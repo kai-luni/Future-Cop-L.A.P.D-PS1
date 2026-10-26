@@ -1,10 +1,17 @@
 int func_8004DA58(unsigned int value)
 {
-    if ((unsigned int)(value - 0x3C) < 10) {
-        return 1;
+    register unsigned int test __asm__("$2");
+
+    test = value - 0x3C;
+    if (test < 10) {
+        goto matched;
     }
-    if ((unsigned int)(value - 0x64) < 2) {
-        return 1;
+    test = value - 0x64;
+    if (test < 2) {
+        goto matched;
     }
     return 0;
+
+matched:
+    return 1;
 }
