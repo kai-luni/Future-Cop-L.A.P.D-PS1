@@ -303,6 +303,27 @@
       "remove_starts": [
         "0x80089408"
       ]
+    },
+    {
+      "address": "0x80083428",
+      "size": "0x54",
+      "remove_starts": [
+        "0x8008342C"
+      ]
+    },
+    {
+      "address": "0x8008589C",
+      "size": "0x44",
+      "remove_starts": [
+        "0x800858A0"
+      ]
+    },
+    {
+      "address": "0x80089874",
+      "size": "0x54",
+      "remove_starts": [
+        "0x80089878"
+      ]
     }
   ]
 }

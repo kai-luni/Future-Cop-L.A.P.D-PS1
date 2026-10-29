@@ -9814,6 +9814,35 @@
       }
     },
     {
+      "name": "func_8007FA48",
+      "address": "0x8007FA48",
+      "size": "0x40",
+      "source": "src/game/8007FA48.c",
+      "compiler": "gcc-2.6.3-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-O2",
+        "-G4",
+        "-O1"
+      ],
+      "symbols": {
+        "D_8009F92C": "0x8009F92C",
+        "func_800181D4": "0x800181D4",
+        "func_80020600": "0x80020600"
+      },
+      "link": true,
+      "small_data_symbols": {
+        "D_8009F92C": 4
+      },
+      "linker_symbols": {
+        "D_8009F92C": "0x8009F92C",
+        "_gp": "0x8009F214"
+      }
+    },
+    {
       "name": "func_8007FACC",
       "address": "0x8007FACC",
       "size": "0x38",
@@ -9901,6 +9930,40 @@
       }
     },
     {
+      "name": "func_80083428",
+      "address": "0x80083428",
+      "size": "0x54",
+      "source": "src/game/80083428.c",
+      "compiler": "gcc-2.6.3-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-O2",
+        "-G4"
+      ],
+      "symbols": {
+        "D_8009F930": "0x8009F930",
+        "D_8009F934": "0x8009F934",
+        "D_8009F938": "0x8009F938",
+        "func_800181D4": "0x800181D4",
+        "func_80019584": "0x80019584"
+      },
+      "link": true,
+      "small_data_symbols": {
+        "D_8009F930": 4,
+        "D_8009F934": 4,
+        "D_8009F938": 4
+      },
+      "linker_symbols": {
+        "D_8009F930": "0x8009F930",
+        "D_8009F934": "0x8009F934",
+        "D_8009F938": "0x8009F938",
+        "_gp": "0x8009F214"
+      }
+    },
+    {
       "name": "func_800841C4",
       "address": "0x800841C4",
       "size": "0x1D4",
@@ -9940,6 +10003,35 @@
         "--expand-div",
         "--dont-expand-li"
       ]
+    },
+    {
+      "name": "func_8008589C",
+      "address": "0x8008589C",
+      "size": "0x44",
+      "source": "src/game/8008589C.c",
+      "compiler": "gcc-2.6.3-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-O2",
+        "-G4"
+      ],
+      "symbols": {
+        "D_8009F4BC": "0x8009F4BC",
+        "func_80085228": "0x80085228",
+        "func_80085630": "0x80085630",
+        "func_8008589C": "0x8008589C"
+      },
+      "link": true,
+      "small_data_symbols": {
+        "D_8009F4BC": 4
+      },
+      "linker_symbols": {
+        "D_8009F4BC": "0x8009F4BC",
+        "_gp": "0x8009F214"
+      }
     },
     {
       "name": "func_800858E0",
@@ -10370,6 +10462,35 @@
         "D_8009F980": "0x8009F980",
         "D_8009F984": "0x8009F984",
         "D_8009F988": "0x8009F988",
+        "_gp": "0x8009F214"
+      }
+    },
+    {
+      "name": "func_80089874",
+      "address": "0x80089874",
+      "size": "0x54",
+      "source": "src/game/80089874.c",
+      "compiler": "gcc-2.6.3-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-O2",
+        "-G4"
+      ],
+      "symbols": {
+        "D_8009F970": "0x8009F970",
+        "func_800895E4": "0x800895E4",
+        "func_8008E5D8": "0x8008E5D8",
+        "func_80091240": "0x80091240"
+      },
+      "link": true,
+      "small_data_symbols": {
+        "D_8009F970": 4
+      },
+      "linker_symbols": {
+        "D_8009F970": "0x8009F970",
         "_gp": "0x8009F214"
       }
     },
@@ -11283,6 +11404,28 @@
       "symbols": {
         "D_8009DEC8": "0x8009DEC8"
       }
+    },
+    {
+      "name": "func_800951D8",
+      "address": "0x800951D8",
+      "size": "0x34",
+      "source": "src/game/800951D8.c",
+      "compiler": "gcc-2.6.3-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2",
+        "-O1"
+      ],
+      "symbols": {
+        "D_8009DEFC": "0x8009DEFC",
+        "D_8009DF00": "0x8009DF00",
+        "func_80091270": "0x80091270"
+      },
+      "link": false
     },
     {
       "name": "func_80095830",
