@@ -16,6 +16,11 @@ against SLUS-00739. Follow them before guessing.
    `0x2A8($gp)`) already has the correct code shape. Do not restructure the C:
    report the expected offset in `note` and place the object through
    `small_data_symbols` instead.
+   The verified units show how that is declared: an `extern` object listed in
+   `small_data_symbols` (name -> size, e.g. `"D_8009E2A8": 4`) plus its address in
+   `symbols`, compiled with `-G4`. The object name is derived from the oracle offset:
+   target address minus the `$gp` base `0x8009F214` gives the byte offset, and the
+   symbol is named after the resulting address.
 
 ## BIOS dispatch stubs
 

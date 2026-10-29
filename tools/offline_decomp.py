@@ -37,6 +37,9 @@ GLOBAL_SYMBOL = re.compile(r"\b(?:func|D)_[0-9A-Fa-f]{8}\b")
 # pinned GCCs append their own prologue/epilogue to any C function, so these ranges
 # cannot be reproduced as C no matter how the source is written (hand-checked).
 BIOS_DISPATCH = re.compile(r"jr\s+\$t2\b")
+GP_REFERENCE = re.compile(r"\b(?:lb|lbu|lh|lhu|lw|sb|sh|sw)\s+\$\w+,\s*(0x[0-9A-Fa-f]+|\(?0\)?)\(\$gp\)")
+#: $gp base of this target, taken from the verified units' symbols (``_gp``).
+GP_BASE = 0x8009F214
 SAFE_SYMBOL = re.compile(r"^(?:func|D)_[0-9A-Fa-f]{8}$")
 NON_C_SOURCE = re.compile(
     r"(?:^\s*\.word\b|^\s*\.include\b|^\s*\.set\b)",
@@ -108,6 +111,21 @@ class Target:
     address: int
     size: int
     assembly: str
+
+
+def gp_objects(assembly: str) -> dict[str, int]:
+    """Object addresses referenced through ``$gp`` in one oracle block.
+
+    The oracle offset plus the ``$gp`` base names the object, so a proposal can
+    declare it as a plain ``extern`` instead of inventing an absolute address.
+    Returns ``{symbol_name: address}``.
+    """
+    objects: dict[str, int] = {}
+    for match in GP_REFERENCE.finditer(assembly):
+        offset = int(match.group(1), 0) if match.group(1).startswith("0x") else 0
+        address = GP_BASE + offset
+        objects[f"D_{address:08X}"] = address
+    return objects
 
 
 def atomic_json(path: Path, value: Any) -> None:
@@ -282,7 +300,12 @@ class Runner:
                 "compiler": self.config["compiler"],
                 "compiler_flags": self.config["compiler_flags"],
                 "assembly_oracle": target.assembly,
-                "known_symbols": inferred_symbols(target),
+                "known_symbols": inferred_symbols(target) | {
+                    name: f"0x{address:08X}" for name, address in gp_objects(target.assembly).items()
+                },
+                "gp_base": f"0x{GP_BASE:08X}",
+                "gp_objects": {name: f"0x{address:08X}"
+                               for name, address in gp_objects(target.assembly).items()},
             },
             "attempt": state.get("attempts", 0) + 1,
             "best_candidate": None if best is None else {
@@ -334,6 +357,17 @@ class Runner:
         }
         for key, value in (extras or {}).items():
             unit[key] = value
+        # A gp-relative oracle means the object must sit in small data. Unless the
+        # proposal declares it itself, place every referenced object with size 4 and
+        # pin the small-data threshold that makes it reachable through $gp.
+        objects = gp_objects(target.assembly)
+        if objects and "small_data_symbols" not in unit:
+            unit["small_data_symbols"] = {name: 4 for name in objects}
+            flags = list(unit.get("compiler_flags",
+                                  self.config.get("compiler_flags", [])))
+            if not any(flag.startswith("-G") and flag not in ("-G0",) for flag in flags):
+                flags = [flag for flag in flags if not flag.startswith("-G")] + ["-G4"]
+                unit["compiler_flags"] = flags
         try:
             with tempfile.TemporaryDirectory(prefix="future-cop-worker-") as directory:
                 actual = matching.compile_unit(
@@ -493,6 +527,71 @@ def run_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def preview_command(args: argparse.Namespace) -> int:
+    """Compile the review-inbox candidates independently and print a verdict per unit.
+
+    Applies the project's own extent rule (``verify_matching_units.verify``): the
+    declared range must match exactly and any extra bytes must be zero padding.
+    """
+    inbox = args.output.resolve() / "inbox"
+    if not inbox.is_dir():
+        print("no inbox to review")
+        return 0
+    config = load_json(MATCHING_MANIFEST, {})
+    executable = args.executable.read_bytes()
+    confirmed = zero_tail = failed = 0
+    for unit_path in sorted(inbox.glob("*/unit.json")):
+        candidate = json.loads(unit_path.read_text())
+        source = unit_path.parent / candidate["source"]
+        address, size = int(candidate["address"], 0), int(candidate["size"], 0)
+        unit = {
+            "name": candidate["name"], "address": address, "size": size,
+            "source": str(source),
+            "symbols": candidate.get("symbols", {}),
+            # gp objects are resolved from the oracle, because the inbox unit.json
+            # only carries the raw proposal.
+            "small_data_symbols": {}, "compiler_flags": config.get("compiler_flags", []),
+        }
+        target = next((t for t in parse_targets(args.assembly.read_text())
+                       if t.name == candidate["name"]), None)
+        if target is not None and gp_objects(target.assembly):
+            unit["small_data_symbols"] = {name: 4 for name in gp_objects(target.assembly)}
+            unit["compiler_flags"] = [flag for flag in unit["compiler_flags"]
+                                      if not flag.startswith("-G")] + ["-G4"]
+        text = source.read_text()
+        # Inline-assembly units must compile with the same flags they were accepted
+        # with: a different -G threshold changes nothing in the asm block itself but
+        # keeps the acceptance reproducible.
+        if "__asm__" in text:
+            unit["compiler_flags"] = config.get("compiler_flags", [])
+        try:
+            with tempfile.TemporaryDirectory(prefix="future-cop-review-") as directory:
+                actual = matching.compile_unit(unit, config, args.binutils_prefix,
+                                               Path(directory),
+                                               environment=compiler_environment())
+        except (subprocess.CalledProcessError, OSError, ValueError) as error:
+            print(f"FAIL {candidate['name']}: {error}")
+            failed += 1
+            continue
+        offset = matching.HEADER_SIZE + address - matching.LOAD_ADDRESS
+        expected = executable[offset:offset + size]
+        tail = actual[size:]
+        if actual[:size] != expected or any(tail):
+            print(f"FAIL {candidate['name']}: bytes differ or nonzero tail")
+            failed += 1
+        elif tail:
+            print(f"OK   {candidate['name']}: {size} bytes, {len(tail)} bytes zero padding "
+                  f"({'inline asm' if '__asm__' in text else 'C'})")
+            confirmed += 1
+            zero_tail += 1
+        else:
+            print(f"OK   {candidate['name']}: {size} bytes exact "
+                  f"({'inline asm' if '__asm__' in text else 'C'})")
+            confirmed += 1
+    print(f"confirmed {confirmed}, of those {zero_tail} with zero padding, failed {failed}")
+    return 0 if failed == 0 else 1
+
+
 def status_command(args: argparse.Namespace) -> int:
     states = []
     for path in sorted((args.output / "work").glob("*/state.json")):
@@ -529,6 +628,14 @@ def parser() -> argparse.ArgumentParser:
     status_parser = subparsers.add_parser("status", help="summarize saved worker state")
     status_parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     status_parser.set_defaults(handler=status_command)
+    preview_parser = subparsers.add_parser(
+        "preview", help="recompile review-inbox candidates and print a verdict")
+    preview_parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    preview_parser.add_argument("--assembly", type=Path, default=DEFAULT_ASSEMBLY)
+    preview_parser.add_argument("--executable", type=Path, default=DEFAULT_EXECUTABLE)
+    preview_parser.add_argument("--binutils-prefix", default=os.environ.get(
+        "MIPSEL_PREFIX", "mipsel-linux-gnu-"))
+    preview_parser.set_defaults(handler=preview_command)
     return result
 
 
