@@ -76,6 +76,14 @@ endlabel func_80010008
         worker.decode_backend_output(json.dumps({
             "source": "void f(void) { __asm__ volatile(\"addiu $t2,$zero,0xB0\\n\\tjr $t2\\n\"); }",
         }))
+        # An assembler file hidden inside an __asm__ string is rejected.
+        for cheat in (
+            '__asm__(".globl f\\nf:\\naddiu $t2,$zero,0xB0\\njr $t2\\n");',
+            '__asm__(".word 0x240A00B0\\n.word 0x01400008\\n");',
+            '__asm__(".set noreorder\\naddiu $t2,$zero,0xB0\\n");',
+        ):
+            with self.assertRaises(ValueError):
+                worker.decode_backend_output(json.dumps({"source": "void f(void) { " + cheat + " }"}))
         # A smuggled assembly listing is still rejected.
         with self.assertRaises(ValueError):
             worker.decode_backend_output(json.dumps({

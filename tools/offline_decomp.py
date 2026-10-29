@@ -54,9 +54,29 @@ def _listing_without_asm_blocks(source: str) -> str:
     return ASM_BLOCK.sub("", source)
 
 
+# Inline assembly is tolerated for BIOS dispatch stubs, but only as bare
+# instructions inside a C function. Directives, symbol tables and label
+# definitions would turn the proposal into an assembler file that emits the
+# retail bytes verbatim, which is not a C reconstruction.
+ASM_DIRECTIVE = re.compile(
+    r"\.(?:word|half|byte|ascii|asciiz|text|data|section|globl|global|type|"
+    r"ent|end|size|set|align|include)\b"
+)
+ASM_LABEL = re.compile(r"(?m)^\s*[A-Za-z_][A-Za-z0-9_]*\s*:\s*$")
+C_FUNCTION = re.compile(r"[A-Za-z_][A-Za-z0-9_\s\*]*\b[A-Za-z_]\w*\s*\([^;]*\)\s*\{")
+
+
 def reject_assembly_listing(source: str) -> None:
     if MIPS_MNEMONIC.search(_listing_without_asm_blocks(source)):
         raise ValueError("source contains assembly; reconstructed C is required")
+    for block in ASM_BLOCK.finditer(source):
+        text = block.group(0)
+        if ASM_DIRECTIVE.search(text):
+            raise ValueError("inline assembly must not contain assembler directives")
+        if ASM_LABEL.search(text):
+            raise ValueError("inline assembly must not define labels")
+    if "__asm__" in source and not C_FUNCTION.search(source):
+        raise ValueError("source must be a C function, not an assembly listing")
 
 
 def _decode_extras(value: dict[str, Any]) -> dict[str, Any]:
@@ -193,6 +213,8 @@ def decode_backend_output(text: str) -> tuple[str, dict[str, str], str, dict[str
     for name, address in raw_symbols.items():
         if not isinstance(name, str) or not SAFE_SYMBOL.fullmatch(name):
             raise ValueError(f"unsafe symbol name: {name!r}")
+        if isinstance(address, bool) or not isinstance(address, (str, int)):
+            raise ValueError(f"symbol address must be a string or integer: {name}")
         parsed = int(address, 0) if isinstance(address, str) else int(address)
         if not 0 <= parsed <= 0xFFFFFFFF:
             raise ValueError(f"symbol address outside 32-bit range: {name}")
