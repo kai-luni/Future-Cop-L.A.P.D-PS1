@@ -6,7 +6,11 @@ dest="$root/.toolchain"
 downloads="$dest/downloads"
 mkdir -p "$downloads"
 
+# Each compiler is pinned to the release that actually publishes it: the
+# 2.7.2-cdk build is not part of release 0.13 (HTTP 404) and has lived in 0.17
+# since then, with the same archive bytes.
 gcc_release=https://github.com/decompals/old-gcc/releases/download/0.13
+gcc_272_cdk_release=https://github.com/decompals/old-gcc/releases/download/0.17
 gcc_263_url=https://github.com/Xeeynamo/sotn-decomp/releases/download/cc1-psx-26/cc1-psx-26.tar.gz
 gcc_263_archive="$downloads/cc1-psx-26.tar.gz"
 gcc_263_sha=ab156fe598ccad6aef704b8b35f3272de7edaf7eaab4e3d504c346ce6647df6c
@@ -31,8 +35,12 @@ do
     name=${spec%%:*}
     sha=${spec#*:}
     archive="$downloads/$name.tar.gz"
+    base=$gcc_release
+    if [ "$name" = gcc-2.7.2-cdk ]; then
+        base=$gcc_272_cdk_release
+    fi
     if [ ! -f "$archive" ]; then
-        curl -L --fail --output "$archive" "$gcc_release/$name.tar.gz"
+        curl -L --fail --output "$archive" "$base/$name.tar.gz"
     fi
     printf '%s  %s\n' "$sha" "$archive" | sha256sum -c -
     mkdir -p "$dest/$name"
