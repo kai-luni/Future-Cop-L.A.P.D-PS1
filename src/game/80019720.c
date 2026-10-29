@@ -2,6 +2,7 @@
 
 extern s32 D_8009F214;
 
+/* generates a random number, 31 bit */
 s32 func_80019720(void)
 {
     u32 high;
