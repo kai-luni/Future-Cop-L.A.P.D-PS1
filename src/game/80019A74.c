@@ -9,6 +9,11 @@ struct Resource {
 extern struct Resource *D_8009F5B8;
 extern struct Resource *D_8009F5BC;
 
+/* Appends a resource to the global doubly linked list.
+ * D_8009F5B8 is the first node and D_8009F5BC the last; a new entry is linked
+ * behind the tail and becomes the new tail, or becomes head and tail when the
+ * list is still empty. Registered nodes are what func_80019BF0 searches by
+ * (group, name). */
 void func_80019A74(struct Resource *resource)
 {
     resource->next = 0;
