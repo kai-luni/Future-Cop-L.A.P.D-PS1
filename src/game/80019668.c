@@ -3,6 +3,7 @@
 extern s32 D_8009F5A8;
 extern s32 D_800A0480[];
 
+/* additive Lagged-Fibonacci-Generator, 31 bit random number */
 s32 func_80019668(void)
 {
     s32 i;
