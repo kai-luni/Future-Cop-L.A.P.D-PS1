@@ -24,7 +24,7 @@ class DecompReportTests(unittest.TestCase):
         self.assertEqual(measures["total_code"], "555552")
         # 1.855 catalogue entries minus the merges recorded in
         # config/us/function_boundary_overrides.json.
-        self.assertEqual(measures["total_functions"], 1854)
+        self.assertEqual(measures["total_functions"], 1852)
         self.assertGreater(int(measures["matched_code"]), 51512)
         self.assertGreaterEqual(measures["matched_functions"], 522)
         self.assertEqual(

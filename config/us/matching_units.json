@@ -4012,6 +4012,40 @@
       "compiler": "gcc-2.7.2-psx"
     },
     {
+      "name": "func_80040E60",
+      "address": "0x80040E60",
+      "size": "0x210",
+      "source": "src/game/80040E60.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-O2",
+        "-G4"
+      ],
+      "symbols": {
+        "D_80040874": "0x80040874",
+        "D_8009F318": "0x8009F318",
+        "func_80017EBC": "0x80017EBC",
+        "func_800188D0": "0x800188D0",
+        "func_8003C14C": "0x8003C14C",
+        "func_800403D0": "0x800403D0"
+      },
+      "link": true,
+      "small_data_symbols": {
+        "D_8009F318": 4
+      },
+      "linker_symbols": {
+        "D_8009F318": "0x8009F318",
+        "_gp": "0x8009F214"
+      },
+      "maspsx_flags_extra": [
+        "--expand-div"
+      ]
+    },
+    {
       "name": "func_80041070",
       "address": "0x80041070",
       "size": "0x4C",
