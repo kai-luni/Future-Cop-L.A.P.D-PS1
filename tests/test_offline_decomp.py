@@ -51,15 +51,19 @@ endlabel func_80010008
         self.assertFalse(partial["exact"])
 
     def test_backend_response_validation(self):
-        source, symbols, note = worker.decode_backend_output(json.dumps({
+        source, symbols, note, extras = worker.decode_backend_output(json.dumps({
             "source": "int func_80010000(void) { return 0; }",
             "symbols": {"D_800A0000": "0x800A0000"},
             "note": "candidate",
+            "compiler": "gcc-2.7.2-cdk",
+            "compiler_flags_extra": ["-G4"],
         }))
+        self.assertEqual(extras["compiler"], "gcc-2.7.2-cdk")
+        self.assertEqual(extras["compiler_flags_extra"], ["-G4"])
         self.assertTrue(source.endswith("\n"))
         self.assertEqual(symbols["D_800A0000"], "0x800A0000")
         self.assertEqual(note, "candidate")
-        normalized, _symbols, _note = worker.decode_backend_output(json.dumps({
+        normalized, _symbols, _note, _extras = worker.decode_backend_output(json.dumps({
             "source": '#include "../../include/game/types.h"\nint f(void) { return 0; }',
         }))
         self.assertIn('#include "game/types.h"', normalized)
@@ -68,9 +72,23 @@ endlabel func_80010008
                 "source": "int f(void) { return 0; }",
                 "symbols": {"bad;name": 1},
             }))
+        # Inline assembly inside a C function is allowed for BIOS dispatch stubs.
+        worker.decode_backend_output(json.dumps({
+            "source": "void f(void) { __asm__ volatile(\"addiu $t2,$zero,0xB0\\n\\tjr $t2\\n\"); }",
+        }))
+        # A smuggled assembly listing is still rejected.
         with self.assertRaises(ValueError):
             worker.decode_backend_output(json.dumps({
-                "source": "void f(void) { __asm__(\"nop\"); }",
+                "source": "glabel f\n    addiu $t2,$zero,0xB0\n    jr $t2\n",
+            }))
+        with self.assertRaises(ValueError):
+            worker.decode_backend_output(json.dumps({
+                "source": "void f(void) {}\n.word 0x1234\n",
+            }))
+        with self.assertRaises(ValueError):
+            worker.decode_backend_output(json.dumps({
+                "source": "void f(void) {}",
+                "compiler": "gcc-9.9-psx",
             }))
 
     def test_failed_compile_can_never_match_zero_bytes(self):

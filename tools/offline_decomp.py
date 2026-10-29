@@ -26,6 +26,7 @@ DEFAULT_ASSEMBLY = ROOT / "asm/us/main.s"
 DEFAULT_EXECUTABLE = ROOT / "baseroms/us/SLUS_007.39"
 DEFAULT_OUTPUT = ROOT / "build/us/offline-decomp"
 MATCHING_MANIFEST = ROOT / "config/us/matching_units.json"
+RULES = ROOT / "config/us/reconstruction_rules.md"
 CANDIDATE_MANIFEST = ROOT / "config/us/candidate_units.json"
 FUNCTION_HEADER = re.compile(
     r"^nonmatching\s+(?P<name>func_[0-9A-Fa-f]{8}|entrypoint),\s*"
@@ -34,9 +35,47 @@ FUNCTION_HEADER = re.compile(
 GLOBAL_SYMBOL = re.compile(r"\b(?:func|D)_[0-9A-Fa-f]{8}\b")
 SAFE_SYMBOL = re.compile(r"^(?:func|D)_[0-9A-Fa-f]{8}$")
 NON_C_SOURCE = re.compile(
-    r"(?:\b__asm__\b|\b(?:asm|__asm)\s*\(|^\s*\.word\b|^\s*\.include\b)",
+    r"(?:^\s*\.word\b|^\s*\.include\b|^\s*\.set\b)",
     re.MULTILINE,
 )
+# A proposal may use one inline __asm__ block (BIOS dispatch stubs need it), but it
+# must stay a C unit: an assembly listing smuggled in as lines of mnemonics is not
+# a reconstruction.
+MIPS_MNEMONIC = re.compile(
+    r"^\s*(?:lui|lw|sw|lb|sb|addiu|addi|addu|subu|sltu|slt|jr|jal|j|nop|sll|srl|sra|"
+    r"multu|divu|mfhi|mflo|break|syscall|cop2)\s",
+    re.MULTILINE,
+)
+ASM_BLOCK = re.compile(r"__asm__\s*(?:volatile\s*)?\((?:[^()]|\([^()]*\))*\)", re.DOTALL)
+
+
+def _listing_without_asm_blocks(source: str) -> str:
+    """Source with every inline-assembly block blanked out."""
+    return ASM_BLOCK.sub("", source)
+
+
+def reject_assembly_listing(source: str) -> None:
+    if MIPS_MNEMONIC.search(_listing_without_asm_blocks(source)):
+        raise ValueError("source contains assembly; reconstructed C is required")
+
+
+def _decode_extras(value: dict[str, Any]) -> dict[str, Any]:
+    """Optional per-proposal compiler/flags, so a unit can pick its pinned toolchain."""
+    extras: dict[str, Any] = {}
+    compiler = value.get("compiler")
+    if compiler is not None:
+        if compiler not in ALLOWED_COMPILERS:
+            raise ValueError(f"unsupported compiler: {compiler!r}")
+        extras["compiler"] = compiler
+    flags = value.get("compiler_flags_extra", [])
+    if flags:
+        if not isinstance(flags, list):
+            raise ValueError("compiler_flags_extra must be a list")
+        for flag in flags:
+            if not isinstance(flag, str) or not SAFE_FLAG.fullmatch(flag):
+                raise ValueError(f"unsafe compiler flag: {flag!r}")
+        extras["compiler_flags_extra"] = flags
+    return extras
 
 
 @dataclass(frozen=True)
@@ -129,7 +168,12 @@ def score_bytes(actual: bytes, expected: bytes) -> dict[str, Any]:
     }
 
 
-def decode_backend_output(text: str) -> tuple[str, dict[str, str], str]:
+ALLOWED_COMPILERS = {"gcc-2.6.3-psx", "gcc-2.7.2-cdk", "gcc-2.7.2-psx",
+                      "gcc-2.8.0-psx", "gcc-2.8.1-psx"}
+SAFE_FLAG = re.compile(r"^-[A-Za-z0-9_,=+-]+$")
+
+
+def decode_backend_output(text: str) -> tuple[str, dict[str, str], str, dict[str, Any]]:
     """Validate the deliberately narrow proposal-command response."""
     value = json.loads(text)
     if not isinstance(value, dict) or not isinstance(value.get("source"), str):
@@ -141,6 +185,7 @@ def decode_backend_output(text: str) -> tuple[str, dict[str, str], str]:
         raise ValueError("source must not be empty")
     if NON_C_SOURCE.search(source):
         raise ValueError("source contains assembly; reconstructed C is required")
+    reject_assembly_listing(source)
     raw_symbols = value.get("symbols", {})
     if not isinstance(raw_symbols, dict):
         raise ValueError("symbols must be an object")
@@ -155,7 +200,7 @@ def decode_backend_output(text: str) -> tuple[str, dict[str, str], str]:
     note = value.get("note", "")
     if not isinstance(note, str):
         raise ValueError("note must be a string")
-    return source, symbols, note
+    return source, symbols, note, _decode_extras(value)
 
 
 def compiler_environment() -> dict[str, str]:
@@ -220,16 +265,20 @@ class Runner:
                 "score": best["score"],
                 "compiler_diagnostic": best.get("compiler_diagnostic", ""),
             },
+            "guidance": RULES.read_text() if RULES.is_file() else "",
             "requirements": [
                 "Return reconstructed C source, not assembly.",
                 "Use ANSI C accepted by the pinned compiler.",
                 "Use project includes such as #include \"game/types.h\" when needed.",
                 "Preserve 32-bit PS1 address and integer semantics.",
-                "Return only one JSON object: source (string), symbols (object), note (string).",
+                "Return only one JSON object: source (string), symbols (object), note (string), "
+                "and optionally compiler (one pinned name) and compiler_flags_extra (list).",
+                "Follow the guidance rules before guessing.",
             ],
         }
 
-    def call_backend(self, payload: dict[str, Any]) -> tuple[str, dict[str, str], str]:
+    def call_backend(self, payload: dict[str, Any]
+                     ) -> tuple[str, dict[str, str], str, dict[str, Any]]:
         completed = subprocess.run(
             self.command,
             input=json.dumps(payload),
@@ -247,7 +296,8 @@ class Runner:
         return decode_backend_output(completed.stdout)
 
     def compile(self, target: Target, source_path: Path,
-                symbols: dict[str, str]) -> tuple[bytes | None, str]:
+                symbols: dict[str, str], extras: dict[str, Any] | None = None
+                ) -> tuple[bytes | None, str]:
         relative = source_path.relative_to(ROOT)
         unit = {
             "name": target.name,
@@ -256,6 +306,8 @@ class Runner:
             "source": str(relative),
             "symbols": inferred_symbols(target) | symbols,
         }
+        for key, value in (extras or {}).items():
+            unit[key] = value
         try:
             with tempfile.TemporaryDirectory(prefix="future-cop-worker-") as directory:
                 actual = matching.compile_unit(
@@ -319,7 +371,7 @@ class Runner:
             attempt_dir = target_dir / "attempts" / f"{attempt:06d}"
             attempt_dir.mkdir(parents=True, exist_ok=True)
             try:
-                source, symbols, note = self.call_backend(self.request(target, state))
+                source, symbols, note, extras = self.call_backend(self.request(target, state))
                 source_hash = hashlib.sha256(source.encode()).hexdigest()
                 seen_sources = set(state.get("seen_source_sha256", []))
                 if source_hash in seen_sources:
@@ -328,10 +380,11 @@ class Runner:
                 state["seen_source_sha256"] = sorted(seen_sources)
                 source_path = attempt_dir / "candidate.c"
                 source_path.write_text(source)
-                actual, diagnostic = self.compile(target, source_path, symbols)
+                actual, diagnostic = self.compile(target, source_path, symbols, extras)
                 score = (score_bytes(actual, self.expected(target)) if actual is not None
                          else self.failed_score(self.expected(target)))
                 result = {"score": score, "symbols": symbols, "note": note,
+                          "extras": extras,
                           "compiler_diagnostic": diagnostic,
                           "source_sha256": source_hash}
                 atomic_json(attempt_dir / "result.json", result)
