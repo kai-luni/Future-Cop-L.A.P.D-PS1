@@ -282,6 +282,27 @@
       "remove_starts": [
         "0x800898EC"
       ]
+    },
+    {
+      "address": "0x80022484",
+      "size": "0x1D0",
+      "remove_starts": [
+        "0x80022494"
+      ]
+    },
+    {
+      "address": "0x800841C4",
+      "size": "0x1D4",
+      "remove_starts": [
+        "0x800841D4"
+      ]
+    },
+    {
+      "address": "0x80089404",
+      "size": "0x1E0",
+      "remove_starts": [
+        "0x80089408"
+      ]
     }
   ]
 }
