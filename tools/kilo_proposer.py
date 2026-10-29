@@ -98,6 +98,23 @@ def query(url: str, model: str, request: dict, temperature: float,
         raise ValueError("gateway response has no generated message") from error
     if not isinstance(content, str):
         raise ValueError("gateway message is not text")
+    # Token accounting for the campaign report: one JSON line per call, appended to
+    # build/us/kilo-usage.jsonl. A failed readback must never break a proposal.
+    try:
+        usage = reply.get("usage") or {}
+        with open("build/us/kilo-usage.jsonl", "a", encoding="utf-8") as log:
+            log.write(json.dumps({
+                "model": reply.get("model", model),
+                "finish_reason": (reply["choices"][0] or {}).get("finish_reason"),
+                "prompt_tokens": usage.get("prompt_tokens"),
+                "completion_tokens": usage.get("completion_tokens"),
+                "total_tokens": usage.get("total_tokens"),
+                "reasoning_tokens": (usage.get("completion_tokens_details") or {}).get("reasoning_tokens"),
+                "request_chars": len(body),
+                "content_chars": len(content),
+            }) + "\n")
+    except OSError:
+        pass
     finish = (reply["choices"][0] or {}).get("finish_reason")
     if finish == "length" and not content.strip():
         raise ValueError("gateway stopped on the token limit with empty content; "
