@@ -113,6 +113,19 @@ class Target:
     assembly: str
 
 
+def _recent_sources(output: Path, target: "Target", state: dict[str, Any],
+                    limit: int = 3, chars: int = 1200) -> list[str]:
+    """The last few candidate sources of one target, for the 'do not repeat' hint."""
+    sources: list[str] = []
+    attempts = sorted((output / "work" / target.name / "attempts").glob("*/candidate.c"))
+    for path in reversed(attempts[-limit:]):
+        try:
+            sources.append(path.read_text()[:chars])
+        except OSError:
+            continue
+    return sources
+
+
 def gp_objects(assembly: str) -> dict[str, int]:
     """Object addresses referenced through ``$gp`` in one oracle block.
 
@@ -308,6 +321,13 @@ class Runner:
                                for name, address in gp_objects(target.assembly).items()},
             },
             "attempt": state.get("attempts", 0) + 1,
+            # Proposals repeat themselves when they cannot see what was already
+            # tried: the newest few sources are shown as rejected variants, and the
+            # mismatch table of the best attempt says which words still differ.
+            "already_tried": [
+                {"source": text, "note": "rejected variant, do not repeat"}
+                for text in _recent_sources(self.output, target, state)
+            ],
             "best_candidate": None if best is None else {
                 "source": (self.output / best["source"]).read_text(),
                 "symbols": best["symbols"],
