@@ -37,11 +37,21 @@ against SLUS-00739. Follow them before guessing.
    appended, so a 12-byte `$t2` stub can never reach the exact extent. 45 such
    ranges (1,600 bytes) exist in the executable; the worker skips them.
 
+## Checked division (`div` / `rem` with `break`)
+
+10. A `div`/`divu` followed by `bnez` + `break 7` and `bne $v1,-1` + `break 6` is not
+    hardware. It is the original toolchain's divide guard, and `maspsx --expand-div`
+    reproduces it from ordinary C: send `maspsx_flags_extra: ["--expand-div"]` with
+    `a / b` or `a % b`. Verified on `func_80028FD4`: 22/22 words byte-exact with
+    `gcc-2.7.2-cdk`, `-O2 -G0` and that flag; without the flag the same C is 8/22.
+11. `break` alone (no `div`/`rem` in the block) has an unknown origin; those ranges
+    stay out of the campaign. GTE/syscall blocks are out as well.
+
 ## Style that matches this project
 
-5. `similar_verified_units` in the request holds already-verified sources with the
-   same instruction mix. Mirror their declaration and control-flow style first; they
-   replicate this compiler's quirks better than any general rule.
+5. `similar_verified_examples` in the request holds already-verified sources with a
+   similar instruction shape. Mirror their declaration and control-flow style first;
+   they replicate this compiler's quirks better than any general rule.
 6. Include shared headers as `#include "game/types.h"`, use the project's
    `s8/u8/s16/u16/s32/u32` types, and keep functions `void`-arg lists explicit.
 6. Use the compiler the unit actually needs (2.6.3, 2.7.2-cdk, 2.7.2-psx,

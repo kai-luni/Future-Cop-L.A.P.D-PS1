@@ -39,10 +39,25 @@ GLOBAL_SYMBOL = re.compile(r"\b(?:func|D)_[0-9A-Fa-f]{8}\b")
 # pinned GCCs append their own prologue/epilogue to any C function, so these ranges
 # cannot be reproduced as C no matter how the source is written (hand-checked).
 BIOS_DISPATCH = re.compile(r"jr\s+\$t2\b")
-# Hardware-only constructs: GTE transfers, syscalls and breakpoints have no C form,
-# so a campaign that wants reconstructed C should not spend attempts on them.
+# Hardware-only constructs have no C form, so a campaign that wants reconstructed C
+# should not spend attempts on them. ``break`` is deliberately *not* in this list:
+# the checked-division guard of the original toolchain is a ``div`` plus ``break 7``
+# and ``break 6``, which maspsx reproduces with ``--expand-div`` (verified against
+# func_80028FD4). A ``break`` without a neighbouring div/rem stays excluded, because
+# its origin is unknown.
 HARDWARE_ONLY = re.compile(
-    r"\b(?:cop2|lwc2|swc2|ctc2|cfc2|mtc2|mfc2|syscall|break)\b")
+    r"\b(?:cop2|lwc2|swc2|ctc2|cfc2|mtc2|mfc2|syscall)\b")
+BREAKPOINT = re.compile(r"\bbreak\b")
+DIVISION = re.compile(r"\b(?:divu?|remu?)\b")
+
+
+def hardware_reason(assembly: str) -> str | None:
+    """Why a target is skipped by ``--pure-c``, or ``None`` when it is eligible."""
+    if HARDWARE_ONLY.search(assembly):
+        return "hardware"
+    if BREAKPOINT.search(assembly) and not DIVISION.search(assembly):
+        return "breakpoint"
+    return None
 GP_REFERENCE = re.compile(r"\b(?:lb|lbu|lh|lhu|lw|sb|sh|sw)\s+\$\w+,\s*(-?(?:0x[0-9A-Fa-f]+|[0-9]+))\(\$gp\)")
 #: $gp base of this target, taken from the verified units' symbols (``_gp``).
 GP_BASE = 0x8009F214
@@ -110,6 +125,14 @@ def _decode_extras(value: dict[str, Any]) -> dict[str, Any]:
             if not isinstance(flag, str) or not SAFE_FLAG.fullmatch(flag):
                 raise ValueError(f"unsafe compiler flag: {flag!r}")
         extras["compiler_flags_extra"] = flags
+    maspsx = value.get("maspsx_flags_extra", [])
+    if maspsx:
+        if not isinstance(maspsx, list):
+            raise ValueError("maspsx_flags_extra must be a list")
+        for flag in maspsx:
+            if not isinstance(flag, str) or flag not in SAFE_MASPSX_FLAGS:
+                raise ValueError(f"unsupported maspsx flag: {flag!r}")
+        extras["maspsx_flags_extra"] = maspsx
     return extras
 
 
@@ -305,6 +328,11 @@ def score_bytes(actual: bytes, expected: bytes) -> dict[str, Any]:
 ALLOWED_COMPILERS = {"gcc-2.6.3-psx", "gcc-2.7.2-cdk", "gcc-2.7.2-psx",
                       "gcc-2.8.0-psx", "gcc-2.8.1-psx"}
 SAFE_FLAG = re.compile(r"^-[A-Za-z0-9_,=+-]+$")
+# maspsx switches a proposal may request: they shape the post-processing only, and
+# ``--passthrough`` stays out because it would let assembler text through unchecked.
+SAFE_MASPSX_FLAGS = {"--expand-div", "--dont-expand-li", "--expand-li",
+                     "--use-comm-section", "--use-comm-for-lcomm",
+                     "--dont-force-G0", "--macro-inc", "--no-macro-inc"}
 
 
 def decode_backend_output(text: str) -> tuple[str, dict[str, str], str, dict[str, Any]]:
@@ -480,7 +508,8 @@ class Runner:
                 "Use project includes such as #include \"game/types.h\" when needed.",
                 "Preserve 32-bit PS1 address and integer semantics.",
                 "Return only one JSON object: source (string), symbols (object), note (string), "
-                "and optionally compiler (one pinned name) and compiler_flags_extra (list).",
+                "and optionally compiler (one pinned name), compiler_flags_extra (list) and "
+                "maspsx_flags_extra (list; use \"--expand-div\" for checked division).",
                 "Follow the guidance rules before guessing.",
                 "Use verified examples only as compiler idiom hints, never assume identical behavior.",
                 "Use mismatch_hints as hypotheses, not as proof of semantic equivalence.",
@@ -520,13 +549,20 @@ class Runner:
         unit.update(extras or {})
         objects = gp_objects(target.assembly)
         if objects:
-            # A gp object is defined as small data (``.comm`` in the verifier), and an
-            # absolute ``.set`` for the same name makes ``%gp_rel`` unassemblable
-            # ("unsupported constant in relocation"). Proposals echo these names in
-            # ``symbols``, so drop them there instead of failing the assembly.
-            unit["symbols"] = {name: value for name, value in unit["symbols"].items()
-                               if name not in objects}
+            # A ``%gp_rel`` access cannot be relocated against an absolute ``.set``
+            # constant, so a gp unit has to go through the verifier's link path —
+            # that is exactly how all 150 accepted gp units are recorded. Keeping the
+            # objects in ``symbols`` is mandatory: the link path reads their values
+            # for ``--defsym``. Dropping them instead only assembles because the
+            # relocation then stays unresolved and every gp offset collapses to 0.
+            for name, address in objects.items():
+                unit["symbols"].setdefault(name, f"0x{address:08X}")
             unit["small_data_symbols"] = {name: 4 for name in objects}
+            linker_symbols = dict(unit.get("linker_symbols", {}))
+            linker_symbols.update({name: unit["symbols"][name] for name in objects})
+            linker_symbols.setdefault("_gp", f"0x{GP_BASE:08X}")
+            unit["linker_symbols"] = linker_symbols
+            unit["link"] = True
             flags = list(unit.get("compiler_flags", self.config.get("compiler_flags", [])))
             if not any(flag.startswith("-G") and flag != "-G0" for flag in flags):
                 flags = [flag for flag in flags if not flag.startswith("-G")] + ["-G4"]
@@ -649,7 +685,9 @@ class Runner:
                     accepted_spec = self.unit_spec(target, source_path, symbols, extras)
                     compile_settings = {
                         k: accepted_spec[k]
-                        for k in ("compiler", "compiler_flags", "compiler_flags_extra", "small_data_symbols")
+                        for k in ("compiler", "compiler_flags", "compiler_flags_extra",
+                                  "maspsx_flags_extra", "small_data_symbols", "link",
+                                  "linker_symbols", "rodata_address")
                         if k in accepted_spec
                     }
                     atomic_json(inbox / "unit.json", {
@@ -657,7 +695,7 @@ class Runner:
                         "address": f"0x{target.address:08X}",
                         "size": f"0x{target.size:X}",
                         "source": "candidate.c",
-                        "symbols": inferred_symbols(target) | symbols,
+                        "symbols": accepted_spec["symbols"],
                         "source_sha256": hashlib.sha256(source.encode()).hexdigest(),
                         "matched": True,
                         "compile_settings": compile_settings,
@@ -700,13 +738,16 @@ def select_targets(args: argparse.Namespace) -> list[Target]:
         print(f"Skipping {len(skipped)} BIOS dispatch target(s): $t2 jumps cannot be "
               f"reproduced in C because the pinned compiler always emits an epilogue.")
     if getattr(args, "pure_c", False):
-        hardware = [target for target in selected
-                    if HARDWARE_ONLY.search(target.assembly)]
-        selected = [target for target in selected
-                    if not HARDWARE_ONLY.search(target.assembly)]
+        reasons = [(target, hardware_reason(target.assembly)) for target in selected]
+        hardware = [target for target, reason in reasons if reason == "hardware"]
+        breakpoint = [target for target, reason in reasons if reason == "breakpoint"]
+        selected = [target for target, reason in reasons if reason is None]
         if hardware:
             print(f"Skipping {len(hardware)} hardware-only target(s) (GTE/syscall): "
                   f"they need inline assembly, not reconstructed C.")
+        if breakpoint:
+            print(f"Skipping {len(breakpoint)} target(s) with a bare break and no "
+                  f"division: origin unknown.")
     selected.sort(key=lambda target: (target.size, target.address))
     if requested - {target.name for target in selected}:
         missing = ", ".join(sorted(requested - {target.name for target in selected}))
@@ -759,6 +800,10 @@ def promote_command(args: argparse.Namespace) -> int:
                       if flag not in flags]
             compiler = compiler_settings.get("compiler", config["compiler"])
             small_data = compiler_settings.get("small_data_symbols", {})
+            link = bool(compiler_settings.get("link", False))
+            linker_symbols = compiler_settings.get("linker_symbols", {})
+            rodata_address = compiler_settings.get("rodata_address")
+            maspsx_flags = compiler_settings.get("maspsx_flags_extra", [])
         else:
             # Backward compatibility with results created by the old worker.
             extras: dict[str, Any] = {}
@@ -774,6 +819,10 @@ def promote_command(args: argparse.Namespace) -> int:
             flags += [flag for flag in extras.get("compiler_flags_extra", []) if flag not in flags]
             compiler = extras.get("compiler", config["compiler"])
             small_data = {}
+            link = False
+            linker_symbols = {}
+            rodata_address = None
+            maspsx_flags = extras.get("maspsx_flags_extra", [])
         unit = {
             "name": candidate["name"],
             "address": candidate["address"],
@@ -782,10 +831,16 @@ def promote_command(args: argparse.Namespace) -> int:
             "compiler": compiler,
             "compiler_flags": flags,
             "symbols": candidate.get("symbols", {}),
-            "link": False,
+            "link": link,
         }
         if small_data:
             unit["small_data_symbols"] = small_data
+        if linker_symbols:
+            unit["linker_symbols"] = linker_symbols
+        if rodata_address is not None:
+            unit["rodata_address"] = rodata_address
+        if maspsx_flags:
+            unit["maspsx_flags_extra"] = maspsx_flags
         config["units"].append(unit)
         added.append(candidate["name"])
     if added:
