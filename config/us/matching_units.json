@@ -716,6 +716,118 @@
       }
     },
     {
+      "name": "func_80017EBC",
+      "address": "0x80017EBC",
+      "size": "0x290",
+      "source": "src/game/80017EBC.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G4",
+        "-fgnu-linker",
+        "-O2"
+      ],
+      "maspsx_flags_extra": [
+        "--aspsx-version=2.56",
+        "-G4",
+        "--dont-force-G0"
+      ],
+      "link": true,
+      "linker_symbols": {
+        "D_8009F590": "0x8009F590",
+        "D_8009F598": "0x8009F598",
+        "D_8009F594": "0x8009F594",
+        "D_8009FA4C": "0x8009FA4C",
+        "D_8009FAAC": "0x8009FAAC",
+        "D_8009F9D0": "0x8009F9D0",
+        "func_80017D5C": "0x80017D5C",
+        "func_80017E0C": "0x80017E0C",
+        "func_800195A4": "0x800195A4",
+        "func_8001E240": "0x8001E240",
+        "func_8001E318": "0x8001E318",
+        "_gp": "0x8009F214"
+      },
+      "symbols": {
+        "D_8009F590": "0x8009F590",
+        "D_8009F598": "0x8009F598",
+        "D_8009F594": "0x8009F594",
+        "D_8009FA4C": "0x8009FA4C",
+        "D_8009FAAC": "0x8009FAAC",
+        "D_8009F9D0": "0x8009F9D0",
+        "func_80017D5C": "0x80017D5C",
+        "func_80017E0C": "0x80017E0C",
+        "func_800195A4": "0x800195A4",
+        "func_8001E240": "0x8001E240",
+        "func_8001E318": "0x8001E318"
+      },
+      "small_data_symbols": {
+        "D_8009F590": 4,
+        "D_8009F598": 4,
+        "D_8009F594": 4,
+        "D_8009FA4C": 4,
+        "D_8009FAAC": 4,
+        "D_8009F9D0": 4
+      }
+    },
+    {
+      "name": "func_800181D4",
+      "address": "0x800181D4",
+      "size": "0x28C",
+      "source": "src/game/800181D4.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G4",
+        "-fgnu-linker",
+        "-O2"
+      ],
+      "maspsx_flags_extra": [
+        "--aspsx-version=2.56",
+        "-G4",
+        "--dont-force-G0"
+      ],
+      "link": true,
+      "linker_symbols": {
+        "D_8009FA4C": "0x8009FA4C",
+        "D_8009F9D0": "0x8009F9D0",
+        "D_8009FAAC": "0x8009FAAC",
+        "D_8009F590": "0x8009F590",
+        "D_8009F594": "0x8009F594",
+        "D_8009F598": "0x8009F598",
+        "func_8001814C": "0x8001814C",
+        "func_800195D0": "0x800195D0",
+        "func_8001E2C0": "0x8001E2C0",
+        "func_8001E318": "0x8001E318",
+        "func_8001E44C": "0x8001E44C",
+        "_gp": "0x8009F214"
+      },
+      "symbols": {
+        "D_8009FA4C": "0x8009FA4C",
+        "D_8009F9D0": "0x8009F9D0",
+        "D_8009FAAC": "0x8009FAAC",
+        "D_8009F590": "0x8009F590",
+        "D_8009F594": "0x8009F594",
+        "D_8009F598": "0x8009F598",
+        "func_8001814C": "0x8001814C",
+        "func_800195D0": "0x800195D0",
+        "func_8001E2C0": "0x8001E2C0",
+        "func_8001E318": "0x8001E318",
+        "func_8001E44C": "0x8001E44C"
+      },
+      "small_data_symbols": {
+        "D_8009FA4C": 4,
+        "D_8009F9D0": 4,
+        "D_8009FAAC": 4,
+        "D_8009F590": 4,
+        "D_8009F594": 4,
+        "D_8009F598": 4
+      }
+    },
+    {
       "name": "func_80018460",
       "address": "0x80018460",
       "size": "0xC",
@@ -7595,6 +7707,97 @@
       "linker_symbols": {}
     },
     {
+      "name": "func_800511E4",
+      "address": "0x800511E4",
+      "size": "0x128",
+      "source": "src/game/800511E4.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G4",
+        "-fgnu-linker",
+        "-O2"
+      ],
+      "maspsx_flags_extra": [
+        "--aspsx-version=2.56"
+      ],
+      "link": true,
+      "linker_symbols": {
+        "D_800A2210": "0x800A2210",
+        "func_80019A74": "0x80019A74",
+        "func_80019AA8": "0x80019AA8",
+        "func_80019D00": "0x80019D00",
+        "func_80067684": "0x80067684",
+        "D_8009F7B8": "0x8009F7B8",
+        "_gp": "0x8009F214"
+      },
+      "symbols": {
+        "D_800A2210": "0x800A2210",
+        "func_80019A74": "0x80019A74",
+        "func_80019AA8": "0x80019AA8",
+        "func_80019D00": "0x80019D00",
+        "func_80067684": "0x80067684",
+        "D_8009F7B8": "0x8009F7B8"
+      },
+      "small_data_symbols": {
+        "D_8009F7B8": 4
+      }
+    },
+    {
+      "name": "func_80051318",
+      "address": "0x80051318",
+      "size": "0xB8",
+      "source": "src/game/80051318.c",
+      "compiler": "gcc-2.7.2-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2"
+      ],
+      "maspsx_flags_extra": [],
+      "link": true,
+      "linker_symbols": {
+        "func_80019A20": "0x80019A20",
+        "_gp": "0x8009F214"
+      },
+      "symbols": {
+        "func_80019A20": "0x80019A20"
+      }
+    },
+    {
+      "name": "func_800513D0",
+      "address": "0x800513D0",
+      "size": "0x1B0",
+      "source": "src/game/800513D0.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2"
+      ],
+      "maspsx_flags_extra": [],
+      "link": true,
+      "linker_symbols": {
+        "func_8001A13C": "0x8001A13C",
+        "func_8001AB78": "0x8001AB78",
+        "func_80019A20": "0x80019A20",
+        "_gp": "0x8009F214"
+      },
+      "symbols": {
+        "func_8001A13C": "0x8001A13C",
+        "func_8001AB78": "0x8001AB78",
+        "func_80019A20": "0x80019A20"
+      }
+    },
+    {
       "name": "func_800516A0",
       "address": "0x800516A0",
       "size": "0x208",
@@ -10942,6 +11145,46 @@
         "func_8008D6D0": "0x8008D6D0"
       },
       "link": false
+    },
+    {
+      "name": "func_8008D6E0",
+      "address": "0x8008D6E0",
+      "size": "0x6C",
+      "source": "src/game/8008D6E0.c",
+      "compiler": "gcc-2.8.1-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2"
+      ],
+      "maspsx_flags_extra": [],
+      "link": true,
+      "linker_symbols": {
+        "func_8008C9A0": "0x8008C9A0",
+        "func_8008C9B0": "0x8008C9B0",
+        "func_8008D6E0": "0x8008D6E0",
+        "func_8008D7B0": "0x8008D7B0",
+        "func_8008D7CC": "0x8008D7CC",
+        "func_8008DC20": "0x8008DC20",
+        "func_8008DCE8": "0x8008DCE8",
+        "func_8008DD7C": "0x8008DD7C",
+        "func_8008DDEC": "0x8008DDEC",
+        "_gp": "0x8009F214"
+      },
+      "symbols": {
+        "func_8008C9A0": "0x8008C9A0",
+        "func_8008C9B0": "0x8008C9B0",
+        "func_8008D6E0": "0x8008D6E0",
+        "func_8008D7B0": "0x8008D7B0",
+        "func_8008D7CC": "0x8008D7CC",
+        "func_8008DC20": "0x8008DC20",
+        "func_8008DCE8": "0x8008DCE8",
+        "func_8008DD7C": "0x8008DD7C",
+        "func_8008DDEC": "0x8008DDEC"
+      }
     },
     {
       "name": "func_8008D74C",
