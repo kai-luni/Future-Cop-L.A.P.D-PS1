@@ -16,6 +16,7 @@ EXECUTABLE_DATA = ROOT / "config/us/executable_data_ranges.json"
 EXECUTABLE_PADDING = ROOT / "src/data/executable_padding.json"
 ASSET_LEDGER = ROOT / "config/us/asset_ledger.json"
 MATCHING_ASSETS = ROOT / "config/us/matching_assets.json"
+PROJECT_SCOPE = ROOT / "config/project.json"
 DEFAULT_OUTPUT = ROOT / "build/report.json"
 
 
@@ -59,9 +60,29 @@ def data_measures(total: int, matched: int) -> dict:
     return result
 
 
+def assets_measured() -> bool:
+    """Whether disc assets belong to this project's completion target.
+
+    ``config/project.json`` declares the measurement scope. A code-only scope
+    (``""assets": {"measure": false}``) keeps assets out of both the aggregate
+    and the category list: they are not part of what this project decompiles,
+    so counting them would cap the reported progress below 100 % forever.
+    """
+    if not PROJECT_SCOPE.is_file():
+        return True
+    try:
+        scope = json.loads(PROJECT_SCOPE.read_text())
+    except (OSError, ValueError):
+        return True
+    return bool((scope.get("assets") or {}).get("measure", True))
+
+
 def noncode_progress() -> tuple[int, int, int, int, dict[str, tuple[int, int]]]:
     executable = json.loads(EXECUTABLE_DATA.read_text())
     padding = json.loads(EXECUTABLE_PADDING.read_text())
+    if not assets_measured():
+        return (executable["total_bytes"],
+                sum(int(item["size"], 0) for item in padding["ranges"]), 0, 0, {})
     ledger = json.loads(ASSET_LEDGER.read_text())
     matching = json.loads(MATCHING_ASSETS.read_text())
 
@@ -175,7 +196,8 @@ def build_report() -> dict:
                     match["source"] if complete
                     else f"asm/us/functions/{function['name']}.s"
                 ),
-                "progress_categories": ["game"],
+                "progress_categories": (["game", "disc_assets"] if assets_measured()
+                                    else ["game"]),
                 "auto_generated": not complete,
             },
         })
@@ -197,11 +219,13 @@ def build_report() -> dict:
         "id": "executable_data",
         "name": "Executable data",
         "measures": data_measures(executable_total, executable_matched),
-    }, {
-        "id": "disc_assets",
-        "name": "Disc assets",
-        "measures": data_measures(asset_total, asset_matched),
     }]
+    if assets_measured():
+        categories.append({
+            "id": "disc_assets",
+            "name": "Disc assets",
+            "measures": data_measures(asset_total, asset_matched),
+        })
     labels = {
         "missions": "Missions",
         "level_scripts": "Level scripts",

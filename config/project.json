@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "notes": [
+    "Measurement scope for this fork: only the boot executable is reconstructed.",
+    "Disc assets (movies, missions, level scripts, recordings, configuration) carry retail game data and are never rebuilt here, so they are excluded from the progress denominator.",
+    "config/us/asset_ledger.json stays as documentation and verify_noncode.py keeps checking the padding recipes; neither awards progress while assets.measure is false."
+  ],
+  "assets": {
+    "measure": false
+  }
+}
