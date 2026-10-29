@@ -44,7 +44,9 @@ HARDWARE_ONLY = re.compile(
 GP_REFERENCE = re.compile(r"\b(?:lb|lbu|lh|lhu|lw|sb|sh|sw)\s+\$\w+,\s*(0x[0-9A-Fa-f]+|\(?0\)?)\(\$gp\)")
 #: $gp base of this target, taken from the verified units' symbols (``_gp``).
 GP_BASE = 0x8009F214
-SAFE_SYMBOL = re.compile(r"^(?:func|D)_[0-9A-Fa-f]{8}$")
+# Symbol names become `.set` definitions and C identifiers, so any plain identifier
+# is acceptable; the strict address-shaped pattern rejected legitimate proposals.
+SAFE_SYMBOL = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,63}$")
 NON_C_SOURCE = re.compile(
     r"(?:^\s*\.word\b|^\s*\.include\b|^\s*\.set\b)",
     re.MULTILINE,
@@ -128,6 +130,51 @@ def _recent_sources(output: Path, target: "Target", state: dict[str, Any],
         except OSError:
             continue
     return sources
+
+
+MISSING = object()
+
+
+def mnemonic_profile(assembly: str) -> set[str]:
+    """Instruction mnemonics of one oracle block, ignoring registers and constants."""
+    profile = set()
+    for line in assembly.splitlines():
+        match = re.search(r"\*/\s+([a-z][a-z0-9.]*)\s", line)
+        if match:
+            profile.add(match.group(1))
+    return profile
+
+
+def similar_verified_units(target: "Target", targets: dict[str, "Target"],
+                           verified: dict[str, str], limit: int = 2,
+                           chars: int = 1400) -> list[dict[str, Any]]:
+    """Already-verified units whose instruction mix resembles this one.
+
+    The verifier rewards this compiler's quirks, so a nearby verified source is a
+    better template than any general rule. Similarity is the Jaccard index of the
+    mnemonic sets, tie-broken by the distance in size.
+    """
+    wanted = mnemonic_profile(target.assembly)
+    if not wanted:
+        return []
+    scored = []
+    for name, source in verified.items():
+        other = targets.get(name)
+        if other is None:
+            continue
+        profile = mnemonic_profile(other.assembly)
+        if not profile:
+            continue
+        jaccard = len(wanted & profile) / len(wanted | profile)
+        if jaccard < 0.6:
+            continue
+        scored.append((jaccard, -abs(other.size - target.size), name, source))
+    scored.sort(reverse=True)
+    examples = []
+    for jaccard, _size_delta, name, source in scored[:limit]:
+        examples.append({"name": name, "similarity": round(jaccard, 2),
+                         "source": source[:chars]})
+    return examples
 
 
 def gp_objects(assembly: str) -> dict[str, int]:
@@ -289,6 +336,12 @@ class Runner:
         if not self.command:
             raise ValueError("proposal command is empty")
         self.print_lock = threading.Lock()
+        self.targets = {target.name: target for target in parse_targets(args.assembly.read_text())}
+        self.verified_sources = {
+            unit["name"]: (ROOT / unit["source"]).read_text()
+            for unit in self.config.get("units", [])
+            if (ROOT / unit["source"]).is_file()
+        }
 
     def expected(self, target: Target) -> bytes:
         offset = matching.HEADER_SIZE + target.address - matching.LOAD_ADDRESS
@@ -320,6 +373,8 @@ class Runner:
                 "known_symbols": inferred_symbols(target) | {
                     name: f"0x{address:08X}" for name, address in gp_objects(target.assembly).items()
                 },
+                "similar_verified_units": similar_verified_units(
+                    target, self.targets, self.verified_sources),
                 "gp_base": f"0x{GP_BASE:08X}",
                 "gp_objects": {name: f"0x{address:08X}"
                                for name, address in gp_objects(target.assembly).items()},

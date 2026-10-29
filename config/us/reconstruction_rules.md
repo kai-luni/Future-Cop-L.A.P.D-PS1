@@ -39,7 +39,10 @@ against SLUS-00739. Follow them before guessing.
 
 ## Style that matches this project
 
-5. Include shared headers as `#include "game/types.h"`, use the project's
+5. `similar_verified_units` in the request holds already-verified sources with the
+   same instruction mix. Mirror their declaration and control-flow style first; they
+   replicate this compiler's quirks better than any general rule.
+6. Include shared headers as `#include "game/types.h"`, use the project's
    `s8/u8/s16/u16/s32/u32` types, and keep functions `void`-arg lists explicit.
 6. Use the compiler the unit actually needs (2.6.3, 2.7.2-cdk, 2.7.2-psx,
    2.8.0-psx, 2.8.1-psx). Scheduling and epilogue placement differ, so try the
