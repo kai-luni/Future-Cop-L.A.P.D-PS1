@@ -166,6 +166,28 @@ class WorkerCliTests(unittest.TestCase):
         self.assertEqual(state["status"], "exact")
         self.assertTrue((self.output / "inbox" / UNIT / "unit.json").is_file())
 
+    def test_run_uses_custom_rules_file(self) -> None:
+        # `--rules` is how per-target context (neighbouring verified sources) reaches
+        # the model: the request's guidance must be exactly that file's text.
+        target = self.unmatched_target()
+        rules = self.directory / "rules.md"
+        rules.write_text("# custom rules\nmarker-80024EC8\n")
+        capture = self.directory / "capture.py"
+        capture.write_text(
+            "import json, pathlib, sys\n"
+            "request = json.load(sys.stdin)\n"
+            f"pathlib.Path({str(self.directory / 'request.json')!r}).write_text(json.dumps(request))\n"
+            "print(json.dumps({'source': 'int f(void){\\n    return 0;\\n}\\n',"
+            " 'symbols': {}, 'note': 'captured'}))\n")
+        code, output = run_cli("run", "--jobs", "1", "--attempts", "1",
+                               "--function", target, "--output", str(self.output),
+                               "--rules", str(rules),
+                               "--backend-command", f"{sys.executable} {capture}")
+        self.assertEqual(code, 0, output)
+        request = json.loads((self.directory / "request.json").read_text())
+        self.assertIn("marker-80024EC8", request["guidance"])
+        self.assertNotIn("reconstruction_rules", request["guidance"])
+
     def test_status_reports_state(self) -> None:
         target = self.unmatched_target()
         fake_backend(self.backend, {"source": "int f(void)\n{\n    return 0;\n}\n",

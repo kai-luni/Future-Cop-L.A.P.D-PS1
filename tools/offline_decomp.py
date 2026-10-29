@@ -501,7 +501,7 @@ class Runner:
                 "compiler_diagnostic": best.get("compiler_diagnostic", ""),
                 "extras": best.get("extras", {}),
             },
-            "guidance": RULES.read_text() if RULES.is_file() else "",
+            "guidance": Path(self.args.rules).read_text() if Path(self.args.rules).is_file() else "",
             "requirements": [
                 "Return reconstructed C source, not assembly.",
                 "Use ANSI C accepted by the pinned compiler.",
@@ -952,6 +952,9 @@ def parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--pure-c", action="store_true",
                             help="skip targets that can only be written as inline assembly")
     run_parser.add_argument("--timeout", type=int, default=600)
+    run_parser.add_argument("--rules", type=Path, default=RULES,
+                            help="guidance markdown for each request; use it to hand in "
+                                 "per-target context such as neighbouring sources")
     run_parser.add_argument("--assembly", type=Path, default=DEFAULT_ASSEMBLY)
     run_parser.add_argument("--executable", type=Path, default=DEFAULT_EXECUTABLE)
     run_parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
