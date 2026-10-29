@@ -11,6 +11,7 @@ struct Resource {
 
 extern struct Resource *D_8009F5B8;
 
+/* checks if a resource is already loaded */
 s32 func_80019AA8(struct Resource *resource)
 {
     struct Resource *node;
