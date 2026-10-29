@@ -22,7 +22,9 @@ class DecompReportTests(unittest.TestCase):
         # A new verified unit changes the manifest, so these numbers move with it;
         # what this test pins is the shape of the aggregate, not a snapshot.
         self.assertEqual(measures["total_code"], "555552")
-        self.assertEqual(measures["total_functions"], 1855)
+        # 1.855 catalogue entries minus the merges recorded in
+        # config/us/function_boundary_overrides.json.
+        self.assertEqual(measures["total_functions"], 1854)
         self.assertGreater(int(measures["matched_code"]), 51512)
         self.assertGreaterEqual(measures["matched_functions"], 522)
         self.assertEqual(

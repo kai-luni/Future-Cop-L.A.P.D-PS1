@@ -62,8 +62,8 @@ def prompt(request: dict) -> str:
     )
 
 
-def query(url: str, model: str, request: dict, temperature: float,
-          max_tokens: int, timeout: int, key: str, effort: str = "low") -> str:
+def _post(url: str, model: str, request: dict, temperature: float,
+          max_tokens: int, timeout: int, key: str, effort: str) -> tuple[dict, bytes]:
     body = json.dumps({
         "model": model,
         "messages": [
@@ -88,18 +88,52 @@ def query(url: str, model: str, request: dict, temperature: float,
     )
     try:
         with urllib.request.urlopen(http_request, timeout=timeout) as response:
-            reply = json.load(response)
+            return json.load(response), body
     except urllib.error.HTTPError as error:
         detail = error.read().decode(errors="replace")[-2000:]
         raise RuntimeError(f"gateway returned HTTP {error.code}: {detail}") from error
+
+
+def query(url: str, model: str, request: dict, temperature: float,
+          max_tokens: int, timeout: int, key: str, effort: str = "low") -> str:
+    """One proposal, with a single retry when reasoning ate the whole budget.
+
+    A reasoning model can spend every completion token on reasoning and return
+    empty content (finish_reason=length). Retrying just that case with double the
+    budget costs nothing on successful calls and removes the failures instead of
+    doubling the budget for every request.
+    """
+    budget = max_tokens
+    for attempt in range(2):
+        reply, body = _post(url, model, request, temperature, budget, timeout, key, effort)
+        content = _content(reply)
+        _log_usage(reply, model, body, content)
+        finish = (reply["choices"][0] or {}).get("finish_reason")
+        if finish == "length" and not content.strip() and attempt == 0:
+            budget = min(budget * 2, 65536)
+            continue
+        if finish == "length" and not content.strip():
+            raise ValueError("gateway stopped on the token limit with empty content; "
+                             "lower --reasoning-effort or raise --max-tokens")
+        return unwrap_json(content)
+    raise ValueError("gateway returned no content")
+
+
+def _content(reply: dict) -> str:
     try:
         content = reply["choices"][0]["message"]["content"]
     except (KeyError, IndexError, TypeError) as error:
         raise ValueError("gateway response has no generated message") from error
     if not isinstance(content, str):
         raise ValueError("gateway message is not text")
-    # Token accounting for the campaign report: one JSON line per call, appended to
-    # build/us/kilo-usage.jsonl. A failed readback must never break a proposal.
+    return content
+
+
+def _log_usage(reply: dict, model: str, body: bytes, content: str) -> None:
+    """Token accounting for the campaign report: one JSON line per call.
+
+    Appended to build/us/kilo-usage.jsonl; a failed write must never break a proposal.
+    """
     try:
         usage = reply.get("usage") or {}
         with open("build/us/kilo-usage.jsonl", "a", encoding="utf-8") as log:
@@ -115,11 +149,6 @@ def query(url: str, model: str, request: dict, temperature: float,
             }) + "\n")
     except OSError:
         pass
-    finish = (reply["choices"][0] or {}).get("finish_reason")
-    if finish == "length" and not content.strip():
-        raise ValueError("gateway stopped on the token limit with empty content; "
-                         "lower --reasoning-effort or raise --max-tokens")
-    return unwrap_json(content)
 
 
 def main() -> int:
