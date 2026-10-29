@@ -559,6 +559,59 @@ def run_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def promote_command(args: argparse.Namespace) -> int:
+    """Copy confirmed inbox candidates into src/game/ and the matching manifest.
+
+    The manifest row carries the acceptance parameters, and compiler flags are
+    **merged** with the project defaults: replacing them (a proposal only supplies
+    its extra flags) silently changes optimisation and breaks the match.
+    """
+    inbox = args.output.resolve() / "inbox"
+    if not inbox.is_dir():
+        print("no inbox to promote")
+        return 0
+    config = load_json(MATCHING_MANIFEST, {})
+    defaults = config.get("compiler_flags", [])
+    existing = {unit["name"] for unit in config.get("units", [])}
+    added = []
+    for unit_path in sorted(inbox.glob("*/unit.json")):
+        candidate = json.loads(unit_path.read_text())
+        if candidate["name"] in existing:
+            continue
+        address = int(candidate["address"], 0)
+        source = ROOT / f"src/game/{address:08X}.c"
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text((unit_path.parent / candidate["source"]).read_text())
+        extras: dict[str, Any] = {}
+        work_state = inbox.parent / "work" / candidate["name"] / "state.json"
+        if work_state.is_file():
+            state = json.loads(work_state.read_text())
+            best_source = state.get("best", {}).get("source")
+            if best_source:
+                result_path = (inbox.parent / best_source).parent / "result.json"
+                if result_path.is_file():
+                    extras = json.loads(result_path.read_text()).get("extras", {})
+        flags = list(defaults)
+        flags += [flag for flag in extras.get("compiler_flags_extra", [])
+                  if flag not in flags]
+        config["units"].append({
+            "name": candidate["name"],
+            "address": candidate["address"],
+            "size": candidate["size"],
+            "source": str(source.relative_to(ROOT)),
+            "compiler": extras.get("compiler", config["compiler"]),
+            "compiler_flags": flags,
+            "symbols": candidate.get("symbols", {}),
+            "link": False,
+        })
+        added.append(candidate["name"])
+    if added:
+        config["units"].sort(key=lambda unit: int(unit["address"], 0))
+        MATCHING_MANIFEST.write_text(json.dumps(config, indent=2) + "\n")
+    print(f"promoted {len(added)}: {', '.join(added) if added else 'nothing'}")
+    return 0
+
+
 def preview_command(args: argparse.Namespace) -> int:
     """Compile the review-inbox candidates independently and print a verdict per unit.
 
@@ -681,6 +734,10 @@ def parser() -> argparse.ArgumentParser:
     preview_parser.add_argument("--binutils-prefix", default=os.environ.get(
         "MIPSEL_PREFIX", "mipsel-linux-gnu-"))
     preview_parser.set_defaults(handler=preview_command)
+    promote_parser = subparsers.add_parser(
+        "promote", help="copy and register confirmed inbox candidates")
+    promote_parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    promote_parser.set_defaults(handler=promote_command)
     return result
 
 

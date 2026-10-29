@@ -3235,6 +3235,12 @@
       "source": "src/game/800243F8.c",
       "compiler": "gcc-2.8.1-psx",
       "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2",
         "-fno-delayed-branch"
       ],
       "symbols": {
