@@ -1525,6 +1525,30 @@
       "symbols": {}
     },
     {
+      "name": "func_8001A7AC",
+      "address": "0x8001A7AC",
+      "size": "0x70",
+      "source": "src/game/8001A7AC.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2"
+      ],
+      "symbols": {
+        "func_8001A030": "0x8001A030",
+        "func_8001ABE0": "0x8001ABE0",
+        "func_80095900": "0x80095900"
+      },
+      "link": false,
+      "maspsx_flags_extra": [
+        "--expand-div"
+      ]
+    },
+    {
       "name": "func_8001AE14",
       "address": "0x8001AE14",
       "size": "0xF4",
