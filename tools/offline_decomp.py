@@ -37,6 +37,10 @@ GLOBAL_SYMBOL = re.compile(r"\b(?:func|D)_[0-9A-Fa-f]{8}\b")
 # pinned GCCs append their own prologue/epilogue to any C function, so these ranges
 # cannot be reproduced as C no matter how the source is written (hand-checked).
 BIOS_DISPATCH = re.compile(r"jr\s+\$t2\b")
+# Hardware-only constructs: GTE transfers, syscalls and breakpoints have no C form,
+# so a campaign that wants reconstructed C should not spend attempts on them.
+HARDWARE_ONLY = re.compile(
+    r"\b(?:cop2|lwc2|swc2|ctc2|cfc2|mtc2|mfc2|syscall|break)\b")
 GP_REFERENCE = re.compile(r"\b(?:lb|lbu|lh|lhu|lw|sb|sh|sw)\s+\$\w+,\s*(0x[0-9A-Fa-f]+|\(?0\)?)\(\$gp\)")
 #: $gp base of this target, taken from the verified units' symbols (``_gp``).
 GP_BASE = 0x8009F214
@@ -525,6 +529,14 @@ def select_targets(args: argparse.Namespace) -> list[Target]:
     if skipped:
         print(f"Skipping {len(skipped)} BIOS dispatch target(s): $t2 jumps cannot be "
               f"reproduced in C because the pinned compiler always emits an epilogue.")
+    if getattr(args, "pure_c", False):
+        hardware = [target for target in selected
+                    if HARDWARE_ONLY.search(target.assembly)]
+        selected = [target for target in selected
+                    if not HARDWARE_ONLY.search(target.assembly)]
+        if hardware:
+            print(f"Skipping {len(hardware)} hardware-only target(s) (GTE/syscall): "
+                  f"they need inline assembly, not reconstructed C.")
     selected.sort(key=lambda target: (target.size, target.address))
     if requested - {target.name for target in selected}:
         missing = ", ".join(sorted(requested - {target.name for target in selected}))
@@ -578,6 +590,17 @@ def preview_command(args: argparse.Namespace) -> int:
             unit["small_data_symbols"] = {name: 4 for name in gp_objects(target.assembly)}
             unit["compiler_flags"] = [flag for flag in unit["compiler_flags"]
                                       if not flag.startswith("-G")] + ["-G4"]
+        # The acceptance parameters live in the winning attempt, not in the inbox
+        # stub: without them a compiler/flag choice would look like a failure.
+        work_state = inbox.parent / "work" / candidate["name"] / "state.json"
+        if work_state.is_file():
+            state = json.loads(work_state.read_text())
+            best_source = state.get("best", {}).get("source")
+            if best_source:
+                attempt_result = (inbox.parent / best_source).parent / "result.json"
+                if attempt_result.is_file():
+                    extras = json.loads(attempt_result.read_text()).get("extras", {})
+                    unit.update(extras)
         text = source.read_text()
         # Inline-assembly units must compile with the same flags they were accepted
         # with: a different -G threshold changes nothing in the asm block itself but
@@ -638,6 +661,8 @@ def parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--max-size", type=lambda value: int(value, 0), default=0x80)
     run_parser.add_argument("--function", action="append",
                             help="restrict work to a function; may be repeated")
+    run_parser.add_argument("--pure-c", action="store_true",
+                            help="skip targets that can only be written as inline assembly")
     run_parser.add_argument("--timeout", type=int, default=600)
     run_parser.add_argument("--assembly", type=Path, default=DEFAULT_ASSEMBLY)
     run_parser.add_argument("--executable", type=Path, default=DEFAULT_EXECUTABLE)
