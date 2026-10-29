@@ -28,6 +28,9 @@ against SLUS-00739. Follow them before guessing.
    as instructions: labels, `.globl`/`.type`/`.ent`/`.set`/`.text` directives and
    `.word` encodings are rejected, because that would be an assembler file
    reproducing the retail bytes instead of reconstructed C.
+   Note: even a correct asm block still gets the compiler's own prologue/epilogue
+   appended, so a 12-byte `$t2` stub can never reach the exact extent. 45 such
+   ranges (1,600 bytes) exist in the executable; the worker skips them.
 
 ## Style that matches this project
 
@@ -40,3 +43,6 @@ against SLUS-00739. Follow them before guessing.
    rewrite; the byte verifier rewards the original compiler's quirks.
 8. When a mismatch cannot be explained by the rules above, say so in `note` and
    return the closest honest candidate instead of inventing structure.
+9. `matching_prefix_bytes` equal to the full size with extra trailing bytes means
+   the instructions are right but the function still emits an epilogue. Do not
+   hide that with inline assembly; it is a compiler-boundary case, not a C bug.

@@ -33,6 +33,10 @@ FUNCTION_HEADER = re.compile(
     r"(?P<size>0x[0-9A-Fa-f]+)\s*$"
 )
 GLOBAL_SYMBOL = re.compile(r"\b(?:func|D)_[0-9A-Fa-f]{8}\b")
+# A BIOS table dispatch loads the entry address into $t2 and jumps through it. The
+# pinned GCCs append their own prologue/epilogue to any C function, so these ranges
+# cannot be reproduced as C no matter how the source is written (hand-checked).
+BIOS_DISPATCH = re.compile(r"jr\s+\$t2\b")
 SAFE_SYMBOL = re.compile(r"^(?:func|D)_[0-9A-Fa-f]{8}$")
 NON_C_SOURCE = re.compile(
     r"(?:^\s*\.word\b|^\s*\.include\b|^\s*\.set\b)",
@@ -454,10 +458,19 @@ def select_targets(args: argparse.Namespace) -> list[Target]:
     targets = parse_targets(args.assembly.read_text())
     completed = matched_names()
     requested = set(args.function or [])
+    skipped = [target for target in targets
+               if target.name not in completed
+               and args.min_size <= target.size <= args.max_size
+               and (not requested or target.name in requested)
+               and BIOS_DISPATCH.search(target.assembly)]
     selected = [target for target in targets
                 if target.name not in completed
                 and args.min_size <= target.size <= args.max_size
-                and (not requested or target.name in requested)]
+                and (not requested or target.name in requested)
+                and not BIOS_DISPATCH.search(target.assembly)]
+    if skipped:
+        print(f"Skipping {len(skipped)} BIOS dispatch target(s): $t2 jumps cannot be "
+              f"reproduced in C because the pinned compiler always emits an epilogue.")
     selected.sort(key=lambda target: (target.size, target.address))
     if requested - {target.name for target in selected}:
         missing = ", ".join(sorted(requested - {target.name for target in selected}))
