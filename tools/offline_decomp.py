@@ -248,6 +248,18 @@ def atomic_json(path: Path, value: Any) -> None:
     temporary.replace(path)
 
 
+def atomic_dump(path: Path, value: Any) -> None:
+    """Atomic JSON write that keeps the caller's key order.
+
+    Used for the matching manifest: sorting keys there rewrites the whole file and
+    turns a two-unit change into a five-thousand-line diff.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(value, indent=2) + "\n")
+    temporary.replace(path)
+
+
 def load_json(path: Path, default: Any) -> Any:
     return json.loads(path.read_text()) if path.is_file() else default
 
@@ -1027,7 +1039,7 @@ def promote_command(args: argparse.Namespace) -> int:
         added.append(unit["name"])
     if added:
         config["units"].sort(key=lambda unit: int(unit["address"], 0))
-        atomic_json(MATCHING_MANIFEST, config)
+        atomic_dump(MATCHING_MANIFEST, config)
     print(f"promoted {len(added)}: {', '.join(added) if added else 'nothing'}")
     return 1 if refused else 0
 

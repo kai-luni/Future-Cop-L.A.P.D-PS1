@@ -1514,6 +1514,31 @@ def validate(config):
             raise ValueError(f"overlapping units: {left[2]} and {right[2]}")
 
 
+def maspsx_stage_flags(unit, config, compiler_flags):
+    """Flags for the maspsx stage, without overriding an explicit threshold.
+
+    A profile may pin the compiler to ``-G8`` and the assembler stage to ``-G4``:
+    the compiler decides code generation, the assembler stage decides how objects
+    are treated. Only when the unit names no threshold itself does the compiler
+    value carry over — the historical behaviour of every manifest unit.
+    """
+    maspsx_flags = list(unit.get("maspsx_flags", config["maspsx_flags"]))
+    maspsx_flags.extend(unit.get("maspsx_flags_extra", []))
+    if not any(re.fullmatch(r"-G\d+", flag) for flag in maspsx_flags):
+        maspsx_flags.extend(flag for flag in compiler_flags
+                            if re.fullmatch(r"-G\d+", flag))
+    return maspsx_flags
+
+
+def assembler_stage_flags(maspsx_flags):
+    """GNU as arguments, including the threshold the profile pinned for it."""
+    flags = ["-EL", "-march=r3000", "-mabi=32"]
+    thresholds = [flag for flag in maspsx_flags if re.fullmatch(r"-G\d+", flag)]
+    if thresholds:
+        flags.append(thresholds[-1])
+    return flags
+
+
 def compile_unit(unit, config, prefix, work, environment=None):
     environment = tool_environment(environment)
     compiler = unit.get("compiler", config["compiler"])
@@ -1540,11 +1565,7 @@ def compile_unit(unit, config, prefix, work, environment=None):
     run([cc1, *flags, preprocessed, "-o", raw_asm], env=environment)
 
     maspsx = ROOT / ".toolchain" / f"maspsx-{MASPSX_COMMIT}" / "maspsx.py"
-    maspsx_flags = list(unit.get("maspsx_flags", config["maspsx_flags"]))
-    maspsx_flags.extend(unit.get("maspsx_flags_extra", []))
-    maspsx_flags.extend(
-        flag for flag in flags if flag.startswith("-G") and len(flag) > 2
-    )
+    maspsx_flags = maspsx_stage_flags(unit, config, flags)
     small_data_symbols = unit.get("small_data_symbols", {})
     marker_lines = [
         f".comm {name},{number(size)}"
@@ -1677,7 +1698,8 @@ def compile_unit(unit, config, prefix, work, environment=None):
     )
     linked_asm.write_text(definitions + processed.read_text())
 
-    run([tool("as", prefix), "-EL", "-march=r3000", "-mabi=32", "-o", obj, linked_asm],
+    assembler_flags = assembler_stage_flags(maspsx_flags)
+    run([tool("as", prefix), *assembler_flags, "-o", obj, linked_asm],
         env=environment)
     binary_input = obj
     if unit.get("link", False):

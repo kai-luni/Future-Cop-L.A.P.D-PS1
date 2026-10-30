@@ -162,6 +162,35 @@ class VerifierStatusTests(unittest.TestCase):
                          ["status"], "failed")
 
 
+class StageThresholdTests(unittest.TestCase):
+    """The -G separation between compiler, maspsx and GNU as.
+
+    A real profile pins the compiler to -G8 and the assembler stage to -G4; the
+    compiler value must not be appended behind that and GNU as has to receive the
+    pinned value instead of falling back to its default of 8.
+    """
+
+    def test_explicit_maspsx_threshold_wins(self) -> None:
+        unit = {"maspsx_flags_extra": ["-G4", "--dont-force-G0"]}
+        config = {"maspsx_flags": ["--dont-expand-li"]}
+        flags = matching.maspsx_stage_flags(unit, config,
+                                            ["-quiet", "-O2", "-G8"])
+        self.assertEqual(flags, ["--dont-expand-li", "-G4", "--dont-force-G0"])
+
+    def test_compiler_threshold_carries_over_when_no_stage_threshold_is_given(self) -> None:
+        unit = {"maspsx_flags_extra": ["--expand-div"]}
+        config = {"maspsx_flags": ["--dont-expand-li"]}
+        flags = matching.maspsx_stage_flags(unit, config, ["-O2", "-G4"])
+        self.assertEqual(flags, ["--dont-expand-li", "--expand-div", "-G4"])
+
+    def test_assembler_gets_the_pinned_threshold(self) -> None:
+        self.assertIn("-G4", matching.assembler_stage_flags(["-G4", "--aspsx-version=2.56"]))
+        self.assertIn("-G0", matching.assembler_stage_flags(["-G0"]))
+        # Without a pinned threshold the assembler keeps its own default.
+        self.assertFalse([flag for flag in matching.assembler_stage_flags(["--expand-div"])
+                          if flag.startswith("-G")])
+
+
 class HeaderFingerprintTests(unittest.TestCase):
     """Point 2: a changed header has to invalidate an existing acceptance."""
 
