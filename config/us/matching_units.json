@@ -3511,6 +3511,63 @@
       "link": false
     },
     {
+      "name": "func_80024D14",
+      "address": "0x80024D14",
+      "size": "0x128",
+      "source": "src/game/80024D14.c",
+      "compiler": "gcc-2.7.2-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-O2",
+        "-G4"
+      ],
+      "symbols": {
+        "D_8009F68C": "0x8009F68C",
+        "func_80013AB4": "0x80013AB4",
+        "func_80017764": "0x80017764",
+        "func_80017D20": "0x80017D20",
+        "func_800181D4": "0x800181D4",
+        "func_800198DC": "0x800198DC",
+        "func_80019BA4": "0x80019BA4",
+        "func_80019D88": "0x80019D88",
+        "func_8001B448": "0x8001B448",
+        "func_80023BF8": "0x80023BF8",
+        "func_80029EB8": "0x80029EB8",
+        "func_8002A5AC": "0x8002A5AC",
+        "func_80031990": "0x80031990",
+        "func_8003F854": "0x8003F854",
+        "func_80047868": "0x80047868",
+        "func_80049410": "0x80049410",
+        "func_8004963C": "0x8004963C",
+        "func_8004ABBC": "0x8004ABBC",
+        "func_8004CCDC": "0x8004CCDC",
+        "func_80059DB0": "0x80059DB0",
+        "func_8005A068": "0x8005A068",
+        "func_8005A290": "0x8005A290",
+        "func_80060A00": "0x80060A00",
+        "func_80060E50": "0x80060E50",
+        "func_80061860": "0x80061860",
+        "func_800634F4": "0x800634F4",
+        "func_80069D04": "0x80069D04",
+        "func_80069D58": "0x80069D58",
+        "func_8006A88C": "0x8006A88C",
+        "func_800734BC": "0x800734BC",
+        "func_80083428": "0x80083428",
+        "func_80086164": "0x80086164"
+      },
+      "link": true,
+      "small_data_symbols": {
+        "D_8009F68C": 4
+      },
+      "linker_symbols": {
+        "D_8009F68C": "0x8009F68C",
+        "_gp": "0x8009F214"
+      }
+    },
+    {
       "name": "func_80025348",
       "address": "0x80025348",
       "size": "0x28",
@@ -4087,6 +4144,38 @@
       "symbols": {
         "func_8003BFD0": "0x8003BFD0",
         "func_800181D4": "0x800181D4"
+      }
+    },
+    {
+      "name": "func_8003C404",
+      "address": "0x8003C404",
+      "size": "0xC0",
+      "source": "src/game/8003C404.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-O2",
+        "-G4"
+      ],
+      "symbols": {
+        "D_800A7040": "0x800A7040",
+        "func_800181D4": "0x800181D4",
+        "func_8003B3D8": "0x8003B3D8",
+        "D_8009F310": "0x8009F310"
+      },
+      "link": true,
+      "small_data_symbols": {
+        "D_8009F310": 4
+      },
+      "linker_symbols": {
+        "D_800A7040": "0x800A7040",
+        "func_800181D4": "0x800181D4",
+        "func_8003B3D8": "0x8003B3D8",
+        "D_8009F310": "0x8009F310",
+        "_gp": "0x8009F214"
       }
     },
     {
@@ -10075,6 +10164,47 @@
         "D_8009F496": "0x8009F496",
         "D_8009F8BD": "0x8009F8BD",
         "D_8009F8BE": "0x8009F8BE",
+        "_gp": "0x8009F214"
+      }
+    },
+    {
+      "name": "func_80080984",
+      "address": "0x80080984",
+      "size": "0xD8",
+      "source": "src/game/80080984.c",
+      "compiler": "gcc-2.6.3-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2"
+      ],
+      "symbols": {
+        "func_8001EC04": "0x8001EC04",
+        "func_80024630": "0x80024630",
+        "func_8002A16C": "0x8002A16C",
+        "func_8002A58C": "0x8002A58C",
+        "func_800451B4": "0x800451B4",
+        "func_800451F8": "0x800451F8",
+        "func_80045238": "0x80045238",
+        "func_80045288": "0x80045288",
+        "func_80045294": "0x80045294",
+        "func_8007BFCC": "0x8007BFCC"
+      },
+      "link": true,
+      "linker_symbols": {
+        "func_8001EC04": "0x8001EC04",
+        "func_80024630": "0x80024630",
+        "func_8002A16C": "0x8002A16C",
+        "func_8002A58C": "0x8002A58C",
+        "func_800451B4": "0x800451B4",
+        "func_800451F8": "0x800451F8",
+        "func_80045238": "0x80045238",
+        "func_80045288": "0x80045288",
+        "func_80045294": "0x80045294",
+        "func_8007BFCC": "0x8007BFCC",
         "_gp": "0x8009F214"
       }
     },
