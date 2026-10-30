@@ -374,6 +374,62 @@
       "remove_starts": [
         "0x80028620"
       ]
+    },
+    {
+      "address": "0x80024064",
+      "size": "0x10C",
+      "remove_starts": [
+        "0x80024068"
+      ]
+    },
+    {
+      "address": "0x80024630",
+      "size": "0x78",
+      "remove_starts": [
+        "0x80024634"
+      ]
+    },
+    {
+      "address": "0x80029BE4",
+      "size": "0x50",
+      "remove_starts": [
+        "0x80029BE8"
+      ]
+    },
+    {
+      "address": "0x80029DD8",
+      "size": "0x48",
+      "remove_starts": [
+        "0x80029DDC"
+      ]
+    },
+    {
+      "address": "0x8002A544",
+      "size": "0x48",
+      "remove_starts": [
+        "0x8002A548"
+      ]
+    },
+    {
+      "address": "0x8008227C",
+      "size": "0x50",
+      "remove_starts": [
+        "0x8008228C"
+      ]
+    },
+    {
+      "address": "0x80061600",
+      "size": "0xA0",
+      "remove_starts": [
+        "0x80061604"
+      ]
+    },
+    {
+      "address": "0x800616A0",
+      "size": "0x138",
+      "remove_starts": [
+        "0x800616A4"
+      ]
     }
   ]
 }
