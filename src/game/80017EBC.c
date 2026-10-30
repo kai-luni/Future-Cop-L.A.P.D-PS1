@@ -23,6 +23,49 @@ extern struct LinkNode *func_800195A4(struct LinkState *state);
 extern void *func_8001E240(s32 size, s32 mode);
 extern u8 *func_8001E318(u8 *destination, u8 *source, s32 count);
 
+/**
+ * Allocates memory using one of several allocation strategies.
+ *
+ * Supports a general-purpose allocator, bidirectional allocation
+ * from a shared free-memory range table, and fixed-size memory pools.
+ *
+ * Allocation modes:
+ *   0 - General allocator (func_8001E240).
+ *       Falls back to mode 2 if allocation fails.
+ *
+ *   1 - Allocates from the end of a suitable free-memory range,
+ *       using a reverse next-fit search.
+ *
+ *   2 - Allocates from the beginning of a suitable free-memory range,
+ *       using a forward next-fit search.
+ *
+ *   3 - Allocates from one of three preallocated memory pools.
+ *       Falls back to mode 1 if no pool is available.
+ *
+ * Modes 1 and 2 reserve an additional 4-byte header containing
+ * the total aligned allocation size. The returned pointer refers
+ * to the usable memory immediately after this header.
+ *
+ * Allocation sizes for modes 1 and 2 are rounded up to a
+ * 4-byte boundary, including the header.
+ *
+ * Fully consumed free-memory ranges are removed from the range
+ * table. The current search position is updated when allocating
+ * from the beginning of a range (mode 2).
+ *
+ * If allocation through mode 1 or 2 fails, the function attempts
+ * the general allocator (mode 0) without further fallback.
+ *
+ * @param size Number of usable bytes requested.
+ * @param tag Allocation mode (0-3).
+ * @return Pointer to allocated memory, or NULL on failure.
+ *         Returns NULL immediately if size is zero.
+ *
+ * @note Mode 3 pool sizes and allocation semantics depend on
+ *       the initialization of the LinkState structures.
+ * @note The behavior for allocation modes outside 0-3 is undefined
+ *       by this function.
+ */
 void *func_80017EBC(s32 size, s32 tag)
 {
     s32 index;
