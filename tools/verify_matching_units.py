@@ -48,6 +48,104 @@ def tool_environment(environment=None):
     return result
 
 
+def target_range(executable, address, size, name="<unit>"):
+    """Validate a target range and return ``(offset, reference bytes)``.
+
+    The range has to be positive, word-aligned and fully inside the loaded image;
+    a short read is an error, never a zero-filled match. Every acceptance path
+    (verifier, worker, matrix, preview, promotion) goes through here so that an
+    out-of-image or unaligned range cannot be compared against at all.
+    """
+    address, size = number(address), number(size)
+    if not isinstance(size, int) or size <= 0 or size & 3:
+        raise ValueError(f"{name}: target size must be positive and word-aligned")
+    if address & 3:
+        raise ValueError(f"{name}: target address must be word-aligned")
+    offset = HEADER_SIZE + address - LOAD_ADDRESS
+    if offset < 0 or offset + size > len(executable):
+        raise ValueError(f"{name}: range outside executable")
+    expected = bytes(executable[offset:offset + size])
+    if len(expected) != size:
+        raise ValueError(f"{name}: reference range incomplete")
+    return offset, expected
+
+
+def compare_bytes(actual, expected):
+    """The single byte comparison of this project: strict, never padded.
+
+    A build that emits fewer bytes than the target range is a failure; the bytes
+    behind the range are allowed only while they are zero, and their length is
+    reported separately from missing bytes inside the range.
+    """
+    expected = bytes(expected)
+    actual = bytes(actual)
+    size = len(expected)
+    head = actual[:size]
+    equal_bytes = sum(left == right for left, right in zip(head, expected))
+    words = size // 4
+    equal_words = sum(
+        len(head[offset:offset + 4]) == 4 and head[offset:offset + 4] == expected[offset:offset + 4]
+        for offset in range(0, words * 4, 4)
+    )
+    prefix = 0
+    for left, right in zip(head, expected):
+        if left != right:
+            break
+        prefix += 1
+    missing = max(0, size - len(actual))
+    surplus = actual[size:]
+    trailing = any(surplus)
+    mismatches = []
+    for offset in range(0, size, 4):
+        expected_word = expected[offset:offset + 4]
+        actual_word = head[offset:offset + 4]
+        if actual_word != expected_word:
+            mismatches.append({
+                "offset": f"0x{offset:X}",
+                "expected_le": expected_word.hex().upper(),
+                "actual_le": actual_word.hex().upper(),
+            })
+    return {
+        "exact": (not missing and head == expected and not trailing),
+        "equal_bytes": equal_bytes,
+        "total_bytes": size,
+        "equal_words": equal_words,
+        "total_words": words,
+        "matching_prefix_bytes": prefix,
+        "emitted_bytes": len(actual),
+        "missing_bytes": missing,
+        "padding_bytes": len(surplus) if not trailing else 0,
+        "nonzero_bytes_after_extent": bool(trailing),
+        "compiled_size": len(actual),
+        "mismatches": mismatches[:64],
+        "mismatch_list_truncated": len(mismatches) > 64,
+        "output_sha256": hashlib.sha256(actual).hexdigest(),
+    }
+
+
+def atomic_write(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(path.name + ".tmp")
+    temporary.write_text(text)
+    temporary.replace(path)
+
+
+def status_path_for(output_path: Path) -> Path:
+    return output_path.with_name(output_path.stem + ".status.json")
+
+
+def write_run_status(output_path: Path, status: str, **details) -> None:
+    """Publish the state of the current run atomically.
+
+    A failed run must not be readable as the previous success: the old report is
+    archived before the first unit is compiled, and this status file names the
+    run that actually produced whatever report is on disk.
+    """
+    record = {"schema": 1, "status": status, "report": str(output_path.name)}
+    record.update(details)
+    atomic_write(status_path_for(output_path), json.dumps(record, indent=2, sort_keys=True) + "\n")
+
+
 def reorder_aspsx_return_delay_slot(text):
     """Reproduce ASPSX's safe stack-pop fill for a terminal return."""
     lines = text.splitlines()
@@ -1615,6 +1713,31 @@ def compile_unit(unit, config, prefix, work, environment=None):
 
 
 def verify(config_path, executable_path, output_path, prefix, keep_going=False):
+    """Acceptance gate with an atomically published run state.
+
+    The previous report is archived before the first unit builds, so a run that
+    fails half-way cannot be read as the earlier success. Historical reports stay
+    available as ``<name>.previous.json``; the status file names the current run.
+    """
+    output_path = Path(output_path)
+    if output_path.is_file():
+        output_path.replace(output_path.with_name(output_path.stem + ".previous.json"))
+    write_run_status(output_path, "running")
+    try:
+        report = _verify_units(config_path, Path(executable_path), output_path,
+                               prefix, keep_going)
+    except BaseException as error:
+        write_run_status(output_path, "failed",
+                         error=f"{type(error).__name__}: {error}"[:2000])
+        raise
+    write_run_status(output_path, "ok",
+                     matched_functions=report["matched_functions"],
+                     matched_bytes=report["matched_bytes"],
+                     failures=len(report["failures"]))
+    return report
+
+
+def _verify_units(config_path, executable_path, output_path, prefix, keep_going=False):
     config = json.loads(config_path.read_text())
     validate(config)
     executable = executable_path.read_bytes()
@@ -1626,16 +1749,15 @@ def verify(config_path, executable_path, output_path, prefix, keep_going=False):
             work.mkdir()
             actual = compile_unit(unit, config, prefix, work)
             address, size = number(unit["address"]), number(unit["size"])
-            offset = HEADER_SIZE + address - LOAD_ADDRESS
-            expected = executable[offset:offset + size]
-            if len(expected) != size:
-                raise ValueError(f"{unit['name']}: range outside executable")
-            if len(actual) < size:
-                actual += bytes(size - len(actual))
+            offset, expected = target_range(executable, address, size, unit["name"])
+            comparison = compare_bytes(actual, expected)
             failure = None
-            if any(actual[size:]):
-                failure = f"emitted nonzero bytes after its extent"
-            elif actual[:size] != expected:
+            if comparison["missing_bytes"]:
+                failure = (f"emitted {comparison['emitted_bytes']} of {size} bytes "
+                           f"({comparison['missing_bytes']} missing)")
+            elif comparison["nonzero_bytes_after_extent"]:
+                failure = "emitted nonzero bytes after its extent"
+            elif not comparison["exact"]:
                 mismatch = next(i for i in range(size) if actual[i] != expected[i])
                 failure = f"differs at +0x{mismatch:X}"
             rodata = work / "unit.rodata.bin"
@@ -1666,14 +1788,17 @@ def verify(config_path, executable_path, output_path, prefix, keep_going=False):
             results.append({"name": unit["name"], "address": address, "size": size,
                             "source_sha256": hashlib.sha256(
                                 (ROOT / unit["source"]).read_bytes()).hexdigest(),
+                            "padding_bytes": comparison["padding_bytes"],
+                            "output_sha256": comparison["output_sha256"],
                             "matched": True})
-            print(f"PASS {unit['name']}: {size} bytes")
+            print(f"PASS {unit['name']}: {size} bytes"
+                  + (f", {comparison['padding_bytes']} bytes zero padding"
+                     if comparison["padding_bytes"] else ""))
     report = {"schema": 1, "compiler": config["compiler"],
               "matched_bytes": sum(row["size"] for row in results),
               "matched_functions": len(results), "units": results,
               "failures": failures}
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    atomic_write(output_path, json.dumps(report, indent=2, sort_keys=True) + "\n")
     return report
 
 

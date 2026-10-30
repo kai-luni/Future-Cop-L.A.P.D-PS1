@@ -89,6 +89,9 @@ def inbox_unit(directory: Path, name: str = UNIT, size: int = UNIT_SIZE,
         "matched": True,
         "semantic_review_required": True,
     }
+    import hashlib
+
+    entry["source_sha256"] = hashlib.sha256(candidate.read_bytes()).hexdigest()
     settings = compile_settings
     if settings is None:
         settings = {
@@ -236,6 +239,8 @@ class PromoteTests(unittest.TestCase):
     def setUp(self) -> None:
         self.directory = Path(tempfile.mkdtemp(prefix="worker-promote-"))
         self.addCleanup(shutil.rmtree, self.directory, True)
+        import argparse
+
         import offline_decomp
 
         self.worker = offline_decomp
@@ -247,34 +252,61 @@ class PromoteTests(unittest.TestCase):
         self.worker.ROOT = self.directory
         self.worker.MATCHING_MANIFEST = self.directory / "config/us/matching_units.json"
         self.output = self.directory / "build/us/out"
+        self.arguments = argparse.Namespace(output=self.output, executable=EXECUTABLE,
+                                            assembly=ASSEMBLY,
+                                            binutils_prefix="mipsel-linux-gnu-")
+
+    def promote(self) -> tuple[int, str]:
+        import contextlib
+        import io
+
+        with contextlib.redirect_stdout(io.StringIO()) as printed:
+            code = self.worker.promote_command(self.arguments)
+        return code, printed.getvalue()
+
+    def test_promote_refuses_candidate_without_review(self) -> None:
+        # The worker marks every candidate as review-required; without an
+        # independent review record promotion must not touch the repository.
+        config = json.loads(self.worker.MATCHING_MANIFEST.read_text())
+        config["units"] = [unit for unit in config["units"] if unit["name"] != UNIT]
+        self.worker.MATCHING_MANIFEST.write_text(json.dumps(config))
+        inbox_unit(self.output)
+        before = self.worker.MATCHING_MANIFEST.read_text()
+        code, output = self.promote()
+        self.assertEqual(code, 1, output)
+        self.assertIn("review still outstanding", output)
+        self.assertEqual(self.worker.MATCHING_MANIFEST.read_text(), before)
+        self.assertFalse((self.directory / f"src/game/{UNIT_ADDRESS:08X}.c").is_file())
 
     def test_promote_records_link_settings(self) -> None:
+        config = json.loads(self.worker.MATCHING_MANIFEST.read_text())
+        config["units"] = [unit for unit in config["units"] if unit["name"] != UNIT]
+        self.worker.MATCHING_MANIFEST.write_text(json.dumps(config))
         inbox_unit(self.output)
-        candidate = inbox_unit(self.output, name="func_80100000")
-        entry = json.loads((candidate / "unit.json").read_text())
-        entry["address"] = "0x80100000"
-        (candidate / "unit.json").write_text(json.dumps(entry))
+        import contextlib
+        import io
 
-        import argparse
-
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(self.worker.preview_command(self.arguments), 0)
         before = json.loads(self.worker.MATCHING_MANIFEST.read_text())
-        self.worker.promote_command(argparse.Namespace(output=self.output))
+        code, output = self.promote()
+        self.assertEqual(code, 0, output)
         after = json.loads(self.worker.MATCHING_MANIFEST.read_text())
         added = [unit for unit in after["units"] if unit["name"] not in
                  {u["name"] for u in before["units"]}]
-        self.assertEqual([unit["name"] for unit in added], ["func_80100000"])
+        self.assertEqual([unit["name"] for unit in added], [UNIT], output)
         unit = added[0]
         self.assertTrue(unit["link"])
         self.assertEqual(unit["linker_symbols"]["_gp"], "0x8009F214")
         self.assertEqual(unit["small_data_symbols"], {"D_8009F6DC": 4})
-        self.assertTrue((self.directory / "src/game/80100000.c").is_file())
+        self.assertTrue((self.directory / f"src/game/{UNIT_ADDRESS:08X}.c").is_file())
+        self.assertTrue((self.directory / f"build/us/matching-evidence/{UNIT}.json").is_file())
 
     def test_promote_skips_known_unit(self) -> None:
         inbox_unit(self.output)  # already in the manifest
         before = json.loads(self.worker.MATCHING_MANIFEST.read_text())
-        import argparse
 
-        self.worker.promote_command(argparse.Namespace(output=self.output))
+        self.promote()
         after = json.loads(self.worker.MATCHING_MANIFEST.read_text())
         self.assertEqual(len(after["units"]), len(before["units"]))
 

@@ -12,8 +12,8 @@ Writes build/us/matrix/results.json and prints one line per candidate.
 
 from __future__ import annotations
 
+import hashlib
 import json
-import shutil
 import sys
 from pathlib import Path
 
@@ -77,7 +77,9 @@ def compile_once(candidate: dict, compiler: str, level: str, *,
         maspsx.append("--dont-expand-li")
     if li_mode is False:
         maspsx = [flag for flag in maspsx if flag != "--dont-expand-li"]
-    if maspsx:
+    if li_mode is not None:
+        # Write the list back even when it is empty: skipping it would leave the
+        # old ``--dont-expand-li`` in ``extras`` and silently undo ``li_mode=False``.
         extras["maspsx_flags_extra"] = maspsx
 
     runner = worker.Runner.__new__(worker.Runner)
@@ -85,22 +87,49 @@ def compile_once(candidate: dict, compiler: str, level: str, *,
     spec = runner.unit_spec(target, candidate["source"].resolve(), candidate["symbols"], extras)
     for key, value in extras.items():
         spec[key] = value
-    work = OUT / "work" / f"{candidate['name']}-{compiler}-{level}"
-    if work.exists():
-        shutil.rmtree(work)
+    # One directory per distinct attempt: target, source content and the complete
+    # effective profile. Link and li mode belong in the name, otherwise a later
+    # run with another configuration overwrites the evidence of an earlier hit.
+    identity = hashlib.sha256(json.dumps({
+        "target": candidate["name"],
+        "source": hashlib.sha256(candidate["source"].read_bytes()).hexdigest(),
+        "profile": {
+            key: value for key, value in extras.items()
+            if key != "maspsx_flags_extra"
+        } | {"maspsx_flags_extra": extras.get("maspsx_flags_extra", [])},
+    }, sort_keys=True, default=str).encode()).hexdigest()[:12]
+    tags = ("link" if extras.get("link") else "nolink",
+            {True: "li-pinned", False: "li-expanded", None: "li-default"}[li_mode])
+    slug = f"{candidate['name']}-{compiler}-{level}-{tags[0]}-{tags[1]}-{identity}"
+    work = OUT / "work" / slug
+    suffix = 1
+    while work.exists():
+        work = OUT / "work" / f"{slug}-{suffix}"
+        suffix += 1
     work.mkdir(parents=True)
+    result = {"profile": f"{compiler} {level} {tags[0]} {tags[1]}",
+              "compiler": compiler, "level": level, "link": extras.get("link"),
+              "li_mode": li_mode, "identity": identity, "work": str(work),
+              "source": str(candidate["source"]),
+              "maspsx_flags_extra": extras.get("maspsx_flags_extra", [])}
     try:
         code = matching.compile_unit(spec, CONFIG, "mipsel-linux-gnu-", work,
                                      environment=worker.compiler_environment())
     except Exception as error:  # noqa: BLE001 - one profile must not stop the sweep
-        return {"profile": f"{compiler} {level}", "error": str(error)[:200]}
-    offset = matching.HEADER_SIZE + target.address - matching.LOAD_ADDRESS
-    expected = EXECUTABLE[offset:offset + target.size]
-    score = worker.score_bytes(code, expected)
-    return {"profile": f"{compiler} {level}", "compiler": compiler, "level": level,
-            "words": f"{score['equal_words']}/{score['total_words']}",
-            "equal_words": score["equal_words"], "total_words": score["total_words"],
-            "exact": score["exact"], "compiled": score["compiled_size"]}
+        result["error"] = str(error)[:200]
+        (work / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        return result
+    _, expected = matching.target_range(EXECUTABLE, target.address, target.size,
+                                        target.name)
+    score = matching.compare_bytes(code, expected)
+    result.update({
+        "words": f"{score['equal_words']}/{score['total_words']}",
+        "equal_words": score["equal_words"], "total_words": score["total_words"],
+        "exact": score["exact"], "compiled": score["compiled_size"],
+        "padding_bytes": score["padding_bytes"],
+    })
+    (work / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    return result
 
 
 def main(argv: list[str]) -> int:

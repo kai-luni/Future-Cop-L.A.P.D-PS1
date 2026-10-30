@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
+import datetime
 import difflib
 import hashlib
 import json
@@ -284,45 +285,10 @@ def inferred_symbols(target: Target) -> dict[str, str]:
 
 
 def score_bytes(actual: bytes, expected: bytes) -> dict[str, Any]:
-    """Byte gate: missing bytes never count as zero-byte matches."""
-    head = actual[:len(expected)]
-    equal_bytes = sum(left == right for left, right in zip(head, expected))
-    words = len(expected) // 4
-    equal_words = sum(
-        len(head[offset:offset + 4]) == 4
-        and head[offset:offset + 4] == expected[offset:offset + 4]
-        for offset in range(0, words * 4, 4)
-    )
-    prefix = 0
-    for left, right in zip(head, expected):
-        if left != right:
-            break
-        prefix += 1
-    trailing = any(actual[len(expected):])
-    mismatches = []
-    for offset in range(0, len(expected), 4):
-        expected_word = expected[offset:offset + 4]
-        actual_word = head[offset:offset + 4]
-        if actual_word != expected_word:
-            mismatches.append({
-                "offset": f"0x{offset:X}",
-                "expected_le": expected_word.hex().upper(),
-                "actual_le": actual_word.hex().upper(),
-            })
-    return {
-        "exact": (len(actual) >= len(expected) and head == expected and not trailing),
-        "equal_bytes": equal_bytes,
-        "total_bytes": len(expected),
-        "equal_words": equal_words,
-        "total_words": words,
-        "matching_prefix_bytes": prefix,
-        "nonzero_bytes_after_extent": bool(trailing),
-        "compiled_size": len(actual),
-        "mismatches": mismatches[:64],
-        "mismatch_list_truncated": len(mismatches) > 64,
-        "mismatch_hints": classify_mismatches(mismatches[:64]),
-        "output_sha256": hashlib.sha256(actual).hexdigest(),
-    }
+    """Byte gate on the verifier's single comparison implementation."""
+    score = matching.compare_bytes(actual, expected)
+    score["mismatch_hints"] = classify_mismatches(score["mismatches"][:64])
+    return score
 
 
 ALLOWED_COMPILERS = {"gcc-2.6.3-psx", "gcc-2.7.2-cdk", "gcc-2.7.2-psx",
@@ -448,13 +414,9 @@ class Runner:
         return result
 
     def expected(self, target: Target) -> bytes:
-        offset = matching.HEADER_SIZE + target.address - matching.LOAD_ADDRESS
-        if offset < 0:
-            raise ValueError(f"{target.name}: negative executable offset")
-        result = self.executable[offset:offset + target.size]
-        if len(result) != target.size:
-            raise ValueError(f"{target.name}: range is outside the executable")
-        return result
+        _, expected = matching.target_range(self.executable, target.address,
+                                            target.size, target.name)
+        return expected
 
     def initial_source(self, target: Target) -> str | None:
         for unit in self.candidate_config.get("units", []):
@@ -770,91 +732,312 @@ def run_command(args: argparse.Namespace) -> int:
     return 0
 
 
-def promote_command(args: argparse.Namespace) -> int:
-    """Copy confirmed inbox candidates into src/game/ and the matching manifest.
+def inbox_unit_spec(candidate: dict[str, Any], config: dict[str, Any], source: Path,
+                    output: Path, assembly_text: str | None = None) -> dict[str, Any]:
+    """Resolve an inbox candidate into the unit record ``compile_unit`` receives.
 
-    The manifest row carries the acceptance parameters, and compiler flags are
-    **merged** with the project defaults: replacing them (a proposal only supplies
-    its extra flags) silently changes optimisation and breaks the match.
+    Preview and promotion both resolve through this function, so the profile a
+    candidate is reviewed with is byte for byte the profile it is promoted with.
+    """
+    unit: dict[str, Any] = {
+        "name": candidate["name"],
+        "address": int(candidate["address"], 0),
+        "size": int(candidate["size"], 0),
+        "source": str(source),
+        "symbols": dict(candidate.get("symbols", {})),
+    }
+    if "compile_settings" in candidate:
+        unit.update(candidate["compile_settings"])
+        return unit
+    # Backward compatibility for candidates written before compile_settings.
+    unit["compiler_flags"] = list(config.get("compiler_flags", []))
+    if assembly_text is not None:
+        target = next((t for t in parse_targets(assembly_text)
+                       if t.name == candidate["name"]), None)
+        if target is not None and gp_objects(target.assembly):
+            unit["small_data_symbols"] = {name: 4 for name in gp_objects(target.assembly)}
+            unit["compiler_flags"] = [flag for flag in unit["compiler_flags"]
+                                      if not flag.startswith("-G")] + ["-G4"]
+    work_state = output.resolve() / "work" / candidate["name"] / "state.json"
+    if work_state.is_file():
+        state = json.loads(work_state.read_text())
+        best_source = state.get("best", {}).get("source")
+        if best_source:
+            attempt_result = (output.resolve() / best_source).parent / "result.json"
+            if attempt_result.is_file():
+                unit.update(json.loads(attempt_result.read_text()).get("extras", {}))
+    return unit
+
+
+def _normalized(value: Any) -> Any:
+    if isinstance(value, str):
+        try:
+            return int(value, 0)
+        except ValueError:
+            return value
+    return value
+
+
+def resolved_profile(unit: dict[str, Any], config: dict[str, Any],
+                     prefix: str) -> dict[str, Any]:
+    """The complete, resolved build profile in the order the stages receive it."""
+    flags = list(unit.get("compiler_flags", config.get("compiler_flags", [])))
+    flags.extend(unit.get("compiler_flags_extra", []))
+    maspsx = list(unit.get("maspsx_flags", config.get("maspsx_flags", [])))
+    maspsx.extend(unit.get("maspsx_flags_extra", []))
+    maspsx.extend(flag for flag in flags if flag.startswith("-G") and len(flag) > 2)
+    transformations = sorted(key for key, value in unit.items()
+                             if key.startswith("aspsx_") and value)
+    if unit.get("rewrite_move_pseudos"):
+        transformations.append("rewrite_move_pseudos")
+    return {
+        "compiler": unit.get("compiler", config.get("compiler")),
+        "compiler_flags": flags,
+        "maspsx_flags": maspsx,
+        "maspsx_commit": matching.MASPSX_COMMIT,
+        "binutils_prefix": prefix,
+        "link": bool(unit.get("link", False)),
+        "linker_symbols": {name: _normalized(value) for name, value
+                           in (unit.get("linker_symbols") or {}).items()},
+        "small_data_symbols": {name: int(_normalized(value)) for name, value
+                               in (unit.get("small_data_symbols") or {}).items()},
+        "rodata_address": _normalized(unit.get("rodata_address")),
+        "symbols": {name: _normalized(value) for name, value
+                    in (unit.get("symbols") or {}).items()},
+        "transformations": transformations,
+    }
+
+
+def profile_sha256(profile: dict[str, Any]) -> str:
+    return hashlib.sha256(json.dumps(profile, sort_keys=True).encode()).hexdigest()
+
+
+def header_fingerprint(source: Path) -> dict[str, str]:
+    """Hash every project header the source includes, recursively."""
+    root = ROOT.resolve()
+    seen: dict[str, str] = {}
+
+    def visit(path: Path) -> None:
+        try:
+            text = path.read_text()
+        except (OSError, UnicodeDecodeError):
+            return
+        for match in re.finditer(r'(?m)^\s*#\s*include\s+"([^"]+)"', text):
+            include = match.group(1)
+            for base in (path.parent, ROOT / "include", ROOT):
+                candidate = base / include
+                if not candidate.is_file():
+                    continue
+                try:
+                    relative = str(candidate.resolve().relative_to(root))
+                except ValueError:
+                    # A header outside the project is still part of the inputs;
+                    # it must not silently drop out of the fingerprint.
+                    relative = str(candidate.resolve())
+                if relative in seen:
+                    break
+                seen[relative] = hashlib.sha256(candidate.read_bytes()).hexdigest()
+                visit(candidate)
+                break
+
+    visit(source)
+    return seen
+
+
+def evidence_path(name: str) -> Path:
+    """Where the acceptance record of one unit is kept (inside the ignored build)."""
+    return ROOT / "build/us/matching-evidence" / f"{name}.json"
+
+
+def promotion_verdict(candidate: dict[str, Any], folder: Path, config: dict[str, Any],
+                      executable: bytes, prefix: str, output: Path,
+                      assembly_text: str | None = None) -> tuple[dict[str, Any] | None, str | None]:
+    """Re-verify one inbox candidate.
+
+    Returns ``(prepared record, None)`` when the current source, its headers, the
+    resolved profile and the reference range still pass, otherwise ``(None, reason)``.
+    """
+    name = candidate.get("name", "<unnamed>")
+    if candidate.get("matched") is not True:
+        return None, "candidate is not marked matched"
+    source_path = folder / candidate.get("source", "")
+    if not source_path.is_file():
+        return None, "candidate source is missing"
+    source_sha = hashlib.sha256(source_path.read_bytes()).hexdigest()
+    if candidate.get("source_sha256") != source_sha:
+        return None, "source_sha256 does not match the candidate file"
+    unit = inbox_unit_spec(candidate, config, source_path, output, assembly_text)
+    offset, reference = matching.target_range(executable, unit["address"],
+                                              unit["size"], name)
+    profile = resolved_profile(unit, config, prefix)
+    review = load_json(folder / "review.json", None)
+    if review is not None:
+        if review.get("verdict") != "accepted":
+            return None, "recorded review is not an acceptance"
+        if review.get("source_sha256") != source_sha:
+            return None, "recorded review is for a different source"
+        if review.get("profile_sha256") != profile_sha256(profile):
+            return None, "recorded review used a different build profile"
+        if review.get("reference_sha256") != hashlib.sha256(reference).hexdigest():
+            return None, "recorded review used a different reference range"
+    elif candidate.get("semantic_review_required"):
+        return None, "semantic review still outstanding (run preview)"
+    fingerprint = {
+        "address": f"0x{unit['address']:08X}",
+        "size": unit["size"],
+        "source_sha256": source_sha,
+        "headers": header_fingerprint(source_path),
+        "profile_sha256": profile_sha256(profile),
+        "reference_sha256": hashlib.sha256(reference).hexdigest(),
+    }
+    stored = load_json(evidence_path(name), {})
+    reused = (stored.get("fingerprint") == fingerprint
+              and bool(stored.get("result", {}).get("exact")))
+    preprocessed_sha = stored.get("preprocessed_sha256") if reused else None
+    if reused:
+        comparison = stored["result"]
+    else:
+        with tempfile.TemporaryDirectory(prefix="future-cop-promote-") as directory:
+            work = Path(directory)
+            try:
+                actual = matching.compile_unit(unit, config, prefix, work,
+                                               environment=compiler_environment())
+            except (subprocess.CalledProcessError, OSError, ValueError) as error:
+                return None, f"recompile failed: {error}"
+            preprocessed = work / "unit.i"
+            if preprocessed.is_file():
+                preprocessed_sha = hashlib.sha256(preprocessed.read_bytes()).hexdigest()
+        comparison = matching.compare_bytes(actual, reference)
+        if not comparison["exact"]:
+            if comparison["missing_bytes"]:
+                detail = f"emitted {comparison['emitted_bytes']} of {unit['size']} bytes"
+            elif comparison["nonzero_bytes_after_extent"]:
+                detail = "nonzero bytes after the range"
+            else:
+                detail = "bytes differ"
+            return None, f"recompiled candidate is not exact ({detail})"
+    evidence = {
+        "schema": 1,
+        "name": name,
+        "address": f"0x{unit['address']:08X}",
+        "size": unit["size"],
+        "fingerprint": fingerprint,
+        "reference": {"offset": f"0x{offset:08X}", "bytes": len(reference),
+                      "sha256": fingerprint["reference_sha256"]},
+        "source": {"path": str(source_path), "sha256": source_sha},
+        "preprocessed_sha256": preprocessed_sha,
+        "profile": profile,
+        "tools": {
+            "cpp": str(ROOT / ".toolchain" / str(profile["compiler"]) / "cpp"),
+            "cc1": str(ROOT / ".toolchain" / str(profile["compiler"]) / "cc1"),
+            "maspsx": str(ROOT / ".toolchain" / f"maspsx-{matching.MASPSX_COMMIT}"
+                          / "maspsx.py"),
+            "binutils_prefix": prefix,
+        },
+        "result": {key: comparison[key] for key in (
+            "exact", "emitted_bytes", "missing_bytes", "padding_bytes",
+            "nonzero_bytes_after_extent", "equal_words", "total_words",
+            "output_sha256")},
+        "review": str(folder / "review.json") if review is not None else None,
+        "reused_evidence": reused,
+        "verified_at": datetime.datetime.now(datetime.timezone.utc).isoformat(
+            timespec="seconds"),
+    }
+    return {"unit": unit, "profile": profile, "evidence": evidence,
+            "source_text": source_path.read_text()}, None
+
+
+def manifest_entry(unit: dict[str, Any], profile: dict[str, Any],
+                   source: str) -> dict[str, Any]:
+    """The manifest row for a verified unit, carrying the verified profile."""
+    entry: dict[str, Any] = {
+        "name": unit["name"],
+        "address": f"0x{unit['address']:08X}",
+        "size": f"0x{unit['size']:X}",
+        "source": source,
+        "compiler": profile["compiler"],
+        # Stored verbatim and in order: a membership filter would silently change
+        # which optimisation level wins (``-O2 -O1 -O2`` must stay ``-O2``).
+        "compiler_flags": list(profile["compiler_flags"]),
+        "symbols": dict(profile["symbols"]),
+        "link": profile["link"],
+    }
+    if profile["small_data_symbols"]:
+        entry["small_data_symbols"] = dict(sorted(profile["small_data_symbols"].items()))
+    if profile["linker_symbols"]:
+        entry["linker_symbols"] = {
+            name: f"0x{int(_normalized(value)):08X}"
+            for name, value in sorted(profile["linker_symbols"].items())
+        }
+    if profile["rodata_address"] is not None:
+        entry["rodata_address"] = f"0x{int(_normalized(profile['rodata_address'])):08X}"
+    if unit.get("maspsx_flags_extra"):
+        entry["maspsx_flags_extra"] = list(unit["maspsx_flags_extra"])
+    for key, value in sorted(unit.items()):
+        if key.startswith("aspsx_") and value:
+            entry[key] = True
+    if unit.get("rewrite_move_pseudos"):
+        entry["rewrite_move_pseudos"] = True
+    return entry
+
+
+def promote_command(args: argparse.Namespace) -> int:
+    """Register inbox candidates only after re-verifying them against the oracle.
+
+    Nothing is written to ``src/game/`` or the matching manifest before the current
+    candidate reproduces its reference range with exactly the profile that is
+    written down. A candidate whose review, source, headers, profile or reference
+    range changed is refused and leaves the repository untouched.
     """
     inbox = args.output.resolve() / "inbox"
     if not inbox.is_dir():
         print("no inbox to promote")
         return 0
     config = load_json(MATCHING_MANIFEST, {})
-    defaults = config.get("compiler_flags", [])
     existing = {unit["name"] for unit in config.get("units", [])}
-    added = []
+    executable = Path(getattr(args, "executable", None) or DEFAULT_EXECUTABLE).read_bytes()
+    assembly = getattr(args, "assembly", None)
+    assembly_text = Path(assembly).read_text() if assembly else None
+    prefix = getattr(args, "binutils_prefix", None) or os.environ.get(
+        "MIPSEL_PREFIX", "mipsel-linux-gnu-")
+    prepared = []
+    refused = []
     for unit_path in sorted(inbox.glob("*/unit.json")):
         candidate = json.loads(unit_path.read_text())
-        if candidate["name"] in existing:
+        name = candidate.get("name", "<unnamed>")
+        if name in existing:
             continue
-        address = int(candidate["address"], 0)
-        source = ROOT / f"src/game/{address:08X}.c"
-        source.parent.mkdir(parents=True, exist_ok=True)
-        source.write_text((unit_path.parent / candidate["source"]).read_text())
-        if "compile_settings" in candidate:
-            compiler_settings = candidate["compile_settings"]
-            flags = list(compiler_settings.get("compiler_flags", defaults))
-            flags += [flag for flag in compiler_settings.get("compiler_flags_extra", [])
-                      if flag not in flags]
-            compiler = compiler_settings.get("compiler", config["compiler"])
-            small_data = compiler_settings.get("small_data_symbols", {})
-            link = bool(compiler_settings.get("link", False))
-            linker_symbols = compiler_settings.get("linker_symbols", {})
-            rodata_address = compiler_settings.get("rodata_address")
-            maspsx_flags = compiler_settings.get("maspsx_flags_extra", [])
-        else:
-            # Backward compatibility with results created by the old worker.
-            extras: dict[str, Any] = {}
-            work_state = inbox.parent / "work" / candidate["name"] / "state.json"
-            if work_state.is_file():
-                state = json.loads(work_state.read_text())
-                best_source = state.get("best", {}).get("source")
-                if best_source:
-                    result_path = (inbox.parent / best_source).parent / "result.json"
-                    if result_path.is_file():
-                        extras = json.loads(result_path.read_text()).get("extras", {})
-            flags = list(defaults)
-            flags += [flag for flag in extras.get("compiler_flags_extra", []) if flag not in flags]
-            compiler = extras.get("compiler", config["compiler"])
-            small_data = {}
-            link = False
-            linker_symbols = {}
-            rodata_address = None
-            maspsx_flags = extras.get("maspsx_flags_extra", [])
-        unit = {
-            "name": candidate["name"],
-            "address": candidate["address"],
-            "size": candidate["size"],
-            "source": str(source.relative_to(ROOT)),
-            "compiler": compiler,
-            "compiler_flags": flags,
-            "symbols": candidate.get("symbols", {}),
-            "link": link,
-        }
-        if small_data:
-            unit["small_data_symbols"] = small_data
-        if linker_symbols:
-            unit["linker_symbols"] = linker_symbols
-        if rodata_address is not None:
-            unit["rodata_address"] = rodata_address
-        if maspsx_flags:
-            unit["maspsx_flags_extra"] = maspsx_flags
-        config["units"].append(unit)
-        added.append(candidate["name"])
+        result, reason = promotion_verdict(candidate, unit_path.parent, config,
+                                           executable, prefix, args.output, assembly_text)
+        if reason is not None:
+            print(f"REFUSED {name}: {reason}")
+            refused.append(name)
+            continue
+        prepared.append(result)
+    added = []
+    for item in sorted(prepared, key=lambda value: value["unit"]["address"]):
+        unit = item["unit"]
+        relative = f"src/game/{unit['address']:08X}.c"
+        target = ROOT / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(item["source_text"])
+        atomic_json(evidence_path(unit["name"]), item["evidence"])
+        config.setdefault("units", []).append(
+            manifest_entry(unit, item["profile"], relative))
+        added.append(unit["name"])
     if added:
         config["units"].sort(key=lambda unit: int(unit["address"], 0))
-        MATCHING_MANIFEST.write_text(json.dumps(config, indent=2) + "\n")
+        atomic_json(MATCHING_MANIFEST, config)
     print(f"promoted {len(added)}: {', '.join(added) if added else 'nothing'}")
-    return 0
+    return 1 if refused else 0
 
 
 def preview_command(args: argparse.Namespace) -> int:
-    """Compile the review-inbox candidates independently and print a verdict per unit.
+    """Compile the review-inbox candidates independently and record the verdict.
 
-    Applies the project's own extent rule (``verify_matching_units.verify``): the
-    declared range must match exactly and any extra bytes must be zero padding.
+    Applies the project's own extent rule and writes ``review.json`` next to an
+    accepted candidate: source hash, resolved profile and reference range. A
+    failing review removes that record, so a later promotion cannot inherit it.
     """
     inbox = args.output.resolve() / "inbox"
     if not inbox.is_dir():
@@ -862,59 +1045,62 @@ def preview_command(args: argparse.Namespace) -> int:
         return 0
     config = load_json(MATCHING_MANIFEST, {})
     executable = args.executable.read_bytes()
+    assembly = getattr(args, "assembly", None)
+    assembly_text = Path(assembly).read_text() if assembly else None
     confirmed = zero_tail = failed = 0
     for unit_path in sorted(inbox.glob("*/unit.json")):
+        folder = unit_path.parent
         candidate = json.loads(unit_path.read_text())
-        source = unit_path.parent / candidate["source"]
-        address, size = int(candidate["address"], 0), int(candidate["size"], 0)
-        unit = {
-            "name": candidate["name"], "address": address, "size": size,
-            "source": str(source), "symbols": candidate.get("symbols", {}),
-        }
-        text = source.read_text()
-        if "compile_settings" in candidate:
-            unit.update(candidate["compile_settings"])
-        else:
-            # Backward compatibility for older inbox candidates.
-            unit["compiler_flags"] = config.get("compiler_flags", [])
-            target = next((t for t in parse_targets(args.assembly.read_text())
-                           if t.name == candidate["name"]), None)
-            if target is not None and gp_objects(target.assembly):
-                unit["small_data_symbols"] = {name: 4 for name in gp_objects(target.assembly)}
-                unit["compiler_flags"] = [flag for flag in unit["compiler_flags"]
-                                          if not flag.startswith("-G")] + ["-G4"]
-            work_state = inbox.parent / "work" / candidate["name"] / "state.json"
-            if work_state.is_file():
-                state = json.loads(work_state.read_text())
-                best_source = state.get("best", {}).get("source")
-                if best_source:
-                    attempt_result = (inbox.parent / best_source).parent / "result.json"
-                    if attempt_result.is_file():
-                        unit.update(json.loads(attempt_result.read_text()).get("extras", {}))
+        name = candidate["name"]
+        source = folder / candidate["source"]
+        review_file = folder / "review.json"
         try:
+            text = source.read_text()
+            unit = inbox_unit_spec(candidate, config, source, args.output, assembly_text)
+            _, expected = matching.target_range(executable, unit["address"],
+                                                unit["size"], name)
             with tempfile.TemporaryDirectory(prefix="future-cop-review-") as directory:
                 actual = matching.compile_unit(unit, config, args.binutils_prefix,
                                                Path(directory),
                                                environment=compiler_environment())
-        except (subprocess.CalledProcessError, OSError, ValueError) as error:
-            print(f"FAIL {candidate['name']}: {error}")
+            comparison = matching.compare_bytes(actual, expected)
+        except (subprocess.CalledProcessError, OSError, ValueError, KeyError) as error:
+            print(f"FAIL {name}: {error}")
             failed += 1
+            review_file.unlink(missing_ok=True)
             continue
-        offset = matching.HEADER_SIZE + address - matching.LOAD_ADDRESS
-        expected = executable[offset:offset + size]
-        tail = actual[size:]
-        if actual[:size] != expected or any(tail):
-            print(f"FAIL {candidate['name']}: bytes differ or nonzero tail")
+        if not comparison["exact"]:
+            if comparison["missing_bytes"]:
+                print(f"FAIL {name}: emitted {comparison['emitted_bytes']} of "
+                      f"{unit['size']} bytes")
+            elif comparison["nonzero_bytes_after_extent"]:
+                print(f"FAIL {name}: bytes differ or nonzero tail")
+            else:
+                print(f"FAIL {name}: bytes differ")
             failed += 1
-        elif tail:
-            print(f"OK   {candidate['name']}: {size} bytes, {len(tail)} bytes zero padding "
+            review_file.unlink(missing_ok=True)
+            continue
+        profile = resolved_profile(unit, config, args.binutils_prefix)
+        atomic_json(review_file, {
+            "schema": 1,
+            "name": name,
+            "verdict": "accepted",
+            "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+            "profile_sha256": profile_sha256(profile),
+            "reference_sha256": hashlib.sha256(expected).hexdigest(),
+            "padding_bytes": comparison["padding_bytes"],
+            "reviewed_at": datetime.datetime.now(datetime.timezone.utc).isoformat(
+                timespec="seconds"),
+        })
+        if comparison["padding_bytes"]:
+            print(f"OK   {name}: {unit['size']} bytes, "
+                  f"{comparison['padding_bytes']} bytes zero padding "
                   f"({'inline asm' if '__asm__' in text else 'C'})")
-            confirmed += 1
             zero_tail += 1
         else:
-            print(f"OK   {candidate['name']}: {size} bytes exact "
+            print(f"OK   {name}: {unit['size']} bytes exact "
                   f"({'inline asm' if '__asm__' in text else 'C'})")
-            confirmed += 1
+        confirmed += 1
     print(f"confirmed {confirmed}, of those {zero_tail} with zero padding, failed {failed}")
     return 0 if failed == 0 else 1
 
@@ -973,8 +1159,12 @@ def parser() -> argparse.ArgumentParser:
         "MIPSEL_PREFIX", "mipsel-linux-gnu-"))
     preview_parser.set_defaults(handler=preview_command)
     promote_parser = subparsers.add_parser(
-        "promote", help="copy and register confirmed inbox candidates")
+        "promote", help="re-verify and register confirmed inbox candidates")
     promote_parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    promote_parser.add_argument("--assembly", type=Path, default=DEFAULT_ASSEMBLY)
+    promote_parser.add_argument("--executable", type=Path, default=DEFAULT_EXECUTABLE)
+    promote_parser.add_argument("--binutils-prefix", default=os.environ.get(
+        "MIPSEL_PREFIX", "mipsel-linux-gnu-"))
     promote_parser.set_defaults(handler=promote_command)
     return result
 
