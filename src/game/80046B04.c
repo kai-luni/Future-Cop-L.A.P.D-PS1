@@ -38,6 +38,21 @@ extern struct SoundVoice *func_8004665C(void);
 extern void func_80046698(struct SoundVoice *voice);
 extern void func_80046870(struct SoundVoice *voice);
 
+/*
+ * Allocate a voice for a sound of bank `slot` (0xFF: any bank) for a request of
+ * priority arg0 + (arg1 << 4).
+ *
+ * A voice is taken from the free list when the request names no specific bank or
+ * when that bank still has capacity (voices < unk14). Otherwise the weakest voice
+ * is stolen: for slot 0xFF the head of the global active list D_8009F744, for a
+ * real bank the bank's head, each only when its priority is lower than the
+ * request. The stolen voice is released through func_80046698 and taken again.
+ *
+ * The returned voice carries the bank slot, volume arg0, the arg2 class, the
+ * priority in `time` (plus 0x64 when arg2 == 1) and a fresh sequence number in
+ * `seq` (wrapping to 1, never 0), and is linked in by func_80046870. Returns 0
+ * when no voice could be allocated.
+ */
 s32 func_80046B04(s32 arg0, s32 arg1, s32 arg2, s32 slot)
 {
     struct SoundBank *bank;
