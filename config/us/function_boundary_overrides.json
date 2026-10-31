@@ -451,6 +451,11 @@
       "remove_starts": [
         "0x80086168"
       ]
+    },
+    {
+      "address": "0x8008C410",
+      "size": "0x34",
+      "remove_starts": []
     }
   ]
 }

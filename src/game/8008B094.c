@@ -37,6 +37,18 @@ extern s32 (*D_8009C744)(void);
 extern void func_8008B168(struct PadPort *port);
 extern s32 func_8008B210(struct PadPort *port);
 
+/*
+ * Initialise a pad port on top of a raw transfer buffer.
+ *
+ * The configuration handshake needs three tables in one block, so the buffer is
+ * sliced here: the u16 mode table (one row per mode), one 5-byte capability
+ * record per actuator, then the variable-length combination records. The two
+ * handlers installed below drive the handshake: func_8008B168 issues the command
+ * of the current sequence step, func_8008B210 parses the reply into the tables.
+ *
+ * Returns 0 when the port is already set up, the buffer is missing or the global
+ * readiness callback D_8009C744 reports the device as unavailable; 1 once armed.
+ */
 s32 func_8008B094(struct PadPort *port, u8 *buffer)
 {
     register s32 cursor __asm__("$5");

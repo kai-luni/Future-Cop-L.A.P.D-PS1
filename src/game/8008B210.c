@@ -33,6 +33,16 @@ struct PadPort {
 
 extern u8 *D_800A3B80;
 
+/*
+ * Response handler of the pad handshake: copies one reply into the table of the
+ * current sequence step and advances the record index.
+ *   step 2 - mode table row, big-endian u16 from response[4..5]
+ *   step 3 - 5-byte actuator capability record
+ *   step 4 - variable-length combination record; its payload grows behind the
+ *            previous record and the copy may span several replies
+ * After the last combination record the port is marked complete (state 6,
+ * step 0xFE). Returns 1 when the step is done, 0 when another reply is needed.
+ */
 s32 func_8008B210(struct PadPort *input_port)
 {
     register struct PadPort *port = input_port;

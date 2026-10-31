@@ -12,6 +12,12 @@ extern void func_8008B770(struct PadPort *port, u8 index);
 extern void func_8008B790(struct PadPort *port, u8 index);
 extern void func_8008B7B0(struct PadPort *port);
 
+/*
+ * Command handler of the pad handshake, called once per sequence step.
+ * Step 2 requests the mode table, step 3 the actuator capability list. Step 4
+ * either starts the next combination record (func_8008B790) or continues the
+ * record in flight (func_8008B7B0), depending on bytes still outstanding.
+ */
 void func_8008B168(struct PadPort *port)
 {
     s32 state = port->sequence_step;
