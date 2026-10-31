@@ -27,6 +27,27 @@ extern void func_80092F38(RectA414 *rect, void *data);
 extern void func_80092C8C(s32 arg);
 extern s32 func_8005A2BC(void **array, s32 count);
 
+/**
+ * Consumes a freshly loaded, packed asset blob: unpacks it into per-entry blocks,
+ * uploads the pixel data into a fixed VRAM window and builds the descriptor table.
+ *
+ * The header behind arg0->unk00 carries count and a length-prefixed list from +0xC.
+ * Each entry is copied as 8 bytes of head plus count * 8 bytes of payload; the copy
+ * is func_8008CD10, which is a BIOS stub for A0:0x2A (memcpy) - argument in the
+ * call shape only, no C body exists for it.
+ *
+ * The pixel data goes up 16 pixels at a time (0x20 source bytes per call, i.e.
+ * 16 bpp) into a 64 pixel wide field anchored at VRAM (320, 480); the x/y cursor is
+ * shared across all entries, so they are stacked top to bottom and each entry's
+ * start coordinate is stored in its bytes +4 and +5. The trailing region is uploaded
+ * as 0x40 x 0x1E0 before func_8005A2BC stamps the tile coordinates. The transfer
+ * itself is func_80092F38: a wrapper that forwards the rectangle and the data pointer
+ * to the callback in D_8009DDE8, so the VRAM write happens in library code.
+ *
+ * Both error paths (empty header, failed allocation) run func_8005A220, which frees
+ * the blocks allocated so far in reverse order - a partial load leaves no leak. The
+ * input buffer is freed at the end, so the function takes ownership of it.
+ */
 void func_8005A414(ArgA414 *arg0)
 {
     register HeaderA414 *header __asm__("$18");

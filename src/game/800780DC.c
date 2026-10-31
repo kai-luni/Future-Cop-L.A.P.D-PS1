@@ -28,6 +28,23 @@ extern void func_800898C8(void);
 extern void func_8007F9CC(void);
 extern void func_80077AD4(s32 arg);
 
+/**
+ * Initialises the object registry and the per-slot flag tables of this subsystem.
+ *
+ * The registry is the 0x78 byte block (30 pointers) allocated from the tag-2 pool,
+ * zeroed and published through D_8009F3F4. Its lifetime is fixed by two verified
+ * neighbours: func_8008263C files an object into slot `obj->unk1C` (valid 1..0x1D,
+ * i.e. 29 usable slots) and func_8007852C frees every occupied slot plus the array
+ * on teardown. The block is therefore a 30-entry registry keyed by a type id.
+ *
+ * The seven 2-entry tables below each receive state 2 in unk4 and one distinct bit
+ * in unk0 (bits 19..23, 28 and 30). They are written only here and in the adjacent
+ * func_800780C0; the readers are not decompiled yet, so the meaning of the bits is
+ * still open - a per-channel/slot flag set is the plausible reading, not a proof.
+ *
+ * Called as the final step of func_80024904, the per-session setup that also sets
+ * the view window, seeds the RNG and programs the display mode.
+ */
 void func_800780DC(void)
 {
     void *p;

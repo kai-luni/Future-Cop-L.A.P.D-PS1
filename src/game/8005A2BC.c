@@ -16,6 +16,27 @@ extern void *func_80017EBC(s32 size, s32 tag);
 extern s32 func_800195F0(u32 value);
 extern void func_8004979C(void *value);
 
+/**
+ * Builds the active sprite/tile descriptor table and publishes it in D_8009F77C.
+ *
+ * Allocates count * 12 + 4 bytes: a header holding count followed by count 12-byte
+ * entries. Each entry keeps the tile count from byte +2, the bit length of byte +3
+ * (func_800195F0 returns the number of significant bits) and a pointer to the
+ * payload at +8.
+ *
+ * Every 8-byte tile record of the caller's data is then rewritten in place: byte +6
+ * gains 0x80 and byte +7 is stamped with (col << 6) | row, with col walking across
+ * four columns before wrapping into the next row. The input data is mutated, not
+ * only inspected - a second call would add 0x80 again.
+ *
+ * The table becomes the active one through func_8004979C. That symbol belongs to a
+ * module whose lifecycle is verified: func_80049690 creates it (with a pool of 384
+ * blocks of 68 bytes) and func_8004963C frees the table.
+ *
+ * Hypothesis, not verified: the two stamped bytes are the UV/CLUT halfword of a PSX
+ * primitive and 0x80 is a 128-texel u offset. Only the offsets and the 4-column
+ * wrapping are established.
+ */
 s32 func_8005A2BC(void **array, s32 count)
 {
     Struct5A2BC *header;
