@@ -1905,6 +1905,28 @@
       "symbols": {}
     },
     {
+      "name": "func_8001A644",
+      "address": "0x8001A644",
+      "size": "0xB4",
+      "source": "src/game/8001A644.c",
+      "compiler": "gcc-2.6.3-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2",
+        "-O2"
+      ],
+      "symbols": {
+        "func_80019F54": 2147589972,
+        "func_8001A644": 2147591748,
+        "func_80095C14": 2148097044
+      },
+      "link": true
+    },
+    {
       "name": "func_8001A750",
       "address": "0x8001A750",
       "size": "0x5C",
