@@ -18444,6 +18444,47 @@
       "link": false
     },
     {
+      "name": "func_800949E8",
+      "address": "0x800949E8",
+      "size": "0x30",
+      "source": "src/game/800949E8.c",
+      "compiler": "gcc-2.6.3-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2",
+        "-O2"
+      ],
+      "symbols": {
+        "D_8009DEC4": 2148130500,
+        "D_8009DEC8": 2148130504
+      },
+      "link": true
+    },
+    {
+      "name": "func_80094A18",
+      "address": "0x80094A18",
+      "size": "0x24",
+      "source": "src/game/80094A18.c",
+      "compiler": "gcc-2.6.3-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2",
+        "-O2"
+      ],
+      "symbols": {
+        "func_80094A3C": 2148092476
+      },
+      "link": true
+    },
+    {
       "name": "func_800951D8",
       "address": "0x800951D8",
       "size": "0x34",
