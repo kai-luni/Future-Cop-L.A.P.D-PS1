@@ -27,6 +27,52 @@ extern void func_8006158C(s32, s32, s32);
 extern void func_80061600(s32, s32, s32);
 extern void func_800841C4(s32, s32, s32);
 
+
+/**
+ * @brief Executes a game-specific bytecode script using a stack-based VM.
+ *
+ * Interprets a sequence of bytecode instructions that perform arithmetic,
+ * comparisons, variable access, conditional branching, and game-engine
+ * operations. Scripts can read and modify global state, generate random
+ * values, and invoke callbacks on game entities.
+ *
+ * The virtual machine uses D_800A3320 as a global operand stack.
+ * Instructions are encoded as single-byte opcodes:
+ *
+ * - 0x80-0xFF: Push an immediate value (0-127).
+ * - 0x01-0x05: Load constants or the supplied argument.
+ * - 0x08, 0x14: Unconditional and conditional forward jumps.
+ * - 0x09-0x0F: Logical operations, lookups, and engine calls.
+ * - 0x10-0x1C: Read, increment, or decrement global variables.
+ * - 0x1D-0x20: Write global variables.
+ * - 0x21-0x2D: Comparisons, arithmetic, and boolean operations.
+ * - 0x2E-0x2F: Conditional return and engine/entity calls.
+ * - 0x30-0x37: Add or subtract values from global variables.
+ * - 0x38-0x3E: Execute game-engine operations with three operands.
+ *
+ * Opcodes 0x09-0x1C consume one stack operand, 0x1D-0x37
+ * consume two, and 0x38-0x7F consume three.
+ * Some instructions push a result back onto the stack.
+ *
+ * Execution stops when a zero byte is encountered or an explicit
+ * conditional return is executed. The interpreter does not perform
+ * explicit stack bounds checking or bytecode validation.
+ *
+ * @param script Pointer to the zero-terminated bytecode sequence.
+ * @param arg1 Value accessible to the script through opcode 0x05.
+ * @param arg2 Optional initial stack value (pushed if nonnegative).
+ * @param entity Entity context used by script-driven engine calls.
+ *
+ * @return 1 if the script begins with a zero byte.
+ * @return 0 if script execution is disabled by D_8009F840.
+ * @return Otherwise, the final stack value or the value returned
+ *         by opcode 0x2E.
+ *
+ * @note Uses shared global VM state and may modify game variables
+ *       or trigger entity callbacks and other engine-side effects.
+ *
+ * @see D_800A3320
+ */
 s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
 {
     u8 *code;
