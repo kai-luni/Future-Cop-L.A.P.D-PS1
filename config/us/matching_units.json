@@ -8039,6 +8039,38 @@
       }
     },
     {
+      "name": "func_8003FB90",
+      "address": "0x8003FB90",
+      "size": "0x180",
+      "source": "src/game/8003FB90.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-G4",
+        "-O2",
+        "-O2"
+      ],
+      "symbols": {
+        "D_8009F30C": 2148135692,
+        "func_8003CA80": 2147732096,
+        "func_8003FB90": 2147744656,
+        "func_800181D4": 2147582420,
+        "D_800A1070": 2148143216
+      },
+      "link": true,
+      "linker_symbols": {
+        "D_8009F30C": "0x8009F30C",
+        "D_800A1070": "0x800A1070",
+        "_gp": "0x8009F214",
+        "func_800181D4": "0x800181D4",
+        "func_8003CA80": "0x8003CA80",
+        "func_8003FB90": "0x8003FB90"
+      }
+    },
+    {
       "name": "func_8003FD10",
       "address": "0x8003FD10",
       "size": "0x5C",
