@@ -1,18 +1,33 @@
-#include "../../include/game/types.h"
+#include "game/types.h"
 
-struct ShortQueue {
-    u8 pad_00[0xA];
-    s8 values[8];
-    u8 active;
+struct Command {
+    s8 op;
+    s8 arg;
 };
 
-void func_8002A5B4(struct ShortQueue *queue, int index)
-{
-    int next;
+struct Blah {
+    u8 unk00[0x0A];
+    struct Command cur;
+    struct Command next;
+};
 
-    for (next = index + 1; next < 4; next++) {
-        queue->values[next * 2 - 2] = queue->values[next * 2];
-        queue->values[next * 2 - 1] = queue->values[next * 2 + 1];
+void func_8002A5B4(u8 *script, s32 index)
+{
+    register u8 *base __asm__("$8");
+    register struct Blah *p __asm__("$6");
+    s32 i;
+    register s32 off __asm__("$2");
+
+    base = script;
+    i = index + 1;
+    if (i < 4) {
+        off = i * 2;
+        p = (struct Blah *)(off + (u32)base);
+        do {
+            p->cur = p->next;
+            i++;
+            p = (struct Blah *)((u8 *)p + 2);
+        } while (i < 4);
     }
-    queue->active = 0;
+    base[0x12] = 0;
 }
