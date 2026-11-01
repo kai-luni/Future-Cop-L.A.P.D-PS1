@@ -7877,6 +7877,48 @@
       "link": true
     },
     {
+      "name": "func_8003F79C",
+      "address": "0x8003F79C",
+      "size": "0xB8",
+      "source": "src/game/8003F79C.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-G4",
+        "-O2",
+        "-O2"
+      ],
+      "symbols": {
+        "D_8009F70C": 2148136716,
+        "D_800A1070": 2148143216,
+        "D_8009F310": 2148135696,
+        "func_8006EDC4": 2147937732,
+        "D_800A0C70": 2148142192,
+        "D_8009F314": 2148135700,
+        "func_8005E1BC": 2147869116,
+        "func_8003F79C": 2147743644,
+        "func_800194DC": 2147587292,
+        "D_800A7040": 2148167744
+      },
+      "link": true,
+      "linker_symbols": {
+        "D_8009F310": "0x8009F310",
+        "D_8009F314": "0x8009F314",
+        "D_8009F70C": "0x8009F70C",
+        "D_800A0C70": "0x800A0C70",
+        "D_800A1070": "0x800A1070",
+        "D_800A7040": "0x800A7040",
+        "_gp": "0x8009F214",
+        "func_800194DC": "0x800194DC",
+        "func_8003F79C": "0x8003F79C",
+        "func_8005E1BC": "0x8005E1BC",
+        "func_8006EDC4": "0x8006EDC4"
+      }
+    },
+    {
       "name": "func_8003F854",
       "address": "0x8003F854",
       "size": "0x1E0",
@@ -17510,6 +17552,34 @@
       },
       "symbols": {
         "D_800A3C20": "0x800A3C20"
+      }
+    },
+    {
+      "name": "func_8008C444",
+      "address": "0x8008C444",
+      "size": "0xD4",
+      "source": "src/game/8008C444.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-G4",
+        "-O1",
+        "-O1"
+      ],
+      "symbols": {
+        "func_8008C444": 2148058180,
+        "func_8008B71C": 2148054812,
+        "func_8008AE8C": 2148052620
+      },
+      "link": true,
+      "linker_symbols": {
+        "_gp": "0x8009F214",
+        "func_8008AE8C": "0x8008AE8C",
+        "func_8008B71C": "0x8008B71C",
+        "func_8008C444": "0x8008C444"
       }
     },
     {
