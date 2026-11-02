@@ -744,6 +744,18 @@ def run_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def linker_table_call_targets(unit: dict[str, Any]) -> list[str]:
+    """Call targets that a candidate put into the linker symbol table.
+
+    The link table holds the small-data objects plus ``_gp``; call targets belong in
+    ``symbols``. A fuller table shifts the link layout and makes a correct source
+    measure short or wrong, which reads like a defect in the C. This helper is only
+    used for the warning in ``preview``: it must never change a verdict.
+    """
+    table = unit.get("linker_symbols") or {}
+    return sorted(name for name in table if name.startswith("func_"))
+
+
 def inbox_unit_spec(candidate: dict[str, Any], config: dict[str, Any], source: Path,
                     output: Path, assembly_text: str | None = None) -> dict[str, Any]:
     """Resolve an inbox candidate into the unit record ``compile_unit`` receives.
@@ -1069,6 +1081,11 @@ def preview_command(args: argparse.Namespace) -> int:
         try:
             text = source.read_text()
             unit = inbox_unit_spec(candidate, config, source, args.output, assembly_text)
+            extras = linker_table_call_targets(unit)
+            if extras:
+                print(f"  hint {name}: linker_symbols carries {len(extras)} call "
+                      f"target(s) ({extras[0]}…); keep the link table to the data "
+                      "objects plus _gp, call targets belong in symbols")
             _, expected = matching.target_range(executable, unit["address"],
                                                 unit["size"], name)
             with tempfile.TemporaryDirectory(prefix="future-cop-review-") as directory:
