@@ -491,6 +491,13 @@
       "remove_starts": [
         "0x80085AC8"
       ]
+    },
+    {
+      "address": "0x80088120",
+      "size": "0x5A8",
+      "remove_starts": [
+        "0x80088124"
+      ]
     }
   ]
 }
