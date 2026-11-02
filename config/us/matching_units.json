@@ -14502,6 +14502,41 @@
    "compiler": "gcc-2.7.2-psx"
   },
   {
+   "name": "func_8005BDE4",
+   "address": "0x8005BDE4",
+   "size": "0x264",
+   "source": "src/game/8005BDE4.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G0",
+    "-O2"
+   ],
+   "symbols": {
+    "func_80017668": 2147579496,
+    "func_8001A100": 2147590400,
+    "func_8003BEF0": 2147729136,
+    "func_8003BF50": 2147729232,
+    "func_800402DC": 2147746524,
+    "func_8005BCD4": 2147859668,
+    "func_8005BDE4": 2147859940,
+    "func_80069580": 2147915136,
+    "D_8005B934": 2147858740,
+    "D_8009FA0C": 2148137484,
+    "D_800A22A0": 2148147872,
+    "D_800A6578": 2148164984
+   },
+   "link": true,
+   "maspsx_flags_extra": [
+    "--dont-expand-li"
+   ]
+  },
+  {
    "name": "func_8005C048",
    "address": "0x8005C048",
    "size": "0x78",
