@@ -19970,6 +19970,33 @@
       "symbols": {
         "D_8009EEA4": "0x8009EEA4"
       }
+    },
+    {
+      "name": "func_80085900",
+      "address": "0x80085900",
+      "size": "0x14",
+      "source": "src/game/80085900.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G4",
+        "-fgnu-linker",
+        "-O2"
+      ],
+      "symbols": {
+        "D_8009F4BC": "0x8009F4BC"
+      },
+      "small_data_symbols": {
+        "D_8009F4BC": 4
+      },
+      "link": true,
+      "linker_symbols": {
+        "D_8009F4BC": "0x8009F4BC",
+        "_gp": "0x8009F214"
+      },
+      "matched": true
     }
   ]
 }
