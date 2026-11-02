@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -18,6 +19,7 @@ ASSET_LEDGER = ROOT / "config/us/asset_ledger.json"
 MATCHING_ASSETS = ROOT / "config/us/matching_assets.json"
 PROJECT_SCOPE = ROOT / "config/project.json"
 DEFAULT_OUTPUT = ROOT / "build/report.json"
+VERIFICATION = ROOT / "build/us/matching_report.json"
 
 
 def measures(total_code: int, matched_code: int, total_functions: int,
@@ -155,7 +157,50 @@ def matching_units() -> dict[int, dict]:
     return units
 
 
-def build_report() -> dict:
+def verification_records(path: Path | None = None) -> dict[int, dict] | None:
+    """Records written by the byte verifier, keyed by address.
+
+    ``None`` means the file does not exist — a fresh checkout, where the report has
+    no verification to compare against and has to trust the manifest as before.
+    """
+    source = VERIFICATION if path is None else Path(path)
+    if not source.is_file():
+        return None
+    report = json.loads(source.read_text())
+    return {int(unit["address"]): unit for unit in report.get("units", [])}
+
+
+def source_digest(unit: dict) -> str | None:
+    source = ROOT / unit["source"]
+    if not source.is_file():
+        return None
+    return hashlib.sha256(source.read_bytes()).hexdigest()
+
+
+def unverified_units(matched: dict[int, dict], path: Path | None = None) -> list[str]:
+    """Manifest entries that the verifier did not confirm for the current source.
+
+    A listed unit is not a verified unit: the report used to count every manifest
+    entry as complete, so entries whose build fails (a missing symbol, a source that
+    no longer compiles) kept inflating the numbers the HTML map shows. Comparing the
+    manifest against the verifier's records keeps both sources on one number.
+    """
+    records = verification_records(path)
+    if records is None:
+        return []
+    stale = []
+    for address, unit in matched.items():
+        record = records.get(address)
+        if (
+            record is None
+            or record.get("source_sha256") != source_digest(unit)
+            or int(record.get("size", -1)) != unit["size_int"]
+        ):
+            stale.append(unit["name"])
+    return sorted(stale)
+
+
+def build_report(verification: Path | None = None) -> dict:
     functions = canonical_functions()
     matched = matching_units()
     catalog = {function["addr"]: function for function in functions}
@@ -169,6 +214,14 @@ def build_report() -> dict:
                 f"size mismatch at 0x{address:08X}: catalogue "
                 f"0x{function['size']:X}, manifest 0x{unit['size_int']:X}"
             )
+
+    stale = unverified_units(matched, verification)
+    if stale:
+        print(f"WARNING: {len(stale)} manifest unit(s) are not confirmed by the verifier "
+              f"and are not counted as complete: {', '.join(stale)}")
+        stale_set = set(stale)
+        matched = {address: unit for address, unit in matched.items()
+                   if unit["name"] not in stale_set}
 
     units = []
     matched_bytes = 0
@@ -246,6 +299,7 @@ def build_report() -> dict:
         "units": units,
         "version": 2,
         "categories": categories,
+        "unverified_units": stale,
     }
 
 

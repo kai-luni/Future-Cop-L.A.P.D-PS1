@@ -1753,7 +1753,13 @@ def compile_units_in_order(units, config, prefix, directory, jobs):
         index, unit = indexed_unit
         work = Path(directory) / str(index)
         work.mkdir()
-        return index, unit, work, compile_unit(unit, config, prefix, work)
+        try:
+            actual = compile_unit(unit, config, prefix, work)
+        except (subprocess.CalledProcessError, OSError, KeyError) as error:
+            # A build that never produced bytes is a failure of that unit, not of
+            # the run: reporting it as such lets --keep-going finish the manifest.
+            return index, unit, work, error
+        return index, unit, work, actual
 
     if jobs == 1:
         for entry in enumerate(units):
@@ -1817,6 +1823,14 @@ def _verify_units(config_path, executable_path, output_path, prefix, keep_going=
         for index, unit, work, actual in compile_units_in_order(
             config["units"], config, prefix, directory, jobs
         ):
+            if isinstance(actual, BaseException):
+                reason = str(actual).strip().splitlines() or [type(actual).__name__]
+                failure = f"build failed: {reason[0][:200]}"
+                if not keep_going:
+                    raise SystemExit(f"{unit['name']} {failure}")
+                failures.append({"name": unit["name"], "reason": failure})
+                print(f"FAIL {unit['name']}: {failure}")
+                continue
             address, size = number(unit["address"]), number(unit["size"])
             offset, expected = target_range(executable, address, size, unit["name"])
             comparison = compare_bytes(actual, expected)

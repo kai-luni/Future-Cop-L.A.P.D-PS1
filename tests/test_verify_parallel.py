@@ -97,6 +97,23 @@ class CompileUnitsInOrderTests(unittest.TestCase):
                 list(matching.compile_units_in_order(
                     [0, 1, 2, 3, 4], {}, "", directory, 3))
 
+    def test_build_errors_come_back_as_rows(self) -> None:
+        """A compiler that cannot build a unit must not end the whole run."""
+        import subprocess
+
+        def compiler(unit, config, prefix, work):
+            if unit == 1:
+                raise subprocess.CalledProcessError(1, ["as"])
+            return bytes([unit])
+
+        matching.compile_unit = compiler
+        with tempfile.TemporaryDirectory() as directory:
+            rows = list(matching.compile_units_in_order([0, 1, 2], {}, "", directory, 2))
+        self.assertEqual([row[0] for row in rows], [0, 1, 2])
+        self.assertIsInstance(rows[1][3], subprocess.CalledProcessError)
+        self.assertEqual(rows[0][3], b"\x00")
+        self.assertEqual(rows[2][3], b"\x02")
+
     def test_zero_jobs_is_rejected(self) -> None:
         matching.compile_unit = lambda *args: b""
         with tempfile.TemporaryDirectory() as directory:
