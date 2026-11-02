@@ -484,6 +484,13 @@
       "remove_starts": [
         "0x80025D70"
       ]
+    },
+    {
+      "address": "0x80085AC4",
+      "size": "0x188",
+      "remove_starts": [
+        "0x80085AC8"
+      ]
     }
   ]
 }
