@@ -50,6 +50,27 @@ extern s32 func_800858E0(void);
 extern void func_8001C088(u8 mode, u8 enable);
 extern s32 func_8001BFE4(void);
 
+/*
+ * Opens and processes a video resource, optionally converting
+ * the current framebuffer between 15-bit RGB555 and 24-bit RGB888.
+ *
+ * When the relevant display-mode flags are set, the function
+ * copies 320x256 framebuffer data into a 24-bit representation,
+ * optionally clears a central 256x144 region, and prepares
+ * the display for video playback.
+ *
+ * Initializes video-processing resources, invokes the main
+ * processing routine, performs cleanup, and closes the resource.
+ *
+ * Afterwards, optionally converts the framebuffer back to
+ * RGB555 and restores the display configuration.
+ *
+ * The exact video format and meanings of the input parameters
+ * require confirmation from the called functions.
+ *
+ * Returns the result of the main processing routine, or zero
+ * when initialization cannot proceed.
+ */
 u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
 {
     Params88120 params;
