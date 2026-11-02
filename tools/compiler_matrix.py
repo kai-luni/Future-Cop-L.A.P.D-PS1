@@ -39,7 +39,9 @@ def candidates(min_ratio: float) -> list[dict]:
     for directory in SEARCH:
         for state_path in sorted((directory / "work").glob("*/state.json")):
             state = json.loads(state_path.read_text())
-            name = state["name"]
+            # Mirrored answer states carry `target` or nothing at all; the directory is the
+            # authority then, and a missing key must not abort the sweep.
+            name = state.get("name") or state.get("target") or state_path.parent.name
             best = state.get("best")
             if not best or state.get("status") == "exact" or name in solved or name not in TARGETS:
                 continue
