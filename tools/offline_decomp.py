@@ -249,14 +249,16 @@ def atomic_json(path: Path, value: Any) -> None:
 
 
 def atomic_dump(path: Path, value: Any) -> None:
-    """Atomic JSON write that keeps the caller's key order.
+    """Atomic JSON write that keeps the caller's key order and the file's formatting.
 
     Used for the matching manifest: sorting keys there rewrites the whole file and
-    turns a two-unit change into a five-thousand-line diff.
+    turns a two-unit change into a five-thousand-line diff. The indent and the missing
+    trailing newline are the format the file is stored in, so a promote touches only
+    the units it adds.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(value, indent=2) + "\n")
+    temporary.write_text(json.dumps(value, indent=1))
     temporary.replace(path)
 
 

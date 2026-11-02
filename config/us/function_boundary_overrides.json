@@ -519,6 +519,28 @@
       "remove_starts": [
         "0x8004A928"
       ]
+    },
+    {
+      "address": "0x800754B8",
+      "size": "0x5CC",
+      "remove_starts": [
+        "0x80075698"
+      ]
+    },
+    {
+      "address": "0x800834C4",
+      "size": "0x68",
+      "remove_starts": [
+        "0x800834C8"
+      ]
+    },
+    {
+      "address": "0x80095900",
+      "size": "0x94",
+      "remove_starts": [
+        "0x80095980",
+        "0x8009598C"
+      ]
     }
   ]
 }
