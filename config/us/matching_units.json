@@ -3292,6 +3292,26 @@
       }
     },
     {
+      "name": "func_8001EF34",
+      "address": "0x8001EF34",
+      "size": "0x58",
+      "source": "src/game/8001EF34.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2",
+        "-O2"
+      ],
+      "symbols": {
+        "D_800A78F0": 2148169968
+      },
+      "link": true
+    },
+    {
       "name": "func_8001F0B8",
       "address": "0x8001F0B8",
       "size": "0x44",
@@ -3413,6 +3433,28 @@
         "D_8009FA20": "0x8009FA20",
         "func_80091510": "0x80091510"
       }
+    },
+    {
+      "name": "func_8001F2E0",
+      "address": "0x8001F2E0",
+      "size": "0x9C",
+      "source": "src/game/8001F2E0.c",
+      "compiler": "gcc-2.6.3-psx",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-G0",
+        "-fgnu-linker",
+        "-O2",
+        "-O2"
+      ],
+      "symbols": {
+        "D_8009AB08": 2148117256,
+        "func_8001F180": 2147611008,
+        "func_8001F2E0": 2147611360
+      },
+      "link": true
     },
     {
       "name": "func_8001F37C",
@@ -6180,6 +6222,57 @@
         "func_80027EBC": "0x80027EBC"
       },
       "link": false
+    },
+    {
+      "name": "func_80027EE4",
+      "address": "0x80027EE4",
+      "size": "0x9C",
+      "source": "src/game/80027EE4.c",
+      "compiler": "gcc-2.7.2-cdk",
+      "compiler_flags": [
+        "-quiet",
+        "-msoft-float",
+        "-mgas",
+        "-fgnu-linker",
+        "-O2",
+        "-G4",
+        "-O2"
+      ],
+      "symbols": {
+        "D_8009F284": 2148135556,
+        "D_8009F9FC": 2148137468,
+        "D_8009FA00": 2148137472,
+        "D_8009FA30": 2148137520,
+        "D_8009FA50": 2148137552,
+        "D_8009FA60": 2148137568,
+        "D_8009FAA4": 2148137636,
+        "func_80027E68": 2147647080,
+        "func_80027EBC": 2147647164,
+        "func_80027EE4": 2147647204,
+        "func_800451EC": 2147766764,
+        "func_800462D0": 2147771088,
+        "func_80078DD0": 2147978704
+      },
+      "link": true,
+      "small_data_symbols": {
+        "D_8009F284": 4,
+        "D_8009F9FC": 4,
+        "D_8009FA00": 4,
+        "D_8009FA30": 4,
+        "D_8009FA50": 4,
+        "D_8009FA60": 4,
+        "D_8009FAA4": 4
+      },
+      "linker_symbols": {
+        "D_8009F284": "0x8009F284",
+        "D_8009F9FC": "0x8009F9FC",
+        "D_8009FA00": "0x8009FA00",
+        "D_8009FA30": "0x8009FA30",
+        "D_8009FA50": "0x8009FA50",
+        "D_8009FA60": "0x8009FA60",
+        "D_8009FAA4": "0x8009FAA4",
+        "_gp": "0x8009F214"
+      }
     },
     {
       "name": "func_80028618",
