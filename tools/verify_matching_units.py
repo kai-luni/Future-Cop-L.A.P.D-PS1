@@ -1734,7 +1734,55 @@ def compile_unit(unit, config, prefix, work, environment=None):
     return binary.read_bytes()
 
 
-def verify(config_path, executable_path, output_path, prefix, keep_going=False):
+
+def compile_units_in_order(units, config, prefix, directory, jobs):
+    """Build independent units concurrently, yielding results in manifest order.
+
+    At most *jobs* builds are in flight; every unit has its own temporary
+    directory, so compiler and linker settings stay untouched. Results are
+    yielded in manifest order, which keeps the report and the failure list
+    deterministic.
+    """
+    from collections import deque
+    from concurrent.futures import ThreadPoolExecutor
+
+    if jobs < 1:
+        raise ValueError("jobs must be at least 1")
+
+    def build(indexed_unit):
+        index, unit = indexed_unit
+        work = Path(directory) / str(index)
+        work.mkdir()
+        return index, unit, work, compile_unit(unit, config, prefix, work)
+
+    if jobs == 1:
+        for entry in enumerate(units):
+            yield build(entry)
+        return
+
+    entries = iter(enumerate(units))
+    with ThreadPoolExecutor(max_workers=jobs, thread_name_prefix="fc-verify") as pool:
+        queue = deque()
+
+        def queue_next():
+            try:
+                entry = next(entries)
+            except StopIteration:
+                return False
+            queue.append(pool.submit(build, entry))
+            return True
+
+        for _ in range(jobs):
+            if not queue_next():
+                break
+
+        while queue:
+            built = queue.popleft().result()
+            queue_next()
+            yield built
+
+
+def verify(config_path, executable_path, output_path, prefix, keep_going=False, jobs=1):
     """Acceptance gate with an atomically published run state.
 
     The previous report is archived before the first unit builds, so a run that
@@ -1747,29 +1795,28 @@ def verify(config_path, executable_path, output_path, prefix, keep_going=False):
     write_run_status(output_path, "running")
     try:
         report = _verify_units(config_path, Path(executable_path), output_path,
-                               prefix, keep_going)
+                               prefix, keep_going, jobs=jobs)
     except BaseException as error:
         write_run_status(output_path, "failed",
                          error=f"{type(error).__name__}: {error}"[:2000])
         raise
-    write_run_status(output_path, "ok",
+    write_run_status(output_path, "failed" if report["failures"] else "ok",
                      matched_functions=report["matched_functions"],
                      matched_bytes=report["matched_bytes"],
                      failures=len(report["failures"]))
     return report
 
 
-def _verify_units(config_path, executable_path, output_path, prefix, keep_going=False):
+def _verify_units(config_path, executable_path, output_path, prefix, keep_going=False, jobs=1):
     config = json.loads(config_path.read_text())
     validate(config)
     executable = executable_path.read_bytes()
     results = []
     failures = []
     with tempfile.TemporaryDirectory(prefix="future-cop-match-") as directory:
-        for index, unit in enumerate(config["units"]):
-            work = Path(directory) / str(index)
-            work.mkdir()
-            actual = compile_unit(unit, config, prefix, work)
+        for index, unit, work, actual in compile_units_in_order(
+            config["units"], config, prefix, directory, jobs
+        ):
             address, size = number(unit["address"]), number(unit["size"])
             offset, expected = target_range(executable, address, size, unit["name"])
             comparison = compare_bytes(actual, expected)
@@ -1831,8 +1878,15 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, default=Path("build/us/matching_report.json"))
     parser.add_argument("--binutils-prefix", default=os.environ.get("MIPSEL_PREFIX", "mipsel-linux-gnu-"))
     parser.add_argument("--keep-going", action="store_true")
+    parser.add_argument("--jobs", type=int, default=min(4, os.cpu_count() or 1),
+                        help="parallel compiler jobs (default: up to 4)")
+    parser.add_argument("--serial", action="store_true",
+                        help="use one compiler job for reproducibility checks")
     args = parser.parse_args()
+    jobs = 1 if args.serial else args.jobs
+    if jobs < 1:
+        parser.error("--jobs must be at least 1")
     report = verify(args.config, args.executable, args.output, args.binutils_prefix,
-                    keep_going=args.keep_going)
+                    keep_going=args.keep_going, jobs=jobs)
     if report["failures"]:
         raise SystemExit(1)
