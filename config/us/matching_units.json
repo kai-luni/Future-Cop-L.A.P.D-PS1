@@ -13009,6 +13009,29 @@
    "link": true
   },
   {
+   "name": "func_8004BEE8",
+   "address": "0x8004BEE8",
+   "size": "0x1D8",
+   "source": "src/game/8004BEE8.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-O2"
+   ],
+   "symbols": {
+    "func_8001ACA4": 2147593380,
+    "func_8004BEE8": 2147794664,
+    "func_80066F78": 2147905400,
+    "D_8009FA50": 2148137552
+   },
+   "link": true
+  },
+  {
    "name": "func_8004C228",
    "address": "0x8004C228",
    "size": "0x90",
