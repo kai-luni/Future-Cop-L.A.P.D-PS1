@@ -191,6 +191,45 @@ extern void func_800330E8(struct Unit *self);
 
 extern int abs(int);
 
+/**
+ * Updates the strategic AI controller for a Precinct Assault unit.
+ *
+ * Scans all active game objects and evaluates potential targets based on
+ * object type, team affiliation, distance, and strategic relevance.
+ * Maintains separate target candidates for multiple object categories
+ * and selects actions according to the current AI mode.
+ *
+ * The controller operates in three modes:
+ *   0 - Default strategy: prioritizes nearby objects, selects targets,
+ *       and allocates resources for production and expansion.
+ *   1 - Strategy centered on position A: prioritizes nearby friendly
+ *       objects and allocates resources to selected production groups.
+ *   2 - Strategy centered on position B: prioritizes objects near that
+ *       position and manages additional production categories.
+ *
+ * Mode transitions depend on nearby objects, unit counts, and the
+ * current battlefield situation. Target selection uses an approximate
+ * 2D distance calculation to avoid expensive square-root operations.
+ *
+ * The function also manages a shared resource pool, assigns ownership
+ * to available slots, updates production counters, and applies limited
+ * randomization to resource allocation.
+ *
+ * Calls func_80033608() to update a secondary object reference,
+ * func_800336A8() to assign the current target, and func_800330E8()
+ * to refresh the strategic position when the AI state changes.
+ *
+ * Side effects:
+ *   - Updates AI mode and target references.
+ *   - Updates the controller's strategic position.
+ *   - Modifies global resource balances, ownership slots, and
+ *     production counters.
+ *   - Updates global AI status and event indicators.
+ *
+ * Note: Precinct Assault interpretation and specific production
+ * categories remain provisional until related object types and
+ * resource-processing functions are identified.
+ */
 void func_800336DC(struct Unit *self)
 {
     s32 c10;
