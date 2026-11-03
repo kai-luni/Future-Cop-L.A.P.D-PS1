@@ -541,6 +541,34 @@
         "0x80095980",
         "0x8009598C"
       ]
+    },
+    {
+      "address": "0x800778E4",
+      "size": "0xAC",
+      "remove_starts": [
+        "0x80077944"
+      ]
+    },
+    {
+      "address": "0x80078740",
+      "size": "0x98",
+      "remove_starts": [
+        "0x80078744"
+      ]
+    },
+    {
+      "address": "0x80086F58",
+      "size": "0x50",
+      "remove_starts": [
+        "0x80086F5C"
+      ]
+    },
+    {
+      "address": "0x80089018",
+      "size": "0x2EC",
+      "remove_starts": [
+        "0x8008901C"
+      ]
     }
   ]
 }
