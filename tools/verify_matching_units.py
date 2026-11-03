@@ -1710,7 +1710,7 @@ def compile_unit(unit, config, prefix, work, environment=None):
             + (
                 f"  .rodata {number(unit['rodata_address']):#x} : "
                 "SUBALIGN(4) { *(.rodata) }\n"
-                if "rodata_address" in unit else ""
+                if unit.get("rodata_address") else ""
             )
             + "  /DISCARD/ : { *(.MIPS.abiflags) *(.reginfo) *(.pdr) "
             "*(.gnu.attributes) }\n"
@@ -1847,21 +1847,31 @@ def _verify_units(config_path, executable_path, output_path, prefix, keep_going=
             if failure is None and rodata.is_file():
                 rodata_address = number(unit["rodata_address"])
                 rodata_bytes = rodata.read_bytes()
-                rodata_offset = HEADER_SIZE + rodata_address - LOAD_ADDRESS
-                expected_rodata = executable[
-                    rodata_offset:rodata_offset + len(rodata_bytes)
-                ]
-                if len(expected_rodata) != len(rodata_bytes):
-                    failure = "read-only data range outside executable"
-                elif rodata_bytes != expected_rodata:
-                    mismatch = next(
-                        i for i, pair in enumerate(zip(rodata_bytes, expected_rodata))
-                        if pair[0] != pair[1]
-                    )
-                    failure = (
-                        f"read-only data differs at "
-                        f"{rodata_address + mismatch:#x}"
-                    )
+                # The assembler pads a .rodata section up to its alignment, and retail
+                # often stores the neighbour's table directly behind ours. `rodata_size`
+                # names the part of the section that belongs to this unit.
+                declared = number(unit["rodata_size"]) if unit.get("rodata_size") else None
+                if declared and declared > len(rodata_bytes):
+                    failure = (f"emitted {len(rodata_bytes)} of {declared} bytes of "
+                               "read-only data")
+                else:
+                    if declared:
+                        rodata_bytes = rodata_bytes[:declared]
+                    rodata_offset = HEADER_SIZE + rodata_address - LOAD_ADDRESS
+                    expected_rodata = executable[
+                        rodata_offset:rodata_offset + len(rodata_bytes)
+                    ]
+                    if len(expected_rodata) != len(rodata_bytes):
+                        failure = "read-only data range outside executable"
+                    elif rodata_bytes != expected_rodata:
+                        mismatch = next(
+                            i for i, pair in enumerate(zip(rodata_bytes, expected_rodata))
+                            if pair[0] != pair[1]
+                        )
+                        failure = (
+                            f"read-only data differs at "
+                            f"{rodata_address + mismatch:#x}"
+                        )
             if failure is not None:
                 if not keep_going:
                     raise SystemExit(f"{unit['name']} {failure}")
