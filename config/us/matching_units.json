@@ -20318,6 +20318,31 @@
    "compiler": "gcc-2.7.2-cdk"
   },
   {
+   "name": "func_80071B40",
+   "address": "0x80071B40",
+   "size": "0x464",
+   "source": "src/game/80071B40.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "func_8001006C": 2147549292,
+    "func_80010820": 2147551264,
+    "func_8003D0F0": 2147733744,
+    "func_800718B8": 2147948728,
+    "func_80071B40": 2147949376
+   },
+   "link": true
+  },
+  {
    "name": "func_800734B0",
    "address": "0x800734B0",
    "size": "0xC",
