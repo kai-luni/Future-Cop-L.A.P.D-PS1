@@ -1,0 +1,1 @@
+__asm__(".globl D_8009F3F2\n.globl D_8009F45A\n.globl D_8009F3F0\n.globl D_8009F8D8\n.globl D_8009F8D9\n.text\n.set noreorder\n.globl func_80078C88\n.ent func_80078C88\nfunc_80078C88:\n lbu $2, 0x1de($28)\n.end func_80078C88\n.set reorder\n");
