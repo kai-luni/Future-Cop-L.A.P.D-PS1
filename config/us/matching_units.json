@@ -1859,6 +1859,27 @@
    }
   },
   {
+   "name": "func_80018DC0",
+   "address": "0x80018DC0",
+   "size": "0x4EC",
+   "source": "src/game/80018DC0.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "func_8001846C": 2147583084
+   },
+   "link": true
+  },
+  {
    "name": "func_800192AC",
    "address": "0x800192AC",
    "size": "0x64",
