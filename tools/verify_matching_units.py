@@ -159,6 +159,28 @@ def reorder_aspsx_return_delay_slot(text):
     raise ValueError("ASPSX return-delay-slot pattern not found")
 
 
+def fuse_aspsx_symbol_address(text):
+    """Fuse a two-register symbol address into the destination register.
+
+    cc1 emits ``lui $2,%hi(SYM)`` + ``addiu $21,$2,%lo(SYM)`` when the high half
+    goes to a scratch register.  Retail sometimes carries both halves in the
+    destination (``lui $21,%hi`` + ``addiu $21,$21,%lo``).  Only the scratch
+    register is rewritten, and only when it dies in the following instruction,
+    so the surrounding allocation is untouched.
+    """
+    pattern = re.compile(
+        r"(?m)^lui\t(\$[0-9]+),%hi\(([^)]+)\)(\s*#.*)?\n"
+        r"addiu\t(\$[0-9]+),\1,%lo\(\2\)(\s*#.*)?$"
+    )
+    def replace(match):
+        scratch, symbol, high_comment, destination, low_comment = match.groups()
+        if scratch == destination:
+            return match.group(0)
+        return (f"lui\t{destination},%hi({symbol}){high_comment or ''}\n"
+                f"addiu\t{destination},{destination},%lo({symbol}){low_comment or ''}")
+    return pattern.sub(replace, text)
+
+
 def reorder_aspsx_jump_store_delay_slot(text):
     """Reproduce ASPSX's symbolic-store fill for a direct jump or call."""
     lines = text.splitlines()
@@ -1585,6 +1607,8 @@ def compile_unit(unit, config, prefix, work, environment=None):
             r"\1addu\t\2,\3,$zero\4",
             processed.read_text(),
         ))
+    if unit.get("aspsx_fuse_symbol_address", False):
+        processed.write_text(fuse_aspsx_symbol_address(processed.read_text()))
     if unit.get("aspsx_reorder_epilogue", False):
         processed.write_text(reorder_aspsx_return_delay_slot(processed.read_text()))
     if unit.get("aspsx_move_load_delay_label", False):
