@@ -31019,6 +31019,47 @@
    }
   },
   {
+   "name": "func_8007DD08",
+   "address": "0x8007DD08",
+   "size": "0x49C",
+   "source": "src/game/8007DD08.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "D_8009F468": 2148136040,
+    "func_8007D2DC": 2147996380,
+    "D_800A6FE0": 2148167648,
+    "func_80078B34": 2147978036,
+    "func_8007D7CC": 2147997644,
+    "D_8009C0D0": 2148122832,
+    "func_800788F0": 2147977456,
+    "D_8009FA60": 2148137568,
+    "D_8009C0A8": 2148122792,
+    "D_8009F928": 2148137256,
+    "D_8009C050": 2148122704,
+    "D_8009F924": 2148137252,
+    "D_8009C030": 2148122672,
+    "D_8009F926": 2148137254
+   },
+   "link": true,
+   "small_data_symbols": {
+    "D_8009F468": 4
+   },
+   "linker_symbols": {
+    "D_8009F468": "0x8009F468",
+    "_gp": "0x8009F214"
+   }
+  },
+  {
    "name": "func_8007E1A4",
    "address": "0x8007E1A4",
    "size": "0x248",
@@ -33194,6 +33235,49 @@
    "maspsx_flags_extra": [
     "--expand-div",
     "--dont-expand-li"
+   ]
+  },
+  {
+   "name": "func_80084398",
+   "address": "0x80084398",
+   "size": "0x448",
+   "source": "src/game/80084398.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "D_8009F938": 2148137272,
+    "D_8009F93C": 2148137276,
+    "D_8009FAA4": 2148137636,
+    "func_80010234": 2147549748,
+    "func_80010750": 2147551056,
+    "func_80017508": 2147579144,
+    "func_800175F8": 2147579384,
+    "func_8001846C": 2147583084,
+    "func_800196C4": 2147587780,
+    "func_8008363C": 2148021820,
+    "func_80084398": 2148025240
+   },
+   "link": true,
+   "small_data_symbols": {
+    "D_8009F938": 4,
+    "D_8009F93C": 4
+   },
+   "linker_symbols": {
+    "D_8009F938": "0x8009F938",
+    "D_8009F93C": "0x8009F93C",
+    "_gp": "0x8009F214"
+   },
+   "maspsx_flags_extra": [
+    "--expand-div"
    ]
   },
   {
