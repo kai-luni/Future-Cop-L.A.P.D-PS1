@@ -989,7 +989,7 @@ def rotate_aspsx_saved_body_registers(text):
     end = next(
         (index for index, line in enumerate(lines)
          if start is not None and index >= start
-         and re.fullmatch(r"\s*lw\s+\$31,40\(\$sp\)\s*", line)),
+         and re.fullmatch(r"\s*lw\s+\$31,\d+\(\$sp\)\s*", line)),
         None,
     )
     if start is None or end is None or start >= end:
