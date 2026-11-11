@@ -17740,6 +17740,43 @@
    "aspsx_expand_indexed_return_store": true
   },
   {
+   "name": "func_800458E8",
+   "address": "0x800458E8",
+   "size": "0x7EC",
+   "source": "src/game/800458E8.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "D_800A1920": 2148145440,
+    "func_8001A074": 2147590260,
+    "func_800458E8": 2147768552,
+    "D_8009F330": 2148135728,
+    "D_8009F734": 2148136756,
+    "D_8009F730": 2148136752
+   },
+   "link": true,
+   "small_data_symbols": {
+    "D_8009F330": 4,
+    "D_8009F730": 4,
+    "D_8009F734": 4
+   },
+   "linker_symbols": {
+    "D_8009F330": "0x8009F330",
+    "D_8009F730": "0x8009F730",
+    "D_8009F734": "0x8009F734",
+    "_gp": "0x8009F214"
+   }
+  },
+  {
    "name": "func_800460D4",
    "address": "0x800460D4",
    "size": "0x1FC",
