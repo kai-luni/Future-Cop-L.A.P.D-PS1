@@ -26217,6 +26217,40 @@
    }
   },
   {
+   "name": "func_800695A8",
+   "address": "0x800695A8",
+   "size": "0x490",
+   "source": "src/game/800695A8.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "D_800A2940": 2148149568,
+    "D_8009F80C": 2148136972,
+    "func_80017EBC": 2147581628,
+    "func_800181D4": 2147582420,
+    "D_8009F808": 2148136968
+   },
+   "link": true,
+   "small_data_symbols": {
+    "D_8009F808": 4,
+    "D_8009F80C": 4
+   },
+   "linker_symbols": {
+    "D_8009F808": "0x8009F808",
+    "D_8009F80C": "0x8009F80C",
+    "_gp": "0x8009F214"
+   }
+  },
+  {
    "name": "func_80069A38",
    "address": "0x80069A38",
    "size": "0xE4",
