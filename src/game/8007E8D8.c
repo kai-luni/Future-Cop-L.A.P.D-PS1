@@ -1,72 +1,99 @@
 #include "game/types.h"
 
-void func_8007E8D8(u8 *output, u32 value1, u32 value2, u32 value3,
-                   u32 value4, u32 value5, u32 value6, u32 value7,
-                   u32 value8, u32 value9, u32 value10, u32 value11,
-                   u32 value12, u32 value13)
+void func_8007E8D8(u8 *out0, u32 a, u32 b, u32 c0, u32 d0, u32 e0, u32 f0, u32 g0, u32 h0, u32 i0, u32 j0, u32 k0, u32 l0, u32 m0)
 {
-    register u8 *destination __asm__("$24");
-    register u32 packed4 __asm__("$4");
-    register u32 packed5 __asm__("$14");
-    register u32 packed6 __asm__("$25");
-    register u32 group0 __asm__("$17");
-    register u32 savedValue3 __asm__("$18");
-    register u32 savedValue7 __asm__("$16");
-    register u32 packed8 __asm__("$12");
-    register u32 packed9 __asm__("$11");
-    register u32 packed10 __asm__("$9");
-    register u32 packed11 __asm__("$10");
-    register u32 packed12 __asm__("$13");
-    register u32 packed13 __asm__("$8");
-    register u32 upperGroup __asm__("$19");
-    u32 group1;
-
-    destination = output;
-    savedValue3 = value3;
-    packed4 = value4;
-    packed5 = value5;
-    packed6 = value6;
-    savedValue7 = value7;
-    packed8 = value8;
-    packed9 = value9;
-    packed10 = value10;
-    packed11 = value11;
-    packed12 = value12;
-    packed13 = value13;
-    group0 = packed5 + packed6 + savedValue7 + packed8 + packed9 + packed12;
-    group1 = value1 + value2 + savedValue3 + packed4 + packed5 + packed6 +
-             savedValue7 + packed8 + packed9 + packed10 + packed11 + packed12 +
-             packed13;
-
-    upperGroup = (group1 & 0xF) >> 2;
-
-    if ((u8)packed6 == 10) {
-        if ((u8)savedValue7 == (u8)packed6) {
-            if ((u8)packed8 == (u8)savedValue7 && (u8)packed9 == (u8)packed8) {
-                u32 first;
-                u32 second;
-
-                if ((u8)packed12 < 6) {
-                    first = (u8)packed12;
-                    second = 0;
-                } else {
-                    first = 5;
-                    second = (u8)packed12 - 5;
-                }
-                packed6 += first;
-                savedValue7 += second;
-            }
+    register u8 *out __asm__("$24") = out0;
+    register u32 c __asm__("$18");
+    register u32 e __asm__("$14") = e0;
+    register u32 h __asm__("$12") = h0;
+    register u32 i __asm__("$11") = i0;
+    register u32 l __asm__("$13") = l0;
+    register u32 j __asm__("$9") = j0;
+    register u32 k __asm__("$10") = k0;
+    register u32 m __asm__("$8") = m0;
+    register u32 d __asm__("$4") = d0;
+    register u32 ff __asm__("$3") = f0;
+    register u32 gg __asm__("$2") = g0;
+    register u32 f __asm__("$25");
+    register u32 g __asm__("$16");
+    register u32 y __asm__("$17");
+    register u32 z __asm__("$19");
+    register u32 aa __asm__("$3");
+    register u32 dd __asm__("$5");
+    register u32 x __asm__("$4");
+    register u32 xx __asm__("$7");
+    register u32 q __asm__("$15");
+    register u32 r __asm__("$2");
+    register u32 v __asm__("$2");
+    register u32 w __asm__("$3");
+    __asm__("" : "+r"(out), "+r"(ff), "+r"(gg));
+    __asm__("" : "+r"(e), "+r"(h), "+r"(i));
+    __asm__("" : "+r"(j), "+r"(k), "+r"(l), "+r"(m), "+r"(d));
+    c = c0;
+    __asm__("" : "+r"(c));
+    __asm__("" ::: "$19", "$17", "$16");
+    f = ff;
+    g = gg;
+    __asm__("" : "+r"(f), "+r"(g));
+    ff = (s32)e + (s32)ff;
+    gg = (s32)gg + (s32)ff;
+    gg = (s32)h + (s32)gg;
+    gg = (s32)i + (s32)gg;
+    gg = (s32)l + (s32)gg;
+    y = gg & 3;
+    __asm__("" : "+r"(gg), "+r"(y));
+    gg = (s32)a + (s32)gg;
+    gg = (s32)b + (s32)gg;
+    gg = (s32)c0 + (s32)gg;
+    gg = (s32)j + (s32)gg;
+    gg = (s32)k + (s32)gg;
+    gg = (s32)m + (s32)gg;
+    gg = (s32)d + (s32)gg;
+    ff = gg & 15;
+    z = ff >> 2;
+    aa = a;
+    dd = d;
+    gg &= 3;
+    xx = gg;
+    __asm__("" : "+r"(gg), "+r"(xx));
+    x = gg;
+    __asm__("" : "+r"(aa), "+r"(dd), "+r"(xx), "+r"(x));
+    if ((f & 255) == 10 && (g & 255) == (f & 255) && (h & 255) == (g & 255) && (i & 255) == (h & 255)) {
+        l &= 255;
+        q = l;
+        if (l >= 6) {
+            q = 5;
+            r = l - 5;
+        } else {
+            r = 0;
         }
+        f += q;
+        g += r;
     }
-
-    destination[0] = (group0 & 3) | ((packed9 & 3) << 2);
-    destination[1] = (packed5 & 3) | (value1 << 2);
-    destination[2] = (group1 & 3) | ((packed6 & 3) << 2);
-    destination[3] = ((packed5 >> 2) & 3) | (packed4 << 2);
-    destination[5] = value2 | ((packed9 >> 1) & 6);
-    destination[7] = packed10 | (packed11 << 1) | (savedValue3 << 2);
-    destination[8] = ((packed6 >> 2) & 3) | (upperGroup << 2);
-    destination[4] = savedValue7;
-    destination[6] = packed8;
-    destination[9] = packed13 | ((group1 & 3) << 1);
+    v = y | ((i & 3) << 2);
+    out[0] = v;
+    v = e & 3;
+    w = aa << 2;
+    v |= w;
+    out[1] = v;
+    v = x | ((f & 3) << 2);
+    out[2] = v;
+    v = (e >> 2) & 3;
+    w = dd << 2;
+    v |= w;
+    out[3] = v;
+    v = b | ((i >> 1) & 6);
+    out[5] = v;
+    v = j | (k << 1);
+    w = c << 2;
+    v |= w;
+    out[7] = v;
+    v = (f >> 2) & 3;
+    w = z << 2;
+    v |= w;
+    out[8] = v;
+    v = m | (xx << 1);
+    out[4] = g;
+    out[6] = h;
+    out[9] = v;
 }
