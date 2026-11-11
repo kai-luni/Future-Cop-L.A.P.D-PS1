@@ -12398,6 +12398,33 @@
    "link": true
   },
   {
+   "name": "func_8002F30C",
+   "address": "0x8002F30C",
+   "size": "0x4BC",
+   "source": "src/game/8002F30C.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "func_800188D0": 2147584208,
+    "func_8002F280": 2147676800,
+    "func_80010234": 2147549748,
+    "func_80047284": 2147775108,
+    "func_80010750": 2147551056,
+    "func_800457B8": 2147768248
+   },
+   "link": true,
+   "rodata_address": "0x80011174"
+  },
+  {
    "name": "func_8002F8B8",
    "address": "0x8002F8B8",
    "size": "0x168",
