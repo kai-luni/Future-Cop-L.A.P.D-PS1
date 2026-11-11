@@ -2,11 +2,11 @@
 
 struct Packed6 {
     u8 bytes[6];
-} __attribute__((packed));
+};
 
 struct Packed9 {
     u8 bytes[9];
-} __attribute__((packed));
+};
 
 struct CardDirectoryFrame {
     u8 bytes[0x80];
@@ -32,23 +32,27 @@ extern void func_8001E318(void *destination, const void *source, s32 length);
 void func_800207CC(void)
 {
     struct CardDirectoryFrame *frame;
-    s32 slot;
+    struct CardManager *initial;
+    u32 slot;
 
+    initial = D_8009AB08;
     D_8009AB08->state[0] = 1;
     *D_8009AB08->primary[0] = D_80010AE8;
+    __asm__("" ::: "memory");
+    frame = initial->directory;
     *D_8009AB08->secondary[0] = D_80010AE8;
-
-    frame = D_8009AB08->directory;
-    for (slot = 1; slot < 16; slot++, frame++) {
+    for (slot = 1; slot < 16; slot++) {
         u8 checksum;
         u8 *cursor;
-        s32 i;
+        u32 i;
 
-        checksum = 0;
         cursor = frame->bytes;
-        for (i = 0; i < 0x7F; i++) {
+        checksum = 0;
+        i = 0;
+        do {
             checksum ^= *cursor++;
-        }
+            i++;
+        } while (i < 0x7F);
         if (*cursor != checksum) {
             frame->bytes[0] = 0x53;
         }
@@ -56,21 +60,26 @@ void func_800207CC(void)
         switch (frame->bytes[0]) {
         case 0xA0:
         case 0xA1:
-        case 0xA3:
+        case 0xA3: {
             D_8009AB08->state[slot] = 2;
             *(struct Packed6 *)D_8009AB08->primary[slot] = D_8009F260;
+            __asm__("" ::: "memory");
             *(struct Packed6 *)D_8009AB08->secondary[slot] = D_8009F260;
             break;
+        }
         case 0x51:
             D_8009AB08->state[slot] = 1;
             func_8001E318(D_8009AB08->primary[slot], &frame->bytes[10], 20);
+            __asm__("" ::: "memory");
             *D_8009AB08->secondary[slot] = D_80010AF4;
             break;
         default:
             D_8009AB08->state[slot] = 1;
             *D_8009AB08->primary[slot] = D_80010B00;
+            __asm__("" ::: "memory");
             *D_8009AB08->secondary[slot] = D_80010B00;
             break;
         }
+        frame++;
     }
 }
