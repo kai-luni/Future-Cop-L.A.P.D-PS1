@@ -38682,6 +38682,310 @@
    "link": true
   },
   {
+   "name": "func_80092474",
+   "address": "0x80092474",
+   "size": "0x14",
+   "source": "src/game/80092474.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_80092488",
+   "address": "0x80092488",
+   "size": "0x14",
+   "source": "src/game/80092488.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_8009249C",
+   "address": "0x8009249C",
+   "size": "0x14",
+   "source": "src/game/8009249C.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_800924B0",
+   "address": "0x800924B0",
+   "size": "0x14",
+   "source": "src/game/800924B0.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_800924C4",
+   "address": "0x800924C4",
+   "size": "0x14",
+   "source": "src/game/800924C4.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_800924D8",
+   "address": "0x800924D8",
+   "size": "0x14",
+   "source": "src/game/800924D8.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_800924EC",
+   "address": "0x800924EC",
+   "size": "0x14",
+   "source": "src/game/800924EC.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_80092500",
+   "address": "0x80092500",
+   "size": "0x14",
+   "source": "src/game/80092500.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_80092514",
+   "address": "0x80092514",
+   "size": "0x14",
+   "source": "src/game/80092514.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_80092528",
+   "address": "0x80092528",
+   "size": "0x14",
+   "source": "src/game/80092528.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_8009253C",
+   "address": "0x8009253C",
+   "size": "0x14",
+   "source": "src/game/8009253C.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_80092550",
+   "address": "0x80092550",
+   "size": "0x14",
+   "source": "src/game/80092550.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_80092564",
+   "address": "0x80092564",
+   "size": "0x14",
+   "source": "src/game/80092564.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_80092578",
+   "address": "0x80092578",
+   "size": "0x14",
+   "source": "src/game/80092578.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_8009258C",
+   "address": "0x8009258C",
+   "size": "0x14",
+   "source": "src/game/8009258C.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
+   "name": "func_800925A0",
+   "address": "0x800925A0",
+   "size": "0x14",
+   "source": "src/game/800925A0.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true
+  },
+  {
    "name": "func_800925B4",
    "address": "0x800925B4",
    "size": "0x20",
@@ -38991,6 +39295,27 @@
     "D_80012A00": "0x80012A00",
     "D_8009DDF1": "0x8009DDF1"
    }
+  },
+  {
+   "name": "func_80092B84",
+   "address": "0x80092B84",
+   "size": "0x10",
+   "source": "src/game/80092B84.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "D_8009DDF2": 2148130290
+   },
+   "link": true
   },
   {
    "name": "func_80092B94",
