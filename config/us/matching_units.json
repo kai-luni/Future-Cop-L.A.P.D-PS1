@@ -13413,6 +13413,283 @@
    ]
   },
   {
+   "name": "func_800324E0",
+   "address": "0x800324E0",
+   "size": "0xA5C",
+   "source": "src/game/800324E0.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "func_80044B34": 2147765044,
+    "func_800175F8": 2147579384,
+    "func_80019668": 2147587688,
+    "func_8004E80C": 2147805196,
+    "func_800320E4": 2147688676,
+    "func_80069A38": 2147916344,
+    "func_80066F78": 2147905400,
+    "func_8003BA50": 2147727952,
+    "func_8003B898": 2147727512,
+    "func_8004D664": 2147800676,
+    "func_80069D68": 2147917160,
+    "func_8001ACA4": 2147593380,
+    "func_8001A180": 2147590528,
+    "func_8001A750": 2147592016,
+    "func_8001A644": 2147591748,
+    "func_8001AB78": 2147593080,
+    "func_8001A6F8": 2147591928,
+    "func_80019310": 2147586832,
+    "func_80010750": 2147551056,
+    "func_80010234": 2147549748,
+    "func_80060238": 2147877432,
+    "func_800324E0": 2147689696,
+    "D_8009FA94": 2148137620,
+    "D_8009FA58": 2148137560,
+    "D_8009FAA4": 2148137636
+   },
+   "link": true,
+   "rodata_address": "0x80011270",
+   "maspsx_flags_extra": [
+    "--expand-div"
+   ],
+   "aspsx_rewrite_blocks": [
+    {
+     "start": "sll\t$4,$2,1",
+     "end": "sra\t$16,$10,8",
+     "lines": [
+      "sll\t$3,$2,1",
+      "addu\t$2,$3,$zero",
+      "mflo\t$10",
+      "bgez\t$3,$L57",
+      "sra\t$16,$10,8"
+     ]
+    },
+    {
+     "start": "addu\t$3,$4,15",
+     "end": "sra\t$3,$3,8",
+     "lines": [
+      "addiu\t$2,$3,15",
+      "$L57:",
+      "sra\t$2,$2,4",
+      "subu\t$3,$3,$2",
+      "sra\t$3,$3,8"
+     ]
+    },
+    {
+     "start": "lw\t$3,40($18)",
+     "end": "addu\t$4,$4,8",
+     "lines": [
+      "lh\t$4,112($18)",
+      "#nop # DEBUG: 'lh\t$2,112($18)' does not load from $3",
+      "lw\t$2,40($18)",
+      "#nop # DEBUG: 'lw\t$4,52($3)' does not load from $2",
+      "sll\t$4,$4,4",
+      "#nop # DEBUG: 'sll\t$2,$2,4' does not load from $4",
+      "lw\t$2,52($2)",
+      "addu\t$4,$4,8"
+     ]
+    },
+    {
+     "start": "$L15:",
+     "end": "addu\t$16,$18,44",
+     "lines": [
+      "$L15:",
+      "sw\t$2,36($sp)",
+      "addiu\t$4,$18,120",
+      "$L66:",
+      "addu\t$5,$sp,32",
+      "addu\t$16,$18,44"
+     ]
+    },
+    {
+     "start": "beq\t$2,$0,$L54",
+     "end": "$L55:",
+     "lines": [
+      "bnez\t$2,$L54",
+      "li\t$2,-32768",
+      "li\t$3,32768",
+      "slt\t$2,$3,$16",
+      "beq\t$2,$0,$L55",
+      "nop",
+      "j\t$L55",
+      "sw\t$3,124($18)",
+      "$L54:",
+      "sw\t$2,124($18)",
+      "$L55:"
+     ]
+    },
+    {
+     "start": "lw\t$4,88($18)",
+     "end": "beq\t$2,$0,$L17",
+     "lines": [
+      "lw\t$5,88($18)",
+      "#nop # DEBUG: 'subu\t$5,$3,$2' does not load from $4",
+      "subu\t$3,$3,$2",
+      "sra\t$4,$3,8",
+      "sra\t$3,$3,31",
+      "addu\t$4,$3,$4",
+      "lw\t$2,216($18)",
+      "xor\t$4,$4,$3",
+      "#nop # DEBUG: 'lh\t$2,270($18)' does not load from $3",
+      "subu\t$5,$5,$2",
+      "lh\t$2,270($18)",
+      "nop",
+      "slt\t$2,$2,$4",
+      "bne\t$2,$0,$L19",
+      "",
+      "sra\t$6,$5,8",
+      "#nop # DEBUG: 'sra\t$3,$4,8' does not load from $2",
+      "sra\t$2,$5,31",
+      "addu\t$3,$2,$6",
+      "lh\t$4,268($18)",
+      "xor\t$3,$3,$2",
+      "slt\t$4,$4,$3",
+      "beq\t$4,$0,$L17"
+     ]
+    },
+    {
+     "start": "lw\t$5,84($18)",
+     "end": "sw\t$16,36($sp)",
+     "lines": [
+      "lw\t$3,84($18)",
+      "#nop # DEBUG: 'sll\t$2,$2,4' does not load from $5",
+      "sll\t$2,$2,4",
+      "addu\t$16,$17,$2",
+      "slt\t$2,$3,$16",
+      "beq\t$2,$0,$L44",
+      "nop  # DEBUG: branch/jump",
+      "lh\t$2,272($18)",
+      "nop # DEBUG: Reuse of '$2'. 'sll\t$2,$2,4' does not use $at",
+      "sll\t$2,$2,4",
+      "addu\t$2,$17,$2",
+      "slt\t$2,$2,$3",
+      "beq\t$2,$0,$L47",
+      "li\t$4,6144\t\t\t# 0x00001800",
+      "",
+      "lw\t$2,284($18)",
+      "#nop # DEBUG: 'j\t$L67' does not load from $3",
+      "j\t$L67",
+      "subu\t$3,$16,$3",
+      "",
+      "$L44:",
+      "lh\t$2,274($18)",
+      "nop # DEBUG: Reuse of '$2'. 'sll\t$2,$2,4' does not use $at",
+      "sll\t$2,$2,4",
+      "addu\t$2,$17,$2",
+      "slt\t$2,$3,$2",
+      "bne\t$2,$0,$L48",
+      "subu\t$3,$16,$3",
+      "",
+      "j\t$L47",
+      "li\t$4,-6144\t\t\t# 0xffffe800",
+      "",
+      "$L48:",
+      "lw\t$2,280($18)",
+      "$L67:",
+      "nop # DEBUG: Reuse of '$3'. 'mult\t$2,$3' does not use $at",
+      "# $L67:  # DEBUG: skipped",
+      "mult\t$3,$2",
+      "mflo\t$8",
+      "mfhi\t$9",
+      "sll\t$9,$9,16",
+      "srl\t$8,$8,16",
+      "or\t$3,$9,$8",
+      "sll\t$2,$3,1",
+      "addu\t$2,$2,$3",
+      "sll\t$2,$2,11",
+      "sra\t$4,$2,16",
+      "$L47:",
+      "sra\t$3,$4,31",
+      "addu\t$2,$3,$4",
+      "xor\t$2,$2,$3",
+      "slt\t$2,$2,513",
+      "bne\t$2,$0,$L50",
+      "nop  # DEBUG: branch/jump",
+      "j\t$L51",
+      "sw\t$4,36($sp)"
+     ]
+    },
+    {
+     "start": "mult\t$16,$2",
+     "end": "sw\t$3,80($18)",
+     "lines": [
+      "mult\t$16,$2",
+      "lw\t$3,120($18)",
+      "#nop # DEBUG: 'lw\t$2,84($18)' does not load from $3",
+      "lw\t$2,80($18)",
+      "#nop # DEBUG: 'mflo\t$10' does not load from $2",
+      "mflo\t$10",
+      "sra\t$16,$10,9",
+      "nop",
+      "mult\t$16,$3",
+      "mflo\t$8",
+      "mfhi\t$9",
+      "sll\t$9,$9,16",
+      "srl\t$8,$8,16",
+      "or\t$3,$9,$8",
+      "addu\t$2,$2,$3",
+      "lw\t$3,124($18)",
+      "sw\t$2,80($18)",
+      "lw\t$2,84($18)",
+      "mult\t$16,$3",
+      "mflo\t$8",
+      "mfhi\t$9",
+      "sll\t$9,$9,16",
+      "srl\t$8,$8,16",
+      "or\t$3,$9,$8",
+      "addu\t$2,$2,$3",
+      "#nop # DEBUG: 'addu\t$2,$2,$4' does not load from $10",
+      "sw\t$2,84($18)",
+      "lw\t$2,128($18)",
+      "nop",
+      "#nop # DEBUG: 'mult $16,$10' does not load from $2",
+      "mult\t$16,$2",
+      "mflo\t$8",
+      "mfhi\t$9",
+      "sll\t$9,$9,16",
+      "srl\t$8,$8,16",
+      "or\t$4,$9,$8",
+      "lw\t$2,88($18)"
+     ]
+    },
+    {
+     "start": "addu\t$19,$18,120",
+     "end": "$L35:",
+     "lines": [
+      "addu\t$16,$18,120",
+      "lw\t$2,36($sp)",
+      "nop # DEBUG: Reuse of '$2'. 'addu\t$2,$2,8192' does not use $at",
+      "addu\t$2,$2,8192",
+      "sw\t$2,36($sp)",
+      "lw\t$2,220($18)",
+      "#nop # DEBUG: 'lw\t$3,224($18)' does not load from $2",
+      "lw\t$3,224($18)",
+      "#nop # DEBUG: 'lw\t$5,228($18)' does not load from $3",
+      "lw\t$5,228($18)",
+      "#nop # DEBUG: 'sw\t$2,120($18)' does not load from $5",
+      "sw\t$2,120($18)",
+      "sw\t$3,124($18)",
+      "sw\t$5,128($18)",
+      "jal\tfunc_8001A180",
+      "addu\t$4,$16,$zero",
+      "",
+      "j\t$L66",
+      "addu\t$4,$16,$zero",
+      "",
+      "$L35:"
+     ]
+    }
+   ]
+  },
+  {
    "name": "func_80032F3C",
    "address": "0x80032F3C",
    "size": "0x1AC",
@@ -16961,6 +17238,44 @@
     "func_800428FC": 2147756284
    },
    "link": true
+  },
+  {
+   "name": "func_80042AF4",
+   "address": "0x80042AF4",
+   "size": "0x75C",
+   "source": "src/game/80042AF4.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "D_8009FAB0": 2148137648,
+    "func_80042AF4": 2147756788,
+    "func_800188D0": 2147584208,
+    "func_80019668": 2147587688,
+    "func_8001B148": 2147594568,
+    "func_8003D9F8": 2147736056,
+    "func_80042764": 2147755876,
+    "func_80042788": 2147755912
+   },
+   "link": true,
+   "small_data_symbols": {
+    "D_8009FAB0": 4
+   },
+   "linker_symbols": {
+    "D_8009FAB0": "0x8009FAB0",
+    "_gp": "0x8009F214"
+   },
+   "maspsx_flags_extra": [
+    "--expand-div"
+   ]
   },
   {
    "name": "func_80043250",
@@ -22586,6 +22901,56 @@
    "linker_symbols": {
     "func_8001E7B8": "0x8001E7B8"
    }
+  },
+  {
+   "name": "func_80053A74",
+   "address": "0x80053A74",
+   "size": "0xB1C",
+   "source": "src/game/80053A74.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "func_80010974": 2147551604,
+    "func_8001846C": 2147583084,
+    "func_8001A314": 2147590932,
+    "func_8001A7AC": 2147592108,
+    "func_8001ABE0": 2147593184,
+    "func_8001AD20": 2147593504,
+    "func_800471C4": 2147774916,
+    "func_8005220C": 2147820044,
+    "func_80052550": 2147820880,
+    "func_80052708": 2147821320,
+    "func_80052E28": 2147823144,
+    "func_80052F54": 2147823444,
+    "func_80053188": 2147824008,
+    "func_80053514": 2147824916,
+    "func_800537D0": 2147825616,
+    "func_800538C8": 2147825864,
+    "func_80053A74": 2147826292,
+    "func_80066F78": 2147905400,
+    "func_8006943C": 2147914812
+   },
+   "link": true,
+   "rodata_address": "0x80011A64",
+   "aspsx_rewrite_blocks": [
+    {
+     "start": "sw\t$0,112($sp)",
+     "end": "sw\t$7,172($sp)",
+     "lines": [
+      "sw\t$7,172($sp)",
+      "sw\t$0,112($sp)"
+     ]
+    }
+   ]
   },
   {
    "name": "func_80054590",
