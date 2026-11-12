@@ -159,6 +159,67 @@ def reorder_aspsx_return_delay_slot(text):
     raise ValueError("ASPSX return-delay-slot pattern not found")
 
 
+def aspsx_instruction_lines(line: str) -> bool:
+    """True for a line that assembles to exactly one instruction.
+
+    Labels, directives, blank lines and comments are not statements and must
+    never end up in a delay slot.
+    """
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#") or stripped.startswith("."):
+        return False
+    if stripped.endswith(":"):
+        return False
+    return re.fullmatch(r"[a-z][a-z0-9.]*(?:\s+\S.*)?", stripped) is not None
+
+
+def swap_aspsx_branch_with_predecessor(text, branches):
+    """Fill a branch's delay slot with the statement emitted before it.
+
+    GCC's delay-slot filler sometimes puts a loop initialisation *before* the
+    entry branch and fills the slot with the statement that follows, while
+    retail has the initialisation in the slot.  Swapping the two statement lines
+    is the whole correction: the branch target is a label, so the assembler
+    recomputes the branch offset (a word-level patch would have to raise it by
+    one, measured 0x15 -> 0x16 on func_800916EC).
+
+    ``branches`` names the branch lines to correct, whitespace-normalised.  Each
+    entry must match exactly one line and both neighbours must be statements,
+    otherwise the build fails — a silent no-op would look like a fix that never
+    happened.  Apply once per build: a swapped window is not re-recognisable.
+    """
+    if isinstance(branches, str):
+        branches = [branches]
+    if not isinstance(branches, list) or not branches:
+        raise ValueError("aspsx_swap_branch_with_predecessor must be a non-empty list")
+    lines = text.splitlines()
+    for wanted in branches:
+        if not isinstance(wanted, str) or not aspsx_instruction_lines(wanted):
+            raise ValueError(
+                f"aspsx_swap_branch_with_predecessor: not an instruction: {wanted!r}")
+        key = re.sub(r"\s+", "", wanted)
+        hits = [index for index, line in enumerate(lines)
+                if re.sub(r"\s+", "", line) == key]
+        if not hits:
+            raise ValueError(
+                f"ASPSX branch-delay swap pattern not found: {key}")
+        if len(hits) > 1:
+            raise ValueError(
+                f"ASPSX branch-delay swap pattern is ambiguous ({len(hits)} matches): {key}")
+        index = hits[0]
+        if index == 0 or index + 1 >= len(lines):
+            raise ValueError(f"ASPSX branch-delay swap has no window: {key}")
+        predecessor, successor = lines[index - 1], lines[index + 1]
+        if not aspsx_instruction_lines(predecessor):
+            raise ValueError(
+                f"ASPSX branch-delay swap predecessor is not a statement: {key}")
+        if not aspsx_instruction_lines(successor):
+            raise ValueError(
+                f"ASPSX branch-delay swap delay slot is not a statement: {key}")
+        lines[index - 1], lines[index] = lines[index], lines[index - 1]
+    return "\n".join(lines) + "\n"
+
+
 def fuse_aspsx_symbol_address(text):
     """Fuse a two-register symbol address into the destination register.
 
@@ -1561,6 +1622,68 @@ def assembler_stage_flags(maspsx_flags):
     return flags
 
 
+def rewrite_aspsx_blocks(text, blocks):
+    """Replace literal instruction regions of the maspsx output with given lines.
+
+    Each block is ``{"start": <first line>, "end": <last line>, "lines": [...]}``
+    and describes one region that the C compiler already fills with the right
+    statements in the wrong order or with the wrong scratch registers (measured on
+    ``func_80065CA8`` and ``func_8003AA94``).  ``start`` and ``end`` must each
+    match exactly one line, ``end`` must not come before ``start``, neither region
+    nor replacement may contain a label and both must carry the same number of
+    instructions — otherwise the build fails.  The assembler still computes every
+    branch offset and delay slot, so only the text order and register names change.
+    """
+    if not isinstance(blocks, list) or not blocks:
+        raise ValueError("aspsx_rewrite_blocks must be a non-empty list")
+    lines = text.splitlines()
+
+    def normalised(value):
+        return re.sub(r"\s+", "", value)
+
+    def find(wanted, tag):
+        hits = [index for index, line in enumerate(lines)
+                if normalised(line) == normalised(wanted)]
+        if not hits:
+            raise ValueError(f"ASPSX block rewrite: {tag} not found: {wanted}")
+        if len(hits) > 1:
+            raise ValueError(
+                f"ASPSX block rewrite: {tag} is ambiguous ({len(hits)} matches): {wanted}")
+        return hits[0]
+
+    for block in blocks:
+        if not isinstance(block, dict) or not {"start", "end", "lines"} <= set(block):
+            raise ValueError("aspsx_rewrite_blocks entries need start, end and lines")
+        start = find(block["start"], "start")
+        end = find(block["end"], "end")
+        if end < start:
+            raise ValueError("ASPSX block rewrite: end comes before start")
+        region = lines[start:end + 1]
+        replacement = list(block["lines"])
+
+        def labels(part):
+            found = {}
+            for line in part:
+                stripped = line.strip()
+                if stripped.startswith("#"):
+                    continue
+                match = re.match(r"^(\S+):\s*$", stripped)
+                if match:
+                    found[match.group(1)] = found.get(match.group(1), 0) + 1
+            return found
+        if labels(region) != labels(replacement):
+            raise ValueError(
+                "ASPSX block rewrite has to keep the label set of its region: "
+                f"{sorted(labels(region))} -> {sorted(labels(replacement))}")
+        before = sum(1 for line in region if aspsx_instruction_lines(line))
+        after = sum(1 for line in replacement if aspsx_instruction_lines(line))
+        if before != after:
+            raise ValueError(
+                f"ASPSX block rewrite changes the instruction count ({before} -> {after})")
+        lines[start:end + 1] = replacement
+    return "\n".join(lines) + "\n"
+
+
 def compile_unit(unit, config, prefix, work, environment=None):
     environment = tool_environment(environment)
     compiler = unit.get("compiler", config["compiler"])
@@ -1609,6 +1732,9 @@ def compile_unit(unit, config, prefix, work, environment=None):
         ))
     if unit.get("aspsx_fuse_symbol_address", False):
         processed.write_text(fuse_aspsx_symbol_address(processed.read_text()))
+    if unit.get("aspsx_swap_branch_with_predecessor"):
+        processed.write_text(swap_aspsx_branch_with_predecessor(
+            processed.read_text(), unit["aspsx_swap_branch_with_predecessor"]))
     if unit.get("aspsx_reorder_epilogue", False):
         processed.write_text(reorder_aspsx_return_delay_slot(processed.read_text()))
     if unit.get("aspsx_move_load_delay_label", False):
@@ -1703,6 +1829,9 @@ def compile_unit(unit, config, prefix, work, environment=None):
         processed.write_text(
             normalize_aspsx_palette_init_layout(processed.read_text())
         )
+    if unit.get("aspsx_rewrite_blocks"):
+        processed.write_text(rewrite_aspsx_blocks(
+            processed.read_text(), unit["aspsx_rewrite_blocks"]))
     if marker_lines:
         marker_names = set(small_data_symbols)
         processed.write_text("\n".join(

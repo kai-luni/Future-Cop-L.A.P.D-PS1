@@ -1001,7 +1001,9 @@ def manifest_entry(unit: dict[str, Any], profile: dict[str, Any],
         entry["maspsx_flags_extra"] = list(unit["maspsx_flags_extra"])
     for key, value in sorted(unit.items()):
         if key.startswith("aspsx_") and value:
-            entry[key] = True
+            # A transformation may carry its own arguments; only a bare flag is
+            # narrowed to True, so the manifest keeps what the build really does.
+            entry[key] = True if value is True else value
     if unit.get("rewrite_move_pseudos"):
         entry["rewrite_move_pseudos"] = True
     return entry

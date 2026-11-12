@@ -22,8 +22,10 @@ from tools.verify_matching_units import (
     restore_aspsx_byte_test_temporary,
     reuse_aspsx_call_constant,
     reuse_aspsx_symbolic_load_destination,
+    rewrite_aspsx_blocks,
     reorder_aspsx_return_delay_slot,
     reorder_aspsx_jump_store_delay_slot,
+    swap_aspsx_branch_with_predecessor,
     use_aspsx_symbolic_address_scratch,
 )
 
@@ -544,6 +546,128 @@ class AspsxReorderTests(unittest.TestCase):
     def test_rejects_nonstore_return_fill(self):
         with self.assertRaisesRegex(ValueError, "pattern not found"):
             reorder_aspsx_jump_store_delay_slot("addu\t$2,$3,$zero\nj\t$31\nnop\n")
+
+    def test_moves_pre_branch_statement_into_the_delay_slot(self):
+        # func_800916EC 0x80091780: retail fills the `beq` slot with the i = 0
+        # assignment; cc1 emits the assignment before the branch instead.
+        source = (
+            "$L4:\n"
+            "addu\t$17,$0,$zero\n"
+            "beq\t$16,$0,$L6\n"
+            "addu\t$18,$20,$zero\n"
+            "slt\t$2,$17,11\n"
+        )
+        expected = (
+            "$L4:\n"
+            "beq\t$16,$0,$L6\n"
+            "addu\t$17,$0,$zero\n"
+            "addu\t$18,$20,$zero\n"
+            "slt\t$2,$17,11\n"
+        )
+        self.assertEqual(
+            swap_aspsx_branch_with_predecessor(source, ["beq\t$16,$0,$L6"]), expected)
+
+    def test_branch_line_and_target_label_survive_the_swap(self):
+        source = "addu\t$17,$0,$zero\nbeq\t$16,$0,$L6\naddu\t$18,$20,$zero\n"
+        result = swap_aspsx_branch_with_predecessor(source, ["beq $16, $0, $L6"])
+        self.assertIn("beq\t$16,$0,$L6", result)
+        self.assertLess(result.index("beq"), result.index("addu\t$17"))
+
+    def test_accepts_several_branches_in_one_call(self):
+        source = (
+            "addu\t$17,$0,$zero\nbeq\t$16,$0,$L6\nnop\n"
+            "addu\t$19,$0,$zero\nbeq\t$18,$0,$L7\nnop\n"
+        )
+        result = swap_aspsx_branch_with_predecessor(
+            source, ["beq\t$16,$0,$L6", "beq\t$18,$0,$L7"])
+        self.assertEqual(result.splitlines()[0], "beq\t$16,$0,$L6")
+        self.assertEqual(result.splitlines()[3], "beq\t$18,$0,$L7")
+
+    def test_rejects_unknown_branch(self):
+        source = "addu\t$17,$0,$zero\nbeq\t$16,$0,$L6\nnop\n"
+        with self.assertRaisesRegex(ValueError, "pattern not found"):
+            swap_aspsx_branch_with_predecessor(source, ["beq\t$16,$0,$L9"])
+
+    def test_rejects_ambiguous_branch(self):
+        source = "addu\t$17,$0,$zero\nbeq\t$16,$0,$L6\nnop\n"
+        source += "addu\t$17,$0,$zero\nbeq\t$16,$0,$L6\nnop\n"
+        with self.assertRaisesRegex(ValueError, "ambiguous"):
+            swap_aspsx_branch_with_predecessor(source, ["beq\t$16,$0,$L6"])
+
+    def test_rejects_a_window_whose_neighbour_is_not_a_statement(self):
+        source = "addu\t$17,$0,$zero\nbeq\t$16,$0,$L6\n$L6:\nnop\n"
+        with self.assertRaisesRegex(ValueError, "delay slot is not a statement"):
+            swap_aspsx_branch_with_predecessor(source, ["beq\t$16,$0,$L6"])
+
+    def test_rejects_a_label_before_the_branch(self):
+        source = "$L4:\nbeq\t$16,$0,$L6\nnop\n"
+        with self.assertRaisesRegex(ValueError, "predecessor is not a statement"):
+            swap_aspsx_branch_with_predecessor(source, ["beq\t$16,$0,$L6"])
+
+    def test_rejects_an_entry_that_is_not_an_instruction(self):
+        with self.assertRaisesRegex(ValueError, "not an instruction"):
+            swap_aspsx_branch_with_predecessor("nop\n", ["$L4:"])
+
+    def test_rejects_an_empty_list(self):
+        with self.assertRaisesRegex(ValueError, "non-empty list"):
+            swap_aspsx_branch_with_predecessor("nop\n", [])
+
+
+
+class AspsxBlockRewriteTests(unittest.TestCase):
+    def test_swaps_two_adjacent_statements(self):
+        source = "li\t$18,8\nli\t$19,31\nli\t$15,3\n"
+        blocks = [{"start": "li\t$18,8", "end": "li\t$19,31",
+                   "lines": ["li\t$19,31", "li\t$18,8"]}]
+        self.assertEqual(rewrite_aspsx_blocks(source, blocks),
+                         "li\t$19,31\nli\t$18,8\nli\t$15,3\n")
+
+    def test_moves_a_statement_across_a_label_that_stays_in_place(self):
+        source = ("beq\t$2,$0,$L15\naddu\t$8,$3,$zero\naddu\t$2,$8,52\n"
+                  "j\t$L51\nli\t$4,1\n$L15:\nli\t$4,1\n")
+        blocks = [{"start": "beq\t$2,$0,$L15", "end": "$L15:",
+                   "lines": ["bne\t$2,$0,$L15", "addu\t$8,$3,$zero", "j\t$L51",
+                             "li\t$4,1", "$L15:", "addu\t$2,$8,52"]}]
+        self.assertEqual(
+            rewrite_aspsx_blocks(source, blocks),
+            "bne\t$2,$0,$L15\naddu\t$8,$3,$zero\nj\t$L51\nli\t$4,1\n"
+            "$L15:\naddu\t$2,$8,52\nli\t$4,1\n")
+
+    def test_rejects_a_missing_anchor(self):
+        with self.assertRaisesRegex(ValueError, "start not found"):
+            rewrite_aspsx_blocks("nop\n", [{"start": "addu\t$1,$2,3", "end": "nop",
+                                             "lines": ["nop"]}])
+
+    def test_rejects_an_ambiguous_anchor(self):
+        source = "nop\nnop\n"
+        with self.assertRaisesRegex(ValueError, "ambiguous"):
+            rewrite_aspsx_blocks(source, [{"start": "nop", "end": "nop",
+                                           "lines": ["nop"]}])
+
+    def test_rejects_an_end_before_the_start(self):
+        source = "addu\t$1,$2,3\nsubu\t$1,$2,3\n"
+        with self.assertRaisesRegex(ValueError, "end comes before start"):
+            rewrite_aspsx_blocks(source, [{"start": "subu\t$1,$2,3",
+                                           "end": "addu\t$1,$2,3",
+                                           "lines": ["nop"]}])
+
+    def test_rejects_a_changed_instruction_count(self):
+        source = "addu\t$1,$2,3\nsubu\t$1,$2,3\n"
+        with self.assertRaisesRegex(ValueError, "instruction count"):
+            rewrite_aspsx_blocks(source, [{"start": "addu\t$1,$2,3",
+                                           "end": "subu\t$1,$2,3",
+                                           "lines": ["addu\t$1,$2,3"]}])
+
+    def test_rejects_a_changed_label_set(self):
+        source = "$L1:\naddu\t$1,$2,3\n"
+        with self.assertRaisesRegex(ValueError, "label set"):
+            rewrite_aspsx_blocks(source, [{"start": "$L1:", "end": "addu\t$1,$2,3",
+                                           "lines": ["addu\t$1,$2,3"]}])
+
+    def test_rejects_an_empty_list(self):
+        with self.assertRaisesRegex(ValueError, "non-empty list"):
+            rewrite_aspsx_blocks("nop\n", [])
+
 
 
 if __name__ == "__main__":
