@@ -44,11 +44,11 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x80015F14	36	func_80015F14	low	3	void	2	0	0		leaf|gte|orphan
 0x80015F38	1468	func_80015F38	medium	4	u32	2	1	48	s0|s1|s2|s3|s4|ra	orphan
 0x800164F4	1392	func_800164F4	medium	1	u32	2	5	208	s0|s1|s2|s3|s4|s5|s6|ra	orphan
-0x80016A64	4	func_80016A64	low	0	u32	1	0	0		leaf|gp
+0x80016A64	548	func_80016A64	low	0	u32	1	0	0		leaf|gp
 0x80016A68	544	func_80016A68	medium	3	u32	0	6	136	s0|s1|s2|s3|s4|s5|s6|s7|fp|ra	gp|orphan
 0x80016C88	484	func_80016C88	medium	4	u32	1	2	48	s0|ra	orphan
 0x80016E6C	492	func_80016E6C	low	4	u32	2	1	0	s0|s1|s2|s3|s4|s5|s6|ra	orphan
-0x80017058	4	func_80017058	low	0	u32	1	0	0		leaf|gp
+0x80017058	592	func_80017058	low	0	u32	1	0	0		leaf|gp
 0x8001705C	588	func_8001705C	medium	3	u32	0	6	136	s0|s1|s2|s3|s4|s5|s6|s7|fp|ra	gp|orphan
 0x800172A8	608	func_800172A8	medium	4	u32	1	1	40	s0|s1|s2|ra	gp|orphan
 0x80017508	152	func_80017508	verified	3	u32	5	2	40	s0|s1|s2|s3|ra
@@ -174,7 +174,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x8001C148	204	func_8001C148	low	4	u32	1	0	0		leaf|orphan
 0x8001C214	104	func_8001C214	medium	4	u32	9	1	40	ra	orphan
 0x8001C27C	12	func_8001C27C	high	2	u32	3	0	0		leaf
-0x8001C288	8	func_8001C288	low	1	u32	1	0	0		leaf
+0x8001C288	368	func_8001C288	low	1	u32	1	0	0		leaf
 0x8001C290	360	func_8001C290	medium	4	u32	0	0	8		leaf|orphan
 0x8001C3F8	120	func_8001C3F8	high	2	u32	1	0	0		leaf
 0x8001C470	8	func_8001C470	high	1	void	2	0	0		leaf
@@ -337,16 +337,16 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x80023204	272	func_80023204	medium	1	u32	1	1	24	s0|ra	gp|addr_taken|orphan|indirect
 0x80023318	36	func_80023318	medium	0	void	0	1	24	ra	orphan
 0x8002333C	316	func_8002333C	verified	0	u32	1	8	56	s0|ra	gp
-0x80023478	4	func_80023478	low	0	u32	3	0	0		leaf|gp
+0x80023478	136	func_80023478	low	0	u32	3	0	0		leaf|gp
 0x8002347C	132	func_8002347C	medium	0	void	0	6	24	ra	gp|orphan
 0x80023500	40	func_80023500	medium	1	u32	1	0	0		leaf|addr_taken|orphan
 0x80023528	172	func_80023528	low	2	u32	2	0	0		leaf|orphan
 0x800235D4	296	func_800235D4	medium	1	u32	1	2	56	s0|s1|s2|s3|s4|ra	orphan
-0x800236FC	4	func_800236FC	low	0	void	1	0	0		leaf|gp|orphan
+0x800236FC	352	func_800236FC	low	0	void	1	0	0		leaf|gp|orphan
 0x80023700	348	func_80023700	medium	1	u32	0	4	40	s0|s1|ra	gp|orphan
-0x8002385C	4	func_8002385C	low	0	u32	2	0	0		leaf|gp
+0x8002385C	212	func_8002385C	low	0	u32	2	0	0		leaf|gp
 0x80023860	208	func_80023860	medium	0	u32	0	3	32	s0|s1|s2|ra	orphan
-0x80023930	4	func_80023930	low	0	u32	1	0	0		leaf|gp
+0x80023930	244	func_80023930	low	0	u32	1	0	0		leaf|gp
 0x80023934	240	func_80023934	medium	1	u32	0	2	24	ra	gp|orphan
 0x80023A24	144	func_80023A24	medium	0	u32	1	1	40	s0|s1|s2|s3|s4|ra	orphan
 0x80023AB4	324	func_80023AB4	medium	1	u32	1	3	48	s0|s1|s2|s3|s4|s5|s6|ra	orphan
@@ -356,7 +356,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x80023CA4	212	func_80023CA4	verified	3	u32	1	2	56	s0|s1|s2|ra	gp
 0x80023D78	268	func_80023D78	medium	0	u32	1	4	56	s0|s1|ra	gp|orphan
 0x80023E84	132	func_80023E84	verified	0	u32	5	4	24	s0|ra
-0x80023F08	4	func_80023F08	low	0	u32	1	0	0		leaf|gp|orphan
+0x80023F08	348	func_80023F08	low	0	u32	1	0	0		leaf|gp|orphan
 0x80023F0C	344	func_80023F0C	medium	0	u32	0	8	80	s0|s1|ra	gp|orphan
 0x80024064	4	func_80024064	low	0	u32	1	0	0		leaf|gp|orphan
 0x80024068	264	func_80024068	medium	2	u32	0	5	40	s0|s1|s2|s3|ra	orphan
@@ -411,7 +411,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x800271A8	872	func_800271A8	medium	0	u32	0	28	32	s0|s1|ra	gp|orphan
 0x80027510	2144	func_80027510	medium	0	u32	1	32	48	s0|s1|s2|s3|ra	gp|orphan
 0x80027D70	44	func_80027D70	medium	0	u32	1	1	24	ra	gp|orphan
-0x80027D9C	4	func_80027D9C	low	0	u32	1	0	0		leaf|gp|orphan
+0x80027D9C	204	func_80027D9C	low	0	u32	1	0	0		leaf|gp|orphan
 0x80027DA0	200	func_80027DA0	medium	0	u32	0	3	32	s0|s1|ra	gp|orphan
 0x80027E68	84	func_80027E68	verified	0	u32	1	1	24	ra	gp
 0x80027EBC	40	func_80027EBC	verified	0	void	1	2	24	ra
@@ -436,7 +436,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x800295E8	104	func_800295E8	verified	1	u32	1	2	24	s0|ra
 0x80029650	208	func_80029650	verified	1	u32	4	1	32	s0|s1|ra
 0x80029720	40	func_80029720	high	0	u32	1	0	0		leaf|gp
-0x80029748	4	func_80029748	low	0	u32	1	0	0		leaf|gp|orphan
+0x80029748	420	func_80029748	low	0	u32	1	0	0		leaf|gp|orphan
 0x8002974C	416	func_8002974C	medium	1	u32	0	3	32	ra	gp|orphan
 0x800298EC	136	func_800298EC	high	1	u32	2	1	0	s0|ra
 0x80029974	236	func_80029974	high	1	u32	1	3	0	s0|ra	gp
@@ -816,7 +816,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x800496D4	96	func_800496D4	medium	2	u32	0	1	24	s0|ra	gp|orphan
 0x80049734	104	func_80049734	verified	1	u32	1	3	24	s0|ra	gp
 0x8004979C	12	func_8004979C	high	1	void	1	0	0		leaf|gp
-0x800497A8	4	func_800497A8	low	0	u32	2	0	0		leaf|gp
+0x800497A8	328	func_800497A8	low	0	u32	2	0	0		leaf|gp
 0x800497AC	324	func_800497AC	medium	0	u32	0	1	40	s0|s1|s2|s3|ra	gp|orphan
 0x800498F0	144	func_800498F0	verified	1	u32	3	1	24	ra	gp
 0x80049980	696	func_80049980	verified	4	u32	3	3	136	s0|s1|s2|s3|s4|ra	gp
@@ -1073,7 +1073,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x80063134	24	func_80063134	high	0	u32	1	0	0		leaf|gp
 0x8006314C	72	func_8006314C	high	2	u32	5	0	0		leaf|gp
 0x80063194	120	func_80063194	high	1	u32	5	0	0		leaf|gp
-0x8006320C	4	func_8006320C	low	0	u32	1	0	0		leaf|gp
+0x8006320C	540	func_8006320C	low	0	u32	1	0	0		leaf|gp
 0x80063210	536	func_80063210	medium	4	u32	0	3	136	s0|s1|s2|s3|s4|s5|s6|s7|fp|ra	gp|orphan
 0x80063428	204	func_80063428	verified	0	u32	1	4	24	ra	gp
 0x800634F4	4	func_800634F4	low	0	void	1	0	0		leaf|gp
@@ -1110,7 +1110,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x8006943C	140	func_8006943C	high	1	u32	2	0	0		leaf
 0x800694C8	184	func_800694C8	low	4	u32	3	0	0		leaf|gp|orphan
 0x80069580	40	func_80069580	high	2	u32	4	0	0		leaf
-0x800695A8	4	func_800695A8	low	0	u32	1	0	0		leaf|gp|orphan
+0x800695A8	1168	func_800695A8	low	0	u32	1	0	0		leaf|gp|orphan
 0x800695AC	1164	func_800695AC	medium	0	u32	0	2	48	s0|s1|s2|s3|s4|s5|s6|ra	gp|orphan
 0x80069A38	228	func_80069A38	high	1	u32	2	0	0		leaf
 0x80069B1C	60	func_80069B1C	high	0	u32	1	0	0		leaf
@@ -1123,7 +1123,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x8006A880	12	func_8006A880	high	0	void	1	0	0		leaf|gp
 0x8006A88C	12	func_8006A88C	high	0	void	1	0	0		leaf|gp
 0x8006A898	128	func_8006A898	medium	1	u32	1	1	24	s0|ra	orphan
-0x8006A918	4	func_8006A918	low	0	u32	1	0	0		leaf|gp|orphan
+0x8006A918	468	func_8006A918	low	0	u32	1	0	0		leaf|gp|orphan
 0x8006A91C	464	func_8006A91C	medium	1	u32	0	5	40	s0|s1|s2|s3|ra	gp|orphan
 0x8006AAEC	76	func_8006AAEC	high	1	u32	7	0	0		leaf|gp
 0x8006AB38	376	func_8006AB38	verified	1	u32	1	2	40	s0|s1|s2|s3|s4|ra
@@ -1240,9 +1240,9 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x800788F0	580	func_800788F0	verified	4	u32	18	7	64	s0|s1|s2|s3|s4|s5|s6|s7|fp|ra	gp
 0x80078B34	100	func_80078B34	high	3	u32	11	0	0		leaf
 0x80078B98	240	func_80078B98	medium	0	u32	1	1	64	s0|s1|s2|s3|s4|s5|s6|ra	orphan
-0x80078C88	4	func_80078C88	low	0	u32	1	0	0		leaf|gp|orphan
+0x80078C88	328	func_80078C88	low	0	u32	1	0	0		leaf|gp|orphan
 0x80078C8C	324	func_80078C8C	medium	0	u32	0	3	32	s0|s1|ra	gp|orphan
-0x80078DD0	4	func_80078DD0	low	0	u32	1	0	0		leaf|gp
+0x80078DD0	4484	func_80078DD0	low	0	u32	1	0	0		leaf|gp
 0x80078DD4	4480	func_80078DD4	medium	0	u32	0	21	144	s0|s1|s2|s3|s4|s5|s6|s7|fp|ra	gp|orphan|indirect
 0x80079F54	140	func_80079F54	verified	0	u32	1	2	24	s0|ra	gp|addr_taken
 0x80079FE0	196	func_80079FE0	medium	1	u32	0	1	32	s0|s1|s2|ra	orphan
@@ -1297,7 +1297,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x8007F128	208	func_8007F128	verified	4	u32	2	1	56	ra
 0x8007F1F8	976	func_8007F1F8	medium	2	u32	0	11	88	s0|s1|s2|s3|s4|s5|s6|s7|ra	gp|orphan
 0x8007F5C8	8	func_8007F5C8	high	0	u32	1	0	0		leaf|addr_taken
-0x8007F5D0	4	func_8007F5D0	low	0	u32	2	0	0		leaf|gp
+0x8007F5D0	72	func_8007F5D0	low	0	u32	2	0	0		leaf|gp
 0x8007F5D4	68	func_8007F5D4	medium	0	u32	0	1	24	ra	gp|orphan
 0x8007F618	48	func_8007F618	verified	0	void	1	2	24	ra	gp|addr_taken
 0x8007F648	48	func_8007F648	medium	1	u32	0	1	24	ra	gp|orphan
@@ -1334,7 +1334,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x8008227C	16	func_8008227C	low	0	u32	1	0	0		leaf|gp|orphan
 0x8008228C	64	func_8008228C	high	1	u32	1	0	0		leaf|gp|addr_taken
 0x800822CC	140	func_800822CC	verified	1	u32	2	3	40	s0|s1|s2|s3|ra	gp
-0x80082358	4	func_80082358	low	0	u32	1	0	0		leaf|gp
+0x80082358	372	func_80082358	low	0	u32	1	0	0		leaf|gp
 0x8008235C	368	func_8008235C	medium	1	u32	0	3	48	s0|s1|s2|s3|s4|s5|s6|ra	gp|orphan
 0x800824CC	224	func_800824CC	verified	1	u32	1	2	48	s0|s1|s2|s3|s4|s5|ra
 0x800825AC	144	func_800825AC	verified	1	u32	1	1	32	s0|s1|ra	gp
@@ -1360,13 +1360,13 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x8008352C	272	func_8008352C	medium	1	u32	1	2	56	s0|s1|s2|s3|s4|s5|s6|s7|fp|ra	gp|orphan
 0x8008363C	296	func_8008363C	medium	1	u32	1	2	40	s0|s1|s2|ra	gp|orphan
 0x80083764	208	func_80083764	high	4	u32	2	0	0		leaf
-0x80083834	4	func_80083834	low	0	u32	1	0	0		leaf|gp
+0x80083834	476	func_80083834	low	0	u32	1	0	0		leaf|gp
 0x80083838	472	func_80083838	medium	2	u32	0	2	48	s0|s1|s2|s3|s4|s5|s6|ra	gp|orphan
 0x80083A10	1792	func_80083A10	verified	4	u32	2	11	160	s0|s1|s2|s3|s4|s5|ra	break|gp
 0x80084110	180	func_80084110	medium	1	u32	1	5	32	s0|s1|s2|ra	orphan
 0x800841C4	16	func_800841C4	low	0	u32	1	0	0		leaf|gp
 0x800841D4	452	func_800841D4	medium	3	u32	0	1	24	ra	break|gp|orphan
-0x80084398	4	func_80084398	low	0	u32	1	0	0		leaf|gp|orphan
+0x80084398	1096	func_80084398	low	0	u32	1	0	0		leaf|gp|orphan
 0x8008439C	1092	func_8008439C	medium	3	u32	0	7	72	s0|s1|s2|s3|s4|s5|s6|s7|fp|ra	break|gp|orphan
 0x800847E0	2196	func_800847E0	high	3	u32	1	0	0		leaf|gp
 0x80085074	436	func_80085074	verified	0	u32	2	3	32	ra	gp|addr_taken
@@ -1387,24 +1387,24 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x80085AC4	4	func_80085AC4	low	0	u32	3	0	0		leaf|gp
 0x80085AC8	388	func_80085AC8	low	2	u32	0	9	0	s0|s1|ra	gp|orphan
 0x80085C4C	720	func_80085C4C	medium	4	u32	1	16	56	s0|s1|s2|s3|s4|s5|ra	gp|orphan
-0x80085F1C	4	func_80085F1C	low	0	u32	3	0	0		leaf|gp
+0x80085F1C	432	func_80085F1C	low	0	u32	3	0	0		leaf|gp
 0x80085F20	428	func_80085F20	medium	0	u32	0	0	40	s0|s1|s2|s3|s4	leaf|gp|orphan
 0x800860CC	104	func_800860CC	verified	0	void	1	1	24	ra	gp
 0x80086134	48	func_80086134	verified	0	void	1	2	24	ra	gp
 0x80086164	4	func_80086164	low	0	void	1	0	0		leaf|gp
 0x80086168	124	func_80086168	medium	1	void	0	1	24	ra	gp|orphan
 0x800861E4	1484	func_800861E4	verified	4	u32	3	18	56	s0|s1|s2|s3|s4|s5|s6|s7|ra	gp
-0x800867B0	4	func_800867B0	low	0	u32	1	0	0		leaf|gp|orphan
+0x800867B0	156	func_800867B0	low	0	u32	1	0	0		leaf|gp|orphan
 0x800867B4	152	func_800867B4	medium	1	u32	0	1	24	ra	orphan
 0x8008684C	260	func_8008684C	medium	3	u32	3	3	32	s0|s1|ra	gp|orphan
 0x80086954	132	func_80086954	medium	2	u32	0	1	24	ra	gp|orphan
 0x800869D8	116	func_800869D8	low	1	u32	2	0	0		leaf|gp|orphan
 0x80086A4C	116	func_80086A4C	low	1	u32	2	0	0		leaf|gp|orphan
-0x80086AC0	4	func_80086AC0	medium	0	u32	2	0	0		leaf|gp|addr_taken|orphan
+0x80086AC0	436	func_80086AC0	medium	0	u32	2	0	0		leaf|gp|addr_taken|orphan
 0x80086AC4	432	func_80086AC4	medium	0	u32	0	8	24	s0|ra	gp|orphan
 0x80086C74	256	func_80086C74	medium	3	u32	1	3	136	s0|s1|s2|ra	gp|orphan
 0x80086D74	64	func_80086D74	low	0	u32	0	0	0		leaf|gp|orphan
-0x80086DB4	4	func_80086DB4	low	0	u32	1	0	0		leaf|gp|orphan
+0x80086DB4	340	func_80086DB4	low	0	u32	1	0	0		leaf|gp|orphan
 0x80086DB8	336	func_80086DB8	medium	0	u32	0	6	32	s0|s1|s2|ra	gp|orphan
 0x80086F08	20	func_80086F08	low	1	u32	1	0	0		leaf|gp|orphan
 0x80086F1C	20	func_80086F1C	low	0	u32	1	0	0		leaf|gp|orphan
@@ -1428,7 +1428,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x800879DC	864	func_800879DC	medium	3	u32	1	13	56	s0|s1|s2|s3|s4|s5|s6|ra	gp|orphan
 0x80087D3C	12	func_80087D3C	high	0	u32	1	0	0		leaf|gp
 0x80087D48	344	func_80087D48	verified	0	u32	2	8	24	ra	gp
-0x80087EA0	4	func_80087EA0	low	0	u32	1	0	0		leaf|gp
+0x80087EA0	640	func_80087EA0	low	0	u32	1	0	0		leaf|gp
 0x80087EA4	636	func_80087EA4	medium	1	u32	0	15	48	s0|s1|ra	gp|orphan
 0x80088120	4	func_80088120	low	0	u32	1	0	0		leaf|gp
 0x80088124	1444	func_80088124	medium	3	u32	0	26	128	s0|s1|s2|s3|s4|s5|s6|s7|fp|ra	gp|orphan
