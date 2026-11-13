@@ -766,6 +766,13 @@
       "remove_starts": [
         "0x80087EA4"
       ]
+    },
+    {
+      "address": "0x800223B0",
+      "size": "0xD4",
+      "remove_starts": [
+        "0x800223BC"
+      ]
     }
   ]
 }
