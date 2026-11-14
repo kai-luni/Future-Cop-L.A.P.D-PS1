@@ -31,7 +31,7 @@ verify: $(EXE)
 	$(PYTHON) tools/verify_exe.py "$(EXE)"
 
 split: setup verify
-	$(VENV_PYTHON) -m splat split config/us/splat.yaml
+	$(PYTHON) tools/split_staged.py $(VENV_PYTHON)
 
 function-inventory: split
 	$(PYTHON) tools/inventory_functions.py asm/us/main.s build/us/function_candidates.json
