@@ -780,6 +780,13 @@
       "remove_starts": [
         "0x80078300"
       ]
+    },
+    {
+      "address": "0x8008D7B0",
+      "size": "0x1C",
+      "remove_starts": [
+        "0x8008D7C0"
+      ]
     }
   ]
 }

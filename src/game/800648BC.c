@@ -1,0 +1,20 @@
+/* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+__asm__(
+    ".set noreorder\n"
+    ".globl func_800648BC\n"
+    ".ent func_800648BC\n"
+    "func_800648BC:\n"
+    ".word 0x48846000   /* mtc2       $a0, $12 */\n"
+    ".word 0x48856800   /* mtc2       $a1, $13 */\n"
+    ".word 0x48867000   /* mtc2       $a2, $14 */\n"
+    ".word 0x00000000   /* nop */\n"
+    ".word 0x00000000   /* nop */\n"
+    ".word 0x4B400006   /* nclip */\n"
+    ".word 0x4802C000   /* mfc2       $v0, $24 */\n"
+    ".word 0x00000000   /* nop */\n"
+    ".word 0x28420000   /* slti       $v0, $v0, 0x0 */\n"
+    ".word 0x03E00008   /* jr         $ra */\n"
+    ".word 0x00000000   /* nop */\n"
+    ".end func_800648BC\n"
+    ".set reorder\n"
+);
