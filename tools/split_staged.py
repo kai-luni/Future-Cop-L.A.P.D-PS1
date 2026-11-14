@@ -110,12 +110,7 @@ def main():
             outputs = [
                 p
                 for p in stage.rglob("*")
-                if p.is_file()
-                and (
-                    p.relative_to(stage) not in before
-                    or hashlib.sha256(p.read_bytes()).digest()
-                    != before[p.relative_to(stage)]
-                )
+                if p.is_file() and p.relative_to(stage) not in before
             ]
             listing = stage / "asm/us/main.s"
             if listing not in outputs:

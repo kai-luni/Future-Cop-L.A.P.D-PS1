@@ -4,10 +4,14 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tools"))
+import split_staged
 
 
 class StagedSplitTests(unittest.TestCase):
@@ -57,3 +61,36 @@ exit """ + ("9" if fail_splat else "0") + "\n")
 
     def test_failed_window_validation_preserves_existing_listing(self):
         self.run_split(False)
+
+    def test_splat_does_not_overwrite_existing_input_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("config/us", "src", "baseroms/us", "include", "asm/us"):
+                (root / name).mkdir(parents=True)
+            header = root / "include/include_asm.h"
+            header.write_text("USER CUSTOM HEADER\n")
+            (root / "config/us/splat_windows.tsv").write_text(
+                "name\taddress\tsize\nfunc_80010000\t0x80010000\t0x4\n"
+            )
+            (root / "baseroms/us/SLUS_007.39").write_bytes(bytes(0x804))
+            (root / "asm/us/main.s").write_text("OLD\n")
+
+            def fake_splat(args, cwd, check):
+                stage = Path(cwd)
+                (stage / "asm/us").mkdir(parents=True)
+                (stage / "build/us").mkdir(parents=True)
+                (stage / "asm/us/main.s").write_text(
+                    "nonmatching func_80010000, 0x4\n"
+                    "glabel func_80010000\n"
+                    "/* 000800 80010000 00000000 */ nop\n"
+                    "endlabel func_80010000\n"
+                )
+                for name in ("undefined_syms_auto.txt", "undefined_funcs_auto.txt"):
+                    (stage / "build/us" / name).write_text("")
+                (stage / "include/include_asm.h").write_text("REGENERATED HEADER\n")
+
+            with mock.patch.object(split_staged, "ROOT", root), mock.patch.object(
+                split_staged.subprocess, "run", side_effect=fake_splat
+            ), mock.patch.object(sys, "argv", ["split_staged"]):
+                split_staged.main()
+            self.assertEqual(header.read_text(), "USER CUSTOM HEADER\n")
