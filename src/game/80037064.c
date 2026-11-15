@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Graphics > GTE > Matrix Build
 #include "game/types.h"
 
 struct Model;
@@ -79,6 +80,35 @@ extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s
 extern void func_8001A180(struct Vec3s32 *vector);
 extern void func_800193F8(struct Vec3s32 *axis, struct Basis *basis);
 
+/**
+ * @brief Spawn setup of a directed entity: copies the template state, binds
+ *        the model and builds the basis from the direction vector.
+ *
+ * @param dest Destination entity block.
+ * @param holder Template holder; +8 the state block.
+ * @param arg2 Forwarded to the shared message-2 hook.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8002AD58(2, dest, holder, arg2) runs first. The state's position,
+ * model, angles, four words +0x34..+0x40, the linked block +0x44 and the
+ * parameter bytes are copied; the linked block is dropped when its +8 word
+ * is <= 0 (its x component). Flags become (flags | 0x840002) & 0xFFFFDFFF.
+ * The direction +0x28 is copied to +0xA0/+0x78; a zero vector defaults to
+ * (0, 0, 0x10000), otherwise func_8001A180 normalises it and func_800193F8
+ * builds the basis into the instance matrix.
+ *
+ * @par Likely role
+ * The message-2 path of the handler func_80037708: a projectile or vehicle
+ * that starts with a template-defined heading; the default +z direction is
+ * the shared "forward" convention.
+ *
+ * @par Unknown
+ * The meaning of flag bits 0x840002 and the cleared bit 0x2000.
+ *
+ * @par Callers
+ * func_80037708.
+ */
 void func_80037064(struct Dest37064 *dest, struct Holder37064 *holder, s32 arg2)
 {
     struct State37064 *p;

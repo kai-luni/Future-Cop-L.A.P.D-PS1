@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -81,6 +82,33 @@ struct Entity {
 extern void func_8002AD58(s32 message, struct Entity *self, struct EntitySpawn *other, s32 arg3);
 extern void func_80013BD8(struct ModelInstance *instance, void *model, s32 options);
 
+/**
+ * @brief Spawn setup of a linked entity: copies the template state, binds
+ *        the model and resolves the two link blocks.
+ *
+ * @param self Destination entity block.
+ * @param other Spawn record; +8 the template data.
+ * @param arg2 Forwarded to the shared message-2 hook.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8002AD58(2, ...) runs first; position, model (func_80013BD8), the
+ * parameter bytes and words are copied from the template. unkB4 == 20
+ * raises flag 0x200000. The link block unk44 provides unkC4 (its +8 id) and
+ * unkC8 (its +0x5C position); the optional child block unk40 provides
+ * unkB8 (its +8 id) or 0. Flags become (flags | 0x840002) & ~0x2000.
+ *
+ * @par Likely role
+ * The message-2 path of the handler func_80036E6C: a carried or attached
+ * object that keeps references to both its parent link and an optional
+ * child; the value 20 marks a special subclass.
+ *
+ * @par Unknown
+ * What subclass 20 and flag 0x200000 encode.
+ *
+ * @par Callers
+ * func_80036E6C.
+ */
 void func_80036940(struct Entity *self, struct EntitySpawn *other, s32 arg2)
 {
     struct EntityData *data;

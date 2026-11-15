@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Graphics > Animation
 #include "game/types.h"
 
 struct Model { u8 pad[0x10]; void *data; };
@@ -26,6 +27,40 @@ extern s32 func_8002ACB4(struct Object *, s32);
 extern void *func_800448D8(void *, s32, s32, u8);
 extern void func_8003B898(u8, struct Object *, s32, u16, s32);
 
+/**
+ * @brief Message handler of object type 27: spawn, attack tick, frame draw
+ *        and an animation-trigger case.
+ *
+ * @param message Handler case (1 type, 2 spawn, 3 draw, 4 trigger, 6 tick,
+ *        16 value query).
+ * @param object Entity block; +0x1C a state word, +0x20 the column,
+ *        +0xC8 the animation track, +0xDC the state byte, +0x110 the frame
+ *        value, +0x111 the animation index.
+ * @param data Case payload.
+ * @return Case 1: 0x114. Case 16: the frame value. Case 4: 0. Other cases:
+ *         the sub-helper or base results.
+ *
+ * @par Confirmed
+ * Case 2 runs the base hook then func_8002DFC4; case 6 -> func_8002E630
+ * (the attack dispatcher tick); case 3 draws with func_8002ACB4(object,
+ * object->value); case 4 (when state != 4/5 and the model data and anim
+ * index are valid) starts the animation via func_800448D8(anim, index, 1,
+ * 1), sets state1C = 1, state = 4, flag bit 0, and registers map occupancy
+ * through func_8003B898(column, object, 0, (flags19 >> 3) & 0x1E, 0).
+ * Unhandled cases fall through to func_8002AD58.
+ *
+ * @par Likely role
+ * One of the numbered entity handlers registered by func_8002AE54 (case 27
+ * returns this address): an attackable object whose case 4 plays a reaction
+ * animation and marks its map cell.
+ *
+ * @par Unknown
+ * What the type id 0x114 selects and the state 4/5 semantics.
+ *
+ * @par Callers
+ * No direct callers in the call graph. func_8002AE54 returns the address
+ * for object type 27, so the dispatcher reaches it indirectly.
+ */
 s32 func_8002ED7C(s32 message, struct Object *object, void *data)
 {
     switch (message) {

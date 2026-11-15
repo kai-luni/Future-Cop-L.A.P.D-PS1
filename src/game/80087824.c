@@ -1,3 +1,4 @@
+// Categories: Platform > Sound > Init | Platform > SPU
 typedef struct State {
     char pad[0x7B10];
     int callback;
@@ -25,6 +26,37 @@ extern int func_80098FB8(void *);
 extern int func_80091510(void *);
 extern char D_80086950[];
 extern char D_80086D74[];
+/**
+ * @brief Initialises the sound subsystem state: buffers, DMA latches and
+ *        the optional interrupt callback.
+ *
+ * @param state The 0x7B80-byte state block (stored in D_8009F4D8).
+ * @param arg_c, arg_d The two buffer pointers.
+ * @param arg_a, arg_b Their sizes.
+ * @param arg_e Forwarded to both buffer setups.
+ * @param arg_enabled Non-zero installs the callback.
+ * @return 1 on success, 0 when state or a required argument is null.
+ *
+ * @par Confirmed
+ * func_8001E4C0 zeroes the block; 0x300 bytes at +0x7811 are set to 2 in
+ * 0x10 steps. one = 1, zero = 0, the five arguments are stored,
+ * func_80086C74 configures both buffers. Under func_8008C9C0 (interrupts
+ * off): irq = func_80098BF8(0), other = func_80098FB8(D_80086950) (the
+ * SPU DMA latch), enabled stored, callback = func_80091510(D_80086D74)
+ * when enabled else 0; func_8008C9E0 re-enables interrupts.
+ *
+ * @par Likely role
+ * The one-time sound init behind func_80088120: the 0x300 bytes of 2s
+ * are likely the 768 voice-state nibbles, the two buffers the SPU transfer
+ * areas, and D_80086950/D_80086D74 the DMA and IRQ callback descriptors.
+ *
+ * @par Unknown
+ * The layout of the state block beyond the named fields.
+ *
+ * @par Callers
+ * func_80088120 (verified in the retail listing; the call-graph edge is
+ * missing).
+ */
 int func_80087824(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b, int arg_e, int arg_enabled)
 {
     register void *c __asm__("$19") = arg_c;

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning > Player Setup | Graphics > Camera > Position Update
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -118,6 +119,64 @@ extern void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 
 extern void func_80017860(s32 yaw, s32 pitch, s32 roll);
 extern void func_800177AC(struct Vec3s32 *position);
 
+/**
+ * @brief Resets an actor's mobility state from its spawn record and places the
+ *        third-person view that belongs to it.
+ *
+ * @param arg0 Spawn record: a three-word position at +0x08 and the heading at
+ *        +0x24 (u16, engine angle units).
+ * @param arg1 The object: its world position at +0x50, the pointer to the
+ *        0x328 state block at +0xAC, the heading written at +0xB0, +0xB2/+0xB4
+ *        and +0xBE/+0xC0 cleared.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * 1. The nine-entry table D_8009AD08 (s16 angle, s16 pitch, s32 distance, 12
+ *    data bytes) is resolved lazily: when the first entry's distance is
+ *    negative, all nine distances are recomputed with
+ *    func_800564A8(entry->pitch).
+ * 2. heading = arg0 +0x24 is stored at arg1 +0xB0; when its signed 16-bit value
+ *    is negative the stored heading is negated and state +0xAD and +0x2FD are
+ *    both set to 1, otherwise both are 0.
+ * 3. State +0xC1 selects one of the two colour triples of D_8009FA94
+ *    (+0x28/+0x2C/+0x30 for 0, +0x34/+0x38/+0x3C for 1) into state +0x90,
+ *    +0x91 and +0x92.
+ * 4. The state block is then overwritten: +0x30 = 0, +0x34 = 0x800000, +0x38 =
+ *    2, +0x3C = 0x2000000, +0x40 = 2, +0x44 = 0x40000, +0x48 = 2, +0x4C =
+ *    0x1000000, +0x50 = 2, +0x6C = 0, +0xA0 = 0, +0xA4 = 0, +0xA5 = 3, +0xA6
+ *    and +0xA7 = 1, +0xA8 = 0, +0xAA = 0, +0xAE = 0x384, +0xBC = 0, +0xC0 = 0,
+ *    +0x2FC = -1, +0x310 = 0, +0x312 = -1, +0x31A = 0, +0x31C = 0x80000,
+ *    +0x320 = 2, and func_8005A070 copies 20 bytes from D_8009AFA0 into
+ *    +0x54.
+ * 5. The object position is copied from the record and its y replaced by the
+ *    ground height (func_80066F78(&arg1 +0x50, 0, 0, 0)), which is also stored
+ *    at state +0xD4 while +0xD8 is cleared.
+ * 6. A new id comes from func_80017994 (a node appended to the list behind
+ *    D_8009F588 with the next running id) and is stored in the byte at state
+ *    +0xAC; func_80017B60(id) selects the map/camera record used below.
+ * 7. The offset entry is D_8009AD08 indexed by the byte at +0x01 of the record
+ *    pointed to by D_8009AEC4. func_8005612C(&arg1 +0x50, heading, heading +
+ *    entry->angle, entry->pitch, entry->distance, entry->data, &position,
+ *    state +0xA8, state +0xBC) computes the view point, func_80017860(heading +
+ *    entry->angle, entry->pitch, 0) sets the camera rotation and
+ *    func_800177AC(&position) its position.
+ * 8. The entry's 12 data bytes are copied to state +0xB0..+0xBB.
+ *
+ * @par Likely role
+ * The spawn/respawn reset of a player-controlled actor: it clears everything the
+ * drive model of func_80055988 relies on, gives the actor its own map record and
+ * parks the chase camera behind it using a per-view offset preset. The negative
+ * heading case Likely marks a spawn that faces backwards.
+ *
+ * @par Unknown
+ * The meaning of the constants (0x800000, 0x1000000, 0x2000000, 0x40000,
+ * 0x80000, 0x384, the 3 at +0xA5) and of +0xAD, which func_80055988 treats as
+ * the current form; also what distinguishes the two colour triples and what the
+ * 12 data bytes copied into +0xB0 describe.
+ *
+ * @par Callers
+ * func_800579D4, right after it allocated the actor's 0x328 state block.
+ */
 void func_800573A4(struct Arg0 *arg0, struct Arg1 *arg1)
 {
     struct Entity *entity;

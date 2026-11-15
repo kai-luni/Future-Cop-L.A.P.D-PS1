@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Game Engine > State Machine
 #include "game/types.h"
 
 struct ModelInstance;
@@ -70,6 +71,74 @@ extern void func_8004D958(struct Entity *entity);
 extern void func_80053A74(void *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void func_800549F0(void *arg0, s32 arg1, s32 arg2, s32 arg3);
 
+/**
+ * @brief Per-tick update of the transformable player unit: runs the form
+ *        change state machine, hands the progress to the animations, the shadow
+ *        and the model instances, then dispatches to one of the two physics
+ *        integrators.
+ *
+ * @param arg0 Entity block. +0x50/+0x54/+0x58 the world position, +0xAC the
+ *        state block s, +0xC8 an animation track array, +0xD4 a model frame,
+ *        +0xF0/+0xF2 the vertical offset bookkeeping of the transition.
+ * @param arg1 step Elapsed ticks of this frame; drives the transition progress.
+ * @param arg2 parameter Physics sub-step count, passed through to the
+ *        integrator unchanged.
+ * @param arg3 Output word, cleared first; bit 0 reports that a form change
+ *        started or finished this tick.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * 1. The output word is zeroed first, then a pending impulse s +0xE0/+0xE4/
+ *    +0xE8 is added to the position and cleared.
+ * 2. flags = s +0x30, forced to 0 while s +0x310 is non-zero.
+ * 3. (flags & 0x2800000) == 0x2800000 with s +0xC0 == 0, D_8009F9A0 == 0 and
+ *    s +0xDE == 0 triggers a request: with s +0x146 set the sound
+ *    func_80046C84(0x2A, obj) plays, otherwise the target form s +0x2FD flips
+ *    to 1 - s +0xAD.
+ * 4. s +0xAD != s +0x2FD starts the transition. With s +0xBC == 0 the direction
+ *    s +0xC0 becomes 1, clips 2 of the track at model +0xA0 and 0xC of the
+ *    track at obj +0xC8 are played forward, s +0xAD = 1 and s +0xC2 = 0;
+ *    otherwise s +0xC0 = -1 and both clips play backwards. s +0x2FD = s +0xAD
+ *    and bit 0 of the output word is set.
+ * 5. While s +0xC0 != 0 the progress s +0xBC moves by +/-step * 0xA0. At the
+ *    low end it clamps to 0, s +0xC0 is cleared, clips 0 and 0 are played,
+ *    obj +0xF0 and s +0xDC are cleared, s +0xAD and s +0x2FD go back to 0 and
+ *    func_800471C4(0xFF, obj) stops the sound track. At 0x10000 or above it
+ *    clamps, clears s +0xC0, plays clips 1 and 0xD and clears obj +0xF0 and
+ *    s +0xDC.
+ * 6. func_800518A8(obj +0x28, s +0xEC, s +0xBC, obj) drives the shadow/cone
+ *    effect, the body is lifted by height = (s +0xBC << 12) >> 16 through
+ *    obj +0x54 and obj +0xF2, and while the transition runs the two clips are
+ *    positioned with func_80044B34(obj, track, s +0xBC, 0) and the sub-system
+ *    flag is set by func_8001E930(obj, 1) (0 otherwise).
+ * 7. func_800175F8 sets both model instances to their current frame
+ *    (model +0xAC and obj +0xD4), then flags and s +0x30 are masked to 0xC0000
+ *    and 0x54C0000.
+ * 8. With D_8009F9A0 null the masking step is skipped when s +0x31A <= 0 and
+ *    s +0xDE == 0; with D_8009F9A0 set and s +0x30 carrying 0x80000,
+ *    func_8004D958(D_8009F9A0) despawns that object and s +0x320 = 3. Both
+ *    words are then masked to 0xC0000.
+ * 9. When bits 0x200000 and 0x100000 of flags are both set, 0x100000 is
+ *    cleared, so at most one strafe direction survives.
+ * 10. Dispatch: s +0xAD != 1 calls func_800549F0(obj, step, parameter, flags),
+ *    otherwise func_80053A74(obj, step, parameter, flags).
+ *
+ * @par Likely role
+ * The per-frame update of the player-controlled transformer: s +0xAD is the
+ * current form (0 = walker, 1 = hover), s +0x2FD the requested one, bit 0 of
+ * the output word tells the caller to play the transformation sound, and the
+ * two integrators are the walker and the hover drive models.
+ *
+ * @par Unknown
+ * What the 0xC0000 and 0x54C0000 masks keep, what s +0x146 and s +0xDE signal,
+ * what the state 3 written to s +0x320 means, and what D_8009F9A0 represents
+ * (an attached or active entity whose 0x80000 flag forces a detach).
+ *
+ * @par Callers
+ * func_800586D4, a trampoline that saves $sp in D_8009FAD8, switches the stack
+ * to the scratchpad at 0x1F8003F4 for the duration of the call and restores it
+ * afterwards.
+ */
 void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
 {
     register struct UnkS2_55988 *obj __asm__("$18");

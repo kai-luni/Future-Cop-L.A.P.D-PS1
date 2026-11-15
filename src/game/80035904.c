@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Graphics > Model Renderer > Instance Setup | Game Engine > Entity Lifecycle
 #include "game/types.h"
 
 struct Model;
@@ -109,6 +110,59 @@ extern void func_80044988(u8 *data, struct AnimTrack *track, u8 forward, s32 ind
 extern s32 func_80019668(void);
 extern void func_800193F8(struct Vec3 *axis, void *basis);
 
+/**
+ * @brief Message 2 (initialise) of the model-backed entity handled by func_80036624:
+ *        binds the descriptor's model to the object's instance, starts its animation
+ *        and copies the descriptor's colours, extents, rates and linked records.
+ *
+ * @param self Live entity; instance at +0x28 (model at +0, matrix from +0x04), position
+ *        +0x50 and +0x5C, animation track +0xE8, class bytes +0xDC/+0xDD, bound
+ *        records +0xC4 and +0xC8 with counts +0xC0 and +0xCC.
+ * @param arg1 Descriptor holder; +0x08 is the descriptor block read below.
+ * @param arg2 Forwarded to the base message-2 handler.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Binding:
+ * func_8002AD58(2, self, arg1, arg2) runs first (the base initialiser func_8002A5F4).
+ * func_80013BD8(&self->+0x28, descriptor +0x24, 0) then binds the model to the
+ * instance, and when the bound model has animation data at its +0x10,
+ * func_80044988(model + 0x10, &self->+0xE8, 1, 0) starts that track at clip 0.
+ *
+ * Field copy:
+ * +0xDC = descriptor +0x4D, +0xDD = +0x50, +0xD8 = +0x4E, +0x20 = +0x4C and +0x24
+ * gains 0x40000; +0xE0 = +0x30, +0x73 = +0x51 and +0xD6 = func_80019668() & 0xFFF
+ * (a random heading). The instance position is copied whole into +0xA8 and +0x5C and
+ * its three words are also stored shifted right by 8 into the short fields +0xA0,
+ * +0xA2 and +0xA4. +0x84 = +0x2C, +0xD4 = +0x48, +0xD2 = +0x4A and the rate words
+ * start at +0xB8 = 0x10000, +0xB4 = 0, +0xBC = 0. +0x1A = descriptor +0x1A and +0x21 = descriptor +0x40;
+ * when the class byte +0xDC is 0x15, +0x1C = descriptor +0x1A * 2.
+ *
+ * Linked records:
+ * +0xC4 takes descriptor +0x34 and its count word +0x08: a non-positive count drops
+ * the pointer, otherwise the count is kept at +0xC0; if the pointer survived, class
+ * 0x13 with +0xE0 == 1 bumps +0xE0 to 2. +0xC8 takes descriptor +0x38 the same way
+ * into +0xCC. +0xA6 = +0x3C >> 8, +0x78 = the vector at descriptor +0x28,
+ * +0xD0 = +0x44 >> 8 and +0xDA = 0x5DC.
+ *
+ * Tail:
+ * +0x24 = (+0x24 | 0x800002) & ~0x2000 (alive and script-driven, ground clamp off),
+ * then func_800193F8(&self->+0x78, &self->+0x28 matrix) builds the orthonormal basis
+ * whose third row is the stored axis.
+ *
+ * @par Likely role
+ * The spawn-time half of the class whose dispatcher func_80036624 answers 0xFC for
+ * message 1: the descriptor read here is the shared entity definition record, so this
+ * is where a placed object turns into a live, animated, collidable entity.
+ *
+ * @par Unknown
+ * What +0xE0 is (some mode word that is bumped to 2 for class 0x13), what the
+ * +0xD2/+0xD4 pair feeds, and whether the counts at +0x08 of the two linked records
+ * are polygon or node counts.
+ *
+ * @par Callers
+ * func_80036624, message 2 of its switch.
+ */
 void func_80035904(struct Self35904 *self, struct Arg35904 *arg1, s32 arg2)
 {
     struct Data35904 *data;

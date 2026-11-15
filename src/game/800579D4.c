@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Game Engine > Object Setup | Gameplay > Entity Update
 #include "game/types.h"
 
 struct Object;
@@ -69,6 +70,71 @@ extern s32 func_80067684(void *, s32);
 extern void func_8005A0C4(void *, s32, s32);
 extern void func_80051AF8(struct Object *);
 
+/**
+ * @brief Spawn (message 2) of the class-1 compound object: allocates the state
+ *        block, registers the object in the player table, binds three models,
+ *        spawns the child object and scales the health by the game mode.
+ *
+ * @param arg0 Object block: +0x1C health, +0x1E max health, +0x24 flags,
+ *            +0x28 model holder, +0x50 position, +0x72 status byte, +0x8C and
+ *            +0xB6 counters, +0xAC state block (written here), +0xC8 animation
+ *            track, +0xDC child pointer, +0xE0/+0xE4/+0xE8/+0xEC the four model
+ *            pointers.
+ * @param arg1 Spawn record: +0x04 model table (four slots read at +0x18,
+ *            +0x20, +0x28, +0x30), +0x08 spawn entry (u16 at +0x24, s8 ground
+ *            mode at +0x26, s8 preferred slot at +0x27).
+ * @param arg2 Forwarded unchanged to func_8002AD58 as its creation argument.
+ * @return Nothing (declared void; the class-1 dispatcher ignores the result).
+ *
+ * @par Confirmed
+ * 1. state = func_80017EBC(0x328, 2); the 16 s16 values at +0x00..+0x1F and the
+ *    four words at +0x20..+0x2F are zeroed.
+ * 2. func_8002AD58(2, obj, data, arg) runs the base create, then
+ *    func_80044988(obj->+0x28->+0x10, obj + 0xC8, 1, 0) attaches the animation
+ *    data in forward direction, +0x72 becomes (.. & 0xEF) | 0x20 and the global
+ *    D_8009FA0C is incremented.
+ * 3. Slot registration: the preferred slot from the record is kept only when
+ *    D_8009FA58[slot] is free, otherwise the first free entry of that table is
+ *    searched. The chosen slot goes to state +0xC1 and D_8009FA58[slot].
+ * 4. func_800573A4(entry, obj) initialises the placement, +0xC4 = 0, and the
+ *    four model pointers are read from the table slots (0 when a slot is null).
+ * 5. Three model instances are bound with func_80013BD8: +0x178 and +0x1C4 from
+ *    obj->+0xE4, +0x210 from obj->+0xE8.
+ * 6. obj->+0x24 = (.. & 0xFEFFFFAE) | 0x40800300, then child = func_80057914(obj)
+ *    receives flag 0x10 and both objects get flag 8.
+ * 7. Ground placement: the s8 at +0x26 picks the query mode (0 gives -1, 1
+ *    gives -2, n gives n - 2) and obj->+0x50.y becomes
+ *    func_80067684(&obj->+0x50, mode) + 0x200, half a unit above the ground.
+ *    The position is copied to state +0xC4 and the u16 at +0x24 to +0xD2.
+ * 8. Health: value = obj->+0x1E; in two-player mode (D_8009FA94->mode == 2) with
+ *    a zero unk5C it gains another 50 percent. The per-slot multiplier
+ *    (D_8009FA94->mode0 for slot 0, mode1 otherwise) scales it by 100, 125 or
+ *    150 percent for modes 0, 1 and 2; mode 3 forces the maximum - the value
+ *    becomes 0x31FF9C and D_8009FA8C[slot] is set to 1, so the division by 100
+ *    yields 0x7FFF. The result is clamped to 0x7FFF and stored in +0x1C and
+ *    +0x1E.
+ * 9. func_8005A0C4(state + 0x54, health, maxHealth) fills the gauge and
+ *    func_80051AF8(obj) runs the compound reset, so the object is fully armed
+ *    when the body returns.
+ * The state block's +0x311, +0x313, +0x2FE, +0x300, +0x174 and +0x176 fields
+ * are simply cleared here.
+ *
+ * @par Likely role
+ * The per-player spawn of a compound craft: it books one of the two slots of
+ * D_8009FA58, increases the global D_8009FA0C that selects the screen layout
+ * (1 or 2 players), scales the hit points with the per-player difficulty in
+ * D_8009FA94 and queues the companion object that handler D_80059ABC maintains.
+ * Mode 3 reads as a "maximum health" variant rather than a multiplier.
+ *
+ * @par Unknown
+ * What D_8009FA8C stores (a two-entry per-player byte array that several message
+ * handlers test before acting) and what D_8009FA94->unk5C gates in the
+ * two-player bonus.
+ *
+ * @par Callers
+ * func_8005908C only, the class-1 handler installed by func_8002AE54, which
+ * calls this body for message 2.
+ */
 void func_800579D4(struct Object *arg0, struct Data *arg1, s32 arg2)
 {
     register struct Object *obj __asm__("$16");

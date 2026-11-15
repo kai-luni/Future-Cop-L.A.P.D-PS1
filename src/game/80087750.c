@@ -1,3 +1,4 @@
+// Categories: Platform > Sound > Shutdown | Platform > SPU
 #include "game/types.h"
 
 typedef void (*SpuIrqCallback)(void);
@@ -25,6 +26,32 @@ extern void func_80098FB8(s32 value);
 extern void func_80091510(void *argument);
 extern void func_80087688(void);
 
+/**
+ * @brief Shuts the sound subsystem down: stops the DMA, waits for the
+ *        pending flag and restores the saved callbacks.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Under func_8008C9C0: func_800876EC, func_80098A78(0), then
+ * func_80098BF8(D_8009F4D8->unk7B14) restores the IRQ callback;
+ * func_8008C9E0 unmask. A busy loop waits for unk7B48 == 0. Under mask
+ * again: func_80098FB8(unk7B18) restores the SPU DMA latch, unk7B20 = 0,
+ * unk7B1C != 0 installs func_80091510(unk7B10), unk7B24 = 0; unmask and
+ * func_80087688 finish.
+ *
+ * @par Likely role
+ * The teardown counterpart of func_80087824 (both called by
+ * func_80088120): the busy wait drains the in-flight transfer before the
+ * latch is restored, so no IRQ fires into a freed state.
+ *
+ * @par Unknown
+ * What unk7B48 counts (likely the pending DMA words).
+ *
+ * @par Callers
+ * func_80088120 (verified in the retail listing; the call-graph edge is
+ * missing).
+ */
 void func_80087750(void)
 {
     func_8008C9C0();

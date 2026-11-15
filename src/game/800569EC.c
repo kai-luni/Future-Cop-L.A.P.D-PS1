@@ -1,3 +1,4 @@
+// Categories: Graphics > Camera > Chase Rig | Gameplay > Player | Graphics > Camera > Smoothing
 #include "game/types.h"
 
 struct Vec569EC { s32 x, y, z; };
@@ -104,6 +105,91 @@ extern void func_800177AC(struct Vec569EC *);
 
 #define RELOAD_OBJECT() (*(struct Obj569EC *volatile *)&object)
 
+/**
+ * @brief Chase-camera step of one player unit: selects the camera preset, probes
+ *        it against the map, then smooths yaw, pitch, boom length and eye offset
+ *        into the view record picked by the unit's camera id.
+ *
+ * @param object Unit object. +0xAC is the info/state block used below, +0x50 the
+ *        current position, +0x5C the previous position, +0x68 the zone/collision
+ *        handle, +0xB0 the heading.
+ * @param elapsed Frame step, in the same tick unit as the game's timers.
+ * @param speed Sub-tick count handed to the angle and offset smoothers (the caller
+ *        passes the odd-step accumulator, i.e. roughly half of elapsed).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Preset selection:
+ * func_8005780C is first called with the unit's button word at info +0x30 and the
+ * four-byte press/release phase record at info +0x44. A phase of 0 (the leading
+ * edge) with the restart byte +0x310 clear advances the preset byte +0xA4, wrapping
+ * from 7 to 0, and sets current +0xA6 = next +0xA7 = 1, timer +0xAA = 0 and
+ * cooldown +0xAE = 900. In presets 5 and 6 a failing func_80031B40(&object +0x50,
+ * object +0x68) - the map zone test over the nodes flagged 0x40 - resets +0xA4 to 0.
+ * The saved position and previous position are copied into a local work block and
+ * only the y component is replaced, by func_80056530(object, elapsed, speed), the
+ * vertical smoother that walks the state word at +0xD4 of the object's +0xAC block
+ * toward the target at object +0x54.
+ *
+ * View source:
+ * The selected slot is held in +0x311: 17 while the lock word +0xA0 is non-zero,
+ * otherwise it is re-picked by func_80056870(object) (a random slot 9..16 that
+ * passes func_80055EE8) when the mode byte +0xC0 is set and the game mode at
+ * D_8009FA94 +0x5C is not 1, and cleared to 0 in all other cases. A non-null
+ * D_8009F9A0 (scripted view override, heading +0xEE, index +0x11E) replaces heading,
+ * position, previous position and the preset index (index - 1), and a positive
+ * D_8009FA84 replaces the preset with func_80056994(info, elapsed), a per-side
+ * sequence D_800A2290[side at +0xC1][step at +0x313] that advances every 3000 steps
+ * through the countdown at +0x2FE.
+ *
+ * View update:
+ * D_8009F9E4 (the camera record) is saved at entry and restored at exit, so the
+ * record selected by func_80017B60(info +0xAC) is only current inside this function.
+ * A positive selected slot places the view through func_8005678C(object, slot, out,
+ * 1) and skips the rest. Otherwise the preset entry D_8009AEC4[+0xA4] supplies a
+ * signed index list (D_8009AD08 entries, 20 bytes each: yaw +0, pitch +2, distance
+ * +4, eye offset +8) and a flag word at +4: 0x1 adds elapsed to the zoom +0xA8 and
+ * clamps at 256, 0x8 clamps at 300, a clear pair subtracts and floors at 0; 0x2 forces
+ * heading -0x400; 0x4 runs the blocked-view search, which tests the current slot
+ * through func_8005612C and the map probe func_80055EE8, accumulates +0xAA while
+ * blocked or while +0xA6 is not 1, and past 120 tries index[1] and then walks the
+ * list (+0xA7, wrapping to 2 on a negative entry), accepting the first free
+ * candidate or parking +0xAA at 120.
+ *
+ * Smoothing:
+ * yaw = func_8005605C(camera->yaw, heading + entry yaw, speed) and
+ * pitch = func_8005605C(camera->pitch, entry pitch, speed), each limited to
+ * elapsed * 4 (yaw) / elapsed * 2 (pitch) units per step, with the yaw unwrapped
+ * across the 0x800 boundary; the boom length comes from func_800564A8(pitch)
+ * (0x10000 - ((pitch - 0x14A) << 16) / 600, squared, doubled, + 0xD800, floored
+ * at 0x9000). The +0xB0 eye offset is lerped toward the preset offset at
+ * elapsed * 0x50 per step, snapping when the remaining length is shorter
+ * (func_8001A314 / func_8001AB78). func_8005612C then places the view,
+ * func_80017860(yaw, pitch, 0) writes the camera matrix, func_8001AC28 shifts the
+ * eye along camera +0x70 by zoom << 7, and a non-zero shake +0xD0 (capped at 255)
+ * becomes a power-of-two mask through func_80095C14 and jitters the view by
+ * (random & (mask - 1)) - mask / 2 along the camera axes +0x64 and +0x58 before
+ * decaying by elapsed. The effect word +0xA2 counts down by 2 * elapsed and drives
+ * func_8001EA20(object, value + 90) in screen state 4 (D_8009FA00 == 4), else
+ * func_8001EA20(object, 0); func_800177AC(out) posts the position last.
+ *
+ * @par Likely role
+ * The chase camera of a player vehicle: the preset byte is one of seven camera
+ * modes cycled with the unit's camera button, the cooldown byte suppresses
+ * re-triggering, and the preset lists in D_8009AEC4/D_8009AD08 are the seven
+ * boom/pitch/length combinations, including two that are only valid outside
+ * map zones and one that looks backwards.
+ *
+ * @par Unknown
+ * What the value 17 in the selected slot means (a "no preset" marker for other
+ * code), the units of the 20-byte offset records, and whether D_8009FA84 really is
+ * the attract/demo countdown described by func_80027510.
+ *
+ * @par Callers
+ * func_800588D4, the message 6 handler of the unit class, which forwards its own
+ * elapsed and odd-step accumulator; its documentation names this function as the
+ * camera step.
+ */
 void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 speed)
 {
     struct Locals569EC local;

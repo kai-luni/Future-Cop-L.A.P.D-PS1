@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Gameplay > Map | Game Engine > Object Setup
 #include "game/types.h"
 
 struct Vec4 {
@@ -70,6 +71,47 @@ extern void func_8003FE0C(struct Node *node);
 extern void func_8003FE90(struct Node *node);
 extern void func_80069580(u32 index, struct DestinationTriple *destination);
 
+/**
+ * @brief Proximity gate of the map's spawn nodes: instantiates the objects whose
+ *        cells lie near a player's ground position and tears down the ones that
+ *        drifted away or whose instance was replaced.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_80069580(0, &work.base1) always fetches the first stored ground position (the
+ * D_800A3190 pair, middle component zeroed) and func_80069580(1, &work.base2) does
+ * the same for the second one when D_8009FA0C >= 2 (two views/players). D_8009F30C
+ * is then walked with next captured first; node +0x08 selects the row and node +0x04
+ * the column of D_800A7040, and a null cell record skips the node.
+ * A node whose instance word +0x10 is non-null but whose +0x08 no longer equals the
+ * node's +0x14 id is stale: it is unlinked (previous->next or the list head) and
+ * freed with func_800181D4. Otherwise the comparison position is the instance's
+ * +0x50/+0x54/+0x58, else the +0x18 record's +0x10/+0x14/+0x18 when its +0x3D byte
+ * has bit 4, else the cell record's +0x8/+0xC/+0x10; the vector length comes from
+ * func_8001A100 and the cell counts as in range at 0x1FFFF or below. With
+ * D_8009FA0C >= 2 the same test against base2 can also set the range flag.
+ *
+ * Actions:
+ * The node flags byte +0x1C bit 0 is the "live" marker: with it set and the node out
+ * of range, func_8003FE90 walks the seven D_800A1070 buckets, unlinks every object
+ * whose +0x44 owner is that node, sends them message 10 and clears the node's bit 0;
+ * with it clear and the node in range, func_8003FE0C builds the object through
+ * func_8003D680(node->source, type, +0x08, +0x18, 0, 1), links it back, registers it
+ * with func_8003E984 and sets bit 0 on success.
+ *
+ * @par Likely role
+ * The distance culling/spawning of map-placed entities, sibling of the on-demand
+ * cell spawner func_800402DC: cells are only materialised while a player is close,
+ * and the two-player session keeps both views' spawn radii active.
+ *
+ * @par Unknown
+ * What the D_800A7040 records hold beyond the position triple at +8, and what the
+ * bit 4 flag of the +0x18 record marks.
+ *
+ * @par Callers
+ * func_8003F570, and only when D_8009F30C is non-empty.
+ */
 void func_8003FF7C(void)
 {
     struct Work work;

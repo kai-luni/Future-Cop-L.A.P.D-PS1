@@ -1,3 +1,4 @@
+// Categories: Gameplay > Damage > Segment Sweep | Physics > Collision > Radius Tests | Graphics > Effects > Particles
 #include "game/types.h"
 
 struct Vec3 {
@@ -120,6 +121,70 @@ extern struct Res *func_800402DC(void *owner, u8 column, struct Msg *msg, s32 ro
 
 #define ASM(d, b) __asm__("mult %0,%1\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "+r"(d) : "r"(b) : "$8", "$9")
 
+/**
+ * @brief Re-clips a segmented tail to its target: raycasts from the target to
+ *        the chain end, redistributes the slack along the segments in step
+ *        units, and reports the moved section to nearby objects and to the
+ *        cell effect gate.
+ *
+ * @param arg0 Owner block; +0x20 the tag block whose +0 byte must be 0x57,
+ *        +0x68 the segment list head and +0x90 the per-segment step. The
+ *        segment records carry next at +0, position at +4/+8/+0x0C, the radius
+ *        at +0x10 and a flag word at +0x18.
+ * @param tgt Target block; +0x08 the entity/kind block, +0x1C and +0x1E two
+ *        words forwarded in the message, +0x28 the state flags, +0x29 a pulse
+ *        counter, +0x2B a byte copied into the message and +0x2C/+0x30/+0x34
+ *        the position.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The tag byte must be 0x57 and the segment list must exist; head and tail are
+ * found by walking next to the end. For a multi-segment chain, when
+ * func_800684AC(&tgt->pos, &tail->pos, &t.v, 0, 1) reports a hit, t.v is the
+ * clipped contact point of the grid walk. s1 is
+ * (func_80095900(func_80019FCC(contact - target)) << 2) >> 4 minus the same
+ * expression for (head - target): a scaled difference of the reciprocals of the
+ * two squared distances. A negative s1 means the contact lies beyond the head:
+ * when tgt +0x28 has bit 1 the head's +0x18 gains bit 0 and the function
+ * returns, otherwise the head is moved to the contact, the successor segment
+ * gains bit 0 and func_8005C184(&t.v, head->radius << 4, tgt) queues the impact.
+ * A non-negative s1 walks the segment list subtracting owner +0x90 until it goes
+ * negative; the segment reached is moved to the contact point, its successor is
+ * flagged and the same impact call is made. A single-segment chain only moves
+ * or flags the head. The candidate scan is skipped when tgt +0x28 has bit 3 or
+ * when the chain has a single segment. For every entry of D_800A8F90, entries
+ * sharing the target's kind word at tgt +0x08 -> +0x14 and entries whose +0x08
+ * is not positive are dropped, and the whole scan is abandoned when the
+ * tail-to-head delta reaches 0x14000 on any axis. The tail-to-head direction is
+ * normalised with func_8001A180 and the candidate offset is tested with
+ * func_8001AB00; a negative dot re-projects the candidate from the head side and
+ * retries, and the hit test is func_80019FCC(diff) below
+ * (candidate radius + tail radius) squared, shifted right by 8.
+ * func_8005C2C8 then dedupes against the target's ten-entry set, the candidate's
+ * handler receives message 0x0E with a block holding tgt +0x08 -> +0x14,
+ * tgt +0x1C, tgt +0x2B and tgt +0x08, and func_800402DC(0, tgt +0x1E, &msg,
+ * func_8003BF50(tgt +0x08), 0) queues the cell effect with msg +0x49 = 5,
+ * msg +0x00 = tail->radius << 4 and the tail position - or the point
+ * re-projected onto the segment on the negative-dot path, with D_8009F374
+ * pointing at the kind block and cleared afterwards. When the returned record exists and
+ * the kind byte is 1 (or 0x12, reached through +0xB4) its target byte +0xC1
+ * selects flag 0x8 or 0x10 on the record.
+ *
+ * @par Likely role
+ * The per-frame constraint step of a segmented limb, whip or tentacle on a
+ * tag-0x57 object: the target pulls the chain, the map raycast stops it at
+ * walls, the remaining length is spread over the segments, and everything the
+ * moved section touches gets a 0x0E message plus an impact effect. The impact
+ * call is the same body func_8005C184 runs, including the +0x29 counter it
+ * reloads with 5, so the contact is limited to roughly one hit per six calls.
+ *
+ * @par Unknown
+ * Why the slack measure is built from reciprocals of squared distances instead
+ * of plain lengths, and what decides the +0x90 step against that unit.
+ *
+ * @par Callers
+ * func_8005CA04, message 1, for objects whose tag byte is 0x57.
+ */
 void func_8005C344(struct Owner *arg0, struct Target *tgt)
 {
     struct Msg msg;

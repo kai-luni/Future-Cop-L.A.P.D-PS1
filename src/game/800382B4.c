@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Game Engine > Entity Lifecycle | Graphics > Model Renderer
 #include "game/types.h"
 
 typedef struct Unk382B4Sub {
@@ -69,6 +70,77 @@ extern void func_80063194(s32 key);
 
 register s32 zero __asm__("$0");
 
+/**
+ * @brief Message handler of entity class 5: dispatches messages 1..16 through
+ *        jtbl_800113DC onto the class's part activation, animation and motion steps.
+ *
+ * @param arg0 Message id, 1..16; 0 and values above 16 go to the base handler.
+ * @param arg1 Entity object; +0x0C four 2-byte part commands, +0x16 kind (5 for the
+ *        animated variant), +0x19 part count byte, +0x1C state word, +0x20 cell
+ *        index, +0x24 flag word, +0x28 instance block (+0x10 its model/data word),
+ *        +0x84 scale, +0x102/+0x118/+0x11E/+0x120/+0x12A words, +0x158..+0x15A
+ *        activation sub-state, +0xC8 animation track, +0xA0/+0xCC/+0xDC sub-records.
+ * @param arg2 Forwarded value: the time step for messages 9/10, and the selector
+ *        that message 11 compares against 6.
+ * @param arg3 Forwarded to the base handler func_8002AD58.
+ * @return Message 1 returns 0x15C (this class's size, against 0xA0 for the base
+ *         class); the query messages return their field; everything else returns 0
+ *         or the base handler's answer.
+ *
+ * @par Confirmed
+ * Dispatch:
+ * msgidx = arg0 - 1; only msgidx below 16 is indirect, and msgidx 15 plus every
+ * out-of-range value lands on the shared tail, return func_8002AD58(message,
+ * object, arg2, arg3).
+ * 1: return 0x15C.
+ * 2: func_800378BC(object, arg1, arg2, arg3) - the full part/animation/frame
+ *    routine - then 0.
+ * 3: 0.
+ * 4: return 0 when +0x16 == 5 and +0x15A == 1, else func_8002AD58 then the shared
+ *    +0x118 tail.
+ * 5: the same guard, func_800379D4, then the shared tail.
+ * 6: only the shared tail: when +0x118 has bit 0x2000 and +0x1C is negative, a
+ *    positive +0x102 makes func_800381D4 re-randomise the motion/lifetime.
+ * 7: needs +0x16 == 5, (+0x28)->+0x10 non-zero and +0x158 != 0xFF. With +0x15A == 0
+ *    it activates: +0x1C = 1, +0x15A = 1, +0x118 |= 0x40, +0x24 |= 1,
+ *    func_800448D8(+0xC8, +0x158, 1, 1) starts the track at clip +0x158 and
+ *    func_8003B898(+0x20, object, 0, (+0x19 >> 3) & 0x1E, 0) spawns the cell parts.
+ *    With +0x15A == 1 it only sets +0x1C = 1; any other sub-state falls back.
+ * 8: func_80037B28(arg0, object, arg2), then 0.
+ * 9: the physics step. The scale is arg2 unless (+0xCC)->+0x01 is not 1, in which
+ *    case it is +0x84 * arg2. For the class-5 activated variant the four 2-byte
+ *    commands at +0x0C are shifted down by func_8002A5B4(arg1, i) while their byte
+ *    is 0x32..0x34. func_80044B34(object, +0xC8, scale, 0) advances the script and
+ *    func_800175F8(+0x28, +0xD4) the model instance; a halved result of 3 with
+ *    +0x15A == 1 ends the piece (+0x1C = -1, +0x15A = 2), otherwise the tail runs.
+ * 10: func_80060238(+0xA0, arg2, object, 0, 1) advances the sub-simulation and
+ *    func_8003802C(arg0, object, arg2) steps the falling/flying motion.
+ * 11: returns +0x11E, but only when arg2 == 6.
+ * 12: needs +0x16 == 5 and (+0x28)->+0x10 non-zero; returns
+ *    func_8002ACB4(object, +0x159) (the animation advance result).
+ * 13: reads +0x120 against the record count at (+0xDC)+2, indexes +0xDC by
+ *    index * 12 and, when the low nibble of the byte at +0x8 is non-zero, rewrites
+ *    that nibble of the word at +4 as c - 1; a set +0x118 bit 0x4000 then removes
+ *    the object from the D_800A31A0 key table through func_80063194. Falls back.
+ * 14: 1 while +0x16 is not 5 or (+0x28)->+0x10 is zero, else +0x159.
+ * 15: +0x12A.
+ *
+ * @par Likely role
+ * The scripted animated prop/piece of the map: activation picks a clip and spawns
+ * its cell parts, messages 9/10 are the frame steps, 13 consumes one hit point of
+ * the current piece, and 11/14/15 are the queries the scripting layer reads while
+ * the piece is alive.
+ *
+ * @par Unknown
+ * Field meanings beyond the offsets - the +0x84 scale, the (+0xCC)->+0x01 flag, the
+ * +0x120 record index, the +0x158..+0x15A sub-state ladder - and what the 0x15C
+ * size is used for by the allocator.
+ *
+ * @par Callers
+ * func_8002AF94, func_80039504, func_800395A8, func_800397AC and func_800398EC (all
+ * direct calls verified in their sources). The entity-type factory func_8002AE54
+ * installs it as the class-5 handler.
+ */
 s32 func_800382B4(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3)
 {
     register s32 msgidx __asm__("$3");

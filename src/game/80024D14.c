@@ -1,3 +1,4 @@
+// Categories: Game Engine > Game State > Reset
 #include "game/types.h"
 
 extern void *D_8009F68C;
@@ -34,6 +35,35 @@ extern void func_80069D04(void);
 extern void func_80086164(void);
 extern void func_80017D20(void);
 
+/**
+ * @brief Global subsystem reset: frees the mission block and re-initialises
+ *        every pool and manager in a fixed order.
+ *
+ * @param arg0 Forwarded to func_80059DB0 (the entity-world reset).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * D_8009F68C != 0 is freed via func_800181D4. Then 30 init calls run in
+ * order: func_800734BC, func_8003F854(2), func_8004ABBC, func_80029EB8,
+ * func_80059DB0(arg0), func_80069D58, func_80049410, func_8002A5AC,
+ * func_8005A290, func_8004963C, func_80083428, func_80031990,
+ * func_8001B448, func_80013AB4, func_800634F4, func_80061860,
+ * func_80047868, func_80017764, func_8004CCDC, func_8006A88C,
+ * func_80060E50, func_80060A00, func_8005A068, func_80019BA4,
+ * func_80023BF8, func_800198DC, func_80019D88, func_80069D04,
+ * func_80086164, func_80017D20.
+ *
+ * @par Likely role
+ * The between-missions reset of the frame driver func_80025B7C: the
+ * order mirrors the boot sequence (effects, text, sound, map, camera,
+ * HUD), so a new mission starts from a clean slate without a full reboot.
+ *
+ * @par Unknown
+ * Which subsystem each callee owns.
+ *
+ * @par Callers
+ * func_80025B7C.
+ */
 void func_80024D14(s32 arg0)
 {
     if (D_8009F68C != 0) {

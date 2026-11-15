@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update > Mover | Physics > Motion > Gravity | Gameplay > Collision > Area Blast
 #include "game/types.h"
 
 #define ABS(x, r) ((((x) >> 31) + (x)) ^ ((x) >> 31))
@@ -61,6 +62,80 @@ extern void func_8001ACA4(struct Vec371 *a, struct Vec371 *b, s32 scale, struct 
 extern s32 func_8001A100(struct Vec371 *vector);
 extern void func_8001A180(struct Vec371 *vector);
 
+/**
+ * @brief Per-frame mover tick of a propelled entity: proximity blast test
+ *        against the entity table, spin, gravity, ground snap, segment
+ *        collision, speed derivation and a lifetime countdown.
+ *
+ * @param arg0 Entity block. Position +0x50, floor offset +0x68,
+ *        direction +0x78, speed +0x84, velocity +0xA0, previous position
+ *        +0xAC, gravity word +0xB8, expire marker +0x1C, lifetime +0xC4,
+ *        cached owner +0xC8 with the id to match at +0xCC, control bits
+ *        +0xD0, spin angle +0xD1, blast radius +0xD2, rotation matrix
+ *        +0x2C.
+ * @param arg1 Frame time step: multiplies the gravity word +0xB8, adds
+ *        to the spin angle +0xD1, scales the position integrator and is
+ *        subtracted from the lifetime +0xC4.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Owner check: a cached pointer +0xC8 whose +0x08 no longer equals
+ * +0xCC is dropped.
+ * Blast test, only with a non-zero radius +0xD2: the entity table
+ * D_800A8F90 is walked (count at +0x00, entries at +0x08). Candidates
+ * are skipped when their +0x08 is <= 0, their +0x16 equals 0x0B, their
+ * team byte +0x18 equals the own team (0xFF when there is no cached
+ * owner) or their +0x24 bit 0 is set. The delta to a candidate
+ * (+0x5C/+0x60/+0x64) is rejected if any component exceeds 0xFFFF,
+ * then the octagonal sum of the squared components, each shifted 4,
+ * squared and shifted back by 12, is compared with
+ * (h * h) >> 12 plus ((r + 2*h) * r) >> 12, where h is +0xD2 and r is
+ * the candidate's +0x6E, i.e. the two radii combined. A hit writes
+ * +0xC4 = 0x12C, velocity.y = -0x8000, +0xD2 = 0, velocity.x = 0,
+ * velocity.z = 0, +0xB8 = 0x8000, +0xD1 = 0, +0xD0 = (+0xD0 & 0xFE) |
+ * 2 and calls func_8003BC0C(self), which turns the entity into its
+ * impact record through the object spawn func_800402DC.
+ * Motion, only while +0xD0 bit 0 is clear: with bit 1 set, +0xD1 += arg1
+ * and func_800188D0(+0xD1 << 4, 0, 0, &+0x2C) rebuilds the matrix as a
+ * rotation about x. func_80066F78(&position, 0, 0, 0) gives the ground
+ * height; +0x68 added makes the floor level. At or below it the actor
+ * lands: with all three velocity components below 0x1800 the velocity
+ * is cleared, position.y is snapped and both +0x1C = -1 and +0xD0 bit 0
+ * are written; otherwise position.y is snapped, velocity.y becomes
+ * -(velocity.y * 5 / 8) and velocity.x/z are scaled by 7 / 8. Above the
+ * floor, velocity.y loses +0xB8 * arg1 / 300 per step, clamped at 0
+ * when the result would overshoot.
+ * Then the previous position is copied to +0xAC, the position is
+ * advanced with func_8001ACA4(position, velocity, arg1 * 218,
+ * position), and func_800684AC(+0xAC, position, out, 0, 0) & 0xFF is
+ * the grid clip: any hit writes +0x1C = -1, stores the corrected
+ * position and returns immediately.
+ * Shared tail: direction = velocity, +0x84 =
+ * func_8001A100(&direction) / 300, func_8001A180 normalises direction.
+ * Finally +0xC4 -= arg1 and a non-positive lifetime sets +0x1C = -1.
+ *
+ * @par Likely role
+ * The flight of a thrown or hovering prop such as an arcing debris piece
+ * or a plasma bolt: it hangs +0x68 above the ground, spins while +0xD0
+ * bit 1 is set, bounces with damping on impact with the floor, and once
+ * it carries a radius +0xD2 it detonates on the first entity of another
+ * team inside the combined radii, spawning the impact object. +0x1C =
+ * -1 is the engine's "remove this entity" marker, so both the grid hit
+ * and the lifetime expiry retire the entity.
+ *
+ * @par Unknown
+ * The units of +0x68 and +0xC4, the meaning of +0xD0 bit 1 (a knockback
+ * state rather than free spin), whether +0xB8 is gravity or a blast
+ * impulse, and why the landing branch keeps the negated vertical
+ * velocity instead of simply stopping.
+ *
+ * @par Callers
+ * func_80037708, message 6 only (call site 0x80037780,
+ * analysis/edges.json kind "direct"). The same handler loads the matrix
+ * at +0x2C and transforms a model vertex right afterwards. func_80037708
+ * itself has no direct callers; it is dispatched through a message
+ * table.
+ */
 void func_800371FC(struct Unk371FC *arg0, s32 arg1)
 {
     register struct Unk371FC *self __asm__("$18");

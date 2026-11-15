@@ -1,3 +1,24 @@
+// Categories: Utilities > Mathematics > Trigonometry
+/**
+ * @brief Eight-octant arctangent with a 256-unit full circle (32 units per
+ *        quadrant).
+ *
+ * @param x, y Signed components.
+ * @return The angle in -128..128 units, 0 for the origin.
+ *
+ * @par Confirmed
+ * The signs and the |x| < |y| comparison build a 3-bit case selector;
+ * each case divides the smaller component << 5 by the larger and offsets
+ * by 0/64/128 with the matching sign. Pure arithmetic, no tables.
+ *
+ * @par Likely role
+ * The coarse heading solver of the radar sweep func_8005AB8C: the 256-unit
+ * circle matches the byte-wide angle fields, unlike the 12-bit
+ * func_80095C30 used by the entity code.
+ *
+ * @par Callers
+ * func_8005AB8C.
+ */
 int func_80018580(int x, int y)
 {
     unsigned char flags;

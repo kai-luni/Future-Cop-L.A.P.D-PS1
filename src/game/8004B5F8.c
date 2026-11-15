@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Debris Spawner | Physics > Motion | Graphics > Model Renderer > Mesh Fracture
 #include "game/types.h"
 
 typedef struct V8 {
@@ -123,6 +124,79 @@ extern void func_8004AAC0(Obj *, Node *);
 extern u8 func_8004B244(Obj *, s32, s32 *);
 extern void func_8004B310(Obj *, s32 *, s32 *, s32, s16 *, s16 *, s32 *, s32 *);
 
+/**
+ * @brief Fractures a model into single polygons: picks a random subset of the
+ *        mesh's face entries, builds one scene node per face with recentred
+ *        vertices and its own world position, and hands each node to the
+ *        impulse and animation setup.
+ *
+ * @param obj Object block. +0x1C is the holder whose +0x34 is the source
+ *        record; +0x7D a face cap, +0x7A a limit override, +0x65 the child
+ *        type, +0x10 the variant flags, +0x16 the child lifetime, +0x0C and
+ *        +0x0F the state and error bytes, +0x76/+0x78 the spin range,
+ *        +0x66/+0x68 the speed range, +0x6A/+0x6C and +0x70/+0x72/+0x74 the
+ *        push terms, +0x7B the option bits, +0x7C the signed percentage,
+ *        +0x80 the copied model header word and +0x84 the debris list head;
+ *        the twelve-word matrix at +0x34 holds the object origin at
+ *        +0x58/+0x5C/+0x60.
+ * @param arg1 Force record, forwarded unchanged to func_8004B244; 0 is
+ *        allowed and then no impulse is added.
+ * @return 1 when at least one fragment was linked into the +0x84 list, else 0;
+ *         every early exit and the empty list path set bit 0 of +0x0F.
+ *
+ * @par Confirmed
+ * The source record is read through +0x1C and a null source, a null model or
+ * an empty selection returns 0 first. +0x80 receives the model header word
+ * +0x28, and n starts at the face count of the mesh block +0x24, is lowered to
+ * +0x7D when 0 < +0x7D < count, and is clipped to 200 - D_8009F7C8, a global
+ * word (gp-relative, +0x7C8) that this function increments once per fragment;
+ * when func_80017B88() returns 1 n is halved again.
+ * Two 32-byte bitmaps in the scratchpad - 0x1F800000 for the dropped faces and
+ * 0x1F800020 for the kept ones - are filled from a random byte that is halved
+ * until it is below the face count, and the code samples the smaller side: n
+ * keepers when count divided by 2 is at least n, otherwise count - n droppers;
+ * the chosen bitmap is then scanned with a 0x80000000 shifted by the low five
+ * bits. Only faces whose type nibble (bits 8..11 of the entry word, that is the
+ * low nibble of entry byte +1) is 3 or 4 produce a node, taken from the free
+ * list behind func_8004AA90. The entry's +2 word goes to node +0x2A, its +0
+ * byte to +0x29 and the type nibble to +0x28, or-ed with 0x80 when +0x65 is
+ * set and the fragment is still below the limit, in which case
+ * func_8003D680(0, 0, 0, 0, 0, 0) supplies a holder that is stored over
+ * node +0x4C and whose +0x3A counter is bumped. Vertices come from the list at
+ * model +0x1C (v[0..2] from the entry bytes +4/+5/+6), v[3] copies v[0] for
+ * type 3 or takes byte +7 for type 4, and v[4] is indexed through the normal
+ * list at model +0x20 by byte +8. func_8001B148 rotates all five pairs by the
+ * object matrix in place. The first four vertices give the centroid, then every
+ * vertex below the type count is moved to centroid-relative form and
+ * func_8001AF08 on it, shifted right by 4, is written to +0x46 (plain node) or
+ * to the holder's +0x3C (bit 0x80 set); the loop runs downwards, so vertex 0's
+ * length is what survives. The node position is the object origin plus the
+ * centroid shifted left by 4. func_8004B310 randomises the spin words
+ * +0x30/+0x32, the angular velocity +0x40 and the three-word push at +0x34,
+ * and adds the impulse that func_8004B244 wrote when it returned non-zero.
+ * func_8004AAC0 then links the node at the +0x84 list head and D_8009F7C8 is
+ * incremented. +0x44 receives +0x16 plus a random byte, or 0. A fragment below
+ * the limit with +0x65 set also calls func_8003E984(holder, 0, +0x65, 0,
+ * (+0x10 >> 1) & 1) for the child object. The exit clears +0x0C and +0x16 and
+ * sets +0x0F bit 0 when nothing was linked.
+ *
+ * @par Likely role
+ * The polygon-fracture sibling of func_8004ABE4: instead of one impulse for the
+ * whole object, the mesh's individual faces become free-flying debris that keep
+ * their own polygon, normal and centroid, so each shard spins about its own
+ * centre while the shared push record decides the blast direction. The force is
+ * the same one func_8004B244 prepares for the blast effect, which ties this to
+ * the explosion paths of func_8003AA94.
+ *
+ * @par Unknown
+ * What the two budgets +0x7A and +0x7D count (faces, fragments or a detail
+ * level), the unit of the impulse from func_8004B244, and why the radius field
+ * keeps only vertex 0's length instead of a per-vertex value.
+ *
+ * @par Callers
+ * func_8004C324, message 0 only: once on the default path and once from the
+ * shared failure label of the flag-0x10 branch.
+ */
 s32 func_8004B5F8(Obj *obj, s32 arg1)
 {
     s16 sum[4];

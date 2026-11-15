@@ -1,3 +1,4 @@
+// Categories: Platform > Sound > Sequencing | Game Engine > Frame
 typedef struct Node Node;
 struct Node {
     char pad0[0x4b];
@@ -20,6 +21,34 @@ extern int D_8009F93C, D_8009F940;
 extern int D_8009FAA4;
 extern void func_800457B8(int, int);
 extern void func_800195D0(void *, Node *);
+/**
+ * @brief Drains the scheduled sound-event buckets whose time has come,
+ *        firing due events and freeing their nodes.
+ *
+ * @param arg0 Current time threshold for the bucket scan.
+ * @param arg1 Non-zero stops after the first fired event.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * With D_8009F938 null nothing runs. Buckets are scanned backwards over
+ * D_8009F93C * D_8009F940 entries; buckets with time > arg0 are skipped.
+ * Per node (until a 0x80 flag or a negative time): nodes due at
+ * D_8009FAA4 with active set and index >= 0 raise the state mask bit
+ * (D_8009F930->mask | 1 << index) and play func_800457B8(sound |
+ * 0x40000000, the per-index byte at state + index * 8 + 10); the node is
+ * unlinked (head or middle) and freed via func_800195D0(D_8009F934, node).
+ *
+ * @par Likely role
+ * The sequencer's event pump (called by func_80083A10): the 0x40000000
+ * flag marks scheduled playback, the mask tracks which channels fired,
+ * and the single-event mode services latency-critical paths.
+ *
+ * @par Unknown
+ * The bucket grid meaning of D_8009F93C/D_8009F940.
+ *
+ * @par Callers
+ * func_80083A10.
+ */
 void func_80083834(int arg0, unsigned char arg1)
 {
     int i, index, offset, mask;

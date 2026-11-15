@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Map Cell Objects | Graphics > Animation | Graphics > Model Renderer > Instance Submission
 #include "game/types.h"
 
 struct Mdl {
@@ -48,6 +49,55 @@ extern void func_80010234(void *a, void *b, s32 c);
 extern void func_80017508(struct Obj *o, u32 *flags, s32 arg);
 extern void func_8008363C(struct Obj *o);
 
+/**
+ * @brief Walks the 5x5 cell window of one region block and animates plus
+ *        submits every object whose band mask matches the cell mask.
+ *
+ * @param x Cell column of the window's origin, used as x + a + stride * (y + b).
+ * @param y Cell row of the window's origin.
+ * @param p Region block of 25 entries, 16 bytes each - mask word, object
+ *        pointer and the four position halves - as filled by func_80064460.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * A null D_8009F938 ends the call. For every one of the 25 masks (the pointer
+ * advances four words per cell) a zero mask is skipped; otherwise the slot
+ * index is x + a + D_8009F93C * (y + b) and the object list at that slot is
+ * walked. Objects with bit 0x10 in the +0x0F flag byte are ignored, the slot's
+ * +0x04 word is stamped with the time base D_8009FAA4 for every visited object,
+ * and the
+ * animation only runs when the cell mask ANDs non-zero with the object's +0x4E
+ * band word. The frame index is chosen by flags: with bit 0x20 the per-object
+ * delay +0x4D is decremented by the low three bits of D_8009FAA4 and given a
+ * fresh random length from func_800196C4 (0x7F or 0xF depending on the
+ * direction byte +0x48) when it underflows; with bit 4 the index ping-pongs over
+ * 2 * (+0x4D) * (frames - 1) and is reflected at the end; otherwise it wraps
+ * over +0x4D * frames, where frames is the model's +0x0C word. A changed index
+ * goes through func_800175F8. The yaw term is (+0x56 * (D_8009FAA4 & 0xFFF))
+ * masked to 12 bits, negated through a complement when +0x56 is negative, and
+ * with flag bit 0x80 and a non-zero amplitude +0x52 it is folded as a triangle
+ * wave scaled by +0x52 over 4096 and offset by +0x50. func_8001846C then yields
+ * the sine/cosine pair, stored as +0x1C = sin, +0x24 = +0x04 = cos and +0x0C =
+ * -sin, with the neutral 0x10000 when the angle is zero. With +0x57 set,
+ * func_80010750 loads that matrix into the GTE and func_80010234 transforms one
+ * vertex record from the model block +0x34 at offset frame * 16 + 8 into
+ * +0x34. func_80017508(o, &local, 1) finally gates and submits the instance,
+ * and func_8008363C follows when +0x57 is set.
+ *
+ * @par Likely role
+ * The third of the three drawers func_80066E98 runs over one screen region:
+ * while func_8006531C and func_8004A924 paint the tile and cell geometry, this
+ * pass advances the animation of the objects standing in the same 25 cells and
+ * submits the visible ones, so the cell masks and the object band word +0x4E
+ * are what selects which layers of a region an object belongs to.
+ *
+ * @par Unknown
+ * What the band bits in +0x4E mean per layer, and why the stale-slot stamp
+ * writes D_8009FAA4 before the mask test rather than after it.
+ *
+ * @par Callers
+ * func_80066E98, after func_8006531C and func_8004A924 on the same region.
+ */
 void func_80084398(s32 x, s32 y, u32 *p)
 {
     u32 local;

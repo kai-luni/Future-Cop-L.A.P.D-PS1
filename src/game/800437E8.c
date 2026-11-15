@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Part Motion | Graphics > Effects > Particles | Physics > Motion
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -77,6 +78,61 @@ extern void func_800427A8(struct Unk437E8 *owner, struct Unk437E8Part *previous,
                           struct Unk437E8Part *node);
 extern s32 func_80066F78(s32 *pos, s32 arg1, s32 arg2, s32 arg3);
 
+/**
+ * @brief Per-frame update of the particle/segment chain of a model-bound effect
+ *        node: drifts every segment toward the node anchor, ramps its colour and
+ *        retires segments that hit the terrain or expire.
+ *
+ * @param node Chain owner: model record at +0x1C, flag word at +0x1A, 0x24-byte
+ *        matrix at +0x34, free list at +0x64, active chain at +0x68, Q12 scale
+ *        at +0x72, anchor point at +0x76/+0x78/+0x7A, mode byte at +0x8C, rates
+ *        at +0x96/+0x98/+0x9A, subtype at +0x0E, state byte at +0x0F, -1
+ *        sentinel at +0x07, segment count at +0xA4.
+ * @param arg Frame delta in 1/300 s ticks - every rate is divided by 300.
+ * @return Always 0.
+ *
+ * @par Confirmed
+ * transform = func_8003D9F8(node->+0x1C ? its +0x34 word : 0, node +0x1A,
+ * node +0x0E, 0, node->+0x1C, node->+0x34), and the translation is read from the
+ * returned block at +0x24/+0x28/+0x2C.
+ * An empty chain with node +0x07 == -1 sets bit 0 of +0x0F and returns 0.
+ * scale = (arg << 12) / 300 and v96 = (node +0x96 * arg << 2) / 300; while bit 0
+ * of +0x8C is clear also v98 and v9A from +0x98 and +0x9A the same way. The
+ * frame counter is loaded from D_8009FA50 with the inline lui/lw pair.
+ * Per segment, in this order: dx/dy/dz = (anchor - segment +0x0C/+0x0E/+0x10) *
+ * segment +0x12; p = ((dx << 4) >> 16) * scale, q = (((dy << 4) >> 16) + node
+ * +0x72) * scale, r = ((dz << 4) >> 16) * scale - only y receives the +0x72
+ * term; then +0x0C += p >> 12 and +0x04 += ((s16)+0x0C * scale) >> 12, the same
+ * pair for +0x0E/+0x06 and +0x10/+0x08. next = +0x00 is read before the update.
+ * Every (frame ^ i) & 3 == 0: bit 0 of +0x8C calls func_80042864(segment, 0 when
+ * segment +0x14 has bit 0, else v96); bit 1 calls func_800428FC(node, segment,
+ * signed v96, signed v98, signed v9A) with the signs from bits 8, 0x10 and 0x20
+ * of +0x14; otherwise func_800428FC with the amounts zeroed for bits 1, 2, 4.
+ * Every (frame ^ i) & 7 == 0, with bit 1 of node +0x1A clear and segment +0x0E
+ * negative: vec = (+0x04/+0x06/+0x08 << 4) + transform translation, and when
+ * vec.y < func_80066F78(vec, 0, 0, 0) the segment is unlinked with
+ * func_800427A8(node, prev, segment) and D_8009FAB0 is decremented.
+ * Life: h = +0x18 & 0x1FFF; h - arg at zero or below unlinks the segment the
+ * same way, otherwise +0x18 stores the new life with the top three bits kept.
+ * Both removal conditions converge on one label, which is why the life test is
+ * written as an assignment chain inside a condition.
+ *
+ * @par Likely role
+ * The second of the two segment updaters behind func_800441DC, selected when bit
+ * 0 of +0x8D is clear; it differs from func_80043CA8 in taking its parent from a
+ * model record instead of a context record, in applying the +0x72 bias to y
+ * only, in feeding the running position back into the drift, and in keeping a
+ * free list at +0x64. Same segment layout as func_80042AF4 produces, so the two
+ * functions are the "model-bound" and "context-bound" variants of one routine.
+ *
+ * @par Unknown
+ * What decides which of the two variants a node uses (only the +0x8D bit is
+ * visible here), and the same open question about the meaning of +0x96/+0x98/
+ * +0x9A and +0x72 as in func_80043CA8.
+ *
+ * @par Callers
+ * func_800441DC only (its flag-bit-0-clear branch).
+ */
 s32 func_800437E8(struct Unk437E8 *node, s32 arg)
 {
     register struct Unk437E8 *nd __asm__("$17");

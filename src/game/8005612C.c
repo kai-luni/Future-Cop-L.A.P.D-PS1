@@ -1,3 +1,4 @@
+// Categories: Graphics > Camera > Offset Placement | Utilities > Mathematics > Trigonometry
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -27,6 +28,55 @@ extern void func_8001846C(s32 angle, s32 *sine, s32 *cosine);
 #define UFMUL(a, b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 #define FMULR(a, b) ({ s32 r_; __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(r_) : "r"(a), "0"(b) : "$8", "$9"); r_; })
 
+/**
+ * @brief Places one point on a heading/pitch ray from a base position, with a
+ *        scaled lateral offset taken from a data block.
+ *
+ * @param position Base position, three s32; its y is also folded into the
+ *        distance.
+ * @param heading Yaw that rotates the offset into world space (sin/cos from
+ *        func_8001846C).
+ * @param angle Second yaw applied to the final ray step.
+ * @param pitch Pitch whose cotangent converts the remaining height into a
+ *        horizontal step.
+ * @param distance Distance along the ray; out[1] receives it after the half-height
+ *        bias.
+ * @param data Offset block, three s32 read as x/y/z.
+ * @param out Output position, three s32.
+ * @param arg7 Percentage shrink of the offset; it is halved first, so the factor
+ *        is (0x100 - arg7 / 2) over 256.
+ * @param arg8 Height bias of the offset, scaled by 21 in 16.16.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The base position is copied, the heading sine/cosine pair is built, and the
+ * offset is scaled by (0x100 - arg7 / 2) / 256 on all three axes with
+ * (arg8 * 21 * 256) >> 16 subtracted from y. The offset's y then gains
+ * position->y and distance gains position->y / 2. When D_8009F9A0 is non-zero
+ * the offset is zeroed. After the pitch pair is built, the four sign
+ * combinations select a signed or unsigned half-reciprocal,
+ * UFMUL(absCos, 0x80000000 / (absSin >> 1)), which evaluates to the cotangent
+ * in 16.16; it multiplies distance - offset.y and the result is made positive.
+ * The offset is then rotated by heading as rx = cos * z - sin * x and
+ * rz = sin * z + cos * x, and with the angle pair out[0] = rz + base.x -
+ * FMUL(scale, sinA) and out[2] = (rx + base.z) - FMUL(scale, cosA) while
+ * out[1] = distance.
+ *
+ * @par Likely role
+ * The shared camera-anchor placement helper: func_80056634, func_8005678C,
+ * func_800569EC and func_800573A4 all feed it a per-view offset block and a
+ * player's own bias words, and read the three outputs as a world position for a
+ * view object. The pitch cotangent is what turns "this far away" into "this far
+ * along the ground at this eye height".
+ *
+ * @par Unknown
+ * The physical meaning of the two bias words arg7 and arg8 (an FOV or distance
+ * percentage and a vertical nudge) and why the global D_8009F9A0 zeroes the
+ * offset.
+ *
+ * @par Callers
+ * func_80056634, func_8005678C, func_800569EC (four sites) and func_800573A4.
+ */
 void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
                    s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8)
 {

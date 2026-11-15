@@ -1,3 +1,4 @@
+// Categories: Platform > Sound > SE | Gameplay > Weapons
 #include "game/types.h"
 
 struct Unk6C488Stats {
@@ -29,6 +30,36 @@ extern struct UnkA10E0 D_800A10E0[];
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
 extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
 
+/**
+ * @brief Starts or refreshes a looping weapon sound in one of the player's
+ *        three voice slots.
+ *
+ * @param object Entity whose stats block +0xAC provides the player index
+ *        byte +0xC1.
+ * @param state Sound state id resolved against the table D_800A1830
+ *        (limit 0x47).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Only player indices < 2 act. func_80045494 resolves the bank; 0xFF
+ * aborts. The three slots D_800A10E0[player * 3] are scanned: an occupied
+ * slot with the same bank and a matching handle field10 is refreshed
+ * (status 0x1E, unk4 = 1); a same-bank slot with a stale handle is freed.
+ * Otherwise the first free slot gets func_80046F9C(0, 0, bank, object, 0);
+ * a non-zero handle stores status 0x1E, unk4 = 1, bank, field10 and the
+ * handle pointer.
+ *
+ * @par Likely role
+ * The sustained-fire sound manager of the weapon handlers (func_8006B23C,
+ * func_8006C488): the handle identity check restarts the loop only when
+ * the voice was recycled, so continuous fire does not retrigger.
+ *
+ * @par Unknown
+ * What status 0x1E encodes in the voice state machine.
+ *
+ * @par Callers
+ * func_8006B23C, func_8006C488.
+ */
 void func_80046CF0(struct Unk6C488 *object, s32 state)
 {
     s32 s1;

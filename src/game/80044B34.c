@@ -1,3 +1,4 @@
+// Categories: Graphics > Animation > Track Advance | Game Engine > Frame
 #include "game/types.h"
 
 struct AnimClip;
@@ -35,6 +36,64 @@ extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index,
 extern void func_800449F8(struct AnimScript *script, struct AnimTrack *track);
 extern void func_80044AE8(u32 code, u32 key, s32 *shift, u32 *bits);
 
+/**
+ * @brief Advances one animation track by a time step, resolves clip changes and
+ *        returns the animation events of the frame as a packed bit field.
+ *
+ * @param script Animation script; the four {u8 op, u8 arg} commands start at
+ *               +0x0C and are applied before anything else; may be 0.
+ * @param track Track: +0x00 clip array, +0x04 current clip, +0x08 elapsed time,
+ *              +0x0C frame (s16), +0x0E target frame (s16), +0x10 step (s8, +1
+ *              or -1), +0x11 clip index, +0x12 clip count, +0x13 flags.
+ * @param speed Amount added to the elapsed accumulator, already scaled by the
+ *              caller.
+ * @param direction 0, 1 or 2; selects which link of the current clip is followed
+ *                  in mode 0 (next0, next1, next2).
+ * @return Bit 0 set when a clip reached its target this frame, plus one 6-bit
+ *         event code per clip boundary crossed, packed upwards by
+ *         func_80044AE8 (shift starts at 1 and grows by 6 per code; func_8002B784
+ *         reads them back as value >> 1 and then value >>= 6).
+ *
+ * @par Confirmed
+ * The body returns 0 immediately when the track has no clip array and when the
+ * flags 2 bit (paused) is set; it also returns early when +0x10 (step) is 0, but
+ * only after the type-0 and type-3 shortcuts have been evaluated.
+ * func_800449F8(script, track) runs the script commands first: 0x32 jumps to a
+ * clip, 0x33 clears the pause bit, 0x34 sets it.
+ * Clip types: type 0 samples the event code of the current frame and returns;
+ * type 3 is a scrub - frame = start + ((end - start) * speed >> 16) - which
+ * overrides the frame without touching the accumulator and emits no event.
+ * Clip flag 0x40 replaces direction with a random band: func_80019668() & 0x3F
+ * mapped to 0 below 0x16, 1 below 0x2B and 2 above. Clip flag 0x20 jitters the
+ * speed by up to a quarter: speed += ((0x80 - (rand & 0xFF)) * speed) >> 9.
+ * The accumulator then advances (elapsed += speed) and while it exceeds the clip
+ * duration the body subtracts the duration, steps the frame, samples the event
+ * code and applies the clip mode. Mode 0 walks to target + step and then follows
+ * the clip link (next0, next1 or next2 by direction) through
+ * func_800448D8(track, next, 2, 1); when that link leads back to the same index
+ * the frame is mirrored to start + end - target. Mode 1 ping-pongs (step and
+ * target are reflected at the target). Mode 2 stops exactly on the target and
+ * sets bit 0.
+ * The top of the loop re-samples the clip while flags bit 0 is set, which is how
+ * a fresh clip from func_800448D8 is entered.
+ *
+ * @par Likely role
+ * The single animation stepper of the game: model, actor and effect code calls
+ * it once per frame per track and then dispatches on the returned bits, so bit 0
+ * is the "sequence finished" flag and each 6-bit code is a script command such
+ * as a footstep or an attack window (func_8002B784 consumes them as events 1, 2
+ * and 3).
+ *
+ * @par Unknown
+ * The meaning of the individual 6-bit event codes, and of the clip fields that
+ * this body stores but never compares (the type-1 and type-2 bytes).
+ *
+ * @par Callers
+ * 13 direct callers: func_8002B588, func_8002B784, func_8002CC30,
+ * func_8002DB9C, func_8002DEA8, func_8002E630 (four sites), func_800306A0 (two
+ * sites), func_800324E0, func_80035B7C, func_800382B4, func_80038A00,
+ * func_800549F0 and func_80055988 (two sites).
+ */
 u32 func_80044B34(struct AnimScript *script, struct AnimTrack *track, s32 speed,
                   s32 direction)
 {

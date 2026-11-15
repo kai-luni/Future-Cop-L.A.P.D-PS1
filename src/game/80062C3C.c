@@ -1,3 +1,4 @@
+// Categories: Graphics > Culling > Object Grid | Graphics > HUD > Minimap
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
@@ -17,6 +18,54 @@ extern Obj **D_8009F818;
 extern u8 *D_8009F820;
 extern u8 D_8009F834, D_8009F835;
 
+/**
+ * @brief Builds the single-view object list and the per-cell object grid of the
+ *        region, testing every entity against the first view anchor only.
+ *
+ * @param (none) The function takes no arguments; all its inputs are the globals
+ *        D_800A8F90, D_800A3190[0], D_800AB3B8, D_8009F834, D_8009F835,
+ *        D_800A2970, D_8009F820 and D_8009F828.
+ * @return Nothing. The results land in D_8009F828/D_8009F818, the grid heads in
+ *         D_8009F820 and the node counter in D_8009F814.
+ *
+ * @par Confirmed
+ * 1. The entity table D_800A8F90 is walked by count from the head of
+ *    D_800A8F90.items; entries whose word at +0x08 is not positive are skipped.
+ *    Per entity the z, x and radius words come from +0x5C, +0x64 and +0x68 and
+ *    the flags word from +0x24.
+ * 2. Clamp to the anchor D_800A3190[0]: per axis, when the distance to the
+ *    anchor does not exceed the radius the anchor coordinate is used, otherwise
+ *    the point moves one radius towards the anchor, so the result is the point of
+ *    the disc nearest the anchor.
+ * 3. Coverage test: cell column = (z >> 17) - D_8009F835 and row = (x >> 17) -
+ *    D_8009F834, both rejected outside 0..4; cell = 16 bytes at D_800AB3B8 +
+ *    (row * 5 + column) * 16, whose first word is the bit mask; the bit index is
+ *    15 - (((z >> 15) & 3) * 4 + ((x >> 15) & 3)).
+ * 4. On a hit the entity is appended to D_8009F818 (bounded by 256, counter from
+ *    D_8009F828) and its hit flag is set.
+ * 5. Entities with bit 4 of the flags word never reach the grid step. Entities
+ *    without a hit reach it only when bit 0x100 is set.
+ * 6. Grid step: column = (x >> 15) - D_800A2970.x and row = (z >> 15) -
+ *    D_800A2970.z, both bounded by D_800A2970.w and .h. The byte
+ *    D_8009F820[row * width + column] is read as the previous head, replaced by
+ *    n, and node n of D_800A2990 receives the entity and the previous head; n
+ *    starts at 1 and ends in D_8009F814.
+ * 7. The counter is read from memory and written back, so the caller has to zero
+ *    it for a fresh list, which func_80062FB4 does.
+ *
+ * @par Likely role
+ * The single-view variant of the region gather used when only one small region
+ * is active: it keeps the same coverage test and grid as func_80062874 but drops
+ * the second anchor, block and list. The list it fills is the one the region
+ * draw pass reads through D_8009F828 and D_8009F818.
+ *
+ * @par Unknown
+ * What the 16 bits of a cell encode and in which space the anchor and the grid
+ * live; the meaning of entity flag bits 4 and 0x100.
+ *
+ * @par Callers
+ * func_80062FB4, the region setup, when D_8009FA0C == 1 (the small-view case).
+ */
 void func_80062C3C(void) {
     register s32 count __asm__("$12") = D_8009F828;
     Obj **scan = D_800A8F90.items;

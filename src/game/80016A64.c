@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Draw Path | Graphics > GTE
 #include "game/types.h"
 
 typedef struct { s32 x,y,z; } Vec;
@@ -18,6 +19,38 @@ extern void func_8001006C(Vec *, Vec *, s32);
 extern s32 func_80015B68(Part *, Work *, void *, s32);
 extern void func_80016E6C(Part *, Work *, void *, void *);
 extern void func_80015F38(Part *, Work *, void *, void *);
+/**
+ * @brief Renders the masked parts of a model instance, with a billboard
+ *        path for flag 0x40 models.
+ *
+ * @param inst Model instance (model, matrix, position, frame index, flags).
+ * @param mode Draw mode forwarded to the work record.
+ * @param mask Part mask: bit (part->flags >> 12) & 7 selects each part.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * work.value = D_8009F580; the frame index is the instance index unless
+ * model flag bit 25 forces 0. The part table p2c[index] provides the
+ * per-frame data; flag = !(inst->flags & 8) << 8. With instance flag 0x40:
+ * the matrix is transposed (func_80019470) and loaded (func_80010820),
+ * the camera delta (D_8009F9E4 - inst->pos) is transformed via
+ * func_8001006C, the instance matrix reloaded, the delta >> 2 with
+ * vec.extra = D_800A8EA4 and work.flag = (model->flags >> 28) & 2. Per
+ * masked part: func_80015B68 gates, then part flag bit 15 triggers
+ * func_80016E6C and func_80015F38 always draws.
+ *
+ * @par Likely role
+ * The main model draw dispatcher (called by func_80017508): the billboard
+ * path re-orients flag-0x40 models toward the camera (the same class
+ * func_80013AF0 marks from model bit 30), the mask lets effects draw only
+ * selected parts.
+ *
+ * @par Unknown
+ * What D_800A8EA4 and the work.flag bit encode.
+ *
+ * @par Callers
+ * func_80017508.
+ */
 void func_80016A64(Instance *inst, s32 mode, s32 mask)
 {
     Matrix transposed;

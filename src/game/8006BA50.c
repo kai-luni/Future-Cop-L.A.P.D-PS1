@@ -1,3 +1,4 @@
+// Categories: Gameplay > Weapons > Input Weapon Slot | Graphics > Effects > Dispatcher | Platform > Sound
 #include "game/types.h"
 
 struct Unk6BA50Node {
@@ -64,6 +65,59 @@ extern void func_8006B23C(struct Unk6BA50Obj *obj, s32 idx, s32 arg2);
 
 #define S16(off) (*(s16 *)((u32)ctl + (idx << 1) + (off)))
 
+/**
+ * @brief Drives one weapon slot of the player vehicle for one frame: handles the
+ *        slot-2 target bookkeeping, refills or toggles the shot counter, then
+ *        either fires the weapon or updates the beam part.
+ *
+ * @param obj Owner block; +0xAC is the control block (ctl below).
+ * @param idx Slot index, only 0..2 are accepted. func_80055E10 maps the pad to
+ *            the slots: 0 for button 0x04000000, 1 for button 0x00400000, 2 on
+ *            the weapon-switch edge.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * ctl (obj->+0xAC) is read as +0x78 reload timers, +0x84 per-slot counter,
+ * +0x8A shared counter, +0x90 per-slot definition id, +0x93 per-slot cycle
+ * counter, +0x98 pending node, +0x9C its expected id and +0xC1 owner slot.
+ * 1. idx >= 3 returns at once. For idx == 2 a pending node is validated against
+ *    +0x9C; the list D_8009FA40 is then walked and every node with a non-zero
+ *    +0x08 and the same +0x14/+0x16 pair is retired: +0x16 == 0xF clears
+ *    +0xC4 = 0, every other value (7 included) sets +0x1C = -1. With a matching
+ *    pending node the pointer is then cleared and
+ *    the function returns, so slot 2 is the "retire the old weapon" pass; when
+ *    there is none, or the id no longer matches, the normal path below runs.
+ * 2. A positive reload timer at +0x78 idx returns early (still reloading).
+ * 3. The counter comes from the shared +0x8A when it is positive (flag set),
+ *    otherwise from +0x84 idx. A value <= 0 plays SE 0xD through
+ *    func_80046C84 and returns.
+ * 4. A value of 5 plays SE 0xE (func_80046C84) and continues.
+ * 5. The definition record func_8006AAEC(+0x90 idx) is read at +0x24 when the
+ *    flag is set, else at +0x04. Entry types 10..12 and 14 go to
+ *    func_8006B23C(obj, idx, entry + 0x1F), the beam/part update, and everything
+ *    else to func_8006ACB0(obj, idx), the weapon fire.
+ * 6. When the sub-call reports success the counter is written back: it is
+ *    decremented when D_8009FA8C[+0xC1] is 0 and toggled in bit 0 otherwise; the
+ *    target is +0x8A or +0x84 idx. The cycle counter +0x93 idx is then
+ *    decremented and either reloaded from entry +0x06 (adding entry +0x08 to the
+ *    reload timer +0x78 idx) or left running (adding entry +0x0A).
+ * 7. In the shared-counter case a counter that reached 0 is cleared, the cycle
+ *    counter is reloaded from the record's +0x0A and the record's +0x44 and
+ *    +0x50 words are swapped - the alternating muzzle halves.
+ *
+ * @par Likely role
+ * The trigger logic of the vehicle weapons: entry +0x06/+0x08 read as a periodic
+ * refire and +0x0A as the alternating rate, the shared counter as the linked
+ * firing pattern of one slot, and D_8009FA8C[owner slot] as the per-player switch
+ * that decides between counting down and toggling (single versus paired fire).
+ *
+ * @par Unknown
+ * What D_8009FA8C stores, what the +0xC4 field cleared for node type 0xF means,
+ * and why slot 2 consumes the pending node instead of firing.
+ *
+ * @par Callers
+ * func_80055E10 only, which calls it three times per frame (slots 0, 1 and 2).
+ */
 void func_8006BA50(struct Unk6BA50Obj *obj, s32 idx)
 {
     struct Unk6BA50Ctl *ctl;

@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Instance Setup
 #include "game/types.h"
 
 struct ModelFrame {
@@ -30,6 +31,32 @@ struct ModelInstance {
     u8 flags;
 };
 
+/**
+ * @brief Initialises a model instance: binds the model, copies the frame-0
+ *        bounds and decodes the option flags.
+ *
+ * @param instance Model instance to initialise.
+ * @param model The model (may be 0).
+ * @param options Bit field: 0x80000 -> flag 0x10, 0x8000 -> flag 8,
+ *        0x10000 -> flag 4.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * With a model: radius = frames[0].radius << 4, unk44/unk46 take the first
+ * frame's unk00/unk06; without one all three are 0. frame = 0, flags = 0
+ * plus the decoded option bits; model flag bit 30 adds instance flag 0x40.
+ *
+ * @par Likely role
+ * The bind helper behind func_80013BD8: the radius is the culling bound,
+ * the two header words are likely the frame count and animation flags,
+ * flag 0x40 marks the special model class (bit 30).
+ *
+ * @par Unknown
+ * The exact meaning of unk44/unk46 and option bits beyond the three decoded.
+ *
+ * @par Callers
+ * func_80013BD8, func_8002CB20.
+ */
 void func_80013AF0(struct ModelInstance *instance, struct Model *model, u32 options)
 {
     instance->model = model;

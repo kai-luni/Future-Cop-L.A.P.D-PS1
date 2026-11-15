@@ -1,3 +1,4 @@
+// Categories: Graphics > 2D Drawing > Lines | Graphics > HUD
 #include "game/types.h"
 
 typedef struct {
@@ -18,6 +19,30 @@ extern u8 D_8009B314[];
 extern void func_80092C8C(s32 arg0);
 extern void func_80093224(u8 *arg0);
 
+/**
+ * @brief Draws the selected frame segments around a rectangle (corner and
+ *        edge pieces chosen by a flag byte).
+ *
+ * @param arg0 Left x of the frame.
+ * @param arg1 Top y of the frame.
+ * @param arg2 Index into the segment flag table D_8009B314.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The local line descriptor is initialised with type 3, colour 0x40 and
+ * RGB 0x80/0x80/0x80. Up to seven segments are emitted, each followed by
+ * func_80092C8C(0): bit 0 left edge (y+1..y+5), bit 1 left lower
+ * (y+7..y+0xC), bit 2 bottom (x+1..x+4 at y+0xD), bit 8 right lower,
+ * bit 0x10 right upper, bit 0x20 top, bit 0x40 middle bar (y+6).
+ *
+ * @par Likely role
+ * The selection-frame drawer of the front end (func_80077278): the flag
+ * table encodes which corners/edges each widget state shows, so one
+ * routine draws all frame variants.
+ *
+ * @par Callers
+ * func_80077278.
+ */
 void func_800770A8(s32 arg0, s32 arg1, s32 arg2)
 {
     u8 flags;

@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Beams | Game Engine > Frame
 #include "game/types.h"
 
 struct Unk71A68Entry {
@@ -24,6 +25,35 @@ struct Unk71A68 {
 extern s32 func_80019668(void);
 extern void func_80070E48(struct Unk71A68 *object, struct Unk71A68Entry *entry, s32 arg2);
 
+/**
+ * @brief Ticks one beam entry: drains its three timers and re-initialises
+ *        or finishes the beam under the blink gate.
+ *
+ * @param object Beam owner; +0xE the mode flags, +0x26 the repeat counter.
+ * @param a1 Entry index into object->entries.
+ * @param a2, a3, a4 Frame deltas for the timers +0xC/+0xD/+0xE.
+ * @return Non-zero while any of the three timers is still running.
+ *
+ * @par Confirmed
+ * Each non-zero timer is decremented by its delta, clamped at 0. The
+ * return value ORs the three "still running" flags (each only when its
+ * delta was non-zero). With mode bit 0x8000 set: the frame parity
+ * func_80019668() & 1 or a cleared bit 2 opens the gate; bit 0x2000
+ * inverts the condition. Inside, unk26 <= 0 or --unk26 > 0 calls
+ * func_80070E48(object, entry, 1) (re-init); otherwise the mode becomes
+ * (mode & ~2) | 1 (finished).
+ *
+ * @par Likely role
+ * The per-frame driver of the beam list func_80071B40: the three timers
+ * are likely fade-in/hold/fade-out phases, the blink gate flickers the
+ * beam on alternate frames, and unk26 counts the repeats.
+ *
+ * @par Unknown
+ * The exact phase meaning of the three timers.
+ *
+ * @par Callers
+ * func_80071B40.
+ */
 s32 func_800718B8(struct Unk71A68 *object_, s32 a1, s32 a2, s32 a3, s32 a4)
 {
     register struct Unk71A68 *object __asm__("$17") = object_;

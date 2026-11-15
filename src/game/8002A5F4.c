@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object Setup > Spawn | Gameplay > Object Spawning
 #include "game/types.h"
 
 struct Vec3 { s32 x, y, z; };
@@ -53,6 +54,38 @@ struct Object {
 extern void func_80013BD8(void *, void *, s32);
 extern void func_8003FA34(struct Object *);
 
+/**
+ * @brief The base spawn implementation (message 2): copies the source
+ *        record into the entity, binds the model and resets the motion
+ *        state.
+ *
+ * @param self Entity block.
+ * @param args Spawn arguments: +4 the asset pair, +8 the source record,
+ *        +0xC an optional offset triple.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The four slot bytes are cleared; the offset triple goes to +0x94..+0x9C
+ * (or zero). The source's parameter bytes, words, flags and position are
+ * copied; unk19 = max(src->unk1F, 15), unk22 = -1, unk1E = unk1C. Flags
+ * lose bit 0x400000; bit 0x80 raises 0x01000000. With an asset:
+ * func_80013BD8 binds *asset->model with the flags and *asset->other is
+ * stored; without one the model/other and the four motion words are
+ * zeroed. position and previous take the source position, the heading
+ * words +0x78..+0x88 are zeroed, unk90 = 0x7F00, func_8003FA34(self)
+ * finishes.
+ *
+ * @par Likely role
+ * The shared spawn core behind func_8002AD58 case 2: the 15-frame minimum
+ * at unk19 is likely a spawn protection timer, 0x7F00 the default
+ * health/energy word, and func_8003FA34 registers the entity for drawing.
+ *
+ * @par Unknown
+ * What unk90 = 0x7F00 represents and the bit 0x80 -> 0x01000000 promotion.
+ *
+ * @par Callers
+ * func_8002AD58.
+ */
 void func_8002A5F4(struct Object *self, struct Args *args)
 {
     struct Source *src;

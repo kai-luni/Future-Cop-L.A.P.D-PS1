@@ -1,3 +1,4 @@
+// Categories: Game Engine > Entity Lifecycle | Graphics > Effects > Object Pool | Gameplay > Object Dynamics
 #include "game/types.h"
 
 struct Node { u8 pad[0x48]; struct Node *next; };
@@ -20,6 +21,67 @@ extern struct Node *func_8004AAD4(struct Owner *, struct Node *, struct Node *);
 extern u8 func_8004ABE4(struct Owner *, s32);
 extern u8 func_8004B5F8(struct Owner *, s32);
 
+/**
+ * @brief Message handler of the debris instance built by func_8004C920: message 0
+ *        chooses the burst or the polygon-fracture death, message 10 releases the
+ *        node chain and the instance itself.
+ *
+ * @param message Message id: 0 setup, 1 ignored, 10 teardown, anything else goes to
+ *        func_8003C980.
+ * @param obj Instance; +0x1C link (its +0x04 data block holds nine words at +0x2C,
+ *        its +0x34 sub record and its +0x38 flag byte), +0x0C/+0x16 countdown words,
+ *        +0x7B flag byte, +0x80 auxiliary block, +0x84 node list head.
+ * @param arg2 Forwarded to the effect routines and to the posted request.
+ * @param arg3 Forwarded to the event-flag handler func_8003C980.
+ * @return 1 when the deferred fracture request was queued, otherwise 0 - including
+ *         the early exit when the packet-pool guard func_8003C7B8 reports that the
+ *         requested packet amounts do not fit.
+ *
+ * @par Confirmed
+ * Message 0:
+ * func_8003C7B8(message, obj, arg2, arg3) runs first and a non-zero result returns 0
+ * (the guard's own doc: it compares the free slots of the 0x34- and 0x1C-byte
+ * effect pools plus a 50-packet reserve against obj +0x0A and +0x08). Message 1 then
+ * returns 0. In message 0, link = +0x1C and sub = link->+0x34 (a record whose target
+ * carries a flag bit 25 at +0x0C):
+ * - +0x7B bit 8: return func_8004ABE4(obj, arg2), the documented burst variant
+ *   (one motion record plus the configured child effect).
+ * - +0x7B bit 0x10 with a sub record whose flag is set and link->+0x38 clear: +0x84
+ *   is cleared, the nine words of D_8009AA38 are copied into the data block at
+ *   +0x2C, func_8003A8C0(data, -1, obj, arg2) posts a request (handler D_8003B2D0,
+ *   arguments data/-1/obj/arg2) through func_8004D4D4, and if the +0x16 word was
+ *   zero both +0x0C and +0x16 become 300. Returns 1.
+ * - +0x7B bit 0x10 without such a sub record, or the +0x38 flag set: falls into the
+ *   same exit as the plain case - +0x7B is masked with 0xE7 (bits 8 and 0x10
+ *   dropped) and func_8004B5F8(obj, arg2), the polygon fracture and scatter, returns
+ *   the value.
+ * - no bit set: return func_8004B5F8(obj, arg2).
+ *
+ * Message 10:
+ * When +0x7B bit 8 was set, +0x80 is freed with func_800181D4. The +0x84 chain is
+ * then walked: the global live-node counter D_8009F9DC is decremented per node and
+ * each node is handed to func_8004AAD4(obj, 0, node), which unlinks it, pushes it
+ * onto D_8009F798 and fixes the parent counters; the walk stops when that call
+ * returns a null head. Finally the instance itself is freed with func_800181D4 and
+ * 0 is returned.
+ *
+ * @par Likely role
+ * The object-message surface of the fracture/debris instance: func_8004C920 stores
+ * this function in the instance's handler word at +0x24, so message 0 is the
+ * "spawn the death visual" step and message 10 the single free pass of the debris
+ * fragments it produced.
+ *
+ * @par Unknown
+ * What bit 25 of the sub record marks, and what the request handler D_8003B2D0 does
+ * with the nine copied matrix words.
+ *
+ * @par Callers
+ * No direct callers in the call graph. The only reference is func_8004C920, which
+ * takes its address and writes it into the handler word at +0x24 of the 0x88-byte
+ * instance it allocates; the handler factories func_8002AE54, func_80077AD4 and
+ * func_8006EB80 and the request tables do not name it, so it is reached only as
+ * that instance's message handler.
+ */
 s32 func_8004C324(s32 message, struct Owner *obj, s32 arg2, s32 arg3)
 {
     struct Link *link;

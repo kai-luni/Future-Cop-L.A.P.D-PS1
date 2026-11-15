@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Part Geometry | Graphics > 2D Drawing
 #include "game/types.h"
 
 typedef struct {
@@ -69,6 +70,58 @@ extern s32 func_80015AF4(s32 origin, s32 first, s32 second, void *out);
 extern s32 func_80015830(Part *part, Work *work, Arg2 *arg2, s32 arg3);
 extern void func_8001484C(Vertex *vtx, u32 a1, u32 a2, u16 a3, s32 a4, s32 a5, s32 a6);
 
+/**
+ * @brief Prepares one model part: rejects back-facing or off-screen parts,
+ *        writes the screen-space corners and the depth into the work block and
+ *        submits the billboard and sprite cases directly.
+ *
+ * @param part +0x00 the flags word whose bits 8..11 are the part type (bits
+ *        12..14 hold the channel index the caller uses for its mask), +0x04
+ *        four vertex indices in bytes 4..7, +0x08 further indices (byte 8) and
+ *        a second flag word whose low half is used by the sprite case.
+ * @param work Output block: +0x00..+0x0B three packed s16 pairs x0,y0 / x1,y1 /
+ *        x2,y2, +0x0C a fourth packed pair, +0x10 the s32 depth.
+ * @param arg2 Width table: one unused word at +0x00 and an s16 array from
+ *        +0x04 indexed by the part's index bytes.
+ * @param arg3 Depth bias subtracted from the value written to +0x10.
+ * @return 1 when the part produced geometry in work and must be drawn, 0 when it
+ *         was rejected or already handled internally.
+ *
+ * @par Confirmed
+ * type = (part +0x00 >> 8) & 0xF.
+ * Type 3 (triangle): the three vertices at D_8009F578 must all carry exactly
+ * 0xC0 in D_8009F57C (a set bit 0 or any other value returns 0);
+ * func_80015AF4 rejects a negative winding and otherwise stores the three
+ * packed positions, and the depth becomes (5 * (z0 + z1 + z2) + z0) >> 4 minus
+ * arg3.
+ * Type 4 (quad): the same test over four vertices, the winding test runs on
+ * vertices 0, 1 and 3, vertex 2 goes to +0x0C and the depth is the mean of the
+ * four z values minus arg3.
+ * Types 5 and 6 (billboard): a single vertex whose flag bit 0 must be clear;
+ * depth = vz - arg3 and a square of half size (arg2->data[b6] << 9) / vz around
+ * the projected point, type 6 taking the vertical half size from
+ * arg2->data[b7] instead.
+ * Type 7 delegates to func_80015830.
+ * Type 8 rejects vertex flag bit 0 and then submits a disc through
+ * func_8001484C(&vtx[b4], part +0x04, part +0x08, the u16 at part +0x02 (the
+ * high half of the flags word), arg2->data[b8], arg3, 0); it returns 0.
+ * Every other type returns 0.
+ *
+ * @par Likely role
+ * The type switch of the model display list, one part per call from the
+ * per-part loop of the renderer. D_8009F578 holds the transformed vertices,
+ * D_8009F57C their clip/visibility flags (bit 0 = rejected, 0xC0 = fully
+ * visible and textured) and the work block is the primitive description the
+ * drawing routines consume.
+ *
+ * @par Unknown
+ * The individual bits of the 0xC0 vertex flag, what the caller's mask bit per
+ * part (bits 12..14) selects, and the meaning of the unused first word of arg2.
+ *
+ * @par Callers
+ * func_80016A64 and func_80017058, the two variants of the per-part traversal
+ * (call sites 0x80016A68 and 0x8001705C).
+ */
 s32 func_80015B68(Part *part, Work *work, Arg2 *arg2, s32 arg3)
 {
     Vertex *vtx = D_8009F578;

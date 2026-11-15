@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Particle Update | Game Engine > Entity Lifecycle | Graphics > Effects > Sprite Animation
 #include "game/types.h"
 
 typedef struct Obj Obj;
@@ -26,6 +27,53 @@ extern s32 D_8009FA50;
 extern void func_8006D520(Obj *);
 extern void func_800188D0(s32, s32, s32, void *);
 
+/**
+ * @brief Per-frame update of a list of effect nodes: colour fade, sprite-sheet
+ *        frame advance, rotation matrix, scale decay, lifetime and the
+ *        re-emission call.
+ *
+ * @param node Head of the singly linked list (next at +0); 0 ends the call.
+ * @param dt Frame delta in 1/256 units, the scale of every rate below.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Nodes with bit 3 of the +0x0C flag byte are skipped. While bit 0 of +0x98 is
+ * clear and the rate +0x86 is non-zero, amount = (+0x86 * dt) >> 8 is
+ * subtracted from the six bytes +0x89, +0x8A, +0x8B, +0x8D, +0x8E and +0x8F -
+ * two RGB triples - each saturating at 0 and collecting a bit in a six-bit
+ * mask; when the mask is full the sub-block's +0x2E gate is tested and
+ * func_8006D520 is called, then +0x0C gains bit 0. The frame timer +0x76 is
+ * reduced by dt; when it reaches zero the overshoot is negated, the frame
+ * index +0x72 advances by 1 plus the
+ * overshoot divided by 20, is wrapped modulo the frame count +0x74, the
+ * column is taken modulo the column count +0x84, the timer is re-armed as
+ * 20 - overshoot modulo 20, and the two atlas offsets are rebuilt as
+ * +0x7C = +0x78 + column * +0x80 and +0x7E = +0x7A + row * +0x82. The counter
+ * +0x12 advances by (+0x68 * dt) >> 8. When the rotation rates +0x94/+0x96 are
+ * non-zero the angles +0x90/+0x92 advance modulo 4096 and func_800188D0(+0x90,
+ * 1024 - +0x92, 0, +0x14) rebuilds the 3x3 matrix at +0x14. When +0x6A is
+ * positive the rate +0x68 is lowered by (+0x6A * dt) >> 7 and floored at 4096,
+ * with +0x6A cleared. With the sub-block gate set and (D_8009FA50 & 3) equal to 3
+ * func_8006D520 is called every fourth frame. Finally, when +0x12 reaches the
+ * limit +0x6E, one last func_8006D520 is made if the sub-block gate is set
+ * and +0x9A differs from +0x12, and +0x0C gains bit 0.
+ *
+ * @par Likely role
+ * The shared tick of the scene's sprite effects: the six colour bytes are the
+ * fading tint, +0x76/+0x74/+0x84 describe a sprite-sheet row animation, +0x68
+ * with +0x6A a growing or shrinking billboard and +0x90/+0x92 a spin, so a
+ * single routine drives every particle that is a textured quad. func_8006D520
+ * resolves the node transform and emits its current appearance as a separate
+ * record, which the fourth-frame and terminal calls turn into a trail and a
+ * final puff.
+ *
+ * @par Unknown
+ * The meaning of +0x98 bit 0 (a freeze?), of the +0x2E gate on the sub-block,
+ * and why the emission wants exactly every fourth frame.
+ *
+ * @par Callers
+ * func_8003F4A0, the second of its six list passes, over D_800A1070[2].
+ */
 void func_8006D770(Obj *node, s32 dt)
 {
     Obj *p;

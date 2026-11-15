@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Part Motion | Graphics > Effects > Particles | Physics > Motion
 #include "game/types.h"
 
 struct Unk3D9F8Ctx {
@@ -68,6 +69,71 @@ extern s32 func_80066F78(s32 *vec, s32 arg1, s32 arg2, s32 arg3);
 extern void func_800427A8(struct Unk43CA8 *owner, struct Unk43CA8Inner *prev,
                           struct Unk43CA8Inner *node);
 
+/**
+ * @brief Per-frame update of a particle/segment chain on an effect node:
+ *        springs every segment toward the node anchor, ramps its colour between
+ *        the node's two colour sets, and retires segments that hit the terrain
+ *        or run out of life.
+ *
+ * @param node Chain owner: parent pointer at +0x1C (its +0x34 word is the
+ *        parent record), 0x24-byte matrix at +0x34, active chain at +0x68, Q12
+ *        scale at +0x72, anchor point at +0x76/+0x78/+0x7A, mode byte at +0x8C,
+ *        rates at +0x96/+0x98/+0x9A, flag word at +0x1A, subtype at +0x0E,
+ *        state byte at +0x0F, -1 sentinel at +0x07.
+ * @param arg Frame delta in 1/300 s ticks - every rate is divided by 300.
+ * @return Always 0.
+ *
+ * @par Confirmed
+ * ctx = node->+0x1C ? its +0x34 word : 0, then
+ * func_8003D9F8(ctx, node +0x1A, node +0x0E, 0, node->+0x1C, &node->+0x34) -
+ * the same resolution func_80042AF4 performs - and the returned block's
+ * +0x24/+0x28/+0x2C are the world translation used by the terrain probe.
+ * An empty chain with node +0x07 == -1 sets bit 0 of +0x0F and returns 0; an
+ * empty chain with any other +0x07 is accepted.
+ * s2 = (arg << 12) / 300 and s4 = (node +0x96 * arg << 2) / 300; while bit 0 of
+ * +0x8C is clear also sp38 = (node +0x98 * arg << 2) / 300 and
+ * fpv = (node +0x9A * arg << 2) / 300.
+ * Per segment (next at +0x00): rot = +0x12, pos = (+0x04/+0x06/+0x08 * node
+ * +0x72) >> 12, d = (anchor +0x76/+0x78/+0x7A - +0x0C/+0x0E/+0x10) * rot,
+ * step = ((((d << 4) >> 16) + pos) * s2) >> 12, then +0x0C/+0x0E/+0x10 += step
+ * and +0x04/+0x06/+0x08 += (that new position * s2) >> 12. All six fields are
+ * s16, so every store truncates to 16 bits.
+ * Every (D_8009FA50 ^ i) & 3 == 0, where i counts the segments and D_8009FA50
+ * is the frame counter: bit 0 of +0x8C calls func_80042864(segment,
+ * (segment +0x14 & 1) ? 0 : s4); bit 1 calls func_800428FC(node, segment,
+ * signed s4, signed sp38, signed fpv) with the signs from bits 8, 0x10, 0x20 of
+ * segment +0x14; otherwise func_800428FC is called with the same three amounts
+ * zeroed for segments flagged with 1, 2 or 4.
+ * Every (D_8009FA50 ^ i) & 7 == 0, with bit 1 of node +0x1A clear and segment
+ * +0x0E negative: vec = (+0x04/+0x06/+0x08 << 4) + world translation, and when
+ * vec.y < func_80066F78(vec, 0, 0, 0) the segment is unlinked with
+ * func_800427A8(node, prev, segment) and D_8009FAB0 is decremented.
+ * Life: (+0x18 & 0x1FFF) - arg; at zero or below the segment is unlinked the
+ * same way, otherwise +0x18 = (+0x18 & 0xE000) | life and the segment becomes
+ * prev. D_8009FAB0 is the global live-segment counter - func_80042AF4 refuses
+ * to spawn once it reaches 0x2BC.
+ *
+ * @par Likely role
+ * One of the two per-node segment updaters behind func_800441DC (flag bit 0 of
+ * +0x8D selects this one). func_80042AF4 writes the very same segment layout -
+ * drift at +0x04..+0x08, running position at +0x0C..+0x10, colour channels
+ * +0x15..+0x17, direction flags +0x14, life plus a 3-bit tier at +0x18 - and
+ * starts each channel either at node +0x8F..+0x91 or at +0x92..+0x94 depending
+ * on the sign of +0x96/+0x98/+0x9A. This function integrates the drift and
+ * walks that colour ramp, while func_800428FC clamps each channel against
+ * +0x8F..+0x94 and flips the direction bits in +0x14. The (frame ^ index) masks
+ * stagger the clamp over four frames and the terrain probe over eight, so a long
+ * chain never pays the whole per-segment cost in one frame.
+ *
+ * @par Unknown
+ * What the three rates +0x96/+0x98/+0x9A and the +0x72 scale are called in the
+ * design, and whether the single-rate mode (bit 0 of +0x8C) is a greyscale fade
+ * - func_80042864 spends one amount across +0x17, then +0x16, then +0x15 -
+ * rather than a per-channel ramp.
+ *
+ * @par Callers
+ * func_800441DC only (its flag-bit-0 branch).
+ */
 s32 func_80043CA8(struct Unk43CA8 *node, s32 arg)
 {
     struct Unk3D9F8Ret *ret;

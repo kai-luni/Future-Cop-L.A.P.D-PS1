@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Instance Setup | Gameplay > Object Spawning
 #include "game/types.h"
 
 struct Unk516A0Owner {
@@ -9,6 +10,34 @@ struct Unk516A0Owner {
 
 extern void func_80013BD8(void *list, void *entry, s32 mode);
 
+/**
+ * @brief Initialises the compound object's visual part: zeroes the entry
+ *        at state+0x2A8, sets the flag pair and copies the owner's
+ *        transform.
+ *
+ * @param owner Compound owner; +0x2C the 15-word transform, +0xAC the
+ *        state block.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The entry is zeroed except +0xC = 0x00010000 | 0x08000000 (bits 16 and
+ * 27 set, the listed mask bits cleared); four bytes at entry+3 are
+ * cleared. +0x3C = 1 with +0x34 pointing at it (a self link), +0x40 =
+ * 0x10. func_80013BD8 binds the model slot at state+0x25C to the entry.
+ * The owner's transform[0..14] is copied word by word to state+0x260..
+ * +0x298.
+ *
+ * @par Likely role
+ * The reset path of the compound object func_80051AF8: the part starts
+ * with the owner's current pose, the self link marks "no parent", and
+ * the two flag bits likely enable drawing and the transform copy.
+ *
+ * @par Unknown
+ * The exact meaning of flag bits 16/27 and the 0x10 word.
+ *
+ * @par Callers
+ * func_80051AF8.
+ */
 void func_800516A0(struct Unk516A0Owner *owner)
 {
     register u8 *state __asm__("$3");

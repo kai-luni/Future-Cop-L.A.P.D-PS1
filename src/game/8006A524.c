@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Ribbon Beam | Gameplay > Target Selection | Graphics > Effects > Object Pool
 #include "game/types.h"
 
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
@@ -76,6 +77,54 @@ extern void func_8007377C(struct Unk73590 *a, struct Unk73590 *b, s32 arg2, s32 
                           s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, s32 arg9,
                           s32 arg10, s32 arg11, s32 arg12, s32 arg13);
 
+/**
+ * @brief Chains a second beam from the current object to a random nearby
+ *        object of another kind, then messages that object.
+ *
+ * @param ctx Source object; +0x14 a word copied into the message and +0x18 the
+ *        kind byte that candidates must not share.
+ * @param current Object the arc starts from; 0 returns immediately.
+ * @param arg2 Unused - the caller passes the contact position, the body never
+ *        reads it.
+ * @param arg3 Pointer to a u16 copied into the message's +0x04 field.
+ * @param params Optional parameter record; +0x36 segment count, +0x38 strip
+ *        count, +0x3B/+0x3C/+0x3D the beam colour, +0x3E the gradient divisor,
+ *        +0x40/+0x42/+0x44 three more beam words, and +0x48/+0x4A the widths.
+ *        When 0 a fixed parameter set is used.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The scan starts at func_80019668() modulo the D_800A8F90 count and wraps at
+ * the end. Candidates are rejected when their +0x08 is not positive, when they
+ * are the current object, when their +0x18 matches ctx +0x18, when their
+ * +0x24 flags carry bit 0, or when any axis of the position delta exceeds
+ * 0x7FFF. The attempt counter starts at 2 and the function leaves as soon as it
+ * goes negative, so at most two candidates are ever accepted. For an accepted
+ * candidate two func_80073590 nodes are allocated - current and candidate, kind
+ * -1, the width taken from params +0x48, and 0 when params +0x4A has bit 8 - and
+ * func_8007377C links them with (params +0x36) >> 1 segments, params +0x38
+ * strips, the colour +0x3B/+0x3C/+0x3D, the divisor +0x3E, +0x40, +0x42, +0x44,
+ * 0, 0 and 1. Without params the fixed set is 6 segments, 1 strip, colour
+ * 0x7F/0x7F/0xFF, divisor 0x4B0, 0x7FFF, -0x1800, 0, 0, 0, 1. Either way the
+ * candidate's handler at +0x04 is then called with message 0x0E and a block of
+ * ctx +0x14, *arg3, byte 8 and ctx.
+ *
+ * @par Likely role
+ * The branching half of a tether: after the main segment hits something,
+ * func_8006B23C calls this to arc a second beam from the tether to one random
+ * object of a different class, so a struck target forks lightning or rope onto
+ * a neighbour. The kind mismatch and the delta limit keep the arc from hitting
+ * its own class or jumping across the level, and the 0x0E message hands the
+ * effect to the candidate itself.
+ *
+ * @par Unknown
+ * What message 0x0E means to the receivers, and why the attempt budget is two
+ * rather than one.
+ *
+ * @par Callers
+ * func_8006B23C, on the type-0x0B beam branch when the swept test reported a
+ * hit.
+ */
 void func_8006A524(struct Ctx *ctx, struct Object *current, s32 arg2, u16 *arg3,
                    struct Params *params)
 {

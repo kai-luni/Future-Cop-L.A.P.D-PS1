@@ -1,3 +1,4 @@
+// Categories: Physics > Motion | Gameplay > Object Dynamics
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -41,6 +42,34 @@ extern s32 D_8009FA50;
 extern void func_8001ACA4(struct Vec3s32 *a, struct Vec3s32 *b, s32 scale, struct Vec3s32 *out);
 extern s32 func_80066F78(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3);
 
+/**
+ * @brief Integrates the debris/shard list of a fractured object: gravity,
+ *        spin, ground contact and lifetime.
+ *
+ * @param node Owner; +0x84 the shard list head, +0xF the done flag byte.
+ * @param arg Frame delta.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * scale = arg * 218. An empty list sets flag bit 0 and returns. Per shard:
+ * vel.y += unk40 * scale (64-bit multiply, >> 16), position integrated via
+ * func_8001ACA4 (the +0x80 flag selects the attached object's position
+ * over the local one), spin words += (unk30/unk32 * arg) >> 8. Every 8th
+ * shard ((frame ^ i) & 7 == 0, frame = D_8009FA50) a ground test
+ * func_80066F78(pos, 0, 0, 0) >= pos.y kills it (unk44 = -1); a positive
+ * unk44 counts down by arg and kills at 0.
+ *
+ * @par Likely role
+ * The fracture-shard physics behind func_8004C228 (the breakable-object
+ * handler): 218 is the gravity constant per frame unit, the staggered
+ * ground test spreads the expensive height queries over frames.
+ *
+ * @par Unknown
+ * What unk40 encodes per shard (likely a gravity scale).
+ *
+ * @par Callers
+ * func_8004C228.
+ */
 void func_8004BEE8(struct Node4BEE8 *node, s32 arg_)
 {
     register s32 arg __asm__("$18") = arg_;

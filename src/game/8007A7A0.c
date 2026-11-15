@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End Configuration | Graphics > HUD
 #include "game/types.h"
 
 struct MenuState {
@@ -16,6 +17,32 @@ extern s32 func_80046C84(s32 id, s32 arg1);
 extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                          s32 alignX, s32 alignY, s32 font);
 
+/**
+ * @brief Menu selector widget: steps a per-player option value with
+ *        wraparound and draws the selected label.
+ *
+ * @param command 0 draw, 1 step down, 2 step up.
+ * @param x Draw column (forced to 0xA0 outside the two-player mode-2 view).
+ * @param y Draw row; the label lands at y + 0xC.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The player index is D_8009F8B8 when D_8009FA94[0]->active is set, else 0.
+ * Steps play sound 0x47 and move D_8009F8F0[player]: down wraps to 3 (or 2
+ * when D_8009F3C1 is 0), up wraps to 0 above 3 (or 2). Draw maps the value
+ * 2/1/0/3 to label ids 0/1/2/3 in D_8009BEEC and renders via func_800788F0
+ * (colour 0xF, alignX 4, size 8, font 1); the label is suppressed for
+ * player 1 unless active == 1 and mode == 2.
+ *
+ * @par Likely role
+ * A three/four-way option selector (the D_8009F3C1 flag likely enables a
+ * fourth entry); the inverted label order suggests the values count down
+ * while the labels read up.
+ *
+ * @par Callers
+ * No direct callers in the call graph and no address reference found;
+ * dispatch unconfirmed (likely a widget table entry).
+ */
 void func_8007A7A0(s32 command, s32 x, s32 y)
 {
     s32 index;

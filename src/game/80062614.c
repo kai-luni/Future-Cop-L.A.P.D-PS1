@@ -1,3 +1,4 @@
+// Categories: Physics > Collision > Broadphase Grid Pairs | Game Engine > Frame
 typedef unsigned char u8;
 typedef struct Node { void *object; struct Node *next; } Node;
 typedef struct { int x, y, width, height; } Grid;
@@ -6,6 +7,41 @@ extern Node D_800A2990[];
 extern u8 *D_8009F820;
 extern void func_800623FC(Node *);
 extern void func_80062504(Node *, Node *);
+/**
+ * @brief Broadphase pass over the marked viewport grid: tests the objects inside
+ *        every cell and against the objects of the neighbouring cells.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The function takes no arguments; everything is read from globals or from the
+ * objects they point at.
+ * The pass works on the rectangle D_800A2970 (x, y, width, height) written by the
+ * caller, the cell map D_8009F820 (one byte per cell, 0 = empty) and the node
+ * array D_800A2990, indexed by that byte.
+ * For every row except the last it handles the first cell, the cells in between
+ * and the last cell: after func_800623FC(&base[index]) - the pairs inside one
+ * cell - it calls func_80062504(&base[index], &base[value]) for the cell to the
+ * right (cur[1]), the two cells below (next[0], next[1]) and, in the interior
+ * only, the cell below-left (next[-1]). The last row only pairs the cell with its
+ * right neighbour, and the very last cell gets func_800623FC alone. A cell byte
+ * of 0 is skipped everywhere.
+ *
+ * @par Likely role
+ * The broadphase driver of the object-versus-object collision system: the
+ * right/down/down-right/down-left neighbourhood is exactly what makes every pair
+ * of adjacent cells meet once, so the function turns the marked viewport
+ * rectangle into the list of object pairs to test. func_80062FB4 calls it last,
+ * after it has cleared and filled the cell map for the current view.
+ *
+ * @par Unknown
+ * What writes the cell bytes of D_8009F820 (func_80062FB4 only clears the reused
+ * region; the per-view passes func_80062C3C and func_80062874 fill it) and why
+ * node index 0 is skipped - it is probably the "no object" sentinel.
+ *
+ * @par Callers
+ * func_80062FB4 only.
+ */
 void func_80062614(void)
 {
     register Node *node __asm__("$16");

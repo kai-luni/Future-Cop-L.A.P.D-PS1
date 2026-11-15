@@ -1,3 +1,4 @@
+// Categories: Gameplay > Combat > Targeting | Utilities > Mathematics
 #include "game/types.h"
 
 typedef struct {
@@ -9,6 +10,38 @@ typedef struct {
 extern s32 func_8001A4E8(s32 *a, s32 *b);
 extern void func_8001A180(s32 *v);
 
+/**
+ * @brief Solves an aim direction by marching a ray toward the target and
+ *        normalising the residual.
+ *
+ * @param target Target position.
+ * @param out Receives the normalised aim vector.
+ * @param arg2 Step size (<< 6 per iteration).
+ * @param arg3 Maximum travel distance.
+ * @param start Ray origin.
+ * @param dir Ray direction (unit-ish).
+ * @param scale Direction scale.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The step vector is dir * scale >> 10; the loop runs at most 9 iterations
+ * (starting at 8 when scale << 4 < arg2), advancing p and accumulating
+ * travelled += arg2 << 6; it stops when travelled reaches the distance to
+ * the target (func_8001A4E8) or arg3. The result is p - target - step/2,
+ * normalised by func_8001A180.
+ *
+ * @par Likely role
+ * The lead/deflection solver of the fire paths (func_8005F6E8,
+ * func_8006ACB0, func_8005CBCC): marching toward the target and taking
+ * the residual gives a smoothed aim direction that accounts for the
+ * projectile travel; the half-step bias centres the estimate.
+ *
+ * @par Unknown
+ * Why the iteration cap differs with the scale/step ratio.
+ *
+ * @par Callers
+ * func_8005CBCC, func_8005F6E8, func_8006ACB0.
+ */
 void func_8005E2A0(Vec3 *target, Vec3 *out, s32 arg2, s32 arg3,
                    Vec3 *start, Vec3 *dir, s32 scale)
 {

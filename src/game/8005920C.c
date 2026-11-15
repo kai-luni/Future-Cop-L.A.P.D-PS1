@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Graphics > Animation
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -48,6 +49,33 @@ extern void func_8002AD58(s32 kind, struct Unk5920C *object, struct Unk5920CSpaw
 extern void func_80013BD8(struct Unk5920CModel **model, s32 arg1, s32 arg2);
 extern void func_80044988(u8 *data, u8 *track, u8 forward, s32 index);
 
+/**
+ * @brief Spawn case of the kind-0x12 companion handler: binds the type's
+ *        model and animation and places the object.
+ *
+ * @param object Entity block.
+ * @param spawn Spawn record; +8 the definition with the position and type.
+ * @param arg2 Forwarded to the shared message-2 hook.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8002AD58(2, object, spawn, arg2) runs first; the type pointer is
+ * copied, func_80013BD8 binds the model from type->unkE0, flags72 gains
+ * 0x30, func_80044988 installs the animation track (forward, index 0),
+ * unk74 is cleared, the definition position is copied and the flags become
+ * (flags & 0xBFFFFFFF) | 0xA20210.
+ *
+ * @par Likely role
+ * The message-2 path of func_80059ABC: the companion object starts with
+ * its type's default animation and a fixed flag set (bit 0x40000000
+ * cleared, likely the "inactive" marker).
+ *
+ * @par Unknown
+ * The meaning of flag bits 0xA20210 and the flags72 pair 0x30.
+ *
+ * @par Callers
+ * func_80059ABC.
+ */
 void func_8005920C(struct Unk5920C *object, struct Unk5920CSpawn *spawn, s32 arg2)
 {
     struct Unk5920CDef *def;

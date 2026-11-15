@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Game Engine > Object Setup
 #include "game/types.h"
 
 struct Unk2AD58 {
@@ -17,6 +18,43 @@ extern s32 func_8002AA1C(s32 message, struct Unk2AD58 *object, void *hit);
 extern s32 func_8002AB8C(struct Unk2AD58 *object, void *data);
 extern s32 func_80095C30(s32 x, s32 y);
 
+/**
+ * @brief The shared base entity handler: default cases for spawn, draw,
+ *        damage, queries and the heading angle.
+ *
+ * @param message Handler case number.
+ * @param object Entity block; +0x24 flags, +0x78/+0x80 the heading vector.
+ * @param data Case payload.
+ * @return Case 1: 0xA0 (the base block size). Case 10/16: 1. Case 15: the
+ *         12-bit heading angle. Default: -1. Other cases: the sub-helper
+ *         results.
+ *
+ * @par Confirmed
+ * Case 2 runs func_8002A5F4 (base spawn); case 3 draws via func_8002ACB4
+ * (object, 1) unless flag bit 0x20 is set; case 4 -> func_8002A810(1, 1);
+ * cases 5/6/7/8/13 return 0; case 9 -> func_8002A940; cases 11/14 ->
+ * func_8002AA1C (the damage path); case 12 -> func_8002AB8C; case 15
+ * returns func_80095C30(unk78, unk80) & 0xFFF (atan2 of the stored heading
+ * vector).
+ *
+ * @par Likely role
+ * The base class of the entity system: every specialised handler forwards
+ * its unhandled cases here (50 callers), and the spawn queue's size query
+ * (message 1) composes with the 0xA0 base size. Message 15 is the shared
+ * "which way am I facing" query.
+ *
+ * @par Callers
+ * func_8002C3F0, func_8002C584, func_8002D664, func_8002DAA4, func_8002DB9C,
+ * func_8002DC94, func_8002DEA8, func_8002ED7C, func_8002EED8, func_8002F7C8,
+ * func_8002FA20, func_8003015C, func_800302E8, func_80030960, func_80030AD4,
+ * func_80030D3C, func_80030DE0, func_8003151C, func_800317BC, func_8003190C,
+ * func_80032180, func_80032F3C, func_80035904, func_80036624, func_80036940,
+ * func_80036E6C, func_80037064, func_80037708, func_800378BC, func_800379D4,
+ * func_800382B4, func_80038754, func_80039298, func_800395A8, func_800398EC,
+ * func_80039C58, func_80039E8C, func_8003A844, func_80041488, func_80041B6C,
+ * func_80041C6C, func_80041E0C, func_80042330, func_80042504, func_800426A8,
+ * func_800578E4, func_800579D4, func_8005908C, func_8005920C, func_80059ABC.
+ */
 s32 func_8002AD58(s32 message, struct Unk2AD58 *object, void *data)
 {
     switch (message) {

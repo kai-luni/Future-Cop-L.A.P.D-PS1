@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Ribbon Beam | Graphics > Effects > Beams | Gameplay > Damage
 #include "game/types.h"
 
 typedef struct V3 {
@@ -77,6 +78,83 @@ extern s16 func_80070730(Node *node, Obj *obj, V3 *out, void *arg);
 extern s32 func_80019668(void);
 extern s32 func_8001A314(V3 *v);
 
+/**
+ * @brief Rebuilds one strip of a ribbon/beam node: resolves both end points,
+ *        delivers their damage events and re-tessellates the interior vertices
+ *        with a tapered random wobble.
+ *
+ * @param node Beam node: segment count at +0x0C, flags at +0x0E, the two end
+ *        records at +0x04 and +0x08, the s16 side scale at +0x14, the u16
+ *        width at +0x16, the colour at +0x18/+0x19/+0x1A and the damage at
+ *        +0x24.
+ * @param e One strip: s32 vertex buffer at +0x00 (count + 1 triples), optional
+ *        s16 buffer at +0x04, segment count at +0x08, colour bytes at
+ *        +0x0C/+0x0D/+0x0E which this function overwrites.
+ * @param mode Only the low byte is tested. Non-zero resolves both end points
+ *        through func_80070730 and sends their damage events; zero keeps the
+ *        existing end points and only re-tessellates the interior.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The strip takes the node colour: +0x0C/+0x0D/+0x0E = node +0x18/+0x19/+0x1A.
+ * Damage block, entered when the s16 at node +0x24 is positive, once for the
+ * record at node +0x04 and once for the one at +0x08: the record, its sub
+ * pointer at +0x04 and bit 2 of its flag word at +0x18 must all be non-zero,
+ * the amount is 1000 when sub +0x10 (type) is 2, 15 or 7 and node +0x24
+ * otherwise, and the record is the message {0, amount, 8, 0, 0} through
+ * sub->fn (+0x04) as fn(14, sub, message, 0). Message 14 is the damage channel
+ * of the shared object handler - func_8002AD58 forwards it to func_8002AA1C,
+ * which for message 14 reads an s16 damage at +0x04 and a kind byte at +0x06 -
+ * so this submits "N damage of kind 8 from nobody".
+ * Mode branch: idx = func_80070730(node, node->+0x04, e->verts, 0); when idx is
+ * not -1 the same event goes to D_8009FA58[idx] with node +0x24 as the amount
+ * (no 1000 substitution). A second call resolves node +0x08 into
+ * e->verts + e->count with e->verts as the scatter reference, the same way.
+ * Geometry: s0 = (node +0x16 << 16) >> 23, i.e. the width divided by 128.
+ * L.v = verts[count] - verts[0]; func_8001A314 normalises that vector in place
+ * and returns its length times four; scale = (length >> 4) / count;
+ * arr[0] = ((v >> 4) * scale) >> 9 and arr[1] = 2 * arr[0], arr[2] = 3 * arr[0]
+ * through the pointer walk.
+ * A first cross axis q[0] comes from v crossed with the world axis whose
+ * absolute component is smallest (0xCCCB tested on x, then y, then z), q[1]
+ * holds the absolute components of v, and w[0] = v x q[0] with the >> 4 and
+ * >> 12 scaling written out per term.
+ * q[0] and w[0] are then negated and scaled by s0 (>> 12) and each is expanded
+ * into five entries by repeatedly adding its own half, so q[0..4] and w[0..4]
+ * are five evenly spaced cross-section offsets running from -X to +X.
+ * Interior loop, i = 1..count-1: three func_80019668 draws (mod 5, mod 5,
+ * mod 3) pick a triple from the local frame; acc1 and acc2 accumulate those
+ * picks and are never reset; the wobble is
+ * (((acc1 + acc2) >> 4) * rem) >> 8 with rem starting at 0x1000 and dropping by
+ * 0x1000/count per vertex, so it is strongest at vertex 1 and zero at the last;
+ * vertex[i] = pos + picked triple + wobble; pos += arr[1]; when node +0x14 is
+ * non-zero, shorts[i] = ((wobble >> 4) * node +0x14) >> 12.
+ * The picked triples are read at a 12-byte stride from the base of the local
+ * frame, whose declared order is v, arr[3], q[5], w[5]: index 0..2 addresses
+ * arr[0..2], index 3 and 4 address q[0] and q[1], and the w member of the same
+ * offset lands two vectors further. Vertices 0 and count are never written
+ * here - they are what func_80070730 produces.
+ *
+ * @par Likely role
+ * The geometry builder of the ribbon strips created by func_8007377C (once per
+ * strip, mode 1) and re-armed by func_800718B8 when a strip's three timers
+ * expire. +0x16 sets the cross-section size, +0x14 enables and scales the s16
+ * side buffer (the constructor allocates that buffer only when the same field
+ * is non-zero), the descending rem tapers the wobble toward the far end and the
+ * never-reset accumulators turn it into a drifting random walk, which reads as
+ * the flicker of a tracer or energy beam. The 5 x 5 cross-section is what the
+ * renderer later connects.
+ *
+ * @par Unknown
+ * The meaning of node +0x1E/+0x20/+0x22 (three s16 the constructor copies from
+ * elsewhere), why sub types 2, 15 and 7 take the fixed 1000 damage, and whether
+ * the cross-section really is a 5 x 5 star - the loop only ever selects one row
+ * and one column per vertex.
+ *
+ * @par Callers
+ * func_8007377C (constructor, mode 1, once per strip) and func_800718B8
+ * (mode 1, when the strip timers expire).
+ */
 void func_80070E48(Node *node, Entry *e, s32 mode)
 {
     Loc L;

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Path Following | Utilities > Mathematics > Fixed Point
 #include "game/types.h"
 
 typedef struct {
@@ -22,6 +23,37 @@ typedef struct { s32 x, y, z; } V3;
 
 extern s32 func_8001A314(s32 *vec);
 
+/**
+ * @brief Initialises a path segment: direction, speed-scaled velocity and
+ *        the remaining duration from the segment length.
+ *
+ * @param node Segment record (fields +0x04..+0x44).
+ * @param scale Speed scale.
+ * @param arg2 Stored at +0x44 (likely a sound/flag id).
+ * @param arg3 Time base (300 units per second).
+ * @param arg4 Stored at +0x40.
+ * @param p1 Segment start position.
+ * @param p2 Segment end position.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * vec = p2 - p1, length via func_8001A314; sv = vec >> 4. The velocity
+ * words +0x34..+0x38 = (sv * scale) >> 12. Duration +0x3C = max(0,
+ * (length >> 4) - scale) * 300 / (arg3 >> 4). Position +0x04 = p1; the
+ * per-frame step words +0x28..+0x30 = (sv * (arg3 / 300)) >> 8; +0x3E =
+ * 0x8000, +0x3A = 0.
+ *
+ * @par Likely role
+ * The segment constructor of the mover system (func_8006F0E8): the two
+ * velocity sets serve the interpolated and the per-frame integration
+ * paths, the duration counts down in 300-unit seconds.
+ *
+ * @par Unknown
+ * What the 0x8000 marker at +0x3E gates.
+ *
+ * @par Callers
+ * func_8006F0E8.
+ */
 void func_8006EEF8(Unk6EEF8 *node, s32 scale, s16 arg2, s32 arg3, s32 arg4, s32 *p1, s32 *p2)
 {
     s32 vec[3];

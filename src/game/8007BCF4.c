@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End > List Screen | Graphics > HUD > Menu Text | Graphics > Text > Rendering
 #include "game/types.h"
 
 struct State8009FA94 {
@@ -26,6 +27,51 @@ extern void func_800493C0(u32, u8, u8, u8);
 extern s32 func_8008CD30(u8 *, u8 *, s32);
 extern void func_80078B34(s32, s32, s32);
 
+/**
+ * @brief Draws one front-end list screen: the profile list body, a numbered row
+ *        list with one highlighted line, and two per-screen display ids.
+ *
+ * @param arg0 Draw selector; any non-zero value returns at once, so only a 0
+ *        performs the pass.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * When D_8009F468 differs from D_800A3838 the profile list is redrawn with
+ * func_8007B460(D_8009F8B8). The row type is D_8009F8C0_arr[D_8009F8B8]; when
+ * it is 2 a header with text id 0xC80 is drawn centred at (0x57, 0x3B) through
+ * func_800788F0, then rows 1 to D_8009F87F + 1 are formatted with
+ * func_8008CD30(text, D_8009F484, i) and drawn at (0x57, y) with y from 0x52
+ * stepping by 0xA. The row equal to D_8009F87E gets colour 0x11 and also
+ * recolours palette entry 0x11 via func_800493C0(0x11, ...) from
+ * D_8009B3D4[((D_8009FA60 >> 4) & 7) * 3]; every other row uses 0xF. When
+ * D_8009F8C8 is not -1 the function returns before the display ids. With the row
+ * type 2 the ids are a0 = 0xC6C and s0 = 0xC62; otherwise the first byte of the
+ * pushed screen block, *D_8009F468, selects a pair through a six-entry jump
+ * table: 0 gives 0xC26/0xC1C with the edit flag D_8009F8C0 set and 0xC4E
+ * otherwise, 1 gives 0xC44, 2 gives 0xC56, 3 gives 0xC3A but 0xC30 when
+ * D_8009FA94 +0x5C is 1 and 0xC3A again when its +0x0C is 1, 4 gives 0xC53 and
+ * 5 gives 0xC30; ids above 5 fall through with a0 = 0 and s0 = 0x44C. In every
+ * case bit 9 of D_8009FA60 forces s0 to 0x10CC, then func_80078B34(a0, 0, 0)
+ * and func_80078B34(s0, 1, 0) queue the two ids into the two display slots.
+ *
+ * @par Likely role
+ * The common draw and update callback of the three front-end list screens: the
+ * level or profile list on the left, a numbered sub-list with the selected line
+ * in the cycling highlight colour, and one display id per screen - the ids in
+ * the 0xC20..0xC6C range differ per screen and per two-player state, which reads
+ * like a page label or prompt pair.
+ *
+ * @par Unknown
+ * What the display ids actually select, why the two-player words at
+ * D_8009FA94 +0x5C/+0x0C only affect screen 3, and what the pending value
+ * D_8009F8C8 suppresses the ids for.
+ *
+ * @par Callers
+ * No direct callers in the call graph. func_80077AD4 stores the address in the
+ * +0x18 callback field of the three screen blocks D_800A3868, D_800A3898 and
+ * D_800A38C8, which also share the +0x10 pointer D_8007B3F4 and the +0x20
+ * pointer D_8007F618, so the screen dispatcher reaches it indirectly.
+ */
 void func_8007BCF4(s32 arg0)
 {
     u8 text[8];

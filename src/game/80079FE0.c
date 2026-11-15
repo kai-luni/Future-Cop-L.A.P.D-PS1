@@ -1,3 +1,4 @@
+// Categories: Graphics > Text > Debug Numbers
 #include "game/types.h"
 
 struct UnkB4E4 {
@@ -13,6 +14,29 @@ extern u8 D_80011E60[];
 
 extern void func_80082DDC(s32 arg0, s32 arg1);
 
+/**
+ * @brief Debug dump of eight profile values through the timed text box.
+ *
+ * @param arg0 Only action 3 runs the dump.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Walks i = 0..7 over the index table D_8009B724; each non-zero value
+ * D_8009B4E4[table[i]].unk08 is shown via func_80082DDC(val, 2) (the wide
+ * layout). D_8009F4E0 aborts the loop early; when it stays 0, the fallback
+ * box func_80082DDC(D_80011E60, 0) runs.
+ *
+ * @par Likely role
+ * A development inspection page for the eight-slot profile table, sibling
+ * of func_8007A0A4 (five slots, other index table).
+ *
+ * @par Unknown
+ * What D_8009F4E0 signals (likely a user abort).
+ *
+ * @par Callers
+ * No direct callers in the call graph and no address reference in the
+ * sources; likely a debug-only page (dispatch unconfirmed).
+ */
 void func_80079FE0(s32 arg0)
 {
     u32 i;

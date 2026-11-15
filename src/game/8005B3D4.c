@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Beams | Gameplay > Damage
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -43,6 +44,36 @@ extern void func_8007377C(void *arg0, void *arg1, s32 arg2, s32 arg3,
                           s32 arg12, s32 arg13);
 extern s32 func_8001A4E8(s32 *a, s32 *b);
 
+/**
+ * @brief Ticks the locked-target beam: validates both endpoints, drains the
+ *        timer, fires the beam and delivers the hit message in range.
+ *
+ * @param arg0 Frame delta subtracted from the timer.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The global lock D_800A22C0 holds two endpoint pointers (+0/+4) with their
+ * ids (+8/+0xC); a mismatched id drops the endpoint. The timer +0x28 must
+ * be non-negative at entry and drains by arg0; only when it crosses below
+ * zero and both endpoints survive does the beam fire: func_8007377C links
+ * two func_80073500 nodes (positions +0x1C and +0x10, args 0, 0x100, 0)
+ * with parameters (4, 1, 0xFF, 0x60, 0, 0x800, 0, 0, 0, 0, 0, 1). Then
+ * func_8001A4E8 compares the endpoint distance against (unk2C +
+ * target[0x6E]) * 16; in range, a local record {8, unk2A, target[0x14],
+ * endpoint} is delivered as message 0xE through the first endpoint's
+ * callback.
+ *
+ * @par Likely role
+ * A periodic beam weapon between two locked objects (tractor/attack beam):
+ * the timer sets the fire rate, the distance gate the effective range, and
+ * message 0xE is the shared hit notification.
+ *
+ * @par Unknown
+ * Who arms D_800A22C0 and the unit of the 0x800 beam parameter.
+ *
+ * @par Callers
+ * func_8005E0AC.
+ */
 void func_8005B3D4(void *arg0)
 {
     struct Local22C0 local;

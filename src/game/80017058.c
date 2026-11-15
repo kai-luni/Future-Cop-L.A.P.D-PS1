@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Draw Path | Graphics > GTE
 #include "game/types.h"
 
 typedef struct { s32 x,y,z; } Vec;
@@ -18,6 +19,35 @@ extern void func_8001006C(Vec *, Vec *, s32);
 extern s32 func_80015B68(Part *, Work *, void *, s32);
 extern void func_80016E6C(Part *, Work *, void *, void *);
 extern void func_80015F38(Part *, Work *, void *, void *);
+/**
+ * @brief Variant of func_80016A64 with an additional per-part enable bit
+ *        array and a fixed draw mode 0.
+ *
+ * @param inst Model instance.
+ * @param enabled Bit array: part count indexes enabled[count / 32] bit
+ *        (count & 31).
+ * @param mask Part group mask (bit (part->flags >> 12) & 7).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Identical setup to func_80016A64 (frame index, p2c lookup, billboard
+ * path for instance flag 0x40 with the transposed matrix and camera
+ * delta), but work.mode = 0 and a part draws only when both the group
+ * mask bit and the enable bit are set; the count runs downwards while
+ * parts advance forwards.
+ *
+ * @par Likely role
+ * The selective draw path (func_800175A0): the enable array lets the
+ * caller hide individual parts (damage states, detachable pieces) on top
+ * of the group mask.
+ *
+ * @par Unknown
+ * Why the enable index uses the descending count rather than the part
+ * index.
+ *
+ * @par Callers
+ * func_800175A0.
+ */
 void func_80017058(Instance *inst, u32 *enabled, s32 mask)
 {
     Matrix transposed;

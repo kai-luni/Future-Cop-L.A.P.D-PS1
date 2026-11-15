@@ -1,3 +1,4 @@
+// Categories: Resources > Memory Management | Platform > Memory
 #include "game/types.h"
 extern s32 D_8009EA3C, D_8009EA40, D_8009EECC, D_8009EED4;
 extern s32 D_8009EF04, D_8009EF08;
@@ -5,6 +6,57 @@ extern s32 *D_8009EF0C;
 extern void func_80097DF8(void);
 extern s32 func_800980F8(s32, s32, s32);
 
+/**
+ * @brief Allocates an aligned block of the requested size from the block
+ *        record table, first fit, splitting the record it comes from.
+ *
+ * @param arg Lower bound for the block address; rounded up to the alignment and
+ *        rejected when it ends up below 0x1010.
+ * @param size Byte count to reserve; rounded up to the alignment.
+ * @return Start address of the block, or -1 when the request does not fit, the
+ *         address is out of range or the table has no room for the split.
+ *
+ * @par Confirmed
+ * 1. Alignment uses D_8009EED4 as the mask and D_8009EECC as the shift: size and
+ *    address are increased by the mask when a bit lies outside it and then
+ *    truncated to a multiple of 1 << D_8009EECC, so both end up aligned.
+ * 2. An aligned address below 0x1010 returns -1 (the first 0x1010 bytes are
+ *    never handed out), and x + size above (0x10000 << D_8009EECC) minus the
+ *    reserve returns -1.
+ * 3. reserve is 0 while D_8009EA3C is 0, otherwise
+ *    (0x10000 - D_8009EA40) << D_8009EECC.
+ * 4. When the first record carries bit 0x40000000 the block is cut straight out
+ *    of it: with a gap before x two records are written (a free 0x80001010
+ *    record with the gap, then the tail at x + size) and with no gap one record
+ *    replaces the header (x, size and the tail). The record count is stored back
+ *    into D_8009EF08 and the capacity test is D_8009EF04 - 2 < D_8009EF08 for
+ *    the two-record case and D_8009EF04 - 1 < D_8009EF08 otherwise.
+ * 5. Otherwise func_80097DF8() coalesces the table first. Records whose address
+ *    word has bit 0x80000000 are then examined: a record matches when x lies
+ *    inside it and either the block extends past x + size or the next record is
+ *    the tail, and the remaining space must be at least size. A record without
+ *    bit 0x80000000 but with 0x40000000 is the tail: its size minus the reserve
+ *    has to be at least size and it is used as is.
+ * 6. The chosen record is split by func_800980F8(record index, x, size) and that
+ *    return value is the result; func_80097DF8() runs once more before returning.
+ *
+ * @par Likely role
+ * The linear heap behind the sprite/asset subsystem's 0x11E80-byte work buffer:
+ * the 0x1010 bytes at the bottom are a fixed header area, and the reserve keeps
+ * a configurable region free at the top of the heap. The address bits read as
+ * 0x80000000 = free record, 0x40000000 = last record (reaches the heap top) and
+ * 0x0FFFFFFF = the address field.
+ *
+ * @par Unknown
+ * What D_8009EA3C/D_8009EA40 describe (Likely a tail reservation for sound or
+ * scratch data), whether the records are kept sorted by address, the unit of
+ * D_8009EECC, and why the fast path overwrites the record count instead of
+ * incrementing it (consistent with the first record being the only one).
+ *
+ * @par Callers
+ * func_8002333C, the sprite/asset bring-up, which stores the result in
+ * D_8009F27C from func_80098458(0x1010, 0x11E80).
+ */
 s32 func_80098458(s32 arg, s32 size)
 {
     s32 reserve, mask, i;
