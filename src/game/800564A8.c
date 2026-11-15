@@ -1,5 +1,29 @@
+// Categories: Graphics > Camera > Distance
 #include "game/types.h"
 
+/**
+ * @brief Maps a camera parameter through a quadratic curve to a boom
+ *        distance, clamped at a minimum.
+ *
+ * @param arg0 Input parameter (offset 0x14A, scaled by 600).
+ * @return The distance word, at least 0x9000.
+ *
+ * @par Confirmed
+ * value = 0x10000 - ((arg0 - 0x14A) << 16) / 600; then r = 0x20000 *
+ * (0x10000 - value^2) in 16.16 arithmetic, plus 0xD800; results <= 0x8FFF
+ * clamp to 0x9000.
+ *
+ * @par Likely role
+ * The lazy distance resolve of the camera presets (func_800569EC,
+ * func_800573A4): the quadratic term gives an ease-in/out boom length over
+ * the parameter range, the floor keeps the camera out of the model.
+ *
+ * @par Unknown
+ * What the input parameter measures (likely pitch or zoom level).
+ *
+ * @par Callers
+ * func_800569EC, func_800573A4.
+ */
 s32 func_800564A8(s32 arg0)
 {
     register u32 lo0 __asm__("$8");

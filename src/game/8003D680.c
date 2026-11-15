@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Game Engine > Object Setup | Graphics > Scene Graph
 #include "game/types.h"
 
 struct Unk3D680;
@@ -78,6 +79,61 @@ extern void *D_800A7040[][0x100];
 extern void *func_80017EBC(s32 size, s32 tag);
 extern u32 *func_8003B3D8(u32 column, u32 row);
 
+/**
+ * @brief Allocates and initialises one 0x4C-byte map-cell object: transform,
+ *        scale, cell flags, then links it at the head of the global object list.
+ *
+ * @param source Optional source descriptor. When non-null the object stores it
+ *        at +0x04, its +0x08 value at +0x08 (or -1 when that value is zero),
+ *        points +0x34 at source +0x28, copies source +0x92/+0x93 to +0x40/+0x41
+ *        and asks source->unk04(0x10, source, 0, 0) for the +0x42 byte.
+ * @param type Cell column; only the low byte reaches func_8003B3D8.
+ * @param row Cell row, also the first index of the D_800A7040 descriptor table.
+ * @param parent Optional owner record: +0x49 flag byte (0x08 takes the 3x3 basis
+ *        from +0x1C..+0x3C, 0x04 the position from +0x10..+0x18, 0x40 the
+ *        transform block from +0x44, 0x01 the scale base from +0x00), plus the
+ *        +0x00 word.
+ * @param arg4 Stored verbatim in the object's +0x48.
+ * @param arg5 Cell-override flag: any non-zero value forces +0x39 = 4.
+ *
+ * @return The new object, or 0 when func_80017EBC(0x4C, 1) failed.
+ *
+ * @par Confirmed
+ * Allocation is func_80017EBC(0x4C, 1); +0x34 and +0x44 start at 0 and +0x48
+ * receives arg4. In the source path +0x38 stays 0 and the transform comes from
+ * source +0x28. In the source-less path +0x42 = 1 and +0x40/+0x41 = 0, the nine
+ * words +0x04..+0x24 come either from parent +0x1C..+0x3C or from the identity
+ * basis D_8009AA38 (0x10000 on the diagonal, confirmed in the image), and
+ * +0x38 = 1. A parent flag 0x40 replaces the +0x34 block with parent +0x44; a
+ * source-less object plus parent flag 0x04 copies parent +0x10/+0x14/+0x18 into
+ * +0x28/+0x2C/+0x30.
+ * Scale: with no +0x34 block, +0x3C = parent->unk00 >> 4 when parent flag 0x01
+ * is set and that word is positive, else 0x100; with a block, +0x3C = the word
+ * at block +0x40 >> 4.
+ * Cell: result = func_8003B3D8(column, row) (the attribute word of a 256-column
+ * grid with 0x400-byte rows) and entry = D_800A7040[row][column] (the cell
+ * descriptor). +0x39 becomes 4 only when both exist and one of arg5, entry
+ * flag 0x40 or attribute bit 0x04 is set; otherwise 0. +0x3A and +0x3E are
+ * cleared and the object is pushed onto D_8009F320.
+ *
+ * @par Likely role
+ * The single constructor of the map/scene cell objects: func_800402DC calls it
+ * from the spawn gate with D_8009F31C as arg5, func_8003FE0C from the deferred
+ * spawn path with arg5 = 1 and a linked owner as parent, and func_8004B5F8 uses
+ * a bare construction as a placeholder holder. func_8003D240 then walks the
+ * list it links into, which confirms the +0x38/+0x3A bookkeeping and the
+ * +0x34 shadow block belong to the frame dispatcher.
+ *
+ * @par Unknown
+ * The +0x04..+0x24 area is written as a 3x3 basis in the source-less path but
+ * holds a descriptor pointer and one extra word in the source path, so the
+ * field is really a union and the meaning of the inline words is unproven.
+ * Also open: what +0x39 = 4 selects, what the +0x32 flag 0x40 of a cell
+ * descriptor marks, and what the cell attribute bit 0x04 means.
+ *
+ * @par Callers
+ * func_8003FE0C, func_800402DC, func_8004B5F8.
+ */
 struct Unk3D680 *func_8003D680(struct Unk3D680Source *source, u8 type, s32 row,
                                struct Unk3D680Parent *parent, s32 arg4, u8 arg5)
 {

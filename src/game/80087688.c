@@ -1,3 +1,4 @@
+// Categories: Platform > Sound > Shutdown
 #include "game/types.h"
 
 typedef struct {
@@ -16,6 +17,25 @@ extern Unk8009F4D8 *D_8009F4D8;
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
 
+/**
+ * @brief Final sound-state reset: clears the head words and the four
+ *        channel words, marks the state idle.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Under func_8008C9C0: D_8009F4D8->unk0/unk4/unkC = 0, the four words at
+ * +0x7B2C = 0, +0x7B3C = 1, the volatile +0x7B24 = 0; func_8008C9E0
+ * unmask.
+ *
+ * @par Likely role
+ * The last step of the sound shutdown func_80087750: after the DMA drain
+ * this zeroes the transfer state so a later re-init starts clean, the 1
+ * at +0x7B3C likely marks "initialised/idle".
+ *
+ * @par Callers
+ * func_80087750.
+ */
 void func_80087688(void)
 {
     u32 i;

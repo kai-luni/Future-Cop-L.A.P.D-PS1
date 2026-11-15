@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM > Streaming | Game Engine > Game State > Init
 #include "game/types.h"
 
 typedef struct Node {
@@ -86,6 +87,33 @@ extern void *func_80017EBC(s32 size, s32 tag);
 extern struct FixedPool *func_800194DC(s32 count, s32 size, s32 tag);
 extern s32 func_8001D5E4(void *arg0, s32 arg1);
 
+/**
+ * @brief Initialises the streaming subsystem: four 0x6014-byte buffer nodes,
+ *        the stream state block and the asset index lookup.
+ *
+ * @param arg0 Asset key forwarded to func_8001D5E4.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Clears the volatile stream globals (D_8009F6A8..D_8009F6E8, D_8009F9B0)
+ * and the four-word tables D_800A0C10/C20/C50/C60. Allocates 0x18050 bytes
+ * (tag 2) and chains four nodes of stride 0x6014 into D_8009FA48. The state
+ * D_800A0B70 gets unk1C = 0x6000, unk3C = 1, unk40 = 0xFFFF, unk0C = -2 and
+ * a fixed pool func_800194DC(0x280, 8, 1) at unk2C. The asset index =
+ * func_8001D5E4(arg0, D_8009F238); indices < 4 with a non-zero
+ * D_800A6D78[index].unk00 provide unk04 from +8, else -9.
+ *
+ * @par Likely role
+ * The XA/stream boot of the mission init (func_80024904, func_80024A24):
+ * the four nodes are the ring buffers, the 0x280-entry pool the stream
+ * event slots, and the -9 default marks "no stream".
+ *
+ * @par Unknown
+ * The exact buffer roles and the D_800A6D78 table contents.
+ *
+ * @par Callers
+ * func_80024904, func_80024A24.
+ */
 void func_80029F50(void *arg0)
 {
     State800A0B70 *state;

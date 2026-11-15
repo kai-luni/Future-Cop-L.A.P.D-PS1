@@ -1,3 +1,4 @@
+// Categories: Physics > Motion | Gameplay > AI > Target Selection | Gameplay > Entity Update
 #include "game/types.h"
 
 extern s32 func_8001AB00(s32 *a, s32 *b);
@@ -45,6 +46,63 @@ typedef struct Object {
     SubObject subDC;       // 0xDC
 } Object;
 
+/**
+ * @brief Approach step of an entity that tracks a target: gates on vertical
+ *        distance and heading, then publishes a target speed and a 300-tick hold
+ *        into its motion block.
+ *
+ * @param a0 Message id of the caller. The body never reads it; the type-26
+ *        handler and the class-5 handler both forward their own message.
+ * @param self Entity: +0x5C/+0x60/+0x64 position, +0x6C height bias, +0x16 type,
+ *        +0x78/+0x7C/+0x80 heading vector, +0x84 speed, +0x88 target pointer,
+ *        +0x90 s16 proximity gate, +0xDC the motion block.
+ * @param unused_arg2 Partner argument; not read.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * flags = self->+0xDC+0x3C. The function returns immediately when
+ * self->unk90 >= 0x4000, when flags & 0x48 is set, or when flags >> 30 == 1.
+ * diff = target position - self position, and the vertical term is folded to an
+ * absolute value and reduced by (target->unk6C - self->unk6C) << 4; a remainder
+ * of 0x1401 or more returns, so the two entities must share a narrow vertical
+ * band.
+ * s0 = func_8001AB00(self->unk78, diff), the 16.16 dot product of the heading
+ * with the offset, and a2 = func_8001A100(diff), its length. While the length is
+ * at least 16 the dot product is rescaled by 0x80000000 / (length >> 1) with
+ * MULU16 in all four sign combinations, i.e. it becomes a cosine-scaled value
+ * where 0x10000 means "dead ahead"; a shorter distance short-circuits to
+ * 0x10000.
+ * Gates after that: with s0 <= 0xF600 the function returns when self->unk90 is
+ * at least 0x2000, and always when s0 <= 0x8000 (more than 60 degrees off).
+ * When target->unk24 is negative the two motion blocks are matched through
+ * their +0x44/+0x46/+0x48 link words and the (unk20 << 8) - unk1C pair: one
+ * branch sets self's +0x40 to 1, another returns without a change, and the
+ * latch branch sets +0x32 = target->unk84 >> 1 (capped by +0x30), +0x40 = 300
+ * and forces a positive target +0x40 to 1.
+ * Otherwise +0x32 = (self->unk84 >> 1) + (+0x30 >> 2); when s0 > 0xF5FF and the
+ * distance is below 0x4000 the speed drops to +0x30 >> 2 for type 26 and to 0
+ * for every other type. All paths that reach the end set +0x40 = 300.
+ *
+ * @par Likely role
+ * The approach-and-hold decision of chase-capable objects. The block at +0xDC
+ * matches the mover layout func_8005027C documents word for word (+0x30 base
+ * speed, +0x32 target speed, +0x40 hold timer, +0x3C flags), so this function
+ * chooses the speed the integrator then ramps toward: fast while the target is
+ * ahead but far, slow or zero when it is close, and a 300-tick hold plus a
+ * speed taken from the target when the target reports itself as active at
+ * +0x24. The +0x44/+0x46/+0x48 triple looks like a "who is holding whom" link,
+ * which would make this a harness/tow/pin behaviour.
+ *
+ * @par Unknown
+ * What the +0x44/+0x46/+0x48 link triple names, whether +0x24 is a movement or
+ * ownership flag, the units of the 0x1400/0x4000/0x1401 bands, and the meaning
+ * of the +0x6C height bias that is subtracted from the vertical distance.
+ *
+ * @par Callers
+ * func_8002C3F0 (case 3, the type-26 tick/draw case) and func_800382B4 (case 8,
+ * the class-5 animated-piece handler); both call sites are direct.
+ */
 void func_80037B28(s32 a0, Object *self, s32 unused_arg2) {
     s32 diff[3];
     Object *target;

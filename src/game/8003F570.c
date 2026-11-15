@@ -1,3 +1,4 @@
+// Categories: Game Engine > Frame | Gameplay > Entity Script
 #include "game/types.h"
 
 struct Unk3F570Node {
@@ -21,6 +22,33 @@ extern void func_8004C2B8(struct Unk3F570Node *object);
 extern void func_8003F428(struct Unk3F570Node *node, s32 arg);
 extern void func_8005E0AC(s32 object);
 
+/**
+ * @brief The entity world's per-frame tick: effects, transform sync, the
+ *        seven type lists, the proximity gate and the retire queue.
+ *
+ * @param arg0 Frame delta.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8005E0AC(arg0) drives the effects, func_8003D240 syncs transforms.
+ * Each of the seven lists D_800A1070[i] is walked: when func_8003F2AC(node,
+ * arg0) & 0xFF the node is unlinked and its handler called with message 10
+ * (retire). Then func_8003F530(arg0) (scratchpad trampoline),
+ * func_8004C2B8(list 4), func_8003F428(list 5, arg0); with D_8009F30C set
+ * func_8003FF7C runs the proximity spawn/despawn gate; finally the
+ * D_8009F314 queue drains through func_8003B44C.
+ *
+ * @par Likely role
+ * The main gameplay tick called by the frame driver func_80027510: the
+ * seven lists are the entity type buckets, message 10 is the shared retire
+ * notification, and the tail queue deferred frees from mid-tick.
+ *
+ * @par Unknown
+ * Which entity types the seven buckets hold.
+ *
+ * @par Callers
+ * func_80027510.
+ */
 void func_8003F570(s32 arg0)
 {
     struct Unk3F570Node *node;

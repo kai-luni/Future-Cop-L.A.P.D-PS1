@@ -1,3 +1,4 @@
+// Categories: Graphics > Lighting > Spawn | Graphics > Effects > Object Pool
 #include "game/types.h"
 
 struct LinkState;
@@ -58,6 +59,37 @@ extern void func_80049980(struct Unk49C38Node *node, u32 arg1, u32 arg2, s32 arg
                           s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8);
 extern s32 func_80067684(u8 *arg0, s32 arg1);
 
+/**
+ * @brief Spawns a map light node: resolves the surface height, allocates
+ *        from the light pool and fills the node via func_80049980.
+ *
+ * @param object Light descriptor (position words +0x08..+0x10, size
+ *        +0x18/+0x1A, colour/angle bytes, surface mode +0x22).
+ * @param arg1 Life/duration; negative keeps it, else offset by the frame
+ *        counter D_8009FAA4[0].
+ * @return The new node, or 0 when gated out or the pool is exhausted.
+ *
+ * @par Confirmed
+ * Both size words must reach 0x40 and D_8009F780 must be non-zero. A
+ * non-negative key (+0x15) is looked up in the D_8009F778 id list (linear
+ * scan, miss keeps the count as index). The node comes from func_800195A4
+ * (D_8009F784); on failure func_800497A8 sweeps and one retry follows.
+ * Surface mode +0x22 != -3/0 maps to a func_80067684 query (0 -> -1,
+ * 1 -> -2, else value - 2). Negative angle words (+0x1C/+0x1E/+0x20) are
+ * randomised via func_80019668() & 0xFFF. func_80049980 builds the node
+ * with the position << 4 and the height result + (unk16 << 4).
+ *
+ * @par Likely role
+ * The dynamic light spawner (muzzle flashes, explosions): the id list
+ * deduplicates persistent lights, the surface query snaps the light to the
+ * map, and the random angles jitter the light cone.
+ *
+ * @par Unknown
+ * The meaning of the id list entries and the -3 surface mode.
+ *
+ * @par Callers
+ * func_80049E88, func_8005A6A4.
+ */
 s32 func_80049C38(struct Unk49C38 *object, s32 arg1)
 {
     struct Unk49C38Node *node;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object Setup > Registry | Game Engine > Game State > Init
 #include "game/types.h"
 
 struct Unk780DC {
@@ -44,6 +45,14 @@ extern void func_80077AD4(s32 arg);
  *
  * Called as the final step of func_80024904, the per-session setup that also sets
  * the view window, seeds the RNG and programs the display mode.
+ *
+ * @par Callers
+ * func_80024904 only, as the final step of the per-session setup.
+ *
+ * @par Unknown
+ * The reader side of the seven flag tables (bits 19..23, 28, 30) and the
+ * exact role of func_80077FFC, func_800898C8 and func_8007F9CC in this
+ * sequence.
  */
 void func_800780DC(void)
 {

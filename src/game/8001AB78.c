@@ -1,5 +1,28 @@
+// Categories: Utilities > Mathematics > Vector | Platform > Handwritten ASM
 #include "game/types.h"
 
+/**
+ * @brief Handwritten in-place vector scale: multiplies three s32 components
+ *        by a 16.16 fixed-point scalar.
+ *
+ * @param arg0 ($4) The scale factor (16.16).
+ * @param arg1 ($5) Pointer to the three-component vector, updated in place.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Per component: mult with the scale, result = (mflo >> 16) | (mfhi << 16)
+ * (the middle 32 bits of the 64-bit product), stored back before the next
+ * component is loaded. The final store sits in the jr delay slot.
+ *
+ * @par Likely role
+ * The hot-path vector scale of the mover integrators and the camera rig:
+ * handwritten because the compiler would spill the wide product; the same
+ * bit-extraction pattern appears in the C FMUL macros.
+ *
+ * @par Callers
+ * func_800324E0, func_80032F3C, func_8003A160, func_8004F764, func_80050E0C,
+ * func_800513D0, func_80051580, func_800569EC, func_8005EE04.
+ */
 __asm__(
     ".text\n\t"
     ".align 2\n\t"

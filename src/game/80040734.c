@@ -1,3 +1,4 @@
+// Categories: Graphics > Lighting > Spawn
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -101,6 +102,31 @@ extern void func_800498F0(void *object);
 extern void func_800181D4(void *block);
 extern s32 func_8003C980(s32 message, void *object, void *arg2, void *arg3);
 
+/**
+ * @brief Builds a light request from an effect object and allocates the
+ *        light through the pool allocator.
+ *
+ * @param object Effect descriptor (size +0x12, kind +0x66, angles
+ *        +0x78..+0x7C, colour bytes +0x87..+0x89, pool id +0x64).
+ * @param position Light position.
+ * @return 1 when the light was allocated, 0 on pool failure (flag bit 0
+ *         set at +0xF).
+ *
+ * @par Confirmed
+ * width/depth = 0x50 floor or size << 1; kind = unk66 | 0x40; height =
+ * position.y >> 4; surface mode unk22 = -1. func_8005A6A4(pool id,
+ * &request, &light) allocates; on success the first call stores the
+ * returned length in unk0C/unk16 (lifetime), and the light's RGB bytes
+ * are refreshed from the object each call.
+ *
+ * @par Likely role
+ * The per-frame light maintenance of the effect tick func_80040874: the
+ * 0x40 kind bit likely marks dynamic lights, the colour refresh lets the
+ * effect fade its light with its sprites.
+ *
+ * @par Callers
+ * func_80040874.
+ */
 u8 func_80040734(struct Unk40734 *object, struct Vec3s32 *position)
 {
     struct Unk40734Request request;

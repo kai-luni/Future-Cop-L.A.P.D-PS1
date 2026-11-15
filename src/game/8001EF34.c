@@ -1,3 +1,4 @@
+// Categories: Game Engine > Input > Controller
 #include "game/types.h"
 
 struct PadBuffer {
@@ -11,6 +12,28 @@ struct PadBuffer {
 
 extern struct PadBuffer D_800A78F0[];
 
+/**
+ * @brief Queries the controller type of a port, accepting only two pad ids.
+ *
+ * @param port Controller port index into D_800A78F0.
+ * @return The pad type nibble (4 or 7), or 0 when absent/unsupported.
+ *
+ * @par Confirmed
+ * A non-zero first byte of the pad buffer aborts with 0; otherwise the
+ * second byte >> 4 is the type, kept only when it equals 4 or 7.
+ *
+ * @par Likely role
+ * The analog-pad detection of the input layer: types 4/7 are the two
+ * supported analog controller ids, the menu and camera code branch on
+ * them to enable stick input.
+ *
+ * @par Unknown
+ * Which physical pad models ids 4 and 7 denote.
+ *
+ * @par Callers
+ * func_8001E7B8, func_8001EF8C, func_80027510, func_8007C0F8, func_8007C6F0,
+ * func_8007C940.
+ */
 s32 func_8001EF34(s32 port)
 {
     struct PadBuffer *pad;

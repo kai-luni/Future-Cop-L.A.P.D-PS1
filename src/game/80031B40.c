@@ -1,3 +1,4 @@
+// Categories: Gameplay > Map > Zones | Graphics > Camera
 #include "game/types.h"
 
 struct Unk31Node {
@@ -25,6 +26,30 @@ struct Vec3s32 {
 
 extern struct Unk31Node *D_8009F6F8;
 
+/**
+ * @brief Tests whether a position plus radius overlaps any active map zone
+ *        rectangle.
+ *
+ * @param position Query point.
+ * @param radius Query radius.
+ * @return 1 when a flagged zone overlaps, else 0.
+ *
+ * @par Confirmed
+ * Walks the D_8009F6F8 zone list; only nodes with flag 0x40 are tested.
+ * Per axis: |position - (node coord << 8)| - radius <= extent << 4 (both
+ * x and z must pass); the first hit returns 1.
+ *
+ * @par Likely role
+ * The camera zone test of the chase rig func_800569EC: flagged zones are
+ * likely indoor/covered areas that switch the camera preset, the shifted
+ * coordinates match the map grid scale.
+ *
+ * @par Unknown
+ * What flag 0x40 marks and who fills the zone list.
+ *
+ * @par Callers
+ * func_800569EC.
+ */
 s32 func_80031B40(struct Vec3s32 *position, s32 radius)
 {
     struct Unk31Node *node;

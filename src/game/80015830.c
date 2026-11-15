@@ -1,9 +1,54 @@
+// Categories: Graphics > Model Renderer > Part Geometry | Graphics > Model Renderer > Primitives | Graphics > 2D Drawing
 #include "game/types.h"
 typedef struct { s16 x,y,z,pad; } Point;
 typedef struct { u8 pad[4]; u8 a,b,c,d; } Input;
 typedef struct { s16 xy[8]; s32 z; } Output;
 extern Point *D_8009F578;
 extern u8 *D_8009F57C;
+/**
+ * @brief Builds the screen-space quad of a type-7 model part: two projected
+ *        vertices widened by a per-end width that scales with 1/z.
+ *
+ * @param in Part header whose byte +0x04 is the first endpoint's vertex index,
+ *        +0x05 the second's, +0x06 the width index used at the first endpoint
+ *        and +0x07 the width index used at the second.
+ * @param out Work block: the four corners as eight s16 values at +0x00..+0x0E
+ *        (x0, y0, x1, y1, x2, y2, x3, y3) and the depth at +0x10.
+ * @param width Width table; element [index + 2] belongs to vertex index
+ *        @c index, which matches the s16 data array that starts at +0x04 of the
+ *        table the caller passes.
+ *
+ * @return 1 when the quad was written, 0 when either endpoint's visibility byte
+ *         in D_8009F57C has bit 0 set.
+ *
+ * @par Confirmed
+ * p = D_8009F578 + (in->a << 3) and q = D_8009F578 + (in->b << 3), records of
+ * four s16 (x, y, z, pad). output->z = (p->z + q->z) / 2. The half sizes are
+ * (width[c + 2] << 9) / p->z and (width[d + 2] << 9) / q->z, the same 0x200
+ * perspective scale the billboard case of func_80015B68 uses. The perpendicular
+ * of the edge is (q->y - p->y, p->x - q->x); its length is the octagonal
+ * approximation (swap to a >= b, then a + (b >> 2) - (b >> 6) with the 0x7F/0x20
+ * correction). With a non-zero length scale1 = (w1 << 10) / length and
+ * scale2 = (w2 << 10) / length; the corners are p + (dy, dx) * scale1,
+ * p - (dy, dx) * scale1, q + (dy, dx) * scale2 and q - (dy, dx) * scale2, all
+ * shifted right by 10. A zero length zeroes all four offsets.
+ *
+ * @par Likely role
+ * The line-shaped primitive of the model display list, i.e. case 7 of the
+ * per-part switch func_80015B68: unlike the square billboard of types 5/6 it is
+ * rotated along the projected edge and tapers by a different width at each end,
+ * which is what rails, cables, wires and beam effects need. Both widths are
+ * half-sizes, as in the billboard case.
+ *
+ * @par Unknown
+ * Whether the widths are meant as half or full sizes, what the depth bias the
+ * caller passes as its fourth argument is for (this body has only three
+ * parameters and ignores it), and whether the part's +0x0F/+0x10 bytes carry
+ * anything for this type - they are never read here.
+ *
+ * @par Callers
+ * func_80015B68, case 7 of its part-type switch (the only direct call site).
+ */
 s32 func_80015830(Input *in, Output *out, s16 *width)
 {
     register Point *p __asm__("$9");

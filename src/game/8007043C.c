@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning > Constructor | Game Engine > Object Setup
 #include "game/types.h"
 
 typedef struct {
@@ -79,6 +80,54 @@ extern void func_8003C14C(Dest7043C *dest, Source7043C *src);
 extern s32 func_80019668(void);
 extern void func_800188D0(s32 x, s32 y, s32 z, Work7043C *work);
 
+/**
+ * @brief Constructor for spawn kind 0x59: allocates the 0x9C-byte scene object,
+ *        installs its update handler and copies the definition's shape, colour and
+ *        jitter parameters.
+ *
+ * @param src Spawn definition record: +0x34 half-word to +0x12, +0x36 byte to
+ *        +0x8E, +0x38/+0x3A/+0x3C half-words to +0x66/+0x68/+0x6A, +0x3E..+0x49 to
+ *        +0x6C..+0x77, +0x4A and +0x4C jitter ranges, +0x4E rotation scale, +0x50 to
+ *        +0x9A, +0x52 to +0x8F, +0x54 the scored value and +0x56 to +0x8C.
+ * @return The new object, or 0 when the pool allocation failed.
+ *
+ * @par Confirmed
+ * func_80017EBC(0x9C, 1) allocates from pool tag 1 and a null result returns 0
+ * immediately. func_8003C14C(dest, src) then copies the shared header.
+ * The word at +0x24 is set to the address of func_8006FF44, an entity message handler
+ * whose own record is 0x9C bytes long (flag word +0x1A, parent +0x1C, matrix +0x34,
+ * point +0x94), so the object allocated here is exactly that record.
+ * Field copies: +0x12 = src +0x34; +0x66/+0x68/+0x6A = src +0x38/+0x3A/+0x3C;
+ * +0x6C..+0x77 = the sixteen bytes at src +0x3E..+0x49; +0x8C = src +0x56;
+ * +0x8E = src +0x36; +0x8F = src +0x52; +0x9A = src +0x50; +0x0A = 0 and
+ * +0x08 = +0x8E + 1.
+ * Rotation: x is src +0x4A when that half-word is non-negative and
+ * random % -value otherwise, y is built the same way from src +0x4C, and
+ * func_800188D0(x, -y, 0, &work) builds a matrix; +0x94, +0x96 and +0x98 become
+ * ((work word >> 4) * src +0x4E) >> 12 for the three words at work +0x18/+0x1C/+0x20.
+ * The value at +0x90 is src +0x54 when non-negative, else random % -(s16)value.
+ *
+ * @par Likely role
+ * A placed decorative or debris object: the handler it receives only resolves the
+ * parent transform and refreshes one point per frame, while the two random angles and
+ * the matrix row scaled by +0x4E give it a scattered orientation at spawn. The
+ * "negative means random in [0, |v|), non-negative means fixed" convention of +0x4A,
+ * +0x4C and +0x54 is the same jitter idiom the rest of the spawn code uses, and
+ * +0x08 = +0x8E + 1 reads like a frame or sub-object count for the handler.
+ *
+ * @par Unknown
+ * - What +0x4E scales: the matrix row read at work +0x18 is a direction, so a spread
+ *   or a turn rate are both plausible.
+ * - Whether +0x08 and +0x0A are a frame index and a count, and what +0x9A selects.
+ * - Why the handler address is stored in a field that other classes use as a plain
+ *   flag word; the pool tag and the handler installation look like the record is
+ *   handed to func_8004D444's queue later.
+ *
+ * @par Callers
+ * func_8003E984, case 0x59 of its constructor switch (the generic level-object
+ * spawner, which runs the distance gate and the parent bookkeeping before it calls
+ * this function).
+ */
 void *func_8007043C(Source7043C *src)
 {
     Dest7043C *dest;

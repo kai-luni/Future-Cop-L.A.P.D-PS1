@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Object Pool | Gameplay > Object Spawning
 #include "game/types.h"
 
 struct Unk447F0 {
@@ -19,6 +20,26 @@ extern void *func_80017EBC(s32 size, s32 tag);
 extern u8 func_80043430(struct Unk447F0 *object, s32 def);
 extern void func_800181D4(void *block);
 
+/**
+ * @brief Allocates and initialises a periodic effect object (0xAC bytes,
+ *        pool tag 1).
+ *
+ * @param def Definition id forwarded to the init helper.
+ * @return The new object, or 0 on allocation/init failure.
+ *
+ * @par Confirmed
+ * func_80017EBC(0xAC, 1); a failed func_80043430(object, def) frees the
+ * block and returns 0. On success update = D_80044610, period = basePeriod
+ * (doubled when flags8D & 0x30), phase = 0.
+ *
+ * @par Likely role
+ * The timed-effect spawner behind the child-spawn handler func_8003E984:
+ * the period/phase pair drives a blinking or pulsing effect, the 0x30
+ * flags likely mark the slow variant.
+ *
+ * @par Callers
+ * func_8003E984.
+ */
 struct Unk447F0 *func_800447F0(s32 def)
 {
     struct Unk447F0 *object;

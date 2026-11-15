@@ -1,7 +1,32 @@
+// Categories: Graphics > Camera > Smoothing
 typedef int s32;
 typedef unsigned int u32;
 #define FMUL(d,a,b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 
+/**
+ * @brief Spring-eases a camera offset word toward the object's value with a
+ *        cubic impulse and a dead zone.
+ *
+ * @param obj Follow object; +0x54 the target value, +0xAC the spring state.
+ * @param scale Output scale.
+ * @param count Integration sub-steps.
+ * @return The new state value (+0xD4).
+ *
+ * @par Confirmed
+ * delta = target - current; the impulse is (delta << 3)^3 in 16.16 (two
+ * FMULs), rounded >> 3. A sign change against the accumulator (+0xD8)
+ * resets it; the impulse accumulates count times, then >> 14 * scale gives
+ * the step. |step| < 256 zeroes it; |step| > |delta| clamps to delta. The
+ * current value advances by the step; delta == 0 clears the accumulator.
+ *
+ * @par Likely role
+ * The boom/offset spring of the chase camera func_800569EC: the cubic
+ * impulse makes large corrections fast and small ones gentle, the dead
+ * zone stops sub-pixel jitter.
+ *
+ * @par Callers
+ * func_800569EC.
+ */
 s32 func_80056530(s32 *obj, s32 scale, s32 count)
 {
     register s32 *state __asm__("$10");

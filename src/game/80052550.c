@@ -1,3 +1,4 @@
+// Categories: Physics > Motion | Gameplay > Player
 #include "game/types.h"
 
 typedef struct {
@@ -27,6 +28,35 @@ extern void func_8001A180(s32 *arg0);
 extern s32 func_8001AB00(s32 *arg0, s32 *arg1);
 extern void func_8001AC28(s32 *arg0, s32 *arg1, s32 arg2, s32 *arg3);
 
+/**
+ * @brief Applies a stored impulse to the player position, projects out the
+ *        surface-normal component and decays the impulse state.
+ *
+ * @param arg0 Player unit; +0xAC the state block (impulse at +0xEC,
+ *        normal at +0xF4, mode bytes +0xAD/+0x147, airborne flag +0xB9).
+ * @param arg1 Position triple, advanced in place.
+ * @return 1 when an impulse was applied, 0 when the impulse vector is zero.
+ *
+ * @par Confirmed
+ * The impulse triple (unk64/68/6C) halves when airborne (flag bit 0). The
+ * add shift is 1 normally, 0 when mode +0x147 is set without +0xAD. After
+ * adding impulse >> shift to the position, the impulse direction is
+ * normalised (func_8001A180), its dot with the stored normal (func_8001AB00)
+ * subtracted along itself (func_8001AC28) — removing the into-surface
+ * component. The three state words decay by 1/8 each call; unk74 >= 0x101
+ * resets to 0; the impulse triple is cleared.
+ *
+ * @par Likely role
+ * The knockback/recoil integrator of the two player physics ticks
+ * (func_80053A74 hover, func_800549F0 on-foot): the projection keeps hits
+ * from pushing the player through the ground, the decay settles the shake.
+ *
+ * @par Unknown
+ * What unk74's 0x101 threshold encodes.
+ *
+ * @par Callers
+ * func_80053A74, func_800549F0.
+ */
 s32 func_80052550(Arg0_52550 *arg0, Vec_52550 *arg1)
 {
     Unk_52550 *unk;

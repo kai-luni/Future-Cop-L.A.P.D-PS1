@@ -1,3 +1,4 @@
+// Categories: Gameplay > Weapons > Spawning | Gameplay > Combat
 #include "game/types.h"
 
 struct Vec { s32 x, y, z; };
@@ -21,6 +22,33 @@ struct Request { void (*handler)(); s32 unk04; struct Args *args; s32 unk0C; };
 extern void D_80036624();
 extern void *func_8004D444(struct Request *);
 
+/**
+ * @brief Spawns a kind-2 projectile with explicit speed and parameter words
+ *        (handler func_80036624).
+ *
+ * @param obj Weapon descriptor; +6 the speed word, +8 an alternate-speed
+ *        selector.
+ * @param a1, a3, a5 Owner/target/hook pointers stored in the args.
+ * @param pos Launch position.
+ * @param ent Firing entity (flags, kind, team bytes).
+ * @param a7..a11 Extra parameter bytes/words forwarded to the projectile.
+ * @param flags Base flag word.
+ * @return The spawned entity from func_8004D444.
+ *
+ * @par Confirmed
+ * Same flag composition as the other spawners (|0x8000, +0x4000 for kind
+ * 0x12, unk14 = flags | 8 with the 0x100 promotion). kind = 2, unk18 =
+ * 0x28. Speed: obj->unk08 non-zero selects unk2C = speed << 1 with unk4A =
+ * obj->unk08, else unk2C = speed << 4. The owner presence sets unk30.
+ *
+ * @par Likely role
+ * The direct-fire projectile path (bullets/shells) of the fire dispatchers
+ * and func_80035B7C: the two speed scales likely separate tracer and
+ * shell velocities, the extra words carry damage/homing parameters.
+ *
+ * @par Callers
+ * func_80035B7C, func_8005F6E8, func_8006ACB0.
+ */
 void *func_8005E47C(struct Obj *obj, void *a1, struct Vec *pos, void *a3,
                     struct Ent *ent, void *a5, u32 flags, u8 a7, u8 a8,
                     u16 a9, u8 a10, s32 a11)

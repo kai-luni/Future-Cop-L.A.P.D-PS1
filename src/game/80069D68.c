@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Game Engine > State Machine | Gameplay > Entity Update
 #include "game/types.h"
 
 struct Entity {
@@ -72,6 +73,73 @@ extern void func_800841C4(s32, s32, s32);
  *       or trigger entity callbacks and other engine-side effects.
  *
  * @see D_800A3320
+ *
+ * @param script Bytecode stream: a zero first byte is the empty script, and the
+ *        stream is read as a NUL-terminated sequence of one-byte opcodes with
+ *        inline immediates.
+ * @param arg1 Caller-supplied operand returned by opcode 0x05; most call sites
+ *        pass the sign bit of a state word, so it reads as a one-bit mode.
+ * @param arg2 Optional initial stack value: pushed when non-negative, otherwise
+ *        the operand stack starts empty.
+ * @param entity Entity record used by the entity opcodes; only +0x00 (next
+ *        pointer) and +0x04 (the update handler) are ever read.
+ *
+ * @return 1 for an empty script, 0 when D_8009F840 (the VM inhibit byte) is
+ *         non-zero, the value of the 0x2E conditional return, otherwise the
+ *         value left on top of the operand stack.
+ *
+ * @par Confirmed
+ * The stack is the global word array D_800A3320. Its element 0 receives the
+ * base index (1, or 2 when arg2 was pushed) and the operands live above it, so
+ * after the final byte the function decrements the depth and returns
+ * D_800A3320[depth]. Opcodes 0x80..0xFF push their low seven bits. 0x01 pushes
+ * the complement of the next byte, 0x02 that byte plus 0x80, 0x03 a big-endian
+ * halfword and 0x04 a big-endian word; 0x05 pushes arg1. Operand counts follow
+ * three thresholds applied before the switch: opcodes 0x09 and above pop one
+ * value, 0x1D and above pop two, 0x38 and above pop three, and values are
+ * pushed back by the shared push label.
+ * Loads: 0x10 and 0x13 read D_8009FA94[a] and D_8009FAD4[a]; 0x11 reads
+ * through the word at D_8009FA94[a + 0x39] (a second, pointer-indexed bank);
+ * 0x12 reads D_8009F9A4[a] / 5, so that bank stores its values multiplied by
+ * five. 0x1D..0x20 are the matching stores (again * 5 for D_8009F9A4), 0x15..0x18 and 0x19..0x1C increment and decrement the four banks, and 0x30..0x37
+ * add or subtract the second operand. 0x0A reads the signed byte table
+ * D_800A8540. 0x0B is the random opcode: a non-negative operand indexes the
+ * 32-entry table D_8009F9F8, a negative one yields func_80019668() modulo the
+ * magnitude. 0x09 turns the operand into a 0/1 test, 0x08 jumps forward by the
+ * following byte and 0x14 does the same only when the operand is zero (both
+ * skip the byte otherwise). 0x21..0x2D are equality, inequality, the four
+ * orderings with b as the left operand, addition, b - a, multiplication, b / a,
+ * b % a, and, or. 0x2E returns a immediately when b is zero.
+ * Entity opcodes: 0x0C/0x0D queue a command through func_800298EC /
+ * func_80029974, 0x0E/0x0F send one synchronously through
+ * func_80029A60(a, entity, 0/1). 0x2F evaluates entity->update(0xC, entity, a, 0)
+ * when b is zero and func_8004DE80(b, a) otherwise. 0x38 applies
+ * func_8004DA84(entity, b, a, 1) when c is zero, else func_8004DC64(c, b, a);
+ * 0x39..0x3E are func_8004DD68, func_8004DDF4, func_8004F0F0, func_8006158C,
+ * func_80061600 and func_800841C4 with the same (c, b, a) order. Every other
+ * opcode is a no-op.
+ *
+ * @par Likely role
+ * The interpreter behind every scripted entity: the handlers call it once per
+ * message with the script pointer kept in their own state block, and the third
+ * argument is usually an entity flags value masked with 0x7FFF, i.e. a handle
+ * the script can pass on to the entity opcodes. The four variable banks look
+ * like per-level script globals: WiFi-free, they are seeded by func_80069B58
+ * (32 random entries in D_8009F9F8, D_8009F9A4 cleared to -10, D_8009FAD4
+ * cleared) and released again by func_80069D58, which sets D_8009F840 to stop
+ * the machine.
+ *
+ * @par Unknown
+ * The exact type of the values behind the D_8009FA94 pointer bank (a word
+ * holding an address that the opcode then dereferences), what each of the
+ * engine-call opcodes actually does downstream, and why some call sites pass
+ * only three arguments, leaving the entity pointer undefined.
+ *
+ * @par Callers
+ * func_80028BCC, func_8002A940, func_8002AA1C, func_8002D1A0, func_800306A0,
+ * func_80030C60, func_80031004, func_80031120, func_80031C74, func_800324E0,
+ * func_80049564, func_8004D958, func_8004DEE0, func_80058378, func_80058714,
+ * func_800600E8, func_80060238, func_8006125C.
  */
 s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
 {

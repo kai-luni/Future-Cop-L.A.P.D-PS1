@@ -1,3 +1,4 @@
+// Categories: Graphics > Camera > State Machine
 #include "game/types.h"
 
 struct Unk56994 {
@@ -11,6 +12,30 @@ struct Unk56994 {
 
 extern u8 D_800A2290[][8];
 
+/**
+ * @brief Advances the camera preset phase timer and returns the current
+ *        phase byte from the per-side table.
+ *
+ * @param state Camera state; +0xC1 the side, +0x2FE the timer,
+ *        +0x313 the step.
+ * @param elapsed Frame delta.
+ * @return D_800A2290[side][step].
+ *
+ * @par Confirmed
+ * timer -= elapsed; when it drops below 0 it resets to 3000 and step
+ * increments (no wrap here). The table lookup uses side and step.
+ *
+ * @par Likely role
+ * The input-phase clock of the chase camera func_800569EC: every 3000
+ * time units the rig advances to the next preset phase, the table encodes
+ * the allowed transitions per side.
+ *
+ * @par Unknown
+ * The table dimensions and what wraps the step.
+ *
+ * @par Callers
+ * func_800569EC.
+ */
 u8 func_80056994(struct Unk56994 *state, s32 elapsed)
 {
     state->timer -= elapsed;

@@ -1,8 +1,34 @@
+// Categories: Platform > Memory Card | Resources > Save Data
 #include "game/types.h"
 extern u8 *D_8009AB08;
 extern void *func_8001E4C0(void *destination, int value, unsigned int count);
 extern void func_8001E318(void *destination, void *source, int count);
 extern s32 func_8008CCC0(char *text);
+/**
+ * @brief Builds a 0x80-byte memory-card name packet with header, title and
+ *        XOR checksum.
+ *
+ * @param t Title string.
+ * @param index Slot index (packet offset index * 0x80).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The packet lives at D_8009AB08 + 0x9B0 + index * 0x80, zeroed first.
+ * Header: byte 0 = 0x51, +4 = 0x2000, +8 = 0xFFFF. The title (BIOS strlen
+ * func_8008CCC0, copied via func_8001E318) starts at +0xA. The XOR of the
+ * first 0x7F bytes is stored as byte 0x7F.
+ *
+ * @par Likely role
+ * The save-icon/title packet writer behind func_80020FDC: 0x51 is the
+ * card-format magic, 0x2000 likely the icon size/offset word, the checksum
+ * protects the directory entry.
+ *
+ * @par Unknown
+ * The exact meaning of the 0x2000/0xFFFF header words.
+ *
+ * @par Callers
+ * func_80020FDC.
+ */
 void func_80020F34(char *t, s32 index)
 {
     register char *text __asm__("$17") = t;

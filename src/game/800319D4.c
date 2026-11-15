@@ -1,3 +1,4 @@
+// Categories: Gameplay > Map > Zones | Resources > Asset Loader
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -53,6 +54,34 @@ extern s32 func_80019668(void);
 extern void func_800181D4(void *obj);
 extern s32 func_80067684(struct Vec3s32 *position, s32 mode);
 
+/**
+ * @brief Creates a map zone node from an asset record and links it into the
+ *        zone list D_8009F6F8.
+ *
+ * @param obj Asset wrapper; +0 the blob, +0x1C/+0x20/+0x24 lookup keys.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_80019C38(obj->f0, obj->f20, 0x74414354, obj->f1C) locates the
+ * record (tag word 0x74414354); the data sits 4 bytes before the result.
+ * A 0x28-byte node from pool tag 3 is pushed onto D_8009F6F8: x/z = position
+ * >> 8, y = func_80067684(position, mode) >> 8 with the surface mode from
+ * the type byte (0 -> -1, 1 -> -2, else type - 2), extents = the three size
+ * halves / 2, a random byte from func_80019668() & 0xFF, f1C = 0, f20 = -1.
+ * The wrapper obj is freed afterwards.
+ *
+ * @par Likely role
+ * The zone loader of the map setup (called by func_8004D6D4): the nodes
+ * are exactly what the camera zone test func_80031B40 walks, the random
+ * byte likely varies ambient effects per zone.
+ *
+ * @par Unknown
+ * The asset tag's FourCC meaning and the f12/f14 fields' consumers.
+ *
+ * @par Callers
+ * func_8004D6D4 (verified in the retail listing; the call-graph edge is
+ * missing).
+ */
 void func_800319D4(struct Obj *obj)
 {
     u8 *r;

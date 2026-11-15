@@ -1,8 +1,29 @@
+// Categories: Graphics > GPU Primitives > Draw Area
 #include "game/types.h"
 
 extern s16 D_8009DDF4;
 extern s16 D_8009DDF6;
 
+/**
+ * @brief Builds the GPU draw-area bottom-right word (opcode 0xE4) with
+ *        screen clamping.
+ *
+ * @param x, y Corner coordinates.
+ * @return 0xE4000000 | (y & 0x3FF) << 10 | (x & 0x3FF), clamped like
+ *         func_80093F78.
+ *
+ * @par Confirmed
+ * Same clamping against D_8009DDF4/D_8009DDF6 as the 0xE3 packer, written
+ * with explicit branch chains instead of ternaries (the compiler shape
+ * differs, the semantics match).
+ *
+ * @par Likely role
+ * The second draw-area corner of the sprite packet builders; together the
+ * 0xE3/0xE4 pair sets the GPU clipping rectangle.
+ *
+ * @par Callers
+ * func_8009398C, func_80093AF0, func_80093CE8.
+ */
 s32 func_80094010(s32 x, s32 y)
 {
     register s32 cx __asm__("$2");

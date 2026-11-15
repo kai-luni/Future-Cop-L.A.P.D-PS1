@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Graphics > Animation | Game Engine > Entity Lifecycle
 #include "game/types.h"
 
 struct AnimClip {
@@ -99,6 +100,61 @@ extern void func_80030498(struct Actor306A0 *, s32);
 extern s32 func_8002AD58(s32, struct Actor306A0 *, s32);
 extern u8 func_80017508(struct ModelInstance *, u32 *, s32);
 
+/**
+ * @brief Per-frame state machine of an animated actor: impact countdown, two
+ *        animation tracks, a spin angle and a timed transition.
+ *
+ * @param actor Actor block: +0x24 flag word, +0x28 and +0xD4 the two model
+ *        instances (+0x12C the frame of the second), +0x9C the bytecode script,
+ *        +0xA0 the animation track, +0xB4 the effect flags, +0xBC and
+ *        +0xBD two state bytes (+0xBD the machine state), +0xBE the delay,
+ *        +0xC0 the timer, +0xC4 the effect value, +0xC8 the spin angle,
+ *        +0xCC the countdown, +0xD0 the owner object and +0xD8 a matrix
+ *        destination.
+ * @param delta Frame step, subtracted from the countdown and the timer and
+ *        multiplied into the spin.
+ *
+ * @return Always 0.
+ *
+ * @par Confirmed
+ * State 5 with a countdown of exactly 0x190 runs the impact step once:
+ * func_8002FC90(owner, +0xB4, +0xC4, 0, 0) applies the effect record, the script
+ * at +0x9C is executed with func_80069D68 unless flag 0x100000 of +0x24 is set,
+ * and when the owner's +0x16 is 1 the word at owner->+0xAC + 0xA0 is raised and,
+ * if owner->+0xDC is non-zero, func_800402DC spawns a cell object with a
+ * hand-built parent block (byte 0x40 at +0x49, block owner->+0xDC + 0x28 at
+ * +0x44) into column 0xC8 of row 1. +0xCC then loses delta and, at zero, with a
+ * valid owner whose +0x16 is 1, clears the same word, starts clip 3 through
+ * func_800448D8(+0xA0, 3, 1, 1) and moves to state 3.
+ * In states 2 and 5 the second instance animates when its model's +0x10 word is
+ * non-zero: func_80044B34(0, actor + 0x120, delta, 0) then
+ * func_800175F8(+0xD4, +0x12C). The spin angle +0xC8 then decreases by
+ * delta << 4 when +0xB4 & 0xF0 is set and increases by delta << 2 otherwise,
+ * both masked with 0xFFF, and func_800188D0 supplies the rotation matrix at
+ * +0xD8.
+ * The main track always advances: temp = func_80044B34(actor, +0xA0, delta, 0),
+ * func_800175F8(+0x28, track frame), then the low six bits of the event mask
+ * select state 2 (event 1) or state 4 with timer = +0xBE * 300 (event 2, only
+ * when the delay is non-negative). State 4 with a non-negative delay drains
+ * +0xC0 and at zero restarts clip 0 (func_800448D8(+0xA0, 0, 1, 0)) and returns
+ * to state 0.
+ *
+ * @par Likely role
+ * The actor's animation-driven behaviour machine, called from the tick message
+ * of its handler: state 5 is the hit/dying latch (one effect application, one
+ * script run, one spawned cell object and a 400-tick countdown), state 4 a
+ * delayed transition armed by clip event 2, and the spin of the secondary model
+ * the idle or turn animation whose direction follows the +0xB4 nibble.
+ *
+ * @par Unknown
+ * What +0xB4's low and high nibbles mean beyond selecting the spin direction,
+ * what +0xC4 is inside func_8002FC90 (and why its accumulator arguments are
+ * passed as null, which only works while flag 0x1000000 of +0xB4 is set), and
+ * what the 0xC8 column of the spawned cell object selects.
+ *
+ * @par Callers
+ * func_80030960, case 6 of its jump table (the object-type-32 tick message).
+ */
 s32 func_800306A0(struct Actor306A0 *actor, s32 delta)
 {
     struct ObjD0_306A0 *obj;

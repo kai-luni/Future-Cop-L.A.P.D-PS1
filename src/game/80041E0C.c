@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Graphics > Model Renderer
 #include "game/types.h"
 
 typedef struct { s32 x, y, z; } Vec3;
@@ -29,6 +30,36 @@ extern void func_800188D0(s32, s32, s32, void *);
 extern s32 func_80066F78(void *, s32, s32, s32);
 extern u32 func_80095900(s32);
 
+/**
+ * @brief Spawn initialiser of a 15-vertex grid object: ground snap, flag
+ *        set and a 5x3 vertex lattice from the descriptor size.
+ *
+ * @param arg0 Unused message argument.
+ * @param obj Entity block; +0xA8 the vertex array (15 entries).
+ * @param holder Spawn record; +8 the descriptor (width/height, angles,
+ *        offset, type byte).
+ * @return 0.
+ *
+ * @par Confirmed
+ * func_8002AD58(2, ...) runs the base spawn; func_800188D0 builds the
+ * rotation from the descriptor angles; the y position snaps to
+ * func_80066F78 + (offset << 4). Flags become (flags | 0x320005) & ~0x2308,
+ * unkA4 = -10, unkA1 = descriptor type. The lattice: x = +width/0/-width
+ * per row of three, y = height, height/2, 0, -height/2, -height across the
+ * five rows, z/w zeroed. unkA2 = func_80095900((w^2 + h^2) >> 8) >> 2 (a
+ * radius estimate).
+ *
+ * @par Likely role
+ * The message-2 path of the handler func_80042330: a flat grid mesh
+ * (banner, force field or shadow sheet) whose vertices the tick deforms;
+ * the radius word feeds culling.
+ *
+ * @par Unknown
+ * Which object class the lattice belongs to.
+ *
+ * @par Callers
+ * func_80042330.
+ */
 s32 func_80041E0C(s32 arg0, Object *obj, DataHolder *holder)
 {
     Data *data;

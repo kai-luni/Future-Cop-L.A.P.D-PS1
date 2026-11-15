@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Dynamics | Gameplay > Damage
 #include "game/types.h"
 
 struct Unk2C174Local {
@@ -41,6 +42,36 @@ extern void func_8002A810(struct Unk2C174 *obj, s32 a, s32 b);
 extern void func_8002B0EC(struct Unk2C174 *obj, s32 a);
 extern void func_8002B1DC(struct Unk2C174 *obj, s32 a, s32 b);
 
+/**
+ * @brief Destruction case of the type-26 handler: directed kill against a
+ *        player target, otherwise a type-dependent break apart.
+ *
+ * @param obj Entity block; +0x8C the owner/attacker id, +0x5C the position,
+ *        +0x19 the type nibble source, +0x1C/+0x1E the health words.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The owner resolves via func_8004D664(id & 0x3FFFFFFF). A target of kind
+ * 1 or 0x12 without id flag 0x40000000 gets a directed hit: the normalised
+ * position delta (func_8001A180) in a local record with unk49 = 2,
+ * unk40 = 0x32, sound from func_8003B7D8 (default 0x5B) delivered via
+ * func_800402DC, then func_8002A810(obj, 1, 1) retires. Otherwise the type
+ * nibble ((unk19 >> 3) & 0x1E) selects: 4 -> random sound 0x41/0x42/0x44
+ * (func_8002B0EC) + func_8002B1DC(obj, 7, 0); 8 -> state 7, flag bit 0,
+ * sound 0x2A and message 0xD2; default -> func_8002B1DC(7, 0). Low health
+ * (-unk1E << 2 >= unk1C) takes the sound + retire path.
+ *
+ * @par Likely role
+ * The death response behind func_8002C3F0 case 7: player kills are credited
+ * with a direction (for the death burst), environment objects shatter by
+ * type, type 8 enters the disabled state 7 instead of dying.
+ *
+ * @par Unknown
+ * What message 0xD2 triggers and the health comparison's unit.
+ *
+ * @par Callers
+ * func_8002C3F0.
+ */
 void func_8002C174(struct Unk2C174 *obj)
 {
     register struct Unk2C174 *target __asm__("$7");

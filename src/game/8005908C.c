@@ -1,3 +1,4 @@
+// Categories: Gameplay > Player > Handler | Gameplay > Entity Script
 #include "game/types.h"
 
 struct UnkDC {
@@ -32,6 +33,38 @@ extern void func_80058378(struct Unk5908C *object, s32 amount, s32 source);
 extern s32 func_800584BC(s32 message, struct Unk5908C *object, struct Unk5908CData *hit,
                          s32 arg3, s32 arg4);
 
+/**
+ * @brief Message handler of the player unit (class 1): spawn, form tick,
+ *        retire, damage/heal and the identity queries.
+ *
+ * @param message Handler case number.
+ * @param object Unit block; +0x1C a counter word, +0xAC an owned block,
+ *        +0xC4/+0xDC two identity pointers.
+ * @param data Case payload.
+ * @param arg4 Forwarded to spawn/damage helpers.
+ * @return Case 1: 0xF4. Case 10: identity flag. Cases 3/4/5/9: 0. Other
+ *         cases: the sub-helper or base results.
+ *
+ * @par Confirmed
+ * Case 2 -> func_800579D4 (spawn); case 6 -> func_800588D4 (the form-change
+ * tick); case 4 -> func_80058D78 (retire); case 5 frees unkAC; case 10
+ * returns 0 when data matches unkC4 or unkDC, else 1. Case 9 ignores
+ * self-hits (data->unk08 == object), else runs the base damage path and on
+ * a positive result raises flag 0x02000000 on unkDC, adds the result to
+ * unk1C and calls func_80058378 with the attacker chain. Cases 11/14 ->
+ * func_800584BC; the rest fall through to func_8002AD58.
+ *
+ * @par Likely role
+ * The player avatar's handler: case 9's positive-result branch is a
+ * heal/score path (the counter grows), the identity pointers track the
+ * rider and the controlled form.
+ *
+ * @par Unknown
+ * What the unk1C counter measures (score or health).
+ *
+ * @par Callers
+ * func_80053188, func_800578B4.
+ */
 s32 func_8005908C(s32 message, struct Unk5908C *object, struct Unk5908CData *data, s32 arg4)
 {
     struct Unk5908C *s0;

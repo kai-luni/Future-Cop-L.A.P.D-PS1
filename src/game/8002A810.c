@@ -1,3 +1,4 @@
+// Categories: Game Engine > Entity Lifecycle | Gameplay > Map > Occupancy
 #include "game/types.h"
 
 typedef struct Unk8002A810 Unk8002A810;
@@ -46,6 +47,33 @@ extern void func_8003B898(s32 arg0, Unk8002A810 *arg1,
 extern void func_80031690(Unk8002A810 *arg0);
 extern void func_8004D958(Unk8002A810 *arg0);
 
+/**
+ * @brief The base retire implementation (message 4): marks the entity
+ *        retired, clears its map footprint and runs the despawn tail.
+ *
+ * @param s0 Entity block; +0x24 flags, +0x20 the map region,
+ *        +0x74 an optional hook block, +0x8C the owner id.
+ * @param arg1 Non-zero runs func_8004D958 (script/sound/id retire).
+ * @param arg2 Non-zero refreshes the map occupancy.
+ * @return 1 when processed, 0 when already retired (flag 0x01000000).
+ *
+ * @par Confirmed
+ * Sets flags 0x01000010. The owner resolves via func_8004D664(unk8C &
+ * 0x3FFFFFFF); an owner of type 2 provides a local record (its +0x78..+0x80
+ * words and +0x1A half) passed to func_8003B898(region, entity, record,
+ * (flags19 >> 3) & 0x1E, 2). A non-null +0x74 triggers func_80031690.
+ *
+ * @par Likely role
+ * The shared despawn core behind func_8002AD58 case 4 and the retire
+ * handlers: the two argument bits let callers choose whether the footprint
+ * and the script/sound teardown run (deferred vs immediate retirement).
+ *
+ * @par Unknown
+ * What func_80031690 does with the hook block.
+ *
+ * @par Callers
+ * func_8002AD58, func_8002B784, func_8002C174, func_80058D78.
+ */
 s32 func_8002A810(Unk8002A810 *s0, s32 arg1, s32 arg2)
 {
     register Unk8002A810Sub *a0 __asm__("$4");

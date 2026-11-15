@@ -1,3 +1,4 @@
+// Categories: Gameplay > Path Movement | Physics > Motion | Utilities > Mathematics > Trigonometry
 #include "game/types.h"
 
 struct CellF764 {
@@ -73,6 +74,82 @@ extern void func_8001846C(u32, s32 *, s32 *);
     } \
 } while (0)
 
+/**
+ * @brief Segment hand-off of the rail mover: selects the next path node, snaps or
+ *        turns the heading toward it, and produces the step clamp, the bank angle
+ *        and the per-frame velocity.
+ *
+ * @param state Path-follower state block, 16-bit fixed point with eight
+ *        fractional bits. Offsets: map pointer +0x00, position +0x04/+0x06/+0x08,
+ *        current velocity +0x0A/+0x0C/+0x0E, direction to the next node
+ *        +0x10/+0x12/+0x14, velocity written here +0x16/+0x18/+0x1A, progress
+ *        inside the segment +0x1C, current segment length +0x20, length of the
+ *        segment just measured +0x22, step clamp +0x24, head offset +0x26, yaw
+ *        delta +0x28, reciprocal step +0x2A, pitch delta +0x2C, rate word +0x30,
+ *        flag word +0x3C, scene indices +0x44/+0x46/+0x48, yaw +0x4C, old yaw
+ *        +0x4E, target yaw +0x50, pitch +0x52, old pitch +0x54, target pitch
+ *        +0x56, bank +0x58, sine/cosine cache +0x64..+0x6C and the scratch
+ *        vector +0x70.
+ * @param obj Render object; only the signed turn amount at +0x84 is read, as the
+ *        gate of the bank calculation.
+ * @param update 0 commits the newly selected segment and snaps the orientation to
+ *        it; 1 computes the incremental turn, the step and the velocity.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8004F330(state, obj, state->index) returns the next node index; a negative
+ * value returns immediately. The node sits at map + 4 + index * 12 and its three
+ * u16 coordinates at +6, +8 and +0xA. The direction stored in +0x10/+0x12/+0x14
+ * is that coordinate minus (position + velocity).
+ * The direction is copied to the vector at +0x70 scaled by 256, its length comes
+ * from func_8001A100, length >> 8 is stored at +0x22, and
+ * func_8001AB78(0x80000000 / (length >> 1), vector) normalises the copy to 16.16
+ * in place.
+ * Yaw: target yaw = func_80095C30(x, z) & 0xFFF, recomputed when the node index
+ * changed or flag 0x400 is clear; before that, old yaw takes the previous target
+ * value when the two differ and flag 0x1000 is clear. Pitch: the horizontal
+ * distance is approximated by abs, swap and shift-add expressions, then target
+ * pitch = (0x1000 - func_80095C30(y, horizontal)) & 0xFFF.
+ * The flag word loses bits 28-29 (mask 0xCFFFFFFF) and, with flag 0x20 set, the
+ * bank and its spare half-word are cleared.
+ * update == 0: pitch and yaw snap to their targets, each suppressed by flags
+ * 0x100 and 0x1000, and func_8001846C refreshes the cache at +0x68 (pitch sine)
+ * and +0x64/+0x6C (yaw sine and cosine); the function then returns.
+ * update == 1: flag 0x800 returns at once, and so does an unchanged node index
+ * with flag 0x400 after both deltas have been zeroed. Otherwise each delta is
+ * (target - current) & 0xFFF, zeroed when they are equal and otherwise written as
+ * the wrapped shortest difference (values above 0x800 lose 0x1000); when both
+ * deltas are zero the function returns. The step at +0x24 is
+ * min(+0x20 / 2, +0x20 - (progress >> 8), +0x22 / 2) clamped at 0, and +0x2A
+ * becomes 0x4000 / step, or 0x7FFF for a zero step.
+ * Bank: only with flag 0x20 and a non-zero yaw delta. The delta is clamped to
+ * +-0x800 and scaled by -768/2048, then multiplied by the ratio
+ * obj->+0x84 * 65536 / +0x30 clamped to 1.0, and the product is stored at +0x58.
+ * Velocity: +0x16/+0x18/+0x1A become ((+0x10 << 8) * (step / +0x22) -
+ * (+0x0A << 8) * (step / +0x20)) >> 10 per axis, and the flag word ends as
+ * (flags & 0xCFFFFFFF) | 0x10000000.
+ *
+ * @par Likely role
+ * The hand-off half of the spline follower func_8005027C: that function calls it
+ * with 0 at a segment transition and with 1 whenever no next node has been chosen
+ * yet, so 0 is the "commit the new segment" path and 1 the "steer into the turn"
+ * path. The step never exceeds half of either adjoining segment, which is the
+ * usual corner slowdown, and +0x2A converts it into a reciprocal so the turn can
+ * be interpolated per frame. The bank at +0x58 is body roll into the turn, scaled
+ * inversely by the rate word so that slow movers lean further.
+ *
+ * @par Unknown
+ * - Whether the rate at +0x30 is a speed (the reading func_8005027C gives it) or a
+ *   turn rate (the reading the bank ratio gives it); the same word serves both.
+ * - Why the node table looks 12 bytes wide here while func_8005027C steps it from
+ *   map + 0 and reads occupancy nibbles at entry +4 and +8, which only lines up if
+ *   a record really spans 16 bytes.
+ * - The units of +0x24 and why the pitch is stored as 0x1000 minus the angle.
+ *
+ * @par Callers
+ * func_8005027C, two sites: the segment transition (update 0) and the branch taken
+ * while no next node is known (update 1).
+ */
 void func_8004F764(struct StateF764 *state, struct ObjectF764 *obj, u8 update)
 {
     register struct StateF764 *s __asm__("$17");

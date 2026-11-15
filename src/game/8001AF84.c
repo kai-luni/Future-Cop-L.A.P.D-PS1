@@ -1,3 +1,4 @@
+// Categories: Graphics > GTE > Software Transform | Utilities > Mathematics
 #include "game/types.h"
 
 struct TransformMatrix {
@@ -11,6 +12,29 @@ struct TransformPoint {
     s16 pad;
 };
 
+/**
+ * @brief Software-transforms a vertex array by a 3x4 matrix (the CPU twin
+ *        of the GTE RTPT path).
+ *
+ * @param matrix 12 words: 9 rotation + 3 translation, all >> 4 on load.
+ * @param source Input vertices (s16 x/y/z/pad).
+ * @param destination Output vertices, same layout.
+ * @param count Vertex count (<= 0 returns).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Per vertex: out.x = (x*m0 + y*m3 + z*m6) >> 12 + tx, and the m1/m4/m7
+ * and m2/m5/m8 rows for y/z. The >> 4 matrix preload and >> 12 product
+ * shift keep the 16.16 convention.
+ *
+ * @par Likely role
+ * The CPU fallback transform of the light node builder func_80049980:
+ * small vertex sets (the 5-point diamond) transform cheaper here than via
+ * a GTE round trip.
+ *
+ * @par Callers
+ * func_80049980.
+ */
 void func_8001AF84(struct TransformMatrix *matrix, struct TransformPoint *source,
                    struct TransformPoint *destination, s32 count)
 {

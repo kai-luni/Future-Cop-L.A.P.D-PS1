@@ -1,3 +1,4 @@
+// Categories: Gameplay > Map > Occupancy | Gameplay > Weapons
 #include "game/types.h"
 
 struct Unk5C048Def {
@@ -22,6 +23,30 @@ extern s32 func_8003BF50(void *object);
 extern struct Unk5C048Result *func_800402DC(void *owner, u8 column, s32 arg2, s32 row,
                                             s32 arg4);
 
+/**
+ * @brief Queries the map cell under an event and, when it holds a kind-0x5C
+ *        object, writes the event value into that object's definition.
+ *
+ * @param object Query owner.
+ * @param event Event record; +0 the value, +0xF the column.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * result = func_800402DC(object, event->column, 0, func_8003BF50(object),
+ * 0); a non-null result whose def->kind == 0x5C receives def->value =
+ * event->value.
+ *
+ * @par Likely role
+ * The weapon-fire interaction of func_8006ACB0 with special map objects
+ * (kind 0x5C): likely a switch/target that stores the last trigger value,
+ * e.g. a destructible panel or a scoring trigger.
+ *
+ * @par Unknown
+ * What object kind 0x5C represents.
+ *
+ * @par Callers
+ * func_8006ACB0.
+ */
 void func_8005C048(void *object, struct Unk5C048Event *event)
 {
     struct Unk5C048Result *result;

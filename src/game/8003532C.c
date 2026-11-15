@@ -1,3 +1,4 @@
+// Categories: Gameplay > AI > Drone Attachment | Gameplay > Entity Update | Game Engine > Entity Lifecycle
 #include "game/types.h"
 
 typedef struct {
@@ -53,6 +54,66 @@ extern void func_800336DC(struct Entity *self);
 extern void func_80060238(void *arg0, s32 arg1, struct Entity *arg2, s32 arg3, s32 arg4);
 extern void func_800324E0(void *arg0, struct Entity *self, s32 arg2);
 
+/**
+ * @brief Message-6 tick of the drone class: runs the two-stage approach to a
+ *        strategic node, re-arms the AI re-think timer, ticks the two attack
+ *        descriptors and hands the frame to the flyer mover.
+ *
+ * @param message Message id, forwarded unchanged to func_800324E0.
+ * @param self Entity block: +0x1C approach word, position +0x50/+0x54/+0x58,
+ *        position copy +0xDC, +0xF4 charge word, +0xF8 cached value, +0xFA state
+ *        byte, +0x134 pointer to the AI record.
+ * @param delta Frame time step, subtracted from the AI timer and forwarded to both
+ *        attack descriptors and to the mover.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The entity word +0x1C is copied into the AI record at +0xA4. The AI mode byte is
+ * at +0x1A and the limit it selects is +0x1E, halved for modes 1 and 2.
+ * While +0x1C is below that limit the approach runs: the planar octagonal distance
+ * between the entity position and the AI record position at +0x0C is measured as
+ * |dx| + |dz| - min / 2, and below 0x4000 the entity is reset with
+ * func_8003526C(self) and the timer is run instead.
+ * State 0: the entity position takes the AI record vector at +0x0C, the state
+ * becomes 1, +0xF4 grows by +0xF4 >> (4 - (D_8009FA94->+0x4C >> 2)),
+ * func_80033608(self, 0) parks the animation and the tail runs.
+ * State 1: func_80035184(self, &distance) returns the nearest live object of type
+ * 16 whose flag word has bit 0x20000 set. With a hit, a distance at or below
+ * 0x13FFF promotes the cached +0xF8 from the AI value +0x20 to +0x20 << 2 while the
+ * two are still equal; below 0x1000 the object is torn down with func_8004D958 when
+ * its +0xC8 has bit 0x02000000, and the entity is reset as above; closer than the
+ * AI distance the entity position is copied from the object's +0x50. With no hit
+ * the same +0xF8 promotion runs for a distance at or below 0x13FFF and the position
+ * is copied from the AI record at +0x0C.
+ * Any other state skips the approach and only runs the timer.
+ * Timer: the AI word +0x18 loses delta; when it goes negative it reloads to
+ * (9 - D_8009FA94->+0x4C) * 80 + 128, plus (random & 0xFF) or, for mode 2, minus
+ * (random & 0x1F), and func_800336DC(self) runs the strategic tick.
+ * Tail, reached from every path: func_80060238(ai + 0x50, delta, self, 0, 1) and
+ * func_80060238(ai + 0x78, delta, self, 0, 1) tick the two attack descriptors held
+ * in the AI record, then func_800324E0(message, self, delta) runs the shared flyer
+ * tick.
+ *
+ * @par Likely role
+ * An AI-controlled drone that flies to a strategic node of its own side and latches
+ * onto it: states 0 and 1 are "acquire" and "track", and the states set by the
+ * spawn half func_80035698 (4, and 5 which arms the countdown at +0x100 in the
+ * handler) bypass the approach. The compounding +0xF4 term reads like a charge or
+ * growth rate that the difficulty word D_8009FA94->+0x4C accelerates, and the
+ * re-think period of 80 frames per difficulty step matches the strategic AI it
+ * wakes up.
+ *
+ * @par Unknown
+ * - What +0x1C and the AI word +0x1E are; the pair is written identically by the
+ *   spawn half, so an altitude band and a period are both plausible.
+ * - Why the AI record carries two attack descriptors at +0x50 and +0x78.
+ * - What +0xF8 selects, and whether the "promote to << 2" is a size or a damage
+ *   change.
+ *
+ * @par Callers
+ * func_800357C0, message 6 of its dispatch table; the same table answers 0x138 for
+ * message 1 (the block size) and calls func_80035698 for message 2.
+ */
 void func_8003532C(void *arg0, struct Entity *self, s32 arg2) {
     struct State *a2;
     struct State *p;

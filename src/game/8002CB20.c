@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Script | Graphics > Animation
 #include "game/types.h"
 
 struct Model;
@@ -26,6 +27,33 @@ struct Unk2CB20 {
 extern void func_80013AF0(void *instance, struct Model *model, u32 options);
 extern void func_8002A5B4(struct Unk2CB20 *self, s32 index);
 
+/**
+ * @brief Interprets model-switch script commands: variant select, a flag
+ *        toggle and a model rebind.
+ *
+ * @param self Script owner; +0xC four {op, arg} commands, +0x16 a type
+ *        byte, +0x24 the options word, +0xDC..+0xDF state, +0x108 four
+ *        model pointers.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Ops 0x29..0x2C store unkDE = op - 0x28 (variant 1..4) and unkDC = arg;
+ * op 0x2D clears bit 2 of unkDF for non-zero arg, sets it for 0; op 0x2E
+ * rebinds the instance at +0x28 via func_80013AF0(models[arg], options)
+ * only when unk16 == 0x1E and arg < 4. Executed commands are consumed by
+ * func_8002A5B4; op 0 ends, unknown ops skip.
+ *
+ * @par Likely role
+ * The appearance-script pump behind func_8002CC30: the type gate 0x1E
+ * restricts model swaps to one object class, the variant words likely
+ * select paint/loadout options.
+ *
+ * @par Unknown
+ * What the variant state +0xDC/+0xDE drives downstream.
+ *
+ * @par Callers
+ * func_8002CC30.
+ */
 void func_8002CB20(struct Unk2CB20 *self)
 {
     s32 i;

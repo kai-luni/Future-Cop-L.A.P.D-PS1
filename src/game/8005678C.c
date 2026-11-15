@@ -1,3 +1,4 @@
+// Categories: Graphics > Camera > Placement
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -35,6 +36,31 @@ extern void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 
 extern void func_80017860(s32 angle, s32 pitch, s32 arg2);
 extern void func_800177AC(s32 *out);
 
+/**
+ * @brief Places the camera from a preset offset around an object, optionally
+ *        applying the result to the active view.
+ *
+ * @param object Follow target; +0x5C the position, +0xB0 the info block,
+ *        +0xB4 the heading.
+ * @param index Preset index into D_8009AD08 (angle/pitch/distance/data).
+ * @param out Receives the computed camera position.
+ * @param apply Non-zero also sets the active camera rotation and position.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8005612C computes the offset position from the object position and
+ * heading (heading + preset angle, preset pitch/distance, the info words
+ * +0xA8/+0xBC). With apply: func_80017860(heading + angle, pitch, 0) sets
+ * the rotation and func_800177AC(out) the position of D_8009F9E4.
+ *
+ * @par Likely role
+ * The preset-driven camera placement of the chase rig (func_800569EC) and
+ * func_80056870: the preset table is the same D_8009AD08 the view handlers
+ * cycle through.
+ *
+ * @par Callers
+ * func_80056870, func_800569EC.
+ */
 void func_8005678C(struct Unk5678C *object, s32 index, s32 *out, s32 apply)
 {
     struct Vec3s32 position;

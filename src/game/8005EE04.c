@@ -1,3 +1,4 @@
+// Categories: Gameplay > Weapons > Spawning | Gameplay > Combat
 #include "game/types.h"
 
 struct Unk5EE04Vec {
@@ -74,6 +75,36 @@ extern s32 func_80019668(void);
 extern void func_8001AB78(s32 value, void *data);
 extern void func_8004D444(struct Unk5EE04Request *request);
 
+/**
+ * @brief Spawns a kind-0xF projectile with jittered speed and inherited or
+ *        solved velocity (handler func_80037708).
+ *
+ * @param obj Weapon descriptor (speed words +2/+0xA, jitter base +0xC).
+ * @param ptr Pointer to the owner pointer.
+ * @param pos Launch position.
+ * @param ent Firing entity; +0x78 the velocity, +0x84 the inherit scale.
+ * @param arg4 Fallback direction vector.
+ * @param flag Non-zero skips the velocity scaling.
+ * @param flags Base flag word.
+ * @return Nothing (the spawn is queued via func_8004D444).
+ *
+ * @par Confirmed
+ * Standard flag composition (|0x8000, +0x4000 for kind 0x12, unk14 = flags
+ * | 8 with the 0x100 promotion). kind = 0xF, lifetime unk18 = 0x4E20.
+ * Speed unk40 = v + v * (rand & 0x1F) / 64 (up to +48% jitter). Velocity:
+ * without flag and with ent->unk84 set, the entity velocity scaled by
+ * unk84 << 8 (func_8001AB78); else arg4, scaled by obj->unk06 when the flag
+ * is clear.
+ *
+ * @par Likely role
+ * The rapid-fire/spread projectile path of the fire dispatchers: the
+ * lifetime 0x4E20 (20000) is a long-lived round, the speed jitter spreads
+ * bursts, inheriting the platform velocity keeps shots consistent while
+ * moving.
+ *
+ * @par Callers
+ * func_8005F6E8, func_8006ACB0.
+ */
 void func_8005EE04(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
                    struct Unk5EE04Ent *ent, struct Unk5EE04Vec *arg4, u8 flag, u32 flags)
 {

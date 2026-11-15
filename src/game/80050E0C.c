@@ -1,3 +1,4 @@
+// Categories: Gameplay > Path Following | Physics > Motion | Gameplay > Map
 #include "game/types.h"
 
 struct Unk50DACCell {
@@ -103,6 +104,81 @@ extern s32 func_8001A100(s32 *vector);
 extern s32 func_80095C30(s32 x, s32 y);
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
 
+/**
+ * @brief Initialises a rail/spline mover block for the map cell that contains a
+ *        position: cell triple, segment vector, length, yaw, pitch and the
+ *        per-part speeds.
+ *
+ * @param arg0 Tuning record: +0x00 flag word (bit 0x10 suppresses the head
+ *        offset), +0x02 base speed, +0x04 head offset, +0x06 turn factor,
+ *        +0x08 acceleration, +0x0A deceleration, +0x0C, +0x0E, +0x10 further
+ *        per-part bytes and +0x12 the top byte merged into the flag word.
+ * @param out Mover state block, the same layout func_8005027C integrates:
+ *        +0x00 map, +0x04/+0x06/+0x08 segment start, +0x0A/+0x0C/+0x0E segment
+ *        vector, +0x1C progress, +0x20 length, +0x26 head offset, +0x30 base
+ *        speed, +0x32 target speed, +0x34/+0x36/+0x38 turn, acceleration,
+ *        deceleration, +0x3C flags, +0x40 hold timer, +0x44/+0x46/+0x48/+0x4A
+ *        cell indices, +0x4C/+0x4E/+0x50 yaw, +0x52/+0x54/+0x56 pitch,
+ *        +0x64/+0x6C yaw sine and cosine, +0x68 the segment's vertical
+ *        component.
+ * @param arg2 Descriptor whose +0x00 word points at the map data block; the map
+ *        header with the cell list starts at +0x0C of that block. A null
+ *        pointer clears out->unk00 and returns.
+ * @param arg3 Render object: +0x24 gains bit 31, +0x78/+0x7C/+0x80 receive the
+ *        segment direction in 8.8 fixed point, +0x54 the part height and +0x84
+ *        the speed.
+ * @param arg4 Position vector (three s32, eight fraction bits) used for the cell
+ *        search.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * arg3->unk24 |= 0x80000000, map = arg2->unk00 + 0x0C, out->unk00 = map, then
+ * index = func_80050DAC(map, arg4), a linear search of the cell list for
+ * position >> 8. The start cell's three half-words are copied to out->unk04,
+ * +0x06 and +0x08, and out->unk48 and out->unk4A both get the cell index.
+ * out->unk1C and out->unk5C are zeroed, out->unk42 = arg0->unk10 and out->unk3C
+ * = arg0->unk00 | (arg0->unk12 << 24).
+ * out->unk44 = func_8004F330(out, arg3, out->unk48) selects the link to the next
+ * cell (a negative result sets flag 0x40), out->unk46 becomes -1, and the next
+ * cell's triple minus the start triple is stored in out->unk0A/+0x0C/+0x0E.
+ * The direction is scaled into arg3->unk78/+0x7C/+0x80 as differences << 8,
+ * its length comes from func_8001A100, out->unk20 = length >> 8, and the vector
+ * is normalised with func_8001AB78 using 0x80000000 / (length >> 1) - skipped
+ * when the length is below 2, which would divide by zero.
+ * Yaw: func_80095C30(x, z) & 0xFFF into out->unk4C, +0x4E and +0x50, then
+ * func_8001846C(yaw, +0x64, +0x6C) stores its sine and cosine.
+ * Pitch: the horizontal length is the octagonal approximation of |x| and |z|
+ * (swap, then a + (b >> 2) - (b >> 6) with the 0x7F/0x20 correction when the
+ * ratio is close to one), func_80095C30(y, that) gives the angle and
+ * (0xFFF - angle) & 0xFFF lands in out->unk52, +0x54 and +0x56.
+ * Height: out->unk26 = arg0->unk04, the offset << 4 is suppressed when it is
+ * positive and flag 0x10 is set, and arg3->unk54 = offset + (start y << 8);
+ * arg3->unk84 = 0.
+ * Speeds: out->unk30 = out->unk32 = ((arg0->unk02 << 8) / 300) >> 4,
+ * out->unk36 = (arg0->unk08 << 8) / 300, out->unk38 = (arg0->unk0A << 8) / 300,
+ * out->unk34 = arg0->unk06, out->unk3A = arg0->unk0C, out->unk2E = arg0->unk0E,
+ * out->unk40, out->unk58 and out->unk5A cleared.
+ *
+ * @par Likely role
+ * The segment-setup counterpart of the mover integrator func_8005027C: it
+ * rewrites the block func_8005027C then integrates (same offsets for progress,
+ * length, speeds, hold timer, index pair, yaw and pitch), so calling it
+ * re-seats a vehicle or part on the road/rail network at a known position. The
+ * /300 scalings match the 300-tick hold timer used by the AI step
+ * func_80037B28.
+ *
+ * @par Unknown
+ * Whether the cell triple is x/height/z or x/z/height - func_80050DAC compares
+ * its own +0x02 and +0x06 fields with the position, which makes the middle word
+ * the height, but the two views use different cell bases. Also unclear: the
+ * meaning of the cell's trailing s32 and of the map header word at +0x04.
+ *
+ * @par Callers
+ * func_800378BC, func_80039C58, func_80039E8C - all three are entity message
+ * handlers that call it from their part-update case, passing the render object
+ * as arg3 and the object position as arg4.
+ */
 void func_80050E0C(struct Unk50E0CArg0 *arg0, struct Unk50E0COut *out, struct Unk50E0CArg2 *arg2, struct Unk50E0CArg3 *arg3, s32 *arg4)
 {
     struct Unk50DACMap *map;

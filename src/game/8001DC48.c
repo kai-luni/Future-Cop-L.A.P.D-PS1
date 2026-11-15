@@ -1,3 +1,4 @@
+// Categories: Resources > File Access | Utilities > String
 typedef unsigned char u8;
 extern int func_8008CCC0(const u8 *);
 extern void func_8008CCB0(u8 *, const u8 *);
@@ -6,6 +7,61 @@ extern u8 func_8008CCE0(int);
 extern int D_8009FA68;
 extern int D_8009F620;
 
+/**
+ * @brief Builds the on-disc path of a file request: joins directory and name,
+ *        upper-cases, removes illegal characters and appends the version suffix.
+ *
+ * @param mode Access mode; only the low nibble is used. 1 enables the name
+ *        conversion (separators, extension and version handling), any other value
+ *        only joins, upper-cases and filters.
+ * @param name File name, may be null.
+ * @param dir Directory or volume prefix, may be null.
+ * @param out Destination buffer; names that would need 64 characters or more are
+ *        refused.
+ * @return The index of the last character written, or -18 when the result does not
+ *         fit the buffer and -19 for a malformed name.
+ *
+ * @par Confirmed
+ * Both lengths come from func_8008CCC0 (BIOS strlen). Empty directory and name
+ * write out[0] = 0 and return 0, and pos + namelen + 1 >= 64 returns -18.
+ * The directory is copied with func_8008CCB0 (BIOS strcpy) and a separator is
+ * appended unless the last directory character is one of backslash, ':', ';', '.'
+ * or slash, or the first name character is one of them; mode 2 with a one-character
+ * name uses ':' instead of a backslash. The name is appended with func_8008CC90
+ * (BIOS strcat) and the whole string is then walked character by character through
+ * func_8008CCE0 (BIOS toupper).
+ * A character is dropped from the output when it lies in 0x01..0x2C except '!' and
+ * '*', in 0x3D..0x40 except '?', or at 0x5B and above except backslash and '_';
+ * every other character is copied (only if below 128) at the next output position.
+ * In mode 1 the remaining cases are handled: ':' restarts the output after
+ * rejecting a second colon, a colon after a dot or a colon after a directory
+ * separator (-19); '/' becomes a backslash; a backslash only bumps the separator
+ * count; a ';' at the end of the string is dropped, a ';' with no preceding dot
+ * turns into a dot and sets the extension position, and a ';' after an extension
+ * sets the version flag (a second one is -19); a second dot is -19; the terminator
+ * with nothing written is -19, and otherwise a missing dot is appended followed by
+ * ";1" when no version was seen.
+ * The return value is the index of the last character stored, i.e. the length minus
+ * one.
+ *
+ * @par Likely role
+ * The single normaliser between the game's file names and the on-disc directory
+ * format, used by the open path func_8001D424 before it looks the name up in the
+ * open-file table. The ';1' suffix, the upper-casing and the 8.3 character filter
+ * are the ISO9660 conventions, and a device prefix is stripped by restarting the
+ * output at the colon.
+ *
+ * @par Unknown
+ * - Why a ';' without a preceding dot is turned into a dot rather than rejected.
+ * - Whether the character filter is exactly the ISO9660 d-character set; '<' and
+ *   '>' are both kept, which that set does not allow.
+ * - Why the length check uses 64 while the caller's buffer is described as a name
+ *   buffer without a stated size.
+ *
+ * @par Callers
+ * func_8001D424 (the open-file slot allocator), which passes mode 1 and the
+ * 64-byte name buffer at 0x800A6DD8.
+ */
 int func_8001DC48(int mode, const u8 *name, const u8 *dir, u8 *out)
 {
     u8 buf[64];

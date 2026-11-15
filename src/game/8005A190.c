@@ -1,3 +1,4 @@
+// Categories: Graphics > HUD > Gauge | Gameplay > Player
 #include "game/types.h"
 
 struct Unk5A190Gauge {
@@ -16,6 +17,30 @@ struct Unk5A190 {
 
 extern void func_8005A154(struct Unk5A190 *object, struct Unk5A190Gauge *gauge, s32 rising);
 
+/**
+ * @brief Sets a gauge value and drives its three-state fill machine.
+ *
+ * @param object Gauge owner; +0x54 the gauge array.
+ * @param index Gauge index.
+ * @param value New value (clamped to >= 0).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * value >= limit sets state 2 (full). Coming down from state 2 sets state
+ * 1 and fires func_8005A154(object, gauge, 1) (rising edge); from state 1
+ * at value <= 0 sets state 0 and fires func_8005A154(object, gauge, 0).
+ *
+ * @par Likely role
+ * The health/energy gauge updater of the player handlers (spawn, tick,
+ * retire and func_8002FC90): the edge callbacks likely trigger the HUD
+ * flash or the low-energy warning sound.
+ *
+ * @par Unknown
+ * What the rising flag selects in func_8005A154.
+ *
+ * @par Callers
+ * func_8002FC90, func_80058714, func_800588D4, func_80058D78.
+ */
 void func_8005A190(struct Unk5A190 *object, s32 index, s32 value)
 {
     struct Unk5A190Gauge *gauge;
