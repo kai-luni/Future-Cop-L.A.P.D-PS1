@@ -1,3 +1,4 @@
+// Categories: Gameplay > AI > Aiming | Graphics > Effects > Beams | Physics > Collision | Graphics > Scene Graph > Node Allocation
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -127,6 +128,68 @@ extern void func_8007377C(void *a0, void *a1, s32 a2, s32 a3, s32 a4, s32 a5, s3
 extern s32 func_800402DC(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4);
 extern s32 func_800684AC(struct Vec3s32 *pos, struct Vec3s32 *in, struct Vec3s32 *out, s32 arg3, s32 arg4);
 
+/**
+ * @brief Computes the aim point of a firing actor - random cone around the target,
+ *        clamped to weapon range and clipped against the map grid - then spawns the
+ *        tracer node pair and the impact effects.
+ *
+ * @param arg0 Actor. Fields read from its data block: +0x01 actor type (0x0B takes the
+ *        special path), +0x0B effect selector, +0x0C message id, +0x0E an explicit
+ *        spread radius, +0x16 the range, +0x1A an impact effect column and +0x1B a
+ *        fallback selector; the actor block itself supplies +0x23, a model part index.
+ * @param arg1 Model instance and spawn block: +0x28 the model instance, +0x14 a
+ *        message id, +0x78/+0x7C/+0x80 a muzzle offset vector.
+ * @param pos Source/muzzle position (three 32-bit components).
+ * @param arg3 Target collision object or 0; its +0x28 model instance, +0x5C/+0x60/+0x64
+ *        position, +0x6E packed angle word and callback at +4 are used.
+ * @param arg4 Sub-type byte forwarded to the target in the message record.
+ * @return Nothing.
+ *
+ * @par Confirmed setup
+ * The effect/tracer object is D_800A7040[0][data + 0x0B] and is discarded unless its
+ * type byte at +4 equals 0x58; the selector kept for the final spawn is that object's
+ * +0x15, or the raw data + 0x1B when the lookup fails.
+ *
+ * @par Confirmed aim construction
+ * With arg3 present: a radius comes from data + 0x0E, else from the object's +0x34
+ * shifted 4, or half of arg3 + 0x6E when that field is negative. Two sine/cosine pairs
+ * from func_8001846C over random 12-bit angles are multiplied into it, giving the
+ * offset vector. The distance vector pos - (arg3 + 0x5C) is measured with func_80019FCC
+ * (sum of squares shifted by 16) and compared against the square of data + 0x16: outside
+ * the range the point is pulled back onto the range circle using the normalisation of
+ * func_80019904, inside it is pushed to the far side of the target, mirrored when the
+ * dot product func_8001AB00 of distance and offset is negative. A model-part hit
+ * (object + 0x1E below 4) short-circuits to func_80017668 on arg3 + 0x28, skipping
+ * everything above. Without arg3 the point is pos plus the muzzle offset scaled by
+ * data + 0x16.
+ *
+ * @par Confirmed clipping and reporting
+ * func_800684AC(pos, point, out, 0, 1) walks the map grid along the segment and a
+ * non-zero result replaces the point with the reported location. When it reports nothing
+ * and arg3 exists, the callback at arg3 + 4 is invoked with message 0x0E and a record
+ * built from arg1 + 0x14, data + 0x0C, arg4 and arg1.
+ *
+ * @par Confirmed spawns
+ * For actor type 0x0B two scene nodes are created with func_80073500 (source point, aim
+ * point) and func_8007377C links them into the tracer with the eight parameters
+ * +0x36 to +0x44 of the effect object, or the constants 0x20, 1, 0x7F, 0x7F, 0xFF, 0x2AA,
+ * 0x4000 and -0x3000 when the lookup failed. An effect record (value 0x300, byte 0x49
+ * = 4) placed at the aim point spawns column data + 0x1A, and a second record (0x300,
+ * 0x44 = the model instance, 0x49 = 0x65) is spawned at the part fetched by
+ * func_80017668 - the muzzle flash.
+ *
+ * @par Likely role
+ * The ranged attack of one enemy class: aim with spread, stop at walls, draw the tracer,
+ * report the hit.
+ *
+ * @par Unknown
+ * Units of the +0x6E angle, the id spaces of the two effect columns (0x1A and 0x65),
+ * and whether actor type 0x0B is a turret or a flyer.
+ *
+ * @par Callers
+ * func_8005F6E8, the actor-type dispatcher, which reaches this case for one entry of
+ * its switch over the data + 0x01 type byte.
+ */
 void func_8005F018(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec3s32 *pos, struct Coll5F018 *arg3, u8 arg4)
 {
     struct Locals5F018 locals;

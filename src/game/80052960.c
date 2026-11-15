@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Animation > Joint Chain | Graphics > GTE > Batch Transform | Graphics > Geometry
 #include "game/types.h"
 
 struct Matrix {
@@ -49,6 +50,51 @@ extern void func_8001006C(struct Matrix *, struct Matrix *, s32);
         (d)->m[11] = (s)->m[11]; \
     } while (0)
 
+/**
+ * @brief Walks a short joint record list and builds the world matrices of a limb
+ *        by concatenating rotation and translation per level.
+ *
+ * @param a0 Description block: +0x00 the sub-block, +0x04 a 3x4 matrix, +0x48 a
+ *        16-bit table offset.
+ * @param first Receives the matrix of the fifth joint; the parameter name is
+ *        misleading, it is written last.
+ * @param second Receives the matrix of the third joint.
+ * @return Nothing. A chain shorter than the level being written leaves the
+ *         corresponding output untouched.
+ *
+ * @par Confirmed data
+ * The sub-block holds the record array at +0x14 (record size 0x14: index byte,
+ * six padding bytes, flags byte, then six 16-bit values x, y, z, rx, ry, rz) and
+ * the 16-bit value table at +0x18. The record index selects both the destination
+ * slot of a four-entry local matrix array and, minus one, the parent slot.
+ *
+ * @par Confirmed sequence
+ * The input matrix is copied into local slot 0. For each record i = 1.. the three
+ * angles are taken literally when flags bits 4/2/1 are set and otherwise from
+ * table[offset + value]; the same rule applies to the translation with bits
+ * 0x20/0x10/0x08. func_80018DC0 builds the 3x3 rotation, the translation is
+ * placed at words 9..11 scaled by 16, the parent matrix is loaded into the GTE by
+ * func_80010820, and func_8001006C(&matrix, dest, 4) concatenates them - the count
+ * of 4 covers the three basis rows plus the translation row. The parent
+ * translation is then added to the result words 9..11.
+ * Flag 0x80 marks the last record and ends the walk; at level 3 the destination
+ * is copied into second, at level 5 into first, which also ends the walk. Note
+ * that func_8001006C negates the y component of every transformed triple, so the
+ * whole chain lives in the mirrored y convention the model pipeline uses.
+ *
+ * @par Likely
+ * The limb solver behind an animated model: a record chain of up to five joints,
+ * with per-joint constants or shared-table values, returning the matrices needed
+ * to place an upper and a lower limb segment (third and fifth joint).
+ *
+ * @par Unknown
+ * What the caller does with the two matrices is not visible here, and record
+ * index 0 would address the root slot itself, so the records presumably start at
+ * index 1; the file does not enforce it.
+ *
+ * @par Callers
+ * func_80052D7C.
+ */
 void func_80052960(struct Args *a0, struct Matrix *first, struct Matrix *second)
 {
     struct Matrix matrix;

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Dynamics | Physics > Motion | Graphics > Effects > Particles | Game Engine > Entity Lifecycle
 #include "game/types.h"
 
 struct Unk4ABE4Inner {
@@ -70,6 +71,54 @@ extern void func_80010820(u8 *arg0);
 extern void func_8001006C(void *arg0, void *arg1, s32 arg2);
 extern void func_8003E984(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
+/**
+ * @brief Burst variant of an object's death handling: allocates a 28-byte motion
+ *        record, fills it with randomly interpolated direction, speed and scale, rotates
+ *        it into world space and spawns the object's configured child effect.
+ *
+ * @param object Object block. +0x1C is the inner block whose +0x34 is the basis
+ *        context, +0x1A a flag word, +0x20 a parent block, +0x65 the child type, +0x10
+ *        a variant bit, +0x16 a lifetime, +0x76/+0x78 a speed range, +0x6A/+0x6C a
+ *        scale range, +0x70/+0x72/+0x74 a direction vector, +0x7C a signed percentage.
+ * @param arg1 Optional driver block (0x40 a magnitude, +0x04/+0x08/+0x0C a rotation
+ *        vector, 0x49 a flag byte); may be 0.
+ * @return 1 when the record was built and the child handed on; 0 when the basis context
+ *         or the allocation is missing, and in the first case +0x0F gains bit 0.
+ *
+ * @par Confirmed construction
+ * The record comes from func_80017EBC(0x1C, 1) and is stored at object + 0x80. Its
+ * first word is (((random and 0x1F) + 0xA0) shifted 3), scaled by the signed
+ * percentage +0x7C over 100 and then multiplied by -16: a large fixed impulse. Words
+ * at +8 and +0xA receive the same value, +0x76 plus (range times a random 12-bit
+ * fraction) shifted 12 when +0x76 is below +0x78, else +0x78. Words +0xC, +0x10 and
+ * +0x14 are +0x70, +0x72 and +0x74 multiplied by a scale drawn the same way from
+ * +0x6A/+0x6C and shifted 8, or zero when the scale is zero. Word +0x18 is +0x16
+ * while the parent's +0x20 is non-zero, and zero otherwise.
+ *
+ * @par Confirmed transforms
+ * When the flag word +0x1A has bit 0x100 or 0x004, func_80010820 loads the matrix at
+ * context + 4 into the GTE and func_8001006C rotates the three-word direction by it in
+ * place. With arg1 present and its +0x49 bit 1 set, a magnitude of arg1 + 0x40 shifted
+ * 3 is negated when +0x1A has bit 0x200, forced to zero when it has 0x400, and each
+ * axis then receives (arg1 + 0x04/+0x08/+0x0C shifted 4) times that magnitude, shifted
+ * 8.
+ *
+ * @par Confirmed tail
+ * +0x0C, +0x16 and +0x84 are cleared; a non-zero child type +0x65 passes the inner
+ * block, 0, the type, 0 and (object + 0x10 shifted once) and 1 to func_8003E984, the
+ * spawn call.
+ *
+ * @par Likely role
+ * The explode-without-splitting-the-model half of the pair with func_8004C324: one
+ * debris/particle impulse and one child effect instead of a full polygon fracture.
+ *
+ * @par Unknown
+ * The unit of the first word and what the two duplicated words at +8/+0xA feed.
+ *
+ * @par Callers
+ * func_8004C324, message 0, on the branch where the object flags carry bit 8;
+ * the fracture path (bit 0x10) sits in the same handler.
+ */
 s32 func_8004ABE4(struct Unk4ABE4 *object, struct Unk4ABE4Arg1 *arg1)
 {
     u8 *context;

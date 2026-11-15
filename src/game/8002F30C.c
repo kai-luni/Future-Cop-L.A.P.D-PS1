@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update > Mover | Physics > Motion | Graphics > GTE > Matrix Build | Platform > Sound
 #include "game/types.h"
 
 struct ObjInner { u8 pad[0x34]; u8 *base; };
@@ -33,6 +34,57 @@ extern void func_80010234(void *, void *, s32);
 extern void func_800457B8(s32, s32);
 extern void func_80047284(s32, s32, s32, s32);
 
+/**
+ * @brief Message-6 tick of a scripted mover: sweeps one angle or one axis of
+ *        translation toward a target at a fixed rate, with optional ping-pong,
+ *        and rebuilds the matrix and the model part afterwards.
+ *
+ * @param obj Object block.
+ * @param dt Frame delta. The rotation modes take the step as (dt * speed) >> 16,
+ *        the translation modes as dt * speed directly.
+ * @return Always 0.
+ *
+ * @par Confirmed layout
+ * +0x0C command byte, +0x21 sound state, +0x22 sound id, +0x24 flag word,
+ * +0x28 model (its +0x34 frame table), +0x2C 3x3 matrix with its row at words
+ * 6..8, +0x50 x/y/z, +0x5C transform, +0x70 model part, +0x78 saved matrix row,
+ * +0xA0 mode, +0xA1 direction, +0xA2 options, +0xA3 start sound, +0xA4 end sound,
+ * +0xA8 speed, +0xAC angle 0, +0xB0 angle, +0xB4 angle 1, +0xB8 target angle,
+ * +0xBC target y, +0xC0 target z.
+ *
+ * @par Confirmed modes
+ * A non-zero command byte first runs func_8002F280, the command handler. Modes 0,
+ * 4 and 5 rotate: the goal is +0xAC or +0xB8 selected by the direction byte, the
+ * difference is wrapped into -0x800..0x800 over a 12-bit angle, the step is
+ * clamped to it and applied; bit 2 of the options byte flips the direction on
+ * arrival. The swept angle is passed as the x rotation for mode 0, as the y
+ * rotation for mode 4 (x fixed at +0xB4) and as the z rotation for mode 5.
+ * Modes 1 and 2 translate in the plane: the step is the matrix words 0/2 (mode 1)
+ * or 6/8 (mode 2) times speed * dt, and x/z are clamped so the goal is never
+ * passed. Mode 3 moves y toward +0xB0 or +0xBC by dt * speed.
+ * The rotation modes then reload the matrix with func_800188D0; all moving modes
+ * push it with func_80010750 and transform the model part with
+ * func_80010234(model + 0x34 + part * 16 + 8, obj + 0x5C, 1).
+ *
+ * @par Confirmed sound and state
+ * While something moves, the start sound +0xA3 is armed into +0x21 unless flag
+ * 0x400000 is already set, and the matrix row at words 6..8 is copied into
+ * +0x78..+0x80. When nothing moves any more the sound state is cleared; if flag
+ * 0x400000 is set the looped sound is stopped with func_800457B8(id, +0x22), the
+ * flag is cleared, and the end sound +0xA4 is played positionally with
+ * func_80047284(sound, x, z, -1).
+ *
+ * @par Likely
+ * A lift, platform or rotating prop driven from a script: one degree of freedom
+ * per mode, a looping travel sound while it moves and a stop sound at the ends.
+ *
+ * @par Unknown
+ * Of the flag word at +0x24 only 0x400000 is used here; the bits written by the
+ * setup path (message 2) are not visible in this function.
+ *
+ * @par Callers
+ * func_8002F7C8, the message table that dispatches message 6 here.
+ */
 s32 func_8002F30C(struct Obj *obj, s32 dt)
 {
     s32 speed;

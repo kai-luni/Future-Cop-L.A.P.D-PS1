@@ -1,3 +1,4 @@
+// Categories: Physics > Motion | Graphics > Scene Graph | Gameplay > Object Dynamics
 #include "game/types.h"
 
 typedef struct UnkSub {
@@ -38,6 +39,35 @@ extern void func_80037EB4(Unk3802C *arg0);
 extern void func_80010750(void *arg0);
 extern void func_80010234(void *arg0, void *arg1, s32 arg2);
 
+/**
+ * @brief Advances a falling or flying object by one time step, clamps it
+ *        against a ground limit and refreshes its transform.
+ *
+ * @param arg0 Unused in this body.
+ * @param arg1 Object record (height unk54, speed unkAC, flags unk118).
+ * @param arg2 Time step.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * ret = func_80050D14(&arg1->unkDC, arg2, arg1). When (unk118 >> 30) == 1:
+ * unkA4 |= 0x100; unkB0 = (unkB0 + 2*arg2) & 0xFFF, clamped to 1000 when
+ * the result lies in [1001, 1001 + 0x816]; unkAC += arg2 >> 1;
+ * unkB4 = (unkB4 + arg2*unkAA) & 0xFFF. The ground limit is
+ * func_80066F78(&unk50, 0, 0, 0) + (unk68 >> 1). With delta = unkAC*arg2,
+ * if unk54 - delta < limit the descent is truncated, unk1C = -1 and
+ * unk118 |= 0xC0000000 (landing flags); when ret == 0, unk54 -= delta;
+ * ret becomes 2 and unk102 -= delta >> 4.
+ * When ret != 0: func_80037EB4(arg1) runs if (ret & 2) or (unk118 & 0x200),
+ * then func_80010750(&unk2C) loads the matrix and func_80010234 transforms
+ * one vertex from the model data into unk5C.
+ *
+ * @par Likely role
+ * Ballistic or hovering object: unk54 is the height, unkAC the descent
+ * speed, the 0xC0000000 bits mark the landed state.
+ *
+ * @par Callers
+ * func_8002B784, func_800382B4.
+ */
 void func_8003802C(s32 arg0, Unk3802C *arg1, s32 arg2)
 {
     s32 ret;

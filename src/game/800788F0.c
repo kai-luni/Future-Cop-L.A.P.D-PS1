@@ -1,3 +1,4 @@
+// Categories: Graphics > Text > Rendering | Graphics > HUD
 #include "game/types.h"
 
 struct FontEntry {
@@ -15,6 +16,36 @@ extern void func_800492A0(u8 *text, s32 *width, s32 *height);
 extern u8 *func_8008CCD0(u8 *str, s32 c);
 extern s32 func_8008CCC0(u8 *str);
 
+/**
+ * @brief Draws a (possibly multi-line) text with horizontal and vertical
+ *        alignment, temporary font switch and string-table lookup.
+ *
+ * @param text Text to draw; when null, textId is resolved instead.
+ * @param x Anchor x.
+ * @param y Anchor y.
+ * @param color Text color (low 16 bits).
+ * @param textId String-table id used when text is null (low 16 bits).
+ * @param alignX 1 = left, 2 = right, 4 = center.
+ * @param alignY 8 = top, 0x10 = bottom (line count pre-pass), 0x20 =
+ *               middle.
+ * @param font Font slot; switched temporarily when it differs from
+ *             D_8009F8BC and restored afterwards.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Null text is resolved via func_80089914(textId & 0xFFFF); still null
+ * aborts. With alignY == 0x10 the lines are counted first (strchr-style
+ * func_8008CCD0 on '\n'). Each line is temporarily NUL-terminated,
+ * measured with func_800492A0 unless (alignX == 1 && alignY == 8), and
+ * drawn with func_80049100. Right/center shift x by width / width/2;
+ * bottom/middle shift y by height / height/2, bottom also stacks lines
+ * upwards using the font height from func_80048E88(). The newline is
+ * restored and y advances by the font height per line.
+ *
+ * @par Callers
+ * Seventeen direct callers across the menu/HUD code, among them
+ * func_8007D7CC, func_8007F1F8 and func_8008125C.
+ */
 void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                    s32 alignX, s32 alignY, s32 font)
 {

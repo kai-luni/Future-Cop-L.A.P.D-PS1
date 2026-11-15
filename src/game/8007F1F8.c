@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End > Character Entry | Graphics > Text > Rendering | Graphics > 2D Drawing | Platform > Sound
 #include "game/types.h"
 
 struct FontEntry {
@@ -30,6 +31,56 @@ extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
 extern struct FontEntry *func_80048E88(void);
 
+/**
+ * @brief State machine and renderer of the ten-character entry screen: commit,
+ *        step one letter, move the cursor, or draw the whole panel.
+ *
+ * @param state Action selector 0..5; values of 6 and above return immediately.
+ * @param input_baseX Horizontal centre of the ten-letter row.
+ * @return Nothing.
+ *
+ * @par Confirmed layout
+ * D_800A3948 holds ten letter indices in 0..25, D_8009F8F8 is the edit cursor in
+ * 0..9, D_8009F8B8 selects the row of the word array D_8009F8F8_arr whose entry
+ * marks the highlighted column, D_8009F92A is a status text id (0 while no
+ * message is pending), D_8009FA60 is a frame counter and D_8009FA60[0] supplies
+ * the palette and toggle bits. The dispatch is a jump through the table
+ * jtbl_800121A4, and the local array of label addresses is emitted as well.
+ *
+ * @par Confirmed states
+ * 0 - commit: func_8007EA78 packs the ten letters; a zero low byte means the
+ * string is not acceptable, so the status text is set to 0x3AAC and sound 0x4C
+ * plays, otherwise sound 0x4D plays and func_80078740 pops the front-end panel.
+ * 1 and 2 - step the current letter down or up with wrap 0..0x19, sound 0x46.
+ * 3 and 4 - move the cursor with wrap 0..9, sound 0x47.
+ * Every one of these first clears D_8009F92A.
+ * 5 - draw: when a status text is pending it is coloured with
+ * func_800493C0(0x11, 0x1F, 0x0A, 0x0A) and drawn at (0xA0, 0x82). Two numeric
+ * fields are drawn with func_80078B34, the ids switching on bit 9 of D_8009FA60.
+ * Two more text blocks (0x3A98 at y 0x3C and 0x3AB6 at y 0xA2) and the frame
+ * func_8007F128(0xA0, 0xAD, 0x0F, 2, 4, 8) follow. The letter row is built by
+ * adding 0x41 to each stored index, measured with func_800492A0 and drawn by
+ * func_80049100 at y 100, advancing by the font width + 1 from
+ * baseX - 5 * (width + 1); the highlighted column also gets a gouraud quad from
+ * func_80082EF0 in colour D_8009F3F8[(D_8009FA60[0] >> 4) & 7] + 0x80 and is
+ * drawn with palette index 8 instead of 15.
+ *
+ * @par Likely
+ * A password or initials panel: ten letters A..Z, cursor left/right, letter
+ * up/down, and a commit that validates the string. func_8007EA78 encodes the ten
+ * characters through a 16-symbol and an 8-symbol alphabet, which fits a code
+ * rather than a name.
+ *
+ * @par Unknown
+ * The relation between the scalar cursor D_8009F8F8 written by states 1..4 and
+ * the array entry D_8009F8F8_arr[D_8009F8B8] used for the highlight is not
+ * resolvable from this file, and the numeric fields drawn in state 5 are not
+ * identified by their ids.
+ *
+ * @par Callers
+ * None in analysis/edges.json, not even an address-taken edge, so the caller lies
+ * outside the analysed set; func_8007F1F8 is reached indirectly.
+ */
 void func_8007F1F8(s32 state, s32 input_baseX)
 {
     u8 text[8];

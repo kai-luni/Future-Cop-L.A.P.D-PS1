@@ -1,3 +1,4 @@
+// Categories: Physics > Collision > Ground Query | Gameplay > Map | Graphics > Geometry
 typedef unsigned char u8;
 typedef signed char s8;
 typedef unsigned short u16;
@@ -21,6 +22,68 @@ extern s32 func_80067480(s8 *data, u32 index, s32 x, s32 y, s32 *out);
 extern s32 *func_8006320C(s32 *pos, s32 *out, s32 *a, u8 *b);
 extern void func_8001A180(s32 *v);
 
+/**
+ * @brief Returns the ground height under a world position.
+ *
+ * Walks the map cell of the given x/z, samples every surface descriptor of the
+ * sub-cell and returns the highest surface that is still below a ceiling of
+ * position[1] + 0x200 (falling back to the lowest surface when none qualifies).
+ * Optionally writes the surface normal and the surface attribute byte.
+ *
+ * @param position s32 triple: x at 0, y (ceiling reference) at 1, z at 2.
+ * @param output Optional s32[3]; receives the surface normal, normalised by
+ *        func_8001A180, or the record position when the secondary lookup hits.
+ * @param a2 Optional surface attribute output (one byte).
+ * @param a3 Optional record pointer output; set to the found record, or 0.
+ * @return Height of the chosen surface, or 0 when the position is outside the
+ *         map, the sub-cell is empty or no descriptor matched.
+ *
+ * @par Confirmed
+ * Rejects z < 0, x < 0, (z >> 17) >= map->w - 1 and (x >> 17) >= map->h - 1;
+ * the header accesses w and h transposed against x/z.
+ * Cell index idx = (z >> 17) + map->w * (x >> 17); sub-cell a4 = (x >> 13) & 0xF
+ * and a5 = a4 * 16 + ((z >> 13) & 0xF); block = D_8009F808[(tab[idx] >> 2) &
+ * 0x3FFF].
+ * The 16-bit descriptor hw = ((u16 *)(block + 0x3CC))[a5] gives count = hw & 0xF
+ * (zero returns 0 immediately) and the descriptor list at
+ * block + 0x5D0 + (hw >> 4); the height table handed to func_80067480 is
+ * block + (a4 + a5) * 3 + 0xC.
+ * Sampling coordinates are the 16-bit fractions (z << 3) & 0xFFFF and
+ * (x << 3) & 0xFFFF.
+ * The loop runs at most 15 32-bit descriptors: type = (s0 >> 15) & 0x7F and it
+ * stops at type >= 0x47. The quadrant (s0 >> 13) & 3 is skipped when it is 0 or
+ * when the byte at block + quadrant + 0x370 has bit 0x40 set. func_80067480
+ * returns the sampled height; s2/s4 keep the global minimum and the greatest
+ * value below the ceiling, with their descriptors in l34/l30.
+ * With no hit at all s2 is still 0x40000000 and the function returns 0; when no
+ * value was below the ceiling both selections collapse onto the minimum.
+ * Secondary lookup: func_8006320C(position, output, &h, &attr) may return a
+ * record with h >= s4; then output[0..2] = record[14..16], the record goes
+ * through a3, attr through a2 and h is returned.
+ * Otherwise, with output non-NULL the winning descriptor is decoded again: the
+ * corner indices come from D_8009AFE8[type] and their heights are read from the
+ * height table. For type >= 0x3C a fourth corner is used and the pair is chosen
+ * by comparing the two fractional coordinates; below that the mode byte
+ * D_8009B1A4[type] >> 3 (0..3) selects one of four combinations of the shift
+ * counts 5 and 0x20. output[0], output[1] and output[2] are then built from the
+ * corner heights as gradient terms and normalised by func_8001A180(output).
+ * If the chosen surface lies within 0x2000 of the ceiling, a2 receives the byte
+ * at block + quadrant + 0x370.
+ *
+ * @par Likely
+ * Terrain sampling for entity placement; func_80041C6C confirms the usage
+ * (obj->v54 = result + (src->x28 << 4)). func_80067480 interpolates the height
+ * inside a quad/triangle of the surface type, output is the ground normal, and
+ * a2 a surface/material id (water, road, ...).
+ *
+ * @par Unknown
+ * What func_8006320C looks up (Likely a dynamic surface such as a moving
+ * platform), and why w and h are used transposed.
+ *
+ * @par Callers
+ * Twenty-two direct callers, among them func_80041C6C, func_80041488,
+ * func_800164F4 and func_8004AFC0.
+ */
 s32 func_80066F78(s32 *position, s32 *output, s32 *a2, s32 *a3)
 {
     s32 *pos = position;

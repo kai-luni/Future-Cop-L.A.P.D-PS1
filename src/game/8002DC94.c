@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Graphics > Scene Graph | Graphics > Animation
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -73,6 +74,34 @@ extern void func_80044988(u8 *data, u8 *track, u8 forward, s32 index);
 extern void func_80010750(struct Basis *basis);
 extern void func_80010234(u8 *ptr, u8 *unk5C, s32 a2);
 
+/**
+ * @brief Spawn initializer for a weapon-derived object: reads the weapon
+ *        mode, places the object on terrain and builds its yaw or
+ *        slope-aligned basis.
+ *
+ * @param self Object being initialized.
+ * @param arg1 Spawn argument; arg1->weapon is the weapon record.
+ * @param arg2 Forwarded to the base initializer.
+ * @return 0.
+ *
+ * @par Confirmed
+ * Weapon mode 0x18 is remapped to 0xB. Modes 8, 0x21 and 0x24 take the
+ * alternate fields (unk34, unk44, unk3A << 4, unk46) and set
+ * flags = (flags | 0x11) & 0xFFEFDEF7; all other modes take unk24, unk25,
+ * unk28, unk26. func_8002AD58(2, self, arg1, arg2) runs in both branches.
+ * The mode maps to a terrain selector (0 -> -1, 1 -> -2, else mode - 2);
+ * pos.y = func_80067684(&pos, sel) + base. With flag & 1 the height comes
+ * from func_80066F78 instead and func_800192AC builds the basis from the
+ * surface result and the direction (cos, 0, sin) of the angle
+ * (func_8001846C); otherwise the basis is the explicit yaw matrix
+ * [cos, 0, -sin; 0, 0x10000, 0; sin, 0, cos].
+ * When the model has animation data, func_80044988 starts the track;
+ * func_80010750 loads the basis, func_80010234 transforms one frame
+ * vertex; unkB4 = 0.
+ *
+ * @par Callers
+ * func_8002DEA8.
+ */
 s32 func_8002DC94(struct Self *self, struct Arg1 *arg1, s32 arg2)
 {
     struct Weapon *w;

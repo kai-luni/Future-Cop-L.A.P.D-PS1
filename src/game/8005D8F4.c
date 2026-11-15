@@ -1,3 +1,4 @@
+// Categories: Gameplay > Damage > Expanding Contact Field | Physics > Collision > Radius Tests | Graphics > Effects > Particles
 #include "game/types.h"
 
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
@@ -100,6 +101,69 @@ extern void *func_80073590(struct Cand *owner, void *coord, s32 kind, s32 a3, s3
 extern void func_8007377C(void *a, void *b, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7,
                           s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13);
 
+/**
+ * @brief Per-frame update of an expanding damage field that rides on an owner's
+ *        matrix: a spring-loaded radius, twelve particle lobes, and contact
+ *        damage with a cooldown per target.
+ *
+ * @param self Effect block: +0x00 owner slot, +0x04 owner, +0x08 owner id,
+ *        +0x0C lifetime stamp, +0x10 damage period, +0x14 next damage time,
+ *        +0x18 the copied 3x4 matrix, +0x48 radius, +0x4A radius velocity,
+ *        +0x4C target radius, +0x4E contact limit, +0x50 base damage,
+ *        +0x54 stat slot, +0x58 twelve lobes of 0x1C bytes, +0x1AE contact flag.
+ * @param dt Frame delta; it scales the radius spring only.
+ * @return 1 while the effect may live, 0 when the owner pointer at +0x04 is set and
+ *        its id no longer matches the copy at +0x08 - the caller then frees the slot.
+ *
+ * @par Confirmed prologue
+ * Bit 0 of the flags word is the armed bit; while it is clear the radius and its
+ * velocity are zeroed and the function returns 1. While set, the radius follows a
+ * damped spring toward +0x4C: velocity += ((target - radius) * 2 - velocity * 8) *
+ * dt >> 8, radius += velocity. The 3x4 matrix at +0x18 is copied from the owner
+ * (+0x2C); for owner kind +0x16 == 1 the y row is lifted by 0x1000, otherwise
+ * func_80017668(owner + 0x28, 0, self + 0x3C) fetches the owner's part-0 vertex as
+ * the centre. Then the twelve lobes at +0x58 (stride 0x1C, exactly filling up to
+ * +0x1A8) are stepped with func_8005D060.
+ *
+ * @par Confirmed lifetime and damage
+ * The frame counter is read through the literal 0x800A0000 - 1372, i.e. D_8009FAA4.
+ * For owner kind 1 the damage window only opens after +0x0C; the two three-entry
+ * 16-bit arrays at +0x84 and +0x8A of the owner's stat block, indexed by +0x54, are
+ * then decremented with func_8006C488 notified first, and the armed bit is cleared
+ * as soon as one of them reaches zero. +0x14 always reloads to the frame counter
+ * plus +0x10. For every other kind the field simply disarms once the frame counter
+ * passes +0x0C.
+ *
+ * @par Confirmed collision pass
+ * Entries of the candidate list D_800A8F90 are skipped when their id (+0x08) is not
+ * positive, when their team byte (+0x18) equals the owner's, or when their flags
+ * contain 0x01000084. The broad phase rejects on any axis offset of +0x4E * 16 or
+ * more, and with bit 2 of the owner slot's +0x18 a facing test with func_8001AB00
+ * against the vector at +0x30 must not come out negative. The narrow phase adds the
+ * squared offsets (each shifted right by 4, squared, divided by 4096) and compares
+ * them with (radius^2 >> 12) + ((candidate radius + 2 * radius) * candidate
+ * radius >> 12), so the tested volume grows as the spring extends the radius. A hit
+ * raises +0x1AE to 4 and kicks the radius velocity to -0x50, or -0x10 without bit 2.
+ *
+ * @par Confirmed message
+ * A hit sends message 0xE to the candidate's handler with kind 8, the owner's +0x14
+ * as source and the owner pointer as payload. Damages of 1000 apply on bit 2 for
+ * candidate kinds 2, 7 and 15, otherwise 0 or 0x12C on a 1-in-8 random draw; all
+ * other candidate kinds take the base damage from +0x50. On bit 2 with the per-frame
+ * flag still set, func_8005CED4 picks a lobe flagged at +0x71, converts its offset
+ * into a world point, and a hit sprite is spawned through func_80073500,
+ * func_80073590 and func_8007377C before the message goes out. When nothing is hit,
+ * bit 0 of byte +0x71 is cleared on all twelve lobes.
+ *
+ * @par Likely
+ * A persistent melee or energy-field volume attached to a model bone: it expands
+ * once toward +0x4C, hurts everything it engulfs, and re-damages each target only
+ * after the period at +0x10.
+ *
+ * @par Callers
+ * func_8005E0AC, which steps the four slots of D_800A22F0 and frees every slot whose
+ * update returned something other than 1.
+ */
 u8 func_8005D8F4(struct Fx *self_, s32 a1)
 {
     register s32 arg1 __asm__("$4");

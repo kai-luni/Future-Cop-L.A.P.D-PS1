@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Game Engine > Entity Lifecycle | Graphics > Scene Graph
 #include "game/types.h"
 
 struct Obj;
@@ -18,6 +19,32 @@ extern s32 func_8002AD58(s32, struct Obj *, struct Data *, s32);
 extern s32 func_8002AD58_case9(s32, struct Obj *, struct Data *, s32);
 extern void func_800410BC(void *, s32, s32, struct Data *);
 
+/**
+ * @brief Entity message handler with size query, spawn, per-frame
+ *        transform, link tests and a guarded destroy.
+ *
+ * @param msg Message number.
+ * @param obj Entity record.
+ * @param data Spawn/link data record.
+ * @param arg3 Forwarded to the sub-handlers.
+ * @return Message 1: 0xD4; message 10: 0 or 1; all others 0 or the base
+ *         handler's result.
+ *
+ * @par Confirmed
+ * 1: returns 0xD4 (the record size). 2: func_80037064(obj, data, arg3).
+ * 6: func_800371FC(obj, data), func_80010750(obj + 0x2C) loads the matrix,
+ * func_80010234 transforms one frame vertex into obj->mat.
+ * 10: returns 0 when obj->other->id == data->id or data->type == 15,
+ * otherwise 1 (destroy veto). 11: obj->val1c = -1. 9: returns 0 when
+ * data->link is null or (data->flags & 1 and link->kind == obj->kind),
+ * else func_8002AD58_case9. 4: func_800410BC(obj->pos, val1a, valbc,
+ * obj->other), *(obj + 0x68) = valbc >> 1, then the base handler.
+ * 5: returns 0. Default: func_8002AD58.
+ *
+ * @par Callers
+ * No direct callers in the call graph; dispatched indirectly through a
+ * handler table.
+ */
 s32 func_80037708(s32 msg, struct Obj *obj, struct Data *data, s32 arg3)
 {
     switch (msg) {

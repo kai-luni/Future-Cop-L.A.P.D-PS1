@@ -1,3 +1,4 @@
+// Categories: Gameplay > AI > Hover Enemy Behaviour | Physics > Motion > Ground Follow | Graphics > GTE > Matrix Build | Game Engine > Entity Lifecycle
 #include "game/types.h"
 
 typedef long long s64;
@@ -55,6 +56,81 @@ extern void func_80010234(s32, void *, s32);
 extern void func_80060238(u32 *, s32, struct Obj *, s32, s32);
 
 #define AB8(v) ((((v) >> 8) >> 31) + ((v) >> 8) ^ (((v) >> 8) >> 31))
+/**
+ * @brief Message-6 tick of a hovering enemy: re-acquires a target, flies after it
+ *        inside a ground-referenced altitude band, and runs the approach, dive,
+ *        descent and death states.
+ *
+ * @param message Message id. Both call sites pass 6 and the body never reads it.
+ * @param o Object block; the fields used reach from +0x16 (type) to +0x134.
+ * @param dt Frame delta: drains the timers, advances the animation and scales
+ *        every velocity term.
+ * @return Always 0.
+ *
+ * @par Confirmed prologue
+ * A non-zero animation counter at model+0x10 runs func_80044B34(o, o+0x120, dt, 0)
+ * and func_800175F8(address of the model pointer, +0x12C) - the address of the
+ * pointer is passed, so the model can replace itself. For every type except 0x25
+ * the retarget countdown at +0x102 reloads to (random 9 bits) + 0x384 and calls
+ * func_8004E80C(o, +0x105, +0x106, +0x104, +0x108 << 4, 0xffff0000, 0), caching
+ * the block id (+0x08) at +0xCC; a later mismatch drops the pointer after
+ * func_800320E4 re-rolls the wander point around +0xD0/+0xD8. States below 2
+ * alternate between the timers +0xFC and +0xFE with a random quarter of jitter.
+ *
+ * @par Confirmed states (+0xFA)
+ * 0 and 1 - approach the tracked object's position when the +0xC8 block exists,
+ * otherwise the wander point at +0xDC; a drift beyond +0x10E/+0x10C (absolute,
+ * world units divided by 256) away from home re-rolls that point and enters 1.
+ * 3 - dive. func_80066F78(&pos, 0, 0, 0) probes the terrain: once the probe surface
+ * plus half the body height (+0x68) reaches the body, the impact stamps animation
+ * frame +0x1E into +0x1C, ORs 0x35 into +0x24, arms a countdown from word 0x13 of
+ * D_8009FA94, updates map occupancy with func_8003B898, bumps the counter at +0x3E
+ * of the +0x134 record (stamping it with D_8009FAA4), compares the struck entity's
+ * class word (+0x14) against the player block D_8009FA58 and increments a counter
+ * through its +0xAC pointer, runs the script at +0x98 via func_80069D68, and enters
+ * state 5. While airborne it bounces: the velocity at +0xE8 is pulled back toward
+ * the wander point by func_8001ACA4 with a negative step and jittered by
+ * (random 4 bits - 3) << 9, then +0xDC and +0x5C are chased with lerps of dt << 8.
+ * 4 - descent: y falls by (dt * +0xF4) >> 9 until the body is within (+0x114 << 4)
+ * of the ground height from func_80069A38 plus (+0x6C << 4), then back to 0.
+ * 5 - dead; only +0x1C is cleared, and only for types other than 0x25.
+ *
+ * @par Confirmed steering
+ * The direction is target minus position, but when the planar distance from
+ * func_8001A750 drops below (+0x10A << 4), or while the turn-away cooldown at
+ * +0x116 runs (re-armed with (random 7 bits) + 0x96), it is negated - the enemy
+ * backs off. y is zeroed, func_8001A644 normalises and func_8001AB78 applies the
+ * step (dt * +0xF8) >> 3. Altitude is separate: below the upper edge (+0x114 << 4)
+ * the climb is +0x1800, between the two lower edges (+0x110, +0x112) it is scaled
+ * by +0x11C/+0x118, above the band the descent is -0x1800, and magnitudes under
+ * 0x201 are dropped. func_8001A6F8 blends that into +0xE8 (three quarters old, one
+ * quarter new), the vertical part is damped by a quarter, and the flight direction
+ * at +0x78 accumulates it, is damped by an eighth, normalised and clamped to
+ * +-0x8000 on y.
+ *
+ * @par Confirmed tail
+ * Position += direction * speed through the fixed-point product macro, clamped to
+ * the ground; the horizontal speed was scaled beforehand by how far the up row at
+ * +0x38 departs from vertical (full speed at y = 0x10000, one sixteenth at 0), so
+ * banking slows the enemy down. Type 0x25 or state 0 also steps the script at
+ * +0xA0 with func_80060238. The three-row basis at +0x2C is rebuilt by
+ * func_80019310 and loaded by func_80010750, and the current model frame (+0x70,
+ * stride 0x10, table at model+0x34) is transformed into +0x5C by func_80010234.
+ *
+ * @par Likely
+ * A flying attacker: it loiters around a home point, wanders when it loses its
+ * prey, dives (state 3) and scores a kill on impact. The recurring "except type
+ * 0x25" guards suggest 0x25 is the player-controlled counterpart of this class.
+ *
+ * @par Unknown
+ * The meaning of +0x104..+0x108 (a search class handed to func_8004E80C) and of the
+ * +0x134 record (+0x3E counter, +0x48 stamp) cannot be proven here, nor can the
+ * first argument of the func_80019310 call, which is assigned only on the dive path.
+ *
+ * @par Callers
+ * func_80032F3C (the message-6 case of the type's message table) and
+ * func_8003532C.
+ */
 s32 func_800324E0(s32 unused, struct Obj *o, s32 dt)
 {
     V3 a;

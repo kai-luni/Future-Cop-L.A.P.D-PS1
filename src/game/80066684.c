@@ -1,3 +1,4 @@
+// Categories: Graphics > Map > Tile Renderer | Gameplay > Radar | Graphics > Effects > Gouraud Disc
 #include "game/types.h"
 
 typedef struct { s16 x, y, z; } Vec;
@@ -5,6 +6,32 @@ extern u8 D_8009FAA4;
 extern s32 D_800A6F60[];
 extern void func_8001484C(Vec *, s32, s32, s32, s32, s32, s32);
 
+/**
+ * @brief Draws the point markers of one minimap object: up to eight
+ *        slots, each a colored disc at the scaled map position.
+ *
+ * @param obj Marker object; flags at +0xA4, per-slot color indices at
+ *            +0xA8, s16 coordinates at +0xB0/+0xB2 (4-byte stride).
+ * @param pos Map origin (pos[0], pos[1]) subtracted from the coordinates.
+ * @param width Visible width before the border offset.
+ * @param height Visible height before the border offset.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Returns when obj is null or !(flags & 0x492492). scale = D_8009FAA4 * 2,
+ * offset = scale * 103 added to width and height. Per slot (3-bit stride,
+ * active bit 1): x = (coord << 9) - pos[0]; drawn only when
+ * x + offset >= 0 && x < width, with v.x = (x * 5) >> 12; y likewise.
+ * v.z = 0x1000. func_8001484C(&v, D_800A6F60[color & 31] << 8, 0, 32,
+ * scale, 0xE00, 0) draws the disc.
+ *
+ * @par Likely role
+ * The *5 >> 12 factor maps world units to minimap cells; the offset is a
+ * border margin around the visible map window.
+ *
+ * @par Callers
+ * func_8006680C (minimap tile renderer).
+ */
 void func_80066684(u8 *obj, s32 *pos, s32 width, s32 height)
 {
     u32 flags;

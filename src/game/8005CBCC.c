@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Map Cell Sprite | Graphics > Effects > Object-Attached Effect | Gameplay > Object Attachment
 #include "game/types.h"
 
 typedef struct {
@@ -110,6 +111,62 @@ extern s32 func_8003BF50(struct Unk5CBCCArg0 *arg0);
 extern s32 func_800402DC(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4);
 extern void D_8005CA04(void);
 
+/**
+ * @brief Attaches a modelled sprite effect to one part of an object and submits it
+ *        to the draw list of a map cell.
+ *
+ * @param arg0   Owner object; its field at +0x08 is copied into the node at +0x14.
+ *               Also the key looked up in the effect pool.
+ * @param arg1   Not referenced by the body.
+ * @param arg2   Optional configuration: target point +0x5C/+0x60/+0x64, pointers
+ *               +0x78 and the value +0x84 used by the direction helper.
+ * @param arg3   Model instance: part positions come from func_80017668, the
+ *               coordinate matrix from +0x04 (nine words).
+ * @param partin Model part index; sign extended, and a negative value aborts the
+ *               creation path.
+ * @param arg5   Effect definition: speed at +0x06, spread at +0x0A, column at +0x0F,
+ *               id at +0x00, byte at +0x0E and byte at +0x13.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed control flow
+ * 1. func_8005CB80(&D_800A22B0, arg0) returns an existing node for the owner; when
+ *    found, only the lifetime (+0x18) and the payload at +0x04/+0x10 are refreshed.
+ * 2. Otherwise a node is taken with func_8003BEF0; a null instance or a negative part
+ *    index returns first. func_80017668(instance, part, &pos) yields the part
+ *    position in world space, which is copied into the node's vector field.
+ * 3. With a configuration the orientation is either the randomised vector from
+ *    func_8005E2A0(pos, temp, speed << 4, spread << 4, arg2+0x5C, arg2+0x78,
+ *    arg2+0x84) when the speed is positive, or the plain vector from arg2+0x5C to
+ *    the part position normalised by func_8001A180; func_800193F8 then builds the
+ *    nine-word matrix. Without a configuration the matrix is copied verbatim from
+ *    the instance coordinate block.
+ * 4. A local block is prepared with its flag byte set to 0x0C, so the pointer handed
+ *    to func_800402DC is never the null alternative. func_8003BF50(arg0) is called
+ *    twice for the same row; the byte at D_800A6578[(column << 2) + (row << 10)] has
+ *    bit 2 cleared in the first pass and bit 0 set in the second.
+ * 5. node->self and node->callback (D_8005CA04) are installed and
+ *    func_800402DC(0, column, &local, row, &node->self) submits the draw entry. A
+ *    return of 0 sets node->flags = 1 and leaves the remaining fields unset.
+ * 6. On success the node receives +0x2B = arg5+0x13, +0x1C = arg5+0x00, +0x08 =
+ *    arg0, +0x1E = arg5+0x0E, flags 0, +0x2A = 0, +0x14 = arg0->+0x08 and +0x29 = 0.
+ * 7. Common tail: +0x18 = 0x96 (a 150 frame lifetime), +0x04 = arg2 and, when
+ *    arg2 is present, +0x10 = arg2->+0x08.
+ *
+ * @par Likely role
+ * The spawn of a short-lived drawn quad or sprite anchored to a model part -
+ * muzzle flash, exhaust plume, damage spark - inserted into the polygon list of the
+ * map cell identified by the row/column pair, with a per-cell visibility byte in
+ * D_800A6578.
+ *
+ * @par Unknown
+ * - Whether D_800A6578 is one byte per map cell or one byte per column/row slot; the
+ *   index (column << 2) + (row << 10) fits a 0x100-wide row grid.
+ * - The exact callback contract of D_8005CA04, installed but called elsewhere.
+ *
+ * @par Callers
+ * func_8005F6E8 (message 17) and func_8006ACB0 (message 0x11).
+ */
 void func_8005CBCC(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 *arg2,
                    struct ModelInstance *arg3, s32 partin, struct Unk5CBCCArg5 *arg5)
 {

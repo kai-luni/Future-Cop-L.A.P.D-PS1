@@ -1,3 +1,4 @@
+// Categories: Physics > Collision > Part Pair Test | Graphics > Geometry | Utilities > Mathematics
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef struct { int x,y,z; } Vec;
@@ -14,6 +15,55 @@ extern void func_8001006C(void *, void *, int);
 extern int func_800618CC(void *, void *, int, int, int);
 extern u32 func_800619C0(void *, void *, void *, int, int);
 
+/**
+ * @brief Narrow-phase hit test between two coord records.
+ *
+ * Tests the per-frame element list of one or both models and returns a 32-bit
+ * hit mask: bits 31..16 name the colliding element of the first record, bits
+ * 15..0 the one of the second, with marker bits 0 and 16 telling which halves
+ * are valid.
+ *
+ * @param arg0 First coord (model at +0x00, 3x3 matrix at +0x04, position at
+ *        +0x28, radius at +0x34, frame index at +0x3C).
+ * @param arg1 Second coord, same layout.
+ * @return Hit mask; 0 when nothing collided.
+ *
+ * @par Confirmed
+ * flags = bit 27 of model->flags (model+0xC) for each side, so the mask is 0..3.
+ * f == 0 returns 0x10001, f == 1/2/3 select the paths below and any other value
+ * returns 0.
+ * f == 1: pa = shape + ((a->frame << 4) + 8), func_80018860(&a->mat, &m1),
+ * func_8001A970(&m1, &b->pos, &v) transforms B's position with m1, and
+ * func_800618CC(pa, &v, b->radius, count, stride) returns the element index n
+ * (negative on a miss). The result is (1 << (31 - n)) | 1.
+ * f == 2 mirrors it on B and returns (1 << (15 - n)) | 0x10000.
+ * f == 3 tests both shapes: B's matrix is combined with A's through
+ * func_80019470, func_80010820 and func_8001006C(&a->mat, &m2, 4), with A's
+ * translation temporarily replaced by the relative offset and restored
+ * afterwards. Each A element is tested against the whole of B with
+ * func_800619C0(m2, p, pb, sb->count, sb->stride); the returned B-side mask is
+ * OR-ed into bits and stored in hits[i]. Then B's elements are walked again and
+ * a pair is only accepted when both directions agree - the A bit is set at
+ * 31 - i and the B bit (1 << (15 - j)) is OR-ed in as well.
+ * Element 0 of each side is only included when the side has at least two
+ * elements: the loops start at index 1 with the initial mask value 0x80000000
+ * (A) or 0x40000000 (B) otherwise.
+ *
+ * @par Likely
+ * The per-part collision of an actor against another actor (vehicle parts vs.
+ * projectile or vs. another vehicle): bit 27 of the model flags marks a model
+ * that carries collision elements, and the marker bits tell the caller which
+ * side produced the hit so damage can be applied to the right owner.
+ *
+ * @par Unknown
+ * The exact meaning of the marker bits 0 and 16 on their own (added even when no
+ * element index is encoded), and what func_800618CC/func_800619C0 test per
+ * element (Likely sphere or axis-aligned boxes derived from the frame data).
+ *
+ * @par Callers
+ * func_80052098 (broad-phase distance test, then damage and reaction through
+ * func_80058378 and func_80051EB8) and func_800620D8.
+ */
 u32 func_80061CAC(Coord *arg0, Coord *arg1)
 {
     register Coord *a __asm__("$17") = arg0;

@@ -1,3 +1,4 @@
+// Categories: Graphics > HUD > Loadout Row | Graphics > Sprites > Atlas | Graphics > GPU Primitives > Gouraud Quad | Graphics > 2D Drawing > Text
 #include "game/types.h"
 
 typedef struct {
@@ -44,6 +45,58 @@ extern void func_80083060(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32,
 extern UnkFont *func_80048E88(void);
 extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
 
+/**
+ * @brief Draws one row of the loadout/upgrade list: the entry's icon in a framed box,
+ *        an optional capacity bar with a gauge, an over-limit corner marker and the
+ *        entry's value as a formatted number.
+ *
+ * @param p Six-byte display record: byte 1 and byte 2 are atlas sprite indices (byte 2
+ *        when sel is non-zero, byte 1 otherwise) and the half-word at +4 is the text id
+ *        of the number.
+ * @param x, y Top-left corner of the row.
+ * @param flag Highlight flag; selects the brighter palette colours and enables the bar.
+ * @param idx Index into D_8009C0A8, whose records are 20 bytes: a per-player value
+ *        array at +4, the limit at +0xA and the bar sprite ids at +0xE, +0xF, +0x10,
+ *        +0x11 and +0x12.
+ * @param sel Selects which of the two sprite indices of the record is drawn.
+ * @return Nothing; the row is skipped when the atlas lookup fails.
+ *
+ * @par Confirmed mechanics
+ * The icon comes from func_80082AB0(sprite, x, y, -1, -1, 0x14, shade, 1, 8) - atlas
+ * size, link 0x14 - where shade is 0x30 when the record's value for the local player
+ * D_8009F8B8 exceeds the limit and 0x80 otherwise; that is the same comparison
+ * func_8007DD08 performs as values[player] above limit. The frame is a gouraud
+ * rectangle around the icon box, inset by 2 for a highlighted row and 1 otherwise,
+ * linked at 0xBB8, in the palette colours D_8009F3F8[(D_8009FA60 >> 4) and 7] + 0x80
+ * when highlighted and 0x60/0xC0/0xFF otherwise.
+ *
+ * @par Confirmed over-limit marker
+ * When the value exceeds the limit, two L-shaped textured quads (func_80083060, code
+ * 0xFF, thickness 2) mark the corners, one along the top edge and one along the bottom.
+ *
+ * @par Confirmed bar
+ * Only while flagged and D_8009F468[5] differs from 2: the background sprite comes
+ * from func_80082B0C with the ids at +0xF, +0x10 and +0x12, plus a second call with
+ * +0x11 when that byte is set. The fill is then drawn as a gouraud rectangle from x
+ * 0x7E to the box edge, a one pixel column of height |value - middle| + 1 at 0x7E, and
+ * the remainder from 0x7E leftwards - all linked at 10.
+ *
+ * @par Confirmed footer
+ * y drops by one and x advances by 4 plus the icon width; outside the mode-2 screen
+ * x snaps to 0xC1 and y rises by 2, a small atlas sprite from the record's +0xE is
+ * placed at (x + 1, y - 2) and func_800788F0 draws the number at y + font offset 6,
+ * colour 0x10, one font size down and middle-aligned.
+ *
+ * @par Likely role
+ * One weapon/upgrade slot of the loadout screen: icon, a box that lights up when the
+ * slot holds the cursor, a bar comparing holdings against the limit, and the quantity.
+ *
+ * @par Unknown
+ * Meaning of the byte at +0x11 and why the gauge origin is fixed at 0x7E.
+ *
+ * @par Callers
+ * func_8007DD08, three times, for the record indices 0, 1 and 2.
+ */
 void func_8007D7CC(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
 {
     s32 c0, c1, c2, c3;

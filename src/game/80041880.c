@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script > Path Sequence | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Obj41880;
@@ -85,6 +86,57 @@ extern void func_800188D0(s32 arg0, s32 arg1, s32 arg2, void *arg3);
 extern s32 func_80066F78(void *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern s32 func_8006314C(s32 arg0, u8 arg1);
 
+/**
+ * @brief Advances an entity along its waypoint sequence.
+ *
+ * Moves the travelled distance by the segment speed, switches the stop index
+ * when a threshold is crossed (ping-ponging between the ends), applies the dwell
+ * timer of the new segment, fires the segment events, and then refreshes the
+ * basis matrix and the frame vertex.
+ *
+ * @param arg0 Sequence entity; thresholds at +0xA0, dwell times at +0xAC,
+ *        speeds at +0xB8/+0xBC, timer at +0xC0, hold at +0xC4, flags at +0xC6,
+ *        count at +0xC8, index at +0xCA, direction at +0xCB.
+ * @param arg1 Frame delta in the same units as the speeds.
+ * @return Always 0.
+ *
+ * @par Confirmed
+ * obj->unk0C != 0 -> func_80041728(obj) runs the queued script commands first.
+ * obj->unkC6 bit 2 skips the whole body; obj->unkC4 > 0 is decremented and also
+ * skips it.
+ * flag is set when obj is the unkC4 entity of one of the two D_8009FA58 games and
+ * that game's unkAC->unk40 is 0.
+ * Advance gating: with (unkC6 & 5) != 0 the step only happens once unkC0 is
+ * negative and flag is set and bit 4 is clear; otherwise unkC0 is a dwell timer
+ * that is decremented and, on expiry or when it was already 0 with flag set, is
+ * set to -1 to arm the move.
+ * Direction 1: unk54 += arg1 * unkB8; the index only advances when unk54 >=
+ * thresholds[oldIndex], and the sequence reverses (unkCB = 2, index clamped to
+ * old - 1) when the next index would reach unkC8.
+ * Direction 2: unk54 -= arg1 * unkBC, index decrements when
+ * thresholds[oldIndex] >= unk54, and the sequence reverses (unkCB = 1, index back
+ * to old + 1) below 0.
+ * On an index change: unk54 is snapped to thresholds[oldIndex], the dwell timer
+ * becomes 1 for the (unkC6 & 5) mode or unkAC[oldIndex] otherwise, unkC9 records
+ * the previous index, and if unk21 (saved from unkCC) was set it is cleared and
+ * bit 0x400000 of unk24 triggers func_800457B8(unk08, unk22) before being
+ * cleared; unkCD != 0 calls func_80047284(unkCD, unk50, unk58, -1).
+ * The tail always runs: func_80010750(unk2C) loads the basis and
+ * func_80010234(model + (unk70 << 4) + 8, unk5C, 1) transforms the frame vertex.
+ *
+ * @par Likely
+ * A patrol/patrol-platform mover with up to three stops (the +0xA0 array is
+ * three words wide in func_80041488), dwell times per stop and ping-pong motion;
+ * the func_800457B8/func_80047284 calls Likely start or stop a sound and notify a
+ * partner object when the segment changes.
+ *
+ * @par Unknown
+ * Why unkC6 bit 5 changes the dwell timer to a constant 1, and the meaning of
+ * unk50/unk58 passed to func_80047284.
+ *
+ * @par Callers
+ * func_80041B6C (sole direct caller).
+ */
 s32 func_80041880(struct Obj41880 *arg0, s32 arg1)
 {
     struct Game41880 *game;

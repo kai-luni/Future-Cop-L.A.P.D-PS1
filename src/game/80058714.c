@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Graphics > Scene Graph | Graphics > Animation
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -75,6 +76,34 @@ extern void func_80051AF8(struct Unk58714 *arg0);
 extern void func_8006BE90(struct Unk58714 *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk58714 *arg3);
 
+/**
+ * @brief Reset/initialization pass of a compound object: clears state
+ *        bits, places the model from its controller record and restarts
+ *        the three sub-objects and the animation state.
+ *
+ * @param arg0 Object record; arg0->unkAC is the controller record, unkDC a
+ *             linked secondary record, unk98 an optional attachment.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Bit 0x00800000 is cleared in arg0->unk08 and arg0->unkDC->unk08;
+ * unk19 &= 0x0F. The controller position (unkC4) is copied to
+ * model.coord + 0x24, then func_80010750 loads the matrix, func_80010234
+ * transforms one frame vertex and func_80017668 fetches the world position
+ * into unkDC + 0x50. d2 = controller->unkD2 is stored as |d2| in unkB0;
+ * a negative value sets controller->unk2FD and unkAD to 1, otherwise 0.
+ * unkB4/unkB2/unkC4 are zeroed, flag masks 0xFCFFFFEF / 0xFCFFFFFF applied,
+ * controller->unkC0 = 0. unk1C = unk1E, func_8005A190(controller, 0, unk1C),
+ * func_8006BE90(arg0, i, -1, 0) for i = 0..2, controller->unk8A[0..2] = 0,
+ * func_80051AF8(arg0); when unk98 != 0, func_80069D68(unk98, 0, -1, arg0).
+ *
+ * @par Likely role
+ * The controller's unkD2 reads like a signed direction or gear value; the
+ * two flag bytes mirror its sign for the sub-objects.
+ *
+ * @par Callers
+ * func_800588D4.
+ */
 void func_80058714(struct Unk58714 *arg0)
 {
     struct Unk5A190 *s1;

@@ -1,9 +1,38 @@
+// Categories: Graphics > Scene Graph > Attached Parts | Graphics > Geometry
 #include "game/types.h"
 
 extern void func_80010820(s32 *);
 extern void func_8001006C(s32 *, s32 *, s32);
 extern s32 func_8001AB00(s32 *, s32 *);
 
+/**
+ * @brief Finds the first active attachment record of an object and
+ *        computes its world position, with an optional orientation test.
+ *
+ * @param a0 Object base; records start at a0 with stride 0x1C up to
+ *           a0 + 0x150, the active bit is byte +0x71, the scale factor
+ *           the s16 at +0x48, the origin the triple at +0x3C.
+ * @param a1 Receives the resulting world position (three s32).
+ * @param a2 Reference object whose position triple at +0x50 is used for
+ *           the orientation test.
+ * @return 1 when a record was processed, 0 when none is active or the
+ *         orientation test rejects it.
+ *
+ * @par Confirmed
+ * For the first record with byte +0x71 bit 0 set: a1 = ((record[0x58..]
+ * >> 4) * scale) >> 8 per axis; func_80010820 loads the matrix at a0+0x18,
+ * func_8001006C transforms a1 in place. When bit 2 of the word pointed to
+ * by *(s32 *)a0 at +0x18 is clear, vec = a2 position - a0 origin and
+ * func_8001AB00(a1, vec) < 0 aborts with 0. Otherwise a1 += origin, the
+ * active bit is cleared and 1 is returned.
+ *
+ * @par Likely role
+ * Emission-point lookup for attached effects: the dot-product test keeps
+ * only points facing the reference object.
+ *
+ * @par Callers
+ * func_8005D8F4.
+ */
 s32 func_8005CED4(u8 *a0, s32 *a1, u8 *a2)
 {
     u8 *p;

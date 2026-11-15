@@ -1,8 +1,22 @@
+// Categories: Game Engine > Frame | Platform > Scratchpad
 #include "game/types.h"
 
 extern u32 D_8009FAD8;
 extern void func_80066E98(void);
 
+/**
+ * @brief Runs the region drawing pass func_80066E98 on a scratchpad stack.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Inline-asm trampoline: push $ra, save $sp to D_8009FAD8, set $sp to
+ * 0x1F8003F8 (scratchpad), jal func_80066E98, restore $sp and $ra. Same
+ * shared save slot as func_80026D5C / func_8003F530 (no nesting).
+ *
+ * @par Callers
+ * func_80027510.
+ */
 void func_80026E1C(void)
 {
     __asm__ volatile(

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Frame | Input > Controller | Graphics > Text > Rendering | Game Engine > State Machine
 #include "game/types.h"
 
 struct Vec3 { s32 x, y, z; };
@@ -89,6 +90,66 @@ extern void func_8004D598(void);
 extern void func_8001EB6C(void);
 extern void func_800476D0(void);
 
+/**
+ * @brief Per-frame driver of a two-player session.
+ *
+ * Polls both controller states, decides which player views are presented, runs
+ * each player's update and draw sequence, draws the per-view status text and
+ * then closes the frame - or, when the pause condition is active, runs the
+ * single-view/pause frame instead.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * D_8009FA58_arr holds the two game states; the loop runs i = 0..1 and calls
+ * func_8005780C(game->unkAC->unk30, &game->unkAC->unk31C), filling the
+ * InputAction at player+0x31C (buttons, phase).
+ * The view-toggle branch fires when phase == 0, D_8009FA00 == 4 and
+ * player->unk312 == -1: unk316 and unk314 (look offsets) are cleared,
+ * saved_position (player+0x304) takes game->position (game+0x50) and unk310 is
+ * toggled. On the falling edge the pending handle D_8009F678[i] is released
+ * with func_80046A34 and message 0x3E is sent via func_80046C84(0x3E, game).
+ * flags bit 0/1 marks a player whose game->unk24 bit 0x1000000 is clear while
+ * player->unk310 is set; flags bit 0x20 is additionally set when the menu mode
+ * D_8009FA94->unk5C is 0 or D_8009FA6C is non-zero, and when D_8009FA50 >= 2
+ * and one of func_8001EF34(0)/func_8001EF34(1) returns 0 while D_8009FA84 == 0.
+ * Unpaused path: D_8009FAA4 = D_8009FA30 = (D_8009FA60 = D_8009FA38),
+ * func_80047690(1), D_8009F680 = 0, then func_80069D0C, func_8004E248,
+ * func_8004CECC, func_8004CD6C(6, D_8009F9FC, 0), func_80031DE8, func_8004CE04,
+ * func_8003F570 - all on the level id D_8009F9FC.
+ * Per player block: func_80017B60(player->unkAC), func_80013C80, then either
+ * func_80026DDC(game, i, paused, menu->unk5C == 1) plus
+ * func_8001C214(1, 0x13E, 0, 2, 0x1E0, 0) for the flagged player, or
+ * func_80026E1C(i, game) plus func_80047F30(game). Then func_80026F68(i, 0),
+ * an optional func_80049100(D_8009F2F4, 0x41, 0x14, 1) banner (the string
+ * built at 0x800A0000 - 0xD0C) when
+ * D_8009FA84 > 0 and D_8009FAA4 has bit 0x100, and the status line
+ * x = 0x140 - func_80049340(text), rounded and shifted right by 2, y = 0xB4,
+ * colour 1 or 9 when D_8009FA2C has bit 0x80. Player 0 ends with
+ * func_800485AC(0) and func_8001BBAC, player 1 with func_800485AC(1) and
+ * func_800486FC(1).
+ * While a block runs, the other game's unk24 bit 0x20 (and its unkDC->unk24) is
+ * set when that game's player->unk324 > 0 and restored afterwards.
+ * Closing: func_80017B60 again, then unpaused func_80026D1C,
+ * func_800616A0(D_8009F9FC), func_80026D9C(D_8009F9FC), func_8004D598 and
+ * D_8009FA24 = 0; paused D_8009FA38 = D_8009FA60, func_8001EB6C,
+ * func_800476D0, func_80046C84(0x3E, arr[index]) with index = !(flags & 1) when
+ * the menu mode is 0, else (player->unk312 != 0), then D_8009F680 = 1 and
+ * D_8009FA24 = 1.
+ *
+ * @par Likely
+ * The main tick of a two-player split-screen game: 0x20 is the pause/single-view
+ * mode, in which only one player's world is presented and the pause key cycles
+ * between the two views; D_8009FA84 is an attract/demo countdown; the status
+ * text is the player label at the bottom of each viewport.
+ *
+ * @par Unknown
+ * What message 0x3E means, and the exact role of D_8009FA50.
+ *
+ * @par Callers
+ * No direct callers in the call graph; reached indirectly through the
+ * screen-state dispatch.
+ */
 void func_80027510(void)
 {
     u32 flags;

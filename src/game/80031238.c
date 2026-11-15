@@ -1,3 +1,4 @@
+// Categories: Physics > Collision
 #include "game/types.h"
 
 struct Mat3 {
@@ -31,6 +32,32 @@ extern void func_80019470(struct Mat3 *source, struct Mat3 *destination);
 extern void func_80010820(void *matrix);
 extern void func_8001006C(s32 *source, s32 *destination, s32 count);
 
+/**
+ * @brief Overlap test between two entities: a world-axis broad phase
+ *        followed by a slab test in the other entity's local frame.
+ *
+ * @param self First entity (extent fields unkB2/unkB4/unkB6).
+ * @param other Second entity (position unk34/38/3C, radii unk44/unk46,
+ *              orientation matrix at sub.mat).
+ * @return 1 when all overlap tests pass, 0 on the first failure.
+ *
+ * @par Confirmed
+ * Broad phase: |dx| and |dz| (differences of unk34 / unk3C) must each be
+ * <= (sa->unk46 + sb->unk46) * 16, |dy| (unk38) <= (sa->unk44 +
+ * sb->unk44) * 16; absolute values are computed branch-free with sign
+ * masks. Then func_80019470 copies the other's matrix, r = other position
+ * - self position (unk28/2C/30), func_80010820 loads the matrix and
+ * func_8001006C transforms r in place. The local test compares
+ * |r[0] >> 4| <= sb->unk46 + self->unkB2, |r[2] >> 4| <= sb->unk46 +
+ * self->unkB6 and |r[1] >> 4| <= sb->unk44 + self->unkB4.
+ *
+ * @par Likely role
+ * Oriented-box collision: the radii are half-extents, the >> 4 converts
+ * the transformed delta into the extent units.
+ *
+ * @par Callers
+ * func_8003151C.
+ */
 s32 func_80031238(struct Ent *self, struct Ent *other)
 {
     register struct Ent *pa __asm__("$18");

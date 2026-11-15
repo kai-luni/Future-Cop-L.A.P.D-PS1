@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Sprite Node | Graphics > 3D > Actor Transform | Graphics > GTE
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -129,6 +130,55 @@ extern void *jtbl_80011E10[];
 extern void func_800752E0(void *object);
 extern void func_80075478(struct Unk75478 *object);
 
+/**
+ * @brief Fills one sprite-list node from a 3D-sprite object and emits it.
+ *
+ * Writes position, size and colour into a render/sprite list node, optionally
+ * rotates the object's anchor point into the node with an additional random
+ * wobble, and calls the sprite emitter when the object is flagged visible.
+ *
+ * @param object 3D-sprite object; colour triple at 0x73/0x76/0x79, size at
+ *        0x12, flags at 0x8E and 0x1A, anchor at object->point.
+ * @param render Target node in the sprite list (called "render" here; the same
+ *        layout as the particle record of the polygon pass).
+ * @param position World position copied into render->position.
+ * @param matrix Rotation to use when object->flags1A has bit 0x100 set.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * render->unk18 = 0, render->position = *position, render->size = object->unk12,
+ * render->unk14 = 0, and the colour bytes are taken from object + 0x73, + 0x76
+ * and + 0x79 with render->unk14 added as a byte offset (0 here); render->unk12
+ * is then cleared.
+ * object->unk72 < 0 sets render->unk28 = 1, render->unk29 = 4, render->unk2C =
+ * 0x4B, render->unk2E = 0x4B and render->unk2A = 1. The empty asm statements
+ * around those assignments only pin the register order and emit no code.
+ * object->flags8E bit 0x8000: the anchor source is &object->point, unless
+ * object->sub and sub->callback exist, in which case the indirect call
+ * callback(4, object, position, 1) may return a different anchor (NULL falls
+ * back to object->point). The rotation is &object->matrix when
+ * (object->flags1A & 0x100) == 0 and the matrix argument otherwise.
+ * func_8001B148(rotation, source, &render->unk1C, 1) rotates exactly one point
+ * into the node (render->unk1C/unk1E/unk20).
+ * When object->unk94 != 0 each of the three components receives
+ * ((func_80019668() >> 20) * object->unk94) >> 12 - a random jitter.
+ * object->flags8E bit 2 (last statement) calls func_800752E0(render), the
+ * emitter.
+ *
+ * @par Likely
+ * The setup half of the sprite/billboard pass: the object is a light, flare or
+ * marker whose colour, size and shake amount drive one list node. The values
+ * 0x4B/4 written for negative unk72 are Likely a blend/size preset.
+ *
+ * @par Unknown
+ * What render->unk28/unk29/unk2A/unk2C/unk2E select in the emitter, and whether
+ * the colour triple is palette-indexed (the stride of 3 suggests one colour per
+ * animation step, with unk14 as the current step).
+ *
+ * @par Callers
+ * D_80075698 (message 0 of the same file, the attach path) and func_80075A84
+ * (the polygon pass).
+ */
 void func_800754B8(struct Unk754B8 *object, struct RenderState *render,
                    struct Vec3s32 *position, struct RotationMatrix *matrix)
 {

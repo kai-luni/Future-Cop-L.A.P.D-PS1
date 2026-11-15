@@ -1,3 +1,4 @@
+// Categories: Graphics > HUD > Name Entry | Graphics > 2D Drawing > Text | Utilities > Character Table | Game Engine > Front-End Configuration
 #include "game/types.h"
 
 struct FontEntry {
@@ -25,6 +26,53 @@ extern void func_800492A0(u8 *text, s32 *width, s32 *height);
 extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b);
 extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
 
+/**
+ * @brief Name-entry widget for one player: handles the action codes of the character
+ *        grid (toggle editing, move the cursor, step the glyph) and draws either the
+ *        grid with the selected cell framed, or the plain name.
+ *
+ * @param action 0 draw, 1/2 move the glyph cursor, 3 toggle the edit session, 4/5 step
+ *        the glyph under the cursor.
+ * @param baseX x position; while the grid is active it is first shifted left by four
+ *        cell advances so the eight cells are centred on it.
+ * @param baseY y position; the text baseline is baseY + 10.
+ * @return Nothing.
+ *
+ * @par Confirmed state
+ * The player index is D_8009F8B8 and every field is per player: the edit flag
+ * D_8009F8C0[idx], the cursor word D_8009F8F8[idx], the eight glyph indices at
+ * D_800A3928 + idx * 8 and the name text at D_800A6FE0 + idx * 9. Glyph indices map
+ * through the sixty-four entry table D_8009F878.
+ *
+ * @par Confirmed actions
+ * 3: leaving an edit session decodes the indices back into the name with func_8007AA9C
+ * and clears the flag; entering one sets the flag, zeroes the cursor and encodes the
+ * name with func_8007A9D0 using the table length D_8009F87C.
+ * 4/5: glyph index in 0..D_8009F87C - 1 with wraparound, plus sound
+ * func_80046C84(0x46, 0). 1/2: cursor in 0..7 with wraparound, plus sound
+ * func_80046C84(0x47, 0). All three are gated on the edit flag being set.
+ *
+ * @par Confirmed drawing
+ * Active: the cell advance is the font field at +0x8, raised by one while
+ * D_8009F468[5] equals 1, and each glyph width comes from func_800492A0, so the glyph
+ * is centred inside its cell. The cell under the cursor gets a gouraud box
+ * (func_80082EF0, link 10) of the cell advance by 2 at y + font height + 2, coloured
+ * from D_8009F3F8[(D_8009FA60[0] >> 4) and 7] + 0x80, and its glyph is drawn in
+ * colour 8 while the others use 15. Inactive: the name is measured with func_800492A0
+ * and drawn centred at baseY + 10 in colour 15.
+ *
+ * @par Likely role
+ * The name field of the front-end player-setup page, one widget per player, driven by
+ * the same action codes as the neighbouring front-end widgets.
+ *
+ * @par Unknown
+ * Why D_8009F468[5] == 1 widens the cell by one pixel.
+ *
+ * @par Callers
+ * No direct caller. Its address is the callback word at +4 of 0x70-byte records at
+ * 0x8009BB00, 0x8009BB70 and 0x8009BBC4, so it is invoked through the front-end widget
+ * list.
+ */
 void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
 {
     u8 text[8];

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End > Map Screen Row | Input > Menu Actions | Graphics > Map > Tile Renderer | Graphics > 2D Drawing | Gameplay > Map
 #include "game/types.h"
 
 struct InputAction267C8 {
@@ -69,6 +70,68 @@ extern void func_800576A8(u32 *buttons, s32 slot);
 extern void func_8005AB8C(struct Obj267C8 *obj, void *arg1, void *arg2);
 extern void func_8006680C(struct Obj267C8 *obj, void *arg1);
 
+/**
+ * @brief Per-slot update of one row of the front-end map screen: evaluates five
+ *        input bindings, turns them into a selection, and draws the label, the
+ *        highlight box and the map view.
+ *
+ * @param obj Screen object: +0x50 scroll origin, +0xA0 marker list, +0xAC state
+ *        block pointer.
+ * @param slot Player slot; indexes the five action tables and the per-slot word
+ *        arrays.
+ * @param active Non-zero while this row owns the input focus.
+ * @param selection Value forwarded unchanged to the row's own draw routine.
+ * @return Nothing.
+ *
+ * @par Confirmed state block (+0xAC)
+ * +0x30 button word, +0x304/+0x308/+0x30C map cursor x/y/z, +0x312 selection
+ * byte, +0x314 and +0x316 pan rates.
+ *
+ * @par Confirmed input
+ * Five action records of eight bytes (button mask, phase) at D_800A0AA0,
+ * D_800A0AF0, D_800A0B00, D_800A0B10 and D_800A0B20 are all evaluated for the
+ * slot by func_8005780C(state->buttons, entry). A zero phase means "pressed", and
+ * the tables are tested in the opposite order, so D_800A0B10 gives choice 4, the
+ * highest priority, then D_800A0B00 choice 3, D_800A0AF0 choice 2 and the last
+ * table choice 1. With +0x312 equal to 1 a non-zero choice advances the
+ * accumulator at D_8009F670[slot]. On a confirm (no choice, +0x312 equal to -1)
+ * the routine plays sound 0x3E for D_8009FA58[slot] - but only while the
+ * game-state block D_8009FA94 sits in one of the accepted menu states - then
+ * bumps D_8009FA6C, clears the selection byte, calls func_80025F58 and resets
+ * D_8009F670[slot].
+ *
+ * @par Confirmed drawing
+ * The layout width is 0x280, or 0x140 when D_8009FA0C == 2. With active set and
+ * bit 0x100 of D_8009FA2C, the header text D_8009F2D8 is drawn at x = 0x14 for
+ * slot 1 and centred otherwise. A row with a non-negative selection is drawn by
+ * func_800260B8(obj, slot, selection, width, D_800A0B00[slot].phase == 0) and
+ * labelled with D_8009F2DC, a negative selection is labelled with D_8009F2E0.
+ * The label width from func_80049340 centres a background rectangle
+ * func_8001C214(1, centre - 6, 0x1AE, width + 0xC, 0x1A, 1) and the text itself,
+ * which is drawn by func_80049100 at y 0xD8 with palette index 9.
+ *
+ * @par Confirmed map
+ * With bit 0x02000000 in the button word the scroll origin at +0x50 is copied
+ * into +0x304. func_800576A8 then refreshes the button word for the slot, and
+ * while the selection is negative the pan rate +0x314 follows
+ * 0x20000000/0x10000000 and +0x316 follows 0x80000000/0x40000000, both clamped to
+ * +-0x200 and scaled by the analog word D_8009F9FC, adding to +0x30C and +0x304. Finally func_8005AB8C draws the markers at
+ * +0x50/+0xA0 and func_8006680C rasterises the map at +0x304.
+ *
+ * @par Likely
+ * A mission or level list row of the front-end map screen, one call per player
+ * slot: arrows change the entry, the confirm closes the row, and both players see
+ * and can pan the same map.
+ *
+ * @par Unknown
+ * Nothing here writes +0x308, and the three values of the selection byte (-1, 0,
+ * 1) are inferred from the branches only; the same holds for the purpose of the
+ * D_8009F670 accumulator.
+ *
+ * @par Callers
+ * func_80026DDC, a hand-written wrapper that moves the stack pointer to
+ * 0x1F8003F0 for the call and restores it afterwards.
+ */
 void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
 {
     register struct State267C8 *state __asm__("$19");

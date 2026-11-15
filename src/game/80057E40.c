@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update > Orientation | Graphics > GTE > Matrix Setup | Graphics > Animation
 #include "game/types.h"
 
 typedef struct { s32 x, y, z; } Vec3;
@@ -29,6 +30,57 @@ extern void func_80010234(void *, void *, s32);
 extern void func_80052D7C(void *, s32);
 extern void func_8001AC28(void *, void *, s32, void *);
 
+/**
+ * @brief Steers an entity's orientation toward its target and refreshes it.
+ *
+ * Computes pitch and yaw to the tracked target, slews the stored angles toward
+ * them with a limited turn rate, builds and loads the basis matrix, fetches the
+ * frame vertex, runs the remaining entity update and steps two child part
+ * animations.
+ *
+ * @param obj Entity; matrix at +0x2C, position at +0x50, vertex at +0x5C,
+ *        frame index at +0x70, origin at +0x78, unk84 at +0x84, info pointer
+ *        at +0xB4.
+ * @param step Frame delta forwarded to func_80052D7C and to the part timers.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * obj->unk84 = info->unk84, func_80017668(info->instance, 0, &obj->pos) samples
+ * the animated instance, and state->target is dropped when state->id differs
+ * from target->id.
+ * With a target: delta = target->pos - obj->pos; the horizontal distance is the
+ * octagonal approximation assembled from shift/add terms (larger and smaller
+ * axis magnitudes plus a correction pair), and func_80095C30(delta.y, distance)
+ * gives the elevation. pitch = -(angle << 12) >> 12, clamped to -400..400.
+ * Yaw comes from func_80095C30(delta.x, delta.z); the difference to info->yaw is
+ * wrapped into -0x800..0x800 and clamped to -128..128.
+ * Both angles then slew: a difference of 23 or less snaps info->pitch /
+ * info->yawOffset to the target, anything larger steps them by 24 per call.
+ * func_800188D0(info->yaw + info->yawOffset, info->pitch, info->roll,
+ * &obj->matrix) builds the basis, obj->origin = info->pos, func_80010750 loads
+ * the matrix into the GTE, and func_80010234(model frames + (frame << 4) + 8,
+ * &obj->vertex, 1) transforms one vertex.
+ * func_80052D7C(obj, step) runs the entity's own update.
+ * The two child parts: state->timer[i] > 0 is decremented by step; while it
+ * stays positive func_8001AC28(part.b, part.a, sum, part.b) is called with
+ * sum = (timer - 132) << 4 when timer >= 89 and sum = -timer << 3 otherwise; a
+ * timer reaching 0 is clamped to 0 and stored back.
+ * Finally the 3x3 basis is copied into state->matrix and state->pos is refreshed
+ * by func_80017668(&obj->model, 2, &state->pos) - part 2.
+ *
+ * @par Likely
+ * Aiming/tracking for a turret, character or chase camera: the +-400 pitch limit
+ * suggests a restricted vertical arc, and the 24-unit slew a deliberately slow
+ * turn rate instead of instant snapping. The two timers are Likely hip/knee or
+ * wheel phase animations that decay over time.
+ *
+ * @par Unknown
+ * The identity check on state->id/target->id (Likely a stale-target guard across
+ * respawns), and the work done by func_80052D7C.
+ *
+ * @par Callers
+ * func_800588D4 (sole direct caller).
+ */
 void func_80057E40(struct Object *obj, s32 step)
 {
     struct Info *info;

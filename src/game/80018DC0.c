@@ -1,7 +1,49 @@
+// Categories: Utilities > Mathematics > Trigonometry | Graphics > GTE > Matrix Setup | Graphics > Geometry > Rotation
 typedef int s32;
 typedef unsigned int u32;
 extern void func_8001846C(u32, s32 *, s32 *);
 
+/**
+ * @brief Builds a fixed-point rotation matrix from three angles.
+ *
+ * @param x Rotation about the X axis, in 4096 units per turn; only the low 12 bits
+ *          are used.
+ * @param y Rotation about the Y axis, same unit and mask.
+ * @param z Rotation about the Z axis, same unit and mask.
+ * @param m Output block of 12 words; only the nine matrix words 0..8 are written,
+ *          the translation words at +0x24..+0x2C are left untouched.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * - All three angles are masked with 0xFFF, and func_8001846C(angle, &sin, &cos)
+ *   supplies each sine/cosine pair in 16.16 format.
+ * - Every matrix word is a product of at most one sine and two cosines, computed
+ *   after shifting the operands right by 2 and the result right by 12, so the
+ *   intermediate never exceeds 32 bits; the diagonal of the identity case is
+ *   0x10000.
+ * - The layout proves the axis order: word 2 is -sin x, word 5 is cos x * sin y and
+ *   word 8 is cos x * cos y, i.e. the row-vector matrix of the X, then Y, then Z
+ *   rotation.
+ * - Eight special cases exist for the zero combinations of the three angles, each
+ *   avoiding the multiplications that would be wasted on a zero sine; the all-zero
+ *   case writes the identity.
+ *
+ * @par Likely role
+ * The single rotation-matrix constructor of the engine: model, camera and effect
+ * code all call it before loading the result into the GTE. The pervasive register
+ * pinning and the empty asm barriers in the special cases exist to reproduce the
+ * retail instruction order, not to change behaviour.
+ *
+ * @par Unknown
+ * - Sign convention: the negative sines in words 2 and 7 fit a row-vector
+ *   convention with a left-handed Z axis, but no caller here proves the direction
+ *   of positive rotation.
+ *
+ * @par Callers
+ * func_80013CB8, func_80014164, func_8003AA94, func_80052960 and func_800592D0 -
+ * the scene-graph, camera, effect and multi-point polygon paths.
+ */
 void func_80018DC0(s32 x, s32 y, s32 z, s32 *m)
 {
     s32 sx, cx, sy, cy, sz, cz;

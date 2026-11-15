@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Game Engine > Entity Lifecycle | Graphics > Scene Graph
 #include "game/types.h"
 
 struct Vec3s32 { s32 x; s32 y; s32 z; };
@@ -60,6 +61,36 @@ extern void func_80036AB4(struct Entity *self, s32 arg3);
 extern s32 func_8002AD58(s32 message, struct Entity *self, s32 arg2, s32 arg3);
 extern void *jtbl_80011380[];
 
+/**
+ * @brief Entity message handler dispatched through the jump table at
+ *        jtbl_80011380: spawn, movement with orientation choice, team
+ *        comparison and guarded forwarding.
+ *
+ * @param arg0 Message number (1..11 via the table, else base handler).
+ * @param arg1 Entity record.
+ * @param arg2 Other entity or spawn data, message-dependent.
+ * @param arg3 Forwarded value.
+ * @return Message 1: 0xD4; message 4: 0/1; others 0 or the base result.
+ *
+ * @par Confirmed
+ * 1: 0xD4. 2: func_80036940. 3: func_80036BD4 updates the entity; when
+ * |unk78.x| + |unk78.y| < 0x10, func_8001937C builds the basis from the
+ * direction, otherwise func_800193F8; when func_8001A750(&unk50, &unkC8)
+ * > 0x58000, func_8004D958 runs; func_80010750 loads the basis and
+ * func_80010234 transforms one frame vertex. 4: returns 1 only when
+ * unk14 differs and unkC0 != other. 5: unk1C = -1. 6: func_80036AB4 then
+ * the base handler. 7..11: forward to func_8002AD58 only when other->unk08
+ * is set and (!(other->unk0C & 1) || other->unk08->unk18 != self->unk18).
+ *
+ * @par Likely role
+ * The 0x58000 distance test despawns or recycles entities that strayed
+ * too far; the small-angle basis path avoids the full orientation math
+ * for nearly axis-aligned movement.
+ *
+ * @par Callers
+ * No direct callers in the call graph; dispatched indirectly through a
+ * handler table.
+ */
 s32 func_80036E6C(s32 arg0, struct Entity *arg1, s32 arg2, s32 arg3)
 {
     register s32 message __asm__("$18");

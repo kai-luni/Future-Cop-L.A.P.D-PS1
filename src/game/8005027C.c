@@ -1,3 +1,4 @@
+// Categories: Gameplay > Path Movement | Physics > Motion | Graphics > GTE > Matrix Setup
 #include "game/types.h"
 
 #define B(o,n) (*(u8 *)((u8 *)(o) + (n)))
@@ -25,6 +26,77 @@ typedef struct { s32 x, y, z; } V3;
     __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
                      : "=r"(out) : "r"((s32)(a)), "r"((s32)(b)) : "$8", "$9")
 
+/**
+ * @brief Advances a path-following entity along its spline for one step and
+ *        writes the resulting position and orientation into the render object.
+ *
+ * @param s    Entity state block. Confirmed offsets: map/table pointer +0x00,
+ *             segment start position +0x04, velocity +0x0A, next segment start
+ *             +0x10, distance travelled +0x1C, segment length +0x20, next length
+ *             +0x22, base speed +0x30, current speed +0x32, turn factor +0x34,
+ *             acceleration +0x36, deceleration +0x38, flag word +0x3C, hold timer
+ *             +0x40, scene index pair +0x44/+0x46, yaw/pitch targets
+ *             +0x4C..+0x58.
+ * @param step Frame step; the two speed rates at +0x36/+0x38 are divided by 16 and
+ *             the distance travelled is the speed times this value.
+ * @param op   Render object: previous position +0x78, current speed +0x84,
+ *             position +0x50/+0x54/+0x58, matrix +0x2C, model +0x28.
+ *
+ * @return Bit mask: 0 when no distance was consumed this step, bit 0 (value 1)
+ *         when a position was produced inside the current segment, bit 1 (value 2)
+ *         when a segment event fired; 3 for both.
+ *
+ * @par Confirmed control flow
+ * 1. Hold timer: while H(s,0x40) is non-zero its magnitude shrinks by @c step; on
+ *    expiry the speed at +0x32 is reseeded from the base speed at +0x30, scaled by
+ *    H(s,0x34)/4096 when flag 0x10000 is set.
+ * 2. Speed ramp: op+0x84 approaches the target speed at +0x32, rising by
+ *    (step * H(s,0x36)) / 16 and falling by (step * H(s,0x38)) / 16, clamped to the
+ *    target and to zero. The travelled remainder is speed * step; a value of zero
+ *    or less returns 0 without touching the position.
+ * 3. Inner loop: s+0x1C grows by the remainder. While (progress >> 8) stays below
+ *    the segment length at +0x20 the entity is inside the segment and the position
+ *    is rebuilt from H(s,0x04..0x08) plus the velocity at +0x0A times the
+ *    normalised progress (MUL16 against 0x80000000 / (length >> 1)), plus the head
+ *    offset H(s,0x26) << 4 unless flag 0x10 suppresses it.
+ * 4. Segment transition (progress past the length): func_8004F764(s, op, 0) picks
+ *    the next segment. An exit code of -2 combined with flag 0x8000 calls
+ *    func_8004D958(op), which tears the entity down; any other code sets flag 0x40,
+ *    zeroes the speed and clamps the progress to the segment length.
+ * 5. On that transition the next segment start is copied into the render object's
+ *    previous-position slot, the yaw and pitch snapshots are taken when flag 0x800
+ *    is set (unless 0x100/0x1000 suppress them), and the index pair +0x44/+0x46 is
+ *    rotated through +0x48/+0x4A while a level nibble in a 12-byte map entry is
+ *    decremented for the old index and incremented for the new one.
+ * 6. Orientation: func_800188D0((H(s,0x50) + 0x800) & 0xFFF, 0, 0, op + 0x2C)
+ *    builds the matrix, func_80010750 loads it into the GTE, func_80010234
+ *    transforms the part vertices, func_80037EB4 orients the basis, and
+ *    func_80095C30 turns the position delta into a new yaw that is stored in
+ *    +0x4C/+0x4E/+0x50 unless flag 0x1000 suppresses it.
+ * 7. Exit bookkeeping: with flag 0x10000 clear and speed class (bits 28-29)
+ *    non-zero, the heading error to the previous yaw caps the speed -
+ *    +0x32 = H(s,0x30) * (0x10000 - ((0x1000 - H(s,0x34)) * |error| >> 6)) >> 16,
+ *    with the error clamped to 0x400. When the speed falls below one eighth of the
+ *    base speed and the hold timer is idle it is restored to the base speed.
+ *
+ * @par Likely role
+ * The per-step integrator of a rail or spline vehicle: it walks a segment list
+ * (12-byte entries, count at map+2, a four-bit level at entry +8 and a rewritten
+ * nibble at entry +4), ramps the speed, follows the heading and produces both the
+ * yaw and the GTE matrix used to draw the entity. The two-angle problem (flag
+ * 0x800) and the "turn factor" suggest a road or tunnel network.
+ *
+ * @par Unknown
+ * - What the four-bit level in the map entry counts: it is raised for the segment
+ *   being entered and lowered for the one being left, which fits an occupancy or
+ *   reference count used by another subsystem.
+ * - Semantics of flags 0x400, 0x8000 and 0x20000000-bit remap of the speed class,
+ *   which is rewritten from class 1 to class 2 on the transition path.
+ *
+ * @par Callers
+ * func_80050D14 (the mover dispatcher, which routes to this function when flags
+ * 0x50 is clear and to func_80050D14 otherwise).
+ */
 s32 func_8005027C(u8 *s, s32 step, u8 *op)
 {
     register u8 *o __asm__("$19");

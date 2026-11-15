@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Particles | Gameplay > Object Spawn | Graphics > Model Renderer
 #include "game/types.h"
 
 typedef struct { s32 x, y, z; } Vec;
@@ -70,6 +71,60 @@ extern void func_80010820(Matrix *);
 extern void func_8001006C(Matrix *, Matrix *, s32);
 extern s32 func_80066F78(Vec *, s32, s32, s32);
 
+/**
+ * @brief Spawn handler (message 2) that turns a source object into a particle
+ *        emitter: allocates the particle array, seeds one particle per model
+ *        entry and builds the polygon mask.
+ *
+ * @param unused Message argument; not used, the caller passes 2.
+ * @param out    Object to initialise (bits +0x14, type +0x16, model +0x28,
+ *               position +0x5C, particle block +0xA8, counters +0xB0..+0xBA).
+ * @param arg    Argument wrapper; the configuration sits at +0x08 and holds the
+ *               source object, two force pointers and a value byte.
+ *
+ * @return Always 0.
+ *
+ * @par Confirmed control flow
+ * 1. func_80017EBC(0xF0, 3) takes 240 bytes for the particles; the model and the
+ *    two bytes at source +0x92/+0x93 are copied, +0x22 is set to -1, the type byte
+ *    becomes 4, the bit field becomes source | 0x800, values 0x94/0x98/0x9C/0x84 are
+ *    zeroed, the flag word is forced to (flags | 0x120001D) & 0xFFBFDFFF and the
+ *    eight-byte clear block is zeroed in steps of 2.
+ * 2. With a force field (config->force non-zero) the identity matrix is copied from
+ *    D_8009AA38 and, per model entry, the entry flags select either the literal
+ *    angles/position or an indirection through model->table at out+0x70. The matrix
+ *    slot comes from the entry's first padding byte (a parent index): the parent is
+ *    read at slot - 1, the destination is slot, and the stack holds six matrices.
+ *    func_80018DC0 builds the local rotation, func_80010820 loads the parent
+ *    matrix, func_8001006C(&matrix, dest, 4) composes it, the parent translation is
+ *    added, and func_8004B310 spreads a random velocity/angle/extra triple for the
+ *    world position. The entry's flag 0x80 marks the last entry.
+ * 3. Without a force field every particle simply gets random values from
+ *    func_80019668: vx/vz in 0..0x3F, vy in 0x100..0x1FF, extra -0x100, and two
+ *    random angles.
+ * 4. func_80066F78(&out->position, 0, 0, 0) returns the ground height; the entry
+ *    count is stored twice (+0xBA and +0xB1) and (ground - position.y) >> 3 lands in
+ *    the half-word at +0xA4.
+ * 5. The eight mask words are cleared and, walking the polygon list, a polygon is
+ *    flagged when all of its four vertex indices fall inside the entry returned by
+ *    func_8003A90C, except that a polygon whose flags nibble (bits 8-11) equals 4
+ *    only needs its fourth index to match.
+ *
+ * @par Likely role
+ * The spawn of a debris or explosion emitter: the per-bone starting velocities let
+ * each model part fly apart, and the polygon mask records which polygons are fully
+ * contained in one bone so they can be moved as a rigid piece.
+ *
+ * @par Unknown
+ * - The mask bit index is (polygon count - k) for polygon k, i.e. the bits are
+ *   filled in reverse order; nothing in this function reads the mask back.
+ * - Both loops trust the entry terminator (flag 0x80) and the 0xF0-byte block: a
+ *   model with more than 15 entries or more than 255 polygons would overrun the
+ *   particle array or the mask.
+ *
+ * @par Callers
+ * func_8003B2D0, message 2 (the spawn case of that object's handler).
+ */
 s32 func_8003AA94(s32 unused, Object *out, Arg *arg)
 {
     Config *config;

@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Ribbon Beam | Game Engine > Object Behaviour > Message Handler | Graphics > Scene Graph > Node Allocation
 #include "game/types.h"
 
 struct Link { u8 pad00[4]; void *owner; u8 pad08[0x2c]; void *coord; u8 disabled; };
@@ -22,6 +23,56 @@ extern void *func_80073500(void *, s32, s32, s32);
 extern void *func_80073590(void *, void *, s32, s32, s32, s32);
 extern void *func_8007377C(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
 
+/**
+ * @brief Message handler of a beam effect object: creates the ribbon between two
+ *        attachment points, clones, queries and destroys it.
+ *
+ * @param message Message code: 0 create, 2 clone, 6/7 query and mark, 10 destroy,
+ *                1/3/4/9 no-op, anything else is forwarded.
+ * @param obj     Object: kind byte +0x0E, flag byte +0x0F, angle +0x12, flags at
+ *                +0x1A, link +0x1C, definition +0x20, position +0x58, effect +0x64.
+ * @param arg2    Event/argument forwarded to func_8003C7B8 and func_8003C980.
+ * @param arg3    Fourth argument of those two calls.
+ *
+ * @return 1 when an effect was created or when message 7/6 reported the flag,
+ *         the clone pointer for message 2, 0 otherwise.
+ *
+ * @par Confirmed control flow
+ * 1. func_8003C7B8(message, obj, arg2, arg3) runs first and, when it returns
+ *    non-zero, the message is swallowed and 0 is returned.
+ * 2. Message 0 builds two scene nodes from the definition flags at +0x4A: node b
+ *    without an angle, node a with obj->angle and, unless flag 8 is set, the
+ *    half-word at +0x48. With a link coordinate the owner pointer and the disabled
+ *    byte of the link decide between func_80073590(owner, coord, kind, ...) and
+ *    func_80073500(&obj->pos, ...). Effect flags start at 2 (0x2002 when flag 2 is
+ *    set), gain 0x20 for flag 0x40 and 8 for obj flag 0x100; the parameter word handed
+ *    to the node functions starts at bit 0 of the flags at +0x4A, gains 8 for bit 0x20
+ *    and 2 for bit 4, and bit 0x80 of the flags at +0x32 adds 0x10 to the second
+ *    node's parameter word.
+ * 3. Allocation failures are unwound through func_80070710, obj->effect is cleared
+ *    and 0 is returned; on success an existing effect is marked for removal with
+ *    func_80073BA8 and func_8007377C(b, a, p36, p38, p3B, p3C, p3D, p3E, p40, p42,
+ *    p44, 0, event, flags) builds the ribbon from the two nodes, the two counts, the
+ *    three colour bytes, the divisor, three half-words, the event id at +0x2E and
+ *    the flag word.
+ * 4. Message 2 allocates 0x68 bytes and copies the object into it, message 10
+ *    releases the effect and the object through func_80073BA8 and func_800181D4,
+ *    message 7 sets bit 0 of +0x0F when definition flag 0x10 is set, message 6
+ *    returns whether that flag is set.
+ *
+ * @par Likely role
+ * The per-object handler of a two-point energy beam, lightning arc or tracer: the
+ * two nodes are the endpoints, the ribbon node holds the segment count, the colours
+ * and the fade divisor.
+ *
+ * @par Unknown
+ * - Which visual parameter p48, p36 and p38 stand for; they reach func_8007377C as
+ *   count and half-word arguments, so they are probably segment count and width.
+ *
+ * @par Callers
+ * None in analysis/edges.json: no direct call exists, so the handler is reached
+ * through an indirect call from an object table.
+ */
 s32 func_80073BBC(s32 message, struct Obj *obj, void *arg2, s32 arg3)
 {
     struct Def *def;

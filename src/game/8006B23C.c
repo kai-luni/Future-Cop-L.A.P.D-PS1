@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Part Motion | Physics > Motion | Graphics > Renderer > Line Pass
 #include "game/types.h"
 
 typedef struct {
@@ -143,6 +144,65 @@ struct Frame6B23C {
 #define sc2 F.sc2
 #define cb F.cb
 
+/**
+ * @brief Updates one animated part of a beam/effect object.
+ *
+ * Recomputes the part's target position (definition table plus optional random
+ * spread around an anchor), resolves the swept move against obstacles, and then
+ * runs the type-specific visual and callback for the part.
+ *
+ * @param arg0 Effect object; the work block sits at arg0->unkAC.
+ * @param index Part slot; selects the definition id (unk90[index]) and the
+ *        variant halfword (unk84/unk8A[index]).
+ * @param arg2 Frame counter forwarded into the callback block (cb.unk06).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * b = self->unkAC, c = b->unk6C (a render/collision handle, may be 0) and
+ * item = func_8006AAEC(b->unk90[index]). Two record halves are used:
+ * item + 0x24 when b->unk8A[index] > 0, else item + 0x04 (s3).
+ * func_80046CF0(self, s3->unk1C) is called on every pass.
+ * The variant selector s7 is (u16)b->unk8A[index] & 1 for the positive case,
+ * otherwise b->unk84[index] & 1.
+ * The instance transform is b + 0x178, or b + 0x178 + s7 * 0x4C;
+ * func_80017668(instance, 0, &v58) yields the current part position.
+ * For type 0x0B with s3->unk1B != 0, s1 = D_800A7040[1][s3->unk1B] is accepted
+ * only when s1->unk04 == 0x58.
+ * New position v38 comes from one GTE-transformed point of c (or from s1), or
+ * from random angles: two func_80019668() values masked with 0xFFF are turned
+ * into sine/cosine by func_8001846C, the radius is s1->unk34 << 4 or
+ * c->unk68 >> 1 (s1 path), s3->unk0E or (s16)c->unk6E >> 1 (s3 path), and the
+ * products use the local MUL16 16.16 macro. With c == 0 the offset is
+ * v58 + (((self->unkA0/A4/A8 >> 4) * s3->unk16) >> 8).
+ * func_8001AB00(&vb8, &v38) decides the sign: the offset is added to c->vec or
+ * subtracted from it.
+ * Swept test: s5 = func_800684AC(&v58, &v38, &v48, 0, 1); a non-zero low byte
+ * means blocked, so v38 = v48 (contact point) and fp = 1.
+ * Dispatch on s3->type: 0x0B builds two scene nodes with func_80073500 and
+ * draws the segment with func_8007377C (fourteen arguments including colour and
+ * width; without s1 the fixed set 0x20/1/0x7F/0x7F/0xFF/0x2AA/0x4000/-0x3000
+ * is used) and then calls func_8006A524. 0x0A stores s7 in b->unk2FC. 0x0C
+ * emits func_8006F0E8 with 0x60000 | random or 0x30000 + random. 0x0E delegates
+ * to func_8005BDE4 and clears both fp and id.
+ * Otherwise, and also for the 0x0B path when (c->unk24 & 0x200080) == 0x200000,
+ * a block {unk00 = self->unk14, unk04 = s3->unk0C, unk06 = arg2, unk08 = self}
+ * is passed to the indirect call c->unk04(0x0E, c, &cb, 0).
+ * Finally func_800402DC(0, id, &local, 1, 0) queues up to two effects: character
+ * 5 at v38 with unk00 = 0x800 when fp is set, and character id (s1->unk15 or
+ * s3->unk1B) with unk49 = 0x60 and unk44 = instance.
+ *
+ * @par Likely
+ * The per-part update of a tether/beam object (rope, cable or arc between two
+ * points): the record halves are the two ends, the random term keeps the segment
+ * loose, and the type byte selects beam, trail, sparkle or impact behaviour.
+ *
+ * @par Unknown
+ * The semantics of the s3 type table (0x0A..0x0E) and of the 0x58 tag check on
+ * s1; which indices the caller walks.
+ *
+ * @par Callers
+ * func_8006BA50.
+ */
 void func_8006B23C(struct Unk6B23C *arg0, s32 index, s32 arg2)
 {
     register struct Unk6B23C *self __asm__("$22") = arg0;

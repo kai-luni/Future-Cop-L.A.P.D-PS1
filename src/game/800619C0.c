@@ -1,3 +1,4 @@
+// Categories: Physics > Collision > Oriented Box Against Entries | Graphics > GTE > Batch Transform | Graphics > Geometry > Bounding Volumes
 typedef short s16;
 typedef int s32;
 typedef unsigned int u32;
@@ -5,6 +6,54 @@ typedef struct { s32 m[9]; s32 x,y,z; } Matrix;
 typedef struct { char pad[0x24]; s32 x,y,z; } Base;
 extern void func_80010820(Base *);
 extern void func_8001006C(Matrix *, Matrix *, s32);
+/**
+ * @brief Turns one oriented box into a world axis-aligned box and reports which
+ *        of a list of radius-bounded entries it overlaps.
+ *
+ * @param base A 3x3 rotation at +0x00 followed by a world position at +0x24.
+ * @param box Six 16-bit values: centre x/y/z, then half extents x/y/z, all
+ *        scaled by 16 on use.
+ * @param objects Byte array of entries of size stride; each entry begins with six
+ *        16-bit values - centre x/y/z, then radii x/y/z.
+ * @param count Number of entries. When it is 2 or more, entry 0 is skipped, so it
+ *        is treated as the owning part.
+ * @param stride Byte distance between entries.
+ * @return Bitmask with one bit per entry index: entry j lands on bit 31 - j, so
+ *         the first tested entry is bit 31 when only one entry exists and bit 30
+ *         when entry 0 was skipped, and the last entry is bit 32 - count. Zero
+ *         when nothing overlaps.
+ *
+ * @par Confirmed conversion
+ * The local box becomes a diagonal scale plus translation matrix (extents << 4 on
+ * the diagonal, centre << 4 in words 9..11). func_80010820 loads the base rotation
+ * into the GTE and func_8001006C(&a, &b, 4) yields the oriented 3x4 matrix, whose
+ * position row is then moved by base->x/y/z. Each world half extent is the sum of
+ * the absolute values of the three basis components of that axis -
+ * b.m[0]/b.m[3]/b.m[6] for x, b.m[1]/b.m[4]/b.m[7] for y and
+ * b.m[2]/b.m[5]/b.m[8] for z - which is the standard OBB-to-AABB bound. All six
+ * bounds are shifted right by 4 to return to the 16-bit world scale.
+ *
+ * @par Confirmed test
+ * The entries are walked from the first tested index to count - 1, advancing by
+ * stride, with the result shifted left once per entry and bit 0 set on an overlap.
+ * An entry overlaps when, on all three axes, centre - radius is below the maximum
+ * bound and the minimum bound is below centre + radius - strict comparisons, so
+ * touching boxes do not count. The final shift by (32 - count) places the bits,
+ * and the caller relies on exactly that numbering.
+ *
+ * @par Likely
+ * The broad phase of a hitbox query: one frame box of an animated model, rotated
+ * by the base matrix, against the point-and-radius entries of another shape; the
+ * bitmask lets the caller map an overlap back to a record index.
+ *
+ * @par Unknown
+ * Why entry 0 is dropped is not visible here; the caller skips it in the same way,
+ * which suggests it describes the whole shape rather than one part.
+ *
+ * @par Callers
+ * func_80061CAC, which calls it once per entry of the first shape and again with
+ * the mirrored matrices to confirm the pair.
+ */
 u32 func_800619C0(Base *base, s16 *box, char *objects, s32 count, s32 stride)
 {
     Matrix a, b;

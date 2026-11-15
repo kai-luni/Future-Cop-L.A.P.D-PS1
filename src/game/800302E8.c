@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Graphics > Scene Graph | Graphics > Animation
 #include "game/types.h"
 
 struct Vec3 {
@@ -80,6 +81,33 @@ extern void func_80044988(void *data, void *track, u8 forward, s32 index);
 extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options);
 extern void func_80017668(void *instance, s32 part, void *out);
 
+/**
+ * @brief Spawn initializer for an entity placed on terrain: copies the
+ *        spawn parameters, fixes the ground height and sets up the model,
+ *        animation tracks and the attached sub-model.
+ *
+ * @param self Entity being initialized.
+ * @param data Spawn record; data->unk08 is the parameter sub-block,
+ *             data->unk04->unk18 optionally points at a sub-model pointer.
+ * @param arg2 Forwarded to the base initializer.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8002AD58(2, self, data, arg2) runs the base init. Fields unkC6,
+ * unkBC, unkBA, unkB4 (| 0x1000000), unkC4, unkBE are copied from the
+ * sub-block; unkBD and unkCC are zeroed. The sub-block type maps to a
+ * terrain mode: 0 -> -1, 1 -> -2, else type - 2.
+ * self->pos.y = func_80067684(&self->pos, mode) + (sub->unk28 << 4);
+ * flags |= 0x800001. func_800188D0(sub->unk30, 0, 0, self->coord) builds
+ * the yaw rotation, func_80010750 loads it, func_80010234 transforms one
+ * model vertex, func_80044988 starts an animation track. func_80013BD8
+ * initializes the embedded model instance (self->d4) with the optional
+ * sub-model; when that model has track data, func_80044988 runs again.
+ * func_80017668 fetches the world position into unkFC; unkC8 = 0.
+ *
+ * @par Callers
+ * func_80030960.
+ */
 void func_800302E8(struct Entity *self, struct Spawn *data, s32 arg2)
 {
     struct Spawn *copy;

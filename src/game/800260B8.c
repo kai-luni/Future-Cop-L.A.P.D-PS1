@@ -1,3 +1,4 @@
+// Categories: Game Engine > Options Menu | Graphics > 2D Drawing > Text | Input > Menu Navigation
 #include "game/types.h"
 
 struct InputAction260B8 {
@@ -60,6 +61,72 @@ extern void func_80025E18(s32 id, s32 value, s32 slot);
 extern void func_80025F58(void);
 extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
 
+/**
+ * @brief Draws and services one player's options sub-panel: the item list, the
+ *        navigation, the volume and toggle rows, and the confirm row.
+ *
+ * @param obj      Object whose state field (+0xAC) holds the shared button word
+ *                 (+0x30) and the selected row (+0x312).
+ * @param slotArg  Player slot, 0-based; indexes the four input action tables, the
+ *                 per-slot object ids in D_8009FA58 and the sound handles in
+ *                 D_8009F678.
+ * @param arg2     Not referenced by the body; kept for signature parity with the
+ *                 caller.
+ * @param selectionArg Panel base offset, 0x140 or 0x280 from the caller; only
+ *                 (selectionArg - 0xDC) / 2 survives, the horizontal origin.
+ * @param active   Non-zero when this tab owns the confirm handling: the press edge
+ *                 then acts on the selected row, otherwise the same edge toggles
+ *                 that row and the left/right edges adjust the volumes.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed control flow
+ * 1. Two blended rectangles are drawn through func_8001C214: a backdrop
+ *    (colour 0x5294) at x - 2, 0x9E, 0xE0 x 0xB6 and an inner panel (colour 0) at
+ *    x, 0xA0, 0xDC x 0xB2, both 2x scale and blend mode 1. The byte at
+ *    menu->unk1C + D_8009F2D4 and the byte at menu->unk20 + D_8009F2D5 are both set
+ *    to 0x0F, or to 0x13 when D_8009FA2C has bit 0x40.
+ * 2. Four action records (D_800A0AB0, D_800A0AC0, D_800A0AD0, D_800A0AE0, each
+ *    indexed by slot * 8) are refreshed from the button word with func_8005780C.
+ *    Phase 0 is the press edge, 3 the held state, so navigation uses 0 and the
+ *    volume rows accept 0 as well as 3 for auto-repeat.
+ * 3. The selection is the signed byte at +0x312, clamped to 0..5: press up
+ *    (D_800A0AB0) decrements with wrap to 5, press down (D_800A0AC0) increments
+ *    with wrap to 0; both play sound 0x3F.
+ * 4. The six item codes come from D_8009ABE8. On the press edge with @c active:
+ *    code 0 leaves the panel (sound 0x3E, selection -1, D_8009FA6C--), 7 and 6 swap
+ *    the label byte at D_8009ABED between 8 and 7, 8 calls func_80060A0C on
+ *    D_8009F670[slot] and sets screen state D_8009FA00 = 5 on success or switches
+ *    the whole list to the greyed-out message otherwise, and any other code simply
+ *    stores the row.
+ * 5. With @c active clear: the back action (D_800A0B20, phase 0) closes the panel
+ *    and releases the preview sound handle; the left/right records with phase 3 or
+ *    edge adjust the three volumes through func_800451F8/func_80045238/
+ *    func_80045294 and restart the preview via func_80025E18 with track
+ *    D_8009FAC0, 0x2F or 0x30, then func_80025F58 re-applies the mix; on the press
+ *    edge code 4 disables sound, 5 enables it (func_800451B4), and 7/8 swap the
+ *    label at D_8009ABED.
+ * 6. The list is printed with func_80049100 from x/2 + 6, starting at y 0x53 in
+ *    steps of 0x0E; the selected row uses colour 8, the greyed list colour 0x0B and
+ *    all other rows 0x10. When the greyed message is active every row is drawn with
+ *    menu->unk24 instead of the per-code text pointer.
+ *
+ * @par Likely role
+ * The per-player options page of the pre-race or pause front end: three sound
+ * volumes with audible preview, a sound on/off row, a two-state row without
+ * immediate side effects, and a confirm row that either advances the game state or
+ * shows a "not available" message.
+ *
+ * @par Unknown
+ * - What the two-state row (codes 6/7) actually configures: it only swaps its own
+ *   label byte and never touches a global.
+ * - Whether D_8009F670 holds a configuration or vehicle index; the confirm row
+ *   only hands it to func_80060A0C.
+ *
+ * @par Callers
+ * func_800267C8 (the parent page, which calls this function only when the shared
+ * selection is 0 or greater, i.e. while the sub-panel is open).
+ */
 void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg, s32 active)
 {
     s32 flag;

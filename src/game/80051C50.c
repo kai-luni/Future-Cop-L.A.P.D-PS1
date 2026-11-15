@@ -1,3 +1,4 @@
+// Categories: Physics > Camera | Graphics > GTE
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -20,6 +21,29 @@ struct Unk51C50 {
 extern void func_80010974(struct Vec3s32 *up, struct Vec3s32 *target, struct Unk51C50View *view);
 extern void func_800188D0(s32 arg0, s32 arg1, s32 angle, struct Unk51C50View *view);
 
+/**
+ * @brief Builds the view frame of an object: look-at form when its angle
+ *        is zero, rotated form otherwise.
+ *
+ * @param object Object with the s16 angle at +0xF0.
+ * @param arg1 Yaw passed to the rotation builder in the angled path.
+ * @param target Look-at target position.
+ * @param view Output view record (first triple, up, target).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * angle == 0: view->target = *target; view->up = (0, 0x10000, 0);
+ * func_80010974(&up, &target, view) writes the cross product into the
+ * first triple of view. Otherwise func_800188D0(arg1, 0, angle, view)
+ * builds the rotated frame.
+ *
+ * @par Likely role
+ * Camera or turret view: the zero-angle case looks at a target with a
+ * world-up vector, the angled case uses a fixed yaw/roll rotation.
+ *
+ * @par Callers
+ * func_80052410.
+ */
 void func_80051C50(struct Unk51C50 *object, s32 arg1, struct Vec3s32 *target,
                    struct Unk51C50View *view)
 {

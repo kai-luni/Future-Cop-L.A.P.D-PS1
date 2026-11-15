@@ -1,3 +1,4 @@
+// Categories: Resources > Movie Playback | Graphics > Video Decode > Frame Slice Upload | Platform > MDEC | Platform > DMA
 #include "game/types.h"
 
 struct State {
@@ -42,6 +43,61 @@ extern void func_80095FF4(s32 arg0, s32 arg1);
 extern void func_80096070(s32 destination, u32 size);
 extern s32 func_800960CC(s32 mode);
 
+/**
+ * @brief Decodes and uploads one video/frame slice on the interrupt-driven path,
+ *        where the registered decode callbacks perform the transfer.
+ *
+ * @param data Slice header in big-endian order: a four-byte tag, a 16-bit size at
+ *             +0x08 and a second 16-bit size at +0x0A; the payload starts at +0x10.
+ * @param input_arg1 Slice size; multiplied by the rate at D_8009F4C8 and halved
+ *             before it becomes the width of the descriptor quads.
+ * @param input_arg2 Vertical position/volume; stored in the descriptor and offset
+ *             by 0x100 when the context flag at +0x114 is set.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed control flow
+ * 1. The tag and both 16-bit fields are byte-swapped into one 32-bit magic value
+ *    that is compared with 0x4D444543; payload = data + 0x10.
+ * 2. When mode D_8009F4C0 equals 1 and D_8009F4C4 is non-zero, the two decoder
+ *    tables are copied into the scratchpad - 0x100 bytes from D_800A3958 to
+ *    0x1F800000 and 0x108 bytes from D_800A3A58 to 0x1F800100 - and D_8009FABC and
+ *    D_8009F9D8 are repointed at those copies.
+ * 3. func_80095FE8(payload) reads the first half-word of the payload and raises the
+ *    running maximum in D_8009F4D0.
+ * 4. The context descriptor is written as three quads of four half-words:
+ *    +0x00 = (arg1 * rate) >> 1, +0x02 = arg2, +0x04 = (size8 * rate) >> 1,
+ *    +0x06 = sizeA; +0x08 = (arg1 * rate) >> 1, +0x0A = arg2 + 0x100,
+ *    +0x0C = (size8 * rate) >> 1, +0x0E = sizeA; +0x10 = 0; and +0x1C =
+ *    (arg1 * rate) >> 1, +0x1E = arg2, +0x20 = rate << 3, +0x22 = sizeA.
+ * 5. First call (context +0x118 == 0): no transfer; when the tag matched,
+ *    func_80089BBC(payload, ctx+0x28[ctx+0x30]) decodes into the current buffer, and
+ *    +0x11C is cleared.
+ * 6. Later calls: +0x11C is cleared, func_80095FF4(ctx+0x28[1 - ctx+0x30], mode)
+ *    prepares the other buffer, func_80096070(ctx+0x24, width * height / 2) starts
+ *    the transfer, the optional decode follows, func_800960CC(0) runs, and a bounded
+ *    loop of 0x30D40 (200000) iterations waits for the callback to raise +0x11C.
+ * 7. Both paths end with func_80095E90(1), then +0x118 is incremented and
+ *    +0x30 = 1 - +0x30, so consecutive slices alternate buffers.
+ *
+ * @par Likely role
+ * The callback twin of func_80085630: func_8008589C routes every slice here when the
+ * context's callback mode (+0x12C) is set, and to func_80085630 when it is not. The
+ * slice header, the tag test, the double buffer, the scratchpad tables and the
+ * counter/flip tail are identical; the difference is that this variant hands the
+ * whole block to one DMA transfer and then waits for the interrupt, while
+ * func_80085630 walks the rows itself and sets +0x11C directly.
+ *
+ * @par Unknown
+ * - The exact meaning of the three descriptor quads: they repeat the same scaled
+ *   values plus a stride, which fits VRAM destination rectangles, but no consumer is
+ *   visible here.
+ * - The unit of the 16-bit payload field read by func_80095FE8, kept only as a
+ *   running maximum.
+ *
+ * @par Callers
+ * func_8008589C (the slice dispatcher, call site 0x800858A0).
+ */
 void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
 {
     register s32 arg1 __asm__("$21");

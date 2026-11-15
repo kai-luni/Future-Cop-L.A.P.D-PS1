@@ -1,3 +1,4 @@
+// Categories: Game Engine > Frame | Platform > Interrupts
 typedef int s32;
 typedef unsigned int u32;
 extern volatile u32 *D_8009CC18;
@@ -7,6 +8,35 @@ extern s32 D_8009CC24;
 extern volatile s32 D_8009DD50;
 extern void func_800913E8(s32, s32);
 
+/**
+ * @brief Waits for the frame counter to advance and returns the elapsed
+ *        16-bit time; negative input only reads the counter.
+ *
+ * @param input Number of frames to wait (0 = resync only, 1 = no wait,
+ *              < 0 = return the current counter D_8009DD50).
+ * @return Elapsed counter ticks (16-bit difference), or D_8009DD50 when
+ *         input < 0.
+ *
+ * @par Confirmed
+ * Samples *D_8009CC1C twice until stable; elapsed = (now - D_8009CC20)
+ * & 0xFFFF. For input != 1: target = D_8009CC24 + input - 1 (input > 0)
+ * or D_8009CC24; func_800913E8(target, input - 1 or 0) waits for the
+ * counter D_8009DD50 with a timeout and an error path; then
+ * func_800913E8(D_8009DD50 + 1, 1). When the saved *D_8009CC18 has bit
+ * 0x400000, spins until bit 31 of *D_8009CC18 toggles. D_8009CC24 is
+ * updated to D_8009DD50 and D_8009CC20 re-sampled stably.
+ *
+ * @par Likely role
+ * Frame pacing for the CD/MDEC paths: D_8009DD50 is the interrupt-driven
+ * frame counter, the 0x400000/0x80000000 pair a display-status handshake.
+ *
+ * @par Callers
+ * func_8008204C, func_80085C4C, func_800879DC, func_80087D48,
+ * func_8008ECFC, func_8008EF7C, func_8008F244, func_8008FAC8,
+ * func_800908D4, func_80090C18, func_80090E00, func_80090FA0,
+ * func_8009113C, func_800951D8, func_8009520C, func_800953F0,
+ * func_800954DC, func_800955C8, func_8009570C.
+ */
 s32 func_80091270(s32 input)
 {
     register s32 arg0 __asm__("$4") = input;

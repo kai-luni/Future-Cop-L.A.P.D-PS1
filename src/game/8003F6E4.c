@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Scene Traversal | Graphics > Scene Graph
 #include "game/types.h"
 
 struct DestinationTriple {
@@ -34,6 +35,33 @@ extern void func_800445B0(s32 arg0, struct DestinationTriple *arg1);
 extern void func_80070158(s32 arg0, struct DestinationTriple *arg1);
 extern void func_80074104(s32 arg0, struct DestinationTriple *arg1);
 
+/**
+ * @brief Scene traversal driver: resolves one view position and runs the
+ *        object dispatcher plus the layer passes over it, in fixed order.
+ *
+ * @param arg0 View selector; only used when D_8009F9A0 is null, then passed
+ *             to func_80069580() to compute the position.
+ * @return Nothing.
+ *
+ * @par Confirmed sequence
+ * 1. If D_8009F9A0 != 0, copy its position triple (offset 0x50); otherwise
+ *    func_80069580(arg0, &position) fills the local triple.
+ * 2. func_80073700(&position) - the object dispatcher.
+ * 3. func_8006F844(&position), func_8005E160(&position),
+ *    func_8003CF6C(&position) - the depth-cue pass.
+ * 4. func_8004C5C8(D_800A1070.unk10, &position),
+ *    func_8006E988(D_800A1070.unk08, &position),
+ *    func_800445B0(D_800A1070.unk0C, &position),
+ *    func_80070158(D_800A1070.unk04, &position),
+ *    func_80074104(D_800A1070.unk14, &position).
+ *
+ * @par Likely role
+ * A sibling of func_8003F4A0 for a second view: the five words of
+ * D_800A1070 select the list or mode of each attached pass.
+ *
+ * @par Callers
+ * func_80066E98 (region drawing).
+ */
 void func_8003F6E4(s32 arg0)
 {
     struct DestinationTriple position;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End Configuration | Graphics > HUD > Name Entry | Graphics > 2D Drawing > Text | Resources > Slot Table
 #include "game/types.h"
 
 typedef struct {
@@ -81,6 +82,82 @@ extern void func_80078210(void);
         else { n += 10; } \
     } else { n += 1; }
 
+/**
+ * @brief Front-end slot widget: dispatches one action code onto the profile-slot
+ *        page, edits the slot's stored name and, on confirm, either applies the
+ *        slot's saved configuration to the running game or advances the page.
+ *
+ * @param arg0 Action code 0..5: 0 draw the row, 1/2 move the glyph cursor, 3 confirm
+ *        the slot, 4/5 step the glyph under the cursor. Values above 5 do nothing.
+ * @param arg1 Horizontal centre of the eight-cell glyph strip; the strip is laid out
+ *        from arg1 - 4 * (advance + 1) and the text is drawn around it.
+ * @param arg2 y position of the row.
+ * @param arg3 Text colour, used only by the non-editing draw path.
+ * @param arg4 Slot number; stored as the slot block's selected index on confirm.
+ * @return Nothing.
+ *
+ * @par Confirmed gate
+ * The body runs only when D_8009F8BD and D_8009F8BE are both non-zero - the two
+ * display flags func_8007FACC raises - and arg0 is below 6. s2 is the local player
+ * index D_8009F8B8, indexing the edit flags D_8009F8C0[], the cursor words
+ * D_8009F8F8[], the eight-byte glyph buffers at D_800A3928 and the nine-byte name
+ * buffers at D_800A6FE0 (eight characters plus terminator).
+ *
+ * @par Confirmed slot block
+ * D_8009F92C points at a block with ten records of 0x70 bytes from +0x424, a page byte
+ * at +0x921, the selected record index at +0x924, a 0x1D-byte scratch name at +0x925,
+ * a bulk-upload half-word at +0x942 and screen state bytes at +0x200 to +0x204.
+ * Record-relative offsets used here are +0x428 (occupancy byte), +0x440 and +0x44C
+ * (the two player names), +0x458 to +0x463, +0x464 to +0x46E (five per-entry counters)
+ * and +0x474 (an audio options block).
+ *
+ * @par Confirmed actions
+ * 0: while editing, each of the eight cells is drawn as
+ * D_8009F878[D_800A3928[s2 * 8 + i]] with its width from func_800492A0 and spaced by
+ * the font advance; the selected cell gets a gouraud box (func_80082EF0, link 0xBB8)
+ * at y + font height + 2 in D_8009F3F8[(D_8009FA60 >> 4) and 7] + 0x80, glyph colour
+ * 8 for the selection and 15 for the rest. Otherwise func_800788F0 draws one string
+ * in colour arg3: the record name, else func_80089914(0x3714) or D_8009F4A4.
+ * 1/2: cursor in 0..7 with wraparound, plus sound func_80046C84(0x47, 0).
+ * 4/5: glyph index in 0..D_8009F87C - 1 with wraparound, plus sound
+ * func_80046C84(0x46, 0). Both only react when D_8009F8C0[s2] is set and arg4 equals
+ * the selected slot.
+ *
+ * @par Confirmed confirm path
+ * The selected index and the timer of the slot block are set from arg4 and 0, then two
+ * branches key on the page byte at +0x921. With it equal to 1 an active edit session is
+ * decoded back into the record by func_8007AA9C and func_80080B70 refreshes the derived
+ * state; otherwise a label is composed through func_8008CD30 by counting the words at
+ * D_8009FA94 + 0x8C, +0x90 and +0x94 - or the placeholder half-word D_8009F470 when
+ * all three are zero - and written to the record, after which func_8007A9D0 re-encodes
+ * it into glyph indices. A non-empty record raises D_8009F468[0] to 1 and, after
+ * func_80078650(D_800A3718, 1), writes 5, 0 and 0 into +0x200 to +0x204.
+ * For any other page byte the slot is applied instead: func_80080984 loads the audio
+ * block at +0x474, the names at +0x440 and +0x44C are copied into D_800A6FE0, and the
+ * bytes at +0x459 to +0x463 are stored into the state words D_8009FA94 + 0x8C, +0x90,
+ * +0x94, +0x28, +0x34, +0x2C, +0x38, +0x30, +0x3C, +0x08, +0x98, +0x0C and +0x5C.
+ * Then +0x46A and +0x46B go to D_8009F3E6 and D_8009F3E7, +0x469, +0x46C, +0x46D and
+ * +0x46F conditionally to D_8009F3C0, D_8009F3C1, D_8009F3C3 and D_8009F3C4, and the
+ * counters +0x464 to +0x467 and +0x46E to the entries addressed through D_8009B72C.
+ * func_80077FFC follows, then either func_80077708 or func_800776B8 together with the
+ * clamped value of +0x458 spread over D_8009F458, D_8009F3F1, D_8009F882, D_8009F881
+ * and D_8009F880 (clamped to 0..7). D_8009FA10 is cleared, func_8007FACC commits a
+ * pending movie start, and func_80078210 closes the transition.
+ *
+ * @par Likely role
+ * The handler behind the ten rows of the front-end profile list: the page byte decides
+ * between the naming page (finish the name, continue) and the slot page (apply the
+ * profile and start the mission, intro movie included).
+ *
+ * @par Unknown
+ * The meaning of the individual setting bytes +0x458 to +0x46F, whether the page byte
+ * value 1 really is the naming page, and the text behind D_8009F470.
+ *
+ * @par Callers
+ * No direct caller. Its address is the callback word at +4 of ten 0x1C-byte records
+ * starting at 0x8009B8D0, all of which reference the text D_8009F470 - so it is reached
+ * through the front-end widget list.
+ */
 void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     s32 s2;
     s32 n;

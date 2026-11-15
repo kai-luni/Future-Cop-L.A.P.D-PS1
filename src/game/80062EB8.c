@@ -1,3 +1,4 @@
+// Categories: Graphics > Region Drawing | Gameplay > Object Update | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Object {
@@ -12,6 +13,27 @@ extern s32 D_8009F828[];
 extern struct Object **D_8009F818[];
 extern void func_800164F4(void *);
 
+/**
+ * @brief Two passes over the object table of one region: message 3 to
+ *        every object, then drawing of the visible subset.
+ *
+ * @param index Region index into the count table D_8009F828 and the
+ *              pointer table D_8009F818.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Pass 1: for each of count objects, object->callback(3, object, 0, 0).
+ * Pass 2 re-reads count and cursor from the tables; for each object with
+ * !(flags & 0x20) and (flags72 & 0x10), func_800164F4(object->data)
+ * submits the textured polygons.
+ *
+ * @par Likely role
+ * Message 3 is the region's update/draw tick; bit 0x20 suppresses drawing
+ * and bit 0x10 of the second flag word enables it.
+ *
+ * @par Callers
+ * func_80066E98 (region drawing).
+ */
 void func_80062EB8(s32 index)
 {
     s32 count;

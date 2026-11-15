@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Gameplay > Damage | Graphics > Model Renderer | Gameplay > Entity Script
 #include "game/types.h"
 
 struct Unk5A190;
@@ -117,6 +118,63 @@ extern void func_8006C3E0(void *object, s32 arg1);
 extern void func_80055E10(struct Unk55E10 *object, s32 arg1);
 extern void func_800569EC(void *object, s32 arg1, s32 arg2);
 
+/**
+ * @brief Per-frame tick of a player/vehicle entity: services timers, contact damage and
+ *        hit reporting, runs the sub-updates, refreshes the basis matrix and world
+ *        position, and drives the controller polling and the camera.
+ *
+ * @param object Entity block. +0xAC is the shared state block, +0xDC a companion block,
+ *        +0x28 a source block whose +0x34 is vertex data, +0x50 the collision body,
+ *        +0x54 a stored distance, +0x14 a reference number, +0x1C a value handed to the
+ *        sub-update, +0x24 and +0x2C two flag/basis words, +0x5C a matrix block, +0x70
+ *        a part index, +0xB6/+0xB7 two fractional clock accumulators.
+ * @param arg1 Elapsed ticks for this frame; subtracted from the timers and added to the
+ *        clock accumulators.
+ * @return Always 0, including the early return.
+ *
+ * @par Confirmed order
+ * 1. state + 0x2FC is set to -1 and func_8005A190(state, 0, object + 0x1C) re-arms the
+ *    model; a non-zero +0x0C triggers func_800585B8.
+ * 2. With state + 0xDE set, func_80066F78(object + 0x50, 0, 0, out) measures the ground
+ *    distance, and a value beyond object + 0x54 + 0x3800 adds one point of damage
+ *    through func_80058378(object, object + 0x1C + 1, 0).
+ * 3. Timers state + 0x31A and +0x318 count down; when +0x318 reaches zero the flag
+ *    words object + 0x24 and companion + 0x24 lose mask 0xA6, func_80058714 runs and
+ *    the function returns.
+ * 4. Two accumulators build the sub-tick arguments: +0xB6 keeps the low three bits and
+ *    yields eighths of arg1, +0xB7 keeps the low bit and yields halves.
+ * 5. In game mode D_8009FA94 + 0x5C == 1 a counter at state + (state + 0xAD shifted 2)
+ *    + 0x28 is advanced by arg1, and while state + 0x24 is still zero and
+ *    D_8009FA94 + 0x84[index] is positive it is stamped from D_8009FAA4.
+ *
+ * @par Confirmed gameplay half
+ * For an index below 2 and screen state D_8009FA00 == 4, func_800576A8(state + 0x30)
+ * transforms the input word and func_800586D4 returns a damage amount. A set bit 0 in
+ * its out word posts a message record (fields 0x40 and state + 0x28) through
+ * func_800402DC(object, 4, record, 1, 0) and plays sound func_80046C84(0x15, object);
+ * a non-zero damage posts a hit record (kind 1, the damage, object as attacker, object
+ * + 0x14 as reference) through func_800584BC(0x0E, object, record, 0, 0). A zero
+ * state + 0x6C then makes func_8006C34C(object, 1) run.
+ *
+ * @par Confirmed transform half
+ * func_80010750 loads object + 0x2C into the GTE and func_80010234 transforms the
+ * vertex at source + 0x34, offset by (part index shifted 4) + 8, into object + 0x5C.
+ * The sub-systems follow: func_80057E40(companion, arg1), func_8006C3E0(object, arg1)
+ * for its three value words, func_80055E10 only in screen state 4 - the controller
+ * polling - and func_800569EC(object, arg1, halves) for the camera. Timers
+ * state + 0x324 and +0x326 are decremented last.
+ *
+ * @par Likely role
+ * The message 6 handler of a player-controlled unit: fall damage, hit feedback to the
+ * scripting layer, input and chase-camera updates on top of the transform refresh.
+ *
+ * @par Unknown
+ * Whether the counter stepped at state + 0xAD is wall time or a scoring clock, and the
+ * meaning of the 0xA6 flag mask.
+ *
+ * @par Callers
+ * func_8005908C, message 6 of its switch - the entity script dispatcher of this class.
+ */
 s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
 {
     struct Unk588D4Data *data;

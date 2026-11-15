@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script > Path Sequence | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Data { u8 pad[0x24]; s8 count; u8 end; s16 pos[3]; s16 speed[3]; s16 other[2]; s16 angle; u8 flags; u8 kind; u8 extra; };
@@ -10,6 +11,50 @@ extern void func_800188D0(s32, s32, s32, void *);
 extern s32 func_80066F78(void *, s32, s32, s32);
 extern void func_80010750(void *);
 extern void func_80010234(void *, void *, s32);
+/**
+ * @brief Initialises the waypoint sequence of an entity from a script record.
+ *
+ * Copies count, the three waypoint positions, the segment speeds and two derived
+ * values into the entity, resolves the entity kind, builds the basis matrix from
+ * the record angle, snaps all waypoint heights to the ground and places the
+ * entity on the last waypoint.
+ *
+ * @param self Sequence entity (same layout as in func_80041880).
+ * @param arg Wrapper whose data pointer at +0x08 carries the record.
+ * @param a2 Forwarded unchanged to func_8002AD58(2, self, arg, a2).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8002AD58(2, self, arg, a2) runs first, so this is the message-2
+ * (spawn/attach) path of the entity family.
+ * count = d->count; values[0..2] = d->pos[0..2] << 4;
+ * speeds[i] = (d->speed[i] << 8) / 218; other[0..1] = (d->other[i] << 4) / 300;
+ * mode = 1; flags/kind/extra are copied straight from the record.
+ * A volatile round-trip stores previous = old and end = d->end, then last =
+ * end - 1. If end >= count, mode becomes 2 and end becomes last - 1.
+ * current = 1 when (flags & 5) != 0, else speeds[last]; zero = 0.
+ * func_8006314C(self, d->kind) selects the entity kind;
+ * func_800188D0(d->angle, 0, 0, self->basis) builds the basis;
+ * base = func_80066F78(self->pos, 0, 0, 0) is the ground height and is added to
+ * all three values; self->pos[1] = values[last] places the entity vertically.
+ * Then func_80010750(basis) loads the matrix and
+ * func_80010234(model->data + (index << 4) + 8, (u8 *)self + 0x5c, 1) transforms
+ * the frame vertex.
+ *
+ * @par Likely
+ * The spawn handler of a moving platform/patrol entity: the record gives up to
+ * three waypoints, per-segment speeds (rescaled from the script units by 218)
+ * and a start angle; snapping the waypoint heights through func_80066F78 keeps
+ * the path on the terrain. mode selects whether the sequence runs forwards only
+ * or ping-pongs (Likely).
+ *
+ * @par Unknown
+ * The two divisors 218 and 300 (Likely 1/256 and 1/300 unit conversions), and
+ * what func_8006314C sets up from the kind byte.
+ *
+ * @par Callers
+ * func_80041B6C (sole direct caller).
+ */
 void func_80041488(struct Self *self, struct Arg *arg, s32 a2)
 {
     struct Data *d;

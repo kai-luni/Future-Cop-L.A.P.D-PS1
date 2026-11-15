@@ -1,3 +1,4 @@
+// Categories: Graphics > Scene Graph > Node Transform | Graphics > Animation | Graphics > GTE
 typedef signed char s8;
 typedef unsigned char u8;
 typedef signed short s16;
@@ -29,6 +30,31 @@ extern void func_80018DC0(s32, s32, s32, struct Matrix *);
 extern void func_80010820(struct Matrix *);
 extern void func_8001006C(struct Matrix *, struct Matrix *, s32);
 
+/**
+ * @brief Composes the transform of node arg0 in the matrix stack
+ *        D_800A0300 from an input record and its parent slot.
+ *
+ * @param arg0 Node index; the parent is slot arg0 - 1.
+ * @param input Rotation/translation record with per-axis source flags.
+ * @param table Animation sample table.
+ * @param offset Base index into the table.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Flags bit 4/2/1 select rx/ry/rz directly, otherwise the value is
+ * table[offset + (u16)field]; func_80018DC0(rx, ry, rz, &matrix) builds the
+ * rotation. Flags bit 0x20/0x10/0x08 select x/y/z directly, otherwise a
+ * table sample; each translation is shifted left by 4.
+ * func_80010820(parent) loads the parent matrix into the GTE,
+ * func_8001006C(&matrix, dest, 4) composes, then dest->x/y/z += parent->x/y/z.
+ *
+ * @par Likely role
+ * Local-to-parent composition step of the scene graph; the table is an
+ * animation track and the offset selects the current sample.
+ *
+ * @par Callers
+ * func_80013F08, func_8001428C.
+ */
 void func_80013CB8(s32 arg0, struct Input *input, s16 *table, s32 offset)
 {
     struct Matrix matrix;

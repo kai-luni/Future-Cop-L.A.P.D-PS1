@@ -1,3 +1,4 @@
+// Categories: Physics > Motion | Gameplay > Object Dynamics | Graphics > Scene Graph
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -47,6 +48,35 @@ extern void func_8001006C(void *dst, void *src, s32 n);
 extern void func_8001ACA4(struct Vec3s32 *a, struct Vec3s32 *b, s32 scale, struct Vec3s32 *out);
 extern s32 func_80066F78(struct Vec3s32 *pos, s32 a1, s32 a2, s32 a3);
 
+/**
+ * @brief Advances a launched object one step: rotates its frame, moves
+ *        the attached record along the velocity, spins the angles and
+ *        checks the ground.
+ *
+ * @param object Object record; unk80 is the launch parameter block,
+ *               unk1C the optional attachment.
+ * @param arg Time step.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The attachment sub-record is used only when unk1C != 0 and unk39 & 2;
+ * otherwise flags0F |= 1 and the function returns. func_800188D0 builds
+ * the rotation from unk80->unk04/unk06, func_80010820 loads it and
+ * func_8001006C transforms the three vectors at object->unk34 into
+ * sub->unk04. With vec = (0, unk80->unk00, 0) and scale = arg * 218,
+ * func_8001ACA4 accumulates vec * scale into unk80->unk0C and then
+ * unk80->unk0C * scale into sub->pos. The angles advance by
+ * (unk08 * arg) >> 8 and (unk0A * arg) >> 8. When
+ * func_80066F78(&sub->pos, 0, 0, 0) >= sub->pos.y, unk18 = -1 (ground
+ * reached); otherwise a positive unk18 counts down by arg.
+ *
+ * @par Likely role
+ * Ballistic or thrown object: unk00 the vertical speed, unk0C the
+ * integrated position, unk18 a fuse that expires on impact.
+ *
+ * @par Callers
+ * func_8004C228.
+ */
 void func_8004AFC0(struct UnkObject *object, s32 arg)
 {
     struct UnkSub *sub;

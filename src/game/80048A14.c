@@ -1,3 +1,4 @@
+// Categories: Graphics > Text > Rendering | Graphics > Text > Font Upload
 #include "game/types.h"
 
 struct FontEntry {
@@ -41,6 +42,28 @@ extern s32 func_800489EC(unsigned char *value);
 extern void func_80048BF8(s32 index);
 extern s32 func_80048E28(s32 index);
 
+/**
+ * @brief Registers a font in the next free slot (max four): builds the
+ *        character map, width statistics and row pitch, then uploads it.
+ *
+ * @param arg0 Font source header (count, glyph table and info offsets).
+ * @param arg1 Owner pointer stored in the slot.
+ * @return Nothing; silently returns when all four slots are taken.
+ *
+ * @par Confirmed
+ * Slot = D_8009F364 (>= 4 aborts). The entry D_800A19A0[slot] receives
+ * f18 = arg1, f02/f04 = sign-extended bytes f12/f13 of the source,
+ * f14 = src + off1C (info), f10 = src + off14 (glyph table), f0C = count.
+ * Per glyph (11-byte stride): data[charset] = index, f0A accumulates the
+ * width byte, f08/f06 track max width/height. f0A becomes the average
+ * width, f00 = func_800489EC(info), f0E = ((info->f04 * f00 + 0x1F) &
+ * ~0x1F) >> 3 (32-bit-aligned row bytes). func_80048BF8 uploads the slot,
+ * the counter increments and slot 0 is selected via func_80048E28(0)
+ * when it was the first font.
+ *
+ * @par Callers
+ * func_80048E9C.
+ */
 void func_80048A14(s32 arg0, s32 *arg1)
 {
     register struct FontSource *src __asm__("$7");
