@@ -50,6 +50,8 @@ def group_of(primary):
         return 'Platform'
     if area == 'Resources':
         return 'Video, MDEC & Movies' if 'Movie Playback' in subs else 'Memory & Resources'
+    if area in {'Gameplay', 'AI', 'Physics'}:
+        return 'Gameplay, AI & Physics'
     if area == 'Graphics':
         if 'GTE' in subs:
             return 'GTE Pipeline'
@@ -60,7 +62,8 @@ def group_of(primary):
 
 
 ORDER = ['Boot & Front-End', 'Memory & Resources', 'Video, MDEC & Movies', 'GTE Pipeline',
-         'Renderer & Scene', 'GPU, 2D & HUD', 'Platform', 'Utilities', 'Other']
+         'Renderer & Scene', 'GPU, 2D & HUD', 'Gameplay, AI & Physics', 'Platform', 'Utilities',
+         'Other']
 
 SUMMARIES = {
  'Boot & Front-End':
@@ -92,6 +95,10 @@ SUMMARIES = {
  'Utilities':
    'Mathematics (vector length, fixed point, reciprocal tables) and the lagged-Fibonacci RNG over '
    '`D_800A0480`, used by the renderer and the effects.',
+ 'Gameplay, AI & Physics':
+   'Entities, their message and script paths, motion, collision and targeting. These functions '
+   'barely draw themselves; they move models, step animation frames and trigger effects, while '
+   'the drawing runs through the renderer areas.',
  'Other': 'No unambiguous area match in the category line.',
 }
 
