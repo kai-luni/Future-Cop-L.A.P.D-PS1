@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Entity Primitives | Graphics > Culling
 #include "game/types.h"
 
 struct Vec { s32 x, y, z; };
@@ -18,6 +19,34 @@ extern void func_80010750(void *);
 extern void func_80010234(struct SVec *, struct Vec *, s32);
 extern void func_80049100(u8 *, s32, s32, s32);
 
+/**
+ * @brief Draws one entity as a screen-space marker primitive (small or large
+ *        form), positioned from its model bounds.
+ *
+ * @param entity Entity block.
+ * @param min, max World-space clip box of the view.
+ * @param arg3 Extra flag forwarded to the transform.
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * 1. The entity's graphic at +0x34 provides the model, the 0x3C-byte transform,
+ *    the radius and a bounds record (six half-words: centre and half-extents).
+ * 2. func_80010750 loads the matrix, func_80010234 transforms the four bounding
+ *    corners to 32-bit world coordinates and func_800694C8 maps them to the
+ *    minimap cell grid.
+ * 3. Depending on the entity's mode (the state block's mode at +0x5C) the small
+ *    packet (tag, colour, x, y, size) or the large one (three vertex pairs with
+ *    two colours) is emitted from the D_8009FA90 pool; the D_8009F9F0 pool is
+ *    used for the ordering-table entry.
+ * 4. func_80049100 finally draws the marker/bounds overlay.
+ *
+ * @par Likely role
+ * The bounding-box marker pass: entities are drawn as boxes or simple quads when
+ * their model is not rendered (distance culling, debug view, minimap).
+ *
+ * @par Callers
+ * func_8004ED18 (the entity pass).
+ */
 void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
 {
     register s32 offset __asm__("$17");

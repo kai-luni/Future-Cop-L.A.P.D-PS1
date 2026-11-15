@@ -1,3 +1,4 @@
+// Categories: Platform > Memory Card | Resources > File Access
 typedef unsigned char u8;
 typedef struct { int a, b, c, pos, e, f; } Entry;
 typedef struct { int state, a, b, c, index, d, callback, saved, buffer; } State;
@@ -14,6 +15,31 @@ extern int func_8008E194(void *);
 extern void func_8001C614(void);
 extern void func_8001C27C(int *, int *);
 extern int func_8008E2F8(int, void *);
+/**
+ * @brief Reads the directory block from the memory card into the loader buffer.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed flow (follow-up of func_8001C680)
+ * 1. The loader's current file slot is taken from D_800A6D78[func_80010000.index]
+ *    and its position is passed to func_8001C494 together with the card buffer
+ *    D_8009F614.
+ * 2. The card interface is polled with func_8008E174(1, 0), the control
+ *    registers D_1F801800/D_1F801803 are cleared and func_8008E1BC(0xE, ...)
+ *    starts a directory read; a failure raises func_8008CC80(-1).
+ * 3. The loader state (at 0x80010000, i.e. the first word of the program image)
+ *    is set to 1 and func_8008E194(&func_8001C614) registers the callback that
+ *    finishes the sequence.
+ * 4. func_8001C27C(&D_8009F61C, &D_8009F614) refreshes the two buffers and
+ *    func_8008E2F8(6, ...) opens the card.
+ *
+ * @par Globals
+ * D_8009F610, D_8009F614, D_8009F61C (card buffers), D_800A6D78 (loader slots),
+ * D_80010000 (loader state block).
+ *
+ * @par Callers
+ * func_8001C808.
+ */
 void func_8001C718(void)
 {
     register State *state __asm__("$16");

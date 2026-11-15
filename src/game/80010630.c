@@ -1,4 +1,23 @@
+// Categories: Graphics > GTE > Projection | Graphics > Clipping
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Projects a vertex list three at a time (RTPT) and returns only the
+ *        screen positions plus the accumulated flag.
+ *
+ * @param (implicit) $a0 source vertices, $a1 output (three words: SXY0, SXY1,
+ *        SXY2 per group, 12 bytes), $a2 count, $a3 unused.
+ * @return In $v0: the OR of the FLAG register after every command.
+ *
+ * @par Confirmed structure
+ * Main loop while count >= 3: load six words into VXY0/VZ0/VXY1/VZ1/VXY2/VZ2
+ * ($0..$5), `rtpt`, advance 0x18/0xC, then swc2 $12/$13/$14 store the three
+ * screen positions. The tail (1 or 2 vertices) runs one `rtps` per remaining
+ * vertex and stores SXY2 at a 4-byte stride.
+ *
+ * @par Compare
+ * func_8001054C writes SXY and SZ through swc2 as well, func_800102A0 adds the
+ * per-vertex clip byte.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_80010630\n"

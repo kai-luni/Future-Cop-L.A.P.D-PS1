@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Entry Point | Graphics > Scene Node
 #include "game/types.h"
 
 typedef struct V8 {
@@ -68,6 +69,34 @@ extern void func_80010750(void *);
 extern void func_8001047C(void *, void *, void *, s32);
 extern void func_8006CAAC(void *, void *, s16, void *, s16);
 
+/**
+ * @brief Draws one model with a base colour: transform, project and emit the
+ *        shaded triangles.
+ *
+ * @param model Model index (an entry of the model table).
+ * @param coord Coordinate block (three 32-bit components).
+ * @param size  Scale factor.
+ * @param a3, a4, a5 Extra arguments forwarded to the vertex path.
+ * @param red, green, blue Base colour.
+ * @return Nothing.
+ *
+ * @par Confirmed flow (from the callees)
+ * 1. func_80010820 loads a rotation-only matrix, func_80010750 the full one
+ *    (matrix + translation from the model record).
+ * 2. func_8006CAAC applies the per-vertex scale table, func_8001006C performs the
+ *    batch transform and func_8001047C projects the vertices and returns the
+ *    clip flags.
+ * 3. The shaded packets are taken from the D_8009F9F0 pool and linked into the
+ *    ordering table; the model's colour modulates the per-vertex result.
+ *
+ * @par Likely role
+ * The single-model entry point of the renderer, i.e. what an object passes when
+ * it wants "draw this model here, in this colour" - the coloured counterpart of
+ * the flat func_80072F7C path.
+ *
+ * @par Callers
+ * func_8005DFF0 (effects) and func_8006E988 (the model list walker).
+ */
 void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
                    u8 arg_tr, u8 arg_tg, u8 arg_tb)
 {

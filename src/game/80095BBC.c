@@ -1,4 +1,19 @@
+// Categories: Graphics > GTE > Vector Product | Platform > GTE
 /* Handwritten function */
+/**
+ * @brief OP without shift: cross product with a temporary matrix, sf = 0.
+ *
+ * @param (implicit) $a0 matrix words, $a1 vector, $a2 destination.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Identical sequence to func_80095B64, only the command differs:
+ * 0x4B70000C (OP, real opcode 0Ch, sf = 0), so the results keep full
+ * precision instead of being divided by 4096.
+ *
+ * @par Callers
+ * None in the symbol table (inlined into the surface-normal calculation).
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_80095BBC\n"

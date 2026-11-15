@@ -1,4 +1,25 @@
+// Categories: Graphics > GTE > Matrix Setup | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Loads a 3x3 matrix plus translation into the GTE (rotation matrix and
+ *        TRX/TRY/TRZ).
+ *
+ * @param (implicit) $a0 matrix block: the words at 0, 4, 8, 0xC, 0x10, 0x14,
+ *        0x18, 0x1C, 0x20 are the matrix, 0x24/0x28/0x2C the translation.
+ * @return Nothing.
+ *
+ * @par Confirmed packing
+ * Each matrix element pair is packed as ((a << 12) & 0xFFFF0000) | ((b >> 4) &
+ * 0xFFFF) and written to $0..$4, with the y and z rows negated - the axis
+ * conversion between the engine's left-handed data and the GTE. The translation
+ * is written to $5/$6/$7 with `sra 4`, the y component again negated.
+ *
+ * @par Compare
+ * func_80010820 loads the same matrix but forces the translation to zero.
+ *
+ * @par Callers
+ * None in the symbol table; the model renderers call it from inlined code.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_80010750\n"

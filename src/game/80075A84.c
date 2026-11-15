@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Polygon Pass | Graphics > Lighting
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -103,6 +104,35 @@ extern void func_800754B8(struct Emitter *e, void *node, void *vec, struct Xform
 extern s32 func_80066F78(void *a, s32 b, s32 c, s32 d);
 extern u8 func_800751A4(struct Particle *p, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
+/**
+ * @brief The main polygon pass: walks one scene list, culls, lights and draws each
+ *        node.
+ *
+ * @param list The scene list (pool of particles/polygons).
+ * @param arg  Frame argument forwarded to the sub-calls (a time or state value).
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * For each node of @c list:
+ * 1. func_8003D9C4(node) resolves the mesh slot, func_800753D0 updates the light
+ *    and func_80075478 / func_800754B8 handle the light and visibility flags.
+ * 2. Visibility/range: func_80019F54 (the cheap distance estimate) decides
+ *    whether the node is in
+ *    range; func_80066F78 supplies the camera-relative values.
+ * 3. Transform: func_80010820 loads the node matrix, func_8001006C transforms
+ *    the vertices and func_8001A81C computes the screen extent.
+ * 4. Emission: func_80017668 copies the vertex data, func_800751A4 draws the
+ *    polygon run; nodes that finish are unlinked with func_8003BF1C, new ones
+ *    are attached with func_8003BEF0.
+ *
+ * @par Likely role
+ * The polygon renderer of the scene: this is the "draw the level geometry" pass
+ * that func_8003F4A0 calls last in its loop over the six layer lists.
+ *
+ * @par Callers
+ * func_8003F4A0.
+ */
 void func_80075A84(struct Emitter *e, s32 step)
 {
     s32 tmp[3];

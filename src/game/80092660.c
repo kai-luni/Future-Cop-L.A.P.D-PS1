@@ -1,9 +1,30 @@
+// Categories: Graphics > Display Lists | Graphics > Primitives
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef signed short s16;
 typedef unsigned char u8;
 struct Rect { s16 x, y, w, h; };
 struct Packet { u8 pad[3]; u8 len; u32 cmd, mode, xy, pos, wh; };
+/**
+ * @brief Builds a five-word display-list entry describing one rectangle.
+ *
+ * @param p Target packet.
+ * @param r Source rectangle (x, y, w, h as half-words).
+ * @param x Destination x (11 bits), y Destination y (16 bits).
+ *
+ * @par Confirmed field values
+ * cmd = 0x01000000, mode = 0x80000000, xy = the rectangle's x/y pair,
+ * wh = its w/h pair, pos = (y << 16) | (x & 0xFFFF), and length = 5 - or 0 when
+ * the rectangle has no area.
+ *
+ * @par Likely meaning
+ * 0x01000000 is also the value func_800926C0 writes as the terminator behind a
+ * VRAM transfer, so this is the engine's own list format rather than a raw GPU
+ * command: a rectangle plus a destination offset, closed by a fixed tag.
+ *
+ * @par Callers
+ * func_800259D8, to draw the screen-filling backdrop quad.
+ */
 void func_80092660(struct Packet *p, struct Rect *r, int x, int y)
 {
     register struct Packet *out __asm__("$8") = p;

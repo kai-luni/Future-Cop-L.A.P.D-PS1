@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Primitives | Graphics > GPU Primitives
 #include "game/types.h"
 typedef struct {
     u16 vx;
@@ -19,6 +20,30 @@ typedef struct {
 extern Prim *D_8009F9F0;
 extern Prim *D_8009FA28;
 
+/**
+ * @brief Emits a 52-byte textured quad packet from four screen vertices.
+ *
+ * @param v0..v3 The four vertices as 16-bit pairs.
+ * @param dx, dy Offset applied to the first two vertices (the texture origin
+ *        pair), while v2/v3 are also stored unshifted as the "source" corners.
+ * @param unk04, unk1C Words written into the packet's two spare slots.
+ * @param tag_in The 16-bit part of the ordering-table link tag.
+ * @return Nothing; the packet is taken from the D_8009F9F0 pool (last slot when
+ *         full).
+ *
+ * @par Confirmed
+ * Length byte 8, the four XY pairs written in the order x2/y2 (v0), x0/y0 (v0+dx,
+ * v0+dy), x1/y1 (v2+dx, v2+dy) and x3/y3 (v2), unk14/unk0C zeroed, and the tag
+ * word rebuilt as (old & 0xFF000000) | (tag & 0xFFFFFF).
+ *
+ * @par Likely role
+ * The quad emitter of the model renderer: the same four vertices are used twice,
+ * once offset (the screen position) and once raw (the texture/sprite corner), so
+ * one packet carries both the destination and the source rectangle.
+ *
+ * @par Callers
+ * func_8006F310 (the model draw entry).
+ */
 void func_8006F21C(DVECTOR v0, DVECTOR v1, DVECTOR v2, DVECTOR v3, s32 dx, s32 dy_in, u32 unk04, u32 unk1C, u16 tag_in) {
     register s32 dy __asm__("$8") = dy_in;
     register u16 tag __asm__("$7") = tag_in;

@@ -1,3 +1,4 @@
+// Categories: Graphics > 2D Drawing > Images | Resources > Memory Management
 #include "game/types.h"
 
 typedef struct {
@@ -30,6 +31,27 @@ extern void func_80092C8C(s32 arg0);
 extern void func_80048DEC(void);
 extern void func_800181D4(void *block);
 
+/**
+ * @brief Blits a decoded image resource into the frame buffer and releases it.
+ *
+ * @param arg0 Resource descriptor: the resource id at +0, the frame index at +0x1C
+ *             and the caller's argument at +0x20.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The frame index selects the destination: s1 = (index - 1 & 1) << 8 (the two
+ * 256-pixel halves of the buffer) and s2 = ((index - 1) >> 1) * 0x80 + 0x180
+ * (the vertical stack). Two rectangles of 0x80 x 0xFC are built and sent with
+ * func_80092F38, func_80092C8C synchronises, func_80048DEC refreshes the font and
+ * func_800181D4 frees the resource.
+ *
+ * @par Likely role
+ * The "show the next video/image frame" step: the resource holds a sequence of
+ * 128x252 pictures that are composited into the two page halves.
+ *
+ * @par Callers
+ * The image/video playback path (same family as func_800861E4).
+ */
 void func_80063C5C(Arg63C5C *arg0)
 {
     Rect63C5C rect[2];

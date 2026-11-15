@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Fade Quad | Graphics > GPU Primitives
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
@@ -23,6 +24,24 @@ extern void func_8002385C(void);
 extern void func_80024EC8(void);
 extern void func_8001B4A8(int);
 
+/**
+ * @brief Draws one full-screen fade/wipe quad with a brightness ramp.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The fade level comes from func_80028FD4() and drives the colour: the quad is a
+ * 4-point gouraud polygon (code 0x60) with base 0x60/0x40/0x40 and a computed
+ * intensity per corner, written into the 52-byte packet pool. When the pool is
+ * exhausted the last slot is reused instead of advancing.
+ *
+ * @par Likely role
+ * The screen fade used by the front-end transitions (func_800259D8 calls it in
+ * its idle loop, i.e. once per frame while a screen settles).
+ *
+ * @par Callers
+ * func_800259D8 only.
+ */
 void func_80025690(void)
 {
     Packet *p;

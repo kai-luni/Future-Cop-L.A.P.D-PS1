@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Particles | Graphics > Model Renderer
 #include "game/types.h"
 
 typedef struct Node {
@@ -73,6 +74,32 @@ extern void func_8001B148(Mat *m, s16 *src, s16 *dst, s32 n);
 extern Node *func_80042764(Ent *e);
 extern void func_80042788(Ent *e, Node *n);
 
+/**
+ * @brief Steps one particle/effect node: moves it, colours it, spawns children and
+ *        draws the quad.
+ *
+ * @param node Node record: link at +0, position at +4..+0x10, colour at
+ *             +0x15..+0x17, two half-words at +0x18 as counter/lifetime.
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * 1. The node's seed is taken from the global counter and func_80019668 (the
+ *    lagged-Fibonacci RNG) supplies the random component; the position is
+ *    advanced along the stored direction.
+ * 2. func_800188D0 builds the node's rotation matrix, func_8003D9F8 registers
+ *    the node in the frame's list and func_80042788 / func_80042764 handle the
+ *    size and the colour.
+ * 3. func_8001B148 contributes the screen-space part (the packet is emitted by
+ *    func_80042004, which this function's callers reach through the same node
+ *    list).
+ *
+ * @par Likely role
+ * The per-node update of the effects renderer: one call per effect node per
+ * frame, which explains its position at the front of the 0x8004xxxx effect code.
+ *
+ * @par Callers
+ * func_80044610 only.
+ */
 void func_80042AF4(Ent *self, Node *src, u8 flag)
 {
     s32 buf[14];

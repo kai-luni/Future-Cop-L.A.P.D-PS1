@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Screen-Space Sprites | Graphics > GPU Primitives
 #include "game/types.h"
 
 typedef struct { u8 pad0[0x28]; u8 m[0x54]; s32 cx, cy, cz; } Cam;
@@ -17,6 +18,32 @@ extern void func_8001047C(u16 *, u16 *, u8 *, s32);
 #define ALLOC(p, under, done) do { Prim *h = D_8009F9F0; if (h < D_8009FA28) goto under; p = h; asm volatile("" : "+r"(p)); goto done; under: p = h; D_8009F9F0 = h + 1; done: asm volatile("" : "+r"(p)); } while (0)
 #define FIN(p) W(p, 0) = (W(p, 0) & 0xFF000000) | ((s16)t6 & 0xFFFFFF)
 
+/**
+ * @brief Draws an effect as an axis-aligned screen quad between two projected
+ *        points.
+ *
+ * @param from World start point (three 32-bit components).
+ * @param to   World end point.
+ * @param e    Effect record: two words at +0/+4, two integers at +0xA8/+0xAC, five
+ *             bytes at +0x10..+0x14 (the last one is the texture/page id) and
+ *             the flags word.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * The camera block D_8009F9E4 supplies the matrix (func_80010820 loads it) and the
+ * centre; both points are projected with func_8001047C, which also returns the
+ * clip bytes. The eight resulting half-words are then clipped against the
+ * 0x140/0xF0 screen (`IN(x, y)`) and, when visible, a 0x34-byte packet from the
+ * D_8009F9F0 pool receives the four corners, the UV word and the ordering-table
+ * tag (the FIN macro writes `(tag & 0xFF000000) | (t6 & 0xFFFFFF)`).
+ *
+ * @par Likely role
+ * The tracer/laser-beam primitive: two world points become one stretched screen
+ * quad, which is why the geometry is projected and clipped instead of transformed.
+ *
+ * @par Callers
+ * func_800596C4.
+ */
 void func_80014C64(s32 *from, s32 *to, Eff *e)
 {
     u16 pp[4];

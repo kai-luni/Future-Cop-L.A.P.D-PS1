@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Debris Spawner | Physics > Motion
 #include "game/types.h"
 
 struct Vec3 { s32 v[3]; };
@@ -121,6 +122,32 @@ static inline s32 rot_b(struct Obj *o, void *m)
     return 1;
 }
 
+/**
+ * @brief Spawns a burst of debris/particle nodes around an object.
+ *
+ * @param obj Spawn source: type byte at +4, three half-words at +0x1A..+0x1E,
+ *            a scale at +0x20, an id at +0x22, flags at +0x32 and further
+ *            half-words at +0x34..+0x48.
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * func_80019668 (the lagged-Fibonacci RNG) supplies the per-part randomness;
+ * func_800188D0 builds each part's rotation matrix from the object's own matrix,
+ * func_80010820 reloads it and func_8001006C transforms the part vertices.
+ * func_8003D0F0 attaches the new node to the effect list that owns its storage.
+ *
+ * @par Likely role
+ * The "explosion debris" spawner: one call creates several flying parts with
+ * random directions, and the object's type/id selects the debris geometry and
+ * colour table.
+ *
+ * @par Unknown
+ * The exact part count and the colour selection (the loop bounds are derived from
+ * the half-words at +0x34/+0x36, not yet traced).
+ *
+ * @par Callers
+ * func_8003E984 and func_80044610.
+ */
 void func_8003DB70(struct Obj *o, s32 *x, struct Par *p_arg, u8 *y, s32 *out, s16 *o16, s8 *o8_arg)
 {
     register struct Par *p __asm__("$21") = p_arg;

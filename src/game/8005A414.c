@@ -1,3 +1,4 @@
+// Categories: Resources > Graphics Assets > Texture Upload | Graphics > VRAM Transfer
 #include "game/types.h"
 
 typedef struct {
@@ -47,6 +48,22 @@ extern s32 func_8005A2BC(void **array, s32 count);
  * Both error paths (empty header, failed allocation) run func_8005A220, which frees
  * the blocks allocated so far in reverse order - a partial load leaves no leak. The
  * input buffer is freed at the end, so the function takes ownership of it.
+ *
+ * @param arg0 Packed asset blob; the header behind unk00 carries the entry count
+ *             and a length-prefixed list from +0xC. The buffer is freed at the
+ *             end, so the caller must not use it afterwards.
+ * @return Nothing.
+ *
+ * @par Globals
+ * D_8009F7D8 (descriptor table), D_8009F7DC (entry cursor into VRAM).
+ *
+ * @par Side effects
+ * Allocates the per-entry blocks with func_80017EBC, writes into VRAM through
+ * func_80092F38 and syncs with func_80092C8C. On failure func_8005A220 releases
+ * the blocks allocated so far.
+ *
+ * @par Callers
+ * func_80024EC8, when a graphics asset of a loaded level becomes visible.
  */
 void func_8005A414(ArgA414 *arg0)
 {

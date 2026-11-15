@@ -1,3 +1,4 @@
+// Categories: Graphics > GPU > Drawing Area | Platform > GPU
 #include "game/types.h"
 
 struct Prim {
@@ -20,6 +21,31 @@ extern s32 D_8009DE6C[];
 extern int func_80091F74(void);
 extern void func_8008CD10(void *, void *, int);
 
+/**
+ * @brief Applies a drawing-area state block to the GPU library, with change
+ *        detection.
+ *
+ * @param p State block: two packed coordinate words (p->u0/p->u2), four
+ *          half-word rectangle values at +0x8..+0xE and a status byte at +0x12.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * 1. Debug hook when the library's level byte D_8009DDF2[0] >= 2.
+ * 2. A GP0 0x05 command word is built from p->u0/p->u2 (both masked to 0x3FF and
+ *    packed as (upper << 10) | lower) and handed to D_8009DDE8->fn.
+ * 3. The four rectangle values are compared with the library's current values at
+ *    D_8009DDF2 + 0x72; if any differs, the library is asked for a new origin
+ *    (func_80091F74), the status byte is stored and the four target coordinates
+ *    are recomputed from a 10-pixel grid.
+ *
+ * @par Likely role
+ * The "set drawing area and offset" call of the 2D layer, with a cache so an
+ * unchanged area costs only the two comparisons.
+ *
+ * @par Callers
+ * func_8001BFE4, func_8001C088, func_800773D8, func_8007757C and the sprite
+ * paths.
+ */
 struct Prim *func_800934BC(struct Prim *p)
 {
     register u32 flags __asm__("$19");

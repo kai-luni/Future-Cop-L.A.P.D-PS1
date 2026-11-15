@@ -1,4 +1,35 @@
+// Categories: Graphics > GTE > Vector Batch Transform | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Transforms an array of vertices with the current rotation matrix and
+ *        stores them as three half-words each (Y negated).
+ *
+ * @param (implicit) $a0 source array, 8 bytes per vertex (VXY0 at +0, VZ0 at +4).
+ * @param (implicit) $a1 destination array, 8 bytes per vertex (three s16 plus
+ *        padding).
+ * @param (implicit) $a2 vertex count; <= 0 skips the loop entirely.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Per vertex: two lw, two mtc2 ($0, $1), two nops, `mvmva 1,0,0,3,0` (sf = 1,
+ * rotation matrix, IR vector as input), then mfc2 $9/$10/$11 (IR1..IR3) and
+ * three `sh` stores; the Y component is negated first. Pointers advance by 8
+ * and the count is decremented before the loop test, so the last store lands in
+ * the delay slot of the branch - the classic MIPS batch shape.
+ *
+ * @par Likely role
+ * The bulk "model to view" transform used by the object renderers: three
+ * 16-bit coordinates are enough for the downstream projection, and the Y
+ * negation converts the model's Y-up axis to the screen's Y-down convention.
+ *
+ * @par Callers
+ * func_80013F08, func_8001428C, func_80016C88, func_8004A048, func_80051CC4,
+ * func_800597C0, func_80070158.
+ *
+ * @par Siblings
+ * func_800101D4 (vector register as input), func_8001016C (adds a 15/16
+ * correction on Y), func_80010234 (32-bit results, output stride 0xC).
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_8001010C\n"

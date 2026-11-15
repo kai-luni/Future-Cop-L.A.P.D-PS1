@@ -1,4 +1,21 @@
+// Categories: Graphics > GTE > Vector Batch Transform | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Batch vertex transform that feeds the vertex into V0 instead of IR.
+ *
+ * @param (implicit) $a0 source array (8 bytes per vertex), $a1 destination
+ *        (8 bytes per vertex), $a2 count.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Same loop as func_8001010C but the command is `mvmva 1,0,0,0,0`: v = 0, so the
+ * multiply uses the V0 register pair that was just loaded with mtc2 $0/$1,
+ * and the flag lm = 0 (no limit). Results are again read from IR1..IR3, Y is
+ * negated, three `sh` stores.
+ *
+ * @par Callers
+ * func_80013F08 and func_800592D0.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_800101D4\n"

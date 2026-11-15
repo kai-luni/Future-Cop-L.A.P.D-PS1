@@ -1,4 +1,26 @@
+// Categories: Graphics > GTE > Projection | Graphics > Clipping
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Projects a vertex list one at a time (RTPS) and writes a clip-flag byte
+ *        per vertex.
+ *
+ * @param (implicit) $a0 source vertices (VXY0/VZ0, 8 bytes each), $a1 output
+ *        (SXY2 + SZ3, 8 bytes each), $a2 clip-flag output (1 byte per vertex),
+ *        $a3 count.
+ * @return In $v0: the OR of all FLAG registers seen, so the caller can test the
+ *         whole batch for overflow in one go.
+ *
+ * @par Confirmed per-vertex step
+ * lw/mtc2 $0/$1, two nops, `rtps`, then SXY2 ($14) and SZ3 ($19) are read.
+ * The clip byte is assembled from three tests: SZ3 < 0x400 (bit 0x40/0x80
+ * depending on the screen width 0x140 or 0xA0 selected by D_8009FA0C), the
+ * x coordinate against that width and y against 0xF0. A FLAG bit 0x1C66 (the
+ * GTE saturation bits, pre-shifted by 12) sets the byte to 1.
+ *
+ * @par Likely role
+ * The single-vertex variant of the projection pass; func_800102A0 is the
+ * three-at-a-time (RTPT) version with the same flag logic.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_8001047C\n"

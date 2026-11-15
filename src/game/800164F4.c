@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Textured Polygons | Graphics > GTE
 #include "game/types.h"
 
 struct V16 { s16 x, y, z, pad; };
@@ -16,6 +17,32 @@ extern void func_80010234(struct V16 *, struct V32 *, s32);
 extern void func_80010820(void *);
 extern s32 func_8001047C(struct V16 *, struct V16 *, u8 *, s32);
 
+/**
+ * @brief Draws one animated model frame as textured, depth-cued triangles.
+ *
+ * @param obj Object: model at +0, matrix at +4, position at +0x28, frame index at
+ *            +0x48 and a flags byte at +0x4C.
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * 1. The frame record (six half-words per vertex pair) and the object matrix are
+ *    loaded with func_80010750; the vertices of the frame are transformed with
+ *    func_80010234 (32-bit) and projected with func_8001047C, which also yields
+ *    the per-vertex clip codes.
+ * 2. For each triangle the code checks the flags, computes the depth as the sum
+ *    of the three z values (<< 2 for the ordering table) and fills the 52-byte
+ *    packet: tag with depth, colour and dark colour for the two shading tones,
+ *    the three screen vertices, the UV words (D_8009FAA0 << 16 | 0x101) and the
+ *    packet length byte 9.
+ * 3. func_80066F78 supplies the camera-relative ground/shade values.
+ *
+ * @par Likely role
+ * The textured model path of the scene renderer (the sibling of the flat
+ * func_80072F7C and the gouraud func_80071FA4).
+ *
+ * @par Callers
+ * func_80010234's callers, i.e. the object renderers of the 0x8002-0x8005 range.
+ */
 void func_800164F4(struct Obj *obj)
 {
     struct V16 p[5], q[5];

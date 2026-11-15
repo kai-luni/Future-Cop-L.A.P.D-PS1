@@ -1,4 +1,27 @@
+// Categories: Graphics > GTE > Vector Batch Transform | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Batch vertex transform with 32-bit results and an output stride of 0xC.
+ *
+ * @param (implicit) $a0 source array (8 bytes per vertex), $a1 destination
+ *        (12 bytes per vertex), $a2 count.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * `mvmva 1,0,0,0,0` (v = 0, i.e. the V0 register pair), then the results are
+ * read from MAC1..MAC3 ($25/$26/$27), each shifted left by 4 (a 4-bit fixed
+ * point scale) and stored as three *words*; Y is negated before the shift.
+ * Destination advances by 0xC per vertex.
+ *
+ * @par Likely role
+ * The high-precision variant of func_8001010C: full 32-bit coordinates for
+ * geometry that is transformed again later (it is the most used of the family,
+ * 39 call sites, all over the polygon and effect code).
+ *
+ * @par Callers
+ * 39 sites, including func_800164F4, func_80065834 and the whole 0x8002-0x8005
+ * range of object renderers.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_80010234\n"

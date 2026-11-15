@@ -1,3 +1,4 @@
+// Categories: Graphics > Debug Display | Platform > Debug
 #include "game/types.h"
 
 struct PacketState {
@@ -26,6 +27,27 @@ extern void func_800932F0(void *);
 extern void func_80092BF4(int);
 extern void func_80077278(int, int, unsigned int);
 
+/**
+ * @brief Draws a four-line debug text screen.
+ *
+ * @param a0..a3 The four numeric values printed at (0x20, 0x20), (0x20, 0x40),
+ *        (0x20, 0x60) and (0x20, 0x80).
+ * @return Nothing; the closing `__asm__(".word 0x000101CD")` is a `break`,
+ *         i.e. the routine is a trap-style debug display that does not return in
+ *         a useful way.
+ *
+ * @par Confirmed
+ * The sequence is the standard stack of the 2D layer: func_80091480 /
+ * func_80091510(0) / func_80092910(0) reset the display, func_80092E10(text, 0,
+ * 0, 0) sets an 8-byte text block from D_8009F3B8, func_80092140 and
+ * func_800921F4 build two 320x240 packet states, func_800934BC/starts and
+ * func_800932F0 applies them, then four func_80077278(x, y, value) calls draw the
+ * numbers.
+ *
+ * @par Likely role
+ * A diagnostic overlay left in the retail build (func_800773D8 is its looping
+ * twin, which ends in an endless redraw).
+ */
 void func_8007757C(int a0, int a1, int a2, int a3)
 {
     u8 disp[0xB8];

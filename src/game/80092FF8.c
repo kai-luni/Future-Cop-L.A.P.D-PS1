@@ -1,3 +1,4 @@
+// Categories: Graphics > GPU > VRAM Transfer | Platform > GPU
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef struct { short x,y,w,h; } Rect;
@@ -6,6 +7,27 @@ extern void func_80092CF4(char *, Rect *);
 extern char D_80012AAC[];
 extern u32 D_8009DE90[];
 extern Context *D_8009DDE8;
+/**
+ * @brief Sends a rectangle to the GPU library as a 20-byte transfer command.
+ *
+ * @param r Rectangle (x, y, w, h as half-words).
+ * @param a Destination x/y, packed into one word as (b << 16) | (a & 0xFFFF).
+ * @param b see @c a.
+ * @return The library's result (negative on an empty rectangle).
+ *
+ * @par Confirmed mechanics
+ * func_80092CF4(D_80012AAC, r) runs the debug wrapper, an empty rectangle returns
+ * -1, then a three-word command block is built in place at D_8009DE90:
+ * [0] = the rectangle's xy, [1] = the packed destination, [2] = its wh - and
+ * handed to the library callback as send(arg, block - 2, 20, 0).
+ *
+ * @par Likely role
+ * The "move image in VRAM" primitive (GP0 0x80) used by the double-buffer and
+ * screen-copy paths.
+ *
+ * @par Callers
+ * func_80088120 only.
+ */
 int func_80092FF8(Rect *r, int a, int b)
 {
     register int aa __asm__("$18") = a;

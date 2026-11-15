@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Textured Mesh | Graphics > Scene Node
 #include "game/types.h"
 typedef struct { u32 w[13]; } QW;
 typedef union Packet {
@@ -53,6 +54,31 @@ extern void func_80010750();
 extern void func_8001047C();
 extern void func_8001846C();
 
+/**
+ * @brief Draws a model node as a textured mesh part: vertices, UVs and packets.
+ *
+ * @param obj Object/model record: parts table at +0x1C, matrix at +0x38, texture
+ *            flags at +0x1A/+0x64/+0x70 and the frame index at +0x12 (see the
+ *            struct at the top of the file).
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * 1. func_80010750 loads the matrix, func_80010820 the rotation-only variant, and
+ *    func_8001A100 tests the model radius against the view.
+ * 2. func_8001047C projects the part's vertices and yields the clip bytes;
+ *    func_8001006C transforms the remaining vertex blocks.
+ * 3. func_8001846C/func_8003D9F8 prepare the packet slots and link them; the
+ *    part descriptors supply the UV pairs (`texture`/`tex` fields) that
+ *    func_80016E6C then turns into triangles/quads.
+ *
+ * @par Likely role
+ * The textured model path - the most detailed of the three renderer paths and
+ * the one that owns the part table (a model is a list of parts, each with its own
+ * vertices and texture page).
+ *
+ * @par Callers
+ * func_8006E988.
+ */
 void func_8006DC24(Obj *o, s32 *pos)
 {
     struct { s32 mat[9]; s32 flag[3]; s32 mask[2]; } w;

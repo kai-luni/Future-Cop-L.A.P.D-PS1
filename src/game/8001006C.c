@@ -1,4 +1,24 @@
+// Categories: Graphics > GTE > Batch Transform | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Batch transform of 12-byte vertices, output as three 32-bit values with
+ *        Y flipped.
+ *
+ * @param (implicit) $a0 source array (x, y, z as three words, 12 bytes per
+ *        vertex), $a1 destination (12 bytes per vertex), $a2 count (<= 0 skips).
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * The source words are repacked into the GTE's 16-bit layout: VXY0 =
+ * ((x << 12) >> 16) | ((y >> 4) << 16), VZ0 = z >> 4 (both with the mtc2 pair
+ * $0/$1), then `mvmva 1,0,0,3,0`; the results are read from IR1..IR3, shifted
+ * left by 4 and stored as three words, with Y negated.
+ *
+ * @par Likely role
+ * The 32-bit-precision sibling of func_8001010C for vertices that keep
+ * fractional coordinates - 30 call sites, from the object renderers to
+ * func_8006DC24 and func_80071FA4.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_8001006C\n"

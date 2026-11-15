@@ -1,3 +1,4 @@
+// Categories: Platform > Memory Card | Platform > Serial Port
 #include "game/types.h"
 extern volatile unsigned char D_1F801800, D_1F801803;
 extern int D_8009F61C, D_8009F614;
@@ -6,6 +7,31 @@ extern int func_8008E1BC(int, void *, void *);
 extern void func_8008CC80(int);
 extern void func_8001C27C(int *, int *);
 extern int func_8008E2F8(int, void *);
+/**
+ * @brief Initialises the memory-card interface on expansion port 1.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed flow (this is not a graphics unit; the selection filter caught
+ *      its hardware register)
+ * 1. func_8008E174(1, 0) is polled until it returns 0 (the card interface is
+ *    free).
+ * 2. D_1F801800 and D_1F801803 are cleared - the two memory-card control/status
+ *    registers of the serial port.
+ * 3. func_8008E1BC(0xE, &D_8009F610, &D_8009F798) starts the card; on failure
+ *    func_8008CC80(-1) raises an error.
+ * 4. func_8001C27C(&D_8009F61C, &D_8009F614) sets up the two buffers, and
+ *    func_8008E2F8(6, &D_8009F614) opens the card; on failure the first word of
+ *    the loaded image (0x80010000) is zeroed - the "no card" marker the loader
+ *    checks.
+ *
+ * @par Globals
+ * D_1F801800/D_1F801803 (card registers), D_8009F61C, D_8009F614 (buffer
+ * pointers).
+ *
+ * @par Callers
+ * func_8001C808.
+ */
 void func_8001C680(void)
 {
     register int *p __asm__("$2");

@@ -1,5 +1,27 @@
+// Categories: Graphics > GTE > Transform | Platform > GTE
 #include "game/types.h"
 
+/**
+ * @brief RTPS: perspective-transforms one vertex and returns the projected
+ *        position together with its depth.
+ *
+ * @param src Pointer to the packed vertex (VXY0 at +0, VZ0 at +4).
+ * @param dst Output block: SXY2 (projected screen XY) at +0, SZ3 (the
+ *            interpolated screen depth) at +4.
+ * @return In $v0: the GTE FLAG register.
+ *
+ * @par Confirmed mechanics
+ * lwc2 $0 / lwc2 $1 load VXY0 and VZ0, two load-delay nops, `cop2 0x0180001`
+ * is RTPS with sf = 1 (real opcode 01h), then swc2 $14 stores SXY2 and
+ * swc2 $19 stores SZ3 before cfc2 $2,$31 reads FLAG.
+ *
+ * @par Compare
+ * func_8001072C is the same transform but returns only SXY2 - the sibling that
+ * the two renderer paths use when the depth is not needed.
+ *
+ * @par Callers
+ * func_8006F310 and func_80070158.
+ */
 void func_80010704(u32 *src, u32 *dst)
 {
     __asm__ volatile(

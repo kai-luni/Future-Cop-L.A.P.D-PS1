@@ -1,3 +1,4 @@
+// Categories: Graphics > Screen Regions > Viewports | Graphics > HUD
 typedef unsigned int u32;
 typedef unsigned char u8;
 typedef struct { char pad[0x5c]; int mode; } Context;
@@ -13,6 +14,32 @@ extern u32 *D_8009F820;
 extern Rect D_800A2970;
 extern Entry D_800A8DC0[];
 extern void func_80062C3C(void), func_80062874(void), func_80062614(void);
+/**
+ * @brief Computes the active screen region and marks its pixels in the region
+ *        table.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * 1. D_8009F82C and D_8009F828 are cleared (the two region counters).
+ * 2. Region by game mode:
+ *    - state block mode == 1 (split screen): 16 pixels are reserved at top and
+ *      bottom (h = height - 16), the width shrinks by 8 per extra player
+ *      (w = width - count * 8 + 8) and the origin is (count - 1) * 4;
+ *    - D_8009FA0C == 1 (small view): a fixed 20x20 box at the current cursor;
+ *    - otherwise: the bounding box of the two corner markers
+ *      D_8009F834..D_8009F837 (each * 4, sorted with XOR swaps) plus 20.
+ * 3. n = w * h, then the pixel loop walks the region in D_8009F820 and sets the
+ *    flag bytes of D_800A8DC0, and D_800A2970 receives the rectangle.
+ *
+ * @par Likely role
+ * The viewport/occlusion bookkeeping of the split-screen renderer: every pixel
+ * that a view draws is marked, so the next view knows what it may overwrite.
+ *
+ * @par Callers
+ * func_80062C3C, func_80062874 and func_80062614 (the three mode-specific
+ * callers).
+ */
 void func_80062FB4(void)
 {
     u32 x, y, x2, y2, w, h, n, i;

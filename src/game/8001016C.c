@@ -1,4 +1,24 @@
+// Categories: Graphics > GTE > Vector Batch Transform | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Batch vertex transform with an extra Y correction of 15/16.
+ *
+ * @param (implicit) $a0 source array, $a1 destination array, $a2 count.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Identical to func_8001010C (`mvmva 1,0,0,3,0`, Y negated, three `sh`), plus
+ * two instructions on Y: `sra $t2,$t3,4` and `sub $t3,$t3,$t2`, i.e.
+ * y = y - y/16 = y * 15/16.
+ *
+ * @par Likely role
+ * The same transform for geometry that has to be squashed slightly on Y -
+ * a cheap aspect-ratio correction for the 320x240 screen.
+ *
+ * @par Callers
+ * None in the symbol table (inlined); the callers of the sibling functions use
+ * whichever variant their projection needs.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_8001016C\n"

@@ -1,3 +1,4 @@
+// Categories: Graphics > 2D Drawing > Rectangles | Graphics > GPU Primitives
 #include "game/types.h"
 
 struct HalfRect { u32 xy, wh; };
@@ -11,6 +12,24 @@ struct Packet {
 extern u8 *D_8009FA90;
 extern u8 *D_8009F9C0;
 
+/**
+ * @brief Emits a filled rectangle: a texpage word plus a 24-bit colour rectangle.
+ *
+ * @param red, green, blue Colour components.
+ * @param rect Rectangle (packed xy and wh words).
+ * @param blend Non-zero switches the primitive from opaque (0x60) to
+ *              semi-transparent (0x62).
+ * @return Nothing; two 28-byte primitives are taken from the D_8009FA90 pool
+ *         (falling back to the last slot when it is exhausted).
+ *
+ * @par Confirmed contents
+ * Primitive 1: length 1, code 0xE1000000 (draw-mode/texpage).
+ * Primitive 2: length 3, code 0x60 (or 0x62 when blending), the colour bytes and
+ * the rectangle's xy/wh.
+ *
+ * @par Callers
+ * func_8001C214 (the blended overlay rectangle) and the 2D screens.
+ */
 void func_8001C148(u8 red, u8 green, u8 blue, struct HalfRect *rect, u8 blend)
 {
     u8 *packet;

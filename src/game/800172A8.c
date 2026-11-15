@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Gouraud Polygons | Graphics > GTE
 #include "game/types.h"
 
 typedef struct {
@@ -22,6 +23,30 @@ extern u16 D_8009F580;
 
 extern void func_80015F14(void *a0, void *a1, void *a2);
 
+/**
+ * @brief Emits one gouraud-shaded, depth-cued textured polygon.
+ *
+ * @param arg0 Vertex count/type selector.
+ * @param arg1 Packed colour or UV word (the upper half is used for the texture
+ *             coordinates).
+ * @param a2 Destination/state pointer.
+ * @param arg3 Vertex block (13-word packet layout: x/y, z, and the per-vertex
+ *             colour slots).
+ * @return A status value (the packet is skipped when the vertex block is empty).
+ *
+ * @par Confirmed
+ * The function takes one 0x34-byte packet from the D_8009F9F0 pool, shades the
+ * vertices with func_80015F14 (NCCS, i.e. light-matrix × vertex colour), and
+ * fills the packet's tag with the depth word taken from D_8009F580 and the
+ * vertex colours from the GTE result registers.
+ *
+ * @par Likely role
+ * The coloured-polygon path of the model renderer (the sibling of the flat
+ * func_8006F21C path).
+ *
+ * @par Callers
+ * func_80015F38 and func_8006CB58.
+ */
 s32 func_800172A8(s32 arg0, u32 arg1, u32 *a2, Vtx17 *arg3)
 {
     Prim17 *prim;

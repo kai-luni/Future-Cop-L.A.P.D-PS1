@@ -1,3 +1,4 @@
+// Categories: Graphics > Debug Display | Platform > Debug
 #include "game/types.h"
 
 struct PacketState {
@@ -28,6 +29,23 @@ extern void func_800932F0(void *);
 extern void func_80092BF4(int);
 extern void func_80077278(int, int, unsigned int);
 
+/**
+ * @brief Endless debug screen: same set-up as func_8007757C, but it redraws
+ *        forever.
+ *
+ * @return Never (declared `noreturn`).
+ *
+ * @par Confirmed
+ * The 8-byte text block is copied from D_8009F3B8 with unaligned `lwl/lwr` pairs
+ * written into the local frame (a hand-written carry-over of a `memcpy` the
+ * compiler would not produce), the same display stack as func_8007757C runs, and
+ * the function then loops over the two tables D_800A6E58/D_800A6E38 redrawing
+ * until the machine is reset.
+ *
+ * @par Likely role
+ * A development leftover: the "hang forever with diagnostics" screen. It is
+ * reachable in the retail binary, so it is part of the shipped behaviour.
+ */
 __attribute__((noreturn)) void func_800773D8(void)
 {
     u8 disp[0xB8];

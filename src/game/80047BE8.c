@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Gouraud Quad | Graphics > Effects
 #include "game/types.h"
 
 typedef struct {
@@ -18,6 +19,28 @@ extern u8 D_8009FAA4;
 
 extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
 
+/**
+ * @brief Draws a vertical gouraud quad (light beam / glow column).
+ *
+ * @param x, y_in Screen position.
+ * @param p3, p4, p5 The three colour components of the top edge.
+ * @param z, width, flag Extra geometry and a "halve when busy" switch.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * 1. A backdrop rectangle is drawn first with func_8001C214(0x2000, x*2,
+ *    y*2 - 0x60, 0x10, 0x60, 1) - the blended overlay primitive.
+ * 2. The colours are scaled by 2 and divided by 4; when the flag is set and
+ *    D_8009FAA4 >= 0x80 they are halved again (the "many effects on screen"
+ *    dimming).
+ * 3. The quad packet (length 8, code 0x38) gets x on both top and bottom edges,
+ *    y - z on the top, the three colours in both edges (c0..c2 and a0..a2/d0..d2)
+ *    - a vertical strip whose two ends share the colour.
+ *
+ * @par Likely role
+ * The energy/smoke column effect: one quad per effect, with the backdrop adding
+ * the soft halo.
+ */
 void func_80047BE8(s32 x, s32 y_in, s32 z, s32 p3, s32 p4, s32 p5, s32 flag)
 {
     Prim *prim;

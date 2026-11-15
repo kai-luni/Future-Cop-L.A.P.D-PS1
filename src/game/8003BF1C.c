@@ -1,3 +1,4 @@
+// Categories: Graphics > Scene Graph > Object List | Utilities
 #include "game/types.h"
 
 struct PoolNode {
@@ -10,6 +11,25 @@ struct Pool {
     struct PoolNode *free;
 };
 
+/**
+ * @brief Unlinks a node from the active list and pushes it onto the free list.
+ *
+ * @param pool     Pool: @c storage at +0, @c active at +4, @c free at +8.
+ * @param previous Predecessor inside the active list, NULL when the node is the
+ *                 list head (then pool->active is advanced).
+ * @param node     Node to release.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * previous ? previous->next = node->next : pool->active = node->next, then
+ * node->next = pool->free and pool->free = node - the mirror image of
+ * func_80042764/80042788, but here with an explicit predecessor (an O(1)
+ * unlink inside a singly linked list).
+ *
+ * @par Callers
+ * func_8005BD20, func_8005C0C0, func_8006F170 and func_80075A84 - the scene
+ * walkers that create and destroy render objects per frame.
+ */
 void func_8003BF1C(struct Pool *pool, struct PoolNode *previous,
                    struct PoolNode *node)
 {

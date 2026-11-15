@@ -1,4 +1,30 @@
+// Categories: Graphics > Model Renderer > Textured Surfaces | Graphics > Clipping
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Builds the triangle strips of a textured surface with per-strip clipping.
+ *
+ * @param (implicit) $a0 vertex list, $a1 destination packet run, $a2 rectangle
+ *        (x, y, w as half-words), $a3 bit mask selecting the texture page.
+ * @return Nothing.
+ *
+ * @par Confirmed structure
+ * The screen width is preloaded from D_8009FA0C (0x140 or 0xA0) and used to clamp
+ * each strip. The loop walks the vertex list in 0x4C-byte steps (0x33 alternately,
+ * i.e. two interleaved strides), packs the 4-bit attribute of each vertex into a
+ * running word (`sllv $a3, ($s4 & ~3)`, masked with 0xF0000000) and, as long as
+ * that word is zero, skips 0x33 bytes and 0x198 bytes in the destination - the
+ * "no attributes in this column" fast path. Otherwise it emits a strip of up to
+ * 0x11 vertices and copies the gathered attributes.
+ *
+ * @par Likely role
+ * The surface rasteriser of the level renderer: attributes are 4-bit indices that
+ * select a palette row per vertex, and the odd strides come from the two
+ * interleaved vertex arrays.
+ *
+ * @par Unknown
+ * The meaning of 0x33/0x198 (likely 51-byte vertex records and 408-byte packet
+ * groups).
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_800646BC\n"

@@ -1,3 +1,4 @@
+// Categories: Graphics > HUD > Markers | Gameplay > Radar
 #include "game/types.h"
 
 struct Unk5AB8CParam {
@@ -66,6 +67,27 @@ extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
 extern void func_800694C8(s32 *outX, s32 *outY, s32 arg2, s32 arg3);
 extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
 
+/**
+ * @brief Draws the eight directional markers of one object on the radar.
+ *
+ * @param obj Object with a sub-block at +0x300 (eight colours and eight
+ *            positions at +0xA8 and +0xBO) and a mode byte at +0x310.
+ * @param arg1 Reference position (three 32-bit components).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The eight (colour, position) pairs of the sub-block are converted to the
+ * minimap grid with func_800694C8, filtered against the view box, and each
+ * surviving marker is drawn with func_8001C214 (the blended rectangle) after
+ * the clip helper func_8001846C/func_80018580 has produced its screen position.
+ *
+ * @par Likely role
+ * The compass/target ring of the HUD: eight markers around the player, each with
+ * its own colour, plus a mode byte that decides which subset is shown.
+ *
+ * @par Callers
+ * The HUD/radar update of the entity renderer.
+ */
 void func_8005AB8C(struct Unk5AB8C *input, s32 *arg1, s32 *arg2)
 {
     struct Unk5AB8C *arg0;

@@ -1,4 +1,27 @@
+// Categories: Graphics > GTE > Matrix Transform | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Transforms one vertex by an explicit matrix and stores it as three
+ *        half-words with the Y axis flipped.
+ *
+ * @param (implicit) $a0 pointer to the packed source vertex (VXY0, VZ0),
+ *        $a1 destination (three s16).
+ * @return In $v0: the GTE FLAG register.
+ *
+ * @par Confirmed mechanics
+ * lwc2 $0/$1, two nops, `0x4A486012` = MVMVA (real opcode 12h) with sf = 1,
+ * mx = 0 (rotation matrix), v = 0 (V0), cv = 0, then the three results are
+ * read back from IR1..IR3 with mfc2 and stored with `sh`; the Y component is
+ * negated first (`neg $t1,$t1`).
+ *
+ * @par Likely role
+ * The "model to world" step of a small object path where the results are kept
+ * as 16-bit coordinates - the Y negation converts between the two screen/axis
+ * conventions used by the engine.
+ *
+ * @par Callers
+ * func_8006411C and func_8006429C.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_800640D8\n"

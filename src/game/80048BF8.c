@@ -1,3 +1,4 @@
+// Categories: Graphics > Text > Font Upload | Graphics > VRAM Transfer
 #include "game/types.h"
 
 typedef struct {
@@ -43,6 +44,28 @@ extern u16 D_8009F768;
 extern void func_80092F38(Rect *rect, void *data);
 extern void func_80092C8C(s32 arg0);
 
+/**
+ * @brief Uploads one font bank into the texture area and builds its texpage
+ *        word.
+ *
+ * @param arg0 Bank index; anything >= 4 is ignored.
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * 1. Guard: the font's row count D_8009F76A plus the bank height (info->f06)
+ *    must stay below 0x1FF.
+ * 2. The glyph bitmap at info + 0x10 is nibble-swapped in place (the font data is
+ *    stored with 4-bit packed pixels in the opposite order).
+ * 3. The bank is placed at VRAM x = 0x380 and y = D_8009F76A + 0x100, uploaded
+ *    with func_80092F38 as (w/4, height) and synchronised with func_80092C8C(0).
+ * 4. D_800A1940[arg0] receives the texpage word built from the destination row:
+ *    bits 8/10 select the VRAM column half, 0xE the texture page.
+ * 5. For bank 0 an extra 0x10x1 rectangle at (0x380, 0x1FF) is written - the
+ *    "blank" glyph the text renderer uses for spaces.
+ *
+ * @par Callers
+ * func_80048DEC (the font selector).
+ */
 void func_80048BF8(s32 arg0)
 {
     struct FontInfo *info;

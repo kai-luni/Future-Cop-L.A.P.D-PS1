@@ -1,3 +1,4 @@
+// Categories: Graphics > Sprites > Atlas | Graphics > GPU Primitives
 #include "game/types.h"
 
 typedef struct {
@@ -59,6 +60,28 @@ extern Table82B0C *D_8009F45C;
 extern Prim82B0C *D_8009F9F0;
 extern Prim82B0C *D_8009FA28;
 
+/**
+ * @brief Emits a sprite from the texture atlas table, with optional size and UV
+ *        overrides.
+ *
+ * @param idx    Atlas entry index; must be inside D_8009F45C->count.
+ * @param x, y   Screen position.
+ * @param w, h   Size; -1 takes the size from the atlas entry.
+ * @param tag    Ordering-table tag.
+ * @param r, g, b Colour.
+ * @param flagX, flagY Flip flags.
+ * @return The emitted packet, or NULL when the table is missing or the index is
+ *         out of range.
+ *
+ * @par Confirmed
+ * The atlas entry carries tpage, u/v, width, height and a CLUT; the packet is a
+ * 0x34-byte sprite/quad as used by the rest of the 2D layer. Sizes of -1 are
+ * resolved from the entry, so the same helper serves "native size" and "stretch".
+ *
+ * @par Likely role
+ * The HUD/front-end sprite emitter: one call per sprite, with the atlas built
+ * once at load time.
+ */
 Prim82B0C *func_80082B0C(register s32 idx, s32 x, s32 y, s32 w, s32 h, s32 tag, s32 r, s32 g, s32 b, s8 flagX, s8 flagY)
 {
     Table82B0C *table;

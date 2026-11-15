@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Flat Polygons | Graphics > Geometry
 #include "game/types.h"
 
 typedef struct V3_72F7C {
@@ -64,6 +65,28 @@ extern s32 func_8001A100(V3_72F7C *vector);
 extern void func_80010820(u8 *matrix);
 extern void func_8001047C(S3X_72F7C *in, S3X_72F7C *out, u8 *flags, s32 count);
 
+/**
+ * @brief Draws a model node as flat-shaded polygons (the cheap renderer path).
+ *
+ * @param node Node: vertex pointer, a short-coordinate block, a count and a base
+ *             colour, plus the per-node matrix.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The node's vertices are transformed with func_8001047C (projection + clip
+ * byte), the matrix is loaded with func_80010820 and the geometry is passed
+ * through func_8001A100 for the radius/range test. The colours are the node's
+ * single RGB triple (no per-vertex shading), and the packet pool is D_8009F9F0.
+ *
+ * @par Compare
+ * func_80071FA4 is the full path (per-vertex shading, textures, environment
+ * mapping); this one is used for nodes without those attributes - func_80073700
+ * selects between them by checking whether the node's two geometry pointers are
+ * set.
+ *
+ * @par Callers
+ * func_80073700.
+ */
 void func_80072F7C(struct Node72F7C *node, V3_72F7C *arg)
 {
     S3X_72F7C shorts[100];

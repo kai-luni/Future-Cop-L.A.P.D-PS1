@@ -1,4 +1,26 @@
+// Categories: Graphics > GTE > Vector Product | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Cross product of two vectors with a caller-supplied matrix, 32-bit out.
+ *
+ * @param (implicit) $a0 matrix pointer, $a1 vector pointer, $a2 destination.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * The three words of *a0 are shifted right by 4 and written to the rotation
+ * matrix ($0, $2, $4); the three words of *a1 are shifted right by 4 into
+ * IR1..IR3 (mtc2 $9/$10/$11); `op 1` (real opcode 0Ch, sf = 1) computes the cross
+ * product; MAC1..MAC3 are read back, shifted left by 4 and stored as three
+ * words.
+ *
+ * @par Compare
+ * func_800108D8 does the same but saves and restores the caller's rotation
+ * matrix; func_80095B64 is the IR-vector form.
+ *
+ * @par Callers
+ * func_800192AC, func_80019310, func_8001937C, func_800193F8, func_80035B7C,
+ * func_80051C50, func_80053A74.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_80010974\n"

@@ -1,5 +1,24 @@
+// Categories: Utilities > Mathematics > Vector Length | Graphics > Culling
 #include "game/types.h"
 
+/**
+ * @brief Cheap 3D distance estimate: max + (sum of the others) / 4.
+ *
+ * @param vector Pointer to three 32-bit components.
+ * @return An upper bound of the vector length, within a few percent of the true
+ *         value - the octagonal ("taxicab with a bias") metric.
+ *
+ * @par Confirmed
+ * The three components are made absolute, sorted with two conditional swaps
+ * (a >= b >= c), then b + c are added and the result is a + ((b + c) >> 2).
+ *
+ * @par Compare
+ * func_8001A100 computes the real length with two square-root steps; this one
+ * is the cheap variant for range tests where a few percent do not matter.
+ *
+ * @par Callers
+ * func_8001A644, func_8003E984, func_80070730 and func_80075A84.
+ */
 s32 func_80019F54(s32 *vector)
 {
     s32 a;

@@ -1,4 +1,30 @@
+// Categories: Utilities > Mathematics > Fixed Point | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Table-driven normalisation: scales a value into the range of a
+ *        small-data lookup table via the GTE's leading-zero counter.
+ *
+ * @param (implicit) $a0 the value to normalise.
+ * @return In $v0: the table value scaled back by the same factor.
+ *
+ * @par Confirmed mechanics
+ * mtc2 $a0,$30 latches the value into LZCS and mfc2 $t2,$31 reads LZCR, the
+ * leading-zero/one count. From it the function derives
+ * exp = 0x16 - (LZCR & ~1), clamps it at 0, shifts the input right by exp,
+ * halves exp and doubles the shifted value to build a word index, loads a
+ * half-word from the table at $gp + 0x39C, and returns
+ * ((entry >> 5) << (entry & 0x1F)) >> (exp / 2) - a fused "look up, then shift
+ * back" that keeps the result in the same fixed-point scale as the input.
+ *
+ * @par Likely role
+ * A reciprocal or square-root table applied to a magnitude (used by
+ * func_80016C88, func_8001A180 and func_8005F018). The exact table content is
+ * in small data at 0x8009Fxxx; not decoded here.
+ *
+ * @par Unknown
+ * The semantic of the table entries (Likely 1/x or 1/sqrt(x) in 5.11 fixed
+ * point, judging from the two-field packing).
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_80019904\n"

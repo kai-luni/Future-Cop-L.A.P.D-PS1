@@ -1,4 +1,27 @@
+// Categories: Graphics > GTE > Projection | Graphics > Clipping
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Projects a vertex list three at a time (RTPT) and writes position, depth
+ *        and a clip-flag byte per vertex.
+ *
+ * @param (implicit) $a0 source vertices (8 bytes each), $a1 output (SXY + SZ, 12
+ *        bytes each), $a2 clip flags (1 byte each), $a3 count.
+ * @return In $v0: the OR of every FLAG register.
+ *
+ * @par Confirmed structure
+ * 1. The screen width is read once: 0x140 when D_8009FA0C == 1, otherwise 0xA0;
+ *    the height is 0xF0. Both feed the clip test.
+ * 2. Main loop while count >= 3: six lw + six mtc2 ($0..$5), `rtpt`, then for
+ *    each of the three results SXY ($12/$13/$14) and SZ ($16/$17/$18) are stored
+ *    and a flag byte is built from SZ < 0x400, x < width and y < height (bits
+ *    0x40/0x80/0x80-style, see func_8001047C).
+ * 3. Tail: one `rtps` per remaining vertex.
+ *
+ * @par Likely role
+ * The projection stage of the 3D pipeline: after this the renderer has screen
+ * positions, depths for ordering and the clip information to reject a polygon
+ * without touching the GTE again.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_800102A0\n"

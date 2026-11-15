@@ -1,3 +1,4 @@
+// Categories: Platform > Memory Card > File Operations | Resources > File Access
 #include "game/types.h"
 
 #define LOAD_ADDRESS(p, sym) __asm__("lui\t%0,%%hi(" #sym ")\n\taddiu\t%0,%0,%%lo(" #sym ")" : "=r"(p))
@@ -48,6 +49,31 @@ extern s32 func_8008E174(s32 mode, u8 *result);
 extern s32 func_8008E194(s32 ptr);
 extern s32 func_8008E1BC(s32 mode, void *src, void *dst);
 
+/**
+ * @brief Performs one memory-card file operation (read, write or delete) for a
+ *        loader slot.
+ *
+ * @param arg0 Loader slot index (0..3).
+ * @param arg1, arg2 Operation-specific values (offset/size or a source pointer).
+ * @param arg3 Completion callback, registered with the card driver.
+ * @return The card driver's result; negative values are propagated unchanged.
+ *
+ * @par Confirmed flow
+ * The slot entry is resolved from D_800A6D78 (24 bytes per slot) and its kind
+ * (entry->unk10) selects the operation. The function then runs the same
+ * protective bracket as the other card routines - func_8008C9C0 /
+ * func_8008C9E0 around the critical section, D_1F801800/D_1F801803 for the
+ * interface registers, func_8008E174 to poll, func_8008E1BC to start the
+ * transfer, func_8008E194 to install the callback - and copies the result into
+ * the loader's global state (0x80010000).
+ *
+ * @par Likely role
+ * The single entry point behind "save", "load" and "delete" for the front-end's
+ * file slots; the kind byte decides which of the three.
+ *
+ * @par Unknown
+ * The exact kind values (the switch is spread over the body, not a table).
+ */
 s32 func_8001CE54(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     Entry *entry;

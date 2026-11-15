@@ -1,4 +1,25 @@
+// Categories: Graphics > GTE > Initialisation | Platform > GTE
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Initialises the GTE for the standard 320x240 projection.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed sequence
+ * 1. $ra is parked in D_8009DF10 around the call to func_80095DB0 (a routine that
+ *    runs with the caller's $ra stashed, i.e. it clobbers the return address).
+ * 2. COP0 status ($12) gets bit 30 set (0x40000000) - this enables COP2, the GTE.
+ * 3. Control registers: ZSF3 = 0x155, ZSF4 = 0x100, H = 0x3E8, DQA = -0x1062,
+ *    DQB = 0x1400000, OFX = OFY = 0.
+ *
+ * @par Why these numbers
+ * H = 1000, DQA/DQB are the standard linear-interpolation coefficients for a
+ * 320x240 screen (the usual SDK values), and ZSF3/ZSF4 are the average-Z scale
+ * factors derived from the screen area.
+ *
+ * @par Callers
+ * func_8001E4E4, once during boot.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_80095878\n"

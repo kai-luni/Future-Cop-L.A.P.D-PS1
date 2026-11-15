@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Full Path | Graphics > GTE > Lighting
 #include "game/types.h"
 
 typedef struct Ent {
@@ -108,6 +109,32 @@ extern s32 D_8009F9B8;
 
 #define INB(x, y) ((x) < 0x140 && (y) < 0xF0)
 
+/**
+ * @brief The full model renderer: per-vertex transform, lighting, projection and
+ *        packet emission for one node.
+ *
+ * @param node Node: vertex stream at +0, a short-coordinate block, a vertex count,
+ *             a base RGB triple and a subdivision table (see the struct at the
+ *             top of the file).
+ * @param arg  Frame argument forwarded to the sub-calls.
+ * @return Nothing.
+ *
+ * @par Confirmed flow (from the callees and the field use)
+ * 1. func_80010820 / func_80010750 load the node matrix, func_8001006C transforms
+ *    the vertices in bulk and func_8001047C projects them, returning the clip
+ *    flags.
+ * 2. func_8001A100 provides the radius test that rejects nodes outside the view.
+ * 3. The per-vertex colours are computed in the GTE (NCCS via func_80015F14 in
+ *    the sibling path) and written into the packet from the D_8009F9F0 pool; the
+ *    ordering-table tag is the depth word taken from the camera.
+ *
+ * @par Likely role
+ * The expensive path: func_80073700 picks it for nodes that carry geometry
+ * pointers, and func_80072F7C (flat shading, single colour) handles the rest.
+ *
+ * @par Callers
+ * func_80073700 only.
+ */
 void func_80071FA4(Node *node, s32 *org)
 {
     Mtx m;

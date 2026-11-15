@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Particles | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Vec { s32 x, y, z; };
@@ -14,6 +15,31 @@ extern void func_800188D0(s32, s32, s32, struct Mat *);
 extern void *func_80073500(struct Vec *, s32, s32, s32);
 extern void func_8007377C(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
 
+/**
+ * @brief Spawns and animates the parts of a particle/smoke object at a time
+ *        interval.
+ *
+ * @param obj Object: transform matrix at +0x18, position at +0x34, scale at +0x40.
+ * @param st  Spawn state: direction, two accumulator pairs, the next time and an
+ *            index that selects one of two slots.
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * Only when the global tick D_8009FAA4 has passed st->time:
+ * 1. The other slot is selected (st->index ^ 1) and the next time is
+ *    D_8009FAA4 + (rand & 0x7F) + 0x3F, i.e. 63..190 ticks later.
+ * 2. The direction is scaled by the object's scale (>> 4, >> 8) into a vector.
+ * 3. func_80010820(&obj->mat) loads the matrix, func_800188D0 builds a rotated
+ *    matrix, func_80073500 attaches a node and func_8007377C emits it with a
+ *    long argument list (position, colour, size, ...).
+ *
+ * @par Likely role
+ * The exhaust/smoke emitter: a new puff every 63..190 ticks, alternating between
+ * two slots so the two streams are phase-shifted.
+ *
+ * @par Callers
+ * The effect update loop of the entity renderer.
+ */
 void func_8005D060(struct Object *obj, struct State *st)
 {
     struct Vec4 v;

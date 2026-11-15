@@ -1,3 +1,4 @@
+// Categories: Graphics > Lighting > Light Source | Graphics > Scene Node
 #include "game/types.h"
 
 struct Unk752E0Light {
@@ -27,6 +28,28 @@ extern void func_80049980(struct Unk752E0Light *light, s32 x, s32 z, s32 y, s32 
                           s32 depth, s32 angle, s32 arg7, s32 arg8);
 extern void func_800752E0(struct Unk753D0 *object);
 
+/**
+ * @brief Updates (or creates) the light source of a scene object.
+ *
+ * @param object Node: position at +4/+8/+0xC, size at +0x10, colour at +0x15..+0x17,
+ *               angle at +0x1A and an optional light pointer at +0x24.
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * size = object->size << 5. When a light exists, its colour bytes are refreshed
+ * from the object and func_80049980(light, x, z, y, size, size, angle, 0, 0)
+ * re-positions it - note the deliberate x/z/y swap, the light lives in the other
+ * axis convention. When there is no light and the radius is larger than 0x500,
+ * func_800752E0(object) creates one.
+ *
+ * @par Likely role
+ * The per-frame light update of the dynamic lights: only objects above a radius
+ * threshold get a real light, everything smaller is lit statically - a
+ * performance decision, not a visual one.
+ *
+ * @par Callers
+ * func_80075A84 (the polygon renderer).
+ */
 void func_800753D0(struct Unk753D0 *object)
 {
     s32 size;

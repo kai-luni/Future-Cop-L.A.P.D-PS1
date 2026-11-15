@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Shaded Polygons | Graphics > GTE
 #include "game/types.h"
 
 typedef struct {
@@ -11,6 +12,30 @@ extern Prim17 *D_8009F9F0;
 extern Prim17 *D_8009FA28;
 extern void func_80015F14(void *a0, void *a1, void *a2);
 
+/**
+ * @brief Emits one shaded part of a model: textured quad with per-vertex colour
+ *        from the GTE.
+ *
+ * @param part   Part record: flags, a texture offset and four index bytes.
+ * @param work   Work record: four XY words, a link and a mode/value pair.
+ * @param texture Texture block (the part's offset selects its base).
+ * @param light   Light/colour block passed to the shading call.
+ * @return Nothing; the packet comes from the D_8009F9F0 pool.
+ *
+ * @par Confirmed
+ * The part's flags select between the triangle and quad form and whether the
+ * single-colour or the per-vertex path is used; the vertices are shaded with
+ * func_80015F14 (NCCS) and the resulting RGB words go straight into the packet
+ * colour slots. The texture word is taken from texture + part->off.
+ *
+ * @par Likely role
+ * The "part" renderer of the model code: a model is split into parts, each with
+ * its own texture offset and four corner indices, which is exactly the layout
+ * func_80015F38 consumes.
+ *
+ * @par Callers
+ * func_800172A8 and the model draw entries.
+ */
 void func_80015F38(Part17 *part, Work17 *work, u8 *texture, u8 *light)
 {
     Prim17 *prim;

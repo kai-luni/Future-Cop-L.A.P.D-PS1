@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Effects | Gameplay > Effects
 #include "game/types.h"
 
 struct Unk5DFF0 {
@@ -20,6 +21,28 @@ struct Unk5DFF0 {
 extern void func_8006CB58(s32 model, u8 *coord, s32 size, s32 arg3, s32 arg4, s32 arg5,
                           s32 red, s32 green, s32 blue);
 
+/**
+ * @brief Draws one effect model, using the flash colour while the flash counter
+ *        runs.
+ *
+ * @param effect Effect block: model index at +0, coordinate block at +0x18,
+ *               size at +0x48, flags at +0x52, base RGB at +0x1A8..+0x1AA and
+ *               flash RGB at +0x1AB..+0x1AD, flash counter at +0x1AE.
+ * @return Nothing; returns immediately when bit 0 of the flags is clear (the
+ *         effect is not visible).
+ *
+ * @par Confirmed
+ * While flash > 0 the flash colour is used and the counter decremented; otherwise
+ * the base colour is used. Both go into
+ * func_8006CB58(model, coord, size, 0, 0, 0, red, green, blue).
+ *
+ * @par Likely role
+ * The hit/damage flash of an effect object: the model is redrawn each frame with
+ * the highlight colour until the counter expires.
+ *
+ * @par Callers
+ * func_8005E160.
+ */
 void func_8005DFF0(struct Unk5DFF0 *effect)
 {
     u8 red;

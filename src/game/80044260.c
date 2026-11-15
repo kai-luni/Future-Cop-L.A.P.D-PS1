@@ -1,4 +1,27 @@
+// Categories: Graphics > Model Renderer > Object Placement | Graphics > GTE
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Places and draws one flagged object: world matrix, transform and the
+ *        polygon emission.
+ *
+ * @param (implicit) $a0 object/node, $a1 pointer to the reference position.
+ * @return Nothing.
+ *
+ * @par Confirmed structure
+ * 0x68-byte frame; the object is only processed when bit 0x100 of the flags at
+ * +0x1A is set. func_8003D9C4(object) resolves the mesh slot and the three
+ * deltas (mesh origin minus the reference position, one per axis) are computed
+ * into the local frame. The matrix is then built with func_80010750 /
+ * func_80010820, the vertices are transformed with func_8001006C and the
+ * bounding magnitude comes from func_8001A100.
+ *
+ * @par Likely role
+ * The "draw an object at a world position" step of the scene renderer: 0x100 is
+ * the "visible/active" bit, and the deltas are the camera-relative translation.
+ *
+ * @par Callers
+ * func_8003F4A0 (the render pass driver).
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_80044260\n"

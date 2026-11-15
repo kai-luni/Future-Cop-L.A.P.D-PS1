@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Markers | Gameplay > Radar
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
@@ -9,6 +10,31 @@ extern s32 D_8009F7E0, D_8009F7E4, D_8009F7E8, D_8009F7EC;
 extern Packet *D_8009FA90, *D_8009F9C0;
 extern u16 D_800A8EA6;
 #define MUL(out,a,b) __asm__ volatile("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(out) : "r"(a), "r"(b) : "$8", "$9")
+/**
+ * @brief Draws one marker (radar blip or world marker) with distance culling and
+ *        camera-relative projection.
+ *
+ * @param pos World position (three 32-bit components).
+ * @param col Colour word.
+ * @param size Marker size (0xC or 0x5C, see func_8004EDC8).
+ * @param type Marker type: 0 = filled marker, 1 = outlined marker, others select
+ *             further shapes.
+ * @return Nothing; the marker is skipped when the distance exceeds 0x25555.
+ *
+ * @par Confirmed
+ * 1. The distance is the same integer sqrt(x^2 + z^2) approximation as
+ *    func_8001A074; above 0x25555 the function returns without drawing.
+ * 2. The two rotation values D_8009F7E0/D_8009F7E4 are applied to the (dx, dz)
+ *    offset to get camera-relative xx/yy, each scaled by 1.5 and shifted right by
+ *    12.
+ * 3. Type 0 emits a 0x66 sprite with the screen position centred on (53, 86),
+ *    size 3x3, the two fixed UV bytes 128/201 and D_800A8EA6 as the v coordinate;
+ *    type 1 emits a 0x20 primitive with four corners offset by 0x30..0x40.
+ *
+ * @par Likely role
+ * The radar/marker overlay: the fixed offsets 53/86/64/92 are the centre of the
+ * radar circle in the HUD.
+ */
 int func_8005B088(Vec *p, u32 color, int side, int type)
 {
     register u32 col __asm__("$13") = color;

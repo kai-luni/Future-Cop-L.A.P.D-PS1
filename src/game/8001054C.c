@@ -1,4 +1,23 @@
+// Categories: Graphics > GTE > Projection | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Projects a vertex list three at a time (RTPT) and returns positions,
+ *        depths and flags.
+ *
+ * @param (implicit) $a0 source vertices, $a1 output (SXY0/1/2 then SZ0/1/2 as six
+ *        words per group), $a2 count.
+ * @return In $v0: the OR of the FLAG register.
+ *
+ * @par Confirmed structure
+ * Same loop shape as func_800102A0 but the results are written straight from the
+ * GTE with `swc2 $12/$13/$14` (SXY) and `swc2 $17/$18/$19` (SZ1/SZ2/SZ3) - no
+ * per-vertex clip byte, only the FLAG accumulation; the tail runs `rtps` per
+ * remaining vertex.
+ *
+ * @par Compare
+ * func_800102A0 is the variant with clip bytes, func_80010630 the one without
+ * depths.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_8001054C\n"

@@ -1,6 +1,30 @@
+// Categories: Utilities > Mathematics > Reciprocal | Graphics > Geometry
 /* v2: the retail routine is hand-written assembly; emit it as a file-scope asm block so
  * the compiler adds no prologue/epilogue of its own.  Every instruction is transcribed
  * from the oracle, delay slots included. */
+/**
+ * @brief Table-driven reciprocal of a 16.16 value, using the GTE's leading-zero
+ *        counter for normalisation.
+ *
+ * @param (implicit) $a0 the value.
+ * @return In $v0: the normalised table result shifted back, or 0 when the input
+ *         is 0 (LZCR == 0x20).
+ *
+ * @par Confirmed mechanics
+ * mtc2 $4,$30 latches the value into LZCS, mfc2 $2,$31 reads LZCR. From LZCR the
+ * function derives an exponent (0x13 - (LZCR & ~1)) and halves it, shifts the
+ * mantissa to a 0x40-based index, loads a half-word from the table at
+ * 0x8009DF20, then shifts the entry left or right by the exponent - the classic
+ * Sony "rsqrt/reciprocal by table" pattern.
+ *
+ * @par Likely role
+ * The perspective-correct interpolation divisor: the table sits next to the
+ * GTE, and thirteen call sites (func_8001A314, func_8001A7AC, func_800336DC,
+ * func_80036624, ...) are all in the transform code.
+ *
+ * @par Unknown
+ * The exact table content at 0x8009DF20 (not decoded here).
+ */
 __asm__(
     ".text\n\t"
     ".set\tnoreorder\n\t"

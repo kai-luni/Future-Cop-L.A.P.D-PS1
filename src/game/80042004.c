@@ -1,3 +1,4 @@
+// Categories: Graphics > Primitives > Textured Quad | Graphics > Effects
 #include "game/types.h"
 
 struct Packet {
@@ -15,6 +16,28 @@ struct Packet {
 extern u8 *D_8009F9F0;
 extern u8 *D_8009FA28;
 
+/**
+ * @brief Emits a textured, semi-transparent quad with a computed texture window.
+ *
+ * @param x Texture window base (three of the four UV coordinates are derived
+ *          from it: x, x + 0x1F, x + 0xB00, x + 0xB1F).
+ * @param points Four vertices (16-bit pairs at +0, +8, +24, +32).
+ * @param flags Quadrant/validity flags; the packet is only emitted when the four
+ *        bytes are without bit 0 and equal 0xC0.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The packet uses code 0x2C808080 (semi-transparent, 50 % grey), v1 = 0x11F and
+ * v0 = 0, and the ordering-table tag is the average of the four vertex
+ * coordinates minus 0x180, masked to 24 bits.
+ *
+ * @par Likely role
+ * The projected-quad path of the effects renderer: the flags encode which of the
+ * four quadrants a face is in, and 0xC0 means "the whole quad is on screen".
+ *
+ * @par Callers
+ * func_80042AF4 (the effect manager).
+ */
 void func_80042004(s32 x, u8 *points, u8 *flags)
 {
     u32 f;

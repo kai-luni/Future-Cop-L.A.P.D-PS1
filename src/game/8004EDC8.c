@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Object Pass | Graphics > Primitives
 #include "game/types.h"
 
 struct Node { u8 pad0[8]; s32 count; u8 padc[0x17]; u8 type; u32 flags; u8 pad28[0x28]; s32 pos[3]; };
@@ -14,6 +15,28 @@ extern void *D_800A6F60[];
 extern void func_8005A9C4(struct Obj *);
 extern void func_8005B088(s32 *, void *, s32, s32);
 
+/**
+ * @brief Draws one object's sub-parts: a texpage word plus one primitive per
+ *        listed node.
+ *
+ * @param obj Object: the controller block at +0xAC, whose mode (0 = small,
+ *            otherwise large) selects a carrier size of 0xC or 0x5C bytes.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * 1. func_8005A9C4(obj) prepares the object.
+ * 2. One packet with the fixed command 0xE100069E (texpage/draw mode) is emitted.
+ * 3. The nodes of D_800A8F98 (count in D_800A8F90) are drawn with
+ *    func_8005B088(node->pos, D_800A6F60[type & 31], size, type >> 5) when the
+ *    node has a count, a type, none of the flag bits 0x30, and either a type
+ *    below 23 or the "show all" bit 0x80 of D_8009FAA4.
+ * 4. A second loop walks the eight optional extra slots of the controller
+ *    (flags bitmask 0x924924): bit 2 per entry marks a used slot, its type and
+ *    two 9-bit-scaled coordinates are taken from the extra block.
+ *
+ * @par Likely role
+ * The multi-part object renderer (vehicles and turrets made of several nodes).
+ */
 void func_8004EDC8(struct Obj *obj)
 {
     struct Node **p;

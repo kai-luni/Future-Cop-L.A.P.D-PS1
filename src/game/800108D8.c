@@ -1,4 +1,25 @@
+// Categories: Graphics > GTE > Vector Product | Graphics > Geometry
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ * @brief Cross product with a temporary matrix, restoring the caller's matrix
+ *        afterwards.
+ *
+ * @param (implicit) $a0 matrix words, $a1 vector words, $a2 destination.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * cfc2 saves the rotation matrix words $0/$2/$4, the new matrix and the vector are
+ * loaded with sra 4 scaling, `op 1` (0Ch, sf = 1) computes the cross product,
+ * MAC1..MAC3 are stored shifted left by 4, and the three saved matrix words are
+ * written back with ctc2.
+ *
+ * @par Compare
+ * func_80010974 performs the same computation without the save/restore, so it is
+ * the variant for callers that own the matrix.
+ *
+ * @par Callers
+ * None in the symbol table (inlined).
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_800108D8\n"
