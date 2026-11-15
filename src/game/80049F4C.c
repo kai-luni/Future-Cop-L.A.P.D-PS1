@@ -1,8 +1,32 @@
+// Categories: Graphics > Renderer > Projection | Utilities > Mathematics
 typedef short s16;
 typedef int s32;
 typedef unsigned int u32;
 extern int D_8009FA0C;
 #define FMUL(d,a,b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
+/**
+ * @brief Projects a world point (and its extent) to screen coordinates with
+ *        the software perspective divide.
+ *
+ * @param p Eight s16 values: [0]/[1] the x/y position, [2] the depth,
+ *        [8]/[10] the extent; the results are written back in place.
+ * @return 1 when the depth is below 65 (too close, skip), 0 otherwise.
+ *
+ * @par Confirmed
+ * scale = 0x10000000 / depth; x' = FMUL(x << 13, scale), y' likewise. The
+ * screen x is (x' + offset) >> 15 with offset 0x500000 (0xA00000 in the
+ * narrow mode D_8009FA0C == 1); the screen y is (0x780000 - y') >> 15. The
+ * extent words [8]/[10] are projected with the same scale and stored back
+ * >> 15.
+ *
+ * @par Likely role
+ * The sprite/culling projection of func_8004A048: the 0x780000 constant is
+ * the vertical screen centre in the 13-bit fixed-point space, the two
+ * offsets are the half-widths of the 320/160 pixel modes.
+ *
+ * @par Callers
+ * func_8004A048.
+ */
 int func_80049F4C(s16 *p)
 {
     register int retval __asm__("$2");

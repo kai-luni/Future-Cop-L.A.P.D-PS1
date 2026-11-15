@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Object-Attached Effect | Gameplay > Object Spawning
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -67,6 +68,35 @@ extern s32 func_80019668(void);
 extern void func_8005E624(s32, void *, void *, void *, s32);
 extern void func_8004D444(struct Unk58C3CRequest *);
 
+/**
+ * @brief Spawns a kind-7 attached effect with a randomised draw id, saving
+ *        the camera pointer around the setup.
+ *
+ * @param owner The carrying object.
+ * @param position The effect position.
+ * @param object Descriptor; +0x14 the tag, +0x16 a class byte, +0x17/+0x18
+ *        parameter bytes, +0xAC a sub-block with the draw id at +0xAC.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The request carries handler D_80036E6C, kind 7, flags = tag | 0x8000
+ * (plus 0x4000 when the class byte is 0x12), unk14 = 9, unk18 = 1. The
+ * camera pointer D_8009F9E4 is saved, func_80017B60 selects the draw id,
+ * func_8005E624((random & 0xF) | 0xE0, &sub, position, D_8009F9E4, 0xA000)
+ * runs with sub.unk0C = 0xA000 and sub.unk1C = object, then the pointer is
+ * restored and func_8004D444 queues the request.
+ *
+ * @par Likely role
+ * The muzzle/impact effect spawner of the handler func_80058D78: the
+ * 0xE0..0xEF draw-id band randomises the visual variant, the camera save
+ * keeps the effect bound to the current view.
+ *
+ * @par Unknown
+ * What func_8005E624 does with the 0xA000 parameter.
+ *
+ * @par Callers
+ * func_80058D78.
+ */
 void func_80058C3C(void *owner, struct Vec3s32 *position, struct Unk58C3CObject *object)
 {
     struct Unk58C3CRequest request;

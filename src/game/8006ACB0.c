@@ -1,3 +1,4 @@
+// Categories: Gameplay > Weapons | Graphics > Effects > Dispatcher | Platform > Sound
 #include "game/types.h"
 
 struct V3 {
@@ -55,6 +56,48 @@ extern s32 func_8005EB74(void *a0, void *a1, void *a2, void *a3, s32 a4, void *a
 extern s32 func_8005CBCC(void *a0, void *a1, s32 a2, void *a3, s32 a4, void *a5);
 extern s32 func_8005D690(void *a0, void *a1, void *a2);
 
+/**
+ * @brief Fires one weapon slot of an owner: resolves the alternating muzzle,
+ *        looks up the weapon config, plays its sound and dispatches the
+ *        action-specific effect spawner.
+ *
+ * @param owner Owner block; +0xA0 the position triple, +0xAC the state
+ *        block, +0xDC a model holder.
+ * @param index Weapon slot index.
+ * @return 1 when the fire sequence ran, 0 when the pool gate fails.
+ *
+ * @par Confirmed
+ * Gate: D_800A8F90[1] - D_800A8F90[0] >= 10 (free pool entries). The muzzle
+ * offset is the parity of the s16 at state + 0x8A + index * 2 when positive,
+ * else of state + 0x84 + index * 2 - the two 76-byte model records at
+ * state + 0x178 alternate left/right. posA = func_80017668(record, 0);
+ * config = func_8006AAEC(state[0x90 + index]); index 1 stamps 0x84 at
+ * state + 0x174 + offset * 2. posB is the target model's (+0x6C) +0x5C
+ * position, else posA + owner position. def = config + 0x24 when the s16
+ * is positive, else config + 0x04. The sound def[0x1C] plays via
+ * func_80046C84; action 2 without a target model becomes 1. Actions
+ * 9/1/3/0x12/0x13/0x15 normalise (posB - posA) via func_8001A180. The
+ * switch: 1/2/3/0x12/0x13/0x15 -> func_8005E47C (action 2 with the lead
+ * helper func_8005E2A0 first), 8 -> func_8005EE04, 9 -> func_8005E624 +
+ * func_8005EE04, 4/0x14 -> func_8005E9E4, 5 -> func_8005ECB8, 6 ->
+ * func_8005EB74, 0xF -> func_8005C048, 0x11 -> func_8005CBCC, 0xD ->
+ * func_8005D690. Flags s4 = (def[1] & 1) << 19 | 0x201. With def[1] & 4 the
+ * result pointer is stored at state + 0x98/0x9C. The tail spawns the
+ * secondary object through func_800402DC (column def[0x1B], row 1) either
+ * on the result or on a local 0x60-byte record with the muzzle position.
+ *
+ * @par Likely role
+ * The player/vehicle weapon fire path (caller func_8006BA50): the same
+ * spawner family as the actor attack dispatcher func_8005F6E8, driven by
+ * the equipped weapon config instead of an AI descriptor.
+ *
+ * @par Unknown
+ * The pool behind D_800A8F90 and the exact config layout beyond the used
+ * offsets.
+ *
+ * @par Callers
+ * func_8006BA50.
+ */
 s32 func_8006ACB0(struct Owner6ACB0 *owner, s32 index)
 {
     struct Locals6ACB0 locals;

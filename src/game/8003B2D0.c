@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Graphics > Effects > Particles | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Unk3B2D0 {
@@ -17,6 +18,39 @@ extern void func_800181D4(s32 block);
 extern s32 func_8003AA94(s32 message, struct Unk3B2D0 *object);
 extern void func_8003B144(s32 message, struct Unk3B2D0 *object);
 
+/**
+ * @brief Message handler of a particle-emitter object: spawn, draw, tick and
+ *        release cases over the shared handler numbers.
+ *
+ * @param message Handler case: 1 type query, 2 spawn, 3 draw, 5 release,
+ *        6 particle decay, 16 alive query.
+ * @param object Entity block; +0x28 the model instance, +0x90 the flag word,
+ *        +0x92/+0x93 two depth-cue bytes, +0xA0 a part selector, +0xA8 a
+ *        0x20-byte parameter block, +0xC8 a pool handle.
+ * @return Case 1: 0xCC. Case 16: 1. Cases 2/3/5/6: 0 (case 2 forwards the
+ *         result of func_8003AA94). Default: 0.
+ *
+ * @par Confirmed
+ * Case 2 forwards to func_8003AA94, the particle spawn helper. Case 3 saves
+ * the depth-cue range with func_80013AA0(bytes +0x92, +0x93) when the upper
+ * half of +0x90 is non-zero, submits the skinned parts through
+ * func_800175A0(+0x28, +0xA0, +0xC8, +0xA8) and restores the range with
+ * func_80013AA0(0, 0). Case 5 releases the +0xC8 handle via func_800181D4
+ * when it is non-zero. Case 6 runs func_8003B144, which walks the part list
+ * and drops expired parts.
+ *
+ * @par Likely role
+ * One of the entity handlers with the shared case numbers (1/2/3/5/6/16):
+ * a short-lived effect object that draws its model and decays its particles.
+ *
+ * @par Unknown
+ * What the type id 0xCC selects, and the layout of the +0xA8 parameter block.
+ *
+ * @par Callers
+ * No direct callers in the call graph. func_8003A8C0 registers the address
+ * as request.handler of a spawn request, so the dispatcher reaches it
+ * indirectly; func_8003AA94 documents message 2 as its spawn case.
+ */
 s32 func_8003B2D0(s32 message, struct Unk3B2D0 *object)
 {
     register u32 m __asm__("$17");

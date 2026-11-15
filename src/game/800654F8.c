@@ -1,3 +1,4 @@
+// Categories: Graphics > HUD > Minimap | Graphics > Textures
 #include "game/types.h"
 
 extern u8 D_800A2630[];
@@ -6,6 +7,35 @@ extern s32 D_8009FAA4;
 
 extern s32 func_80018534(u32);
 
+/**
+ * @brief Generates the 256-byte minimap background tile: a sine interference
+ *        pattern (command 0) or a blended copy of the source tile (command 1).
+ *
+ * @param input Command word; the top nibble selects the mode, the remaining
+ *        bits carry the parameters.
+ * @return Nothing; the result lands in D_800A2630.
+ *
+ * @par Confirmed
+ * Mode 0: n = bits 16..19, step = 0x100 << n, the tile is walked as a
+ * (step * 15 + 1) square grid; mode = bits 24..27 (0 flattens the row term),
+ * shift = bits 20..23 + 8, phase = bits 8..15, base = D_8009FAA4 * bits 0..7,
+ * mask = (0x1000 << n) - 1. Each cell samples func_80018534((base + x + row)
+ * & mask) >> shift when the masked angle is below 0x1000, adds phase and
+ * clamps to 0..255. Mode 1: base = bits 8..15 << (bits 0..7); 0x40 iterations
+ * blend four bytes at a time from D_800A2730 with the plane at +0x100:
+ * v = p < v ? 2 * p - v : v, then dst = (base + v) >> sh.
+ *
+ * @par Likely role
+ * The animated minimap background: mode 0 renders a moving sine moire whose
+ * scale follows the map zoom D_8009FAA4, mode 1 fades the static tile in.
+ *
+ * @par Unknown
+ * The exact visual intent of the mask/shift parameters and who consumes
+ * D_800A2630.
+ *
+ * @par Callers
+ * func_8006531C, func_8006680C.
+ */
 void func_800654F8(u32 input)
 {
     register u32 arg __asm__("$4") = input;

@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Attachment Points | Graphics > Animation
 #include "game/types.h"
 
 struct Vec3 { s32 x, y, z; };
@@ -5,6 +6,33 @@ struct Range { s32 count; s16 data[1]; };
 struct Model { u8 pad[12]; u32 flags; u8 pad10[12]; s32 **frames; u8 pad20[16]; u8 slots[8]; struct Range *range; };
 struct Instance { struct Model *model; u8 pad[0x44]; s16 frame; };
 
+/**
+ * @brief Reads one of four model attachment points for the current animation
+ *        frame, in world units.
+ *
+ * @param input Model instance; +0 the model, +0x44 the s16 frame.
+ * @param index Attachment index 0..3.
+ * @param out The position triple (s16 values << 4), zeroed on any miss.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Two layouts: with model flag bit 25 set, the range table at model->range
+ * holds count s16 triples per frame (stride frame * count * 8, data at +4);
+ * otherwise the slot byte at model +0x30 + index selects a bone, the frame
+ * pointer array at model->frames gives frameptr = frames[frame], and the
+ * triple sits at frameptr[1] + slot * 8 + 4. Slot 255, index >= 4, a null
+ * range or index >= count all zero the output.
+ *
+ * @par Likely role
+ * The muzzle/hardpoint lookup of the effect spawner func_8003D0F0: effects
+ * are placed at the animated attachment points of the carrying model.
+ *
+ * @par Unknown
+ * What flag bit 25 distinguishes (likely skinned vs ranged models).
+ *
+ * @par Callers
+ * func_8003D0F0.
+ */
 void func_8003CE30(struct Instance *input, s32 index, struct Vec3 *out)
 {
     register struct Instance *instance __asm__("$4") = input;

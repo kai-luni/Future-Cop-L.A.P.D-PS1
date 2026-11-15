@@ -1,3 +1,4 @@
+// Categories: Gameplay > Map > Grid Raycast | Physics > Collision | Utilities > Mathematics > Fixed Point
 #include "game/types.h"
 
 typedef struct { s32 x, y, z; } Vec3;
@@ -71,6 +72,48 @@ extern s32 func_80067914(s32 *, s32 *, s32, s32, s32);
     if(mode&1) { SWAP((p)[0],(p)[1]); } \
 }
 
+/**
+ * @brief Walks the map grid along the segment p -> q (DDA) and runs a
+ *        per-cell intersection test, returning the first hit.
+ *
+ * @param p Start point, three s32 world components.
+ * @param q End point, three s32 world components.
+ * @param arg2, arg3 Forwarded to the per-cell test (out buffers).
+ * @param flag Forwarded to the per-cell test (mode selector).
+ * @return The first non-zero result of func_80067914 over the crossed
+ *         cells, or 0 when the segment is clear / out of bounds.
+ *
+ * @par Confirmed
+ * Both points are scaled << 5 into the 27-bit grid space; the map header
+ * D_8009F80C gives the z dimension (map[1]) and x dimension (map[2]), and
+ * both endpoints must lie in [0, (dim - 1) << 22) on both axes or the call
+ * returns 0. The walk is normalised to +z: when |dz| < |dx| the x/z axes
+ * are swapped (mode 1), a negative dz negates both axes (mode 2); the
+ * TRANSFORM macro undoes this on every emitted point. Cell edges sit at
+ * multiples of 0x40000 (1 << 18). The first z-edge and x-edge crossings
+ * (edgez/edgex) and their intersection coordinates are computed with the
+ * reciprocal-ratio macros (STEP/RATIO/NEGSTEP: 0x80000000 / (divisor >> 1)
+ * unsigned multiply, signed rounding preserved). The loop always advances
+ * to the nearer of the next z-edge or x-edge, builds the prev/next cell
+ * boundary points ((value + 16) >> 5, half-cell rounding) and calls
+ * func_80067914(prev, next, arg2, arg3, flag); the final segment to q is
+ * tested last.
+ *
+ * @par Likely role
+ * The line-of-sight and shot-clip query of the game: the aiming code
+ * func_8005F018 replaces its aim point with the reported hit, the attack
+ * dispatcher func_8005F6E8 fails blocked shots, and the AI/effect handlers
+ * use it for ground and wall probes. func_80067914 is the per-cell polygon
+ * intersection (tile polys, heights, normals, nearest distance).
+ *
+ * @par Unknown
+ * The exact out-buffer layout arg2/arg3 receive from func_80067914.
+ *
+ * @par Callers
+ * func_80035B7C, func_80036BD4, func_800371FC, func_80047888, func_8004E80C,
+ * func_80052410, func_800549F0, func_80055EE8, func_8005B6A8, func_8005C344,
+ * func_8005F018, func_8005F6E8, func_8006B23C.
+ */
 s32 func_800684AC(s32 *p, s32 *q, s32 arg2, s32 arg3, s32 flag)
 {
     s32 prev[4], next[4];

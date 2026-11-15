@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End Configuration | Graphics > HUD > Profile Detail | Graphics > Sprites > Atlas
 #include "game/types.h"
 
 struct Item {
@@ -48,6 +49,50 @@ extern void func_80082AB0(s32, s32, s32, s32, s32, s32, s32, s32, s32);
 extern void func_80082EF0(s32, s32, s32, s32, s32, s32, s32, s32);
 extern s32 func_8008CD30(u8 *, u8 *, s32);
 
+/**
+ * @brief Draws the profile detail screen: header, state-dependent message
+ *        lines, the selected slot's name/difficulty/progress and the code
+ *        display.
+ *
+ * @param arg0 Must be 0 (the draw action); any other value returns.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8007FB04 runs first, then atlas sprites 9/8 at (0x24, 0x34)/
+ * (0x93, 0x34) and a divider line. The display requests branch on the
+ * mode pointer (D_8009F468 == D_800A3718: ids 0x44C/0x10CC), the page byte
+ * D_8009F92C->st921 and the edit flag D_8009F8C0, with palette bits 9/10
+ * of D_8009FA60 selecting the blinking prompt variants (0x3912, 0x6E5/
+ * 0x6D6 + 0x6E0, 0x3926/0x10CC, 0x391C/0x3908). A large switch over the
+ * screen state st200 (0..6) and sub-states st201..st206 picks the message
+ * id 0x3728..0x380E, drawn at (0x57, 0x5A) in font st945; the context msg
+ * is drawn at (0x57, 0xA3), and msg 0x385E raises st944. For an occupied
+ * slot (it = items + *D_8009F468 * 0x70, it[4] != 0) without a pending
+ * message: the name at it + 0x1C (two lines when it[0x4C] == 2) and a
+ * difficulty label from it[0x3E] via D_8009C1C4 (2->0, 1->1, 0->2, 3->3).
+ * The progress rows use table D_8009B72C with cnt 4 when it + 0x40 ==
+ * 0x0A0A0A0A else 3 (it[0x44] == 1), otherwise the table at 0x8009B724
+ * with sel = it[0x34] clamped to 0..7; each entry D_8009B4E4 + tbl[j] *
+ * 0x24 draws its bar sprite (e + 0x12 below sel or at level 10, else
+ * e + 0x14) and, in the it[0x44] == 1 mode, the level number
+ * clamp(it[j + 0x40] + 1, 1, 10) formatted via D_8009F484. With st944 set,
+ * text 0x3AB6 at (0xA0, 0x1B) and the decoded code via func_8007F128
+ * (0xA0, 0x25, 0xF, 2, 4, 8) are drawn.
+ *
+ * @par Likely role
+ * The profile inspection page of the front end: state machine messages
+ * guide the user (delete/confirm prompts), the progress rows show the
+ * per-mission completion, and the code display reveals the save password.
+ *
+ * @par Unknown
+ * The full message-id semantics and the meaning of the 0x0A0A0A0A marker
+ * (likely "all missions completed").
+ *
+ * @par Callers
+ * No direct callers in the call graph. func_80077AD4 stores the address
+ * in the screen callback block D_800A36E8.unk18, so the screen dispatcher
+ * reaches it indirectly.
+ */
 void func_80080038(s32 arg0)
 {
     u16 msg;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End Configuration | Graphics > HUD > Options | Graphics > 2D Drawing > Text
 #include "game/types.h"
 
 struct E8007E1A4 {
@@ -25,6 +26,40 @@ extern void func_8008CD30(u8 *dest, u8 *fmt, ...);
 extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                           s32 alignX, s32 alignY, s32 font);
 
+/**
+ * @brief Options-row widget: steps a per-player setting byte with wraparound
+ *        (modes 1/2) or draws the current value as a fraction label (mode 0).
+ *
+ * @param mode 0 draw, 1 increment, 2 decrement.
+ * @param x, y Label position (mode 0).
+ * @param color Text colour (mode 0).
+ * @param idx 1-based row index; player 1 addresses row idx - 5, player 0
+ *        row idx - 1 in the 20-byte record table D_8009C0A8.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The record's +4 pointer holds one setting byte per player. Modes 1/2 play
+ * sound 0x46 and step the byte, wrapping at the record's limits +9 (min)
+ * and +8 (count): increment wraps to min at count, decrement wraps to
+ * count - 1 below min. Mode 0 reads the neighbouring row b, computes
+ * n = unkA - unk9 + 1, and when n >= 2 fetches the label text
+ * func_80089914(unkC); unless the font is already 2 it switches to font 2
+ * via func_80048E28(2), measures the text with func_800492A0, formats
+ * func_8008CD30(buf, D_8009F490, n) and draws it at (x + width, y) in the
+ * given colour, alignX 1, size 8, font 2, then restores the old font.
+ *
+ * @par Likely role
+ * One row of the options/configuration screen, sibling of the panel
+ * func_800260B8: the byte is the selected option, the label shows
+ * "value of n" in the small font.
+ *
+ * @par Unknown
+ * The format string behind D_8009F490 and why player 1 offsets by 5.
+ *
+ * @par Callers
+ * No direct callers in the call graph and no address reference in the
+ * sources; likely reached through a runtime-built widget table (unconfirmed).
+ */
 void func_8007E1A4(s32 mode, s32 x, s32 y, s32 color, s32 idx)
 {
     struct E8007E1A4 *e;

@@ -1,3 +1,4 @@
+// Categories: Graphics > Camera | Gameplay > Player
 #include "game/types.h"
 
 typedef struct Vec56634 {
@@ -48,6 +49,32 @@ extern void func_80017B60(s32 id);
 extern void func_800177AC(Vec56634 *position);
 extern void func_80017860(s32 yaw, s32 pitch, s32 roll);
 
+/**
+ * @brief Places both players' view objects using the per-view offset table.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Reads the active view index and angle from D_8009F9A0 (+0x11E index,
+ * +0xEE angle), selects the entry D_8009ACF4[index] {f0, f2, f4, pos}. For
+ * each non-null player D_8009FA58[i]: func_8005612C computes the world
+ * position from the view position/angle plus the entry offsets and the
+ * player's info valA8/valBC; func_80017B60 selects the draw id (info
+ * +0xAC), func_800177AC sets the position, func_80017860 the rotation
+ * (angle, entry f2, 0); info flags +0xA6/+0xA7 become 1 and valAA is
+ * cleared.
+ *
+ * @par Likely role
+ * The per-frame camera-anchor placement of the screen frame func_800259D8:
+ * each player carries a view object whose offset/tilt comes from the
+ * per-view table, so split-screen views keep their relative placement.
+ *
+ * @par Unknown
+ * The meaning of the two info values valA8/valBC passed to the placement.
+ *
+ * @par Callers
+ * func_800259D8.
+ */
 void func_80056634(void)
 {
     s32 i;

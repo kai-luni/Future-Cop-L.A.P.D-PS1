@@ -1,5 +1,28 @@
+// Categories: Utilities > Mathematics > Vector Dot Product | Utilities > Mathematics > Fixed Point
 #include "game/types.h"
 
+/**
+ * @brief Dot product of two three-component vectors in 16.16 fixed point.
+ *
+ * @param a First vector, three s32 components.
+ * @param b Second vector, three s32 components.
+ * @return Sum of the three middle-word products (a[i] * b[i] >> 16).
+ *
+ * @par Confirmed
+ * Each component pair is multiplied with mult; the middle 32 bits are
+ * assembled as (hi << 16) | (lo >> 16) and the three products are summed.
+ * No saturation or rounding.
+ *
+ * @par Likely role
+ * The projection/sign helper of the geometry code: the aiming routine
+ * func_8005F018 uses it to decide whether the spread offset points away
+ * from the target, and the attachment renderer func_8005CED4 uses it for
+ * its orientation test.
+ *
+ * @par Callers
+ * func_80035B7C, func_80037B28, func_80052550, func_8005B934, func_8005C344,
+ * func_8005CED4, func_8005D8F4, func_8005F018, func_8005F6E8, func_8006B23C.
+ */
 s32 func_8001AB00(s32 *a, s32 *b)
 {
     register u32 lo0 __asm__("$8");

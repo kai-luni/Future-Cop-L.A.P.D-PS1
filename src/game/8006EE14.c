@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Beams | Physics > Motion
 typedef unsigned short u16;
 typedef short s16;
 typedef int s32;
@@ -15,6 +16,31 @@ struct Obj {
     u16 flags;
 };
 
+/**
+ * @brief Per-frame tick of a beam/tracer node: integrates its velocity and
+ *        expires it at the time limit.
+ *
+ * @param obj Beam node; +0x24 the flags word, +0x28 the u16 time, +0x2A the
+ *        u16 limit, +4 base, +0x10 velocity, +0x1C offset, +0x10 out.
+ * @param delta Frame time step.
+ * @return 1 while the node is alive, 0 when it expired.
+ *
+ * @par Confirmed
+ * Flag bit 0x8000 is cleared on the first tick after expiry (the else
+ * branch); otherwise time += delta. While time < limit, each axis computes
+ * pos = base + (velocity * time) >> 4 and out = pos + (offset << 4).
+ *
+ * @par Likely role
+ * The motion update of the tracers spawned by func_8006F0E8: the scene
+ * node updater func_8006F170 calls it each frame, the out triple is what
+ * the renderer draws.
+ *
+ * @par Unknown
+ * Who sets flag bit 0x8000 and whether the expiry path also frees the node.
+ *
+ * @par Callers
+ * func_8006F170.
+ */
 s32 func_8006EE14(struct Obj *obj, s32 delta)
 {
     if (!(obj->flags & 0x8000)) {

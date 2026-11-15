@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End Configuration | Graphics > HUD > Loadout | Graphics > 2D Drawing > Text
 typedef signed char s8;
 typedef unsigned char u8;
 typedef int s32;
@@ -26,6 +27,39 @@ extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
 extern void func_80078B34(s32, s32, s32);
 extern void func_8007D7CC(u8 *, s32, s32, s32, s32, s32);
 
+/**
+ * @brief Draws the loadout screen for one player: names, three equipment
+ *        rows and the prompt/over-limit display requests.
+ *
+ * @param arg0 Player index (0/1).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8007D2DC(0) runs first. In the two-player layout (D_8009F468[5] ==
+ * 2) both names (D_800A6FE0 and +9) are drawn at x 0x23/0xA4 with a 10000
+ * score line below, and the three rows via func_8007D7CC at y 0x4F/0x71/
+ * 0x93; otherwise the single name is centred at 0x53 and the rows sit at
+ * x 0x86, y 0x35/0x5F/0x89. The row records come from D_8009C030/
+ * D_8009C050/D_8009C0D0 indexed by D_8009F924/926/928[arg0] (6-byte
+ * stride); the highlighted row is s4 = D_8009F468[arg0] - 1 (player 1:
+ * -5). The prompt state s6 is 1 when the mode byte is 0, 2 when the row's
+ * replacement != limit. Display requests: 0x2968 (slot 0), 0x521C when
+ * values[arg0] > limit (the over-limit marker), 0x10CC (slot 1), and with
+ * palette bit 9 set 0x297C (s6 == 1) or 0x2972 (s6 == 2).
+ *
+ * @par Likely role
+ * The equipment selection screen: the three rows are the weapon/upgrade
+ * slots drawn by func_8007D7CC, the 0x521C request is the highlighted
+ * over-capacity warning the status pass func_80078B98 colours specially.
+ *
+ * @par Unknown
+ * The labels behind the display ids 0x2968/0x2972/0x297C.
+ *
+ * @par Callers
+ * No direct callers in the call graph. func_80077AD4 stores the address
+ * in two screen callback blocks (D_800A3628.unk18 and D_800A3658.unk18),
+ * so the screen dispatcher reaches it indirectly.
+ */
 void func_8007DD08(s32 arg0)
 {
     s32 s3 = 0;

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Graphics > GTE > Matrix Build
 #include "game/types.h"
 
 struct Vec3 {
@@ -85,6 +86,35 @@ extern s32 func_800331CC();
 extern s32 func_8003532C();
 extern s32 func_80032F3C();
 
+/**
+ * @brief Spawn initialisation of a wandering entity: randomises the target
+ *        heading, builds a random horizontal basis and arms the state.
+ *
+ * @param self Entity block; +0x1C/+0x1E two heading words, +0x24 the flag
+ *        word, +0x2C the basis, +0x50/+0x78 two vectors, +0xD0 the spawn
+ *        position, +0xFA a state byte, +0x134 the linked target block.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Copies unk1E to unk1C, sets target->unk1E = (unk1E >> 1) - (random &
+ * 0x3F), masks unk19 with 0x0F and unk24 with 0xFDFFFFCA, copies the
+ * target's unk24/unk20 into unkF4/unkF8, sets unkFA = 4 and target->unk18
+ * = 0. func_80033608(self, 0) and func_800330E8(self) set up the animation;
+ * a random 12-bit angle gives (sin, 0, cos) in unk78, func_800193F8 builds
+ * the basis into unk2C, unkD0 is copied to unk50, and D_8009FA94->unkE0
+ * becomes 9.
+ *
+ * @par Likely role
+ * The message-2 setup of the handler func_800357C0: a projectile or drone
+ * that starts with a random horizontal direction and a fixed state 4.
+ *
+ * @par Unknown
+ * What the global unkE0 = 9 signals and the meaning of flag mask
+ * 0xFDFFFFCA.
+ *
+ * @par Callers
+ * func_800357C0.
+ */
 void func_80035698(struct Self *self) {
     register u32 mask __asm__("$7");
     register struct Other *other __asm__("$3");

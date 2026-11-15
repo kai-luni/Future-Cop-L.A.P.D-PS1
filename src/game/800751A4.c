@@ -1,6 +1,34 @@
+// Categories: Graphics > Effects > Lights | Game Engine > Front-End Configuration
 typedef unsigned char u8;
 typedef int s32;
 
+/**
+ * @brief Steps three colour channel bytes with per-channel clamping and
+ *        returns how many channels moved freely.
+ *
+ * @param base Record with the three bytes at +0x15/+0x16/+0x17.
+ * @param d1, d2, d3 Signed deltas for the three channels.
+ * @param a5, a6, a7 The clamp limits (a5 is compared as a byte).
+ * @return 3 minus the number of channels that hit a limit or had a zero
+ *         delta (channel 1 clamping sets 2 instead of decrementing).
+ *
+ * @par Confirmed
+ * Channel 1: positive deltas clamp at the limit (return base 2), negative
+ * deltas clamp when the result would fall to/below the limit, a zero delta
+ * also yields 2. Channels 2/3: each clamped or zero delta decrements the
+ * running count from 3. All stores are byte-wide.
+ *
+ * @par Likely role
+ * The colour-picker step of the light editor func_80075A84: the return
+ * count tells the caller how many channels are still adjustable, so the
+ * UI can grey out the saturated ones.
+ *
+ * @par Unknown
+ * Why channel 1 uses the asymmetric clamp rule.
+ *
+ * @par Callers
+ * func_80075A84.
+ */
 u8 func_800751A4(u8 *base, s32 d1, s32 d2, s32 d3, s32 a5, u8 a6, u8 a7)
 {
     register s32 ret __asm__("$8") = 3;

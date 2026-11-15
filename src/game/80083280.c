@@ -1,9 +1,32 @@
+// Categories: Graphics > HUD > Selection Frame | Graphics > GPU Primitives > Gouraud Quad
 #include "game/types.h"
 
 extern volatile s32 D_8009FA2C;
 extern u8 D_8009F3F8[8];
 extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b);
 
+/**
+ * @brief Draws a 2-pixel selection frame centred on a rectangle, in the
+ *        cycling palette colour.
+ *
+ * @param x, y Centre of the frame.
+ * @param w, h Inner width/height (the frame is w + 1 wide).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The colour is D_8009F3F8[(D_8009FA2C >> 4) & 7] + 0x80 (the same palette
+ * cycle the HUD uses). Four gouraud rectangles at link 0x12C form the top,
+ * left, right and bottom borders, each 2 pixels thick, around
+ * (x - (w + 1) / 2, y - h / 2).
+ *
+ * @par Likely role
+ * The cursor frame of a front-end widget: the palette cycle makes the
+ * selection blink without redrawing the content.
+ *
+ * @par Callers
+ * No direct callers in the call graph and no address reference in the
+ * sources; dispatch unconfirmed.
+ */
 void func_80083280(s32 x, s32 y, s32 w, s32 h)
 {
     register s32 w1 __asm__("$19") = w + 1;

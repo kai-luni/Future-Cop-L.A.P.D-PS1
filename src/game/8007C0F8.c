@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End Configuration | Graphics > HUD > Schematic | Graphics > GPU Primitives > Gouraud Quad
 #include "game/types.h"
 
 struct MenuTable7C0F8 {
@@ -47,6 +48,40 @@ extern void func_80082EF0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6
 #define MAX(a, b) ((a) - ((((a) - (b)) >> 31) & ((a) - (b))))
 #define ABS(a) ((((a) >> 31) + (a)) ^ ((a) >> 31))
 
+/**
+ * @brief Draws the vehicle schematic of one profile slot: header, central
+ *        sprite, 14 component labels with connector lines and a footer list.
+ *
+ * @param slot Profile slot index (0/1).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * choice = D_8009F902[slot] selects the table at D_8009C018 + choice * 12
+ * {sprite, items, count}. Header: the player name (D_800A6FE0 + slot * 9)
+ * at (0x28, 0x34), the table sprite text at (0xA0, 0x34), text 0x12F2 and
+ * the formatted selection number (*D_8009F900[slot] + 1 via D_8009F484)
+ * at (0x10E, 0x34). The central atlas sprite is mode 0x48, or 0x49 when
+ * func_8001EF34(D_800A374D[0] == 3) returns port 7, drawn at (0xA0, 0x69).
+ * Fourteen 12-byte items from D_8009BEF4 {x, y, x2, y2, amount, y3, flag}
+ * are labelled with sprite ids D_8009BF9C[selData[i]][choice] (selData =
+ * D_8009BFD4 + sel * 14); items 0..6 use align 2 / dy -2, items 7..13
+ * align 1 / dy +2. In mode 0x49 with amount != 0, 1-pixel gouraud
+ * connectors (link 10) join the item to its amount position: flag 1 uses
+ * (0x60, 0xC0, 0xFF), item 4 a special L-shape, the rest (0xFF, 0xFF,
+ * 0x64); the base x -> x2 connector draws when mode != 0x49 or flag == 0.
+ * The footer draws table->count text items at (0xA0, 0x93 + i * 10).
+ *
+ * @par Likely role
+ * The loadout diagram of the profile screen func_8007C6F0: the 0x49
+ * variant (second controller port detected) shows the expanded connector
+ * layout, the amounts are the equipped component levels.
+ *
+ * @par Unknown
+ * What the 14 components map to and why port 7 selects the expanded mode.
+ *
+ * @par Callers
+ * func_8007C6F0.
+ */
 void func_8007C0F8(s32 slot)
 {
     u8 text[0x10];

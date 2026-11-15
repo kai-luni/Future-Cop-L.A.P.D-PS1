@@ -1,3 +1,4 @@
+// Categories: Physics > Motion | Gameplay > Damage
 #include "game/types.h"
 
 struct Unk4B244Source {
@@ -16,6 +17,33 @@ struct Unk4B244Force {
     u8 flags;
 };
 
+/**
+ * @brief Computes a signed impulse vector from a force record, gated by the
+ *        source's flag bits.
+ *
+ * @param source Object block; +0x1A the flag word.
+ * @param force Force record; +4/+8/+0xC the direction triple, +0x40 the
+ *        u16 strength, +0x49 the flags byte.
+ * @param out Three s32 impulse components.
+ * @return 1 when an impulse was written, 0 when the force is null, its flag
+ *         bit 1 is clear, the source suppresses it (bit 0x200) or the
+ *         strength is zero.
+ *
+ * @par Confirmed
+ * scale = strength << 3, negated when source flag bit 0x400 is set; bit
+ * 0x200 forces scale 0. Each output is (force->axis >> 4) * scale >> 8.
+ *
+ * @par Likely role
+ * The explosion push of the debris handlers func_8003AA94/func_8004B5F8:
+ * the direction comes from the blast, the sign from the object's orientation
+ * flags, and the 4/8 shifts convert the force units to world velocity.
+ *
+ * @par Unknown
+ * The unit of strength and why bit 0x200 suppresses the impulse entirely.
+ *
+ * @par Callers
+ * func_8003AA94, func_8004B5F8.
+ */
 s32 func_8004B244(struct Unk4B244Source *source, struct Unk4B244Force *force, s32 *out)
 {
     s16 scale;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End Configuration | Graphics > HUD > Slot List | Graphics > Sprites > Atlas
 #include "game/types.h"
 
 struct MenuEntry {
@@ -71,6 +72,41 @@ extern void func_80078B34(s32, s32, s32);
 extern s32 func_80046C84(s32, s32);
 extern void func_800493C0(u32, u8, u8, u8);
 
+/**
+ * @brief Draws the profile slot list: two header sprites and one row per
+ *        visible slot with name, state markers and a progress bar.
+ *
+ * @param arg0 Must be 0 (the draw action); any other value returns.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Atlas sprites 9 and 8 at (0x24, 0x34)/(0x93, 0x34), link 0x1F4. The row
+ * window runs i = D_8009F881 .. D_8009F882 over the entries
+ * D_8009B4E4[D_8009F884[i]]. The selected row (i == D_8009F880, edit flag
+ * D_8009F8C0 set, mode D_8009F468[0] == 0) uses the cycling palette colour
+ * D_8009F3F8[(D_8009FA60 >> 4) & 7] + 0x80 and draws the entry name text
+ * (e->unk10) at (0x97, 0xB1); plain rows use 0x80. State markers: text
+ * 0x5226 at (0x97, 0xA9) when D_8009FA94->unk5C == 1 and state != 0xA on
+ * row 0, text 0xC8A when the row is below the D_8009F458[D_8009F889]
+ * threshold or state == 0xA in the two-player mode (unk5C == 1, unk0C ==
+ * 1, edit flag 2 forces colour 0xFF). In that mode a level number
+ * m = clamp(state + 1, 1, 0xA) is formatted via D_8009F484 and drawn at
+ * (e->unk1C, e->unk1E). The bar sprite uses len = e->unk12 below the
+ * threshold (or at state 0xA), else e->unk14, drawn via func_80082B0C at
+ * (e->unk16, e->unk18).
+ *
+ * @par Likely role
+ * The profile/level select list of the front end: each row shows the
+ * saved name, a completion marker and the progress bar; the two-player
+ * mode adds the level number badge.
+ *
+ * @par Unknown
+ * What state 0xA marks (likely "completed") and the threshold table's
+ * meaning.
+ *
+ * @par Callers
+ * func_8007B854, func_8007BCF4.
+ */
 void func_8007B460(s32 arg0)
 {
     char text[8];

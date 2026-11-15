@@ -1,5 +1,30 @@
+// Categories: Gameplay > Map | Graphics > HUD > Minimap
 typedef int s32;
 extern s32 D_800A2950[4];
+/**
+ * @brief Clamps a position triple to the current map bounds and reports which
+ *        axes were corrected.
+ *
+ * @param arg0 Position triple; [0] = x, [2] = z (in place).
+ * @param arg1 Margin parameter; the z margin is arg1 - 0x4000.
+ * @return Bit 0 when z was clamped, bit 1 when x was clamped, 0 otherwise.
+ *
+ * @par Confirmed
+ * z is clamped into [D_800A2950[0] + margin, D_800A2950[1] - margin]; x is
+ * clamped into [D_800A2950[2] + 0x14000, D_800A2950[3] - 0x14000]. The four
+ * bounds words are the active map window.
+ *
+ * @par Likely role
+ * The camera/object leash of the minimap driver func_8006680C: keeps the
+ * view inside the map with a fixed 0x14000 side margin and a configurable
+ * depth margin.
+ *
+ * @par Unknown
+ * Who updates D_800A2950 and in which units the bounds are expressed.
+ *
+ * @par Callers
+ * func_8006680C.
+ */
 s32 func_800665E8(s32 *arg0, s32 arg1)
 {
     s32 lower;

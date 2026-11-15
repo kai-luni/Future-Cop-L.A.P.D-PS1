@@ -1,3 +1,28 @@
+// Categories: Graphics > Renderer > Map Cell Geometry | Utilities > Mathematics > Geometry
+/**
+ * @brief Builds a 4x4 subcell coverage mask for a world-space rectangle
+ *        inside one map cell.
+ *
+ * @param x, y The cell's world origin.
+ * @param left, right, top, bottom The rectangle edges in world units.
+ * @return A 16-bit mask, bit 0x8000 >> (row * 4 + col) set for each covered
+ *         subcell.
+ *
+ * @par Confirmed
+ * Each edge is quantised: the cell index is edge >> 17, the subcell index
+ * (edge >> 15) & 3. An edge outside the cell clamps to subcell 0 (left/top)
+ * or 3 (right/bottom); an edge in a different cell clamps the whole side.
+ * The mask loops i = left + top * 4 .. 15 and sets the bit when the subcell
+ * lies inside all four bounds.
+ *
+ * @par Likely role
+ * The coverage test of the map renderer: func_80049980 and the model binder
+ * func_80083A10 use it to decide which of the 16 subcells a primitive
+ * touches, so only those are emitted.
+ *
+ * @par Callers
+ * func_80049980, func_80083A10.
+ */
 unsigned short func_80083764(int x, int y, int left, int right, int top, int bottom)
 {
     int i;

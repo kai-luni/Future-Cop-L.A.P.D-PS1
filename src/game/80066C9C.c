@@ -1,3 +1,4 @@
+// Categories: Graphics > Camera > Position Update | Graphics > HUD > Minimap
 #include "game/types.h"
 
 struct Camera {
@@ -44,6 +45,38 @@ extern void func_80064460(s32 a0, s32 a1, struct Block *block);
 #define FMUL(a, b) ({ s32 r_; __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 #define FMULU(a, b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 
+/**
+ * @brief Projects an entity's height against the camera eye and stores the
+ *        resulting ground position pair plus two scale bytes for one view.
+ *
+ * @param index View/player index into D_800A3190 and D_8009F834.
+ * @param obj Entity block; +0x54 the signed height, +0xAC a sub-block whose
+ *        +0xAC byte selects the draw id.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_80017B60(sub->unkAC) selects the draw id, func_80010820 loads the
+ * camera matrix of D_8009F9E4. v = |obj->unk54|; the eye difference dy is
+ * scaled by the reciprocal of half the camera rate word +0x74 (sign flipped
+ * with the rate), FMULU(dy, 0x80000000 / den). The inline block then writes
+ * D_800A3190[index].first = cam[0x84] - FMUL(a3, cam[0x78]) and
+ * .second = cam[0x7C] - FMUL(a3, cam[0x70]), stores (first >> 17) - 2 and
+ * (second >> 17) - 2 as the two bytes at D_8009F834[index * 2], and calls
+ * func_80064460 with a 0x190-byte block of D_800AB3B8 at a derived offset.
+ *
+ * @par Likely role
+ * The per-view camera anchor update: D_800A3190 is the position pair table
+ * that func_80069580 reads back, so this feeds the scene traversal and the
+ * minimap with the current ground position; the two bytes are a coarse
+ * 17-bit-shifted scale for the map window.
+ *
+ * @par Unknown
+ * The meaning of camera words +0x70/+0x74/+0x78/+0x7C/+0x84 and the
+ * -2 bias on the scale bytes.
+ *
+ * @par Callers
+ * func_80026E5C.
+ */
 void func_80066C9C(s32 index, struct Entity *obj)
 {
     struct Camera *cam;

@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Ribbon Beam | Graphics > Effects > Object Pool
 #include "game/types.h"
 
 typedef struct Entry Entry;
@@ -41,6 +42,45 @@ extern void func_800181D4(void *block);
 extern void func_80070710(void *block);
 extern void func_80070E48(Node *node, Entry *entry, s32 mode);
 
+/**
+ * @brief Constructs a ribbon/beam scene node with count strips, a colour
+ *        gradient and per-entry vertex buffers, and links it into the beam
+ *        list.
+ *
+ * @param a0, a1 Two pooled blocks stored in the node (released on failure).
+ * @param a2 Strip segment count; each entry allocates (a2 + 1) * 3 s32
+ *        words, plus (a2 + 1) * 3 s16 words when arg10 != 0.
+ * @param count Number of strips (entries).
+ * @param r, g, b Base colour.
+ * @param divisor Gradient divisor; below 0x10 the gradient steps are 0,
+ *        else each channel step is (channel << 12) / divisor.
+ * @param arg9, arg10, arg11, arg12, arg13 Node parameters (field16/14/28/
+ *        26/24); arg10 also enables the s16 buffers.
+ * @param flagsArg Low 16 bits become the node flags; bit 0 adds 0x2000.
+ * @return The new node, or 0 after a full cleanup on any allocation failure.
+ *
+ * @par Confirmed
+ * The 0x2C-byte node comes from func_80017EBC(0x2C, 1), the entry array
+ * from func_80017EBC(count << 4, 1). When *a0 == 0 the node flag 8 is
+ * cleared. Each entry is initialised via func_80070E48(node, entry, 1);
+ * field18 takes field28. The node is pushed onto the D_8009F38C list head.
+ * Failure paths free every allocated entry buffer, the array, the node,
+ * and release a0/a1 through func_80070710.
+ *
+ * @par Likely role
+ * The tracer/beam constructor behind the effect spawners: func_8005F018
+ * links the muzzle and impact nodes into a tracer with the effect object's
+ * parameters (or the constants 0x20, 1, 0x7F, 0x7F, 0xFF, 0x2AA, 0x4000,
+ * -0x3000), the other callers build beams for their own effects.
+ *
+ * @par Unknown
+ * The exact vertex layout func_80070E48 fills and the meaning of the
+ * 0x2000 flag.
+ *
+ * @par Callers
+ * func_8005B3D4, func_8005D060, func_8005D8F4, func_8005F018, func_8006A524,
+ * func_8006B23C, func_80073BBC.
+ */
 void *func_8007377C(void *a0, void *a1, s32 a2, s32 count,
                     u8 r, u8 g, u8 b, s16 divisor,
                     u16 arg9, s16 arg10, s32 arg11, u8 arg12,

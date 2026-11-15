@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Lights | Gameplay > Object Spawning
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -52,6 +53,33 @@ extern u32 func_80019668(void);
 extern s32 func_8005A6A4(s32 id, struct Unk752E0Request *request,
                          struct Unk752E0Light **result);
 
+/**
+ * @brief Spawns a coloured light effect at an object's position with a random
+ *        heading and copies the colour into the allocated light record.
+ *
+ * @param object Effect descriptor: +0x04 the position triple, +0x10 the size
+ *        word, +0x14/+0x15/+0x16 the RGB bytes, +0x1A the angle word (written),
+ *        +0x24 the light record pointer (written).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Builds a request with kind 0x16, height = position.y >> 4, width = depth =
+ * size << 1, angle = func_80019668() & 0xFFF (also stored back into the
+ * object), unk22 = -1, scale = -1, and the object's RGB. func_8005A6A4(0xA,
+ * &request, &object->light) allocates from effect pool 0xA; on success the
+ * three colour bytes are copied into the light record at +9/+0xA/+0xB.
+ *
+ * @par Likely role
+ * The muzzle/explosion light spawner of the effect handlers func_800753D0
+ * and func_800754B8: a short-lived coloured light whose cone width follows
+ * the object size.
+ *
+ * @par Unknown
+ * The meaning of request fields unk1E/unk20 and why scale is -1.
+ *
+ * @par Callers
+ * func_800753D0, func_800754B8.
+ */
 void func_800752E0(struct Unk752E0 *object)
 {
     struct Unk752E0Request request;

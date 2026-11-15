@@ -1,3 +1,4 @@
+// Categories: Graphics > HUD > Code Entry | Utilities > Character Table
 #include "game/types.h"
 
 struct FontEntry {
@@ -59,6 +60,33 @@ extern void func_8007F128(s32 input0, s32 input1, s32 input2, s32 input3, s32 ar
             letter = (u8 *)(((*src + i) & 0xF) + (u32)even);
         }
         *dst++ = *letter;
+/**
+ * @brief Decodes the ten stored code bytes into a display string and draws it.
+ *
+ * @param input0, input1, input2 x, y and colour forwarded to the text draw.
+ * @param input3 Font parameter forwarded as the last draw argument.
+ * @param arg5, arg6 alignX/alignY forwarded to the text draw.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * For each of the ten bytes at D_800A3938: even positions index the 16-entry
+ * table D_8009C1AC with (byte + i) & 0xF, odd positions the 8-entry table
+ * D_8009C1BC with (byte + i) & 7. The resulting characters are NUL-terminated
+ * in a 12-byte buffer and drawn via func_800788F0(buf, x, y, colour, 0,
+ * alignX, alignY, font).
+ *
+ * @par Likely role
+ * The password display of the code-entry screen func_8007F1F8 and the
+ * profile screen func_80080038: the two tables are the 16+8 symbol alphabet
+ * of the save-code system, position-dependent so the same byte shows
+ * different glyphs in even/odd cells.
+ *
+ * @par Unknown
+ * Whether the +i rotation is obfuscation or part of the code checksum.
+ *
+ * @par Callers
+ * func_8007F1F8, func_80080038.
+ */
         __asm__ volatile("");
         i++;
         src++;

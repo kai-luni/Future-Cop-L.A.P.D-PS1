@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update > Attachment | Graphics > Scene Graph
 #include "game/types.h"
 
 struct Vec3 {
@@ -47,6 +48,29 @@ extern void func_80031004(struct Entity *self);
 extern s32 D_8009FAA4;
 extern void *jtbl_8001123C[];
 
+/**
+ * @brief Syncs an attached entity to its target's transform and position.
+ *
+ * @param self Entity block; +0xA8 the target pointer, +0xAC the target id,
+ *        +0xB0 the model part index (-1 = use the target origin), +0xB1 a
+ *        re-resolve flag, +0x2C..+0x4C the nine transform words, +0x50/+0x5C
+ *        two position triples.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * With unkB1 set, the target is re-resolved through func_8004D69C(unkAC)
+ * and the id refreshed. While the target exists and its id still matches,
+ * the nine transform words are copied; the position comes from the target's
+ * unk50 when unkB0 < 0, otherwise from func_80017668(target + 0x28, unkB0).
+ * unk5C mirrors unk50.
+ *
+ * @par Likely role
+ * The per-frame follow of the carried-object handler func_8003151C (types
+ * 14/38): the id check drops the attachment when the target was recycled.
+ *
+ * @par Callers
+ * func_8003151C.
+ */
 void func_800313F0(struct Entity *self)
 {
     struct Entity *other;

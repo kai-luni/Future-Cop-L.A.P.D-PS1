@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Game Engine > Object Setup
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -57,6 +58,34 @@ extern void func_80039298();
 extern void func_80017668(u8 *coord, s32 part, struct Vec3s32 *out);
 extern void *func_8004D444(struct Request *request);
 
+/**
+ * @brief Spawns a kind-0x15 object through the request queue with handler
+ *        func_80039298, copying the parent descriptor.
+ *
+ * @param object Parent descriptor (tag, parameter bytes, flags, coord).
+ * @param arg1 Forwarded as args.unk24.
+ * @param arg2 s16 forwarded as args.unk28.
+ * @param arg3 Model part index for the position lookup; also args.unk2A.
+ * @param arg4, arg5 Parameter bytes.
+ * @param arg6 Forwarded as args.unk2C.
+ * @return The request queue result of func_8004D444.
+ *
+ * @par Confirmed
+ * The request carries kind 0x15, the parent's tag/parameters, flags masked
+ * with 0x7FFFDFFF (bit 0x2000 cleared), unk1F = parent unk19 & 0xF, and the
+ * position from func_80017668(object->coord, arg3, &args.position).
+ *
+ * @par Likely role
+ * The child spawner of the entity handlers func_80039504/func_800397AC:
+ * kind 0x15 is the class whose handler func_80039298 processes the shared
+ * message cases for.
+ *
+ * @par Unknown
+ * Why flag bit 0x2000 is stripped from the child.
+ *
+ * @par Callers
+ * func_80039504, func_800397AC.
+ */
 void *func_80039418(struct Object *object, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6)
 {
     struct Request request;

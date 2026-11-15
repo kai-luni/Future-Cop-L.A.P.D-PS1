@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Game Engine > Events
 #include "game/types.h"
 
 struct Unk3C980Handler {
@@ -35,6 +36,34 @@ struct Unk3C980Event {
     s32 unk08;
 };
 
+/**
+ * @brief Event-flag handler: arms a flag on messages 7/8 and fires the linked
+ *        event on message 9.
+ *
+ * @param message 7 conditional arm, 8 arm, 9 fire; all others return 0.
+ * @param object Entity block; +0x0F the flag byte, +0x10 the state byte,
+ *        +0x1C a link record (+0x38 disabled byte, +0x04 handler), +0x20 a
+ *        definition with the event id at +0x2E.
+ * @return 1 for message 7, 0 otherwise.
+ *
+ * @par Confirmed
+ * Message 7 sets flag bit 0 only when state bit 2 is set. Message 8 sets
+ * flag bit 0 unconditionally. Message 9 reads the link's handler when the
+ * link exists and its disabled byte is 0; with a non-zero definition event
+ * id it builds a local event {id, enabled = 1, unk00 = unk08 = 0} and calls
+ * handler->callback(14, handler, &event, 0).
+ *
+ * @par Likely role
+ * The trigger plumbing of scripted objects: a collision or timer arms the
+ * flag, and the fire case delivers the object's event to its linked handler.
+ *
+ * @par Unknown
+ * What message 14 means to the receiving handler, and who clears flag bit 0.
+ *
+ * @par Callers
+ * func_80040874, func_80044610, func_8004C324, func_8006E814, func_8006FF44,
+ * func_80073BBC.
+ */
 s32 func_8003C980(s32 message, struct Unk3C980Object *object)
 {
     struct Unk3C980Handler *handler;

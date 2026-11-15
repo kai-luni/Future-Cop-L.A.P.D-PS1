@@ -1,3 +1,4 @@
+// Categories: Platform > Sound | Game Engine > Init
 #include "game/types.h"
 
 struct Unk21824 {
@@ -18,6 +19,27 @@ struct Unk21824 {
     u32 f24;
 };
 
+/**
+ * @brief Initialises the SPU common attributes: master volume to maximum.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Builds a 0x28-byte SpuCommonAttr on the stack: mask 0x3FC3, the two volume
+ * words 0x3FFF/0x3FFF, all remaining fields 0, and passes it to
+ * func_80098FE8, which applies the masked fields to the SPU.
+ *
+ * @par Likely role
+ * The sound init step of the asset driver func_80021B50: 0x3FFF is the
+ * maximum master volume, the mask selects which attribute fields are
+ * written.
+ *
+ * @par Unknown
+ * The exact field map of mask 0x3FC3 in the SDK attribute layout.
+ *
+ * @par Callers
+ * func_80021B50.
+ */
 void func_80021824(void)
 {
     struct Unk21824 attr;

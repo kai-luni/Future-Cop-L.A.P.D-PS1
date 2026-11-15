@@ -1,3 +1,4 @@
+// Categories: Platform > Interrupts | Game Engine > Init
 #include "game/types.h"
 
 extern s32 D_800A63D0;
@@ -9,6 +10,34 @@ asm(".set D_80095E5C, 0x80095E5C");
 asm(".set D_80095E74, 0x80095E74");
 asm(".set D_80095E8C, 0x80095E8C");
 
+/**
+ * @brief Patches six words of the BIOS C0 table when they match a known
+ *        signature, inside a critical section.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Saves $ra to D_800A63D0, EnterCriticalSection (syscall 1), GetC0Table
+ * (BIOS B0:0x56) returns the table base; the code reads table[0x18] + 0x28
+ * and compares six consecutive words against the signature at
+ * D_80095E5C..D_80095E74. On a full match it copies the six replacement
+ * words from D_80095E74..D_80095E8C into the table, calls FlushCache
+ * (A0:0x44 via func_8008DBA0), ExitCriticalSection (syscall 2) and restores
+ * $ra. On a mismatch nothing is written.
+ *
+ * @par Likely role
+ * A kernel redirect installed at boot: the C0 table entry at +0x18 is the
+ * interrupt/exception dispatch, and the patch swaps in the game's own
+ * handler words (likely the VBlank/DMA routing the sound and movie paths
+ * rely on).
+ *
+ * @par Unknown
+ * Which handler the six replacement words point at, and why the patch is
+ * signature-gated (BIOS version check).
+ *
+ * @par Callers
+ * func_80095878.
+ */
 void func_80095DB0(void)
 {
     __asm__ volatile(

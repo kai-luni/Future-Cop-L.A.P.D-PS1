@@ -1,3 +1,4 @@
+// Categories: Platform > GPU | Graphics > GPU > Debug Validation
 __asm__(".section .text.target,\"ax\",@progbits\n\t.balign 4");
 typedef unsigned int u32;
 
@@ -22,6 +23,30 @@ extern int func_8009520C(void);
 extern void func_800914E0(int, void (*)(void));
 extern void D_80095808(void);
 
+/**
+ * @brief Debug device write with a GPU-ready timeout (variant B, while-loop
+ *        form of func_800953F0).
+ *
+ * @param entry Debug entry {data, width, height}.
+ * @param data Payload forwarded to the device write callback.
+ * @return 0 on success, -1 on abort.
+ *
+ * @par Confirmed
+ * Same sequence as func_800953F0 but with format string D_80012AA0 and a
+ * while-loop over the two GPU status bits instead of the goto form; the
+ * deadline, callback install and device write are identical.
+ *
+ * @par Likely role
+ * The second debug capture variant; the different format string suggests a
+ * different entry layout (likely the raw vs the annotated capture).
+ *
+ * @par Unknown
+ * Which build configuration selects this variant.
+ *
+ * @par Callers
+ * No direct callers in the call graph and no address reference in the
+ * sources; likely an unused retail variant.
+ */
 int func_800954DC(Entry *entry, void *data)
 {
     int result;

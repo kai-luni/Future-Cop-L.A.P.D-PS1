@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Game Engine > Object Setup
 #include "game/types.h"
 
 struct Vec3 {
@@ -60,6 +61,32 @@ extern void D_8003190C(void);
 extern u8 func_80083A10(struct Unk31690Sub *arg0, void *arg1, s32 arg2, void *arg3);
 extern s32 func_8004D4D4(struct Unk31690Request *request);
 
+/**
+ * @brief Spawns a kind-0x17 object through the request queue, optionally
+ *        binding its model first.
+ *
+ * @param self Spawn descriptor; +8 the id, +0x24 the flag word, +0x2C the
+ *        model basis, +0x50 the position, +0x74 the model holder.
+ * @return The queue result of func_8004D4D4, or -1 when the model bind
+ *         fails.
+ *
+ * @par Confirmed
+ * With flag bit 0x1000, func_80083A10 binds the model (range -1 when bit
+ * 0x800 is set, else 0x4650) and a zero result aborts with -1. The request
+ * carries handler D_8003190C, kind 0x17, args.unk14 = 0xD5 (bit 0x1000) or
+ * 0xD1, the position and the model pointers; func_8004D4D4 queues it.
+ *
+ * @par Likely role
+ * The spawn path of the handler func_8002A810: kind 0x17 is the class the
+ * handler D_8003190C processes, the two unk14 values select the modelled
+ * vs the plain variant.
+ *
+ * @par Unknown
+ * What the range constant 0x4650 selects in the model bind.
+ *
+ * @par Callers
+ * func_8002A810.
+ */
 s32 func_80031690(struct Entity *self)
 {
     struct Unk31690Request request;

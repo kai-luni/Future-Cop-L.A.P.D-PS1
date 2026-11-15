@@ -1,3 +1,4 @@
+// Categories: Platform > GPU | Graphics > GPU > Debug Validation
 __asm__(".section .text.target,\"ax\",@progbits\n\t.balign 4");
 typedef unsigned int u32;
 
@@ -22,6 +23,33 @@ extern int func_8009520C(void);
 extern void func_800914E0(int, void (*)(void));
 extern void D_80095808(void);
 
+/**
+ * @brief Debug device write with a GPU-ready timeout (variant A).
+ *
+ * @param entry Debug entry {data, width, height}.
+ * @param data Payload forwarded to the device write callback.
+ * @return 0 on success, -1 when the abort check func_8009520C fires.
+ *
+ * @par Confirmed
+ * func_80092CF4(D_80012B7C, entry) formats the entry; the deadline
+ * D_8009DEFC = func_80091270(-1) + 0xF0 (frame wait plus 240), D_8009DF00
+ * is cleared. The code polls the GPU status words D_8009DED4 (bit
+ * 0x01000000) and D_8009DEC8 (bit 0x04000000) until both are ready, with
+ * func_8009520C() as the abort path. Then func_800914E0(2, D_80095808)
+ * installs the display callback and D_8009DDE8->write(entry, data) sends
+ * the entry.
+ *
+ * @par Likely role
+ * One of the two debug capture paths (twin func_800954DC uses a different
+ * format string): the GPU must be idle before the debug device samples the
+ * frame.
+ *
+ * @par Unknown
+ * What device D_8009DDE8 addresses and what D_80095808 does on VBlank.
+ *
+ * @par Callers
+ * func_800824CC.
+ */
 int func_800953F0(Entry *entry, void *data)
 {
     int result;

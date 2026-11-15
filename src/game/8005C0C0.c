@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Object Pool | Resources > Memory Management
 #include "game/types.h"
 
 struct Unk5C0C0Target {
@@ -25,6 +26,26 @@ struct Unk5C0C0Pool {
 extern void func_8003BF1C(struct Unk5C0C0Pool *pool, struct Unk5C0C0Node *previous,
                           struct Unk5C0C0Node *node);
 
+/**
+ * @brief Garbage-collects the sprite pool (twin of func_8005BD20 with
+ *        0x28-byte nodes).
+ *
+ * @param pool Sprite pool; +4 the active list head.
+ * @param owner Unused in the body.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Same sweep as func_8005BD20: flag-bit-0 nodes go to func_8003BF1C, stale
+ * first/second pointers are nulled by id mismatch; the payload is 0x10
+ * bytes shorter, matching the map-cell sprite records.
+ *
+ * @par Likely role
+ * The sprite-side pool sweep of func_8005E0AC, running alongside the effect
+ * sweep each frame.
+ *
+ * @par Callers
+ * func_8005E0AC.
+ */
 void func_8005C0C0(struct Unk5C0C0Pool *pool, void *owner)
 {
     struct Unk5C0C0Node *node;

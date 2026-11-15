@@ -1,8 +1,45 @@
+// Categories: Graphics > HUD > Minimap | Graphics > Renderer > Map Cell Geometry
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
 typedef struct { int x, y, z; } Vec;
 extern void func_800648E8(void *, u32, Vec *);
+/**
+ * @brief Walks a packed minimap cell list and emits the visible cells as
+ *        geometry, clipping against two bounds.
+ *
+ * @param obj Map block: the position triple at +0, a u16 index table at
+ *        +0x3CC, the packed word list at +0x5D0.
+ * @param list Output geometry list; each emitted cell appends 8 bytes.
+ * @param a, b The two clip bounds (their difference is the type-4 delta).
+ * @param index Start index into the +0x3CC table (word offset >> 4).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The list pointer is obj + 0x5D0 + (table[index] >> 4). Each word's type
+ * comes from the scratchpad table at 0x1F800000[(word >> 15) & 0x7F] & 7.
+ * A set bit 0 marks a counted cell: the index advances by 1, or by 13 on
+ * every fourth marked cell; the walk stops after 16 marked cells. Type 0
+ * folds bit 11 into bit 0 and always emits; types 1..4 compute a signed
+ * distance d from the current index against a/b (type 1: (idx & 0xF0) - b;
+ * type 2: ((idx << 4) & 0xF0) - a; type 3: the sum of both minus a and b;
+ * type 4: (a - b) - ((idx << 4) & 0xF0) + (idx & 0xF0)). d >= 0 emits only
+ * with word bit 0x800 and d > 0; otherwise word bit 0x1000 is required.
+ * Emission calls func_800648E8(list + arg * 8, word, &pos) with
+ * arg = idx + (idx >> 4), tripled.
+ *
+ * @par Likely role
+ * The minimap cell renderer: the scratchpad type table classifies cell
+ * shapes, the two bounds are the visible window, and the 16-cell cap limits
+ * the per-frame geometry budget.
+ *
+ * @par Unknown
+ * The exact layout of the scratchpad type table and why every fourth marked
+ * cell skips 13 indices.
+ *
+ * @par Callers
+ * func_8006531C.
+ */
 void func_80065134(void *obj, void *list, int a, int b, unsigned int index)
 {
     Vec pos;

@@ -1,5 +1,27 @@
+// Categories: Utilities > Mathematics > Geometry | Graphics > GTE > Matrix Math
 #include "game/types.h"
 
+/**
+ * @brief Software 3x3 matrix-vector transform with the shared fixed-point
+ *        scaling.
+ *
+ * @param matrix Nine s32 words, row-major.
+ * @param vector Three s32 components.
+ * @param out Three s32 results.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Both the vector and every matrix word are pre-scaled >> 2; each output
+ * row is the dot product >> 12. No GTE involved, no saturation.
+ *
+ * @par Likely role
+ * The CPU-side rotation of the culling path func_80013F08: the same >>2/>>12
+ * convention as the GTE matrix helpers keeps the software and hardware
+ * paths in the same fixed-point range.
+ *
+ * @par Callers
+ * func_80013F08.
+ */
 void func_8001AE14(s32 *matrix, s32 *vector, s32 *out)
 {
     s32 x;

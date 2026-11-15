@@ -1,3 +1,4 @@
+// Categories: Resources > Text Tables | Graphics > Text
 #include "game/types.h"
 
 typedef struct TableEntry {
@@ -19,6 +20,28 @@ typedef struct Unk800899A4 {
 
 extern Unk800899A4 *D_8009F518;
 
+/**
+ * @brief Resolves a text id to its string via binary search over the loaded
+ *        text table.
+ *
+ * @param id The 16-bit text id.
+ * @return Pointer to the string (entries base + entry offset), or 0 when no
+ *         table is loaded or the id is missing.
+ *
+ * @par Confirmed
+ * D_8009F518->header holds {unk0, count, entries[]}; entries are {u16 id,
+ * u16 offset} sorted by id. Classic binary search (low/high, mid = (low +
+ * high) / 2); on a match the result is (u8 *)entries + offset, i.e. the
+ * offset is relative to the entry array base.
+ *
+ * @par Likely role
+ * The central string lookup of the game: every text draw (func_800788F0),
+ * the front-end widgets and the profile code resolve their labels through
+ * it; the table is one of the loaded assets.
+ *
+ * @par Callers
+ * func_8007799C, func_800788F0, func_8007E1A4, func_80080B70, func_8008125C.
+ */
 u8 *func_80089914(u16 id)
 {
     register u8 *result __asm__("$9") = 0;

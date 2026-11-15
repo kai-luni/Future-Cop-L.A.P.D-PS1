@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Graphics > Model Renderer | Physics > Collision
 #include "game/types.h"
 
 typedef struct Object {
@@ -22,6 +23,38 @@ extern s32 func_8002AD58(s32, Object *, void *);
 extern u8 func_80017508(void *, u32 *, s32);
 extern s32 func_800306A0(Object *, void *);
 
+/**
+ * @brief Message handler of object type 32: spawn, conditional draw with a
+ *        zoom-dependent flag, collision tick and the shared fallback.
+ *
+ * @param message Handler case (1 type, 2 spawn, 3 draw, 6 tick, 10 collision).
+ * @param object Entity block; +0x24 flags, +0xB4 a state word, +0xBA an s16
+ *        parameter, +0xBC/+0xBD two state bytes, +0xD4 the model instance.
+ * @param data Spawn/collision payload.
+ * @param arg3 Forwarded to the spawn helper.
+ * @return Case 1: 0x134. Case 10: 1. Case 3: the draw result. Case 6: the
+ *         tick result. Default: the shared hook func_8002AD58.
+ *
+ * @par Confirmed
+ * Dispatch through jtbl_800111DC over message - 1 (10 entries). Case 2 runs
+ * func_800302E8. Case 10 only acts when unkBD is 0 or 2: func_8002F8B8
+ * (unkBC, unkBA, data, unkBD == 2) gates func_80030498. Case 3 requires
+ * unkBD 2 or 5 and flag bit 0x20 clear, calls the shared hook, then submits
+ * the model via func_80017508 with flags 0x2000000 when (unkB4 & 0xF0) and
+ * (D_8009FAA4 & 0x80) are both set. Case 6 forwards to func_800306A0.
+ *
+ * @par Likely role
+ * One of the numbered entity handlers registered by func_8002AE54 (case 32
+ * returns this address): a collidable object whose draw flag follows the
+ * map zoom bit 0x80.
+ *
+ * @par Unknown
+ * What the type id 0x134 selects and the meaning of unkBD states 2/5.
+ *
+ * @par Callers
+ * No direct callers in the call graph. func_8002AE54 returns the address
+ * for object type 32, so the dispatcher reaches it indirectly.
+ */
 s32 func_80030960(s32 message, Object *object, void *data, s32 arg3)
 {
     register Object *self __asm__("$16");

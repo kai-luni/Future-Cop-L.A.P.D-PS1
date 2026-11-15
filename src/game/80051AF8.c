@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Graphics > Animation
 #include "game/types.h"
 
 struct Unk51AF8State {
@@ -68,6 +69,34 @@ extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 di
 extern void func_800175F8(struct ModelInstance *instance, s32 frame);
 extern void func_800518A8(void *arg0, void *arg1, s32 arg2, void *arg3);
 
+/**
+ * @brief Resets a compound entity's state and restarts its animation tracks.
+ *
+ * @param arg0 Entity block; +0x28 the model instance, +0xAC the state block,
+ *        +0xC8 an animation track, +0xD4 a frame value, +0xDC a second
+ *        model holder.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Clears ~25 state fields (counters, angles, the 0x150..0x170 block with
+ * unk16C = 0x10000), runs func_800516A0(arg0), then selects the animation:
+ * state unkAD == 1 uses track 0xD with unkF2 = 0x1000 and unkBC = 0x10000,
+ * otherwise track 0 with both zero. func_800448D8 starts the tracks at
+ * +0xC8 and at the second holder +0xA0, func_800175F8 sets both model
+ * frames, func_800518A8 initialises the motion block at state +0xEC, and
+ * the remaining counters are zeroed.
+ *
+ * @par Likely role
+ * The (re)spawn reset of the compound-object handlers func_800579D4 and
+ * func_80058714: the two animation variants are the idle and the active
+ * pose of the carried object.
+ *
+ * @par Unknown
+ * What state unkAD distinguishes beyond the track choice.
+ *
+ * @par Callers
+ * func_800579D4, func_80058714.
+ */
 void func_80051AF8(struct Unk51AF8Arg *arg0)
 {
     struct Unk51AF8State *s1;
