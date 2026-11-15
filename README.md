@@ -148,7 +148,8 @@ mnemonics.
 
 See [`docs/OFFLINE_DECOMP.md`](docs/OFFLINE_DECOMP.md) for the resumable, parallel
 candidate-search worker, and [`docs/RESEARCH.md`](docs/RESEARCH.md) for the research
-log.
+log. [`docs/FUNCTION_MAP.md`](docs/FUNCTION_MAP.md) is the generated architecture map
+of the functions whose source carries a category line (`tools/build_function_map.py`).
 
 ## Repository layout
 
