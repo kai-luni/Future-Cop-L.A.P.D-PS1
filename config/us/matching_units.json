@@ -23796,6 +23796,34 @@
    }
   },
   {
+   "name": "func_8004EFE4",
+   "address": "0x8004EFE4",
+   "size": "0x28",
+   "source": "src/game/8004EFE4.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "D_8009F7B0": 2148136880,
+    "func_800181D4": 2147582420
+   },
+   "link": true,
+   "small_data_symbols": {
+    "D_8009F7B0": 4
+   },
+   "linker_symbols": {
+    "D_8009F7B0": "0x8009F7B0",
+    "_gp": "0x8009F214"
+   }
+  },
+  {
    "name": "func_8004F00C",
    "address": "0x8004F00C",
    "size": "0x80",
@@ -35018,6 +35046,36 @@
     "D_800A6E58": 2148167256,
     "D_8009F3B8": 2148135864,
     "D_800A6E38": 2148167224
+   },
+   "link": true
+  },
+  {
+   "name": "func_8007757C",
+   "address": "0x8007757C",
+   "size": "0x13C",
+   "source": "src/game/8007757C.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-O2"
+   ],
+   "symbols": {
+    "D_8009F3B8": 2148135864,
+    "func_80077278": 2147971704,
+    "func_80091480": 2148078720,
+    "func_80091510": 2148078864,
+    "func_80092140": 2148081984,
+    "func_800921F4": 2148082164,
+    "func_80092910": 2148083984,
+    "func_80092BF4": 2148084724,
+    "func_80092E10": 2148085264,
+    "func_800932F0": 2148086512,
+    "func_800934BC": 2148086972
    },
    "link": true
   },
@@ -47348,6 +47406,95 @@
    "link": true
   },
   {
+   "name": "func_8008FD30",
+   "address": "0x8008FD30",
+   "size": "0xEC",
+   "source": "src/game/8008FD30.c",
+   "compiler": "gcc-2.8.1-psx",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "D_8009CB6C": 2148125548,
+    "D_8009CB78": 2148125560,
+    "D_8009CB7C": 2148125564,
+    "D_8009CBA0": 2148125600,
+    "D_8009CBA4": 2148125604,
+    "D_8009CBA8": 2148125608,
+    "D_8009CBAC": 2148125612,
+    "D_8009CBB0": 2148125616
+   },
+   "link": true
+  },
+  {
+   "name": "func_8008FE1C",
+   "address": "0x8008FE1C",
+   "size": "0xC",
+   "source": "src/game/8008FE1C.c",
+   "compiler": "gcc-2.7.2-cdk",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-O2"
+   ],
+   "symbols": {},
+   "link": true,
+   "aspsx_rewrite_blocks": [
+    {
+     "start": "sw $4,-2146841776",
+     "end": "nop # DEBUG: branch/jump",
+     "lines": [
+      "lui $at, 0x800A",
+      "j $31",
+      "sw $4, -13488($at)"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "func_8008FE28",
+   "address": "0x8008FE28",
+   "size": "0xD8",
+   "source": "src/game/8008FE28.c",
+   "compiler": "gcc-2.7.2-psx",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-O2",
+    "-G0"
+   ],
+   "symbols": {
+    "D_8009C8A8": 2148124840,
+    "D_8009C8AC": 2148124844,
+    "D_8009CB6C": 2148125548,
+    "func_8008E7A0": 2148067232
+   },
+   "link": true,
+   "linker_symbols": {
+    "D_8009CB84": "0x8009CB84",
+    "D_800A3E50": "0x800A3E50",
+    "D_800A3E58": "0x800A3E58"
+   },
+   "maspsx_flags_extra": [
+    "--passthrough"
+   ]
+  },
+  {
    "name": "func_8008FF08",
    "address": "0x8008FF08",
    "size": "0x18",
@@ -52760,6 +52907,35 @@
      ]
     }
    ]
+  },
+  {
+   "name": "func_80099C58",
+   "address": "0x80099C58",
+   "size": "0x5D0",
+   "source": "src/game/80099C58.c",
+   "compiler": "gcc-2.7.2-psx",
+   "compiler_flags": [
+    "-quiet",
+    "-msoft-float",
+    "-mgas",
+    "-G0",
+    "-fgnu-linker",
+    "-O2",
+    "-G4",
+    "-O2"
+   ],
+   "symbols": {
+    "D_8009EEA4": 2148134564,
+    "func_80097808": 2148104200,
+    "func_800999F4": 2148112884
+   },
+   "link": true,
+   "linker_symbols": {
+    "D_8009EA60": "0x8009EA60"
+   },
+   "rodata_address": "0x80012DDC",
+   "aspsx_reorder_epilogue": true,
+   "aspsx_reorder_jump_store": true
   }
  ]
 }

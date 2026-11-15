@@ -230,7 +230,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x8001EC94	672	func_8001EC94	verified	1	u32	1	5	56	s0|s1|s2|s3|s4|s5|s6|s7|ra
 0x8001EF34	88	func_8001EF34	high	1	u32	7	0	0		leaf
 0x8001EF8C	108	func_8001EF8C	verified	1	u32	4	2	24	s0|ra
-0x8001EFFC	188	func_8001EFFC	medium	0	u32	0	3	24	ra	gp|orphan|indirect
+0x8001EFF8	192	func_8001EFF8	medium	0	u32	0	3	24	ra	gp|orphan|indirect
 0x8001F0B8	68	func_8001F0B8	verified	0	u32	1	1	24	ra	gp
 0x8001F0FC	48	func_8001F0FC	high	1	u32	1	0	0		leaf|gp
 0x8001F12C	44	func_8001F12C	low	1	u32	1	0	0		leaf|gp|orphan
@@ -277,7 +277,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x80021254	72	func_80021254	medium	0	void	0	3	24	ra	gp|orphan
 0x8002129C	92	func_8002129C	low	0	u32	2	0	0		leaf|gp|orphan
 0x800212F8	164	func_800212F8	verified	1	u32	3	1	24	ra	gp
-0x800213A0	240	func_800213A0	medium	0	u32	0	1	48	s0|ra	gp|orphan|indirect
+0x8002139C	244	func_8002139C	medium	0	u32	0	1	48	s0|ra	gp|orphan|indirect
 0x80021490	120	func_80021490	verified	1	u32	2	3	32	s0|s1|ra	gp
 0x80021508	76	func_80021508	low	0	u32	1	0	0		leaf|orphan
 0x80021554	388	func_80021554	medium	1	u32	1	2	48	s0|s1|s2|s3|ra	orphan
@@ -335,7 +335,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x80022F7C	44	func_80022F7C	medium	0	u32	2	1	24	ra	orphan
 0x80022FA8	604	func_80022FA8	medium	0	u32	1	4	24	s0|ra	break|gp|addr_taken|orphan|indirect
 0x80023204	272	func_80023204	medium	1	u32	1	1	24	s0|ra	gp|addr_taken|orphan|indirect
-0x80023318	36	func_80023318	medium	0	void	0	1	24	ra	orphan
+0x80023314	40	func_80023314	medium	0	void	0	1	24	ra	orphan
 0x8002333C	316	func_8002333C	verified	0	u32	1	8	56	s0|ra	gp
 0x80023478	136	func_80023478	low	0	u32	3	0	0		leaf|gp
 0x8002347C	132	func_8002347C	medium	0	void	0	6	24	ra	gp|orphan
@@ -1310,7 +1310,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x8007F8CC	20	func_8007F8CC	high	0	u32	1	0	0		leaf|gp
 0x8007F8E0	28	func_8007F8E0	high	0	u32	2	0	0		leaf|gp
 0x8007F8FC	64	func_8007F8FC	verified	0	u32	1	3	24	ra	gp|addr_taken
-0x8007F940	140	func_8007F940	medium	0	u32	0	2	24	s0|ra	gp|orphan
+0x8007F93C	144	func_8007F93C	medium	0	u32	0	2	24	s0|ra	gp|orphan
 0x8007F9CC	124	func_8007F9CC	verified	0	u32	2	4	24	ra	gp
 0x8007FA48	64	func_8007FA48	verified	0	u32	2	2	24	ra	gp
 0x8007FA88	68	func_8007FA88	verified	0	u32	3	1	24	ra	gp
@@ -1882,7 +1882,7 @@ addr	size	name	confidence	args	ret	callers	callees	frame	saved	tags
 0x80098FB8	36	func_80098FB8	high	1	u32	4	0	0		leaf
 0x80098FE8	892	func_80098FE8	high	1	u32	2	0	0		leaf
 0x80099368	1528	func_80099368	verified	1	u32	3	2	56	s0|s1|s2|s3|s4|s5|ra
-0x80099970	132	func_80099970	medium	2	u32	0	0	8		leaf|orphan
+0x80099968	140	func_80099968	medium	2	u32	0	0	8		leaf|orphan
 0x800999F4	312	func_800999F4	verified	4	u32	2	0	8		leaf
 0x80099B2C	296	func_80099B2C	low	3	u32	0	0	0		leaf|orphan
 0x80099C58	1488	func_80099C58	verified	2	u32	2	2	48	s0|s1|s2|s3|ra

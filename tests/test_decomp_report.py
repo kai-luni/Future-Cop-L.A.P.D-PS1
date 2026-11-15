@@ -29,7 +29,7 @@ class DecompReportTests(unittest.TestCase):
         self.assertEqual(report["version"], 2)
         # A new verified unit changes the manifest, so these numbers move with it;
         # what this test pins is the shape of the aggregate, not a snapshot.
-        self.assertEqual(measures["total_code"], "555552")
+        self.assertEqual(measures["total_code"], "555576")
         # The catalogue minus the merges recorded in the boundary overrides: the
         # count follows the data instead of pinning a snapshot that every new
         # override would break.
@@ -49,7 +49,7 @@ class DecompReportTests(unittest.TestCase):
     def test_code_only_scope_drops_disc_assets_everywhere(self):
         report = build_report_with_assets(False)
         measures = report["measures"]
-        self.assertEqual(measures["total_code"], "555552")
+        self.assertEqual(measures["total_code"], "555576")
         self.assertGreater(int(measures["matched_code"]), 51512)
         self.assertEqual(measures["total_data"], "32224")
         self.assertEqual(measures["matched_data"], "404")
