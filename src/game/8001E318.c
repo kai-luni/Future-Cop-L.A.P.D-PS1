@@ -1,5 +1,24 @@
+// Categories: Utilities > Memory
 #include "game/types.h"
 
+/**
+ * @brief memcpy/memmove: copies @c count bytes with the widest safe access.
+ *
+ * @param destination Target address.
+ * @param source Source address.
+ * @param count Number of bytes.
+ * @return The unchanged destination pointer.
+ *
+ * @par Confirmed structure
+ * Three paths chosen by alignment: 4-byte aligned source, destination and
+ * length use an unrolled eight-word loop; 2-byte alignment uses a half-word
+ * loop; anything else a byte loop. There is no overlap handling - the one
+ * caller that has to move backwards (the free-range merge) uses
+ * func_8001E44C instead.
+ *
+ * @par Callers
+ * func_800181D4 and func_80017EBC, for the free-range table maintenance.
+ */
 u8 *func_8001E318(u8 *destination, u8 *source, u32 count)
 {
     if (((u32)destination & 3) == 0 &&

@@ -1,3 +1,4 @@
+// Categories: Resources > Memory Management | Platform > Memory
 #include "game/types.h"
 
 struct LinkState {
@@ -65,6 +66,30 @@ extern u8 *func_8001E318(u8 *destination, u8 *source, s32 count);
  *       the initialization of the LinkState structures.
  * @note The behavior for allocation modes outside 0-3 is undefined
  *       by this function.
+ *
+ * @par Globals
+ * - D_8009F590: free-range table (start/end pointer pairs).
+ * - D_8009F594: number of valid words in that table.
+ * - D_8009F598: current search cursor for mode 2 allocations.
+ * - D_8009FA4C, D_8009FAAC, D_8009F9D0: the three fixed-size pools, tried in
+ *   that order by mode 3.
+ *
+ * @par Calls
+ * func_8001E240() is the general allocator (mode 0), func_80017D5C() and
+ * func_80017E0C() search the free-range table from the front/back,
+ * func_800195A4() pops a node from a fixed pool and func_8001E318() moves the
+ * table words when a range is consumed.
+ *
+ * @par Callers
+ * The universal allocator of the executable - almost every subsystem uses it,
+ * with mode 2 (front of the free range) by far the most common at boot and
+ * mode 3 for the small fixed-size structures.
+ *
+ * @par Matching note
+ * The @c goto retry ladder and the "size -= 4" adjustment are part of the
+ * retail control flow: when a range allocation fails the header word is
+ * subtracted again before the general allocator is tried, so the byte match
+ * depends on this exact order.
  */
 void *func_80017EBC(s32 size, s32 tag)
 {

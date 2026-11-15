@@ -1,3 +1,4 @@
+// Categories: Resources > Memory Management | Platform > Memory
 #include "game/types.h"
 
 extern s32 *D_8009F590;
@@ -21,6 +22,17 @@ extern s32 D_8009F598;
  *
  * @param size Minimum number of contiguous bytes required.
  * @return Index of the first suitable range, or -1 if none exists.
+ *
+ * @par Globals
+ * D_8009F590 (range table), D_8009F594 (word count), D_8009F598 (search cursor,
+ * used as the starting index).
+ *
+ * @par Callers
+ * func_80017EBC, for allocation mode 2 (allocate from the front of a range).
+ *
+ * @par Note
+ * The cursor is not advanced here - the caller updates D_8009F598 after it has
+ * chosen the range, which is why the function is a pure search.
  */
 s32 func_80017D5C(s32 size)
 {

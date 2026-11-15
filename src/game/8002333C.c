@@ -1,3 +1,4 @@
+// Categories: Graphics > Sprite/Asset Subsystem | Resources > Memory Management
 #include "game/types.h"
 
 typedef struct {
@@ -30,6 +31,37 @@ extern s32 func_80098458(s32 arg0, s32 arg1);
 extern s32 func_80097B28(s32 arg0);
 extern void func_80044F8C(void);
 
+/**
+ * @brief Brings up the sprite/asset subsystem: resource group, eight object
+ *        slots and two work buffers.
+ *
+ * @return D_8009F26C - 1 when the two work buffers were obtained (the subsystem
+ *         is running), 0 when the resource-group call failed and no buffers
+ *         were taken.
+ *
+ * @par Confirmed flow
+ * 1. func_80023478() tears down a previous instance if one is running.
+ * 2. func_80021B50(), then func_80021C20(1, 0x1002001, 4, 8, 5, 0x18, 8,
+ *    D_800A8E48, 9, D_800AB0E8, 0) - a varargs "declare resource group" call
+ *    with two (id, table) pairs (4/8 and 5/0x18) and two tables, terminated by
+ *    0. func_800211FC() finishes the declaration.
+ * 3. func_8001F0FC(D_80023314) registers a per-frame callback.
+ * 4. The eight slots D_800A0A00 are initialised: unk00/unk01 = -1 ("free"),
+ *    unk02/unk04/unk08 = 0. D_8009F640[0..1] are cleared.
+ * 5. Only when func_80021C20 returned 0: D_8009F27C = func_80098458(0x1010,
+ *    0x11E80) and D_8009F278 = func_80097B28(0xC000) - two buffers, one of them
+ *    0x11E80 bytes with a 0x1010-byte header area - and D_8009F26C = 1.
+ * 6. D_800A0A80[0..2] and D_8009F648 are cleared, func_80044F8C() runs a final
+ *    set-up step, and D_8009F26C is returned.
+ *
+ * @par Globals
+ * D_800A0A00 (8 object slots), D_8009F640 (2 words), D_800A0A80 (3 words),
+ * D_8009F26C (running flag), D_8009F278/D_8009F27C (work buffers),
+ * D_8009F648, D_800A8E48/D_800AB0E8 (resource tables).
+ *
+ * @par Callers
+ * func_80076EB0 (boot); func_80023478 undoes it.
+ */
 u8 func_8002333C(void)
 {
     s32 result;

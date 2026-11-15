@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Resources > Device Init
 #include "game/types.h"
 
 extern u8 D_8009F234;
@@ -13,6 +14,45 @@ extern s32 D_800A8E68[];
 extern u32 jtbl_80010AA4[];
 extern s32 func_8001D130(s32 arg0);
 
+/**
+ * @brief Initialises the file/CD layer: installs the allocator callbacks,
+ *        clears the four file slots and probes the drive/media slots.
+ *
+ * @param arg0 Optional allocation callback; both arguments must be given or
+ *             both omitted.
+ * @param arg1 Optional free callback (same rule as arg0).
+ * @param arg2 Optional pointer stored in D_8009F240; when NULL the default
+ *             D_8009AABC is used.
+ *
+ * @return 0 on success, -0x11 when only one of arg0/arg1 is non-zero, -7 when
+ *         none of the four probed slots reported a usable state.
+ *
+ * @par Confirmed flow
+ * 1. With arg0 == arg1 == 0 the defaults D_8001CDD0 (alloc) and D_8001CDF0
+ *    (free) are installed in D_8009F230/D_8009F22C; otherwise both given
+ *    pointers are stored.
+ * 2. The four file slots D_800A6D78 (0x18 bytes apart) are cleared word-wise.
+ * 3. For i = 1..3: idx = func_8001D130(i); the result shifted by 0x10 indexes
+ *    the jump table jtbl_80010AA4 (four cases: 0, 3, 1, default). Case 0 and
+ *    case 3 store 0 and 3 and count as "usable"; case 1 stores 1; anything else
+ *    stores 2 into D_800A8E68[i].
+ * 4. count == 0 means no usable slot: -7.
+ * 5. D_8009F234 = 1 ("file layer ready") and D_8009F240 = arg2 (or
+ *    D_8009AABC), return 0.
+ *
+ * @par Likely role
+ * A Sony-style device/drive probe: the per-index state codes (0/1/2/3) look
+ * like "no media / ready / not present / changed" and D_8009F234 is the
+ * "initialised" flag read elsewhere.
+ *
+ * @par Globals
+ * D_8009F230/D_8009F22C (alloc/free callbacks), D_8009F234 (ready flag),
+ * D_8009F240 (private pointer), D_800A6D78 (file slots), D_800A8E68 (per-slot
+ * state), jtbl_80010AA4.
+ *
+ * @par Callers
+ * func_80076EB0 (boot) and func_8001CE10.
+ */
 s32 func_8001D248(s32 arg0, s32 arg1, u8 *arg2)
 {
     register s32 count __asm__("$18");

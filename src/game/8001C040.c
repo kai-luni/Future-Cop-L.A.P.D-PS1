@@ -1,3 +1,4 @@
+// Categories: Graphics > Fade Layers | Graphics > Colour
 #include "game/types.h"
 
 struct Unk1C040 {
@@ -12,6 +13,23 @@ struct Unk1C040 {
 extern u8 D_8009F225;
 extern struct Unk1C040 D_800A06E0[];
 
+/**
+ * @brief Sets the colour of all fade layers.
+ *
+ * @param color 24-bit colour, split into the layer's red (bits 16-23), green
+ *              (8-15) and blue (0-7) bytes. 0 makes every layer black.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * The loop runs over D_8009F225 layers (2 after func_8001BF78) and writes the
+ * three bytes of D_800A06E0[i] at offsets 0x19/0x1A/0x1B; the layer's @c enabled
+ * byte at 0x18 is left alone.
+ *
+ * @par Callers
+ * func_80076EB0 only - twice with 0, after selecting each layer, so that the
+ * first visible frame is guaranteed to be black.
+ */
 void func_8001C040(u32 color)
 {
     s32 i;

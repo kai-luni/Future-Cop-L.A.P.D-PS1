@@ -1,3 +1,4 @@
+// Categories: Graphics > Fade Layers | Graphics > Display Setup
 #include "game/types.h"
 
 struct Unk1C040 {
@@ -15,6 +16,28 @@ extern struct Unk1C040 D_800A06E0[];
 
 extern void func_800932F0(struct Unk1C040 *entry);
 
+/**
+ * @brief Selects a fade layer and enables or disables all of them.
+ *
+ * @param mode Layer index, stored in the signed global D_8009F224. Must be in
+ *             0..D_8009F225-1 (the caller's responsibility; an out-of-range
+ *             index selects past the array).
+ * @param enable 1 = mark every layer enabled, 0 = mark every layer disabled.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * D_8009F224 = mode; then the @c enabled byte at offset 0x18 of every
+ * D_800A06E0[i] is set to 1 or 0, and func_800932F0(&D_800A06E0[mode]) uploads
+ * the selected entry to the hardware.
+ *
+ * @par Globals
+ * D_8009F224 (selection), D_8009F225 (layer count), D_800A06E0 (layers).
+ *
+ * @par Callers
+ * func_80076EB0 (boot: select layer 1 and enable, then layer 0 and enable),
+ * func_8001BFA8, func_80087D48, the unit at 0x80088124.
+ */
 void func_8001C088(u8 mode, u8 enable)
 {
     s32 i;

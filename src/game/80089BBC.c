@@ -1,7 +1,41 @@
+// Categories: Graphics > Video Decode | Resources > Decompression
 #include "game/types.h"
 extern u8 *D_8009F51C;
 extern u8 *D_8009F520;
 
+/**
+ * @brief Decodes one compressed bit stream into code words using the tables
+ *        built by func_80089A88().
+ *
+ * @param input  Compressed stream: two 16-bit words are copied verbatim, then a
+ *               10-bit prefix and the bit stream follow.
+ * @param output Destination for the decoded 16-bit words.
+ *
+ * @return 0 on success.
+ *
+ * @par Confirmed flow
+ * 1. The first two words are copied to the output, the third becomes the
+ *    10-bit prefix (shifted left by 10) and words 4/5 are combined into the
+ *    bit reservoir (bits = (raw << 16) | code).
+ * 2. The outer loop reads a 9-bit code; 0x1FF terminates the stream.
+ * 3. Each code is refined in the inner loop through the length table: codes
+ *    below 32 consume 8 more bits, longer codes take their length directly; the
+ *    symbol is looked up in the value table (length table base + 0x2000 or the
+ *    second table at +0x200).
+ * 4. Two escapes are handled: 0x7C1F means "next 16 bits are a literal word"
+ *    and 0xFE00 ends the stream.
+ * 5. The output is padded with 0xFE00 up to a total of 64 words.
+ *
+ * @par Globals
+ * D_8009F51C/D_8009F520 (decode tables, read-only here).
+ *
+ * @par Callers
+ * func_800861E4, after func_80089A88 built the tables.
+*
+ * @par Matching note
+ * Every working value is pinned to a retail register ($2-$10, $24, $25); the
+ * shift/refill sequence is what reproduces the retail instruction order.
+ */
 int func_80089BBC(u16 *input, u16 *output)
 {
     register u16 *src __asm__("$9") = input;

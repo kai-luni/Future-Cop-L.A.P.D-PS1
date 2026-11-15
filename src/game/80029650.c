@@ -1,3 +1,4 @@
+// Categories: Resources > Asset Registry | Resources > Reference Counting
 #include "game/types.h"
 
 typedef struct Node {
@@ -14,6 +15,31 @@ typedef struct {
 extern List D_800A0B70;
 extern void func_800288BC(Node *node);
 
+/**
+ * @brief Decrements a registered asset's reference count and releases the
+ *        asset when it reaches zero.
+ *
+ * @param arg0 Address of the node pointer (the node itself is read through it).
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * (*arg0)->count is decremented, then the global list D_800A0B70 is walked:
+ * every node whose count has reached 0 is unlinked and handed to
+ * func_800288BC(). The loop restarts from the head after a removal, so a whole
+ * chain of dead nodes is cleaned up in one call; the walk is guarded against
+ * a NULL head.
+ *
+ * @par Globals
+ * D_800A0B70 (asset list: head pointer at +0x18).
+ *
+ * @par Likely role
+ * The "release handle" step used by the deferred queues in func_8001B4A8: an
+ * image or sound keeps a node alive until the last user releases it.
+ *
+ * @par Callers
+ * func_8001B4A8 (frame end, both queues).
+ */
 void func_80029650(Node **arg0)
 {
     Node *current;

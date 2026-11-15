@@ -1,3 +1,4 @@
+// Categories: Game Engine > Screen State Machine | Resources > Module Teardown
 #include "game/types.h"
 
 typedef struct {
@@ -30,6 +31,40 @@ extern void func_80023BF8(void);
 extern void func_800249BC(s32 arg0);
 extern void func_80024D14(s32 arg0);
 
+/**
+ * @brief Closes a front-end screen: maps the module's exit state to the next
+ *        screen state and unloads the module.
+ *
+ * @param arg0 Module handle/name passed on to the unloader.
+ *
+ * @return Nothing. The next state is written to D_8009FA94->unk10.
+ *
+ * @par Confirmed transition table (D_8009FA00 - 5, 10 entries)
+ * - 5, 6 -> unk10 = 2
+ * - 7    -> unk10 = 3
+ * - 8    -> if D_8009FA70 == 0: D_8009FA00 = 10 and an inner loop runs until
+ *           D_8009FA00 changes and func_80024170() returns 0, refreshing the
+ *           frame time (D_8009F9FC = D_8009FAA4 - D_8009FA30) and calling
+ *           func_80025348() each round; then unk10 = 0.
+ * - 9    -> unk10 = 0 when unk40 == unk44, otherwise 1
+ * - other -> unk10 = 4
+ *
+ * After the switch: func_80047690(0) releases the display, func_80029DD8() and
+ * func_80023BF8() finish the render side, unk60 is cleared and the module is
+ * unloaded through func_800249BC(arg0) (UI mode) or func_80024D14(arg0).
+ *
+ * @par Globals
+ * D_8009FA00 (current state), D_8009FA70, D_8009F9FC/D_8009FAA4/D_8009FA30
+ * (frame timing), D_8009F9C4 (loader selector), D_8009FA94 (state block:
+ * unk10, unk40, unk44, unk60), jtbl_80010DDC (the jump table).
+ *
+ * @par Likely meaning of the states
+ * 2/3 lead back to the loader or the next screen, 0 returns to the front-end
+ * menu and 4 enters the interactive loop of func_80027EE4/func_80028618.
+ *
+ * @par Callers
+ * func_800287F4, as the last step of every screen.
+ */
 void func_80025B7C(s32 arg0)
 {
     register s32 state __asm__("$16");

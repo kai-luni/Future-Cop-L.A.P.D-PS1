@@ -1,3 +1,4 @@
+// Categories: Platform > GPU | Graphics > GPU Command Lists
 #include "game/types.h"
 
 typedef struct {
@@ -12,6 +13,26 @@ extern void (*D_8009DDEC)(u8 *, s32);
 extern Dispatch *D_8009DDE8;
 extern u8 D_80012AE8[];
 
+/**
+ * @brief Hands an ordering table to the GPU (DrawOTag).
+ *
+ * @param arg0 Start of the primitive list.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * With debug level D_8009DDF2 >= 2 the hook is called with D_80012AE8, then the
+ * library callback at D_8009DDE8+8 is invoked as
+ * callback(unk18, list, 0, 0) - the two trailing zeroes are the standard
+ * "no extra parameters" form of the DMA submission.
+ *
+ * @par Globals
+ * D_8009DDE8 (GPU library state), D_8009DDF2 (debug level), D_8009DDEC (hook).
+ *
+ * @par Callers
+ * func_8001B4A8 only, once per frame, with the list built from the ordering
+ * table buckets.
+ */
 void func_80093280(s32 arg0)
 {
     Dispatch *dispatch;

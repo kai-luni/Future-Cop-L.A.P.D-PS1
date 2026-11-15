@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End Configuration | Input > Port Presets
 #include "game/types.h"
 
 typedef struct {
@@ -20,6 +21,40 @@ extern u8 D_800A374D[];
 
 extern u8 func_8001EB2C(s32 arg0);
 
+/**
+ * @brief Applies one of four stored presets to a per-port configuration block.
+ *
+ * @param port  Port index, clamped to 0..1 (anything < 0 becomes 0, anything
+ *              >= 2 becomes 1).
+ * @param value Preset index, clamped to 0..3.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * - The preset index is stored in D_8009FA98[port] (addressed through
+ *   D_8009FA99 - 1, the compiler's form for a two-byte array starting at
+ *   0x8009FA98).
+ * - src = D_8009BFD4 + value * 14: the four presets are 14 consecutive byte
+ *   offsets each.
+ * - The 14 words of D_8009BEF4 (stride 12: 8 unused bytes plus one value word)
+ *   are written to D_800AAC50 + port * 56 + src[i] * 4, i.e. into the i-th
+ *   slot named by the preset. With 14 slots of 4 bytes the target block is
+ *   56 bytes per port.
+ *
+ * @par Likely role
+ * A "copy the preset's values into the port's 14-slot configuration" helper.
+ * The 2 x 56-byte layout and the two ports match the two controller/key
+ * configuration blocks; the main loop applies preset 0 to both ports at boot.
+ *
+ * @par Globals
+ * D_8009FA98 (preset index per port), D_8009BEF4 (value table),
+ * D_8009BFD4 (4 x 14 offset table), D_800AAC50 (target blocks).
+ * D_8009F8D8/D_8009F8D9/D_8009F900..D_8009F904 are declared but not touched
+ * by this function (left over from an earlier revision of the unit).
+ *
+ * @par Callers
+ * func_80076A2C (preset 0 for ports 0 and 1), func_8007C80C, func_80080984.
+ */
 void func_8007BFCC(s32 port, s32 value)
 {
     extern u8 D_8009FA99[];

@@ -1,3 +1,4 @@
+// Categories: Utilities > Formatting | Platform > Library
 #include "game/types.h"
 
 /* 0x8008CD30 (0xC bytes) — argument-spill head of the varargs formatter whose
@@ -10,6 +11,28 @@
  * extent carries no prologue and no epilogue at all: nothing a C function body
  * can emit, because GCC always terminates a fall-through with jr $ra/nop.
  * The unit is therefore carried as the raw spill GCC placed here. */
+/**
+ * @brief First 12 bytes of the varargs formatter (sprintf): the register
+ *        argument spill.
+ *
+ * The retail build stores $a1/$a2/$a3 into the caller's 16-byte argument save
+ * area *before* the callee lowers $sp, so these three stores sit above the
+ * frame set-up of the body at 0x8008CD3C. The catalogue cuts the unit right
+ * after the third store, and a unit without prologue or epilogue cannot be
+ * produced by a C function body (GCC always ends a fall-through block with
+ * jr $ra/nop), so the words are carried as raw assembly.
+ *
+ * @param (implicit) $a0 destination buffer, $a1 format string, $a2/$a3 the
+ *        first two variadic arguments - the usual o32 call layout. The body
+ *        that follows at 0x8008CD3C consumes them.
+ * @return Not applicable here; the body returns the number of characters
+ *         written.
+ *
+ * @par Usage in the game
+ * Every formatted path/name in the front-end goes through this entry, e.g.
+ * sprintf(buf, "%s%s", prefix, name) - see func_80024E3C, func_80025370,
+ * func_80083130 and the mission loaders.
+ */
 __asm__(
     ".set noreorder\n"
     " .globl func_8008CD30\n"

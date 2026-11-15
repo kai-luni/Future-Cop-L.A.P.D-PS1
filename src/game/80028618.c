@@ -1,3 +1,4 @@
+// Categories: Game Engine > Gameplay Frame Loop | Graphics > Rendering | Physics > Camera
 #include "game/types.h"
 
 extern volatile s32 D_8009FA60;
@@ -33,6 +34,52 @@ extern void func_8008352C(s32 arg);
 extern void func_80017B60(s32 id);
 extern void func_80045884(s32 *position, s32 arg1, s32 angle, s32 index);
 
+/**
+ * @brief The in-game frame loop: input, update, camera matrix per player,
+ *        world render and frame submission - repeated while the state is
+ *        4 (playing), 8 or 0xD.
+ *
+ * @return Nothing; it returns when the state leaves those values.
+ *
+ * @par Confirmed flow
+ * 1. Frame bookkeeping: D_8009FA60 = 0, frame id D_8009F9FC = 8, D_8009FA50 = 0,
+ *    the three bytes D_8009F690..D_8009F692 are set to 8, D_8009F693 = 0 and
+ *    D_8009FAA4/D_8009FA30 are seeded (D_8009FA30 = 0 - 8).
+ * 2. If the state is not 4, 0xD or 8 the loop is skipped entirely.
+ * 3. Per round: increment D_8009FA50, func_8002703C() (input/controller),
+ *    then func_800271A4() when D_8009FA0C == 1 or func_80027510() otherwise
+ *    (the two update paths - the same switch the rest of the renderer uses),
+ *    and func_8008352C(frame id).
+ * 4. For up to two entries of D_8009FA58 (the player/split-screen slots):
+ *    func_80017B60() selects a bank from the entry's node, then
+ *    func_80045884(position, camera + 0x7C, camera->0x20, index) builds the
+ *    view matrix - the position pointer comes either from D_8009F9A0[0] + 0x50
+ *    (when set) or from the entry itself at +0x50.
+ * 5. func_800451EC(work), func_800462D0() render the world; when the state has
+ *    become 0xD, func_80028164() plus func_8001B4A8(1) submit the frame.
+ * 6. func_80027D70() always runs; when the state is still 4 or 0xD,
+ *    func_80027D9C() runs and the frame barrier D_8009FA3C is raised, except
+ *    when the state just changed to 0xD. In every other case the barrier is
+ *    raised directly.
+ * 7. The loop repeats while the state is 4, 0xD or 8; func_8001BFD8(1)
+ *    re-enables the display on exit.
+ *
+ * @par Globals
+ * D_8009FA00 (game state), D_8009FA0C (render/update path selector),
+ * D_8009F9FC (frame id), D_8009FAA4/D_8009FA30 (frame timing), D_8009FA50
+ * (frame counter), D_8009FA60 (cleared), D_8009F690..D_8009F693 (frame/state
+ * bytes), D_8009FA3C (barrier), D_8009F9A0/D_8009FA58 (player slots),
+ * D_8009F9E4 (camera object).
+ *
+ * @par Likely role
+ * This is the "playing" loop: one call per displayed frame, with two players
+ * supported (split screen or co-op) and the camera driven from a camera object
+ * at D_8009F9E4. State 0xD appears to be the "leaving the level" frame in
+ * which the last picture is submitted.
+ *
+ * @par Callers
+ * func_800287F4, on the path where arg1 == 0 (game mode).
+ */
 void func_80028618(void)
 {
     register s32 saved __asm__("$3");

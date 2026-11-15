@@ -1,3 +1,4 @@
+// Categories: Graphics > Display Setup | Platform > GTE
 #include "game/types.h"
 
 /*
@@ -16,6 +17,34 @@
 extern void func_800959F0(s32 arg0, s32 arg1);
 extern void func_80095A10(s32 arg0);
 
+/**
+ * @brief Two-stage display set-up: position (x, y) followed by a height value.
+ *
+ * @param x Forwarded unchanged to func_800959F0(x, y).
+ * @param y Forwarded unchanged to func_800959F0(x, y).
+ * @param h Forwarded to func_80095A10(h) after the position call.
+ *
+ * @return Nothing.
+ *
+ * @par Why this is assembly
+ * The function lives in the hand-written GTE module at the start of .text. It
+ * is the only routine in the executable that saves $ra alone at frame-4
+ * (0x3C of a 0x40 frame); every GCC 2.6.3-2.8.1 build of the equivalent C puts
+ * a lone $ra at frame-8 (0x38), so no compiler reproduces it. The equivalent C
+ * is kept in the comment above the block:
+ * @code
+ * void func_80010030(s32 x, s32 y, s32 h) { func_800959F0(x, y); func_80095A10(h); }
+ * @endcode
+ *
+ * @par Likely role
+ * func_800959F0 takes the pair (x, y) and func_80095A10 a single height, which
+ * matches "set the projection/viewport origin, then its size". Callers use
+ * (0xA0, 0x78, 0x200) for the 320x240 front-end and (0x50, 0x78, 0x200) for the
+ * narrower variant - consistent with centring a viewport.
+ *
+ * @par Callers
+ * func_800287F4 (once per frame) and func_80019D60.
+ */
 __asm__(
     ".text\n\t"
     ".align 2\n\t"

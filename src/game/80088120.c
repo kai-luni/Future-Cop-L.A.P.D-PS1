@@ -1,3 +1,4 @@
+// Categories: Graphics > Video Decode Output | Graphics > Frame Conversion
 #include "game/types.h"
 
 typedef struct {
@@ -70,6 +71,42 @@ extern s32 func_8001BFE4(void);
  *
  * Returns the result of the main processing routine, or zero
  * when initialization cannot proceed.
+ */
+/**
+ * @brief Processes one video frame: opens the resource, optionally converts the
+ *        320x256 frame buffer between RGB555 and RGB888, decodes and blits.
+ *
+ * @param arg0 Resource/file name passed to func_8001D5E4 (the file layer).
+ * @param arg1 Mode/format selector from the caller (see func_80089D44: 4 for
+ *             full screens, 0x26 for the narrow variant).
+ * @param arg2 Second coordinate/offset from the caller.
+ *
+ * @return The result of the main processing routine, or 0 when the layer is not
+ *         open or the resource cannot be opened.
+ *
+ * @par Confirmed flow (the outline comment above the function is the original
+ *      author's description and is kept as-is)
+ * 1. If D_8009F504 == 0 the call is a no-op returning 0.
+ * 2. handle = func_8001D5E4(arg0, D_8009F238); a negative handle means "cannot
+ *    open" - func_80092BF4(1) restores the display and 0 is returned.
+ * 3. If the mode flags carry 0x24 (convert + clear), the function converts the
+ *    current frame buffer row by row: two 1-pixel-high rectangles (0x140 and
+ *    0x1E0 wide) are read with func_80092F98, the y positions depend on the
+ *    current screen page (func_8001C034), and every pixel is expanded from
+ *    5-6-5 to 24 bit while a central 0x100 x 0x90 region (rows 0x31..0xC0,
+ *    columns 0x20..0x11F) is forced to black when the mode mask applies.
+ * 4. The proper decode path then runs the resource through
+ *    func_80089700/func_80087824 with the parameter block D_800A6E20, writes the
+ *    result with func_80092F38 / func_80092FF8 and converts back to RGB555
+ *    afterwards.
+ *
+ * @par Globals
+ * D_8009F504 (layer open), D_8009F4DC (mode flags), D_8009F4EC/D_8009F4F0/
+ * D_8009F4F4/D_8009F4F8 (buffers), D_8009F960/D_8009F964/D_8009F968
+ * (geometry), D_8009F238 (file layer parameter), D_800A6E20 (parameter block).
+ *
+ * @par Callers
+ * func_80089D44 only.
  */
 u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
 {

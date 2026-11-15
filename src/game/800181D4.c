@@ -1,3 +1,4 @@
+// Categories: Resources > Memory Management
 #include "game/types.h"
 
 struct LinkState {
@@ -21,6 +22,41 @@ extern void func_8001E2C0(void *block);
 extern u8 *func_8001E318(u8 *destination, u8 *source, s32 count);
 extern u8 *func_8001E44C(u8 *destination, u8 *source, s32 count);
 
+/**
+ * @brief Frees a block obtained from func_80017EBC(): pool, free-range or
+ *        general allocator.
+ *
+ * @param block Pointer returned by the allocator. Any other pointer is not
+ *              validated beyond the range checks below.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * 1. Pool case: if the block lies inside D_8009FA4C, D_8009F9D0 or D_8009FAAC
+ *    (start <= block < D_8009xxxx->end) func_800195D0(pool, block) pushes the
+ *    node back onto that pool's free list and the function returns.
+ * 2. Free-range case: if the block lies inside the range table window
+ *    (D_8009F590[0] .. D_8009F590[D_8009F594]) the 4-byte header is restored
+ *    (block -= 4), the matching range index found with func_8001814C() and the
+ *    range start/end pair merged with its neighbours via func_8001E318/
+ *    func_8001E44C (word moves). Fully covered ranges are dropped and the
+ *    search cursor D_8009F598 adjusted.
+ * 3. Otherwise the block is handed to func_8001E2C0(), the general allocator's
+ *    free.
+ *
+ * @par Globals
+ * D_8009F590/D_8009F594/D_8009F598 (free-range table, count and cursor),
+ * D_8009FA4C/D_8009F9D0/D_8009FAAC (the three fixed pools).
+ *
+ * @par Callers
+ * The whole executable - it is the single deallocator (over 80 call sites,
+ * from the front-end through the renderer to the game code).
+ *
+ * @par Matching note
+ * The $2/$3/$5 pins and the comma-expression in the pool test reproduce the
+ * retail register allocation and branch layout; the logic is a plain
+ * three-way dispatch.
+ */
 void func_800181D4(void *block)
 {
     struct LinkState *pool;

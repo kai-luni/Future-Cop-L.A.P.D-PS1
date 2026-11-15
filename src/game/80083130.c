@@ -1,3 +1,4 @@
+// Categories: Resources > Mission Table | Game Engine > Front-End Module Lookup
 #include "game/types.h"
 
 typedef struct {
@@ -19,6 +20,44 @@ extern s32 func_8008CCC0(u8 *);
 extern u8 func_8008CCF0(u8);
 extern s32 func_8008CCA0(void *, void *);
 
+/**
+ * @brief Resolves the current front-end module name to its movie file and to
+ *        the optional fixed overlay name.
+ *
+ * @param arg0 Out-parameter, may be NULL. Receives "credits.wve" when the
+ *             matched table entry has its flag byte set, otherwise NULL.
+ *
+ * @return The matched entry's @c unk8 pointer (the mission's "po" movie name as
+ *         a string pointer), or 0 when the module is not in the table. The
+ *         caller treats 0 as "no movie".
+ *
+ * @par Confirmed flow
+ * 1. The module name in D_8009B300 is lowercased with func_8008CCF0 into a
+ *    24-byte buffer, stopping at the first '.' (so "FE.mis" becomes "fe",
+ *    "m4a1.mis" becomes "m4a1").
+ * 2. If the result equals "lax2" (D_8009F488) the five bytes of D_8009F444
+ *    ("lax1") are copied over it - "lax2" is an alias of "lax1".
+ * 3. The 16-entry table D_8009B4E4 (0x24-byte stride, fields @c name,
+ *    @c brfMovie, @c poMovie, @c flags at 0x21) is searched with strcmp.
+ *    Entries in retail order: m4a1, ov, lax1, conft, un, m3b, joke, slim, e3,
+ *    m2c, hk, m3a, (empty), m1a1, (empty), ovmp.
+ * 4. On a hit the function returns entry->poMovie (e.g. "pom4a1.wve") and
+ *    writes "credits.wve" (D_80011E60) to *arg0 when entry->flags == 1
+ *    (m4a1 and joke). The sibling field entry->brfMovie ("brfm4a1.wve") is
+ *    read by other front-end code, not here.
+ *
+ * @par Likely role
+ * Each mission module owns two movies - a briefing ("brf*") and a pre-op
+ * cutscene ("po*"). This lookup is what the main loop uses to blit the
+ * mission's pre-op frame (the caller wraps it in "Movies\\%s").
+ *
+ * @par Globals
+ * D_8009B300 (module name), D_8009F488 ("lax2"), D_8009F444 ("lax1"),
+ * D_8009B4E4 (mission table), D_80011E60 ("credits.wve").
+ *
+ * @par Callers
+ * func_80076A2C only, once per frame after the screen state has settled.
+ */
 s32 func_80083130(void **arg0)
 {
     register void **arg0_reg __asm__("$20") = arg0;

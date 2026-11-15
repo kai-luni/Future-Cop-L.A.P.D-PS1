@@ -1,3 +1,4 @@
+// Categories: Graphics > Video Layer | Resources > Movie Playback
 #include "game/types.h"
 
 extern u8 D_8009F4E0;
@@ -34,6 +35,54 @@ extern s32 func_80091F60(s32);
 extern void func_80092BF4(s32);
 extern s32 func_80097B28(s32);
 
+/**
+ * @brief Opens the video/image layer: sets the frame geometry, allocates the
+ *        buffers and initialises the decoder tables.
+ *
+ * @param arg0 Mode bits. bit0 selects the "narrow" variant (D_8009F968 = 0x27
+ *             instead of 0xC8, buffer 0xF6C0 instead of 0x22D00, extra flag
+ *             0x10 instead of 0x4); bit1 (0x20) suppresses the direct
+ *             display reset; bits 2 (0x4), 3 (0x8) and 4 (0x10) select the
+ *             decoder initialisation path.
+ * @return 1 when the layer is open, 0 when an allocation failed (the layer is
+ *         then closed again through func_80087D48).
+ *
+ * @par Confirmed flow
+ * 1. Already open (D_8009F504 != 0) returns 1 immediately.
+ * 2. func_8001EF8C(0) and func_8001EF8C(1) are masked with 0x40080000 and
+ *    stored in D_8009F958/D_8009F95C (two per-channel flag sets).
+ *    D_8009F960 = 0x400, D_8009F964 = 0x800 (destination strides) and
+ *    D_8009F968 = 0xC8 or 0x27 (row length).
+ * 3. Unless bit 0x20 is set, func_80092BF4(0) and func_80091F60(0) reset the
+ *    display; func_8008F7AC() then prepares the video hardware.
+ * 4. Main buffer: func_8008799C(0x22D00) (or 0xF6C0), then 0x6000 and 0x600
+ *    bytes; func_80089A88(video, table, 0) builds the decode tables.
+ * 5. func_800859D8(0/1) or func_800859B0() select the scaling mode according
+ *    to the mode bits.
+ * 6. func_8008799C(func_80085A1C()) sizes the ring buffer and
+ *    func_80085C4C(ring, ptr, ptr+a3, ptr+2*a3, 1, narrow, 0) initialises the
+ *    decoder with a3 = 0x10000 (or 0x6DE0 in the narrow variant).
+ * 7. One more buffer of func_800896D4(D_8009F968, 0x4400, 1) bytes for the
+ *    wide variant (the narrow one reuses D_8009FA48[0] and still calls
+ *    func_800896D4 with 0x424C), then func_8008781C() bytes, and two blocks of
+ *    func_80087814() bytes each.
+ * 8. D_8009F504 = 1 and 1 is returned; any failed allocation jumps to the
+ *    failure path that calls func_80087D48() and returns 0.
+ *
+ * @par Globals
+ * D_8009F4DC (mode + derived flags), D_8009F958/D_8009F95C/D_8009F960/
+ * D_8009F964/D_8009F968 (geometry), D_8009F4E4/D_8009F4E8/D_8009F4EC/
+ * D_8009F4F0/D_8009F4F4/D_8009F4F8/D_8009F4FC/D_8009F500 (buffers),
+ * D_8009F504 (open flag), D_8009FA48.
+ *
+ * @par Likely role
+ * "Open a movie/image for playback": two variants (full screen 0x140 wide and
+ * a narrower 0x100-wide one), a hardware decoder with a triple-buffer ring, and
+ * two tables that later get copied into the scratchpad by func_800861E4.
+ *
+ * @par Callers
+ * func_80089D44, at most once per draw unless the layer is already open.
+ */
 s32 func_80087EA0(s32 arg0)
 {
     register s32 var_s0 __asm__("$16");

@@ -1,3 +1,4 @@
+// Categories: Graphics > Video Decode Tables | Utilities > Mathematics
 #include "game/types.h"
 
 typedef struct { s32 v[4]; } Matrix;
@@ -6,6 +7,33 @@ extern u8 D_8009F4D4;
 extern u8 D_800A3958[];
 extern u8 D_800A3A58[];
 
+/**
+ * @brief Builds the two decode/quantisation tables in D_800A3958 and D_800A3A58
+ *        from the matrix D_8001220C.
+ *
+ * @return Nothing. The work is done once: D_8009F4D4 guards a repeat call.
+ *
+ * @par Confirmed structure
+ * A hierarchical refinement: for size = 1, 2, 4, 8 the code walks the 2x2
+ * sub-blocks of the growing matrix (row/col loops with the negated step), and
+ * for each element copies a byte with a scaled offset:
+ * dst[dstrow + col + j] = src[srcrow + j] + (matrix_element << (8 - shift)),
+ * where shift = level * 2 and the matrix element is picked by (y*2 + x) * 4.
+ * The destination stride is 16 bytes per row. The second table D_800A3A58 is
+ * built the same way from the second half.
+ *
+ * @par Globals
+ * D_8001220C (four-word source matrix), D_800A3958/D_800A3A58 (the tables),
+ * D_8009F4D4 (built-once flag).
+ *
+ * @par Likely role
+ * These two tables are exactly what func_800861E4 copies into the scratchpad at
+ * 0x1F800000/0x1F800100 before decoding, which makes them the IDCT/quantiser
+ * tables of the video decoder.
+ *
+ * @par Callers
+ * func_800861E4 only.
+ */
 void func_80085F1C(void)
 {
     Matrix matrix;

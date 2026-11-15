@@ -1,3 +1,30 @@
+// Categories: Platform > Runtime Init | Utilities
+/**
+ * @brief One-shot initialiser: runs the constructor table once per program
+ *        run and records that it happened.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed flow (the body is inline assembly, word-exact from retail)
+ * 1. Loads D_8009EA00; if it is non-zero the function returns after restoring
+ *    the saved registers (the guard).
+ * 2. Stores 1 into D_8009EA00.
+ * 3. Walks a table starting at func_80010000: load word, advance, @c jalr, and
+ *    repeat $17 times. In this build $17 is loaded as 0 (lui/addiu 0), so the
+ *    loop body never executes - the shipping executable has an empty
+ *    constructor table and this call only sets the guard.
+ *
+ * @par Globals
+ * D_8009EA00: "runtime already initialised" flag.
+ *
+ * @par Likely origin
+ * The Sony crt0/compiler-runtime pattern for C++ static constructors or
+ * __attribute__((constructor)) functions; the empty table suggests the
+ * constructors were linked elsewhere or the driver was left unused.
+ *
+ * @par Callers
+ * func_80076A2C, as the very first thing it does.
+ */
 void func_800965C8(void)
 {
     __asm__ volatile (

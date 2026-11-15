@@ -1,3 +1,4 @@
+// Categories: Game Engine > Screen Frame | Graphics > Display Setup
 #include "game/types.h"
 
 typedef struct {
@@ -32,6 +33,43 @@ extern void func_80047690(u8 enable);
 extern void func_8006AB38(void *arg0);
 extern void func_80056634(void);
 
+/**
+ * @brief Runs one front-end screen frame: prepare the screen, draw the
+ *        background quad, submit it, then pump the module until it reports
+ *        "done", and hand control back.
+ *
+ * @return 1 (the next screen state for the main loop), and the state block's
+ *         unk10 is set to the same value.
+ *
+ * @par Confirmed flow
+ * 1. D_8009FA30/D_8009FAA4 = 0, D_8009F9FC = 5, func_8001BFD8(0) arms the
+ *    display, func_80025370() serves the pending loading screen and, in the
+ *    "non-UI" mode (D_8009F9C4 == 0), func_80086134() prepares the image layer.
+ * 2. Waits for the frame barrier D_8009FA3C to clear, then takes one 52-byte
+ *    packet from the D_8009F9F0 pool.
+ * 3. Builds a full-screen rectangle (0, 0x100 - offset, 0x140, 0xF0) and emits
+ *    it with func_80092660(packet, rect, 0, colour) - a gouraud/flat quad that
+ *    covers the screen (a backdrop or fade).
+ * 4. func_8001B4A8(1) submits the frame.
+ * 5. Idle loop: as long as D_8009FA00 still equals 4 and func_8002385C()
+ *    returns non-zero, call func_80025690() (draw one effect quad) and
+ *    func_80024EC8() (update the object list) - this is the screen's own
+ *    frame pump.
+ * 6. func_8001BFD8(1), func_80047690(1) release the display again, then the two
+ *    entries of D_8009FA58 are passed to func_8006AB38 (freeing whatever the
+ *    screen registered).
+ * 7. If D_8009F9A0 is set func_80056634() runs a final step.
+ * 8. Returns 1 with the state block's unk10 = 1.
+ *
+ * @par Globals
+ * D_8009F9FC (frame id, 5), D_8009FAA4/D_8009FA30 (time base), D_8009FA3C
+ * (barrier), D_8009F9F0/D_8009FA28 (packet pool), D_8009F9D4 (screen offset),
+ * D_8009FA00 (screen state), D_8009F9C4 (mode), D_8009FA58 (two registered
+ * pointers), D_8009F9A0.
+ *
+ * @par Callers
+ * func_800287F4, as the first half of every screen.
+ */
 s32 func_800259D8(void)
 {
     u32 *p;

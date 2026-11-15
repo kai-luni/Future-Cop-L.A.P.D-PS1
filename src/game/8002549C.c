@@ -1,3 +1,4 @@
+// Categories: Graphics > Display Setup | Graphics > GPU Primitives
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
@@ -18,6 +19,38 @@ typedef struct {
 extern u8 *D_8009FA90;
 extern u8 *D_8009F9C0;
 
+/**
+ * @brief Emits the display set-up for one screen: two texpage/tile words and
+ *        two 160x240 sprites that together cover the 320x240 frame buffer.
+ *
+ * @param value The 24-bit ordering-table link tag written into all four
+ *              primitives (only the low 24 bits are used; the top byte carries
+ *              the primitive size code).
+ *
+ * @return Nothing. Four primitives of 28 bytes are taken from the 0x1C pool
+ *         (D_8009FA90, limited by D_8009F9C0); when the pool is full the
+ *         primitives are written to the last slot instead of advancing the
+ *         cursor.
+ *
+ * @par Confirmed contents
+ * - Primitive 1: code 0xE1000105 (draw-mode/tile words) with link tag.
+ * - Primitive 2: sprite (code 0x64) at x/y = 0/0, size 0xA0 x 0xF0, colour
+ *   0x808080 (neutral), UV 0/0, link tag.
+ * - Primitive 3: code 0xE1000115, same link tag.
+ * - Primitive 4: sprite at x = 0xA0, y = 0, size 0xA0 x 0xF0, same colour and
+ *   UV, link tag.
+ *
+ * @par Likely role
+ * The pair of sprites tiles the 320x240 image area from a 320x240 buffer in
+ * two 160-pixel halves (the VRAM split of a 320-wide frame), and the two
+ * 0xE1 words select the corresponding texture pages. func_80025370() calls
+ * this right after uploading a loading-screen image.
+ *
+ * @par Matching note
+ * The $4/$7 pins, the repeated "if the pool is full, reuse the last slot"
+ * blocks and the @c goto labels are the retail control flow and register
+ * allocation; do not tidy them.
+ */
 void func_8002549C(int value) {
     u8 *packet;
     register int arg __asm__("$7") = value;

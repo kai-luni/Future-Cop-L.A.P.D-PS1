@@ -1,3 +1,4 @@
+// Categories: Resources > Movie Playback | Game Engine > State Machine
 #include "game/types.h"
 
 typedef struct {
@@ -14,6 +15,23 @@ extern u8 D_8009F496;
 
 extern void func_800206D0(void);
 
+/**
+ * @brief Arms the next movie: resets the decoder and puts the context into
+ *        the "start requested" state.
+ *
+ * @par Confirmed flow
+ * func_800206D0() resets the decoder module, then the movie context gets
+ * unk200 = 6 (state) and unk208 = -0x2B, followed by unk203 = 6 and the
+ * global pending flag D_8009F496 = 1. func_8007FACC() consumes that flag and
+ * is what actually commits the playback, so this function only prepares it.
+ *
+ * @par Matching note
+ * The $5/$4/$3/$2 pins reproduce the retail register use (6 is built once and
+ * reused, the two stores are split across two base registers).
+ *
+ * @par Callers
+ * func_80076A2C, func_8007F8FC, func_8007F93C.
+ */
 void func_8007FA88(void)
 {
     register s32 six __asm__("$5");

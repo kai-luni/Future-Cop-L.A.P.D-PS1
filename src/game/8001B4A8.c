@@ -1,3 +1,4 @@
+// Categories: Graphics > Frame Submission | Game Engine > Frame End | Platform > GPU
 #include "game/types.h"
 
 
@@ -43,6 +44,67 @@ extern void func_8009398C(u32 arg0, void *arg1);
 extern void func_80093A0C(u32 arg0, void *arg1);
 extern void func_800861E4(u32 arg0, u32 arg1, u32 arg2, u32 arg3);
 
+/**
+ * @brief Ends a frame: buckets everything drawn this frame into the ordering
+ *        table by depth, submits it, flushes pending uploads and swaps the
+ *        double buffer.
+ *
+ * @param arg0 0 = sub-screen frame (0xA0 wide clip when D_8009F5C0 is set),
+ *             non-zero = full-screen frame (0x140 x 0xF0 clip). A non-zero
+ *             value also raises the frame barrier D_8009FA3C at the end.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed flow
+ * 1. Spins while D_8009FA3C is set (the previous frame's DMA is still running).
+ * 2. h = func_8001C034() ? 0x100 : 0; the x offset is mirrored into
+ *    D_8009F9D4.
+ * 3. Walks both packet pools backwards from the current cursor
+ *    (D_8009F9F0 with 0x34 stride, D_8009FA90 with 0x1C stride) down to the
+ *    bases D_8009F5E0/D_8009F5E4, collecting the 24-bit depth tag
+ *    (word & 0xFFFFFF) into min/max. Because the pools are walked downwards,
+ *    the ordering matches the order the primitives were emitted.
+ * 4. Computes the bucket count: quot = (D_8009F5FC + max - 1 - min) /
+ *    D_8009F5FC, shift = 0x20 - func_80095C14(quot) (a log2 helper), and
+ *    count = ((max - min) >> shift) + 1 (0 when no primitive was emitted).
+ * 5. Second pass links every primitive into the bucket list of the ordering
+ *    table word at D_8009F5D8[D_8009F600]: the low 24 bits of the primitive's
+ *    tag become the bucket index, the previous bucket head is chained into the
+ *    primitive and the primitive becomes the new head.
+ * 6. If D_8009FA0C >= 2 or arg0 != 0, a drawing area (rect = x, y, w, h) is
+ *    installed with func_8009398C and func_80093A0C, and the ordering table
+ *    itself is spliced into the display list at D_800A63E0.
+ * 7. Deferred work queues are drained in ring-buffer order (0x14 slots):
+ *    func_800A0520 entries release handles (func_80029650), D_800A0528
+ *    entries submit transfers (func_80092F38) followed by func_80092C8C.
+ *    A single-shot queue in D_8009AA68 is handled the same way.
+ * 8. When arg0 != 0, D_8009F5C0 == 0 or D_8009FA0C == 1, the 4-slot image
+ *    upload ring D_800A0660 is flushed: queued handles are freed and queued
+ *    images are uploaded with func_800861E4(ptr, mode, width, offset).
+ * 9. func_80092C8C(0) and func_80093280(table + (count + 1) * 4) hand the list
+ *    to the GPU (DrawOTag style).
+ * 10. Buffer swap: D_8009F600 toggles 0/1, the cursors D_8009F9F0/D_8009FA90
+ *     and limits D_8009FA28/D_8009F9C0 are reset to the other buffer pair
+ *     (D_8009F5C8/D_8009F5D0), and func_80093178() terminates the new table.
+ *
+ * @par Globals
+ * D_8009FA3C (frame barrier), D_8009F9D4 (x offset), D_8009F9F0/D_8009FA90
+ * (packet cursors), D_8009F5E0/D_8009F5E4 (pool bases), D_8009FA28/D_8009F9C0
+ * (pool limits), D_8009F5C8/D_8009F5D0 (buffer bases), D_8009F5D8 (ordering
+ * table), D_8009F600 (buffer index), D_8009F5FC (bucket size),
+ * D_8009F5F4/D_8009F5F8 (pool entry counts), D_8009FA0C (screen state),
+ * D_8009F5C0 (sub-screen flag), D_8009F218/D_8009F21C/D_8009F220 (ring heads),
+ * D_8009A0520/D_800A0528/D_800A0660/D_8009AA68 (queues).
+ *
+ * @par Side effects
+ * GPU DMA is started, queued images are uploaded to VRAM, handles are freed
+ * and the render buffers are swapped. This is the only place the frame is
+ * submitted.
+ *
+ * @par Unknown
+ * The exact meaning of D_8009FA0C values (0/1/2) beyond selecting the clip
+ * rectangle, and of D_8009F5C0.
+ */
 void func_8001B4A8(s32 arg0)
 {
     register s32 max __asm__("$16");

@@ -1,9 +1,39 @@
+// Categories: Graphics > Video Decode Tables | Resources > Decompression
 #include "game/types.h"
 typedef struct { u8 bits; u8 pad; u16 code; } Entry;
 extern u8 *D_8009F51C, *D_8009F520;
 extern u16 D_8009C560[];
 extern Entry D_8009C1E0[], D_8009C360[];
 
+/**
+ * @brief Builds the variable-length (Huffman) decoding tables.
+ *
+ * @param arg0 Table block A; its length table starts at +0x2000 and is
+ *            0x2000 bytes long, so the block must be at least 0x4000 bytes.
+ * @param arg1 Table block B (the second lookup table).
+ * @param arg2 Optional source of 0x60 symbols; NULL selects D_8009C560.
+ *
+ * @return 0 on success, -1 when arg0 or arg1 is NULL.
+ *
+ * @par Confirmed flow
+ * For each of 0x60 symbols the code takes the bit length from D_8009C1E0 (stride
+ * 4) and the code word from the following half-word, computes
+ * count = 1 << (13 - bits) and base = code >> 3, then fills
+ * count consecutive slots of the length table (arg0) and of the value table at
+ * arg0 + 0x2000 with the symbol. The tail of the function copies the second
+ * half into arg1.
+ *
+ * @par Globals
+ * D_8009F51C/D_8009F520 (the two table pointers, cached for the decoder),
+ * D_8009C1E0 (symbol table), D_8009C560 (default symbols), D_8009C360.
+ *
+ * @par Likely role
+ * The MDEC/VLC table builder for the game's own compressed images (*.fsv), 13
+ * bits maximum code length, 0x60 symbols.
+ *
+ * @par Callers
+ * func_800861E4 and func_80087EA0 - both right before they decode a stream.
+ */
 s32 func_80089A88(u8 *arg0, u8 *arg1, u16 *arg2)
 {
     register s32 i __asm__("$11");
