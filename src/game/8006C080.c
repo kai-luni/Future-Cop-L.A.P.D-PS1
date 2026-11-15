@@ -1,3 +1,4 @@
+// Categories: Graphics > HUD > Status Bar | Graphics > 2D Drawing
 #include "game/types.h"
 
 extern u8 D_8009FA8C[];
@@ -22,6 +23,25 @@ extern void func_8006AAEC(u8 id);
 extern void func_800491F8(s32 value, s32 x, s32 y, s32 color);
 extern void func_8006BF44(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
+/**
+ * @brief Draws the three-slot status bar (icons plus counters).
+ *
+ * @param arg0 Owner record: sub-block at +0xAC whose arrays at +0x84, +0x8A and
+ *        +0x90 carry the counts, and a flag array at +0xC1.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * A loop of three slots, stepping x and y by 0x29 each: func_8006AAEC(id) for the
+ * icon, func_800491F8(count, x, 0xCE, color) for the number, and
+ * func_8006BF44(i, highlight, y, 0xE0) for the sprite; the colour is 9 when bit
+ * 0x40 of the frame counter D_8009FAA4 is set, else 0xC. A second pass draws the
+ * 0xD8 line (with the alternative array +0x84 when the flag byte is set) and a
+ * final func_8006BF44(-1, 0, 0x124, 0xE0) closes the bar.
+ *
+ * @par Likely role
+ * The weapon/item bar: three slots at fixed 0x29 spacing, each with icon, count
+ * and a highlighted frame.
+ */
 void func_8006C080(struct Arg6C080 *arg0)
 {
     s32 i;

@@ -1,3 +1,4 @@
+// Categories: Graphics > Scene Graph > Object List Walk | Renderer
 #include "game/types.h"
 
 struct Parent {
@@ -34,6 +35,26 @@ extern s32 func_8001A100(s32 *);
 extern void func_8006CB58(s32, struct Object *, s32, s32, s32, s32, s32, s32, s32);
 extern void func_8006DC24(struct Node *, s32 *);
 
+/**
+ * @brief Walks the model node list and draws each node (or its parent) with a
+ *        radius test.
+ *
+ * @param node First node: next at +0, flags at +0x14/+0x98, parent at +0x24,
+ *        per-node data at +0x34/+0x9C, radius, type, param.
+ * @param origin Camera/origin block passed to the draw calls.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * While the node exists: nodes without flag bit 3 are skipped; when bit 0x40 of
+ * +0x98 is set func_8003D9F8(arg, node->param, node->type, mask, parent,
+ * node->data34) produces the object, and if `func_8001A100(vec) - (radius << 4) <=
+ * 0x1FFFF` the node is drawn with func_8006CB58(data9c, o) or, for nodes without
+ * that data, with func_8006DC24(node, origin).
+ *
+ * @par Likely role
+ * The "second model layer" walker next to func_80073700 - it resolves the parent
+ * chain first, which is what attached models need.
+ */
 void func_8006E988(struct Node *node, s32 *origin)
 {
     struct Object *object;

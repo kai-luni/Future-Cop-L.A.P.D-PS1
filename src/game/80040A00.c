@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Dynamics | Graphics > Lighting
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef signed short s16;
@@ -16,6 +17,27 @@ extern void func_80040600(Obj *, s32,s32,s32);
 extern void func_80010820(void *);
 extern void func_8001006C(Vec *, Vec *, s32);
 extern void func_80049980(void *,s32,s32,s32,s32,s32,s32,s32,s32);
+/**
+ * @brief Integrates the motion of an object list and moves its light.
+ *
+ * @param node First object: flags at +0x0F, rates and velocities, parent at
+ *        +0x2C-ish, inner/light record, position.
+ * @param dt Time step (0x1000 based).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * While the node exists: skip when bit 3 of the flags byte is clear; when the
+ * object has an inner record, its velocity is integrated
+ * (`node->vy += (rate82 * step) >> 12`), func_80040550(o, x) and
+ * func_80040600(o, x, y >> 8, z >> 8) apply the rates, the parent matrix is loaded
+ * with func_80010820((u8 *)parent + 4) and one func_8001006C transforms the
+ * position, and func_80049980(inner, pos.x, pos.z, pos.y, scale, scale, a7a, a7c,
+ * 0) moves the light - note the deliberate x/z/y order.
+ *
+ * @par Likely role
+ * The physics/lighting step of the object list (the sibling of func_80071B40 and
+ * func_80075A84): velocity integration plus one light per object.
+ */
 void func_80040A00(Obj *node, s32 dt)
 {
     Obj *o;

@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Gouraud Disc | Graphics > GPU Primitives
 #include "game/types.h"
 
 typedef struct {
@@ -29,6 +30,29 @@ extern u8 * volatile D_8009F9C0;
 
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
 
+/**
+ * @brief Emits a gouraud-shaded disc (fan of triangles) around a centre.
+ *
+ * @param v Centre vertex (x, y, z; the depth test uses z).
+ * @param color0, color1 Centre and rim colour.
+ * @param count Number of segments (the loop runs in steps of four vertices).
+ * @param scale Radius scale.
+ * @param offset_z Depth offset applied before the visible test.
+ * @param angle Start angle (4096-step convention; the per-segment step is
+ *        `(i + angle) * step / 32`).
+ * @return Nothing; returns immediately when `depth - dz <= 0`; packets come from
+ *         D_8009FA90 (guarded by D_8009F9C0).
+ *
+ * @par Confirmed
+ * Two func_8001846C calls supply sine and cosine for the start angle and for each
+ * segment; one texpage word 0xE10006A0 is emitted first, then the triangles with
+ * code 0x32xxxxxx / 0x06xxxxxx and the two colours per corner, and the
+ * terminating `poly->code` word carries 0x06000000 | (count << 24).
+ *
+ * @par Likely role
+ * The glow/light disc of an effect: a filled circle whose centre is brighter than
+ * the rim, emitted as a single untextured fan.
+ */
 void func_8001484C(Vec *v, u32 color0, u32 color1, s32 count, s32 scale, s32 offset_z, s32 angle)
 {
     register s32 vx __asm__("$23");

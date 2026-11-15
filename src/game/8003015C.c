@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Inner34 {
@@ -41,6 +42,28 @@ extern void func_80010750(void *a);
 extern void func_80010234(void *a, void *b, s32 c);
 extern s32 func_8002AD58(s32 message, struct Obj3015C *object, struct Arg3015C *data);
 
+/**
+ * @brief Entity message handler of the second script family.
+ *
+ * @param cmd Message id.
+ * @param obj Entity: fields at +0x08, +0x1C, +0x24, model block at +0x28, matrix at
+ *        +0x2C, output at +0x5C, frame at +0x70, values at +0xC0..+0xD4.
+ * @param arg Argument block.
+ * @param arg3 Forwarded to func_8002FA20.
+ * @return 0 or 0xD8 for the simple messages, otherwise the delegated result.
+ *
+ * @par Confirmed
+ * case 1 → func_8002FA20(obj, arg, arg3) and 0xD8; case 2 → func_80030060 and 0;
+ * case 10 → guarded by `arg->unk16 == 0x25 && obj->unk1C >= 0` and then
+ * `func_8002F8B8(obj->unkC0, obj->unkC4, arg, 0) & 0xFF`; case 11 → guarded by
+ * obj->unk8 and then func_8002FF6C; case 6 → guarded by obj->unkD4 and the
+ * `(obj->unkC8 & 0xF0) && (D_8009FAA4 & 0x80)` pair, then func_8002AD58. The shared
+ * path builds the matrix with func_800188D0(val, 0, 0, obj + 0x2C) and fetches the
+ * frame vertex from `obj->unk28->unk34 + (unk70 << 4) + 8` into obj + 0x5C.
+ *
+ * @par Unknown
+ * The meaning of the return 0xD8 and of arg->unk16 == 0x25.
+ */
 s32 func_8003015C(s32 cmd, struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3)
 {
     switch (cmd) {

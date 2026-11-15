@@ -1,3 +1,4 @@
+// Categories: AI > Strategic > Build Order | Resources > Economy | Gameplay > Precinct Assault
 #include "game/types.h"
 
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
@@ -229,6 +230,164 @@ extern int abs(int);
  * Note: Precinct Assault interpretation and specific production
  * categories remain provisional until related object types and
  * resource-processing functions are identified.
+ */
+/**
+ * @brief Strategic AI tick for one Precinct Assault side: enumerates every live
+ *        unit, scores candidate targets, switches between three strategy modes
+ *        and spends the shared resource pool on production, expansion and
+ *        expansion slots.
+ *
+ * @param self The unit that owns the strategy record (ai pointer at +0x134).
+ *             Only the fields listed under Globals are used; the function is a
+ *             state machine over self->ai plus the global block D_8009FA94 and
+ *             returns nothing.
+ *
+ * @return Nothing.
+ *
+ * @par Globals (confirmed layout)
+ * Unit: next +0x00, active +0x08, type +0x16, team +0x18, sub +0x19,
+ *       s1C (s16) +0x1C, u1E (u16) +0x1E, pos x/y/z +0x50/+0x54/+0x58,
+ *       aq6 +0xA6, aa (s16) +0xAA, aux +0xAC, b8 +0xB4, c8 +0xC8,
+ *       fa +0xFA, ai +0x134.
+ * Aux: a324 (s16) +0x324, a326 (s16) +0x326.
+ * Ai:  posA x/y/z +0x00, posB x/y/z +0x0C, mode +0x1A, b1B +0x1B,
+ *      c1C +0x1C, u30 (u16) +0x30, u32 (u16) +0x32, s4C +0x4C.
+ * Glob (D_8009FA94, at least 0xE4 bytes): s4C +0x4C, f68 +0x68, f74 +0x74,
+ *      f78 +0x78, f84 +0x84, f88 +0x88, f9C +0x9C, a0[4] +0xA0, fB0 +0xB0,
+ *      fB4 +0xB4, fB8 +0xB8, fBC +0xBC, c[4][2] +0xC0..0xDF, fE0 +0xE0.
+ * The macro GC(i, k) expands to the s32 at G + (i << 3) + (0x30 + k) * 4, i.e.
+ * G + 0xC0 + i * 8 + k * 4 - exactly c[i][k], which is how the two production
+ * counters per ownership slot are addressed.
+ *
+ * @par Control flow (confirmed): scan pass
+ * The unit list headed by D_8009FA40 is walked through next until null and
+ * entries with active == 0 are skipped. A switch on p->type admits only
+ * 1, 5, 6, 8, 9, 28 (0x1C) and 36 (0x24); the default case does nothing.
+ * A unit is "of interest" when p->team == ai->b1B, or it is a 0x24 with
+ * p->team != self->team, or it is a type 8.
+ *
+ * @par Confirmed: distance metric
+ * The DIST macro is an octagonal 2D metric of the form |dx| + |dz| -
+ * floor(min / 2): it takes the absolute values, halves the smaller one and
+ * subtracts it from the sum. DISTA returns only the second half of that sum
+ * (|dz| - floor(min / 2)) so the caller can add it to a distance that was
+ * already accumulated relative to ai->posB. No square root and no
+ * multiplication is involved.
+ *
+ * @par Confirmed: candidate collection
+ * For types 0x1C, 5, 9 and 8 the distance is measured against ai->posB and
+ * filtered by a type-specific radius: 0x1C within 0x90000, type 5 within
+ * 0x80000, type 9 split into c9b (p->sub >= 10) and c9a (p->sub < 10), and
+ * type 8 only counted when the unit is friendly and within 0x1FFFFF (cntA).
+ * A second, global selection then scores every candidate with
+ * score = posB_metric + self_metric + ((9 - G->s4C) << 12), i.e. the strategy
+ * level biases all candidates by the same amount; the nearest per type wins
+ * (c1 for type 1, n54 for 0x1C, n4C for 5, c9aB / c9bB for 9 by sub, n60 for a
+ * friendly 0x24 and n64 for a hostile 0x24).
+ * Type 1 is only taken when p->aux->a324 <= 0 and p->aux->a326 <= 0.
+ * For the hostile 0x24 candidate the score accumulator d44 is read before it
+ * is ever assigned, so the first comparison uses an undefined value - in the
+ * retail code whatever is left in that stack slot decides whether n64 is set
+ * on the first hit. This is reproduced as written.
+ *
+ * @par Confirmed: mode selection and approach
+ * - Mode 2: entered when there is a 0x1C or a type 5 near posB, or when fewer
+ *   than ten friendly type-8 units exist and the mode is not already 1. The
+ *   global mirror G->f9C is set to the same value.
+ * - Mode 1: entered from the fall-through label when cnt2 >= 2 (cnt2 is
+ *   accumulated around ai->posA: +1 per type 5 within 0x68000, +10 per 0x1C
+ *   within 0x78000).
+ * - Mode 0: entered by the fall-through paths when no candidate qualifies.
+ * The APPROACH macro is the shared "go for it" step: when the candidate
+ * differs from c8 or b8 it first tests the squared distance of the candidate
+ * against self->aa (FMUL of the x and z deltas, square root, shifted left by
+ * 2, compared with aa << 4); on success it calls func_80033608(self, cand) -
+ * the attack/animation switch - and then func_800336A8(self, cand) which
+ * stores cand in c8, copies cand->+0x08 into +0xCC and clears the idle flag
+ * at +0xFA.
+ * The per-mode target chains use the thresholds 0x4FFFF (type 1),
+ * 0x4FFFF (0x1C), 0x3FFFF (type 5), 0x5FFFF (hostile 0x24), 0x2FFFF (type 9)
+ * and 0x4FFFF (friendly 0x24); the type 1 branch additionally requires
+ * c1->s1C < ((s16)c1->u1E >> 2). When nothing matches, the fallback sets
+ * self->fa = 1 and calls func_800330E8(self) once.
+ * After the chain, a mode change (mode snapshot != ai->mode) triggers
+ * func_800330E8(self), and a missing attack target with aq6 != 4 triggers
+ * func_80033608(self, 0), which parks the animation in mode 4.
+ *
+ * @par Confirmed: economy
+ * - Mode 2 spends on defence first: with G->s4C >= 9 and a close 0x1C
+ *   (0x23FFF) or type 5 (0x1FFFF), and 20 units of headroom in both f68 and
+ *   f74, it moves 1 from f68 into the counter fB0 and increments f74.
+ * - It then measures the octagonal distance from self->pos to ai->posB and
+ *   subtracts (G->s4C << 16) from it, so every strategy level makes the base
+ *   look one 0x10000 closer. When the result is <= 0x7FFFF and
+ *   f78 < (s4C >> 2) + 4 it draws a batch n = (s4C >> 2) + ((rng & 3) + 4),
+ *   clamped by (0x14 - f78) and f68, subtracts (2 - (s4C >> 2)) * 2 and pays
+ *   n into fB4/f78; when the result is > 0x7FFFF but f78 < 10 it pays the
+ *   same kind of batch into c[i][1] of slots 2 and 3 that belong to self->team.
+ * - A type-9 slot (n5C == 0) triggers an upkeep payment of 0x32 out of f68
+ *   (guarded by f68 > (rng & 7) + 0x41) and increments fBC.
+ * - Modes 0 and 1 instead claim a free ownership slot: the four indices are
+ *   read from the byte list D_8009AC50, or D_8009AC54 when ai->c1C == 1, and
+ *   the first index with G->a0[idx] == 0 and at least 0x1E resources is
+ *   claimed for self->team. When G->f88 == 0 the AI also rewrites
+ *   D_8009F9EC->ai->s4C = D_8009FAA4.
+ * - Mode 1 pushes n = (rng & 7) + 5 + (s4C >> 2), clamped by (0x14 - f74),
+ *   into c[i][0] of slots 0 and 1 (cost 2 * n, f74 += n) and, once f74 >= 12,
+ *   n = (rng & 3) + 2 + (s4C >> 2) into c[i][1] (cost 2 * n, f78 += n).
+ * - Mode 0 pays 0x32 into fB8 while no 0x1C is near, then, if the strategy
+ *   level still allows growth ((c1C == 1 && s4C < 8) || (c1C == 0 && s4C < 6)
+ *   || (no free slot && ai->u32 > ai->u30)), pays n = (rng & 7) + s4C + 4 +
+ *   (s4C >> 2) into c[i][0] and, for a "special" case ((G->f88 == 0 &&
+ *   s4C < 5) || both slots owned by ai->b1B) with f74 < 2, n = s4C + (rng & 3)
+ *   + 6 (+6 when f84 == 4) into fB0 at unit cost. Finally, with c1C == 0 and
+ *   f78 <= 0, it seeds fB4 with 1 or 2.
+ *
+ * @par Calls
+ * - func_80019668: the lagged-Fibonacci RNG; every batch size and every
+ *   jitter term comes from it (masks 3, 7 and 0x3FFF).
+ * - func_80033608(self, unit): switch the attack/animation target, including
+ *   the idle variant when the argument is null.
+ * - func_800336A8(self, unit): set c8, cache unit->+0x08 in +0xCC, clear fa.
+ * - func_800330E8(self): recompute the strategic position at +0xDC from the
+ *   mode (called on every mode change and on the idle fallback).
+ * - func_80095900: the table/GTE-normalised integer root used by the APPROACH
+ *   test on the squared distance.
+ *
+ * @par Side effects
+ * Writes ai->mode, c8, +0xCC, fa, aq6 (indirectly), and the global resource
+ * pool f68, the counters f74/f78/f84/f88/fB0/fB4/fB8/fBC, the ownership array
+ * a0[4], the production matrix c[4][2], the mode mirror f9C and the event word
+ * fE0 (2 or 3). It also rewrites s4C of the unit D_8009F9EC.
+ *
+ * @par Callers
+ * func_8003532C (direct) - its re-think timer: it decrements a countdown and,
+ * when it expires, reloads it with (9 - D_8009FA94->unk4C) * 80 + 128 plus a
+ * random term and then calls this function. That confirms +0x4C of the global
+ * block as the difficulty/strategy level in the range 0..9.
+ *
+ * @par Likely
+ * - The resource pool f68 is a per-side credit balance and c[i][k] are unit
+ *   production counters of ownership slots i, i.e. this is the build-order AI
+ *   of the Precinct Assault mode.
+ * - Modes 0/1/2 correspond to "balanced defence", "expand toward position A"
+ *   and "defend position B"; posA/posB are the two base locations.
+ * - fB0/fB4/fB8/fBC count upgrades, attack-unit orders, builder orders and
+ *   upkeep payments; f74/f78 are the per-turn production limits against 0x14.
+ * - The +0x1FFFF / 0x1FFFFF constants are squared-ish engagement radii in
+ *   world units of the same 1/16 scale used by the rest of the code.
+ *
+ * @par Unknown
+ * - The unit types 1, 5, 6, 8, 9, 0x1C, 0x24 are only identified by number;
+ *   no name table for them has been found, so the role of each candidate list
+ *   (builder, factory, turret, soldier, ...) stays provisional.
+ * - The meaning of ai->u30/u32 (compared once as u32 > u30) and of G->f84,
+ *   f88, f9C and fBC beyond their use as counters.
+ * - Why +0xB4 (b8) is only ever compared here and never written; on this
+ *   evidence its type (pointer or 16-bit id) is Unknown.
+ * - Cross-file note: the front-end pass func_80076A2C interprets the very same
+ *   address 0x8009FA94 as a 0xF4-byte screen state block, so the two views
+ *   must be treated as a union that is reused between modes.
  */
 void func_800336DC(struct Unit *self)
 {

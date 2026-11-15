@@ -1,3 +1,4 @@
+// Categories: Resources > Asset Loader | Graphics > Asset Dispatch
 #include "game/types.h"
 
 struct Node24EC8 {
@@ -41,6 +42,29 @@ extern void func_800825AC(struct Node24EC8 *node);
 extern void func_8008263C(struct Node24EC8 *node);
 extern void func_800899A4(struct Node24EC8 *node);
 
+/**
+ * @brief Loads every queued asset of the level and frees the request nodes.
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Walks the request list D_8009F668/D_8009F66C (a doubly linked list with
+ * `next`/`prev`), takes the next node first, and dispatches on `node->tag`
+ * through a switch whose arms call one loader per asset class: func_800899A4,
+ * func_800825AC, func_800824CC, func_8008263C, func_80063C20, func_80063C5C,
+ * func_80063DC8, func_80048E9C, func_80013550, func_8004D6D4, func_8004D924,
+ * func_80060E74, func_80049420, func_80023930, func_80082358, func_80029E20,
+ * func_800511E4, func_80049734 and func_8005A414. Every node is released with
+ * func_800181D4 afterwards.
+ *
+ * @par Likely role
+ * The central "load what this level needs" pass: one tag per asset type
+ * (textures, models, animation tables, sound banks), called once per frame
+ * while the state machine is not in state 4 (D_8009FA00).
+ *
+ * @par Callers
+ * func_80027EBC (the frame step of a scene) and func_800295E8.
+ */
 void func_80024EC8(void)
 {
     struct Node24EC8 *node;

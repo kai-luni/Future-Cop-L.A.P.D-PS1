@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Map Cell Sprite | Graphics > GTE > Projection | Graphics > Clipping
 #include "game/types.h"
 
 typedef struct V8 {
@@ -38,6 +39,117 @@ extern s32 func_80049EF8(s32 a, s32 b, s32 c);
 #define H(o)(*(s16 *)(s0 + (o)))
 #define W(o) (*(s32 *)(s0 + (o)))
 
+/**
+ * @brief Projects and emits the sprite of one map cell: either a camera-facing
+ *        billboard from a single anchor point or a four-corner textured quad,
+ *        after a perspective cull, a clip-flag test and (optionally) a
+ *        backface test.
+ *
+ * @param node  The cell object. s16 idx +0x00 (negative selects the animated
+ *              variant), u8 flags +0x08, s32 c +0x0C and s16 d +0x10 (the
+ *              animation time base and period), s32 margin +0x14 (cull
+ *              margin), five s16 4-tuples v[0..4] +0x18..0x3F where each entry
+ *              is x, y, z, w and x/y carry the sprite size or the quad offsets
+ *              while z carries an angle for the billboard path.
+ * @param arg1  Cell index on the Z axis: world Z = arg1 << 17 (0x20000 per
+ *              cell), relative to the camera Z at D_8009F9E4[2].
+ * @param arg2  Cell index on the X axis: world X = arg2 << 17, relative to the
+ *              camera X at D_8009F9E4[0].
+ *
+ * @return Nothing. The function may return before emitting anything (cull,
+ *         clip test, backface test, or - in the quad path - a non 0xC0 clip
+ *         mask).
+ *
+ * @par Control flow (confirmed): cell to camera space
+ * d[2] = ((arg1 << 17) - cam[2]) >> 4, d[0] = ((arg2 << 17) - cam[0]) >> 4 and
+ * d[1] = (-cam[1]) >> 4, so cell size is 0x20000 world units and Y is taken
+ * straight from the height axis without an offset. The same d[] vector is added
+ * to every vertex before the transform.
+ *
+ * @par Confirmed: billboard path (flags bit 2)
+ * Only v[0] is transformed (func_8001010C with count 1, output as half-words
+ * with Y negated) and culled with func_80019D90(rot, margin) - the result must
+ * be 2 or the cell is dropped. A packet is then taken from the pool and the
+ * quad is built around the anchor: when bit 3 of flags is set the half-size is
+ * taken from rot[1] and rotated by the angle in v[1].z (func_8001846C gives
+ * sine/cosine, shifted right by 4, and the four corners are
+ * s1 -/+ a, s2 -/+ q, s1 -/+ b, s2 -/+ p); otherwise the corners are built from
+ * rot[0] and rot[1] without rotation. The depth key is rot[0].z - 0x100.
+ * With a negative idx the animated frame is selected as
+ * ((D_8009FAA4 - node->c) / node->d) % frameCount, where frameCount is byte 0
+ * of the 12-byte record at D_8009F77C + (-idx * 12 - 8), the shift is byte 1 and
+ * the frame table pointer is the word at +8.
+ *
+ * @par Confirmed: quad path (flags bit 2 clear)
+ * All five v[] entries are transformed and culled with func_80019E70(rot,
+ * margin), again requiring 2. func_8001047C then projects them and writes four
+ * clip bytes; the quad is drawn only when the OR of the four bytes has bit 0
+ * clear and equals 0xC0 - the same all-inside rule used by the ribbon pass.
+ * Unless flags bit 0 is set, func_80049EF8 (a 2D cross product on the first
+ * three projected vertices) rejects back faces. The packet vertices come from
+ * rot[1..4] and the depth key is the average of the four z values minus 0x100.
+ *
+ * @par Confirmed: texture words
+ * The texture descriptor is 5 bytes: with idx >= 0 at
+ * D_8009F778 + idx * 8 + 4 (u0, v0, width, height, texture id), with idx < 0 at
+ * the animated frame record s4 (bytes 0, 1 = u0, v0, 2, 3 and 4, 5 = shape
+ * offsets, 6 = texture id, 7 = CLUT word). Texture id < 10 builds
+ * tpage = getTPage(1, abr, ((id >> 1) << 7) + 0x180, (id & 1) << 8) and
+ * clut = getClut(((id << 6) & 0x100) + 0x180, (id & 3) + ((id << 5) | 0xFC));
+ * a larger id builds tpage = getTPage(0, abr, 0x140, (id - 0x80) << 8) and takes
+ * the CLUT from byte 7 of the descriptor. The UVs are
+ * (u0, v0) / (u0 + w - 1, v0) / (u0, v0 + h - 1) / (u0 + w - 1, v0 + h - 1).
+ * The ABR field is 1 when flags bit 4 is set, otherwise (flags >> 4) & 2.
+ *
+ * @par Confirmed: packet form
+ * fl = flags & 0x30 selects the layout. Non-zero: four 12-byte vertex records,
+ * each with its own colour word (the colour word is built as
+ * (node +0x08 >> 8) | 0x3E000000), header nibble 0x0C. Zero: four 8-byte vertex
+ * records sharing one colour word, header nibble 0x09, code 0x2C or 0x2E -
+ * bit 1 of word 4 is set when flags bit 1 is set, which is exactly the
+ * semi-transparency bit of the 0x2C GPU primitive.
+ *
+ * @par Globals read/written
+ * D_8009F9E4: camera block (translation at +0x00/+0x04/+0x08 is read as an
+ * s32 array). D_8009F9F0 / D_8009FA28: packet cursor and limit (the last slot
+ * is reused when exhausted). D_8009FAA4: animation clock. D_8009F778 /
+ * D_8009F77C: static and animated texture tables.
+ *
+ * @par Calls
+ * func_8001010C (batch transform with half-word output), func_80019D90 /
+ * func_80019E70 (perspective cull with margin), func_8001047C (projection plus
+ * clip bytes), func_80049EF8 (2D winding test), func_80049F4C (perspective
+ * divide of the anchor, also writes the depth key), func_8001846C (sine/cosine
+ * of the billboard angle).
+ *
+ * @par Side effects
+ * Advances D_8009F9F0 by 0x34 when a packet fits and leaves it untouched
+ * otherwise.
+ *
+ * @par Callers
+ * func_8004A924 (direct; analysis/edges.json records the call site 0x8004A928,
+ * which lies inside that function) - the grid walker: it scans a 5x5 block of
+ * cell lists,
+ * applies a per-cell visibility mask against the node's +0x12 half-word and
+ * calls this function with the absolute cell coordinates arg0 + i and
+ * arg1 + j.
+ *
+ * @par Likely
+ * The cell sprites are the ground detail of the tactical map (buildings, trees,
+ * markers): the billboard form serves small always-facing icons, the quad form
+ * the flat, oriented cells, and the texture id ranges (below and above 10) the
+ * two texture pages of the same atlas.
+ *
+ * @par Unknown
+ * - The purpose of byte 6 of the animated frame record and of the shape bytes
+ *   2..5; only their use as offsets is visible.
+ * - The exact meaning of the branch on texture id < 10 versus >= 10, which
+ *   chooses between two pages and two CLUT sources.
+ * - The fidelity note already recorded in the source: on the idx >= 0 path with
+ *   a texture id >= 10 the function reads s4 + 7, but s4 is only built on the
+ *   idx < 0 path, so retail consumes a stale pointer there. It is reproduced for
+ *   byte identity and must be treated as uninitialised by any port.
+ */
 void func_8004A048(Node *node, s32 arg1, s32 arg2)
 {
     V8 rot[5];

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update > Mover | Physics > Motion | Graphics > GTE > Matrix Build
 #include "game/types.h"
 
 struct Vec3_35B7C { s32 x, y, z; };
@@ -133,6 +134,144 @@ extern void *func_8005E47C(struct SpawnInfo35B7C *info, struct Model *model, s32
 extern void *func_8006C224(struct Obj35B7C *target, struct Obj35B7C *arg1, s32 arg2, s32 arg3);
 extern void func_80044B34(struct Obj35B7C *self, void *unkE8, s32 delta, s32 arg3);
 
+/**
+ * @brief Per-frame update of a mobile entity: advances its animation, acquires
+ *        or validates a leader/target, flies toward it with lead pursuit,
+ *        resolves collisions, bursts child objects on arrival and finally
+ *        rebuilds its own basis matrix and model vertex.
+ *
+ * @param self  The entity record (layout below). It is updated in place.
+ * @param delta Frame time step. Used as a multiplier for speed/acceleration
+ *              and as a countdown decrement, so it is a tick count, not a
+ *              seconds value.
+ *
+ * @return Nothing.
+ *
+ * @par Globals (confirmed field use) (offsets into self)
+ * +0x08 serial id (compared with a target's own +0x08 to detect reuse),
+ * +0x16 type (0x12 unwraps a second object through +0xB4), +0x1A s16 type id,
+ * +0x1C s16 "movement enabled" flag (negative disables the movement block),
+ * +0x20 team/owner byte, +0x24 model/arg word, +0x2C 3x3 matrix (written at the
+ * end); +0x44 is the third 3-word row of the matrix at +0x2C (matrix words
+ * 6..8) and serves as the direction of the dot-product test; +0x50/+0x54/+0x58
+ * position; +0x5C/+0x60/+0x64 the transformed model vertex, written at the end
+ * by func_80010234 and read when a child's offset is built;
+ * +0x78/+0x7C/+0x80 velocity, +0x84 speed, +0xA0/+0xA2/+0xA4
+ * home point (shifted left by 8), +0xA6 leash radius (also shifted left by 8),
+ * +0xA8 previous position, +0xB4/+0xB8/+0xBC heading vector, +0xC0 cached target
+ * id, +0xC4 current target, +0xC8 leader, +0xCC cached leader id, +0xD0 s16,
+ * +0xD2 s16 acceleration, +0xD4 s16 target speed, +0xD6 u16 spin angle,
+ * +0xD8 s16 spawn argument, +0xDA u16 countdown, +0xDC state byte
+ * (0x12 / 0x15 / 3), +0xDD spawn type (0xFF selects the alternate path),
+ * +0xE0 state word (0..4), +0xE4 flag word, +0xE8 animation track,
+ * +0xEC pointer whose byte 1 selects the animation rate mode, +0xF4 s16 frame.
+ * Model instance block at +0x28: model +0x28, radius +0x68, frame +0x70,
+ * unk4B +0x73.
+ *
+ * @par Control flow (confirmed)
+ * 1. State 4 (launch): the entity asks for a spawn source - either
+ *    func_8004E80C(target, unkDD, unkD8, 1, unkA6 << 8, 0xFFFF0000, 0) where
+ *    target is unkC8 or self, or func_8006C224(target, unkC4, unkA6 << 8, -1)
+ *    when unkDD == 0xFF. On success it stores unkDA = 0x5DC, unkE0 = 1,
+ *    unkC4 = source, unkC0 = source->+0x08 and unk84 = unkD4; on failure it
+ *    drops back to state 0.
+ * 2. Animation: with a model and a non-null model->+0x10, the rate is delta for
+ *    mode 1, unk84 * delta for mode 2 and 0 otherwise; func_80044B34 advances
+ *    the track and func_800175F8 installs the new frame radius.
+ * 3. A stale leader (unkCC != leader->+0x08) is dropped to null.
+ * 4. s4 = func_8001A4E8(home << 8, pos): the octagonal distance between the
+ *    home point and the current position.
+ * 5. Burst: when unkDC == 0x12 and s4 >= 0x3001, a spawn info block is filled
+ *    (unk06 = unkD4, unk08 = unkD2, unk00 = unk1A, unk0A = unkA6 << 4,
+ *    unk12 = 0, unk0E = unk20, unk02 = unkD0 >> 4) and up to three children are
+ *    created with func_8005E47C(&info, model, vec80, vec70, unkC8, p2, unk24,
+ *    3, 0, 0, 0, unkE4). The per-child direction gets +0x2000 in x and z for
+ *    child 0, -0x2000 for child 1 and +0x2000 in y for child 2, is normalised
+ *    with func_8001A180, and is skipped when the dot product with self +0x44
+ *    (func_8001AB00) is <= -0xEC83. Each created child with mi.unk4B != 0 is
+ *    post-processed with func_800402DC(child, mi.unk4B, 0, 1, 0). unkDC is then
+ *    set to 3.
+ * 6. Leash: when (unkA6 << 8) < s4 the movement block is disabled
+ *    (unk1C = -1).
+ * 7. Movement block, entered only while unk1C >= 0: the home position is copied
+ *    to unkA8, unk84 accelerates toward unkD4 << 4 by (unkD2 * delta) / 16, and
+ *    s3 = delta * unk84 is the step length.
+ *    - State 2: leaves for state 1 once y - (unkA2 << 8) >= 0x4001; damps the y
+ *      velocity with unk7C = (3 * unk7C + 0x18000) / 4, normalises it, and
+ *      cross-products it with the matrix at +0x2C into unkB4.
+ *    - States 1 and 3: the countdown unkDA is decremented; when it goes
+ *      negative the speed halves, unkD4 = unk84 >> 4, unkDA += 0x12C, and the
+ *      movement block is disabled once unk84 < 16. The target is revalidated
+ *      against unkC0; the aim point is the target position, extrapolated by the
+ *      target velocity times its own speed and delta when the target's serial
+ *      is newer. The distance is measured with func_8001A314, which normalises
+ *      the vector in place and returns length << 2. Within 0x7FFF the state
+ *      drops to 0 if the target is "complete" (type 1 with a positive
+ *      half-word at target->+0xAC + 0x324, or type 0x12 with the same test one
+ *      indirection deeper); in state 3 the y component is lifted by 0xA000
+ *      before the test. If the step covers the whole distance the entity snaps
+ *      onto the direction (or stops when closer than 8), otherwise the velocity
+ *      is smoothed toward it with func_8001A6F8, normalised, lifted by 0x2000
+ *      in y and cross-producted into unkB4.
+ * 8. func_8001ACA4(position, velocity, s3, position) integrates the position.
+ *    For unkDC == 0x15 the state 3 -> state 1 transition happens and, when the
+ *    target is at least 0x301 away while the height above the floor is below
+ *    0x800, the position is raised by 0x200, state 3 is re-entered and the
+ *    speed halves.
+ * 9. Collision: func_800684AC(unkA8, position, out, 0, 0) != 0 disables
+ *    movement and snaps the position to the corrected point; otherwise
+ *    func_80066F78(position, 0, 0, 0) gives the floor height and a position
+ *    below it disables movement and pulls the position halfway back toward
+ *    unkA8.
+ * 10. Basis: the point (unkB4, unkB8 + 0x20000, unkBC) is built and, when
+ *     unkE4 bit 1 is set, the spin angle unkD6 is advanced by
+ *     (delta << 12) >> 6 modulo 0x1000, func_800188D0 builds a rotation matrix
+ *     at +0x2C, func_80019310 builds a second basis into spB8 and the rotation
+ *     is post-multiplied (func_80010820, func_8001006C with count 3). Otherwise
+ *     func_80019310 writes the basis directly to +0x2C. func_80010750 loads it
+ *     into the GTE and func_80010234 transforms the frame vertex at
+ *     model->frames + (frame << 4) + 8 into +0x5C.
+ *
+ * @par Calls
+ * func_8003B898 (effect attach), func_8004E80C / func_8006C224 (spawn source
+ * lookup), func_8005E47C (child object creation), func_800402DC (post-create
+ * parameter), func_80044B34 / func_800175F8 (animation), func_8001A4E8 and
+ * func_8001A314 (octagonal / exact distance), func_8001A180 (normalise),
+ * func_8001A6F8 (3/4 low pass), func_8001AB00 (dot product), func_8001ACA4
+ * (add scaled vector), func_80010974 (cross product), func_800684AC
+ * (collision), func_80066F78 (floor height), func_80069A38, func_8001A13C,
+ * func_800188D0 / func_80019310 / func_80010820 / func_8001006C / func_80010750 /
+ * func_80010234 (matrix and transform pipeline).
+ *
+ * @par Globals
+ * No global variable is written. The function writes only self: +0x1C, +0x78,
+ * +0x7C, +0x80, +0xB4, +0xB8, +0xBC, +0xC0, +0xC4, +0xC8, +0xD6, +0xDA,
+ * +0xDC, +0xE0, +0x2C, +0x84, +0xD4 and the model instance radius/frame.
+ *
+ * @par Side effects
+ * Moves the entity, may create up to three new objects in the global object
+ * lists, may disable further movement, and leaves the GTE loaded with this
+ * entity's matrix.
+ *
+ * @par Callers
+ * func_80036624 (direct), message 6 of its dispatch table - i.e. the entity's
+ * per-frame tick handler, with the message argument being the time step.
+ *
+ * @par Likely
+ * The entity is an aircraft or hover vehicle (the state 2 climb, the constant
+ * y lift of 0x2000/0xA000 and the floor test all fit a flyer), and the burst at
+ * s4 >= 0x3001 is a deployment or drop of three units once the entity has left
+ * its home area. The collision call is a wall/terrain pushback and the floor
+ * test a "sink into the ground" recovery.
+ *
+ * @par Unknown
+ * - The semantics of +0xD0, +0xD2, +0xD8 and +0xDD beyond their role as spawn
+ *   and speed parameters.
+ * - What byte 1 of the block at +0xEC encodes (only the values 1 and 2 are
+ *   distinguished).
+ * - Whether the +0xB4/+0xB8/+0xBC vector is a heading, an up vector or a
+ *   velocity for the second body; it is fed to func_80019310 as basis input.
+ */
 void func_80035B7C(struct Obj35B7C *self, s32 delta)
 {
     struct Obj35B7C *p1;

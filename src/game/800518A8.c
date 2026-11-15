@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Shadow / Cone | Graphics > GTE
 #include "game/types.h"
 
 typedef struct {
@@ -45,6 +46,27 @@ extern void func_80010750(void *a0);
 extern void func_80010234(void *a0, void *a1, s32 a2);
 extern s32 func_80095900(s32 a0);
 
+/**
+ * @brief Builds the four-corner geometry of a projected cone (shadow/light beam).
+ *
+ * @param model Matrix/model block: matrix at +0, sub-block at +0x48 (fields
+ *        +0x40/+0x44/+0x46).
+ * @param buf Vertex buffer; the four corners are written at +0 and +0x20.
+ * @param t Frame/time value.
+ * @param obj Owner object whose +0xAC field is the radius/height source.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_80010750(model) loads the matrix, func_80010234(buf, buf + 0x20, 4)
+ * transforms four vertices into the second half of the buffer, and
+ * func_80095900 (the GTE-table reciprocal) is called twice with `(f06 + cenx + p2)
+ * >> 8` and `f06 >> 8`, shifted left by 2 - the perspective divide for the two
+ * depth planes.
+ *
+ * @par Likely role
+ * The ground shadow or light cone of an object: four corners at two depths, each
+ * scaled by the reciprocal of its distance, so the shape narrows with height.
+ */
 void func_800518A8(Model518A8 *model, s16 *buf, s32 t, Obj518A8 *obj)
 {
     Elem518A8 *e;

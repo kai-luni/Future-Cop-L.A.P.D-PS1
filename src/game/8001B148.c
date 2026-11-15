@@ -1,3 +1,4 @@
+// Categories: Graphics > Geometry > Matrix Transform | Utilities > Mathematics
 #include "game/types.h"
 
 struct RotationMatrix {
@@ -11,6 +12,24 @@ struct RotationPoint {
     s16 pad;
 };
 
+/**
+ * @brief Transforms a list of points with a 3x3 rotation matrix in plain C.
+ *
+ * @param matrix Nine 32-bit values (row-major 3x3).
+ * @param source Point list (three 32-bit components per point).
+ * @param destination Output list, same layout.
+ * @param count Point count; <= 0 returns immediately.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * A do/while loop over `count` points with a hand-rolled multiply-add of the nine
+ * matrix values against x/y/z - no GTE command, unlike func_8001006C, so the
+ * inputs stay in full 32-bit precision.
+ *
+ * @par Likely role
+ * The CPU-side transform used where the GTE's 16-bit registers would lose
+ * precision (level geometry with large coordinates).
+ */
 void func_8001B148(struct RotationMatrix *matrix, struct RotationPoint *source,
                    struct RotationPoint *destination, s32 count)
 {

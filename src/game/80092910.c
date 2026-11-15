@@ -1,3 +1,4 @@
+// Categories: Platform > GPU > Library Reset | Graphics > Display Setup
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
@@ -34,6 +35,26 @@ extern void func_80091480(void);
 extern void func_80095860(u32);
 extern int func_80094F4C(int);
 
+/**
+ * @brief Initialises or resets the GPU library state for the given mode.
+ *
+ * @param input Mode bits; the low three bits select the reset variant.
+ * @return The library state's mode word (or the callback result in the
+ *         debug-level branch).
+ *
+ * @par Confirmed
+ * func_8008E000(D_800129A0, D_8009DDA8, &D_8009DDF0) loads the defaults,
+ * func_80095830 clears the 0x80-byte state, func_80091480 dispatches the callback,
+ * func_80095860 masks the callback table address with 0xFFFFFF and func_80094F4C
+ * runs with the argument. `switch (arg & 7)` treats 0/3/5 alike; the state block
+ * (mode, active, field4/field6) is returned, and at debug level >= 2 the callback
+ * returns instead.
+ *
+ * @par Likely role
+ * The single entry point that resets the library between screens;
+ * func_80092BF4 (queue reset) and func_80092A84 are its companions in
+ * func_8001BE68.
+ */
 int func_80092910(int input)
 {
     register int arg __asm__("$17") = input;

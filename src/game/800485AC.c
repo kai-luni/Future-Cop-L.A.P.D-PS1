@@ -1,3 +1,4 @@
+// Categories: Graphics > HUD > Frame | Graphics > 2D Drawing
 #include "game/types.h"
 
 struct DrawTPage {
@@ -28,6 +29,22 @@ extern s32 D_8009FA0C[];
 extern u8 *D_8009FA90;
 extern u8 *D_8009F9C0;
 
+/**
+ * @brief Draws the HUD frame / border for the current view mode.
+ *
+ * @param value Mode selector; 1 selects the wide layout.
+ * @return Nothing; returns early when the frame switch D_8009FAC8 is 0 or a frame
+ *         is already drawn (D_8009F9B0[0] != 0).
+ *
+ * @par Confirmed
+ * Two packets come from D_8009FA90 (guarded by D_8009F9C0) - a texpage word
+ * 0xE100011F plus the border primitive - with the fixed coordinates 0x30, 0x40,
+ * 0x64, 0x80, 0xB2, 0xCC and 0xF4, i.e. the static layout of the frame. Which
+ * variant is used depends on D_8009FA0C[0] == 1 and on @c value.
+ *
+ * @par Likely role
+ * The frame around the play view (letterbox plus side panels).
+ */
 void func_800485AC(s32 value)
 {
     u8 *packet;

@@ -1,3 +1,4 @@
+// Categories: Graphics > Scene > Node Spawn | Graphics > 3D > Culling | Game Engine > Entity Lifecycle
 #include "game/types.h"
 
 struct Model3A10 {
@@ -72,6 +73,122 @@ extern s32 func_80083764(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 extern void func_80010750(void *a);
 extern void func_80010234(void *a, void *b, s32 c);
 
+/**
+ * @brief Turns one spawn request into a render node: takes a node from the
+ *        pool, attaches the model, builds transform and bounding data and links
+ *        the node into the grid bucket the renderer walks.
+ *
+ * Confirmed role
+ * --------------
+ * The two callers (func_80031690 and func_80084110) hand in a request block
+ * and a model and get 1 back when the node exists; the node is then reachable
+ * through the bucket array D_8009F938 that the scene renderer traverses. The
+ * function is therefore both the allocator and the insertion point of the
+ * scene graph.
+ *
+ * @param req   Spawn request (0x30 bytes): id at +0x0, position at +0x8, three
+ *        angles at +0x14/+0x16/+0x18, a roll offset at +0x1A, an alignment
+ *        code at +0x1C, flags at +0x1D, an animation rate at +0x1E, three Q6
+ *        scale bytes at +0x1F..+0x21, a flag at +0x22, an angle in degrees at
+ *        +0x23.
+ * @param model Model. Only +0x34 (the part/bound table) is read, after
+ *        func_80013BD8 has stored it in the node.
+ * @param z2    Time tag: >= 0 stores the value plus D_8009FAA4 in the node's
+ *        +0x50 and makes the node "dynamic"; negative sets bit 0x80 of the
+ *        flags and fills +0x50 with two 16-bit fields instead.
+ * @param arg3  Optional 12-word transform: 9 matrix words followed by the three
+ *        position words. When null the transform is built from the request.
+ *
+ * @return 1 when the node was created, 0 when the pool refused twice in a row.
+ *
+ * @par Confirmed allocation
+ * node = func_800195A4(D_8009F934). If that returns null the function calls
+ * func_80083834(D_8009FAA4 - 0x5DC, 1) - the frame stamp minus 1500 - and tries
+ * again; a second null ends the call with 0. func_80013BD8(node, model, 0)
+ * then installs the model and copies the identity matrix D_8009AA38 into the
+ * node's matrix.
+ *
+ * @par Confirmed field set-up
+ * +0x4B = -1, +0x56 = req+0x22, +0x54 = req+0x0, +0x4C = req+0x1D; bit 0 of
+ * +0x4C sets bit 8 of +0x4A, bit 1 sets bit 4. The rate at req+0x1E becomes
+ * +0x4D: 0 stays 0, 1 becomes 0xFF, anything else 300 / rate.
+ *
+ * @par Confirmed transform
+ * With arg3 the nine matrix words and the three position words are copied and
+ * +0x57 takes req+0x16 when bit 0x40 of the flags is set, else 0. Without arg3
+ * the position comes from req+0x8, the pitch is read from req+0x1C (skip on
+ * -99, otherwise -1 and -2 for the codes 0 and 1 and code - 2 above that, with
+ * req+0x1A shifted by 4 added to +0x2C), and the three rotation angles are
+ * req+0x14/+0x18/+0x16, each replaced by a random 12-bit angle when negative.
+ * func_800188D0 then builds the matrix, and unless req+0x1F and req+0x20 are
+ * exactly 0x40 and 0x40 each row is multiplied by the byte scale at
+ * +0x1F/+0x20/+0x21 and shifted right by 6 - so those bytes are Q6 factors
+ * (0x40 = 1.0). A negative scale is jittered by random % (-2 * scale) + 64.
+ *
+ * @par Confirmed bounds and insertion
+ * The six s16 values at model+0x34 + 8 become a diagonal matrix (positions 0,
+ * 4, 8 and the translation words 9..11, all shifted by 4), loaded with
+ * func_80010820 and applied to four points with func_8001006C. The fourth point
+ * is moved by +0x2C/+0x30, stored at +0x34 (before its x is offset by +0x28 -
+ * the stored x is the pre-offset value), and the axis extremes are summed from
+ * the absolute values of the matrix words 0, 3, 6 and 2, 5, 8 to feed
+ * func_80083764, whose result lands in +0x4E (Likely a packed bounding rectangle).
+ * The bucket index is (z >> 17) + D_8009F93C * (x >> 17): dynamic nodes are
+ * pushed at the head, static ones (z2 < 0) are appended at the tail so spawn
+ * order is kept. The bucket's arena field is stamped with D_8009FAA4.
+ *
+ * @par Likely
+ * A non-zero +0x56 (copied from req+0x22) makes the function zero the matrix
+ * words 1, 2, 3 and 7 and set word 4 to 0x10000, which is an axis-aligned "keep
+ * upright" transform. +0x57 selects one model part that is re-transformed at
+ * the end with the matrix and written to +0x34 - a per-node attachment point.
+ *
+ * @par Unknown
+ * The unit of req+0x23 (divided by 360 and shifted by 12, so degrees into the
+ * engine's 4096-step angle) and the meaning of +0x54/+0x56 are only visible as
+ * data flow; no name is recoverable from this file.
+ *
+ * @par Globals
+ * D_8009F934 at 0x8009F934 - node pool state passed to func_800195A4.
+ * D_8009F938 at 0x8009F938 - bucket array; element 0 is the list head, +0x4
+ * the arena stamp.
+ * D_8009F93C at 0x8009F93C - row stride in buckets for the grid index.
+ * D_8009FAA4 at 0x8009FAA4 - frame stamp, also used as the 1500-tick pool
+ * timeout and the dynamic/static decision.
+ *
+ * @par Node offsets used (Confirmed)
+ * +0x0 model, +0x4 matrix (9 words), +0x28/+0x2C/+0x30 position, +0x34 bound
+ * centre, +0x48 s16 frame, +0x4A flag byte, +0x4B s8, +0x4C flag byte, +0x4D
+ * byte, +0x4E u16 rectangle, +0x50 u32 tag (or two u16 angles), +0x54 u16,
+ * +0x56 s8, +0x57 byte, +0x58 next.
+ *
+ * @par Control flow
+ * 1. Allocate (with one retry after the 1500-tick reset request).
+ * 2. Attach the model, copy the identity matrix.
+ * 3. Copy the request fields, build transform (arg3 or request), scale rows.
+ * 4. Optional upright correction.
+ * 5. Build the bound matrix, transform four points, derive the rectangle.
+ * 6. Insert into the bucket, stamp the arena.
+ * 7. Optional part transform, return 1.
+ *
+ * @par Calls
+ * func_800195A4 (allocate, two sites), func_80083834 (reset request),
+ * func_80013BD8 (attach model), func_80019668 (random, up to five sites),
+ * func_80067684 (ground height), func_800188D0 (matrix from angles),
+ * func_80010820 (matrix to GTE, twice), func_8001006C (transform four points),
+ * func_80083764 (rectangle), func_80010750 and func_80010234 (final part
+ * transform).
+ *
+ * @par Side effects
+ * Consumes a node from the pool, writes the bucket head or tail, overwrites the
+ * bucket's arena stamp, replaces the GTE matrix and consumes the random
+ * generator. No plain global variable is written, only the pool and the bucket
+ * array behind the two pointers.
+ *
+ * @par Callers
+ * func_80031690 and func_80084110 (analysis/edges.json, kind "direct"); the
+ * address also carries an "address_taken" edge.
+ */
 u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3)
 {
     struct Node3A10 *node;

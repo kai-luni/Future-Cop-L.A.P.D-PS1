@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update > Orientation | Graphics > GTE > Matrix Build | AI > Steering
 #include "game/types.h"
 
 struct Info {
@@ -48,6 +49,111 @@ union Prod { long long val; struct { u32 lo, hi; } w; };
         obj->field = (obj->field + lim) & 0xFFF; \
     }
 
+/**
+ * @brief Per-frame orientation update of a scripted entity: steers yaw and pitch
+ *        toward a target (or aligns the entity to the ground normal), builds the
+ *        world matrix, transforms the model vertex, advances the animation and
+ *        runs the entity script.
+ *
+ * @param obj The entity. struct Obj: model +0x28, matrix m[9] +0x2C,
+ *            position pos[3] +0x50, transformed vertex vtx[3] +0x5C,
+ *            s16 frame +0x70, previous position old[3] +0x78, target-present
+ *            byte +0xA6, script bytes +0xA0 (6 bytes), target pointer +0xB8,
+ *            targetId +0xBC, anim track +0xC8, animFrame +0xD4, yaw +0xDC,
+ *            pitch +0xDE, speed +0xE0, heading +0xE4, part +0xE6, mode +0xE7,
+ *            flags +0xE8, info +0xEC. All offsets follow from the struct
+ *            declaration at the top of the file.
+ *            struct Info: count +0x08, instance +0x28, m[9] +0x2C, limit +0x84,
+ *            h10C (u16) +0x10C, flags (u32) +0x118, yawBias (s16) +0x12A.
+ *            struct Target: id +0x08, pos[3] +0x5C.
+ *            struct Model: anim +0x10, frames +0x34.
+ * @param dt   Time step: multiplies obj->speed to bound the per-frame turn rate.
+ *
+ * @return Nothing. Returns immediately when info->count <= 0.
+ *
+ * @par Control flow (confirmed)
+ * 1. info = obj->info; zero or negative info->count returns at once - the entity
+ *    has no live model, so nothing is updated.
+ * 2. func_80017668(info->instance, obj->part, obj->pos) resolves the part
+ *    position into obj->pos.
+ * 3. Two mutually exclusive orientation paths, selected by bit 1 of obj->flags:
+ *    a) Scripted steering (bit clear):
+ *       - bit 5 set: yaw is forced to heading and the matrix is built directly.
+ *       - else the target yaw s2 is (yaw + 0x800) & 0xFFF when the entity has no
+ *         target byte or a negative heading, yaw itself when bit 0x8000 is set,
+ *         the arctangent of the target delta when the target is valid
+ *         (t->id == targetId), and heading otherwise. With bit 4 set the pitch
+ *         s1 is additionally derived from the elevation of the same delta
+ *         (atan2 on the vertical and the horizontal magnitude, built with the
+ *         same max + (b >> 2) - (b >> 6) approximation) and clamped to
+ *         -0x200..0x200.
+ *       - The bias info->yawBias is subtracted from the target yaw unless bit
+ *         0x1000 of info->flags is set.
+ *       - STEP(pitch) and STEP(yaw) move the angle toward its target by at most
+ *         dt * obj->speed per frame, wrapping in 0x1000 units. Bit 0x4000
+ *         further limits the yaw step to +/-0x300 per frame.
+ *       - apply: func_800188D0(yaw, pitch, 0, obj->m) builds the rotation; unless
+ *         info->flags bit 0x1000 is set, info->m is loaded into the GTE and
+ *         post-multiplied (func_80010820, func_8001006C with count 3).
+ *    b) Ground alignment (bit set): the half-word info->h10C is the height above
+ *       the surface and info->limit the threshold. s1 = 0 while the height is
+ *       below the threshold; when limit < h / 4 it becomes 0x400, otherwise
+ *       0x400 - ((limit - h/4) << 10) / (h >> 1), i.e. a pitch that follows the
+ *       slope. STEP(pitch) is applied to that value, then obj->m is either
+ *       copied verbatim from info->m (pitch == 0) or rebuilt from info->m with a
+ *       pitch rotation about one axis (func_8001846C plus nine FMULs; the first
+ *       row is copied unchanged, rows 2 and 3 are rotated).
+ * 4. func_80010750(obj->m) loads the matrix into the GTE and func_80010234
+ *    transforms the frame record at model->frames + (frame << 4) + 8 into
+ *    obj->vtx with a single vertex.
+ * 5. obj->old[0..2] = obj->m[6..8] - the previous translation, kept for the
+ *    next frame.
+ * 6. Animation: when model->anim is non-zero, func_80044B34(obj, obj->anim, dt,
+ *    0) returns a command word which is consumed six bits at a time (>> 1 first,
+ *    then a >>= 6 loop): 2 sets flag 0x8000, 1 moves mode 1 to mode 2 (and
+ *    nothing otherwise), 3 clears flag 0x8000. func_800175F8(&obj->model,
+ *    obj->animFrame) then installs the frame radius.
+ * 7. Script: bit 2 of flags returns; bit 3 calls func_80060238(script, dt, info,
+ *    0, 1) and returns; mode 0 runs func_80060238(script, dt, obj, info,
+ *    ((flags >> 7) ^ 1) & 1) and, when it reports a hit while flag 0x80 is set,
+ *    switches mode to 1 and calls func_800448D8(anim, 1, 1, 1); mode 2 resets
+ *    mode to 0 and calls func_8005F6E8(script, obj, info, 1).
+ *
+ * @par Globals
+ * None. The function touches only the entity, its Info, its Target and the GTE
+ * registers loaded through func_80010750.
+ *
+ * @par Calls
+ * func_80017668 (part position), func_80095C30 (12-bit arctangent),
+ * func_800188D0 (rotation matrix from yaw/pitch), func_80010820 /
+ * func_8001006C (load and concatenate), func_80010750 (load with translation),
+ * func_80010234 (vertex transform), func_80044B34 / func_800175F8 (animation),
+ * func_80060238 (entity script), func_800448D8 (animation switch),
+ * func_8005F6E8 (script exit handler), func_8001846C (sine/cosine).
+ *
+ * @par Side effects
+ * Writes obj->yaw, pitch, m[9], vtx[3], old[3], mode, flags (0x8000) and calls
+ * into the script and animation subsystems, which may in turn change the mode.
+ *
+ * @par Callers
+ * func_800395A8 and func_800398EC (direct), both from message 6 of their entity
+ * dispatch tables - i.e. the per-frame tick - with the message argument as the
+ * time step.
+ *
+ * @par Likely
+ * The two paths are "vehicle/mission entity steers toward a target or heading"
+ * and "walking/ground entity tilts with the terrain". The fact that the same
+ * function updates the matrix, the model vertex and the script every frame
+ * matches a scripted animated prop or a mission-critical actor.
+ *
+ * @par Unknown
+ * - The unit of info->h10C and info->limit (they are compared as raw
+ *   integers and fed through << 10 / >> 1).
+ * - Which axis the ground-alignment rotation uses; the code only rotates rows 2
+ *   and 3 of info->m, which is consistent with a pitch about the X axis but not
+ *   proven by a constant.
+ * - The semantics of the script return value tested with & 0xFF.
+ */
 void func_80038A00(struct Obj *obj, s32 dt)
 {
     struct Info *info;

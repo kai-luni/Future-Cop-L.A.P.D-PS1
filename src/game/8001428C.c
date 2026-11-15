@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Skinned Parts | Graphics > GTE
 #include "game/types.h"
 
 struct Mat12 {
@@ -45,6 +46,33 @@ extern void func_80010750(void *a0);
 extern void func_8001010C(u8 *a0, u8 *a1, s32 a2);
 extern void func_8001047C(u8 *a0, u8 *a1, u8 *a2, s32 a3);
 
+/**
+ * @brief Draws a multi-part object: per-part matrices, lighting, transform and
+ *        projection.
+ *
+ * @param arg0 Object with the parts table at +0x18, the vertex source at +0x1C and
+ *        +0x20 and the part count.
+ * @param arg1 Camera-relative origin block.
+ * @return Nothing; the loop runs until the terminator bit 0x80 of the part's
+ *         flags byte.
+ *
+ * @par Confirmed
+ * Per part: func_800178DC(object, buf2) builds the camera-relative transform,
+ * func_80013ECC(args) prepares the light, func_80013CB8(idx, callp, count,
+ * reload->unk48) sets the GTE depth-cue pair, func_80014164(arg1, dest, buf1,
+ * buf2) composes the matrices, func_80010750(buf1) loads them, and then
+ * func_8001010C / func_8001047C transform and project the vertex block in one call
+ * each (source `part->unk4 + p[1] * 8 + 4`, output at the 8-byte stride, projection
+ * with the counts in p[2] and p[4]). The static buffers are D_8009FAE0 (0x100
+ * bytes), D_8009F570..D_8009F57C and the two factor tables D_800A02E0/D_800A02F0.
+ *
+ * @par Likely role
+ * The rig renderer: a table of parts (0x30 bytes each) with per-part vertex data,
+ * transformed through the camera and lit with the two shared factor blocks.
+ *
+ * @par Unknown
+ * The meaning of the table fields p[1]..p[7] beyond their use as indices.
+ */
 void func_8001428C(struct Arg0 *arg0, u8 *arg1)
 {
     register struct S3 *s3 __asm__("$19");

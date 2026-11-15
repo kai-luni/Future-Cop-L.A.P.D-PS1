@@ -1,3 +1,4 @@
+// Categories: Resources > Object Table | Graphics > Object List
 #include "game/types.h"
 
 struct Entry { u32 value; u32 other; };
@@ -5,6 +6,22 @@ extern s32 D_8009EF04;
 extern struct Entry *D_8009EF0C;
 extern void func_80097DF8(void);
 
+/**
+ * @brief Marks one entry of a fixed table as "used" by setting its high bit.
+ *
+ * @param value Key to look for; the matching entry's word becomes
+ *        `value | 0x80000000`.
+ * @return Nothing; func_80097DF8() is always called afterwards.
+ *
+ * @par Confirmed
+ * The table base is D_8009EF0C, the count D_8009EF04; the loop stops at
+ * `entry->value & 0x40000000` (a barrier entry) or on a match, where the high
+ * bit of the value is set (the "claimed" marker).
+ *
+ * @par Likely role
+ * The reservation of a resource slot: claiming sets bit 31, the barrier bit 30
+ * marks the end of the valid range.
+ */
 void func_80098708(u32 value)
 {
     s32 i;

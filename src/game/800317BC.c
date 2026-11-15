@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Vec3 { s32 x, y, z; };
@@ -19,6 +20,25 @@ extern void func_80013BD8(void *, struct Model *, s32);
 extern void func_80010750(struct Matrix *);
 extern void func_80010234(void *, void *, s32);
 
+/**
+ * @brief Attaches a model to an entity and fetches its frame vertex.
+ *
+ * @param obj Object: model at +0x28, matrix at +0x2C, frame at +0x70, output at
+ *        +0x5C.
+ * @param input Argument block whose source carries the donor model and matrix.
+ * @param arg Forwarded to func_8002AD58.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8002AD58(2, obj, input, arg) runs the behaviour, func_80013BD8(&obj->model,
+ * src->model, 0) attaches the model, then func_80010750(&obj->matrix) loads the
+ * matrix and one func_80010234 call fetches the vertex at
+ * `model->frames + (frame * 16) + 8` into obj + 0x5C.
+ *
+ * @par Likely role
+ * The "mount this model on this entity" message: the donor supplies the model, the
+ * target keeps its own matrix.
+ */
 void func_800317BC(struct Object *obj, struct Input *input, void *arg)
 {
     struct Source *src;

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Unk378BCState {
@@ -56,6 +57,28 @@ extern void func_80010750(void *matrix);
 extern void func_80010234(void *frame, void *output, s32 count);
 extern s32 func_8006314C(void *key, u8 value);
 
+/**
+ * @brief Runs one entity message: parts, animation and the transformed frame.
+ *
+ * @param message Message/behaviour id forwarded to func_8002AD58.
+ * @param self Entity: flags at +0x14, kind at +0x16, matrix at +0x24, state at
+ *        +0x2C, several part pointers (+0x50, +0x5C, +0xA0, +0xC8, +0xDC) and
+ *        three bytes at +0x158..+0x15A.
+ * @param other Partner entity whose info record supplies a value.
+ * @return Nothing.
+ *
+ * @par Confirmed sequence
+ * func_8002AD58(message, self, other) → func_80060668(part->animIn, self->unkA0) →
+ * func_80050E0C(part->output, self->unkDC, other->info->value, self, self->unk50);
+ * when the entity kind (+0x16) is 5 and flags bit 0x4000 is set,
+ * func_80037EB4(self) runs; then func_80044988 animates, func_80010750 loads the
+ * matrix and func_80010234 transforms one vertex, and func_8006314C(self, 0)
+ * closes.
+ *
+ * @par Likely role
+ * The "one message of a two-part character" handler - the same shape as
+ * func_80030C60, with the partner's info value as an extra parameter.
+ */
 void func_800378BC(s32 message, struct Unk378BC *self, struct Unk378BCOther *other)
 {
     struct Unk378BCPart *part;

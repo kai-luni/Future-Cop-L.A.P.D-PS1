@@ -1,8 +1,28 @@
+// Categories: Graphics > GTE > Per-Vertex Lighting | Graphics > Geometry
 typedef short s16;
 typedef int s32;
 typedef unsigned char u8;
 extern void func_8001010C(s16 *, s16 *, s32);
 extern s32 func_80019904(s32, s32);
+/**
+ * @brief Computes a per-vertex shade/UV value: normal dot product, transform,
+ *        table normalisation and clamping.
+ *
+ * @param p, n, q Pointers into the vertex record (position, normal, extra).
+ * @param out Output byte/word buffer for the result.
+ * @return Nothing; writes the computed values into @c out.
+ *
+ * @par Confirmed
+ * `dot = (d[0] * n[0] + d[1] * n[1] + d[2] * n[2]) >> 12`, the difference vector is
+ * transformed with func_8001010C(r, v, 1), the magnitude goes through
+ * func_80019904(len << 4, 0x1000) >> 4 (the table normaliser) and the two results
+ * are clamped against 0x1F80 with the 0x1F7F/0x7D boundaries before being stored.
+ *
+ * @par Likely role
+ * The shading value of a polygon corner: the normal dot product gives the light
+ * term, the transformed vector gives the view term, and both are packed as 5-bit
+ * (0..0x1F80) values - the format of the GTE's colour registers.
+ */
 void func_80016C88(s16 *p, s16 *n, s32 *q, u8 *out)
 {
     s16 d[4], r[4], v[4];

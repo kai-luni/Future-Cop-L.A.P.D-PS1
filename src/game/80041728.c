@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Command {
@@ -37,6 +38,22 @@ extern void func_80010750(void *matrix);
 extern void func_80010234(void *frame, void *out, s32 count);
 extern void func_8002A5B4(void *script, s32 index);
 
+/**
+ * @brief Executes up to four queued commands of an entity and refreshes its frame.
+ *
+ * @param self Entity: command array at +0, matrix at +0x2C, output at +0x5C,
+ *        frame at +0x70, counter at +0xC0, bytes at +0xC6..+0xCB.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * `for (i = 0; i < 4;)` walks the command array; the switch understands only
+ * 0x52 (set the counter when the argument is 0 or smaller than the current value)
+ * and 0x53 (set the counter); every other opcode goes to func_8002A5B4(self, i)
+ * or is skipped. Afterwards func_80010750 + func_80010234 refresh the frame vertex.
+ *
+ * @par Likely role
+ * A small script interpreter: two opcodes here, the rest delegated.
+ */
 void func_80041728(struct Unk41728 *self)
 {
     s32 i;

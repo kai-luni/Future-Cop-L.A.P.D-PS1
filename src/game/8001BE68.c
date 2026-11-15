@@ -1,3 +1,4 @@
+// Categories: Graphics > Display Setup | Graphics > GPU
 typedef unsigned char u8;
 typedef short s16;
 typedef int s32;
@@ -12,6 +13,25 @@ extern void func_80092BF4(int);
 extern void func_80092A84(int);
 extern void func_80092140(struct Display *, int, int, int, int);
 extern void func_800921F4(struct Draw *, int, int, int, int);
+/**
+ * @brief Resets the GPU library and installs the two 320x240 drawing areas.
+ *
+ * @return 0.
+ *
+ * @par Confirmed
+ * func_80092910(0), func_80092BF4(0) and func_80092A84(0) reset the library state;
+ * then func_80092140 fills D_800A06E0[0] at (0, 0) and [1] at (0, 0x100) with
+ * 0x140 x 0xF0, func_800921F4 does the same for the draw blocks D_800A06B0, and
+ * func_80092BF4(1) flushes.
+ *
+ * @par Likely role
+ * The double-buffer set-up: 0x140 x 0xF0 is 320x240, and y = 0x100 puts the
+ * second area in the other half of VRAM. Each entry's flag byte is cleared in the
+ * same pass.
+ *
+ * @par Callers
+ * The front-end/graphics initialisation.
+ */
 int func_8001BE68(void)
 {
     int i;

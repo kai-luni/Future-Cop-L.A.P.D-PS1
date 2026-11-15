@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Map Tile Icons | Graphics > GPU Primitives | Graphics > 2D Drawing
 #include "game/types.h"
 
 extern u8 D_8009AFE8[][4];
@@ -25,6 +26,106 @@ extern u16 D_8009F83C;
     PK[(off) + 1] = gr;                                \
     PK[(off) + 2] = gr;
 
+/**
+ * @brief Emits the 10x10 pixel icon quads of one map cell: walks the cell's
+ *        primitive word list and writes one textured, flat or gouraud packet
+ *        per word into the shared primitive pool.
+ *
+ * @param ctx  Base of the cell record. Confirmed sub-structure: +0x004 and
+ *             +0x008 are two table base pointers (the first supplies the
+ *             per-primitive descriptor half-words, the second the UV/colour
+ *             half-words), +0x3CC is the array of 16-bit cell descriptors and
+ *             +0x5D0 is the primitive word stream. The first descriptor's low
+ *             nibble is the primitive count of the cell and its upper bits are
+ *             the byte offset of the first word inside the +0x5D0 stream.
+ * @param arg1 Sub-index of the primitive block inside the cell: it selects the
+ *             16-bit descriptor at ctx + 0x3CC and the 3-byte shading triple
+ *             at ctx + 0x0C + ((arg1 >> 4) + arg1) * 3. Its two nibbles double
+ *             as texture-atlas coordinates in the ramp variants (low nibble =
+ *             column, high nibble = row of what the k == 6 branch treats as a
+ *             16x16 tile atlas).
+ * @param x    Screen X in 16.16 fixed point; the high half is used.
+ * @param y    Screen Y in 16.16 fixed point; the high half is used.
+ *
+ * @return Nothing. The function returns early - without touching the remaining
+ *         words - as soon as a primitive index >= 0x47 appears, which is how a
+ *         cell list terminates.
+ *
+ * @par Control flow (confirmed)
+ * 1. count = descriptor & 0xF, wp = ctx + (descriptor >> 4) + 0x5D0,
+ *    base = ctx + (((arg1 >> 4) + arg1) * 3 + 0xC). Loop while count > 0.
+ * 2. wd = next word; t = (wd >> 15) & 0x7F. A value >= 0x47 returns.
+ * 3. The four bytes of D_8009AFE8[t] index the 3-byte shading table; their sum
+ *    a1 is the quad's brightness.
+ * 4. switch (D_8009B1A4[t] >> 3) builds the vertex set v[0..7] as two
+ *    half-words per corner of a 10x10 pixel square: modes 0..4 place the
+ *    trailing corner (x+10, y+10) at different positions, which flips the
+ *    triangle/quad split and the winding of the icon.
+ * 5. A packet is taken from the D_8009F9F0 pool (0x34 bytes, the last slot is
+ *    reused when the cursor has reached D_8009FA28). The header word receives
+ *    (0x400 - a1) in its low 24 bits - a darkness key - and byte 3 receives the
+ *    length (7, 9 or 0x0C) in the switch below.
+ * 6. t4 = table1[t] (the descriptor half-word) and a0 = table2[t] (the UV
+ *    half-word). When the descriptor has bit 0x800 set, four half-words are
+ *    read from the UV table, re-based by D_8009F83C and copied to the
+ *    scratchpad palette at 0x1F800070, which then replaces a0 - a per-cell
+ *    palette animation.
+ * 7. The page base a1 = D_800A8E80[(descriptor >> 8) & 7] and the kind
+ *    k = descriptor >> 13 select the packet form:
+ *    - k == 0: 3 corners, flat colour from (descriptor & 0xFC), length 7,
+ *      code 0x24;
+ *    - k == 1: 4 corners, length 9, code 0x2C;
+ *    - k == 2 / 4 / 6: 4 corners, length 9, code 0x34, with per-corner colours
+ *      taken from the gouraud words (k == 2), from the palette through the low
+ *      byte / next half-word (k == 4), or from the D_800A2630 ramp indexed by
+ *      the arg1 nibbles and the low 3 bits of the descriptor (k == 6);
+ *    - k == 3 / 5 / 7: 5 corner writes, length 0x0C, code 0x3C, same three
+ *      colour variants with one more corner.
+ *    In every case the low bit of the code byte is the semi-transparency flag
+ *    taken from descriptor bit 0x1000.
+ *
+ * @par Globals read/written
+ * D_8009AFE8 (4 vertex-shading bytes per primitive index),
+ * D_8009B1A4 (one flag byte per index; >> 3 is the corner layout),
+ * D_8009F9F0 / D_8009FA28 (packet cursor and limit),
+ * D_800A8E80 (texture-page base per (descriptor >> 8) & 7),
+ * D_800A2630 (16x16 shading ramp used by the k == 6 variant),
+ * D_8009F83C (palette phase added to the four scratchpad entries),
+ * 0x1F800070 (scratchpad palette staging area).
+ *
+ * @par Calls
+ * None - the edge table lists no direct callee; the function is pure data
+ * marshalling into the packet buffer.
+ *
+ * @par Side effects
+ * Advances D_8009F9F0 by 0x34 per emitted packet, writes into scratchpad memory
+ * at 0x1F800070, and clobbers the caller's x and y arguments (both are shifted
+ * in place).
+ *
+ * @par Callers
+ * func_8006680C (direct) - the overhead map pass: for every visible grid cell
+ * it resolves the tile record, sets D_8009F83C from the tile's colour bytes and
+ * then calls this function once per cell sub-index with
+ * (tile, (i << 4) + j, ((xx * 5) << 17) - zfrac, ((yy * 5) << 17) - x), i.e. a
+ * 16-step loop in both directions with a 5:1 pixel scale.
+ *
+ * @par Likely
+ * The function draws the small tile icons of the tactical/overhead map: the
+ * 10x10 extent, the 16.16 incoming coordinates, the per-cell palette rotation
+ * and the caller's pixel-window clamp all fit a scaled top-down
+ * map. The (0x400 - brightness) value in the header is a sort key so darker
+ * icons are ordered first.
+ *
+ * @par Unknown
+ * - What the two table bases at ctx + 4 and ctx + 8 point at in the file
+ *   format; only their use as half-word tables with 2-byte granularity is
+ *   confirmed.
+ * - The exact meaning of D_8009B1A4 bits other than >> 3, and of the k == 6
+ *   variant's nibble arithmetic.
+ * - Whether the header's low 24 bits are later replaced by an ordering-table
+ *   link (the same word is the addr:24 field of the packet header used by
+ *   func_8001C148).
+ */
 void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
 {
     s32 idx;

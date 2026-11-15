@@ -1,3 +1,4 @@
+// Categories: Graphics > Sprites > Target Markers | Gameplay > Targeting | Graphics > 2D Drawing | Graphics > Clipping
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
@@ -17,6 +18,85 @@ extern void func_80017668(void *, int, Vec *);
 extern int func_800684AC(Vec *, Vec *, Vec *, int, int);
 extern void func_80010820(void *);
 extern void func_8001047C(SVec *, SVec *, int *, int);
+/**
+ * @brief Draws the marker of an object's current target: a 16x16 sprite at the
+ *        target's screen position plus a two-point line from the object to a
+ *        computed point.
+ *
+ * @param obj Object block. Fields used: flags at +0x24, state at +0xAC, model
+ *            instance at +0xDC. The target is state + 0x6C and the target
+ *            position is at +0x5C..0x64 of that block.
+ *
+ * @return Nothing.
+ *
+ * @par Globals
+ * - D_8009F9E4 (0x8009F9E4): camera block; the eye position is read at +0x7C,
+ *   +0x80, +0x84 and the view matrix at +0x28.
+ * - D_8009FA90 (0x8009FA90): packet cursor.
+ * - D_8009F9C0 (0x8009F9C0): packet limit.
+ * - D_800A8EA0[0] (0x800A8EA0): one 32-bit resource handle; its low 16 bits are
+ *   masked with 0x9FF into the tpage word and its high half becomes the sprite
+ *   CLUT.
+ *
+ * @par Control flow
+ * Confirmed:
+ * 1. Early out when state->target == 0 or when obj->flags & 0x1000000 is set.
+ * 2. points[2] = target position. func_80017668(obj->model + 0x28, 0,
+ *    &points[0]) fetches the object's own anchor; func_800684AC(&points[0],
+ *    &points[2], &points[1], 0, 1) (five arguments, the fifth pushed on the
+ *    stack) computes the third point, and points[1] is replaced by the target
+ *    position when that call returns 0.
+ * 3. Three iterations project every point to 16-bit screen space:
+ *    (p - camera eye) >> 4, x at +0x0, y at +0x2, z at +0x4 of an 8-byte entry.
+ * 4. func_80010820(camera + 0x28) loads the view matrix and
+ *    func_8001047C(screen, screen, &flag, 3) projects and flags the three
+ *    points; the draw is skipped when ((unsigned char *)&flag)[2] & 1 is set
+ *    (lbu at 0x5A of the frame, i.e. flag + 2).
+ * 5. Packet 1 (0x1C bytes): the existing word 0 is masked with 0xFF000000 and
+ *    byte 3 is set to 1, so the tag announces one following word; +0x4 =
+ *    0xE1000000 | (D_800A8EA0[0] & 0x9FF).
+ * 6. Packet 2 (0x1C bytes): word 0 keeps only its top byte (the address part is
+ *    cleared), byte 3 = 4, the opcode byte at +0x7 = 0x66, r at +0x4, g at +0x5
+ *    and b at +0x6 = 0x80 each, +0xC (u) = 0, +0xD (v) = 0xD2,
+ *    +0xE (clut) = handle >> 16,
+ *    +0x10 (w) = 0x10, +0x12 (h) = 0x10, +0x8 (x) = screen[2].x - 8,
+ *    +0xA (y) = screen[2].y - 8 - a 16x16 quad centred on the target.
+ * 7. depth = screen[0].z clamped up to 0x400: the code computes z - 0x400,
+ *    takes the negative part with sra 31 and and, and subtracts it from z, so
+ *    z < 0x400 becomes exactly 0x400.
+ * 8. Packet 3 (0x1C bytes): byte 3 = 1, +0x4 = 0xE10006A0, low 24 bits of
+ *    word 0 = depth.
+ * 9. Packet 4 (0x1C bytes): byte 3 = 3, +0x7 = 0x42, +0x4 = 0x30 (r), +0x5 =
+ *    +0x6 = 0, low 24 bits of word 0 = depth, +0x8/+0xA = screen[0].x/y,
+ *    +0xC/+0xE = screen[1].x/y.
+ *
+ * @par Calls
+ * func_80017668, func_800684AC, func_80010820, func_8001047C.
+ *
+ * @par Side effects
+ * Appends up to four 0x1C-byte packets. As in the other packet builders of this
+ * file, a packet is only counted when the cursor is below the limit, but the
+ * body is written in either case, so the slot at the limit is overwritten
+ * rather than skipped.
+ *
+ * @par Likely role
+ * A lock-on / off-screen indicator: the 16x16 textured quad with a fixed v of
+ * 0xD2 and the dark red two-point line describe a reticle plus a leader line.
+ * The gating condition D_8009FA00 == 4 in the caller supports "only while the
+ * game is in one particular mode". The geometry is confirmed; the name of the
+ * effect is not.
+ *
+ * @par Unknown
+ * - What func_800684AC computes (only its failure fallback is observable).
+ * - What D_800A8EA0[0] points to beyond the tpage and CLUT fields.
+ * - Why packet 3 repeats a draw mode with tpage 0x6A0 before the line; the code
+ *   stores depth in its tag, which the GPU does not read, so it looks like a
+ *   padding/ordering artefact of the original code.
+ *
+ * @par Callers
+ * func_80047F30, recorded at 0x80047F30 (direct call at 0x80047F60), reached
+ * only when D_8009FA00 == 4.
+ */
 void func_80047888(Object *obj)
 {
     Vec points[3];

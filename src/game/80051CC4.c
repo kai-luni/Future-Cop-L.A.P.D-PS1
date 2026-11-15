@@ -1,3 +1,4 @@
+// Categories: Physics > Movement | Gameplay > Navigation
 #include "game/types.h"
 typedef struct { s16 x,y,z,pad; } SV;
 typedef struct { s32 x,y,z; } V;
@@ -7,6 +8,28 @@ typedef struct { char pad[0xac]; Data *data; } Obj;
 typedef struct { s16 x,y,z,dx,dy,dz; } Bounds;
 extern void func_80010820(void *);
 extern void func_8001010C(SV *, SV *, s32);
+/**
+ * @brief Moves an object toward a position with a speed, clamped to its bounds.
+ *
+ * @param obj Object with a data block.
+ * @param pos Target position.
+ * @param unused Not read.
+ * @param bounds Axis-aligned bounds with half-extents dx/dy/dz.
+ * @param trans Transform block applied second.
+ * @param matrix Matrix for the first transform.
+ * @param flags Bit 0x400 forces the speed to 0x4000.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_80010820(matrix) + func_8001010C(&local, &rotated, 1) rotate the step, then
+ * func_80010820(trans) + func_8001010C(&step, &output, 1) apply the second
+ * transform. Each component is negated or zeroed according to the sign test and
+ * the `|y| < bounds->dy` comparisons; steps of 0x2400 are the default speed.
+ *
+ * @par Likely role
+ * The "slide along the surface" step of a moving entity: the direction comes from
+ * the two transforms and the bounds decide which components are allowed.
+ */
 void func_80051CC4(Obj *obj, V *pos, s32 unused, Bounds *bounds, Transform *trans, void *matrix, s32 flags)
 {
     SV local, rotated, step, output;

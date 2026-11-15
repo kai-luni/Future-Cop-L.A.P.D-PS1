@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Multi-Point Polygon | Graphics > GTE
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -59,6 +60,29 @@ extern void func_800101D4(void *arg0, void *arg1, s32 arg2);
 extern s32 func_80019E70(s16 *point, s32 margin);
 extern void func_8001047C(void *arg0, void *arg1, void *arg2, s32 arg3);
 
+/**
+ * @brief Draws the seven-point polygon of a special effect object.
+ *
+ * @param arg0 Object: its sub-block at +0xAC, position and height fields.
+ * @return Nothing; returns when the view mode D_8009FA0C is below 2, when
+ *         D_8009FA94+0x5C is zero, when the near/far frame is empty or when the
+ *         on-screen test func_80019E70(point, 0x400) & 0xFF is not 2.
+ *
+ * @par Confirmed
+ * func_800536B4(&frame.near, &frame.far) reads the near/far planes,
+ * func_80095C30(other->x - height, other->z - z) computes the distance,
+ * func_80018DC0(angle, 0, 0, &frame.object) builds the orientation,
+ * func_800178DC(&frame.object, matrix) makes it camera-relative and
+ * func_80010750 loads it. The seven vertices are transformed with
+ * func_800101D4(afptr, frame.point, 1) and projected with
+ * func_8001047C(afptr, frame.point, flags, 7); then up to five packets are taken
+ * from the 2D pool (tags 0x22000000/0x2A000000/0x04000000/0x05000000) guarded by
+ * a `(u32)temp < 0x80` opacity test.
+ *
+ * @par Likely role
+ * The "wall/beam" effect: a seven-vertex outline (two seven-point rings) drawn
+ * only in the higher view mode, with a distance-dependent fade.
+ */
 void func_800592D0(struct Unk592D0 *arg0)
 {
     struct Frame592D0 frame;

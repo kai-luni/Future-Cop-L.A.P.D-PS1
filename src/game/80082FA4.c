@@ -1,3 +1,4 @@
+// Categories: Graphics > GPU Primitives > Gouraud Quad | Graphics > 2D Drawing
 #include "game/types.h"
 
 struct Poly {
@@ -10,6 +11,22 @@ struct Poly {
 extern struct Poly *D_8009F9F0;
 extern struct Poly *D_8009FA28;
 
+/**
+ * @brief Emits a gouraud quad with a caller-selected primitive code.
+ *
+ * @param x, y, w, h Rectangle.
+ * @param link Ordering-table link.
+ * @param r, g, b Colour.
+ * @param code Primitive code; the emitted byte is `code | 0x28`, so the low bits
+ *        add the semi-transparency/texture bits of the 0x28 family.
+ * @return Nothing; packet from D_8009F9F0.
+ *
+ * @par Confirmed
+ * Same body as func_80082EF0, only the code byte differs.
+ *
+ * @par Likely role
+ * The variant the 3D layer uses for blended quads (0x2C) versus opaque (0x28).
+ */
 void func_80082FA4(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b, s32 code)
 {
     struct Poly *p;

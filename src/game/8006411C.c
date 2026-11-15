@@ -1,3 +1,4 @@
+// Categories: Physics > Collision | Gameplay > Movement
 #include "game/types.h"
 
 struct Bound {
@@ -8,6 +9,25 @@ struct Bound {
 extern s32 func_800640D8(u16 *in, s16 *out);
 extern s32 func_80063FF8(s16 *point, s32 margin);
 
+/**
+ * @brief Builds a four-direction collision mask around a position.
+ *
+ * @param base Geometry block (half-word array).
+ * @param step Offset added per direction test.
+ * @param bounds Four margin records; the margins at [1]..[4] are used, shifted
+ *        left by 4.
+ * @return A bit mask: bit 1 = +step, bit 2, bit 4, bit 3 - one bit per direction.
+ *
+ * @par Confirmed
+ * Each direction runs func_800640D8(in, out) (a ray/height query) and, when it
+ * finds no hit, ORs `func_80063FF8(out, margin << 4) << n` into the result with
+ * n = 1, 2, 4 and 3 respectively.
+ *
+ * @par Likely role
+ * The "can I move this way" probe of the entity movement: four directions, each
+ * tested with the object's own margin, and the result tells the mover which sides
+ * are free.
+ */
 s32 func_8006411C(u16 *base, s32 step, struct Bound *bounds)
 {
     s32 result;

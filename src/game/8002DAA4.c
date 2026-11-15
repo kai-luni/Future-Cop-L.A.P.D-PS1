@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Animation | Graphics > Model Renderer
 typedef signed short s16;
 typedef signed int s32;
 typedef unsigned int u32;
@@ -12,6 +13,27 @@ extern void func_800188D0(s32, s32, s32, void *);
 extern s32 func_80067684(void *, s32);
 extern void func_80010750(void *);
 extern void func_80010234(void *, void *, s32);
+/**
+ * @brief Advances one entity's animation and places its frame vertex.
+ *
+ * @param self Entity: flags at +0x24, model at +0x28, transform at +0x2C, position
+ *        at +0x50, matrix at +0x60, frame index at +0x70, track data at +0xA2.
+ * @param data Data block whose inner record holds height (+0x24), id and mode.
+ * @param arg2 Forwarded to func_8002AD58.
+ * @return 0.
+ *
+ * @par Confirmed
+ * func_8002AD58(2, self, data, arg2) runs the behaviour step; when the model has
+ * an animation record, func_80044988(model->anim, track, 1, 0) advances it;
+ * func_800188D0(inner->id, 0, 0, coord) builds the rotation matrix, the vertical
+ * offset is `func_80067684(pos, mode) + inner->height`, then func_80010750 loads
+ * the matrix and func_80010234 transforms one vertex
+ * (`model->frames + (frame << 4) + 8`) into the entity's 0x14 target.
+ *
+ * @par Likely role
+ * The "walk animator" of a ground entity: height from the data record plus the
+ * floor query func_80067684 keeps the frame on the terrain.
+ */
 s32 func_8002DAA4(struct Object *self, struct Data *data, s32 arg2)
 {
     struct DataInner *inner;

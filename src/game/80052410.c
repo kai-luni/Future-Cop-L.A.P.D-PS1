@@ -1,3 +1,4 @@
+// Categories: Gameplay > Collision | Graphics > Geometry
 #include "game/types.h"
 
 struct Vec52410 { s32 x, y, z; };
@@ -14,6 +15,26 @@ extern void func_80010750(void *);
 extern void func_80010234(void *, struct Vec52410 *, s32);
 extern s32 func_800684AC(void *, void *, void *, s32, s32);
 
+/**
+ * @brief Transforms a quad and tests its four edges.
+ *
+ * @param obj Object with rotation angle, target and view vectors.
+ * @param points Four input vertices.
+ * @param out Result block: the transformed vertices at +4.. and the per-edge
+ *        results at +0x10.
+ * @return The accumulated per-edge result of func_800684AC.
+ *
+ * @par Confirmed
+ * func_80051C50(obj, obj->angle, target, view) prepares the matrices,
+ * func_80010750 loads one and func_80010234 transforms four vertices. Two loops
+ * then call func_800684AC(&points[i], &points[(i + 1) & 3], &out[i + 4], 0, 0) and
+ * accumulate `& 7` - four calls, one per edge of the quad. The block offsets
+ * 0x20/0x2C/0x74/0xEC belong to the object and result records.
+ *
+ * @par Likely role
+ * The footprint test of a vehicle or building: each edge is checked against the
+ * level geometry and the four codes say which sides are blocked.
+ */
 s32 func_80052410(struct Obj52410 *obj, struct Vec52410 *points, struct Vec52410 *out)
 {
     s32 i;

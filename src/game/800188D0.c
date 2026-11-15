@@ -1,7 +1,27 @@
+// Categories: Utilities > Mathematics > Trigonometry | Graphics > Geometry > Rotation
 typedef signed int s32;
 typedef unsigned int u32;
 extern void func_8001846C(u32, s32 *, s32 *);
 
+/**
+ * @brief Builds a 3x3 rotation matrix from three angles, in place.
+ *
+ * @param x, y, z Rotation angles in the engine's 4096-step convention.
+ * @param m Output: nine 32-bit values (3x3, row-major, 1.0 = 0x10000).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_8001846C supplies sine and cosine for each angle; the angle is masked
+ * with 0xFFF. The body has a fast path per zero angle (`z == 0`, `y == 0`,
+ * `x == 0`), which collapses the product into fewer multiplies, and the
+ * remaining products are scaled by 0x10000 (16.16 fixed point).
+ *
+ * @par Likely role
+ * The single rotation-matrix factory of the engine: entity orientation, effect
+ * placement and the light matrices all end up here (the callers include
+ * func_80037EB4, func_8003DB70, func_80041C6C, func_8005D060, func_8005B588 and
+ * the whole 0x8002-0x8007 range).
+ */
 void func_800188D0(s32 x, s32 y, s32 z, s32 *m)
 {
     s32 sx, cx, sy, cy, sz, cz;

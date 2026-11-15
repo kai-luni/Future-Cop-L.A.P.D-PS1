@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Update > Steering | AI > Target Selection | Graphics > 3D > Actor Transform
 #include "game/types.h"
 
 struct Vec { s32 x, y, z; };
@@ -32,6 +33,114 @@ extern s32 func_80095C30(s32, s32);
 extern void func_80044B34(struct Obj *, void *, s32, s32);
 extern void func_800175F8(void *, s32);
 
+/**
+ * @brief Message-6 tick of an animated object: serves the command queue, steps
+ *        the script, then runs one of three behaviours - spin in place, steer
+ *        at a target, or idle - with rate-limited yaw and pitch, and finally
+ *        advances the animation.
+ *
+ * Confirmed role
+ * --------------
+ * func_8002D664 is the message table of this class; case 6 - the tick - calls
+ * this function and returns 0. Its set-up counterpart is func_8002C584 (message
+ * 2), which writes most of the fields read here (speed, range, yaw, kind).
+ *
+ * @param self Object block: id +0x8, command queue +0xC, model +0x28, matrix
+ *        +0x2C, position +0x5C, radius +0x68, frame +0x70, script +0xA0, target
+ *        +0xB8, target id +0xBC, animation +0xC8, frame index +0xD4, kind
+ *        +0xDC, mode +0xDE, flags +0xDF, speed +0xE8, range +0xEA, heading
+ *        +0xEC, timer +0xF0, yaw +0xF2, pitch +0xF4.
+ * @param dt   Frame delta; multiplies speed for the yaw and pitch steps and is
+ *        passed to the script and the animation stepper.
+ *
+ * @return Always 0. Confirmed: "return 0" appears exactly twice, once for a
+ *         missing model and once at the end.
+ *
+ * @par Confirmed prelude
+ * A non-zero command opcode at +0xC runs func_8002CB20, which consumes the
+ * opcodes 0x29..0x2E (kind, a 4-bit flag and a model swap). Without a model at
+ * +0x28 the function returns immediately. A script pointer at +0xA0 is stepped
+ * with func_80060238(address of +0xA0, dt, self, 0, 1) - the address is passed,
+ * so the script can replace its own pointer. Bit 4 of +0xDF ends the tick.
+ *
+ * @par Confirmed spin (bit 2)
+ * yaw = (yaw + dt * speed) & 0xFFF, then func_800188D0(timer(+0xF0), 0, yaw,
+ * matrix): the timer field is the x rotation, so the object spins about its
+ * facing axis - Likely a rotating prop. The model frame at +0x70 (frame size
+ * 0x10, table at model+0x34) is transformed to +0x5C.
+ *
+ * @par Confirmed steering (bit 1)
+ * Target choice has three sources. Bit 0x10 uses the fixed target at +0xB8,
+ * but only while +0xBC still equals target->id(+0x8). With mode(+0xDE) == 0 the
+ * object simply faces backwards (yaw + 0x800, pitch 0). Otherwise the search
+ * runs every 1500 frames through the timer at +0xF0:
+ * func_8004E80C(self, mode, kind(+0xDC), 1, range << 4, 0xffff0000, 0), and the
+ * result plus its id are cached at +0xE0/+0xE4. A cached target is only used
+ * while the id still matches and while
+ * func_8001A100(delta) - (target radius + own radius) < range << 4.
+ *
+ * @par Confirmed aim
+ * yaw = atan2(dx, dz) with func_80095C30, masked to 0xFFF. Pitch is computed
+ * only with bit 8: the planar distance is built with the octagonal
+ * approximation used elsewhere in the engine (sort |dx| and |dz|, the
+ * shift-add form of the square root) and the pitch is
+ * atan2(dy, planar) shifted left and right by 12, then clamped to +-512. The
+ * fallback label sets yaw = heading(+0xEC) and pitch 0.
+ *
+ * @par Confirmed rate limit
+ * Bit 0x40 restricts the request to heading +-0x300. For yaw and pitch alike the
+ * difference is wrapped into -0x800..0x800, the step is dt * speed and is
+ * clamped to the absolute difference, and the angle is advanced by that step.
+ * Only when something changed is the matrix rebuilt (func_800188D0 with yaw,
+ * pitch, 0), loaded (func_80010750), used to transform the model part
+ * (func_80010234) and its row 2 (words at +0x18/+0x1C/+0x20) copied into the
+ * vector at +0x78 - for this rotation that row is the local z axis, Likely a
+ * cached forward vector.
+ *
+ * @par Confirmed animation
+ * At the end, when model+0x10 is non-zero, func_80044B34(self, +0xC8, dt, 0)
+ * steps the animation and func_800175F8(address of the model pointer, +0xD4)
+ * applies the frame. Note that the address of the pointer field is passed, not
+ * the pointer itself.
+ *
+ * @par Likely
+ * The 1500-frame search period, the 0xffff0000 argument (a "no filter" mask)
+ * and the radius subtraction describe a turret or a homing prop that reacquires
+ * a target about every 25 seconds and otherwise keeps its current one.
+ *
+ * @par Unknown
+ * The meaning of kind +0xDC (a search class passed straight to func_8004E80C)
+ * and of mode +0xDE (0 means "face backwards") is not provable from this file.
+ *
+ * @par Globals
+ * None. Confirmed: no D_ symbol is referenced; everything is reached through
+ * the object block and the model it points to.
+ *
+ * @par Model offsets used (Confirmed)
+ * +0x10 animation flag, +0x34 frame table, frame stride 0x10. Object matrix at
+ * +0x2C with the translation word at +0x50 shared with the position.
+ *
+ * @par Control flow
+ * 1. Command queue, model check, script step, bit 4 exit.
+ * 2. Spin, steer or idle.
+ * 3. Yaw/pitch rate limiting and matrix rebuild.
+ * 4. Cache matrix row 2.
+ * 5. Animation step and frame.
+ *
+ * @par Calls
+ * func_8002CB20 (commands), func_80060238 (script), func_8004E80C (target
+ * search), func_8001A100 (distance), func_80095C30 (atan2, three sites),
+ * func_800188D0 (matrix), func_80010750 (matrix to GTE), func_80010234 (part
+ * transform), func_80044B34 (animation), func_800175F8 (frame).
+ *
+ * @par Side effects
+ * Writes yaw, pitch, timer, cached target, matrix, the vector at +0x78, the
+ * animation track and the frame index; advances the command queue and possibly
+ * the script pointer. No global variable is written.
+ *
+ * @par Callers
+ * func_8002D664, message 6 (analysis/edges.json, kind "direct").
+ */
 s32 func_8002CC30(struct Obj *self, s32 dt)
 {
     s32 delta[3];

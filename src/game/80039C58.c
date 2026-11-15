@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Vec { s32 x, y, z; };
@@ -32,6 +33,27 @@ extern struct Object *D_8009F9A0;
 #define current D_8009F9A0
 #define barrier() __asm__ volatile("" : : : "memory")
 
+/**
+ * @brief Entity message handler of the third script family, with a "current"
+ *        pointer in D_8009F9A0.
+ *
+ * @param message Message id.
+ * @param self Object: anim at +0x34, matrix, output, command, animflags, bytes.
+ * @param other Partner whose info->value is passed to the part update.
+ * @return 0x120 for message 1, 0 for 2/3/4/5/10/11/13/14 paths, otherwise the
+ *         delegated result of func_8002AD58.
+ *
+ * @par Confirmed
+ * func_8002AD58(message, self, other) runs the behaviour; the part update is
+ * func_80050E0C(part->data, self->anim, other->info->value, self, &self->position),
+ * then func_80010750 + func_80010234 fetch one frame vertex into self->output.
+ * Message 5 clears the global current pointer when it is this object, message 6
+ * calls func_80039BD0 and func_80050D14 and refreshes the matrix of the state.
+ *
+ * @par Likely role
+ * The handler of the "active/attached" entity family: D_8009F9A0 holds the one
+ * object that is currently being driven, and messages 5/6 take or drop that role.
+ */
 s32 func_80039C58(s32 message, struct Object *self, struct Other *other)
 {
     struct Part *part;

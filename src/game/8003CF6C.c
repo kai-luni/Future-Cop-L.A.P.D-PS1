@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Depth Cue Pass | Graphics > Culling
 #include "game/types.h"
 
 struct Obj8003CF6C {
@@ -29,6 +30,24 @@ extern void func_80013AA0(s32 low, s32 high);
 extern u8 func_80017508(struct Obj8003CF6C *instance, u32 *flags, s32 arg2);
 extern void func_800164F4(struct Obj8003CF6C *obj);
 
+/**
+ * @brief Walks the depth-cued object list and draws the visible nodes.
+ *
+ * @param arg Frame argument forwarded to the visibility test.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Iterates D_8009F320 with `next` captured first. A node is skipped when its
+ * object pointer is null or bit 1 of the flags byte at +0x39 is clear, and when
+ * `func_8001A100(vec) - obj->unk40 > 0x1FFFF` (the radius test against the
+ * object's distance word). Surviving nodes hand their two bytes at +0x40/+0x41 to
+ * func_80013AA0 (the GTE depth-cue pair), func_80017508(obj, &flags, +0x42)
+ * decides visibility, and func_800164F4(obj) draws the frame.
+ *
+ * @par Likely role
+ * The "far objects, depth-cued" pass, sibling of func_80075A84 and driven from
+ * the same render list.
+ */
 void func_8003CF6C(s32 arg0)
 {
     struct Node8003CF6C *node;

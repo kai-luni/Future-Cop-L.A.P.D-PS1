@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Ribbon Pass | Graphics > GTE > Projection | Graphics > GPU Primitives
 #include "game/types.h"
 
 #define W(p,o) (*(s32 *)((u8 *)(p)+(o)))
@@ -27,6 +28,121 @@ extern void func_8001006C();
 extern void func_80010750();
 extern void func_8001047C();
 
+/**
+ * @brief Renders one object list as camera-facing polygon ribbons: every list
+ *        entry contributes a polyline whose segments become two screen-space
+ *        quads (or one textured quad) of perspective-correct width.
+ *
+ * @param input Head of the singly linked object list; next is at +0x00.
+ * @param pos   Camera/eye position (3 x s32) in the same 1/16 world units as
+ *              the node coordinates: it is subtracted from every node
+ *              coordinate before the shift into screen space.
+ *
+ * @return Nothing. The function only fills the primitive pool.
+ *
+ * @par Globals (confirmed object fields) (offsets into input and its successors)
+ * - +0x0F bit 3 (0x08): set means the entry is skipped for this frame.
+ * - +0x1C: holder/parent pointer handed to func_8003D9F8.
+ * - +0x1A (u16) flags: 0x0100 = "coordinates are already in view space" (no
+ *   camera subtraction, func_80010750 instead of func_80010820 for the basis),
+ *   0x2000 = second flag used to pick the transform source of the extra point.
+ * - +0x8E (u16) flags: 0x2000 = "no header point" (the strip starts at the
+ *   node chain itself instead of the D_800A3548 header point), 0x0010 =
+ *   position is taken verbatim from +0x28..+0x30, 0x0004 = force untextured.
+ * - +0x10 (u8) bit 0: skip the distance cull.
+ * - +0x12 (u16), +0x73, +0x76, +0x79 (u8): copied into the D_800A3548 header
+ *   record at +0x10, +0x15, +0x16 and +0x17.
+ * - +0x68: pointer to the first vertex node of the strip.
+ * - +0x72 (s8): texture index; >= 0 selects the entry in D_8009B234 (the
+ *   5-word texture table page/x/y/w/h), < 0 selects per-segment textures from
+ *   node +0x2A instead.
+ * - +0x28/+0x2C/+0x30: the object position, used when 0x8E bit 4 is set.
+ * - +0x58: 3-word vector transformed with the object matrix when 0x1A bit
+ *   0x100 is set.
+ * Vertex node: next +0x00, x/y/z (s32) +0x04/+0x08/+0x0C, half-word +0x10
+ * (strip half-width, shifted left by 9 in the width formula), colour word
+ * +0x14 (>> 8 gives the three RGB bytes), per-segment texture byte +0x2A,
+ * and bit 0 of the half-word at +0x18 marks the end of the chain.
+ *
+ * @par Control flow (confirmed)
+ * 1. Outer loop over the list; invisible entries jump straight to the advance
+ *    label at the bottom.
+ * 2. func_8003D9F8 builds the base transform from the entry at +0x1C (or a
+ *    null holder) and func_8003D9C4 supplies the mesh slot. The result is
+ *    only used when the node transform pointer is non-null.
+ * 3. Unless +0x10 bit 0 is set, the vector from pos to the transform
+ *    translation (+0x24/+0x28/+0x2C) is measured with func_8001A100 and the
+ *    entry is dropped above 0x1FFFF - a hard far-distance cull.
+ * 4. Unless +0x8E bit 0x2000 is set, a header point is written to
+ *    D_800A6418[0]: either the transformed +0x58 vector, the raw +0x28
+ *    position, or the object position plus the matrix translation. All three
+ *    are converted with (value - camera) >> 4 for the camera-space paths and
+ *    then count++.
+ * 5. The vertex chain is appended to D_800A6418, one entry (4 half-words) per
+ *    node, using the same camera subtraction, until the end marker or null.
+ *    Fewer than two points abort the entry.
+ * 6. The basis is rebuilt (camera matrix from D_8009F9E4, or the object
+ *    matrix) and func_8001047C projects the point array while writing one
+ *    clip-flag byte per point into D_800AB388.
+ * 7. Per segment i: t = flag[i] | flag[previous] | flag[next]; only when bit 0
+ *    is clear and t == 0xC0 (all four clip bits set, i.e. fully inside) is the
+ *    segment drawn. The width is (node_halfwidth << 9) / depth, clamped to a
+ *    minimum of 3 pixels; the segment normal is (dy, -dx) and is rescaled by
+ *    an integer approximation of the reciprocal hypotenuse
+ *    (q = a + (b >> 2) - (b >> 6) after the (a + b) * 0x49 / 0x80 step), so the
+ *    ribbon keeps a roughly constant on-screen thickness. The scaled dx/dy
+ *    land in D_800A7840 / D_800A7898.
+ * 8. Emission per segment: with a texture, one 0x34-byte textured quad whose
+ *    tpage/CLUT words are built inline (Sony getTPage/getClut shape with the
+ *    0x180 / 0xA0 bases) and whose UVs come from the texture table or from the
+ *    per-segment index; without a texture, two flat quads (code written as
+ *    0x3A000000 in the colour word, 0x08000000 in the header) covering the
+ *    left and the right half of the band. Both paths reject a quad only when
+ *    all four corners are off screen (x >= 320 or y >= 240 - there is no
+ *    negative bound in the test) and then roll the cursor back by 0x34.
+ *
+ * @par Globals read/written
+ * D_8009F9F0 / D_8009FA28: packet cursor and end of the primitive pool
+ * (bump-allocated, last slot reused when full). D_800A6418: scratch array of
+ * projected points. D_800A7840 / D_800A7898: per-segment dx/dy. D_800AB388:
+ * clip-flag bytes. D_800A3548: the header primitive record filled from the
+ * object (+0x10, +0x15, +0x16, +0x17 and the node pointer at +0x00).
+ * D_8009F9E4: camera matrix block (matrix at +0x28, translation at
+ * +0x7C/+0x80/+0x84). D_8009B234: texture table.
+ *
+ * @par Calls
+ * func_8003D9F8 (build the strip transform), func_8003D9C4 (mesh slot),
+ * func_8001A100 (3D length for the far cull), func_8001A81C (matrix times
+ * vector for the extra point), func_80010820 / func_80010750 (load a rotation
+ * matrix with / without translation into the GTE), func_8001006C (batch
+ * transform), func_80010234 (transform with 0xC output stride), func_8001047C
+ * (RTPS projection plus clip flags).
+ *
+ * @par Side effects
+ * Consumes up to 0x34 bytes per emitted primitive from the shared pool, may
+ * leave the cursor exactly at D_8009FA28 when the pool is exhausted, and
+ * overwrites the shared scratch arrays D_800A6418, D_800A7840, D_800A7898 and
+ * D_800AB388 (all of them fully rebuilt per list entry, so nothing survives
+ * across calls).
+ *
+ * @par Callers
+ * func_8003F6E4 (direct) - the per-class render dispatch: it resolves one
+ * world position and then calls the sibling list renderers in sequence; this
+ * one receives D_800A1070.unk14 and the position triple.
+ *
+ * @par Likely
+ * The pass draws light trails / ribbon effects (rocket exhaust, skid marks,
+ * beam or road edges): the strip width is derived from a per-node radius,
+ * colours are interpolated between the two nodes of each segment, and the whole
+ * geometry is rebuilt from a polyline every frame.
+ *
+ * @par Unknown
+ * The exact meaning of the length byte at +0x03 of each packet and of the
+ * 0x24 / 0x2C / 0x3A / 0x3E codes written into the colour word: only their
+ * positions inside the 0x34-byte block are confirmed. The purpose of the two
+ * flags 0x2000 (in +0x1A and in +0x8E) is not established beyond which code
+ * path they select.
+ */
 void func_80074104(u8 *input, s32 *pos)
 {
     register u8 *obj asm("$23") = input;

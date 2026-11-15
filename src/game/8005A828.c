@@ -1,3 +1,4 @@
+// Categories: Graphics > 2D Drawing > Lines | Graphics > HUD
 #include "game/types.h"
 
 struct LineF3 {
@@ -12,6 +13,23 @@ extern s16 D_8009AFB4[];
 
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
 
+/**
+ * @brief Emits a three-segment line fan around an origin.
+ *
+ * @param origin Packed origin (x/y).
+ * @param angle Start angle (4096-step convention).
+ * @param code Primitive code for the three segments.
+ * @return Nothing; 0x1C bytes per segment from D_8009FA90, guarded by D_8009F9C0.
+ *
+ * @par Confirmed
+ * func_8001846C supplies sine and cosine; a loop runs ctr = 0..2 and consumes the
+ * half-word table D_8009AFB4 for the radii, building three line primitives with
+ * tags 0x20000000 / 0x04000000 and the code `code | 0x2C0000`.
+ *
+ * @par Likely role
+ * The radar sweep or a three-blade marker: the same origin, three directions
+ * offset by the table's angles.
+ */
 void func_8005A828(s32 origin, u32 angle, s32 code)
 {
     struct LineF3 *line;

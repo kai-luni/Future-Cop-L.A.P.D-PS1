@@ -1,3 +1,4 @@
+// Categories: Physics > Force Fields | Gameplay > Object Update > Tick Handler | Utilities > Mathematics > Fixed Point
 #include "game/types.h"
 
 typedef struct { s32 x, y, z; } Vec;
@@ -26,6 +27,102 @@ extern int func_8002AD58(int, void *, void *);
 #define FMULP(d,a,b) do { register s32 mul __asm__("$2") = (b); FMUL(d,a,mul); } while (0)
 #define FMULV(d,a,b) do { register s32 in __asm__("$2") = (a); register s32 out __asm__("$7"); __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(out) : "r"(in), "r"(b) : "$8", "$9"); (d) = out; } while (0)
 
+/**
+ * @brief Per-frame update of a force-field object: every tick it computes one
+ *        acceleration vector per target list slot and adds it to the velocity
+ *        of the actors in range.
+ *
+ * Confirmed role
+ * --------------
+ * func_8003A844 is the message table of this object class; message 6, the tick
+ * message, is forwarded here and its (void) result discarded. The function
+ * therefore owns the whole per-frame behaviour of the field: phase timer,
+ * force computation, velocity injection and the closing animation step.
+ *
+ * @param obj Field object: script byte at +0x0C, sound id at +0x8, flags at
+ *        +0x24, model at +0x28, matrix at +0x2C, position at +0x50, last
+ *        position at +0x5C, part index at +0x70, motion triple at +0xA0, the
+ *        linked body at +0xAC, two force slots at +0x11C, and the parameter
+ *        block from +0x134 to +0x144.
+ * @param dt  Frame delta, subtracted from the phase timer and used as the final
+ *        scale of the force (product shifted right by 4).
+ *
+ * @return Nothing.
+ *
+ * @par Confirmed phase timer
+ * When bit 0x40 of +0x140 is set the timer at +0x13E counts down; below zero
+ * bit 0x80 is toggled, the timer reloads from +0x138 (on) or +0x13A (off) and,
+ * when the new phase is "on", both force slots at +0x11C are cleared. The field
+ * only acts while (flags & 0x81) == 0x81.
+ *
+ * @par Confirmed target loop
+ * for (i = D_8009FA0C - 1; i >= 0; i--) over D_8009FA58. An entry is skipped
+ * when it is null or when bit 4 of the flags is set and the body's state at
+ * sub+0xBC is not 0x10000; a skipped slot writes a zero force and rejoins the
+ * loop at the accumulation step. Otherwise delta = position(+0x50) - target
+ * position(+0x50), with y only included when bit 1 of the flags is set.
+ *
+ * @par Confirmed three modes (+0x13D)
+ * 1 - radial: distance = func_8001A100(delta). From 4 upwards the vector is
+ * normalized: recip = 0x80000000 / (distance >> 1) and each component times
+ * recip shifted right by 16 is the unit direction in Q16 (the three multiplications
+ * are inlined as one asm block). Below 4 the result depends on the sign of
+ * +0x136: with a positive strength the force is zero, otherwise it degenerates
+ * to (0x10000, 0x10000, 0) - a pure x/y push.
+ * 2 - along z: only when (|delta.x| >> 4) <= +0x134; force.z = +-0x10000 from
+ * the sign of delta.z, x and y zero, distance = |delta.z|.
+ * 3 - along x: mirrored, gated by (|delta.z| >> 4) <= +0x134.
+ * In all three modes a distance whose (distance >> 4) exceeds +0x134 zeroes the
+ * force again, so +0x134 is the radius in 16-unit steps.
+ *
+ * @par Confirmed fall-off curve (+0x13C) and scaling
+ * 0 - factor 0x10000; 1 - 0x10000 - distance * multiplier(+0x144); 2 - the same
+ * value squared; 3 - distance * multiplier; 4 - that product squared. The factor
+ * is then multiplied by the strength at +0x136 and by dt and shifted right by 4
+ * (an inline asm block), and func_8001AB78 scales the force vector with it.
+ *
+ * @par Likely
+ * func_8001A6F8(force, slot) writes the new force into the object's own slot
+ * and reads the old one, so it almost certainly smooths or slews the value
+ * rather than overwriting it; the slot is then clamped so that no component
+ * exceeds the corresponding delta component (inlined CLAMP macro). The
+ * remaining parameters are an attractor/repulsor pair: modes 2 and 3 push along
+ * one axis only, which fits a conveyor or a wind volume.
+ *
+ * @par Unknown
+ * The unit of +0x134 (shifted by 4 before the comparison, so 16 world units per
+ * step) and the exact meaning of the multiplier at +0x144 (it scales the raw
+ * distance, not the normalized one) are not provable from this file.
+ *
+ * @par Globals
+ * D_8009FA0C at 0x8009FA0C - number of actor slots to walk.
+ * D_8009FA58 at 0x8009FA58 - actor array; the body pointer used here is the
+ * field at obj+0xAC of each actor, whose velocity sits at +0xE0/+0xE4/+0xE8.
+ *
+ * @par Control flow
+ * 1. Optional script step (obj+0x0C -> func_8003A09C).
+ * 2. Phase timer.
+ * 3. If the "on" phase is active: walk the actors, compute forces, accumulate.
+ *    Otherwise: if a sound is pending, play it and clear the latch.
+ * 4. Optional motion block (obj+0xA0) with func_80050D14, then either the model
+ *    part transform (+0x70) into +0x5C or a plain copy of +0x50 into +0x5C.
+ *
+ * @par Calls
+ * func_8003A09C (script step), func_8001A100 (length), func_8001A6F8 (slot
+ * accumulate), func_8001AB78 (scale force), func_800457B8 (sound),
+ * func_80050D14 (motion step), func_80010750 and func_80010234 (matrix and part
+ * transform).
+ *
+ * @par Side effects
+ * Adds to the velocity of every actor in the list - i.e. it changes state owned
+ * by other objects - writes the two force slots, the timer, the sound latches at
+ * +0x21 and bit 0x400000 of +0x24, and rewrites the matrix and +0x5C when a
+ * model is attached. No global variable is written; the actor array is only
+ * read.
+ *
+ * @par Callers
+ * func_8003A844, message 6 (analysis/edges.json, kind "direct").
+ */
 void func_8003A160(Obj *obj, s32 dt)
 {
     Vec force, delta;

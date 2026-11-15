@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Src {
@@ -32,6 +33,28 @@ extern void func_80063194(struct Obj *a);
 extern void func_80010750(void *a);
 extern void func_80010234(void *a, void *b, s32 c);
 
+/**
+ * @brief Entity message handler: dispatches by message id, then refreshes the
+ *        frame vertex.
+ *
+ * @param msg Message id.
+ * @param obj Entity.
+ * @param arg Argument block whose source record supplies two half-words.
+ * @param a3 Forwarded to func_8002AD58.
+ * @return 0xA4 for message 1, 0 for messages 2/5/6/11, otherwise the value of
+ *         func_8002AD58.
+ *
+ * @par Confirmed
+ * Messages 3, 4 and 7..10 are forwarded unchanged to func_8002AD58(msg, obj, arg,
+ * a3). The handled path builds the matrix with
+ * func_800188D0(src->x24, src->x26, 0, obj + 0x2C), queries func_80066F78(obj +
+ * 0x50), calls func_8006314C(obj, obj->vA0), loads the matrix and transforms one
+ * vertex from `obj->p28->p34 + (v70 << 4) + 8` into obj + 0x5C, then
+ * func_80063194(obj).
+ *
+ * @par Unknown
+ * The meaning of the return value 0xA4 (distance, state or handle).
+ */
 s32 func_80041C6C(s32 msg, struct Obj *obj, struct Arg *arg, s32 a3)
 {
     struct Src *src;

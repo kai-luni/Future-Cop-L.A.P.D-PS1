@@ -1,3 +1,4 @@
+// Categories: Graphics > Text > Glyph Rendering | Graphics > GPU Primitives
 #include "game/types.h"
 
 struct LookupState {
@@ -46,6 +47,24 @@ extern s32 D_8009F76C;
 
 extern u8 *func_800489C8(struct LookupState *state, unsigned int offset);
 
+/**
+ * @brief Emits one glyph sprite at a position.
+ *
+ * @param character Character code.
+ * @param x, y Screen position.
+ * @param color Packed colour.
+ * @return The glyph's advance/width byte (glyph->b08).
+ *
+ * @par Confirmed
+ * The glyph record comes from func_800489C8(D_8009F35C, character); when the 2D
+ * pool D_8009FA90 is full the function returns the advance without drawing. The
+ * sprite fields are filled from the glyph (b02..b0A) and the texpage table
+ * D_8009AAE0, with the font bitmap at D_800A1970.
+ *
+ * @par Likely role
+ * The per-character half of func_80049100; the returned byte is what the string
+ * loop adds to x.
+ */
 s32 func_80048F98(u8 character, s32 x, s32 y, u16 color)
 {
     struct Sprite *sprite;

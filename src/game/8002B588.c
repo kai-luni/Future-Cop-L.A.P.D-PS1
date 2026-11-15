@@ -1,3 +1,4 @@
+// Categories: Gameplay > AI > Aiming | Graphics > Model Renderer
 #include "game/types.h"
 struct Vec { s32 x,y,z; };
 struct Model { u8 pad[0x34]; u8 *frames; };
@@ -8,6 +9,28 @@ extern void func_80010234(void *,void *,s32);
 extern void func_8002B0EC(void *,s32);
 extern void func_80044B34(void *,void *,s32,s32);
 extern void func_800175F8(void *,s32);
+/**
+ * @brief Rotates an entity by an angle at a speed and re-fetches its frame vertex.
+ *
+ * @param o Entity: model at +0x28, rotation matrix at +0x2C, position at +0x44,
+ *        output at +0x58, frame at +0x6C, second position at +0x74, track data at
+ *        +0xC8, track frame at +0xD8, angle at +0xDC, flag at +0x162, animation
+ *        id at +0x164.
+ * @param angle Target angle.
+ * @param speed Rotation speed (passed to func_80044B34).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_800188D0(angle, 0, 0, o->matrix) builds the matrix, func_80010750 loads it,
+ * func_80010234 transforms one vertex (`frames + (frame << 4) + 8`), then
+ * func_8002B0EC(o, o->anim) and func_80044B34(o, o->track, speed, 0) run the
+ * animation, and func_800175F8(&o->model, o->trackframe) refreshes the frame
+ * pointer.
+ *
+ * @par Likely role
+ * The turret/aiming update: it turns the entity toward an angle and keeps its
+ * animated frame in sync - a "look at" step, not a physics move.
+ */
 void func_8002B588(struct Obj *o, s32 angle, s32 speed)
 {
     s32 diff, step, mag;

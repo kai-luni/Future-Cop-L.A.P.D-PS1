@@ -1,3 +1,4 @@
+// Categories: Graphics > Renderer > Map Cell Geometry | Graphics > GPU Primitives | Graphics > Clipping
 #include "game/types.h"
 
 extern u32 D_8009AFE8[];
@@ -10,6 +11,112 @@ extern s32 func_800648BC(s32 a, s32 b, s32 c);
 
 typedef struct { s32 w0; s16 h4; u8 b6; u8 b7; } V;
 
+/**
+ * @brief Emits one precomputed map-cell polygon: decodes the cell's 16-bit
+ *        primitive word into three or four vertex indices, applies the
+ *        per-vertex visibility and facing tests, takes the average of the four
+ *        vertex shading values as the ordering key and writes a textured
+ *        triangle or quad packet into the shared primitive pool.
+ *
+ * @param base  Vertex array base. One vertex occupies 8 bytes: word +0x00 is the
+ *              packed screen XY, half-word +0x04 is the shading/depth key, bytes
+ *              +0x06 and +0x07 are flag bytes (bit 0 of +0x07 = hidden,
+ *              bit 1 = "swallow", bit 2 = "degenerate").
+ * @param arg1  The 16-bit primitive word from the cell stream. Bits 15..21 are
+ *              the index into D_8009AFE8 (the four-byte vertex index table),
+ *              bits 21..31 and 0..9 index the two UV tables, bit 0 is the
+ *              "run another primitive" marker, bit 0x800 / 0x1000 are the
+ *              clipping / semi-transparency flags used by the caller's filter.
+ * @param tbl   Three-word table: tbl[0] is the CLUT source used by the palette
+ *              variants, tbl[1] the table of per-primitive descriptor half-words
+ *              and tbl[2] the table of UV half-words.
+ * @param arg3  Cell sub-index (low nibble = column, high nibble = row) used only
+ *              by the D_800A2630 ramp variant of the k == 6 branch, where it is
+ *              also advanced by one column and one row to fetch the three
+ *              neighbouring ramp values.
+ *
+ * @return Nothing. Several paths return early (hidden vertex, degenerate quad,
+ *         failing facing test, unknown kind), and the k == 6 untextured ramp
+ *         branch returns as soon as the packet has been filled.
+ *
+ * @par Control flow (confirmed)
+ * 1. w = D_8009AFE8[(arg1 >> 15) & 0x7F] is split into four byte indices b0, b1,
+ *    b2 and w (bits 0..7, 8..15, 16..23, 24..31). Each index selects a vertex
+ *    at base + (index << 3); v0 = b0, v1 = b1, v2 = b2, v3 = w.
+ * 2. Visibility is decided from byte +0x07 of the four vertices: t is the AND,
+ *    f the OR, x2 = v3.b7 & t. Any vertex with bit 0 set cancels the primitive;
+ *    when no vertex has bit 1 set and all four have bit 2 set it is cancelled as
+ *    well.
+ * 3. With bit 0 of @p arg1 set the winding is tested for real:
+ *    func_800648BC(v0->w0, v1->w0, v2->w0) is the GTE NCLIP instruction and
+ *    returns 1 for a back-facing triangle, which cancels the primitive.
+ * 4. The ordering key is the mean of the four +0x04 shading half-words; when
+ *    v0 == v3 (a triangle stored as a degenerate quad) it uses the weighted form
+ *    (v3 + v1 + v2) * 5 / 16 instead of the plain (v0 + v1 + v2 + v3) / 4.
+ * 5. A packet is taken from D_8009F9F0 (0x34 bytes, cursor advanced by 13 words;
+ *    the last slot is reused when the cursor has reached D_8009FA28) and its
+ *    header word receives the mean in the low 24 bits while byte 3 gets the
+ *    length code.
+ * 6. p5 = tbl[1] + ((arg1 >> 21) & 0x7FE) is the descriptor half-word and
+ *    a1 = tbl[2] + (arg1 & 0x7FE) the UV half-word. When the descriptor has bit
+ *    0x800 set, four half-words are read from the UV table, re-based by
+ *    D_8009F83C and staged in the scratchpad palette at 0x1F800070, which then
+ *    replaces a1 - a per-cell palette animation.
+ * 7. a0 = D_800A8E80[(descriptor >> 8) & 7] is the texture page base and
+ *    k = descriptor >> 13 selects the packet form:
+ *    - k == 0: three vertices, length 7, code 0x24 (flat textured triangle);
+ *    - k == 1: four vertices, length 9, code 0x2C (flat textured quad);
+ *    - k == 2 / 4 / 6: four vertices, length 9, code 0x34 (gouraud textured),
+ *      with per-vertex colours from the gouraud words (k == 2), the CLUT (k == 4)
+ *      or the D_800A2630 ramp indexed by the arg3 nibbles and the low three bits
+ *      of the descriptor (k == 6, which returns immediately);
+ *    - k == 3 / 5 / 7: five corner writes, length 0x0C, code 0x3C (gouraud
+ *      textured quad with an extra corner word), same three colour variants.
+ *    In all cases bit 1 of the code byte is the semi-transparency flag taken from
+ *    descriptor bit 0x1000, which turns 0x24/0x2C/0x34/0x3C into 0x26/0x2E/0x36/
+ *    0x3E.
+ *
+ * @par Globals read/written
+ * D_8009AFE8 (4 vertex indices per primitive index, read), D_8009F9F0 /
+ * D_8009FA28 (packet cursor and limit), D_800A8E80 (texture page base per
+ * (descriptor >> 8) & 7), D_800A2630 (16x16 shading ramp), D_8009F83C (palette
+ * phase added to the four staged CLUT entries), 0x1F800070 (scratchpad palette
+ * staging area, written).
+ *
+ * @par Calls
+ * func_800648BC only - the GTE NCLIP facing test. Everything else is inline
+ * table work.
+ *
+ * @par Side effects
+ * Advances D_8009F9F0 by 0x34 per emitted packet, writes the scratchpad palette
+ * at 0x1F800070, and leaves the first word of each packet holding a mean
+ * shading value in the field that the packet header declares as a 24-bit
+ * address.
+ *
+ * @par Callers
+ * func_80065134 (direct) - the cell stream walker: it keeps a running 16-entry
+ * counter over the cell's word list, rewrites bit 0 of the word and the running
+ * index, applies its own per-kind depth filter and calls
+ * func_800648E8(list + index * 24, word, position).
+ *
+ * @par Likely
+ * The function draws the precomputed ground/level polygons of a map cell: the
+ * triangle table D_8009AFE8 maps a primitive code to four vertex indices, the
+ * vertex flags carry the hidden/facing bits, and the mean shading value is used
+ * as the sort key so that darker polygons are ordered first - the same key
+ * convention as the icon emitter func_80065CA8.
+ *
+ * @par Unknown
+ * - The meaning of byte +0x06 of a vertex and of the exact bit assignment of
+ *   +0x07 beyond the three bits that are tested.
+ * - Why the k == 6 variant returns before the depth/ordering word is written
+ *   twice; the branch does write the header first, so the difference is only
+ *   that the CLUT stage is skipped.
+ * - The reason the caller passes only three arguments while this function
+ *   declares four: on the k == 6 path a value left in the fourth argument
+ *   register is used as the cell sub-index, so that path depends on the
+ *   caller's scratch state.
+ */
 void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
 {
     u32 w, x0, x1, x2, x3;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Effects > Impact Placement | Gameplay > Damage | Utilities > Mathematics > Geometry
 #include "game/types.h"
 
 typedef struct Vec70730 {
@@ -51,6 +52,107 @@ extern s32 func_80019F54(s32 *vector);
 extern void func_8003D0F0(Base70730 *base, s32 type, s32 flags, Vec70730 *out);
 extern s32 func_80067684(Vec70730 *vec, s32 adjust);
 
+/**
+ * @brief Computes one end point of an effect segment - position, random scatter
+ *        and ground height - and reports which actor that point landed on.
+ *
+ * Confirmed role
+ * --------------
+ * func_80070E48, the effect walker, calls this once per segment end: for
+ * node->a into e->verts and for node->b into e->verts + e->count, using the
+ * first half's output as the scatter reference of the second. A non-negative
+ * return value is used as an index into D_8009FA58 and the actor found there
+ * receives the effect message 14, so the return value is the damage target and
+ * the written vector is the visual end point.
+ *
+ * @param world World block. Only +0xE flags and +0x4 (origin offset pointer)
+ *        are read.
+ * @param obj   Effect object: a base pointer at +0x0, a type byte at +0xC, a
+ *        flag word at +0x18 and the range at +0x1A. When +0x0 is null the same
+ *        +0xC is an inline position vector instead of type and flags.
+ * @param out   Receives the computed point (three 32-bit words).
+ * @param arg   Reference point for the flat branch (flag 8): its x and z are
+ *        taken over and its ground height becomes the y value.
+ *
+ * @return Index into D_8009FA58 of the actor that was hit, or -1. Confirmed:
+ *         selected is initialised to -1 and only overwritten inside the
+ *         proximity test.
+ *
+ * @par Confirmed base point
+ * With obj->base == 0 the target is the inline vector at obj+0xC and the radius
+ * is the absolute range (+0x1A sign-stripped with the shift/mask trick). With a
+ * base, func_8003D0F0(base, type(+0xC), flags & 0x10, out) resolves the point;
+ * when bit 3 of world->flagsE is clear the base matrix at base+4 is loaded
+ * (func_80010820) and the point is transformed (func_8001006C) and moved by the
+ * base offsets at +0x28/+0x2C/+0x30. A negative range is turned into
+ * (base->unk46 * -range) >> 12, a positive one is used as is.
+ *
+ * @par Confirmed proximity test (flag 2)
+ * One random actor: r = random % D_8009FA0C, and only when the next random
+ * value is odd. The vector from that actor's position (+0x5C) to the point is
+ * measured with the cheap metric func_80019F54; if (length >> shift) is smaller
+ * than the radius plus the actor's +0x6E, the point snaps onto the actor, the
+ * radius becomes 0 and the actor index is returned. shift is 5 normally and 4
+ * when bit 5 of world->flagsE is set - i.e. the tolerance is doubled.
+ *
+ * @par Confirmed scatter (flag 9)
+ * The radius is scaled by a random 12-bit value (Q12) and a random angle is
+ * turned into (sin, 0, cos) with func_8001846C. With flag 8 and a non-null arg
+ * the flat branch runs instead: out takes arg's x and z, y becomes
+ * func_80067684(arg, -1 or -2) and, when a base exists and bit 3 of
+ * world->flagsE is set, the world origin offsets are subtracted. Otherwise the
+ * scaled vector is added to the target and y is again replaced by
+ * func_80067684 - Confirmed by the identical call pattern in func_8002CC30 and
+ * func_80083A10, where the same helper supplies a ground height.
+ *
+ * @par Likely
+ * The third branch (neither flag 2 nor flag 9) builds the point from two
+ * random angles and a sine/cosine product instead of a flat circle, which fits
+ * a scatter volume rather than a disc. The flag bit 0x10 of obj->flags and bits
+ * 8 and 9 of world->flagsE control instance offsetting, height snapping and
+ * scatter; their names are not recoverable.
+ *
+ * @par Unknown
+ * The exact meaning of base+0x46 (reciprocal of a ground-follow radius, scaled
+ * by 4096) and of the actor field +0x6E (a personal radius, added to the
+ * tolerance) is not proven - both are only ever used additively here.
+ *
+ * @par Globals
+ * D_8009FA0C at 0x8009FA0C - actor count, used as the random modulus.
+ * D_8009FA58 at 0x8009FA58 - array of actor bases; position at +0x5C and the
+ * tolerance at +0x6E are read.
+ *
+ * @par Object offsets used (Confirmed)
+ * obj: +0x0 base, +0xC type or inline position, +0x18 flags, +0x1A range.
+ * base: +0x4 matrix, +0x28/+0x2C/+0x30 offsets, +0x46 s16 radius factor,
+ * +0x5C position, +0x6E s16 radius.
+ * world: +0x4 origin pointer (its +0x28/+0x2C/+0x30 offsets), +0xE flags.
+ *
+ * @par Control flow
+ * 1. selected = -1. mode = bit 3 of world->flagsE, but only when a base exists.
+ * 2. obj == 0 -> out = (0,0,0), return -1.
+ * 3. Base point and radius as above.
+ * 4. Optional one-actor proximity test, which may retarget and set selected.
+ * 5. Radius truncated to s16; 0 -> out = target, return.
+ * 6. Scatter (circle or tilted) and Y replacement by ground height.
+ * 7. If mode is still set, subtract the world origin offsets.
+ * 8. Return selected.
+ *
+ * @par Calls
+ * func_8003D0F0 (base point), func_80010820 (matrix to GTE), func_8001006C
+ * (transform), func_80019668 (random, five sites), func_8001846C (sin/cos, two
+ * sites), func_80019F54 (cheap length), func_80067684 (ground height).
+ *
+ * @par Side effects
+ * Writes out and arg is only read. Replaces the GTE rotation matrix with the
+ * base matrix, so every later GTE call in the same frame inherits it until
+ * another function reloads it. Consumes the global random generator. No global
+ * variable is written.
+ *
+ * @par Callers
+ * func_80070E48, two call sites (analysis/edges.json, kind "direct"); the same
+ * address also has an "address_taken" edge.
+ */
 s16 func_80070730(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg)
 {
     Vec70730 vec;

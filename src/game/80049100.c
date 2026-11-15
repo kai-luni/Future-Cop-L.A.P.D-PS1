@@ -1,3 +1,4 @@
+// Categories: Graphics > Text > Rendering | Graphics > GPU Primitives
 #include "game/types.h"
 
 struct DrawTPage {
@@ -14,6 +15,24 @@ extern s32 D_8009F76C;
 
 extern s32 func_80048F98(s32 character, s32 x, s32 y, u16 color);
 
+/**
+ * @brief Draws a NUL-terminated string with the current font bank.
+ *
+ * @param text Character string.
+ * @param x, y Start position.
+ * @param color Packed colour forwarded per character.
+ * @return Nothing; returns immediately when no font is loaded (D_8009F768 == 0).
+ *
+ * @par Confirmed
+ * One texpage packet (D_800A1940[0] & 0x9FF | 0xE1000000) is emitted first, then
+ * the loop takes each byte and calls func_80048F98(character, x, y, color) - the
+ * per-glyph emitter. Characters below 0x16 trigger the newline/control branch
+ * (`character - 10 < 0x16`).
+ *
+ * @par Likely role
+ * The debug/HUD text renderer; the pool it draws into is the 2D one
+ * (D_8009FA90/D_8009F9C0).
+ */
 void func_80049100(u8 *text, s32 x, s32 y, s32 color)
 {
     struct DrawTPage *packet;

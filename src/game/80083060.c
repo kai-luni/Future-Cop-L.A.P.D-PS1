@@ -1,3 +1,4 @@
+// Categories: Graphics > GPU Primitives > Textured Quad | Graphics > 2D Drawing
 #include "game/types.h"
 
 struct Poly {
@@ -11,6 +12,23 @@ struct Poly {
 extern struct Poly *D_8009F9F0;
 extern struct Poly *D_8009FA28;
 
+/**
+ * @brief Emits a four-corner quad from eight explicit coordinates.
+ *
+ * @param x0..y3 The four corners as separate x/y values.
+ * @param link Ordering-table link.
+ * @param r, g, b Colour.
+ * @param code Primitive code; emitted as `code | 0x28`.
+ * @return Nothing; the 0x34-byte packet comes from D_8009F9F0.
+ *
+ * @par Confirmed
+ * Length 5, code `code | 0x28`, the eight half-words written in the given order
+ * (no sorting), `addr = link`.
+ *
+ * @par Compare
+ * func_80082EF0/`80082FA4 take a rectangle; this form exists for shapes whose
+ * corners are already projected individually.
+ */
 void func_80083060(s32 x0, s32 y0, s32 x1, s32 y1, s32 x2, s32 y2, s32 x3, s32 y3, u32 link, s32 r, s32 g, s32 b, s32 code)
 {
     struct Poly *p;

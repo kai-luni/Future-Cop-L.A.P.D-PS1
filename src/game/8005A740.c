@@ -1,3 +1,4 @@
+// Categories: Graphics > 2D Drawing > Lines | Utilities > Mathematics > Trigonometry
 #include "game/types.h"
 
 struct LineF2 {
@@ -14,6 +15,22 @@ extern u8 *D_8009F9C0;
 
 extern void func_8001846C(s32 id, s32 *first, s32 *second);
 
+/**
+ * @brief Emits a line primitive from an origin along an angle.
+ *
+ * @param origin Packed origin (x/y).
+ * @param id Angle in the engine's 4096-step convention.
+ * @return Nothing; the 0x1C-byte primitive comes from D_8009FA90 (D_8009F9C0 is
+ *         the pool end, checked before the write).
+ *
+ * @par Confirmed
+ * func_8001846C(id, &first, &second) supplies sine and cosine from the table,
+ * the primitive gets `code`, a tag built from 0x03000000/0x02C00000 and the
+ * colour 0x40808080, and the two endpoints in x0/x1 and y0/y1.
+ *
+ * @par Likely role
+ * The free-hand/aim line of the HUD: one call per angle, 28 bytes each.
+ */
 void func_8005A740(s32 origin, s32 id)
 {
     struct LineF2 *line;

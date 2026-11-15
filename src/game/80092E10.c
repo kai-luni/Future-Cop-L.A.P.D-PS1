@@ -1,8 +1,24 @@
+// Categories: Graphics > GPU > VRAM Transfer | Platform > GPU
 typedef unsigned int u32;
 typedef struct { int pad[2]; void (*fn)(void *, void *, int, u32); void *ctx; } Device;
 extern Device *D_8009DDE8;
 extern char D_80012A7C[];
 extern void func_80092CF4(char *, void *);
+/**
+ * @brief Builds and sends a four-component data block to the GPU library.
+ *
+ * @param arg0 Source pointer (the block that is copied).
+ * @param arg1, arg2, arg3 Three byte values, packed as
+ *        ((arg3 & 0xFF) << 16) | ((arg2 & 0xFF) << 8) | (arg1 & 0xFF).
+ * @return Nothing; the library callback at D_8009DDE8->fn runs with a length of
+ *         8 words.
+ *
+ * @par Confirmed
+ * A debug hook (func_80092CF4) runs first, then
+ * `D_8009DDE8->fn(ctx, arg0, 8, packed)` - the "upload a quad of bytes" form of
+ * the library API. Several `register ... __asm__` pins keep the argument
+ * registers in the retail order.
+ */
 void func_80092E10(void *arg0, int arg1, int arg2, int arg3)
 {
     register void *a __asm__("$19") = arg0;

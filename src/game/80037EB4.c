@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Basis Orientation | Graphics > GTE
 #include "game/types.h"
 struct Vec { s32 x,y,z; };
 struct Model { u8 pad[0x34]; u8 *data; };
@@ -15,6 +16,27 @@ extern void func_800192AC(struct Vec *, struct Vec *, struct Vec *);
 extern void func_800188D0(s32,s32,s32,struct Vec *);
 extern void func_80010750(struct Vec *);
 extern void func_80010234(u8 *, void *, s32);
+/**
+ * @brief Orients an object's model basis (ground-normal or fixed) and fetches its
+ *        frame vertex.
+ *
+ * @param arg Object: position, three basis vectors, the 0x140 vector, flags at
+ *        +0x12A? (see the structs at the top of the file), matrix at +0x2C and
+ *        output at +0x5C.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_80066F78(&self->pos, 0, 0, 0) queries the ground/height, a second call with
+ * &tmp gets the normal; func_800192AC(&tmp, &self->unk140, self->basis) builds the
+ * basis from both, func_800188D0(self->unk12a, c, d, basis) adds the rotation, and
+ * func_80010750 + func_80010234 fetch one vertex into self->unk5c. The flag bits
+ * 0x200 and 0x100 and the `flags >> 30` branch choose between the ground-aligned,
+ * the fixed and the two-parameter variant (c/d from +0xB0/+0xB4).
+ *
+ * @par Likely role
+ * The "stand on the terrain" orientation of a ground object: the model's up axis
+ * follows the surface normal unless the flags pin it.
+ */
 void func_80037EB4(struct Self *arg)
 {
  register struct Self *self __asm__("$17") = arg;

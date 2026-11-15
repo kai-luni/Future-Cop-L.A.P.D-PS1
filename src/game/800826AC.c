@@ -1,3 +1,4 @@
+// Categories: Graphics > Image Compositor | Resources > Asset Tables
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef signed char s8;
@@ -12,6 +13,28 @@ extern int **D_8009F3F4;
 extern u8 *D_8009FA90, *D_8009F9C0;
 extern void func_800861E4(int, int, int, int);
 
+/**
+ * @brief Composes the two-frame image block of one screen and uploads the slices.
+ *
+ * @param idx Entry index into the descriptor table D_8009B32C.
+ * @return Nothing; returns when the table is empty or the entry has no records.
+ *
+ * @par Confirmed
+ * The current index is cached in D_8009F874 and the upload flag in D_8009F876;
+ * the loops walk up to two records per entry (`for (; j < 2; ...)` with a
+ * 4-byte stride over `Ent`) and, for each non-empty table slot
+ * `D_8009F3F4[t]`, call func_800861E4 with (`*D_8009F3F4[t]`, D_8009F876,
+ * `s[1] + 0x140`, `off + s[3]`) - i.e. four pictures per entry, two per record.
+ * The 2D pool is checked before each of the four packet writes, and the
+ * texpage words 0xE1000105 / 0xE1000115 select the two page halves.
+ *
+ * @par Likely role
+ * The compositor of the front-end/pause screen: an entry is a small graphic (two
+ * rows of two slices) that is uploaded into the 320x240 buffer.
+ *
+ * @par Unknown
+ * The record layout of D_8009B32C beyond its two-entry structure.
+ */
 void func_800826AC(int idx)
 {
     register int cur __asm__("$2");

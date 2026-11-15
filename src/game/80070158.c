@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Node Walk | Graphics > GTE > Projection
 #include "game/types.h"
 
 struct Vec70158 {
@@ -61,6 +62,26 @@ extern void func_80010704(u32 *src, u32 *dst);
 extern void func_80014490(void *dst, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
 extern void func_8001484C(void *dst, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
 
+/**
+ * @brief Walks a model node list, culls by radius and draws the textured nodes.
+ *
+ * @param node First node: next at +0, sub at +0x1C, fields at +0x0E/+0x12/+0x1A,
+ *        matrix at +0x34, geometry at +0x78..+0x90.
+ * @param origin Camera/origin block.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * Per node: func_8003D9F8(model, n->unk1A, n->unk0E, 0, sub, &n->unk34) resolves the
+ * transform, `func_8001A100(vec) - (n->unk12 << 4) > 0x1FFFF` culls distant nodes,
+ * func_80010820(&camera->unk28) loads the camera matrix and func_8001010C transforms
+ * one vertex; func_80019D90(dst, n->unk12 << 4) & 0xFF must return exactly 2 (the
+ * on-screen test), then func_80010704 (RTPS) projects and func_8001484C /
+ * func_80014490 emit the packet with the node's fields.
+ *
+ * @par Likely role
+ * The textured-node pass of the scene walker: it is the RTPS-based sibling of
+ * func_80075A84 and is driven by the same render lists.
+ */
 void func_80070158(struct Node70158 *node, s32 *origin)
 {
     register struct Node70158 *n __asm__("$16");

@@ -1,3 +1,4 @@
+// Categories: Graphics > Map > Tile Renderer | Gameplay > Radar
 typedef signed char s8;
 typedef unsigned char u8;
 typedef short s16;
@@ -23,6 +24,30 @@ extern void func_800694C8(s32 *, s32 *, s32, s32);
 extern void func_8001C214(s32, s32, s32, s32, s32, s32);
 extern void func_80066684(void *, s32 *, s32, s32);
 
+/**
+ * @brief Draws the 16x16 tile block of the minimap around a position.
+ *
+ * @param owner Owner: actor pointer at +0xAC (whose obj and flag byte are used).
+ * @param pos Position (two 32-bit values used as the block origin).
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * func_800665E8(pos, scale) maps the position to the grid; the loops run
+ * `row = x0 >> 4 .. (x0 + 24) >> 4` and `col = z0 >> 4 .. (z0 + size) >> 4`
+ * (size 16 when D_8009FA0C[0] >= 2), read the cell values from
+ * D_8009F80C->cells, clamp them to 0..53, look up the tile in the 100-entry
+ * table D_800A6F38 and draw each with func_80065CA8(tile, index, x, y). The block
+ * is then finished with func_8004ED18, func_800694C8, func_8001C214(0x7FFF, ...)
+ * and func_80066684.
+ *
+ * @par Likely role
+ * The minimap/radar renderer: a 54x54 cell grid (the clamp value), 16 pixels per
+ * cell, drawn as a textured block and framed by the blended rectangle.
+ *
+ * @par Unknown
+ * The meaning of the table field D_800A6F38.pad[1] (compared against the actor's
+ * id).
+ */
 void func_8006680C(struct Owner *owner, s32 *pos)
 {
     s32 x;

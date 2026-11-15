@@ -1,3 +1,4 @@
+// Categories: Graphics > GPU > Command Queue | Platform > GPU
 #include "game/types.h"
 
 struct Context {
@@ -13,6 +14,18 @@ extern struct Context *D_8009DDE8;
 extern void func_80093CE8(u8 *, u8 *);
 extern void func_8008CD10(void *, void *, int);
 
+/**
+ * @brief Queues a command block: copies the object, page-aligns it and links it.
+ *
+ * @param arg Command object; the queue word is at +0x1C.
+ * @return The command object (the pointer itself, as the retail code returns it).
+ *
+ * @par Confirmed
+ * Debug hook at level 2, func_80093CE8(p, arg) prepares the 0x1C-offset block,
+ * `*(u32 *)p |= 0xFFFFFF` (the low 24 bits become the list terminator),
+ * func_8008CD10 copies into the library buffer and the library callback at
+ * D_8009DDE8 runs with the assembled length.
+ */
 u8 *func_800932F0(u8 *arg)
 {
     register u8 *base __asm__("$18") = D_8009DDF2;

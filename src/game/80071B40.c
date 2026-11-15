@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer > Part Animation | Graphics > GTE
 #include "game/types.h"
 
 typedef struct Vec { s32 x, y, z; } Vec;
@@ -32,6 +33,26 @@ extern void func_80010820(void *);
 extern void func_8001006C(Vec *, Vec *, s32);
 extern s32 func_800718B8(Node *, s32, s32, s32, s32);
 
+/**
+ * @brief Advances the parts of a model node and re-fetches their vertices.
+ *
+ * @param node Node: count at +?, parts array, flags, timer, obj1/obj2 records with
+ *        base, position and id.
+ * @param dt Time delta (0x1000 based) applied to the per-part speeds.
+ * @return Nothing.
+ *
+ * @par Confirmed
+ * The node is only processed while `obj->id->id != obj->saved` (a change detector)
+ * and `!(flags & 8)`. func_8003D0F0(base, pos, flags & 0x10, &pos) places the base,
+ * func_80010820((u8 *)base + 4) loads the matrix, then one func_8001006C per part
+ * (`&p->pos, &p->pos, 1`) transforms the part vertex in place, and
+ * func_800718B8(node, index, x, y, z) advances the part's own state. A timer
+ * below zero resets the node (speedx/y/z, reset flag).
+ *
+ * @par Likely role
+ * The per-frame animation of a compound model (turret parts, wheels, doors):
+ * each part rotates around its base and its vertex is transformed once.
+ */
 void func_80071B40(Node *node, s32 dt)
 {
     register s32 i __asm__("$16");

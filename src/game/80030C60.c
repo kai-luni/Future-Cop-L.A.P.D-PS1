@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Draw | Graphics > Model Renderer
 #include "game/types.h"
 
 struct Vec { s32 x, y, z; };
@@ -25,6 +26,25 @@ extern void func_80010234(void *, void *, s32);
 extern void func_80069D68(void *, s32, s32, void *);
 extern s16 D_8009FA44[];
 
+/**
+ * @brief Draws one vertex of an entity and hands it to the entity callback.
+ *
+ * @param owner Owner block: callback at +0x94, position at +0xA0.
+ * @param entity Entity: type at +0x16, flags at +0x14, model at +0x28,
+ *        transform at +0x2C, position at +0x50, part index at +0x70.
+ * @return 0 on the paths that reach the end of the function.
+ *
+ * @par Confirmed
+ * A type of 0x12 makes the function continue with entity->child instead. The
+ * matrix at +0x2C is loaded with func_80010750, one vertex is transformed
+ * (func_80010234 with source `model->data + (part << 4) + 8`), and
+ * func_80069D68(owner->callback, 0, entity->flags & 0x7FFF, owner) is called when
+ * the owner has a callback.
+ *
+ * @par Likely role
+ * The per-entity "attach this part's screen position to the caller" step of the
+ * model pass; 0x12 is the two-part entity type.
+ */
 s32 func_80030C60(struct Owner *owner, struct Entity *entity)
 {
     int index;
