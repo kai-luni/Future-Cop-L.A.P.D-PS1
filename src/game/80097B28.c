@@ -8,7 +8,7 @@ typedef struct {
 
 extern s32 D_8009EA3C;
 extern s32 D_8009EA40;
-extern s32 D_8009EECC;
+extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern s32 D_8009EED4;
 extern s32 D_8009EF04;
 extern s32 D_8009EF08;
@@ -91,13 +91,13 @@ s32 func_80097B28(s32 size)
     if (D_8009EA3C == 0) {
         { register s32 zero __asm__("$0"); __asm__("" : "=r"(zero)); offset = zero; }
     } else {
-        offset = (0x10000 - D_8009EA40) << D_8009EECC;
+        offset = (0x10000 - D_8009EA40) << gSpuAddrShift;
     }
     if (size & ~D_8009EED4) {
         size += D_8009EED4;
     }
-    size = size >> D_8009EECC;
-    size = size << D_8009EECC;
+    size = size >> gSpuAddrShift;
+    size = size << gSpuAddrShift;
     if (D_8009EF0C[0].flags & 0x40000000) {
         found = 0;
         goto search_done;

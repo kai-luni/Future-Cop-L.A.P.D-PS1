@@ -1,6 +1,7 @@
 // Categories: Resources > Memory Management | Platform > Memory
 #include "game/types.h"
-extern s32 D_8009EA3C, D_8009EA40, D_8009EECC, D_8009EED4;
+extern s32 D_8009EA3C, D_8009EA40, D_8009EED4;
+extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern s32 D_8009EF04, D_8009EF08;
 extern s32 *D_8009EF0C;
 extern void func_80097DF8(void);
@@ -69,19 +70,19 @@ s32 func_80098458(s32 arg, s32 size)
     u32 start;
     s32 *p;
     if (D_8009EA3C == 0) reserve = 0;
-    else reserve = (0x10000 - D_8009EA40) << D_8009EECC;
+    else reserve = (0x10000 - D_8009EA40) << gSpuAddrShift;
     address = arg;
     mask = D_8009EED4;
     if (size & ~mask) size += mask;
-    size >>= D_8009EECC;
-    size <<= D_8009EECC;
+    size >>= gSpuAddrShift;
+    size <<= gSpuAddrShift;
     x = address;
     if (x & ~mask) x += mask;
-    x >>= D_8009EECC;
-    x <<= D_8009EECC;
+    x >>= gSpuAddrShift;
+    x <<= gSpuAddrShift;
     if (x < 0x1010) return -1;
     sum = x + size;
-    if (sum > (0x10000 << D_8009EECC) - reserve) return -1;
+    if (sum > (0x10000 << gSpuAddrShift) - reserve) return -1;
     p = D_8009EF0C;
     if (p[0] & 0x40000000) {
         register s32 *hi __asm__("$1");

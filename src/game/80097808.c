@@ -2,7 +2,8 @@
 #include "game/spu_globals.h"
 
 #include "game/types.h"
-extern u32 D_8009EEC8, D_8009EED0, D_8009EED4, D_8009EECC;
+extern u32 D_8009EEC8, D_8009EED0, D_8009EED4;
+extern u32 gSpuAddrShift __asm__("D_8009EECC");
 extern u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
 
 /**
@@ -52,7 +53,7 @@ u32 func_80097808(s32 reg, u32 addr)
             addr &= ~D_8009EED4;
         }
     }
-    shift = D_8009EECC;
+    shift = gSpuAddrShift;
     __asm__("" : "=r" (shift) : "0" (shift));
     shifted = addr >> shift;
     __asm__("" : "=r" (shifted) : "0" (shifted));

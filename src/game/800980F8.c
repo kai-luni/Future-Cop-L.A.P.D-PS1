@@ -9,7 +9,7 @@ struct Entry {
 
 extern s32 D_8009EA3C;
 extern s32 D_8009EA40;
-extern s32 D_8009EECC;
+extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern s32 D_8009EF04;
 extern s32 D_8009EF08;
 extern struct Entry *D_8009EF0C;
@@ -66,7 +66,7 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
     if (!D_8009EA3C) {
         v1 = 0;
     } else {
-        v1 = (0x10000 - D_8009EA40) << D_8009EECC;
+        v1 = (0x10000 - D_8009EA40) << gSpuAddrShift;
     }
 
     if (entry_addr & 0x40000000) {

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern volatile u16 gSpuTransferAddr __asm__("D_8009EEBC");
-extern u32 D_8009EECC;
+extern u32 gSpuAddrShift __asm__("D_8009EECC");
 
 extern u32 func_80097808(s32 register_index, u32 address);
 
@@ -34,5 +34,5 @@ u32 func_80098EE8(u32 address)
     }
 
     gSpuTransferAddr = func_80097808(-1, address);
-    return (u32)gSpuTransferAddr << D_8009EECC;
+    return (u32)gSpuTransferAddr << gSpuAddrShift;
 }

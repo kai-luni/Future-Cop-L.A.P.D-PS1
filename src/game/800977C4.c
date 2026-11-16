@@ -4,7 +4,7 @@
 #include "game/types.h"
 
 extern u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
-extern u32 D_8009EECC;
+extern u32 gSpuAddrShift __asm__("D_8009EECC");
 
 /**
  * @brief Writes a 16-bit value to an SPU hardware register, optionally shifting by D_8009EECC.
@@ -36,6 +36,6 @@ void func_800977C4(s32 index, u32 value, s32 flag)
     if (flag == 0) {
         gSpuRegBasePtr[index] = value;
     } else {
-        gSpuRegBasePtr[index] = value >> D_8009EECC;
+        gSpuRegBasePtr[index] = value >> gSpuAddrShift;
     }
 }
