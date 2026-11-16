@@ -1,8 +1,10 @@
 // Categories: Game Engine > Frame | Platform > Interrupts
+#include "game/timer_globals.h"
+
 typedef int s32;
 typedef unsigned int u32;
 extern volatile u32 *D_8009CC18;
-extern volatile u32 *D_8009CC1C;
+extern volatile u32 *gTimer1CounterPtr __asm__("D_8009CC1C");
 extern volatile u32 D_8009CC20;
 extern s32 D_8009CC24;
 extern volatile s32 D_8009DD50;
@@ -44,8 +46,8 @@ s32 func_80091270(s32 input)
     volatile u32 now;
     u32 elapsed;
     do {
-        now = *D_8009CC1C;
-    } while (now != *D_8009CC1C);
+        now = *gTimer1CounterPtr;
+    } while (now != *gTimer1CounterPtr);
     elapsed = (now - D_8009CC20) & 0xffff;
     if (arg0 < 0) return D_8009DD50;
     if (arg0 != 1) {
@@ -74,8 +76,8 @@ s32 func_80091270(s32 input)
         }
         D_8009CC24 = D_8009DD50;
         do {
-            D_8009CC20 = *D_8009CC1C;
-        } while (D_8009CC20 != *D_8009CC1C);
+            D_8009CC20 = *gTimer1CounterPtr;
+        } while (D_8009CC20 != *gTimer1CounterPtr);
     }
     return elapsed;
 }
