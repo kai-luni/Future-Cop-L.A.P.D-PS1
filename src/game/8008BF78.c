@@ -1,4 +1,6 @@
 // Categories: Input > Controller Communication
+#include "game/sio_globals.h"
+
 typedef signed int s32;
 typedef unsigned short u16;
 struct E { char pad[0xF0]; };
@@ -7,7 +9,7 @@ extern s32 D_8009C768;
 extern s32 D_8009C76C;
 extern s32 D_8009C77C;
 extern s32 D_8009C780[];
-extern struct H *D_8009C7C0;
+extern struct H *gSio0CtrlPtr __asm__("D_8009C7C0");
 extern struct E D_800A3C20[];
 extern void func_8008C77C(struct E *);
 extern void func_8008C06C(struct E *);
@@ -55,7 +57,7 @@ void func_8008BF78(s32 arg)
             }
         }
         D_8009C76C = 0;
-        D_8009C7C0->v = 0;
+        gSio0CtrlPtr->v = 0;
         D_8009C768++;
         done = (D_8009C77C < D_8009C768) ? 1 : func_8008A6CC((struct E *)(D_8009C768 * 240 + base));
         a = 0xFFFF;
