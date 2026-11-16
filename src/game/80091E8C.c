@@ -1,6 +1,8 @@
 // Categories: Platform > Register Control
+#include "game/dma_globals.h"
+
 extern unsigned int D_8009DD64[];
-extern unsigned int *D_8009DD60;
+extern unsigned int *gDmaInterruptCtrlPtr __asm__("D_8009DD60");
 
 /**
  *  @brief Updates an indexed value and its corresponding control bit.
@@ -39,15 +41,15 @@ unsigned int func_80091E8C(int arg0, unsigned int arg1)
             register int shift __asm__("$3");
             unsigned int bits;
             base[index] = value;
-            tmp = *D_8009DD60 & 0xFFFFFF;
+            tmp = *gDmaInterruptCtrlPtr & 0xFFFFFF;
             shift = index + 16;
             __asm__ volatile("" : "+r"(tmp), "+r"(shift));
             bits = (1 << shift) | 0x800000;
             __asm__ volatile("" : "+r"(bits));
-            *D_8009DD60 = tmp | bits;
+            *gDmaInterruptCtrlPtr = tmp | bits;
             __asm__ volatile("" : : : "memory");
         } else {
-            register unsigned int *ptr __asm__("$5") = D_8009DD60;
+            register unsigned int *ptr __asm__("$5") = gDmaInterruptCtrlPtr;
             register int shift __asm__("$4");
             register unsigned int mask __asm__("$2") = 0xFF0000;
             unsigned int tmp;
