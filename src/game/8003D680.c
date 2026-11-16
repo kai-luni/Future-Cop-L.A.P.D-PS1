@@ -72,7 +72,7 @@ struct Unk3D680 {
     s32 unk48;
 };
 
-extern s32 D_8009AA38[9];
+extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
 extern struct Unk3D680 *D_8009F320;
 extern void *D_800A7040[][0x100];
 
@@ -182,15 +182,15 @@ struct Unk3D680 *func_8003D680(struct Unk3D680Source *source, u8 type, s32 row,
             object->unk20 = parent->unk38;
             object->unk24 = parent->unk3C;
         } else {
-            object->unk04 = D_8009AA38[0];
-            object->unk08 = D_8009AA38[1];
-            object->unk0C = D_8009AA38[2];
-            object->unk10 = D_8009AA38[3];
-            object->unk14 = D_8009AA38[4];
-            object->unk18 = D_8009AA38[5];
-            object->unk1C = D_8009AA38[6];
-            object->unk20 = D_8009AA38[7];
-            object->unk24 = D_8009AA38[8];
+            object->unk04 = gBaseMatrix[0];
+            object->unk08 = gBaseMatrix[1];
+            object->unk0C = gBaseMatrix[2];
+            object->unk10 = gBaseMatrix[3];
+            object->unk14 = gBaseMatrix[4];
+            object->unk18 = gBaseMatrix[5];
+            object->unk1C = gBaseMatrix[6];
+            object->unk20 = gBaseMatrix[7];
+            object->unk24 = gBaseMatrix[8];
         }
         object->unk38 = 1;
     }

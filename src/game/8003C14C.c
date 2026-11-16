@@ -53,7 +53,7 @@ struct UnkC14CSrc {
     u16 unk32;
 };
 
-extern s32 D_8009AA38[9];
+extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
 
 /**
  * @brief Initialises a motion state block from a source record.
@@ -91,15 +91,15 @@ void func_8003C14C(struct UnkC14C *dest, struct UnkC14CSrc *src)
     dest->unk06 = src->unk15;
     dest->unk11 = src->unk16;
 
-    dest->unk34 = D_8009AA38[0];
-    dest->unk38 = D_8009AA38[1];
-    dest->unk3C = D_8009AA38[2];
-    dest->unk40 = D_8009AA38[3];
-    dest->unk44 = D_8009AA38[4];
-    dest->unk48 = D_8009AA38[5];
-    dest->unk4C = D_8009AA38[6];
-    dest->unk50 = D_8009AA38[7];
-    dest->unk54 = D_8009AA38[8];
+    dest->unk34 = gBaseMatrix[0];
+    dest->unk38 = gBaseMatrix[1];
+    dest->unk3C = gBaseMatrix[2];
+    dest->unk40 = gBaseMatrix[3];
+    dest->unk44 = gBaseMatrix[4];
+    dest->unk48 = gBaseMatrix[5];
+    dest->unk4C = gBaseMatrix[6];
+    dest->unk50 = gBaseMatrix[7];
+    dest->unk54 = gBaseMatrix[8];
 
     dest->unk28 = 0;
     dest->unk2C = 0;

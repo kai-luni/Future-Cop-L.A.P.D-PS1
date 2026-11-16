@@ -11,7 +11,7 @@ struct Owner {
     u8 pad18[4]; struct Link *volatile link; u8 pad20[0x5b];
     u8 flags; u8 pad7c[4]; void *unk80; struct Node *head;
 };
-extern s32 D_8009AA38[9];
+extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
 extern s32 D_8009F9DC;
 extern void func_800181D4(void *);
 extern void func_8003A8C0(s32, s32, struct Owner *, s32);

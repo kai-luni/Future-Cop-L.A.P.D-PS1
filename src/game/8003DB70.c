@@ -36,7 +36,7 @@ struct Par {
     s32 *unk34;
 };
 
-extern s32 D_8009AA38[9];
+extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
 extern s32 func_80019668(void);
 extern void func_8003D0F0(s32 *a, s32 b, s32 c, s32 *d);
 extern void func_80010820(s32 *a);
@@ -345,15 +345,15 @@ L4D8:
 LDefault:
 
     if (rot_b(o, out) != 1) {
-        out[0] = D_8009AA38[0];
-        out[1] = D_8009AA38[1];
-        out[2] = D_8009AA38[2];
-        out[3] = D_8009AA38[3];
-        out[4] = D_8009AA38[4];
-        out[5] = D_8009AA38[5];
-        out[6] = D_8009AA38[6];
-        out[7] = D_8009AA38[7];
-        out[8] = D_8009AA38[8];
+        out[0] = gBaseMatrix[0];
+        out[1] = gBaseMatrix[1];
+        out[2] = gBaseMatrix[2];
+        out[3] = gBaseMatrix[3];
+        out[4] = gBaseMatrix[4];
+        out[5] = gBaseMatrix[5];
+        out[6] = gBaseMatrix[6];
+        out[7] = gBaseMatrix[7];
+        out[8] = gBaseMatrix[8];
     }
     return;
 

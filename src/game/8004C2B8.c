@@ -58,7 +58,7 @@ struct Unk4C2B8Owner {
     struct Unk4AADNode *head;
 };
 
-extern s32 D_8009AA38[9];
+extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
 extern s32 D_8009F9DC;
 
 extern void func_800181D4(void *block);

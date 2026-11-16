@@ -28,7 +28,7 @@ struct Arg0 {
     s16 unk48;
 };
 
-extern struct Mat12 D_8009AA38;
+extern struct Mat12 gBaseMatrix __asm__("D_8009AA38");
 extern struct Mat12 gBoneMatrices __asm__("D_800A0300");
 extern struct Blk3 D_800A02E0;
 extern struct Blk3 D_800A02F0;

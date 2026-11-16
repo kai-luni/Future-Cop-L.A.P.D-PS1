@@ -14,7 +14,7 @@ struct Unk17994Node {
     struct Unk17994Node *previous;
 };
 
-extern struct Unk17994Block D_8009AA38;
+extern struct Unk17994Block gBaseMatrix __asm__("D_8009AA38");
 extern struct Unk17994Node *D_8009F588;
 extern s32 D_8009F58C;
 
@@ -54,7 +54,7 @@ s32 func_80017994(void)
     register s32 firstWord __asm__("$4");
 
     node = func_80017EBC(0x94, 2);
-    template = &D_8009AA38;
+    template = &gBaseMatrix;
     firstWord = template->words[0];
     node->first.words[0] = firstWord;
     node->first.words[1] = template->words[1];

@@ -60,7 +60,7 @@ typedef struct {
 typedef struct { Object *source; void *force; void *force2; u8 value; } Config;
 typedef struct { u8 pad[8]; Config *config; } Arg;
 
-extern Matrix D_8009AA38;
+extern Matrix gBaseMatrix __asm__("D_8009AA38");
 extern void *func_80017EBC(s32, s32);
 extern s32 func_80019668(void);
 extern Entry *func_8003A90C(Entry *, s32);
@@ -178,18 +178,18 @@ s32 func_8003AA94(s32 unused, Object *out, Arg *arg)
     particle = out->particles;
     entry = model->entries;
     if (config->force) {
-        matrices[0].m[1] = D_8009AA38.m[1];
-        matrices[0].m[2] = D_8009AA38.m[2];
-        matrices[0].m[3] = D_8009AA38.m[3];
-        matrices[0].m[4] = D_8009AA38.m[4];
-        matrices[0].m[5] = D_8009AA38.m[5];
-        matrices[0].m[6] = D_8009AA38.m[6];
-        matrices[0].m[7] = D_8009AA38.m[7];
-        matrices[0].m[8] = D_8009AA38.m[8];
-        matrices[0].x = D_8009AA38.x;
-        matrices[0].y = D_8009AA38.y;
-        matrices[0].z = D_8009AA38.z;
-        matrices[0].m[0] = D_8009AA38.m[0];
+        matrices[0].m[1] = gBaseMatrix.m[1];
+        matrices[0].m[2] = gBaseMatrix.m[2];
+        matrices[0].m[3] = gBaseMatrix.m[3];
+        matrices[0].m[4] = gBaseMatrix.m[4];
+        matrices[0].m[5] = gBaseMatrix.m[5];
+        matrices[0].m[6] = gBaseMatrix.m[6];
+        matrices[0].m[7] = gBaseMatrix.m[7];
+        matrices[0].m[8] = gBaseMatrix.m[8];
+        matrices[0].x = gBaseMatrix.x;
+        matrices[0].y = gBaseMatrix.y;
+        matrices[0].z = gBaseMatrix.z;
+        matrices[0].m[0] = gBaseMatrix.m[0];
         table = model->table;
         offset = out->tableOffset;
         forceEnabled = func_8004B244(config->force, config->force2, &force);
