@@ -1,4 +1,6 @@
 // Categories: Platform > SPU Transfer
+#include "game/spu_globals.h"
+
 #include "game/types.h"
 
 typedef struct {
@@ -6,7 +8,7 @@ typedef struct {
     volatile u16 flags;
 } Unk9EEA4;
 
-extern Unk9EEA4 *D_8009EEA4;
+extern Unk9EEA4 *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern void func_8008E000(char *a, char *b);
 
 /**
@@ -45,9 +47,9 @@ s32 func_80098A78(s32 arg)
     register char *a1 __asm__("$5");
 
     if (arg == 0 || arg == 3) {
-        D_8009EEA4->flags &= 0xFFBF;
+        gSpuRegBasePtr->flags &= 0xFFBF;
         i = 0;
-        while (D_8009EEA4->flags & 0x40) {
+        while (gSpuRegBasePtr->flags & 0x40) {
             if (++i > 0xF00) {
                 a0 = (char *)0x80010000;
                 __asm__("" : "=r"(a0) : "0"(a0));
@@ -61,9 +63,9 @@ s32 func_80098A78(s32 arg)
         }
     }
     if (arg == 1 || arg == 3) {
-        D_8009EEA4->flags |= 0x40;
+        gSpuRegBasePtr->flags |= 0x40;
         i = 0;
-        while (!(D_8009EEA4->flags & 0x40)) {
+        while (!(gSpuRegBasePtr->flags & 0x40)) {
             if (++i > 0xF00) {
                 a0 = (char *)0x80010000;
                 __asm__("" : "=r"(a0) : "0"(a0));

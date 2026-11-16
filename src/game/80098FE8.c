@@ -1,4 +1,6 @@
 // Categories: Platform > SPU | Platform > Sound
+#include "game/spu_globals.h"
+
 #include "game/types.h"
 
 typedef struct {
@@ -34,7 +36,7 @@ typedef struct {
     u16 extVolumeRight;
 } SpuRegisters;
 
-extern SpuRegisters *D_8009EEA4;
+extern SpuRegisters *gSpuRegBasePtr __asm__("D_8009EEA4");
 
 /**
  * @brief Writes common SPU volume and control attributes to hardware registers (SpuSetCommonAttr).
@@ -108,7 +110,7 @@ void func_80098FE8(SpuCommonAttr *attr)
                 leftVolume = 0;
             }
         }
-        D_8009EEA4->mainVolumeLeft = (leftVolume & 0x7FFF) | mode;
+        gSpuRegBasePtr->mainVolumeLeft = (leftVolume & 0x7FFF) | mode;
     }
 
     if (setAll || (mask & 2)) {
@@ -145,48 +147,48 @@ void func_80098FE8(SpuCommonAttr *attr)
                 rightVolume = 0;
             }
         }
-        D_8009EEA4->mainVolumeRight = (rightVolume & 0x7FFF) | mode;
+        gSpuRegBasePtr->mainVolumeRight = (rightVolume & 0x7FFF) | mode;
     }
 
     if (setAll || (mask & 0x40)) {
-        D_8009EEA4->cdVolumeLeft = attr->cd.volume.left;
+        gSpuRegBasePtr->cdVolumeLeft = attr->cd.volume.left;
     }
     if (setAll || (mask & 0x80)) {
-        D_8009EEA4->cdVolumeRight = attr->cd.volume.right;
+        gSpuRegBasePtr->cdVolumeRight = attr->cd.volume.right;
     }
     if (setAll || (mask & 0x400)) {
-        D_8009EEA4->extVolumeLeft = attr->ext.volume.left;
+        gSpuRegBasePtr->extVolumeLeft = attr->ext.volume.left;
     }
     if (setAll || (mask & 0x800)) {
-        D_8009EEA4->extVolumeRight = attr->ext.volume.right;
+        gSpuRegBasePtr->extVolumeRight = attr->ext.volume.right;
     }
 
     if (setAll || (mask & 0x100)) {
         if (attr->cd.reverb == 0) {
-            D_8009EEA4->control &= ~4;
+            gSpuRegBasePtr->control &= ~4;
         } else {
-            D_8009EEA4->control |= 4;
+            gSpuRegBasePtr->control |= 4;
         }
     }
     if (setAll || (mask & 0x200)) {
         if (attr->cd.mix == 0) {
-            D_8009EEA4->control &= ~1;
+            gSpuRegBasePtr->control &= ~1;
         } else {
-            D_8009EEA4->control |= 1;
+            gSpuRegBasePtr->control |= 1;
         }
     }
     if (setAll || (mask & 0x1000)) {
         if (attr->ext.reverb == 0) {
-            D_8009EEA4->control &= ~8;
+            gSpuRegBasePtr->control &= ~8;
         } else {
-            D_8009EEA4->control |= 8;
+            gSpuRegBasePtr->control |= 8;
         }
     }
     if (setAll || (mask & 0x2000)) {
         if (attr->ext.mix == 0) {
-            D_8009EEA4->control &= ~2;
+            gSpuRegBasePtr->control &= ~2;
         } else {
-            D_8009EEA4->control |= 2;
+            gSpuRegBasePtr->control |= 2;
         }
     }
     __asm__ volatile("");

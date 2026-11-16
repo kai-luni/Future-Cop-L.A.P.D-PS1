@@ -1,4 +1,6 @@
 // Categories: Platform > Sound | Platform > SPU
+#include "game/spu_globals.h"
+
 #include "game/types.h"
 
 typedef struct {
@@ -45,7 +47,7 @@ typedef struct {
 } Voice;
 
 extern u32 *D_8009EEB4;
-extern Spu *D_8009EEA4;
+extern Spu *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern s32 D_8009EEC0;
 extern s32 D_8009EEC4;
 extern s32 D_8009EEC8;
@@ -104,7 +106,7 @@ s32 func_80096EB8(s32 arg0)
 
     v = *D_8009EEB4 | 0xB0000;
     *D_8009EEB4 = v;
-    spu = D_8009EEA4;
+    spu = gSpuRegBasePtr;
     D_8009EEC0 = 0;
     D_8009EEC4 = 0;
     D_8009EEBC = 0;
@@ -112,7 +114,7 @@ s32 func_80096EB8(s32 arg0)
     spu->f182 = 0;
     spu->f1AA = 0;
     func_80097990();
-    spu = D_8009EEA4;
+    spu = gSpuRegBasePtr;
     spu->f180 = 0;
     spu->f182 = 0;
     __asm__ volatile("" ::: "memory");
@@ -127,7 +129,7 @@ again:
         func_8008E000(D_80012CDC, D_80012CEC);
         goto cont;
     }
-    spu = D_8009EEA4;
+    spu = gSpuRegBasePtr;
     if ((spu->f1AE & 0x7FF) != 0) {
         goto again;
     }
@@ -139,7 +141,7 @@ cont:
     D_8009EED0 = 8;
     D_8009EED4 = 7;
     __asm__ volatile("" ::: "memory");
-    spu = D_8009EEA4;
+    spu = gSpuRegBasePtr;
     spu->f1AC = 4;
     spu->f184 = 0;
     spu->f186 = 0;
@@ -157,7 +159,7 @@ cont:
         goto done;
     }
     arr = D_8009EEE4;
-    spu = D_8009EEA4;
+    spu = gSpuRegBasePtr;
     __asm__ volatile("" : : "r"(spu));
     D_8009EEBC = 0x200;
     spu->f190 = 0;
@@ -173,7 +175,7 @@ cont:
     i = 0;
     c1 = 0x3FFF;
     c2 = 0x200;
-    voice = (Voice *)D_8009EEA4;
+    voice = (Voice *)gSpuRegBasePtr;
     __asm__ volatile("nop" : : "r"(voice), "r"(c1), "r"(c2));
     do {
         voice->f0 = 0;
@@ -186,14 +188,14 @@ cont:
         i++;
         voice++;
     } while (i < 0x18);
-    spu = D_8009EEA4;
+    spu = gSpuRegBasePtr;
     spu->f188 = 0xFFFF;
     spu->f18A = 0xFF;
     func_80097990();
     func_80097990();
     func_80097990();
     func_80097990();
-    spu = D_8009EEA4;
+    spu = gSpuRegBasePtr;
     spu->f18C = 0xFFFF;
     spu->f18E = 0xFF;
     func_80097990();
@@ -203,7 +205,7 @@ cont:
 done:
     ret = 0;
     __asm__ volatile("" : "+r"(ret));
-    tl = D_8009EEA4;
+    tl = gSpuRegBasePtr;
     D_8009EED8 = 1;
     tl->f1AA = 0xC000;
     __asm__ volatile("" ::: "memory");

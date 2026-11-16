@@ -1,7 +1,9 @@
 // Categories: Platform > Audio
+#include "game/spu_globals.h"
+
 #include "game/types.h"
 extern u32 D_8009EEC8, D_8009EED0, D_8009EED4, D_8009EECC;
-extern u16 *D_8009EEA4;
+extern u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
 
 /**
  *  @brief Aligns and encodes an address, optionally writing it to a register.
@@ -59,7 +61,7 @@ u32 func_80097808(s32 reg, u32 addr)
     case -1: return index & 0xFFFF;
     case -2: return addr;
     default:
-        base = D_8009EEA4;
+        base = gSpuRegBasePtr;
         dest = (u16 *)((u32)(saved_reg * 2) + (u32)base);
         __asm__("" : "=r" (dest) : "0" (dest));
         *dest = shifted;

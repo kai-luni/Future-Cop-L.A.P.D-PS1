@@ -1,4 +1,6 @@
 // Categories: Platform > SPU Audio
+#include "game/spu_globals.h"
+
 /*
  * func_80099C58  (0x80099C58, 0x5D0 bytes) - PSY-Q SPU driver, single-voice
  * SpuVoiceAttr update.  Byte-exact with this profile (fcq measure: 372/372
@@ -69,7 +71,7 @@ typedef union {
     SpuVoiceReg voice[24];
 } SpuRXX;
 
-extern SpuRXX *D_8009EEA4;
+extern SpuRXX *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern u16 D_8009EA60[];
 extern u16 func_800999F4(s32, s32, s32, s32);
 extern void func_80097808(s32, u32);
@@ -114,7 +116,7 @@ void func_80099C58(s32 ch, SpuVoiceAttr *arg)
     ch8 = ch << 3;
 
     if (set_all || (mask & 0x10)) {
-        (D_8009EEA4->voice + ch)->pitch = arg->pitch;
+        (gSpuRegBasePtr->voice + ch)->pitch = arg->pitch;
     }
     if (set_all || (mask & 0x40)) {
         D_8009EA60[ch] = arg->sample_note;
@@ -130,7 +132,7 @@ void func_80099C58(s32 ch, SpuVoiceAttr *arg)
         __asm__("lui %0,%%hi(D_8009EA60)\n\taddu %0,%0,%1\n\tlhu %0,%%lo(D_8009EA60)(%0)"
                 "\n\tlhu %2,22(%3)"
                 : "=&r"(note) : "r"(off), "r"(argnote), "r"(arg));
-        D_8009EEA4->raw[ch8 + 2] = func_800999F4(note >> 8, note & 0xFF,
+        gSpuRegBasePtr->raw[ch8 + 2] = func_800999F4(note >> 8, note & 0xFF,
                                                  argnote >> 8, argnote & 0xFF);
     }
     if (set_all || (mask & 0x1)) {
@@ -154,7 +156,7 @@ void func_80099C58(s32 ch, SpuVoiceAttr *arg)
                 volume = 0;
             }
         }
-        D_8009EEA4->raw[ch8] = volume | vol_mode;
+        gSpuRegBasePtr->raw[ch8] = volume | vol_mode;
     }
     if (set_all || (mask & 0x2)) {
         vol_mode = 0;
@@ -177,7 +179,7 @@ void func_80099C58(s32 ch, SpuVoiceAttr *arg)
                 volume = 0;
             }
         }
-        D_8009EEA4->raw[ch8 + 1] = volume | vol_mode;
+        gSpuRegBasePtr->raw[ch8 + 1] = volume | vol_mode;
     }
     if (set_all || (mask & 0x80)) {
         func_80097808(ch8 | 3, arg->addr);
@@ -186,10 +188,10 @@ void func_80099C58(s32 ch, SpuVoiceAttr *arg)
         func_80097808(ch8 | 7, arg->loop_addr);
     }
     if (set_all || (mask & 0x20000)) {
-        D_8009EEA4->raw[ch8 + 4] = arg->adsr1;
+        gSpuRegBasePtr->raw[ch8 + 4] = arg->adsr1;
     }
     if (set_all || (mask & 0x40000)) {
-        D_8009EEA4->raw[ch8 + 5] = arg->adsr2;
+        gSpuRegBasePtr->raw[ch8 + 5] = arg->adsr2;
     }
     if (set_all || (mask & 0x800)) {
         rate = arg->ar;
@@ -202,18 +204,18 @@ void func_80099C58(s32 ch, SpuVoiceAttr *arg)
                 mode = 0x80;
             }
         }
-        old = D_8009EEA4->raw[ch8 + 4];
+        old = gSpuRegBasePtr->raw[ch8 + 4];
         __asm__ volatile("" : "=r"(old) : "0"(old));
         masked = old & 0xFF;
         __asm__ volatile("" : "=r"(masked) : "0"(masked));
-        D_8009EEA4->raw[ch8 + 4] = masked | ((rate | mode) << 8);
+        gSpuRegBasePtr->raw[ch8 + 4] = masked | ((rate | mode) << 8);
     }
     if (set_all || (mask & 0x1000)) {
         rate = arg->dr;
         if (rate >= 0x10) {
             rate = 0xF;
         }
-        D_8009EEA4->raw[ch8 + 4] = (D_8009EEA4->raw[ch8 + 4] & 0xFF0F) | (rate << 4);
+        gSpuRegBasePtr->raw[ch8 + 4] = (gSpuRegBasePtr->raw[ch8 + 4] & 0xFF0F) | (rate << 4);
     }
     if (set_all || (mask & 0x2000)) {
         rate = arg->sr;
@@ -228,11 +230,11 @@ void func_80099C58(s32 ch, SpuVoiceAttr *arg)
             case 7: mode = 0x300; break;
             }
         }
-        old = D_8009EEA4->raw[ch8 + 5];
+        old = gSpuRegBasePtr->raw[ch8 + 5];
         __asm__ volatile("" : "=r"(old) : "0"(old));
         masked = old & 0x3F;
         __asm__ volatile("" : "=r"(masked) : "0"(masked));
-        D_8009EEA4->raw[ch8 + 5] = masked | ((rate | mode) << 6);
+        gSpuRegBasePtr->raw[ch8 + 5] = masked | ((rate | mode) << 6);
     }
     if (set_all || (mask & 0x4000)) {
         rate = arg->rr;
@@ -246,14 +248,14 @@ void func_80099C58(s32 ch, SpuVoiceAttr *arg)
             case 7: mode = 0x20; break;
             }
         }
-        D_8009EEA4->raw[ch8 + 5] = (D_8009EEA4->raw[ch8 + 5] & 0xFFC0) | (rate | mode);
+        gSpuRegBasePtr->raw[ch8 + 5] = (gSpuRegBasePtr->raw[ch8 + 5] & 0xFFC0) | (rate | mode);
     }
     if (set_all || (mask & 0x8000)) {
         rate = arg->sl;
         if (rate >= 0x10) {
             rate = 0xF;
         }
-        D_8009EEA4->raw[ch8 + 4] = (D_8009EEA4->raw[ch8 + 4] & 0xFFF0) | rate;
+        gSpuRegBasePtr->raw[ch8 + 4] = (gSpuRegBasePtr->raw[ch8 + 4] & 0xFFF0) | rate;
     }
     j = 1;
     for (i = 0; i < 2; i = i + 1) {

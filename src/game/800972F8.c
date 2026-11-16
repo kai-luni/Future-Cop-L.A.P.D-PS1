@@ -1,4 +1,6 @@
 // Categories: Platform > Event Handling
+#include "game/spu_globals.h"
+
 #include "game/types.h"
 
 typedef struct {
@@ -6,7 +8,7 @@ typedef struct {
     volatile u16 flags;
 } Unk9EEA4;
 
-extern Unk9EEA4 *D_8009EEA4;
+extern Unk9EEA4 *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern volatile u32 D_8009EEDC;
 extern u32 D_8009EEF4;
 extern void func_80097990(void);
@@ -39,13 +41,13 @@ void func_800972F8(void)
         func_80097990();
     }
 
-    D_8009EEA4->flags &= 0xFFCF;
+    gSpuRegBasePtr->flags &= 0xFFCF;
 
-    if (D_8009EEA4->flags & 0x30) {
+    if (gSpuRegBasePtr->flags & 0x30) {
         i = 0;
         do {
             i++;
-        } while (i < 0xF01 && (D_8009EEA4->flags & 0x30));
+        } while (i < 0xF01 && (gSpuRegBasePtr->flags & 0x30));
     }
 
     if (D_8009EEDC != 0) {

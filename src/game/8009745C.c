@@ -1,4 +1,6 @@
 // Categories: Platform > SPU Transfer
+#include "game/spu_globals.h"
+
 #include "game/types.h"
 
 typedef struct {
@@ -8,7 +10,7 @@ typedef struct {
     volatile u16 field1AA;
 } SpuDebug;
 
-extern SpuDebug *D_8009EEA4;
+extern SpuDebug *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern s32 D_8009EECC;
 extern u16 D_8009EEBC;
 extern s32 D_8009EEF4;
@@ -63,7 +65,7 @@ s32 func_8009745C(s32 arg0, ...)
     case 2:
         rx = (u32)*vl;
         rs = D_8009EECC;
-        rp = D_8009EEA4;
+        rp = gSpuRegBasePtr;
         poll = rx >> rs;
         D_8009EEBC = poll;
         rp->field1A6 = poll;
@@ -72,28 +74,28 @@ s32 func_8009745C(s32 arg0, ...)
         D_8009EEF4 = 0;
         want = D_8009EEBC;
         i = 0;
-        while (D_8009EEA4->field1A6 != want) {
+        while (gSpuRegBasePtr->field1A6 != want) {
             if (++i >= 0xF01) {
                 return -2;
             }
         }
-        D_8009EEA4->field1AA = (D_8009EEA4->field1AA & 0xFFCF) | 0x20;
+        gSpuRegBasePtr->field1AA = (gSpuRegBasePtr->field1AA & 0xFFCF) | 0x20;
         break;
     case 0:
         D_8009EEF4 = 1;
         want = D_8009EEBC;
         i = 0;
-        while (D_8009EEA4->field1A6 != want) {
+        while (gSpuRegBasePtr->field1A6 != want) {
             if (++i >= 0xF01) {
                 return -2;
             }
         }
-        D_8009EEA4->field1AA |= 0x30;
+        gSpuRegBasePtr->field1AA |= 0x30;
         break;
     case 3:
         target = (D_8009EEF4 == 1) ? 0x30 : 0x20;
         i = 0;
-        while ((D_8009EEA4->field1AA & 0x30) != target) {
+        while ((gSpuRegBasePtr->field1AA & 0x30) != target) {
             if (++i >= 0xF01) {
                 return -2;
             }

@@ -1,4 +1,6 @@
 // Categories: Platform > Device Control
+#include "game/spu_globals.h"
+
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef struct { volatile u16 a, b, c, d; } Ports;
@@ -6,7 +8,7 @@ typedef struct { char pad[0x188]; u16 a, b, c, d; } Device;
 extern volatile u32 D_8009EE90, D_8009EA5C, D_8009EA58;
 extern u32 D_8009EA30;
 extern Ports D_800A7028;
-extern Device *D_8009EEA4;
+extern Device *gSpuRegBasePtr __asm__("D_8009EEA4");
 
 /**
  *  @brief Enables or disables selected device bits using one of two register paths.
@@ -48,8 +50,8 @@ void func_80098C68(int mode, u32 mask)
             if (port->c & m) port->c &= ~m;
             if (port->d & high) ((u16 *)port)[3] = port->d & ~high;
         } else {
-            D_8009EEA4->a = m;
-            D_8009EEA4->b = high;
+            gSpuRegBasePtr->a = m;
+            gSpuRegBasePtr->b = high;
             result = D_8009EA30 | m;
             goto store;
         }
@@ -70,8 +72,8 @@ off:
             if (port->a & m) port->a &= inv;
             if (port->b & high) ((u16 *)port)[1] = port->b & ~high;
         } else {
-            D_8009EEA4->c = m;
-            D_8009EEA4->d = high;
+            gSpuRegBasePtr->c = m;
+            gSpuRegBasePtr->d = high;
             __asm__("" : "+r"(m) : : "memory");
             result = D_8009EA30 & ~m;
             goto store;

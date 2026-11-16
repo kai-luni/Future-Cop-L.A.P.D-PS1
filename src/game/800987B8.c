@@ -1,9 +1,11 @@
 // Categories: Platform > Register State
+#include "game/spu_globals.h"
+
 #include "game/types.h"
 extern volatile u32 D_8009EE90;
 extern volatile u16 D_800A6EA0[];
 extern volatile u16 table[] __asm__("D_800A6EA0");
-extern volatile u16 *D_8009EEA4;
+extern volatile u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern volatile u32 D_8009EA5C;
 
 /**
@@ -45,7 +47,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
     flag &= 1;
     __asm__("" : "+r"(flag));
     base = D_800A6EA0;
-    if (!flag) base = D_8009EEA4;
+    if (!flag) base = gSpuRegBasePtr;
     ptr = (volatile u16 *)((high << 1) + (u32)base);
     __asm__("" : "+r"(ptr));
     upper = *ptr;
@@ -65,7 +67,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
             table[high] |= (value >> 16) & 0xff;
             D_8009EA5C |= 1 << ((low - 0xc6) >> 1);
         } else {
-            register volatile u16 *other __asm__("$5") = D_8009EEA4;
+            register volatile u16 *other __asm__("$5") = gSpuRegBasePtr;
             *(volatile u16 *)(offset + (u32)other) |= value;
             other[high] |= (value >> 16) & 0xff;
         }
@@ -81,7 +83,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
             table[high] &= ~((value >> 16) & 0xff);
             D_8009EA5C |= 1 << ((low - 0xc6) >> 1);
         } else {
-            register volatile u16 *other __asm__("$5") = D_8009EEA4;
+            register volatile u16 *other __asm__("$5") = gSpuRegBasePtr;
             *(volatile u16 *)(offset + (u32)other) &= ~value;
             other[high] &= ~((value >> 16) & 0xff);
         }
@@ -100,7 +102,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
             register s32 looff __asm__("$2") = low << 1;
             register volatile u16 *other __asm__("$4");
             __asm__("" : "+r"(looff));
-            other = D_8009EEA4;
+            other = gSpuRegBasePtr;
             __asm__("" : "+r"(other));
             *(volatile u16 *)(looff + (u32)other) = value;
             *(volatile u16 *)(offset + (u32)other) = (value >> 16) & 0xff;
