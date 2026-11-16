@@ -1,9 +1,11 @@
 // Categories: Platform > MDEC | Graphics > Video Decode
+#include "game/mdec_globals.h"
+
 #include "game/dma_globals.h"
 
 #include "game/types.h"
 
-extern u32 *D_8009E9F4;
+extern u32 *gMdecControlStatusPtr __asm__("D_8009E9F4");
 extern u32 *D_8009E9C8;
 extern volatile u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
 extern u32 D_8009E8B0[];
@@ -38,23 +40,23 @@ void func_80096150(s32 option)
     register u32 *q __asm__("$2");
     switch (option) {
     case 0:
-        p = D_8009E9F4;
+        p = gMdecControlStatusPtr;
         __asm__ volatile ("" : : "r"(p));
         *p = 0x80000000;
         q = D_8009E9C8;
         __asm__ volatile ("" : : "r"(q) : "$4");
         *q = 0;
         *gDma1ChannelCtrlPtr = 0;
-        *D_8009E9F4 = 0x60000000;
+        *gMdecControlStatusPtr = 0x60000000;
         func_80096240(D_8009E8B0, 0x20);
         func_80096240(D_8009E934, 0x20);
         break;
     case 1:
-        *D_8009E9F4 = 0x80000000;
+        *gMdecControlStatusPtr = 0x80000000;
         *D_8009E9C8 = 0;
         *gDma1ChannelCtrlPtr = 0;
         (void)*gDma1ChannelCtrlPtr;
-        *D_8009E9F4 = 0x60000000;
+        *gMdecControlStatusPtr = 0x60000000;
         break;
     default:
         __asm__ volatile ("" : : : "$4");

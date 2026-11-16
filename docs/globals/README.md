@@ -22,6 +22,7 @@ reads through the pointer afterwards.
 | `D_8009EEA4` | `gSpuRegBasePtr` | `0x8009EEA4` | `0x1F801C00` | SPU register block (voice 0 base) |
 | `D_8009CB6C` | `gCdromIndexStatusPtr` | `0x8009CB6C` | `0x1F801800` | CD-ROM index/status port |
 | `D_8009CB78` | `gCdromRequestStatusPtr` | `0x8009CB78` | `0x1F801803` | CD-ROM request / IRQ flag port |
+| `D_8009E9F4` | `gMdecControlStatusPtr` | `0x8009E9F4` | `0x1F801824` | MDEC control/status word |
 
 Per-variable detail, evidence and function lists:
 [`D_8009DEC4.md`](D_8009DEC4.md), [`D_8009DEC8.md`](D_8009DEC8.md),
@@ -30,7 +31,7 @@ Per-variable detail, evidence and function lists:
 [`D_8009DD1C.md`](D_8009DD1C.md), [`D_8009C788.md`](D_8009C788.md),
 [`D_8009DD18.md`](D_8009DD18.md), [`D_8009C78C.md`](D_8009C78C.md),
 [`D_8009CBB0.md`](D_8009CBB0.md), [`D_8009E9D4.md`](D_8009E9D4.md),
-[`D_8009EEA4.md`](D_8009EEA4.md), [`D_8009CB6C.md`](D_8009CB6C.md), [`D_8009CB78.md`](D_8009CB78.md).
+[`D_8009EEA4.md`](D_8009EEA4.md), [`D_8009CB6C.md`](D_8009CB6C.md), [`D_8009CB78.md`](D_8009CB78.md), [`D_8009E9F4.md`](D_8009E9F4.md).
 
 ## Two different accesses
 

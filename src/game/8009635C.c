@@ -1,7 +1,9 @@
 // Categories: Platform > MDEC | Platform > DMA
+#include "game/mdec_globals.h"
+
 #include "game/types.h"
 
-extern u32 *D_8009E9F4;
+extern u32 *gMdecControlStatusPtr __asm__("D_8009E9F4");
 extern u8 D_80012BA8[];
 extern void func_8009649C(void *);
 
@@ -33,7 +35,7 @@ s32 func_8009635C(void)
 {
     volatile s32 count = 0x100000;
 
-    if (*D_8009E9F4 & 0x20000000) {
+    if (*gMdecControlStatusPtr & 0x20000000) {
         do {
             count = count - 1;
             if (count == -1) {
@@ -42,7 +44,7 @@ s32 func_8009635C(void)
                 func_8009649C(message + 0x2BA8);
                 return -1;
             }
-        } while (*D_8009E9F4 & 0x20000000);
+        } while (*gMdecControlStatusPtr & 0x20000000);
     }
     return 0;
 }

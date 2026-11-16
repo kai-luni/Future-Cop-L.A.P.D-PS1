@@ -1,5 +1,7 @@
 // Categories: Platform > DMA | Graphics > Image Transfer
-extern int *D_8009E9F4;
+#include "game/mdec_globals.h"
+
+extern int *gMdecControlStatusPtr __asm__("D_8009E9F4");
 
 /**
  * @brief Reads the transfer status word that D_8009E9F4 points at.
@@ -25,5 +27,5 @@ extern int *D_8009E9F4;
  */
 int func_80096484(void)
 {
-    return *D_8009E9F4;
+    return *gMdecControlStatusPtr;
 }
