@@ -9,7 +9,8 @@ extern unsigned char D_8009C8C5;
 extern int D_8009CA6C[];
 extern int D_8009C96C[];
 extern int D_8009C8CC[];
-extern int D_8009C8B8, D_8009C8BC;
+extern int D_8009C8B8;
+extern int gCdResponseCount __asm__("D_8009C8BC");
 extern int gCdLogLevel __asm__("D_8009C8B0");
 extern int gCdStatusByte __asm__("D_8009C8B4");
 extern unsigned char gCdStateBytes[] __asm__("D_8009CB84");
@@ -86,7 +87,7 @@ int func_8008E7A0(void)
     }
     {
         if (!(gCdStatusByte & 0x10) && (buf[0] & 0x10)) {
-            D_8009C8BC = D_8009C8BC + 1;
+            gCdResponseCount = gCdResponseCount + 1;
         }
         {
             int a = buf[0];
