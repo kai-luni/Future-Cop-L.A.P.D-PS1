@@ -12,6 +12,7 @@
  * different qualification; a single shared type changes code generation.
  * Bind the declaration with the labels below, for example:
  *
+ *   extern volatile u32 *gDma2MemAddrPtr __asm__(DMA2_MEM_ADDR_ASM);
  *   extern volatile u32 *gDma2BlockCtrlPtr __asm__(DMA2_BLOCK_CTRL_ASM);
  *
  * Register map (public PlayStation documentation):
@@ -20,6 +21,7 @@
  *   0x1F8010A8 DMA2 channel control  (direction, step, sync mode, start)
  */
 
+#define DMA2_MEM_ADDR_ASM "D_8009DECC"
 #define DMA2_BLOCK_CTRL_ASM "D_8009DED0"
 
 #endif /* GAME_DMA_GLOBALS_H */

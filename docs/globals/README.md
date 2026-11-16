@@ -9,11 +9,12 @@ reads through the pointer afterwards.
 | --- | --- | --- | --- | --- |
 | `D_8009DEC4` | `gGpuGp0PortPtr` | `0x8009DEC4` | `0x1F801810` | GP0 command port / GPUREAD |
 | `D_8009DEC8` | `gGpuGp1PortPtr` | `0x8009DEC8` | `0x1F801814` | GP1 command port / GPUSTAT |
+| `D_8009DECC` | `gDma2MemAddrPtr` | `0x8009DECC` | `0x1F8010A0` | DMA2 memory address (GPU) |
 | `D_8009DED0` | `gDma2BlockCtrlPtr` | `0x8009DED0` | `0x1F8010A4` | DMA2 block control (GPU) |
 
 Per-variable detail, evidence and function lists:
 [`D_8009DEC4.md`](D_8009DEC4.md), [`D_8009DEC8.md`](D_8009DEC8.md),
-[`D_8009DED0.md`](D_8009DED0.md).
+[`D_8009DECC.md`](D_8009DECC.md), [`D_8009DED0.md`](D_8009DED0.md).
 
 ## Two different accesses
 
