@@ -1,4 +1,6 @@
 // Categories: Platform > GPU | Graphics > GPU > Debug Validation
+#include "game/gpu_globals.h"
+
 __asm__(".section .text.target,\"ax\",@progbits\n\t.balign 4");
 typedef unsigned int u32;
 
@@ -14,7 +16,8 @@ typedef struct Callbacks {
 } Callbacks;
 
 extern char D_80012AAC[];
-extern volatile u32 *D_8009DED4, *D_8009DEC8;
+extern volatile u32 *D_8009DED4;
+extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 D_8009DEFC, D_8009DF00;
 extern Callbacks *D_8009DDE8;
 extern u32 D_8009DE90[];
@@ -58,7 +61,7 @@ int func_800955C8(Entry *entry, u32 a, u32 b)
     func_80092CF4(first, entry);
     D_8009DEFC = func_80091270(-1) + 0xF0;
     D_8009DF00 = 0;
-    while ((*D_8009DED4 & 0x01000000) || !(*D_8009DEC8 & 0x04000000)) {
+    while ((*D_8009DED4 & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000)) {
         if (func_8009520C()) { result = -1; goto done; }
     }
     {

@@ -1,8 +1,10 @@
 // Categories: Graphics > GPU Commands
+#include "game/gpu_globals.h"
+
 #include "game/types.h"
 
 extern u16 D_8009DDF4, D_8009DDF6;
-extern u32 *D_8009DEC8;
+extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 D_800A6280[], D_800A62A8[];
 extern u32 func_800949E8(u32);
 extern void func_800949A0(u32);
@@ -53,7 +55,7 @@ s32 func_8009423C(u16 *arg0, u32 arg1)
         p[3] = 0xe5000000;
         p[4] = 0xe6000000;
         header = 0xe1000000 | ((color >> 31) << 10);
-        p[5] = (*D_8009DEC8 & 0x7ff) | header;
+        p[5] = (*gGpuGp1PortPtr & 0x7ff) | header;
         p[6] = 0x60000000 | (color & mask);
         __asm__ volatile ("" : : "r"(color));
         tag |= 0xffff;
@@ -78,7 +80,7 @@ s32 func_8009423C(u16 *arg0, u32 arg1)
         p[0] = value;
         p[1] = 0xe6000000;
         rgb = 0x02000000 | (color & mask);
-        gpu = *D_8009DEC8;
+        gpu = *gGpuGp1PortPtr;
         __asm__("" : "+r"(color) : "r"(gpu));
         mode = (color >> 31) << 10;
         p[3] = rgb;

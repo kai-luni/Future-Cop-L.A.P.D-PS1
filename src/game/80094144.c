@@ -1,5 +1,7 @@
 // Categories: Game Engine > State Access
-extern int *D_8009DEC8;
+#include "game/gpu_globals.h"
+
+extern int *gGpuGp1PortPtr __asm__("D_8009DEC8");
 
 /**
  *  @brief Returns the integer referenced by a global pointer.
@@ -20,5 +22,5 @@ extern int *D_8009DEC8;
  */
 int func_80094144(void)
 {
-    return *D_8009DEC8;
+    return *gGpuGp1PortPtr;
 }

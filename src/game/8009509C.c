@@ -1,4 +1,6 @@
 // Categories: Platform > Hardware Synchronization
+#include "game/gpu_globals.h"
+
 typedef signed char s8;
 typedef unsigned char u8;
 typedef signed short s16;
@@ -11,7 +13,7 @@ extern u32 D_8009DEE8;
 extern u32 D_8009DEF8;
 extern u32 *D_8009DED4;
 extern u32 *D_8009DEE4;
-extern u32 *D_8009DEC8;
+extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u8 D_800A62C8[];
 extern u8 D_800A9450[];
 
@@ -55,7 +57,7 @@ u32 func_8009509C(u32 a0)
                 return -1;
             }
         }
-        while ((*D_8009DED4 & 0x1000000) || !(*(volatile u32 *)D_8009DEC8 & 0x4000000)) {
+        while ((*D_8009DED4 & 0x1000000) || !(*(volatile u32 *)gGpuGp1PortPtr & 0x4000000)) {
             if (func_8009520C() != 0) {
                 return -1;
             }
@@ -66,7 +68,7 @@ u32 func_8009509C(u32 a0)
         if (count != 0) {
             func_80094CEC();
         }
-        if ((*D_8009DED4 & 0x1000000) || !(*(volatile u32 *)D_8009DEC8 & 0x4000000)) {
+        if ((*D_8009DED4 & 0x1000000) || !(*(volatile u32 *)gGpuGp1PortPtr & 0x4000000)) {
             return count ? count : 1;
         }
         return count;

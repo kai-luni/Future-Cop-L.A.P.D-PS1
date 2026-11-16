@@ -1,6 +1,8 @@
 // Categories: Graphics > Command Transfer
-extern unsigned int *D_8009DEC8;
-extern unsigned int *D_8009DEC4;
+#include "game/gpu_globals.h"
+
+extern unsigned int *gGpuGp1PortPtr __asm__("D_8009DEC8");
+extern unsigned int *gGpuGp0PortPtr __asm__("D_8009DEC4");
 
 /**
  *  @brief Writes a command followed by a sequence of data words.
@@ -25,10 +27,10 @@ int func_80094960(unsigned int *data, unsigned int count)
 {
     unsigned int remaining = count - 1;
 
-    *D_8009DEC8 = 0x04000000;
+    *gGpuGp1PortPtr = 0x04000000;
     if (count != 0) {
         do {
-            *D_8009DEC4 = *data++;
+            *gGpuGp0PortPtr = *data++;
         } while (remaining-- != 0);
     }
     return 0;

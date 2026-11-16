@@ -1,11 +1,14 @@
 // Categories: Graphics > Image Transfer | Platform > DMA
+#include "game/gpu_globals.h"
+
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef short s16;
 
 extern u16 D_8009DDF4, D_8009DDF6;
-extern volatile u32 *D_8009DEC8, *D_8009DECC, *D_8009DED0, *D_8009DED4;
-extern u32 *volatile D_8009DEC4;
+extern volatile u32 *D_8009DECC, *D_8009DED0, *D_8009DED4;
+extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
+extern u32 *volatile gGpuGp0PortPtr __asm__("D_8009DEC4");
 extern void func_800951D8(void);
 extern int func_8009520C(void);
 
@@ -61,26 +64,26 @@ int func_8009446C(u16 *hdr_, u32 *data_)
     words = t / 2;
     if (words <= 0) return -1;
     rem = words >> 4; tmp = rem; rem = words - tmp * 16; blocks = tmp;
-    if ((*D_8009DEC8 & 0x4000000) == 0) {
+    if ((*gGpuGp1PortPtr & 0x4000000) == 0) {
         __asm__ volatile("" ::: "$3");
         do {
             if (func_8009520C() != 0) return -1;
-        } while ((*D_8009DEC8 & 0x4000000) == 0);
+        } while ((*gGpuGp1PortPtr & 0x4000000) == 0);
     }
-    *D_8009DEC8 = 0x4000000;
-    *(volatile u32 *)D_8009DEC4 = 0x1000000;
-    *(volatile u32 *)D_8009DEC4 = dir ? 0xB0000000 : 0xA0000000;
-    *(volatile u32 *)D_8009DEC4 = *(u32 *)hdr;
-    *(volatile u32 *)D_8009DEC4 = ((u32 *)hdr)[1];
+    *gGpuGp1PortPtr = 0x4000000;
+    *(volatile u32 *)gGpuGp0PortPtr = 0x1000000;
+    *(volatile u32 *)gGpuGp0PortPtr = dir ? 0xB0000000 : 0xA0000000;
+    *(volatile u32 *)gGpuGp0PortPtr = *(u32 *)hdr;
+    *(volatile u32 *)gGpuGp0PortPtr = ((u32 *)hdr)[1];
     rem--;
     if (rem != -1) {
         __asm__ volatile("" ::: "$2");
         do {
-            *D_8009DEC4 = *data++;
+            *gGpuGp0PortPtr = *data++;
         } while (--rem != -1);
     }
     if (blocks != 0) {
-        *D_8009DEC8 = 0x4000002;
+        *gGpuGp1PortPtr = 0x4000002;
         *D_8009DECC = (u32)data;
         *D_8009DED0 = (blocks << 16) | 0x10;
         *D_8009DED4 = 0x1000201;

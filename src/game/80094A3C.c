@@ -1,4 +1,6 @@
 // Categories: Platform > GPU | Game Engine > Command Queue
+#include "game/gpu_globals.h"
+
 #include "game/types.h"
 
 struct QueueEntry {
@@ -22,7 +24,7 @@ extern volatile s32 D_8009DEE8;
 extern volatile s32 D_8009DEEC;
 extern u32 D_8009DEF0;
 extern volatile u32 *D_8009DED4;
-extern volatile u32 *D_8009DEC8;
+extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 
 extern void func_800951D8(void);
 extern s32 func_8009520C(void);
@@ -77,7 +79,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
     ddf0->unk8 = 1;
 
     if (ddf0->unk1 == 0 || (D_8009DEE8 == D_8009DEEC && (*D_8009DED4 & 0x1000000) == 0 && ddf0->unkC == 0)) {
-        while ((*D_8009DEC8 & 0x04000000) == 0) {
+        while ((*gGpuGp1PortPtr & 0x04000000) == 0) {
         }
         func(arg1, arg3);
         func_800915FC(D_8009DEF0);
