@@ -57,7 +57,7 @@ extern s32 gSpuAlignMask __asm__("D_8009EED4");
 extern s32 D_8009EED8;
 extern s32 D_8009EEDC;
 extern s32 D_8009EEE0;
-extern u8 D_8009EEE4[];
+extern u8 gSpuInitData[] __asm__("D_8009EEE4");
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern u16 D_800A7028[];
 extern u8 D_80012CDC[];
@@ -158,7 +158,7 @@ cont:
     if (arg0 != 0) {
         goto done;
     }
-    arr = D_8009EEE4;
+    arr = gSpuInitData;
     spu = gSpuRegBasePtr;
     __asm__ volatile("" : : "r"(spu));
     gSpuTransferAddr = 0x200;
