@@ -4,7 +4,7 @@
 extern volatile unsigned char *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern volatile unsigned char *D_8009CB70;
 extern volatile unsigned char *D_8009CB74;
-extern volatile unsigned char *D_8009CB78;
+extern volatile unsigned char *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern unsigned char D_8009C8C5;
 extern int D_8009CA6C[];
 extern int D_8009C96C[];
@@ -55,7 +55,7 @@ int func_8008E7A0(void)
     volatile unsigned char *p;
 
     *gCdromIndexStatusPtr = 1;
-    p = D_8009CB78;
+    p = gCdromRequestStatusPtr;
     mode = *p & 7;
     if (mode == 0) {
         return 0;
@@ -73,7 +73,7 @@ int func_8008E7A0(void)
         while (i < 8) { buf[i] = 0; i++; }
     }
     *gCdromIndexStatusPtr = 1;
-    *D_8009CB78 = 7;
+    *gCdromRequestStatusPtr = 7;
     *D_8009CB74 = 7;
     if (mode == 3) {
         register int index __asm__("$2");
@@ -180,7 +180,7 @@ skip_input:
         }
         COPY(D_800A3E58);
         *gCdromIndexStatusPtr = 0;
-        *(unsigned char *)D_8009CB78 = 0;
+        *(unsigned char *)gCdromRequestStatusPtr = 0;
         return 4;
     case4:
         {

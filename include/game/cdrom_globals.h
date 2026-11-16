@@ -14,8 +14,10 @@
  * is unchanged. Declare them where they are used:
  *
  *   extern volatile u8 *gCdromIndexStatusPtr __asm__(CDROM_INDEX_STATUS_ASM);
+ *   extern volatile u8 *gCdromRequestStatusPtr __asm__(CDROM_REQUEST_ASM);
  */
 
 #define CDROM_INDEX_STATUS_ASM "D_8009CB6C"
+#define CDROM_REQUEST_ASM "D_8009CB78"
 
 #endif /* GAME_CDROM_GLOBALS_H */

@@ -14,7 +14,8 @@ struct State {
     u16 f, g;
 };
 extern struct State *D_8009CB80;
-extern u8 *D_8009CB70, *D_8009CB74, *D_8009CB78;
+extern u8 *D_8009CB70, *D_8009CB74;
+extern u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 
 /**
@@ -52,10 +53,10 @@ s32 func_8008F7AC(void)
     data[1] = 0;
     *gCdromIndexStatusPtr = 2;
     *D_8009CB74 = data[0];
-    *D_8009CB78 = data[1];
+    *gCdromRequestStatusPtr = data[1];
     *gCdromIndexStatusPtr = 3;
     *D_8009CB70 = data[2];
     *D_8009CB74 = data[3];
-    *D_8009CB78 = 0x20;
+    *gCdromRequestStatusPtr = 0x20;
     return 0;
 }
