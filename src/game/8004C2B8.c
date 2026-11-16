@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Gameplay > Object Spawning
 #include "game/types.h"
 
 struct Unk4AADParent {
@@ -70,6 +71,29 @@ extern void func_8004B180(void *object);
 extern s32 func_8004B5F8(struct Unk4C2B8Owner *object, s32 arg1);
 extern void func_8004C0C0(struct Unk4C2B8Owner *object);
 
+/**
+ * @brief Walks a D_800A1070[4] node list and dispatches triggered spawns or child-list sweeps by node->flags.
+ *
+ * Iterates through `input` via `node->next`: nodes with flag bit `0x08` (`+0x7B`) invoke func_8004B180, nodes with `0x08` clear and `0x10` clear invoke func_8004C0C0, and nodes with `0x10` set (when `0x08` is clear) are skipped. Category Gameplay > Entity Update | Gameplay > Object Spawning follows list-4 tick dispatch from func_8003F570 and spawn/retire callees.
+ *
+ * @param input Head pointer of the `Unk4C2B8Owner` singly linked list (D_800A1070[4]).
+ *
+ * @par Globals
+ * None directly (caller passes D_800A1070[4]; func_8004C0C0 updates D_8009F9DC).
+ *
+ * @par Control flow
+ * `while (node != 0)` advancing `node = node->next`, branching on `node->flags & 0x08` then `!(node->flags & 0x10)`.
+ *
+ * @par Calls
+ * func_8004B180 - marks node triggered and spawns an object from `shape->position` when `flags & 0x08`.
+ * func_8004C0C0 - sweeps child list `unk84`, unlinks expired items, and spawns debris when `!(flags & 0x18)`.
+ *
+ * @par Side effects
+ * Mutates node/child state and spawns entities via func_8004B180 and func_8004C0C0.
+ *
+ * @par Callers
+ * Confirmed: func_8003F570 (0x8003F65C in asm/us/main.s, passing D_800A1070[4]) / Likely: none / Unknown: none.
+ */
 void func_8004C2B8(struct Unk4C2B8Owner *input)
 {
     register struct Unk4C2B8Owner *node __asm__("$16");

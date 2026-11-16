@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | AI > Attack Scheduling | Game Engine > Command Queue
 #include "game/types.h"
 
 struct Cmd {
@@ -30,6 +31,31 @@ extern struct Entry5FFB8 D_800A2300[];
 extern s32 func_8005FF70(s32 key);
 extern void func_8002A5B4(struct Script5FFB8 *script, s32 index);
 
+/**
+ * @brief Applies scripted attack-descriptor commands from an entity's 4-slot queue.
+ *
+ * Walks script->commands[0..3] (+0x0C), stopping on opcode 0. Handles opcodes
+ * 0x1F..0x23 (target class/arg), 0x1E (enable/disable flag 0x100), and 0x26
+ * (looks up entry in D_800A2300 by key and copies unk02 into obj->unk20).
+ *
+ * @param obj Attack descriptor (Obj5FFB8: +0x00 entry, +0x04 flags, +0x06/+0x08 class/arg, +0x20 gate).
+ * @param script Host entity holding the 4-entry Command queue at +0x0C.
+ *
+ * @par Globals
+ * D_800A2300 - attack definition table (0x30-byte Entry5FFB8 stride).
+ *
+ * @par Control flow
+ * While i < 4, breaks on op == 0; handled opcodes call func_8002A5B4(script, i) without advancing i, while default opcodes advance p += 2 and i++.
+ *
+ * @par Calls
+ * func_8005FF70 - finds index in D_800A2300 matching key byte; func_8002A5B4 - removes consumed command slot.
+ *
+ * @par Side effects
+ * Updates obj->unk06, unk08, flags bit 0x100, entry, and unk20, and consumes matching slots from script->commands.
+ *
+ * @par Callers
+ * Confirmed: func_80060238 (0x800602B4, 0x800602CC, merges commands from optional second and primary owner objects).
+ */
 void func_8005FFB8(struct Obj5FFB8 *obj, struct Script5FFB8 *script)
 {
     register u8 *p __asm__("$17");

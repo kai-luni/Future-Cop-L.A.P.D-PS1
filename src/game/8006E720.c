@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects | Gameplay > Entity Script
 #include "game/types.h"
 
 struct UnkE720Sub {
@@ -20,6 +21,26 @@ struct UnkE720 {
     u8 unk8F;
 };
 
+/**
+ * @brief Computes a scaled duration/step value at +0x86 from peak effect colour channels and sub-record rate.
+ *
+ * Clears self->unk86 (+0x86) if below 0x10; otherwise takes the maximum across the six
+ * intensity/colour bytes (+0x89..+0x8B and +0x8D..+0x8F) and scales it by
+ * ((0x80000000u / (self->unk20->unk48 * 80 * 30)) >> 4) >> 4 into self->unk86.
+ *
+ * @param self Effect object holding sub-pointer at +0x20 (unk48 at +0x48), s16 counter at +0x86, and six byte channels at +0x89..+0x8F.
+ *
+ * @par Globals
+ * None.
+ * @par Control flow
+ * Early exit zeroing unk86 when unk86 < 0x10, branch-based max across two 3-byte triplets, then fixed-point division and store.
+ * @par Calls
+ * None.
+ * @par Side effects
+ * Writes self->unk86 (+0x86).
+ * @par Callers
+ * Confirmed: func_8006E814 (message 0 effect init).
+ */
 void func_8006E720(struct UnkE720 *self)
 {
     s32 a2;

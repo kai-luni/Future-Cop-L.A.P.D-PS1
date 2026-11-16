@@ -1,3 +1,4 @@
+// Categories: AI > Target Selection | Gameplay > Entity Update
 #include "game/types.h"
 
 typedef struct Target {
@@ -29,6 +30,29 @@ typedef struct Target {
 extern void func_8002B1DC(Target *arg0, s32 arg1, Target *arg2);
 extern void func_8002B1AC(Target *arg0);
 
+/**
+ * @brief Evaluates and assigns a candidate target for a class-26 actor.
+ *
+ * Rejects invalid, dead, same-team (unk18), or unready (unkC0 == 0) pairs and state-4 actors with a target. When !(unk160 & 2), unk1C < 5, and state != 4, switches to mode 0xA / state 2 on unk138 unless state 2 already holds a target with >= priority (unk19 & 0xF); otherwise acquires via state 0 or upgrades unkB8 in state 1.
+ *
+ * @param s0 Actor block (+0x18 team, +0x1C/+0xC0/+0x15F/+0x160 state, +0xB8/+0x138 target slots).
+ * @param s1 Candidate target entity (+0x08 id, +0x14 word id, +0x18 team, +0x19 priority nibble).
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Seven early-return guards followed by a two-way branch: priority override (state 2, unk138) vs standard acquisition/upgrade (state 0/1, unkB8).
+ *
+ * @par Calls
+ * func_8002B1DC - issues target-acquire command 1 to the actor state machine; func_8002B1AC - syncs +0x10C/+0x10E counters from +0x158.
+ *
+ * @par Side effects
+ * Writes actor state +0x15F, +0x118 mode nibble, +0x11E, target fields +0xB8/+0xBC or +0x138/+0x13C, and +0x10C/+0x10E.
+ *
+ * @par Callers
+ * Confirmed: func_8002C3B0 (0x8002C3D0), func_8002C3F0 (0x8002C4A4, 0x8002C4DC) / Likely: none / Unknown: none.
+ */
 void func_8002BFB4(Target *s0, Target *s1)
 {
     s16 unk1C;

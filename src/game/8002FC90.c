@@ -1,3 +1,4 @@
+// Categories: Gameplay > Player | Gameplay > Weapons | Gameplay > Entity Update
 #include "game/types.h"
 
 typedef struct UnkFC90Sub {
@@ -36,6 +37,30 @@ extern void func_8003BA50(UnkFC90Obj *obj, s32 value);
 extern void func_8006BE90(UnkFC90Obj *obj, s32 index, s32 value, s32 flag);
 extern void func_8006BDFC(UnkFC90Obj *obj, s32 index);
 
+/**
+ * @brief Applies a pickup or resupply bitmask payload to a player (and optionally their co-op partner).
+ *
+ * For non-instant effects (arg1 lacks bit 0x1000000), accumulates D_8009F9FC in *arg3 against
+ * threshold *arg4 and computes tick quotient; dereferences arg0->unkB4 when unk16 == 0x12, then
+ * restores health/gauges (bit 0x20000, shared in co-op), timers (0x40000/0x80000), and weapon slots (bits 0..7).
+ *
+ * @param arg0 Target player entity (or type-0x12 proxy dereferenced via unkB4).
+ * @param arg1 Payload bitmask: bits 0..3 refill via func_8006BE90, 4..7 reset via func_8006BDFC, 0x20000 health, 0x40000/0x80000 timers, 0x1000000 instant.
+ * @param arg2 Direct amount used when bit 0x1000000 is set (negative jumps ammo/health to max).
+ * @param arg3,arg4 Tick accumulator and period pointers used when bit 0x1000000 is clear.
+ *
+ * @par Globals
+ * D_8009F9FC - frame delta; D_8009FA58[2] - player entities; D_8009FA0C/D_8009FA94->unk5C - co-op sharing gate.
+ * @par Control flow
+ * Interval accumulator gate, proxy dereference, 2-player loop applying shared 0x20000 health/gauge updates, and self-only timer and bitmask-slot loops.
+ * @par Calls
+ * func_8005A190 - updates HUD gauge 0; func_8003BA50 - flags map occupancy quartile crossing;
+ * func_8006BE90 - refills weapon slot j; func_8006BDFC - refreshes secondary/special slot j.
+ * @par Side effects
+ * Updates *arg3, player unk1C/unk324/unk326/flags, HUD gauges, and weapon slot counters.
+ * @par Callers
+ * Confirmed: func_8002FF6C (proximity pickup trigger), func_800306A0 (resupply actor script).
+ */
 void func_8002FC90(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4)
 {
     register UnkFC90Obj *self __asm__("$20");

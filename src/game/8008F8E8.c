@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Platform > Interrupts
 typedef unsigned char u8;
 typedef unsigned int u32;
 
@@ -17,6 +18,29 @@ extern void func_800914B0(int, void (*)(void));
 extern int func_8008F244(int, int, int, int);
 extern int func_8008ECFC(int, int);
 
+/**
+ * @brief Initializes the PsyQ CD-ROM subsystem, interrupt callback, and drive state.
+ *
+ * Logs "CD_init:" and the D_8009CB88 state block address, clears CD callbacks and flags, invokes D_8009DD10 via func_80091480 and registers func_8008FE28 on IRQ slot 2 via func_800914B0, clears pending CD interrupts, sets D_8009CB7C (0x1F801020) to 0x1325, and issues CdlNop (1), CdlReset (10), CdlDemute (12), and CdlSync.
+ *
+ * @param void No parameters.
+ * @return 0 if initialization and sync (status == 2) succeed, or -1 if CdlReset, CdlDemute, or func_8008ECFC fails.
+ *
+ * @par Globals
+ * D_8001257C/D_80012588 - format strings; D_8009CB88/D_8009CB84 - CD state table; D_8009C8A8..D_8009C8C5 - callbacks/flags; D_8009CB6C..D_8009CB7C - CD-ROM/delay register pointers.
+ *
+ * @par Control flow
+ * Straight-line setup with a poll loop clearing (*D_8009CB78 & 7), an optional retry of command 1 if D_8009C8B4 & 0x10, and three error-checking exits.
+ *
+ * @par Calls
+ * func_8008FF08 - prints banner; func_8008E000 - prints addr; func_80091480/func_800914B0 - dispatches D_8009DD10 and installs IRQ callback func_8008FE28; func_8008F244 - sends CD commands; func_8008ECFC - waits for ready status.
+ *
+ * @par Side effects
+ * Clears CD globals, writes CD-ROM hardware ports and D_8009CB7C (0x1F801020), resets D_8009CB84, and installs the CD IRQ handler.
+ *
+ * @par Callers
+ * Confirmed: func_8008DF30 (0x8008DF38), func_8008E04C (0x8008E074) / Likely: none / Unknown: none.
+ */
 int func_8008F8E8(void)
 {
     register int z __asm__("$0");

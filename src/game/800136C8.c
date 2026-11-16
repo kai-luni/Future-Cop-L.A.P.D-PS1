@@ -1,3 +1,4 @@
+// Categories: Graphics > Animation | Game Engine > Frame
 #include "game/types.h"
 
 struct AnimEntry {
@@ -26,6 +27,28 @@ extern void func_800135C0(struct AnimNode *node, u32 arg1);
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
 extern s32 func_80019668(void);
 
+/**
+ * @brief Advances animated entries in D_8009F568 and the linked list D_8009F564.
+ *
+ * Calls func_800135C0(D_8009F568, D_8009FAA4), then walks D_8009F564 entries (skipping flags & 4). Types 0..3 decrement timer by dt and step cur (0 wrap+, 1 wrap-, 2 ping-pong via flags & 2, 3 random); types >= 16 step angle via sine/cosine func_8001846C. On change, copies 3 or 4 u16 values from src to dst.
+ *
+ * @param a0 Frame delta dt.
+ *
+ * @par Globals
+ * D_8009F568 - triangle-wave list passed to func_800135C0; D_8009FAA4 - frame clock; D_8009F564 - AnimNode linked list.
+ *
+ * @par Control flow
+ * Nested list/entry loops; type < 16 switch (0..3) vs trig path (0x11 sine, else cosine); conditional 6- or 8-byte copy.
+ *
+ * @par Calls
+ * func_800135C0 - updates D_8009F568; func_80019668 - PRNG for type 3; func_8001846C - sin/cos lookup for types >= 16.
+ *
+ * @par Side effects
+ * Updates AnimEntry timer/cur/flags fields and copies active src halfwords into dst pointers.
+ *
+ * @par Callers
+ * Confirmed: func_8002703C (0x80027184, main frame tick) / Likely: none / Unknown: none.
+ */
 void func_800136C8(s32 a0)
 {
     register s32 dt __asm__("$19");

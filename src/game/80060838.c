@@ -1,3 +1,4 @@
+// Categories: Resources > Asset Loader | Game Engine > Object Setup
 #include "game/types.h"
 
 struct Resource;
@@ -36,6 +37,28 @@ extern void func_800607B8(struct Unk607B8 *value);
 extern void func_800181D4(struct Unk60838Arg *arg0);
 extern void *memcpy(void *dest, const void *src, u32 count);
 
+/**
+ * @brief Loads and normalizes a 0x30-byte definition entry into D_800A2300.
+ *
+ * Allocates D_800A2300[D_8009F7F8++], copies 0x20 bytes from the 0x74414354 ("tACT") payload (+0x10), scales subfields and unk08/unk0A by (x << 12) / 218, resolves up to four 0x6152534C ("aRSL") linked resources into unk20[0..3], and frees arg0.
+ *
+ * @param arg0 Temporary resource descriptor (+0x00 blob, +0x1C section id, +0x20 byte length).
+ *
+ * @par Globals
+ * D_8009F7F8 - entry count incremented per entry; D_800A2300 - array of 0x30-byte definition entries.
+ *
+ * @par Control flow
+ * Linear sequence with an inline 0x20-byte unaligned copy (compiled without a memcpy call) and a 4-iteration loop checking sp[2] != 0 for linked resources.
+ *
+ * @par Calls
+ * func_80019C38 - fetches "tACT" payload; func_800607B8 - scales entry->sub; func_80019CA0 - fetches "aRSL" header; func_80019BF0 - resolves non-zero resource pairs; func_800181D4 - frees arg0.
+ *
+ * @par Side effects
+ * Increments D_8009F7F8, populates D_800A2300[index], and frees arg0.
+ *
+ * @par Callers
+ * Confirmed: func_8004D6D4 (0x8004D78C in asm/us/main.s, type 0x62 case) / Likely: none / Unknown: none.
+ */
 void func_80060838(struct Unk60838Arg *arg0)
 {
     struct Unk60838Entry *entry;

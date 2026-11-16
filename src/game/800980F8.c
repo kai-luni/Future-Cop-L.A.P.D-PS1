@@ -1,3 +1,4 @@
+// Categories: Resources > Memory Pools | Platform > Sound
 typedef unsigned int u32;
 typedef int s32;
 
@@ -15,6 +16,31 @@ extern struct Entry *D_8009EF0C;
 
 extern void func_80097DF8(void);
 
+/**
+ * @brief Splits a record in the SPU pool block table D_8009EF0C at address a1 for size a2.
+ *
+ * Computes offset t1 from entry a0's base address (low 28 bits) and available bytes (subtracting tail reserve (0x10000 - D_8009EA40) << D_8009EECC when D_8009EA3C != 0 on tail record 0x40000000). Returns -1 if avail < a2 or table capacity D_8009EF04 is exceeded; otherwise splits leading free gap, allocated block, and trailing free/tail record, then compacts.
+ *
+ * @param a0 Index of target record in D_8009EF0C.
+ * @param a1 Aligned start address requested inside record a0.
+ * @param a2 Aligned byte size to allocate.
+ * @return Allocated start address a1 on success, or -1 on insufficient space or full table.
+ *
+ * @par Globals
+ * D_8009EF0C - block table (addr+flags, size); D_8009EF08/D_8009EF04 - count/capacity; D_8009EA3C/D_8009EA40/D_8009EECC - tail reserve state.
+ *
+ * @par Control flow
+ * Bounds check, two-way split on tail flag 0x40000000 vs free record, each branching on leading gap t1 > 0 and trailing space.
+ *
+ * @par Calls
+ * func_80097DF8 - coalesces adjacent free records and compacts tombstones in D_8009EF0C.
+ *
+ * @par Side effects
+ * Rewrites records in D_8009EF0C, updates D_8009EF08, and compacts via func_80097DF8.
+ *
+ * @par Callers
+ * Confirmed: func_80098458 (0x800986D0, aligned SPU/heap allocator) / Likely: none / Unknown: none.
+ */
 s32 func_800980F8(s32 a0, u32 a1, s32 a2)
 {
     register s32 a0_reg __asm__("$10") = a0;

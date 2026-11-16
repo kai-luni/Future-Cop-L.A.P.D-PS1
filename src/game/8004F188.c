@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Gameplay > Path Following | Physics > Motion
 #include "game/types.h"
 
 struct Unk4F0F0Entry {
@@ -31,6 +32,31 @@ struct Script {
 
 extern void func_8002A5B4(struct Script *script, s32 index);
 
+/**
+ * @brief Executes and consumes path-mover script opcodes 1..22 from a 4-slot queue.
+ *
+ * Scans script->commands[0..3] (+0x0C), stopping on opcode 0. Handles mode/tag opcodes
+ * 1..7 and 10..15, pause/resume opcode 19, entry flag toggle 20/21, and rate scaling 22,
+ * shifting each processed slot out of the queue via func_8002A5B4.
+ *
+ * @param object Mover block (+0x00 entries, +0x30/+0x32 rate, +0x3C flags, +0x42 unk42).
+ * @param script Entity script record (+0x0C commands[4], +0x84 unk84).
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Loops i = 0..3 breaking on op == 0; handled opcodes call func_8002A5B4(script, i) without advancing i, while unhandled opcodes advance i++.
+ *
+ * @par Calls
+ * func_8002A5B4 - compacts script->commands after consuming slot i.
+ *
+ * @par Side effects
+ * Mutates object flags/unk30/unk32/unk42, entry flag bits in object->entries, script->unk84, and script->commands.
+ *
+ * @par Callers
+ * Confirmed: func_80050D14 (0x80050D40, movement dispatcher pre-step when arg->unk0C != 0).
+ */
 void func_8004F188(struct Object *object, struct Script *script)
 {
     s32 i;

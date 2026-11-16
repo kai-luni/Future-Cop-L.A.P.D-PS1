@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects | Game Engine > Object Setup
 #include "game/types.h"
 
 struct Entity;
@@ -59,6 +60,29 @@ extern void *func_80017EBC(s32 size, s32 tag);
 extern void *func_8006C84C(s32 arg0, s32 arg1);
 extern void func_8005CEA8(struct Sub *state);
 
+/**
+ * @brief Allocates a 0x1B0-byte attached-effect block in D_800A22F0 with a dome mesh and 12 motion sub-states.
+ *
+ * Scans D_800A22F0[0..3] for the first free slot, allocates a 0x1B0-byte Block (tag 2),
+ * attaches a dome-patch mesh via func_8006C84C (0x100/9 for ent->unk16 == 1 with colour pair
+ * chosen by ent->unkAC[idx*2 + 0x8A] > 0, else 0x200/0xD), and initialises 12 Sub states.
+ *
+ * @param ent Owning Entity (+0x08 id, +0x16 kind, +0x6E scale, +0xAC state buffer).
+ * @param idx Slot/weapon index stored at +0x54 and selecting the s16 check at ent->unkAC + idx*2 + 0x8A.
+ * @return Newly allocated Block pointer stored in D_800A22F0, or NULL if all 4 slots are occupied.
+ *
+ * @par Globals
+ * D_800A22F0 - 4-entry array of active Block pointers updated with the first free slot.
+ * @par Control flow
+ * Do-while loop scanning D_800A22F0[0..3] for NULL, branching on ent->unk16 == 1, then 12-iteration Sub init loop.
+ * @par Calls
+ * func_80017EBC - allocates 0x1B0-byte Block (tag 2); func_8006C84C - builds dome-patch mesh;
+ * func_8005CEA8 - initialises each of the 12 0x1C-byte Sub motion blocks at Block + 0x58.
+ * @par Side effects
+ * Writes new Block pointer into D_800A22F0, allocates heap tag 2 and mesh buffers.
+ * @par Callers
+ * Confirmed: func_8005D690 (lazy slot allocation), func_8006AB38 (kind-13 weapon slot setup).
+ */
 struct Block *func_8005D3FC(struct Entity *ent, s32 idx)
 {
     register struct Block **p __asm__("$16");

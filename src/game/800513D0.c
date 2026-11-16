@@ -1,3 +1,4 @@
+// Categories: Gameplay > Path Movement | Physics > Motion
 #include "game/types.h"
 
 typedef struct {
@@ -22,6 +23,34 @@ typedef struct {
 extern void func_8001AB78(s32 length, s32 *vector);
 extern s32 func_8001A13C(s32 *a, s32 *b);
 
+/**
+ * @brief Integrates a 3D position along a looping table of piecewise-linear segments.
+ *
+ * Advances arg1 along arg0->unk10 by up to arg2 units per iteration using func_8001AB78,
+ * stepping through 3-word (z, x, length) records at arg0->unk20 when each segment
+ * finishes, wrapping to arg0->unk1C at unk28 and snapping to unk2C when within 0x2000.
+ *
+ * @param arg0 Path state (Unk513D0: active flag +0x00, segment len/pos +0x08/+0x0C, dir +0x10, base/cur +0x1C/+0x20, idx/count +0x24/+0x28, end +0x2C).
+ * @param arg1 3D position vector (Vec513D0) updated in place.
+ * @param arg2 Remaining motion budget to advance.
+ * @param arg3 Optional counter incremented on each segment transition, or null.
+ * @return 1 if the path wrapped past segment unk28 during this call, else 0.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Returns 0 if arg0->unk00 == 0; loops while arg2 > 0 clamping each step to (unk08 - unk0C), advancing segment records and wrapping at unk24 == unk28.
+ *
+ * @par Calls
+ * func_8001AB78 - scales copied segment vector by step amount; func_8001A13C - checks XZ distance to unk2C on wrap.
+ *
+ * @par Side effects
+ * Updates *arg1, arg0 progress/segment fields (unk08, unk0C, unk10, unk20, unk24), and *arg3 if non-null.
+ *
+ * @par Callers
+ * Confirmed: none (unreferenced in asm/us/main.s and marked orphan/unreachable in analysis/analysis.json).
+ */
 s32 func_800513D0(Unk513D0 *arg0, Vec513D0 *arg1, s32 arg2, s32 *arg3)
 {
     s32 done;

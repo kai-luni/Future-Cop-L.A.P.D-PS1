@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
@@ -15,6 +16,27 @@ extern void func_8008E000(char *, ...), func_8008ECFC(int, int), func_8008FF08(c
 extern int func_80091270(int), func_800915D4(void), func_8008E7A0(void);
 extern void dummy_5args(int, int, int, int, int);
 
+/**
+ * @brief Issues a PS1 CD-ROM controller command with parameter validation and optional synchronous wait.
+ *
+ * Waits for prior command settlement via func_8008ECFC, caches CdlSetloc/CdlSetmode state, pushes parameter bytes to FIFO D_8009CB74 and command byte to D_8009CB70, then either returns immediately (async) or polls interrupts until completion or timeout.
+ *
+ * @param arg0 CD-ROM command byte (low 8 bits select table entries).
+ * @param arg1 Optional parameter buffer (required when D_8009CAEC[cmd] != 0).
+ * @param arg2 Optional 8-byte output buffer receiving D_800A3E50 response.
+ * @param arg3 Non-zero returns 0 immediately without waiting; zero blocks until completion.
+ * @return 0 on success (or async launch), -2 if required arg1 is null, -1 on timeout or status 5.
+ * @par Globals
+ * D_8009CB6C/D_8009CB70/D_8009CB74 (0x1F801800..2 CD ports), D_8009CB84 (sync/ready status), D_8009CAEC/D_8009C9EC/D_8009C8CC/D_8009C94C (cmd tables), D_8009C8C0/D_8009C8C4/D_8009C8C5, D_8009C8A8/D_8009C8AC, D_800A3E50/D_800A3E58/D_800A3E68..70, D_8009C8B0, D_80012524/2C/3C/488/498.
+ * @par Control flow
+ * Validates parameter; calls func_8008ECFC; copies CdlSetloc/mode; writes FIFO and cmd register; if arg3 == 0 polls func_800915D4/func_8008E7A0 up to 0x3C0 ticks or 0x3C0000 loops (resetting via func_8008F6D8 on timeout); copies 8-byte response.
+ * @par Calls
+ * func_8008E000 - debug log; func_8008ECFC - wait prior cmd; func_80091270 - timer; func_8008FF08 - BIOS print; func_8008F6D8 - CD reset; func_800915D4/func_8008E7A0 - poll/drain CD IRQs.
+ * @par Side effects
+ * Writes CD hardware ports, updates driver state/globals, may reset controller or fire D_8009C8A8/D_8009C8AC callbacks, and fills arg2.
+ * @par Callers
+ * Confirmed: func_8008E1BC (0x8008E250, 0x8008E278, 0x8008E29C), func_8008E2F8 (0x8008E384, 0x8008E3AC, 0x8008E3D0), func_8008E42C (0x8008E4B8, 0x8008E4E0, 0x8008E504), func_8008F8E8 (0x8008FA2C, 0x8008FA54, 0x8008FA68, 0x8008FA84).
+ */
 int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
 {
     register u8 *param __asm__("$16") = arg1;

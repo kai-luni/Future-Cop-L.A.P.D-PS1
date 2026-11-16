@@ -1,3 +1,4 @@
+// Categories: Platform > Sound | Platform > SPU
 #include "game/types.h"
 
 typedef struct {
@@ -64,6 +65,29 @@ extern void func_80097990(void);
 extern void func_8008E000(void *fmt, void *msg);
 extern void func_80097138(void *attr, s32 size);
 
+/**
+ * @brief Resets SPU hardware registers and optionally initializes all 24 SPU voices.
+ *
+ * Sets *D_8009EEB4 |= 0xB0000, mutes main and SPU control registers, polls spu->f1AE & 0x7FF (logging timeout after 0xF00 loops), configures reverb/timing globals and D_800A7028, and on warm start (arg0 == 0) uploads 0x10 bytes of D_8009EEE4 to SPU RAM 0x200, initializes 24 voices, keys them off, and sets control 0xC000.
+ *
+ * @param arg0 0 performs full voice/RAM reset; non-zero skips voice table and SPU RAM setup.
+ * @return Always 0.
+ *
+ * @par Globals
+ * D_8009EEA4 - SPU base (0x1F801C00); D_8009EEB4 - SPU delay/control ptr; D_800A7028/D_8009EEE4/D_8009EEC0..D_8009EEE0/D_8009EEBC - SPU driver state.
+ *
+ * @par Control flow
+ * Busy-wait loop with 0xF00 timeout cap, 10-entry clear loop, conditional warm-start block with 24-voice init loop, and final enable.
+ *
+ * @par Calls
+ * func_80097990 - hardware delay loop; func_8008E000 - prints "SPU: T/O [wait (reset)]"; func_80097138 - uploads D_8009EEE4 to SPU RAM.
+ *
+ * @par Side effects
+ * Writes SPU MMIO registers (0x1F801C00..), SPU RAM at 0x200, D_800A7028, and SPU globals.
+ *
+ * @par Callers
+ * Confirmed: func_80096D58 (0x80096D6C, SPU subsystem init) / Likely: none / Unknown: none.
+ */
 s32 func_80096EB8(s32 arg0)
 {
     register Spu *spu __asm__("$2");

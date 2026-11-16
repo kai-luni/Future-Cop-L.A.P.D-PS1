@@ -1,3 +1,4 @@
+// Categories: Gameplay > Damage | Gameplay > Health | Gameplay > Player
 #include "game/types.h"
 
 struct Unk58210U {
@@ -40,6 +41,31 @@ extern struct Unk58210Global *D_8009FA94;
 extern void func_80057358(void *object, s32 amount);
 extern void func_8003BA50(void *object, s32 value);
 
+/**
+ * @brief Deducts player health, charges gauge unkA2/charge, and flags quartile drops.
+ *
+ * Guards against non-positive damage, non-zero D_8009FA8C[unkAC->unkC1], or active
+ * invulnerability timer unkAC->unk326 > 0, then subtracts amount from object->unk1C
+ * and unkDC->unk1C, scales unkAC->unkA2 and info->charge, and calls func_8003BA50.
+ *
+ * @param object Player entity block (+0x1C/+0x1E health/max, +0x20/+0x24 flags, +0xAC/+0xDC sub-blocks).
+ * @param amount Damage amount subtracted from current health (<= 0 ignored).
+ *
+ * @par Globals
+ * D_8009FA8C - per-player gate byte table indexed by unkAC->unkC1; D_8009FA94 - game state (+0x5C halves charge gain).
+ *
+ * @par Control flow
+ * Three early returns (amount <= 0, D_8009FA8C[unkC1] != 0, unk326 > 0), then clamps unkA2 to 0x1C2 and charge gain to 0x200 before calling func_80057358 and conditionally func_8003BA50.
+ *
+ * @par Calls
+ * func_80057358 - adds max/4 (clamped to 0xFF) into unkAC->charge; func_8003BA50 - sets flag 0x4000 if health crossed a quartile.
+ *
+ * @par Side effects
+ * Updates object->unk1C, unkDC->unk1C, unkAC->unkA2, charge (+0xD0), and potentially object->flags.
+ *
+ * @par Callers
+ * Confirmed: func_80058378 (0x80058398 primary target, 0x80058484 co-op mirror across D_8009FA58).
+ */
 void func_80058210(struct Unk58210 *object, s32 amount)
 {
     u8 *table;

@@ -1,3 +1,4 @@
+// Categories: Platform > Memory Card | Resources > Save Data
 #include "game/types.h"
 
 struct Packed6 {
@@ -29,6 +30,28 @@ extern const struct Packed6 D_8009F260;
 
 extern void func_8001E318(void *destination, const void *source, s32 length);
 
+/**
+ * @brief Parses the 15 memory-card directory frames in D_8009AB08 into slot state and names.
+ *
+ * Sets slot 0 state = 1 with default label D_80010AE8, then iterates slots 1..15 over D_8009AB08->directory[0..14]: verifies the 0x7F-byte XOR checksum (forcing type 0x53 on mismatch), marks 0xA0/0xA1/0xA3 free slots as state 2 (D_8009F260), copies 20-byte save names for 0x51 slots (state 1, D_80010AF4), and sets D_80010B00 otherwise.
+ *
+ * @param void No parameters.
+ *
+ * @par Globals
+ * D_8009AB08 - CardManager struct (state[16], primary/secondary[16], directory[15]); D_80010AE8/D_80010AF4/D_80010B00/D_8009F260 - status label strings.
+ *
+ * @par Control flow
+ * Outer 15-slot loop containing a 127-byte XOR checksum loop, checksum mismatch override, and a 3-way switch on frame->bytes[0].
+ *
+ * @par Calls
+ * func_8001E318 - copies 20-byte filename from frame->bytes[10] into primary[slot] for 0x51 entries.
+ *
+ * @par Side effects
+ * Mutates corrupted frame->bytes[0] to 0x53 and updates D_8009AB08 state, primary, and secondary slot labels.
+ *
+ * @par Callers
+ * Confirmed: func_80020C90 (0x80020CC0), func_80020DF8 (0x80020E2C), func_80020E68 (0x80020E90) / Likely: none / Unknown: none.
+ */
 void func_800207CC(void)
 {
     struct CardDirectoryFrame *frame;

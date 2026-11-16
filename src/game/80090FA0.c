@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Resources > File Access
 typedef unsigned int u32;
 typedef int s32;
 struct State {
@@ -27,6 +28,33 @@ extern s32 func_8008E010(void);
 extern void func_8008E42C(s32, s32, s32);
 extern s32 func_80090C18(s32);
 
+/**
+ * @brief Configures CD-ROM sector read parameters and starts an asynchronous read.
+ *
+ * Waits up to 121 ticks for D_8009CBF4 (D_8009CBD0.busy) to clear, selects sector
+ * word size from (mode & 0x30) (0x200, 0x249, or 0x246) with double-speed bit 0x20,
+ * saves/clears CD and DMA3 callbacks, pauses any active drive motion, and calls func_80090C18.
+ *
+ * @param count Number of sectors to read into buffer.
+ * @param buffer Destination RAM buffer for read sectors.
+ * @param mode CD mode bits (bits 4..5 select sector size; bit 5 = 0x20 forced on).
+ * @return 1 if func_80090C18(0) returned > 0 (read armed), else 0.
+ *
+ * @par Globals
+ * D_8009CBD0 - CD read state; D_8009CBF4/D_8009CBF8 - aliases for busy/callback; D_8009C814 - mode flag bit 0.
+ *
+ * @par Control flow
+ * Spins up to 121 ticks on *D_8009CBF4 restoring *D_8009CBF8 on timeout, switches on mode & 0x30, pauses CD if status & 0xE0, then calls func_80090C18(0).
+ *
+ * @par Calls
+ * func_80091270 - tick clock; func_8008E194/E1A8/E5D8 - save/clear hooks; func_8008E010/E42C - status check and CdlPause (9); func_80090C18 - start CD read.
+ *
+ * @par Side effects
+ * Mutates D_8009CBD0, swaps CD/DMA3 callbacks, may issue CdlPause, and initiates CD read.
+ *
+ * @par Callers
+ * Confirmed: func_8009081C (0x80090858, blocking CD sector reader).
+ */
 s32 func_80090FA0(s32 count, void *buffer, s32 mode)
 {
     register s32 n __asm__("$20");

@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Platform > Interrupts
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
@@ -21,6 +22,30 @@ extern int func_800915D4(void);
 extern int func_8008E7A0(void);
 extern void dummy_5args(int, int, int, int, int);
 
+/**
+ * @brief Polls or blocks for completion of the active CD-ROM command (CD_sync).
+ *
+ * Arms a 0x3C0-tick timeout from func_80091270(-1) in D_800A3E68 and resets D_800A3E6C. Each pass checks deadline and 0x3C0000 iteration cap (printing error diagnostics and calling func_8008F6D8 on timeout), drains CD events through func_8008E7A0 when func_800915D4 is non-zero, and returns status 2 or 5 (copying D_800A3E50 into result).
+ *
+ * @param mode 0 blocks until completion or timeout; non-zero polls once and returns 0 if still pending.
+ * @param result Optional 8-byte buffer receiving D_800A3E50 on status 2 or 5.
+ * @return Status byte 2 (done) or 5 (error), 0 if pending with mode != 0, or -1 on timeout.
+ *
+ * @par Globals
+ * D_8009CB84 - CD slot state; D_800A3E50/D_800A3E58 - result buffers; D_8009C8A8/D_8009C8AC - CD callbacks; D_800A3E68..D_800A3E70 - timeout state; D_8009C8CC/D_8009C94C/D_8009C8C5 - log tables; D_8009CB6C - CD index port.
+ *
+ * @par Control flow
+ * Outer loop with timeout guard, inner event-drain loop gated by func_800915D4(), status 2/5 exit, and mode == 0 loop test.
+ *
+ * @par Calls
+ * func_80091270 - reads frame clock; func_800915D4 - checks D_8009CC8A; func_8008E7A0 - dequeues CD event; func_8008FF08/func_8008E000 - logs timeout; func_8008F6D8 - resets CD on timeout.
+ *
+ * @par Side effects
+ * Updates D_800A3E68..D_800A3E70, preserves/restores *D_8009CB6C, resets D_8009CB84[0] to 2, writes result, and resets CD on timeout.
+ *
+ * @par Callers
+ * Confirmed: func_8008E154 (0x8008E15C), func_8008E42C (0x8008E530), func_8008F244 (0x8008F304), func_8008F8E8 (0x8008FA94) / Likely: none / Unknown: none.
+ */
 s32 func_8008ECFC(s32 mode, u8 *result)
 {
     register int s0 __asm__("$16");

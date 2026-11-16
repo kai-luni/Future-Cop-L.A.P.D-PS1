@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front End | Game Engine > Front-End Configuration | Resources > Level Table
 #include "game/types.h"
 
 struct Entry {
@@ -39,6 +40,29 @@ extern void func_8007A168(void);
 
 #define CLAMPN(x, m) do { if ((s8)(x) >= 0) { if ((s8)(x) > (m)) { t = (m); } else { t = (x); } } else { t = 0; } (x) = t; } while (0)
 
+/**
+ * @brief Decodes and verifies the 10-character password/cheat buffer D_800A3948 and applies unlocked stages and flags.
+ *
+ * Translates D_800A3948[0..9] + 0x41 through 16-char D_8009C1AC (even) and 8-char D_8009C1BC (odd)
+ * alphabets into nibbles/triplets, unpacks 6 clamped stage values (n0..n5) and 7 option flags (f1..f7),
+ * checks three modular checksums (c0..c2), and updates D_8009FA94, D_8009B4E4, D_8009F3C0..F3C4, and front-end lists.
+ *
+ * @param void No parameters.
+ * @return 1 if all 10 characters decoded and all three checksums matched; 0 otherwise.
+ *
+ * @par Globals
+ * D_800A3948/D_8009C1AC/D_8009C1BC - input letter indices and lookup alphabets; D_8009FA94/D_8009B4E4/D_8009B72C - mode config and mission entries;
+ * D_8009F3C0/F3C1/F3C3/F3C4/D_8009F458/D_8009F3F1/D_8009F880..D_8009F882 - unlock flags, stage index, and front-end cursor.
+ * @par Control flow
+ * 10-char alphabet decode loop, bitfield unpacking with Precinct Assault n5 extension check, three checksum guards, then apply block.
+ * @par Calls
+ * func_80077FFC - updates D_8009F3C2; func_80077708 or func_800776B8 - resets front-end list;
+ * func_8007A168 - activates bonus menu flags in D_8009BBF8 and D_8009F3C3/D_8009F3C4.
+ * @par Side effects
+ * Mutates D_8009FA94 fields, D_8009B4E4 entries, unlock flags, and front-end list/cursor globals on valid code.
+ * @par Callers
+ * Confirmed: func_8007F1F8 (state 0 password commit handler).
+ */
 s32 func_8007EA78(void)
 {
     u8 buf[12];

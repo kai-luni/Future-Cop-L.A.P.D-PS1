@@ -1,3 +1,4 @@
+// Categories: Platform > MDEC | Platform > DMA
 #include "game/types.h"
 
 extern u8 D_80012BC8;
@@ -6,6 +7,29 @@ extern volatile u32 *D_8009E9C8;
 extern volatile u32 *D_8009E9D4;
 extern void func_8008E000(void *arg0, s32 arg1);
 
+/**
+ * @brief Logs an MDEC/DMA timeout and resets the MDEC unit and DMA channels 0 and 1.
+ *
+ * Prints D_80012BC8 ('%s timeout:\n') with arg0 via func_8008E000, writes MDEC reset (0x80000000) to 0x1F801824, zeroes DMA0 MDECin (0x1F801088) and DMA1 MDECout (0x1F801098) control registers, reads back DMA1 CHCR, and sets MDEC1 control to 0x60000000.
+ *
+ * @param arg0 Caller label string passed to printf (e.g. 'MDEC_in_sync' or 'MDEC_out_sync').
+ * @return Always 0.
+ *
+ * @par Globals
+ * D_80012BC8 - '%s timeout:\n' format string; D_8009E9F4 - MDEC1 register (0x1F801824); D_8009E9C8 - DMA0 CHCR (0x1F801088); D_8009E9D4 - DMA1 CHCR (0x1F801098).
+ *
+ * @par Control flow
+ * Straight-line sequence of console output and MMIO writes; no branches or loops.
+ *
+ * @par Calls
+ * func_8008E000 - BIOS printf for timeout diagnostic.
+ *
+ * @par Side effects
+ * Prints diagnostic string, resets MDEC hardware (0x1F801824), and halts DMA channels 0 and 1.
+ *
+ * @par Callers
+ * Confirmed: func_8009635C, func_800963F0.
+ */
 s32 func_8009649C(s32 arg0)
 {
     register s32 result __asm__("$2");

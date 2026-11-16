@@ -1,3 +1,4 @@
+// Categories: Platform > Sound > Voices | Resources > Memory Pools
 #include "game/types.h"
 
 struct SoundChannel {
@@ -38,6 +39,30 @@ extern s32 D_8009F758;
 extern void func_800243F8(s8 *arg0);
 extern void func_80046804(struct SoundVoice *voice);
 
+/**
+ * @brief Stops a sound voice and returns its SoundVoice node to the free and bank lists.
+ *
+ * Returns early if voice->unk10 == 0; otherwise clears unk10, halts the hardware
+ * channel via func_800243F8, unlinks voice from its priority list (D_8009F744/4C/54),
+ * pushes it onto free list D_8009F73C, unlinks its bank list, and clears owner->unk28.
+ *
+ * @param voice Pointer to the SoundVoice node (+0x00 bank, +0x0C priority, +0x10 active, +0x18 owner).
+ *
+ * @par Globals
+ * D_8009F73C/D_8009F740 - free list head/count; D_8009F744/48, D_8009F74C/50, D_8009F754/58 - priority voice lists and counts.
+ *
+ * @par Control flow
+ * Guards on voice->unk10 != 0; switches on priority (0, 2, default) for unlink/decrement; conditionally calls func_80046804 when bank != 0xFF and clears owner->unk28 when owner != 0.
+ *
+ * @par Calls
+ * func_800243F8 - stops channel *(voice + 0xD) via func_8002238C; func_80046804 - unlinks voice from D_800A7938[bank].
+ *
+ * @par Side effects
+ * Mutates voice, priority/free/bank lists and counts, and optionally voice->owner->unk28.
+ *
+ * @par Callers
+ * Confirmed: func_800457B8 (0x80045808), func_800462D0 (0x800463D8, 0x80046620), func_80046A34 (0x80046A40), func_80046B04 (0x80046BE4), func_80046E88 (0x80046F64), func_80046F9C (0x80047058), func_80047554 (0x80047608, 0x8004763C).
+ */
 void func_80046698(struct SoundVoice *voice)
 {
     struct SoundVoice *old;

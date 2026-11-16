@@ -1,3 +1,4 @@
+// Categories: Game Engine > Cheat Codes | Gameplay > Player | Gameplay > Weapons
 #include "game/types.h"
 
 struct Unk3BObject {
@@ -64,6 +65,25 @@ extern void func_8003BA50(struct Unk3BObject *object, s32 value);
 extern void func_8006BDFC(struct Actor *actor, s32 mode);
 extern void func_8006BE90(struct Actor *actor, s32 mode, s32 arg2, s32 arg3);
 
+/**
+ * @brief Hashes an input code word via func_80060DD8 and dispatches matching cheat/debug actions for a player.
+ *
+ * Computes a 10-round LFSR/CRC transform of state and matches 13 magic values for D_8009FA58[index]: full health refill (0x00011081) or max health 0x7FFF + refill (0x0A9CF51C), mission end (0x01ADCFED), 1P actor unk92 toggle (0x016499A4), D_8009FA8C[index] flag (0x031F78DF), weapon ammo/swaps, unkDF |= 1, and +0xC8 score.
+ *
+ * @param state Raw code word hashed by func_80060DD8.
+ * @param index Player index (0 or 1) into D_8009FA58 and D_8009FA8C.
+ * @return 0 if a code matched (result ^ 1), 1 if unrecognized.
+ * @par Globals
+ * D_8009FA58 (player actors), D_8009FA94 (mission/score state), D_8009FA0C (player count), D_8009FA00/D_8009FA70 (screen/exit state), D_8009FA8C (per-player flags).
+ * @par Control flow
+ * Transforms state via func_80060DD8, dispatches a 13-case switch (0x0A9CF51C falls into 0x00011081), and returns result ^ 1.
+ * @par Calls
+ * func_80060DD8 (hash code), func_8005A0C4/func_8003BA50 (health gauge/quartile update), func_8006BE90 (refill weapon slot 0..2), func_8006BDFC (reload/swap special slot 0..2).
+ * @par Side effects
+ * Modifies player health/weapons/flags, mission score/exit state, and D_8009FA8C.
+ * @par Callers
+ * Confirmed: func_800260B8.
+ */
 s32 func_80060A0C(u32 state, s32 index)
 {
     s32 result;

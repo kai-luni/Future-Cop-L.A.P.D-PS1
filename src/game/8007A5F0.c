@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front-End Configuration | Game Engine > Menu System
 #include "game/types.h"
 
 struct Unk78210Mode {
@@ -32,6 +33,28 @@ extern struct Unk78210Panel D_800A38C8;
 
 extern void func_80078650(struct Unk78210Panel *panel, s32 arg1);
 
+/**
+ * @brief Menu-item callback handling player/split-screen option hover timing and sub-panel push on confirm.
+ *
+ * When a0 == 0 (draw/hover), clears D_8009F8E0_arr[player] if cursor moved off a4 and sets preview
+ * scale D_8009BB66/D_8009BBBA to 0x64 (or 0x6E when ready). When a0 == 3 (confirm), writes D_8009F8F0/D_8009F8F4
+ * into D_8009FA94+0x08/+0x98, syncs both players in 2P mode (D_8009F468[5] == 2), and pushes D_800A3868/898/8C8.
+ *
+ * @param a0 Callback phase (0 hover/draw update, 3 confirm action; other values ignored).
+ * @param a1,a2,a3,a4 a1..a3 unused; a4 is the menu item index associated with this callback.
+ *
+ * @par Globals
+ * D_8009FA94 - game mode config (+0x08, +0x5C split flag, +0x98); D_8009F8F0/D_8009F8F4 - selected options;
+ * D_8009F468/D_8009F8B8/D_8009F8E0/D_8009F8E4 - menu cursor, player index, and 2P ready flags; D_8009BB34/D_8009BB66/D_8009BBBA - panel scales.
+ * @par Control flow
+ * Top-level split on a0 == 0 vs a0 == 3, branching on 2P menu mode (D_8009F468[5] == 2) and mode->split == 0.
+ * @par Calls
+ * func_80078650 - pushes the next menu panel (D_800A3868, D_800A3898, or D_800A38C8) with arg1 = 1.
+ * @par Side effects
+ * Updates D_8009FA94 mode fields, 2P ready flags, item scale values, and pushes active menu D_8009F468.
+ * @par Callers
+ * Unknown: no direct calls; address placed as menu-item callback pointers at 0x8009BAE4, 0x8009BB54, and 0x8009BBA8 in asm/us/main.s.
+ */
 void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
 {
     register struct Unk78210Mode *mode __asm__("$6");

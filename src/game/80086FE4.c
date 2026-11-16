@@ -1,3 +1,4 @@
+// Categories: Resources > Movie Playback | Platform > Sound
 #include "game/types.h"
 
 struct Unk9F4D8 {
@@ -11,6 +12,28 @@ extern void func_8008CD10(u8 *arg0, u8 *arg1, u32 arg2);
 
 #define BSWAP(p) ((*(u32 *)(p) >> 24) | ((*(u32 *)(p) >> 8) & 0xFF00) | ((*(u32 *)(p) & 0xFF00) << 8) | (*(u32 *)(p) << 24))
 
+/**
+ * @brief Demuxes an audio movie chunk into the dual-channel 0x3C00-byte ring buffer D_8009F4D8.
+ *
+ * Byte-swaps the big-endian chunk header: "ad*" (0x61640000) skips 0x10 header bytes while "Ad*" skips 0x0C, and "ad2*" (0x61643200) selects split stereo (halving s1, right channel at s2 + s1) rather than duplicating mono. Spins until D_8009F4D8 has s1 free bytes, copies into +0x10 and +0x3C10 (wrapping at 0x3C00), and advances unk04.
+ *
+ * @param arg0 Pointer to big-endian audio chunk header and payload.
+ *
+ * @par Globals
+ * D_8009F4D8 - dual 0x3C00-byte audio ring buffer struct (unk00 read cursor, unk04 write cursor, +0x10/+0x3C10 rings).
+ *
+ * @par Control flow
+ * Header tag/size decode, spin-wait loop for ring space, and wrap-splitting copy branch (s0 >= s1 vs two-piece copy).
+ *
+ * @par Calls
+ * func_8008CD10 - copies payload bytes into the left (+0x10) and right (+0x3C10) ring buffers.
+ *
+ * @par Side effects
+ * Writes D_8009F4D8 ring buffers at +0x10 and +0x3C10 and advances D_8009F4D8->unk04 by s1.
+ *
+ * @par Callers
+ * Confirmed: func_800879DC (0x80087C64, movie stream demuxer) / Likely: none / Unknown: none.
+ */
 void func_80086FE4(u8 *arg0)
 {
     u32 flag;

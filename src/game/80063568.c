@@ -1,3 +1,4 @@
+// Categories: Graphics > Animation | Game Engine > Frame
 #include "game/types.h"
 
 struct AnimEntry {
@@ -24,6 +25,28 @@ extern u8 D_800A2730[];
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
 extern s32 func_80019668(void);
 
+/**
+ * @brief Advances animated entries in D_8009FA04 and updates the 256-entry table D_800A2730.
+ *
+ * Walks D_8009FA04 (skipping flags & 4), stepping types 0..3 by timer/dt (wrap+, wrap-, ping-pong, random via func_80019668) or trig types >= 16 via func_8001846C and copying 3 or 4 u16 values from src to dst. When D_800A2730[0x201] != 0, ticks 256 counters in D_800A2730[0..0xFF] and refills underflows from func_80019668.
+ *
+ * @param dt Frame delta ticks.
+ *
+ * @par Globals
+ * D_8009FA04 - AnimNode linked list; D_800A2730 - 0x202-byte counter/reload table (0x100..0x1FF mirror, 0x200 rem, 0x201 enable).
+ *
+ * @par Control flow
+ * Nested list/entry loops (type < 16 switch vs trig path), followed by a 64x4-byte unrolled loop gated by D_800A2730[0x201].
+ *
+ * @par Calls
+ * func_80019668 - PRNG for type 3 and D_800A2730 refills; func_8001846C - sin/cos lookup for types >= 16.
+ *
+ * @par Side effects
+ * Mutates D_8009FA04 AnimEntry fields, writes dst halfwords, and updates D_800A2730 counters/remainders.
+ *
+ * @par Callers
+ * Confirmed: func_8002703C (0x80027178, main frame tick) / Likely: none / Unknown: none.
+ */
 void func_80063568(s32 dt)
 {
     struct AnimNode *node;

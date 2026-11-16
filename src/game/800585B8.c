@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Game Engine > Command Queue | Gameplay > Player
 #include "game/types.h"
 
 struct Cmd {
@@ -38,6 +39,30 @@ struct Obj58 {
 
 extern void func_8002A5B4(struct Obj58 *self, s32 index);
 
+/**
+ * @brief Executes and consumes player command opcodes 0x5F..0x62 from the 4-slot queue.
+ *
+ * Walks the 2-byte {op, arg} slots at self->commands (+0x0C), stopping on opcode 0.
+ * Handles 0x5F (clear target lock unk6C), 0x60 (add arg << 7 to unkD0), 0x61
+ * (arm state/timers unkA4..unkAE), and 0x62 (set unk2FD when unkC0 == 0).
+ *
+ * @param self Player entity block (+0x0C commands[4], +0xAC Sub58 pointer).
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Loops i = 0..3 breaking on op == 0; unhandled opcodes advance i++, while handled opcodes 0x5F..0x62 dequeue slot i via func_8002A5B4 without advancing i.
+ *
+ * @par Calls
+ * func_8002A5B4 - shifts later command pairs down and zeroes the trailing opcode byte.
+ *
+ * @par Side effects
+ * Mutates self->commands and Sub58 fields unk6C, unkD0, unkA4..unkAE, or unk2FD inside self->unkAC.
+ *
+ * @par Callers
+ * Confirmed: func_800588D4 (0x80058924, player entity tick when self->unk0C != 0).
+ */
 void func_800585B8(struct Obj58 *self)
 {
     s32 i;

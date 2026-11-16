@@ -1,3 +1,4 @@
+// Categories: Physics > Collision | Gameplay > Entity Script
 #include "game/types.h"
 
 struct Coord {
@@ -45,6 +46,29 @@ struct Other {
 
 extern void func_800448D8(void *track, s32 index, s32 direction, s32 flags);
 
+/**
+ * @brief Evaluates 3D proximity collision for a type-32 entity in states 0 and 2.
+ *
+ * Exits unless unkBD is 0 or 2, computes an octagonal 2D horizontal distance between self->coord and other->coord, compares against (unkC6 << 4) + b->unk40 + 0x4000 (state 0) or unk68 + b->unk40 (state 2), folds in |dy| with a second octagonal pass, and on hit triggers clip 1 -> state 1 (state 0) or latches state 5 with countdown 0x190 and target unkD0 (unwrapping type 0x12).
+ *
+ * @param self Type-32 entity block (+0x28 coord, +0x68 radius, +0xA0 anim track, +0xBD state, +0xC6/+0xCC/+0xD0).
+ * @param other Colliding entity (+0x16 type, +0x28 coord with +0x40 radius, +0xB4 parent).
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * State guard (unkBD == 0 || unkBD == 2), nested octagonal 2D/3D threshold checks, and a two-case switch on unkBD.
+ *
+ * @par Calls
+ * func_800448D8 - selects animation clip 1 forward with flag 1 on track self+0xA0 when state 0 triggers.
+ *
+ * @par Side effects
+ * Writes self->unkBD (1 or 5), self->unkCC (0x190), self->unkD0, and updates track self+0xA0.
+ *
+ * @par Callers
+ * Confirmed: func_80030960 (0x80030A00, type-32 message 10 handler) / Likely: none / Unknown: none.
+ */
 void func_80030498(struct Entity *self, struct Other *other)
 {
     struct Coord *a;

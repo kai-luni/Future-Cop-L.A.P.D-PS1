@@ -1,3 +1,4 @@
+// Categories: Platform > SPU | Platform > Sound
 #include "game/types.h"
 
 typedef struct {
@@ -35,6 +36,28 @@ typedef struct {
 
 extern SpuRegisters *D_8009EEA4;
 
+/**
+ * @brief Writes common SPU volume and control attributes to hardware registers (SpuSetCommonAttr).
+ *
+ * Applies fields selected by attr->mask (or all fields when mask == 0) to D_8009EEA4 (0x1F801C00): configures mainVolumeLeft/Right (with optional mode encoding 0x8000..0xE000 and 0..0x7F clamping), cdVolumeLeft/Right, extVolumeLeft/Right, and CD/ext reverb/mix control bits 0..3 in D_8009EEA4->control.
+ *
+ * @param attr SpuCommonAttr struct holding bitmask, main/CD/ext volumes, and reverb/mix toggles.
+ *
+ * @par Globals
+ * D_8009EEA4 - pointer to SPU MMIO register block (0x1F801C00).
+ *
+ * @par Control flow
+ * Sequential mask checks: main left/right with 0..7 mode switch and 0..0x7F clamp, volume register writes, and control bit toggles.
+ *
+ * @par Calls
+ * None.
+ *
+ * @par Side effects
+ * Writes SPU MMIO registers mainVolumeLeft/Right, cdVolumeLeft/Right, extVolumeLeft/Right, and control.
+ *
+ * @par Callers
+ * Confirmed: func_80021824 (0x80021870), func_80086C74 (0x80086CA8) / Likely: none / Unknown: none.
+ */
 void func_80098FE8(SpuCommonAttr *attr)
 {
     s32 mask;

@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Resources > File Access
 #include "game/types.h"
 
 extern u8 D_800A5A80[];
@@ -26,6 +27,29 @@ extern void *memcpy(void *, const void *, u32);
 #define PRINT_STR(S) __asm__ volatile(".set\tnoreorder\n\tlui $4,%%hi(" #S ")\n\tjal func_8008E000\n\taddiu $4,$4,%%lo(" #S ")\n\t.set\treorder" \
     : : : "$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25", "$31", "memory")
 
+/**
+ * @brief Reads the ISO-9660 PVD and path table into D_800A4480..D_800A4488 (CD_newmedia).
+ *
+ * Reads sector 0x10 into D_800A5A80, checks signature "CD001" (D_80012664), reads the path-table sector at buf+0x8C, walks up to 128 path-table records storing directory id, parent id, extent sector, and NUL-terminated name in parallel 44-byte stride tables, and resets cached directory D_8009CBC0 = 0.
+ *
+ * @param void No parameters.
+ * @return 1 on success, 0 on PVD read error, bad volume signature, or path-table read error.
+ *
+ * @par Globals
+ * D_800A5A80 - sector buffer; D_800A4480/D_800A4484/D_800A4488 - 44-byte-stride path table arrays; D_8009CBC0 - cached dir reset; D_8009C8B0 - debug verbosity.
+ *
+ * @par Control flow
+ * Three early error exits (sector 0x10 read, "CD001" compare, path-table read) followed by a bounded loop over <= 128 path records.
+ *
+ * @par Calls
+ * func_8009081C - reads 1 CD sector; func_80090890 - BIOS strncmp checks "CD001"; func_8008CD10 - copies directory name; func_8008E000 - logs progress/errors.
+ *
+ * @par Side effects
+ * Populates D_800A5A80 and D_800A4480..D_800A4488, and zeroes D_8009CBC0.
+ *
+ * @par Callers
+ * Confirmed: func_8008FF20 (0x8008FF60, CD path lookup) / Likely: none / Unknown: none.
+ */
 s32 func_80090218(void)
 {
     register u8 *buf __asm__("$16");

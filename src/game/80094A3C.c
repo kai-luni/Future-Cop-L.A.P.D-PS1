@@ -1,3 +1,4 @@
+// Categories: Platform > GPU | Game Engine > Command Queue
 #include "game/types.h"
 
 struct QueueEntry {
@@ -29,6 +30,28 @@ extern void func_80094CEC(void);
 extern u32 func_800915FC(u32);
 extern void func_800914E0(s32, void (*)(void));
 
+/**
+ * @brief Enqueues or immediately executes a GPU/DMA2 callback job in the 64-entry ring D_800A9450.
+ *
+ * Arms timeout via func_800951D8, drains full ring via func_80094CEC (returning -1 if func_8009520C stalls), masks interrupts, and either runs func(arg1, arg3) directly when GPU DMA2 is idle (unmasked unk1 == 0 or empty ring + idle CHCR/unkC) after GPUSTAT bit 26 ready, or queues it in D_800A9450 with DMA2 IRQ callback func_80094CEC.
+ *
+ * @param func Job callback invoked as func(arg1, arg3).
+ * @param arg1 Payload pointer or inline buffer to copy.
+ * @param arg2 Byte count to copy into D_800A9450[head].data (0 passes arg1 directly).
+ * @param arg3 Second argument forwarded to func.
+ * @return 0 if executed immediately, queue count ((head - tail) & 0x3F) if queued, or -1 on GPU timeout.
+ *
+ * @par Globals
+ * D_800A9450 - 64-entry job ring; D_8009DEE8/D_8009DEEC - head/tail indices; D_8009DDF0/D_8009DEF0 - queue/IRQ state; D_8009DEC8/D_8009DED4 - GPUSTAT/DMA2_CHCR ptrs.
+ * @par Control flow
+ * Full-ring wait loop, direct-dispatch vs queued branch, optional word-copy loop into entry.data, and queue drain trigger.
+ * @par Calls
+ * func_800951D8 - arms timeout; func_8009520C - checks timeout; func_80094CEC - drains ring; func_800915FC - saves/restores IRQ mask; func_800914E0 - sets DMA2 callback.
+ * @par Side effects
+ * Updates D_8009DDF0, D_8009DEF0, D_800A9450, D_8009DEE8, installs DMA2 callback, and invokes func.
+ * @par Callers
+ * Confirmed: func_80094A18 (0x80094A24) / Likely: indirect via jump/dispatch table at 0x8009DDB0 / Unknown: none.
+ */
 s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
 {
     s32 i;

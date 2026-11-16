@@ -1,3 +1,4 @@
+// Categories: Resources > Movie Playback > Stream Demux | Platform > CD-ROM > Streaming
 #include "game/types.h"
 
 typedef struct {
@@ -47,6 +48,34 @@ extern s32 func_80091240(s32 v);
 extern void func_80088F00(void);
 extern void func_800895E4(s32 arg);
 
+/**
+ * @brief Initializes the movie-stream demux context and starts CD streaming playback.
+ *
+ * Zeroes the Unk89700 context arg0, binds D_8009F970/74/78/7C pointers, copies arg3
+ * 24-byte stream descriptors into the 56-byte entry array, saves existing DMA3 and CD
+ * callbacks into unk574/unk578, primes the first entry, and enables CD streaming.
+ *
+ * @param arg0 Caller-supplied buffer holding the Unk89700 header and ring/entry storage.
+ * @param arg1 Callback pointer stored in arg0->unk570.
+ * @param arg2 Array of arg3 24-byte Src89700 stream descriptors.
+ * @param arg3 Number of stream descriptors to copy into D_8009F974.
+ * @return Always 1.
+ *
+ * @par Globals
+ * D_8009F970..D_8009F97C - active context, entries, and ring bounds; D_8009F980/84/88 - ring/entry sizing.
+ *
+ * @par Control flow
+ * Clears arg0, copies arg3 descriptors in a for-loop, swaps out callbacks via func_8008E5D8(0) and func_80091240(0), then calls func_80088F00 and func_800895E4(1).
+ *
+ * @par Calls
+ * func_8001E4C0 - zeroes context; func_8008E5D8, func_80091240 - save/clear DMA3/CD hooks; func_80088F00 - primes first stream entry; func_800895E4 - starts CD stream service.
+ *
+ * @par Side effects
+ * Initializes D_8009F970..D_8009F97C, clears/saves CD/DMA3 callbacks, and starts CD stream mode 0xA0.
+ *
+ * @par Callers
+ * Confirmed: func_80088120 (0x800883FC in asm/us/main.s; edges.json lists start +4 at 0x80088124).
+ */
 s32 func_80089700(Unk89700 *arg0, s32 arg1, Src89700 *arg2, u32 arg3)
 {
     u32 i;

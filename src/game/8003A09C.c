@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Game Engine > Command Queue | Physics > Force Fields
 #include "game/types.h"
 
 struct Cmd {
@@ -22,6 +23,30 @@ struct Script {
 
 extern void func_8002A5B4(struct Script *script, s32 index);
 
+/**
+ * @brief Executes and consumes opcode 0x6E toggle commands for a force-field entity.
+ *
+ * Scans the 4-entry 2-byte command queue at script->commands (+0x0C), stopping on
+ * opcode 0; for opcode 0x6E it updates bit 0 of script->unk140, resets the two
+ * accumulated force slots unk11C[0..1], and dequeues the command via func_8002A5B4.
+ *
+ * @param script Force-field entity block (+0x0C commands[4], +0x11C unk11C[2], +0x140 effectFlags).
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Loops i = 0..3 breaking on op == 0; op == 0x6E toggles unk140 bit 0, zeroes unk11C[0..1].a/b, and calls func_8002A5B4 without advancing i; other ops increment i.
+ *
+ * @par Calls
+ * func_8002A5B4 - shifts remaining command slots down and clears the trailing opcode.
+ *
+ * @par Side effects
+ * Modifies script->commands, clears script->unk11C[0..1].a/b, and sets/clears bit 0 of script->unk140.
+ *
+ * @par Callers
+ * Confirmed: func_8003A160 (0x8003A1A0, force-field per-frame tick when command byte +0x0C is non-zero).
+ */
 void func_8003A09C(struct Script *script)
 {
     s32 i;

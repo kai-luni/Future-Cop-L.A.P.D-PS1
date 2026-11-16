@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Resources > File Access
 #include "game/types.h"
 
 typedef struct Entry { s32 a, b; char name[16]; } Entry;
@@ -11,6 +12,30 @@ extern s32 func_80090580(s32);
 extern s32 func_800901F8(char *, char *);
 extern void func_8008E000(char *, ...);
 
+/**
+ * @brief Resolves a backslash-delimited ISO-9660 path to a CD directory entry (CdSearchFile).
+ *
+ * Refreshes the ISO path table via func_80090218 if D_8009CBC4 != D_8009C8BC, rejects paths not starting with '\\', walks up to 7 directory levels via func_800904DC, caches the leaf directory with func_80090580, scans up to 64 entries in D_800A3E80 with func_800901F8, and copies the matched 24-byte Entry to *out.
+ *
+ * @param out Destination Entry struct receiving location, size, and filename.
+ * @param path NUL-terminated ISO path string starting with '\\'.
+ * @return Pointer to matched entry in D_800A3E80, or 0 on media change failure, depth >= 8, invalid path, or missing file.
+ *
+ * @par Globals
+ * D_8009CBC4/D_8009C8BC - media-change sync counters; D_800A3E80/D_800A3E88 - cached directory entries/names; D_8009C8B0 - debug verbosity.
+ *
+ * @par Control flow
+ * Media-change guard, path-component parsing loop (< 8 components), directory load, and linear scan over <= 64 cached entries.
+ *
+ * @par Calls
+ * func_80090218 - reads PVD/path table; func_800904DC - resolves dir id; func_80090580 - caches dir sector; func_800901F8 - 12-byte name match; func_8008E000 - debug logs.
+ *
+ * @par Side effects
+ * Updates D_8009CBC4, refreshes ISO path/directory caches, and writes *out on match.
+ *
+ * @par Callers
+ * Confirmed: func_8001D424 (0x8001D548, file open) / Likely: none / Unknown: none.
+ */
 Entry *func_8008FF20(Entry *out, char *path)
 {
     char buf[32];

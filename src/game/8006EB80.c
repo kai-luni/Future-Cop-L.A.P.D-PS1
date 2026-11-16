@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Graphics > Effects | Physics > Motion
 #include "game/types.h"
 
 typedef struct {
@@ -70,6 +71,27 @@ extern u8 D_8006E814[];
 extern void *func_80017EBC(s32, s32);
 extern void func_8003C14C(Dest6EB80 *, Source6EB80 *);
 
+/**
+ * @brief Allocates and initializes a 0xA0-byte kind-0x5C effect/mesh object from a source spawn template.
+ *
+ * Confirmed: allocates 0xA0 bytes (tag 1) via func_80017EBC, snaps src->unk40 down to a multiple of 8 clamped to >= 8, initializes dest fields (+0x64..+0x98), calls func_8003C14C(dest, src), sets dest->unk24 = D_8006E814 (func_8006E814), and scales unk64 by flags (+0x98 bits 2 and 4) into unk08 or unk0A (selected by bit 0).
+ * Category follows caller func_8003E984 (spawn switch case 0x5C), motion init func_8003C14C, and pooled-mesh handler func_8006E814.
+ * Likely: constructor for kind-0x5C deformable-mesh effect entities; Unknown: exact semantic meaning of +0x7A/+0x7E (0xE2), +0x80 (0x20), +0x82 (0x19), and +0x08/+0x0A.
+ *
+ * @param src Pointer to Source6EB80 spawn descriptor (+0x34..+0x52 read; +0x40 may be quantized and clamped in place).
+ * @return Pointer to initialized 0xA0-byte Dest6EB80 object, or null (0) if func_80017EBC fails.
+ *
+ * @par Globals
+ * None (uses address of func_8006E814, declared as D_8006E814).
+ * @par Control flow
+ * Early return on null allocation; src->unk40 alignment/clamp checks; linear field setup and func_8003C14C call; three bitmask branches on unk98 (&4, &0x10, &1) setting unk08/unk0A.
+ * @par Calls
+ * func_80017EBC - allocates 0xA0 bytes from heap tag 1; func_8003C14C - initializes motion/physics fields on dest from src.
+ * @par Side effects
+ * Allocates heap memory, may mutate src->unk40 in place, and binds func_8006E814 as dest->unk24 handler.
+ * @par Callers
+ * Confirmed: func_8003E984 (0x8003EB54 in asm/us/main.s, switch case 0x5C on source->kind) / Likely: none / Unknown: none.
+ */
 void *func_8006EB80(Source6EB80 *src)
 {
     Dest6EB80 *dest;

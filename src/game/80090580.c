@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Resources > File Access
 #include "game/types.h"
 
 struct CdlLOC {
@@ -39,6 +40,29 @@ extern void *memcpy(void *, const void *, u32);
 #define HIADDR(o) ({ u8 *a_; __asm__ volatile("lui %0,0x800a\n\taddu %0,%0,%1" : "=&r"(a_) : "r"(o)); a_; })
 #define LOADX(op, S, o) ({ s32 v_; __asm__("lui %0,%%hi(" #S ")\n\taddu %0,%0,%1\n\t" op " %0,%%lo(" #S ")(%0)" : "=&r"(v_) : "r"(o)); v_; })
 
+/**
+ * @brief Reads and caches an ISO-9660 directory sector into D_800A3E80 (CD_cachefile).
+ *
+ * Returns 1 immediately if arg0 == D_8009CBC0; otherwise reads 1 sector from directory offset table D_800A445C[arg0 * 0x2C] into D_800A5A80, parses up to 64 variable-length ISO directory records (storing BCD CdlLOC, size, and "."/".." or NUL-terminated names in D_800A3E80[]), and updates D_8009CBC0.
+ *
+ * @param arg0 Directory index into D_800A445C (stride 0x2C bytes).
+ * @return 1 on cache hit or successful parse, -1 if sector read fails.
+ *
+ * @par Globals
+ * D_8009CBC0 - cached directory index; D_800A445C - directory sector table; D_800A5A80 - 2048-byte sector buffer; D_800A3E80 - 64-entry DirEntry cache; D_8009C8B0 - debug verbosity.
+ *
+ * @par Control flow
+ * Cache-hit fast return, sector-read failure exit, and record-walk loop over D_800A5A80 (compiled without an external memcpy call) stopping at *p == 0 or i >= 0x40.
+ *
+ * @par Calls
+ * func_8009081C - reads 1 CD sector; func_8008E61C - converts LBA to CdlLOC; func_8008CD10 - copies entry name; func_8008E000 - logs directory info.
+ *
+ * @par Side effects
+ * Populates D_800A5A80 and D_800A3E80[0..63] and updates D_8009CBC0.
+ *
+ * @par Callers
+ * Confirmed: func_8008FF20 (0x80090090, CD file search) / Likely: none / Unknown: none.
+ */
 s32 func_80090580(s32 arg0)
 {
     u8 *p;

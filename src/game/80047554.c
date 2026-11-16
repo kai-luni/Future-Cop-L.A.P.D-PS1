@@ -1,3 +1,4 @@
+// Categories: Platform > Sound > Shutdown | Platform > Sound > Voices | Platform > SPU
 #include "game/types.h"
 
 struct Unk47554Node {
@@ -32,6 +33,30 @@ extern void func_80021B90(void);
 extern void func_80021BD0(s32 voice);
 extern s32 func_800474F0(struct Unk4749CHandle *handle);
 
+/**
+ * @brief Halts active sound voices, music streams, and CD audio, optionally sparing one node.
+ *
+ * Clears D_8009F739, shuts down stream/CD audio via func_80023E84 (when node == 0) and
+ * func_80024630(0), stops player track loops in D_8009FA58, releases queued handles,
+ * frees priority 1/2 and priority 0 voices, and mutes SPU channels via func_80021BD0/B90.
+ *
+ * @param node Optional SoundVoice node in D_8009F74C to keep playing (others muted), or null to mute all.
+ *
+ * @par Globals
+ * D_8009F739 - audio enable byte (cleared); D_8009FA58 - player objects; D_8009F32C/D_800A10C0 - tracked handles; D_8009F744/D_8009F74C - active voice lists.
+ *
+ * @par Control flow
+ * Stops streams/CD audio, loops over 2 D_8009FA58 slots, drains D_800A10C0 and D_8009F744, walks D_8009F74C skipping node, and mutes SPU voices.
+ *
+ * @par Calls
+ * func_80023E84, func_80024630 - stop stream/CD playback; func_80047088 - stop player track (0x27); func_800474F0, func_80046698 - release handles/voices; func_80021BD0, func_80021B90 - mute SPU.
+ *
+ * @par Side effects
+ * Clears D_8009F739, stops streams and voices, frees voice nodes, and mutes SPU hardware channels.
+ *
+ * @par Callers
+ * Confirmed: func_80047690 (0x800476B8, disable audio with arg 0), func_800476D0 (0x80047710, transition/pause audio).
+ */
 void func_80047554(struct Unk47554Node *node)
 {
     s32 i;

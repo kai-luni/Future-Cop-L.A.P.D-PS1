@@ -1,3 +1,4 @@
+// Categories: Physics > Collision | Gameplay > Player
 #include "game/types.h"
 
 struct Vec3 {
@@ -59,6 +60,29 @@ extern struct Unk5220CEntity *D_8009FA58[];
 extern s32 func_80052098(struct Unk5220CEntity *self, struct Unk5220CCoord *coordA,
                          struct Unk5220CCoord *coordB, struct Unk5220CEntity *other);
 
+/**
+ * @brief Checks player entity collisions against D_800A8DC0 candidates and the rival player.
+ *
+ * Reads self->info (+0xAC), returns 0 immediately in single-player (D_8009FA0C == 1) when D_800A8DC0[playerIndex].count is 0, mirrors self->coord and self->unk5C into info->coord and info->unk290, tests up to 8 id-matched list entries via func_80052098, and in two-player mode (D_8009FA0C == 2) also tests D_8009FA58[1 - playerIndex] if !(flags & 4).
+ *
+ * @param self Player entity block (+0x28 coord, +0x5C vec, +0xAC player info with +0xC1 playerIndex).
+ * @return Total number of collisions reported by func_80052098.
+ *
+ * @par Globals
+ * D_800A8DC0 - per-player 8-slot candidate collision list; D_8009FA0C - active player count (1 or 2); D_8009FA58 - two-slot player entity array.
+ *
+ * @par Control flow
+ * Early return for empty list in mode 1, counted loop over min(count, 8) entries gated by entry->id == other->id, and conditional rival check in mode 2.
+ *
+ * @par Calls
+ * func_80052098 - tests 3D proximity/bounding collision and triggers hit damage and response.
+ *
+ * @par Side effects
+ * Writes info->coord and info->unk290, and applies hit damage/response through func_80052098.
+ *
+ * @par Callers
+ * Confirmed: func_80053A74 (0x800544F4), func_800549F0 (0x8005563C) / Likely: none / Unknown: none.
+ */
 s32 func_8005220C(struct Unk5220CEntity *self)
 {
     struct Unk5220CInfo *info;

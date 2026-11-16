@@ -1,3 +1,4 @@
+// Categories: Input > Controller Setup | Platform > Controller Input
 #include "game/types.h"
 
 struct PadActuator {
@@ -18,6 +19,29 @@ extern struct PadActuator D_800A6FF8[];
 
 extern void func_8001EBA8(s32 port);
 
+/**
+ * @brief Enables or disables vibration actuator support for a controller port.
+ *
+ * Clamps port to [0, 1] and sets D_800A6FF8[port].enabled to 1 when enable is non-zero; when enable is 0, stops both motors via func_8001EBA8(port) before clearing enabled.
+ *
+ * @param port Controller port index (clamped to 0 or 1).
+ * @param enable Non-zero enables actuators on port; 0 stops motors and disables them.
+ *
+ * @par Globals
+ * D_800A6FF8 - PadActuator array; writes .enabled (+0x17) for the clamped port.
+ *
+ * @par Control flow
+ * Clamps port to 0..1 using signed comparisons, then branches on enable != 0.
+ *
+ * @par Calls
+ * func_8001EBA8 - stops both actuator motors on port when disabling.
+ *
+ * @par Side effects
+ * Writes D_800A6FF8[port].enabled and, when disabling, clears motor outputs via func_8001EBA8.
+ *
+ * @par Callers
+ * Confirmed: func_8007C80C, func_8007C940, func_80080984.
+ */
 void func_8001EC04(s32 port, s32 enable)
 {
     s32 clamped;

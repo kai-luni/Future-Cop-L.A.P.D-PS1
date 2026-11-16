@@ -1,3 +1,4 @@
+// Categories: Platform > Memory Card | Resources > Save Data
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
@@ -8,6 +9,31 @@ extern void *func_8001E4C0(void *destination, int value, unsigned int count);
 extern void func_80020B28(void *records);
 extern s32 func_8001F180(void);
 
+/**
+ * @brief Formats an empty PS1 memory-card image buffer and queues a card format write.
+ *
+ * Zeroes 0x1200 bytes at D_8009AB08 + 0x9B0, writes the "MC" header frame and 15
+ * free directory frames (0xA0 tag, 0xFFFF link, XOR checksum at byte 0x7F), fills
+ * the broken-sector table via func_80020B28, and queues command 5 when idle.
+ *
+ * @param void No parameters.
+ * @return 1 if func_8001F180() reports the card manager is busy, else 0 after queuing format.
+ *
+ * @par Globals
+ * D_8009AB08 - card manager base (+0x9B0 36-sector image, +0x8F8 command=5, +0x998/+0x99C/+0x910 transfer parameters).
+ *
+ * @par Control flow
+ * Loops over 16 directory frames (0x80 bytes each) computing XOR checksums, calls func_80020B28, returns 1 early if busy, else sets command 5.
+ *
+ * @par Calls
+ * func_8001E4C0 - clears 0x1200-byte buffer; func_80020B28 - fills broken-sector records 16..35; func_8001F180 - checks card manager busy state.
+ *
+ * @par Side effects
+ * Rebuilds the 0x1200-byte card image in D_8009AB08 and queues a 35-sector write (unk8F8 = 5).
+ *
+ * @par Callers
+ * Confirmed: func_8008204C (0x80082058, 0x80082084, card format/wait loop).
+ */
 int func_80020B64(void)
 {
     u8 *records;

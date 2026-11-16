@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Platform > Interrupts
 extern volatile unsigned char *D_8009CB6C;
 extern volatile unsigned char *D_8009CB70;
 extern volatile unsigned char *D_8009CB74;
@@ -20,6 +21,29 @@ extern void func_8008FF08();
     { register unsigned char *d __asm__("$4") = dst; unsigned char *s = buf; int n; \
       if (d) { for (n = 7; n != -1; n--) { *d++ = *s++; } } }
 
+/**
+ * @brief Dequeues and dispatches one pending CD-ROM hardware interrupt event.
+ *
+ * Reads stable IRQ flags (*D_8009CB78 & 7), drains up to 8 response bytes from *D_8009CB70, acknowledges the IRQ on 0x1F801802/3, updates D_8009C8B4/D_8009C8B8 and shell-open counter D_8009C8BC, logs Disk Error on mode 5, and dispatches modes 1..5 to update D_8009CB84 and copy response packets into D_800A3E50/D_800A3E58/D_800A3E60.
+ *
+ * @param void No parameters.
+ * @return Event bitmask for callers (4 for INT1/INT4, 2 for INT2/INT3, 1 for INT3 ack, 6 for INT5, 0 if none/unknown).
+ *
+ * @par Globals
+ * D_8009CB6C..D_8009CB78 - CD ports; D_8009CB84/D_800A3E50..D_800A3E60 - slot status/result buffers; D_8009C8B0..D_8009C8CC/D_8009C96C/D_8009CA6C - CD flags/tables.
+ *
+ * @par Control flow
+ * Early return on zero IRQ, FIFO drain loop, optional status update, error log, and 5-way jump-table switch on mode.
+ *
+ * @par Calls
+ * func_8008E000 - prints Disk Error / unknown intr details; func_8008FF08 - prints "CDROM: unknown intr".
+ *
+ * @par Side effects
+ * Acknowledges CD IRQs, updates CD status/result buffers and shell-open counter D_8009C8BC, and clears port 0/3 on INT1.
+ *
+ * @par Callers
+ * Confirmed: func_8008ECFC (0x8008EE64), func_8008EF7C (0x8008F0E4), func_8008F244 (0x8008F540), func_8008FE28 (0x8008FE5C) / Likely: none / Unknown: none.
+ */
 int func_8008E7A0(void)
 {
     volatile unsigned char mode;

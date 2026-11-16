@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Platform > Interrupts
 typedef int s32;
 typedef unsigned int u32;
 struct State {
@@ -69,6 +70,26 @@ static __inline__ void wait_again(s32 *callbacks)
     }
 }
 
+/**
+ * @brief Cancels an active CD read by waiting for pending transfer completion, restoring callbacks, and issuing CD command 9.
+ *
+ * Confirmed: calls func_8008E5FC(0) when D_8009C814 & 1 is set, clears D_8009CBD0.unk14, runs wait_ready on D_8009CBD0.busy (polling func_80091270(-1) up to 121 ticks), restores D_8009CBFC[0..1] via func_8008E1A8/func_8008E5D8, installs D_800908A0 (func_800908A0) via func_8008E194, issues func_8008E2F8(9, 0), sets busy = 1, and waits via wait_again.
+ * Category follows CD-ROM state D_8009CBD0, mode flag D_8009C814, callback hooks func_8008E194/func_8008E1A8/func_8008E5D8, and CD command retry func_8008E2F8.
+ * Likely: PSX libcd CdReadBreak routine issuing CdlPause (command 9) with a 121-frame timeout fallback; Unknown: exact meaning of D_8009CBD0.unk14 vs busy.
+ *
+ * @param void No parameters.
+ *
+ * @par Globals
+ * D_8009C814 - CD flags (bit 0 gates func_8008E5FC/func_8008E5D8); D_8009CBD0 / D_8009CBF8 / D_8009CBFC - CD read state and saved callback words; D_800908A0 - func_800908A0 completion handler address.
+ * @par Control flow
+ * Optional mode-sync call, inline wait_ready poll loop (121-tick timeout), callback swap and command-9 dispatch when wait_ready returns nonzero (idle or timed out), then inline wait_again loop.
+ * @par Calls
+ * func_8008E5FC - resets mode when D_8009C814 & 1; func_80091270 - reads counter D_8009DD50; func_8008E1A8/func_8008E5D8/func_8008E194 - swap CD/data callbacks; func_8008E2F8 - sends CD command 9.
+ * @par Side effects
+ * Modifies D_8009CBD0.unk14 and busy, swaps CD/DMAC callbacks via func_8008E194/func_8008E1A8/func_8008E5D8, and issues CD command 9.
+ * @par Callers
+ * Confirmed: none in pkg_m1.md, analysis/edges.json, or asm/us/main.s / Likely: unreferenced PSX libcd CdReadBreak routine in this build / Unknown: any indirect caller outside static references.
+ */
 void func_80090E00(void)
 {
     register s32 *callbacks __asm__("$17");

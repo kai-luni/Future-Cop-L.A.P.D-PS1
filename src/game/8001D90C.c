@@ -1,3 +1,4 @@
+// Categories: Resources > File Access | Platform > Memory Card
 typedef signed int s32;
 typedef unsigned int u32;
 struct Entry { volatile s32 state; s32 start, size, pos, flags, pad; };
@@ -5,6 +6,29 @@ extern struct Entry D_800A6D78[];
 extern char func_80010010[];
 extern s32 func_8001D0A0(s32);
 extern s32 func_8001CE54(s32, s32, s32, void (*)(s32,s32));
+
+/**
+ * @brief Executes a bounded read/write transfer on an open file slot in D_800A6D78.
+ *
+ * Validates slot index (0..3) and non-busy state, waits out states 2/3, marks state 3, checks pos-start against size (returning -14 on EOF), clamps count to remaining bytes (clearing byte 0x80010024 when flags == 0x11 reaches EOF), runs func_8001D0A0 for non-type-1 slots, calls func_8001CE54, advances pos, and invokes the completion callback.
+ *
+ * @param index Slot index 0..3 into D_800A6D78.
+ * @param arg1 Transfer buffer or address passed to func_8001CE54.
+ * @param arg2 Requested byte count, clamped to remaining slot size.
+ * @param arg3 Optional completion callback invoked as arg3(transferred, status).
+ * @return Transferred byte count on success, or negative status (-9, -14, or callee error).
+ *
+ * @par Globals
+ * D_800A6D78 - 4-slot file table (state, start, size, pos, flags); byte 0x80010024 cleared on flags == 0x11 EOF.
+ * @par Control flow
+ * Busy-wait loop on states 2/3, EOF clamp, conditional pre-transfer setup when (flags & 15) != 1, transfer call, and error/completion branches.
+ * @par Calls
+ * func_8001D0A0 - prepares non-type-1 transfer slot; func_8001CE54 - performs card/file I/O operation; arg3 - completion callback.
+ * @par Side effects
+ * Updates D_800A6D78[index].state and .pos, clears 0x80010024 on flags == 0x11 EOF, and fires arg3.
+ * @par Callers
+ * Confirmed: func_8001DB60 (0x8001DBBC, 0x8001DC1C), func_8001E004 (0x8001E0B8) / Likely: none / Unknown: none.
+ */
 s32 func_8001D90C(s32 index, volatile s32 arg1, s32 arg2, void (*arg3)(s32,s32))
 {
     register s32 count __asm__("$19") = arg2;

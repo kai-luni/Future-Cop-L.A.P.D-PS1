@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object Setup | Gameplay > Map | Graphics > Scene List
 typedef unsigned char u8;
 typedef signed short s16;
 typedef signed int s32;
@@ -23,6 +24,26 @@ extern u32 *func_8003B3D8(u32 column, u32 row);
 extern void func_8003C4C4(u8 column, s32 row, u8 bits);
 extern void func_8003C500(s32 column, s32 stop, s32 row);
 
+/**
+ * @brief Traverses object-descriptor chains in one row of D_800A7040 and flags active or cyclic nodes in D_800A6578.
+ *
+ * Confirmed: zeroes a 256-entry local s16 table, scans D_800A7040[arg0][1..255], skips empty, visited, or already-flagged (bit 0x4 via func_8003B3D8) slots, follows cell->next (+0x15) chains while marking bit 0x4 via func_8003C4C4 when (unk28==0 && unk2A>0) or (unk20==0 && type in {0x57..0x59} or (type==0x5C && unk48==0)), and calls func_8003C500 on cycle closure.
+ * Category follows D_800A7040/D_800A6578 spawn-descriptor tables used by func_8003E984 and invoked twice during teardown in func_8003FAD4.
+ * Likely: propagates reachability/visibility flag bit 0x4 across descriptor chains and cycles for bank arg0 (0 or 1); Unknown: exact meaning of flag bit 0x4 in D_800A6578.
+ *
+ * @param arg0 Row bank index into D_800A7040 and D_800A6578 (0 or 1 in func_8003FAD4).
+ *
+ * @par Globals
+ * D_800A7040 - 2D array of UnkC590Cell descriptor pointers (1024-byte row stride); D_800A6578 - flag grid read/updated via func_8003B3D8 and func_8003C4C4.
+ * @par Control flow
+ * Outer loop over i = 1..255 with inner chain_loop following cell->next (+0x15), a switch on cell->type (+0x04), and early cycle exit via func_8003C500 when table[cell->next] == i.
+ * @par Calls
+ * func_8003B3D8 - checks bit 0x4 in D_800A6578; func_8003C4C4 - sets bit 0x4 on qualifying nodes; func_8003C500 - marks bit 0x4 along a closed cycle from i to current.
+ * @par Side effects
+ * Sets bit 0x4 in D_800A6578 entries for qualifying descriptor chains and cycles in row arg0.
+ * @par Callers
+ * Confirmed: func_8003FAD4 (0x8003FAE4 with arg0=0, 0x8003FAEC with arg0=1 during screen teardown) / Likely: none / Unknown: none.
+ */
 void func_8003C590(s32 arg0)
 {
     s16 table[256];

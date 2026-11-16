@@ -1,3 +1,4 @@
+// Categories: Resources > Asset Loader | Gameplay > Map
 #include "game/types.h"
 
 typedef struct {
@@ -43,6 +44,28 @@ extern void func_800834C4(s32 width, s32 height);
                      : "r"(x), "0"(dst)                    \
                      : "$2", "$3", "$4", "$8", "$9")
 
+/**
+ * @brief Parses the map header chunk ("GRDB") and initializes world bounds and cell grids.
+ *
+ * Scans arg0->unk00..+arg0->unk20 for the last record tagged 0x47524442 ("GRDB"), publishes it to D_8009F80C, rotates and negates its origin vector unk0C, populates map world bounds and fixed-point 0x360000 inverse spans in D_800A2950[0..5] and cell counts in D_800A2970[4..5], and allocates D_8009F820 and two auxiliary cell grids.
+ *
+ * @param arg0 Loaded map resource descriptor (+0x00 data base, +0x20 byte length).
+ *
+ * @par Globals
+ * D_8009F810/D_8009F80C - active map descriptor and "GRDB" payload; D_800A2950/D_800A2970 - world bounds and cell dimension tables; D_8009F820 - allocated 16-byte-per-cell grid buffer.
+ *
+ * @par Control flow
+ * Single do-while scan over chunk headers (advancing by *(u32 *)(ptr + 4)), followed by straight-line coordinate setup and grid allocations.
+ *
+ * @par Calls
+ * func_80017EBC - allocates D_8009F820 (tag 2); func_800496D0 - allocates/clears D_8009F780 pointer grid; func_800834C4 - allocates/clears D_8009F938 8-byte cell grid.
+ *
+ * @par Side effects
+ * Writes D_8009F810, D_8009F80C, D_800A2950, D_800A2970, D_8009F820, mutates unk0C in place, and initializes sub-grids.
+ *
+ * @par Callers
+ * Confirmed: func_80024EC8 (0x80025210, level asset loader) / Likely: none / Unknown: none.
+ */
 void func_80063DC8(Unk63DC8 *arg0)
 {
     u32 magic;

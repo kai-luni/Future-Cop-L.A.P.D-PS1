@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Platform > Sound | Game Engine > Frame
 #include "game/types.h"
 
 struct Entity {
@@ -31,6 +32,28 @@ extern void func_8004572C(s32, s32, s32, s32, s32);
 extern void func_800457B8(s32, s32);
 extern void func_8004DEE0(struct Entity *);
 
+/**
+ * @brief Culls world entities in D_8009FA40 by proximity, builds active list D_800A8F98, updates entity sounds, and triggers one script.
+ *
+ * Walks D_8009FA40 measuring octagonal distance to D_8009FA58/D_8009FA5C (or override D_8009F9A0),
+ * shrinks limit from 0x38000 down toward 0x20000 if count reaches capacity D_800A8F94, maintains
+ * active flag 0x20000000 and ambient channel flag 0x400000, stores count in D_800A8F90, and runs the nearest 0x100000 script.
+ *
+ * @param void No parameters.
+ *
+ * @par Globals
+ * D_8009FA58/D_8009FA5C/D_8009F9A0 - distance reference entities; D_8009FA40 - master entity list;
+ * D_800A8F90/D_800A8F94/D_800A8F98 - active count, capacity, and output array; D_8009FAA4/D_8009F7A4 - tick and 0x12C-tick script cooldown.
+ * @par Control flow
+ * Outer retry loop reducing limit by 0x4000 on overflow; inner do-while over D_8009FA40 testing octagonal distance against 0x21FFF and limit.
+ * @par Calls
+ * func_80045678 - starts looping entity sound (stores channel in unk22); func_8004572C - updates sound coords;
+ * func_800457B8 - stops channel when out of range/inactive; func_8004DEE0 - runs closest bestEnt->script once per 0x12C ticks.
+ * @par Side effects
+ * Rewrites D_800A8F90/D_800A8F98, D_8009F7A4, entity flags/unk22, active sound channels, and runs one entity script.
+ * @par Callers
+ * Confirmed: func_80027510 (two-player unpaused frame loop).
+ */
 void func_8004E248(void)
 {
     s32 flag;

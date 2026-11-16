@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Lifecycle | Game Engine > Object Pool
 #include "game/types.h"
 
 struct Unk3CA80 {
@@ -39,6 +40,30 @@ extern struct NodeC *D_8009F30C;
 extern void func_800181D4(void *arg);
 extern void func_8003CA80(struct Unk3CA80 *object);
 
+/**
+ * @brief Tears down active flagged slots and frees deferred nodes owned by a given key.
+ *
+ * Walks all 7 lists in D_800A1070[0..6], invoking func_8003CA80 on entries whose
+ * flags bit 2 is set and whose owner key (unk1C->unk04 when unk1C != 0 && unk38 == 0,
+ * else 0) matches arg_, then unlinks and frees matching NodeC items from D_8009F30C.
+ *
+ * @param arg_ Owner/key value matched against NodeA->unk1C->unk04 (or 0) and NodeC->unk10.
+ *
+ * @par Globals
+ * D_800A1070 - array of 7 active NodeA linked lists; D_8009F30C - singly-linked deferred NodeC list.
+ *
+ * @par Control flow
+ * Outer loop i = 0..6 over D_800A1070[i] with owner-match guard, followed by a singly-linked filter/unlink pass over D_8009F30C.
+ *
+ * @par Calls
+ * func_8003CA80 - dispatches message 7 to node->callback and marks slot retired; func_800181D4 - frees unlinked NodeC blocks.
+ *
+ * @par Side effects
+ * Fires message 7 teardown callbacks, mutates NodeA slots, unlinks from D_8009F30C, and frees NodeC blocks.
+ *
+ * @par Callers
+ * Confirmed: func_8003BAE4 (0x8003BB08, called before placing entity into map grid columns).
+ */
 void func_8003B6A4(s32 arg_)
 {
     register s32 arg __asm__("$19");

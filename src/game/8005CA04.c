@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Gameplay > Damage | Physics > Collision
 #include "game/types.h"
 
 /* Second half of the original 8005C344.c: the catalogue treats this as its own
@@ -60,6 +61,30 @@ struct Obj2 {
 
 extern s32 func_8005C344(struct Owner *owner, struct Target *t);
 
+/**
+ * @brief Message handler for beam/segment-sweep attack instances installed at node +0x24 by func_8005CBCC.
+ *
+ * Dispatches messages 1 (tick/sweep), 2 (latch target flag), and 3 (activate flags) when
+ * obj->unk20->type (+0x04) == 0x57; message 1 ticks target->unk18 lifetime, retires on
+ * underflow or missing target->unk08, and invokes func_8005C344 to advance the segment sweep.
+ *
+ * @param msg Message id (1 tick, 2 set target flag 1, 3 activate).
+ * @param obj Obj2 instance (+0x0F/+0x10 state bytes, +0x1C Mid, +0x20 Tag, +0x24 handler, +0x8E flags).
+ * @param arg2,arg3 Elapsed tick delta subtracted from (*obj->unk1C->unk48)->unk18 in msg 1; arg3 unused.
+ * @return Always 0.
+ *
+ * @par Globals
+ * None directly (func_8005C344 uses D_800A8F90 and D_8009F374).
+ * @par Control flow
+ * Switch on msg (1, 2, 3) with nested type == 0x57, lifetime underflow, and null-target checks.
+ * @par Calls
+ * func_8005C344 - advances segment chain and tests hits against D_800A8F90 in msg 1;
+ * indirect obj->handler(8, obj, 0, 0) (+0x24) when t->unk18 drops below 0.
+ * @par Side effects
+ * Mutates obj flags (+0x0F, +0x10, +0x8E), target lifetime/flags (+0x18, +0x28), and runs segment damage sweep.
+ * @par Callers
+ * Confirmed: address taken as D_8005CA04 in func_8005CBCC (0x8005CDE0, stored at node+0x24). / Likely: entity update loop via node+0x24.
+ */
 s32 func_8005CA04(u32 msg, struct Obj2 *obj, s32 arg2, s32 arg3)
 {
     struct Target *t;

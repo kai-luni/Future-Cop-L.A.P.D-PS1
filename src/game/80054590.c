@@ -1,3 +1,4 @@
+// Categories: Gameplay > Player > On-Foot Locomotion | Physics > Motion
 #include "game/types.h"
 
 struct Unk54590Obj {
@@ -30,6 +31,27 @@ extern void func_8001ABE0(s32 scale, s32 *vec);
     __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
                      : "=r"(out) : "r"(a), "r"(b) : "$8", "$9")
 
+/**
+ * @brief Computes a player entity's movement delta vector from facing direction, steering mode, drag, and gravity.
+ *
+ * Projects speed a1 along facing (unkA0, unkA8) with strafe (a2 != 0) or 45-degree 181/256 rotation (f != 0), scales by unkAC[0x147], calls func_80053730, applies either ground damping (unkB9 & 1 or unkBB in {0xB,0xC,0xE,0x10}) or cubic air/velocity drag plus thrust, and adds -0x9800 gravity to out[1].
+ *
+ * @param obj Player object (+0xA0/+0xA8 facing, +0xAC sub-block, +0xB9 flags, +0xBB state).
+ * @param a1 Drive speed (0 clears out[0] and out[2]).
+ * @param a2 Non-zero selects lateral strafe orientation.
+ * @param out Output 3D delta vector [x, y, z].
+ * @param f Diagonal steering mode (0 = straight, 1/2 = 45-degree rotation).
+ * @par Globals
+ * None directly; func_80053730 writes D_8009FA64 in 2P mode.
+ * @par Control flow
+ * Computes drive vector; applies unkAC[0x147] scale if non-zero; calls func_80053730; branches between grounded/special damping and cubic velocity drag; appends -0x9800 to out[1].
+ * @par Calls
+ * func_80053730 (2P separation distance), func_8001A7AC (2D velocity magnitude), func_8001ABE0 (scale drag vector).
+ * @par Side effects
+ * Writes out[0..2] movement delta and (via func_80053730) D_8009FA64.
+ * @par Callers
+ * Confirmed: func_800549F0.
+ */
 void func_80054590(struct Unk54590Obj *obj, s32 a1, s32 a2, s32 *out, s32 f)
 {
     register struct Unk54590Obj *o __asm__("$19");

@@ -1,3 +1,4 @@
+// Categories: Physics > Collision | Gameplay > Damage | Gameplay > Entity Update
 #include "game/types.h"
 
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
@@ -25,6 +26,27 @@ extern s32 func_80061CAC(struct Coord *coordA, struct Coord *coordB);
 extern void func_80058378(void *self, s32 amount, s32 source);
 extern void func_80051EB8(void *self, struct Coord *coordB, s32 ret, s32 flags);
 
+/**
+ * @brief Performs cylindrical bounds and narrow-phase part collision, then applies damage and response.
+ *
+ * Tests 2D octagonal distance between coordA and coordB (+0x34/+0x3C) against (coordA->unk46 + coordB->unk46) << 4 and vertical delta (+0x38) against (coordA->unk44 + coordB->unk44) << 4. On overlap and non-zero func_80061CAC result, applies damage via func_80058378 and collision response via func_80051EB8.
+ *
+ * @param self Target entity receiving damage and collision push/response.
+ * @param coordA Target coord/bounds (+0x34..+0x3C pos, +0x44 half-height, +0x46 radius).
+ * @param coordB Colliding entity's coord/bounds (same layout).
+ * @param other Colliding entity descriptor (+0x08 id, +0x1A damage unk1A, +0x24 flags).
+ * @return 1 if collision succeeded and damage/response ran, 0 otherwise.
+ * @par Globals
+ * None.
+ * @par Control flow
+ * Early-returns 0 on horizontal octagonal miss, vertical delta miss, or func_80061CAC == 0; otherwise applies damage/response and returns 1.
+ * @par Calls
+ * func_80061CAC - narrow-phase part pair hit test; func_80058378 - apply damage other->unk1A; func_80051EB8 - apply collision response.
+ * @par Side effects
+ * Damages target entity and updates target position/state through func_80058378 and func_80051EB8.
+ * @par Callers
+ * Confirmed: func_8005220C.
+ */
 s32 func_80052098(void *self, struct Coord *coordA, struct Coord *coordB, struct Entity *other)
 {
     s32 flags;

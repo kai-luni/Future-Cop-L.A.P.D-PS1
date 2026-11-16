@@ -1,3 +1,4 @@
+// Categories: Game Engine > Options Menu | Platform > Sound
 #include "game/types.h"
 
 typedef struct {
@@ -54,6 +55,31 @@ extern s32 func_80045288(void);
 extern s32 func_800452C8(void);
 extern void func_80046A34(s32 handle);
 extern s32 func_80046C84(s32 id, s32 arg1);
+
+/**
+ * @brief Options-menu callback that toggles global sound enable and updates widget label D_8009BABE[0].
+ *
+ * When invoked with action `arg0` in `{1, 2}`, plays sound cue `0x47`, flips the sound-enable word (`D_8009F730`) via func_800451E0/func_800451B4, and writes `0x100E` (on) or `0x1018` (off) into D_8009BABE[0]. Category Game Engine > Options Menu | Platform > Sound follows widget table D_8009BA38 and audio getters/setters.
+ *
+ * @param arg0 Menu action code; only values `1` and `2` (`0 < arg0 && arg0 < 3`) execute the toggle.
+ *
+ * @par Globals
+ * D_8009BABE - menu item text-id halfword (`D_8009BABE[0]` inside D_8009BA38 entry 4) set to `0x100E` or `0x1018`.
+ *
+ * @par Control flow
+ * Guards on `arg0 < 3 && arg0 > 0`, triggers cue + toggle, then branches on func_800451E0() to select the label id.
+ *
+ * @par Calls
+ * func_80046C84 - triggers menu sound cue `(0x47, 0)`.
+ * func_800451E0 - reads current sound enable flag (called once to invert, once to pick D_8009BABE[0]).
+ * func_800451B4 - writes inverted enable flag and reapplies effect volume D_8009F334.
+ *
+ * @par Side effects
+ * Plays cue `0x47`, toggles sound mute/mixer state, and mutates D_8009BABE[0].
+ *
+ * @par Callers
+ * Confirmed: none direct; address `0x8007D27C` sits at `0x8009BAAC` in D_8009BA38 (bound by func_80077AD4) / Likely: indirect call from menu input loop / Unknown: exact call site.
+ */
 void D_8007D27C(s32 arg0)
 {
 

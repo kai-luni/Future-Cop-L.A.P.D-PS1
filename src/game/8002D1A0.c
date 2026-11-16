@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Physics > Collision | Gameplay > Scoring
 #include "game/types.h"
 
 struct Coord {
@@ -85,6 +86,29 @@ extern struct Ent *D_8009F9EC;
 extern struct Menu *D_8009FA94;
 extern void func_80069D68();
 
+/**
+ * @brief Handles proximity capture and team ownership transfer for an objective entity.
+ *
+ * Requires self->unkFE == 0 and matching team unkF6/unkF7 on other (types 1/0x12 checked in D_8009FA58 with unk40 == 0, or types 5/0x25). Tests octagonal 2D/3D distance against (unkFC << 4) + b->unk40 + 0x4000; on hit latches unkFE (1/2), propagates team/counters to self and unk104, updates scores, and runs unk9C script.
+ *
+ * @param self Objective entity block (+0x18/+0xF6..+0xFE capture fields, +0x9C script, +0x104 child).
+ * @param other Candidate capturing entity (+0x14 id, +0x16 type, +0x18 team, +0x28 coord).
+ *
+ * @par Globals
+ * D_8009FA58 - two-slot player entity array; D_8009FA0C - player count; D_8009F9EC - single-player state; D_8009FA94 - match scoring counters.
+ *
+ * @par Control flow
+ * Uncaptured/team/type guards (2-slot player scan for 1/0x12), 2D/3D octagonal distance checks (2D-only for 0x25), and 1P vs 2P scoring.
+ *
+ * @par Calls
+ * func_80069D68 - executes self->unk9C bytecode script when non-empty and flag 0x100000 is set.
+ *
+ * @par Side effects
+ * Updates capture/team/counter fields on self and self->unk104, increments scores in D_8009FA94/D_8009F9EC/D_8009FA58, and runs unk9C.
+ *
+ * @par Callers
+ * Confirmed: func_8002D664 (0x8002D6FC, message 10 handler for type 0x24) / Likely: none / Unknown: none.
+ */
 void func_8002D1A0(struct Ent *self, struct Ent *other)
 {
     s32 i;

@@ -1,3 +1,4 @@
+// Categories: Platform > Sound > DMA | Platform > Interrupts | BIOS > System Calls
 #include "game/types.h"
 
 typedef void (*SpuDmaCallback)(void);
@@ -13,6 +14,28 @@ extern void func_800979F8(SpuDmaCallback callback);
 extern void func_8008C970(void *arg);
 extern void func_8008C990(void *arg);
 
+/**
+ * @brief Tears down the SPU DMA completion event and clears its driver callback inside a critical section.
+ *
+ * Counterpart to func_80096E40: if D_8009EE94 is 1, clears D_8009EE94, enters a critical section, zeroes D_8009EEDC and D_8009EEE0, clears the channel-4 SPU DMA callback via func_800979F8(0), closes and disables BIOS event D_8009EA2C, and exits the critical section.
+ *
+ * @param void No parameters.
+ *
+ * @par Globals
+ * D_8009EE94 - init guard cleared to 0; D_8009EEDC/D_8009EEE0 - SPU DMA state/callback words cleared; D_8009EA2C - BIOS event handle.
+ *
+ * @par Control flow
+ * Guarded by D_8009EE94 == 1; straight-line teardown inside Enter/ExitCriticalSection.
+ *
+ * @par Calls
+ * func_8008C9A0/func_8008C9B0 - critical section (syscall 0 codes 1/2); func_800979F8 - clear channel-4 SPU DMA callback; func_8008C970 - BIOS B0:09 (CloseEvent); func_8008C990 - BIOS B0:0D (DisableEvent).
+ *
+ * @par Side effects
+ * Zeroes D_8009EE94/D_8009EEDC/D_8009EEE0, disarms SPU DMA callback, and closes/disables BIOS event D_8009EA2C.
+ *
+ * @par Callers
+ * Confirmed: func_80021C80.
+ */
 void func_80097A48(void)
 {
     if (D_8009EE94 == 1) {

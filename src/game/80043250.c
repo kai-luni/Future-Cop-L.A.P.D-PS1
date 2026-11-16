@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects | Game Engine > Object Setup
 #include "game/types.h"
 
 typedef struct {
@@ -19,6 +20,26 @@ typedef struct {
     s16 a6;
 } Unk43250;
 
+/**
+ * @brief Computes Q12 per-tick colour-channel step deltas (+0x96..+0x9A) for a particle emitter block.
+ *
+ * Zeroes v96/v98/v9A when duration a6 (+0xA6) < 0x10; otherwise divides either the summed
+ * base RGB (a8F+a90+a91) uniformly when flags (+0x8C) bit 1 is set, or each (end - start) channel
+ * difference (a92..a94 minus a8F..a91) by a6, then swaps start/end bytes for any negative delta.
+ *
+ * @param p Emitter block holding flags (+0x8C), start RGB (+0x8F..+0x91), end RGB (+0x92..+0x94), deltas (+0x96..+0x9A), and duration a6 (+0xA6).
+ *
+ * @par Globals
+ * None.
+ * @par Control flow
+ * Mode check on (p->flags & 1), duration guard a6 < 0x10 in each branch, followed by three independent sign checks swapping start/end bytes.
+ * @par Calls
+ * None.
+ * @par Side effects
+ * Writes p->v96, p->v98, p->v9A and swaps any start/end byte pairs whose computed delta is negative.
+ * @par Callers
+ * Confirmed: func_80043430 (particle/effect emitter initializer).
+ */
 void func_80043250(Unk43250 *p)
 {
     if (p->flags & 0x01) {
