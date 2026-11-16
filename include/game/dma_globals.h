@@ -21,10 +21,12 @@
  *   0x1F8010A8 DMA2 channel control  (direction, step, sync mode, start)
  *   0x1F801098 DMA1 channel control (MDEC input)
  *   0x1F8010B8 DMA3 channel control (CD-ROM)
- *   0x1F8010F0 DMA control (per-channel priority and enable)
+ *   0x1F8010F0 DMA control (per-channel priority and enable); retail holds
+ *              three pointers to it: D_8009DD1C, D_8009DEE4, D_8009EEB4
  *   0x1F8010F4 DMA interrupt control (channel enables, channel flags)
  */
 
+#define DMA_CONTROL_GPU_ASM "D_8009DEE4"
 #define DMA_CONTROL_ASM "D_8009DD1C"
 #define DMA_INTERRUPT_CTRL_ASM "D_8009DD60"
 #define DMA1_CHANNEL_CTRL_ASM "D_8009E9D4"

@@ -14,7 +14,7 @@ extern volatile u32 D_8009DEEC;
 extern u32 D_8009DEE8;
 extern u32 D_8009DEF8;
 extern u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
-extern u32 *D_8009DEE4;
+extern u32 *gDmaControlGpuPtr __asm__("D_8009DEE4");
 extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u8 D_800A62C8[];
 extern u8 D_800A9450[];

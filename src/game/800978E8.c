@@ -1,5 +1,7 @@
 // Categories: Platform > Register Configuration
-extern unsigned int *D_8009EEB4;
+#include "game/spu_globals.h"
+
+extern unsigned int *gSpuDelayCtrlPtr __asm__("D_8009EEB4");
 
 /**
  *  @brief Selects one of two bit patterns in a pointed-to control word.
@@ -20,10 +22,10 @@ extern unsigned int *D_8009EEB4;
  */
 void func_800978E8(int arg0)
 {
-    *D_8009EEB4 &= 0xFFF8FFFFU;
+    *gSpuDelayCtrlPtr &= 0xFFF8FFFFU;
     if (arg0) {
-        *D_8009EEB4 |= 0x30000U;
+        *gSpuDelayCtrlPtr |= 0x30000U;
     } else {
-        *D_8009EEB4 |= 0x50000U;
+        *gSpuDelayCtrlPtr |= 0x50000U;
     }
 }

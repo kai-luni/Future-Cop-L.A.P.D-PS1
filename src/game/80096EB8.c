@@ -46,7 +46,7 @@ typedef struct {
     u16 fE;
 } Voice;
 
-extern u32 *D_8009EEB4;
+extern u32 *gSpuDelayCtrlPtr __asm__("D_8009EEB4");
 extern Spu *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern s32 D_8009EEC0;
 extern s32 D_8009EEC4;
@@ -104,8 +104,8 @@ s32 func_80096EB8(s32 arg0)
     u8 *arr;
     register s32 ret __asm__("$2");
 
-    v = *D_8009EEB4 | 0xB0000;
-    *D_8009EEB4 = v;
+    v = *gSpuDelayCtrlPtr | 0xB0000;
+    *gSpuDelayCtrlPtr = v;
     spu = gSpuRegBasePtr;
     D_8009EEC0 = 0;
     D_8009EEC4 = 0;

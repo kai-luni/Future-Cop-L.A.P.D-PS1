@@ -7,7 +7,7 @@ typedef unsigned int u32;
 extern int D_8009DEFC, D_8009DF00;
 extern volatile u32 D_8009DEEC;
 extern u32 D_8009DEE8, D_8009DEF8;
-extern volatile u32 *D_8009DEE4;
+extern volatile u32 *gDmaControlGpuPtr __asm__("D_8009DEE4");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gDma2MemAddrPtr __asm__("D_8009DECC");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
@@ -62,7 +62,7 @@ fail:
         D_8009DEF8 = saved;
         D_8009DEE8 = D_8009DEEC;
         *gDma2ChannelCtrlPtr = 0x401;
-        *D_8009DEE4 |= 0x800;
+        *gDmaControlGpuPtr |= 0x800;
         *gGpuGp1PortPtr = 0x2000000;
         *gGpuGp1PortPtr = 0x1000000;
         func_800915FC(D_8009DEF8);

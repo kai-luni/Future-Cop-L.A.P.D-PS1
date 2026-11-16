@@ -19,5 +19,6 @@
  */
 
 #define SPU_REGS_ASM "D_8009EEA4"
+#define SPU_DELAY_REGS_ASM "D_8009EEB4"
 
 #endif /* GAME_SPU_GLOBALS_H */
