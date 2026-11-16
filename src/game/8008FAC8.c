@@ -1,11 +1,13 @@
 // Categories: Platform > Device Wait | Platform > Memory Card
+#include "game/dma_globals.h"
+
 typedef unsigned char u8;
 extern int D_800A3E68, D_800A3E6C;
 extern char *D_800A3E70;
 extern char D_80012594[], D_80012488[], D_80012498[];
 extern int D_8009C8CC[], D_8009C94C[];
 extern u8 D_8009CB84[], D_8009C8C5;
-extern int *D_8009CBB0;
+extern int *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
 extern int func_80091270(int);
 extern void func_8008FF08(char *);
 extern void func_8008E000(char *, char *, int, int);
@@ -120,7 +122,7 @@ int func_8008FAC8(int mode)
             __asm__("addu %0,$0,$0" : "=r"(ret));
         }
         if (ret != 0) return -1;
-        if (!(*D_8009CBB0 & 0x1000000)) return 0;
+        if (!(*gDma3ChannelCtrlPtr & 0x1000000)) return 0;
     } while (saved_mode == 0);
     return 1;
 }

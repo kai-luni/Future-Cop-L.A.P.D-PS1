@@ -16,13 +16,14 @@ reads through the pointer afterwards.
 | `D_8009C788` | `gInterruptStatusPtr` | `0x8009C788` | `0x1F801070` | interrupt status (I_STAT) |
 | `D_8009DD18` | `gInterruptMaskPtr` | `0x8009DD18` | `0x1F801074` | interrupt mask (I_MASK) |
 | `D_8009C78C` | `gSio0RegBasePtr` | `0x8009C78C` | `0x1F801040` | SIO0 register block (pad/memory card) |
+| `D_8009CBB0` | `gDma3ChannelCtrlPtr` | `0x8009CBB0` | `0x1F8010B8` | DMA3 channel control (CD-ROM) |
 
 Per-variable detail, evidence and function lists:
 [`D_8009DEC4.md`](D_8009DEC4.md), [`D_8009DEC8.md`](D_8009DEC8.md),
 [`D_8009DECC.md`](D_8009DECC.md), [`D_8009DED0.md`](D_8009DED0.md),
 [`D_8009DD60.md`](D_8009DD60.md), [`D_8009DD1C.md`](D_8009DD1C.md),
 [`D_8009C788.md`](D_8009C788.md), [`D_8009DD18.md`](D_8009DD18.md),
-[`D_8009C78C.md`](D_8009C78C.md).
+[`D_8009C78C.md`](D_8009C78C.md), [`D_8009CBB0.md`](D_8009CBB0.md).
 
 ## Two different accesses
 

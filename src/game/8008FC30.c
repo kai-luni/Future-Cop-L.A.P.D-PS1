@@ -1,4 +1,6 @@
 // Categories: Platform > Hardware Transfer
+#include "game/dma_globals.h"
+
 typedef unsigned char u8;
 typedef unsigned int u32;
 extern volatile u8 *D_8009CB6C;
@@ -8,7 +10,7 @@ extern volatile u32 *D_8009CB7C;
 extern volatile u32 *D_8009CBA4;
 extern volatile u32 *D_8009CBA8;
 extern volatile u32 *D_8009CBAC;
-extern volatile u32 *D_8009CBB0;
+extern volatile u32 *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
 
 /**
  *  @brief Configures and waits for a hardware transfer to a destination.
@@ -43,8 +45,8 @@ int func_8008FC30(u32 destination, u32 size)
     p = D_8009CB6C;
     __asm__ volatile("nop" : "+r"(p));
     while ((*p & 0x40) == 0) {}
-    *D_8009CBB0 = 0x11000000;
-    while (*D_8009CBB0 & 0x1000000) {}
+    *gDma3ChannelCtrlPtr = 0x11000000;
+    while (*gDma3ChannelCtrlPtr & 0x1000000) {}
     *D_8009CB7C = 0x1325;
     return 0;
 }
