@@ -1,10 +1,12 @@
 // Categories: Platform > Hardware Control
+#include "game/intc_globals.h"
+
 typedef unsigned short u16;
 typedef unsigned int u32;
 typedef int s32;
 
 extern s32 D_8009CC8C[];
-extern volatile short *D_8009DD18;
+extern volatile short *gInterruptMaskPtr __asm__("D_8009DD18");
 extern void func_8008D7B0(s32);
 extern void func_8008CA20(s32, s32);
 
@@ -40,7 +42,7 @@ s32 func_800918BC(s32 index, s32 value)
     if (value == old) return old;
     state = (char *)base - 4;
     if (*(u16 *)((char *)base - 4)) {
-        hw = D_8009DD18;
+        hw = gInterruptMaskPtr;
         sample = (u16)*hw;
         *hw = 0;
         __asm__("" : "+r"(sample) : "m"(*hw));
@@ -64,7 +66,7 @@ s32 func_800918BC(s32 index, s32 value)
         if (index == 4) func_8008CA20(0, !value);
         if (index == 5) func_8008CA20(1, !value);
         if (index == 6) func_8008CA20(2, !value);
-        *D_8009DD18 = bits;
+        *gInterruptMaskPtr = bits;
     }
     return old;
 }

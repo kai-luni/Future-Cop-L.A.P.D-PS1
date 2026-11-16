@@ -1,11 +1,14 @@
 // Categories: Platform > Interrupt Dispatch
+#include "game/intc_globals.h"
+
 typedef unsigned short u16;
 typedef unsigned int u32;
 typedef void (*Callback)(void);
 struct State { u16 active, busy; Callback handlers[11]; u16 mask; };
 extern struct State D_8009CC88;
 extern u16 D_8009CCB8, D_8009CC8A;
-extern u16 *D_8009DD14, *D_8009DD18;
+extern u16 *D_8009DD14;
+extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern int D_8009DD20;
 extern char D_80012830[], D_8001284C[];
 extern void func_8008E000(char *, ...);
@@ -55,7 +58,7 @@ void func_800916EC(void)
     __asm__ volatile ("" : "+r"(mask));
     state->busy = 1;
     __asm__ volatile ("" : : : "memory");
-    pb1 = D_8009DD18;
+    pb1 = gInterruptMaskPtr;
     __asm__ volatile ("" : "+r"(pa1), "+r"(pb1));
     if ((pending = mask & *pa1 & *pb1)) {
     one = 1;
@@ -72,13 +75,13 @@ void func_800916EC(void)
             pending >>= 1;
             i++;
         }
-    } while ((pending = D_8009CCB8 & *D_8009DD14 & *D_8009DD18));
+    } while ((pending = D_8009CCB8 & *D_8009DD14 & *gInterruptMaskPtr));
     }
     {
     register u16 *pa __asm__("$5");
     register u16 *pb __asm__("$6");
     pa = D_8009DD14;
-    pb = D_8009DD18;
+    pb = gInterruptMaskPtr;
     __asm__("" : "+r"(pa), "+r"(pb));
     if (*pa & *pb) {
         int *cnt;

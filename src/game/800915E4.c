@@ -1,7 +1,9 @@
 // Categories: Game Engine > State Access
+#include "game/intc_globals.h"
+
 #include "game/types.h"
 
-extern u16 *D_8009DD18;
+extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 
 /**
  *  @brief Returns the unsigned halfword referenced by a global pointer.
@@ -22,5 +24,5 @@ extern u16 *D_8009DD18;
  */
 u16 func_800915E4(void)
 {
-    return *D_8009DD18;
+    return *gInterruptMaskPtr;
 }

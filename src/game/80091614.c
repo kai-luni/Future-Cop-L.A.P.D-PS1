@@ -1,4 +1,6 @@
 // Categories: Platform > Initialization
+#include "game/intc_globals.h"
+
 #include "game/dma_globals.h"
 
 typedef unsigned short u16;
@@ -12,7 +14,7 @@ typedef struct Other {
 extern char D_8009CC88[];
 extern char D_8009CCC4[];
 extern volatile u16 *D_8009DD14;
-extern volatile u16 *D_8009DD18;
+extern volatile u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern volatile u32 *gDmaControlPtr __asm__("D_8009DD1C");
 extern Other *D_8009DD10;
 extern void func_80091B1C(void *, unsigned int);
@@ -53,7 +55,7 @@ void *func_80091614(void)
     __asm__("" : "+r"(p));
     if (*(u16 *)p != 0) return 0;
     a = D_8009DD14;
-    b = D_8009DD18;
+    b = gInterruptMaskPtr;
     *b = 0;
     *a = *b;
     *gDmaControlPtr = 0x33333333;

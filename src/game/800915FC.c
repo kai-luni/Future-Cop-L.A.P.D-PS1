@@ -1,7 +1,9 @@
 // Categories: Platform > Interrupts
+#include "game/intc_globals.h"
+
 #include "game/types.h"
 
-extern u16 *D_8009DD18;
+extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 
 /**
  * @brief Atomically swaps the 16-bit PS1 interrupt mask register (I_MASK) via D_8009DD18.
@@ -28,7 +30,7 @@ extern u16 *D_8009DD18;
  */
 u16 func_800915FC(u16 a0)
 {
-    u16 old = *D_8009DD18;
-    *D_8009DD18 = a0;
+    u16 old = *gInterruptMaskPtr;
+    *gInterruptMaskPtr = a0;
     return old;
 }

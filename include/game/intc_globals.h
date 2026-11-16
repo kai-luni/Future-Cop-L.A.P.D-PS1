@@ -14,8 +14,10 @@
  * Declare the pointer where it is used and bind it with these labels:
  *
  *   extern volatile u32 *gInterruptStatusPtr __asm__(INT_STATUS_ASM);
+ *   extern volatile u16 *gInterruptMaskPtr __asm__(INT_MASK_ASM);
  */
 
 #define INT_STATUS_ASM "D_8009C788"
+#define INT_MASK_ASM "D_8009DD18"
 
 #endif /* GAME_INTC_GLOBALS_H */

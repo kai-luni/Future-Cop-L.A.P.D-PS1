@@ -1,4 +1,6 @@
 // Categories: Platform > CD-ROM | Platform > Hardware Init
+#include "game/intc_globals.h"
+
 #include "game/dma_globals.h"
 
 #include "game/types.h"
@@ -12,7 +14,7 @@ typedef struct {
 } Context;
 
 extern Context D_8009CC88;
-extern u16 *D_8009DD18;
+extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern u32 *gDmaControlPtr __asm__("D_8009DD1C");
 extern void func_80091B80(void *);
 extern void func_8008C9B0(void);
@@ -48,7 +50,7 @@ Context *func_80091AA4(void)
         goto busy;
     func_80091B80(ctx->payload);
     ctx->active = 1;
-    *D_8009DD18 = ctx->value;
+    *gInterruptMaskPtr = ctx->value;
     dest = gDmaControlPtr;
     __asm__ volatile("" : "+r"(dest));
     value = ctx->data;
