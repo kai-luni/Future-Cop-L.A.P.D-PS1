@@ -7,7 +7,7 @@ typedef unsigned char u8;
 typedef unsigned int u32;
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern volatile u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
-extern volatile u32 *D_8009CBA0;
+extern volatile u32 *gCdromAccessDelayPtr __asm__("D_8009CBA0");
 extern volatile u32 *D_8009CB7C;
 extern volatile u32 *D_8009CBA4;
 extern volatile u32 *D_8009CBA8;
@@ -39,7 +39,7 @@ int func_8008FC30(u32 destination, u32 size)
     volatile u8 *p;
     *gCdromIndexStatusPtr = 0;
     *gCdromRequestStatusPtr = 0x80;
-    *D_8009CBA0 = 0x20943;
+    *gCdromAccessDelayPtr = 0x20943;
     *D_8009CB7C = 0x1323;
     *D_8009CBA4 |= 0x8000;
     *D_8009CBA8 = destination;

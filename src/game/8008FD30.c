@@ -7,7 +7,7 @@
 
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern volatile u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
-extern volatile u32 *D_8009CBA0;
+extern volatile u32 *gCdromAccessDelayPtr __asm__("D_8009CBA0");
 extern volatile u32 *D_8009CB7C;
 extern volatile u32 *D_8009CBA4;
 extern volatile u32 *D_8009CBA8;
@@ -42,7 +42,7 @@ int func_8008FD30(u32 destination, u32 size)
 
     *gCdromIndexStatusPtr = 0;
     *gCdromRequestStatusPtr = 0x80;
-    *D_8009CBA0 = 0x21020843;
+    *gCdromAccessDelayPtr = 0x21020843;
     *D_8009CB7C = 0x1325;
     *D_8009CBA4 |= 0x8000;
     *D_8009CBA8 = destination;
