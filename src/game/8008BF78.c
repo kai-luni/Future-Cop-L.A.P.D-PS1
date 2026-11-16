@@ -5,7 +5,7 @@ typedef signed int s32;
 typedef unsigned short u16;
 struct E { char pad[0xF0]; };
 struct H { char pad[10]; u16 v; };
-extern s32 D_8009C768;
+extern s32 gPadSlotIndex __asm__("D_8009C768");
 extern s32 D_8009C76C;
 extern s32 D_8009C77C;
 extern s32 D_8009C780[];
@@ -47,10 +47,10 @@ void func_8008BF78(s32 arg)
     __asm__("" : "+r"(a));
     __asm__("" : "+r"(base), "+r"(tab), "+r"(neg));
     do {
-        struct E *p = (struct E *)(D_8009C768 * 240 + base);
+        struct E *p = (struct E *)(gPadSlotIndex * 240 + base);
         if (a != neg) {
             if (!a) {
-                tab[D_8009C768] = zero;
+                tab[gPadSlotIndex] = zero;
             } else {
                 func_8008C77C(p);
                 func_8008C06C(p);
@@ -58,8 +58,8 @@ void func_8008BF78(s32 arg)
         }
         D_8009C76C = 0;
         gSio0CtrlPtr->v = 0;
-        D_8009C768++;
-        done = (D_8009C77C < D_8009C768) ? 1 : func_8008A6CC((struct E *)(D_8009C768 * 240 + base));
+        gPadSlotIndex++;
+        done = (D_8009C77C < gPadSlotIndex) ? 1 : func_8008A6CC((struct E *)(gPadSlotIndex * 240 + base));
         a = 0xFFFF;
     } while (!done);
 }

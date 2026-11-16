@@ -8,7 +8,7 @@ typedef struct {
     volatile u8 unk36;
 } Unk8008B810;
 
-extern u32 D_8009C768;
+extern u32 gPadSlotIndex __asm__("D_8009C768");
 extern u32 D_8009C778;
 extern u32 D_8009C764;
 extern u32 D_8009C758;
@@ -41,7 +41,7 @@ s32 func_8008B810(Unk8008B810 *arg0)
 {
     register Unk8008B810 *a0 __asm__("$4");
 
-    if (D_8009C768 == D_8009C778) {
+    if (gPadSlotIndex == D_8009C778) {
         if (D_8009C764 != 0) {
             ((void (*)(void))D_8009C758)();
             ((void (*)(void))D_8009C754)();

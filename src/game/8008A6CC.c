@@ -9,7 +9,7 @@ typedef signed int s32;
 struct State { u8 a[4]; volatile u16 status; u8 b[2]; volatile u16 x; volatile u16 flags; u8 c[2]; volatile u16 y; };
 struct Obj { u8 a[12]; u8 *data; u8 b[0x2C]; u8 *p; u8 c[0x10]; u8 v50; u8 d[0x97]; u8 ve8; };
 extern struct State *gSio0RegBasePtr __asm__("D_8009C78C");
-extern s32 D_8009C768;
+extern s32 gPadSlotIndex __asm__("D_8009C768");
 extern s32 D_8009C780[];
 extern void (*D_8009C748)(void *);
 extern void (*D_8009C74C)(void *);
@@ -49,7 +49,7 @@ s32 func_8008A6CC(struct Obj *obj)
     gSio0RegBasePtr->x = 13;
     gSio0RegBasePtr->y = 0x88;
     func_8008C890(obj->ve8 == 8 ? 0x50 : 0x91);
-    idx = D_8009C768;
+    idx = gPadSlotIndex;
     state = gSio0RegBasePtr;
     flags = 0x1003;
     if (idx) flags = 0x3003;
@@ -68,15 +68,15 @@ s32 func_8008A6CC(struct Obj *obj)
                 base = (s32 *)arr;
                 __asm__("" : "+r"(base));
                 do {
-                    n = --base[D_8009C768];
+                    n = --base[gPadSlotIndex];
                     D_8009C748(obj->data + n * 240);
-                } while (base[D_8009C768] > 0);
+                } while (base[gPadSlotIndex] > 0);
                 __asm__ volatile ("" ::: "memory");
             }
             {
                 register s32 index __asm__("$2");
                 register u8 *arr2 __asm__("$3");
-                index = D_8009C768;
+                index = gPadSlotIndex;
                 __asm__("" : "+r"(index));
                 arr2 = (u8 *)0x800a0000;
                 __asm__("" : "+r"(arr2));

@@ -26,7 +26,7 @@ extern void (*D_8009C734)();
 extern void (*D_8009C748)(u8 *);
 extern void (*D_8009C74C)(u8 *);
 extern UnkBA34_Item *D_8009C75C;
-extern s32 D_8009C768;
+extern s32 gPadSlotIndex __asm__("D_8009C768");
 extern s32 D_8009C774;
 extern s32 D_8009C780[2];
 extern s32 D_8009C7A0;
@@ -95,7 +95,7 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
         }
     }
 
-    idx = (D_8009C768 == 0);
+    idx = (gPadSlotIndex == 0);
     while (D_8009C7A0 >= 2) {
         if (D_8009C780[idx] < 0) {
             break;
