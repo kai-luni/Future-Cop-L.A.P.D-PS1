@@ -3,7 +3,7 @@
 
 typedef unsigned char u8;
 typedef unsigned int u32;
-extern volatile u8 *D_8009CB74;
+extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u32 *D_8009CB7C;
@@ -39,7 +39,7 @@ void func_8008F6D8(void)
     while (*gCdromRequestStatusPtr & 7) {
         *gCdromIndexStatusPtr = 1;
         *gCdromRequestStatusPtr = 7;
-        *D_8009CB74 = 7;
+        *gCdromParameterPtr = 7;
     }
     {
         register volatile u8 *state __asm__("$3") = D_8009CB84;

@@ -4,8 +4,8 @@
 #include "game/types.h"
 
 extern u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
-extern u8 *D_8009CB70;
-extern u8 *D_8009CB74;
+extern u8 *gCdromCommandPtr __asm__("D_8009CB70");
+extern u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 
 /**
@@ -30,12 +30,12 @@ extern u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 s32 func_8008F650(u8 *arg0)
 {
     *gCdromIndexStatusPtr = 2;
-    *D_8009CB74 = arg0[0];
+    *gCdromParameterPtr = arg0[0];
     *gCdromRequestStatusPtr = arg0[1];
 
     *gCdromIndexStatusPtr = 3;
-    *D_8009CB70 = arg0[2];
-    *D_8009CB74 = arg0[3];
+    *gCdromCommandPtr = arg0[2];
+    *gCdromParameterPtr = arg0[3];
     *gCdromRequestStatusPtr = 0x20;
 
     return 0;

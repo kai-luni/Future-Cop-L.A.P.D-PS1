@@ -2,8 +2,8 @@
 #include "game/cdrom_globals.h"
 
 extern volatile unsigned char *gCdromIndexStatusPtr __asm__("D_8009CB6C");
-extern volatile unsigned char *D_8009CB70;
-extern volatile unsigned char *D_8009CB74;
+extern volatile unsigned char *gCdromCommandPtr __asm__("D_8009CB70");
+extern volatile unsigned char *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile unsigned char *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern unsigned char D_8009C8C5;
 extern int D_8009CA6C[];
@@ -66,7 +66,7 @@ int func_8008E7A0(void)
     }
     for (s0 = 0; s0 < 8; s0++) {
         if (!(*gCdromIndexStatusPtr & 0x20)) break;
-        buf[s0] = *D_8009CB70;
+        buf[s0] = *gCdromCommandPtr;
     }
     {
         int i = s0;
@@ -74,7 +74,7 @@ int func_8008E7A0(void)
     }
     *gCdromIndexStatusPtr = 1;
     *gCdromRequestStatusPtr = 7;
-    *D_8009CB74 = 7;
+    *gCdromParameterPtr = 7;
     if (mode == 3) {
         register int index __asm__("$2");
         register int value __asm__("$2");

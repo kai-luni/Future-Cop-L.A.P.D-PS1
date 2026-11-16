@@ -8,7 +8,8 @@ typedef int s32;
 extern int D_8009C8B0, D_8009CAEC[], D_8009C9EC[];
 extern int D_8009C8CC[], D_8009C94C[];
 extern u8 D_8009C8C0[], D_8009C8C4, D_8009C8C5, D_8009CB84[];
-extern volatile u8 *D_8009CB70, *D_8009CB74;
+extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
+extern volatile u8 *gCdromCommandPtr __asm__("D_8009CB70");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern int D_800A3E68, D_800A3E6C;
 extern char *D_800A3E70;
@@ -134,7 +135,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
                         __asm__("" : "+r"(idx), "+r"(lim_ptr));
                         do {
                             p = param + idx;
-                            *D_8009CB74 = *p;
+                            *gCdromParameterPtr = *p;
                             idx++;
                         } while (idx < *lim_ptr);
                     }
@@ -143,7 +144,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
         }
     }
     {
-        register volatile u8 *p70 __asm__("$2") = D_8009CB70;
+        register volatile u8 *p70 __asm__("$2") = gCdromCommandPtr;
         __asm__("" : "+r"(p70));
         D_8009C8C5 = s1;
         *p70 = s1;

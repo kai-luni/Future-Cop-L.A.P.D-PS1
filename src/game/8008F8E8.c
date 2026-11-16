@@ -10,7 +10,7 @@ extern char D_8009CB88[];
 extern void D_8008FE28(void);
 extern u8 D_8009C8C5, D_8009C8C4;
 extern u32 D_8009C8AC, D_8009C8A8, D_8009C8B8, D_8009C8B4;
-extern volatile u8 *D_8009CB74;
+extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u32 *D_8009CB7C;
@@ -79,7 +79,7 @@ int func_8008F8E8(void)
     while (*gCdromRequestStatusPtr & 7) {
         *gCdromIndexStatusPtr = 1;
         *gCdromRequestStatusPtr = 7;
-        *D_8009CB74 = 7;
+        *gCdromParameterPtr = 7;
     }
     {
         register int a0 __asm__("$4") = 1;
