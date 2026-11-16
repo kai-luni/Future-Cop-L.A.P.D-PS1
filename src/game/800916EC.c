@@ -9,7 +9,7 @@ extern struct State D_8009CC88;
 extern u16 D_8009CCB8, D_8009CC8A;
 extern u16 *gInterruptStatusHalfPtr __asm__("D_8009DD14");
 extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
-extern int D_8009DD20;
+extern int gIrqStuckCounter __asm__("D_8009DD20");
 extern char D_80012830[], D_8001284C[];
 extern void func_8008E000(char *, ...);
 extern void func_80091B60(void);
@@ -95,10 +95,10 @@ void func_800916EC(void)
             __asm__ volatile ("" : : "r"(msg));
             func_8008E000(msg, *pa, *pb);
             }
-            D_8009DD20 = 0;
+            gIrqStuckCounter = 0;
             *gInterruptStatusHalfPtr = 0;
         }
-    } else D_8009DD20 = 0;
+    } else gIrqStuckCounter = 0;
     }
     __asm__ volatile (".set\tnoreorder\n\t"
                       "lui\t$1,%%hi(D_8009CC8A)\n\t"
