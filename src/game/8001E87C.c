@@ -12,7 +12,7 @@ typedef struct {
     u8 f;
 } Slot;
 
-extern Slot D_800A6FF8[];
+extern Slot gPadActuators[] __asm__("D_800A6FF8");
 extern u8 D_800A78F0[];
 
 extern void func_8008BDB0(u8 *start, u8 *end);
@@ -45,7 +45,7 @@ void func_8001E87C(void)
 
 
     for (i = 0; i < 2; i++) {
-        p = &D_800A6FF8[i];
+        p = &gPadActuators[i];
         p->a = i << 4;
         p->b = 0;
         p->e = 0;

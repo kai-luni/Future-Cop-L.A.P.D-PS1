@@ -15,7 +15,7 @@ struct PadActuator {
     u8 enabled;
 };
 
-extern struct PadActuator D_800A6FF8[];
+extern struct PadActuator gPadActuators[] __asm__("D_800A6FF8");
 extern s32 D_8009FA2C;
 
 /**
@@ -42,7 +42,7 @@ void func_8001EA5C(s32 port, s32 level)
     s32 clamped;
     s32 index;
 
-    actuator = &D_800A6FF8[port];
+    actuator = &gPadActuators[port];
     if (!actuator->enabled || (index = actuator->largeIndex) == 0xFF) {
         return;
     }

@@ -6,7 +6,7 @@ typedef struct {
     int times[2];
     u8 command[6], flag, pad17;
 } State;
-extern State D_800A6FF8[];
+extern State gPadActuators[] __asm__("D_800A6FF8");
 extern volatile int D_8009FA2C;
 extern int func_80089E8C(int);
 extern int func_8008A044(int, int, int);
@@ -47,7 +47,7 @@ void func_8001EC94(u32 arg)
     register u8 *entry __asm__("$2");
     int slot;
     if (arg >= 2) return;
-    s = &D_800A6FF8[arg];
+    s = &gPadActuators[arg];
     port = s->port;
     for (i = 0; i < 2; i++) {
         if (s->times[i] && s->times[i] < D_8009FA2C) {

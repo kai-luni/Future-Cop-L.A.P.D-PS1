@@ -1,7 +1,7 @@
 // Categories: Platform > Controller Input | Input > Controller
 #include "game/types.h"
 
-extern u8 D_800A6FF8[];
+extern u8 gPadActuators[] __asm__("D_800A6FF8");
 
 /**
  * @brief Reads the rumble-enable flag (byte +0x17) for a clamped controller port in D_800A6FF8.
@@ -28,7 +28,7 @@ extern u8 D_800A6FF8[];
  */
 u8 func_8001EB2C(s32 arg0)
 {
-    u8 *base = D_800A6FF8;
+    u8 *base = gPadActuators;
     s32 offset;
 
     if (arg0 >= 0) {

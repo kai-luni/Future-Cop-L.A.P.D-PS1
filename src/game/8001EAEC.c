@@ -1,7 +1,7 @@
 // Categories: Input > DualShock | Input > Controller
 #include "game/types.h"
 
-extern u8 D_800A6FF8[];
+extern u8 gPadActuators[] __asm__("D_800A6FF8");
 
 /**
  * @brief Returns the DualShock actuator/rumble-ready flag byte (+0x16) for a clamped controller slot.
@@ -26,7 +26,7 @@ extern u8 D_800A6FF8[];
  */
 u8 func_8001EAEC(s32 arg0)
 {
-    u8 *base = D_800A6FF8;
+    u8 *base = gPadActuators;
     s32 offset;
 
     if (arg0 >= 0) {
