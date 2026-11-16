@@ -1,7 +1,7 @@
 // Categories: Platform > Address Access
 #include "game/types.h"
 
-extern volatile u16 D_8009EEBC;
+extern volatile u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern u32 D_8009EECC;
 
 extern u32 func_80097808(s32 register_index, u32 address);
@@ -33,6 +33,6 @@ u32 func_80098EE8(u32 address)
         return 0;
     }
 
-    D_8009EEBC = func_80097808(-1, address);
-    return (u32)D_8009EEBC << D_8009EECC;
+    gSpuTransferAddr = func_80097808(-1, address);
+    return (u32)gSpuTransferAddr << D_8009EECC;
 }

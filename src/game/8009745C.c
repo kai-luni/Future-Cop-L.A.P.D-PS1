@@ -14,7 +14,7 @@ typedef struct {
 
 extern SpuDebug *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern s32 D_8009EECC;
-extern u16 D_8009EEBC;
+extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern s32 D_8009EEF4;
 extern s32 D_8009EEF8;
 extern s32 D_8009EEFC;
@@ -69,12 +69,12 @@ s32 func_8009745C(s32 arg0, ...)
         rs = D_8009EECC;
         rp = gSpuRegBasePtr;
         poll = rx >> rs;
-        D_8009EEBC = poll;
+        gSpuTransferAddr = poll;
         rp->field1A6 = poll;
         break;
     case 1:
         D_8009EEF4 = 0;
-        want = D_8009EEBC;
+        want = gSpuTransferAddr;
         i = 0;
         while (gSpuRegBasePtr->field1A6 != want) {
             if (++i >= 0xF01) {
@@ -85,7 +85,7 @@ s32 func_8009745C(s32 arg0, ...)
         break;
     case 0:
         D_8009EEF4 = 1;
-        want = D_8009EEBC;
+        want = gSpuTransferAddr;
         i = 0;
         while (gSpuRegBasePtr->field1A6 != want) {
             if (++i >= 0xF01) {

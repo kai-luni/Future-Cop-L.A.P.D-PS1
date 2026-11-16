@@ -58,7 +58,7 @@ extern s32 D_8009EED8;
 extern s32 D_8009EEDC;
 extern s32 D_8009EEE0;
 extern u8 D_8009EEE4[];
-extern u16 D_8009EEBC;
+extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern u16 D_800A7028[];
 extern u8 D_80012CDC[];
 extern u8 D_80012CEC[];
@@ -109,7 +109,7 @@ s32 func_80096EB8(s32 arg0)
     spu = gSpuRegBasePtr;
     D_8009EEC0 = 0;
     D_8009EEC4 = 0;
-    D_8009EEBC = 0;
+    gSpuTransferAddr = 0;
     spu->f180 = 0;
     spu->f182 = 0;
     spu->f1AA = 0;
@@ -161,7 +161,7 @@ cont:
     arr = D_8009EEE4;
     spu = gSpuRegBasePtr;
     __asm__ volatile("" : : "r"(spu));
-    D_8009EEBC = 0x200;
+    gSpuTransferAddr = 0x200;
     spu->f190 = 0;
     spu->f192 = 0;
     spu->f194 = 0;

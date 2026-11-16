@@ -13,7 +13,7 @@ typedef struct {
 } SpuDebug;
 
 extern SpuDebug *gSpuRegBasePtr __asm__("D_8009EEA4");
-extern u16 D_8009EEBC;
+extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern char D_80012CDC[];
 extern char D_80012CFC[];
 extern char D_80012D10[];
@@ -62,7 +62,7 @@ void func_80097138(u16 *arg0, u32 arg1)
     register u32 cmp __asm__("$5");
 
     want = gSpuRegBasePtr->field1AE & 0x7FF;
-    gSpuRegBasePtr->field1A6 = D_8009EEBC;
+    gSpuRegBasePtr->field1A6 = gSpuTransferAddr;
     func_80097990();
 
     while (rem != 0) {
