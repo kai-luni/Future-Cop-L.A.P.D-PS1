@@ -6,7 +6,7 @@ typedef unsigned int u32;
 extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
-extern u32 *D_8009CB7C;
+extern u32 *gComAccessDelayPtr __asm__("D_8009CB7C");
 extern volatile u8 D_8009CB84[];
 
 /**
@@ -52,5 +52,5 @@ void func_8008F6D8(void)
         *port = 0;
     }
     *gCdromRequestStatusPtr = 0;
-    *D_8009CB7C = 0x1325;
+    *gComAccessDelayPtr = 0x1325;
 }

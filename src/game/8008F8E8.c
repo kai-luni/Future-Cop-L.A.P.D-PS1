@@ -13,7 +13,7 @@ extern u32 D_8009C8AC, D_8009C8A8, D_8009C8B8, D_8009C8B4;
 extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
-extern u32 *D_8009CB7C;
+extern u32 *gComAccessDelayPtr __asm__("D_8009CB7C");
 extern volatile u8 D_8009CB84[];
 extern void func_8008FF08(char *);
 extern void func_8008E000(char *, char *);
@@ -94,7 +94,7 @@ int func_8008F8E8(void)
         state[0] = 2;
         *port = 0;
         *gCdromRequestStatusPtr = 0;
-        *D_8009CB7C = 0x1325;
+        *gComAccessDelayPtr = 0x1325;
         func_8008F244(a0, a1, z, z);
     }
     if (D_8009C8B4 & 0x10)
