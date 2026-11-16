@@ -6,7 +6,7 @@
 
 Diese Datei erklärt **49 globale Variablen**, die sich im Originalprogramm befinden und als Inhalt eine Adresse eines PlayStation-Hardwareregisters tragen. Es sind **49 verschiedene Variablen**, aber nur **37 verschiedene Hardware-Zieladressen**: Manche Programmteile besitzen einen eigenen Zeiger auf dasselbe Register.
 
-Die Datei dokumentiert **nur diese bisher untersuchten Hardware-Zeiger**, nicht alle globalen Variablen des Spiels. Sie hilft beim Verstehen des C-Codes und beim Nachschlagen, welche Funktion mit welchem Gerät spricht.
+Die Datei dokumentiert **nur diese bisher untersuchten Hardware-Zeiger**, nicht alle globalen Variablen des Spiels. Sie hilft beim Verstehen des C-Codes und beim Nachschlagen, welche Funktion mit welchem Gerät spricht. Der Abschnitt „Spielzustand und Zeitmessung" enthält zusätzlich drei normale Daten-Globals aus dem Pilotprojekt zur Umbenennung.
 
 ### Das wichtigste Prinzip
 
@@ -130,6 +130,18 @@ Dieser DMA-Kanal dient dem Aufbau beziehungsweise Zurücksetzen von Ordnungstabe
 | `D_8009DED8` | `gDma6MemAddrPtr` | `0x1F8010E0` | Startadresse für OTC-DMA | `func_8009415C` |
 | `D_8009DEDC` | `gDma6BlockCtrlPtr` | `0x1F8010E4` | Anzahl der OTC-Einträge | `func_8009415C` |
 | `D_8009DEE0` | `gDma6ChannelCtrlPtr` | `0x1F8010E8` | OTC-DMA starten und abschließen | `func_8009415C` |
+
+## Spielzustand und Zeitmessung (Pilotprojekt)
+
+Diese drei Globals sind **keine** Hardware-Zeiger, sondern normale Spielvariablen im RAM. Sie sind der erste Pilot für die Umbenennung von Daten-Globals: Bedeutung aus dem Code belegt, Name im C-Code gesetzt, Byte-Matching geprüft.
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009DD50` | `gVSyncTickCounter` | `volatile s32` | Zählt die VSync-Interrupts. Der VBlank-Handler erhöht ihn, die Frame-Wartefunktion pollt ihn und bricht nach Zeitbudget mit „VSync: timeout" ab. **Bestätigt.** | `func_800913E8`, `func_80091BF8` |
+| `D_8009CC20` | `gTimerBaselineTick` | `volatile u32` | Letzte stabile Probe des Timers 1. Die verstrichenen Ticks ergeben sich als `(now - gTimerBaselineTick) & 0xFFFF`; anschließend wird der Wert stabil neu gesampelt. **Bestätigt.** | `func_80091270` |
+| `D_8009DD20` | `gIrqStuckCounter` | `int` | Zählt Dispatch-Runden, in denen Status und Maske gesetzt bleiben. Über `0x800` wird geloggt und der Interruptstatus gelöscht, sonst der Zähler zurückgesetzt. **Rolle bestätigt**, der Name beschreibt das beobachtete Verhalten. | `func_800916EC` |
+
+Alle drei werden im C-Code über `__asm__("D_XXXXXXXX")` an das Retail-Symbol gebunden und behalten ihren ursprünglichen Typ; die betroffenen Units sind nach der Umbenennung weiterhin byte-identisch.
 
 ## Vier Beispiele etwas genauer
 
