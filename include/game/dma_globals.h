@@ -19,9 +19,11 @@
  *   0x1F8010A0 DMA2 memory address   (GPU)
  *   0x1F8010A4 DMA2 block control    (block size / block count)
  *   0x1F8010A8 DMA2 channel control  (direction, step, sync mode, start)
+ *   0x1F8010F0 DMA control (per-channel priority and enable)
  *   0x1F8010F4 DMA interrupt control (channel enables, channel flags)
  */
 
+#define DMA_CONTROL_ASM "D_8009DD1C"
 #define DMA_INTERRUPT_CTRL_ASM "D_8009DD60"
 #define DMA2_MEM_ADDR_ASM "D_8009DECC"
 #define DMA2_BLOCK_CTRL_ASM "D_8009DED0"
