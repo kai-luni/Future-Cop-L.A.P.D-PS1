@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Platform > Hardware Init
 #include "game/types.h"
 
 extern u32 D_8008DCD4[];
@@ -6,6 +7,29 @@ extern void func_8008C9A0(void);
 extern void func_8008DBA0(void);
 extern void func_8008DCE8(void);
 
+/**
+ * @brief Installs the completion handler into the kernel block at offset 0x9C8.
+ *
+ * Like func_8008DCE8 the routine takes the kernel base from BIOS B0:0x57 and
+ * reads the +0x16C table word, then copies the table D_8008DCD4 word by word to
+ * base + 0x9C8 while func_8008DCE8 is installed as the corresponding callback.
+ * A cache flush follows so the handler is visible to the interrupt side.
+ *
+ * @par Globals
+ * D_8008DCD4 - source table; D_800A3E30 - saved return address scratch.
+ *
+ * @par Control flow
+ * BIOS call, one copy loop, flush.
+ *
+ * @par Calls
+ * func_8008C9A0 - semaphore. func_8008DBA0 - cache flush.
+ *
+ * @par Side effects
+ * Patches kernel memory with the completion table.
+ *
+ * @par Callers
+ * Confirmed: func_8008D784 (driver init pair).
+ */
 void func_8008DD7C(void)
 {
     register u32 value __asm__("$8");

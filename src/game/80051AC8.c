@@ -1,3 +1,4 @@
+// Categories: Graphics > HUD | Gameplay > Player
 #include "../../include/game/types.h"
 
 struct DisplayRecord {
@@ -17,6 +18,26 @@ struct DisplayState {
     struct DisplayOwner *owner;
 };
 
+/**
+ * @brief Sets the left/right display edges of the player's screen record.
+ *
+ * The record is reached through state->owner->record + 8 and describes the
+ * visible horizontal band. Compact mode (second argument non-zero) narrows the
+ * band around 0xCC instead of 0x126; both edges are placed 0x19 units around
+ * the centre.
+ * @param state HUD state whose owner holds the display record.
+ * @param compact Non-zero selects the narrow 0xCC centre.
+ * @par Globals
+ * None.
+ * @par Control flow
+ * One branch on the compact flag.
+ * @par Calls
+ * None.
+ * @par Side effects
+ * Writes the right and left halfwords of the record.
+ * @par Callers
+ * Unknown: no direct edge; called from the split-screen/HUD layout path.
+ */
 void func_80051AC8(struct DisplayState *state, int compact)
 {
     struct DisplayRecord *record = (struct DisplayRecord *)

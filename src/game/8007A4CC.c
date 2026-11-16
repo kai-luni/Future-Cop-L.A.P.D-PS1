@@ -1,3 +1,4 @@
+// Categories: Game Engine > Front End | Resources > Level Table | Platform > Sound
 #include "game/types.h"
 
 struct Unk78210Mode {
@@ -20,6 +21,28 @@ extern u8 D_800A368B;
 extern void func_80077708(void);
 extern s32 func_80046C84(s32 id, s32 arg1);
 
+/**
+ * @brief Menu confirm handler for 1-player Precinct Assault, configuring split-mode state and transition targets.
+ *
+ * Returns immediately unless a0 == 3; when D_800A35CC is 0, sets 1P split mode (players = 1, split = 1) in D_8009FA94, clears D_8009F459, resets the 5-entry list via func_80077708, sets D_8009F8C8 = 5 with optional first-time movie D_80012094 ("MultiBrf.wve"), and sets byte 0x800A368B = 9; otherwise plays SE 0x4C. Category Game Engine > Front End | Resources > Level Table | Platform > Sound follows the menu state globals, func_80077708 list reset, and sound trigger.
+ *
+ * @param a0 Menu action code (only 3 = confirm is handled).
+ *
+ * @par Globals
+ * D_800A35CC - lock guard; D_8009FA94 - mode (+0x0C players, +0x5C split); D_800A377D/D_8009F459/D_800A368B - UI bytes; D_8009F3E6/D_8009F8C8/D_8009F8C4/D_80012094 - briefing flag, transition 5, movie ptr.
+ *
+ * @par Control flow
+ * Early return for a0 != 3, branch on D_800A35CC == 0 vs else SE trigger, and one-shot check on D_8009F3E6 == 0.
+ *
+ * @par Calls
+ * func_80077708 - resets selection and binds D_8009B72C list; func_80046C84 - plays SE 0x4C when D_800A35CC != 0.
+ *
+ * @par Side effects
+ * Writes mode, front-end list, transition, and briefing-seen globals, or plays SE 0x4C.
+ *
+ * @par Callers
+ * Confirmed: none direct (function pointer in D_8009BBF8 at 0x8009BC50 in asm/us/main.s) / Likely: menu widget dispatch via D_8009BBF8 / Unknown: none.
+ */
 void func_8007A4CC(s32 a0)
 {
     struct Unk78210Mode *mode;

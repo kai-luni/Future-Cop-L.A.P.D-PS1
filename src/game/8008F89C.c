@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Platform > Interrupts
 #include "game/types.h"
 
 extern s32 D_8009C8AC;
@@ -8,6 +9,24 @@ extern u8 D_8008FE28[];
 extern void func_80091480(void);
 extern void func_800914B0(s32 arg0, u8 *arg1);
 
+/**
+ * @brief Resets the CD driver callback words and installs its default handler.
+ *
+ * D_8009C8AC, D_8009C8A8 and D_8009C8B8 are cleared, the scratch block at
+ * 0x8009C8B4 is zeroed, then func_80091480 runs the interrupt teardown and
+ * func_800914B0 registers func_8008FE28 as the channel-2 handler.
+ * @par Globals
+ * D_8009C8A8/D_8009C8AC/D_8009C8B8 - callback and status words;
+ * D_8008FE28 - default handler address.
+ * @par Control flow
+ * Four stores, two calls.
+ * @par Calls
+ * func_80091480 - interrupt teardown. func_800914B0 - handler registration.
+ * @par Side effects
+ * Clears the driver callbacks and installs the default handler.
+ * @par Callers
+ * Confirmed: the CD init path (func_8008F8E8 neighbourhood).
+ */
 void func_8008F89C(void)
 {
     register u32 base __asm__("$1");

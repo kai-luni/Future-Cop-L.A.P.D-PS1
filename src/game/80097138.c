@@ -1,3 +1,4 @@
+// Categories: Platform > SPU | Platform > Sound
 #include "game/types.h"
 
 typedef struct {
@@ -18,6 +19,29 @@ extern char D_80012D10[];
 extern void func_80097990(void);
 extern void func_8008E000(char *arg0, char *arg1);
 
+/**
+ * @brief Uploads a block of bytes to PlayStation SPU Sound RAM via manual FIFO writes.
+ *
+ * Snapshots SPUSTAT & 0x7FF, programs SPU transfer address D_8009EEBC into D_8009EEA4->field1A6, transfers arg1 bytes in chunks of up to 0x40 bytes through FIFO field1A8 with SPUCNT transfer bits 0x10 (manual write) while polling SPUSTAT bit 0x400, then clears transfer bits and waits for SPUSTAT & 0x7FF to settle. Category Platform > SPU | Platform > Sound reflects direct SPU MMIO access (0x1F801C00 + 0x1A6..0x1AE) and SPU timeout logging.
+ *
+ * @param arg0 Pointer to source 16-bit halfwords to write into SPU RAM.
+ * @param arg1 Number of bytes to transfer (written as halfwords, up to 0x40 bytes per chunk).
+ *
+ * @par Globals
+ * D_8009EEA4 - SPU MMIO base; D_8009EEBC - target SPU RAM address; D_80012CDC/D_80012CFC/D_80012D10 - "SPU:T/O [%s]\n" and wait strings.
+ *
+ * @par Control flow
+ * Outer chunk loop (<= 0x40 bytes) with inner halfword FIFO loop, 0xF00-capped wrdy wait loop, and final 0xF00-capped dmaf wait loop.
+ *
+ * @par Calls
+ * func_80097990 - hardware settling delay loop; func_8008E000 - logs SPU timeout diagnostic if wrdy or dmaf wait exceeds 0xF00 polls.
+ *
+ * @par Side effects
+ * Writes SPU transfer address, FIFO, and control registers, uploading data into SPU Sound RAM.
+ *
+ * @par Callers
+ * Confirmed: func_80096EB8 (0x80097048), func_800976DC (0x80097740) / Likely: none / Unknown: none.
+ */
 void func_80097138(u16 *arg0, u32 arg1)
 {
     register u32 rem __asm__("$17") = arg1;

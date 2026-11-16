@@ -1,3 +1,4 @@
+// Categories: Gameplay > Table Lookup
 #include "game/types.h"
 
 struct Unk5FF70 {
@@ -8,6 +9,24 @@ struct Unk5FF70 {
 extern s32 D_8009F7F8;
 extern struct Unk5FF70 D_800A2300[];
 
+/**
+ * @brief Finds the index of a spawn/definition record by its key byte.
+ *
+ * Linear search over the table D_800A2300 with D_8009F7F8 entries, comparing
+ * each record's key byte with the requested key.
+ * @param key Key byte to look for.
+ * @return The record index, or -1 when nothing matches.
+ * @par Globals
+ * D_800A2300 - record table (0x30-byte stride); D_8009F7F8 - record count.
+ * @par Control flow
+ * Bounded linear loop.
+ * @par Calls
+ * None.
+ * @par Side effects
+ * None observed.
+ * @par Callers
+ * Unknown: no direct edge in edges.json.
+ */
 s32 func_8005FF70(s32 key)
 {
     s32 i;

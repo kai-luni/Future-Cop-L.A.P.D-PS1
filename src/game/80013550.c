@@ -1,3 +1,4 @@
+// Categories: Resources > Loader Post-Process
 #include "game/types.h"
 
 struct Unk13550 {
@@ -14,6 +15,26 @@ extern void func_800131A0(void **out, void *data, s32 arg2, s32 arg3);
 extern void func_80019A74(struct Unk13550 *resource);
 extern void func_80019D00(struct Unk13550 *resource);
 
+/**
+ * @brief Rebuilds one resource through the node expander.
+ *
+ * For a fresh resource the expander func_800131A0 is called with a local output
+ * pointer and the resource's data/size words; the resulting block replaces the
+ * resource data, the status is cleared and the resource is re-prepared. Loaded
+ * resources take the maintenance path.
+ * @param resource Resource block (data 0x00, 0x1C, 0x20).
+ * @par Globals
+ * None.
+ * @par Control flow
+ * Two exclusive branches around one expander call.
+ * @par Calls
+ * func_80019AA8 - state. func_800131A0 - node expander.
+ * func_80019A74 - prepare. func_80019D00 - maintenance.
+ * @par Side effects
+ * Replaces the resource data pointer.
+ * @par Callers
+ * Confirmed: func_80024EC8 (asset loader).
+ */
 void func_80013550(struct Unk13550 *resource)
 {
     void *loaded;

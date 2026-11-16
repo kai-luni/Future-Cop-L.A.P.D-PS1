@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM | Platform > Hardware Init
 #include "game/types.h"
 
 extern u32 D_8008DCC0[];
@@ -6,6 +7,31 @@ extern s32 D_800A3E30;
 extern void func_8008C9A0(void);
 extern void func_8008DBA0(void);
 
+/**
+ * @brief Writes a prepared CD driver table into the kernel base block.
+ *
+ * BIOS B0:0x56 returns the kernel base; the routine combines the two halfwords
+ * at +0x70 and +0x74 into an offset, adds 0x28 and uses the result as the
+ * destination inside that base. The local table D_8008DCD4 (bounded by
+ * D_8008DCC0) is copied word by word, then the cache is flushed and the
+ * kernel's own pointer slot at 0x8009DFFC receives the new address.
+ *
+ * @par Globals
+ * D_8008DCC0 / D_8008DCD4 - local table bounds; D_800A3E30 - saved return
+ * address scratch; the kernel base is reached through BIOS B0:0x56.
+ *
+ * @par Control flow
+ * BIOS call, offset computation, one copy loop, flush, one store.
+ *
+ * @par Calls
+ * func_8008C9A0 - semaphore. func_8008DBA0 - cache flush.
+ *
+ * @par Side effects
+ * Overwrites kernel memory and republishes the pointer.
+ *
+ * @par Callers
+ * Confirmed: func_8008D784 (driver init pair). Likely: func_8008DD7C (same shape).
+ */
 void func_8008DCE8(void)
 {
     register u32 *dst __asm__("$2");

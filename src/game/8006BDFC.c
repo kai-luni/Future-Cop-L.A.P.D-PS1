@@ -1,3 +1,4 @@
+// Categories: Gameplay > Weapon Loadout | Game Engine > Difficulty
 #include "game/types.h"
 
 struct Unk6BDFCCtl {
@@ -29,6 +30,33 @@ extern s32 func_8006BD48(struct Unk6BDFCObj *obj, struct Unk6BDFCTgt *tgt, s32 f
 #define U8(off)  (*(u8 *)((u32)ctl + idx + (off)))
 #define S16(off) (*(s16 *)((u32)ctl + (idx << 1) + (off)))
 
+/**
+ * @brief Refreshes one weapon slot's counters and swaps its two range values.
+ *
+ * The record for slot idx comes from func_8006AAEC with the slot's id byte at
+ * 0x90. While the slot's secondary counter 0x8A is not positive the record's
+ * ammo byte 0x2A is copied into 0x93 and its two range words 0x44/0x50 are
+ * swapped, so the reload alternates between the two bands. The counter is then
+ * recomputed by func_8006BD48 with flag 1.
+ *
+ * @param obj Object whose control block (0xAC) holds the three slots.
+ * @param idx Slot index 0..2.
+ *
+ * @par Globals
+ * None directly; the slot arrays live in the control block.
+ *
+ * @par Control flow
+ * One gate on the counter, then an unconditional recompute.
+ *
+ * @par Calls
+ * func_8006AAEC - weapon record lookup. func_8006BD48 - counter/ammo update.
+ *
+ * @par Side effects
+ * Writes the record's ammo byte and the two range words, and the slot counter.
+ *
+ * @par Callers
+ * Confirmed: func_8006AB38 (loadout reset) and the weapon update loop.
+ */
 void func_8006BDFC(struct Unk6BDFCObj *obj, s32 idx)
 {
     struct Unk6BDFCCtl *ctl = obj->ctl;

@@ -1,3 +1,4 @@
+// Categories: Platform > Sound > Streaming | Platform > SPU Transfer
 #include "game/types.h"
 
 struct StreamState {
@@ -12,6 +13,29 @@ extern struct StreamState D_800A0968;
 extern void func_80098BB8(s32 address);
 extern void func_80098A78(s32 mode);
 
+/**
+ * @brief Arms the SPU IRQ address and enables SPU interrupts for the active audio stream.
+ *
+ * Sets the SPU IRQ target address to D_800A0968.base + D_800A0968.offset via func_80098BB8 and
+ * then enables and waits for bit 0x40 in the SPU control register via func_80098A78(1).
+ *
+ * @param void No parameters.
+ *
+ * @par Globals
+ * D_800A0968 - StreamState struct (reads +0x44 base SPU RAM address and +0x7C current offset).
+ *
+ * @par Control flow
+ * Straight-line sequence calling func_80098BB8 followed by func_80098A78(1).
+ *
+ * @par Calls
+ * func_80098BB8 - programs SPU IRQ address register 0xD2; func_80098A78 - sets and polls SPU transfer flag bit 0x40.
+ *
+ * @par Side effects
+ * Programs the SPU IRQ address and sets bit 0x40 in D_8009EEA4->flags via callees.
+ *
+ * @par Callers
+ * Confirmed: func_800228F4 (0x80022948, after installing callback D_80022FA8 during stream start) / Likely: none / Unknown: none.
+ */
 void func_80022F44(void)
 {
     func_80098BB8(D_800A0968.base + D_800A0968.offset);

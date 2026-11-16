@@ -1,3 +1,4 @@
+// Categories: Graphics > VRAM Transfer | Platform > GPU
 #include "game/types.h"
 
 struct S {
@@ -10,6 +11,31 @@ struct S {
 extern void func_80092F38(void *rect, void *data);
 extern u16 func_8009226C(s32 x, s32 y);
 
+/**
+ * @brief Uploads a 16-entry (0x10x1) CLUT palette to VRAM and returns its GPU CLUT handle.
+ *
+ * Confirmed: builds an 8-byte stack RECT {a, b, 0x10, 1}, transfers main-memory palette data x to VRAM via func_80092F38, and packs (a, b) into a 16-bit CLUT handle via func_8009226C. Likely: PsyQ libgpu LoadClut2 (4-bit 16-color CLUT upload).
+ *
+ * @param x Pointer to 16 halfword (32-byte) palette data in main RAM.
+ * @param a Destination VRAM X coordinate (in halfwords).
+ * @param b Destination VRAM Y coordinate (scanline).
+ * @return Packed 16-bit GPU CLUT handle ((b << 6) | ((a >> 4) & 0x3F)).
+ *
+ * @par Globals
+ * None directly (func_80092F38 reads D_8009DDE8 and D_80012A94).
+ *
+ * @par Control flow
+ * Straight-line stack RECT initialization, VRAM upload dispatch, and packed CLUT handle return; no branches or loops.
+ *
+ * @par Calls
+ * func_80092F38 - executes LoadImage VRAM transfer for the 0x10x1 RECT; func_8009226C - packs (a, b) into a CLUT id.
+ *
+ * @par Side effects
+ * Transfers 0x10 halfwords from x into GPU VRAM at (a, b) via D_8009DDE8->callback.
+ *
+ * @par Callers
+ * Confirmed: none in edges.json or asm/us/main.s / Likely: unreferenced libgpu LoadClut2 helper / Unknown: indirect or external callers.
+ */
 u16 func_800920DC(s32 x, s32 a, s32 b)
 {
     struct S s;

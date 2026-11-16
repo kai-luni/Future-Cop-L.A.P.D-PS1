@@ -1,3 +1,4 @@
+// Categories: Graphics > HUD | Resources > Save Data
 #include "game/types.h"
 
 typedef struct SaveSlot {
@@ -120,6 +121,30 @@ extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
 extern u8 D_800120A4[];
 extern s32 func_80020D3C(void *, s32, u32);
 
+/**
+ * @brief Switches the save/load menu to its "reading" presentation.
+ *
+ * The menu state at 0x922 is set to 3, the two frame flags at 0x201/0x202 to 1,
+ * the shared blank flags D_8009F8BD/D_8009F8BE are cleared and func_80020D3C
+ * copies the 0x678-byte title/status block over the slot area at 0x20C. The
+ * function is the entry state of the card operations.
+ *
+ * @par Globals
+ * D_8009F92C - save-menu state block; D_8009F8BD/D_8009F8BE - blank flags;
+ * D_800120A4 - source block of the title area.
+ *
+ * @par Control flow
+ * Straight-line stores and one block copy.
+ *
+ * @par Calls
+ * func_80020D3C - block copy.
+ *
+ * @par Side effects
+ * Rewrites the menu state and the slot area.
+ *
+ * @par Callers
+ * Confirmed: the save/load menu dispatcher (func_80080B70 neighbourhood).
+ */
 void func_80081204(void)
 {
     ((u8 *)D_8009F92C)[0x922] = 3;

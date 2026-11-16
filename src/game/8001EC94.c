@@ -1,3 +1,4 @@
+// Categories: Input > DualShock | Platform > Controller
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef struct {
@@ -12,6 +13,29 @@ extern int func_8008A044(int, int, int);
 extern void func_8008A240(int, u8 *, int);
 extern int func_8008A1C0(int, u8 *);
 extern int func_80089F4C(int, int, int);
+
+/**
+ * @brief Manages DualShock actuator alignment, rumble motor expiration, and motor commands for a pad port.
+ *
+ * Expires active rumble timers in D_800A6FF8[arg].times[0..1] against D_8009FA2C, polls pad mode via func_80089E8C, resets actuator state on mode 1, sends motor values via func_8008A240 and configures actuator alignment via func_8008A044/func_8008A1C0 when mode == 6 (or enables immediately on mode 2), or updates motor values from times[0] when active and !func_80089F4C(port, 2, 0). Category Input > DualShock | Platform > Controller follows the actuator slots and DualShock pad library calls.
+ *
+ * @param arg Logical controller index (0 or 1; values >= 2 return immediately).
+ *
+ * @par Globals
+ * D_800A6FF8 - 2-slot actuator state array (port, active, values, slots, times, command, flag); D_8009FA2C - frame tick counter.
+ *
+ * @par Control flow
+ * Port bounds check, 2-motor timeout loop, mode == 1 reset, active/inactive branch (mode 2/6 probe vs func_80089F4C check).
+ *
+ * @par Calls
+ * func_80089E8C - query pad state; func_8008A240 - send actuator bytes; func_8008A044 - probe actuators; func_8008A1C0 - align actuators; func_80089F4C - query mode.
+ *
+ * @par Side effects
+ * Updates D_800A6FF8[arg] motor values, slots, timers, command buffer, and active/flag fields, and dispatches controller actuator commands.
+ *
+ * @par Callers
+ * Confirmed: func_8001EF8C (0x8001EFB4 in asm/us/main.s) / Likely: none / Unknown: none.
+ */
 void func_8001EC94(u32 arg)
 {
     State *s;

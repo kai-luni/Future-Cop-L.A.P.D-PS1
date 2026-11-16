@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM
 #include "game/types.h"
 
 extern s32 D_8009C820[];
@@ -6,6 +7,33 @@ extern u8 D_8009C8B4;
 extern s32 func_8008F244(s32, void *, void *, s32);
 extern s32 func_8008ECFC(s32, void *);
 
+/**
+ * @brief Issues a CD command with a parameter block and an optional retry loop.
+ *
+ * The command byte selects the entry of D_8009C820. Up to three attempts are
+ * made: each pass clears the callback word D_8009C8A8, and if the driver status
+ * has bit 0x10 set the recovery call func_8008F244(1, 0, 0, 0) runs first. When
+ * the entry exists and a parameter block was supplied, func_8008F244(2, param,
+ * result, 0) prepares the transfer; the command itself follows as
+ * func_8008F244(cmd, param, result, 0). After success the synchroniser
+ * func_8008ECFC checks the reply: 2 means the command completed, so the function
+ * returns 1, anything else 0.
+ * @param command Command byte (masked with 0xFF) selecting the driver entry.
+ * @param param Optional parameter block, may be null.
+ * @param result Buffer that receives the reply.
+ * @return 1 when the command completed (reply code 2), 0 on failure.
+ * @par Globals
+ * D_8009C820 - command/parameter table; D_8009C8A8 - callback word (saved and
+ * restored around the inline recovery step); D_8009C8B4 - driver status.
+ * @par Control flow
+ * Three-pass do-while with two early successes.
+ * @par Calls
+ * func_8008F244 - command issue. func_8008ECFC - completion synchroniser.
+ * @par Side effects
+ * Transfers command parameters and may advance the driver state machine.
+ * @par Callers
+ * Confirmed: func_800895E4 (device start/stop).
+ */
 s32 func_8008E42C(s32 command, void *param, void *result)
 {
     register s32 i __asm__("$16");

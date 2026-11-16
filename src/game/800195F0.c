@@ -1,5 +1,29 @@
+// Categories: Utilities > Bit Manipulation | Graphics > Textures
 #include "game/types.h"
 
+/**
+ * @brief Counts trailing zero bits in a 32-bit unsigned value (lowest set bit index).
+ *
+ * Confirmed: starts with count = 32 and halves the search window via left shifts (<< 16, << 8, << 4, << 2, << 1), subtracting 16, 8, 4, 2, 1 when the shifted bits remain non-zero, then subtracts 1 if the final bit is non-zero. Returns 0..31 for bit index, or 32 for 0.
+ *
+ * @param value Unsigned 32-bit integer to inspect.
+ * @return Index of least-significant set bit (0..31), or 32 when value == 0.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Straight-line binary-search sequence of six conditional branches on left-shifted value; no loops.
+ *
+ * @par Calls
+ * None.
+ *
+ * @par Side effects
+ * None observed.
+ *
+ * @par Callers
+ * Confirmed: func_8005A2BC (0x8005A33C in asm/us/main.s, converts byte +3 of sprite/tile entry into shift/exponent) / Likely: none / Unknown: none.
+ */
 s32 func_800195F0(u32 value)
 {
     s32 count;

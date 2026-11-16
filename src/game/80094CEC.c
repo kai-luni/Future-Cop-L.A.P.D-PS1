@@ -1,5 +1,40 @@
+// Categories: Platform > Hardware Init | Graphics > Image Transfer
 #include "game/types.h"
 
+/**
+ * @brief Waits for the image-transfer engine to reach a frame boundary.
+ *
+ * The routine is a hand-written do-loop around the transfer status word that
+ * D_8009DED4 points at. It saves the current value of the timing register with
+ * func_800915FC(0) and restores it at the end. The loop reads the status word
+ * for bit 0x100 and, while the engine keeps reporting work, advances a 6-bit
+ * frame counter D_8009DEEC, waits for the busy bit 0x400 to clear on
+ * D_8009DEC8, and then dispatches the callback registered in the table at
+ * D_800A9454/D_800A9458 (indexed by the counter, stride 0x60). When a callback
+ * is present it is called with the counter as argument; after the loop the
+ * interval D_8009DEE8 - D_8009DEEC (mod 64) is returned in $v0.
+ *
+ * @par Globals
+ * D_8009DED4 - pointer to the status word; D_8009DEC8 - busy/command word;
+ * D_8009DEEC - frame counter; D_8009DEE8 - start counter; D_8009DEF4 - saved
+ * timing value; D_800A9450/D_800A9454/D_800A9458 - callback table; D_8009DDF8 -
+ * pending-call record; D_8009DDFC - cancel flag.
+ *
+ * @par Control flow
+ * Do-loop with an inner busy-wait, a frame-boundary test and an optional
+ * indirect callback.
+ *
+ * @par Calls
+ * func_800915FC - timing register save/restore. func_800914E0 - callback
+ * registration on cancellation. The table entries are called indirectly.
+ *
+ * @par Side effects
+ * Advances the frame counter, calls callbacks, temporarily reprograms the
+ * timing register.
+ *
+ * @par Callers
+ * Confirmed: func_80094F4C (mode 0 continuation).
+ */
 __asm__(
     ".text\n\t"
     ".set\tnoreorder\n\t"

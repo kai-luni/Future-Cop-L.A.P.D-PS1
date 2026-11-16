@@ -1,3 +1,4 @@
+// Categories: Platform > Sound | Utilities > Mathematics > Vector Length
 #include "game/types.h"
 
 extern s32 D_8009F330;
@@ -30,6 +31,28 @@ struct ExtraData458 {
     s8 mode;
 };
 
+/**
+ * @brief Computes distance-attenuated volume and listener XZ deltas for 1- or 2-listener spatial sound mixing.
+ *
+ * For non-positional origin (0, 0), sets full volume D_8009F330 and center pan 64 (or hard-left/right 0/127 from extra->data->mode in stereo 2P mode). Otherwise computes 2D XZ distances via func_8001A074 against D_800A1920[0] (and [1] when D_8009F734 == 2), rejects sounds beyond 0x1FFFF returning 0, attenuates linearly over 0x20000, and clears mix->flag when stereo pan D_8009F730 is enabled. Category Platform > Sound | Utilities > Mathematics > Vector Length follows volume/pan fields and 2D distance calls.
+ *
+ * @param xin World X sound position (0,0 selects non-positional center/player mix).
+ * @param zin World Z sound position.
+ * @param mixin Output Mix458 struct (+0 volume, +1 pan, +2 computed flag, +4/+0xC listener XZ deltas).
+ * @param extra Optional Extra458 entity pointer (+0xAC->+0xC1 mode for 2P non-positional L/R pan).
+ * @return 1 if audible (within range 0x1FFFF or non-positional), or 0 if attenuated out of range.
+ *
+ * @par Globals
+ * D_8009F330 - master SE volume; D_8009F730 - stereo pan enable; D_8009F734 - listener count; D_800A1920 - listener positions.
+ * @par Control flow
+ * Branch on (xin == 0 && zin == 0) vs switch on D_8009F734 (case 1, case 2, default) with 0x1FFFF range cutoffs.
+ * @par Calls
+ * func_8001A074 - computes approximate 2D XZ distance between sound source and each listener.
+ * @par Side effects
+ * Populates all fields of mixin (volume, pan, flag, and listener XZ deltas dx0/dz0/dx1/dz1).
+ * @par Callers
+ * Confirmed: func_800450A4 (0x800450D0), func_80046E88 (0x80046EFC); also func_800462D0 (0x80046478) and func_80046F9C (0x80046FF8) in asm/us/main.s / Likely: none / Unknown: none.
+ */
 s32 func_800458E8(s32 xin, s32 zin, struct Mix458 *mixin, struct Extra458 *extra)
 {
     register s32 x __asm__("$19") = xin;

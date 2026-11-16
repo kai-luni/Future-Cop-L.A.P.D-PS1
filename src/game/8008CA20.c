@@ -1,4 +1,18 @@
+// Categories: BIOS > System Calls
 /* Handwritten function: BIOS vector call, transcribed from the retail listing. */
+/**
+ * @brief Handwritten BIOS C0:0x0A stub (change thread priority class).
+ * @par Globals
+ * None.
+ * @par Control flow
+ * Unconditional tail jump into the C0 vector.
+ * @par Calls
+ * None; BIOS C0:0x0A performs the change.
+ * @par Side effects
+ * Alters the current thread's scheduling class.
+ * @par Callers
+ * Confirmed: func_80091270's neighbourhood (frame/timer bridge).
+ */
 __asm__(
     ".set noreorder\n"
     ".globl func_8008CA20\n"

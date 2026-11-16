@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Game Engine > Object Pool | Resources > Memory Management
 #include "game/types.h"
 
 struct UnkFB90Owner {
@@ -35,6 +36,29 @@ extern struct UnkFB90Global *D_8009F30C;
 extern void func_8003CA80(void *object);
 extern void func_800181D4(void *object);
 
+/**
+ * @brief Retires active D_800A1070 nodes and frees deferred D_8009F30C entries matching an owner and kind.
+ *
+ * Scans all seven D_800A1070 linked lists for entries with node->unk20->unk14 == kind whose owner matches object (via unk1C->unk04 when unk1C && !unk1C->unk38, else object == 0), calling func_8003CA80 if unk10 & 4 or setting unk0F |= 1; then unlinks and frees matching nodes from D_8009F30C. Category Gameplay > Object Spawning | Game Engine > Object Pool | Resources > Memory Management follows the object buckets, deferred queue, and free call.
+ *
+ * @param object Owner pointer matched against active node->unk1C->unk04 and deferred entry->unk10 (or 0).
+ * @param kind Kind byte matched against node->unk20->unk14 and entry->unk04.
+ *
+ * @par Globals
+ * D_800A1070 - 7-bucket array of active spawned object lists; D_8009F30C - singly linked list of deferred spawn entries.
+ *
+ * @par Control flow
+ * 7-iteration bucket loop with nested list traversal, followed by a single-pass linked-list filter/unlink loop over D_8009F30C.
+ *
+ * @par Calls
+ * func_8003CA80 - sends teardown message 7 to node->callback and resets active node; func_800181D4 - frees unlinked D_8009F30C entry.
+ *
+ * @par Side effects
+ * Retires or flags D_800A1070 nodes, unlinks/updates D_8009F30C, and frees matched deferred entries.
+ *
+ * @par Callers
+ * Confirmed: func_8003FD10 (0x8003FD54 in asm/us/main.s, opcode 0x65) / Likely: none / Unknown: none.
+ */
 void func_8003FB90(void *object_, s32 kind_)
 {
     register void *object __asm__("$19");

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Options Menu | Platform > Sound > Voices
 #include "game/types.h"
 
 typedef struct {
@@ -54,6 +55,30 @@ extern s32 func_80045288(void);
 extern s32 func_800452C8(void);
 extern void func_80046A34(s32 handle);
 extern s32 func_80046C84(s32 id, s32 arg1);
+
+/**
+ * @brief Options-menu widget callback that stops the preview voice when action 3 is received.
+ *
+ * Checks action code arg0 == 3; if the options preview sound voice handle D_8009F91C is non-zero,
+ * releases the voice through func_80046A34 and resets D_8009F91C to 0.
+ *
+ * @param arg0 Menu widget action code (only action 3 triggers preview voice teardown).
+ *
+ * @par Globals
+ * D_8009F91C - active preview sound voice handle (read, released, and cleared to 0).
+ *
+ * @par Control flow
+ * Guarded by arg0 == 3 and D_8009F91C != 0; otherwise returns immediately.
+ *
+ * @par Calls
+ * func_80046A34 - stops and frees the voice handle held in D_8009F91C.
+ *
+ * @par Side effects
+ * Stops the options preview voice and zeroes D_8009F91C.
+ *
+ * @par Callers
+ * Confirmed: none direct; address 0x8007D150 is stored in options widget table D_8009BABE at 0x8009BAC8 / Likely: dispatched indirectly by options menu UI on widget exit/cancel (action 3) / Unknown: exact table dispatcher.
+ */
 void D_8007D150(s32 arg0)
 {
     s32 handle;
