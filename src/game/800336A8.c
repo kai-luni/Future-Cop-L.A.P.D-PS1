@@ -1,3 +1,4 @@
+// Categories: Gameplay > Targeting | Gameplay > Entity Update
 #include "../../include/game/types.h"
 
 struct ReferencedObject {

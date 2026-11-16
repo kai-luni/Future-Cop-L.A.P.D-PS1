@@ -1,3 +1,4 @@
+// Categories: Input > DualShock | Platform > Controller
 #include "game/types.h"
 
 struct PadPort {

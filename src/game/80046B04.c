@@ -1,3 +1,4 @@
+// Categories: Platform > Audio | Game Engine > Resource Pools
 #include "game/types.h"
 
 struct SoundVoice {
