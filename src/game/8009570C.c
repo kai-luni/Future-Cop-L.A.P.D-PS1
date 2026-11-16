@@ -1,4 +1,6 @@
 // Categories: Graphics > Ordering Table | Platform > GPU
+#include "game/dma_globals.h"
+
 #include "game/gpu_globals.h"
 
 __asm__(".section .text.target,\"ax\",@progbits\n\t.balign 4");
@@ -14,7 +16,7 @@ typedef struct Callbacks {
 extern u8 D_8009DDF2;
 extern char D_80012AE8[];
 extern void (*D_8009DDEC)(char *, s32);
-extern volatile u32 *D_8009DED4;
+extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 D_8009DEFC, D_8009DF00;
 extern Callbacks *D_8009DDE8;
@@ -54,11 +56,11 @@ int func_8009570C(s32 arg0)
     }
     D_8009DEFC = func_80091270(-1) + 0xF0;
     D_8009DF00 = 0;
-    if (!((*D_8009DED4 & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000))) goto success;
+    if (!((*gDma2ChannelCtrlPtr & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000))) goto success;
 loop:
     if (func_8009520C()) { result = -1; goto done; }
 check:
-    if (*D_8009DED4 & 0x01000000) goto loop;
+    if (*gDma2ChannelCtrlPtr & 0x01000000) goto loop;
     if (!(*gGpuGp1PortPtr & 0x04000000)) goto loop;
 success:
     {

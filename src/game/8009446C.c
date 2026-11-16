@@ -8,7 +8,7 @@ typedef unsigned short u16;
 typedef short s16;
 
 extern u16 D_8009DDF4, D_8009DDF6;
-extern volatile u32 *D_8009DED4;
+extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gDma2MemAddrPtr __asm__("D_8009DECC");
 extern volatile u32 *gDma2BlockCtrlPtr __asm__("D_8009DED0");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
@@ -90,7 +90,7 @@ int func_8009446C(u16 *hdr_, u32 *data_)
         *gGpuGp1PortPtr = 0x4000002;
         *gDma2MemAddrPtr = (u32)data;
         *gDma2BlockCtrlPtr = (blocks << 16) | 0x10;
-        *D_8009DED4 = 0x1000201;
+        *gDma2ChannelCtrlPtr = 0x1000201;
     }
     return 0;
 }

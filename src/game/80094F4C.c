@@ -1,4 +1,6 @@
 // Categories: Platform > Hardware Init
+#include "game/dma_globals.h"
+
 #include "game/gpu_globals.h"
 
 typedef signed char s8;
@@ -11,7 +13,7 @@ typedef unsigned int u32;
 extern volatile u32 D_8009DEEC;
 extern u32 D_8009DEE8;
 extern u32 D_8009DEF8;
-extern u32 *D_8009DED4;
+extern u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern u32 *D_8009DEE4;
 extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u8 D_800A62C8[];
@@ -69,7 +71,7 @@ s32 func_80094F4C(s32 a0)
     switch (a0 & 7) {
     case 0:
     case 5:
-        *D_8009DED4 = 0x401;
+        *gDma2ChannelCtrlPtr = 0x401;
         *D_8009DEE4 |= 0x800;
         *gGpuGp1PortPtr = 0;
         func_80095830(D_800A62C8, 0, 0x100);
@@ -77,7 +79,7 @@ s32 func_80094F4C(s32 a0)
         break;
     case 1:
     case 3:
-        *D_8009DED4 = 0x401;
+        *gDma2ChannelCtrlPtr = 0x401;
         *D_8009DEE4 |= 0x800;
         *gGpuGp1PortPtr = 0x2000000;
         *gGpuGp1PortPtr = 0x1000000;

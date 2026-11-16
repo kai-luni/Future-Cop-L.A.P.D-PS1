@@ -18,14 +18,15 @@ reads through the pointer afterwards.
 | `D_8009C78C` | `gSio0RegBasePtr` | `0x8009C78C` | `0x1F801040` | SIO0 register block (pad/memory card) |
 | `D_8009CBB0` | `gDma3ChannelCtrlPtr` | `0x8009CBB0` | `0x1F8010B8` | DMA3 channel control (CD-ROM) |
 | `D_8009E9D4` | `gDma1ChannelCtrlPtr` | `0x8009E9D4` | `0x1F801098` | DMA1 channel control (MDEC input) |
+| `D_8009DED4` | `gDma2ChannelCtrlPtr` | `0x8009DED4` | `0x1F8010A8` | DMA2 channel control (GPU) |
 
 Per-variable detail, evidence and function lists:
 [`D_8009DEC4.md`](D_8009DEC4.md), [`D_8009DEC8.md`](D_8009DEC8.md),
 [`D_8009DECC.md`](D_8009DECC.md), [`D_8009DED0.md`](D_8009DED0.md),
-[`D_8009DD60.md`](D_8009DD60.md), [`D_8009DD1C.md`](D_8009DD1C.md),
-[`D_8009C788.md`](D_8009C788.md), [`D_8009DD18.md`](D_8009DD18.md),
-[`D_8009C78C.md`](D_8009C78C.md), [`D_8009CBB0.md`](D_8009CBB0.md),
-[`D_8009E9D4.md`](D_8009E9D4.md).
+[`D_8009DED4.md`](D_8009DED4.md), [`D_8009DD60.md`](D_8009DD60.md),
+[`D_8009DD1C.md`](D_8009DD1C.md), [`D_8009C788.md`](D_8009C788.md),
+[`D_8009DD18.md`](D_8009DD18.md), [`D_8009C78C.md`](D_8009C78C.md),
+[`D_8009CBB0.md`](D_8009CBB0.md), [`D_8009E9D4.md`](D_8009E9D4.md).
 
 ## Two different accesses
 
