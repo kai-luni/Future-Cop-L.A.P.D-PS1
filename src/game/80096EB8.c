@@ -50,7 +50,7 @@ extern u32 *gSpuDelayCtrlPtr __asm__("D_8009EEB4");
 extern Spu *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern s32 D_8009EEC0;
 extern s32 D_8009EEC4;
-extern s32 D_8009EEC8;
+extern s32 gSpuAlignEnable __asm__("D_8009EEC8");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern s32 D_8009EED0;
 extern s32 D_8009EED4;
@@ -136,7 +136,7 @@ again:
 cont:
     i = 0;
     p = D_800A7028;
-    D_8009EEC8 = 2;
+    gSpuAlignEnable = 2;
     gSpuAddrShift = 3;
     D_8009EED0 = 8;
     D_8009EED4 = 7;

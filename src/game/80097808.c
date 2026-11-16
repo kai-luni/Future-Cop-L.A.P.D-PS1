@@ -2,7 +2,8 @@
 #include "game/spu_globals.h"
 
 #include "game/types.h"
-extern u32 D_8009EEC8, D_8009EED0, D_8009EED4;
+extern u32 D_8009EED0, D_8009EED4;
+extern u32 gSpuAlignEnable __asm__("D_8009EEC8");
 extern u32 gSpuAddrShift __asm__("D_8009EECC");
 extern u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
 
@@ -36,7 +37,7 @@ u32 func_80097808(s32 reg, u32 addr)
     register u16 *dest __asm__("$3");
     u32 index, rem;
 
-    if (D_8009EEC8 != 0) {
+    if (gSpuAlignEnable != 0) {
         align = D_8009EED0;
         __asm__ (
             "divu\t$zero,%1,%2\n\t"
