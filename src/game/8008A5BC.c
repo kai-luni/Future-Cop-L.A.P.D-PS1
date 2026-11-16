@@ -5,7 +5,7 @@
 
 typedef void (*Handler)(s32 port);
 
-extern s32 D_8009C760;
+extern s32 gPadPresentFlag __asm__("D_8009C760");
 extern s32 *gInterruptStatusPtr __asm__("D_8009C788");
 extern s32 D_8009C75C;
 extern Handler D_8009C72C;
@@ -75,5 +75,5 @@ void func_8008A5BC(void)
     __asm__ volatile("" : "+r"(end));
     end[1] = 0;
     end[0] = 0;
-    D_8009C760 = 1;
+    gPadPresentFlag = 1;
 }

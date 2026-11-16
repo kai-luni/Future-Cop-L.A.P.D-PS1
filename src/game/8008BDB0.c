@@ -12,7 +12,8 @@ struct Obj {
     u8 flags[6];
     u8 rest[0x8d];
 };
-extern int D_8009C760, D_8009C774;
+extern int D_8009C774;
+extern int gPadPresentFlag __asm__("D_8009C760");
 extern void (*D_8009C728)(), (*D_8009C72C)(), (*D_8009C730)();
 extern void (*D_8009C734)(), (*D_8009C738)(), (*D_8009C73C)(), (*D_8009C74C)();
 extern Obj *D_8009C75C;
@@ -55,7 +56,7 @@ void func_8008BDB0(u8 *a, u8 *b)
     register u8 *arg2 __asm__("$18") = b;
     register u8 *x __asm__("$6");
     register u8 *y __asm__("$7");
-    D_8009C760 = 0;
+    gPadPresentFlag = 0;
     D_8009C774 = 0;
     func_8008C410();
     p = D_800A3C20;
@@ -97,6 +98,6 @@ void func_8008BDB0(u8 *a, u8 *b)
         p++;
     } while (i < 2);
     func_8008A3A8();
-    D_8009C760 = 1;
+    gPadPresentFlag = 1;
     __asm__("" ::: "memory");
 }

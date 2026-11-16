@@ -1,7 +1,8 @@
 // Categories: Input > Port Processing
 #include "game/sio_globals.h"
 
-extern int D_8009C778, D_8009C77C, D_8009C760, D_8009C76C, D_8009C768, D_8009C770;
+extern int D_8009C778, D_8009C77C, D_8009C76C, D_8009C768, D_8009C770;
+extern int gPadPresentFlag __asm__("D_8009C760");
 extern int D_800A3B70, D_800A3B74;
 extern char *D_8009C75C;
 extern short *gSio0RegBasePtr __asm__("D_8009C78C");
@@ -50,7 +51,7 @@ int func_8008A43C(void)
             *q = *q + 1;
         }
     }
-    if (D_8009C760 != 0) {
+    if (gPadPresentFlag != 0) {
         if (D_8009C778 <= D_8009C77C) {
             D_8009C76C = 0;
             D_8009C768 = D_8009C778;
