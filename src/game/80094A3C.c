@@ -24,7 +24,7 @@ extern volatile struct QueueEntry D_800A9450[];
 extern struct StructDDF0 D_8009DDF0;
 extern volatile s32 gGpuJobHead __asm__("D_8009DEE8");
 extern volatile s32 gGpuJobTail __asm__("D_8009DEEC");
-extern u32 D_8009DEF0;
+extern u32 gDispatchSavedIrqMask __asm__("D_8009DEF0");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 
@@ -75,7 +75,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
         func_80094CEC();
     }
 
-    D_8009DEF0 = func_800915FC(0);
+    gDispatchSavedIrqMask = func_800915FC(0);
     ddf0 = &D_8009DDF0;
     __asm__("" : "=r"(ddf0) : "0"(ddf0));
     ddf0->unk8 = 1;
@@ -84,7 +84,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
         while ((*gGpuGp1PortPtr & 0x04000000) == 0) {
         }
         func(arg1, arg3);
-        func_800915FC(D_8009DEF0);
+        func_800915FC(gDispatchSavedIrqMask);
         return 0;
     }
 
@@ -110,7 +110,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
     __asm__ volatile("" ::: "memory");
 
     gGpuJobHead = (gGpuJobHead + 1) & 0x3F;
-    func_800915FC(D_8009DEF0);
+    func_800915FC(gDispatchSavedIrqMask);
     func_80094CEC();
 
     i = (gGpuJobHead - gGpuJobTail) & 0x3F;
