@@ -36,6 +36,11 @@ reads through the pointer afterwards.
 | `D_8009E9C4` | `gDma0BlockCtrlPtr` | `0x8009E9C4` | `0x1F801084` | DMA0 block control |
 | `D_8009E9CC` | `gDma1MemAddrPtr` | `0x8009E9CC` | `0x1F801090` | DMA1 memory address |
 | `D_8009E9D0` | `gDma1BlockCtrlPtr` | `0x8009E9D0` | `0x1F801094` | DMA1 block control |
+| `D_8009CBA8` | `gDma3MemAddrPtr` | `0x8009CBA8` | `0x1F8010B0` | DMA3 memory address (CD-ROM) |
+| `D_8009CBAC` | `gDma3BlockCtrlPtr` | `0x8009CBAC` | `0x1F8010B4` | DMA3 block control (CD-ROM) |
+| `D_8009EEA8` | `gDma4MemAddrPtr` | `0x8009EEA8` | `0x1F8010C0` | DMA4 memory address (SPU) |
+| `D_8009EEAC` | `gDma4BlockCtrlPtr` | `0x8009EEAC` | `0x1F8010C4` | DMA4 block control (SPU) |
+| `D_8009EEB0` | `gDma4ChannelCtrlPtr` | `0x8009EEB0` | `0x1F8010C8` | DMA4 channel control (SPU) |
 | `D_8009E9F4` | `gMdecControlStatusPtr` | `0x8009E9F4` | `0x1F801824` | MDEC control/status word |
 
 Per-variable detail, evidence and function lists:
