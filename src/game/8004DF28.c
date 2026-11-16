@@ -1,3 +1,4 @@
+// Categories: Game Engine > Entity Management | Platform > Audio
 #include "game/types.h"
 
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
@@ -40,6 +41,26 @@ extern void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index);
 extern void func_800457B8(s32 arg0, s32 index);
 extern void func_8004DEE0(struct Entity *entity);
 
+/**
+ *  @brief Builds a distance-filtered entity list and manages nearby entity sounds.
+ *
+ *  Uses a reference position and an approximate planar distance to select entities,
+ *  retrying with a smaller threshold when the output capacity is exceeded.
+ *  @par Globals
+ *  D_8009FA40 supplies the entity chain; D_8009FA58 and D_8009F9A0 supply positions.
+ *  D_8009F7A4 and D_8009FAA4 control periodic nearest-entity selection.
+ *  D_800A8F98, D_800A8F94, and D_800A8F90 are the output list, capacity, and count.
+ *  @par Control flow
+ *  Scans nonzero-ID nodes, adjusts flags and sounds, and may restart the scan.
+ *  A flagged entity bypasses the distance threshold; the closest eligible node is dispatched.
+ *  @par Calls
+ *  func_80045678 starts a sound; func_8004572C updates it; func_800457B8 stops it.
+ *  func_8004DEE0 processes the selected nearest entity, if any.
+ *  @par Side effects
+ *  Writes entity flags and sound indices, the output list and count, and the selection timer.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8004DF28(void)
 {
     register struct Entity *node __asm__("$16");

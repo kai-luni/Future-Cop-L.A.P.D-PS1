@@ -1,3 +1,4 @@
+// Categories: Game Engine > Dispatch
 #include "game/types.h"
 
 extern u8 D_80039C58[];
@@ -24,6 +25,27 @@ extern void func_8002D664(void);
 extern void func_800395A8(void);
 extern void func_800398EC(void);
 
+/**
+ *  @brief Maps a type number to a stored address.
+ *
+ *  The switch returns addresses of declared data symbols or functions as signed
+ *  integers, allowing the caller to select an address by type.
+ *  @param type Numeric selector for the address mapping.
+ *  @return The selected address cast to s32, or zero for an unrecognized type.
+ *  @par Globals
+ *  Returns addresses of D_80039C58, D_800357C0, D_80041B6C, D_8002DEA8,
+ *  D_80041C6C, D_8002DB9C, D_8003015C, D_80030960, D_8002F7C8,
+ *  D_8002ED7C, D_8002C3F0, D_80030D3C, D_8003A844, D_80042330,
+ *  D_800426A8, or D_8003151C for their corresponding selectors.
+ *  @par Control flow
+ *  A switch dispatches the selector; several cases share an address.
+ *  @par Calls
+ *  None; function addresses are returned without invoking them.
+ *  @par Side effects
+ *  None.
+ *  @par Callers
+ *  Confirmed: func_80060E74.
+ */
 s32 func_8002AE54(u32 type)
 {
     switch (type) {

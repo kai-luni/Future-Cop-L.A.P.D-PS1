@@ -1,3 +1,4 @@
+// Categories: Input > Controller Mapping
 #include "game/types.h"
 
 struct PadMapping {
@@ -6,6 +7,23 @@ struct PadMapping {
 
 extern struct PadMapping D_800AAC50[];
 
+/**
+ *  @brief Initializes fourteen controller masks for a valid port.
+ *
+ *  Writes a fixed set of bit masks into the selected port's mapping table;
+ *  ports outside the two-entry range are left unchanged.
+ *  @param port Zero-based port index; only 0 and 1 are accepted.
+ *  @par Globals
+ *  D_800AAC50 contains the per-port mapping records written by this function.
+ *  @par Control flow
+ *  Checks port against 2 before assigning all fourteen masks.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Replaces the selected mapping's masks when the port is valid.
+ *  @par Callers
+ *  Confirmed: func_8001E4E4.
+ */
 void func_8001E588(u32 port)
 {
     struct PadMapping *mapping;

@@ -1,3 +1,4 @@
+// Categories: Input > Configuration
 #include "game/types.h"
 
 struct Unk247A8 {
@@ -25,6 +26,25 @@ extern u16 D_8009F65C;
 extern u16 D_8009FA44;
 extern s32 D_8009F664;
 
+/**
+ *  @brief Initializes shared values and two sets of mask records.
+ *
+ *  Sets fixed masks and record values, choosing four masks per set according
+ *  to bit 1 of the corresponding configuration byte.
+ *  @par Globals
+ *  D_8009F660, D_8009F9EC, D_8009FA30, D_8009F65E, D_8009F65C,
+ *  D_8009FA44, D_8009FA46, and D_8009F664 receive initial values.
+ *  D_8009FA98 supplies configuration bits; D_800A0AA0 through D_800A0B20
+ *  are the nine two-entry record arrays initialized by the function.
+ *  @par Control flow
+ *  Loops over two entries and branches on each configuration byte's bit 1.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Overwrites the listed scalar values and both entries of each record array.
+ *  @par Callers
+ *  Confirmed: func_80024E3C.
+ */
 void func_800247A8(void)
 {
     s32 i;

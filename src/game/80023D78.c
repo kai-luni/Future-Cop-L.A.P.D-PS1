@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct Unk4749CResource {
@@ -34,6 +35,25 @@ extern s32 func_800450A4(s32 id, s8 *mix);
 extern s32 func_800474C4(struct Unk4749CHandle *handle);
 extern void func_80047800(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
 
+/**
+ *  @brief Maintains a sound handle and updates its voice when eligible.
+ *
+ *  A nonzero timestamp is checked against the current counter and a 0xBB8
+ *  window. An enabled active handle can also receive updated mix values.
+ *  @par Globals
+ *  D_800A0A80 holds the handle and timestamp; D_8009FA2C is the current
+ *  counter; D_8009F26C enables the mix-update path.
+ *  @par Control flow
+ *  An invalid timestamp or an active handle with zero timestamp triggers cleanup.
+ *  The mix path requires enabled, active, and flag18; failed checks also clean up.
+ *  @par Calls
+ *  func_80023E84 performs cleanup; func_800450A4 obtains mix values;
+ *  func_800474C4 checks the handle; func_80047800 updates the voice.
+ *  @par Side effects
+ *  May clear the timestamp, invoke cleanup, or update the resource voice.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80023D78(void)
 {
     s8 mix[0x18];

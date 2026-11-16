@@ -1,3 +1,4 @@
+// Categories: Graphics > Image Transfer | Platform > DMA
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef short s16;
@@ -8,6 +9,25 @@ extern u32 *volatile D_8009DEC4;
 extern void func_800951D8(void);
 extern int func_8009520C(void);
 
+/**
+ *  @brief Sends an image header and pixel data to the graphics hardware.
+ *
+ *  Clamps the header dimensions, waits for readiness, and sends initial words
+ *  directly before starting DMA for any remaining 16-word blocks.
+ *  @param hdr_ Four-halfword image header whose dimensions are clamped in place.
+ *  @param data_ Source of packed pixel words.
+ *  @return 0 after issuing the transfer, or -1 for an empty transfer or wait failure.
+ *  @par Globals
+ *  D_8009DDF4 and D_8009DDF6 limit dimensions; D_8009DEC4 and D_8009DEC8 through D_8009DED4 address graphics and DMA registers.
+ *  @par Control flow
+ *  Rejects nonpositive word counts, polls readiness, writes remainder words, and conditionally starts DMA.
+ *  @par Calls
+ *  func_800951D8 prepares the transfer; func_8009520C checks for failure while polling.
+ *  @par Side effects
+ *  Modifies the header and writes graphics and DMA registers; DMA may continue after return.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 int func_8009446C(u16 *hdr_, u32 *data_)
 {
     u32 *data = data_;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Callback Lists
 typedef unsigned char u8;
 struct Target { u8 pad[0x1c]; u8 flags; };
 struct Owner { u8 pad[0x44]; struct Target *target; };
@@ -9,6 +10,26 @@ struct Node {
     void (*callback)(int, struct Node *, int, int);
 };
 extern struct Node *D_800A1070[7];
+
+/**
+ *  @brief Removes and notifies all list nodes associated with a target.
+ *
+ *  Searches seven linked lists for nodes whose owner references the target.
+ *  Each removed node receives callback event 10 after it is unlinked.
+ *  @param arg Target whose associated nodes are removed.
+ *  @par Globals
+ *  D_800A1070 contains the seven list heads.
+ *  @par Control flow
+ *  Traverses every list, preserving the next pointer before invoking a callback.
+ *  Matching nodes are unlinked; other nodes remain in their original order.
+ *  @par Calls
+ *  Each removed node's callback is invoked with event 10 and two zero arguments.
+ *  @par Side effects
+ *  Changes list links, clears removed nodes' next pointers, and invokes callbacks.
+ *  Clears bit zero of the target's flags after processing the lists.
+ *  @par Callers
+ *  Confirmed: func_8003FF7C.
+ */
 void func_8003FE90(struct Target *arg)
 {
     register struct Node **cursor __asm__("$18");

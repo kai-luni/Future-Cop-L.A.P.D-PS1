@@ -1,3 +1,4 @@
+// Categories: Platform > Interrupt Dispatch
 typedef unsigned short u16;
 typedef unsigned int u32;
 typedef void (*Callback)(void);
@@ -9,6 +10,27 @@ extern int D_8009DD20;
 extern char D_80012830[], D_8001284C[];
 extern void func_8008E000(char *, ...);
 extern void func_80091B60(void);
+
+/**
+ *  @brief Dispatches enabled pending interrupt handlers and checks for persistent status.
+ *
+ *  The routine marks dispatch busy, acknowledges each selected interrupt bit,
+ *  and invokes its registered handler before checking for remaining status.
+ *  @par Globals
+ *  D_8009CC88 holds active, busy, handler, and mask state; D_8009CCB8 is the repeat mask.
+ *  D_8009DD14 and D_8009DD18 point to status and mask registers; D_8009DD20 counts persistence.
+ *  D_8009CC8A is cleared on exit; D_80012830 and D_8001284C supply diagnostic formats.
+ *  @par Control flow
+ *  An inactive state is reported first; up to eleven bits are scanned per pass.
+ *  Repeated masked status is drained, and persistent unmasked status triggers a reset.
+ *  @par Calls
+ *  func_8008E000 emits diagnostics; func_80091B60 is called for inactive state and on exit.
+ *  Non-null registered handlers are invoked indirectly.
+ *  @par Side effects
+ *  Writes interrupt status, busy state, and the persistence counter; may invoke handlers.
+ *  @par Callers
+ *  Confirmed: func_80091614.
+ */
 void func_800916EC(void)
 {
     register struct State *state __asm__("$17") = &D_8009CC88;

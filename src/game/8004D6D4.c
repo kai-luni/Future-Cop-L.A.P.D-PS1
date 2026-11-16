@@ -1,3 +1,4 @@
+// Categories: Resources > Entity Loading | Game Engine > Object Creation
 #include "game/types.h"
 
 struct Resource;
@@ -63,6 +64,25 @@ extern void func_800706C4(struct Unk4D6D4 *arg0);
 extern void func_800740B8(struct Unk4D6D4 *arg0);
 extern void func_80076878(struct Unk4D6D4 *arg0);
 
+/**
+ *  @brief Loads an entity definition and dispatches initialization by its resource type.
+ *
+ *  Recognized types use dedicated handlers; the default path resolves a resource list and creates an entity.
+ *  A pending global flag triggers preliminary processing before the resource lookup.
+ *  @param arg0 Entity loading record containing resource identifiers and output fields.
+ *  @par Globals
+ *  D_8009F7AC is cleared when set before preliminary processing.
+ *  @par Control flow
+ *  Dispatches thirteen recognized types; otherwise loops over list entries and resolves nonzero names.
+ *  @par Calls
+ *  func_800695A8 handles the flag; func_80019C38 and func_80019CA0 retrieve chunks; func_80019BF0 resolves names.
+ *  func_8002AE54 maps the type, func_8004D4D4 creates the entity, and func_800181D4 processes the record.
+ *  Type-specific handlers are called directly for recognized types.
+ *  @par Side effects
+ *  Clears the flag, rewrites the resource list and record fields, and invokes initialization handlers.
+ *  @par Callers
+ *  Confirmed: func_80024EC8.
+ */
 void func_8004D6D4(struct Unk4D6D4 *arg0)
 {
     struct EntityDef def;

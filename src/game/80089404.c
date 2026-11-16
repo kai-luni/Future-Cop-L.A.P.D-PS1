@@ -1,3 +1,4 @@
+// Categories: Resources > Streaming
 #include "game/types.h"
 
 struct Sub80089404 {
@@ -38,6 +39,24 @@ extern s32 func_800886C8(s32 delta, s32 value);
 extern void func_80089018(void);
 extern void func_8008CD10(s32 arg0, s32 arg1);
 
+/**
+ *  @brief Waits for available data and computes its position in a circular buffer.
+ *
+ *  The requested amount is adjusted before comparing it with the producer and consumer positions.
+ *  A wrapped range is prepared before returning its adjusted address.
+ *  @param out Requested amount, replaced with the adjusted amount.
+ *  @return Computed buffer address, or zero if waiting is aborted or retries are exhausted.
+ *  @par Globals
+ *  D_8009F970 supplies buffer positions, state, and retry counters; D_8009F980 supplies the ring size.
+ *  @par Control flow
+ *  Polls availability, aborts on the state flag, and retries recovery at most twice before failing.
+ *  @par Calls
+ *  func_800886C8 adjusts the request; func_80089018 performs recovery; func_8008CD10 handles a wrapped range.
+ *  @par Side effects
+ *  Updates the requested amount and may increment the state retry counter or invoke recovery and wrap handling.
+ *  @par Callers
+ *  Confirmed: func_800879DC.
+ */
 s32 func_80089404(s32 *out)
 {
     u32 i;

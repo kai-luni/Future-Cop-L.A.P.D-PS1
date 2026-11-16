@@ -1,3 +1,4 @@
+// Categories: Gameplay > Statistics
 #include "game/types.h"
 
 struct Stats { u8 pad[2]; u16 a; u8 p4[2]; u16 b; u8 p8[2]; u16 c; u8 pc[2]; u16 d; };
@@ -13,6 +14,27 @@ extern struct Player *D_8009F9EC;
 extern struct Other *D_8009FA58, *D_8009FA5C;
 extern s32 func_80069D68(s32, s32, s32, s32);
 extern s32 func_8004D4F8(void *);
+
+/**
+ *  @brief Updates entity counters and matching participant statistics after a successful check.
+ *
+ *  On success, decrements a positive remaining count and increments the total.
+ *  In active mode, the associated ID and type select a participant statistic to increment.
+ *  @param entity Entity whose substructure supplies the check arguments and counters.
+ *  @par Globals
+ *  D_8009FA94 supplies the active mode; D_8009F9EC identifies the player.
+ *  D_8009FA58 and D_8009FA5C identify other participants and their statistics.
+ *  @par Control flow
+ *  A failed initial check does nothing; otherwise IDs are matched in player-first order.
+ *  Types 1 through 4 select counters; unmatched IDs skip the statistics update.
+ *  @par Calls
+ *  func_80069D68 performs the initial check and is called again with the second argument.
+ *  func_8004D4F8 processes the substructure definition after a successful check.
+ *  @par Side effects
+ *  Changes entity counters and possibly a participant statistic; called functions may have effects.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8006125C(struct Entity *entity)
 {
     struct Sub *s = entity->sub;

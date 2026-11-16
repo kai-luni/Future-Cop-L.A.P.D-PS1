@@ -1,4 +1,24 @@
+// Categories: Utilities > BCD Arithmetic
 typedef unsigned char u8;
+
+/**
+ *  @brief Increments a three-byte packed-BCD position in place.
+ *
+ *  The bytes are decoded as decimal fields, incremented with carries at
+ *  75 and 60, and encoded back into packed BCD.
+ *  The first field receives the final carry without an explicit rollover.
+ *  @param p Pointer to the three packed-BCD bytes to update.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Two equality checks propagate carries from the third and second fields.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Overwrites all three bytes at p; input digits are not validated.
+ *  @par Callers
+ *  Confirmed: func_8001C808.
+ */
 void func_8001C288(u8 *p)
 {
     volatile u8 a[3];

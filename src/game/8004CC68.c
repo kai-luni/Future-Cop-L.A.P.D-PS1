@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects
 #include "game/types.h"
 
 struct Unk4CC68 {
@@ -10,6 +11,22 @@ struct Unk4CC68 {
 extern s32 D_8009FAA4;
 extern struct Unk4CC68 D_800A6F60;
 
+/**
+ *  @brief Computes three packed values from a global phase-like counter.
+ *
+ *  Folds six bits of the shifted counter into a triangular level, adds an
+ *  offset, clamps it, and packs the result into three state fields.
+ *  @par Globals
+ *  D_8009FAA4 supplies the counter; D_800A6F60 receives the packed values.
+ *  @par Control flow
+ *  Reflects levels at or above 32 and clamps the offset level to 31.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Overwrites D_800A6F60 fields unk44, unk48, and unk4C.
+ *  @par Callers
+ *  Confirmed: func_8002703C.
+ */
 void func_8004CC68(void)
 {
     s32 level;

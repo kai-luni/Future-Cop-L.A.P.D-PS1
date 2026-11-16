@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 typedef struct {
@@ -30,6 +31,25 @@ extern VoiceTable *D_8009F930;
 extern s32 func_80045678(s32 sound, s32 id, s32 arg2, s32 arg3, s32 arg4);
 extern void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index);
 
+/**
+ *  @brief Allocates or refreshes a sound object's voice slot.
+ *
+ *  A free-bit mask tracks 32 slots. New voices receive a 300-tick timer;
+ *  existing slots are refreshed to 900 and may have their voice updated.
+ *  @param obj Sound object containing slot, sound and update fields.
+ *  @par Globals
+ *  D_8009F930 points to the voice table and its free-slot mask.
+ *  @par Control flow
+ *  Returns if no slot is free or voice creation fails; otherwise finds the lowest
+ *  set free bit. An existing slot takes the refresh path instead.
+ *  @par Calls
+ *  func_80045678 creates a voice; func_8004572C updates an existing voice.
+ *  @par Side effects
+ *  Updates the free mask, object slot and voice table, or refreshes a slot timer.
+ *  The audio calls may also change voice state.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8008363C(SoundObj *obj)
 {
     VoiceTable *table;

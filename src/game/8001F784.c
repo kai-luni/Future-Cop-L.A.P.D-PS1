@@ -1,3 +1,4 @@
+// Categories: Game Engine > State Management
 #include "game/types.h"
 
 struct Context {
@@ -16,6 +17,25 @@ struct Context {
 extern struct Context *D_8009AB08;
 extern void func_8008D640(s32);
 
+/**
+ *  @brief Resets context state and passes a context field to a helper.
+ *
+ *  Clears common fields in the global context and performs additional resets
+ *  when its previous state is 2, 3, or 6.
+ *  @return Always zero.
+ *  @par Globals
+ *  D_8009AB08 points to the context whose fields are read and written.
+ *  @par Control flow
+ *  States 2, 3, and 6 also clear field904 and set field9a4; the default
+ *  path resets state and field8f8 without those additional writes.
+ *  @par Calls
+ *  func_8008D640 receives field8fc in either branch.
+ *  @par Side effects
+ *  Clears field1bb0, state, and field8f8; sets field9a8 and may update
+ *  field904 and field9a4, then invokes the helper.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_8001F784(void)
 {
     volatile struct Context *p = D_8009AB08;

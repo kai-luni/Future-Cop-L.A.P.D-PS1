@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 #include "game/types.h"
 
 struct Ctx {
@@ -20,6 +21,23 @@ extern volatile struct Ctx *D_8009AB08;
 
 extern void func_8008D640(s32 value);
 
+/**
+ *  @brief Advances a context counter and invokes its callback.
+ *
+ *  On reaching the counter threshold, resets several context fields and
+ *  passes another field to a follow-up operation before the callback.
+ *  @par Globals
+ *  D_8009AB08 points to the volatile context containing the counter and callback.
+ *  @par Control flow
+ *  Tests the counter's pre-increment value against 0x3D; always invokes unk8CC.
+ *  @par Calls
+ *  func_8008D640 receives unk8FC on threshold; unk8CC is called indirectly.
+ *  @par Side effects
+ *  Increments or resets the counter and may reset other context fields.
+ *  The direct and indirect calls may have additional effects.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80020024(void)
 {
     if (D_8009AB08->unk1BB0++ >= 0x3D) {

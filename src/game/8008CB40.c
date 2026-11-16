@@ -1,3 +1,4 @@
+// Categories: Utilities > Memory
 typedef struct Header {
     struct Header *next;
     unsigned int size;
@@ -12,6 +13,25 @@ extern Snapshot D_800A6568;
 extern Snapshot D_800A8F80;
 extern Header *D_800A8E78;
 
+/**
+ *  @brief Returns a block to the circular free list and coalesces adjacent blocks.
+ *
+ *  The header immediately before the supplied pointer is inserted in address
+ *  order, with snapshots recorded before the list is modified.
+ *  @param ptr Pointer immediately following the block header.
+ *  @par Globals
+ *  D_8009C7D0 is the free-list cursor; D_800A8E78 saves its previous value.
+ *  D_800A6568 and D_800A8F80 receive snapshots of the block and predecessor.
+ *  @par Control flow
+ *  Searches through the circular list, handling its address wrap, then merges
+ *  with the successor if adjacent and nonempty and with the predecessor if adjacent.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Updates snapshots, free-list headers, and D_8009C7D0 to the predecessor.
+ *  @par Callers
+ *  Confirmed: func_8001E2C0.
+ */
 void func_8008CB40(Header *ptr)
 {
     Header *p;

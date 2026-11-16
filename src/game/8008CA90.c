@@ -1,7 +1,27 @@
+// Categories: Utilities > Memory Allocation
 typedef unsigned int u32;
 typedef struct Block { struct Block *next; int size; } Block;
 extern Block *D_8009C7D0;
 
+/**
+ *  @brief Allocates an aligned payload from a circular free-block list.
+ *
+ *  The requested size is rounded up to eight bytes and includes a block header.
+ *  A fitting block is removed whole or split from its high-address end.
+ *  @param size Requested payload size in bytes.
+ *  @return Pointer past the allocated header, or null for zero size or no fit.
+ *  @par Globals
+ *  D_8009C7D0 points to the free-list search position and is updated on success.
+ *  @par Control flow
+ *  Searches from the successor of the saved position through one circular pass.
+ *  Exact fits are unlinked; larger blocks are shortened and split.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Changes free-list links or block sizes and writes the allocated block header.
+ *  @par Callers
+ *  Confirmed: func_8001E240.
+ */
 void *func_8008CA90(u32 size)
 {
     Block *p, *prev;

@@ -1,9 +1,32 @@
+// Categories: Resources > Requests
 typedef struct { int pad[3]; int size; } Input;
 typedef struct { int handle; int size; int arg; void (*callback)(); int context; int flag; } Request;
 extern int func_80097B28(int);
 extern void func_800212F8(Request *);
 extern void func_80021888(void);
 extern volatile int D_8009F628;
+
+/**
+ *  @brief Allocates a handle and submits a request, optionally waiting for completion.
+ *
+ *  The allocation size is rounded up to a 64-byte boundary, while the request
+ *  retains the original size. A null callback selects the default completion path.
+ *  @param input Input descriptor containing the requested size.
+ *  @param arg Value passed through to the request.
+ *  @param callback Completion callback, or null to wait for the completion flag.
+ *  @param context Context passed through when callback is non-null.
+ *  @return The handle on completion or asynchronous submission, -1 on allocation failure, or 0 on timeout.
+ *  @par Globals
+ *  D_8009F628 is cleared and polled for the default completion path.
+ *  @par Control flow
+ *  Allocation failure returns -1; otherwise a null callback causes a bounded polling loop.
+ *  @par Calls
+ *  func_80097B28 allocates the handle; func_800212F8 submits the request.
+ *  @par Side effects
+ *  Submits a request and may clear the completion flag; timeout does not cancel the request.
+ *  @par Callers
+ *  Confirmed: func_80021CB0.
+ */
 int func_80021898(Input *input, int arg, void (*callback)(), int context)
 {
     int size = input->size;

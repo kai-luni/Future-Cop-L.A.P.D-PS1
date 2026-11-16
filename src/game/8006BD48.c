@@ -1,3 +1,4 @@
+// Categories: Gameplay > Values
 #include "game/types.h"
 
 struct Unk6BD48Obj {
@@ -21,6 +22,27 @@ struct Unk6BD48State {
 
 extern struct Unk6BD48State *D_8009FA94;
 
+/**
+ *  @brief Selects and adjusts a target value according to shared state.
+ *
+ *  A control byte selects one of two state fields, which determines whether
+ *  the selected target value is scaled or replaced by a fixed value.
+ *  @param obj Object whose control byte selects the state field.
+ *  @param tgt Target containing the two signed source values.
+ *  @param flag Low byte selects offset 0x28 when nonzero, otherwise offset 0x08.
+ *  @return The selected value after the state-dependent adjustment.
+ *  @par Globals
+ *  D_8009FA94 points to the two selectable state fields.
+ *  @par Control flow
+ *  States 1 and 2 add one quarter and one half; state 3 sets 9999.
+ *  State 0 and unlisted states leave the selected value unchanged.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None.
+ *  @par Callers
+ *  Confirmed: func_8006BDFC, func_8006BE90.
+ */
 s32 func_8006BD48(struct Unk6BD48Obj *obj, struct Unk6BD48Tgt *tgt, s32 flag)
 {
     s32 val;

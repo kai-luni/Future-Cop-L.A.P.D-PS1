@@ -1,3 +1,4 @@
+// Categories: Platform > Audio
 #include "game/types.h"
 
 typedef struct {
@@ -49,6 +50,27 @@ extern u16 D_8009EA60[];
 extern u16 func_800999F4(s32, s32, s32, s32);
 extern void func_80097808(s32, u32);
 
+/**
+ *  @brief Applies selected SPU voice attributes to the specified voices.
+ *
+ *  A zero attribute mask selects all supported fields; otherwise mask bits select
+ *  pitch, volume, addresses, and envelope fields for each voice in the voice bitset.
+ *  @param arg Voice selection, attribute mask, and values to apply.
+ *  @par Globals
+ *  D_8009EEA4 points to the SPU register layout written by this function.
+ *  D_8009EA60 stores the sample note associated with each voice.
+ *  @par Control flow
+ *  Iterates over 24 voices, skipping unselected ones and branching on attribute bits.
+ *  Volume modes are encoded and sweep volumes and envelope rates are clamped.
+ *  Raw ADSR values are written before any selected individual envelope fields.
+ *  @par Calls
+ *  func_800999F4 converts sample and target notes to pitch.
+ *  func_80097808 writes the selected start or loop address.
+ *  @par Side effects
+ *  Updates SPU voice registers and the per-voice sample-note table.
+ *  @par Callers
+ *  Confirmed: func_80021B90, func_80021BD0, func_80086C74.
+ */
 void func_80099368(SpuVoiceAttr *arg)
 {
     s32 ch;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object State
 #include "game/types.h"
 
 struct Unk3CDACRange {
@@ -16,6 +17,26 @@ struct Unk3CDACHolder {
     struct Unk3CDACObject *object;
 };
 
+/**
+ *  @brief Tests whether an indexed entry is available in a held object.
+ *
+ *  Flag bit 25 selects either a range-count check or a slot sentinel check.
+ *  The slot path directly indexes the eight-byte array without bounds checks.
+ *  @param holder Holder whose object is tested.
+ *  @param index Signed entry index to test.
+ *  @return 1 if the selected check succeeds, otherwise 0.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  A null object fails; the range path also rejects null ranges and negative indices.
+ *  The slot path succeeds when the indexed byte is not 0xFF.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None directly; an invalid slot index can access outside the array.
+ *  @par Callers
+ *  Confirmed: func_8003E984.
+ */
 s32 func_8003CDAC(struct Unk3CDACHolder *holder, s8 index)
 {
     struct Unk3CDACObject *object;

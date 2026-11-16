@@ -1,3 +1,4 @@
+// Categories: Game Engine > State Update
 typedef unsigned char u8;
 typedef short s16;
 typedef unsigned short u16;
@@ -26,6 +27,25 @@ struct Entity {
         } else { sum = e->V + delta; e->V = sum; } \
     } }
 
+/**
+ *  @brief Advances six bounded byte values using their signed speeds.
+ *
+ *  Each value receives its corresponding speed multiplied by dt and divided by 300.
+ *  Values reaching a bound are clamped, with optional speed reversal.
+ *  @param e Entity containing the values, bounds, speeds, and reversal flag.
+ *  @param dt Time scale used to calculate each integer delta.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Six unrolled steps branch on delta sign and whether the relevant bound is reached.
+ *  A zero delta leaves the corresponding value and speed unchanged.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Updates entity values and may negate speeds when flag bit 0 is set.
+ *  @par Callers
+ *  Confirmed: func_80070048.
+ */
 void func_8006FB7C(struct Entity *e, int dt)
 {
     register int delta __asm__("$3");

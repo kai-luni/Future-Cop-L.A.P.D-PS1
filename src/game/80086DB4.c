@@ -1,3 +1,4 @@
+// Categories: Platform > Audio
 #include "game/types.h"
 
 typedef struct {
@@ -26,6 +27,25 @@ extern void func_80086AC0(void);
 extern u32 func_80098788(s32 on_off, u32 voice_bits);
 extern void func_80098C68(s32 a, u32 b);
 
+/**
+ *  @brief Initializes audio transfer state once and updates two voice masks.
+ *
+ *  On first use, prepares three 0x300-byte transfers and waits for each to
+ *  finish before performing the final initialization step.
+ *  @par Globals
+ *  D_8009F4D8 holds transfer flags, buffers, initialization state, and voice masks.
+ *  @par Control flow
+ *  The initialization branch loops three times and busy-waits on unk7B48;
+ *  voice-mask operations run on every call.
+ *  @par Calls
+ *  func_800869D8 and func_80086A4C obtain buffers; func_8008684C starts each
+ *  transfer; func_80086AC0 performs the final initialization step.
+ *  func_80098788 processes each mask; func_80098C68 receives their union.
+ *  @par Side effects
+ *  Updates shared transfer and mask state and invokes audio operations.
+ *  @par Callers
+ *  Confirmed: func_800879DC.
+ */
 void func_80086DB4(void)
 {
     u8 *buf;

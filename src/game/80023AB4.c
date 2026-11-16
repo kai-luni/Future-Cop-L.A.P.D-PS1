@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio | Resources > Sound Banks
 #include "game/types.h"
 
 struct SoundSample {
@@ -37,6 +38,24 @@ extern void func_80021DAC(s32 index);
 extern void func_800181D4(void *block);
 extern void func_800242B4(s32 slot, u8 program);
 
+/**
+ *  @brief Releases the first VAB entry matching a nonnegative status value.
+ *
+ *  Before releasing the entry, scans sound-bank samples and processes each
+ *  program whose VAB field matches the requested value.
+ *  @param arg0 Status and sample VAB value to match; negative values are ignored.
+ *  @par Globals
+ *  D_800A0A00 contains eight VAB entries; D_800A7938 contains 110 sound banks.
+ *  @par Control flow
+ *  Searches for the first matching entry, then scans each bank's samples backward.
+ *  @par Calls
+ *  func_800242B4 processes matching slot and program pairs; func_80021DAC handles
+ *  a valid entry ID; func_800181D4 releases each nonnull block4 and block8.
+ *  @par Side effects
+ *  Resets the matching entry's ID, released block pointers, status, and pad2.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80023AB4(s32 arg0)
 {
     register s32 arg __asm__("$21") = arg0;

@@ -1,3 +1,4 @@
+// Categories: Resources > Handles
 #include "game/types.h"
 
 struct Unk4749CResource {
@@ -10,6 +11,24 @@ struct Unk4749CHandle {
     s32 serial;
 };
 
+/**
+ *  @brief Checks whether a resource handle has a matching serial.
+ *
+ *  Reads the resource pointer and compares its serial with the handle's serial.
+ *  A null resource pointer is treated as an invalid handle.
+ *  @param handle Handle containing the resource pointer and expected serial.
+ *  @return 1 if the pointer is non-null and the serials match; otherwise 0.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Branches on the resource pointer before comparing serials.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None; the handle and resource are only read.
+ *  @par Callers
+ *  Confirmed: func_80023D78, func_80024188.
+ */
 s32 func_800474C4(struct Unk4749CHandle *handle)
 {
     register struct Unk4749CResource *resource __asm__("$3");

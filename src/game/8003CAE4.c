@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object State
 #include "game/types.h"
 
 struct Unk3CAE4;
@@ -39,6 +40,28 @@ struct Unk3CAE4 {
 
 extern void func_8003CA80(struct Unk3CA80 *object);
 
+/**
+ *  @brief Updates an object's timers, flags, and pending event value.
+ *
+ *  Advances several countdowns, dispatches callbacks on selected expirations,
+ *  and handles a condition on the object's linked state.
+ *  @param object Object whose timers and state are updated.
+ *  @param arg1 Amount subtracted from active timers.
+ *  @param flag In/out event byte, set or cleared by applicable branches.
+ *  @return 1 if the message-1 callback does not return 1; otherwise 0.
+ *  @par Globals
+ *  None directly referenced.
+ *  @par Control flow
+ *  Conditional timer branches update flags and invoke callbacks; a linked-state
+ *  check can clear the event byte and invoke object handling.
+ *  @par Calls
+ *  The object callback receives messages 1 and 8; func_8003CA80 handles the
+ *  qualifying linked-state condition.
+ *  @par Side effects
+ *  Modifies object fields and the event byte and invokes callbacks.
+ *  @par Callers
+ *  Confirmed: func_8003F2AC.
+ */
 s32 func_8003CAE4(struct Unk3CAE4 *object, s32 arg1, u8 *flag)
 {
     s32 result;

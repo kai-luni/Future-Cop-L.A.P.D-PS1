@@ -1,3 +1,4 @@
+// Categories: Resources > Data Initialization | Graphics > Animation
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef short s16;
@@ -17,6 +18,30 @@ extern u32 D_800A8E80[];
 extern void func_80012E48(void *, u32, u32);
 extern void func_8001306C(void *);
 
+/**
+ *  @brief Initializes a loaded header and resolves its associated data.
+ *
+ *  Prepares pointer tables, packed records, and optional animation data for use.
+ *  @param out Receives the initialized header pointer.
+ *  @param data Input data passed to the loader.
+ *  @param size Input data size passed to the loader.
+ *  @param arg3 Additional loader argument.
+ *  @par Globals
+ *  D_8009F52C supplies the header; D_8009F560 resolves indexed pointers.
+ *  D_8009F528 bounds the record scan; D_800A8E80 translates record values.
+ *  D_8009F530, D_8009F534, D_8009F538, D_8009F53C, D_8009F540,
+ *  D_8009F544 and D_8009F548 supply header fields; D_8009F54C and
+ *  D_8009F550 supply optional nodes linked through D_8009F564 and D_8009F568.
+ *  @par Control flow
+ *  Scans variable-size records, fixes animation entries, and rewrites packed flags.
+ *  Optional nodes and header fields are handled conditionally; unknown record types do not advance the scan.
+ *  @par Calls
+ *  func_80012E48 loads the data; func_8001306C processes three resolved blocks.
+ *  @par Side effects
+ *  Modifies the header, records, animation entries, and global node lists.
+ *  @par Callers
+ *  Confirmed: func_80013550.
+ */
 void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
 {
     Header *h;

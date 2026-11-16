@@ -1,3 +1,4 @@
+// Categories: Gameplay > State Transition
 #include "game/types.h"
 
 extern s8 *D_8009F468;
@@ -20,6 +21,28 @@ extern s16 D_8009B7E6[4];
 
 extern void func_8007D2DC(s32 mode);
 
+/**
+ *  @brief Updates selection readiness or initiates a shared state transition.
+ *
+ *  Mode 3 marks readiness and, when permitted, copies two sets of table values
+ *  into shared state; mode 0 updates readiness-related values for a selection.
+ *  @param a0 Operation selector; only 0 and 3 are handled.
+ *  @param a1 Unused.
+ *  @param a2 Unused.
+ *  @param a3 Unused.
+ *  @param a4 Selection value compared in mode 0.
+ *  @par Globals
+ *  D_8009F468, D_8009F8B8, D_8009F8E0_arr, D_8009F8E0, and D_8009F8E4 control readiness; D_8009FA94 holds shared state.
+ *  D_8009F924, D_8009F926, D_8009F928 index D_8009C030, D_8009C050, D_8009C0A8; D_8009F45A, D_8009FA10, D_8009FA00, D_8009B856, D_8009B7E6 are updated.
+ *  @par Control flow
+ *  Branches on a0 and the shared mode; mode 3 may wait for both readiness flags.
+ *  @par Calls
+ *  func_8007D2DC is called with 1 when the transition is permitted.
+ *  @par Side effects
+ *  Changes readiness flags, shared state, and selection-related values.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
 {
     u8 flag;

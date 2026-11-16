@@ -1,3 +1,4 @@
+// Categories: Game Engine > Entity Dispatch
 #include "game/types.h"
 
 struct Entity {
@@ -18,6 +19,23 @@ struct EntityTable {
 
 extern struct EntityTable D_800A8F90;
 
+/**
+ *  @brief Resets marked entities after sending them update message 0xD.
+ *
+ *  Scans the global entity table for entries with a positive ID and nonzero
+ *  unk88, dispatching their update callback before resetting two fields.
+ *  @par Globals
+ *  D_800A8F90 supplies the entity count and pointer array.
+ *  @par Control flow
+ *  Iterates over the table and dispatches only when both eligibility tests pass.
+ *  @par Calls
+ *  Each eligible entity's update callback receives 0xD, the entity, zero, zero.
+ *  @par Side effects
+ *  Sets each eligible entity's unk88 to zero and unk90 to 0x7F00 after dispatch;
+ *  callbacks may have additional effects.
+ *  @par Callers
+ *  Confirmed: func_80026D1C.
+ */
 void func_8004EC74(void)
 {
     struct Entity **cursor;

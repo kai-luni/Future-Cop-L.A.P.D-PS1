@@ -1,3 +1,4 @@
+// Categories: Physics > Collision Detection | Gameplay > Object Interaction
 typedef struct Object Object;
 typedef struct Coord Coord;
 struct Coord { char pad[0x34]; int x,y,z,r; short h,w; };
@@ -7,6 +8,28 @@ struct Entry { int id; Object *object; };
 struct Bucket { unsigned char count; char pad[3]; struct Entry entries[8]; };
 extern struct Bucket D_800A8DC0[];
 extern int func_80061CAC(Coord *, Coord *);
+
+/**
+ *  @brief Tests an object pair for proximity and possible collision.
+ *
+ *  Approximates separation using coordinates and radii, optionally records
+ *  a nearby pair, and dispatches collision callbacks or updates closest objects.
+ *  @param a First object in the pair.
+ *  @param b Second object in the pair.
+ *  @param flags Pair-processing flags controlling recording and collision tests.
+ *  @par Globals
+ *  D_800A8DC0 holds indexed buckets of recently recorded object pairs.
+ *  @par Control flow
+ *  Distance thresholds reject pairs; flag and overlap checks gate recording
+ *  and the detailed test. A hit dispatches callbacks; otherwise proximity is updated.
+ *  @par Calls
+ *  func_80061CAC performs the detailed coordinate test; object callbacks
+ *  receive event 11 and the hit value, with its halves swapped for b.
+ *  @par Side effects
+ *  May append to a bucket, invoke callbacks, or update closest and distance fields.
+ *  @par Callers
+ *  Confirmed: func_800623FC, func_80062504.
+ */
 void func_800620D8(Object *a, Object *b, unsigned int flags)
 {
     register Coord *ca __asm__("$9") = &a->coord;

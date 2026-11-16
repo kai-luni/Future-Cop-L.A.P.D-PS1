@@ -1,3 +1,4 @@
+// Categories: Game Engine > Queued Operations
 #include "game/types.h"
 
 typedef struct Node {
@@ -23,6 +24,26 @@ extern void func_8001D6D0(s32, s32, s32);
 extern void func_8001DB60(s32, void *, s32, void (*)());
 extern void func_80028918();
 
+/**
+ *  @brief Starts the next queued node operation when the state permits it.
+ *
+ *  Removes a node from a four-entry ring and records it as the current node.
+ *  The operation uses the current state values and a completion callback.
+ *  @par Globals
+ *  D_800A0B70 supplies the readiness flag and operation arguments.
+ *  D_800A0C20 and D_8009F6B4 provide the ring and its read index.
+ *  D_8009F6AC records the current node; D_8009F6A8 is set to one.
+ *  @par Control flow
+ *  Proceeds only for a nonnull node, a clear state flag, and a nonnegative handle.
+ *  Advances the read index with wraparound at four.
+ *  @par Calls
+ *  func_8001D6D0 prepares the operation; func_8001DB60 starts it with node data.
+ *  func_80028918 is passed as the completion callback.
+ *  @par Side effects
+ *  Clears a ring entry, updates queue state and the node, and starts an operation.
+ *  @par Callers
+ *  Confirmed: func_80028918, func_80028E58.
+ */
 void func_80028AB4(void)
 {
     Node *node;

@@ -1,3 +1,4 @@
+// Categories: Platform > Serial I/O
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef signed int s32;
@@ -11,6 +12,26 @@ extern void (*D_8009C74C)(void *);
 extern s32 *D_8009C788;
 extern void func_8008C890(s32);
 extern void func_8008AE44(void);
+
+/**
+ *  @brief Configures the port and processes pending callbacks for an object.
+ *
+ *  The routine initializes hardware registers, drains the selected pending count, and checks port status.
+ *  It clears the object's pointed-to byte only when neither early-return condition applies.
+ *  @param obj Object supplying callback data, mode, and completion state.
+ *  @return One when the pointed-to byte is cleared, or zero on an early return.
+ *  @par Globals
+ *  D_8009C78C and D_8009C788 provide hardware state; D_8009C768 selects D_8009C780 and the pending count.
+ *  D_8009C748 and D_8009C74C are callbacks invoked while draining and completing pending work.
+ *  @par Control flow
+ *  Drains positive counts, dispatches completion callbacks at zero, and branches on status and object flags.
+ *  @par Calls
+ *  func_8008C890 configures a mode; func_8008AE44 handles the persistent status condition.
+ *  @par Side effects
+ *  Writes hardware registers and pending counts, invokes callbacks, and may clear the byte at obj->p.
+ *  @par Callers
+ *  Confirmed: func_8008A43C, func_8008BF78.
+ */
 s32 func_8008A6CC(struct Obj *obj)
 {
     s32 result;

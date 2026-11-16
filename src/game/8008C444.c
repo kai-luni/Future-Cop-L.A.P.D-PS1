@@ -1,3 +1,4 @@
+// Categories: Input > Controller Protocol
 #include "game/types.h"
 
 struct C444Layout {
@@ -17,6 +18,26 @@ struct CommandState;
 extern void func_8008B71C(struct CommandState *state, u8 value);
 extern void func_8008AE8C(struct PadPort *port);
 
+/**
+ *  @brief Dispatches a controller command sequence step.
+ *
+ *  The first byte of the pointed-to data and a state field can force a
+ *  zero command before the sequence step is considered.
+ *  @param state Controller state containing the sequence and optional callback.
+ *  @return Always zero.
+ *  @par Globals
+ *  None directly referenced.
+ *  @par Control flow
+ *  Steps 1 and 0xFE send commands; 0 and 0xFF do nothing.
+ *  Other steps invoke the callback if present, otherwise the fallback handler.
+ *  @par Calls
+ *  func_8008B71C sends a command value; func_8008AE8C handles the fallback.
+ *  The callback stored in state is invoked for other steps when present.
+ *  @par Side effects
+ *  Called handlers or the callback may modify state or perform I/O.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_8008C444(struct C444Layout *state)
 {
     if (state->ptr_3C[0] == 0xF3 && state->field_E8 == 0) {

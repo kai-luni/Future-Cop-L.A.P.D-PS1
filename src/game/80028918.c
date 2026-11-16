@@ -1,3 +1,4 @@
+// Categories: Game Engine > Node Queues
 #include "game/types.h"
 
 typedef struct Node {
@@ -30,6 +31,28 @@ extern s32 D_8009F6E8;
 extern void func_800288BC(Node *);
 extern void func_80028AB4(void);
 
+/**
+ *  @brief Handles completion of the current queued node operation.
+ *
+ *  The routine checks the reported amount and current position, updates progress
+ *  on success, and either queues the node as completed or passes it to cleanup.
+ *  A special node tag and state flags can terminate further processing.
+ *  @param arg0 Reported amount used to validate and advance the position.
+ *  @param arg1 Reported status, subject to overrides by the validation checks.
+ *  @par Globals
+ *  D_800A0B70 holds progress and flags; D_8009F6AC is the current node.
+ *  D_800A0C10 and D_8009F6B0 hold the completion queue and write index.
+ *  D_8009F6A8 is the busy flag; D_8009F6E8 controls an additional end check.
+ *  @par Control flow
+ *  An inactive state clears busy and returns; otherwise validation selects success
+ *  or cleanup, and a final flag determines whether processing resumes.
+ *  @par Calls
+ *  func_800288BC handles rejected or special nodes; func_80028AB4 resumes processing.
+ *  @par Side effects
+ *  Updates progress, flags, queue entries, and indices; clears the current node and busy flag.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80028918(s32 arg0, s32 arg1)
 {
     register State *state asm("$16");

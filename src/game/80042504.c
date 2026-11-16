@@ -1,3 +1,4 @@
+// Categories: Game Engine > Entity Initialization
 #include "game/types.h"
 
 struct Unk42504Def {
@@ -31,6 +32,26 @@ struct Unk42504Object {
 
 extern void func_8002AD58(s32 kind);
 
+/**
+ *  @brief Initializes an object from its spawn definition.
+ *
+ *  Sets object flags and an active byte, then copies scalar and array fields
+ *  from the definition referenced by the spawn data.
+ *  @param message Message value, unused by this function.
+ *  @param object Object to initialize.
+ *  @param spawn Spawn data containing the definition pointer.
+ *  @return Always zero.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Copies scalar fields, then loops over eight byte and word pairs.
+ *  @par Calls
+ *  func_8002AD58 is called with kind 2 before object initialization.
+ *  @par Side effects
+ *  Modifies the object's flags, active byte, copied fields, and arrays.
+ *  @par Callers
+ *  Confirmed: func_800426A8.
+ */
 s32 func_80042504(s32 message, struct Unk42504Object *object, struct Unk42504Spawn *spawn)
 {
     struct Unk42504Def *def;

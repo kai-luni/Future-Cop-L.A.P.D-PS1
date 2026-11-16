@@ -1,3 +1,4 @@
+// Categories: Game Engine > Entity Dispatch
 #include "game/types.h"
 
 struct Entity {
@@ -13,6 +14,27 @@ extern s32 func_80042470(s32 message, struct Entity *self);
 extern s32 func_80042504(s32 message, struct Entity *self, void *data);
 extern void func_800425BC(struct Entity *self);
 
+/**
+ *  @brief Dispatches entity messages to initialization, update, or default handling.
+ *
+ *  Message 1 reports the entity size, while selected messages are ignored.
+ *  Message 6 conditionally processes and clears the active byte and checks unk0C.
+ *  @param message Message selector.
+ *  @param self Entity receiving the message.
+ *  @param data Message-specific data passed to applicable handlers.
+ *  @return Size, handler result, or zero according to the message.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Switches on message; message 6 has two independent conditional calls.
+ *  @par Calls
+ *  func_80042504 initializes; func_80042470 handles message 5.
+ *  func_800423F0 and func_800425BC handle message 6; func_8002AD58 handles defaults.
+ *  @par Side effects
+ *  Clears self->unkA1 when set and may modify state through dispatched calls.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_800426A8(s32 message, struct Entity *self, void *data)
 {
     switch (message) {

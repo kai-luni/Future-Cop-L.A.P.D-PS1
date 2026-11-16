@@ -1,3 +1,4 @@
+// Categories: Utilities > String Formatting
 #include "game/types.h"
 
 typedef struct Spec {
@@ -23,6 +24,29 @@ extern u8 *func_8008D5D0(u8 *dest, u8 *src, s32 count);
 
 #define VA(T) ((T)*ap[0]++)
 
+/**
+ *  @brief Formats arguments into a null-terminated output buffer.
+ *
+ *  Parses printf-style flags, width, precision, modifiers, and supported conversions.
+ *  Arguments are read from the calling convention's argument area after fmt.
+ *  @param buf Destination buffer, which must have sufficient space.
+ *  @param fmt Null-terminated format string.
+ *  @return Number of output bytes written, excluding the terminator.
+ *  @par Globals
+ *  D_8009C7E0 supplies the initial conversion specification; D_80012250
+ *  supplies lowercase hexadecimal digits, and the uppercase table is addressed at D_8001223C.
+ *  @par Control flow
+ *  Scans literals and conversions, builds numeric digits backward, and applies padding.
+ *  Supports integer, pointer, character, string, count, and percent conversions;
+ *  an unsupported conversion ends formatting, and %n writes the current count.
+ *  @par Calls
+ *  func_8008CCC0 measures strings; func_8008D5C0 searches bounded strings.
+ *  func_8008D5D0 copies each formatted field into the output.
+ *  @par Side effects
+ *  Writes buf and any count destination supplied for %n; performs no buffer bounds check.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_8008CD3C(u8 *buf, signed char *fmt)
 {
     u8 digits[0x200];

@@ -1,3 +1,4 @@
+// Categories: Resources > Chunk Processing | Graphics > Image Data
 #include "game/types.h"
 
 struct Node {
@@ -16,6 +17,28 @@ extern void func_800822CC(u8 *arg0);
 extern u8 *func_8001E318(u8 *destination, u8 *source, u32 count);
 extern void func_800181D4(struct Node *node);
 
+/**
+ *  @brief Extracts selected image and palette chunks from a tagged node.
+ *
+ *  When enabled and the node tag matches, prepares a destination header and
+ *  copies up to three 0x80-byte PIX4 payloads and one 0x20-byte PL16 payload.
+ *  A completion byte is set only when all four required payloads are found.
+ *  @param node Node containing the tagged chunk stream and its size.
+ *  @par Globals
+ *  D_8009F464 gates processing; D_8009F92C points to the destination;
+ *  D_800120E0 is passed to the setup call.
+ *  @par Control flow
+ *  Walks chunks by their declared sizes and dispatches on type and payload size.
+ *  The node cleanup call runs even when processing is skipped.
+ *  @par Calls
+ *  func_800822CC performs setup; func_8001E318 copies payloads;
+ *  func_800181D4 processes the node after the scan.
+ *  @par Side effects
+ *  Writes the destination header, selected payloads, and possibly its completion byte.
+ *  Chunk sizes and bounds are not validated beyond the payload-size checks.
+ *  @par Callers
+ *  Confirmed: func_80024EC8.
+ */
 void func_80082358(struct Node *node)
 {
     s32 has_pl16;

@@ -1,3 +1,4 @@
+// Categories: Input > Controller Initialization
 #include "game/types.h"
 
 typedef struct {
@@ -17,6 +18,23 @@ extern u8 D_800A78F0[];
 extern void func_8008BDB0(u8 *start, u8 *end);
 extern void func_80089E00(void);
 
+/**
+ *  @brief Initializes two controller actuator slots and related state.
+ *
+ *  Each slot receives its port identifier, enabled flag and cleared motor
+ *  and timer fields before the shared buffer and subsystem are initialized.
+ *  @par Globals
+ *  D_800A6FF8 contains the two slots; D_800A78F0 supplies a 0x24-byte range.
+ *  @par Control flow
+ *  An outer loop visits two slots; two inner loops clear paired fields.
+ *  The two helper calls follow the loop.
+ *  @par Calls
+ *  func_8008BDB0 receives the buffer range; func_80089E00 performs setup.
+ *  @par Side effects
+ *  Writes slot fields and invokes helpers that may modify related state.
+ *  @par Callers
+ *  Confirmed: func_8001E4E4.
+ */
 void func_8001E87C(void)
 {
     s32 i;

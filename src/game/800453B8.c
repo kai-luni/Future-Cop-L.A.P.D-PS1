@@ -1,3 +1,4 @@
+// Categories: Platform > Audio
 #include "game/types.h"
 
 struct SoundVoice {
@@ -39,6 +40,26 @@ extern void func_80044EF8(void);
 extern void func_8004582C(void);
 extern s32 func_80046AD8(void);
 
+/**
+ *  @brief Initializes voice, bank and stream state for the audio subsystem.
+ *
+ *  The voice array becomes a 24-element linked list, bank markers are
+ *  cleared, and two stream records receive values from a helper.
+ *  @par Globals
+ *  D_800AACC8 holds voices; D_8009F73C and D_8009F740 hold the list and count;
+ *  D_8009F744, D_8009F748, D_8009F74C, D_8009F750, D_8009F754 and
+ *  D_8009F758 are cleared. D_800A10E0 and D_800A1810 hold banks and streams;
+ *  D_8009F32C and D_8009F738 are also cleared.
+ *  @par Control flow
+ *  Links 24 voices, clears six bank markers, and initializes two streams.
+ *  @par Calls
+ *  func_80044EF8 and func_8004582C initialize related state;
+ *  func_80046AD8 supplies a value for each stream.
+ *  @par Side effects
+ *  Rewrites the listed global audio state and invokes initialization helpers.
+ *  @par Callers
+ *  Confirmed: func_80044F8C.
+ */
 void func_800453B8(void)
 {
     u32 i;

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Search
 typedef struct Node {
     struct Node *next;
     char pad04[4];
@@ -13,6 +14,25 @@ typedef struct Node {
 } Node;
 extern Node *D_8009FA40;
 
+/**
+ *  @brief Finds the nearest eligible node in the horizontal plane.
+ *
+ *  Scans the global node list for active type-16 nodes with flag 0x20000.
+ *  Distance is abs(dx) + abs(dz) - min(abs(dx), abs(dz)) / 2.
+ *  @param obj Object whose x and z coordinates are the search origin.
+ *  @param distance Receives the distance only when a node is found.
+ *  @return The nearest eligible node, or null if none qualifies.
+ *  @par Globals
+ *  D_8009FA40 is the head of the node list.
+ *  @par Control flow
+ *  Traverses the list and retains the first node at the smallest distance.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes to distance only on a successful search.
+ *  @par Callers
+ *  Confirmed: func_8003532C.
+ */
 Node *func_80035184(Node *obj, int *distance)
 {
     register Node *node __asm__("$9");

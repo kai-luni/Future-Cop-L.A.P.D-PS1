@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct SoundVoice {
@@ -21,6 +22,28 @@ extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 ext
 extern u8 func_80024358(struct SoundBank *bank, struct SoundVoice *voice, s32 pan,
                         s32 volume, s32 extra);
 
+/**
+ *  @brief Selects the next bank sample and submits a configured voice.
+ *
+ *  The bank cursor advances before selection and wraps at the sample count.
+ *  An empty bank is rejected without configuring or submitting the voice.
+ *  @param bank Sample bank containing the count and rotating cursor.
+ *  @param voice Voice to receive the selected sample and adjusted parameters.
+ *  @param pan Pan value passed to voice configuration.
+ *  @param volume Volume value passed to voice configuration.
+ *  @param extra Additional value passed to voice configuration.
+ *  @return Zero for an empty bank, otherwise the submission result.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Branches on bank count, then advances and conditionally wraps the cursor.
+ *  @par Calls
+ *  func_800477D8 configures the voice; func_80024358 submits its resulting values.
+ *  @par Side effects
+ *  Updates the bank cursor and voice sample, and may modify the voice through calls.
+ *  @par Callers
+ *  Confirmed: func_80046E88.
+ */
 u8 func_8004772C(struct SoundBank *bank, struct SoundVoice *voice, s32 pan, s32 volume,
                  s32 extra)
 {

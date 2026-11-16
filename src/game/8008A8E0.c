@@ -1,9 +1,30 @@
+// Categories: Platform > Callback Dispatch
 #include "game/types.h"
 extern s32 D_8009C76C;
 extern s32 (*D_8009C7AC[])(void);
 extern void (*D_8009C728)(s32);
 extern void func_8008C890(u32);
 extern s32 func_8008ADB4(void);
+
+/**
+ *  @brief Dispatches the next indexed callback and handles its result.
+ *
+ *  The index at address 0x8009C76C is incremented before the callback runs.
+ *  Successful dispatch can trigger a delay and check, then adjust the index.
+ *  @par Globals
+ *  D_8009C76C is the dispatch index and controls post-dispatch processing.
+ *  D_8009C7AC supplies callbacks; D_8009C728 supplies the error callback.
+ *  @par Control flow
+ *  Negative results go directly to the error callback; nonnegative results
+ *  conditionally run the delay and check, then decrement the index if it is at least 5.
+ *  @par Calls
+ *  Calls the indexed D_8009C7AC function; func_8008C890 delays with argument 60.
+ *  func_8008ADB4 supplies the check; D_8009C728 receives errors or -3 on check failure.
+ *  @par Side effects
+ *  Updates the dispatch index and invokes callbacks and conditional helper calls.
+ *  @par Callers
+ *  Confirmed: func_8008A43C.
+ */
 void func_8008A8E0(void)
 {
     s32 result;

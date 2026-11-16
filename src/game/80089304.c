@@ -1,3 +1,4 @@
+// Categories: Resources > Transfer State
 #include "game/types.h"
 
 struct Unk80089304Node {
@@ -23,6 +24,25 @@ struct Unk80089304State {
 extern struct Unk80089304State *D_8009F970;
 extern void func_80089018(void);
 
+/**
+ *  @brief Advances the current node's byte and 2048-byte page counters.
+ *
+ *  The shared state tracks a current node, a replacement node, and a remainder.
+ *  After updating the counters, the function checks whether to switch nodes.
+ *  @param arg0 Amount added to the current node and page accounting.
+ *  @par Globals
+ *  D_8009F970 points to the state and nodes whose counters and pointers are updated.
+ *  @par Control flow
+ *  A boundary branch updates the remainder and page count; after the call, a
+ *  completed current node switches to the replacement if they differ.
+ *  @par Calls
+ *  func_80089018 runs after the initial accounting and before the completion check.
+ *  @par Side effects
+ *  Updates node progress and state counters; a switch clears unk44C and loads
+ *  the replacement node's unk28 as the new remainder.
+ *  @par Callers
+ *  Confirmed: func_800879DC.
+ */
 void func_80089304(s32 arg0)
 {
     {

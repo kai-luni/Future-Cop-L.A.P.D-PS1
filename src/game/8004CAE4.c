@@ -1,3 +1,4 @@
+// Categories: Graphics > Color Tables | Game Engine > State Initialization
 #include "game/types.h"
 
 struct Unk4CAE4State {
@@ -18,6 +19,25 @@ extern struct Unk4CAE4State *D_8009FA94[];
 extern s32 D_800A6F60[];
 extern s32 D_800A8F90[];
 
+/**
+ *  @brief Initializes a color table and resets associated state.
+ *
+ *  The routine installs 32 fixed color values and selects a limit from
+ *  two mode fields in the first state object.
+ *  @par Globals
+ *  D_800A6F60 receives colors; D_800A8F90 receives zero and the selected limit.
+ *  D_8009F7A0, D_8009F7A4, D_8009F7A8, D_8009FA40, and D_8009FA88 are cleared.
+ *  D_8009F7AC is set, D_8009F9F4[0] is cleared, and D_8009FA94 supplies modes.
+ *  @par Control flow
+ *  Mode 5C equal to one selects 0xFE; otherwise mode 0C equal to two selects
+ *  0x12C, and all other cases select 0xC8.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Overwrites the listed table entries and global state values.
+ *  @par Callers
+ *  Confirmed: func_80024A24.
+ */
 void func_8004CAE4(void)
 {
     register s32 colorF8F800 __asm__("$13");

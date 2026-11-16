@@ -1,3 +1,4 @@
+// Categories: Game Engine > Script Processing
 #include "game/types.h"
 
 struct Unk425BC {
@@ -11,6 +12,25 @@ struct Unk425BC {
 
 extern void func_8002A5B4(u8 *script, s32 index);
 
+/**
+ *  @brief Processes selected commands in the first four script slots.
+ *
+ *  Opcode 0x4B updates a three-bit field in unkA4; opcode 0x4C updates
+ *  the low five bits of a byte in the array beginning at offset 0xA8.
+ *  @param script Script state containing the command slots and packed fields.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Stops at a zero opcode or after four slots; other opcodes advance the cursor.
+ *  Recognized opcodes call the helper and recheck the same slot and index.
+ *  @par Calls
+ *  func_8002A5B4 is called for each recognized opcode with the script and index.
+ *  @par Side effects
+ *  Updates packed script fields and may modify script state through the helper.
+ *  Rechecking a recognized slot can repeat indefinitely if it remains unchanged.
+ *  @par Callers
+ *  Confirmed: func_800426A8.
+ */
 void func_800425BC(struct Unk425BC *script)
 {
     register struct Unk425BC *self __asm__("$18");

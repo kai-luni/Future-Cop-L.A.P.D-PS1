@@ -1,3 +1,4 @@
+// Categories: Platform > Device I/O
 #include "game/types.h"
 
 typedef struct UnkBA34_Item {
@@ -35,6 +36,28 @@ extern s32 func_8008ADB4(void);
 extern void func_8008AE44(void);
 extern void func_8008C890(s32);
 
+/**
+ *  @brief Runs a callback-driven sequence of device operations.
+ *
+ *  Processes an optional preliminary sequence, advances indexed item states,
+ *  and performs remaining operations before recording a device byte.
+ *  @param arg0 Operation context containing item and output pointers.
+ *  @return 0 on completion, a negative operation result, or -3 on check failure.
+ *  @par Globals
+ *  D_8009C728, D_8009C730, D_8009C734, D_8009C748, and D_8009C74C are callbacks;
+ *  D_8009C75C, D_8009C768, D_8009C774, D_8009C780, and D_8009C7A0 hold sequence state;
+ *  D_8009C7A4 supplies the final byte.
+ *  @par Control flow
+ *  Loops over preliminary and remaining operations, switches on item state,
+ *  and returns early on operation or check failure.
+ *  @par Calls
+ *  func_8008AB80 and func_8008A9A8 perform operations; func_8008C890 delays;
+ *  func_8008ADB4 checks progress; func_8008AE44 finalizes the sequence.
+ *  @par Side effects
+ *  Invokes callbacks, changes global sequence state, and appends an output byte.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_8008BA34(UnkBA34_Arg *arg0)
 {
     s32 i;

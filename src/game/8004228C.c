@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object State
 #include "game/types.h"
 
 typedef struct {
@@ -13,6 +14,25 @@ extern s32 D_8009FAC8;
 extern s32 D_8009F9B4;
 extern s32 D_8009F9B0;
 
+/**
+ *  @brief Updates an object's tracked state against global activity.
+ *
+ *  For objects with unkA0 bit 0 set, this maintains bit 1 while activity is
+ *  present or clears the tracked state when its active condition no longer holds.
+ *  @param obj Object whose state and flags may be changed.
+ *  @par Globals
+ *  D_8009FAC8 supplies activity; D_8009F9B4 is compared with unkA4;
+ *  D_8009F9B0 is decremented when the tracked state is cleared.
+ *  @par Control flow
+ *  If bit 1 is set and activity is absent or the identifier differs, clears
+ *  state; otherwise, active objects have bit 1 set.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  May set unkA4 to -10, clear unkA0 bits 0 and 1 and flags bit 3, or set bit 1.
+ *  @par Callers
+ *  Confirmed: func_80042330.
+ */
 void func_8004228C(Object *obj)
 {
     s32 active;

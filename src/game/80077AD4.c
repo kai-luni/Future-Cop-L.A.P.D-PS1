@@ -1,3 +1,4 @@
+// Categories: Game Engine > State Initialization
 #include "game/types.h"
 
 struct State {
@@ -105,6 +106,27 @@ extern void func_80077990(void);
 extern void func_8007FACC(void);
 extern void func_800782EC(void);
 
+/**
+ *  @brief Initializes a collection of global state descriptors and related control values.
+ *
+ *  Registers each descriptor with a name and kind, then assigns fields and handlers.
+ *  Shared handler pointers and per-descriptor settings establish the initial configuration.
+ *  @par Globals
+ *  D_800A35F8 through D_800A38F8 are the configured state descriptors.
+ *  D_8009B744 through D_8009BED0 supply names; D_8007A2C4 and other
+ *  D_8007xxxx and D_8008xxxx symbols supply stored handler or data pointers.
+ *  D_8009F874, D_8009F875, D_8009F876, D_8009F468, D_8009F8BC,
+ *  D_8009F8BD, D_8009F8BE, D_8009F8C0, D_8009F8C1, D_8009F8C4,
+ *  and D_8009F8C8 are initialized; D_8009F870 uses D_8009FA2C[0].
+ *  @par Control flow
+ *  Performs a fixed sequence of registrations and assignments without loops or branches.
+ *  @par Calls
+ *  func_80077884 initializes each descriptor; func_800782EC performs further setup.
+ *  @par Side effects
+ *  Rewrites global descriptors and control values, and stores handler pointers.
+ *  @par Callers
+ *  Confirmed: func_800780DC.
+ */
 void func_80077AD4(void)
 {
     func_80077884(&D_800A38F8, D_8009BED0, 1);

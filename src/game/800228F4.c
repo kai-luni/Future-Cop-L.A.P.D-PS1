@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio Streaming
 #include "game/types.h"
 
 typedef void (*SpuIrqCallback)(void);
@@ -49,6 +50,27 @@ extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 ext
 extern s32 func_800220C4(s32 arg0, s32 arg1, s32 *arg2, s32 arg3);
 extern void func_800221E4(s32 count, s32 *channels);
 
+/**
+ *  @brief Starts the configured stream channels when stream state is available.
+ *
+ *  It installs an SPU callback, prepares each configured voice and channel,
+ *  submits the channel list, and records a deadline in the stream state.
+ *  @return Zero if setup was attempted, or -1 if the availability field is zero.
+ *  @par Globals
+ *  D_800A0968 supplies configuration and receives active state, voice pointers,
+ *  channel IDs and a deadline; D_8009FA2C supplies the current time.
+ *  @par Control flow
+ *  An availability check gates setup; a loop handles each configured channel,
+ *  recording -1 in the submitted list when voice allocation fails.
+ *  @par Calls
+ *  func_80098BF8 installs D_80022FA8; func_80022F44 prepares the stream.
+ *  func_80046B04 obtains voices; func_800477D8 configures them;
+ *  func_800220C4 creates channel IDs and func_800221E4 submits the list.
+ *  @par Side effects
+ *  Changes stream state, installs a callback and invokes audio setup routines.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_800228F4(void)
 {
     s32 ret = 0;

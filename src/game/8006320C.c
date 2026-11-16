@@ -1,3 +1,4 @@
+// Categories: Physics > Spatial Queries
 #include "game/types.h"
 
 typedef struct { s32 x, y, z; } Vec;
@@ -12,6 +13,27 @@ extern s32 func_8001A750(s32 *, s32 *);
 extern void func_80018860(void *, void *);
 extern void func_8001A970(void *, void *, void *);
 
+/**
+ *  @brief Finds the first eligible object whose local box matches a position.
+ *
+ *  Candidate objects are filtered by flags and radius, then tested against model table boxes in local space.
+ *  A match supplies a rounded world-space height and the entry identifier.
+ *  @param pos World-space position to test.
+ *  @param out Optional destination for the vector stored at matrix offset three.
+ *  @param height Destination for the rounded world-space height.
+ *  @param id Destination for the matching entry identifier.
+ *  @return The first matching object, or null if none matches.
+ *  @par Globals
+ *  D_8009F838 gives the entry count; D_800A31A0 contains the object entries.
+ *  @par Control flow
+ *  Iterates entries and their boxes, skipping the first box when the table has at least two, and returns on the first match.
+ *  @par Calls
+ *  func_8001A750 performs the radius test; func_80018860 prepares a matrix; func_8001A970 transforms positions.
+ *  @par Side effects
+ *  Writes height, id, and optionally out only when a match is found.
+ *  @par Callers
+ *  Confirmed: func_80066F78.
+ */
 Object *func_8006320C(Vec *pos, Vec *out, s32 *height, u8 *id)
 {
     register Entry *current __asm__("$20");

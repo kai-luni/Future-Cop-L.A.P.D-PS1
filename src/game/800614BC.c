@@ -1,3 +1,4 @@
+// Categories: Gameplay > State
 #include "game/types.h"
 
 struct Unk614BCSub {
@@ -14,6 +15,26 @@ struct Unk614BCObj {
     struct Unk614BCSub *sub;
 };
 
+/**
+ *  @brief Updates flag fields in an object's substructure for two command codes.
+ *
+ *  Command 0x46 controls bit zero and an associated value; command 0x47
+ *  increments a flag field only when the substructure passes two checks.
+ *  @param obj Object containing the substructure to update.
+ *  @param arg1 Command code, either 0x46 or 0x47.
+ *  @param arg2 Selects the command's nonzero or zero branch.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Dispatches on arg1; 0x47 returns if unk16 is at least unk0E or unk12 is zero.
+ *  Its nonzero branch increments bits 8 through 11; its zero branch adds 0x1000.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  May change substructure flags and clear unk14 when clearing bit zero.
+ *  @par Callers
+ *  Confirmed: func_8006158C.
+ */
 void func_800614BC(struct Unk614BCObj *obj, s32 arg1, s32 arg2)
 {
     register struct Unk614BCSub *sub __asm__("$4") = obj->sub;

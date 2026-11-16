@@ -1,7 +1,28 @@
+// Categories: Game Engine > Object Updates
 #include "game/types.h"
 typedef struct {
  u8 pad[0x68]; s16 d0,d1; u8 a,b,c,d,e,f,g,h,i,j,k,l; u8 pad78; u8 m,n,o,pad7c,p,q,r; s16 x,y,z,u,v,w;
 } Obj;
+
+/**
+ *  @brief Computes two sets of fixed-point component slopes and orders their endpoints.
+ *
+ *  Each three-component endpoint pair uses its associated duration to
+ *  calculate slopes; the original starting components are also saved.
+ *  @param p Object containing durations, endpoints, saved starts, and slopes.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Durations below 16 produce zero slopes; otherwise each difference is
+ *  shifted by 12 and divided by its duration. Negative slopes swap endpoints.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes six slopes and six saved starting components, and may swap
+ *  individual endpoint components in the object.
+ *  @par Callers
+ *  Confirmed: func_8006FF44.
+ */
 void func_8006F898(Obj *p) {
  s32 x,y,z; u8 t;
  if (p->d0 < 16) { p->x=0; p->y=0; p->z=0; }

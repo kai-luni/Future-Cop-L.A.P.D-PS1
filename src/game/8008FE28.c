@@ -1,3 +1,4 @@
+// Categories: Platform > Event Dispatch
 /*
  * func_8008FE28 (0x8008FE28, 0xD8 bytes) -- EXACT reconstruction.
  *
@@ -25,6 +26,26 @@ extern u32 D_8009C8AC, D_8009C8A8;
 extern char D_800A3E58[], D_800A3E50[];
 extern s32 func_8008E7A0(void);
 
+/**
+ *  @brief Drains event results and invokes callbacks for selected result bits.
+ *
+ *  The low two bits of the mode byte are saved before polling and written
+ *  back after the event source returns zero.
+ *  @par Globals
+ *  D_8009CB6C points to the mode byte; D_8009CB84 supplies callback bytes.
+ *  D_8009C8AC and D_8009C8A8 hold optional callbacks; D_800A3E58 and
+ *  D_800A3E50 supply their respective string arguments.
+ *  @par Control flow
+ *  Polls until a zero result; bit 4 dispatches the first callback and bit 2
+ *  dispatches the second, each only when its callback pointer is nonzero.
+ *  @par Calls
+ *  func_8008E7A0 supplies each event result; configured callbacks receive
+ *  the corresponding byte and string.
+ *  @par Side effects
+ *  Invokes callbacks and replaces the mode byte with its saved low two bits.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8008FE28(void)
 {
     u8 mode = *D_8009CB6C & 3;

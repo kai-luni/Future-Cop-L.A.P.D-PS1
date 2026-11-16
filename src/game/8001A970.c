@@ -1,6 +1,26 @@
+// Categories: Utilities > Fixed-point Math
 #include "game/types.h"
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 
+/**
+ *  @brief Transforms a three-component vector using a fixed-point affine matrix.
+ *
+ *  Each output component sums three signed products shifted right by 16 bits,
+ *  then adds the corresponding translation from the final three matrix entries.
+ *  @param m Twelve matrix entries: nine coefficients followed by three translations.
+ *  @param v Three input vector components.
+ *  @param out Destination for three transformed components.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Computes the three components in sequence without branches or loops.
+ *  @par Calls
+ *  None; inline multiplication instructions form the fixed-point products.
+ *  @par Side effects
+ *  Writes out[0] through out[2] and reads m and v through volatile pointers.
+ *  @par Callers
+ *  Confirmed: func_80061CAC.
+ */
 void func_8001A970(volatile s32 *m, volatile s32 *v, s32 *out)
 {
     register s32 x __asm__("$12");

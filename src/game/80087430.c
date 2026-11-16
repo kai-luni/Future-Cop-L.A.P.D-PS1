@@ -1,3 +1,4 @@
+// Categories: Platform > Ring Buffer
 #include "game/types.h"
 
 typedef struct {
@@ -11,6 +12,24 @@ typedef struct {
 extern volatile Ring *D_8009F4D8;
 extern void func_8008731C(u8 *dst, u8 *src, u32 count);
 
+/**
+ *  @brief Copies two packed input streams into a pair of ring buffers.
+ *
+ *  Derives each stream length from the byte-swapped header word, rounds it
+ *  down to 15-byte groups, and accounts for 16 ring bytes per group.
+ *  @param arg0 Input block containing the header and two consecutive streams.
+ *  @par Globals
+ *  D_8009F4D8 supplies the ring buffers and producer and consumer counters.
+ *  @par Control flow
+ *  Busy-waits for space, then copies each stream either once or in two pieces
+ *  when the destination wraps around the 0x3C00-byte ring.
+ *  @par Calls
+ *  func_8008731C copies each contiguous stream segment into its ring buffer.
+ *  @par Side effects
+ *  Writes both ring buffers and advances the producer counter.
+ *  @par Callers
+ *  Confirmed: func_800879DC.
+ */
 void func_80087430(u8 *arg0)
 {
     u32 magic;

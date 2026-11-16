@@ -1,3 +1,4 @@
+// Categories: Game Engine > Resource Cleanup
 #include "game/types.h"
 
 struct Unk4749CResource {
@@ -24,6 +25,26 @@ extern void func_80029720(void);
 extern void func_80045370(void);
 extern s32 func_800474F0(struct Unk4749CHandle *handle);
 
+/**
+ *  @brief Resets a global handle and performs associated cleanup.
+ *
+ *  When the handle is in state one, its resource owner is processed if
+ *  present and an additional cleanup call depends on the handle flag.
+ *  @par Globals
+ *  D_800A0A80 supplies the handle, resource and flag; its state and unk10
+ *  fields are cleared as applicable.
+ *  @par Control flow
+ *  State, resource and flag checks gate conditional calls; final cleanup is
+ *  always performed after those checks.
+ *  @par Calls
+ *  func_80022240 processes the resource owner; func_80045370 performs
+ *  flag-dependent cleanup; func_800474F0 processes the handle and
+ *  func_80029720 performs the final cleanup step.
+ *  @par Side effects
+ *  Changes handle fields and invokes cleanup routines.
+ *  @par Callers
+ *  Confirmed: func_80023D78, func_80047554.
+ */
 void func_80023E84(void)
 {
     if (D_800A0A80.state == 1) {

@@ -1,3 +1,4 @@
+// Categories: Platform > State
 #include "game/types.h"
 
 struct Ctx {
@@ -17,6 +18,25 @@ struct Ctx {
 extern volatile struct Ctx *D_8009AB08;
 extern void func_8008D640(s32);
 
+/**
+ *  @brief Updates a context state and passes its stored value to a helper.
+ *
+ *  The routine marks the context, then either decrements a positive counter
+ *  in state zero or resets several state fields to their fallback values.
+ *  @return Always 0.
+ *  @par Globals
+ *  D_8009AB08 points to the volatile context read and modified by this routine.
+ *  @par Control flow
+ *  State zero decrements a positive unk9A8; otherwise it resets the state
+ *  fields and sets unk9A8 to 1. Other states reset the fields without
+ *  changing unk9A8, then all paths call the helper.
+ *  @par Calls
+ *  func_8008D640 receives the context's unk8FC value.
+ *  @par Side effects
+ *  Writes context markers and, depending on state, the counter and reset fields.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_8001FF44(void)
 {
     static void *const table[] = { &&case0, &&fallback, &&fallback, &&fallback, &&fallback, &&fallback, &&fallback };

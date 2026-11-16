@@ -1,3 +1,4 @@
+// Categories: Platform > DMA Interrupts
 typedef unsigned int u32;
 
 typedef struct DmaChannel {
@@ -16,6 +17,26 @@ extern char D_80012888[];
 
 extern void func_8008E000(char *, ...);
 
+/**
+ *  @brief Dispatches pending DMA channel callbacks and reports exceptional status.
+ *
+ *  The handler repeatedly reads the seven channel status bits, writes the
+ *  corresponding acknowledgement mask, and invokes registered callbacks.
+ *  It then checks the control register for two exceptional status conditions.
+ *  @par Globals
+ *  D_8009DD60 points to the control register; D_8009DD64 holds callbacks.
+ *  D_8009DD84 supplies channel addresses; D_8001286C and D_80012888 are formats.
+ *  @par Control flow
+ *  Scans up to seven bits per pass and repeats until no channel bits remain.
+ *  An exceptional status triggers one register report and seven channel reports.
+ *  @par Calls
+ *  func_8008E000 prints the control value and channel memory addresses.
+ *  Registered non-null callbacks are invoked indirectly.
+ *  @par Side effects
+ *  Writes the control register and may invoke callbacks or emit diagnostics.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80091D0C(void)
 {
     int s0;

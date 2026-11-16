@@ -1,3 +1,4 @@
+// Categories: Resources > Lookup
 #include "game/types.h"
 
 struct Unk51580Entry {
@@ -27,6 +28,27 @@ struct Unk51580Out {
 extern struct Unk51580Header *func_80019A20(s32 magic, s32 arg1, s32 arg2);
 extern void func_8001AB78(s32 arg0, struct Unk51580Out *out);
 
+/**
+ *  @brief Looks up a one-based resource entry and populates an output record.
+ *
+ *  The resource header supplies the entry count, and a separate table
+ *  supplies the selected entry and the value passed for further processing.
+ *  @param arg0 Resource descriptor, or null to fail.
+ *  @param arg1 One-based entry index.
+ *  @param arg2 Output record, cleared on failure.
+ *  @return 1 if the entry was processed, or 0 if the descriptor or index is invalid.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Checks the descriptor, count and positive index before accessing the table;
+ *  otherwise clears all three output fields.
+ *  @par Calls
+ *  func_80019A20 retrieves the header and entry table; func_8001AB78 processes the output.
+ *  @par Side effects
+ *  Writes the output record and invokes the processing helper on success.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_80051580(struct Unk51580 *arg0, s32 arg1, struct Unk51580Out *arg2)
 {
     struct Unk51580Out *out;

@@ -1,3 +1,4 @@
+// Categories: Platform > Device I/O
 #include "game/types.h"
 
 struct S {
@@ -30,6 +31,25 @@ extern void func_8008D670(s32, s32, volatile u32 *);
 extern void func_8008D680(s32, s32, volatile u32 *);
 extern void *func_8001E318(volatile void *, void *, u32);
 
+/**
+ *  @brief Advances a global device-transfer state machine.
+ *
+ *  Selects a pending operation, prepares its 128-byte buffer, and dispatches
+ *  a device request or completion action according to the stored state.
+ *  @return Always 0.
+ *  @par Globals
+ *  D_8009AB08 points to the state, transfer buffer, and device identifier.
+ *  @par Control flow
+ *  Branches on request and operation states; one path loops over buffer words
+ *  to calculate a checksum before dispatching a transfer.
+ *  @par Calls
+ *  func_8001E318 copies data; func_8008D670 and func_8008D680 dispatch
+ *  transfers; func_8008D640 and func_8008D650 handle other device actions.
+ *  @par Side effects
+ *  Updates state fields and buffer contents and invokes device operations.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_8001FAB8(void)
 {
     register struct S *p asm("$3");

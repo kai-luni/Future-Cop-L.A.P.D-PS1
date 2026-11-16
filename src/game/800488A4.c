@@ -1,8 +1,30 @@
+// Categories: Graphics > Color Tables
 #include "game/types.h"
 
 extern u16 D_800A1E10[][0x10];
 extern s32 D_8009F360;
 
+/**
+ *  @brief Builds a 16-entry packed color ramp in a table row.
+ *
+ *  The first entry is zero; the remaining entries scale the low eight
+ *  bits of each component and pack them into red, green and blue fields.
+ *  @param index Table row index, accepted from zero through the global limit.
+ *  @param blue Blue component, truncated to eight bits.
+ *  @param green Green component, truncated to eight bits.
+ *  @param red Red component, truncated to eight bits.
+ *  @par Globals
+ *  D_800A1E10 receives the row; D_8009F360 supplies the inclusive limit.
+ *  @par Control flow
+ *  Invalid indices return; otherwise a 15-iteration loop fills entries 1 to 15.
+ *  Entries 1 through 6 have bit 15 set.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Overwrites the selected table row.
+ *  @par Callers
+ *  Confirmed: func_80048978.
+ */
 void func_800488A4(s32 index, s32 blue, s32 green, s32 red)
 {
     register u16 (*table)[0x10] __asm__("$2");

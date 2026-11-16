@@ -1,3 +1,4 @@
+// Categories: Platform > Hardware Transfer
 #include "game/types.h"
 
 extern volatile u8 *D_8009CB6C;
@@ -9,6 +10,27 @@ extern volatile u32 *D_8009CBA8;
 extern volatile u32 *D_8009CBAC;
 extern volatile u32 *D_8009CBB0;
 
+/**
+ *  @brief Configures hardware registers and starts a transfer.
+ *
+ *  Programs control, destination, and size registers, then waits for readiness.
+ *  The size register receives size with bit 16 set.
+ *  @param destination Destination value written to the transfer register.
+ *  @param size Size value combined with 0x10000 for the transfer register.
+ *  @return Always 0.
+ *  @par Globals
+ *  D_8009CB6C and D_8009CB78 point to byte control and status registers.
+ *  D_8009CBA0, D_8009CB7C, and D_8009CBA4 point to configuration registers.
+ *  D_8009CBA8, D_8009CBAC, and D_8009CBB0 point to transfer registers.
+ *  @par Control flow
+ *  Polls bit 0x40 until set, then writes and reads the final control register.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes hardware registers and may busy-wait indefinitely.
+ *  @par Callers
+ *  Confirmed: func_8008E5B8.
+ */
 int func_8008FD30(u32 destination, u32 size)
 {
     volatile u8 *p;

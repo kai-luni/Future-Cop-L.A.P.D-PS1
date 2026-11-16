@@ -1,3 +1,4 @@
+// Categories: Platform > Hardware Registers
 #include "game/types.h"
 
 struct State {
@@ -13,6 +14,25 @@ struct State {
 extern struct State *D_8009CB80;
 extern u8 *D_8009CB6C, *D_8009CB70, *D_8009CB74, *D_8009CB78;
 
+/**
+ *  @brief Initializes shared state fields and writes a short register sequence.
+ *
+ *  Two fields are initialized conditionally, while three others are always
+ *  set before the indexed register writes.
+ *  @return Always zero.
+ *  @par Globals
+ *  D_8009CB80 points to the state whose fields are initialized.
+ *  D_8009CB6C selects register banks; D_8009CB70, D_8009CB74 and
+ *  D_8009CB78 point to registers written in the selected banks.
+ *  @par Control flow
+ *  Fields a and b are set only when both f and g are zero.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Updates shared state and writes the register sequence for banks 2 and 3.
+ *  @par Callers
+ *  Confirmed: func_8008DF30, func_8008E04C.
+ */
 s32 func_8008F7AC(void)
 {
     volatile u8 data[4];

@@ -1,6 +1,29 @@
+// Categories: Physics > Spatial Queries
 typedef struct { short x, y, z, sx, sy, sz; } Box;
 typedef struct { int x, y, z; } Vec;
 
+/**
+ *  @brief Finds the first box containing a position within expanded bounds.
+ *
+ *  Box coordinates and extents are scaled by 16 before comparison with pos.
+ *  Each axis uses a strict absolute-distance comparison against extent plus radius.
+ *  @param input First box in the strided array.
+ *  @param pos Position to test against the boxes.
+ *  @param radius Amount added to each scaled box extent.
+ *  @param count Number of boxes in the array.
+ *  @param input_stride Byte distance between consecutive boxes.
+ *  @return Index of the first matching box, or -1 if none matches.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Skips index zero when count is at least two, then tests axes in x, y, z order.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None.
+ *  @par Callers
+ *  Confirmed: func_80061CAC.
+ */
 int func_800618CC(Box *input, Vec *pos, int radius, int count, int input_stride)
 {
     register Box *box __asm__("$10") = input;

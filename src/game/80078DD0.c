@@ -1,3 +1,4 @@
+// Categories: Game Engine > Menu | Input > Controller | Graphics > Menu Rendering
 #include "game/types.h"
 
 struct InputAction { u32 buttons; s32 phase; };
@@ -65,6 +66,27 @@ extern void func_80082AB0(s32,s32,s32,s32,s32,s32,s32,s32,s32);
 extern void func_800788F0(void *,s32,s32,s32,s32,s32,s32,s32);
 extern void func_800826A0(void), func_80078B98(void), func_80078B34(s32,s32,s32), func_8001B4A8(s32);
 
+/**
+ *  @brief Updates controller-driven menu state and renders the active menu.
+ *
+ *  Polls two controllers, processes menu actions and callbacks, draws items,
+ *  and handles inactivity and pending menu transitions when the menu is active.
+ *  @par Globals
+ *  D_8009F464 gates processing; D_8009F468 selects the menu; D_8009F8D0 and D_8009F8D4 hold button states.
+ *  D_8009F890, D_8009F898, D_8009F8A0 and D_8009F8A8 track directional holds; D_800A3588 through D_800A35E8 hold action states.
+ *  D_8009FA2C drives timing; D_8009F8C8 and D_8009F8C4 request transitions; D_8009FA94 supplies game context.
+ *  @par Control flow
+ *  Returns when disabled; otherwise loops over controllers and menu items, dispatches callbacks, and branches on menu mode and transition type.
+ *  A pending transition can wait until D_8009FA3C clears.
+ *  @par Calls
+ *  func_8001EF8C polls input; func_8005780C and func_80082D30 update actions and repeats.
+ *  func_80078650 and func_80078740 change menus; func_800787D8 moves selection; func_80046C84 plays menu sounds.
+ *  func_8001C214, func_80082AB0 and func_800788F0 draw menu elements; menu and item callbacks provide custom behavior.
+ *  @par Side effects
+ *  Updates input, timing, selection and transition globals, invokes callbacks, and submits menu drawing and sound operations.
+ *  @par Callers
+ *  Confirmed: func_80027EE4.
+ */
 void func_80078DD0(void)
 {
     u32 buttons[2];

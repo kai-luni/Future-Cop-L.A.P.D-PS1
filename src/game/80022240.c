@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio Voices
 #include "game/types.h"
 
 struct SoundVoiceSlot {
@@ -21,6 +22,23 @@ extern struct SoundSystem D_800A07A8;
 
 extern void func_8002238C(s32 channel);
 
+/**
+ *  @brief Clears active voice slots belonging to an owner.
+ *
+ *  The routine scans the three global voice slots and processes every
+ *  active slot whose owner matches the supplied value.
+ *  @param owner Owner value to match and pass to the channel helper.
+ *  @par Globals
+ *  D_800A07A8 contains the voice slots whose active and owner fields change.
+ *  @par Control flow
+ *  A three-iteration loop checks both active status and owner equality.
+ *  @par Calls
+ *  func_8002238C is called with owner for each matching slot.
+ *  @par Side effects
+ *  Matching slots are marked inactive and their owners are set to -1.
+ *  @par Callers
+ *  Confirmed: func_80022A64, func_80023E84.
+ */
 void func_80022240(s32 owner)
 {
     s32 i;

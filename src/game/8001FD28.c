@@ -1,3 +1,4 @@
+// Categories: Platform > State Management
 #include "game/types.h"
 
 typedef struct {
@@ -18,6 +19,26 @@ extern State *D_8009AB08;
 extern void func_8008D640(s32);
 extern void func_8008D690(s32);
 
+/**
+ *  @brief Transitions the shared state and dispatches its handle to a helper.
+ *
+ *  The routine clears reset and enables the state before selecting a transition.
+ *  State 1 has a special mode-5 transition; other cases reset or set fields.
+ *  @return Always 0.
+ *  @par Globals
+ *  D_8009AB08 points to the state whose fields and handle are read or modified.
+ *  @par Control flow
+ *  States 2, 3, and 6 reset fields and set result to -3; state 1 sets result
+ *  to -1 and falls through to state 4 handling. The default sets result to -2
+ *  and state to 4.
+ *  @par Calls
+ *  func_8008D640 receives the handle for states 1, 2, 3, 4, and 6;
+ *  func_8008D690 receives it for the default transition.
+ *  @par Side effects
+ *  Modifies shared state fields and invokes one of the handle helpers.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_8001FD28(void)
 {
     register State *p asm("$2");

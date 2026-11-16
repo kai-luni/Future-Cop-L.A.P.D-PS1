@@ -1,3 +1,4 @@
+// Categories: Gameplay > Timers
 #include "game/types.h"
 
 struct Unk40550Timers {
@@ -12,6 +13,25 @@ struct Unk40550 {
     struct Unk40550Timers *timers;
 };
 
+/**
+ *  @brief Applies an amount to three timer fields in priority order.
+ *
+ *  The second field is consumed first, followed by the first and then total.
+ *  A zero total prevents any changes, even if the other fields are nonzero.
+ *  @param object Object containing the timer structure pointer.
+ *  @param amount Amount to subtract, carried between fields when necessary.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Returns when total is zero or a field can absorb the remaining amount.
+ *  Otherwise clears exhausted fields and clamps total to zero if insufficient.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Modifies the timer structure's second, first, and possibly total fields.
+ *  @par Callers
+ *  Confirmed: func_80040A00.
+ */
 void func_80040550(struct Unk40550 *object, s32 amount)
 {
     if (object->timers->total == 0) {

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct Actor {
@@ -24,6 +25,26 @@ extern struct SoundManager *D_8009F930;
 extern s32 func_80045768(s32 arg0, s32 index);
 extern void func_800457B8(s32 arg0, s32 index);
 
+/**
+ *  @brief Updates sound-slot timers and releases slots whose sound check fails.
+ *
+ *  The manager mask identifies slots to skip for sound checks. Timers are
+ *  decremented for every slot visited, including slots already marked in the mask.
+ *  @param elapsed Amount subtracted from each visited slot's timer.
+ *  @par Globals
+ *  D_8009F930 points to the sound manager, its mask, and its 32 slots.
+ *  @par Control flow
+ *  If the mask is not full, slots are visited until all remaining mask bits
+ *  are accounted for; unmasked slots are checked when their timer is negative.
+ *  @par Calls
+ *  func_80045768 checks the actor and sound index; func_800457B8 is called
+ *  when that check returns zero.
+ *  @par Side effects
+ *  Updates timers and the mask; a failed check sets the actor's unk4B to -1.
+ *  A successful check resets the slot timer to 300.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8008352C(s32 elapsed)
 {
     u32 bit = 1;

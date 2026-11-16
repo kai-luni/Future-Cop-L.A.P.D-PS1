@@ -1,3 +1,4 @@
+// Categories: Platform > Audio Streaming
 #include "game/types.h"
 
 struct Stream22FA8 {
@@ -37,6 +38,27 @@ extern void func_80022D84(void);
 extern void func_80098BB8(s32 address);
 extern void func_80098A78(s32 mode);
 
+/**
+ *  @brief Advances stream state and schedules the next audio transfer.
+ *
+ *  Checks stream readiness, invokes optional status callbacks, and computes the
+ *  next buffer offset and deadline, including a special looping transition.
+ *  @par Globals
+ *  D_800A0968 holds stream state; D_800A0988, D_800A099C, and D_800A09F8 hold control state.
+ *  D_8009FA2C supplies the time base; D_8009F634 holds an optional callback address.
+ *  @par Control flow
+ *  Returns early for busy, inactive, or flagged streams; ready streams may dispatch callbacks.
+ *  The callback can change start state before it is checked again.
+ *  Looping and normal paths calculate offsets and deadlines differently; the deadline is clamped.
+ *  @par Calls
+ *  func_80022F7C runs first; func_80022D84 handles a ready stream when requested.
+ *  func_80098BB8 sets the transfer address and func_80098A78 starts mode 1.
+ *  @par Side effects
+ *  Updates stream fields and control state, invokes callbacks, and schedules a transfer.
+ *  The busy field is set before inactive and flagged-stream early returns.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80022FA8(void)
 {
     register u32 quot __asm__("$3");

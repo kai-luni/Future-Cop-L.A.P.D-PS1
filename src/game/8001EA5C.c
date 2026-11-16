@@ -1,3 +1,4 @@
+// Categories: Input > Controller Vibration
 #include "game/types.h"
 
 struct PadActuator {
@@ -17,6 +18,24 @@ struct PadActuator {
 extern struct PadActuator D_800A6FF8[];
 extern s32 D_8009FA2C;
 
+/**
+ *  @brief Sets the large motor level for a controller port.
+ *
+ *  The actuator must be enabled and have a valid large-motor index.
+ *  A nonzero level sets a deadline 300 units after the current global time.
+ *  @param port Index of the actuator record.
+ *  @param level Motor level, clamped to the range 0 through 255.
+ *  @par Globals
+ *  D_800A6FF8 holds actuator records; D_8009FA2C supplies the current time.
+ *  @par Control flow
+ *  Disabled or unmapped actuators return; the clamped level selects the update.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Updates the selected motor byte and large-motor timer.
+ *  @par Callers
+ *  Confirmed: func_8001EA20, func_8001EBA8.
+ */
 void func_8001EA5C(s32 port, s32 level)
 {
     struct PadActuator *actuator;

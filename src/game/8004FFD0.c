@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object Updates
 typedef signed int s32;
 typedef unsigned int u32;
 typedef signed short s16;
@@ -7,6 +8,27 @@ typedef struct { char p[0x50]; s32 x,y,z; } Vec;
 #define MUL(o,a,b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(o) : "r"(a),"r"(b) : "$8","$9")
 #define MULN(o,a,b) __asm__("nop\n\tmult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(o) : "r"(a),"r"(b) : "$8","$9")
 #define MULU(o,a,b) __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(o) : "r"(a),"r"(b) : "$8","$9")
+
+/**
+ *  @brief Updates object angles and accumulates a scaled vector contribution.
+ *
+ *  Uses the object's size, rates, scale, flags, and input to compute
+ *  fixed-point angle offsets and a contribution from its x, y, and z fields.
+ *  @param obj Object containing the parameters and angle outputs.
+ *  @param input Signed input used in the fixed-point calculations.
+ *  @param vec Vector whose components receive the accumulated contribution.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Turn and flag checks gate turnout; rate and rate2 independently gate
+ *  the vector and angle updates, with flag 0x1000 suppressing angle2.
+ *  @par Calls
+ *  None; multiplication is performed by inline assembly.
+ *  @par Side effects
+ *  May write turnout, angle2, and angle4 and add to vec components.
+ *  @par Callers
+ *  Confirmed: func_8005027C.
+ */
 void func_8004FFD0(Obj *obj, s32 input, Vec *vec) {
  register Obj *p __asm__("$10") = obj;
  register s32 size __asm__("$7");

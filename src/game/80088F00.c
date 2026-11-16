@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 #include "game/types.h"
 
 typedef struct Ent88F00 {
@@ -31,6 +32,24 @@ extern Ent88F00 *D_8009F974;
 extern s32 D_8009F978;
 extern s32 D_8009F97C;
 
+/**
+ *  @brief Initializes the next table entry when the state is ready.
+ *
+ *  Selects an entry from the global array, initializes its fields, and advances
+ *  the state index; exhaustion changes the state code to 2.
+ *  @return The current state code, including any exhaustion update.
+ *  @par Globals
+ *  D_8009F970 holds the state and entry pointers; D_8009F974 is the array base.
+ *  D_8009F978 and D_8009F97C supply two values copied into the entry.
+ *  @par Control flow
+ *  A nonzero state is returned unchanged; the first entry also resets totals.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Updates the state, selected entry, and possibly the first-entry pointer.
+ *  @par Callers
+ *  Confirmed: func_80089700.
+ */
 s32 func_80088F00(void)
 {
     if (D_8009F970->unk43C == 0) {

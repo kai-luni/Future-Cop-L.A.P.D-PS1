@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct SoundVoice {
@@ -27,6 +28,24 @@ extern s32 D_8009F758;
 
 extern void func_800469A0(struct SoundVoice *voice);
 
+/**
+ *  @brief Inserts a sound voice into the list selected by its pan field.
+ *
+ *  Pan values 0 and 2 select separate head-inserted lists; other values use
+ *  a list ordered by ascending priority, with equal priorities kept ahead.
+ *  @param voice Voice to link and optionally pass for further processing.
+ *  @par Globals
+ *  D_8009F74C and D_8009F754 are special list heads; D_8009F744 is the ordered head.
+ *  D_8009F750, D_8009F758, and D_8009F748 count their respective lists.
+ *  @par Control flow
+ *  A switch selects the list; the default branch scans for the insertion point.
+ *  @par Calls
+ *  func_800469A0 processes the voice when its bank is not 0xFF.
+ *  @par Side effects
+ *  Changes voice links, a list head or neighboring links, and a list count.
+ *  @par Callers
+ *  Confirmed: func_80046B04.
+ */
 void func_80046870(struct SoundVoice *voice)
 {
     struct SoundVoice *prev;

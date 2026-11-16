@@ -1,4 +1,25 @@
+// Categories: Platform > Startup
 /* Handwritten function: retail body has no C shape (hardware/GTE); words transcribed 1:1. */
+/**
+ *  @brief Initializes memory and registers before invoking startup routines.
+ *
+ *  Clears a global memory range, establishes stack and global-pointer registers,
+ *  and computes a memory base and size from startup configuration values.
+ *  @par Globals
+ *  D_8009F528 starts the cleared range and D_800AB6D8 ends it; D_8009F390
+ *  and D_8009F394 supply configuration values. D_8009EA04 and D_8009EA08
+ *  receive the computed base and size; D_8009F990 saves the incoming return address.
+ *  @par Control flow
+ *  A word loop clears the range, then two routines are called in sequence;
+ *  execution reaches a break instruction if the second call returns.
+ *  @par Calls
+ *  func_800966A0 receives the computed base plus four and the computed size;
+ *  func_80076A2C runs after the saved return address is reloaded.
+ *  @par Side effects
+ *  Clears memory, writes startup globals, changes registers, and invokes helpers.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 __asm__(
     ".set noreorder\n"
     ".globl entrypoint\n"

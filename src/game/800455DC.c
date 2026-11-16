@@ -1,3 +1,4 @@
+// Categories: Game Engine > Sound Channels
 #include "game/types.h"
 
 struct SoundChannel {
@@ -18,6 +19,24 @@ extern s32 D_8009F720;
 extern struct SoundChannel *D_8009F728;
 extern struct SoundChannel *D_8009F72C;
 
+/**
+ *  @brief Inserts a sound channel into the global doubly linked list.
+ *
+ *  Nonzero-priority channels are inserted before the first lower-priority
+ *  channel; a zero-priority channel is appended at the tail.
+ *  @param channel Channel to link into the list.
+ *  @par Globals
+ *  D_8009F728 and D_8009F72C hold the head and tail; D_8009F720 is the count.
+ *  @par Control flow
+ *  A nonzero priority scans the list; zero priority selects the tail directly.
+ *  Neighbor links and list endpoints are updated according to insertion position.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Changes channel and neighbor links, list endpoints as needed, and the count.
+ *  @par Callers
+ *  Confirmed: func_80045678.
+ */
 void func_800455DC(struct SoundChannel *channel)
 {
     struct SoundChannel *prev;

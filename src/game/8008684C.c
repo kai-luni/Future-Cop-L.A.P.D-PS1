@@ -1,3 +1,4 @@
+// Categories: Platform > Audio Transfer
 #include "game/types.h"
 
 typedef struct {
@@ -20,6 +21,27 @@ extern void func_80098F48(s32 mode);
 extern u32 func_80098EE8(u32 address);
 extern void func_80098E88(u8 *data, u32 size);
 
+/**
+ *  @brief Marks a 0x300-byte buffer and transfers it to a selected ring slot.
+ *
+ *  The shared state supplies four slot positions and a base address indexed by
+ *  arg2. The slot counter advances only when arg2 is 1.
+ *  @param arg0 Buffer of at least 0x300 bytes to mark and transfer.
+ *  @param arg1 Value recorded for the current slot.
+ *  @param arg2 Index into the base-address array; 1 also advances the counter.
+ *  @par Globals
+ *  D_8009F4D8 supplies the slot counter, recorded values, and base addresses.
+ *  @par Control flow
+ *  A loop marks every 16-byte block; boundary branches adjust the first or
+ *  last marker, and a separate branch conditionally increments the counter.
+ *  @par Calls
+ *  func_80098F48 selects mode 0, func_80098EE8 sets the address, and
+ *  func_80098E88 transfers 0x300 bytes from the buffer.
+ *  @par Side effects
+ *  Modifies buffer markers and shared slot state, then initiates the transfer.
+ *  @par Callers
+ *  Confirmed: func_80086954.
+ */
 void func_8008684C(u8 *arg0, u32 arg1, u32 arg2)
 {
     u32 i;

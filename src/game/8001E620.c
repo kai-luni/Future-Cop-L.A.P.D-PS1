@@ -1,3 +1,4 @@
+// Categories: Input > Button Mapping
 #include "game/types.h"
 
 struct InputMaskMap {
@@ -7,6 +8,24 @@ struct InputMaskMap {
 extern struct InputMaskMap D_800AAC50[2];
 extern u32 func_8001EF8C(void);
 
+/**
+ *  @brief Maps the current pressed-input mask to a profile-specific result mask.
+ *
+ *  Fourteen configured masks are tested independently against the current input;
+ *  each matching entry sets its assigned bit in the returned mask.
+ *  @param profile Mapping profile index, valid for values zero and one.
+ *  @return Mapped input bits, or zero for an invalid profile or no matches.
+ *  @par Globals
+ *  D_800AAC50 contains the two profiles and their fourteen input masks.
+ *  @par Control flow
+ *  Reads input first, then tests each mapping only when profile is less than two.
+ *  @par Calls
+ *  func_8001EF8C supplies the current pressed-input mask.
+ *  @par Side effects
+ *  No direct writes; the input query may have its own effects.
+ *  @par Callers
+ *  Confirmed: func_80057864.
+ */
 u32 func_8001E620(u32 profile)
 {
     register struct InputMaskMap *map __asm__("$5");

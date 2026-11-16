@@ -1,3 +1,4 @@
+// Categories: Platform > Asynchronous Operations
 typedef struct State {
     char pad0[0x8F4];
     volatile unsigned int mode;
@@ -20,6 +21,25 @@ extern void func_8008D640(int);
 extern void func_8008D670(int, int, void *);
 extern void func_8008D680(int, int, void *);
 
+/**
+ *  @brief Advances or terminates an operation according to its mode and timer.
+ *
+ *  Clears a state field, dispatches an operation using the stored handle and
+ *  buffer, or marks the operation done and closes the handle.
+ *  @return Always zero.
+ *  @par Globals
+ *  D_8009AB08 points to the shared operation state.
+ *  @par Control flow
+ *  Mode 2 continues only for a positive timer; modes 3 and 6 continue for any
+ *  nonzero timer. Other modes take the default completion path.
+ *  @par Calls
+ *  func_8008D680 handles mode 2; func_8008D670 handles modes 3 and 6;
+ *  func_8008D640 closes the handle on completion.
+ *  @par Side effects
+ *  Updates the timer or completion fields; timed completion also sets code to -3.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 int func_8001F818(void)
 {
     register State *p asm("$6") = D_8009AB08;

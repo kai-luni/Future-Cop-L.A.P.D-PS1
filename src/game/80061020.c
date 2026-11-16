@@ -1,3 +1,4 @@
+// Categories: Gameplay > Unit Statistics
 #include "game/types.h"
 
 struct Def {
@@ -73,6 +74,24 @@ extern struct Unit *D_8009F9EC;
 extern struct GlobalFA94 *D_8009FA94;
 extern struct Actor *D_8009FA58[];
 
+/**
+ *  @brief Updates matching definition counts and conditional team statistics for a unit.
+ *
+ *  Every table entry whose definition ID matches the unit's field has its count decremented.
+ *  In the selected global mode, definition team and type determine which statistics are incremented.
+ *  @param arg0 Unit whose identifier selects matching definitions.
+ *  @par Globals
+ *  D_8009F800 supplies the table; D_8009F9EC supplies the current unit; D_8009FA94 selects the mode.
+ *  D_8009FA58 supplies actor teams and their statistics blocks.
+ *  @par Control flow
+ *  Scans all entries, selects a statistics block by team, and dispatches types one through four.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Decrements matching counts and may increment type-specific counters or clear the current unit's field at offset 0x18.
+ *  @par Callers
+ *  Confirmed: func_8004D598.
+ */
 void func_80061020(struct Unit *arg0)
 {
     struct Table *table;

@@ -1,7 +1,28 @@
+// Categories: Platform > State
 #include "game/types.h"
 struct Entry { volatile u32 state; u32 pad[3]; s32 flags; u32 pad14; };
 extern struct Entry D_800A6D78[];
 extern s32 func_8001D90C(s32);
+
+/**
+ *  @brief Dispatches an indexed entry operation according to its flags.
+ *
+ *  Entries with flags 2, 3 or 17 are dispatched directly; flag 1 waits
+ *  for the low state byte to leave values 2 and 3 before dispatching.
+ *  @param index Index of the entry in the global table.
+ *  @return The helper's result for supported flags, or -6 otherwise.
+ *  @par Globals
+ *  D_800A6D78 contains the indexed volatile state and flags.
+ *  @par Control flow
+ *  Switches on the flags; the flag-1 path busy-waits without a timeout,
+ *  sets bit 0x10 around the helper call, then clears that bit.
+ *  @par Calls
+ *  func_8001D90C performs the indexed operation for supported flags.
+ *  @par Side effects
+ *  Temporarily modifies the entry flags on the flag-1 path.
+ *  @par Callers
+ *  Confirmed: func_80028AB4.
+ */
 s32 func_8001DB60(s32 index)
 {
     s32 result;

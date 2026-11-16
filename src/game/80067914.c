@@ -1,3 +1,4 @@
+// Categories: Physics > Collision | Resources > World Geometry
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
@@ -9,6 +10,30 @@ extern Vec D_800A2600,D_800A2610,D_800A2620,D_800A32A0[];
 extern u32 D_800A3260[];
 extern int D_800A3280[],D_800A3300[];
 extern u8 D_8009AFE8[][4],D_8009B1A4[];
+
+/**
+ *  @brief Tests a segment against polygons in its midpoint's world cell.
+ *
+ *  Reads the cell's packed polygon and height data, tests eligible surfaces,
+ *  and records wall candidates for selection and material reporting.
+ *  @param a Segment start in world coordinates.
+ *  @param b Segment end in world coordinates.
+ *  @param outA Optional output in y, z, x order.
+ *  @param outB Optional output for the selected height or endpoint z.
+ *  @param flag Enables tests of polygon types below 71 when nonzero.
+ *  @return Zero on no result or a degenerate diagonal; otherwise a kind and material code.
+ *  @par Globals
+ *  D_8009F80C and D_8009F808 locate the cell; D_8009AFE8 and D_8009B1A4 describe polygon geometry.
+ *  D_800A2600, D_800A2610 and D_800A2620 hold local points; D_800A32A0, D_800A3260, D_800A3280 and D_800A3300 hold candidates.
+ *  @par Control flow
+ *  Iterates cell polygons, returns immediately for an enabled plane hit, and scans multiple wall candidates using an approximate horizontal distance.
+ *  @par Calls
+ *  No function calls.
+ *  @par Side effects
+ *  Overwrites global scratch points and candidate arrays and writes optional outputs on a hit.
+ *  @par Callers
+ *  Confirmed: func_800684AC.
+ */
 int func_80067914(Vec *a, Vec *b, int *outA, int *outB, int flag)
 {
     int ox,oy;

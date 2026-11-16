@@ -1,3 +1,4 @@
+// Categories: Platform > Block Transfer
 typedef struct State {
     char pad0[0x8F4];
     volatile int mode;
@@ -25,6 +26,25 @@ extern void func_8008D670(int, int, void *);
 extern void func_8008D680(int, int, void *);
 extern void func_8001E318(void *, void *, int);
 
+/**
+ *  @brief Advances a mode-driven block transfer and handles completion or errors.
+ *
+ *  Uses the shared transfer state to receive or send 128-byte blocks, optionally
+ *  reserving two words for a sequence number and checksum.
+ *  @return Always zero.
+ *  @par Globals
+ *  D_8009AB08 points to the transfer state, buffer, counters, and handle.
+ *  @par Control flow
+ *  Dispatches on mode; checksum loops cover words 2 through 31. Receive errors
+ *  consume retries before stopping; modes 3 and 6 advance outgoing blocks.
+ *  @par Calls
+ *  func_8001E318 copies block data; func_8008D680 requests the next block;
+ *  func_8008D670 submits a block; func_8008D640 stops the handle.
+ *  @par Side effects
+ *  Updates transfer state and buffers, and starts or stops handle operations.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 int func_8001F394(void)
 {
     State *p;

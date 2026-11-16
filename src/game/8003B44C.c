@@ -1,3 +1,4 @@
+// Categories: Game Engine > List Management
 #include "game/types.h"
 
 struct KindData {
@@ -13,6 +14,25 @@ struct Node {
 
 extern struct Node *D_800A1070[7];
 
+/**
+ *  @brief Prepends a node to a list selected by its data kind or index.
+ *
+ *  Seven recognized kind values override the supplied index; other kinds
+ *  use the index unchanged to select a global list head.
+ *  @param node Node to insert, with a valid data pointer.
+ *  @param index Fallback list index for an unrecognized kind.
+ *  @par Globals
+ *  D_800A1070 contains the seven list heads and receives the new head.
+ *  @par Control flow
+ *  A switch maps kinds 0x5D, 0x59, 0x5C, 0x5E, 0x5A, 0x57, and 0x58
+ *  to indices 0 through 6 respectively; the fallback index is not checked.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Replaces node->next and the selected list head.
+ *  @par Callers
+ *  Confirmed: func_8003F570.
+ */
 void func_8003B44C(struct Node *node, s32 index)
 {
     node->next = 0;

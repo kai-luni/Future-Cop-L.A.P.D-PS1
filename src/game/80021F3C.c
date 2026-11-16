@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct SoundChannelSlot {
@@ -18,6 +19,22 @@ extern struct SoundSystem D_800A07A8;
 extern void func_80021AB4(u32 mask);
 extern void func_80021E1C(void);
 
+/**
+ *  @brief Builds a mask of configured sound channels and dispatches it.
+ *
+ *  Reads the sound system's channel slots and combines their channel numbers
+ *  into a bitmask before invoking the two follow-up operations.
+ *  @par Globals
+ *  D_800A07A8 supplies the channel count and slot array.
+ *  @par Control flow
+ *  Iterates over the configured slots, then calls both functions in order.
+ *  @par Calls
+ *  func_80021AB4 receives the mask; func_80021E1C performs the follow-up.
+ *  @par Side effects
+ *  Calls may modify state; this function does not directly write globals.
+ *  @par Callers
+ *  Confirmed: func_80021C80.
+ */
 void func_80021F3C(void)
 {
     struct SoundChannelSlot *slot;

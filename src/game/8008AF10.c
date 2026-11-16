@@ -1,3 +1,4 @@
+// Categories: Input > Controller Protocol
 #include "game/types.h"
 
 struct PadPort {
@@ -26,6 +27,26 @@ struct PadPort {
 extern s32 func_8008B05C(struct PadPort *port);
 extern s32 func_8008B094(struct PadPort *port, u8 *buffer);
 
+/**
+ *  @brief Processes a controller information response for the current sequence step.
+ *
+ *  Records mode and actuator information, an extended ID, or combination
+ *  storage requirements in the port's protocol state.
+ *  @param port Controller port state and response buffer pointer.
+ *  @return Zero while combination processing continues or restarts; otherwise one.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Steps 2 and 3 record response fields; step 4 accumulates aligned record sizes.
+ *  After the last combination, a size check selects an error state or a restart.
+ *  @par Calls
+ *  func_8008B05C checks the accumulated state; func_8008B094 receives the port
+ *  and its internal buffer when the sequence is restarted.
+ *  @par Side effects
+ *  Updates port information, sequence and communication fields as applicable.
+ *  @par Callers
+ *  Confirmed: func_8008C518.
+ */
 s32 func_8008AF10(struct PadPort *port)
 {
     u32 chunk;

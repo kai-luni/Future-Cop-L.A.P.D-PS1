@@ -1,3 +1,4 @@
+// Categories: Platform > Hardware Control
 typedef unsigned short u16;
 typedef unsigned int u32;
 typedef int s32;
@@ -7,6 +8,25 @@ extern volatile short *D_8009DD18;
 extern void func_8008D7B0(s32);
 extern void func_8008CA20(s32, s32);
 
+/**
+ *  @brief Updates an indexed control value and its hardware mask when enabled.
+ *
+ *  Reads the previous value from the control table and, if it changes,
+ *  synchronizes the table, shadow mask, and hardware register when active.
+ *  @param index Control-table index and corresponding mask bit.
+ *  @param value New control value; zero clears the corresponding bit.
+ *  @return Previous table value, even if no update was performed.
+ *  @par Globals
+ *  D_8009CC8C supplies the table and adjacent state; D_8009DD18 points to the hardware register.
+ *  @par Control flow
+ *  Returns early for an unchanged value; active state gates updates and index-specific calls.
+ *  @par Calls
+ *  func_8008D7B0 handles index 0; func_8008CA20 handles indices 0 and 4 through 6.
+ *  @par Side effects
+ *  May update the table, shadow mask, hardware register, and callee-managed state.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_800918BC(s32 index, s32 value)
 {
     register s32 *base __asm__("$5") = D_8009CC8C;

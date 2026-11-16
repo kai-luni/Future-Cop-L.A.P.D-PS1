@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 #include "game/types.h"
 
 struct Unk8009AB08 {
@@ -19,6 +20,26 @@ struct Unk8009AB08 {
 extern struct Unk8009AB08 *D_8009AB08;
 extern s32 func_8001F180(u32 arg0, u32 arg1, u32 arg2, u32 arg3);
 
+/**
+ *  @brief Initializes a mode-3 operation when its arguments pass a check.
+ *
+ *  The four values are forwarded to a shared check and, on success, stored
+ *  in the shared operation state for subsequent processing.
+ *  @param arg0 First value, stored at offset 0x998 on success.
+ *  @param arg1 Second value, stored at offset 0x99C on success.
+ *  @param arg2 Third value, stored at offset 0x910 on success.
+ *  @param arg3 Fourth value, stored at offset 0x90C on success.
+ *  @par Globals
+ *  D_8009AB08 points to the operation state and its status fields.
+ *  @par Control flow
+ *  A zero check result initializes mode 3; a nonzero result sets the error flag.
+ *  @par Calls
+ *  func_8001F180 checks the four supplied values.
+ *  @par Side effects
+ *  Updates the shared state fields or sets its field at offset 0x9A4 to 1.
+ *  @par Callers
+ *  Confirmed: func_80020FDC.
+ */
 void func_8001F24C(u32 arg0, u32 arg1, u32 arg2, u32 arg3)
 {
     volatile struct Unk8009AB08 *p;

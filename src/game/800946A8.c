@@ -1,3 +1,4 @@
+// Categories: Graphics > GPU Transfer | Platform > DMA
 typedef unsigned short u16;
 typedef unsigned int u32;
 typedef short s16;
@@ -18,6 +19,27 @@ typedef struct {
     s16 y;
 } Hdr;
 
+/**
+ *  @brief Starts a GPU image readback into an output buffer.
+ *
+ *  Clamps the header dimensions, sends the readback command, reads remainder
+ *  words directly, and starts DMA for any complete 16-word blocks.
+ *  @param arg0 Image command header whose dimensions are clamped in place.
+ *  @param out Destination for the transferred 32-bit words.
+ *  @return 0 on setup success, or -1 for an empty transfer or polling failure.
+ *  @par Globals
+ *  D_8009DDF4 and D_8009DDF6 bound dimensions; D_8009DEC4 and D_8009DEC8
+ *  address GPU registers; D_8009DECC, D_8009DED0, and D_8009DED4 address DMA registers.
+ *  @par Control flow
+ *  Polls GPU readiness with failure checks, reads remainder words in a loop,
+ *  and conditionally starts DMA for complete blocks.
+ *  @par Calls
+ *  func_800951D8 prepares the operation; func_8009520C checks polling failure.
+ *  @par Side effects
+ *  Modifies the header and output buffer and writes GPU and DMA registers.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 int func_800946A8(Hdr *arg0, u32 *out)
 {
     register Hdr *p __asm__("$17");

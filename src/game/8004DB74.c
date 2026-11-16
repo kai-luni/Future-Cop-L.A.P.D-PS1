@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Messages
 #include "game/types.h"
 
 struct Entity {
@@ -19,6 +20,25 @@ extern u32 D_8009F7A8;
 
 extern u8 func_8004DA84(struct Entity *entity, u8 kind, u8 value, s32 retry);
 
+/**
+ *  @brief Advances timers and attempts delivery of pending entity messages.
+ *
+ *  Each set bit identifies a message whose timer is reduced by elapsed time.
+ *  Expired messages are retried after adding 600 to their timer.
+ *  @param elapsed Amount subtracted from each pending message timer.
+ *  @par Globals
+ *  D_8009F7A8 is the pending-message bitmask and is cleared per completed entry.
+ *  D_800A2090 contains the corresponding message records.
+ *  @par Control flow
+ *  Scans through the highest initially set bit; expired entries with matching
+ *  target IDs remain pending only if delivery fails.
+ *  @par Calls
+ *  func_8004DA84 attempts delivery with retry disabled for matching target IDs.
+ *  @par Side effects
+ *  Updates timers and the pending mask, and may modify target entities.
+ *  @par Callers
+ *  Confirmed: func_8002703C.
+ */
 void func_8004DB74(s32 elapsed)
 {
     s32 i;

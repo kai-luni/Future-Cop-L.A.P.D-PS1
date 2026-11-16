@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object Creation
 #include "game/types.h"
 
 struct Unk40E60Source {
@@ -77,6 +78,24 @@ extern void func_8003C14C(struct Unk40E60 *, struct Unk40E60Source *);
 extern void func_800188D0(s32, s32, s32, struct Unk40E60Work *);
 extern void func_800403D0(void *);
 
+/**
+ *  @brief Allocates and initializes an object from a source record.
+ *
+ *  The object receives copied fields and a scaled vector derived from the source angles.
+ *  Creation is rejected when the object limit is reached or allocation fails.
+ *  @param src Source record containing initialization fields.
+ *  @return The initialized object, or null on failure.
+ *  @par Globals
+ *  D_8009F318 tracks the object count; D_80040874 is stored in the object's field at offset 0x24.
+ *  @par Control flow
+ *  Checks the count and allocation, then branches on the source divisor before registering the object.
+ *  @par Calls
+ *  func_80017EBC allocates; func_8003C14C initializes common fields; func_800188D0 computes a vector; func_800403D0 registers the object.
+ *  @par Side effects
+ *  Allocates and populates an object, increments D_8009F318, and invokes registration.
+ *  @par Callers
+ *  Confirmed: func_8003E984.
+ */
 void *func_80040E60(struct Unk40E60Source *src)
 {
     struct Unk40E60 *dest;

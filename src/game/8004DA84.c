@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Messages
 #include "game/types.h"
 
 struct EntitySlot {
@@ -18,6 +19,27 @@ struct Entity {
 extern u8 func_8004DA58(u32 value);
 extern u8 func_8004D9EC(struct Entity *target, s32 kind, s32 value);
 
+/**
+ *  @brief Accepts or queues a kind and value for an entity.
+ *
+ *  Certain entity types report success without storing the pair; other types
+ *  use the first of four slots whose kind is zero.
+ *  @param entity Entity to receive or accept the pair.
+ *  @param kind Kind to filter and store in a slot.
+ *  @param value Value to store alongside the kind.
+ *  @param retry Nonzero to invoke the fallback when all slots are occupied.
+ *  @return One for immediate acceptance or slot storage, zero for failure, or the fallback result.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Dispatches by entity type, scans up to four slots, then optionally falls back.
+ *  @par Calls
+ *  func_8004DA58 filters kinds for types 18 and 21; func_8004D9EC is the fallback.
+ *  @par Side effects
+ *  May write a slot's byte-sized kind and value or invoke the fallback.
+ *  @par Callers
+ *  Confirmed: func_8004DC64, func_8004DD68, func_8004DDF4, func_80069D68.
+ */
 u8 func_8004DA84(struct Entity *entity, s32 kind, s32 value, s32 retry)
 {
     s32 i;

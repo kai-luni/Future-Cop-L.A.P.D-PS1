@@ -1,3 +1,4 @@
+// Categories: Resources > Chunk Loading
 #include "game/types.h"
 
 typedef struct Chunk { u32 type; u32 size; s32 count; } Chunk;
@@ -9,6 +10,25 @@ extern Chunk *D_8009FA04;
 extern List D_800A6F38;
 extern u8 D_800A2931[];
 
+/**
+ *  @brief Processes section, animation, and effects chunks in a data buffer.
+ *
+ *  Section chunks establish pointers used by later chunks; animation offsets are relocated in place.
+ *  Effects values are deduplicated in a global list and assigned to the current section.
+ *  @param data Start of the chunk buffer.
+ *  @param size Size of the chunk buffer in bytes.
+ *  @param id Index at which to store the section pointer.
+ *  @par Globals
+ *  D_8009F808 stores sections; D_8009FA04 links animation chunks; D_800A6F38 stores effects values; D_800A2931 records a flag.
+ *  @par Control flow
+ *  Advances by each chunk's declared size, dispatches recognized tags, and loops over animation entries or effects values.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Rewrites chunk fields and pointers, updates global tables and flags, and modifies the current section.
+ *  @par Callers
+ *  Confirmed: func_80063C20.
+ */
 void func_800639D4(u8 *data, u32 size, s32 id)
 {
     register u8 *end __asm__("$14") = data + size;

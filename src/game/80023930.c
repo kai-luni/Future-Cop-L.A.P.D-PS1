@@ -1,3 +1,4 @@
+// Categories: Resources > Node Registration
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
@@ -17,6 +18,25 @@ extern Node *D_8009F640[2];
 extern void func_800181D4(Node *node);
 extern void func_800236FC(void);
 
+/**
+ *  @brief Registers or rejects a tagged resource node.
+ *
+ *  When registration is enabled, recognized tags select dedicated pointers
+ *  or one of two slots for nodes whose first data halfword equals four.
+ *  @param node Tagged node to register or pass to the rejection helper.
+ *  @par Globals
+ *  D_8009F26C enables registration; D_8009F270 and D_8009F274 hold tagged nodes.
+ *  D_8009F640 holds up to two qualifying nodes of the third recognized tag.
+ *  @par Control flow
+ *  Dispatches by tag, scans two slots when needed, and rejects unsupported nodes.
+ *  The enabled path always invokes the follow-up helper after dispatch.
+ *  @par Calls
+ *  func_800181D4 handles rejected nodes; func_800236FC performs enabled-path follow-up.
+ *  @par Side effects
+ *  May replace a dedicated pointer, fill a slot, or invoke either helper.
+ *  @par Callers
+ *  Confirmed: func_80024EC8.
+ */
 void func_80023930(Node *node)
 {
     s32 i;

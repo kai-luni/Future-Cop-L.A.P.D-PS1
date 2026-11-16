@@ -1,3 +1,4 @@
+// Categories: Physics > Pair Processing
 typedef struct Object Object;
 typedef struct Node Node;
 struct Object {
@@ -8,6 +9,26 @@ struct Object {
 };
 struct Node { Object *object; Node *next; };
 extern void func_800620D8(Object *, Object *, unsigned int);
+
+/**
+ *  @brief Processes eligible unordered pairs from a nonempty object list.
+ *
+ *  Each pair is filtered by combined flags and optional per-object callbacks
+ *  before being passed to the pair-processing helper.
+ *  @param list Head of a nonempty list of objects.
+ *  @par Globals
+ *  None referenced.
+ *  @par Control flow
+ *  Nested loops visit each pair once; combined flags must include 0x2200.
+ *  Objects with flag 0x800000 must approve through their callback, in order.
+ *  @par Calls
+ *  Object callbacks receive event 10 and the pair; func_800620D8 processes
+ *  pairs that pass both callback checks.
+ *  @par Side effects
+ *  Invokes callbacks and the pair helper, whose effects are not shown here.
+ *  @par Callers
+ *  Confirmed: func_80062614.
+ */
 void func_800623FC(Node *list)
 {
     Object *a, *b;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct Unk4749CResource {
@@ -101,6 +102,29 @@ extern void func_800469A0(struct SoundVoice *);
 extern struct SoundVoice *func_80046B04(s32, s32, s32, s32);
 extern u8 func_8004772C(struct SoundBank *, struct SoundVoice *, s32, s32, s32);
 
+/**
+ *  @brief Updates sound timers, channel priorities, and voice assignments.
+ *
+ *  When enabled, processes pending handles and timed voice releases, then
+ *  rebuilds the channel queue and maintains up to eight active voices.
+ *  @par Globals
+ *  D_8009F340 enables processing; D_8009F32C and D_800A10C0 hold pending handles.
+ *  D_8009FA2C and D_8009F344 supply timing; D_800A10E0 and D_8009F744 hold timers.
+ *  D_8009F720, D_8009F728, D_8009F72C, D_8009F739, D_800A1780, and
+ *  D_800A7938 control the channel queue, scratch table, and sound banks.
+ *  @par Control flow
+ *  Drains handles, clamps elapsed time, scans timers, and conditionally rebuilds
+ *  the queue; channels are updated, started, or released by priority and limit.
+ *  @par Calls
+ *  func_800474F0 processes handles; func_80023D78, func_8002A26C, and
+ *  func_8002441C perform updates; func_800458E8 and func_800455DC rebuild priorities.
+ *  func_800460D4, func_80047800, func_80046804, and func_800469A0 update voices;
+ *  func_80046B04 and func_8004772C allocate and start them; func_80046698 releases them.
+ *  @par Side effects
+ *  Changes timers, queue and channel state, and voice assignments and playback.
+ *  @par Callers
+ *  Confirmed: func_80027EE4.
+ */
 void func_800462D0(void)
 {
     register u32 work __asm__("$2");

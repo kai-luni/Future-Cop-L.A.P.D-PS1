@@ -1,3 +1,4 @@
+// Categories: Platform > Asynchronous Operations
 typedef struct {
     char pad0[0x8f4];
     volatile unsigned int state;
@@ -20,6 +21,25 @@ extern void func_8008D640(int);
 extern void func_8008D670(int, int, void *);
 extern void func_8008D680(int, int, void *);
 
+/**
+ *  @brief Advances or terminates an operation according to its state and counter.
+ *
+ *  Clears a state field, dispatches an operation using the stored handle and
+ *  buffer, or marks the operation done and closes the handle.
+ *  @return Always zero.
+ *  @par Globals
+ *  D_8009AB08 points to the shared operation state.
+ *  @par Control flow
+ *  States 2, 3, and 6 continue only while the counter is positive; other states
+ *  take the default completion path.
+ *  @par Calls
+ *  func_8008D680 handles state 2; func_8008D670 handles states 3 and 6;
+ *  func_8008D640 closes the handle on completion.
+ *  @par Side effects
+ *  Updates the counter or completion fields; timed completion also sets field900 to -3.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 int func_8001F968(void)
 {
     register State *p asm("$6") = D_8009AB08;

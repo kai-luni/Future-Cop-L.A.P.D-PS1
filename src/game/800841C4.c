@@ -1,3 +1,4 @@
+// Categories: Game Engine > Node Management
 #include "game/types.h"
 
 struct Node841C4 {
@@ -24,6 +25,27 @@ extern s32 D_8009F940;
 extern s32 D_8009FAA4[];
 extern void func_800195D0(struct LinkState *state, int *link);
 
+/**
+ *  @brief Finds the first node with a matching ID and applies a command.
+ *
+ *  Cells are searched in descending index order, with each cell's linked list
+ *  traversed from its head. Commands remove a node or update its fields and flags.
+ *  @param id ID to match against each node's 16-bit ID.
+ *  @param mode Command value: 0x19, 0x1A, or 0x1B.
+ *  @param index Command-dependent value controlling removal, timing, or flags.
+ *  @par Globals
+ *  D_8009F938 holds cells; D_8009F93C and D_8009F940 determine their count.
+ *  D_8009F934 is passed for node removal; D_8009FAA4 supplies a field base.
+ *  @par Control flow
+ *  Stops at the first matching node, including for an unrecognized command.
+ *  Command branches distinguish zero, negative, and positive index values as applicable.
+ *  @par Calls
+ *  func_800195D0 handles a node unlinked by command 0x19 with index zero.
+ *  @par Side effects
+ *  May unlink a node or modify its field, timer, and flags; otherwise does nothing.
+ *  @par Callers
+ *  Confirmed: func_80069D68.
+ */
 void func_800841C4(s32 id, s32 mode, s32 index)
 {
     register s32 command __asm__("$11") = mode;

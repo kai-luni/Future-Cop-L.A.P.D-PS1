@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
@@ -8,6 +9,26 @@ struct Range { u8 pad[3]; u8 start, count; u8 rest[15]; };
 struct Info { u8 pad[0x14]; struct Range *ranges; u8 pad2[12]; struct Data *data; };
 struct State { u8 pad[0xa8]; u32 bits[1]; };
 
+/**
+ *  @brief Clears enabled item bits for items outside a selected range.
+ *
+ *  Uses the indexed range's inclusive start and count to filter item fields.
+ *  Fields a, b, and c are always checked; d is checked for flag type 4.
+ *  @param self State containing the bit array to filter.
+ *  @param info Source of the range and item tables.
+ *  @param index Index of the 20-byte range record.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Walks items forward while the bit index counts down from data->count to 1.
+ *  Only set bits are tested and cleared when an applicable field is out of range.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Clears selected bits in self->bits; it never sets a bit.
+ *  @par Callers
+ *  Confirmed: func_8003B144.
+ */
 void func_8003A960(struct State *self, struct Info *info, s32 index)
 {
     register s32 offset __asm__("$2") = index * 20;

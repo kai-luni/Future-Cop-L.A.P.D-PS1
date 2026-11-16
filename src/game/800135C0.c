@@ -1,3 +1,4 @@
+// Categories: Graphics > Data Animation
 typedef unsigned char u8;
 typedef struct Node {
     struct Node *next;
@@ -6,6 +7,25 @@ typedef struct Node {
     u8 entry[8];
 } Node;
 
+/**
+ *  @brief Updates three destination bytes using a time-dependent triangular phase.
+ *
+ *  Each node supplies a data base, a count, and an eight-byte entry describing
+ *  the destination index, phase multiplier, and interpolation endpoints.
+ *  @param node Head of the node list, or null for no work.
+ *  @param time Time value multiplied by each node's entry phase multiplier.
+ *  @par Globals
+ *  None referenced.
+ *  @par Control flow
+ *  The outer loop traverses nodes; the inner loop repeats count times using the
+ *  same entry, since its pointer is not advanced. The phase folds at 0x800.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes bytes 5 through 7 of the indexed 12-byte destination record.
+ *  @par Callers
+ *  Confirmed: func_800136C8.
+ */
 void func_800135C0(Node *node, int time)
 {
     register int count __asm__("$10");

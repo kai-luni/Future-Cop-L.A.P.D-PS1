@@ -1,3 +1,4 @@
+// Categories: Game Engine > Script Timers
 #include "game/types.h"
 
 struct ScriptTimer {
@@ -13,6 +14,25 @@ extern s32 D_8009F774;
 
 extern s32 func_80069D68(s32 id, s32 arg1, s32 arg2, s32 arg3);
 
+/**
+ *  @brief Advances active script timers and dispatches actions when triggered.
+ *
+ *  Each active timer loses elapsed time; an expired timer has one period
+ *  added back and evaluates its trigger before dispatching its action.
+ *  @param elapsed Amount subtracted from each active timer's remaining time.
+ *  @par Globals
+ *  D_8009F770 points to the timer array; D_8009F774 gives its length.
+ *  @par Control flow
+ *  Skips zero-count timers and timers with nonnegative remaining time.
+ *  Each expired timer is evaluated at most once per call; a successful
+ *  trigger decrements a positive count after dispatching the action.
+ *  @par Calls
+ *  func_80069D68 evaluates the trigger and, on success, dispatches the action.
+ *  @par Side effects
+ *  Updates timer remaining times and counts and may execute script actions.
+ *  @par Callers
+ *  Confirmed: func_80026D9C.
+ */
 void func_80049564(s32 elapsed)
 {
     struct ScriptTimer *timer;

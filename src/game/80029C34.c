@@ -1,3 +1,4 @@
+// Categories: Game Engine > Request Queues
 #include "game/types.h"
 
 typedef struct {
@@ -44,6 +45,26 @@ extern void func_8002A49C(void);
 extern void func_8002A408(void);
 extern void func_80029520(void);
 
+/**
+ *  @brief Processes the current entry of an eight-slot request queue when permitted.
+ *
+ *  The entry selects an object update and may initiate a transition to a new value.
+ *  Entries remain queued when transition state or readiness prevents progress.
+ *  @par Globals
+ *  D_800A0BC0 holds the queue; D_800A0B70 and D_800A0B90 hold transition state.
+ *  D_8009F6B8, D_8009F6BC, D_8009F6C0, D_8009F6C4, and D_8009F6DC track it.
+ *  D_8009F69C is cleared; D_8009FA2C supplies a base and D_8009F698 a value offset.
+ *  @par Control flow
+ *  Returns for an empty or blocked queue, or when a new transition cannot proceed.
+ *  Otherwise it advances the queue index modulo eight and may initialize position fields.
+ *  @par Calls
+ *  func_80044FF8 applies the entry selection; func_80029BE4 checks readiness.
+ *  func_8002A49C and func_8002A408 prepare a transition; func_80029520 starts it.
+ *  @par Side effects
+ *  May update the selected object, transition globals, queue count, and state fields.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80029C34(void)
 {
     State29C34 *state;

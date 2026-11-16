@@ -1,3 +1,4 @@
+// Categories: Platform > Disc Location
 #include "game/types.h"
 
 struct CdlLOC {
@@ -57,6 +58,27 @@ extern struct CdlLOC *func_8008E61C(s32, struct CdlLOC *);
 extern s32 func_8008E720(struct CdlLOC *);
 extern void func_800889A8(s32, s32, s32);
 
+/**
+ *  @brief Adds a sector offset to a disc location.
+ *
+ *  Converts the input location to a sector number, adds the signed offset,
+ *  and converts the result back into the supplied output location.
+ *  @param loc Input disc location.
+ *  @param out Destination for the resulting disc location.
+ *  @param offset Signed sector offset to add.
+ *  @return Pointer returned by the sector-to-location conversion.
+ *  @par Globals
+ *  None accessed directly.
+ *  @par Control flow
+ *  Performs the two conversions in sequence without branches or loops.
+ *  @par Calls
+ *  func_8008E720 converts the location to a sector; func_8008E61C converts back.
+ *  @par Side effects
+ *  The conversion writes the resulting location to out.
+ *  @par Callers
+ *  Confirmed: func_800889DC calls itself recursively (0x80088B3C, 0x80088BAC) and
+ * func_80089018 calls it (0x80089134, 0x80089250); both call sites verified in asm/us/main.s.
+ */
 struct CdlLOC *func_800889DC(struct CdlLOC *loc, struct CdlLOC *out, s32 offset)
 {
     return func_8008E61C(func_8008E720(loc) + offset, out);
