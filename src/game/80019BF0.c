@@ -10,7 +10,7 @@ struct Resource {
     s32 name;
 };
 
-extern struct Resource *D_8009F5B8;
+extern struct Resource *gResourceList __asm__("D_8009F5B8");
 
 /**
  * @brief Searches the global resource list D_8009F5B8 for a node matching `(group, name)`.
@@ -40,7 +40,7 @@ struct Resource *func_80019BF0(s32 group, s32 name)
 {
     struct Resource *node;
 
-    for (node = D_8009F5B8; node != 0; node = node->next) {
+    for (node = gResourceList; node != 0; node = node->next) {
         if (node->group == group && node->name == name) {
             return node;
         }

@@ -7,7 +7,7 @@ struct Resource {
     struct Resource *prev;
 };
 
-extern struct Resource *D_8009F5B8;
+extern struct Resource *gResourceList __asm__("D_8009F5B8");
 extern struct Resource *D_8009F5BC;
 
 /* Appends a resource to the global doubly linked list.
@@ -48,6 +48,6 @@ void func_80019A74(struct Resource *resource)
         D_8009F5BC = resource;
     } else {
         D_8009F5BC = resource;
-        D_8009F5B8 = resource;
+        gResourceList = resource;
     }
 }

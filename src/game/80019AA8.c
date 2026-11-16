@@ -10,7 +10,7 @@ struct Resource {
     s32 name;
 };
 
-extern struct Resource *D_8009F5B8;
+extern struct Resource *gResourceList __asm__("D_8009F5B8");
 
 /* checks if a resource is already loaded */
 
@@ -42,7 +42,7 @@ s32 func_80019AA8(struct Resource *resource)
 {
     struct Resource *node;
 
-    for (node = D_8009F5B8; node != 0; node = node->next) {
+    for (node = gResourceList; node != 0; node = node->next) {
         if (node->group == resource->group && node->name == resource->name) {
             break;
         }
