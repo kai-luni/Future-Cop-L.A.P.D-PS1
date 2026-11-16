@@ -13,7 +13,7 @@ typedef struct Other {
 } Other;
 extern char D_8009CC88[];
 extern char D_8009CCC4[];
-extern volatile u16 *D_8009DD14;
+extern volatile u16 *gInterruptStatusHalfPtr __asm__("D_8009DD14");
 extern volatile u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern volatile u32 *gDmaControlPtr __asm__("D_8009DD1C");
 extern Other *D_8009DD10;
@@ -54,7 +54,7 @@ void *func_80091614(void)
     volatile u16 *b;
     __asm__("" : "+r"(p));
     if (*(u16 *)p != 0) return 0;
-    a = D_8009DD14;
+    a = gInterruptStatusHalfPtr;
     b = gInterruptMaskPtr;
     *b = 0;
     *a = *b;

@@ -7,7 +7,7 @@ typedef void (*Callback)(void);
 struct State { u16 active, busy; Callback handlers[11]; u16 mask; };
 extern struct State D_8009CC88;
 extern u16 D_8009CCB8, D_8009CC8A;
-extern u16 *D_8009DD14;
+extern u16 *gInterruptStatusHalfPtr __asm__("D_8009DD14");
 extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern int D_8009DD20;
 extern char D_80012830[], D_8001284C[];
@@ -48,12 +48,12 @@ void func_800916EC(void)
     __asm__("" : "+r"(state));
     if (!state->active) {
         u16 v;
-        v = *D_8009DD14;
+        v = *gInterruptStatusHalfPtr;
         __asm__ volatile ("" : : "r"(v));
         func_8008E000(D_80012830, v);
         func_80091B60();
     }
-    pa1 = D_8009DD14;
+    pa1 = gInterruptStatusHalfPtr;
     mask = state->mask;
     __asm__ volatile ("" : "+r"(mask));
     state->busy = 1;
@@ -68,19 +68,19 @@ void func_800916EC(void)
         handler = base;
         while (pending && i < 11) {
             if (pending & 1) {
-                *D_8009DD14 = ~(one << i);
+                *gInterruptStatusHalfPtr = ~(one << i);
                 if (*handler) (*handler)();
             }
             handler++;
             pending >>= 1;
             i++;
         }
-    } while ((pending = D_8009CCB8 & *D_8009DD14 & *gInterruptMaskPtr));
+    } while ((pending = D_8009CCB8 & *gInterruptStatusHalfPtr & *gInterruptMaskPtr));
     }
     {
     register u16 *pa __asm__("$5");
     register u16 *pb __asm__("$6");
-    pa = D_8009DD14;
+    pa = gInterruptStatusHalfPtr;
     pb = gInterruptMaskPtr;
     __asm__("" : "+r"(pa), "+r"(pb));
     if (*pa & *pb) {
@@ -96,7 +96,7 @@ void func_800916EC(void)
             func_8008E000(msg, *pa, *pb);
             }
             D_8009DD20 = 0;
-            *D_8009DD14 = 0;
+            *gInterruptStatusHalfPtr = 0;
         }
     } else D_8009DD20 = 0;
     }

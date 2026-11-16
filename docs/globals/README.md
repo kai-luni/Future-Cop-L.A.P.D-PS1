@@ -24,6 +24,7 @@ reads through the pointer afterwards.
 | `D_8009CB78` | `gCdromRequestStatusPtr` | `0x8009CB78` | `0x1F801803` | CD-ROM request / IRQ flag port |
 | `D_8009CB70` | `gCdromCommandPtr` | `0x8009CB70` | `0x1F801801` | CD-ROM command / response port |
 | `D_8009CB74` | `gCdromParameterPtr` | `0x8009CB74` | `0x1F801802` | CD-ROM parameter / IRQ enable port |
+| `D_8009DD14` | `gInterruptStatusHalfPtr` | `0x8009DD14` | `0x1F801070` | interrupt status, halfword view |
 | `D_8009E9F4` | `gMdecControlStatusPtr` | `0x8009E9F4` | `0x1F801824` | MDEC control/status word |
 
 Per-variable detail, evidence and function lists:
