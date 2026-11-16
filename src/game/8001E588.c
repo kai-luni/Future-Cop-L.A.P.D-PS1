@@ -5,7 +5,7 @@ struct PadMapping {
     u32 masks[14];
 };
 
-extern struct PadMapping D_800AAC50[];
+extern struct PadMapping gPadMappingTable[] __asm__("D_800AAC50");
 
 /**
  *  @brief Initializes fourteen controller masks for a valid port.
@@ -29,7 +29,7 @@ void func_8001E588(u32 port)
     struct PadMapping *mapping;
 
     if (port < 2) {
-        mapping = &D_800AAC50[port];
+        mapping = &gPadMappingTable[port];
         mapping->masks[0] = 0x100000;
         mapping->masks[1] = 0x400000;
         mapping->masks[2] = 0x800000;

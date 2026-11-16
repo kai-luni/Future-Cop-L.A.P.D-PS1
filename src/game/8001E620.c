@@ -5,7 +5,7 @@ struct InputMaskMap {
     u32 masks[14];
 };
 
-extern struct InputMaskMap D_800AAC50[2];
+extern struct InputMaskMap gPadMappingTable[2] __asm__("D_800AAC50");
 extern u32 func_8001EF8C(void);
 
 /**
@@ -42,7 +42,7 @@ u32 func_8001E620(u32 profile)
     if (profile < 2) {
         offset = (profile * 8) - profile;
         offset <<= 3;
-        map = (struct InputMaskMap *)((u8 *)D_800AAC50 + offset);
+        map = (struct InputMaskMap *)((u8 *)gPadMappingTable + offset);
         firstMask = map->masks[0];
         secondMask = map->masks[1];
         firstSet = (pressed & firstMask) != 0;

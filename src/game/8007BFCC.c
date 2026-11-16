@@ -16,7 +16,7 @@ extern u8 D_8009F903;
 extern s8 D_8009F904;
 extern u8 D_8009BFD4[];
 extern D_8009BEF4_Entry D_8009BEF4[];
-extern u8 D_800AAC50[];
+extern u8 gPadMappingTable[] __asm__("D_800AAC50");
 extern u8 D_800A374D[];
 
 extern u8 func_8001EB2C(s32 arg0);
@@ -90,7 +90,7 @@ void func_8007BFCC(s32 port, s32 value)
     ((u8 *)D_8009FA99 - 1)[port] = value;
     src = D_8009BFD4 + value * 14;
     i = 0;
-    base = D_800AAC50;
+    base = gPadMappingTable;
     dst = base + port * 56;
     while (i < 14) {
         *(s32 *)(dst + src[i] * 4) = D_8009BEF4[i].value;
