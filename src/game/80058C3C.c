@@ -61,7 +61,7 @@ struct Unk58C3CRequest {
 };
 
 extern void D_80036E6C();
-extern void *D_8009F9E4;
+extern void *gCamera __asm__("D_8009F9E4");
 
 extern void func_80017B60(s32 id);
 extern s32 func_80019668(void);
@@ -133,10 +133,10 @@ void func_80058C3C(void *owner, struct Vec3s32 *position, struct Unk58C3CObject 
     args.unk20 = 0;
     args.position = *position;
 
-    old = D_8009F9E4;
+    old = gCamera;
     func_80017B60(object->unkAC->unkAC);
     func_8005E624((func_80019668() & 0xF) | 0xE0, &sub, position,
-                  D_8009F9E4, sub.unk0C);
-    D_8009F9E4 = old;
+                  gCamera, sub.unk0C);
+    gCamera = old;
     func_8004D444(&request);
 }

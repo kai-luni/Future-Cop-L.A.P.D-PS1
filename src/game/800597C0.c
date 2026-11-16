@@ -72,7 +72,7 @@ u8 D_8009F36D;
 extern u8 D_8009F36E;
 extern u8 D_8009F36F;
 extern s32 D_8009F370;
-extern struct Camera597C0 *D_8009F9E4;
+extern struct Camera597C0 *gCamera __asm__("D_8009F9E4");
 extern struct Global597C0 *D_8009FA94[];
 
 extern void func_80013AA0(s32 low, s32 high);
@@ -270,7 +270,7 @@ void func_800597C0(struct Object597C0 *object)
 
         func_80017668(&info->unk210, *(u8 *)(i + (u32)parts), loc.from);
 
-        cam = D_8009F9E4;
+        cam = gCamera;
         loc.from[0] -= cam->unk7C;
         loc.from[1] -= cam->unk80;
         loc.from[2] -= cam->unk84;

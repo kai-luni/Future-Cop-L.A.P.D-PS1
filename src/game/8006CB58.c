@@ -58,7 +58,7 @@ typedef struct Obj {
     s32 z;
 } Obj;
 
-extern Cam *D_8009F9E4;
+extern Cam *gCamera __asm__("D_8009F9E4");
 extern Prim *D_8009F9F0;
 extern Prim *D_8009FA28;
 extern u32 D_8009F9B8;
@@ -261,26 +261,26 @@ void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
         break;
     }
 
-    L.vin[0] = op->x - D_8009F9E4->px;
-    L.vin[1] = op->y - D_8009F9E4->py;
-    L.vin[2] = op->z - D_8009F9E4->pz;
-    func_80010820(&D_8009F9E4->mtx);
+    L.vin[0] = op->x - gCamera->px;
+    L.vin[1] = op->y - gCamera->py;
+    L.vin[2] = op->z - gCamera->pz;
+    func_80010820(&gCamera->mtx);
     func_8001006C(L.vin, L.vout, 1);
     mat = &L.mtx;
     if (mp->flg & 8) {
-        func_80010820(&D_8009F9E4->mtx);
+        func_80010820(&gCamera->mtx);
         func_8001006C(op, mat, 3);
     } else {
-        tmp = D_8009F9E4->mtx.m[1];
-        m0 = D_8009F9E4->mtx.m[0];
+        tmp = gCamera->mtx.m[1];
+        m0 = gCamera->mtx.m[0];
         L.mtx.m[1] = tmp;
-        L.mtx.m[2] = D_8009F9E4->mtx.m[2];
-        L.mtx.m[3] = D_8009F9E4->mtx.m[3];
-        L.mtx.m[4] = D_8009F9E4->mtx.m[4];
-        L.mtx.m[5] = D_8009F9E4->mtx.m[5];
-        L.mtx.m[6] = D_8009F9E4->mtx.m[6];
-        L.mtx.m[7] = D_8009F9E4->mtx.m[7];
-        L.mtx.m[8] = D_8009F9E4->mtx.m[8];
+        L.mtx.m[2] = gCamera->mtx.m[2];
+        L.mtx.m[3] = gCamera->mtx.m[3];
+        L.mtx.m[4] = gCamera->mtx.m[4];
+        L.mtx.m[5] = gCamera->mtx.m[5];
+        L.mtx.m[6] = gCamera->mtx.m[6];
+        L.mtx.m[7] = gCamera->mtx.m[7];
+        L.mtx.m[8] = gCamera->mtx.m[8];
         L.mtx.m[0] = m0;
     }
     i = 0;

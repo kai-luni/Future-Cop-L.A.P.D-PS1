@@ -13,7 +13,7 @@ extern u8 D_8009F691;
 extern u8 D_8009F692;
 extern u8 D_8009F693;
 extern u8 D_8009FA3C;
-extern void *D_8009F9E4;
+extern void *gCamera __asm__("D_8009F9E4");
 
 /* Incomplete array types keep these out of small data on the MIPS backend,
    which is why the oracle addresses them with lui/lw instead of ($gp). */
@@ -135,13 +135,13 @@ frame:
             position = D_8009F9A0[0];
             if (position != 0) {
                 position += 0x50;
-                camera = (u8 *)D_8009F9E4;
+                camera = (u8 *)gCamera;
                 angle = *(s32 *)(camera + 0x20);
                 camera += 0x7C;
                 func_80045884((s32 *)position, (s32)camera, angle, work);
             } else {
                 position = *cursor + 0x50;
-                camera = (u8 *)D_8009F9E4;
+                camera = (u8 *)gCamera;
                 angle = *(s32 *)(camera + 0x20);
                 camera += 0x7C;
                 func_80045884((s32 *)position, (s32)camera, angle, work);

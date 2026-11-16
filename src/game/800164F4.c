@@ -8,7 +8,7 @@ struct Model { u8 pad[0x34]; struct Frame *frames; };
 struct Obj { struct Model *model; u8 matrix[0x24]; struct V32 pos; u8 pad34[0x14]; s16 frame; u8 flags; };
 struct Camera { u8 pad[0x28]; u8 matrix[0x54]; struct V32 pos; };
 struct Packet { u32 tag, c0, p0, uv0, c1, p1, uv1, c2, p2; u16 uv2; u8 pad[14]; };
-extern struct Camera *D_8009F9E4;
+extern struct Camera *gCamera __asm__("D_8009F9E4");
 extern struct Packet *D_8009F9F0, *D_8009FA28;
 extern u32 D_8009FAA0;
 extern s32 func_80066F78(struct V32 *, s32, s32, void *);
@@ -90,13 +90,13 @@ void func_800164F4(struct Obj *obj)
         j = 0;
         dst = p;
         do {
-            dst->x = (src->x - D_8009F9E4->pos.x) >> 4;
-            dst->y = (ground - D_8009F9E4->pos.y) >> 4;
-            dst->z = (src->z - D_8009F9E4->pos.z) >> 4;
+            dst->x = (src->x - gCamera->pos.x) >> 4;
+            dst->y = (ground - gCamera->pos.y) >> 4;
+            dst->z = (src->z - gCamera->pos.z) >> 4;
             src++; dst++;
         } while (++j < 5);
     }
-    func_80010820(D_8009F9E4->matrix);
+    func_80010820(gCamera->matrix);
     if (func_8001047C(p, p, codes, 5) & 0x1c66000) return;
     t = codes[0] | codes[1] | codes[2] | codes[3];
     if (t & 1) return;

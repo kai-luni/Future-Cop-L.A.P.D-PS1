@@ -39,7 +39,7 @@ typedef struct Obj {
     u16 f98;
 } Obj;
 
-extern s32 *D_8009F9E4;
+extern s32 *gCamera __asm__("D_8009F9E4");
 extern u8 *D_8009F9F0;
 extern u8 *D_8009FA28;
 extern u32 D_8009F9B8;
@@ -119,10 +119,10 @@ void func_8006DC24(Obj *o, s32 *pos)
     s2 = vec;
     if (func_8001A100(s2) - (o->f12 << 4) > 0x1FFFF)
         return;
-    vec[0] = s0[9] - D_8009F9E4[0x1F];
-    vec[1] = s0[10] - D_8009F9E4[0x20];
-    vec[2] = s0[11] - D_8009F9E4[0x21];
-    func_80010820(D_8009F9E4 + 10);
+    vec[0] = s0[9] - gCamera[0x1F];
+    vec[1] = s0[10] - gCamera[0x20];
+    vec[2] = s0[11] - gCamera[0x21];
+    func_80010820(gCamera + 10);
     func_8001006C(s2, w.flag, 1);
     if (o->f98 & 0x20) {
         mt = o->mat.m[0];
@@ -136,7 +136,7 @@ void func_8006DC24(Obj *o, s32 *pos)
         w.mat[8] = o->mat.m[8];
         w.mat[0] = mt;
     } else {
-        func_80010820(D_8009F9E4 + 10);
+        func_80010820(gCamera + 10);
         func_8001006C(s0, w.mat, 3);
     }
     func_80010750(w.mat);

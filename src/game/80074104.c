@@ -18,7 +18,7 @@ extern u8 D_800A3548[];
 extern Point D_800A6418[];
 extern u8 D_800AB388[];
 extern s16 D_800A7840[], D_800A7898[];
-extern u8 *D_8009F9E4;
+extern u8 *gCamera __asm__("D_8009F9E4");
 extern u8 *func_8003D9F8();
 extern u8 *func_8003D9C4();
 extern s32 func_8001A100();
@@ -204,18 +204,18 @@ void func_80074104(u8 *input, s32 *pos)
                 D_800A6418[count].z = frame.trans.z >> 4;
             } else if (UH(owner,0x8e) & 0x10) {
                 frame.trans = *(Vec *)(owner+0x28);
-                D_800A6418[count].x = (frame.trans.x-W(D_8009F9E4,0x7c)) >> 4;
-                D_800A6418[count].y = (frame.trans.y-W(D_8009F9E4,0x80)) >> 4;
-                D_800A6418[count].z = (frame.trans.z-W(D_8009F9E4,0x84)) >> 4;
+                D_800A6418[count].x = (frame.trans.x-W(gCamera,0x7c)) >> 4;
+                D_800A6418[count].y = (frame.trans.y-W(gCamera,0x80)) >> 4;
+                D_800A6418[count].z = (frame.trans.z-W(gCamera,0x84)) >> 4;
             } else {
                 func_80010820(m);
                 func_8001006C(owner+0x28, &frame.trans, 1);
                 frame.trans.x = W(owner,0x28)+W(m,0x24);
                 frame.trans.y = W(owner,0x2c)+W(m,0x28);
                 frame.trans.z = W(owner,0x30)+W(m,0x2c);
-                D_800A6418[count].x = (frame.trans.x-W(D_8009F9E4,0x7c)) >> 4;
-                D_800A6418[count].y = (frame.trans.y-W(D_8009F9E4,0x80)) >> 4;
-                D_800A6418[count].z = (frame.trans.z-W(D_8009F9E4,0x84)) >> 4;
+                D_800A6418[count].x = (frame.trans.x-W(gCamera,0x7c)) >> 4;
+                D_800A6418[count].y = (frame.trans.y-W(gCamera,0x80)) >> 4;
+                D_800A6418[count].z = (frame.trans.z-W(gCamera,0x84)) >> 4;
             }
             count++;
         }
@@ -228,9 +228,9 @@ void func_80074104(u8 *input, s32 *pos)
                 out->y = W(node,8) >> 4;
                 out->z = W(node,12) >> 4;
             } else {
-                out->x = (W(node,4) - W(D_8009F9E4,0x7c)) >> 4;
-                out->y = (W(node,8) - W(D_8009F9E4,0x80)) >> 4;
-                out->z = (W(node,12) - W(D_8009F9E4,0x84)) >> 4;
+                out->x = (W(node,4) - W(gCamera,0x7c)) >> 4;
+                out->y = (W(node,8) - W(gCamera,0x80)) >> 4;
+                out->z = (W(node,12) - W(gCamera,0x84)) >> 4;
             }
             ++out;
             node = PTR(node,0);
@@ -239,27 +239,27 @@ void func_80074104(u8 *input, s32 *pos)
         if (count < 2) goto advance;
         __asm__("" : "=r"(points) : "0"(D_800A6418), "r"(count));
         if (UH(owner,0x1a) & 0x100) {
-            frame.v.x = W(m,0x24)-W(D_8009F9E4,0x7c);
-            frame.v.y = W(m,0x28)-W(D_8009F9E4,0x80);
-            frame.v.z = W(m,0x2c)-W(D_8009F9E4,0x84);
-            func_80010820(D_8009F9E4+0x28);
+            frame.v.x = W(m,0x24)-W(gCamera,0x7c);
+            frame.v.y = W(m,0x28)-W(gCamera,0x80);
+            frame.v.z = W(m,0x2c)-W(gCamera,0x84);
+            func_80010820(gCamera+0x28);
             func_8001006C(m, &frame.mat, 3);
         } else {
-            frame.v.x = W(base,0x24)-W(D_8009F9E4,0x7c);
-            frame.v.y = W(base,0x28)-W(D_8009F9E4,0x80);
-            frame.v.z = W(base,0x2c)-W(D_8009F9E4,0x84);
-            mat0 = W(D_8009F9E4,0x28);
-            frame.mat.e[1] = W(D_8009F9E4,0x2c);
-            frame.mat.e[2] = W(D_8009F9E4,0x30);
-            frame.mat.e[3] = W(D_8009F9E4,0x34);
-            frame.mat.e[4] = W(D_8009F9E4,0x38);
-            frame.mat.e[5] = W(D_8009F9E4,0x3c);
-            frame.mat.e[6] = W(D_8009F9E4,0x40);
-            frame.mat.e[7] = W(D_8009F9E4,0x44);
-            frame.mat.e[8] = W(D_8009F9E4,0x48);
+            frame.v.x = W(base,0x24)-W(gCamera,0x7c);
+            frame.v.y = W(base,0x28)-W(gCamera,0x80);
+            frame.v.z = W(base,0x2c)-W(gCamera,0x84);
+            mat0 = W(gCamera,0x28);
+            frame.mat.e[1] = W(gCamera,0x2c);
+            frame.mat.e[2] = W(gCamera,0x30);
+            frame.mat.e[3] = W(gCamera,0x34);
+            frame.mat.e[4] = W(gCamera,0x38);
+            frame.mat.e[5] = W(gCamera,0x3c);
+            frame.mat.e[6] = W(gCamera,0x40);
+            frame.mat.e[7] = W(gCamera,0x44);
+            frame.mat.e[8] = W(gCamera,0x48);
             frame.mat.e[0] = mat0;
         }
-        func_80010820(D_8009F9E4+0x28);
+        func_80010820(gCamera+0x28);
         func_8001006C(&frame.v, &frame.projected, 1);
         node = (u8 *)&frame.mat;
         if (UH(owner,0x1a) & 0x100) func_80010750(node);

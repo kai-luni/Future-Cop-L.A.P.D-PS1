@@ -5,7 +5,7 @@ typedef struct { s32 a,b; } VecW;
 typedef struct { s32 mask; void *node; VecW pos; } Entry;
 typedef struct { char pad[0x7c]; s32 x,y,z; } Camera;
 typedef struct { s32 a,width; char pad[0x1c]; u32 offsets[1]; } Map;
-extern Camera *D_8009F9E4;
+extern Camera *gCamera __asm__("D_8009F9E4");
 extern Map *D_8009F80C;
 extern char *D_8009F808;
 extern s32 func_8006429C(void *, Vec);
@@ -72,7 +72,7 @@ void func_80064460(s32 arg0, s32 arg1, Entry *arg2)
     y=arg1; __asm__("" : "=r"(y) : "0"(y));
     out=arg2; __asm__("" : "=r"(out) : "0"(out));
     j=0; __asm__("" : "=r"(j) : "0"(j));
-    cam=(s32 *)D_8009F9E4;
+    cam=(s32 *)gCamera;
     bx=(y<<17)-cam[0x7c/4];
     cam+=0x7c/4;
     __asm__("" : "=r"(cam) : "0"(cam) : "memory");

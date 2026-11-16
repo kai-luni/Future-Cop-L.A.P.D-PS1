@@ -11,7 +11,7 @@ typedef struct { Model *model; Matrix matrix; Vec pos; char pad34[20]; s16 index
 typedef struct { char data[20]; u8 mode, flag; u16 value; } Work;
 extern u16 D_8009F580;
 extern void *D_8009F570, *D_8009F574;
-extern Vec *D_8009F9E4;
+extern Vec *gCamera __asm__("D_8009F9E4");
 extern s32 D_800A8EA4;
 extern void func_80019470(Matrix *, Matrix *);
 extern void func_80010820(Matrix *);
@@ -91,7 +91,7 @@ void func_80017058(Instance *inst, u32 *enabled, s32 mask)
             register s32 py __asm__("$2");
             register s32 px __asm__("$8");
             __asm__("" : "+r" (a), "+r" (b), "+r" (one));
-            p = D_8009F9E4; iy = inst->pos.y; ix = inst->pos.x; py = p->y; px = p->x;
+            p = gCamera; iy = inst->pos.y; ix = inst->pos.x; py = p->y; px = p->x;
             __asm__("" : "+r" (p), "+r" (iy), "+r" (ix), "+r" (py), "+r" (px));
             vec.y = py - iy;
             __asm__("" : : "m" (vec.y));

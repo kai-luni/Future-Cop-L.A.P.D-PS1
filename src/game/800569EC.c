@@ -77,7 +77,7 @@ struct Locals569EC {
 extern struct Mode569EC *D_8009FA94;
 extern struct Override569EC *D_8009F9A0;
 extern s32 D_8009FA84;
-extern struct Camera569EC *D_8009F9E4;
+extern struct Camera569EC *gCamera __asm__("D_8009F9E4");
 extern struct State569EC D_8009AEC4[];
 extern struct Offset569EC D_8009AD08[];
 extern s32 D_8009FA00;
@@ -281,7 +281,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
     {
         register struct Camera569EC *saved __asm__("$8");
         register s32 id __asm__("$4");
-        saved = D_8009F9E4;
+        saved = gCamera;
         id = info->camera;
         local.saved = saved;
         func_80017B60(id);
@@ -428,11 +428,11 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
         base = (struct Offset569EC *)((s32)base - 0x52F8);
         offset = (struct Offset569EC *)(index * 20 + (s32)base);
     }
-    yaw = func_8005605C(D_8009F9E4->yaw, heading + offset->yaw, speed);
+    yaw = func_8005605C(gCamera->yaw, heading + offset->yaw, speed);
     __asm__ __volatile__("" : "+r"(yaw));
     {
         register struct Camera569EC *camera __asm__("$2");
-        camera = D_8009F9E4;
+        camera = gCamera;
         __asm__("" : : "r"(camera) : "$5");
         pitch = func_8005605C(camera->pitch, offset->pitch, speed);
     }
@@ -441,7 +441,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
     scaled = tick << 9;
     __asm__("" : : "r"(scaled));
     rate = scaled >> 8;
-    old = D_8009F9E4->pitch;
+    old = gCamera->pitch;
     if (pitch > old) {
         difference = pitch - old;
         if (difference > rate) pitch = old + rate;
@@ -455,7 +455,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
         register struct Camera569EC *camera __asm__("$4");
         register s32 normalYaw __asm__("$3");
         register s32 rawYaw __asm__("$2");
-        camera = D_8009F9E4;
+        camera = gCamera;
         rawYaw = camera->yaw & 0xFFF;
         __asm__ __volatile__("" : "+r"(rawYaw));
         normalYaw = rawYaw;
@@ -473,7 +473,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
     scaled = tick << 10;
     __asm__("" : : "r"(scaled));
     rate = scaled >> 8;
-    old = D_8009F9E4->yaw;
+    old = gCamera->yaw;
     if (yaw > old) {
         difference = yaw - old;
         if (difference > rate) yaw = old + rate;
@@ -503,7 +503,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
     func_8005612C(&local.position, heading, yaw, pitch, distance, &info->offset,
                  &local.out, info->zoom, info->distance);
     func_80017860(yaw, pitch, 0);
-    func_8001AC28(&local.out, &D_8009F9E4->axis70, info->zoom << 7, &local.out);
+    func_8001AC28(&local.out, &gCamera->axis70, info->zoom << 7, &local.out);
     {
     s32 t;
     t = info->shake;
@@ -517,13 +517,13 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
             s32 random;
             random = (func_80019668() & (shake - 1)) - shake / 2;
             __asm__("" : : "r"(random) : "$4");
-            func_8001AC28(&local.out, &D_8009F9E4->axis64, random << 3, &local.out);
+            func_8001AC28(&local.out, &gCamera->axis64, random << 3, &local.out);
         }
         {
             s32 random;
             random = (func_80019668() & (shake - 1)) - shake / 2;
             __asm__("" : : "r"(random) : "$4");
-            func_8001AC28(&local.out, &D_8009F9E4->axis58, random << 3, &local.out);
+            func_8001AC28(&local.out, &gCamera->axis58, random << 3, &local.out);
         }
         if (info->shake > 0) {
             tick = elapsed;
@@ -558,6 +558,6 @@ done:
     {
         register struct Camera569EC *saved __asm__("$8");
         saved = local.saved;
-        D_8009F9E4 = saved;
+        gCamera = saved;
     }
 }

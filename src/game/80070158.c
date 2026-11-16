@@ -50,7 +50,7 @@ struct Transform70158 {
     s32 z;
 };
 
-extern struct Camera70158 *D_8009F9E4;
+extern struct Camera70158 *gCamera __asm__("D_8009F9E4");
 
 extern struct Transform70158 *func_8003D9F8(void *model, s32 flags, s32 part,
                                             s32 count, void *sub, void *matrix);
@@ -116,7 +116,7 @@ void func_80070158(struct Node70158 *node, s32 *origin)
             continue;
         }
 
-        camera = D_8009F9E4;
+        camera = gCamera;
         vec[0] = t->x - camera->unk7C;
         vec[1] = t->y - camera->unk80;
         vec[2] = t->z - camera->unk84;

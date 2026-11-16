@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 D_8009B1A4[];
-extern s32 *D_8009F9E4;
+extern s32 *gCamera __asm__("D_8009F9E4");
 struct Table { s8 pad[4]; s32 entries[100]; };
 extern struct Table D_800A6F38;
 extern s32 D_8009FA08;
@@ -43,8 +43,8 @@ void func_8006531C(s32 x, s32 y, s32 *region)
     s32 *src = D_8009B1A4;
     s32 *dst = (s32 *)0x1F800000;
     s32 base = D_8009FA08;
-    s32 dx = (D_8009F9E4[2] >> 9) - (x << 8);
-    s32 dy = (D_8009F9E4[0] >> 9) - (y << 8);
+    s32 dx = (gCamera[2] >> 9) - (x << 8);
+    s32 dy = (gCamera[0] >> 9) - (y << 8);
     s32 rows, cols, a, b, hi;
     s32 id;
     register s32 value __asm__("$2");

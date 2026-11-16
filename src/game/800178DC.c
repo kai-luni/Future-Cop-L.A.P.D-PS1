@@ -18,7 +18,7 @@ struct Unk178DC {
     struct Vec3s32 translation;
 };
 
-extern struct Camera *D_8009F9E4;
+extern struct Camera *gCamera __asm__("D_8009F9E4");
 
 extern void func_80010820(u8 *matrix);
 extern void func_8001006C(struct Unk178DC *object, s32 arg1, s32 count);
@@ -46,7 +46,7 @@ void func_800178DC(struct Unk178DC *object, s32 arg1)
     struct Camera *camera;
 
     saved = object->translation;
-    camera = D_8009F9E4;
+    camera = gCamera;
     object->translation.x -= camera->eye.x;
     object->translation.y -= camera->eye.y;
     object->translation.z -= camera->eye.z;

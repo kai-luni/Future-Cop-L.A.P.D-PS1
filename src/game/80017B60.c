@@ -1,7 +1,7 @@
 // Categories: Graphics > Map | Resources > Asset Selection
 #include "game/types.h"
 
-extern void *D_8009F9E4;
+extern void *gCamera __asm__("D_8009F9E4");
 
 extern void *func_80017B28(s32 id);
 
@@ -22,5 +22,5 @@ extern void *func_80017B28(s32 id);
  */
 void func_80017B60(s32 id)
 {
-    D_8009F9E4 = func_80017B28(id);
+    gCamera = func_80017B28(id);
 }

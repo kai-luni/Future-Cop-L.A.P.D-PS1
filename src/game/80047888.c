@@ -11,7 +11,7 @@ typedef struct { u8 pad[0x7c]; Vec pos; } Camera;
 typedef struct { u32 addr:24; u32 len:8; u32 code; } Page;
 typedef struct { u32 addr:24; u32 len:8; u8 r,g,b,code; short x,y; u8 u,v; u16 clut,w,h; } Sprt;
 typedef struct { u32 addr:24; u32 len:8; u8 r,g,b,code; short x0,y0,x1,y1; } Line;
-extern Camera *D_8009F9E4;
+extern Camera *gCamera __asm__("D_8009F9E4");
 extern u8 *D_8009FA90, *D_8009F9C0;
 extern u32 D_800A8EA0[];
 extern void func_80017668(void *, int, Vec *);
@@ -111,11 +111,11 @@ void func_80047888(Object *obj)
     func_80017668(obj->model + 0x28, 0, &points[0]);
     if (!func_800684AC(&points[0], &points[2], &points[1], 0, 1)) points[1] = points[2];
     for (i = 0; i < 3; i++) {
-        screen[i].x = (points[i].x - D_8009F9E4->pos.x) >> 4;
-        screen[i].y = (points[i].y - D_8009F9E4->pos.y) >> 4;
-        screen[i].z = (points[i].z - D_8009F9E4->pos.z) >> 4;
+        screen[i].x = (points[i].x - gCamera->pos.x) >> 4;
+        screen[i].y = (points[i].y - gCamera->pos.y) >> 4;
+        screen[i].z = (points[i].z - gCamera->pos.z) >> 4;
     }
-    func_80010820((u8 *)D_8009F9E4 + 0x28);
+    func_80010820((u8 *)gCamera + 0x28);
     func_8001047C(screen, screen, &flag, 3);
     if (((u8 *)&flag)[2] & 1) return;
     if (D_8009FA90 < D_8009F9C0) goto a1;

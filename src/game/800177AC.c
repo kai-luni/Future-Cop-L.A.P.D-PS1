@@ -16,7 +16,7 @@ struct Camera {
     struct Vec3s32 eye;
 };
 
-extern struct Camera *D_8009F9E4;
+extern struct Camera *gCamera __asm__("D_8009F9E4");
 
 extern void func_8001A81C(u8 *matrix, struct Vec3s32 *input, struct Vec3s32 *output);
 
@@ -43,11 +43,11 @@ void func_800177AC(struct Vec3s32 *position)
 {
     struct Vec3s32 rotated;
 
-    D_8009F9E4->position = *position;
-    D_8009F9E4->eye = *position;
-    func_8001A81C(D_8009F9E4->matrix, position, &rotated);
+    gCamera->position = *position;
+    gCamera->eye = *position;
+    func_8001A81C(gCamera->matrix, position, &rotated);
     rotated.x = -rotated.x;
     rotated.y = -rotated.y;
     rotated.z = -rotated.z;
-    D_8009F9E4->inverse = rotated;
+    gCamera->inverse = rotated;
 }

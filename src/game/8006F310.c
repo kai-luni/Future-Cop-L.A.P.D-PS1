@@ -27,7 +27,7 @@ struct Camera {
     s32 z;
 };
 
-extern struct Camera *D_8009F9E4;
+extern struct Camera *gCamera __asm__("D_8009F9E4");
 extern u8 *D_8009F9F0;
 extern u8 *D_8009FA28;
 extern u32 D_8009F388;
@@ -182,7 +182,7 @@ void func_8006F310(struct Node *node, Vec3 *pos)
     nptr = node;
     for (; i < 2; i++, nptr = (struct Node *)((u8 *)nptr + 12)) {
         __asm__ volatile("" : : "r"(nptr));
-        cam = D_8009F9E4;
+        cam = gCamera;
         diff[0] = nptr->v[0].x - cam->x;
         diff[1] = nptr->v[0].y - cam->y;
         diff[2] = nptr->v[0].z - cam->z;

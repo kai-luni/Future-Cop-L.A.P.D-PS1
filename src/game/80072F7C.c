@@ -57,7 +57,7 @@ struct Prim72F7C {
     u8 pad[0x34 - 0x10];
 };
 
-extern struct Camera72F7C *const D_8009F9E4;
+extern struct Camera72F7C *const gCamera __asm__("D_8009F9E4");
 extern struct Prim72F7C *D_8009F9F0;
 extern struct Prim72F7C *D_8009FA28;
 
@@ -125,7 +125,7 @@ void func_80072F7C(struct Node72F7C *node, V3_72F7C *arg)
         if (j < node->entries[i].count + 1) {
             entry_offset = i * sizeof(struct Entry72F7C);
             __asm__ volatile("" : : "r"(entry_offset));
-            camera = D_8009F9E4;
+            camera = gCamera;
             __asm__ volatile("" : : "r"(camera));
             for (; j < node->entries[i].count + 1; j++) {
             __asm__ volatile("" : : "r"(camera));
@@ -134,7 +134,7 @@ void func_80072F7C(struct Node72F7C *node, V3_72F7C *arg)
             shorts[j].z = (node->entries[i].verts[j].z - camera->eye.z) >> 4;
             }
         }
-        func_80010820(D_8009F9E4->matrix);
+        func_80010820(gCamera->matrix);
         screen_arg = shorts;
         __asm__ volatile("" : : "r"(screen_arg));
         call_entries = node->entries;

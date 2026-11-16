@@ -72,7 +72,7 @@ struct Frame {
     s32 padAC;
 };
 
-extern struct Unk8009F9E4 *D_8009F9E4;
+extern struct Unk8009F9E4 *gCamera __asm__("D_8009F9E4");
 
 extern s32 *func_8003D9C4(struct Node4C5C8 *node);
 extern s32 func_8001A100(s32 *vec);
@@ -206,7 +206,7 @@ void func_8004C5C8(struct Node4C5C8 *arg0, s32 *arg1)
             } else {
                 f.src = *(struct Vec3 *)&sub->unk4C;
             }
-            g = D_8009F9E4;
+            g = gCamera;
             f.vec[0] = f.src.v[0] - g->unk7C;
             f.vec[1] = f.src.v[1] - g->unk80;
             f.vec[2] = f.src.v[2] - g->unk84;

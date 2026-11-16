@@ -33,7 +33,7 @@ struct Block {
     u8 unk00[0x190];
 };
 
-extern struct Camera *D_8009F9E4;
+extern struct Camera *gCamera __asm__("D_8009F9E4");
 extern struct Pair D_800A3190[];
 extern struct Block D_800AB3B8[];
 extern u8 D_8009F834[];
@@ -94,12 +94,12 @@ void func_80066C9C(s32 index, struct Entity *obj)
     s32 m;
 
     func_80017B60(obj->unkAC->unkAC);
-    func_80010820(D_8009F9E4->matrix);
+    func_80010820(gCamera->matrix);
 
     t = obj->unk54;
     d = -t;
     v = ((d >> 31) & d) + t;
-    cam = D_8009F9E4;
+    cam = gCamera;
     dy = cam->eyeY - v;
 
     if (dy > 0) {

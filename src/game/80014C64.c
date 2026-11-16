@@ -5,7 +5,7 @@ typedef struct { u8 pad0[0x28]; u8 m[0x54]; s32 cx, cy, cz; } Cam;
 typedef struct { u32 c0, c4; s32 a8, aC; u8 b10, b11, b12, b13, tex, pad15[3]; u32 flags; } Eff;
 typedef struct { u8 b[0x34]; } Prim;
 
-extern Cam *D_8009F9E4;
+extern Cam *gCamera __asm__("D_8009F9E4");
 extern Prim *D_8009F9F0, *D_8009FA28;
 extern void func_80010820(void *);
 extern void func_8001047C(u16 *, u16 *, u8 *, s32);
@@ -62,13 +62,13 @@ void func_80014C64(s32 *from, s32 *to, Eff *e)
     register u32 colorcode asm("$2");
 
     s1 = (e->flags & 5) == 4;
-    pp[0] = (from[0] - D_8009F9E4->cx) >> 4;
-    pp[1] = (from[1] - D_8009F9E4->cy) >> 4;
-    pp[2] = (from[2] - D_8009F9E4->cz) >> 4;
-    qq[0] = (to[0] - D_8009F9E4->cx) >> 4;
-    qq[1] = (to[1] - D_8009F9E4->cy) >> 4;
-    qq[2] = (to[2] - D_8009F9E4->cz) >> 4;
-    func_80010820(D_8009F9E4->m);
+    pp[0] = (from[0] - gCamera->cx) >> 4;
+    pp[1] = (from[1] - gCamera->cy) >> 4;
+    pp[2] = (from[2] - gCamera->cz) >> 4;
+    qq[0] = (to[0] - gCamera->cx) >> 4;
+    qq[1] = (to[1] - gCamera->cy) >> 4;
+    qq[2] = (to[2] - gCamera->cz) >> 4;
+    func_80010820(gCamera->m);
     func_8001047C(pp, pp, out, 2);
     if ((out[0] | out[1]) & 1) return;
 

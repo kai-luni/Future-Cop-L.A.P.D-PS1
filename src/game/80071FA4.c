@@ -87,7 +87,7 @@ extern u8 D_800AB388[];
 extern u8 D_800AB389[];
 extern s16 D_800A7840[];
 extern s16 D_800A7898[];
-extern Cam *D_8009F9E4;
+extern Cam *gCamera __asm__("D_8009F9E4");
 extern Prim *D_8009F9F0;
 extern Prim *D_8009FA28;
 extern s32 D_8009F9B8;
@@ -174,36 +174,36 @@ void func_80071FA4(Node *node, s32 *org)
             }
         } else {
             for (prep = 0; prep < node->ents[i].cnt + 1; prep++) {
-                D_800A6418[prep][0] = (node->ents[i].verts[prep * 3 + 0] - D_8009F9E4->ox) >> 4;
-                D_800A6418[prep][1] = (node->ents[i].verts[prep * 3 + 1] - D_8009F9E4->oy) >> 4;
-                D_800A6418[prep][2] = (node->ents[i].verts[prep * 3 + 2] - D_8009F9E4->oz) >> 4;
+                D_800A6418[prep][0] = (node->ents[i].verts[prep * 3 + 0] - gCamera->ox) >> 4;
+                D_800A6418[prep][1] = (node->ents[i].verts[prep * 3 + 1] - gCamera->oy) >> 4;
+                D_800A6418[prep][2] = (node->ents[i].verts[prep * 3 + 2] - gCamera->oz) >> 4;
             }
         }
 
         }
 
         if (node->flags & 8) {
-            v[0] = node->a->sub->f28 - D_8009F9E4->ox;
-            v[1] = node->a->sub->f2C - D_8009F9E4->oy;
-            v[2] = node->a->sub->f30 - D_8009F9E4->oz;
-            func_80010820(&D_8009F9E4->mtx);
+            v[0] = node->a->sub->f28 - gCamera->ox;
+            v[1] = node->a->sub->f2C - gCamera->oy;
+            v[2] = node->a->sub->f30 - gCamera->oz;
+            func_80010820(&gCamera->mtx);
             func_8001006C((u8 *)node->a->sub + 4, &m, 3);
-            func_80010820(&D_8009F9E4->mtx);
+            func_80010820(&gCamera->mtx);
             func_8001006C(v, &m.m[9], 1);
         } else {
             s32 first;
-            first = D_8009F9E4->mtx.m[0];
-            m.m[1] = D_8009F9E4->mtx.m[1];
-            m.m[2] = D_8009F9E4->mtx.m[2];
-            m.m[3] = D_8009F9E4->mtx.m[3];
-            m.m[4] = D_8009F9E4->mtx.m[4];
-            m.m[5] = D_8009F9E4->mtx.m[5];
-            m.m[6] = D_8009F9E4->mtx.m[6];
-            m.m[7] = D_8009F9E4->mtx.m[7];
-            m.m[8] = D_8009F9E4->mtx.m[8];
-            m.m[9] = D_8009F9E4->mtx.m[9];
-            m.m[10] = D_8009F9E4->mtx.m[10];
-            m.m[11] = D_8009F9E4->mtx.m[11];
+            first = gCamera->mtx.m[0];
+            m.m[1] = gCamera->mtx.m[1];
+            m.m[2] = gCamera->mtx.m[2];
+            m.m[3] = gCamera->mtx.m[3];
+            m.m[4] = gCamera->mtx.m[4];
+            m.m[5] = gCamera->mtx.m[5];
+            m.m[6] = gCamera->mtx.m[6];
+            m.m[7] = gCamera->mtx.m[7];
+            m.m[8] = gCamera->mtx.m[8];
+            m.m[9] = gCamera->mtx.m[9];
+            m.m[10] = gCamera->mtx.m[10];
+            m.m[11] = gCamera->mtx.m[11];
             m.m[0] = first;
         }
         if (node->flags & 8) func_80010750(&m);

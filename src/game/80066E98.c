@@ -16,7 +16,7 @@ struct Coord66E98 {
     u8 x;
     u8 y;
 };
-extern u8 *D_8009F9E4;
+extern u8 *gCamera __asm__("D_8009F9E4");
 extern struct Region66E98 D_800AB3B8[];
 extern struct Coord66E98 D_8009F834[];
 extern void func_80017B60(s32);
@@ -53,12 +53,12 @@ void func_80066E98(s32 index, struct Object66E98 *object)
     s32 y;
 
     func_80017B60(object->info->id);
-    func_80010820(D_8009F9E4 + 0x28);
+    func_80010820(gCamera + 0x28);
     region = &D_800AB3B8[index];
     x = D_8009F834[index].x;
     y = D_8009F834[index].y;
     func_8006531C(x, y, region);
-    func_80010820(D_8009F9E4 + 0x28);
+    func_80010820(gCamera + 0x28);
     func_8004A924(x, y, region);
     func_80084398(x, y, region);
     func_80062EB8(index);

@@ -17,7 +17,7 @@ typedef struct Node {
     V8 v[5];
 } Node;
 
-extern s32 *D_8009F9E4;
+extern s32 *gCamera __asm__("D_8009F9E4");
 extern s32 D_8009FAA4;
 typedef struct Pkt { u8 b[0x34]; } Pkt;
 extern Pkt *D_8009F9F0;
@@ -167,9 +167,9 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
     s32 i;
 
     fl = node->flags & 0x30;
-    d[2] = ((arg1 << 17) - D_8009F9E4[2]) >> 4;
-    d[0] = ((arg2 << 17) - D_8009F9E4[0]) >> 4;
-    d[1] = (-D_8009F9E4[1]) >> 4;
+    d[2] = ((arg1 << 17) - gCamera[2]) >> 4;
+    d[0] = ((arg2 << 17) - gCamera[0]) >> 4;
+    d[1] = (-gCamera[1]) >> 4;
 
     if (node->flags & 4) {
         s32 a, b, p, q, t0, t1, t2, t3;
