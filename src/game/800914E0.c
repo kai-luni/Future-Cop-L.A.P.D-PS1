@@ -4,7 +4,7 @@ struct CallbackTable {
     void (*callback)(void);
 };
 
-extern struct CallbackTable *D_8009DD10;
+extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
 
 /**
  * @brief Dispatches the registered callback in slot +4 of the display
@@ -28,5 +28,5 @@ extern struct CallbackTable *D_8009DD10;
  */
 void func_800914E0(void)
 {
-    D_8009DD10->callback();
+    gIrqCallbackTable->callback();
 }

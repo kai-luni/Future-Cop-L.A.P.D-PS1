@@ -5,7 +5,7 @@ struct CallbackTable {
     void (*callback)(void);
 };
 
-extern struct CallbackTable *D_8009DD10;
+extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
 
 /**
  * @brief Dispatches the interrupt-registration callback at offset +0x08 of D_8009DD10.
@@ -31,5 +31,5 @@ extern struct CallbackTable *D_8009DD10;
  */
 void func_800914B0(void)
 {
-    D_8009DD10->callback();
+    gIrqCallbackTable->callback();
 }

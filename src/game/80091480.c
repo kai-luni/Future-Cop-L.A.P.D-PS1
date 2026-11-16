@@ -6,7 +6,7 @@ struct CallbackTable {
     void (*callback)(void);
 };
 
-extern struct CallbackTable *D_8009DD10;
+extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
 
 /**
  * @brief Dispatches the registered display/VBlank callback.
@@ -23,5 +23,5 @@ extern struct CallbackTable *D_8009DD10;
  */
 void func_80091480(void)
 {
-    D_8009DD10->callback();
+    gIrqCallbackTable->callback();
 }

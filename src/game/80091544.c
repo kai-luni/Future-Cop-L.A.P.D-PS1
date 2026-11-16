@@ -8,7 +8,7 @@ struct CallbackTable {
     void (*callback)(void);
 };
 
-extern struct CallbackTable *D_8009DD10;
+extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
 
 /**
  *  @brief Invokes the callback at offset 0x14 in the current table.
@@ -28,5 +28,5 @@ extern struct CallbackTable *D_8009DD10;
  */
 void func_80091544(void)
 {
-    D_8009DD10->callback();
+    gIrqCallbackTable->callback();
 }

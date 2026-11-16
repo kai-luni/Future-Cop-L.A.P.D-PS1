@@ -8,7 +8,7 @@ struct CallbackTable {
     void (*callback)(int operation, void *argument);
 };
 
-extern struct CallbackTable *D_8009DD10;
+extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
 
 /**
  * @brief Issues callback operation 4 with an argument.
@@ -27,5 +27,5 @@ extern struct CallbackTable *D_8009DD10;
  */
 void func_80091510(void *argument)
 {
-    D_8009DD10->callback(4, argument);
+    gIrqCallbackTable->callback(4, argument);
 }
