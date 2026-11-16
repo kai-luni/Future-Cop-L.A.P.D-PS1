@@ -1,11 +1,13 @@
 // Categories: Platform > Serial I/O
+#include "game/intc_globals.h"
+
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
 typedef struct { u8 pad[0x3c]; u8 *buffer; u8 *other; u8 index; u8 count; } State;
 typedef struct { volatile u8 data; u8 pad[3]; volatile u16 status; u8 pad2[8]; volatile u16 control; } Port;
 extern Port *D_8009C78C;
-extern volatile u32 *D_8009C788;
+extern volatile u32 *gInterruptStatusPtr __asm__("D_8009C788");
 extern volatile u32 D_800A6E18, D_800A9448;
 extern int func_8008C8B0(void);
 
@@ -75,7 +77,7 @@ int func_8008A9A8(State *arg, int argvalue)
         result = p->data;
         p->control = control;
     }
-    while (!(*D_8009C788 & 0x80)) {
+    while (!(*gInterruptStatusPtr & 0x80)) {
         if (func_8008C8B0()) return -20;
     }
     D_8009C78C->data = value;

@@ -1,10 +1,12 @@
 // Categories: Platform > Controller Input | Platform > Timer | Input > Controller
+#include "game/intc_globals.h"
+
 #include "game/types.h"
 
 struct Port { u8 pad0[0x3c]; u8 *response; u8 pad40[4]; u8 index; u8 count; u8 pad46[0xa2]; u8 id; };
 struct Device { volatile u8 data; u8 pad1[3]; volatile u16 status; u8 pad6[8]; volatile u16 control; };
 extern struct Device *D_8009C78C;
-extern volatile u32 *D_8009C788;
+extern volatile u32 *gInterruptStatusPtr __asm__("D_8009C788");
 extern u32 D_8009C76C;
 extern u32 D_800A6E18, D_800A9448;
 extern void func_8008C890(u32);
@@ -70,7 +72,7 @@ normal:
 special:
     device->control = 0x22;
 done:;
-    while (!(*D_8009C788 & 0x80)) {
+    while (!(*gInterruptStatusPtr & 0x80)) {
         count = *(volatile u16 *)0x1f801120 & 0xffff;
         if (count < D_800A6E18) {
             if (*(volatile u16 *)0x1f801128)

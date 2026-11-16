@@ -1,4 +1,6 @@
 // Categories: Platform > Serial I/O
+#include "game/intc_globals.h"
+
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef signed int s32;
@@ -9,7 +11,7 @@ extern s32 D_8009C768;
 extern s32 D_8009C780[];
 extern void (*D_8009C748)(void *);
 extern void (*D_8009C74C)(void *);
-extern s32 *D_8009C788;
+extern s32 *gInterruptStatusPtr __asm__("D_8009C788");
 extern void func_8008C890(s32);
 extern void func_8008AE44(void);
 
@@ -93,7 +95,7 @@ s32 func_8008A6CC(struct Obj *obj)
             (void)*(volatile u8 *)D_8009C78C;
             return 0;
         }
-        *D_8009C788 = -0x81;
+        *gInterruptStatusPtr = -0x81;
     }
     if (obj->v50 && *((u8 *)obj + 0x36)) return 0;
     *obj->p = 0;

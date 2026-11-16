@@ -1,10 +1,12 @@
 // Categories: Platform > Controller Input | BIOS > System Calls | Platform > Interrupts
+#include "game/intc_globals.h"
+
 #include "game/types.h"
 
 typedef void (*Handler)(s32 port);
 
 extern s32 D_8009C760;
-extern s32 *D_8009C788;
+extern s32 *gInterruptStatusPtr __asm__("D_8009C788");
 extern s32 D_8009C75C;
 extern Handler D_8009C72C;
 extern u8 D_800A3B60[];
@@ -58,7 +60,7 @@ void func_8008A5BC(void)
 
     arg = 3;
     __asm__ volatile("" : "+r"(arg) :: "memory");
-    state = D_8009C788;
+    state = gInterruptStatusPtr;
     state[0] = -2;
     __asm__ volatile("" ::: "memory");
     state[1] |= 1;
