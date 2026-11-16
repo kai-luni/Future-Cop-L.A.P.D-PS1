@@ -1,9 +1,11 @@
 // Categories: Platform > MDEC | Graphics > Video Decode
+#include "game/dma_globals.h"
+
 #include "game/types.h"
 
 extern u32 *D_8009E9F4;
 extern u32 *D_8009E9C8;
-extern volatile u32 *D_8009E9D4;
+extern volatile u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
 extern u32 D_8009E8B0[];
 extern u32 D_8009E934[];
 extern u8 D_80010000[];
@@ -42,7 +44,7 @@ void func_80096150(s32 option)
         q = D_8009E9C8;
         __asm__ volatile ("" : : "r"(q) : "$4");
         *q = 0;
-        *D_8009E9D4 = 0;
+        *gDma1ChannelCtrlPtr = 0;
         *D_8009E9F4 = 0x60000000;
         func_80096240(D_8009E8B0, 0x20);
         func_80096240(D_8009E934, 0x20);
@@ -50,8 +52,8 @@ void func_80096150(s32 option)
     case 1:
         *D_8009E9F4 = 0x80000000;
         *D_8009E9C8 = 0;
-        *D_8009E9D4 = 0;
-        (void)*D_8009E9D4;
+        *gDma1ChannelCtrlPtr = 0;
+        (void)*gDma1ChannelCtrlPtr;
         *D_8009E9F4 = 0x60000000;
         break;
     default:
