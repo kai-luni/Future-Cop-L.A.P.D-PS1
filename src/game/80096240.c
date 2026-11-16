@@ -1,11 +1,13 @@
 // Categories: Platform > Sound | Platform > DMA
+#include "game/dma_globals.h"
+
 #include "game/types.h"
 
 extern u32 *D_8009E9F8;
 extern u32 *D_8009E9C0;
 extern u32 *D_8009E9C4;
 extern u32 *D_8009E9F0;
-extern u32 *D_8009E9C8;
+extern u32 *gDma0ChannelCtrlPtr __asm__("D_8009E9C8");
 extern s32 func_8009635C(void);
 
 /**
@@ -40,5 +42,5 @@ void func_80096240(u32 *arg0, u32 arg1)
     *D_8009E9C0 = (u32)(arg0 + 1);
     *D_8009E9C4 = ((arg1 >> 5) << 16) | 0x20;
     *D_8009E9F0 = *arg0;
-    *D_8009E9C8 = 0x01000201;
+    *gDma0ChannelCtrlPtr = 0x01000201;
 }

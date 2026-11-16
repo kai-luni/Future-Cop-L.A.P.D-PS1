@@ -19,6 +19,7 @@
  *   0x1F8010A0 DMA2 memory address   (GPU)
  *   0x1F8010A4 DMA2 block control    (block size / block count)
  *   0x1F8010A8 DMA2 channel control  (direction, step, sync mode, start)
+ *   0x1F801088 DMA0 channel control (MDEC output)
  *   0x1F801098 DMA1 channel control (MDEC input)
  *   0x1F8010B8 DMA3 channel control (CD-ROM)
  *   0x1F8010F0 DMA control (per-channel priority and enable); retail holds
@@ -29,6 +30,7 @@
 #define DMA_CONTROL_GPU_ASM "D_8009DEE4"
 #define DMA_CONTROL_ASM "D_8009DD1C"
 #define DMA_INTERRUPT_CTRL_ASM "D_8009DD60"
+#define DMA0_CHANNEL_CTRL_ASM "D_8009E9C8"
 #define DMA1_CHANNEL_CTRL_ASM "D_8009E9D4"
 #define DMA3_CHANNEL_CTRL_ASM "D_8009CBB0"
 #define DMA2_MEM_ADDR_ASM "D_8009DECC"

@@ -27,6 +27,7 @@ reads through the pointer afterwards.
 | `D_8009DD14` | `gInterruptStatusHalfPtr` | `0x8009DD14` | `0x1F801070` | interrupt status, halfword view |
 | `D_8009DEE4` | `gDmaControlGpuPtr` | `0x8009DEE4` | `0x1F8010F0` | DMA control (DPCR), GPU path |
 | `D_8009EEB4` | `gSpuDelayCtrlPtr` | `0x8009EEB4` | `0x1F8010F0` | DMA control (DPCR), SPU driver |
+| `D_8009E9C8` | `gDma0ChannelCtrlPtr` | `0x8009E9C8` | `0x1F801088` | DMA0 channel control (MDEC output) |
 | `D_8009E9F4` | `gMdecControlStatusPtr` | `0x8009E9F4` | `0x1F801824` | MDEC control/status word |
 
 Per-variable detail, evidence and function lists:

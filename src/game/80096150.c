@@ -6,7 +6,7 @@
 #include "game/types.h"
 
 extern u32 *gMdecControlStatusPtr __asm__("D_8009E9F4");
-extern u32 *D_8009E9C8;
+extern u32 *gDma0ChannelCtrlPtr __asm__("D_8009E9C8");
 extern volatile u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
 extern u32 D_8009E8B0[];
 extern u32 D_8009E934[];
@@ -43,7 +43,7 @@ void func_80096150(s32 option)
         p = gMdecControlStatusPtr;
         __asm__ volatile ("" : : "r"(p));
         *p = 0x80000000;
-        q = D_8009E9C8;
+        q = gDma0ChannelCtrlPtr;
         __asm__ volatile ("" : : "r"(q) : "$4");
         *q = 0;
         *gDma1ChannelCtrlPtr = 0;
@@ -53,7 +53,7 @@ void func_80096150(s32 option)
         break;
     case 1:
         *gMdecControlStatusPtr = 0x80000000;
-        *D_8009E9C8 = 0;
+        *gDma0ChannelCtrlPtr = 0;
         *gDma1ChannelCtrlPtr = 0;
         (void)*gDma1ChannelCtrlPtr;
         *gMdecControlStatusPtr = 0x60000000;
