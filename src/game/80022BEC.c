@@ -1,3 +1,4 @@
+// Categories: Resources > Buffer Management
 typedef unsigned int u32;
 typedef int s32;
 struct Data {
@@ -10,6 +11,24 @@ struct Data {
 extern struct Data D_800A0968;
 extern volatile s32 D_8009F27C;
 
+/**
+ *  @brief Assigns sequential buffer addresses to entries in a global table.
+ *
+ *  Each address advances by the fixed width times height from the table.
+ *  A zero base or a negative computed address stops assignment immediately.
+ *  @return Zero on completion, or the first negative address value encountered.
+ *  @par Globals
+ *  D_800A0968 supplies the count and dimensions and receives entry addresses;
+ *  D_8009F27C supplies the volatile base address.
+ *  @par Control flow
+ *  Iterates over count entries at a 0x24-byte stride, returning early on a negative value.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes nonnegative addresses at offset 0x44 of successive table entries.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_80022BEC(void)
 {
     register s32 offset __asm__("$7") = 0;

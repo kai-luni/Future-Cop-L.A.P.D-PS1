@@ -1,3 +1,4 @@
+// Categories: Game Engine > Scheduling
 #include "game/types.h"
 
 extern u8 D_800A0968[];
@@ -5,6 +6,24 @@ extern volatile u32 D_8009F634;
 
 extern void func_80022D84(void);
 
+/**
+ *  @brief Advances a matching global counter and dispatches its work.
+ *
+ *  The state block tracks a cycle count, per-entry flags and an offset.
+ *  A completed cycle can notify a callback before updating the offset.
+ *  @param arg0 Identifier compared as a 16-bit value with the state identifier.
+ *  @par Globals
+ *  D_800A0968 holds the state block; D_8009F634 holds an optional callback.
+ *  @par Control flow
+ *  A mismatch returns; otherwise the counter advances and may wrap.
+ *  On wrap, a loop clears entry flags, then offset and dispatch checks run.
+ *  @par Calls
+ *  The optional callback receives 3; func_80022D84 performs dispatched work.
+ *  @par Side effects
+ *  Changes counters, flags and offsets and may invoke either callback.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80023204(s32 arg0)
 {
     u8 *base;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > State Transitions | Input > Port Control
 #include "game/types.h"
 
 struct Entry78C88 {
@@ -39,6 +40,25 @@ extern void func_8008CCB0(u8 *a0, s32 a1);
 extern u8 func_8001EB2C(s32 arg0);
 extern void func_8001EC04(s32 port, s32 enable);
 
+/**
+ *  @brief Advances a pending entry sequence and applies its selected state.
+ *
+ *  A nonzero sequence index selects an entry and advances through indices below five.
+ *  The selected entry supplies object fields and a subtable value for setup.
+ *  @return 1 if an entry was applied, or 0 if the sequence was inactive.
+ *  @par Globals
+ *  D_8009F3F2 indexes D_8009B730; D_8009FA94 receives entry fields.
+ *  D_8009B4E4 and D_8009B300 supply setup data; D_8009FA84, D_8009FA00, D_8009F45A and D_8009F3F0 receive state.
+ *  D_8009F8D8 and D_8009F8D9 store the two port query results.
+ *  @par Control flow
+ *  An inactive index returns immediately; the object field at 0x4C changes only when entry byte 1 is nonzero.
+ *  @par Calls
+ *  func_8008CCB0 applies setup data; func_8001EB2C queries each port; func_8001EC04 disables both ports.
+ *  @par Side effects
+ *  Updates sequence, object and global state and issues port-control calls.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_80078C88(void)
 {
     struct Entry78C88 *e;

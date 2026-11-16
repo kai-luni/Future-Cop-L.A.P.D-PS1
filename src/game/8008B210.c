@@ -1,3 +1,4 @@
+// Categories: Input > Controller Protocol
 #include "game/types.h"
 
 struct PadCapabilityRecord {
@@ -33,6 +34,26 @@ struct PadPort {
 
 extern u8 *D_800A3B80;
 
+/**
+ *  @brief Stores a controller handshake reply in the current information table.
+ *
+ *  Decodes mode and actuator records or assembles variable-length combination
+ *  data across replies, marking communication complete after the last record.
+ *  @param input_port Port containing the response, tables and sequence state.
+ *  @return 1 when the current step is done or unhandled; 0 when more processing is needed or combinations complete.
+ *  @par Globals
+ *  D_800A3B80 holds and advances the destination pointer for combination data.
+ *  @par Control flow
+ *  Dispatches on sequence step; combination copies loop over up to three
+ *  initial or six continuation bytes and stop when the record is exhausted.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes table records and payloads, updates indices and remaining length,
+ *  and sets communication state 6 and step 0xFE after the last combination.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 /*
  * Response handler of the pad handshake: copies one reply into the table of the
  * current sequence step and advances the record index.

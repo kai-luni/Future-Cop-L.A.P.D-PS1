@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object Processing
 #include "game/types.h"
 
 struct Unk607B8 {
@@ -17,6 +18,23 @@ struct Unk6A898 {
 
 extern void func_800607B8(struct Unk607B8 *value);
 
+/**
+ *  @brief Processes an embedded structure and rescales two object fields.
+ *
+ *  After processing the embedded substructure, the function scales the
+ *  two signed fields by shifting left 12 bits and dividing by 218.
+ *  @param object Object containing the substructure and fields to rescale.
+ *  @par Globals
+ *  None referenced directly.
+ *  @par Control flow
+ *  Calls the substructure operation once, then updates both fields in order.
+ *  @par Calls
+ *  func_800607B8 processes the embedded substructure.
+ *  @par Side effects
+ *  Replaces object fields unk0A and unk08 and may modify the substructure through the call.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8006A898(struct Unk6A898 *object)
 {
     func_800607B8(&object->sub);

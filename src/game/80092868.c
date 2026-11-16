@@ -1,9 +1,27 @@
+// Categories: Utilities > Diagnostics
 #include "game/types.h"
 /* Test the return sequence under a different compiler. */
 
 extern void (*D_8009DDEC)(const char *, ...);
 struct Values { s16 values[8]; u8 first; u8 second; };
 
+/**
+ *  @brief Prints the eight values and two byte fields of a structure.
+ *
+ *  Uses four fixed format strings to emit two groups of four signed values
+ *  followed by the two individual byte fields.
+ *  @param arg0 Structure containing the values to print.
+ *  @par Globals
+ *  D_8009DDEC supplies the variadic print function pointer.
+ *  @par Control flow
+ *  Makes four sequential print calls without branches or loops.
+ *  @par Calls
+ *  D_8009DDEC is invoked with format strings at fixed addresses and the field values.
+ *  @par Side effects
+ *  Produces output through the configured print function.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80092868(struct Values *arg0)
 {
     register int a __asm__("$5");

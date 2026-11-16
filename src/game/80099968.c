@@ -1,5 +1,25 @@
+// Categories: Utilities > Fixed-point Arithmetic
 #include "game/types.h"
 
+/**
+ *  @brief Computes a fixed-point scaled value using iterative growth and interpolation.
+ *
+ *  The upper bits of the second argument select repeated multiplication by
+ *  4155 in 12-bit fixed point; its low five bits select an interpolation fraction.
+ *  @param a0 Initial signed value to scale.
+ *  @param a1 Step count and five-bit interpolation fraction.
+ *  @return The interpolated result shifted right by 12 bits.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Iterates a1 shifted right by five times, then interpolates between adjacent values.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 u32 func_80099968(s32 a0, u32 a1)
 {
     s32 prev;

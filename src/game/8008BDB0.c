@@ -1,3 +1,4 @@
+// Categories: Input > Port Initialization
 typedef unsigned char u8;
 typedef struct Obj Obj;
 struct Obj {
@@ -20,6 +21,27 @@ extern u8 D_800A3B90[], D_800A3BD8[];
 extern void func_8008BF78(), func_8008BF10(), func_8008C07C(), func_8008C138();
 extern void func_8008C3B4(), func_8008C3EC(), func_8008C06C();
 extern void func_8008C410(), func_8008CD00(), func_8008A3A8();
+
+/**
+ *  @brief Initializes two port objects and installs their dispatch functions.
+ *
+ *  The objects receive caller-provided output buffers and separate internal buffer regions.
+ *  Initialization clears the object array, sets sentinel bytes and marks the subsystem ready.
+ *  @param a Output buffer assigned to the first object.
+ *  @param b Output buffer assigned to the second object.
+ *  @par Globals
+ *  D_8009C760 and D_8009C774 are reset; D_8009C75C points to D_800A3C20.
+ *  D_8009C728, D_8009C72C, D_8009C730, D_8009C734, D_8009C738, D_8009C73C and D_8009C74C receive dispatch pointers.
+ *  D_800A3B90 and D_800A3BD8 provide per-object buffer regions.
+ *  @par Control flow
+ *  A two-iteration loop initializes each object and its six flag bytes.
+ *  @par Calls
+ *  func_8008C410 performs preliminary setup; func_8008CD00 clears the array; func_8008A3A8 performs final setup.
+ *  @par Side effects
+ *  Writes global state, object storage and the first two bytes of each supplied output buffer.
+ *  @par Callers
+ *  Confirmed: func_8001E87C.
+ */
 void func_8008BDB0(u8 *a, u8 *b)
 {
     register int i __asm__("$8");

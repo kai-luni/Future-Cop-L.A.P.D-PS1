@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct StreamChannel {
@@ -18,6 +19,26 @@ struct StreamState {
 
 extern struct StreamState D_800A0968;
 
+/**
+ *  @brief Sets the start and length of a stream channel and optionally enables looping.
+ *
+ *  Updates the selected entry in the shared stream-channel state without
+ *  checking the channel index or clearing an existing looping flag.
+ *  @param start Start value stored in the channel.
+ *  @param length Length value stored in the channel.
+ *  @param channel Index of the stream channel to update.
+ *  @param looping Nonzero to set the channel's looping flag to one.
+ *  @par Globals
+ *  D_800A0968 contains the channel array being modified.
+ *  @par Control flow
+ *  Sets looping only when requested, then stores length and start.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Modifies the selected channel's start, length, and possibly looping flag.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80022B28(s32 start, s32 length, s32 channel, u8 looping)
 {
     if (looping) {

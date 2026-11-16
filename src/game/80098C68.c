@@ -1,3 +1,4 @@
+// Categories: Platform > Device Control
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef struct { volatile u16 a, b, c, d; } Ports;
@@ -6,6 +7,27 @@ extern volatile u32 D_8009EE90, D_8009EA5C, D_8009EA58;
 extern u32 D_8009EA30;
 extern Ports D_800A7028;
 extern Device *D_8009EEA4;
+
+/**
+ *  @brief Enables or disables selected device bits using one of two register paths.
+ *
+ *  Only the low 24 mask bits are used, split across low and high 16-bit fields.
+ *  The selected path also maintains a corresponding software mask.
+ *  @param mode 0 disables bits, 1 enables bits; other values perform no register update.
+ *  @param mask Bit mask of device bits to change.
+ *  @par Globals
+ *  D_8009EE90 selects the path; D_800A7028 holds one register set and D_8009EEA4 points to the other.
+ *  D_8009EA5C and D_8009EA58 track updates on the first path; D_8009EA30 tracks the second path.
+ *  @par Control flow
+ *  Mode selects enable or disable, then the path flag selects direct port or device-pointer writes.
+ *  On the first path, conflicting bits in the opposite port fields are cleared when present.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes device registers and updates the selected software tracking globals.
+ *  @par Callers
+ *  Confirmed: func_80021E1C.
+ */
 void func_80098C68(int mode, u32 mask)
 {
     register u32 result __asm__("$2");

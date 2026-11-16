@@ -1,6 +1,26 @@
+// Categories: Platform > Register Control
 extern unsigned int D_8009DD64[];
 extern unsigned int *D_8009DD60;
 
+/**
+ *  @brief Updates an indexed value and its corresponding control bit.
+ *
+ *  When the value changes, stores it in the indexed table and updates the
+ *  pointed-to control word, setting bit 23 and the indexed bit as appropriate.
+ *  @param arg0 Index into the value table and control-bit selection.
+ *  @param arg1 New value for the indexed entry.
+ *  @return The previous indexed value.
+ *  @par Globals
+ *  D_8009DD64 holds the indexed values; D_8009DD60 points to the control word.
+ *  @par Control flow
+ *  Does nothing if unchanged; otherwise sets or clears bit arg0 plus 16.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  On change, writes the table entry and control word, discarding the word's top byte.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 unsigned int func_80091E8C(int arg0, unsigned int arg1)
 {
     register int index __asm__("$6") = arg0;

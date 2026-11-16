@@ -1,3 +1,4 @@
+// Categories: Game Engine > State Initialization
 #include "game/types.h"
 
 struct Unk77884 {
@@ -22,6 +23,25 @@ struct Unk77884 {
     s32 unk28;
 };
 
+/**
+ *  @brief Initializes the fields of a state record.
+ *
+ *  Clears most fields and installs fixed defaults alongside two caller values.
+ *  The record's more specific purpose is not established by this source.
+ *  @param state Record to initialize.
+ *  @param arg1 Value stored in the field at offset 0x28.
+ *  @param arg2 Value stored in the field at offset 0x02.
+ *  @par Globals
+ *  None accessed directly.
+ *  @par Control flow
+ *  Performs a fixed sequence of assignments without branches or loops.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Overwrites the listed fields of the supplied record.
+ *  @par Callers
+ *  Confirmed: func_80077AD4.
+ */
 void func_80077884(struct Unk77884 *state, s32 arg1, u8 arg2)
 {
     state->unk03 = -1;

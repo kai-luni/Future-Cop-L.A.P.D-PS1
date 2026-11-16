@@ -1,3 +1,4 @@
+// Categories: Graphics > GPU Commands
 #include "game/types.h"
 
 extern u16 D_8009DDF4, D_8009DDF6;
@@ -6,6 +7,27 @@ extern u32 D_800A6280[], D_800A62A8[];
 extern u32 func_800949E8(u32);
 extern void func_800949A0(u32);
 
+/**
+ *  @brief Builds and submits a GPU rectangle fill command.
+ *
+ *  Selects a packet format based on 64-pixel alignment of the horizontal fields.
+ *  The color's high bit contributes to the GPU drawing mode.
+ *  @param arg0 Four halfwords containing rectangle position and dimensions.
+ *  @param arg1 Packed color and drawing-mode high bit.
+ *  @return Always zero.
+ *  @par Globals
+ *  D_8009DDF4 and D_8009DDF6 bound the last two rectangle fields.
+ *  D_8009DEC8 supplies drawing mode bits; D_800A6280 and D_800A62A8 hold packets.
+ *  @par Control flow
+ *  Clamps the last two fields, then chooses an aligned or unaligned packet.
+ *  @par Calls
+ *  func_800949E8 retrieves drawing settings for the unaligned packet.
+ *  func_800949A0 submits the packet at D_800A6280.
+ *  @par Side effects
+ *  Modifies arg0, writes GPU packets, and submits a command.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_8009423C(u16 *arg0, u32 arg1)
 {
     register u16 *rect __asm__("$8") = arg0;

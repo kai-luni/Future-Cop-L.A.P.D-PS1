@@ -1,3 +1,4 @@
+// Categories: Game Engine > Map Processing | Resources > Map Data
 #include "game/types.h"
 
 struct Map {
@@ -57,6 +58,25 @@ extern void func_800181D4(s8 *);
     *(dst) = sum; \
 } while (0)
 
+/**
+ *  @brief Builds a filtered signed-byte grid from the current map's cell data.
+ *
+ *  Each selected map cell contributes an 8 by 8 block of maxima sampled
+ *  from its referenced data, followed by a weighted 3 by 3 filter.
+ *  The filtered value is never lower than the corresponding sampled value.
+ *  @par Globals
+ *  D_8009F80C supplies map dimensions, border and cells; D_8009F808
+ *  supplies cell data; D_800A2940 receives the output pointer and metadata.
+ *  @par Control flow
+ *  Nested loops sample cells and filter rows with replicated edge values.
+ *  @par Calls
+ *  func_80017EBC allocates temporary and output buffers; func_800181D4
+ *  releases the temporary buffer.
+ *  @par Side effects
+ *  Allocates and publishes an output grid, replacing the stored pointer.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_800695A8(void)
 {
     register struct Map *map __asm__("$3");

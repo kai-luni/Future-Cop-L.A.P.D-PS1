@@ -1,5 +1,36 @@
+// Categories: Utilities > Data Packing
 #include "game/types.h"
 
+/**
+ *  @brief Packs thirteen input values into a ten-byte output record.
+ *
+ *  The record combines input bits with low bits of two accumulated sums.
+ *  A special case adjusts f0 and g0 when f0 through i0 have low bytes equal to 10.
+ *  @param out0 Destination for ten bytes.
+ *  @param a First packed input.
+ *  @param b Second packed input.
+ *  @param c0 Third packed input.
+ *  @param d0 Fourth packed input.
+ *  @param e0 Fifth packed input.
+ *  @param f0 Sixth packed input, adjusted in the special case.
+ *  @param g0 Seventh packed input, adjusted in the special case.
+ *  @param h0 Eighth packed input.
+ *  @param i0 Ninth packed input.
+ *  @param j0 Tenth packed input.
+ *  @param k0 Eleventh packed input.
+ *  @param l0 Twelfth packed input and special-case adjustment source.
+ *  @param m0 Thirteenth packed input.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  One conditional applies the special adjustment before the ten bytes are written.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes out0[0] through out0[9].
+ *  @par Callers
+ *  Confirmed: func_8007F02C.
+ */
 void func_8007E8D8(u8 *out0, u32 a, u32 b, u32 c0, u32 d0, u32 e0, u32 f0, u32 g0, u32 h0, u32 i0, u32 j0, u32 k0, u32 l0, u32 m0)
 {
     register u8 *out __asm__("$24") = out0;

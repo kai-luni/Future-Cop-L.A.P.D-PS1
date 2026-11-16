@@ -1,3 +1,4 @@
+// Categories: Game Engine > State Access
 #include "game/types.h"
 
 typedef struct {
@@ -7,6 +8,23 @@ typedef struct {
 
 extern Unk8009F4BC *D_8009F4BC;
 
+/**
+ *  @brief Writes a signed value to a global object's field.
+ *
+ *  Stores the supplied value through a volatile access at offset 0x11C
+ *  in the object referenced by the global pointer.
+ *  @param arg0 Signed value to store.
+ *  @par Globals
+ *  D_8009F4BC supplies the object pointer.
+ *  @par Control flow
+ *  Performs the store unconditionally.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes the object's field at offset 0x11C; the pointer must be valid.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80085900(s32 arg0)
 {
     *(volatile s32 *)&D_8009F4BC->unk11C = arg0;

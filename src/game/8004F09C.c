@@ -1,6 +1,27 @@
+// Categories: Utilities > Coordinate Calculations
 #include "game/types.h"
 struct Pair { s32 x; s32 y; };
 extern struct Pair *D_8009F7B0;
+
+/**
+ *  @brief Computes clamped coordinate intermediates and returns the next pair.
+ *
+ *  When the global pair pointer is non-null, two input components are shifted
+ *  right by 14, offset by the pair's fields, and clamped to zero.
+ *  The computed values are not stored or returned by the C source.
+ *  @param arg Pointer to an array whose elements 0 and 2 supply the components.
+ *  @return The pair after D_8009F7B0, or null if that pointer is null.
+ *  @par Globals
+ *  D_8009F7B0 supplies the pair pointer and coordinate offsets.
+ *  @par Control flow
+ *  A null check skips the input reads; otherwise each intermediate is clamped.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  No C-visible state is modified.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 struct Pair *func_8004F09C(s32 *arg)
 {
     register struct Pair *p __asm__("$5") = D_8009F7B0;

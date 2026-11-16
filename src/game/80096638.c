@@ -1,3 +1,20 @@
+// Categories: Game Engine > Dispatch
+/**
+ *  @brief Checks a global flag before a disabled indirect-call loop.
+ *
+ *  The assembly contains a table-dispatch loop, but initializes its count
+ *  to zero, so no table entries are read or called in this build.
+ *  @par Globals
+ *  D_8009EA00 is read as the dispatch enable flag.
+ *  @par Control flow
+ *  A zero flag exits immediately; otherwise the zero count also exits.
+ *  @par Calls
+ *  None are reached; the assembly contains an indirect call in the loop.
+ *  @par Side effects
+ *  No persistent state is modified by the reachable instructions.
+ *  @par Callers
+ *  Unknown: No direct callers are listed.
+ */
 void func_80096638(void)
 {
     __asm__ volatile (

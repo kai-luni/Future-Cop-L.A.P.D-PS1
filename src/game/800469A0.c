@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct SoundVoice {
@@ -27,6 +28,23 @@ struct SoundBank {
 
 extern struct SoundBank D_800A7938[];
 
+/**
+ *  @brief Inserts a sound voice into its bank's priority-ordered list.
+ *
+ *  Traverses the bank's doubly linked voice list in ascending priority order.
+ *  Equal-priority voices remain ahead of the inserted voice.
+ *  @param voice Voice to insert, including its bank index and priority.
+ *  @par Globals
+ *  D_800A7938 supplies the bank whose head and voice count are updated.
+ *  @par Control flow
+ *  Searches until a higher-priority value or the list end, then links both neighbors.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Updates voice links, the bank head when needed, and the bank voice count.
+ *  @par Callers
+ *  Confirmed: func_80046870.
+ */
 void func_800469A0(struct SoundVoice *voice)
 {
     struct SoundBank *bank;

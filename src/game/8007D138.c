@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 #include "game/types.h"
 
 typedef struct {
@@ -54,6 +55,24 @@ extern s32 func_80045288(void);
 extern s32 func_800452C8(void);
 extern void func_80046A34(s32 handle);
 extern s32 func_80046C84(s32 id, s32 arg1);
+
+/**
+ *  @brief Sets a global flag when the argument equals 3.
+ *
+ *  This entry point conditionally updates a shared state value.
+ *  The source does not establish the meaning of the value or argument.
+ *  @param arg0 Value tested against 3.
+ *  @par Globals
+ *  D_8009F918 is set to 1 when the test succeeds.
+ *  @par Control flow
+ *  Branches on arg0; other values leave the global unchanged.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  May modify D_8009F918.
+ *  @par Callers
+ *  Unknown: No direct callers are listed.
+ */
 void D_8007D138(s32 arg0)
 {
     if (arg0 == 3) {

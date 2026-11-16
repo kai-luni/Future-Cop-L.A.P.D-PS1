@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct SoundBankEntry {
@@ -20,6 +21,25 @@ struct SoundBank {
 
 extern struct SoundBank D_800A7938[];
 
+/**
+ *  @brief Removes the first matching key from a sound bank.
+ *
+ *  Searches the selected bank's active entries and fills any resulting gap
+ *  with the last active entry, so entry order is not preserved.
+ *  @param bankIndex Index of the bank to modify.
+ *  @param key Entry key to remove.
+ *  @return 1 if a matching entry was removed, otherwise 0.
+ *  @par Globals
+ *  D_800A7938 supplies the bank array and receives the modified entry count.
+ *  @par Control flow
+ *  Scans until a match or the count is reached; copies the last entry if needed.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Decrements the bank count and may overwrite an entry.
+ *  @par Callers
+ *  Confirmed: func_80023A24, func_80023AB4.
+ */
 s32 func_800242B4(s32 bankIndex, u8 key)
 {
     struct SoundBank *bank;

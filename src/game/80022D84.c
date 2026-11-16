@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio Streaming | Resources > Requests
 #include "game/types.h"
 
 struct StreamChannel {
@@ -45,6 +46,24 @@ extern void func_80022D1C(void *data, s32 mode, s32 length);
 extern void func_80023204(void);
 extern void func_800212F8(struct Request *req);
 
+/**
+ *  @brief Prepares and submits a request for the selected stream channel.
+ *
+ *  Uses the stream state to select a transfer mode and construct a request.
+ *  The request callback continues processing when the transfer completes.
+ *  @par Globals
+ *  D_800A0968 supplies channel data and ring state; ready and counters are updated.
+ *  @par Control flow
+ *  Channel zero can return early; ring bookkeeping precedes mode selection.
+ *  Looping selects mode 3; otherwise the offset selects mode 0, 1, or 2.
+ *  @par Calls
+ *  func_80022D1C prepares the channel buffer for the selected mode.
+ *  func_800212F8 submits the request with func_80023204 as its callback.
+ *  @par Side effects
+ *  Clears ready, adjusts ring bookkeeping, and initiates a transfer.
+ *  @par Callers
+ *  Confirmed: func_80022710, func_80022FA8, func_80023204.
+ */
 void func_80022D84(void)
 {
     struct Request req;

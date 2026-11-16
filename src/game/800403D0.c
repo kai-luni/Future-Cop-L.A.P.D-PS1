@@ -1,3 +1,4 @@
+// Categories: Utilities > Fixed-point Math
 #include "game/types.h"
 
 typedef struct {
@@ -17,6 +18,23 @@ typedef struct {
     s16 div94;
 } Unk800403D0;
 
+/**
+ *  @brief Computes three fixed-point output values from fields in an object.
+ *
+ *  Flag 0x100 selects a shared value derived from the sum of three bytes.
+ *  Otherwise each output uses the difference between corresponding byte fields.
+ *  @param p Object containing the flag, input bytes, divisor and output fields.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  A divisor below 16 zeros all outputs; otherwise the selected numerators are shifted by 12 and divided.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes the three signed 16-bit output fields in p.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_800403D0(Unk800403D0 *p)
 {
     if (p->flags66 & 0x100) {

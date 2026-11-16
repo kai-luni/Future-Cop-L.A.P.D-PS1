@@ -1,3 +1,4 @@
+// Categories: Platform > Buffered Transfers
 #include "game/types.h"
 
 struct Sub80089018 {
@@ -51,6 +52,29 @@ extern void func_80088974(s32 arg0, s32 arg1, s32 arg2);
 extern void func_80088F00(void);
 extern s32 func_800886C8(s32 a, s32 b);
 
+/**
+ *  @brief Resets transfer state when requested and starts a bounded buffered transfer.
+ *
+ *  Uses a shared state structure and ring capacity to prepare a command and
+ *  schedule either a special transfer or a contiguous portion of remaining work.
+ *  @par Globals
+ *  D_8009F970 holds transfer state, parameters, and an optional callback;
+ *  D_8009F980 supplies ring capacity and D_80088D74 supplies a callback address.
+ *  @par Control flow
+ *  A reset branch invokes the callback, waits for readiness, and reinitializes state.
+ *  Active transfers return early; otherwise the work size is bounded by ring space
+ *  and the contiguous span. A failed command sets the state error flag and returns.
+ *  @par Calls
+ *  func_8008C9C0 and func_8008C9E0 bracket state changes; func_8008E194,
+ *  func_8008E1A8, func_8008E1BC, and func_8008E42C configure the operation.
+ *  func_800886E4 polls readiness; func_800889DC prepares parameters;
+ *  func_80088770 issues a command and func_80088974 starts a transfer.
+ *  func_80088F00 handles zero remaining work; func_800886C8 bounds the size.
+ *  @par Side effects
+ *  Updates shared transfer fields, invokes an optional callback, and may start I/O.
+ *  @par Callers
+ *  Confirmed: func_80089304.
+ */
 void func_80089018(void)
 {
     u8 local;

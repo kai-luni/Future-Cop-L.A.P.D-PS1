@@ -1,6 +1,26 @@
+// Categories: Game Engine > State Flags
 typedef unsigned char u8;
 extern int D_800A09D4;
 
+/**
+ *  @brief Updates a byte in a data buffer according to a mode.
+ *
+ *  Modes zero and one set bits, while mode three writes a whole byte.
+ *  The buffer's purpose and the meaning of these flags are not established.
+ *  @param data Buffer to modify.
+ *  @param mode Selects the update; other values leave the buffer unchanged.
+ *  @param offset Offset used by mode three, before subtracting 15.
+ *  @par Globals
+ *  D_800A09D4 supplies the index basis for mode one.
+ *  @par Control flow
+ *  Branches on modes 0, 1, and 3; all other modes return without a write.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Modifies one buffer byte for a supported mode, without bounds checks.
+ *  @par Callers
+ *  Confirmed: func_80022D84.
+ */
 void func_80022D1C(u8 *data, int mode, int offset)
 {
     register int index __asm__("$2");

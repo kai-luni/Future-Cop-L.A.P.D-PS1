@@ -1,3 +1,4 @@
+// Categories: Input > Port Processing
 extern int D_8009C778, D_8009C77C, D_8009C760, D_8009C76C, D_8009C768, D_8009C770;
 extern int D_800A3B70, D_800A3B74;
 extern char *D_8009C75C;
@@ -6,6 +7,25 @@ extern void (*D_8009C728)(int);
 extern int func_8008A6CC(char *);
 extern void func_8008A8E0(char *);
 
+/**
+ *  @brief Processes the configured range of port objects when the subsystem is ready.
+ *
+ *  Two counters are conditionally incremented up to 150 before the object range is serviced.
+ *  The routine also writes a status value through the configured short pointer.
+ *  @return Always zero.
+ *  @par Globals
+ *  D_8009C778 and D_8009C77C bound the range; D_8009C760 gates processing; D_8009C75C points to objects.
+ *  D_800A3B70 and D_800A3B74 are counters; D_8009C76C, D_8009C768 and D_8009C770 hold processing state.
+ *  D_8009C728 is a dispatch pointer and D_8009C78C receives the status write; an assembly-addressed global is also set to 1.
+ *  @par Control flow
+ *  If ready and the range is valid, the first object is checked and a loop processes objects through the upper bound.
+ *  @par Calls
+ *  func_8008A6CC checks the first object; D_8009C728 is dispatched on a zero result; func_8008A8E0 processes each loop iteration.
+ *  @par Side effects
+ *  Updates counters, processing globals and status storage, and invokes the processing callbacks.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 int func_8008A43C(void)
 {
     register int v asm("$3") = D_8009C778;

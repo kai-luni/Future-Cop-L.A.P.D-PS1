@@ -1,3 +1,4 @@
+// Categories: Game Engine > Entry Management
 #include "game/types.h"
 
 typedef struct { s32 unused[2]; s32 value; } Entry;
@@ -6,6 +7,29 @@ extern Table D_800A07A8;
 extern s32 func_80021898(Entry *, s32, s32, s32);
 extern void func_800219EC(Entry *, s32);
 
+/**
+ *  @brief Initialize an entry and register it in an available table slot.
+ *
+ *  A negative slot argument searches for the first null entry; otherwise the
+ *  supplied index is used directly. Initialization must return a positive amount.
+ *  @param entry Entry to initialize and register.
+ *  @param arg1 First argument forwarded to the initialization calculation.
+ *  @param arg2 Slot index, or a negative value to search for a free slot.
+ *  @param arg3 Second argument forwarded to the initialization calculation.
+ *  @param arg4 Third argument forwarded to the initialization calculation.
+ *  @return Slot index on success, -1 if the search exceeds the count,
+ *  -2 if the selected slot is occupied, or -3 if initialization fails.
+ *  @par Globals
+ *  D_800A07A8 supplies the item table and search count.
+ *  @par Control flow
+ *  Optionally scans for a null slot, then checks occupancy and initialization.
+ *  @par Calls
+ *  func_80021898 calculates the amount; func_800219EC applies it to the entry.
+ *  @par Side effects
+ *  On success, writes entry->value and stores the entry pointer in the table.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_80021CB0(Entry *entry, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     Entry **cursor = D_800A07A8.items;

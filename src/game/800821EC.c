@@ -1,3 +1,4 @@
+// Categories: Game Engine > State Transitions
 #include "game/types.h"
 
 struct State821EC {
@@ -14,6 +15,23 @@ extern struct State821EC *D_8009F92C;
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
 
+/**
+ *  @brief Advances selected modes in the current state object.
+ *
+ *  Mode 3 becomes 4 and updates two global bytes from the object's flag.
+ *  Mode 5 becomes 2 and may reset the object's value.
+ *  @par Globals
+ *  D_8009F92C points to the state; D_8009F8BD and D_8009F8BE receive flag-derived values.
+ *  @par Control flow
+ *  Mode 3 clears the first byte and sets the second to the inverse of flag truth.
+ *  Mode 5 sets value to 0x385e unless kind is 2 or 3; other modes do nothing.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Modifies the state object and, for mode 3, the two global bytes.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_800821EC(void)
 {
     if (D_8009F92C->mode == 3) {

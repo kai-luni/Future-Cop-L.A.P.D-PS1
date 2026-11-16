@@ -1,3 +1,4 @@
+// Categories: Input > Controller Communication
 #include "game/types.h"
 
 struct Obj {
@@ -17,6 +18,24 @@ struct Obj {
 };
 extern void (*D_8009C72C)(struct Obj *);
 
+/**
+ *  @brief Advance a communication timer and handle state-dependent completion.
+ *
+ *  Increments the timer, counts state-dependent delays, and may dispatch a
+ *  callback before resetting output for commands other than 0xF3.
+ *  @param self Communication object containing state, buffers, and counters.
+ *  @par Globals
+ *  D_8009C72C is the callback invoked when the delayed state has a nonzero flag.
+ *  @par Control flow
+ *  State 1 returns after counting to two or setting flag 2 and state 255;
+ *  other nonzero states return while counting to four, then may call back.
+ *  @par Calls
+ *  D_8009C72C receives self when the callback condition is met.
+ *  @par Side effects
+ *  Updates timer and possibly count, flag, state, output bytes, and active.
+ *  @par Callers
+ *  Confirmed: func_8008BF78.
+ */
 void func_8008C77C(struct Obj *self)
 {
     self->timer++;

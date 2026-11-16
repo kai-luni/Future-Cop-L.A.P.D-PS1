@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
@@ -20,6 +21,23 @@ struct State {
     u8 e9, ea;
 };
 
+/**
+ *  @brief Resets selected state fields when the reset flag is set.
+ *
+ *  Clears counters and flags in the supplied state and marks all six entries
+ *  with 0xff; an unset flag leaves the state unchanged.
+ *  @param s State containing the reset flag and fields to clear.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Tests flag49, then clears fields and loops over six entries.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Modifies the supplied state, including two volatile writes to e6.
+ *  @par Callers
+ *  Unknown: No direct callers are listed.
+ */
 void func_8008BF10(struct State *s)
 {
     int i;

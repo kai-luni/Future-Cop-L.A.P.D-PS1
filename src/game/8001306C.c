@@ -1,3 +1,4 @@
+// Categories: Resources > Table Remapping
 #include "game/types.h"
 
 struct Unk1306C {
@@ -10,6 +11,24 @@ extern s32 *D_8009F554;
 extern s32 *D_8009F558;
 extern s32 *D_8009F55C;
 
+/**
+ *  @brief Remaps a tagged array of indices through a selected global table.
+ *
+ *  Three recognized tags select separate tables; other tags leave data intact.
+ *  Each array element is replaced in place by its corresponding table value.
+ *  @param arg0 Tagged structure containing the element count and index array.
+ *  @return Always zero.
+ *  @par Globals
+ *  D_8009F554, D_8009F558 and D_8009F55C supply the three remapping tables.
+ *  @par Control flow
+ *  Switches on the tag and loops over the count for a recognized tag.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Overwrites the structure's array elements for recognized tags.
+ *  @par Callers
+ *  Confirmed: func_800131A0.
+ */
 s32 func_8001306C(struct Unk1306C *arg0)
 {
     s32 *tbl;

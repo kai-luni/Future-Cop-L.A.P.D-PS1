@@ -1,3 +1,4 @@
+// Categories: Gameplay > Frame Update | Input > Actions | Graphics > Text
 #include "game/types.h"
 
 struct Vec3 { s32 x; s32 y; s32 z; };
@@ -82,6 +83,29 @@ extern void func_8004CECC(void);
 extern void func_8004DF28(void);
 extern void func_800616A0(s32 arg0);
 
+/**
+ *  @brief Updates player action state and dispatches gameplay or paused-frame work.
+ *
+ *  Processes the player's action, toggles a player state under specific conditions,
+ *  and uses local flags to select update paths and display status text.
+ *  @par Globals
+ *  D_8009FA58 supplies game and player state; D_8009FA00, D_8009FA50,
+ *  D_8009FA84, D_8009FA2C, and D_8009F9A0 gate actions and display.
+ *  D_8009F2D0 and D_8009F2F4 supply text; D_8009F678 holds a handle.
+ *  D_8009F680, D_8009FA38, D_8009FA60, D_8009FAA4, D_8009FA30,
+ *  D_8009FA24, and D_8009F9FC track pause, timing, and update state.
+ *  @par Control flow
+ *  Branches on action phase, player state, and display conditions; pause flags
+ *  suppress selected updates and trigger transition work on entry or exit.
+ *  @par Calls
+ *  func_8005780C processes input; func_80049340 and func_80049100 measure and
+ *  draw text. The func_80026DDC or func_80026E5C path dispatches player work;
+ *  other calls update subsystems, timing, and pause transitions.
+ *  @par Side effects
+ *  Changes player and global state, draws text, and invokes subsystem updates.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_800271A4(void)
 {
     struct Player *player;

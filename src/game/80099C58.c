@@ -1,3 +1,4 @@
+// Categories: Platform > SPU Audio
 /*
  * func_80099C58  (0x80099C58, 0x5D0 bytes) - PSY-Q SPU driver, single-voice
  * SpuVoiceAttr update.  Byte-exact with this profile (fcq measure: 372/372
@@ -73,6 +74,27 @@ extern u16 D_8009EA60[];
 extern u16 func_800999F4(s32, s32, s32, s32);
 extern void func_80097808(s32, u32);
 
+/**
+ *  @brief Applies selected attributes to one SPU voice.
+ *
+ *  A zero mask selects all supported fields; otherwise mask bits select
+ *  pitch, volume, addresses and envelope updates. Note conversion can
+ *  overwrite a pitch written earlier in the same call.
+ *  @param ch Voice channel index.
+ *  @param arg Attribute values and selection mask.
+ *  @par Globals
+ *  D_8009EEA4 addresses voice registers; D_8009EA60 stores sample notes.
+ *  @par Control flow
+ *  Mask branches select updates, switches encode modes, and rates are clamped.
+ *  A final two-iteration loop performs local volatile arithmetic.
+ *  @par Calls
+ *  func_800999F4 converts sample and target notes to pitch; func_80097808
+ *  writes the selected sample or loop address.
+ *  @par Side effects
+ *  Writes SPU voice registers and may update the channel's stored sample note.
+ *  @par Callers
+ *  Confirmed: func_80021AD0, func_800222CC.
+ */
 void func_80099C58(s32 ch, SpuVoiceAttr *arg)
 {
     s32 ch8;

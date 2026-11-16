@@ -1,3 +1,4 @@
+// Categories: Game Engine > Buffer
 #include "game/types.h"
 
 typedef struct {
@@ -9,6 +10,24 @@ typedef struct {
 
 extern Unk800869D8 *D_8009F4D8;
 
+/**
+ *  @brief Returns a pointer into the first buffer region when available.
+ *
+ *  Checks the requested index against the unsigned end-minus-start range
+ *  and requires the state flag to be zero; the index does not offset the pointer.
+ *  @param index Index used for the availability check.
+ *  @return Pointer at start modulo 15360 plus 0x10, or null if unavailable.
+ *  @par Globals
+ *  D_8009F4D8 points to the buffer state and storage.
+ *  @par Control flow
+ *  Returns the computed pointer only when both checks pass.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None; the volatile start field is read.
+ *  @par Callers
+ *  Unknown: No direct callers are listed.
+ */
 void *func_800869D8(u32 index)
 {
     Unk800869D8 *p = D_8009F4D8;

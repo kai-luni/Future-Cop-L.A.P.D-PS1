@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 #include "game/types.h"
 
 typedef struct {
@@ -23,6 +24,23 @@ extern void func_80023BF8(void);
 extern void func_80021C80(void);
 extern void func_80044FEC(void);
 
+/**
+ *  @brief Sets the status byte of an indexed entry to 2.
+ *
+ *  Updates the unk02 field in an eight-entry global table.
+ *  Indices outside the table are ignored.
+ *  @param arg0 Unsigned index of the entry to update.
+ *  @par Globals
+ *  D_800A0A00 is the table whose selected unk02 field is written.
+ *  @par Control flow
+ *  Checks that arg0 is less than 8 before writing.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  May change one table entry's status byte.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80023500(u32 arg0)
 {
     if (arg0 < 8) {

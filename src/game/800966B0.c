@@ -1,9 +1,31 @@
+// Categories: Utilities > Integer Arithmetic
 typedef unsigned int u32;
 typedef signed int s32;
 typedef unsigned long long u64;
 typedef union { u64 whole; struct { u32 lo, hi; } words; } Pair;
 extern u64 func_80096748(u32, u32, u32, u32, int);
 
+/**
+ *  @brief Applies signed operand and result handling around a 64-bit helper.
+ *
+ *  Treats each pair of words as a signed 64-bit operand, converts negative
+ *  operands to magnitudes, and restores the result sign when they differ.
+ *  @param a Low word of the first operand.
+ *  @param b High word of the first operand.
+ *  @param c Low word of the second operand.
+ *  @param d High word of the second operand.
+ *  @return The helper result, negated when the operand signs differ.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Two sign branches normalize operands; a final branch conditionally negates the result.
+ *  @par Calls
+ *  func_80096748 processes the normalized words with a final argument of zero.
+ *  @par Side effects
+ *  No direct state changes; effects of the helper are not shown here.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 u64 func_800966B0(u32 a, u32 b, u32 c, u32 d)
 {
     register int sign __asm__("$18") = 0;

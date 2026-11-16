@@ -1,3 +1,4 @@
+// Categories: Game Engine > Data Access
 typedef unsigned char u8;
 
 typedef struct {
@@ -14,6 +15,25 @@ typedef struct {
     u8 enabled[6];
 } Object;
 
+/**
+ *  @brief Reads a mode-dependent byte from an object's data arrays.
+ *
+ *  Subtracts three from the stored index and selects an array, enable check,
+ *  and out-of-range fallback according to the object's mode.
+ *  @param obj Object containing the mode, index, arrays, counts, and enable bytes.
+ *  @return The selected byte, or 0xFF for an out-of-range index in mode 0x4D; otherwise 0 on rejection.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Mode zero checks enable bytes for indices below six; mode 0x4D uses data1.
+ *  Other modes also use data1; the code does not reject negative adjusted indices.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None; reads in modes zero and 0x4D use a volatile-qualified pointer.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 int func_8008C07C(Object *obj)
 {
     int index = obj->index - 3;

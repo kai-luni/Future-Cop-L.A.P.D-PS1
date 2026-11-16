@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 /*
  * func_80077990 — 12-byte leaf fragment at 0x80077990.
  *
@@ -16,6 +17,23 @@
  * 0x800779B0); the linker has to define it for this unit as well.
  */
 
+/**
+ *  @brief Loads the item table pointer and setup flag into registers.
+ *
+ *  This assembler fragment contains the hoisted loads preceding the rest of
+ *  a larger retail block; it has no return instruction of its own.
+ *  @par Globals
+ *  D_8009FA2C supplies the item table pointer; D_8009F3E4 supplies the
+ *  setup flag. D_8009F8E8 is declared but not accessed by this fragment.
+ *  @par Control flow
+ *  Three instructions execute sequentially, with no branch or return.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes the loaded values to registers $2 and $3.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 __asm__(
 ".globl D_8009F3E4\n"
 ".globl D_8009FA2C\n"

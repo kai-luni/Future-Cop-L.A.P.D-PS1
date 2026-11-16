@@ -1,9 +1,26 @@
+// Categories: Game Engine > State Transitions
 #include "game/types.h"
 
 extern u32 D_8009F6DC;
 extern void func_80024630(s32 arg0);
 extern void func_8002A16C(s32 arg0);
 
+/**
+ *  @brief Runs two state operations when a global flag is nonzero.
+ *
+ *  Uses D_8009F6DC to gate a pair of calls with fixed arguments.
+ *  A zero flag leaves both operations uncalled.
+ *  @par Globals
+ *  D_8009F6DC is read as the gate.
+ *  @par Control flow
+ *  If the flag is nonzero, calls the two functions in order.
+ *  @par Calls
+ *  func_80024630 receives 0; func_8002A16C then receives 1.
+ *  @par Side effects
+ *  Any effects of the two calls occur only when the flag is nonzero.
+ *  @par Callers
+ *  Confirmed: func_80022654.
+ */
 void func_8002A23C(void)
 {
     if (D_8009F6DC != 0) {

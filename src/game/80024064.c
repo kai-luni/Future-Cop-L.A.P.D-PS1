@@ -1,3 +1,4 @@
+// Categories: Resources > Handles
 #include "game/types.h"
 
 struct Unk4749CResource {
@@ -26,6 +27,26 @@ extern s32 func_80045028(s32 mode);
 extern struct Unk4749CResource *func_80046B04(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void func_8004749C(struct Unk4749CHandle *handle, struct Unk4749CResource *resource);
 
+/**
+ *  @brief Acquires and initializes a global resource handle when enabled.
+ *
+ *  The handle records a validated mode and a scaled argument after acquisition.
+ *  Values of arg1 divided by 21 that reach 0xBB9 are replaced by 0x834.
+ *  @param arg0 Mode passed to the validation function.
+ *  @param arg1 Value scaled by 21 for the handle.
+ *  @return Nonzero if a resource was acquired, otherwise zero.
+ *  @par Globals
+ *  D_8009F26C gates acquisition; D_800A0A80 receives handle state.
+ *  @par Control flow
+ *  Optionally performs cleanup, then branches on acquisition and validation.
+ *  @par Calls
+ *  func_80024170 checks cleanup; func_80023E84 performs it.
+ *  func_80046B04 acquires, func_8004749C binds, and func_80045028 validates.
+ *  @par Side effects
+ *  Updates the global handle and may invoke cleanup or resource operations.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_80024064(s32 arg0, s32 arg1)
 {
     struct Unk4749CResource *handle;

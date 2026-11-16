@@ -1,3 +1,4 @@
+// Categories: Input > Controller Configuration
 #include "game/types.h"
 
 struct PadPort;
@@ -37,6 +38,27 @@ extern s32 (*D_8009C744)(void);
 extern void func_8008B168(struct PadPort *port);
 extern s32 func_8008B210(struct PadPort *port);
 
+/**
+ *  @brief Arm a controller port's configuration handshake using a buffer.
+ *
+ *  Aligns the buffer and partitions it into mode, capability, and combination
+ *  tables, then installs the command and response handlers for the handshake.
+ *  @param port Controller port to initialize.
+ *  @param buffer Storage for the tables, or null to decline initialization.
+ *  @return 1 if armed; 0 if the buffer is null, capabilities already exist,
+ *  or the readiness callback reports a nonzero result.
+ *  @par Globals
+ *  D_8009C744 is the readiness callback.
+ *  @par Control flow
+ *  Rejects invalid or unavailable setup before calculating table addresses.
+ *  @par Calls
+ *  D_8009C744 checks readiness; func_8008B168 and func_8008B210 are installed
+ *  as handlers rather than called here.
+ *  @par Side effects
+ *  Sets port state, sequence, handlers, table pointers, and record index.
+ *  @par Callers
+ *  Confirmed: func_8008AF10.
+ */
 /*
  * Initialise a pad port on top of a raw transfer buffer.
  *

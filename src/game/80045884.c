@@ -1,3 +1,4 @@
+// Categories: Game Engine > State Tables
 #include "game/types.h"
 
 struct Unk45884 {
@@ -7,6 +8,26 @@ struct Unk45884 {
 
 extern struct Unk45884 D_800A1920[];
 
+/**
+ *  @brief Stores a position and normalized angle in an indexed record.
+ *
+ *  Copies three position components into the global table and stores the
+ *  signed remainder of angle plus 0x1000 divided by 0x1000.
+ *  @param position Pointer to three position components.
+ *  @param arg1 Unused argument.
+ *  @param angle Angle to adjust and reduce modulo 0x1000.
+ *  @param index Index of the destination record.
+ *  @par Globals
+ *  D_800A1920 is the destination table for the position and angle.
+ *  @par Control flow
+ *  A three-iteration loop copies the position, then the angle is stored.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Overwrites the selected table record; no index bounds check is performed.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80045884(s32 *position, s32 arg1, s32 angle, s32 index)
 {
     s32 i;

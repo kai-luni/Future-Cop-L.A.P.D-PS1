@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 struct State {
     char pad0[3];
     unsigned char field3;
@@ -7,6 +8,23 @@ struct State {
     unsigned int field14;
 };
 
+/**
+ *  @brief Sets three fields of a state structure to fixed values.
+ *
+ *  Writes 5 to field3, 0x48 to field7, and 0x55555555 to field14.
+ *  The meanings of these fields are not established by this source.
+ *  @param state State structure to update.
+ *  @par Globals
+ *  None accessed directly.
+ *  @par Control flow
+ *  Performs three assignments without branching or looping.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Modifies field3, field7, and field14 of state.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_800925B4(struct State *state)
 {
     state->field3 = 5;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 typedef struct {
     char pad[10];
     volatile short value;
@@ -5,6 +6,23 @@ typedef struct {
 
 extern State *D_8009C804;
 
+/**
+ *  @brief Clears a global state value and performs a short busy wait.
+ *
+ *  Writes zero to the volatile value in the pointed-to state, then uses a
+ *  volatile local counter to retain the delay loop.
+ *  @return Always zero.
+ *  @par Globals
+ *  D_8009C804 supplies the state whose value is cleared.
+ *  @par Control flow
+ *  Decrements the counter from 10 until it reaches -1.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes zero to the global state's volatile value.
+ *  @par Callers
+ *  Unknown: No direct callers are listed.
+ */
 int func_8008DA14(void)
 {
     volatile int count[3];

@@ -1,3 +1,4 @@
+// Categories: Utilities > Arithmetic
 /*
  * GCC 2.7.2 libgcc2 unsigned double-word division helper.
  *
@@ -98,6 +99,27 @@ static const UQItype __clz_tab[] = {
         (count) = SI_TYPE_SIZE - (__clz_tab[__xr >> __a] + __a); \
     } while (0)
 
+/**
+ *  @brief Divides an unsigned 64-bit value and optionally stores the remainder.
+ *
+ *  This runtime helper uses word-sized arithmetic and a leading-zero table
+ *  to normalize operands and calculate quotient digits.
+ *  @param n Unsigned dividend.
+ *  @param d Unsigned divisor; must be nonzero.
+ *  @param rp Optional destination for the unsigned remainder.
+ *  @return Unsigned quotient of n divided by d.
+ *  @par Globals
+ *  No D_800xxxxx globals are used; a static leading-zero table is read.
+ *  @par Control flow
+ *  Branches handle single-word and double-word divisors, normalization,
+ *  quotient correction and optional remainder storage.
+ *  @par Calls
+ *  No functions are called; arithmetic macros include inline multiplication.
+ *  @par Side effects
+ *  Writes the remainder through rp when it is non-null.
+ *  @par Callers
+ *  Confirmed: func_800966B0.
+ */
 UDItype func_80096748(n, d, rp)
     UDItype n, d;
     UDItype *rp;

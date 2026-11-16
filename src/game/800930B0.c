@@ -1,3 +1,4 @@
+// Categories: Graphics > DMA Command Lists
 #include "game/types.h"
 
 extern u8 D_8009DDF2;
@@ -6,6 +7,27 @@ extern u8 D_80012AB8[];
 extern u32 D_8009DEB0[];
 extern u32 D_8009DE9C[];
 
+/**
+ *  @brief Link a sequence of words to a global command-list node.
+ *
+ *  Builds 24-bit next-address links in the supplied words and connects the
+ *  final word through a global node to another global address.
+ *  The count must be positive for the linking loop to terminate normally.
+ *  @param arg0 First word of the sequence to link.
+ *  @param arg1 Number of words in the sequence.
+ *  @return Pointer to the final word in the sequence.
+ *  @par Globals
+ *  D_8009DDF2 gates the D_8009DDEC callback using message D_80012AB8.
+ *  D_8009DEB0 receives a link to D_8009DE9C with the 0x04000000 flag.
+ *  @par Control flow
+ *  Optionally dispatches the callback, then links all but the final word.
+ *  @par Calls
+ *  D_8009DDEC receives the message, sequence address, and original count.
+ *  @par Side effects
+ *  Rewrites the sequence words and the first word at D_8009DEB0.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 u32 *func_800930B0(u32 *arg0, s32 arg1)
 {
     register u32 *s0 __asm__("$16");

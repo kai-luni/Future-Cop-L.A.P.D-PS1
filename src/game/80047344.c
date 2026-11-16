@@ -1,3 +1,4 @@
+// Categories: Resources > Sound Registration
 #include "game/types.h"
 
 struct Unk7938 {
@@ -31,6 +32,26 @@ extern u8 D_800A188A[];
 
 extern s32 func_800472E8(s32 key);
 
+/**
+ *  @brief Finds or registers a sound object under the low byte of a key.
+ *
+ *  A new registration copies bounded object fields into a slot and populates lookup tables.
+ *  Existing keys and a full 110-slot table return without registering the object.
+ *  @param self Object whose identifier and bounded fields are updated for a new slot.
+ *  @param key Key whose low byte is used for lookup and storage.
+ *  @return Existing or newly allocated slot, or -1 when no slot is available.
+ *  @par Globals
+ *  D_8009F75C counts slots; D_800A7938 stores entries.
+ *  D_800A1830, D_800A1880 and D_800A188A map eligible object bytes to slots.
+ *  @par Control flow
+ *  After lookup and capacity checks, four object bytes are classified by value and object mode.
+ *  @par Calls
+ *  func_800472E8 searches for an existing key.
+ *  @par Side effects
+ *  A new slot increments the count, modifies self and writes entry and lookup-table fields.
+ *  @par Callers
+ *  Confirmed: func_800241D0.
+ */
 s32 func_80047344(struct SoundObj *self, s32 key)
 {
     s32 slot;

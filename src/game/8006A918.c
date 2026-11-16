@@ -1,3 +1,4 @@
+// Categories: Resources > Loading
 #include "game/types.h"
 
 struct Resource;
@@ -43,6 +44,27 @@ extern void func_8006A898(struct Unk6A898 *value);
 extern void func_800181D4(struct Unk60838Arg *arg0);
 extern void *memcpy(void *dest, const void *src, u32 count);
 
+/**
+ *  @brief Loads a resource-backed entry when the six-entry limit permits.
+ *
+ *  Copies a tagged record into the entry table and resolves four references.
+ *  The input is passed to a final helper even when the table is full.
+ *  @param arg0 Descriptor supplying resource lookup fields.
+ *  @par Globals
+ *  D_8009F848 counts entries and is incremented before loading.
+ *  D_800A3340 stores copied records; D_800A3344 addresses their embedded objects.
+ *  @par Control flow
+ *  If the count is below six, loads two records and loops over four references.
+ *  A zero reference name produces a null pointer; otherwise it is resolved.
+ *  @par Calls
+ *  func_80019C38 and func_80019CA0 obtain tagged data; memcpy copies the record.
+ *  func_8006A898 processes both objects; func_80019BF0 resolves references.
+ *  func_800181D4 processes arg0 unconditionally.
+ *  @par Side effects
+ *  Updates the entry count and table and invokes the final helper.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8006A918(struct Unk60838Arg *arg0)
 {
     struct Unk6AAEC *entry;

@@ -1,3 +1,4 @@
+// Categories: Platform > Audio
 #include "game/types.h"
 
 struct SoundVoice {
@@ -27,6 +28,25 @@ struct StreamState {
 
 extern struct StreamState D_800A0968;
 
+/**
+ *  @brief Sets the stored left and right levels for a stream channel.
+ *
+ *  Both levels are clamped to the range 0 through 127, and the channel
+ *  index is clamped to the three available entries.
+ *  @param channel Requested channel index, clamped to 0 through 2.
+ *  @param left Requested left level.
+ *  @param right Requested right level.
+ *  @par Globals
+ *  D_800A0968 holds the channel entries whose levels are updated.
+ *  @par Control flow
+ *  Clamps each argument independently, then writes the selected entry.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Replaces the selected channel's stored left and right values.
+ *  @par Callers
+ *  Confirmed: func_8002283C.
+ */
 void func_800227BC(s32 channel, s32 left, s32 right)
 {
     s32 clampedLeft;

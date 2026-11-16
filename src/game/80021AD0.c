@@ -1,3 +1,4 @@
+// Categories: Platform > Audio
 #include "game/types.h"
 
 struct Sub80021AD0 {
@@ -31,6 +32,26 @@ struct Local80021AD0 {
 
 extern void func_80099C58(s32, void *);
 
+/**
+ *  @brief Builds and submits a channel parameter block.
+ *
+ *  The local block combines a channel mask and fixed control value with
+ *  caller-supplied values and fields copied from the referenced substructure.
+ *  @param arg0 Object containing the channel index and source substructure.
+ *  @param arg1 Value placed at offset 0x14 in the parameter block.
+ *  @param arg2 Value placed at offset 0x08 in the parameter block.
+ *  @param arg3 Value placed at offset 0x0A in the parameter block.
+ *  @par Globals
+ *  None referenced directly.
+ *  @par Control flow
+ *  Initializes selected block fields and submits the block once.
+ *  @par Calls
+ *  func_80099C58 receives the channel index and local parameter block.
+ *  @par Side effects
+ *  Invokes the channel operation; other local block fields are not initialized here.
+ *  @par Callers
+ *  Confirmed: func_80021E1C.
+ */
 void func_80021AD0(struct Arg80021AD0 *arg0, s16 arg1, s16 arg2, s16 arg3)
 {
     struct Sub80021AD0 *v1;

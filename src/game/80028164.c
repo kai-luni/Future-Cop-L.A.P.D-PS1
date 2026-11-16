@@ -1,3 +1,4 @@
+// Categories: Graphics > Menu Rendering | Gameplay > State Transitions
 #include "game/types.h"
 
 struct State28164 {
@@ -60,6 +61,28 @@ extern s32 func_80049340(u8 *text);
 extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
 extern void func_80027F80(void *arg0, u8 *text, s32 x, s32 y);
 
+/**
+ *  @brief Initializes and draws a two-sided player information screen.
+ *
+ *  The routine prepares persistent screen state, draws player panels and
+ *  labels, and selects a subsequent game state from player fields.
+ *  @par Globals
+ *  D_8009F68C holds screen state; D_8009FA94 and D_8009F2C0 supply menu data.
+ *  D_8009FA58 and D_8009FA5C supply players; D_8009F9EC selects the second.
+ *  D_8009FA0C controls extra text, D_8009FAA4 its color, and D_8009FA00
+ *  receives state changes; D_8009F300 and D_8009ABF0 through D_8009AC44
+ *  provide copied data and labels.
+ *  @par Control flow
+ *  Initialization runs once; branches select text, players and state 5 or 14.
+ *  @par Calls
+ *  func_80017EBC allocates state; func_8008CD30 copies menu data.
+ *  func_800576A8 prepares players; func_8001C214 draws panels.
+ *  func_80049340 measures text; func_80049100 and func_80027F80 draw text.
+ *  @par Side effects
+ *  Updates screen and menu state, may change the game state, and submits drawing.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80028164(void)
 {
     struct Game28164 *game;

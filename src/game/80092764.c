@@ -1,3 +1,4 @@
+// Categories: Utilities > Diagnostics
 #include "game/types.h"
 
 typedef s32 (*PrintFn)();
@@ -19,6 +20,24 @@ struct S {
 #define FN() __asm__ volatile("lui %0, %%hi(D_8009DDEC)\n\tlw %0, %%lo(D_8009DDEC)(%0)" : "=r"(f))
 #define HI(name, var) __asm__ volatile("lui %0, %%hi(" #name ")" : "=r"(var))
 
+/**
+ *  @brief Prints the fields of a structure through a configured callback.
+ *
+ *  Emits five groups of scalar fields and four values decoded from k.
+ *  The format strings and output destination are supplied by global state.
+ *  @param p Structure whose fields are printed.
+ *  @par Globals
+ *  D_8009DDEC supplies the print callback; D_800128C4, D_800128DC,
+ *  D_800128EC, D_80012904, D_80012910 and D_8001289C supply formats.
+ *  @par Control flow
+ *  Makes six sequential indirect calls, extracting bit fields for the last.
+ *  @par Calls
+ *  The callback in D_8009DDEC formats or emits each group.
+ *  @par Side effects
+ *  Produces callback-defined output; does not modify the structure directly.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80092764(struct S *p)
 {
     register s32 k __asm__("$3");

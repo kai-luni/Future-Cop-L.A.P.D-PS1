@@ -1,3 +1,4 @@
+// Categories: Game Engine > Sound Initialization
 #include "game/types.h"
 
 struct SoundSystem {
@@ -15,6 +16,25 @@ extern s32 D_800A07B4;
 extern s32 func_80021740(s32 *table, s32 key, s32 *value, s32 *index);
 extern void func_800216D8(void);
 
+/**
+ *  @brief Initializes sound bank and channel storage from an argument table.
+ *
+ *  Keys 4 and 5 select counts, while keys 8 and 9 select storage addresses.
+ *  Local default counts are one bank and 24 channels when their keys are absent.
+ *  @param arguments Table searched for configuration keys and values.
+ *  @return Always zero in this implementation.
+ *  @par Globals
+ *  D_800A07A8 holds sound-system fields; D_800A07AC and D_800A07B4 hold storage addresses; D_800A07B0 holds the channel count.
+ *  @par Control flow
+ *  Four lookups conditionally update globals; loops clear both storage regions and assign channel indices.
+ *  The cleanup branch is unreachable because the local result remains zero.
+ *  @par Calls
+ *  func_80021740 searches the argument table; func_800216D8 is present only in the unreachable cleanup branch.
+ *  @par Side effects
+ *  Updates configuration globals and writes the configured bank and channel storage.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_80021554(s32 *arguments)
 {
     s32 value;

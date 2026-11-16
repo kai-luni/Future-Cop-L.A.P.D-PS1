@@ -1,7 +1,26 @@
+// Categories: Game Engine > Data Selection
 #include "../../include/game/types.h"
 
 extern u8 D_800A3C20[];
 
+/**
+ *  @brief Selects one of two addresses in a global byte array.
+ *
+ *  Returns the array base when flags bits 4 through 7 are clear,
+ *  or the address 0xF0 bytes past the base when any are set.
+ *  @param flags Bits used to select the returned address.
+ *  @return The selected address in D_800A3C20.
+ *  @par Globals
+ *  D_800A3C20 supplies the base address.
+ *  @par Control flow
+ *  Tests flags against 0xF0 and conditionally adds an offset.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 u8 *func_8008C3EC(u32 flags)
 {
     u8 *result;

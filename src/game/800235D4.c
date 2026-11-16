@@ -1,3 +1,4 @@
+// Categories: Resources > Table Processing
 #include "game/types.h"
 
 typedef struct { u16 id, count, offset; } Entry;
@@ -8,6 +9,24 @@ extern Mapping D_800A0A00[];
 extern Header *func_80023528(s32, s32 *);
 extern s32 func_800241D0(s32, s32, s32, s32, void *);
 
+/**
+ *  @brief Processes the items associated with an identifier and mapping.
+ *
+ *  Looks up a header entry and an eight-slot mapping before visiting items.
+ *  Each item is passed with the identifier and mapped value to a handler.
+ *  @param id Identifier used for the header and mapping lookups.
+ *  @return 1 if both lookups succeed, including for an empty entry; else 0.
+ *  @par Globals
+ *  D_800A0A00 supplies the eight identifier-to-value mappings.
+ *  @par Control flow
+ *  Searches mappings until a match, then loops over the selected entry's items.
+ *  @par Calls
+ *  func_80023528 finds the header and index; func_800241D0 handles each item.
+ *  @par Side effects
+ *  Invokes the item handler for each item in a successfully matched entry.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_800235D4(s32 id)
 {
     register s32 result __asm__("$16") = 0;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Table Processing
 typedef unsigned char u8;
 typedef int s32;
 
@@ -10,6 +11,23 @@ struct Entry {
 extern struct Entry D_800A7938[];
 extern void func_800242B4(s32, s32);
 
+/**
+ *  @brief Dispatches each table entry's first data byte according to its count.
+ *
+ *  Scans 110 entries and passes the entry index and first data byte to the
+ *  dispatch function once for each unit of the entry's count.
+ *  @par Globals
+ *  D_800A7938 supplies the entries, counts, and data bytes.
+ *  @par Control flow
+ *  An outer loop visits all entries; a nonzero count starts an inner loop.
+ *  The data pointer is not advanced within that loop.
+ *  @par Calls
+ *  func_800242B4 receives the entry index and repeated data byte.
+ *  @par Side effects
+ *  Invokes the dispatch function; its effects are not shown here.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80023A24(void)
 {
     register s32 i __asm__("$18");

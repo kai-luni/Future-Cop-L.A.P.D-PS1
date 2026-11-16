@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object Initialization | Resources > Lookup
 #include "game/types.h"
 
 struct Vec3 {
@@ -34,6 +35,25 @@ struct Unk51318 {
 
 extern struct Unk80019A20 *func_80019A20(u32 tag, s32 arg1, s32 arg2);
 
+/**
+ *  @brief Initializes an object with optional resource data and a position.
+ *
+ *  Stores the supplied descriptor, resolves two tagged resources when it is
+ *  nonnull, and initializes the object's scalar fields and position vector.
+ *  @param obj Object to initialize.
+ *  @param arg1 Optional resource descriptor containing lookup arguments.
+ *  @param arg2 Position vector to copy into the object.
+ *  @par Globals
+ *  None directly accessed.
+ *  @par Control flow
+ *  Resource lookup and related field initialization occur only when arg1 is nonnull.
+ *  @par Calls
+ *  func_80019A20 resolves resources tagged 0x61415048 and 0x74415048.
+ *  @par Side effects
+ *  Writes object fields; resource-related fields remain unchanged when arg1 is null.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80051318(struct Unk51318 *obj, struct Unk51318Arg1 *arg1, struct Vec3 *arg2)
 {
     struct Unk80019A20 *res;

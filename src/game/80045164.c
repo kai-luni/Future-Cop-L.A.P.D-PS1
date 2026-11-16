@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 #include "game/types.h"
 
 struct Unk45164Slot {
@@ -15,6 +16,25 @@ extern struct Unk45164Current D_800A1800;
 
 extern u8 func_80045028(s32 id);
 
+/**
+ *  @brief Returns the current slot if an ID check succeeds and its key matches.
+ *
+ *  Uses the current-slot state after validating the supplied ID, and rejects
+ *  the slot when its stored key differs from the current key.
+ *  @param id Identifier passed to the validation function.
+ *  @return Current slot pointer on success, or null if either check fails.
+ *  @par Globals
+ *  D_800A1800 supplies the current slot pointer and comparison key.
+ *  @par Control flow
+ *  Calls the validator first; only on success does it dereference the slot
+ *  and compare keys. The slot pointer is not checked for null locally.
+ *  @par Calls
+ *  func_80045028 validates the ID and returns a nonzero value on success.
+ *  @par Side effects
+ *  No direct writes; the validation call may have effects.
+ *  @par Callers
+ *  Confirmed: func_800450A4.
+ */
 struct Unk45164Slot *func_80045164(s32 id)
 {
     register s32 valid __asm__("$3");

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Streaming
 #include "game/types.h"
 
 typedef struct {
@@ -29,6 +30,24 @@ extern s32 func_800867B0(s32);
 extern void func_80098BB8(u32);
 void func_80086AC0(void);
 
+/**
+ *  @brief Services an active buffered stream and schedules its next callback.
+ *
+ *  The routine manages a pending 0x300-byte buffer request and advances a cyclic output position.
+ *  If the primary buffer request fails, it submits an embedded fallback buffer instead.
+ *  @par Globals
+ *  D_8009F4D8 points to the volatile stream state, buffer fields, counters and cyclic address base.
+ *  @par Control flow
+ *  An inactive stream returns immediately; otherwise buffer submission depends on pending state and a counter threshold.
+ *  On even counter values, a nonzero entry in a four-element table is processed before the counter advances.
+ *  @par Calls
+ *  func_80098A78 and func_80098BF8 control callback setup; func_800869D8 and func_80086A4C obtain buffers.
+ *  func_8008684C submits a buffer; func_800867B0 processes a table value; func_80098BB8 receives the cyclic address.
+ *  @par Side effects
+ *  Updates stream state, submits data, changes callback configuration and registers func_80086AC0 for the next callback.
+ *  @par Callers
+ *  Unknown: no direct callers are listed; the function registers itself as a callback.
+ */
 void func_80086AC0(void)
 {
     void *buf;

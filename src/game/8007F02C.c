@@ -1,3 +1,4 @@
+// Categories: Game Engine > State Serialization
 #include "game/types.h"
 
 struct Entry {
@@ -30,6 +31,24 @@ extern void func_8007E8D8(u8 *output, u32 value1, u32 value2, u32 value3,
                           u32 value8, u32 value9, u32 value10, u32 value11,
                           u32 value12, u32 value13);
 
+/**
+ *  @brief Pass current mode and selection values to an output builder.
+ *
+ *  Collects three mode bytes, several standalone state bytes, and five bytes
+ *  selected through an index table, preserving their argument order.
+ *  @par Globals
+ *  D_8009FA94 supplies three mode bytes; D_8009F3C0, D_8009F3C1,
+ *  D_8009F3C3, D_8009F3C4, and D_8009F458 supply state bytes.
+ *  D_8009B72C indexes D_8009B4E4; D_800A3938 is the output buffer.
+ *  @par Control flow
+ *  Performs one unconditional call with the collected values.
+ *  @par Calls
+ *  func_8007E8D8 receives the output buffer and thirteen values.
+ *  @par Side effects
+ *  Passes D_800A3938 to the builder for output; its writes are not shown here.
+ *  @par Callers
+ *  Confirmed: func_8007E7A8, func_8007F93C.
+ */
 void func_8007F02C(void)
 {
     func_8007E8D8(D_800A3938,

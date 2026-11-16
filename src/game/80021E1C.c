@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct SoundChannel {
@@ -26,6 +27,23 @@ extern void *D_800A07BC;
 extern void func_80098C68(s32, void *);
 extern void func_80021AD0(struct SoundChannel *, s32, s32, s32);
 
+/**
+ *  @brief Processes pending sound-system state and channel mask bits.
+ *
+ *  A reentrancy flag protects processing of a pending pointer and channels.
+ *  Selected channels are processed before the remaining mask is submitted.
+ *  @par Globals
+ *  D_800A07A8 holds the active flag, pending pointer, channels and mask.
+ *  @par Control flow
+ *  Returns if active; otherwise processes the pointer and loops over channels
+ *  when the mask is nonzero, then clears the mask and active flag.
+ *  @par Calls
+ *  func_80098C68 submits the pointer or mask; func_80021AD0 handles a channel.
+ *  @par Side effects
+ *  Clears pending state, sets channel status to 2 and invokes audio operations.
+ *  @par Callers
+ *  Confirmed: func_80021F3C, func_80023314.
+ */
 void func_80021E1C(void)
 {
     struct SoundSystem *sys;

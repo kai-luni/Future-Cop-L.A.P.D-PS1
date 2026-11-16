@@ -1,5 +1,27 @@
+// Categories: Utilities > Fixed-point Math
 #include "game/types.h"
 
+/**
+ *  @brief Computes a bounded fixed-point ratio from two paired coordinates.
+ *
+ *  Each pair is combined as a coarse value times 128 plus a fine value.
+ *  The difference is decomposed into 0x600-unit shifts and an interpolated remainder.
+ *  @param a0 Starting coarse value.
+ *  @param a1 Starting fine value.
+ *  @param a2 Ending coarse value.
+ *  @param a3 Ending fine value.
+ *  @return Computed ratio, capped at 0x3FFF.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Negative differences adjust the shift and remainder; a loop advances the approximation in 32-unit steps.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None.
+ *  @par Callers
+ *  Confirmed: func_80099368, func_80099C58.
+ */
 u16 func_800999F4(u16 a0, u16 a1, u16 a2, u16 a3)
 {
     s32 start;

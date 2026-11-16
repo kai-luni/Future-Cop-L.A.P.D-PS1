@@ -1,3 +1,4 @@
+// Categories: Game Engine > State Initialization
 #include "game/types.h"
 
 typedef struct Unk7B004Mode {
@@ -26,6 +27,25 @@ extern Unk7B004Node D_800A3688;
 extern u8 D_800A37AB[];
 extern u8 D_800A37DB[];
 
+/**
+ *  @brief Initialize shared state from the current mode and adjust a linked node.
+ *
+ *  Copies two mode fields, clears two counters, and sets two halfwords to 100.
+ *  It also selects one of two byte locations and a value from the mode fields.
+ *  @par Globals
+ *  D_8009FA94 supplies mode fields; D_8009F8F0 and D_8009F8F4 receive copies.
+ *  D_8009F8E0 and D_8009F8E4 are cleared; D_8009BB34 holds the halfwords.
+ *  D_8009F468 and D_800A3688 identify the link to bypass when present.
+ *  D_800A37AB or D_800A37DB receives the selected byte.
+ *  @par Control flow
+ *  Conditionally bypasses one node, then branches on two mode fields.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes shared counters, halfwords, a possible link, and one selected byte.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8007B004(void)
 {
     register Unk7B004Mode *mode __asm__("$3");

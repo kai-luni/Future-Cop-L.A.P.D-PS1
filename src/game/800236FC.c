@@ -1,3 +1,4 @@
+// Categories: Game Engine > Object Coordination
 #include "game/types.h"
 typedef struct Obj { s32 value; u8 pad[24]; s32 id; } Obj;
 typedef struct Slot { s8 id; u8 type; u8 active; u8 pad; Obj *a; Obj *b; s32 time; } Slot;
@@ -8,6 +9,25 @@ extern s32 func_80023528(s32, s32 *);
 extern void func_800181D4(Obj *);
 extern s32 func_80021CB0(s32, s32, s32, void *, s32);
 extern void func_80023500(void);
+
+/**
+ *  @brief Processes a pending pair of objects and optionally records an operation slot.
+ *
+ *  Matching object identifiers and a successful eligibility check permit an operation in a free slot.
+ *  A successful operation records both objects and a deadline 1500 units after the global clock.
+ *  @par Globals
+ *  D_8009F270 and D_8009F274 hold the pending pair; D_800A0A00 holds eight slots; D_8009FA2C supplies the clock.
+ *  @par Control flow
+ *  If both objects exist, the function checks their identifiers and scans for a slot with id -1.
+ *  Validation or capacity failure releases both objects; a negative operation result leaves the slot unchanged.
+ *  @par Calls
+ *  func_80023528 checks eligibility; func_800181D4 releases objects on validation failure.
+ *  func_80021CB0 starts the operation with func_80023500 as its callback.
+ *  @par Side effects
+ *  May release objects or populate a slot; clears both pending pointers whenever both were present.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_800236FC(void)
 {
     u16 i = 0;

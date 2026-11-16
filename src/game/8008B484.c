@@ -1,3 +1,4 @@
+// Categories: Input > Controller Protocol
 #include "game/types.h"
 
 struct PadPort {
@@ -14,6 +15,26 @@ extern s32 (*D_8009C744)(struct PadPort *port);
 extern void func_8008B4EC(struct PadPort *port);
 extern s32 func_8008B508(struct PadPort *port);
 
+/**
+ *  @brief Sets up an actuator-map command sequence when the port is available.
+ *
+ *  A port check gates installation of command and response handlers.
+ *  The supplied map pointer is retained in the port state for the sequence.
+ *  @param port Controller port state to check and configure.
+ *  @param command Pointer to the requested actuator map.
+ *  @return One if the sequence was configured, or zero if the check failed.
+ *  @par Globals
+ *  D_8009C744 supplies the port-check callback.
+ *  @par Control flow
+ *  A nonzero callback result returns immediately; zero initializes the sequence.
+ *  @par Calls
+ *  The D_8009C744 callback checks the port; func_8008B4EC and func_8008B508
+ *  are installed as handlers rather than called directly.
+ *  @par Side effects
+ *  On success, writes the sequence step, handlers, and map pointer in the port.
+ *  @par Callers
+ *  Confirmed: func_8008A1C0.
+ */
 s32 func_8008B484(struct PadPort *port, u8 *command)
 {
     s32 result;

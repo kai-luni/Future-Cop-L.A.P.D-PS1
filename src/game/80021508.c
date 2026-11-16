@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct SoundVoiceSlot {
@@ -20,6 +21,23 @@ struct SoundSystem {
 
 extern struct SoundSystem D_800A07A8;
 
+/**
+ *  @brief Resets selected sound-system fields and sets the default volume.
+ *
+ *  Initializes bank and channel references, three unknown fields, and the
+ *  active flags of the three voice slots in the shared sound-system state.
+ *  @par Globals
+ *  D_800A07A8 holds the sound-system fields modified by this routine.
+ *  @par Control flow
+ *  Clears the common fields, loops over voice slots from index 2 down to 0,
+ *  and then sets volume to 0x7F.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Overwrites the specified fields; other voice-slot fields are unchanged.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_80021508(void)
 {
     s32 i;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio Streaming
 /* Exact .text reconstruction with GCC-2.7.2-cdk.
  * Two GNU C register declarations bind local4_loaded to $7 (a3) and
  * local0_loaded to $2 (v0). They contain no assembly instruction or barrier.
@@ -34,6 +35,27 @@ extern void func_80022B84(s32 *arg0, s32 index, u32 *out, s32 zero);
 extern s32 func_80022BEC(void);
 extern void func_80022CA8(void);
 
+/**
+ *  @brief Initializes stream state from defaults and supplied options.
+ *
+ *  Clears the state, derives timing and rate values, and initializes entries.
+ *  Option indices 6, 3, 1, 2, and 10 override the local defaults.
+ *  @param arg0 First argument used as the base for option parsing.
+ *  @param ... Additional arguments available to the option parser.
+ *  @return Result returned by func_80022BEC.
+ *  @par Globals
+ *  D_800A0968 holds the initialized state and entries.
+ *  D_8009F630, D_8009F638, and D_8009F63C are cleared; D_8009F634 receives option 6.
+ *  @par Control flow
+ *  Parses five options, initializes helpers, then loops over the configured entry count.
+ *  @par Calls
+ *  func_8001E4C0 clears state; func_80022B84 reads options.
+ *  func_80022BEC and func_80022CA8 perform further initialization.
+ *  @par Side effects
+ *  Replaces global state and sets its first byte to one.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_80022484(s32 arg0, ...)
 {
     u32 local0;

@@ -1,3 +1,4 @@
+// Categories: Platform > SPU Transfer
 #include "game/types.h"
 
 typedef struct {
@@ -20,6 +21,27 @@ extern s32 *D_8009EEB0;
 extern void func_80097940(void);
 extern void func_80097968(void);
 
+/**
+ *  @brief Configures or starts an SPU transfer according to an operation code.
+ *
+ *  Sets a shifted transfer address, selects a transfer mode, or programs
+ *  transfer registers after polling the SPU for the expected state.
+ *  @param arg0 Operation code: 2 sets address, 0 or 1 selects mode, 3 starts transfer.
+ *  @param ... Address for operation 2, or transfer address and byte count for operation 3.
+ *  @return 0 on completion or an unrecognized operation; -2 on polling timeout.
+ *  @par Globals
+ *  D_8009EEA4 accesses SPU registers; D_8009EECC and D_8009EEBC set and track the address.
+ *  D_8009EEF4 tracks mode; D_8009EEF8 and D_8009EEFC store transfer parameters.
+ *  D_8009EEA8, D_8009EEAC and D_8009EEB0 point to transfer registers.
+ *  @par Control flow
+ *  Dispatches by operation and polls up to 0xF01 iterations before timing out.
+ *  @par Calls
+ *  func_80097968 or func_80097940 prepares the transfer according to mode.
+ *  @par Side effects
+ *  Updates transfer globals and writes SPU and transfer registers.
+ *  @par Callers
+ *  Confirmed: func_800976DC, func_80097760.
+ */
 s32 func_8009745C(s32 arg0, ...)
 {
     s32 *vl;

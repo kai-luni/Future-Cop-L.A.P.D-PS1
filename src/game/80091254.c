@@ -1,7 +1,26 @@
+// Categories: Game Engine > State Access
 #include "game/types.h"
 
 extern s32 D_8009C814;
 
+/**
+ *  @brief Replaces a signed global value and returns its previous value.
+ *
+ *  The assembly reads the old value and stores the incoming argument
+ *  in the return jump's delay slot.
+ *  @param arg0 New value supplied in the first argument register.
+ *  @return Previous value of D_8009C814.
+ *  @par Globals
+ *  D_8009C814 is read and then overwritten.
+ *  @par Control flow
+ *  Returns after the unconditional store in the delay slot.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Updates D_8009C814.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 __asm__(
     ".text\n\t"
     ".set\tnoreorder\n\t"

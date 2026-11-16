@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct SoundVoice {
@@ -37,6 +38,26 @@ extern void func_800227BC(s32 channel, s32 left, s32 right);
 extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
 extern void func_800222CC(s32 voice, struct StreamMix *mix);
 
+/**
+ *  @brief Updates a stream channel's settings and applies its active voice mix.
+ *
+ *  Clamps the channel to the three-channel range, records the requested
+ *  values, and updates the associated voice when streaming is active.
+ *  @param channel Channel index, clamped to 0 through 2.
+ *  @param left Requested left channel setting.
+ *  @param right Requested right channel setting.
+ *  @par Globals
+ *  D_800A0968 supplies the active flag and channel voice and settings.
+ *  @par Control flow
+ *  Returns after recording settings if streaming is inactive or the voice is null.
+ *  @par Calls
+ *  func_800227BC records settings; func_800477D8 updates the voice.
+ *  func_800222CC applies the resulting volume and pan to the voice index.
+ *  @par Side effects
+ *  Updates channel settings and, when applicable, voice and audio mix state.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8002283C(s32 channel, s32 left, s32 right)
 {
     struct SoundVoice *voice;

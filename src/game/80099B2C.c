@@ -1,5 +1,26 @@
+// Categories: Utilities > Numeric Conversion
 #include "game/types.h"
 
+/**
+ *  @brief Converts a 16-bit value into a packed coarse and fractional result.
+ *
+ *  Searches fixed-point intervals derived from the highest set bit of arg2.
+ *  The resulting index is split into units of 128 and combined with the inputs.
+ *  @param arg0 Base value added to the coarse component.
+ *  @param arg1 Base value added to the fractional component.
+ *  @param arg2 Value used to select the interval and octave adjustment.
+ *  @return Packed result formed by shifting the coarse sum and ORing the fraction.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Scans bits, then searches up to 48 groups of 32 intervals; defaults to 0x600.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 u32 func_80099B2C(u16 arg0, u16 arg1, u16 arg2)
 {
     register s32 bit __asm__("$10");

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct SoundChannel {
@@ -16,6 +17,26 @@ struct SoundChannel {
 
 extern struct SoundChannel D_800A1160[];
 
+/**
+ *  @brief Tests whether a sound channel has a valid ID and nonzero priority.
+ *
+ *  Reads the indexed channel from the shared sound-channel array when the
+ *  index is nonnegative; no upper-bound check is performed.
+ *  @param arg0 Unused argument.
+ *  @param index Index of the sound channel to test.
+ *  @return One if the index is nonnegative, the ID is not -1, and priority
+ *  is nonzero; otherwise zero.
+ *  @par Globals
+ *  D_800A1160 contains the sound-channel array.
+ *  @par Control flow
+ *  Rejects negative indices and ID -1 before testing priority.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  None.
+ *  @par Callers
+ *  Confirmed: func_8008352C.
+ */
 s32 func_80045768(s32 arg0, s32 index)
 {
     register struct SoundChannel *base __asm__("$3");

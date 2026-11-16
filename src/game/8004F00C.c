@@ -1,5 +1,27 @@
+// Categories: Utilities > Numeric Processing
 #include "game/types.h"
 
+/**
+ *  @brief Computes and transforms four unsigned values into an output array.
+ *
+ *  The initial values are a0, two rounded pair averages, and a rounded
+ *  four-input average; each is then transformed using unsigned arithmetic.
+ *  @param a0 First input value.
+ *  @param a1 Second input value.
+ *  @param a2 Third input value.
+ *  @param a3 Fourth input value.
+ *  @param arg Output array of at least four unsigned words.
+ *  @par Globals
+ *  None referenced directly.
+ *  @par Control flow
+ *  Initializes four words, then loops over them applying the shift and mask expression.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Overwrites the four output words; unsigned arithmetic wraps as defined by C.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8004F00C(u32 a0, u32 a1, u32 a2, u32 a3, u32 *arg)
 {
     register u32 *start __asm__("$2") = arg;

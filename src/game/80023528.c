@@ -1,3 +1,4 @@
+// Categories: Resources > Lookup
 #include "game/types.h"
 
 typedef struct {
@@ -14,6 +15,25 @@ typedef struct {
 
 extern Unk23528Header **D_8009F640[2];
 
+/**
+ *  @brief Finds the first header containing an entry with the requested ID.
+ *
+ *  Searches up to two registered containers in order and optionally reports
+ *  the matching entry's index within its header.
+ *  @param id Entry ID to find.
+ *  @param outIndex Optional destination for the matching entry index.
+ *  @return The matching header, or null if no entry matches.
+ *  @par Globals
+ *  D_8009F640 contains the two container pointers to search.
+ *  @par Control flow
+ *  Skips null containers and scans each header until a match or its count is reached.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes outIndex only when a match is found and the pointer is nonnull.
+ *  @par Callers
+ *  Confirmed: func_800235D4.
+ */
 Unk23528Header *func_80023528(s32 id, s32 *outIndex)
 {
     s32 j = 0;

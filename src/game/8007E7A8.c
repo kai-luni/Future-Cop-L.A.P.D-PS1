@@ -1,3 +1,4 @@
+// Categories: Gameplay > Mode State
 #include "game/types.h"
 
 typedef struct {
@@ -19,6 +20,25 @@ extern volatile s32 D_8009F8F8;
 extern u16 D_8009F92A;
 extern void func_8007F02C(void);
 
+/**
+ *  @brief Initializes mode-dependent state and generates ten table-derived values.
+ *
+ *  Alternating lookup tables transform source bytes into zero-based letter values.
+ *  Two mode fields also select flags and a final state byte.
+ *  @par Globals
+ *  D_8009FA94 supplies mode fields; D_8009FAC4 and D_800A35FD are set.
+ *  D_8009C1BC and D_8009C1AC are lookup tables; D_800A3938 is the source.
+ *  D_800A3948 receives results; D_8009F8F8 and D_8009F92A are cleared.
+ *  D_800A35FB receives the mode-dependent state byte.
+ *  @par Control flow
+ *  Selects an initial flag, loops over ten bytes, then branches on mode fields.
+ *  @par Calls
+ *  func_8007F02C runs before the table transformation.
+ *  @par Side effects
+ *  Updates the listed global flags, counters, output bytes and state byte.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8007E7A8(void)
 {
     s32 i;

@@ -1,3 +1,4 @@
+// Categories: Input > Controller Protocol
 #include "game/types.h"
 
 struct PadPort {
@@ -18,6 +19,26 @@ extern s32 (*D_8009C744)(struct PadPort *port);
 extern void func_8008B668(struct PadPort *port);
 extern s32 func_8008B6BC(struct PadPort *port);
 
+/**
+ *  @brief Starts a controller mode-selection sequence when the port is available.
+ *
+ *  A port check gates installation of command and response handlers and storage
+ *  of the requested mode, lock, and current-mode comparison.
+ *  @param port Controller port state to check and configure.
+ *  @param mode Requested mode index, stored as a byte.
+ *  @param lock Requested mode lock, stored as a byte.
+ *  @return Zero if the port check rejects the request; otherwise one.
+ *  @par Globals
+ *  D_8009C744 is the indirect port-check function pointer.
+ *  @par Control flow
+ *  Returns immediately on a nonzero check result; otherwise initializes sequence step 1.
+ *  @par Calls
+ *  D_8009C744 checks the port; func_8008B668 and func_8008B6BC are installed as handlers.
+ *  @par Side effects
+ *  On success, updates the port's handlers, request fields, and mode comparison flag.
+ *  @par Callers
+ *  Confirmed: func_8008A1F8.
+ */
 s32 func_8008B5D0(struct PadPort *port, s32 mode, s32 lock)
 {
     register s32 compare_mode __asm__("$19");

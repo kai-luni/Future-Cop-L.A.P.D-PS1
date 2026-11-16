@@ -1,5 +1,22 @@
+// Categories: Platform > Register Operations
 #include "game/types.h"
 
+/**
+ *  @brief Sets bits in a halfword addressed through a register-bound value.
+ *
+ *  Reads the halfword at p plus 0xA and writes it back with mask and 0x12 ORed in.
+ *  The source binds p and mask to registers without initializing them locally.
+ *  @par Globals
+ *  None named in the source.
+ *  @par Control flow
+ *  Performs the read-modify-write, then counts down from 0x28 to zero.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Writes a halfword at the address derived from p and executes a delay loop.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8008DC50(void)
 {
     register u32 p __asm__("$3");

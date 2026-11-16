@@ -1,3 +1,4 @@
+// Categories: Gameplay > Progression
 typedef signed char s8;
 typedef unsigned char u8;
 typedef int s32;
@@ -15,6 +16,30 @@ extern struct Mode *D_8009FA94[];
 extern struct Entry D_8009B4E4[];
 extern char D_800A38F8[];
 extern void func_80078210(void), func_8001EC04(s32, s32), func_80078650(void *, s32);
+
+/**
+ *  @brief Updates mode-dependent progression state and invokes the next handler.
+ *
+ *  Sets a state value and deadline before dispatching on the current mode.
+ *  Some modes update progression entries or mark a change flag.
+ *  @par Globals
+ *  D_8009F464 and D_8009F870 receive the state and deadline from D_8009FA2C.
+ *  D_8009F45A selects the mode; D_8009F9A8 and D_8009F458 affect progression.
+ *  D_8009F889, D_8009F880, D_8009F888, and D_8009F882 control progression updates.
+ *  D_8009F3F1 and D_8009FA10 participate in change detection.
+ *  D_8009FA94, D_8009F884, D_8009B4E4, and D_8009F3C2 supply entry data.
+ *  D_8009F8D8, D_8009F8D9, and D_800A38F8 supply handler arguments.
+ *  @par Control flow
+ *  Mode 1 updates progression; mode 2 updates and scans entries, possibly setting a flag.
+ *  Mode 3 makes two calls before falling through to the default handler.
+ *  @par Calls
+ *  func_80078210 handles modes 1 and 2; func_8001EC04 handles mode 3 values.
+ *  func_80078650 handles the default path and mode 3 fallthrough.
+ *  @par Side effects
+ *  Changes global state, progression values, and possibly the change flag.
+ *  @par Callers
+ *  Confirmed: func_80077AD4.
+ */
 void func_800782EC(void)
 {
     register s32 v __asm__("$2");

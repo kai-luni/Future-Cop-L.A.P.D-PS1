@@ -1,3 +1,4 @@
+// Categories: Game Engine > Event Flags
 #include "../../include/game/types.h"
 
 struct EventFlags {
@@ -8,6 +9,23 @@ struct EventFlags {
 
 extern struct EventFlags D_800A07A8;
 
+/**
+ *  @brief Adds bits to the pending event flags.
+ *
+ *  ORs the supplied mask into the pending field of the shared event state.
+ *  Existing pending bits remain set.
+ *  @param flags Bit mask to add to the pending flags.
+ *  @par Globals
+ *  D_800A07A8.pending is read and updated.
+ *  @par Control flow
+ *  Performs one unconditional read-modify-write operation.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Updates the pending field of D_800A07A8.
+ *  @par Callers
+ *  Confirmed: func_80021F98, func_800221E4.
+ */
 void func_80021A70(u32 flags)
 {
     D_800A07A8.pending |= flags;

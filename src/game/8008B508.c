@@ -1,3 +1,4 @@
+// Categories: Input > Controller Configuration
 #include "game/types.h"
 
 struct PadCapabilityRecord {
@@ -20,6 +21,26 @@ struct PadPort {
     u8 actuator_count;
 };
 
+/**
+ *  @brief Validate requested actuator assignments and advance the port sequence.
+ *
+ *  Counts each actuator's occurrences in the six-byte requested map and writes
+ *  matching output positions according to its capability payload size.
+ *  A zero payload size is treated as one; insufficient assignments become 0xFF.
+ *  Positions not matching an actuator are left unchanged.
+ *  @param port Controller port containing the maps and capability records.
+ *  @return Always 0.
+ *  @par Globals
+ *  None.
+ *  @par Control flow
+ *  Loops over actuators and scans all six map positions twice for each one.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Updates matching actuator map bytes and sets sequence_step to 0xFE.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_8008B508(struct PadPort *port)
 {
     s32 actuator;

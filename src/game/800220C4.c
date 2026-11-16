@@ -1,3 +1,4 @@
+// Categories: Game Engine > Audio
 #include "game/types.h"
 
 struct SoundVoice {
@@ -43,6 +44,27 @@ extern struct SoundSystem D_800A07A8;
 
 extern void func_800223B0(s32 a0, s32 a1, s32 a2, s32 *a3, s32 *a4);
 
+/**
+ *  @brief Assigns the first free sound voice to a channel.
+ *
+ *  Initializes voice defaults and stores derived arguments in the channel.
+ *  The channel voice pointer is cleared even if no free voice is found.
+ *  @param unused Unused argument.
+ *  @param index Channel index and voice owner value.
+ *  @param args Values used to initialize the channel and derive two outputs.
+ *  @param arg3 Value stored in the allocated voice.
+ *  @return The channel index on success, or -1 if all voices are active.
+ *  @par Globals
+ *  D_800A07A8 supplies the channel array and three voice slots.
+ *  @par Control flow
+ *  Scans the three voices and stops at the first inactive slot.
+ *  @par Calls
+ *  func_800223B0 derives two values from args before the scan.
+ *  @par Side effects
+ *  Clears the channel pointer and, on success, updates the voice and channel.
+ *  @par Callers
+ *  Confirmed: func_800228F4.
+ */
 s32 func_800220C4(s32 unused, s32 index, struct VoiceArgs *args, s32 arg3)
 {
     struct SoundSystem *sys;

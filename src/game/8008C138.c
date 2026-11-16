@@ -1,3 +1,4 @@
+// Categories: Input > Controller Configuration
 #include "game/types.h"
 
 struct Entry {
@@ -25,6 +26,24 @@ struct Port {
 extern void func_8008CD00(u8 *, int);
 extern int D_8009C770;
 
+/**
+ *  @brief Selects enabled controller entries subject to a shared cost limit.
+ *
+ *  Clears the six enable flags, then uses entry modes, IDs and input flags
+ *  to select entries, with fallback rules for particular port types.
+ *  @param p Port configuration, entry table and enable flags.
+ *  @par Globals
+ *  D_8009C770 is read and increased when an accepted selection incurs cost.
+ *  @par Control flow
+ *  Scans entries and up to six slots when configuration and flags are present;
+ *  otherwise branches by type, fieldE6 and count to apply fallback rules.
+ *  @par Calls
+ *  func_8008CD00 clears the six-byte enabled array.
+ *  @par Side effects
+ *  Writes enabled flags and may increase the shared cost counter.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8008C138(struct Port *p)
 {
     int i, j, n;

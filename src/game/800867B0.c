@@ -1,3 +1,4 @@
+// Categories: Game Engine > Value Scaling
 #include "game/types.h"
 
 typedef struct {
@@ -10,6 +11,24 @@ typedef struct {
 extern Unk8009F4D8 *D_8009F4D8;
 extern s32 func_800966B0(unsigned long long p, s32 a, s32 b);
 
+/**
+ *  @brief Scales an input according to the current state's mode and value.
+ *
+ *  Selects one of three multiplier and divisor pairs from the state, or
+ *  returns zero for modes other than 0 and 1.
+ *  @param arg0 Unsigned input value to scale.
+ *  @return The helper result for a selected pair, or zero for other modes.
+ *  @par Globals
+ *  D_8009F4D8 supplies the mode and the value tested against 0x800.
+ *  @par Control flow
+ *  Mode 1 selects 0x40 and 0x3F; mode 0 selects a pair based on the value.
+ *  @par Calls
+ *  func_800966B0 receives the 64-bit product and selected divisor words.
+ *  @par Side effects
+ *  No direct state changes; effects of the helper are not shown here.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_800867B0(u32 arg0)
 {
     register s32 ret __asm__("$3") = 0;

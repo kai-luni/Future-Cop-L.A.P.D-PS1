@@ -1,3 +1,4 @@
+// Categories: Input > Controller Protocol
 #include "game/types.h"
 
 struct Port;
@@ -31,6 +32,26 @@ extern void (*D_8009C72C)(struct Port *port);
 extern s32 func_8008C858(struct Port *port);
 extern s32 func_8008AF10(struct Port *port);
 
+/**
+ *  @brief Processes a controller response and advances the port sequence.
+ *
+ *  Updates the controller ID and response buffer, checks reset conditions,
+ *  and dispatches the current handshake step when permitted.
+ *  @param port Controller port state and received response.
+ *  @par Globals
+ *  D_8009C72C is invoked as a port callback when response checks require it.
+ *  @par Control flow
+ *  Copies response bytes in a loop unless the ID nibble is 0xF; two
+ *  independent checks can invoke the callback before step dispatch.
+ *  Steps 0, 1, 0xFE and 0xFF have special handling; other steps use a handler.
+ *  @par Calls
+ *  func_8008C858 checks the port; func_8008AF10 supplies the default step delta.
+ *  The port's field18 callback supplies the delta when present.
+ *  @par Side effects
+ *  Changes port ID, response buffer, flags, communication state and sequence.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 void func_8008C518(struct Port *port)
 {
     u32 saved_id;

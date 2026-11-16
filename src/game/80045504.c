@@ -1,3 +1,4 @@
+// Categories: Game Engine > State
 #include "game/types.h"
 
 struct Unk7938 {
@@ -15,6 +16,23 @@ struct Unk7938 {
 
 extern struct Unk7938 D_800A7938[];
 
+/**
+ *  @brief Resets selected fields of an indexed state entry.
+ *
+ *  Clears the active flag and several other fields, sets unk13 to one,
+ *  and sets unk16 to 0xFF in the selected table entry.
+ *  @param index Index of the entry to update.
+ *  @par Globals
+ *  D_800A7938 is the array containing the modified entry.
+ *  @par Control flow
+ *  Performs the field assignments directly without branching.
+ *  @par Calls
+ *  None.
+ *  @par Side effects
+ *  Modifies the selected entry; its other fields are left unchanged.
+ *  @par Callers
+ *  Confirmed: func_80044EF8.
+ */
 void func_80045504(s32 index)
 {
     struct Unk7938 *entry;

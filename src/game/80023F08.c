@@ -1,3 +1,4 @@
+// Categories: Game Engine > Sound Playback
 #include "game/types.h"
 
 struct Resource { u8 pad[13]; s8 owner; };
@@ -14,6 +15,24 @@ extern s32 func_800474F0(struct Handle *);
 extern void func_80047800(struct Resource *, s32, s32, s32);
 extern void func_800221E4(s32, s32 *);
 
+/**
+ *  @brief Attempts to start the sound represented by the global handle.
+ *
+ *  The handle supplies a resource, optional mix lookup and delayed completion time.
+ *  A successful start records the active state and schedules its time relative to the global clock.
+ *  @return Nonzero if the handle state is 1 after processing, otherwise zero.
+ *  @par Globals
+ *  D_800A0A80 holds the handle; D_8009F278 supplies a playback argument and D_8009FA2C supplies the clock.
+ *  @par Control flow
+ *  Initialization and handle readiness gate playback; mix lookup failure resets setup and start failure invokes handle cleanup.
+ *  @par Calls
+ *  func_80023E84 initializes or resets setup; func_800474C4 checks the handle; func_800450A4 or func_80045050 supplies mix data.
+ *  func_800220C4 starts playback; func_800474F0 handles failure; func_80047800 and func_800221E4 perform success-side updates.
+ *  @par Side effects
+ *  May change handle state and time and invoke sound setup, playback and channel operations.
+ *  @par Callers
+ *  Unknown: no direct callers are listed.
+ */
 s32 func_80023F08(void)
 {
     s8 mix[24];
