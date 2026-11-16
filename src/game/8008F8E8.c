@@ -14,7 +14,7 @@ extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u32 *gComAccessDelayPtr __asm__("D_8009CB7C");
-extern volatile u8 D_8009CB84[];
+extern volatile u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern void func_8008FF08(char *);
 extern void func_8008E000(char *, char *);
 extern void func_80091480(void);
@@ -86,7 +86,7 @@ int func_8008F8E8(void)
         register int a1 __asm__("$5") = 0;
         register volatile u8 *port __asm__("$7");
         __asm__("" : "+r"(a0), "+r"(a1));
-        state = D_8009CB84;
+        state = gCdStateBytes;
         state[2] = 0;
         state[1] = state[2];
         port = gCdromIndexStatusPtr;

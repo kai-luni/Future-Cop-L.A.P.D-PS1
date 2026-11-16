@@ -10,7 +10,7 @@ extern int D_8009CA6C[];
 extern int D_8009C96C[];
 extern int D_8009C8CC[];
 extern int D_8009C8B0, D_8009C8B4, D_8009C8B8, D_8009C8BC;
-extern unsigned char D_8009CB84[];
+extern unsigned char gCdStateBytes[] __asm__("D_8009CB84");
 extern unsigned char D_800A3E50[], D_800A3E58[], D_800A3E60[];
 extern char D_800124B4[], D_800124C0[], D_800124DC[], D_800124F0[];
 extern void func_8008E000();
@@ -129,7 +129,7 @@ skip_input:
             register int flag __asm__("$2") = 5;
             register unsigned char *status __asm__("$3");
             __asm__("" : "+r"(flag));
-            status = D_8009CB84;
+            status = gCdStateBytes;
             __asm__("" : "+r"(status));
             *status = flag;
             COPY(D_800A3E50);
@@ -144,7 +144,7 @@ skip_input:
                 register int flag __asm__("$2") = 3;
                 register unsigned char *status __asm__("$3");
                 __asm__("" : "+r"(flag));
-                status = D_8009CB84;
+                status = gCdStateBytes;
                 __asm__("" : "+r"(status));
                 *status = flag;
                 COPY(D_800A3E50);
@@ -152,7 +152,7 @@ skip_input:
             }
         }
         {
-            register unsigned char *status __asm__("$3") = D_8009CB84;
+            register unsigned char *status __asm__("$3") = gCdStateBytes;
             __asm__("" : "+r"(status));
             *status = 2;
         }
@@ -174,7 +174,7 @@ skip_input:
             register unsigned char *status __asm__("$2");
             if (s1) state = 5;
             __asm__("" : "+r"(state));
-            status = D_8009CB84;
+            status = gCdStateBytes;
             __asm__("" : "+r"(status));
             status[1] = state;
         }
@@ -185,7 +185,7 @@ skip_input:
     case4:
         {
         register unsigned char *dest __asm__("$4") = D_800A3E60;
-        register unsigned char *status __asm__("$2") = D_8009CB84;
+        register unsigned char *status __asm__("$2") = gCdStateBytes;
         __asm__("" : "+r"(dest), "+r"(status));
         {
             register unsigned char *source __asm__("$5");
@@ -207,7 +207,7 @@ skip_input:
     case5:
         {
         register unsigned char *dest __asm__("$4") = D_800A3E50;
-        register unsigned char *status __asm__("$2") = D_8009CB84;
+        register unsigned char *status __asm__("$2") = gCdStateBytes;
         __asm__("" : "+r"(dest), "+r"(status));
         {
             register unsigned char *source __asm__("$5");

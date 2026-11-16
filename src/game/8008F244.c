@@ -7,7 +7,8 @@ typedef int s32;
 
 extern int D_8009C8B0, D_8009CAEC[], D_8009C9EC[];
 extern int D_8009C8CC[], D_8009C94C[];
-extern u8 D_8009C8C0[], D_8009C8C4, D_8009C8C5, D_8009CB84[];
+extern u8 D_8009C8C0[], D_8009C8C4, D_8009C8C5;
+extern u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile u8 *gCdromCommandPtr __asm__("D_8009CB70");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
@@ -105,7 +106,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
             register int *c9ec __asm__("$3");
             register int v __asm__("$2");
             __asm__ volatile("" : "+r"(cmd_lo));
-            st = D_8009CB84;
+            st = gCdStateBytes;
             off = cmd_lo << 2;
             __asm__("" : "+r"(st), "+r"(off));
             st[0] = 0;
@@ -157,7 +158,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
         register char *msg __asm__("$2");
         now += 0x3c0;
         __asm__("" : "+r"(now));
-        st = D_8009CB84;
+        st = gCdStateBytes;
         __asm__("" : "+r"(st), "+r"(now));
         D_800A3E68 = now;
         __asm__ volatile(".set noat\n\tlui $1,%%hi(D_800A3E6C)\n\tsw $0,%%lo(D_800A3E6C)($1)\n\t.set at" : : : "memory");
@@ -272,7 +273,7 @@ after_loop:
     }
     {
         register int res __asm__("$4") = 0;
-        register u8 *st __asm__("$2") = D_8009CB84;
+        register u8 *st __asm__("$2") = gCdStateBytes;
         __asm__("" : "+r"(res), "+r"(st));
         if (st[0] == 5) {
             res = -1;

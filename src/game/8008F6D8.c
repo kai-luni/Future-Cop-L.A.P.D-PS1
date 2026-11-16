@@ -7,7 +7,7 @@ extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u32 *gComAccessDelayPtr __asm__("D_8009CB7C");
-extern volatile u8 D_8009CB84[];
+extern volatile u8 gCdStateBytes[] __asm__("D_8009CB84");
 
 /**
  * @brief Clears pending CD-ROM hardware interrupts and resets CD status and bus delay.
@@ -42,7 +42,7 @@ void func_8008F6D8(void)
         *gCdromParameterPtr = 7;
     }
     {
-        register volatile u8 *state __asm__("$3") = D_8009CB84;
+        register volatile u8 *state __asm__("$3") = gCdStateBytes;
         register volatile u8 *port __asm__("$4");
         state[2] = 0;
         state[1] = state[2];

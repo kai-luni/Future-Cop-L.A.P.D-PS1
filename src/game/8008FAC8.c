@@ -6,7 +6,8 @@ extern int D_800A3E68, D_800A3E6C;
 extern char *D_800A3E70;
 extern char D_80012594[], D_80012488[], D_80012498[];
 extern int D_8009C8CC[], D_8009C94C[];
-extern u8 D_8009CB84[], D_8009C8C5;
+extern u8 D_8009C8C5;
+extern u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern int *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
 extern int func_80091270(int);
 extern void func_8008FF08(char *);
@@ -62,7 +63,7 @@ int func_8008FAC8(int mode)
     __asm__("" : "=m"(pad));
     limit = 0x3c0000;
     other = D_8009C8CC;
-    state = D_8009CB84;
+    state = gCdStateBytes;
     table = D_8009C94C;
     D_800A3E68 = now + 0x3c0;
     D_800A3E6C = 0;
