@@ -13,7 +13,7 @@ struct Cache { s16 s[4]; s16 t[4]; s32 w; s32 pad; };
 extern u8 D_8009DDF2[];
 extern u8 D_8009DDF3;
 extern struct Gfx *D_8009DDE8;
-extern void (*D_8009DDEC)(void *, void *);
+extern  void (*gLogPrintf)(void *, void *) __asm__("D_8009DDEC");
 extern char D_80012B30[];
 extern struct Cache D_8009DE5C;
 extern s16 D_8009DE64[];
@@ -70,7 +70,7 @@ struct Prim *func_800934BC(struct Prim *p)
     __asm__("" : "+r"(g));
     flags = 0x8000000;
     if (g[0] >= 2) {
-        D_8009DDEC(D_80012B30, p);
+        gLogPrintf(D_80012B30, p);
     }
     cmd = 0x5000000;
     upper = p->u2;

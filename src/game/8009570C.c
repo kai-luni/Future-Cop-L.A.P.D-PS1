@@ -15,7 +15,7 @@ typedef struct Callbacks {
 
 extern u8 D_8009DDF2;
 extern char D_80012AE8[];
-extern void (*D_8009DDEC)(char *, s32);
+extern  void (*gLogPrintf)(char *, s32) __asm__("D_8009DDEC");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 D_8009DEFC, D_8009DF00;
@@ -52,7 +52,7 @@ int func_8009570C(s32 arg0)
     if (D_8009DDF2 >= 2) {
         register char *msg __asm__("$4");
         __asm__("lui %0,%%hi(D_80012AE8)\n\taddiu %0,%0,%%lo(D_80012AE8)" : "=r"(msg));
-        D_8009DDEC(msg, arg0);
+        gLogPrintf(msg, arg0);
     }
     D_8009DEFC = func_80091270(-1) + 0xF0;
     D_8009DF00 = 0;

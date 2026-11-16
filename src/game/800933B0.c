@@ -9,7 +9,7 @@ struct Context {
 };
 extern u8 D_8009DDF2[];
 extern char D_80012B14[];
-extern void (*D_8009DDEC)(char *, ...);
+extern  void (*gLogPrintf)(char *, ...) __asm__("D_8009DDEC");
 extern struct Context *D_8009DDE8;
 extern void func_80093CE8(u8 *, u8 *);
 extern void func_8008CD10(void *, void *, int);
@@ -47,7 +47,7 @@ void func_800933B0(u32 arg0, u8 *arg1)
     __asm__ volatile ("" : "=r"(cond) : "0"(cond));
     saved = arg1;
     if (cond >= 2)
-        D_8009DDEC(D_80012B14, arg0, saved);
+        gLogPrintf(D_80012B14, arg0, saved);
     p = saved + 0x1c;
     func_80093CE8(p, saved);
     mask = 0xffffff;

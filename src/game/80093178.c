@@ -7,7 +7,7 @@ typedef struct {
 } Unk8009DDE8;
 
 extern u8 D_8009DDF2;
-extern void (*D_8009DDEC)(u8 *, s32, s32);
+extern  void (*gLogPrintf)(u8 *, s32, s32) __asm__("D_8009DDEC");
 extern Unk8009DDE8 *D_8009DDE8;
 extern u8 D_80012AD0[];
 extern u32 D_8009DEB0[];
@@ -57,7 +57,7 @@ void func_80093178(u32 *arg0, s32 arg1)
     register u32 *v0 __asm__("$2");
 
     if (D_8009DDF2 >= 2) {
-        D_8009DDEC(D_80012AD0, (s32)arg0, arg1);
+        gLogPrintf(D_80012AD0, (s32)arg0, arg1);
     }
 
     D_8009DDE8->unk2C((s32)arg0, arg1);

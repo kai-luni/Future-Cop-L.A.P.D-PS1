@@ -2,7 +2,7 @@
 #include "game/types.h"
 /* Test the return sequence under a different compiler. */
 
-extern void (*D_8009DDEC)(const char *, ...);
+extern  void (*gLogPrintf)(const char *, ...) __asm__("D_8009DDEC");
 struct Values { s16 values[8]; u8 first; u8 second; };
 
 /**
@@ -36,7 +36,7 @@ void func_80092868(struct Values *arg0)
     __asm__("" : "=r"(a), "=r"(b), "=r"(c) : "0"(a), "1"(b), "2"(c));
     last = arg0->values[3];
     __asm__("" : "=r"(last) : "0"(last));
-    print = D_8009DDEC;
+    print = gLogPrintf;
     __asm__("" : "=r"(print) : "0"(print));
     format = (char *)0x80010000;
     __asm__("" : "=r"(format) : "0"(format));
@@ -47,21 +47,21 @@ void func_80092868(struct Values *arg0)
     __asm__("" : "=r"(a), "=r"(b), "=r"(c) : "0"(a), "1"(b), "2"(c));
     last = arg0->values[7];
     __asm__("" : "=r"(last) : "0"(last));
-    print = D_8009DDEC;
+    print = gLogPrintf;
     __asm__("" : "=r"(print) : "0"(print));
     format = (char *)0x80010000;
     __asm__("" : "=r"(format) : "0"(format));
     print(format + 0x2938, a, b, c, last);
     a = arg0->first;
     __asm__("" : "=r"(a) : "0"(a));
-    print = D_8009DDEC;
+    print = gLogPrintf;
     __asm__("" : "=r"(print) : "0"(print));
     format = (char *)0x80010000;
     __asm__("" : "=r"(format) : "0"(format));
     print(format + 0x2954, a);
     a = arg0->second;
     __asm__("" : "=r"(a) : "0"(a));
-    print = D_8009DDEC;
+    print = gLogPrintf;
     __asm__("" : "=r"(print) : "0"(print));
     format = (char *)0x80010000;
     __asm__("" : "=r"(format) : "0"(format));

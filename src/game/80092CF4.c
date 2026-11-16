@@ -2,7 +2,7 @@
 typedef struct { short x, y, w, h; } Rect;
 typedef struct { unsigned char mode, pad; short width, height; } State;
 extern State D_8009DDF2;
-extern void (*D_8009DDEC)(char *, ...);
+extern  void (*gLogPrintf)(char *, ...) __asm__("D_8009DDEC");
 extern char D_80012A58[], D_80012A64[], D_80012A78[];
 
 /**
@@ -67,14 +67,14 @@ mode2:
     __asm__("lui %0,%%hi(D_80012A78)" : "=r"(message));
     message += 0x2a78;
 print:
-    D_8009DDEC(message, name);
+    gLogPrintf(message, name);
     a = r->x;
     b = r->y;
     c = r->w;
     __asm__("" : "+r"(a), "+r"(b), "+r"(c));
     last = r->h;
     __asm__("" : "+r"(last));
-    callback = D_8009DDEC;
+    callback = gLogPrintf;
     __asm__("" : "+r"(callback));
     callback(D_80012A64, a, b, c, last);
     __asm__ volatile(".set reorder");

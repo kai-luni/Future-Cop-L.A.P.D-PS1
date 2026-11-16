@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 D_8009DDF2;
-extern void (*D_8009DDEC)(u8 *, s32, s32);
+extern  void (*gLogPrintf)(u8 *, s32, s32) __asm__("D_8009DDEC");
 extern u8 D_80012AB8[];
 extern u32 D_8009DEB0[];
 extern u32 D_8009DE9C[];
@@ -45,7 +45,7 @@ u32 *func_800930B0(u32 *arg0, s32 arg1)
 
     if (D_8009DDF2 >= 2) {
         u8 *msg = D_80012AB8;
-        f = D_8009DDEC;
+        f = gLogPrintf;
         __asm__ volatile("" : "+r"(msg) : : "memory");
         __asm__ volatile("" : "+r"(s0) : : "memory");
         f(msg, (s32)s0, s1);

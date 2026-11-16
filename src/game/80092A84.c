@@ -2,7 +2,7 @@
 typedef unsigned char u8;
 extern u8 D_8009DDF2[];
 extern char D_800129D4[];
-extern void (*D_8009DDEC)(char *, int, int, int);
+extern  void (*gLogPrintf)(char *, int, int, int) __asm__("D_8009DDEC");
 
 /**
  * @brief Exchanges a library flag byte and notifies the debug hook when
@@ -32,7 +32,7 @@ int func_80092A84(int value)
     old = p[0];
     p[0] = value;
     if ((u8)value) {
-        register void (*fn)(char *, int, int, int) __asm__("$2") = D_8009DDEC;
+        register void (*fn)(char *, int, int, int) __asm__("$2") = gLogPrintf;
         register int a1 __asm__("$5") = p[0];
         register int a2 __asm__("$6") = p[-2];
         register int a3 __asm__("$7") = p[1];

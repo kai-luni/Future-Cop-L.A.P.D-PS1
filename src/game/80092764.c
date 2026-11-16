@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 typedef s32 (*PrintFn)();
-extern PrintFn D_8009DDEC;
+extern PrintFn gLogPrintf __asm__("D_8009DDEC");
 
 extern char D_800128C4;
 extern char D_800128DC;

@@ -28,7 +28,7 @@ extern struct State D_8009DDF0;
 extern struct Entry D_8009DE70[];
 extern struct Entry D_8009DE7C[];
 extern struct Callbacks *D_8009DDE8;
-extern void (*D_8009DDEC)(u8 *, int);
+extern  void (*gLogPrintf)(u8 *, int) __asm__("D_8009DDEC");
 extern void func_8008E000(void *, void *, void *);
 extern void func_80095830(unsigned char *, int, unsigned int);
 extern void func_80091480(void);
@@ -115,7 +115,7 @@ int func_80092910(int input)
         __asm__ volatile ("" ::: "memory");
         if (D_8009DDF0.field2 >= 2) {
             __asm__ volatile ("" ::: "memory");
-            D_8009DDEC(D_800129C0, arg);
+            gLogPrintf(D_800129C0, arg);
         }
         return D_8009DDE8->callback(1);
     }
