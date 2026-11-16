@@ -20,7 +20,7 @@ extern s32 D_8009EEF8;
 extern s32 D_8009EEFC;
 extern s32 *gDma4MemAddrPtr __asm__("D_8009EEA8");
 extern s32 *gDma4BlockCtrlPtr __asm__("D_8009EEAC");
-extern s32 *D_8009EEB0;
+extern s32 *gDma4ChannelCtrlPtr __asm__("D_8009EEB0");
 
 extern void func_80097940(void);
 extern void func_80097968(void);
@@ -119,7 +119,7 @@ s32 func_8009745C(s32 arg0, ...)
         *gDma4BlockCtrlPtr = (D_8009EEFC << 16) | 0x10;
         rf = D_8009EEF4;
         val = (rf == 1) ? 0x1000200 : 0x1000201;
-        *D_8009EEB0 = val;
+        *gDma4ChannelCtrlPtr = val;
         break;
     }
     return 0;
