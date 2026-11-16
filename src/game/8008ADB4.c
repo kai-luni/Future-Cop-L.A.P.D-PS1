@@ -1,10 +1,12 @@
 // Categories: Platform > Hardware Synchronization
+#include "game/sio_globals.h"
+
 #include "game/intc_globals.h"
 
 #include "game/types.h"
 
 extern u32 *gInterruptStatusPtr __asm__("D_8009C788");
-extern u8 *D_8009C78C;
+extern u8 *gSio0RegBasePtr __asm__("D_8009C78C");
 
 extern s32 func_8008C8B0(void);
 
@@ -30,7 +32,7 @@ extern s32 func_8008C8B0(void);
 s32 func_8008ADB4(void)
 {
     u32 *counter = gInterruptStatusPtr;
-    u8 *state = D_8009C78C;
+    u8 *state = gSio0RegBasePtr;
 
     *counter = 0xFFFFFF7F;
 
@@ -39,13 +41,13 @@ s32 func_8008ADB4(void)
             if (func_8008C8B0()) {
                 return 0;
             }
-            if (!(*(volatile u16 *)(D_8009C78C + 4) & 0x80)) {
+            if (!(*(volatile u16 *)(gSio0RegBasePtr + 4) & 0x80)) {
                 break;
             }
         }
     }
 
-    *(volatile u16 *)(D_8009C78C + 0xA) |= 0x10;
+    *(volatile u16 *)(gSio0RegBasePtr + 0xA) |= 0x10;
 
     return 1;
 }

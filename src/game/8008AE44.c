@@ -1,4 +1,6 @@
 // Categories: Platform > Status Polling
+#include "game/sio_globals.h"
+
 #include "../../include/game/types.h"
 
 struct StatusState {
@@ -6,7 +8,7 @@ struct StatusState {
     volatile u16 status;
 };
 
-extern struct StatusState *D_8009C78C;
+extern struct StatusState *gSio0RegBasePtr __asm__("D_8009C78C");
 
 /**
  *  @brief Waits until bit 1 of a status field is set.
@@ -26,6 +28,6 @@ extern struct StatusState *D_8009C78C;
  */
 void func_8008AE44(void)
 {
-    while ((D_8009C78C->status & 2) == 0) {
+    while ((gSio0RegBasePtr->status & 2) == 0) {
     }
 }

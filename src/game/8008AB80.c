@@ -1,11 +1,13 @@
 // Categories: Platform > Controller Input | Platform > Timer | Input > Controller
+#include "game/sio_globals.h"
+
 #include "game/intc_globals.h"
 
 #include "game/types.h"
 
 struct Port { u8 pad0[0x3c]; u8 *response; u8 pad40[4]; u8 index; u8 count; u8 pad46[0xa2]; u8 id; };
 struct Device { volatile u8 data; u8 pad1[3]; volatile u16 status; u8 pad6[8]; volatile u16 control; };
-extern struct Device *D_8009C78C;
+extern struct Device *gSio0RegBasePtr __asm__("D_8009C78C");
 extern volatile u32 *gInterruptStatusPtr __asm__("D_8009C788");
 extern u32 D_8009C76C;
 extern u32 D_800A6E18, D_800A9448;
@@ -54,12 +56,12 @@ s32 func_8008AB80(struct Port *port, s32 value_)
         control = 0x22;
     {
         register struct Device *poll __asm__("$3");
-        poll = D_8009C78C;
+        poll = gSio0RegBasePtr;
         __asm__ volatile ("nop" : "+r"(poll));
         while (!(poll->status & 2)) {}
     }
     func_8008C890(400);
-    device = D_8009C78C;
+    device = gSio0RegBasePtr;
     data = device->data;
     index = *(volatile u8 *)&port->index;
     __asm__("" : "+r"(data), "+r"(index));
@@ -89,7 +91,7 @@ done:;
         func_8008C890(60);
         while (!func_8008C8B0()) {}
     }
-    D_8009C78C->data = value;
+    gSio0RegBasePtr->data = value;
     port->count++;
     if (*(volatile u8 *)&port->index != 0xff) {
         register u8 *response __asm__("$2");

@@ -1,4 +1,6 @@
 // Categories: Platform > Serial I/O
+#include "game/sio_globals.h"
+
 #include "game/intc_globals.h"
 
 typedef unsigned char u8;
@@ -6,7 +8,7 @@ typedef unsigned short u16;
 typedef signed int s32;
 struct State { u8 a[4]; volatile u16 status; u8 b[2]; volatile u16 x; volatile u16 flags; u8 c[2]; volatile u16 y; };
 struct Obj { u8 a[12]; u8 *data; u8 b[0x2C]; u8 *p; u8 c[0x10]; u8 v50; u8 d[0x97]; u8 ve8; };
-extern struct State *D_8009C78C;
+extern struct State *gSio0RegBasePtr __asm__("D_8009C78C");
 extern s32 D_8009C768;
 extern s32 D_8009C780[];
 extern void (*D_8009C748)(void *);
@@ -42,13 +44,13 @@ s32 func_8008A6CC(struct Obj *obj)
     register s32 idx __asm__("$2");
     register struct State *state __asm__("$4");
     register s32 flags __asm__("$3");
-    D_8009C78C->flags = 0x40;
-    D_8009C78C->flags = 0;
-    D_8009C78C->x = 13;
-    D_8009C78C->y = 0x88;
+    gSio0RegBasePtr->flags = 0x40;
+    gSio0RegBasePtr->flags = 0;
+    gSio0RegBasePtr->x = 13;
+    gSio0RegBasePtr->y = 0x88;
     func_8008C890(obj->ve8 == 8 ? 0x50 : 0x91);
     idx = D_8009C768;
-    state = D_8009C78C;
+    state = gSio0RegBasePtr;
     flags = 0x1003;
     if (idx) flags = 0x3003;
     idx <<= 2;
@@ -87,12 +89,12 @@ s32 func_8008A6CC(struct Obj *obj)
             }
         }
     }
-    if (D_8009C78C->status & 0x200) {
-        D_8009C78C->flags |= 0x10;
-        if (D_8009C78C->status & 0x200) {
-            *(volatile u8 *)D_8009C78C = 1;
+    if (gSio0RegBasePtr->status & 0x200) {
+        gSio0RegBasePtr->flags |= 0x10;
+        if (gSio0RegBasePtr->status & 0x200) {
+            *(volatile u8 *)gSio0RegBasePtr = 1;
             func_8008AE44();
-            (void)*(volatile u8 *)D_8009C78C;
+            (void)*(volatile u8 *)gSio0RegBasePtr;
             return 0;
         }
         *gInterruptStatusPtr = -0x81;
