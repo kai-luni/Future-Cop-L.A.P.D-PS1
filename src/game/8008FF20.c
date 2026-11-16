@@ -2,7 +2,8 @@
 #include "game/types.h"
 
 typedef struct Entry { s32 a, b; char name[16]; } Entry;
-extern s32 D_8009CBC4, D_8009C8BC, D_8009C8B0;
+extern s32 D_8009CBC4, D_8009C8BC;
+extern s32 gCdLogLevel __asm__("D_8009C8B0");
 extern Entry D_800A3E80[];
 extern char D_800A3E88[];
 extern char D_800125AC[], D_800125C8[], D_800125E0[], D_800125FC[], D_8001261C[], D_80012628[];
@@ -90,11 +91,11 @@ Entry *func_8008FF20(Entry *out, char *path)
     } while (count < 8);
 end:
     if (count >= 8) {
-        if (D_8009C8B0 > 0) func_8008E000(D_800125AC, orig, count);
+        if (gCdLogLevel > 0) func_8008E000(D_800125AC, orig, count);
         return 0;
     }
     if (!*(signed char *)buf) {
-        if (D_8009C8B0 > 0) {
+        if (gCdLogLevel > 0) {
             register char *a1 __asm__("$5") = orig;
             __asm__ volatile("" : "=r"(a1) : "0"(a1));
             {
@@ -108,13 +109,13 @@ end:
     }
     *q = 0;
     if (!func_80090580(dir)) {
-        if (D_8009C8B0 <= 0) return 0;
+        if (gCdLogLevel <= 0) return 0;
         __asm__ volatile(".set\tnoreorder\n\tlui $4,%%hi(D_800125E0)\n\tjal func_8008E000\n\taddiu $4,$4,%%lo(D_800125E0)\n\t.set\treorder"
             : : : "$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25", "$31", "memory");
         return 0;
     }
     count = 0;
-    if (D_8009C8B0 >= 2) {
+    if (gCdLogLevel >= 2) {
         func_8008E000(D_800125FC, buf);
         __asm__ volatile("" : "=r"(count));
         count = 0;
@@ -129,7 +130,7 @@ end:
         __asm__ volatile("" : "=r"(hi) : "0"(hi));
         if (!*(signed char *)(hi + off + 0x3E88)) break;
         if (func_800901F8(name, buf)) {
-            if (D_8009C8B0 >= 2) {
+            if (gCdLogLevel >= 2) {
                 __asm__ volatile("");
                 func_8008E000(D_8001261C, buf);
             }
@@ -141,7 +142,7 @@ end:
         count++;
         off += 24;
     } while (count < 64);
-    if (D_8009C8B0 > 0) {
+    if (gCdLogLevel > 0) {
         func_8008E000(D_80012628, buf);
         __asm__ volatile(".set reorder");
     }

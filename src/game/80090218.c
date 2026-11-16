@@ -5,7 +5,7 @@ extern u8 D_800A5A80[];
 extern u8 D_800A4480[];
 extern u8 D_800A4484[];
 extern u8 D_800A4488[];
-extern s32 D_8009C8B0;
+extern s32 gCdLogLevel __asm__("D_8009C8B0");
 extern s32 D_8009CBC0;
 
 extern u8 D_80012638[];
@@ -70,14 +70,14 @@ s32 func_80090218(void)
     __asm__("lui %0,%%hi(D_800A5A80)\n\taddiu %0,%0,%%lo(D_800A5A80)" : "=r"(buf));
     res = func_8009081C(1, 0x10, buf);
     if (res != 1) {
-        if (D_8009C8B0 > 0) {
+        if (gCdLogLevel > 0) {
             PRINT_STR(D_80012638);
         }
         return 0;
     }
 
     if (func_80090890(buf + 1, D_80012664, 5) != 0) {
-        if (D_8009C8B0 > 0) {
+        if (gCdLogLevel > 0) {
             PRINT_STR(D_8001266C);
         }
         return 0;
@@ -86,7 +86,7 @@ s32 func_80090218(void)
     memcpy(sector, buf + 0x8C, 4);
 
     if (func_8009081C(1, *(s32 *)sector, buf) != res) {
-        if (D_8009C8B0 > 0) {
+        if (gCdLogLevel > 0) {
             register s32 a1 __asm__("$5") = *(s32 *)sector;
             __asm__ volatile(".set\tnoreorder\n\tlui $4,%%hi(D_8001269C)\n\tjal func_8008E000\n\taddiu $4,$4,%%lo(D_8001269C)\n\t.set\treorder"
                 : "=r"(a1) : "0"(a1) : "$2", "$3", "$4", "$6", "$7", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25", "$31", "memory");
@@ -95,7 +95,7 @@ s32 func_80090218(void)
     }
 
     ptr = buf;
-    if (D_8009C8B0 >= 2) {
+    if (gCdLogLevel >= 2) {
         PRINT_STR(D_800126C0);
     }
 
@@ -123,7 +123,7 @@ loop:
             pad = (len & 1) + 8;
             ptr += len + pad;
 
-            if (D_8009C8B0 >= 2) {
+            if (gCdLogLevel >= 2) {
                 s32 a_, b_, c_;
                 a_ = LOADX(D_800A4488, off, 0x4488);
                 b_ = LOADX(D_800A4480, off, 0x4480);
@@ -141,7 +141,7 @@ finish_loop:
 
 after_loop:
     D_8009CBC0 = 0;
-    if (D_8009C8B0 >= 2) {
+    if (gCdLogLevel >= 2) {
         func_8008E000(D_800126F4, i);
         __asm__ volatile(".set\tnoreorder\n\t.set reorder");
     }

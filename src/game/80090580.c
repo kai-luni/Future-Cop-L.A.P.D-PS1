@@ -15,7 +15,7 @@ typedef struct {
 } DirEntry;
 
 extern s32 D_8009CBC0;
-extern s32 D_8009C8B0;
+extern s32 gCdLogLevel __asm__("D_8009C8B0");
 extern u8 D_800A445C[];
 extern u8 D_800A5A80[];
 extern DirEntry D_800A3E80[];
@@ -75,12 +75,12 @@ s32 func_80090580(s32 arg0)
         return 1;
     }
     if (func_8009081C(1, LOADX("lw", D_800A445C, arg0 * 0x2C), D_800A5A80) != 1) {
-        if (D_8009C8B0 > 0) {
+        if (gCdLogLevel > 0) {
             PRINT_STR(D_80012718);
         }
         return -1;
     }
-    if (D_8009C8B0 >= 2) {
+    if (gCdLogLevel >= 2) {
         PRINT_STR(D_80012738);
     }
     p = D_800A5A80;
@@ -112,7 +112,7 @@ s32 func_80090580(s32 arg0)
             D_800A3E80[i].name[p[0x20]] = 0;
             break;
         }
-        if (D_8009C8B0 >= 2) {
+        if (gCdLogLevel >= 2) {
             s32 off = i * sizeof(DirEntry);
             __asm__("" : : "r"(i), "r"(off));
             func_8008E000(D_8001275C, LOADV("lbu", D_800A3E80, off), LOADV("lbu", D_800A3E81, off),
@@ -128,7 +128,7 @@ s32 func_80090580(s32 arg0)
     if (i < 0x40) {
         D_800A3E80[i].name[0] = 0;
     }
-    if (D_8009C8B0 >= 2) {
+    if (gCdLogLevel >= 2) {
         func_8008E000(D_80012778, i);
         __asm__ volatile(".set\tnoreorder\n\t.set reorder");
     }

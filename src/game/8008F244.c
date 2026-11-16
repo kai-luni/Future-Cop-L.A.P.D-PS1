@@ -5,7 +5,8 @@ typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
 
-extern int D_8009C8B0, D_8009CAEC[], D_8009C9EC[];
+extern int D_8009CAEC[], D_8009C9EC[];
+extern int gCdLogLevel __asm__("D_8009C8B0");
 extern int D_8009C8CC[], D_8009C94C[];
 extern u8 D_8009C8C0[], D_8009C8C4, D_8009C8C5;
 extern u8 gCdStateBytes[] __asm__("D_8009CB84");
@@ -55,7 +56,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
     int ret;
     register int zero __asm__("$4");
 
-    if (D_8009C8B0 >= 2) {
+    if (gCdLogLevel >= 2) {
         register unsigned int index __asm__("$2") = (s1 & 255) << 2;
         register char *entry __asm__("$5");
         __asm__("" : "+r"(saved_result));
@@ -70,7 +71,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
         if (value != 0) {
             __asm__("" : "+r"(zero));
             if (param == 0) {
-                if (D_8009C8B0 > 0) {
+                if (gCdLogLevel > 0) {
                     register char *entry __asm__("$5");
                     __asm__("lui %0,%%hi(D_8009C8CC)\n\taddu %0,%0,%1\n\tlw %0,%%lo(D_8009C8CC)(%0)" : "=&r"(entry) : "r"(offset));
                     func_8008E000(D_8001252C, entry);

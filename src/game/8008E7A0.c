@@ -9,7 +9,8 @@ extern unsigned char D_8009C8C5;
 extern int D_8009CA6C[];
 extern int D_8009C96C[];
 extern int D_8009C8CC[];
-extern int D_8009C8B0, D_8009C8B8, D_8009C8BC;
+extern int D_8009C8B8, D_8009C8BC;
+extern int gCdLogLevel __asm__("D_8009C8B0");
 extern int gCdStatusByte __asm__("D_8009C8B4");
 extern unsigned char gCdStateBytes[] __asm__("D_8009CB84");
 extern unsigned char D_800A3E50[], D_800A3E58[], D_800A3E60[];
@@ -98,9 +99,9 @@ int func_8008E7A0(void)
         }
     }
 skip_input:
-    if (mode == 5 && D_8009C8B0 > 0) {
+    if (mode == 5 && gCdLogLevel > 0) {
         func_8008E000(D_800124B4);
-        if (D_8009C8B0 > 0) {
+        if (gCdLogLevel > 0) {
             register int index __asm__("$2");
             register int val __asm__("$5");
             register int a __asm__("$6");
