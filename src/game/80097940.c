@@ -1,7 +1,9 @@
 // Categories: Platform > Bit Manipulation
+#include "game/spu_globals.h"
+
 #include "../../include/game/types.h"
 
-extern u32 *D_8009EEB8;
+extern u32 *gSpuAccessDelayPtr __asm__("D_8009EEB8");
 
 /**
  *  @brief Updates bits 24 through 27 of a pointed-to word.
@@ -21,5 +23,5 @@ extern u32 *D_8009EEB8;
  */
 void func_80097940(void)
 {
-    *D_8009EEB8 = (*D_8009EEB8 & 0xF0FFFFFFU) | 0x20000000U;
+    *gSpuAccessDelayPtr = (*gSpuAccessDelayPtr & 0xF0FFFFFFU) | 0x20000000U;
 }

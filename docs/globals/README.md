@@ -28,6 +28,9 @@ reads through the pointer afterwards.
 | `D_8009DEE4` | `gDmaControlGpuPtr` | `0x8009DEE4` | `0x1F8010F0` | DMA control (DPCR), GPU path |
 | `D_8009EEB4` | `gSpuDelayCtrlPtr` | `0x8009EEB4` | `0x1F8010F0` | DMA control (DPCR), SPU driver |
 | `D_8009E9C8` | `gDma0ChannelCtrlPtr` | `0x8009E9C8` | `0x1F801088` | DMA0 channel control (MDEC output) |
+| `D_8009EEB8` | `gSpuAccessDelayPtr` | `0x8009EEB8` | `0x1F801014` | SPU access delay |
+| `D_8009CBA0` | `gCdromAccessDelayPtr` | `0x8009CBA0` | `0x1F801018` | CD-ROM access delay |
+| `D_8009CB7C` | `gComAccessDelayPtr` | `0x8009CB7C` | `0x1F801020` | common access delay |
 | `D_8009E9F4` | `gMdecControlStatusPtr` | `0x8009E9F4` | `0x1F801824` | MDEC control/status word |
 
 Per-variable detail, evidence and function lists:
