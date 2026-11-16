@@ -5,7 +5,7 @@
 
 typedef unsigned int u32;
 extern int D_8009DEFC, D_8009DF00;
-extern volatile u32 D_8009DEEC;
+extern volatile u32 gGpuJobTail __asm__("D_8009DEEC");
 extern u32 D_8009DEF8;
 extern u32 gGpuJobHead __asm__("D_8009DEE8");
 extern volatile u32 *gDmaControlGpuPtr __asm__("D_8009DEE4");
@@ -57,11 +57,11 @@ int func_8009520C(void)
 fail:
         __asm__ volatile("lui %0,%%hi(D_8009DEC8)\n\tlw %0,%%lo(D_8009DEC8)(%0)\n\tlui %1,%%hi(D_80012B48)\n\taddiu %1,%1,%%lo(D_80012B48)\n\tlw $2,0(%0)" : "=r"(port), "=r"(message));
         count = gGpuJobHead;
-        func_8008E000(message, (count - D_8009DEEC) & 0x3f, *port, *gDma2ChannelCtrlPtr, *gDma2MemAddrPtr);
+        func_8008E000(message, (count - gGpuJobTail) & 0x3f, *port, *gDma2ChannelCtrlPtr, *gDma2MemAddrPtr);
         saved = func_800915FC(0);
-        D_8009DEEC = 0;
+        gGpuJobTail = 0;
         D_8009DEF8 = saved;
-        gGpuJobHead = D_8009DEEC;
+        gGpuJobHead = gGpuJobTail;
         *gDma2ChannelCtrlPtr = 0x401;
         *gDmaControlGpuPtr |= 0x800;
         *gGpuGp1PortPtr = 0x2000000;

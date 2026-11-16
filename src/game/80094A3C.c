@@ -23,7 +23,7 @@ struct StructDDF0 {
 extern volatile struct QueueEntry D_800A9450[];
 extern struct StructDDF0 D_8009DDF0;
 extern volatile s32 gGpuJobHead __asm__("D_8009DEE8");
-extern volatile s32 D_8009DEEC;
+extern volatile s32 gGpuJobTail __asm__("D_8009DEEC");
 extern u32 D_8009DEF0;
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
@@ -68,7 +68,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
 
     func_800951D8();
 
-    while (((gGpuJobHead + 1) & 0x3F) == D_8009DEEC) {
+    while (((gGpuJobHead + 1) & 0x3F) == gGpuJobTail) {
         if (func_8009520C() != 0) {
             return -1;
         }
@@ -80,7 +80,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
     __asm__("" : "=r"(ddf0) : "0"(ddf0));
     ddf0->unk8 = 1;
 
-    if (ddf0->unk1 == 0 || (gGpuJobHead == D_8009DEEC && (*gDma2ChannelCtrlPtr & 0x1000000) == 0 && ddf0->unkC == 0)) {
+    if (ddf0->unk1 == 0 || (gGpuJobHead == gGpuJobTail && (*gDma2ChannelCtrlPtr & 0x1000000) == 0 && ddf0->unkC == 0)) {
         while ((*gGpuGp1PortPtr & 0x04000000) == 0) {
         }
         func(arg1, arg3);
@@ -113,7 +113,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
     func_800915FC(D_8009DEF0);
     func_80094CEC();
 
-    i = (gGpuJobHead - D_8009DEEC) & 0x3F;
+    i = (gGpuJobHead - gGpuJobTail) & 0x3F;
     __asm__ volatile(".set\tnoreorder\n\t.set reorder");
     return i;
 }
