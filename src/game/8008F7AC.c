@@ -1,4 +1,6 @@
 // Categories: Platform > Hardware Registers
+#include "game/spu_globals.h"
+
 #include "game/cdrom_globals.h"
 
 #include "game/types.h"
@@ -13,7 +15,7 @@ struct State {
     u8 pad4[4];
     u16 f, g;
 };
-extern struct State *D_8009CB80;
+extern struct State *gSpuRegsAltPtr __asm__("D_8009CB80");
 extern u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern u8 *gCdromCommandPtr __asm__("D_8009CB70");
 extern u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
@@ -41,13 +43,13 @@ extern u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 s32 func_8008F7AC(void)
 {
     volatile u8 data[4];
-    if (D_8009CB80->f == 0 && D_8009CB80->g == 0) {
-        D_8009CB80->a = 0x3fff;
-        D_8009CB80->b = 0x3fff;
+    if (gSpuRegsAltPtr->f == 0 && gSpuRegsAltPtr->g == 0) {
+        gSpuRegsAltPtr->a = 0x3fff;
+        gSpuRegsAltPtr->b = 0x3fff;
     }
-    D_8009CB80->d = 0x3fff;
-    D_8009CB80->e = 0x3fff;
-    D_8009CB80->c = 0xc001;
+    gSpuRegsAltPtr->d = 0x3fff;
+    gSpuRegsAltPtr->e = 0x3fff;
+    gSpuRegsAltPtr->c = 0xc001;
     data[2] = 0x80;
     data[0] = 0x80;
     data[3] = 0;
