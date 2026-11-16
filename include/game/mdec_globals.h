@@ -16,6 +16,7 @@
  *   extern volatile u32 *gMdecControlStatusPtr __asm__(MDEC_CONTROL_ASM);
  */
 
+#define MDEC_COMMAND_ASM "D_8009E9F0"
 #define MDEC_CONTROL_ASM "D_8009E9F4"
 
 #endif /* GAME_MDEC_GLOBALS_H */

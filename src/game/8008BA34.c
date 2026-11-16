@@ -1,4 +1,6 @@
 // Categories: Platform > Device I/O
+#include "game/sio_globals.h"
+
 #include "game/types.h"
 
 typedef struct UnkBA34_Item {
@@ -28,7 +30,7 @@ extern s32 D_8009C768;
 extern s32 D_8009C774;
 extern s32 D_8009C780[2];
 extern s32 D_8009C7A0;
-extern volatile u8 *D_8009C7A4;
+extern volatile u8 *gSio0RxDataPtr __asm__("D_8009C7A4");
 
 extern s32 func_8008A9A8(UnkBA34_Arg *, u8);
 extern s32 func_8008AB80(UnkBA34_Arg *, u8);
@@ -141,7 +143,7 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
     }
 
     func_8008AE44();
-    arg0->unk3C[arg0->unk44++] = *D_8009C7A4;
+    arg0->unk3C[arg0->unk44++] = *gSio0RxDataPtr;
     D_8009C728(0);
     return 0;
 }

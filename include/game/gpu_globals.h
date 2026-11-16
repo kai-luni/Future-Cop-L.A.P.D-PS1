@@ -24,6 +24,7 @@
  */
 
 #define GPU_GP0_PORT_ASM "D_8009DEC4"
+#define GPU_GP1_STATUS_ASM "D_8009CC18"
 #define GPU_GP1_PORT_ASM "D_8009DEC8"
 
 #endif /* GAME_GPU_GLOBALS_H */

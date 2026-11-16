@@ -46,6 +46,15 @@ reads through the pointer afterwards.
 | `D_8009DEE0` | `gDma6ChannelCtrlPtr` | `0x8009DEE0` | `0x1F8010E8` | DMA6 channel control (OTC) |
 | `D_8009CC1C` | `gTimer1CounterPtr` | `0x8009CC1C` | `0x1F801110` | timer 1 counter |
 | `D_8009DD54` | `gTimer1ModePtr` | `0x8009DD54` | `0x1F801114` | timer 1 mode |
+| `D_8009C7A4` | `gSio0RxDataPtr` | `0x8009C7A4` | `0x1F801040` | SIO0 receive data |
+| `D_8009C7C0` | `gSio0CtrlPtr` | `0x8009C7C0` | `0x1F801040` | SIO0 control (offset 0xA) |
+| `D_8009C804` | `gSio0CtrlClearPtr` | `0x8009C804` | `0x1F801040` | SIO0 control clear |
+| `D_8009C808` | `gInterruptStatusStatePtr` | `0x8009C808` | `0x1F801070` | I_STAT, struct view |
+| `D_8009CBA4` | `gDmaControlCdromPtr` | `0x8009CBA4` | `0x1F8010F0` | DPCR, CD-ROM path |
+| `D_8009E9F8` | `gDmaControlMdecPtr` | `0x8009E9F8` | `0x1F8010F0` | DPCR, MDEC path |
+| `D_8009CC18` | `gGpuGp1StatusPtr` | `0x8009CC18` | `0x1F801814` | GPUSTAT read side |
+| `D_8009E9F0` | `gMdecCommandPtr` | `0x8009E9F0` | `0x1F801820` | MDEC command port |
+| `D_8009CB80` | `gSpuRegsAltPtr` | `0x8009CB80` | `0x1F801C00` | SPU block, second pointer |
 | `D_8009E9F4` | `gMdecControlStatusPtr` | `0x8009E9F4` | `0x1F801824` | MDEC control/status word |
 
 Per-variable detail, evidence and function lists:
