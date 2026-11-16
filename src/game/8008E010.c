@@ -1,5 +1,5 @@
 // Categories: Platform > CD-ROM
-extern unsigned char D_8009C8B4;
+extern unsigned char gCdStatusByte __asm__("D_8009C8B4");
 
 /**
  * @brief Returns the CD driver status byte.
@@ -21,5 +21,5 @@ extern unsigned char D_8009C8B4;
  */
 int func_8008E010(void)
 {
-    return D_8009C8B4;
+    return gCdStatusByte;
 }

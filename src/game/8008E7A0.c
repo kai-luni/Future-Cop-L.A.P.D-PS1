@@ -9,7 +9,8 @@ extern unsigned char D_8009C8C5;
 extern int D_8009CA6C[];
 extern int D_8009C96C[];
 extern int D_8009C8CC[];
-extern int D_8009C8B0, D_8009C8B4, D_8009C8B8, D_8009C8BC;
+extern int D_8009C8B0, D_8009C8B8, D_8009C8BC;
+extern int gCdStatusByte __asm__("D_8009C8B4");
 extern unsigned char gCdStateBytes[] __asm__("D_8009CB84");
 extern unsigned char D_800A3E50[], D_800A3E58[], D_800A3E60[];
 extern char D_800124B4[], D_800124C0[], D_800124DC[], D_800124F0[];
@@ -83,7 +84,7 @@ int func_8008E7A0(void)
         if (!value) goto skip_input;
     }
     {
-        if (!(D_8009C8B4 & 0x10) && (buf[0] & 0x10)) {
+        if (!(gCdStatusByte & 0x10) && (buf[0] & 0x10)) {
             D_8009C8BC = D_8009C8BC + 1;
         }
         {
@@ -92,7 +93,7 @@ int func_8008E7A0(void)
             __asm__("" : "+r"(a), "+r"(b));
             a &= 0xff;
             s1 = a & 0x1D;
-            D_8009C8B4 = a;
+            gCdStatusByte = a;
             D_8009C8B8 = b;
         }
     }
@@ -105,7 +106,7 @@ skip_input:
             register int a __asm__("$6");
             register int b __asm__("$7");
             index = D_8009C8C5;
-            a = D_8009C8B4;
+            a = gCdStatusByte;
             b = D_8009C8B8;
             __asm__("" : "+r"(index), "+r"(a), "+r"(b));
             index <<= 2;

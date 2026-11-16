@@ -3,7 +3,7 @@
 
 extern s32 D_8009C820[];
 extern s32 D_8009C8A8;
-extern u8 D_8009C8B4;
+extern u8 gCdStatusByte __asm__("D_8009C8B4");
 extern s32 func_8008F244(s32, void *, void *, s32);
 
 /**

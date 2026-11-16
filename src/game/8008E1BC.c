@@ -3,7 +3,7 @@
 
 extern s32 D_8009C820[];
 extern s32 D_8009C8A8;
-extern u8 D_8009C8B4;
+extern u8 gCdStatusByte __asm__("D_8009C8B4");
 extern s32 func_8008F244(s32, void *, void *, s32);
 
 /**
@@ -68,7 +68,7 @@ s32 func_8008E1BC(s32 command, void *param, void *result)
         D_8009C8A8 = 0;
         one = 1;
         __asm__("" : "+r"(one));
-        if (index != one && (D_8009C8B4 & 0x10)) {
+        if (index != one && (gCdStatusByte & 0x10)) {
             call_a0 = 1;
             __asm__("" : "+r"(call_a0));
             zero_a1 = 0;
