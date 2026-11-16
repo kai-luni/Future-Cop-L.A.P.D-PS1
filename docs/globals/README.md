@@ -31,6 +31,11 @@ reads through the pointer afterwards.
 | `D_8009EEB8` | `gSpuAccessDelayPtr` | `0x8009EEB8` | `0x1F801014` | SPU access delay |
 | `D_8009CBA0` | `gCdromAccessDelayPtr` | `0x8009CBA0` | `0x1F801018` | CD-ROM access delay |
 | `D_8009CB7C` | `gComAccessDelayPtr` | `0x8009CB7C` | `0x1F801020` | common access delay |
+| `D_8009DD84` | `gDmaChannelRegBasePtr` | `0x8009DD84` | `0x1F801080` | DMA channel block base |
+| `D_8009E9C0` | `gDma0MemAddrPtr` | `0x8009E9C0` | `0x1F801080` | DMA0 memory address |
+| `D_8009E9C4` | `gDma0BlockCtrlPtr` | `0x8009E9C4` | `0x1F801084` | DMA0 block control |
+| `D_8009E9CC` | `gDma1MemAddrPtr` | `0x8009E9CC` | `0x1F801090` | DMA1 memory address |
+| `D_8009E9D0` | `gDma1BlockCtrlPtr` | `0x8009E9D0` | `0x1F801094` | DMA1 block control |
 | `D_8009E9F4` | `gMdecControlStatusPtr` | `0x8009E9F4` | `0x1F801824` | MDEC control/status word |
 
 Per-variable detail, evidence and function lists:
