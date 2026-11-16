@@ -8,7 +8,7 @@ struct SoundSystem {
     u8 *channels;
 };
 
-extern struct SoundSystem D_800A07A8;
+extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 extern s32 D_800A07AC;
 extern s32 D_800A07B0;
 extern s32 D_800A07B4;
@@ -52,7 +52,7 @@ s32 func_80021554(s32 *arguments)
     valuePtr = &value;
     if (func_80021740(arguments, 4, valuePtr, 0) != 0) {
         bankCount = value;
-        D_800A07A8.bankCount = bankCount;
+        gSoundSystem.bankCount = bankCount;
     }
 
     channelCount = 0x18;
@@ -87,7 +87,7 @@ s32 func_80021554(s32 *arguments)
     }
 
     for (i = 0; i < channelCount; i++) {
-        *(s32 *)(D_800A07A8.channels + i * 0x1C + 0xC) = i;
+        *(s32 *)(gSoundSystem.channels + i * 0x1C + 0xC) = i;
     }
 
     if (result != 0) {

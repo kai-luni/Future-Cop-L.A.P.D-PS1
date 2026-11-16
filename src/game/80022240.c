@@ -18,7 +18,7 @@ struct SoundSystem {
     struct SoundVoiceSlot voices[3];
 };
 
-extern struct SoundSystem D_800A07A8;
+extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
 extern void func_8002238C(s32 channel);
 
@@ -44,10 +44,10 @@ void func_80022240(s32 owner)
     s32 i;
 
     for (i = 0; i < 3; i++) {
-        if (D_800A07A8.voices[i].active != 0 && D_800A07A8.voices[i].owner == owner) {
+        if (gSoundSystem.voices[i].active != 0 && gSoundSystem.voices[i].owner == owner) {
             func_8002238C(owner);
-            D_800A07A8.voices[i].active = 0;
-            D_800A07A8.voices[i].owner = -1;
+            gSoundSystem.voices[i].active = 0;
+            gSoundSystem.voices[i].owner = -1;
         }
     }
 }

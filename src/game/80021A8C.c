@@ -7,7 +7,7 @@ struct EventFlags {
     u32 acknowledged;
 };
 
-extern struct EventFlags D_800A07A8;
+extern struct EventFlags gSoundSystem __asm__("D_800A07A8");
 
 /**
  *  @brief Acknowledges the specified event flags.
@@ -28,6 +28,6 @@ extern struct EventFlags D_800A07A8;
  */
 void func_80021A8C(u32 flags)
 {
-    D_800A07A8.pending &= ~flags;
-    D_800A07A8.acknowledged |= flags;
+    gSoundSystem.pending &= ~flags;
+    gSoundSystem.acknowledged |= flags;
 }

@@ -21,7 +21,7 @@ struct SoundSystem {
     void *unk18;
 };
 
-extern struct SoundSystem D_800A07A8;
+extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 extern void *D_800A07BC;
 
 extern void func_80098C68(s32, void *);
@@ -50,7 +50,7 @@ void func_80021E1C(void)
     struct SoundChannel *chan;
     s32 i;
 
-    sys = &D_800A07A8;
+    sys = &gSoundSystem;
     if (sys->active != 0) {
         return;
     }
@@ -59,21 +59,21 @@ void func_80021E1C(void)
         func_80098C68(0, sys->unk18);
         sys->unk18 = 0;
     }
-    if (D_800A07A8.mask != 0) {
-        i = D_800A07A8.channelCount;
-        chan = D_800A07A8.channels;
+    if (gSoundSystem.mask != 0) {
+        i = gSoundSystem.channelCount;
+        chan = gSoundSystem.channels;
         i--;
         for (; i != -1; i--) {
-            if ((1 << chan->channel) & D_800A07A8.mask) {
+            if ((1 << chan->channel) & gSoundSystem.mask) {
                 func_80021AD0(chan, chan->unk10, chan->unk14, chan->unk18);
             }
             chan->unk08 = 2;
             chan++;
         }
-        if (D_800A07A8.mask != 0) {
-            func_80098C68(1, (void *)D_800A07A8.mask);
+        if (gSoundSystem.mask != 0) {
+            func_80098C68(1, (void *)gSoundSystem.mask);
         }
     }
-    D_800A07A8.mask = 0;
-    D_800A07A8.active = 0;
+    gSoundSystem.mask = 0;
+    gSoundSystem.active = 0;
 }

@@ -6,7 +6,7 @@ struct FlagState {
     u32 flags;
 };
 
-extern struct FlagState D_800A07A8;
+extern struct FlagState gSoundSystem __asm__("D_800A07A8");
 
 /**
  *  @brief Adds bits to a shared flag field.
@@ -27,5 +27,5 @@ extern struct FlagState D_800A07A8;
  */
 void func_80021AB4(u32 flags)
 {
-    D_800A07A8.flags |= flags;
+    gSoundSystem.flags |= flags;
 }

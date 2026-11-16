@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 struct State { u8 pad[0x70]; s32 scale; };
-extern struct State D_800A07A8;
+extern struct State gSoundSystem __asm__("D_800A07A8");
 
 /**
  *  @brief Calculate two scaled channel values from a level and pan control.
@@ -39,6 +39,6 @@ void func_800223B0(u8 *a0, s32 a1, s32 a2, s32 *a3, s32 *a4)
         values[0] = (values[0] * a0[1]) >> 7;
         values[1] = (values[1] * a0[2]) >> 7;
     }
-    *a3 = values[0] * D_800A07A8.scale;
-    *a4 = values[1] * D_800A07A8.scale;
+    *a3 = values[0] * gSoundSystem.scale;
+    *a4 = values[1] * gSoundSystem.scale;
 }

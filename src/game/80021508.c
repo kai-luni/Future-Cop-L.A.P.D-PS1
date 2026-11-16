@@ -19,7 +19,7 @@ struct SoundSystem {
     s32 volume;
 };
 
-extern struct SoundSystem D_800A07A8;
+extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
 /**
  *  @brief Resets selected sound-system fields and sets the default volume.
@@ -42,15 +42,15 @@ void func_80021508(void)
 {
     s32 i;
 
-    D_800A07A8.bankCount = 0;
-    D_800A07A8.banks = 0;
-    D_800A07A8.channelCount = 0;
-    D_800A07A8.channels = 0;
-    D_800A07A8.unk10 = 0;
-    D_800A07A8.unk14 = 0;
-    D_800A07A8.unk18 = 0;
+    gSoundSystem.bankCount = 0;
+    gSoundSystem.banks = 0;
+    gSoundSystem.channelCount = 0;
+    gSoundSystem.channels = 0;
+    gSoundSystem.unk10 = 0;
+    gSoundSystem.unk14 = 0;
+    gSoundSystem.unk18 = 0;
     for (i = 2; i >= 0; i--) {
-        D_800A07A8.voices[i].active = 0;
+        gSoundSystem.voices[i].active = 0;
     }
-    D_800A07A8.volume = 0x7F;
+    gSoundSystem.volume = 0x7F;
 }

@@ -6,7 +6,7 @@ struct SoundSystem {
     void **banks;
 };
 
-extern struct SoundSystem D_800A07A8;
+extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
 extern void func_80021998(s32 index);
 
@@ -30,9 +30,9 @@ extern void func_80021998(s32 index);
  */
 void func_80021DAC(s32 index)
 {
-    if (D_800A07A8.bankCount < index || index < 0 || D_800A07A8.banks == 0) {
+    if (gSoundSystem.bankCount < index || index < 0 || gSoundSystem.banks == 0) {
         return;
     }
     func_80021998(index);
-    D_800A07A8.banks[index] = 0;
+    gSoundSystem.banks[index] = 0;
 }

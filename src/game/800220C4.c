@@ -40,7 +40,7 @@ struct VoiceArgs {
     s32 unk08;
 };
 
-extern struct SoundSystem D_800A07A8;
+extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
 extern void func_800223B0(s32 a0, s32 a1, s32 a2, s32 *a3, s32 *a4);
 
@@ -88,7 +88,7 @@ s32 func_800220C4(s32 unused, s32 index, struct VoiceArgs *args, s32 arg3)
     vol = 0x7F;
     fmt = 0x80FF;
     rate = 0x5FCE;
-    sys = &D_800A07A8;
+    sys = &gSoundSystem;
     ptr = (u8 *)sys->voices + 4;
     chan = sys->channels + index;
     chan->unk00 = 0;

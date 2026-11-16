@@ -8,7 +8,7 @@ struct Unk07A8 {
     u8 *unk0C;
 };
 
-extern struct Unk07A8 D_800A07A8;
+extern struct Unk07A8 gSoundSystem __asm__("D_800A07A8");
 
 struct Args {
     s32 unk00;
@@ -62,8 +62,8 @@ s32 func_80021F98(s32 a0, s32 a1, s32 a2, s32 a3, s32 slot, struct Args *args)
     s32 offset;
     struct Entry *entry;
 
-    if (D_800A07A8.unk00 >= a0 && a0 >= 0) {
-        ptr = (u8 *)D_800A07A8.unk04[a0];
+    if (gSoundSystem.unk00 >= a0 && a0 >= 0) {
+        ptr = (u8 *)gSoundSystem.unk04[a0];
         if (ptr != 0) {
             ptr = func_80021800(ptr, a1);
             if (ptr != 0) {
@@ -71,7 +71,7 @@ s32 func_80021F98(s32 a0, s32 a1, s32 a2, s32 a3, s32 slot, struct Args *args)
                 offset += 4;
                 result = (s32)ptr + offset;
                 func_800223B0(result, args->unk04, args->unk08, &out1, &out2);
-                entry = (struct Entry *)(D_800A07A8.unk0C + slot * 28);
+                entry = (struct Entry *)(gSoundSystem.unk0C + slot * 28);
                 entry->unk00 = result;
                 if (args->unk00 == -1) {
                     entry->unk10 = *(u16 *)(result + 0xE);

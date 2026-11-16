@@ -14,7 +14,7 @@ struct SoundSystem {
     struct SoundChannelSlot *channels;
 };
 
-extern struct SoundSystem D_800A07A8;
+extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
 extern void func_80021AB4(u32 mask);
 extern void func_80021E1C(void);
@@ -41,8 +41,8 @@ void func_80021F3C(void)
     s32 remaining;
     u32 mask;
 
-    remaining = D_800A07A8.channelCount;
-    slot = D_800A07A8.channels;
+    remaining = gSoundSystem.channelCount;
+    slot = gSoundSystem.channels;
     mask = 0;
     for (; remaining != 0; remaining--) {
         mask |= 1 << slot->channel;

@@ -8,7 +8,7 @@ struct SoundSystem {
     void *channels;
 };
 
-extern struct SoundSystem D_800A07A8;
+extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
 extern void func_800217A8(void);
 
@@ -30,13 +30,13 @@ extern void func_800217A8(void);
  */
 void func_800216D8(void)
 {
-    if (D_800A07A8.banks != 0) {
+    if (gSoundSystem.banks != 0) {
         func_800217A8();
-        D_800A07A8.banks = 0;
-        D_800A07A8.bankCount = 0;
+        gSoundSystem.banks = 0;
+        gSoundSystem.bankCount = 0;
     }
-    if (D_800A07A8.channels != 0) {
-        D_800A07A8.channels = 0;
-        D_800A07A8.channelCount = 0;
+    if (gSoundSystem.channels != 0) {
+        gSoundSystem.channels = 0;
+        gSoundSystem.channelCount = 0;
     }
 }

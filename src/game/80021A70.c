@@ -7,7 +7,7 @@ struct EventFlags {
     u32 acknowledged;
 };
 
-extern struct EventFlags D_800A07A8;
+extern struct EventFlags gSoundSystem __asm__("D_800A07A8");
 
 /**
  *  @brief Adds bits to the pending event flags.
@@ -28,5 +28,5 @@ extern struct EventFlags D_800A07A8;
  */
 void func_80021A70(u32 flags)
 {
-    D_800A07A8.pending |= flags;
+    gSoundSystem.pending |= flags;
 }
