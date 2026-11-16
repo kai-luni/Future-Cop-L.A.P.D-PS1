@@ -7,7 +7,7 @@ typedef int s32;
 typedef unsigned int u32;
 extern volatile u32 *gGpuGp1StatusPtr __asm__("D_8009CC18");
 extern volatile u32 *gTimer1CounterPtr __asm__("D_8009CC1C");
-extern volatile u32 D_8009CC20;
+extern volatile u32 gTimerBaselineTick __asm__("D_8009CC20");
 extern s32 D_8009CC24;
 extern volatile s32 gVSyncTickCounter __asm__("D_8009DD50");
 extern void func_800913E8(s32, s32);
@@ -50,7 +50,7 @@ s32 func_80091270(s32 input)
     do {
         now = *gTimer1CounterPtr;
     } while (now != *gTimer1CounterPtr);
-    elapsed = (now - D_8009CC20) & 0xffff;
+    elapsed = (now - gTimerBaselineTick) & 0xffff;
     if (arg0 < 0) return gVSyncTickCounter;
     if (arg0 != 1) {
         register s32 target __asm__("$2");
@@ -78,8 +78,8 @@ s32 func_80091270(s32 input)
         }
         D_8009CC24 = gVSyncTickCounter;
         do {
-            D_8009CC20 = *gTimer1CounterPtr;
-        } while (D_8009CC20 != *gTimer1CounterPtr);
+            gTimerBaselineTick = *gTimer1CounterPtr;
+        } while (gTimerBaselineTick != *gTimer1CounterPtr);
     }
     return elapsed;
 }
