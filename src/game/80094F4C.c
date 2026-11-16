@@ -11,7 +11,7 @@ typedef int s32;
 typedef unsigned int u32;
 
 extern volatile u32 D_8009DEEC;
-extern u32 D_8009DEE8;
+extern u32 gGpuJobHead __asm__("D_8009DEE8");
 extern u32 D_8009DEF8;
 extern u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern u32 *gDmaControlGpuPtr __asm__("D_8009DEE4");
@@ -65,7 +65,7 @@ s32 func_80094F4C(s32 a0)
 
     saved = func_800915FC(0);
     D_8009DEEC = 0;
-    D_8009DEE8 = D_8009DEEC;
+    gGpuJobHead = D_8009DEEC;
     D_8009DEF8 = saved;
 
     switch (a0 & 7) {

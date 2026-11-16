@@ -11,7 +11,7 @@ typedef int s32;
 typedef unsigned int u32;
 
 extern volatile u32 D_8009DEEC;
-extern u32 D_8009DEE8;
+extern u32 gGpuJobHead __asm__("D_8009DEE8");
 extern u32 D_8009DEF8;
 extern u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern u32 *gDmaControlGpuPtr __asm__("D_8009DEE4");
@@ -53,7 +53,7 @@ u32 func_8009509C(u32 a0)
 
     if (a0 == 0) {
         func_800951D8();
-        while (D_8009DEE8 != D_8009DEEC) {
+        while (gGpuJobHead != D_8009DEEC) {
             func_80094CEC();
             if (func_8009520C() != 0) {
                 return -1;
@@ -66,7 +66,7 @@ u32 func_8009509C(u32 a0)
         }
         return 0;
     } else {
-        count = (D_8009DEE8 - D_8009DEEC) & 0x3F;
+        count = (gGpuJobHead - D_8009DEEC) & 0x3F;
         if (count != 0) {
             func_80094CEC();
         }
