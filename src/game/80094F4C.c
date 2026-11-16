@@ -12,7 +12,7 @@ typedef unsigned int u32;
 
 extern volatile u32 gGpuJobTail __asm__("D_8009DEEC");
 extern u32 gGpuJobHead __asm__("D_8009DEE8");
-extern u32 D_8009DEF8;
+extern u32 gSavedIrqMask __asm__("D_8009DEF8");
 extern u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern u32 *gDmaControlGpuPtr __asm__("D_8009DEE4");
 extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
@@ -66,7 +66,7 @@ s32 func_80094F4C(s32 a0)
     saved = func_800915FC(0);
     gGpuJobTail = 0;
     gGpuJobHead = gGpuJobTail;
-    D_8009DEF8 = saved;
+    gSavedIrqMask = saved;
 
     switch (a0 & 7) {
     case 0:
@@ -86,7 +86,7 @@ s32 func_80094F4C(s32 a0)
         break;
     }
 
-    func_800915FC(D_8009DEF8);
+    func_800915FC(gSavedIrqMask);
     if ((a0 & 7) == 0) {
         return func_80095350(a0);
     }
