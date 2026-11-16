@@ -1,4 +1,6 @@
 // Categories: Graphics > GPU Transfer | Platform > DMA
+#include "game/dma_globals.h"
+
 #include "game/gpu_globals.h"
 
 typedef unsigned short u16;
@@ -10,7 +12,7 @@ extern s16 D_8009DDF6;
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern volatile u32 *gGpuGp0PortPtr __asm__("D_8009DEC4");
 extern volatile u32 *D_8009DECC;
-extern volatile u32 *D_8009DED0;
+extern volatile u32 *gDma2BlockCtrlPtr __asm__("D_8009DED0");
 extern volatile u32 *D_8009DED4;
 extern void func_800951D8(void);
 extern int func_8009520C(void);
@@ -92,7 +94,7 @@ int func_800946A8(Hdr *arg0, u32 *out)
     if (blocks) {
         *gGpuGp1PortPtr = 0x4000003;
         *D_8009DECC = (u32)out;
-        *D_8009DED0 = (blocks << 16) | 0x10;
+        *gDma2BlockCtrlPtr = (blocks << 16) | 0x10;
         *D_8009DED4 = 0x1000200;
     }
     return 0;
