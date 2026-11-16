@@ -11,7 +11,7 @@ extern volatile u32 *gCdromAccessDelayPtr __asm__("D_8009CBA0");
 extern volatile u32 *gComAccessDelayPtr __asm__("D_8009CB7C");
 extern volatile u32 *D_8009CBA4;
 extern volatile u32 *gDma3MemAddrPtr __asm__("D_8009CBA8");
-extern volatile u32 *D_8009CBAC;
+extern volatile u32 *gDma3BlockCtrlPtr __asm__("D_8009CBAC");
 extern volatile u32 *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
 
 /**
@@ -46,7 +46,7 @@ int func_8008FD30(u32 destination, u32 size)
     *gComAccessDelayPtr = 0x1325;
     *D_8009CBA4 |= 0x8000;
     *gDma3MemAddrPtr = destination;
-    *D_8009CBAC = size | 0x10000;
+    *gDma3BlockCtrlPtr = size | 0x10000;
     p = gCdromIndexStatusPtr;
     while ((*p & 0x40) == 0) {
         continue;
