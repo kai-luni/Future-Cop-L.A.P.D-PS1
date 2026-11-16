@@ -1,4 +1,6 @@
 // Categories: Platform > Event Dispatch
+#include "game/cdrom_globals.h"
+
 /*
  * func_8008FE28 (0x8008FE28, 0xD8 bytes) -- EXACT reconstruction.
  *
@@ -20,7 +22,7 @@ typedef unsigned char u8;
 typedef unsigned int u32;
 typedef signed int s32;
 
-extern u8 *D_8009CB6C;
+extern u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u8 D_8009CB84[];
 extern u32 D_8009C8AC, D_8009C8A8;
 extern char D_800A3E58[], D_800A3E50[];
@@ -48,7 +50,7 @@ extern s32 func_8008E7A0(void);
  */
 void func_8008FE28(void)
 {
-    u8 mode = *D_8009CB6C & 3;
+    u8 mode = *gCdromIndexStatusPtr & 3;
     u8 *p = D_8009CB84 + 1;
     u8 *q = p - 1;
     s32 r;
@@ -63,5 +65,5 @@ void func_8008FE28(void)
         if ((r & 2) && D_8009C8A8 != 0)
             ((void (*)(u8, char *))D_8009C8A8)(q[0], D_800A3E50);
     }
-    *D_8009CB6C = mode;
+    *gCdromIndexStatusPtr = mode;
 }

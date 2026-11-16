@@ -1,4 +1,6 @@
 // Categories: Platform > CD-ROM | Platform > Interrupts
+#include "game/cdrom_globals.h"
+
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
@@ -10,7 +12,7 @@ extern int D_8009C8CC[], D_8009C94C[];
 extern u8 D_8009CB84[], D_8009C8C5;
 extern void (*D_8009C8AC)(int, void *);
 extern void (*D_8009C8A8)(int, void *);
-extern volatile u8 *D_8009CB6C;
+extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u8 D_800A3E58[];
 extern u8 D_800A3E50[];
 
@@ -131,7 +133,7 @@ loop:
 
     if (func_800915D4() != 0) {
         {
-            register int v __asm__("$2") = *D_8009CB6C;
+            register int v __asm__("$2") = *gCdromIndexStatusPtr;
             __asm__("" : "+r"(v));
             s1 = v & 3;
         }
@@ -157,7 +159,7 @@ inner_loop:
             }
             goto inner_loop;
         }
-        *D_8009CB6C = s1;
+        *gCdromIndexStatusPtr = s1;
     }
 
     {

@@ -1,7 +1,10 @@
 // Categories: Platform > CD-ROM > Control
+#include "game/cdrom_globals.h"
+
 typedef unsigned char u8;
 typedef unsigned int u32;
-extern volatile u8 *D_8009CB6C, *D_8009CB78, *D_8009CB74;
+extern volatile u8 *D_8009CB78, *D_8009CB74;
+extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u32 *D_8009CB7C;
 extern volatile u8 D_8009CB84[];
 
@@ -31,9 +34,9 @@ extern volatile u8 D_8009CB84[];
  */
 void func_8008F6D8(void)
 {
-    *D_8009CB6C = 1;
+    *gCdromIndexStatusPtr = 1;
     while (*D_8009CB78 & 7) {
-        *D_8009CB6C = 1;
+        *gCdromIndexStatusPtr = 1;
         *D_8009CB78 = 7;
         *D_8009CB74 = 7;
     }
@@ -42,7 +45,7 @@ void func_8008F6D8(void)
         register volatile u8 *port __asm__("$4");
         state[2] = 0;
         state[1] = state[2];
-        port = D_8009CB6C;
+        port = gCdromIndexStatusPtr;
         __asm__("" : "+r"(state), "+r"(port));
         state[0] = 2;
         *port = 0;

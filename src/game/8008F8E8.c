@@ -1,4 +1,6 @@
 // Categories: Platform > CD-ROM | Platform > Interrupts
+#include "game/cdrom_globals.h"
+
 typedef unsigned char u8;
 typedef unsigned int u32;
 
@@ -8,7 +10,8 @@ extern char D_8009CB88[];
 extern void D_8008FE28(void);
 extern u8 D_8009C8C5, D_8009C8C4;
 extern u32 D_8009C8AC, D_8009C8A8, D_8009C8B8, D_8009C8B4;
-extern volatile u8 *D_8009CB6C, *D_8009CB78, *D_8009CB74;
+extern volatile u8 *D_8009CB78, *D_8009CB74;
+extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u32 *D_8009CB7C;
 extern volatile u8 D_8009CB84[];
 extern void func_8008FF08(char *);
@@ -71,9 +74,9 @@ int func_8008F8E8(void)
         __asm__("" : "+r"(cb));
         func_800914B0(2, cb);
     }
-    *D_8009CB6C = 1;
+    *gCdromIndexStatusPtr = 1;
     while (*D_8009CB78 & 7) {
-        *D_8009CB6C = 1;
+        *gCdromIndexStatusPtr = 1;
         *D_8009CB78 = 7;
         *D_8009CB74 = 7;
     }
@@ -85,7 +88,7 @@ int func_8008F8E8(void)
         state = D_8009CB84;
         state[2] = 0;
         state[1] = state[2];
-        port = D_8009CB6C;
+        port = gCdromIndexStatusPtr;
         __asm__("" : "+r"(state), "+r"(port));
         state[0] = 2;
         *port = 0;

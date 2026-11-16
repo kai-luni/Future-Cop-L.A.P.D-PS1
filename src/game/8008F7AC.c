@@ -1,4 +1,6 @@
 // Categories: Platform > Hardware Registers
+#include "game/cdrom_globals.h"
+
 #include "game/types.h"
 
 struct State {
@@ -12,7 +14,8 @@ struct State {
     u16 f, g;
 };
 extern struct State *D_8009CB80;
-extern u8 *D_8009CB6C, *D_8009CB70, *D_8009CB74, *D_8009CB78;
+extern u8 *D_8009CB70, *D_8009CB74, *D_8009CB78;
+extern u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 
 /**
  *  @brief Initializes shared state fields and writes a short register sequence.
@@ -47,10 +50,10 @@ s32 func_8008F7AC(void)
     data[0] = 0x80;
     data[3] = 0;
     data[1] = 0;
-    *D_8009CB6C = 2;
+    *gCdromIndexStatusPtr = 2;
     *D_8009CB74 = data[0];
     *D_8009CB78 = data[1];
-    *D_8009CB6C = 3;
+    *gCdromIndexStatusPtr = 3;
     *D_8009CB70 = data[2];
     *D_8009CB74 = data[3];
     *D_8009CB78 = 0x20;

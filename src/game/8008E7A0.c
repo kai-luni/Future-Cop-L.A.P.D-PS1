@@ -1,5 +1,7 @@
 // Categories: Platform > CD-ROM | Platform > Interrupts
-extern volatile unsigned char *D_8009CB6C;
+#include "game/cdrom_globals.h"
+
+extern volatile unsigned char *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern volatile unsigned char *D_8009CB70;
 extern volatile unsigned char *D_8009CB74;
 extern volatile unsigned char *D_8009CB78;
@@ -52,7 +54,7 @@ int func_8008E7A0(void)
     int s1;
     volatile unsigned char *p;
 
-    *D_8009CB6C = 1;
+    *gCdromIndexStatusPtr = 1;
     p = D_8009CB78;
     mode = *p & 7;
     if (mode == 0) {
@@ -63,14 +65,14 @@ int func_8008E7A0(void)
         mode = *p & 7;
     }
     for (s0 = 0; s0 < 8; s0++) {
-        if (!(*D_8009CB6C & 0x20)) break;
+        if (!(*gCdromIndexStatusPtr & 0x20)) break;
         buf[s0] = *D_8009CB70;
     }
     {
         int i = s0;
         while (i < 8) { buf[i] = 0; i++; }
     }
-    *D_8009CB6C = 1;
+    *gCdromIndexStatusPtr = 1;
     *D_8009CB78 = 7;
     *D_8009CB74 = 7;
     if (mode == 3) {
@@ -177,7 +179,7 @@ skip_input:
             status[1] = state;
         }
         COPY(D_800A3E58);
-        *D_8009CB6C = 0;
+        *gCdromIndexStatusPtr = 0;
         *(unsigned char *)D_8009CB78 = 0;
         return 4;
     case4:

@@ -1,4 +1,6 @@
 // Categories: Platform > CD-ROM
+#include "game/cdrom_globals.h"
+
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
@@ -6,7 +8,8 @@ typedef int s32;
 extern int D_8009C8B0, D_8009CAEC[], D_8009C9EC[];
 extern int D_8009C8CC[], D_8009C94C[];
 extern u8 D_8009C8C0[], D_8009C8C4, D_8009C8C5, D_8009CB84[];
-extern volatile u8 *D_8009CB6C, *D_8009CB70, *D_8009CB74;
+extern volatile u8 *D_8009CB70, *D_8009CB74;
+extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern int D_800A3E68, D_800A3E6C;
 extern char *D_800A3E70;
 extern char D_80012524[], D_8001252C[], D_8001253C[], D_80012488[], D_80012498[];
@@ -112,7 +115,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
                 st[1] = 0;
             }
             {
-                register volatile u8 *p6c __asm__("$2") = D_8009CB6C;
+                register volatile u8 *p6c __asm__("$2") = gCdromIndexStatusPtr;
                 __asm__("" : "+r"(p6c), "+r"(c9ec));
                 *p6c = 0;
             }
@@ -224,7 +227,7 @@ loop:
 
     if (func_800915D4() != 0) {
         {
-            register int v __asm__("$2") = *D_8009CB6C;
+            register int v __asm__("$2") = *gCdromIndexStatusPtr;
             __asm__("" : "+r"(v));
             s1 = v & 3;
         }
@@ -250,7 +253,7 @@ inner_loop:
             }
             goto inner_loop;
         }
-        *D_8009CB6C = s1;
+        *gCdromIndexStatusPtr = s1;
     }
     if (state[0] == 0) goto loop;
 
