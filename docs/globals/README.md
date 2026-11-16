@@ -41,6 +41,11 @@ reads through the pointer afterwards.
 | `D_8009EEA8` | `gDma4MemAddrPtr` | `0x8009EEA8` | `0x1F8010C0` | DMA4 memory address (SPU) |
 | `D_8009EEAC` | `gDma4BlockCtrlPtr` | `0x8009EEAC` | `0x1F8010C4` | DMA4 block control (SPU) |
 | `D_8009EEB0` | `gDma4ChannelCtrlPtr` | `0x8009EEB0` | `0x1F8010C8` | DMA4 channel control (SPU) |
+| `D_8009DED8` | `gDma6MemAddrPtr` | `0x8009DED8` | `0x1F8010E0` | DMA6 memory address (OTC) |
+| `D_8009DEDC` | `gDma6BlockCtrlPtr` | `0x8009DEDC` | `0x1F8010E4` | DMA6 block control (OTC) |
+| `D_8009DEE0` | `gDma6ChannelCtrlPtr` | `0x8009DEE0` | `0x1F8010E8` | DMA6 channel control (OTC) |
+| `D_8009CC1C` | `gTimer1CounterPtr` | `0x8009CC1C` | `0x1F801110` | timer 1 counter |
+| `D_8009DD54` | `gTimer1ModePtr` | `0x8009DD54` | `0x1F801114` | timer 1 mode |
 | `D_8009E9F4` | `gMdecControlStatusPtr` | `0x8009E9F4` | `0x1F801824` | MDEC control/status word |
 
 Per-variable detail, evidence and function lists:
