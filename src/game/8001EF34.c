@@ -10,7 +10,7 @@ struct PadBuffer {
     u8 unk08[0x1C];
 };
 
-extern struct PadBuffer D_800A78F0[];
+extern struct PadBuffer gPadBuffers[] __asm__("D_800A78F0");
 
 /**
  * @brief Queries the controller type of a port, accepting only two pad ids.
@@ -39,7 +39,7 @@ s32 func_8001EF34(s32 port)
     struct PadBuffer *pad;
     s32 result;
 
-    pad = &D_800A78F0[port];
+    pad = &gPadBuffers[port];
     if (pad->unk00[0] != 0) {
         result = 0;
     } else {

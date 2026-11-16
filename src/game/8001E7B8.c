@@ -10,7 +10,7 @@ struct PadBuffer {
     u8 unk08[0x1C];
 };
 
-extern struct PadBuffer D_800A78F0[];
+extern struct PadBuffer gPadBuffers[] __asm__("D_800A78F0");
 
 extern s32 func_8001EF34(s32 port);
 
@@ -48,11 +48,11 @@ s32 func_8001E7B8(s32 *x, s32 *y, s32 port, s32 stick)
         return 0;
     }
     if (stick == 1) {
-        *x = D_800A78F0[port].rightX;
-        *y = D_800A78F0[port].rightY;
+        *x = gPadBuffers[port].rightX;
+        *y = gPadBuffers[port].rightY;
     } else {
-        *x = D_800A78F0[port].leftX;
-        *y = D_800A78F0[port].leftY;
+        *x = gPadBuffers[port].leftX;
+        *y = gPadBuffers[port].leftY;
     }
     return 1;
 }
