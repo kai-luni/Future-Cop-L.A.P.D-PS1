@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 typedef struct Entry { s32 a, b; char name[16]; } Entry;
-extern s32 D_8009CBC4;
+extern s32 gCdSeenResponseCount __asm__("D_8009CBC4");
 extern s32 gCdResponseCount __asm__("D_8009C8BC");
 extern s32 gCdLogLevel __asm__("D_8009C8B0");
 extern Entry D_800A3E80[];
@@ -54,9 +54,9 @@ Entry *func_8008FF20(Entry *out, char *path)
     register Entry *entry __asm__("$16");
     register char *name __asm__("$19");
     orig = path;
-    if (D_8009CBC4 != gCdResponseCount) {
+    if (gCdSeenResponseCount != gCdResponseCount) {
         if (!func_80090218()) return 0;
-        D_8009CBC4 = gCdResponseCount;
+        gCdSeenResponseCount = gCdResponseCount;
     }
     dest = out;
     if (*(signed char *)orig != '\\') return 0;
