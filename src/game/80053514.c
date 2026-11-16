@@ -1,3 +1,4 @@
+// Categories: Physics > Movement | Gameplay > Entity Update
 #include "game/types.h"
 
 typedef struct {
@@ -37,6 +38,26 @@ typedef struct {
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
 extern void func_8001A578(s32 angle, s32 *offset, s32 arg2);
 
+/**
+ * @brief Carries an actor along with its standing surface entity by applying frame translation and yaw rotation deltas.
+ *
+ * Confirmed: reads cached platform state at obj->unkAC + 0xEC (sub->unk50/unk54 position, unk58 yaw, unk5C/unk60 actor XZ). When arg1 is non-null and matches obj->unkC4, adds surface XZ delta to obj->unk50/unk58 and queries arg1->unk04(0xF, arg1, 0, 0) for surface yaw; if yaw changed by delta, wraps (obj->unkB0 + delta) & 0xFFF, updates sin/cos at obj->unkA0/unkA8 via func_8001846C, and rotates cached relative offset via func_8001A578(-delta, ...) to adjust obj->unk50/unk58. Then records obj->unkC4 = arg1 and refreshes sub cache. Category follows XZ position +0x50/+0x58, 12-bit heading +0xB0, and 2D trig rotation.
+ * Likely: moving-platform riding step called after ground queries in actor movement; message 0xF returns platform yaw. Unknown: meaning of sub->unk5A and sentinel 0x270F beyond avoiding duplicate message 0xF calls.
+ *
+ * @param arg0 Actor block (+0x50/+0x58 XZ pos, +0xA0/+0xA8 facing, +0xAC state, +0xB0 angle, +0xC4 riding pointer).
+ * @param arg1 Ground surface entity (+0x04 message handler, +0x50/+0x58 XZ position), or null when not on a surface entity.
+ *
+ * @par Globals
+ * None.
+ * @par Control flow
+ * Conditional ride update when arg1 != 0 && obj->unkC4 == arg1, nested delta != 0 rotation branch, then cache update when arg1 != 0.
+ * @par Calls
+ * arg1->unk04 (indirect message 0xF) - queries surface yaw. func_8001846C - recomputes sin/cos for unkB0. func_8001A578 - rotates XZ offset by -delta.
+ * @par Side effects
+ * Updates obj->unk50, obj->unk58, obj->unkA0, obj->unkA8, obj->unkB0, obj->unkC4, and cached fields at obj->unkAC + 0x13C..0x14C.
+ * @par Callers
+ * Confirmed: func_80053A74 (0x80054344) and func_800549F0 (0x8005540C), passing surface returned by func_80066F78 / Likely: none / Unknown: none.
+ */
 void func_80053514(Unk53514Obj *arg0, Unk53514Arg *arg1)
 {
     register Unk53514Obj *obj __asm__("$18");

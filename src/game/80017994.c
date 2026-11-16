@@ -1,3 +1,4 @@
+// Categories: Graphics > Scene Graph | Game Engine > Object Pool
 #include "game/types.h"
 
 struct Unk17994Block {
@@ -19,6 +20,32 @@ extern s32 D_8009F58C;
 
 extern void *func_80017EBC(s32 size, s32 tag);
 
+/**
+ * @brief Allocates a node with two copies of the neutral matrix template.
+ *
+ * A 0x94-byte block of type 2 is allocated and both 12-word blocks that follow
+ * the 0x28-byte header are filled from D_8009AA38, which makes them two
+ * identical 3x3 matrices in 16.16 fixed point. The node gets the next id from
+ * D_8009F58C and is appended to the list whose head is D_8009F588, with the
+ * previous pointer set to the current tail.
+ *
+ * @return The id assigned to the new node.
+ *
+ * @par Globals
+ * D_8009AA38 - matrix template; D_8009F588 - list head; D_8009F58C - id counter.
+ *
+ * @par Control flow
+ * Straight-line copy, then an append with a tail walk.
+ *
+ * @par Calls
+ * func_80017EBC - upper allocator.
+ *
+ * @par Side effects
+ * Grows the node list and increments the id counter.
+ *
+ * @par Callers
+ * Confirmed: func_800573A4.
+ */
 s32 func_80017994(void)
 {
     register struct Unk17994Node *node __asm__("$5");

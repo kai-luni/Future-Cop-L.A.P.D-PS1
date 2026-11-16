@@ -1,3 +1,4 @@
+// Categories: Resources > Memory Management | Graphics > Image Decode & Upload
 #include "game/types.h"
 
 extern void *D_8009F948;
@@ -7,6 +8,40 @@ extern void *D_8009F954;
 
 extern void *func_80017EBC(s32 size, s32 tag);
 
+/**
+ * @brief Allocates the four static working buffers of the image decoder.
+ *
+ * All four globals are nulled first and then filled from the tag-2 pool with
+ * 0x6000, 0x600, 0x2000 and 0x600 bytes. They are the "static" set of the
+ * decode/upload path func_800861E4, used when D_8009F9C4 is 0: D_8009F948 and
+ * D_8009F94C are the packed source and its unpack buffer, D_8009F954 and
+ * D_8009F950 the destination block and the work area. The allocating path of
+ * func_800861E4 grabs 0x10000/0x3000 instead and leaves these alone.
+ *
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Globals
+ * D_8009F948 - 0x6000-byte compressed-source buffer.
+ * D_8009F94C - 0x600-byte unpack/palette buffer.
+ * D_8009F954 - 0x2000-byte destination block.
+ * D_8009F950 - 0x600-byte work area.
+ * All four are freed again by func_80086164; no bounds check is performed here.
+ *
+ * @par Control flow
+ * Four stores, four allocations, four stores; the allocation and store order
+ * differ (D_8009F954 is allocated before D_8009F950), which is what the retail
+ * scheduling does. No branches.
+ *
+ * @par Calls
+ * func_80017EBC - tagged allocation, tag 2, four times.
+ *
+ * @par Side effects
+ * Allocates 0x7400 bytes in total and publishes them through the four globals.
+ *
+ * @par Callers
+ * Confirmed: func_80024A24 (mission boot).
+ */
 void func_800860CC(void)
 {
     D_8009F948 = (void *)0;

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Gameplay > Entity Script
 #include "game/types.h"
 
 struct Unk39504Sub04 {
@@ -40,6 +41,28 @@ extern void func_800382B4(s32 arg0, struct Unk39504Self *self, struct Unk39504Ot
 extern struct Unk39504Child *func_80039418(struct Unk39504Self *self, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6);
 extern void func_8003FA34(struct Unk39504Child *child);
 
+/**
+ * @brief Initializes a class-5 entity and spawns and registers its kind-0x15 child object.
+ *
+ * Forwards setup to func_800382B4, spawns a child object via func_80039418 from fields in
+ * other->unk08/unk04, clears self->unkA0, sets flag 0x10 on the child, and registers it.
+ *
+ * @param arg0 Message code forwarded to func_800382B4 (2 during spawn).
+ * @param self Class-5 entity receiving the child pointer at +0x158 and cleared +0xA0.
+ * @param other Spawn descriptor carrying sub-records unk04 (+0x04) and unk08 (+0x08).
+ * @param arg3 Context word forwarded to func_800382B4.
+ *
+ * @par Globals
+ * None directly.
+ * @par Control flow
+ * Straight-line sequence: base handler call, flag extraction ((unk4C_word & 6) == 2) << 1, child spawn, and child registration.
+ * @par Calls
+ * func_800382B4 (base setup), func_80039418 (spawns kind-0x15 child at +0x158), func_8003FA34 (links child into active/track list).
+ * @par Side effects
+ * Writes self->unk158 and self->unkA0 = 0, ORs 0x10 into child->unk24, and registers child via func_8003FA34.
+ * @par Callers
+ * Confirmed: func_800395A8 (message 2 spawn handler).
+ */
 void func_80039504(s32 arg0, struct Unk39504Self *self, struct Unk39504Other *other, s32 arg3)
 {
     struct Unk39504Sub08 *data;

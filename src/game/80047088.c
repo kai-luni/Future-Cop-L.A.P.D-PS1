@@ -1,3 +1,4 @@
+// Categories: Platform > Audio | Game Engine > Music
 #include "game/types.h"
 
 struct Unk47088Info {
@@ -23,6 +24,38 @@ extern void func_800243F8(s8 *arg0);
 extern void func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle,
                           struct Unk47088Object *object);
 
+/**
+ * @brief Switches or re-triggers the music track that belongs to an object.
+ *
+ * Only the request bit 0x20 is honoured. The stream block is selected by the
+ * object's info record, and the three low bits of arg0 are the requested
+ * track. If that stream is already playing, the same track only lowers the
+ * volume of the running voice by 0x64 (through the voice pointer returned by
+ * func_80046C84 with the track-relative id), while a different track stops
+ * the old one with sound stream->track + 0x32, releases the handle and clears
+ * the playing flag. A requested track other than 7 starts the new loop with
+ * func_80046E88(track + 0x22, ...) and marks the stream playing; track 6 is
+ * handled as a one-shot that only lowers its voice.
+ *
+ * @param arg0 Request flags, bit 0x20 plus the track number in bits 0..2.
+ * @param object Object whose info record names the stream (0xC1).
+ *
+ * @par Globals
+ * D_800A1810 - stream table (playing, track, handle).
+ *
+ * @par Control flow
+ * Guard on the request bit, then stop/restart or volume-only paths.
+ *
+ * @par Calls
+ * func_80046C84 - voice lookup by id. func_800243F8 - release the stream handle.
+ * func_80046E88 - start the looping track.
+ *
+ * @par Side effects
+ * Writes the stream state and lowers or stops voices.
+ *
+ * @par Callers
+ * Confirmed: func_800267C8, func_800588D4.
+ */
 void func_80047088(s32 arg0, struct Unk47088Object *object)
 {
     struct Unk47088Stream *stream;

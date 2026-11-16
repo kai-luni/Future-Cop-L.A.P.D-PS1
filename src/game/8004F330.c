@@ -1,3 +1,4 @@
+// Categories: Gameplay > Path Movement | AI > Target Selection
 #include "game/types.h"
 
 struct Node4F330 {
@@ -37,6 +38,31 @@ extern void func_8004E5F0(void *, void *, s32, s32);
 extern struct Ref4F330 *func_8004E80C(void *, s32, s32, s32, s32, s32, s32);
 extern s32 func_80095C14(u32);
 
+/**
+ * @brief Selects the next connected map node for a path follower using target-directed or random scoring.
+ *
+ * Unpacks four packed neighbor indices from 12-byte node arg2 in arg0->unk00 + 4, validates or acquires a target for modes 1..5 and 9..13, scores candidates via jtbl_800119A8, and picks the highest-scoring neighbor.
+ *
+ * @param arg0 Path state (+0x00 map, +0x2E range, +0x3A random skip, +0x3C/+0x3F flags/mode, +0x42 target node/val, +0x48/+0x4A recent nodes, +0x5C/+0x60 target cache).
+ * @param arg1 Seeker object passed to func_8004E5F0 and func_8004E80C.
+ * @param arg2 Current map node index.
+ * @return Winning neighbor index, -1 if only blocked/unk48 candidates exist, or -2 if all score -4.
+ *
+ * @par Globals
+ * None (dispatches scoring modes via jump table jtbl_800119A8).
+ *
+ * @par Control flow
+ * Low nibble of +0x3F sets mode (reverts to 0 on PRNG < +0x3A or failed target lookup). Loops over 4 unpacked neighbors (three 10-bit fields in +0, one >> 6 in +4): rejects 0x3FF (-4), +0x48 (-2) and +0x4A (-1) unless +0x3C & 1, and node byte +0 & 2 (-3). Modes 1..5/9..13 seek/flee target +0x5C and modes 6/14 aim at node +0x42 via 2D dot product scaled with func_80095C14 and >> (+4 & 0xF). Picks max >= -1 backwards with random tie-breaking.
+ *
+ * @par Calls
+ * func_80019668 (random skip, mode-0 scores, tie-break), func_8004E5F0 (called on matching cached id before clearing unk5C), func_8004E80C (target acquisition), func_80095C14 (GTE leading-bit scaling of dot products).
+ *
+ * @par Side effects
+ * Clears or updates arg0->unk5C and arg0->unk60 during target lookup.
+ *
+ * @par Callers
+ * Confirmed: func_8004F764 (0x8004F790, segment hand-off) and func_80050E0C (0x80050EDC, mover setup).
+ */
 s32 func_8004F330(struct Obj4F330 *arg0, struct Node4F330 *arg1, s32 arg2)
 {
     static void *const label_table[] __attribute__((used)) = {

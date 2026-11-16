@@ -1,3 +1,4 @@
+// Categories: Gameplay > Collision Response | Gameplay > Entity Update
 #include "game/types.h"
 
 typedef struct Obj379D4 {
@@ -23,6 +24,40 @@ typedef struct Obj379D4 {
 
 extern s32 func_8002AD58(s32 message, Obj379D4 *object, void *data);
 
+/**
+ * @brief Resolves a contact between two objects of the same family.
+ *
+ * When the object's state bits (0x30) read 1 it is put into state 3 and its
+ * countdown is set to -1. The message is forwarded unchanged whenever the
+ * object flag 0x8 is set, the partner's counter 0x24 is non-negative, the flag
+ * 0x40 is set, either 0x11C is negative, or the two objects do not share the
+ * same 0x120 group. For matching groups the object with the larger derived
+ * distance (0xFC << 8 - 0xF8) is treated as the faster partner; after the swap
+ * the pair must still share the group or be linked through 0x124, otherwise
+ * nothing happens. In the update path the faster object takes half of the
+ * other's speed, clamped to twice its 0x10C value, the two countdowns are set
+ * to -300 and 300 and the partner's speed is halved. Finally flag 0x80 decides
+ * whether the base handler sees the message.
+ *
+ * @param message Entity message id, forwarded to the base handler.
+ * @param object Object receiving the contact.
+ * @param data Contact partner.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * A chain of goto-driven guard exits around the swap and update blocks.
+ *
+ * @par Calls
+ * func_8002AD58 - base entity handler.
+ *
+ * @par Side effects
+ * Writes state, countdowns and speed fields of both objects.
+ *
+ * @par Callers
+ * Confirmed: func_800382B4. Likely: func_8002C3B0 (same block).
+ */
 void func_800379D4(s32 message, Obj379D4 *object, Obj379D4 *data)
 {
     register s32 t2 __asm__("$10");

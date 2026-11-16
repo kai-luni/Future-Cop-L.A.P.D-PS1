@@ -1,3 +1,4 @@
+// Categories: Game Engine > Message Dispatch | Gameplay > Entity Script | Gameplay > Entity Update
 #include "game/types.h"
 
 struct Child {
@@ -29,6 +30,31 @@ extern void func_80038A00(struct Child *, void *);
 extern void func_8004D958(struct Child *);
 extern void func_8003BA50(struct Child *, s32);
 
+/**
+ * @brief Message dispatcher for entity class 28, managing a container object and up to 4 child entities.
+ *
+ * Reports size 0x168 on message 1, attaches up to four children on message 2 via func_800397AC, handles draw/free/tick/sync messages across self->child[], and delegates base behavior to func_800382B4 or func_8002AD58.
+ * @param message Message id (1 size, 2 spawn, 3 draw, 5 free, 6 tick, 9/11/14 state/flag sync, default base).
+ * @param object Container entity (+0x1C s16 value, +0x24 flags, +0x73 child count, +0x158 child pointer array).
+ * @param data Payload pointer forwarded to child and base handlers.
+ * @param extra Extra parameter forwarded to func_800397AC, func_8002AD58, and func_800382B4.
+ * @return 0x168 for message 1, 0 for messages 3/6/9/11/14, or the delegated handler return value.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Switch on message: 1 returns 0x168; 2 delegates to func_800397AC; 3 skips if flags & 0x20 else calls func_8002AD58 on self and children; 5 retires valid children with id via func_8004D958, clears slots, and calls func_800382B4; 6 runs func_800382B4 and func_80038A00 per child then updates children; 9/11/14 run func_800382B4 then sync active children (!(state & 1)): copy flags bit 0x02000000, copy +0x1C, and call func_8003BA50 if kind != 0 and !(flags & 0x40000).
+ *
+ * @par Calls
+ * func_800397AC (spawn children), func_8002AD58 (draw self/children), func_800382B4 (base class-5 handler), func_80038A00 (child tick), func_8004D958 (retire child id), func_8003BA50 (notify child on +0x1C change).
+ *
+ * @par Side effects
+ * Updates child flags/values, clears child pointers on message 5, and dispatches child spawn/retire calls.
+ *
+ * @par Callers
+ * Confirmed: func_80039298 (0x800393F0, messages 11/14 for child type 0x1C). Likely: indirect dispatch via handler returned by func_8002AE54 (0x8002AF40) for type 28.
+ */
 s32 func_800398EC(s32 message, struct Self *object, void *data, s32 extra)
 {
     register s32 msg __asm__("$19") = message;

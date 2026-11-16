@@ -1,3 +1,4 @@
+// Categories: Gameplay > Spawn Placement
 #include "game/types.h"
 
 struct Vec3 {
@@ -51,6 +52,39 @@ struct Entity {
 extern s32 func_8002AD58(s32 message, struct Entity *self, struct Spawn *data, s32 arg3);
 extern s32 func_80067684(struct Vec3 *pos, s32 mode);
 
+/**
+ * @brief Positions a freshly spawned entity from its spawn record.
+ *
+ * The base spawn (message 2) runs first. The sub-record at 0x08 then supplies
+ * the fields: 0x24 and 0x28 doubled become the y and x offsets, the ground
+ * height is queried with func_80067684 using the mode encoded in 0x2E (-1 for
+ * type 0, -2 for type 1, type - 2 otherwise) plus 0x2C << 4, and the same is
+ * done for the second position (0x50/0x54/0x60) with 0x2F and 0x36. The size
+ * halfword 0x34 fills 0x6C/0x6E and 0x68, 0x31 and 0x32 are copied to 0xAD
+ * and 0xAE, and flags 0xA00011 are raised. An entity carrying flag 0x80000
+ * gets bit 0x10 of 0x72 cleared, and the byte pair 0x10100 forces the subtype
+ * at 0xAD to 8.
+ *
+ * @param self Entity that is placed.
+ * @param data Spawn record with the sub-record pointer at 0x08.
+ * @param arg2 Third argument passed on to the base spawn.
+ * @return Always 0.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Straight-line assignment with two ground queries.
+ *
+ * @par Calls
+ * func_8002AD58 - base spawn. func_80067684 - ground height query.
+ *
+ * @par Side effects
+ * Fills the entity geometry and flags.
+ *
+ * @par Callers
+ * Likely: func_80030D3C (same block).
+ */
 s32 func_80030AD4(struct Entity *self, struct Spawn *data, s32 arg2)
 {
     struct Sub *sub;

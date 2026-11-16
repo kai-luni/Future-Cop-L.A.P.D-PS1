@@ -1,7 +1,41 @@
+// Categories: Platform > Controller Input | Input > Analog
 #include "game/types.h"
 
 extern s32 func_8001E7B8(s32 *x, s32 *y, s32 controller, s32 arg3);
 
+/**
+ * @brief Converts the analog stick of one controller into direction bits and magnitudes.
+ *
+ * Nothing happens while the top nibble of *flags is already set, while the
+ * caller's 0xC0 byte is non-zero, or while 0x310 is set. func_8001E7B8 then
+ * returns the raw x/y pair; both axes are centred by subtracting 0x80 and the
+ * values inside +/-0x27 are forced to zero. Beyond 0xE1 the axis saturates at
+ * 0x100, below -0xE0 at -0x100, and each non-zero axis sets its direction bit
+ * (0x20000000/0x10000000 for x, 0x80000000/0x40000000 for y). The magnitudes
+ * are written as absolute values, so the caller gets direction and strength
+ * from one call.
+ *
+ * @param context Caller state; controller index at 0xC1, lock bytes at 0xC0/0x310.
+ * @param flags Direction bits are OR-ed into this word.
+ * @param verticalMagnitude Absolute y magnitude.
+ * @param horizontalMagnitude Absolute x magnitude.
+ * @return The raw status from func_8001E7B8, or 0 when no stick was read.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Guard, read, centre, clamp per axis, then the bit assignments.
+ *
+ * @par Calls
+ * func_8001E7B8 - raw analog read.
+ *
+ * @par Side effects
+ * Writes *flags and both magnitudes.
+ *
+ * @par Callers
+ * Confirmed: func_80053A74, func_800549F0.
+ */
 s32 func_800538C8(u8 *context, u32 *flags, s32 *verticalMagnitude,
                   s32 *horizontalMagnitude)
 {

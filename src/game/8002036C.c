@@ -1,3 +1,4 @@
+// Categories: Platform > Device Service | Utilities > Resource Release
 #include "game/types.h"
 
 typedef struct Unk8009AB08 {
@@ -21,6 +22,30 @@ extern void func_8008C990(s32 arg0);
 extern void func_8008C970(s32 arg0);
 extern void func_8008C9E0(void);
 
+/**
+ * @brief Counts a shared release down and frees eight handles when it reaches zero.
+ *
+ * The counter at 0x8C8 is decremented; anything other than zero ends the
+ * function immediately. At zero the device lock is taken and the eight words
+ * at 0x8D4..0x8F0 are passed twice through the two release entry points (first
+ * func_8008C990, then func_8008C970), after which the lock is released again.
+ *
+ * @par Globals
+ * D_8009AB08 - device block; the counter and the eight handles live at 0x8C8..0x8F0.
+ *
+ * @par Control flow
+ * One pre-decrement test, then a fixed unrolled release sequence.
+ *
+ * @par Calls
+ * func_8008C9C0/func_8008C9E0 - lock and unlock. func_8008C990 and
+ * func_8008C970 - the two release stages.
+ *
+ * @par Side effects
+ * Releases up to eight device handles.
+ *
+ * @par Callers
+ * Likely: func_8002078C (same block).
+ */
 void func_8002036C(void)
 {
     if (--D_8009AB08->unk8C8 == 0) {

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Timer | Game Engine > Script Hook
 #include "game/types.h"
 
 struct Unk3BObject {
@@ -38,6 +39,36 @@ struct Unk2A940 {
 extern void func_8003BA50(struct Unk3BObject *object, s32 value);
 extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk2A940 *arg3);
 
+/**
+ * @brief Decrements an entity countdown and reacts when it expires.
+ *
+ * Reads the step width from arg->unk0E and returns it unchanged when it is
+ * zero or negative. Otherwise the countdown in object->unk1C is reduced by
+ * that step. When the result goes negative the entity copies the pointer
+ * value arg->unk08->unk08 into object->unk8C; while it stays positive and
+ * the entity has an active target (object->unk20) without flag 0x40000 set,
+ * func_8003BA50 is notified with the previous countdown value.
+ *
+ * @param object Entity state block with the counter at 0x1C and flags at 0x24.
+ * @param arg Step descriptor: step width at 0x0E, selector at 0x00, payload at 0x08.
+ * @return The step width that was applied (0 or negative when nothing changed).
+ *
+ * @par Globals
+ * None directly; the entity block itself carries the state.
+ *
+ * @par Control flow
+ * Single branch tree on the step width and on the sign of the new counter.
+ *
+ * @par Calls
+ * func_8003BA50 - reports the old counter value to the target tracker.
+ * func_80069D68 - runs the attached script with the sign of the counter.
+ *
+ * @par Side effects
+ * Writes the counter, sets flag 0x02000000 in object->unk24, may write 0x8C.
+ *
+ * @par Callers
+ * Confirmed: func_8002AD58 (base entity handler, message 0x0E).
+ */
 s32 func_8002A940(struct Unk2A940 *object, struct Unk2A940Arg2 *arg)
 {
     s32 delta;

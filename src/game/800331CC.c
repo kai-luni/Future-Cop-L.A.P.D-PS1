@@ -1,3 +1,4 @@
+// Categories: AI > Drone Setup | Gameplay > Object Spawning | Game Engine > Object Setup
 #include "game/types.h"
 
 struct Vec3 {
@@ -98,6 +99,28 @@ extern void func_800330E8(struct Unk331CCObj *);
 extern void func_8005A09C(void *);
 extern void func_8005A0C4(void *, s32, s32);
 
+/**
+ * @brief Message-2 spawn initializer for entity type 37 (drone): allocates its 0xB4-byte AI block, scales stats by difficulty, and initializes gauges/attack slots.
+ *
+ * Confirmed: clears D_8009FA94->unkE0, clamps D_8009FA94->unk4C to 0..9, sets bits on src->unk26/unk5A from unk4C, calls func_80032180, allocates 0xB4 bytes at obj->unk134 via func_80017EBC, initializes two weapon slots at unk134 +0x50/+0x78 via func_80060668, adjusts obj->unkF4 and health (+0x1E/+0x1C) by unk4C, clears D_8009FA94->unkA0[0..3] and +0xB0..+0xDF, derives unkB0[0..1]/unk74/unk78 from unk4C, copies obj->unk50 and D_8009FA58->unk50, calls func_800330E8, publishes D_8009F9EC = obj, and initializes gauge unk134->unkA0. Category follows type-37 drone handler, 0xB4 AI block, func_80060668 slots, and func_800330E8 waypoint sync.
+ * Likely: D_8009FA94->unk4C is difficulty level (0..9) and D_8009F9EC tracks the active Sky Captain/boss drone. Unknown: meaning of unkB0[0..1] vs unk74/unk78.
+ *
+ * @param arg0 Message code forwarded to func_80032180 (2 on spawn).
+ * @param obj Drone entity receiving +0x134 AI block and scaled stats.
+ * @param arg2 Spawn wrapper (+0x08 source descriptor).
+ * @param arg3 Extra context word forwarded to func_80032180.
+ * @return Always 0.
+ * @par Globals
+ * D_8009FA94 (clamps +0x4C, clears +0xE0/+0xA0/+0xB0.., sets +0x9C=2/+0x74/+0x78/+0x68), D_8009FA58 (player pos copied), D_8009F9EC (set to obj).
+ * @par Control flow
+ * Linear setup with difficulty-based branches on D_8009FA94->unk4C and three small loops clearing state arrays.
+ * @par Calls
+ * func_80032180 (base spawn), func_80017EBC (0xB4 alloc), func_80060668 (two attack slots), func_80019668 (random jitter/bits), func_800330E8 (target pos), func_8005A09C and func_8005A0C4 (gauge init).
+ * @par Side effects
+ * Allocates obj->unk134, mutates src flags, scales obj health/speed fields, updates D_8009FA94 and D_8009F9EC.
+ * @par Callers
+ * Confirmed: func_800357C0 (0x800357FC, entity type 37 message 2 spawn path) / Likely: none / Unknown: none.
+ */
 s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *arg2, s32 arg3)
 {
     struct Unk331CCSrc *src;

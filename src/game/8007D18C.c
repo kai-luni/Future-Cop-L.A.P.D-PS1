@@ -1,3 +1,4 @@
+// Categories: Game Engine > Options Menu | Platform > Sound > Volume
 #include "game/types.h"
 
 typedef struct {
@@ -25,6 +26,27 @@ extern s32 func_8004522C(void);
 extern s32 func_80045288(void);
 extern s32 func_800452C8(void);
 
+/**
+ * @brief Options-screen init callback: snapshots volumes and the sound-mode flag, primes the preview-sound state and picks the initial menu flag byte.
+ *
+ * @param void No parameters.
+ *
+ * @par Globals
+ * D_8009F908/90C/910 - snapshots of the three volume getters; D_8009F914 - snapshot of the sound-mode flag D_8009F730; D_8009F918 - exit request, cleared; D_8009F904 - selection byte, cleared.
+ * D_8009F91C/D_8009F920 - preview voice handle (0) and preview id word (0x47). D_8009BABE[0] - toggle label text id 0x100E (flag on) or 0x1018 (off). D_800A377B[0] - menu flag byte: bit 0 from state block +0xC == 1, bit 3 from +0x5C == 1 (values 1/3/8/9).
+ *
+ * @par Control flow
+ * Straight-line; the stream-idle test gates func_8002A16C(0), and a 2x2 branch on the two state-block words (read through the D_8009FA94 pointer via inline asm) selects the flag byte.
+ *
+ * @par Calls
+ * func_8004522C/func_80045288/func_800452C8 - music/SE/voice volume getters. func_800451E0 - sound-mode flag getter. func_8002A58C - stream busy test (D_8009F6DC != 0). func_8002A16C - starts a stream/CD audio request when idle.
+ *
+ * @par Side effects
+ * Writes the options state words, the toggle text id and the menu flag byte; may start audio streaming.
+ *
+ * @par Callers
+ * Confirmed: no direct callers; the address is stored at 0x80077D70 (inside func_80077AD4) into D_800A3778+0x10 as the init callback beside update func_8007CACC and draw func_8007CFA0. Unknown: which framework routine performs the indirect call.
+ */
 void func_8007D18C(void)
 {
     register Unk8009FA94 *p __asm__("$3");

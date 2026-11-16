@@ -1,3 +1,4 @@
+// Categories: Platform > Device Service
 #include "game/types.h"
 
 typedef struct {
@@ -26,6 +27,40 @@ extern void func_8001C470(void *ptr);
 extern s32 func_8008E1A8(s32 value);
 extern s32 func_8008E1BC(s32 mode, void *src, void *dst);
 
+/**
+ * @brief Initialises a service context and issues its first command.
+ *
+ * Only modes 1 and 0x11 are accepted, and the global state word
+ * func_80010000.unk00 must be idle, otherwise -6 or -0x10 is returned. The
+ * state is then reset (0x00, 0x04, 0x08 cleared, 0x10 = -1), mode 2 is set
+ * through func_800914B0, func_8008DEA0 is called and the buffer D_8009F61C is
+ * passed to func_8001C470. The callback D_8001C808 is registered through
+ * func_8008E1A8, D_8009F618 is cleared and the working buffer D_800A0798 is
+ * offered twice to func_8008E1BC. If its first byte has bit 0x10 set the
+ * function returns -3; otherwise a two-byte command 0x82/0xA2 is built around
+ * D_8009F610 and sent with func_8008E1BC(0xE, ...), whose failure returns -4.
+ *
+ * @param arg0 Mode selector, 1 or 0x11.
+ * @return 0 on success, -6 bad mode, -0x10 busy, -3 flag set, -4 transfer failed.
+ *
+ * @par Globals
+ * func_80010000 - global state block; D_8009F610/D_8009F611 - command bytes;
+ * D_8009F618 - cleared status; D_8009F61C - receive buffer; D_800A0798 - work buffer.
+ *
+ * @par Control flow
+ * Guard, one-time reset block, then a single command with three failure paths.
+ *
+ * @par Calls
+ * func_800914B0 - mode/clock setup. func_8008DEA0 - service reset.
+ * func_8001C470 - buffer prepare. func_8008E1A8 - callback registration.
+ * func_8008E1BC - synchronous transfer.
+ *
+ * @par Side effects
+ * Resets the global state word and writes the command and status globals.
+ *
+ * @par Callers
+ * Confirmed: func_8001D248.
+ */
 s32 func_8001D130(s32 arg0)
 {
     register u8 *s1 __asm__("$17");

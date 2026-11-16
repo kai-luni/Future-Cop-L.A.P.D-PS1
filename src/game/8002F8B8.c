@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Query | Input > Condition Test
 #include "game/types.h"
 
 struct Inner {
@@ -20,6 +21,38 @@ struct Entity {
 extern struct Entity *D_8009FA58[2];
 extern struct Entity *D_8009FA60[2];
 
+/**
+ * @brief Compares one entity field with a value and optionally checks the pair table.
+ *
+ * The selector arg0 chooses the field: 8 maps type 0x12 to 1 and returns the
+ * type otherwise, 1 returns the type, 2 returns 0x14 but rejects type 0x15,
+ * 3 and 4 return 0x17 and 0x18, 5 also masks arg1 with 1 << value, and 7 is a
+ * pure predicate that only succeeds for a type-2 entity whose partner is of
+ * type 0x12. With arg3 set the match is filtered: for each of the two entries
+ * of D_8009FA58 a type-1 entity must be the same pointer, and any entry whose
+ * partner block has a non-zero 0x40 makes the test fail.
+ *
+ * @param arg0 Field selector 1..8.
+ * @param arg1 Value the selected field is compared with.
+ * @param arg2 Entity the fields are read from.
+ * @param arg3 Non-zero enables the two-object filter.
+ * @return 1 when the test passes, 0 otherwise.
+ *
+ * @par Globals
+ * D_8009FA58 - the two reference entities; D_8009FA60 - end of that array.
+ *
+ * @par Control flow
+ * Switch on the selector, then one compare and an optional two-iteration loop.
+ *
+ * @par Calls
+ * None.
+ *
+ * @par Side effects
+ * None observed.
+ *
+ * @par Callers
+ * Confirmed: func_8003015C, func_80030960. Likely: func_80030D3C, func_8003151C.
+ */
 s32 func_8002F8B8(u8 arg0, s16 arg1, struct Entity *arg2, u8 arg3)
 {
     s32 val;

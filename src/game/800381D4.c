@@ -1,3 +1,4 @@
+// Categories: Gameplay > Movement | Utilities > Random
 #include "game/types.h"
 
 struct Unk381D4 {
@@ -20,6 +21,36 @@ struct Unk381D4 {
 
 extern s32 func_80019668(void);
 
+/**
+ * @brief Picks a random turn rate for an entity leaving its idle state.
+ *
+ * The two-bit field at the top of arg->unk118 is the entity state. In state 0
+ * the function draws a random nibble from func_80019668 and only acts while it
+ * stays below 0xC, so the transition is delayed by roughly a quarter of the
+ * frames. On transition it sets bit 30, clears the timer at 0xAC, copies the
+ * angle limits 0x136 and 0x130 into 0xB4 and 0xB0, sets flag 0x100 and derives
+ * the turn rate (random 1..4) with its sign chosen from the side the target
+ * angle lies on. Values above 0x800 are treated as the negative half of the
+ * 12-bit angle circle. State 1 then falls through and clears the frame timer.
+ *
+ * @param arg Entity block; angle at 0x130/0x136, rate at 0xAA, state at 0x118.
+ *
+ * @par Globals
+ * None; all state lives in the entity block.
+ *
+ * @par Control flow
+ * Switch on the state bits with an intentional fall-through from state 0 into
+ * state 1; the random guard breaks out without changing state.
+ *
+ * @par Calls
+ * func_80019668 - random source (called three times per transition).
+ *
+ * @par Side effects
+ * Writes 0xAA, 0xAC, 0xB0, 0xB4, 0x118 and 0x1C of the entity.
+ *
+ * @par Callers
+ * Confirmed: func_800382B4.
+ */
 void func_800381D4(struct Unk381D4 *arg)
 {
     s32 v;

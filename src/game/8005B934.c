@@ -1,3 +1,4 @@
+// Categories: Gameplay > Combat | Physics > Collision | Graphics > Effects
 #include "game/types.h"
 
 struct Vec { s32 x, y, z; };
@@ -15,6 +16,28 @@ extern u32 func_80095900(s32);
 extern u16 D_8009F7F0, D_8009F7F2, D_8009F7F4;
 extern s16 data_return[3];
 
+/**
+ * @brief Four-message callback for kind-0x57 beam/tentacle effect nodes handling radius strength, hit ticks, target marking, and aim offsets.
+ *
+ * Confirmed: registered as D_8005B934 (func_8005B934) at node +0x24 by func_8005BDE4. Requires tag->type == 0x57 for msgs 1 and 3: msg 3 clears flags10 bit 2, updates flags8E ((flags8E & ~8) | 1), and stores func_80095900((x*x>>8)+(y*y>>8)+(z*z>>8))>>2 into (*mid->target)->strength; msg 1 decrements target->health by arg2 (retiring via obj->handler(8) on < 0), sets target->flags |= 2 and obj->flagsF |= 1 if moving == 0, else runs func_8005B6A8; msg 2 sets target->flags |= 1; msg 4 (arg3 == 1) computes projected offsets into D_8009F7F0/F2/F4 (data_return) via func_8001A180/func_8001AB00 and returns data_return. Category follows tag 0x57, func_8005B6A8 area hit, and D_800A22A0 effect pool.
+ * Likely: beam/tether effect controller called by pool/segment managers. Unknown: exact indirect call sites of msgs 1..4.
+ *
+ * @param msg Selector 1 (tick/damage), 2 (mark flag 1), 3 (recompute strength), or 4 (compute transform offset).
+ * @param obj Kind-0x57 owner (+0x0F/+0x10/+0x8E flags, +0x1C mid, +0x20 tag, +0x24 handler, +0x9A..+0x9E vector).
+ * @param arg2 Damage step (msg 1) or base Vec3 pointer (msg 4).
+ * @param arg3 Must equal 1 for msg 4 to compute and return data_return.
+ * @return Pointer to D_8009F7F0 (data_return) on msg 4 with arg3 == 1, otherwise 0.
+ * @par Globals
+ * D_8009F7F0/D_8009F7F2/D_8009F7F4 (data_return) - three s16 offsets written and returned by msg 4.
+ * @par Control flow
+ * Switch on msg 1..4; msg 1/3 guard on tag->type == 0x57, msg 4 guards on arg3 == 1 and mid->transform/moving/aim pointers.
+ * @par Calls
+ * func_80095900 (isqrt in msg 3), obj->handler (indirect msg 8 in msg 1), func_8005B6A8 (sphere damage/raycast in msg 1), func_8001A180 and func_8001AB00 (msg 4).
+ * @par Side effects
+ * Mutates obj flags, (*obj->mid->target) health/strength/flags, and D_8009F7F0..D_8009F7F4.
+ * @par Callers
+ * Confirmed: none direct; address taken as D_8005B934 in func_8005BDE4 (0x8005BF98, stored in D_800A22A0 node +0x24) / Likely: indirect callers via node +0x24 / Unknown: specific indirect call sites.
+ */
 void *func_8005B934(u32 msg, struct Obj *obj, s32 arg2, s32 arg3)
 {
     struct Target *t;

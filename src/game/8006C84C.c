@@ -1,3 +1,4 @@
+// Categories: Graphics > Mesh Generation | Graphics > Effects
 #include "game/types.h"
 
 typedef struct {
@@ -21,6 +22,42 @@ extern void func_8006C768(void *faces, s32 rows, s32 cols, s32 count);
 extern s32 D_8009FA08;
 extern s32 D_8009FA1C;
 
+/**
+ * @brief Allocates and fills a dome-patch mesh for the effect objects.
+ *
+ * Quantizes the requested step to a divisor of 0x200 and builds a Mesh header
+ * with 8-byte vertices and 5-byte faces. The vertex fill sweeps a spherical
+ * octant (rows pole-to-equator over angles 0..0x400, columns a 0x200 wedge);
+ * the radius is fixed 0x1000, or grows 0x800 to 0x1000 with flags bit 0x10.
+ * Faces are a pole triangle fan plus quad strips with byte vertex indices.
+ *
+ * @param arg0 Requested angular step, 1..0x200, quantized to divide 0x200.
+ * @param flags Bit 0 halves the stored width; bit 0x10 selects the expanding
+ *        radius variant and is passed on to the vertex fill.
+ * @return The mesh, or 0 when any allocation fails.
+ *
+ * @par Globals
+ * D_8009FA08 - shared 0x1B18-byte graphics buffer; pointer copied to +0x10.
+ * D_8009FA1C - shared 0x400-byte graphics buffer; pointer copied to +0x14.
+ *
+ * @par Control flow
+ * Step quantization, then three allocation stages (header, vertices, faces)
+ * with rollback frees on failure. Width is halved for flags bit 0 before the
+ * two fill calls run.
+ *
+ * @par Calls
+ * func_80017EBC - pool allocation with tag 1 for header and both buffers.
+ * func_800181D4 - frees already-allocated parts when a later stage fails.
+ * func_8006C4C4 - writes the spherical vertex grid.
+ * func_8006C768 - writes the fan and strip faces.
+ *
+ * @par Side effects
+ * Allocates pool memory; writes the mesh header, vertex and face buffers.
+ *
+ * @par Callers
+ * Confirmed: func_8005D3FC (effect emitter blocks, steps 0x100 and 0x200),
+ * func_8006E814 (mesh effect init, step 0x100).
+ */
 Mesh *func_8006C84C(s16 arg0, s32 flags)
 {
     Mesh *mesh;

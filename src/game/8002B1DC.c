@@ -1,3 +1,4 @@
+// Categories: AI > Command Processing | Gameplay > Entity Update
 #include "game/types.h"
 
 typedef struct Target Target;
@@ -49,6 +50,46 @@ extern void func_8003B898(u8 index, Target *entity, s32 arg2, u16 flags, s32 mod
 extern void *jtbl_80010FCC[];
 extern void *jtbl_80010FEC[];
 
+/**
+ * @brief Command dispatcher of the class-26 actor state machine at +0x15F.
+ *
+ * Executes one order against the actor: 0 resets to idle (state 0, refreshes
+ * the destination word +0x10C from +0x158 unless flag bit 0 of +0x160, clamps
+ * +0x10E, clears the mode nibble of +0x118); 1 acquires a target entity after
+ * checking maturity (+0x1C >= 5) and stores it at +0xB8 with its id at +0xBC,
+ * then dispatches on the kind nibble of +0x118 to either record the target
+ * word +0x14 (mode 2) or just enter state 1; 5 zeroes +0x10E; 6 searches the
+ * 12-byte node table at +0xDC for the nearest eligible node (flag bit 0 set,
+ * bit 1 clear) by Manhattan distance from the current node +0x120 and enters
+ * state 6 with the node index at +0x11E; 7 enters state 7, plays the 0x3A
+ * animation family with a random variant, sets flags bit 0 and registers map
+ * occupancy. States 7 and 8 reject all commands.
+ *
+ * @param s0 Actor block.
+ * @param a1 Command index, 0..7 (2..4 are no-ops returning 1).
+ * @param a2 Target entity for command 1.
+ * @return 1 when the command was accepted, 0 on rejection.
+ *
+ * @par Globals
+ * jtbl_80010FCC - outer command jump table; jtbl_80010FEC - kind dispatch.
+ *
+ * @par Control flow
+ * State gate, computed-goto command switch, a nested kind switch for target
+ * acquisition, and a descending nearest-node scan for command 6.
+ *
+ * @par Calls
+ * func_8002B1AC - refreshes destination words +0x10C/+0x10E from +0x158;
+ * func_8002B0EC - animation select, randomizing the 0x3A death family;
+ * func_8003B898 - registers map occupancy for the dying actor.
+ *
+ * @par Side effects
+ * Writes state +0x15F, target fields +0xB8/+0xBC, mode nibble and index in
+ * +0x118/+0x11E, counters +0x10C/+0x10E and flags +0x24.
+ *
+ * @par Callers
+ * Confirmed: func_8002B4B4, func_8002B784 (class-26 per-frame update),
+ * func_8002BFB4 and func_8002C174 (type-26 destruction case).
+ */
 s32 func_8002B1DC(Target *s0, s32 a1, Target *a2)
 {
     u8 *base;

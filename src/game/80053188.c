@@ -1,3 +1,4 @@
+// Categories: Gameplay > Player > Control | Physics > Collision > Ground Query
 #include "game/types.h"
 
 struct Unk53188Sub;
@@ -42,6 +43,45 @@ extern s8 D_8009ACF4[][10];
 extern void func_8005908C(s32 arg0, struct Unk53188 *arg1,
                            struct Unk53188Arg *arg2, s32 arg3);
 
+/**
+ * @brief Applies a terrain surface attribute byte to the player unit.
+ *
+ * Called by the locomotion ticks with the surface attribute returned by the
+ * ground query, masked with ~0xC0. Codes 0x20..0x2F nudge the world position
+ * words +0x50 (x) and +0x58 (z) by +/-0x200, +/-0x400, +/-0x92 or +/-0x124.
+ * Code 1 raises request flags in the state block, gated by the slot words at
+ * D_8009FA94+0x08/+0x98 and the busy array D_8009FA8C; code 2 requests the
+ * 10000 sentinel when the slot is idle; codes 3/4/5 load the form-request
+ * byte +0x147 with 2/1/3; codes 6..0xF look up D_8009ACF4[form][code-6]
+ * (form = state byte +0xAD), replace negatives with 10000, and forward the
+ * value to the player handler as message 14 with sub-opcode code-0x64.
+ * Codes 0xE/0xF additionally require slot 0/1. The form-request byte is
+ * written last, zero for all other codes.
+ *
+ * @param arg0 Player entity block; +0xAC the state block.
+ * @param arg1 Surface attribute code, 0..0x2F.
+ *
+ * @par Globals
+ * D_8009FA94 - player context block pointer; D_8009FA8C - per-slot busy
+ * flags indexed by state byte +0xC1; D_8009ACF4 - 10-column s8 parameter
+ * table per form.
+ *
+ * @par Control flow
+ * Two disjoint switch ranges (position nudges vs behaviour codes), a shared
+ * payload build when the lookup value is non-zero, and the final state write.
+ *
+ * @par Calls
+ * func_8005908C - player unit message handler, receives message 14 with the
+ * looked-up parameter payload.
+ *
+ * @par Side effects
+ * Writes world position +0x50/+0x58, state request bytes +0x146/+0x147,
+ * +0xDE, +0x2FD and the word +0x326.
+ *
+ * @par Callers
+ * Confirmed: func_80053A74 and func_800549F0, after ground sampling when the
+ * masked attribute byte is non-zero.
+ */
 void func_80053188(struct Unk53188 *arg0, u32 arg1)
 {
     register struct Unk53188Sub *p __asm__("$4");

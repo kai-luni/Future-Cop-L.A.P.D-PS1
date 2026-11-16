@@ -1,3 +1,4 @@
+// Categories: AI > Target Selection | Gameplay > Entity Script
 #include "game/types.h"
 
 struct Unk600E8Sub {
@@ -40,6 +41,27 @@ extern struct Unk600E8Found *func_8004E80C(struct Unk600E8Ctx *ctx,
 extern void func_80069D68(struct Unk600E8Sub *sub, s32 arg1, u32 arg2,
     struct Unk600E8Ctx *ctx);
 
+/**
+ * @brief Decrements a target-search timer, queries func_8004E80C when due, runs an acquisition script, and caches the target pointer and id.
+ *
+ * Confirmed: subtracts amount from obj->unk16 (+0x16); if signed result < 0, reloads +0x16 from obj->unk14 and calls func_8004E80C(ctx, unk06, unk08, unk07, unk0A << 4, unk0C, (flags >> 6) & 1). On null or non-expired timer, returns 0 (clearing obj->unk18 unless flags & 0x4000). On hit, skips script/write if (flags & 0x4000) && found == unk18 && found->unk08 == unk1C; otherwise runs func_80069D68 on ctx->unk9C if active and bit 0x100000 of ctx->unk24 is clear, then stores unk18 = found and unk1C = found->unk08. Category AI > Target Selection | Gameplay > Entity Script follows func_8004E80C search, cached target +0x18/+0x1C, and func_80069D68 script.
+ * Likely: periodic target-acquisition helper for weapon/turret descriptors; unk9C is an on-acquire script. Unknown: exact meaning of flags bit 0x4000 vs bit 6 and ctx->unk24 bit 0x100000.
+ *
+ * @param obj Attack/target descriptor (+0x04 flags, +0x06..+0x0C filter params, +0x14 period, +0x16 timer, +0x18/+0x1C cached target).
+ * @param amount Elapsed time/frame delta subtracted from obj->unk16.
+ * @param ctx Owner entity (+0x1C s16 state, +0x24 flags, +0x9C script pointer) forwarded to func_8004E80C and func_80069D68.
+ * @return 1 if a valid target was found on this search tick, 0 otherwise.
+ * @par Globals
+ * None.
+ * @par Control flow
+ * Timer countdown gate (< 0 triggers search); cleanup path clears unk18 when bit 0x4000 is clear; hit path short-circuits on unchanged target under 0x4000.
+ * @par Calls
+ * func_8004E80C - searches D_800A8F90 candidates by class, range, and mode. func_80069D68 - executes ctx->unk9C script on target acquisition.
+ * @par Side effects
+ * Updates obj->unk16, obj->unk18, obj->unk1C, and runs ctx->unk9C script side effects when triggered.
+ * @par Callers
+ * Confirmed: func_80060238 (0x800605AC, weapon/attack tick fire gate) / Likely: none / Unknown: none.
+ */
 s32 func_800600E8(struct Unk600E8Obj *obj, s32 amount, struct Unk600E8Ctx *ctx)
 {
     struct Unk600E8Found *found;

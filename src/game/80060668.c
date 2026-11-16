@@ -1,3 +1,4 @@
+// Categories: Gameplay > AI > Attack Scheduling | Game Engine > Object Setup
 #include "game/types.h"
 
 struct Unk5FF70 {
@@ -47,6 +48,30 @@ extern s32 func_8005FF70(s32 key);
 extern s32 func_8006062C(u32 id);
 extern struct Unk5FF70 D_800A2300[];
 
+/**
+ * @brief Initializes a 0x28-byte attack/weapon scheduler slot from a 16-byte config descriptor.
+ *
+ * Looks up the config key in the global definition table D_800A2300 via func_8005FF70, copies tuning bytes, precomputes half-angle cosines at +0x0C/+0x10 and scaled rate at +0x14, clears runtime fields, and seeds counters from the table entry.
+ *
+ * @param in 16-byte input descriptor (+0x00 key, +0x02..+0x06 config fields, +0x08/+0x0A angles, +0x0C field, +0x0E rate).
+ * @param out Destination 0x28-byte slot (e.g. entity +0xA0 for func_80060238).
+ *
+ * @par Globals
+ * D_800A2300 - array of 0x30-byte definition entries indexed by the result of func_8005FF70.
+ *
+ * @par Control flow
+ * Branches on in->f00 < 0: clears out->f00 to 0 and returns; otherwise resolves &D_800A2300[func_8005FF70(in->f00)], copies in->f02/f05/f04/f06/f0C to +0x04/+0x06/+0x07/+0x08/+0x0A, sets +0x14 = (s16)((in->f0E << 12) / 218), zeroes +0x16..+0x23, and copies entry f02/f0A/f06 to +0x20/+0x24/+0x26.
+ *
+ * @par Calls
+ * func_8005FF70 - linear search in D_800A2300 for matching byte key in->f00.
+ * func_8006062C - computes cosine via func_8001846C for half-angles ((s16)in->f08 / 2) and ((s16)in->f0A / 2) into +0x0C and +0x10.
+ *
+ * @par Side effects
+ * Writes out->f00 alone when in->f00 < 0, or populates all 0x28 bytes of out.
+ *
+ * @par Callers
+ * Confirmed: func_8002C584 (0x8002CA48), func_8002DFC4 (0x8002E278), func_80032180 (0x800321A4), func_800331CC (0x800332B0, 0x800332C0), func_800378BC (0x800378E4), and func_800397AC (0x80039838).
+ */
 void func_80060668(struct Unk60668In *in, struct Unk60668Out *out)
 {
     s32 index;

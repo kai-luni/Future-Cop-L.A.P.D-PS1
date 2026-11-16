@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Gameplay > Combat
 #include "game/types.h"
 
 struct Unk5C184Vec {
@@ -50,6 +51,30 @@ extern s32 func_8003BF50(struct Unk5C184Kind *object);
 extern s32 func_800402DC(void *owner, u8 column, struct Unk5C184Msg *msg, s32 row,
                          s32 arg4);
 
+/**
+ * @brief Rate-limits and spawns a contact impact object via func_800402DC, tagging the result by owner kind and team byte.
+ *
+ * Confirmed: decrements node->unk29 (+0x29) and returns early if signed result >= 0; else builds a stack message (unk49 = 5, unk00 = arg1, vec = *arg0), sets D_8009F374 = node->unk08, computes row via func_8003BF50, and calls func_800402DC(0, node->unk1E, &msg, flag, 0). Category Gameplay > Object Spawning | Gameplay > Combat follows func_800402DC table spawn and kind 1/0x12 team-flag tagging. Likely: reloading node->unk29 = 5 limits spawns to once per six calls, and +0xC1 == 0 vs non-zero selects team bit 0x8 vs 0x10. Unknown: meaning of unk49 = 5 and arg1.
+ *
+ * @param arg0 World position vector copied into msg.vec (+0x10).
+ * @param arg1 Opaque payload pointer/value stored into msg.unk00 (+0x00).
+ * @param node Driver node (+0x08 owner kind block, +0x1E spawn column, +0x29 cooldown counter).
+ *
+ * @par Globals
+ * D_8009F374 - temporarily bound to node->unk08 across func_8003BF50/func_800402DC, then cleared to 0.
+ *
+ * @par Control flow
+ * Early return on decremented unk29 >= 0; if func_800402DC returns non-null and unk08 exists, branches on kind == 1 (unkAC) vs 0x12 (unkB4->unkAC) to set flags 0x8 or 0x10.
+ *
+ * @par Calls
+ * func_8003BF50 - classifies node->unk08 into spawn row 0 or 1. func_800402DC - spawns object for column node->unk1E.
+ *
+ * @par Side effects
+ * Updates node->unk29 (decremented or reset to 5), temporarily writes D_8009F374, spawns an object, and may set bit 0x8 or 0x10 in res->flags.
+ *
+ * @par Callers
+ * Confirmed: func_8005C344 (0x8005C4EC, 0x8005C55C, 0x8005C5F0 on segment raycast hits) / Likely: none / Unknown: none.
+ */
 void func_8005C184(struct Unk5C184Vec *arg0, void *arg1, struct Unk5C184Node *node)
 {
     struct Unk5C184Msg msg;

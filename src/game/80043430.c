@@ -1,3 +1,4 @@
+// Categories: Graphics > Effects > Particles | Game Engine > Object Setup | Utilities > Memory Management
 #include "game/types.h"
 
 typedef struct Node43430 {
@@ -85,6 +86,30 @@ extern void *func_80017EBC(s32 size, s32 tag);
 extern void func_800188D0(s32 x, s32 y, s32 z, s32 *out);
 extern void func_80043250(Obj43430 *p);
 
+/**
+ * @brief Initializes a particle/effect emitter block and allocates its 0x1C-byte node pools.
+ *
+ * Copies motion tuning via func_8003C14C, clamps particle counts (halving in low-detail mode), populates color/scale/stride fields from src, computes the emission vector via func_800188D0, links the primary node free list at +0x6C/+0x64, computes color deltas via func_80043250, and allocates an optional secondary buffer.
+ *
+ * @param p Target effect object (+0x64/+0x6C/+0xA8 pool pointers, +0x72..+0xA6 emitter parameters).
+ * @param src Emitter definition record (+0x34..+0x5F).
+ * @return 1 on success, or 0 if clamped count src->unk36 <= 0 or primary pool allocation fails.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Maps unk36 == -1 to unk34, caps at 0x2BC (700), halves unk34/unk36 when func_80017B88() == 1 and unk34 >= 0xB, clamps unk8E to [-7, 7] (0 -> 1), links p->unk8A nodes in a singly-linked list, and allocates p->unkA8 (unk88 * 0x1C) only when p->unk88 < p->unk8A.
+ *
+ * @par Calls
+ * func_8003C14C (initializes motion block), func_80017B88 (detail gate), func_800188D0 (rotation matrix for +0x76..+0x7A vector), func_80017EBC (allocates 0x1C-byte node pools from tag 1), func_80043250 (computes color deltas +0x96..+0x9A).
+ *
+ * @par Side effects
+ * Mutates src->unk34/unk36 during clamping, populates p + 0x00..+0xA8, and allocates 1-2 blocks from heap tag 1.
+ *
+ * @par Callers
+ * Confirmed: func_800447F0 (0x80044824, periodic effect spawner).
+ */
 u8 func_80043430(Obj43430 *p, Def43430 *src)
 {
     s32 matrix[9];

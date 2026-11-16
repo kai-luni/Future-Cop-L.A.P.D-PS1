@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Query
 #include "game/types.h"
 
 struct Unk2AB8C {
@@ -20,6 +21,34 @@ extern struct Unk2AB8C *D_8009FA58[2];
 
 extern s32 func_8001A4E8(s32 *a, s32 *b);
 
+/**
+ * @brief Returns a requested field or the clear distance to the two player objects.
+ *
+ * Cases 0 to 4 and 7 to 8 are plain field reads (0x1C, 0x50, 0x54, 0x58, 0x84,
+ * 0x17, 0x18). Case 5 is the interesting one: for both entries of
+ * D_8009FA58 the 2D distance between the two 0x5C position vectors is reduced
+ * by the two radii at 0x68 and the minimum is returned with its sign cleared,
+ * so the result is the smallest cleared gap to either object.
+ *
+ * @param object Entity the fields are read from.
+ * @param query Field selector; unknown selectors return 0.
+ * @return The field value, or the smallest distance for selector 5.
+ *
+ * @par Globals
+ * D_8009FA58 - the two reference objects.
+ *
+ * @par Control flow
+ * Switch with a two-iteration loop in case 5.
+ *
+ * @par Calls
+ * func_8001A4E8 - 2D distance between two position vectors.
+ *
+ * @par Side effects
+ * None observed.
+ *
+ * @par Callers
+ * Confirmed: func_8002AD58 (base entity handler).
+ */
 s32 func_8002AB8C(struct Unk2AB8C *object, s32 query)
 {
     s32 min;

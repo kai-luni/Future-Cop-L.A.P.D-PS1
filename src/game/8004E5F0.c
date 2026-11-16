@@ -1,3 +1,4 @@
+// Categories: AI > Target Selection | Physics > Collision
 #include "game/types.h"
 
 typedef struct Entity {
@@ -24,6 +25,40 @@ typedef struct Entity {
 
 extern s32 func_80095900(s32 value);
 
+/**
+ * @brief Range-and-facing score used by the AI target acquisition.
+ *
+ * Rejects a candidate outside the maxDist box in x/z, computes the fixed-point
+ * planar distance (square root of the FMUL squares, shifted left 2), then
+ * optionally tests whether the candidate lies in the seeker's facing cone by
+ * normalizing the dot product of the seeker heading with the displacement.
+ *
+ * @param src Seeker entity; heading at +0x78/+0x80, or +0xA0/+0xA8 when the
+ *        type byte +0x16 is 1; position at +0x50/+0x58.
+ * @param tgt Candidate entity, position at +0x50/+0x58.
+ * @param maxDist Half-width of the rejection box and exclusive distance cap.
+ * @param threshold Facing threshold; 0xFFFF0000 disables the cone test.
+ * @return The fixed-point distance when accepted, -1 when rejected.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Four early-out box tests, then the distance cap. The cone test is skipped
+ * for threshold <= 0xFFFF0000 or dist < 9. Four sign branches compute the
+ * signed projection num * 0x80000000 / (dist >> 1) via FMULU and compare it
+ * against threshold; distances below 9 are accepted without a direction.
+ *
+ * @par Calls
+ * func_80095900 - integer square root of dx*dx + dz*dz.
+ *
+ * @par Side effects
+ * None observed.
+ *
+ * @par Callers
+ * Confirmed: func_8004E80C (nearest and line-of-sight search, modes 1 and 3),
+ * func_8004F330, func_80060238, func_8006C224, func_8006C3E0 (direct callers).
+ */
 s32 func_8004E5F0(Entity *src, Entity *tgt, s32 maxDist, s32 threshold)
 {
     s32 dx;

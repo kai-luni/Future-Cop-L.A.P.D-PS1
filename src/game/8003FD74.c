@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Game Engine > Deferred Queue
 #include "game/types.h"
 
 struct Unk3FD74Source {
@@ -21,6 +22,28 @@ struct Unk3FD74Node {
 extern struct Unk3FD74Node *D_8009F30C;
 extern void *func_80017EBC(s32 size, s32 tag);
 
+/**
+ * @brief Allocates and prepends a deferred spawn request node to the pending spawn list.
+ *
+ * Allocates a 0x20-byte node from tag 1, populates type, row, source and arg18, and links it at D_8009F30C.
+ *
+ * @param type Spawn table column index (0..255) stored at +0x04.
+ * @param arg08 Spawn table row index stored at +0x08.
+ * @param source Optional owner/source pointer (+0x10); if non-null, source->value08 is cached at +0x14.
+ * @param arg18 Opaque argument or placement block pointer stored at +0x18.
+ * @return Pointer to the new 0x20-byte node, or null if allocation fails.
+ *
+ * @par Globals
+ * D_8009F30C - singly-linked list head of deferred spawn request nodes.
+ * @par Control flow
+ * Allocates 0x20 bytes; returns 0 on null, reads source->value08 if source != 0, and prepends to D_8009F30C.
+ * @par Calls
+ * func_80017EBC - allocates 0x20 bytes with tag 1.
+ * @par Side effects
+ * Allocates heap memory and updates list head D_8009F30C.
+ * @par Callers
+ * Confirmed: func_8003C2A4 (spawn with generated placement), func_800402DC (cell flags & 5 == 4 deferred path).
+ */
 struct Unk3FD74Node *func_8003FD74(s32 type, s32 arg08,
                                    struct Unk3FD74Source *source, s32 arg18)
 {

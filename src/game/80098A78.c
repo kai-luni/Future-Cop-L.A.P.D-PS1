@@ -1,3 +1,4 @@
+// Categories: Platform > SPU Transfer
 #include "game/types.h"
 
 typedef struct {
@@ -8,6 +9,35 @@ typedef struct {
 extern Unk9EEA4 *D_8009EEA4;
 extern void func_8008E000(char *a, char *b);
 
+/**
+ * @brief Waits for the SPU transfer flag to settle, with a timeout.
+ *
+ * Modes 0 and 3 clear bit 0x40 of the status word and then spin until the bit
+ * is gone; modes 1 and 3 set it and spin until it appears. Both waits give up
+ * after 0xF00 iterations and report the timeout through func_8008E000 with
+ * two fixed strings from the image (0x80012D2C/0x80012D3C when clearing,
+ * 0x80012D2C/0x80012D4C when setting), returning -1. Otherwise the mode is
+ * returned unchanged, which makes the call chainable.
+ *
+ * @param arg Mode: 0 wait for clear, 1 wait for set, 3 do both in that order.
+ * @return The mode, or -1 after a timeout.
+ *
+ * @par Globals
+ * D_8009EEA4 - device block; the status word sits at 0x1AA.
+ *
+ * @par Control flow
+ * Two independent bounded spin loops.
+ *
+ * @par Calls
+ * func_8008E000 - diagnostic print on timeout.
+ *
+ * @par Side effects
+ * Writes the status bit; the spin loops read hardware state.
+ *
+ * @par Callers
+ * Confirmed: func_80087750 (sound shutdown). Likely: func_80022F44,
+ * func_80022F7C, func_80022FA8 (same block).
+ */
 s32 func_80098A78(s32 arg)
 {
     u32 i;

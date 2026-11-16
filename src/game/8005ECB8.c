@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Gameplay > Combat
 #include "game/types.h"
 
 struct Unk5EE04Vec {
@@ -71,6 +72,29 @@ struct Unk5EE04Request {
 extern void D_80037708();
 extern void *func_8004D444(struct Unk5EE04Request *request);
 
+/**
+ * @brief Packs a kind-0xF entity spawn request with handler D_80037708 and queues creation via func_8004D444.
+ *
+ * Confirmed: fills a stack request referencing D_80037708 (func_80037708) and a 0x4C-byte args block with kind = 0xF, unk18 = 0x3E8, unk34 = 0x10000, unk3C = -1, flags = ent->unk14 | 0x8000 (+0x4000 if ent->unk16 == 0x12), unk14 = flags | 0x8 (+0x100 if ent->unk24 & 0x100, else cleared), model **ptr, position *pos, and obj fields (+0x00, +0x02 << 4, +0x04, +0x0C, +0x0E, +0x12), then calls func_8004D444. Category Gameplay > Object Spawning | Gameplay > Combat follows func_8004D444 spawn queue, func_80037708 handler, and weapon dispatch callers. Likely: spawns a secondary/beam weapon entity (case 5) linked to firing entity ent. Unknown: exact role of unk18 = 0x3E8, unk34 = 0x10000, and obj fields.
+ *
+ * @param obj Weapon descriptor (+0x00, +0x02, +0x04, +0x0C, +0x0E, +0x12 copied into args).
+ * @param ptr Double pointer to model handle (**ptr stored in args.unk24).
+ * @param pos Launch position vector copied into args.position.
+ * @param ent Firing entity (+0x14 flags, +0x16 kind, +0x17/+0x18 bytes, +0x24 bit 0x100); pointer stored at args.unk44.
+ * @param flags Base flag word combined with 0x8 and optionally 0x100 into args.unk14.
+ * @return Pointer returned by func_8004D444 (newly spawned entity).
+ *
+ * @par Globals
+ * None directly accessed; takes address of D_80037708 (func_80037708).
+ * @par Control flow
+ * Straight-line struct initialization with flag branches on ent->unk16 == 0x12 and ent->unk24 & 0x100, returning func_8004D444(&request).
+ * @par Calls
+ * func_8004D444 - allocates entity via D_80037708 message 1, assigns id, invokes message 2 init, and links into active list.
+ * @par Side effects
+ * Allocates and links a new func_80037708 entity through func_8004D444.
+ * @par Callers
+ * Confirmed: func_8005F6E8 (0x8005F96C, action case 5) and func_8006ACB0 (0x8006B09C, action case 5) / Likely: none / Unknown: none.
+ */
 void *func_8005ECB8(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
                     struct Unk5EE04Ent *ent, u32 flags)
 {

@@ -1,9 +1,43 @@
+// Categories: Gameplay > Spawning | Game Engine > Object Pool
 #include "game/types.h"
 
 extern void func_800382B4(s32 arg0);
 extern void func_80060668(u8 *in, u8 *out);
 extern u8 *func_80039418(u8 *object, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6);
 
+/**
+ * @brief Attaches up to four child objects to a parent from its spawn table.
+ *
+ * func_800382B4(2) runs first (mode selection for the spawn path). For each of
+ * the four slots the presence word at base + 4 + offset + 0x20 is tested; when
+ * it is non-zero func_80039418 creates the child with the parent's x/y
+ * position, the slot index, the per-slot flags and scale bytes and the
+ * presence word. The handle is stored at out + 0x158 and the created object is
+ * marked with flag 0x10. From the second slot on, and only while bit 4 of the
+ * per-slot byte is clear, the parent's 0xA0 block is also copied into the
+ * child's 0x44 area. The slot counter is stored at arg1[0x73] and the 0xA0
+ * word is cleared.
+ *
+ * @param arg0 Unused argument slot of the spawn call.
+ * @param arg1 Parent object; flags at 0x4C, position 0x48/0x4A, payload 0xA0.
+ * @param arg2 Spawn table; pointer at +4, object base at +8.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Counted loop over four slots with two conditional side calls.
+ *
+ * @par Calls
+ * func_800382B4 - spawn mode setup. func_80039418 - child constructor.
+ * func_80060668 - copies the parent's state block into the child.
+ *
+ * @par Side effects
+ * Creates up to four objects and writes the parent's slot count.
+ *
+ * @par Callers
+ * Likely: func_800398EC (sibling in the same block).
+ */
 s32 func_800397AC(s32 arg0, u8 *arg1, u8 *arg2)
 {
     s32 i;

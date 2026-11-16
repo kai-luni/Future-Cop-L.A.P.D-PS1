@@ -1,3 +1,4 @@
+// Categories: Gameplay > Trigger Volume | Gameplay > Entity Update
 #include "game/types.h"
 
 typedef struct Target80031DE8 Target80031DE8;
@@ -45,6 +46,42 @@ extern s32 func_80019668(void);
 extern s32 func_80031C74(Node80031DE8 *node, Target80031DE8 *target);
 extern void func_800181D4(void *block);
 
+/**
+ * @brief Per-frame tick of the trigger-node list D_8009F6F8.
+ *
+ * Walks the singly linked node list. Nodes with the retire byte +0x15 set
+ * are unlinked and freed; flag bit 0x10 skips a node. Assigned nodes
+ * (id != -1) validate their tracked target by id, dropping it with a 600-tick
+ * cooldown on mismatch. When the timer expires they rescan the candidate
+ * table D_800A8F90 for the nearest entity on the same nodeId (positive id,
+ * type not 0x15 or 0x12) using the octile distance dx+dy-min/2, rearm the
+ * timer with 600 plus a 0..63 random jitter (another 600 when a target was
+ * found) and test the target against the trigger box. Unassigned nodes test
+ * the two global player targets D_8009FA58[0..1] instead. A non-zero low
+ * byte from the box test retires the node.
+ *
+ * @param delta Frame time subtracted from every active node timer.
+ *
+ * @par Globals
+ * D_8009F6F8 - trigger-node list head; D_800A8F90 - candidate target table;
+ * D_8009FA58 - the two player entity pointers.
+ *
+ * @par Control flow
+ * List walk with prev-pointer unlinking, a timer-gated nearest-target scan,
+ * and a two-slot player fallback loop for unassigned nodes.
+ *
+ * @par Calls
+ * func_80031C74 - trigger-box test that fires the node script and reports
+ * retirement; func_80019668 - random jitter for the rescan timer;
+ * func_800181D4 - frees a retired node block.
+ *
+ * @par Side effects
+ * Updates node targets, ids and timers, unlinks and frees retired nodes,
+ * runs node scripts through the box test.
+ *
+ * @par Callers
+ * Confirmed: func_800271A4 and func_80027510 (two-player frame driver).
+ */
 void func_80031DE8(s32 delta)
 {
     Node80031DE8 *node;

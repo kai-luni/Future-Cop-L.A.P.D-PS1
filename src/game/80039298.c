@@ -1,3 +1,4 @@
+// Categories: Game Engine > Message Dispatch | Gameplay > Entity Update
 #include "game/types.h"
 
 struct Object;
@@ -24,6 +25,40 @@ extern s32 func_8002AD58(s32, struct Object *, void *, s32);
 extern void func_800395A8(s32, struct Child *, void *, s32);
 extern void func_800398EC(s32, struct Child *, void *, s32);
 
+/**
+ * @brief Message dispatcher for the container object type.
+ *
+ * Message 1 reports the instance size 0xF0, message 2 runs the constructor
+ * func_80038754 and falls through to a plain 0 return. Message 10 answers
+ * whether the given data pointer is the current child; message 9 returns 0
+ * unless flag 1 is set. Message 5 either removes the object from the child's
+ * object array (for type 0x1C) or clears the first entry, and sets the child
+ * countdown to -1 unless flag 1 is set. Messages 11 and 14 hand over to the
+ * type-specific handler for child types 0x14 and 0x1C. Everything else goes to
+ * the base handler.
+ *
+ * @param message Entity message id.
+ * @param object Container object; child pointer at 0xEA.
+ * @param data Message payload.
+ * @param arg3 Extra argument forwarded unchanged.
+ * @return 0, except for the queries of messages 9 and 10.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Switch with intentional fall-through from message 2 into 3/6.
+ *
+ * @par Calls
+ * func_80038754 - constructor. func_800395A8 - handler for child type 0x14.
+ * func_800398EC - handler for child type 0x1C. func_8002AD58 - base handler.
+ *
+ * @par Side effects
+ * Depends on the message; the default path modifies the child list.
+ *
+ * @par Callers
+ * Unknown: no direct edge, the object is reached through its handler table.
+ */
 s32 func_80039298(s32 message, struct Object *object, void *data, s32 arg3)
 {
     register struct Object *obj __asm__("$5") = object;

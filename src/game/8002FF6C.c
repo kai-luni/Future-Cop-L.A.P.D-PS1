@@ -1,3 +1,4 @@
+// Categories: Gameplay > Collision | Physics > Proximity Test
 #include "game/types.h"
 
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
@@ -23,6 +24,35 @@ extern void func_8002FC90(struct Unk8002FF6C *other, s32 arg1, s32 arg2,
                           u8 *arg3, u8 *arg4);
 extern void func_8004D958(struct Unk8002FF6C *self);
 
+/**
+ * @brief Axis-aligned proximity test that applies an effect on contact.
+ *
+ * A target of type 0x12 is a proxy and is dereferenced through its 0xB4
+ * pointer first; anything that is not type 1 is ignored. The three axis
+ * deltas between self and target are compared against the self box half
+ * extents at 0xB4/0xB8/0xBC. When all three fit, func_8002FC90 is called with
+ * the self payload word 0xC8, selector -1 and the two 0xCC/0xD0 values, and
+ * the caller itself is retired when its flag 0x02000000 is set.
+ *
+ * @param self Entity with the box half extents and the payload words.
+ * @param other Target entity, or a proxy that points at the real target.
+ * @return Always 0.
+ *
+ * @par Globals
+ * None; the box and payload live in the entity block.
+ *
+ * @par Control flow
+ * Nested if chain, one branch per axis, so the effect only fires on a full hit.
+ *
+ * @par Calls
+ * func_8002FC90 - applies the payload to the target. func_8004D958 - retires self.
+ *
+ * @par Side effects
+ * May modify the target through the payload call and retire the caller.
+ *
+ * @par Callers
+ * Confirmed: func_8003015C.
+ */
 s32 func_8002FF6C(struct Unk8002FF6C *self, struct Unk8002FF6C *other)
 {
     s32 dx;

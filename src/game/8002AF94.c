@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Setup | Gameplay > Entity Script | Graphics > Animation
 /* Exact .text reconstruction with GCC's labels-as-values extension.
  * jtbl_80010FAC is the pre-existing external retail dispatch table. Its eight
  * entries are deliberately not guessed or replaced here.
@@ -29,6 +30,30 @@ extern void func_800448D8(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern u32 func_80019668(void);
 extern void *jtbl_80010FAC[8];
 
+/**
+ * @brief Handles message-2 spawn setup for entity class 26.
+ *
+ * Forwards base setup to func_800382B4, attaches clip 0 on animation track +0xC8, copies class-26 state and animation variants from s0->def (+0x48..+0x4F) into s1 + 0x158..+0x167, randomizes lock range +0x15A, and clamps +0x10C/+0x10E for active modes.
+ *
+ * @param a0 Message id forwarded in $a0 to func_800382B4 (alongside s1 in $a1 and s0 in $a2).
+ * @param s1 Class-26 actor block (+0xAA range limit, +0xC8 track, +0x10C/+0x10E counters, +0x158..+0x167 behavior/clip fields).
+ * @param s0 Spawn descriptor whose +0x08 pointer supplies byte fields at +0x48..+0x4F.
+ *
+ * @par Globals
+ * None (uses jump table jtbl_80010FAC for the +0x15F mode switch).
+ *
+ * @par Control flow
+ * Runs setup calls linearly, computes +0x15A = aa - (PRNG % ((s16)aa >> 1)), then switches on s1[0x15F] (< 8) via jtbl_80010FAC: modes 0 and 3 halve +0x10C twice (>> 2) if !(s1[0x160] & 1) and clamp +0x10E <= +0x10C; modes 1, 2, 4..7 and >= 8 skip clamping.
+ *
+ * @par Calls
+ * func_800382B4 (base class-5 message-2 setup), func_800448D8 (selects clip 0 on track s1 + 0xC8), func_80019668 (random jitter for lock range +0x15A).
+ *
+ * @par Side effects
+ * Initializes s1 + 0xC8 track, +0x158..+0x167 actor state/clip bytes, +0x15A range, and optionally scales +0x10C/+0x10E.
+ *
+ * @par Callers
+ * Confirmed: func_8002C3F0 (0x8002C444, message 2 of entity class 26).
+ */
 void func_8002AF94(void *a0, u8 *s1, S08002AF94 *s0)
 {
     Def8002AF94 *def;

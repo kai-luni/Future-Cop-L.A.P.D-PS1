@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Gameplay > Damage
 #include "game/types.h"
 
 union Product36AB4 { unsigned long long value; u32 word[2]; };
@@ -25,6 +26,24 @@ struct Unk36AB4 {
 extern void func_800410BC(void *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern s32 func_8001A4E8(void *arg0, void *arg1);
 
+/**
+ * @brief Message-6 tick of a linked blast/attachment entity: applies a radial damage field while the radius word is positive, otherwise attenuates the strength word by distance to its linked child and notifies the child.
+ *
+ * @param arg0 Entity block; unk50 position, unk1A s16 strength, unkB0 radius/limit, unkBC child link, unkB8 snapshotted child id, unkC0 blast source record.
+ * @param arg1 Forwarded value, passed to the child callbacks.
+ *
+ * @par Control flow
+ * unkB0 > 0: radial blast, then return. Otherwise the child must exist and its unk08 id must still equal the spawn-time snapshot unkB8; the approximate distance from child->unk5C to unk50 must be below unkB0 (with unkB0 <= 0 here, only negative approximate distances pass). unk1A is then scaled by (unkB0 - distance)/unkB0 via the reciprocal 0x80000000/(unkB0/2) and 16.16 fixed-point multiplies. Finally child->callback(0xA, child, self, arg1), and callback(0xB, ...) only when 0xA returned nonzero.
+ *
+ * @par Calls
+ * func_800410BC - radial blast: message 9 with distance falloff to objects inside radius unkB0 around unk50, strength unk1A, source record unkC0. func_8001A4E8 - fast approximate distance (max + (mid+min)/4). The child callbacks are indirect.
+ *
+ * @par Side effects
+ * Writes unk1A; via func_800410BC sends message 9 to nearby objects; the child callbacks may mutate the child. Likely role: a carried or attached damage source, since the spawn routine binds parent and child links.
+ *
+ * @par Callers
+ * Confirmed: func_80036E6C message 6 at call site 0x80036FD0 (then the base handler). The other callers named in the package work list do not exist in the unit catalog.
+ */
 void func_80036AB4(struct Unk36AB4 *arg0, s32 arg1)
 {
     register struct Unk36AB4 *self __asm__("$16") = arg0;

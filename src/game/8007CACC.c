@@ -1,3 +1,4 @@
+// Categories: Platform > Sound > Music | Input > Menu Navigation
 #include "game/types.h"
 
 struct Sel {
@@ -30,6 +31,47 @@ extern s32 func_80046A58(s32 arg0, s32 arg1, s32 arg2, s32 id);
 extern s32 func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *object);
 extern void func_80047800(struct Voice *voice, s32 pan, s32 volume, s32 extra);
 
+/**
+ * @brief Menu-driven music preview and volume callback.
+ *
+ * Runs while the front-end menu at D_8009F468 is in state 0 (or state 1 with
+ * arg1 zero). Flag 0x40000000 stores arg1 in D_8009F904. Flags 0x800000 and
+ * 0x200000 step the volume of the active menu mode down or up through the
+ * getter/setter pairs (mode 1 music, mode 2 effects, mode 3 third channel).
+ * Menu mode 1 maps to preview track 0x4A and mode 3 to track 0x4B: a stale
+ * voice for another track is stopped, a missing voice is allocated with
+ * func_80046A58 and started with func_80046E88, and an existing voice is
+ * refreshed with func_80047800 at the current mode volume. Any other menu
+ * mode stops the preview voice. Returns flags unchanged.
+ *
+ * @param flags Command bits: 0x40000000 store, 0x800000 volume down,
+ *        0x200000 volume up.
+ * @param arg1 Value stored under flag 0x40000000; also gates state 1.
+ * @return The flags argument, unmodified.
+ *
+ * @par Globals
+ * D_8009F468 - menu block (mode byte +0x00, state byte +0x05); D_8009F91C -
+ * preview voice handle; D_8009F920 - track id the voice was started for;
+ * D_8009F904 - stored arg1 value.
+ *
+ * @par Control flow
+ * State gate, two volume switches on menu mode, then a three-way branch
+ * (track 0x4A / track 0x4B / stop) with stop-and-replace voice management.
+ *
+ * @par Calls
+ * func_8004522C/func_800451F8, func_80045288/func_80045238,
+ * func_800452C8/func_80045294 - volume get/set pairs; func_80046A34 - stop
+ * voice; func_80046A58 - allocate voice; func_80046E88 - start track;
+ * func_80047800 - update voice pan/volume.
+ *
+ * @par Side effects
+ * Writes D_8009F904, the three volume words, and the voice handle/track id.
+ *
+ * @par Callers
+ * Confirmed: none direct. Likely: invoked through the callback slot +0xC
+ * that func_80077AD4 installs (pointer load at 0x80077D88). Unknown: the
+ * dispatcher that calls the slot.
+ */
 s32 func_8007CACC(s32 flags, s32 arg1)
 {
     s32 mode;

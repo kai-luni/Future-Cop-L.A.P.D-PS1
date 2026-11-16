@@ -1,3 +1,4 @@
+// Categories: Platform > Interrupts | BIOS > Exception Vector
 typedef unsigned int u32;
 
 extern u32 D_80076A0C[];
@@ -5,6 +6,29 @@ extern void func_80076878(void);
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
 
+/**
+ * @brief Saves the MIPS general exception vector and installs a custom trampoline.
+ *
+ * Disables interrupts, backs up 8 words (32 bytes) from address 0x80 into D_80076A0C,
+ * patches 0x80..0x8C with a lui/ori/jr $k0/nop jump to func_80076878+0x4C, and re-enables interrupts.
+ *
+ * @param void No parameters.
+ *
+ * @par Globals
+ * D_80076A0C - 8-word backup buffer holding the original 0x80 exception vector (restored by func_800772E0).
+ *
+ * @par Control flow
+ * Enters critical section, copies 8 words from 0x80 to D_80076A0C, writes 4 instruction words at 0x80..0x8C, exits critical section.
+ *
+ * @par Calls
+ * func_8008C9C0 - disables interrupts via COP0 status; func_8008C9E0 - enables interrupts via COP0 status.
+ *
+ * @par Side effects
+ * Overwrites D_80076A0C, patches 16 bytes at RAM address 0x80 (MIPS exception vector), and modifies COP0 status.
+ *
+ * @par Callers
+ * Confirmed: none in direct-call list or asm/us/main.s. Unknown: whether invoked dynamically or left unused beside func_800772E0.
+ */
 void func_80077340(void)
 {
     u32 *src = (u32 *)0x80;

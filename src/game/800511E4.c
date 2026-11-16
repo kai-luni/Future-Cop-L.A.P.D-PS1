@@ -1,3 +1,4 @@
+// Categories: Resources > Loader Post-Process | Gameplay > Placement
 #include "game/types.h"
 
 struct Resource {
@@ -40,6 +41,37 @@ extern void func_80019A74(struct Resource *resource);
 extern void func_80019D00(struct Resource *resource);
 extern s32 func_80067684(struct Vec3s32 *position, s32 mode);
 
+/**
+ * @brief Converts map-relative placement records into world coordinates on load.
+ *
+ * When func_80019AA8 reports the resource as fresh, the resource status is
+ * cleared and func_80019A74 runs, then the header at data + 0xC is published in
+ * D_800A2210 at the running slot index. For every entry the two 16-bit
+ * coordinates are scaled by 256 into a position vector; the low nibble of
+ * flags06 selects the mode: type 5 takes the signed flags word multiplied by
+ * 16 as the height, every other type calls func_80067684 with mode -1 (type 0),
+ * -2 (type 1) or type - 2. The resulting height is written back at 0x04, the
+ * x value at 0x02, and flags06 receives the z value.
+ *
+ * @param resource Resource whose data block holds the header and entry table.
+ *
+ * @par Globals
+ * D_8009F7B8 - running slot index; D_800A2210 - published headers.
+ *
+ * @par Control flow
+ * One counted loop over the entries, plus the already-loaded path that only
+ * calls func_80019D00.
+ *
+ * @par Calls
+ * func_80019AA8, func_80019A74, func_80019D00 - resource state handling.
+ * func_80067684 - height/ground query at a position.
+ *
+ * @par Side effects
+ * Rewrites every entry in place and advances the slot index.
+ *
+ * @par Callers
+ * Confirmed: func_80024EC8 (asset loader).
+ */
 void func_800511E4(struct Resource *resource)
 {
     struct Vec3s32 position;

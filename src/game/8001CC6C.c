@@ -1,3 +1,4 @@
+// Categories: Resources > Streaming | Platform > CD-ROM
 #include "game/types.h"
 
 typedef struct {
@@ -28,6 +29,36 @@ extern u8 D_800A85C0[];
 
 extern void func_8008CD10(void *dest, const void *src, s32 n);
 
+/**
+ * @brief Copies one chunk of a pending stream into the caller's buffer.
+ *
+ * The source offset inside the streaming buffer is the sector offset of the
+ * open file (0x7FF mask), so a chunk never crosses a sector boundary: the
+ * length is clamped to 0x800 and reduced by the offset. func_8008CD10 copies
+ * the bytes, then the read pointer, the remaining count and the file position
+ * are advanced by the transferred length. When nothing is left the job is
+ * marked idle, the file slot is marked done (plus 0x100 when the caller asked
+ * for it) and the completion callback stored in the state block is invoked
+ * with the transferred byte count and the accumulator.
+ *
+ * @par Globals
+ * func_80010000 - stream state (handle 0x10, remaining 0x04, pointer 0x20,
+ * accumulator 0x08, callback 0x14, flag 0x24);
+ * D_800A6D78 - four file slots (status 0x00, sector offset 0x0C);
+ * D_800A85C0 - streaming buffer.
+ *
+ * @par Control flow
+ * One clamp, one copy, then a completion branch.
+ *
+ * @par Calls
+ * func_8008CD10 - block copy.
+ *
+ * @par Side effects
+ * Advances the stream state, the file slot and calls the completion callback.
+ *
+ * @par Callers
+ * Confirmed: func_8001CE54.
+ */
 void func_8001CC6C(void)
 {
     s32 chunk;

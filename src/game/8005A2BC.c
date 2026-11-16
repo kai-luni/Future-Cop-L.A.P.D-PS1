@@ -1,3 +1,4 @@
+// Categories: Graphics > Textures | Resources > Descriptor Table
 #include "game/types.h"
 
 typedef struct {
@@ -36,6 +37,14 @@ extern void func_8004979C(void *value);
  * Hypothesis, not verified: the two stamped bytes are the UV/CLUT halfword of a PSX
  * primitive and 0x80 is a 128-texel u offset. Only the offsets and the 4-column
  * wrapping are established.
+ *
+ * @par Calls
+ * func_80017EBC - allocates the descriptor table.
+ * func_800195F0 - significant-bit count of the tile-count byte.
+ * func_8004979C - publishes the table as the active one.
+ *
+ * @par Callers
+ * Confirmed: func_8005A414.
  */
 s32 func_8005A2BC(void **array, s32 count)
 {

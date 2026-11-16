@@ -1,3 +1,4 @@
+// Categories: Gameplay > AI > Attack Scheduling | Gameplay > Entity Update | Graphics > Animation
 #include "game/types.h"
 
 struct Unk33608Anim {
@@ -40,6 +41,29 @@ struct Unk33608Owner {
     struct Unk33608Mirror *mirror;
 };
 
+/**
+ * @brief Sets an entity's active animation/target block or parks its mode at 4, mirroring to its twin block.
+ *
+ * When anim is non-null and differs from owner->animB8, writes anim and anim->value08 to owner and both mirror banks of owner->mirror; when anim is null, resets valueB6 to valueB4 and, if modeA6 != 4, switches mode to 4 and restores valueA8 from mirror->base1B.
+ *
+ * @param owner Entity block (+0xA6 modeA6, +0xA8 valueA8, +0xB4 valueB4, +0xB6 valueB6, +0xB8 animB8, +0xBC valueBC, +0x134 mirror).
+ * @param anim Target/animation descriptor (+0x08 value08), or 0 to park/reset the slot.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Branches on anim != 0: updates animB8 and valueBC on owner and both mirror banks (+0x68/+0x6C and +0x90/+0x94) if owner->animB8 != anim. Else copies valueB4 to valueB6/value66/value8E, and if modeA6 != 4 writes mode 4 to modeA6/mode56/mode7E and mirror->base1B to valueA8/value58/value80.
+ *
+ * @par Calls
+ * None.
+ *
+ * @par Side effects
+ * Mutates owner fields +0xA6..+0xBC and mirrored fields +0x56..+0x94 in owner->mirror.
+ *
+ * @par Callers
+ * Confirmed: func_800336DC (10 sites: 0x80033ED8..0x800347DC), func_8003532C (0x80035478), and func_80035698 (0x80035714).
+ */
 void func_80033608(struct Unk33608Owner *owner, struct Unk33608Anim *anim)
 {
     register struct Unk33608Mirror *firstMirror __asm__("$2");

@@ -1,5 +1,29 @@
+// Categories: Utilities > Mathematics > Fixed Point
 #include "game/types.h"
 
+/**
+ * @brief Scales a 2-element 16.16 fixed-point vector in place by a signed 16.16 factor.
+ *
+ * Multiplies p[0] and p[1] by scale using 32x32->64 signed multiplication and extracts the middle 32 bits ((hi << 16) | (lo >> 16)), writing results back to p[0] and p[1].
+ *
+ * @param scale Signed 16.16 fixed-point scale factor.
+ * @param p Pointer to a two-element s32 vector modified in place.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Straight-line inline-assembly mult/mflo/mfhi scaling for p[0] and p[1]; no branches or loops.
+ *
+ * @par Calls
+ * None.
+ *
+ * @par Side effects
+ * Overwrites p[0] and p[1] in place.
+ *
+ * @par Callers
+ * Confirmed: func_8001A7AC (0x8001A7F8), func_80051EB8 (0x80051F70), func_80053A74 (0x80054020, 0x80054214), func_80054590 (0x80054800), and func_8005E624 (0x8005E980).
+ */
 void func_8001ABE0(s32 scale, s32 *p)
 {
     register u32 lo0 __asm__("$8");

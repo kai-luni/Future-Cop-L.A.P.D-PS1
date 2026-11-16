@@ -1,3 +1,4 @@
+// Categories: Gameplay > Combat | Gameplay > Map
 #include "game/types.h"
 
 struct Vec { s32 x, y, z; };
@@ -35,6 +36,47 @@ extern s32 func_8001AB00(struct Vec *, struct Vec *);
 extern u32 func_80095900(s32);
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 
+/**
+ * @brief Area-effect pass of a kind-0x57 object: sphere damage plus map trace.
+ *
+ * Walks the owner's sphere chain. For each unconsumed sphere (state <= 0),
+ * unless source flags bit 3 is set, it first tests the sphere against the
+ * primary target and then against the shared candidate table D_800A8F90:
+ * active targets qualify when they are not the attacker, lack flag 0x80,
+ * belong to another team and are not kinds 2/7/15, while kind 25 always
+ * qualifies; a +/-65535 box check precedes the overlap test. Overlap delivers
+ * a type-2 damage event through the target callback (message 14) and consumes
+ * the sphere. Afterwards the chain segments (source position to first sphere,
+ * then sphere to sphere) are traced against the map grid; the first blocked
+ * segment marks the sphere and spawns a type-5 cell effect carrying the
+ * radius shifted left 4.
+ *
+ * @param owner Kind-0x57 object; +0x24 tag, +0x68 sphere chain head.
+ * @param source Effect source: flags, primary target, detail (attacker),
+ *        column, position and value.
+ *
+ * @par Globals
+ * D_800A8F90 - shared candidate table (count +0x00, items +0x08) filled by
+ * the target query functions.
+ *
+ * @par Control flow
+ * Tag-kind gate, then a linked-list walk with a damage phase and a raycast
+ * phase per sphere; the first map hit returns immediately.
+ *
+ * @par Calls
+ * func_8005B5A0 - sphere/target overlap test that fires the damage event.
+ * func_800684AC - map-grid DDA segment trace, returns the first hit.
+ * func_8003BF50 - classifies the attacker as kind-0x12 linked, used as row.
+ * func_800402DC - map-cell spawn gate for the type-5 effect message.
+ *
+ * @par Side effects
+ * Consumes spheres (state 10 via the overlap helper), sets sphere flag bit 0
+ * on the map hit, may set source flags bit 3, and spawns a cell object.
+ *
+ * @par Callers
+ * Confirmed: func_8005B934 (message 1 of the kind-0x57 handler, when the
+ * linked target has a moving part).
+ */
 void func_8005B6A8(struct Owner *owner, struct Source *source)
 {
     struct Vec diff;

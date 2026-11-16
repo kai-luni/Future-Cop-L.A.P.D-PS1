@@ -1,3 +1,4 @@
+// Categories: Utilities > Fixed Point | Utilities > Heightfield Sampling
 #include "game/types.h"
 
 typedef struct {
@@ -9,6 +10,34 @@ typedef struct {
 
 extern Unk800A2940 D_800A2940;
 
+/**
+ * @brief Bilinear sample of a byte heightfield at a 16.14 fixed-point position.
+ *
+ * The map descriptor D_800A2940 holds the origin, the row width, the last
+ * valid column and the base pointer. The two coordinates of arg0 are split
+ * into a cell index (>> 14) and a 14-bit fraction; the sample is the bilinear
+ * blend of the four surrounding bytes. Rows and columns are bounds-checked
+ * against the descriptor, and out-of-range positions return the sentinel
+ * 0x8000 instead of a value.
+ *
+ * @param arg0 Two 16.14 coordinates: arg0[0] is the column, arg0[2] the row.
+ * @return Interpolated height in 8.8 scale, or 0x8000 when outside the map.
+ *
+ * @par Globals
+ * D_800A2940 - origin (0x0), row width (0x4), last column (0x8), base (0xC).
+ *
+ * @par Control flow
+ * Index split, four range tests, then two row interpolations and one column blend.
+ *
+ * @par Calls
+ * None.
+ *
+ * @par Side effects
+ * None observed.
+ *
+ * @par Callers
+ * Confirmed: func_800324E0, func_80035B7C.
+ */
 s32 func_80069A38(s32 *arg0)
 {
     register Unk800A2940 *desc __asm__("$6") = &D_800A2940;

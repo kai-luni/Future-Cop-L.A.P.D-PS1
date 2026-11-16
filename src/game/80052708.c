@@ -1,3 +1,4 @@
+// Categories: Gameplay > Collision | Physics > Movement
 #include "game/types.h"
 
 struct Vec3 {
@@ -15,6 +16,42 @@ struct Self80052708 {
 
 extern s32 func_80052410(struct Self80052708 *self, struct Vec3 *outA, struct Vec3 *outB);
 
+/**
+ * @brief Footprint collision response: pushes the motion block off blocked edges.
+ *
+ * Runs the eight-segment footprint test (four origin-to-corner rays plus the
+ * four quad edges, each a map-grid DDA) and stores the transformed footprint
+ * corners at state+0x10C..+0x13C. For every distinct non-zero 3-bit hit code
+ * it builds a push-away direction from the contact point toward the footprint
+ * centre, quantized by code: 1 keeps x, 2 keeps z, 3 the diagonal, 4 the
+ * anti-diagonal. The impulse magnitude is fixed at 0x24000 per axis, doubled
+ * when arg1 is non-zero, and added to the x/z motion words at state+0x150
+ * and state+0x158 that the slide-step helper func_80051CC4 also writes.
+ *
+ * @param self Entity block; +0xAC is the state block.
+ * @param arg1 Non-zero doubles the impulse; callers pass func_8005220C(self).
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Early return when the test mask is 0. A descending 8-iteration loop peels
+ * 3-bit groups, deduplicates codes through a seen-bit set, records the last
+ * code in +0xB8, shapes dx/dz in a four-way switch, clamps each to +/-0x24000
+ * by sign only, then accumulates into the two motion words.
+ *
+ * @par Calls
+ * func_80052410 - transforms the footprint quad and returns the packed
+ * per-edge map hit codes.
+ *
+ * @par Side effects
+ * Writes the corner block at state+0x10C, the code byte +0xB8 and the motion
+ * words state+0x150/+0x158.
+ *
+ * @par Callers
+ * Confirmed: func_80053A74 and func_800549F0, at the end of every locomotion
+ * sub-step.
+ */
 void func_80052708(struct Self80052708 *self, s32 arg1)
 {
     struct Vec3 outA[4];

@@ -1,3 +1,4 @@
+// Categories: Graphics > Model Renderer | Gameplay > Movement
 #include "game/types.h"
 
 struct Matrix32 {
@@ -68,6 +69,40 @@ extern void func_8001ABE0(s32 scale, s32 *p);
 extern void func_80051CC4(struct Arg0 *arg0, void *arg1, s32 arg2, void *arg3,
                           struct Matrix32 *arg4, struct Matrix32 *arg5, s32 arg6);
 
+/**
+ * @brief Feeds one model instance either a camera push or its transform pass.
+ *
+ * With bit 0 of arg2 set the function works in two dimensions: the delta
+ * between the model position (0x34/0x3C) and the owner's anchor (0x50/0x58) is
+ * measured with func_8001A7AC, reduced by the two radii, clamped to
+ * +/-0x1000 and scaled by D_8009F9FC before func_8001ABE0 applies it to the
+ * owner's world position at 0xAC. Otherwise the model matrix is transposed with
+ * func_80019470, the part table and the sub-object offset are resolved, and for
+ * every part bit in arg2 (starting at 0x8000, shifting down per part) the part
+ * is passed to func_80051CC4 together with both the original and the transposed
+ * matrix. Both paths mark the model as updated with flag 0x10 in 0xB8.
+ *
+ * @param arg0 Owner with the model handle at 0xAC and the animation table at 0x28.
+ * @param arg1 Model instance with matrix, position and part index.
+ * @param arg2 Part bit mask, bit 0 selects the 2D push path.
+ * @param arg3 Extra argument forwarded to the part renderer.
+ *
+ * @par Globals
+ * D_8009F9FC - global push scale.
+ *
+ * @par Control flow
+ * Two paths: a short clamped push, or a masked loop over the model parts.
+ *
+ * @par Calls
+ * func_8001A7AC - 2D distance. func_8001ABE0 - scaled vector apply.
+ * func_80019470 - matrix transpose. func_80051CC4 - part transform/render.
+ *
+ * @par Side effects
+ * Moves the owner position or transforms the model parts.
+ *
+ * @par Callers
+ * Likely: func_80052098 (same block).
+ */
 void func_80051EB8(struct Arg0 *arg0, struct Arg1 *arg1, s32 arg2, s32 arg3)
 {
     s32 vec[2];

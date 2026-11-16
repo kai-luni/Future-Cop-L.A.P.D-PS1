@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Gameplay > Map | Game Engine > Object Setup
 #include "game/types.h"
 
 struct Unk3FD74Source;
@@ -26,6 +27,29 @@ extern struct Unk3FE0CObject *func_8003D680(struct Unk3FD74Source *source,
 extern s32 func_8003E984(struct Unk3FE0CObject *object, s32 arg1, u8 type,
                          s32 arg18, s32 arg08);
 
+/**
+ * @brief Instantiates and registers a deferred map spawn node when it enters player range.
+ *
+ * Allocates and builds the object via func_8003D680 from node's descriptor fields, sets object->owner (+0x44) back to node, registers it in the active world with func_8003E984, and sets node->flags bit 0 on success.
+ *
+ * @param node Spawn request node (+0x04 type, +0x08 row/arg08, +0x10 source, +0x18 col/arg18, +0x1C flags).
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Calls func_8003D680; if non-null, writes object->owner = node and calls func_8003E984, setting node->flags |= 1 when func_8003E984 returns non-zero.
+ *
+ * @par Calls
+ * func_8003D680 - allocates and initializes the 0x4C-byte object from node->source.
+ * func_8003E984 - registers the object into world buckets and spawns its active entity.
+ *
+ * @par Side effects
+ * Allocates/registers a world object, links object->owner (+0x44), and may set bit 0 of node->flags (+0x1C).
+ *
+ * @par Callers
+ * Confirmed: func_8003FF7C (0x800402A0, when an inactive spawn node enters player range).
+ */
 void func_8003FE0C(struct Unk3FD74Node *node)
 {
     struct Unk3FE0CObject *object;

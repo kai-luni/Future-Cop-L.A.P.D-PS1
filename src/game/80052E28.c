@@ -1,3 +1,4 @@
+// Categories: Gameplay > Movement | Game Engine > Steering
 #include "game/types.h"
 
 struct Unk52E28 {
@@ -7,6 +8,33 @@ struct Unk52E28 {
     u8 unkB8;
 };
 
+/**
+ * @brief Steps a 12-bit angle towards a target that depends on the behaviour mode.
+ *
+ * The low three bits of 0xB8 select one of four steering rules, each mapping
+ * the current angle 0xB0 into a hysteresis window: mode 1 targets 0, 0x800 or
+ * 0x1000 depending on how far the angle already is; mode 2 splits at 0x800;
+ * mode 3 targets 0xE00, 0x600 or -1 around 0xA00 and 0x200; mode 4 mirrors
+ * mode 1 with a different split. The delta is then clamped to eight units per
+ * call and added, so the movement needs several frames to reach the target.
+ *
+ * @param self Entity; angle at 0xB0, mode bits at 0xB8.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Switch over four modes, then a symmetric clamp on the delta.
+ *
+ * @par Calls
+ * None.
+ *
+ * @par Side effects
+ * Writes the angle at 0xB0.
+ *
+ * @par Callers
+ * Confirmed: func_80053A74, func_800549F0.
+ */
 void func_80052E28(struct Unk52E28 *self)
 {
     register s32 target __asm__("$5") = 0;

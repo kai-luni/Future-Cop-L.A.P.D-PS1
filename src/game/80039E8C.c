@@ -1,3 +1,4 @@
+// Categories: Physics > Force Fields | Game Engine > Object Setup
 #include "game/types.h"
 
 typedef struct {
@@ -60,6 +61,41 @@ extern s32 func_8002AD58(s32, Unk39E8C_O *, Unk39E8C_A *);
 extern s32 func_80067684(void *, s32);
 extern void func_80050E0C(void *, void *, s32, void *, void *);
 
+/**
+ * @brief Spawn-time initializer of the force-field entity class.
+ *
+ * Runs the shared base handler, then places the field on the topmost terrain
+ * surface, installs its motion/path block and fills the parameter block at
+ * +0x134..+0x144 (range, strength, on/off phase times, curve/mode bytes,
+ * effect flags, force multiplier) that the tick handler func_8003A160 reads.
+ *
+ * @param arg0 Message number, forwarded to the base handler (spawn is 2).
+ * @param obj Force-field object block (0x148 bytes for this class).
+ * @param arg2 Spawn payload: +0x04 definition record (+0x18 selector),
+ *        +0x08 input definition with the field parameters.
+ *
+ * @par Globals
+ * None touched directly; all state lives in the object block.
+ *
+ * @par Control flow
+ * Straight-line setup. One branch: when the definition selector is 0 the
+ * height is lifted by input->unk28 * 16 above the terrain. The effect flag
+ * byte gets 0xC0 when both phase times are non-zero (periodic blinking),
+ * else 0x80. A small loop clears the two force vectors at +0x11C.
+ *
+ * @par Calls
+ * func_8002AD58 - base entity handler, runs the default spawn path first.
+ * func_80067684 - terrain surface selector, mode -1 returns the top surface.
+ * func_80050E0C - installs the motion/path data at obj+0xA0 from the input.
+ *
+ * @par Side effects
+ * Writes obj +0x21 (cleared, old value saved to +0x141), +0x24 bit31 cleared,
+ * +0x54/+0x60 height, the +0xA0 motion block and +0x11C..+0x144 parameters;
+ * +0x144 is 0x10000000 / range, the per-tick force multiplier.
+ *
+ * @par Callers
+ * Confirmed: func_8003A844 (message 2 of the class handler, size query 0x148).
+ */
 void func_80039E8C(s32 arg0, Unk39E8C_O *obj, Unk39E8C_A *arg2)
 {
     Unk39E8C_I *in;

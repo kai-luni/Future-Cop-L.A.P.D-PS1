@@ -1,3 +1,4 @@
+// Categories: Game Engine > Command Queue | Gameplay > Entity Script | Gameplay > Entity Update
 #include "game/types.h"
 
 struct Command { u8 op; u8 arg; };
@@ -34,6 +35,24 @@ extern void func_8004D958(struct Entity *);
 extern void func_8003FD10(s32, struct Entity *, s32);
 extern void func_8002A5B4(void *, s32);
 
+/**
+ * @brief Walks D_800A8F90 active entities and executes up to four queued 2-byte commands per entity.
+ *
+ * Confirmed: iterates over D_800A8F90.items[0..count-1] skipping id <= 0, and loops through up to 4 {op, arg} slots at +0x0C..+0x13 (stopping on op == 0). Handles opcodes: 0x38 (health = arg*100, mirrored to child[0..3] for kinds 20/28); 0x39 (stops sound via func_800457B8 if flag 0x400000, sets unk21); 0x3A/0x41..0x43/0x3E (write unk1A/health/unk17/unk18/unk23); 0x3B/0x3F/0x40 (toggle flags bits 4/0x1000080/0x20000); 0x3C (clears 0x1000080 and sends msg 14 damage if > 0); 0x3D (sets flags 0x4000000/0x8000000 and retires via func_8004D958); 0x44/0x45 (sets unk92/unk93 or flag 0x20, propagated to childDC/children for kinds 1/20/28); 0x64/0x65 (func_8003FD10). Consumes handled slots via func_8002A5B4. Category follows D_800A8F90 queue, func_8002A5B4, and entity flags/health mutations.
+ * Likely: per-frame command dispatcher draining scripted orders queued onto entities. Unknown: meaning of unk21/unk23/unk92/unk93 fields.
+ *
+ * @param void No parameters.
+ * @par Globals
+ * D_800A8F90 - active entity table (count + items array) scanned read-only.
+ * @par Control flow
+ * Outer loop over D_800A8F90; inner do-while over 4 command slots; large opcode switch with default skipping slot without consuming.
+ * @par Calls
+ * func_800457B8 (stop sound on 0x39), entity->update (indirect msg 14 on 0x3C), func_8004D958 (retire on 0x3D), func_8003FD10 (0x64/0x65), func_8002A5B4 (consume slot).
+ * @par Side effects
+ * Mutates entity health, flags, fields, child entities, stops sounds, triggers damage/retire/spawn, and compacts command queues.
+ * @par Callers
+ * Confirmed: func_80027510 (0x800277C4, 2-player frame) and func_800271A4 (0x80027364 in asm/us/main.s; edges.json lists 0x800271a8) / Likely: none / Unknown: none.
+ */
 void func_8004CECC(void)
 {
     s32 i, index, arg;

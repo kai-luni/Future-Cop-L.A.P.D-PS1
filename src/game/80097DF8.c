@@ -1,8 +1,45 @@
+// Categories: Resources > Memory Pools | Platform > Sound
 typedef unsigned int u32;
 typedef int s32;
 struct Entry { u32 addr; u32 size; };
 extern s32 D_8009EF08;
 extern struct Entry *D_8009EF0C;
+
+/**
+ * @brief Compacts the SPU pool block table D_8009EF0C.
+ *
+ * Maintenance pass over the two-word block records (address with flag bits,
+ * size in 8-byte units) used by the pool allocator func_80097B28. Flag
+ * semantics: 0x80000000 free, 0x40000000 untouched tail space, no top bits
+ * allocated, 0x2FFFFFFF dead tombstone, low 28 bits the address. Five passes:
+ * coalesce each free entry with the next non-dead entry when it is also free
+ * and physically contiguous; tombstone zero-size entries; selection-sort the
+ * records by address, stopping at the first untouched-tail entry; compact the
+ * first tombstone by moving the last record into its slot and lowering the
+ * cursor D_8009EF08; finally fold the trailing run of free entries back into
+ * the tail, converting them to 0x40000000 and accumulating their sizes.
+ *
+ * @par Globals
+ * D_8009EF0C - block record table; D_8009EF08 - insertion cursor / last
+ * record index, lowered by the compaction passes.
+ *
+ * @par Control flow
+ * Five sequential loops over the table; the coalescing scan skips tombstones
+ * and merges only adjacent free records; the sort and the tail fold both
+ * stop at the untouched-tail marker.
+ *
+ * @par Calls
+ * None.
+ *
+ * @par Side effects
+ * Rewrites record addresses, sizes and flags in place and shrinks the
+ * cursor; no allocation or hardware access.
+ *
+ * @par Callers
+ * Confirmed: func_80097B28 (after every alloc/split, sites 0x80097BD0,
+ * 0x80097D00, 0x80097DB4), func_800980F8 (site 0x8009843C) and
+ * func_80098458 (site 0x800985E0); func_80098708 per its documentation.
+ */
 void func_80097DF8(void)
 {
     s32 i, j;

@@ -1,3 +1,4 @@
+// Categories: Platform > Audio
 #include "game/types.h"
 
 struct State86 {
@@ -40,6 +41,35 @@ extern void func_80098FE8(struct Setup86 *);
 extern s32 func_800452C8(void);
 extern void func_80099368(struct Msg86 *);
 
+/**
+ * @brief Sends a positioned playback message to the sound engine.
+ *
+ * First a setup block of type 3 with both scale fields 0x3FFF is handed to
+ * func_80098FE8. Then a message of kind 0xFF93 is filled: the object pointer,
+ * a panning value that is a random 0..127 only for the two tracked objects
+ * (D_8009F4D8->first and ->second), the caller value, and a block of fixed
+ * fields (1, 1, 3, 0, 0, 0, 0, 15). func_80099368 consumes the message.
+ *
+ * @param object Entity the sound is attached to.
+ * @param value Payload passed through in the message.
+ * @param c Third argument forwarded to the message field at 0x10.
+ *
+ * @par Globals
+ * D_8009F4D8 - state block with the two tracked objects.
+ *
+ * @par Control flow
+ * Straight-line fill of two stack blocks.
+ *
+ * @par Calls
+ * func_80098FE8 - setup. func_80099368 - message dispatch.
+ * func_800452C8 - random source for the panning values.
+ *
+ * @par Side effects
+ * Emits one engine message; no globals written.
+ *
+ * @par Callers
+ * Confirmed: func_80087824 (sound initialisation).
+ */
 void func_80086C74(void *object, s32 value, s32 c)
 {
     struct Msg86 msg;

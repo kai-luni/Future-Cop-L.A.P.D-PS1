@@ -1,3 +1,4 @@
+// Categories: Platform > Device Wait | Platform > Memory Card
 typedef unsigned char u8;
 extern int D_800A3E68, D_800A3E6C;
 extern char *D_800A3E70;
@@ -10,6 +11,39 @@ extern void func_8008FF08(char *);
 extern void func_8008E000(char *, char *, int, int);
 extern void func_8008F6D8(void);
 
+/**
+ * @brief Waits for a device reply word with a tick timeout and a retry ceiling.
+ *
+ * The deadline D_800A3E68 is the current tick plus 0x3C0 and the pass counter
+ * D_800A3E6C starts at zero. Each pass first compares the deadline with the
+ * current tick; a pass counter above 0x3C0000 or an expired deadline goes to
+ * the error path, which prints D_80012488 through func_8008FF08, reports the
+ * state bytes and the table entries through func_8008E000 and returns -1 after
+ * func_8008F6D8. On a normal pass the function returns 0 unless bit 0x1000000
+ * of the reply word *D_8009CBB0 is set; with mode 0 the loop then waits again
+ * and finally returns 1.
+ *
+ * @param mode 0 keeps retrying, non-zero performs a single pass.
+ * @return -1 on timeout, 0 when the reply bit is clear, 1 when it is set.
+ *
+ * @par Globals
+ * D_800A3E68 - deadline; D_800A3E6C - pass counter; D_800A3E70 - message pointer;
+ * D_8009CB84 - state bytes; D_8009C94C and D_8009C8CC - value tables;
+ * D_8009C8C5 - table index; D_8009CBB0 - reply word pointer.
+ *
+ * @par Control flow
+ * Do-while loop with a shared timeout label.
+ *
+ * @par Calls
+ * func_80091270 - tick counter. func_8008FF08 - error print.
+ * func_8008E000 - formatted diagnostic. func_8008F6D8 - error teardown.
+ *
+ * @par Side effects
+ * Writes the deadline and pass counter, prints on timeout.
+ *
+ * @par Callers
+ * Likely: func_8008E5FC (same block).
+ */
 int func_8008FAC8(int mode)
 {
     int ret;

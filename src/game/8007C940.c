@@ -1,3 +1,4 @@
+// Categories: Platform > Controller Input
 #include "game/types.h"
 
 extern s32 D_8009F8B0[];
@@ -9,6 +10,38 @@ extern u8 func_8001EB2C(s32);
 extern void func_8001EC04(s32, s32);
 extern void func_8001E96C(s32, s32);
 
+/**
+ * @brief Filters the pad state for one port and toggles its vibration pair.
+ *
+ * A button counts as new when it is set in arg0 and was clear in the mask
+ * kept at D_8009F8B0. In that case a sound is started through
+ * func_80046C84(0x48, 0), the port is mapped to 0/1 and, if a pad is present
+ * (func_8001EF34) and reports connected (func_8001EAEC), the toggle at
+ * D_8009F8D8[port] flips. On the rising edge the current motor mode is read
+ * with func_8001EB2C, motor 1 is started, and the saved mode is written back,
+ * so the pad shakes once per press.
+ *
+ * @param arg0 Button bits to test.
+ * @param arg1 Pad port (0 or 1).
+ * @return The button bits that were passed in; the return value is the input.
+ *
+ * @par Globals
+ * D_8009F8B0 - mask of buttons already seen; D_8009F8D8 - per-port toggle.
+ *
+ * @par Control flow
+ * Two-level guard (port equality, then new-button bit test) around the toggle.
+ *
+ * @par Calls
+ * func_80046C84 - sound cue. func_8001EF34 - pad present. func_8001EAEC - pad
+ * connected. func_8001EB2C - read motor mode. func_8001EC04 - set motor,
+ * func_8001E96C - apply motor state.
+ *
+ * @par Side effects
+ * Writes the toggle byte and the pad motor registers.
+ *
+ * @par Callers
+ * Unknown: no direct edge; the signature suggests a per-frame pad hook.
+ */
 s32 func_8007C940(s32 arg0, s32 arg1)
 {
     register s32 input __asm__("$2");

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Combat | Gameplay > Difficulty
 #include "game/types.h"
 
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
@@ -24,6 +25,41 @@ struct Game {
 extern struct Game *D_8009FA94;
 extern s32 func_80095900(s32 value);
 
+/**
+ * @brief Landing-impact damage curve scaled by object and difficulty.
+ *
+ * Converts a hard-landing rebound speed into damage. Speeds at or below
+ * 0x93333 do no damage; above that the excess is clamped at 0x300000,
+ * normalized (shift 9, divide 183501, shift 7) and shaped by a three-piece
+ * curve: linear below 0x8000, square-root-weighted up to 0xC000, cubic above.
+ * The result is multiplied by the object impact scale at +0x1E and by 100,
+ * then divided by the difficulty divisor picked through the object's side.
+ *
+ * @param obj Entity block; +0x1E impact scale, +0xAC info record whose side
+ *        byte at +0xC1 selects the difficulty word.
+ * @param val Rebound speed in fixed point.
+ * @return The damage amount; 0 below the threshold or in difficulty mode 3.
+ *
+ * @par Globals
+ * D_8009FA94 - game settings block; +0x08 and +0x98 hold the difficulty mode
+ * words for side 0 and non-zero side respectively.
+ *
+ * @par Control flow
+ * Threshold gate, clamp, normalization, three FMUL curve bands, side
+ * selection, then a four-way switch: modes 0/1/2 divide by 100/125/150 and
+ * mode 3 zeroes the result.
+ *
+ * @par Calls
+ * func_80095900 - square root used by the middle curve band.
+ *
+ * @par Side effects
+ * None observed.
+ *
+ * @par Callers
+ * Confirmed: func_80053A74 (hover-form physics tick) and func_800549F0
+ * (on-foot locomotion tick); both add the result to the impact total and
+ * switch the actor to state 0x12 when the landing speed exceeds the limit.
+ */
 s32 func_80052F54(struct Object *obj, s32 val)
 {
     s32 *modePtr;

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Update | Game Engine > Entity Lifecycle | Physics > Collision
 #include "game/types.h"
 
 struct Vec3 {
@@ -47,6 +48,27 @@ extern void func_80031004(struct Entity *self);
 extern s32 D_8009FAA4;
 extern void *jtbl_8001123C[];
 
+/**
+ * @brief Message handler for trigger/attachment entities (types 14 and 38), dispatching messages 1..13 via jtbl_8001123C.
+ *
+ * Confirmed: routes message 1..13 through jtbl_8001123C and defaults others to func_8002AD58. Case 1 returns 0xB8 (size); case 2 calls func_80030DE0; case 11 calls func_80031120. Case 6 runs func_80031004 when self->unk0C != 0 and func_800313F0 when self->unk16 == 0x26. Case 10 returns 0 if self->unkA0 & 0x10, else evaluates func_8002F8B8, filters type 0x26 with func_80031238, and suppresses duplicate hits when self->unkA4 == D_8009FAA4 and self->unkA0 & 4. Category follows jtbl_8001123C dispatch, 0xB8 size, func_80031238 collision, and func_800313F0 sync. Likely: reached indirectly via entity update pointers. Unknown: distinction between types 14 and 38.
+ *
+ * @param message Message selector (1=size, 2=init, 6=tick, 10=overlap/match query, 11=interact, others fallback).
+ * @param arg1 Entity block (+0x0C commands, +0x16 kind, +0xA0..+0xB1 trigger/attachment state).
+ * @param arg2 Message payload or candidate entity for cases 2/10/11.
+ * @param arg3 Extra argument forwarded to case 2 and 11 helpers.
+ * @return Case 1: 0xB8; case 10: 0 or 1 match flag; cases 3-5/7-9/12-13: 0; others return helper result.
+ * @par Globals
+ * D_8009FAA4 - per-frame stamp tested against self->unkA4 in case 10. jtbl_8001123C - 13-entry jump table.
+ * @par Control flow
+ * Bounds check (u32)(message - 1) >= 13 jumps to fallback; otherwise switches via jtbl_8001123C.
+ * @par Calls
+ * func_80030DE0 (case 2 init), func_8002F8B8 and func_80031238 (case 10 query/OBB), func_80031120 (case 11 attach/flags), func_80031004 and func_800313F0 (case 6), func_8002AD58 (default).
+ * @par Side effects
+ * Case 6/11 mutate entity flags, commands, attachment transform, or linked entities through sub-helpers.
+ * @par Callers
+ * Confirmed: none direct; func_8002AE54 returns D_8003151C (alias of func_8003151C) at 0x8002AF84 for types 14 and 38 / Likely: entity update callers via function pointer / Unknown: specific indirect call sites.
+ */
 s32 func_8003151C(s32 message, struct Entity *arg1, void *arg2, s32 arg3)
 {
     register struct Entity *self __asm__("$16");

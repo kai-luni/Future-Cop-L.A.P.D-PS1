@@ -1,3 +1,4 @@
+// Categories: Resources > Loader Post-Process | Gameplay > Spawn Registration
 #include "game/types.h"
 
 struct Resource;
@@ -59,6 +60,39 @@ extern void *func_80019C38(u32 a0, u32 a1, u32 a2, u32 a3);
 extern struct Resource *func_80019BF0(s32 group, s32 name);
 extern s32 func_8002AE54(u8 arg0);
 
+/**
+ * @brief Registers a spawn object and resolves its three sub-resources.
+ *
+ * The resource is prepared, the object is appended to the D_8009F800 list, and
+ * three tagged views are requested: 0x74534143 for the main record, 0x6152534C
+ * for the entry list and 0x74414354 for the trailing table. The main record
+ * gets its respawn delay from 0x0C multiplied by five; a negative value is
+ * mirrored into 0x14, otherwise 0x14 becomes a random value modulo that delay.
+ * The 0x18 pointer is copied from the object and 0x1C is its end. The entry
+ * list count is derived as (length - 0xC) >> 3, and every entry with a non-zero
+ * second word is resolved through func_80019BF0, which turns a group/name pair
+ * into a direct pointer. Finally the model index is looked up with
+ * func_8002AE54 and the owner pointer is stored.
+ *
+ * @param arg0 Spawn object with the resource header fields at 0x00/0x1C/0x20.
+ *
+ * @par Globals
+ * D_8009F800 - registered spawn objects (count plus array).
+ *
+ * @par Control flow
+ * Linear setup, one loop over the entry list.
+ *
+ * @par Calls
+ * func_80019A74 - resource prepare. func_80019CA0, func_80019C38 - tagged views.
+ * func_80019BF0 - group/name resolution. func_8002AE54 - model factory.
+ * func_80019668 - random source.
+ *
+ * @par Side effects
+ * Publishes the object in the global list and links its sub-resources.
+ *
+ * @par Callers
+ * Confirmed: func_80024EC8 (asset loader).
+ */
 void func_80060E74(struct Unk60E74Arg *arg0)
 {
     struct Unk60E74Data *data;

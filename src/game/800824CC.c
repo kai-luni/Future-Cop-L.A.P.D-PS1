@@ -1,3 +1,4 @@
+// Categories: Resources > Texture Atlas | Graphics > Image Transfer | Platform > GPU
 #include "game/types.h"
 
 typedef struct Unk824CCEntry {
@@ -20,6 +21,29 @@ typedef struct Unk824CCObject {
 extern void func_800953F0(Unk824CCEntry *entry, u8 *ptr);
 extern void func_800181D4(Unk824CCObject *object);
 
+/**
+ * @brief Uploads texture atlas image blocks from a Ctdt resource via func_800953F0 and frees object.
+ *
+ * Validates header->type == 2 and magic == 0x35BFBC73 on object->header, computes the pixel payload pointer immediately past the 8-byte header and header->count 8-byte entries, submits each rectangle to func_800953F0, and frees object.
+ *
+ * @param object Loaded resource node (+0x00 header pointer to Unk824CCHeader).
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Checks header->type == 2 and header->magic == 0x35BFBC73; if valid and header->count != 0, computes ptr = (u8 *)header - ((100 - count) * 8 - 0x328) (= header + 8 + 8 * count) and loops count times calling func_800953F0(entry, ptr) and advancing ptr by unk04 * (unk06 << 1). Unconditionally calls func_800181D4(object).
+ *
+ * @par Calls
+ * func_800953F0 - transfers one {unk00, unk04, unk06} entry rectangle from ptr.
+ * func_800181D4 - frees the resource wrapper object.
+ *
+ * @par Side effects
+ * Dispatches GPU/device transfers via func_800953F0 and frees object.
+ *
+ * @par Callers
+ * Confirmed: func_80024EC8 (0x800251D0, asset loader dispatch on tag 0x43746474).
+ */
 void func_800824CC(Unk824CCObject *object)
 {
     register Unk824CCHeader *header __asm__("$19");

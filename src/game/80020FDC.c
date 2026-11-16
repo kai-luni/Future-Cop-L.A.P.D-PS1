@@ -1,3 +1,4 @@
+// Categories: Platform > Memory Card | Resources > Save Data
 #include "game/types.h"
 
 struct Unk8009AB08 {
@@ -28,6 +29,29 @@ extern void func_80020F34(char *text, s32 index);
 extern void func_8001F2E0(u32 arg0, u32 arg1, u32 arg2, u32 arg3);
 extern u32 func_8001F37C(void);
 
+/**
+ * @brief Queues a memory-card file write (create or overwrite) and returns 0x2000 when the transfer was queued, 0 when refused.
+ *
+ * @param arg0 File/title name string; the lookup key and the name-packet title.
+ * @param arg1 Data pointer stored into the card manager's request word unk910.
+ * @param arg2 Transfer size in bytes; rounded up to 128-byte units for the request and to 0x2000-byte blocks for allocation.
+ * @return 0x2000 if the request was queued (manager idle, unk9A4 still 0), 0 if the unit was busy or no block run was free.
+ *
+ * @par Globals
+ * D_8009AB08 - card manager: unk0000>>4 feeds the debug format, state[16]/primary[16] are walked by the lookup, unk9A4 is the pending flag read back at the end.
+ *
+ * @par Control flow
+ * Lookup first: an existing name updates in place; otherwise allocate a free block run, build the name packet and queue a new entry; allocation failure returns 0 early. The final flag is (unk9A4 < 1) << 13.
+ *
+ * @par Calls
+ * func_8008CD30 - sprintf of the debug trace "bu0%1ld:%s" into a stack buffer that is not read afterwards. func_80020C90 - find the slot whose state is 1 and name matches. func_8001F24C - requeue the directory request for an existing slot. func_80020E68 - allocate ceil(size/0x2000) consecutive state-2 blocks. func_80020F34 - build the 0x80-byte name packet (header, title, XOR checksum). func_8001F2E0 - queue the new entry. func_8001F37C - read back unk9A4.
+ *
+ * @par Side effects
+ * Via the queue helpers: card manager request words unk998/99C/910/90C, command unk8F8 = 3 and pending flag unk9A4; name packet built for the slot.
+ *
+ * @par Callers
+ * Confirmed: func_80080B70 at call site 0x8008118C (profile-image save loop, passes name D_800120A4, size 0x678). The caller listed in the package work list does not exist in the unit catalog; no such call edge was found.
+ */
 s32 func_80020FDC(u32 arg0, u32 arg1, u32 arg2)
 {
     register u32 p0 __asm__("$18") = arg0;

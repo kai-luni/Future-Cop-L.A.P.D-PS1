@@ -1,3 +1,4 @@
+// Categories: Game Engine > World Reset
 #include "game/types.h"
 
 struct Unk8003F854 {
@@ -19,6 +20,35 @@ extern void func_8003D0AC(void);
 extern void func_8006EDF0(void);
 extern void func_8005E22C(void);
 
+/**
+ * @brief Tears the world down: handler lists, object banks and dependent subsystems.
+ *
+ * First every handler in the seven lists of D_800A1070 is called with message
+ * 10 and then the seven head pointers are cleared. The same message is sent to
+ * the list at D_8009F314, which is cleared as well. Both 0x100-entry banks of
+ * D_800A7040 are freed when mode is 0 or 2, the 0x100 slots of D_800A0C70 are
+ * freed unconditionally, and the D_8009F30C list is walked, freeing each node's
+ * 0x18 block before the node itself. Three subsystem resets close the teardown.
+ *
+ * @param arg0 Mode: 0 or 2 free both object banks, 1 keeps them.
+ *
+ * @par Globals
+ * D_800A1070 - seven handler lists; D_8009F314 - extra handler list;
+ * D_800A7040 - two banks of 0x100 pointers; D_800A0C70 - 0x100 slot pointers;
+ * D_8009F30C - list of allocated nodes.
+ *
+ * @par Control flow
+ * Five sequential teardown phases, two of them loops over banks.
+ *
+ * @par Calls
+ * func_800181D4 - free. func_8003D0AC, func_8006EDF0, func_8005E22C - subsystem resets.
+ *
+ * @par Side effects
+ * Frees all world-owned memory and empties every list head.
+ *
+ * @par Callers
+ * Confirmed: func_80024D14 (global reset).
+ */
 void func_8003F854(s32 arg0)
 {
     register s32 mode __asm__("$20");

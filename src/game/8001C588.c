@@ -1,7 +1,35 @@
+// Categories: Platform > CD-ROM
 typedef unsigned char u8;
 typedef int s32;
 struct CdlLOC { u8 minute, second, sector, track; };
 #define BCD_TO_INT(value) (((value) >> 4) * 10 + ((value) & 0xF))
+
+/**
+ * @brief Converts a CdlLOC position back into a byte offset.
+ *
+ * The inverse of func_8001C494: minute, second and sector are BCD-decoded, the
+ * minutes are turned into seconds, seconds into sectors (times 75) and the
+ * sector/frame field is added. The result is a sector number, so returning it
+ * shifted left by 11 yields the byte offset in the 2048-byte sector layout.
+ *
+ * @param location CdlLOC with BCD minute, second and sector bytes.
+ * @return Byte offset of the position, or 0 when all fields are zero.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Straight-line BCD decode; the *5/<<4 combination is the original times-75.
+ *
+ * @par Calls
+ * None.
+ *
+ * @par Side effects
+ * None observed.
+ *
+ * @par Callers
+ * Confirmed: func_8001C808, func_8001D424.
+ */
 s32 func_8001C588(struct CdlLOC *location)
 {
     register unsigned int m __asm__("$3");

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Game Engine > Object Setup | Graphics > Effects
 #include "game/types.h"
 
 struct Unk4C920Source {
@@ -59,6 +60,29 @@ extern void *func_80017EBC(s32 size, s32 tag);
 extern void func_8003C14C(struct Unk4C920 *dest, struct Unk4C920Source *src);
 extern void func_800188D0(s32, s32, s32, struct Unk4C920Work *);
 
+/**
+ * @brief Allocates and initializes a 0x88-byte debris/fracture entity for spawn-source kind 0x5A with handler D_8004C324.
+ *
+ * Confirmed: allocates 0x88 bytes via func_80017EBC(0x88, 1), initializes motion fields via func_8003C14C(dest, src), builds a 3x3 rotation matrix from (src->unk40, -src->unk42, 0) via func_800188D0 and stores matrix[6..8] >> 4 into dest->unk70/+0x72/+0x74. Installs D_8004C324 (func_8004C324) at dest->unk24, copies src->unk34..+0x4A, clamps src->unk49 to 0x32 into dest->unk7D, sets dest->unk0A to 0x14 when unk7D < 0 or unk7B & 8 else unk7D, and clears dest->unk08. Category follows tag-1 allocation, func_8003C14C motion setup, and D_8004C324 debris handler. Likely: constructs death/fracture visual entity for kind 0x5A. Unknown: exact meaning of clamped count 0x32 vs 0x14 fallback in unk0A.
+ *
+ * @param src Spawn source descriptor (+0x34..+0x4A layout parameters, angles at +0x40/+0x42).
+ * @return Pointer to initialized 0x88-byte instance, or 0 if allocation fails.
+ *
+ * @par Globals
+ * None directly read or written; stores address of D_8004C324 (func_8004C324) into dest->unk24.
+ *
+ * @par Control flow
+ * Allocation null-check return, then straight-line copies with two clamping/fallback branches on src->unk49 and dest->unk7B.
+ *
+ * @par Calls
+ * func_80017EBC - allocates 0x88 bytes (tag 1). func_8003C14C - initializes motion state. func_800188D0 - computes rotation matrix from angles.
+ *
+ * @par Side effects
+ * Allocates a 0x88-byte entity block and binds handler func_8004C324 at +0x24.
+ *
+ * @par Callers
+ * Confirmed: func_8003E984 (0x8003EB74, source->kind == 0x5A constructor dispatch) / Likely: none / Unknown: none.
+ */
 void *func_8004C920(struct Unk4C920Source *src)
 {
     struct Unk4C920 *dest;

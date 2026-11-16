@@ -1,8 +1,32 @@
+// Categories: Game Engine > Front-End > Map Screen | Platform > Scratchpad
 #include "game/types.h"
 
 extern u32 D_8009FAD8;
 extern void func_800267C8(void);
 
+/**
+ * @brief Runs the map-screen row update on a stack in the scratchpad.
+ *
+ * Inline-assembly trampoline of the same family as func_80026D5C and func_80026E5C: it pushes the return address, stores the caller's stack pointer in D_8009FAD8, switches the stack to 0x1F8003F0 (top of the 1 KB scratchpad at 0x1F800000) and calls func_800267C8.
+ *
+ * @return Nothing; the four caller-supplied arguments pass through unchanged.
+ *
+ * @par Globals
+ * D_8009FAD8 - saves the interrupted stack pointer; shared with the other trampolines of the family, so they must not nest.
+ *
+ * @par Control flow
+ * Push, save, switch, call, restore the stack pointer, return - every step in inline assembly, no C-level branches.
+ *
+ * @par Calls
+ * func_800267C8 - the per-slot front-end map-screen row update.
+ *
+ * @par Side effects
+ * The scratchpad below 0x1F8003F0 is used as a stack and its previous content is not preserved; D_8009FAD8 is left holding a stale pointer. The row update runs on the hot split-screen path, which is why its frames live there.
+ *
+ * @par Callers
+ * Confirmed: func_80027510 (0x8002790C, 0x80027B1C) with (game, slot, paused, menu mode).
+ * Unknown: one call at 0x800273B0 from a routine that is not in the matching set.
+ */
 void func_80026DDC(void)
 {
     __asm__ volatile(

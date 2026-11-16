@@ -1,3 +1,4 @@
+// Categories: AI > Behaviour | Gameplay > Movement
 #include "game/types.h"
 
 struct Vec3 {
@@ -52,6 +53,12 @@ extern struct Unk330E8Global *D_8009FA94;
  *
  * Note: The strategic interpretation of positions A and B is
  * inferred from their usage in the main AI controller.
+ *
+ * @par Calls
+ * None - leaf function.
+ *
+ * @par Callers
+ * Confirmed: func_800336DC, func_80035698. Likely: func_800331CC, func_8003526C.
  */
 void func_800330E8(struct Unk330E8Obj *obj)
 {

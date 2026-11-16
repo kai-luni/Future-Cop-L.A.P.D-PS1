@@ -1,3 +1,4 @@
+// Categories: Gameplay > Vehicle Physics
 #include "game/types.h"
 
 struct UnkC14C {
@@ -54,6 +55,37 @@ struct UnkC14CSrc {
 
 extern s32 D_8009AA38[9];
 
+/**
+ * @brief Initialises a motion state block from a source record.
+ *
+ * The template D_8009AA38 fills the nine words at 0x34..0x54, which start out
+ * as the neutral tuning values. Two byte selectors are copied (0x15 and 0x16),
+ * then the speed limits are derived: 0x16 receives (src->unk20 * 75) >> 14,
+ * 0x04 receives (src->unk24 * 75) >> 14 and the third value (src->unk2A * 75)
+ * >> 10 goes to 0x14. The remaining fields are taken over unchanged
+ * (0x28, 0x32, 0x2C, 0x1E) while the accumulators 0x28, 0x2C, 0x30, 0x58,
+ * 0x5C, 0x60, 0x24, 0x0F, 0x10, 0x00 and 0x1C are cleared. A negative
+ * acceleration is clamped to 0 when the first selector byte is set.
+ *
+ * @param dest Motion block that is filled.
+ * @param src Source record with the raw tuning values.
+ *
+ * @par Globals
+ * D_8009AA38 - nine-word neutral template.
+ *
+ * @par Control flow
+ * Straight-line assignment with one clamp at the end.
+ *
+ * @par Calls
+ * None.
+ *
+ * @par Side effects
+ * Fully initialises the destination block.
+ *
+ * @par Callers
+ * Confirmed: func_8007043C, func_800762B0. Likely: func_80043430,
+ * func_8004C920, func_8006EB80, func_80074024.
+ */
 void func_8003C14C(struct UnkC14C *dest, struct UnkC14CSrc *src)
 {
     dest->unk06 = src->unk15;

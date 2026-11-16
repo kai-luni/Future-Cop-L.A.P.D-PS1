@@ -1,3 +1,4 @@
+// Categories: Gameplay > AI > Drone Attachment | Gameplay > Entity Update
 #include "game/types.h"
 
 struct Vec3 {
@@ -85,6 +86,30 @@ extern s32 func_800331CC();
 extern s32 func_8003532C();
 extern s32 func_80032F3C();
 
+/**
+ * @brief Entity-type 37 handler (drone class): size query, spawn and tick forwarding, a wander-rearm timer, and local-player identity checks that raise the global AI event word.
+ *
+ * @param id Message id (1, 2, 4, 6, 9, 11, 14 handled; others default).
+ * @param a1 Drone entity block; unkFA state byte, unk100 s16 timer.
+ * @param a2 Other entity or link, message-dependent.
+ * @param a3 Forwarded in registers to the delegated handlers.
+ * @return 0x138 for msg 1 (block size), the spawn result for msg 2, 0 for the timer/tick/identity cases, otherwise the flyer handler's result.
+ *
+ * @par Globals
+ * D_8009FA58 - local player slot block, unk14 is the registered object id compared against. D_8009FA94 - game state; unkE0 is the AI event word set to 5 on a match (also written 0/1/4 by the drone spawn/reset routines). D_8009F9FC - frame time subtracted from the msg-4 timer.
+ *
+ * @par Control flow
+ * 14-entry jump table. Msg 4 only acts while unkFA == 5: subtract frame time from unk100, return 0 while the s16 result is positive, else rearm wandering. Msgs 9/11/14 compare three different id fields against the local player id; on equality set unkE0 = 5, then fall into the default handler.
+ *
+ * @par Calls
+ * func_800331CC - msg 2 drone spawn (clears unkE0, clamps the drone index, allocates the AI record), registers passed through. func_8003532C - msg 6 drone tick. func_80035698 - timer-expiry wander rearm. func_80032F3C - default flyer-variant handler.
+ *
+ * @par Side effects
+ * Writes unk100 and D_8009FA94->unkE0; further state via the delegated handlers.
+ *
+ * @par Callers
+ * Confirmed: no direct calls; address taken at 0x8002AEA0 inside func_8002AE54, the entity-type dispatcher (jump-table index 36 = type id 37). The package work list's callers do not exist in the unit catalog.
+ */
 s32 func_800357C0(s32 id, struct Self *a1, struct Other *a2) {
     u32 index;
         register struct OtherChild *p __asm__("$3");

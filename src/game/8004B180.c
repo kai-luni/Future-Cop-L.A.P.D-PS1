@@ -1,3 +1,4 @@
+// Categories: Gameplay > Object Spawning | Gameplay > Entity Update
 #include "game/types.h"
 
 struct Vec3s32 {
@@ -37,6 +38,25 @@ struct Unk4B180 {
 extern s32 func_8001A314(s32 *vector);
 extern s32 func_8003E984(void *owner, s32 arg1, u8 kind, struct Unk4B180Hit *hit, s32 arg4);
 
+/**
+ * @brief Marks a triggered node and spawns an object from its shape's position vector.
+ *
+ * Returns unless object->shape->radius < 0; sets flag 1 in flags0F, normalizes the shape's
+ * position vector via func_8001A314 to derive strength and direction, and calls func_8003E984.
+ *
+ * @param object Node holding flags0F (+0x0F), flags10 (+0x10), owner (+0x1C), kind (+0x64), and shape (+0x80).
+ *
+ * @par Globals
+ * None directly.
+ * @par Control flow
+ * Early returns if shape->radius >= 0; sets flags0F |= 1, returns if kind == 0, else normalizes vector, forces y >= 0, builds local hit struct, and spawns.
+ * @par Calls
+ * func_8001A314 - normalizes hit.position in place and returns its length (shifted >> 12 into hit.strength); func_8003E984 - spawns object->kind.
+ * @par Side effects
+ * Sets bit 0 of object->flags0F and spawns a child/effect entity via func_8003E984.
+ * @par Callers
+ * Confirmed: func_8004C2B8 (called on linked list nodes with node->flags & 0x08).
+ */
 void func_8004B180(struct Unk4B180 *object)
 {
     struct Unk4B180Hit hit;

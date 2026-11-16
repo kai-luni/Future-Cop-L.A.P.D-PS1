@@ -1,3 +1,4 @@
+// Categories: Gameplay > Trigger Volume | Gameplay > Entity Update
 #include "game/types.h"
 
 struct Unk31C74Ptr {
@@ -42,6 +43,37 @@ struct Entity {
 extern s32 func_80069D68(s32 script, s32 arg1, s32 arg2, struct Entity *entity);
 extern void func_8004D958(struct Entity *entity);
 
+/**
+ * @brief Tests an entity against a trigger box and fires the attached script.
+ *
+ * Each axis is checked separately: the node coordinate scaled by 256 minus the
+ * entity position, reduced by the entity radius and the node extent
+ * (extent << 4), must stay below zero. As soon as one axis misses, the function
+ * returns 0. A type-1 entity that is busy (its partner block has a non-zero
+ * 0x40) is ignored when the node has flag 4. On a hit the script at 0x1C is
+ * run with the entity type as argument; entities of any type other than 1 are
+ * also retired when the node carries flag 1. The return value is the negation
+ * of flag 2, i.e. 1 for a normal trigger and 0 for a "stay" trigger.
+ *
+ * @param node Trigger node: position, extents, flags and script pointer.
+ * @param other Entity entering the volume.
+ * @return 1 when the volume should be released, 0 while the entity stays.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Three guard exits followed by the script call and the retire branch.
+ *
+ * @par Calls
+ * func_80069D68 - trigger script. func_8004D958 - retires the entity.
+ *
+ * @par Side effects
+ * Runs a script and may retire the entity.
+ *
+ * @par Callers
+ * Likely: func_80031DE8 (same block).
+ */
 s32 func_80031C74(struct Unk31C74Node *node, struct Entity *other)
 {
     s32 delta;

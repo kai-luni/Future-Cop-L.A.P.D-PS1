@@ -1,3 +1,4 @@
+// Categories: Gameplay > Weapon Loadout | Game Engine > Difficulty
 #include "game/types.h"
 
 struct Data {
@@ -34,6 +35,35 @@ extern struct Global *D_8009FA94;
 extern struct Data *func_8006AAEC(u8);
 extern void func_8005D3FC(struct Owner *, s32);
 
+/**
+ * @brief (Re)initialises the three weapon slots for a difficulty level.
+ *
+ * For each of the three slot indices in 0x90 the record is fetched with
+ * func_8006AAEC and its two damage/range values are scaled by the active
+ * difficulty field of D_8009FA94 (0x8 for the normal path, 0x98 when 0xC1 is
+ * set): mode 1 adds a quarter, mode 2 adds a half and mode 3 sets both to 9999.
+ * The pair is stored in 0x84/0x8A, the record's third value in 0x93 and the
+ * per-slot counter is reset. A record with flag 4 clears 0xA5, and kind 13 runs
+ * the per-slot setup func_8005D3FC. Finally the counters at 0x98, 0x6C, 0x70
+ * are cleared and the active slot is set to -1.
+ *
+ * @param owner Object whose state block (0xAC) holds the three slots.
+ *
+ * @par Globals
+ * D_8009FA94 - global difficulty block.
+ *
+ * @par Control flow
+ * Three-iteration loop with a four-way switch on the difficulty mode.
+ *
+ * @par Calls
+ * func_8006AAEC - weapon record lookup. func_8005D3FC - per-slot setup.
+ *
+ * @par Side effects
+ * Rewrites the three weapon slots and clears the selection.
+ *
+ * @par Callers
+ * Confirmed: func_800259D8.
+ */
 void func_8006AB38(struct Owner *owner)
 {
     struct State *state;

@@ -1,3 +1,4 @@
+// Categories: Gameplay > Entity Script | Game Engine > Message Dispatch | Gameplay > Scoring
 #include "game/types.h"
 
 struct Unk2D664Obj {
@@ -81,6 +82,31 @@ extern void func_8002D1A0(struct Unk2D664Obj *obj, void *data);
 extern void func_80063194(s32 key);
 extern struct Unk2D664Entity *func_8004D664(s32 id);
 
+/**
+ * @brief Message dispatcher for multi-part/objective entity classes (6, 8, 30, 33, 36).
+ *
+ * Reports size 0x118 on message 1, handles setup/tick/capture on messages 2/6/10, propagates hit flags and health onto child parts unk104/unk100, and records capture/destruction scoring on message 5 before delegating to func_8002AD58.
+ * @param message Message id (1 size, 2 spawn, 4 retire, 5 free/score, 6 tick, 9/11/14 child sync, 10 capture/identity).
+ * @param obj Entity block (+0x16 kind, +0x1C value, +0x24 flags, +0x8C attacker, +0xDF/+0xF6..+0xFE capture fields, +0x100/+0x104 children).
+ * @param arg2 Message payload (child pointer comparison in 10, capture partner in 10 when kind == 0x24).
+ * @param arg3 Extra parameter forwarded to func_8002C584 and func_8002AD58.
+ * @return 0x118 for message 1, 0 for 2/9/11/14, child-match flag for 10, or result of func_8002CC30 / func_8002AD58.
+ *
+ * @par Globals
+ * D_8009FA0C (player mode), D_8009F9EC (single-player entity), D_8009FA94 (match/menu counters +0x64/+0x7C/+0xE0), D_8009FA58 (two-slot player array).
+ *
+ * @par Control flow
+ * Switch on message: 2 calls func_8002C584; 6 tail-calls func_8002CC30; 10 runs func_8002D1A0 when unk16 == 0x24 and returns !(arg2 == unk104 || arg2 == unk100); 9/11/14 run func_8002AD58 and sync bit 0x2000000 and unk1C to unk104/unk100; 4 sets bit 8 on children; 5 calls func_80063194 if unkDF & 0x20 and updates scoring/state for active kind-0x24 entities.
+ *
+ * @par Calls
+ * func_8002C584 (setup), func_8002CC30 (tick), func_8002D1A0 (capture check), func_80063194 (remove from ground table), func_8004D664 (resolve attacker), func_8002AD58 (base handler).
+ *
+ * @par Side effects
+ * Updates child flags/health, unregisters from ground table, and increments match/player stats in D_8009FA94, D_8009F9EC, and D_8009FA58.
+ *
+ * @par Callers
+ * Confirmed: func_8002DEA8 (0x8002DF60, messages 11/14 forwarding to child unkB4). Likely: indirect dispatch via handler returned by func_8002AE54 (0x8002AEBC) for types 6, 8, 30, 33, 36.
+ */
 s32 func_8002D664(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
 {
     struct Unk2D664State *p;

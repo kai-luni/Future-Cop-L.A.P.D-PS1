@@ -1,3 +1,4 @@
+// Categories: Platform > CD-ROM > Control
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
@@ -22,6 +23,51 @@ extern int func_800915D4(void);
 extern int func_8008E7A0(void);
 extern void dummy_5args(int, int, int, int, int);
 
+/**
+ * @brief Waits for a pending CD command result, with timeout diagnostics.
+ *
+ * Implements the CD_ready wait: polls the two result slots of the CD state
+ * array D_8009CB84 (byte 2 first, then byte 1). A non-zero slot status is
+ * cleared, its 8-byte result block (D_800A3E60 or D_800A3E58) is copied to
+ * the caller buffer and the status returned. While waiting it drains CD
+ * events through func_8008E7A0 and dispatches the registered callbacks
+ * D_8009C8AC (event bit 4, slot 1) and D_8009C8A8 (event bit 2, slot 0).
+ * Mode 0 blocks until a result arrives; any other mode polls once and
+ * returns 0 when nothing is pending. The deadline is 0x3C0 frames from
+ * func_80091270 and the iteration count is capped at 0x3C0000; on expiry it
+ * prints 'CD timeout: ' via BIOS puts and the '%s:(%s) Sync=%s, Ready=%s'
+ * report via BIOS printf using the status string tables, resets the CD
+ * controller with func_8008F6D8 and returns -1.
+ *
+ * @param mode 0 blocks until completion, non-zero polls once.
+ * @param result Optional 8-byte buffer receiving the command result block.
+ * @return Slot status byte, 0 when nothing pending, -1 on timeout.
+ *
+ * @par Globals
+ * D_8009CB84 - three-byte CD slot state; D_8009CB6C - CD index port pointer
+ * saved/restored around event draining; D_8009C8AC/D_8009C8A8 - completion
+ * callbacks; D_800A3E50/D_800A3E58/D_800A3E60 - result buffers;
+ * D_8009C8CC/D_8009C94C with D_8009C8C5 - status string tables for the error
+ * report; D_800A3E68/D_800A3E6C/D_800A3E70 - deadline, iteration counter and
+ * the 'CD_ready' name pointer.
+ *
+ * @par Control flow
+ * Outer poll loop with two timeout tests, an inner event-drain loop, then
+ * the two slot checks in priority order; mode decides loop-or-return.
+ *
+ * @par Calls
+ * func_80091270 - frame counter read for the deadline; func_800915D4 -
+ * pending-event word D_8009CC8A; func_8008E7A0 - dequeues one CD event;
+ * func_8008FF08 - BIOS puts B0(0x3F); func_8008E000 - BIOS printf A0(0x3F);
+ * func_8008F6D8 - CD controller reset after timeout.
+ *
+ * @par Side effects
+ * Clears slot status bytes, writes the result buffer, advances the iteration
+ * counter, invokes callbacks and on timeout resets CD hardware.
+ *
+ * @par Callers
+ * Confirmed: func_8008E174, which forwards mode/result queries here.
+ */
 s32 func_8008EF7C(s32 mode, u8 *result)
 {
     register int s0 __asm__("$16");

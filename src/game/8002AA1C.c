@@ -1,3 +1,4 @@
+// Categories: Gameplay > Damage | Gameplay > Health
 #include "game/types.h"
 
 struct Unk2AA1CAttacker {
@@ -39,6 +40,39 @@ extern void func_8003BA50(struct Unk3BObject *object, s32 value);
 extern void func_80069D68(void *arg0, s32 arg1, u32 arg2,
                           struct Unk3BObject *arg3);
 
+/**
+ * @brief Applies a hit to an entity and runs its damage script.
+ *
+ * Entities with flag 0x80 ignore hits completely. Message 0xE takes the damage
+ * from the hit record and the source word from its 0x00 field, every other
+ * message takes them from 0x1A and 0x14. A positive amount sets flag
+ * 0x02000000, saves the old health from 0x1C and subtracts the amount. Message
+ * 0xE additionally packs the hit kind into 0x19 (kind 2 and above), other
+ * messages reset the low nibble of that byte. When the health goes negative the
+ * attacker id (message 0xE) or the raw source is stored in 0x8C; otherwise the
+ * health bar is notified through func_8003BA50. The script attached at 0x94 is
+ * always run with the "dead" boolean and the source as context.
+ *
+ * @param message Message id, 0xE means a direct hit.
+ * @param object Entity that takes the damage.
+ * @param hit Hit record with amount, kind and source/attacker.
+ * @return Always 0.
+ *
+ * @par Globals
+ * None.
+ *
+ * @par Control flow
+ * Guard, then two parallel layouts for the damage source, then the health test.
+ *
+ * @par Calls
+ * func_8003BA50 - health bar update. func_80069D68 - damage script.
+ *
+ * @par Side effects
+ * Writes health, flags and the kill-credit word.
+ *
+ * @par Callers
+ * Confirmed: func_8002AD58 (base entity handler, message 0xE).
+ */
 s32 func_8002AA1C(s32 message, struct Unk3BObject *object,
                   struct Unk2AA1CHit *hit)
 {

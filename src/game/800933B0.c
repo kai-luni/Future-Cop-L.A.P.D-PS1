@@ -1,3 +1,4 @@
+// Categories: Platform > GPU | Graphics > 2D Drawing
 #include "game/types.h"
 
 struct Context {
@@ -13,6 +14,26 @@ extern struct Context *D_8009DDE8;
 extern void func_80093CE8(u8 *, u8 *);
 extern void func_8008CD10(void *, void *, int);
 
+/**
+ * @brief Builds a DRAWENV GPU packet, links it to an ordering table, and submits it (PsyQ DrawOTagEnv).
+ *
+ * Optionally logs "DrawOTagEnv(%08x,&%08x).." at debug level >= 2, packs GPU commands at
+ * arg1+0x1C via func_80093CE8, patches the low 24-bit OT link, submits via D_8009DDE8->send, and caches the 0x5C-byte DRAWENV.
+ *
+ * @param arg0 Ordering table address linked into the low 24 bits of packet word *(arg1 + 0x1C).
+ * @param arg1 Pointer to a 0x5C-byte DRAWENV structure containing the embedded packet buffer at +0x1C.
+ *
+ * @par Globals
+ * D_8009DDF2 (debug level at [0], cached 0x5C-byte DRAWENV at +0xE), D_80012B14 (format string), D_8009DDEC (log callback), D_8009DDE8 (GPU driver context).
+ * @par Control flow
+ * Optional debug log if D_8009DDF2[0] >= 2, followed by straight-line packet build, OT pointer link, GPU submission, and DRAWENV copy.
+ * @par Calls
+ * func_80093CE8 (builds DRAWENV GPU command list at arg1+0x1C), func_8008CD10 (copies 0x5C bytes), indirect calls via D_8009DDEC and D_8009DDE8->send.
+ * @par Side effects
+ * Mutates packet buffer at arg1+0x1C, submits DMA/GPU command list, and updates cached DRAWENV at D_8009DDF2+0xE.
+ * @par Callers
+ * Confirmed: none in direct-call list or asm/us/main.s. Unknown: whether invoked indirectly or unreferenced PsyQ library unit.
+ */
 void func_800933B0(u32 arg0, u8 *arg1)
 {
     register u8 *base __asm__("$19") = D_8009DDF2;

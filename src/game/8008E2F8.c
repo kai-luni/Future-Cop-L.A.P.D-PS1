@@ -1,3 +1,4 @@
+// Categories: Platform > File Service
 #include "game/types.h"
 
 extern s32 D_8009C820[];
@@ -5,6 +6,39 @@ extern s32 D_8009C8A8;
 extern u8 D_8009C8B4;
 extern s32 func_8008F244(s32, void *, void *, s32);
 
+/**
+ * @brief Retries a service request up to four times around a recovery step.
+ *
+ * Each pass first runs an inline assembly block: when the index equals 1 the
+ * status word D_8009C8A8 is cleared, and if bit 0x10 of D_8009C8B4 is set a
+ * recovery call func_8008F244(1, 0, 0, 0) is issued. Then, only if a buffer was
+ * supplied and the indexed table entry is non-zero, func_8008F244(2, buffer, 0, 0)
+ * is tried first. The actual request follows as func_8008F244(index, buffer, 0, 1);
+ * a zero return means success and the function returns 1, otherwise the saved
+ * status is restored and the pass repeats. After four failed passes it returns
+ * 0 with the saved status restored.
+ *
+ * @param arg0 Request index, low 8 bits select the table entry.
+ * @param arg1 Buffer handed to the service, may be null.
+ * @return 1 on success, 0 when all four attempts failed.
+ *
+ * @par Globals
+ * D_8009C820 - request table; D_8009C8A8 - status word (saved and restored);
+ * D_8009C8B4 - status flags.
+ *
+ * @par Control flow
+ * Do-while over four attempts with a success exit in the middle.
+ *
+ * @par Calls
+ * func_8008F244 - the service entry point, called with three different modes.
+ *
+ * @par Side effects
+ * Transiently clears D_8009C8A8 and always restores it.
+ *
+ * @par Callers
+ * Confirmed: func_8001C680, func_8001C718. Likely: func_8008888C, func_800908D4,
+ * func_80090B48, func_80090C18, func_80090E00.
+ */
 s32 func_8008E2F8(s32 arg0, void *arg1)
 {
     register s32 i __asm__("$16");

@@ -1,3 +1,4 @@
+// Categories: Resources > Loader Post-Process | Utilities > Random
 #include "game/types.h"
 
 struct Entry {
@@ -31,6 +32,35 @@ extern u32 func_80019CA0(u32 a, u32 b, u32 c, u32 d);
 extern u32 func_80019C38(u32 a, u32 b, u32 c, u32 d);
 extern s32 func_80019668(void);
 
+/**
+ * @brief Post-processes a 20-byte entry table after a resource load.
+ *
+ * The resource is prepared with func_80019A74 and two tagged views are
+ * requested, 0x7446554E and 0x74455854. The chunk length at 0x04 gives the
+ * entry count as (length - 0xC) / 20, which is published together with the
+ * table start in D_8009F770 and D_8009F774. Each entry then gets its first
+ * word multiplied by five; a negative product is mirrored into the next word,
+ * otherwise the next word becomes a random value modulo the product. Both
+ * remaining words get the always-random base added.
+ *
+ * @param obj Resource object; its 0x00/0x1C/0x20 fields feed the tagged views.
+ *
+ * @par Globals
+ * D_8009F770 - published entry table; D_8009F774 - entry count.
+ *
+ * @par Control flow
+ * One counted loop over the entries.
+ *
+ * @par Calls
+ * func_80019A74 - resource prepare. func_80019CA0, func_80019C38 - tagged views.
+ * func_80019668 - random source.
+ *
+ * @par Side effects
+ * Rewrites the entry words in place and publishes the table pointer.
+ *
+ * @par Callers
+ * Confirmed: func_80024EC8 (asset loader).
+ */
 void func_80049420(struct Obj *obj)
 {
     struct Data *data;

@@ -1,3 +1,4 @@
+// Categories: Game Engine > Event Queue | Platform > Controller Input
 #include "game/types.h"
 
 struct Unk800A0BC0Entry {
@@ -21,6 +22,37 @@ extern s32 func_800452C8(void);
 extern void func_80029DD8(void);
 extern void func_800298EC(s32 arg0);
 
+/**
+ * @brief Queues an event value into the eight-slot ring buffer.
+ *
+ * The push only happens while the screen state D_8009FA00[0] is below 5 and
+ * func_800452C8 reports an active frame. If no slot is free yet
+ * (D_800A0BC0.unk00 == 0) and the pad flags in D_8009F6B8 show no pending bits,
+ * func_800298EC is called directly and nothing is queued. Otherwise the pad
+ * flags decide: bit 0x40 only sets the latch D_8009F6C0, everything else calls
+ * func_80029DD8 first. The slot written is index-1 with wraparound, the value
+ * goes into entries[i].unk00, the entry is marked unused and the ring count
+ * stops growing at 8.
+ *
+ * @param arg0 Event value pushed by the script VM.
+ *
+ * @par Globals
+ * D_8009FA00 - screen state; D_8009F6B8 - pad status flags; D_8009F6C0 - latch;
+ * D_800A0BC0 - ring buffer (count at 0x00, head at 0x02, eight entries of 8 bytes).
+ *
+ * @par Control flow
+ * Guard, then either the direct call or the ring insert with a wrapping index.
+ *
+ * @par Calls
+ * func_800452C8 - frame/test query. func_800298EC - immediate handler.
+ * func_80029DD8 - flush/advance of the ring consumer.
+ *
+ * @par Side effects
+ * Writes one entry, the head index and the fill count.
+ *
+ * @par Callers
+ * Confirmed: func_80069D68 (script VM).
+ */
 void func_80029974(s32 arg0)
 {
     s32 index;
