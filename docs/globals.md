@@ -6,7 +6,7 @@
 
 Diese Datei erklärt **49 globale Variablen**, die sich im Originalprogramm befinden und als Inhalt eine Adresse eines PlayStation-Hardwareregisters tragen. Es sind **49 verschiedene Variablen**, aber nur **37 verschiedene Hardware-Zieladressen**: Manche Programmteile besitzen einen eigenen Zeiger auf dasselbe Register.
 
-Die Datei dokumentiert **nur diese bisher untersuchten Hardware-Zeiger**, nicht alle globalen Variablen des Spiels. Sie hilft beim Verstehen des C-Codes und beim Nachschlagen, welche Funktion mit welchem Gerät spricht. Der Abschnitt „Spielzustand und Zeitmessung" enthält zusätzlich drei normale Daten-Globals aus dem Pilotprojekt zur Umbenennung.
+Die Datei dokumentiert **nur diese bisher untersuchten Hardware-Zeiger**, nicht alle globalen Variablen des Spiels. Sie hilft beim Verstehen des C-Codes und beim Nachschlagen, welche Funktion mit welchem Gerät spricht. Der Abschnitt „Spielzustand, Treiber und Warteschlangen" enthält zusätzlich 23 normale Daten-Globals (Ringindizes, Treiberzustände, Rückrufe), die bereits im C-Code lesbare Namen tragen.
 
 ### Das wichtigste Prinzip
 
@@ -131,17 +131,66 @@ Dieser DMA-Kanal dient dem Aufbau beziehungsweise Zurücksetzen von Ordnungstabe
 | `D_8009DEDC` | `gDma6BlockCtrlPtr` | `0x1F8010E4` | Anzahl der OTC-Einträge | `func_8009415C` |
 | `D_8009DEE0` | `gDma6ChannelCtrlPtr` | `0x1F8010E8` | OTC-DMA starten und abschließen | `func_8009415C` |
 
-## Spielzustand und Zeitmessung (Pilotprojekt)
+## Spielzustand, Treiber und Warteschlangen
 
-Diese drei Globals sind **keine** Hardware-Zeiger, sondern normale Spielvariablen im RAM. Sie sind der erste Pilot für die Umbenennung von Daten-Globals: Bedeutung aus dem Code belegt, Name im C-Code gesetzt, Byte-Matching geprüft.
+Diese Einträge sind **keine** Hardware-Zeiger, sondern Datenvariablen im RAM. Für sie wurde geprüft, welche Rolle sie im Code haben; die neuen Namen stehen auch im C-Code und sind über `__asm__("D_XXXXXXXX")` an das Retail-Symbol gebunden. Der Datentyp blieb jeweils unverändert, und das Byte-Matching der betroffenen Units wurde vor und nach jeder Umbenennung verglichen.
+
+Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **wahrscheinlich** = Rolle aus dem Code ableitbar, einzelne Details offen.
+
+### Zeitmessung und Interrupts
 
 | Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
 |---|---|---|---|---|
-| `D_8009DD50` | `gVSyncTickCounter` | `volatile s32` | Zählt die VSync-Interrupts. Der VBlank-Handler erhöht ihn, die Frame-Wartefunktion pollt ihn und bricht nach Zeitbudget mit „VSync: timeout" ab. **Bestätigt.** | `func_800913E8`, `func_80091BF8` |
-| `D_8009CC20` | `gTimerBaselineTick` | `volatile u32` | Letzte stabile Probe des Timers 1. Die verstrichenen Ticks ergeben sich als `(now - gTimerBaselineTick) & 0xFFFF`; anschließend wird der Wert stabil neu gesampelt. **Bestätigt.** | `func_80091270` |
-| `D_8009DD20` | `gIrqStuckCounter` | `int` | Zählt Dispatch-Runden, in denen Status und Maske gesetzt bleiben. Über `0x800` wird geloggt und der Interruptstatus gelöscht, sonst der Zähler zurückgesetzt. **Rolle bestätigt**, der Name beschreibt das beobachtete Verhalten. | `func_800916EC` |
+| `D_8009DD50` | `gVSyncTickCounter` | `volatile s32` | Zählt die VSync-Interrupts; der VBlank-Handler erhöht ihn, die Frame-Wartefunktion pollt ihn und bricht mit „VSync: timeout" ab. **Bestätigt.** | `func_80091BF8`, `func_800913E8` |
+| `D_8009CC20` | `gTimerBaselineTick` | `volatile u32` | Letzte stabile Probe des Timers 1; verstrichene Ticks = `(now - gTimerBaselineTick) & 0xFFFF`, danach neu gesampelt. **Bestätigt.** | `func_80091270` |
+| `D_8009DD20` | `gIrqStuckCounter` | `int` | Zählt Dispatch-Runden, in denen Status und Maske gesetzt bleiben; ab `0x800` Log und Status löschen, sonst zurücksetzen. **Rolle bestätigt.** | `func_800916EC` |
+| `D_8009DEF0` | `gDispatchSavedIrqMask` | `u32` | Sichert die Interruptmaske über die GPU-Dispatch-Sektion und schreibt sie danach zurück. **Bestätigt.** | `func_80094A3C` |
+| `D_8009DEF8` | `gSavedIrqMask` | `u32` | Dasselbe für den Transferpfad: Maske sichern, Arbeit erledigen, Maske zurück. **Bestätigt.** | `func_80094F4C`, `func_8009509C` |
+| `D_8009DD10` | `gIrqCallbackTable` | `struct CallbackTable *` | Zeiger auf die Tabelle mit dem IRQ-Rücksprung, der beim Betreten/Verlassen der Handler gerufen wird. **Wahrscheinlich** (Inhalt der Tabelle nicht vollständig analysiert). | `func_80091480`, `func_800914B0` |
 
-Alle drei werden im C-Code über `__asm__("D_XXXXXXXX")` an das Retail-Symbol gebunden und behalten ihren ursprünglichen Typ; die betroffenen Units sind nach der Umbenennung weiterhin byte-identisch.
+### GPU-Warteschlange
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009DEE8` | `gGpuJobHead` | `volatile s32` | Schreibindex des 64 Einträge großen GPU-Auftragsrings; voll, wenn `((head + 1) & 0x3F) == tail`. **Bestätigt.** | `func_80094A3C`, `func_8009509C` |
+| `D_8009DEEC` | `gGpuJobTail` | `volatile s32` | Leseindex desselben Rings; `count = (head - tail) & 0x3F` ist die Zahl wartender Aufträge. **Bestätigt.** | `func_8009509C`, `func_80094F4C` |
+
+### Ton (SPU-Treiber)
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009EEBC` | `gSpuTransferAddr` | `u16` | Aktuelle SPU-RAM-Adresse für den FIFO-Transfer; wird in das Transferadressregister geschrieben. **Bestätigt.** | `func_80097138`, `func_80098EE8` |
+| `D_8009EECC` | `gSpuAddrShift` | `s32` | Schiebewert zwischen SPU-Adresse und Byte-Offset (`<< gSpuAddrShift`), im Retail 3. **Bestätigt.** | `func_80097808`, `func_80098EE8` |
+| `D_8009EEC8` | `gSpuAlignEnable` | `s32` | Schalter für die Adressausrichtung, im Retail 2. **Wahrscheinlich.** | `func_80096EB8`, `func_80097808` |
+| `D_8009EED0` | `gSpuAlignBase` | `s32` | Basiswert der Ausrichtung, im Retail 8. **Wahrscheinlich.** | `func_80097808` |
+| `D_8009EED4` | `gSpuAlignMask` | `s32` | Maske der Ausrichtung (`addr &= ~mask`), im Retail 7. **Wahrscheinlich.** | `func_80097808` |
+| `D_8009EEE4` | `gSpuInitData` | `u8[]` | 0x10-Byte-Block, der beim Kaltstart nach SPU-RAM `0x200` übertragen wird. **Wahrscheinlich.** | `func_80096EB8` |
+
+### Controller (SIO0)
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009C760` | `gPadPresentFlag` | `s32` | 1, sobald ein Controller erkannt wurde; steuert, ob die Ports abgefragt werden. **Bestätigt.** | `func_8008A290`, `func_8008A43C` |
+| `D_8009C768` | `gPadSlotIndex` | `int` | Laufender Port-Index beim Abfragen der Slots (Einträge liegen bei `Basis + Index * 240`). **Bestätigt.** | `func_8008A43C`, `func_8008A6CC` |
+| `D_800A6FF8` | `gPadActuators` | `Slot[]` | Ein Eintrag pro Port für den Aktuator-Zustand (Rumble-Motoren). **Wahrscheinlich.** | `func_8001E9AC`, `func_8001E87C` |
+
+### CD-ROM-Treiber
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009CB84` | `gCdStateBytes` | `u8[]` | Drei Zustandsbytes des Treibers; nach einem Reset steht `[0] = 2`, während einer Antwort werden sie fortgeschrieben. **Bestätigt.** | `func_8008F6D8`, `func_8008E7A0` |
+| `D_8009C8B4` | `gCdStatusByte` | `u8` | Letztes Statusbyte einer CD-Antwort; wird unter anderem auf Bit `0x10` geprüft. **Bestätigt.** | `func_8008E7A0`, `func_8008E010` |
+| `D_8009C8B0` | `gCdLogLevel` | `int` | Größer 0 schaltet die CD-Protokollierung ein; der Setter gibt den vorherigen Wert zurück. **Bestätigt.** | `func_8008E0D8`, `func_8008E7A0` |
+| `D_8009C8BC` | `gCdResponseCount` | `int` | Zähler der bearbeiteten CD-Antworten, wird pro Antwort erhöht. **Bestätigt.** | `func_8008E7A0`, `func_8008FF20` |
+| `D_8009CBC4` | `gCdSeenResponseCount` | `s32` | Zuletzt verarbeiteter Stand von `gCdResponseCount`; eine Abweichung löst das Neulesen des Zustands aus. **Bestätigt.** | `func_8008FF20` |
+
+### Diagnose
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009DDEC` | `gLogPrintf` | `void (*)(char *, ...)` | Funktionszeiger auf die zentrale Log-Routine; im Retail mit `func_8008E000` vorbelegt und im ganzen Code als Ausgabe verwendet. **Bestätigt.** | `func_80092910`, `func_800930B0` |
+
+Alle hier genannten Variablen behalten ihren ursprünglichen Typ; die betroffenen Units sind nach der Umbenennung weiterhin byte-identisch.
 
 ## Vier Beispiele etwas genauer
 
