@@ -9,7 +9,7 @@ extern volatile u32 *gGpuGp1StatusPtr __asm__("D_8009CC18");
 extern volatile u32 *gTimer1CounterPtr __asm__("D_8009CC1C");
 extern volatile u32 D_8009CC20;
 extern s32 D_8009CC24;
-extern volatile s32 D_8009DD50;
+extern volatile s32 gVSyncTickCounter __asm__("D_8009DD50");
 extern void func_800913E8(s32, s32);
 
 /**
@@ -51,7 +51,7 @@ s32 func_80091270(s32 input)
         now = *gTimer1CounterPtr;
     } while (now != *gTimer1CounterPtr);
     elapsed = (now - D_8009CC20) & 0xffff;
-    if (arg0 < 0) return D_8009DD50;
+    if (arg0 < 0) return gVSyncTickCounter;
     if (arg0 != 1) {
         register s32 target __asm__("$2");
         register s32 count __asm__("$5");
@@ -66,7 +66,7 @@ s32 func_80091270(s32 input)
         func_800913E8(target, count);
         saved = *gGpuGp1StatusPtr;
         {
-            register s32 value __asm__("$4") = D_8009DD50;
+            register s32 value __asm__("$4") = gVSyncTickCounter;
             register s32 one __asm__("$5");
             __asm__("" : "=r"(value) : "0"(value));
             one = 1;
@@ -76,7 +76,7 @@ s32 func_80091270(s32 input)
         if (saved & 0x400000) {
             while (!((saved ^ *gGpuGp1StatusPtr) & 0x80000000)) {}
         }
-        D_8009CC24 = D_8009DD50;
+        D_8009CC24 = gVSyncTickCounter;
         do {
             D_8009CC20 = *gTimer1CounterPtr;
         } while (D_8009CC20 != *gTimer1CounterPtr);
