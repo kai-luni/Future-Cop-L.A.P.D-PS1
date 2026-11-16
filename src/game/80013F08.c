@@ -51,7 +51,7 @@ struct Instance {
     s16 frame;
 };
 
-extern struct Matrix D_800A0300[];
+extern struct Matrix gBoneMatrices[] __asm__("D_800A0300");
 extern struct Vec3s32 D_800A02E0;
 extern struct Vec3s32 D_800A02F0;
 extern char D_8009FAE0[];
@@ -170,8 +170,8 @@ s32 func_80013F08(struct Instance *instance)
         index = instance->frame;
     }
 
-    func_800178DC(&instance->coord, D_800A0300);
-    func_80010750(D_800A0300);
+    func_800178DC(&instance->coord, gBoneMatrices);
+    func_80010750(gBoneMatrices);
     func_800101D4((char *)instance->model->unk34 + (index * 16 + 8), point, 1);
 
     if (func_80019E70(point, instance->unk40) != 2) {
@@ -190,7 +190,7 @@ s32 func_80013F08(struct Instance *instance)
         register char *p1data __asm__("$8");
         struct Vec3s32 *f0 = &D_800A02F0;
 
-        mat = D_800A0300;
+        mat = gBoneMatrices;
         __asm__ volatile("" :: "r"(f0));
         tmp = D_8009FAE0;
         __asm__ volatile("" : "+r"(tmp));
@@ -239,7 +239,7 @@ s32 func_80013F08(struct Instance *instance)
         register void *a1_pts __asm__("$5");
         register s32 idx __asm__("$3");
 
-        func_8001AE14(D_800A0300, &D_800A02E0, f0);
+        func_8001AE14(gBoneMatrices, &D_800A02E0, f0);
         func_80013ECC(f0);
 
         a1_pts = pts;

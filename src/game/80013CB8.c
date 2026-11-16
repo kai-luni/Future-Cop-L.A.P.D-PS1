@@ -25,7 +25,7 @@ struct Input {
     s16 rz;
 };
 
-extern struct Matrix D_800A0300[];
+extern struct Matrix gBoneMatrices[] __asm__("D_800A0300");
 extern void func_80018DC0(s32, s32, s32, struct Matrix *);
 extern void func_80010820(struct Matrix *);
 extern void func_8001006C(struct Matrix *, struct Matrix *, s32);
@@ -103,8 +103,8 @@ void func_80013CB8(s32 arg0, struct Input *input, s16 *table, s32 offset)
         matrix.z = table[offset + (u16)input->z] << 4;
     }
 
-    dest = &D_800A0300[arg0];
-    parent = &D_800A0300[arg0 - 1];
+    dest = &gBoneMatrices[arg0];
+    parent = &gBoneMatrices[arg0 - 1];
 
     func_80010820(parent);
     func_8001006C(&matrix, dest, 4);
