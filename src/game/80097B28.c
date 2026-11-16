@@ -9,7 +9,7 @@ typedef struct {
 extern s32 D_8009EA3C;
 extern s32 D_8009EA40;
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
-extern s32 D_8009EED4;
+extern s32 gSpuAlignMask __asm__("D_8009EED4");
 extern s32 D_8009EF04;
 extern s32 D_8009EF08;
 extern Block *D_8009EF0C;
@@ -93,8 +93,8 @@ s32 func_80097B28(s32 size)
     } else {
         offset = (0x10000 - D_8009EA40) << gSpuAddrShift;
     }
-    if (size & ~D_8009EED4) {
-        size += D_8009EED4;
+    if (size & ~gSpuAlignMask) {
+        size += gSpuAlignMask;
     }
     size = size >> gSpuAddrShift;
     size = size << gSpuAddrShift;

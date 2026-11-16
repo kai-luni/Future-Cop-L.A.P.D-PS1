@@ -2,7 +2,7 @@
 #include "game/spu_globals.h"
 
 #include "game/types.h"
-extern u32 D_8009EED4;
+extern u32 gSpuAlignMask __asm__("D_8009EED4");
 extern u32 gSpuAlignBase __asm__("D_8009EED0");
 extern u32 gSpuAlignEnable __asm__("D_8009EEC8");
 extern u32 gSpuAddrShift __asm__("D_8009EECC");
@@ -52,7 +52,7 @@ u32 func_80097808(s32 reg, u32 addr)
         );
         if (rem != 0) {
             addr += align;
-            addr &= ~D_8009EED4;
+            addr &= ~gSpuAlignMask;
         }
     }
     shift = gSpuAddrShift;

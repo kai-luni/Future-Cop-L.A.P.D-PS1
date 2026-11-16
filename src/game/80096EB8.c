@@ -53,7 +53,7 @@ extern s32 D_8009EEC4;
 extern s32 gSpuAlignEnable __asm__("D_8009EEC8");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern s32 gSpuAlignBase __asm__("D_8009EED0");
-extern s32 D_8009EED4;
+extern s32 gSpuAlignMask __asm__("D_8009EED4");
 extern s32 D_8009EED8;
 extern s32 D_8009EEDC;
 extern s32 D_8009EEE0;
@@ -139,7 +139,7 @@ cont:
     gSpuAlignEnable = 2;
     gSpuAddrShift = 3;
     gSpuAlignBase = 8;
-    D_8009EED4 = 7;
+    gSpuAlignMask = 7;
     __asm__ volatile("" ::: "memory");
     spu = gSpuRegBasePtr;
     spu->f1AC = 4;
