@@ -1,7 +1,7 @@
 // Categories: Utilities > Random Numbers
 #include "game/types.h"
 
-extern s32 D_8009F214;
+extern s32 gRandSeed __asm__("D_8009F214");
 
 /* generates a random number, 31 bit */
 
@@ -27,11 +27,11 @@ s32 func_80019720(void)
     u32 high;
     u32 low;
 
-    high = ((u32)D_8009F214 >> 16) * 16807;
-    low = (D_8009F214 & 0xFFFF) * 16807;
-    D_8009F214 = low + ((high & 0x7FFF) << 16) + (high >> 15);
-    if (D_8009F214 < 0) {
-        D_8009F214 -= 0x7FFFFFFF;
+    high = ((u32)gRandSeed >> 16) * 16807;
+    low = (gRandSeed & 0xFFFF) * 16807;
+    gRandSeed = low + ((high & 0x7FFF) << 16) + (high >> 15);
+    if (gRandSeed < 0) {
+        gRandSeed -= 0x7FFFFFFF;
     }
-    return D_8009F214;
+    return gRandSeed;
 }

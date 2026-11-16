@@ -1,7 +1,7 @@
 // Categories: Utilities > Random Numbers
 #include "game/types.h"
 
-extern s32 D_8009F214;
+extern s32 gRandSeed __asm__("D_8009F214");
 extern s32 D_8009F5A8;
 extern s32 D_8009F5AC;
 extern s32 D_800A0480[];
@@ -35,7 +35,7 @@ void func_800197A8(s32 seed)
 {
     s32 i;
 
-    D_8009F214 = seed;
+    gRandSeed = seed;
     D_8009F5A8 = 0x14;
     D_8009F5AC = 0x14;
     for (i = 0; i < 0x14; i++) {
