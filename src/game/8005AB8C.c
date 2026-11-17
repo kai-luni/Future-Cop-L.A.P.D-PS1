@@ -53,7 +53,7 @@ extern s32 D_8009F7E8;
 extern s32 D_8009F7EC;
 extern s32 D_8009F7E0[];
 extern s32 D_8009F7E4[];
-extern u8 *D_8009FA90;
+extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern struct DrawObj *D_8009FA58[];
 extern struct DrawObj *gSinglePlayerEntity __asm__("D_8009F9EC");
@@ -140,19 +140,19 @@ void func_8005AB8C(struct Unk5AB8C *input, s32 *arg1, s32 *arg2)
         register u32 tag __asm__("$2");
         register u32 pageCode __asm__("$3");
 
-        next = D_8009FA90;
+        next = gPacketCursor;
         if (next < gPacketLimit) goto alloc1;
         __asm__("" : : "r"(next));
         p = next; goto ready1;
 alloc1:
-        p = next; D_8009FA90 = p + 0x1C;
+        p = next; gPacketCursor = p + 0x1C;
 ready1:
         pageCode = 0xE100069E;
         __asm__("" : : "r"(pageCode));
         p[3] = 1;
         tag = *(u32 *)p;
         __asm__("" : : "r"(tag) : "memory");
-        next2 = D_8009FA90;
+        next2 = gPacketCursor;
         mask = 0xFF000000;
         *(u32 *)(p + 4) = pageCode;
         limit = gPacketLimit;
@@ -163,7 +163,7 @@ ready1:
         __asm__("" : : "r"(next2));
         p = next2; goto ready2;
 alloc2:
-        p = next2; D_8009FA90 = p + 0x1C;
+        p = next2; gPacketCursor = p + 0x1C;
 ready2:
         p[7] = 0x66;
         p[4] = 0x80;
@@ -180,14 +180,14 @@ ready2:
         __asm__("lui\t%0,0x800B" : "=r"(addressHi) : "m"(*(u32 *)p));
         clut = *(u16 *)(addressHi - 0x715A);
         __asm__("" : : "r"(clut) : "memory");
-        next3 = D_8009FA90;
+        next3 = gPacketCursor;
         cmp3 = next3 < gPacketLimit;
         *(s16 *)(p + 0xE) = clut;
         if (cmp3) goto alloc3;
         __asm__("" : : "r"(next3));
         p2 = next3; goto ready3;
 alloc3:
-        p2 = next3; D_8009FA90 = p2 + 0x1C;
+        p2 = next3; gPacketCursor = p2 + 0x1C;
 ready3:
         *(struct PacketWord5 *)p2 = *(struct PacketWord5 *)p;
     } else {
@@ -226,11 +226,11 @@ ready3:
                 b = 0x28;
             }
 
-            cursor = D_8009FA90;
+            cursor = gPacketCursor;
             cmp = cursor < gPacketLimit;
             p = cursor;
             if (cmp) {
-                D_8009FA90 = p + 0x1C;
+                gPacketCursor = p + 0x1C;
             }
             tag = *(u32 *)p;
             p[7] = opcode;
@@ -319,7 +319,7 @@ ready3:
                         func_800694C8(&x, &y, pos->pos[0].x << 9, pos->pos[0].y << 9);
                         palIndex = sub->colors[i];
                         __asm__("" : : "r"(palIndex) : "memory");
-                        tileCursor = D_8009FA90;
+                        tileCursor = gPacketCursor;
                         tileLimit = gPacketLimit;
                         palIndex &= 0x1F;
                         palIndex <<= 2;
@@ -329,7 +329,7 @@ ready3:
                         color = *colorAddress;
                         p = tileCursor;
                         if (tileCmp) {
-                            D_8009FA90 = p + 0x1C;
+                            gPacketCursor = p + 0x1C;
                         }
                         px = x;
                         __asm__("" : : "r"(px) : "$4");

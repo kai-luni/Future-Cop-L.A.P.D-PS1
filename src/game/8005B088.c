@@ -7,7 +7,7 @@ typedef short s16;
 typedef struct { s32 x,y,z; } Vec;
 typedef struct { u32 tag, color; s16 x0,y0,x1,y1,x2,y2,x3,y3; } Packet;
 extern s32 D_8009F7E0, D_8009F7E4, D_8009F7E8, D_8009F7EC;
-extern Packet *D_8009FA90;
+extern Packet *gPacketCursor __asm__("D_8009FA90");
 extern Packet *gPacketLimit __asm__("D_8009F9C0");
 extern u16 D_800A8EA6;
 #define MUL(out,a,b) __asm__ volatile("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(out) : "r"(a), "r"(b) : "$8", "$9")
@@ -69,10 +69,10 @@ int func_8005B088(Vec *p, u32 color, int side, int type)
     xx = a - b; xx = (xx + (xx >> 1)) >> 12;
     if (type == 0) {
         register Packet *q __asm__("$4");
-        cur = D_8009FA90;
+        cur = gPacketCursor;
         if (cur < gPacketLimit) goto alloc0;
         q = cur; __asm__(""); goto ready0;
-alloc0: q = cur; D_8009FA90 = (Packet *)((u8 *)q + 28);
+alloc0: q = cur; gPacketCursor = (Packet *)((u8 *)q + 28);
 ready0:
         q->tag = 0x04000000; __asm__ volatile("" ::: "memory"); v0 = col | 0x66000000; __asm__("" : "=r"(v0) : "0"(v0)); q->color = v0; __asm__ volatile("" ::: "memory");
         v0 = xx + 53; v1 = side << 1; v0 = (v0 + v1) >> 1; __asm__("" : "=r"(v0) : "0"(v0)); q->x0 = v0; __asm__ volatile("" ::: "memory"); v0 = (yy + 86) >> 1; __asm__("" : "=r"(v0) : "0"(v0)); q->y0 = v0; __asm__ volatile("" ::: "memory");
@@ -82,10 +82,10 @@ ready0:
     } else if (type == 1) {
         register Packet *q __asm__("$5");
         register int sd __asm__("$4");
-        cur = D_8009FA90;
+        cur = gPacketCursor;
         if (cur < gPacketLimit) goto alloc1;
         q = cur; __asm__(""); goto ready1;
-alloc1: q = cur; D_8009FA90 = (Packet *)((u8 *)q + 28);
+alloc1: q = cur; gPacketCursor = (Packet *)((u8 *)q + 28);
 ready1:
         q->tag = 0x04000000; __asm__ volatile("" ::: "memory"); v0 = col | 0x20000000; __asm__("" : "=r"(v0) : "0"(v0)); q->color = v0; __asm__ volatile("" ::: "memory");
         v0 = xx + 56; __asm__("" : "=r"(v0) : "0"(v0)); sd = side << 1; v0 = (v0 + sd) >> 1; q->x0 = v0;
@@ -95,10 +95,10 @@ ready1:
     } else {
         register Packet *q __asm__("$7");
         register int sd __asm__("$5"), xp __asm__("$4");
-        cur = D_8009FA90;
+        cur = gPacketCursor;
         if (cur < gPacketLimit) goto alloc2;
         q = cur; __asm__(""); goto ready2;
-alloc2: q = cur; D_8009FA90 = (Packet *)((u8 *)q + 28);
+alloc2: q = cur; gPacketCursor = (Packet *)((u8 *)q + 28);
 ready2:
         q->tag = 0x05000000; __asm__ volatile("" ::: "memory");
         v0 = col | 0x28000000; __asm__("" : "=r"(v0) : "0"(v0));

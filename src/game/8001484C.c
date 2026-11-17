@@ -25,7 +25,7 @@ struct PolyG3 {
     s16 x2, y2;
 };
 
-extern u8 *D_8009FA90;
+extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 * volatile gPacketLimit __asm__("D_8009F9C0");
 
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
@@ -96,13 +96,13 @@ void func_8001484C(Vec *v, u32 color0, u32 color1, s32 count, s32 scale, s32 off
     vx = v->x;
     vy = v->y;
 
-    if (D_8009FA90 < gPacketLimit) goto page_alloc;
+    if (gPacketCursor < gPacketLimit) goto page_alloc;
     __asm__("");
-    poly = (struct PolyG3 *)D_8009FA90;
+    poly = (struct PolyG3 *)gPacketCursor;
     goto page_ready;
 page_alloc:
-    poly = (struct PolyG3 *)D_8009FA90;
-    D_8009FA90 = (u8 *)poly + 0x1C;
+    poly = (struct PolyG3 *)gPacketCursor;
+    gPacketCursor = (u8 *)poly + 0x1C;
 page_ready:
     cw = 0xE10006A0;
     poly->code = cw;
@@ -123,13 +123,13 @@ page_ready:
     tag = (depth - dz) | 0x06000000;
 
     do {
-        if (D_8009FA90 < gPacketLimit) goto poly_alloc;
+        if (gPacketCursor < gPacketLimit) goto poly_alloc;
         __asm__("");
-        poly = (struct PolyG3 *)D_8009FA90;
+        poly = (struct PolyG3 *)gPacketCursor;
         goto poly_ready;
     poly_alloc:
-        poly = (struct PolyG3 *)D_8009FA90;
-        D_8009FA90 = (u8 *)poly + 0x1C;
+        poly = (struct PolyG3 *)gPacketCursor;
+        gPacketCursor = (u8 *)poly + 0x1C;
     poly_ready:
         i--;
         poly->color.word = tag;

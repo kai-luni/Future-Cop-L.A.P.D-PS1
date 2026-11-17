@@ -7,7 +7,7 @@ struct LineF3 {
     s16 xy[6];
 };
 
-extern u8 *D_8009FA90;
+extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern s16 D_8009AFB4[];
 
@@ -54,9 +54,9 @@ void func_8005A828(s32 origin, u32 angle, s32 code)
     __asm__ volatile ("" : "+r"(arg0), "+r"(arg1), "+r"(saved_code));
     arg2 = &cosine;
     func_8001846C(arg0, arg1, arg2);
-    line = (struct LineF3 *)D_8009FA90;
-    if (D_8009FA90 < gPacketLimit) {
-        D_8009FA90 += 0x1C;
+    line = (struct LineF3 *)gPacketCursor;
+    if (gPacketCursor < gPacketLimit) {
+        gPacketCursor += 0x1C;
     }
     ctr = 0;
     bias = 0x2C0000;

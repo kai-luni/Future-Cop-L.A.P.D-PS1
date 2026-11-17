@@ -36,7 +36,7 @@ struct Sprite {
     u16 w12;
 };
 
-extern u8 *D_8009FA90;
+extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u16 D_8009AAE0[];
 extern u8 D_800A1970[];
@@ -76,11 +76,11 @@ s32 func_80048F98(u8 character, s32 x, s32 y, u16 color)
     register u32 u __asm__("$3");
     register s32 index2 __asm__("$4");
 
-    if (D_8009FA90 >= gPacketLimit) {
-        sprite = (struct Sprite *)D_8009FA90;
+    if (gPacketCursor >= gPacketLimit) {
+        sprite = (struct Sprite *)gPacketCursor;
     } else {
-        sprite = (struct Sprite *)D_8009FA90;
-        D_8009FA90 = (u8 *)sprite + 0x1C;
+        sprite = (struct Sprite *)gPacketCursor;
+        gPacketCursor = (u8 *)sprite + 0x1C;
     }
     sprite->addr = 0;
     glyph = (struct Glyph *)func_800489C8(D_8009F35C, character);

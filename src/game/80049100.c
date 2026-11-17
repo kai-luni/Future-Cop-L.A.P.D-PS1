@@ -7,7 +7,7 @@ struct DrawTPage {
     u32 code;
 };
 
-extern u8 *D_8009FA90[];
+extern u8 *gPacketCursor[] __asm__("D_8009FA90");
 extern u8 *gPacketLimit[] __asm__("D_8009F9C0");
 extern u16 D_800A1940[];
 extern u16 D_8009F768;
@@ -41,9 +41,9 @@ void func_80049100(u8 *text, s32 x, s32 y, s32 color)
     if (D_8009F768 == 0) {
         return;
     }
-    packet = (struct DrawTPage *)D_8009FA90[0];
-    if (D_8009FA90[0] < gPacketLimit[0]) {
-        D_8009FA90[0] = (u8 *)packet + 0x1C;
+    packet = (struct DrawTPage *)gPacketCursor[0];
+    if (gPacketCursor[0] < gPacketLimit[0]) {
+        gPacketCursor[0] = (u8 *)packet + 0x1C;
     }
     packet->addr = 0;
     packet->len = 1;

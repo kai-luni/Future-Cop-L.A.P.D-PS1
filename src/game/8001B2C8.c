@@ -21,7 +21,7 @@ extern s32 gPacketLimit __asm__("D_8009F9C0");
 extern volatile s32 D_8009F9D4;
 extern s32 gPrimPoolNext __asm__("D_8009F9F0");
 extern s32 gPrimPoolEnd __asm__("D_8009FA28");
-extern s32 D_8009FA90;
+extern s32 gPacketCursor __asm__("D_8009FA90");
 
 extern s32 func_80017EBC(s32, s32);
 extern u8 func_8001C034(void);
@@ -107,7 +107,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     D_8009F600 = 0;
     gPrimPoolNext = D_8009F5C8;
     D_8009F5E0 = D_8009F5C8;
-    D_8009FA90 = D_8009F5D0;
+    gPacketCursor = D_8009F5D0;
     D_8009F5E4 = D_8009F5D0;
 
     func_80093178(D_8009F5D8, D_8009F5FC + 2);

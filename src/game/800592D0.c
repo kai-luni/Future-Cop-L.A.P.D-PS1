@@ -48,7 +48,7 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u8 *D_8009FA94;
 extern struct Unk592D0 *D_8009FA58[];
 extern u8 D_8009AF40[];
-extern u8 *D_8009FA90;
+extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 extern void func_800536B4(s32 *near, s32 *far);
@@ -162,11 +162,11 @@ void func_800592D0(struct Unk592D0 *arg0)
     color = sum / 2;
     color -= 0x100;
 
-    if (D_8009FA90 >= gPacketLimit) {
-        p = D_8009FA90;
+    if (gPacketCursor >= gPacketLimit) {
+        p = gPacketCursor;
     } else {
-        p = D_8009FA90;
-        D_8009FA90 = p + 0x1C;
+        p = gPacketCursor;
+        gPacketCursor = p + 0x1C;
     }
     p[3] = 1;
     *(u32 *)(p + 4) = 0xE10006A0;
@@ -181,11 +181,11 @@ void func_800592D0(struct Unk592D0 *arg0)
 
     temp = intensity << 8;
 
-    if (D_8009FA90 >= gPacketLimit) {
-        p = D_8009FA90;
+    if (gPacketCursor >= gPacketLimit) {
+        p = gPacketCursor;
     } else {
-        p = D_8009FA90;
-        D_8009FA90 = p + 0x1C;
+        p = gPacketCursor;
+        gPacketCursor = p + 0x1C;
     }
     *(u32 *)(p + 0x0) = 0x05000000 | color;
     *(u32 *)(p + 0x4) = 0x2A000000 | temp;
@@ -194,11 +194,11 @@ void func_800592D0(struct Unk592D0 *arg0)
     *(u32 *)(p + 0x14) = *(u32 *)&frame.point[2];
     *(u32 *)(p + 0x10) = *(u32 *)&frame.point[3];
 
-    if (D_8009FA90 >= gPacketLimit) {
-        p = D_8009FA90;
+    if (gPacketCursor >= gPacketLimit) {
+        p = gPacketCursor;
     } else {
-        p = D_8009FA90;
-        D_8009FA90 = p + 0x1C;
+        p = gPacketCursor;
+        gPacketCursor = p + 0x1C;
     }
     *(u32 *)(p + 0x0) = 0x04000000 | color;
     *(u32 *)(p + 0x4) = 0x22000000 | temp;
@@ -206,11 +206,11 @@ void func_800592D0(struct Unk592D0 *arg0)
     *(u32 *)(p + 0xC) = *(u32 *)&frame.point[0];
     *(u32 *)(p + 0x10) = *(u32 *)&frame.point[5];
 
-    if (D_8009FA90 >= gPacketLimit) {
-        p = D_8009FA90;
+    if (gPacketCursor >= gPacketLimit) {
+        p = gPacketCursor;
     } else {
-        p = D_8009FA90;
-        D_8009FA90 = p + 0x1C;
+        p = gPacketCursor;
+        gPacketCursor = p + 0x1C;
     }
     *(u32 *)(p + 0x0) = 0x04000000 | color;
     *(u32 *)(p + 0x4) = 0x22000000 | temp;
@@ -218,11 +218,11 @@ void func_800592D0(struct Unk592D0 *arg0)
     *(u32 *)(p + 0xC) = *(u32 *)&frame.point[0];
     *(u32 *)(p + 0x10) = *(u32 *)&frame.point[1];
 
-    if (D_8009FA90 >= gPacketLimit) {
-        p = D_8009FA90;
+    if (gPacketCursor >= gPacketLimit) {
+        p = gPacketCursor;
     } else {
-        p = D_8009FA90;
-        D_8009FA90 = p + 0x1C;
+        p = gPacketCursor;
+        gPacketCursor = p + 0x1C;
     }
     height_shift = 0x04000000 | color;
     __asm__("" : "=r"(height_shift) : "0"(height_shift));

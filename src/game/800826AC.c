@@ -10,7 +10,7 @@ extern Ent D_8009B32C[];
 extern s8 D_8009F874;
 extern u8 D_8009F876;
 extern int **D_8009F3F4;
-extern u8 *D_8009FA90;
+extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern void func_800861E4(int, int, int, int);
 
@@ -109,16 +109,16 @@ void func_800826AC(int idx)
     }
 tail:
     col = D_8009B32C[D_8009F874].b ? 0x60 : 0x80;
-    if (D_8009FA90 < gPacketLimit) goto a1;
-    packet = D_8009FA90; __asm__("" : : "r"(packet)); goto p1;
-a1: packet = D_8009FA90; D_8009FA90 = packet + 28;
+    if (gPacketCursor < gPacketLimit) goto a1;
+    packet = gPacketCursor; __asm__("" : : "r"(packet)); goto p1;
+a1: packet = gPacketCursor; gPacketCursor = packet + 28;
 p1:
     ((Page *)packet)->addr = 0xFFFF; ((Page *)packet)->len = 1;
     ((Page *)packet)->code = 0xe1000105;
-    next2 = D_8009FA90;
+    next2 = gPacketCursor;
     if (next2 < gPacketLimit) goto a2;
     __asm__("" : : "r"(next2)); packet = next2; goto p2;
-a2: packet = next2; D_8009FA90 = packet + 28;
+a2: packet = next2; gPacketCursor = packet + 28;
 p2:
     ((Sprt *)packet)->code = 0x64;
     ((Sprt *)packet)->w = 0xa0; ((Sprt *)packet)->h = 0xf0;
@@ -126,18 +126,18 @@ p2:
     ((Sprt *)packet)->u = 0; ((Sprt *)packet)->v = 0;
     ((Sprt *)packet)->x = 0; ((Sprt *)packet)->y = 0;
     ((Sprt *)packet)->addr = 0xFFFF; ((Sprt *)packet)->len = 4;
-    next3 = D_8009FA90;
+    next3 = gPacketCursor;
     cmp3 = next3 < gPacketLimit;
     if (cmp3) goto a3;
     __asm__("" : : "r"(next3)); packet = next3; goto p3;
-a3: packet = next3; D_8009FA90 = packet + 28;
+a3: packet = next3; gPacketCursor = packet + 28;
 p3:
     ((Page *)packet)->addr = 0xFFFF; ((Page *)packet)->len = 1;
     ((Page *)packet)->code = 0xe1000115;
-    next4 = D_8009FA90;
+    next4 = gPacketCursor;
     if (next4 < gPacketLimit) goto a4;
     __asm__("" : : "r"(next4)); packet = next4; goto p4;
-a4: packet = next4; D_8009FA90 = packet + 28;
+a4: packet = next4; gPacketCursor = packet + 28;
 p4:
     ((Sprt *)packet)->code = 0x64;
     ((Sprt *)packet)->w = 0xa0; ((Sprt *)packet)->h = 0xf0;

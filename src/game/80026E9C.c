@@ -8,7 +8,7 @@ struct Packet {
     s16 x, y, w, h;
 };
 struct Page { u32 addr : 24; u32 len : 8; u32 code; };
-extern u8 *D_8009FA90;
+extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 /**
@@ -33,24 +33,24 @@ extern u8 *gPacketLimit __asm__("D_8009F9C0");
 void func_80026E9C(s32 r, s32 g, s32 b, s32 w)
 {
     u8 *packet;
-    if (D_8009FA90 < gPacketLimit) goto page_alloc;
+    if (gPacketCursor < gPacketLimit) goto page_alloc;
     __asm__("");
-    packet = D_8009FA90;
+    packet = gPacketCursor;
     goto page_ready;
 page_alloc:
-    packet = D_8009FA90;
-    D_8009FA90 = packet + 0x1C;
+    packet = gPacketCursor;
+    gPacketCursor = packet + 0x1C;
 page_ready:
     ((struct Page *)packet)->len = 1;
     ((struct Page *)packet)->code = 0xE10006A0;
     ((struct Page *)packet)->addr = 0;
-    if (D_8009FA90 < gPacketLimit) goto rect_alloc;
+    if (gPacketCursor < gPacketLimit) goto rect_alloc;
     __asm__("");
-    packet = D_8009FA90;
+    packet = gPacketCursor;
     goto rect_ready;
 rect_alloc:
-    packet = D_8009FA90;
-    D_8009FA90 = packet + 0x1C;
+    packet = gPacketCursor;
+    gPacketCursor = packet + 0x1C;
 rect_ready:
     ((struct Packet *)packet)->len = 3;
     ((struct Packet *)packet)->code = 0x62;

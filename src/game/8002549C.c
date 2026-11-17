@@ -16,7 +16,7 @@ typedef struct {
     u16 pad, w, h;
 } Sprt;
 
-extern u8 *D_8009FA90;
+extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 /**
@@ -55,11 +55,11 @@ void func_8002549C(int value) {
     u8 *packet;
     register int arg __asm__("$7") = value;
 
-    if (D_8009FA90 < gPacketLimit) goto p1_alloc;
+    if (gPacketCursor < gPacketLimit) goto p1_alloc;
     __asm__("");
-    packet = D_8009FA90; goto p1;
+    packet = gPacketCursor; goto p1;
 p1_alloc:
-    packet = D_8009FA90; D_8009FA90 = packet + 28;
+    packet = gPacketCursor; gPacketCursor = packet + 28;
 p1:
     {
         register u32 mask __asm__("$4") = 0x00FFFFFF;
@@ -68,11 +68,11 @@ p1:
         ((Page *)packet)->code = 0xe1000105;
     }
 
-    if (D_8009FA90 < gPacketLimit) goto s1_alloc;
+    if (gPacketCursor < gPacketLimit) goto s1_alloc;
     __asm__("");
-    packet = D_8009FA90; goto s1;
+    packet = gPacketCursor; goto s1;
 s1_alloc:
-    packet = D_8009FA90; D_8009FA90 = packet + 28;
+    packet = gPacketCursor; gPacketCursor = packet + 28;
 s1:
     {
         register u32 mask __asm__("$4") = 0x00FFFFFF;
@@ -92,11 +92,11 @@ s1:
         ((Sprt *)packet)->h = h;
     }
 
-    if (D_8009FA90 < gPacketLimit) goto p2_alloc;
+    if (gPacketCursor < gPacketLimit) goto p2_alloc;
     __asm__("");
-    packet = D_8009FA90; goto p2;
+    packet = gPacketCursor; goto p2;
 p2_alloc:
-    packet = D_8009FA90; D_8009FA90 = packet + 28;
+    packet = gPacketCursor; gPacketCursor = packet + 28;
 p2:
     {
         register u32 mask __asm__("$4") = 0x00FFFFFF;
@@ -105,11 +105,11 @@ p2:
         ((Page *)packet)->code = 0xe1000115;
     }
 
-    if (D_8009FA90 < gPacketLimit) goto s2_alloc;
+    if (gPacketCursor < gPacketLimit) goto s2_alloc;
     __asm__("");
-    packet = D_8009FA90; goto s2;
+    packet = gPacketCursor; goto s2;
 s2_alloc:
-    packet = D_8009FA90; D_8009FA90 = packet + 28;
+    packet = gPacketCursor; gPacketCursor = packet + 28;
 s2:
     {
         register u32 mask __asm__("$4") = 0x00FFFFFF;

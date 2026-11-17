@@ -10,7 +10,7 @@ struct LineF2 {
     s16 y1;
 };
 
-extern u8 *D_8009FA90;
+extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 extern void func_8001846C(s32 id, s32 *first, s32 *second);
@@ -38,9 +38,9 @@ void func_8005A740(s32 origin, s32 id)
     s32 second;
 
     func_8001846C(id, &first, &second);
-    line = (struct LineF2 *)D_8009FA90;
-    if (D_8009FA90 < gPacketLimit) {
-        D_8009FA90 += 0x1C;
+    line = (struct LineF2 *)gPacketCursor;
+    if (gPacketCursor < gPacketLimit) {
+        gPacketCursor += 0x1C;
     }
     line->tag = 0x3000000;
     line->code = 0x40808080;

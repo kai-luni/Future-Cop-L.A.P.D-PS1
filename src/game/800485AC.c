@@ -26,7 +26,7 @@ struct Sprt {
 extern s32 D_8009FAC8;
 extern s32 D_8009F9B0[];
 extern s32 gPlayerCount[] __asm__("D_8009FA0C");
-extern u8 *D_8009FA90;
+extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 /**
@@ -66,23 +66,23 @@ void func_800485AC(s32 value)
         x = (arg == 0) << 7;
     }
 
-    if (D_8009FA90 >= gPacketLimit) {
-        packet = D_8009FA90;
+    if (gPacketCursor >= gPacketLimit) {
+        packet = gPacketCursor;
         goto page_ready;
     }
-    packet = D_8009FA90;
-    D_8009FA90 = packet + 0x1C;
+    packet = gPacketCursor;
+    gPacketCursor = packet + 0x1C;
 page_ready:
     ((struct DrawTPage *)packet)->addr = 0;
     ((struct DrawTPage *)packet)->len = 1;
     ((struct DrawTPage *)packet)->code = 0xE100011F;
 
-    if (D_8009FA90 >= gPacketLimit) {
-        packet = D_8009FA90;
+    if (gPacketCursor >= gPacketLimit) {
+        packet = gPacketCursor;
         goto sprt_ready;
     }
-    packet = D_8009FA90;
-    D_8009FA90 = packet + 0x1C;
+    packet = gPacketCursor;
+    gPacketCursor = packet + 0x1C;
 sprt_ready:
 
     ((struct Sprt *)packet)->code = 0x64;
