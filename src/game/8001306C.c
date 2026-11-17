@@ -7,7 +7,7 @@ struct Unk1306C {
     s32 unk8[1];
 };
 
-extern s32 *D_8009F554;
+extern s32 *gVertexBlockTable __asm__("D_8009F554");
 extern s32 *D_8009F558;
 extern s32 *D_8009F55C;
 
@@ -37,7 +37,7 @@ s32 func_8001306C(struct Unk1306C *arg0)
     switch (arg0->unk0) {
     case 0x3444564C:
         if (arg0->unk4 != 0) {
-            tbl = D_8009F554;
+            tbl = gVertexBlockTable;
             i = 0;
             do {
                 arg0->unk8[i] = tbl[arg0->unk8[i]];
