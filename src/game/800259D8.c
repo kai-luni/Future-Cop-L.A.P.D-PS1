@@ -17,7 +17,7 @@ extern s32 D_8009FAA4;
 
 extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
-extern volatile s32 D_8009F9D4;
+extern volatile s32 gScreenOffsetValue __asm__("D_8009F9D4");
 extern u8 *D_8009F9A0;
 extern u8 *D_8009FA58[];
 
@@ -111,10 +111,10 @@ s32 func_800259D8(void)
         rp = rect;
         __asm__("" : "+r"(rp));
         masked = p[0];
-        color = D_8009F9D4;
+        color = gScreenOffsetValue;
         masked = masked & bits;
         __asm__("" : "+r"(masked) : : "$6");
-        half = *(volatile u16 *)&D_8009F9D4;
+        half = *(volatile u16 *)&gScreenOffsetValue;
         __asm__("" : "+r"(half) : : "$6");
         zero = 0;
         __asm__("" : "+r"(zero) : "r"(half));

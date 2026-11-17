@@ -29,7 +29,7 @@ extern s32 D_8009F5FC;
 extern s32 D_8009F600;
 extern u32 gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 gPacketCursor __asm__("D_8009FA90");
-extern s32 D_8009F9D4;
+extern s32 gScreenOffsetValue __asm__("D_8009F9D4");
 extern u32 gPacketLimit __asm__("D_8009F9C0");
 extern u32 gPrimPoolEnd __asm__("D_8009FA28");
 
@@ -148,7 +148,7 @@ void func_8001B4A8(s32 arg0)
 
     xbase = gPrimPoolNext;
     v = 0x100 - h;
-    D_8009F9D4 = v;
+    gScreenOffsetValue = v;
     v = gPacketCursor;
     limX = gPacketPoolBase;
     limY = gNodePoolBase;
