@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern  void (*gScreenModeHook)(void) __asm__("D_8009F99C");
-extern s32 D_8009F9CC;
+extern s32 gDisplaySetupToggle __asm__("D_8009F9CC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
@@ -55,5 +55,5 @@ void func_8001EFF8(void)
             func_8001BFA8();
         }
     }
-    D_8009F9CC = 1 - D_8009F9CC;
+    gDisplaySetupToggle = 1 - gDisplaySetupToggle;
 }

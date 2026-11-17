@@ -10,9 +10,9 @@ typedef struct {
     s16 unkA4;
 } Object;
 
-extern s32 D_8009FAC8;
+extern s32 gFrameSwitch __asm__("D_8009FAC8");
 extern s32 D_8009F9B4;
-extern s32 D_8009F9B0;
+extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
 
 /**
  *  @brief Updates an object's tracked state against global activity.
@@ -37,12 +37,12 @@ void func_8004228C(Object *obj)
 {
     s32 active;
     if (obj->unkA0 & 1) {
-        active = D_8009FAC8;
+        active = gFrameSwitch;
         if ((obj->unkA0 & 2) && (!active || D_8009F9B4 != obj->unkA4)) {
             obj->unkA4 = -10;
             obj->unkA0 &= ~3;
             obj->flags &= ~8;
-            D_8009F9B0--;
+            gStreamPreemptFlag--;
         } else if (active) {
             obj->unkA0 |= 2;
         }

@@ -1,7 +1,7 @@
 // Categories: Game Engine > Options Menu | Graphics > HUD > Gauge | Platform > Sound
 #include "game/types.h"
 
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
 extern s32 func_8004522C(void);
@@ -44,7 +44,7 @@ void func_8007CFA0(s32 arg0)
     func_8007CE04(0x14, 0x4B, func_8004522C(), 0x7F);
     func_8007CE04(0x14, 0x57, func_80045288(), 0x7F);
     func_8007CE04(0x14, 0x62, func_800452C8(), 0x7F);
-    switch (*D_8009F468) {
+    switch (*gFontBankTable) {
     case 1:
     case 2:
     case 3: func_80078B34(0x10F4, 0, 0); break;

@@ -84,7 +84,7 @@ extern struct UnkF744 *gVoicePriorityList __asm__("D_8009F744");
 
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern struct Unk4749CHandle D_800A10C0[];
-extern struct Unk10E0 D_800A10E0[6];
+extern struct Unk10E0 gPlayerSlots[6] __asm__("D_800A10E0");
 extern struct SoundChannel *D_800A1780[];
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
@@ -180,7 +180,7 @@ delta_ready:
             register s32 *tag __asm__("$16");
 
             index = 0;
-            entry = D_800A10E0;
+            entry = gPlayerSlots;
             tag = &entry->unk10;
             do {
                 s32 remaining;

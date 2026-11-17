@@ -13,7 +13,8 @@ extern void func_8001A180(struct Vec *);
 extern s32 func_8001AB00(struct Vec *, struct Vec *);
 extern void func_8005B6A8(struct Obj *);
 extern u32 func_80095900(s32);
-extern u16 D_8009F7F0, D_8009F7F2, D_8009F7F4;
+extern u16 D_8009F7F2, D_8009F7F4;
+extern u16 gMessageReturnData __asm__("D_8009F7F0");
 extern s16 data_return[3];
 
 /**
@@ -122,7 +123,7 @@ void *func_8005B934(u32 msg, struct Obj *obj, s32 arg2, s32 arg3)
                 D_8009F7F2 = shifted;
                 product = (func_8001AB00(&v, &tr->axis0) >> 4) * t->strength;
                 shifted = product >> 12;
-                D_8009F7F0 = shifted;
+                gMessageReturnData = shifted;
                 __asm__ volatile("" : : "r"(shifted) : "$4", "$5", "memory");
                 product = (func_8001AB00(&t->moving->velocity, &tr->axis2) >> 4) * scale;
                 shifted3 = product >> 12;
@@ -130,14 +131,14 @@ void *func_8005B934(u32 msg, struct Obj *obj, s32 arg2, s32 arg3)
             } else {
                 product = (func_8001AB00(&t->moving->velocity, &tr->axis2) >> 4) * scale;
                 D_8009F7F2 = 0;
-                D_8009F7F0 = 0;
+                gMessageReturnData = 0;
                 shifted = product >> 12;
                 D_8009F7F4 = shifted;
                 __asm__ volatile("" : : : "memory");
                 out = shifted + (u16)t->strength;
             }
         } else {
-            D_8009F7F0 = 0;
+            gMessageReturnData = 0;
             D_8009F7F2 = 0;
             __asm__ volatile("" : : : "memory");
             out = (u16)t->strength;

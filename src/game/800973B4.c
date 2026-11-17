@@ -16,7 +16,7 @@ extern volatile struct Hardware *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern u32 *gDma4MemAddrPtr __asm__("D_8009EEA8");
 extern u32 *gDma4BlockCtrlPtr __asm__("D_8009EEAC");
 extern u32 *gDma4ChannelCtrlPtr __asm__("D_8009EEB0");
-extern u32 D_8009EEF4;
+extern u32 gSetupGuard __asm__("D_8009EEF4");
 extern void func_80097990(void);
 extern void func_80097968(void);
 
@@ -57,6 +57,6 @@ void func_800973B4(u32 arg0, u32 arg1, u32 arg2)
     *gDma4MemAddrPtr = arg0;
     __asm__ volatile("" : "+r" (arg2));
     *gDma4BlockCtrlPtr = arg2 | 0x10;
-    D_8009EEF4 = 1;
+    gSetupGuard = 1;
     *gDma4ChannelCtrlPtr = control;
 }

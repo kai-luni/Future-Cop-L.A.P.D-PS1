@@ -4,7 +4,7 @@ typedef signed char s8;
 struct Entry { char *name; s8 type; u8 value; char pad[2]; };
 extern u8 gUploadRequestFlag __asm__("D_8009F3E5");
 extern s8 gModuleLoadState __asm__("D_8009F3F0");
-extern struct Entry D_8009B42C[];
+extern struct Entry gScreenIndexTable[] __asm__("D_8009B42C");
 extern char gFormatNamePair[] __asm__("D_8009F2E4");
 extern int gModulePrefixCW __asm__("D_8009F3D8");
 extern int gModulePrefixPA __asm__("D_8009F3E0");
@@ -69,7 +69,7 @@ int func_80025370(void)
     struct Entry *entry;
     int saved;
     if (!gUploadRequestFlag && gModuleLoadState < 23) {
-        entry = &D_8009B42C[gModuleLoadState];
+        entry = &gScreenIndexTable[gModuleLoadState];
         {
             int arg;
             if (entry->type == 1)

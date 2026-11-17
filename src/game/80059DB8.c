@@ -7,7 +7,7 @@ struct Data { s8 count; u8 pad[19]; struct Entry *entries[3]; struct ByteEntry *
 extern s32 D_8009F7C0;
 extern s32 output[2] __asm__("D_8009F7C0");
 extern s32 gControlMaskWord __asm__("D_8009F7C4");
-extern struct Data *D_8009F7D0;
+extern struct Data *gStreamDescriptorPtr __asm__("D_8009F7D0");
 
 /**
  *  @brief Consumes counted values from data streams and returns a byte value.
@@ -41,7 +41,7 @@ s32 func_80059DB8(void)
     register s32 *out __asm__("$7");
     if (D_8009F7C0 != 0 || gControlMaskWord != 0)
         return -1;
-    data = D_8009F7D0;
+    data = gStreamDescriptorPtr;
     count = data->count;
     __asm__ volatile("" : "+r"(count));
     i = 0;

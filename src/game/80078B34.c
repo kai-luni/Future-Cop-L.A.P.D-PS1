@@ -8,7 +8,7 @@ typedef struct {
     s16 unk6;
 } Unk800A3578;
 
-extern Unk800A3578 D_800A3578[];
+extern Unk800A3578 gSlotRecordTable[] __asm__("D_800A3578");
 
 /**
  * @brief Queues a display id into one of the two HUD display slots.
@@ -45,7 +45,7 @@ void func_80078B34(s32 arg0, s32 arg1, s32 arg2)
     if (arg1 >= 2) {
         return;
     }
-    p = &D_800A3578[arg1];
+    p = &gSlotRecordTable[arg1];
     switch (arg2) {
     case 1:
         p->unk2 = 0x55;

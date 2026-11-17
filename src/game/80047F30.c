@@ -48,7 +48,7 @@ extern Game *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern u8 D_800117C0[];
 extern u8 gStageLineFormat[] __asm__("D_8009F354");
 extern u8 gScoreFormatString[] __asm__("D_8009F34C");
-extern u8 **D_8009F348;
+extern u8 **gPlayerAvatarSprite __asm__("D_8009F348");
 extern void func_80047888(void);
 extern void func_8006C080(Game *);
 extern void func_80047BE8(s32, s32, s32, s32, s32, s32, s32);
@@ -193,7 +193,7 @@ void func_80047F30(Game *game)
     func_8004EDC8(game);
     p2 = game->player;
     if (p2->valueae > 0) {
-        label = D_8009F348[p2->valuea4];
+        label = gPlayerAvatarSprite[p2->valuea4];
         label_x = 12;
         if (p2->valuec1) label_x = 148 - func_80049340(label) / 2;
         func_80049100(label, label_x, 74, 8);

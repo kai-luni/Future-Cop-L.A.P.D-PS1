@@ -9,7 +9,7 @@ struct Node {
     u8 pad20[4];
     void (*callback)(int, struct Node *, int, int);
 };
-extern struct Node *D_800A1070[7];
+extern struct Node *gListHeads[7] __asm__("D_800A1070");
 
 /**
  *  @brief Removes and notifies all list nodes associated with a target.
@@ -39,7 +39,7 @@ void func_8003FE90(struct Target *arg)
     struct Node *node, *next, *prev;
     int zero;
     target = arg;
-    base = D_800A1070;
+    base = gListHeads;
     cursor = base;
     do {
         node = *cursor;

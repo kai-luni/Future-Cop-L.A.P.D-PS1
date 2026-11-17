@@ -8,7 +8,7 @@ typedef struct {
     s32 unk20;
 } DispatchDDE8;
 
-extern u8 D_80012A94[];
+extern u8 gDebugTagRect[] __asm__("D_80012A94");
 extern DispatchDDE8 *gVramWriteCallback __asm__("D_8009DDE8");
 extern void func_80092CF4(void *arg0, void *arg1);
 
@@ -36,6 +36,6 @@ extern void func_80092CF4(void *arg0, void *arg1);
  */
 void func_80092F38(void *rect, void *data)
 {
-    func_80092CF4(D_80012A94, rect);
+    func_80092CF4(gDebugTagRect, rect);
     gVramWriteCallback->callback(gVramWriteCallback->unk20, rect, 8, data);
 }

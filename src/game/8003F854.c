@@ -9,9 +9,9 @@ struct Unk8003F854 {
     void (*unk24)(s32, struct Unk8003F854 *, s32, s32);
 };
 
-extern struct Unk8003F854 *D_800A1070[7];
+extern struct Unk8003F854 *gListHeads[7] __asm__("D_800A1070");
 extern struct Unk8003F854 *gPendingSpawnList __asm__("D_8009F314");
-extern struct Unk8003F854 *D_8009F30C;
+extern struct Unk8003F854 *gNodeCList __asm__("D_8009F30C");
 extern void *gSpawnRecordMap[0x200] __asm__("D_800A7040");
 extern void *gOccupancyColumns[0x100] __asm__("D_800A0C70");
 
@@ -62,7 +62,7 @@ void func_8003F854(s32 arg0)
         register s32 zero __asm__("$6");
 
         i = 0;
-        head = D_800A1070;
+        head = gListHeads;
         do {
             p = *head;
             while (p != 0) {
@@ -79,7 +79,7 @@ void func_8003F854(s32 arg0)
             register u32 clear __asm__("$2");
 
             i = 6;
-            clear = (u32)D_800A1070;
+            clear = (u32)gListHeads;
             clear += 0x18;
             do {
                 *(struct Unk8003F854 **)clear = 0;
@@ -147,7 +147,7 @@ void func_8003F854(s32 arg0)
         register struct Unk8003F854 *p __asm__("$16");
         register struct Unk8003F854 *next __asm__("$17");
 
-        p = D_8009F30C;
+        p = gNodeCList;
         while (p != 0) {
             next = p->next;
             if (p->unk18 != 0) {
@@ -156,7 +156,7 @@ void func_8003F854(s32 arg0)
             func_800181D4(p);
             p = next;
         }
-        D_8009F30C = 0;
+        gNodeCList = 0;
     }
 
     func_8003D0AC();

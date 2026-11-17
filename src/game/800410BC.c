@@ -40,8 +40,8 @@ struct CallArgs {
 };
 
 extern s32 D_8009F324;
-extern u8 D_8009F328;
-extern u8 D_8009F329;
+extern u8 gConeTestFlag __asm__("D_8009F328");
+extern u8 gBandTestFlag __asm__("D_8009F329");
 extern s32 gLightStrengthScale __asm__("D_8009F700");
 extern s32 D_8009F704;
 extern s16 gShadowThreshold __asm__("D_8009F710");
@@ -196,21 +196,21 @@ void func_800410BC(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3)
 
         if (d < D_8009F704) {
             if (d >= D_8009F324) {
-                if (D_8009F329 & 1) {
+                if (gBandTestFlag & 1) {
                     s32 yc = obj->unk60;
                     s32 yr = obj->unk68;
                     s32 y = pos->y;
                     if (yc + yr + 0x1000 < y) {
                         continue;
                     }
-                    if (!(D_8009F329 & 2)) {
+                    if (!(gBandTestFlag & 2)) {
                         if (y < yc - yr - 0x1000) {
                             continue;
                         }
                     }
                 }
 
-                if (D_8009F328 != 0) {
+                if (gConeTestFlag != 0) {
                     s32 denom = d >> 8;
                     s32 tx = ((obj->unk50 - pos->x) << 4) / denom;
                     s32 tz = ((obj->unk58 - pos->z) << 4) / denom;

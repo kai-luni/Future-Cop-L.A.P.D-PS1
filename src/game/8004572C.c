@@ -15,7 +15,7 @@ struct SoundChannel {
     struct SoundChannel *prev;
 };
 
-extern struct SoundChannel D_800A1160[];
+extern struct SoundChannel gVoiceTable[] __asm__("D_800A1160");
 
 /**
  * @brief Updates the 2D world coordinates (X, Z) of an active looping sound channel.
@@ -47,7 +47,7 @@ void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index)
     if (index < 0) {
         return;
     }
-    channel = &D_800A1160[index];
+    channel = &gVoiceTable[index];
     channel->unk0C = arg1;
     channel->unk10 = arg2;
 }

@@ -12,7 +12,7 @@ struct Entry {
     u8 pad[9];
 };
 extern struct Entry gLoadoutTable[] __asm__("D_8009C0A8");
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern u8 D_800A6FE0[];
 extern s8 D_8009F924[];
 extern s8 D_8009F926[];
@@ -67,11 +67,11 @@ void func_8007DD08(s32 arg0)
     s32 s5;
     s32 s0;
     s32 s4;
-    s32 fp = D_8009F468[arg0];
+    s32 fp = gFontBankTable[arg0];
     s32 i3;
 
     func_8007D2DC(s3);
-    s5 = D_8009F468[5];
+    s5 = gFontBankTable[5];
     s4 = fp - 1;
     if (s5 == 2) {
         func_800788F0(D_800A6FE0, 0x23, 0x35, 0x10, 0, 1, 8, s5);
@@ -82,14 +82,14 @@ void func_8007DD08(s32 arg0)
         if (arg0 != 0) {
             s4 = fp - 5;
             s3 = 2;
-            if (D_8009F468[arg0] == 4)
+            if (gFontBankTable[arg0] == 4)
                 s6 = 1;
             else if (gLoadoutTable[s4].replacement != gLoadoutTable[s4].limit)
                 s6 = 2;
         } else {
             s0 = 0x25;
             s3 = 1;
-            if (D_8009F468[0] == 0)
+            if (gFontBankTable[0] == 0)
                 s6 = 1;
             else if (gLoadoutTable[s4].replacement != gLoadoutTable[s4].limit)
                 s6 = 2;
@@ -99,7 +99,7 @@ void func_8007DD08(s32 arg0)
         i3 = D_8009F928[arg0];
         func_8007D7CC(D_8009C0D0 + i3 * 6, s0, 0x93, s4 == 2, 2, 0);
     } else {
-        if (D_8009F468[arg0] == 0)
+        if (gFontBankTable[arg0] == 0)
             s6 = 1;
         else if (gLoadoutTable[s4].replacement != gLoadoutTable[s4].limit)
             s6 = 2;

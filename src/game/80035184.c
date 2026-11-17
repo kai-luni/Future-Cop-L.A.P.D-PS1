@@ -12,7 +12,7 @@ typedef struct Node {
     char pad5c[0x6c];
     int flags;
 } Node;
-extern Node *D_8009FA40;
+extern Node *gUnitListHead __asm__("D_8009FA40");
 
 /**
  *  @brief Finds the nearest eligible node in the horizontal plane.
@@ -44,7 +44,7 @@ Node *func_80035184(Node *obj, int *distance)
     register int sign __asm__("$3");
     register int dist __asm__("$7");
     register int half __asm__("$2");
-    for (node = D_8009FA40; node != 0; node = node->next) {
+    for (node = gUnitListHead; node != 0; node = node->next) {
         if (node->active && node->type == 16 && (node->flags & 0x20000)) {
             x = obj->x - node->x;
             sign = x >> 31;

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern s32 D_8009F870;
+extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s32 D_8009F8E8;
 extern u8 D_8009F46C;
 extern u8 D_800A3808[8];
@@ -38,7 +38,7 @@ void func_800778E4(s32 arg0)
         return;
     }
 
-    D_8009F870 = gFrameTickCounter + 0x2328;
+    gIdleDeadline = gFrameTickCounter + 0x2328;
     if (D_8009F8E8 < gFrameTickCounter) {
         func_80078650(D_800A3808, 0);
         D_8009F46C = 1;

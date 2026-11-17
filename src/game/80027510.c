@@ -43,17 +43,17 @@ extern s32 gSlotVoiceHandle[] __asm__("D_8009F678");
 extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C_b, D_8009FA5C_c, D_8009FA5C_d, D_8009FA5C_e;
 extern s32 gScreenState __asm__("D_8009FA00");
 extern struct Menu *gGameSession __asm__("D_8009FA94");
-extern s32 D_8009FA6C;
+extern s32 gPanelSelection __asm__("D_8009FA6C");
 extern u32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
-extern u8 D_8009F680;
+extern u8 gMenuModeFlag __asm__("D_8009F680");
 extern s32 D_8009FA38;
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern u32 gDiscShadeByte __asm__("D_8009FAA4");
-extern s32 D_8009FA30;
+extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern u8 *D_8009F2D0;
-extern u8 D_8009F2F4[];
+extern u8 gBannerString[] __asm__("D_8009F2F4");
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 D_8009FA24;
 
@@ -196,24 +196,24 @@ void func_80027510(void)
     }
     if (!(D_8009FA58.ptr->unk24 & 0x1000000) && D_8009FA58.ptr->unkAC->unk310 != 0) {
         flags |= 1;
-        if (gGameSession->unk5C == 0 || D_8009FA6C != 0) flags |= 0x20;
+        if (gGameSession->unk5C == 0 || gPanelSelection != 0) flags |= 0x20;
     }
     if (!(D_8009FA5C.ptr->unk24 & 0x1000000) && D_8009FA5C.ptr->unkAC->unk310 != 0) {
         flags |= 2;
-        if (gGameSession->unk5C == 0 || D_8009FA6C != 0) flags |= 0x20;
+        if (gGameSession->unk5C == 0 || gPanelSelection != 0) flags |= 0x20;
     }
     if (gSceneFrameCounter >= 2 && (func_8001EF34(0) == 0 || func_8001EF34(1) == 0) && gModuleLoadedFlag == 0) {
         flags |= 0x20;
     }
     if (!(flags & 0x20)) {
-        if (D_8009F680 != 0) {
+        if (gMenuModeFlag != 0) {
             gPaletteCycleCounter = D_8009FA38;
             clock_value = *(volatile s32 *)&gPaletteCycleCounter;
             gDiscShadeByte = clock_value;
-            D_8009FA30 = clock_value;
+            gFrameTickBase = clock_value;
             func_80047690(1);
         }
-        D_8009F680 = 0;
+        gMenuModeFlag = 0;
         func_80069D0C(gFrameId);
         func_8004E248();
         func_8004CECC();
@@ -312,7 +312,7 @@ void func_80027510(void)
         func_8004D598();
         D_8009FA24 = 0;
     } else {
-        if (D_8009F680 == 0) {
+        if (gMenuModeFlag == 0) {
             D_8009FA38 = gPaletteCycleCounter;
             func_8001EB6C();
             func_800476D0();
@@ -325,7 +325,7 @@ void func_80027510(void)
             __asm__ volatile("" : "=r"(endbase) : "0"(endbase));
             func_80046C84(0x3E, endbase[index]);
         }
-        D_8009F680 = 1;
+        gMenuModeFlag = 1;
         D_8009FA24 = 1;
     }
 }

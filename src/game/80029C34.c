@@ -29,13 +29,13 @@ typedef struct {
 
 extern Queue29C34 gRingBuffer __asm__("D_800A0BC0");
 extern State29C34 gStreamBufferList __asm__("D_800A0B70");
-extern u8 D_8009F6B8;
-extern s32 D_8009F6BC;
-extern u8 D_8009F6C0;
+extern u8 gBitFieldState __asm__("D_8009F6B8");
+extern s32 gOutStreamId __asm__("D_8009F6BC");
+extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern s32 D_8009F6C4;
-extern s32 D_8009F6DC;
-extern u8 D_8009F69C;
-extern u8 *D_8009F698;
+extern s32 gCallGateFlag __asm__("D_8009F6DC");
+extern u8 gRegisterGuard __asm__("D_8009F69C");
+extern u8 *gResourceSubChunkPtr __asm__("D_8009F698");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_800A0B90[];
 
@@ -76,7 +76,7 @@ void func_80029C34(void)
     if (gRingBuffer.count <= 0) {
         return;
     }
-    if (D_8009F6B8 & 0x70) {
+    if (gBitFieldState & 0x70) {
         return;
     }
 
@@ -89,12 +89,12 @@ void func_80029C34(void)
         func_80044FF8(-1, 0);
     }
 
-    if (value == D_8009F6BC) {
-        D_8009F6B8 &= 0xF7;
+    if (value == gOutStreamId) {
+        gBitFieldState &= 0xF7;
         goto tail;
     }
 
-    if (D_8009F6DC == 3) {
+    if (gCallGateFlag == 3) {
         return;
     }
 
@@ -102,28 +102,28 @@ void func_80029C34(void)
         return;
     }
 
-    if (D_8009F6DC != 2 && D_8009F6DC != 0) {
+    if (gCallGateFlag != 2 && gCallGateFlag != 0) {
         D_800A0B90[0] = 1;
         func_8002A49C();
         func_8002A408();
-        D_8009F6DC = 2;
+        gCallGateFlag = 2;
     }
 
-    D_8009F6BC = value;
-    D_8009F6B8 = 0x40;
-    D_8009F6C0 = 0;
+    gOutStreamId = value;
+    gBitFieldState = 0x40;
+    gLatchFlag = 0;
     D_8009F6C4 = gFrameTickCounter + 0xBB8;
     func_80029520();
 
 tail:
-    D_8009F69C = 0;
+    gRegisterGuard = 0;
     gRingBuffer.index = (gRingBuffer.index + 1) & 7;
     gRingBuffer.count = gRingBuffer.count - 1;
 
-    if (D_8009F6B8 == 0x40) {
+    if (gBitFieldState == 0x40) {
         state->unk3C = 0;
         state->unk20 = 0;
         state->unk0C = value;
-        state->unk08 = state->unk4C + *(s32 *)(D_8009F698 + value * 12 + 4);
+        state->unk08 = state->unk4C + *(s32 *)(gResourceSubChunkPtr + value * 12 + 4);
     }
 }

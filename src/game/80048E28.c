@@ -5,7 +5,7 @@ struct FontEntry {
     u8 data[0x11C];
 };
 
-extern struct FontEntry D_800A19A0[];
+extern struct FontEntry gGlyphEntryTable[] __asm__("D_800A19A0");
 extern s32 gFontBankCount __asm__("D_8009F364");
 extern s32 D_8009F76C;
 extern struct FontEntry *gFont __asm__("D_8009F35C");
@@ -44,7 +44,7 @@ s32 func_80048E28(s32 index)
     goto done;
 valid:
     D_8009F76C = index;
-    gFont = &D_800A19A0[index];
+    gFont = &gGlyphEntryTable[index];
     func_80048DEC();
     result = 1;
 done:

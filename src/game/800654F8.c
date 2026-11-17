@@ -1,7 +1,7 @@
 // Categories: Graphics > HUD > Minimap | Graphics > Textures
 #include "game/types.h"
 
-extern u8 D_800A2630[];
+extern u8 gRampVariantTable[] __asm__("D_800A2630");
 extern u8 D_800A2730[];
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
@@ -57,7 +57,7 @@ void func_800654F8(u32 input)
 
         tmp = arg >> 16;
         n = tmp & 15;
-        out = D_800A2630;
+        out = gRampVariantTable;
         step = 0x100 << n;
         y = step * 15;
         mode = (arg >> 24) & 15;
@@ -98,7 +98,7 @@ void func_800654F8(u32 input)
         s32 cnt;
 
         base <<= sh;
-        dst = D_800A2630;
+        dst = gRampVariantTable;
         src = D_800A2730;
         q = src + 0x100;
         cnt = 0x40;

@@ -9,7 +9,7 @@ struct Entity {
     u16 tag;
 };
 
-extern struct Entity *D_8009FA40;
+extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 
 /**
  * @brief Searches the active entity linked list for the first entity matching a 16-bit tag.
@@ -39,7 +39,7 @@ struct Entity *func_8004D69C(s32 tag)
 {
     struct Entity *entity;
 
-    for (entity = D_8009FA40; entity != 0; entity = entity->next) {
+    for (entity = gUnitListHead; entity != 0; entity = entity->next) {
         if (entity->tag == tag) {
             break;
         }

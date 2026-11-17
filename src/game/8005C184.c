@@ -46,7 +46,7 @@ struct Unk5C184Res {
     u8 flags;
 };
 
-extern struct Unk5C184Kind *D_8009F374;
+extern struct Unk5C184Kind *gPendingMotion __asm__("D_8009F374");
 extern s32 func_8003BF50(struct Unk5C184Kind *object);
 extern s32 func_800402DC(void *owner, u8 column, struct Unk5C184Msg *msg, s32 row,
                          s32 arg4);
@@ -94,7 +94,7 @@ void func_8005C184(struct Unk5C184Vec *arg0, void *arg1, struct Unk5C184Node *no
     msg.unk00 = arg1;
     msg.vec = *arg0;
 
-    D_8009F374 = node->unk08;
+    gPendingMotion = node->unk08;
     flag = func_8003BF50(node->unk08);
     res = func_800402DC(0, node->unk1E, &msg, flag, 0);
     if (res != 0) {
@@ -121,6 +121,6 @@ void func_8005C184(struct Unk5C184Vec *arg0, void *arg1, struct Unk5C184Node *no
             }
         }
     }
-    D_8009F374 = 0;
+    gPendingMotion = 0;
     node->unk29 = 5;
 }

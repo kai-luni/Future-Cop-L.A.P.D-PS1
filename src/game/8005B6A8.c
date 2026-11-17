@@ -25,7 +25,7 @@ struct Owner {
 struct Message { s32 value; u8 pad04[12]; struct Vec vec; u8 pad1c[0x2d]; u8 type; u8 pad4a[6]; };
 struct Candidates { s32 count; s32 pad; struct Target *items[1]; };
 extern struct Candidates gCommandListHead __asm__("D_800A8F90");
-extern s16 D_8009F7F0[3];
+extern s16 gMessageReturnData[3] __asm__("D_8009F7F0");
 extern s16 D_8009F7F2, D_8009F7F4;
 extern void func_8005B5A0(struct Source *, struct Target *, struct Sphere *);
 extern s32 func_800684AC(struct Vec *, struct Vec *, struct Vec *, s32, s32);

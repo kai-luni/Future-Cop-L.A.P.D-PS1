@@ -8,7 +8,7 @@ struct Entity {
     u8 unk20;
 };
 
-extern u8 D_8009F31C;
+extern u8 gCellAbortFlag __asm__("D_8009F31C");
 
 extern void func_8003B6A4(s32 arg_);
 extern s32 func_8003B65C(s32 value, s32 range);
@@ -62,7 +62,7 @@ void func_8003BAE4(struct Entity *entity, u16 flags)
         return;
     }
 
-    D_8009F31C = 1;
+    gCellAbortFlag = 1;
 
     for (i = 0; i < 5; i++) {
         if (flags & 1) {
@@ -82,5 +82,5 @@ void func_8003BAE4(struct Entity *entity, u16 flags)
         }
     }
 
-    D_8009F31C = 0;
+    gCellAbortFlag = 0;
 }

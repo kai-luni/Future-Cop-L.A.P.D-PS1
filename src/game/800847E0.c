@@ -4,14 +4,14 @@ typedef unsigned int u32;
 typedef short s16;
 typedef int s32;
 
-extern u8 *D_8009F9D8;
-extern u8 *D_8009FABC;
+extern u8 *gByteTable __asm__("D_8009F9D8");
+extern u8 *gCharTable __asm__("D_8009FABC");
 extern s32 gDecodeJob __asm__("D_8009F4BC");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 D_8009F4C4;
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
 
-#define K(o, e, tp, i) o = (e); if ((o & 7) >= (tp)[i]) o += 8; o = D_8009F9D8[o];
+#define K(o, e, tp, i) o = (e); if ((o & 7) >= (tp)[i]) o += 8; o = gByteTable[o];
 #define PACK (a | ((b << 5) | (c << 10)))
 
 /**
@@ -74,7 +74,7 @@ void func_800847E0(u32 *src, u32 *dst, s16 *arg)
     u32 w;
     u32 a, b, c, p0, pc;
 
-    th = D_8009FABC;
+    th = gCharTable;
     n = arg[3];
     end = th + 0x100;
     if (n > 0) {
@@ -169,7 +169,7 @@ void func_800847E0(u32 *src, u32 *dst, s16 *arg)
             th += 16;
             if (th < end) {
             } else {
-                th = D_8009FABC;
+                th = gCharTable;
             }
         } while (--n > 0);
     }

@@ -1,6 +1,6 @@
 // Categories: Game Engine > State Flags
 typedef unsigned char u8;
-extern int D_800A09D4;
+extern int gMode1IndexBase __asm__("D_800A09D4");
 
 /**
  *  @brief Updates a byte in a data buffer according to a mode.
@@ -33,7 +33,7 @@ zero:
     data[1] |= 4;
     goto done;
 one:
-    index = D_800A09D4 - 15;
+    index = gMode1IndexBase - 15;
     __asm__("" : "=r"(index) : "0"(index));
     ptr = data + index;
     __asm__("" : "=r"(ptr) : "0"(ptr));

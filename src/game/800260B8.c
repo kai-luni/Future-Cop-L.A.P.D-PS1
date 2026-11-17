@@ -25,16 +25,16 @@ struct Obj260B8 {
     struct State260B8 *state;
 };
 
-extern struct MenuText260B8 *D_8009F2CC;
+extern struct MenuText260B8 *gLabelRecord __asm__("D_8009F2CC");
 extern s8 D_8009F2D4;
 extern s8 D_8009F2D5;
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern s32 D_8009FA6C;
+extern s32 gPanelSelection __asm__("D_8009FA6C");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern s32 D_8009FAC0;
+extern s32 gPanelSoundIds __asm__("D_8009FAC0");
 extern s8 gItemCodeTable[] __asm__("D_8009ABE8");
 extern s8 D_8009ABEC[];
-extern s8 D_8009ABED[];
+extern s8 gItemLabelByte[] __asm__("D_8009ABED");
 extern s32 D_8009FA58[];
 extern s32 D_8009F670[];
 extern s32 gSlotVoiceHandle[2] __asm__("D_8009F678");
@@ -43,7 +43,7 @@ extern struct InputAction260B8 D_800A0AD0[];
 extern struct InputAction260B8 D_800A0AE0[];
 extern struct InputAction260B8 D_800A0AB0[];
 extern struct InputAction260B8 D_800A0AC0[];
-extern struct InputAction260B8 D_800A0B20[];
+extern struct InputAction260B8 gBackActionRecord[] __asm__("D_800A0B20");
 
 extern void func_8005780C(u32 buttons, struct InputAction260B8 *action);
 extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
@@ -160,7 +160,7 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
     selection = selectionArg;
     initialColor = 0xF;
 
-    menu = D_8009F2CC;
+    menu = gLabelRecord;
     base1 = menu->unk1C + D_8009F2D4;
     base2 = menu->unk20 + D_8009F2D5;
     if (gFrameTickCounter & 0x40) {
@@ -206,7 +206,7 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
             func_80046C84(0x3E, D_8009FA58[slotArg]);
             selection = -1;
             state->selected = selection;
-            D_8009FA6C--;
+            gPanelSelection--;
             state->selected = selection;
             goto display;
         case 7:
@@ -221,7 +221,7 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
             } else {
                 flag = 1;
             }
-            D_8009ABED[0] = 6;
+            gItemLabelByte[0] = 6;
             D_8009F670[slotArg] = 0;
             goto store_selected;
         case 6:
@@ -233,13 +233,13 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
             goto display;
         }
     } else {
-        backAction = (struct InputAction260B8 *)(actionOffset + (u32)D_800A0B20);
+        backAction = (struct InputAction260B8 *)(actionOffset + (u32)gBackActionRecord);
         if (backAction->phase == 0) {
             func_80046C84(0x3E, D_8009FA58[slotArg]);
             selection = -1;
             items[5] = 6;
             state->selected = selection;
-            D_8009FA6C--;
+            gPanelSelection--;
             if (gSlotVoiceHandle[slotArg] != 0) {
                 func_80046A34(gSlotVoiceHandle[slotArg]);
                 gSlotVoiceHandle[slotArg] = 0;
@@ -251,7 +251,7 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
             switch (code = items[selection]) {
             case 1:
                 func_800451F8(func_8004522C() + delta);
-                func_80025E18(D_8009FAC0, func_8004522C(), slotArg);
+                func_80025E18(gPanelSoundIds, func_8004522C(), slotArg);
                 break;
             case 2:
                 func_80045238(func_80045288() + delta);
@@ -281,12 +281,12 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
                 goto store_selected;
             case 7:
                 func_80046C84(0x3F, D_8009FA58[slotArg]);
-                D_8009ABED[0] = 8;
+                gItemLabelByte[0] = 8;
                 goto store_selected;
             case 8:
                 toggleOffset = (u32)slotArg * 4;
                 func_80046C84(0x3F, *(s32 *)(toggleOffset + (u32)D_8009FA58));
-                D_8009ABED[0] = 7;
+                gItemLabelByte[0] = 7;
                 goto store_selected;
             default:
                 state->selected = selection;
@@ -304,7 +304,7 @@ display:
     if (selection != -1 && gSlotVoiceHandle[slotArg] != 0) {
         switch (code = items[selection]) {
         case 1:
-            id = D_8009FAC0;
+            id = gPanelSoundIds;
             break;
         case 2:
             id = 0x2F;
@@ -327,9 +327,9 @@ display:
     for (i = 0; (code = items[i]) >= 0; i++) {
         textOffset = (u32)code * 4;
         if (flag != 0) {
-            text = D_8009F2CC->unk24;
+            text = gLabelRecord->unk24;
         } else {
-            text = *(u8 **)(textOffset + (u32)D_8009F2CC);
+            text = *(u8 **)(textOffset + (u32)gLabelRecord);
         }
         func_80049100(text, x, textY,
                       i == selection ? 8 : (flag != 0 ? 0xB : 0x10));

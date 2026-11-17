@@ -1,5 +1,5 @@
 // Categories: Game Engine > State
-extern unsigned char *D_8009F468;
+extern unsigned char *gFontBankTable __asm__("D_8009F468");
 
 /**
  *  @brief Writes the byte value two through a global pointer.
@@ -21,6 +21,6 @@ extern unsigned char *D_8009F468;
 int func_8007F678(void)
 {
     int x = 2;
-    *D_8009F468 = x;
+    *gFontBankTable = x;
     return x;
 }

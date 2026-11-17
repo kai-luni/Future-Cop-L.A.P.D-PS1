@@ -44,7 +44,7 @@ extern u8 *D_8009F8C4;
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 *gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern u8 D_8009F3F8[];
 extern s8 D_8009F458[];
 extern u8 D_8009F444[];
@@ -52,7 +52,7 @@ extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern u8 D_8009F488[];
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
-extern struct MenuEntry D_8009B4E4[];
+extern struct MenuEntry gWideTextTable[] __asm__("D_8009B4E4");
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern u8 D_8009B3D4[];
 extern s8 D_800A3628[];
@@ -133,9 +133,9 @@ void func_8007B460(s32 arg0)
     }
 
     do {
-        e = &D_8009B4E4[D_8009F884[i]];
+        e = &gWideTextTable[D_8009F884[i]];
 
-        if (D_8009F468[arg0] != 0) {
+        if (gFontBankTable[arg0] != 0) {
             goto plain;
         }
         if (gPlayerMenuDepth == 0) {

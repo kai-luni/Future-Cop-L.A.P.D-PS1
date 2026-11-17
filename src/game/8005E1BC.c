@@ -11,7 +11,7 @@ extern struct Pool D_800A22A0;
 extern struct Pool D_800A22B0;
 extern void *gDomeEffectBlock[] __asm__("D_800A22F0");
 extern s16 D_800A22E8[];
-extern s32 D_8009F374;
+extern s32 gPendingMotion __asm__("D_8009F374");
 
 extern void func_8003BE2C(struct Pool *pool, s32 size, s32 count);
 
@@ -44,5 +44,5 @@ void func_8005E1BC(void)
     for (i = 3; i >= 0; i--) {
         gDomeEffectBlock[i] = 0;
     }
-    D_8009F374 = 0;
+    gPendingMotion = 0;
 }

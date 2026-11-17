@@ -25,7 +25,7 @@ struct Sub78C88 {
 };
 
 extern struct Entry78C88 D_8009B730[];
-extern struct Sub78C88 D_8009B4E4[];
+extern struct Sub78C88 gWideTextTable[] __asm__("D_8009B4E4");
 extern struct Obj78C88 *gGameSession __asm__("D_8009FA94");
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern s32 gScreenState __asm__("D_8009FA00");
@@ -84,8 +84,8 @@ s32 func_80078C88(void)
     if (e->unk1 != 0) {
         o->unk4C = e->unk3;
     }
-    func_8008CCB0(gFrontEndModuleName, D_8009B4E4[e->unk0].unk00);
-    unk0C = D_8009B4E4[e->unk0].unk0C;
+    func_8008CCB0(gFrontEndModuleName, gWideTextTable[e->unk0].unk00);
+    unk0C = gWideTextTable[e->unk0].unk0C;
     gModuleLoadedFlag = 1;
     gScreenState = 5;
     D_8009F45A = 3;

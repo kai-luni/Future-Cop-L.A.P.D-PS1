@@ -5,8 +5,8 @@ struct Entity {
     struct Entity *next;
 };
 
-extern struct Entity *D_8009FA40;
-extern struct Entity *D_8009FA88;
+extern struct Entity *gUnitListHead __asm__("D_8009FA40");
+extern struct Entity *gListTailBranch __asm__("D_8009FA88");
 
 /**
  * @brief Appends an entity node to the tail of the active singly linked entity list.
@@ -32,11 +32,11 @@ extern struct Entity *D_8009FA88;
  */
 void func_8004D3D4(struct Entity *entity)
 {
-    if (D_8009FA88 != 0) {
-        D_8009FA88->next = entity;
+    if (gListTailBranch != 0) {
+        gListTailBranch->next = entity;
     } else {
-        D_8009FA40 = entity;
+        gUnitListHead = entity;
     }
-    D_8009FA88 = entity;
+    gListTailBranch = entity;
     entity->next = 0;
 }

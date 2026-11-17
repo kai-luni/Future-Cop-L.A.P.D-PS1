@@ -17,7 +17,7 @@ typedef struct Callbacks {
     void (*unk18)(void *);
 } Callbacks;
 
-extern char D_80012AAC[];
+extern char gDebugTagRectEmpty[] __asm__("D_80012AAC");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 gPendingDeadline __asm__("D_8009DF00");

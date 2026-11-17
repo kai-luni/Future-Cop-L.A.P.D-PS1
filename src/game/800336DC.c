@@ -81,7 +81,7 @@ struct Glob {
     s32 fE0;
 };
 
-extern struct Unit *D_8009FA40;
+extern struct Unit *gUnitListHead __asm__("D_8009FA40");
 extern struct Glob *gGameSession __asm__("D_8009FA94");
 extern struct Unit *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
@@ -443,7 +443,7 @@ void func_800336DC(struct Unit *self)
     n64 = 0;
     n60 = 0;
 
-    for (p = D_8009FA40; p != 0; p = p->next) {
+    for (p = gUnitListHead; p != 0; p = p->next) {
         if (p->active == 0) continue;
         switch (p->type) {
         case 1:

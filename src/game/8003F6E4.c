@@ -21,8 +21,8 @@ struct Unk800A1070 {
     s32 unk14;
 };
 
-extern struct Unk8009F9A0 *D_8009F9A0;
-extern struct Unk800A1070 D_800A1070;
+extern struct Unk8009F9A0 *gMissionWorkingSet __asm__("D_8009F9A0");
+extern struct Unk800A1070 gListHeads __asm__("D_800A1070");
 
 extern void func_80069580(u32 index, struct DestinationTriple *destination);
 extern void func_80073700(s32 arg);
@@ -67,7 +67,7 @@ void func_8003F6E4(s32 arg0)
     struct DestinationTriple position;
     register struct Unk8009F9A0 *p __asm__("$6");
 
-    p = D_8009F9A0;
+    p = gMissionWorkingSet;
     if (p != 0) {
         position = p->position;
     } else {
@@ -77,9 +77,9 @@ void func_8003F6E4(s32 arg0)
     func_8006F844((s32)&position);
     func_8005E160((s32)&position);
     func_8003CF6C((s32)&position);
-    func_8004C5C8(D_800A1070.unk10, &position);
-    func_8006E988(D_800A1070.unk08, &position);
-    func_800445B0(D_800A1070.unk0C, &position);
-    func_80070158(D_800A1070.unk04, &position);
-    func_80074104(D_800A1070.unk14, &position);
+    func_8004C5C8(gListHeads.unk10, &position);
+    func_8006E988(gListHeads.unk08, &position);
+    func_800445B0(gListHeads.unk0C, &position);
+    func_80070158(gListHeads.unk04, &position);
+    func_80074104(gListHeads.unk14, &position);
 }

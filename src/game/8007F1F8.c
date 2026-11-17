@@ -10,7 +10,7 @@ struct FontEntry {
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s32 D_8009F8F8;
 extern s32 D_8009F8F8_arr[];
-extern u16 D_8009F92A;
+extern u16 gStatusTextId __asm__("D_8009F92A");
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 D_800A3938[];
 extern u8 gHexDigitTable[] __asm__("D_8009C1AC");
@@ -117,7 +117,7 @@ void func_8007F1F8(s32 state, s32 input_baseX)
     goto *jtbl_800121A4[(u32)state];
 state_0:
         if ((func_8007EA78() & 0xFF) == 0) {
-            D_8009F92A = 0x3AAC;
+            gStatusTextId = 0x3AAC;
             func_80046C84(0x4C, 0);
         } else {
             func_80046C84(0x4D, 0);
@@ -125,7 +125,7 @@ state_0:
         }
         goto done;
 state_1:
-        D_8009F92A = 0;
+        gStatusTextId = 0;
         func_80046C84(0x46, 0);
         {
             u8 *p;
@@ -139,7 +139,7 @@ state_1:
         }
         goto done;
 state_2:
-        D_8009F92A = 0;
+        gStatusTextId = 0;
         func_80046C84(0x46, 0);
         {
             u8 *p;
@@ -152,7 +152,7 @@ state_2:
         }
         goto done;
 state_3:
-        D_8009F92A = 0;
+        gStatusTextId = 0;
         D_8009F8F8++;
         if (D_8009F8F8 >= 0xA) {
             D_8009F8F8 = 0;
@@ -160,7 +160,7 @@ state_3:
         func_80046C84(0x47, 0);
         goto done;
 state_4:
-        D_8009F92A = 0;
+        gStatusTextId = 0;
         D_8009F8F8--;
         if (D_8009F8F8 < 0) {
             D_8009F8F8 = 9;
@@ -168,9 +168,9 @@ state_4:
         func_80046C84(0x47, 0);
         goto done;
 state_5:
-        if (D_8009F92A != 0) {
+        if (gStatusTextId != 0) {
             func_800493C0(0x11, 0x1F, 0xA, 0xA);
-            func_800788F0(0, 0xA0, 0x82, 0x11, D_8009F92A, 4, 8, 1);
+            func_800788F0(0, 0xA0, 0x82, 0x11, gStatusTextId, 4, 8, 1);
         }
         if ((gPaletteCycleCounter[0] >> 9) & 1) {
             func_80078B34(0x6E5, 0, 0);

@@ -11,7 +11,7 @@ struct Obj {
     char pad64[8]; void *field6c; char point[8]; char pad78[2];
     s16 field7a; s16 field7c;
 };
-extern s32 D_8009F318;
+extern s32 gMessage10Counter __asm__("D_8009F318");
 extern s32 func_8003C7B8(s32, struct Obj *, s32, s32);
 extern s32 func_8003C980(s32, struct Obj *, s32, s32);
 extern void *func_8003D9F8(void *, u16, s8, s32, struct Parent *, void *);
@@ -70,7 +70,7 @@ case0:
     if (obj->field7c < 0) obj->field7c = ((func_800196C4() & 0xfff) * -obj->field7c) >> 12;
     return func_80040734(obj, matrix + 0x24);
 case10:
-    D_8009F318--;
+    gMessage10Counter--;
     if (obj->field6c) {
         func_800498F0(obj->field6c);
         obj->field6c = 0;

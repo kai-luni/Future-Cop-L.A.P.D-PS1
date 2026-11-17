@@ -29,7 +29,7 @@ struct Ctx {
     s8 st945;
 };
 
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern u8 D_8009F8BD;
 extern s8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern struct Ctx *gSaveProfileImage __asm__("D_8009F92C");
@@ -37,7 +37,7 @@ extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s8 D_800A3718[];
 extern s8 gMissionListTable[] __asm__("D_8009B724");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
-extern u8 D_8009B4E4[];
+extern u8 gWideTextTable[] __asm__("D_8009B4E4");
 extern u16 gDifficultyLabelMap[] __asm__("D_8009C1C4");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 
@@ -114,14 +114,14 @@ void func_80080038(s32 arg0)
     func_80082EF0(0x25, 0x9B, 0x67, 2, 0xA, 0x60, 0xC0, 0xFF);
     func_80082AB0(8, 0x93, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
 
-    if (D_8009F468 == D_800A3718) {
+    if (gFontBankTable == D_800A3718) {
         func_80078B34(0x44C, 0, 0);
         func_80078B34(0x10CC, 1, 0);
-    } else if (D_8009F8BD != 0 && *D_8009F468 < 10) {
+    } else if (D_8009F8BD != 0 && *gFontBankTable < 10) {
         if (gSaveProfileImage->st921 == 0) {
             func_80078B34(0x44C, 0, 0);
             {
-                u8 *p = *D_8009F468 * 0x70 + (u8 *)gSaveProfileImage;
+                u8 *p = *gFontBankTable * 0x70 + (u8 *)gSaveProfileImage;
                 s32 on = p[0x428];
                 __asm__("" : : "r"(p), "r"(on));
                 if (on != 0) {
@@ -257,8 +257,8 @@ void func_80080038(s32 arg0)
         func_800788F0(0, 0x57, 0xA3, 0x10, gSaveProfileImage->msg, 4, 8, gSaveProfileImage->st945);
     }
 
-    if (D_8009F8BD != 0 && D_8009F468 != D_800A3718 && *D_8009F468 < 10) {
-        it = gSaveProfileImage->items + *D_8009F468 * 0x70;
+    if (D_8009F8BD != 0 && gFontBankTable != D_800A3718 && *gFontBankTable < 10) {
+        it = gSaveProfileImage->items + *gFontBankTable * 0x70;
         if (it[4] != 0) {
             if (gSaveProfileImage->msg == 0) {
                 s32 s0;
@@ -315,7 +315,7 @@ void func_80080038(s32 arg0)
             x = cnt + 1;
             if (x != 0) {
                 do {
-                    e = D_8009B4E4 + tbl[j] * 0x24;
+                    e = gWideTextTable + tbl[j] * 0x24;
                     if (j == sel && it[0x44] == 0) {
                         func_800788F0(0, 0x97, 0xB1, 0x10, *(u16 *)(e + 0x10), 1, 8, 2);
                     }

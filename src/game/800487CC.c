@@ -2,9 +2,9 @@
 #include "game/types.h"
 
 extern s32 gScreenState[] __asm__("D_8009FA00");
-extern s32 D_8009FAB8;
+extern s32 gHudMode2 __asm__("D_8009FAB8");
 extern s32 gOverlayTimer __asm__("D_8009F760");
-extern s32 D_8009FAC8;
+extern s32 gFrameSwitch __asm__("D_8009FAC8");
 
 extern u8 func_80048790(void);
 
@@ -39,9 +39,9 @@ void func_800487CC(s32 input)
     if ((u8)force && gScreenState[0] == 5) {
         force = 0;
     }
-    current = D_8009FAC8;
+    current = gFrameSwitch;
     if (current != 0 && gOverlayTimer != current) {
-        D_8009FAB8 = 2;
+        gHudMode2 = 2;
         force = 0;
     }
     gOverlayTimer = current;
@@ -51,9 +51,9 @@ void func_800487CC(s32 input)
     }
     if ((u8)cycle) {
         do {
-            D_8009FAB8++;
-            if (D_8009FAB8 >= 3) {
-                D_8009FAB8 = 0;
+            gHudMode2++;
+            if (gHudMode2 >= 3) {
+                gHudMode2 = 0;
             }
         } while (func_80048790());
     }

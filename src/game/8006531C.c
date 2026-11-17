@@ -5,7 +5,7 @@ extern s32 gTileShapeTable[] __asm__("D_8009B1A4");
 extern s32 *gCamera __asm__("D_8009F9E4");
 struct Table { s8 pad[4]; s32 entries[100]; };
 extern struct Table gTileDefTable __asm__("D_800A6F38");
-extern s32 D_8009FA08;
+extern s32 gTableBuffer __asm__("D_8009FA08");
 extern s16 gTileColourWord __asm__("D_8009F83C");
 extern void func_800654F8(s32);
 extern s32 func_80065744(s32);
@@ -42,7 +42,7 @@ void func_8006531C(s32 x, s32 y, s32 *region)
 {
     s32 *src = gTileShapeTable;
     s32 *dst = (s32 *)0x1F800000;
-    s32 base = D_8009FA08;
+    s32 base = gTableBuffer;
     s32 dx = (gCamera[2] >> 9) - (x << 8);
     s32 dy = (gCamera[0] >> 9) - (y << 8);
     s32 rows, cols, a, b, hi;

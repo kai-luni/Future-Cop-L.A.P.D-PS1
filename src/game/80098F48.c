@@ -1,8 +1,8 @@
 // Categories: Platform > Sound | Platform > DMA
 #include "../../include/game/types.h"
 
-extern s32 D_8009EA34;
-extern s32 D_8009EEC0;
+extern s32 gNormalisedMode __asm__("D_8009EA34");
+extern s32 gOpOrderFlag __asm__("D_8009EEC0");
 
 /**
  * @brief Selects the SPU DMA transfer mode and its enable flag.
@@ -37,6 +37,6 @@ void func_80098F48(s32 mode)
         enabled = 0;
         break;
     }
-    D_8009EA34 = mode;
-    D_8009EEC0 = enabled;
+    gNormalisedMode = mode;
+    gOpOrderFlag = enabled;
 }

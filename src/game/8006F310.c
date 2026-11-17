@@ -30,7 +30,7 @@ struct Camera {
 extern struct Camera *gCamera __asm__("D_8009F9E4");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 D_8009F388;
+extern u32 gColourWord __asm__("D_8009F388");
 
 extern s32 func_8001A100(s32 *vector);
 extern void func_80010820(u8 *matrix);
@@ -253,7 +253,7 @@ void func_8006F310(struct Node *node, Vec3 *pos)
     }
 
     s6 = node->field40;
-    w = D_8009F388;
+    w = gColourWord;
     if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc;
     __asm__("");
     prim = gPrimPoolNext;

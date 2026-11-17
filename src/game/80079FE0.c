@@ -7,9 +7,9 @@ struct UnkB4E4 {
     u8 unk0C[0x18];
 };
 
-extern struct UnkB4E4 D_8009B4E4[];
+extern struct UnkB4E4 gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gMissionListTable[] __asm__("D_8009B724");
-extern u8 D_8009F4E0;
+extern u8 gLoopAbortFlag __asm__("D_8009F4E0");
 extern u8 D_80011E60[];
 
 extern void func_80082DDC(s32 arg0, s32 arg1);
@@ -45,16 +45,16 @@ void func_80079FE0(s32 arg0)
     if (arg0 == 3) {
         i = 0;
         do {
-            val = D_8009B4E4[gMissionListTable[i]].unk08;
+            val = gWideTextTable[gMissionListTable[i]].unk08;
             if (val != 0) {
                 func_80082DDC(val, 2);
-                if (D_8009F4E0 != 0) {
+                if (gLoopAbortFlag != 0) {
                     return;
                 }
             }
             i++;
         } while (i < 8);
-        if (D_8009F4E0 == 0) {
+        if (gLoopAbortFlag == 0) {
             func_80082DDC((s32)D_80011E60, 0);
         }
     }

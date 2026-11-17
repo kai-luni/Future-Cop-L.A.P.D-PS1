@@ -4,7 +4,7 @@ typedef unsigned short u16;
 typedef struct { short x,y,w,h; } Rect;
 typedef struct { void *pad0; void *pad4; int (*send)(int, void *, int, int); char padC[12]; int arg; } Context;
 extern void func_80092CF4(char *, Rect *);
-extern char D_80012AAC[];
+extern char gDebugTagRectEmpty[] __asm__("D_80012AAC");
 extern u32 gGpuCmdBlock[] __asm__("D_8009DE90");
 extern Context *gVramWriteCallback __asm__("D_8009DDE8");
 /**
@@ -33,7 +33,7 @@ int func_80092FF8(Rect *r, int a, int b)
     register int aa __asm__("$18") = a;
     register int bb __asm__("$17") = b;
     __asm__("" : "+r"(aa), "+r"(bb));
-    func_80092CF4(D_80012AAC, r);
+    func_80092CF4(gDebugTagRectEmpty, r);
     if (!r->w || !r->h) return -1;
     {
         register u32 *base __asm__("$3");

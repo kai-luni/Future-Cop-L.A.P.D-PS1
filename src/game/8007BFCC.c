@@ -13,8 +13,8 @@ extern u8 D_8009F900;
 extern u8 D_8009F901;
 extern u8 D_8009F902;
 extern u8 D_8009F903;
-extern s8 D_8009F904;
-extern u8 D_8009BFD4[];
+extern s8 gSnapshotResult __asm__("D_8009F904");
+extern u8 gPresetByteTable[] __asm__("D_8009BFD4");
 extern D_8009BEF4_Entry D_8009BEF4[];
 extern u8 gPadMappingTable[] __asm__("D_800AAC50");
 extern u8 D_800A374D[];
@@ -88,7 +88,7 @@ void func_8007BFCC(s32 port, s32 value)
     value = clampedValue;
 
     ((u8 *)D_8009FA99 - 1)[port] = value;
-    src = D_8009BFD4 + value * 14;
+    src = gPresetByteTable + value * 14;
     i = 0;
     base = gPadMappingTable;
     dst = base + port * 56;

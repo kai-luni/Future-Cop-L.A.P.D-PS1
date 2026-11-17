@@ -3,7 +3,7 @@
 
 extern s32 D_8009F9AC;
 extern s32 D_8009FA14;
-extern s32 D_8009FA80;
+extern s32 gSlotIndexLimit __asm__("D_8009FA80");
 extern s32 D_8009F998;
 extern s32 D_8009FA34;
 extern s32 D_8009FAD0;
@@ -38,7 +38,7 @@ void func_800211FC(void)
     D_8009F9AC = func_80098FB8(D_8002139C);
     D_8009FA14 = func_80098F78();
     func_80098F48(0);
-    D_8009FA80 = 0;
+    gSlotIndexLimit = 0;
     D_8009F998 = 0;
     D_8009FA34 = 0;
     D_8009FAD0 = 0;

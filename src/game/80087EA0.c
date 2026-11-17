@@ -1,7 +1,7 @@
 // Categories: Graphics > Video Layer | Resources > Movie Playback
 #include "game/types.h"
 
-extern u8 D_8009F4E0;
+extern u8 gLoopAbortFlag __asm__("D_8009F4E0");
 extern u8 gLayerOpenResult __asm__("D_8009F504");
 extern s32 gChunkSkipFlag __asm__("D_8009F4DC");
 extern s32 D_8009F4E4;
@@ -16,8 +16,8 @@ extern s32 D_8009F958;
 extern s32 D_8009F95C;
 extern s32 D_8009F960;
 extern s32 D_8009F964;
-extern s32 D_8009F968;
-extern s32 D_8009FA48[];
+extern s32 gLayerModeBits __asm__("D_8009F968");
+extern s32 gChainedNodes[] __asm__("D_8009FA48");
 
 extern s32 func_8001EF8C(s32);
 extern void func_800859B0(void);
@@ -95,7 +95,7 @@ s32 func_80087EA0(s32 arg0)
         return 1;
     }
 
-    D_8009F4E0 = 0;
+    gLoopAbortFlag = 0;
     var_a0 = func_8001EF8C(0);
     var_s0 = 0x40080000;
     D_8009F958 = var_a0 & var_s0;
@@ -109,9 +109,9 @@ s32 func_80087EA0(s32 arg0)
     var_s0 = var_v0 < 1;
 
     if (!(arg0 & 1)) {
-        D_8009F968 = 0xC8;
+        gLayerModeBits = 0xC8;
     } else {
-        D_8009F968 = 0x27;
+        gLayerModeBits = 0x27;
     }
 
     if (var_s0 != 0) {
@@ -173,13 +173,13 @@ s32 func_80087EA0(s32 arg0)
     }
 
     if (!(arg0 & 1)) {
-        D_8009F4EC = func_8008799C(func_800896D4(D_8009F968, 0x4400, 1));
+        D_8009F4EC = func_8008799C(func_800896D4(gLayerModeBits, 0x4400, 1));
         if (D_8009F4EC == 0) {
             goto fail;
         }
     } else {
-        D_8009F4EC = D_8009FA48[0];
-        func_800896D4(D_8009F968, 0x424C, 1);
+        D_8009F4EC = gChainedNodes[0];
+        func_800896D4(gLayerModeBits, 0x424C, 1);
     }
 
     D_8009F4F0 = func_8008799C(func_8008781C());

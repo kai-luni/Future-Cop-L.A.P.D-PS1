@@ -5,7 +5,7 @@ extern u32 gVertexIndexTable[] __asm__("D_8009AFE8");
 extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
-extern u8 D_800A2630[];
+extern u8 gRampVariantTable[] __asm__("D_800A2630");
 extern u16 gTileColourWord __asm__("D_8009F83C");
 extern s32 func_800648BC(s32 a, s32 b, s32 c);
 
@@ -273,7 +273,7 @@ void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
             o[0x1E] = (e << (sh + 2)) & m;
             break;
         } else {
-            u8 *tab = D_800A2630;
+            u8 *tab = gRampVariantTable;
             u32 ty = t3 & 7, lo = arg3 & 0xF, hi = arg3 & 0xF0, lo1 = (lo + 1) & 0xF, hi1 = (hi + 0x10) & 0xF0;
             u8 *p;
             if (ty != 1) p = tab + arg3;
@@ -342,13 +342,13 @@ void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
             break;
         } else {
             u32 lo = arg3 & 0xF, hi = arg3 & 0xF0, lo1 = (lo + 1) & 0xF, hi1 = (hi + 0x10) & 0xF0;
-            c = D_800A2630[arg3];
+            c = gRampVariantTable[arg3];
             o[4] = c; o[5] = c; o[6] = c;
-            c = D_800A2630[hi | lo1];
+            c = gRampVariantTable[hi | lo1];
             o[0x10] = c; o[0x11] = c; o[0x12] = c;
-            c = D_800A2630[hi1 | lo1];
+            c = gRampVariantTable[hi1 | lo1];
             o[0x28] = c; o[0x29] = c; o[0x2A] = c;
-            c = D_800A2630[hi1 | lo];
+            c = gRampVariantTable[hi1 | lo];
             o[0x1C] = c; o[0x1D] = c; o[0x1E] = c;
             break;
         }

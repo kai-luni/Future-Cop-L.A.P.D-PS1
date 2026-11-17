@@ -11,7 +11,7 @@ struct Entry {
     u8 pad[9];
 };
 extern struct Entry gLoadoutTable[3] __asm__("D_8009C0A8");
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 
 /**
  * @brief Clamps out-of-range loadout selections in D_8009C0A8 back to their replacement defaults for both players.
@@ -48,9 +48,9 @@ void func_8007D2DC(int mode)
             value = p->values + i;
             if (*value > p->limit) {
                 if (mode == 0) {
-                    if (i == 0 && j == D_8009F468[0] - 1)
+                    if (i == 0 && j == gFontBankTable[0] - 1)
                         continue;
-                    if (i == 1 && j == D_8009F468[1] - 5)
+                    if (i == 1 && j == gFontBankTable[1] - 5)
                         continue;
                 }
                 *value = p->replacement;

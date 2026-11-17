@@ -10,7 +10,7 @@ extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(u8 *, s32, s32) __asm__("D_8009DDEC");
 extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
 extern u8 gClearOTagFormat[] __asm__("D_80012AD0");
-extern u32 D_8009DEB0[];
+extern u32 gSeqFirstWord[] __asm__("D_8009DEB0");
 extern u32 gGpuTpageWord[] __asm__("D_8009DE9C");
 
 /**
@@ -65,7 +65,7 @@ void func_80093178(u32 *arg0, s32 arg1)
     a2 = 0xFFFFFF;
     v0 = arg0;
     __asm__ volatile("" : "+r"(v0));
-    a1 = (u32)D_8009DEB0;
+    a1 = (u32)gSeqFirstWord;
     __asm__ volatile("" : "+r"(a1));
     v1 = (u32)gGpuTpageWord;
     v1 = (v1 & a2);

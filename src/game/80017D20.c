@@ -1,9 +1,9 @@
 // Categories: Resources > Memory Pools
 #include "game/types.h"
 
-extern void *D_8009FA4C;
-extern void *D_8009FAAC;
-extern void *D_8009F9D0;
+extern void *gPool3Size __asm__("D_8009FA4C");
+extern void *gPool2Size __asm__("D_8009FAAC");
+extern void *gPool1Size __asm__("D_8009F9D0");
 
 extern void func_800181D4(void *block);
 
@@ -23,7 +23,7 @@ extern void func_800181D4(void *block);
  */
 void func_80017D20(void)
 {
-    func_800181D4(D_8009FA4C);
-    func_800181D4(D_8009FAAC);
-    func_800181D4(D_8009F9D0);
+    func_800181D4(gPool3Size);
+    func_800181D4(gPool2Size);
+    func_800181D4(gPool1Size);
 }

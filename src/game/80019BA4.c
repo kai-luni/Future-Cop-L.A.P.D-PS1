@@ -7,7 +7,7 @@ struct Resource {
 };
 
 extern struct Resource *gResourceList __asm__("D_8009F5B8");
-extern struct Resource *D_8009F5BC;
+extern struct Resource *gListTailFlag __asm__("D_8009F5BC");
 
 extern void func_80019AF8(struct Resource *resource);
 
@@ -55,5 +55,5 @@ void func_80019BA4(void)
         func_80019AF8(current);
     }
     gResourceList = 0;
-    D_8009F5BC = 0;
+    gListTailFlag = 0;
 }

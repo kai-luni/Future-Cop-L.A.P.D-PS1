@@ -15,7 +15,7 @@ struct SoundChannel {
     struct SoundChannel *prev;
 };
 
-extern struct SoundChannel D_800A1160[];
+extern struct SoundChannel gVoiceTable[] __asm__("D_800A1160");
 
 /**
  *  @brief Tests whether a sound channel has a valid ID and nonzero priority.
@@ -46,7 +46,7 @@ s32 func_80045768(s32 arg0, s32 index)
 
     result = 0;
     if (index >= 0) {
-        base = D_800A1160;
+        base = gVoiceTable;
         channel = &base[index];
         if (channel->id != -1) {
             active = channel->priority != 0;

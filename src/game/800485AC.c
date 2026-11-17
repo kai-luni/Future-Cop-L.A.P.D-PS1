@@ -23,8 +23,8 @@ struct Sprt {
     u16 h;
 };
 
-extern s32 D_8009FAC8;
-extern s32 D_8009F9B0[];
+extern s32 gFrameSwitch __asm__("D_8009FAC8");
+extern s32 gStreamPreemptFlag[] __asm__("D_8009F9B0");
 extern s32 gPlayerCount[] __asm__("D_8009FA0C");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
@@ -54,10 +54,10 @@ void func_800485AC(s32 value)
 
     value = 0;
 
-    if (D_8009FAC8 == 0) {
+    if (gFrameSwitch == 0) {
         return;
     }
-    if (D_8009F9B0[0] != 0) {
+    if (gStreamPreemptFlag[0] != 0) {
         return;
     }
 

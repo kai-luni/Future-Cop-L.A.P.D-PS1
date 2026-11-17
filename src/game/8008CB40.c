@@ -8,7 +8,7 @@ typedef struct Snapshot {
     Header *next;
     unsigned int size;
 } Snapshot;
-extern Header *D_8009C7D0;
+extern Header *gSessionBlockBase __asm__("D_8009C7D0");
 extern Snapshot D_800A6568;
 extern Snapshot D_800A8F80;
 extern Header *D_800A8E78;
@@ -41,7 +41,7 @@ void func_8008CB40(Header *ptr)
     register Header *next __asm__("$2");
     register char *base __asm__("$1");
     bp = ptr - 1;
-    p = D_8009C7D0;
+    p = gSessionBlockBase;
     for (; !(bp > p && bp < p->next); p = p->next) {
         if (p >= p->next && (bp > p || bp < p->next))
             break;
@@ -60,7 +60,7 @@ void func_8008CB40(Header *ptr)
     s->next = next;
     t->size = p->size;
     t->next = p->next;
-    D_800A8E78 = D_8009C7D0;
+    D_800A8E78 = gSessionBlockBase;
     if (bp + bp->size == p->next && p->next->size != 0) {
         bp->size += p->next->size;
         bp->next = p->next->next;

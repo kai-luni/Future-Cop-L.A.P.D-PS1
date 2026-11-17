@@ -1,7 +1,7 @@
 // Categories: Resources > Asset Loader | Resources > Spawn Tables | Gameplay > Object Spawning
 #include "game/types.h"
 
-extern s32 D_8009F310;
+extern s32 gSavedChunkBase __asm__("D_8009F310");
 extern void *jtbl_800115B8[];
 
 extern void func_8003BC7C(void *data);
@@ -55,9 +55,9 @@ s32 func_8003BFD0(s32 arg0, s32 arg1)
 
     ptr = (s32 *)arg0;
     remaining = arg1;
-    old = D_8009F310;
+    old = gSavedChunkBase;
     table = (void **)jtbl_800115B8;
-    D_8009F310 = 0;
+    gSavedChunkBase = 0;
 
 loop:
     ptr++;
@@ -74,7 +74,7 @@ loop:
     goto default_case;
 
 case_56:
-    D_8009F310 = ptr[5];
+    gSavedChunkBase = ptr[5];
     goto done;
 case_57:
     func_80044770(ptr);
@@ -110,6 +110,6 @@ done:
     if (remaining > 0) {
         goto loop;
     }
-    D_8009F310 = old;
+    gSavedChunkBase = old;
     return 1;
 }

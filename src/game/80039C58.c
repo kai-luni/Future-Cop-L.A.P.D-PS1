@@ -29,8 +29,8 @@ extern s32 func_80050D14(void *, struct Other *, struct Object *);
 extern void func_80039BD0(struct Object *);
 extern void func_80010750(void *);
 extern void func_80010234(void *, void *, s32);
-extern struct Object *D_8009F9A0;
-#define current D_8009F9A0
+extern struct Object *gMissionWorkingSet __asm__("D_8009F9A0");
+#define current gMissionWorkingSet
 #define barrier() __asm__ volatile("" : : : "memory")
 
 /**

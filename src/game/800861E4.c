@@ -28,7 +28,8 @@ extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern State861E4 *gDecodeJob __asm__("D_8009F4BC");
 extern void *D_8009F948, *D_8009F94C, *D_8009F954;
 extern void *gWorkAreaBlock __asm__("D_8009F950");
-extern void *D_8009FABC, *D_8009F9D8;
+extern void *gCharTable __asm__("D_8009FABC");
+extern void *gByteTable __asm__("D_8009F9D8");
 extern Block100 D_800A3958;
 extern Block108 D_800A3A58;
 extern void D_80085074(void);
@@ -165,9 +166,9 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         if (masked) {
             func_80085F1C();
             *(Block100 *)0x1F800000 = D_800A3958;
-            D_8009FABC = (void *)0x1F800000;
+            gCharTable = (void *)0x1F800000;
             *(Block108 *)0x1F800100 = D_800A3A58;
-            D_8009F9D8 = (void *)0x1F800100;
+            gByteTable = (void *)0x1F800100;
         }
         }
     } else {

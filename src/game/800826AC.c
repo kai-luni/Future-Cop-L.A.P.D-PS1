@@ -7,7 +7,7 @@ typedef struct { u32 addr:24; u32 len:8; u32 code; } Page;
 typedef struct { u32 addr:24; u32 len:8; u8 r,g,b,code; short x,y; u8 u,v; u16 clut,w,h; } Sprt;
 typedef struct { u16 n; s8 a; s8 b; u32 t[2]; } Ent;
 extern Ent gDescriptorTable[] __asm__("D_8009B32C");
-extern s8 D_8009F874;
+extern s8 gOverlayDelay __asm__("D_8009F874");
 extern u8 D_8009F876;
 extern int **D_8009F3F4;
 extern u8 *gPacketCursor __asm__("D_8009FA90");
@@ -54,7 +54,7 @@ void func_800826AC(int idx)
 
     if (cur == idx) goto tail;
     tbl = (int *)D_8009F3F4;
-    D_8009F874 = val;
+    gOverlayDelay = val;
     if (tbl == 0) return;
     cur = val < 14;
     if (!cur) goto tail;
@@ -108,7 +108,7 @@ void func_800826AC(int idx)
     } while (i < cnt);
     }
 tail:
-    col = gDescriptorTable[D_8009F874].b ? 0x60 : 0x80;
+    col = gDescriptorTable[gOverlayDelay].b ? 0x60 : 0x80;
     if (gPacketCursor < gPacketLimit) goto a1;
     packet = gPacketCursor; __asm__("" : : "r"(packet)); goto p1;
 a1: packet = gPacketCursor; gPacketCursor = packet + 28;

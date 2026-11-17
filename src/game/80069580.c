@@ -12,7 +12,7 @@ struct DestinationTriple {
     s32 first;
 };
 
-extern struct SourcePair D_800A3190[];
+extern struct SourcePair gScenePositionPairs[] __asm__("D_800A3190");
 
 /**
  * @brief Copies one stored ground position into a view triple.
@@ -43,8 +43,8 @@ void func_80069580(u32 index, struct DestinationTriple *destination)
 {
     s32 first;
 
-    first = D_800A3190[index].first;
+    first = gScenePositionPairs[index].first;
     destination->zero = 0;
     destination->first = first;
-    destination->second = D_800A3190[index].second;
+    destination->second = gScenePositionPairs[index].second;
 }

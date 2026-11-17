@@ -13,8 +13,8 @@ extern s32 D_8009F7A4;
 extern s32 gPendingMessageMask __asm__("D_8009F7A8");
 extern u8 D_8009F7AC;
 extern s32 gLastSpawnSlot[] __asm__("D_8009F9F4");
-extern s32 D_8009FA40;
-extern s32 D_8009FA88;
+extern s32 gUnitListHead __asm__("D_8009FA40");
+extern s32 gListTailBranch __asm__("D_8009FA88");
 extern struct Unk4CAE4State *gGameSession[] __asm__("D_8009FA94");
 extern s32 D_800A6F60[];
 extern s32 gCommandListHead[] __asm__("D_800A8F90");
@@ -66,8 +66,8 @@ void func_8004CAE4(void)
     entityTable[0] = 0;
     D_800A6F60[0] = 0;
     D_8009F7A4 = 0;
-    D_8009FA40 = 0;
-    D_8009FA88 = 0;
+    gUnitListHead = 0;
+    gListTailBranch = 0;
     gEntityIdCounter = 0;
 
     D_800A6F60[1] = 0xF8;

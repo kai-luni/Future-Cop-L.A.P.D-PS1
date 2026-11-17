@@ -1,7 +1,7 @@
 // Categories: Graphics > Renderer > Depth Cue Pass | Graphics > Effects
 #include "game/types.h"
 
-extern s32 D_8009FA64;
+extern s32 gCameraNearBase __asm__("D_8009FA64");
 
 /**
  * @brief Computes the near and far depth-cue scale factors from the
@@ -27,7 +27,7 @@ void func_800536B4(s32 *near, s32 *far)
 {
     s32 distance;
 
-    distance = D_8009FA64;
+    distance = gCameraNearBase;
     *near = (distance << 8) / 608;
     if (distance >= 0x1A000) {
         *far = ((distance - 0x1A000) << 8) / 192;

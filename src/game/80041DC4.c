@@ -12,7 +12,7 @@ struct Unk41DC4 {
     s16 valueA4;
 };
 
-extern s32 D_8009F9B0;
+extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
 
 /**
  *  @brief Updates a value and flags on objects of kind 0x22.
@@ -36,7 +36,7 @@ void func_80041DC4(struct Unk41DC4 *object, s16 value)
 {
     if (object->kind == 0x22) {
         object->valueA4 = value;
-        D_8009F9B0++;
+        gStreamPreemptFlag++;
         object->flags |= 8;
         object->stateA0 |= 1;
     }

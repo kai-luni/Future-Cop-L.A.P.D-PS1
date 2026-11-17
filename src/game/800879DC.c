@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 gChunkSkipFlag __asm__("D_8009F4DC");
-extern u8 D_8009F4E0;
+extern u8 gLoopAbortFlag __asm__("D_8009F4E0");
 extern u32 D_8009F958;
 extern u32 D_8009F95C;
 
@@ -102,7 +102,7 @@ s32 func_800879DC(u8 *arg0, u8 *arg1, s32 arg2)
             if (count >= 4) {
                 if (((state0 & ~D_8009F958) & index) ||
                     ((state1 & ~D_8009F95C) & index)) {
-                    D_8009F4E0 = 1;
+                    gLoopAbortFlag = 1;
                 }
                 ok = 0;
                 goto ret;

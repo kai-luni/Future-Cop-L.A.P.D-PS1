@@ -39,7 +39,7 @@ typedef struct Player56634 {
     s8 index;
 } Player56634;
 
-extern Player56634 *D_8009F9A0;
+extern Player56634 *gMissionWorkingSet __asm__("D_8009F9A0");
 extern Entry56634 gFormCodeTable[] __asm__("D_8009ACF4");
 extern Object56634 *D_8009FA58[2];
 
@@ -85,9 +85,9 @@ void func_80056634(void)
     register Entry56634 *entries __asm__("$2");
     s32 index;
 
-    index = D_8009F9A0->index;
+    index = gMissionWorkingSet->index;
     __asm__("" : : "r"(index));
-    angle = D_8009F9A0->angle;
+    angle = gMissionWorkingSet->angle;
     entries = gFormCodeTable;
     entry = &entries[index];
 
@@ -96,7 +96,7 @@ void func_80056634(void)
             continue;
         }
 
-        func_8005612C(&D_8009F9A0->pos, angle, angle + entry->f0, entry->f2,
+        func_8005612C(&gMissionWorkingSet->pos, angle, angle + entry->f0, entry->f2,
                       entry->f4, &entry->pos, &out,
                       D_8009FA58[i]->info->valA8, D_8009FA58[i]->info->valBC);
 

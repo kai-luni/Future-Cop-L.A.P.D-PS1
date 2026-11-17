@@ -1,8 +1,8 @@
 // Categories: Platform > Sound | Platform > DMA
 #include "game/types.h"
 
-extern s32 D_8009EA34;
-extern s32 D_8009EEC0;
+extern s32 gNormalisedMode __asm__("D_8009EA34");
+extern s32 gOpOrderFlag __asm__("D_8009EEC0");
 
 /**
  * @brief Reads the SPU DMA enable flag and normalises the mode word to 0/1.
@@ -24,16 +24,16 @@ s32 func_80098F78(void)
 {
     s32 mode;
 
-    mode = D_8009EEC0;
+    mode = gOpOrderFlag;
     switch (mode) {
     case 1:
-        D_8009EA34 = mode;
+        gNormalisedMode = mode;
         break;
     case 0:
     default:
-        D_8009EA34 = 0;
+        gNormalisedMode = 0;
         break;
     }
 
-    return D_8009EA34;
+    return gNormalisedMode;
 }

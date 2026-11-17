@@ -1,7 +1,7 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 
@@ -31,7 +31,7 @@ s32 func_8007B0D4(void)
     register s32 r __asm__("$6");
     s32 idx;
 
-    p = D_8009F468;
+    p = gFontBankTable;
     t = p[5];
     r = 0;
     if (t == 2) {

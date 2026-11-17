@@ -7,7 +7,7 @@ struct Unk631A0 {
 };
 
 extern s32 gQueueCount __asm__("D_8009F838");
-extern struct Unk631A0 D_800A31A0[];
+extern struct Unk631A0 gObjectKeyTable[] __asm__("D_800A31A0");
 
 /**
  * @brief Appends a {key, value} event to the 24-entry frame queue.
@@ -38,7 +38,7 @@ s32 func_8006314C(s32 key, u8 value)
     if (gQueueCount == 0x18) {
         return 0;
     }
-    entry = &D_800A31A0[gQueueCount];
+    entry = &gObjectKeyTable[gQueueCount];
     entry->value = value;
     entry->key = key;
     gQueueCount++;

@@ -2,8 +2,8 @@
 #include "game/types.h"
 
 extern s32 gStillRunningState __asm__("D_8009F464");
-extern void *D_8009F460;
-extern s32 D_8009F45C;
+extern void *gSpriteAtlasBlock __asm__("D_8009F460");
+extern s32 gAtlasTable __asm__("D_8009F45C");
 extern void **D_8009F3F4;
 
 extern void func_800898E8(void);
@@ -40,10 +40,10 @@ void func_8007852C(void)
     func_800898E8();
     func_8007FACC();
     func_8007FA48();
-    if (D_8009F460 != 0) {
-        func_800181D4(D_8009F460);
-        D_8009F460 = 0;
-        D_8009F45C = 0;
+    if (gSpriteAtlasBlock != 0) {
+        func_800181D4(gSpriteAtlasBlock);
+        gSpriteAtlasBlock = 0;
+        gAtlasTable = 0;
     }
     gStillRunningState = 0;
     if (D_8009F3F4 != 0) {

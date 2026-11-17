@@ -10,7 +10,7 @@ extern s32 gTileMapTable __asm__("D_8009F80C");
 extern s32 D_8009F810;
 extern s32 D_8009FA04;
 extern int *gTileBlockTable __asm__("D_8009F808");
-extern int *D_8009FA08;
+extern int *gTableBuffer __asm__("D_8009FA08");
 
 extern void func_80063134(void);
 extern void *func_80017EBC(s32 size, s32 mode);
@@ -61,8 +61,8 @@ int *func_80063428(void)
     D_8009F810 = 0;
     gTileBlockTable = func_80017EBC(0x1A0, 2);
     func_8008CD20(gTileBlockTable, 0, func_80018460(gTileBlockTable));
-    D_8009FA08 = func_80017EBC(0x1B18, 2);
-    func_8008CD20(D_8009FA08, 0, func_80018460(D_8009FA08));
+    gTableBuffer = func_80017EBC(0x1B18, 2);
+    func_8008CD20(gTableBuffer, 0, func_80018460(gTableBuffer));
 
     for (i = 9; i >= 0; i--) {
         gTexpageBaseTable[i] = 0;
@@ -71,7 +71,7 @@ int *func_80063428(void)
     {
         register int *result __asm__("$2");
 
-        result = D_8009FA08;
+        result = gTableBuffer;
         D_8009FA04 = 0;
         gTileDefTable[0] = 0;
         return result;

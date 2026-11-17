@@ -14,9 +14,9 @@ struct LinkNode;
 extern s32 *D_8009F590;
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
-extern struct LinkState *D_8009FA4C;
-extern struct LinkState *D_8009FAAC;
-extern struct LinkState *D_8009F9D0;
+extern struct LinkState *gPool3Size __asm__("D_8009FA4C");
+extern struct LinkState *gPool2Size __asm__("D_8009FAAC");
+extern struct LinkState *gPool1Size __asm__("D_8009F9D0");
 
 extern s32 func_80017D5C(s32 size);
 extern s32 func_80017E0C(s32 size);
@@ -164,11 +164,11 @@ retry:
         break;
 
     case 3:
-        pool = D_8009FA4C;
+        pool = gPool3Size;
         if (pool->stride < size || pool->count <= 0) {
-            pool = D_8009FAAC;
+            pool = gPool2Size;
             if (pool->stride < size || pool->count <= 0) {
-                pool = D_8009F9D0;
+                pool = gPool1Size;
                 if (pool->count <= 0) {
                     tag = 1;
                     goto retry;

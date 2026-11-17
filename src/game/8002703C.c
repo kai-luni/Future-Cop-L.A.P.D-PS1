@@ -8,7 +8,7 @@ struct Unk9F9A0 {
 };
 
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern volatile s32 D_8009FA30;
+extern volatile s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
@@ -17,7 +17,7 @@ extern u8 D_8009F690;
 extern u8 D_8009F691;
 extern u8 D_8009F692;
 extern u8 D_8009F693;
-extern u8 *D_8009F9A0[];
+extern u8 *gMissionWorkingSet[] __asm__("D_8009F9A0");
 
 extern void func_80057864(void);
 extern s32 func_80059DB8(void);
@@ -58,7 +58,7 @@ void func_8002703C(void)
 
     do {
         s32 cur = gPaletteCycleCounter;
-        s32 prev = D_8009FA30;
+        s32 prev = gFrameTickBase;
         diff = cur - prev;
         gDiscShadeByte = cur;
     } while (diff < 5);
@@ -73,7 +73,7 @@ void func_8002703C(void)
         sum += 3;
     }
     __asm__ volatile("");
-    obj = D_8009F9A0[0];
+    obj = gMissionWorkingSet[0];
     gFrameId = sum >> 2;
     D_8009F692 = D_8009F691;
     D_8009F691 = D_8009F690;
@@ -94,12 +94,12 @@ void func_8002703C(void)
             gScreenState = 5;
             gFrameId = 5;
         }
-        nsum = D_8009FA30 + gFrameId;
+        nsum = gFrameTickBase + gFrameId;
         gDiscShadeByte = nsum;
         gPaletteCycleCounter = nsum;
     }
 
-    D_8009FA30 = gDiscShadeByte;
+    gFrameTickBase = gDiscShadeByte;
     func_8004DB74(gFrameId);
     func_80063568(gFrameId);
     func_800136C8(gFrameId);

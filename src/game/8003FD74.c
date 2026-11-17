@@ -19,7 +19,7 @@ struct Unk3FD74Node {
     u8 unk1D[3];
 };
 
-extern struct Unk3FD74Node *D_8009F30C;
+extern struct Unk3FD74Node *gNodeCList __asm__("D_8009F30C");
 extern void *func_80017EBC(s32 size, s32 tag);
 
 /**
@@ -62,7 +62,7 @@ struct Unk3FD74Node *func_8003FD74(s32 type, s32 arg08,
         node->sourceValue = source->value08;
     }
     node->arg18 = arg18;
-    node->next = D_8009F30C;
-    D_8009F30C = node;
+    node->next = gNodeCList;
+    gNodeCList = node;
     return node;
 }

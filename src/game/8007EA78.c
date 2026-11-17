@@ -20,7 +20,7 @@ struct Unk9FA94 {
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 gOctalDigitTable[] __asm__("D_8009C1BC");
 extern u8 gHexDigitTable[] __asm__("D_8009C1AC");
-extern struct Entry D_8009B4E4[];
+extern struct Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern struct Unk9FA94 *gGameSession __asm__("D_8009FA94");
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
@@ -238,16 +238,16 @@ s32 func_8007EA78(void)
                 }
                 D_8009F458 = n0;
                 D_8009F3F1 = n0;
-                D_8009B4E4[gFrontEndListTable[0]].unk1F = n1;
-                D_8009B4E4[gFrontEndListTable[1]].unk1F = n2;
-                D_8009B4E4[gFrontEndListTable[2]].unk1F = n3;
-                D_8009B4E4[gFrontEndListTable[3]].unk1F = n4;
-                D_8009B4E4[gFrontEndListTable[4]].unk1F = n5;
-                D_8009B4E4[gFrontEndListTable[0]].unk20 = n1;
-                D_8009B4E4[gFrontEndListTable[1]].unk20 = n2;
-                D_8009B4E4[gFrontEndListTable[2]].unk20 = n3;
-                D_8009B4E4[gFrontEndListTable[3]].unk20 = n4;
-                D_8009B4E4[gFrontEndListTable[4]].unk20 = n5;
+                gWideTextTable[gFrontEndListTable[0]].unk1F = n1;
+                gWideTextTable[gFrontEndListTable[1]].unk1F = n2;
+                gWideTextTable[gFrontEndListTable[2]].unk1F = n3;
+                gWideTextTable[gFrontEndListTable[3]].unk1F = n4;
+                gWideTextTable[gFrontEndListTable[4]].unk1F = n5;
+                gWideTextTable[gFrontEndListTable[0]].unk20 = n1;
+                gWideTextTable[gFrontEndListTable[1]].unk20 = n2;
+                gWideTextTable[gFrontEndListTable[2]].unk20 = n3;
+                gWideTextTable[gFrontEndListTable[3]].unk20 = n4;
+                gWideTextTable[gFrontEndListTable[4]].unk20 = n5;
                 func_80077FFC();
                 if (gGameSession->unk5C == 1) {
                     func_80077708();

@@ -1,7 +1,7 @@
 // Categories: Graphics > Sprite/Asset Subsystem | Resources > Memory Management
 #include "game/types.h"
 
-extern u8 D_800A085C[];
+extern u8 gSubsystemTable[] __asm__("D_800A085C");
 
 extern void func_80097A28(void);
 extern void func_80096E40(void);
@@ -30,6 +30,6 @@ void func_80021B50(void)
 {
     func_80097A28();
     func_80096E40();
-    func_80097AC8(0x20, D_800A085C);
+    func_80097AC8(0x20, gSubsystemTable);
     func_80021824();
 }

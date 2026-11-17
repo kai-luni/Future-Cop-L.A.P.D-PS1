@@ -1,7 +1,7 @@
 // Categories: Platform > Dispatch
 #include "game/types.h"
 
-extern s32 D_8009EEC0;
+extern s32 gOpOrderFlag __asm__("D_8009EEC0");
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 
@@ -30,7 +30,7 @@ extern void func_8009745C(s32 arg0, ...);
  */
 s32 func_800976DC(s32 arg0, s32 arg1)
 {
-    if (D_8009EEC0 == 0) {
+    if (gOpOrderFlag == 0) {
         func_8009745C(2, gSpuTransferAddr << gSpuAddrShift);
         func_8009745C(1);
         func_8009745C(3, arg0, arg1);

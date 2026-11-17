@@ -1,10 +1,10 @@
 // Categories: Platform > Streaming Audio | Resources > Reference Counting | Game Engine > Frame
 #include "game/types.h"
 
-extern u8 D_8009F6B8;
-extern s32 D_8009F6BC;
+extern u8 gBitFieldState __asm__("D_8009F6B8");
+extern s32 gOutStreamId __asm__("D_8009F6BC");
 extern s32 D_8009F6C4;
-extern s32 D_8009F6DC;
+extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern s32 D_8009FA24;
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_800A0B90[];
@@ -42,12 +42,12 @@ void func_8002A26C(void)
     if (D_8009F6C4 != 0 && D_8009F6C4 < gFrameTickCounter) {
         D_8009F6C4 = 0;
         func_80029DD8();
-        if (D_8009F6B8 & 0x40) {
-            D_8009F6B8 = 0;
-            D_8009F6BC = -1;
+        if (gBitFieldState & 0x40) {
+            gBitFieldState = 0;
+            gOutStreamId = -1;
         }
         if (D_8009FA24 == 0) {
-            if (D_8009F6DC == 2 || D_8009F6DC == 0) {
+            if (gCallGateFlag == 2 || gCallGateFlag == 0) {
                 D_800A0B90[0] = 1;
                 func_8002A16C(1);
             }

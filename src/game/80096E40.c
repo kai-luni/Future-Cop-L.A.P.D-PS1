@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 typedef void (*Callback)(void);
-extern s32 D_8009EE94;
+extern s32 gSecondCallGuard __asm__("D_8009EE94");
 extern void *gSpuDmaCallback __asm__("D_8009EA2C");
 extern void func_800972F8(void);
 extern void func_8008C9A0(void);
@@ -39,7 +39,7 @@ extern void func_8008C980(void *);
  */
 void func_80096E40(void)
 {
-    if (D_8009EE94 == 0) {
+    if (gSecondCallGuard == 0) {
         __asm__ volatile(".set\tnoreorder\n\t"
                          "addiu\t$v0,$zero,1\n\t"
                          "lui\t$at,%%hi(D_8009EE94)\n\t"

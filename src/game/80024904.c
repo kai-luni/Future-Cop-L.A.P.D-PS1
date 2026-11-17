@@ -1,7 +1,7 @@
 // Categories: Game Engine > Game State > Init | Gameplay > Mission Setup
 #include "game/types.h"
 
-extern s32 D_8009F284;
+extern s32 gGlobalTick __asm__("D_8009F284");
 extern s32 gRequestListHead __asm__("D_8009F668");
 extern s32 gRequestListTail __asm__("D_8009F66C");
 extern s32 gMissionId __asm__("D_8009F684");
@@ -56,7 +56,7 @@ void func_80024904(s32 arg)
     gRequestListHead = 0;
     gRequestListTail = 0;
     func_80019A64();
-    temp = D_8009F284;
+    temp = gGlobalTick;
     func_80019828();
     func_800197A8(temp);
     func_80069B58();

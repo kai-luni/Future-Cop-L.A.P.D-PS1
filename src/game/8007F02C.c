@@ -16,7 +16,7 @@ struct UnkFA94 {
     u8 unk94;
 };
 
-extern struct Entry D_8009B4E4[];
+extern struct Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
@@ -57,12 +57,12 @@ void func_8007F02C(void)
                   gGameSession->unk94,
                   gFrontEndListFlag,
                   D_8009F458,
-                  D_8009B4E4[gFrontEndListTable[0]].unk1F,
-                  D_8009B4E4[gFrontEndListTable[1]].unk1F,
-                  D_8009B4E4[gFrontEndListTable[2]].unk1F,
-                  D_8009B4E4[gFrontEndListTable[3]].unk1F,
+                  gWideTextTable[gFrontEndListTable[0]].unk1F,
+                  gWideTextTable[gFrontEndListTable[1]].unk1F,
+                  gWideTextTable[gFrontEndListTable[2]].unk1F,
+                  gWideTextTable[gFrontEndListTable[3]].unk1F,
                   gPlayerWrapLimit,
                   gPausedMenuFlag,
-                  D_8009B4E4[gFrontEndListTable[4]].unk1F,
+                  gWideTextTable[gFrontEndListTable[4]].unk1F,
                   gLockedMenuFlag);
 }

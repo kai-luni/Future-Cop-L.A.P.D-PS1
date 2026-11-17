@@ -28,7 +28,7 @@ struct Unk53730Delta {
 extern s32 gPlayerCount[] __asm__("D_8009FA0C");
 extern struct Unk53730Global *gGameSession[] __asm__("D_8009FA94");
 extern struct Unk53730 *D_8009FA58[];
-extern s32 D_8009FA64;
+extern s32 gCameraNearBase __asm__("D_8009FA64");
 
 extern s32 func_8001A074(struct Unk53730Delta *delta);
 
@@ -63,6 +63,6 @@ void func_80053730(struct Unk53730 *object)
         other = D_8009FA58[1 - object->info->side];
         delta.x = other->x - object->x;
         delta.z = other->z - object->z;
-        D_8009FA64 = func_8001A074(&delta);
+        gCameraNearBase = func_8001A074(&delta);
     }
 }

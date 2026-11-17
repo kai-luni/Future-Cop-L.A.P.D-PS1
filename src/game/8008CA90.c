@@ -1,7 +1,7 @@
 // Categories: Utilities > Memory Allocation
 typedef unsigned int u32;
 typedef struct Block { struct Block *next; int size; } Block;
-extern Block *D_8009C7D0;
+extern Block *gSessionBlockBase __asm__("D_8009C7D0");
 
 /**
  *  @brief Allocates an aligned payload from a circular free-block list.
@@ -38,10 +38,10 @@ void *func_8008CA90(u32 size)
                 p += p->size;
                 p->size = n;
             }
-            D_8009C7D0 = prev;
+            gSessionBlockBase = prev;
             return p + 1;
         }
-        if (p == D_8009C7D0) return 0;
+        if (p == gSessionBlockBase) return 0;
         prev = p;
         p = p->next;
     }

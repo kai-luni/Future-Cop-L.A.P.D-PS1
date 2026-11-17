@@ -51,37 +51,37 @@ struct FixedPool {
 };
 
 extern State800A0B70 gStreamBufferList __asm__("D_800A0B70");
-extern Node *D_8009FA48;
+extern Node *gChainedNodes __asm__("D_8009FA48");
 extern s32 gFileSearchGroup __asm__("D_8009F238");
 extern Unk800A6D78 D_800A6D78[];
-extern u8 D_800A0C30[0x14];
+extern u8 gReleaseQueues[0x14] __asm__("D_800A0C30");
 extern u32 D_800A0C10[];
 extern u32 D_800A0C20[];
-extern u32 D_800A0C50[];
+extern u32 gVagmRing[] __asm__("D_800A0C50");
 extern u32 D_800A0C60[];
 extern s32 D_800A0B9C[2];
 extern u16 gRingBuffer[] __asm__("D_800A0BC0");
 
-extern s32 D_8009F698;
-extern u8 D_8009F69C;
+extern s32 gResourceSubChunkPtr __asm__("D_8009F698");
+extern u8 gRegisterGuard __asm__("D_8009F69C");
 extern s32 D_8009F6A0;
 extern s32 D_8009F6A4;
 extern volatile u8 D_8009F6A8;
 extern volatile s32 D_8009F6AC;
 extern volatile s32 D_8009F6B0;
 extern volatile s32 D_8009F6B4;
-extern u8 D_8009F6B8;
-extern s32 D_8009F6BC;
-extern u8 D_8009F6C0;
+extern u8 gBitFieldState __asm__("D_8009F6B8");
+extern s32 gOutStreamId __asm__("D_8009F6BC");
+extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern s32 D_8009F6C4;
 extern s32 D_8009F6CC;
 extern s32 D_8009F6D0;
 extern s32 D_8009F6D4;
 extern s32 D_8009F6D8;
-extern s32 D_8009F6DC;
+extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern s32 D_8009F6E4;
 extern s32 D_8009F6E8;
-extern s32 D_8009F9B0;
+extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
 
 extern void *func_80017EBC(s32 size, s32 tag);
 extern struct FixedPool *func_800194DC(s32 count, s32 size, s32 tag);
@@ -125,22 +125,22 @@ void func_80029F50(void *arg0)
     s32 count;
     s32 stride;
 
-    D_800A0C30[0x10] = 0;
-    D_800A0C30[0x11] = 0;
-    D_800A0C30[0x12] = 0;
-    D_800A0C30[0x13] = 0xFF;
+    gReleaseQueues[0x10] = 0;
+    gReleaseQueues[0x11] = 0;
+    gReleaseQueues[0x12] = 0;
+    gReleaseQueues[0x13] = 0xFF;
 
     D_8009F6A8 = 0;
     D_8009F6AC = 0;
     D_8009F6B0 = 0;
     D_8009F6B4 = 0;
-    D_8009F9B0 = 0;
-    D_8009F6B8 = 0;
-    D_8009F6BC = -1;
-    D_8009F6C0 = 0;
+    gStreamPreemptFlag = 0;
+    gBitFieldState = 0;
+    gOutStreamId = -1;
+    gLatchFlag = 0;
     D_8009F6C4 = 0;
-    D_8009F69C = 0;
-    D_8009F698 = 0;
+    gRegisterGuard = 0;
+    gResourceSubChunkPtr = 0;
     D_8009F6A0 = 0;
     D_8009F6A4 = D_8009F6B4;
 
@@ -152,7 +152,7 @@ void func_80029F50(void *arg0)
     stride = 0x6014;
     D_800A0B9C[0] = 0;
     node = func_80017EBC(0x18050, 2);
-    D_8009FA48 = node;
+    gChainedNodes = node;
 
     prev = 0;
     count = 4;
@@ -196,7 +196,7 @@ void func_80029F50(void *arg0)
     gRingBuffer[1] = 0;
 
     for (i = 0; i < 4; i++) {
-        D_800A0C50[i] = 0;
+        gVagmRing[i] = 0;
         D_800A0C60[i] = 0;
     }
 
@@ -204,7 +204,7 @@ void func_80029F50(void *arg0)
     D_8009F6D0 = 0;
     D_8009F6D4 = 0;
     D_8009F6D8 = 0;
-    D_8009F6DC = 0;
+    gCallGateFlag = 0;
     D_8009F6E4 = 0;
     D_8009F6E8 = 1;
 }

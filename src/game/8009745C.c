@@ -15,7 +15,7 @@ typedef struct {
 extern SpuDebug *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
-extern s32 D_8009EEF4;
+extern s32 gSetupGuard __asm__("D_8009EEF4");
 extern s32 D_8009EEF8;
 extern s32 D_8009EEFC;
 extern s32 *gDma4MemAddrPtr __asm__("D_8009EEA8");
@@ -73,7 +73,7 @@ s32 func_8009745C(s32 arg0, ...)
         rp->field1A6 = poll;
         break;
     case 1:
-        D_8009EEF4 = 0;
+        gSetupGuard = 0;
         want = gSpuTransferAddr;
         i = 0;
         while (gSpuRegBasePtr->field1A6 != want) {
@@ -84,7 +84,7 @@ s32 func_8009745C(s32 arg0, ...)
         gSpuRegBasePtr->field1AA = (gSpuRegBasePtr->field1AA & 0xFFCF) | 0x20;
         break;
     case 0:
-        D_8009EEF4 = 1;
+        gSetupGuard = 1;
         want = gSpuTransferAddr;
         i = 0;
         while (gSpuRegBasePtr->field1A6 != want) {
@@ -95,14 +95,14 @@ s32 func_8009745C(s32 arg0, ...)
         gSpuRegBasePtr->field1AA |= 0x30;
         break;
     case 3:
-        target = (D_8009EEF4 == 1) ? 0x30 : 0x20;
+        target = (gSetupGuard == 1) ? 0x30 : 0x20;
         i = 0;
         while ((gSpuRegBasePtr->field1AA & 0x30) != target) {
             if (++i >= 0xF01) {
                 return -2;
             }
         }
-        if (D_8009EEF4 == 1) {
+        if (gSetupGuard == 1) {
             func_80097968();
         } else {
             func_80097940();
@@ -117,7 +117,7 @@ s32 func_8009745C(s32 arg0, ...)
         D_8009EEFC = rq + (rm != 0);
         *gDma4MemAddrPtr = D_8009EEF8;
         *gDma4BlockCtrlPtr = (D_8009EEFC << 16) | 0x10;
-        rf = D_8009EEF4;
+        rf = gSetupGuard;
         val = (rf == 1) ? 0x1000200 : 0x1000201;
         *gDma4ChannelCtrlPtr = val;
         break;

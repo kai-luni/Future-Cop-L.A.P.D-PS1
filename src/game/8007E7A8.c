@@ -17,7 +17,7 @@ extern u8 gHexDigitTable[] __asm__("D_8009C1AC");
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 D_800A3938[];
 extern volatile s32 D_8009F8F8;
-extern u16 D_8009F92A;
+extern u16 gStatusTextId __asm__("D_8009F92A");
 extern void func_8007F02C(void);
 
 /**
@@ -75,7 +75,7 @@ void func_8007E7A8(void)
     p = gGameSession;
     D_8009F8F8 = 0;
     __asm__ volatile("" ::: "memory");
-    D_8009F92A = 0;
+    gStatusTextId = 0;
     if (p->unk5C == 1) {
         if (p->unk0C == 1) {
             D_800A35FB[0] = 9;

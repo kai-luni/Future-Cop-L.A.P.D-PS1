@@ -9,7 +9,7 @@ struct Entity {
     u16 tag;
 };
 
-extern struct Entity *D_8009FA40;
+extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 
 /**
  * @brief Finds the first entity in D_8009FA40 matching a 16-bit tag and sends it message 0xC.
@@ -39,7 +39,7 @@ s32 func_8004DE80(s32 tag, s32 arg)
 {
     struct Entity *entity;
 
-    for (entity = D_8009FA40; entity != 0; entity = entity->next) {
+    for (entity = gUnitListHead; entity != 0; entity = entity->next) {
         if (entity->tag == tag) {
             return entity->update(0xC, entity, arg, 0);
         }

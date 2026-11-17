@@ -8,7 +8,7 @@ struct Struct800A8EA8 {
 };
 
 extern s32 gInitDoneFlag __asm__("D_8009F9C8");
-extern s32 D_8009FA80;
+extern s32 gSlotIndexLimit __asm__("D_8009FA80");
 extern s32 D_8009F998;
 extern s32 D_8009FA34;
 extern struct Struct800A8EA8 gPendingEntryList[] __asm__("D_800A8EA8");
@@ -40,8 +40,8 @@ void func_8002129C(void)
     s32 timeout = 0xFFFF;
 
     if (gInitDoneFlag != 0) {
-        D_8009F998 = D_8009FA80;
-        gPendingEntryList[D_8009FA80].unk0C = 0;
+        D_8009F998 = gSlotIndexLimit;
+        gPendingEntryList[gSlotIndexLimit].unk0C = 0;
         while (D_8009FA34 != 0 && timeout-- != 0) {
         }
     }

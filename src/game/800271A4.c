@@ -44,15 +44,15 @@ extern u32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern u8 *D_8009F2D0;
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
-extern u8 D_8009F680;
+extern u8 gMenuModeFlag __asm__("D_8009F680");
 extern s32 D_8009FA38;
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern u32 gDiscShadeByte __asm__("D_8009FAA4");
-extern s32 D_8009FA30;
+extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 D_8009FA24;
 extern s32 gFrameId __asm__("D_8009F9FC");
-extern u8 *D_8009F9A0[4];
-extern u8 D_8009F2F4[];
+extern u8 *gMissionWorkingSet[4] __asm__("D_8009F9A0");
+extern u8 gBannerString[] __asm__("D_8009F2F4");
 
 extern void func_8005780C(u32 buttons, struct InputAction *action);
 extern s32 func_80046C84(s32 id, s32 arg1);
@@ -150,14 +150,14 @@ void func_800271A4(void)
     }
 
     if (!(flags & 0x20)) {
-        if (D_8009F680 != 0) {
+        if (gMenuModeFlag != 0) {
             gPaletteCycleCounter = D_8009FA38;
             clock_value = *(volatile s32 *)&gPaletteCycleCounter;
             gDiscShadeByte = clock_value;
-            D_8009FA30 = clock_value;
+            gFrameTickBase = clock_value;
             func_80047690(1);
         }
-        D_8009F680 = 0;
+        gMenuModeFlag = 0;
         func_80069D0C(gFrameId);
         func_8004DF28();
         func_8004CECC();
@@ -177,14 +177,14 @@ void func_800271A4(void)
         }
         func_80026E1C(0, (s32)D_8009FA58);
         func_80026F68(0, 1);
-        unk = (struct Unk9A0 *)D_8009F9A0[0];
+        unk = (struct Unk9A0 *)gMissionWorkingSet[0];
         if (unk == 0 || unk->unk11F == 0) {
             func_80047F30((s32)D_8009FA58);
         }
     }
 
     if (gModuleLoadedFlag > 0 && (gDiscShadeByte & 0x100)) {
-        func_80049100(D_8009F2F4, 0x91, 0x14, 1);
+        func_80049100(gBannerString, 0x91, 0x14, 1);
     }
 
     func_8001BBAC();
@@ -196,13 +196,13 @@ void func_800271A4(void)
         func_8004D598();
         D_8009FA24 = 0;
     } else {
-        if (D_8009F680 == 0) {
+        if (gMenuModeFlag == 0) {
             D_8009FA38 = gPaletteCycleCounter;
             func_8001EB6C();
             func_800476D0();
             func_80046C84(0x3E, (s32)D_8009FA58);
         }
-        D_8009F680 = 1;
+        gMenuModeFlag = 1;
         D_8009FA24 = 1;
     }
 }

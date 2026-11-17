@@ -5,7 +5,8 @@ typedef struct Request {
     int context, mode;
 } Request;
 extern Request gPendingEntryList[] __asm__("D_800A8EA8");
-extern int D_8009F998, D_8009FA80, D_8009FAD0, D_8009FA34;
+extern int D_8009F998, D_8009FAD0, D_8009FA34;
+extern int gSlotIndexLimit __asm__("D_8009FA80");
 extern void func_80021490(Request *);
 
 /**
@@ -32,17 +33,17 @@ void func_8002139C(void)
     Request r;
     if (D_8009FAD0)
         return;
-    if (D_8009FA80 == D_8009F998)
+    if (gSlotIndexLimit == D_8009F998)
         return;
-    r = gPendingEntryList[D_8009FA80];
+    r = gPendingEntryList[gSlotIndexLimit];
     D_8009FAD0 = 1;
     if (r.callback)
         r.callback(r.context);
-    D_8009FA80++;
-    if (D_8009FA80 >= 9)
-        D_8009FA80 = 0;
-    if (D_8009F998 != D_8009FA80)
-        func_80021490(&gPendingEntryList[D_8009FA80]);
+    gSlotIndexLimit++;
+    if (gSlotIndexLimit >= 9)
+        gSlotIndexLimit = 0;
+    if (D_8009F998 != gSlotIndexLimit)
+        func_80021490(&gPendingEntryList[gSlotIndexLimit]);
     else
         D_8009FA34 = 0;
     D_8009FAD0 = 0;

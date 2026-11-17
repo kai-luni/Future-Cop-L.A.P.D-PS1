@@ -5,7 +5,7 @@ extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 D_8009F4C4;
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
 extern s32 gBufferCount __asm__("D_8009F4CC");
-extern s32 D_8009F508;
+extern s32 gReleaseDoneFlag __asm__("D_8009F508");
 
 /**
  *  @brief Initializes five global state values.
@@ -30,5 +30,5 @@ void func_800859B0(void)
     gStripStepWidth = 3;
     gBufferCount = 3;
     D_8009F4C4 = 0;
-    D_8009F508 = 1;
+    gReleaseDoneFlag = 1;
 }

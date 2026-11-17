@@ -6,7 +6,7 @@ extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
-extern u8 D_800A2630[];
+extern u8 gRampVariantTable[] __asm__("D_800A2630");
 extern u16 gTileColourWord __asm__("D_8009F83C");
 
 #define PK ((u8 *)t0)
@@ -264,7 +264,7 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
                 t2 = idx & 0xF0;
                 a0 = (t3 + 1) & 0xF;
                 t1 = (t2 + 0x10) & 0xF0;
-                t4 = (s32)D_800A2630;
+                t4 = (s32)gRampVariantTable;
                 GRAY(4, *(a1 != 1 ? (u8 *)t4 + idx : (u8 *)t4 + (t2 | a0)));
                 GRAY(0x1C, ((u8 *)t4)[a1 != 3 ? (t1 | t3) : (t1 | a0)]);
                 GRAY(0x10, ((u8 *)t4)[(a1 == 3 || a1 == 0) ? (t2 | a0) : (t1 | a0)]);
@@ -302,10 +302,10 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
                 hi = idx & 0xF0;
                 lo1 = (lo + 1) & 0xF;
                 hi1 = (hi + 0x10) & 0xF0;
-                GRAY(4, D_800A2630[idx]);
-                GRAY(0x10, D_800A2630[hi | lo1]);
-                GRAY(0x28, D_800A2630[hi1 | lo1]);
-                GRAY(0x1C, D_800A2630[hi1 | lo]);
+                GRAY(4, gRampVariantTable[idx]);
+                GRAY(0x10, gRampVariantTable[hi | lo1]);
+                GRAY(0x28, gRampVariantTable[hi1 | lo1]);
+                GRAY(0x1C, gRampVariantTable[hi1 | lo]);
             }
             break;
         }

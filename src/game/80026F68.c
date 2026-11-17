@@ -1,7 +1,7 @@
 // Categories: Graphics > Fade Layers | Game Engine > Frame
 #include "game/types.h"
 
-extern s16 D_8009F65C[];
+extern s16 gTeamFlag[] __asm__("D_8009F65C");
 extern s16 D_8009FA44[];
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
@@ -38,11 +38,11 @@ void func_80026F68(s32 arg0, s32 arg1)
 {
     s32 temp;
 
-    if (D_8009F65C[arg0] != 0) {
-        if (D_8009F65C[arg0] >= 0x384) {
+    if (gTeamFlag[arg0] != 0) {
+        if (gTeamFlag[arg0] >= 0x384) {
             gScreenState = 6;
         } else {
-            D_8009F65C[arg0] += gFrameId;
+            gTeamFlag[arg0] += gFrameId;
         }
     } else if (D_8009FA44[arg0] != 0) {
         temp = D_8009FA44[arg0] - (gFrameId + gFrameId / 2);

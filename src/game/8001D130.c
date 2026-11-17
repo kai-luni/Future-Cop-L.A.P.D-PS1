@@ -15,7 +15,7 @@ typedef struct {
 
 extern GlobalState func_80010000;
 extern s32 D_8009F618;
-extern u8 D_8009F610[8];
+extern u8 gCdCommandParam[8] __asm__("D_8009F610");
 extern u8 D_8009F611;
 extern u8 D_8009F61C[];
 extern u8 gEventBuffer[] __asm__("D_800A0798");
@@ -105,7 +105,7 @@ s32 func_8001D130(s32 arg0)
         register void *a2 __asm__("$6");
         a0 = (void *)0xE;
         __asm__("" : "+r"(a0));
-        v0 = (s32)&D_8009F610[1];
+        v0 = (s32)&gCdCommandParam[1];
         __asm__("" : "+r"(v0));
         a1 = (u8 *)v0 - 1;
         __asm__("" : "+r"(a1));

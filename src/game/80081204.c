@@ -72,7 +72,7 @@ typedef struct FontEntry {
 
 extern SaveMenu *gSaveProfileImage __asm__("D_8009F92C");
 extern GameState *gGameSession __asm__("D_8009FA94");
-extern Upgrade D_8009B4E4[];
+extern Upgrade gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern s32 D_8009F8F8[];
@@ -90,7 +90,7 @@ extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 D_8009F3E6, D_8009F3E7, D_8009F3F1, D_8009F458, D_8009F459;
 extern u8 D_8009FA10;
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern u16 gPlaceholderGlyph __asm__("D_8009F470");
 extern u8 D_8009F498[], D_8009F4A0[];
 extern u8 gDefaultNameString[] __asm__("D_8009F4A4");

@@ -71,7 +71,7 @@ struct Unk40E60 {
     u16 unk94;
 };
 
-extern s32 D_8009F318;
+extern s32 gMessage10Counter __asm__("D_8009F318");
 extern u8 D_80040874[];
 extern void *func_80017EBC(s32, s32);
 extern void func_8003C14C(struct Unk40E60 *, struct Unk40E60Source *);
@@ -101,7 +101,7 @@ void *func_80040E60(struct Unk40E60Source *src)
     struct Unk40E60 *dest;
     struct Unk40E60Work work;
 
-    if (D_8009F318 >= 0x15F) {
+    if (gMessage10Counter >= 0x15F) {
         return 0;
     }
     dest = func_80017EBC(0x98, 1);
@@ -141,7 +141,7 @@ void *func_80040E60(struct Unk40E60Source *src)
     dest->unk68[0] = *(s32 *)((u8 *)src + 0x3C) != 0;
     dest->unk08 = 0;
     dest->unk0A = 1;
-    D_8009F318++;
+    gMessage10Counter++;
     func_800403D0(dest);
     return dest;
 }

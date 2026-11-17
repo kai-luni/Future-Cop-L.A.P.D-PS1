@@ -12,7 +12,7 @@ struct Node {
     struct KindData *data;
 };
 
-extern struct Node *D_800A1070[7];
+extern struct Node *gListHeads[7] __asm__("D_800A1070");
 
 /**
  *  @brief Prepends a node to a list selected by its data kind or index.
@@ -45,6 +45,6 @@ void func_8003B44C(struct Node *node, s32 index)
     case 0x57: index = 5; break;
     case 0x58: index = 6; break;
     }
-    node->next = D_800A1070[index];
-    D_800A1070[index] = node;
+    node->next = gListHeads[index];
+    gListHeads[index] = node;
 }

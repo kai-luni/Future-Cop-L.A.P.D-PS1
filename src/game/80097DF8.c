@@ -2,8 +2,8 @@
 typedef unsigned int u32;
 typedef int s32;
 struct Entry { u32 addr; u32 size; };
-extern s32 D_8009EF08;
-extern struct Entry *D_8009EF0C;
+extern s32 gTableCursor __asm__("D_8009EF08");
+extern struct Entry *gSpuEntryTable __asm__("D_8009EF0C");
 
 /**
  * @brief Compacts the SPU pool block table D_8009EF0C.
@@ -52,11 +52,11 @@ void func_80097DF8(void)
         register u32 mask __asm__("$11");
         register u32 flag __asm__("$12");
         register s32 initial __asm__("$2");
-        initial = D_8009EF08;
+        initial = gTableCursor;
         i = 0;
         if (initial >= 0) {
             flag = 0x80000000; deleted = 0x2fffffff; mask = 0x0fffffff;
-            base = D_8009EF0C; limit = initial; cur = base;
+            base = gSpuEntryTable; limit = initial; cur = base;
             do {
                 if (cur->addr & flag) {
                     register struct Entry *scan __asm__("$3");
@@ -84,7 +84,7 @@ void func_80097DF8(void)
         register s32 count __asm__("$2");
         register s32 count2 __asm__("$4");
         register u32 deleted __asm__("$5");
-        count = D_8009EF08;
+        count = gTableCursor;
         __asm__ volatile (".set reorder\n.set noreorder" : "+r" (count));
         i = 0;
         if (count >= 0) {
@@ -93,39 +93,39 @@ void func_80097DF8(void)
             count2 = count;
             do {
                 __asm__ volatile (".set reorder\n.set noreorder");
-                if (D_8009EF0C[i].size == 0) D_8009EF0C[i].addr = deleted;
+                if (gSpuEntryTable[i].size == 0) gSpuEntryTable[i].addr = deleted;
                 i++;
             } while (i <= count2);
         }
     }
-    for (i = 0; i <= D_8009EF08; i++) {
-        if (D_8009EF0C[i].addr & 0x40000000) break;
-        for (j = i + 1; j <= D_8009EF08; j++) {
-            if (D_8009EF0C[j].addr & 0x40000000) break;
-            if ((D_8009EF0C[j].addr & 0x0fffffff) < (D_8009EF0C[i].addr & 0x0fffffff)) {
-                a = D_8009EF0C[i].addr;
-                b = D_8009EF0C[i].size;
-                D_8009EF0C[i].addr = D_8009EF0C[j].addr;
-                D_8009EF0C[i].size = D_8009EF0C[j].size;
-                D_8009EF0C[j].addr = a;
-                D_8009EF0C[j].size = b;
+    for (i = 0; i <= gTableCursor; i++) {
+        if (gSpuEntryTable[i].addr & 0x40000000) break;
+        for (j = i + 1; j <= gTableCursor; j++) {
+            if (gSpuEntryTable[j].addr & 0x40000000) break;
+            if ((gSpuEntryTable[j].addr & 0x0fffffff) < (gSpuEntryTable[i].addr & 0x0fffffff)) {
+                a = gSpuEntryTable[i].addr;
+                b = gSpuEntryTable[i].size;
+                gSpuEntryTable[i].addr = gSpuEntryTable[j].addr;
+                gSpuEntryTable[i].size = gSpuEntryTable[j].size;
+                gSpuEntryTable[j].addr = a;
+                gSpuEntryTable[j].size = b;
             }
         }
     }
-    for (i = 0; i <= D_8009EF08; i++) {
-        if (D_8009EF0C[i].addr & 0x40000000) break;
-        if (D_8009EF0C[i].addr == 0x2fffffff) {
-            D_8009EF0C[i].addr = D_8009EF0C[D_8009EF08].addr;
-            D_8009EF0C[i].size = D_8009EF0C[D_8009EF08].size;
-            D_8009EF08 = i;
+    for (i = 0; i <= gTableCursor; i++) {
+        if (gSpuEntryTable[i].addr & 0x40000000) break;
+        if (gSpuEntryTable[i].addr == 0x2fffffff) {
+            gSpuEntryTable[i].addr = gSpuEntryTable[gTableCursor].addr;
+            gSpuEntryTable[i].size = gSpuEntryTable[gTableCursor].size;
+            gTableCursor = i;
             break;
         }
     }
-    for (i = D_8009EF08 - 1; i >= 0; i--) {
-        if (!(D_8009EF0C[i].addr & 0x80000000)) break;
-        D_8009EF0C[i].addr = (D_8009EF0C[i].addr & 0x0fffffff) | 0x40000000;
-        size = D_8009EF0C[D_8009EF08].size;
-        D_8009EF08 = i;
-        D_8009EF0C[i].size += size;
+    for (i = gTableCursor - 1; i >= 0; i--) {
+        if (!(gSpuEntryTable[i].addr & 0x80000000)) break;
+        gSpuEntryTable[i].addr = (gSpuEntryTable[i].addr & 0x0fffffff) | 0x40000000;
+        size = gSpuEntryTable[gTableCursor].size;
+        gTableCursor = i;
+        gSpuEntryTable[i].size += size;
     }
 }

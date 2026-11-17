@@ -9,7 +9,7 @@ struct Entity {
 extern u8 gScriptVmDisabled __asm__("D_8009F840");
 extern s32 gOperandStack[] __asm__("D_800A3320");
 extern s32 *gVmCountdowns __asm__("D_8009F9A4");
-extern s32 *D_8009F9F8;
+extern s32 *gOpcodeTable __asm__("D_8009F9F8");
 extern s32 *gGameSession __asm__("D_8009FA94");
 extern s32 *D_8009FAD4;
 extern s8 D_800A8540[];
@@ -295,7 +295,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
         case 11:
             if (a >= 0) {
                 a = a % 32;
-                a = D_8009F9F8[a];
+                a = gOpcodeTable[a];
             } else {
                 b = func_80019668();
                 op = b >> 31;

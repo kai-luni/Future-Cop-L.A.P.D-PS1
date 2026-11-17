@@ -5,7 +5,7 @@ extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
-extern s32 D_8009FA30;
+extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u8 D_8009F690;
@@ -17,7 +17,7 @@ extern void *gCamera __asm__("D_8009F9E4");
 
 /* Incomplete array types keep these out of small data on the MIPS backend,
    which is why the oracle addresses them with lui/lw instead of ($gp). */
-extern u8 *D_8009F9A0[];
+extern u8 *gMissionWorkingSet[] __asm__("D_8009F9A0");
 extern u8 *D_8009FA58[];
 
 extern void func_8001BFD8(u8 value);
@@ -95,7 +95,7 @@ void func_80028618(void)
     gSceneFrameCounter = 0;
     D_8009F693 = 0;
     gDiscShadeByte = saved;
-    D_8009FA30 = saved - 8;
+    gFrameTickBase = saved - 8;
     D_8009F690 = b;
     D_8009F691 = b;
     D_8009F692 = b;
@@ -132,7 +132,7 @@ frame:
                 break;
             }
             func_80017B60((s32)*(s8 *)(*(u8 **)(*cursor + 0xAC) + 0xAC));
-            position = D_8009F9A0[0];
+            position = gMissionWorkingSet[0];
             if (position != 0) {
                 position += 0x50;
                 camera = (u8 *)gCamera;

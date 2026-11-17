@@ -1,7 +1,7 @@
 // Categories: Graphics > Effects > Quad Batch | Graphics > GTE
 #include "game/types.h"
 
-extern s32 D_8009FAC8;
+extern s32 gFrameSwitch __asm__("D_8009FAC8");
 extern void func_800178DC(void *, void *);
 extern s32 func_80019E70(s16 *, s32);
 extern void func_80010750(void *);
@@ -40,7 +40,7 @@ void func_80042128(u8 *object)
     register u8 *p __asm__("$17");
     register u8 *f __asm__("$16");
 
-    if (!D_8009FAC8) return;
+    if (!gFrameSwitch) return;
     func_800178DC(object + 0x2c, matrix);
     point[0] = matrix[9] >> 4;
     point[1] = matrix[10] >> 4;

@@ -55,7 +55,7 @@ struct Unk6BA50Tgt {
     s32 unk50;
 };
 
-extern struct Unk6BA50Node *D_8009FA40;
+extern struct Unk6BA50Node *gUnitListHead __asm__("D_8009FA40");
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
 extern s32 func_80046C84(s32 id, struct Unk6BA50Obj *obj);
@@ -141,7 +141,7 @@ void func_8006BA50(struct Unk6BA50Obj *obj, s32 idx)
                 if (ctl->unk9C != n->unk08) {
                     ctl->unk98 = 0;
                 } else {
-                    struct Unk6BA50Node *m = D_8009FA40;
+                    struct Unk6BA50Node *m = gUnitListHead;
                     u32 a = n->unk14;
                     u32 b = n->unk16;
                     for (; m != 0; m = m->next) {

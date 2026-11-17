@@ -105,9 +105,9 @@ struct Arg1 {
     s16 fieldC0;
 };
 
-extern struct UnkAD08 D_8009AD08[];
+extern struct UnkAD08 gViewPresetTable[] __asm__("D_8009AD08");
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
-extern u8 D_8009AEC4[];
+extern u8 gPresetEntryTable[] __asm__("D_8009AEC4");
 
 extern s32 func_800564A8(s16 pitch);
 extern s32 func_80066F78(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3);
@@ -187,7 +187,7 @@ void func_800573A4(struct Arg0 *arg0, struct Arg1 *arg1)
     s32 id;
     u32 heading;
 
-    offset = D_8009AD08;
+    offset = gViewPresetTable;
     if (offset[0].distance < 0) {
         s32 *p;
         i = 0;
@@ -266,7 +266,7 @@ void func_800573A4(struct Arg0 *arg0, struct Arg1 *arg1)
     entity->fieldA7 = 1;
     *(s16 *)((u8 *)entity + 0xAA) = 0;
 
-    offset = &D_8009AD08[(*(struct UnkAEC4 **)D_8009AEC4)->index];
+    offset = &gViewPresetTable[(*(struct UnkAEC4 **)gPresetEntryTable)->index];
 
     func_8005612C(&arg1->position, arg1->fieldB0,
                   arg1->fieldB0 + offset->angle, offset->pitch,

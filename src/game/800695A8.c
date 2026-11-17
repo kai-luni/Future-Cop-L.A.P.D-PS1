@@ -13,7 +13,7 @@ struct Map {
 
 extern struct Map *gTileMapTable __asm__("D_8009F80C");
 extern s8 **gTileBlockTable __asm__("D_8009F808");
-extern s32 D_800A2940[];
+extern s32 gCellDataOutput[] __asm__("D_800A2940");
 extern s8 *func_80017EBC(s32, s32);
 extern void func_800181D4(s8 *);
 
@@ -274,8 +274,8 @@ void func_800695A8(void)
         } while (x < H);
     }
     func_800181D4(buf);
-    D_800A2940[3] = (s32)out;
-    D_800A2940[0] = ((gTileMapTable->border - 1) << 17) + 0x2000;
-    D_800A2940[1] = W;
-    D_800A2940[2] = H - 2;
+    gCellDataOutput[3] = (s32)out;
+    gCellDataOutput[0] = ((gTileMapTable->border - 1) << 17) + 0x2000;
+    gCellDataOutput[1] = W;
+    gCellDataOutput[2] = H - 2;
 }

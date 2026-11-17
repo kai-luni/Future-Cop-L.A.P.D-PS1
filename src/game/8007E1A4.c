@@ -12,7 +12,7 @@ struct E8007E1A4 {
     u8 unk0E[6];
 };
 
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F8BC;
 extern struct E8007E1A4 gLoadoutTable[] __asm__("D_8009C0A8");
@@ -76,7 +76,7 @@ void func_8007E1A4(s32 mode, s32 x, s32 y, s32 color, s32 idx)
     s32 a;
     u8 buf[16];
 
-    t = D_8009F468[gActivePlayerIndex];
+    t = gFontBankTable[gActivePlayerIndex];
     a = t - 1;
     b = idx - 1;
     if (gActivePlayerIndex == 1) {

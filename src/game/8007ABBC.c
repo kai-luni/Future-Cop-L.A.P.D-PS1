@@ -10,7 +10,7 @@ struct FontEntry {
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 *D_8009F878;
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 D_800A6FE0[];
 extern u8 D_800A3928[];
@@ -158,7 +158,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
             font = func_80048E88();
             fontUnk8 = font->unk8;
             step = fontUnk8;
-            if (D_8009F468[5] == 1) {
+            if (gFontBankTable[5] == 1) {
                 step++;
             }
             font = func_80048E88();

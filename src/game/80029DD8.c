@@ -1,9 +1,9 @@
 // Categories: Platform > Streaming Audio | Game Engine > Event Queue
 #include "game/types.h"
 
-extern u8 D_8009F69C;
-extern u8 D_8009F6B8;
-extern u8 D_8009F6C0;
+extern u8 gRegisterGuard __asm__("D_8009F69C");
+extern u8 gBitFieldState __asm__("D_8009F6B8");
+extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern s32 D_8009F6C4;
 
 extern void func_80023E84(void);
@@ -34,12 +34,12 @@ void func_80029DD8(void)
 {
     u8 flag;
 
-    if (D_8009F69C == 0) {
-        D_8009F69C = 1;
+    if (gRegisterGuard == 0) {
+        gRegisterGuard = 1;
         func_80023E84();
-        flag = D_8009F6B8;
+        flag = gBitFieldState;
         D_8009F6C4 = 0;
-        D_8009F6C0 = 0;
-        D_8009F6B8 = (flag & 0xDF) | 0x8;
+        gLatchFlag = 0;
+        gBitFieldState = (flag & 0xDF) | 0x8;
     }
 }

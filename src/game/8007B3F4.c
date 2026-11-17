@@ -13,7 +13,7 @@ typedef struct {
     void *unk24;
 } Unk8009F468;
 
-extern Unk8009F468 *D_8009F468;
+extern Unk8009F468 *gFontBankTable __asm__("D_8009F468");
 extern u8 D_8009FA10;
 extern Unk8009FA94 *gGameSession __asm__("D_8009FA94");
 extern u8 D_800A3808[];
@@ -45,7 +45,7 @@ void func_8007B3F4(void)
 {
     Unk8009FA94 *g;
 
-    D_8009F468->unk24 = D_800A3808;
+    gFontBankTable->unk24 = D_800A3808;
     if (D_8009FA10 != 0) {
         g = gGameSession;
         if (g->unk5C == 0 || g->unk0C == 1) {

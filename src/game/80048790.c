@@ -1,7 +1,7 @@
 // Categories: Graphics > HUD | Game Engine > State Machine
 #include "game/types.h"
 
-extern s32 D_8009FAB8;
+extern s32 gHudMode2 __asm__("D_8009FAB8");
 extern s32 gOverlayTimer __asm__("D_8009F760");
 
 /**
@@ -30,7 +30,7 @@ extern s32 gOverlayTimer __asm__("D_8009F760");
  */
 u8 func_80048790(void)
 {
-    switch (D_8009FAB8) {
+    switch (gHudMode2) {
     case 0:
         return 0;
     case 2:

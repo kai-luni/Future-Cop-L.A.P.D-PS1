@@ -111,7 +111,7 @@ typedef struct Obj {
 } Obj;
 
 register u8 *gp_base asm("$28");
-#define D_8009F7C8 (*(s32 *)(gp_base + 0x7C8))
+#define gClipLimitOffset (*(s32 *)(gp_base + 0x7C8))
 
 extern s32 func_80017B88(void);
 extern s32 func_80019668(void);
@@ -250,7 +250,7 @@ s32 func_8004B5F8(Obj *obj, s32 arg1)
     }
     {
         register s32 counter asm("$3");
-        counter = D_8009F7C8;
+        counter = gClipLimitOffset;
         if (counter + n > 200) {
             register s32 max asm("$2");
             max = 200;
@@ -472,7 +472,7 @@ scan_test:
                 register Obj *call_obj asm("$4");
                 call_obj = obj;
                 asm("" : : "r"(call_obj));
-                D_8009F7C8++;
+                gClipLimitOffset++;
                 asm volatile("" ::: "memory");
                 func_8004AAC0(call_obj, node);
             }

@@ -9,7 +9,7 @@ struct Entity {
     u16 unk14;
 };
 
-extern struct Entity *D_8009FA40;
+extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 
 extern void func_80031BEC(s32 id, s32 kind, s32 mode);
 extern void func_8003FD6C();
@@ -53,7 +53,7 @@ void func_8004DC64(s32 arg0, s32 kind, s32 value)
         return;
     }
 
-    for (entity = D_8009FA40; entity != 0; entity = entity->next) {
+    for (entity = gUnitListHead; entity != 0; entity = entity->next) {
         if (entity->unk14 == arg0 && entity->id != 0) {
             func_8004DA84(entity, kind, value, 1);
         }

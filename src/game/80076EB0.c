@@ -6,7 +6,7 @@ extern u32 D_8009EA08;
 extern u32 *gGameSession __asm__("D_8009FA94");
 extern u32 *D_8009FAD4;
 extern u32 *gVmCountdowns __asm__("D_8009F9A4");
-extern u32 *D_8009F9F8;
+extern u32 *gOpcodeTable __asm__("D_8009F9F8");
 extern u8 D_8009B2DC[];
 
 extern void func_8008CA30(u32 arg0, u32 arg1);
@@ -84,7 +84,7 @@ s32 func_80076EB0(void)
 
     D_8009FAD4 = func_8001E240(0x190, 3);
     gVmCountdowns = func_8001E240(0x80, 3);
-    D_8009F9F8 = func_8001E240(0x80, 3);
+    gOpcodeTable = func_8001E240(0x80, 3);
 
     func_80017BE8();
     func_8008DEA0();

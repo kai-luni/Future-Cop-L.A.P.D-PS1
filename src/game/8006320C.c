@@ -8,7 +8,7 @@ typedef struct { Model *model; s32 matrix[12]; char pad[0x12]; s16 radius, index
 typedef struct { char pad[0x24]; u32 flags; Transform transform; } Object;
 typedef struct { Object *obj; u8 id; char pad[3]; } Entry;
 extern s32 gQueueCount __asm__("D_8009F838");
-extern Entry D_800A31A0[];
+extern Entry gObjectKeyTable[] __asm__("D_800A31A0");
 extern s32 func_8001A750(s32 *, s32 *);
 extern void func_80018860(void *, void *);
 extern void func_8001A970(void *, void *, void *);
@@ -48,7 +48,7 @@ Object *func_8006320C(Vec *pos, Vec *out, s32 *height, u8 *id)
     s16 *box;
     i = 0;
     if (i < gQueueCount) {
-      entry = D_800A31A0;
+      entry = gObjectKeyTable;
       do {
         obj = entry->obj;
         if (!(obj->flags & 0x20000000)) goto next;

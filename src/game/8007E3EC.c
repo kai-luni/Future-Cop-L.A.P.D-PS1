@@ -1,7 +1,7 @@
 // Categories: Gameplay > State Transition
 #include "game/types.h"
 
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern volatile s32 D_8009F8E0;
 extern volatile s32 D_8009F8E4;
@@ -55,7 +55,7 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
         if (a0 != 3) {
             return;
         }
-        if (D_8009F468[5] == 2) {
+        if (gFontBankTable[5] == 2) {
             idx = gActivePlayerIndex;
             __asm__ volatile("" ::: "memory");
             idx[D_8009F8E0_arr] = 1;
@@ -88,9 +88,9 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             gScreenState = 5;
         }
     } else {
-        if (D_8009F468[5] == 2) {
+        if (gFontBankTable[5] == 2) {
             s32 i = gActivePlayerIndex;
-            if (D_8009F468[i] != want) {
+            if (gFontBankTable[i] != want) {
                 off = i << 2;
                 *(s32 *)((u8 *)D_8009F8E0_arr + off) = 0;
                 if (i == 1) {

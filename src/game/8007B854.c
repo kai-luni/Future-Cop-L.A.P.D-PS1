@@ -20,7 +20,7 @@ typedef struct {
     s32 unk5C;
 } State;
 extern State *gGameSession __asm__("D_8009FA94");
-extern Entry D_8009B4E4[];
+extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F880, D_8009F881, D_8009F882;
@@ -35,14 +35,14 @@ extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern u8 D_800A3628[], D_800A3658[], D_800A3838[];
 extern u8 *gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
-extern u8 *D_8009F468;
+extern u8 *gFontBankTable __asm__("D_8009F468");
 extern void func_80078650(void *, s32);
 extern s32 func_80046C84(s32, s32);
 extern void func_8008CCB0(void *, s32);
 extern s32 func_8008CCA0(void *, void *);
 extern void func_80078B34(s32, s32, s32);
 extern void func_8007B460(s32);
-#define SELECTED (D_8009B4E4[D_8009F884[D_8009F880]])
+#define SELECTED (gWideTextTable[D_8009F884[D_8009F880]])
 
 /**
  * @brief Item handler of the profile-list screen: confirm opens the level list,
@@ -144,7 +144,7 @@ void func_8007B854(s32 arg0)
             if (state->unk5C == 1) {
                 if (state->unkC == 1) {
                     if (*p == 1) {
-                        sel = D_8009B4E4;
+                        sel = gWideTextTable;
                         scaled = D_8009F884[D_8009F880] * 36;
                         __asm__("addu %0, %1, %2" : "=r"(ep) : "r"(scaled), "r"(sel));
                         value = ep->unk1F;
@@ -230,7 +230,7 @@ SELECTION_DONE:;
         }
         break;
     case 0:
-        if (D_8009F468 == D_800A3838) {
+        if (gFontBankTable == D_800A3838) {
             func_80078B34(0x44C, 0, 0);
             func_80078B34(0x10CC, 1, 0);
             func_8007B460(gActivePlayerIndex);

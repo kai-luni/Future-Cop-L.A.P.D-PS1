@@ -21,7 +21,7 @@ struct StructDDF0 {
 };
 
 extern volatile struct QueueEntry gGpuDmaQueue[] __asm__("D_800A9450");
-extern struct StructDDF0 D_8009DDF0;
+extern struct StructDDF0 gDebugTagBytes __asm__("D_8009DDF0");
 extern volatile s32 gGpuJobHead __asm__("D_8009DEE8");
 extern volatile s32 gGpuJobTail __asm__("D_8009DEEC");
 extern u32 gDispatchSavedIrqMask __asm__("D_8009DEF0");
@@ -76,7 +76,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
     }
 
     gDispatchSavedIrqMask = func_800915FC(0);
-    ddf0 = &D_8009DDF0;
+    ddf0 = &gDebugTagBytes;
     __asm__("" : "=r"(ddf0) : "0"(ddf0));
     ddf0->unk8 = 1;
 

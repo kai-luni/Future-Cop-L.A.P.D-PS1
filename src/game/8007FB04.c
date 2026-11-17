@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
-extern u8 *D_8009F468;
+extern u8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gStillRunningState __asm__("D_8009F464");
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
@@ -82,9 +82,9 @@ s32 func_8007FB04(void)
 
     state = func_800207B4(0);
     if (state != *(s32 *)(gSaveProfileImage + 0x208)) {
-        if (D_8009F468 != 0 &&
-            D_8009F468 != D_800A36E8 &&
-            D_8009F468 != D_800A36B8) {
+        if (gFontBankTable != 0 &&
+            gFontBankTable != D_800A36E8 &&
+            gFontBankTable != D_800A36B8) {
             func_80078740();
         }
 
@@ -174,7 +174,7 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x201] = 0;
                 gSaveProfileImage[0x207] = 0;
                 func_80078650(D_800A3718, 1);
-                D_8009F468[0] = 1;
+                gFontBankTable[0] = 1;
                 D_8009F8BD = 1;
                 D_8009F8BE = 1;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;

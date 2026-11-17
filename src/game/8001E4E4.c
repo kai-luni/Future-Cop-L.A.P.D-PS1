@@ -1,7 +1,7 @@
 // Categories: Input > Controller Init | Platform > Device Init
 #include "game/types.h"
 
-extern s32 D_8009FAD8;
+extern s32 gHookInstallFlag __asm__("D_8009FAD8");
 extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 
 extern void func_80091480(void);
@@ -39,7 +39,7 @@ s32 func_8001E4E4(void)
     func_80091480();
     func_80095878();
     func_800200A8();
-    D_8009FAD8 = 0;
+    gHookInstallFlag = 0;
     func_8001E87C();
     gFrameCallbackEnabled = 0;
     for (port = 0; port < 2; port++) {

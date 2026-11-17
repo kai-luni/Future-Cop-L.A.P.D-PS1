@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern s8 D_8009F904;
+extern s8 gSnapshotResult __asm__("D_8009F904");
 extern s8 D_8009F900[];
 extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 extern u8 D_8009F902[];
@@ -46,7 +46,7 @@ void func_8007C80C(s32 action)
     s32 port;
 
     port = gActivePlayerIndex;
-    if (port == D_8009F904) {
+    if (port == gSnapshotResult) {
         switch (action) {
         case 3:
             func_8007BFCC(port, D_8009F900[port]);

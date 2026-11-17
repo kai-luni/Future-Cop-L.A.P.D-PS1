@@ -8,14 +8,14 @@ typedef struct {
     s32 unk5C;
 } Unk8009FA94;
 
-extern u8 D_8009F904;
+extern u8 gSnapshotResult __asm__("D_8009F904");
 extern s32 D_8009F908;
 extern s32 D_8009F90C;
 extern s32 D_8009F910;
 extern volatile s32 D_8009F914;
-extern s32 D_8009F918;
-extern volatile s32 D_8009F91C;
-extern volatile s32 D_8009F920;
+extern s32 gTestResultFlag __asm__("D_8009F918");
+extern volatile s32 gSnapshotPointer __asm__("D_8009F91C");
+extern volatile s32 gPreviewTrackId __asm__("D_8009F920");
 extern Unk8009FA94 *gGameSession[2] __asm__("D_8009FA94");
 extern u16 gSoundWidgetLabel[] __asm__("D_8009BABE");
 extern u8 D_800A377B[];
@@ -52,16 +52,16 @@ void func_8007D18C(void)
     register Unk8009FA94 *p __asm__("$3");
     s32 tmp;
 
-    D_8009F918 = 0;
+    gTestResultFlag = 0;
     D_8009F908 = func_8004522C();
     D_8009F90C = func_80045288();
     D_8009F910 = func_800452C8();
     tmp = func_800451E0();
     D_8009F914 = tmp;
-    D_8009F91C = 0;
-    D_8009F920 = 0x47;
+    gSnapshotPointer = 0;
+    gPreviewTrackId = 0x47;
     gSoundWidgetLabel[0] = (tmp != 0) ? 0x100E : 0x1018;
-    D_8009F904 = 0;
+    gSnapshotResult = 0;
     if ((u8)func_8002A58C() == 0) {
         func_8002A16C(0);
     }

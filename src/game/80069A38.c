@@ -8,7 +8,7 @@ typedef struct {
     s8 *unkC;
 } Unk800A2940;
 
-extern Unk800A2940 D_800A2940;
+extern Unk800A2940 gCellDataOutput __asm__("D_800A2940");
 
 /**
  * @brief Bilinear sample of a byte heightfield at a 16.14 fixed-point position.
@@ -40,7 +40,7 @@ extern Unk800A2940 D_800A2940;
  */
 s32 func_80069A38(s32 *arg0)
 {
-    register Unk800A2940 *desc __asm__("$6") = &D_800A2940;
+    register Unk800A2940 *desc __asm__("$6") = &gCellDataOutput;
     register s32 origin __asm__("$2");
     register s32 width __asm__("$7");
     register s32 dy __asm__("$8");

@@ -33,9 +33,10 @@ struct Menu {
     struct Item *items;
 };
 extern s32 gStillRunningState __asm__("D_8009F464");
-extern struct Menu *D_8009F468;
+extern struct Menu *gFontBankTable __asm__("D_8009F468");
 extern u8 D_8009F8CC, D_8009F3F2, D_8009F3F3, D_8009F45A, D_8009F8BE;
-extern s32 D_8009F870, D_8009F8B0, D_8009F8B4;
+extern s32 D_8009F8B0, D_8009F8B4;
+extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s32 prev_buttons[2] __asm__("D_8009F8B0");
 extern u32 D_8009F8D0, D_8009F8D4;
@@ -44,7 +45,7 @@ extern s32 D_8009F890[], D_8009F898[], D_8009F8A0[], D_8009F8A8[];
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u32 D_8009B324[];
 extern struct Menu D_800A3808;
-extern s16 D_800A3578[2][4];
+extern s16 gSlotRecordTable[2][4] __asm__("D_800A3578");
 extern struct InputAction D_800A3588[], D_800A3598[], D_800A35A8[], D_800A35B8[], D_800A35C8[], D_800A35D8[], D_800A35E8[];
 extern u32 func_8001EF8C(u32);
 extern void func_80077990(void), func_800788B4(void), func_80077AD4(s32);
@@ -112,13 +113,13 @@ void func_80078DD0(void)
     if (gStillRunningState != 1) {
         changed = count = step = first = 0;
         if (!D_8009F8CC) { func_80077990(); D_8009F8CC = 1; }
-        if (D_8009F468 == &D_800A3808) {
+        if (gFontBankTable == &D_800A3808) {
             for (j = 0; j < 2; j++) if (buttons[j] != prev_buttons[j]) goto reset_timer;
         } else {
 reset_timer:
-            D_8009F870 = gFrameTickCounter + 9000;
+            gIdleDeadline = gFrameTickCounter + 9000;
         }
-        if (gFrameTickCounter > D_8009F870) {
+        if (gFrameTickCounter > gIdleDeadline) {
             u8 active = 0;
             if (D_8009F3F2) active = func_80078C88();
             if (!active) {
@@ -133,15 +134,15 @@ reset_timer:
         do {
             j = 0;
             do {
-                *(s16 *)((u8 *)D_800A3578 + i * 8 + j * 4) = 0;
+                *(s16 *)((u8 *)gSlotRecordTable + i * 8 + j * 4) = 0;
                 j++;
             } while (j < 2);
             i++;
         } while (i < 2);
         func_800788B4();
-        if (D_8009F468->filter) {
-            D_8009F8D0 = D_8009F468->filter(D_8009F8D0, 0);
-            D_8009F8D4 = (*(u32 (**)(u32, s32))((u8 *)D_8009F468 + 12))(D_8009F8D4, 1);
+        if (gFontBankTable->filter) {
+            D_8009F8D0 = gFontBankTable->filter(D_8009F8D0, 0);
+            D_8009F8D4 = (*(u32 (**)(u32, s32))((u8 *)gFontBankTable + 12))(D_8009F8D4, 1);
         }
         for (j = 0; j < 2; j++) {
             u32 *btns;
@@ -160,7 +161,7 @@ reset_timer:
             accept[j] = 0;
             back[j] = 0;
         }
-        switch (D_8009F468->mode) {
+        switch (gFontBankTable->mode) {
         case 0: first = 0; count = 2; step = first; break;
         case 1: first = 0; count = 1; step = first; break;
         case 2: first = 0; count = 2; step = 1; break;
@@ -171,7 +172,7 @@ reset_timer:
             for (j = first, idx = first; j < count; j++, idx += step) {
                 gActivePlayerIndex = j;
                 if (!D_800A35C8[j].phase) accept[idx] = 1;
-                if (D_8009F468->extra && !D_800A35E8[j].phase) accept[idx] = 1;
+                if (gFontBankTable->extra && !D_800A35E8[j].phase) accept[idx] = 1;
                 if (!D_800A35D8[j].phase) back[idx] = 1;
                 {
                     register u32 arr __asm__("$4");
@@ -187,12 +188,12 @@ reset_timer:
             for (i = 0; i < count && !changed; i++) {
                 gActivePlayerIndex = i;
                 if (accept[i]) {
-                    struct Item *item = &D_8009F468->items[D_8009F468->selection[i]];
-                    if (D_8009F468 != &D_800A38F8 || D_8009F46C) func_80046C84(0x48, 0);
+                    struct Item *item = &gFontBankTable->items[gFontBankTable->selection[i]];
+                    if (gFontBankTable != &D_800A38F8 || D_8009F46C) func_80046C84(0x48, 0);
                     if (item->handler) {
-                        menu = D_8009F468;
+                        menu = gFontBankTable;
                         item->handler(3, 0, 0, 0, menu->selection[i]);
-                        if (D_8009F468 != menu) { changed = 1; continue; }
+                        if (gFontBankTable != menu) { changed = 1; continue; }
                     }
                     if (item->next) {
                         if (item->next == (struct Menu *)-1) {
@@ -214,13 +215,13 @@ reset_timer:
                         else if (*depth == 1) D_8009F8BD = 1;
                         func_80046C84(0x49, 0);
                         changed = 1;
-                        if (D_8009F468 == &D_800A36B8) func_8008227C();
+                        if (gFontBankTable == &D_800A36B8) func_8008227C();
                         continue;
                     }
-                    menu = D_8009F468;
+                    menu = gFontBankTable;
                     if (menu->cancel) {
                         menu->cancel();
-                        if (D_8009F468 != menu) { changed = 1; continue; }
+                        if (gFontBankTable != menu) { changed = 1; continue; }
                     } else if (func_80078740()) {
                         func_80046C84(0x49, 0);
                         changed = 1; continue;
@@ -230,31 +231,31 @@ reset_timer:
                     u32 cbase;
                     __asm__("lui %0,%%hi(D_8009F8C0)\n\taddiu %0,%0,%%lo(D_8009F8C0)" : "=r"(cbase) : "r"(i));
                     if (!*((s8 *)i + cbase)) {
-                        oldsel = D_8009F468->selection[i];
-                        func_800787D8((s8)(D_8009F468->selection[i] - 1), -1, (s8)i);
-                        if (oldsel != D_8009F468->selection[i]) func_80046C84(0x46, 0);
+                        oldsel = gFontBankTable->selection[i];
+                        func_800787D8((s8)(gFontBankTable->selection[i] - 1), -1, (s8)i);
+                        if (oldsel != gFontBankTable->selection[i]) func_80046C84(0x46, 0);
                     }
-                    if (D_8009F468->items[D_8009F468->selection[i]].handler)
-                        D_8009F468->items[D_8009F468->selection[i]].handler(4, 0, 0, 0, D_8009F468->selection[i]);
+                    if (gFontBankTable->items[gFontBankTable->selection[i]].handler)
+                        gFontBankTable->items[gFontBankTable->selection[i]].handler(4, 0, 0, 0, gFontBankTable->selection[i]);
                 }
                 if (down[i]) {
                     u32 cbase;
                     __asm__("lui %0,%%hi(D_8009F8C0)\n\taddiu %0,%0,%%lo(D_8009F8C0)" : "=r"(cbase) : "r"(i));
                     if (!*((s8 *)i + cbase)) {
-                        oldsel = D_8009F468->selection[i];
-                        func_800787D8((s8)(D_8009F468->selection[i] + 1), 1, (s8)i);
-                        if (oldsel != D_8009F468->selection[i]) func_80046C84(0x46, 0);
+                        oldsel = gFontBankTable->selection[i];
+                        func_800787D8((s8)(gFontBankTable->selection[i] + 1), 1, (s8)i);
+                        if (oldsel != gFontBankTable->selection[i]) func_80046C84(0x46, 0);
                     }
-                    if (D_8009F468->items[D_8009F468->selection[i]].handler)
-                        D_8009F468->items[D_8009F468->selection[i]].handler(5, 0, 0, 0, D_8009F468->selection[i]);
+                    if (gFontBankTable->items[gFontBankTable->selection[i]].handler)
+                        gFontBankTable->items[gFontBankTable->selection[i]].handler(5, 0, 0, 0, gFontBankTable->selection[i]);
                 }
                 if (left[i]) {
-                    if (D_8009F468->items[D_8009F468->selection[i]].handler)
-                        D_8009F468->items[D_8009F468->selection[i]].handler(2, 0, 0, 0, D_8009F468->selection[i]);
+                    if (gFontBankTable->items[gFontBankTable->selection[i]].handler)
+                        gFontBankTable->items[gFontBankTable->selection[i]].handler(2, 0, 0, 0, gFontBankTable->selection[i]);
                 }
                 if (right[i]) {
-                    if (D_8009F468->items[D_8009F468->selection[i]].handler)
-                        D_8009F468->items[D_8009F468->selection[i]].handler(1, 0, 0, 0, D_8009F468->selection[i]);
+                    if (gFontBankTable->items[gFontBankTable->selection[i]].handler)
+                        gFontBankTable->items[gFontBankTable->selection[i]].handler(1, 0, 0, 0, gFontBankTable->selection[i]);
                 }
             }
         }
@@ -263,26 +264,26 @@ reset_timer:
                 s32 menu_y;
                 gActivePlayerIndex = i;
                 n = 0;
-                for (j = 0; j < D_8009F468->item_count; j++) {
-                    if (D_8009F468->items[j].player == i && D_8009F468->items[j].enabled) n++;
+                for (j = 0; j < gFontBankTable->item_count; j++) {
+                    if (gFontBankTable->items[j].player == i && gFontBankTable->items[j].enabled) n++;
                 }
                 {
                     s32 h = (n << 2) + n;
                     width = h << 1;
                 }
-                menu_x = D_8009F468->x;
-                menu_y = D_8009F468->y;
+                menu_x = gFontBankTable->x;
+                menu_y = gFontBankTable->y;
                 if (menu_y + width >= 210) menu_y += 210 - (menu_y + width);
-                if (i == 0 && D_8009F468->width) {
-                    func_8001C214(0, (menu_x - 6) * 2, (menu_y - 5) * 2, D_8009F468->width * 2, (width + 10) * 2, 1);
+                if (i == 0 && gFontBankTable->width) {
+                    func_8001C214(0, (menu_x - 6) * 2, (menu_y - 5) * 2, gFontBankTable->width * 2, (width + 10) * 2, 1);
                 }
                 shown = menu_y;
-                for (j = 0; j < D_8009F468->item_count; j++) {
-                    if (D_8009F468->items[j].player != i) continue;
-                    item = &D_8009F468->items[j];
+                for (j = 0; j < gFontBankTable->item_count; j++) {
+                    if (gFontBankTable->items[j].player != i) continue;
+                    item = &gFontBankTable->items[j];
                     if (item->icon != -1) {
                         color = 0x80;
-                        if (j == D_8009F468->selection[i] && item->enabled) {
+                        if (j == gFontBankTable->selection[i] && item->enabled) {
                             if (gPlayerMenuDepth[i]) color = D_8009F3FB + 0x80;
                             else {
                                 s32 frame = gPaletteCycleCounter;
@@ -294,7 +295,7 @@ reset_timer:
                         y = item->y;
                         func_80082AB0(item->icon, x, y, -1, -1, 10, color, item->flags & 7, item->flags & 0x38);
                     } else if (item->text || item->unk16) {
-                        if (j == D_8009F468->selection[i] && item->enabled) {
+                        if (j == gFontBankTable->selection[i] && item->enabled) {
                             u8 *rgb2;
                             color = 0x11;
                             if (gPlayerMenuDepth[i]) rgb2 = D_8009B3E0;
@@ -319,7 +320,7 @@ reset_timer:
         }
         for (i = 0; i < count; i++) {
             gActivePlayerIndex = i;
-            if (D_8009F468->update) D_8009F468->update(i);
+            if (gFontBankTable->update) gFontBankTable->update(i);
         }
         func_800826A0();
         if (gDeferredTransition == -1) func_80078B98();
@@ -356,7 +357,7 @@ reset_timer:
                 else func_80078650(&D_800A37A8, 1);
                 break;
             case 5:
-                if (D_8009F468 == &D_800A3808) {
+                if (gFontBankTable == &D_800A3808) {
                     if (D_8009F8C4) {
                         if (gGameSession->type == 2) D_8009B8B8[0] = &D_800A37D8;
                         else D_8009B8B8[0] = &D_800A37A8;

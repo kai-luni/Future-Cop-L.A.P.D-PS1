@@ -21,7 +21,7 @@ extern volatile s32 D_8009F8E0;
 extern volatile s32 D_8009F8E4;
 extern volatile s32 gPlayerSelection __asm__("D_8009F8F0");
 extern s32 D_8009F8F4;
-extern Unk7B004Node *D_8009F468;
+extern Unk7B004Node *gFontBankTable __asm__("D_8009F468");
 extern u8 D_8009BB34[];
 extern Unk7B004Node D_800A3688;
 extern u8 D_800A37AB[];
@@ -67,7 +67,7 @@ void func_8007B004(void)
     *(s16 *)(base + 0x86) = 0x64;
     D_8009F8F4 = v98;
     __asm__ volatile("" ::: "memory");
-    node = D_8009F468;
+    node = gFontBankTable;
     if (node->unk24 == &D_800A3688) {
         node->unk24 = node->unk24->unk24;
     }

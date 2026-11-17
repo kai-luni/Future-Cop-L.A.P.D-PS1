@@ -11,7 +11,7 @@ typedef struct {
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 *gGameSession __asm__("D_8009FA94");
 extern u8 D_800A6FE0[];
-extern Entry D_8009B4E4[];
+extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern u8 D_800120A4[];
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
@@ -132,9 +132,9 @@ void func_80080B70(void)
     S(0x46C) = gPlayerWrapLimit;
     S(0x46D) = gPausedMenuFlag;
     S(0x46F) = gLockedMenuFlag;
-    S(0x46E) = D_8009B4E4[gFrontEndListTable[4]].unk1F;
+    S(0x46E) = gWideTextTable[gFrontEndListTable[4]].unk1F;
     for (i = 0; i < 4; i++) {
-        S(0x464 + i) = D_8009B4E4[gFrontEndListTable[i]].unk1F;
+        S(0x464 + i) = gWideTextTable[gFrontEndListTable[i]].unk1F;
     }
     S(0x458) = D_8009F458;
     D_8009F3F1 = D_8009F458;
@@ -150,11 +150,11 @@ void func_80080B70(void)
     }
     D_8009F8BD = 0;
     D_8009F8BE = 0;
-    D_8009B4E4[gFrontEndListTable[0]].unk20 = D_8009B4E4[gFrontEndListTable[0]].unk1F;
-    D_8009B4E4[gFrontEndListTable[1]].unk20 = D_8009B4E4[gFrontEndListTable[1]].unk1F;
-    D_8009B4E4[gFrontEndListTable[2]].unk20 = D_8009B4E4[gFrontEndListTable[2]].unk1F;
-    D_8009B4E4[gFrontEndListTable[3]].unk20 = D_8009B4E4[gFrontEndListTable[3]].unk1F;
-    D_8009B4E4[gFrontEndListTable[4]].unk20 = D_8009B4E4[gFrontEndListTable[4]].unk1F;
+    gWideTextTable[gFrontEndListTable[0]].unk20 = gWideTextTable[gFrontEndListTable[0]].unk1F;
+    gWideTextTable[gFrontEndListTable[1]].unk20 = gWideTextTable[gFrontEndListTable[1]].unk1F;
+    gWideTextTable[gFrontEndListTable[2]].unk20 = gWideTextTable[gFrontEndListTable[2]].unk1F;
+    gWideTextTable[gFrontEndListTable[3]].unk20 = gWideTextTable[gFrontEndListTable[3]].unk1F;
+    gWideTextTable[gFrontEndListTable[4]].unk20 = gWideTextTable[gFrontEndListTable[4]].unk1F;
     for (;;) {
         if (func_80020FDC(D_800120A4, gSaveProfileImage + 0x20C, 0x678, 0) != 0) {
             break;

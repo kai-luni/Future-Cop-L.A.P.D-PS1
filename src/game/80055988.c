@@ -58,7 +58,7 @@ struct UnkS2_55988 {
     s16 unkF2;
 };
 
-extern struct Entity *D_8009F9A0;
+extern struct Entity *gMissionWorkingSet __asm__("D_8009F9A0");
 
 extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction, u8 flags);
 extern s32 func_80046C84(s32 id, s32 arg1);
@@ -174,7 +174,7 @@ void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
 
     if ((flags & 0x2800000) == 0x2800000) {
         if (state->unkC0 == 0) {
-            if (D_8009F9A0 == 0) {
+            if (gMissionWorkingSet == 0) {
                 if (obj->state->unkDE == 0) {
                     if (obj->state->unk146 != 0) {
                         func_80046C84(0x2A, (s32)obj);
@@ -248,13 +248,13 @@ void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
         state->flags &= 0x54C0000;
     }
 
-    if (D_8009F9A0 == 0) {
+    if (gMissionWorkingSet == 0) {
         if (state->unk31A <= 0 && obj->state->unkDE == 0) {
             goto skip_mask;
         }
     } else {
         if (state->flags & 0x80000) {
-            func_8004D958(D_8009F9A0);
+            func_8004D958(gMissionWorkingSet);
             state->unk320 = 3;
         }
     }

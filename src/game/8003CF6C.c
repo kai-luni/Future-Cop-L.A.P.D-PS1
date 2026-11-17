@@ -23,7 +23,7 @@ struct Node8003CF6C {
     u8 unk42;
 };
 
-extern struct Node8003CF6C *D_8009F320;
+extern struct Node8003CF6C *gNodeListHead __asm__("D_8009F320");
 
 extern s32 func_8001A100(s32 *vector);
 extern void func_80013AA0(s32 low, s32 high);
@@ -57,7 +57,7 @@ void func_8003CF6C(s32 arg0)
 
     origin = (s32 *)arg0;
     flags = 0;
-    for (node = D_8009F320; node != 0; node = node->next) {
+    for (node = gNodeListHead; node != 0; node = node->next) {
         if (node->obj != 0 && (node->flags39 & 2)) {
             vec[0] = node->obj->x - origin[0];
             vec[1] = node->obj->y - origin[1];

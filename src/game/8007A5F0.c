@@ -19,7 +19,7 @@ struct Unk78210Panel {
 extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
 extern volatile s32 gPlayerSelection __asm__("D_8009F8F0");
 extern s32 D_8009F8F4;
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern volatile s32 D_8009F8E0;
 extern s32 D_8009F8E0_arr[];
@@ -65,7 +65,7 @@ void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             return;
         }
         mode = gGameSession;
-        p = D_8009F468;
+        p = gFontBankTable;
         mode->unk08 = gPlayerSelection;
         __asm__ volatile("" ::: "memory");
         mode->unk98 = D_8009F8F4;
@@ -100,7 +100,7 @@ void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
     } else {
         register s8 *tbl __asm__("$2");
         register s32 player __asm__("$4");
-        tbl = D_8009F468;
+        tbl = gFontBankTable;
         player = gActivePlayerIndex;
         if (tbl[player] != a4) {
             register s32 off __asm__("$3") = player << 2;

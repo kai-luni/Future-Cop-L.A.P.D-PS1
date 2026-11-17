@@ -35,7 +35,7 @@ struct FontInfo {
     s16 f04;
 };
 
-extern struct FontEntry D_800A19A0[];
+extern struct FontEntry gGlyphEntryTable[] __asm__("D_800A19A0");
 extern s32 gFontBankCount __asm__("D_8009F364");
 
 extern s32 func_800489EC(unsigned char *value);
@@ -81,7 +81,7 @@ void func_80048A14(s32 arg0, s32 *arg1)
         return;
     }
 
-    e = &D_800A19A0[gFontBankCount];
+    e = &gGlyphEntryTable[gFontBankCount];
     off = src->off1C;
     e->f18 = (s32)arg1;
     e->f02 = (s16)(s8)src->f12;

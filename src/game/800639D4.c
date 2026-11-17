@@ -8,7 +8,7 @@ typedef struct List { s8 count; u8 pad[3]; u32 values[1]; } List;
 extern Section **gTileBlockTable __asm__("D_8009F808");
 extern Chunk *D_8009FA04;
 extern List gTileDefTable __asm__("D_800A6F38");
-extern u8 D_800A2931[];
+extern u8 gSlfxFlagByte[] __asm__("D_800A2931");
 
 /**
  *  @brief Processes section, animation, and effects chunks in a data buffer.
@@ -107,7 +107,7 @@ void func_800639D4(u8 *data, u32 size, s32 id)
             register u32 value __asm__("$4") = chunk->count;
             register s32 i __asm__("$7");
             if ((value >> 28) == 1) {
-                D_800A2931[0] = 1;
+                gSlfxFlagByte[0] = 1;
                 value &= ~0xfc;
             }
             {

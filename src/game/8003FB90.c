@@ -30,8 +30,8 @@ struct UnkFB90Global {
     void *unk10;
 };
 
-extern struct UnkFB90Node *D_800A1070[7];
-extern struct UnkFB90Global *D_8009F30C;
+extern struct UnkFB90Node *gListHeads[7] __asm__("D_800A1070");
+extern struct UnkFB90Global *gNodeCList __asm__("D_8009F30C");
 
 extern void func_8003CA80(void *object);
 extern void func_800181D4(void *object);
@@ -73,7 +73,7 @@ void func_8003FB90(void *object_, s32 kind_)
     kind = kind_;
     previous = 0;
     for (i = 0; i < 7; i++) {
-        node = D_800A1070[i];
+        node = gListHeads[i];
         while (node != 0) {
             if (node->unk20->unk14 == kind &&
                 ((node->unk1C != 0 && node->unk1C->unk38 == 0)
@@ -89,14 +89,14 @@ void func_8003FB90(void *object_, s32 kind_)
         }
     }
 
-    entry = D_8009F30C;
+    entry = gNodeCList;
     while (entry != 0) {
         next = entry->next;
         if (entry->unk10 == object && entry->unk04 == kind) {
             if (previous != 0) {
                 previous->next = next;
             } else {
-                D_8009F30C = next;
+                gNodeCList = next;
             }
             entry->next = 0;
             func_800181D4(entry);

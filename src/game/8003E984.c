@@ -98,7 +98,7 @@ extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Player *D_8009FA58;
 extern struct Player *D_8009FA5C;
-extern void *D_8009F374;
+extern void *gPendingMotion __asm__("D_8009F374");
 extern struct Object *gPendingSpawnList __asm__("D_8009F314");
 
 extern void func_8003DB70(struct Source *, struct Object *, struct Parent *, void *, struct Matrix *, u16 *, s8 *);
@@ -388,7 +388,7 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
 
     if (object->source20->unk2E != 0) {
         if (object->source20->unk30 > 0) {
-            func_800410BC(&data->x, object->source20->unk2E, object->source20->unk30, D_8009F374);
+            func_800410BC(&data->x, object->source20->unk2E, object->source20->unk30, gPendingMotion);
         } else {
             object->func24(9, object, 0, 0);
         }

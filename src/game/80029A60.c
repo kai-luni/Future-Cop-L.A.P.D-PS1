@@ -18,7 +18,7 @@ struct Unk800A0BC0 {
 
 extern struct Unk800A0BC0 gRingBuffer __asm__("D_800A0BC0");
 extern u32 gScreenState __asm__("D_8009FA00");
-extern u8 D_8009F6B8;
+extern u8 gBitFieldState __asm__("D_8009F6B8");
 
 extern void func_80029DD8(void);
 extern void func_80041DC4(struct Unk41DC4 *object, s32 value);
@@ -56,7 +56,7 @@ s32 func_80029A60(s32 arg0, struct Unk41DC4 *arg1, u8 arg2)
         if (gRingBuffer.unk00 > 0) {
             return 0;
         }
-        if ((D_8009F6B8 & 0x70) != 0) {
+        if ((gBitFieldState & 0x70) != 0) {
             return 0;
         }
     }

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gFrameId __asm__("D_8009F9FC");
-extern s32 D_8009FA30;
+extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
@@ -39,7 +39,7 @@ void func_80027E68(void)
     do {
         func_80057864();
         current = gPaletteCycleCounter;
-        diff = current - D_8009FA30;
+        diff = current - gFrameTickBase;
         gDiscShadeByte = current;
     } while (diff < 5);
 
@@ -48,5 +48,5 @@ void func_80027E68(void)
     }
 
     gFrameId = diff;
-    D_8009FA30 = current;
+    gFrameTickBase = current;
 }

@@ -27,11 +27,11 @@ struct Entity {
     s32 unk58;
 };
 
-extern struct Entity *D_8009FA40;
+extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 extern s32 D_8009F7A4;
 extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
 extern struct Pos *D_8009FA58[];
-extern struct Pos *D_8009F9A0[];
+extern struct Pos *gMissionWorkingSet[] __asm__("D_8009F9A0");
 extern struct Entity *gEffectListHead[] __asm__("D_800A8F98");
 extern s32 gCommandListHead[] __asm__("D_800A8F90");
 extern s32 gEffectPoolCapacity[] __asm__("D_800A8F94");
@@ -88,7 +88,7 @@ void func_8004DF28(void)
     best = 0;
     bestDist = 0x40000000;
     a = D_8009FA58[0];
-    b = D_8009F9A0[0];
+    b = gMissionWorkingSet[0];
     saved50 = a->unk50;
     saved58 = a->unk58;
     if (b != 0) {
@@ -108,7 +108,7 @@ void func_8004DF28(void)
         outHigh = (char *)0x800B0000;
         __asm__("" : "=r"(outHigh) : "0"(outHigh));
         out = (struct Entity **)(outHigh - 0x7068);
-        node = D_8009FA40;
+        node = gUnitListHead;
         count = 0;
         if (node != 0) {
         mask = 0x400000;

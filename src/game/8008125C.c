@@ -38,8 +38,8 @@ extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
 extern u8 D_8009F3E6;
 extern u8 D_8009F3E7;
 extern u8 D_8009FA10;
-extern u8 *D_8009F468;
-extern Entry D_8009B4E4[];
+extern u8 *gFontBankTable __asm__("D_8009F468");
+extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern u8 D_800120BC[];
 extern u8 D_800120C8[];
@@ -219,9 +219,9 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                     if (*(s32 *)(gGameSession + 0x5C) == 1) {
                         n = 0;
                         for (arg2 = 0; arg2 < 4; arg2++) {
-                            CNT(D_8009B4E4[gFrontEndListTable[arg2]])
+                            CNT(gWideTextTable[gFrontEndListTable[arg2]])
                         }
-                        CNT(D_8009B4E4[gFrontEndListTable[4]])
+                        CNT(gWideTextTable[gFrontEndListTable[4]])
                         arg2 = (s32)func_80089914(0x52D0);
                         if (((u8 *)arg2) != 0 && func_8008CCC0(((u8 *)arg2)) < 5) {
                             func_8008CD30(RAW + 0x925, D_800120BC, ((u8 *)arg2), n, txt);
@@ -248,7 +248,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                     RAW[0x201] = 0;
                     RAW[0x204] = 0;
                     func_80078650(D_800A3718, 1);
-                    *D_8009F468 = 1;
+                    *gFontBankTable = 1;
                 } else {
                     gPlayerMenuDepth[s2] = 1;
                 }
@@ -291,11 +291,11 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             if (REC(0x46D) != 0) gPausedMenuFlag = REC(0x46D);
             if (REC(0x46F) != 0) gLockedMenuFlag = REC(0x46F);
             for (arg2 = 0; arg2 < 4; arg2++) {
-                D_8009B4E4[gFrontEndListTable[arg2]].unk1F = REC(0x464 + arg2);
-                D_8009B4E4[gFrontEndListTable[arg2]].unk20 = REC(0x464 + arg2);
+                gWideTextTable[gFrontEndListTable[arg2]].unk1F = REC(0x464 + arg2);
+                gWideTextTable[gFrontEndListTable[arg2]].unk20 = REC(0x464 + arg2);
             }
-            D_8009B4E4[gFrontEndListTable[4]].unk1F = REC(0x46E);
-            D_8009B4E4[gFrontEndListTable[4]].unk20 = REC(0x46E);
+            gWideTextTable[gFrontEndListTable[4]].unk1F = REC(0x46E);
+            gWideTextTable[gFrontEndListTable[4]].unk20 = REC(0x46E);
             func_80077FFC();
             if (*(s32 *)(gGameSession + 0x5C) == 1) {
                 D_8009F459 = 0;

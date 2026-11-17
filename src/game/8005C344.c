@@ -104,7 +104,7 @@ struct CandList {
 };
 
 extern struct CandList gCommandListHead __asm__("D_800A8F90");
-extern struct Tgt *D_8009F374;
+extern struct Tgt *gPendingMotion __asm__("D_8009F374");
 
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 extern s32 func_800684AC(struct Vec3 *a, struct Vec3 *b, struct Vec3 *out, s32 c, s32 d);
@@ -318,7 +318,7 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
                 cand->handler(0xE, cand, &t.m, 0);
                 msg.unk49 = 5;
                 msg.unk00 = (void *)(tail->radius << 4);
-                D_8009F374 = tgt->unk08;
+                gPendingMotion = tgt->unk08;
                 f = func_8003BF50(tgt->unk08);
                 res = func_800402DC(0, tgt->unk1E, &msg, f, 0);
                 if (res != 0) {
@@ -345,7 +345,7 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
                         }
                     }
                 }
-                D_8009F374 = 0;
+                gPendingMotion = 0;
             }
         }
         goto cont;

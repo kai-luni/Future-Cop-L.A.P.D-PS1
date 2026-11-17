@@ -12,7 +12,7 @@ typedef struct Menu {
     struct Menu *unk24;
 } Menu;
 
-extern Menu *D_8009F468;
+extern Menu *gFontBankTable __asm__("D_8009F468");
 extern u8 D_8009F875;
 extern u8 D_8009F876;
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
@@ -49,9 +49,9 @@ void func_80078650(Menu *arg0, s32 arg1)
     Menu *m;
 
     if (arg1 != 0) {
-        arg0->unk24 = D_8009F468;
+        arg0->unk24 = gFontBankTable;
     }
-    D_8009F468 = arg0;
+    gFontBankTable = arg0;
     if (arg1 != 0) {
         func_800788B4();
     }
@@ -59,17 +59,17 @@ void func_80078650(Menu *arg0, s32 arg1)
     D_8009F8C1 = 0;
     func_800785F8();
     D_8009F8CC = 0;
-    if (D_8009F468->unk10 != 0) {
-        D_8009F468->unk10();
+    if (gFontBankTable->unk10 != 0) {
+        gFontBankTable->unk10();
     }
     func_800787D8(0, 1, 0);
-    if ((u8)(D_8009F468->unk05 - 2) < 2) {
+    if ((u8)(gFontBankTable->unk05 - 2) < 2) {
         func_800787D8(0, 1, 1);
     }
-    if ((void *)D_8009F468->unk10 == (void *)D_8007B3F4) {
-        D_8009F468->unk10();
+    if ((void *)gFontBankTable->unk10 == (void *)D_8007B3F4) {
+        gFontBankTable->unk10();
     }
-    m = D_8009F468;
+    m = gFontBankTable;
     if (m->unk03 != -1) {
         D_8009F875 = m->unk03;
         D_8009F876 = m->unk04;

@@ -16,7 +16,7 @@ typedef struct Spec {
 } Spec;
 
 extern Spec D_8009C7E0;
-extern u8 D_8001223C[];
+extern u8 gHexUpperTable[] __asm__("D_8001223C");
 extern u8 D_80012250[];
 extern s32 func_8008CCC0(u8 *s);
 extern u8 *func_8008D5C0(u8 *s, s32 c, s32 n);

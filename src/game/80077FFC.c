@@ -7,7 +7,7 @@ struct Unk77FFC {
     u8 unk20[4];
 };
 
-extern struct Unk77FFC D_8009B4E4[];
+extern struct Unk77FFC gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern u8 gUnlockFlag __asm__("D_8009F3C2");
 
@@ -32,10 +32,10 @@ extern u8 gUnlockFlag __asm__("D_8009F3C2");
  */
 void func_80077FFC(void)
 {
-    if (D_8009B4E4[gFrontEndListTable[0]].state == 10 &&
-        D_8009B4E4[gFrontEndListTable[1]].state == D_8009B4E4[gFrontEndListTable[0]].state &&
-        D_8009B4E4[gFrontEndListTable[2]].state == D_8009B4E4[gFrontEndListTable[1]].state &&
-        D_8009B4E4[gFrontEndListTable[3]].state == D_8009B4E4[gFrontEndListTable[2]].state) {
+    if (gWideTextTable[gFrontEndListTable[0]].state == 10 &&
+        gWideTextTable[gFrontEndListTable[1]].state == gWideTextTable[gFrontEndListTable[0]].state &&
+        gWideTextTable[gFrontEndListTable[2]].state == gWideTextTable[gFrontEndListTable[1]].state &&
+        gWideTextTable[gFrontEndListTable[3]].state == gWideTextTable[gFrontEndListTable[2]].state) {
         gUnlockFlag = 1;
     } else {
         gUnlockFlag = 0;

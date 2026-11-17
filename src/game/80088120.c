@@ -20,7 +20,7 @@ extern void *D_8009F4F4;
 extern void *D_8009F4F8;
 extern s32 D_8009F960;
 extern s32 D_8009F964;
-extern s32 D_8009F968;
+extern s32 gLayerModeBits __asm__("D_8009F968");
 extern s32 gFileSearchGroup __asm__("D_8009F238");
 extern Params88120 gFileTable __asm__("D_800A6E20");
 
@@ -228,7 +228,7 @@ u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
     if (func_80089700(D_8009F4EC, func_80086F30, &params, 1, 0x800) != 0) {
         if (func_80087824(D_8009F4F0, 0x400000, D_8009F4F4, 0x800000, D_8009F4F8, D_8009F964, 1) != 0) {
             func_80086F08(0);
-            result = func_800879DC(arg1, arg2, D_8009F968 * D_8009F960);
+            result = func_800879DC(arg1, arg2, gLayerModeBits * D_8009F960);
             count = 3;
             while (func_80086FA8() != 0 && count > 0) {
                 func_80091270(0);

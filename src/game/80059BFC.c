@@ -34,7 +34,7 @@ typedef struct {
 
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern SomeState *gGameSession __asm__("D_8009FA94");
-extern LoadedData *D_8009F7D0;
+extern LoadedData *gStreamDescriptorPtr __asm__("D_8009F7D0");
 extern u8 D_80011B00[];
 
 extern void func_800197A8(s32 seed);
@@ -94,7 +94,7 @@ void func_80059BFC(s32 countArg, s32 seed, u8 *nameArg)
     }
 
     data = func_80059BA0((s32)buffer);
-    D_8009F7D0 = data;
+    gStreamDescriptorPtr = data;
     if (data != 0) {
         ptr = data->data;
         state = gGameSession;
@@ -119,8 +119,8 @@ void func_80059BFC(s32 countArg, s32 seed, u8 *nameArg)
                 slot++;
             } while (i < count);
         }
-        D_8009F7D0->end1 = ptr;
-        D_8009F7D0->end2 = ptr;
+        gStreamDescriptorPtr->end1 = ptr;
+        gStreamDescriptorPtr->end2 = ptr;
     } else {
         __asm__("" : "+r"(data));
         gModuleLoadedFlag = 0;

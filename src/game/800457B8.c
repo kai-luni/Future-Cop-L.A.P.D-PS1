@@ -15,7 +15,7 @@ struct SoundChannel {
     struct SoundChannel *prev;
 };
 
-extern struct SoundChannel D_800A1160[];
+extern struct SoundChannel gVoiceTable[] __asm__("D_800A1160");
 
 extern void func_80046698(s32 handle);
 extern void func_80045548(struct SoundChannel *channel);
@@ -50,7 +50,7 @@ void func_800457B8(s32 arg0, s32 index)
     if (index < 0) {
         return;
     }
-    channel = &D_800A1160[index];
+    channel = &gVoiceTable[index];
     if (channel->id == -1) {
         return;
     }

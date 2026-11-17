@@ -7,12 +7,12 @@ struct Entry {
     u32 size;
 };
 
-extern s32 D_8009EA3C;
-extern s32 D_8009EA40;
+extern s32 gArenaOffsetFlag __asm__("D_8009EA3C");
+extern s32 gArenaCursor __asm__("D_8009EA40");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern s32 D_8009EF04;
-extern s32 D_8009EF08;
-extern struct Entry *D_8009EF0C;
+extern s32 gTableCursor __asm__("D_8009EF08");
+extern struct Entry *gSpuEntryTable __asm__("D_8009EF0C");
 
 extern void func_80097DF8(void);
 
@@ -58,15 +58,15 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
     s32 count;
 
     mask = 0x0FFFFFFF;
-    entry_addr = D_8009EF0C[a0_reg].addr;
-    entry_size = D_8009EF0C[a0_reg].size;
+    entry_addr = gSpuEntryTable[a0_reg].addr;
+    entry_size = gSpuEntryTable[a0_reg].size;
     s0 = a1;
     t1 = s0 - (entry_addr & mask);
 
-    if (!D_8009EA3C) {
+    if (!gArenaOffsetFlag) {
         v1 = 0;
     } else {
-        v1 = (0x10000 - D_8009EA40) << gSpuAddrShift;
+        v1 = (0x10000 - gArenaCursor) << gSpuAddrShift;
     }
 
     if (entry_addr & 0x40000000) {
@@ -83,32 +83,32 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
 
     if (entry_addr & 0x40000000) {
         if (t1 > 0) {
-            if (D_8009EF08 > D_8009EF04 - 2) {
+            if (gTableCursor > D_8009EF04 - 2) {
                 return -1;
             }
-            D_8009EF0C[D_8009EF08].size = t1;
-            D_8009EF0C[D_8009EF08].addr = (D_8009EF0C[D_8009EF08].addr & 0x0FFFFFFF) | 0x80000000;
-            D_8009EF08++;
-            D_8009EF0C[D_8009EF08].addr = s0;
-            D_8009EF0C[D_8009EF08].size = a2_reg;
+            gSpuEntryTable[gTableCursor].size = t1;
+            gSpuEntryTable[gTableCursor].addr = (gSpuEntryTable[gTableCursor].addr & 0x0FFFFFFF) | 0x80000000;
+            gTableCursor++;
+            gSpuEntryTable[gTableCursor].addr = s0;
+            gSpuEntryTable[gTableCursor].size = a2_reg;
         } else {
-            if (D_8009EF08 > D_8009EF04 - 1) {
+            if (gTableCursor > D_8009EF04 - 1) {
                 return -1;
             }
-            D_8009EF0C[D_8009EF08].size = a2_reg;
-            D_8009EF0C[D_8009EF08].addr &= 0x0FFFFFFF;
+            gSpuEntryTable[gTableCursor].size = a2_reg;
+            gSpuEntryTable[gTableCursor].addr &= 0x0FFFFFFF;
         }
         {
             register u32 tail_addr __asm__("$2");
             register s32 tail_size __asm__("$2");
             tail_addr = (entry_addr & 0x0FFFFFFF) + t1 + a2_reg;
             __asm__("" : "+r"(tail_addr));
-            D_8009EF08++;
-            D_8009EF0C[D_8009EF08].addr = tail_addr | 0x40000000;
+            gTableCursor++;
+            gSpuEntryTable[gTableCursor].addr = tail_addr | 0x40000000;
             __asm__("");
             tail_size = entry_size - t1;
             __asm__("" : "+r"(tail_size));
-            D_8009EF0C[D_8009EF08].size = tail_size - a2_reg;
+            gSpuEntryTable[gTableCursor].size = tail_size - a2_reg;
         }
     } else {
         if (t1 > 0) {
@@ -120,12 +120,12 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
 
             if (avail == a2_reg) {
                 limit = D_8009EF04;
-                count = D_8009EF08;
+                count = gTableCursor;
                 __asm__("" : "+r"(limit), "+r"(count));
                 limit -= 2;
             } else {
                 limit = D_8009EF04;
-                count = D_8009EF08;
+                count = gTableCursor;
                 __asm__("" : "+r"(limit), "+r"(count));
                 limit -= 1;
             }
@@ -134,8 +134,8 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
             }
             index = a0_reg << 3;
             __asm__("" : "+r"(index));
-            base = D_8009EF0C;
-            a0_reg = D_8009EF08;
+            base = gSpuEntryTable;
+            a0_reg = gTableCursor;
             __asm__("" : "+r"(base), "+r"(a0_reg));
             e0 = (struct Entry *)(index + (u32)base);
             e0->size = t1;
@@ -149,7 +149,7 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
             __asm__("" : "+r"(next_i));
             e0->addr = s0;
             e0->size = a2_reg;
-            D_8009EF08 = next_i;
+            gTableCursor = next_i;
             e0[1].addr = old_a;
             e0[1].size = old_s;
             __asm__("" : : "m"(e0[1].addr), "m"(e0[1].size));
@@ -180,7 +180,7 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
                 e1->size = new_a;
                 new_a = a0_reg + 2;
                 __asm__("" : "+r"(new_a));
-                D_8009EF08 = new_a;
+                gTableCursor = new_a;
                 e1[1].addr = old_a2;
                 e1[1].size = old_s2;
             }
@@ -192,12 +192,12 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
 
             if (avail > a2_reg) {
                 __asm__("" : "=r"(m6));
-                if (D_8009EF08 > D_8009EF04 - 1) {
+                if (gTableCursor > D_8009EF04 - 1) {
                     return -1;
                 }
             }
             m6 = 0x0FFF0000;
-            base4 = D_8009EF0C;
+            base4 = gSpuEntryTable;
             __asm__("" : "+r"(m6), "+r"(base4));
             index = a0_reg << 3;
             __asm__("" : "+r"(index));
@@ -224,7 +224,7 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
 
                 new_a = entry_addr & m6;
                 __asm__("" : "+r"(new_a));
-                idx5 = D_8009EF08;
+                idx5 = gTableCursor;
                 __asm__("" : "+r"(idx5));
                 new_a += a2_reg;
                 e1 = (struct Entry *)((idx5 << 3) + (u32)base4);
@@ -242,7 +242,7 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
                 __asm__("" : "+r"(idx5), "+r"(new_a));
                 e1->size = new_a;
                 __asm__("");
-                D_8009EF08 = idx5;
+                gTableCursor = idx5;
                 e1[1].addr = old_a2;
                 e1[1].size = old_s2;
             }

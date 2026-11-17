@@ -8,7 +8,7 @@ struct Unk25F58 {
     u8 *unk0C;
 };
 
-extern struct Unk25F58 *D_8009F2CC;
+extern struct Unk25F58 *gLabelRecord __asm__("D_8009F2CC");
 extern u8 D_8009F2EC[];
 extern u8 gItemCodeTable[] __asm__("D_8009ABE8");
 
@@ -51,15 +51,15 @@ void func_80025F58(void)
     u8 *ptr;
 
     value = (func_8004522C() + 1) * 100 / 128;
-    ptr = D_8009F2CC->unk04;
+    ptr = gLabelRecord->unk04;
     func_8008CD30(ptr + func_8008CCC0(ptr) - 3, D_8009F2EC, value);
 
     value = (func_80045288() + 1) * 100 / 128;
-    ptr = D_8009F2CC->unk08;
+    ptr = gLabelRecord->unk08;
     func_8008CD30(ptr + func_8008CCC0(ptr) - 3, D_8009F2EC, value);
 
     value = (func_800452C8() + 1) * 100 / 128;
-    ptr = D_8009F2CC->unk0C;
+    ptr = gLabelRecord->unk0C;
     func_8008CD30(ptr + func_8008CCC0(ptr) - 3, D_8009F2EC, value);
 
     value = func_800451E0();

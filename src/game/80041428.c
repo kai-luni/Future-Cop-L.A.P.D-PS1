@@ -8,7 +8,7 @@ struct Vec3s32 {
 };
 
 extern s32 D_8009F324;
-extern u8 D_8009F328;
+extern u8 gConeTestFlag __asm__("D_8009F328");
 extern s16 gShadowThreshold __asm__("D_8009F710");
 extern s16 D_8009F718;
 extern s16 D_8009F71C;
@@ -44,10 +44,10 @@ void func_80041428(s32 arg0, s32 arg1, s32 arg2, s32 context, struct Vec3s32 *po
 {
     gShadowThreshold = height >> 4;
     D_8009F718 = position->x >> 4;
-    D_8009F328 = 1;
+    gConeTestFlag = 1;
     D_8009F324 = context;
     D_8009F71C = position->z >> 4;
     func_800410BC(arg0, arg1, arg2, arg6);
-    D_8009F328 = 0;
+    gConeTestFlag = 0;
     D_8009F324 = 0;
 }

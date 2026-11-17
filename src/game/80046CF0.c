@@ -25,7 +25,7 @@ struct UnkA10E0 {
 };
 
 extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
-extern struct UnkA10E0 D_800A10E0[];
+extern struct UnkA10E0 gPlayerSlots[] __asm__("D_800A10E0");
 
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
 extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
@@ -74,7 +74,7 @@ void func_80046CF0(struct Unk6C488 *object, s32 state)
         s2 = func_80045494(state, gSoundBankTableLow, 0x47);
         firstFree = -1;
         if (s2 != 0xFF) {
-            entry = &D_800A10E0[s1 * 3];
+            entry = &gPlayerSlots[s1 * 3];
             for (i = 0; i < 3; i++, entry++) {
                 if (entry->status != 0) {
                     if (entry->bank == s2) {
@@ -97,7 +97,7 @@ void func_80046CF0(struct Unk6C488 *object, s32 state)
             if (firstFree == -1) {
                 return;
             }
-            entry = &D_800A10E0[s1 * 3] + firstFree;
+            entry = &gPlayerSlots[s1 * 3] + firstFree;
             handle = func_80046F9C(0, 0, s2, (s32)object, 0);
             if (handle != 0) {
                 entry->status = 0x1E;

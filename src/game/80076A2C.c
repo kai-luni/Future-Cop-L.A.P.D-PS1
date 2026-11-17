@@ -37,7 +37,7 @@ extern s8 D_8009F868;
 extern s8 D_8009F869;
 extern u8 gUploadRequestFlag __asm__("D_8009F3E5");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
-extern u8 D_8009F4E0;
+extern u8 gLoopAbortFlag __asm__("D_8009F4E0");
 extern s32 gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern s32 D_8009F3D0;
 extern u8 D_8009F3A0[];
@@ -303,7 +303,7 @@ s32 func_80076A2C(void)
                 func_80089D44(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
             }
 
-            if (D_8009F4E0 == 0 && *(s32 *)(local + 0x50) != 0) {
+            if (gLoopAbortFlag == 0 && *(s32 *)(local + 0x50) != 0) {
                 func_8008CD30(local + 0x28, D_8009F3A0, D_8009F3D0, *(s32 *)(local + 0x50));
                 func_80089D44(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
             }

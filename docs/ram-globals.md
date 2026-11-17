@@ -132,6 +132,155 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 
 Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage).
 
+## Steuerung, Skript-VM, Panels und CD-Treiber: die große Runde
+
+Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-Vergleich (`D_8009BEF4`, `D_8009C810`, `D_8009F614`) und bleiben stehen. Außerdem sind vier Namen aus der vorigen Runde nachgetragen, die in der Doku fehlten: `gDeferredList` (`D_8009F708`), `gDeferredPool` (`D_8009F70C`), `gPendingMessageMask` (`D_8009F7A8`) und `gRegistryTable` (`D_8009F800`).
+
+### Objekt- und Renderhelfer
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F348` | `gPlayerAvatarSprite` | — | Sprite je Spieler, gezeichnet bei y 74, sobald `player+0xAE` positiv ist. |
+| `D_8009F374` | `gPendingMotion` | — | Startet eine Bewegung, wenn gesetzt; sonst erhält das Objekt einen Callback. |
+| `D_8009F388` | `gColourWord` | — | Farbwort: `(Wert >> 8) \| 0x3A000000`, Farbe ist `field40 >> 8`. |
+| `D_8009F45C` | `gAtlasTable` | — | Atlas mit `count`; der Index muss darin liegen. |
+| `D_8009F460` | `gSpriteAtlasBlock` | — | Wird vor dem Neuaufbau freigegeben; bei Typ ungleich 2 wird ein Flag gesetzt. |
+| `D_8009F468` | `gFontBankTable` | — | Schriftbank-Tabelle; ändert sich `[8]`, wechselt `func_80048E28` die Bank. |
+| `D_8009F4E0` | `gLoopAbortFlag` | — | Bricht die Schleife früh ab; bleibt 0, greift der Fallback. |
+| `D_8009F508` | `gReleaseDoneFlag` | — | Wird im Completion-Callback gesetzt. |
+| `D_8009F5BC` | `gListTailFlag` | — | Bei ungleich 0 wird hinter dem Ende angehängt, sonst Kopf und Ende gesetzt. |
+| `D_8009FABC` | `gCharTable` | `u8[]` | 0x100-Byte-Zeichentabelle; der Zeiger rückt um 16 weiter. |
+| `D_8009F284` | `gGlobalTick` | — | Globaler Tick, gegen den die Frame-Helfer messen. |
+| `D_8009FA30` | `gFrameTickBase` | — | Wartet mindestens 5 Ticks seit diesem Wert und aktualisiert das Frame-Delta. |
+| `D_8009FA64` | `gCameraNearBase` | — | Erhält `(Wert << 8) / 608` für die Nahgrenze. |
+
+### Skript-VM, Listen und Tabellen
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F2CC` | `gLabelRecord` | — | Datensatz mit drei Labelwerten (`unk04/unk08/unk0C`). |
+| `D_8009F2F4` | `gBannerString` | — | Banner-String für `func_80049100(…, 0x41, 0x14, 1)`. |
+| `D_8009F30C` | `gNodeCList` | — | Liste der NodeC-Einträge; passende werden entlinkt und freigegeben. |
+| `D_8009F310` | `gSavedChunkBase` | — | Zwischengespeicherte Basis, wird auf 0 zurückgesetzt und über die Chunks iteriert. |
+| `D_8009F318` | `gMessage10Counter` | — | Zähler der Meldung 10. |
+| `D_8009F31C` | `gCellAbortFlag` | — | Wird gesetzt, solange „keine Zelle" gilt. |
+| `D_8009F320` | `gNodeListHead` | — | Kopf der Knotenliste, Durchlauf mit vorab gesichertem `next`. |
+| `D_8009F328` | `gConeTestFlag` | — | Nur bei ungleich 0 läuft der Kegeltest. |
+| `D_8009F329` | `gBandTestFlag` | — | Bit 0 aktiviert den Bandtest. |
+| `D_8009FA48` | `gChainedNodes` | — | Vier Knoten der Schrittweite 0x6014, angehängt beim Aufbau. |
+| `D_8009FA40` | `gUnitListHead` | — | Kopf der Einheitenliste, über `next` bis null durchlaufen. |
+| `D_8009F9D8` | `gByteTable` | `u8[]` | Byte-Tabelle, in die das Ergebnis indiziert; drei Bytes werden gepackt. |
+| `D_8009F9F8` | `gOpcodeTable` | — | 32 Einträge; ein negativer Wert führt `func_80019668()` modulo. |
+| `D_8009FA08` | `gTableBuffer` | — | Basisadresse des allokierten Tabellenpuffers. |
+| `D_8009F9D0` | `gPool1Size` | — | Erster Pool: Größe `a0`, Anzahl `a1`. |
+| `D_8009FAAC` | `gPool2Size` | — | Zweiter Pool: Größe `a2`, Anzahl `a3`. |
+| `D_8009FA4C` | `gPool3Size` | — | Dritter Pool: Größe `a4`, Anzahl `a5`. |
+| `D_8009F800` | `gRegistryTable` | — | 0x80-Slot-Registertabelle (Nachtrag). |
+| `D_8009F708` | `gDeferredList` | — | Einfach verkettete Liste `{next, object}` (Nachtrag). |
+| `D_8009F70C` | `gDeferredPool` | — | Pool aus 256 Acht-Byte-Knoten (Nachtrag). |
+| `D_8009F7A8` | `gPendingMessageMask` | — | Bitmaske ausstehender Meldungen, je erledigtem Eintrag gelöscht (Nachtrag). |
+| `D_8009F7C8` | `gClipLimitOffset` | — | Wird von 200 abgezogen, wenn die Klemmung greift. |
+| `D_8009F7D0` | `gStreamDescriptorPtr` | — | Zeiger auf den Stream-Deskriptor. |
+| `D_8009F7F0` | `gMessageReturnData` | — | Rückgabedaten bei Meldung 4 mit `arg3 == 1`, sonst 0. |
+
+### Frontend, Panels und Mission
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009B42C` | `gScreenIndexTable` | — | Bildschirm-Index des Frontends. |
+| `D_8009B4E4` | `gWideTextTable` | — | Tabelle, aus der `[table[i]].unk08` in breiter Schrift gezeigt wird. |
+| `D_8009BEF4` | — | — | **Nicht umbenannt** (Byte-Vergleich kippt): 14 Wörter im 12-Byte-Schritt. |
+| `D_8009BFD4` | `gPresetByteTable` | — | Vier Voreinstellungen als 14 aufeinanderfolgende Bytes, `src = Basis + Wert * 14`. |
+| `D_8009AD08` | `gViewPresetTable` | — | Voreinstellungstabelle, die auch die View-Handler nutzen. |
+| `D_8009AEC4` | `gPresetEntryTable` | — | Voreinstellungs-Eintrag; Feld `+0xA4` liefert den Wert. |
+| `D_8009AFA0` | `gSourceBlock20` | — | 20-Byte-Block, den `func_8005A070` kopiert. |
+| `D_8009ABED` | `gItemLabelByte` | `u8` | Label-Byte zwischen 8 und 7; 8 ruft `func_80060A0C`. |
+| `D_8009F65C` | `gTeamFlag` | — | Mannschafts-Flag, schützt den Kamerapfad. |
+| `D_8009F680` | `gMenuModeFlag` | — | Wird auf 1 gesetzt, wenn Menümodus 0 oder `unk312` gesetzt ist. |
+| `D_8009F698` | `gResourceSubChunkPtr` | — | Veröffentlichter `0x74544F53`-Subchunk-Zeiger einer `0x43746F73`-Ressource. |
+| `D_8009F69C` | `gRegisterGuard` | — | Einzige Wächterprüfung auf 0, danach geradliniger Rumpf. |
+| `D_8009FA6C` | `gPanelSelection` | — | Auswahl im Panel; Code 0 verlässt es mit Sound 0x3E und `-1`. |
+| `D_8009FA80` | `gSlotIndexLimit` | — | Vergleichswert, bevor der Index weiterläuft. |
+| `D_8009FA88` | `gListTailBranch` | — | Einzelne Verzweigung: Anhängen am Ende oder Kopf-Initialisierung. |
+| `D_8009FAB8` | `gHudMode2` | — | Bei Wert 2 wird das HUD aktiviert. |
+| `D_8009FAC0` | `gPanelSoundIds` | — | Sound-Ids 0x2F/0x30 des Panels, danach mischt `func_80025F58` neu. |
+| `D_8009FAC8` | `gFrameSwitch` | — | Frame-Umschalter; bei 0 kehrt der Aufruf sofort zurück. |
+| `D_8009FAD8` | `gHookInstallFlag` | — | Wird genullt, danach installiert `func_8001E87C` die Geräte-Hooks. |
+| `D_8009F870` | `gIdleDeadline` | — | Leerlauf-Frist, um 0x2328 Ticks vorgestellt. |
+| `D_8009F874` | `gOverlayDelay` | — | Wird auf `-1` gesetzt, nachdem die Fläche gesetzt wurde. |
+| `D_8009F904` | `gSnapshotResult` | — | Momentaufnahme, danach zwei `func_8001EB2C`-Aufrufe und Vergleich mit 1. |
+| `D_8009F918` | `gTestResultFlag` | — | Bei erfolgreichem Test auf 1 gesetzt. |
+| `D_8009F91C` | `gSnapshotPointer` | — | Wird freigegeben, wenn er ungleich 0 ist. |
+| `D_8009F920` | `gPreviewTrackId` | — | Track-Id, für die die Vorschau-Voice gestartet wurde. |
+| `D_8009F92A` | `gStatusTextId` | — | Status-Text-Id (0, solange nichts läuft). |
+| `D_8009F944` | `gMissionClearFlag` | — | Wird genullt und sonst nirgends geschrieben. |
+| `D_8009F968` | `gLayerModeBits` | — | Bit 0 wählt die schmale Variante (`0x27`). |
+| `D_8009F9A0` | `gMissionWorkingSet` | — | Wird genullt, bevor `func_80017C68(0x168, …)` die Pools anlegt. |
+| `D_8009F9B0` | `gStreamPreemptFlag` | — | Markiert beim Verdrängen abgebaute Stream-Voices. |
+| `D_8009F9CC` | `gDisplaySetupToggle` | — | Wechselt zwischen 0 und 1 nach dem Display-Aufbau. |
+| `D_800A0AA0` | `gActionRecords` | — | Fünf Acht-Byte-Aktionsdatensätze (Tastenmaske, Phase). |
+| `D_800A0B00` | `gPanelPhaseTable` | — | Phasenfeld je Slot, an `func_800260B8` übergeben. |
+| `D_800A0B10` | `gPanelChoiceTable` | — | Zweite Auswahltabelle, liefert Auswahl 4. |
+| `D_800A0B20` | `gBackActionRecord` | — | Zurück-Aktion (Phase 0), schließt das Panel. |
+| `D_800A085C` | `gSubsystemTable` | — | Tabelle, die beim Hochfahren des Subsystems einmal gefüllt wird. |
+| `D_800A09D4` | `gMode1IndexBase` | — | Indexbasis für Modus 1. |
+| `D_800A09F0` | `gCurrentChannel` | — | Aktueller Kanal; `-1` ist die Markierung „kein Kanal". |
+| `D_800A0C30` | `gReleaseQueues` | — | Beide aufgeschobenen Freigabe-Warteschlangen für Asset-Handles. |
+| `D_800A0C50` | `gVagmRing` | — | VAGM-Ring; ausstehende Einträge werden über `func_8002A31C` abgearbeitet. |
+| `D_800A1070` | `gListHeads` | — | Sieben Listenköpfe; der neue Kopf wird dort eingetragen. |
+| `D_800A10E0` | `gPlayerSlots` | — | Drei Slots je Spieler, belegt/leer geprüft. |
+| `D_800A1160` | `gVoiceTable` | — | 52-Byte-Einträge, nur für nicht-negative Kanalindizes. |
+| `D_800A1920` | `gPositionAngleTable` | — | Zieltabelle für Position und Winkel. |
+| `D_800A19A0` | `gGlyphEntryTable` | — | Einträge, deren `glyphs`-Zeiger `func_800181D4` freigibt. |
+| `D_800A2630` | `gRampVariantTable` | — | Verlaufsvariante des k==6-Zweigs. |
+| `D_800A2931` | `gSlfxFlagByte` | `u8` | SLFX-Flag, beim Zerlegen der Karten-Chunks geschrieben. |
+| `D_800A2940` | `gCellDataOutput` | — | Nimmt Ausgabezeiger und Metadaten der Zelldaten auf. |
+| `D_800A3190` | `gScenePositionPairs` | — | Positionspaare, die `func_80066C9C` für die Szene schreibt. |
+| `D_800A31A0` | `gObjectKeyTable` | — | Schlüsseltabelle, über die `func_80063194` Objekte auflöst. |
+| `D_800A3578` | `gSlotRecordTable` | — | Je Slot drei `{marker, id}`-Paare. |
+
+### Debug-Ausgaben und Zeichenhilfen
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8001223C` | `gHexUpperTable` | — | Zweite Hex-Tabelle mit Großbuchstaben, neben der Kleinbuchstaben-Tabelle. |
+| `D_80012A88` | `gTraceFormatString` | — | Formatstring eines reinen Entwicklungs-Trace-Kanals. |
+| `D_80012A94` | `gDebugTagRect` | — | Tag-String für `func_80092CF4(…, rect)`, den Debug-Wrapper. |
+| `D_80012AA0` | `gDebugTagArg` | — | Tag-String der Debug-Hook-Variante mit einem Argument. |
+| `D_80012AAC` | `gDebugTagRectEmpty` | — | Tag für denselben Wrapper; ein leeres Rechteck kehrt sofort zurück. |
+| `D_8009DDF0` | `gDebugTagBytes` | — | Drei Bytes neben dem Flag, die zusammen mit dem Tag-String gelesen werden. |
+| `D_8009DEB0` | `gSeqFirstWord` | — | Erstes Wort der Sequenz, das beim Umschreiben mitgesetzt wird. |
+| `D_8009C560` | `gDefaultSymbolTable` | — | Ersatzquelle für 0x60 Symbole, wenn kein Puffer übergeben wird. |
+| `D_8009C7D0` | `gSessionBlockBase` | — | Basisadresse des Sitzungsblocks, beim Anlegen von `func_80076EB0` gesetzt. |
+| `D_8009CBEC` | `gReadWindowTable` | — | Tabelle, deren Wert `+4` (0x4B0 = 1200 Ticks) das Lesefenster begrenzt. |
+| `D_8009CC24` | `gFrameTargetBase` | — | Basis der Frame-Ziele: `Ziel = Basis + input - 1` bei `input > 0`. |
+
+### SPU-Arena, Tabellen und Wächter
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009EA34` | `gNormalisedMode` | — | Normalisierter Modus, den der Aufruf zurückgibt. |
+| `D_8009EA3C` | `gArenaOffsetFlag` | — | Solange 0 ist der Offset 0, sonst rechnet der Pfad anders. |
+| `D_8009EA40` | `gArenaCursor` | — | Einfügezeiger, der die Arena-Position mitführt. |
+| `D_8009EA8E` | `gSpuInitWords` | — | 0x18 Wörter, die `func_80096EB8(0)` beim Aufsetzen füllt. |
+| `D_8009EE94` | `gSecondCallGuard` | — | Ein zweiter Aufruf ist wirkungslos. |
+| `D_8009EEC0` | `gOpOrderFlag` | — | Bei 0 werden die Operationen 2, 1 und 3 in dieser Reihenfolge abgearbeitet. |
+| `D_8009EEF4` | `gSetupGuard` | — | Bei 0 läuft das Setup, danach wird höchstens 0xF01 Mal abgefragt. |
+| `D_8009EF08` | `gTableCursor` | — | Zeiger in die SPU-Tabelle; der abschließende freie Lauf wird zurückgefaltet. |
+| `D_8009EF0C` | `gSpuEntryTable` | — | Einträge, denen `func_80098708` Bit 0x80000000 setzt. |
+| `D_8009F6B8` | `gBitFieldState` | — | Wird als Bitfeld gelesen und fortgeschrieben. |
+| `D_8009F6BC` | `gOutStreamId` | — | Stream-Id, die nach außen gegeben und mit `func_80024064`/`func_80023F08` gestartet wird. |
+| `D_8009F6C0` | `gLatchFlag` | — | Bit 0x40 setzt nur dieses Latch, alle anderen Flags lösen Aufrufe aus. |
+| `D_8009F6DC` | `gCallGateFlag` | — | Sperrt ein Paar von Aufrufen mit festen Argumenten. |
+
+### Meldungs-Handler und Callback-Slots
+
+Diese Adressen tragen alle denselben Charakter: sie werden als `handler`-Feld in Anforderungs- oder Knotenstrukturen abgelegt und über den Dispatcher erreicht. Sie bleiben deshalb bei ihren Retail-Namen — der Beleg nennt nur die Registrierung, nicht die Aufgabe.
+
+`D_8001C808`, `D_8002DEA8`, `D_8003190C`, `D_80036E6C`, `D_80037708`, `D_8003B2D0`, `D_80044610`, `D_800578B4`, `D_80059ABC`, `D_8005B934`, `D_8005CA04`, `D_8007F618`, `D_80080038`, `D_80086950`, `D_80086D74`, `D_800A36B8`, `D_800A36E8`, `D_800A3778`, `D_800A38F8`.
+
+**Nicht umbenannt:** `D_8009BEF4`, `D_8009C810`, `D_8009F614` — Byte-Vergleich kippt nach dem Rename.
+
 ## Textformatierung, Audio-Pegel, Missions- und Dateitabellen
 
 Fünfzig weitere Globals in **einem** Commit. Fünf Kandidaten aus der CD-/Verzeichnisgruppe kippten beim Byte-Vergleich (`D_8009F4D8`, `D_800A445C`, `D_800A4480`, `D_800A4484`, `D_800A3E80`) und bleiben stehen.
@@ -386,12 +535,12 @@ Fünfundfünfzig weitere Globals, wieder in **einem** Commit umbenannt. Bei alle
 | `D_8009DE9C` | `gGpuTpageWord` | `u32[]` | Texpage-Wort, gespeist aus `(Wert & 0xFFFFFF) \| 0x04000000`. | `80093178.c:70` |
 | `D_8009DDE8` | `gVramWriteCallback` | `struct Callbacks *` | Callback, an den der VRAM-Schreibvorgang weitergereicht wird (er läuft dann im Bibliothekscode). | `8005A414.c:46` |
 | `D_8009DDA8` | `gGpuCallbackTable` | `u8[]` | Callback-Tabelle der GPU-Bibliothek (Eintrag `+0x04`). | `80094A18.c:16` |
-| `D_8009DDFC` | `gGpuCancelFlag` | `s32` | Abbruch-Flag des ausstehenden Aufrufs. | `80094CEC.c:21` |
+| `D_8009DDFC` | — | — | Abbruch-Flag des ausstehenden Aufrufs. **Nur Inline-Asm, kein C-Name setzbar.** | `80094CEC.c:21` |
 | `D_8009DEFC` | `gTimeoutStamp` | `s32` | Ablaufmarke (aktueller Tick + 0xF0) für ausstehende Aufrufe. | `800951D8.c:11` |
 | `D_8009DF00` | `gPendingDeadline` | `s32` | Gegenstück zur Marke; genullt bedeutet „nichts ausstehend". | `800951D8.c:12` |
 | `D_800A63D0` | `gGpuLibSavedRa` | `s32` | Merker für den Rücksprungadress-Speicher der Bibliotheksroutine. | `80095DB0.c:20` |
 | `D_8009E0A0` | `gRatioTable` | `s16[]` | Verhältnis-Tabelle, in die das Ergebnis einer Divisionsschutz-Prüfung indiziert. | `80095C30.c:57` |
-| `D_8009F990` | `gMdecSavedRa` | `s32` | Merker für die eingehende Rücksprungadresse im MDEC-Pfad. | `80096520.c:11` |
+| `D_8009F990` | — | — | Merker für die eingehende Rücksprungadresse im MDEC-Pfad. **Nur Inline-Asm, kein C-Name setzbar.** | `80096520.c:11` |
 
 Debug-Texte, die der GPU-Wrapper `func_80092CF4` ausgibt:
 

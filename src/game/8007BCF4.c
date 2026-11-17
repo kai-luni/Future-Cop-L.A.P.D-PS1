@@ -8,7 +8,7 @@ struct State8009FA94 {
     s32 unk5C;
 };
 
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 gSelectedRow __asm__("D_8009F87E");
 extern s8 gLineCount __asm__("D_8009F87F");
@@ -90,7 +90,7 @@ void func_8007BCF4(s32 arg0)
         return;
     }
 
-    if (D_8009F468 != D_800A3838) {
+    if (gFontBankTable != D_800A3838) {
         func_8007B460(gActivePlayerIndex);
     }
 
@@ -128,7 +128,7 @@ void func_8007BCF4(s32 arg0)
     }
     a0 = 0;
     s0 = 0x44C;
-    k = *D_8009F468;
+    k = *gFontBankTable;
     if ((u32)k >= 6) {
         goto common;
     }

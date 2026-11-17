@@ -1,7 +1,7 @@
 // Categories: Game Engine > Front End | Input > Menu Navigation
 #include "game/types.h"
 
-extern u8 *D_8009F468;
+extern u8 *gFontBankTable __asm__("D_8009F468");
 extern u8 D_8009F875;
 extern u8 D_8009F876;
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
@@ -36,21 +36,21 @@ s32 func_80078740(void)
     register s32 ret __asm__("$3");
     register u8 *p __asm__("$4");
 
-    p = D_8009F468;
+    p = gFontBankTable;
     ret = 0;
     if (*(u32 *)(p + 0x24) != 0) {
         if (*(void (**)(void))(p + 0x14) != 0) {
             (*(void (**)(void))(p + 0x14))();
         }
-        D_8009F468 = *(u8 **)(D_8009F468 + 0x24);
+        gFontBankTable = *(u8 **)(gFontBankTable + 0x24);
         gPlayerMenuDepth = 0;
         D_8009F8C1 = 0;
         func_800785F8();
         D_8009F8CC = 0;
         func_800788B4();
-        if ((s8)D_8009F468[3] != -1) {
-            D_8009F875 = D_8009F468[3];
-            D_8009F876 = D_8009F468[4];
+        if ((s8)gFontBankTable[3] != -1) {
+            D_8009F875 = gFontBankTable[3];
+            D_8009F876 = gFontBankTable[4];
         }
         ret = 1;
     }

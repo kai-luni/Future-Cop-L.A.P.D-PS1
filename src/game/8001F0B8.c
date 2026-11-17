@@ -3,7 +3,7 @@
 
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern s32 D_8009F9CC;
+extern s32 gDisplaySetupToggle __asm__("D_8009F9CC");
 extern s32 gScreenModeHook __asm__("D_8009F99C");
 extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 extern u8 D_8001EFF8[];
@@ -38,7 +38,7 @@ void func_8001F0B8(void)
     callback_table = D_8001EFF8;
     gPaletteCycleCounter = 0;
     gFrameTickCounter = 0;
-    D_8009F9CC = 0;
+    gDisplaySetupToggle = 0;
     gScreenModeHook = 0;
     func_80091510(callback_table);
     gFrameCallbackEnabled = 1;

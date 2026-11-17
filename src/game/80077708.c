@@ -16,7 +16,7 @@ extern u8 D_8009F882;
 extern s8 *D_8009F884;
 extern u8 D_8009F888;
 extern u8 D_8009F889;
-extern struct Entry D_8009B4E4[];
+extern struct Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 
 void func_80077FFC(void);
@@ -50,16 +50,16 @@ void func_80077708(void)
     D_8009F889 = 1;
 
     if (gFrontEndListFlag != 0) {
-        D_8009B4E4[gFrontEndListTable[0]].unk1F = 10;
-        D_8009B4E4[gFrontEndListTable[1]].unk1F = 10;
-        D_8009B4E4[gFrontEndListTable[2]].unk1F = 10;
-        D_8009B4E4[gFrontEndListTable[3]].unk1F = 10;
-        D_8009B4E4[gFrontEndListTable[0]].unk20 = 10;
-        D_8009B4E4[gFrontEndListTable[1]].unk20 = 10;
-        D_8009B4E4[gFrontEndListTable[2]].unk20 = 10;
-        D_8009B4E4[gFrontEndListTable[3]].unk20 = 10;
-        D_8009B4E4[gFrontEndListTable[4]].unk1F = 10;
-        D_8009B4E4[gFrontEndListTable[4]].unk20 = 10;
+        gWideTextTable[gFrontEndListTable[0]].unk1F = 10;
+        gWideTextTable[gFrontEndListTable[1]].unk1F = 10;
+        gWideTextTable[gFrontEndListTable[2]].unk1F = 10;
+        gWideTextTable[gFrontEndListTable[3]].unk1F = 10;
+        gWideTextTable[gFrontEndListTable[0]].unk20 = 10;
+        gWideTextTable[gFrontEndListTable[1]].unk20 = 10;
+        gWideTextTable[gFrontEndListTable[2]].unk20 = 10;
+        gWideTextTable[gFrontEndListTable[3]].unk20 = 10;
+        gWideTextTable[gFrontEndListTable[4]].unk1F = 10;
+        gWideTextTable[gFrontEndListTable[4]].unk20 = 10;
         func_80077FFC();
     }
 

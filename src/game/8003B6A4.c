@@ -35,8 +35,8 @@ struct NodeC {
     s32 unk10;
 };
 
-extern struct NodeA *D_800A1070[7];
-extern struct NodeC *D_8009F30C;
+extern struct NodeA *gListHeads[7] __asm__("D_800A1070");
+extern struct NodeC *gNodeCList __asm__("D_8009F30C");
 extern void func_800181D4(void *arg);
 extern void func_8003CA80(struct Unk3CA80 *object);
 
@@ -77,7 +77,7 @@ void func_8003B6A4(s32 arg_)
     prev = 0;
 
     for (i = 0; i < 7; i++) {
-        node = D_800A1070[i];
+        node = gListHeads[i];
         while (node != 0) {
             if (node->unk1C != 0 && node->unk1C->unk38 == 0) {
                 if (node->unk1C->unk04 != arg) {
@@ -94,14 +94,14 @@ void func_8003B6A4(s32 arg_)
         }
     }
 
-    cur = D_8009F30C;
+    cur = gNodeCList;
     while (cur != 0) {
         next = cur->next;
         if (cur->unk10 == arg) {
             if (prev != 0) {
                 prev->next = next;
             } else {
-                D_8009F30C = next;
+                gNodeCList = next;
             }
             cur->next = 0;
             func_800181D4(cur);

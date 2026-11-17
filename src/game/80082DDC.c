@@ -3,8 +3,8 @@
 
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 D_8009F3D0;
-extern s32 D_8009F870;
-extern s8 D_8009F874;
+extern s32 gIdleDeadline __asm__("D_8009F870");
+extern s8 gOverlayDelay __asm__("D_8009F874");
 extern u8 D_8009F4AC[];
 
 extern void func_80047690(u8 enable);
@@ -57,6 +57,6 @@ void func_80082DDC(s32 arg0, s32 arg1)
         break;
     }
     func_80047690(1);
-    D_8009F874 = -1;
-    D_8009F870 += gFrameTickCounter - start;
+    gOverlayDelay = -1;
+    gIdleDeadline += gFrameTickCounter - start;
 }

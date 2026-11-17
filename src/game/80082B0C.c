@@ -56,7 +56,7 @@ typedef struct {
     u8 pad26[0x34 - 0x26];
 } Prim82B0C;
 
-extern Table82B0C *D_8009F45C;
+extern Table82B0C *gAtlasTable __asm__("D_8009F45C");
 extern Prim82B0C *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim82B0C *gPrimPoolEnd __asm__("D_8009FA28");
 
@@ -92,7 +92,7 @@ Prim82B0C *func_80082B0C(register s32 idx, s32 x, s32 y, s32 w, s32 h, s32 tag, 
     u16 tpage;
 
     prim = 0;
-    table = D_8009F45C;
+    table = gAtlasTable;
     if (table != 0 && idx >= 0 && idx < table->count) {
         e = &table->entries[idx];
         if (w == -1) {

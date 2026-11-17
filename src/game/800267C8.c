@@ -43,14 +43,14 @@ union SpeedValue267C8 {
 };
 
 extern struct InputAction267C8 D_800A0AF0[];
-extern struct InputAction267C8 D_800A0B00[];
-extern struct InputAction267C8 D_800A0B10[];
-extern struct InputAction267C8 D_800A0B20[];
-extern struct InputAction267C8 D_800A0AA0[];
+extern struct InputAction267C8 gPanelPhaseTable[] __asm__("D_800A0B00");
+extern struct InputAction267C8 gPanelChoiceTable[] __asm__("D_800A0B10");
+extern struct InputAction267C8 gBackActionRecord[] __asm__("D_800A0B20");
+extern struct InputAction267C8 gActionRecords[] __asm__("D_800A0AA0");
 
 extern s32 D_8009F670[];
 extern s32 D_8009FA58[];
-extern s32 D_8009FA6C;
+extern s32 gPanelSelection __asm__("D_8009FA6C");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern union SpeedValue267C8 gFrameId __asm__("D_8009F9FC");
@@ -156,19 +156,19 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
     func_8005780C(state->buttons, first);
     {
         register u32 base __asm__("$2");
-        base = (u32)D_800A0B00;
+        base = (u32)gPanelPhaseTable;
         second = (struct InputAction267C8 *)(off + base);
     }
     func_8005780C(state->buttons, second);
     {
         register u32 base __asm__("$2");
-        base = (u32)D_800A0B10;
+        base = (u32)gPanelChoiceTable;
         third = (struct InputAction267C8 *)(off + base);
     }
     func_8005780C(state->buttons, third);
     func_8005780C(state->buttons,
-                  (struct InputAction267C8 *)(off + (u32)D_800A0B20));
-    off += (u32)D_800A0AA0;
+                  (struct InputAction267C8 *)(off + (u32)gBackActionRecord));
+    off += (u32)gActionRecords;
     func_8005780C(state->buttons, (struct InputAction267C8 *)off);
 
     action = 0;
@@ -203,10 +203,10 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
         if (gGameSession->unk5C == 0 ||
             (gGameSession->unk5C == 1 &&
              (gGameSession->unk0C == 1 ||
-              (gGameSession->unk0C == 2 && D_8009FA6C == 1)))) {
+              (gGameSession->unk0C == 2 && gPanelSelection == 1)))) {
             func_80046C84(0x3E, D_8009FA58[slot]);
         }
-        D_8009FA6C++;
+        gPanelSelection++;
         obj->state->selected = 0;
         func_80025F58();
         D_8009F670[slot] = 0;
@@ -231,7 +231,7 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
 
     if (obj->state->selected >= 0) {
         func_800260B8(obj, slot, selection, off,
-                     D_800A0B00[slot].phase == 0);
+                     gPanelPhaseTable[slot].phase == 0);
         text = D_8009F2DC;
     } else {
         text = D_8009F2E0;

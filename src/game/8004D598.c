@@ -9,8 +9,8 @@ struct Entity {
     u32 flags;
 };
 
-extern struct Entity *D_8009FA40;
-extern struct Entity *D_8009FA88;
+extern struct Entity *gUnitListHead __asm__("D_8009FA40");
+extern struct Entity *gListTailBranch __asm__("D_8009FA88");
 
 extern void func_80061020(struct Entity *entity);
 extern void func_800181D4(void *block);
@@ -41,7 +41,7 @@ void func_8004D598(void)
     struct Entity *previous;
 
     previous = 0;
-    next = D_8009FA40;
+    next = gUnitListHead;
     while (next != 0) {
         entity = next;
         next = next->next;
@@ -55,11 +55,11 @@ void func_8004D598(void)
                     goto release;
                 }
             } else {
-                if ((D_8009FA40 = entity->next) != 0) {
+                if ((gUnitListHead = entity->next) != 0) {
                     goto release;
                 }
             }
-            D_8009FA88 = previous;
+            gListTailBranch = previous;
 release:
             func_800181D4(entity);
         } else {

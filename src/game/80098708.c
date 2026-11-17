@@ -3,7 +3,7 @@
 
 struct Entry { u32 value; u32 other; };
 extern s32 D_8009EF04;
-extern struct Entry *D_8009EF0C;
+extern struct Entry *gSpuEntryTable __asm__("D_8009EF0C");
 extern void func_80097DF8(void);
 
 /**
@@ -41,7 +41,7 @@ void func_80098708(u32 value)
     __asm__ volatile ("" : : "r" (mask), "r" (tagged));
     count = initial;
     __asm__ volatile ("" : "=r" (count) : "0" (count));
-    entry = D_8009EF0C;
+    entry = gSpuEntryTable;
     __asm__ volatile ("nop");
     goto body;
     for (; i < count; i++, entry++) {

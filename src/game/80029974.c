@@ -14,8 +14,8 @@ struct Unk800A0BC0 {
 };
 
 extern u32 gScreenState[] __asm__("D_8009FA00");
-extern u8 D_8009F6B8;
-extern u8 D_8009F6C0;
+extern u8 gBitFieldState __asm__("D_8009F6B8");
+extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern struct Unk800A0BC0 gRingBuffer __asm__("D_800A0BC0");
 
 extern s32 func_800452C8(void);
@@ -58,11 +58,11 @@ void func_80029974(s32 arg0)
     s32 index;
 
     if (gScreenState[0] < 5 && func_800452C8() != 0) {
-        if (gRingBuffer.unk00 <= 0 && (D_8009F6B8 & 0x70) == 0) {
+        if (gRingBuffer.unk00 <= 0 && (gBitFieldState & 0x70) == 0) {
             func_800298EC(arg0);
         } else {
-            if (D_8009F6B8 & 0x40) {
-                D_8009F6C0 = 1;
+            if (gBitFieldState & 0x40) {
+                gLatchFlag = 1;
             } else {
                 func_80029DD8();
             }

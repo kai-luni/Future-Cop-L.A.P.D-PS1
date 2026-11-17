@@ -6,7 +6,7 @@ struct UnkFA94 {
     s32 unk5C;
 };
 
-extern u8 D_8009F680;
+extern u8 gMenuModeFlag __asm__("D_8009F680");
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA70;
@@ -46,7 +46,7 @@ void func_80027D9C(void)
     u8 *object;
     register u8 **slot __asm__("$16");
 
-    if (D_8009F680 != 0) {
+    if (gMenuModeFlag != 0) {
         goto tail;
     }
 

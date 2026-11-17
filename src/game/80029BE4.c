@@ -1,7 +1,7 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern u32 D_8009F6DC;
+extern u32 gCallGateFlag __asm__("D_8009F6DC");
 extern u32 func_8002443C(void);
 
 /**
@@ -24,7 +24,7 @@ extern u32 func_8002443C(void);
  */
 u32 func_80029BE4(void)
 {
-    u32 value = D_8009F6DC;
+    u32 value = gCallGateFlag;
 
     if (value == 3 || value == 4) {
         return 0;

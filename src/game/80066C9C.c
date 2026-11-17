@@ -34,7 +34,7 @@ struct Block {
 };
 
 extern struct Camera *gCamera __asm__("D_8009F9E4");
-extern struct Pair D_800A3190[];
+extern struct Pair gScenePositionPairs[] __asm__("D_800A3190");
 extern struct Block gCoverageGrid[] __asm__("D_800AB3B8");
 extern u8 gGridOriginX[] __asm__("D_8009F834");
 

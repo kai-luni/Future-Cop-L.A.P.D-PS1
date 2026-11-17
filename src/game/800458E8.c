@@ -4,7 +4,7 @@
 extern s32 gMusicVolume __asm__("D_8009F330");
 extern s32 gSoundModeFlag __asm__("D_8009F730");
 extern s32 gSoundSpatialMode __asm__("D_8009F734");
-extern s32 D_800A1920[];
+extern s32 gPositionAngleTable[] __asm__("D_800A1920");
 extern s32 func_8001A074(s32 *);
 
 #define CLAMP(x, lo, hi) ((x) >= (lo) ? ((x) <= (hi) ? (x) : (hi)) : (lo))
@@ -89,9 +89,9 @@ s32 func_800458E8(s32 xin, s32 zin, struct Mix458 *mixin, struct Extra458 *extra
         mix->flag = 1;
         break;
     case 1:
-        base = D_800A1920;
+        base = gPositionAngleTable;
         __asm__("" : "+r"(base));
-        dx = x - D_800A1920[0];
+        dx = x - gPositionAngleTable[0];
         dz = z - base[2];
         __asm__("" : "+r"(dx), "+r"(dz));
         mix->dx0 = dx;
@@ -123,11 +123,11 @@ s32 func_800458E8(s32 xin, s32 zin, struct Mix458 *mixin, struct Extra458 *extra
     case 2:
         {
             register s32 *arg0 __asm__("$4");
-            base = D_800A1920;
+            base = gPositionAngleTable;
             __asm__("" : "+r"(base));
             arg0 = &mix->dx0;
             __asm__("" : "+r"(arg0));
-            dx = x - D_800A1920[0];
+            dx = x - gPositionAngleTable[0];
             dz = z - base[2];
             base += 4;
             __asm__("" : "+r"(dx), "+r"(dz), "+r"(base));

@@ -1,7 +1,7 @@
 // Categories: Game Engine > Front-End > Map Screen | Platform > Scratchpad
 #include "game/types.h"
 
-extern u32 D_8009FAD8;
+extern u32 gHookInstallFlag __asm__("D_8009FAD8");
 extern void func_800267C8(void);
 
 /**

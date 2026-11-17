@@ -31,7 +31,7 @@ struct Unk3D240Transform {
     s32 pos[3];
 };
 
-extern struct Unk3D240 *D_8009F320;
+extern struct Unk3D240 *gNodeListHead __asm__("D_8009F320");
 
 extern void *func_80017EBC(s32 size, s32 tag);
 extern void func_800181D4(void *block);
@@ -96,7 +96,7 @@ void func_8003D240(void)
     s32 first;
 
     prev = 0;
-    object = D_8009F320;
+    object = gNodeListHead;
     while (object != 0) {
         next = object->next;
         if (object->unk38 == 0 && object->unk04 != 0 &&
@@ -184,7 +184,7 @@ void func_8003D240(void)
             if (prev != 0) {
                 prev->next = object->next;
             } else {
-                D_8009F320 = object->next;
+                gNodeListHead = object->next;
             }
             object->next = 0;
             func_8003CF20(object);

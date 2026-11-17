@@ -6,7 +6,7 @@ typedef struct Unk8009F468 {
     s32 (*unk1C)(s32);
 } Unk8009F468;
 
-extern Unk8009F468 *D_8009F468;
+extern Unk8009F468 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 
@@ -33,7 +33,7 @@ extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 s32 func_80082D30(s32 *arg0, s32 arg1)
 {
     s32 result = 0;
-    s32 (*callback)(s32) = D_8009F468->unk1C;
+    s32 (*callback)(s32) = gFontBankTable->unk1C;
 
     if (callback != 0) {
         if (*arg0 != 0) {

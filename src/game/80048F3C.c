@@ -7,7 +7,7 @@ struct FontEntry {
     u8 unk1C[0x100];
 };
 
-extern struct FontEntry D_800A19A0[];
+extern struct FontEntry gGlyphEntryTable[] __asm__("D_800A19A0");
 extern s32 gFontBankCount __asm__("D_8009F364");
 
 extern void func_800181D4(void *block);
@@ -36,6 +36,6 @@ void func_80048F3C(void)
     s32 i;
 
     for (i = 0; i < gFontBankCount; i++) {
-        func_800181D4(D_800A19A0[i].glyphs);
+        func_800181D4(gGlyphEntryTable[i].glyphs);
     }
 }

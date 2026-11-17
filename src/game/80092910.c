@@ -24,7 +24,7 @@ struct Callbacks {
 extern u8 D_800129A0[];
 extern u8 D_800129C0[];
 extern u8 gGpuCallbackTable[] __asm__("D_8009DDA8");
-extern struct State D_8009DDF0;
+extern struct State gDebugTagBytes __asm__("D_8009DDF0");
 extern struct Entry D_8009DE70[];
 extern struct Entry D_8009DE7C[];
 extern struct Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
@@ -66,10 +66,10 @@ int func_80092910(int input)
     case 0:
     case 3:
         __asm__ volatile ("" ::: "memory");
-        func_8008E000(D_800129A0, gGpuCallbackTable, &D_8009DDF0);
+        func_8008E000(D_800129A0, gGpuCallbackTable, &gDebugTagBytes);
     case 5:
         __asm__ volatile ("" ::: "memory");
-        state = &D_8009DDF0;
+        state = &gDebugTagBytes;
         __asm__("" : "+r"(state));
         func_80095830((u8 *)state, 0, 0x80);
         func_80091480();
@@ -113,7 +113,7 @@ int func_80092910(int input)
         return state->mode;
     default:
         __asm__ volatile ("" ::: "memory");
-        if (D_8009DDF0.field2 >= 2) {
+        if (gDebugTagBytes.field2 >= 2) {
             __asm__ volatile ("" ::: "memory");
             gLogPrintf(D_800129C0, arg);
         }

@@ -1,9 +1,9 @@
 // Categories: Graphics > Text > Rendering | Game Engine > Init
 #include "game/types.h"
 
-extern s32 D_8009FAB8;
+extern s32 gHudMode2 __asm__("D_8009FAB8");
 extern s32 gOverlayTimer __asm__("D_8009F760");
-extern s32 D_8009FAC8;
+extern s32 gFrameSwitch __asm__("D_8009FAC8");
 
 extern void func_80048EC4(void);
 
@@ -31,8 +31,8 @@ extern void func_80048EC4(void);
  */
 void func_8004783C(void)
 {
-    D_8009FAB8 = 0;
+    gHudMode2 = 0;
     gOverlayTimer = 0;
-    D_8009FAC8 = 0;
+    gFrameSwitch = 0;
     func_80048EC4();
 }

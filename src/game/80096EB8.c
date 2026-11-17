@@ -48,7 +48,7 @@ typedef struct {
 
 extern u32 *gSpuDelayCtrlPtr __asm__("D_8009EEB4");
 extern Spu *gSpuRegBasePtr __asm__("D_8009EEA4");
-extern s32 D_8009EEC0;
+extern s32 gOpOrderFlag __asm__("D_8009EEC0");
 extern s32 D_8009EEC4;
 extern s32 gSpuAlignEnable __asm__("D_8009EEC8");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
@@ -107,7 +107,7 @@ s32 func_80096EB8(s32 arg0)
     v = *gSpuDelayCtrlPtr | 0xB0000;
     *gSpuDelayCtrlPtr = v;
     spu = gSpuRegBasePtr;
-    D_8009EEC0 = 0;
+    gOpOrderFlag = 0;
     D_8009EEC4 = 0;
     gSpuTransferAddr = 0;
     spu->f180 = 0;

@@ -7,7 +7,7 @@ struct Entity {
     s32 id;
 };
 
-extern struct Entity *D_8009FA40;
+extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 
 /**
  * @brief Searches the active entity linked list for an entry matching a given id.
@@ -36,7 +36,7 @@ struct Entity *func_8004D664(s32 id)
 {
     struct Entity *entity;
 
-    for (entity = D_8009FA40; entity != 0; entity = entity->next) {
+    for (entity = gUnitListHead; entity != 0; entity = entity->next) {
         if (entity->id == id) {
             break;
         }

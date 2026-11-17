@@ -10,7 +10,7 @@ typedef struct Unk8002A398 {
 extern u8 D_8009F308;
 extern s32 D_8009F6CC;
 extern u32 D_8009F6E4;
-extern Unk8002A398 *D_800A0C50[4];
+extern Unk8002A398 *gVagmRing[4] __asm__("D_800A0C50");
 
 /**
  *  @brief Removes the current entry from a four-slot pointer queue.
@@ -36,13 +36,13 @@ s32 func_8002A398(void)
 
     ptr = 0;
     if (D_8009F308 != 1) {
-        ptr = D_800A0C50[D_8009F6CC];
+        ptr = gVagmRing[D_8009F6CC];
         if (ptr != 0) {
             D_8009F6E4 = ptr->unk16 + 1;
             if (D_8009F6E4 >= ptr->unk14) {
                 D_8009F6E4 = 0;
             }
-            D_800A0C50[D_8009F6CC] = 0;
+            gVagmRing[D_8009F6CC] = 0;
             D_8009F6CC++;
             if (D_8009F6CC >= 4) {
                 D_8009F6CC = 0;

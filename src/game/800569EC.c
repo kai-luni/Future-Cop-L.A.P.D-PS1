@@ -75,11 +75,11 @@ struct Locals569EC {
 };
 
 extern struct Mode569EC *gGameSession __asm__("D_8009FA94");
-extern struct Override569EC *D_8009F9A0;
+extern struct Override569EC *gMissionWorkingSet __asm__("D_8009F9A0");
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern struct Camera569EC *gCamera __asm__("D_8009F9E4");
-extern struct State569EC D_8009AEC4[];
-extern struct Offset569EC D_8009AD08[];
+extern struct State569EC gPresetEntryTable[] __asm__("D_8009AEC4");
+extern struct Offset569EC gViewPresetTable[] __asm__("D_8009AD08");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern void func_8005780C(void *, struct Vec569EC *);
 extern s32 func_80031B40(struct Vec569EC *, void *);
@@ -265,7 +265,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
     {
         register struct Override569EC *override __asm__("$7");
         register s32 overrideIndex __asm__("$2");
-        override = D_8009F9A0;
+        override = gMissionWorkingSet;
         selected = 0;
         if (override != 0) {
             heading = override->heading;

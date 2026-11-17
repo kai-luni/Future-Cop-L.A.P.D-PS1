@@ -35,7 +35,7 @@ typedef struct {
 extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 extern u8 D_8009F3F8;
 extern Unk8009C0A8 gLoadoutTable[] __asm__("D_8009C0A8");
-extern s8 *D_8009F468;
+extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 
 extern UnkBox *func_80082AB0(s32, s32, s32, s32, s32, s32, s32, s32, s32);
@@ -167,7 +167,7 @@ void func_8007D7CC(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
             func_80083060(x, y + 3, s6, y, s3, s0, s1, s2, 0, 0xFF, 0, 0, s4);
             func_80083060(x, s2, s6, s0, s3, y, s1, y + 3, 0, 0xFF, 0, 0, s4);
         }
-        if (flag && D_8009F468[5] != 2) {
+        if (flag && gFontBankTable[5] != 2) {
             s2 = (s32)func_80082B0C(e->unkF, e->unk10, e->unk12, -1, -1, 0x14, c0, c1, c2, 1, 8);
             if (e->unk11) {
                 func_80082B0C(e->unkF, e->unk11, e->unk12, -1, -1, 0x14, c0, c1, c2, 1, 8);
@@ -201,7 +201,7 @@ void func_8007D7CC(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
         y -= 1;
         x += 4 + (box->unk10 - box->unk8);
     }
-    if (D_8009F468[5] != 2) {
+    if (gFontBankTable[5] != 2) {
         x = 0xC1;
         y += 2;
     }

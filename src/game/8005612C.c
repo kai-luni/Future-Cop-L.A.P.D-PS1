@@ -21,7 +21,7 @@ struct Locals {
     s32 cosA;
 };
 
-extern s32 D_8009F9A0;
+extern s32 gMissionWorkingSet __asm__("D_8009F9A0");
 extern void func_8001846C(s32 angle, s32 *sine, s32 *cosine);
 
 #define FMUL(a, b) ({ s32 r_; __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
@@ -105,7 +105,7 @@ void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
     L.vec.y += position->y;
     distance += position->y / 2;
 
-    if (D_8009F9A0 != 0) {
+    if (gMissionWorkingSet != 0) {
         L.vec.x = 0;
         L.vec.y = 0;
         L.vec.z = 0;

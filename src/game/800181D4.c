@@ -9,9 +9,9 @@ struct LinkState {
     s32 *link;
 };
 
-extern struct LinkState *D_8009FA4C;
-extern struct LinkState *D_8009F9D0;
-extern struct LinkState *D_8009FAAC;
+extern struct LinkState *gPool3Size __asm__("D_8009FA4C");
+extern struct LinkState *gPool1Size __asm__("D_8009F9D0");
+extern struct LinkState *gPool2Size __asm__("D_8009FAAC");
 extern s32 *D_8009F590;
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
@@ -70,11 +70,11 @@ void func_800181D4(void *block)
     u32 offset;
     register s32 total __asm__("$3");
 
-    if (((pool = D_8009FA4C),
+    if (((pool = gPool3Size),
          (s32)block >= (s32)pool && (s32)block < (s32)pool->end) ||
-        ((pool = D_8009F9D0),
+        ((pool = gPool1Size),
          (s32)block >= (s32)pool && (s32)block < (s32)pool->end) ||
-        ((pool = D_8009FAAC),
+        ((pool = gPool2Size),
          (s32)block >= (s32)pool && (s32)block < (s32)pool->end)) {
         func_800195D0(pool, (s32 *)block);
     } else if ((s32)block >= (s32)D_8009F590[0] &&

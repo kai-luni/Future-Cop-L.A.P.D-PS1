@@ -7,7 +7,7 @@ typedef struct {
 } UnkA78F0;
 
 extern  void (*gScreenModeHook)(void) __asm__("D_8009F99C");
-extern s32 D_8009F9CC;
+extern s32 gDisplaySetupToggle __asm__("D_8009F9CC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");

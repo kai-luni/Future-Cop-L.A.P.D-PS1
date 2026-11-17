@@ -10,7 +10,7 @@ struct Unk69B58 {
 };
 
 extern struct Unk69B58 *gGameSession __asm__("D_8009FA94");
-extern s32 *D_8009F9F8;
+extern s32 *gOpcodeTable __asm__("D_8009F9F8");
 extern s32 *D_8009FAD4;
 extern s32 *gVmCountdowns __asm__("D_8009F9A4");
 extern u8 gScriptVmDisabled __asm__("D_8009F840");
@@ -48,7 +48,7 @@ void func_80069B58(void)
     gGameSession->unk24 = (u32)func_80019668() % 1000;
 
     for (i = 0; i < 0x20; i++) {
-        D_8009F9F8[i] = (u32)func_80019668() % 1000;
+        gOpcodeTable[i] = (u32)func_80019668() % 1000;
     }
 
     for (i = 0x63; i >= 0; i--) {

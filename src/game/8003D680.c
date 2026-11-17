@@ -73,7 +73,7 @@ struct Unk3D680 {
 };
 
 extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
-extern struct Unk3D680 *D_8009F320;
+extern struct Unk3D680 *gNodeListHead __asm__("D_8009F320");
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void *func_80017EBC(s32 size, s32 tag);
@@ -233,7 +233,7 @@ struct Unk3D680 *func_8003D680(struct Unk3D680Source *source, u8 type, s32 row,
 
     object->unk3A = 0;
     object->unk3E = 0;
-    object->next = D_8009F320;
-    D_8009F320 = object;
+    object->next = gNodeListHead;
+    gNodeListHead = object;
     return object;
 }

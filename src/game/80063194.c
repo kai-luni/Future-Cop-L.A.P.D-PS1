@@ -7,7 +7,7 @@ struct Unk631A0 {
 };
 
 extern s32 gQueueCount __asm__("D_8009F838");
-extern struct Unk631A0 D_800A31A0[];
+extern struct Unk631A0 gObjectKeyTable[] __asm__("D_800A31A0");
 
 /**
  * @brief Removes an object from the ground/interaction key table D_800A31A0 by
@@ -47,12 +47,12 @@ void func_80063194(s32 key)
     s32 i;
 
     for (i = 0; i < gQueueCount; i++) {
-        if (D_800A31A0[i].key == key) {
+        if (gObjectKeyTable[i].key == key) {
             gQueueCount--;
             if (i < gQueueCount) {
-                D_800A31A0[i] = D_800A31A0[gQueueCount];
+                gObjectKeyTable[i] = gObjectKeyTable[gQueueCount];
             } else {
-                D_800A31A0[i].key = 0;
+                gObjectKeyTable[i].key = 0;
             }
             return;
         }

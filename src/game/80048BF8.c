@@ -34,7 +34,7 @@ struct FontEntry {
     u8 data[0x100];
 };
 
-extern struct FontEntry D_800A19A0[];
+extern struct FontEntry gGlyphEntryTable[] __asm__("D_800A19A0");
 extern u16 gPaletteTable[] __asm__("D_800A1970");
 extern u16 gTexpageTable[] __asm__("D_800A1940");
 extern u16 D_800A1E10[];
@@ -76,7 +76,7 @@ void func_80048BF8(s32 arg0)
     u8 *data;
 
     if (arg0 < 4) {
-        info = D_800A19A0[arg0].info;
+        info = gGlyphEntryTable[arg0].info;
         if (gTexBankVramY + info->f06 < 0x1FF) {
             size = (info->f04 * info->f06) / 2;
             for (i = 0; i < size; i++) {

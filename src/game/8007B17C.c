@@ -15,7 +15,7 @@ struct Unk8009F468 {
     s8 unk5;
 };
 
-extern struct Unk8009F468 *D_8009F468;
+extern struct Unk8009F468 *gFontBankTable __asm__("D_8009F468");
 extern struct Unk8009FA94 *gGameSession __asm__("D_8009FA94");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
@@ -87,24 +87,24 @@ void func_8007B17C(s32 arg0)
         func_800788F0(0, 0xA0, y, 0x10, id, 4, 8, 1);
     }
 
-    if (D_8009F468->unk5 == 2) {
+    if (gFontBankTable->unk5 == 2) {
         if (arg0 == 1) {
             b = 2;
-            switch (D_8009F468->unk1) {
+            switch (gFontBankTable->unk1) {
             case 5: a = 1; break;
             case 6: a = 2; break;
             case 4: a = 3; break;
             }
         } else {
             b = 1;
-            switch (D_8009F468->unk0) {
+            switch (gFontBankTable->unk0) {
             case 2: a = 1; break;
             case 3: a = 2; break;
             case 1: a = 3; break;
             }
         }
     } else {
-        switch (D_8009F468->unk0) {
+        switch (gFontBankTable->unk0) {
         case 1: a = 1; break;
         case 2: a = 2; break;
         case 0: a = 3; break;

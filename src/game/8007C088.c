@@ -9,7 +9,7 @@ extern u8 D_8009F900;
 extern u8 D_8009F901;
 extern u8 D_8009F902;
 extern u8 D_8009F903;
-extern s8 D_8009F904;
+extern s8 gSnapshotResult __asm__("D_8009F904");
 extern u8 D_800A374D[];
 extern u8 func_8001EB2C(s32 arg0);
 
@@ -43,7 +43,7 @@ void func_8007C088(void)
     D_8009F8D9 = func_8001EB2C(1);
     D_8009F902 = 0;
     D_8009F903 = 0;
-    if (D_8009F904 == 1) {
+    if (gSnapshotResult == 1) {
         D_800A374D[0] = 3;
     } else {
         D_800A374D[0] = 1;

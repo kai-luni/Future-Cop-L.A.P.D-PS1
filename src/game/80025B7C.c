@@ -16,7 +16,7 @@ extern UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern s32 D_8009FA30;
+extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 D_8009FA70;
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void *jtbl_80010DDC[];
@@ -103,8 +103,8 @@ state_8:
                 if (gScreenState != state && func_80024170() == 0) {
                     break;
                 }
-                gFrameId = gDiscShadeByte - D_8009FA30;
-                D_8009FA30 = gDiscShadeByte;
+                gFrameId = gDiscShadeByte - gFrameTickBase;
+                gFrameTickBase = gDiscShadeByte;
                 func_80025348();
             }
         }

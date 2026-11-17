@@ -45,7 +45,7 @@ struct State800889DC {
 };
 
 extern volatile struct State800889DC *gQueueBlock __asm__("D_8009F970");
-extern s32 D_8009F508;
+extern s32 gReleaseDoneFlag __asm__("D_8009F508");
 extern volatile u32 *D_8009F50C;
 extern u32 D_8009F980;
 
@@ -122,7 +122,7 @@ void func_80088A1C(u8 mode)
         return;
     }
 
-    if (D_8009F508 != 0) {
+    if (gReleaseDoneFlag != 0) {
         count = 0;
         while (*D_8009F50C & 0x1000000) {
             count++;

@@ -31,7 +31,7 @@ struct Work7C0F8 {
 extern u8 D_8009F902[];
 extern s8 D_8009F900[];
 extern u8 D_8009C018[];
-extern u8 D_8009BFD4[];
+extern u8 gPresetByteTable[] __asm__("D_8009BFD4");
 extern u8 D_8009BEF4[];
 extern u16 gChoiceSpriteTable[][2] __asm__("D_8009BF9C");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
@@ -141,7 +141,7 @@ void func_8007C0F8(s32 slot)
 
     sel = *selPtr;
     off = i;
-    selData = D_8009BFD4 + sel * 14;
+    selData = gPresetByteTable + sel * 14;
 
     for (; i < 14; i++) {
         item = (struct MenuItem7C0F8 *)(D_8009BEF4 + off);

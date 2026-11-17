@@ -11,10 +11,12 @@ struct SoundLoad { Sound *sound; s32 soundpos; };
 struct State { u8 pad0[8]; s32 pos; u8 padc[8]; File *file; s32 pad18; s32 limit; u8 playing; u8 pad21[3]; struct SoundLoad load; u8 pad2c[0x12]; u16 count; u16 rate; u8 pad42[2]; s32 a, b, c; };
 struct Other { u8 pad0[8]; Chunk *chunks[2]; u8 pad10; u8 count; u8 sum; u8 pad13; s32 size; };
 extern struct State gStreamBufferList __asm__("D_800A0B70");
-extern struct Other D_800A0C30;
-extern Chunk *D_800A0C50[4];
-extern u8 D_8009F6B8, D_8009F6C0;
-extern s32 D_8009F6C4, D_8009F6DC, D_8009F6E0;
+extern struct Other gReleaseQueues __asm__("D_800A0C30");
+extern Chunk *gVagmRing[4] __asm__("D_800A0C50");
+extern u8 gLatchFlag __asm__("D_8009F6C0");
+extern u8 gBitFieldState __asm__("D_8009F6B8");
+extern s32 D_8009F6C4, D_8009F6E0;
+extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern volatile s32 D_8009F6D4;
 extern s32 D_8009FA24;
 extern s32 func_80028E58(s32);
@@ -59,14 +61,14 @@ void func_8002902C(void)
     state = &gStreamBufferList;
     file = state->file;
     if (!file) return;
-    queue = D_800A0C50;
+    queue = gVagmRing;
     one = 1;
     do {
         state->count++;
         copy = *file;
         pos = file->pos;
         if (pos < state->limit) {
-            other = &D_800A0C30;
+            other = &gReleaseQueues;
         chunk_loop:
             {
                 s32 pivot = 0x53484F43;
@@ -115,7 +117,7 @@ void func_8002902C(void)
                     }
                     goto dispatch_end;
                 vagm:
-                    if (D_8009F6DC != 0 && D_8009F6DC != 2 && queue[D_8009F6D4] == 0) {
+                    if (gCallGateFlag != 0 && gCallGateFlag != 2 && queue[D_8009F6D4] == 0) {
                         register Chunk *p __asm__("$16");
                         p = chunk;
                         __asm__("" : "+r"(p));
@@ -125,30 +127,30 @@ void func_8002902C(void)
                         file->refs++;
                         __asm__("" : "+r"(chunk));
                         chunk->owner = file;
-                        if (D_8009F6DC == 3) {
+                        if (gCallGateFlag == 3) {
                             D_8009F6E0++;
                             if ((u32)D_8009F6E0 >= 2) {
                                 if (!func_800244A4()) func_8002A544();
-                                else D_8009F6DC = one;
+                                else gCallGateFlag = one;
                             }
-                        } else D_8009F6DC = one;
-                        if (D_8009F6DC && p->index + 1 == p->total && state->playing == one) {
+                        } else gCallGateFlag = one;
+                        if (gCallGateFlag && p->index + 1 == p->total && state->playing == one) {
                             state->playing = 0;
                             state->pos = state->c + state->b;
                         }
                     }
                     goto dispatch_end;
                 vagb:
-                    D_8009F6B8 |= 1;
+                    gBitFieldState |= 1;
                     if (func_80023CA4((u8 *)chunk + 0x18, size - 0x18, chunk->index)) {
                         if (chunk->index == one) other->size = 0;
                         other->size += ((size + 0x27) >> 6) << 6;
                         if (chunk->index == chunk->total) {
                             D_8009F6C4 = 0;
-                            D_8009F6B8 = (D_8009F6B8 | 4) & 0xbf;
-                            if (D_8009F6C0) {
-                                D_8009F6B8 |= 8;
-                                D_8009F6C0 = 0;
+                            gBitFieldState = (gBitFieldState | 4) & 0xbf;
+                            if (gLatchFlag) {
+                                gBitFieldState |= 8;
+                                gLatchFlag = 0;
                             }
                             if (!D_8009FA24) {
                                 state->playing = one;
@@ -163,7 +165,7 @@ void func_8002902C(void)
                         chunk->owner = file;
                         other->chunks[other->count++] = chunk;
                         { u8 c = other->count;
-                        D_8009F6B8 |= 2;
+                        gBitFieldState |= 2;
                         if (c == one) other->sum = 0; }
                         other->sum += *(u8 *)((u8 *)chunk + 0x16);
                     }

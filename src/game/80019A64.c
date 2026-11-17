@@ -4,7 +4,7 @@
 struct ScriptTimer;
 
 extern struct ScriptTimer *gResourceList __asm__("D_8009F5B8");
-extern s32 D_8009F5BC;
+extern s32 gListTailFlag __asm__("D_8009F5BC");
 
 /**
  * @brief Clears the global resource registry head and tail pointers during level initialization.
@@ -33,5 +33,5 @@ extern s32 D_8009F5BC;
 void func_80019A64(void)
 {
     gResourceList = 0;
-    D_8009F5BC = 0;
+    gListTailFlag = 0;
 }

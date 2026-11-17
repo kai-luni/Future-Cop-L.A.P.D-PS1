@@ -9,8 +9,8 @@ struct Unk3F570Node {
     void (*unk24)(s32, struct Unk3F570Node *, s32, s32);
 };
 
-extern struct Unk3F570Node *D_800A1070[7];
-extern struct Unk3F570Node *D_8009F30C;
+extern struct Unk3F570Node *gListHeads[7] __asm__("D_800A1070");
+extern struct Unk3F570Node *gNodeCList __asm__("D_8009F30C");
 extern struct Unk3F570Node *gPendingSpawnList __asm__("D_8009F314");
 
 extern s32 func_8003F2AC(struct Unk3F570Node *object, s32 arg1);
@@ -63,7 +63,7 @@ void func_8003F570(s32 arg0)
 
     i = 0;
     do {
-        node = D_800A1070[i];
+        node = gListHeads[i];
         prev = 0;
         if (node != 0) {
             do {
@@ -72,7 +72,7 @@ void func_8003F570(s32 arg0)
                     if (prev != 0) {
                         prev->next = node->next;
                     } else {
-                        D_800A1070[i] = node->next;
+                        gListHeads[i] = node->next;
                     }
                     zero = 0;
                     node->next = 0;
@@ -87,9 +87,9 @@ void func_8003F570(s32 arg0)
     } while (i < 7);
 
     func_8003F530(arg0);
-    func_8004C2B8(D_800A1070[4]);
-    func_8003F428(D_800A1070[5], arg0);
-    if (D_8009F30C != 0) {
+    func_8004C2B8(gListHeads[4]);
+    func_8003F428(gListHeads[5], arg0);
+    if (gNodeCList != 0) {
         func_8003FF7C();
     }
     while (gPendingSpawnList != 0) {

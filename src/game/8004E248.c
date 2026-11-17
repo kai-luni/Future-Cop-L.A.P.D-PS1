@@ -20,10 +20,10 @@ struct Entity {
 
 extern struct Entity *D_8009FA58;
 extern struct Entity *D_8009FA5C;
-extern struct Entity *D_8009F9A0;
+extern struct Entity *gMissionWorkingSet __asm__("D_8009F9A0");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 D_8009F7A4;
-extern struct Entity *D_8009FA40;
+extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 extern s32 gCommandListHead __asm__("D_800A8F90");
 extern s32 gEffectPoolCapacity __asm__("D_800A8F94");
 extern struct Entity *gEffectListHead[] __asm__("D_800A8F98");
@@ -81,9 +81,9 @@ void func_8004E248(void)
     bx = D_8009FA5C->x;
     bz = D_8009FA5C->z;
     best = 0x40000000;
-    if (D_8009F9A0 != 0) {
-        bx = D_8009F9A0->x;
-        bz = D_8009F9A0->z;
+    if (gMissionWorkingSet != 0) {
+        bx = gMissionWorkingSet->x;
+        bz = gMissionWorkingSet->z;
         x = bx;
         z = bz;
     }
@@ -96,7 +96,7 @@ outer_head:
     }
     out = gEffectListHead;
     count = 0;
-    e = D_8009FA40;
+    e = gUnitListHead;
     if (e != 0) {
         mask = 0x400000;
         do {

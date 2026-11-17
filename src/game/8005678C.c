@@ -29,7 +29,7 @@ struct Unk5678C {
     s16 heading;
 };
 
-extern struct Unk5678COffset D_8009AD08[];
+extern struct Unk5678COffset gViewPresetTable[] __asm__("D_8009AD08");
 
 extern void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
                           s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8);
@@ -69,7 +69,7 @@ void func_8005678C(struct Unk5678C *object, s32 index, s32 *out, s32 apply)
 
     heading = object->heading;
     position = object->position;
-    offset = &D_8009AD08[index];
+    offset = &gViewPresetTable[index];
     func_8005612C(&position, heading, heading + offset->angle, offset->pitch,
                   offset->distance, offset->data, out, object->info->unkA8,
                   object->info->unkBC);

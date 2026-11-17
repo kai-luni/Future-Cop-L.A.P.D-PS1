@@ -3,7 +3,7 @@
 
 typedef void (*SpuDmaCallback)(void);
 
-extern s32 D_8009EE94;
+extern s32 gSecondCallGuard __asm__("D_8009EE94");
 extern s32 D_8009EEDC;
 extern SpuDmaCallback gInstalledHandler __asm__("D_8009EEE0");
 extern void *gSpuDmaCallback __asm__("D_8009EA2C");
@@ -38,7 +38,7 @@ extern void func_8008C990(void *arg);
  */
 void func_80097A48(void)
 {
-    if (D_8009EE94 == 1) {
+    if (gSecondCallGuard == 1) {
         __asm__ volatile(
             ".set\tnoreorder\n\t"
             "lui\t$at,%hi(D_8009EE94)\n\t"

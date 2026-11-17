@@ -1,7 +1,7 @@
 // Categories: Platform > Streaming Audio | Platform > Sound
 #include "game/types.h"
 
-extern u32 D_8009F6DC;
+extern u32 gCallGateFlag __asm__("D_8009F6DC");
 
 /**
  * @brief Returns whether audio stream playback state D_8009F6DC is active (non-zero).
@@ -28,5 +28,5 @@ extern u32 D_8009F6DC;
  */
 s32 func_8002A58C(void)
 {
-    return D_8009F6DC != 0;
+    return gCallGateFlag != 0;
 }
