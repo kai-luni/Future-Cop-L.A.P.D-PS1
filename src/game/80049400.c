@@ -3,7 +3,7 @@
 
 struct ScriptTimer;
 
-extern struct ScriptTimer *D_8009F770;
+extern struct ScriptTimer *gScriptTimerTicks __asm__("D_8009F770");
 extern s32 D_8009F774;
 
 /**
@@ -30,6 +30,6 @@ extern s32 D_8009F774;
  */
 void func_80049400(void)
 {
-    D_8009F770 = 0;
+    gScriptTimerTicks = 0;
     D_8009F774 = 0;
 }

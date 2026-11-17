@@ -6,7 +6,7 @@ extern s32 gCdSeenResponseCount __asm__("D_8009CBC4");
 extern s32 gCdResponseCount __asm__("D_8009C8BC");
 extern s32 gCdLogLevel __asm__("D_8009C8B0");
 extern Entry D_800A3E80[];
-extern char D_800A3E88[];
+extern char gCachedDirName[] __asm__("D_800A3E88");
 extern char D_800125AC[], D_800125C8[], D_800125E0[], D_800125FC[], D_8001261C[], D_80012628[];
 extern s32 func_80090218(void);
 extern s32 func_800904DC(s32, char *);
@@ -121,7 +121,7 @@ end:
         __asm__ volatile("" : "=r"(count));
         count = 0;
     }
-    base = D_800A3E88;
+    base = gCachedDirName;
     __asm__("" : "=r"(base) : "0"(base));
     entry = (Entry *)(base - 8);
     name = base;

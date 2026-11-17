@@ -16,7 +16,7 @@ extern s8 *D_8009F468;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F8BC;
 extern struct E8007E1A4 gLoadoutTable[] __asm__("D_8009C0A8");
-extern u8 D_8009F490[];
+extern u8 gNumberFormatString[] __asm__("D_8009F490");
 
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern s32 func_80048E28(s32 index);
@@ -113,7 +113,7 @@ void func_8007E1A4(s32 mode, s32 x, s32 y, s32 color, s32 idx)
                     func_80048E28(2);
                 }
                 func_800492A0(s, &w, &h);
-                func_8008CD30(buf, D_8009F490, n);
+                func_8008CD30(buf, gNumberFormatString, n);
                 func_800788F0(buf, x + w, y, color, 0, 1, 8, 2);
                 if (old != -1) {
                     func_80048E28(old);

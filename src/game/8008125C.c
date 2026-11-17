@@ -31,10 +31,10 @@ extern u8 *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009F458;
 extern u8 D_8009F459;
 extern u8 D_8009F3F1;
-extern u8 D_8009F3C0;
-extern u8 D_8009F3C1;
-extern u8 D_8009F3C3;
-extern u8 D_8009F3C4;
+extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
+extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
+extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
+extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
 extern u8 D_8009F3E6;
 extern u8 D_8009F3E7;
 extern u8 D_8009FA10;
@@ -44,11 +44,11 @@ extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern u8 D_800120BC[];
 extern u8 D_800120C8[];
 extern u8 D_800120D4[];
-extern u8 D_8009F484[];
-extern u16 D_8009F470;
+extern u8 gMenuValueFormat[] __asm__("D_8009F484");
+extern u16 gPlaceholderGlyph __asm__("D_8009F470");
 extern u8 D_8009F498[];
 extern u8 D_8009F4A0[];
-extern u8 D_8009F4A4[];
+extern u8 gDefaultNameString[] __asm__("D_8009F4A4");
 extern u8 D_800A3718[];
 extern u8 D_8009F3F8[];
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
@@ -212,9 +212,9 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                     if (fa[0x90 / 4] != 0) count++;
                     if (fa[0x94 / 4] != 0) count++;
                     if (count != 0) {
-                        func_8008CD30(txt, D_8009F484, count);
+                        func_8008CD30(txt, gMenuValueFormat, count);
                     } else {
-                        *(u16 *)txt = D_8009F470;
+                        *(u16 *)txt = gPlaceholderGlyph;
                     }
                     if (*(s32 *)(gGameSession + 0x5C) == 1) {
                         n = 0;
@@ -286,10 +286,10 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             *(s32 *)(gGameSession + 0x5C) = REC(0x468);
             D_8009F3E6 = REC(0x46A);
             D_8009F3E7 = REC(0x46B);
-            if (REC(0x469) != 0) D_8009F3C0 = REC(0x469);
-            if (REC(0x46C) != 0) D_8009F3C1 = REC(0x46C);
-            if (REC(0x46D) != 0) D_8009F3C3 = REC(0x46D);
-            if (REC(0x46F) != 0) D_8009F3C4 = REC(0x46F);
+            if (REC(0x469) != 0) gFrontEndListFlag = REC(0x469);
+            if (REC(0x46C) != 0) gPlayerWrapLimit = REC(0x46C);
+            if (REC(0x46D) != 0) gPausedMenuFlag = REC(0x46D);
+            if (REC(0x46F) != 0) gLockedMenuFlag = REC(0x46F);
             for (arg2 = 0; arg2 < 4; arg2++) {
                 D_8009B4E4[gFrontEndListTable[arg2]].unk1F = REC(0x464 + arg2);
                 D_8009B4E4[gFrontEndListTable[arg2]].unk20 = REC(0x464 + arg2);
@@ -421,7 +421,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                 if (RAW[arg4 * 0x70 + 0x428] == 0) {
                     q = func_80089914(0x3714);
                     if (q == 0 || func_8008CCC0(q) >= 9) {
-                        q = D_8009F4A4;
+                        q = gDefaultNameString;
                     }
                 } else {
                     q = RAW + arg4 * 0x70 + 0x428;

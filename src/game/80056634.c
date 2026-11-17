@@ -40,7 +40,7 @@ typedef struct Player56634 {
 } Player56634;
 
 extern Player56634 *D_8009F9A0;
-extern Entry56634 D_8009ACF4[];
+extern Entry56634 gFormCodeTable[] __asm__("D_8009ACF4");
 extern Object56634 *D_8009FA58[2];
 
 extern void func_8005612C(Vec56634 *pos, s32 angle, s32 angle2, s32 pitch, s32 dist,
@@ -88,7 +88,7 @@ void func_80056634(void)
     index = D_8009F9A0->index;
     __asm__("" : : "r"(index));
     angle = D_8009F9A0->angle;
-    entries = D_8009ACF4;
+    entries = gFormCodeTable;
     entry = &entries[index];
 
     for (i = 0; i < 2; i++) {

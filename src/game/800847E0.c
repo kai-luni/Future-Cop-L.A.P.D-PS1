@@ -9,7 +9,7 @@ extern u8 *D_8009FABC;
 extern s32 gDecodeJob __asm__("D_8009F4BC");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 D_8009F4C4;
-extern s32 D_8009F4C8;
+extern s32 gStripStepWidth __asm__("D_8009F4C8");
 
 #define K(o, e, tp, i) o = (e); if ((o & 7) >= (tp)[i]) o += 8; o = D_8009F9D8[o];
 #define PACK (a | ((b << 5) | (c << 10)))

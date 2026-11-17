@@ -1,7 +1,7 @@
 // Categories: Platform > Sound > Volume
 #include "game/types.h"
 
-extern s32 D_8009F338;
+extern s32 gVoiceVolumeBase __asm__("D_8009F338");
 
 /**
  * @brief Sets the voice/stream volume, clamped to the 0..0x7F range.
@@ -30,11 +30,11 @@ void func_80045294(s32 volume)
 {
     if (volume >= 0) {
         if (volume < 0x80) {
-            D_8009F338 = volume;
+            gVoiceVolumeBase = volume;
         } else {
-            D_8009F338 = 0x7F;
+            gVoiceVolumeBase = 0x7F;
         }
     } else {
-        D_8009F338 = 0;
+        gVoiceVolumeBase = 0;
     }
 }

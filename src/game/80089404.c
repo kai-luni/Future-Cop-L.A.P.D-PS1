@@ -32,7 +32,7 @@ struct State80089404 {
     volatile u32 unk448;
 };
 
-extern struct State80089404 *D_8009F970;
+extern struct State80089404 *gQueueBlock __asm__("D_8009F970");
 extern u32 D_8009F980;
 
 extern s32 func_800886C8(s32 delta, s32 value);
@@ -75,15 +75,15 @@ s32 func_80089404(s32 *out)
     register struct Sub80089404 *sub __asm__("$6");
 
     i = 0;
-    *out = func_800886C8(D_8009F970->unk42C->unk10 - D_8009F970->unk42C->unk04, *out);
+    *out = func_800886C8(gQueueBlock->unk42C->unk10 - gQueueBlock->unk42C->unk04, *out);
     retry = i;
 
-    available = D_8009F970->unk448;
-    available = D_8009F970->unk440;
-    (void)D_8009F970->unk444;
+    available = gQueueBlock->unk448;
+    available = gQueueBlock->unk440;
+    (void)gQueueBlock->unk444;
 
     for (;;) {
-        available = (D_8009F970->unk448 << 11) - ((D_8009F970->unk440 << 11) + D_8009F970->unk444);
+        available = (gQueueBlock->unk448 << 11) - ((gQueueBlock->unk440 << 11) + gQueueBlock->unk444);
         if (available < 0) {
             available = 0;
         }
@@ -91,16 +91,16 @@ s32 func_80089404(s32 *out)
             break;
         }
 
-        if (D_8009F970->unk43C != 0) {
+        if (gQueueBlock->unk43C != 0) {
             return 0;
         }
 
         i++;
         if (i > 0x3D0900U) {
-            D_8009F970->unk424 += 2;
+            gQueueBlock->unk424 += 2;
         }
 
-        if (D_8009F970->unk414 != 0 && D_8009F970->unk424 < 2) {
+        if (gQueueBlock->unk414 != 0 && gQueueBlock->unk424 < 2) {
             continue;
         }
 
@@ -113,7 +113,7 @@ s32 func_80089404(s32 *out)
         i = 0;
     }
 
-    state = D_8009F970;
+    state = gQueueBlock;
     old440 = state->unk440;
     old444 = state->unk444;
     sub = ((volatile struct State80089404 *)state)->unk42C;

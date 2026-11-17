@@ -31,7 +31,7 @@ struct Local {
 extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
 extern s32 D_8009CBD8[];
 extern s32 D_8009CBF0[];
-extern s32 D_8009C814;
+extern s32 gCardRetryCount __asm__("D_8009C814");
 extern void (*D_8009C810)(s32, s32);
 extern s32 D_800908A0[];
 extern char D_8001279C[];
@@ -80,7 +80,7 @@ void func_800908D4(u8 mode, s32 arg1)
         if (gSectorBufferPtr.unk14 > 0) {
             __asm__ volatile("");
             if (gSectorBufferPtr.command == 0x200) {
-                if (D_8009C814 & 1) {
+                if (gCardRetryCount & 1) {
                     func_8008E5D8(0);
                     func_8008E5B8(&tmp.loc, 3);
                     func_8008E5FC(0);
@@ -99,7 +99,7 @@ void func_800908D4(u8 mode, s32 arg1)
                     s->unk14 = -1;
                 }
             }
-            if (D_8009C814 & 1) {
+            if (gCardRetryCount & 1) {
                 s32 *q;
                 __asm__ volatile("" : : : "memory");
                 q = D_8009CBD8;
@@ -137,7 +137,7 @@ void func_800908D4(u8 mode, s32 arg1)
     }
     if (st->unk14 == 0 || func_80091270(-1) > st->time + 0x4B0) {
         func_8008E1A8(st->callback2);
-        if (D_8009C814 & 1) {
+        if (gCardRetryCount & 1) {
             func_8008E5D8(st->callback3);
         }
         func_8008E194((s32)D_800908A0);

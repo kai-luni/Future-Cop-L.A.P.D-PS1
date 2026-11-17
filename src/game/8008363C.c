@@ -26,7 +26,7 @@ typedef struct {
     u8 unk57;
 } SoundObj;
 
-extern VoiceTable *D_8009F930;
+extern VoiceTable *gMissionTable __asm__("D_8009F930");
 
 extern s32 func_80045678(s32 sound, s32 id, s32 arg2, s32 arg3, s32 arg4);
 extern void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index);
@@ -61,7 +61,7 @@ void func_8008363C(SoundObj *obj)
     u32 mask;
     s32 shift;
 
-    table = D_8009F930;
+    table = gMissionTable;
     if (obj->slot < 0) {
         free = table->free;
         if (free == 0) {

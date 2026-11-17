@@ -10,7 +10,7 @@ typedef struct {
     u8 pad22[2];
 } Entry;
 
-extern u8 D_8009B300[];
+extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern u8 D_8009F488[];
 extern u32 D_8009F444[];
 extern u8 D_80011E60[];
@@ -69,12 +69,12 @@ s32 func_80083130(void **arg0)
     void *s2;
     Entry *entry;
 
-    len = func_8008CCC0(D_8009B300);
+    len = func_8008CCC0(gFrontEndModuleName);
     i = 0;
     res = 0;
     if (len != 0) {
         do {
-            c = func_8008CCF0(D_8009B300[i]);
+            c = func_8008CCF0(gFrontEndModuleName[i]);
             buffer[i] = c;
             if (c == 0x2E) {
                 break;

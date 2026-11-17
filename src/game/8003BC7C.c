@@ -1,7 +1,7 @@
 // Categories: Resources > Object Copy | Game Engine > Object Pool
 #include "game/types.h"
 
-extern u8 *D_800A0C70[];
+extern u8 *gOccupancyColumns[] __asm__("D_800A0C70");
 extern u8 *func_80017EBC(s32 size, s32 type);
 extern void func_800181D4(void *block);
 extern void *memcpy(void *dst, const void *src, u32 n);
@@ -36,12 +36,12 @@ void func_8003BC7C(u8 *arg0)
 {
     u8 *block;
 
-    if (D_800A0C70[arg0[0x14]] != 0) {
-        func_800181D4(D_800A0C70[arg0[0x14]]);
+    if (gOccupancyColumns[arg0[0x14]] != 0) {
+        func_800181D4(gOccupancyColumns[arg0[0x14]]);
     }
 
     block = func_80017EBC(0x1C, 2);
-    D_800A0C70[arg0[0x14]] = block;
+    gOccupancyColumns[arg0[0x14]] = block;
 
     block[0] = arg0[0x18];
     block[1] = arg0[0x19];

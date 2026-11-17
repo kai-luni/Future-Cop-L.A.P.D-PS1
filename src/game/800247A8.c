@@ -16,7 +16,7 @@ extern struct Unk247A8 D_800A0B00[2];
 extern struct Unk247A8 D_800A0B10[2];
 extern struct Unk247A8 D_800A0B20[2];
 
-extern u8 D_8009FA98[];
+extern u8 gPresetIndexPerPort[] __asm__("D_8009FA98");
 
 extern s32 D_8009F660;
 extern s32 gSinglePlayerEntity __asm__("D_8009F9EC");
@@ -69,7 +69,7 @@ void func_800247A8(void)
         D_800A0AD0[i].unk4 = 2;
         D_800A0AE0[i].unk0 = 0x20000000;
         D_800A0AE0[i].unk4 = 2;
-        if (D_8009FA98[i] & 2) {
+        if (gPresetIndexPerPort[i] & 2) {
             D_800A0AF0[i].unk0 = 0x1000000;
             D_800A0B00[i].unk0 = 0x8000000;
             D_800A0B10[i].unk0 = 0x4000000;

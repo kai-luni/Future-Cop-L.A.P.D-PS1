@@ -29,7 +29,7 @@ extern struct SoundVoice *gVoiceFreeList __asm__("D_8009F73C");
 extern s32 D_8009F740;
 extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
 extern struct SoundVoice *D_8009F748;
-extern struct SoundVoice *D_8009F74C;
+extern struct SoundVoice *gVoiceList __asm__("D_8009F74C");
 extern struct SoundVoice *D_8009F750;
 extern struct SoundVoice *D_8009F754;
 extern struct SoundVoice *D_8009F758;
@@ -72,7 +72,7 @@ void func_800453B8(void)
     D_8009F740 = 0x18;
     gVoicePriorityList = 0;
     D_8009F748 = 0;
-    D_8009F74C = 0;
+    gVoiceList = 0;
     D_8009F750 = 0;
     D_8009F754 = 0;
     D_8009F758 = 0;

@@ -34,7 +34,7 @@ extern u8 D_8009C018[];
 extern u8 D_8009BFD4[];
 extern u8 D_8009BEF4[];
 extern u16 gChoiceSpriteTable[][2] __asm__("D_8009BF9C");
-extern u8 D_8009F484[];
+extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern s8 D_800A374D[];
 extern u8 D_800A6FE0[];
 

@@ -35,7 +35,7 @@ struct State80089018 {
     void (*unk570)(void);
 };
 
-extern struct State80089018 *D_8009F970;
+extern struct State80089018 *gQueueBlock __asm__("D_8009F970");
 extern u32 D_8009F980;
 extern u8 D_80088D74[8];
 
@@ -80,15 +80,15 @@ void func_80089018(void)
     u8 local;
     s32 work;
 
-    if (D_8009F970->unk424 >= 2) {
-        if (D_8009F970->unk570 != 0) {
-            D_8009F970->unk570();
+    if (gQueueBlock->unk424 >= 2) {
+        if (gQueueBlock->unk570 != 0) {
+            gQueueBlock->unk570();
         }
         func_8008C9C0();
-        D_8009F970->unk410 = 0;
-        D_8009F970->unk408 = 0;
-        D_8009F970->unk40C = 0;
-        D_8009F970->unk41C = 0;
+        gQueueBlock->unk410 = 0;
+        gQueueBlock->unk408 = 0;
+        gQueueBlock->unk40C = 0;
+        gQueueBlock->unk41C = 0;
         func_8008E194(0);
         func_8008E1A8(0);
         func_8008C9E0();
@@ -101,17 +101,17 @@ void func_80089018(void)
         func_8008C9C0();
         func_8008E194((s32)D_80088D74);
         func_8008E1A8((s32)func_800889DC + 0x40);
-        D_8009F970->unk41C = work;
-        D_8009F970->unk414 = work;
-        D_8009F970->unk424 = 0;
+        gQueueBlock->unk41C = work;
+        gQueueBlock->unk414 = work;
+        gQueueBlock->unk424 = 0;
         func_8008C9E0();
-        if ((D_8009F970->unk414 != 0) && (D_8009F970->unk000 != 0)) {
+        if ((gQueueBlock->unk414 != 0) && (gQueueBlock->unk000 != 0)) {
             {
                 register struct Sub80089018 *parameter __asm__("$5");
                 register s32 address __asm__("$4");
                 register s32 sector __asm__("$6");
 
-                parameter = D_8009F970->unk430;
+                parameter = gQueueBlock->unk430;
                 address = (s32)((u8 *)parameter + 0xC);
                 sector = parameter->unk08;
                 parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
@@ -121,31 +121,31 @@ void func_80089018(void)
                 register struct State80089018 *state __asm__("$3");
                 register struct Sub80089018 *parameter __asm__("$5");
 
-                state = D_8009F970;
+                state = gQueueBlock;
                 parameter = state->unk430;
                 state->unk418 = 2;
                 parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
                 if (func_80088770(0x15, (s32)parameter, 0) == 0) {
-                    D_8009F970->unk43C = work;
+                    gQueueBlock->unk43C = work;
                     return;
                 }
             }
-            work = (s32)D_8009F970->unk000;
-            func_80088974(D_8009F970->unk004, work,
-                          (s32)((u8 *)D_8009F970->unk430 + 0x24));
+            work = (s32)gQueueBlock->unk000;
+            func_80088974(gQueueBlock->unk004, work,
+                          (s32)((u8 *)gQueueBlock->unk430 + 0x24));
         } else {
-            D_8009F970->unk414 = 0;
+            gQueueBlock->unk414 = 0;
         }
     }
 
-    if (D_8009F970->unk414 != 0) {
+    if (gQueueBlock->unk414 != 0) {
         return;
     }
 
     {
         struct Sub80089018 *sub;
 
-        sub = D_8009F970->unk430;
+        sub = gQueueBlock->unk430;
         work = sub->unk00 - sub->unk08;
     }
     if (work == 0) {
@@ -160,7 +160,7 @@ void func_80089018(void)
         register u32 dividend __asm__("$2");
         register u32 remainder __asm__("$3");
 
-        state = D_8009F970;
+        state = gQueueBlock;
         capacity = D_8009F980;
         read_position = state->unk440;
         write_position = state->unk448;
@@ -178,7 +178,7 @@ void func_80089018(void)
             register s32 address __asm__("$4");
             register s32 sector __asm__("$6");
 
-            parameter = D_8009F970->unk430;
+            parameter = gQueueBlock->unk430;
             address = (s32)((u8 *)parameter + 0xC);
             sector = parameter->unk08;
             parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
@@ -188,13 +188,13 @@ void func_80089018(void)
             register struct State80089018 *state __asm__("$3");
             register struct Sub80089018 *parameter __asm__("$5");
 
-            state = D_8009F970;
+            state = gQueueBlock;
             parameter = state->unk430;
             parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
             state->unk44C = state->unk448 + work;
             state->unk418 = 2;
             if (func_80088770(0x15, (s32)parameter, 0) == 0) {
-                D_8009F970->unk43C = 1;
+                gQueueBlock->unk43C = 1;
                 return;
             }
         }
@@ -207,7 +207,7 @@ void func_80089018(void)
             register u8 *parameter __asm__("$6");
             register u32 start __asm__("$3");
 
-            state = D_8009F970;
+            state = gQueueBlock;
             sub = state->unk430;
             dividend = state->unk448;
             address = sub->unk34;

@@ -13,7 +13,7 @@ struct Entry {
     u8 column;
 };
 
-extern struct Entry *D_800A0C70[];
+extern struct Entry *gOccupancyColumns[] __asm__("D_800A0C70");
 extern s32 func_80019668(void);
 
 /**
@@ -40,12 +40,12 @@ extern s32 func_80019668(void);
  */
 u8 func_8003B4E0(u8 index, u8 slot, u8 mode)
 {
-    if (!(D_800A0C70[index]->flags & 1)) {
+    if (!(gOccupancyColumns[index]->flags & 1)) {
         if (slot == 0 && mode != 0) {
             if (func_80019668() & 1) {
-                return D_800A0C70[index]->column;
+                return gOccupancyColumns[index]->column;
             }
         }
     }
-    return ((u8 *)D_800A0C70[index] + ((s32)slot << 2))[4];
+    return ((u8 *)gOccupancyColumns[index] + ((s32)slot << 2))[4];
 }

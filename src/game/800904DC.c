@@ -1,7 +1,7 @@
 // Categories: Platform > CD-ROM | Resources > File Access
 #include "game/types.h"
 
-extern u8 D_800A448C[];
+extern u8 gPathTable[] __asm__("D_800A448C");
 extern s32 func_8008CCA0(s32 arg0, u8 *arg1);
 
 /**
@@ -37,7 +37,7 @@ s32 func_800904DC(s32 arg0, s32 arg1)
 
     i = 0;
     __asm__("" : "=r"(i) : "0"(i));
-    ptr = D_800A448C;
+    ptr = gPathTable;
     off = 0;
 
     for (;;) {

@@ -1,7 +1,7 @@
 // Categories: Game Engine > State Access
 #include "game/types.h"
 
-extern s32 D_8009C814;
+extern s32 gCardRetryCount __asm__("D_8009C814");
 
 /**
  *  @brief Replaces a signed global value and returns its previous value.

@@ -14,7 +14,7 @@ struct Text8 {
     char b[8];
 };
 
-extern struct Text8 D_8009F3B8;
+extern struct Text8 gTextBlock __asm__("D_8009F3B8");
 
 extern void func_80091480(void);
 extern void func_80091510(void *);
@@ -54,7 +54,7 @@ void func_8007757C(int a0, int a1, int a2, int a3)
     struct PacketState st[2];
     struct Text8 text;
 
-    text = D_8009F3B8;
+    text = gTextBlock;
 
     func_80091480();
     func_80091510(0);

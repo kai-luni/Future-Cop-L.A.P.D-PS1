@@ -6,7 +6,7 @@ typedef unsigned int u32;
 typedef struct { u32 addr:24; u32 len:8; u32 code; } Page;
 typedef struct { u32 addr:24; u32 len:8; u8 r,g,b,code; short x,y; u8 u,v; u16 clut,w,h; } Sprt;
 typedef struct { u16 n; s8 a; s8 b; u32 t[2]; } Ent;
-extern Ent D_8009B32C[];
+extern Ent gDescriptorTable[] __asm__("D_8009B32C");
 extern s8 D_8009F874;
 extern u8 D_8009F876;
 extern int **D_8009F3F4;
@@ -59,7 +59,7 @@ void func_800826AC(int idx)
     cur = val < 14;
     if (!cur) goto tail;
     h[1] = 0; h[3] = 0; h[2] = 0; h[4] = 0;
-    if (D_8009B32C[idx].a) {
+    if (gDescriptorTable[idx].a) {
         cnt = 2;
         h[0] = 1; h[6] = 0x20; h[5] = idx; h[8] = 0x31; h[9] = 0x31;
     } else {
@@ -68,7 +68,7 @@ void func_800826AC(int idx)
     i = 0;
     if (cnt == 0) goto tail;
     {
-    Ent *tab = D_8009B32C;
+    Ent *tab = gDescriptorTable;
     short *base = h;
     short *g;
     __asm__("" : : "r"(base));
@@ -108,7 +108,7 @@ void func_800826AC(int idx)
     } while (i < cnt);
     }
 tail:
-    col = D_8009B32C[D_8009F874].b ? 0x60 : 0x80;
+    col = gDescriptorTable[D_8009F874].b ? 0x60 : 0x80;
     if (gPacketCursor < gPacketLimit) goto a1;
     packet = gPacketCursor; __asm__("" : : "r"(packet)); goto p1;
 a1: packet = gPacketCursor; gPacketCursor = packet + 28;

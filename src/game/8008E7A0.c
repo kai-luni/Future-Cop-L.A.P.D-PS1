@@ -8,7 +8,7 @@ extern volatile unsigned char *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern unsigned char gLastResultByte __asm__("D_8009C8C5");
 extern int D_8009CA6C[];
 extern int D_8009C96C[];
-extern int D_8009C8CC[];
+extern int gIndexEntryTable[] __asm__("D_8009C8CC");
 extern int D_8009C8B8;
 extern int gCdResponseCount __asm__("D_8009C8BC");
 extern int gCdLogLevel __asm__("D_8009C8B0");

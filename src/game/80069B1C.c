@@ -13,7 +13,7 @@ extern struct Unk69B1C *gGameSession __asm__("D_8009FA94");
 extern u8 gDiscShadeByte[] __asm__("D_8009FAA4");
 extern u8 D_8009FAB4[];
 extern u8 D_8009FA70[];
-extern u8 D_8009FACC[];
+extern u8 gEffectId[] __asm__("D_8009FACC");
 
 /**
  * @brief Binds four global script-VM counter/state buffer addresses onto the mission state structure D_8009FA94.
@@ -43,5 +43,5 @@ void func_80069B1C(void)
     object->unkE4 = gDiscShadeByte;
     object->unkE8 = D_8009FAB4;
     object->unkEC = D_8009FA70;
-    object->unkF0 = D_8009FACC;
+    object->unkF0 = gEffectId;
 }

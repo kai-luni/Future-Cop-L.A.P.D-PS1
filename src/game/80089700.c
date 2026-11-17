@@ -34,8 +34,8 @@ typedef struct {
     s32 unk578;
 } Unk89700;
 
-extern Unk89700 *D_8009F970;
-extern u8 *D_8009F974;
+extern Unk89700 *gQueueBlock __asm__("D_8009F970");
+extern u8 *gStreamDescriptors __asm__("D_8009F974");
 extern u8 *D_8009F978;
 extern u8 *D_8009F97C;
 extern s32 D_8009F980;
@@ -84,9 +84,9 @@ s32 func_80089700(Unk89700 *arg0, s32 arg1, Src89700 *arg2, u32 arg3)
 
     t = (D_8009F980 << 11) + 0x57C;
     func_8001E4C0(arg0, 0, D_8009F984 + t + D_8009F988 * 56);
-    D_8009F970 = arg0;
+    gQueueBlock = arg0;
     p = (u8 *)arg0 + 0x57C;
-    D_8009F974 = p;
+    gStreamDescriptors = p;
     arg0->unk570 = arg1;
     arg0->unk414 = 0;
     arg0->unk418 = 0;
@@ -101,13 +101,13 @@ s32 func_80089700(Unk89700 *arg0, s32 arg1, Src89700 *arg2, u32 arg3)
     D_8009F978 = p + D_8009F988 * 56;
     D_8009F97C = D_8009F978 + D_8009F984;
     for (i = 0; i < arg3; i++) {
-        *(Src89700 *)(D_8009F974 + i * 56 + 12) = arg2[i];
+        *(Src89700 *)(gStreamDescriptors + i * 56 + 12) = arg2[i];
     }
-    D_8009F970->unk438 = arg3;
-    D_8009F970->unk424 = 0;
-    D_8009F970->unk428 = 0;
-    D_8009F970->unk574 = func_8008E5D8(0);
-    D_8009F970->unk578 = func_80091240(0);
+    gQueueBlock->unk438 = arg3;
+    gQueueBlock->unk424 = 0;
+    gQueueBlock->unk428 = 0;
+    gQueueBlock->unk574 = func_8008E5D8(0);
+    gQueueBlock->unk578 = func_80091240(0);
     func_80088F00();
     func_800895E4(1);
     return 1;

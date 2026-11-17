@@ -21,7 +21,7 @@ struct Unk80089304State {
     s32 unk44C;
 };
 
-extern struct Unk80089304State *D_8009F970;
+extern struct Unk80089304State *gQueueBlock __asm__("D_8009F970");
 extern void func_80089018(void);
 
 /**
@@ -54,7 +54,7 @@ void func_80089304(s32 arg0)
 
         amount = arg0;
         __asm__("" : "+r"(amount));
-        state = D_8009F970;
+        state = gQueueBlock;
         node = state->unk42C;
         rem = state->unk444;
         __asm__("" : "+r"(node) : "r"(rem));
@@ -75,15 +75,15 @@ void func_80089304(s32 arg0)
     {
         register struct Unk80089304State *state __asm__("$5");
         register struct Unk80089304Node *node __asm__("$4");
-        state = D_8009F970;
+        state = gQueueBlock;
         node = state->unk42C;
         if (node->unk04 == node->unk10 && state->unk430 != node) {
             if (state->unk444 != 0) {
                 state->unk440++;
             }
-            D_8009F970->unk44C = 0;
-            D_8009F970->unk42C = D_8009F970->unk430;
-            D_8009F970->unk444 = D_8009F970->unk42C->unk28;
+            gQueueBlock->unk44C = 0;
+            gQueueBlock->unk42C = gQueueBlock->unk430;
+            gQueueBlock->unk444 = gQueueBlock->unk42C->unk28;
         }
     }
 }

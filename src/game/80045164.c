@@ -12,7 +12,7 @@ struct Unk45164Current {
     s32 key;
 };
 
-extern struct Unk45164Current D_800A1800;
+extern struct Unk45164Current gVolumeLevels __asm__("D_800A1800");
 
 extern u8 func_80045028(s32 id);
 
@@ -44,7 +44,7 @@ struct Unk45164Slot *func_80045164(s32 id)
     valid = func_80045028(id);
     result = 0;
     if (valid != 0) {
-        current = &D_800A1800;
+        current = &gVolumeLevels;
         if (current->slot->key == current->key) {
             result = current->slot;
         }

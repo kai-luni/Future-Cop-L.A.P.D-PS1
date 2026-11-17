@@ -11,7 +11,7 @@ typedef struct {
 extern u32 D_8009C7A8;
 extern u32 gPadDataOffset __asm__("D_8009C740");
 extern u32 D_8009C774;
-extern u32 D_8009C7A0;
+extern u32 gPadMotorValue __asm__("D_8009C7A0");
 extern s32 func_8008AB80(Unk8008B8E8 *, void *);
 
 /**
@@ -53,9 +53,9 @@ s32 func_8008B8E8(Unk8008B8E8 *arg0)
     if ((ret & 0xF0) == 0) {
         return -9;
     }
-    D_8009C7A0 = (ret & 0xF) << 1;
-    if (D_8009C7A0 == 0) {
-        D_8009C7A0 = 0x20;
+    gPadMotorValue = (ret & 0xF) << 1;
+    if (gPadMotorValue == 0) {
+        gPadMotorValue = 0x20;
     }
     return 0;
 }

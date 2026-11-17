@@ -12,7 +12,7 @@ extern int gTransferError __asm__("D_8009F244");
 extern int gTransferRetryCount __asm__("D_8009F24C");
 extern int D_8009F618;
 extern int gCdAbortFlag __asm__("D_8009F228");
-extern volatile u8 D_800A0798[];
+extern volatile u8 gEventBuffer[] __asm__("D_800A0798");
 extern int func_8008E0D8(int);
 extern int func_8008E598(void *, int);
 extern int func_8001C588(void *);
@@ -211,8 +211,8 @@ void func_8001C808(int arg)
         s->result = -0x1D;
         gCdAbortFlag = one;
         do {
-            func_8008E1BC(1, 0, (void *)D_800A0798);
-            if (!(D_800A0798[0] & 0x10)) break;
+            func_8008E1BC(1, 0, (void *)gEventBuffer);
+            if (!(gEventBuffer[0] & 0x10)) break;
             func_800914B0(2, 0);
             func_8008DEA0();
             loc = D_8009F61C;
@@ -220,7 +220,7 @@ void func_8001C808(int arg)
             func_8001C470(loc);
             s->unk18 = func_8008E1A8(D_8001C808);
             D_8009F618 = 0;
-        } while (D_800A0798[0] & 0x10);
+        } while (gEventBuffer[0] & 0x10);
         func_8001C718();
         gCdAbortFlag = 0;
     }

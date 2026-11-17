@@ -11,7 +11,7 @@ struct State {
     s32 callback, callback2, callback3;
 };
 extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
-extern s32 D_8009C814;
+extern s32 gCardRetryCount __asm__("D_8009C814");
 extern s32 D_800908A0[];
 extern s32 D_8009CBF8[];
 extern s32 D_8009CBFC[];
@@ -95,7 +95,7 @@ void func_80090E00(void)
     register s32 *callbacks __asm__("$17");
     register struct State *state __asm__("$16");
     struct State *other;
-    if (D_8009C814 & 1) func_8008E5FC(0);
+    if (gCardRetryCount & 1) func_8008E5FC(0);
     state = &gSectorBufferPtr;
     __asm__ volatile("" : "+r"(state));
     state->unk14 = 0;
@@ -104,7 +104,7 @@ void func_80090E00(void)
         callbacks = D_8009CBFC;
         __asm__ volatile("" : "+r"(callbacks));
         func_8008E1A8(callbacks[0]);
-        if (D_8009C814 & 1) func_8008E5D8(callbacks[1]);
+        if (gCardRetryCount & 1) func_8008E5D8(callbacks[1]);
         func_8008E194((s32)&D_800908A0);
         func_8008E2F8(9,0);
         other = (struct State *)(callbacks - 11);

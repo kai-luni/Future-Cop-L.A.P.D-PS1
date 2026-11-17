@@ -17,7 +17,7 @@ extern  s8 gPlayerMenuDepth_arr[] __asm__("D_8009F8C0");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
-extern u8 D_8009F484[];
+extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern u8 D_8009B3D4[];
 extern s8 D_800A3838[];
 
@@ -109,7 +109,7 @@ void func_8007BCF4(s32 arg0)
                 } else {
                     c = 0xF;
                 }
-                { register u8 *t __asm__("$4") = text; register u8 *src __asm__("$5") = D_8009F484; __asm__("" : "+r"(t)); __asm__("" : "+r"(src)); func_8008CD30(t, src, ++i); }
+                { register u8 *t __asm__("$4") = text; register u8 *src __asm__("$5") = gMenuValueFormat; __asm__("" : "+r"(t)); __asm__("" : "+r"(src)); func_8008CD30(t, src, ++i); }
                 func_800788F0(text, 0x57, y, c, 0, 4, 8, 2);
                 y += 0xA;
             } while (i < gLineCount + 1);

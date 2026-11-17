@@ -10,7 +10,7 @@ struct MenuState {
 
 extern struct MenuState *gGameSession[] __asm__("D_8009FA94");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern u8 D_8009F3C1;
+extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern s32 gPlayerSelection[] __asm__("D_8009F8F0");
 extern u16 gLabelIdTable[] __asm__("D_8009BEEC");
 extern s32 func_80046C84(s32 id, s32 arg1);
@@ -61,7 +61,7 @@ void func_8007A7A0(s32 command, s32 x, s32 y)
         entry = (s32 *)((index << 2) + (s32)entry);
         (*entry)--;
         if (*entry < 0) {
-            if (D_8009F3C1 != 0) {
+            if (gPlayerWrapLimit != 0) {
                 *entry = 3;
             } else {
                 *entry = 2;
@@ -86,7 +86,7 @@ void func_8007A7A0(s32 command, s32 x, s32 y)
         offset = index << 2;
         entry = (s32 *)(offset + (s32)base);
         value = *entry;
-        flag = D_8009F3C1;
+        flag = gPlayerWrapLimit;
         value++;
         *entry = value;
         if (flag != 0) {

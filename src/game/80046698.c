@@ -31,7 +31,7 @@ extern struct SoundVoice *gVoiceFreeList __asm__("D_8009F73C");
 extern s32 D_8009F740;
 extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
 extern s32 D_8009F748;
-extern struct SoundVoice *D_8009F74C;
+extern struct SoundVoice *gVoiceList __asm__("D_8009F74C");
 extern s32 D_8009F750;
 extern struct SoundVoice *D_8009F754;
 extern s32 D_8009F758;
@@ -79,7 +79,7 @@ void func_80046698(struct SoundVoice *voice)
     } else {
         switch (voice->priority) {
         case 0:
-            D_8009F74C = voice->next;
+            gVoiceList = voice->next;
             break;
         case 2:
             D_8009F754 = voice->next;

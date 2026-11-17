@@ -18,15 +18,15 @@ struct Unk9FA94 {
 };
 
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
-extern u8 D_8009C1BC[];
-extern u8 D_8009C1AC[];
+extern u8 gOctalDigitTable[] __asm__("D_8009C1BC");
+extern u8 gHexDigitTable[] __asm__("D_8009C1AC");
 extern struct Entry D_8009B4E4[];
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern struct Unk9FA94 *gGameSession __asm__("D_8009FA94");
-extern u8 D_8009F3C0;
-extern u8 D_8009F3C1;
-extern u8 D_8009F3C3;
-extern u8 D_8009F3C4;
+extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
+extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
+extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
+extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
 extern u8 D_8009F3F1;
 extern u8 D_8009F458;
 extern u8 D_8009F880;
@@ -114,7 +114,7 @@ s32 func_8007EA78(void)
         c = gPasswordBuffer[i] + 0x41;
         if (i & 1) {
             for (j = 0; j < 8; j++) {
-                if (c == D_8009C1BC[j]) {
+                if (c == gOctalDigitTable[j]) {
                     buf[i] = (j - i) & 7;
                     break;
                 }
@@ -124,7 +124,7 @@ s32 func_8007EA78(void)
             }
         } else {
             for (j = 0; j < 16; j++) {
-                if (c == D_8009C1AC[j]) {
+                if (c == gHexDigitTable[j]) {
                     buf[i] = (j - i) & 0xF;
                     break;
                 }
@@ -225,16 +225,16 @@ s32 func_8007EA78(void)
                     gGameSession->unk94 = g3;
                 }
                 if (g7) {
-                    D_8009F3C0 = f7;
+                    gFrontEndListFlag = f7;
                 }
                 if (g4) {
-                    D_8009F3C1 = f4;
+                    gPlayerWrapLimit = f4;
                 }
                 if (g5) {
-                    D_8009F3C3 = f5;
+                    gPausedMenuFlag = f5;
                 }
                 if (g6) {
-                    D_8009F3C4 = f6;
+                    gLockedMenuFlag = f6;
                 }
                 D_8009F458 = n0;
                 D_8009F3F1 = n0;

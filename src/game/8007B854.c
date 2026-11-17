@@ -30,7 +30,8 @@ extern s8 *D_8009F884;
 extern u8 D_8009F8BD;
 extern s32 D_8009F8C4;
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
-extern u8 D_8009B300[], D_8009F444[], D_8009F488[];
+extern u8 D_8009F444[], D_8009F488[];
+extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern u8 D_800A3628[], D_800A3658[], D_800A3838[];
 extern u8 *gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
@@ -186,8 +187,8 @@ SELECTION_DONE:;
                 D_8009F8C4 = SELECTED.unk4;
             }
             if (gDeferredTransition != 0) {
-                func_8008CCB0(D_8009B300, SELECTED.unk0);
-                if (func_8008CCA0(D_8009B300, D_8009F444) == 0) gPendingModuleNameFlag = D_8009F488;
+                func_8008CCB0(gFrontEndModuleName, SELECTED.unk0);
+                if (func_8008CCA0(gFrontEndModuleName, D_8009F444) == 0) gPendingModuleNameFlag = D_8009F488;
                 else gPendingModuleNameFlag = 0;
                 if (special != 0) gModuleLoadState = special;
                 else if (SELECTED.unkC != 0) gModuleLoadState = SELECTED.unkC;

@@ -18,7 +18,7 @@ extern s32 D_8009F618;
 extern u8 D_8009F610[8];
 extern u8 D_8009F611;
 extern u8 D_8009F61C[];
-extern u8 D_800A0798[];
+extern u8 gEventBuffer[] __asm__("D_800A0798");
 extern void D_8001C808(s32 mode);
 
 extern void func_800914B0(s32 arg0, s32 arg1);
@@ -81,7 +81,7 @@ s32 func_8001D130(s32 arg0)
     func_80010000.unk04 = 0;
     func_80010000.unk08 = 0;
 
-    s1 = D_800A0798;
+    s1 = gEventBuffer;
     func_800914B0(2, 0);
     func_8008DEA0();
 
@@ -95,7 +95,7 @@ s32 func_8001D130(s32 arg0)
     func_8008E1BC(1, 0, s1);
     func_8008E1BC(1, 0, s1);
 
-    v0 = D_800A0798[0] & 0x10;
+    v0 = gEventBuffer[0] & 0x10;
     if (v0) {
         return -3;
     }

@@ -1,7 +1,7 @@
 // Categories: Platform > Sound > Volume
 #include "game/types.h"
 
-extern s32 D_8009F338;
+extern s32 gVoiceVolumeBase __asm__("D_8009F338");
 
 /**
  * @brief Returns the third volume setting (D_8009F338).
@@ -23,5 +23,5 @@ extern s32 D_8009F338;
  */
 s32 func_800452C8(void)
 {
-    return D_8009F338;
+    return gVoiceVolumeBase;
 }

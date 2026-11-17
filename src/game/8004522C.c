@@ -1,7 +1,7 @@
 // Categories: Platform > Sound > Volume
 #include "game/types.h"
 
-extern s32 D_8009F330;
+extern s32 gMusicVolume __asm__("D_8009F330");
 
 /**
  * @brief Returns the first volume setting (D_8009F330).
@@ -22,5 +22,5 @@ extern s32 D_8009F330;
  */
 s32 func_8004522C(void)
 {
-    return D_8009F330;
+    return gMusicVolume;
 }

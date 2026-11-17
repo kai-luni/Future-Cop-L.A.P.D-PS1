@@ -1,7 +1,7 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern s32 D_800A1800;
+extern s32 gVolumeLevels __asm__("D_800A1800");
 
 /**
  *  @brief Tests whether a mode matches the active global state.
@@ -23,7 +23,7 @@ extern s32 D_800A1800;
  */
 s32 func_80045028(s32 mode)
 {
-    s32 state = D_800A1800;
+    s32 state = gVolumeLevels;
 
     if (state != -1 && mode == state) {
         return 1;

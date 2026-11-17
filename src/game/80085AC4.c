@@ -9,7 +9,7 @@ typedef struct {
 
 extern Ctx85AC4 *gDecodeJob __asm__("D_8009F4BC");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
-extern u32 D_8009F4C8;
+extern u32 gStripStepWidth __asm__("D_8009F4C8");
 
 extern void func_80092C8C(s32 arg0);
 extern void func_80096090(s32 arg0);
@@ -66,14 +66,14 @@ void func_80085AC4(u32 arg0, u32 arg1)
         buf[0] = 0;
         buf[1] = 0;
         buf[3] = 0xF0;
-        buf[2] = ((D_8009F4C8 * 5) << 6) >> 1;
+        buf[2] = ((gStripStepWidth * 5) << 6) >> 1;
         func_80092E10(buf, 0, 0, 0);
         func_80092C8C(0);
 
         buf[0] = 0;
         buf[1] = 0x100;
         buf[3] = 0xF0;
-        buf[2] = ((D_8009F4C8 * 5) << 6) >> 1;
+        buf[2] = ((gStripStepWidth * 5) << 6) >> 1;
         func_80092E10(buf, 0, 0, 0);
         func_80092C8C(0);
     }

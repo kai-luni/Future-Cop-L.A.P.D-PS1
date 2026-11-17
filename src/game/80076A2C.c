@@ -43,7 +43,7 @@ extern s32 D_8009F3D0;
 extern u8 D_8009F3A0[];
 extern u8 D_8009F3A8[];
 extern u8 D_8009F3B0[];
-extern u8 D_8009B300[];
+extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern u8 D_80011E3C[];
 extern u8 D_80011E48[];
 
@@ -240,7 +240,7 @@ s32 func_80076A2C(void)
         for (;;) {
             if (s2) {
                 func_800287F4(D_8009F3A8, 1);
-                func_8008CC90(D_8009B300, D_8009F3B0);
+                func_8008CC90(gFrontEndModuleName, D_8009F3B0);
                 s2 = 0;
                 continue;
             }
@@ -254,7 +254,7 @@ s32 func_80076A2C(void)
             D_8009F868 = ((u8 *)gGameSession)[8];
             D_8009F869 = ((u8 *)gGameSession)[0x98];
 
-            func_800287F4(D_8009B300, 0);
+            func_800287F4(gFrontEndModuleName, 0);
 
             gGameSession->unk28 = D_8009F850;
             gGameSession->unk2C = D_8009F854;
@@ -275,8 +275,8 @@ s32 func_80076A2C(void)
             switch (gGameSession->unk10) {
             case 0:
                 if (gPendingModuleNameFlag != 0) {
-                    func_8008CCB0(D_8009B300, gPendingModuleNameFlag);
-                    func_8008CC90(D_8009B300, D_8009F3B0);
+                    func_8008CCB0(gFrontEndModuleName, gPendingModuleNameFlag);
+                    func_8008CC90(gFrontEndModuleName, D_8009F3B0);
                     gPendingScreenState = 3;
                     gPendingModuleNameFlag = 0;
                     gModuleLoadState = 5;

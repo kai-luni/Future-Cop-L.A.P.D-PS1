@@ -34,7 +34,7 @@ extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern u8 D_8009F45A;
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern u8 D_8009F8D9;
-extern u8 D_8009B300[];
+extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 
 extern void func_8008CCB0(u8 *a0, s32 a1);
 extern u8 func_8001EB2C(s32 arg0);
@@ -84,7 +84,7 @@ s32 func_80078C88(void)
     if (e->unk1 != 0) {
         o->unk4C = e->unk3;
     }
-    func_8008CCB0(D_8009B300, D_8009B4E4[e->unk0].unk00);
+    func_8008CCB0(gFrontEndModuleName, D_8009B4E4[e->unk0].unk00);
     unk0C = D_8009B4E4[e->unk0].unk0C;
     gModuleLoadedFlag = 1;
     gScreenState = 5;

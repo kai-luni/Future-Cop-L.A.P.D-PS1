@@ -3,7 +3,8 @@
 typedef struct { u8 bits; u8 pad; u16 code; } Entry;
 extern u8 *D_8009F51C, *D_8009F520;
 extern u16 D_8009C560[];
-extern Entry D_8009C1E0[], D_8009C360[];
+extern Entry D_8009C360[];
+extern Entry gSymbolBitLengthTable[] __asm__("D_8009C1E0");
 
 /**
  * @brief Builds the variable-length (Huffman) decoding tables.
@@ -59,7 +60,7 @@ s32 func_80089A88(u8 *arg0, u8 *arg1, u16 *arg2)
     i = 0;
     maxbits = 13;
     one = 1;
-    addr = (u8 *)D_8009C1E0;
+    addr = (u8 *)gSymbolBitLengthTable;
     __asm__("" : "+r"(addr));
     codes = (u16 *)(addr + 2);
     ptr = addr;

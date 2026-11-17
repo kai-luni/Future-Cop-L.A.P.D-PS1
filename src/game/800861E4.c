@@ -21,12 +21,13 @@ typedef struct {
 } State861E4;
 
 typedef struct { u16 w, h; u8 data[1]; } Input861E4;
-extern s32 D_8009F4C8;
+extern s32 gStripStepWidth __asm__("D_8009F4C8");
 extern s32 gTransferPending __asm__("D_8009F250");
 extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern State861E4 *gDecodeJob __asm__("D_8009F4BC");
-extern void *D_8009F948, *D_8009F94C, *D_8009F950, *D_8009F954;
+extern void *D_8009F948, *D_8009F94C, *D_8009F954;
+extern void *gWorkAreaBlock __asm__("D_8009F950");
 extern void *D_8009FABC, *D_8009F9D8;
 extern Block100 D_800A3958;
 extern Block108 D_800A3A58;
@@ -171,10 +172,10 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         }
     } else {
         gDecodeJob->buffer28[0] = D_8009F954;
-        gDecodeJob->buffer24 = D_8009F950;
+        gDecodeJob->buffer24 = gWorkAreaBlock;
     }
     {
-        register u32 scale __asm__("$5") = D_8009F4C8;
+        register u32 scale __asm__("$5") = gStripStepWidth;
         register u32 product __asm__("$8") = x * scale;
         register u32 width __asm__("$2") = input->w * scale;
         register State861E4 *state __asm__("$3") = gDecodeJob;

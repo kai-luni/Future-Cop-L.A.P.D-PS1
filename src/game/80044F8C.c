@@ -1,8 +1,8 @@
 // Categories: Platform > Sound | Graphics > Sprite/Asset Subsystem
 #include "game/types.h"
 
-extern s32 D_800A1800[];
-extern u8 D_8009F739;
+extern s32 gVolumeLevels[] __asm__("D_800A1800");
+extern u8 gStreamAudioFlag __asm__("D_8009F739");
 extern u8 D_8009F340;
 
 extern void func_800451B4(s32 value);
@@ -41,7 +41,7 @@ void func_80044F8C(void)
     func_80045238(0x40);
     func_80045294(0x40);
     func_800453B8();
-    D_800A1800[0] = -1;
-    D_8009F739 = 0;
+    gVolumeLevels[0] = -1;
+    gStreamAudioFlag = 0;
     D_8009F340 = 1;
 }

@@ -45,7 +45,9 @@ extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern State *gGameSession __asm__("D_8009FA94");
 extern Game *gSinglePlayerEntity __asm__("D_8009F9EC");
-extern u8 D_8009F34C[], D_8009F354[], D_800117C0[];
+extern u8 D_800117C0[];
+extern u8 gStageLineFormat[] __asm__("D_8009F354");
+extern u8 gScoreFormatString[] __asm__("D_8009F34C");
 extern u8 **D_8009F348;
 extern void func_80047888(void);
 extern void func_8006C080(Game *);
@@ -201,7 +203,7 @@ void func_80047F30(Game *game)
     state = gGameSession;
     if (state->mode != 1) return;
     score = state->score[game->player->valuec1];
-    func_8008CD30(text, D_8009F34C, score);
+    func_8008CD30(text, gScoreFormatString, score);
     flash = 0;
     if (score >= 30 && (gDiscShadeByte & 0x80)) {
         register s32 a __asm__("$3") = gGameSession->total1;
@@ -240,7 +242,7 @@ void func_80047F30(Game *game)
         register s32 one __asm__("$16");
         register s32 height __asm__("$20");
         score = gGameSession->score[1];
-        func_8008CD30(text, D_8009F34C, score);
+        func_8008CD30(text, gScoreFormatString, score);
         flash = 0;
         if (score >= 30 && (gDiscShadeByte & 0x80)) {
             register s32 a __asm__("$3") = gGameSession->total1;
@@ -280,7 +282,7 @@ void func_80047F30(Game *game)
         }
         func_80049100(text, x + 130, 56, 3);
         if (!gSinglePlayerEntity) return;
-        func_8008CD30(text, D_8009F354, gGameSession->stage + 1);
+        func_8008CD30(text, gStageLineFormat, gGameSession->stage + 1);
         func_80049100(text, 274, 216, 8);
         other = gSinglePlayerEntity;
         if (other->health > 0) {

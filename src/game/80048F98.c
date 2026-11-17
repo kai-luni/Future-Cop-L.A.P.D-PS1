@@ -42,7 +42,7 @@ extern u16 gGlyphTable[] __asm__("D_8009AAE0");
 extern u8 gPaletteTable[] __asm__("D_800A1970");
 
 extern struct LookupState *gFont __asm__("D_8009F35C");
-extern u16 D_8009F768;
+extern u16 gLoadedFont __asm__("D_8009F768");
 extern s32 D_8009F76C;
 
 extern u8 *func_800489C8(struct LookupState *state, unsigned int offset);
@@ -114,6 +114,6 @@ s32 func_80048F98(u8 character, s32 x, s32 y, u16 color)
     sprite->w12 = glyph->b03;
     sprite->w08 = x + (s8)glyph->b09;
     sprite->w0A = y + (s8)glyph->b0A;
-    sprite->w0E = D_8009F768;
+    sprite->w0E = gLoadedFont;
     return glyph->b08;
 }

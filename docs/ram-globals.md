@@ -132,6 +132,90 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 
 Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage).
 
+## Textformatierung, Audio-Pegel, Missions- und Dateitabellen
+
+Fünfzig weitere Globals in **einem** Commit. Fünf Kandidaten aus der CD-/Verzeichnisgruppe kippten beim Byte-Vergleich (`D_8009F4D8`, `D_800A445C`, `D_800A4480`, `D_800A4484`, `D_800A3E80`) und bleiben stehen.
+
+### Frontend-Texte und Formate
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F34C` | `gScoreFormatString` | `u8[]` | Format, mit dem der Punktestand `state->score[…]` gezeichnet wird. |
+| `D_8009F354` | `gStageLineFormat` | `u8[]` | Zeilenformat für `Stage + 1` an Position (274, 216). |
+| `D_8009F368` | `gFormatStringB` | `char[]` | Zweiter Formatstring für `func_8008CD30(buffer, …, wert)` in einen 0x20-Byte-Puffer. |
+| `D_8009F484` | `gMenuValueFormat` | `u8[]` | Format für den geklemmten Menüwert `clamp(zustand + 1, 1, 0xA)`. |
+| `D_8009F490` | `gNumberFormatString` | `u8[]` | Zahlenformat, rechts neben dem Eintrag gezeichnet. |
+| `D_8009F4A4` | `gDefaultNameString` | `u8[]` | Ersatzname, wenn der Datensatz keinen eigenen Namen liefert. |
+| `D_8009F3B8` | `gTextBlock` | `struct Text8` | 8-Byte-Textblock, mit `lwl/lwr`-Paaren unaligned kopiert. |
+| `D_8009F470` | `gPlaceholderGlyph` | `u16` | Platzhalter-Zeichen, das `func_8007A9D0` in die acht Glyphen kodiert. |
+| `D_8009B300` | `gFrontEndModuleName` | `u8[]` | Modulname des Frontends; `strcat(…, ".mis")` vervollständigt ihn. |
+| `D_8009B32C` | `gDescriptorTable` | `Ent[]` | Deskriptor-Tabelle des Bildschirms, Index ist der Parameter. |
+| `D_8009C1AC` | `gHexDigitTable` | `u8[]` | 16 Einträge Hex-Ziffern, adressiert mit `(byte + i) & 0xF`. |
+| `D_8009C1BC` | `gOctalDigitTable` | `u8[]` | 8 Einträge, adressiert mit `(byte + i) & 7`; erzeugt NUL-terminierte Zeichen. |
+| `D_8009C1C4` | `gDifficultyLabelMap` | `u16[]` | Schwierigkeitslabel: 2→0, 1→1, 0→2, 3→3. |
+| `D_8009C1E0` | `gSymbolBitLengthTable` | `Entry[]` | Bitlänge je Symbol, 0x60 Einträge. |
+
+### Frontend-Zustände und Layout
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F3C0` | `gFrontEndListFlag` | `u8` | Bei ungleich 0 werden Listenzeiger und Zähler des Frontends gebunden. |
+| `D_8009F3C1` | `gPlayerWrapLimit` | `u8` | Obere Grenze der Auswahl (3 bzw. 2), ab der auf 0 gewickelt wird. |
+| `D_8009F3C3` | `gPausedMenuFlag` | `u8` | Verriegeltes Flag des Pausenmenüs (Text-Id 0x526C). |
+| `D_8009F3C4` | `gLockedMenuFlag` | `u8` | Verriegeltes Flag des gesperrten Menüs (Text-Id 0x5276). |
+| `D_8009F4C8` | `gStripStepWidth` | `s32` | Schrittweite des Streifen-Cursors, mal 8 Pixel. |
+| `D_8009F4CC` | `gBufferCount` | `s32` | Anzahl der Puffer, immer 2. |
+| `D_8009F4D0` | `gFrameTimeMax` | `u32` | Laufendes Maximum der Frame-Zeit. |
+| `D_8009FACC` | `gEffectId` | `u32` | Effekt-Id, die die Text-Engine für den aktuellen Bildschirm abspielen soll. |
+| `D_8009FA98` | `gPresetIndexPerPort` | `u8` | Voreinstellungsindex je Port (Zweibyte-Array ab `D_8009FA98`). |
+| `D_8009ACF4` | `gFormCodeTable` | `Entry[]` | Tabelle `[Form][Code - 6]` für die Codes 6 bis 0xF. |
+
+### Audio-Pegel
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F330` | `gMusicVolume` | `s32` | Musiklautstärke, mit geklemmtem Wert geschrieben. |
+| `D_8009F334` | `gMusicVolumeSetting` | `s32` | Einstellwert, den `func_80045288` bei `(arg0 & 0xFF) != 0` zurückgibt. |
+| `D_8009F338` | `gVoiceVolumeBase` | `s32` | Basiswert, aus dem die skalierte Voice-Lautstärke berechnet wird. |
+| `D_8009F739` | `gStreamAudioFlag` | `u8` | Flag des Stream-/CD-Audiopfads, beim Herunterfahren gelöscht. |
+| `D_8009F74C` | `gVoiceList` | `struct SoundVoice *` | Knotenliste der Voices; ein Knoten kann beim Stummschalten erhalten bleiben. |
+| `D_8009F768` | `gLoadedFont` | `u16` | Lädt derzeit eine Schrift; bei 0 kehrt der Aufruf sofort zurück. |
+| `D_8009F770` | `gScriptTimerTicks` | `struct ScriptTimer *` | Countdown-Einträge des Skript-Timers, um die verstrichene Zeit dekrementiert. |
+| `D_800A1800` | `gVolumeLevels` | `s32` | Lautstärkepegel-Tabelle (0x7F ist die Obergrenze der Bibliothek), `[0] = -1`. |
+
+### Mission und Streaming
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F930` | `gMissionTable` | `s32 *` | 0x104-Byte-Tabelle, deren erstes Wort eine 32-Bit-Maske ist. |
+| `D_8009F934` | `gMissionState` | `s32` | Nimmt den Zustand der Missions-Boot-Kette `func_80024A24` auf. |
+| `D_8009F938` | `gBucketArray` | `Bucket *` | Eimer-Array-Zeiger, über `func_80083A10` indiziert. |
+| `D_8009F93C` | `gMissionGridWidth` | `int` | Rasterbreite in Zellen. |
+| `D_8009F940` | `gMissionGridHeight` | `int` | Rasterhöhe in Zellen. |
+| `D_8009F950` | `gWorkAreaBlock` | `void *` | Zielblock samt Arbeitsbereich beim Allokieren. |
+| `D_8009F970` | `gQueueBlock` | `Queue *` | Warteschlangenblock: Einträge ab `+0x08`, Index und Zähler nach 257 Wörtern. |
+| `D_8009F974` | `gStreamDescriptors` | `Ent88F00 *` | Ziel für die zu kopierenden Stream-Deskriptoren. |
+
+### Datei- und Verzeichnistabellen
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_800A448C` | `gPathTable` | `u8[]` | Pfadtabelle mit 44-Byte-Schritt (Parent-Id bei `+0x800A4484`), von `func_80090218` gefüllt. |
+| `D_800A5A80` | `gDirRecordBuffer` | `u8[]` | Datensatz-Puffer des Verzeichnis-Durchlaufs nach dem Sektorlesen. |
+| `D_800A3E88` | `gCachedDirName` | `char[]` | Zwischengespeicherter Verzeichniseintrags-Name. |
+| `D_8009C820` | `gCommandParamTable` | `s32[]` | Je Kommandobyte ein Flag, ob ein Parameterpuffer nötig ist. |
+| `D_800A0798` | `gEventBuffer` | `u8[]` | Ereignispuffer der Abfrage `func_8008E1BC(1, 0, …)`; Bit 0x10 beendet die Schleife. |
+
+### Pad-Treiber und Raster
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009C7A0` | `gPadMotorValue` | `s32` | Erhält das Doppelte des Ergebnis-Nibbles, oder 0x20 wenn dieses 0 ist. |
+| `D_8009C8CC` | `gIndexEntryTable` | `int[]` | Einträge für Indizes unter 28. |
+| `D_8009C94C` | `gLowByteEntryTable` | `int[]` | Einträge für Low-Byte-Werte unter sieben. |
+| `D_8009C814` | `gCardRetryCount` | `s32` | Fehlversuchszähler der Karteninitialisierung; nach dem fünften greift der Inline-Fehlerpfad. |
+| `D_800A0C70` | `gOccupancyColumns` | `s32[]` | Belegungs-Spaltenbyte je Region und Slot. |
+
 ## Effekt-Renderer, Lichtraster, Frontend und Pad-Treiber
 
 Fünfzig weitere Globals in **einem** Commit. Zwei Kandidaten fielen beim Byte-Vergleich durch (`D_8009F79C`, `D_8009F7C0`) und bleiben stehen; `D_8009EA00` erwies sich als reines Inline-Asm-Symbol ohne C-Deklaration und wurde durch `D_8009EEE0` ersetzt.

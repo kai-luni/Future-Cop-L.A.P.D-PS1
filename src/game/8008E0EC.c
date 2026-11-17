@@ -1,5 +1,5 @@
 // Categories: Resources > Lookup
-extern void *D_8009C8CC[];
+extern void *gIndexEntryTable[] __asm__("D_8009C8CC");
 
 /**
  *  @brief Looks up a pointer by byte index with a fallback.
@@ -26,5 +26,5 @@ void *func_8008E0EC(unsigned char index)
         __asm__("" : "=r"(base) : "0"(base));
         return base + 0x233C;
     }
-    return D_8009C8CC[index];
+    return gIndexEntryTable[index];
 }

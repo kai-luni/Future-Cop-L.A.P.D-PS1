@@ -32,7 +32,7 @@ extern s32 D_8009F618;
 extern u8 D_8009F610[];
 extern u8 D_8009F614[];
 extern u8 D_8009F61C[];
-extern u8 D_800A0798[];
+extern u8 gEventBuffer[] __asm__("D_800A0798");
 extern u8 D_8001C60C[];
 extern u8 D_8001C614[];
 extern volatile u8 D_1F801800;

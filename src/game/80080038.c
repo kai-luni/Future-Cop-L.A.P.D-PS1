@@ -38,8 +38,8 @@ extern s8 D_800A3718[];
 extern s8 gMissionListTable[] __asm__("D_8009B724");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern u8 D_8009B4E4[];
-extern u16 D_8009C1C4[];
-extern u8 D_8009F484[];
+extern u16 gDifficultyLabelMap[] __asm__("D_8009C1C4");
+extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 
 extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
 extern void func_80078B34(s32, s32, s32);
@@ -286,7 +286,7 @@ void func_80080038(s32 arg0)
                     default: k = -1; break;
                     }
                     if (k != -1) {
-                        func_800788F0(0, 0x57, s0, 0x10, D_8009C1C4[k], 4, 8, 0);
+                        func_800788F0(0, 0x57, s0, 0x10, gDifficultyLabelMap[k], 4, 8, 0);
                     }
                 }
             }
@@ -338,7 +338,7 @@ void func_80080038(s32 arg0)
                             } else {
                                 m = 1;
                             }
-                            fmt = D_8009F484;
+                            fmt = gMenuValueFormat;
                             __asm__("" : : "r"(fmt), "r"(m) : "$4");
                             func_8008CD30(buf, fmt, m);
                             if (it[0x4A] == 10) {
@@ -355,7 +355,7 @@ void func_80080038(s32 arg0)
                             } else {
                                 m = 1;
                             }
-                            fmt = D_8009F484;
+                            fmt = gMenuValueFormat;
                             __asm__("" : : "r"(fmt), "r"(m) : "$4");
                             func_8008CD30(buf, fmt, m);
                             if (it[j + 0x40] == 10) {

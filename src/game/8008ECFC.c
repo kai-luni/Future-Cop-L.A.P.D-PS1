@@ -9,7 +9,8 @@ extern int D_800A3E68, D_800A3E6C;
 extern char *D_800A3E70;
 extern char D_80012510[], D_80012498[];
 extern char gCdErrorLogMsg[] __asm__("D_80012488");
-extern int D_8009C8CC[], D_8009C94C[];
+extern int gLowByteEntryTable[] __asm__("D_8009C94C");
+extern int gIndexEntryTable[] __asm__("D_8009C8CC");
 extern u8 gLastResultByte __asm__("D_8009C8C5");
 extern u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern void (*D_8009C8AC)(int, void *);
@@ -71,7 +72,7 @@ s32 func_8008ECFC(s32 mode, u8 *result)
 
     now = func_80091270(-1);
     __asm__("lui $30, %%hi(D_8009C8CC)\n\taddiu $30, $30, %%lo(D_8009C8CC)" : "=r"(other));
-    table = D_8009C94C;
+    table = gLowByteEntryTable;
     state = gCdStateBytes;
     state1 = state + 1;
     two = 2;

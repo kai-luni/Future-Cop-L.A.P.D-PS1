@@ -57,9 +57,9 @@ struct Req3A10 {
 struct Vec3I { s32 x; s32 y; s32 z; };
 struct Bucket3A { struct Node3A10 *head; s32 arena; };
 
-extern void *D_8009F934;
-extern struct Bucket3A *D_8009F938;
-extern s32 D_8009F93C;
+extern void *gMissionState __asm__("D_8009F934");
+extern struct Bucket3A *gBucketArray __asm__("D_8009F938");
+extern s32 gMissionGridWidth __asm__("D_8009F93C");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void *func_800195A4(void *state);
 extern void func_80083834(s32 arg0, s32 arg1);
@@ -215,10 +215,10 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
     s8 *q;
     s32 *sp;
 
-    node = (struct Node3A10 *)func_800195A4(D_8009F934);
+    node = (struct Node3A10 *)func_800195A4(gMissionState);
     if (node == 0) {
         func_80083834(gDiscShadeByte - 0x5DC, 1);
-        node = (struct Node3A10 *)func_800195A4(D_8009F934);
+        node = (struct Node3A10 *)func_800195A4(gMissionState);
         if (node == 0) {
             return 0;
         }
@@ -408,19 +408,19 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
     node->unk4E = func_80083764(dst[3].z, dst[3].x,
                                dst[3].z + lo2, dst[3].z + hi2,
                                dst[3].x + lo, dst[3].x + hi);
-    idx = (dst[3].z >> 17) + D_8009F93C * (dst[3].x >> 17);
-    if (z2 >= 0 || D_8009F938[idx].head == 0) {
-        node->next = D_8009F938[idx].head;
-        D_8009F938[idx].head = node;
+    idx = (dst[3].z >> 17) + gMissionGridWidth * (dst[3].x >> 17);
+    if (z2 >= 0 || gBucketArray[idx].head == 0) {
+        node->next = gBucketArray[idx].head;
+        gBucketArray[idx].head = node;
     } else {
-        head = D_8009F938[idx].head;
+        head = gBucketArray[idx].head;
         while (head->next != 0) {
             head = head->next;
         }
         head->next = node;
         node->next = 0;
     }
-    D_8009F938[idx].arena = gDiscShadeByte;
+    gBucketArray[idx].arena = gDiscShadeByte;
     if (node->unk57 != 0) {
         register s32 frame __asm__("$4");
         func_80010750(&node->mat[0][0]);

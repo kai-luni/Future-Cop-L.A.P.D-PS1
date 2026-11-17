@@ -5,7 +5,7 @@ typedef struct { int state, a, b, c, index, d, callback, saved, buffer; } State;
 extern State func_80010000;
 extern Entry D_800A6D78[];
 extern int D_8009F610[], D_8009F614[], D_8009F61C[];
-extern u8 D_800A0798[];
+extern u8 gEventBuffer[] __asm__("D_800A0798");
 extern volatile u8 D_1F801800, D_1F801803;
 extern void func_8001C494(int *, int);
 extern int func_8008E174(int, int);

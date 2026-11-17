@@ -21,8 +21,8 @@ typedef struct {
 
 extern State *gDecodeJob __asm__("D_8009F4BC");
 extern u32 gStripScaleEnable __asm__("D_8009F4C0");
-extern u32 D_8009F4C8;
-extern u32 D_8009F4D0;
+extern u32 gStripStepWidth __asm__("D_8009F4C8");
+extern u32 gFrameTimeMax __asm__("D_8009F4D0");
 
 extern s32 func_80095FE8(u16 *value);
 extern void func_80096070(s32 destination, u32 size);
@@ -140,7 +140,7 @@ void func_80085630(u8 *data, u32 count, s32 volume)
     }
 
     {
-        register u32 rate __asm__("$2") = D_8009F4C8;
+        register u32 rate __asm__("$2") = gStripStepWidth;
         local.unk6 = s3;
         local.unk0 = (count * rate) >> 1;
         local.unk4 = rate << 3;
@@ -148,8 +148,8 @@ void func_80085630(u8 *data, u32 count, s32 volume)
 
     src = (u16 *)(p + 8);
     result = func_80095FE8(src);
-    if (D_8009F4D0 < result) {
-        D_8009F4D0 = result;
+    if (gFrameTimeMax < result) {
+        gFrameTimeMax = result;
     }
 
     st = gDecodeJob;
@@ -161,7 +161,7 @@ void func_80085630(u8 *data, u32 count, s32 volume)
     } else {
         s1 = st->unk24;
         func_80095FF4(st->unk28[1 - st->unk30], gStripScaleEnable);
-        func_80096070(s1, ((s3 * (D_8009F4C8 << 3)) >> 1) * (s2 >> 4));
+        func_80096070(s1, ((s3 * (gStripStepWidth << 3)) >> 1) * (s2 >> 4));
         if (s4 == 0x4D444543) {
             func_80089BBC(src, gDecodeJob->unk28[gDecodeJob->unk30]);
         }
@@ -169,7 +169,7 @@ void func_80085630(u8 *data, u32 count, s32 volume)
         for (i = 0; i < s2; i += 0x10) {
             func_80092F38(&local, s1);
             s1 += (local.unk4 * local.unk6) << 1;
-            { u32 step = D_8009F4C8 << 3; local.unk0 += step; }
+            { u32 step = gStripStepWidth << 3; local.unk0 += step; }
         }
         gDecodeJob->unk11C = 1;
     }

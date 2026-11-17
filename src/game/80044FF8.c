@@ -12,7 +12,7 @@ struct ModeState {
     s32 value;
 };
 
-extern struct ModeState D_800A1800;
+extern struct ModeState gVolumeLevels __asm__("D_800A1800");
 
 /**
  *  @brief Sets the current mode and optionally records an object and its value.
@@ -34,9 +34,9 @@ extern struct ModeState D_800A1800;
  */
 void func_80044FF8(s32 mode, struct ModeObject *object)
 {
-    D_800A1800.mode = mode;
+    gVolumeLevels.mode = mode;
     if (mode != -1) {
-        D_800A1800.object = object;
-        D_800A1800.value = object->value;
+        gVolumeLevels.object = object;
+        gVolumeLevels.value = object->value;
     }
 }

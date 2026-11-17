@@ -38,7 +38,7 @@ struct Unk53188Arg {
 
 extern u8 *gGameSession __asm__("D_8009FA94");
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
-extern s8 D_8009ACF4[][10];
+extern s8 gFormCodeTable[][10] __asm__("D_8009ACF4");
 
 extern void func_8005908C(s32 arg0, struct Unk53188 *arg1,
                            struct Unk53188Arg *arg2, s32 arg3);
@@ -229,7 +229,7 @@ void func_80053188(struct Unk53188 *arg0, u32 arg1)
                 if (arg1 == 0xF && slot != 1) {
                     break;
                 }
-                value = D_8009ACF4[p->unkAD][arg1 - 6];
+                value = gFormCodeTable[p->unkAD][arg1 - 6];
                 if (value < 0) {
                     value = 10000;
                 }

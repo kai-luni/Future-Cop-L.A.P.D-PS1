@@ -29,8 +29,8 @@ extern void *memcpy(void *, const void *, u32);
 extern struct State *gDecodeJob __asm__("D_8009F4BC");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 D_8009F4C4;
-extern s32 D_8009F4C8;
-extern u32 D_8009F4D0;
+extern s32 gStripStepWidth __asm__("D_8009F4C8");
+extern u32 gFrameTimeMax __asm__("D_8009F4D0");
 extern u8 *D_8009FABC;
 extern u8 *D_8009F9D8;
 extern u8 D_800A3958[0x100];
@@ -165,8 +165,8 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
 
 
     value = func_80095FE8((u16 *)payload);
-    if (D_8009F4D0 < value) {
-        D_8009F4D0 = value;
+    if (gFrameTimeMax < value) {
+        gFrameTimeMax = value;
     }
 
     state = gDecodeJob;
@@ -176,7 +176,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
         register u32 half __asm__("$3");
         tag = 0x4D444543;
 
-        scale = D_8009F4C8;
+        scale = gStripStepWidth;
 
         state->field02 = (u16)arg2;
         state->field06 = valA;

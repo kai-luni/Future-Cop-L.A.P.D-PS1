@@ -48,12 +48,12 @@ extern s8 *D_8009F468;
 extern u8 D_8009F3F8[];
 extern s8 D_8009F458[];
 extern u8 D_8009F444[];
-extern u8 D_8009F484[];
+extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern u8 D_8009F488[];
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
 extern struct MenuEntry D_8009B4E4[];
-extern u8 D_8009B300[];
+extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern u8 D_8009B3D4[];
 extern s8 D_800A3628[];
 extern s8 D_800A3658[];
@@ -203,7 +203,7 @@ void func_8007B460(s32 arg0)
             } else {
                 m = 1;
             }
-            { register u8 *src __asm__("$5") = D_8009F484; __asm__("" : "+r"(src)); func_8008CD30(text, src, m); }
+            { register u8 *src __asm__("$5") = gMenuValueFormat; __asm__("" : "+r"(src)); func_8008CD30(text, src, m); }
             func_800788F0(text, e->unk1C, e->unk1E, 0x10, 0, 4, 0x20, 0);
             if (e->state == 0xA) {
                 len = e->unk12;

@@ -20,7 +20,7 @@ struct SoundManager {
     struct Slot slots[32];
 };
 
-extern struct SoundManager *D_8009F930;
+extern struct SoundManager *gMissionTable __asm__("D_8009F930");
 
 extern s32 func_80045768(s32 arg0, s32 index);
 extern void func_800457B8(s32 arg0, s32 index);
@@ -48,7 +48,7 @@ extern void func_800457B8(s32 arg0, s32 index);
 void func_8008352C(s32 elapsed)
 {
     u32 bit = 1;
-    struct SoundManager *mgr = D_8009F930;
+    struct SoundManager *mgr = gMissionTable;
     struct Slot *slot = mgr->slots;
     u32 mask = mgr->mask;
     u32 pending = mask;

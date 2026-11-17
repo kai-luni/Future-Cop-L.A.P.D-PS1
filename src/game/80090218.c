@@ -1,7 +1,7 @@
 // Categories: Platform > CD-ROM | Resources > File Access
 #include "game/types.h"
 
-extern u8 D_800A5A80[];
+extern u8 gDirRecordBuffer[] __asm__("D_800A5A80");
 extern u8 D_800A4480[];
 extern u8 D_800A4484[];
 extern u8 D_800A4488[];

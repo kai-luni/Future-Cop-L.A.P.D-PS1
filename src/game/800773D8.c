@@ -14,7 +14,7 @@ struct Text8 {
     char b[8];
 };
 
-extern struct Text8 D_8009F3B8;
+extern struct Text8 gTextBlock __asm__("D_8009F3B8");
 extern u32 D_800A6E58[];
 extern u32 D_800A6E38[];
 

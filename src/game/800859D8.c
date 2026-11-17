@@ -3,8 +3,8 @@
 
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 D_8009F4C4;
-extern s32 D_8009F4C8;
-extern s32 D_8009F4CC;
+extern s32 gStripStepWidth __asm__("D_8009F4C8");
+extern s32 gBufferCount __asm__("D_8009F4CC");
 
 /**
  * @brief Selects the decoder's output scaling mode.
@@ -26,12 +26,12 @@ void func_800859D8(s32 arg0)
 {
     if ((arg0 & 0xFF) != 0) {
         gStripScaleEnable = 1;
-        D_8009F4C8 = 3;
+        gStripStepWidth = 3;
         D_8009F4C4 = 1;
     } else {
         gStripScaleEnable = 2;
-        D_8009F4C8 = 2;
+        gStripStepWidth = 2;
         D_8009F4C4 = 0;
     }
-    D_8009F4CC = 2;
+    gBufferCount = 2;
 }

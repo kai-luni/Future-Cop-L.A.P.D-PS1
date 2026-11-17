@@ -79,7 +79,7 @@ extern s32 D_8009F344;
 extern s32 gChannelCount __asm__("D_8009F720");
 extern struct SoundChannel *D_8009F728;
 extern struct SoundChannel *D_8009F72C;
-extern u8 D_8009F739;
+extern u8 gStreamAudioFlag __asm__("D_8009F739");
 extern struct UnkF744 *gVoicePriorityList __asm__("D_8009F744");
 
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
@@ -226,7 +226,7 @@ delta_ready:
     if (gChannelCount == 0) {
         return;
     }
-    if (D_8009F739 == 0) {
+    if (gStreamAudioFlag == 0) {
         return;
     }
 

@@ -21,7 +21,7 @@ struct SoundVoice {
 
 extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
 extern s32 D_8009F748;
-extern struct SoundVoice *D_8009F74C;
+extern struct SoundVoice *gVoiceList __asm__("D_8009F74C");
 extern s32 D_8009F750;
 extern struct SoundVoice *D_8009F754;
 extern s32 D_8009F758;
@@ -53,12 +53,12 @@ void func_80046870(struct SoundVoice *voice)
 
     switch (voice->pan) {
     case 0:
-        if (D_8009F74C != 0) {
-            D_8009F74C->prev = voice;
+        if (gVoiceList != 0) {
+            gVoiceList->prev = voice;
         }
         voice->prev = 0;
-        voice->next = D_8009F74C;
-        D_8009F74C = voice;
+        voice->next = gVoiceList;
+        gVoiceList = voice;
         D_8009F750++;
         break;
     case 2:

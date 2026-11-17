@@ -13,8 +13,8 @@ extern s32 D_8009F8F8_arr[];
 extern u16 D_8009F92A;
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 D_800A3938[];
-extern u8 D_8009C1AC[];
-extern u8 D_8009C1BC[];
+extern u8 gHexDigitTable[] __asm__("D_8009C1AC");
+extern u8 gOctalDigitTable[] __asm__("D_8009C1BC");
 extern u8 D_8009F3F8[8];
 extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 extern void *jtbl_800121A4[];
@@ -49,8 +49,8 @@ extern void func_8007F128(s32 input0, s32 input1, s32 input2, s32 input3, s32 ar
     a1 = input1;
     a2 = input2;
     i = 0;
-    odd = D_8009C1BC;
-    even = D_8009C1AC;
+    odd = gOctalDigitTable;
+    even = gHexDigitTable;
     dst = buf;
     src = D_800A3938;
     do {

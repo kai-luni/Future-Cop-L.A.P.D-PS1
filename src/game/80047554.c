@@ -18,10 +18,10 @@ struct Unk4749CHandle {
     s32 serial;
 };
 
-extern u8 D_8009F739;
+extern u8 gStreamAudioFlag __asm__("D_8009F739");
 extern s32 D_8009F32C;
 extern struct Unk47554Node *gVoicePriorityList __asm__("D_8009F744");
-extern struct Unk47554Node *D_8009F74C;
+extern struct Unk47554Node *gVoiceList __asm__("D_8009F74C");
 extern void *D_8009FA58[2];
 extern struct Unk4749CHandle D_800A10C0[];
 
@@ -63,7 +63,7 @@ void func_80047554(struct Unk47554Node *node)
     struct Unk47554Node *entry;
     struct Unk47554Node *next;
 
-    D_8009F739 = 0;
+    gStreamAudioFlag = 0;
     if (node == 0) {
         func_80023E84();
     }
@@ -87,7 +87,7 @@ void func_80047554(struct Unk47554Node *node)
     while (gVoicePriorityList != 0) {
         func_80046698(gVoicePriorityList);
     }
-    entry = D_8009F74C;
+    entry = gVoiceList;
     while (entry != 0) {
         next = entry->next;
         if (entry != node) {

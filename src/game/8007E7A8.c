@@ -12,8 +12,8 @@ extern Mode *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009FAC4;
 extern u8 D_800A35FD[];
 extern u8 D_800A35FB[];
-extern u8 D_8009C1BC[];
-extern u8 D_8009C1AC[];
+extern u8 gOctalDigitTable[] __asm__("D_8009C1BC");
+extern u8 gHexDigitTable[] __asm__("D_8009C1AC");
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 D_800A3938[];
 extern volatile s32 D_8009F8F8;
@@ -57,8 +57,8 @@ void func_8007E7A8(void)
     }
     func_8007F02C();
     i = 0;
-    odd = D_8009C1BC;
-    even = D_8009C1AC;
+    odd = gOctalDigitTable;
+    even = gHexDigitTable;
     dst = gPasswordBuffer;
     src = D_800A3938;
     do {

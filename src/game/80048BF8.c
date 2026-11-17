@@ -39,7 +39,7 @@ extern u16 gPaletteTable[] __asm__("D_800A1970");
 extern u16 gTexpageTable[] __asm__("D_800A1940");
 extern u16 D_800A1E10[];
 extern u16 gTexBankVramY __asm__("D_8009F76A");
-extern u16 D_8009F768;
+extern u16 gLoadedFont __asm__("D_8009F768");
 
 extern void func_80092F38(Rect *rect, void *data);
 extern void func_80092C8C(s32 arg0);
@@ -103,7 +103,7 @@ void func_80048BF8(s32 arg0)
                 rect[1].h = 1;
                 func_80092F38(&rect[1], D_800A1E10);
                 func_80092C8C(0);
-                D_8009F768 = 0x7FF8;
+                gLoadedFont = 0x7FF8;
             }
 
             for (i = 0; i < size; i++) {

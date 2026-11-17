@@ -13,7 +13,7 @@ extern struct Unk8003F854 *D_800A1070[7];
 extern struct Unk8003F854 *gPendingSpawnList __asm__("D_8009F314");
 extern struct Unk8003F854 *D_8009F30C;
 extern void *gSpawnRecordMap[0x200] __asm__("D_800A7040");
-extern void *D_800A0C70[0x100];
+extern void *gOccupancyColumns[0x100] __asm__("D_800A0C70");
 
 extern void func_800181D4(void *block);
 extern void func_8003D0AC(void);
@@ -132,7 +132,7 @@ void func_8003F854(s32 arg0)
         void **slot;
 
         i = 0;
-        slot = D_800A0C70;
+        slot = gOccupancyColumns;
         do {
             if (*slot != 0) {
                 func_800181D4(*slot);

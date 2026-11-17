@@ -1,7 +1,7 @@
 // Categories: Platform > File Service
 #include "game/types.h"
 
-extern s32 D_8009C820[];
+extern s32 gCommandParamTable[] __asm__("D_8009C820");
 extern s32 D_8009C8A8;
 extern u8 gCdStatusByte __asm__("D_8009C8B4");
 extern s32 func_8008F244(s32, void *, void *, s32);
@@ -62,7 +62,7 @@ s32 func_8008E2F8(s32 arg0, void *arg1)
     __asm__("" : "=r"(one) : "0"(one));
     index = a0 & 0xff;
     __asm__("" : "+r"(index));
-    base = D_8009C820;
+    base = gCommandParamTable;
     __asm__("" : "+r"(base));
     saved = D_8009C8A8;
     __asm__("" : "+r"(saved));

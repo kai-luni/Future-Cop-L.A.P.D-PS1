@@ -1,9 +1,9 @@
 // Categories: Graphics > Scene Graph | Platform > Sound | Resources > Memory Pools
 #include "game/types.h"
 
-extern s32 D_8009F934;
-extern void *D_8009F938;
-extern void *D_8009F930;
+extern s32 gMissionState __asm__("D_8009F934");
+extern void *gBucketArray __asm__("D_8009F938");
+extern void *gMissionTable __asm__("D_8009F930");
 
 extern void func_800181D4(void *block);
 extern void func_80019584(s32 pool);
@@ -32,13 +32,13 @@ extern void func_80019584(s32 pool);
  */
 void func_80083428(void)
 {
-    func_80019584(D_8009F934);
-    D_8009F934 = 0;
-    if (D_8009F938 != 0) {
-        func_800181D4(D_8009F938);
+    func_80019584(gMissionState);
+    gMissionState = 0;
+    if (gBucketArray != 0) {
+        func_800181D4(gBucketArray);
     }
-    D_8009F938 = 0;
-    if (D_8009F930 != 0) {
-        func_800181D4(D_8009F930);
+    gBucketArray = 0;
+    if (gMissionTable != 0) {
+        func_800181D4(gMissionTable);
     }
 }

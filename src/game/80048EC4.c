@@ -5,9 +5,9 @@ struct FontEntry;
 
 extern u16 gTexpageTable[] __asm__("D_800A1940");
 extern u16 gPaletteTable[] __asm__("D_800A1970");
-extern u32 D_8009FACC[];
+extern u32 gEffectId[] __asm__("D_8009FACC");
 extern u16 gTexBankVramY __asm__("D_8009F76A");
-extern u16 D_8009F768;
+extern u16 gLoadedFont __asm__("D_8009F768");
 extern struct FontEntry *gFont __asm__("D_8009F35C");
 extern s32 gRampFillCounter __asm__("D_8009F360");
 extern s32 gFontBankCount __asm__("D_8009F364");
@@ -39,7 +39,7 @@ void func_80048EC4(void)
     s32 i;
 
     gTexBankVramY = 1;
-    D_8009F768 = 0;
+    gLoadedFont = 0;
     for (i = 0; i < 0x14; i++) {
         gTexpageTable[i] = 0;
         gPaletteTable[i] = 0;
@@ -47,6 +47,6 @@ void func_80048EC4(void)
     gFont = 0;
     gRampFillCounter = 0;
     gFontBankCount = 0;
-    D_8009FACC[0] = 0;
+    gEffectId[0] = 0;
     func_80048978(0x1F, 0x1F, 0x1F);
 }

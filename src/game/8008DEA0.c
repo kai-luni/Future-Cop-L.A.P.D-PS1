@@ -1,7 +1,7 @@
 // Categories: Platform > CD-ROM | Platform > Device Init
 #include "game/types.h"
 extern u8 D_8008DF6C[]; extern u8 D_8008DF94[]; extern u8 D_8008DFBC[]; extern u8 gCdInitFailMsg[] __asm__("D_8001231C");
-extern u8 *D_8009C8A8; extern u8 *D_8009C8AC; extern u8 *D_8009C810; extern s32 D_8009C814;
+extern u8 *D_8009C8A8; extern u8 *D_8009C8AC; extern u8 *D_8009C810; extern s32 gCardRetryCount __asm__("D_8009C814");
 extern s32 func_8008DF30(void); extern void func_8008E000(u8 *str);
 /**
  * @brief Initialises the CD-ROM driver, retrying five times.
@@ -55,6 +55,6 @@ again:
     D_8009C8A8 = D_8008DF6C;
     D_8009C8AC = D_8008DF94;
     D_8009C810 = D_8008DFBC;
-    D_8009C814 = 0;
+    gCardRetryCount = 0;
     return 1;
 }

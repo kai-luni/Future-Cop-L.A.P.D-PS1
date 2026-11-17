@@ -1,7 +1,7 @@
 // Categories: Game Engine > Front-End Configuration | Input > Port Presets
 #include "game/types.h"
 
-extern u8 D_8009FA98;
+extern u8 gPresetIndexPerPort __asm__("D_8009FA98");
 extern u8 D_8009FA99;
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern u8 D_8009F8D9;
@@ -37,7 +37,7 @@ extern u8 func_8001EB2C(s32 arg0);
  */
 void func_8007C088(void)
 {
-    D_8009F900 = D_8009FA98;
+    D_8009F900 = gPresetIndexPerPort;
     D_8009F901 = D_8009FA99;
     gRumbleEnabled = func_8001EB2C(0);
     D_8009F8D9 = func_8001EB2C(1);

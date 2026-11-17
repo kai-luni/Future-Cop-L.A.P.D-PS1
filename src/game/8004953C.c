@@ -9,7 +9,7 @@ struct ScriptTimer {
     s32 action;
 };
 
-extern struct ScriptTimer *D_8009F770;
+extern struct ScriptTimer *gScriptTimerTicks __asm__("D_8009F770");
 
 /**
  *  @brief Sets a script timer count for the supported kind.
@@ -34,7 +34,7 @@ void func_8004953C(s32 index, s32 kind, s32 value)
 {
     struct ScriptTimer *timers;
 
-    timers = D_8009F770;
+    timers = gScriptTimerTicks;
     if (kind == 0x7E) {
         timers[index].count = value;
     }

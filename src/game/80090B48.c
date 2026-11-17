@@ -19,7 +19,7 @@ struct State {
 };
 
 extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
-extern s32 D_8009C814;
+extern s32 gCardRetryCount __asm__("D_8009C814");
 extern u32 D_8009C810;
 
 extern void func_800908A0(void);
@@ -64,7 +64,7 @@ void func_80090B48(void)
         return;
     }
     func_8008E1A8(state->callback2);
-    if (D_8009C814 & 1) {
+    if (gCardRetryCount & 1) {
         func_8008E5D8(state->callback3);
     }
     func_8008E194((s32)func_800908A0);

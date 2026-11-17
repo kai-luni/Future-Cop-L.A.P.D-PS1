@@ -3,7 +3,7 @@
 
 struct FixedPool;
 
-extern s32 D_800A0C70[];
+extern s32 gOccupancyColumns[] __asm__("D_800A0C70");
 extern s32 gSpawnRecordMap[2][256] __asm__("D_800A7040");
 extern s32 D_800A1070[];
 
@@ -45,7 +45,7 @@ void func_8003F79C(void)
     s32 j;
 
     for (i = 0xFF; i >= 0; i--) {
-        D_800A0C70[i] = 0;
+        gOccupancyColumns[i] = 0;
     }
 
     for (j = 0; j < 2; j++) {

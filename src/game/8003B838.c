@@ -10,7 +10,7 @@ struct Unk3BObject {
     u32 flags;
 };
 
-extern u8 *D_800A0C70[];
+extern u8 *gOccupancyColumns[] __asm__("D_800A0C70");
 
 /**
  * @brief Reads byte [0] from the entity's D_800A0C70 spawn-region table entry.
@@ -45,7 +45,7 @@ u8 func_8003B838(struct Unk3BObject *object)
     if (object->flags & 0x40000) {
         return 0;
     }
-    entry = D_800A0C70[object->tableIndex];
+    entry = gOccupancyColumns[object->tableIndex];
     if (entry == 0) {
         return 0;
     }

@@ -13,7 +13,7 @@ struct UnkD0A0 {
 extern struct UnkD0A0 D_800A6D78[];
 extern u8 D_8009F614[];
 extern u8 D_8009F615[];
-extern u8 D_800A0798[];
+extern u8 gEventBuffer[] __asm__("D_800A0798");
 
 extern void func_8001C494(void *a0, s32 a1);
 extern s32 func_8008E1BC(s32 a0, void *a1, void *a2);
@@ -59,7 +59,7 @@ s32 func_8001D0A0(s32 index)
 
         a0 = (u8 *)0x15;
         a1 = D_8009F615 - 1;
-        a2 = D_800A0798;
+        a2 = gEventBuffer;
         r = func_8008E1BC((s32)a0, a1, a2);
         if (r == 0) {
             return -4;

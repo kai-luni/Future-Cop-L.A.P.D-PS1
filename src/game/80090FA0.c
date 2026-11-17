@@ -19,7 +19,7 @@ struct State {
 extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
 extern volatile s32 D_8009CBF4[];
 extern s32 D_8009CBF8[];
-extern s32 D_8009C814;
+extern s32 gCardRetryCount __asm__("D_8009C814");
 extern u32 func_80091270(s32);
 extern s32 func_8008E194(s32);
 extern s32 func_8008E1A8(s32);
@@ -118,7 +118,7 @@ ready:
     ((struct State *)busy)->callback = func_8008E194(z);
     ((struct State *)busy)->callback2 = func_8008E1A8(0);
     {
-        s32 flags = D_8009C814;
+        s32 flags = gCardRetryCount;
         __asm__ volatile("" : "+r" (flags));
         if (flags & 1)
             ((struct State *)busy)->callback3 = func_8008E5D8(0);

@@ -2,7 +2,7 @@
 typedef unsigned char u8;
 typedef unsigned int u32;
 
-extern u8 *D_8009C94C[];
+extern u8 *gLowByteEntryTable[] __asm__("D_8009C94C");
 extern u8 gCdFallbackMsg[] __asm__("D_8001233C");
 
 /**
@@ -30,5 +30,5 @@ u8 *func_8008E120(u32 index)
     if (i >= 7) {
         return gCdFallbackMsg;
     }
-    return D_8009C94C[i];
+    return gLowByteEntryTable[i];
 }

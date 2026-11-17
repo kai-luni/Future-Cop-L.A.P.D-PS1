@@ -29,7 +29,7 @@ extern UnkBA34_Item *gPadBasePort __asm__("D_8009C75C");
 extern s32 gPadSlotIndex __asm__("D_8009C768");
 extern s32 D_8009C774;
 extern s32 D_8009C780[2];
-extern s32 D_8009C7A0;
+extern s32 gPadMotorValue __asm__("D_8009C7A0");
 extern volatile u8 *gSio0RxDataPtr __asm__("D_8009C7A4");
 
 extern s32 func_8008A9A8(UnkBA34_Arg *, u8);
@@ -78,7 +78,7 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
 
     if (s4 != 0) {
         for (i = -1, off = -0xF0; i < 4; i++, off += 0xF0) {
-            if (--D_8009C7A0 <= 0) {
+            if (--gPadMotorValue <= 0) {
                 break;
             }
             if (i >= 0) {
@@ -96,7 +96,7 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
     }
 
     idx = (gPadSlotIndex == 0);
-    while (D_8009C7A0 >= 2) {
+    while (gPadMotorValue >= 2) {
         if (D_8009C780[idx] < 0) {
             break;
         }
@@ -128,10 +128,10 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
         if (func_8008ADB4() == 0) {
             return -3;
         }
-        --D_8009C7A0;
+        --gPadMotorValue;
     }
 
-    while (--D_8009C7A0 > 0) {
+    while (--gPadMotorValue > 0) {
         ret = func_8008A9A8(arg0, gPadTxByteHook(arg0, s4));
         if (ret < 0) {
             return ret;

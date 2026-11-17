@@ -8,7 +8,7 @@ struct Entry {
     u8 pad[3];
 };
 
-extern u8 D_8009F3C0;
+extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gUnlockFlag __asm__("D_8009F3C2");
 extern u8 D_8009F880;
 extern u8 D_8009F881;
@@ -49,7 +49,7 @@ void func_80077708(void)
     D_8009F881 = 0;
     D_8009F889 = 1;
 
-    if (D_8009F3C0 != 0) {
+    if (gFrontEndListFlag != 0) {
         D_8009B4E4[gFrontEndListTable[0]].unk1F = 10;
         D_8009B4E4[gFrontEndListTable[1]].unk1F = 10;
         D_8009B4E4[gFrontEndListTable[2]].unk1F = 10;

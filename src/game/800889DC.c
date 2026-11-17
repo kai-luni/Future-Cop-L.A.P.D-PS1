@@ -44,7 +44,7 @@ struct State800889DC {
     u8 unk458[0x46];
 };
 
-extern volatile struct State800889DC *D_8009F970;
+extern volatile struct State800889DC *gQueueBlock __asm__("D_8009F970");
 extern s32 D_8009F508;
 extern volatile u32 *D_8009F50C;
 extern u32 D_8009F980;
@@ -107,18 +107,18 @@ void func_80088A1C(u8 mode)
     s32 r0;
 
     if (mode != 1) {
-        D_8009F970->unk424++;
+        gQueueBlock->unk424++;
         return;
     }
 
-    if (D_8009F970->unk424 >= 2) {
+    if (gQueueBlock->unk424 >= 2) {
         return;
     }
-    D_8009F970->unk424 = 0;
-    if (D_8009F970->unk414 != 2) {
+    gQueueBlock->unk424 = 0;
+    if (gQueueBlock->unk414 != 2) {
         return;
     }
-    if (D_8009F970->unk00 == 0) {
+    if (gQueueBlock->unk00 == 0) {
         return;
     }
 
@@ -133,38 +133,38 @@ done:
         ;
     }
 
-    if (!(D_8009F970->unk04 & 3)) {
+    if (!(gQueueBlock->unk04 & 3)) {
         func_8008E598(&tmp.loc, 3);
         func_8008E5FC(0);
         sector = func_8008E720(&tmp.loc);
 
-        disc1 = D_8009F970->unk430;
+        disc1 = gQueueBlock->unk430;
         func_800889DC(&disc1->loc0C, &disc1->loc24, disc1->unk08);
         //(&disc->loc0C, &disc->loc24, disc->unk08);
 
-        if (func_8008E720(&D_8009F970->unk430->loc24) != sector) {
-            func_8008E598((void *)D_8009F970->unk04, 0x200);
+        if (func_8008E720(&gQueueBlock->unk430->loc24) != sector) {
+            func_8008E598((void *)gQueueBlock->unk04, 0x200);
             func_8008E5FC(0);
-            func_8008E598(D_8009F970->unk458, 0x46);
+            func_8008E598(gQueueBlock->unk458, 0x46);
             func_8008E5FC(0);
-            disc2 = D_8009F970->unk430;
+            disc2 = gQueueBlock->unk430;
             func_800889DC(&disc2->loc0C, &disc2->loc24, disc2->unk08);
-            disc4 = D_8009F970->unk430;
-            D_8009F970->unk428++;
-            D_8009F970->unk418 = 2;
-            D_8009F970->unk414 = 1;
+            disc4 = gQueueBlock->unk430;
+            gQueueBlock->unk428++;
+            gQueueBlock->unk418 = 2;
+            gQueueBlock->unk414 = 1;
             func_8008888C(0x15, (s32)&disc4->loc24, 0);
-            a4 = D_8009F970->unk04;
-            disc5 = D_8009F970->unk430;
-            b4 = D_8009F970->unk00;
+            a4 = gQueueBlock->unk04;
+            disc5 = gQueueBlock->unk430;
+            b4 = gQueueBlock->unk00;
             func_800889A8(a4, b4, (s32)&disc5->loc24);
         } else {
-            func_8008E598((void *)D_8009F970->unk04, 0x200);
+            func_8008E598((void *)gQueueBlock->unk04, 0x200);
             func_8008E5FC(0);
-            func_8008E598(D_8009F970->unk458, 0x46);
+            func_8008E598(gQueueBlock->unk458, 0x46);
             func_8008E5FC(0);
 
-            p = D_8009F970;
+            p = gQueueBlock;
             p->unk04 += 0x800;
             r0 = p->unk00;
             disc6 = p->unk430;
@@ -189,19 +189,19 @@ done:
                 c = func_800886C8(a0v, D_8009F980 - rem);
                 d = func_800886C8(c, temp);
                 if (d != 0) {
-                    disc7 = (struct DiscThing800889DC *)D_8009F970->unk430;
-                    if (D_8009F970->unk04 == disc7->unk30 + (D_8009F980 << 11)) {
-                        D_8009F970->unk04 = disc7->unk30;
+                    disc7 = (struct DiscThing800889DC *)gQueueBlock->unk430;
+                    if (gQueueBlock->unk04 == disc7->unk30 + (D_8009F980 << 11)) {
+                        gQueueBlock->unk04 = disc7->unk30;
                     }
-                    D_8009F970->unk00 = d;
+                    gQueueBlock->unk00 = d;
                 } else {
-                    D_8009F970->unk00 = 0;
-                    D_8009F970->unk414 = 0;
+                    gQueueBlock->unk00 = 0;
+                    gQueueBlock->unk414 = 0;
                 }
             }
         }
     } else {
-        D_8009F970->unk414 = 0;
+        gQueueBlock->unk414 = 0;
     }
 }
 
@@ -211,43 +211,43 @@ void D_80088D74(u8 mode)
     s32 b;
 
     if (mode != 2) {
-        D_8009F970->unk424++;
+        gQueueBlock->unk424++;
         return;
     }
 
-    if (D_8009F970->unk424 >= 2) {
+    if (gQueueBlock->unk424 >= 2) {
         return;
     }
-    D_8009F970->unk424 = 0;
-    if (D_8009F970->unk41C == 0) {
+    gQueueBlock->unk424 = 0;
+    if (gQueueBlock->unk41C == 0) {
         return;
     }
-    if (D_8009F970->unk410 == 0) {
+    if (gQueueBlock->unk410 == 0) {
         return;
     }
-    if (D_8009F970->unk418 != 0) {
-        D_8009F970->unk418--;
-        if (D_8009F970->unk418 == 0) {
+    if (gQueueBlock->unk418 != 0) {
+        gQueueBlock->unk418--;
+        if (gQueueBlock->unk418 == 0) {
             {
-                s32 x = D_8009F970->unk450;
-                s32 y = D_8009F970->unk454;
-                D_8009F970->unk04 = x;
-                D_8009F970->unk00 = y;
+                s32 x = gQueueBlock->unk450;
+                s32 y = gQueueBlock->unk454;
+                gQueueBlock->unk04 = x;
+                gQueueBlock->unk00 = y;
             }
-            D_8009F970->unk414 = mode;
+            gQueueBlock->unk414 = mode;
         }
     }
-    D_8009F970->unk410--;
-    D_8009F970->unk408 += 3;
-    D_8009F970->unk408 %= 48;
-    if (D_8009F970->unk410 == 0) {
+    gQueueBlock->unk410--;
+    gQueueBlock->unk408 += 3;
+    gQueueBlock->unk408 %= 48;
+    if (gQueueBlock->unk410 == 0) {
         return;
     }
     {
-        s32 t = D_8009F970->unk08[D_8009F970->unk408];
-        s32 b = D_8009F970->unk08[D_8009F970->unk408 + 1];
+        s32 t = gQueueBlock->unk08[gQueueBlock->unk408];
+        s32 b = gQueueBlock->unk08[gQueueBlock->unk408 + 1];
         s32 a = t;
-        (void)D_8009F970->unk08[D_8009F970->unk408 + 2];
+        (void)gQueueBlock->unk08[gQueueBlock->unk408 + 2];
         while (func_8008E2F8(a & 0xFF, b) == 0) {
             ;
         }
