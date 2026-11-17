@@ -46,7 +46,7 @@ struct Node {
     struct Node *f24;
 };
 
-extern struct Node *D_8009F6F8;
+extern struct Node *gMapZoneList __asm__("D_8009F6F8");
 
 extern u8 *func_80019C38(u8 *arg0, u32 arg1, u32 arg2, s32 arg3);
 extern void *func_80017EBC(s32 size, s32 tag);
@@ -95,12 +95,12 @@ void func_800319D4(struct Obj *obj)
     d = (struct Data *)(r - 4);
     node = (struct Node *)func_80017EBC(0x28, 3);
 
-    node->f24 = D_8009F6F8;
+    node->f24 = gMapZoneList;
     node->f18 = obj->f24;
     node->f8 = d->tag;
     node->f0 = d->pos.x >> 8;
     node->f4 = d->pos.z >> 8;
-    D_8009F6F8 = node;
+    gMapZoneList = node;
 
     type = d->f1A;
     if (type != 0) {

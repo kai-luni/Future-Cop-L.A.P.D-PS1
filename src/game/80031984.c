@@ -3,7 +3,7 @@
 
 struct Unk31Node;
 
-extern struct Unk31Node *D_8009F6F8;
+extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
 
 /**
  * @brief Clears the map trigger/zone linked-list head D_8009F6F8 during mission boot.
@@ -29,5 +29,5 @@ extern struct Unk31Node *D_8009F6F8;
  */
 void func_80031984(void)
 {
-    D_8009F6F8 = 0;
+    gMapZoneList = 0;
 }

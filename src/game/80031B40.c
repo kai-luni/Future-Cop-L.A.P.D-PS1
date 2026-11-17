@@ -24,7 +24,7 @@ struct Vec3s32 {
     s32 z;
 };
 
-extern struct Unk31Node *D_8009F6F8;
+extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
 
 /**
  * @brief Tests whether a position plus radius overlaps any active map zone
@@ -58,7 +58,7 @@ s32 func_80031B40(struct Vec3s32 *position, s32 radius)
     s32 sign;
 
     found = 0;
-    for (node = D_8009F6F8; node != 0; node = node->next) {
+    for (node = gMapZoneList; node != 0; node = node->next) {
         if (node->flags & 0x40) {
             delta = position->x - (node->x << 8);
             sign = delta >> 31;

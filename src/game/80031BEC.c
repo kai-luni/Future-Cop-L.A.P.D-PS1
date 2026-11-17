@@ -18,7 +18,7 @@ struct Unk31Node {
     struct Unk31Node *next;
 };
 
-extern struct Unk31Node *D_8009F6F8;
+extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
 
 /**
  *  @brief Updates flags on the first list node matching an identifier.
@@ -43,7 +43,7 @@ void func_80031BEC(s32 id, s32 kind, s32 mode)
 {
     struct Unk31Node *node;
 
-    for (node = D_8009F6F8; node != 0; node = node->next) {
+    for (node = gMapZoneList; node != 0; node = node->next) {
         if (node->id == id) {
             if (kind == 0x7C) {
                 if (mode == 1) {

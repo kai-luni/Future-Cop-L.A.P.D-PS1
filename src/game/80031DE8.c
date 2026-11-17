@@ -38,7 +38,7 @@ typedef struct {
     Target80031DE8 *targets[1];
 } Manager80031DE8;
 
-extern Node80031DE8 *D_8009F6F8;
+extern Node80031DE8 *gMapZoneList __asm__("D_8009F6F8");
 extern Manager80031DE8 D_800A8F90;
 extern Target80031DE8 *D_8009FA58[2];
 
@@ -97,7 +97,7 @@ void func_80031DE8(s32 delta)
     s32 r;
     s32 t;
 
-    node = D_8009F6F8;
+    node = gMapZoneList;
     prev = 0;
     while (node != 0) {
     if (node->unk15 != 0) {
@@ -175,7 +175,7 @@ remove:
     if (prev != 0) {
         prev->next = node->next;
     } else {
-        D_8009F6F8 = node->next;
+        gMapZoneList = node->next;
     }
     func_800181D4(node);
     node = prev;

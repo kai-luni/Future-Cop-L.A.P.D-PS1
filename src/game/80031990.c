@@ -18,7 +18,7 @@ struct Unk31Node {
     struct Unk31Node *next;
 };
 
-extern struct Unk31Node *D_8009F6F8;
+extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
 extern void func_800181D4(void *block);
 
 /**
@@ -49,11 +49,11 @@ void func_80031990(void)
     struct Unk31Node *node;
     struct Unk31Node *next;
 
-    node = D_8009F6F8;
+    node = gMapZoneList;
     while (node != 0) {
         next = node->next;
         func_800181D4(node);
         node = next;
     }
-    D_8009F6F8 = 0;
+    gMapZoneList = 0;
 }
