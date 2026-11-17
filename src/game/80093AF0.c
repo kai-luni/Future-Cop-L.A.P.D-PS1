@@ -1,8 +1,8 @@
 // Categories: Graphics > GPU Primitives > Sprite | Graphics > 2D Drawing
 #include "game/types.h"
 
-extern u16 D_8009DDF4;
-extern u16 D_8009DDF6;
+extern u16 gMaxDrawWidth __asm__("D_8009DDF4");
+extern u16 gMaxDrawHeight __asm__("D_8009DDF6");
 extern s32 func_80093F78(s16 x, s16 y);
 extern s32 func_80094010(s32 x, s32 y);
 extern u32 func_800940A8(u32 x, u32 y);
@@ -61,8 +61,8 @@ void func_80093AF0(u8 *arg0, u8 *arg1)
         buf[2] = *(u16 *)(rect + 4);
         buf[3] = *(u16 *)(rect + 6);
 
-        buf[2] = (s16)buf[2] < 0 ? 0 : ((s16)D_8009DDF4 - 1 < (s16)buf[2] ? D_8009DDF4 - 1 : buf[2]);
-        buf[3] = (s16)buf[3] < 0 ? 0 : ((s16)D_8009DDF6 - 1 < (s16)buf[3] ? D_8009DDF6 - 1 : buf[3]);
+        buf[2] = (s16)buf[2] < 0 ? 0 : ((s16)gMaxDrawWidth - 1 < (s16)buf[2] ? gMaxDrawWidth - 1 : buf[2]);
+        buf[3] = (s16)buf[3] < 0 ? 0 : ((s16)gMaxDrawHeight - 1 < (s16)buf[3] ? gMaxDrawHeight - 1 : buf[3]);
 
         p = (u32 *)obj;
         buf[0] -= *(u16 *)(rect + 8);

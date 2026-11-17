@@ -9,8 +9,8 @@ struct Unk78210Mode {
 };
 
 extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
-extern u8 D_8009F3F1;
-extern u8 D_8009F458;
+extern u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
+extern u8 gCrimeWarProgress __asm__("D_8009F458");
 extern u8 gLayoutPointerFlagB __asm__("D_8009F3E7");
 extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
@@ -47,13 +47,13 @@ void func_8007A450(s32 a0)
         return;
     }
     mode = gGameSession;
-    D_8009F3F1 = 0;
+    gSavedCrimeWarProgress = 0;
     mode->players = 2;
     mode->split = 0;
     D_800A377D[0] = 0;
     D_800A386D[0] = 0;
     __asm__ volatile("" ::: "memory");
-    D_8009F458 = 0;
+    gCrimeWarProgress = 0;
     func_800776B8();
     gDeferredTransition = 4;
     gPendingRowCapture = 0;

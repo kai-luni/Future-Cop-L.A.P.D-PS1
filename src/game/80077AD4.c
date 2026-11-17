@@ -92,7 +92,7 @@ extern u8 D_8009F876;
 extern s32 gFontBankTable __asm__("D_8009F468");
 extern s8 gPanelSyncValue __asm__("D_8009F8BC");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
-extern u8 D_8009F8BE;
+extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
 extern s32 gPendingRowCapture __asm__("D_8009F8C4");
@@ -253,7 +253,7 @@ void func_80077AD4(void)
     gMenuActivationBlock.unk06 = 0;
     gFontBankTable = 0;
     gUiHoldFlag = 1;
-    D_8009F8BE = 1;
+    gUiInteractionEnabled = 1;
     gPlayerMenuDepth = 0;
     D_8009F8C1 = 0;
     gPendingRowCapture = 0;

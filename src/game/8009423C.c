@@ -3,7 +3,8 @@
 
 #include "game/types.h"
 
-extern u16 D_8009DDF4, D_8009DDF6;
+extern u16 gMaxDrawHeight __asm__("D_8009DDF6");
+extern u16 gMaxDrawWidth __asm__("D_8009DDF4");
 extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 gGpuPacketArrayAlt[] __asm__("D_800A62A8");
 extern u32 gGpuPacketArray[] __asm__("D_800A6280");
@@ -36,8 +37,8 @@ s32 func_8009423C(u16 *arg0, u32 arg1)
     register u16 *rect __asm__("$8") = arg0;
     register u32 color __asm__("$9") = arg1;
     register s32 result __asm__("$2");
-    rect[2] = (s16)rect[2] < 0 ? 0 : ((s16)D_8009DDF4 - 1 < (s16)rect[2] ? D_8009DDF4 - 1 : rect[2]);
-    rect[3] = (s16)rect[3] < 0 ? 0 : ((s16)D_8009DDF6 - 1 < (s16)rect[3] ? D_8009DDF6 - 1 : rect[3]);
+    rect[2] = (s16)rect[2] < 0 ? 0 : ((s16)gMaxDrawWidth - 1 < (s16)rect[2] ? gMaxDrawWidth - 1 : rect[2]);
+    rect[3] = (s16)rect[3] < 0 ? 0 : ((s16)gMaxDrawHeight - 1 < (s16)rect[3] ? gMaxDrawHeight - 1 : rect[3]);
 
     if ((rect[0] & 0x3f) != 0 || (rect[2] & 0x3f) != 0) {
         register u32 mask __asm__("$6") = 0xffffff;

@@ -11,7 +11,7 @@ struct LinkState {
 
 struct LinkNode;
 
-extern s32 *D_8009F590;
+extern s32 *gFreeRangeTablePtr __asm__("D_8009F590");
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
 extern struct LinkState *gPool3Size __asm__("D_8009FA4C");
@@ -127,13 +127,13 @@ retry:
             index = 0;
             goto retry;
         }
-        result = (void *)D_8009F590[index];
+        result = (void *)gFreeRangeTablePtr[index];
         gHeapSearchCursor = index;
         *(s32 *)result = size;
         result = (u8 *)result + 4;
-        D_8009F590[index] += size;
-        if (D_8009F590[index] == D_8009F590[index + 1] && gFreeRangeCount >= 4) {
-            func_8001E318((u8 *)&D_8009F590[index], (u8 *)(&D_8009F590[index] + 2),
+        gFreeRangeTablePtr[index] += size;
+        if (gFreeRangeTablePtr[index] == gFreeRangeTablePtr[index + 1] && gFreeRangeCount >= 4) {
+            func_8001E318((u8 *)&gFreeRangeTablePtr[index], (u8 *)(&gFreeRangeTablePtr[index] + 2),
                          (gFreeRangeCount - index - 1) * 4);
             gFreeRangeCount -= 2;
         }
@@ -149,12 +149,12 @@ retry:
             index = 0;
             goto retry;
         }
-        D_8009F590[index + 1] -= size;
-        result = (void *)D_8009F590[index + 1];
+        gFreeRangeTablePtr[index + 1] -= size;
+        result = (void *)gFreeRangeTablePtr[index + 1];
         *(s32 *)result = size;
         result = (u8 *)result + 4;
-        if (D_8009F590[index] == D_8009F590[index + 1] && gFreeRangeCount >= 4) {
-            func_8001E318((u8 *)&D_8009F590[index], (u8 *)(&D_8009F590[index] + 2),
+        if (gFreeRangeTablePtr[index] == gFreeRangeTablePtr[index + 1] && gFreeRangeCount >= 4) {
+            func_8001E318((u8 *)&gFreeRangeTablePtr[index], (u8 *)(&gFreeRangeTablePtr[index] + 2),
                          (gFreeRangeCount - index - 1) * 4);
             gFreeRangeCount -= 2;
             if (gHeapSearchCursor >= index + 2) {

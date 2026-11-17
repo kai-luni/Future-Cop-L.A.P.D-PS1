@@ -9,7 +9,7 @@ typedef struct {
 } Entry;
 
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
-extern u8 D_8009F8BE;
+extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 typedef struct { u8 b[0x70]; } Rec;
 typedef struct {
     u8 pad0[0x424]; Rec recs[10]; u8 pad884[0x9D];
@@ -20,17 +20,17 @@ extern Big *gSaveProfileImage __asm__("D_8009F92C");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 *D_8009F878;
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
-extern s8 D_8009F882;
-extern s8 D_8009F880;
+extern s8 gMissionListMaxIndex __asm__("D_8009F882");
+extern s8 gSelectedMissionIndex __asm__("D_8009F880");
 extern s8 D_8009F881;
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 D_800A3928[];
 extern s32 gScalarCursor[] __asm__("D_8009F8F8");
 extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 extern u8 *gGameSession __asm__("D_8009FA94");
-extern u8 D_8009F458;
+extern u8 gCrimeWarProgress __asm__("D_8009F458");
 extern u8 D_8009F459;
-extern u8 D_8009F3F1;
+extern u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
@@ -50,7 +50,7 @@ extern u8 D_8009F498[];
 extern u8 D_8009F4A0[];
 extern u8 gDefaultNameString[] __asm__("D_8009F4A4");
 extern u8 gMenuActivationBlock[] __asm__("D_800A3718");
-extern u8 D_8009F3F8[];
+extern u8 gHighlightShadeTable[] __asm__("D_8009F3F8");
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 
 extern void func_8007AA9C(u8 *a, u8 *b, s32 c, u8 *d);
@@ -186,7 +186,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
 
     __asm__("" : : "r"(arg4) : "$18");
     s2 = gActivePlayerIndex;
-    if (gUiHoldFlag != 0 && D_8009F8BE != 0 && arg0 < 6) {
+    if (gUiHoldFlag != 0 && gUiInteractionEnabled != 0 && arg0 < 6) {
         switch (arg0) {
         case 3:
             init = gSaveProfileImage;
@@ -231,9 +231,9 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                     } else {
                         arg2 = (s32)func_80089914(0x3868);
                         if (((u8 *)arg2) != 0 && func_8008CCC0(((u8 *)arg2)) < 7) {
-                            func_8008CD30(RAW + 0x925, D_8009F498, ((u8 *)arg2), D_8009F882 + 1, txt);
+                            func_8008CD30(RAW + 0x925, D_8009F498, ((u8 *)arg2), gMissionListMaxIndex + 1, txt);
                         } else {
-                            func_8008CD30(RAW + 0x925, D_800120D4, D_8009F882 + 1, txt);
+                            func_8008CD30(RAW + 0x925, D_800120D4, gMissionListMaxIndex + 1, txt);
                         }
                     }
                 } else {
@@ -305,17 +305,17 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                 s32 saved;
                 func_800776B8();
                 saved = REC(0x458);
-                D_8009F458 = saved;
-                D_8009F3F1 = REC(0x458);
+                gCrimeWarProgress = saved;
+                gSavedCrimeWarProgress = REC(0x458);
                 if ((s8)saved >= 0) {
                     if ((s8)saved >= 8) v = 7;
                     else v = saved;
                 } else {
                     v = 0;
                 }
-                D_8009F882 = v;
+                gMissionListMaxIndex = v;
                 D_8009F881 = 0;
-                D_8009F880 = v;
+                gSelectedMissionIndex = v;
             }
             gRowClearFlag = 0;
             func_8007FACC();
@@ -395,7 +395,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                     if (arg2 == *(s32 *)s2) {
                         dst = (u8 *)n;
                         one = 1;
-                        savedBase = D_8009F3F8;
+                        savedBase = gHighlightShadeTable;
                         step = gPaletteCycleCounter;
                         heightTmp = h;
                         __asm__("sra %0,%0,4\n\tandi %0,%0,7\n\taddu %0,%0,%1"

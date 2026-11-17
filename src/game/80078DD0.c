@@ -34,7 +34,8 @@ struct Menu {
 };
 extern s32 gStillRunningState __asm__("D_8009F464");
 extern struct Menu *gFontBankTable __asm__("D_8009F468");
-extern u8 D_8009F8CC, D_8009F3F2, D_8009F3F3, D_8009F45A, D_8009F8BE;
+extern u8 D_8009F8CC, D_8009F3F2, D_8009F3F3, D_8009F45A;
+extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern s32 D_8009F8B0, D_8009F8B4;
 extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
@@ -52,7 +53,8 @@ extern void func_80077990(void), func_800788B4(void), func_80077AD4(s32);
 extern u8 func_80078C88(void), func_80082D30(s32 *, s32);
 extern void func_80082DDC(u32, s32), func_8005780C(u32, struct InputAction *);
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
-extern u8 D_8009F46C, D_8009F3FB, D_8009F3F8[], D_8009B3D4[], D_8009B3E0[];
+extern u8 D_8009F46C, D_8009F3FB, D_8009B3D4[], D_8009B3E0[];
+extern u8 gHighlightShadeTable[] __asm__("D_8009F3F8");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern s32 gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
@@ -185,7 +187,7 @@ reset_timer:
             }
         }
         if (!step) count = 1;
-        if (D_8009F8BE) {
+        if (gUiInteractionEnabled) {
             for (i = 0; i < count && !changed; i++) {
                 gActivePlayerIndex = i;
                 if (accept[i]) {

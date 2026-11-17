@@ -5,7 +5,7 @@ typedef struct {
  u8 pad30[0xcc]; u8 fc, fd; u8 padfe[8]; s16 f106; u8 pad108[2]; s16 f10a; u8 pad10c[4]; u8 f110, f111; u8 pad112[2]; s32 f114; u8 pad118[8]; s32 f120, f124, f128, f12c;
 } Ctx;
 extern Ctx *gDecodeJob __asm__("D_8009F4BC");
-extern int D_8009F4C4;
+extern int gStripDitherEnabled __asm__("D_8009F4C4");
 extern int gReleaseDoneFlag __asm__("D_8009F508");
 extern int gStripScaleEnable __asm__("D_8009F4C0");
 extern char D_80085074[];
@@ -120,7 +120,7 @@ int func_80085C4C(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, int a6
  func_800921F4((u8 *)gDecodeJob+0xec,0,0,0x140,0xf0);
  func_80092140((u8 *)gDecodeJob+0x90,0,0x100,0x140,0xf0);
  func_800921F4((u8 *)gDecodeJob+0x100,0,0x100,0x140,0xf0);
- if (gStripScaleEnable == 1 && D_8009F4C4 == 0) {
+ if (gStripScaleEnable == 1 && gStripDitherEnabled == 0) {
   gDecodeJob->fd=1; gDecodeJob->f111=1;
  } else { gDecodeJob->fd=0; gDecodeJob->f111=0; }
  gDecodeJob->fc=0; gDecodeJob->f110=0;

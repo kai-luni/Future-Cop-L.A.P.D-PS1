@@ -20,11 +20,11 @@ extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
 extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
 extern u8 gLayoutPointerFlagB __asm__("D_8009F3E7");
-extern u8 D_8009F458;
-extern u8 D_8009F3F1;
+extern u8 gCrimeWarProgress __asm__("D_8009F458");
+extern u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
 extern u8 gArmedFlag __asm__("D_8009FAC4");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
-extern u8 D_8009F8BE;
+extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 
 extern u8 *func_80089914(u16 id);
 extern void func_800822CC(u8 *arg0);
@@ -136,8 +136,8 @@ void func_80080B70(void)
     for (i = 0; i < 4; i++) {
         S(0x464 + i) = gWideTextTable[gFrontEndListTable[i]].unk1F;
     }
-    S(0x458) = D_8009F458;
-    D_8009F3F1 = D_8009F458;
+    S(0x458) = gCrimeWarProgress;
+    gSavedCrimeWarProgress = gCrimeWarProgress;
     func_8008CCB0(REC + 0x428, gSaveProfileImage + 0x925);
     func_8007F6E0();
     gSaveProfileImage[0x922] = 3;
@@ -149,7 +149,7 @@ void func_80080B70(void)
         gArmedFlag = 1;
     }
     gUiHoldFlag = 0;
-    D_8009F8BE = 0;
+    gUiInteractionEnabled = 0;
     gWideTextTable[gFrontEndListTable[0]].unk20 = gWideTextTable[gFrontEndListTable[0]].unk1F;
     gWideTextTable[gFrontEndListTable[1]].unk20 = gWideTextTable[gFrontEndListTable[1]].unk1F;
     gWideTextTable[gFrontEndListTable[2]].unk20 = gWideTextTable[gFrontEndListTable[2]].unk1F;
@@ -168,7 +168,7 @@ void func_80080B70(void)
         gSaveProfileImage[0x204] = 2;
         gSaveProfileImage[0x202] = 3;
         gUiHoldFlag = 1;
-        D_8009F8BE = 1;
+        gUiInteractionEnabled = 1;
         break;
     }
 }

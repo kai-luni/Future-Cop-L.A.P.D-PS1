@@ -1,8 +1,8 @@
 // Categories: Graphics > GPU Primitives > Draw Area
 #include "game/types.h"
 
-extern s16 D_8009DDF4;
-extern s16 D_8009DDF6;
+extern s16 gMaxDrawWidth __asm__("D_8009DDF4");
+extern s16 gMaxDrawHeight __asm__("D_8009DDF6");
 
 /**
  * @brief Builds the GPU draw-area bottom-right word (opcode 0xE4) with
@@ -33,8 +33,8 @@ s32 func_80094010(s32 x, s32 y)
     u16 maxh;
 
     if ((s16)x >= 0) {
-        maxw = *(u16 *)&D_8009DDF4;
-        if ((s16)x > D_8009DDF4 - 1) {
+        maxw = *(u16 *)&gMaxDrawWidth;
+        if ((s16)x > gMaxDrawWidth - 1) {
             cx = maxw - 1;
         } else {
             cx = x;
@@ -45,8 +45,8 @@ s32 func_80094010(s32 x, s32 y)
     x = cx;
 
     if ((s16)y >= 0) {
-        maxh = *(u16 *)&D_8009DDF6;
-        if ((s16)y > D_8009DDF6 - 1) {
+        maxh = *(u16 *)&gMaxDrawHeight;
+        if ((s16)y > gMaxDrawHeight - 1) {
             y = maxh - 1;
         }
     } else {

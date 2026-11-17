@@ -28,7 +28,7 @@ extern void *memcpy(void *, const void *, u32);
 
 extern struct State *gDecodeJob __asm__("D_8009F4BC");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
-extern s32 D_8009F4C4;
+extern s32 gStripDitherEnabled __asm__("D_8009F4C4");
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
 extern u32 gFrameTimeMax __asm__("D_8009F4D0");
 extern u8 *gCharTable __asm__("D_8009FABC");
@@ -153,7 +153,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
     __asm__("" : "=r" (one), "=r" (p) : "0" (one), "1" (p));
     payload = p + 8;
     if (mode == one) {
-        if (D_8009F4C4 != 0) {
+        if (gStripDitherEnabled != 0) {
             memcpy((void *)0x1F800000, gScratchTable, 0x100);
             gCharTable = (u8 *)0x1F800000;
             memcpy((void *)0x1F800100, gSecondScratchTable, 0x108);

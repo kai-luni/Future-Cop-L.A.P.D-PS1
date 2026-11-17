@@ -23,7 +23,7 @@ extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
-extern u8 D_8009F458;
+extern u8 gCrimeWarProgress __asm__("D_8009F458");
 extern u8 D_800A3938[];
 
 extern void func_8007E8D8(u8 *output, u32 value1, u32 value2, u32 value3,
@@ -56,7 +56,7 @@ void func_8007F02C(void)
                   gGameSession->unk90,
                   gGameSession->unk94,
                   gFrontEndListFlag,
-                  D_8009F458,
+                  gCrimeWarProgress,
                   gWideTextTable[gFrontEndListTable[0]].unk1F,
                   gWideTextTable[gFrontEndListTable[1]].unk1F,
                   gWideTextTable[gFrontEndListTable[2]].unk1F,

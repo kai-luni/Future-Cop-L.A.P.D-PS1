@@ -82,14 +82,18 @@ extern u8 gMenuActivationBlock[] __asm__("D_800A3718");
 extern u8 *D_8009F878;
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern u8 D_8009F8BE;
+extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
-extern s8 D_8009F880, D_8009F881, D_8009F882;
+extern s8 D_8009F881;
+extern s8 gMissionListMaxIndex __asm__("D_8009F882");
+extern s8 gSelectedMissionIndex __asm__("D_8009F880");
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
 extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
 extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
-extern u8 D_8009F3F1, D_8009F458, D_8009F459;
+extern u8 D_8009F459;
+extern u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
+extern u8 gCrimeWarProgress __asm__("D_8009F458");
 extern u8 gLayoutPointerFlagB __asm__("D_8009F3E7");
 extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
 extern u8 gRowClearFlag __asm__("D_8009FA10");
@@ -99,7 +103,7 @@ extern u8 D_8009F498[], D_8009F4A0[];
 extern u8 gDefaultNameString[] __asm__("D_8009F4A4");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern u8 D_800120BC[], D_800120C8[], D_800120D4[];
-extern u8 D_8009F3F8[];
+extern u8 gHighlightShadeTable[] __asm__("D_8009F3F8");
 extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 
 extern void func_8007AA9C(u8 *, u8 *, s32, u8 *);
@@ -159,6 +163,6 @@ void func_80081204(void)
     ((u8 *)gSaveProfileImage)[0x201] = 1;
     ((u8 *)gSaveProfileImage)[0x202] = 1;
     gUiHoldFlag = 0;
-    D_8009F8BE = 0;
+    gUiInteractionEnabled = 0;
     func_80020D3C(gProfileImageName, (s32)((u8 *)gSaveProfileImage + 0x20C), 0x678);
 }

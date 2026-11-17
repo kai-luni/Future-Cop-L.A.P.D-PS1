@@ -27,11 +27,11 @@ extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
-extern u8 D_8009F3F1;
-extern u8 D_8009F458;
-extern u8 D_8009F880;
+extern u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
+extern u8 gCrimeWarProgress __asm__("D_8009F458");
+extern u8 gSelectedMissionIndex __asm__("D_8009F880");
 extern u8 D_8009F881;
-extern u8 D_8009F882;
+extern u8 gMissionListMaxIndex __asm__("D_8009F882");
 
 extern void func_80077FFC(void);
 extern void func_80077708(void);
@@ -236,8 +236,8 @@ s32 func_8007EA78(void)
                 if (g6) {
                     gLockedMenuFlag = f6;
                 }
-                D_8009F458 = n0;
-                D_8009F3F1 = n0;
+                gCrimeWarProgress = n0;
+                gSavedCrimeWarProgress = n0;
                 gWideTextTable[gFrontEndListTable[0]].unk1F = n1;
                 gWideTextTable[gFrontEndListTable[1]].unk1F = n2;
                 gWideTextTable[gFrontEndListTable[2]].unk1F = n3;
@@ -253,11 +253,11 @@ s32 func_8007EA78(void)
                     func_80077708();
                 } else {
                     func_800776B8();
-                    v = D_8009F458;
-                    if ((s8)D_8009F458 >= 0) { if ((s8)D_8009F458 < 8) { } else { v = 7; } } else { v = 0; }
-                    D_8009F882 = v;
+                    v = gCrimeWarProgress;
+                    if ((s8)gCrimeWarProgress >= 0) { if ((s8)gCrimeWarProgress < 8) { } else { v = 7; } } else { v = 0; }
+                    gMissionListMaxIndex = v;
                     D_8009F881 = 0;
-                    D_8009F880 = v;
+                    gSelectedMissionIndex = v;
                 }
                 func_8007A168();
                 ret = 1;

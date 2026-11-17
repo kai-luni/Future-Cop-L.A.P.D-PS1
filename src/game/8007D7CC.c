@@ -33,7 +33,7 @@ typedef struct {
 } UnkFont;
 
 extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
-extern u8 D_8009F3F8;
+extern u8 gHighlightShadeTable __asm__("D_8009F3F8");
 extern Unk8009C0A8 gLoadoutTable[] __asm__("D_8009C0A8");
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");

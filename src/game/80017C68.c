@@ -1,7 +1,7 @@
 // Categories: Resources > Memory Pools | Platform > Memory
 #include "game/types.h"
 
-extern s32 *D_8009F590;
+extern s32 *gFreeRangeTablePtr __asm__("D_8009F590");
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
 extern void *gPool1Size __asm__("D_8009F9D0");
@@ -42,7 +42,7 @@ extern void *func_800194DC(s32 count, s32 size, s32 tag);
 void func_80017C68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     s32 off = gHeapMainBlockSize;
-    s32 *ptr = D_8009F590;
+    s32 *ptr = gFreeRangeTablePtr;
     s32 base;
 
     gFreeRangeCount = 3;

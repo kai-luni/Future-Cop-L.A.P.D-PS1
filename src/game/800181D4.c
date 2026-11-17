@@ -12,7 +12,7 @@ struct LinkState {
 extern struct LinkState *gPool3Size __asm__("D_8009FA4C");
 extern struct LinkState *gPool1Size __asm__("D_8009F9D0");
 extern struct LinkState *gPool2Size __asm__("D_8009FAAC");
-extern s32 *D_8009F590;
+extern s32 *gFreeRangeTablePtr __asm__("D_8009F590");
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
 
@@ -77,13 +77,13 @@ void func_800181D4(void *block)
         ((pool = gPool2Size),
          (s32)block >= (s32)pool && (s32)block < (s32)pool->end)) {
         func_800195D0(pool, (s32 *)block);
-    } else if ((s32)block >= (s32)D_8009F590[0] &&
-               (s32)block < (s32)D_8009F590[gFreeRangeCount]) {
+    } else if ((s32)block >= (s32)gFreeRangeTablePtr[0] &&
+               (s32)block < (s32)gFreeRangeTablePtr[gFreeRangeCount]) {
         block = (u8 *)block - 4;
         index = func_8001814C(block);
         end = (u8 *)block + *(s32 *)block;
         offset = (u32)index * 4;
-        table = (u8 **)D_8009F590;
+        table = (u8 **)gFreeRangeTablePtr;
         slot = (u8 **)(offset + (u32)table);
         if (block == slot[0]) {
             if (end == slot[1]) {
@@ -108,8 +108,8 @@ void func_800181D4(void *block)
                 func_8001E44C((u8 *)(table + 3),
                               (u8 *)(table + 1),
                               gFreeRangeCount * 4);
-                D_8009F590[1] = (s32)block;
-                D_8009F590[2] = (s32)end;
+                gFreeRangeTablePtr[1] = (s32)block;
+                gFreeRangeTablePtr[2] = (s32)end;
                 gFreeRangeCount += 2;
                 gHeapSearchCursor += 2;
             }
@@ -136,8 +136,8 @@ void func_800181D4(void *block)
             if (index < gHeapSearchCursor) {
                 gHeapSearchCursor += 2;
             }
-            D_8009F590[index + 1] = (s32)block;
-            D_8009F590[index + 2] = (s32)end;
+            gFreeRangeTablePtr[index + 1] = (s32)block;
+            gFreeRangeTablePtr[index + 2] = (s32)end;
         }
     } else {
         func_8001E2C0(block);

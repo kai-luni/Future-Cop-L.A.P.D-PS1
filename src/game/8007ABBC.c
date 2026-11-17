@@ -15,7 +15,7 @@ extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 extern u8 D_800A3928[];
 extern s32 gScalarCursor[] __asm__("D_8009F8F8");
-extern u8 D_8009F3F8[8];
+extern u8 gHighlightShadeTable[8] __asm__("D_8009F3F8");
 extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 
 extern void func_8007AA9C(u8 *dst, u8 *src, s32 len, u8 *table);
@@ -182,7 +182,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
                     s32 color;
                     boxX = baseX;
                     boxKind = 2;
-                    pal = D_8009F3F8;
+                    pal = gHighlightShadeTable;
                     __asm__("" : "=r"(boxX), "=r"(boxKind), "=r"(pal) : "0"(boxX), "1"(boxKind), "2"(pal));
                     c_idx = (gPaletteCycleCounter[0] >> 4) & 7;
                     c_idx += (s32)pal;

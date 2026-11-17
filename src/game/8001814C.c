@@ -1,7 +1,7 @@
 // Categories: Resources > Memory Management
 #include "game/types.h"
 
-extern s32 *D_8009F590;
+extern s32 *gFreeRangeTablePtr __asm__("D_8009F590");
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 
 /**
@@ -23,7 +23,7 @@ extern s32 gFreeRangeCount __asm__("D_8009F594");
 s32 func_8001814C(s32 value)
 {
     s32 high = gFreeRangeCount - 1;
-    s32 *table = D_8009F590;
+    s32 *table = gFreeRangeTablePtr;
     s32 low = 0;
     s32 mid;
 

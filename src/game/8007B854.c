@@ -23,7 +23,9 @@ extern State *gGameSession __asm__("D_8009FA94");
 extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern s8 D_8009F880, D_8009F881, D_8009F882;
+extern s8 D_8009F881;
+extern s8 gMissionListMaxIndex __asm__("D_8009F882");
+extern s8 gSelectedMissionIndex __asm__("D_8009F880");
 extern s8 gLineCount __asm__("D_8009F87F");
 extern s8 gSelectedRow __asm__("D_8009F87E");
 extern s8 *D_8009F884;
@@ -43,7 +45,7 @@ extern void func_8008CCB0(void *, s32);
 extern s32 func_8008CCA0(void *, void *);
 extern void func_80078B34(s32, s32, s32);
 extern void func_8007B460(s32);
-#define SELECTED (gWideTextTable[D_8009F884[D_8009F880]])
+#define SELECTED (gWideTextTable[D_8009F884[gSelectedMissionIndex]])
 
 /**
  * @brief Item handler of the profile-list screen: confirm opens the level list,
@@ -146,7 +148,7 @@ void func_8007B854(s32 arg0)
                 if (state->unkC == 1) {
                     if (*p == 1) {
                         sel = gWideTextTable;
-                        scaled = D_8009F884[D_8009F880] * 36;
+                        scaled = D_8009F884[gSelectedMissionIndex] * 36;
                         __asm__("addu %0, %1, %2" : "=r"(ep) : "r"(scaled), "r"(sel));
                         value = ep->unk1F;
                         if (value != 0) {
@@ -209,8 +211,8 @@ SELECTION_DONE:;
                 gSelectedRow--;
                 if (gSelectedRow < 0) gSelectedRow = gLineCount;
             } else {
-                D_8009F880--;
-                if (D_8009F880 < D_8009F881) D_8009F880 = D_8009F882;
+                gSelectedMissionIndex--;
+                if (gSelectedMissionIndex < D_8009F881) gSelectedMissionIndex = gMissionListMaxIndex;
             }
         }
         break;
@@ -225,8 +227,8 @@ SELECTION_DONE:;
                 gSelectedRow++;
                 if (gSelectedRow > gLineCount) gSelectedRow = 0;
             } else {
-                D_8009F880++;
-                if (D_8009F880 > D_8009F882) D_8009F880 = D_8009F881;
+                gSelectedMissionIndex++;
+                if (gSelectedMissionIndex > gMissionListMaxIndex) gSelectedMissionIndex = D_8009F881;
             }
         }
         break;

@@ -31,9 +31,9 @@ struct State8009FA94 {
 
 extern u8 gSelectedRow __asm__("D_8009F87E");
 extern u8 gLineCount __asm__("D_8009F87F");
-extern u8 D_8009F880;
+extern u8 gSelectedMissionIndex __asm__("D_8009F880");
 extern u8 D_8009F881;
-extern u8 D_8009F882;
+extern u8 gMissionListMaxIndex __asm__("D_8009F882");
 extern s8 *D_8009F884;
 extern s8 D_8009F889;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
@@ -45,8 +45,8 @@ extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 *gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern s8 *gFontBankTable __asm__("D_8009F468");
-extern u8 D_8009F3F8[];
-extern s8 D_8009F458[];
+extern u8 gHighlightShadeTable[] __asm__("D_8009F3F8");
+extern s8 gCrimeWarProgress[] __asm__("D_8009F458");
 extern u8 D_8009F444[];
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern u8 D_8009F488[];
@@ -126,7 +126,7 @@ void func_8007B460(s32 arg0)
     func_80082AB0(9, 0x24, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
     func_80082AB0(8, 0x93, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
 
-    end = (s8)D_8009F882 - (s8)D_8009F881 + 1;
+    end = (s8)gMissionListMaxIndex - (s8)D_8009F881 + 1;
     i = (s8)D_8009F881;
     if (i >= end) {
         return;
@@ -141,7 +141,7 @@ void func_8007B460(s32 arg0)
         if (gPlayerMenuDepth == 0) {
             goto plain;
         }
-        if (i != (s8)D_8009F880) {
+        if (i != (s8)gSelectedMissionIndex) {
             goto plain;
         }
 
@@ -152,7 +152,7 @@ void func_8007B460(s32 arg0)
         func_800788F0(0, 0x97, 0xB1, 0x10, e->unk10, 1, 8, 2);
         c3 = c1;
 
-        if (i < ({ register s32 idx __asm__("$2") = D_8009F889; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = D_8009F458; __asm__("" : "+r"(base)); *(s8 *)(idx + (s32)base); })) {
+        if (i < ({ register s32 idx __asm__("$2") = D_8009F889; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = gCrimeWarProgress; __asm__("" : "+r"(base)); *(s8 *)(idx + (s32)base); })) {
             flag = 1;
             goto common;
         }
@@ -185,7 +185,7 @@ void func_8007B460(s32 arg0)
         c3 = c1;
 
     cont:
-        if (i < ({ register s32 idx __asm__("$2") = D_8009F889; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = D_8009F458; __asm__("" : "+r"(base)); *(s8 *)(idx + (s32)base); })) {
+        if (i < ({ register s32 idx __asm__("$2") = D_8009F889; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = gCrimeWarProgress; __asm__("" : "+r"(base)); *(s8 *)(idx + (s32)base); })) {
             len = e->unk12;
         } else {
             len = e->unk14;

@@ -3,7 +3,7 @@
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
-extern u8 D_8009F8BE;
+extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 
@@ -58,7 +58,7 @@ void func_8008204C(void)
                 gSaveProfileImage[0x202] = 1;
                 gSaveProfileImage[0x207] = 1;
                 gUiHoldFlag = 0;
-                D_8009F8BE = 0;
+                gUiInteractionEnabled = 0;
                 break;
             }
             i++;
@@ -72,6 +72,6 @@ void func_8008204C(void)
         gSaveProfileImage[0x202] = 1;
         gSaveProfileImage[0x207] = 1;
         gUiHoldFlag = 0;
-        D_8009F8BE = 0;
+        gUiInteractionEnabled = 0;
     }
 }

@@ -132,6 +132,25 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 
 Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage).
 
+## Rest ohne Datei-Beleg: zehn Fälle einzeln geklärt
+
+Zehn Symbole, die keinen erklärenden Kommentar in ihrer Unit hatten. Drei waren am Code direkt lesbar, sieben wurden mit Gemini 4 Hydrogen geklärt und die genannten Stellen anschließend selbst geprüft.
+
+| Global (RAM) | C-Name | Bedeutung | Beleg |
+|---|---|---|---|
+| `D_8009DDF4` | `gMaxDrawWidth` | Obere Grenze der Breite: `buf[2]` wird auf `Wert - 1` geklemmt. | `80093AF0.c:64` |
+| `D_8009DDF6` | `gMaxDrawHeight` | Dasselbe für die Höhe (`buf[3]`), in `80094010` als `maxw`/`maxh` gelesen. | `80093F78.c:33` |
+| `D_8009F590` | `gFreeRangeTablePtr` | Zeiger auf den 0x810-Byte-Frei-Bereichsblock (Tag 3), dessen zweites Wort `gFreeRangeCount` ist. | `80017BE8.c:46` |
+| `D_8009F8BE` | `gUiInteractionEnabled` | Freigabe-Flag der Frontend-Eingabe: wird gesetzt, bevor die Auswahlschleife Eingaben annimmt, und bei Film-/Kartensperren gelöscht. | `8007FACC.c:27`, `8007F8E0.c:36`, `80078DD0.c:188`, `8008125C.c:189` |
+| `D_8009F458` | `gCrimeWarProgress` | Freigeschalteter Missionsfortschritt im Crime-War-Modus (0…8); der Zähler wird bei Treffer auf `gSelectedMissionIndex` erhöht. | `800782EC.c:61-67`, `8007A168.c:47` |
+| `D_8009F3F1` | `gSavedCrimeWarProgress` | Zuletzt bestätigter Stand dazu; weicht er ab, setzt der Code `gRowClearFlag = 1` (ungesicherter Fortschritt). | `800782EC.c:70-72` |
+| `D_8009F3F8` | `gHighlightShadeTable` | Achtstufige Helligkeitstabelle für pulsierende Icons und Rahmen, gelesen mit `Pegel + 0x80`. | `80078DD0.c:291-292`, `8007ABBC.c:185` |
+| `D_8009F880` | `gSelectedMissionIndex` | Cursor in der Missionsliste, läuft zwischen `D_8009F881` und `D_8009F882` zyklisch. | `8007B854.c:212-214` |
+| `D_8009F882` | `gMissionListMaxIndex` | Inklusive Obergrenze der wählbaren Einträge (7 im Crime-War-Modus, `gUnlockFlag + 3` in Precinct Assault). | `800776B8.c:43`, `80077708.c:67` |
+| `D_8009F4C4` | `gStripDitherEnabled` | Begleitflag zur Streifenskalierung: 1 bei `gStripScaleEnable == 1` (Step 3), 0 im Step-2-Modus. | `800859D8.c:30-35` |
+
+**Nicht umbenannt:** `D_8009FA5C` — es ist nur das zweite Element hinter `D_8009FA58` (die `bp--`-Schleife in `80024A24.c:175-181` nullt beide rückwärts), und die Units deklarieren es unvereinbar (`struct {…}`, `_b`…`_e`, `s32[]`). Dieselbe Sperre wie bei `D_8009FA58`.
+
 ## Letzte belegte Runde und die Grenze des Benennbaren
 
 Einundsechzig weitere Globals in **einem** Commit. Damit sind alle Symbole abgearbeitet, deren Rolle in den Datei-Dokus belegt ist; die 63 übrigen Kandidaten sind unten mit Grund aufgeführt.

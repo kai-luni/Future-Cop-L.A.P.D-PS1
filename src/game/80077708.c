@@ -10,9 +10,9 @@ struct Entry {
 
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gUnlockFlag __asm__("D_8009F3C2");
-extern u8 D_8009F880;
+extern u8 gSelectedMissionIndex __asm__("D_8009F880");
 extern u8 D_8009F881;
-extern u8 D_8009F882;
+extern u8 gMissionListMaxIndex __asm__("D_8009F882");
 extern s8 *D_8009F884;
 extern u8 D_8009F888;
 extern u8 D_8009F889;
@@ -45,7 +45,7 @@ void func_80077FFC(void);
  */
 void func_80077708(void)
 {
-    D_8009F880 = 0;
+    gSelectedMissionIndex = 0;
     D_8009F881 = 0;
     D_8009F889 = 1;
 
@@ -64,6 +64,6 @@ void func_80077708(void)
     }
 
     D_8009F884 = gFrontEndListTable;
-    D_8009F882 = gUnlockFlag + 3;
+    gMissionListMaxIndex = gUnlockFlag + 3;
     D_8009F888 = gUnlockFlag + 4;
 }

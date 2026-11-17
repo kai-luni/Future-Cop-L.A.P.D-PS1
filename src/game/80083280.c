@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern u8 D_8009F3F8[8];
+extern u8 gHighlightShadeTable[8] __asm__("D_8009F3F8");
 extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b);
 
 /**

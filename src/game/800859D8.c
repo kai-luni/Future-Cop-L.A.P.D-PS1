@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
-extern s32 D_8009F4C4;
+extern s32 gStripDitherEnabled __asm__("D_8009F4C4");
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
 extern s32 gBufferCount __asm__("D_8009F4CC");
 
@@ -27,11 +27,11 @@ void func_800859D8(s32 arg0)
     if ((arg0 & 0xFF) != 0) {
         gStripScaleEnable = 1;
         gStripStepWidth = 3;
-        D_8009F4C4 = 1;
+        gStripDitherEnabled = 1;
     } else {
         gStripScaleEnable = 2;
         gStripStepWidth = 2;
-        D_8009F4C4 = 0;
+        gStripDitherEnabled = 0;
     }
     gBufferCount = 2;
 }

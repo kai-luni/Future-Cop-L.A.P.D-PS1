@@ -13,7 +13,7 @@ struct State821EC {
 
 extern struct State821EC *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
-extern u8 D_8009F8BE;
+extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 
 /**
  *  @brief Advances selected modes in the current state object.
@@ -38,10 +38,10 @@ void func_800821EC(void)
         gSaveProfileImage->mode = 4;
         if (gSaveProfileImage->flag) {
             gUiHoldFlag = 0;
-            D_8009F8BE = 0;
+            gUiInteractionEnabled = 0;
         } else {
             gUiHoldFlag = 0;
-            D_8009F8BE = 1;
+            gUiInteractionEnabled = 1;
         }
     } else if (gSaveProfileImage->mode == 5) {
         gSaveProfileImage->mode = 2;

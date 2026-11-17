@@ -3,12 +3,12 @@
 
 extern u8 gMissionListTable[] __asm__("D_8009B724");
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
-extern u8 D_8009F880;
+extern u8 gSelectedMissionIndex __asm__("D_8009F880");
 extern u8 D_8009F881;
-extern u8 D_8009F882;
+extern u8 gMissionListMaxIndex __asm__("D_8009F882");
 extern u8 D_8009F889;
-extern u8 D_8009F458;
-extern u8 D_8009F3F1;
+extern u8 gCrimeWarProgress __asm__("D_8009F458");
+extern u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
 extern u8 *D_8009F884;
 extern u8 D_8009F888;
 
@@ -36,15 +36,15 @@ extern u8 D_8009F888;
  */
 void func_800776B8(void)
 {
-    D_8009F880 = 0;
+    gSelectedMissionIndex = 0;
     D_8009F881 = 0;
     D_8009F889 = 0;
     if (gFrontEndListFlag != 0) {
-        D_8009F882 = 7;
-        D_8009F458 = 8;
-        D_8009F3F1 = 8;
+        gMissionListMaxIndex = 7;
+        gCrimeWarProgress = 8;
+        gSavedCrimeWarProgress = 8;
     } else {
-        D_8009F882 = 0;
+        gMissionListMaxIndex = 0;
     }
     D_8009F884 = gMissionListTable;
     D_8009F888 = 8;

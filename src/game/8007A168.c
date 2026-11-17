@@ -10,7 +10,7 @@ struct Entry {
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
-extern u8 D_8009F458;
+extern u8 gCrimeWarProgress __asm__("D_8009F458");
 extern u8 gScreenPersistentBlock[] __asm__("D_8009BBF8");
 extern struct Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
@@ -44,7 +44,7 @@ extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
  */
 void func_8007A168(void)
 {
-    if (gFrontEndListFlag != 0 || gPausedMenuFlag != 0 || D_8009F458 == 8) {
+    if (gFrontEndListFlag != 0 || gPausedMenuFlag != 0 || gCrimeWarProgress == 8) {
         gScreenPersistentBlock[0x46] = 1;
         *(u16 *)(gScreenPersistentBlock + 0x4E) = 0x526C;
         gPausedMenuFlag = 1;

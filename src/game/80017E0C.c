@@ -1,7 +1,7 @@
 // Categories: Resources > Memory Management | Platform > Memory
 #include "game/types.h"
 
-extern s32 *D_8009F590;
+extern s32 *gFreeRangeTablePtr __asm__("D_8009F590");
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
 
@@ -40,13 +40,13 @@ s32 func_80017E0C(s32 size)
     s32 i;
     s32 *block;
 
-    block = &D_8009F590[gHeapSearchCursor - 2];
+    block = &gFreeRangeTablePtr[gHeapSearchCursor - 2];
     for (i = gHeapSearchCursor - 2; i > 0; i -= 2, block -= 2) {
         if (block[1] - block[0] >= size) {
             return i;
         }
     }
-    block = &D_8009F590[gFreeRangeCount - 2];
+    block = &gFreeRangeTablePtr[gFreeRangeCount - 2];
     for (i = gFreeRangeCount - 2; i >= gHeapSearchCursor; i -= 2, block -= 2) {
         if (block[1] - block[0] >= size) {
             return i;

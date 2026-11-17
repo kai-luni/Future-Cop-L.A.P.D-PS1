@@ -8,7 +8,7 @@ extern u8 *gByteTable __asm__("D_8009F9D8");
 extern u8 *gCharTable __asm__("D_8009FABC");
 extern s32 gDecodeJob __asm__("D_8009F4BC");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
-extern s32 D_8009F4C4;
+extern s32 gStripDitherEnabled __asm__("D_8009F4C4");
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
 
 #define K(o, e, tp, i) o = (e); if ((o & 7) >= (tp)[i]) o += 8; o = gByteTable[o];

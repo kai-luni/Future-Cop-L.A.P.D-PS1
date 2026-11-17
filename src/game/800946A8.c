@@ -7,8 +7,8 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef short s16;
 
-extern s16 D_8009DDF4;
-extern s16 D_8009DDF6;
+extern s16 gMaxDrawWidth __asm__("D_8009DDF4");
+extern s16 gMaxDrawHeight __asm__("D_8009DDF6");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern volatile u32 *gGpuGp0PortPtr __asm__("D_8009DEC4");
 extern volatile u32 *gDma2MemAddrPtr __asm__("D_8009DECC");
@@ -55,8 +55,8 @@ int func_800946A8(Hdr *arg0, u32 *out)
 
     func_800951D8();
     p = arg0;
-    p->x = (p->x < 0) ? 0 : ((D_8009DDF4 < p->x) ? (u16)D_8009DDF4 : (u16)p->x);
-    p->y = (p->y < 0) ? 0 : ((D_8009DDF6 < p->y) ? (u16)D_8009DDF6 : (u16)p->y);
+    p->x = (p->x < 0) ? 0 : ((gMaxDrawWidth < p->x) ? (u16)gMaxDrawWidth : (u16)p->x);
+    p->y = (p->y < 0) ? 0 : ((gMaxDrawHeight < p->y) ? (u16)gMaxDrawHeight : (u16)p->y);
     n = p->x * p->y + 1;
     half = n / 2;
     rem = half >> 4;

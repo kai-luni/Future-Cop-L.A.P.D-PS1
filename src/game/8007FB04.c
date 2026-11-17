@@ -5,7 +5,7 @@ extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gStillRunningState __asm__("D_8009F464");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
-extern u8 D_8009F8BE;
+extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_800A36E8[];
 extern u8 D_800A36B8[];
@@ -97,7 +97,7 @@ s32 func_8007FB04(void)
             gSaveProfileImage[0x202] = 0;
             s0 = 1;
             gUiHoldFlag = s0;
-            D_8009F8BE = s0;
+            gUiInteractionEnabled = s0;
             s1 = gSaveProfileImage[0x203];
 
             if (s1 == 2 && (u32)(gSaveProfileImage[0x204] - 1) < 3) {
@@ -163,7 +163,7 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x201] = 0;
                 gSaveProfileImage[0x207] = 0;
                 gUiHoldFlag = 0;
-                D_8009F8BE = 1;
+                gUiInteractionEnabled = 1;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 func_80082020();
                 __asm__ volatile ("");
@@ -176,7 +176,7 @@ s32 func_8007FB04(void)
                 func_80078650(gMenuActivationBlock, 1);
                 gFontBankTable[0] = 1;
                 gUiHoldFlag = 1;
-                D_8009F8BE = 1;
+                gUiInteractionEnabled = 1;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 func_80082020();
                 __asm__ volatile ("");
@@ -187,7 +187,7 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x201] = 0;
                 gSaveProfileImage[0x207] = 0;
                 gUiHoldFlag = 0;
-                D_8009F8BE = 0;
+                gUiInteractionEnabled = 0;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 func_80082020();
                 __asm__ volatile ("");
@@ -197,7 +197,7 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x201] = 1;
                 gSaveProfileImage[0x207] = 0;
                 gUiHoldFlag = 0;
-                D_8009F8BE = 0;
+                gUiInteractionEnabled = 0;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 func_80082020();
                 __asm__ volatile ("");
@@ -211,7 +211,7 @@ s32 func_8007FB04(void)
                 }
                 gSaveProfileImage[0x207] = 0;
                 gUiHoldFlag = 0;
-                D_8009F8BE = 0;
+                gUiInteractionEnabled = 0;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 break;
             case -6:
@@ -220,7 +220,7 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x201] = 3;
                 gSaveProfileImage[0x207] = 1;
                 gUiHoldFlag = 0;
-                D_8009F8BE = 0;
+                gUiInteractionEnabled = 0;
                 func_80082020();
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 break;

@@ -7,7 +7,8 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef short s16;
 
-extern u16 D_8009DDF4, D_8009DDF6;
+extern u16 gMaxDrawHeight __asm__("D_8009DDF6");
+extern u16 gMaxDrawWidth __asm__("D_8009DDF4");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gDma2MemAddrPtr __asm__("D_8009DECC");
 extern volatile u32 *gDma2BlockCtrlPtr __asm__("D_8009DED0");
@@ -50,7 +51,7 @@ int func_8009446C(u16 *hdr_, u32 *data_)
     sv = hdr[2]; uv = hdr[2];
     if (sv >= 0) {
         a = uv;
-        if ((s16)D_8009DDF4 < sv) a = D_8009DDF4;
+        if ((s16)gMaxDrawWidth < sv) a = gMaxDrawWidth;
     } else {
         a = 0;
     }
@@ -58,7 +59,7 @@ int func_8009446C(u16 *hdr_, u32 *data_)
     sv2 = hdr[3]; uv2 = hdr[3];
     if (sv2 >= 0) {
         b = uv2;
-        if ((s16)D_8009DDF6 < sv2) b = D_8009DDF6;
+        if ((s16)gMaxDrawHeight < sv2) b = gMaxDrawHeight;
     } else {
         b = 0;
     }
