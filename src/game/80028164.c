@@ -36,7 +36,7 @@ struct MenuData28164 {
     u8 *unk60;
 };
 
-extern s32 *D_8009F68C;
+extern s32 *gScratchBlockPtr __asm__("D_8009F68C");
 extern struct MenuInfo28164 *D_8009FA94;
 extern struct MenuData28164 *D_8009F2C0;
 extern struct Game28164 *D_8009FA58;
@@ -97,20 +97,20 @@ void func_80028164(void)
     register s32 blend __asm__("$18");
     s32 x;
 
-    if (D_8009F68C == 0) {
-        D_8009F68C = func_80017EBC(0xC8, 3);
-        D_8009F68C[0] = 0;
-        D_8009F68C[2] = D_8009FA94->unk40 == D_8009FA94->unk44;
+    if (gScratchBlockPtr == 0) {
+        gScratchBlockPtr = func_80017EBC(0xC8, 3);
+        gScratchBlockPtr[0] = 0;
+        gScratchBlockPtr[2] = D_8009FA94->unk40 == D_8009FA94->unk44;
         if (gPlayerCount == 1) {
             func_8008CD30((u8 *)D_8009F2C0->unk08 + 6, D_8009F300,
                           D_8009FA94->unk4C + 1);
-            if (D_8009F68C[2] == 0) {
+            if (gScratchBlockPtr[2] == 0) {
                 D_8009FA94->unk4C++;
             }
         }
     }
 
-    D_8009F68C[1] = 3;
+    gScratchBlockPtr[1] = 3;
 
     game = D_8009FA58;
     p1 = game->unkAC;
@@ -130,7 +130,7 @@ void func_80028164(void)
     func_8001C214(0x6000, 0x14, 0x26, 0x12C, 0x18, blend);
     func_8001C214(0x18, 0x140, 0x26, 0x12C, 0x18, blend);
 
-    flag = *(u8 *)&D_8009F68C[2];
+    flag = *(u8 *)&gScratchBlockPtr[2];
     slot = &D_8009F2C0->unk00;
     if (flag) slot++;
     text = *slot;
@@ -167,7 +167,7 @@ void func_80028164(void)
 
     func_8001C214(0x300, 0x14, 0x1A2, 0x258, 0x18, 1);
 
-    if (D_8009F68C[2] == 0 && gPlayerCount == 1) {
+    if (gScratchBlockPtr[2] == 0 && gPlayerCount == 1) {
         tailSlot = &D_8009F2C0->unk60;
     } else {
         tailSlot = &D_8009F2C0->unk5C;
@@ -190,5 +190,5 @@ state14:
     gScreenState = 0xE;
 done:
 
-    D_8009F68C[0] = 1;
+    gScratchBlockPtr[0] = 1;
 }

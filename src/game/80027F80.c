@@ -11,7 +11,7 @@ struct MenuText27F80 {
     u8 *text[0x40];
 };
 
-extern struct State27F80 *D_8009F68C;
+extern struct State27F80 *gScratchBlockPtr __asm__("D_8009F68C");
 extern struct MenuText27F80 *D_8009F2C0;
 extern u8 D_8009F2FC[];
 extern u8 D_80010DCC[];
@@ -75,13 +75,13 @@ void func_80027F80(void *player, u8 *text, s32 x, s32 color)
         } else if (c != 0x19) {
             if (c >= 0x40) {
                 c -= 0x40;
-                if (D_8009F68C->unk0 == 0) {
+                if (gScratchBlockPtr->unk0 == 0) {
                     t = func_80059E9C(player, c);
-                    ((s32 *)D_8009F68C)[D_8009F68C->unk4] = t;
+                    ((s32 *)gScratchBlockPtr)[gScratchBlockPtr->unk4] = t;
                 } else {
-                    t = ((s32 *)D_8009F68C)[D_8009F68C->unk4];
+                    t = ((s32 *)gScratchBlockPtr)[gScratchBlockPtr->unk4];
                 }
-                D_8009F68C->unk4 = D_8009F68C->unk4 + 1;
+                gScratchBlockPtr->unk4 = gScratchBlockPtr->unk4 + 1;
                 if (c >= 0xF) {
                     t += 0x96;
                     t /= 300;

@@ -18,7 +18,7 @@ extern s32 gRequestListTail __asm__("D_8009F66C");
 extern u8 D_8009F680;
 extern s32 D_8009F684;
 extern s32 D_8009F688;
-extern s32 D_8009F68C;
+extern s32 gScratchBlockPtr __asm__("D_8009F68C");
 extern s32 D_8009FA24;
 extern s32 D_8009FA6C;
 extern s32 D_8009FA70;
@@ -115,7 +115,7 @@ void func_80024A24(s32 arg0)
     s32 seed;
     s32 target;
 
-    D_8009F68C = 0;
+    gScratchBlockPtr = 0;
     D_8009F680 = 0;
     {
         register s32 *p __asm__("$4");

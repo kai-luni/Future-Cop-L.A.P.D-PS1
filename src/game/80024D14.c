@@ -1,7 +1,7 @@
 // Categories: Game Engine > Game State > Reset
 #include "game/types.h"
 
-extern void *D_8009F68C;
+extern void *gScratchBlockPtr __asm__("D_8009F68C");
 
 extern void func_800181D4(void *block);
 extern void func_800734BC(void);
@@ -66,8 +66,8 @@ extern void func_80017D20(void);
  */
 void func_80024D14(s32 arg0)
 {
-    if (D_8009F68C != 0) {
-        func_800181D4(D_8009F68C);
+    if (gScratchBlockPtr != 0) {
+        func_800181D4(gScratchBlockPtr);
     }
     func_800734BC();
     func_8003F854(2);
