@@ -31,7 +31,20 @@ static long sys3(long n, long a, long b, long c)
 static void out(const char *s, int n) { sys3(4004, 1, (long)s, n); }
 static int slen(const char *s) { int n = 0; while (s[n]) n++; return n; }
 static void print(const char *s) { out(s, slen(s)); }
+static void print_dec(int v)
+{
+    char b[12];
+    int i = 11;
+    b[i] = 0;
+    if (v <= 0) { print("0"); return; }
+    while (v > 0 && i > 0) { b[--i] = (char)('0' + v % 10); v /= 10; }
+    print(&b[i]);
+}
 static void exit(int code) { sys3(4001, code, 0, 0); }
+static void bad_fixture(const char *id, const char *what)
+{
+    print("fixture error "); print(id); print(": "); print(what); print("\n"); exit(2);
+}
 
 static char hexc(u8 v) { return v < 10 ? '0' + v : 'a' + v - 10; }
 static int hexv(char c)
@@ -148,15 +161,26 @@ static void parse_fixture(const char *path)
                 c->id[i] = 0;
                 for (i = 0; t[2][i] && i < 23; i++) c->status[i] = t[2][i];
                 c->status[i] = 0;
-                c->err = nt > 3 ? (int)atool(t[3]) : -1;
+                if (!streq(c->status, "ok") && !streq(c->status, "c_skip") && !streq(c->status, "c_hang"))
+                    bad_fixture(c->id, "unknown CASE mode");
+                c->err = nt > 3 && streq(c->status, "ok") ? (int)atool(t[3]) : -1;
                 c->remap_zero = 0; c->nrec = 0; c->in_len = 0; c->expect_len = 0;
             }
             else if (c && streq(t[0], "REMAP_ZERO")) c->remap_zero = 1;
             else if (c && streq(t[0], "IN")) c->in_len = nt > 1 ? unhex(t[1], c->in, MAXBODY) : 0;
-            else if (c && streq(t[0], "OUT")) c->expect_len = nt > 1 ? unhex(t[1], c->expect, MAXBODY) : 0;
+            else if (c && (streq(t[0], "NET") || streq(t[0], "NET_REC")))
+            {
+                /* .NET-only expectation; this harness never executes it */
+            }
+            else if (c && streq(t[0], "OUT"))
+            {
+                if (!streq(c->status, "ok")) bad_fixture(c->id, "OUT in a non-parity case");
+                c->expect_len = nt > 1 ? unhex(t[1], c->expect, MAXBODY) : 0;
+            }
             else if (c && streq(t[0], "REC") && nt >= 12 && c->nrec < MAXREC)
             {
                 int i, j;
+                if (!streq(c->status, "ok")) bad_fixture(c->id, "REC in a non-parity case");
                 for (i = 0; i < 11; i++)
                 {
                     for (j = 0; t[i + 1][j] && j < 23; j++) c->rec[c->nrec][i][j] = t[i + 1][j];
@@ -217,6 +241,7 @@ static void reset_globals(void)
 }
 
 static int fails;
+static int parity_cases, skipped_cases, hang_cases;
 static void fail(const char *id, const char *what)
 {
     print("FAIL "); print(id); print(": "); print(what); print("\n");
@@ -284,14 +309,16 @@ static void run_case(struct Case *c)
         for (i = 0; i < 10; i++)
             if (D_800A8E80[i] != remap[i]) { fail(c->id, "remap entry"); return; }
         print("PASS "); print(c->id); print("\n");
+        parity_cases++;
         return;
     }
-    if (streq(c->status, "index_out_of_range"))
+    if (streq(c->status, "c_skip"))
     {
-        print("SKIP "); print(c->id); print(" (retail reads past table; undefined)\n");
+        print("SKIP "); print(c->id); print(" (c_skip: retail reads past the table; .NET-only expectations)\n");
+        skipped_cases++;
         return;
     }
-    expect_hang = streq(c->status, "unknown_type");
+    expect_hang = streq(c->status, "c_hang");
     len = build_payload(c->in, c->in_len);
     reset_globals();
     for (i = 0; i < 10; i++) D_800A8E80[i] = c->remap_zero ? 0 : remap[i];
@@ -306,7 +333,7 @@ static void run_case(struct Case *c)
         }
         status = 0;
         sys3(4007, pid, (long)&status, 0); /* waitpid */
-        if ((status & 0x7F) == 14) { print("PASS "); print(c->id); print(" (hang as retail)\n"); }
+        if ((status & 0x7F) == 14) { print("PASS "); print(c->id); print(" (c_hang: retail loops; .NET expectations not checked)\n"); hang_cases++; }
         else fail(c->id, "expected SIGALRM hang");
         return;
     }
@@ -319,6 +346,7 @@ static void run_case(struct Case *c)
     compare_records(c, loaded);
     if (fails != before) return;
     print("PASS "); print(c->id); print("\n");
+    parity_cases++;
 }
 
 /* ================= render golden vectors (render.vectors) ================= */
@@ -642,6 +670,12 @@ int main(int argc, char **argv)
         parse_render(argv[2]);
         for (i = 0; i < nrk; i++) run_render(i);
     }
-    print(fails ? "FAILED\n" : "ALL PASS\n");
+    if (fails) print("FAILED\n");
+    else
+    {
+        print("ALL PASS (3dtl parity: "); print_dec(parity_cases);
+        print(", c_hang: "); print_dec(hang_cases);
+        print(", skipped: "); print_dec(skipped_cases); print(")\n");
+    }
     return fails ? 1 : 0;
 }
