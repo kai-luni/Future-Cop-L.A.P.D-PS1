@@ -36,7 +36,7 @@ struct Node {
     u8 pad2A[2];
 };
 
-extern Node *D_8009F38C;
+extern Node *gModelNodeList __asm__("D_8009F38C");
 extern void *func_80017EBC(s32 size, s32 tag);
 extern void func_800181D4(void *block);
 extern void func_80070710(void *block);
@@ -180,8 +180,8 @@ void *func_8007377C(void *a0, void *a1, s32 a2, s32 count,
         func_80070E48(node, &node->entries[i], 1);
     }
 
-    node->next = D_8009F38C;
-    D_8009F38C = node;
+    node->next = gModelNodeList;
+    gModelNodeList = node;
     return node;
 
 fail_entries:

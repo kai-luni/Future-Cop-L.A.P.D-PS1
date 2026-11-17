@@ -3,7 +3,7 @@
 
 struct Unk734B0;
 
-extern struct Unk734B0 *D_8009F38C;
+extern struct Unk734B0 *gModelNodeList __asm__("D_8009F38C");
 
 /**
  * @brief Clears the global model/scene-graph node list head D_8009F38C during mission boot.
@@ -29,5 +29,5 @@ extern struct Unk734B0 *D_8009F38C;
  */
 void func_800734B0(void)
 {
-    D_8009F38C = 0;
+    gModelNodeList = 0;
 }
