@@ -8,7 +8,7 @@ typedef struct AnimEntry { u8 max, cur, type, flags; s16 rate, timer; u8 *src, *
 typedef struct AnimNode { struct AnimNode *next; s32 pad; s32 count; AnimEntry entries[1]; } AnimNode;
 typedef struct Header { u32 a, b; AnimNode *anim; u32 flags; u32 x10, x14, x18; u8 *p1c, *p20, *p24, *p28, *p2c; u32 p30; u32 *p34; u32 p38; } Header;
 extern u32 D_8009F528;
-extern Header *D_8009F52C;
+extern Header *gModelGeometryChunk __asm__("D_8009F52C");
 extern u8 *D_8009F530, *D_8009F534, *D_8009F538, *D_8009F53C, *D_8009F540;
 extern AnimNode *D_8009F544, *D_8009F564;
 extern u32 *D_8009F548, *D_8009F550, *D_8009F568;
@@ -57,7 +57,7 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
     u32 *node2;
 
     func_80012E48(data, size, arg3);
-    h = D_8009F52C;
+    h = gModelGeometryChunk;
     h->p34 = (u32 *)D_8009F540;
     h->p34[1] = *(u16 *)&h->flags << 4;
     __asm__ volatile ("" : : : "memory");
