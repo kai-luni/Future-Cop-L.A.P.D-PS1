@@ -3,7 +3,7 @@
 
 
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
-extern u8 D_800A63E0[];
+extern u8 gDisplayListHead[] __asm__("D_800A63E0");
 extern u8 D_800A0520[];
 extern u8 D_800A0528[];
 extern u8 D_800A0660[];
@@ -279,7 +279,7 @@ void func_8001B4A8(s32 arg0)
         rect[2] = (arg9 != 0) ? 0x140 : 0xA0;
         rect[3] = 0xF0;
 
-        q = (u32)D_800A63E0;
+        q = (u32)gDisplayListHead;
         func_8009398C(q, rect);
 
         p = 0xFFFFFF;
@@ -291,9 +291,9 @@ void func_8001B4A8(s32 arg0)
         __asm__("" : : "r"(bv));
         max = (count << 2) + table;
         min = 0xFF000000;
-        xbase = *(u32 *)D_800A63E0;
+        xbase = *(u32 *)gDisplayListHead;
         v = *(u32 *)(max + 4);
-        *(u32 *)D_800A63E0 = (xbase & min) | (v & p);
+        *(u32 *)gDisplayListHead = (xbase & min) | (v & p);
         v = *(volatile u32 *)(max + 4);
         *(u32 *)(max + 4) = (v & min) | mask;
 
