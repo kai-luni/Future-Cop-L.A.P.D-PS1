@@ -1,7 +1,7 @@
 // Categories: Platform > Device Shutdown | Input > Controller
 #include "game/types.h"
 
-extern u8 D_8009FA20;
+extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 
 extern void func_800200F0(void);
 extern void func_8001E910(void);
@@ -29,7 +29,7 @@ s32 func_8001E540(void)
 {
     func_800200F0();
     func_8001E910();
-    if (D_8009FA20 != 0) {
+    if (gFrameCallbackEnabled != 0) {
         func_8001F158();
     }
     func_80091574();
