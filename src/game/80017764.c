@@ -6,7 +6,7 @@ struct Unk17764 {
     struct Unk17764 *next;
 };
 
-extern struct Unk17764 *D_8009F588;
+extern struct Unk17764 *gTransformRecordList __asm__("D_8009F588");
 
 extern void func_800181D4(void *block);
 
@@ -48,11 +48,11 @@ void func_80017764(void)
     struct Unk17764 *node;
     struct Unk17764 *current;
 
-    node = D_8009F588;
+    node = gTransformRecordList;
     while (node != 0) {
         current = node;
         node = node->next;
         func_800181D4(current);
     }
-    D_8009F588 = 0;
+    gTransformRecordList = 0;
 }

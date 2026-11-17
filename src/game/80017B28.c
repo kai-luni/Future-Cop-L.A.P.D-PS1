@@ -7,7 +7,7 @@ struct Unk17764 {
     struct Unk17764 *next;
 };
 
-extern struct Unk17764 *D_8009F588;
+extern struct Unk17764 *gTransformRecordList __asm__("D_8009F588");
 
 /**
  * @brief Finds a draw instance by id in the active list.
@@ -30,7 +30,7 @@ struct Unk17764 *func_80017B28(s32 id)
 {
     struct Unk17764 *node;
 
-    for (node = D_8009F588; node != 0; node = node->next) {
+    for (node = gTransformRecordList; node != 0; node = node->next) {
         if (id == node->id) {
             return node;
         }

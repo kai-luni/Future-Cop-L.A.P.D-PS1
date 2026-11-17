@@ -15,7 +15,7 @@ struct Unk17994Node {
 };
 
 extern struct Unk17994Block gBaseMatrix __asm__("D_8009AA38");
-extern struct Unk17994Node *D_8009F588;
+extern struct Unk17994Node *gTransformRecordList __asm__("D_8009F588");
 extern s32 gTransformSerialCounter __asm__("D_8009F58C");
 
 extern void *func_80017EBC(s32 size, s32 tag);
@@ -84,15 +84,15 @@ s32 func_80017994(void)
     node->next = 0;
     node->previous = 0;
 
-    if (D_8009F588 != 0) {
-        tail = D_8009F588;
+    if (gTransformRecordList != 0) {
+        tail = gTransformRecordList;
         while (tail->next != 0) {
             tail = tail->next;
         }
         tail->next = node;
         node->previous = tail;
     } else {
-        D_8009F588 = node;
+        gTransformRecordList = node;
     }
     return node->id;
 }
