@@ -9,7 +9,7 @@ struct Unk1306C {
 
 extern s32 *gVertexBlockTable __asm__("D_8009F554");
 extern s32 *gNormalBlockTable __asm__("D_8009F558");
-extern s32 *D_8009F55C;
+extern s32 *gRelocBlockTable __asm__("D_8009F55C");
 
 /**
  *  @brief Remaps a tagged array of indices through a selected global table.
@@ -57,7 +57,7 @@ s32 func_8001306C(struct Unk1306C *arg0)
         break;
     case 0x3344524C:
         if (arg0->unk4 != 0) {
-            tbl = D_8009F55C;
+            tbl = gRelocBlockTable;
             i = 0;
             do {
                 arg0->unk8[i] = tbl[arg0->unk8[i]];

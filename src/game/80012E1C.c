@@ -3,7 +3,7 @@
 
 extern s32 gVertexBlockTable __asm__("D_8009F554");
 extern s32 gNormalBlockTable __asm__("D_8009F558");
-extern s32 D_8009F55C;
+extern s32 gRelocBlockTable __asm__("D_8009F55C");
 extern s32 D_8009F560;
 extern s32 D_8009F564;
 extern s32 D_8009F568;
@@ -37,7 +37,7 @@ void func_80012E1C(s32 arg0)
     next = arg0 + 0x400;
     gNormalBlockTable = next;
     next = arg0 + 0x800;
-    D_8009F55C = next;
+    gRelocBlockTable = next;
     next = arg0 + 0xC00;
     gVertexBlockTable = arg0;
     D_8009F560 = next;

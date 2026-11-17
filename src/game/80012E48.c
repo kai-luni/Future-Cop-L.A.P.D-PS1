@@ -10,7 +10,8 @@ extern u8 *gModelPolygonList __asm__("D_8009F530");
 extern u8 *gModelGeometryChunk __asm__("D_8009F52C");
 extern u8 *D_8009F548, *D_8009F54C, *D_8009F550;
 extern u8 *gModelAnimData __asm__("D_8009F544");
-extern u8 **D_8009F55C, **D_8009F560;
+extern u8 **D_8009F560;
+extern u8 **gRelocBlockTable __asm__("D_8009F55C");
 extern u8 **gNormalBlockTable __asm__("D_8009F558");
 extern u8 **gVertexBlockTable __asm__("D_8009F554");
 
@@ -51,7 +52,7 @@ void func_80012E48(u8 *base, u32 size)
         switch (tag) {
         case 0x3444564c: gVertexBlockTable[index] = data; break;
         case 0x34444e4c: gNormalBlockTable[index] = data; break;
-        case 0x3344524c: D_8009F55C[index] = data; break;
+        case 0x3344524c: gRelocBlockTable[index] = data; break;
         case 0x33445246: D_8009F560[index] = data; break;
         case 0x33444242: gModelBoundingBox = p + 8; break;
         case 0x34444749: gModelGeometryChunk = p; break;
