@@ -10,7 +10,7 @@ struct Node {
 };
 
 extern s32 D_8009F464;
-extern u8 *D_8009F92C;
+extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 D_800120E0[];
 
 extern void func_800822CC(u8 *arg0);
@@ -53,7 +53,7 @@ void func_80082358(struct Node *node)
     s32 chunk_data_size;
 
     if (D_8009F464 != 0 && node->tag == 0x436D6963) {
-        dst = D_8009F92C;
+        dst = gSaveProfileImage;
         dst[0] = 0x43;
         dst[2] = 0x13;
         dst[3] = 1;
@@ -91,7 +91,7 @@ void func_80082358(struct Node *node)
         }
 
         if (has_pl16 == 1 && pix_count == 3) {
-            D_8009F92C[0x920] = has_pl16;
+            gSaveProfileImage[0x920] = has_pl16;
         }
     }
     func_800181D4(node);

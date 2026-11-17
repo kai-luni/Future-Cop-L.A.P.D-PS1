@@ -70,7 +70,7 @@ typedef struct FontEntry {
     s16 height;
 } FontEntry;
 
-extern SaveMenu *D_8009F92C;
+extern SaveMenu *gSaveProfileImage __asm__("D_8009F92C");
 extern GameState *D_8009FA94;
 extern Upgrade D_8009B4E4[];
 extern s8 D_8009B72C[];
@@ -115,8 +115,8 @@ extern void func_80082EF0(s32, s32, s32, s32, u32, s32, s32, s32);
 extern void func_80049100(u8 *, s32, s32, s32);
 extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
 
-#define SLOT(i) (((SaveSlot *)((u8 *)D_8009F92C + 0x428))[i])
-#define SELECTED SLOT(D_8009F92C->selected)
+#define SLOT(i) (((SaveSlot *)((u8 *)gSaveProfileImage + 0x428))[i])
+#define SELECTED SLOT(gSaveProfileImage->selected)
 
 extern u8 D_800120A4[];
 extern s32 func_80020D3C(void *, s32, u32);
@@ -147,10 +147,10 @@ extern s32 func_80020D3C(void *, s32, u32);
  */
 void func_80081204(void)
 {
-    ((u8 *)D_8009F92C)[0x922] = 3;
-    ((u8 *)D_8009F92C)[0x201] = 1;
-    ((u8 *)D_8009F92C)[0x202] = 1;
+    ((u8 *)gSaveProfileImage)[0x922] = 3;
+    ((u8 *)gSaveProfileImage)[0x201] = 1;
+    ((u8 *)gSaveProfileImage)[0x202] = 1;
     D_8009F8BD = 0;
     D_8009F8BE = 0;
-    func_80020D3C(D_800120A4, (s32)((u8 *)D_8009F92C + 0x20C), 0x678);
+    func_80020D3C(D_800120A4, (s32)((u8 *)gSaveProfileImage + 0x20C), 0x678);
 }

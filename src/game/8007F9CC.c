@@ -13,7 +13,7 @@ struct Unk8007F9CC {
     u8 pad946[0x2];
 };
 
-extern struct Unk8007F9CC *D_8009F92C;
+extern struct Unk8007F9CC *gSaveProfileImage __asm__("D_8009F92C");
 
 extern void *func_80017EBC(s32 size, s32 tag);
 extern void *func_8001E4C0(void *destination, int value, unsigned int count);
@@ -50,13 +50,13 @@ void func_8007F9CC(void)
     struct Unk8007F9CC *s;
 
     p = func_80017EBC(0x948, 2);
-    D_8009F92C = p;
+    gSaveProfileImage = p;
     func_8001E4C0(p, 0, 0x948);
-    D_8009F92C->unk208 = 3;
-    D_8009F92C->unk945 = 2;
+    gSaveProfileImage->unk208 = 3;
+    gSaveProfileImage->unk945 = 2;
     q = func_80017EBC(func_80020610(), 2);
-    s = D_8009F92C;
+    s = gSaveProfileImage;
     s->unk200 = 1;
     s->unk904 = q;
-    func_80020618(0, D_8009F92C->unk904);
+    func_80020618(0, gSaveProfileImage->unk904);
 }

@@ -17,7 +17,7 @@ struct Save {
     u8 valid;
 };
 
-extern struct Save *D_8009F92C;
+extern struct Save *gSaveProfileImage __asm__("D_8009F92C");
 extern s32 func_8007F824(u8 *data, u32 len, u32 expectedSum, u32 expectedOther, s32 clear);
 
 /**
@@ -44,15 +44,15 @@ s32 func_8007F750(void)
     u32 i;
 
     ok = 1;
-    if (func_8007F824(D_8009F92C->header, 0x10, D_8009F92C->sum, D_8009F92C->other, 0) != 0) {
-        D_8009F92C->valid = ok;
+    if (func_8007F824(gSaveProfileImage->header, 0x10, gSaveProfileImage->sum, gSaveProfileImage->other, 0) != 0) {
+        gSaveProfileImage->valid = ok;
     } else {
         ok = 0;
-        D_8009F92C->valid = 0;
+        gSaveProfileImage->valid = 0;
     }
     for (i = 0; i < 10; i++) {
-        if (func_8007F824(D_8009F92C->entries[i].data, 0x68, D_8009F92C->entries[i].sum,
-                          D_8009F92C->entries[i].other, 1) == 0) {
+        if (func_8007F824(gSaveProfileImage->entries[i].data, 0x68, gSaveProfileImage->entries[i].sum,
+                          gSaveProfileImage->entries[i].other, 1) == 0) {
             ok = 0;
         }
     }

@@ -10,7 +10,7 @@ typedef struct {
     s32 unk208;
 } UnkStruct;
 
-extern UnkStruct *D_8009F92C;
+extern UnkStruct *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 D_8009F496;
 
 extern void func_800206D0(void);
@@ -39,13 +39,13 @@ void func_8007FA88(void)
     func_800206D0();
 
     {
-        register UnkStruct *p __asm__("$4") = D_8009F92C;
+        register UnkStruct *p __asm__("$4") = gSaveProfileImage;
         six = 6;
         p->unk200 = six;
         p->unk208 = -0x2B;
     }
     {
-        register UnkStruct *q __asm__("$3") = D_8009F92C;
+        register UnkStruct *q __asm__("$3") = gSaveProfileImage;
         register s32 one __asm__("$2") = 1;
         q->unk203 = six;
         D_8009F496 = one;

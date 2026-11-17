@@ -15,8 +15,8 @@ typedef struct {
     u8 pad0[0x424]; Rec recs[10]; u8 pad884[0x9D];
     u8 mode; u8 pad922[2]; u8 index; u8 name[0x1D]; u16 timer;
 } Big;
-extern Big *D_8009F92C;
-#define RAW ((u8 *)D_8009F92C)
+extern Big *gSaveProfileImage __asm__("D_8009F92C");
+#define RAW ((u8 *)gSaveProfileImage)
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 *D_8009F878;
 extern s16 D_8009F87C;
@@ -74,7 +74,7 @@ extern void func_800776B8(void);
 extern void func_8007FACC(void);
 extern void func_80078210(void);
 
-#define REC(off) (D_8009F92C->recs[D_8009F92C->index].b[(off) - 0x424])
+#define REC(off) (gSaveProfileImage->recs[gSaveProfileImage->index].b[(off) - 0x424])
 #define RECP(base, off) ((base) + (base)[0x924] * 0x70 + (off))
 #define CNT(e) \
     if ((e).unk1F + 1 > 0) { \
@@ -189,7 +189,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     if (D_8009F8BD != 0 && D_8009F8BE != 0 && arg0 < 6) {
         switch (arg0) {
         case 3:
-            init = D_8009F92C;
+            init = gSaveProfileImage;
             init->index = arg4;
             init->timer = 0;
             base = RAW;

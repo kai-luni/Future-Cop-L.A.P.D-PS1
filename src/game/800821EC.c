@@ -11,7 +11,7 @@ struct State821EC {
     u16 value;
 };
 
-extern struct State821EC *D_8009F92C;
+extern struct State821EC *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
 
@@ -34,19 +34,19 @@ extern u8 D_8009F8BE;
  */
 void func_800821EC(void)
 {
-    if (D_8009F92C->mode == 3) {
-        D_8009F92C->mode = 4;
-        if (D_8009F92C->flag) {
+    if (gSaveProfileImage->mode == 3) {
+        gSaveProfileImage->mode = 4;
+        if (gSaveProfileImage->flag) {
             D_8009F8BD = 0;
             D_8009F8BE = 0;
         } else {
             D_8009F8BD = 0;
             D_8009F8BE = 1;
         }
-    } else if (D_8009F92C->mode == 5) {
-        D_8009F92C->mode = 2;
-        if ((unsigned)(D_8009F92C->kind - 2) >= 2) {
-            D_8009F92C->value = 0x385e;
+    } else if (gSaveProfileImage->mode == 5) {
+        gSaveProfileImage->mode = 2;
+        if ((unsigned)(gSaveProfileImage->kind - 2) >= 2) {
+            gSaveProfileImage->value = 0x385e;
         }
     }
 }

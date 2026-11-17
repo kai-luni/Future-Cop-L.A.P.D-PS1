@@ -3,7 +3,7 @@
 
 extern s8 D_8009F8C0[];
 extern s8 *D_8009F468;
-extern u8 *D_8009F92C;
+extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 
 /**
  *  @brief Writes a fixed 16-bit value into a global state buffer.
@@ -23,7 +23,7 @@ extern u8 *D_8009F92C;
  */
 void func_8008227C(void)
 {
-    *(u16 *)(D_8009F92C + 0x942) = 0x385E;
+    *(u16 *)(gSaveProfileImage + 0x942) = 0x385E;
 }
 
 s32 D_8008228C(s32 arg0)

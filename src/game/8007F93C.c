@@ -6,7 +6,7 @@ struct UnkFA94 {
     s32 unkC;
 };
 
-extern u8 *D_8009F92C;
+extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
 extern u8 D_800A36BD[];
@@ -37,12 +37,12 @@ void func_8007F93C(void)
 {
     u8 *p;
 
-    D_8009F92C[0x93D] = 0;
-    D_8009F92C[0x93F] = 0;
-    D_8009F92C[0x940] = 1;
+    gSaveProfileImage[0x93D] = 0;
+    gSaveProfileImage[0x93F] = 0;
+    gSaveProfileImage[0x940] = 1;
     func_8007FA88();
-    D_8009F92C[0x921] = 1;
-    p = D_8009F92C;
+    gSaveProfileImage[0x921] = 1;
+    p = gSaveProfileImage;
     D_8009F8BD = 0;
     D_8009F8BE = 0;
     *(u16 *)(p + 0x942) = 0;

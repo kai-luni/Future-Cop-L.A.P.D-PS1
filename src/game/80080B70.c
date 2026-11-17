@@ -8,7 +8,7 @@ typedef struct {
     u8 pad21[3];
 } Entry;
 
-extern u8 *D_8009F92C;
+extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 *D_8009FA94;
 extern u8 D_800A6FE0[];
 extern Entry D_8009B4E4[];
@@ -36,8 +36,8 @@ extern s32 func_80020FDC(u8 *arg0, u8 *arg1, s32 arg2, s32 arg3);
 
 typedef struct { u8 b[0x70]; } Rec;
 typedef struct { u8 pad0[0x424]; Rec recs[10]; u8 pad884[0xA0]; u8 idx; } Big;
-#define S(off) (((Big *)D_8009F92C)->recs[((Big *)D_8009F92C)->idx].b[(off) - 0x424])
-#define REC (((Rec *)((Big *)D_8009F92C)->recs)[((Big *)D_8009F92C)->idx].b - 0x424)
+#define S(off) (((Big *)gSaveProfileImage)->recs[((Big *)gSaveProfileImage)->idx].b[(off) - 0x424])
+#define REC (((Rec *)((Big *)gSaveProfileImage)->recs)[((Big *)gSaveProfileImage)->idx].b - 0x424)
 
 /**
  * @brief Materialises the 0x678-byte front-end profile image in the D_8009F92C block
@@ -107,9 +107,9 @@ void func_80080B70(void)
     if (r != 0) {
         func_800822CC(r);
     }
-    func_8001E318(D_8009F92C + 0x20C, D_8009F92C, 0x200);
-    *(s32 *)(D_8009F92C + 0x40C) = 1;
-    func_80080A5C(D_8009F92C + 0x40C);
+    func_8001E318(gSaveProfileImage + 0x20C, gSaveProfileImage, 0x200);
+    *(s32 *)(gSaveProfileImage + 0x40C) = 1;
+    func_80080A5C(gSaveProfileImage + 0x40C);
     func_80080A5C(REC + 0x474);
     func_8008CCB0(REC + 0x440, D_800A6FE0);
     func_8008CCB0(REC + 0x44C, D_800A6FE0 + 9);
@@ -138,12 +138,12 @@ void func_80080B70(void)
     }
     S(0x458) = D_8009F458;
     D_8009F3F1 = D_8009F458;
-    func_8008CCB0(REC + 0x428, D_8009F92C + 0x925);
+    func_8008CCB0(REC + 0x428, gSaveProfileImage + 0x925);
     func_8007F6E0();
-    D_8009F92C[0x922] = 3;
-    D_8009F92C[0x201] = 2;
+    gSaveProfileImage[0x922] = 3;
+    gSaveProfileImage[0x201] = 2;
     {
-        register u8 *p __asm__("$2") = D_8009F92C;
+        register u8 *p __asm__("$2") = gSaveProfileImage;
         __asm__("" : "+r"(p));
         p[0x202] = 1;
         D_8009FAC4 = 1;
@@ -156,17 +156,17 @@ void func_80080B70(void)
     D_8009B4E4[D_8009B72C[3]].unk20 = D_8009B4E4[D_8009B72C[3]].unk1F;
     D_8009B4E4[D_8009B72C[4]].unk20 = D_8009B4E4[D_8009B72C[4]].unk1F;
     for (;;) {
-        if (func_80020FDC(D_800120A4, D_8009F92C + 0x20C, 0x678, 0) != 0) {
+        if (func_80020FDC(D_800120A4, gSaveProfileImage + 0x20C, 0x678, 0) != 0) {
             break;
         }
-        if (*(s8 *)(D_8009F92C + 0x922) != 0) {
-            D_8009F92C[0x922] = D_8009F92C[0x922] - 1;
+        if (*(s8 *)(gSaveProfileImage + 0x922) != 0) {
+            gSaveProfileImage[0x922] = gSaveProfileImage[0x922] - 1;
             continue;
         }
-        D_8009F92C[0x200] = 2;
-        D_8009F92C[0x201] = 0;
-        D_8009F92C[0x204] = 2;
-        D_8009F92C[0x202] = 3;
+        gSaveProfileImage[0x200] = 2;
+        gSaveProfileImage[0x201] = 0;
+        gSaveProfileImage[0x204] = 2;
+        gSaveProfileImage[0x202] = 3;
         D_8009F8BD = 1;
         D_8009F8BE = 1;
         break;

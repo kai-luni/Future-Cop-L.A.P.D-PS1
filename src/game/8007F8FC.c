@@ -3,7 +3,7 @@
 
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
-extern u8 *D_8009F92C;
+extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 
 extern void func_8007FA88(void);
 extern void func_8007F8E0(void);
@@ -49,7 +49,7 @@ void func_8007F8FC(void)
 
     func_8007FA88();
     func_8007F8E0();
-    p = D_8009F92C;
+    p = gSaveProfileImage;
     D_8009F8BD = 0;
     D_8009F8BE = 0;
     *(u16 *)(p + 0x942) = 0;

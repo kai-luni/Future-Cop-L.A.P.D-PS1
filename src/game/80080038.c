@@ -32,7 +32,7 @@ struct Ctx {
 extern s8 *D_8009F468;
 extern u8 D_8009F8BD;
 extern s8 D_8009F8C0;
-extern struct Ctx *D_8009F92C;
+extern struct Ctx *gSaveProfileImage __asm__("D_8009F92C");
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s8 D_800A3718[];
 extern s8 D_8009B724[];
@@ -118,10 +118,10 @@ void func_80080038(s32 arg0)
         func_80078B34(0x44C, 0, 0);
         func_80078B34(0x10CC, 1, 0);
     } else if (D_8009F8BD != 0 && *D_8009F468 < 10) {
-        if (D_8009F92C->st921 == 0) {
+        if (gSaveProfileImage->st921 == 0) {
             func_80078B34(0x44C, 0, 0);
             {
-                u8 *p = *D_8009F468 * 0x70 + (u8 *)D_8009F92C;
+                u8 *p = *D_8009F468 * 0x70 + (u8 *)gSaveProfileImage;
                 s32 on = p[0x428];
                 __asm__("" : : "r"(p), "r"(on));
                 if (on != 0) {
@@ -151,19 +151,19 @@ void func_80080038(s32 arg0)
         }
     }
 
-    switch (D_8009F92C->st200) {
+    switch (gSaveProfileImage->st200) {
     case 1:
     case 6:
         msg = 0x3728;
         break;
     case 0:
-        if (D_8009F92C->st203 == 3 && (u8)(D_8009F92C->st204 - 3) < 2) {
+        if (gSaveProfileImage->st203 == 3 && (u8)(gSaveProfileImage->st204 - 3) < 2) {
             msg = 0x3732;
         } else {
-            if (D_8009F92C->st204 == 2) {
+            if (gSaveProfileImage->st204 == 2) {
                 __asm__("" : : : "$21");
                 msg = 0x373C;
-            } else if (D_8009F92C->st204 == 1) {
+            } else if (gSaveProfileImage->st204 == 1) {
                 msg = 0x3746;
             } else {
                 __asm__("" : : : "$21");
@@ -173,11 +173,11 @@ void func_80080038(s32 arg0)
         func_80078B34(0x3908, 1, 0);
         break;
     case 2:
-        if (D_8009F92C->st921 == 0) {
-            if (D_8009F92C->st201 == 1) {
+        if (gSaveProfileImage->st921 == 0) {
+            if (gSaveProfileImage->st201 == 1) {
                 msg = 0x375A;
             } else {
-                switch (D_8009F92C->st205) {
+                switch (gSaveProfileImage->st205) {
                 case 1:
                     break;
                 case 2:
@@ -194,20 +194,20 @@ void func_80080038(s32 arg0)
                 }
             }
         } else {
-            if (D_8009F92C->st201 == 1) {
+            if (gSaveProfileImage->st201 == 1) {
                 msg = 0x375A;
-            } else if (D_8009F92C->st201 == 2) {
+            } else if (gSaveProfileImage->st201 == 2) {
                 msg = 0x3796;
-            } else if (D_8009F92C->st204 == 2) {
-                if (D_8009F92C->st202 != 2) {
+            } else if (gSaveProfileImage->st204 == 2) {
+                if (gSaveProfileImage->st202 != 2) {
                     msg = 0x373C;
                     func_80078B34(0x3908, 1, 0);
                 }
-            } else if (D_8009F92C->st206 != 0) {
+            } else if (gSaveProfileImage->st206 != 0) {
                 msg = 0x37B4;
                 func_80078B34(0x3908, 1, 0);
             } else {
-                switch (D_8009F92C->st205) {
+                switch (gSaveProfileImage->st205) {
                 case 1:
                     break;
                 case 2:
@@ -218,14 +218,14 @@ void func_80080038(s32 arg0)
                     break;
                 case 0:
                 default:
-                    D_8009F92C->msg = 0x37DC;
+                    gSaveProfileImage->msg = 0x37DC;
                     break;
                 }
             }
         }
         break;
     case 3:
-        switch (D_8009F92C->st201) {
+        switch (gSaveProfileImage->st201) {
         case 3:
             msg = 0x37E6;
             break;
@@ -242,25 +242,25 @@ void func_80080038(s32 arg0)
         break;
     case 4:
         msg = 0x380E;
-        func_800788F0(0, 0x57, 0x6C, 0x10, 0x3818, 4, 8, D_8009F92C->st945);
+        func_800788F0(0, 0x57, 0x6C, 0x10, 0x3818, 4, 8, gSaveProfileImage->st945);
         func_80078B34(0x3908, 1, 0);
         break;
     }
 
     if (msg != 0) {
-        func_800788F0(0, 0x57, 0x5A, 0x10, msg, 4, 8, D_8009F92C->st945);
+        func_800788F0(0, 0x57, 0x5A, 0x10, msg, 4, 8, gSaveProfileImage->st945);
     }
-    if (D_8009F92C->msg != 0) {
-        if (D_8009F92C->msg == 0x385E) {
-            D_8009F92C->st944 = 1;
+    if (gSaveProfileImage->msg != 0) {
+        if (gSaveProfileImage->msg == 0x385E) {
+            gSaveProfileImage->st944 = 1;
         }
-        func_800788F0(0, 0x57, 0xA3, 0x10, D_8009F92C->msg, 4, 8, D_8009F92C->st945);
+        func_800788F0(0, 0x57, 0xA3, 0x10, gSaveProfileImage->msg, 4, 8, gSaveProfileImage->st945);
     }
 
     if (D_8009F8BD != 0 && D_8009F468 != D_800A3718 && *D_8009F468 < 10) {
-        it = D_8009F92C->items + *D_8009F468 * 0x70;
+        it = gSaveProfileImage->items + *D_8009F468 * 0x70;
         if (it[4] != 0) {
-            if (D_8009F92C->msg == 0) {
+            if (gSaveProfileImage->msg == 0) {
                 s32 s0;
                 u8 *name = it + 0x1C;
                 if (it[0x4C] == 2) {
@@ -371,7 +371,7 @@ void func_80080038(s32 arg0)
         }
     }
 
-    if (D_8009F92C->st944 != 0) {
+    if (gSaveProfileImage->st944 != 0) {
         func_800788F0(0, 0xA0, 0x1B, 0x10, 0x3AB6, 4, 8, 2);
         func_8007F128(0xA0, 0x25, 0xF, 2, 4, 8);
     }

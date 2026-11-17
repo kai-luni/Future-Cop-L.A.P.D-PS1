@@ -1,7 +1,7 @@
 // Categories: Resources > Movie Playback | Platform > CD-ROM
 #include "game/types.h"
 
-extern u8 *D_8009F92C;
+extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
@@ -53,10 +53,10 @@ void func_8008204C(void)
                 break;
             }
             if (func_80020B64() == 0) {
-                D_8009F92C[0x922] = 3;
-                D_8009F92C[0x201] = 3;
-                D_8009F92C[0x202] = 1;
-                D_8009F92C[0x207] = 1;
+                gSaveProfileImage[0x922] = 3;
+                gSaveProfileImage[0x201] = 3;
+                gSaveProfileImage[0x202] = 1;
+                gSaveProfileImage[0x207] = 1;
                 D_8009F8BD = 0;
                 D_8009F8BE = 0;
                 break;
@@ -64,13 +64,13 @@ void func_8008204C(void)
             i++;
         } while (i < 5);
         if (i == 5) {
-            D_8009F92C[0x201] = 4;
+            gSaveProfileImage[0x201] = 4;
         }
     } else {
-        D_8009F92C[0x922] = 3;
-        D_8009F92C[0x201] = 3;
-        D_8009F92C[0x202] = 1;
-        D_8009F92C[0x207] = 1;
+        gSaveProfileImage[0x922] = 3;
+        gSaveProfileImage[0x201] = 3;
+        gSaveProfileImage[0x202] = 1;
+        gSaveProfileImage[0x207] = 1;
         D_8009F8BD = 0;
         D_8009F8BE = 0;
     }
