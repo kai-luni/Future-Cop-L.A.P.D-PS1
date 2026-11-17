@@ -17,7 +17,7 @@ struct Node24EC8 {
 extern struct Node24EC8 *D_8009F668;
 extern struct Node24EC8 *D_8009F66C;
 extern s32 D_8009F9F4;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 
 extern struct Node24EC8 *func_800295E8(s32 arg0);
 extern void func_80013550(struct Node24EC8 *node);
@@ -95,7 +95,7 @@ loop_test:
       node = D_8009F668;
       do {
         next = node->next;
-        if (D_8009FA00 != 4) {
+        if (gScreenState != 4) {
             if (node->prev != 0) {
                 node->prev->next = next;
             } else {
@@ -155,7 +155,7 @@ loop_test:
                 default:
                     goto default_action;
                 }
-                D_8009FA00 = mode;
+                gScreenState = mode;
                 goto default_action;
             case 0x436F626A:
                 func_80013550(node);

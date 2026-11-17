@@ -41,7 +41,7 @@ extern struct Game *D_8009FA58_arr[];
 extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C;
 extern s32 D_8009F678[];
 extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C_b, D_8009FA5C_c, D_8009FA5C_d, D_8009FA5C_e;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern struct Menu *D_8009FA94;
 extern s32 D_8009FA6C;
 extern u32 D_8009FA50;
@@ -176,7 +176,7 @@ void func_80027510(void)
         __asm__ volatile("" : "=r"(base) : "0"(base));
         game = base[i];
         func_8005780C(game->unkAC->unk30, &game->unkAC->unk31C);
-        if (game->unkAC->unk31C.phase == 0 && D_8009FA00 == 4 && game->unkAC->unk312 == -1) {
+        if (game->unkAC->unk31C.phase == 0 && gScreenState == 4 && game->unkAC->unk312 == -1) {
             game->unkAC->unk316 = 0;
             game->unkAC->unk314 = 0;
             game->unkAC->saved_position = game->position;

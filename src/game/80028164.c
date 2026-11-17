@@ -43,7 +43,7 @@ extern struct Game28164 *D_8009FA58;
 extern struct Game28164 *D_8009FA5C[4];
 extern s32 gSinglePlayerEntity __asm__("D_8009F9EC");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern u32 D_8009FAA4;
 extern u8 D_8009F300[];
 extern u8 D_8009ABF0[];
@@ -183,11 +183,11 @@ void func_80028164(void)
     }
     if (p1->unk320 == 0) goto state14;
     if (p2 == 0 || p2->unk320 != 0) {
-        D_8009FA00 = 5;
+        gScreenState = 5;
         goto done;
     }
 state14:
-    D_8009FA00 = 0xE;
+    gScreenState = 0xE;
 done:
 
     D_8009F68C[0] = 1;

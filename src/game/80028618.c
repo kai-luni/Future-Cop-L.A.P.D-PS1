@@ -6,7 +6,7 @@ extern s32 D_8009F9FC;
 extern s32 D_8009FA50;
 extern s32 D_8009FAA4;
 extern s32 D_8009FA30;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u8 D_8009F690;
 extern u8 D_8009F691;
@@ -102,7 +102,7 @@ void func_80028618(void)
 
     func_8001BFD8(0);
 
-    if (D_8009FA00 != 4 && D_8009FA00 != 0xD && D_8009FA00 != work) {
+    if (gScreenState != 4 && gScreenState != 0xD && gScreenState != work) {
         goto finished;
     }
 
@@ -154,16 +154,16 @@ frame:
         work = 0xD;
         func_800462D0();
 
-        if (D_8009FA00 == work) {
+        if (gScreenState == work) {
             func_80028164();
             func_8001B4A8(1);
         }
 
         func_80027D70();
 
-        if (D_8009FA00 == 4 || D_8009FA00 == work) {
+        if (gScreenState == 4 || gScreenState == work) {
             func_80027D9C();
-            if (D_8009FA00 != work) {
+            if (gScreenState != work) {
                 D_8009FA3C = 1;
             }
         } else {
@@ -171,7 +171,7 @@ frame:
         }
     }
 
-    if (D_8009FA00 == 4 || D_8009FA00 == 0xD || D_8009FA00 == 8) {
+    if (gScreenState == 4 || gScreenState == 0xD || gScreenState == 8) {
         goto frame;
     }
 finished:

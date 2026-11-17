@@ -3,7 +3,7 @@
 
 extern void (*D_8009F99C)(void);
 extern s32 D_8009F9CC;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA60;
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern volatile u8 D_8009FA3C;
@@ -44,7 +44,7 @@ void func_8001EFF8(void)
     if (D_8009F99C != 0) {
         D_8009F99C();
     }
-    if (D_8009FA00 == 4 || D_8009FA00 == 13) {
+    if (gScreenState == 4 || gScreenState == 13) {
         D_8009FA60 += 5;
     }
     gFrameTickCounter += 5;

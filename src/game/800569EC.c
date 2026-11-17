@@ -80,7 +80,7 @@ extern s32 D_8009FA84;
 extern struct Camera569EC *gCamera __asm__("D_8009F9E4");
 extern struct State569EC D_8009AEC4[];
 extern struct Offset569EC D_8009AD08[];
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern void func_8005780C(void *, struct Vec569EC *);
 extern s32 func_80031B40(struct Vec569EC *, void *);
 extern s32 func_80056530(struct Obj569EC *, s32, s32);
@@ -548,7 +548,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
             lowEffect = lowEffect - twice;
             __asm__("" : "+r"(lowEffect) : "r"(tick) : "memory");
             info->effect = lowEffect;
-            if (D_8009FA00 == 4) func_8001EA20(object, (s16)lowEffect + 90);
+            if (gScreenState == 4) func_8001EA20(object, (s16)lowEffect + 90);
         } else {
             func_8001EA20(object, 0);
         }

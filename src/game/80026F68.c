@@ -4,7 +4,7 @@
 extern s16 D_8009F65C[];
 extern s16 D_8009FA44[];
 extern s32 D_8009F9FC;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 
 extern void func_80026E9C(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
@@ -40,7 +40,7 @@ void func_80026F68(s32 arg0, s32 arg1)
 
     if (D_8009F65C[arg0] != 0) {
         if (D_8009F65C[arg0] >= 0x384) {
-            D_8009FA00 = 6;
+            gScreenState = 6;
         } else {
             D_8009F65C[arg0] += D_8009F9FC;
         }

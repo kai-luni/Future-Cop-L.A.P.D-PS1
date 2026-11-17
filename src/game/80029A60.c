@@ -17,7 +17,7 @@ struct Unk800A0BC0 {
 };
 
 extern struct Unk800A0BC0 D_800A0BC0;
-extern u32 D_8009FA00;
+extern u32 gScreenState __asm__("D_8009FA00");
 extern u8 D_8009F6B8;
 
 extern void func_80029DD8(void);
@@ -61,7 +61,7 @@ s32 func_80029A60(s32 arg0, struct Unk41DC4 *arg1, u8 arg2)
         }
     }
 
-    if (D_8009FA00 >= 5) {
+    if (gScreenState >= 5) {
         return 0;
     }
 

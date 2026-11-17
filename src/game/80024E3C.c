@@ -1,7 +1,7 @@
 // Categories: Game Engine > Screen Loading | Resources > File Access
 #include "game/types.h"
 
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009F658;
 extern s32 D_8009F9C4;
 extern u8 *D_8009FA94;
@@ -50,7 +50,7 @@ s32 func_80024E3C(s32 arg0)
     s32 r;
 
     func_800247A8();
-    D_8009FA00 = 1;
+    gScreenState = 1;
     D_8009F658 = 0;
     *(s32 *)(D_8009FA94 + 0x10) = 4;
 

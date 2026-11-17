@@ -10,7 +10,7 @@ extern UnkFA94 *D_8009FA94;
 
 extern s32 D_8009F9C4;
 extern s32 D_8009F9FC;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA30;
 extern volatile u8 D_8009FA3C;
 extern s32 D_8009FAA4;
@@ -131,7 +131,7 @@ s32 func_800259D8(void)
     func_8001B4A8(1);
 
     while (1) {
-        if (D_8009FA00 == mode && func_8002385C() != 0) {
+        if (gScreenState == mode && func_8002385C() != 0) {
             break;
         }
         func_80025690();

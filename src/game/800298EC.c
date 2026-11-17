@@ -1,7 +1,7 @@
 // Categories: Game Engine > Event Queue
 #include "game/types.h"
 
-extern u32 D_8009FA00;
+extern u32 gScreenState __asm__("D_8009FA00");
 extern s32 func_800452C8(void);
 
 typedef struct {
@@ -47,7 +47,7 @@ extern Queue298EC D_800A0BC0;
  */
 void func_800298EC(s16 arg0)
 {
-    if (D_8009FA00 < 5) {
+    if (gScreenState < 5) {
         if (func_800452C8() != 0) {
             s16 pending = D_800A0BC0.length;
             if (pending < 8) {

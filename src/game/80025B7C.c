@@ -15,7 +15,7 @@ extern UnkFA94 *D_8009FA94;
 
 extern s32 D_8009F9C4;
 extern s32 D_8009F9FC;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA30;
 extern s32 D_8009FA70;
 extern s32 D_8009FAA4;
@@ -80,7 +80,7 @@ void func_80025B7C(s32 arg0)
     func_80092C8C(0);
     func_8001EB6C();
 
-    index = (u32)D_8009FA00 - 5;
+    index = (u32)gScreenState - 5;
     if (index >= 10) {
         goto state_default;
     }
@@ -97,10 +97,10 @@ state_7:
         goto state_done;
 state_8:
         if (D_8009FA70 == 0) {
-            D_8009FA00 = 10;
-            state = D_8009FA00;
+            gScreenState = 10;
+            state = gScreenState;
             while (1) {
-                if (D_8009FA00 != state && func_80024170() == 0) {
+                if (gScreenState != state && func_80024170() == 0) {
                     break;
                 }
                 D_8009F9FC = D_8009FAA4 - D_8009FA30;

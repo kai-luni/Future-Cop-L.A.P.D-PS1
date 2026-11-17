@@ -8,7 +8,7 @@ struct Unk3FA34Link {
 
 extern void *D_8009F70C;
 extern struct Unk3FA34Link *D_8009F708;
-extern s32 D_8009FA00[];
+extern s32 gScreenState[] __asm__("D_8009FA00");
 
 extern void func_8003BC0C(void *object);
 extern u8 func_8003B838(void *object);
@@ -41,7 +41,7 @@ void func_8003FA34(void *object)
 {
     struct Unk3FA34Link *link;
 
-    if (D_8009F70C == 0 || D_8009FA00[0] == 4 || D_8009FA00[0] == 0xD) {
+    if (D_8009F70C == 0 || gScreenState[0] == 4 || gScreenState[0] == 0xD) {
         func_8003BC0C(object);
         return;
     }

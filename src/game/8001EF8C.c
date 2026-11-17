@@ -8,7 +8,7 @@ typedef struct {
 
 extern void (*D_8009F99C)(void);
 extern s32 D_8009F9CC;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern volatile u8 D_8009FA3C;
 extern s32 D_8009FA60;

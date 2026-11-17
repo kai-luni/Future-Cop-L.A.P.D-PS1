@@ -10,7 +10,7 @@ struct Unk9F9A0 {
 extern volatile s32 D_8009FA60;
 extern volatile s32 D_8009FA30;
 extern s32 D_8009F9FC;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA84;
 extern s32 D_8009FAA4;
 extern u8 D_8009F690;
@@ -91,7 +91,7 @@ void func_8002703C(void)
         value = func_80059DB8();
         D_8009F9FC = value;
         if (value < 0) {
-            D_8009FA00 = 5;
+            gScreenState = 5;
             D_8009F9FC = 5;
         }
         nsum = D_8009FA30 + D_8009F9FC;

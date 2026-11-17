@@ -12,7 +12,7 @@ extern s8 D_8009F924[2];
 extern s8 D_8009F926[2];
 extern s8 D_8009F928[2];
 extern u8 D_8009FA10;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern u8 D_8009C030[];
 extern u8 D_8009C050[];
 extern u8 *D_8009C0A8[];
@@ -85,7 +85,7 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             D_8009FA94[14] = D_8009C050[D_8009F926[1] * 6];
             D_8009FA94[15] = D_8009C0A8[10][D_8009F928[1] * 6];
             D_8009FA10 = 0;
-            D_8009FA00 = 5;
+            gScreenState = 5;
         }
     } else {
         if (D_8009F468[5] == 2) {

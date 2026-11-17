@@ -8,7 +8,7 @@ struct UnkFA94 {
 
 extern u8 D_8009F680;
 extern s32 D_8009F9FC;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA70;
 extern struct UnkFA94 *D_8009FA94;
 
@@ -50,7 +50,7 @@ void func_80027D9C(void)
         goto tail;
     }
 
-    if (D_8009FA00 != 4) {
+    if (gScreenState != 4) {
         goto tail;
     }
 
@@ -78,9 +78,9 @@ void func_80027D9C(void)
             slot++;
         }
 
-        D_8009FA00 = 0xD;
+        gScreenState = 0xD;
     } else {
-        D_8009FA00 = 0xB;
+        gScreenState = 0xB;
     }
 
 tail:

@@ -40,7 +40,8 @@ typedef struct State {
     u8 pad7c[8];
     s32 total1, total2;
 } State;
-extern s32 D_8009FA00, D_8009FAA4;
+extern s32 D_8009FAA4;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern State *D_8009FA94;
 extern Game *gSinglePlayerEntity __asm__("D_8009F9EC");
@@ -173,7 +174,7 @@ void func_80047F30(Game *game)
     u8 *label;
     Game *other;
 
-    if (D_8009FA00 != 4) return;
+    if (gScreenState != 4) return;
     func_80047888();
     func_8006C080(game);
     player = game->player;

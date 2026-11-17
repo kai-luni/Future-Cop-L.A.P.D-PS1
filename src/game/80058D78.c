@@ -9,7 +9,7 @@ struct Mode { u8 p[0x5c]; int active; };
 struct Stats { u8 p[0x18]; u16 a; u8 p1a[0x22]; u16 b; };
 extern struct Mode *D_8009FA94;
 extern void *D_8009FAA4;
-extern int D_8009FA00;
+extern int gScreenState __asm__("D_8009FA00");
 extern int gPlayerCount __asm__("D_8009FA0C");
 extern Obj *D_8009FA58[];
 extern Obj *gSinglePlayerEntity __asm__("D_8009F9EC");
@@ -127,7 +127,7 @@ void func_80058D78(Obj *o)
                 }
             }
         } else {
-            if (D_8009FA00 != 5) func_80025CFC(o);
+            if (gScreenState != 5) func_80025CFC(o);
             func_8005A190(o->data, 0, o->angle);
             o->update = D_800578B4;
             o->child->update = D_800578E4;

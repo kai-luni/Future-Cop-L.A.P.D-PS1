@@ -95,7 +95,7 @@ struct Unk588D4Locals {
     struct Unk584BCHitLocal hit;
 };
 
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern struct Unk588D4Global *D_8009FA94;
 extern u32 D_8009FAA4;
 
@@ -236,7 +236,7 @@ s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
     }
 
     if (c1 < 2) {
-        if (D_8009FA00 == 4) {
+        if (gScreenState == 4) {
             func_800576A8((u8 *)data + 0x30);
             s2 = func_800586D4(object, arg1, s2, &locals.out1C);
             if (locals.out1C & 1) {
@@ -268,7 +268,7 @@ s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
     func_80010234((void *)(v + offset), object->unk5C, 1);
     func_80057E40(object->unkDC, arg1);
     func_8006C3E0(object, arg1);
-    if (D_8009FA00 == 4) {
+    if (gScreenState == 4) {
         func_80055E10((struct Unk55E10 *)object, arg1);
     }
     func_800569EC(object, arg1, s4);

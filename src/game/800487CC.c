@@ -1,7 +1,7 @@
 // Categories: Graphics > HUD | Game Engine > State Machine
 #include "game/types.h"
 
-extern s32 D_8009FA00[];
+extern s32 gScreenState[] __asm__("D_8009FA00");
 extern s32 D_8009FAB8;
 extern s32 D_8009F760;
 extern s32 D_8009FAC8;
@@ -36,7 +36,7 @@ void func_800487CC(s32 input)
     s32 current;
 
     force = input;
-    if ((u8)force && D_8009FA00[0] == 5) {
+    if ((u8)force && gScreenState[0] == 5) {
         force = 0;
     }
     current = D_8009FAC8;

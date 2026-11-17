@@ -39,7 +39,7 @@ struct Unk9A0 {
 
 extern struct Game *D_8009FA58;
 extern s32 D_8009F678;
-extern u32 D_8009FA00;
+extern u32 gScreenState __asm__("D_8009FA00");
 extern u32 D_8009FA50;
 extern s32 D_8009FA84;
 extern u8 *D_8009F2D0;
@@ -120,7 +120,7 @@ void func_800271A4(void)
     func_8005780C(player->unk30, &player->unk31C);
 
     flags = 0;
-    if (player->unk31C.phase == 0 && D_8009FA00 == 4 && player->unk312 == -1) {
+    if (player->unk31C.phase == 0 && gScreenState == 4 && player->unk312 == -1) {
         func_80046C84(0x3E, (s32)D_8009FA58);
         *(volatile s16 *)&player->unk316 = 0;
         *(volatile s16 *)&player->unk314 = 0;

@@ -30,7 +30,7 @@ extern s8 D_8009F2D4;
 extern s8 D_8009F2D5;
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 D_8009FA6C;
-extern s32 D_8009FA00;
+extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FAC0;
 extern s8 D_8009ABE8[];
 extern s8 D_8009ABEC[];
@@ -217,7 +217,7 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
             saveOffset = (u32)slotArg * 4;
             func_80046C84(0x3E, *(s32 *)(saveOffset + (u32)D_8009FA58));
             if ((func_80060A0C(*(s32 *)(saveOffset + (u32)D_8009F670), slotArg) & 0xFF) != 0) {
-                D_8009FA00 = 5;
+                gScreenState = 5;
             } else {
                 flag = 1;
             }
