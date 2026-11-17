@@ -1,5 +1,5 @@
 // Categories: Platform > CD-ROM | Resources > File Access
-extern unsigned char D_8009C8C0[];
+extern unsigned char gCdTargetLocation[] __asm__("D_8009C8C0");
 
 /**
  * @brief Returns a pointer to the 4-byte CD-ROM target location buffer D_8009C8C0.
@@ -26,5 +26,5 @@ extern unsigned char D_8009C8C0[];
  */
 unsigned char *func_8008E040(void)
 {
-    return D_8009C8C0;
+    return gCdTargetLocation;
 }
