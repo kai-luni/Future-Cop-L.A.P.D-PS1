@@ -20,7 +20,7 @@ extern void func_800181D4(void *ptr);
 extern void func_8006C4C4(void *vertices, s16 step, s16 flags);
 extern void func_8006C768(void *faces, s32 rows, s32 cols, s32 count);
 extern s32 D_8009FA08;
-extern s32 D_8009FA1C;
+extern s32 gLevelVertexBlock __asm__("D_8009FA1C");
 
 /**
  * @brief Allocates and fills a dome-patch mesh for the effect objects.
@@ -111,7 +111,7 @@ Mesh *func_8006C84C(s16 arg0, s32 flags)
         mesh->width = mesh->width >> 1;
     }
     mesh->unk10 = D_8009FA08;
-    mesh->unk14 = D_8009FA1C;
+    mesh->unk14 = gLevelVertexBlock;
     func_8006C4C4(mesh->vertices, step, flags & 0x10);
     func_8006C768(mesh->faces, rows, cols, mesh->vertex_count);
     return mesh;

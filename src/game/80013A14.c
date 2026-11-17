@@ -7,7 +7,7 @@ struct Matrix {
     s32 t[3];
 };
 
-extern void *D_8009FA1C;
+extern void *gLevelVertexBlock __asm__("D_8009FA1C");
 extern void *D_8009F578;
 extern void *D_8009F57C;
 extern s16 D_8009F580;
@@ -42,7 +42,7 @@ void func_80013A14(void)
     color.m[0][1] = color.m[0][2] = color.m[1][1] = color.m[1][2] = color.m[2][1] =
         color.m[2][2] = 0;
     func_800959A0(&color);
-    D_8009FA1C = func_80017EBC(0x400, 2);
+    gLevelVertexBlock = func_80017EBC(0x400, 2);
     D_8009F578 = func_80017EBC(0x800, 2);
     D_8009F57C = func_80017EBC(0x100, 2);
     D_8009F580 = 0;
