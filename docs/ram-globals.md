@@ -130,7 +130,22 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 | `D_8009F2E4` | `gFormatNamePair` | `u8[]` | Format-String `"%s%s"`, mit dem Präfix und Name zusammengesetzt werden. **Bestätigt.** | `func_80024E3C`, `func_80025370` |
 | `D_8009C744` | `gReadyCheckHook` | `s32 (*)(void)` | Hook, der die Bereitschaft eines Treiberobjekts abfragt; `func_8008B168`/`func_8008B210` werden dort installiert. **Bestätigt.** | `func_8008B094` |
 
-Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage). Ebenso offen: `D_8009C730`, `D_8009C750`, `D_8009C770`, `D_8009C790` — dort ist die Rolle nur vage beschrieben.
+Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage).
+
+## Pad-Treiber und Spielsitzung
+
+Die folgenden Rollen wurden mit Google Gemini 4 Hydrogen (read-only, Repo-Zugriff) erarbeitet und anschließend in den Units selbst nachgeprüft.
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_8009C730` | `gPadTxByteHook` | `u32` | Handler, der bei der SIO0-Kommunikation das nächste Sende-Byte liefert; im Init mit `func_8008C07C` belegt. **Bestätigt.** | `src/game/8008BDB0.c:65`, `8008C07C.c:37` |
+| `D_8009C770` | `gPadActuatorCostSum` | `int` | Aufsummierte Aktuator-Kosten eines Polling-Durchlaufs; wird vor der Port-Schleife genullt und nur erhöht, solange die Summe unter 61 bleibt. **Bestätigt.** | `src/game/8008C138.c:78`, `8008A43C.c:62` |
+| `D_8009C790` | `gPadVblankIrqFlag` | `s32` | Verriegeltes Flag eines Pad-VBlank-Durchlaufs: am Beginn von `func_8008A43C` auf 1 gesetzt, von `func_8008A5A8` gelesen und genullt. **Bestätigt.** | `src/game/8008A43C.c:39`, `8008A5A8.c:26` |
+| `D_8009FA8C` | `gPlayerInvulnerable` | `u8[]` | Ein Unverwundbarkeits-Flag je Spieler; verhindert Schadensabzug und Terrain-Schaden, wird im Spawn-Pfad bei `mode0`/`mode1 == 3` gesetzt. **Bestätigt.** | `src/game/800579D4.c:230`, `80058210.c:89`, `80053188.c:171` |
+| `D_800A8EA4` | `gEnvMapTexpageWord` | `s32` | Genau der Eintrag `[9]` von `gTexpageBaseTable` (`0x800A8E80 + 9*4`): gepacktes `(CLUT << 16) \| TPAGE`-Wort für den Env-Map-Texturslot, als `vec.extra` übergeben. **Bestätigt.** | `src/game/80063C5C.c:117`, `80016A64.c:111`, `80016E6C.c:55` |
+| `D_8009FA94` | `gGameSession` | `struct Obj *` (je Unit abweichend) | Persistenter Sitzungs- und Konfigurationsblock (244 Byte, `func_8001E240(0xF4, 3)`): `mode` (1 = 1P, 2 = 2P), `mode0`/`mode1` (Schwierigkeit, God-Mode), Übergangscode bei `+0x10`, Loadout und Match-Zähler. **Bestätigt** in der Rolle, einzelne Felder offen. | `src/game/80076EB0.c:80`, `8008125C.c:283`, `800579D4.c:214` |
+
+`D_8009C750` bleibt unbenannt und ist in der Doku als **nicht bestimmbar** vermerkt: der Callback wird nur aufgerufen (zweiter Eintrag der IRQ-Chain-2-Tabelle, VBlank-Bit), die schreibende Stelle wurde auch mit Modellhilfe nicht gefunden.
 
 ## Model-Loader: Chunk-Slots der Cobj-Ressource
 
