@@ -9,7 +9,7 @@ struct Info { u8 pad[0x1c]; u8 id, type; };
 struct Sub { u8 pad[0x12]; s16 count; u8 p14[2]; u16 total; s32 arg1, arg2; u8 def[8]; struct Info *info; };
 struct Entity { u8 pad[4]; struct Sub *sub; };
 struct Mode { u8 pad[0x5c]; s32 active; };
-extern struct Mode *D_8009FA94;
+extern struct Mode *gGameSession __asm__("D_8009FA94");
 extern struct Player *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct Other *D_8009FA58, *D_8009FA5C;
 extern s32 func_80069D68(s32, s32, s32, s32);
@@ -44,7 +44,7 @@ void func_8006125C(struct Entity *entity)
     if (func_80069D68(s->arg1, 0, -1, 0)) {
         if (s->count > 0) s->count--;
         s->total++;
-        if (D_8009FA94->active == 1) {
+        if (gGameSession->active == 1) {
             info = s->info;
             if (gSinglePlayerEntity && gSinglePlayerEntity->id == info->id) {
                 stats = 0;

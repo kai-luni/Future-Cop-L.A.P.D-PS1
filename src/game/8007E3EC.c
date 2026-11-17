@@ -6,7 +6,7 @@ extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern volatile s32 D_8009F8E0;
 extern volatile s32 D_8009F8E4;
 extern s32 D_8009F8E0_arr[];
-extern s32 *D_8009FA94;
+extern s32 *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009F45A;
 extern s8 D_8009F924[2];
 extern s8 D_8009F926[2];
@@ -62,7 +62,7 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             __asm__ volatile("" ::: "memory");
             if (D_8009F8E0 != 0 && D_8009F8E4 != 0) {
                 flag = 1;
-                if (D_8009FA94[23] == 1) {
+                if (gGameSession[23] == 1) {
                     D_8009F45A = 2;
                 } else {
                     D_8009F45A = 1;
@@ -70,7 +70,7 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             }
         } else {
             flag = 1;
-            if (D_8009FA94[23] == 1) {
+            if (gGameSession[23] == 1) {
                 D_8009F45A = 2;
             } else {
                 D_8009F45A = 1;
@@ -78,12 +78,12 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
         }
         if (flag != 0) {
             func_8007D2DC(1);
-            D_8009FA94[10] = D_8009C030[D_8009F924[0] * 6];
-            D_8009FA94[11] = D_8009C050[D_8009F926[0] * 6];
-            D_8009FA94[12] = D_8009C0A8[10][D_8009F928[0] * 6];
-            D_8009FA94[13] = D_8009C030[D_8009F924[1] * 6];
-            D_8009FA94[14] = D_8009C050[D_8009F926[1] * 6];
-            D_8009FA94[15] = D_8009C0A8[10][D_8009F928[1] * 6];
+            gGameSession[10] = D_8009C030[D_8009F924[0] * 6];
+            gGameSession[11] = D_8009C050[D_8009F926[0] * 6];
+            gGameSession[12] = D_8009C0A8[10][D_8009F928[0] * 6];
+            gGameSession[13] = D_8009C030[D_8009F924[1] * 6];
+            gGameSession[14] = D_8009C050[D_8009F926[1] * 6];
+            gGameSession[15] = D_8009C0A8[10][D_8009F928[1] * 6];
             D_8009FA10 = 0;
             gScreenState = 5;
         }

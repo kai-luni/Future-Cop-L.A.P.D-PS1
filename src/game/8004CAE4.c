@@ -15,7 +15,7 @@ extern u8 D_8009F7AC;
 extern s32 gLastSpawnSlot[] __asm__("D_8009F9F4");
 extern s32 D_8009FA40;
 extern s32 D_8009FA88;
-extern struct Unk4CAE4State *D_8009FA94[];
+extern struct Unk4CAE4State *gGameSession[] __asm__("D_8009FA94");
 extern s32 D_800A6F60[];
 extern s32 D_800A8F90[];
 
@@ -105,13 +105,13 @@ void func_8004CAE4(void)
 
     D_8009F7AC = 1;
     D_8009F7A8 = 0;
-    if (D_8009FA94[0]->mode5C != 1) {
+    if (gGameSession[0]->mode5C != 1) {
         goto check_secondary;
     }
     limit = 0xFE;
     goto store_limit;
 check_secondary:
-    if (D_8009FA94[0]->mode0C == 2) {
+    if (gGameSession[0]->mode0C == 2) {
         limit = 0x12C;
     } else {
         limit = 0xC8;

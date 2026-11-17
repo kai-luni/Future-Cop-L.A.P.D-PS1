@@ -59,7 +59,7 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Object *D_8009FA58[];
 extern struct Object *table_after[] __asm__("D_8009FA58+0");
 extern s8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
-extern struct Game *D_8009FA94;
+extern struct Game *gGameSession __asm__("D_8009FA94");
 extern void *func_80017EBC(s32, s32);
 extern void func_8002AD58(s32, struct Object *, struct Data *, s32);
 extern void func_80044988(void *, void *, s32, s32);
@@ -211,9 +211,9 @@ found:
     state->unk300 = 0;
     state->unk2FE = 0;
     value = obj->maxHealth;
-    if (D_8009FA94->mode == 2 && D_8009FA94->unk5C == 0) value += value / 2;
-    if (obj->state->index) modePtr = &D_8009FA94->mode1;
-    else modePtr = &D_8009FA94->mode0;
+    if (gGameSession->mode == 2 && gGameSession->unk5C == 0) value += value / 2;
+    if (obj->state->index) modePtr = &gGameSession->mode1;
+    else modePtr = &gGameSession->mode0;
     mode = *modePtr;
     switch (mode) {
     case 2: value *= 150; break;

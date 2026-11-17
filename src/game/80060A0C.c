@@ -53,7 +53,7 @@ struct Actor {
 
 extern struct Actor *D_8009FA58[];
 extern struct Actor *actor0 __asm__("D_8009FA58");
-extern struct UnkFA94 *D_8009FA94;
+extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA70;
@@ -110,13 +110,13 @@ s32 func_80060A0C(u32 state, s32 index)
 
     case 0x01ADCFED:
         offset = 1;
-        if (D_8009FA94->unk5C == offset) {
+        if (gGameSession->unk5C == offset) {
             D_8009FA70 = 0x78;
             delta = index - 1;
-            D_8009FA94->unk40 = D_8009FA94->unk44 - delta;
+            gGameSession->unk40 = gGameSession->unk44 - delta;
         } else {
             gScreenState = 0x0B;
-            D_8009FA94->unk40 = D_8009FA94->unk44;
+            gGameSession->unk40 = gGameSession->unk44;
         }
         break;
 
@@ -168,7 +168,7 @@ s32 func_80060A0C(u32 state, s32 index)
         break;
 
     case 0x00F8F778:
-        D_8009FA94->unk64[D_8009FA58[index]->unkAC->unkC1] += 0xC8;
+        gGameSession->unk64[D_8009FA58[index]->unkAC->unkC1] += 0xC8;
         break;
 
     case 0x0A9CF51C:

@@ -73,7 +73,7 @@ extern u8 D_8009F36E;
 extern u8 D_8009F36F;
 extern s32 gDiscColourWordSecondary __asm__("D_8009F370");
 extern struct Camera597C0 *gCamera __asm__("D_8009F9E4");
-extern struct Global597C0 *D_8009FA94[];
+extern struct Global597C0 *gGameSession[] __asm__("D_8009FA94");
 
 extern void func_80013AA0(s32 low, s32 high);
 extern u8 func_80017508(struct Unk17508 *instance, u32 *flags, s32 arg2);

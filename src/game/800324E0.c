@@ -27,7 +27,7 @@ struct Obj {
     u8 p120[0xC]; s16 f12C; u8 p12E[6]; struct Q *f134;
 };
 
-extern s32 *D_8009FA94;
+extern s32 *gGameSession __asm__("D_8009FA94");
 extern struct Hit *D_8009FA58;
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
@@ -229,7 +229,7 @@ L5E4:
         if (!(t3 + (o->f68 >> 1) < o->pos.y)) {
             if (o->type == 0x25) {
                 s32 k;
-                k = D_8009FA94[0x13];
+                k = gGameSession[0x13];
                 o->f1C = o->f1E;
                 o->f24 |= 0x35;
                 o->f100 = (10 - k) * 150 + 600;

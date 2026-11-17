@@ -71,7 +71,7 @@ struct GlobalFA94 {
 
 extern struct Table *D_8009F800;
 extern struct Unit *gSinglePlayerEntity __asm__("D_8009F9EC");
-extern struct GlobalFA94 *D_8009FA94;
+extern struct GlobalFA94 *gGameSession __asm__("D_8009FA94");
 extern struct Actor *D_8009FA58[];
 
 /**
@@ -123,7 +123,7 @@ void func_80061020(struct Unit *arg0)
 
             info->unk16--;
 
-            if (D_8009FA94->unk5C != 1) {
+            if (gGameSession->unk5C != 1) {
                 continue;
             }
 

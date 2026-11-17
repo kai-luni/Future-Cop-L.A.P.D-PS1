@@ -87,7 +87,7 @@ struct Unk331CCPlayer {
     struct Vec3 unk50;
 };
 
-extern struct Unk331CCGlobal *D_8009FA94;
+extern struct Unk331CCGlobal *gGameSession __asm__("D_8009FA94");
 extern struct Unk331CCPlayer *D_8009FA58;
 extern struct Unk331CCObj *gSinglePlayerEntity __asm__("D_8009F9EC");
 
@@ -128,17 +128,17 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
     s32 v;
     u32 f;
 
-    D_8009FA94->unkE0 = 0;
-    if (D_8009FA94->unk4C < 0) {
-        D_8009FA94->unk4C = 0;
+    gGameSession->unkE0 = 0;
+    if (gGameSession->unk4C < 0) {
+        gGameSession->unk4C = 0;
     }
-    if (D_8009FA94->unk4C >= 10) {
-        D_8009FA94->unk4C = 9;
+    if (gGameSession->unk4C >= 10) {
+        gGameSession->unk4C = 9;
     }
     src = arg2->unk8;
     f = (src->unk26 | 0x20) & 0xFFF8;
     src->unk26 = f;
-    if (D_8009FA94->unk4C > 0) {
+    if (gGameSession->unk4C > 0) {
         src->unk26 = f | 2;
     } else {
         src->unk26 = f | 6;
@@ -152,7 +152,7 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
 
         g = (src->unk5A | 0x20) & 0xFFF8;
         src->unk5A = g;
-        w = D_8009FA94->unk4C;
+        w = gGameSession->unk4C;
         if (w < 3) {
             src->unk5A = g | 6;
         } else if (w < 7) {
@@ -165,7 +165,7 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
     {
         s32 w;
 
-        w = D_8009FA94->unk4C;
+        w = gGameSession->unk4C;
         if (w < 3) {
             obj->unkF4 -= (3 - w) << 11;
         } else {
@@ -178,7 +178,7 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
     {
         s32 w;
 
-        w = D_8009FA94->unk4C;
+        w = gGameSession->unk4C;
         if (w < 6) {
             obj->unk1E -= ((7 - w) >> 1) * ((s16)obj->unk1E >> 2);
             obj->unk1C = obj->unk1E;
@@ -187,7 +187,7 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
     {
         s32 w;
 
-        w = D_8009FA94->unk4C;
+        w = gGameSession->unk4C;
         if (w >= 8) {
             obj->unk1E += (w - 7) * ((s16)obj->unk1E >> 3);
             obj->unk1C = obj->unk1E;
@@ -197,7 +197,7 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
     obj->unk134->unk1B = src->unk54;
     obj->unk134->unk1D = obj->unkFA;
     obj->unk134->unk1A = 2;
-    D_8009FA94->unk9C = 2;
+    gGameSession->unk9C = 2;
     obj->unk134->unk18 = 0;
     obj->unk134->unk56 = obj->unk134->unk7E = 4;
     obj->unkA6 = 4;
@@ -205,31 +205,31 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
     obj->unk134->unk1C = func_80019668() & 1;
 
     for (i = 3; i >= 0; i--) {
-        D_8009FA94->unkA0[i] = 0;
+        gGameSession->unkA0[i] = 0;
     }
     for (i = 0x2C; i < 0x38; i++) {
-        ((s32 *)D_8009FA94)[i] = 0;
+        ((s32 *)gGameSession)[i] = 0;
     }
 
-    if (D_8009FA94->unk4C > 0) {
+    if (gGameSession->unk4C > 0) {
         s32 r = (func_80019668() & 3) + 9;
-        v = r - D_8009FA94->unk4C;
+        v = r - gGameSession->unk4C;
         if (v >= 11) {
             v = 10;
         }
-        D_8009FA94->unkB0[0] = v;
-        D_8009FA94->unk74 = v;
+        gGameSession->unkB0[0] = v;
+        gGameSession->unk74 = v;
         if (v < 10) {
-            D_8009FA94->unkB0[1] = 10 - v;
-            D_8009FA94->unk78 = 10 - v;
+            gGameSession->unkB0[1] = 10 - v;
+            gGameSession->unk78 = 10 - v;
         }
     } else {
-        D_8009FA94->unkB0[0] = 0;
-        D_8009FA94->unk74 = 0;
-        D_8009FA94->unkB0[1] = 0;
-        D_8009FA94->unk78 = 0;
+        gGameSession->unkB0[0] = 0;
+        gGameSession->unk74 = 0;
+        gGameSession->unkB0[1] = 0;
+        gGameSession->unk78 = 0;
     }
-    D_8009FA94->unk68 = 0;
+    gGameSession->unk68 = 0;
     obj->unk134->unkC = obj->unk50;
     *(struct Vec3 *)obj->unk134 = D_8009FA58->unk50;
     func_800330E8(obj);

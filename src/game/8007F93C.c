@@ -10,7 +10,7 @@ extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
 extern u8 D_800A36BD[];
-extern struct UnkFA94 *D_8009FA94;
+extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 
 extern void func_8007FA88(void);
 extern void func_8007F02C(void);
@@ -48,7 +48,7 @@ void func_8007F93C(void)
     *(u16 *)(p + 0x942) = 0;
     *(u8 *)(p + 0x944) = 0;
     func_8007F02C();
-    if (D_8009FA94->unkC == 2) {
+    if (gGameSession->unkC == 2) {
         D_800A36BD[0] = 0;
     } else {
         D_800A36BD[0] = 1;

@@ -27,7 +27,7 @@ extern s8 D_8009F8C0[];
 extern u8 D_800A3928[];
 extern s32 D_8009F8F8[];
 extern u8 D_800A6FE0[];
-extern u8 *D_8009FA94;
+extern u8 *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009F458;
 extern u8 D_8009F459;
 extern u8 D_8009F3F1;
@@ -206,7 +206,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                 __asm__("" : "+r"(step));
                 off = step << 4;
                 if ((base + off)[0x428] == 0) {
-                    s32 *fa = (s32 *)D_8009FA94;
+                    s32 *fa = (s32 *)gGameSession;
                     s32 count;
                     count = fa[0x8C / 4] != 0;
                     if (fa[0x90 / 4] != 0) count++;
@@ -216,7 +216,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                     } else {
                         *(u16 *)txt = D_8009F470;
                     }
-                    if (*(s32 *)(D_8009FA94 + 0x5C) == 1) {
+                    if (*(s32 *)(gGameSession + 0x5C) == 1) {
                         n = 0;
                         for (arg2 = 0; arg2 < 4; arg2++) {
                             CNT(D_8009B4E4[gFrontEndListTable[arg2]])
@@ -271,19 +271,19 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             off = savedIdx * 0x70;
             __asm__("addu %0,%0,%1" : "+r"(off) : "r"(savedBase), "r"(dst));
             func_8008CCB0(dst, (u8 *)off + 0x44C);
-            if (REC(0x459) != 0) *(s32 *)(D_8009FA94 + 0x8C) = REC(0x459);
-            if (REC(0x45A) != 0) *(s32 *)(D_8009FA94 + 0x90) = REC(0x45A);
-            if (REC(0x45B) != 0) *(s32 *)(D_8009FA94 + 0x94) = REC(0x45B);
-            *(s32 *)(D_8009FA94 + 0x28) = REC(0x45C);
-            *(s32 *)(D_8009FA94 + 0x34) = REC(0x45D);
-            *(s32 *)(D_8009FA94 + 0x2C) = REC(0x45E);
-            *(s32 *)(D_8009FA94 + 0x38) = REC(0x45F);
-            *(s32 *)(D_8009FA94 + 0x30) = REC(0x460);
-            *(s32 *)(D_8009FA94 + 0x3C) = REC(0x461);
-            *(s32 *)(D_8009FA94 + 0x8) = REC(0x462);
-            *(s32 *)(D_8009FA94 + 0x98) = REC(0x463);
-            *(s32 *)(D_8009FA94 + 0xC) = REC(0x470);
-            *(s32 *)(D_8009FA94 + 0x5C) = REC(0x468);
+            if (REC(0x459) != 0) *(s32 *)(gGameSession + 0x8C) = REC(0x459);
+            if (REC(0x45A) != 0) *(s32 *)(gGameSession + 0x90) = REC(0x45A);
+            if (REC(0x45B) != 0) *(s32 *)(gGameSession + 0x94) = REC(0x45B);
+            *(s32 *)(gGameSession + 0x28) = REC(0x45C);
+            *(s32 *)(gGameSession + 0x34) = REC(0x45D);
+            *(s32 *)(gGameSession + 0x2C) = REC(0x45E);
+            *(s32 *)(gGameSession + 0x38) = REC(0x45F);
+            *(s32 *)(gGameSession + 0x30) = REC(0x460);
+            *(s32 *)(gGameSession + 0x3C) = REC(0x461);
+            *(s32 *)(gGameSession + 0x8) = REC(0x462);
+            *(s32 *)(gGameSession + 0x98) = REC(0x463);
+            *(s32 *)(gGameSession + 0xC) = REC(0x470);
+            *(s32 *)(gGameSession + 0x5C) = REC(0x468);
             D_8009F3E6 = REC(0x46A);
             D_8009F3E7 = REC(0x46B);
             if (REC(0x469) != 0) D_8009F3C0 = REC(0x469);
@@ -297,7 +297,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             D_8009B4E4[gFrontEndListTable[4]].unk1F = REC(0x46E);
             D_8009B4E4[gFrontEndListTable[4]].unk20 = REC(0x46E);
             func_80077FFC();
-            if (*(s32 *)(D_8009FA94 + 0x5C) == 1) {
+            if (*(s32 *)(gGameSession + 0x5C) == 1) {
                 D_8009F459 = 0;
                 func_80077708();
             } else {

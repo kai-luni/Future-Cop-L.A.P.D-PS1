@@ -10,7 +10,7 @@ extern u8 D_8009F680;
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA70;
-extern struct UnkFA94 *D_8009FA94;
+extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 
 /* Incomplete array type keeps this out of small data, so the compiler has to
    materialise the base address with lui/addiu like the retail code does. */
@@ -68,7 +68,7 @@ void func_80027D9C(void)
 
     D_8009FA70 = -1;
 
-    if (D_8009FA94->unk5C == 1) {
+    if (gGameSession->unk5C == 1) {
         for (i = 0, slot = D_8009FA58; i < 2; i++) {
             object = *slot;
 

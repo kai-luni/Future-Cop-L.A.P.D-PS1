@@ -38,7 +38,7 @@ extern volatile s32 D_8009F91C;
 extern volatile s32 D_8009F920;
 
 extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
-extern Unk8009FA94 *D_8009FA94[2];
+extern Unk8009FA94 *gGameSession[2] __asm__("D_8009FA94");
 extern u16 D_8009BABE[];
 extern u8 D_800A377B[];
 

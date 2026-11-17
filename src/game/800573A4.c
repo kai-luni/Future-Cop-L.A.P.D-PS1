@@ -106,7 +106,7 @@ struct Arg1 {
 };
 
 extern struct UnkAD08 D_8009AD08[];
-extern struct UnkFA94 *D_8009FA94;
+extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009AEC4[];
 
 extern s32 func_800564A8(s16 pitch);
@@ -216,14 +216,14 @@ void func_800573A4(struct Arg0 *arg0, struct Arg1 *arg1)
 
     switch (entity->fieldC1) {
     case 0:
-        entity->field90 = D_8009FA94->b28;
-        entity->field91 = D_8009FA94->b2C;
-        entity->field92 = D_8009FA94->b30;
+        entity->field90 = gGameSession->b28;
+        entity->field91 = gGameSession->b2C;
+        entity->field92 = gGameSession->b30;
         break;
     case 1:
-        entity->field90 = D_8009FA94->b34;
-        entity->field91 = D_8009FA94->b38;
-        entity->field92 = D_8009FA94->b3C;
+        entity->field90 = gGameSession->b34;
+        entity->field91 = gGameSession->b38;
+        entity->field92 = gGameSession->b3C;
         break;
     }
 

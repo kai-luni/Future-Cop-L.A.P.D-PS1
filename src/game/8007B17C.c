@@ -16,7 +16,7 @@ struct Unk8009F468 {
 };
 
 extern struct Unk8009F468 *D_8009F468;
-extern struct Unk8009FA94 *D_8009FA94;
+extern struct Unk8009FA94 *gGameSession __asm__("D_8009FA94");
 extern s8 D_8009F8C0[];
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 
@@ -81,7 +81,7 @@ void func_8007B17C(s32 arg0)
     s32 a = 0;
 
     if (arg0 == 0) {
-        struct Unk8009FA94 *g = D_8009FA94;
+        struct Unk8009FA94 *g = gGameSession;
         s32 y = (g->unk0C == 2) ? 0x37 : 0x41;
         s32 id = (g->unk5C == 1) ? 0x438 : 0x42E;
         func_800788F0(0, 0xA0, y, 0x10, id, 4, 8, 1);

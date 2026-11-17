@@ -9,7 +9,7 @@ struct Unk69B58 {
     u32 unk24;
 };
 
-extern struct Unk69B58 *D_8009FA94;
+extern struct Unk69B58 *gGameSession __asm__("D_8009FA94");
 extern s32 *D_8009F9F8;
 extern s32 *D_8009FAD4;
 extern s32 *D_8009F9A4;
@@ -42,10 +42,10 @@ void func_80069B58(void)
     s32 i;
     s32 value;
 
-    D_8009FA94->unk18 = (u32)func_80019668() % 1000;
-    D_8009FA94->unk1C = (u32)func_80019668() % 1000;
-    D_8009FA94->unk20 = (u32)func_80019668() % 1000;
-    D_8009FA94->unk24 = (u32)func_80019668() % 1000;
+    gGameSession->unk18 = (u32)func_80019668() % 1000;
+    gGameSession->unk1C = (u32)func_80019668() % 1000;
+    gGameSession->unk20 = (u32)func_80019668() % 1000;
+    gGameSession->unk24 = (u32)func_80019668() % 1000;
 
     for (i = 0; i < 0x20; i++) {
         D_8009F9F8[i] = (u32)func_80019668() % 1000;

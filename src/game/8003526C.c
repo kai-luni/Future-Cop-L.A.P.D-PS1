@@ -31,7 +31,7 @@ struct GlobalFA94 {
     s32 unkE0;
 };
 
-extern struct GlobalFA94 *D_8009FA94;
+extern struct GlobalFA94 *gGameSession __asm__("D_8009FA94");
 
 extern void func_8003BA50(struct Entity *self, s32 old1C);
 extern s32 func_80019668(void);
@@ -70,5 +70,5 @@ void func_8003526C(struct Entity *self)
     self->unk134->unk18 = 0;
     self->unkF4 = self->unk134->unk24;
     self->unkF8 = self->unk134->unk20;
-    D_8009FA94->unkE0 = 4;
+    gGameSession->unkE0 = 4;
 }

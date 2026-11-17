@@ -3,7 +3,7 @@
 
 extern u32 D_8009EA04;
 extern u32 D_8009EA08;
-extern u32 *D_8009FA94;
+extern u32 *gGameSession __asm__("D_8009FA94");
 extern u32 *D_8009FAD4;
 extern u32 *D_8009F9A4;
 extern u32 *D_8009F9F8;
@@ -77,9 +77,9 @@ s32 func_80076EB0(void)
     result = 0;
     func_8008CA30(D_8009EA04, (D_8009EA08 >> 3) << 3);
 
-    D_8009FA94 = func_8001E240(0xF4, 3);
+    gGameSession = func_8001E240(0xF4, 3);
     for (i = 0x38; i >= 0; i--) {
-        D_8009FA94[i] = 0;
+        gGameSession[i] = 0;
     }
 
     D_8009FAD4 = func_8001E240(0x190, 3);

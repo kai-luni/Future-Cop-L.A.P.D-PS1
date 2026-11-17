@@ -8,7 +8,7 @@ struct Unk78210Mode {
     s32 split;
 };
 
-extern struct Unk78210Mode *D_8009FA94;
+extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009F3F1;
 extern u8 D_8009F458;
 extern u8 D_8009F3E7;
@@ -46,7 +46,7 @@ void func_8007A450(s32 a0)
     if (a0 != 3) {
         return;
     }
-    mode = D_8009FA94;
+    mode = gGameSession;
     D_8009F3F1 = 0;
     mode->players = 2;
     mode->split = 0;

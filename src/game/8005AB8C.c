@@ -57,7 +57,7 @@ extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern struct DrawObj *D_8009FA58[];
 extern struct DrawObj *gSinglePlayerEntity __asm__("D_8009F9EC");
-extern struct DrawObj *D_8009FA94;
+extern struct DrawObj *gGameSession __asm__("D_8009FA94");
 extern u32 D_8009AFC0[];
 extern u32 D_800A6F60[];
 extern u16 D_800A8EA6[];
@@ -278,7 +278,7 @@ ready3:
 
         drawObj = gSinglePlayerEntity;
         if (drawObj != 0) {
-            if (D_8009FA94->unk5C == 1) {
+            if (gGameSession->unk5C == 1) {
                 func_800694C8(&x, &y, drawObj->unk58, drawObj->unk50);
                 callColor = 0xFFFF;
                 width = 4;

@@ -9,7 +9,7 @@ struct Graphic { struct Model *model; u8 transform[0x3c]; s32 radius; u8 pad44[4
 struct State { u8 pad[0x5c]; s32 mode; };
 struct PacketSmall { u32 tag, color; s16 x, y; u32 size; };
 struct PacketLarge { u32 tag, color; s16 x0, y0; u32 color1; s16 x1, y1; u32 color2; s16 x2, y2; };
-extern struct State *D_8009FA94;
+extern struct State *gGameSession __asm__("D_8009FA94");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
@@ -76,7 +76,7 @@ void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
 
     flags = entity[0x23];
     graphic = (struct Graphic *)(entity + 0x28);
-    if ((flags >> 5) == 2 && entity[0x16] == 0x1c && D_8009FA94->mode == 1) {
+    if ((flags >> 5) == 2 && entity[0x16] == 0x1c && gGameSession->mode == 1) {
         offset = 0;
         if (arg3) offset = 0x50;
         func_800694C8(&sx, &sy, *(s32 *)(entity + 0x58), *(s32 *)(entity + 0x50));

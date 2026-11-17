@@ -37,7 +37,7 @@ struct MenuData28164 {
 };
 
 extern s32 *gScratchBlockPtr __asm__("D_8009F68C");
-extern struct MenuInfo28164 *D_8009FA94;
+extern struct MenuInfo28164 *gGameSession __asm__("D_8009FA94");
 extern struct MenuData28164 *D_8009F2C0;
 extern struct Game28164 *D_8009FA58;
 extern struct Game28164 *D_8009FA5C[4];
@@ -100,12 +100,12 @@ void func_80028164(void)
     if (gScratchBlockPtr == 0) {
         gScratchBlockPtr = func_80017EBC(0xC8, 3);
         gScratchBlockPtr[0] = 0;
-        gScratchBlockPtr[2] = D_8009FA94->unk40 == D_8009FA94->unk44;
+        gScratchBlockPtr[2] = gGameSession->unk40 == gGameSession->unk44;
         if (gPlayerCount == 1) {
             func_8008CD30((u8 *)D_8009F2C0->unk08 + 6, D_8009F300,
-                          D_8009FA94->unk4C + 1);
+                          gGameSession->unk4C + 1);
             if (gScratchBlockPtr[2] == 0) {
-                D_8009FA94->unk4C++;
+                gGameSession->unk4C++;
             }
         }
     }

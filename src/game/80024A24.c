@@ -23,7 +23,7 @@ extern s32 D_8009FA24;
 extern s32 D_8009FA6C;
 extern s32 D_8009FA70;
 extern s32 D_8009FA84;
-extern struct Obj *D_8009FA94;
+extern struct Obj *gGameSession __asm__("D_8009FA94");
 extern s32 D_8009FAC0;
 
 extern s32 D_8009F678[];
@@ -136,7 +136,7 @@ void func_80024A24(s32 arg0)
     name = D_80010DC0;
 
     D_8009FAC0 = 0;
-    target = D_8009FA94->unk28;
+    target = gGameSession->unk28;
     for (i = 0; i < 10; i += 2) {
         if (name.b[i] == target) {
             D_8009FAC0 = name.b[i + 1];
@@ -215,7 +215,7 @@ call_init:
     func_8004783C();
 
     if (D_8009FA84 != 0) {
-        s32 flag = (D_8009FA94->unk0C == 2) ? 2 : 1;
+        s32 flag = (gGameSession->unk0C == 2) ? 2 : 1;
 
         func_80059BFC(flag, D_8009F688, arg0);
     }

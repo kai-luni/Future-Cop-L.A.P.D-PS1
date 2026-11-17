@@ -31,7 +31,7 @@ struct State {
 };
 struct Owner { u8 pad[0xac]; struct State *state; };
 struct Global { u8 pad[8]; s32 field8; u8 padc[0x8c]; s32 field98; };
-extern struct Global *D_8009FA94;
+extern struct Global *gGameSession __asm__("D_8009FA94");
 extern struct Data *func_8006AAEC(u8);
 extern void func_8005D3FC(struct Owner *, s32);
 
@@ -77,9 +77,9 @@ void func_8006AB38(struct Owner *owner)
         a = data->value1;
         b = data->value3;
         if (owner->state->fieldc1 == 0)
-            mode = D_8009FA94->field8;
+            mode = gGameSession->field8;
         else
-            mode = D_8009FA94->field98;
+            mode = gGameSession->field98;
         switch (mode) {
         case 0:
             break;

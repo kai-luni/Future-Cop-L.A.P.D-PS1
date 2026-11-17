@@ -18,7 +18,7 @@ struct UnkFA94 {
 
 extern struct Entry D_8009B4E4[];
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
-extern struct UnkFA94 *D_8009FA94;
+extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009F3C0;
 extern u8 D_8009F3C1;
 extern u8 D_8009F3C3;
@@ -52,9 +52,9 @@ extern void func_8007E8D8(u8 *output, u32 value1, u32 value2, u32 value3,
 void func_8007F02C(void)
 {
     func_8007E8D8(D_800A3938,
-                  D_8009FA94->unk8C,
-                  D_8009FA94->unk90,
-                  D_8009FA94->unk94,
+                  gGameSession->unk8C,
+                  gGameSession->unk90,
+                  gGameSession->unk94,
                   D_8009F3C0,
                   D_8009F458,
                   D_8009B4E4[gFrontEndListTable[0]].unk1F,

@@ -8,7 +8,7 @@ struct MenuState {
     s32 active;
 };
 
-extern struct MenuState *D_8009FA94[];
+extern struct MenuState *gGameSession[] __asm__("D_8009FA94");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 D_8009F3C1;
 extern s32 D_8009F8F0[];
@@ -53,7 +53,7 @@ void func_8007A7A0(s32 command, s32 x, s32 y)
     {
         register s32 *entry __asm__("$3");
         index = 0;
-        if (D_8009FA94[0]->active != 0) {
+        if (gGameSession[0]->active != 0) {
             index = gActivePlayerIndex;
         }
         func_80046C84(0x47, 0);
@@ -78,7 +78,7 @@ void func_8007A7A0(s32 command, s32 x, s32 y)
         s32 flag;
         s32 below;
         index = 0;
-        if (D_8009FA94[0]->active != 0) {
+        if (gGameSession[0]->active != 0) {
             index = gActivePlayerIndex;
         }
         func_80046C84(0x47, 0);
@@ -126,7 +126,7 @@ void func_8007A7A0(s32 command, s32 x, s32 y)
             textId = -1;
             break;
         }
-        if (D_8009FA94[0]->active != 1 || D_8009FA94[0]->mode != 2) {
+        if (gGameSession[0]->active != 1 || gGameSession[0]->mode != 2) {
             if (gActivePlayerIndex != 0) {
                 textId = -1;
             }

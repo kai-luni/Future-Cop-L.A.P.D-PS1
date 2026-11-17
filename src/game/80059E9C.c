@@ -4,7 +4,7 @@ struct Player { u16 values[0x14]; s32 a; s32 b; u8 pad[0x91]; s8 index; };
 struct State { u8 pad[0x134]; struct Defaults *defaults; };
 struct Defaults { u8 pad[0x28]; u16 values[0]; };
 struct Global { u8 pad[0xAC]; struct Player *player; };
-extern s32 *D_8009FA94[];
+extern s32 *gGameSession[] __asm__("D_8009FA94");
 extern struct State *gSinglePlayerEntity[] __asm__("D_8009F9EC");
 extern struct Global *D_8009FA58[];
 /**
@@ -44,19 +44,19 @@ s32 func_80059E9C(struct Player *player, s32 id)
     if (id < 15) {
         switch (id) {
         case 12:
-            if (player) { index = player->index; base = D_8009FA94[0]; index += 0x21; goto indexed; }
-            ptr = D_8009FA94[0] + 0x22; goto fetch;
+            if (player) { index = player->index; base = gGameSession[0]; index += 0x21; goto indexed; }
+            ptr = gGameSession[0] + 0x22; goto fetch;
         case 13:
-            if (player) { index = player->index; base = D_8009FA94[0]; index += 0x19; goto indexed; }
-            ptr = D_8009FA94[0] + 0x1A; goto fetch;
+            if (player) { index = player->index; base = gGameSession[0]; index += 0x19; goto indexed; }
+            ptr = gGameSession[0] + 0x1A; goto fetch;
         case 14:
             if (player) {
-                index = player->index; base = D_8009FA94[0]; index += 0x1F;
+                index = player->index; base = gGameSession[0]; index += 0x1F;
 indexed:
                 ptr = base + index;
                 goto fetch;
             }
-            ptr = D_8009FA94[0] + 0x20;
+            ptr = gGameSession[0] + 0x20;
 fetch:
             return *ptr;
         default:

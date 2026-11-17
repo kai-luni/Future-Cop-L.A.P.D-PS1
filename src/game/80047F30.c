@@ -43,7 +43,7 @@ typedef struct State {
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern State *D_8009FA94;
+extern State *gGameSession __asm__("D_8009FA94");
 extern Game *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern u8 D_8009F34C[], D_8009F354[], D_800117C0[];
 extern u8 **D_8009F348;
@@ -198,14 +198,14 @@ void func_80047F30(Game *game)
     }
     if (gPlayerCount >= 2 && !game->player->valuec1)
         func_8001C214(1, 318, 0, 2, 480, 0);
-    state = D_8009FA94;
+    state = gGameSession;
     if (state->mode != 1) return;
     score = state->score[game->player->valuec1];
     func_8008CD30(text, D_8009F34C, score);
     flash = 0;
     if (score >= 30 && (gDiscShadeByte & 0x80)) {
-        register s32 a __asm__("$3") = D_8009FA94->total1;
-        register s32 b __asm__("$2") = D_8009FA94->total2;
+        register s32 a __asm__("$3") = gGameSession->total1;
+        register s32 b __asm__("$2") = gGameSession->total2;
         __asm__ volatile("" : "+r"(a), "+r"(b));
         a += b;
         __asm__ volatile("" : "+r"(a));
@@ -232,19 +232,19 @@ void func_80047F30(Game *game)
                 func_80049100(text, arg, 20, c);
             }
         }
-        func_8008CD30(text, D_800117C0, D_8009FA94->count1, D_8009FA94->count2);
+        func_8008CD30(text, D_800117C0, gGameSession->count1, gGameSession->count2);
         func_8001C214(1, (x + 127) * 2, 64, 60, 20, 1);
         func_80049100(text, x + 130, 32, 1);
         if (gPlayerCount != 1) return;
         {
         register s32 one __asm__("$16");
         register s32 height __asm__("$20");
-        score = D_8009FA94->score[1];
+        score = gGameSession->score[1];
         func_8008CD30(text, D_8009F34C, score);
         flash = 0;
         if (score >= 30 && (gDiscShadeByte & 0x80)) {
-            register s32 a __asm__("$3") = D_8009FA94->total1;
-            register s32 b __asm__("$2") = D_8009FA94->total2;
+            register s32 a __asm__("$3") = gGameSession->total1;
+            register s32 b __asm__("$2") = gGameSession->total2;
             __asm__ volatile("" : "+r"(a), "+r"(b));
             a += b;
             __asm__ volatile("" : "+r"(a));
@@ -275,12 +275,12 @@ void func_80047F30(Game *game)
                 func_80049100(text, arg, 44, c);
             }
         }
-        func_8008CD30(text, D_800117C0, D_8009FA94->count3, D_8009FA94->count4);
+        func_8008CD30(text, D_800117C0, gGameSession->count3, gGameSession->count4);
         func_8001C214(1, (x + 127) * 2, 112, 60, height, one);
         }
         func_80049100(text, x + 130, 56, 3);
         if (!gSinglePlayerEntity) return;
-        func_8008CD30(text, D_8009F354, D_8009FA94->stage + 1);
+        func_8008CD30(text, D_8009F354, gGameSession->stage + 1);
         func_80049100(text, 274, 216, 8);
         other = gSinglePlayerEntity;
         if (other->health > 0) {
@@ -295,7 +295,7 @@ void func_80047F30(Game *game)
         color = 3;
         if (flash) color = 9;
         func_80049100(text, 6, 20, color);
-        func_8008CD30(text, D_800117C0, D_8009FA94->count3, D_8009FA94->count4);
+        func_8008CD30(text, D_800117C0, gGameSession->count3, gGameSession->count4);
         func_8001C214(1, 6, 64, 60, 20, 1);
         func_80049100(text, 6, 32, 3);
     }

@@ -36,7 +36,7 @@ struct Unk53188Arg {
     s32 unk8;
 };
 
-extern u8 *D_8009FA94;
+extern u8 *gGameSession __asm__("D_8009FA94");
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 extern s8 D_8009ACF4[][10];
 
@@ -156,9 +156,9 @@ void func_80053188(struct Unk53188 *arg0, u32 arg1)
             case 1:
                 arg0->unkAC->unk146 = 1;
                 if (arg0->unkAC->unkC1 != 0) {
-                    ptr = D_8009FA94 + 0x98;
+                    ptr = gGameSession + 0x98;
                 } else {
-                    ptr = D_8009FA94 + 0x8;
+                    ptr = gGameSession + 0x8;
                 }
                 if (*(s32 *)ptr != 0) {
                     goto case1_body;

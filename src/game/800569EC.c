@@ -74,7 +74,7 @@ struct Locals569EC {
     struct Camera569EC *saved;
 };
 
-extern struct Mode569EC *D_8009FA94;
+extern struct Mode569EC *gGameSession __asm__("D_8009FA94");
 extern struct Override569EC *D_8009F9A0;
 extern s32 D_8009FA84;
 extern struct Camera569EC *gCamera __asm__("D_8009F9E4");
@@ -255,7 +255,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
     }
     if (info->lock != 0) {
         info->selected = 17;
-    } else if (info->mode != 0 && D_8009FA94->mode != 1) {
+    } else if (info->mode != 0 && gGameSession->mode != 1) {
         if (info->selected == 0) {
             info->selected = func_80056870(object);
         }

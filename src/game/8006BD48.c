@@ -20,7 +20,7 @@ struct Unk6BD48State {
     s32 unk98;
 };
 
-extern struct Unk6BD48State *D_8009FA94;
+extern struct Unk6BD48State *gGameSession __asm__("D_8009FA94");
 
 /**
  *  @brief Selects and adjusts a target value according to shared state.
@@ -55,9 +55,9 @@ s32 func_8006BD48(struct Unk6BD48Obj *obj, struct Unk6BD48Tgt *tgt, s32 flag)
     }
 
     if (*(s8 *)(obj->ctl + 0xC1) == 0) {
-        state = D_8009FA94->unk8;
+        state = gGameSession->unk8;
     } else {
-        state = D_8009FA94->unk98;
+        state = gGameSession->unk98;
     }
 
     switch (state) {

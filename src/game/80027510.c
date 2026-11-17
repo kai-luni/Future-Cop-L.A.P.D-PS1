@@ -42,7 +42,7 @@ extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C;
 extern s32 D_8009F678[];
 extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C_b, D_8009FA5C_c, D_8009FA5C_d, D_8009FA5C_e;
 extern s32 gScreenState __asm__("D_8009FA00");
-extern struct Menu *D_8009FA94;
+extern struct Menu *gGameSession __asm__("D_8009FA94");
 extern s32 D_8009FA6C;
 extern u32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 D_8009FA84;
@@ -187,7 +187,7 @@ void func_80027510(void)
                     D_8009F678[i] = 0;
                 }
                 func_80046C84(0x3E, game);
-            } else if (D_8009FA94->unk5C == 1 && D_8009FA94->unkC == 2) {
+            } else if (gGameSession->unk5C == 1 && gGameSession->unkC == 2) {
                 func_80046C84(0x3E, game);
             }
         }
@@ -196,11 +196,11 @@ void func_80027510(void)
     }
     if (!(D_8009FA58.ptr->unk24 & 0x1000000) && D_8009FA58.ptr->unkAC->unk310 != 0) {
         flags |= 1;
-        if (D_8009FA94->unk5C == 0 || D_8009FA6C != 0) flags |= 0x20;
+        if (gGameSession->unk5C == 0 || D_8009FA6C != 0) flags |= 0x20;
     }
     if (!(D_8009FA5C.ptr->unk24 & 0x1000000) && D_8009FA5C.ptr->unkAC->unk310 != 0) {
         flags |= 2;
-        if (D_8009FA94->unk5C == 0 || D_8009FA6C != 0) flags |= 0x20;
+        if (gGameSession->unk5C == 0 || D_8009FA6C != 0) flags |= 0x20;
     }
     if (gSceneFrameCounter >= 2 && (func_8001EF34(0) == 0 || func_8001EF34(1) == 0) && D_8009FA84 == 0) {
         flags |= 0x20;
@@ -236,7 +236,7 @@ void func_80027510(void)
         func_80017B60(D_8009FA58.ptr->unkAC->unkAC);
         func_80013C80();
         if (flags & 1) {
-            func_80026DDC(D_8009FA58.ptr, 0, flags & 0x20, D_8009FA94->unk5C == 1);
+            func_80026DDC(D_8009FA58.ptr, 0, flags & 0x20, gGameSession->unk5C == 1);
             func_8001C214(1, 0x13E, 0, 2, 0x1E0, 0);
         } else {
             func_80026E1C(0, D_8009FA58.ptr);
@@ -275,7 +275,7 @@ void func_80027510(void)
             func_80017B60(D_8009FA5C_b.ptr->unkAC->unkAC);
             func_80013C80();
             if (flags & 2) {
-                func_80026DDC(D_8009FA5C_c.ptr, 1, flags & 0x20, D_8009FA94->unk5C == 1);
+                func_80026DDC(D_8009FA5C_c.ptr, 1, flags & 0x20, gGameSession->unk5C == 1);
             } else {
                 func_80026E1C(1, D_8009FA5C_d.ptr);
                 func_80047F30(D_8009FA5C_e.ptr);
@@ -316,7 +316,7 @@ void func_80027510(void)
             D_8009FA38 = gPaletteCycleCounter;
             func_8001EB6C();
             func_800476D0();
-            if (D_8009FA94->unk5C == 0) {
+            if (gGameSession->unk5C == 0) {
                 index = flags & 1;
                 __asm__ volatile("" : "=r"(index) : "0"(index));
                 index = !index;

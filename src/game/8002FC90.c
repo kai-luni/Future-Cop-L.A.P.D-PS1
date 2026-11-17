@@ -29,7 +29,7 @@ typedef struct UnkFA94 {
 
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern UnkFA94 *D_8009FA94;
+extern UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern UnkFC90Obj *D_8009FA58[2];
 
 extern void func_8005A190(UnkFC90Sub *sub, s32 index, s32 value);
@@ -133,7 +133,7 @@ void func_8002FC90(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4)
             if (gPlayerCount < 2) {
                 continue;
             }
-            if (D_8009FA94->unk5C != 0) {
+            if (gGameSession->unk5C != 0) {
                 continue;
             }
         }

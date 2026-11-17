@@ -27,7 +27,7 @@ struct Unk330E8Global {
     s32 unkE0;
 };
 
-extern struct Unk330E8Global *D_8009FA94;
+extern struct Unk330E8Global *gGameSession __asm__("D_8009FA94");
 
 /**
  * Updates an object's strategic position according to its AI mode.
@@ -71,7 +71,7 @@ void func_800330E8(struct Unk330E8Obj *obj)
         break;
     case 1:
         obj->unkDC = e->unk00;
-        D_8009FA94->unkE0 = type;
+        gGameSession->unkE0 = type;
         break;
     case 0:
         obj->unkDC.x = e->unk0C.x + ((e->unk00.x - e->unk0C.x) >> 1);

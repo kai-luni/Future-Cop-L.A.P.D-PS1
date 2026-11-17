@@ -16,7 +16,7 @@ struct O59ABC {
     struct C59ABC *unkB4;
 };
 
-extern struct G59ABC *D_8009FA94;
+extern struct G59ABC *gGameSession __asm__("D_8009FA94");
 
 extern s32 func_8002AD58(s32 message, struct O59ABC *object, s32 data);
 extern s32 func_800584BC(s32 message, struct C59ABC *child, s32 data, s32 arg3, s32 arg4);
@@ -78,7 +78,7 @@ zero:
     case 14:
         return func_800584BC(message, object->unkB4, data, arg3, 1);
     case 4:
-        if (D_8009FA94->unk5C == 1) {
+        if (gGameSession->unk5C == 1) {
             goto zero;
         }
     default:

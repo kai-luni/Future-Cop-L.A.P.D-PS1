@@ -8,7 +8,7 @@ typedef struct {
     s32 unk5C;
 } Mode;
 
-extern Mode *D_8009FA94;
+extern Mode *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009FAC4;
 extern u8 D_800A35FD[];
 extern u8 D_800A35FB[];
@@ -50,7 +50,7 @@ void func_8007E7A8(void)
     Mode *p;
 
     D_8009FAC4 = 1;
-    if (D_8009FA94->unk0C == 2) {
+    if (gGameSession->unk0C == 2) {
         D_800A35FD[0] = 0;
     } else {
         D_800A35FD[0] = 1;
@@ -72,7 +72,7 @@ void func_8007E7A8(void)
         i++;
         src++;
     } while (i < 10);
-    p = D_8009FA94;
+    p = gGameSession;
     D_8009F8F8 = 0;
     __asm__ volatile("" ::: "memory");
     D_8009F92A = 0;

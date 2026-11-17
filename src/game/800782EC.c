@@ -13,7 +13,7 @@ extern s8 D_8009F3F1, D_8009FA10;
 extern u8 D_8009F3C2, D_8009F8D8, D_8009F8D9;
 extern s8 *D_8009F884;
 extern s8 D_8009F458;
-extern struct Mode *D_8009FA94[];
+extern struct Mode *gGameSession[] __asm__("D_8009FA94");
 extern struct Entry D_8009B4E4[];
 extern char D_800A38F8[];
 extern void func_80078210(void), func_8001EC04(s32, s32), func_80078650(void *, s32);

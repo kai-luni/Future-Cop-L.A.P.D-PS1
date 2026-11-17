@@ -56,7 +56,7 @@ extern s32 D_8009F8C4, D_8009F8C8;
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 struct GameContext { u8 pad00[12]; s32 type; u8 pad10[0x4c]; s32 stage; };
-extern struct GameContext *D_8009FA94;
+extern struct GameContext *gGameSession __asm__("D_8009FA94");
 extern struct Menu D_800A38F8, D_800A36B8, D_800A3658, D_800A3628, D_800A37D8, D_800A37A8, D_800A3688;
 extern struct Menu *D_8009B8B8[];
 extern s32 func_80046C84(s32, s32), func_80078740(void);
@@ -334,15 +334,15 @@ reset_timer:
             }
             switch (D_8009F8C8) {
             case 1:
-                if (D_8009FA94->type == 2) {
-                    if (D_8009FA94->stage == 1) {
+                if (gGameSession->type == 2) {
+                    if (gGameSession->stage == 1) {
                         if (D_8009F8C4) {
                             D_8009B8B8[0] = &D_800A3658;
                             func_80078650(&D_800A3688, 1);
                         } else func_80078650(&D_800A3658, 1);
                     } else func_80078650(&D_800A3658, 1);
                 } else {
-                    if (D_8009FA94->stage == 1) {
+                    if (gGameSession->stage == 1) {
                         if (D_8009F8C4) {
                             D_8009B8B8[0] = &D_800A3628;
                             func_80078650(&D_800A3688, 1);
@@ -351,17 +351,17 @@ reset_timer:
                 }
                 break;
             case 4:
-                if (D_8009FA94->type == 2) func_80078650(&D_800A37D8, 1);
+                if (gGameSession->type == 2) func_80078650(&D_800A37D8, 1);
                 else func_80078650(&D_800A37A8, 1);
                 break;
             case 5:
                 if (D_8009F468 == &D_800A3808) {
                     if (D_8009F8C4) {
-                        if (D_8009FA94->type == 2) D_8009B8B8[0] = &D_800A37D8;
+                        if (gGameSession->type == 2) D_8009B8B8[0] = &D_800A37D8;
                         else D_8009B8B8[0] = &D_800A37A8;
                         func_80078650(&D_800A3688, 1);
                     } else {
-                        if (D_8009FA94->type == 2) func_80078650(&D_800A37D8, 1);
+                        if (gGameSession->type == 2) func_80078650(&D_800A37D8, 1);
                         else func_80078650(&D_800A37A8, 1);
                     }
                 } else {

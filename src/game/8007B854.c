@@ -19,7 +19,7 @@ typedef struct {
     u8 pad50[0xC];
     s32 unk5C;
 } State;
-extern State *D_8009FA94;
+extern State *gGameSession __asm__("D_8009FA94");
 extern Entry D_8009B4E4[];
 extern s8 D_8009F8C0[];
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
@@ -136,7 +136,7 @@ void func_8007B854(s32 arg0)
         special = 0;
         if (*p != 0) {
             ready = 0;
-            state = D_8009FA94;
+            state = gGameSession;
             if (state->unk5C == 1) {
                 if (state->unkC == 1) {
                     if (*p == 1) {
@@ -171,7 +171,7 @@ SELECTION_DONE:;
                     ready = 1;
                 }
                 if (ready) {
-                    if (D_8009FA94->unkC == 1) message = D_800A3628;
+                    if (gGameSession->unkC == 1) message = D_800A3628;
                     else message = D_800A3658;
                     func_80078650(message, 1);
                     D_8009F8C8 = 2;

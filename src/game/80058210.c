@@ -36,7 +36,7 @@ struct Unk58210Global {
 };
 
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
-extern struct Unk58210Global *D_8009FA94;
+extern struct Unk58210Global *gGameSession __asm__("D_8009FA94");
 
 extern void func_80057358(void *object, s32 amount);
 extern void func_8003BA50(void *object, s32 value);
@@ -121,7 +121,7 @@ void func_80058210(struct Unk58210 *object, s32 amount)
         max = 0;
     }
 
-    if (D_8009FA94->unk5C != 0) {
+    if (gGameSession->unk5C != 0) {
         max /= 2;
     }
 

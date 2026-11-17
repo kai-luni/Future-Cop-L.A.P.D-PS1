@@ -4,7 +4,7 @@
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009F658;
 extern s32 gUploadInProgress __asm__("D_8009F9C4");
-extern u8 *D_8009FA94;
+extern u8 *gGameSession __asm__("D_8009FA94");
 extern u8 gFormatNamePair[] __asm__("D_8009F2E4");
 
 extern void func_800247A8(void);
@@ -52,7 +52,7 @@ s32 func_80024E3C(s32 arg0)
     func_800247A8();
     gScreenState = 1;
     D_8009F658 = 0;
-    *(s32 *)(D_8009FA94 + 0x10) = 4;
+    *(s32 *)(gGameSession + 0x10) = 4;
 
     r = func_800833A8(arg0);
     func_8008CD30(buf, gFormatNamePair, r, arg0);

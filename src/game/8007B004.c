@@ -16,7 +16,7 @@ typedef struct Unk7B004Node {
     struct Unk7B004Node *unk24;
 } Unk7B004Node;
 
-extern Unk7B004Mode *D_8009FA94;
+extern Unk7B004Mode *gGameSession __asm__("D_8009FA94");
 extern volatile s32 D_8009F8E0;
 extern volatile s32 D_8009F8E4;
 extern volatile s32 D_8009F8F0;
@@ -53,7 +53,7 @@ void func_8007B004(void)
     u8 *base;
     s32 v98;
 
-    mode = D_8009FA94;
+    mode = gGameSession;
     D_8009F8F0 = mode->unk08;
     __asm__ volatile("" ::: "memory");
     base = D_8009BB34;
@@ -73,7 +73,7 @@ void func_8007B004(void)
     }
 
 
-    mode = D_8009FA94;
+    mode = gGameSession;
     if (mode->unk5C == 1) {
         if (mode->unk0C == 1) {
             D_800A37AB[0] = 9;

@@ -45,7 +45,7 @@ struct Frame592D0 {
 };
 
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern u8 *D_8009FA94;
+extern u8 *gGameSession __asm__("D_8009FA94");
 extern struct Unk592D0 *D_8009FA58[];
 extern u8 D_8009AF40[];
 extern u8 *gPacketCursor __asm__("D_8009FA90");
@@ -108,7 +108,7 @@ void func_800592D0(struct Unk592D0 *arg0)
     if (gPlayerCount < 2) {
         return;
     }
-    if (*(s32 *)(D_8009FA94 + 0x5C) != 0) {
+    if (*(s32 *)(gGameSession + 0x5C) != 0) {
         return;
     }
     func_800536B4(&frame.near, &frame.far);

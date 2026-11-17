@@ -71,7 +71,7 @@ struct Unk2D664Entity {
 
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk2D664State *gSinglePlayerEntity __asm__("D_8009F9EC");
-extern struct Unk2D664Menu *D_8009FA94;
+extern struct Unk2D664Menu *gGameSession __asm__("D_8009FA94");
 extern struct Unk2D664Player *D_8009FA58[2];
 
 extern s32 func_8002AD58(s32 message, struct Unk2D664Obj *object, void *data,

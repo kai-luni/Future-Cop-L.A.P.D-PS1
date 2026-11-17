@@ -82,7 +82,7 @@ struct Glob {
 };
 
 extern struct Unit *D_8009FA40;
-extern struct Glob *D_8009FA94;
+extern struct Glob *gGameSession __asm__("D_8009FA94");
 extern struct Unit *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void *D_8009FA58;
@@ -95,7 +95,7 @@ extern void func_800336A8(struct Unit *self, void *anim);
 extern s32 func_80095900(s32 v);
 extern void func_800330E8(struct Unit *self);
 
-#define G D_8009FA94
+#define G gGameSession
 #define GC(i, k) (((s32 *)((s32)((i) << 3) + (s32)G))[0x30 + (k)])
 
 #define ABS(v)                           \

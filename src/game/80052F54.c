@@ -22,7 +22,7 @@ struct Game {
     s32 mode1;
 };
 
-extern struct Game *D_8009FA94;
+extern struct Game *gGameSession __asm__("D_8009FA94");
 extern s32 func_80095900(s32 value);
 
 /**
@@ -91,9 +91,9 @@ s32 func_80052F54(struct Object *obj, s32 val)
         val *= 100;
 
         if (obj->info->side != 0) {
-            modePtr = &D_8009FA94->mode1;
+            modePtr = &gGameSession->mode1;
         } else {
-            modePtr = &D_8009FA94->mode0;
+            modePtr = &gGameSession->mode0;
         }
         mode = *modePtr;
 

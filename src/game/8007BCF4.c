@@ -16,7 +16,7 @@ extern s8 D_8009F8C0;
 extern s8 D_8009F8C0_arr[];
 extern s32 D_8009F8C8;
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern struct State8009FA94 *D_8009FA94;
+extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009F484[];
 extern u8 D_8009B3D4[];
 extern s8 D_800A3838[];
@@ -150,9 +150,9 @@ case_2:
     goto common;
 case_3:
     a0 = 0xC3A;
-    if (D_8009FA94->unk5C == 1) {
+    if (gGameSession->unk5C == 1) {
         a0 = 0xC30;
-        if (D_8009FA94->unk0C == 1) {
+        if (gGameSession->unk0C == 1) {
             a0 = 0xC3A;
         }
     }

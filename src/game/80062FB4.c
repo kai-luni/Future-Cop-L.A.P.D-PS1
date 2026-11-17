@@ -5,7 +5,7 @@ typedef struct { char pad[0x5c]; int mode; } Context;
 typedef struct { char pad[0x18]; int count; } Other;
 typedef struct { u32 x,y,w,h; int width,height; } Rect;
 typedef struct { u8 flag; char pad[0x43]; } Entry;
-extern volatile Context *D_8009FA94;
+extern volatile Context *gGameSession __asm__("D_8009FA94");
 extern Other *D_8009F80C;
 extern int gPlayerCount __asm__("D_8009FA0C");
 extern volatile int D_8009F82C, D_8009F828;
@@ -47,7 +47,7 @@ void func_80062FB4(void)
     Entry *entry;
     D_8009F82C = 0;
     D_8009F828 = 0;
-    if (D_8009FA94->mode == 1) {
+    if (gGameSession->mode == 1) {
         h = D_800A2970.height - 16;
         w = D_800A2970.width - D_8009F80C->count * 8 + 8;
         x = y = (D_8009F80C->count - 1) * 4;

@@ -14,7 +14,7 @@ struct Unk78210Panel {
     u8 unk06[0x2A];
 };
 
-extern struct Unk78210Mode *D_8009FA94[];
+extern struct Unk78210Mode *gGameSession[] __asm__("D_8009FA94");
 extern struct Unk78210Panel D_800A3868;
 extern struct Unk78210Panel D_800A3898;
 extern struct Unk78210Panel D_800A38C8;
@@ -48,8 +48,8 @@ extern void func_80078650(struct Unk78210Panel *panel, s32 arg1);
 void func_80078210(void)
 {
     func_8007A168();
-    if (D_8009FA94[0]->players == 1) {
-        if (D_8009FA94[0]->split == 1) {
+    if (gGameSession[0]->players == 1) {
+        if (gGameSession[0]->split == 1) {
             func_80078650(&D_800A38C8, 0);
         } else {
             func_80078650(&D_800A3868, 0);
@@ -60,7 +60,7 @@ void func_80078210(void)
         *(volatile s32 *)&D_8009F8E0 = 0;
         *(volatile s32 *)&D_8009F8E4 = 0;
         *(volatile u8 *)&D_800A377D[0] = 0;
-        if (((volatile struct Unk78210Mode *)D_8009FA94[0])->split == 1) {
+        if (((volatile struct Unk78210Mode *)gGameSession[0])->split == 1) {
             func_80078650(&D_800A3898, 0);
         } else {
             func_80078650(&D_800A3868, 0);

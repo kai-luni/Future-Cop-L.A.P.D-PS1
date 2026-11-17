@@ -44,7 +44,7 @@ struct Global {
     s32 unk4C;
 };
 
-extern struct Global *D_8009FA94;
+extern struct Global *gGameSession __asm__("D_8009FA94");
 extern s32 func_80019668(void);
 extern void func_80033608(struct Entity *self, void *anim);
 extern void func_8004D958(struct State *state);
@@ -171,7 +171,7 @@ void func_8003532C(void *arg0, struct Entity *self, s32 arg2) {
             self->pos = a2->pos;
             self->unkFA = 1;
 
-            self->unkF4 += self->unkF4 >> (4 - (D_8009FA94->unk4C >> 2));
+            self->unkF4 += self->unkF4 >> (4 - (gGameSession->unk4C >> 2));
 
             func_80033608(self, 0);
             goto L_final;
@@ -215,7 +215,7 @@ void func_8003532C(void *arg0, struct Entity *self, s32 arg2) {
 L_timer:
     self->unk134->unk18 -= arg2;
     if (self->unk134->unk18 < 0) {
-        dist = (9 - D_8009FA94->unk4C) * 80 + 128;
+        dist = (9 - gGameSession->unk4C) * 80 + 128;
         if (self->unk134->unk1A != 2) {
             dist += func_80019668() & 0xFF;
         } else {

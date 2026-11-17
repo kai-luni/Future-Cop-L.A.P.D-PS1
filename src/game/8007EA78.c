@@ -22,7 +22,7 @@ extern u8 D_8009C1BC[];
 extern u8 D_8009C1AC[];
 extern struct Entry D_8009B4E4[];
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
-extern struct Unk9FA94 *D_8009FA94;
+extern struct Unk9FA94 *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009F3C0;
 extern u8 D_8009F3C1;
 extern u8 D_8009F3C3;
@@ -218,11 +218,11 @@ s32 func_8007EA78(void)
         if (c1 == (sum & 3)) {
             if (c2 != (sum & 0xF)) return ret; {
                 if (g1) {
-                    D_8009FA94->unk8C = g1;
+                    gGameSession->unk8C = g1;
                 }
                 if (g2) {
-                    D_8009FA94->unk90 = g2;
-                    D_8009FA94->unk94 = g3;
+                    gGameSession->unk90 = g2;
+                    gGameSession->unk94 = g3;
                 }
                 if (g7) {
                     D_8009F3C0 = f7;
@@ -249,7 +249,7 @@ s32 func_8007EA78(void)
                 D_8009B4E4[gFrontEndListTable[3]].unk20 = n4;
                 D_8009B4E4[gFrontEndListTable[4]].unk20 = n5;
                 func_80077FFC();
-                if (D_8009FA94->unk5C == 1) {
+                if (gGameSession->unk5C == 1) {
                     func_80077708();
                 } else {
                     func_800776B8();

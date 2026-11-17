@@ -33,7 +33,7 @@ typedef struct {
 } SomeState;
 
 extern s32 D_8009FA84;
-extern SomeState *D_8009FA94;
+extern SomeState *gGameSession __asm__("D_8009FA94");
 extern LoadedData *D_8009F7D0;
 extern u8 D_80011B00[];
 
@@ -97,7 +97,7 @@ void func_80059BFC(s32 countArg, s32 seed, u8 *nameArg)
     D_8009F7D0 = data;
     if (data != 0) {
         ptr = data->data;
-        state = D_8009FA94;
+        state = gGameSession;
         state->unk08 = data->unk01;
         state->unk98 = data->unk01;
         state->unk28 = data->unk02;

@@ -6,7 +6,7 @@ typedef struct {
     s32 unk10;
 } UnkFA94;
 
-extern UnkFA94 *D_8009FA94;
+extern UnkFA94 *gGameSession __asm__("D_8009FA94");
 
 extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gFrameId __asm__("D_8009F9FC");
@@ -163,6 +163,6 @@ s32 func_800259D8(void)
 
     gDiscShadeByte = 0;
     D_8009FA30 = 0;
-    D_8009FA94->unk10 = one;
+    gGameSession->unk10 = one;
     return one;
 }

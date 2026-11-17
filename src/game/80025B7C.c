@@ -11,7 +11,7 @@ typedef struct {
     s32 unk60;
 } UnkFA94;
 
-extern UnkFA94 *D_8009FA94;
+extern UnkFA94 *gGameSession __asm__("D_8009FA94");
 
 extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gFrameId __asm__("D_8009F9FC");
@@ -87,13 +87,13 @@ void func_80025B7C(s32 arg0)
     goto *jtbl_80010DDC[index];
 
 state_5:
-        D_8009FA94->unk10 = 2;
+        gGameSession->unk10 = 2;
         goto state_done;
 state_6:
-        D_8009FA94->unk10 = 2;
+        gGameSession->unk10 = 2;
         goto state_done;
 state_7:
-        D_8009FA94->unk10 = 3;
+        gGameSession->unk10 = 3;
         goto state_done;
 state_8:
         if (D_8009FA70 == 0) {
@@ -108,24 +108,24 @@ state_8:
                 func_80025348();
             }
         }
-        D_8009FA94->unk10 = 0;
+        gGameSession->unk10 = 0;
         goto state_done;
 state_9:
-        if (D_8009FA94->unk40 == D_8009FA94->unk44) {
-            D_8009FA94->unk10 = 0;
+        if (gGameSession->unk40 == gGameSession->unk44) {
+            gGameSession->unk10 = 0;
         } else {
-            D_8009FA94->unk10 = 1;
+            gGameSession->unk10 = 1;
         }
         goto state_done;
 state_default:
-        D_8009FA94->unk10 = 4;
+        gGameSession->unk10 = 4;
 
 state_done:
     func_80047690(0);
     func_80029DD8();
     func_80023BF8();
 
-    D_8009FA94->unk60 = 0;
+    gGameSession->unk60 = 0;
     if (gUploadInProgress != 0) {
         func_800249BC(saved_arg);
     } else {

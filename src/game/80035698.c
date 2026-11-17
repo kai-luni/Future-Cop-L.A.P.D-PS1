@@ -72,7 +72,7 @@ struct PlayerFA58 {
     u16 unk14;
 };
 
-extern struct GlobalFA94 *D_8009FA94;
+extern struct GlobalFA94 *gGameSession __asm__("D_8009FA94");
 extern struct PlayerFA58 *D_8009FA58;
 extern u16 gFrameId __asm__("D_8009F9FC");
 extern void *jtbl_80011318[];
@@ -154,7 +154,7 @@ void func_80035698(struct Self *self) {
     self->unkFA = self->unk134->unk1D;
     {
         register s32 nine __asm__("$2") = 9;
-        register struct GlobalFA94 *global __asm__("$3") = D_8009FA94;
+        register struct GlobalFA94 *global __asm__("$3") = gGameSession;
         global->unkE0 = nine;
     }
 }

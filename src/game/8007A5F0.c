@@ -16,7 +16,7 @@ struct Unk78210Panel {
     u8 unk06[0x2A];
 };
 
-extern struct Unk78210Mode *D_8009FA94;
+extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
 extern volatile s32 D_8009F8F0;
 extern s32 D_8009F8F4;
 extern s8 *D_8009F468;
@@ -64,7 +64,7 @@ void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
         if (a0 != 3) {
             return;
         }
-        mode = D_8009FA94;
+        mode = gGameSession;
         p = D_8009F468;
         mode->unk08 = D_8009F8F0;
         __asm__ volatile("" ::: "memory");

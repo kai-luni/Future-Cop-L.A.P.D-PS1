@@ -10,7 +10,7 @@ extern u8 gScriptVmDisabled __asm__("D_8009F840");
 extern s32 D_800A3320[];
 extern s32 *D_8009F9A4;
 extern s32 *D_8009F9F8;
-extern s32 *D_8009FA94;
+extern s32 *gGameSession __asm__("D_8009FA94");
 extern s32 *D_8009FAD4;
 extern s8 D_800A8540[];
 
@@ -215,10 +215,10 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             a = saved;
             goto push;
         case 16:
-            a = D_8009FA94[a];
+            a = gGameSession[a];
             goto push;
         case 17:
-            a = *(s32 *)(D_8009FA94[a + 0x39]);
+            a = *(s32 *)(gGameSession[a + 0x39]);
             goto push;
         case 18:
             a = D_8009F9A4[a] / 5;
@@ -227,10 +227,10 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             a = D_8009FAD4[a];
             goto push;
         case 29:
-            D_8009FA94[a] = b;
+            gGameSession[a] = b;
             break;
         case 30:
-            *(s32 *)(D_8009FA94[a + 0x39]) = b;
+            *(s32 *)(gGameSession[a + 0x39]) = b;
             break;
         case 31:
             D_8009F9A4[a] = b * 5;
@@ -239,10 +239,10 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             D_8009FAD4[a] = b;
             break;
         case 21:
-            D_8009FA94[a]++;
+            gGameSession[a]++;
             goto push;
         case 22:
-            D_8009FA94[a + 0x39]++;
+            gGameSession[a + 0x39]++;
             goto push;
         case 23:
             D_8009F9A4[a] += 5;
@@ -251,10 +251,10 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             D_8009FAD4[a]++;
             goto push;
         case 25:
-            D_8009FA94[a]--;
+            gGameSession[a]--;
             goto push;
         case 26:
-            D_8009FA94[a + 0x39]--;
+            gGameSession[a + 0x39]--;
             goto push;
         case 27:
             D_8009F9A4[a] -= 5;
@@ -263,10 +263,10 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             D_8009FAD4[a]--;
             goto push;
         case 48:
-            D_8009FA94[a] += b;
+            gGameSession[a] += b;
             goto push;
         case 49:
-            D_8009FA94[a + 0x39] += b;
+            gGameSession[a + 0x39] += b;
             goto push;
         case 50:
             D_8009F9A4[a] += b * 5;
@@ -275,10 +275,10 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             D_8009FAD4[a] += b;
             goto push;
         case 52:
-            D_8009FA94[a] -= b;
+            gGameSession[a] -= b;
             goto push;
         case 53:
-            D_8009FA94[a + 0x39] -= b;
+            gGameSession[a + 0x39] -= b;
             goto push;
         case 54:
             D_8009F9A4[a] -= b * 5;

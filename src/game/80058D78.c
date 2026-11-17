@@ -7,7 +7,7 @@ struct Data { u8 p0[0x14]; u16 count14, count16; u8 p18[8]; void *ptr20; u8 p24[
 struct Obj { u8 p0[4]; void (*update)(); u32 flags8; u8 pc[8]; u16 tag; u8 p16[6]; s16 angle, other; u8 active; u8 p21[3]; u32 flags24; u8 p28[0x64]; u32 id; u8 p90[0x1c]; Data *data; u8 pb0[0x2c]; Obj *child; u8 pe0[0xc]; void *owner; u8 pf0[0x44]; void *stats; };
 struct Mode { u8 p[0x5c]; int active; };
 struct Stats { u8 p[0x18]; u16 a; u8 p1a[0x22]; u16 b; };
-extern struct Mode *D_8009FA94;
+extern struct Mode *gGameSession __asm__("D_8009FA94");
 extern void *gDiscShadeByte __asm__("D_8009FAA4");
 extern int gScreenState __asm__("D_8009FA00");
 extern int gPlayerCount __asm__("D_8009FA0C");
@@ -94,11 +94,11 @@ void func_80058D78(Obj *o)
             func_80058C3C(o->owner, (u8 *)o->child + 0x5c, o);
             func_800402DC(o, 3, 0, 1, 0);
             func_800402DC(o->child, 9, 0, 1, 0);
-            if (D_8009FA94->active == 1) func_80046C84(0x41, o);
+            if (gGameSession->active == 1) func_80046C84(0x41, o);
         }
         o->flags8 |= 0x800000;
         o->child->flags8 |= 0x800000;
-        if (D_8009FA94->active == 1) {
+        if (gGameSession->active == 1) {
             o->data->timer = first ? 1200 : 150;
             o->flags24 |= 0xa5;
             o->child->flags24 |= 0xa5;

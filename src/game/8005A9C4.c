@@ -38,7 +38,7 @@ struct Unk5A9C4FA94 {
 };
 
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern struct Unk5A9C4FA94 *D_8009FA94;
+extern struct Unk5A9C4FA94 *gGameSession __asm__("D_8009FA94");
 extern struct Unk5A9C4Other *D_8009FA58[];
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 D_800A6F60[32];
@@ -92,7 +92,7 @@ void func_8005A9C4(struct Unk5A9C4 *object)
     angle = -(s32)object->unkB0 - 0x800;
     func_8005A740(colour, angle, 0xF8F8F8);
 
-    if (gPlayerCount >= 2 && D_8009FA94->unk5C == 0) {
+    if (gPlayerCount >= 2 && gGameSession->unk5C == 0) {
         arg = object;
         __asm__("" : : "r" (arg));
         idx = object->unkAC->unkC1;

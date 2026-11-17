@@ -51,7 +51,7 @@ extern u8 D_8009F444[];
 extern u8 D_8009F484[];
 extern u8 D_8009F488[];
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern struct State8009FA94 *D_8009FA94;
+extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
 extern struct MenuEntry D_8009B4E4[];
 extern u8 D_8009B300[];
 extern u8 D_8009B3D4[];
@@ -159,12 +159,12 @@ void func_8007B460(s32 arg0)
         if (i != 0) {
             goto common;
         }
-        if (D_8009FA94->unk5C == 1 && e->state != 0xA) {
+        if (gGameSession->unk5C == 1 && e->state != 0xA) {
             func_800788F0(0, 0x97, 0xA9, 0xC, 0x5226, 1, 8, 2);
         }
 
     common:
-        if (D_8009FA94->unk5C == 1 && D_8009FA94->unk0C == 1) {
+        if (gGameSession->unk5C == 1 && gGameSession->unk0C == 1) {
             if (D_8009F8C0 == 2) {
                 c1 = 0xFF;
                 c2 = c1;
@@ -191,7 +191,7 @@ void func_8007B460(s32 arg0)
             len = e->unk14;
         }
 
-        if (D_8009FA94->unk5C == 1 && D_8009FA94->unk0C == 1) {
+        if (gGameSession->unk5C == 1 && gGameSession->unk0C == 1) {
             s32 n = e->state + 1;
 
             s32 m;

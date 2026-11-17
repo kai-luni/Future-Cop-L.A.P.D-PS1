@@ -54,7 +54,7 @@ extern s32 D_8009FA6C;
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern union SpeedValue267C8 gFrameId __asm__("D_8009F9FC");
-extern struct SoundState267C8 *D_8009FA94;
+extern struct SoundState267C8 *gGameSession __asm__("D_8009FA94");
 extern u8 *D_8009F2D8;
 extern u8 *D_8009F2DC;
 extern u8 *D_8009F2E0;
@@ -200,10 +200,10 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
     }
 
     if (action != 0 && obj->state->selected == -1) {
-        if (D_8009FA94->unk5C == 0 ||
-            (D_8009FA94->unk5C == 1 &&
-             (D_8009FA94->unk0C == 1 ||
-              (D_8009FA94->unk0C == 2 && D_8009FA6C == 1)))) {
+        if (gGameSession->unk5C == 0 ||
+            (gGameSession->unk5C == 1 &&
+             (gGameSession->unk0C == 1 ||
+              (gGameSession->unk0C == 2 && D_8009FA6C == 1)))) {
             func_80046C84(0x3E, D_8009FA58[slot]);
         }
         D_8009FA6C++;

@@ -24,7 +24,7 @@ typedef struct {
     s32 unk98;
 } State;
 
-extern State *D_8009FA94;
+extern State *gGameSession __asm__("D_8009FA94");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 gPendingScreenState __asm__("D_8009F9A8");
 extern s32 D_8009F850;
@@ -187,24 +187,24 @@ s32 func_80076A2C(void)
         register s32 ten __asm__("$6");
         __asm__ volatile("" : : "r"(z0), "r"(z1));
         ten = 0x10;
-        D_8009FA94->unk30 = 0x20;
-        D_8009FA94->unk3C = 0x20;
-        D_8009FA94->unk28 = 0;
-        D_8009FA94->unk2C = ten;
-        D_8009FA94->unk34 = 0;
-        D_8009FA94->unk38 = ten;
-        D_8009FA94->unk8C = 0;
-        D_8009FA94->unk90 = 0;
-        D_8009FA94->unk94 = 0;
-        D_8009FA94->unk8 = 1;
-        D_8009FA94->unk98 = 1;
-        D_8009FA94->unk4C = 0;
+        gGameSession->unk30 = 0x20;
+        gGameSession->unk3C = 0x20;
+        gGameSession->unk28 = 0;
+        gGameSession->unk2C = ten;
+        gGameSession->unk34 = 0;
+        gGameSession->unk38 = ten;
+        gGameSession->unk8C = 0;
+        gGameSession->unk90 = 0;
+        gGameSession->unk94 = 0;
+        gGameSession->unk8 = 1;
+        gGameSession->unk98 = 1;
+        gGameSession->unk4C = 0;
 
         func_8007BFCC(z0, z1);
         func_8007BFCC(1, 0);
 
         gPendingScreenState = 3;
-        D_8009FA94->unk10 = 3;
+        gGameSession->unk10 = 3;
         func_80077050();
 
         func_8001B2C8(0xC8, 0x200);
@@ -245,34 +245,34 @@ s32 func_80076A2C(void)
                 continue;
             }
 
-            D_8009F850 = D_8009FA94->unk28;
-            D_8009F854 = D_8009FA94->unk2C;
-            D_8009F858 = D_8009FA94->unk30;
-            D_8009F85C = D_8009FA94->unk34;
-            D_8009F860 = D_8009FA94->unk38;
-            D_8009F864 = D_8009FA94->unk3C;
-            D_8009F868 = ((u8 *)D_8009FA94)[8];
-            D_8009F869 = ((u8 *)D_8009FA94)[0x98];
+            D_8009F850 = gGameSession->unk28;
+            D_8009F854 = gGameSession->unk2C;
+            D_8009F858 = gGameSession->unk30;
+            D_8009F85C = gGameSession->unk34;
+            D_8009F860 = gGameSession->unk38;
+            D_8009F864 = gGameSession->unk3C;
+            D_8009F868 = ((u8 *)gGameSession)[8];
+            D_8009F869 = ((u8 *)gGameSession)[0x98];
 
             func_800287F4(D_8009B300, 0);
 
-            D_8009FA94->unk28 = D_8009F850;
-            D_8009FA94->unk2C = D_8009F854;
-            D_8009FA94->unk30 = D_8009F858;
-            D_8009FA94->unk34 = D_8009F85C;
-            D_8009FA94->unk38 = D_8009F860;
-            D_8009FA94->unk3C = D_8009F864;
-            ((s32 *)D_8009FA94)[2] = D_8009F868;
-            ((s32 *)D_8009FA94)[0x26] = D_8009F869;
+            gGameSession->unk28 = D_8009F850;
+            gGameSession->unk2C = D_8009F854;
+            gGameSession->unk30 = D_8009F858;
+            gGameSession->unk34 = D_8009F85C;
+            gGameSession->unk38 = D_8009F860;
+            gGameSession->unk3C = D_8009F864;
+            ((s32 *)gGameSession)[2] = D_8009F868;
+            ((s32 *)gGameSession)[0x26] = D_8009F869;
 
-            if (D_8009FA94->unk4C == 10 &&
-                D_8009FA94->unk5C == s3 &&
-                D_8009FA94->unkC == s3) {
-                D_8009FA94->unk10 = 0;
+            if (gGameSession->unk4C == 10 &&
+                gGameSession->unk5C == s3 &&
+                gGameSession->unkC == s3) {
+                gGameSession->unk10 = 0;
             }
 
-            gPendingScreenState = D_8009FA94->unk10;
-            switch (D_8009FA94->unk10) {
+            gPendingScreenState = gGameSession->unk10;
+            switch (gGameSession->unk10) {
             case 0:
                 if (D_8009F3EC != 0) {
                     func_8008CCB0(D_8009B300, D_8009F3EC);

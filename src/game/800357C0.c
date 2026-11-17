@@ -72,7 +72,7 @@ struct PlayerFA58 {
     u16 unk14;
 };
 
-extern struct GlobalFA94 *D_8009FA94;
+extern struct GlobalFA94 *gGameSession __asm__("D_8009FA94");
 extern struct PlayerFA58 *D_8009FA58;
 extern u16 gFrameId __asm__("D_8009F9FC");
 extern void *jtbl_80011318[];
@@ -189,7 +189,7 @@ cmp_val:
     if (lhs != rhs) {
         goto case_default;
     }
-    D_8009FA94->unkE0 = 5;
+    gGameSession->unkE0 = 5;
     goto case_default;
 
 case_default:
