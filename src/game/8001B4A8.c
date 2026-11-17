@@ -26,7 +26,7 @@ extern s32 D_8009F5F0;
 extern s32 D_8009F5F4;
 extern s32 D_8009F5F8;
 extern s32 gNodeTableLength __asm__("D_8009F5FC");
-extern s32 D_8009F600;
+extern s32 gNodeTableIndex __asm__("D_8009F600");
 extern u32 gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 gPacketCursor __asm__("D_8009FA90");
 extern s32 gScreenOffsetValue __asm__("D_8009F9D4");
@@ -215,7 +215,7 @@ void func_8001B4A8(s32 arg0)
     }
 
     mask = 0xFF0000;
-    v = D_8009F600;
+    v = gNodeTableIndex;
     __asm__("" : "+r"(mask) : "r"(v));
     mask |= 0xFFFF;
     xbase = (s32)D_8009F5D8;
@@ -385,7 +385,7 @@ void func_8001B4A8(s32 arg0)
     }
 
     mask = 1;
-    v = D_8009F600;
+    v = gNodeTableIndex;
     __asm__ volatile("" : "+r"(mask) : "r"(v));
     xbase = (s32)gRenderNodeTable;
     mask -= v;
@@ -400,7 +400,7 @@ void func_8001B4A8(s32 arg0)
     __asm__("" : : "r"(av));
     av = gNodeTableLength;
     xbase = D_8009F5F4;
-    D_8009F600 = mask;
+    gNodeTableIndex = mask;
     v = xbase * 52;
     xbase = D_8009F5F8;
     __asm__("" : : "r"(xbase));
