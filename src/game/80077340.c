@@ -1,7 +1,7 @@
 // Categories: Platform > Interrupts | BIOS > Exception Vector
 typedef unsigned int u32;
 
-extern u32 D_80076A0C[];
+extern u32 gExceptionVectorBackup[] __asm__("D_80076A0C");
 extern void func_80076878(void);
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
@@ -32,7 +32,7 @@ extern void func_8008C9E0(void);
 void func_80077340(void)
 {
     u32 *src = (u32 *)0x80;
-    u32 *dst = D_80076A0C;
+    u32 *dst = gExceptionVectorBackup;
     register u32 handler __asm__("$3");
     register u32 instruction __asm__("$2");
     register u32 first __asm__("$4");
