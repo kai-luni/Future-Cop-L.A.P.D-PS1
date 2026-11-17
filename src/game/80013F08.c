@@ -53,7 +53,7 @@ struct Instance {
 
 extern struct Matrix gBoneMatrices[] __asm__("D_800A0300");
 extern struct Vec3s32 gLightVectorOut __asm__("D_800A02E0");
-extern struct Vec3s32 D_800A02F0;
+extern struct Vec3s32 gLightVectorSource __asm__("D_800A02F0");
 extern char gScriptVertexBuffer[] __asm__("D_8009FAE0");
 
 extern void *D_8009F570;
@@ -188,7 +188,7 @@ s32 func_80013F08(struct Instance *instance)
         register char *tmp __asm__("$2");
         register char *p1 __asm__("$2");
         register char *p1data __asm__("$8");
-        struct Vec3s32 *f0 = &D_800A02F0;
+        struct Vec3s32 *f0 = &gLightVectorSource;
 
         mat = gBoneMatrices;
         __asm__ volatile("" :: "r"(f0));
@@ -235,7 +235,7 @@ s32 func_80013F08(struct Instance *instance)
         register char *t0 __asm__("$8");
         char *p20;
         s32 count;
-        struct Vec3s32 *f0 = &D_800A02F0;
+        struct Vec3s32 *f0 = &gLightVectorSource;
         register void *a1_pts __asm__("$5");
         register s32 idx __asm__("$3");
 
