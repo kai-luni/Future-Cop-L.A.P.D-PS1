@@ -5,7 +5,7 @@ typedef int s32;
 typedef unsigned int u32;
 struct Mode { char pad[12]; s32 players; char pad10[60]; s8 value; };
 struct Entry { char pad[31]; u8 current; u8 maximum; char rest[3]; };
-extern s32 D_8009F9A8[];
+extern s32 gPendingScreenState[] __asm__("D_8009F9A8");
 extern s32 gFrameTickCounter[] __asm__("D_8009FA2C");
 extern s32 D_8009F464, D_8009F870;
 extern s8 D_8009F45A, D_8009F889, D_8009F880, D_8009F888, D_8009F882;
@@ -52,7 +52,7 @@ void func_800782EC(void)
     D_8009F870 = gFrameTickCounter[0] + 9000;
     switch (D_8009F45A) {
     case 1:
-        if (D_8009F9A8[0] == 0) {
+        if (gPendingScreenState[0] == 0) {
             s8 *p;
             __asm__("lui %0,%%hi(D_8009F458)\n\taddiu %0,%0,%%lo(D_8009F458)" : "=r"(p));
             if (D_8009F880 == *(s8 *)(D_8009F889 + (s32)p) && D_8009F880 < D_8009F888) {

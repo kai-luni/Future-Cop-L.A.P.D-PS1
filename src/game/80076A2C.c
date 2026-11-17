@@ -26,7 +26,7 @@ typedef struct {
 
 extern State *D_8009FA94;
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern s32 D_8009F9A8;
+extern s32 gPendingScreenState __asm__("D_8009F9A8");
 extern s32 D_8009F850;
 extern s32 D_8009F854;
 extern s32 D_8009F858;
@@ -203,7 +203,7 @@ s32 func_80076A2C(void)
         func_8007BFCC(z0, z1);
         func_8007BFCC(1, 0);
 
-        D_8009F9A8 = 3;
+        gPendingScreenState = 3;
         D_8009FA94->unk10 = 3;
         func_80077050();
 
@@ -271,13 +271,13 @@ s32 func_80076A2C(void)
                 D_8009FA94->unk10 = 0;
             }
 
-            D_8009F9A8 = D_8009FA94->unk10;
+            gPendingScreenState = D_8009FA94->unk10;
             switch (D_8009FA94->unk10) {
             case 0:
                 if (D_8009F3EC != 0) {
                     func_8008CCB0(D_8009B300, D_8009F3EC);
                     func_8008CC90(D_8009B300, D_8009F3B0);
-                    D_8009F9A8 = 3;
+                    gPendingScreenState = 3;
                     D_8009F3EC = 0;
                     D_8009F3F0 = 5;
                     break;
@@ -287,7 +287,7 @@ s32 func_80076A2C(void)
                 s2 = 1;
             }
 
-            if (D_8009F9A8 != 0) {
+            if (gPendingScreenState != 0) {
                 continue;
             }
 
