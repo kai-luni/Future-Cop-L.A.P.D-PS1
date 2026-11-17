@@ -44,7 +44,7 @@ extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C_b, D_8009FA5C_c, D_80
 extern s32 gScreenState __asm__("D_8009FA00");
 extern struct Menu *D_8009FA94;
 extern s32 D_8009FA6C;
-extern u32 D_8009FA50;
+extern u32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 D_8009FA84;
 extern u8 D_8009F680;
 extern s32 D_8009FA38;
@@ -202,7 +202,7 @@ void func_80027510(void)
         flags |= 2;
         if (D_8009FA94->unk5C == 0 || D_8009FA6C != 0) flags |= 0x20;
     }
-    if (D_8009FA50 >= 2 && (func_8001EF34(0) == 0 || func_8001EF34(1) == 0) && D_8009FA84 == 0) {
+    if (gSceneFrameCounter >= 2 && (func_8001EF34(0) == 0 || func_8001EF34(1) == 0) && D_8009FA84 == 0) {
         flags |= 0x20;
     }
     if (!(flags & 0x20)) {
@@ -254,7 +254,7 @@ void func_80027510(void)
             D_8009FA5C.ptr->unk24 &= ~0x20;
             D_8009FA5C.ptr->unkDC->unk24 &= ~0x20;
         }
-        if (D_8009FA50 >= 2 && func_8001EF34(0) == 0 && D_8009FA84 == 0) {
+        if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && D_8009FA84 == 0) {
             text = D_8009F2D0;
             x = 0x140 - func_80049340(text);
             color = 1;
@@ -287,7 +287,7 @@ void func_80027510(void)
             __asm__ volatile("" : "=r"(banner) : "0"(banner));
             func_80049100(banner - 0xD0C, 0x41, 0x14, 1);
         }
-        if (D_8009FA50 >= 2 && func_8001EF34(1) == 0 && D_8009FA84 == 0) {
+        if (gSceneFrameCounter >= 2 && func_8001EF34(1) == 0 && D_8009FA84 == 0) {
             text = D_8009F2D0;
             x = 0x140 - func_80049340(text);
             color = 1;

@@ -3,7 +3,7 @@
 
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 gFrameId __asm__("D_8009F9FC");
-extern s32 D_8009FA50;
+extern s32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 D_8009FAA4;
 extern s32 D_8009FA30;
 extern s32 gScreenState __asm__("D_8009FA00");
@@ -92,7 +92,7 @@ void func_80028618(void)
     work = 8;
     gFrameId = work;
     b = *(u8 *)&gFrameId;
-    D_8009FA50 = 0;
+    gSceneFrameCounter = 0;
     D_8009F693 = 0;
     D_8009FAA4 = saved;
     D_8009FA30 = saved - 8;
@@ -108,7 +108,7 @@ void func_80028618(void)
 
 frame:
     {
-        D_8009FA50 = D_8009FA50 + 1;
+        gSceneFrameCounter = gSceneFrameCounter + 1;
         func_8002703C();
         if (gPlayerCount == 1) {
             func_800271A4();

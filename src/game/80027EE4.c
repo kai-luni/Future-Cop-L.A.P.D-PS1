@@ -5,7 +5,7 @@ extern s32 D_8009F284;
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA30;
-extern s32 D_8009FA50;
+extern s32 gSceneFrameCounter __asm__("D_8009FA50");
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 D_8009FAA4;
 
@@ -43,10 +43,10 @@ void func_80027EE4(void)
     gFrameId = 8;
     D_8009FAA4 = t;
     D_8009FA30 = t;
-    D_8009FA50 = 0;
+    gSceneFrameCounter = 0;
 
     while (gScreenState == 4) {
-        D_8009FA50++;
+        gSceneFrameCounter++;
         D_8009F284++;
         func_80027E68();
         func_800451EC(0);

@@ -38,7 +38,7 @@ struct Node4BEE8 {
     struct SubNode *unk84;
 };
 
-extern s32 D_8009FA50;
+extern s32 gSceneFrameCounter __asm__("D_8009FA50");
 extern void func_8001ACA4(struct Vec3s32 *a, struct Vec3s32 *b, s32 scale, struct Vec3s32 *out);
 extern s32 func_80066F78(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3);
 

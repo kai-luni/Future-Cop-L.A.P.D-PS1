@@ -58,7 +58,7 @@ struct Unk3D9F8Ret {
     s32 unk2C;
 };
 
-extern u32 D_8009FA50;
+extern u32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 D_8009FAB0;
 extern struct Unk3D9F8Ret *func_8003D9F8(s32 arg0, u16 arg1, s8 arg2, s32 arg3,
                                           struct Unk3D9F8Ctx *arg4, s32 *arg5);
@@ -176,7 +176,7 @@ s32 func_80043CA8(struct Unk43CA8 *node, s32 arg)
         sp38 = (node->unk98 * arg << 2) / 300;
         fpv = (node->unk9A * arg << 2) / 300;
     }
-    d = D_8009FA50;
+    d = gSceneFrameCounter;
     s6 = node->unk72;
     i = 0;
     while (cur != 0) {

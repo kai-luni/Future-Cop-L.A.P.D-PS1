@@ -40,7 +40,7 @@ struct Unk9A0 {
 extern struct Game *D_8009FA58;
 extern s32 D_8009F678;
 extern u32 gScreenState __asm__("D_8009FA00");
-extern u32 D_8009FA50;
+extern u32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 D_8009FA84;
 extern u8 *D_8009F2D0;
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
@@ -138,7 +138,7 @@ void func_800271A4(void)
         flags |= 0x21;
     }
 
-    if (D_8009FA50 >= 2 && func_8001EF34(0) == 0 && D_8009FA84 == 0) {
+    if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && D_8009FA84 == 0) {
         text = D_8009F2D0;
         x = (0x280 - func_80049340(text)) / 4;
         color = 1;

@@ -66,7 +66,7 @@ struct Unk437E8 {
     u16 count;
 };
 
-extern s32 D_8009FA50[];
+extern s32 gSceneFrameCounter[] __asm__("D_8009FA50");
 extern s32 D_8009FAB0;
 
 extern struct Unk437E8Transform *func_8003D9F8(void *model, s32 flags, s32 part,

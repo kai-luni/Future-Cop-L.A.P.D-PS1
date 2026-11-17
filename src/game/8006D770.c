@@ -23,7 +23,7 @@ struct Obj {
     u16 field98;
     s16 field9a;
 };
-extern s32 D_8009FA50;
+extern s32 gSceneFrameCounter __asm__("D_8009FA50");
 extern void func_8006D520(Obj *);
 extern void func_800188D0(s32, s32, s32, void *);
 
@@ -126,7 +126,7 @@ void func_8006D770(Obj *node, s32 dt)
             p->field68 -= (p->field6a * dt) >> 7;
             if (p->field68 < 4096) { p->field68 = 4096; p->field6a = 0; }
         }
-        if (p->sub->field2e && (D_8009FA50 & 3) == 3) func_8006D520(p);
+        if (p->sub->field2e && (gSceneFrameCounter & 3) == 3) func_8006D520(p);
         if (p->field12 >= p->field6e) {
             if (p->sub->field2e && p->field9a != p->field12) func_8006D520(p);
             p->flags |= 1;
