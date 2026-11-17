@@ -14,7 +14,8 @@ extern u8 *gModelMeshInfo __asm__("D_8009F53C");
 extern u8 *gModelHierarchy __asm__("D_8009F538");
 extern u8 *gModelTriangleList __asm__("D_8009F534");
 extern u8 *gModelPolygonList __asm__("D_8009F530");
-extern AnimNode *D_8009F544, *D_8009F564;
+extern AnimNode *D_8009F564;
+extern AnimNode *gModelAnimData __asm__("D_8009F544");
 extern u32 *D_8009F548, *D_8009F550, *D_8009F568;
 extern AnimNode *D_8009F54C;
 extern u8 **D_8009F560;
@@ -157,7 +158,7 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
         h->x14 = (u32)gModelHierarchy;
         h->x18 = (u32)gModelMeshInfo;
     }
-    h->x10 = (u32)D_8009F544;
+    h->x10 = (u32)gModelAnimData;
     h->p38 = (u32)D_8009F548;
     *out = h;
 }
