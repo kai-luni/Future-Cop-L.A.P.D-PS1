@@ -8,7 +8,7 @@ typedef struct {
 } Ctx85AC4;
 
 extern Ctx85AC4 *gDecodeJob __asm__("D_8009F4BC");
-extern volatile u8 D_8009FA3C;
+extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 extern u32 D_8009F4C8;
 
 extern void func_80092C8C(s32 arg0);
@@ -55,7 +55,7 @@ void func_80085AC4(u32 arg0, u32 arg1)
     gDecodeJob->unk114 = 0;
     gDecodeJob->unk118 = 0;
 
-    while (D_8009FA3C != 0) {
+    while (gFrameBarrier != 0) {
     }
 
     func_80092C8C(0);

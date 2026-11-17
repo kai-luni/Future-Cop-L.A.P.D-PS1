@@ -12,7 +12,7 @@ extern u8 D_8009F690;
 extern u8 D_8009F691;
 extern u8 D_8009F692;
 extern u8 D_8009F693;
-extern u8 D_8009FA3C;
+extern u8 gFrameBarrier __asm__("D_8009FA3C");
 extern void *gCamera __asm__("D_8009F9E4");
 
 /* Incomplete array types keep these out of small data on the MIPS backend,
@@ -164,10 +164,10 @@ frame:
         if (gScreenState == 4 || gScreenState == work) {
             func_80027D9C();
             if (gScreenState != work) {
-                D_8009FA3C = 1;
+                gFrameBarrier = 1;
             }
         } else {
-            D_8009FA3C = 1;
+            gFrameBarrier = 1;
         }
     }
 

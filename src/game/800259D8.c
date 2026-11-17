@@ -12,7 +12,7 @@ extern s32 D_8009F9C4;
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA30;
-extern volatile u8 D_8009FA3C;
+extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 extern s32 D_8009FAA4;
 
 extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
@@ -90,7 +90,7 @@ s32 func_800259D8(void)
         func_80086134();
     }
 
-    while (D_8009FA3C != 0) {
+    while (gFrameBarrier != 0) {
     }
 
     p = gPrimPoolNext;

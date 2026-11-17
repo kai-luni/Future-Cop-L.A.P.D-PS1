@@ -6,7 +6,7 @@ extern s32 D_8009F9CC;
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern volatile u8 D_8009FA3C;
+extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 
 extern s32 func_80092C8C(s32 arg0);
 extern void func_8001BFE4(void);
@@ -48,9 +48,9 @@ void func_8001EFF8(void)
         gPaletteCycleCounter += 5;
     }
     gFrameTickCounter += 5;
-    if (D_8009FA3C != 0) {
+    if (gFrameBarrier != 0) {
         if (func_80092C8C(1) == 0) {
-            D_8009FA3C = 0;
+            gFrameBarrier = 0;
             func_8001BFE4();
             func_8001BFA8();
         }

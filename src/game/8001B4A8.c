@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 
-extern volatile u8 D_8009FA3C;
+extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 extern u8 D_800A63E0[];
 extern u8 D_800A0520[];
 extern u8 D_800A0528[];
@@ -137,7 +137,7 @@ void func_8001B4A8(s32 arg0)
     s32 dx;
     s32 dy;
 
-    while (D_8009FA3C) {
+    while (gFrameBarrier) {
     }
 
     __asm__("" : "+m"(arg0));
@@ -381,7 +381,7 @@ void func_8001B4A8(s32 arg0)
     func_80093280(table + (max << 2));
 
     if (({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; })) {
-        D_8009FA3C = 1;
+        gFrameBarrier = 1;
     }
 
     mask = 1;

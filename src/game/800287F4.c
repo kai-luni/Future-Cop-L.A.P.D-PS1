@@ -3,7 +3,7 @@
 
 extern s32 D_8009F9C4;
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern u8 D_8009FA3C;
+extern u8 gFrameBarrier __asm__("D_8009FA3C");
 extern s32 D_8009FAA4;
 extern u8 D_8009FAA8;
 
@@ -71,7 +71,7 @@ s32 func_800287F4(s32 arg0, u8 arg1)
         return 0;
     }
 
-    D_8009FA3C = 0;
+    gFrameBarrier = 0;
     func_800259D8();
     func_80029E64();
 

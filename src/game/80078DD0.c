@@ -54,7 +54,7 @@ extern s8 D_8009F8C0[];
 extern u8 D_8009F8BD, D_8009F46C, D_8009F3FB, D_8009F3F8[], D_8009B3D4[], D_8009B3E0[];
 extern s32 D_8009F8C4, D_8009F8C8;
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern volatile u8 D_8009FA3C;
+extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 struct GameContext { u8 pad00[12]; s32 type; u8 pad10[0x4c]; s32 stage; };
 extern struct GameContext *D_8009FA94;
 extern struct Menu D_800A38F8, D_800A36B8, D_800A3658, D_800A3628, D_800A37D8, D_800A37A8, D_800A3688;
@@ -329,7 +329,7 @@ reset_timer:
                 func_80078B34(500, 0, 0);
                 func_80078B98();
                 func_8001B4A8(1);
-                while (D_8009FA3C) { }
+                while (gFrameBarrier) { }
                 func_80082DDC(D_8009F8C4, 1);
             }
             switch (D_8009F8C8) {
