@@ -9,7 +9,7 @@ struct Matrix {
 
 extern void *gLevelVertexBlock __asm__("D_8009FA1C");
 extern void *gPartVertexBuffer __asm__("D_8009F578");
-extern void *D_8009F57C;
+extern void *gClipFlagBuffer __asm__("D_8009F57C");
 extern s16 D_8009F580;
 
 extern void func_800959D0(s32 red, s32 green, s32 blue);
@@ -44,6 +44,6 @@ void func_80013A14(void)
     func_800959A0(&color);
     gLevelVertexBlock = func_80017EBC(0x400, 2);
     gPartVertexBuffer = func_80017EBC(0x800, 2);
-    D_8009F57C = func_80017EBC(0x100, 2);
+    gClipFlagBuffer = func_80017EBC(0x100, 2);
     D_8009F580 = 0;
 }

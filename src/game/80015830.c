@@ -4,7 +4,7 @@ typedef struct { s16 x,y,z,pad; } Point;
 typedef struct { u8 pad[4]; u8 a,b,c,d; } Input;
 typedef struct { s16 xy[8]; s32 z; } Output;
 extern Point *gPartVertexBuffer __asm__("D_8009F578");
-extern u8 *D_8009F57C;
+extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
 /**
  * @brief Builds the screen-space quad of a type-7 model part: two projected
  *        vertices widened by a per-end width that scales with 1/z.
@@ -69,7 +69,7 @@ s32 func_80015830(Input *in, Output *out, s16 *width)
       register s32 off __asm__("$3");
       s32 ia = in->a;
       register s32 ib __asm__("$5") = in->b;
-      u8 *flags = D_8009F57C;
+      u8 *flags = gClipFlagBuffer;
       s32 fa = flags[ia], fb = flags[ib];
       __asm__ volatile ("" : "=r" (fa), "=r" (fb), "=r" (result), "=r" (ib) : "0" (fa), "1" (fb), "2" (result), "3" (ib));
       p = gPartVertexBuffer;

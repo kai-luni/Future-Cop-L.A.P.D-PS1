@@ -59,7 +59,7 @@ extern char D_8009FAE0[];
 extern void *D_8009F570;
 extern void *D_8009F574;
 extern void *gPartVertexBuffer __asm__("D_8009F578");
-extern void *D_8009F57C;
+extern void *gClipFlagBuffer __asm__("D_8009F57C");
 
 extern void func_800178DC(void *coord, struct Matrix *matrix);
 extern void func_80010750(struct Matrix *matrix);
@@ -178,7 +178,7 @@ s32 func_80013F08(struct Instance *instance)
         return 0;
     }
 
-    flg = D_8009F57C;
+    flg = gClipFlagBuffer;
     pts = gPartVertexBuffer;
 
     if ((model->flags >> 25) & 1) {

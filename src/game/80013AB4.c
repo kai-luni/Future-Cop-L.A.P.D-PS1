@@ -3,7 +3,7 @@
 
 extern void *gLevelVertexBlock __asm__("D_8009FA1C");
 extern void *gPartVertexBuffer __asm__("D_8009F578");
-extern void *D_8009F57C;
+extern void *gClipFlagBuffer __asm__("D_8009F57C");
 
 extern void func_800181D4(void *block);
 
@@ -34,5 +34,5 @@ void func_80013AB4(void)
 {
     func_800181D4(gLevelVertexBlock);
     func_800181D4(gPartVertexBuffer);
-    func_800181D4(D_8009F57C);
+    func_800181D4(gClipFlagBuffer);
 }

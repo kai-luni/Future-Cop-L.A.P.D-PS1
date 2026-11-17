@@ -36,7 +36,7 @@ extern u8 D_8009FAE0[0x100];
 extern u8 *D_8009F570;
 extern u8 *D_8009F574;
 extern u8 *gPartVertexBuffer __asm__("D_8009F578");
-extern u8 *D_8009F57C;
+extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
 
 extern void func_800178DC(void *object, s32 arg1);
 extern void func_80013ECC(u32 *arg0);

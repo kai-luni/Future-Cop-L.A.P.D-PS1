@@ -64,7 +64,7 @@ typedef struct {
 } Arg2;
 
 extern Vertex *gPartVertexBuffer __asm__("D_8009F578");
-extern u8 *D_8009F57C;
+extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
 
 extern s32 func_80015AF4(s32 origin, s32 first, s32 second, void *out);
 extern s32 func_80015830(Part *part, Work *work, Arg2 *arg2, s32 arg3);
@@ -134,7 +134,7 @@ s32 func_80015B68(Part *part, Work *work, Arg2 *arg2, s32 arg3)
         i0 = part->u4.b.b4;
         i1 = part->u4.b.b5;
         i2 = part->u4.b.b6;
-        if (((flags = D_8009F57C[i0] | D_8009F57C[i1] | D_8009F57C[i2]) & 1) || flags != 0xC0) {
+        if (((flags = gClipFlagBuffer[i0] | gClipFlagBuffer[i1] | gClipFlagBuffer[i2]) & 1) || flags != 0xC0) {
             return 0;
         }
         if (func_80015AF4(vtx[i0].u.xy, vtx[i1].u.xy, vtx[i2].u.xy, work)) {
@@ -150,7 +150,7 @@ s32 func_80015B68(Part *part, Work *work, Arg2 *arg2, s32 arg3)
         i1 = part->u4.b.b5;
         i2 = part->u4.b.b6;
         i3 = part->u4.b.b7;
-        if (((flags = D_8009F57C[i0] | D_8009F57C[i1] | D_8009F57C[i2] | D_8009F57C[i3]) & 1) || flags != 0xC0) {
+        if (((flags = gClipFlagBuffer[i0] | gClipFlagBuffer[i1] | gClipFlagBuffer[i2] | gClipFlagBuffer[i3]) & 1) || flags != 0xC0) {
             return 0;
         }
         if (func_80015AF4(vtx[i0].u.xy, vtx[i1].u.xy, vtx[i3].u.xy, work)) {
@@ -162,7 +162,7 @@ s32 func_80015B68(Part *part, Work *work, Arg2 *arg2, s32 arg3)
 
     case 5:
     case 6:
-        if (D_8009F57C[part->u4.b.b4] & 1) {
+        if (gClipFlagBuffer[part->u4.b.b4] & 1) {
             return 0;
         }
         vtx += part->u4.b.b4;
@@ -186,7 +186,7 @@ s32 func_80015B68(Part *part, Work *work, Arg2 *arg2, s32 arg3)
         return func_80015830(part, work, arg2, arg3);
 
     case 8:
-        if (D_8009F57C[part->u4.b.b4] & 1) {
+        if (gClipFlagBuffer[part->u4.b.b4] & 1) {
             return 0;
         }
         func_8001484C(&vtx[part->u4.b.b4], part->u4.w4, part->u8.w8, part->u0.h.h1, arg2->data[part->u8.b.b8], arg3, 0);
