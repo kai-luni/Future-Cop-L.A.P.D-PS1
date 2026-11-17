@@ -288,6 +288,24 @@ static void compare_records(struct Case *c, const u8 *loaded)
     if (nr != c->nrec) fail(c->id, "record count");
 }
 
+/* Minimal valid Cbmp container (CCB with a 64-byte body, PDAT, PLUT) for the remap case:
+ * this harness links the real func_8001996C, so the retail parser needs a container whose
+ * CCB block is large enough for its word 10 / word 11 stores. */
+static u8 remap_container[128];
+static int build_remap_container(void)
+{
+    u8 *p = remap_container;
+    int i;
+    wr32(p, 0x43434220); wr32(p + 4, 76); wr32(p + 8, 0);
+    for (i = 0; i < 64; i++) p[12 + i] = 0;
+    p += 76;
+    wr32(p, 0x50444154); wr32(p + 4, 12); wr32(p + 8, 0);
+    p += 12;
+    wr32(p, 0x504C5554); wr32(p + 4, 20); wr32(p + 8, 0);
+    wr32(p + 12, 0); wr32(p + 16, 0);
+    return 76 + 12 + 20;
+}
+
 static void run_case(struct Case *c)
 {
     struct Node { u32 unk00; u8 pad[0x18]; u32 unk1C; u32 unk20; } node;
@@ -299,11 +317,14 @@ static void run_case(struct Case *c)
     static char wanthex[MAXBODY * 2 + 1];
     if (streq(c->id, "remap_table"))
     {
-        /* exercise the retail remap builder func_80063C5C for ids 1..10 */
+        /* exercise the retail remap builder func_80063C5C for ids 1..10; since the real
+         * func_8001996C is linked, feed a valid container (CCB + PDAT + PLUT) */
+        node.unk00 = (u32)(long)remap_container;
+        node.unk20 = (u32)build_remap_container();
         func_80063428();
         for (i = 1; i <= 10; i++)
         {
-            node.unk00 = 0; node.unk1C = i; node.unk20 = 0;
+            node.unk1C = i;
             func_80063C5C(&node);
         }
         for (i = 0; i < 10; i++)
@@ -658,10 +679,151 @@ static void run_render(int c)
     print("PASS "); print(rid[c]); print("\n");
 }
 
+/* ================= Cbmp container golden vectors (cbmp.vectors) ============ */
+/* The ORIGINAL decomp function func_8001996C runs unmodified here: it walks a
+ * {tag, length, index, body} container and stores the pixel and palette block
+ * pointers into the CCB block (word 10 / word 11). The fixture therefore only
+ * asserts containers where the retail routine is well defined (CCB body >= 48
+ * bytes); the degenerate inputs are c_skip cases, and here the fork below proves
+ * that C is undefined on them instead of assuming it. */
+extern u32 *func_8001996C(u8 *data, s32 size);
+
+#define CBMAX 12
+#define CBIN 2048
+static struct CbCase
+{
+    char id[32], status[24];
+    u8 in[CBIN]; int in_len;
+    long want[7];
+} cbcases[CBMAX];
+static int ncb;
+
+static void parse_cbmp(const char *path)
+{
+    static char buf[65536];
+    int fd, n;
+    struct CbCase *c = 0;
+    char *line = buf;
+    fd = (int)sys3(4005, (long)path, 0, 0);
+    if (fd < 0) { print("cannot open cbmp fixture\n"); exit(2); }
+    n = (int)sys3(4003, fd, (long)buf, sizeof(buf) - 1);
+    sys3(4006, fd, 0, 0);
+    if (n < 0) n = 0;
+    buf[n] = 0;
+    while (line && *line)
+    {
+        char *nl = line;
+        char *t[12];
+        char *p;
+        int nt = 0;
+        while (*nl && *nl != '\n') nl++;
+        if (*nl) *nl++ = 0;
+        p = line;
+        while (*p)
+        {
+            while (*p == ' ' || *p == '\t' || *p == '\r') p++;
+            if (!*p || *p == '#') break;
+            t[nt++] = p;
+            while (*p && *p != ' ' && *p != '\t' && *p != '\r') p++;
+            if (*p) *p++ = 0;
+            if (nt == 12) break;
+        }
+        if (nt > 0)
+        {
+            if (streq(t[0], "CASE") && nt >= 3 && ncb < CBMAX)
+            {
+                int i;
+                c = &cbcases[ncb++];
+                for (i = 0; t[1][i] && i < 31; i++) c->id[i] = t[1][i];
+                c->id[i] = 0;
+                for (i = 0; t[2][i] && i < 23; i++) c->status[i] = t[2][i];
+                c->status[i] = 0;
+                c->in_len = 0;
+                c->want[0] = -1; c->want[1] = 0; c->want[2] = -1; c->want[3] = 0;
+                c->want[4] = -1; c->want[5] = 0; c->want[6] = 0;
+            }
+            else if (c && streq(t[0], "IN")) c->in_len = nt > 1 ? unhex(t[1], c->in, CBIN) : 0;
+            else if (c && streq(t[0], "OUT") && nt >= 8)
+            {
+                int i;
+                if (!streq(c->status, "ok")) bad_fixture(c->id, "OUT in a non-parity case");
+                for (i = 0; i < 7; i++) c->want[i] = atool(t[i + 1]);
+            }
+            else if (c && streq(t[0], "NET"))
+            {
+                /* .NET-only expectation; the C original is undefined on these cases */
+            }
+            else if (streq(t[0], "END")) c = 0;
+        }
+        line = nl;
+    }
+}
+
+static void run_cbmp(int idx)
+{
+    struct CbCase *c = &cbcases[idx];
+    static u8 work[CBIN + 512];
+    u32 *ccb;
+    u8 *pdatp, *plutp;
+    long got[7];
+    long pid;
+    int i, status;
+
+    if (streq(c->status, "c_skip"))
+    {
+        for (i = 0; i < c->in_len; i++) work[i] = c->in[i];
+        pid = sys3(4002, 0, 0, 0); /* fork: the retail routine may fault here */
+        if (pid == 0)
+        {
+            u32 *child_ccb;
+            sys3(4027, 2, 0, 0); /* alarm(2) in case it loops instead */
+            child_ccb = func_8001996C(work, c->in_len);
+            /* report what the retail routine actually produced when it survives */
+            print("  c: ccb=");
+            print_dec(child_ccb ? (int)((u8 *)child_ccb - work) : -1);
+            print(" pdat=");
+            print_dec(child_ccb ? (int)((u8 *)rd32((u8 *)child_ccb + 40) - work) : -1);
+            print(" plut=");
+            print_dec(child_ccb ? (int)((u8 *)rd32((u8 *)child_ccb + 44) - work) : -1);
+            print("\n");
+            exit(0);
+        }
+        status = 0;
+        sys3(4007, pid, (long)&status, 0);
+        print("SKIP ");
+        print(c->id);
+        if ((status & 0x7F) == 11) print(" (c_skip: retail faults on SIGSEGV; .NET-only expectations)\n");
+        else if ((status & 0x7F) == 14) print(" (c_skip: retail hangs on SIGALRM; .NET-only expectations)\n");
+        else if ((status & 0x7F) != 0) print(" (c_skip: retail dies on a signal; .NET-only expectations)\n");
+        else print(" (c_skip: retail return value is undefined; .NET-only expectations)\n");
+        skipped_cases++;
+        return;
+    }
+
+    for (i = 0; i < c->in_len; i++) work[i] = c->in[i];
+    ccb = func_8001996C(work, c->in_len);
+    got[0] = (long)((u8 *)ccb - work);
+    if (ccb == 0) { fail(c->id, "no CCB block"); return; }
+    got[1] = (long)rd32((u8 *)ccb - 8) - 12;
+    pdatp = (u8 *)rd32((u8 *)ccb + 40);
+    plutp = (u8 *)rd32((u8 *)ccb + 44);
+    got[2] = pdatp ? (long)(pdatp - work) : -1;
+    got[3] = pdatp ? (long)rd32(pdatp - 4) - 8 : 0;
+    got[4] = plutp ? (long)(plutp - work) : -1;
+    got[5] = plutp ? (long)rd32(plutp - 8) - 12 : 0;
+    got[6] = pdatp && rd32(pdatp - 8) == 0x50495834 ? 1 : 0;
+    for (i = 0; i < 7; i++)
+        if (got[i] != c->want[i]) { fail(c->id, "container field"); return; }
+    print("PASS ");
+    print(c->id);
+    print("\n");
+    parity_cases++;
+}
+
 int main(int argc, char **argv)
 {
     int i;
-    if (argc < 2) { print("usage: harness <3dtl.vectors> [render.vectors]\n"); return 2; }
+    if (argc < 2) { print("usage: harness <3dtl.vectors> [render.vectors] [cbmp.vectors]\n"); return 2; }
     parse_fixture(argv[1]);
     if (!have_remap) { print("fixture missing REMAP line\n"); return 2; }
     for (i = 0; i < ncases; i++) run_case(&cases[i]);
@@ -669,6 +831,11 @@ int main(int argc, char **argv)
     {
         parse_render(argv[2]);
         for (i = 0; i < nrk; i++) run_render(i);
+    }
+    if (argc > 3)
+    {
+        parse_cbmp(argv[3]);
+        for (i = 0; i < ncb; i++) run_cbmp(i);
     }
     if (fails) print("FAILED\n");
     else

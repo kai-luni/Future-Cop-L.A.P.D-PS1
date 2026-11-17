@@ -23,9 +23,10 @@ u32 D_8009F564 __asm__("D_8009F564");
 u32 D_8009F568 __asm__("D_8009F568");
 u32 D_800A8E80[10] __asm__("D_800A8E80");
 
-/* Stubs for func_80063C5C dependencies (LoadImage/DrawSync/font/free/parser). */
-static u32 fake_res[16];
-void *func_8001996C(void *a, s32 b) { (void)a; (void)b; return fake_res; }
+/* Stubs for func_80063C5C dependencies (LoadImage/DrawSync/font/free/remap reset).
+ * func_8001996C is NOT stubbed: the harness links the original decomp function so the
+ * container walk is measured for real, which is why the remap case below feeds a valid
+ * container instead of a null pointer. */
 void func_80092F38(void *a, u32 b) { (void)a; (void)b; }
 void func_80092C8C(s32 a) { (void)a; }
 void func_80048DEC(void) {}
