@@ -9,7 +9,7 @@ struct LineF3 {
 
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
-extern s16 D_8009AFB4[];
+extern s16 gRadiusTable[] __asm__("D_8009AFB4");
 
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
 
