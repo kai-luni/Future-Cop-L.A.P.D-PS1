@@ -14,7 +14,7 @@ struct Packet {
     s16 u3, v3;
 };
 extern u8 *D_8009F9F0;
-extern u8 *D_8009FA28;
+extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 
 /**
  * @brief Emits a textured, semi-transparent quad with a computed texture window.
@@ -46,7 +46,7 @@ void func_80042004(s32 x, u8 *points, u8 *flags)
     register u32 mask __asm__("$8");
     f = flags[0] | flags[1] | flags[4] | flags[3];
     if (!(f & 1) && f == 0xc0) {
-        if (D_8009F9F0 >= D_8009FA28) {
+        if (D_8009F9F0 >= gPrimPoolEnd) {
             p = (struct Packet *)D_8009F9F0;
             __asm__ volatile ("");
             goto ready;

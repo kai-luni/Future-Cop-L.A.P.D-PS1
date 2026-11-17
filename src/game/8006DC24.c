@@ -41,7 +41,7 @@ typedef struct Obj {
 
 extern s32 *gCamera __asm__("D_8009F9E4");
 extern u8 *D_8009F9F0;
-extern u8 *D_8009FA28;
+extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_8009F9B8;
 extern u32 D_8009B214[];
 extern s32 D_800A8E80[];
@@ -193,7 +193,7 @@ void func_8006DC24(Obj *o, s32 *pos)
             if (w.mask[0] & 0x01010101) continue;
             if ((o->f98 & 0x10) && ((u16)w.mask[1] & 0x101)) continue;
             if (o->f98 & 1) {
-                if (D_8009F9F0 < D_8009FA28) goto L_alloc1;
+                if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc1;
                 __asm__("");
                 p = (Packet *)D_8009F9F0;
                 goto L_done1;
@@ -230,7 +230,7 @@ void func_8006DC24(Obj *o, s32 *pos)
                 }
                 }
                 if (o->f98 & 0x10) {
-                    if (D_8009F9F0 < D_8009FA28) goto L_alloc2;
+                    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc2;
                     __asm__("");
                     p = (Packet *)D_8009F9F0;
                     goto L_done2;
@@ -293,7 +293,7 @@ void func_8006DC24(Obj *o, s32 *pos)
                     if (v[3].z < zz) zz = v[3].z;
                 }
                 zz -= 0x100;
-                if (D_8009F9F0 < D_8009FA28) goto L_alloc3;
+                if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc3;
                 __asm__("");
                 p = (Packet *)D_8009F9F0;
                 goto L_done3;
@@ -320,7 +320,7 @@ void func_8006DC24(Obj *o, s32 *pos)
                 p->h[24] = 0x100;
                 p->w[6] = ((u32)D_8009F9B8 << 16) | 1;
                 if (o->f98 & 0x10) {
-                    if (D_8009F9F0 < D_8009FA28) goto L_alloc4;
+                    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc4;
                     __asm__("");
                     p = (Packet *)D_8009F9F0;
                     goto L_done4;

@@ -9,7 +9,8 @@ struct Obj { struct Model *model; u8 matrix[0x24]; struct V32 pos; u8 pad34[0x14
 struct Camera { u8 pad[0x28]; u8 matrix[0x54]; struct V32 pos; };
 struct Packet { u32 tag, c0, p0, uv0, c1, p1, uv1, c2, p2; u16 uv2; u8 pad[14]; };
 extern struct Camera *gCamera __asm__("D_8009F9E4");
-extern struct Packet *D_8009F9F0, *D_8009FA28;
+extern struct Packet *D_8009F9F0;
+extern struct Packet *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_8009FAA0;
 extern s32 func_80066F78(struct V32 *, s32, s32, void *);
 extern void func_80010750(void *);
@@ -127,7 +128,7 @@ void func_800164F4(struct Obj *obj)
         s32 center, depth;
         u32 tail;
         next = n ? cur + 1 : cur - 3;
-        packet = D_8009F9F0 >= D_8009FA28 ? D_8009F9F0 : D_8009F9F0++;
+        packet = D_8009F9F0 >= gPrimPoolEnd ? D_8009F9F0 : D_8009F9F0++;
         ((u8 *)packet)[3] = 9;
         center = p[4].z;
         depth = center + cur->z + mid->z;
@@ -143,7 +144,7 @@ void func_800164F4(struct Obj *obj)
         __asm__("" : : : "memory");
         packet->uv2 = 1; ((struct Packet *)packet)->uv1 = (D_8009FAA0 << 16) | 0x101;
         __asm__ ("" : : : "memory");
-        packet = D_8009F9F0 >= D_8009FA28 ? D_8009F9F0 : D_8009F9F0++;
+        packet = D_8009F9F0 >= gPrimPoolEnd ? D_8009F9F0 : D_8009F9F0++;
         ((u8 *)packet)[3] = 9;
         center = p[4].z;
         depth = center + mid->z + next->z;

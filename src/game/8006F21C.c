@@ -18,7 +18,7 @@ typedef struct {
     u8 pad24[0x34 - 0x24];
 } Prim;
 extern Prim *D_8009F9F0;
-extern Prim *D_8009FA28;
+extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
 
 /**
  * @brief Emits a 52-byte textured quad packet from four screen vertices.
@@ -49,7 +49,7 @@ void func_8006F21C(DVECTOR v0, DVECTOR v1, DVECTOR v2, DVECTOR v3, s32 dx, s32 d
     register u16 tag __asm__("$7") = tag_in;
     Prim *prim;
 
-    if (D_8009F9F0 < D_8009FA28) goto L_alloc;
+    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc;
     __asm__("");
     prim = D_8009F9F0;
     goto L_done;

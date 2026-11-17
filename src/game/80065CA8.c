@@ -4,7 +4,7 @@
 extern u8 D_8009AFE8[][4];
 extern u8 D_8009B1A4[];
 extern u8 *D_8009F9F0;
-extern u8 *D_8009FA28;
+extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_800A8E80[];
 extern u8 D_800A2630[];
 extern u16 D_8009F83C;
@@ -184,7 +184,7 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
             v[7] = y + 10; v[5] = y + 10;
             break;
         }
-        if (D_8009F9F0 < D_8009FA28) {
+        if (D_8009F9F0 < gPrimPoolEnd) {
             t0 = (s32)D_8009F9F0;
             D_8009F9F0 = PK + 0x34;
         } else {

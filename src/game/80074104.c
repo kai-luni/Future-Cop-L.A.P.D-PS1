@@ -13,7 +13,8 @@ typedef struct { s32 x, y, z; } Vec;
 typedef struct { s32 e[9]; } Matrix;
 typedef struct { s32 page, x, y, w, h; } Texture;
 extern Texture D_8009B234[];
-extern u8 *D_8009F9F0, *D_8009FA28;
+extern u8 *D_8009F9F0;
+extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u8 D_800A3548[];
 extern Point D_800A6418[];
 extern u8 D_800AB388[];
@@ -330,7 +331,7 @@ void func_80074104(u8 *input, s32 *pos)
             depth = ((cur->z + H((u8 *)D_800A6418+offset,4)) >> 1) - 0x100;
             if (tex) {
                 cursor = D_8009F9F0;
-                if (cursor < D_8009FA28) D_8009F9F0 = cursor + 0x34;
+                if (cursor < gPrimPoolEnd) D_8009F9F0 = cursor + 0x34;
                 __asm__("" : "=r"(prim) : "0"(cursor));
                 H(prim,8) = cur->x + D_800A7840[i];
                 H(prim,0x14) = cur->x - D_800A7840[i];
@@ -378,7 +379,7 @@ void func_80074104(u8 *input, s32 *pos)
                 register u32 cmdhi asm("$4");
                 s32 room;
                 cursor = D_8009F9F0;
-                if (cursor >= D_8009FA28) {
+                if (cursor >= gPrimPoolEnd) {
                     __asm__("" : "=r"(prim) : "0"(cursor));
                     __asm__("lui %0,0xe100" : "=r"(cmdhi) : "r"(cursor));
                 } else {
@@ -392,7 +393,7 @@ void func_80074104(u8 *input, s32 *pos)
                 W(prim,0) = (s16)tagdepth | 0x01000000;
                 }
                 cursor = D_8009F9F0;
-                room = cursor < D_8009FA28;
+                room = cursor < gPrimPoolEnd;
                 W(prim,4) = cmdhi | 0x6a0;
                 if (!room) {
                     __asm__("" : "+r"(cursor));
@@ -428,7 +429,7 @@ void func_80074104(u8 *input, s32 *pos)
                     W(prim,0x1c) = c1 >> 8;
                     }
                     cursor = D_8009F9F0;
-                    if (cursor < D_8009FA28) D_8009F9F0 = cursor + 0x34;
+                    if (cursor < gPrimPoolEnd) D_8009F9F0 = cursor + 0x34;
                     __asm__("" : "=r"(prim) : "0"(cursor));
                     H(prim,8) = cur->x;
                     H(prim,0xa) = cur->y;

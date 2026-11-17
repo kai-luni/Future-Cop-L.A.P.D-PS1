@@ -9,7 +9,7 @@ struct Poly {
     u8 pad[0x1C];
 };
 extern struct Poly *D_8009F9F0;
-extern struct Poly *D_8009FA28;
+extern struct Poly *gPrimPoolEnd __asm__("D_8009FA28");
 
 /**
  * @brief Emits a gouraud quad with a caller-selected primitive code.
@@ -36,7 +36,7 @@ void func_80082FA4(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b, s3
 
     __asm__("" : : "r"(x1));
 
-    if (D_8009F9F0 < D_8009FA28) goto L_alloc;
+    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc;
     __asm__("");
     p = D_8009F9F0;
     goto L_done;

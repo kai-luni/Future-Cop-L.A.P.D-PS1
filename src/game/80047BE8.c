@@ -14,7 +14,7 @@ typedef struct {
 } Prim;
 
 extern Prim *D_8009F9F0;
-extern Prim *D_8009FA28;
+extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
 extern u8 D_8009FAA4;
 
 extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
@@ -79,7 +79,7 @@ void func_80047BE8(s32 x, s32 y_in, s32 z, s32 p3, s32 p4, s32 p5, s32 flag)
 
     z = (z + 1) / 2;
 
-    if (D_8009F9F0 < D_8009FA28) goto L_alloc1;
+    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc1;
     prim = D_8009F9F0;
     goto L_done1;
 L_alloc1:
@@ -111,7 +111,7 @@ L_done1:
     prim->y2 = y;
     prim->hdr.word = prim->hdr.word & 0xFF000000;
 
-    if (D_8009F9F0 < D_8009FA28) goto L_alloc2;
+    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc2;
     prim = D_8009F9F0;
     goto L_done2;
 L_alloc2:

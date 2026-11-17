@@ -10,7 +10,7 @@ struct Poly {
 };
 
 extern struct Poly *D_8009F9F0;
-extern struct Poly *D_8009FA28;
+extern struct Poly *gPrimPoolEnd __asm__("D_8009FA28");
 
 /**
  * @brief Emits a four-corner quad from eight explicit coordinates.
@@ -33,7 +33,7 @@ void func_80083060(s32 x0, s32 y0, s32 x1, s32 y1, s32 x2, s32 y2, s32 x3, s32 y
 {
     struct Poly *p;
 
-    if (D_8009F9F0 < D_8009FA28) goto L_alloc;
+    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc;
     __asm__("");
     p = D_8009F9F0;
     goto L_done;

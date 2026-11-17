@@ -58,7 +58,7 @@ typedef struct {
 
 extern Table82B0C *D_8009F45C;
 extern Prim82B0C *D_8009F9F0;
-extern Prim82B0C *D_8009FA28;
+extern Prim82B0C *gPrimPoolEnd __asm__("D_8009FA28");
 
 /**
  * @brief Emits a sprite from the texture atlas table, with optional size and UV
@@ -130,7 +130,7 @@ Prim82B0C *func_80082B0C(register s32 idx, s32 x, s32 y, s32 w, s32 h, s32 tag, 
             break;
         }
 
-        if (D_8009F9F0 < D_8009FA28) goto L_alloc;
+        if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc;
         __asm__("");
         prim = D_8009F9F0;
         goto L_done;

@@ -11,7 +11,8 @@ struct PacketSmall { u32 tag, color; s16 x, y; u32 size; };
 struct PacketLarge { u32 tag, color; s16 x0, y0; u32 color1; s16 x1, y1; u32 color2; s16 x2, y2; };
 extern struct State *D_8009FA94;
 extern u8 *D_8009FA90, *D_8009F9C0;
-extern u8 *D_8009F9F0, *D_8009FA28;
+extern u8 *D_8009F9F0;
+extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_800A6F60[];
 extern u8 D_8009F37C[];
 extern void func_800694C8(s32 *, s32 *, s32, s32);
@@ -154,7 +155,7 @@ void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
     register struct PacketLarge *lp __asm__("$4");
     lt = D_8009F9F0;
     lp = (struct PacketLarge *)lt;
-    if (lt >= D_8009FA28) {
+    if (lt >= gPrimPoolEnd) {
         __asm__ volatile ("" : : "r"(lt));
         lt = (u8 *)(flags & 31);
     } else {

@@ -60,7 +60,7 @@ typedef struct Obj {
 
 extern Cam *gCamera __asm__("D_8009F9E4");
 extern Prim *D_8009F9F0;
-extern Prim *D_8009FA28;
+extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_8009F9B8;
 
 extern void func_80010820(void *);
@@ -391,7 +391,7 @@ void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
                     depth = depth < z2;
                     if (depth) m = tmp;
                     raw = D_8009F9F0;
-                    if (raw >= D_8009FA28) {
+                    if (raw >= gPrimPoolEnd) {
                         p = raw;
                         __asm__("" : "+r"(p));
                     } else {
@@ -437,7 +437,7 @@ void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
                     depth = depth < z2;
                     if (depth) m = tmp;
                     raw = D_8009F9F0;
-                    if (raw >= D_8009FA28) {
+                    if (raw >= gPrimPoolEnd) {
                         p = raw;
                         __asm__("" : "+r"(p));
                     } else {
