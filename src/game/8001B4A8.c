@@ -23,7 +23,7 @@ extern u32 gNodePoolBase __asm__("D_8009F5E4");
 extern s32 D_8009F5E8;
 extern s32 D_8009F5EC;
 extern s32 D_8009F5F0;
-extern s32 D_8009F5F4;
+extern s32 gFrameBlockCount __asm__("D_8009F5F4");
 extern s32 D_8009F5F8;
 extern s32 gNodeTableLength __asm__("D_8009F5FC");
 extern s32 gNodeTableIndex __asm__("D_8009F600");
@@ -399,7 +399,7 @@ void func_8001B4A8(s32 arg0)
     val = *(u32 *)av;
     __asm__("" : : "r"(av));
     av = gNodeTableLength;
-    xbase = D_8009F5F4;
+    xbase = gFrameBlockCount;
     gNodeTableIndex = mask;
     v = xbase * 52;
     xbase = D_8009F5F8;

@@ -13,7 +13,7 @@ extern s32 gNodePoolBase __asm__("D_8009F5E4");
 extern volatile s32 D_8009F5E8;
 extern volatile s32 D_8009F5EC;
 extern volatile s32 D_8009F5F0;
-extern s32 D_8009F5F4;
+extern s32 gFrameBlockCount __asm__("D_8009F5F4");
 extern s32 D_8009F5F8;
 extern s32 gNodeTableLength __asm__("D_8009F5FC");
 extern s32 gNodeTableIndex __asm__("D_8009F600");
@@ -85,14 +85,14 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     register s32 offset __asm__("$2");
     register s32 count28 __asm__("$4");
 
-    D_8009F5F4 = arg0;
+    gFrameBlockCount = arg0;
     gSubScreenActive = 0;
     D_8009F5F8 = 0x400;
     gNodeTableLength = arg1;
 
-    D_8009F5C8 = func_80017EBC(D_8009F5F4 * 0x34, 2);
+    D_8009F5C8 = func_80017EBC(gFrameBlockCount * 0x34, 2);
 
-    allocationSize = D_8009F5F4 * 0x34;
+    allocationSize = gFrameBlockCount * 0x34;
     D_8009F5CC = func_80017EBC(allocationSize, 2);
 
     allocationSize = D_8009F5F8 * 0x1C;
@@ -112,7 +112,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
 
     func_80093178(D_8009F5D8, gNodeTableLength + 2);
 
-    value = D_8009F5F4;
+    value = gFrameBlockCount;
     count28 = D_8009F5F8;
     offset = value * 0x34;
     offset -= 0x34;
