@@ -5,7 +5,7 @@ extern s32 D_8009F5C0;
 extern s32 D_8009F5C8;
 extern s32 D_8009F5CC;
 extern s32 gRenderNodeTable __asm__("D_8009F5D0");
-extern s32 D_8009F5D4;
+extern s32 gRenderNodeTableAlt __asm__("D_8009F5D4");
 extern s32 D_8009F5D8;
 extern s32 D_8009F5DC;
 extern s32 gPacketPoolBase __asm__("D_8009F5E0");
@@ -99,7 +99,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     gRenderNodeTable = func_80017EBC(allocationSize, 2);
 
     allocationSize = D_8009F5F8 * 0x1C;
-    D_8009F5D4 = func_80017EBC(allocationSize, 2);
+    gRenderNodeTableAlt = func_80017EBC(allocationSize, 2);
 
     D_8009F5D8 = func_80017EBC((arg1 + 2) * 4, 2);
     D_8009F5DC = func_80017EBC((arg1 + 2) * 4, 2);
