@@ -9,7 +9,7 @@ struct Unk9F9A0 {
 
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern volatile s32 D_8009FA30;
-extern s32 D_8009F9FC;
+extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA84;
 extern s32 D_8009FAA4;
@@ -65,43 +65,43 @@ void func_8002703C(void)
 
     __asm__ volatile("");
     sum = diff + (s8)D_8009F690 + (s8)D_8009F691;
-    D_8009F9FC = diff;
+    gFrameId = diff;
     sum = sum + (s8)D_8009F692 + (s8)D_8009F693;
-    D_8009F9FC = sum;
-    D_8009F693 = *(u8 *)&D_8009F9FC & 3;
+    gFrameId = sum;
+    D_8009F693 = *(u8 *)&gFrameId & 3;
     if (sum < 0) {
         sum += 3;
     }
     __asm__ volatile("");
     obj = D_8009F9A0[0];
-    D_8009F9FC = sum >> 2;
+    gFrameId = sum >> 2;
     D_8009F692 = D_8009F691;
     D_8009F691 = D_8009F690;
     D_8009F690 = diff;
     if (obj != 0 && obj->unk11C != 0 && obj->unk11D != 0) {
-        D_8009F9FC = obj->unk11D * 5;
+        gFrameId = obj->unk11D * 5;
     }
 
-    if (D_8009F9FC >= 0x3C) {
-        D_8009F9FC = 0x3C;
+    if (gFrameId >= 0x3C) {
+        gFrameId = 0x3C;
     }
 
     func_80057864();
     if (D_8009FA84 > 0) {
         value = func_80059DB8();
-        D_8009F9FC = value;
+        gFrameId = value;
         if (value < 0) {
             gScreenState = 5;
-            D_8009F9FC = 5;
+            gFrameId = 5;
         }
-        nsum = D_8009FA30 + D_8009F9FC;
+        nsum = D_8009FA30 + gFrameId;
         D_8009FAA4 = nsum;
         gPaletteCycleCounter = nsum;
     }
 
     D_8009FA30 = D_8009FAA4;
-    func_8004DB74(D_8009F9FC);
-    func_80063568(D_8009F9FC);
-    func_800136C8(D_8009F9FC);
+    func_8004DB74(gFrameId);
+    func_80063568(gFrameId);
+    func_800136C8(gFrameId);
     func_8004CC68();
 }

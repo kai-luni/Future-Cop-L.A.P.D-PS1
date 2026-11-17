@@ -1,7 +1,7 @@
 // Categories: Game Engine > Interactive Loop | Graphics > Frame Timing
 #include "game/types.h"
 
-extern s32 D_8009F9FC;
+extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 D_8009FA30;
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 D_8009FAA4;
@@ -47,6 +47,6 @@ void func_80027E68(void)
         diff = 0x12C;
     }
 
-    D_8009F9FC = diff;
+    gFrameId = diff;
     D_8009FA30 = current;
 }

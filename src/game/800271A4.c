@@ -50,7 +50,7 @@ extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern u32 D_8009FAA4;
 extern s32 D_8009FA30;
 extern s32 D_8009FA24;
-extern s32 D_8009F9FC;
+extern s32 gFrameId __asm__("D_8009F9FC");
 extern u8 *D_8009F9A0[4];
 extern u8 D_8009F2F4[];
 
@@ -158,13 +158,13 @@ void func_800271A4(void)
             func_80047690(1);
         }
         D_8009F680 = 0;
-        func_80069D0C(D_8009F9FC);
+        func_80069D0C(gFrameId);
         func_8004DF28();
         func_8004CECC();
-        func_8004CD6C(6, D_8009F9FC, 0);
-        func_80031DE8(D_8009F9FC);
+        func_8004CD6C(6, gFrameId, 0);
+        func_80031DE8(gFrameId);
         func_8004CE04();
-        func_8003F570(D_8009F9FC);
+        func_8003F570(gFrameId);
     }
 
     if (flags & 1) {
@@ -191,8 +191,8 @@ void func_800271A4(void)
 
     if (!(flags & 0x20)) {
         func_80026D1C();
-        func_800616A0(D_8009F9FC);
-        func_80026D9C(D_8009F9FC);
+        func_800616A0(gFrameId);
+        func_80026D9C(gFrameId);
         func_8004D598();
         D_8009FA24 = 0;
     } else {

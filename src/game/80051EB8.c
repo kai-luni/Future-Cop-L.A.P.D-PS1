@@ -61,7 +61,7 @@ struct Arg1 {
     s16 unk48;
 };
 
-extern s32 D_8009F9FC;
+extern s32 gFrameId __asm__("D_8009F9FC");
 
 extern void func_80019470(struct Matrix32 *source, struct Matrix32 *destination);
 extern s32 func_8001A7AC(s32 *arg0);
@@ -124,7 +124,7 @@ void func_80051EB8(struct Arg0 *arg0, struct Arg1 *arg1, s32 arg2, s32 arg3)
         } else {
             scale = 0x1000;
         }
-        diff = scale * D_8009F9FC;
+        diff = scale * gFrameId;
         func_8001ABE0(diff << 1, vec);
         arg0->unkAC->x += vec[0];
         arg0->unkAC->z += vec[1];

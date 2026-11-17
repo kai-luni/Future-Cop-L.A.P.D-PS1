@@ -9,7 +9,7 @@ typedef struct {
 extern UnkFA94 *D_8009FA94;
 
 extern s32 D_8009F9C4;
-extern s32 D_8009F9FC;
+extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA30;
 extern volatile u8 D_8009FA3C;
@@ -81,7 +81,7 @@ s32 func_800259D8(void)
 
     D_8009FA30 = 0;
     D_8009FAA4 = 0;
-    D_8009F9FC = 5;
+    gFrameId = 5;
 
     func_8001BFD8(0);
     func_80025370();

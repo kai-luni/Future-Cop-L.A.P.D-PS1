@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern s32 D_8009F9FC;
+extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 D_8009FA50;
 extern s32 D_8009FAA4;
 extern s32 D_8009FA30;
@@ -90,8 +90,8 @@ void func_80028618(void)
     gPaletteCycleCounter = 0;
     saved = gPaletteCycleCounter;
     work = 8;
-    D_8009F9FC = work;
-    b = *(u8 *)&D_8009F9FC;
+    gFrameId = work;
+    b = *(u8 *)&gFrameId;
     D_8009FA50 = 0;
     D_8009F693 = 0;
     D_8009FAA4 = saved;
@@ -117,7 +117,7 @@ frame:
         }
         {
             register s32 frame_id __asm__("$4");
-            frame_id = D_8009F9FC;
+            frame_id = gFrameId;
             cursor = D_8009FA58;
             work = 0;
             func_8008352C(frame_id);

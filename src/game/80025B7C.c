@@ -14,7 +14,7 @@ typedef struct {
 extern UnkFA94 *D_8009FA94;
 
 extern s32 D_8009F9C4;
-extern s32 D_8009F9FC;
+extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA30;
 extern s32 D_8009FA70;
@@ -103,7 +103,7 @@ state_8:
                 if (gScreenState != state && func_80024170() == 0) {
                     break;
                 }
-                D_8009F9FC = D_8009FAA4 - D_8009FA30;
+                gFrameId = D_8009FAA4 - D_8009FA30;
                 D_8009FA30 = D_8009FAA4;
                 func_80025348();
             }

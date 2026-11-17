@@ -74,7 +74,7 @@ struct PlayerFA58 {
 
 extern struct GlobalFA94 *D_8009FA94;
 extern struct PlayerFA58 *D_8009FA58;
-extern u16 D_8009F9FC;
+extern u16 gFrameId __asm__("D_8009F9FC");
 extern void *jtbl_80011318[];
 
 extern s32 func_80019668(void);
@@ -147,7 +147,7 @@ case_4:
     }
     {
         register s32 diff __asm__("$2");
-        diff = a1->unk100 - D_8009F9FC;
+        diff = a1->unk100 - gFrameId;
         a1->unk100 = diff;
         if ((s16)diff > 0) {
             return 0;

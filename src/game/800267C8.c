@@ -53,7 +53,7 @@ extern s32 D_8009FA58[];
 extern s32 D_8009FA6C;
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
-extern union SpeedValue267C8 D_8009F9FC;
+extern union SpeedValue267C8 gFrameId __asm__("D_8009F9FC");
 extern struct SoundState267C8 *D_8009FA94;
 extern u8 *D_8009F2D8;
 extern u8 *D_8009F2DC;
@@ -284,7 +284,7 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
             if ((s16)state->unk314 < 0) {
                 state->unk314 = 0;
             }
-            state->unk314 += D_8009F9FC.half;
+            state->unk314 += gFrameId.half;
             if ((s16)state->unk314 > 0x200) {
                 state->unk314 = 0x200;
             }
@@ -292,7 +292,7 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
             if ((s16)state->unk314 > 0) {
                 state->unk314 = 0;
             }
-            state->unk314 -= D_8009F9FC.half;
+            state->unk314 -= gFrameId.half;
             if ((s16)state->unk314 < -0x200) {
                 state->unk314 = -0x200;
             }
@@ -304,7 +304,7 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
             if ((s16)state->unk316 < 0) {
                 state->unk316 = 0;
             }
-            state->unk316 += D_8009F9FC.half;
+            state->unk316 += gFrameId.half;
             if ((s16)state->unk316 > 0x200) {
                 state->unk316 = 0x200;
             }
@@ -312,7 +312,7 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
             if ((s16)state->unk316 > 0) {
                 state->unk316 = 0;
             }
-            state->unk316 -= D_8009F9FC.half;
+            state->unk316 -= gFrameId.half;
             if ((s16)state->unk316 < -0x200) {
                 state->unk316 = -0x200;
             }
@@ -324,8 +324,8 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
             s32 dz;
             s32 dx;
 
-            dz = state->unk314 * D_8009F9FC.word;
-            dx = state->unk316 * D_8009F9FC.word;
+            dz = state->unk314 * gFrameId.word;
+            dx = state->unk316 * gFrameId.word;
             state->unk30C += dz << 2;
             state->unk304 += dx << 2;
         }

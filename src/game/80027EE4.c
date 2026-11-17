@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 D_8009F284;
-extern s32 D_8009F9FC;
+extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA30;
 extern s32 D_8009FA50;
@@ -40,7 +40,7 @@ void func_80027EE4(void)
     s32 t;
     gPaletteCycleCounter = 0;
     t = gPaletteCycleCounter;
-    D_8009F9FC = 8;
+    gFrameId = 8;
     D_8009FAA4 = t;
     D_8009FA30 = t;
     D_8009FA50 = 0;
