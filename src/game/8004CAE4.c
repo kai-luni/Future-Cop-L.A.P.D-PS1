@@ -8,7 +8,7 @@ struct Unk4CAE4State {
     s32 mode5C;
 };
 
-extern s32 D_8009F7A0;
+extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 extern s32 D_8009F7A4;
 extern s32 D_8009F7A8;
 extern u8 D_8009F7AC;
@@ -68,7 +68,7 @@ void func_8004CAE4(void)
     D_8009F7A4 = 0;
     D_8009FA40 = 0;
     D_8009FA88 = 0;
-    D_8009F7A0 = 0;
+    gEntityIdCounter = 0;
 
     D_800A6F60[1] = 0xF8;
     D_800A6F60[2] = 0xF80000;

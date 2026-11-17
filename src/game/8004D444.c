@@ -13,7 +13,7 @@ struct Entity {
     s32 id;
 };
 
-extern s32 D_8009F7A0;
+extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 
 extern void *func_80017EBC(s32 size, s32 tag);
 extern void func_8004D3D4(struct Entity *entity);
@@ -49,7 +49,7 @@ struct Entity *func_8004D444(struct EntityDef *def)
     entity = func_80017EBC(def->handler(1, 0, 0, 0), 3);
     handler = def->handler;
     entity->update = handler;
-    entity->id = ++D_8009F7A0;
+    entity->id = ++gEntityIdCounter;
     handler(2, entity, def, 0);
     func_8004D3D4(entity);
     return entity;

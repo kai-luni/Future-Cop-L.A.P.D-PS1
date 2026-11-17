@@ -10,7 +10,7 @@ struct Entity {
 };
 
 extern struct Entity *D_8009FA40;
-extern s32 D_8009F7A0;
+extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 extern void *D_8009FA58[];
 
 extern void func_8004D958(struct Entity *entity);
@@ -53,7 +53,7 @@ void func_8004CCDC(void)
         }
     }
     func_8004D598();
-    D_8009F7A0 = 0;
+    gEntityIdCounter = 0;
     for (i = 1; i >= 0; i--) {
         D_8009FA58[i] = 0;
     }
