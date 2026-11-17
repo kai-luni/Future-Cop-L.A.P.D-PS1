@@ -27,7 +27,7 @@ struct Unk60838Entry {
     void *unk20[4];
 };
 
-extern s32 D_8009F7F8;
+extern s32 gDefinitionEntryCount __asm__("D_8009F7F8");
 extern struct Unk60838Entry D_800A2300[];
 
 extern void *func_80019C38(u32 a0, u32 a1, u32 a2, u32 a3);
@@ -69,7 +69,7 @@ void func_80060838(struct Unk60838Arg *arg0)
     s32 i;
     s32 index;
 
-    index = D_8009F7F8++;
+    index = gDefinitionEntryCount++;
 
     data = func_80019C38(arg0->unk00, arg0->unk20, 0x74414354, arg0->unk1C);
     entry = &D_800A2300[index];

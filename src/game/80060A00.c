@@ -1,7 +1,7 @@
 // Categories: Game Engine > Game State > Reset | Game Engine > Object Setup
 #include "game/types.h"
 
-extern s32 D_8009F7F8;
+extern s32 gDefinitionEntryCount __asm__("D_8009F7F8");
 
 /**
  * @brief Clears the 0x30-byte definition table entry count D_8009F7F8 during mission reset.
@@ -27,5 +27,5 @@ extern s32 D_8009F7F8;
  */
 void func_80060A00(void)
 {
-    D_8009F7F8 = 0;
+    gDefinitionEntryCount = 0;
 }
