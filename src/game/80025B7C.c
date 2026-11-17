@@ -13,7 +13,7 @@ typedef struct {
 
 extern UnkFA94 *D_8009FA94;
 
-extern s32 D_8009F9C4;
+extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA30;
@@ -126,7 +126,7 @@ state_done:
     func_80023BF8();
 
     D_8009FA94->unk60 = 0;
-    if (D_8009F9C4 != 0) {
+    if (gUploadInProgress != 0) {
         func_800249BC(saved_arg);
     } else {
         func_80024D14(saved_arg);

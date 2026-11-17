@@ -1,7 +1,7 @@
 // Categories: Game Engine > Screen Dispatch | Resources | Graphics
 #include "game/types.h"
 
-extern s32 D_8009F9C4;
+extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u8 gFrameBarrier __asm__("D_8009FA3C");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
@@ -63,7 +63,7 @@ extern void func_80025B7C(s32 arg0);
 s32 func_800287F4(s32 arg0, u8 arg1)
 {
     gPlayerCount = 0;
-    D_8009F9C4 = arg1;
+    gUploadInProgress = arg1;
     gDiscShadeByte = 0;
     D_8009FAA8 = 0;
 
@@ -79,7 +79,7 @@ s32 func_800287F4(s32 arg0, u8 arg1)
     func_80048E28(func_80048E94());
     func_8003FAD4();
 
-    if (D_8009F9C4 != 0) {
+    if (gUploadInProgress != 0) {
         func_80027EE4();
     } else {
         func_80028618(arg0);

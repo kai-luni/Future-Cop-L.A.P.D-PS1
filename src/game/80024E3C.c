@@ -3,7 +3,7 @@
 
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009F658;
-extern s32 D_8009F9C4;
+extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern u8 *D_8009FA94;
 extern u8 D_8009F2E4[];
 
@@ -57,7 +57,7 @@ s32 func_80024E3C(s32 arg0)
     r = func_800833A8(arg0);
     func_8008CD30(buf, D_8009F2E4, r, arg0);
 
-    if (D_8009F9C4 != 0) {
+    if (gUploadInProgress != 0) {
         func_80024904((s32)buf);
     } else {
         func_80024A24((s32)buf);

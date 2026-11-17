@@ -21,7 +21,8 @@ typedef struct {
 } State861E4;
 
 typedef struct { u16 w, h; u8 data[1]; } Input861E4;
-extern s32 D_8009F9C4, D_8009F250, D_8009F4C8;
+extern s32 D_8009F250, D_8009F4C8;
+extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern State861E4 *gDecodeJob __asm__("D_8009F4BC");
 extern void *D_8009F948, *D_8009F94C, *D_8009F950, *D_8009F954;
@@ -131,7 +132,7 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         }
         func_800859D8(flag);
     }
-    if (D_8009F9C4) {
+    if (gUploadInProgress) {
         buf1 = func_80017EBC(0x6000, 2);
         if (!buf1) goto cleanup;
         buf2 = func_80017EBC(0x600, 2);
@@ -141,7 +142,7 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         buf1 = D_8009F948;
         buf2 = D_8009F94C;
     }
-    gDecodeJob = func_80017EBC(0x130, D_8009F9C4 ? 2 : 3);
+    gDecodeJob = func_80017EBC(0x130, gUploadInProgress ? 2 : 3);
     if (!gDecodeJob) goto cleanup;
     func_8001E4C0(gDecodeJob, 0, 0x130);
     func_8008C9C0();
@@ -151,7 +152,7 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
     gDecodeJob->callback128 = func_80092B94(0);
     if (gStripScaleEnable == 1) D_8009F250 = gStripScaleEnable;
     func_8008C9E0();
-    if (D_8009F9C4) {
+    if (gUploadInProgress) {
         gDecodeJob->buffer28[0] = func_80017EBC(0x10000, 2);
         if (!gDecodeJob->buffer28[0]) goto cleanup;
         gDecodeJob->buffer24 = func_80017EBC(0x3000, 2);
@@ -222,7 +223,7 @@ cleanup:
     }
     func_8008C9E0();
     func_80095E90(1);
-    if (D_8009F9C4) {
+    if (gUploadInProgress) {
         if (buf1) func_800181D4(buf1);
         if (buf2) func_800181D4(buf2);
         if (gDecodeJob) {
