@@ -67,7 +67,7 @@ struct Global597C0 {
 };
 
 extern u8 gDiscShadeByte[] __asm__("D_8009FAA4");
-extern u8 D_8009AF3C[];
+extern u8 gDiscPartIndexTable[] __asm__("D_8009AF3C");
 u8 D_8009F36D;
 extern u8 D_8009F36E;
 extern u8 D_8009F36F;
@@ -255,7 +255,7 @@ void func_800597C0(struct Object597C0 *object)
     i = offset;
     __asm__ volatile("" : "+r"(i));
     color = &D_8009F36D;
-    parts = D_8009AF3C;
+    parts = gDiscPartIndexTable;
     count = ((struct Model597C0 *)info->unk210.model)->unk08->unk0C;
 
     do {
