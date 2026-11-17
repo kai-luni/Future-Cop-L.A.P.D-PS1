@@ -60,7 +60,7 @@ extern u32 D_800A0C20[];
 extern u32 D_800A0C50[];
 extern u32 D_800A0C60[];
 extern s32 D_800A0B9C[2];
-extern u16 D_800A0BC0[];
+extern u16 gRingBuffer[] __asm__("D_800A0BC0");
 
 extern s32 D_8009F698;
 extern u8 D_8009F69C;
@@ -192,8 +192,8 @@ void func_80029F50(void *arg0)
     }
     state->unk04 = value;
 
-    D_800A0BC0[0] = 0;
-    D_800A0BC0[1] = 0;
+    gRingBuffer[0] = 0;
+    gRingBuffer[1] = 0;
 
     for (i = 0; i < 4; i++) {
         D_800A0C50[i] = 0;

@@ -16,7 +16,7 @@ typedef struct {
     QueueSlot298EC slots[8];
 } Queue298EC;
 
-extern Queue298EC D_800A0BC0;
+extern Queue298EC gRingBuffer __asm__("D_800A0BC0");
 
 /**
  * @brief Appends a value to the eight-slot event ring at its next free position.
@@ -49,12 +49,12 @@ void func_800298EC(s16 arg0)
 {
     if (gScreenState < 5) {
         if (func_800452C8() != 0) {
-            s16 pending = D_800A0BC0.length;
+            s16 pending = gRingBuffer.length;
             if (pending < 8) {
-                s32 slot = (D_800A0BC0.baseIndex + pending) & 7;
-                D_800A0BC0.slots[slot].value = arg0;
-                D_800A0BC0.slots[slot].state = 0;
-                D_800A0BC0.length++;
+                s32 slot = (gRingBuffer.baseIndex + pending) & 7;
+                gRingBuffer.slots[slot].value = arg0;
+                gRingBuffer.slots[slot].state = 0;
+                gRingBuffer.length++;
             }
         }
     }

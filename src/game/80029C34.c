@@ -27,7 +27,7 @@ typedef struct {
     s32 unk4C;
 } State29C34;
 
-extern Queue29C34 D_800A0BC0;
+extern Queue29C34 gRingBuffer __asm__("D_800A0BC0");
 extern State29C34 D_800A0B70;
 extern u8 D_8009F6B8;
 extern s32 D_8009F6BC;
@@ -73,18 +73,18 @@ void func_80029C34(void)
 
     state = &D_800A0B70;
 
-    if (D_800A0BC0.count <= 0) {
+    if (gRingBuffer.count <= 0) {
         return;
     }
     if (D_8009F6B8 & 0x70) {
         return;
     }
 
-    index = D_800A0BC0.index;
-    value = D_800A0BC0.entries[index].unk00;
+    index = gRingBuffer.index;
+    value = gRingBuffer.entries[index].unk00;
 
-    if (D_800A0BC0.entries[index].unk02 != 0) {
-        func_80044FF8(value, D_800A0BC0.entries[index].unk04);
+    if (gRingBuffer.entries[index].unk02 != 0) {
+        func_80044FF8(value, gRingBuffer.entries[index].unk04);
     } else {
         func_80044FF8(-1, 0);
     }
@@ -117,8 +117,8 @@ void func_80029C34(void)
 
 tail:
     D_8009F69C = 0;
-    D_800A0BC0.index = (D_800A0BC0.index + 1) & 7;
-    D_800A0BC0.count = D_800A0BC0.count - 1;
+    gRingBuffer.index = (gRingBuffer.index + 1) & 7;
+    gRingBuffer.count = gRingBuffer.count - 1;
 
     if (D_8009F6B8 == 0x40) {
         state->unk3C = 0;
