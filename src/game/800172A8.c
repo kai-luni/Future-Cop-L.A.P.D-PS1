@@ -19,7 +19,7 @@ typedef struct {
 
 extern Prim17 *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim17 *gPrimPoolEnd __asm__("D_8009FA28");
-extern u16 D_8009F580;
+extern u16 gDepthTagWord __asm__("D_8009F580");
 
 extern void func_80015F14(void *a0, void *a1, void *a2);
 
@@ -75,7 +75,7 @@ s32 func_800172A8(s32 arg0, u32 arg1, u32 *a2, Vtx17 *arg3)
     void *vp;
 
     fl = arg1;
-    base = D_8009F580;
+    base = gDepthTagWord;
     vp = (u8 *)arg3 + 0x20;
 
     if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc;

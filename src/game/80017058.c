@@ -9,7 +9,7 @@ typedef struct { s32 count; Part part[1]; } Parts;
 typedef struct { char pad[12]; u32 flags; char pad10[20]; Parts *parts; void *p28; void **p2c; } Model;
 typedef struct { Model *model; Matrix matrix; Vec pos; char pad34[20]; s16 index; u8 flags; } Instance;
 typedef struct { char data[20]; u8 mode, flag; u16 value; } Work;
-extern u16 D_8009F580;
+extern u16 gDepthTagWord __asm__("D_8009F580");
 extern void *D_8009F570, *D_8009F574;
 extern Vec *gCamera __asm__("D_8009F9E4");
 extern s32 D_800A8EA4;
@@ -58,7 +58,7 @@ void func_80017058(Instance *inst, u32 *enabled, s32 mask)
     void *p28, *p2c, *global, *other;
     s32 count, flag, bit;
     register s32 index __asm__("$16");
-    work.value = D_8009F580;
+    work.value = gDepthTagWord;
     other = 0;
     index = (s32)other;
     model = inst->model;

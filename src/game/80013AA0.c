@@ -1,7 +1,7 @@
 // Categories: Graphics > GPU Primitives | Graphics > Renderer > Depth Cue Pass
 #include "game/types.h"
 
-extern s16 D_8009F580;
+extern s16 gDepthTagWord __asm__("D_8009F580");
 
 /**
  * @brief Packs two bytes into the shared 16-bit depth/tag word D_8009F580.
@@ -24,5 +24,5 @@ extern s16 D_8009F580;
  */
 void func_80013AA0(s32 low, s32 high)
 {
-    D_8009F580 = (high << 8) | low;
+    gDepthTagWord = (high << 8) | low;
 }
