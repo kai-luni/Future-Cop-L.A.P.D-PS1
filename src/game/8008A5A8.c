@@ -1,7 +1,7 @@
 // Categories: Game Engine > State Access
 #include "../../include/game/types.h"
 
-extern s32 D_8009C790;
+extern s32 gPadVblankIrqFlag __asm__("D_8009C790");
 
 /**
  *  @brief Returns and clears a signed global value.
@@ -23,7 +23,7 @@ s32 func_8008A5A8(void)
 {
     s32 previous;
 
-    previous = D_8009C790;
-    D_8009C790 = 0;
+    previous = gPadVblankIrqFlag;
+    gPadVblankIrqFlag = 0;
     return previous;
 }
