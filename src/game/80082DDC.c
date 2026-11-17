@@ -1,7 +1,7 @@
 // Categories: Graphics > Text > Debug Numbers | Game Engine > Frame
 #include "game/types.h"
 
-extern s32 D_8009FA2C;
+extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 D_8009F3D0;
 extern s32 D_8009F870;
 extern s8 D_8009F874;
@@ -43,7 +43,7 @@ void func_80082DDC(s32 arg0, s32 arg1)
     u8 buf[0x28];
     s32 start;
 
-    start = D_8009FA2C;
+    start = gFrameTickCounter;
     func_80047690(0);
     switch (arg1) {
     case 1:
@@ -58,5 +58,5 @@ void func_80082DDC(s32 arg0, s32 arg1)
     }
     func_80047690(1);
     D_8009F874 = -1;
-    D_8009F870 += D_8009FA2C - start;
+    D_8009F870 += gFrameTickCounter - start;
 }

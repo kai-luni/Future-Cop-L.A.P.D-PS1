@@ -40,7 +40,7 @@ extern s32 prev_buttons[2] __asm__("D_8009F8B0");
 extern u32 D_8009F8D0, D_8009F8D4;
 extern volatile u32 D_8009F8D0_arr[] __asm__("D_8009F8D0");
 extern s32 D_8009F890[], D_8009F898[], D_8009F8A0[], D_8009F8A8[];
-extern volatile s32 D_8009FA2C;
+extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u32 D_8009B324[];
 extern struct Menu D_800A3808;
 extern s16 D_800A3578[2][4];
@@ -102,10 +102,10 @@ void func_80078DD0(void)
     D_8009F8B4 = D_8009F8D4;
     buttons[1] = D_8009F8D4 = func_8001EF8C(1);
     for (i = 0; i < 2; i++) {
-        if (buttons[i] & 0x100000) { if (!D_8009F890[i]) D_8009F890[i] = D_8009FA2C; } else D_8009F890[i] = 0;
-        if (buttons[i] & 0x400000) { if (!D_8009F898[i]) D_8009F898[i] = D_8009FA2C; } else D_8009F898[i] = 0;
-        if (buttons[i] & 0x800000) { if (!D_8009F8A0[i]) D_8009F8A0[i] = D_8009FA2C; } else D_8009F8A0[i] = 0;
-        if (buttons[i] & 0x200000) { if (!D_8009F8A8[i]) D_8009F8A8[i] = D_8009FA2C; } else D_8009F8A8[i] = 0;
+        if (buttons[i] & 0x100000) { if (!D_8009F890[i]) D_8009F890[i] = gFrameTickCounter; } else D_8009F890[i] = 0;
+        if (buttons[i] & 0x400000) { if (!D_8009F898[i]) D_8009F898[i] = gFrameTickCounter; } else D_8009F898[i] = 0;
+        if (buttons[i] & 0x800000) { if (!D_8009F8A0[i]) D_8009F8A0[i] = gFrameTickCounter; } else D_8009F8A0[i] = 0;
+        if (buttons[i] & 0x200000) { if (!D_8009F8A8[i]) D_8009F8A8[i] = gFrameTickCounter; } else D_8009F8A8[i] = 0;
     }
     if (D_8009F464 != 1) {
         changed = count = step = first = 0;
@@ -114,9 +114,9 @@ void func_80078DD0(void)
             for (j = 0; j < 2; j++) if (buttons[j] != prev_buttons[j]) goto reset_timer;
         } else {
 reset_timer:
-            D_8009F870 = D_8009FA2C + 9000;
+            D_8009F870 = gFrameTickCounter + 9000;
         }
-        if (D_8009FA2C > D_8009F870) {
+        if (gFrameTickCounter > D_8009F870) {
             u8 active = 0;
             if (D_8009F3F2) active = func_80078C88();
             if (!active) {

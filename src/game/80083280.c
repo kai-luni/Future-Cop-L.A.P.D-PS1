@@ -1,7 +1,7 @@
 // Categories: Graphics > HUD > Selection Frame | Graphics > GPU Primitives > Gouraud Quad
 #include "game/types.h"
 
-extern volatile s32 D_8009FA2C;
+extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_8009F3F8[8];
 extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b);
 
@@ -38,7 +38,7 @@ void func_80083280(s32 x, s32 y, s32 w, s32 h)
     register s32 t __asm__("$2");
     register u8 *pal __asm__("$3");
 
-    t = D_8009FA2C;
+    t = gFrameTickCounter;
     __asm__("lui %0,%%hi(D_8009F3F8)\n\taddiu %0,%0,%%lo(D_8009F3F8)"
             : "=r"(pal) : "r"(t));
     idx = (t >> 4) & 7;

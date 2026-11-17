@@ -28,7 +28,7 @@ struct Obj260B8 {
 extern struct MenuText260B8 *D_8009F2CC;
 extern s8 D_8009F2D4;
 extern s8 D_8009F2D5;
-extern s32 D_8009FA2C;
+extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 D_8009FA6C;
 extern s32 D_8009FA00;
 extern s32 D_8009FAC0;
@@ -163,7 +163,7 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
     menu = D_8009F2CC;
     base1 = menu->unk1C + D_8009F2D4;
     base2 = menu->unk20 + D_8009F2D5;
-    if (D_8009FA2C & 0x40) {
+    if (gFrameTickCounter & 0x40) {
         initialColor = 0x13;
     }
     *base2 = initialColor;

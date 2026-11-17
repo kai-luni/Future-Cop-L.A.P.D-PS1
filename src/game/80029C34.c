@@ -36,7 +36,7 @@ extern s32 D_8009F6C4;
 extern s32 D_8009F6DC;
 extern u8 D_8009F69C;
 extern u8 *D_8009F698;
-extern s32 D_8009FA2C;
+extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_800A0B90[];
 
 extern void func_80044FF8(s32 mode, void *object);
@@ -112,7 +112,7 @@ void func_80029C34(void)
     D_8009F6BC = value;
     D_8009F6B8 = 0x40;
     D_8009F6C0 = 0;
-    D_8009F6C4 = D_8009FA2C + 0xBB8;
+    D_8009F6C4 = gFrameTickCounter + 0xBB8;
     func_80029520();
 
 tail:

@@ -43,7 +43,7 @@ extern u32 D_8009FA00;
 extern u32 D_8009FA50;
 extern s32 D_8009FA84;
 extern u8 *D_8009F2D0;
-extern u32 D_8009FA2C;
+extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_8009F680;
 extern s32 D_8009FA38;
 extern s32 D_8009FA60;
@@ -142,7 +142,7 @@ void func_800271A4(void)
         text = D_8009F2D0;
         x = (0x280 - func_80049340(text)) / 4;
         color = 1;
-        if (D_8009FA2C & 0x80) {
+        if (gFrameTickCounter & 0x80) {
             color = 9;
         }
         func_80049100(text, x, 0xB4, color);

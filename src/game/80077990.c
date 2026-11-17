@@ -36,7 +36,7 @@
  */
 __asm__(
 ".globl D_8009F3E4\n"
-".globl D_8009FA2C\n"
+".globl gFrameTickCounter\n"
 ".globl D_8009F8E8\n"
 ".text\n"
 ".set noreorder\n"

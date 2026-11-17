@@ -6,7 +6,7 @@ extern s32 D_8009F6BC;
 extern s32 D_8009F6C4;
 extern s32 D_8009F6DC;
 extern s32 D_8009FA24;
-extern s32 D_8009FA2C;
+extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_800A0B90[];
 
 extern void func_80029DD8(void);
@@ -39,7 +39,7 @@ void func_8002A26C(void)
 {
     func_8002A408();
 
-    if (D_8009F6C4 != 0 && D_8009F6C4 < D_8009FA2C) {
+    if (D_8009F6C4 != 0 && D_8009F6C4 < gFrameTickCounter) {
         D_8009F6C4 = 0;
         func_80029DD8();
         if (D_8009F6B8 & 0x40) {

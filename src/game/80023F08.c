@@ -5,7 +5,8 @@ struct Resource { u8 pad[13]; s8 owner; };
 struct Handle { struct Resource *resource; s32 serial, state, id, time, delay; u8 flag; };
 struct Params { s32 pitch, volume, pan; };
 extern struct Handle D_800A0A80;
-extern s32 D_8009F278, D_8009FA2C;
+extern s32 D_8009F278;
+extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern void func_80023E84(void);
 extern s32 func_800474C4(struct Handle *);
 extern s32 func_800450A4(s32, s8 *);
@@ -63,7 +64,7 @@ s32 func_80023F08(void)
                 channel = resource->owner;
                 func_800221E4(1, &channel);
                 D_800A0A80.state = 1;
-                D_800A0A80.time = D_8009FA2C + D_800A0A80.delay;
+                D_800A0A80.time = gFrameTickCounter + D_800A0A80.delay;
             }
         }
     }

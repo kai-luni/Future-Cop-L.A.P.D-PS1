@@ -1,7 +1,7 @@
 // Categories: Game Engine > Front End | Game Engine > Menu System
 #include "game/types.h"
 
-extern volatile s32 D_8009FA2C;
+extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 D_8009F870;
 extern s32 D_8009F8E8;
 extern u8 D_8009F46C;
@@ -38,8 +38,8 @@ void func_800778E4(s32 arg0)
         return;
     }
 
-    D_8009F870 = D_8009FA2C + 0x2328;
-    if (D_8009F8E8 < D_8009FA2C) {
+    D_8009F870 = gFrameTickCounter + 0x2328;
+    if (D_8009F8E8 < gFrameTickCounter) {
         func_80078650(D_800A3808, 0);
         D_8009F46C = 1;
         func_800788B4();
@@ -49,7 +49,7 @@ void func_800778E4(s32 arg0)
 void func_80077944(s32 arg0)
 {
     if (arg0 == 3 && D_8009F46C != 0) {
-        D_8009F8E8 = D_8009FA2C + 1;
+        D_8009F8E8 = gFrameTickCounter + 1;
         func_800778E4(0);
     }
 }

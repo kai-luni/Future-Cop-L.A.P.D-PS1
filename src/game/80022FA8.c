@@ -30,7 +30,7 @@ extern struct Stream22FA8 D_800A0968;
 extern s32 D_800A0988[2];
 extern s32 D_800A099C[2];
 extern s32 D_800A09F8[2];
-extern s32 D_8009FA2C[2];
+extern s32 gFrameTickCounter[2] __asm__("D_8009FA2C");
 extern u32 D_8009F634;
 
 extern void func_80022F7C(void);
@@ -112,7 +112,7 @@ void func_80022FA8(void)
             u32 tmp = D_800A0968.unk40 - 16;
             D_800A0968.unk7C = tmp + D_800A0968.length;
         }
-        D_800A0968.unk88 = D_8009FA2C[0] + (quot + 10) * 3;
+        D_800A0968.unk88 = gFrameTickCounter[0] + (quot + 10) * 3;
     } else {
         u32 product;
         product = D_800A0968.unk70 * D_800A0968.unk6C;
@@ -121,7 +121,7 @@ void func_80022FA8(void)
             D_800A0968.unk7C = 0;
         }
         __asm__ volatile("" ::: "memory");
-        D_800A0968.unk88 = D_8009FA2C[0] + D_800A0968.unk8C;
+        D_800A0968.unk88 = gFrameTickCounter[0] + D_800A0968.unk8C;
     }
     if (D_800A0968.unk88 < 20) {
         D_800A0968.unk88 = 20;

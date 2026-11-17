@@ -40,7 +40,7 @@ struct StreamState {
 };
 
 extern struct StreamState D_800A0968;
-extern s32 D_8009FA2C;
+extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern void D_80022FA8(void);
 
 extern SpuIrqCallback func_80098BF8(SpuIrqCallback callback);
@@ -103,7 +103,7 @@ s32 func_800228F4(void)
             }
         }
         func_800221E4(D_800A0968.channelCount, channels);
-        D_800A0968.unk88 = D_8009FA2C + D_800A0968.unk8C;
+        D_800A0968.unk88 = gFrameTickCounter + D_800A0968.unk8C;
     } else {
         ret = -1;
     }

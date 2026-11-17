@@ -27,7 +27,7 @@ struct SoundVoice {
 };
 
 extern struct Unk4749CHandle D_800A0A80;
-extern volatile s32 D_8009FA2C;
+extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_8009F26C;
 
 extern void func_80023E84(void);
@@ -59,8 +59,8 @@ void func_80023D78(void)
     s8 mix[0x18];
 
     if (D_800A0A80.unk10 != 0) {
-        if (D_800A0A80.unk10 > D_8009FA2C + 0xBB8 ||
-            D_800A0A80.unk10 < D_8009FA2C) {
+        if (D_800A0A80.unk10 > gFrameTickCounter + 0xBB8 ||
+            D_800A0A80.unk10 < gFrameTickCounter) {
             D_800A0A80.unk10 = 0;
             func_80023E84();
         }

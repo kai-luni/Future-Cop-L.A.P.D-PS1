@@ -25,7 +25,7 @@ typedef struct {
 } State;
 
 extern State *D_8009FA94;
-extern s32 D_8009FA2C;
+extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 D_8009F9A8;
 extern s32 D_8009F850;
 extern s32 D_8009F854;
@@ -218,8 +218,8 @@ s32 func_80076A2C(void)
         func_8007FA88();
         func_8007F8E0();
 
-        s0 = D_8009FA2C + 0x5DC;
-        while (D_8009FA2C < s0 || func_8007F8CC() == 0) {
+        s0 = gFrameTickCounter + 0x5DC;
+        while (gFrameTickCounter < s0 || func_8007F8CC() == 0) {
             func_80080B08();
         }
 

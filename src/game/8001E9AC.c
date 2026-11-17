@@ -16,7 +16,7 @@ struct PadActuator {
 };
 
 extern struct PadActuator gPadActuators[] __asm__("D_800A6FF8");
-extern s32 D_8009FA2C;
+extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 
 /**
  *  @brief Sets the small motor state for a controller port.
@@ -46,7 +46,7 @@ void func_8001E9AC(s32 port, s32 enable)
     }
     if (enable) {
         actuator->motor[actuator->smallIndex] = 1;
-        actuator->smallTimer = D_8009FA2C + 300;
+        actuator->smallTimer = gFrameTickCounter + 300;
     } else {
         actuator->motor[actuator->smallIndex] = 0;
         actuator->smallTimer = 0;

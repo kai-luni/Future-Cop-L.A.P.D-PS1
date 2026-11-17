@@ -5,7 +5,7 @@ extern void (*D_8009F99C)(void);
 extern s32 D_8009F9CC;
 extern s32 D_8009FA00;
 extern s32 D_8009FA60;
-extern volatile s32 D_8009FA2C;
+extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern volatile u8 D_8009FA3C;
 
 extern s32 func_80092C8C(s32 arg0);
@@ -47,7 +47,7 @@ void func_8001EFF8(void)
     if (D_8009FA00 == 4 || D_8009FA00 == 13) {
         D_8009FA60 += 5;
     }
-    D_8009FA2C += 5;
+    gFrameTickCounter += 5;
     if (D_8009FA3C != 0) {
         if (func_80092C8C(1) == 0) {
             D_8009FA3C = 0;

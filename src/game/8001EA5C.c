@@ -16,7 +16,7 @@ struct PadActuator {
 };
 
 extern struct PadActuator gPadActuators[] __asm__("D_800A6FF8");
-extern s32 D_8009FA2C;
+extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 
 /**
  *  @brief Sets the large motor level for a controller port.
@@ -59,7 +59,7 @@ void func_8001EA5C(s32 port, s32 level)
 
     if (level) {
         actuator->motor[index] = level;
-        actuator->largeTimer = D_8009FA2C + 300;
+        actuator->largeTimer = gFrameTickCounter + 300;
     } else {
         actuator->motor[index] = 0;
         actuator->largeTimer = 0;

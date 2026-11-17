@@ -82,7 +82,7 @@ extern struct SoundChannel *D_8009F72C;
 extern u8 D_8009F739;
 extern struct UnkF744 *D_8009F744;
 
-extern volatile s32 D_8009FA2C;
+extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern struct Unk4749CHandle D_800A10C0[];
 extern struct Unk10E0 D_800A10E0[6];
 extern struct SoundChannel *D_800A1780[];
@@ -145,9 +145,9 @@ void func_800462D0(void)
             register s32 previous __asm__("$3");
             register s32 stamp __asm__("$4");
 
-            work = D_8009FA2C;
+            work = gFrameTickCounter;
             previous = D_8009F344;
-            stamp = D_8009FA2C;
+            stamp = gFrameTickCounter;
             delta = (s32)work - previous;
             D_8009F344 = stamp;
         }

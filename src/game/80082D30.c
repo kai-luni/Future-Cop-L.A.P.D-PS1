@@ -8,7 +8,7 @@ typedef struct Unk8009F468 {
 
 extern Unk8009F468 *D_8009F468;
 extern s32 D_8009F8B8;
-extern volatile s32 D_8009FA2C;
+extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 
 /**
  *  @brief Tests a callback mask and elapsed time to trigger a timed result.
@@ -38,9 +38,9 @@ s32 func_80082D30(s32 *arg0, s32 arg1)
     if (callback != 0) {
         if (*arg0 != 0) {
             if (callback(D_8009F8B8) & arg1) {
-                if (D_8009FA2C - *arg0 >= 0xB5) {
+                if (gFrameTickCounter - *arg0 >= 0xB5) {
                     result = 1;
-                    *arg0 = D_8009FA2C - 0x96;
+                    *arg0 = gFrameTickCounter - 0x96;
                 }
             }
         }

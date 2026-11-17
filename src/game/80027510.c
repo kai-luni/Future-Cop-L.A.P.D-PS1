@@ -54,7 +54,7 @@ extern s32 D_8009FA30;
 extern s32 D_8009F9FC;
 extern u8 *D_8009F2D0;
 extern u8 D_8009F2F4[];
-extern u32 D_8009FA2C;
+extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 D_8009FA24;
 
 extern void func_8005780C(u32, struct InputAction *);
@@ -260,7 +260,7 @@ void func_80027510(void)
             color = 1;
             if (x < 0) x += 3;
             xarg = x >> 2;
-            if (D_8009FA2C & 0x80) color = 9;
+            if (gFrameTickCounter & 0x80) color = 9;
             func_80049100(text, xarg, 0xB4, color);
         }
         func_800485AC(0);
@@ -293,7 +293,7 @@ void func_80027510(void)
             color = 1;
             if (x < 0) x += 3;
             xarg = x >> 2;
-            if (D_8009FA2C & 0x80) color = 9;
+            if (gFrameTickCounter & 0x80) color = 9;
             func_80049100(text, xarg, 0xB4, color);
         }
         func_800485AC(1);

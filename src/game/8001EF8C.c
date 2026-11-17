@@ -9,7 +9,7 @@ typedef struct {
 extern void (*D_8009F99C)(void);
 extern s32 D_8009F9CC;
 extern s32 D_8009FA00;
-extern volatile s32 D_8009FA2C;
+extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern volatile u8 D_8009FA3C;
 extern s32 D_8009FA60;
 extern UnkA78F0 gPadBuffers[] __asm__("D_800A78F0");
