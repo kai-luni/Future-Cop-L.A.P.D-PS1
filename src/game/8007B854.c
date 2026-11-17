@@ -22,7 +22,7 @@ typedef struct {
 extern State *D_8009FA94;
 extern Entry D_8009B4E4[];
 extern s8 D_8009F8C0[];
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F87E, D_8009F87F, D_8009F880, D_8009F881, D_8009F882;
 extern s8 *D_8009F884;
 extern u8 D_8009F8BD;
@@ -130,7 +130,7 @@ void func_8007B854(s32 arg0)
     register Entry *ep __asm__("$3");
     switch (arg0) {
     case 3:
-        firstIndex = D_8009F8B8;
+        firstIndex = gActivePlayerIndex;
         __asm__("" : "+r"(firstIndex));
         p = &D_8009F8C0[firstIndex];
         special = 0;
@@ -195,12 +195,12 @@ SELECTION_DONE:;
         break;
     case 2:
     case 4:
-        index = D_8009F8B8;
+        index = gActivePlayerIndex;
         __asm__("" : "+r"(index));
         base = D_8009F8C0;
         if (base[index] != 0) {
             func_80046C84(0x46, 0);
-            if (base[D_8009F8B8] == 2) {
+            if (base[gActivePlayerIndex] == 2) {
                 D_8009F87E--;
                 if (D_8009F87E < 0) D_8009F87E = D_8009F87F;
             } else {
@@ -211,12 +211,12 @@ SELECTION_DONE:;
         break;
     case 1:
     case 5:
-        index = D_8009F8B8;
+        index = gActivePlayerIndex;
         __asm__("" : "+r"(index));
         base = D_8009F8C0;
         if (base[index] != 0) {
             func_80046C84(0x46, 0);
-            if (base[D_8009F8B8] == 2) {
+            if (base[gActivePlayerIndex] == 2) {
                 D_8009F87E++;
                 if (D_8009F87E > D_8009F87F) D_8009F87E = 0;
             } else {
@@ -229,7 +229,7 @@ SELECTION_DONE:;
         if (D_8009F468 == D_800A3838) {
             func_80078B34(0x44C, 0, 0);
             func_80078B34(0x10CC, 1, 0);
-            func_8007B460(D_8009F8B8);
+            func_8007B460(gActivePlayerIndex);
         }
         break;
     }

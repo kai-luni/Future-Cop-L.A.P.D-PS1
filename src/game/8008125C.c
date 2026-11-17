@@ -17,7 +17,7 @@ typedef struct {
 } Big;
 extern Big *D_8009F92C;
 #define RAW ((u8 *)D_8009F92C)
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 *D_8009F878;
 extern s16 D_8009F87C;
 extern s8 D_8009F882;
@@ -185,7 +185,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     register u8 *dst __asm__("$4");
 
     __asm__("" : : "r"(arg4) : "$18");
-    s2 = D_8009F8B8;
+    s2 = gActivePlayerIndex;
     if (D_8009F8BD != 0 && D_8009F8BE != 0 && arg0 < 6) {
         switch (arg0) {
         case 3:

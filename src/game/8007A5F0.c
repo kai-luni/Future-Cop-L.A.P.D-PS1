@@ -20,7 +20,7 @@ extern struct Unk78210Mode *D_8009FA94;
 extern volatile s32 D_8009F8F0;
 extern s32 D_8009F8F4;
 extern s8 *D_8009F468;
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern volatile s32 D_8009F8E0;
 extern s32 D_8009F8E0_arr[];
 extern volatile s32 D_8009F8E4;
@@ -72,7 +72,7 @@ void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
         if (p[5] == 2) {
             register s32 idx __asm__("$2");
             register u8 *base __asm__("$2");
-            idx = D_8009F8B8;
+            idx = gActivePlayerIndex;
             __asm__ volatile("" ::: "memory");
             idx[D_8009F8E0_arr] = 1;
             __asm__ volatile("" ::: "memory");
@@ -101,7 +101,7 @@ void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
         register s8 *tbl __asm__("$2");
         register s32 player __asm__("$4");
         tbl = D_8009F468;
-        player = D_8009F8B8;
+        player = gActivePlayerIndex;
         if (tbl[player] != a4) {
             register s32 off __asm__("$3") = player << 2;
             *(s32 *)((u8 *)D_8009F8E0_arr + off) = 0;
@@ -110,7 +110,7 @@ void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             } else {
                 D_8009BB66[0] = 0x64;
             }
-            player = D_8009F8B8;
+            player = gActivePlayerIndex;
         }
         if (D_8009F8E0_arr[player] != 0) {
             if (player == 1) {

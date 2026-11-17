@@ -7,7 +7,7 @@ struct FontEntry {
     s16 unk8;
 };
 
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s32 D_8009F8F8;
 extern s32 D_8009F8F8_arr[];
 extern u16 D_8009F92A;

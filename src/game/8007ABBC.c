@@ -7,7 +7,7 @@ struct FontEntry {
     s16 unk8;
 };
 
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 *D_8009F878;
 extern s16 D_8009F87C;
 extern s8 *D_8009F468;
@@ -87,7 +87,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
     register s32 *base __asm__("$4");
     register s32 off __asm__("$3");
 
-    idx = D_8009F8B8;
+    idx = gActivePlayerIndex;
     switch (action) {
     case 3: {
         s8 *flag = &D_8009F8C0[idx];

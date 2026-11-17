@@ -36,7 +36,7 @@ extern u8 D_8009F881;
 extern u8 D_8009F882;
 extern s8 *D_8009F884;
 extern s8 D_8009F889;
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F8BD;
 extern s8 D_8009F8C0;
 extern s8 D_8009F8C0_arr[];

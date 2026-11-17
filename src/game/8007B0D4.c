@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s8 *D_8009F468;
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F8C0[];
 
 /**
@@ -35,7 +35,7 @@ s32 func_8007B0D4(void)
     t = p[5];
     r = 0;
     if (t == 2) {
-        idx = D_8009F8B8;
+        idx = gActivePlayerIndex;
         if (D_8009F8C0[idx] != 0) {
             if (idx == 0 && p[0] == t) {
                 r = 2;
@@ -44,7 +44,7 @@ s32 func_8007B0D4(void)
             }
         }
     } else {
-        idx = D_8009F8B8;
+        idx = gActivePlayerIndex;
         if (D_8009F8C0[idx] != 0 && p[idx] == 1) {
             r = 2;
         }

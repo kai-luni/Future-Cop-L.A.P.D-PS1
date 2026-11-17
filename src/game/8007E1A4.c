@@ -13,7 +13,7 @@ struct E8007E1A4 {
 };
 
 extern s8 *D_8009F468;
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F8BC;
 extern struct E8007E1A4 D_8009C0A8[];
 extern u8 D_8009F490[];
@@ -76,10 +76,10 @@ void func_8007E1A4(s32 mode, s32 x, s32 y, s32 color, s32 idx)
     s32 a;
     u8 buf[16];
 
-    t = D_8009F468[D_8009F8B8];
+    t = D_8009F468[gActivePlayerIndex];
     a = t - 1;
     b = idx - 1;
-    if (D_8009F8B8 == 1) {
+    if (gActivePlayerIndex == 1) {
         a = t - 5;
         b = idx - 5;
     }
@@ -89,16 +89,16 @@ void func_8007E1A4(s32 mode, s32 x, s32 y, s32 color, s32 idx)
     switch (mode) {
     case 2:
         func_80046C84(0x46, 0);
-        p[D_8009F8B8]--;
-        if (((s8 *)p)[D_8009F8B8] < e->unk9) {
-            p[D_8009F8B8] = e->unk8 - 1;
+        p[gActivePlayerIndex]--;
+        if (((s8 *)p)[gActivePlayerIndex] < e->unk9) {
+            p[gActivePlayerIndex] = e->unk8 - 1;
         }
         break;
     case 1:
         func_80046C84(0x46, 0);
-        p[D_8009F8B8]++;
-        if (((s8 *)p)[D_8009F8B8] >= e->unk8) {
-            p[D_8009F8B8] = e->unk9;
+        p[gActivePlayerIndex]++;
+        if (((s8 *)p)[gActivePlayerIndex] >= e->unk8) {
+            p[gActivePlayerIndex] = e->unk9;
         }
         break;
     case 0:

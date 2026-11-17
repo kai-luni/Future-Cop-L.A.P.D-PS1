@@ -9,7 +9,7 @@ struct MenuState {
 };
 
 extern struct MenuState *D_8009FA94[];
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 D_8009F3C1;
 extern s32 D_8009F8F0[];
 extern u16 D_8009BEEC[];
@@ -54,7 +54,7 @@ void func_8007A7A0(s32 command, s32 x, s32 y)
         register s32 *entry __asm__("$3");
         index = 0;
         if (D_8009FA94[0]->active != 0) {
-            index = D_8009F8B8;
+            index = gActivePlayerIndex;
         }
         func_80046C84(0x47, 0);
         entry = D_8009F8F0;
@@ -79,7 +79,7 @@ void func_8007A7A0(s32 command, s32 x, s32 y)
         s32 below;
         index = 0;
         if (D_8009FA94[0]->active != 0) {
-            index = D_8009F8B8;
+            index = gActivePlayerIndex;
         }
         func_80046C84(0x47, 0);
         base = D_8009F8F0;
@@ -105,7 +105,7 @@ void func_8007A7A0(s32 command, s32 x, s32 y)
         register u16 *labels __asm__("$3");
         register u8 *text __asm__("$4");
         register s32 selection __asm__("$2");
-        selection = D_8009F8B8;
+        selection = gActivePlayerIndex;
         __asm__("" : "+r"(selection));
         base = D_8009F8F0;
         __asm__("" : "+r"(base));
@@ -127,7 +127,7 @@ void func_8007A7A0(s32 command, s32 x, s32 y)
             break;
         }
         if (D_8009FA94[0]->active != 1 || D_8009FA94[0]->mode != 2) {
-            if (D_8009F8B8 != 0) {
+            if (gActivePlayerIndex != 0) {
                 textId = -1;
             }
             x = 0xA0;

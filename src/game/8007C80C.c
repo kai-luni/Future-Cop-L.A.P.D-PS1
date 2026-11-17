@@ -1,7 +1,7 @@
 // Categories: Game Engine > Controller Setup | Platform > Controller Input
 #include "game/types.h"
 
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F904;
 extern s8 D_8009F900[];
 extern u8 D_8009F8D8[];
@@ -45,7 +45,7 @@ void func_8007C80C(s32 action)
 {
     s32 port;
 
-    port = D_8009F8B8;
+    port = gActivePlayerIndex;
     if (port == D_8009F904) {
         switch (action) {
         case 3:

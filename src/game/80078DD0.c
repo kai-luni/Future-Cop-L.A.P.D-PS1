@@ -35,7 +35,8 @@ struct Menu {
 extern s32 D_8009F464;
 extern struct Menu *D_8009F468;
 extern u8 D_8009F8CC, D_8009F3F2, D_8009F3F3, D_8009F45A, D_8009F8BE;
-extern s32 D_8009F870, D_8009F8B0, D_8009F8B4, D_8009F8B8;
+extern s32 D_8009F870, D_8009F8B0, D_8009F8B4;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s32 prev_buttons[2] __asm__("D_8009F8B0");
 extern u32 D_8009F8D0, D_8009F8D4;
 extern volatile u32 D_8009F8D0_arr[] __asm__("D_8009F8D0");
@@ -167,7 +168,7 @@ reset_timer:
         {
             s32 idx;
             for (j = first, idx = first; j < count; j++, idx += step) {
-                D_8009F8B8 = j;
+                gActivePlayerIndex = j;
                 if (!D_800A35C8[j].phase) accept[idx] = 1;
                 if (D_8009F468->extra && !D_800A35E8[j].phase) accept[idx] = 1;
                 if (!D_800A35D8[j].phase) back[idx] = 1;
@@ -183,7 +184,7 @@ reset_timer:
         if (!step) count = 1;
         if (D_8009F8BE) {
             for (i = 0; i < count && !changed; i++) {
-                D_8009F8B8 = i;
+                gActivePlayerIndex = i;
                 if (accept[i]) {
                     struct Item *item = &D_8009F468->items[D_8009F468->selection[i]];
                     if (D_8009F468 != &D_800A38F8 || D_8009F46C) func_80046C84(0x48, 0);
@@ -259,7 +260,7 @@ reset_timer:
         if (D_8009F8BD) {
             for (i = 0; i < count; i++) {
                 s32 menu_y;
-                D_8009F8B8 = i;
+                gActivePlayerIndex = i;
                 n = 0;
                 for (j = 0; j < D_8009F468->item_count; j++) {
                     if (D_8009F468->items[j].player == i && D_8009F468->items[j].enabled) n++;
@@ -316,7 +317,7 @@ reset_timer:
             }
         }
         for (i = 0; i < count; i++) {
-            D_8009F8B8 = i;
+            gActivePlayerIndex = i;
             if (D_8009F468->update) D_8009F468->update(i);
         }
         func_800826A0();

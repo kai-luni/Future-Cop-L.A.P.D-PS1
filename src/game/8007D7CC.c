@@ -36,7 +36,7 @@ extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 extern u8 D_8009F3F8;
 extern Unk8009C0A8 D_8009C0A8[];
 extern s8 *D_8009F468;
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 
 extern UnkBox *func_80082AB0(s32, s32, s32, s32, s32, s32, s32, s32, s32);
 extern UnkBox *func_80082B0C(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
@@ -144,14 +144,14 @@ void func_8007D7CC(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
     base = (u32)D_8009C0A8;
     e = (Unk8009C0A8 *)((u32)(idx * 20) + base);
     __asm__ volatile("" : : "r"(e));
-    shade = (e->unk4[D_8009F8B8] > e->unkA) ? 0x30 : 0x80;
+    shade = (e->unk4[gActivePlayerIndex] > e->unkA) ? 0x30 : 0x80;
     box = func_80082AB0(c, x, y, -1, -1, 0x14, shade, 1, 8);
     if (box != 0) {
         func_80082EF0(box->unk8 - c3, box->unkA - c3,
                       (box->unk10 - box->unk8) + c3 * 2,
                       (box->unk1A - box->unkA) + c3 * 2,
                       0xBB8, c0, c1, c2);
-        if (e->unk4[D_8009F8B8] > e->unkA) {
+        if (e->unk4[gActivePlayerIndex] > e->unkA) {
             s1 = box->unk10;
             dx = box->unk8;
             s0 = box->unk1A;

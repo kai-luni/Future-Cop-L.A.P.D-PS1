@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 *D_8009F92C;
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 D_8009F8C0[];
 
 extern void func_8008204C(void);
@@ -48,7 +48,7 @@ void func_80082154(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
                 register s32 idx __asm__("$2");
                 register u8 *base __asm__("$3");
                 func_80078740();
-                idx = D_8009F8B8;
+                idx = gActivePlayerIndex;
                 __asm__ volatile ("" : : "r" (idx));
                 base = D_8009F8C0;
                 *(u8 *)(idx + base) = 1;

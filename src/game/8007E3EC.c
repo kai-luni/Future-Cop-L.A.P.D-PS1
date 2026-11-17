@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s8 *D_8009F468;
-extern s32 D_8009F8B8;
+extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern volatile s32 D_8009F8E0;
 extern volatile s32 D_8009F8E4;
 extern s32 D_8009F8E0_arr[];
@@ -56,7 +56,7 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             return;
         }
         if (D_8009F468[5] == 2) {
-            idx = D_8009F8B8;
+            idx = gActivePlayerIndex;
             __asm__ volatile("" ::: "memory");
             idx[D_8009F8E0_arr] = 1;
             __asm__ volatile("" ::: "memory");
@@ -89,7 +89,7 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
         }
     } else {
         if (D_8009F468[5] == 2) {
-            s32 i = D_8009F8B8;
+            s32 i = gActivePlayerIndex;
             if (D_8009F468[i] != want) {
                 off = i << 2;
                 *(s32 *)((u8 *)D_8009F8E0_arr + off) = 0;
@@ -98,7 +98,7 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
                 } else {
                     D_8009B7E6[0] = 100;
                 }
-                i = D_8009F8B8;
+                i = gActivePlayerIndex;
             }
             if (D_8009F8E0_arr[i] != 0) {
                 if (i == 1) {
