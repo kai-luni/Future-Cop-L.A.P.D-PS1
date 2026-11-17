@@ -1,7 +1,7 @@
 // Categories: Graphics > Clipping | Graphics > 2D
 #include "game/types.h"
 
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 
 /**
  * @brief Tests whether a projected point still lies inside the visible area.
@@ -43,7 +43,7 @@ s32 func_80063FF8(s16 *point, s32 margin)
     if (depth + margin < 0x601) {
         return 0;
     }
-    if (D_8009FA0C == 1) {
+    if (gPlayerCount == 1) {
         limit = depth + ((point[2] << 6) + (margin << 4) + ((margin + margin * 2) >> 2));
         extentX = point[0] << 8;
     } else {

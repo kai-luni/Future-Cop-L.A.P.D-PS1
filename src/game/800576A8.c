@@ -3,7 +3,7 @@
 
 extern s32 D_8009F7C0[];
 extern u32 D_8009F7C4;
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 
 /**
  * @brief Translates a raw pad word into the game's own button mask.
@@ -83,7 +83,7 @@ void func_800576A8(u32 *out, s32 index)
         res |= 0x00200000;
     }
 
-    if (D_8009FA0C == 1) {
+    if (gPlayerCount == 1) {
         in = D_8009F7C4;
         if (in & 0x08000000) {
             res |= 0x04000000;

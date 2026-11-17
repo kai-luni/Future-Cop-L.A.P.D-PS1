@@ -1,7 +1,7 @@
 // Categories: Game Engine > Frame | Graphics > HUD
 #include "game/types.h"
 
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern void func_800486FC(s32 arg);
 
 /**
@@ -26,7 +26,7 @@ extern void func_800486FC(s32 arg);
  */
 void func_80027D70(void)
 {
-    if (D_8009FA0C == 1) {
+    if (gPlayerCount == 1) {
         func_800486FC(1);
     }
 }

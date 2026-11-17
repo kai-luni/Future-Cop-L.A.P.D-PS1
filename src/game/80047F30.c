@@ -40,7 +40,8 @@ typedef struct State {
     u8 pad7c[8];
     s32 total1, total2;
 } State;
-extern s32 D_8009FA00, D_8009FA0C, D_8009FAA4;
+extern s32 D_8009FA00, D_8009FAA4;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern State *D_8009FA94;
 extern Game *D_8009F9EC;
 extern u8 D_8009F34C[], D_8009F354[], D_800117C0[];
@@ -194,7 +195,7 @@ void func_80047F30(Game *game)
         if (p2->valuec1) label_x = 148 - func_80049340(label) / 2;
         func_80049100(label, label_x, 74, 8);
     }
-    if (D_8009FA0C >= 2 && !game->player->valuec1)
+    if (gPlayerCount >= 2 && !game->player->valuec1)
         func_8001C214(1, 318, 0, 2, 480, 0);
     state = D_8009FA94;
     if (state->mode != 1) return;
@@ -212,7 +213,7 @@ void func_80047F30(Game *game)
     width = 0;
     if (score >= 1000) width = 6;
     x = 0;
-    if (D_8009FA0C == 1) x = 152;
+    if (gPlayerCount == 1) x = 152;
     if (!game->player->valuec1) {
         {
             register s32 arg __asm__("$4") = 1;
@@ -233,7 +234,7 @@ void func_80047F30(Game *game)
         func_8008CD30(text, D_800117C0, D_8009FA94->count1, D_8009FA94->count2);
         func_8001C214(1, (x + 127) * 2, 64, 60, 20, 1);
         func_80049100(text, x + 130, 32, 1);
-        if (D_8009FA0C != 1) return;
+        if (gPlayerCount != 1) return;
         {
         register s32 one __asm__("$16");
         register s32 height __asm__("$20");

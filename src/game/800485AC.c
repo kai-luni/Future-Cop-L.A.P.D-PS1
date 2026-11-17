@@ -25,7 +25,7 @@ struct Sprt {
 
 extern s32 D_8009FAC8;
 extern s32 D_8009F9B0[];
-extern s32 D_8009FA0C[];
+extern s32 gPlayerCount[] __asm__("D_8009FA0C");
 extern u8 *D_8009FA90;
 extern u8 *D_8009F9C0;
 
@@ -62,7 +62,7 @@ void func_800485AC(s32 value)
     }
 
     x = 0xF4;
-    if (D_8009FA0C[0] != 1) {
+    if (gPlayerCount[0] != 1) {
         x = (arg == 0) << 7;
     }
 
@@ -92,7 +92,7 @@ sprt_ready:
     ((struct Sprt *)packet)->addr = 0;
     ((struct Sprt *)packet)->len = 4;
 
-    if (D_8009FA0C[0] == 1) {
+    if (gPlayerCount[0] == 1) {
         ((struct Sprt *)packet)->u = 0;
         w = 0x40;
     } else {

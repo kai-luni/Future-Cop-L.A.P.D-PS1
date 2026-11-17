@@ -44,7 +44,7 @@ struct Frame592D0 {
     s32 far;
 };
 
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u8 *D_8009FA94;
 extern struct Unk592D0 *D_8009FA58[];
 extern u8 D_8009AF40[];
@@ -105,7 +105,7 @@ void func_800592D0(struct Unk592D0 *arg0)
     register u32 afbase __asm__("$2");
     register u8 *afptr __asm__("$17");
 
-    if (D_8009FA0C < 2) {
+    if (gPlayerCount < 2) {
         return;
     }
     if (*(s32 *)(D_8009FA94 + 0x5C) != 0) {

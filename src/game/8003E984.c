@@ -95,7 +95,7 @@ struct SpawnWork {
 };
 
 extern void *D_800A7040[][0x100];
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Player *D_8009FA58;
 extern struct Player *D_8009FA5C;
 extern void *D_8009F374;
@@ -275,7 +275,7 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
 
     if ((*(u8 *)func_8003B3D8(type, arg4) & 5) == 0) {
         found = 0;
-        for (i = 0; i < D_8009FA0C; i++) {
+        for (i = 0; i < gPlayerCount; i++) {
             func_80069580(i, &work.point);
             work.diff[0] = data->x - work.point.second;
             work.diff[1] = data->y - work.point.zero;
@@ -372,7 +372,7 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
             func_80057358(D_8009FA58, amount);
         }
 
-        if (D_8009FA0C >= 2) {
+        if (gPlayerCount >= 2) {
             work.distVec[0] = D_8009FA5C->x - data->x;
             work.distVec[1] = D_8009FA5C->y - data->y;
             work.distVec[2] = D_8009FA5C->z - data->z;
@@ -405,7 +405,7 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
         }
 
         if ((type >= 0x3D && type < 0x45) || (type >= 0x64 && type < 0x77)) {
-            if (D_8009FA0C >= 2) {
+            if (gPlayerCount >= 2) {
                 if (target != 0) {
                     work.vec1[0] = target->x - D_8009FA58->x;
                     work.vec1[1] = target->y - D_8009FA58->y;

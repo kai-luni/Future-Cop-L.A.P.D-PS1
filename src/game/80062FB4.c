@@ -7,7 +7,7 @@ typedef struct { u32 x,y,w,h; int width,height; } Rect;
 typedef struct { u8 flag; char pad[0x43]; } Entry;
 extern volatile Context *D_8009FA94;
 extern Other *D_8009F80C;
-extern int D_8009FA0C;
+extern int gPlayerCount __asm__("D_8009FA0C");
 extern volatile int D_8009F82C, D_8009F828;
 extern u8 D_8009F834, D_8009F835, D_8009F836, D_8009F837;
 extern u32 *D_8009F820;
@@ -51,7 +51,7 @@ void func_80062FB4(void)
         h = D_800A2970.height - 16;
         w = D_800A2970.width - D_8009F80C->count * 8 + 8;
         x = y = (D_8009F80C->count - 1) * 4;
-    } else if (D_8009FA0C == 1) {
+    } else if (gPlayerCount == 1) {
         h = w = 20;
         x = D_8009F834 * 4;
         y = D_8009F835 * 4;
@@ -74,7 +74,7 @@ void func_80062FB4(void)
     { register u32 count __asm__("$3");
     count = n >> 2;
     while (count) { *p++ = 0; count--; } }
-    if (D_8009FA0C == 1) func_80062C3C();
+    if (gPlayerCount == 1) func_80062C3C();
     else func_80062874();
     i = 0;
     __asm__ volatile ("" : "+r" (i));

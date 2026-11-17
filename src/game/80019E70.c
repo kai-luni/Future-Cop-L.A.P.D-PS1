@@ -1,7 +1,7 @@
 // Categories: Graphics > Culling | Graphics > Renderer
 #include "game/types.h"
 
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 
 /**
  * @brief Frustum visibility test for a point plus a safety margin.
@@ -39,7 +39,7 @@ s32 func_80019E70(s16 *point, s32 margin)
     if (depth + margin < 0x406) {
         return 1;
     }
-    if (D_8009FA0C == 1) {
+    if (gPlayerCount == 1) {
         limit = depth + ((point[2] << 6) + (margin << 4) + ((margin + margin * 2) >> 2));
         extentX = point[0] << 8;
     } else {

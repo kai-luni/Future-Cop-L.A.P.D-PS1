@@ -8,7 +8,7 @@ extern u8 D_800A0520[];
 extern u8 D_800A0528[];
 extern u8 D_800A0660[];
 extern u32 D_8009AA68[];
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 
 extern u32 D_8009F5C8[];
 extern u32 D_8009F5D0[];
@@ -267,7 +267,7 @@ void func_8001B4A8(s32 arg0)
         } while (p >= limX);
     }
 
-    if (D_8009FA0C >= 2 || ({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; })) {
+    if (gPlayerCount >= 2 || ({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; })) {
         arg9 = arg0;
         limX = 0;
         if (arg9 == 0 && D_8009F5C0 != 0) {
@@ -347,7 +347,7 @@ void func_8001B4A8(s32 arg0)
         D_8009AA68[0] = 0;
     }
 
-    if (({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; }) || D_8009F5C0 == 0 || D_8009FA0C == 1) {
+    if (({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; }) || D_8009F5C0 == 0 || gPlayerCount == 1) {
         if (D_8009F5EC != D_8009F5F0) {
             do {
                 v = (u32)D_800A0660 + D_8009F5EC * 20;

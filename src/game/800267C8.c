@@ -51,7 +51,7 @@ extern struct InputAction267C8 D_800A0AA0[];
 extern s32 D_8009F670[];
 extern s32 D_8009FA58[];
 extern s32 D_8009FA6C;
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u32 D_8009FA2C;
 extern union SpeedValue267C8 D_8009F9FC;
 extern struct SoundState267C8 *D_8009FA94;
@@ -213,7 +213,7 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
     }
 
     off = 0x280;
-    if (D_8009FA0C == 2) {
+    if (gPlayerCount == 2) {
         off = 0x140;
     }
 

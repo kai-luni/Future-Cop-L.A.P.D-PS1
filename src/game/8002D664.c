@@ -69,7 +69,7 @@ struct Unk2D664Entity {
     u16 unk14;
 };
 
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk2D664State *D_8009F9EC;
 extern struct Unk2D664Menu *D_8009FA94;
 extern struct Unk2D664Player *D_8009FA58[2];

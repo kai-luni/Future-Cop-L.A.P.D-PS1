@@ -62,7 +62,7 @@ struct TableEntry {
 };
 
 extern struct Node *D_8009F30C;
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct TableEntry *D_800A7040[][0x100];
 
 extern void func_800181D4(struct Node *node);
@@ -124,7 +124,7 @@ void func_8003FF7C(void)
     func_80069580(0, (struct DestinationTriple *)&work.base1);
     prev = 0;
 
-    if (D_8009FA0C >= 2) {
+    if (gPlayerCount >= 2) {
         func_80069580(1, (struct DestinationTriple *)&work.base2);
     }
 
@@ -161,7 +161,7 @@ void func_8003FF7C(void)
 
             in_range = func_8001A100(&work.delta.x) <= 0x1FFFF;
 
-            if (D_8009FA0C >= 2) {
+            if (gPlayerCount >= 2) {
                 if (node->active != 0) {
                     work.delta.x = node->active->x - work.base2.x;
                     work.delta.y = node->active->y - work.base2.y;

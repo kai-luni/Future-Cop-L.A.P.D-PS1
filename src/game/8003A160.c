@@ -10,7 +10,7 @@ typedef struct Obj {
     u8 padb0[0x6c]; Vec forces[2]; s16 range; s16 strength; u16 timeA, timeB; u8 curve, mode; s16 timer; u8 effectFlags, soundType; u8 pad142[2]; s32 multiplier;
 } Obj;
 typedef struct Model { u8 pad[0x34]; void *parts; } Model;
-extern int D_8009FA0C;
+extern int gPlayerCount __asm__("D_8009FA0C");
 extern Obj *D_8009FA58[];
 extern void func_8003A09C(Obj *);
 extern s32 func_8001A100(Vec *);
@@ -148,7 +148,7 @@ void func_8003A160(Obj *obj, s32 dt)
     }
     if ((obj->effectFlags & 0x81) == 0x81) {
         obj->soundPlaying = obj->soundType;
-        for (i = D_8009FA0C - 1; i >= 0; i--) {
+        for (i = gPlayerCount - 1; i >= 0; i--) {
             target = D_8009FA58[i];
             if (target != 0 && (!(obj->effectFlags & 4) || target->sub->state == 0x10000)) goto valid_target;
             force.z = 0;

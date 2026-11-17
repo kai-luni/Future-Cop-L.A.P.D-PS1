@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 D_8009FA00[];
-extern s32 D_8009FA0C[];
+extern s32 gPlayerCount[] __asm__("D_8009FA0C");
 extern u8 D_8009F9B4[];
 extern s32 D_8009FAB8;
 extern s32 D_8009FAC8;
@@ -44,7 +44,7 @@ void func_800486FC(u8 enable)
     }
     D_8009FAC8 = func_80029748(D_8009F9B4);
     func_800487CC(0);
-    if (D_8009FAB8 != 0 && D_8009FAB8 == 2 && enable && D_8009FA0C[0] == 1) {
+    if (D_8009FAB8 != 0 && D_8009FAB8 == 2 && enable && gPlayerCount[0] == 1) {
         func_800485AC(0);
     }
 }

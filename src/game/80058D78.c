@@ -9,7 +9,8 @@ struct Mode { u8 p[0x5c]; int active; };
 struct Stats { u8 p[0x18]; u16 a; u8 p1a[0x22]; u16 b; };
 extern struct Mode *D_8009FA94;
 extern void *D_8009FAA4;
-extern int D_8009FA0C, D_8009FA00;
+extern int D_8009FA00;
+extern int gPlayerCount __asm__("D_8009FA0C");
 extern Obj *D_8009F9EC, *D_8009FA58[];
 extern void D_800578B4(), D_800578E4();
 extern int func_8002A810(Obj *, int, int);
@@ -111,7 +112,7 @@ void func_80058D78(Obj *o)
             o->data->count16++;
             if (o->id) {
                 found = func_8004D664(o->id & 0x3fffffff);
-                if (D_8009FA0C == 1) {
+                if (gPlayerCount == 1) {
                     if (found && D_8009F9EC && D_8009F9EC->tag == (found->tag & 0x3fff)) {
                         ((struct Stats *)D_8009F9EC->stats)->b++;
                         ((struct Stats *)D_8009F9EC->stats)->a = 0;

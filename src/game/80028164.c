@@ -42,7 +42,7 @@ extern struct MenuData28164 *D_8009F2C0;
 extern struct Game28164 *D_8009FA58;
 extern struct Game28164 *D_8009FA5C[4];
 extern s32 D_8009F9EC;
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern s32 D_8009FA00;
 extern u32 D_8009FAA4;
 extern u8 D_8009F300[];
@@ -101,7 +101,7 @@ void func_80028164(void)
         D_8009F68C = func_80017EBC(0xC8, 3);
         D_8009F68C[0] = 0;
         D_8009F68C[2] = D_8009FA94->unk40 == D_8009FA94->unk44;
-        if (D_8009FA0C == 1) {
+        if (gPlayerCount == 1) {
             func_8008CD30((u8 *)D_8009F2C0->unk08 + 6, D_8009F300,
                           D_8009FA94->unk4C + 1);
             if (D_8009F68C[2] == 0) {
@@ -146,7 +146,7 @@ void func_80028164(void)
     x = (limit - length) / 4 + 0xA0;
     func_80049100(text, x, 0x14, 8);
 
-    if (D_8009FA0C == blend) {
+    if (gPlayerCount == blend) {
         text = D_8009F2C0->unk08;
         length = func_80049340(text);
         func_80049100(text, (0x258 - length) / 4 + 0xA, 0x14,
@@ -167,7 +167,7 @@ void func_80028164(void)
 
     func_8001C214(0x300, 0x14, 0x1A2, 0x258, 0x18, 1);
 
-    if (D_8009F68C[2] == 0 && D_8009FA0C == 1) {
+    if (D_8009F68C[2] == 0 && gPlayerCount == 1) {
         tailSlot = &D_8009F2C0->unk60;
     } else {
         tailSlot = &D_8009F2C0->unk5C;

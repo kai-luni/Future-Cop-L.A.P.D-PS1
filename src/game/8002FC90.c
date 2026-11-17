@@ -28,7 +28,7 @@ typedef struct UnkFA94 {
 } UnkFA94;
 
 extern s32 D_8009F9FC;
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern UnkFA94 *D_8009FA94;
 extern UnkFC90Obj *D_8009FA58[2];
 
@@ -130,7 +130,7 @@ void func_8002FC90(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4)
             continue;
         }
         if (obj != self) {
-            if (D_8009FA0C < 2) {
+            if (gPlayerCount < 2) {
                 continue;
             }
             if (D_8009FA94->unk5C != 0) {

@@ -55,7 +55,7 @@ struct Data8 { u8 pad00[0x24]; u16 unk24; s8 unk26, index; };
 struct Data4 { u8 pad00[0x18]; void **p18; u8 pad1C[4]; void **p20; u8 pad24[4]; void **p28; u8 pad2C[4]; void **p30; };
 struct Data { u8 pad00[4]; struct Data4 *d4; struct Data8 *d8; };
 struct Game { u8 pad00[8]; s32 mode0; s32 mode; u8 pad10[0x5C-0x10]; s32 unk5C; u8 pad60[0x98-0x60]; s32 mode1; };
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Object *D_8009FA58[];
 extern struct Object *table_after[] __asm__("D_8009FA58+0");
 extern s8 D_8009FA8C[];
@@ -162,7 +162,7 @@ void func_800579D4(struct Object *arg0, struct Data *arg1, s32 arg2)
     func_8002AD58(2, obj, data, arg);
     func_80044988(obj->obj28->anim, obj->anim, 1, 0);
     obj->flags72 = (obj->flags72 & 0xEF) | 0x20;
-    D_8009FA0C++;
+    gPlayerCount++;
     index = data->d8->index;
     if (index != -1) {
         register s32 offset __asm__("$3") = index * 4;

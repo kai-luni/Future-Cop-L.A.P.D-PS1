@@ -3,7 +3,7 @@
 
 extern s16 D_8009FA44[];
 extern s32 *D_8009FA58[];
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 
 extern s32 func_8001A4E8(s32 *a, s32 *b);
 
@@ -35,7 +35,7 @@ void func_80025D6C(s32 *arg0)
     register s32 distance __asm__("$3");
 
     i = 0;
-    if (i < D_8009FA0C) {
+    if (i < gPlayerCount) {
         out = D_8009FA44;
         in = D_8009FA58;
         do {
@@ -45,6 +45,6 @@ void func_80025D6C(s32 *arg0)
             out++;
             in++;
             i++;
-        } while (i < D_8009FA0C);
+        } while (i < gPlayerCount);
     }
 }

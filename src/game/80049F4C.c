@@ -2,7 +2,7 @@
 typedef short s16;
 typedef int s32;
 typedef unsigned int u32;
-extern int D_8009FA0C;
+extern int gPlayerCount __asm__("D_8009FA0C");
 #define FMUL(d,a,b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 /**
  * @brief Projects a world point (and its extent) to screen coordinates with
@@ -47,7 +47,7 @@ int func_80049F4C(s16 *p)
     b <<= 13;
     FMUL(x, a, scale);
     FMUL(y, b, scale);
-    if (D_8009FA0C == 1) offset = 0xa00000;
+    if (gPlayerCount == 1) offset = 0xa00000;
     __asm__ volatile(
         "addu $3,$10,$11\n\t"
         "sra $3,$3,15\n\t"

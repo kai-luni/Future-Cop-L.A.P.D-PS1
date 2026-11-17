@@ -7,7 +7,7 @@ extern s32 D_8009FA50;
 extern s32 D_8009FAA4;
 extern s32 D_8009FA30;
 extern s32 D_8009FA00;
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u8 D_8009F690;
 extern u8 D_8009F691;
 extern u8 D_8009F692;
@@ -110,7 +110,7 @@ frame:
     {
         D_8009FA50 = D_8009FA50 + 1;
         func_8002703C();
-        if (D_8009FA0C == 1) {
+        if (gPlayerCount == 1) {
             func_800271A4();
         } else {
             func_80027510();

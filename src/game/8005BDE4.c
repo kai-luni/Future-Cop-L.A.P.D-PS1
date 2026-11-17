@@ -83,7 +83,7 @@ struct ListNode {
     struct ListNode *tail;
 };
 
-extern s32 D_8009FA0C[];
+extern s32 gPlayerCount[] __asm__("D_8009FA0C");
 extern struct Unk5BCD4Pool D_800A22A0;
 extern u8 D_800A6578[];
 extern u8 D_8005B934[];
@@ -172,7 +172,7 @@ void func_8005BDE4(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *a
     u32 found;
 
     __asm__("" : : "r"(source) : "$2");
-    for (i = 0; i < D_8009FA0C[0]; i++) {
+    for (i = 0; i < gPlayerCount[0]; i++) {
         func_80069580(i, &scratch.local);
         scratch.diff.x = instance->x - scratch.local.second;
         scratch.diff.y = instance->y - scratch.local.zero;

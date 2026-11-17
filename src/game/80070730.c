@@ -41,7 +41,7 @@ typedef struct Obj70730 {
     u16 range;
 } Obj70730;
 
-extern u32 D_8009FA0C;
+extern u32 gPlayerCount __asm__("D_8009FA0C");
 extern Base70730 *D_8009FA58[];
 
 extern void func_8001006C(Vec70730 *dst, Vec70730 *src, s32 count);
@@ -212,7 +212,7 @@ s16 func_80070730(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg
         s32 shift;
         s32 dist;
 
-        r = func_80019668() % D_8009FA0C;
+        r = func_80019668() % gPlayerCount;
 
         if ((func_80019668() & 1) != 0) {
             shift = (world->flagsE & 0x20) ? 4 : 5;

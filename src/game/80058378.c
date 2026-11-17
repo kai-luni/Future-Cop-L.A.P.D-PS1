@@ -39,7 +39,7 @@ struct Entity {
     u16 unk14;
 };
 
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk8009FA94 *D_8009FA94;
 extern void *D_8009FA58[2];
 
@@ -94,7 +94,7 @@ void func_80058378(struct Unk80058378 *object, s32 amount, s32 source)
                       entity != 0 ? entity->unk14 & 0x3FFF : -1, object);
     }
 
-    if (D_8009FA0C >= 2 && D_8009FA94->unk5C == 0) {
+    if (gPlayerCount >= 2 && D_8009FA94->unk5C == 0) {
         i = 0;
         p = D_8009FA58;
         do {

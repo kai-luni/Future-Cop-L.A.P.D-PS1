@@ -54,7 +54,7 @@ struct Unk5220CList {
 };
 
 extern struct Unk5220CList D_800A8DC0[];
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk5220CEntity *D_8009FA58[];
 
 extern s32 func_80052098(struct Unk5220CEntity *self, struct Unk5220CCoord *coordA,
@@ -98,7 +98,7 @@ s32 func_8005220C(struct Unk5220CEntity *self)
 
     info = self->info;
     list = &D_800A8DC0[info->playerIndex];
-    if (list->count == 0 && D_8009FA0C == 1) {
+    if (list->count == 0 && gPlayerCount == 1) {
         return 0;
     }
 
@@ -130,7 +130,7 @@ s32 func_8005220C(struct Unk5220CEntity *self)
         }
     }
 
-    if (D_8009FA0C == 2) {
+    if (gPlayerCount == 2) {
         other = D_8009FA58[1 - info->playerIndex];
         if ((other->flags & 4) == 0) {
             result += func_80052098(self, dst, &other->info->coord, other);

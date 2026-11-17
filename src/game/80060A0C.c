@@ -54,7 +54,7 @@ struct Actor {
 extern struct Actor *D_8009FA58[];
 extern struct Actor *actor0 __asm__("D_8009FA58");
 extern struct UnkFA94 *D_8009FA94;
-extern s32 D_8009FA0C;
+extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern s32 D_8009FA00;
 extern s32 D_8009FA70;
 extern u8 D_8009FA8C[];
@@ -122,7 +122,7 @@ s32 func_80060A0C(u32 state, s32 index)
 
     case 0x016499A4:
         offset = 1;
-        if (D_8009FA0C == offset) {
+        if (gPlayerCount == offset) {
             actor = actor0;
             if (actor != 0) {
                 actor->unk92 = 0x80 - actor->unk92;

@@ -9,7 +9,7 @@ struct Table { s8 pad[4]; s32 entries[100]; };
 struct Grid { s32 unused; s32 width; s32 pad[7]; u32 cells[1]; };
 struct Actor { u8 pad[0xc1]; s8 flag; u8 pad2[0x23e]; void *obj; };
 struct Owner { u8 pad[0xac]; struct Actor *actor; };
-extern s32 D_8009FA0C[];
+extern s32 gPlayerCount[] __asm__("D_8009FA0C");
 extern struct Table D_800A6F38;
 extern struct Grid *D_8009F80C;
 extern u8 *D_8009F808;
@@ -75,7 +75,7 @@ void func_8006680C(struct Owner *owner, s32 *pos)
     s32 ax;
 
     size = 32;
-    if (D_8009FA0C[0] >= 2) size = 16;
+    if (gPlayerCount[0] >= 2) size = 16;
     half = (u32)size >> 1;
     scale = ((half * 5) << 17) / 80;
     func_800665E8(pos, scale);
