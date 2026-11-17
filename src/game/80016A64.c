@@ -10,7 +10,8 @@ typedef struct { char pad[12]; u32 flags; char pad10[20]; Parts *parts; void *p2
 typedef struct { Model *model; Matrix matrix; Vec pos; char pad34[20]; s16 index; u8 flags; } Instance;
 typedef struct { char data[20]; u8 mode, flag; u16 value; } Work;
 extern u16 gDepthTagWord __asm__("D_8009F580");
-extern void *D_8009F570, *D_8009F574;
+extern void *D_8009F574;
+extern void *gVertexSourcePtr __asm__("D_8009F570");
 extern Vec *gCamera __asm__("D_8009F9E4");
 extern s32 D_800A8EA4;
 extern void func_80019470(Matrix *, Matrix *);
@@ -65,7 +66,7 @@ void func_80016A64(Instance *inst, s32 mode, s32 mask)
     other = 0;
     index = (s32)other;
     model = inst->model;
-    global = D_8009F570;
+    global = gVertexSourcePtr;
     part = model->parts->part;
     p28 = model->p28;
     if (!((model->flags >> 25) & 1)) index = inst->index;

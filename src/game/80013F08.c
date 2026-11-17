@@ -56,7 +56,7 @@ extern struct Vec3s32 gLightVectorOut __asm__("D_800A02E0");
 extern struct Vec3s32 gLightVectorSource __asm__("D_800A02F0");
 extern char gScriptVertexBuffer[] __asm__("D_8009FAE0");
 
-extern void *D_8009F570;
+extern void *gVertexSourcePtr __asm__("D_8009F570");
 extern void *D_8009F574;
 extern void *gPartVertexBuffer __asm__("D_8009F578");
 extern void *gClipFlagBuffer __asm__("D_8009F57C");
@@ -197,7 +197,7 @@ s32 func_80013F08(struct Instance *instance)
         fae = tmp;
         __asm__ volatile("" : "+r"(fae));
         input = model->inputs;
-        D_8009F570 = fae;
+        gVertexSourcePtr = fae;
         p1 = (char *)model->unk1C[1];
         *f0 = gLightVectorOut;
         p1data = p1 + 4;
@@ -251,7 +251,7 @@ s32 func_80013F08(struct Instance *instance)
         p20 = *(char **)((char *)idx + (u32)model->unk20 + 4) + 4;
         count = *p1C;
         D_8009F574 = t0;
-        D_8009F570 = p20;
+        gVertexSourcePtr = p20;
         func_8001047C(t0, a1_pts, flg, count);
     }
 
