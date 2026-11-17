@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gVertexBlockTable __asm__("D_8009F554");
-extern s32 D_8009F558;
+extern s32 gNormalBlockTable __asm__("D_8009F558");
 extern s32 D_8009F55C;
 extern s32 D_8009F560;
 extern s32 D_8009F564;
@@ -35,7 +35,7 @@ void func_80012E1C(s32 arg0)
     register s32 next __asm__("$2");
 
     next = arg0 + 0x400;
-    D_8009F558 = next;
+    gNormalBlockTable = next;
     next = arg0 + 0x800;
     D_8009F55C = next;
     next = arg0 + 0xC00;
