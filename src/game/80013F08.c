@@ -54,7 +54,7 @@ struct Instance {
 extern struct Matrix gBoneMatrices[] __asm__("D_800A0300");
 extern struct Vec3s32 D_800A02E0;
 extern struct Vec3s32 D_800A02F0;
-extern char D_8009FAE0[];
+extern char gScriptVertexBuffer[] __asm__("D_8009FAE0");
 
 extern void *D_8009F570;
 extern void *D_8009F574;
@@ -192,7 +192,7 @@ s32 func_80013F08(struct Instance *instance)
 
         mat = gBoneMatrices;
         __asm__ volatile("" :: "r"(f0));
-        tmp = D_8009FAE0;
+        tmp = gScriptVertexBuffer;
         __asm__ volatile("" : "+r"(tmp));
         fae = tmp;
         __asm__ volatile("" : "+r"(fae));
