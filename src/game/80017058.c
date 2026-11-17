@@ -13,7 +13,7 @@ extern u16 gDepthTagWord __asm__("D_8009F580");
 extern void *gVertexSourceAltPtr __asm__("D_8009F574");
 extern void *gVertexSourcePtr __asm__("D_8009F570");
 extern Vec *gCamera __asm__("D_8009F9E4");
-extern s32 D_800A8EA4;
+extern s32 gEnvMapTexpageWord __asm__("D_800A8EA4");
 extern void func_80019470(Matrix *, Matrix *);
 extern void func_80010820(Matrix *);
 extern void func_8001006C(Vec *, Vec *, s32);
@@ -105,7 +105,7 @@ void func_80017058(Instance *inst, u32 *enabled, s32 mask)
             func_8001006C(a, b, one);
         }
         func_80010820(&inst->matrix);
-        vec.extra = D_800A8EA4;
+        vec.extra = gEnvMapTexpageWord;
         {
             s32 x = vec.x;
             s32 y = vec.y;

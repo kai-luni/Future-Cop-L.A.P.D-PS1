@@ -5,7 +5,7 @@ typedef unsigned int u32;
 struct Packet { u32 addr:24; u32 len:8; u8 r,g,b,code; short x,y; u8 u,v; u16 clut,w,h; };
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
-extern u32 D_800A8EA4[];
+extern u32 gEnvMapTexpageWord[] __asm__("D_800A8EA4");
 extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 /**
  * @brief Emits a 16x16 textured sprite, optionally highlighted.
@@ -52,7 +52,7 @@ page_alloc:
     gPacketCursor = packet + 0x1C;
 page_ready:
     ((struct Packet *)packet)->addr = 0;
-    texture = D_800A8EA4[0];
+    texture = gEnvMapTexpageWord[0];
     ((struct Packet *)packet)->len = 1;
     page = (texture & 0x9FF) | 0xE1000600;
     cur2 = gPacketCursor;
