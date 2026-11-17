@@ -29,7 +29,7 @@ struct Poly {
 };
 
 extern u8 *D_8009FA90;
-extern u8 * volatile D_8009F9C0;
+extern u8 * volatile gPacketLimit __asm__("D_8009F9C0");
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
 
 /**
@@ -184,7 +184,7 @@ void func_80014490(struct Src *src, u32 p1, u32 p2, s32 p3, s32 p4, s32 p5, s32 
     sy = src->y;
 
     cursor = D_8009FA90;
-    if (cursor < D_8009F9C0) {
+    if (cursor < gPacketLimit) {
         D_8009FA90 = cursor + 0x1C;
     }
     poly = (struct Poly *)cursor;
@@ -212,7 +212,7 @@ void func_80014490(struct Src *src, u32 p1, u32 p2, s32 p3, s32 p4, s32 p5, s32 
     do {
         current = D_8009FA90;
         __asm__("" : "=r" (current) : "0" (current));
-        if (current >= D_8009F9C0) {
+        if (current >= gPacketLimit) {
             cursor = current;
             __asm__ volatile ("");
             i--;

@@ -49,7 +49,7 @@ extern u8 *D_8009FA94;
 extern struct Unk592D0 *D_8009FA58[];
 extern u8 D_8009AF40[];
 extern u8 *D_8009FA90;
-extern u8 *D_8009F9C0;
+extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 extern void func_800536B4(s32 *near, s32 *far);
 extern s32 func_80095C30(s32 x, s32 y);
@@ -162,7 +162,7 @@ void func_800592D0(struct Unk592D0 *arg0)
     color = sum / 2;
     color -= 0x100;
 
-    if (D_8009FA90 >= D_8009F9C0) {
+    if (D_8009FA90 >= gPacketLimit) {
         p = D_8009FA90;
     } else {
         p = D_8009FA90;
@@ -181,7 +181,7 @@ void func_800592D0(struct Unk592D0 *arg0)
 
     temp = intensity << 8;
 
-    if (D_8009FA90 >= D_8009F9C0) {
+    if (D_8009FA90 >= gPacketLimit) {
         p = D_8009FA90;
     } else {
         p = D_8009FA90;
@@ -194,7 +194,7 @@ void func_800592D0(struct Unk592D0 *arg0)
     *(u32 *)(p + 0x14) = *(u32 *)&frame.point[2];
     *(u32 *)(p + 0x10) = *(u32 *)&frame.point[3];
 
-    if (D_8009FA90 >= D_8009F9C0) {
+    if (D_8009FA90 >= gPacketLimit) {
         p = D_8009FA90;
     } else {
         p = D_8009FA90;
@@ -206,7 +206,7 @@ void func_800592D0(struct Unk592D0 *arg0)
     *(u32 *)(p + 0xC) = *(u32 *)&frame.point[0];
     *(u32 *)(p + 0x10) = *(u32 *)&frame.point[5];
 
-    if (D_8009FA90 >= D_8009F9C0) {
+    if (D_8009FA90 >= gPacketLimit) {
         p = D_8009FA90;
     } else {
         p = D_8009FA90;
@@ -218,7 +218,7 @@ void func_800592D0(struct Unk592D0 *arg0)
     *(u32 *)(p + 0xC) = *(u32 *)&frame.point[0];
     *(u32 *)(p + 0x10) = *(u32 *)&frame.point[1];
 
-    if (D_8009FA90 >= D_8009F9C0) {
+    if (D_8009FA90 >= gPacketLimit) {
         p = D_8009FA90;
     } else {
         p = D_8009FA90;

@@ -26,7 +26,7 @@ struct PolyG3 {
 };
 
 extern u8 *D_8009FA90;
-extern u8 * volatile D_8009F9C0;
+extern u8 * volatile gPacketLimit __asm__("D_8009F9C0");
 
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
 
@@ -96,7 +96,7 @@ void func_8001484C(Vec *v, u32 color0, u32 color1, s32 count, s32 scale, s32 off
     vx = v->x;
     vy = v->y;
 
-    if (D_8009FA90 < D_8009F9C0) goto page_alloc;
+    if (D_8009FA90 < gPacketLimit) goto page_alloc;
     __asm__("");
     poly = (struct PolyG3 *)D_8009FA90;
     goto page_ready;
@@ -123,7 +123,7 @@ page_ready:
     tag = (depth - dz) | 0x06000000;
 
     do {
-        if (D_8009FA90 < D_8009F9C0) goto poly_alloc;
+        if (D_8009FA90 < gPacketLimit) goto poly_alloc;
         __asm__("");
         poly = (struct PolyG3 *)D_8009FA90;
         goto poly_ready;

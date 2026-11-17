@@ -10,7 +10,8 @@ struct State { u8 pad[0x5c]; s32 mode; };
 struct PacketSmall { u32 tag, color; s16 x, y; u32 size; };
 struct PacketLarge { u32 tag, color; s16 x0, y0; u32 color1; s16 x1, y1; u32 color2; s16 x2, y2; };
 extern struct State *D_8009FA94;
-extern u8 *D_8009FA90, *D_8009F9C0;
+extern u8 *D_8009FA90;
+extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_800A6F60[];
@@ -86,7 +87,7 @@ void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
         color = colors[index];
         {
             register u32 test __asm__("$3");
-            test = (u32)D_8009F9C0;
+            test = (u32)gPacketLimit;
             test = (u32)smallbase < test;
             __asm__ volatile ("" : "=r"(test) : "0"(test));
             small = (struct PacketSmall *)smallbase;

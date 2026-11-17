@@ -9,7 +9,7 @@ struct Packet {
 };
 struct Page { u32 addr : 24; u32 len : 8; u32 code; };
 extern u8 *D_8009FA90;
-extern u8 *D_8009F9C0;
+extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 /**
  * @brief Emits a full-height colour bar: texpage word plus a 0x62 rectangle.
@@ -33,7 +33,7 @@ extern u8 *D_8009F9C0;
 void func_80026E9C(s32 r, s32 g, s32 b, s32 w)
 {
     u8 *packet;
-    if (D_8009FA90 < D_8009F9C0) goto page_alloc;
+    if (D_8009FA90 < gPacketLimit) goto page_alloc;
     __asm__("");
     packet = D_8009FA90;
     goto page_ready;
@@ -44,7 +44,7 @@ page_ready:
     ((struct Page *)packet)->len = 1;
     ((struct Page *)packet)->code = 0xE10006A0;
     ((struct Page *)packet)->addr = 0;
-    if (D_8009FA90 < D_8009F9C0) goto rect_alloc;
+    if (D_8009FA90 < gPacketLimit) goto rect_alloc;
     __asm__("");
     packet = D_8009FA90;
     goto rect_ready;

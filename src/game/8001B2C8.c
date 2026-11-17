@@ -17,7 +17,7 @@ extern s32 D_8009F5F4;
 extern s32 D_8009F5F8;
 extern s32 D_8009F5FC;
 extern s32 D_8009F600;
-extern s32 D_8009F9C0;
+extern s32 gPacketLimit __asm__("D_8009F9C0");
 extern volatile s32 D_8009F9D4;
 extern s32 gPrimPoolNext __asm__("D_8009F9F0");
 extern s32 gPrimPoolEnd __asm__("D_8009FA28");
@@ -124,7 +124,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     offset -= 0x1C;
     value = D_8009F5E4;
     value += offset;
-    D_8009F9C0 = value;
+    gPacketLimit = value;
 
     value = func_8001C034();
     if (value != 0) {

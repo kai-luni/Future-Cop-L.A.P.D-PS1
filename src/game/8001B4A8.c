@@ -30,7 +30,7 @@ extern s32 D_8009F600;
 extern u32 gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 D_8009FA90;
 extern s32 D_8009F9D4;
-extern u32 D_8009F9C0;
+extern u32 gPacketLimit __asm__("D_8009F9C0");
 extern u32 gPrimPoolEnd __asm__("D_8009FA28");
 
 extern u8 func_8001C034(void);
@@ -414,7 +414,7 @@ void func_8001B4A8(s32 arg0)
     v = xbase * 28;
     v -= 0x1C;
     val += v;
-    D_8009F9C0 = val;
+    gPacketLimit = val;
     func_80093178(bv, av + 2);
 done:
     return;

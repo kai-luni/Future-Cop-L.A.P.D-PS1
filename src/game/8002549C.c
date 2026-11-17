@@ -17,7 +17,7 @@ typedef struct {
 } Sprt;
 
 extern u8 *D_8009FA90;
-extern u8 *D_8009F9C0;
+extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 /**
  * @brief Emits the display set-up for one screen: two texpage/tile words and
@@ -55,7 +55,7 @@ void func_8002549C(int value) {
     u8 *packet;
     register int arg __asm__("$7") = value;
 
-    if (D_8009FA90 < D_8009F9C0) goto p1_alloc;
+    if (D_8009FA90 < gPacketLimit) goto p1_alloc;
     __asm__("");
     packet = D_8009FA90; goto p1;
 p1_alloc:
@@ -68,7 +68,7 @@ p1:
         ((Page *)packet)->code = 0xe1000105;
     }
 
-    if (D_8009FA90 < D_8009F9C0) goto s1_alloc;
+    if (D_8009FA90 < gPacketLimit) goto s1_alloc;
     __asm__("");
     packet = D_8009FA90; goto s1;
 s1_alloc:
@@ -92,7 +92,7 @@ s1:
         ((Sprt *)packet)->h = h;
     }
 
-    if (D_8009FA90 < D_8009F9C0) goto p2_alloc;
+    if (D_8009FA90 < gPacketLimit) goto p2_alloc;
     __asm__("");
     packet = D_8009FA90; goto p2;
 p2_alloc:
@@ -105,7 +105,7 @@ p2:
         ((Page *)packet)->code = 0xe1000115;
     }
 
-    if (D_8009FA90 < D_8009F9C0) goto s2_alloc;
+    if (D_8009FA90 < gPacketLimit) goto s2_alloc;
     __asm__("");
     packet = D_8009FA90; goto s2;
 s2_alloc:

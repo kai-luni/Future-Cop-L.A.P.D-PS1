@@ -10,7 +10,7 @@ struct Packet {
     struct HalfRect rect;
 };
 extern u8 *D_8009FA90;
-extern u8 *D_8009F9C0;
+extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 /**
  * @brief Emits a filled rectangle: a texpage word plus a 24-bit colour rectangle.
@@ -33,7 +33,7 @@ extern u8 *D_8009F9C0;
 void func_8001C148(u8 red, u8 green, u8 blue, struct HalfRect *rect, u8 blend)
 {
     u8 *packet;
-    if (D_8009FA90 < D_8009F9C0) {
+    if (D_8009FA90 < gPacketLimit) {
         packet = D_8009FA90;
         D_8009FA90 = packet + 0x1C;
     } else {
@@ -43,7 +43,7 @@ page_ready:
     ((volatile struct DrawTPage *)packet)->addr = 0;
     ((volatile struct DrawTPage *)packet)->len = 1;
     ((struct DrawTPage *)packet)->code = 0xE1000000;
-    if (D_8009FA90 < D_8009F9C0) goto rect_alloc;
+    if (D_8009FA90 < gPacketLimit) goto rect_alloc;
     __asm__("");
     packet = D_8009FA90;
     goto rect_ready;

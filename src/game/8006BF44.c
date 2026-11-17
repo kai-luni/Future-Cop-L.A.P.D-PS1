@@ -3,7 +3,8 @@ typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
 struct Packet { u32 addr:24; u32 len:8; u8 r,g,b,code; short x,y; u8 u,v; u16 clut,w,h; };
-extern u8 *D_8009FA90, *D_8009F9C0;
+extern u8 *D_8009FA90;
+extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u32 D_800A8EA4[], D_8009FAA4;
 /**
  * @brief Emits a 16x16 textured sprite, optionally highlighted.
@@ -41,7 +42,7 @@ void func_8006BF44(int a0, int a1, int a2, int a3)
     u = 0xA6;
     if (a0 == -1) { u = 0x96; v = 0xBC; }
     else { register int tmp __asm__("$2") = a0 << 4; __asm__("" : "=r"(tmp) : "0"(tmp)); v = tmp + 0x9C; }
-    if (D_8009FA90 < D_8009F9C0) goto page_alloc;
+    if (D_8009FA90 < gPacketLimit) goto page_alloc;
     __asm__("");
     packet = D_8009FA90;
     goto page_ready;
@@ -54,7 +55,7 @@ page_ready:
     ((struct Packet *)packet)->len = 1;
     page = (texture & 0x9FF) | 0xE1000600;
     cur2 = D_8009FA90;
-    lim2 = D_8009F9C0;
+    lim2 = gPacketLimit;
     *(u32 *)(packet + 4) = page;
     if (cur2 < lim2) goto sprt_alloc;
     __asm__("");

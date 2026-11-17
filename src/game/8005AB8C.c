@@ -54,7 +54,7 @@ extern s32 D_8009F7EC;
 extern s32 D_8009F7E0[];
 extern s32 D_8009F7E4[];
 extern u8 *D_8009FA90;
-extern u8 *D_8009F9C0;
+extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern struct DrawObj *D_8009FA58[];
 extern struct DrawObj *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct DrawObj *D_8009FA94;
@@ -141,7 +141,7 @@ void func_8005AB8C(struct Unk5AB8C *input, s32 *arg1, s32 *arg2)
         register u32 pageCode __asm__("$3");
 
         next = D_8009FA90;
-        if (next < D_8009F9C0) goto alloc1;
+        if (next < gPacketLimit) goto alloc1;
         __asm__("" : : "r"(next));
         p = next; goto ready1;
 alloc1:
@@ -155,7 +155,7 @@ ready1:
         next2 = D_8009FA90;
         mask = 0xFF000000;
         *(u32 *)(p + 4) = pageCode;
-        limit = D_8009F9C0;
+        limit = gPacketLimit;
         tag &= mask;
         cmp = next2 < limit;
         *(u32 *)p = tag;
@@ -181,7 +181,7 @@ ready2:
         clut = *(u16 *)(addressHi - 0x715A);
         __asm__("" : : "r"(clut) : "memory");
         next3 = D_8009FA90;
-        cmp3 = next3 < D_8009F9C0;
+        cmp3 = next3 < gPacketLimit;
         *(s16 *)(p + 0xE) = clut;
         if (cmp3) goto alloc3;
         __asm__("" : : "r"(next3));
@@ -227,7 +227,7 @@ ready3:
             }
 
             cursor = D_8009FA90;
-            cmp = cursor < D_8009F9C0;
+            cmp = cursor < gPacketLimit;
             p = cursor;
             if (cmp) {
                 D_8009FA90 = p + 0x1C;
@@ -320,7 +320,7 @@ ready3:
                         palIndex = sub->colors[i];
                         __asm__("" : : "r"(palIndex) : "memory");
                         tileCursor = D_8009FA90;
-                        tileLimit = D_8009F9C0;
+                        tileLimit = gPacketLimit;
                         palIndex &= 0x1F;
                         palIndex <<= 2;
                         colorAddress = (u32 *)(palIndex + (u32)colorTable);
