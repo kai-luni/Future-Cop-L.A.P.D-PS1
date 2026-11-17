@@ -12,7 +12,7 @@ extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 extern s32 D_8009F7A4;
 extern s32 D_8009F7A8;
 extern u8 D_8009F7AC;
-extern s32 D_8009F9F4[];
+extern s32 gLastSpawnSlot[] __asm__("D_8009F9F4");
 extern s32 D_8009FA40;
 extern s32 D_8009FA88;
 extern struct Unk4CAE4State *D_8009FA94[];
@@ -101,7 +101,7 @@ void func_8004CAE4(void)
     D_800A6F60[29] = colorF8F8F8;
     D_800A6F60[30] = 0x78F8;
     D_800A6F60[31] = color787878;
-    D_8009F9F4[0] = 0;
+    gLastSpawnSlot[0] = 0;
 
     D_8009F7AC = 1;
     D_8009F7A8 = 0;

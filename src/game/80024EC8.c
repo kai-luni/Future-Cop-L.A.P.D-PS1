@@ -16,7 +16,7 @@ struct Node24EC8 {
 
 extern struct Node24EC8 *gRequestListHead __asm__("D_8009F668");
 extern struct Node24EC8 *gRequestListTail __asm__("D_8009F66C");
-extern s32 D_8009F9F4;
+extern s32 gLastSpawnSlot __asm__("D_8009F9F4");
 extern s32 gScreenState __asm__("D_8009FA00");
 
 extern struct Node24EC8 *func_800295E8(s32 arg0);
@@ -114,9 +114,9 @@ loop_test:
                 }
             }
 
-            node->unk24 += D_8009F9F4;
-            node->unk28 += D_8009F9F4;
-            node->unk2C += D_8009F9F4;
+            node->unk24 += gLastSpawnSlot;
+            node->unk28 += gLastSpawnSlot;
+            node->unk2C += gLastSpawnSlot;
 
             switch (node->tag) {
             case 0x43747273:
