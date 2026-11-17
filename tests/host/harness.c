@@ -321,13 +321,327 @@ static void run_case(struct Case *c)
     print("PASS "); print(c->id); print("\n");
 }
 
+/* ================= render golden vectors (render.vectors) ================= */
+/* Pure-C originals run here: func_80015AF4 (winding), func_80015B68 (part prep),
+ * func_80016A64 (masked walk), func_800131A0 (flag rewrite, read back from 3DQL).
+ * GTE asm units are mirrored by gte_ref.c; .NET asserts the same file. */
+typedef short s16;
+extern s32 func_80015AF4(s32 o, s32 a, s32 b, s32 *out3);
+extern s32 func_80015B68(void *part, void *work, void *arg2, s32 bias, void *tex);
+extern void func_80016A64(void *inst, s32 mode, s32 mask);
+extern void gte_load(const s32 *w, const s32 *t, s16 *r, s32 *tr);
+extern void gte_mvmva(const s16 *r, s16 vx, s16 vy, s16 vz, s16 *out, u32 *flag);
+extern s32 gte_quot(s32 h, s32 sz3, s32 *overflow);
+extern void gte_rtps(const s16 *r, const s32 *tr, s16 vx, s16 vy, s16 vz,
+                     s32 h, s32 ofx, s32 ofy, s32 wmode,
+                     s32 *sxy, s32 *sz3out, u32 *clip, u32 *flag, s32 *written);
+extern u32 D_8009F570, D_8009F574, D_8009F578, D_8009F57C, D_8009F580;
+extern u32 D_8009F9E4, D_800A8EA4, D_8009FA0C;
+extern u32 rec_count, rec_type[64], rec_xy[64 * 4], overlay_count;
+extern s32 rec_z[64];
+
+#define RMAX 64
+#define RLMAX 48
+static char rkind[RMAX][8];
+static char rid[RMAX][32];
+static char rtok[RMAX][8][RLMAX][24];
+static int rn[RMAX];
+static int nrk;
+
+static void parse_render(const char *path)
+{
+    static char buf[65536];
+    char lt[RLMAX][24];
+    int fd, n, i, j, cur, nt;
+    char *p, *line, *t, *s;
+    fd = sys3(4005, (long)path, 0, 0);
+    if (fd < 0) { print("cannot open render vectors\n"); exit(2); }
+    n = sys3(4003, fd, (long)buf, sizeof(buf) - 1);
+    sys3(4006, fd, 0, 0);
+    if (n < 0) n = 0;
+    buf[n] = 0;
+    cur = -1;
+    p = buf;
+    while (*p)
+    {
+        line = p;
+        while (*p && *p != '\n') p++;
+        if (*p) *p++ = 0;
+        if (*line == '#' || *line == 0) continue;
+        nt = 0;
+        t = line;
+        while (*t)
+        {
+            while (*t == ' ' || *t == '\t') t++;
+            if (!*t) break;
+            s = t;
+            while (*t && *t != ' ' && *t != '\t') t++;
+            if (*t) *t++ = 0;
+            if (nt < RLMAX)
+            {
+                for (i = 0; s[i] && i < 23; i++) lt[nt][i] = s[i];
+                lt[nt][i] = 0;
+            }
+            nt++;
+        }
+        if (nt == 0) continue;
+        if (streq(lt[0], "END")) { cur = -1; continue; }
+        if (cur < 0)
+        {
+            if (nrk >= RMAX) break;
+            cur = nrk++;
+            rn[cur] = 0;
+            for (i = 0; i < 7 && lt[0][i]; i++) rkind[cur][i] = lt[0][i];
+            rkind[cur][i] = 0;
+            for (i = 0; i < 31 && lt[1][i]; i++) rid[cur][i] = lt[1][i];
+            rid[cur][i] = 0;
+        }
+        if (rn[cur] < 8)
+        {
+            for (j = 0; j < nt && j < RLMAX; j++)
+                for (i = 0; i < 24; i++) rtok[cur][rn[cur]][j][i] = lt[j][i];
+            rn[cur]++;
+        }
+    }
+}
+
+static char *RT(int c, int l, int t) { return rtok[c][l][t]; }
+
+static void rfail(int c, const char *what) { fail(rid[c], what); }
+
+static void expect_hex(int c, const char *what, u32 got, int l, int t)
+{
+    if (got != hextoul(RT(c, l, t))) rfail(c, what);
+}
+static void expect_dec(int c, const char *what, long got, int l, int t)
+{
+    if (got != atool(RT(c, l, t))) rfail(c, what);
+}
+
+/* synthetic Cobj payload carrying a 3DQL list; returns total length */
+static int build_ql_payload(int np, const u8 *f0, const u8 *f1, const u8 *idx)
+{
+    int p = 0, i, k;
+    wr32(payload + p, 0x34444749); wr32(payload + p + 4, 60); wr32(payload + p + 8, 0);
+    for (i = 0; i < 48; i++) payload[p + 12 + i] = 0;
+    wr32(payload + p + 0x1C, 1); wr32(payload + p + 0x20, 2); wr32(payload + p + 0x2C, 3);
+    p += 60;
+    wr32(payload + p, 0x33444242); wr32(payload + p + 4, 24); wr32(payload + p + 8, 0);
+    for (i = 0; i < 12; i++) payload[p + 12 + i] = 0;
+    p += 24;
+    for (i = 1; i <= 3; i++)
+    {
+        wr32(payload + p, 0x33445246); wr32(payload + p + 4, 20); wr32(payload + p + 8, i);
+        wr32(payload + p + 12, 0); wr32(payload + p + 16, 0);
+        p += 20;
+    }
+    wr32(payload + p, 0x3344514C); wr32(payload + p + 4, 16 + 12 * np); wr32(payload + p + 8, 1);
+    wr32(payload + p + 12, np);
+    for (i = 0; i < np; i++)
+    {
+        u8 *q = payload + p + 16 + i * 12;
+        q[0] = f0[i]; q[1] = f1[i]; q[2] = 0; q[3] = 0;
+        for (k = 0; k < 4; k++) q[4 + k] = idx[i * 4 + k];
+        for (k = 0; k < 4; k++) q[8 + k] = 0;
+    }
+    p += 16 + 12 * np;
+    /* empty 3DTL: keeps gModelTriangleList/Size fresh (no stale walk) */
+    wr32(payload + p, 0x3344544C); wr32(payload + p + 4, 12); wr32(payload + p + 8, 1);
+    p += 12;
+    return p;
+}
+
+static u8 *load_ql(int np, const u8 *f0, const u8 *f1, const u8 *idx)
+{
+    void *o;
+    int len = build_ql_payload(np, f0, f1, idx);
+    reset_globals();
+    func_800131A0(&o, payload, len, 0);
+    return (u8 *)D_8009F530; /* gModelPolygonList */
+}
+
+struct SV { u32 xy; s32 z; };
+struct W17 { u32 xy[4]; s32 z; u32 tag; };
+struct P17 { u32 flags; u32 a; u32 b; };
+struct A2 { s32 unk0; s16 data[4]; };
+
+static void fill_verts(int c, int o, int nv, struct SV *sv, u8 *clip)
+{
+    int i;
+    for (i = 0; i < nv; i++)
+    {
+        sv[i].xy = hextoul(RT(c, 0, o + i * 3));
+        sv[i].z = atool(RT(c, 0, o + i * 3 + 1));
+        clip[i] = (u8)hextoul(RT(c, 0, o + i * 3 + 2));
+    }
+    D_8009F578 = (u32)sv;
+    D_8009F57C = (u32)clip;
+}
+
+static void run_render(int c)
+{
+    s32 w[9], t[3], tr[3], v[3];
+    s16 r[9], mv[3];
+    u32 flag, clip, o3[3];
+    s32 sxy, sz3, written, ovf, q, ret, i, nv, np, bias, mask;
+    struct SV sv[16];
+    u8 cb[16];
+    struct A2 widths;
+    struct W17 work;
+    struct P17 part;
+    u8 f0[16], f1[16], idx[64];
+    u8 *ql;
+    static u8 model[48];
+    static u8 inst[76];
+    static void *p2c[2];
+    int before = fails;
+    const char *k = rkind[c];
+    if (streq(k, "ML"))
+    {
+        for (i = 0; i < 9; i++) w[i] = (s32)hextoul(RT(c, 0, 2 + i));
+        for (i = 0; i < 3; i++) t[i] = (s32)hextoul(RT(c, 0, 11 + i));
+        gte_load(w, t, r, tr);
+        for (i = 0; i < 9; i++) expect_hex(c, "load R", (u32)(u16)r[i], 1, 1 + i);
+        for (i = 0; i < 3; i++) expect_dec(c, "load TR", tr[i], 1, 10 + i);
+    }
+    else if (streq(k, "MV"))
+    {
+        for (i = 0; i < 9; i++) r[i] = (s16)hextoul(RT(c, 0, 2 + i));
+        for (i = 0; i < 3; i++) v[i] = atool(RT(c, 0, 11 + i));
+        gte_mvmva(r, (s16)v[0], (s16)v[1], (s16)v[2], mv, &flag);
+        for (i = 0; i < 3; i++) expect_dec(c, "mvmva", mv[i], 1, 1 + i);
+        expect_hex(c, "mvmva flag", flag, 1, 4);
+    }
+    else if (streq(k, "Q"))
+    {
+        q = gte_quot((s32)hextoul(RT(c, 0, 2)), (s32)hextoul(RT(c, 0, 3)), &ovf);
+        expect_hex(c, "quot", (u32)q, 1, 1);
+        expect_dec(c, "quot ovf", ovf, 1, 2);
+    }
+    else if (streq(k, "RP"))
+    {
+        for (i = 0; i < 9; i++) r[i] = (s16)hextoul(RT(c, 0, 2 + i));
+        for (i = 0; i < 3; i++) tr[i] = atool(RT(c, 0, 11 + i));
+        for (i = 0; i < 3; i++) v[i] = atool(RT(c, 0, 14 + i));
+        gte_rtps(r, tr, (s16)v[0], (s16)v[1], (s16)v[2],
+                 (s32)hextoul(RT(c, 0, 17)), (s32)hextoul(RT(c, 0, 18)),
+                 (s32)hextoul(RT(c, 0, 19)), atool(RT(c, 0, 20)),
+                 &sxy, &sz3, &clip, &flag, &written);
+        expect_hex(c, "rtps sxy", (u32)sxy, 1, 1);
+        expect_hex(c, "rtps sz", (u32)sz3, 1, 2);
+        expect_hex(c, "rtps clip", clip, 1, 3);
+        expect_hex(c, "rtps flag", flag, 1, 4);
+        expect_dec(c, "rtps written", written, 1, 5);
+    }
+    else if (streq(k, "W"))
+    {
+        ret = func_80015AF4(hextoul(RT(c, 0, 2)), hextoul(RT(c, 0, 3)), hextoul(RT(c, 0, 4)), o3);
+        expect_dec(c, "winding", ret, 1, 1);
+        if (!ret)
+            for (i = 0; i < 3; i++) expect_hex(c, "winding out", o3[i], 1, 2 + i);
+    }
+    else if (streq(k, "P"))
+    {
+        nv = atool(RT(c, 0, 8));
+        fill_verts(c, 9, nv, sv, cb);
+        for (i = 0; i < 4; i++) widths.data[i] = (s16)hextoul(RT(c, 0, 9 + nv * 3 + i));
+        widths.unk0 = 0;
+        part.flags = (u32)atool(RT(c, 0, 2)) << 8;
+        part.a = (u32)atool(RT(c, 0, 3)) | ((u32)atool(RT(c, 0, 4)) << 8) |
+                 ((u32)atool(RT(c, 0, 5)) << 16) | ((u32)atool(RT(c, 0, 6)) << 24);
+        part.b = 0;
+        bias = atool(RT(c, 0, 7));
+        for (i = 0; i < 24; i++) ((u8 *)&work)[i] = 0; /* xy3 unused for tris */
+        ret = func_80015B68(&part, &work, &widths, bias, 0);
+        expect_dec(c, "prep accept", ret, 1, 1);
+        if (ret)
+        {
+            for (i = 0; i < 4; i++) expect_hex(c, "prep xy", work.xy[i], 1, 2 + i);
+            expect_dec(c, "prep z", work.z, 1, 6);
+        }
+    }
+    else if (streq(k, "K"))
+    {
+        np = atool(RT(c, 0, 4));
+        for (i = 0; i < np; i++)
+        {
+            f0[i] = (u8)hextoul(RT(c, 0, 5 + i * 6));
+            f1[i] = (u8)hextoul(RT(c, 0, 6 + i * 6));
+            idx[i * 4] = (u8)atool(RT(c, 0, 7 + i * 6));
+            idx[i * 4 + 1] = (u8)atool(RT(c, 0, 8 + i * 6));
+            idx[i * 4 + 2] = (u8)atool(RT(c, 0, 9 + i * 6));
+            idx[i * 4 + 3] = (u8)atool(RT(c, 0, 10 + i * 6));
+        }
+        ql = load_ql(np, f0, f1, idx);
+        nv = atool(RT(c, 0, 5 + np * 6));
+        fill_verts(c, 6 + np * 6, nv, sv, cb);
+        for (i = 0; i < 4; i++) widths.data[i] = (s16)hextoul(RT(c, 0, 6 + np * 6 + nv * 3 + i));
+        widths.unk0 = 0;
+        for (i = 0; i < 48; i++) model[i] = 0;
+        *(u32 *)(model + 36) = (u32)ql;          /* parts: count word + records */
+        *(u32 *)(model + 40) = 0;               /* texture base */
+        p2c[0] = 0; p2c[1] = &widths;
+        *(u32 *)(model + 44) = (u32)p2c;
+        for (i = 0; i < 76; i++) inst[i] = 0;
+        *(u32 *)(inst + 0) = (u32)model;
+        *(s16 *)(inst + 72) = 0;                /* frame index */
+        inst[74] = 8;                           /* no depth bias */
+        D_8009F580 = 0;
+        for (i = 0; i < 24; i++) ((u8 *)&work)[i] = 0;
+        rec_count = 0; overlay_count = 0;
+        mask = (s32)hextoul(RT(c, 0, 2));
+        func_80016A64(inst, 0, mask);
+        expect_dec(c, "walk count", (long)rec_count, 1, 1);
+        for (i = 0; i < (int)rec_count; i++)
+        {
+            expect_dec(c, "face type", rec_type[i], 2 + i, 1);
+            expect_hex(c, "face xy0", rec_xy[i * 4], 2 + i, 2);
+            expect_hex(c, "face xy1", rec_xy[i * 4 + 1], 2 + i, 3);
+            expect_hex(c, "face xy2", rec_xy[i * 4 + 2], 2 + i, 4);
+            if (!streq(RT(c, 2 + i, 5), "-"))
+                expect_hex(c, "face xy3", rec_xy[i * 4 + 3], 2 + i, 5);
+            expect_dec(c, "face z", rec_z[i], 2 + i, 6);
+        }
+    }
+    else if (streq(k, "FR"))
+    {
+        np = 0;
+        for (i = 2; RT(c, 0, i)[0]; i++) np++;
+        for (i = 0; i < np; i++)
+        {
+            f0[i] = (u8)hextoul(RT(c, 0, 2 + i));
+            f1[i] = 0;
+            idx[i * 4] = idx[i * 4 + 1] = idx[i * 4 + 2] = idx[i * 4 + 3] = 0;
+        }
+        ql = load_ql(np, f0, f1, idx);
+        for (i = 0; i < np; i++)
+        {
+            /* pair token "in:out" */
+            char *tok = RT(c, 0, 2 + i);
+            u32 want = 0;
+            int j = 0;
+            while (tok[j] && tok[j] != ':') j++;
+            want = hextoul(tok + j + 1);
+            if (ql[4 + i * 12] != (u8)want) { rfail(c, "flag rewrite"); break; }
+        }
+    }
+    else { rfail(c, "unknown kind"); return; }
+    if (fails != before) return;
+    print("PASS "); print(rid[c]); print("\n");
+}
+
 int main(int argc, char **argv)
 {
     int i;
-    if (argc < 2) { print("usage: harness <3dtl.vectors>\n"); return 2; }
+    if (argc < 2) { print("usage: harness <3dtl.vectors> [render.vectors]\n"); return 2; }
     parse_fixture(argv[1]);
     if (!have_remap) { print("fixture missing REMAP line\n"); return 2; }
     for (i = 0; i < ncases; i++) run_case(&cases[i]);
+    if (argc > 2)
+    {
+        parse_render(argv[2]);
+        for (i = 0; i < nrk; i++) run_render(i);
+    }
     print(fails ? "FAILED\n" : "ALL PASS\n");
     return fails ? 1 : 0;
 }

@@ -28,14 +28,17 @@ compile() { # compile <src.c> <obj>
     "$AS" -o "$obj" "$OUT/tmp.mas.s"
 }
 
-for f in 80012E1C 80012E48 8001306C 800131A0 80063C5C; do
+for f in 80012E1C 80012E48 8001306C 800131A0 80063C5C 80015AF4 80015B68 80016A64; do
     compile "$DECOMP/src/game/$f.c" "$OUT/$f.o"
 done
+compile "$HERE/gte_ref.c" "$OUT/gte_ref.o"
 compile "$HERE/stubs.c" "$OUT/stubs.o"
 compile "$HERE/harness.c" "$OUT/harness.o"
 "$AS" -o "$OUT/crt0.o" "$HERE/crt0.s"
 "$LD" -static -e __start -o "$OUT/harness" \
-    "$OUT/crt0.o" "$OUT/harness.o" "$OUT/stubs.o" \
-    "$OUT/80012E1C.o" "$OUT/80012E48.o" "$OUT/8001306C.o" "$OUT/800131A0.o" "$OUT/80063C5C.o"
+    "$OUT/crt0.o" "$OUT/harness.o" "$OUT/stubs.o" "$OUT/gte_ref.o" \
+    "$OUT/80012E1C.o" "$OUT/80012E48.o" "$OUT/8001306C.o" "$OUT/800131A0.o" "$OUT/80063C5C.o" \
+    "$OUT/80015AF4.o" "$OUT/80015B68.o" "$OUT/80016A64.o"
 echo "built $OUT/harness"
-"$QEMU" "$OUT/harness" "$VECTORS"
+RENDER="${RENDER:-$HERE/../../../future_cop_dotnet/tests/golden/render.vectors}"
+"$QEMU" "$OUT/harness" "$VECTORS" "$RENDER"
