@@ -120,6 +120,49 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
      Umbenennung verändert dort die erzeugten Bytes. Erst die Doppeldeklaration
      auflösen, dann benennen. -->
 
+## Model-Loader: Chunk-Slots der Cobj-Ressource
+
+`func_80012E48` läuft über die Rohtabelle einer Modellressource und legt je Chunk-Tag einen Zeiger in einen eigenen globalen Slot. Die Tags sind ASCII, big-endian gelesen:
+
+| Tag | Slot | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|---|
+| `4DGI` | `D_8009F52C` | `gModelGeometryChunk` | `u8 *` | Kopf-Chunk der Geometrie (Zeiger auf den Chunk-Beginn inkl. Header) |
+| `3DQL` | `D_8009F530` | `gModelPolygonList` | `u8 *` | Polygonliste: 12-Byte-Records (Gruppe/Typ, Textur-Offset, 4 Vertex- und 4 Normal-Indizes) |
+| `3DTL` | `D_8009F534` | `gModelTriangleList` | `u8 *` | Dreiecksliste |
+| — | `D_8009F528` | `gModelTriangleListSize` | `u32` | Länge der Dreiecksliste abzüglich 12 Byte Chunk-Header |
+| `3DHY` | `D_8009F538` | `gModelHierarchy` | `u8 *` | Hierarchie/Skelett des Modells |
+| `3DMI` | `D_8009F53C` | `gModelMeshInfo` | `u8 *` | Mesh-Informationen |
+| `3DBB` | `D_8009F540` | `gModelBoundingBox` | `u8 *` | Bounding-Box des Modells |
+| `AnmD` | `D_8009F544` | `gModelAnimData` | `u8 *` | Animationsdaten; der Index wird zu einer Anzahl (16-Byte-Records) umgeschrieben |
+| `4DVL` | `D_8009F554` | `gVertexBlockTable` | `s32` | Indizierte Tabelle der Vertex-Blöcke |
+| `4DNL` | `D_8009F558` | `gNormalBlockTable` | `s32` | Indizierte Tabelle der Normalen-Blöcke |
+| `3DRL` | `D_8009F55C` | `gRelocBlockTable` | `s32` | Indizierte Tabelle der Relokations-Blöcke |
+| `3DRF` | `D_8009F560` | `gRefBlockTable` | `s32` | Indizierte Tabelle der Referenz-Blöcke |
+
+Alle zwölf wurden einzeln umbenannt und byte-genau geprüft. **Bestätigt** ist die Zuordnung Tag→Slot (Switch in `func_80012E48`); die inhaltliche Deutung der Tags `3DTL`, `3DMI`, `3DRL` und `3DRF` stammt aus dem Tag-Namen und bleibt **wahrscheinlich**.
+
+Nicht benannt bleiben `D_8009F548` (`3DHS`), `D_8009F54C` (`3DTA`), `D_8009F550` (`3DAL`) sowie die beiden Knotenköpfe `D_8009F564`/`D_8009F568`: dort ist die Rolle im Code noch nicht belegt.
+
+## Disc-Darstellung im Mech-Renderer
+
+`func_800597C0` zeichnet die zwei Discs (Walker/Hover) und schreibt dafür gemeinsame Farb-Bytes.
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009F370` | `gDiscColourWordSecondary` | `s32` | Zweites Farbwort für `func_8001484C` (vier Dreiecke, Skalierung 0x70, Tiefenversatz 0x200). **Bestätigt.** | `func_800597C0` |
+| `D_8009FAA4` | `gDiscShadeByte` | `u32` | Byte, dessen `>> 2` als hohe Farbe der Disc dient, wenn das Info-Block-Feld `+0x324` positiv ist. **Bestätigt.** | `func_800597C0` |
+| `D_8009AF3C` | `gDiscPartIndexTable` | `u8[]` | Byte-Tabelle der Modellteil-Indizes, von denen zwei für die Discs genutzt werden. **Bestätigt.** | `func_800597C0` |
+
+`D_8009F36D` (Rampen-Byte, `u8`-Definition innerhalb der Unit) und `D_8009F36C` (nur in Kommentaren erwähnt, kein eigenes Symbol) bleiben unverändert.
+
+## Anforderungsliste des Spawn-Pfads
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009F668` | `gRequestListHead` | `s32` | Kopf der doppelt verketteten Anforderungsliste, an die `func_80024EC8` neue Knoten anhängt. **Bestätigt.** | `func_80024EC8` |
+| `D_8009F66C` | `gRequestListTail` | `s32` | Ende derselben Liste; neue Knoten werden hinten eingefügt. **Bestätigt.** | `func_80024EC8` |
+| `D_8009F9F4` | `gLastSpawnSlot` | `s32` | Slot, den der Spawn-Pfad zuletzt belegt hat und später zurückmeldet. **Wahrscheinlich.** | `func_80024EC8` |
+
 ## 3D-Pipeline und Renderpuffer
 
 Diese Gruppe bildet den Kern der 3D-Ausgabe: Transformationspuffer, Clip-Flags, Lichtvektoren und die Pools, aus denen die Polygon- und Paketdaten kommen. Die Belege stammen aus den Renderern `func_80013A14`, `func_80013F08`, `func_8001B2C8` und `func_8001B4A8`.
@@ -151,6 +194,10 @@ Diese Gruppe bildet den Kern der 3D-Ausgabe: Transformationspuffer, Clip-Flags, 
 | `D_8009F600` | `gNodeTableIndex` | `s32` | Laufender Index in diese Tabelle; wird bei der Vorbereitung genullt. **Bestätigt.** | `func_8001B4A8` |
 | `D_8009F5C0` | `gSubScreenActive` | `s32` | Flag für den Sub-Screen-Modus; steuert den 0xA0 breiten Clip beim Zeichnen. **Bestätigt.** | `func_8001B4A8` |
 | `D_8009F9D4` | `gScreenOffsetValue` | `volatile s32` | Bildschirm-Offset, im Retail 0 oder `0x100`; wird als Farbe übergeben. **Bestätigt.** | `func_8001B2C8`, `func_800259D8` |
+| `D_800A02F0` | `gLightVectorSource` | `struct Vec3s32` | 12-Byte-Quellvektor der Lichtberechnung, Gegenstück zu `gLightVectorOut`. **Bestätigt.** | `func_80013C80` |
+| `D_800A8E80` | `gTexpageBaseTable` | `u32[]` | Texpage-Basis je Texturgruppe (`(descriptor >> 8) & 7` adressiert den Eintrag). **Bestätigt.** | `func_800648E8` |
+| `D_8009F570` | `gVertexSourcePtr` | `void *` | Veröffentlichter Zeiger auf die Vertex-Quelle, die der Polygon-Emitter liest. **Wahrscheinlich.** | `func_80013F08`, `func_80016A64` |
+| `D_8009F574` | `gVertexSourceAltPtr` | `void *` | Zweite veröffentlichte Quelle (Vertex-Quelle + 4) für denselben Emitter. **Wahrscheinlich.** | `func_80013F08`, `func_80016A64` |
 
 ## Tabellen, Pools und Verzeichnisse
 
