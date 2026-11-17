@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 D_8009F284;
-extern s32 D_8009F668;
+extern s32 gRequestListHead __asm__("D_8009F668");
 extern s32 D_8009F66C;
 extern s32 D_8009F684;
 extern s32 D_8009FA70;
@@ -53,7 +53,7 @@ void func_80024904(s32 arg)
     D_8009F684 = arg;
     func_80017C68(0x168, 0, 0x118, 0, 0xFC, 0);
     func_8008CCB0(D_800A0B30, arg);
-    D_8009F668 = 0;
+    gRequestListHead = 0;
     D_8009F66C = 0;
     func_80019A64();
     temp = D_8009F284;

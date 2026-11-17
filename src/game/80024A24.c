@@ -13,7 +13,7 @@ struct Name {
 };
 
 extern s32 D_8009F284;
-extern s32 D_8009F668;
+extern s32 gRequestListHead __asm__("D_8009F668");
 extern s32 D_8009F66C;
 extern u8 D_8009F680;
 extern s32 D_8009F684;
@@ -167,7 +167,7 @@ call_init:
         } while (n >= 0);
     }
 
-    D_8009F668 = 0;
+    gRequestListHead = 0;
     D_8009F66C = 0;
 
     {
