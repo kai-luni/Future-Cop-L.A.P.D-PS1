@@ -1,7 +1,7 @@
 // Categories: Game Engine > Front End | Resources > Level Table
 #include "game/types.h"
 
-extern u8 D_8009B724[];
+extern u8 gMissionListTable[] __asm__("D_8009B724");
 extern u8 D_8009F3C0;
 extern u8 D_8009F880;
 extern u8 D_8009F881;
@@ -46,6 +46,6 @@ void func_800776B8(void)
     } else {
         D_8009F882 = 0;
     }
-    D_8009F884 = D_8009B724;
+    D_8009F884 = gMissionListTable;
     D_8009F888 = 8;
 }
