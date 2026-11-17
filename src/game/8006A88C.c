@@ -1,7 +1,7 @@
 // Categories: Game Engine > Game State > Reset | Gameplay > Object Registry
 #include "game/types.h"
 
-extern s32 D_8009F848;
+extern s32 gDescriptorRegistryCount __asm__("D_8009F848");
 
 /**
  * @brief Clears the 6-entry object/texture descriptor registry count D_8009F848 during mission reset.
@@ -27,5 +27,5 @@ extern s32 D_8009F848;
  */
 void func_8006A88C(void)
 {
-    D_8009F848 = 0;
+    gDescriptorRegistryCount = 0;
 }

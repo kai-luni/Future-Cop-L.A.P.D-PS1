@@ -33,7 +33,7 @@ struct Unk6AAEC {
     void *unk44[4];
 };
 
-extern s32 D_8009F848;
+extern s32 gDescriptorRegistryCount __asm__("D_8009F848");
 extern struct Unk6AAEC D_800A3340[];
 extern u8 D_800A3344[];
 
@@ -73,8 +73,8 @@ void func_8006A918(struct Unk60838Arg *arg0)
     s32 i;
     s32 index;
 
-    if (D_8009F848 < 6) {
-        index = D_8009F848++;
+    if (gDescriptorRegistryCount < 6) {
+        index = gDescriptorRegistryCount++;
 
         data = func_80019C38(arg0->unk00, arg0->unk20, 0x74414354, arg0->unk1C);
 
