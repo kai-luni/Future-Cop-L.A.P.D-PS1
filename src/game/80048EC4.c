@@ -3,7 +3,7 @@
 
 struct FontEntry;
 
-extern u16 D_800A1940[];
+extern u16 gTexpageTable[] __asm__("D_800A1940");
 extern u16 D_800A1970[];
 extern u32 D_8009FACC[];
 extern u16 D_8009F76A;
@@ -41,7 +41,7 @@ void func_80048EC4(void)
     D_8009F76A = 1;
     D_8009F768 = 0;
     for (i = 0; i < 0x14; i++) {
-        D_800A1940[i] = 0;
+        gTexpageTable[i] = 0;
         D_800A1970[i] = 0;
     }
     gFont = 0;
