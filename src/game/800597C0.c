@@ -71,7 +71,7 @@ extern u8 D_8009AF3C[];
 u8 D_8009F36D;
 extern u8 D_8009F36E;
 extern u8 D_8009F36F;
-extern s32 D_8009F370;
+extern s32 gDiscColourWordSecondary __asm__("D_8009F370");
 extern struct Camera597C0 *gCamera __asm__("D_8009F9E4");
 extern struct Global597C0 *D_8009FA94[];
 
@@ -283,7 +283,7 @@ void func_800597C0(struct Object597C0 *object)
 
         if ((u8)func_80019D90(loc.point, 0x700) == 2) {
             func_8001047C(loc.coords, loc.point, loc.hit, 1);
-            func_8001484C(loc.point, *(s32 *)(color - 1), D_8009F370, 4, 0x70, 0x200, 0);
+            func_8001484C(loc.point, *(s32 *)(color - 1), gDiscColourWordSecondary, 4, 0x70, 0x200, 0);
             offset += count >> 1;
         }
         i++;
