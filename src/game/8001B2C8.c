@@ -4,7 +4,7 @@
 extern s32 D_8009F5C0;
 extern s32 D_8009F5C8;
 extern s32 D_8009F5CC;
-extern s32 D_8009F5D0;
+extern s32 gRenderNodeTable __asm__("D_8009F5D0");
 extern s32 D_8009F5D4;
 extern s32 D_8009F5D8;
 extern s32 D_8009F5DC;
@@ -96,7 +96,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     D_8009F5CC = func_80017EBC(allocationSize, 2);
 
     allocationSize = D_8009F5F8 * 0x1C;
-    D_8009F5D0 = func_80017EBC(allocationSize, 2);
+    gRenderNodeTable = func_80017EBC(allocationSize, 2);
 
     allocationSize = D_8009F5F8 * 0x1C;
     D_8009F5D4 = func_80017EBC(allocationSize, 2);
@@ -107,8 +107,8 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     D_8009F600 = 0;
     gPrimPoolNext = D_8009F5C8;
     gPacketPoolBase = D_8009F5C8;
-    gPacketCursor = D_8009F5D0;
-    gNodePoolBase = D_8009F5D0;
+    gPacketCursor = gRenderNodeTable;
+    gNodePoolBase = gRenderNodeTable;
 
     func_80093178(D_8009F5D8, D_8009F5FC + 2);
 

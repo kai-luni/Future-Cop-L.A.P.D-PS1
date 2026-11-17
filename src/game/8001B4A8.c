@@ -11,7 +11,7 @@ extern u32 D_8009AA68[];
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 
 extern u32 D_8009F5C8[];
-extern u32 D_8009F5D0[];
+extern u32 gRenderNodeTable[] __asm__("D_8009F5D0");
 extern u32 D_8009F5D8[];
 
 extern s32 D_8009F218;
@@ -387,7 +387,7 @@ void func_8001B4A8(s32 arg0)
     mask = 1;
     v = D_8009F600;
     __asm__ volatile("" : "+r"(mask) : "r"(v));
-    xbase = (s32)D_8009F5D0;
+    xbase = (s32)gRenderNodeTable;
     mask -= v;
     av = mask << 2;
     v = (s32)D_8009F5D8 + av;
