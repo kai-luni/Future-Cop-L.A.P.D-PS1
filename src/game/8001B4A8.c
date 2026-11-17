@@ -25,7 +25,7 @@ extern s32 D_8009F5EC;
 extern s32 D_8009F5F0;
 extern s32 D_8009F5F4;
 extern s32 D_8009F5F8;
-extern s32 D_8009F5FC;
+extern s32 gNodeTableLength __asm__("D_8009F5FC");
 extern s32 D_8009F600;
 extern u32 gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 gPacketCursor __asm__("D_8009FA90");
@@ -198,7 +198,7 @@ void func_8001B4A8(s32 arg0)
     }
 
     v = max - 1;
-    quot = (D_8009F5FC + v - min) / D_8009F5FC;
+    quot = (gNodeTableLength + v - min) / gNodeTableLength;
     shift = 1;
     if (quot != 0) {
         v = func_80095C14(quot);
@@ -398,7 +398,7 @@ void func_8001B4A8(s32 arg0)
     shift = *(u32 *)v;
     val = *(u32 *)av;
     __asm__("" : : "r"(av));
-    av = D_8009F5FC;
+    av = gNodeTableLength;
     xbase = D_8009F5F4;
     D_8009F600 = mask;
     v = xbase * 52;

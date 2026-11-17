@@ -15,7 +15,7 @@ extern volatile s32 D_8009F5EC;
 extern volatile s32 D_8009F5F0;
 extern s32 D_8009F5F4;
 extern s32 D_8009F5F8;
-extern s32 D_8009F5FC;
+extern s32 gNodeTableLength __asm__("D_8009F5FC");
 extern s32 D_8009F600;
 extern s32 gPacketLimit __asm__("D_8009F9C0");
 extern volatile s32 gScreenOffsetValue __asm__("D_8009F9D4");
@@ -88,7 +88,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     D_8009F5F4 = arg0;
     D_8009F5C0 = 0;
     D_8009F5F8 = 0x400;
-    D_8009F5FC = arg1;
+    gNodeTableLength = arg1;
 
     D_8009F5C8 = func_80017EBC(D_8009F5F4 * 0x34, 2);
 
@@ -110,7 +110,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     gPacketCursor = gRenderNodeTable;
     gNodePoolBase = gRenderNodeTable;
 
-    func_80093178(D_8009F5D8, D_8009F5FC + 2);
+    func_80093178(D_8009F5D8, gNodeTableLength + 2);
 
     value = D_8009F5F4;
     count28 = D_8009F5F8;
