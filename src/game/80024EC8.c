@@ -15,7 +15,7 @@ struct Node24EC8 {
 };
 
 extern struct Node24EC8 *gRequestListHead __asm__("D_8009F668");
-extern struct Node24EC8 *D_8009F66C;
+extern struct Node24EC8 *gRequestListTail __asm__("D_8009F66C");
 extern s32 D_8009F9F4;
 extern s32 gScreenState __asm__("D_8009FA00");
 
@@ -77,13 +77,13 @@ void func_80024EC8(void)
 loop_body:
     node->next = 0;
     node->prev = 0;
-    if (D_8009F66C != 0) {
-        D_8009F66C->next = node;
-        node->prev = D_8009F66C;
+    if (gRequestListTail != 0) {
+        gRequestListTail->next = node;
+        node->prev = gRequestListTail;
     } else {
         gRequestListHead = node;
     }
-    D_8009F66C = node;
+    gRequestListTail = node;
     flag = 0;
 loop_test:
     node = func_800295E8(flag);
@@ -108,9 +108,9 @@ loop_test:
             if (node->next != 0) {
                 node->next->prev = node->prev;
             } else {
-                D_8009F66C = node->prev;
-                if (D_8009F66C != 0) {
-                    D_8009F66C->next = 0;
+                gRequestListTail = node->prev;
+                if (gRequestListTail != 0) {
+                    gRequestListTail->next = 0;
                 }
             }
 
