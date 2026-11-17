@@ -35,7 +35,7 @@ extern s32 D_8009F860;
 extern s32 D_8009F864;
 extern s8 D_8009F868;
 extern s8 D_8009F869;
-extern u8 D_8009F3E5;
+extern u8 gUploadRequestFlag __asm__("D_8009F3E5");
 extern u8 D_8009F3F0;
 extern u8 D_8009F4E0;
 extern s32 D_8009F3EC;
@@ -209,7 +209,7 @@ s32 func_80076A2C(void)
 
         func_8001B2C8(0xC8, 0x200);
 
-        D_8009F3E5 = 0;
+        gUploadRequestFlag = 0;
         D_8009F3F0 = 0x14;
 
         func_80025370();

@@ -2,7 +2,7 @@
 typedef unsigned char u8;
 typedef signed char s8;
 struct Entry { char *name; s8 type; u8 value; char pad[2]; };
-extern u8 D_8009F3E5;
+extern u8 gUploadRequestFlag __asm__("D_8009F3E5");
 extern s8 D_8009F3F0;
 extern struct Entry D_8009B42C[];
 extern char D_8009F2E4[];
@@ -66,7 +66,7 @@ int func_80025370(void)
     int size;
     struct Entry *entry;
     int saved;
-    if (!D_8009F3E5 && D_8009F3F0 < 23) {
+    if (!gUploadRequestFlag && D_8009F3F0 < 23) {
         entry = &D_8009B42C[D_8009F3F0];
         {
             int arg;
@@ -92,6 +92,6 @@ int func_80025370(void)
             func_8001B4A8(1);
         }
     }
-    D_8009F3E5 = 0;
+    gUploadRequestFlag = 0;
     return data != 0;
 }
