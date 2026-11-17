@@ -6,7 +6,7 @@
 
 Diese Datei erklärt **49 globale Variablen**, die sich im Originalprogramm befinden und als Inhalt eine Adresse eines PlayStation-Hardwareregisters tragen. Es sind **49 verschiedene Variablen**, aber nur **37 verschiedene Hardware-Zieladressen**: Manche Programmteile besitzen einen eigenen Zeiger auf dasselbe Register.
 
-Die Datei dokumentiert **nur diese bisher untersuchten Hardware-Zeiger**, nicht alle globalen Variablen des Spiels. Sie hilft beim Verstehen des C-Codes und beim Nachschlagen, welche Funktion mit welchem Gerät spricht. Der Abschnitt „Spielzustand, Treiber und Warteschlangen" enthält zusätzlich 43 normale Daten-Globals (Ringindizes, Treiberzustände, Rückrufe), die bereits im C-Code lesbare Namen tragen.
+Die Datei dokumentiert **nur diese bisher untersuchten Hardware-Zeiger**, nicht alle globalen Variablen des Spiels. Sie hilft beim Verstehen des C-Codes und beim Nachschlagen, welche Funktion mit welchem Gerät spricht. Der Abschnitt „Spielzustand, Treiber und Warteschlangen" enthält zusätzlich 53 normale Daten-Globals (Ringindizes, Treiberzustände, Rückrufe), die bereits im C-Code lesbare Namen tragen.
 
 ### Das wichtigste Prinzip
 
@@ -209,6 +209,8 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 | `D_8009F9C0` | `gPacketLimit` | `u8 * volatile` | Ende des aktuellen Paketpuffers; liegt der Cursor darüber, wird neu alloziert. **Bestätigt** („the packet limit"). | `func_80014490`, `func_8001484C` |
 | `D_8009F9F0` | `gPrimPoolNext` | `Prim *` | Nächster freier Eintrag im Primitive-Pool (`h < Ende` prüft die Grenze). **Bestätigt.** | `func_80014C64`, `func_80015F38` |
 | `D_8009FA28` | `gPrimPoolEnd` | `Prim *` | Ende des Primitive-Pools; die Allokationsmakros vergleichen dagegen. **Bestätigt.** | `func_80014C64`, `func_800164F4` |
+| `D_8009F4BC` | `gDecodeJob` | `s32` | Kennung des laufenden Dekodierauftrags (Rechteck-Paar, Index, Ziel, Flag). **Wahrscheinlich** (Doku: „decode job: rects[2], index, rect, dest, flag"). | `func_80085074` |
+| `D_8009F4C0` | `gStripScaleEnable` | `s32` | Schalter für horizontales Skalieren eines Streifens; nur bei `== 1` und gesetztem `D_8009F4C4` aktiv. **Bestätigt.** | `func_80085074` |
 
 ### Spielzustand und Warteschlangen
 
@@ -219,6 +221,14 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 | `D_8009FA60` | `gPaletteCycleCounter` | `s32` | Zähler für den Palettenwechsel; das HUD liest `(>> 4) & 7` daraus. **Bestätigt.** | `func_8001EFF8` |
 | `D_800A0BC0` | `gRingBuffer` | `Queue298EC` | Ringpuffer mit Länge, Basisindex und acht 8-Byte-Slots für Kommandos. **Bestätigt.** | `func_800298EC` |
 | `D_800A0B70` | `gStreamBufferList` | `State` | Kopf der Liste von Stream-/Asset-Puffern (`head` bei +0x10); neue Knoten werden hinten angehängt. **Bestätigt.** | `func_800288BC` |
+| `D_8009F9FC` | `gFrameId` | `s32` | Frame-Kennung für Zeitvergleiche; wird auf 5 gesetzt und bei Bedarf aus der Zeitbasis berechnet. **Wahrscheinlich.** | `func_800259D8`, `func_80025B7C` |
+| `D_8009FA3C` | `gFrameBarrier` | `volatile u8` | Frame-Schranke: am Frame-Ende auf 1 gesetzt, andere Stellen warten `while (gFrameBarrier)`. **Bestätigt.** | `func_8001B4A8`, `func_8001EFF8` |
+| `D_8009F9A8` | `gPendingScreenState` | `s32` | Nächster Bildschirmzustand; spiegelt `unk10` der Hauptschleife, solange er ungleich 0 ist, läuft die Schleife weiter. **Bestätigt.** | `func_80076A2C` |
+| `D_8009FA20` | `gFrameCallbackEnabled` | `u8` | Schalter für den Pro-Frame-Rücksprung; 0 bedeutet „läuft noch nicht". **Bestätigt** (Doku: „per-frame-callback enabled flag"). | `func_8001E4E4`, `func_8001E540` |
+| `D_8009F92C` | `gSaveProfileImage` | `u8 *` | 0x678 Byte großes Profil-/Spielstandabbild; Titel und Profilfelder werden an festen Offsets (+4, +0x20C) hineingeschrieben. **Bestätigt.** | `func_80081204`, `func_800822CC` |
+| `D_800A0A00` | `gObjectSlots` | `Unk800A0A00[8]` | Acht Objekt-Slots; `unk00`/`unk01` = -1 markiert einen freien Slot. **Bestätigt.** | `func_8002333C` |
+| `D_8009F588` | `gTransformRecordList` | `void *` | Kopf der Liste der Transform-Sätze; wird beim Init auf 0 gesetzt und beim Durchlaufen verkettet. **Bestätigt.** | `func_8001774C`, `func_80017994` |
+| `D_8009F58C` | `gTransformSerialCounter` | `s32` | Fortlaufende ID für Transform-Sätze (`node->id = gTransformSerialCounter++`). **Bestätigt.** | `func_80017994` |
 
 ### Spieler und Match
 
