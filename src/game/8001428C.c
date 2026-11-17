@@ -34,7 +34,7 @@ extern struct Blk3 gLightVectorOut __asm__("D_800A02E0");
 extern struct Blk3 gLightVectorSource __asm__("D_800A02F0");
 extern u8 gScriptVertexBuffer[0x100] __asm__("D_8009FAE0");
 extern u8 *gVertexSourcePtr __asm__("D_8009F570");
-extern u8 *D_8009F574;
+extern u8 *gVertexSourceAltPtr __asm__("D_8009F574");
 extern u8 *gPartVertexBuffer __asm__("D_8009F578");
 extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
 
