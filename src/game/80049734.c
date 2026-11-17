@@ -13,7 +13,7 @@ struct Unk49734Resource {
     s32 unk08;
 };
 
-extern s32 *D_8009F778;
+extern s32 *gSpriteRegionTable __asm__("D_8009F778");
 extern s32 D_8009F788;
 
 extern u8 func_80019AA8(struct Unk49734Resource *resource);
@@ -44,7 +44,7 @@ void func_80049734(struct Unk49734Resource *resource)
     if (func_80019AA8(resource) == 0) {
         resource->unk08 = 0;
         func_80019A74(resource);
-        D_8009F778 = &resource->data->count;
+        gSpriteRegionTable = &resource->data->count;
         D_8009F788 = resource->data->count;
     } else {
         func_80019D00(resource);

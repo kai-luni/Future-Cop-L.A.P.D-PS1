@@ -10,12 +10,12 @@ struct Prim {
 struct Gfx { u8 pad[0x10]; void (*fn)(u32); };
 struct Cache { s16 s[4]; s16 t[4]; s32 w; s32 pad; };
 
-extern u8 D_8009DDF2[];
+extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
 extern u8 D_8009DDF3;
 extern struct Gfx *D_8009DDE8;
 extern  void (*gLogPrintf)(void *, void *) __asm__("D_8009DDEC");
 extern char D_80012B30[];
-extern struct Cache D_8009DE5C;
+extern struct Cache gDispEnvCache __asm__("D_8009DE5C");
 extern s16 D_8009DE64[];
 extern s32 D_8009DE6C[];
 extern int func_80091F74(void);
@@ -66,7 +66,7 @@ struct Prim *func_800934BC(struct Prim *p)
     register u32 cmd __asm__("$2");
     register struct Gfx *gfx __asm__("$5");
 
-    g = D_8009DDF2;
+    g = gGpuDebugLevel;
     __asm__("" : "+r"(g));
     flags = 0x8000000;
     if (g[0] >= 2) {
@@ -193,7 +193,7 @@ mode_changed:
         D_8009DDE8->fn(flags);
     }
     __asm__("" ::: "memory");
-    func_8008CD10(&D_8009DE5C, p, 0x14);
+    func_8008CD10(&gDispEnvCache, p, 0x14);
     __asm__(".set reorder");
     return p;
 }

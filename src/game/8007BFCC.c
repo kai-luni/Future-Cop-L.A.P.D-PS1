@@ -7,7 +7,7 @@ typedef struct {
 } D_8009BEF4_Entry;
 
 extern u8 D_8009FA98;
-extern u8 D_8009F8D8;
+extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern u8 D_8009F8D9;
 extern u8 D_8009F900;
 extern u8 D_8009F901;

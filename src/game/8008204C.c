@@ -5,7 +5,7 @@ extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern u8 D_8009F8C0[];
+extern u8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 
 extern s32 func_80020B64(void);
 extern void func_80091270(s32 arg0);

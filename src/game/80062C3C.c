@@ -8,7 +8,7 @@ typedef struct Node { Obj *obj; struct Node *next; } Node;
 typedef struct { s32 x,z,w,h; } Bounds;
 typedef struct { s32 x,z; } Pair;
 typedef struct { u32 bits; s32 pad[3]; } Cell;
-extern List D_800A8F90;
+extern List gCommandListHead __asm__("D_800A8F90");
 extern Pair D_800A3190[];
 extern Bounds D_800A2970;
 extern Node D_800A2990[];
@@ -68,7 +68,7 @@ extern u8 D_8009F834, D_8009F835;
  */
 void func_80062C3C(void) {
     register s32 count __asm__("$12") = D_8009F828;
-    Obj **scan = D_800A8F90.items;
+    Obj **scan = gCommandListHead.items;
     register s32 remaining __asm__("$13");
     register s32 cx __asm__("$16") = D_800A3190[0].x;
     register s32 cz __asm__("$25") = D_800A3190[0].z;
@@ -90,7 +90,7 @@ void func_80062C3C(void) {
     u32 bits;
     register s32 sign __asm__("$3");
     Node *node;
-    for (remaining = D_800A8F90.count; remaining > 0; remaining--) {
+    for (remaining = gCommandListHead.count; remaining > 0; remaining--) {
         o = *scan++;
         if (o->active <= 0) continue;
         z = o->z; x = o->x; r = o->radius;

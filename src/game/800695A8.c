@@ -11,8 +11,8 @@ struct Map {
     s32 cell[1];
 };
 
-extern struct Map *D_8009F80C;
-extern s8 **D_8009F808;
+extern struct Map *gTileMapTable __asm__("D_8009F80C");
+extern s8 **gTileBlockTable __asm__("D_8009F808");
 extern s32 D_800A2940[];
 extern s8 *func_80017EBC(s32, s32);
 extern void func_800181D4(s8 *);
@@ -115,7 +115,7 @@ void func_800695A8(void)
     register s8 *mid __asm__("$12");
     register s8 *dp __asm__("$7");
 
-    map = D_8009F80C;
+    map = gTileMapTable;
     mw = map->w;
     mb = map->border;
     mh = map->h;
@@ -128,7 +128,7 @@ void func_800695A8(void)
     h = h + 2;
     prod = w * h;
     buf = func_80017EBC(prod << 6, 1);
-    bd = D_8009F80C->border;
+    bd = gTileMapTable->border;
     base = bd - 1;
     for (fb = 0; fb < h; fb++) {
         fy = 0;
@@ -140,16 +140,16 @@ void func_800695A8(void)
             register s32 oj __asm__("$13");
             register s32 x8 __asm__("$24");
             register s32 off __asm__("$8");
-            wt = D_8009F80C->w;
+            wt = gTileMapTable->w;
             __asm__("mult %1,%2\n\tmove %0,$0" : "=r"(fj) : "r"(wt), "r"(rb));
             __asm__("sll %0,%1,3" : "=r"(x8) : "r"(fy), "r"(fj));
             __asm__("addu %0,%1,%2" : "=r"(wt) : "r"(fy), "r"(base), "r"(x8));
             __asm__("mflo %0" : "=r"(prod) : "r"(wt));
-            v = D_8009F80C->cell[wt + prod];
+            v = gTileMapTable->cell[wt + prod];
             v = (v >> 2) & 0x3FFF;
             __asm__("" : "+r"(v));
             oj = fj;
-            p = D_8009F808[v] + 0xC;
+            p = gTileBlockTable[v] + 0xC;
             do {
                 wt = (fx8 + fj) << 3;
                 __asm__("mult %1,%2\n\tmove %0,$0" : "=r"(fi) : "r"(w), "r"(wt));
@@ -275,7 +275,7 @@ void func_800695A8(void)
     }
     func_800181D4(buf);
     D_800A2940[3] = (s32)out;
-    D_800A2940[0] = ((D_8009F80C->border - 1) << 17) + 0x2000;
+    D_800A2940[0] = ((gTileMapTable->border - 1) << 17) + 0x2000;
     D_800A2940[1] = W;
     D_800A2940[2] = H - 2;
 }

@@ -22,7 +22,7 @@ struct Unk4E80CList {
     struct Unk4E80C *items[1];
 };
 
-extern struct Unk4E80CList D_800A8F90;
+extern struct Unk4E80CList gCommandListHead __asm__("D_800A8F90");
 
 extern s32 func_8004E5F0(struct Unk4E80C *a, struct Unk4E80C *b, s32 c, s32 d);
 extern s32 func_800684AC(void *a, void *b, s32 c, s32 d, s32 e);
@@ -105,8 +105,8 @@ struct Unk4E80C *func_8004E80C(struct Unk4E80C *ctx, s32 type, s32 val, s32 mode
     if (flag) {
         prio = -1;
     }
-    for (i = 0; i < D_800A8F90.count; i++) {
-        o = D_800A8F90.items[i];
+    for (i = 0; i < gCommandListHead.count; i++) {
+        o = gCommandListHead.items[i];
         if (o->unk08 <= 0) continue;
         if (o->unk08 == ctxId) continue;
         if (o == ctx) continue;
@@ -169,8 +169,8 @@ struct Unk4E80C *func_8004E80C(struct Unk4E80C *ctx, s32 type, s32 val, s32 mode
     }
     if (cnt > 0) {
     cnt = (u32)func_80019668() % (u32)cnt;
-    for (i = 0; i < D_800A8F90.count; i++) {
-        o = D_800A8F90.items[i];
+    for (i = 0; i < gCommandListHead.count; i++) {
+        o = gCommandListHead.items[i];
         if (o->unk08 <= 0) continue;
         if (o->unk08 == ctxId) continue;
         switch (type) {

@@ -4,7 +4,7 @@
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F904;
 extern s8 D_8009F900[];
-extern u8 D_8009F8D8[];
+extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 extern u8 D_8009F902[];
 
 extern void func_8007BFCC(s32 port, s32 value);
@@ -50,7 +50,7 @@ void func_8007C80C(s32 action)
         switch (action) {
         case 3:
             func_8007BFCC(port, D_8009F900[port]);
-            func_8001EC04(port, D_8009F8D8[port]);
+            func_8001EC04(port, gRumbleEnabled[port]);
             break;
         case 4:
         case 5:

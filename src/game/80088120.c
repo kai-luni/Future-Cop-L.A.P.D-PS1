@@ -21,7 +21,7 @@ extern void *D_8009F4F8;
 extern s32 D_8009F960;
 extern s32 D_8009F964;
 extern s32 D_8009F968;
-extern s32 D_8009F238;
+extern s32 gFileSearchGroup __asm__("D_8009F238");
 extern Params88120 D_800A6E20;
 
 extern s32 func_8001D5E4(s32 arg0, s32 arg1);
@@ -144,7 +144,7 @@ u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
     if (D_8009F504 == 0) {
         return 0;
     }
-    handle = func_8001D5E4(arg0, D_8009F238);
+    handle = func_8001D5E4(arg0, gFileSearchGroup);
     if (handle < 0) {
         func_80092BF4(1);
         return 0;

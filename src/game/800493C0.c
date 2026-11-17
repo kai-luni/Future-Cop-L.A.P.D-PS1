@@ -1,7 +1,7 @@
 // Categories: Graphics > Palette | Graphics > Text
 #include "game/types.h"
 
-extern u16 D_8009AAE0[];
+extern u16 gGlyphTable[] __asm__("D_8009AAE0");
 
 /**
  * @brief Writes one entry of the 20-colour text palette in 15-bit BGR form.
@@ -31,6 +31,6 @@ extern u16 D_8009AAE0[];
 void func_800493C0(u32 index, u8 blue, u8 green, u8 red)
 {
     if (index < 0x14) {
-        D_8009AAE0[index] = (blue << 10) | (green << 5) | red;
+        gGlyphTable[index] = (blue << 10) | (green << 5) | red;
     }
 }

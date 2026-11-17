@@ -1,5 +1,5 @@
 // Categories: Graphics > GPU > Drawing Area | Platform > GPU
-extern int D_8009DD90;
+extern int gGpuDrawOffset __asm__("D_8009DD90");
 
 /**
  * @brief Returns the GPU library's current drawing origin.
@@ -15,5 +15,5 @@ extern int D_8009DD90;
  */
 int func_80091F74(void)
 {
-    return D_8009DD90;
+    return gGpuDrawOffset;
 }

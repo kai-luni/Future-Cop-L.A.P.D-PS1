@@ -103,7 +103,7 @@ struct CandList {
     struct Cand *items[1];
 };
 
-extern struct CandList D_800A8F90;
+extern struct CandList gCommandListHead __asm__("D_800A8F90");
 extern struct Tgt *D_8009F374;
 
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
@@ -284,8 +284,8 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
     if (head == tail) {
         return;
     }
-    for (i = 0; i < D_800A8F90.count; i++) {
-        cand = D_800A8F90.items[i];
+    for (i = 0; i < gCommandListHead.count; i++) {
+        cand = gCommandListHead.items[i];
         if (tgt->unk08->unk14 == cand->unk14) {
             continue;
         }

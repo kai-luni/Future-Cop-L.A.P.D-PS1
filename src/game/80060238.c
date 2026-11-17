@@ -49,7 +49,7 @@ typedef struct Func80060238Obj {
     s16 unk26;
 } Func80060238Obj;
 
-extern s32 D_800A8F90[];
+extern s32 gCommandListHead[] __asm__("D_800A8F90");
 
 extern void func_8005FFB8(Func80060238Obj *arg0, Func80060238Arg2 *arg1);
 extern s32 func_80019668(void);
@@ -151,7 +151,7 @@ s32 func_80060238(Func80060238Obj *arg0, s32 arg1, Func80060238Arg2 *arg2, Func8
 
     bytearg = arg4;
 
-    if (D_800A8F90[1] - D_800A8F90[0] < 10) {
+    if (gCommandListHead[1] - gCommandListHead[0] < 10) {
         return 0;
     }
     if (arg0->unk00 == 0) {

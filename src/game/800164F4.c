@@ -11,7 +11,7 @@ struct Packet { u32 tag, c0, p0, uv0, c1, p1, uv1, c2, p2; u16 uv2; u8 pad[14]; 
 extern struct Camera *gCamera __asm__("D_8009F9E4");
 extern struct Packet *gPrimPoolNext __asm__("D_8009F9F0");
 extern struct Packet *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 D_8009FAA0;
+extern u32 gScreenUvBase __asm__("D_8009FAA0");
 extern s32 func_80066F78(struct V32 *, s32, s32, void *);
 extern void func_80010750(void *);
 extern void func_80010234(struct V16 *, struct V32 *, s32);
@@ -142,7 +142,7 @@ void func_800164F4(struct Obj *obj)
         packet->p0 = *(u32 *)&p[4];
         packet->p1 = *(u32 *)cur; tail = *(u32 *)mid; packet->uv0 = 0; packet->p2 = tail;
         __asm__("" : : : "memory");
-        packet->uv2 = 1; ((struct Packet *)packet)->uv1 = (D_8009FAA0 << 16) | 0x101;
+        packet->uv2 = 1; ((struct Packet *)packet)->uv1 = (gScreenUvBase << 16) | 0x101;
         __asm__ ("" : : : "memory");
         packet = gPrimPoolNext >= gPrimPoolEnd ? gPrimPoolNext : gPrimPoolNext++;
         ((u8 *)packet)[3] = 9;
@@ -153,7 +153,7 @@ void func_800164F4(struct Obj *obj)
         packet->tag = (packet->tag & 0xff000000) | (((depth >> 4) - 0x200) & 0xffffff);
         packet->p0 = *(u32 *)&p[4]; packet->p1 = *(u32 *)mid; tail = *(u32 *)next; packet->uv0 = 0; packet->p2 = tail;
         __asm__("" : : : "memory");
-        packet->uv2 = 1; ((struct Packet *)packet)->uv1 = (D_8009FAA0 << 16) | 0x101;
+        packet->uv2 = 1; ((struct Packet *)packet)->uv1 = (gScreenUvBase << 16) | 0x101;
         mid++; cur++;
     }
 }

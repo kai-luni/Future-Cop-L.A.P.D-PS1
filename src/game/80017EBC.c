@@ -13,7 +13,7 @@ struct LinkNode;
 
 extern s32 *D_8009F590;
 extern s32 D_8009F594;
-extern s32 D_8009F598;
+extern s32 gHeapSearchCursor __asm__("D_8009F598");
 extern struct LinkState *D_8009FA4C;
 extern struct LinkState *D_8009FAAC;
 extern struct LinkState *D_8009F9D0;
@@ -128,7 +128,7 @@ retry:
             goto retry;
         }
         result = (void *)D_8009F590[index];
-        D_8009F598 = index;
+        gHeapSearchCursor = index;
         *(s32 *)result = size;
         result = (u8 *)result + 4;
         D_8009F590[index] += size;
@@ -157,8 +157,8 @@ retry:
             func_8001E318((u8 *)&D_8009F590[index], (u8 *)(&D_8009F590[index] + 2),
                          (D_8009F594 - index - 1) * 4);
             D_8009F594 -= 2;
-            if (D_8009F598 >= index + 2) {
-                D_8009F598 -= 2;
+            if (gHeapSearchCursor >= index + 2) {
+                gHeapSearchCursor -= 2;
             }
         }
         break;

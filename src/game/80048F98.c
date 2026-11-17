@@ -38,8 +38,8 @@ struct Sprite {
 
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
-extern u16 D_8009AAE0[];
-extern u8 D_800A1970[];
+extern u16 gGlyphTable[] __asm__("D_8009AAE0");
+extern u8 gPaletteTable[] __asm__("D_800A1970");
 
 extern struct LookupState *gFont __asm__("D_8009F35C");
 extern u16 D_8009F768;
@@ -92,7 +92,7 @@ s32 func_80048F98(u8 character, s32 x, s32 y, u16 color)
     __asm__ volatile ("" : "=r" (index) : "0" (index));
     sprite->b07 = code;
     __asm__ volatile ("" : : : "memory");
-    base = (u32)D_8009AAE0 + 0x5520;
+    base = (u32)gGlyphTable + 0x5520;
     __asm__ volatile ("" : "=r" (base) : "0" (base));
     base = base - 0x5520;
     __asm__ volatile ("" : "=r" (base) : "0" (base));
@@ -103,7 +103,7 @@ s32 func_80048F98(u8 character, s32 x, s32 y, u16 color)
     u = glyph->b04;
     __asm__ volatile ("" : "=r" (u) : "0" (u));
     sprite->b0C = u;
-    table = (u8 *)((u32)D_800A1970 - 0x1970);
+    table = (u8 *)((u32)gPaletteTable - 0x1970);
     __asm__ volatile ("" : "=r" (table) : "0" (table));
     index2 = D_8009F76C;
     __asm__ volatile ("" : "=r" (index2) : "0" (index2), "r" (table));

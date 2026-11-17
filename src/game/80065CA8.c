@@ -2,12 +2,12 @@
 #include "game/types.h"
 
 extern u8 gVertexIndexTable[][4] __asm__("D_8009AFE8");
-extern u8 D_8009B1A4[];
+extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
 extern u8 D_800A2630[];
-extern u16 D_8009F83C;
+extern u16 gTileColourWord __asm__("D_8009F83C");
 
 #define PK ((u8 *)t0)
 #define SRC ((u16 *)a0)
@@ -162,7 +162,7 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
         }
         { u8 *e = gVertexIndexTable[t0];
         a1 = base[e[0]] + base[e[1]] + base[e[2]] + base[e[3]]; }
-        switch (D_8009B1A4[t0] >> 3) {
+        switch (gTileShapeTable[t0] >> 3) {
         case 0:
             v[4] = x; v[0] = x; v[3] = y; v[1] = y; v[2] = x + 10;
             v[5] = y + 10;
@@ -195,7 +195,7 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
         a0 = *(s32 *)(ctx + 8) + (wd & 0x7FE);
         t2 = *TEX;
         if (t2 & 0x800) {
-            u16 g = D_8009F83C;
+            u16 g = gTileColourWord;
             u16 *d = (u16 *)0x1F800070;
             d[0] = *(u16 *)(a0 + 0) + g;
             d[1] = *(u16 *)(a0 + 2) + g;

@@ -1,7 +1,7 @@
 // Categories: Graphics > Textures | Resources > Descriptor Table
 #include "game/types.h"
 
-extern void *D_8009F77C;
+extern void *gSpriteDescriptorTable __asm__("D_8009F77C");
 
 /**
  * @brief Publishes the active sprite/tile descriptor table pointer into D_8009F77C.
@@ -27,5 +27,5 @@ extern void *D_8009F77C;
  */
 void func_8004979C(void *value)
 {
-    D_8009F77C = value;
+    gSpriteDescriptorTable = value;
 }

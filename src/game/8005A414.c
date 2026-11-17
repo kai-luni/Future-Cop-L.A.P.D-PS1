@@ -17,7 +17,7 @@ typedef struct {
     u8 *unk00;
 } ArgA414;
 
-extern void **D_8009F7D8;
+extern void **gTextureDescriptorTable __asm__("D_8009F7D8");
 extern s32 D_8009F7DC;
 
 extern void *func_80017EBC(s32 size, s32 tag);
@@ -85,17 +85,17 @@ void func_8005A414(ArgA414 *arg0)
     }
 
     D_8009F7DC = count;
-    D_8009F7D8 = func_80017EBC(count * 4, 2);
+    gTextureDescriptorTable = func_80017EBC(count * 4, 2);
     p = (u8 *)header + 0xC;
-    if (D_8009F7D8 == 0) {
+    if (gTextureDescriptorTable == 0) {
         goto cleanup;
     }
 
     for (i = 0; i < count; i++) {
         size = p[2] * 8;
-        D_8009F7D8[i] = func_80017EBC(size + 8, 2);
-        *(s32 *)D_8009F7D8[i] = *(s32 *)p;
-        func_8008CD10((u8 *)D_8009F7D8[i] + 8, p + 4, size);
+        gTextureDescriptorTable[i] = func_80017EBC(size + 8, 2);
+        *(s32 *)gTextureDescriptorTable[i] = *(s32 *)p;
+        func_8008CD10((u8 *)gTextureDescriptorTable[i] + 8, p + 4, size);
         p += size + 4;
     }
 
@@ -103,9 +103,9 @@ void func_8005A414(ArgA414 *arg0)
     x = 0;
     y = 0;
     for (i = 0; i < count; i++) {
-        ((u8 *)D_8009F7D8[i])[4] = x;
-        ((u8 *)D_8009F7D8[i])[5] = y;
-        for (j = 0; j < ((u8 *)D_8009F7D8[i])[2]; j++) {
+        ((u8 *)gTextureDescriptorTable[i])[4] = x;
+        ((u8 *)gTextureDescriptorTable[i])[5] = y;
+        for (j = 0; j < ((u8 *)gTextureDescriptorTable[i])[2]; j++) {
             rect[0].x = x + 0x140;
             rect[0].y = y + 0x1E0;
             rect[0].w = 0x10;
@@ -128,7 +128,7 @@ void func_8005A414(ArgA414 *arg0)
     func_80092F38(&rect[1], p + 8);
     func_80092C8C(0);
 
-    if ((func_8005A2BC(D_8009F7D8, count) & 0xFF) != 0) {
+    if ((func_8005A2BC(gTextureDescriptorTable, count) & 0xFF) != 0) {
         goto done;
     }
 

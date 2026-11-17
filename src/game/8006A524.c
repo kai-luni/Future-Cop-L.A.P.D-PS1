@@ -68,7 +68,7 @@ struct List {
 struct Unk73590;
 struct Unk73590Owner;
 
-extern struct List D_800A8F90;
+extern struct List gCommandListHead __asm__("D_800A8F90");
 
 extern s32 func_80019668(void);
 extern struct Unk73590 *func_80073590(struct Unk73590Owner *owner, void *coord, s32 kind,
@@ -144,9 +144,9 @@ void func_8006A524(struct Ctx *ctx, struct Object *current, s32 arg2, u16 *arg3,
 
     kind = ctx->unk18;
     attempts = 2;
-    index = (s32)((u32)func_80019668() % (u32)D_800A8F90.count);
-    for (i = 0; i < D_800A8F90.count; i++) {
-        item = D_800A8F90.items[index];
+    index = (s32)((u32)func_80019668() % (u32)gCommandListHead.count);
+    for (i = 0; i < gCommandListHead.count; i++) {
+        item = gCommandListHead.items[index];
         if (item->unk08 <= 0) {
             goto next;
         }
@@ -210,7 +210,7 @@ void func_8006A524(struct Ctx *ctx, struct Object *current, s32 arg2, u16 *arg3,
     L_cont:
     next:
         index++;
-        if (index >= D_800A8F90.count) {
+        if (index >= gCommandListHead.count) {
             index = 0;
         }
     }

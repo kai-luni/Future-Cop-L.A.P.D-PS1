@@ -35,10 +35,10 @@ struct FontEntry {
 };
 
 extern struct FontEntry D_800A19A0[];
-extern u16 D_800A1970[];
+extern u16 gPaletteTable[] __asm__("D_800A1970");
 extern u16 gTexpageTable[] __asm__("D_800A1940");
 extern u16 D_800A1E10[];
-extern u16 D_8009F76A;
+extern u16 gTexBankVramY __asm__("D_8009F76A");
 extern u16 D_8009F768;
 
 extern void func_80092F38(Rect *rect, void *data);
@@ -77,24 +77,24 @@ void func_80048BF8(s32 arg0)
 
     if (arg0 < 4) {
         info = D_800A19A0[arg0].info;
-        if (D_8009F76A + info->f06 < 0x1FF) {
+        if (gTexBankVramY + info->f06 < 0x1FF) {
             size = (info->f04 * info->f06) / 2;
             for (i = 0; i < size; i++) {
                 val = i[(u8 *)info + 0x10];
                 i[(u8 *)info + 0x10] = ((val & 0xF) << 4) | (val >> 4);
             }
 
-            D_800A1970[arg0] = D_8009F76A;
-            D_8009F76A += info->f06;
+            gPaletteTable[arg0] = gTexBankVramY;
+            gTexBankVramY += info->f06;
             rect[0].x = 0x380;
-            rect[0].y = D_800A1970[arg0] + 0x100;
+            rect[0].y = gPaletteTable[arg0] + 0x100;
             data = (u8 *)info + 0x10;
             rect[0].w = info->f04 / 4;
             rect[0].h = info->f06;
             func_80092F38(&rect[0], data);
             func_80092C8C(0);
 
-            gTexpageTable[arg0] = (((D_800A1970[arg0] + 0x100) & 0x100) >> 4) | 0xE | (((D_800A1970[arg0] + 0x100) & 0x200) << 2);
+            gTexpageTable[arg0] = (((gPaletteTable[arg0] + 0x100) & 0x100) >> 4) | 0xE | (((gPaletteTable[arg0] + 0x100) & 0x200) << 2);
 
             if (arg0 == 0) {
                 rect[1].x = 0x380;

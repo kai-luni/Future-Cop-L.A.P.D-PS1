@@ -1,7 +1,7 @@
 // Categories: Graphics > HUD > Name Entry | Game Engine > Front-End Configuration
 #include "game/types.h"
 
-extern s8 D_8009F8C0[];
+extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern s32 D_8009F8B0[];
 extern s32 D_8009F8F8[];
 extern u8 D_8009F470[];
@@ -39,7 +39,7 @@ extern s32 func_80046C84(s32 id, s32 arg1);
  */
 s32 func_8007AB0C(s32 arg0, s32 arg1)
 {
-    if (D_8009F8C0[arg1] != 0) {
+    if (gPlayerMenuDepth[arg1] != 0) {
         if ((arg0 & ~D_8009F8B0[arg1]) < 0) {
             D_8009F8F8[arg1] = 0;
             func_8007A9D0(D_8009F470, D_800A3928 + arg1 * 8, 8, D_8009F878, D_8009F87C);

@@ -3,7 +3,7 @@
 
 extern u8 D_8009FA98;
 extern u8 D_8009FA99;
-extern u8 D_8009F8D8;
+extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern u8 D_8009F8D9;
 extern u8 D_8009F900;
 extern u8 D_8009F901;
@@ -39,7 +39,7 @@ void func_8007C088(void)
 {
     D_8009F900 = D_8009FA98;
     D_8009F901 = D_8009FA99;
-    D_8009F8D8 = func_8001EB2C(0);
+    gRumbleEnabled = func_8001EB2C(0);
     D_8009F8D9 = func_8001EB2C(1);
     D_8009F902 = 0;
     D_8009F903 = 0;

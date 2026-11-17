@@ -13,10 +13,10 @@ struct Map {
     s32 tab[1];
 };
 
-extern struct Map *D_8009F80C;
-extern u8 **D_8009F808;
+extern struct Map *gTileMapTable __asm__("D_8009F80C");
+extern u8 **gTileBlockTable __asm__("D_8009F808");
 extern u8 gVertexIndexTable[][4] __asm__("D_8009AFE8");
-extern u8 D_8009B1A4[];
+extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
 
 extern s32 func_80067480(s8 *data, u32 index, s32 x, s32 y, s32 *out);
 extern s32 *func_8006320C(s32 *pos, s32 *out, s32 *a, u8 *b);
@@ -118,7 +118,7 @@ s32 func_80066F78(s32 *position, s32 *output, s32 *a2, s32 *a3)
     x = pos[0];
     if (z < 0) return 0;
     cz = z >> 17;
-    map = D_8009F80C;
+    map = gTileMapTable;
     if (cz >= map->w - 1) return 0;
     if (x < 0) return 0;
     cx = x >> 17;
@@ -128,7 +128,7 @@ s32 func_80066F78(s32 *position, s32 *output, s32 *a2, s32 *a3)
     a5 = a4 * 16 + ((z >> 13) & 0xF);
     tmp = (map->tab[idx] >> 2) & 0x3FFF;
     __asm__("" : "=r"(tmp) : "0"(tmp));
-    s5 = D_8009F808[tmp];
+    s5 = gTileBlockTable[tmp];
     {
         s32 hw = ((u16 *)(s5 + 0x3CC))[a5];
         frame.limit += 0x200;
@@ -263,7 +263,7 @@ s32 func_80066F78(s32 *position, s32 *output, s32 *a2, s32 *a3)
                 t0 = d - a;
             }
         } else {
-            mode = D_8009B1A4[type] >> 3;
+            mode = gTileShapeTable[type] >> 3;
             switch (mode) {
             case 0:
                 fp = 0x20; s7 = fp;

@@ -99,7 +99,7 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Player *D_8009FA58;
 extern struct Player *D_8009FA5C;
 extern void *D_8009F374;
-extern struct Object *D_8009F314;
+extern struct Object *gPendingSpawnList __asm__("D_8009F314");
 
 extern void func_8003DB70(struct Source *, struct Object *, struct Parent *, void *, struct Matrix *, u16 *, s8 *);
 extern struct Data *func_8003D9F8(struct Holder *, u16, s8, s32, struct Parent *, struct Matrix *);
@@ -394,8 +394,8 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
         }
     }
 
-    prev = D_8009F314;
-    D_8009F314 = object;
+    prev = gPendingSpawnList;
+    gPendingSpawnList = object;
     object->next = prev;
 
     if (object->soundId11 != 0) {

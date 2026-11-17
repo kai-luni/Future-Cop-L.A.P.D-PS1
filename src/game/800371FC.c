@@ -53,7 +53,7 @@ struct Unk371FC {
     s16 unkD2;
 };
 
-extern struct Unk4E80CList D_800A8F90;
+extern struct Unk4E80CList gCommandListHead __asm__("D_800A8F90");
 extern void func_8003BC0C(struct Unk371FC *object);
 extern void func_800188D0(s32 a0, s32 a1, s32 a2, s32 *a3);
 extern s32 func_80066F78(struct Vec371 *pos, s32 a1, s32 a2, s32 a3);
@@ -172,9 +172,9 @@ void func_800371FC(struct Unk371FC *arg0, s32 arg1)
         if (owner != 0) {
             s1 = owner->unk18;
         }
-        for (i = 0; i < D_800A8F90.count; i++) {
+        for (i = 0; i < gCommandListHead.count; i++) {
             register s32 shifted __asm__("$3");
-            o = D_800A8F90.items[i];
+            o = gCommandListHead.items[i];
             if (o->unk08 <= 0) continue;
             if (o->unk16 == 0xB) continue;
             if (o->unk18 == s1) continue;

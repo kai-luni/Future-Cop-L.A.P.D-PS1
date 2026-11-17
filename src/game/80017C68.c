@@ -3,7 +3,7 @@
 
 extern s32 *D_8009F590;
 extern s32 D_8009F594;
-extern s32 D_8009F598;
+extern s32 gHeapSearchCursor __asm__("D_8009F598");
 extern void *D_8009F9D0;
 extern s32 D_8009F9E8;
 extern void *D_8009FA4C;
@@ -47,7 +47,7 @@ void func_80017C68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 
     D_8009F594 = 3;
     base = D_8009FA9C;
-    D_8009F598 = 1;
+    gHeapSearchCursor = 1;
     ptr[0] = base;
     ptr[1] = base;
     ptr[2] = base + off;

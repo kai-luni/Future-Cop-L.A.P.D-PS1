@@ -19,7 +19,7 @@ struct EntityTable {
     struct Entity *items[1];
 };
 
-extern struct EntityTable D_800A8F90;
+extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
 
 extern void func_8003BAE4(struct Entity *entity, s32 value);
 
@@ -49,8 +49,8 @@ void func_8004CE04(void)
     struct Entity *entity;
     s32 i;
 
-    for (i = 0; i < D_800A8F90.count; i++) {
-        entity = D_800A8F90.items[i];
+    for (i = 0; i < gCommandListHead.count; i++) {
+        entity = gCommandListHead.items[i];
         if (entity->id <= 0) {
             continue;
         }

@@ -22,8 +22,8 @@ extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 typedef struct Pkt { u8 b[0x34]; } Pkt;
 extern Pkt *gPrimPoolNext __asm__("D_8009F9F0");
 extern Pkt *gPrimPoolEnd __asm__("D_8009FA28");
-extern u8 *D_8009F77C;
-extern u8 *D_8009F778;
+extern u8 *gSpriteDescriptorTable __asm__("D_8009F77C");
+extern u8 *gSpriteRegionTable __asm__("D_8009F778");
 
 extern void func_8001010C(V8 *in, V8 *out, s32 n);
 extern s32 func_80019D90(V8 *p, s32 m);
@@ -181,7 +181,7 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
             return;
         }
         if (node->idx < 0) {
-            s3 = D_8009F77C + ((-node->idx) * 12 - 8);
+            s3 = gSpriteDescriptorTable + ((-node->idx) * 12 - 8);
             s4 = *(u8 **)(s3 + 8) + (((gDiscShadeByte - node->c) / node->d) % s3[0]) * 8;
         }
         *(s32 *)&rot[1] = *(s32 *)&node->v[1];
@@ -270,7 +270,7 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
             }
         }
         if (node->idx < 0) {
-            s3 = D_8009F77C + ((-node->idx) * 12 - 8);
+            s3 = gSpriteDescriptorTable + ((-node->idx) * 12 - 8);
             s4 = *(u8 **)(s3 + 8) + (((gDiscShadeByte - node->c) / node->d) % s3[0]) * 8;
         }
         s0 = (u8 *)(gPrimPoolNext >= gPrimPoolEnd ? gPrimPoolNext : gPrimPoolNext++);
@@ -292,7 +292,7 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
             a1 = s4[6]; a3 = s4[0]; a2 = s4[1];
             t1 = s4[4] - 1; t0 = s4[5] - 1;
         } else {
-            q = D_8009F778 + (node->idx * 8 + 4);
+            q = gSpriteRegionTable + (node->idx * 8 + 4);
             a1 = q[4]; a3 = q[0]; a2 = q[1];
             t1 = q[2] - 1; t0 = q[3] - 1;
         }

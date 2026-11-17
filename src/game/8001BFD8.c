@@ -1,7 +1,7 @@
 // Categories: Graphics > Display Setup | Platform > GPU
 #include "game/types.h"
 
-extern u8 D_8009F608;
+extern u8 gDisplayEnabled __asm__("D_8009F608");
 
 /**
  * @brief Sets the display-control byte the render set-up reads.
@@ -15,5 +15,5 @@ extern u8 D_8009F608;
  */
 void func_8001BFD8(u8 value)
 {
-    D_8009F608 = value;
+    gDisplayEnabled = value;
 }

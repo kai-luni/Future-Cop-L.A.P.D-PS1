@@ -6,7 +6,7 @@ extern u8 *D_8009F468;
 extern s32 D_8009F464;
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
-extern u8 D_8009F8C0;
+extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_800A36E8[];
 extern u8 D_800A36B8[];
 extern u8 D_800A3718[];
@@ -225,7 +225,7 @@ s32 func_8007FB04(void)
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 break;
             }
-            D_8009F8C0 = 0;
+            gPlayerMenuDepth = 0;
         }
         *(s32 *)(gSaveProfileImage + 0x208) = state;
     }

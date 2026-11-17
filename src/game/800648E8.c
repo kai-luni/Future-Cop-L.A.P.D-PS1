@@ -6,7 +6,7 @@ extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
 extern u8 D_800A2630[];
-extern u16 D_8009F83C;
+extern u16 gTileColourWord __asm__("D_8009F83C");
 extern s32 func_800648BC(s32 a, s32 b, s32 c);
 
 typedef struct { s32 w0; s16 h4; u8 b6; u8 b7; } V;
@@ -197,7 +197,7 @@ void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
     t3 = *p5;
     if (t3 & 0x800) {
         volatile u16 *d = (volatile u16 *)0x1F800070;
-        u16 off = D_8009F83C;
+        u16 off = gTileColourWord;
         d[0] = ((volatile u16 *)a1)[0] + off;
         d[1] = ((volatile u16 *)a1)[1] + off;
         d[2] = ((volatile u16 *)a1)[2] + off;

@@ -11,7 +11,7 @@ extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 *D_8009F878;
 extern s16 D_8009F87C;
 extern s8 *D_8009F468;
-extern s8 D_8009F8C0[];
+extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 D_800A6FE0[];
 extern u8 D_800A3928[];
 extern s32 D_8009F8F8[];
@@ -90,7 +90,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
     idx = gActivePlayerIndex;
     switch (action) {
     case 3: {
-        s8 *flag = &D_8009F8C0[idx];
+        s8 *flag = &gPlayerMenuDepth[idx];
         if (*flag != 0) {
             func_8007AA9C(D_800A6FE0 + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878);
             *flag = 0;
@@ -102,7 +102,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
         break;
     }
     case 4:
-        if (D_8009F8C0[idx] != 0) {
+        if (gPlayerMenuDepth[idx] != 0) {
             u8 *p;
             func_80046C84(0x46, 0);
             i = D_8009F8F8[idx];
@@ -116,7 +116,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
         }
         break;
     case 5:
-        if (D_8009F8C0[idx] != 0) {
+        if (gPlayerMenuDepth[idx] != 0) {
             u8 *p;
             func_80046C84(0x46, 0);
             i = D_8009F8F8[idx];
@@ -129,7 +129,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
         }
         break;
     case 1:
-        if (D_8009F8C0[idx] != 0) {
+        if (gPlayerMenuDepth[idx] != 0) {
             s32 *p = &D_8009F8F8[idx];
             (*p)++;
             if (*p >= 8) {
@@ -139,7 +139,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
         }
         break;
     case 2:
-        if (D_8009F8C0[idx] != 0) {
+        if (gPlayerMenuDepth[idx] != 0) {
             s32 *p = &D_8009F8F8[idx];
             (*p)--;
             if (*p < 0) {
@@ -150,7 +150,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
         break;
     case 0: {
         s32 y = baseY + 10;
-        if (D_8009F8C0[idx] != 0) {
+        if (gPlayerMenuDepth[idx] != 0) {
             struct FontEntry *font;
             s32 step;
             s32 *sel_ptr;

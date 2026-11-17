@@ -8,7 +8,7 @@ struct MapBounds {
     int z_scale;
 };
 
-extern int D_8009F80C;
+extern int gTileMapTable __asm__("D_8009F80C");
 extern struct MapBounds D_800A2950;
 
 /**
@@ -32,7 +32,7 @@ extern struct MapBounds D_800A2950;
  */
 void func_800694C8(int *out_x, int *out_z, int x, int z)
 {
-    if (D_8009F80C) {
+    if (gTileMapTable) {
         x -= D_800A2950.x;
         x *= D_800A2950.x_scale >> 8;
         z -= D_800A2950.z;

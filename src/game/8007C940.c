@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 D_8009F8B0[];
-extern u8 D_8009F8D8[];
+extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 extern s32 func_80046C84(s32, s32);
 extern s32 func_8001EF34(s32);
 extern u8 func_8001EAEC(s32);
@@ -70,7 +70,7 @@ s32 func_8007C940(s32 arg0, s32 arg1)
                 register u8 *p __asm__("$3");
                 register s32 result __asm__("$2") = buttons;
                 __asm__("" : : "r"(result));
-                p = &D_8009F8D8[player];
+                p = &gRumbleEnabled[player];
                 __asm__("" : "=r"(p) : "0"(p));
                 toggle = *p;
                 __asm__("" : "=r"(toggle) : "0"(toggle));

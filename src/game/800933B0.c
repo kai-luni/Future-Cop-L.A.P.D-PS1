@@ -7,7 +7,7 @@ struct Context {
     u8 pad2[12];
     void *arg;
 };
-extern u8 D_8009DDF2[];
+extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
 extern char D_80012B14[];
 extern  void (*gLogPrintf)(char *, ...) __asm__("D_8009DDEC");
 extern struct Context *D_8009DDE8;
@@ -36,7 +36,7 @@ extern void func_8008CD10(void *, void *, int);
  */
 void func_800933B0(u32 arg0, u8 *arg1)
 {
-    register u8 *base __asm__("$19") = D_8009DDF2;
+    register u8 *base __asm__("$19") = gGpuDebugLevel;
     register u8 *saved __asm__("$17");
     u32 cond;
     register u32 mask __asm__("$4");

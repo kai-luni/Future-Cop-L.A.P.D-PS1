@@ -20,8 +20,8 @@ typedef struct {
     s32 arr[16];
 } Res67684;
 
-extern Res67684 *D_8009F80C;
-extern u8 **D_8009F808;
+extern Res67684 *gTileMapTable __asm__("D_8009F80C");
+extern u8 **gTileBlockTable __asm__("D_8009F808");
 
 extern s32 func_80067480(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 *arg4);
 
@@ -124,7 +124,7 @@ s32 func_80067684(Vec67684 *pos, s32 mode)
         goto fail;
     }
 
-    res = D_8009F80C;
+    res = gTileMapTable;
     unk04 = res->unk04;
     z17 = z >> 17;
 
@@ -157,7 +157,7 @@ s32 func_80067684(Vec67684 *pos, s32 mode)
     slot = res->arr[index];
     idx = (slot >> 2) & 0x3FFF;
     __asm__("" : "+r"(idx));
-    base = D_8009F808[idx];
+    base = gTileBlockTable[idx];
 
     __asm__("" : "+r"(tile) : "r"(base));
     entryoffset = 2 * tile;

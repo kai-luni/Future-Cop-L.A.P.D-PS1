@@ -12,7 +12,7 @@ extern struct MenuState *gGameSession[] __asm__("D_8009FA94");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 D_8009F3C1;
 extern s32 D_8009F8F0[];
-extern u16 D_8009BEEC[];
+extern u16 gLabelIdTable[] __asm__("D_8009BEEC");
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                          s32 alignX, s32 alignY, s32 font);
@@ -135,7 +135,7 @@ void func_8007A7A0(s32 command, s32 x, s32 y)
         if (textId != -1) {
             text = 0;
             __asm__("" : "+r"(text));
-            labels = D_8009BEEC;
+            labels = gLabelIdTable;
             __asm__("" : "+r"(labels));
             func_800788F0(text, x, y + 0xC, 0xF, labels[textId], 4, 8, 1);
         }

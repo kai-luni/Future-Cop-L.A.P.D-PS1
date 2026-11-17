@@ -29,7 +29,7 @@ struct Entity {
 };
 struct EntityTable { s32 count; s32 unk04; struct Entity *items[1]; };
 struct Message { s32 unk0; s16 value; u8 kind; u8 unk7; s32 unk8; };
-extern struct EntityTable D_800A8F90;
+extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
 extern void func_800457B8(s32, s32);
 extern void func_8004D958(struct Entity *);
 extern void func_8003FD10(s32, struct Entity *, s32);
@@ -67,8 +67,8 @@ void func_8004CECC(void)
     register s32 childHealth __asm__("$6");
     register s32 highByte __asm__("$7");
     s32 mask;
-    for (i = 0; i < D_800A8F90.count; i++) {
-        entity = D_800A8F90.items[i];
+    for (i = 0; i < gCommandListHead.count; i++) {
+        entity = gCommandListHead.items[i];
         if (entity->id <= 0) continue;
         op = entity->commands[0].op;
         index = 0;

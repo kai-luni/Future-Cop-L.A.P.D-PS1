@@ -32,7 +32,7 @@ extern s32 gScreenState __asm__("D_8009FA00");
 extern u8 D_8009F3F2;
 extern u8 D_8009F3F0;
 extern u8 D_8009F45A;
-extern u8 D_8009F8D8;
+extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern u8 D_8009F8D9;
 extern u8 D_8009B300[];
 
@@ -90,7 +90,7 @@ s32 func_80078C88(void)
     gScreenState = 5;
     D_8009F45A = 3;
     D_8009F3F0 = unk0C;
-    D_8009F8D8 = func_8001EB2C(0);
+    gRumbleEnabled = func_8001EB2C(0);
     D_8009F8D9 = func_8001EB2C(1);
     func_8001EC04(0, 0);
     func_8001EC04(1, 0);

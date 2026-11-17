@@ -17,7 +17,7 @@ extern u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern u32 *gDmaControlGpuPtr __asm__("D_8009DEE4");
 extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u8 D_800A62C8[];
-extern u8 D_800A9450[];
+extern u8 gGpuDmaQueue[] __asm__("D_800A9450");
 
 extern u32 func_800915FC(u32 a0);
 extern u32 func_80095350(u32 a0);

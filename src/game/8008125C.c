@@ -23,7 +23,7 @@ extern s16 D_8009F87C;
 extern s8 D_8009F882;
 extern s8 D_8009F880;
 extern s8 D_8009F881;
-extern s8 D_8009F8C0[];
+extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 D_800A3928[];
 extern s32 D_8009F8F8[];
 extern u8 D_800A6FE0[];
@@ -194,8 +194,8 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             init->timer = 0;
             base = RAW;
             if (base[0x921] == 1) {
-                if (D_8009F8C0[s2] != 0) {
-                    D_8009F8C0[s2] = 0;
+                if (gPlayerMenuDepth[s2] != 0) {
+                    gPlayerMenuDepth[s2] = 0;
                     func_8007AA9C(RAW + 0x925, D_800A3928 + s2 * 8, 8, D_8009F878);
                     func_80080B70();
                     break;
@@ -250,7 +250,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                     func_80078650(D_800A3718, 1);
                     *D_8009F468 = 1;
                 } else {
-                    D_8009F8C0[s2] = 1;
+                    gPlayerMenuDepth[s2] = 1;
                 }
                 break;
             }
@@ -323,7 +323,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             break;
         case 4:
             *(u16 *)(RAW + 0x942) = 0;
-            if (D_8009F8C0[s2] != 0 && arg4 == RAW[0x924]) {
+            if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 func_80046C84(0x46, 0);
                 arg2 = D_8009F8F8[s2];
                 arg3 = (s32)(D_800A3928 + s2 * 8);
@@ -337,7 +337,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             break;
         case 5:
             *(u16 *)(RAW + 0x942) = 0;
-            if (D_8009F8C0[s2] != 0 && arg4 == RAW[0x924]) {
+            if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 func_80046C84(0x46, 0);
                 arg2 = D_8009F8F8[s2];
                 arg3 = (s32)(D_800A3928 + s2 * 8);
@@ -349,7 +349,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             }
             break;
         case 1:
-            if (D_8009F8C0[s2] != 0 && arg4 == RAW[0x924]) {
+            if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 step = s2 << 2;
                 __asm__("" : "+r"(step));
                 cursor = (s32 *)(step + (u8 *)D_8009F8F8);
@@ -361,7 +361,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             }
             break;
         case 2:
-            if (D_8009F8C0[s2] != 0 && arg4 == RAW[0x924]) {
+            if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 step = s2 << 2;
                 __asm__("" : "+r"(step));
                 cursor = (s32 *)(step + (u8 *)D_8009F8F8);
@@ -374,7 +374,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             break;
         case 0:
             y = arg2;
-            if (D_8009F8C0[s2] != 0 && arg4 == RAW[0x924]) {
+            if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 s32 *font;
                 s32 *pi;
                 s32 col;

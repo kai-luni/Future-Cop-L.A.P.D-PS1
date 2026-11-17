@@ -47,7 +47,7 @@ struct Unk49C38 {
     u16 unk28;
 };
 
-extern struct Unk49C38List *D_8009F778;
+extern struct Unk49C38List *gSpriteRegionTable __asm__("D_8009F778");
 extern s32 D_8009F780;
 extern struct LinkState *D_8009F784;
 extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
@@ -117,7 +117,7 @@ s32 func_80049C38(struct Unk49C38 *object, s32 arg1)
         register struct Unk49C38List *list __asm__("$5");
         register struct Unk49C38List *q __asm__("$3");
         s32 key2;
-        list = D_8009F778;
+        list = gSpriteRegionTable;
         i = 0;
         if (i >= list->count) goto done;
         key2 = key;

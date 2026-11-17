@@ -17,7 +17,7 @@ extern s32 D_8009FA40;
 extern s32 D_8009FA88;
 extern struct Unk4CAE4State *gGameSession[] __asm__("D_8009FA94");
 extern s32 D_800A6F60[];
-extern s32 D_800A8F90[];
+extern s32 gCommandListHead[] __asm__("D_800A8F90");
 
 /**
  *  @brief Initializes a color table and resets associated state.
@@ -61,7 +61,7 @@ void func_8004CAE4(void)
     color8080F8 = 0x8080F8;
     colorF88070 = 0xF88070;
     color80F880 = 0x80F880;
-    entityTable = D_800A8F90;
+    entityTable = gCommandListHead;
 
     entityTable[0] = 0;
     D_800A6F60[0] = 0;

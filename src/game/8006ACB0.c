@@ -37,7 +37,7 @@ struct Locals6ACB0 {
     struct Tmp60 t60;
 };
 
-extern s32 D_800A8F90[2];
+extern s32 gCommandListHead[2] __asm__("D_800A8F90");
 
 extern void func_80017668(void *instance, s32 part, void *out);
 extern void func_8001A180(void *arg0);
@@ -110,7 +110,7 @@ s32 func_8006ACB0(struct Owner6ACB0 *owner, s32 index)
     s32 action;
 
     result = 0;
-    if (D_800A8F90[1] - D_800A8F90[0] < 10) {
+    if (gCommandListHead[1] - gCommandListHead[0] < 10) {
         return result;
     }
 

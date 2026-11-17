@@ -21,7 +21,7 @@ typedef struct {
     u32 unk20;
 } Unk63DC8;
 
-extern Res63DC8 * volatile D_8009F80C;
+extern Res63DC8 * volatile gTileMapTable __asm__("D_8009F80C");
 extern Unk63DC8 *D_8009F810;
 extern void *D_8009F820;
 
@@ -89,18 +89,18 @@ void func_80063DC8(Unk63DC8 *arg0)
     magic = 0x47524442;
     ptr = arg0->unk00;
     D_8009F810 = arg0;
-    D_8009F80C = 0;
+    gTileMapTable = 0;
 
     do {
         if (*(u32 *)ptr == magic) {
             found = (Res63DC8 *)(ptr + 0xC);
-            D_8009F80C = found;
+            gTileMapTable = found;
         }
         ptr += *(u32 *)(ptr + 4);
     } while ((u32)(ptr - arg0->unk00) < arg0->unk20);
 
-    transform = D_8009F80C;
-    resource = D_8009F80C;
+    transform = gTileMapTable;
+    resource = gTileMapTable;
 
     old_x = transform->unk0C.x;
     old_y = transform->unk0C.y;
@@ -145,13 +145,13 @@ void func_80063DC8(Unk63DC8 *arg0)
 
     product = (resource->unk04 - 1) * (resource->unk08 - 1);
     result = func_80017EBC(product << 4, 2);
-    call_resource = D_8009F80C;
+    call_resource = gTileMapTable;
     D_8009F820 = result;
 
     func_800496D0(call_resource->unk04 - 1,
                   call_resource->unk08 - 1);
 
-    last_resource = D_8009F80C;
+    last_resource = gTileMapTable;
     func_800834C4(last_resource->unk04 - 1,
                   last_resource->unk08 - 1);
 }

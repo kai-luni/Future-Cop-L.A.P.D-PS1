@@ -7,7 +7,7 @@ struct Unk4F0F0Entry {
     u8 unk05[7];
 };
 
-extern struct Unk4F0F0Entry *D_800A2210[];
+extern struct Unk4F0F0Entry *gPathNetTables[] __asm__("D_800A2210");
 extern s32 gPlacementSlotCount __asm__("D_8009F7B8");
 
 /**
@@ -36,7 +36,7 @@ void func_8004F0F0(s32 index, u32 mode, s32 entry)
     struct Unk4F0F0Entry *table;
 
     if (mode < 0x100 && index >= 0 && index < gPlacementSlotCount) {
-        table = D_800A2210[index];
+        table = gPathNetTables[index];
         if (mode == 0) {
             goto clear;
         }

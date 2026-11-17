@@ -50,7 +50,7 @@ extern u32 func_8001EF8C(u32);
 extern void func_80077990(void), func_800788B4(void), func_80077AD4(s32);
 extern u8 func_80078C88(void), func_80082D30(s32 *, s32);
 extern void func_80082DDC(u32, s32), func_8005780C(u32, struct InputAction *);
-extern s8 D_8009F8C0[];
+extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 D_8009F8BD, D_8009F46C, D_8009F3FB, D_8009F3F8[], D_8009B3D4[], D_8009B3E0[];
 extern s32 D_8009F8C4, D_8009F8C8;
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
@@ -282,7 +282,7 @@ reset_timer:
                     if (item->icon != -1) {
                         color = 0x80;
                         if (j == D_8009F468->selection[i] && item->enabled) {
-                            if (D_8009F8C0[i]) color = D_8009F3FB + 0x80;
+                            if (gPlayerMenuDepth[i]) color = D_8009F3FB + 0x80;
                             else {
                                 s32 frame = gPaletteCycleCounter;
                                 __asm__("lui %0,%%hi(D_8009F3F8)\n\taddiu %0,%0,%%lo(D_8009F3F8)" : "=r"(rgb) : "r"(frame));
@@ -296,7 +296,7 @@ reset_timer:
                         if (j == D_8009F468->selection[i] && item->enabled) {
                             u8 *rgb2;
                             color = 0x11;
-                            if (D_8009F8C0[i]) rgb2 = D_8009B3E0;
+                            if (gPlayerMenuDepth[i]) rgb2 = D_8009B3E0;
                             else rgb2 = &D_8009B3D4[((gPaletteCycleCounter >> 4) & 7) * 3];
                             func_800493C0(color, rgb2[0], rgb2[1], rgb2[2]);
                         } else {

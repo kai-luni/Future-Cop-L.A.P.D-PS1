@@ -15,7 +15,7 @@ typedef struct Menu {
 extern Menu *D_8009F468;
 extern u8 D_8009F875;
 extern u8 D_8009F876;
-extern u8 D_8009F8C0;
+extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
 extern u8 D_8009F8CC;
 extern void func_800785F8(void);
@@ -55,7 +55,7 @@ void func_80078650(Menu *arg0, s32 arg1)
     if (arg1 != 0) {
         func_800788B4();
     }
-    D_8009F8C0 = 0;
+    gPlayerMenuDepth = 0;
     D_8009F8C1 = 0;
     func_800785F8();
     D_8009F8CC = 0;

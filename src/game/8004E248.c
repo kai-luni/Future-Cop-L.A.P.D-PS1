@@ -24,7 +24,7 @@ extern struct Entity *D_8009F9A0;
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 D_8009F7A4;
 extern struct Entity *D_8009FA40;
-extern s32 D_800A8F90;
+extern s32 gCommandListHead __asm__("D_800A8F90");
 extern s32 D_800A8F94;
 extern struct Entity *D_800A8F98[];
 extern s32 func_80045678(s32, s32, s32, s32, s32);

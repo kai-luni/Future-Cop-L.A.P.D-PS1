@@ -93,7 +93,7 @@ extern s32 D_8009F468;
 extern s8 D_8009F8BC;
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
-extern u8 D_8009F8C0;
+extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
 extern s32 D_8009F8C4;
 extern s32 D_8009F8C8;
@@ -254,7 +254,7 @@ void func_80077AD4(void)
     D_8009F468 = 0;
     D_8009F8BD = 1;
     D_8009F8BE = 1;
-    D_8009F8C0 = 0;
+    gPlayerMenuDepth = 0;
     D_8009F8C1 = 0;
     D_8009F8C4 = 0;
     D_8009F8C8 = -1;

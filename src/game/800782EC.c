@@ -10,7 +10,8 @@ extern s32 gFrameTickCounter[] __asm__("D_8009FA2C");
 extern s32 D_8009F464, D_8009F870;
 extern s8 D_8009F45A, D_8009F889, D_8009F880, D_8009F888, D_8009F882;
 extern s8 D_8009F3F1, D_8009FA10;
-extern u8 D_8009F3C2, D_8009F8D8, D_8009F8D9;
+extern u8 D_8009F3C2, D_8009F8D9;
+extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern s8 *D_8009F884;
 extern s8 D_8009F458;
 extern struct Mode *gGameSession[] __asm__("D_8009FA94");
@@ -90,7 +91,7 @@ void func_800782EC(void)
         func_80078210();
         break;
     case 3:
-        func_8001EC04(0, D_8009F8D8);
+        func_8001EC04(0, gRumbleEnabled);
         func_8001EC04(1, D_8009F8D9);
     default:
         func_80078650(D_800A38F8, 0);

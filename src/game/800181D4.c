@@ -14,7 +14,7 @@ extern struct LinkState *D_8009F9D0;
 extern struct LinkState *D_8009FAAC;
 extern s32 *D_8009F590;
 extern s32 D_8009F594;
-extern s32 D_8009F598;
+extern s32 gHeapSearchCursor __asm__("D_8009F598");
 
 extern void func_800195D0(struct LinkState *state, s32 *link);
 extern s32 func_8001814C(void *block);
@@ -93,8 +93,8 @@ void func_800181D4(void *block)
                                       (u8 *)(slot + 2),
                                       (D_8009F594 - index - 1) * 4);
                         D_8009F594 -= 2;
-                        if (D_8009F598 >= index) {
-                            D_8009F598 -= 2;
+                        if (gHeapSearchCursor >= index) {
+                            gHeapSearchCursor -= 2;
                         }
                     } else {
                         slot[0] = end;
@@ -111,7 +111,7 @@ void func_800181D4(void *block)
                 D_8009F590[1] = (s32)block;
                 D_8009F590[2] = (s32)end;
                 D_8009F594 += 2;
-                D_8009F598 += 2;
+                gHeapSearchCursor += 2;
             }
         } else if (end == slot[1]) {
             total = D_8009F594;
@@ -133,8 +133,8 @@ void func_800181D4(void *block)
                           (u8 *)copy_source,
                           (D_8009F594 - index) * 4);
             D_8009F594 += 2;
-            if (index < D_8009F598) {
-                D_8009F598 += 2;
+            if (index < gHeapSearchCursor) {
+                gHeapSearchCursor += 2;
             }
             D_8009F590[index + 1] = (s32)block;
             D_8009F590[index + 2] = (s32)end;

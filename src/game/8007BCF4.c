@@ -10,10 +10,10 @@ struct State8009FA94 {
 
 extern s8 *D_8009F468;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern s8 D_8009F87E;
+extern s8 gSelectedRow __asm__("D_8009F87E");
 extern s8 D_8009F87F;
-extern s8 D_8009F8C0;
-extern s8 D_8009F8C0_arr[];
+extern s8 gPlayerMenuDepth __asm__("D_8009F8C0");
+extern  s8 gPlayerMenuDepth_arr[] __asm__("D_8009F8C0");
 extern s32 D_8009F8C8;
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
@@ -94,14 +94,14 @@ void func_8007BCF4(s32 arg0)
         func_8007B460(gActivePlayerIndex);
     }
 
-    { register s32 idx __asm__("$2") = gActivePlayerIndex; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = D_8009F8C0_arr; __asm__("" : "+r"(base)); v = *(s8 *)(idx + (s32)base); }
+    { register s32 idx __asm__("$2") = gActivePlayerIndex; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = gPlayerMenuDepth_arr; __asm__("" : "+r"(base)); v = *(s8 *)(idx + (s32)base); }
     if (v == 2) {
         y = 0x52;
         func_800788F0(0, 0x57, 0x3B, 0x10, 0xC80, 4, 8, v);
         i = 0;
         if (D_8009F87F + 1 > 0) {
             do {
-                if (i == D_8009F87E) {
+                if (i == gSelectedRow) {
                     u8 *p;
                     c = 0x11;
                     p = D_8009B3D4 + ((gPaletteCycleCounter >> 4) & 7) * 3;
@@ -120,7 +120,7 @@ void func_8007BCF4(s32 arg0)
         return;
     }
 
-    { register s32 idx __asm__("$2") = gActivePlayerIndex; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = D_8009F8C0_arr; __asm__("" : "+r"(base)); v = *(s8 *)(idx + (s32)base); }
+    { register s32 idx __asm__("$2") = gActivePlayerIndex; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = gPlayerMenuDepth_arr; __asm__("" : "+r"(base)); v = *(s8 *)(idx + (s32)base); }
     if (v == 2) {
         a0 = 0xC6C;
         s0 = 0xC62;
@@ -135,7 +135,7 @@ void func_8007BCF4(s32 arg0)
     goto *label_table[k];
 
 case_0:
-    if (D_8009F8C0 != 0) {
+    if (gPlayerMenuDepth != 0) {
         a0 = 0xC26;
         s0 = 0xC1C;
     } else {

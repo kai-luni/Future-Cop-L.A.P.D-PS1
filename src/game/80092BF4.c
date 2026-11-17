@@ -6,7 +6,7 @@ typedef struct {
     void (*fn)(s32);
 } Context;
 
-extern u8 D_8009DDF2[];
+extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
 extern u8 D_80012A30[];
 extern  void (*gLogPrintf)(u8 *, s32) __asm__("D_8009DDEC");
 extern Context *D_8009DDE8;
@@ -27,7 +27,7 @@ extern void func_80095830(u8 *, int, unsigned int);
  */
 void func_80092BF4(s32 arg0)
 {
-    register u8 *p __asm__("$17") = D_8009DDF2;
+    register u8 *p __asm__("$17") = gGpuDebugLevel;
     s32 mode;
     Context *ctx;
     __asm__("" : "=r"(p) : "0"(p));

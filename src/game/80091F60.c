@@ -1,7 +1,7 @@
 // Categories: Platform > GPU | Graphics > GPU > Draw Environment
 #include "../../include/game/types.h"
 
-extern s32 D_8009DD90;
+extern s32 gGpuDrawOffset __asm__("D_8009DD90");
 
 /**
  * @brief Exchanges the library state's origin/drawing-area word.
@@ -21,7 +21,7 @@ s32 func_80091F60(s32 value)
 {
     s32 previous;
 
-    previous = D_8009DD90;
-    D_8009DD90 = value;
+    previous = gGpuDrawOffset;
+    gGpuDrawOffset = value;
     return previous;
 }

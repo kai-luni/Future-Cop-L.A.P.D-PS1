@@ -1,7 +1,7 @@
 // Categories: Graphics > Terrain | Resources > Memory Management
 #include "game/types.h"
 
-extern void *D_8009F808;
+extern void *gTileBlockTable __asm__("D_8009F808");
 extern void *D_8009F810;
 extern void *D_8009FA08;
 extern void *D_800A294C[];
@@ -31,8 +31,8 @@ extern void func_800181D4(void *block);
  */
 void func_800634F4(void)
 {
-    if (D_8009F808 != 0) {
-        func_800181D4(D_8009F808);
+    if (gTileBlockTable != 0) {
+        func_800181D4(gTileBlockTable);
     }
     if (D_8009F810 != 0) {
         func_800181D4(D_8009F810);

@@ -11,7 +11,7 @@ struct Unk3F570Node {
 
 extern struct Unk3F570Node *D_800A1070[7];
 extern struct Unk3F570Node *D_8009F30C;
-extern struct Unk3F570Node *D_8009F314;
+extern struct Unk3F570Node *gPendingSpawnList __asm__("D_8009F314");
 
 extern s32 func_8003F2AC(struct Unk3F570Node *object, s32 arg1);
 extern void func_8003B44C(struct Unk3F570Node *object);
@@ -92,9 +92,9 @@ void func_8003F570(s32 arg0)
     if (D_8009F30C != 0) {
         func_8003FF7C();
     }
-    while (D_8009F314 != 0) {
-        tail = D_8009F314->next;
-        func_8003B44C(D_8009F314);
-        D_8009F314 = tail;
+    while (gPendingSpawnList != 0) {
+        tail = gPendingSpawnList->next;
+        func_8003B44C(gPendingSpawnList);
+        gPendingSpawnList = tail;
     }
 }

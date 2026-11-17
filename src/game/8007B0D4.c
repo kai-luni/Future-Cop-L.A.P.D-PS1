@@ -3,7 +3,7 @@
 
 extern s8 *D_8009F468;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern s8 D_8009F8C0[];
+extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 
 /**
  *  @brief Tests the current indexed state and returns a status code.
@@ -36,7 +36,7 @@ s32 func_8007B0D4(void)
     r = 0;
     if (t == 2) {
         idx = gActivePlayerIndex;
-        if (D_8009F8C0[idx] != 0) {
+        if (gPlayerMenuDepth[idx] != 0) {
             if (idx == 0 && p[0] == t) {
                 r = 2;
             } else if (idx == 1 && p[1] == 5) {
@@ -45,7 +45,7 @@ s32 func_8007B0D4(void)
         }
     } else {
         idx = gActivePlayerIndex;
-        if (D_8009F8C0[idx] != 0 && p[idx] == 1) {
+        if (gPlayerMenuDepth[idx] != 0 && p[idx] == 1) {
             r = 2;
         }
     }

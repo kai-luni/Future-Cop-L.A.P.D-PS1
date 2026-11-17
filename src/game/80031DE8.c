@@ -39,7 +39,7 @@ typedef struct {
 } Manager80031DE8;
 
 extern Node80031DE8 *gMapZoneList __asm__("D_8009F6F8");
-extern Manager80031DE8 D_800A8F90;
+extern Manager80031DE8 gCommandListHead __asm__("D_800A8F90");
 extern Target80031DE8 *D_8009FA58[2];
 
 extern s32 func_80019668(void);
@@ -116,8 +116,8 @@ void func_80031DE8(s32 delta)
         }
         if (node->timer < delta) {
             target = 0;
-            for (i = 0; i < D_800A8F90.count; i++) {
-                candidate = D_800A8F90.targets[i];
+            for (i = 0; i < gCommandListHead.count; i++) {
+                candidate = gCommandListHead.targets[i];
                 if (candidate->id > 0 &&
                     candidate->nodeId == node->id &&
                     candidate->type != 0x15 &&

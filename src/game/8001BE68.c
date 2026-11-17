@@ -7,7 +7,7 @@ struct Draw { u8 data[0x14]; };
 extern struct Display D_800A06E0[];
 extern struct Draw D_800A06B0[];
 extern u8 D_8009F225;
-extern u8 D_8009F608;
+extern u8 gDisplayEnabled __asm__("D_8009F608");
 extern void func_80092910(int);
 extern void func_80092BF4(int);
 extern void func_80092A84(int);
@@ -60,6 +60,6 @@ int func_8001BE68(void)
         } while (i < D_8009F225);
     }
     func_80092BF4(1);
-    D_8009F608 = 1;
+    gDisplayEnabled = 1;
     return 0;
 }

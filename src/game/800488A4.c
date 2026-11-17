@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u16 D_800A1E10[][0x10];
-extern s32 D_8009F360;
+extern s32 gRampFillCounter __asm__("D_8009F360");
 
 /**
  *  @brief Builds a 16-entry packed color ramp in a table row.
@@ -39,7 +39,7 @@ void func_800488A4(s32 index, s32 blue, s32 green, s32 red)
     register s32 greenShift __asm__("$24");
     register s32 blueShift __asm__("$25");
 
-    if (index < 0 || D_8009F360 < index) {
+    if (index < 0 || gRampFillCounter < index) {
         return;
     }
     blueShift = 10;

@@ -1,7 +1,7 @@
 // Categories: Utilities > Mathematics > Trigonometry
 #include "game/types.h"
 
-extern u16 D_8009A234[];
+extern u16 gSineTable[] __asm__("D_8009A234");
 
 /**
  * @brief Sine lookup over a 1024-entry quarter-wave table, 12-bit angle.
@@ -32,7 +32,7 @@ s32 func_80018534(u32 angle)
     if (angle & 0x400) {
         index = 0x400 - index;
     }
-    value = D_8009A234[index] << 1;
+    value = gSineTable[index] << 1;
     if (angle & 0x800) {
         value = -value;
     }

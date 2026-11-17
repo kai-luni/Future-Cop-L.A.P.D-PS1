@@ -3,7 +3,7 @@
 
 extern s32 D_8009F76C;
 extern s32 gFontBankCount __asm__("D_8009F364");
-extern u16 D_8009F76A;
+extern u16 gTexBankVramY __asm__("D_8009F76A");
 
 extern void func_80048BF8(s32 value);
 
@@ -27,7 +27,7 @@ extern void func_80048BF8(s32 value);
 void func_80048DEC(void)
 {
     if (D_8009F76C == 0 && gFontBankCount == 1) {
-        D_8009F76A = gFontBankCount;
+        gTexBankVramY = gFontBankCount;
         func_80048BF8(0);
     }
 }

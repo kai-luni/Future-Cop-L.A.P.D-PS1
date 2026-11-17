@@ -33,7 +33,7 @@ extern s8 D_8009F900[];
 extern u8 D_8009C018[];
 extern u8 D_8009BFD4[];
 extern u8 D_8009BEF4[];
-extern u16 D_8009BF9C[][2];
+extern u16 gChoiceSpriteTable[][2] __asm__("D_8009BF9C");
 extern u8 D_8009F484[];
 extern s8 D_800A374D[];
 extern u8 D_800A6FE0[];
@@ -153,7 +153,7 @@ void func_8007C0F8(s32 slot)
             dy = 2;
         }
 
-        sprite = D_8009BF9C[selData[i]][D_8009F902[slot]];
+        sprite = gChoiceSpriteTable[selData[i]][D_8009F902[slot]];
         func_800788F0(0, center_x + item->x + dy, center_y + item->y, 0x10,
                       sprite, flag, 0x20, c2);
 

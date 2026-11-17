@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern u8 D_8009F8D8[];
+extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 
 extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b);
 extern void func_8007C0F8(s32 arg0);
@@ -63,7 +63,7 @@ void func_8007C6F0(s32 slot)
         if (((gPaletteCycleCounter >> 10) & 1) != 0) {
             if (func_8001EF34(t) && func_8001EAEC(t)) {
                 __asm__("");
-                if (D_8009F8D8[slot] != 0) {
+                if (gRumbleEnabled[slot] != 0) {
                     a = 0x1338;
                 } else {
                     a = 0x133D;

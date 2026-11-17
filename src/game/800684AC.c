@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 typedef struct { s32 x, y, z; } Vec3;
-extern s32 *D_8009F80C;
+extern s32 *gTileMapTable __asm__("D_8009F80C");
 extern s32 func_80067914(s32 *, s32 *, s32, s32, s32);
 
 #define MULU16(out, a, b) \
@@ -140,7 +140,7 @@ s32 func_800684AC(s32 *p, s32 *q, s32 arg2, s32 arg3, s32 flag)
     {
         register s32 va __asm__("$2") = p[0];
         register s32 vb __asm__("$3") = q[0];
-        map=D_8009F80C;
+        map=gTileMapTable;
         __asm__("" : "=r"(va), "=r"(vb), "=r"(map) : "0"(va), "1"(vb), "2"(map));
         x0=va<<5; x1=vb<<5;
     }

@@ -4,7 +4,7 @@
 extern u8 *D_8009F468;
 extern u8 D_8009F875;
 extern u8 D_8009F876;
-extern u8 D_8009F8C0;
+extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
 extern u8 D_8009F8CC;
 extern void func_800785F8(void);
@@ -43,7 +43,7 @@ s32 func_80078740(void)
             (*(void (**)(void))(p + 0x14))();
         }
         D_8009F468 = *(u8 **)(D_8009F468 + 0x24);
-        D_8009F8C0 = 0;
+        gPlayerMenuDepth = 0;
         D_8009F8C1 = 0;
         func_800785F8();
         D_8009F8CC = 0;

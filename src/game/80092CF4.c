@@ -1,7 +1,7 @@
 // Categories: Graphics > GPU > Debug Validation | Platform > GPU
 typedef struct { short x, y, w, h; } Rect;
 typedef struct { unsigned char mode, pad; short width, height; } State;
-extern State D_8009DDF2;
+extern State gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(char *, ...) __asm__("D_8009DDEC");
 extern char D_80012A58[], D_80012A64[], D_80012A78[];
 

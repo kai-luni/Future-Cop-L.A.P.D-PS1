@@ -29,7 +29,7 @@ struct State8009FA94 {
     s32 unk5C;
 };
 
-extern u8 D_8009F87E;
+extern u8 gSelectedRow __asm__("D_8009F87E");
 extern u8 D_8009F87F;
 extern u8 D_8009F880;
 extern u8 D_8009F881;
@@ -38,8 +38,8 @@ extern s8 *D_8009F884;
 extern s8 D_8009F889;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F8BD;
-extern s8 D_8009F8C0;
-extern s8 D_8009F8C0_arr[];
+extern s8 gPlayerMenuDepth __asm__("D_8009F8C0");
+extern  s8 gPlayerMenuDepth_arr[] __asm__("D_8009F8C0");
 extern u8 *D_8009F8C4;
 extern s32 D_8009F8C8;
 extern u8 *D_8009F3EC;
@@ -138,7 +138,7 @@ void func_8007B460(s32 arg0)
         if (D_8009F468[arg0] != 0) {
             goto plain;
         }
-        if (D_8009F8C0 == 0) {
+        if (gPlayerMenuDepth == 0) {
             goto plain;
         }
         if (i != (s8)D_8009F880) {
@@ -165,7 +165,7 @@ void func_8007B460(s32 arg0)
 
     common:
         if (gGameSession->unk5C == 1 && gGameSession->unk0C == 1) {
-            if (D_8009F8C0 == 2) {
+            if (gPlayerMenuDepth == 2) {
                 c1 = 0xFF;
                 c2 = c1;
                 c3 = c1;

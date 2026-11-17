@@ -12,10 +12,10 @@ typedef struct { s16 x, y, z, pad; } Point;
 typedef struct { s32 x, y, z; } Vec;
 typedef struct { s32 e[9]; } Matrix;
 typedef struct { s32 page, x, y, w, h; } Texture;
-extern Texture D_8009B234[];
+extern Texture gModelTextureTable[] __asm__("D_8009B234");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
-extern u8 D_800A3548[];
+extern u8 gHeaderPrimitiveRecord[] __asm__("D_800A3548");
 extern Point gPreparedVertexTable[] __asm__("D_800A6418");
 extern u8 D_800AB388[];
 extern s16 D_800A7840[], D_800A7898[];
@@ -193,11 +193,11 @@ void func_80074104(u8 *input, s32 *pos)
             if (func_8001A100(&frame.v) > 0x1ffff) goto advance;
         }
         if (!(UH(owner,0x8e) & 0x2000)) {
-            UH(D_800A3548,0x10) = UH(owner,0x12);
-            UB(D_800A3548,0x15) = UB(owner,0x73);
-            UB(D_800A3548,0x16) = UB(owner,0x76);
-            PTR(D_800A3548,0) = node;
-            UB(D_800A3548,0x17) = UB(owner,0x79);
+            UH(gHeaderPrimitiveRecord,0x10) = UH(owner,0x12);
+            UB(gHeaderPrimitiveRecord,0x15) = UB(owner,0x73);
+            UB(gHeaderPrimitiveRecord,0x16) = UB(owner,0x76);
+            PTR(gHeaderPrimitiveRecord,0) = node;
+            UB(gHeaderPrimitiveRecord,0x17) = UB(owner,0x79);
             if (UH(owner,0x1a) & 0x100) {
                 func_8001A81C(m, owner+0x58, &frame.trans);
                 gPreparedVertexTable[count].x = frame.trans.x >> 4;
@@ -266,7 +266,7 @@ void func_80074104(u8 *input, s32 *pos)
         if (UH(owner,0x1a) & 0x100) func_80010750(node);
         else func_80010820(node);
         func_8001047C(gPreparedVertexTable, gPreparedVertexTable, D_800AB388, count);
-        if (!(UH(owner,0x8e) & 0x2000)) node = D_800A3548;
+        if (!(UH(owner,0x8e) & 0x2000)) node = gHeaderPrimitiveRecord;
         else node = PTR(owner,0x68);
         dx = D_800A7840; dy = D_800A7898;
         for (i=0; i<count; i++) {
@@ -295,12 +295,12 @@ void func_80074104(u8 *input, s32 *pos)
             if (next >= count) next = count-1;
             dx++; dy++;
         }
-        if (!(UH(owner,0x8e) & 0x2000)) node = D_800A3548;
+        if (!(UH(owner,0x8e) & 0x2000)) node = gHeaderPrimitiveRecord;
         else node = PTR(owner,0x68);
         if (!(UH(owner,0x8e) & 4)) {
         if (B(owner,0x72) >= 0) {
             s32 tx, ty, tw;
-            tex = D_8009B234;
+            tex = gModelTextureTable;
             if (B(owner,0x72) < 2) tex += B(owner,0x72);
             t = tex->page;
             frame.uv1 = (((t & 1) << 4) | (((((t >> 1) << 7) + 0x180) & 0x3ff) >> 6) | 0xa0) << 16;
@@ -314,7 +314,7 @@ void func_80074104(u8 *input, s32 *pos)
             frame.uv3 = ux | ((uy + uh - 1) << 8);
         }
         } else tex = 0;
-        textures = D_8009B234;
+        textures = gModelTextureTable;
         cur = gPreparedVertexTable;
         offset = 8;
         for (i=0; i<count-1; ++i, ++cur, offset+=8) {

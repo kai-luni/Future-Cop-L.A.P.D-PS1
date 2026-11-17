@@ -2,7 +2,7 @@
 typedef unsigned char u8;
 typedef signed char s8;
 extern u8 gVertexIndexTable[][4] __asm__("D_8009AFE8");
-extern u8 D_8009B1A4[];
+extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
 
 /**
  * @brief Samples and interpolates a terrain surface height within a map sub-cell.
@@ -41,7 +41,7 @@ int func_80067480(s8 *data, unsigned int index, int x, int y, int *out)
         left = (a << 7) + (((b - a) * x) >> 9);
         right = (d << 7) + (((c - d) * x) >> 9);
     } else {
-        mode = D_8009B1A4[index];
+        mode = gTileShapeTable[index];
         __asm__("" : "+r"(mode));
         switch (mode >> 3) {
         case 0:

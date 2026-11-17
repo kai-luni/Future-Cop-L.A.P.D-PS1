@@ -20,7 +20,7 @@ struct StructDDF0 {
     s32 unkC;
 };
 
-extern volatile struct QueueEntry D_800A9450[];
+extern volatile struct QueueEntry gGpuDmaQueue[] __asm__("D_800A9450");
 extern struct StructDDF0 D_8009DDF0;
 extern volatile s32 gGpuJobHead __asm__("D_8009DEE8");
 extern volatile s32 gGpuJobTail __asm__("D_8009DEEC");
@@ -92,21 +92,21 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
 
     i = 0;
     if (arg2 != 0) {
-        payload = (volatile u32 (*)[24])D_800A9450[0].data;
+        payload = (volatile u32 (*)[24])gGpuDmaQueue[0].data;
         __asm__("" : "=r"(payload) : "0"(payload));
         for (src = (u32 *)arg1; i < arg2 / 4; i++) {
             payload[gGpuJobHead][i] = *src++;
         }
         offset = gGpuJobHead * 96;
-        copy = (void *)D_800A9450[gGpuJobHead].data;
+        copy = (void *)gGpuDmaQueue[gGpuJobHead].data;
         __asm__ volatile("lui %0,%%hi(D_800A9450+4)\n\taddu %0,%0,%1" : "=r"(dest) : "r"(offset));
         *(void **)((u8 *)dest - 0x6BAC) = copy;
     } else {
-        D_800A9450[gGpuJobHead].arg1 = arg1;
+        gGpuDmaQueue[gGpuJobHead].arg1 = arg1;
     }
 
-    D_800A9450[gGpuJobHead].arg2 = arg3;
-    D_800A9450[gGpuJobHead].func = func;
+    gGpuDmaQueue[gGpuJobHead].arg2 = arg3;
+    gGpuDmaQueue[gGpuJobHead].func = func;
     __asm__ volatile("" ::: "memory");
 
     gGpuJobHead = (gGpuJobHead + 1) & 0x3F;

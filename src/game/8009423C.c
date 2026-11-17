@@ -5,7 +5,8 @@
 
 extern u16 D_8009DDF4, D_8009DDF6;
 extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
-extern u32 D_800A6280[], D_800A62A8[];
+extern u32 gGpuPacketArrayAlt[] __asm__("D_800A62A8");
+extern u32 gGpuPacketArray[] __asm__("D_800A6280");
 extern u32 func_800949E8(u32);
 extern void func_800949A0(u32);
 
@@ -46,8 +47,8 @@ s32 func_8009423C(u16 *arg0, u32 arg1)
         register u32 *q __asm__("$16");
         u32 xy, header;
         __asm__ volatile ("" : "+r"(mask), "+r"(limit), "+r"(tag));
-        p = D_800A6280;
-        q = D_800A62A8;
+        p = gGpuPacketArray;
+        q = gGpuPacketArrayAlt;
         __asm__ volatile ("" : "+r"(p), "+r"(q));
         p[0] = ((u32)q & mask) | 0x08000000;
         p[1] = 0xe3000000;
@@ -75,7 +76,7 @@ s32 func_8009423C(u16 *arg0, u32 arg1)
         register u32 mode __asm__("$2");
         u32 rgb;
         __asm__ volatile ("" : "+r"(value), "+r"(mask));
-        p = D_800A6280;
+        p = gGpuPacketArray;
         __asm__ volatile ("" : "+r"(p));
         p[0] = value;
         p[1] = 0xe6000000;
@@ -96,7 +97,7 @@ s32 func_8009423C(u16 *arg0, u32 arg1)
         p[4] = *(u32 *)&rect[0];
         p[5] = *(u32 *)&rect[2];
     }
-    func_800949A0((u32)D_800A6280);
+    func_800949A0((u32)gGpuPacketArray);
     result = 0;
     __asm__ volatile ("" : "+r"(result));
     return result;

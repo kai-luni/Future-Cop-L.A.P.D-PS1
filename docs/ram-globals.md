@@ -132,6 +132,72 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 
 Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage).
 
+## GPU-Bibliothek, Sprites und Tiles
+
+Fünfunddreißig Globals aus dem Grafikbereich, alle einzeln byte-genau geprüft und in **einem** Commit umbenannt. Die ersten 28 sind direkt aus den Datei-Dokus belegt, die letzten sieben wurden mit Google Gemini 4 Hydrogen geklärt und die Belegstellen anschließend im Code nachgeprüft.
+
+### GPU-Bibliothek
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009DD90` | `gGpuDrawOffset` | `s32` | Ursprungs-/Zeichenbereichs-Feld des Bibliothekszustands, als Rückgabewert gelesen. |
+| `D_8009DDF2` | `gGpuDebugLevel` | `u8[]` | Debug-Stufe des Paketbaus; `[0] >= 2` schaltet das optionale Log ein. |
+| `D_8009DE00` | `gDrawEnvCache` | `u8[]` | Zwischengespeicherter 0x5C-Byte-`DRAWENV`-Block, den `func_80093488` als Kopierquelle nutzt. |
+| `D_8009DE5C` | `gDispEnvCache` | `struct Cache` | Zwischengespeicherter 0x14-Byte-`DISPENV`-Block. |
+| `D_800A6280` | `gGpuPacketArray` | `u32[]` | Paketpuffer, den `func_800949A0` an die GPU übergibt. |
+| `D_800A62A8` | `gGpuPacketArrayAlt` | `u32[]` | Zweiter Paketpuffer derselben Einheit. |
+| `D_800A9450` | `gGpuDmaQueue` | `volatile struct QueueEntry[]` | GPU-/DMA2-Warteschlange; `func_80094A3C` reiht dort Aufträge ein. |
+| `D_800A8F90` | `gCommandListHead` | `Manager80031DE8` | Kopf der Kommando-Liste im Display-List-Interpreter (innerer `do-while` über vier Slots, großer Opcode-Switch). |
+
+### Mathe-Tabellen der 3D-Pipeline
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009A234` | `gSineTable` | `u16[]` | Sinus-Tabelle: `sin = [index] << 1`, `cos = [0x400 - index] << 1`, Quadrant über `angle >> 10`. |
+| `D_8009F5B0` | `gReciprocalTablePtr` | `u16 *` | 0x800-Byte-Block mit gepackten Exponent/Mantisse-Paaren als Kehrwert-Lookup; wird getestet, bevor er gelesen wird, und absichtlich hängend gelassen. |
+
+### Sprites, Texturen und Tiles
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F77C` | `gSpriteDescriptorTable` | `void *` | Veröffentlichter Zeiger auf die aktive Sprite-/Tile-Deskriptortabelle. |
+| `D_8009F7D8` | `gTextureDescriptorTable` | `void **` | Zeiger auf das Textur-Deskriptor-Array, beim Missionsstart genullt. |
+| `D_8009F76A` | `gTexBankVramY` | `u16` | VRAM-Y-Basis der Texturbank (Upload bei `y = Wert + 0x100`, `x = 0x380`). |
+| `D_8009F778` | `gSpriteRegionTable` | `void *` | Regions-Tabelle je Sprite: `+ idx*8 + 4` liefert `(u0, v0, Breite, Höhe, Textur-Id)`. |
+| `D_8009FAA0` | `gScreenUvBase` | `u32` | UV-Basiswort für die drei Bildschirm-Vertizes (`<< 16 | 0x101`). |
+| `D_800A3548` | `gHeaderPrimitiveRecord` | `u8[]` | Kopf-Primitiv, das aus den Clip-Flag-Bytes des Modells gefüllt wird. |
+| `D_8009B234` | `gModelTextureTable` | `Texture[]` | Textur-Einträge je Modell; das Feld `+0x72` (s8) wählt den Index, `< 0` bedeutet keine Textur. |
+| `D_800A6F38` | `gTileDefTable` | `u8[]` | 100-Einträge-Tabelle der Tile-Definitionen; `func_80065CA8(tile, index, x, y)` zeichnet daraus. |
+| `D_8009F80C` | `gTileMapTable` | `Other *` | Tile-Karte; `->cells` wird auf 0..53 geklemmt und in `gTileDefTable` nachgeschlagen. |
+| `D_8009F808` | `gTileBlockTable` | `int *` | Block-Tabelle: `block = [((slot >> 2) & 0x3FFF)]`. |
+| `D_8009B1A4` | `gTileShapeTable` | `s32[]` | Formcode je Tile: `>> 3` wählt im Switch die Vertex-Menge `v[0..7]` (zwei Varianten). |
+| `D_8009F83C` | `gTileColourWord` | `u16` | Farbwort, das aus den Farb-Bytes des Tile-Records gesetzt wird. |
+| `D_8009F360` | `gRampFillCounter` | `s32` | Füllzähler eines Farbverlaufs; bis `0x14` wird die Farbe durchgeschrieben. |
+| `D_800A1970` | `gPaletteTable` | `u16[]` | Farbpalette; Slot 0 wird mit RGB `(0x1F, 0x1F, 0x1F)` belegt. |
+| `D_8009AAE0` | `gGlyphTable` | `u16[]` | 0x14 Einträge, vom Text-Renderer beim Ausgeben der Glyphen gelesen. |
+
+### Frontend-Grafik
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009BEEC` | `gLabelIdTable` | `u16[]` | Label-Ids: die Werte 2/1/0/3 werden den Labels 0/1/2/3 zugeordnet (Rendern über `func_800788F0`). |
+| `D_8009BF9C` | `gChoiceSpriteTable` | `u16[][2]` | Sprite-Ids je Auswahl: `[selData[i]][choice]`. |
+| `D_8009F87E` | `gSelectedRow` | `u8` | Hervorgehobene Zeile im Listenbildschirm; diese Zeile bekommt Farbe `0x11`. |
+
+### Weitere Helfer derselben Gruppe
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F598` | `gHeapSearchCursor` | `s32` | Next-Fit-Suchcursor des Heap-Allokators in die Frei-Bereichstabelle `D_8009F590`. |
+| `D_8009F608` | `gDisplayEnabled` | `u8` | Globales Enable-Flag der Display-/Fade-Layer, beim Pufferwechsel an `func_8001C088` übergeben. |
+| `D_8009F314` | `gPendingSpawnList` | `struct Object *` | Warteliste neu erzeugter Objekte, die am Ende von `func_8003F570` nach `kind` einsortiert wird (keine Renderliste). |
+| `D_8009F8C0` | `gPlayerMenuDepth` | `u8` | Auswahltiefe je Spieler im Profil-Bildschirm (0 inaktiv, 1 Profil, 2 Level-Unterliste). |
+| `D_8009F8D8` | `gRumbleEnabled` | `u8` | Vibrations-Flags je Controller im Frontend, aus `D_800A6FF8` übernommen und zurückgeschrieben. |
+| `D_800A2210` | `gPathNetTables` | `struct Unk4F0F0Entry *[]` | Zeiger auf geladene `Cnet`-Pfadnetz-Tabellen (Header `s16 unk00` / `s16 count`, 12-Byte-Knoten); Skripte schalten dort Sperrflags (`& 2`). |
+| `D_8009F238` | `gFileSearchGroup` | `int` | Datei-Suchgruppen-Index für `D_8009F240->items[]`; bei negativem Wert wird er als negierter Open-Mode an `func_8001D424` gegeben. **Schreibstelle nicht bestimmbar** — im Retail-Image steht 0. |
+
+**Nicht umbenannt:** `D_800A8EA0` ist kein eigenes Symbol, sondern der Slot `[8]` von `gTexpageBaseTable` (`0x800A8E80 + 8*4`); ein eigener Name würde das Array auseinanderreißen.
+
 ## Pad-Treiber und Spielsitzung
 
 Die folgenden Rollen wurden mit Google Gemini 4 Hydrogen (read-only, Repo-Zugriff) erarbeitet und anschließend in den Units selbst nachgeprüft.

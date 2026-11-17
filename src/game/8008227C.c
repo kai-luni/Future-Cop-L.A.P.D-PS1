@@ -1,7 +1,7 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern s8 D_8009F8C0[];
+extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern s8 *D_8009F468;
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 
@@ -31,7 +31,7 @@ s32 D_8008228C(s32 arg0)
     s32 result;
 
     result = 0;
-    if (D_8009F8C0[arg0] != 0) {
+    if (gPlayerMenuDepth[arg0] != 0) {
         result = (D_8009F468[arg0] < 10) << 1;
     }
     return result;

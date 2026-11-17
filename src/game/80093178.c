@@ -6,7 +6,7 @@ typedef struct {
     void (*unk2C)(s32, s32);
 } Unk8009DDE8;
 
-extern u8 D_8009DDF2;
+extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(u8 *, s32, s32) __asm__("D_8009DDEC");
 extern Unk8009DDE8 *D_8009DDE8;
 extern u8 D_80012AD0[];
@@ -56,7 +56,7 @@ void func_80093178(u32 *arg0, s32 arg1)
     register u32 a1 __asm__("$5");
     register u32 *v0 __asm__("$2");
 
-    if (D_8009DDF2 >= 2) {
+    if (gGpuDebugLevel >= 2) {
         gLogPrintf(D_80012AD0, (s32)arg0, arg1);
     }
 

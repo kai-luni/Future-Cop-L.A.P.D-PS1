@@ -17,7 +17,7 @@ struct Unk8009F468 {
 
 extern struct Unk8009F468 *D_8009F468;
 extern struct Unk8009FA94 *gGameSession __asm__("D_8009FA94");
-extern s8 D_8009F8C0[];
+extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 
 extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
@@ -114,7 +114,7 @@ void func_8007B17C(s32 arg0)
     switch (a) {
     case 1:
         __asm__ volatile("");
-        if (D_8009F8C0[arg0] != 0) {
+        if (gPlayerMenuDepth[arg0] != 0) {
             s32 id;
             if ((gPaletteCycleCounter >> 9) & 1) {
                 id = 0x6C2;

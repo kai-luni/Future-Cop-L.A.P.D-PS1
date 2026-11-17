@@ -13,7 +13,7 @@ struct EntityTable {
     struct Entity *items[1];
 };
 
-extern struct EntityTable D_800A8F90;
+extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
 
 /**
  * @brief Broadcasts a message to every active entity in the global entity table D_800A8F90.
@@ -42,8 +42,8 @@ void func_8004CD6C(s32 message, s32 arg2, s32 arg3)
     struct Entity *entity;
     s32 remaining;
 
-    cursor = D_800A8F90.items;
-    for (remaining = D_800A8F90.count; remaining > 0; remaining--) {
+    cursor = gCommandListHead.items;
+    for (remaining = gCommandListHead.count; remaining > 0; remaining--) {
         entity = *cursor++;
         if (entity->id > 0) {
             entity->update(message, entity, arg2, arg3);

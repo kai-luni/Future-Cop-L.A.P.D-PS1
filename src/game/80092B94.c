@@ -6,7 +6,7 @@ typedef void (*DecDctFn)(u8 *, DecDctCallback);
 
 extern  void (*gLogPrintf)(u8 *, DecDctCallback) __asm__("D_8009DDEC");
 extern u8 D_80012A14[];
-extern u8 D_8009DDF2[];
+extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
 
 /**
  * @brief Gets or sets the decoder's completion callback.
@@ -33,7 +33,7 @@ extern u8 D_8009DDF2[];
  */
 DecDctCallback func_80092B94(DecDctCallback callback)
 {
-    u8 *p = D_8009DDF2;
+    u8 *p = gGpuDebugLevel;
     DecDctCallback old;
     __asm__("" : "=r"(p) : "0"(p));
     if ((u32)p[0] >= 2) {

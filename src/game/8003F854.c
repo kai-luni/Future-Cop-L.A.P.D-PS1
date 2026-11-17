@@ -10,7 +10,7 @@ struct Unk8003F854 {
 };
 
 extern struct Unk8003F854 *D_800A1070[7];
-extern struct Unk8003F854 *D_8009F314;
+extern struct Unk8003F854 *gPendingSpawnList __asm__("D_8009F314");
 extern struct Unk8003F854 *D_8009F30C;
 extern void *D_800A7040[0x200];
 extern void *D_800A0C70[0x100];
@@ -88,14 +88,14 @@ void func_8003F854(s32 arg0)
             } while (i >= 0);
         }
 
-        p = D_8009F314;
+        p = gPendingSpawnList;
         while (p != 0) {
             next = p->next;
             zero = 0;
             p->unk24(10, p, zero, zero);
             p = next;
         }
-        D_8009F314 = 0;
+        gPendingSpawnList = 0;
     }
 
     {

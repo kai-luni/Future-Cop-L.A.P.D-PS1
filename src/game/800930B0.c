@@ -1,7 +1,7 @@
 // Categories: Graphics > DMA Command Lists
 #include "game/types.h"
 
-extern u8 D_8009DDF2;
+extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(u8 *, s32, s32) __asm__("D_8009DDEC");
 extern u8 D_80012AB8[];
 extern u32 D_8009DEB0[];
@@ -43,7 +43,7 @@ u32 *func_800930B0(u32 *arg0, s32 arg1)
     s0 = arg0;
     s1 = arg1;
 
-    if (D_8009DDF2 >= 2) {
+    if (gGpuDebugLevel >= 2) {
         u8 *msg = D_80012AB8;
         f = gLogPrintf;
         __asm__ volatile("" : "+r"(msg) : : "memory");

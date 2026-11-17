@@ -16,7 +16,7 @@ typedef struct EntityList {
     Entity *items[1];
 } EntityList;
 
-extern EntityList D_800A8F90;
+extern EntityList gCommandListHead __asm__("D_800A8F90");
 extern s32 func_8004E5F0(Entity *source, Entity *target, s32 maxDist, s32 flags);
 
 /**
@@ -58,8 +58,8 @@ Entity *func_8006C224(Entity *source, Entity *exclude, s32 maxDist, s32 flags)
     bestDist = maxDist;
     i = 0;
     best = 0;
-    for (; i < D_800A8F90.count; i++) {
-        entity = D_800A8F90.items[i];
+    for (; i < gCommandListHead.count; i++) {
+        entity = gCommandListHead.items[i];
         if (entity->unk18 == source->unk18) {
             continue;
         }

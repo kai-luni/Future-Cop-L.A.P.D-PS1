@@ -88,7 +88,7 @@ struct CandList {
 };
 
 extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
-extern struct CandList D_800A8F90;
+extern struct CandList gCommandListHead __asm__("D_800A8F90");
 
 extern void func_80017668(u8 *instance, s32 part, s32 *out);
 extern s32 func_80019668(void);
@@ -297,8 +297,8 @@ u8 func_8005D8F4(struct Fx *self_, s32 a1)
         }
     }
     collision_loop:
-    for (i = 0; i < D_800A8F90.count; i++) {
-        cand = D_800A8F90.items[i];
+    for (i = 0; i < gCommandListHead.count; i++) {
+        cand = gCommandListHead.items[i];
         team = cand->unk18;
         if (cand->unk08 <= 0) {
             continue;

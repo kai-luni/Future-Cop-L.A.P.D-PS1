@@ -6,7 +6,8 @@ extern u8 gUploadRequestFlag __asm__("D_8009F3E5");
 extern s8 D_8009F3F0;
 extern struct Entry D_8009B42C[];
 extern char gFormatNamePair[] __asm__("D_8009F2E4");
-extern int D_8009F3E0, D_8009F3D8, D_8009F238;
+extern int D_8009F3E0, D_8009F3D8;
+extern int gFileSearchGroup __asm__("D_8009F238");
 extern int gUploadInProgress __asm__("D_8009F9C4");
 extern void func_8008CD30(char *, char *, int, char *);
 extern void func_8001E110(char *, int, void **, int *, int);
@@ -76,7 +77,7 @@ int func_80025370(void)
                 arg = D_8009F3D8;
             func_8008CD30(buffer, gFormatNamePair, arg, entry->name);
         }
-        func_8001E110(buffer, D_8009F238, &data, &size, 0);
+        func_8001E110(buffer, gFileSearchGroup, &data, &size, 0);
         if (data) {
             saved = gUploadInProgress;
             gUploadInProgress = 1;

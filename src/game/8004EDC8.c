@@ -8,7 +8,7 @@ struct Obj { u8 pad0[0xac]; struct Ctl *ctl; };
 struct Packet { u32 tag; u32 cmd; };
 extern struct Packet *gPacketCursor __asm__("D_8009FA90");
 extern struct Packet *gPacketLimit __asm__("D_8009F9C0");
-extern s32 D_800A8F90[];
+extern s32 gCommandListHead[] __asm__("D_800A8F90");
 extern s32 D_8009F7B0;
 extern struct Node *D_800A8F98[];
 extern u32 gDiscShadeByte __asm__("D_8009FAA4");
@@ -58,7 +58,7 @@ void func_8004EDC8(struct Obj *obj)
     packet->tag &= 0xff000000;
     ((u8 *)packet)[3] = 1;
     enabled = gDiscShadeByte & 0x80;
-    count = D_800A8F90[0];
+    count = gCommandListHead[0];
     while (count > 0) {
         n = *p++;
         if (n->count > 0 && (type = n->type) != 0 && !(n->flags & 0x30)) {

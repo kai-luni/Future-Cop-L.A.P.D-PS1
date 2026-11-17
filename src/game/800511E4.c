@@ -34,7 +34,7 @@ struct Vec3s32 {
 };
 
 extern s32 gPlacementSlotCount __asm__("D_8009F7B8");
-extern struct Header511E4 *D_800A2210[];
+extern struct Header511E4 *gPathNetTables[] __asm__("D_800A2210");
 
 extern s32 func_80019AA8(struct Resource *resource);
 extern void func_80019A74(struct Resource *resource);
@@ -92,7 +92,7 @@ void func_800511E4(struct Resource *resource)
 
         data = resource->data;
         header = (struct Header511E4 *)(data + 0xC);
-        D_800A2210[gPlacementSlotCount] = header;
+        gPathNetTables[gPlacementSlotCount] = header;
         count = header->count;
         gPlacementSlotCount++;
 

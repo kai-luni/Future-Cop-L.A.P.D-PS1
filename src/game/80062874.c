@@ -8,7 +8,7 @@ typedef struct Node { Obj *obj; struct Node *next; } Node;
 typedef struct { s32 x,z,w,h; } Bounds;
 typedef struct { s32 x,z; } Pair;
 typedef struct { u32 bits; s32 pad[3]; } Cell;
-extern List D_800A8F90;
+extern List gCommandListHead __asm__("D_800A8F90");
 extern Pair D_800A3190[];
 extern Bounds D_800A2970;
 extern Node D_800A2990[];
@@ -74,14 +74,14 @@ extern u8 D_8009F834, D_8009F835, D_8009F836, D_8009F837;
  * func_80062FB4, the region setup, in its non-small-view branch.
  */
 void func_80062874(void) {
-    register Obj **scan __asm__("$24") = D_800A8F90.items;
+    register Obj **scan __asm__("$24") = gCommandListHead.items;
     register Pair *pairs __asm__("$3") = D_800A3190;
     Cell *cells = D_800AB3B8;
     register Bounds *bounds __asm__("$2") = &D_800A2970;
     s32 width = bounds->w;
     register s32 count1 __asm__("$13") = D_8009F828;
     register s32 count2 __asm__("$14") = D_8009F82C;
-    register s32 remaining __asm__("$15") = D_800A8F90.count;
+    register s32 remaining __asm__("$15") = gCommandListHead.count;
     register s32 cx1 __asm__("$20") = pairs[0].x;
     register s32 cz1 __asm__("$19") = pairs[0].z;
     register s32 cx2 __asm__("$18") = pairs[1].x;

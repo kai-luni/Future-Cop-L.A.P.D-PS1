@@ -1,7 +1,7 @@
 // Categories: Utilities > Mathematics > Tables | Game Engine > Game State > Init
 #include "game/types.h"
 
-extern u16 *D_8009F5B0;
+extern u16 *gReciprocalTablePtr __asm__("D_8009F5B0");
 
 extern void *func_80017EBC(s32 size, s32 tag);
 extern u32 func_80018818(u32 divisor);
@@ -41,7 +41,7 @@ void func_80019828(void)
     u32 value;
     s32 shift;
 
-    D_8009F5B0 = func_80017EBC(0x800, 2);
+    gReciprocalTablePtr = func_80017EBC(0x800, 2);
     for (input = 0, i = input; i < 0x400; input++) {
         value = func_800187C8(func_80018818(input));
         shift = 0x15;
@@ -53,7 +53,7 @@ void func_80019828(void)
         }
         value <<= 5;
         value |= shift;
-        D_8009F5B0[i++] = value;
+        gReciprocalTablePtr[i++] = value;
     }
     func_800197A8(0x457);
 }
