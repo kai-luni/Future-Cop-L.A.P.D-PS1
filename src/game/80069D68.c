@@ -6,7 +6,7 @@ struct Entity {
     s32 (*update)(s32 message, struct Entity *entity, s32 arg2, s32 arg3);
 };
 
-extern u8 D_8009F840;
+extern u8 gScriptVmDisabled __asm__("D_8009F840");
 extern s32 D_800A3320[];
 extern s32 *D_8009F9A4;
 extern s32 *D_8009F9F8;
@@ -161,7 +161,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
     if (*code == 0) {
         return 1;
     }
-    if (D_8009F840 != 0) {
+    if (gScriptVmDisabled != 0) {
         return 0;
     }
 

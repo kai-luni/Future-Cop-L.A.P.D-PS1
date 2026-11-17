@@ -13,7 +13,7 @@ extern struct Unk69B58 *D_8009FA94;
 extern s32 *D_8009F9F8;
 extern s32 *D_8009FAD4;
 extern s32 *D_8009F9A4;
-extern u8 D_8009F840;
+extern u8 gScriptVmDisabled __asm__("D_8009F840");
 
 extern s32 func_80019668(void);
 extern void func_80069B1C(void);
@@ -61,5 +61,5 @@ void func_80069B58(void)
     }
 
     func_80069B1C();
-    D_8009F840 = 0;
+    gScriptVmDisabled = 0;
 }

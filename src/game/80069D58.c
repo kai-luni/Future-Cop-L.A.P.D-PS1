@@ -1,7 +1,7 @@
 // Categories: Gameplay > Entity Script | Game Engine > State Machine
 #include "game/types.h"
 
-extern u8 D_8009F840;
+extern u8 gScriptVmDisabled __asm__("D_8009F840");
 
 /**
  * @brief Inhibits bytecode script execution by setting the global script-VM disable flag D_8009F840.
@@ -29,5 +29,5 @@ extern u8 D_8009F840;
  */
 void func_80069D58(void)
 {
-    D_8009F840 = 1;
+    gScriptVmDisabled = 1;
 }
