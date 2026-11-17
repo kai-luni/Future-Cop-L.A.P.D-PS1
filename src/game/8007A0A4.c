@@ -8,7 +8,7 @@ struct UnkB4E4 {
 };
 
 extern struct UnkB4E4 D_8009B4E4[];
-extern s8 D_8009B72C[];
+extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern u8 D_8009F4E0;
 extern u8 D_80011E60[];
 
@@ -42,7 +42,7 @@ void func_8007A0A4(s32 arg0)
     if (arg0 == 3) {
         i = 0;
         do {
-            val = D_8009B4E4[D_8009B72C[i]].unk08;
+            val = D_8009B4E4[gFrontEndListTable[i]].unk08;
             if (val != 0) {
                 func_80082DDC(val, 2);
                 if (D_8009F4E0 != 0) {

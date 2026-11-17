@@ -17,7 +17,7 @@ struct UnkFA94 {
 };
 
 extern struct Entry D_8009B4E4[];
-extern s8 D_8009B72C[];
+extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern struct UnkFA94 *D_8009FA94;
 extern u8 D_8009F3C0;
 extern u8 D_8009F3C1;
@@ -57,12 +57,12 @@ void func_8007F02C(void)
                   D_8009FA94->unk94,
                   D_8009F3C0,
                   D_8009F458,
-                  D_8009B4E4[D_8009B72C[0]].unk1F,
-                  D_8009B4E4[D_8009B72C[1]].unk1F,
-                  D_8009B4E4[D_8009B72C[2]].unk1F,
-                  D_8009B4E4[D_8009B72C[3]].unk1F,
+                  D_8009B4E4[gFrontEndListTable[0]].unk1F,
+                  D_8009B4E4[gFrontEndListTable[1]].unk1F,
+                  D_8009B4E4[gFrontEndListTable[2]].unk1F,
+                  D_8009B4E4[gFrontEndListTable[3]].unk1F,
                   D_8009F3C1,
                   D_8009F3C3,
-                  D_8009B4E4[D_8009B72C[4]].unk1F,
+                  D_8009B4E4[gFrontEndListTable[4]].unk1F,
                   D_8009F3C4);
 }

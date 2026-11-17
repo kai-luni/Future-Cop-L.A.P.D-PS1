@@ -36,7 +36,7 @@ extern struct Ctx *gSaveProfileImage __asm__("D_8009F92C");
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s8 D_800A3718[];
 extern s8 gMissionListTable[] __asm__("D_8009B724");
-extern s8 D_8009B72C[];
+extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern u8 D_8009B4E4[];
 extern u16 D_8009C1C4[];
 extern u8 D_8009F484[];
@@ -291,7 +291,7 @@ void func_80080038(s32 arg0)
                 }
             }
             if (it[0x44] == 1) {
-                tbl = D_8009B72C;
+                tbl = gFrontEndListTable;
                 sel = 0;
                 if (*(s32 *)(it + 0x40) == 0x0A0A0A0A) {
                     cnt = 4;

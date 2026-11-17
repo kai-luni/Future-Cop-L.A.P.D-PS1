@@ -17,7 +17,7 @@ extern s8 *D_8009F884;
 extern u8 D_8009F888;
 extern u8 D_8009F889;
 extern struct Entry D_8009B4E4[];
-extern s8 D_8009B72C[];
+extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 
 void func_80077FFC(void);
 
@@ -50,20 +50,20 @@ void func_80077708(void)
     D_8009F889 = 1;
 
     if (D_8009F3C0 != 0) {
-        D_8009B4E4[D_8009B72C[0]].unk1F = 10;
-        D_8009B4E4[D_8009B72C[1]].unk1F = 10;
-        D_8009B4E4[D_8009B72C[2]].unk1F = 10;
-        D_8009B4E4[D_8009B72C[3]].unk1F = 10;
-        D_8009B4E4[D_8009B72C[0]].unk20 = 10;
-        D_8009B4E4[D_8009B72C[1]].unk20 = 10;
-        D_8009B4E4[D_8009B72C[2]].unk20 = 10;
-        D_8009B4E4[D_8009B72C[3]].unk20 = 10;
-        D_8009B4E4[D_8009B72C[4]].unk1F = 10;
-        D_8009B4E4[D_8009B72C[4]].unk20 = 10;
+        D_8009B4E4[gFrontEndListTable[0]].unk1F = 10;
+        D_8009B4E4[gFrontEndListTable[1]].unk1F = 10;
+        D_8009B4E4[gFrontEndListTable[2]].unk1F = 10;
+        D_8009B4E4[gFrontEndListTable[3]].unk1F = 10;
+        D_8009B4E4[gFrontEndListTable[0]].unk20 = 10;
+        D_8009B4E4[gFrontEndListTable[1]].unk20 = 10;
+        D_8009B4E4[gFrontEndListTable[2]].unk20 = 10;
+        D_8009B4E4[gFrontEndListTable[3]].unk20 = 10;
+        D_8009B4E4[gFrontEndListTable[4]].unk1F = 10;
+        D_8009B4E4[gFrontEndListTable[4]].unk20 = 10;
         func_80077FFC();
     }
 
-    D_8009F884 = D_8009B72C;
+    D_8009F884 = gFrontEndListTable;
     D_8009F882 = D_8009F3C2 + 3;
     D_8009F888 = D_8009F3C2 + 4;
 }

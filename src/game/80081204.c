@@ -73,7 +73,7 @@ typedef struct FontEntry {
 extern SaveMenu *gSaveProfileImage __asm__("D_8009F92C");
 extern GameState *D_8009FA94;
 extern Upgrade D_8009B4E4[];
-extern s8 D_8009B72C[];
+extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern s8 D_8009F8C0[];
 extern s32 D_8009F8F8[];
 extern u8 D_800A3928[];
