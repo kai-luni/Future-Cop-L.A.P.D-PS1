@@ -18,7 +18,7 @@ extern AnimNode *D_8009F564;
 extern AnimNode *gModelAnimData __asm__("D_8009F544");
 extern u32 *D_8009F548, *D_8009F550, *D_8009F568;
 extern AnimNode *D_8009F54C;
-extern u8 **D_8009F560;
+extern u8 **gRefBlockTable __asm__("D_8009F560");
 extern u32 D_800A8E80[];
 extern void func_80012E48(void *, u32, u32);
 extern void func_8001306C(void *);
@@ -69,9 +69,9 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
     p = h->p20;
     h->p28 = gModelTriangleList;
     h->p24 = gModelPolygonList;
-    p = D_8009F560[(u32)p]; h->p20 = p + 4; func_8001306C(p);
-    p = h->p1c; p = D_8009F560[(u32)p]; h->p1c = p + 4; func_8001306C(p);
-    p = h->p2c; p = D_8009F560[(u32)p]; h->p2c = p + 4; func_8001306C(p);
+    p = gRefBlockTable[(u32)p]; h->p20 = p + 4; func_8001306C(p);
+    p = h->p1c; p = gRefBlockTable[(u32)p]; h->p1c = p + 4; func_8001306C(p);
+    p = h->p2c; p = gRefBlockTable[(u32)p]; h->p2c = p + 4; func_8001306C(p);
 
     p = end = h->p28;
     end += gModelTriangleListSize;
