@@ -120,6 +120,38 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
      Umbenennung verändert dort die erzeugten Bytes. Erst die Doppeldeklaration
      auflösen, dann benennen. -->
 
+## 3D-Pipeline und Renderpuffer
+
+Diese Gruppe bildet den Kern der 3D-Ausgabe: Transformationspuffer, Clip-Flags, Lichtvektoren und die Pools, aus denen die Polygon- und Paketdaten kommen. Die Belege stammen aus den Renderern `func_80013A14`, `func_80013F08`, `func_8001B2C8` und `func_8001B4A8`.
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009FA1C` | `gLevelVertexBlock` | `void *` | 0x400-Byte-Block für Vertizes, beim Level-Setup mit Tag 2 alloziert. **Bestätigt.** | `func_80013A14` |
+| `D_8009F578` | `gPartVertexBuffer` | `void *` / `Vertex *` | 0x800-Byte-Puffer mit den transformierten Vertizes eines Bauteils; der Polygon-Emitter liest hier. **Bestätigt.** | `func_80013A14`, `func_80015B68` |
+| `D_8009F57C` | `gClipFlagBuffer` | `void *` / `u8 *` | Ein Clip-Flag-Byte je Vertex; der Wert `0xC0` bedeutet sichtbar. **Bestätigt.** | `func_80015B68` |
+| `D_8009F580` | `gDepthTagWord` | `s16` | Gemeinsames 16-Bit-Wort für Tiefe und Tag; zwei Bytes werden hineingepackt. **Bestätigt.** | `func_80013AA0`, `func_80013A14` |
+| `D_8009FAE0` | `gScriptVertexBuffer` | `char[]` | Zielpuffer der transformierten Vertizes im skriptgesteuerten Pfad. **Bestätigt.** | `func_80013F08` |
+| `D_8009A228` | `gLightVectorIn` | `unsigned char[]` | 12-Byte-Konstantvektor, den die Lichtberechnung mit der Kamera-Matrix multipliziert. **Bestätigt.** | `func_80013C80` |
+| `D_800A02E0` | `gLightVectorOut` | `unsigned char[]` | 12-Byte-Zielvektor derselben Lichtberechnung. **Bestätigt.** | `func_80013C80` |
+| `D_800A1940` | `gTexpageTable` | `u16[]` | Texpage-Wort je Zielzeile; daraus wird das Textur-Paket gebaut (`& 0x9FF | 0xE1000000`). **Bestätigt.** | `func_80048BF8`, `func_80049100` |
+| `D_800A63E0` | `gDisplayListHead` | `u8[]` | Kopf der Display-Liste, in die sich die Primitive einhängen. **Wahrscheinlich.** | `func_8001B4A8` |
+| `D_800A6418` | `gPreparedVertexTable` | `s16[][4]` | Aufbereitete Vertizes je Vorbereitungsschritt (`>> 4` verschoben, vier Halbwörter pro Eintrag). **Wahrscheinlich.** | `func_80071FA4` |
+
+### Pools und Tabellen des Renderers
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009F5E0` | `gPacketPoolBase` | `s32` | Startadresse des ersten Paketblocks, Gegenstück zu `gPrimPoolNext`. **Bestätigt.** | `func_8001B2C8` |
+| `D_8009F5E4` | `gNodePoolBase` | `s32` | Startadresse des ersten 28-Byte-Record-Blocks, Gegenstück zu `gPacketCursor`. **Bestätigt.** | `func_8001B2C8` |
+| `D_8009F5D0` | `gRenderNodeTable` | `s32` | Erster von zwei Puffern mit je 1024 Einträgen à 28 Byte (Doppelpuffer-Verfahren). **Bestätigt.** | `func_8001B2C8` |
+| `D_8009F5D4` | `gRenderNodeTableAlt` | `s32` | Zweiter Puffer desselben Paars. **Bestätigt.** | `func_8001B2C8` |
+| `D_8009F5F8` | `gNodeCapacity` | `s32` | Anzahl der 28-Byte-Einträge je Puffer, im Retail `0x400`. **Bestätigt.** | `func_8001B2C8` |
+| `D_8009F5F4` | `gFrameBlockCount` | `s32` | Anzahl der 0x34-Byte-Blöcke, die der Renderer pro Bild reserviert. **Bestätigt.** | `func_8001B2C8` |
+| `D_8009F5FC` | `gNodeTableLength` | `s32` | Länge der Bucket-Tabelle; bestimmt die Bucket-Anzahl beim Einsortieren. **Bestätigt.** | `func_8001B4A8` |
+| `D_8009F600` | `gNodeTableIndex` | `s32` | Laufender Index in diese Tabelle; wird bei der Vorbereitung genullt. **Bestätigt.** | `func_8001B4A8` |
+| `D_8009F5C0` | `gSubScreenActive` | `s32` | Flag für den Sub-Screen-Modus; steuert den 0xA0 breiten Clip beim Zeichnen. **Bestätigt.** | `func_8001B4A8` |
+| `D_8009F9D4` | `gScreenOffsetValue` | `volatile s32` | Bildschirm-Offset, im Retail 0 oder `0x100`; wird als Farbe übergeben. **Bestätigt.** | `func_8001B2C8`, `func_800259D8` |
+
 ## Tabellen, Pools und Verzeichnisse
 
 | Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
