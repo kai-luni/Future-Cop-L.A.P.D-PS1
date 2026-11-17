@@ -22,6 +22,9 @@ typedef struct Blk { u32 tag; u32 len; u32 body[1]; } Blk;
  * The texture asset unpacker of the upload path func_80063C5C: the four
  * tags are the game's container format for colour-conversion blocks,
  * palette LUTs and 4/16-bit pixel data.
+ * (Clarification: this is specifically the CCB/PLUT/PDAT/PIX4 image/texpage
+ * container unpacker for the "Cbmp" path func_80063C5C, distinct from the
+ * "Cpyr" func_8005A414 and "Ctdt" func_800824CC paths.)
  *
  * @par Unknown
  * The exact CCB layout beyond words 10/11 and whether PIX4 vs PDAT selects
@@ -29,6 +32,12 @@ typedef struct Blk { u32 tag; u32 len; u32 body[1]; } Blk;
  *
  * @par Callers
  * func_80063C5C.
+ *
+ * @par Texture load path
+ * Called by func_80063C5C ("Cbmp"); walks `CCB ` (`0x43434220`),
+ * `PLUT` (`0x504C5554`), `PDAT` (`0x50444154`), and `PIX4` (`0x50495834`) chunks,
+ * writes `ccb[10] = pdat` and `ccb[11] = plut`, and returns `ccb` so
+ * func_80063C5C can upload both via func_80092F38.
  */
 u32 *func_8001996C(u8 *data, s32 size)
 {

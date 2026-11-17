@@ -29,6 +29,9 @@ extern void func_80092C8C(s32 arg);
 extern s32 func_8005A2BC(void **array, s32 count);
 
 /**
+ * @brief Unpacks a "Cpyr" sprite/tile atlas blob, uploads its pixels to VRAM,
+ *        and builds the descriptor table.
+ *
  * Consumes a freshly loaded, packed asset blob: unpacks it into per-entry blocks,
  * uploads the pixel data into a fixed VRAM window and builds the descriptor table.
  *
@@ -64,6 +67,14 @@ extern s32 func_8005A2BC(void **array, s32 count);
  *
  * @par Callers
  * func_80024EC8, when a graphics asset of a loaded level becomes visible.
+ *
+ * @par Texture load path
+ * Called by func_80024EC8 on tag `0x43707972` ("Cpyr"). Unpacks
+ * `count` entries of `8 + p[2] * 8` bytes into D_8009F7D8 (count in D_8009F7DC),
+ * uploads 0x20 bytes (0x10 x 1) per tile anchored at VRAM (0x140, 0x1E0) in a
+ * 0x40-wide column and a trailing 0x40 x 0x1E0 region at (0x140, 0) via
+ * func_80092F38 / func_80092C8C, then calls func_8005A2BC to stamp tile
+ * coordinates and frees `arg0` via func_800181D4 (or rolls back via func_8005A220).
  */
 void func_8005A414(ArgA414 *arg0)
 {

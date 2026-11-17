@@ -43,6 +43,17 @@ extern void func_800181D4(Unk824CCObject *object);
  *
  * @par Callers
  * Confirmed: func_80024EC8 (0x800251D0, asset loader dispatch on tag 0x43746474).
+ *
+ * @par Likely
+ * Advancing `ptr` by `unk04 * (unk06 << 1)` (i.e. `2 * w * h` bytes) indicates
+ * 16 bpp pixel data.
+ *
+ * @par Texture load path
+ * Called by func_80024EC8 on tag `0x43746474` ("Ctdt"). Reads
+ * `{u16 type, u16 count, u32 magic 0x35BFBC73}` and `count` 8-byte entries
+ * followed by pixel data, uploads each `unk04` x `unk06` rectangle via
+ * func_800953F0 advancing `ptr` by `unk04 * (unk06 << 1)`, then frees `object`
+ * via func_800181D4.
  */
 void func_800824CC(Unk824CCObject *object)
 {

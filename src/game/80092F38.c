@@ -32,7 +32,13 @@ extern void func_80092CF4(void *arg0, void *arg1);
  *
  * @par Callers
  * func_8001B4A8 (deferred transfer queue), func_8003FAD4, func_80085074
- * (decoded frame output) and func_80088120.
+ * (decoded frame output) and func_80088120, as well as the texture load paths
+ * func_8005A414 ("Cpyr") and func_80063C5C ("Cbmp").
+ *
+ * @par Texture load path
+ * Primary VRAM rectangle upload primitive called by func_8005A414
+ * ("Cpyr") and func_80063C5C ("Cbmp") (each paired with func_80092C8C) to
+ * transfer unpacked pixel and CLUT rectangles into VRAM via D_8009DDE8+8.
  */
 void func_80092F38(void *rect, void *data)
 {

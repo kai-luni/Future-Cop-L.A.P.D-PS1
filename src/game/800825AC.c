@@ -39,6 +39,11 @@ extern void func_800181D4(Unk824CCObject *object);
  *
  * @par Callers
  * Confirmed: func_80024EC8 (asset loader dispatch on tag 0x4374696E / "Ctin").
+ *
+ * @par Texture load path
+ * Called by func_80024EC8 on tag `0x4374696E` ("Ctin"); only
+ * validates (type == 2, magic == `0x35BFBC73`) and registers the 2D atlas
+ * header in D_8009F45C / D_8009F460 with no VRAM pixel upload.
  */
 void func_800825AC(Unk824CCObject *object)
 {

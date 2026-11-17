@@ -18,7 +18,7 @@ extern s32 func_800195F0(u32 value);
 extern void func_8004979C(void *value);
 
 /**
- * Builds the active sprite/tile descriptor table and publishes it in D_8009F77C.
+ * @brief Builds the active sprite/tile descriptor table and publishes it in D_8009F77C.
  *
  * Allocates count * 12 + 4 bytes: a header holding count followed by count 12-byte
  * entries. Each entry keeps the tile count from byte +2, the bit length of byte +3
@@ -45,6 +45,13 @@ extern void func_8004979C(void *value);
  *
  * @par Callers
  * Confirmed: func_8005A414.
+ *
+ * @par Texture load path
+ * Called by func_8005A414 after VRAM upload; allocates 12-byte
+ * descriptor entries (+0 tile count, +1 bit length via func_800195F0, +8 payload
+ * pointer), rewrites each 8-byte tile record in place (byte +6 += 0x80,
+ * byte +7 = (col << 6) | row across 4 columns), and activates the table via
+ * func_8004979C (D_8009F77C).
  */
 s32 func_8005A2BC(void **array, s32 count)
 {

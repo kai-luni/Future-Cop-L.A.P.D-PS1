@@ -55,6 +55,12 @@ extern void gAbortCallbackId(void) __asm__("D_80095808");
  *
  * @par Callers
  * func_800824CC.
+ *
+ * @par Texture load path
+ * VRAM rectangle upload primitive used by the "Ctdt" loader
+ * func_800824CC; polls GPU status (D_8009DED4, D_8009DEC8) with timeout via
+ * func_8009520C, registers D_80095808 via func_800914E0, and transfers one
+ * `{data, width, height}` rectangle through D_8009DDE8->write.
  */
 int func_800953F0(Entry *entry, void *data)
 {

@@ -46,11 +46,23 @@ extern void func_800181D4(void *block);
  * func_800181D4 frees the resource.
  *
  * @par Likely role
- * The "show the next video/image frame" step: the resource holds a sequence of
+ * [Superseded] The "show the next video/image frame" step: the resource holds a sequence of
  * 128x252 pictures that are composited into the two page halves.
+ * (Correction from source: dispatched on "Cbmp" `0x43626D70` by func_80024EC8,
+ * it uploads a 0x80 x 0xFC texture page and a 0x100 x 1 CLUT into VRAM and
+ * registers the packed tpage/CLUT word in D_800A8E80[s0] for 3D rendering.)
  *
  * @par Callers
- * The image/video playback path (same family as func_800861E4).
+ * [Superseded] The image/video playback path (same family as func_800861E4).
+ * Confirmed: func_80024EC8 (asset loader dispatch on tag `0x43626D70` / "Cbmp").
+ *
+ * @par Texture load path
+ * Called by func_80024EC8 on tag `0x43626D70` ("Cbmp"). Unpacks
+ * the container with func_8001996C, uploads the 0x80 x 0xFC pixel rectangle
+ * (unk28) and 0x100 x 1 CLUT (unk2C + 8) via func_80092F38 / func_80092C8C,
+ * refreshes the font via func_80048DEC when `s0 == 9`, stores the packed
+ * tpage/CLUT entry in D_800A8E80[s0] (read by func_800131A0), and frees `arg0`
+ * via func_800181D4.
  */
 void func_80063C5C(Arg63C5C *arg0)
 {

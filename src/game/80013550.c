@@ -34,6 +34,12 @@ extern void func_80019D00(struct Unk13550 *resource);
  * Replaces the resource data pointer.
  * @par Callers
  * Confirmed: func_80024EC8 (asset loader).
+ * @par Texture load path
+ * Called by func_80024EC8 on tag `0x436F626A` ("Cobj"). No pixel
+ * data is uploaded to VRAM here: func_800131A0 / func_80012E48 only extract
+ * geometry and animation chunk pointers (and translate polygon records via
+ * D_800A8E80); model/ribbon texture entries come from the static table
+ * D_8009B234 read by func_80074104.
  */
 void func_80013550(struct Unk13550 *resource)
 {

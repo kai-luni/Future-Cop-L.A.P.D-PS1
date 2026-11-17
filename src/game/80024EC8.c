@@ -64,6 +64,16 @@ extern void func_800899A4(struct Node24EC8 *node);
  *
  * @par Callers
  * func_80027EBC (the frame step of a scene) and func_800295E8.
+ *
+ * @par Texture load path
+ * Request nodes are popped from the streaming queue D_800A0B70 by func_800295E8
+ * and appended to D_8009F668/D_8009F66C here. Runs once per frame from
+ * func_80027EBC while D_8009FA00 != 4,
+ * dispatching pixel-bearing request nodes by ASCII tag to their loaders before
+ * freeing each node with func_800181D4: `0x43707972` ("Cpyr") -> func_8005A414,
+ * `0x43746474` ("Ctdt") -> func_800824CC, `0x4374696E` ("Ctin") -> func_800825AC,
+ * `0x43626D70` ("Cbmp") -> func_80063C5C, `0x436D6963` ("Cmic") -> func_80082358,
+ * and `0x436F626A` ("Cobj") -> func_80013550 (geometry/animation, no pixel upload).
  */
 void func_80024EC8(void)
 {

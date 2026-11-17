@@ -38,6 +38,11 @@ extern void func_800181D4(struct Node *node);
  *  Chunk sizes and bounds are not validated beyond the payload-size checks.
  *  @par Callers
  *  Confirmed: func_80024EC8.
+ *  @par Texture load path
+ *  Called by func_80024EC8 on tag `0x436D6963` ("Cmic") when
+ *  D_8009F464 != 0; copies up to three 0x80-byte `PIX4` (`0x50495834`) chunks
+ *  and one 0x20-byte `PL16` (`0x504C3136`) chunk into main-RAM buffer D_8009F92C
+ *  (no VRAM upload here), then frees `node` via func_800181D4.
  */
 void func_80082358(struct Node *node)
 {
