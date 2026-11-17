@@ -1,7 +1,7 @@
 // Categories: Game Engine > Init | Gameplay > Placement
 #include "game/types.h"
 
-extern s32 D_8009F7B8;
+extern s32 gPlacementSlotCount __asm__("D_8009F7B8");
 
 /**
  * @brief Resets the placement-header slot count D_8009F7B8 to zero during mission boot.
@@ -27,5 +27,5 @@ extern s32 D_8009F7B8;
  */
 void func_8005130C(void)
 {
-    D_8009F7B8 = 0;
+    gPlacementSlotCount = 0;
 }

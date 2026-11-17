@@ -33,7 +33,7 @@ struct Vec3s32 {
     s32 z;
 };
 
-extern s32 D_8009F7B8;
+extern s32 gPlacementSlotCount __asm__("D_8009F7B8");
 extern struct Header511E4 *D_800A2210[];
 
 extern s32 func_80019AA8(struct Resource *resource);
@@ -92,9 +92,9 @@ void func_800511E4(struct Resource *resource)
 
         data = resource->data;
         header = (struct Header511E4 *)(data + 0xC);
-        D_800A2210[D_8009F7B8] = header;
+        D_800A2210[gPlacementSlotCount] = header;
         count = header->count;
-        D_8009F7B8++;
+        gPlacementSlotCount++;
 
         if (count > 0) {
             entry = (struct Entry511E4 *)(data + 0x14);

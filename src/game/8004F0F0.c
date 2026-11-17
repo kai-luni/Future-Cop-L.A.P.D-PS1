@@ -8,7 +8,7 @@ struct Unk4F0F0Entry {
 };
 
 extern struct Unk4F0F0Entry *D_800A2210[];
-extern s32 D_8009F7B8;
+extern s32 gPlacementSlotCount __asm__("D_8009F7B8");
 
 /**
  *  @brief Sets or clears bit 1 of a table entry's flags.
@@ -35,7 +35,7 @@ void func_8004F0F0(s32 index, u32 mode, s32 entry)
     u8 value;
     struct Unk4F0F0Entry *table;
 
-    if (mode < 0x100 && index >= 0 && index < D_8009F7B8) {
+    if (mode < 0x100 && index >= 0 && index < gPlacementSlotCount) {
         table = D_800A2210[index];
         if (mode == 0) {
             goto clear;
