@@ -10,7 +10,7 @@ struct Unk69B1C {
 };
 
 extern struct Unk69B1C *D_8009FA94;
-extern u8 D_8009FAA4[];
+extern u8 gDiscShadeByte[] __asm__("D_8009FAA4");
 extern u8 D_8009FAB4[];
 extern u8 D_8009FA70[];
 extern u8 D_8009FACC[];
@@ -40,7 +40,7 @@ void func_80069B1C(void)
     struct Unk69B1C *object;
 
     object = D_8009FA94;
-    object->unkE4 = D_8009FAA4;
+    object->unkE4 = gDiscShadeByte;
     object->unkE8 = D_8009FAB4;
     object->unkEC = D_8009FA70;
     object->unkF0 = D_8009FACC;

@@ -11,7 +11,7 @@ extern Node **D_8009F780;
 extern void *D_8009F784;
 extern int D_8009F78C;
 extern int D_8009F790;
-extern int D_8009FAA4;
+extern int gDiscShadeByte __asm__("D_8009FAA4");
 extern void func_800195D0(void *, Node *);
 
 /**
@@ -47,7 +47,7 @@ void func_800497A8(void)
         for (i = D_8009F78C * D_8009F790 - 1; i >= 0; i--) {
             node = D_8009F780[i];
             while (node != 0 && node->unk4 >= 0 && !(node->unk8 & 0x40)) {
-                if (node->unk4 <= D_8009FAA4) {
+                if (node->unk4 <= gDiscShadeByte) {
                     head = D_8009F780[i];
                     prev = head;
                     if (node == head) {

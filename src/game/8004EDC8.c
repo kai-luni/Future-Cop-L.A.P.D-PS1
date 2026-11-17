@@ -11,7 +11,7 @@ extern struct Packet *gPacketLimit __asm__("D_8009F9C0");
 extern s32 D_800A8F90[];
 extern s32 D_8009F7B0;
 extern struct Node *D_800A8F98[];
-extern u32 D_8009FAA4;
+extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void *D_800A6F60[];
 extern void func_8005A9C4(struct Obj *);
 extern void func_8005B088(s32 *, void *, s32, s32);
@@ -57,7 +57,7 @@ void func_8004EDC8(struct Obj *obj)
     packet->cmd = 0xe100069e;
     packet->tag &= 0xff000000;
     ((u8 *)packet)[3] = 1;
-    enabled = D_8009FAA4 & 0x80;
+    enabled = gDiscShadeByte & 0x80;
     count = D_800A8F90[0];
     while (count > 0) {
         n = *p++;

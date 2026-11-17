@@ -15,7 +15,7 @@ typedef struct {
 
 extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
-extern u8 D_8009FAA4;
+extern u8 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
 
@@ -66,7 +66,7 @@ void func_80047BE8(s32 x, s32 y_in, s32 z, s32 p3, s32 p4, s32 p5, s32 flag)
     t1 = p5 / 4;
 
     if (flag != 0) {
-        s32 v = D_8009FAA4;
+        s32 v = gDiscShadeByte;
         if (v >= 0x80) {
             p3 /= 2;
             p4 /= 2;

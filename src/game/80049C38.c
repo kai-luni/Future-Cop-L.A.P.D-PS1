@@ -50,7 +50,7 @@ struct Unk49C38 {
 extern struct Unk49C38List *D_8009F778;
 extern s32 D_8009F780;
 extern struct LinkState *D_8009F784;
-extern s32 D_8009FAA4[];
+extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
 
 extern struct LinkNode *func_800195A4(struct LinkState *state);
 extern s32 func_80019668(void);
@@ -139,7 +139,7 @@ s32 func_80049C38(struct Unk49C38 *object, s32 arg1)
     }
     node->unk00 = index;
     if (index < 0) {
-        node->unk0C = D_8009FAA4[0];
+        node->unk0C = gDiscShadeByte[0];
         node->unk10 = object->unk28;
     }
     node->unk09 = object->unk23;
@@ -147,7 +147,7 @@ s32 func_80049C38(struct Unk49C38 *object, s32 arg1)
     node->unk0B = object->unk25;
     node->unk08 = object->unk14;
     if (arg1 >= 0) {
-        arg1 += D_8009FAA4[0];
+        arg1 += gDiscShadeByte[0];
     }
     node->unk04 = arg1;
     var_s4 = 0;

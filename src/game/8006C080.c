@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 D_8009FA8C[];
-extern volatile s32 D_8009FAA4;
+extern volatile s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 gSinglePlayerEntity[] __asm__("D_8009F9EC");
 
 struct Unk6C080 {
@@ -61,7 +61,7 @@ void func_8006C080(struct Arg6C080 *arg0)
         flag = 0;
         if (*(u8 *)((u32)d->fieldC1 + (u32)base) == 0 && d->field8A[i] > 0) {
             flag = 1;
-            func_800491F8(d->field8A[i], x, 0xCE, (D_8009FAA4 & 0x40) ? 0x9 : 0xC);
+            func_800491F8(d->field8A[i], x, 0xCE, (gDiscShadeByte & 0x40) ? 0x9 : 0xC);
         }
         func_8006BF44(i, (*(u8 *)((u32)d->fieldC1 + (u32)base) != 0 || flag != 0) ? 1 : 0, y, 0xE0);
         func_800491F8((*(u8 *)((u32)d->fieldC1 + (u32)base) != 0) ? d->field8A[i] : d->field84[i], x, 0xD8, 8);

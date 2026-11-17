@@ -21,7 +21,7 @@ struct Entity {
 extern struct Entity *D_8009FA58;
 extern struct Entity *D_8009FA5C;
 extern struct Entity *D_8009F9A0;
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 D_8009F7A4;
 extern struct Entity *D_8009FA40;
 extern s32 D_800A8F90;
@@ -90,9 +90,9 @@ void func_8004E248(void)
     flag = 0;
     limit = 0x38000;
 outer_head:
-    if (D_8009F7A4 <= D_8009FAA4) {
+    if (D_8009F7A4 <= gDiscShadeByte) {
         flag = 1;
-        D_8009F7A4 = D_8009FAA4 + 0x12C;
+        D_8009F7A4 = gDiscShadeByte + 0x12C;
     }
     out = D_800A8F98;
     count = 0;

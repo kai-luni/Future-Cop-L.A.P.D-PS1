@@ -49,7 +49,7 @@ extern s32 D_8009FA84;
 extern u8 D_8009F680;
 extern s32 D_8009FA38;
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern u32 D_8009FAA4;
+extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 D_8009FA30;
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern u8 *D_8009F2D0;
@@ -209,7 +209,7 @@ void func_80027510(void)
         if (D_8009F680 != 0) {
             gPaletteCycleCounter = D_8009FA38;
             clock_value = *(volatile s32 *)&gPaletteCycleCounter;
-            D_8009FAA4 = clock_value;
+            gDiscShadeByte = clock_value;
             D_8009FA30 = clock_value;
             func_80047690(1);
         }
@@ -245,7 +245,7 @@ void func_80027510(void)
         zero_arg = 0;
         __asm__ volatile("" : "=r"(zero_arg) : "0"(zero_arg));
         func_80026F68(zero_arg, zero_arg);
-        if (D_8009FA84 > 0 && (D_8009FAA4 & 0x100)) {
+        if (D_8009FA84 > 0 && (gDiscShadeByte & 0x100)) {
             banner = (u8 *)0x800A0000;
             __asm__ volatile("" : "=r"(banner) : "0"(banner));
             func_80049100(banner - 0xD0C, 0x41, 0x14, 1);
@@ -282,7 +282,7 @@ void func_80027510(void)
             }
         }
         func_80026F68(1, 0);
-        if (D_8009FA84 > 0 && (D_8009FAA4 & 0x100)) {
+        if (D_8009FA84 > 0 && (gDiscShadeByte & 0x100)) {
             banner = (u8 *)0x800A0000;
             __asm__ volatile("" : "=r"(banner) : "0"(banner));
             func_80049100(banner - 0xD0C, 0x41, 0x14, 1);

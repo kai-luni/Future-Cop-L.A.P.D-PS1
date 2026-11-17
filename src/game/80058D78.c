@@ -8,7 +8,7 @@ struct Obj { u8 p0[4]; void (*update)(); u32 flags8; u8 pc[8]; u16 tag; u8 p16[6
 struct Mode { u8 p[0x5c]; int active; };
 struct Stats { u8 p[0x18]; u16 a; u8 p1a[0x22]; u16 b; };
 extern struct Mode *D_8009FA94;
-extern void *D_8009FAA4;
+extern void *gDiscShadeByte __asm__("D_8009FAA4");
 extern int gScreenState __asm__("D_8009FA00");
 extern int gPlayerCount __asm__("D_8009FA0C");
 extern Obj *D_8009FA58[];
@@ -109,7 +109,7 @@ void func_80058D78(Obj *o)
             o->angle = angle;
             if (o->active && !(o->flags24 & 0x40000)) func_8003BA50(o, 0);
             if (o->child->active && !(o->child->flags24 & 0x40000)) func_8003BA50(o->child, 0);
-            if (!o->data->ptr20) o->data->ptr20 = D_8009FAA4;
+            if (!o->data->ptr20) o->data->ptr20 = gDiscShadeByte;
             o->data->count16++;
             if (o->id) {
                 found = func_8004D664(o->id & 0x3fffffff);

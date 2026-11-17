@@ -29,7 +29,7 @@ struct Entity {
 
 extern struct Entity *D_8009FA40;
 extern s32 D_8009F7A4;
-extern s32 D_8009FAA4[];
+extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
 extern struct Pos *D_8009FA58[];
 extern struct Pos *D_8009F9A0[];
 extern struct Entity *D_800A8F98[];
@@ -99,11 +99,11 @@ void func_8004DF28(void)
     threshold = 0x38000;
 
     for (;;) {
-        if (D_8009F7A4 > D_8009FAA4[0]) {
+        if (D_8009F7A4 > gDiscShadeByte[0]) {
             goto skip;
         }
         flag = 1;
-        D_8009F7A4 = D_8009FAA4[0] + 0x12C;
+        D_8009F7A4 = gDiscShadeByte[0] + 0x12C;
     skip:
         outHigh = (char *)0x800B0000;
         __asm__("" : "=r"(outHigh) : "0"(outHigh));

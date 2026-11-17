@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 typedef struct { s16 x, y, z; } Vec;
-extern u8 D_8009FAA4;
+extern u8 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 D_800A6F60[];
 extern void func_8001484C(Vec *, s32, s32, s32, s32, s32, s32);
 
@@ -47,7 +47,7 @@ void func_80066684(u8 *obj, s32 *pos, s32 width, s32 height)
     p = obj;
     __asm__("" : "+r"(p));
     v.z = 0x1000;
-    scale = D_8009FAA4 * 2;
+    scale = gDiscShadeByte * 2;
     offset = scale * 103;
     width += offset;
     height += offset;

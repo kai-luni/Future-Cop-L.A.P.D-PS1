@@ -18,7 +18,7 @@ typedef struct Node {
 } Node;
 
 extern s32 *gCamera __asm__("D_8009F9E4");
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 typedef struct Pkt { u8 b[0x34]; } Pkt;
 extern Pkt *gPrimPoolNext __asm__("D_8009F9F0");
 extern Pkt *gPrimPoolEnd __asm__("D_8009FA28");
@@ -182,7 +182,7 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
         }
         if (node->idx < 0) {
             s3 = D_8009F77C + ((-node->idx) * 12 - 8);
-            s4 = *(u8 **)(s3 + 8) + (((D_8009FAA4 - node->c) / node->d) % s3[0]) * 8;
+            s4 = *(u8 **)(s3 + 8) + (((gDiscShadeByte - node->c) / node->d) % s3[0]) * 8;
         }
         *(s32 *)&rot[1] = *(s32 *)&node->v[1];
         func_80049F4C(rot);
@@ -271,7 +271,7 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
         }
         if (node->idx < 0) {
             s3 = D_8009F77C + ((-node->idx) * 12 - 8);
-            s4 = *(u8 **)(s3 + 8) + (((D_8009FAA4 - node->c) / node->d) % s3[0]) * 8;
+            s4 = *(u8 **)(s3 + 8) + (((gDiscShadeByte - node->c) / node->d) % s3[0]) * 8;
         }
         s0 = (u8 *)(gPrimPoolNext >= gPrimPoolEnd ? gPrimPoolNext : gPrimPoolNext++);
         s6 = ((rot[0].z + rot[1].z + rot[2].z + rot[3].z) >> 2) - 0x100;

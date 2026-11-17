@@ -44,7 +44,7 @@ extern struct Game28164 *D_8009FA5C[4];
 extern s32 gSinglePlayerEntity __asm__("D_8009F9EC");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern u32 D_8009FAA4;
+extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 extern u8 D_8009F300[];
 extern u8 D_8009ABF0[];
 extern u8 D_8009AC08[];
@@ -150,7 +150,7 @@ void func_80028164(void)
         text = D_8009F2C0->unk08;
         length = func_80049340(text);
         func_80049100(text, (0x258 - length) / 4 + 0xA, 0x14,
-                       (D_8009FAA4 & 0x20) ? 8 : 2);
+                       (gDiscShadeByte & 0x20) ? 8 : 2);
     }
 
     func_80027F80(0, D_8009ABF0, 0xA0, 9);

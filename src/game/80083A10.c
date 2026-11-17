@@ -60,7 +60,7 @@ struct Bucket3A { struct Node3A10 *head; s32 arena; };
 extern void *D_8009F934;
 extern struct Bucket3A *D_8009F938;
 extern s32 D_8009F93C;
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void *func_800195A4(void *state);
 extern void func_80083834(s32 arg0, s32 arg1);
 extern void func_80013BD8(struct Node3A10 *node, struct Model3A10 *model, s32 options);
@@ -217,7 +217,7 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
 
     node = (struct Node3A10 *)func_800195A4(D_8009F934);
     if (node == 0) {
-        func_80083834(D_8009FAA4 - 0x5DC, 1);
+        func_80083834(gDiscShadeByte - 0x5DC, 1);
         node = (struct Node3A10 *)func_800195A4(D_8009F934);
         if (node == 0) {
             return 0;
@@ -246,7 +246,7 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
         node->unk4D = 0;
     }
     if (z2 >= 0) {
-        z2 = z2 + D_8009FAA4;
+        z2 = z2 + gDiscShadeByte;
         node->unk50.word = z2;
     } else {
         node->flags4C |= 0x80;
@@ -420,7 +420,7 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
         head->next = node;
         node->next = 0;
     }
-    D_8009F938[idx].arena = D_8009FAA4;
+    D_8009F938[idx].arena = gDiscShadeByte;
     if (node->unk57 != 0) {
         register s32 frame __asm__("$4");
         func_80010750(&node->mat[0][0]);

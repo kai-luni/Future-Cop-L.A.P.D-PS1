@@ -7,7 +7,7 @@ struct Vec4 { s32 x, y, z, pad; };
 struct Flags { u8 pad[0x18]; u8 flags; };
 struct Object { struct Flags *flags; u8 pad[0x14]; struct Mat mat; struct Vec pos; s16 scale; };
 struct State { struct Vec dir; s16 a[2]; s16 b[2]; s32 time; s8 index; u8 flags; };
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 func_80019668(void);
 extern void func_80010820(void *);
 extern void func_8001006C(struct Vec *, struct Vec *, s32);
@@ -48,10 +48,10 @@ void func_8005D060(struct Object *obj, struct State *st)
     void *node;
     s16 t;
     s32 interval;
-    if (D_8009FAA4 > st->time) {
+    if (gDiscShadeByte > st->time) {
         other = st->index ^ 1;
         interval = (func_80019668() & 0x7f) + 0x3f;
-        st->time = D_8009FAA4 + interval;
+        st->time = gDiscShadeByte + interval;
         v.x = ((st->dir.x >> 4) * obj->scale) >> 8;
         v.y = ((st->dir.y >> 4) * obj->scale) >> 8;
         v.z = ((st->dir.z >> 4) * obj->scale) >> 8;

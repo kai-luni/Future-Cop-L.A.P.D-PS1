@@ -29,7 +29,7 @@ struct Obj {
 
 extern s32 *D_8009FA94;
 extern struct Hit *D_8009FA58;
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern void func_80044B34(void *, void *, s32, s32);
 extern void func_800175F8(void *, s32);
@@ -240,7 +240,7 @@ L5E4:
                 o->f1C = -1;
                 func_8003B898(o->f20, o, 0, (o->f19 >> 3) & 0x1E, 2);
                 if (o->f134->f48 == 0)
-                    o->f134->f48 = D_8009FAA4;
+                    o->f134->f48 = gDiscShadeByte;
                 o->f134->f3E++;
                 if (o->f8C != 0) {
                     struct Hit *h;

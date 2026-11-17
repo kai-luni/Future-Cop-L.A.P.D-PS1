@@ -32,7 +32,7 @@ struct Entity {
     s32 unkE0;
 };
 
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void func_8004D958(struct Entity *entity);
 extern s32 func_80069D68(s32 script, s32 arg1, s32 arg2, struct Entity *entity);
 
@@ -73,7 +73,7 @@ s32 func_80031120(struct Entity *arg0, struct Entity *arg1)
     u8 flags;
 
     flags = arg0->flagsA0;
-    arg0->unkA4 = D_8009FAA4;
+    arg0->unkA4 = gDiscShadeByte;
 
     if (flags & 8) {
         oldC8 = arg1->unkC8;

@@ -21,7 +21,7 @@ struct AnimNode {
 
 extern struct AnimNode *D_8009F564;
 extern struct AnimNode *D_8009F568;
-extern u32 D_8009FAA4;
+extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern void func_800135C0(struct AnimNode *node, u32 arg1);
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
@@ -64,7 +64,7 @@ void func_800136C8(s32 a0)
     s32 off;
 
     dt = a0;
-    func_800135C0(D_8009F568, D_8009FAA4);
+    func_800135C0(D_8009F568, gDiscShadeByte);
 
     for (node = D_8009F564; node != 0; node = node->next) {
         e = node->entries;

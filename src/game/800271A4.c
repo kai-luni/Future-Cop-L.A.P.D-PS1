@@ -47,7 +47,7 @@ extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_8009F680;
 extern s32 D_8009FA38;
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern u32 D_8009FAA4;
+extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 D_8009FA30;
 extern s32 D_8009FA24;
 extern s32 gFrameId __asm__("D_8009F9FC");
@@ -153,7 +153,7 @@ void func_800271A4(void)
         if (D_8009F680 != 0) {
             gPaletteCycleCounter = D_8009FA38;
             clock_value = *(volatile s32 *)&gPaletteCycleCounter;
-            D_8009FAA4 = clock_value;
+            gDiscShadeByte = clock_value;
             D_8009FA30 = clock_value;
             func_80047690(1);
         }
@@ -183,7 +183,7 @@ void func_800271A4(void)
         }
     }
 
-    if (D_8009FA84 > 0 && (D_8009FAA4 & 0x100)) {
+    if (D_8009FA84 > 0 && (gDiscShadeByte & 0x100)) {
         func_80049100(D_8009F2F4, 0x91, 0x14, 1);
     }
 

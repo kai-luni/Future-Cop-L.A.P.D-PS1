@@ -40,7 +40,7 @@ struct Unk5A9C4FA94 {
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk5A9C4FA94 *D_8009FA94;
 extern struct Unk5A9C4Other *D_8009FA58[];
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 D_800A6F60[32];
 
 extern void func_8005A740(s32 origin, s32 id, s32 colour);
@@ -103,7 +103,7 @@ void func_8005A9C4(struct Unk5A9C4 *object)
         }
     }
 
-    if (D_8009FAA4 & 0x180) {
+    if (gDiscShadeByte & 0x180) {
         node = object->unkAC->unk300;
         if (node != 0) {
             mask = node->unkA4;

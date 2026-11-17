@@ -3,7 +3,7 @@
 
 extern u8 D_800A2630[];
 extern u8 D_800A2730[];
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern s32 func_80018534(u32);
 
@@ -63,7 +63,7 @@ void func_800654F8(u32 input)
         mode = (arg >> 24) & 15;
         shift = ((arg >> 20) & 15) + 8;
         p_tmp = arg >> 8;
-        base = D_8009FAA4 * (arg & 255);
+        base = gDiscShadeByte * (arg & 255);
         phase = p_tmp & 255;
         mask = (0x1000 << n) - 1;
 

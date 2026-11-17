@@ -18,7 +18,7 @@ typedef struct MaskEntry {
 extern Node **D_8009F780;
 extern s32 D_8009F78C;
 extern s32 D_8009F794;
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern void func_800497A8(void);
 extern void func_8004A048(Node *node, s32 arg1, s32 arg2);
@@ -62,9 +62,9 @@ void func_8004A924(s32 arg0, s32 arg1, MaskEntry *arg2)
         return;
     }
 
-    if (D_8009F794 + 0x4B0 < D_8009FAA4) {
+    if (D_8009F794 + 0x4B0 < gDiscShadeByte) {
         func_800497A8();
-        D_8009F794 = D_8009FAA4;
+        D_8009F794 = gDiscShadeByte;
     }
 
     entry = arg2;
@@ -80,7 +80,7 @@ void func_8004A924(s32 arg0, s32 arg1, MaskEntry *arg2)
                 continue;
             }
             do {
-                if (node->unk4 < 0 || node->unk4 > D_8009FAA4) {
+                if (node->unk4 < 0 || node->unk4 > gDiscShadeByte) {
                     if (mask & node->unk12) {
                         func_8004A048(node, arg0 + i, arg1 + j);
                     }

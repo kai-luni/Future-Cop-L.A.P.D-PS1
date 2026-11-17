@@ -13,7 +13,7 @@ extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA30;
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
@@ -80,7 +80,7 @@ s32 func_800259D8(void)
     register s32 mode __asm__("$16");
 
     D_8009FA30 = 0;
-    D_8009FAA4 = 0;
+    gDiscShadeByte = 0;
     gFrameId = 5;
 
     func_8001BFD8(0);
@@ -161,7 +161,7 @@ s32 func_800259D8(void)
         one = 1;
     }
 
-    D_8009FAA4 = 0;
+    gDiscShadeByte = 0;
     D_8009FA30 = 0;
     D_8009FA94->unk10 = one;
     return one;

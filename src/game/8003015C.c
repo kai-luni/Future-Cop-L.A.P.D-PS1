@@ -31,7 +31,7 @@ struct Arg3015C {
     u8 unk16;
 };
 
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern void func_8002FA20(struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3);
 extern void func_80030060(struct Obj3015C *obj, struct Arg3015C *arg);
@@ -92,7 +92,7 @@ s32 func_8003015C(s32 cmd, struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3)
             func_80010750((u8 *)obj + 0x2C);
             func_80010234(obj->unk28->unk34 + ((obj->unk70 << 4) + 8),
                           (u8 *)obj + 0x5C, 1);
-            if ((obj->unkC8 & 0xF0) && (D_8009FAA4 & 0x80)) {
+            if ((obj->unkC8 & 0xF0) && (gDiscShadeByte & 0x80)) {
                 obj->unk24 |= 0x2000000;
             }
         }

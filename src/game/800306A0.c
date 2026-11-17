@@ -84,7 +84,7 @@ struct Actor306A0 {
     s16 unk12C;
 };
 
-extern u32 D_8009FAA4;
+extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void *jtbl_800111DC[];
 
 extern void func_8002FC90(void *, u32, s16, s32, s32);

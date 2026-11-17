@@ -97,7 +97,7 @@ struct Unk588D4Locals {
 
 extern s32 gScreenState __asm__("D_8009FA00");
 extern struct Unk588D4Global *D_8009FA94;
-extern u32 D_8009FAA4;
+extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern void func_8005A190(struct Unk5A190 *object, s32 index, s32 value);
 extern void func_800585B8(struct Unk588D4 *object);
@@ -231,7 +231,7 @@ s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
     if (D_8009FA94->unk5C == 1) {
         *(s32 *)((u32)data + (data->unkAD << 2) + 0x28) += arg1;
         if (object->unkAC->unk24 == 0 && *(s32 *)((c1 << 2) + (u32)D_8009FA94 + 0x84) > 0) {
-            object->unkAC->unk24 = D_8009FAA4;
+            object->unkAC->unk24 = gDiscShadeByte;
         }
     }
 

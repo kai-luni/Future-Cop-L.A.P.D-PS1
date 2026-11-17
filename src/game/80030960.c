@@ -15,7 +15,7 @@ typedef struct Object {
 } Object;
 
 extern void *jtbl_800111DC[];
-extern u32 D_8009FAA4;
+extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void func_800302E8(Object *, void *, s32);
 extern u8 func_8002F8B8(u8, s16, void *, u8);
 extern void func_80030498(Object *, void *);
@@ -86,7 +86,7 @@ case3:
     if (self->unkBD != 2 && self->unkBD != 5) goto fallback;
     if (self->flags & 0x20) return 0;
     func_8002AD58(message, self, other);
-    if ((self->unkB4 & 0xF0) && (D_8009FAA4 & 0x80)) {
+    if ((self->unkB4 & 0xF0) && (gDiscShadeByte & 0x80)) {
         flags = 0x2000000;
     } else {
         flags = 0;

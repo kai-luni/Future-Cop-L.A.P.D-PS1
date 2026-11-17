@@ -5,7 +5,7 @@ struct Frame { u8 pad[0x16]; u8 length; u8 pad17[3]; u16 stride; };
 struct State { u8 pad[8]; struct Frame *frames[2]; u8 pad10[2]; u8 count; u8 current; };
 extern struct State D_800A0C30;
 extern s32 D_800A0C44[];
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern u8 D_8009F6B8;
 extern s32 D_8009F6BC;
 extern s32 D_8009F6C8;
@@ -51,14 +51,14 @@ s32 func_80029748(s32 *out)
         D_8009F6B8 |= 0x30;
         func_80024064(D_8009F6BC, D_800A0C44[0], 0);
         func_80023F08();
-        if (D_8009F6B8 & 2) D_8009F6C8 = D_8009FAA4 - 30;
+        if (D_8009F6B8 & 2) D_8009F6C8 = gDiscShadeByte - 30;
         else D_8009F6B8 &= 0xDF;
     }
     if (!(D_8009F6B8 & 2)) goto return0;
     base = 0x800A0000;
     __asm__("" : "=r"(base) : "0"(base));
     state = (struct State *)(base + 0xC30);
-    quotient = (D_8009FAA4 - D_8009F6C8) / 30;
+    quotient = (gDiscShadeByte - D_8009F6C8) / 30;
     index = quotient - 1;
     if (index >= state->count) {
         D_8009F6B8 &= 0xDF;

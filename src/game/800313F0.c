@@ -45,7 +45,7 @@ extern s32 func_80031238(struct Entity *self, void *data);
 extern s32 func_80031120(struct Entity *self, void *data, s32 arg);
 extern s32 func_8002AD58(s32 message, struct Entity *self, void *data);
 extern void func_80031004(struct Entity *self);
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void *jtbl_8001123C[];
 
 /**

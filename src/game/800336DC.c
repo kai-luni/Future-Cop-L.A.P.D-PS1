@@ -84,7 +84,7 @@ struct Glob {
 extern struct Unit *D_8009FA40;
 extern struct Glob *D_8009FA94;
 extern struct Unit *gSinglePlayerEntity __asm__("D_8009F9EC");
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void *D_8009FA58;
 extern u8 D_8009AC50[];
 extern u8 D_8009AC54[];
@@ -745,7 +745,7 @@ L4170:
             s32 idx = (self->ai->c1C == 1 ? D_8009AC54 : D_8009AC50)[i];
             if (G->a0[idx] == 0) {
                 if (G->f68 >= 0x1E) {
-                    if (G->f88 == 0) gSinglePlayerEntity->ai->s4C = D_8009FAA4;
+                    if (G->f88 == 0) gSinglePlayerEntity->ai->s4C = gDiscShadeByte;
                     G->a0[idx] = self->team;
                     G->f68 -= 0x1E;
                     if (G->f68 < 0x1E) break;

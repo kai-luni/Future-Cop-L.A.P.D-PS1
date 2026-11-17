@@ -4,7 +4,7 @@
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gSceneFrameCounter __asm__("D_8009FA50");
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 D_8009FA30;
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
@@ -94,7 +94,7 @@ void func_80028618(void)
     b = *(u8 *)&gFrameId;
     gSceneFrameCounter = 0;
     D_8009F693 = 0;
-    D_8009FAA4 = saved;
+    gDiscShadeByte = saved;
     D_8009FA30 = saved - 8;
     D_8009F690 = b;
     D_8009F691 = b;

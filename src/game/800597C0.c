@@ -66,7 +66,7 @@ struct Global597C0 {
     s32 unk5C;
 };
 
-extern u8 D_8009FAA4[];
+extern u8 gDiscShadeByte[] __asm__("D_8009FAA4");
 extern u8 D_8009AF3C[];
 u8 D_8009F36D;
 extern u8 D_8009F36E;
@@ -218,7 +218,7 @@ void func_800597C0(struct Object597C0 *object)
         if (condition > 0) {
             register s32 value __asm__("$2");
             __asm__ volatile("" : : : "memory");
-            value = *(volatile u8 *)D_8009FAA4;
+            value = *(volatile u8 *)gDiscShadeByte;
             __asm__ volatile("" : "+r"(value));
             high = value >> 2;
         } else {

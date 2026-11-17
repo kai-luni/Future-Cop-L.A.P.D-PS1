@@ -39,7 +39,7 @@ struct Slot {
 
 extern struct Slot *D_8009F938;
 extern s32 D_8009F93C;
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern s32 func_800196C4(void);
 extern void func_800175F8(struct Obj *o, s32 frame);
@@ -142,13 +142,13 @@ void func_80084398(s32 x, s32 y, u32 *p)
             }
             do {
                 if (!(o->flags & 0x10)) {
-                    t = D_8009FAA4;
+                    t = gDiscShadeByte;
                     D_8009F938[idx].unk04 = t;
                     if (mask & o->unk4E) {
                         if (!(o->flags & 8) && o->unk4D != 0) {
                             if (o->flags & 0x20) {
                                 s = o->unk48;
-                                w = o->unk4D - (*(u8 *)&D_8009FAA4 & 7);
+                                w = o->unk4D - (*(u8 *)&gDiscShadeByte & 7);
                                 o->unk4D = w;
                                 if ((u8)(w - 1) < 0xF0) {
                                 } else {
@@ -178,9 +178,9 @@ void func_80084398(s32 x, s32 y, u32 *p)
                         d = o->unk56;
                         if (d != 0) {
                             if (d >= 0) {
-                                e = ((D_8009FAA4 & 0xFFF) * d) & 0xFFF;
+                                e = ((gDiscShadeByte & 0xFFF) * d) & 0xFFF;
                             } else {
-                                e = ~((D_8009FAA4 & 0xFFF) * -d) & 0xFFF;
+                                e = ~((gDiscShadeByte & 0xFFF) * -d) & 0xFFF;
                             }
                             if (o->flags & 0x80) {
                                 m = o->unk52;

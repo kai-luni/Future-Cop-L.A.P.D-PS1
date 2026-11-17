@@ -87,7 +87,7 @@ struct CandList {
     struct Cand *items[1];
 };
 
-extern s32 D_8009FAA4[];
+extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
 extern struct CandList D_800A8F90;
 
 extern void func_80017668(u8 *instance, s32 part, s32 *out);
@@ -284,7 +284,7 @@ u8 func_8005D8F4(struct Fx *self_, s32 a1)
                 } else {
                     cand->stats->unk84[self->unk54] = tmp;
                 }
-                self->unk14 = D_8009FAA4[0] + self->unk10;
+                self->unk14 = gDiscShadeByte[0] + self->unk10;
             }
         }
     } else {

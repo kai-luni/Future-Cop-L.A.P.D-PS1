@@ -4,7 +4,7 @@
 extern s32 D_8009F9C4;
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u8 gFrameBarrier __asm__("D_8009FA3C");
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern u8 D_8009FAA8;
 
 extern u8 func_80024E3C(s32 arg0);
@@ -64,7 +64,7 @@ s32 func_800287F4(s32 arg0, u8 arg1)
 {
     gPlayerCount = 0;
     D_8009F9C4 = arg1;
-    D_8009FAA4 = 0;
+    gDiscShadeByte = 0;
     D_8009FAA8 = 0;
 
     if (func_80024E3C(arg0) == 0) {

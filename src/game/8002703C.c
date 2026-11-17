@@ -12,7 +12,7 @@ extern volatile s32 D_8009FA30;
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA84;
-extern s32 D_8009FAA4;
+extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern u8 D_8009F690;
 extern u8 D_8009F691;
 extern u8 D_8009F692;
@@ -60,7 +60,7 @@ void func_8002703C(void)
         s32 cur = gPaletteCycleCounter;
         s32 prev = D_8009FA30;
         diff = cur - prev;
-        D_8009FAA4 = cur;
+        gDiscShadeByte = cur;
     } while (diff < 5);
 
     __asm__ volatile("");
@@ -95,11 +95,11 @@ void func_8002703C(void)
             gFrameId = 5;
         }
         nsum = D_8009FA30 + gFrameId;
-        D_8009FAA4 = nsum;
+        gDiscShadeByte = nsum;
         gPaletteCycleCounter = nsum;
     }
 
-    D_8009FA30 = D_8009FAA4;
+    D_8009FA30 = gDiscShadeByte;
     func_8004DB74(gFrameId);
     func_80063568(gFrameId);
     func_800136C8(gFrameId);
