@@ -27,7 +27,7 @@ struct State {
 extern void *memcpy(void *, const void *, u32);
 
 extern struct State *gDecodeJob __asm__("D_8009F4BC");
-extern s32 D_8009F4C0;
+extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 D_8009F4C4;
 extern s32 D_8009F4C8;
 extern u32 D_8009F4D0;
@@ -147,7 +147,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
     {
     register s32 mode __asm__("$3");
     register s32 one __asm__("$2");
-    mode = D_8009F4C0;
+    mode = gStripScaleEnable;
     __asm__("" : "=r" (mode), "=r" (p) : "0" (mode), "1" (p));
     one = 1;
     __asm__("" : "=r" (one), "=r" (p) : "0" (one), "1" (p));
@@ -207,7 +207,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
         s32 prod;
 
         state->field11C = 0;
-        func_80095FF4(state->field28[1 - state->field30], D_8009F4C0);
+        func_80095FF4(state->field28[1 - state->field30], gStripScaleEnable);
 
         {
             u16 v20 = *(volatile u16 *)&gDecodeJob->field20;

@@ -14,7 +14,7 @@ typedef struct {
 } State;
 
 extern State *gDecodeJob __asm__("D_8009F4BC");
-extern s32 D_8009F4C0;
+extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 D_8009F4C4;
 extern s32 D_8009F4C8;
 extern void func_800847E0(s32, s32, Rect *);
@@ -52,7 +52,7 @@ void func_80085074(void)
 {
     Rect rect;
     State *s;
-    if (D_8009F4C0 == 1 && D_8009F4C4 != 0) {
+    if (gStripScaleEnable == 1 && D_8009F4C4 != 0) {
         rect.x = ((s16)gDecodeJob->rect.x * 2) / 3;
         rect.y = gDecodeJob->rect.y;
         rect.w = ((s16)gDecodeJob->rect.w * 2) / 3;

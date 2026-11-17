@@ -20,7 +20,7 @@ typedef struct {
 } Local;
 
 extern State *gDecodeJob __asm__("D_8009F4BC");
-extern u32 D_8009F4C0;
+extern u32 gStripScaleEnable __asm__("D_8009F4C0");
 extern u32 D_8009F4C8;
 extern u32 D_8009F4D0;
 
@@ -160,7 +160,7 @@ void func_80085630(u8 *data, u32 count, s32 volume)
         *(volatile s32 *)&gDecodeJob->unk11C = 0;
     } else {
         s1 = st->unk24;
-        func_80095FF4(st->unk28[1 - st->unk30], D_8009F4C0);
+        func_80095FF4(st->unk28[1 - st->unk30], gStripScaleEnable);
         func_80096070(s1, ((s3 * (D_8009F4C8 << 3)) >> 1) * (s2 >> 4));
         if (s4 == 0x4D444543) {
             func_80089BBC(src, gDecodeJob->unk28[gDecodeJob->unk30]);

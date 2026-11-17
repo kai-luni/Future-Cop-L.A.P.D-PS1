@@ -21,7 +21,8 @@ typedef struct {
 } State861E4;
 
 typedef struct { u16 w, h; u8 data[1]; } Input861E4;
-extern s32 D_8009F9C4, D_8009F250, D_8009F4C0, D_8009F4C8;
+extern s32 D_8009F9C4, D_8009F250, D_8009F4C8;
+extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern State861E4 *gDecodeJob __asm__("D_8009F4BC");
 extern void *D_8009F948, *D_8009F94C, *D_8009F950, *D_8009F954;
 extern void *D_8009FABC, *D_8009F9D8;
@@ -148,7 +149,7 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
     gDecodeJob->callback120 = func_8009612C(D_80085074);
     gDecodeJob->callback124 = func_80096108(0);
     gDecodeJob->callback128 = func_80092B94(0);
-    if (D_8009F4C0 == 1) D_8009F250 = D_8009F4C0;
+    if (gStripScaleEnable == 1) D_8009F250 = gStripScaleEnable;
     func_8008C9E0();
     if (D_8009F9C4) {
         gDecodeJob->buffer28[0] = func_80017EBC(0x10000, 2);
@@ -191,7 +192,7 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         state->done = 0;
         func_80089BBC(input->data, state->buffer28[state->index]);
     }
-    func_80095FF4(gDecodeJob->buffer28[gDecodeJob->index], D_8009F4C0);
+    func_80095FF4(gDecodeJob->buffer28[gDecodeJob->index], gStripScaleEnable);
     {
         u32 width = gDecodeJob->w2;
         u32 height = gDecodeJob->h2;
@@ -213,7 +214,7 @@ cleanup:
     func_80096090(0);
     func_800960CC(0);
     func_8008C9C0();
-    if (D_8009F4C0 == 1) D_8009F250 = 0;
+    if (gStripScaleEnable == 1) D_8009F250 = 0;
     if (gDecodeJob) {
         func_8009612C(gDecodeJob->callback120);
         func_80096108(gDecodeJob->callback124);
