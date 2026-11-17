@@ -4,7 +4,7 @@ typedef signed int s32;
 
 extern u8 D_800A2730[];
 extern u8 D_800A6F38[];
-extern s32 D_800A8E80[];
+extern s32 gTexpageBaseTable[] __asm__("D_800A8E80");
 
 extern s32 D_8009F80C;
 extern s32 D_8009F810;
@@ -65,7 +65,7 @@ int *func_80063428(void)
     func_8008CD20(D_8009FA08, 0, func_80018460(D_8009FA08));
 
     for (i = 9; i >= 0; i--) {
-        D_800A8E80[i] = 0;
+        gTexpageBaseTable[i] = 0;
     }
 
     {

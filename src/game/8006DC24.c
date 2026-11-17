@@ -44,7 +44,7 @@ extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_8009F9B8;
 extern u32 D_8009B214[];
-extern s32 D_800A8E80[];
+extern s32 gTexpageBaseTable[] __asm__("D_800A8E80");
 
 extern s32 *func_8003D9F8();
 extern s32 func_8001A100();
@@ -202,7 +202,7 @@ void func_8006DC24(Obj *o, s32 *pos)
                 gPrimPoolNext = (u8 *)p + 0x34;
             L_done1:
                 p->b[3] = 9; p->b[7] = 0x2E;
-                tp = D_800A8E80[5];
+                tp = gTexpageBaseTable[5];
                 p->b[4] = 0x80; p->b[5] = 0x80; p->b[6] = 0x80;
                 p->b[0x1C] = p->b[0x24] = o->f7C;
                 p->b[0xC] = p->b[0x14] = o->f7C + o->f80 - 1;
@@ -239,7 +239,7 @@ void func_8006DC24(Obj *o, s32 *pos)
                     gPrimPoolNext = (u8 *)p + 0x34;
                 L_done2:
                     p->b[3] = 9; p->b[7] = 0x2E;
-                    tp = D_800A8E80[5];
+                    tp = gTexpageBaseTable[5];
                     p->b[4] = 0x80; p->b[5] = 0x80; p->b[6] = 0x80;
                     p->b[0x1C] = p->b[0x24] = o->f7C;
                     p->b[0xC] = p->b[0x14] = o->f7C + o->f80 - 1;

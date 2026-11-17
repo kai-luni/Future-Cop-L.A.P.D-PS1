@@ -24,7 +24,7 @@ typedef struct {
     u8 *unk2C;
 } Arg63C5C;
 
-extern u32 D_800A8E80[];
+extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
 extern Res63C5C *func_8001996C(void *arg0, s32 arg1);
 extern void func_80092F38(Rect63C5C *rect, void *data);
 extern void func_80092C8C(s32 arg0);
@@ -114,7 +114,7 @@ void func_80063C5C(Arg63C5C *arg0)
     attr = s1 << 6;
     attr |= (s2 >> 4) & 0x3F;
 
-    D_800A8E80[s0] = (attr << 16) | s6;
+    gTexpageBaseTable[s0] = (attr << 16) | s6;
 
     func_800181D4(arg0);
 }

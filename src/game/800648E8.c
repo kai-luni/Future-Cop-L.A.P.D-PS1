@@ -4,7 +4,7 @@
 extern u32 gVertexIndexTable[] __asm__("D_8009AFE8");
 extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 D_800A8E80[];
+extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
 extern u8 D_800A2630[];
 extern u16 D_8009F83C;
 extern s32 func_800648BC(s32 a, s32 b, s32 c);
@@ -204,7 +204,7 @@ void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
         d[3] = ((volatile u16 *)a1)[3] + off;
         a1 = (u16 *)0x1F800070;
     }
-    a0 = D_800A8E80[(t3 >> 8) & 7];
+    a0 = gTexpageBaseTable[(t3 >> 8) & 7];
     k = t3 >> 13;
     switch (k) {
     case 0:

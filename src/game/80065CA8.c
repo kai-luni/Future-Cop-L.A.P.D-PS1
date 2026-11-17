@@ -5,7 +5,7 @@ extern u8 gVertexIndexTable[][4] __asm__("D_8009AFE8");
 extern u8 D_8009B1A4[];
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 D_800A8E80[];
+extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
 extern u8 D_800A2630[];
 extern u16 D_8009F83C;
 
@@ -203,7 +203,7 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
             d[3] = *(u16 *)(a0 + 6) + g;
             a0 = 0x1F800070;
         }
-        a1 = D_800A8E80[(t2 >> 8) & 7];
+        a1 = gTexpageBaseTable[(t2 >> 8) & 7];
         t1 = t2 >> 13;
         switch (t1) {
         case 0:

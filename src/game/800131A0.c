@@ -19,7 +19,7 @@ extern AnimNode *gModelAnimData __asm__("D_8009F544");
 extern u32 *D_8009F548, *D_8009F550, *D_8009F568;
 extern AnimNode *D_8009F54C;
 extern u8 **gRefBlockTable __asm__("D_8009F560");
-extern u32 D_800A8E80[];
+extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
 extern void func_80012E48(void *, u32, u32);
 extern void func_8001306C(void *);
 
@@ -86,7 +86,7 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
         case 2:
         case 3:
             {
-                u32 val = D_800A8E80[*(u32 *)(p + 12)];
+                u32 val = gTexpageBaseTable[*(u32 *)(p + 12)];
                 *(u32 *)(p + 12) = val;
                 if (*p == 3) {
                     *(u32 *)(p + 12) = val | 0x20;
