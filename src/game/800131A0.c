@@ -7,7 +7,7 @@ typedef int s32;
 typedef struct AnimEntry { u8 max, cur, type, flags; s16 rate, timer; u8 *src, *dst; } AnimEntry;
 typedef struct AnimNode { struct AnimNode *next; s32 pad; s32 count; AnimEntry entries[1]; } AnimNode;
 typedef struct Header { u32 a, b; AnimNode *anim; u32 flags; u32 x10, x14, x18; u8 *p1c, *p20, *p24, *p28, *p2c; u32 p30; u32 *p34; u32 p38; } Header;
-extern u32 D_8009F528;
+extern u32 gModelTriangleListSize __asm__("D_8009F528");
 extern Header *gModelGeometryChunk __asm__("D_8009F52C");
 extern u8 *D_8009F538, *D_8009F53C, *D_8009F540;
 extern u8 *gModelTriangleList __asm__("D_8009F534");
@@ -71,7 +71,7 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
     p = h->p2c; p = D_8009F560[(u32)p]; h->p2c = p + 4; func_8001306C(p);
 
     p = end = h->p28;
-    end += D_8009F528;
+    end += gModelTriangleListSize;
     while (p < end) {
         switch (*p) {
         case 1:
