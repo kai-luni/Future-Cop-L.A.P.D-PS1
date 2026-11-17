@@ -2,7 +2,8 @@
 typedef unsigned int u32;
 typedef unsigned char u8;
 extern u32 D_8009F528;
-extern u8 *D_8009F530, *D_8009F534, *D_8009F538, *D_8009F53C, *D_8009F540;
+extern u8 *D_8009F534, *D_8009F538, *D_8009F53C, *D_8009F540;
+extern u8 *gModelPolygonList __asm__("D_8009F530");
 extern u8 *gModelGeometryChunk __asm__("D_8009F52C");
 extern u8 *D_8009F544, *D_8009F548, *D_8009F54C, *D_8009F550;
 extern u8 **D_8009F554, **D_8009F558, **D_8009F55C, **D_8009F560;
@@ -48,7 +49,7 @@ void func_80012E48(u8 *base, u32 size)
         case 0x33445246: D_8009F560[index] = data; break;
         case 0x33444242: D_8009F540 = p + 8; break;
         case 0x34444749: gModelGeometryChunk = p; break;
-        case 0x3344514c: D_8009F530 = data; break;
+        case 0x3344514c: gModelPolygonList = data; break;
         case 0x3344544c: D_8009F534 = data; D_8009F528 = length - 12; break;
         case 0x33444859: D_8009F538 = data; break;
         case 0x33444d49: D_8009F53C = data; break;

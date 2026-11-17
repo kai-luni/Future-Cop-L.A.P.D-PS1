@@ -9,7 +9,8 @@ typedef struct AnimNode { struct AnimNode *next; s32 pad; s32 count; AnimEntry e
 typedef struct Header { u32 a, b; AnimNode *anim; u32 flags; u32 x10, x14, x18; u8 *p1c, *p20, *p24, *p28, *p2c; u32 p30; u32 *p34; u32 p38; } Header;
 extern u32 D_8009F528;
 extern Header *gModelGeometryChunk __asm__("D_8009F52C");
-extern u8 *D_8009F530, *D_8009F534, *D_8009F538, *D_8009F53C, *D_8009F540;
+extern u8 *D_8009F534, *D_8009F538, *D_8009F53C, *D_8009F540;
+extern u8 *gModelPolygonList __asm__("D_8009F530");
 extern AnimNode *D_8009F544, *D_8009F564;
 extern u32 *D_8009F548, *D_8009F550, *D_8009F568;
 extern AnimNode *D_8009F54C;
@@ -63,7 +64,7 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
     __asm__ volatile ("" : : : "memory");
     p = h->p20;
     h->p28 = D_8009F534;
-    h->p24 = D_8009F530;
+    h->p24 = gModelPolygonList;
     p = D_8009F560[(u32)p]; h->p20 = p + 4; func_8001306C(p);
     p = h->p1c; p = D_8009F560[(u32)p]; h->p1c = p + 4; func_8001306C(p);
     p = h->p2c; p = D_8009F560[(u32)p]; h->p2c = p + 4; func_8001306C(p);
