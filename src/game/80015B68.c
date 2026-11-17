@@ -63,7 +63,7 @@ typedef struct {
     s16 data[1];
 } Arg2;
 
-extern Vertex *D_8009F578;
+extern Vertex *gPartVertexBuffer __asm__("D_8009F578");
 extern u8 *D_8009F57C;
 
 extern s32 func_80015AF4(s32 origin, s32 first, s32 second, void *out);
@@ -124,7 +124,7 @@ extern void func_8001484C(Vertex *vtx, u32 a1, u32 a2, u16 a3, s32 a4, s32 a5, s
  */
 s32 func_80015B68(Part *part, Work *work, Arg2 *arg2, s32 arg3)
 {
-    Vertex *vtx = D_8009F578;
+    Vertex *vtx = gPartVertexBuffer;
     u32 i0, i1, i2, i3;
     u8 flags;
     s32 vx, vy, vz, dx, dy;
