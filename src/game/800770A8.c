@@ -14,7 +14,7 @@ typedef struct {
     s16 unk0E;
 } Unk770A8;
 
-extern u8 D_8009B314[];
+extern u8 gSegmentFlagTable[] __asm__("D_8009B314");
 
 extern void func_80092C8C(s32 arg0);
 extern void func_80093224(u8 *arg0);
@@ -48,7 +48,7 @@ void func_800770A8(s32 arg0, s32 arg1, s32 arg2)
     u8 flags;
     Unk770A8 local;
 
-    flags = D_8009B314[arg2];
+    flags = gSegmentFlagTable[arg2];
 
     local.unk03 = 3;
     local.unk07 = 0x40;
