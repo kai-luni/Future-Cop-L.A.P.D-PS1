@@ -11,7 +11,7 @@ struct FontEntry {
     s16 height;
 };
 
-extern struct FontEntry *D_8009F35C;
+extern struct FontEntry *gFont __asm__("D_8009F35C");
 
 extern struct FontGlyph *func_800489C8(struct FontEntry *font, u8 character);
 
@@ -43,7 +43,7 @@ void func_800492A0(u8 *text, s32 *width, s32 *height)
     u8 character;
 
     lineHeight = total = 0;
-    if (D_8009F35C != 0) {
+    if (gFont != 0) {
         for (;;) {
             character = *text;
             if (character == 0) {
@@ -53,9 +53,9 @@ void func_800492A0(u8 *text, s32 *width, s32 *height)
             if (character < 0x20) {
                 continue;
             }
-            total += func_800489C8(D_8009F35C, character)->advance;
+            total += func_800489C8(gFont, character)->advance;
         }
-        lineHeight = D_8009F35C->height;
+        lineHeight = gFont->height;
     }
     *height = lineHeight;
     *width = total;

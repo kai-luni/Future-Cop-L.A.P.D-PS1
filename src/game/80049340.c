@@ -8,7 +8,7 @@ struct FontGlyph {
 
 struct FontEntry;
 
-extern struct FontEntry *D_8009F35C;
+extern struct FontEntry *gFont __asm__("D_8009F35C");
 
 extern struct FontGlyph *func_800489C8(struct FontEntry *font, u8 character);
 
@@ -39,7 +39,7 @@ s32 func_80049340(u8 *text)
     s32 total;
     u8 character;
 
-    font = D_8009F35C;
+    font = gFont;
     total = 0;
     if (font != 0) {
         while ((character = *text++) != 0) {

@@ -41,7 +41,7 @@ extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u16 D_8009AAE0[];
 extern u8 D_800A1970[];
 
-extern struct LookupState *D_8009F35C;
+extern struct LookupState *gFont __asm__("D_8009F35C");
 extern u16 D_8009F768;
 extern s32 D_8009F76C;
 
@@ -83,7 +83,7 @@ s32 func_80048F98(u8 character, s32 x, s32 y, u16 color)
         gPacketCursor = (u8 *)sprite + 0x1C;
     }
     sprite->addr = 0;
-    glyph = (struct Glyph *)func_800489C8(D_8009F35C, character);
+    glyph = (struct Glyph *)func_800489C8(gFont, character);
     sprite->len = 4;
     __asm__ volatile ("" : : : "memory");
     code = 100;
