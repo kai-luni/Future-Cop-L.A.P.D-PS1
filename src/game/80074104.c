@@ -16,7 +16,7 @@ extern Texture D_8009B234[];
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u8 D_800A3548[];
-extern Point D_800A6418[];
+extern Point gPreparedVertexTable[] __asm__("D_800A6418");
 extern u8 D_800AB388[];
 extern s16 D_800A7840[], D_800A7898[];
 extern u8 *gCamera __asm__("D_8009F9E4");
@@ -200,28 +200,28 @@ void func_80074104(u8 *input, s32 *pos)
             UB(D_800A3548,0x17) = UB(owner,0x79);
             if (UH(owner,0x1a) & 0x100) {
                 func_8001A81C(m, owner+0x58, &frame.trans);
-                D_800A6418[count].x = frame.trans.x >> 4;
-                D_800A6418[count].y = frame.trans.y >> 4;
-                D_800A6418[count].z = frame.trans.z >> 4;
+                gPreparedVertexTable[count].x = frame.trans.x >> 4;
+                gPreparedVertexTable[count].y = frame.trans.y >> 4;
+                gPreparedVertexTable[count].z = frame.trans.z >> 4;
             } else if (UH(owner,0x8e) & 0x10) {
                 frame.trans = *(Vec *)(owner+0x28);
-                D_800A6418[count].x = (frame.trans.x-W(gCamera,0x7c)) >> 4;
-                D_800A6418[count].y = (frame.trans.y-W(gCamera,0x80)) >> 4;
-                D_800A6418[count].z = (frame.trans.z-W(gCamera,0x84)) >> 4;
+                gPreparedVertexTable[count].x = (frame.trans.x-W(gCamera,0x7c)) >> 4;
+                gPreparedVertexTable[count].y = (frame.trans.y-W(gCamera,0x80)) >> 4;
+                gPreparedVertexTable[count].z = (frame.trans.z-W(gCamera,0x84)) >> 4;
             } else {
                 func_80010820(m);
                 func_8001006C(owner+0x28, &frame.trans, 1);
                 frame.trans.x = W(owner,0x28)+W(m,0x24);
                 frame.trans.y = W(owner,0x2c)+W(m,0x28);
                 frame.trans.z = W(owner,0x30)+W(m,0x2c);
-                D_800A6418[count].x = (frame.trans.x-W(gCamera,0x7c)) >> 4;
-                D_800A6418[count].y = (frame.trans.y-W(gCamera,0x80)) >> 4;
-                D_800A6418[count].z = (frame.trans.z-W(gCamera,0x84)) >> 4;
+                gPreparedVertexTable[count].x = (frame.trans.x-W(gCamera,0x7c)) >> 4;
+                gPreparedVertexTable[count].y = (frame.trans.y-W(gCamera,0x80)) >> 4;
+                gPreparedVertexTable[count].z = (frame.trans.z-W(gCamera,0x84)) >> 4;
             }
             count++;
         }
         __asm__("" : "+r"(count));
-        out = &D_800A6418[count];
+        out = &gPreparedVertexTable[count];
         while (node) {
             if (UH(node,0x18) & 1) break;
             if (UH(owner,0x1a) & 0x100) {
@@ -238,7 +238,7 @@ void func_80074104(u8 *input, s32 *pos)
             count++;
         }
         if (count < 2) goto advance;
-        __asm__("" : "=r"(points) : "0"(D_800A6418), "r"(count));
+        __asm__("" : "=r"(points) : "0"(gPreparedVertexTable), "r"(count));
         if (UH(owner,0x1a) & 0x100) {
             frame.v.x = W(m,0x24)-W(gCamera,0x7c);
             frame.v.y = W(m,0x28)-W(gCamera,0x80);
@@ -265,17 +265,17 @@ void func_80074104(u8 *input, s32 *pos)
         node = (u8 *)&frame.mat;
         if (UH(owner,0x1a) & 0x100) func_80010750(node);
         else func_80010820(node);
-        func_8001047C(D_800A6418, D_800A6418, D_800AB388, count);
+        func_8001047C(gPreparedVertexTable, gPreparedVertexTable, D_800AB388, count);
         if (!(UH(owner,0x8e) & 0x2000)) node = D_800A3548;
         else node = PTR(owner,0x68);
         dx = D_800A7840; dy = D_800A7898;
         for (i=0; i<count; i++) {
             t = D_800AB388[i] | D_800AB388[previous] | D_800AB388[next];
             if (!(t & 1) && t == 0xc0) {
-                width = (H(node,0x10) << 9) / D_800A6418[previous].z;
+                width = (H(node,0x10) << 9) / gPreparedVertexTable[previous].z;
                 if (width < 3) width = 3;
-                *dx = D_800A6418[next].y - D_800A6418[previous].y;
-                *dy = D_800A6418[previous].x - D_800A6418[next].x;
+                *dx = gPreparedVertexTable[next].y - gPreparedVertexTable[previous].y;
+                *dy = gPreparedVertexTable[previous].x - gPreparedVertexTable[next].x;
                 original_dx = *dx; a = original_dx; if (a < 0) a = -a;
                 b = *dy; if (b < 0) b = -b;
                 if (a < b) { a ^= b; b ^= a; a ^= b; }
@@ -315,7 +315,7 @@ void func_80074104(u8 *input, s32 *pos)
         }
         } else tex = 0;
         textures = D_8009B234;
-        cur = D_800A6418;
+        cur = gPreparedVertexTable;
         offset = 8;
         for (i=0; i<count-1; ++i, ++cur, offset+=8) {
             t = D_800AB388[i] | D_800AB388[i+1];
@@ -328,7 +328,7 @@ void func_80074104(u8 *input, s32 *pos)
                 frame.texpage1 = (((t & 1) << 4) | (((((t >> 1) << 7) + 0x180) & 0x3ff) >> 6) | 0xa0) << 16;
                 frame.texpage0 = (((((t & 3) + ((t << 5) | 0xfc)) << 6) | (((u32)(t << 6 & 0x100) + 0x180) >> 4))) << 16;
             }
-            depth = ((cur->z + H((u8 *)D_800A6418+offset,4)) >> 1) - 0x100;
+            depth = ((cur->z + H((u8 *)gPreparedVertexTable+offset,4)) >> 1) - 0x100;
             if (tex) {
                 cursor = gPrimPoolNext;
                 if (cursor < gPrimPoolEnd) gPrimPoolNext = cursor + 0x34;
@@ -337,7 +337,7 @@ void func_80074104(u8 *input, s32 *pos)
                 H(prim,0x14) = cur->x - D_800A7840[i];
                 H(prim,0xa) = cur->y + D_800A7898[i];
                 H(prim,0x16) = cur->y - D_800A7898[i];
-                __asm__("" : "=r"(following) : "0"(D_800A6418), "r"(offset));
+                __asm__("" : "=r"(following) : "0"(gPreparedVertexTable), "r"(offset));
                 following = (Point *)((u8 *)following + offset);
                 H(prim,0x2c) = following->x - D_800A7840[i+1];
                 H(prim,0x20) = following->x + D_800A7840[i+1];
@@ -407,7 +407,7 @@ void func_80074104(u8 *input, s32 *pos)
                 H(prim,0xa) = cur->y + D_800A7898[i];
                 H(prim,0x10) = cur->x;
                 H(prim,0x12) = cur->y;
-                __asm__("" : "=r"(following) : "0"(D_800A6418), "r"(offset));
+                __asm__("" : "=r"(following) : "0"(gPreparedVertexTable), "r"(offset));
                 following = (Point *)((u8 *)following + offset);
                 H(prim,0x18) = following->x + D_800A7840[i+1];
                 H(prim,0x1a) = following->y + D_800A7898[i+1];
@@ -435,7 +435,7 @@ void func_80074104(u8 *input, s32 *pos)
                     H(prim,0xa) = cur->y;
                     H(prim,0x10) = cur->x - D_800A7840[i];
                     H(prim,0x12) = cur->y - D_800A7898[i];
-                    __asm__("" : "=r"(following) : "0"(D_800A6418), "r"(offset));
+                    __asm__("" : "=r"(following) : "0"(gPreparedVertexTable), "r"(offset));
                 following = (Point *)((u8 *)following + offset);
                 H(prim,0x18) = following->x;
                     H(prim,0x1a) = following->y;

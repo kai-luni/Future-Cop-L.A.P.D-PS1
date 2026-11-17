@@ -82,7 +82,7 @@ extern void func_80010750(void *m);
 extern void func_8001006C(void *a, void *b, s32 c);
 extern void func_8001047C(void *a, void *b, void *c, s32 n);
 
-extern s16 D_800A6418[][4];
+extern s16 gPreparedVertexTable[][4] __asm__("D_800A6418");
 extern u8 D_800AB388[];
 extern u8 D_800AB389[];
 extern s16 D_800A7840[];
@@ -168,15 +168,15 @@ void func_80071FA4(Node *node, s32 *org)
             s32 prep;
         if (node->flags & 8) {
             for (prep = 0; prep < node->ents[i].cnt + 1; prep++) {
-                D_800A6418[prep][0] = node->ents[i].verts[prep * 3 + 0] >> 4;
-                D_800A6418[prep][1] = node->ents[i].verts[prep * 3 + 1] >> 4;
-                D_800A6418[prep][2] = node->ents[i].verts[prep * 3 + 2] >> 4;
+                gPreparedVertexTable[prep][0] = node->ents[i].verts[prep * 3 + 0] >> 4;
+                gPreparedVertexTable[prep][1] = node->ents[i].verts[prep * 3 + 1] >> 4;
+                gPreparedVertexTable[prep][2] = node->ents[i].verts[prep * 3 + 2] >> 4;
             }
         } else {
             for (prep = 0; prep < node->ents[i].cnt + 1; prep++) {
-                D_800A6418[prep][0] = (node->ents[i].verts[prep * 3 + 0] - gCamera->ox) >> 4;
-                D_800A6418[prep][1] = (node->ents[i].verts[prep * 3 + 1] - gCamera->oy) >> 4;
-                D_800A6418[prep][2] = (node->ents[i].verts[prep * 3 + 2] - gCamera->oz) >> 4;
+                gPreparedVertexTable[prep][0] = (node->ents[i].verts[prep * 3 + 0] - gCamera->ox) >> 4;
+                gPreparedVertexTable[prep][1] = (node->ents[i].verts[prep * 3 + 1] - gCamera->oy) >> 4;
+                gPreparedVertexTable[prep][2] = (node->ents[i].verts[prep * 3 + 2] - gCamera->oz) >> 4;
             }
         }
 
@@ -209,7 +209,7 @@ void func_80071FA4(Node *node, s32 *org)
         if (node->flags & 8) func_80010750(&m);
         else func_80010820(&m);
 
-        func_8001047C(D_800A6418, D_800A6418, D_800AB388, node->ents[i].cnt + 1);
+        func_8001047C(gPreparedVertexTable, gPreparedVertexTable, D_800AB388, node->ents[i].cnt + 1);
 
         {
             s32 a3 = 0, a2 = 1;
@@ -217,13 +217,13 @@ void func_80071FA4(Node *node, s32 *org)
             s32 step = ((node->b->f1C - node->a->f1C) << 4) / (node->ents[i].cnt + 1);
             for (j = 0; j < node->ents[i].cnt + 1; j++) {
                 if (!((D_800AB388[j] | D_800AB388[a3] | D_800AB388[a2]) & 1)) {
-                    s32 sc = ((t3 >> 4) << 10) / D_800A6418[a3][2];
+                    s32 sc = ((t3 >> 4) << 10) / gPreparedVertexTable[a3][2];
                     s32 ax, ay, t, len, rawax;
                     s32 raway;
                     s32 product;
                     if (sc < 3) sc = 3;
-                    D_800A7840[j] = D_800A6418[a2][1] - D_800A6418[a3][1];
-                    D_800A7898[j] = D_800A6418[a3][0] - D_800A6418[a2][0];
+                    D_800A7840[j] = gPreparedVertexTable[a2][1] - gPreparedVertexTable[a3][1];
+                    D_800A7898[j] = gPreparedVertexTable[a3][0] - gPreparedVertexTable[a2][0];
                     rawax = D_800A7840[j];
                     ax = rawax;
                     if (ax < 0) ax = -ax;
@@ -262,18 +262,18 @@ void func_80071FA4(Node *node, s32 *org)
             Prim *p;
             s32 z;
             if ((D_800AB388[j] | D_800AB388[j + 1]) & 1) continue;
-            z = ((D_800A6418[j][2] + D_800A6418[j + 1][2]) >> 1) - 0x100;
+            z = ((gPreparedVertexTable[j][2] + gPreparedVertexTable[j + 1][2]) >> 1) - 0x100;
             if (D_800A7840[j] == 0 && D_800A7898[j] == 0) {
-                s16 dx = D_800A6418[j + 1][0] - D_800A6418[j][0];
-                s16 dy = D_800A6418[j + 1][1] - D_800A6418[j][1];
+                s16 dx = gPreparedVertexTable[j + 1][0] - gPreparedVertexTable[j][0];
+                s16 dy = gPreparedVertexTable[j + 1][1] - gPreparedVertexTable[j][1];
                 if (dx < 0) {
                     if (dy < 0) {
-                        if (dx < dy) D_800A6418[j][0]--; else D_800A6418[j][1]--;
-                    } else if (dy < -dx) D_800A6418[j][0]--; else D_800A6418[j][1]++;
+                        if (dx < dy) gPreparedVertexTable[j][0]--; else gPreparedVertexTable[j][1]--;
+                    } else if (dy < -dx) gPreparedVertexTable[j][0]--; else gPreparedVertexTable[j][1]++;
                 } else {
                     if (dy < 0) {
-                        if (-dy < dx) D_800A6418[j][0]++; else D_800A6418[j][1]--;
-                    } else if (dy < dx) D_800A6418[j][0]++; else D_800A6418[j][1]++;
+                        if (-dy < dx) gPreparedVertexTable[j][0]++; else gPreparedVertexTable[j][1]--;
+                    } else if (dy < dx) gPreparedVertexTable[j][0]++; else gPreparedVertexTable[j][1]++;
                 }
                 ALLOC_U(p);
                 ((u8 *)p)[3] = 1;
@@ -286,20 +286,20 @@ void func_80071FA4(Node *node, s32 *org)
                 p->r0 = node->ents[i].r;
                 p->g0 = node->ents[i].g;
                 p->b0 = node->ents[i].b;
-                p->x0 = D_800A6418[j][0];
-                p->y0 = D_800A6418[j][1];
-                ((s16 *)p)[6] = D_800A6418[j + 1][0];
-                ((s16 *)p)[7] = D_800A6418[j + 1][1];
+                p->x0 = gPreparedVertexTable[j][0];
+                p->y0 = gPreparedVertexTable[j][1];
+                ((s16 *)p)[6] = gPreparedVertexTable[j + 1][0];
+                ((s16 *)p)[7] = gPreparedVertexTable[j + 1][1];
             } else {
                 ALLOC_T(p);
-                p->x0 = D_800A6418[j][0];
-                p->y0 = D_800A6418[j][1];
-                p->x1 = D_800A6418[j][0] - D_800A7840[j];
-                p->y1 = D_800A6418[j][1] - D_800A7898[j];
-                p->x3 = D_800A6418[j + 1][0] - D_800A7840[j + 1];
-                p->y3 = D_800A6418[j + 1][1] - D_800A7898[j + 1];
-                p->x2 = D_800A6418[j + 1][0];
-                p->y2 = D_800A6418[j + 1][1];
+                p->x0 = gPreparedVertexTable[j][0];
+                p->y0 = gPreparedVertexTable[j][1];
+                p->x1 = gPreparedVertexTable[j][0] - D_800A7840[j];
+                p->y1 = gPreparedVertexTable[j][1] - D_800A7898[j];
+                p->x3 = gPreparedVertexTable[j + 1][0] - D_800A7840[j + 1];
+                p->y3 = gPreparedVertexTable[j + 1][1] - D_800A7898[j + 1];
+                p->x2 = gPreparedVertexTable[j + 1][0];
+                p->y2 = gPreparedVertexTable[j + 1][1];
                 if (INB(p->x0, p->y0) || INB(p->x1, p->y1) || INB(p->x2, p->y2) || INB(p->x3, p->y3)) {
                     ((u8 *)p)[3] = 0xC;
                     p->c0 = 0x3E;
@@ -320,14 +320,14 @@ void func_80071FA4(Node *node, s32 *org)
                     goto reject_segment;
                 }
                 ALLOC_T(p);
-                p->x0 = D_800A6418[j][0];
-                p->y0 = D_800A6418[j][1];
-                p->x1 = D_800A6418[j + 1][0];
-                p->y1 = D_800A6418[j + 1][1];
-                p->x3 = D_800A6418[j + 1][0] + D_800A7840[j + 1];
-                p->y3 = D_800A6418[j + 1][1] + D_800A7898[j + 1];
-                p->x2 = D_800A6418[j][0] + D_800A7840[j];
-                p->y2 = D_800A6418[j][1] + D_800A7898[j];
+                p->x0 = gPreparedVertexTable[j][0];
+                p->y0 = gPreparedVertexTable[j][1];
+                p->x1 = gPreparedVertexTable[j + 1][0];
+                p->y1 = gPreparedVertexTable[j + 1][1];
+                p->x3 = gPreparedVertexTable[j + 1][0] + D_800A7840[j + 1];
+                p->y3 = gPreparedVertexTable[j + 1][1] + D_800A7898[j + 1];
+                p->x2 = gPreparedVertexTable[j][0] + D_800A7840[j];
+                p->y2 = gPreparedVertexTable[j][1] + D_800A7898[j];
                 if (!(INB(p->x0, p->y0) || INB(p->x1, p->y1) || INB(p->x2, p->y2) || INB(p->x3, p->y3))) {
 reject_segment:
                     gPrimPoolNext = (Prim *)((u8 *)gPrimPoolNext - 0x34);
