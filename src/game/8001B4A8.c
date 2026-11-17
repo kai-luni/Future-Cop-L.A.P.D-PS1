@@ -18,7 +18,7 @@ extern s32 D_8009F218;
 extern s32 D_8009F21C;
 extern s32 D_8009F220;
 extern s32 D_8009F5C0;
-extern u32 D_8009F5E0;
+extern u32 gPacketPoolBase __asm__("D_8009F5E0");
 extern u32 D_8009F5E4;
 extern s32 D_8009F5E8;
 extern s32 D_8009F5EC;
@@ -150,7 +150,7 @@ void func_8001B4A8(s32 arg0)
     v = 0x100 - h;
     D_8009F9D4 = v;
     v = gPacketCursor;
-    limX = D_8009F5E0;
+    limX = gPacketPoolBase;
     limY = D_8009F5E4;
 
     p = xbase - 0x34;
@@ -405,7 +405,7 @@ void func_8001B4A8(s32 arg0)
     xbase = D_8009F5F8;
     __asm__("" : : "r"(xbase));
     v -= 0x34;
-    D_8009F5E0 = shift;
+    gPacketPoolBase = shift;
     gPrimPoolNext = shift;
     shift += v;
     D_8009F5E4 = val;

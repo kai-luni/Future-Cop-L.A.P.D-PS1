@@ -8,7 +8,7 @@ extern s32 D_8009F5D0;
 extern s32 D_8009F5D4;
 extern s32 D_8009F5D8;
 extern s32 D_8009F5DC;
-extern s32 D_8009F5E0;
+extern s32 gPacketPoolBase __asm__("D_8009F5E0");
 extern s32 D_8009F5E4;
 extern volatile s32 D_8009F5E8;
 extern volatile s32 D_8009F5EC;
@@ -106,7 +106,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
 
     D_8009F600 = 0;
     gPrimPoolNext = D_8009F5C8;
-    D_8009F5E0 = D_8009F5C8;
+    gPacketPoolBase = D_8009F5C8;
     gPacketCursor = D_8009F5D0;
     D_8009F5E4 = D_8009F5D0;
 
@@ -116,7 +116,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     count28 = D_8009F5F8;
     offset = value * 0x34;
     offset -= 0x34;
-    value = D_8009F5E0;
+    value = gPacketPoolBase;
     value += offset;
     gPrimPoolEnd = value;
 
