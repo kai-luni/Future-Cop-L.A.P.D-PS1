@@ -1,7 +1,8 @@
 // Categories: Input > Port Processing
 #include "game/sio_globals.h"
 
-extern int D_8009C778, D_8009C77C, D_8009C76C, D_8009C770;
+extern int D_8009C778, D_8009C77C, D_8009C76C;
+extern int gPadActuatorCostSum __asm__("D_8009C770");
 extern int gPadSlotIndex __asm__("D_8009C768");
 extern int gPadPresentFlag __asm__("D_8009C760");
 extern int D_800A3B70, D_800A3B74;
@@ -59,7 +60,7 @@ int func_8008A43C(void)
             if (func_8008A6CC(D_8009C75C + D_8009C778 * 240) == 0) {
                 D_8009C728(0xFFFF);
             }
-            D_8009C770 = 0;
+            gPadActuatorCostSum = 0;
             while (gPadSlotIndex <= D_8009C77C) {
                 func_8008A8E0(D_8009C75C + gPadSlotIndex * 240);
             }

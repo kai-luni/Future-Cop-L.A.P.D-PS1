@@ -24,7 +24,7 @@ struct Port {
     u8 nentries;
 };
 extern void func_8008CD00(u8 *, int);
-extern int D_8009C770;
+extern int gPadActuatorCostSum __asm__("D_8009C770");
 
 /**
  *  @brief Selects enabled controller entries subject to a shared cost limit.
@@ -75,8 +75,8 @@ void func_8008C138(struct Port *p)
                 flags++;
             }
             if (found) {
-                if (D_8009C770 + p->entries[i].cost < 61)
-                    D_8009C770 += p->entries[i].cost;
+                if (gPadActuatorCostSum + p->entries[i].cost < 61)
+                    gPadActuatorCostSum += p->entries[i].cost;
                 else
                     found = 0;
             }
@@ -91,10 +91,10 @@ void func_8008C138(struct Port *p)
             }
         } while (++i < p->nentries);
     } else if (((unsigned)(p->type - 4) < 2 || p->type == 7) && !p->fieldE6 && p->count >= 2) {
-        if ((p->flags[0] & 0xc0) == 0x40 && (p->flags[1] & 1) && D_8009C770 + 10 < 61) {
+        if ((p->flags[0] & 0xc0) == 0x40 && (p->flags[1] & 1) && gPadActuatorCostSum + 10 < 61) {
             p->enabled[1] = 1;
             p->enabled[0] = 1;
-            D_8009C770 += 10;
+            gPadActuatorCostSum += 10;
         }
     } else if (*(volatile u8 *)&p->type == 3) {
         p->enabled[0] = 1;
