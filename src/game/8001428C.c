@@ -30,7 +30,7 @@ struct Arg0 {
 
 extern struct Mat12 gBaseMatrix __asm__("D_8009AA38");
 extern struct Mat12 gBoneMatrices __asm__("D_800A0300");
-extern struct Blk3 D_800A02E0;
+extern struct Blk3 gLightVectorOut __asm__("D_800A02E0");
 extern struct Blk3 D_800A02F0;
 extern u8 gScriptVertexBuffer[0x100] __asm__("D_8009FAE0");
 extern u8 *D_8009F570;

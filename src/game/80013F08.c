@@ -52,7 +52,7 @@ struct Instance {
 };
 
 extern struct Matrix gBoneMatrices[] __asm__("D_800A0300");
-extern struct Vec3s32 D_800A02E0;
+extern struct Vec3s32 gLightVectorOut __asm__("D_800A02E0");
 extern struct Vec3s32 D_800A02F0;
 extern char gScriptVertexBuffer[] __asm__("D_8009FAE0");
 
@@ -199,7 +199,7 @@ s32 func_80013F08(struct Instance *instance)
         input = model->inputs;
         D_8009F570 = fae;
         p1 = (char *)model->unk1C[1];
-        *f0 = D_800A02E0;
+        *f0 = gLightVectorOut;
         p1data = p1 + 4;
         __asm__ volatile("" : "+r"(p1data));
         D_8009F574 = p1data;
@@ -239,7 +239,7 @@ s32 func_80013F08(struct Instance *instance)
         register void *a1_pts __asm__("$5");
         register s32 idx __asm__("$3");
 
-        func_8001AE14(gBoneMatrices, &D_800A02E0, f0);
+        func_8001AE14(gBoneMatrices, &gLightVectorOut, f0);
         func_80013ECC(f0);
 
         a1_pts = pts;

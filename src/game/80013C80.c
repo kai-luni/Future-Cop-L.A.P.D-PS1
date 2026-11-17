@@ -1,7 +1,7 @@
 // Categories: Graphics > Lighting | Graphics > Camera
 extern unsigned char *gCamera __asm__("D_8009F9E4");
 extern unsigned char D_8009A228[];
-extern unsigned char D_800A02E0[];
+extern unsigned char gLightVectorOut[] __asm__("D_800A02E0");
 extern void func_8001A81C(void *, void *, void *);
 
 /**
@@ -29,5 +29,5 @@ extern void func_8001A81C(void *, void *, void *);
  */
 void func_80013C80(void)
 {
-    func_8001A81C(gCamera + 0x28, D_8009A228, D_800A02E0);
+    func_8001A81C(gCamera + 0x28, D_8009A228, gLightVectorOut);
 }
