@@ -6,7 +6,7 @@
 
 Diese Datei erklärt **49 globale Variablen**, die sich im Originalprogramm befinden und als Inhalt eine Adresse eines PlayStation-Hardwareregisters tragen. Es sind **49 verschiedene Variablen**, aber nur **37 verschiedene Hardware-Zieladressen**: Manche Programmteile besitzen einen eigenen Zeiger auf dasselbe Register.
 
-Die Datei dokumentiert **nur diese bisher untersuchten Hardware-Zeiger**, nicht alle globalen Variablen des Spiels. Sie hilft beim Verstehen des C-Codes und beim Nachschlagen, welche Funktion mit welchem Gerät spricht. Der Abschnitt „Spielzustand, Treiber und Warteschlangen" enthält zusätzlich 31 normale Daten-Globals (Ringindizes, Treiberzustände, Rückrufe), die bereits im C-Code lesbare Namen tragen.
+Die Datei dokumentiert **nur diese bisher untersuchten Hardware-Zeiger**, nicht alle globalen Variablen des Spiels. Sie hilft beim Verstehen des C-Codes und beim Nachschlagen, welche Funktion mit welchem Gerät spricht. Der Abschnitt „Spielzustand, Treiber und Warteschlangen" enthält zusätzlich 33 normale Daten-Globals (Ringindizes, Treiberzustände, Rückrufe), die bereits im C-Code lesbare Namen tragen.
 
 ### Das wichtigste Prinzip
 
@@ -200,6 +200,19 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 | `D_8009F214` | `gRandSeed` | `s32` | Zustand des Zufallszahlengenerators (Multiplikation mit 16807, Park-Miller). **Bestätigt.** | `func_80019720` |
 | `D_8009F5B8` | `gResourceList` | `struct Resource *` | Kopf der einfach verketteten Ressourcenliste; wird in mehreren Funktionen durchlaufen und am Ende freigegeben. **Bestätigt.** | `func_80019AA8`, `func_800198DC` |
 | `D_800A07A8` | `gSoundSystem` | `struct SoundSystem` | Globaler Zustand des Klangsystems mit Bank-Liste und Anzahl. **Bestätigt.** | `func_80021508` |
+
+### Spieler und Match
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009FA0C` | `gPlayerCount` | `s32` / `int` | Anzahl der Spieler im laufenden Match (1 = Einzelspieler, 2 = Zweispieler); viele Pfade verzweigen darauf. **Bestätigt.** Die Funktionsdoku in `src/game/8002D1A0.c` nennt sie „player count". | `func_8002D1A0`, `func_80027510` |
+| `D_8009F9EC` | `gSinglePlayerEntity` | `struct Ent *` / `Game *` | Zeiger auf die Spielfigur im Einzelspielermodus; wird nur bei `gPlayerCount == 1` ausgewertet und über die Entity-Id verglichen. **Bestätigt.** | `func_8002D1A0`, `func_80027510` |
+
+<!-- OFFEN: D_8009FA58 (Zwei-Slot-Array der Spieler-Entities) bleibt vorerst
+     unbenannt. In src/game/80027510.c wird dasselbe Symbol doppelt deklariert
+     (einmal als Union `D_8009FA58`, einmal als Array `D_8009FA58_arr`); eine
+     Umbenennung verändert dort die erzeugten Bytes. Erst die Doppeldeklaration
+     auflösen, dann benennen. -->
 
 ### Controller-Puffer
 
