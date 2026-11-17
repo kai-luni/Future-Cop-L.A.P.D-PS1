@@ -21,7 +21,7 @@ typedef struct UnkBA34_Arg {
 } UnkBA34_Arg;
 
 extern void (*D_8009C728)(s32);
-extern u8 (*D_8009C730)(UnkBA34_Arg *, s32);
+extern  u8 (*gPadTxByteHook)(UnkBA34_Arg *, s32) __asm__("D_8009C730");
 extern void (*D_8009C734)();
 extern void (*D_8009C748)(u8 *);
 extern void (*D_8009C74C)(u8 *);
@@ -84,7 +84,7 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
             if (i >= 0) {
                 D_8009C734(arg0->unk0C + off);
             }
-            ret = func_8008AB80(arg0, D_8009C730(arg0, 1));
+            ret = func_8008AB80(arg0, gPadTxByteHook(arg0, 1));
             if (ret < 0) {
                 return ret;
             }
@@ -120,7 +120,7 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
             D_8009C780[idx] = -1;
             break;
         }
-        ret = func_8008A9A8(arg0, D_8009C730(arg0, s4));
+        ret = func_8008A9A8(arg0, gPadTxByteHook(arg0, s4));
         if (ret < 0) {
             return ret;
         }
@@ -132,7 +132,7 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
     }
 
     while (--D_8009C7A0 > 0) {
-        ret = func_8008A9A8(arg0, D_8009C730(arg0, s4));
+        ret = func_8008A9A8(arg0, gPadTxByteHook(arg0, s4));
         if (ret < 0) {
             return ret;
         }

@@ -14,7 +14,7 @@ struct Obj {
 };
 extern int D_8009C774;
 extern int gPadPresentFlag __asm__("D_8009C760");
-extern void (*D_8009C728)(), (*D_8009C72C)(), (*D_8009C730)();
+extern  void (*D_8009C728)(), (*D_8009C72C)(), (*gPadTxByteHook)() __asm__("D_8009C730");
 extern void (*D_8009C734)(), (*D_8009C738)(), (*D_8009C73C)(), (*D_8009C74C)();
 extern Obj *D_8009C75C;
 extern Obj D_800A3C20[];
@@ -62,7 +62,7 @@ void func_8008BDB0(u8 *a, u8 *b)
     p = D_800A3C20;
     D_8009C728 = func_8008BF78;
     D_8009C72C = func_8008BF10;
-    D_8009C730 = func_8008C07C;
+    gPadTxByteHook = func_8008C07C;
     D_8009C734 = func_8008C138;
     D_8009C738 = func_8008C3B4;
     D_8009C73C = func_8008C3EC;
