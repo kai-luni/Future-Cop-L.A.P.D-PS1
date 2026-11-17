@@ -11,7 +11,7 @@ typedef struct {
     u8 pad0C[4];
 } Unk800A0A00;
 
-extern Unk800A0A00 D_800A0A00[8];
+extern Unk800A0A00 gObjectSlots[8] __asm__("D_800A0A00");
 extern s32 D_8009F640[2];
 extern s32 D_800A0A80[3];
 extern s32 D_8009F648;
@@ -73,11 +73,11 @@ u8 func_8002333C(void)
     func_800211FC();
     func_8001F0FC((s32)D_80023314);
     for (i = 0; i < 8; i++) {
-        D_800A0A00[i].unk00 = -1;
-        D_800A0A00[i].unk01 = -1;
-        D_800A0A00[i].unk04 = 0;
-        D_800A0A00[i].unk08 = 0;
-        D_800A0A00[i].unk02 = 0;
+        gObjectSlots[i].unk00 = -1;
+        gObjectSlots[i].unk01 = -1;
+        gObjectSlots[i].unk04 = 0;
+        gObjectSlots[i].unk08 = 0;
+        gObjectSlots[i].unk02 = 0;
     }
     i = 0;
     {

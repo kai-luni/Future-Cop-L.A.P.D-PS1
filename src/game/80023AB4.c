@@ -31,7 +31,7 @@ struct VabEntry {
     void *blockC;
 };
 
-extern struct VabEntry D_800A0A00[];
+extern struct VabEntry gObjectSlots[] __asm__("D_800A0A00");
 extern struct SoundBank D_800A7938[];
 
 extern void func_80021DAC(s32 index);
@@ -72,7 +72,7 @@ void func_80023AB4(s32 arg0)
     }
 
     m1 = -1;
-    base = D_800A0A00;
+    base = gObjectSlots;
     entry = base;
 
     do {

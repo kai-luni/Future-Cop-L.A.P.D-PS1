@@ -13,7 +13,7 @@ typedef struct {
 
 extern u8 D_8009F26C;
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern Slot D_800A0A00[];
+extern Slot gObjectSlots[] __asm__("D_800A0A00");
 
 extern void func_800181D4(void *block);
 extern void func_800235D4(s32 id);
@@ -45,7 +45,7 @@ s32 func_8002385C(void)
     if (D_8009F26C != 0) {
         i = 0;
         do {
-            slot = &D_800A0A00[i];
+            slot = &gObjectSlots[i];
             if (slot->state == 2) {
                 if (slot->block != 0) {
                     func_800181D4(slot->block);

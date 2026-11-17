@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 D_8009F26C;
-extern s8 D_800A0A00[];
+extern s8 gObjectSlots[] __asm__("D_800A0A00");
 extern void *D_8009F640[2];
 extern volatile s32 D_8009F650;
 
@@ -43,7 +43,7 @@ void func_80023BF8(void)
 
     if (D_8009F26C != 0) {
         i = 0;
-        entry = D_800A0A00;
+        entry = gObjectSlots;
         do {
             value = entry[1];
             entry += 0x10;

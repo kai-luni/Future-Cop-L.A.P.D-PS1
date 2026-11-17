@@ -15,7 +15,7 @@ extern u8 D_8009F26C;
 extern s32 D_8009F278;
 extern s32 D_8009F27C;
 extern u8 D_80023314[];
-extern Unk800A0A00 D_800A0A00[8];
+extern Unk800A0A00 gObjectSlots[8] __asm__("D_800A0A00");
 
 extern void func_80098708(s32 arg0);
 extern s32 func_8001F12C(s32 callback);
@@ -44,6 +44,6 @@ extern void func_80044FEC(void);
 void func_80023500(u32 arg0)
 {
     if (arg0 < 8) {
-        D_800A0A00[arg0].unk02 = 2;
+        gObjectSlots[arg0].unk02 = 2;
     }
 }

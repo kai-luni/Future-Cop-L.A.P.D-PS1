@@ -5,7 +5,7 @@ typedef struct { u16 id, count, offset; } Entry;
 typedef struct { u16 unk, count; Entry entries[1]; } Header;
 typedef struct { u8 value; s8 id; u8 pad[14]; } Mapping;
 typedef struct { u16 key; u8 value; u8 pad[9]; } Item;
-extern Mapping D_800A0A00[];
+extern Mapping gObjectSlots[] __asm__("D_800A0A00");
 extern Header *func_80023528(s32, s32 *);
 extern s32 func_800241D0(s32, s32, s32, s32, void *);
 
@@ -41,8 +41,8 @@ s32 func_800235D4(s32 id)
     if (header != 0) {
         __asm__("" : "+r"(result));
         for (i = 0; i < 8; i++) {
-            if (D_800A0A00[i].id == id) {
-                value = D_800A0A00[i].value;
+            if (gObjectSlots[i].id == id) {
+                value = gObjectSlots[i].value;
                 break;
             }
         }
