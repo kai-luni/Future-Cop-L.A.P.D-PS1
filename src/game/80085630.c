@@ -19,7 +19,7 @@ typedef struct {
     s16 unk6;
 } Local;
 
-extern State *D_8009F4BC;
+extern State *gDecodeJob __asm__("D_8009F4BC");
 extern u32 D_8009F4C0;
 extern u32 D_8009F4C8;
 extern u32 D_8009F4D0;
@@ -133,7 +133,7 @@ void func_80085630(u8 *data, u32 count, s32 volume)
     s2 = (*(u16 *)(data + 8) >> 8) |
          ((*(u16 *)(data + 8) & 0xFF) << 8);
 
-    if (D_8009F4BC->unk114 != 0) {
+    if (gDecodeJob->unk114 != 0) {
         local.unk2 = volume + 0x100;
     } else {
         local.unk2 = volume;
@@ -152,18 +152,18 @@ void func_80085630(u8 *data, u32 count, s32 volume)
         D_8009F4D0 = result;
     }
 
-    st = D_8009F4BC;
+    st = gDecodeJob;
     if (st->unk118 == 0) {
         if (s4 == 0x4D444543) {
             func_80089BBC(src, st->unk28[st->unk30]);
         }
-        *(volatile s32 *)&D_8009F4BC->unk11C = 0;
+        *(volatile s32 *)&gDecodeJob->unk11C = 0;
     } else {
         s1 = st->unk24;
         func_80095FF4(st->unk28[1 - st->unk30], D_8009F4C0);
         func_80096070(s1, ((s3 * (D_8009F4C8 << 3)) >> 1) * (s2 >> 4));
         if (s4 == 0x4D444543) {
-            func_80089BBC(src, D_8009F4BC->unk28[D_8009F4BC->unk30]);
+            func_80089BBC(src, gDecodeJob->unk28[gDecodeJob->unk30]);
         }
         func_800960CC(0);
         for (i = 0; i < s2; i += 0x10) {
@@ -171,11 +171,11 @@ void func_80085630(u8 *data, u32 count, s32 volume)
             s1 += (local.unk4 * local.unk6) << 1;
             { u32 step = D_8009F4C8 << 3; local.unk0 += step; }
         }
-        D_8009F4BC->unk11C = 1;
+        gDecodeJob->unk11C = 1;
     }
 
     func_80095E90(1);
 
-    D_8009F4BC->unk118++;
-    D_8009F4BC->unk30 = 1 - D_8009F4BC->unk30;
+    gDecodeJob->unk118++;
+    gDecodeJob->unk30 = 1 - gDecodeJob->unk30;
 }

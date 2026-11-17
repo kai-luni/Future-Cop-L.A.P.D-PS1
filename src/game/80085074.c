@@ -13,7 +13,7 @@ typedef struct {
     volatile s32 flag;
 } State;
 
-extern State *D_8009F4BC;
+extern State *gDecodeJob __asm__("D_8009F4BC");
 extern s32 D_8009F4C0;
 extern s32 D_8009F4C4;
 extern s32 D_8009F4C8;
@@ -53,16 +53,16 @@ void func_80085074(void)
     Rect rect;
     State *s;
     if (D_8009F4C0 == 1 && D_8009F4C4 != 0) {
-        rect.x = ((s16)D_8009F4BC->rect.x * 2) / 3;
-        rect.y = D_8009F4BC->rect.y;
-        rect.w = ((s16)D_8009F4BC->rect.w * 2) / 3;
-        rect.h = D_8009F4BC->rect.h;
-        func_800847E0(D_8009F4BC->dest, D_8009F4BC->dest, &rect);
-        func_80092F38(&rect, D_8009F4BC->dest);
+        rect.x = ((s16)gDecodeJob->rect.x * 2) / 3;
+        rect.y = gDecodeJob->rect.y;
+        rect.w = ((s16)gDecodeJob->rect.w * 2) / 3;
+        rect.h = gDecodeJob->rect.h;
+        func_800847E0(gDecodeJob->dest, gDecodeJob->dest, &rect);
+        func_80092F38(&rect, gDecodeJob->dest);
     } else {
-        func_80092F38(&D_8009F4BC->rect, D_8009F4BC->dest);
+        func_80092F38(&gDecodeJob->rect, gDecodeJob->dest);
     }
-    s = D_8009F4BC;
+    s = gDecodeJob;
     s->rect.x += D_8009F4C8 * 8;
     if ((s16)s->rect.x < (s16)s->rects[s->index].x + (s16)s->rects[s->index].w) {
         func_80096070(s->dest, ((s16)s->rect.w * (s16)s->rect.h) / 2);

@@ -7,7 +7,7 @@ typedef struct {
     s32 unk118;
 } Ctx85AC4;
 
-extern Ctx85AC4 *D_8009F4BC;
+extern Ctx85AC4 *gDecodeJob __asm__("D_8009F4BC");
 extern volatile u8 D_8009FA3C;
 extern u32 D_8009F4C8;
 
@@ -52,8 +52,8 @@ void func_80085AC4(u32 arg0, u32 arg1)
 {
     s16 buf[4];
 
-    D_8009F4BC->unk114 = 0;
-    D_8009F4BC->unk118 = 0;
+    gDecodeJob->unk114 = 0;
+    gDecodeJob->unk118 = 0;
 
     while (D_8009FA3C != 0) {
     }
@@ -80,8 +80,8 @@ void func_80085AC4(u32 arg0, u32 arg1)
 
     if ((arg1 & 0xFF) != 0) {
         func_80091270(0);
-        func_800932F0((u8 *)D_8009F4BC + 0x34 + (1 - D_8009F4BC->unk114) * 92);
-        func_800934BC((u8 *)D_8009F4BC + 0xEC + (1 - D_8009F4BC->unk114) * 20);
+        func_800932F0((u8 *)gDecodeJob + 0x34 + (1 - gDecodeJob->unk114) * 92);
+        func_800934BC((u8 *)gDecodeJob + 0xEC + (1 - gDecodeJob->unk114) * 20);
         func_80092BF4(1);
     }
 

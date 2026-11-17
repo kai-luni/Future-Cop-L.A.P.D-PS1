@@ -22,7 +22,7 @@ typedef struct {
 
 typedef struct { u16 w, h; u8 data[1]; } Input861E4;
 extern s32 D_8009F9C4, D_8009F250, D_8009F4C0, D_8009F4C8;
-extern State861E4 *D_8009F4BC;
+extern State861E4 *gDecodeJob __asm__("D_8009F4BC");
 extern void *D_8009F948, *D_8009F94C, *D_8009F950, *D_8009F954;
 extern void *D_8009FABC, *D_8009F9D8;
 extern Block100 D_800A3958;
@@ -140,21 +140,21 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         buf1 = D_8009F948;
         buf2 = D_8009F94C;
     }
-    D_8009F4BC = func_80017EBC(0x130, D_8009F9C4 ? 2 : 3);
-    if (!D_8009F4BC) goto cleanup;
-    func_8001E4C0(D_8009F4BC, 0, 0x130);
+    gDecodeJob = func_80017EBC(0x130, D_8009F9C4 ? 2 : 3);
+    if (!gDecodeJob) goto cleanup;
+    func_8001E4C0(gDecodeJob, 0, 0x130);
     func_8008C9C0();
-    D_8009F4BC->field12C = 1;
-    D_8009F4BC->callback120 = func_8009612C(D_80085074);
-    D_8009F4BC->callback124 = func_80096108(0);
-    D_8009F4BC->callback128 = func_80092B94(0);
+    gDecodeJob->field12C = 1;
+    gDecodeJob->callback120 = func_8009612C(D_80085074);
+    gDecodeJob->callback124 = func_80096108(0);
+    gDecodeJob->callback128 = func_80092B94(0);
     if (D_8009F4C0 == 1) D_8009F250 = D_8009F4C0;
     func_8008C9E0();
     if (D_8009F9C4) {
-        D_8009F4BC->buffer28[0] = func_80017EBC(0x10000, 2);
-        if (!D_8009F4BC->buffer28[0]) goto cleanup;
-        D_8009F4BC->buffer24 = func_80017EBC(0x3000, 2);
-        if (!D_8009F4BC->buffer24) goto cleanup;
+        gDecodeJob->buffer28[0] = func_80017EBC(0x10000, 2);
+        if (!gDecodeJob->buffer28[0]) goto cleanup;
+        gDecodeJob->buffer24 = func_80017EBC(0x3000, 2);
+        if (!gDecodeJob->buffer24) goto cleanup;
         {
         register u32 masked __asm__("$2") = mode & 0xFF;
         __asm__ volatile("" : "+r"(masked));
@@ -167,14 +167,14 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         }
         }
     } else {
-        D_8009F4BC->buffer28[0] = D_8009F954;
-        D_8009F4BC->buffer24 = D_8009F950;
+        gDecodeJob->buffer28[0] = D_8009F954;
+        gDecodeJob->buffer24 = D_8009F950;
     }
     {
         register u32 scale __asm__("$5") = D_8009F4C8;
         register u32 product __asm__("$8") = x * scale;
         register u32 width __asm__("$2") = input->w * scale;
-        register State861E4 *state __asm__("$3") = D_8009F4BC;
+        register State861E4 *state __asm__("$3") = gDecodeJob;
         register u32 height __asm__("$6") = input->h;
         register u32 xpos __asm__("$4");
         state->y = y;
@@ -191,16 +191,16 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         state->done = 0;
         func_80089BBC(input->data, state->buffer28[state->index]);
     }
-    func_80095FF4(D_8009F4BC->buffer28[D_8009F4BC->index], D_8009F4C0);
+    func_80095FF4(gDecodeJob->buffer28[gDecodeJob->index], D_8009F4C0);
     {
-        u32 width = D_8009F4BC->w2;
-        u32 height = D_8009F4BC->h2;
+        u32 width = gDecodeJob->w2;
+        u32 height = gDecodeJob->h2;
         __asm__("" : "+r"(width), "+r"(height));
-        func_80096070(D_8009F4BC->buffer24, ((s32)(width << 16) >> 16) * ((s32)(height << 16) >> 16) / 2);
+        func_80096070(gDecodeJob->buffer24, ((s32)(width << 16) >> 16) * ((s32)(height << 16) >> 16) / 2);
     }
     func_800960CC(0);
     {
-        register State861E4 *state __asm__("$5") = D_8009F4BC;
+        register State861E4 *state __asm__("$5") = gDecodeJob;
         __asm__ volatile("" : "+r"(state));
         count = 0;
         while (!state->done) {
@@ -214,25 +214,25 @@ cleanup:
     func_800960CC(0);
     func_8008C9C0();
     if (D_8009F4C0 == 1) D_8009F250 = 0;
-    if (D_8009F4BC) {
-        func_8009612C(D_8009F4BC->callback120);
-        func_80096108(D_8009F4BC->callback124);
-        func_80092B94(D_8009F4BC->callback128);
+    if (gDecodeJob) {
+        func_8009612C(gDecodeJob->callback120);
+        func_80096108(gDecodeJob->callback124);
+        func_80092B94(gDecodeJob->callback128);
     }
     func_8008C9E0();
     func_80095E90(1);
     if (D_8009F9C4) {
         if (buf1) func_800181D4(buf1);
         if (buf2) func_800181D4(buf2);
-        if (D_8009F4BC) {
-            if (D_8009F4BC->buffer28[0]) func_800181D4(D_8009F4BC->buffer28[0]);
-            if (D_8009F4BC->buffer24) func_800181D4(D_8009F4BC->buffer24);
-            func_800181D4(D_8009F4BC);
-            D_8009F4BC = 0;
+        if (gDecodeJob) {
+            if (gDecodeJob->buffer28[0]) func_800181D4(gDecodeJob->buffer28[0]);
+            if (gDecodeJob->buffer24) func_800181D4(gDecodeJob->buffer24);
+            func_800181D4(gDecodeJob);
+            gDecodeJob = 0;
         }
-    } else if (D_8009F4BC) {
-        func_800181D4(D_8009F4BC);
-        D_8009F4BC = 0;
+    } else if (gDecodeJob) {
+        func_800181D4(gDecodeJob);
+        gDecodeJob = 0;
     }
     return result;
 }

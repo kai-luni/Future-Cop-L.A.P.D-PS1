@@ -1,7 +1,7 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern s32 *D_8009F4BC;
+extern s32 *gDecodeJob __asm__("D_8009F4BC");
 
 /**
  *  @brief Stores a value in a field of the globally referenced object.
@@ -22,5 +22,5 @@ extern s32 *D_8009F4BC;
  */
 void func_800858F4(s32 value)
 {
-    *(s32 *)((u8 *)D_8009F4BC + 0x114) = value;
+    *(s32 *)((u8 *)gDecodeJob + 0x114) = value;
 }

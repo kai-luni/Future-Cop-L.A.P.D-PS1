@@ -10,7 +10,7 @@ typedef struct {
     s32 unk11C;
 } Unk8009F4BC;
 
-extern Unk8009F4BC *D_8009F4BC;
+extern Unk8009F4BC *gDecodeJob __asm__("D_8009F4BC");
 extern void func_80092C8C(s32);
 extern void func_80091270(s32);
 extern void func_800934BC(void *);
@@ -38,12 +38,12 @@ void func_80085914(void)
 {
     s32 t;
 
-    if (D_8009F4BC->unk11C != 0) {
+    if (gDecodeJob->unk11C != 0) {
         func_80092C8C(0);
         func_80091270(0);
-        func_800934BC((void *)&D_8009F4BC->unkEC[D_8009F4BC->unk114][0]);
-        t = 1 - D_8009F4BC->unk114;
-        D_8009F4BC->unk114 = t;
-        func_800932F0((void *)&D_8009F4BC->unk34[t][0]);
+        func_800934BC((void *)&gDecodeJob->unkEC[gDecodeJob->unk114][0]);
+        t = 1 - gDecodeJob->unk114;
+        gDecodeJob->unk114 = t;
+        func_800932F0((void *)&gDecodeJob->unk34[t][0]);
     }
 }

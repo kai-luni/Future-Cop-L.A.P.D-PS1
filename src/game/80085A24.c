@@ -10,7 +10,7 @@ typedef struct {
     DecDctCallback unk128;
 } Unk8009F4BC;
 
-extern Unk8009F4BC *D_8009F4BC;
+extern Unk8009F4BC *gDecodeJob __asm__("D_8009F4BC");
 
 extern s32 func_80096090(s32 mode);
 extern s32 func_800960CC(s32 mode);
@@ -47,22 +47,22 @@ extern void func_80095E90(s32 option);
  */
 void func_80085A24(void)
 {
-    if (D_8009F4BC != 0) {
+    if (gDecodeJob != 0) {
         func_80096090(0);
         func_800960CC(0);
         func_80092C8C(0);
         func_8008C9C0();
 
-        func_8009612C(D_8009F4BC->unk120);
-        func_80096108(D_8009F4BC->unk124);
-        func_80092B94(D_8009F4BC->unk128);
+        func_8009612C(gDecodeJob->unk120);
+        func_80096108(gDecodeJob->unk124);
+        func_80092B94(gDecodeJob->unk128);
 
-        D_8009F4BC->unk120 = 0;
-        D_8009F4BC->unk124 = 0;
-        D_8009F4BC->unk128 = 0;
+        gDecodeJob->unk120 = 0;
+        gDecodeJob->unk124 = 0;
+        gDecodeJob->unk128 = 0;
 
         func_8008C9E0();
         func_80095E90(1);
-        D_8009F4BC = 0;
+        gDecodeJob = 0;
     }
 }

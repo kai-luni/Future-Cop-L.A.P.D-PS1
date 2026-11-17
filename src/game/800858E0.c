@@ -6,7 +6,7 @@ struct UnkF4BC {
     s32 unk114;
 };
 
-extern struct UnkF4BC *D_8009F4BC;
+extern struct UnkF4BC *gDecodeJob __asm__("D_8009F4BC");
 
 /**
  * @brief Returns the active buffer index of the playback context.
@@ -22,5 +22,5 @@ extern struct UnkF4BC *D_8009F4BC;
  */
 s32 func_800858E0(void)
 {
-    return D_8009F4BC->unk114;
+    return gDecodeJob->unk114;
 }

@@ -26,7 +26,7 @@ struct State {
 
 extern void *memcpy(void *, const void *, u32);
 
-extern struct State *D_8009F4BC;
+extern struct State *gDecodeJob __asm__("D_8009F4BC");
 extern s32 D_8009F4C0;
 extern s32 D_8009F4C4;
 extern s32 D_8009F4C8;
@@ -169,7 +169,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
         D_8009F4D0 = value;
     }
 
-    state = D_8009F4BC;
+    state = gDecodeJob;
     if (state->field118 == 0) {
         register s32 scale __asm__("$4");
         register u32 tag __asm__("$5");
@@ -202,7 +202,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
             func_80089BBC(payload,
                           state->field28[state->field30]);
         }
-        D_8009F4BC->field11C = 0;
+        gDecodeJob->field11C = 0;
     } else {
         s32 prod;
 
@@ -210,16 +210,16 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
         func_80095FF4(state->field28[1 - state->field30], D_8009F4C0);
 
         {
-            u16 v20 = *(volatile u16 *)&D_8009F4BC->field20;
-            u16 v22 = *(volatile u16 *)&D_8009F4BC->field22;
+            u16 v20 = *(volatile u16 *)&gDecodeJob->field20;
+            u16 v22 = *(volatile u16 *)&gDecodeJob->field22;
 
             prod = (s32)(s16)v20 * (s32)(s16)v22;
         }
-        func_80096070(D_8009F4BC->field24, (u32)(prod / 2));
+        func_80096070(gDecodeJob->field24, (u32)(prod / 2));
 
         if (magic == 0x4D444543) {
             func_80089BBC(payload,
-                          D_8009F4BC->field28[D_8009F4BC->field30]);
+                          gDecodeJob->field28[gDecodeJob->field30]);
         }
 
         func_800960CC(0);
@@ -227,7 +227,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
         {
             register struct State *sp __asm__("$4");
 
-            sp = D_8009F4BC;
+            sp = gDecodeJob;
             i = 0;
             while (sp->field11C == 0) {
                 if (i > 0x30D40) {
@@ -242,7 +242,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
     {
         register struct State *tp __asm__("$3");
 
-        tp = D_8009F4BC;
+        tp = gDecodeJob;
         tp->field118++;
         tp->field30 = 1 - tp->field30;
     }
