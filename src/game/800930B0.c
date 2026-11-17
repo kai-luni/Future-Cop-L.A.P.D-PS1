@@ -5,7 +5,7 @@ extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(u8 *, s32, s32) __asm__("D_8009DDEC");
 extern u8 D_80012AB8[];
 extern u32 D_8009DEB0[];
-extern u32 D_8009DE9C[];
+extern u32 gGpuTpageWord[] __asm__("D_8009DE9C");
 
 /**
  *  @brief Link a sequence of words to a global command-list node.
@@ -68,7 +68,7 @@ u32 *func_800930B0(u32 *arg0, s32 arg1)
     __asm__ volatile("" : "+r"(v0));
     a1 = (u32)D_8009DEB0;
     __asm__ volatile("" : "+r"(a1));
-    v1 = (u32)D_8009DE9C;
+    v1 = (u32)gGpuTpageWord;
     v1 = v1 & a2;
     v1 = v1 | 0x4000000;
     *(u32 *)a1 = v1;

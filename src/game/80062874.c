@@ -10,13 +10,19 @@ typedef struct { s32 x,z; } Pair;
 typedef struct { u32 bits; s32 pad[3]; } Cell;
 extern List gCommandListHead __asm__("D_800A8F90");
 extern Pair D_800A3190[];
-extern Bounds D_800A2970;
-extern Node D_800A2990[];
-extern Cell D_800AB3B8[], D_800AB548[];
-extern s32 D_8009F814, D_8009F828, D_8009F82C;
-extern Obj **D_8009F818, **D_8009F81C;
-extern u8 *D_8009F820;
-extern u8 D_8009F834, D_8009F835, D_8009F836, D_8009F837;
+extern Bounds gClipRect __asm__("D_800A2970");
+extern Node gCellNodeArray[] __asm__("D_800A2990");
+extern Cell D_800AB548[];
+extern Cell gCoverageGrid[] __asm__("D_800AB3B8");
+extern s32 D_8009F82C;
+extern s32 gViewCount __asm__("D_8009F814");
+extern s32 gCellEntityCount __asm__("D_8009F828");
+extern Obj **D_8009F81C;
+extern Obj **gCellEntityList __asm__("D_8009F818");
+extern u8 *gCellMap __asm__("D_8009F820");
+extern u8 D_8009F836, D_8009F837;
+extern u8 gGridOriginY __asm__("D_8009F835");
+extern u8 gGridOriginX __asm__("D_8009F834");
 
 /**
  * @brief Builds the two per-view object lists and the per-cell object grid of
@@ -76,10 +82,10 @@ extern u8 D_8009F834, D_8009F835, D_8009F836, D_8009F837;
 void func_80062874(void) {
     register Obj **scan __asm__("$24") = gCommandListHead.items;
     register Pair *pairs __asm__("$3") = D_800A3190;
-    Cell *cells = D_800AB3B8;
-    register Bounds *bounds __asm__("$2") = &D_800A2970;
+    Cell *cells = gCoverageGrid;
+    register Bounds *bounds __asm__("$2") = &gClipRect;
     s32 width = bounds->w;
-    register s32 count1 __asm__("$13") = D_8009F828;
+    register s32 count1 __asm__("$13") = gCellEntityCount;
     register s32 count2 __asm__("$14") = D_8009F82C;
     register s32 remaining __asm__("$15") = gCommandListHead.count;
     register s32 cx1 __asm__("$20") = pairs[0].x;
@@ -113,7 +119,7 @@ void func_80062874(void) {
     if (remaining > 0) {
         fifteen = 15;
         one = n;
-        nodes = D_800A2990;
+        nodes = gCellNodeArray;
         do {
             o = *scan++;
             if (o->active <= 0) goto next;
@@ -138,12 +144,12 @@ void func_80062874(void) {
             {
                 register s32 col __asm__("$4");
                 register s32 s1 __asm__("$3") = pz >> 17;
-                register s32 o1 __asm__("$2") = D_8009F835;
+                register s32 o1 __asm__("$2") = gGridOriginY;
                 col = s1 - o1;
                 if ((u32)col < 5) {
                     col += col << 2;
                     {
-                        register s32 o2 __asm__("$3") = D_8009F834;
+                        register s32 o2 __asm__("$3") = gGridOriginX;
                         register s32 s2 __asm__("$2") = px >> 17;
                         dz = s2 - o2;
                     }
@@ -171,7 +177,7 @@ void func_80062874(void) {
                                     hit1 = 1;
                                     {
                                         register s32 off __asm__("$2") = count1 << 2;
-                                        register Obj **arr __asm__("$3") = D_8009F818;
+                                        register Obj **arr __asm__("$3") = gCellEntityList;
                                         count1++;
                                         arr = (Obj **)((s32)arr + off);
                                         __asm__("" : "+r"(arr));
@@ -259,7 +265,7 @@ void func_80062874(void) {
                     u8 old;
                     if (row < 0 || row >= height) goto next;
                     col += row * width;
-                    p = &D_8009F820[col];
+                    p = &gCellMap[col];
                     old = *p;
                     *p = n;
                     __asm__ volatile("" : "+r"(n));
@@ -287,7 +293,7 @@ void func_80062874(void) {
         } while (remaining > 0);
     }
     __asm__("" : : "r"(cells));
-    D_8009F814 = n;
-    D_8009F828 = count1;
+    gViewCount = n;
+    gCellEntityCount = count1;
     D_8009F82C = count2;
 }

@@ -10,13 +10,15 @@ typedef struct { s32 x,z; } Pair;
 typedef struct { u32 bits; s32 pad[3]; } Cell;
 extern List gCommandListHead __asm__("D_800A8F90");
 extern Pair D_800A3190[];
-extern Bounds D_800A2970;
-extern Node D_800A2990[];
-extern Cell D_800AB3B8[];
-extern s32 D_8009F814, D_8009F828;
-extern Obj **D_8009F818;
-extern u8 *D_8009F820;
-extern u8 D_8009F834, D_8009F835;
+extern Bounds gClipRect __asm__("D_800A2970");
+extern Node gCellNodeArray[] __asm__("D_800A2990");
+extern Cell gCoverageGrid[] __asm__("D_800AB3B8");
+extern s32 gViewCount __asm__("D_8009F814");
+extern s32 gCellEntityCount __asm__("D_8009F828");
+extern Obj **gCellEntityList __asm__("D_8009F818");
+extern u8 *gCellMap __asm__("D_8009F820");
+extern u8 gGridOriginY __asm__("D_8009F835");
+extern u8 gGridOriginX __asm__("D_8009F834");
 
 /**
  * @brief Builds the single-view object list and the per-cell object grid of the
@@ -67,19 +69,19 @@ extern u8 D_8009F834, D_8009F835;
  * func_80062FB4, the region setup, when D_8009FA0C == 1 (the small-view case).
  */
 void func_80062C3C(void) {
-    register s32 count __asm__("$12") = D_8009F828;
+    register s32 count __asm__("$12") = gCellEntityCount;
     Obj **scan = gCommandListHead.items;
     register s32 remaining __asm__("$13");
     register s32 cx __asm__("$16") = D_800A3190[0].x;
     register s32 cz __asm__("$25") = D_800A3190[0].z;
-    Cell *cells = D_800AB3B8;
-    register s32 ox __asm__("$23") = D_8009F834;
-    register s32 oz __asm__("$22") = D_8009F835;
-    register s32 width __asm__("$24") = D_800A2970.w;
-    register s32 height __asm__("$21") = D_800A2970.h;
-    register s32 bx __asm__("$20") = D_800A2970.x;
-    register s32 bz __asm__("$19") = D_800A2970.z;
-    Obj **output = D_8009F818;
+    Cell *cells = gCoverageGrid;
+    register s32 ox __asm__("$23") = gGridOriginX;
+    register s32 oz __asm__("$22") = gGridOriginY;
+    register s32 width __asm__("$24") = gClipRect.w;
+    register s32 height __asm__("$21") = gClipRect.h;
+    register s32 bx __asm__("$20") = gClipRect.x;
+    register s32 bz __asm__("$19") = gClipRect.z;
+    Obj **output = gCellEntityList;
     register s32 n __asm__("$11") = 1;
     register Obj *o __asm__("$8");
     register s32 x __asm__("$9");
@@ -144,19 +146,19 @@ void func_80062C3C(void) {
             u8 *p;
             u8 old;
             col += row * width;
-            p = &D_8009F820[col];
+            p = &gCellMap[col];
             old = *p;
             *p = n;
-            node = &D_800A2990[n++];
+            node = &gCellNodeArray[n++];
             node->obj = o;
             if (old == 0) {
                 node->next = 0;
             } else {
-                node->next = &D_800A2990[old];
+                node->next = &gCellNodeArray[old];
             }
         }
         __asm__("" : : "r"(x), "r"(z));
     }
-    D_8009F814 = n;
-    D_8009F828 = count;
+    gViewCount = n;
+    gCellEntityCount = count;
 }

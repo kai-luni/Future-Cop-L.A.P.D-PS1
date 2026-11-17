@@ -9,8 +9,8 @@ struct Object {
     u8 data[0x4a];
     u8 flags72;
 };
-extern s32 D_8009F828[];
-extern struct Object **D_8009F818[];
+extern s32 gCellEntityCount[] __asm__("D_8009F828");
+extern struct Object **gCellEntityList[] __asm__("D_8009F818");
 extern void func_800164F4(void *);
 
 /**
@@ -44,8 +44,8 @@ void func_80062EB8(s32 index)
 
     offset = index * 4;
     __asm__("" : "+r" (offset));
-    count = *(s32 *)((u8 *)D_8009F828 + offset);
-    cursor = *(struct Object ***)((u8 *)D_8009F818 + offset);
+    count = *(s32 *)((u8 *)gCellEntityCount + offset);
+    cursor = *(struct Object ***)((u8 *)gCellEntityList + offset);
     if (count > 0) {
       arg = 3;
       do {
@@ -58,8 +58,8 @@ void func_80062EB8(s32 index)
     }
     offset = index * 4;
     __asm__("" : "+r" (offset));
-    count = *(s32 *)((u8 *)D_8009F828 + offset);
-    cursor = *(struct Object ***)((u8 *)D_8009F818 + offset);
+    count = *(s32 *)((u8 *)gCellEntityCount + offset);
+    cursor = *(struct Object ***)((u8 *)gCellEntityList + offset);
     while (count > 0) {
         object = *cursor;
         if (!(object->flags & 0x20) && (object->flags72 & 0x10)) {

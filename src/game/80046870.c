@@ -19,7 +19,7 @@ struct SoundVoice {
     struct SoundVoice *prev;
 };
 
-extern struct SoundVoice *D_8009F744;
+extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
 extern s32 D_8009F748;
 extern struct SoundVoice *D_8009F74C;
 extern s32 D_8009F750;
@@ -72,7 +72,7 @@ void func_80046870(struct SoundVoice *voice)
         break;
     default:
         prev = 0;
-        for (next = D_8009F744; next != 0; next = next->next) {
+        for (next = gVoicePriorityList; next != 0; next = next->next) {
             if (voice->priority < next->priority) {
                 break;
             }
@@ -83,7 +83,7 @@ void func_80046870(struct SoundVoice *voice)
         if (prev != 0) {
             prev->next = voice;
         } else {
-            D_8009F744 = voice;
+            gVoicePriorityList = voice;
         }
         if (next != 0) {
             next->prev = voice;

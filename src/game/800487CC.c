@@ -3,7 +3,7 @@
 
 extern s32 gScreenState[] __asm__("D_8009FA00");
 extern s32 D_8009FAB8;
-extern s32 D_8009F760;
+extern s32 gOverlayTimer __asm__("D_8009F760");
 extern s32 D_8009FAC8;
 
 extern u8 func_80048790(void);
@@ -40,11 +40,11 @@ void func_800487CC(s32 input)
         force = 0;
     }
     current = D_8009FAC8;
-    if (current != 0 && D_8009F760 != current) {
+    if (current != 0 && gOverlayTimer != current) {
         D_8009FAB8 = 2;
         force = 0;
     }
-    D_8009F760 = current;
+    gOverlayTimer = current;
     cycle = 0;
     if (func_80048790() || (u8)force) {
         cycle = 1;

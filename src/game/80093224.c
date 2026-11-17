@@ -8,7 +8,7 @@ typedef struct {
     void (*unk3C)(s32);
 } Unk8009DDE8;
 
-extern Unk8009DDE8 *D_8009DDE8;
+extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
 
 /**
  * @brief Submits a line/rect packet through the active draw callback table.
@@ -32,6 +32,6 @@ void func_80093224(u8 *arg0)
 {
     s32 temp = arg0[3];
 
-    D_8009DDE8->unk3C(0);
-    D_8009DDE8->unk14(arg0 + 4, temp);
+    gVramWriteCallback->unk3C(0);
+    gVramWriteCallback->unk14(arg0 + 4, temp);
 }

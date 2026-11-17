@@ -14,7 +14,7 @@ extern u8 D_800A35FD[];
 extern u8 D_800A35FB[];
 extern u8 D_8009C1BC[];
 extern u8 D_8009C1AC[];
-extern u8 D_800A3948[];
+extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 D_800A3938[];
 extern volatile s32 D_8009F8F8;
 extern u16 D_8009F92A;
@@ -59,7 +59,7 @@ void func_8007E7A8(void)
     i = 0;
     odd = D_8009C1BC;
     even = D_8009C1AC;
-    dst = D_800A3948;
+    dst = gPasswordBuffer;
     src = D_800A3938;
     do {
         if (i & 1) {

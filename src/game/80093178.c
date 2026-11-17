@@ -8,10 +8,10 @@ typedef struct {
 
 extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(u8 *, s32, s32) __asm__("D_8009DDEC");
-extern Unk8009DDE8 *D_8009DDE8;
-extern u8 D_80012AD0[];
+extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
+extern u8 gClearOTagFormat[] __asm__("D_80012AD0");
 extern u32 D_8009DEB0[];
-extern u32 D_8009DE9C[];
+extern u32 gGpuTpageWord[] __asm__("D_8009DE9C");
 
 /**
  * @brief Terminates a primitive list: writes the GPU destination/terminator
@@ -57,17 +57,17 @@ void func_80093178(u32 *arg0, s32 arg1)
     register u32 *v0 __asm__("$2");
 
     if (gGpuDebugLevel >= 2) {
-        gLogPrintf(D_80012AD0, (s32)arg0, arg1);
+        gLogPrintf(gClearOTagFormat, (s32)arg0, arg1);
     }
 
-    D_8009DDE8->unk2C((s32)arg0, arg1);
+    gVramWriteCallback->unk2C((s32)arg0, arg1);
 
     a2 = 0xFFFFFF;
     v0 = arg0;
     __asm__ volatile("" : "+r"(v0));
     a1 = (u32)D_8009DEB0;
     __asm__ volatile("" : "+r"(a1));
-    v1 = (u32)D_8009DE9C;
+    v1 = (u32)gGpuTpageWord;
     v1 = (v1 & a2);
     a0 = 0x4000000;
     v1 = v1 | a0;

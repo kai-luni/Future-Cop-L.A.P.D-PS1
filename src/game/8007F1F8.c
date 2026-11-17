@@ -11,7 +11,7 @@ extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s32 D_8009F8F8;
 extern s32 D_8009F8F8_arr[];
 extern u16 D_8009F92A;
-extern u8 D_800A3948[];
+extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 D_800A3938[];
 extern u8 D_8009C1AC[];
 extern u8 D_8009C1BC[];
@@ -130,7 +130,7 @@ state_1:
         {
             u8 *p;
             i = D_8009F8F8;
-            p = D_800A3948 + i;
+            p = gPasswordBuffer + i;
             if (*p == 0) {
                 *p = 0x19;
             } else {
@@ -144,7 +144,7 @@ state_2:
         {
             u8 *p;
             i = D_8009F8F8;
-            p = D_800A3948 + i;
+            p = gPasswordBuffer + i;
             (*p)++;
             if (*p >= 0x1A) {
                 *p = 0;
@@ -188,7 +188,7 @@ state_5:
         fontUnk8 = font->unk8;
         font = func_80048E88();
         fontHeight = font->height;
-        chars = D_800A3948;
+        chars = gPasswordBuffer;
         x = baseX - 5 * (fontUnk8 + 1);
         text[1] = 0;
         {

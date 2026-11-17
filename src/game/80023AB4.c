@@ -32,7 +32,7 @@ struct VabEntry {
 };
 
 extern struct VabEntry gObjectSlots[] __asm__("D_800A0A00");
-extern struct SoundBank D_800A7938[];
+extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 extern void func_80021DAC(s32 index);
 extern void func_800181D4(void *block);
@@ -77,7 +77,7 @@ void func_80023AB4(s32 arg0)
 
     do {
         if (entry->status == arg) {
-            bank = D_800A7938;
+            bank = gSoundEntryTable;
             slot = 0;
             do {
                 idx = bank->count - 1;

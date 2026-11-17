@@ -80,7 +80,7 @@ extern u8 D_800A3928[];
 extern u8 D_800A6FE0[];
 extern u8 D_800A3718[];
 extern u8 *D_8009F878;
-extern s16 D_8009F87C;
+extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 D_8009F8BD, D_8009F8BE;
 extern s8 D_8009F880, D_8009F881, D_8009F882;

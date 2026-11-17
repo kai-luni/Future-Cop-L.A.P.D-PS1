@@ -1,8 +1,8 @@
 // Categories: Resources > Memory Allocation | Game Engine > Subsystem Init
 #include "game/types.h"
 
-extern s32 D_8009F818[2];
-extern s32 D_8009F820;
+extern s32 gCellEntityList[2] __asm__("D_8009F818");
+extern s32 gCellMap __asm__("D_8009F820");
 extern s32 D_8009F830;
 extern u8 D_800A8DC0[];
 
@@ -37,8 +37,8 @@ void func_800617D8(void)
     register s32 *p __asm__("$17");
     s32 i;
 
-    D_8009F820 = 0;
-    for (i = 0, p = D_8009F818; i < 2; i++) {
+    gCellMap = 0;
+    for (i = 0, p = gCellEntityList; i < 2; i++) {
         *p = func_80017EBC(0x400, 2);
         p++;
     }

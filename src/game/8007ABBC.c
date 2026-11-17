@@ -9,7 +9,7 @@ struct FontEntry {
 
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 *D_8009F878;
-extern s16 D_8009F87C;
+extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s8 *D_8009F468;
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 D_800A6FE0[];
@@ -97,7 +97,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
         } else {
             *flag = 1;
             D_8009F8F8[idx] = 0;
-            func_8007A9D0(D_800A6FE0 + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878, D_8009F87C);
+            func_8007A9D0(D_800A6FE0 + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878, gPlayerNameLength);
         }
         break;
     }
@@ -111,7 +111,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
             if (*p != 0) {
                 (*p)--;
             } else {
-                *p = D_8009F87C - 1;
+                *p = gPlayerNameLength - 1;
             }
         }
         break;
@@ -123,7 +123,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
             chars = D_800A3928 + idx * 8;
             p = chars + i;
             (*p)++;
-            if (*p >= D_8009F87C) {
+            if (*p >= gPlayerNameLength) {
                 *p = 0;
             }
         }

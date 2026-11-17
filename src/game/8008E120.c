@@ -3,7 +3,7 @@ typedef unsigned char u8;
 typedef unsigned int u32;
 
 extern u8 *D_8009C94C[];
-extern u8 D_8001233C[];
+extern u8 gCdFallbackMsg[] __asm__("D_8001233C");
 
 /**
  *  @brief Looks up a pointer using the low byte of an index.
@@ -28,7 +28,7 @@ u8 *func_8008E120(u32 index)
     u32 i = index & 0xFF;
 
     if (i >= 7) {
-        return D_8001233C;
+        return gCdFallbackMsg;
     }
     return D_8009C94C[i];
 }

@@ -19,7 +19,7 @@ extern Big *gSaveProfileImage __asm__("D_8009F92C");
 #define RAW ((u8 *)gSaveProfileImage)
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 *D_8009F878;
-extern s16 D_8009F87C;
+extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s8 D_8009F882;
 extern s8 D_8009F880;
 extern s8 D_8009F881;
@@ -242,7 +242,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                     func_8008CCB0(dst, (u8 *)off + 0x428);
                 }
                 D_8009F8F8[s2] = 0;
-                func_8007A9D0(RAW + 0x925, D_800A3928 + s2 * 8, 8, D_8009F878, D_8009F87C);
+                func_8007A9D0(RAW + 0x925, D_800A3928 + s2 * 8, 8, D_8009F878, gPlayerNameLength);
                 if (REC(0x428) != 0) {
                     RAW[0x200] = 5;
                     RAW[0x201] = 0;
@@ -331,7 +331,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                 if (*p != 0) {
                     *p = *p - 1;
                 } else {
-                    *p = *(u8 *)&D_8009F87C - 1;
+                    *p = *(u8 *)&gPlayerNameLength - 1;
                 }
             }
             break;
@@ -343,7 +343,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                 arg3 = (s32)(D_800A3928 + s2 * 8);
                 p = (u8 *)arg3 + arg2;
                 *p = *p + 1;
-                if (*p >= D_8009F87C) {
+                if (*p >= gPlayerNameLength) {
                     *p = 0;
                 }
             }

@@ -4,7 +4,7 @@
 #include "game/types.h"
 
 extern u32 *gMdecControlStatusPtr __asm__("D_8009E9F4");
-extern u8 D_80012BA8[];
+extern u8 gTimeoutLogMsg[] __asm__("D_80012BA8");
 extern void func_8009649C(void *);
 
 /**

@@ -11,7 +11,7 @@ struct State8009FA94 {
 extern s8 *D_8009F468;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 gSelectedRow __asm__("D_8009F87E");
-extern s8 D_8009F87F;
+extern s8 gLineCount __asm__("D_8009F87F");
 extern s8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern  s8 gPlayerMenuDepth_arr[] __asm__("D_8009F8C0");
 extern s32 D_8009F8C8;
@@ -99,7 +99,7 @@ void func_8007BCF4(s32 arg0)
         y = 0x52;
         func_800788F0(0, 0x57, 0x3B, 0x10, 0xC80, 4, 8, v);
         i = 0;
-        if (D_8009F87F + 1 > 0) {
+        if (gLineCount + 1 > 0) {
             do {
                 if (i == gSelectedRow) {
                     u8 *p;
@@ -112,7 +112,7 @@ void func_8007BCF4(s32 arg0)
                 { register u8 *t __asm__("$4") = text; register u8 *src __asm__("$5") = D_8009F484; __asm__("" : "+r"(t)); __asm__("" : "+r"(src)); func_8008CD30(t, src, ++i); }
                 func_800788F0(text, 0x57, y, c, 0, 4, 8, 2);
                 y += 0xA;
-            } while (i < D_8009F87F + 1);
+            } while (i < gLineCount + 1);
         }
     }
 

@@ -17,7 +17,7 @@ struct Unk47088Stream {
     s32 handle;
 };
 
-extern struct Unk47088Stream D_800A1810[];
+extern struct Unk47088Stream gStreamTable[] __asm__("D_800A1810");
 
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern void func_800243F8(s8 *arg0);
@@ -63,7 +63,7 @@ void func_80047088(s32 arg0, struct Unk47088Object *object)
     s32 *voice;
 
     if (arg0 & 0x20) {
-        stream = &D_800A1810[object->info->stream];
+        stream = &gStreamTable[object->info->stream];
         track = arg0 & 7;
 
         if (stream->playing != 0) {

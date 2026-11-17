@@ -4,7 +4,8 @@
 typedef unsigned char u8;
 extern int D_800A3E68, D_800A3E6C;
 extern char *D_800A3E70;
-extern char D_80012594[], D_80012488[], D_80012498[];
+extern char D_80012594[], D_80012498[];
+extern char gCdErrorLogMsg[] __asm__("D_80012488");
 extern int D_8009C8CC[], D_8009C94C[];
 extern u8 D_8009C8C5;
 extern u8 gCdStateBytes[] __asm__("D_8009CB84");
@@ -84,7 +85,7 @@ int func_8008FAC8(int mode)
         }
         if (count) {
         timeout:
-            func_8008FF08(D_80012488);
+            func_8008FF08(gCdErrorLogMsg);
             {
                 register int first __asm__("$4") = state[0];
                 register int second __asm__("$2") = state[1];

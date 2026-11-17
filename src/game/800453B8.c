@@ -24,17 +24,17 @@ struct Unk453B8Stream {
 
 extern struct SoundVoice D_800AACC8[];
 extern struct Unk453B8Bank D_800A10E0[];
-extern struct Unk453B8Stream D_800A1810[];
-extern struct SoundVoice *D_8009F73C;
+extern struct Unk453B8Stream gStreamTable[] __asm__("D_800A1810");
+extern struct SoundVoice *gVoiceFreeList __asm__("D_8009F73C");
 extern s32 D_8009F740;
-extern struct SoundVoice *D_8009F744;
+extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
 extern struct SoundVoice *D_8009F748;
 extern struct SoundVoice *D_8009F74C;
 extern struct SoundVoice *D_8009F750;
 extern struct SoundVoice *D_8009F754;
 extern struct SoundVoice *D_8009F758;
 extern s32 D_8009F32C;
-extern u8 D_8009F738;
+extern u8 gVolumeLimitSelector __asm__("D_8009F738");
 
 extern void func_80044EF8(void);
 extern void func_8004582C(void);
@@ -67,10 +67,10 @@ void func_800453B8(void)
     struct Unk453B8Stream *stream;
     struct SoundVoice *voice;
 
-    D_8009F73C = D_800AACC8;
+    gVoiceFreeList = D_800AACC8;
     voice = D_800AACC8;
     D_8009F740 = 0x18;
-    D_8009F744 = 0;
+    gVoicePriorityList = 0;
     D_8009F748 = 0;
     D_8009F74C = 0;
     D_8009F750 = 0;
@@ -91,12 +91,12 @@ void func_800453B8(void)
     }
     D_8009F32C = 0;
     i = 0;
-    stream = D_800A1810;
+    stream = gStreamTable;
     while (i < 2) {
         stream->unk08 = func_80046AD8();
         stream->unk00 = 0;
         i++;
         stream++;
     }
-    D_8009F738 = 0;
+    gVolumeLimitSelector = 0;
 }

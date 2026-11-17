@@ -17,7 +17,7 @@ extern s32 D_8009F918;
 extern volatile s32 D_8009F91C;
 extern volatile s32 D_8009F920;
 extern Unk8009FA94 *gGameSession[2] __asm__("D_8009FA94");
-extern u16 D_8009BABE[];
+extern u16 gSoundWidgetLabel[] __asm__("D_8009BABE");
 extern u8 D_800A377B[];
 extern void func_8002A16C(s32);
 extern s32 func_8002A58C(void);
@@ -60,7 +60,7 @@ void func_8007D18C(void)
     D_8009F914 = tmp;
     D_8009F91C = 0;
     D_8009F920 = 0x47;
-    D_8009BABE[0] = (tmp != 0) ? 0x100E : 0x1018;
+    gSoundWidgetLabel[0] = (tmp != 0) ? 0x100E : 0x1018;
     D_8009F904 = 0;
     if ((u8)func_8002A58C() == 0) {
         func_8002A16C(0);

@@ -1,7 +1,7 @@
 // Categories: Platform > Sound
 #include "game/types.h"
 
-extern s32 D_8009F730;
+extern s32 gSoundModeFlag __asm__("D_8009F730");
 
 /**
  * @brief Returns the global sound-mode (stereo/enable) flag D_8009F730.
@@ -26,5 +26,5 @@ extern s32 D_8009F730;
  */
 s32 func_800451E0(void)
 {
-    return D_8009F730;
+    return gSoundModeFlag;
 }

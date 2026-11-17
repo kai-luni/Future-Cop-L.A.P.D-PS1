@@ -23,10 +23,10 @@ typedef struct {
 
 extern Res63DC8 * volatile gTileMapTable __asm__("D_8009F80C");
 extern Unk63DC8 *D_8009F810;
-extern void *D_8009F820;
+extern void *gCellMap __asm__("D_8009F820");
 
 extern s32 D_800A2950[];
-extern s32 D_800A2970[];
+extern s32 gClipRect[] __asm__("D_800A2970");
 
 extern void *func_80017EBC(s32 size, s32 tag);
 extern void func_800496D0(s32 width, s32 height);
@@ -140,13 +140,13 @@ void func_80063DC8(Unk63DC8 *arg0)
     D_800A2950[5] = product;
     D_800A2950[3] = z_bottom;
 
-    D_800A2970[4] = (resource->unk04 - 1) << 2;
-    D_800A2970[5] = (resource->unk08 - 1) << 2;
+    gClipRect[4] = (resource->unk04 - 1) << 2;
+    gClipRect[5] = (resource->unk08 - 1) << 2;
 
     product = (resource->unk04 - 1) * (resource->unk08 - 1);
     result = func_80017EBC(product << 4, 2);
     call_resource = gTileMapTable;
-    D_8009F820 = result;
+    gCellMap = result;
 
     func_800496D0(call_resource->unk04 - 1,
                   call_resource->unk08 - 1);

@@ -1,7 +1,7 @@
 // Categories: Platform > GPU | Graphics > GPU > Debug Validation
 typedef unsigned int u32;
 typedef struct { int pad[2]; void (*fn)(void *, void *, int, u32); void *ctx; } Device;
-extern Device *D_8009DDE8;
+extern Device *gVramWriteCallback __asm__("D_8009DDE8");
 extern char D_80012A88[];
 extern void func_80092CF4(char *, void *);
 /**
@@ -58,7 +58,7 @@ void func_80092EA0(void *arg0, int arg1, int arg2, int arg3)
     __asm__("" : "+r"(d));
     b &= 255;
     __asm__("" : "+r"(b));
-    device = D_8009DDE8;
+    device = gVramWriteCallback;
     __asm__("" : "+r"(device));
     device->fn(device->ctx, a5, 8, d | b);
     __asm__ volatile(".set reorder");

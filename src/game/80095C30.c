@@ -1,7 +1,7 @@
 // Categories: Utilities > Mathematics > Trigonometry
 #include "game/types.h"
 
-extern s16 D_8009E0A0[];
+extern s16 gRatioTable[] __asm__("D_8009E0A0");
 
 /**
  * @brief Two-argument arctangent over a 1024-entry table, 12-bit angle result.
@@ -54,14 +54,14 @@ s32 func_80095C30(s32 x, s32 y)
         } else {
             index = (x << 10) / y;
         }
-        result = D_8009E0A0[index];
+        result = gRatioTable[index];
     } else {
         if (y & 0x7FE00000) {
             index = y / (x >> 10);
         } else {
             index = (y << 10) / x;
         }
-        result = 0x400 - D_8009E0A0[index];
+        result = 0x400 - gRatioTable[index];
     }
     if (negateY) {
         result = 0x800 - result;

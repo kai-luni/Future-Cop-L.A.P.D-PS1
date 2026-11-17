@@ -5,8 +5,8 @@ typedef struct { short x,y,w,h; } Rect;
 typedef struct { void *pad0; void *pad4; int (*send)(int, void *, int, int); char padC[12]; int arg; } Context;
 extern void func_80092CF4(char *, Rect *);
 extern char D_80012AAC[];
-extern u32 D_8009DE90[];
-extern Context *D_8009DDE8;
+extern u32 gGpuCmdBlock[] __asm__("D_8009DE90");
+extern Context *gVramWriteCallback __asm__("D_8009DDE8");
 /**
  * @brief Sends a rectangle to the GPU library as a 20-byte transfer command.
  *
@@ -44,12 +44,12 @@ int func_80092FF8(Rect *r, int a, int b)
         register int size __asm__("$6");
         val = bb << 16;
         __asm__("" : "+r"(val));
-        base = D_8009DE90;
+        base = gGpuCmdBlock;
         __asm__("" : "+r"(base));
         lo = aa & 0xffff;
         val = val | lo;
         first = *(u32 *)r;
-        ctx = D_8009DDE8;
+        ctx = gVramWriteCallback;
         __asm__("" : "+r"(val), "+r"(first), "+r"(ctx));
         size = 20;
         __asm__("" : "+r"(size));

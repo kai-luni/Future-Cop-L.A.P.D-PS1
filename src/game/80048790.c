@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 D_8009FAB8;
-extern s32 D_8009F760;
+extern s32 gOverlayTimer __asm__("D_8009F760");
 
 /**
  * @brief Reports whether the HUD overlay may be drawn right now.
@@ -34,7 +34,7 @@ u8 func_80048790(void)
     case 0:
         return 0;
     case 2:
-        if (D_8009F760 == 0) {
+        if (gOverlayTimer == 0) {
             __asm__ volatile ("");
             return 1;
         }

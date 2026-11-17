@@ -10,7 +10,7 @@ struct Entry {
     u8 limit;
     u8 pad[9];
 };
-extern struct Entry D_8009C0A8[3];
+extern struct Entry gLoadoutTable[3] __asm__("D_8009C0A8");
 extern s8 *D_8009F468;
 
 /**
@@ -41,7 +41,7 @@ void func_8007D2DC(int mode)
     struct Entry *base;
     u8 *value;
     i = 0;
-    base = D_8009C0A8;
+    base = gLoadoutTable;
     for (; i < 2; i++) {
         for (j = 0, p = base; j < 3; j++, p++) {
             __asm__("" : "+r"(p));

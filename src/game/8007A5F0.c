@@ -17,7 +17,7 @@ struct Unk78210Panel {
 };
 
 extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
-extern volatile s32 D_8009F8F0;
+extern volatile s32 gPlayerSelection __asm__("D_8009F8F0");
 extern s32 D_8009F8F4;
 extern s8 *D_8009F468;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
@@ -66,7 +66,7 @@ void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
         }
         mode = gGameSession;
         p = D_8009F468;
-        mode->unk08 = D_8009F8F0;
+        mode->unk08 = gPlayerSelection;
         __asm__ volatile("" ::: "memory");
         mode->unk98 = D_8009F8F4;
         if (p[5] == 2) {
@@ -85,7 +85,7 @@ void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             *(s16 *)(base + 0x32) = 0x64;
             *(s16 *)(base + 0x86) = 0x64;
             if (mode->split == 0) {
-                mode->unk98 = D_8009F8F0;
+                mode->unk98 = gPlayerSelection;
                 func_80078650(&D_800A3868, 1);
             } else {
                 func_80078650(&D_800A3898, 1);

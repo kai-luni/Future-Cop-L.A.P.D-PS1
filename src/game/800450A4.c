@@ -8,7 +8,7 @@ struct Unk450A4Slot {
     s32 unk58;
 };
 
-extern u8 D_8009F738;
+extern u8 gVolumeLimitSelector __asm__("D_8009F738");
 
 extern struct Unk450A4Slot *func_80045164(s32 id);
 extern s32 func_800458E8(s32 arg0, s32 arg1, s8 *mix, s32 arg3);
@@ -45,7 +45,7 @@ s32 func_800450A4(s32 id, s8 *mix)
             func_800460D4(mix);
             volume = mix[0];
             volume += (mix[0] >> 1) + (mix[0] >> 2);
-            if (D_8009F738 != 0) {
+            if (gVolumeLimitSelector != 0) {
                 if (volume >= 0x40) {
                     volume = 0x3F;
                 }

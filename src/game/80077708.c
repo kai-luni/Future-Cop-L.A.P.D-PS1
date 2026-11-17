@@ -9,7 +9,7 @@ struct Entry {
 };
 
 extern u8 D_8009F3C0;
-extern u8 D_8009F3C2;
+extern u8 gUnlockFlag __asm__("D_8009F3C2");
 extern u8 D_8009F880;
 extern u8 D_8009F881;
 extern u8 D_8009F882;
@@ -64,6 +64,6 @@ void func_80077708(void)
     }
 
     D_8009F884 = gFrontEndListTable;
-    D_8009F882 = D_8009F3C2 + 3;
-    D_8009F888 = D_8009F3C2 + 4;
+    D_8009F882 = gUnlockFlag + 3;
+    D_8009F888 = gUnlockFlag + 4;
 }

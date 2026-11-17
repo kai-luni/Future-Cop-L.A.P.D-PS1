@@ -4,7 +4,8 @@
 #include "game/gpu_globals.h"
 
 typedef unsigned int u32;
-extern int D_8009DEFC, D_8009DF00;
+extern int gPendingDeadline __asm__("D_8009DF00");
+extern int gTimeoutStamp __asm__("D_8009DEFC");
 extern volatile u32 gGpuJobTail __asm__("D_8009DEEC");
 extern u32 gSavedIrqMask __asm__("D_8009DEF8");
 extern u32 gGpuJobHead __asm__("D_8009DEE8");
@@ -51,7 +52,7 @@ int func_8009520C(void)
     register int *counter __asm__("$3");
     register volatile u32 *port __asm__("$6");
     register char *message __asm__("$4");
-    if (D_8009DEFC < func_80091270(-1)) goto fail;
+    if (gTimeoutStamp < func_80091270(-1)) goto fail;
     __asm__("lui %0,%%hi(D_8009DF00)\n\taddiu %0,%0,%%lo(D_8009DF00)" : "=r"(counter));
     if ((*counter)++ > 0xF0000) {
 fail:

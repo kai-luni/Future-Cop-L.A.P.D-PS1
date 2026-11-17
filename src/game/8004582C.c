@@ -16,8 +16,8 @@ struct SoundChannel {
 };
 
 extern struct SoundChannel D_800A1160[];
-extern s32 D_8009F720;
-extern struct SoundChannel *D_8009F724;
+extern s32 gChannelCount __asm__("D_8009F720");
+extern struct SoundChannel *gChannelListHead __asm__("D_8009F724");
 extern struct SoundChannel *D_8009F728;
 extern struct SoundChannel *D_8009F72C;
 
@@ -51,8 +51,8 @@ void func_8004582C(void)
         channel++;
     }
     channel[-1].next = 0;
-    D_8009F720 = 0;
-    D_8009F724 = D_800A1160;
+    gChannelCount = 0;
+    gChannelListHead = D_800A1160;
     D_8009F728 = 0;
     D_8009F72C = 0;
 }

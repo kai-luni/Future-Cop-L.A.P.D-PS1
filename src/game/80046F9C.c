@@ -15,7 +15,7 @@ struct SoundBank {
 };
 
 extern volatile u8 D_8009F340;
-extern struct SoundBank D_800A7938[];
+extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 extern s32 func_800458E8(s32 arg0, s32 arg1, s8 *mix, s32 arg3);
 extern s32 func_80046B04(s32 volume, s32 arg1, s32 arg2, u32 index);
@@ -70,7 +70,7 @@ s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4)
     if (indexValue >= 0x6E) {
         return handle;
     }
-    bank = &D_800A7938[indexValue];
+    bank = &gSoundEntryTable[indexValue];
     if (bank->count == 0) {
         return handle;
     }

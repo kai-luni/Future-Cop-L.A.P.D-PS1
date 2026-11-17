@@ -4,7 +4,7 @@
 #include "game/types.h"
 
 extern u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
-extern u8 D_80012BB8[];
+extern u8 gMdecStatusLogMsg[] __asm__("D_80012BB8");
 extern void func_8009649C(void *);
 
 /**

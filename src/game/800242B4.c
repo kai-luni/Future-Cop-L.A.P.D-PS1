@@ -19,7 +19,7 @@ struct SoundBank {
     s32 head;
 };
 
-extern struct SoundBank D_800A7938[];
+extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 /**
  *  @brief Removes the first matching key from a sound bank.
@@ -48,7 +48,7 @@ s32 func_800242B4(s32 bankIndex, u8 key)
 
     result = 0;
     __asm__("" : "=r"(result) : "0"(result));
-    bank = &D_800A7938[bankIndex];
+    bank = &gSoundEntryTable[bankIndex];
     for (i = 0; i < bank->count; i++) {
         if (bank->entries[i].key == key) {
             bank->count--;

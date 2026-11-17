@@ -25,9 +25,9 @@ struct SoundObj {
 };
 
 extern u8 D_8009F75C;
-extern struct Unk7938 D_800A7938[];
-extern u8 D_800A1830[];
-extern u8 D_800A1880[];
+extern struct Unk7938 gSoundEntryTable[] __asm__("D_800A7938");
+extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
+extern u8 gSoundIdTable[] __asm__("D_800A1880");
 extern u8 D_800A188A[];
 
 extern s32 func_800472E8(s32 key);
@@ -66,7 +66,7 @@ s32 func_80047344(struct SoundObj *self, s32 key)
 
     slot = D_8009F75C;
     D_8009F75C = slot + 1;
-    entry = &D_800A7938[slot];
+    entry = &gSoundEntryTable[slot];
 
     self->id = slot;
     if (self->unk04 == 0) {
@@ -92,9 +92,9 @@ s32 func_80047344(struct SoundObj *self, s32 key)
                 }
             } else {
                 if (self->unk07 == 1) {
-                    D_800A1830[value] = slot;
+                    gSoundBankTableLow[value] = slot;
                 } else {
-                    D_800A1880[value] = slot;
+                    gSoundIdTable[value] = slot;
                 }
             }
         }

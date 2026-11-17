@@ -15,7 +15,7 @@ struct SoundChannel {
     struct SoundChannel *prev;
 };
 
-extern s32 D_8009F720;
+extern s32 gChannelCount __asm__("D_8009F720");
 extern struct SoundChannel *D_8009F728;
 extern struct SoundChannel *D_8009F72C;
 
@@ -67,5 +67,5 @@ void func_800455DC(struct SoundChannel *channel)
     } else {
         D_8009F72C = channel;
     }
-    D_8009F720++;
+    gChannelCount++;
 }

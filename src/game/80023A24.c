@@ -8,7 +8,7 @@ struct Entry {
     u8 rest[11];
 };
 
-extern struct Entry D_800A7938[];
+extern struct Entry gSoundEntryTable[] __asm__("D_800A7938");
 extern void func_800242B4(s32, s32);
 
 /**
@@ -36,7 +36,7 @@ void func_80023A24(void)
     struct Entry *entry;
     register u8 *data __asm__("$19");
     i = 0;
-    entry = D_800A7938;
+    entry = gSoundEntryTable;
     do {
         count = entry->count;
         j = 0;

@@ -26,7 +26,7 @@ struct SoundBank {
     struct SoundVoice *head;
 };
 
-extern struct SoundBank D_800A7938[];
+extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 /**
  * @brief Unlinks a SoundVoice node from its SoundBank doubly-linked voice list in D_800A7938.
@@ -54,7 +54,7 @@ void func_80046804(struct SoundVoice *voice)
 {
     struct SoundBank *bank;
 
-    bank = &D_800A7938[voice->bank];
+    bank = &gSoundEntryTable[voice->bank];
     if (voice->bankPrev != 0) {
         voice->bankPrev->bankNext = voice->bankNext;
     } else {

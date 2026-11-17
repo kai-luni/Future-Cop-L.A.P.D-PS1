@@ -11,7 +11,7 @@ struct Entry {
     u8 limit;
     u8 pad[9];
 };
-extern struct Entry D_8009C0A8[];
+extern struct Entry gLoadoutTable[] __asm__("D_8009C0A8");
 extern s8 *D_8009F468;
 extern u8 D_800A6FE0[];
 extern s8 D_8009F924[];
@@ -84,14 +84,14 @@ void func_8007DD08(s32 arg0)
             s3 = 2;
             if (D_8009F468[arg0] == 4)
                 s6 = 1;
-            else if (D_8009C0A8[s4].replacement != D_8009C0A8[s4].limit)
+            else if (gLoadoutTable[s4].replacement != gLoadoutTable[s4].limit)
                 s6 = 2;
         } else {
             s0 = 0x25;
             s3 = 1;
             if (D_8009F468[0] == 0)
                 s6 = 1;
-            else if (D_8009C0A8[s4].replacement != D_8009C0A8[s4].limit)
+            else if (gLoadoutTable[s4].replacement != gLoadoutTable[s4].limit)
                 s6 = 2;
         }
         func_8007D7CC(D_8009C030 + D_8009F924[arg0] * 6, s0, 0x4F, s4 == 0, 0, 0);
@@ -101,7 +101,7 @@ void func_8007DD08(s32 arg0)
     } else {
         if (D_8009F468[arg0] == 0)
             s6 = 1;
-        else if (D_8009C0A8[s4].replacement != D_8009C0A8[s4].limit)
+        else if (gLoadoutTable[s4].replacement != gLoadoutTable[s4].limit)
             s6 = 2;
         func_800788F0(D_800A6FE0, 0x53, 0x3C, 0x10, 0, 4, 8, 2);
         func_800788F0(0, 0x53, 0x44, 0x10, 10000, 4, 8, 2);
@@ -111,7 +111,7 @@ void func_8007DD08(s32 arg0)
         func_8007D7CC(D_8009C0D0 + i3 * 6, 0x86, 0x89, s4 == 2, 2, 1);
     }
     func_80078B34(0x2968, 0, s3);
-    if (s4 >= 0 && D_8009C0A8[s4].values[arg0] > D_8009C0A8[s4].limit)
+    if (s4 >= 0 && gLoadoutTable[s4].values[arg0] > gLoadoutTable[s4].limit)
         func_80078B34(0x521C, 0, s3);
     func_80078B34(0x10CC, 1, s3);
     if ((gPaletteCycleCounter >> 9) & 1) {

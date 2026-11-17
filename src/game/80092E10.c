@@ -1,7 +1,7 @@
 // Categories: Graphics > GPU > VRAM Transfer | Platform > GPU
 typedef unsigned int u32;
 typedef struct { int pad[2]; void (*fn)(void *, void *, int, u32); void *ctx; } Device;
-extern Device *D_8009DDE8;
+extern Device *gVramWriteCallback __asm__("D_8009DDE8");
 extern char D_80012A7C[];
 extern void func_80092CF4(char *, void *);
 /**
@@ -43,6 +43,6 @@ void func_80092E10(void *arg0, int arg1, int arg2, int arg3)
     __asm__("" : "+r"(d));
     b &= 255;
     __asm__("" : "+r"(b));
-    D_8009DDE8->fn(D_8009DDE8->ctx, a5, 8,
+    gVramWriteCallback->fn(gVramWriteCallback->ctx, a5, 8,
                      d | b);
 }

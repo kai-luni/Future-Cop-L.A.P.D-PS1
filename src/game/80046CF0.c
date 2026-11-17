@@ -24,7 +24,7 @@ struct UnkA10E0 {
     s32 field10;
 };
 
-extern u8 D_800A1830[];
+extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
 extern struct UnkA10E0 D_800A10E0[];
 
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
@@ -71,7 +71,7 @@ void func_80046CF0(struct Unk6C488 *object, s32 state)
 
     s1 = object->stats->unkC1;
     if (s1 < 2) {
-        s2 = func_80045494(state, D_800A1830, 0x47);
+        s2 = func_80045494(state, gSoundBankTableLow, 0x47);
         firstFree = -1;
         if (s2 != 0xFF) {
             entry = &D_800A10E0[s1 * 3];

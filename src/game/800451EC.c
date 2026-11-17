@@ -1,7 +1,7 @@
 // Categories: Platform > Sound
 #include "game/types.h"
 
-extern s32 D_8009F734;
+extern s32 gSoundSpatialMode __asm__("D_8009F734");
 
 /**
  * @brief Sets the global audio listener/spatialization mode D_8009F734.
@@ -29,5 +29,5 @@ extern s32 D_8009F734;
  */
 void func_800451EC(s32 value)
 {
-    D_8009F734 = value;
+    gSoundSpatialMode = value;
 }

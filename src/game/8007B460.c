@@ -30,7 +30,7 @@ struct State8009FA94 {
 };
 
 extern u8 gSelectedRow __asm__("D_8009F87E");
-extern u8 D_8009F87F;
+extern u8 gLineCount __asm__("D_8009F87F");
 extern u8 D_8009F880;
 extern u8 D_8009F881;
 extern u8 D_8009F882;

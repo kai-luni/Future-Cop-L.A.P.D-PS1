@@ -10,7 +10,7 @@ extern struct Name7 D_800A6FE9;
 extern struct Name7 D_8009F474;
 extern struct Name7 D_8009F47C;
 extern u32 D_8009F8E8;
-extern u8 D_8009F3E4;
+extern u8 gSetupDoneFlag __asm__("D_8009F3E4");
 
 extern u8 *func_80089914(s32 id);
 extern s32 func_8008CCC0(u8 *s);
@@ -63,7 +63,7 @@ void func_8007799C(void)
             ok = 1;
         }
         if (ok == 0) {
-            D_8009F3E4 = 1;
+            gSetupDoneFlag = 1;
         }
     }
 }

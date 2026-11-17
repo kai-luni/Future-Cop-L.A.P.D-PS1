@@ -20,7 +20,7 @@ struct Unk4749CHandle {
 
 extern u8 D_8009F739;
 extern s32 D_8009F32C;
-extern struct Unk47554Node *D_8009F744;
+extern struct Unk47554Node *gVoicePriorityList __asm__("D_8009F744");
 extern struct Unk47554Node *D_8009F74C;
 extern void *D_8009FA58[2];
 extern struct Unk4749CHandle D_800A10C0[];
@@ -84,8 +84,8 @@ void func_80047554(struct Unk47554Node *node)
         D_8009F32C--;
         func_800474F0(&D_800A10C0[D_8009F32C]);
     }
-    while (D_8009F744 != 0) {
-        func_80046698(D_8009F744);
+    while (gVoicePriorityList != 0) {
+        func_80046698(gVoicePriorityList);
     }
     entry = D_8009F74C;
     while (entry != 0) {

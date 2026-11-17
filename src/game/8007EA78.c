@@ -17,7 +17,7 @@ struct Unk9FA94 {
     s32 unk94;
 };
 
-extern u8 D_800A3948[];
+extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 D_8009C1BC[];
 extern u8 D_8009C1AC[];
 extern struct Entry D_8009B4E4[];
@@ -111,7 +111,7 @@ s32 func_8007EA78(void)
     ret = 0;
     __asm__ volatile("" : "+r"(n5), "+r"(ret) :: "memory");
     for (i = 0; i < 10; i++) {
-        c = D_800A3948[i] + 0x41;
+        c = gPasswordBuffer[i] + 0x41;
         if (i & 1) {
             for (j = 0; j < 8; j++) {
                 if (c == D_8009C1BC[j]) {

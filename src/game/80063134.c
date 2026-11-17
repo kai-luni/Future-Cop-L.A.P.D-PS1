@@ -3,7 +3,7 @@
 
 extern void *D_800A294C[];
 extern u8 D_800A2931[];
-extern s32 D_8009F838;
+extern s32 gQueueCount __asm__("D_8009F838");
 
 /**
  * @brief Clears terrain heightfield pointer, ground-object table count, and SLFX flag byte.
@@ -32,6 +32,6 @@ extern s32 D_8009F838;
 void func_80063134(void)
 {
     D_800A294C[0] = 0;
-    D_8009F838 = 0;
+    gQueueCount = 0;
     D_800A2931[0] = 0;
 }

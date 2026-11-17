@@ -9,7 +9,7 @@ struct Unk77FFC {
 
 extern struct Unk77FFC D_8009B4E4[];
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
-extern u8 D_8009F3C2;
+extern u8 gUnlockFlag __asm__("D_8009F3C2");
 
 /**
  * @brief Updates the front-end unlock flag D_8009F3C2 from the first four entry states.
@@ -36,8 +36,8 @@ void func_80077FFC(void)
         D_8009B4E4[gFrontEndListTable[1]].state == D_8009B4E4[gFrontEndListTable[0]].state &&
         D_8009B4E4[gFrontEndListTable[2]].state == D_8009B4E4[gFrontEndListTable[1]].state &&
         D_8009B4E4[gFrontEndListTable[3]].state == D_8009B4E4[gFrontEndListTable[2]].state) {
-        D_8009F3C2 = 1;
+        gUnlockFlag = 1;
     } else {
-        D_8009F3C2 = 0;
+        gUnlockFlag = 0;
     }
 }

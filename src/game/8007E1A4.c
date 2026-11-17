@@ -15,7 +15,7 @@ struct E8007E1A4 {
 extern s8 *D_8009F468;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 D_8009F8BC;
-extern struct E8007E1A4 D_8009C0A8[];
+extern struct E8007E1A4 gLoadoutTable[] __asm__("D_8009C0A8");
 extern u8 D_8009F490[];
 
 extern s32 func_80046C84(s32 id, s32 arg1);
@@ -83,7 +83,7 @@ void func_8007E1A4(s32 mode, s32 x, s32 y, s32 color, s32 idx)
         a = t - 5;
         b = idx - 5;
     }
-    base = (u8 *)D_8009C0A8;
+    base = (u8 *)gLoadoutTable;
     e = (struct E8007E1A4 *)(base + a * 20);
     p = (u8 *)e->unk4;
     switch (mode) {
@@ -102,7 +102,7 @@ void func_8007E1A4(s32 mode, s32 x, s32 y, s32 color, s32 idx)
         }
         break;
     case 0:
-        e2 = &D_8009C0A8[b];
+        e2 = &gLoadoutTable[b];
         n = e2->unkA - e2->unk9 + 1;
         if (n >= 2) {
             s = func_80089914(e2->unkC);

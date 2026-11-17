@@ -3,7 +3,9 @@ typedef struct { short x, y, w, h; } Rect;
 typedef struct { unsigned char mode, pad; short width, height; } State;
 extern State gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(char *, ...) __asm__("D_8009DDEC");
-extern char D_80012A58[], D_80012A64[], D_80012A78[];
+extern char gMode2LogTag[] __asm__("D_80012A78");
+extern char gRectFormatString[] __asm__("D_80012A64");
+extern char gOutOfBoundsLogTag[] __asm__("D_80012A58");
 
 /**
  * @brief Validates a rectangle against the GPU library's limits and logs a
@@ -76,6 +78,6 @@ print:
     __asm__("" : "+r"(last));
     callback = gLogPrintf;
     __asm__("" : "+r"(callback));
-    callback(D_80012A64, a, b, c, last);
+    callback(gRectFormatString, a, b, c, last);
     __asm__ volatile(".set reorder");
 }

@@ -4,7 +4,7 @@ struct CallbackTable {
     int (*callback)(void);
 };
 
-extern struct CallbackTable *D_8009DDE8;
+extern struct CallbackTable *gVramWriteCallback __asm__("D_8009DDE8");
 
 /**
  *  @brief Returns the sign bit of a callback's result.
@@ -25,5 +25,5 @@ extern struct CallbackTable *D_8009DDE8;
  */
 unsigned int func_80093924(void)
 {
-    return (unsigned int)D_8009DDE8->callback() >> 31;
+    return (unsigned int)gVramWriteCallback->callback() >> 31;
 }

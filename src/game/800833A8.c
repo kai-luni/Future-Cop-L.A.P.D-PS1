@@ -2,8 +2,8 @@
 #include "game/types.h"
 
 extern s32 D_8009C1CC[5];
-extern s32 D_8009F3D8;
-extern s32 D_8009F3E0;
+extern s32 gModulePrefixCW __asm__("D_8009F3D8");
+extern s32 gModulePrefixPA __asm__("D_8009F3E0");
 
 extern s32 func_8008CCA0(s32 arg0, s32 arg1);
 
@@ -55,7 +55,7 @@ s32 func_800833A8(s32 arg0)
     }
 
     if (i == 5) {
-        return D_8009F3D8;
+        return gModulePrefixCW;
     }
-    return D_8009F3E0;
+    return gModulePrefixPA;
 }

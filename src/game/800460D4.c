@@ -9,7 +9,7 @@ struct Unk45884 {
 };
 
 extern struct Unk45884 D_800A1920[];
-extern s32 D_8009F734;
+extern s32 gSoundSpatialMode __asm__("D_8009F734");
 
 extern void func_8001A578(u32 angle, s32 *vec);
 
@@ -39,7 +39,7 @@ void func_800460D4(s8 *mix)
 {
     if (mix[2] == 0) {
         func_8001A578(D_800A1920[0].angle, (s32 *)(mix + 4));
-        if (D_8009F734 == 2) {
+        if (gSoundSpatialMode == 2) {
             func_8001A578(D_800A1920[1].angle, (s32 *)(mix + 0xC));
             mix[1] = CLAMP(CLAMP((*(s32 *)(mix + 4) >> 11) + 0x20, 0, 0x40) +
                            CLAMP((*(s32 *)(mix + 0xC) >> 11) + 0x20, 0, 0x40),

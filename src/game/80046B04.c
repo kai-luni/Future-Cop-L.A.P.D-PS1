@@ -31,8 +31,8 @@ struct SoundBank {
     struct SoundVoice *head;
 };
 
-extern struct SoundBank D_800A7938[];
-extern struct SoundVoice *D_8009F744;
+extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
+extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
 extern s32 D_8009F33C;
 
 extern struct SoundVoice *func_8004665C(void);
@@ -63,12 +63,12 @@ s32 func_80046B04(s32 arg0, s32 arg1, s32 arg2, s32 slot)
 
     voice = 0;
     value = arg0 + (arg1 << 4);
-    bank = &D_800A7938[slot];
+    bank = &gSoundEntryTable[slot];
 
     if (slot == 0xFF || bank->voices < bank->unk14) {
         voice = func_8004665C();
         if (voice == 0) {
-            node = D_8009F744;
+            node = gVoicePriorityList;
             if (node != 0 && node->time < value) {
                 func_80046698(node);
                 voice = func_8004665C();

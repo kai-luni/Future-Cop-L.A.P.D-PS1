@@ -18,8 +18,9 @@ extern char D_80012AE8[];
 extern  void (*gLogPrintf)(char *, s32) __asm__("D_8009DDEC");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
-extern u32 D_8009DEFC, D_8009DF00;
-extern Callbacks *D_8009DDE8;
+extern u32 gPendingDeadline __asm__("D_8009DF00");
+extern u32 gTimeoutStamp __asm__("D_8009DEFC");
+extern Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
 extern int func_80091270(int);
 extern int func_8009520C(void);
 extern void func_800914E0(int, void (*)(void));
@@ -54,8 +55,8 @@ int func_8009570C(s32 arg0)
         __asm__("lui %0,%%hi(D_80012AE8)\n\taddiu %0,%0,%%lo(D_80012AE8)" : "=r"(msg));
         gLogPrintf(msg, arg0);
     }
-    D_8009DEFC = func_80091270(-1) + 0xF0;
-    D_8009DF00 = 0;
+    gTimeoutStamp = func_80091270(-1) + 0xF0;
+    gPendingDeadline = 0;
     if (!((*gDma2ChannelCtrlPtr & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000))) goto success;
 loop:
     if (func_8009520C()) { result = -1; goto done; }
@@ -68,7 +69,7 @@ success:
         __asm__("lui %0,%%hi(D_80095808)\n\taddiu %0,%0,%%lo(D_80095808)" : "=r"(callback));
         func_800914E0(2, callback);
     }
-    D_8009DDE8->unk18(arg0);
+    gVramWriteCallback->unk18(arg0);
     result = 0;
 done:
     __asm__ volatile(".set reorder");

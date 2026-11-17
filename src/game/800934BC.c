@@ -12,7 +12,7 @@ struct Cache { s16 s[4]; s16 t[4]; s32 w; s32 pad; };
 
 extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
 extern u8 D_8009DDF3;
-extern struct Gfx *D_8009DDE8;
+extern struct Gfx *gVramWriteCallback __asm__("D_8009DDE8");
 extern  void (*gLogPrintf)(void *, void *) __asm__("D_8009DDEC");
 extern char D_80012B30[];
 extern struct Cache gDispEnvCache __asm__("D_8009DE5C");
@@ -75,7 +75,7 @@ struct Prim *func_800934BC(struct Prim *p)
     cmd = 0x5000000;
     upper = p->u2;
     lower = p->u0;
-    gfx = D_8009DDE8;
+    gfx = gVramWriteCallback;
     __asm__("" : "+r"(cmd), "+r"(upper), "+r"(lower), "+r"(gfx));
     gfx->fn((((upper & 0x3FF) << 10) | ((lower & 0x3FF) | cmd)));
     q = (u16 *)(g + 0x72);
@@ -141,7 +141,7 @@ rect_changed:
         upper <<= 12;
         lower = a & 0xFFF;
         cmd = 0x6000000;
-        gfx = D_8009DDE8;
+        gfx = gVramWriteCallback;
         __asm__("" : "+r"(upper), "+r"(lower), "+r"(cmd), "+r"(gfx));
         lower |= cmd;
         __asm__("" : "+r"(lower), "+r"(upper), "+r"(gfx));
@@ -150,7 +150,7 @@ rect_changed:
         upper <<= 10;
         lower = x1 & 0x3FF;
         cmd = 0x7000000;
-        gfx = D_8009DDE8;
+        gfx = gVramWriteCallback;
         __asm__("" : "+r"(upper), "+r"(lower), "+r"(cmd), "+r"(gfx));
         lower |= cmd;
         __asm__("" : "+r"(lower), "+r"(upper), "+r"(gfx));
@@ -190,7 +190,7 @@ mode_changed:
         __asm__("" : "+r"(cmd), "+r"(mul));
         if (cmd) t = mul < 0x121; else t = mul < 0x101;
         if (!t) flags |= 0x24;
-        D_8009DDE8->fn(flags);
+        gVramWriteCallback->fn(flags);
     }
     __asm__("" ::: "memory");
     func_8008CD10(&gDispEnvCache, p, 0x14);

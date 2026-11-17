@@ -1,7 +1,7 @@
 // Categories: Platform > Interrupts | Game Engine > Init
 #include "game/types.h"
 
-extern s32 D_800A63D0;
+extern s32 gGpuLibSavedRa __asm__("D_800A63D0");
 extern void func_8008C9A0(void);
 extern void func_8008C9B0(void);
 extern void func_8008DBA0(void);

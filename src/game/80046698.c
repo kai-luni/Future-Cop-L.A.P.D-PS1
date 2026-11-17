@@ -27,9 +27,9 @@ struct SoundVoice {
     struct SoundVoice *bankPrev;
 };
 
-extern struct SoundVoice *D_8009F73C;
+extern struct SoundVoice *gVoiceFreeList __asm__("D_8009F73C");
 extern s32 D_8009F740;
-extern struct SoundVoice *D_8009F744;
+extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
 extern s32 D_8009F748;
 extern struct SoundVoice *D_8009F74C;
 extern s32 D_8009F750;
@@ -85,7 +85,7 @@ void func_80046698(struct SoundVoice *voice)
             D_8009F754 = voice->next;
             break;
         default:
-            D_8009F744 = voice->next;
+            gVoicePriorityList = voice->next;
             break;
         }
     }
@@ -94,8 +94,8 @@ void func_80046698(struct SoundVoice *voice)
         voice->next->prev = voice->prev;
     }
 
-    old = D_8009F73C;
-    D_8009F73C = voice;
+    old = gVoiceFreeList;
+    gVoiceFreeList = voice;
     voice->next = old;
 
     switch (voice->priority) {

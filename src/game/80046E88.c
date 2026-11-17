@@ -14,8 +14,8 @@ struct SoundBank {
     s32 head;
 };
 
-extern u8 D_800A1830[];
-extern struct SoundBank D_800A7938[];
+extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
+extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
 extern s32 func_800458E8(s32 arg0, s32 arg1, s8 *mix, void *arg3);
@@ -56,12 +56,12 @@ s32 func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *obj
 
     result = 0;
     __asm__("" : "=r"(result) : "0"(result));
-    slot = func_80045494(track, D_800A1830, 0x47);
+    slot = func_80045494(track, gSoundBankTableLow, 0x47);
     __asm__("" : "=r"(slot) : "0"(slot));
     if (slot == 0xFF) {
         return result;
     }
-    bank = &D_800A7938[slot];
+    bank = &gSoundEntryTable[slot];
     if (func_800458E8(arg1, arg2, mix, object) == 0) {
         return result;
     }

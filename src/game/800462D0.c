@@ -76,17 +76,17 @@ struct UnkF744 {
 extern u8 D_8009F340;
 extern s32 D_8009F32C;
 extern s32 D_8009F344;
-extern s32 D_8009F720;
+extern s32 gChannelCount __asm__("D_8009F720");
 extern struct SoundChannel *D_8009F728;
 extern struct SoundChannel *D_8009F72C;
 extern u8 D_8009F739;
-extern struct UnkF744 *D_8009F744;
+extern struct UnkF744 *gVoicePriorityList __asm__("D_8009F744");
 
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern struct Unk4749CHandle D_800A10C0[];
 extern struct Unk10E0 D_800A10E0[6];
 extern struct SoundChannel *D_800A1780[];
-extern struct SoundBank D_800A7938[];
+extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 extern s32 func_800474F0(struct Unk4749CHandle *);
 extern void func_80023D78(void);
@@ -213,7 +213,7 @@ delta_ready:
         {
             register struct UnkF744 *f744 __asm__("$17");
 
-            f744 = D_8009F744;
+            f744 = gVoicePriorityList;
             while (f744 != 0) {
                 if (f744->unk08 > 0) {
                     f744->unk08 -= delta;
@@ -223,7 +223,7 @@ delta_ready:
         }
     }
 
-    if (D_8009F720 == 0) {
+    if (gChannelCount == 0) {
         return;
     }
     if (D_8009F739 == 0) {
@@ -240,7 +240,7 @@ delta_ready:
 
             channel = D_8009F72C;
             if (channel != 0) {
-                banks = D_800A7938;
+                banks = gSoundEntryTable;
                 do {
                     *table = channel;
                     if (func_800458E8(channel->unk0C, channel->unk10,
@@ -261,10 +261,10 @@ delta_ready:
             register s32 index __asm__("$16");
 
             table = D_800A1780;
-            count = D_8009F720;
+            count = gChannelCount;
             D_8009F728 = 0;
             D_8009F72C = 0;
-            D_8009F720 = 0;
+            gChannelCount = 0;
             index = 0;
             while (index < count) {
                 struct SoundChannel *queued;
@@ -287,7 +287,7 @@ delta_ready:
             return;
         }
         active = 0;
-        banks = D_800A7938;
+        banks = gSoundEntryTable;
 
         do {
             if (active >= 8 || channel->priority == 0) {

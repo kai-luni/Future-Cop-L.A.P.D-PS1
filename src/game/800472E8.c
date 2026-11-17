@@ -14,7 +14,7 @@ struct SoundBank {
     s32 head;
 };
 
-extern struct SoundBank D_800A7938[];
+extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 /**
  *  @brief Finds a used sound bank entry with the requested key.
@@ -39,11 +39,11 @@ s32 func_800472E8(s32 key)
     s32 i;
 
     for (i = 0; i < 0x6E; i++) {
-        if (D_800A7938[i].used == 0) {
+        if (gSoundEntryTable[i].used == 0) {
             i = -1;
             break;
         }
-        if (D_800A7938[i].key == key) {
+        if (gSoundEntryTable[i].key == key) {
             break;
         }
     }

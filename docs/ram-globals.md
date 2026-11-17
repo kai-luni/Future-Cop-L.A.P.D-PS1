@@ -132,7 +132,91 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 
 Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage).
 
-## GPU-Bibliothek, Sprites und Tiles
+## Grafik-, Sound- und Weltbereich: die zweite Runde
+
+Fünfundfünfzig weitere Globals, wieder in **einem** Commit umbenannt. Bei allen war die Rolle in der Datei-Doku belegt; die Belegstelle steht jeweils daneben.
+
+### GPU-Bibliothek und Debug-Ausgaben
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_8009DE90` | `gGpuCmdBlock` | `u32[]` | Drei-Wort-Kommandoblock, der an Ort und Stelle gebaut wird. | `80092FF8.c:47` |
+| `D_8009DE9C` | `gGpuTpageWord` | `u32[]` | Texpage-Wort, gespeist aus `(Wert & 0xFFFFFF) \| 0x04000000`. | `80093178.c:70` |
+| `D_8009DDE8` | `gVramWriteCallback` | `struct Callbacks *` | Callback, an den der VRAM-Schreibvorgang weitergereicht wird (er läuft dann im Bibliothekscode). | `8005A414.c:46` |
+| `D_8009DDA8` | `gGpuCallbackTable` | `u8[]` | Callback-Tabelle der GPU-Bibliothek (Eintrag `+0x04`). | `80094A18.c:16` |
+| `D_8009DDFC` | `gGpuCancelFlag` | `s32` | Abbruch-Flag des ausstehenden Aufrufs. | `80094CEC.c:21` |
+| `D_8009DEFC` | `gTimeoutStamp` | `s32` | Ablaufmarke (aktueller Tick + 0xF0) für ausstehende Aufrufe. | `800951D8.c:11` |
+| `D_8009DF00` | `gPendingDeadline` | `s32` | Gegenstück zur Marke; genullt bedeutet „nichts ausstehend". | `800951D8.c:12` |
+| `D_800A63D0` | `gGpuLibSavedRa` | `s32` | Merker für den Rücksprungadress-Speicher der Bibliotheksroutine. | `80095DB0.c:20` |
+| `D_8009E0A0` | `gRatioTable` | `s16[]` | Verhältnis-Tabelle, in die das Ergebnis einer Divisionsschutz-Prüfung indiziert. | `80095C30.c:57` |
+| `D_8009F990` | `gMdecSavedRa` | `s32` | Merker für die eingehende Rücksprungadresse im MDEC-Pfad. | `80096520.c:11` |
+
+Debug-Texte, die der GPU-Wrapper `func_80092CF4` ausgibt:
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_80012A58` | `gOutOfBoundsLogTag` | `char[]` | Tag, das geloggt wird, wenn ein Rechteck außerhalb der Grenzen liegt. |
+| `D_80012A64` | `gRectFormatString` | `char[]` | Format, mit dem das Rechteck ausgegeben wird. |
+| `D_80012A78` | `gMode2LogTag` | `char[]` | Tag, das Modus 2 bedingungslos loggt. |
+| `D_80012AD0` | `gClearOTagFormat` | `u8[]` | Format `"ClearOTagR(%08x,%d)...\n"` des Sony-Stil-Logs. |
+| `D_80012BA8` | `gTimeoutLogMsg` | `u8[]` | Meldung bei Zeitüberschreitung (0x100000 Versuche). |
+| `D_80012BB8` | `gMdecStatusLogMsg` | `u8[]` | Statusmeldung des MDEC-Pfads. |
+| `D_80012BC8` | `gMdecTimeoutFormat` | `u8[]` | Format `"%s timeout:\n"` für den MDEC-Timeout. |
+| `D_8001231C` | `gCdInitFailMsg` | `u8[]` | `"CdInit: Init failed\n"` nach fünf Fehlversuchen. |
+| `D_8001233C` | `gCdFallbackMsg` | `u8[]` | Fallback-Text für Low-Byte-Werte ab sieben. |
+| `D_80012488` | `gCdErrorLogMsg` | `char[]` | Meldung des CD-Fehlerpfads, über `func_8008FF08` ausgegeben. |
+
+### Sound
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_8009F730` | `gSoundModeFlag` | `s32` | Globales Sound-Modus-Flag (Stereo/Aktiv). | `800451E0.c:7` |
+| `D_8009F734` | `gSoundSpatialMode` | `s32` | Räumlichkeits-/Listener-Modus des Mischers. | `800451EC.c:7` |
+| `D_8009F738` | `gVolumeLimitSelector` | `u8` | Wählt die obere Lautstärkegrenze 63 statt 127. | `800450A4.c:26` |
+| `D_800A1810` | `gStreamTable` | `struct Unk453B8Stream[]` | Stream-Tabelle (spielt, Track, Handle). | `80047088.c:44` |
+| `D_800A1830` | `gSoundBankTableLow` | `u8[]` | Primäre Sound-Id→Bank-Tabelle, Grenze `0x47`. | `80046A58.c:20` |
+| `D_800A18D0` | `gSoundBankTableHigh` | `u8[]` | Zweite Tabelle für Ids ab `0x46`, Grenze `0x82`, Bias `-0x46`. | `80045494.c:24` |
+| `D_800A1880` | `gSoundIdTable` | `u8[]` | Id-Tabelle der unteren Hälfte, an `func_80045494` übergeben. | `80045494.c:18` |
+| `D_800A7938` | `gSoundEntryTable` | `struct Entry[]` | Bank-Slots mit Einträgen, Zählern und Datenbytes. | `80046A58.c:10` |
+| `D_8009F73C` | `gVoiceFreeList` | `struct SoundVoice *` | Freiliste der Voice-Knoten. | `80046698.c:47` |
+| `D_8009F744` | `gVoicePriorityList` | `struct SoundVoice *` | Prioritätsliste der aktiven Voices. | `80046698.c:46` |
+| `D_8009F724` | `gChannelListHead` | `struct SoundChannel *` | Kopf der Kanal-Liste. | `80045548.c:29` |
+| `D_8009F720` | `gChannelCount` | `s32` | Zähler der belegten Kanäle, wird bei Bedarf dekrementiert. | `80045548.c:33` |
+| `D_8009F760` | `gOverlayTimer` | `s32` | Timer der Overlay-Einblendung. | `80048790.c:11` |
+
+### Frontend
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_8009F3E0` | `gModulePrefixPA` | `int` | Pfad-Präfix `"PA\"` (Bytes 50 41 5C 00). | `800833A8.c:21` |
+| `D_8009F3D8` | `gModulePrefixCW` | `int` | Pfad-Präfix `"CW\"` (Bytes 43 57 5C 00). | `800833A8.c:22` |
+| `D_8009F3E4` | `gSetupDoneFlag` | `u8` | „schon eingerichtet"-Flag beim Einstieg in den Bildschirm. | `80077990.c:14` |
+| `D_8009F3C2` | `gUnlockFlag` | `u8` | Freischalt-Flag, aus den Zuständen der ersten vier Einträge gesetzt. | `80077FFC.c:15` |
+| `D_8009F87C` | `gPlayerNameLength` | `s16` | Länge des Spielernamens, im Retail `0x40`. | `800780C0.c:13` |
+| `D_8009F87F` | `gLineCount` | `u8` | Anzahl numerierter Zeilen (`1 .. Wert + 1`) bei Zeilentyp 2. | `8007B854.c:63` |
+| `D_8009F8F0` | `gPlayerSelection` | `volatile s32` | Auswahlindex je Spieler; hoch/runter läuft zyklisch über 0..3. | `8007A7A0.c:31` |
+| `D_800A3948` | `gPasswordBuffer` | `u8[]` | Zehn-Zeichen-Passwort-/Cheat-Puffer, der geprüft und angewandt wird. | `8007EA78.c:44` |
+| `D_8009C0A8` | `gLoadoutTable` | `struct Entry[3]` | Drei Ausrüstungs-Einträge (Wertezeiger, Ersatzwert, Grenze), für beide Spieler geklemmt. | `8007D2DC.c:17` |
+| `D_8009C0E4` | `gMenuEntryTable` | `Entry[]` | 28 Menü-Einträge `(id, x, y, align)`, über `func_800788F0` gezeichnet. | `8007E67C.c:26` |
+| `D_8009C18C` | `gMenuTailEntryTable` | `Entry[]` | Fünf weitere Einträge, die im Anschluss gezeichnet werden. | `8007E67C.c:27` |
+| `D_8009BABE` | `gSoundWidgetLabel` | `u16[]` | Label des Sound-Schalters; der Callback kippt das globale Sound-Flag und aktualisiert `[0]`. | `8007D27C.c:60` |
+
+### Welt- und Zellenraster
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_800A2970` | `gClipRect` | `Grid` | Rechteck `(x, y, Breite, Höhe)`, auf dem der Durchlauf arbeitet. | `80062614.c:19` |
+| `D_8009F820` | `gCellMap` | `s32` | Zellenkarte, ein Byte je Zelle, 0 = leer. | `80062614.c:20` |
+| `D_800A2990` | `gCellNodeArray` | `Node[]` | Knoten-Array, indiziert über das Byte der Zellenkarte. | `80062614.c:21` |
+| `D_8009F818` | `gCellEntityList` | `s32[2]` | Liste der Entitäten, die Ansicht 0 bei gesetztem Bit anhängt, Grenze 256. | `80062874.c:46` |
+| `D_8009F828` | `gCellEntityCount` | `s32` | Zähler zu `gCellEntityList`. | `80062874.c:47` |
+| `D_8009F834` | `gGridOriginX` | `u8` | Ursprung der Rasterspalte: `(x >> 17) - Wert`, außerhalb 0..4 verworfen. | `80062874.c:43` |
+| `D_8009F835` | `gGridOriginY` | `u8` | Ursprung der Rasterzeile: `(z >> 17) - Wert`. | `80062874.c:42` |
+| `D_800AB3B8` | `gCoverageGrid` | `Cell[]` | Abdeckungsraster, 16-Byte-Zelle je `(Zeile * 5 + Spalte)`, erstes Wort ist die Bitmaske. | `80062874.c:44` |
+| `D_8009F814` | `gViewCount` | `s32` | Anzahl der Ansichten, beginnt bei 1. | `80062874.c:57` |
+| `D_8009F838` | `gQueueCount` | `s32` | Füllstand der Warteschlange; bei `0x18` ist sie voll. | `8006314C.c:17` |
+
+## Grafik-, Sound- und Weltbereich: die erste Runde
 
 Fünfunddreißig Globals aus dem Grafikbereich, alle einzeln byte-genau geprüft und in **einem** Commit umbenannt. Die ersten 28 sind direkt aus den Datei-Dokus belegt, die letzten sieben wurden mit Google Gemini 4 Hydrogen geklärt und die Belegstellen anschließend im Code nachgeprüft.
 

@@ -16,7 +16,8 @@ extern volatile u8 *gCdromCommandPtr __asm__("D_8009CB70");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern int D_800A3E68, D_800A3E6C;
 extern char *D_800A3E70;
-extern char D_80012524[], D_8001252C[], D_8001253C[], D_80012488[], D_80012498[];
+extern char D_80012524[], D_8001252C[], D_8001253C[], D_80012498[];
+extern char gCdErrorLogMsg[] __asm__("D_80012488");
 extern u8 D_800A3E50[], D_800A3E58[];
 extern void (*D_8009C8AC)(int, void *), (*D_8009C8A8)(int, void *);
 extern void func_8008E000(char *, ...), func_8008ECFC(int, int), func_8008FF08(char *), func_8008F6D8(void);
@@ -190,7 +191,7 @@ loop:
         D_800A3E6C = next;
         if (0x3c0000 < old) {
         timeout:
-            func_8008FF08(D_80012488);
+            func_8008FF08(gCdErrorLogMsg);
             {
                 register int first __asm__("$4") = state[0];
                 register int second __asm__("$2") = state[1];

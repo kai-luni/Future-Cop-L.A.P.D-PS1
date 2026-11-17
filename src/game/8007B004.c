@@ -19,7 +19,7 @@ typedef struct Unk7B004Node {
 extern Unk7B004Mode *gGameSession __asm__("D_8009FA94");
 extern volatile s32 D_8009F8E0;
 extern volatile s32 D_8009F8E4;
-extern volatile s32 D_8009F8F0;
+extern volatile s32 gPlayerSelection __asm__("D_8009F8F0");
 extern s32 D_8009F8F4;
 extern Unk7B004Node *D_8009F468;
 extern u8 D_8009BB34[];
@@ -54,7 +54,7 @@ void func_8007B004(void)
     s32 v98;
 
     mode = gGameSession;
-    D_8009F8F0 = mode->unk08;
+    gPlayerSelection = mode->unk08;
     __asm__ volatile("" ::: "memory");
     base = D_8009BB34;
     __asm__ volatile("" ::: "memory");

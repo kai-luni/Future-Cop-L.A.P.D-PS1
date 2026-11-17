@@ -34,7 +34,7 @@ typedef struct {
 
 extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 extern u8 D_8009F3F8;
-extern Unk8009C0A8 D_8009C0A8[];
+extern Unk8009C0A8 gLoadoutTable[] __asm__("D_8009C0A8");
 extern s8 *D_8009F468;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 
@@ -141,7 +141,7 @@ void func_8007D7CC(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
     } else {
         c = p[1];
     }
-    base = (u32)D_8009C0A8;
+    base = (u32)gLoadoutTable;
     e = (Unk8009C0A8 *)((u32)(idx * 20) + base);
     __asm__ volatile("" : : "r"(e));
     shade = (e->unk4[gActivePlayerIndex] > e->unkA) ? 0x30 : 0x80;
@@ -205,7 +205,7 @@ void func_8007D7CC(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
         x = 0xC1;
         y += 2;
     }
-    func_80082AB0(D_8009C0A8[idx].unkE, x + 1, y - 2, -1, -1, 0x14, 0x80, 1, 8);
+    func_80082AB0(gLoadoutTable[idx].unkE, x + 1, y - 2, -1, -1, 0x14, 0x80, 1, 8);
     font = func_80048E88();
     func_800788F0(0, x, y + font->unk6, 0x10, *(u16 *)(p + 4), 1, 8, 2);
 }

@@ -7,8 +7,8 @@ struct Unk7938 {
     u8 unk11[0x0B];
 };
 
-extern u8 D_800A18D0[];
-extern struct Unk7938 D_800A7938[];
+extern u8 gSoundBankTableHigh[] __asm__("D_800A18D0");
+extern struct Unk7938 gSoundEntryTable[] __asm__("D_800A7938");
 
 /**
  * @brief Resolves a sound id to its active voice-record index across two
@@ -43,7 +43,7 @@ s32 func_80045494(s32 id, u8 *table, s32 limit)
     register struct Unk7938 *record __asm__("$2");
 
     if (id >= 0x46) {
-        table = D_800A18D0;
+        table = gSoundBankTableHigh;
         limit = 0x82;
         bias = -0x46;
     } else {
@@ -54,7 +54,7 @@ s32 func_80045494(s32 id, u8 *table, s32 limit)
         if (id < limit) {
             entry = &table[adjusted];
             __asm__ volatile ("" : "+r" (entry));
-            base = D_800A7938;
+            base = gSoundEntryTable;
             id = *entry;
             record = &base[id];
             if (record->active != 0) {

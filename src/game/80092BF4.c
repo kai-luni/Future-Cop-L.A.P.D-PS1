@@ -9,7 +9,7 @@ typedef struct {
 extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
 extern u8 D_80012A30[];
 extern  void (*gLogPrintf)(u8 *, s32) __asm__("D_8009DDEC");
-extern Context *D_8009DDE8;
+extern Context *gVramWriteCallback __asm__("D_8009DDE8");
 extern void func_80095830(u8 *, int, unsigned int);
 
 /**
@@ -38,7 +38,7 @@ void func_80092BF4(s32 arg0)
         func_80095830(p + 0x6A, -1, 0x14);
     }
     mode = 0x3000001;
-    ctx = D_8009DDE8;
+    ctx = gVramWriteCallback;
     if (arg0 != 0) {
         mode = 0x3000000;
     }

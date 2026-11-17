@@ -9,7 +9,7 @@ struct SoundVoice {
     s8 extra;
 };
 
-extern u8 D_8009F738;
+extern u8 gVolumeLimitSelector __asm__("D_8009F738");
 
 /**
  *  @brief Sets a sound voice's volume, pan, and extra parameter.
@@ -34,7 +34,7 @@ extern u8 D_8009F738;
 void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra)
 {
     voice->baseVolume = volume;
-    if (D_8009F738 != 0) {
+    if (gVolumeLimitSelector != 0) {
         volume >>= 1;
     }
     voice->volume = volume;

@@ -2,8 +2,8 @@
 #include "game/types.h"
 
 extern s32 D_8009F330;
-extern s32 D_8009F730;
-extern s32 D_8009F734;
+extern s32 gSoundModeFlag __asm__("D_8009F730");
+extern s32 gSoundSpatialMode __asm__("D_8009F734");
 extern s32 D_800A1920[];
 extern s32 func_8001A074(s32 *);
 
@@ -66,7 +66,7 @@ s32 func_800458E8(s32 xin, s32 zin, struct Mix458 *mixin, struct Extra458 *extra
     __asm__("" : "+r"(x), "+r"(z), "+r"(mix));
     if (x == 0 && z == 0) {
         mix->volume = D_8009F330;
-        if (D_8009F734 == 2 && D_8009F730 != 0 && extra != 0) {
+        if (gSoundSpatialMode == 2 && gSoundModeFlag != 0 && extra != 0) {
             switch (extra->data->mode) {
             case 0:
                 mix->pan = 0;
@@ -82,7 +82,7 @@ s32 func_800458E8(s32 xin, s32 zin, struct Mix458 *mixin, struct Extra458 *extra
             mix->pan = 64;
         }
         mix->flag = 1;
-    } else switch (D_8009F734) {
+    } else switch (gSoundSpatialMode) {
     default:
         mix->volume = D_8009F330;
         mix->pan = 64;
@@ -112,7 +112,7 @@ s32 func_800458E8(s32 xin, s32 zin, struct Mix458 *mixin, struct Extra458 *extra
                 if (!(bound < amount)) value -= scaled;
             } else value = 0;
             mix->volume = value;
-            if (D_8009F730 != 0) {
+            if (gSoundModeFlag != 0) {
                 mix->flag = 0;
             } else {
                 mix->pan = 64;
@@ -149,7 +149,7 @@ s32 func_800458E8(s32 xin, s32 zin, struct Mix458 *mixin, struct Extra458 *extra
         } else {
             s32 lim3, lim5;
             mix->volume = ATTEN_SC_REG(d1, "$4") - (({ register s32 b2 __asm__("$5"); b2 = (ATTEN_SC_REG(d1, "$5") - ATTEN_SC(d0, lim3)) >> 31; b2; }) & (ATTEN_SC_REG(d1, "$6") - ATTEN_SC(d0, lim5)));
-            if (D_8009F730 != 0) {
+            if (gSoundModeFlag != 0) {
                 mix->flag = 0;
             } else {
                 mix->pan = 64;

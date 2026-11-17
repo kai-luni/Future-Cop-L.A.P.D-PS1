@@ -5,7 +5,7 @@
 
 #include "game/types.h"
 
-extern u8 D_80012BC8;
+extern u8 gMdecTimeoutFormat __asm__("D_80012BC8");
 extern volatile u32 *gMdecControlStatusPtr __asm__("D_8009E9F4");
 extern volatile u32 *gDma0ChannelCtrlPtr __asm__("D_8009E9C8");
 extern volatile u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
@@ -37,7 +37,7 @@ extern void func_8008E000(void *arg0, s32 arg1);
 s32 func_8009649C(s32 arg0)
 {
     register s32 result __asm__("$2");
-    func_8008E000(&D_80012BC8, arg0);
+    func_8008E000(&gMdecTimeoutFormat, arg0);
     *gMdecControlStatusPtr = 0x80000000;
     *gDma0ChannelCtrlPtr = 0;
     *gDma1ChannelCtrlPtr = 0;

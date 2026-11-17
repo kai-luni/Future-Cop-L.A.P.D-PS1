@@ -17,7 +17,7 @@ struct Unk471C4Stream {
     s32 handle;
 };
 
-extern struct Unk471C4Stream D_800A1810[];
+extern struct Unk471C4Stream gStreamTable[] __asm__("D_800A1810");
 
 extern void func_800243F8(s32 handle);
 extern void func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle,
@@ -47,7 +47,7 @@ void func_800471C4(s32 track, struct Unk471C4Object *object)
 {
     struct Unk471C4Stream *stream;
 
-    stream = &D_800A1810[object->info->stream];
+    stream = &gStreamTable[object->info->stream];
     if (track == stream->track) {
         return;
     }

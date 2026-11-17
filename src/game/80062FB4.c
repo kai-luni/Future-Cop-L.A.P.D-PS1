@@ -8,10 +8,13 @@ typedef struct { u8 flag; char pad[0x43]; } Entry;
 extern volatile Context *gGameSession __asm__("D_8009FA94");
 extern Other *gTileMapTable __asm__("D_8009F80C");
 extern int gPlayerCount __asm__("D_8009FA0C");
-extern volatile int D_8009F82C, D_8009F828;
-extern u8 D_8009F834, D_8009F835, D_8009F836, D_8009F837;
-extern u32 *D_8009F820;
-extern Rect D_800A2970;
+extern volatile int D_8009F82C;
+extern volatile int gCellEntityCount __asm__("D_8009F828");
+extern u8 D_8009F836, D_8009F837;
+extern u8 gGridOriginY __asm__("D_8009F835");
+extern u8 gGridOriginX __asm__("D_8009F834");
+extern u32 *gCellMap __asm__("D_8009F820");
+extern Rect gClipRect __asm__("D_800A2970");
 extern Entry D_800A8DC0[];
 extern void func_80062C3C(void), func_80062874(void), func_80062614(void);
 /**
@@ -46,18 +49,18 @@ void func_80062FB4(void)
     u32 *p;
     Entry *entry;
     D_8009F82C = 0;
-    D_8009F828 = 0;
+    gCellEntityCount = 0;
     if (gGameSession->mode == 1) {
-        h = D_800A2970.height - 16;
-        w = D_800A2970.width - gTileMapTable->count * 8 + 8;
+        h = gClipRect.height - 16;
+        w = gClipRect.width - gTileMapTable->count * 8 + 8;
         x = y = (gTileMapTable->count - 1) * 4;
     } else if (gPlayerCount == 1) {
         h = w = 20;
-        x = D_8009F834 * 4;
-        y = D_8009F835 * 4;
+        x = gGridOriginX * 4;
+        y = gGridOriginY * 4;
     } else {
-        x = D_8009F834 * 4;
-        y = D_8009F835 * 4;
+        x = gGridOriginX * 4;
+        y = gGridOriginY * 4;
         x2 = D_8009F836 * 4;
         y2 = D_8009F837 * 4;
         if (x2 < x) { x2 ^= x; x ^= x2; x2 ^= x; }
@@ -66,11 +69,11 @@ void func_80062FB4(void)
         h = y2 - y + 20;
     }
     n = w * h;
-    p = D_8009F820;
-    D_800A2970.x = x;
-    D_800A2970.y = y;
-    D_800A2970.w = w;
-    D_800A2970.h = h;
+    p = gCellMap;
+    gClipRect.x = x;
+    gClipRect.y = y;
+    gClipRect.w = w;
+    gClipRect.h = h;
     { register u32 count __asm__("$3");
     count = n >> 2;
     while (count) { *p++ = 0; count--; } }

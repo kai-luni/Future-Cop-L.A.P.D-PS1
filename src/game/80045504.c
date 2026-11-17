@@ -14,7 +14,7 @@ struct Unk7938 {
     s32 unk18;
 };
 
-extern struct Unk7938 D_800A7938[];
+extern struct Unk7938 gSoundEntryTable[] __asm__("D_800A7938");
 
 /**
  *  @brief Resets selected fields of an indexed state entry.
@@ -37,7 +37,7 @@ void func_80045504(s32 index)
 {
     struct Unk7938 *entry;
 
-    entry = &D_800A7938[index];
+    entry = &gSoundEntryTable[index];
     entry->unk13 = 1;
     entry->active = 0;
     entry->unk15 = 0;

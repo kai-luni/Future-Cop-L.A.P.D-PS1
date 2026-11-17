@@ -23,7 +23,8 @@ extern State *gGameSession __asm__("D_8009FA94");
 extern Entry D_8009B4E4[];
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern s8 D_8009F87F, D_8009F880, D_8009F881, D_8009F882;
+extern s8 D_8009F880, D_8009F881, D_8009F882;
+extern s8 gLineCount __asm__("D_8009F87F");
 extern s8 gSelectedRow __asm__("D_8009F87E");
 extern s8 *D_8009F884;
 extern u8 D_8009F8BD;
@@ -148,14 +149,14 @@ void func_8007B854(s32 arg0)
                         if (value != 0) {
                             *p = 2;
                             limit = SELECTED.unk1F;
-                            D_8009F87F = limit;
+                            gLineCount = limit;
                             if ((s8)limit >= 0) {
                                 if ((s8)limit < 10) goto CLAMPED;
                                 limit = 9;
                             } else {
                                 limit = 0;
                             }
-                            D_8009F87F = limit;
+                            gLineCount = limit;
 CLAMPED:
                             gSelectedRow = limit;
                             D_8009F8BD = 0;
@@ -203,7 +204,7 @@ SELECTION_DONE:;
             func_80046C84(0x46, 0);
             if (base[gActivePlayerIndex] == 2) {
                 gSelectedRow--;
-                if (gSelectedRow < 0) gSelectedRow = D_8009F87F;
+                if (gSelectedRow < 0) gSelectedRow = gLineCount;
             } else {
                 D_8009F880--;
                 if (D_8009F880 < D_8009F881) D_8009F880 = D_8009F882;
@@ -219,7 +220,7 @@ SELECTION_DONE:;
             func_80046C84(0x46, 0);
             if (base[gActivePlayerIndex] == 2) {
                 gSelectedRow++;
-                if (gSelectedRow > D_8009F87F) gSelectedRow = 0;
+                if (gSelectedRow > gLineCount) gSelectedRow = 0;
             } else {
                 D_8009F880++;
                 if (D_8009F880 > D_8009F882) D_8009F880 = D_8009F881;

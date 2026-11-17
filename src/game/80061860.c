@@ -1,8 +1,8 @@
 // Categories: Graphics > Rendering | Resources > Memory Management
 #include "game/types.h"
 
-extern void *D_8009F820;
-extern void *D_8009F818[2];
+extern void *gCellMap __asm__("D_8009F820");
+extern void *gCellEntityList[2] __asm__("D_8009F818");
 extern void *D_8009F830;
 extern void func_800181D4(void *block);
 
@@ -32,11 +32,11 @@ void func_80061860(void)
 {
     s32 i;
 
-    if (D_8009F820 != 0) {
-        func_800181D4(D_8009F820);
+    if (gCellMap != 0) {
+        func_800181D4(gCellMap);
     }
     for (i = 0; i < 2; i++) {
-        func_800181D4(D_8009F818[i]);
+        func_800181D4(gCellEntityList[i]);
     }
     func_800181D4(D_8009F830);
 }

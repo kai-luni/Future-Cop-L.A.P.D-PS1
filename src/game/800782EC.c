@@ -10,7 +10,8 @@ extern s32 gFrameTickCounter[] __asm__("D_8009FA2C");
 extern s32 D_8009F464, D_8009F870;
 extern s8 D_8009F45A, D_8009F889, D_8009F880, D_8009F888, D_8009F882;
 extern s8 D_8009F3F1, D_8009FA10;
-extern u8 D_8009F3C2, D_8009F8D9;
+extern u8 D_8009F8D9;
+extern u8 gUnlockFlag __asm__("D_8009F3C2");
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern s8 *D_8009F884;
 extern s8 D_8009F458;
@@ -84,7 +85,7 @@ void func_800782EC(void)
                     D_8009B4E4[D_8009F884[D_8009F880]].current = value;
             }
         }
-        for (i = 0; i < D_8009F3C2 + 4; i++) {
+        for (i = 0; i < gUnlockFlag + 4; i++) {
             if (D_8009B4E4[D_8009F884[i]].current > D_8009B4E4[D_8009F884[i]].maximum)
                 goto set_flag;
         }
