@@ -24,7 +24,7 @@ extern s32 D_8009F5E8;
 extern s32 D_8009F5EC;
 extern s32 D_8009F5F0;
 extern s32 gFrameBlockCount __asm__("D_8009F5F4");
-extern s32 D_8009F5F8;
+extern s32 gNodeCapacity __asm__("D_8009F5F8");
 extern s32 gNodeTableLength __asm__("D_8009F5FC");
 extern s32 gNodeTableIndex __asm__("D_8009F600");
 extern u32 gPrimPoolNext __asm__("D_8009F9F0");
@@ -402,7 +402,7 @@ void func_8001B4A8(s32 arg0)
     xbase = gFrameBlockCount;
     gNodeTableIndex = mask;
     v = xbase * 52;
-    xbase = D_8009F5F8;
+    xbase = gNodeCapacity;
     __asm__("" : : "r"(xbase));
     v -= 0x34;
     gPacketPoolBase = shift;

@@ -14,7 +14,7 @@ extern volatile s32 D_8009F5E8;
 extern volatile s32 D_8009F5EC;
 extern volatile s32 D_8009F5F0;
 extern s32 gFrameBlockCount __asm__("D_8009F5F4");
-extern s32 D_8009F5F8;
+extern s32 gNodeCapacity __asm__("D_8009F5F8");
 extern s32 gNodeTableLength __asm__("D_8009F5FC");
 extern s32 gNodeTableIndex __asm__("D_8009F600");
 extern s32 gPacketLimit __asm__("D_8009F9C0");
@@ -87,7 +87,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
 
     gFrameBlockCount = arg0;
     gSubScreenActive = 0;
-    D_8009F5F8 = 0x400;
+    gNodeCapacity = 0x400;
     gNodeTableLength = arg1;
 
     D_8009F5C8 = func_80017EBC(gFrameBlockCount * 0x34, 2);
@@ -95,10 +95,10 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     allocationSize = gFrameBlockCount * 0x34;
     D_8009F5CC = func_80017EBC(allocationSize, 2);
 
-    allocationSize = D_8009F5F8 * 0x1C;
+    allocationSize = gNodeCapacity * 0x1C;
     gRenderNodeTable = func_80017EBC(allocationSize, 2);
 
-    allocationSize = D_8009F5F8 * 0x1C;
+    allocationSize = gNodeCapacity * 0x1C;
     gRenderNodeTableAlt = func_80017EBC(allocationSize, 2);
 
     D_8009F5D8 = func_80017EBC((arg1 + 2) * 4, 2);
@@ -113,7 +113,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     func_80093178(D_8009F5D8, gNodeTableLength + 2);
 
     value = gFrameBlockCount;
-    count28 = D_8009F5F8;
+    count28 = gNodeCapacity;
     offset = value * 0x34;
     offset -= 0x34;
     value = gPacketPoolBase;
