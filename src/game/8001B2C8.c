@@ -1,7 +1,7 @@
 // Categories: Resources > Memory Allocation | Graphics > Render Buffers
 #include "game/types.h"
 
-extern s32 D_8009F5C0;
+extern s32 gSubScreenActive __asm__("D_8009F5C0");
 extern s32 D_8009F5C8;
 extern s32 D_8009F5CC;
 extern s32 gRenderNodeTable __asm__("D_8009F5D0");
@@ -86,7 +86,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     register s32 count28 __asm__("$4");
 
     D_8009F5F4 = arg0;
-    D_8009F5C0 = 0;
+    gSubScreenActive = 0;
     D_8009F5F8 = 0x400;
     gNodeTableLength = arg1;
 

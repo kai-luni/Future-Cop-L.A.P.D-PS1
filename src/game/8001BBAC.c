@@ -1,7 +1,7 @@
 // Categories: Game Engine > Frame | Graphics > Display
 #include "game/types.h"
 
-extern s32 D_8009F5C0;
+extern s32 gSubScreenActive __asm__("D_8009F5C0");
 
 extern void func_8001B4A8(s32 arg0);
 
@@ -24,7 +24,7 @@ extern void func_8001B4A8(s32 arg0);
 void func_8001BBAC(void)
 {
     func_8001B4A8(0);
-    if (++D_8009F5C0 >= 2) {
-        D_8009F5C0 = 0;
+    if (++gSubScreenActive >= 2) {
+        gSubScreenActive = 0;
     }
 }

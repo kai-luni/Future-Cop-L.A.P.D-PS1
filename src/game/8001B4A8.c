@@ -17,7 +17,7 @@ extern u32 D_8009F5D8[];
 extern s32 D_8009F218;
 extern s32 D_8009F21C;
 extern s32 D_8009F220;
-extern s32 D_8009F5C0;
+extern s32 gSubScreenActive __asm__("D_8009F5C0");
 extern u32 gPacketPoolBase __asm__("D_8009F5E0");
 extern u32 gNodePoolBase __asm__("D_8009F5E4");
 extern s32 D_8009F5E8;
@@ -270,7 +270,7 @@ void func_8001B4A8(s32 arg0)
     if (gPlayerCount >= 2 || ({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; })) {
         arg9 = arg0;
         limX = 0;
-        if (arg9 == 0 && D_8009F5C0 != 0) {
+        if (arg9 == 0 && gSubScreenActive != 0) {
             limX = 0xA0;
         }
 
@@ -347,7 +347,7 @@ void func_8001B4A8(s32 arg0)
         D_8009AA68[0] = 0;
     }
 
-    if (({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; }) || D_8009F5C0 == 0 || gPlayerCount == 1) {
+    if (({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; }) || gSubScreenActive == 0 || gPlayerCount == 1) {
         if (D_8009F5EC != D_8009F5F0) {
             do {
                 v = (u32)D_800A0660 + D_8009F5EC * 20;
