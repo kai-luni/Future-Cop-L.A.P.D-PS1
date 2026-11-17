@@ -34,7 +34,7 @@ struct PadPort {
     u8 actuator_count;
 };
 
-extern s32 (*D_8009C744)(void);
+extern  s32 (*gReadyCheckHook)(void) __asm__("D_8009C744");
 extern void func_8008B168(struct PadPort *port);
 extern s32 func_8008B210(struct PadPort *port);
 
@@ -86,7 +86,7 @@ s32 func_8008B094(struct PadPort *port, u8 *buffer)
     if (port->capabilities != 0) {
         return 0;
     }
-    if (D_8009C744() != 0) {
+    if (gReadyCheckHook() != 0) {
 return_zero:
         return 0;
     }

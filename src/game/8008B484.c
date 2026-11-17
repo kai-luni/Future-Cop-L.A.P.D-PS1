@@ -11,7 +11,7 @@ struct PadPort {
     u8 sequence_step;
 };
 
-extern s32 (*D_8009C744)(struct PadPort *port);
+extern  s32 (*gReadyCheckHook)(struct PadPort *port) __asm__("D_8009C744");
 extern void func_8008B4EC(struct PadPort *port);
 extern s32 func_8008B508(struct PadPort *port);
 
@@ -40,7 +40,7 @@ s32 func_8008B484(struct PadPort *port, u8 *command)
     s32 result;
     s32 active;
 
-    result = D_8009C744(port);
+    result = gReadyCheckHook(port);
     if (result != 0) {
         return 0;
     } else {

@@ -15,7 +15,7 @@ struct PadPort {
     u8 current_mode_index;
 };
 
-extern s32 (*D_8009C744)(struct PadPort *port);
+extern  s32 (*gReadyCheckHook)(struct PadPort *port) __asm__("D_8009C744");
 extern void func_8008B668(struct PadPort *port);
 extern s32 func_8008B6BC(struct PadPort *port);
 
@@ -47,7 +47,7 @@ s32 func_8008B5D0(struct PadPort *port, s32 mode, s32 lock)
     s32 current_mode;
 
     compare_mode = mode;
-    result = D_8009C744(port);
+    result = gReadyCheckHook(port);
     if (result != 0) {
         return 0;
     }

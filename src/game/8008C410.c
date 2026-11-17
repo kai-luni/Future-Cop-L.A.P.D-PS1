@@ -3,7 +3,7 @@ extern void func_8008C444(void);
 extern void func_8008C858(void);
 extern void func_8008C518(void);
 extern void (*D_8009C740)(void);
-extern void (*D_8009C744)(void);
+extern  void (*gReadyCheckHook)(void) __asm__("D_8009C744");
 
 /**
  *  @brief Installs three function pointers in global callback slots.
@@ -25,7 +25,7 @@ extern void (*D_8009C744)(void);
 void func_8008C410(void)
 {
     D_8009C740 = func_8008C444;
-    D_8009C744 = func_8008C858;
+    gReadyCheckHook = func_8008C858;
     {
         register char *base __asm__("$1");
         register void (*value)(void) __asm__("$2");
