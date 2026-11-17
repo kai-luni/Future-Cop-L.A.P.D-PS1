@@ -8,7 +8,7 @@ typedef struct {
     u8 unk0C[0xC];
 } Unk800A6D78;
 
-extern Unk800A6D78 D_800A6D78[];
+extern Unk800A6D78 gFileSlotTable[] __asm__("D_800A6D78");
 extern volatile u8 gCompletionFlag __asm__("D_8009FA68");
 extern s32 gFileSlotState __asm__("D_8009F620");
 
@@ -57,8 +57,8 @@ s32 func_8001E004(s32 arg0, s32 arg1, s32 *arg2)
 
     value = -9;
     if ((u32)arg0 < 4) {
-        if (D_800A6D78[arg0].field0 != 0) {
-            value = D_800A6D78[arg0].field0;
+        if (gFileSlotTable[arg0].field0 != 0) {
+            value = gFileSlotTable[arg0].field0;
         }
     }
     if (value < 0) {
@@ -70,8 +70,8 @@ s32 func_8001E004(s32 arg0, s32 arg1, s32 *arg2)
 
     arg = -9;
     if ((u32)arg0 < 4) {
-        if (D_800A6D78[arg0].field0 != 0) {
-            arg = D_800A6D78[arg0].field8;
+        if (gFileSlotTable[arg0].field0 != 0) {
+            arg = gFileSlotTable[arg0].field8;
         }
     }
 

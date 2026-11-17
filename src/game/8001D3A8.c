@@ -6,7 +6,7 @@ typedef struct {
     u8 unk04[0x14];
 } Unk800A6D78;
 
-extern Unk800A6D78 D_800A6D78[];
+extern Unk800A6D78 gFileSlotTable[] __asm__("D_800A6D78");
 
 /**
  * @brief Closes a file slot in D_800A6D78 unless an asynchronous read (state 2 or 3) is active.
@@ -36,8 +36,8 @@ s32 func_8001D3A8(u32 index)
     s32 value;
 
     if (index < 4) {
-        if (D_800A6D78[index].field0 != 0) {
-            value = D_800A6D78[index].field0 & 0xFF;
+        if (gFileSlotTable[index].field0 != 0) {
+            value = gFileSlotTable[index].field0 & 0xFF;
         } else {
             value = 0xF7;
         }
@@ -52,6 +52,6 @@ s32 func_8001D3A8(u32 index)
         return -0xF;
     }
 store:
-    D_800A6D78[index].field0 = 0;
+    gFileSlotTable[index].field0 = 0;
     return value;
 }

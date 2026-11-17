@@ -5,7 +5,7 @@ extern s32 gGlobalTick __asm__("D_8009F284");
 extern s32 gRequestListHead __asm__("D_8009F668");
 extern s32 gRequestListTail __asm__("D_8009F66C");
 extern s32 gMissionId __asm__("D_8009F684");
-extern s32 D_8009FA70;
+extern s32 gScreenResetFlag __asm__("D_8009FA70");
 extern u8 gModuleNameBuffer[] __asm__("D_800A0B30");
 
 extern void func_80017C68(s32, s32, s32, s32, s32, s32);
@@ -63,6 +63,6 @@ void func_80024904(s32 arg)
     func_8001B2C8(0xC8, 0x200);
     func_8004783C();
     func_80029F50(gModuleNameBuffer);
-    D_8009FA70 = 0;
+    gScreenResetFlag = 0;
     func_800780DC();
 }

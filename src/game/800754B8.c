@@ -257,7 +257,7 @@ void func_800754B8(struct Unk754B8 *object, struct RenderState *render,
 }
 
 /* The second entry is included in the supplied 0x5CC-byte retail range. */
-s32 D_80075698(s32 message, struct Unk754B8 *object, void *arg2, void *arg3)
+s32 gAttachMessageName(s32 message, struct Unk754B8 *object, void *arg2, void *arg3)
 {
     struct Unk754B8Transform *transform;
     struct Unk754B8Transform *current;

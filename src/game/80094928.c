@@ -2,7 +2,7 @@
 #include "game/gpu_globals.h"
 
 extern unsigned int *gGpuGp1PortPtr __asm__("D_8009DEC8");
-extern unsigned char D_800A62C8[];
+extern unsigned char gGpuLibPair[] __asm__("D_800A62C8");
 
 /**
  *  @brief Stores a word and records its low byte in a high-byte-indexed table.

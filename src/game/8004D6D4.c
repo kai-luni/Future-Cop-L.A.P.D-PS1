@@ -40,7 +40,7 @@ struct EntityDef {
     void *unk0C;
 };
 
-extern u8 D_8009F7AC;
+extern u8 gMessageDoneFlag __asm__("D_8009F7AC");
 
 extern void func_800695A8(void);
 extern u8 *func_80019C38(s32 arg0, s32 arg1, u32 tag, s32 arg3);
@@ -92,8 +92,8 @@ void func_8004D6D4(struct Unk4D6D4 *arg0)
     s32 type_value;
     void *list;
 
-    if (D_8009F7AC != 0) {
-        D_8009F7AC = 0;
+    if (gMessageDoneFlag != 0) {
+        gMessageDoneFlag = 0;
         func_800695A8();
     }
 

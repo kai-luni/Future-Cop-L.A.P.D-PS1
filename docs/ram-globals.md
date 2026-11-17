@@ -132,6 +132,100 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 
 Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage).
 
+## Letzte belegte Runde und die Grenze des Benennbaren
+
+Einundsechzig weitere Globals in **einem** Commit. Damit sind alle Symbole abgearbeitet, deren Rolle in den Datei-Dokus belegt ist; die 63 übrigen Kandidaten sind unten mit Grund aufgeführt.
+
+### Frontend-Namen und Formate
+
+| Global (RAM) | C-Name | Bedeutung |
+|---|---|---|
+| `D_80010DCC` | `gTimeMmSsFormat` | Format für die mm:ss-Ausgabe, neben der Dezimalvariante. |
+| `D_800117C0` | `gCounterFormatString` | Format des Zählertextes, gezeichnet bei `x + 138 - Breite`, y 20. |
+| `D_80011E3C` | `gEaLogoName` | Dateiname `"Ea_logo.fsv"`, gezeichnet bei (0,0) mit Modus 4. |
+| `D_800120A4` | `gProfileImageName` | Name, den die Profilbild-Speicherschleife an `func_80080B70` übergibt. |
+| `D_8009BBF8` | `gScreenPersistentBlock` | Persistenter Bildschirmblock, in den zwei unabhängige Prüfungen schreiben. |
+| `D_8009C030` | `gRowRecordTable` | Quelle der Zeilendatensätze (y 0x35/0x5F/0x89). |
+| `D_8009F3E6` | `gLayoutPointerFlagA` | Beeinflusst die Zeigerzuweisung, nur bei `a0 == 3` erreicht. |
+| `D_8009F3E7` | `gLayoutPointerFlagB` | Dasselbe für die abschließende Zeigerauswahl. |
+| `D_8009F3F4` | `gPublishedBlockPtr` | Genullter und veröffentlichter Blockzeiger mit fester Lebensdauer. |
+| `D_8009F8B0` | — | **Nicht umbenannt** (Byte-Vergleich kippt): wählt die Ereignisse für den Reset. |
+| `D_8009F8BC` | `gPanelSyncValue` | Wird aus `panel[8]` nachgezogen. |
+| `D_8009F8BD` | `gUiHoldFlag` | Wird gelöscht, wenn der Zähler bei `0x921` auf 0 steht. |
+| `D_8009F8C4` | `gPendingRowCapture` | Hält die Zeile fest, sobald der Wert 10 (der letzte Eintrag) erreicht ist. |
+| `D_8009F8F8` | `gScalarCursor` | Skalarer Cursor, den die Zustände 1 bis 4 schreiben. |
+| `D_8009FA70` | `gScreenResetFlag` | Wird genullt, danach läuft `func_800780DC` in fester Reihenfolge. |
+| `D_8009FAB0` | `gRemainingCounter` | Restzähler, um `object->unkA4` verringert. |
+| `D_8009FAC4` | `gArmedFlag` | Wird mit 1 scharfgeschaltet, parallel zu `+0x201` mit 2 und `+0x202` mit 1. |
+| `D_800A3718` | `gMenuActivationBlock` | Wird an `func_80078650` gegeben; dabei werden `+0x200` bis `+0x204` mit 5, 0, 0 beschrieben. |
+| `D_800A374D` | `gPortCheckTable` | `[0] == 3` schaltet Port 7 frei, gezeichnet bei (0xA0, 0x69). |
+| `D_800A3808` | `gMenuDescriptor` | Menü-Beschreibung, von `func_80078650` ohne Push aktiviert. |
+| `D_800A3838` | `gScreenDescriptor` | Bildschirm-Beschreibung; die Display-Ids 0x44C und 0x10CC werden dort eingereiht. |
+
+### BIOS-, IRQ- und Rücksprungmerker
+
+| Global (RAM) | C-Name | Bedeutung |
+|---|---|---|
+| `D_800A3B64` | `gCallbackTable2` | Callback-Tabelle, mit zwei Funktionszeigern befüllt. |
+| `D_800A3B80` | `gCombinationPtr` | Ziel- und Laufzeiger für Kombinationsdaten. |
+| `D_800A3C20` | `gCompareAddress` | Vergleichsadresse einer Bereichsprüfung. |
+| `D_800A3E00` | `gIrqNode` | IRQ-Knoten, den die Geräteinitialisierung installiert. |
+| `D_800A3E10` | `gSavedRaScratch` | Merker für `$ra` neben den Sprungtabellen `jtbl_800A3E18`/`jtbl_800A3E1C`. |
+| `D_800A3E20` | — | Parkt `$ra` um die BIOS-Abfrage `0xB0/0x57`. **Nur Inline-Asm, kein C-Name setzbar.** |
+| `D_800A3E40` | `gRaParkPatch` | Parkt `$ra` um das Überschreiben von 12 Bytes bei `*(B0(0x56)+0x18)+0x70`. |
+| `D_800A3E50` | `gStatusBuffer8` | 8-Byte-Puffer, der bei Status 2 oder 5 gefüllt wird. |
+| `D_800A3E68` | `gPollDeadline` | Frist aus aktuellem Tick plus 0x3C0. |
+| `D_800A3E6C` | `gPassCounter` | Durchlaufzähler der Abfrageschleife, startet bei 0. |
+| `D_8009DF10` | — | Parkt `$ra` um den Aufruf von `func_80095DB0`. **Nur Inline-Asm, kein C-Name setzbar.** |
+
+### Grafik-, Tabellen- und Treiberhelfer
+
+| Global (RAM) | C-Name | Bedeutung |
+|---|---|---|
+| `D_8002139C` | `gPerFrameHook` | Pro-Frame-Hook, den der Interrupt-Pfad aufruft. |
+| `D_80075698` | `gAttachMessageName` | Meldung 0 derselben Datei, Anhänge-Pfad. |
+| `D_80088D74` | `gCodeDataSource` | Datenquelle; `func_800889DC` liefert die Code-/Datenbasis für das zweite Handle. |
+| `D_80095808` | `gAbortCallbackId` | Wird nach dem Abbruchpfad `func_8009520C()` an `func_800914E0(2, …)` gegeben. |
+| `D_8009F610` | `gCdCommandParam` | Wert, der mit `func_8008E1BC(0xE, …)` gesendet wird; ein Fehler liefert `-4`. |
+| `D_8009AF88` | `gDescriptorBlock` | Deskriptor, dessen Zufallswort bei `&Wert - 0x10` landet. |
+| `D_8009C7A8` | `gPadUpdateByte` | Wird im Pad-Pfad fortgeschrieben; aufgerufene Funktionen können weitere Wirkung haben. |
+| `D_8009C800` | `gModeClearFlag` | Löscht das Modusargument, wenn `func_8008D7…` es erlaubt. |
+| `D_8009CC8A` | `gFrameClockValid` | Gültigkeitsbyte der Frame-Uhr, von `func_800915D4` geprüft. |
+| `D_8009DD30` | `gValueMatchTable` | Tabelle, gegen die ein gelieferter Wert verglichen wird. |
+| `D_8009EA5C` | `gModeEntryWord` | Wird von den unterstützten Modi als flüchtiger Eintrag geschrieben. |
+| `D_8009EED8` | `gSpuClearFlag` | Kann beim Aufräumen gelöscht werden. |
+| `D_8009EEDC` | `gSpuCompareWord` | Vergleichs- und Schreibwort ohne weitere Wirkung. |
+| `D_8009F324` | `gMessageConeFlag` | Teil des Meldungsdatensatzes, steuert den Kegeltest. |
+| `D_8009F6F0` | `gGpStateWord` | 32-Bit-Zustandswort bei `0x4DC($gp)`, genullt. |
+| `D_8009F7AC` | `gMessageDoneFlag` | Wird vor der Vorverarbeitung gelöscht, wenn gesetzt. |
+| `D_8009FA10` | `gRowClearFlag` | Bei 0 werden die Bytes `+0x1F`/`+0x20` aller 16 Einträge genullt. |
+| `D_8009FA18` | `gInitStateWord` | 32-Bit-Zustandswort, genullt. |
+| `D_800A22A0` | `gOwnerNodeListA` | Knotenliste, die `func_8005BCD4(&…, owner)` durchsucht. |
+| `D_800A22B0` | `gOwnerNodeListB` | Zweite Liste für denselben Besitzer-Lookup. |
+| `D_800A22C0` | `gLockEndpoints` | Globale Sperre mit zwei Endpunktzeigern (`+0`/`+4`). |
+| `D_800A3958` | `gScratchTable` | 0x100 Bytes, in den Scratchpad kopiert. |
+| `D_800A3A58` | `gSecondScratchTable` | Zweite Tabelle, Zielschrittweite 16 Bytes je Zeile. |
+| `D_800A62C8` | `gGpuLibPair` | Wort- und Bytefeld, das die GPU-Bibliothek mitführt. |
+| `D_800A6D78` | `gFileSlotTable` | Dateislots des Loaders, indiziert über `func_80010000.index`. |
+| `D_800A6E18` | `gCountWrapLimit` | Umschlaggrenze der Zählung (0x1F801128 oder 0x10000). |
+| `D_800A6E38` | `gExceptionFrame` | Nimmt `$at`, `$v0` und die COP0-Cause beim Ausnahmezustand auf. |
+| `D_800A6F60` | `gEffectSizeTable` | Größe je Effekttyp: `[type & 31]`, Größenklasse `type >> 5`. |
+| `D_800A6FE0` | `gPlayerNameTable` | Spielernamen im Header, `+ slot * 9`. |
+| `D_800A7028` | `gSpuInitWord` | Wort, das beim SPU-Aufsetzen mitgeschrieben wird. |
+| `D_800A8540` | `gRandomTable` | Tabelle für den Zufalls-Opcode 0x0B, ein nicht-negativer Operand indiziert sie. |
+| `D_800A85C0` | `gLengthTable` | Längentabelle, aus der `func_8008CD10` Einheiten kopiert. |
+| `D_800A8EA6` | `gEffectUvV` | Feste V-Koordinate der 3×3-Effektfläche (U ist 128/201 als Konstante). |
+
+### Die 63 Kandidaten, die stehen bleiben
+
+**Handler- und Callback-Adressen.** Sie werden nur als `handler`-Feld registriert oder indirekt über den Dispatcher erreicht; der Beleg nennt keine Aufgabe: `D_8001C808`, `D_8001EFF8`, `D_8002DEA8`, `D_8003190C`, `D_80036E6C`, `D_80037708`, `D_8003B2D0`, `D_80044610`, `D_800578B4`, `D_80059ABC`, `D_8005B934`, `D_8005CA04`, `D_8006E814`, `D_8007D150`, `D_8007D18C`, `D_8007D27C`, `D_8007F618`, `D_80080038`, `D_80085074`, `D_80086950`, `D_80086D74`, `D_800A36B8`, `D_800A36E8`, `D_800A3778`, `D_800A38F8`.
+
+**Byte-Vergleich kippt nach dem Rename** (Symbol zusätzlich lokal definiert oder ohne `__asm__` gebunden): `D_8009BEF4`, `D_8009C810`, `D_8009F4D8`, `D_8009F614`, `D_8009F79C`, `D_8009F7C0`, `D_8009F8B0`, `D_800A3E80`, `D_800A445C`, `D_800A4480`, `D_800A4484`. Dazu `D_8009C8A8`/`D_8009C8AC` (Mehrfachdeklaration mit abweichenden Typen).
+
+**Nur Inline-Asm, kein C-Name setzbar:** `D_8009EA00`, `D_8009F7C8` (in `8001C808.c` von Hand gesetzt, in weiteren Units asm-only), `D_A000DFAC`.
+
+**Bedeutung nicht bestimmbar:** `D_80010000` (erstes Wort des Programmbilds), `D_80010B0C`, `D_80011E60`, `D_80012088`, `D_8004C324`, `D_8008DCC0`, `D_8008DCD4`, `D_800908D4`, `D_8009EF04`, `D_8009F628` (nur „direkter Schreibzugriff"), `D_8009F670` (Konfiguration oder Fahrzeugindex), `D_8009F8E8`, `D_8009FA99`, `D_800A0974` (nur „direkter Schreibzugriff"), `D_800A09DC` (Wert unbelegt), `D_800A0C10` (Teil einer Vierer-Gruppe), `D_800A2730`, `D_800A3938`, `D_800A3B60`, `D_800AB388`.
+
 ## Steuerung, Skript-VM, Panels und CD-Treiber: die große Runde
 
 Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-Vergleich (`D_8009BEF4`, `D_8009C810`, `D_8009F614`) und bleiben stehen. Außerdem sind vier Namen aus der vorigen Runde nachgetragen, die in der Doku fehlten: `gDeferredList` (`D_8009F708`), `gDeferredPool` (`D_8009F70C`), `gPendingMessageMask` (`D_8009F7A8`) und `gRegistryTable` (`D_8009F800`).

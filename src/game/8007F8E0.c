@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
-extern u8 D_8009F8BD;
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 D_8009F8BE;
 extern u8 D_800A36BD;
 extern void *gGameSession __asm__("D_8009FA94");
@@ -32,6 +32,6 @@ extern void func_8007F02C(void);
 void func_8007F8E0(void)
 {
     gSaveProfileImage[0x921] = 0;
-    D_8009F8BD = 0;
+    gUiHoldFlag = 0;
     D_8009F8BE = 0;
 }

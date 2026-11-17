@@ -27,7 +27,7 @@ extern int func_80091270(int);
 extern void func_80092CF4(char *, void *);
 extern int func_8009520C(void);
 extern void func_800914E0(int, void (*)(void));
-extern void D_80095808(void);
+extern void gAbortCallbackId(void) __asm__("D_80095808");
 
 /**
  * @brief Debug device write with a GPU-ready timeout (variant A).

@@ -56,7 +56,7 @@ extern struct Actor *actor0 __asm__("D_8009FA58");
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern s32 D_8009FA70;
+extern s32 gScreenResetFlag __asm__("D_8009FA70");
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
 extern u32 func_80060DD8(u32 state);
@@ -111,7 +111,7 @@ s32 func_80060A0C(u32 state, s32 index)
     case 0x01ADCFED:
         offset = 1;
         if (gGameSession->unk5C == offset) {
-            D_8009FA70 = 0x78;
+            gScreenResetFlag = 0x78;
             delta = index - 1;
             gGameSession->unk40 = gGameSession->unk44 - delta;
         } else {

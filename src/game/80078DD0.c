@@ -44,7 +44,7 @@ extern volatile u32 D_8009F8D0_arr[] __asm__("D_8009F8D0");
 extern s32 D_8009F890[], D_8009F898[], D_8009F8A0[], D_8009F8A8[];
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u32 D_8009B324[];
-extern struct Menu D_800A3808;
+extern struct Menu gMenuDescriptor __asm__("D_800A3808");
 extern s16 gSlotRecordTable[2][4] __asm__("D_800A3578");
 extern struct InputAction D_800A3588[], D_800A3598[], D_800A35A8[], D_800A35B8[], D_800A35C8[], D_800A35D8[], D_800A35E8[];
 extern u32 func_8001EF8C(u32);
@@ -52,8 +52,9 @@ extern void func_80077990(void), func_800788B4(void), func_80077AD4(s32);
 extern u8 func_80078C88(void), func_80082D30(s32 *, s32);
 extern void func_80082DDC(u32, s32), func_8005780C(u32, struct InputAction *);
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
-extern u8 D_8009F8BD, D_8009F46C, D_8009F3FB, D_8009F3F8[], D_8009B3D4[], D_8009B3E0[];
-extern s32 D_8009F8C4;
+extern u8 D_8009F46C, D_8009F3FB, D_8009F3F8[], D_8009B3D4[], D_8009B3E0[];
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
+extern s32 gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
@@ -113,7 +114,7 @@ void func_80078DD0(void)
     if (gStillRunningState != 1) {
         changed = count = step = first = 0;
         if (!D_8009F8CC) { func_80077990(); D_8009F8CC = 1; }
-        if (gFontBankTable == &D_800A3808) {
+        if (gFontBankTable == &gMenuDescriptor) {
             for (j = 0; j < 2; j++) if (buttons[j] != prev_buttons[j]) goto reset_timer;
         } else {
 reset_timer:
@@ -212,7 +213,7 @@ reset_timer:
                     if (*depth) {
                         (*depth)--;
                         if (*depth < 0) *depth = 0;
-                        else if (*depth == 1) D_8009F8BD = 1;
+                        else if (*depth == 1) gUiHoldFlag = 1;
                         func_80046C84(0x49, 0);
                         changed = 1;
                         if (gFontBankTable == &D_800A36B8) func_8008227C();
@@ -259,7 +260,7 @@ reset_timer:
                 }
             }
         }
-        if (D_8009F8BD) {
+        if (gUiHoldFlag) {
             for (i = 0; i < count; i++) {
                 s32 menu_y;
                 gActivePlayerIndex = i;
@@ -326,26 +327,26 @@ reset_timer:
         if (gDeferredTransition == -1) func_80078B98();
         else { func_80078B34(0, 0, 0); func_80078B34(0, 1, 0); }
         if (gDeferredTransition != -1) {
-            D_8009F8BD = 1;
-            if (D_8009F8C4) {
+            gUiHoldFlag = 1;
+            if (gPendingRowCapture) {
                 func_80078B34(500, 0, 0);
                 func_80078B98();
                 func_8001B4A8(1);
                 while (gFrameBarrier) { }
-                func_80082DDC(D_8009F8C4, 1);
+                func_80082DDC(gPendingRowCapture, 1);
             }
             switch (gDeferredTransition) {
             case 1:
                 if (gGameSession->type == 2) {
                     if (gGameSession->stage == 1) {
-                        if (D_8009F8C4) {
+                        if (gPendingRowCapture) {
                             D_8009B8B8[0] = &D_800A3658;
                             func_80078650(&D_800A3688, 1);
                         } else func_80078650(&D_800A3658, 1);
                     } else func_80078650(&D_800A3658, 1);
                 } else {
                     if (gGameSession->stage == 1) {
-                        if (D_8009F8C4) {
+                        if (gPendingRowCapture) {
                             D_8009B8B8[0] = &D_800A3628;
                             func_80078650(&D_800A3688, 1);
                         } else func_80078650(&D_800A3628, 1);
@@ -357,8 +358,8 @@ reset_timer:
                 else func_80078650(&D_800A37A8, 1);
                 break;
             case 5:
-                if (gFontBankTable == &D_800A3808) {
-                    if (D_8009F8C4) {
+                if (gFontBankTable == &gMenuDescriptor) {
+                    if (gPendingRowCapture) {
                         if (gGameSession->type == 2) D_8009B8B8[0] = &D_800A37D8;
                         else D_8009B8B8[0] = &D_800A37A8;
                         func_80078650(&D_800A3688, 1);
@@ -373,7 +374,7 @@ reset_timer:
                 break;
             }
             gDeferredTransition = -1;
-            D_8009F8C4 = 0;
+            gPendingRowCapture = 0;
         }
     }
     D_8009F8D0 = buttons[0];

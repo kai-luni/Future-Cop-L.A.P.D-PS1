@@ -5,7 +5,7 @@ struct Name7 {
     s8 c[7];
 };
 
-extern struct Name7 D_800A6FE0;
+extern struct Name7 gPlayerNameTable __asm__("D_800A6FE0");
 extern struct Name7 D_800A6FE9;
 extern struct Name7 D_8009F474;
 extern struct Name7 D_8009F47C;
@@ -50,9 +50,9 @@ void func_8007799C(void)
     if (flag == 0) {
         p = func_80089914(0xC8);
         if (p != 0 && func_8008CCC0(p) < 9) {
-            func_8008CCB0(&D_800A6FE0, p);
+            func_8008CCB0(&gPlayerNameTable, p);
         } else {
-            D_800A6FE0 = D_8009F474;
+            gPlayerNameTable = D_8009F474;
             ok = 1;
         }
         p = func_80089914(0xD2);

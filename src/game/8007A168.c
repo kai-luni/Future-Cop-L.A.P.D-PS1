@@ -11,7 +11,7 @@ extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
 extern u8 D_8009F458;
-extern u8 D_8009BBF8[];
+extern u8 gScreenPersistentBlock[] __asm__("D_8009BBF8");
 extern struct Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 
@@ -45,8 +45,8 @@ extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 void func_8007A168(void)
 {
     if (gFrontEndListFlag != 0 || gPausedMenuFlag != 0 || D_8009F458 == 8) {
-        D_8009BBF8[0x46] = 1;
-        *(u16 *)(D_8009BBF8 + 0x4E) = 0x526C;
+        gScreenPersistentBlock[0x46] = 1;
+        *(u16 *)(gScreenPersistentBlock + 0x4E) = 0x526C;
         gPausedMenuFlag = 1;
     }
     if (gFrontEndListFlag != 0 || gLockedMenuFlag != 0 ||
@@ -55,8 +55,8 @@ void func_8007A168(void)
          gWideTextTable[gFrontEndListTable[2]].unk1F == gWideTextTable[gFrontEndListTable[1]].unk1F &&
          gWideTextTable[gFrontEndListTable[3]].unk1F == gWideTextTable[gFrontEndListTable[2]].unk1F &&
          gWideTextTable[gFrontEndListTable[4]].unk1F == gWideTextTable[gFrontEndListTable[3]].unk1F)) {
-        D_8009BBF8[0x9A] = 1;
-        *(u16 *)(D_8009BBF8 + 0xA2) = 0x5276;
+        gScreenPersistentBlock[0x9A] = 1;
+        *(u16 *)(gScreenPersistentBlock + 0xA2) = 0x5276;
         gLockedMenuFlag = 1;
     }
 }

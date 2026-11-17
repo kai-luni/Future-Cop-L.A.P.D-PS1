@@ -3,7 +3,7 @@
 
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern s32 D_8009F8B0[];
-extern s32 D_8009F8F8[];
+extern s32 gScalarCursor[] __asm__("D_8009F8F8");
 extern u8 gPlaceholderGlyph[] __asm__("D_8009F470");
 extern u8 D_800A3928[];
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
@@ -41,7 +41,7 @@ s32 func_8007AB0C(s32 arg0, s32 arg1)
 {
     if (gPlayerMenuDepth[arg1] != 0) {
         if ((arg0 & ~D_8009F8B0[arg1]) < 0) {
-            D_8009F8F8[arg1] = 0;
+            gScalarCursor[arg1] = 0;
             func_8007A9D0(gPlaceholderGlyph, D_800A3928 + arg1 * 8, 8, D_8009F878, gPlayerNameLength);
             func_80046C84(0x48, 0);
         }

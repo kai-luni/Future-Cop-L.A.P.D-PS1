@@ -1,7 +1,7 @@
 // Categories: Game Engine > Address Lookup
 #include "../../include/game/types.h"
 
-extern u8 D_800A3C20[];
+extern u8 gCompareAddress[] __asm__("D_800A3C20");
 
 /**
  *  @brief Maps either of two exact addresses to a small code.
@@ -29,7 +29,7 @@ int func_8008C3B4(void *address)
 
     index = 0;
     result = 0x10;
-    current = D_800A3C20;
+    current = gCompareAddress;
 
     for (; index < 2; index++) {
         if (address == current) {

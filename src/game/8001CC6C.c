@@ -24,8 +24,8 @@ typedef struct {
 } StreamEntry;
 
 extern GlobalState func_80010000;
-extern StreamEntry D_800A6D78[];
-extern u8 D_800A85C0[];
+extern StreamEntry gFileSlotTable[] __asm__("D_800A6D78");
+extern u8 gLengthTable[] __asm__("D_800A85C0");
 
 extern void func_8008CD10(void *dest, const void *src, s32 n);
 
@@ -65,7 +65,7 @@ void func_8001CC6C(void)
     s32 offset;
 
     func_80010000.unk0C = 0;
-    offset = D_800A6D78[func_80010000.unk10].unk0C & 0x7FF;
+    offset = gFileSlotTable[func_80010000.unk10].unk0C & 0x7FF;
 
     chunk = func_80010000.unk04 + offset;
     if (chunk > 0x800) {
@@ -73,19 +73,19 @@ void func_8001CC6C(void)
     }
     chunk -= offset;
 
-    func_8008CD10(func_80010000.unk20, &D_800A85C0[offset], chunk);
+    func_8008CD10(func_80010000.unk20, &gLengthTable[offset], chunk);
 
     func_80010000.unk20 += chunk;
     func_80010000.unk04 -= chunk;
     __asm__ volatile("");
     func_80010000.unk08 += chunk;
-    D_800A6D78[func_80010000.unk10].unk0C += chunk;
+    gFileSlotTable[func_80010000.unk10].unk0C += chunk;
 
     if (func_80010000.unk04 <= 0) {
         func_80010000.unk00 = 0;
-        D_800A6D78[func_80010000.unk10].unk00 = 1;
+        gFileSlotTable[func_80010000.unk10].unk00 = 1;
         if (func_80010000.unk24 == 1) {
-            D_800A6D78[func_80010000.unk10].unk00 |= 0x100;
+            gFileSlotTable[func_80010000.unk10].unk00 |= 0x100;
         }
         func_80010000.unk14(func_80010000.unk08, func_80010000.unk0C);
     }

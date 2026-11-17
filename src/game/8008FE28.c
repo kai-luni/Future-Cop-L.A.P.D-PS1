@@ -25,7 +25,8 @@ typedef signed int s32;
 extern u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern u32 D_8009C8AC, D_8009C8A8;
-extern char D_800A3E58[], D_800A3E50[];
+extern char D_800A3E58[];
+extern char gStatusBuffer8[] __asm__("D_800A3E50");
 extern s32 func_8008E7A0(void);
 
 /**
@@ -63,7 +64,7 @@ void func_8008FE28(void)
         if ((r & 4) && D_8009C8AC != 0)
             ((void (*)(u8, char *))D_8009C8AC)(p[0], D_800A3E58);
         if ((r & 2) && D_8009C8A8 != 0)
-            ((void (*)(u8, char *))D_8009C8A8)(q[0], D_800A3E50);
+            ((void (*)(u8, char *))D_8009C8A8)(q[0], gStatusBuffer8);
     }
     *gCdromIndexStatusPtr = mode;
 }

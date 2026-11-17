@@ -14,7 +14,7 @@ struct E8007E1A4 {
 
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern s8 D_8009F8BC;
+extern s8 gPanelSyncValue __asm__("D_8009F8BC");
 extern struct E8007E1A4 gLoadoutTable[] __asm__("D_8009C0A8");
 extern u8 gNumberFormatString[] __asm__("D_8009F490");
 
@@ -108,8 +108,8 @@ void func_8007E1A4(s32 mode, s32 x, s32 y, s32 color, s32 idx)
             s = func_80089914(e2->unkC);
             if (s != 0) {
                 old = -1;
-                if (D_8009F8BC != 2) {
-                    old = D_8009F8BC;
+                if (gPanelSyncValue != 2) {
+                    old = gPanelSyncValue;
                     func_80048E28(2);
                 }
                 func_800492A0(s, &w, &h);

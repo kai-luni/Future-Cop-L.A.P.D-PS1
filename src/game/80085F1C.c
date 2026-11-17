@@ -4,8 +4,8 @@
 typedef struct { s32 v[4]; } Matrix;
 extern Matrix D_8001220C;
 extern u8 gInitGuardFlag __asm__("D_8009F4D4");
-extern u8 D_800A3958[];
-extern u8 D_800A3A58[];
+extern u8 gScratchTable[] __asm__("D_800A3958");
+extern u8 gSecondScratchTable[] __asm__("D_800A3A58");
 
 /**
  * @brief Builds the two decode/quantisation tables in D_800A3958 and D_800A3A58
@@ -67,8 +67,8 @@ void func_80085F1C(void)
         size = 1;
         level = 1;
         matrix = D_8001220C;
-        D_800A3958[0] = 0;
-        buffer = D_800A3958;
+        gScratchTable[0] = 0;
+        buffer = gScratchTable;
         base = 8;
         for (; size < 16; size *= 2, level++) {
             y = 1;
@@ -110,9 +110,9 @@ void func_80085F1C(void)
                 }
             }
         }
-        for (k = 0; k < 256; k++) D_800A3958[k] >>= 5;
+        for (k = 0; k < 256; k++) gScratchTable[k] >>= 5;
         k = 0;
-        table = D_800A3A58;
+        table = gSecondScratchTable;
         __asm__("" : "+r"(table) : : "$3");
         max = 31;
         __asm__("" : "+r"(k) : "r"(table), "r"(max));

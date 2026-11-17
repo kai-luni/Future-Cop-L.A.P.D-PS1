@@ -2,7 +2,7 @@
 extern void func_8008DB14(void);
 extern void func_8008DAE0(void);
 extern void func_8008D9DC(void);
-extern int D_8009C800;
+extern int gModeClearFlag __asm__("D_8009C800");
 
 /**
  * @brief Tears down BIOS pad and interrupt-chain hooks and clears initialization flag D_8009C800.
@@ -32,5 +32,5 @@ void func_8008D92C(void)
     func_8008DB14();
     func_8008DAE0();
     func_8008D9DC();
-    D_8009C800 = 0;
+    gModeClearFlag = 0;
 }

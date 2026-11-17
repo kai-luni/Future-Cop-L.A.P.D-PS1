@@ -1,7 +1,7 @@
 // Categories: BIOS > System Calls | Platform > Interrupts
 #include "game/types.h"
 
-extern s32 D_800A3E00;
+extern s32 gIrqNode __asm__("D_800A3E00");
 extern s32 D_800A3E04[];
 extern s32 D_800A3E0C;
 extern u8 D_8008DA14[];
@@ -49,7 +49,7 @@ s32 func_8008D964(void)
     q = p - 1;
     p[0] = (s32) D_8008DA14;
     p[1] = (s32) D_8008DA7C;
-    D_800A3E00 = 0;
+    gIrqNode = 0;
     D_800A3E0C = 0;
 
     func_8008CA10(one, q);

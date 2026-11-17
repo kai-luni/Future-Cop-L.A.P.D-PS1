@@ -17,7 +17,7 @@ extern s8 gSnapshotResult __asm__("D_8009F904");
 extern u8 gPresetByteTable[] __asm__("D_8009BFD4");
 extern D_8009BEF4_Entry D_8009BEF4[];
 extern u8 gPadMappingTable[] __asm__("D_800AAC50");
-extern u8 D_800A374D[];
+extern u8 gPortCheckTable[] __asm__("D_800A374D");
 
 extern u8 func_8001EB2C(s32 arg0);
 

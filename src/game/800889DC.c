@@ -205,7 +205,7 @@ done:
     }
 }
 
-void D_80088D74(u8 mode)
+void gCodeDataSource(u8 mode)
 {
     s32 a;
     s32 b;

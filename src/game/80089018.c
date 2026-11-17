@@ -37,7 +37,7 @@ struct State80089018 {
 
 extern struct State80089018 *gQueueBlock __asm__("D_8009F970");
 extern u32 D_8009F980;
-extern u8 D_80088D74[8];
+extern u8 gCodeDataSource[8] __asm__("D_80088D74");
 
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
@@ -99,7 +99,7 @@ void func_80089018(void)
         func_8008E42C(0xE, &local, 0);
         work = 1;
         func_8008C9C0();
-        func_8008E194((s32)D_80088D74);
+        func_8008E194((s32)gCodeDataSource);
         func_8008E1A8((s32)func_800889DC + 0x40);
         gQueueBlock->unk41C = work;
         gQueueBlock->unk414 = work;

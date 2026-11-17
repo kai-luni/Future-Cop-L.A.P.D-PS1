@@ -15,7 +15,7 @@ extern s32 gArenaOffsetFlag __asm__("D_8009EA3C");
 extern s32 gArenaCursor __asm__("D_8009EA40");
 extern s32 gNormalisedMode __asm__("D_8009EA34");
 extern s32 D_8009EA30;
-extern s32 D_8009EA5C;
+extern s32 gModeEntryWord __asm__("D_8009EA5C");
 extern s32 D_8009EA58;
 extern s32 gOpOrderFlag __asm__("D_8009EEC0");
 extern s32 D_8009EE90;
@@ -99,7 +99,7 @@ void func_80096D58(s32 cold_start)
     gNormalisedMode = 0;
     gOpOrderFlag = 0;
     D_8009EA30 = 0;
-    D_8009EA5C = 0;
+    gModeEntryWord = 0;
     D_8009EA58 = 0;
     D_8009EE90 = 0;
     __asm__ volatile("" ::: "memory");

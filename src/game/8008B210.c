@@ -32,7 +32,7 @@ struct PadPort {
     u8 combination_count;
 };
 
-extern u8 *D_800A3B80;
+extern u8 *gCombinationPtr __asm__("D_800A3B80");
 
 /**
  *  @brief Stores a controller handshake reply in the current information table.
@@ -126,7 +126,7 @@ s32 func_8008B210(struct PadPort *input_port)
             }
             base += offset;
             record->data = base;
-            D_800A3B80 = base;
+            gCombinationPtr = base;
         } else {
             register u8 *response = port->response;
             bytes = 6;
@@ -135,7 +135,7 @@ s32 func_8008B210(struct PadPort *input_port)
 
         bytes--;
         if (bytes != -1) {
-            register u8 **destination = &D_800A3B80;
+            register u8 **destination = &gCombinationPtr;
             do {
                 register s32 remaining = port->combination_bytes_remaining;
                 bytes--;

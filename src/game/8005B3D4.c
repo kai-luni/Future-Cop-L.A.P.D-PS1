@@ -35,7 +35,7 @@ struct Local22C0 {
 
 struct Unk73500;
 
-extern struct Unk22C0 D_800A22C0;
+extern struct Unk22C0 gLockEndpoints __asm__("D_800A22C0");
 
 extern struct Unk73500 *func_80073500(struct Vec3s32 *position, s16 arg1, s16 arg2, s16 arg3);
 extern void func_8007377C(void *arg0, void *arg1, s32 arg2, s32 arg3,
@@ -78,49 +78,49 @@ void func_8005B3D4(void *arg0)
 {
     struct Local22C0 local;
 
-    if (D_800A22C0.unk28 < 0) {
+    if (gLockEndpoints.unk28 < 0) {
         return;
     }
 
-    if (D_800A22C0.unk00 != 0) {
-        if (D_800A22C0.unk08 != D_800A22C0.unk00->unk08) {
-            D_800A22C0.unk00 = 0;
+    if (gLockEndpoints.unk00 != 0) {
+        if (gLockEndpoints.unk08 != gLockEndpoints.unk00->unk08) {
+            gLockEndpoints.unk00 = 0;
         }
     }
 
-    if (D_800A22C0.unk04 != 0) {
-        if (D_800A22C0.unk0C != D_800A22C0.unk04->unk08) {
-            D_800A22C0.unk04 = 0;
+    if (gLockEndpoints.unk04 != 0) {
+        if (gLockEndpoints.unk0C != gLockEndpoints.unk04->unk08) {
+            gLockEndpoints.unk04 = 0;
         }
     }
 
-    D_800A22C0.unk28 -= (s32)arg0;
-    if (D_800A22C0.unk28 >= 0) {
+    gLockEndpoints.unk28 -= (s32)arg0;
+    if (gLockEndpoints.unk28 >= 0) {
         return;
     }
 
-    if (D_800A22C0.unk04 == 0) {
+    if (gLockEndpoints.unk04 == 0) {
         return;
     }
-    if (D_800A22C0.unk00 == 0) {
+    if (gLockEndpoints.unk00 == 0) {
         return;
     }
 
     func_8007377C(
-        func_80073500(&D_800A22C0.unk1C, 0, 0x100, 0),
-        func_80073500(&D_800A22C0.unk10, 0, 0x100, 0),
+        func_80073500(&gLockEndpoints.unk1C, 0, 0x100, 0),
+        func_80073500(&gLockEndpoints.unk10, 0, 0x100, 0),
         4, 1, 0xFF, 0x60, 0, 0x800, 0, 0, 0, 0, 0, 1);
 
-    if (func_8001A4E8((s32 *)&D_800A22C0.unk10,
-                      (s32 *)((u8 *)D_800A22C0.unk00 + 0x5C)) >=
-        (D_800A22C0.unk2C + *(s16 *)((u8 *)D_800A22C0.unk00 + 0x6E)) * 16) {
+    if (func_8001A4E8((s32 *)&gLockEndpoints.unk10,
+                      (s32 *)((u8 *)gLockEndpoints.unk00 + 0x5C)) >=
+        (gLockEndpoints.unk2C + *(s16 *)((u8 *)gLockEndpoints.unk00 + 0x6E)) * 16) {
         return;
     }
 
     local.unk06 = 8;
-    local.unk04 = D_800A22C0.unk2A;
-    local.unk00 = *(u16 *)((u8 *)D_800A22C0.unk04 + 0x14);
-    local.unk08 = D_800A22C0.unk04;
+    local.unk04 = gLockEndpoints.unk2A;
+    local.unk00 = *(u16 *)((u8 *)gLockEndpoints.unk04 + 0x14);
+    local.unk08 = gLockEndpoints.unk04;
 
-    D_800A22C0.unk00->unk04(0xE, D_800A22C0.unk00, &local, 0);
+    gLockEndpoints.unk00->unk04(0xE, gLockEndpoints.unk00, &local, 0);
 }

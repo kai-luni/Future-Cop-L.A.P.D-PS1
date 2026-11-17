@@ -25,7 +25,7 @@ typedef struct {
 } Entry;
 
 extern GlobalState func_80010000;
-extern Entry D_800A6D78[];
+extern Entry gFileSlotTable[] __asm__("D_800A6D78");
 extern s32 D_8009F244;
 extern u8 D_8009F248;
 extern s32 D_8009F618;
@@ -100,7 +100,7 @@ s32 func_8001CE54(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     __asm__("" : : "r"(second), "r"(third));
     __asm__("" : : : "$19");
     callback = arg3;
-    base = (s32)D_800A6D78;
+    base = (s32)gFileSlotTable;
     offset = index * 24;
     entry = (Entry *)(offset + base);
     kind = entry->unk10;

@@ -1,8 +1,8 @@
 // Categories: Game Engine > Init
 #include "game/types.h"
 
-extern u32 D_8009FA18;
-extern u32 D_8009F6F0;
+extern u32 gInitStateWord __asm__("D_8009FA18");
+extern u32 gGpStateWord __asm__("D_8009F6F0");
 
 /**
  * @brief Clears mission-boot state words D_8009FA18 and D_8009F6F0 to zero.
@@ -29,6 +29,6 @@ extern u32 D_8009F6F0;
  */
 void func_8002A598(void)
 {
-    D_8009FA18 = 0;
-    D_8009F6F0 = 0;
+    gInitStateWord = 0;
+    gGpStateWord = 0;
 }

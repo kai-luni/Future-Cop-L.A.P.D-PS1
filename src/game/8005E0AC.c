@@ -7,8 +7,8 @@ struct Pool {
     void *free;
 };
 
-extern struct Pool D_800A22A0;
-extern struct Pool D_800A22B0;
+extern struct Pool gOwnerNodeListA __asm__("D_800A22A0");
+extern struct Pool gOwnerNodeListB __asm__("D_800A22B0");
 extern void *gDomeEffectBlock[] __asm__("D_800A22F0");
 
 extern void func_8005B3D4(void *object);
@@ -44,8 +44,8 @@ void func_8005E0AC(void *object)
     s32 i;
 
     func_8005B3D4(object);
-    func_8005BD20(&D_800A22A0, object);
-    func_8005C0C0(&D_800A22B0, object);
+    func_8005BD20(&gOwnerNodeListA, object);
+    func_8005C0C0(&gOwnerNodeListB, object);
     for (i = 0; i < 4; i++) {
         if (gDomeEffectBlock[i] != 0 && func_8005D8F4(gDomeEffectBlock[i], object) != 1) {
             func_8005E074(gDomeEffectBlock[i]);

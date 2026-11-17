@@ -30,8 +30,8 @@ extern void *D_8009F948, *D_8009F94C, *D_8009F954;
 extern void *gWorkAreaBlock __asm__("D_8009F950");
 extern void *gCharTable __asm__("D_8009FABC");
 extern void *gByteTable __asm__("D_8009F9D8");
-extern Block100 D_800A3958;
-extern Block108 D_800A3A58;
+extern Block100 gScratchTable __asm__("D_800A3958");
+extern Block108 gSecondScratchTable __asm__("D_800A3A58");
 extern void D_80085074(void);
 extern void *func_80017EBC(s32, s32);
 extern void func_800181D4(void *);
@@ -165,9 +165,9 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         __asm__ volatile("" : "+r"(masked));
         if (masked) {
             func_80085F1C();
-            *(Block100 *)0x1F800000 = D_800A3958;
+            *(Block100 *)0x1F800000 = gScratchTable;
             gCharTable = (void *)0x1F800000;
-            *(Block108 *)0x1F800100 = D_800A3A58;
+            *(Block108 *)0x1F800100 = gSecondScratchTable;
             gByteTable = (void *)0x1F800100;
         }
         }

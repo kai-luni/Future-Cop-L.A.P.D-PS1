@@ -1,7 +1,7 @@
 // Categories: Resources > Movie Playback | Graphics > Frame State
 #include "game/types.h"
 
-extern u8 D_8009F8BD;
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 D_8009F8BE;
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 
@@ -50,7 +50,7 @@ void func_8007F8FC(void)
     func_8007FA88();
     func_8007F8E0();
     p = gSaveProfileImage;
-    D_8009F8BD = 0;
+    gUiHoldFlag = 0;
     D_8009F8BE = 0;
     *(u16 *)(p + 0x942) = 0;
     *(u8 *)(p + 0x944) = 0;

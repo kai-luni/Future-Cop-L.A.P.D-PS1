@@ -17,11 +17,13 @@ extern u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile u8 *gCdromCommandPtr __asm__("D_8009CB70");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
-extern int D_800A3E68, D_800A3E6C;
+extern int gPassCounter __asm__("D_800A3E6C");
+extern int gPollDeadline __asm__("D_800A3E68");
 extern char *D_800A3E70;
 extern char D_80012524[], D_8001252C[], D_8001253C[], D_80012498[];
 extern char gCdErrorLogMsg[] __asm__("D_80012488");
-extern u8 D_800A3E50[], D_800A3E58[];
+extern u8 D_800A3E58[];
+extern u8 gStatusBuffer8[] __asm__("D_800A3E50");
 extern void (*D_8009C8AC)(int, void *), (*D_8009C8A8)(int, void *);
 extern void func_8008E000(char *, ...), func_8008ECFC(int, int), func_8008FF08(char *), func_8008F6D8(void);
 extern int func_80091270(int), func_800915D4(void), func_8008E7A0(void);
@@ -166,7 +168,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
         __asm__("" : "+r"(now));
         st = gCdStateBytes;
         __asm__("" : "+r"(st), "+r"(now));
-        D_800A3E68 = now;
+        gPollDeadline = now;
         __asm__ volatile(".set noat\n\tlui $1,%%hi(D_800A3E6C)\n\tsw $0,%%lo(D_800A3E6C)($1)\n\t.set at" : : : "memory");
         st0 = st[0];
         __asm__("" : "+r"(st0));
@@ -181,17 +183,17 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
         state1 = state + 1;
     }
 loop:
-    if (D_800A3E68 < func_80091270(-1)) goto timeout;
+    if (gPollDeadline < func_80091270(-1)) goto timeout;
     {
         register int cur __asm__("$2");
         register int next __asm__("$2");
         register int old __asm__("$3");
-        cur = D_800A3E6C;
+        cur = gPassCounter;
         __asm__("" : "+r"(cur));
         old = cur;
         next = cur + 1;
         __asm__("" : "+r"(old), "+r"(next));
-        D_800A3E6C = next;
+        gPassCounter = next;
         if (0x3c0000 < old) {
         timeout:
             func_8008FF08(gCdErrorLogMsg);
@@ -255,7 +257,7 @@ inner_loop:
                         register int a0 __asm__("$4");
                         a0 = *state;
                         __asm__("" : "+r"(a0));
-                        D_8009C8A8(a0, D_800A3E50);
+                        D_8009C8A8(a0, gStatusBuffer8);
                     }
                 }
             }
@@ -268,7 +270,7 @@ inner_loop:
 after_loop:
     {
         register u8 *dst __asm__("$6") = saved_result;
-        register u8 *src __asm__("$4") = D_800A3E50;
+        register u8 *src __asm__("$4") = gStatusBuffer8;
         __asm__("" : "+r"(dst), "+r"(src));
         if (dst != 0) {
             int j = 7;

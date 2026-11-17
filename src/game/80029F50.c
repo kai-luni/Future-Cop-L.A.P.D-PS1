@@ -53,7 +53,7 @@ struct FixedPool {
 extern State800A0B70 gStreamBufferList __asm__("D_800A0B70");
 extern Node *gChainedNodes __asm__("D_8009FA48");
 extern s32 gFileSearchGroup __asm__("D_8009F238");
-extern Unk800A6D78 D_800A6D78[];
+extern Unk800A6D78 gFileSlotTable[] __asm__("D_800A6D78");
 extern u8 gReleaseQueues[0x14] __asm__("D_800A0C30");
 extern u32 D_800A0C10[];
 extern u32 D_800A0C20[];
@@ -186,8 +186,8 @@ void func_80029F50(void *arg0)
     state->unk00 = index;
     value = -9;
     if (index < 4) {
-        if (D_800A6D78[index].unk00 != 0) {
-            value = D_800A6D78[index].unk08;
+        if (gFileSlotTable[index].unk00 != 0) {
+            value = gFileSlotTable[index].unk08;
         }
     }
     state->unk04 = value;

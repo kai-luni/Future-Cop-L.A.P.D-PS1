@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
-extern u8 D_8009F8BD;
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 D_8009F8BE;
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
@@ -57,7 +57,7 @@ void func_8008204C(void)
                 gSaveProfileImage[0x201] = 3;
                 gSaveProfileImage[0x202] = 1;
                 gSaveProfileImage[0x207] = 1;
-                D_8009F8BD = 0;
+                gUiHoldFlag = 0;
                 D_8009F8BE = 0;
                 break;
             }
@@ -71,7 +71,7 @@ void func_8008204C(void)
         gSaveProfileImage[0x201] = 3;
         gSaveProfileImage[0x202] = 1;
         gSaveProfileImage[0x207] = 1;
-        D_8009F8BD = 0;
+        gUiHoldFlag = 0;
         D_8009F8BE = 0;
     }
 }

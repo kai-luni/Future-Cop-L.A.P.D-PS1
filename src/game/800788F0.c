@@ -6,7 +6,7 @@ struct FontEntry {
     s16 height;
 };
 
-extern s8 D_8009F8BC;
+extern s8 gPanelSyncValue __asm__("D_8009F8BC");
 
 extern u8 *func_80089914(s32 id);
 extern s32 func_80048E28(s32 index);
@@ -78,8 +78,8 @@ void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
         }
     }
 
-    if (D_8009F8BC != font0) {
-        oldFont = D_8009F8BC;
+    if (gPanelSyncValue != font0) {
+        oldFont = gPanelSyncValue;
         func_80048E28(font0);
     }
 

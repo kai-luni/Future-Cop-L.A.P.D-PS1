@@ -30,11 +30,11 @@ struct Ctx {
 };
 
 extern s8 *gFontBankTable __asm__("D_8009F468");
-extern u8 D_8009F8BD;
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern s8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern struct Ctx *gSaveProfileImage __asm__("D_8009F92C");
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern s8 D_800A3718[];
+extern s8 gMenuActivationBlock[] __asm__("D_800A3718");
 extern s8 gMissionListTable[] __asm__("D_8009B724");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern u8 gWideTextTable[] __asm__("D_8009B4E4");
@@ -114,10 +114,10 @@ void func_80080038(s32 arg0)
     func_80082EF0(0x25, 0x9B, 0x67, 2, 0xA, 0x60, 0xC0, 0xFF);
     func_80082AB0(8, 0x93, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
 
-    if (gFontBankTable == D_800A3718) {
+    if (gFontBankTable == gMenuActivationBlock) {
         func_80078B34(0x44C, 0, 0);
         func_80078B34(0x10CC, 1, 0);
-    } else if (D_8009F8BD != 0 && *gFontBankTable < 10) {
+    } else if (gUiHoldFlag != 0 && *gFontBankTable < 10) {
         if (gSaveProfileImage->st921 == 0) {
             func_80078B34(0x44C, 0, 0);
             {
@@ -257,7 +257,7 @@ void func_80080038(s32 arg0)
         func_800788F0(0, 0x57, 0xA3, 0x10, gSaveProfileImage->msg, 4, 8, gSaveProfileImage->st945);
     }
 
-    if (D_8009F8BD != 0 && gFontBankTable != D_800A3718 && *gFontBankTable < 10) {
+    if (gUiHoldFlag != 0 && gFontBankTable != gMenuActivationBlock && *gFontBankTable < 10) {
         it = gSaveProfileImage->items + *gFontBankTable * 0x70;
         if (it[4] != 0) {
             if (gSaveProfileImage->msg == 0) {

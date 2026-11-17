@@ -35,8 +35,8 @@ extern u8 gPresetByteTable[] __asm__("D_8009BFD4");
 extern u8 D_8009BEF4[];
 extern u16 gChoiceSpriteTable[][2] __asm__("D_8009BF9C");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
-extern s8 D_800A374D[];
-extern u8 D_800A6FE0[];
+extern s8 gPortCheckTable[] __asm__("D_800A374D");
+extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 
 extern void func_800788F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7);
 extern void func_8008CD30(u8 *dst, u8 *fmt, s32 value);
@@ -114,7 +114,7 @@ void func_8007C0F8(s32 slot)
 
     choice = D_8009F902[slot];
     table = (struct MenuTable7C0F8 *)(D_8009C018 + choice * 12);
-    func_800788F0((s32)(D_800A6FE0 + slot * 9), 0x28, 0x34, 0xF, 0, 1, 8, c2);
+    func_800788F0((s32)(gPlayerNameTable + slot * 9), 0x28, 0x34, 0xF, 0, 1, 8, c2);
     func_800788F0(0, 0xA0, 0x34, 0xF, table->sprite, c4, 8, c2);
     func_800788F0(0, 0x10E, 0x34, 0xF, 0x12F2, 2, 8, c2);
     bufArg = text;
@@ -124,7 +124,7 @@ void func_8007C0F8(s32 slot)
     func_8008CD30(bufArg, fmtHi - 2940, *selPtr + 1);
     func_800788F0((s32)text, 0x10E, 0x34, 0xF, 0, 1, 8, c2);
     mode = 0x48;
-    port = func_8001EF34(D_800A374D[0] == 3);
+    port = func_8001EF34(gPortCheckTable[0] == 3);
     center_x = 0xA0;
     center_y = 0x69;
     if (port == 7) {

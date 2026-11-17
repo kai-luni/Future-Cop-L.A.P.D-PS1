@@ -8,7 +8,7 @@ typedef struct {
     u8 pad21[3];
 } Entry;
 
-extern u8 D_8009F8BD;
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 D_8009F8BE;
 typedef struct { u8 b[0x70]; } Rec;
 typedef struct {
@@ -25,8 +25,8 @@ extern s8 D_8009F880;
 extern s8 D_8009F881;
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 D_800A3928[];
-extern s32 D_8009F8F8[];
-extern u8 D_800A6FE0[];
+extern s32 gScalarCursor[] __asm__("D_8009F8F8");
+extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 extern u8 *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009F458;
 extern u8 D_8009F459;
@@ -35,9 +35,9 @@ extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
-extern u8 D_8009F3E6;
-extern u8 D_8009F3E7;
-extern u8 D_8009FA10;
+extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
+extern u8 gLayoutPointerFlagB __asm__("D_8009F3E7");
+extern u8 gRowClearFlag __asm__("D_8009FA10");
 extern u8 *gFontBankTable __asm__("D_8009F468");
 extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
@@ -49,7 +49,7 @@ extern u16 gPlaceholderGlyph __asm__("D_8009F470");
 extern u8 D_8009F498[];
 extern u8 D_8009F4A0[];
 extern u8 gDefaultNameString[] __asm__("D_8009F4A4");
-extern u8 D_800A3718[];
+extern u8 gMenuActivationBlock[] __asm__("D_800A3718");
 extern u8 D_8009F3F8[];
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 
@@ -186,7 +186,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
 
     __asm__("" : : "r"(arg4) : "$18");
     s2 = gActivePlayerIndex;
-    if (D_8009F8BD != 0 && D_8009F8BE != 0 && arg0 < 6) {
+    if (gUiHoldFlag != 0 && D_8009F8BE != 0 && arg0 < 6) {
         switch (arg0) {
         case 3:
             init = gSaveProfileImage;
@@ -241,13 +241,13 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                     __asm__("addu %0,%0,%1" : "+r"(off) : "r"(base), "r"(dst));
                     func_8008CCB0(dst, (u8 *)off + 0x428);
                 }
-                D_8009F8F8[s2] = 0;
+                gScalarCursor[s2] = 0;
                 func_8007A9D0(RAW + 0x925, D_800A3928 + s2 * 8, 8, D_8009F878, gPlayerNameLength);
                 if (REC(0x428) != 0) {
                     RAW[0x200] = 5;
                     RAW[0x201] = 0;
                     RAW[0x204] = 0;
-                    func_80078650(D_800A3718, 1);
+                    func_80078650(gMenuActivationBlock, 1);
                     *gFontBankTable = 1;
                 } else {
                     gPlayerMenuDepth[s2] = 1;
@@ -258,7 +258,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                 break;
             }
             func_80080984(RECP(RAW, 0x474), 0);
-            textBase = D_800A6FE0;
+            textBase = gPlayerNameTable;
             dst = textBase;
             savedBase = RAW;
             savedIdx = savedBase[0x924];
@@ -284,8 +284,8 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             *(s32 *)(gGameSession + 0x98) = REC(0x463);
             *(s32 *)(gGameSession + 0xC) = REC(0x470);
             *(s32 *)(gGameSession + 0x5C) = REC(0x468);
-            D_8009F3E6 = REC(0x46A);
-            D_8009F3E7 = REC(0x46B);
+            gLayoutPointerFlagA = REC(0x46A);
+            gLayoutPointerFlagB = REC(0x46B);
             if (REC(0x469) != 0) gFrontEndListFlag = REC(0x469);
             if (REC(0x46C) != 0) gPlayerWrapLimit = REC(0x46C);
             if (REC(0x46D) != 0) gPausedMenuFlag = REC(0x46D);
@@ -317,7 +317,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                 D_8009F881 = 0;
                 D_8009F880 = v;
             }
-            D_8009FA10 = 0;
+            gRowClearFlag = 0;
             func_8007FACC();
             func_80078210();
             break;
@@ -325,7 +325,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             *(u16 *)(RAW + 0x942) = 0;
             if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 func_80046C84(0x46, 0);
-                arg2 = D_8009F8F8[s2];
+                arg2 = gScalarCursor[s2];
                 arg3 = (s32)(D_800A3928 + s2 * 8);
                 p = (u8 *)arg3 + arg2;
                 if (*p != 0) {
@@ -339,7 +339,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             *(u16 *)(RAW + 0x942) = 0;
             if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 func_80046C84(0x46, 0);
-                arg2 = D_8009F8F8[s2];
+                arg2 = gScalarCursor[s2];
                 arg3 = (s32)(D_800A3928 + s2 * 8);
                 p = (u8 *)arg3 + arg2;
                 *p = *p + 1;
@@ -352,7 +352,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 step = s2 << 2;
                 __asm__("" : "+r"(step));
-                cursor = (s32 *)(step + (u8 *)D_8009F8F8);
+                cursor = (s32 *)(step + (u8 *)gScalarCursor);
                 *cursor = *cursor + 1;
                 if (*cursor >= 8) {
                     *cursor = 0;
@@ -364,7 +364,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 step = s2 << 2;
                 __asm__("" : "+r"(step));
-                cursor = (s32 *)(step + (u8 *)D_8009F8F8);
+                cursor = (s32 *)(step + (u8 *)gScalarCursor);
                 *cursor = *cursor - 1;
                 if (*cursor < 0) {
                     *cursor = 7;
@@ -384,7 +384,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                 arg2 = 0;
                 font = func_80048E88();
                 arg3 = (s32)(D_800A3928 + s2 * 8);
-                s2 = (s32)&D_8009F8F8[s2];
+                s2 = (s32)&gScalarCursor[s2];
                 h = ((s16 *)font)[3];
                 txt[1] = 0;
                 n = arg1 - (w + 1) * 4;

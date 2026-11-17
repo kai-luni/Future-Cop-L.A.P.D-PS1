@@ -24,7 +24,7 @@ extern Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
 extern int func_80091270(int);
 extern int func_8009520C(void);
 extern void func_800914E0(int, void (*)(void));
-extern void D_80095808(void);
+extern void gAbortCallbackId(void) __asm__("D_80095808");
 
 /**
  * @brief Waits for the GPU DMA path to go idle, then issues DrawOTag through the library callback block; returns 0 on success, -1 when the streaming watchdog trips.

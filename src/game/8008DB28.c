@@ -1,7 +1,7 @@
 // Categories: Platform > CD-ROM | Platform > Hardware Init
 #include "game/types.h"
 
-extern u32 D_800A3E10;
+extern u32 gSavedRaScratch __asm__("D_800A3E10");
 extern u32 jtbl_800A3E18_main;
 extern u32 jtbl_800A3E1C_main;
 extern void func_8008C9A0(void);

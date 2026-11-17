@@ -1,5 +1,5 @@
 // Categories: Platform > Memory Card | BIOS > System Calls
-extern int D_8009C800;
+extern int gModeClearFlag __asm__("D_8009C800");
 
 /**
  * @brief Returns the BIOS card/pad initialization status word D_8009C800.
@@ -26,5 +26,5 @@ extern int D_8009C800;
  */
 int func_8008D7CC(void)
 {
-    return D_8009C800;
+    return gModeClearFlag;
 }

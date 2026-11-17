@@ -13,11 +13,11 @@ struct Entry {
 };
 extern struct Entry gLoadoutTable[] __asm__("D_8009C0A8");
 extern s8 *gFontBankTable __asm__("D_8009F468");
-extern u8 D_800A6FE0[];
+extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 extern s8 D_8009F924[];
 extern s8 D_8009F926[];
 extern s8 D_8009F928[];
-extern u8 D_8009C030[];
+extern u8 gRowRecordTable[] __asm__("D_8009C030");
 extern u8 D_8009C050[];
 extern u8 *D_8009C0D0;
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
@@ -74,9 +74,9 @@ void func_8007DD08(s32 arg0)
     s5 = gFontBankTable[5];
     s4 = fp - 1;
     if (s5 == 2) {
-        func_800788F0(D_800A6FE0, 0x23, 0x35, 0x10, 0, 1, 8, s5);
+        func_800788F0(gPlayerNameTable, 0x23, 0x35, 0x10, 0, 1, 8, s5);
         func_800788F0((u8 *)s3, 0x23, 0x3F, 0x10, 10000, 1, 8, s5);
-        func_800788F0(D_800A6FE0 + 9, 0xA4, 0x35, 0x10, 0, 1, 8, s5);
+        func_800788F0(gPlayerNameTable + 9, 0xA4, 0x35, 0x10, 0, 1, 8, s5);
         func_800788F0((u8 *)s6, 0xA4, 0x3F, 0x10, 10000, 1, 8, s5);
         s0 = 0xA4;
         if (arg0 != 0) {
@@ -94,7 +94,7 @@ void func_8007DD08(s32 arg0)
             else if (gLoadoutTable[s4].replacement != gLoadoutTable[s4].limit)
                 s6 = 2;
         }
-        func_8007D7CC(D_8009C030 + D_8009F924[arg0] * 6, s0, 0x4F, s4 == 0, 0, 0);
+        func_8007D7CC(gRowRecordTable + D_8009F924[arg0] * 6, s0, 0x4F, s4 == 0, 0, 0);
         func_8007D7CC(D_8009C050 + D_8009F926[arg0] * 6, s0, 0x71, s4 == 1, 1, 0);
         i3 = D_8009F928[arg0];
         func_8007D7CC(D_8009C0D0 + i3 * 6, s0, 0x93, s4 == 2, 2, 0);
@@ -103,9 +103,9 @@ void func_8007DD08(s32 arg0)
             s6 = 1;
         else if (gLoadoutTable[s4].replacement != gLoadoutTable[s4].limit)
             s6 = 2;
-        func_800788F0(D_800A6FE0, 0x53, 0x3C, 0x10, 0, 4, 8, 2);
+        func_800788F0(gPlayerNameTable, 0x53, 0x3C, 0x10, 0, 4, 8, 2);
         func_800788F0(0, 0x53, 0x44, 0x10, 10000, 4, 8, 2);
-        func_8007D7CC(D_8009C030 + D_8009F924[arg0] * 6, 0x86, 0x35, s4 == 0, 0, 1);
+        func_8007D7CC(gRowRecordTable + D_8009F924[arg0] * 6, 0x86, 0x35, s4 == 0, 0, 1);
         func_8007D7CC(D_8009C050 + D_8009F926[arg0] * 6, 0x86, 0x5F, s4 == 1, 1, 1);
         i3 = D_8009F928[arg0];
         func_8007D7CC(D_8009C0D0 + i3 * 6, 0x86, 0x89, s4 == 2, 2, 1);

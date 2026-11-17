@@ -14,7 +14,7 @@ struct MenuText27F80 {
 extern struct State27F80 *gScratchBlockPtr __asm__("D_8009F68C");
 extern struct MenuText27F80 *D_8009F2C0;
 extern u8 D_8009F2FC[];
-extern u8 D_80010DCC[];
+extern u8 gTimeMmSsFormat[] __asm__("D_80010DCC");
 
 extern s32 func_80059E9C(void *player, s32 arg1);
 extern s32 func_80049340(u8 *text);
@@ -85,7 +85,7 @@ void func_80027F80(void *player, u8 *text, s32 x, s32 color)
                 if (c >= 0xF) {
                     t += 0x96;
                     t /= 300;
-                    func_8008CD30(buf, D_80010DCC, t / 60, t % 60);
+                    func_8008CD30(buf, gTimeMmSsFormat, t / 60, t % 60);
                 } else {
                     func_8008CD30(buf, D_8009F2FC, t);
                 }

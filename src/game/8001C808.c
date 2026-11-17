@@ -3,8 +3,8 @@ typedef unsigned char u8;
 typedef struct { int state; volatile int remain; int pos; volatile int result; int idx; void (*cb)(int, int); int unk18; int unk1C; int buf; u8 flag; } St;
 typedef struct { int flags, a, b, c, d, e; } Ent;
 extern St func_80010000;
-extern Ent D_800A6D78[];
-extern u8 D_800A85C0[];
+extern Ent gFileSlotTable[] __asm__("D_800A6D78");
+extern u8 gLengthTable[] __asm__("D_800A85C0");
 extern u8 D_8009F61C[];
 extern volatile unsigned int *gTransferPending __asm__("D_8009F250");
 extern volatile unsigned int *gTransferStatusPtr __asm__("D_8009F254");
@@ -137,12 +137,12 @@ void func_8001C808(int arg)
             }
             func_8008E598(buf, 3);
             cur = func_8001C588(buf);
-            entries = D_800A6D78;
+            entries = gFileSlotTable;
             q = &func_80010000;
             want = entries[q->idx].c & -0x800;
             if (cur != want) {
                 gTransferError = -1;
-                func_8008E598(D_800A85C0, 0x200);
+                func_8008E598(gLengthTable, 0x200);
                 func_8008E598(buf2, 0x46);
                 if (cur < want && want < cur + 0x10)
                     return;
@@ -152,20 +152,20 @@ void func_8001C808(int arg)
             loc = D_8009F61C;
             __asm__ volatile ("" : : "r" (loc));
             func_8001C288(loc);
-            n = D_800A6D78[q->idx].c & 0x7FF;
+            n = gFileSlotTable[q->idx].c & 0x7FF;
             len = q->remain + n;
             if (len > 0x800) len = 0x800;
             len -= n;
             if (len < 0x800) {
-                if (func_8008E598(D_800A85C0, 0x200) == 1) {
+                if (func_8008E598(gLengthTable, 0x200) == 1) {
                     int idx;
                     register int cnt __asm__("$6");
                     idx = q->idx;
                     __asm__ volatile ("" : : "r" (idx));
                     cnt = len;
                     __asm__ volatile ("" : : "r" (idx), "r" (cnt) : "$5");
-                    gTransferError = D_800A6D78[idx].c & -0x800;
-                    func_8008CD10(q->buf, D_800A85C0 + n, cnt);
+                    gTransferError = gFileSlotTable[idx].c & -0x800;
+                    func_8008CD10(q->buf, gLengthTable + n, cnt);
                 } else {
                     q->result = -0xC;
                 }
@@ -177,15 +177,15 @@ void func_8001C808(int arg)
             if (func_80010000.result >= 0) {
                 func_80010000.buf += len;
                 func_80010000.pos += len;
-                D_800A6D78[func_80010000.idx].c += len;
+                gFileSlotTable[func_80010000.idx].c += len;
                 func_80010000.remain -= len;
             }
             if (func_80010000.result < 0 || func_80010000.remain <= 0) {
                 func_80010000.state = 0;
-                D_800A6D78[func_80010000.idx].flags = 1;
+                gFileSlotTable[func_80010000.idx].flags = 1;
                 gTransferRetryCount = 0x8CA;
                 if (func_80010000.flag == 1)
-                    D_800A6D78[func_80010000.idx].flags |= 0x100;
+                    gFileSlotTable[func_80010000.idx].flags |= 0x100;
                 D_8009F618 = 1;
                 func_80010000.cb(func_80010000.pos, func_80010000.result);
                 D_8009F618 = 0;

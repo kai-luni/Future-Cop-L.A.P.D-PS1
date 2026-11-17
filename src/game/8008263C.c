@@ -6,7 +6,7 @@ typedef struct {
     s32 unk1C;
 } Unk8008263C;
 
-extern Unk8008263C **D_8009F3F4;
+extern Unk8008263C **gPublishedBlockPtr __asm__("D_8009F3F4");
 extern void func_800181D4(void *block);
 
 /**
@@ -42,13 +42,13 @@ extern void func_800181D4(void *block);
 void func_8008263C(Unk8008263C *arg)
 {
     if ((u32)(arg->unk1C - 1) < 0x1D) {
-        if (D_8009F3F4 == 0) {
+        if (gPublishedBlockPtr == 0) {
             goto end;
         }
-        if (D_8009F3F4[arg->unk1C] != 0) {
+        if (gPublishedBlockPtr[arg->unk1C] != 0) {
             goto call;
         }
-        D_8009F3F4[arg->unk1C] = arg;
+        gPublishedBlockPtr[arg->unk1C] = arg;
         goto end;
     }
 call:

@@ -3,7 +3,7 @@ typedef int s32;
 typedef unsigned char u8;
 typedef struct { volatile s32 state; volatile s32 pos; s32 value; s32 copy; s32 mode; s32 other; } Entry;
 typedef struct { u8 loc[4]; s32 value; } File;
-extern Entry D_800A6D78[];
+extern Entry gFileSlotTable[] __asm__("D_800A6D78");
 extern char gFileOpenResult[] __asm__("D_800A6DD8");
 extern File gFileTable[] __asm__("D_800A6E20");
 extern s32 func_8001CE10(void);
@@ -56,7 +56,7 @@ s32 func_8001D424(s32 arg0, s32 arg1, void *arg2)
     register char *name __asm__("$20");
     if (func_8001CE10() < 0) return -2;
     i = 0;
-    entry = D_800A6D78;
+    entry = gFileSlotTable;
     __asm__ volatile ("" : "+r" (entry));
     while (i < 4) {
         if (!entry->state) break;
@@ -89,16 +89,16 @@ s32 func_8001D424(s32 arg0, s32 arg1, void *arg2)
     if (j != 5) {
         register s32 value __asm__("$2");
         register s32 copy __asm__("$4");
-        D_800A6D78[i].pos = func_8001C588(gFileTable);
+        gFileSlotTable[i].pos = func_8001C588(gFileTable);
         value = gFileTable[0].value;
-        copy = D_800A6D78[i].pos;
-        D_800A6D78[i].mode = arg1;
-        D_800A6D78[i].value = value;
-        D_800A6D78[i].copy = copy;
+        copy = gFileSlotTable[i].pos;
+        gFileSlotTable[i].mode = arg1;
+        gFileSlotTable[i].value = value;
+        gFileSlotTable[i].copy = copy;
         {
             register s32 state __asm__("$2");
             state = 1;
-            D_800A6D78[i].state = state;
+            gFileSlotTable[i].state = state;
         }
         __asm__ volatile ("" : : "r" (copy));
         return i;

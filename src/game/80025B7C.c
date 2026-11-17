@@ -17,7 +17,7 @@ extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
-extern s32 D_8009FA70;
+extern s32 gScreenResetFlag __asm__("D_8009FA70");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern void *jtbl_80010DDC[];
 
@@ -96,7 +96,7 @@ state_7:
         gGameSession->unk10 = 3;
         goto state_done;
 state_8:
-        if (D_8009FA70 == 0) {
+        if (gScreenResetFlag == 0) {
             gScreenState = 10;
             state = gScreenState;
             while (1) {

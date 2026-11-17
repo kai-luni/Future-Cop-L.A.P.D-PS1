@@ -33,8 +33,8 @@ extern s32 gStripStepWidth __asm__("D_8009F4C8");
 extern u32 gFrameTimeMax __asm__("D_8009F4D0");
 extern u8 *gCharTable __asm__("D_8009FABC");
 extern u8 *gByteTable __asm__("D_8009F9D8");
-extern u8 D_800A3958[0x100];
-extern u8 D_800A3A58[0x108];
+extern u8 gScratchTable[0x100] __asm__("D_800A3958");
+extern u8 gSecondScratchTable[0x108] __asm__("D_800A3A58");
 
 extern void func_80089BBC(u8 *arg0, s32 arg1);
 extern void func_80095E90(s32 option);
@@ -154,9 +154,9 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
     payload = p + 8;
     if (mode == one) {
         if (D_8009F4C4 != 0) {
-            memcpy((void *)0x1F800000, D_800A3958, 0x100);
+            memcpy((void *)0x1F800000, gScratchTable, 0x100);
             gCharTable = (u8 *)0x1F800000;
-            memcpy((void *)0x1F800100, D_800A3A58, 0x108);
+            memcpy((void *)0x1F800100, gSecondScratchTable, 0x108);
             gByteTable = (u8 *)0x1F800100;
             payload = p + 8;
         }

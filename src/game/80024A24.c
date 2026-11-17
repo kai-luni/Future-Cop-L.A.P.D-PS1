@@ -21,7 +21,7 @@ extern s32 gMissionParam __asm__("D_8009F688");
 extern s32 gScratchBlockPtr __asm__("D_8009F68C");
 extern s32 D_8009FA24;
 extern s32 gPanelSelection __asm__("D_8009FA6C");
-extern s32 D_8009FA70;
+extern s32 gScreenResetFlag __asm__("D_8009FA70");
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern struct Obj *gGameSession __asm__("D_8009FA94");
 extern s32 gPanelSoundIds __asm__("D_8009FAC0");
@@ -31,7 +31,7 @@ extern s32 gSlotTrackId[] __asm__("D_8009FA78");
 extern struct Name D_80010DC0;
 extern void *gMissionWorkingSet __asm__("D_8009F9A0");
 extern u8 gModuleNameBuffer[] __asm__("D_800A0B30");
-extern u8 D_800A8540[];
+extern u8 gRandomTable[] __asm__("D_800A8540");
 extern s32 D_8009FA5C[];
 
 extern void func_80017C68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
@@ -158,7 +158,7 @@ call_init:
         register u32 bp __asm__("$2");
 
         n = 0x7F;
-        bp = (u32)D_800A8540;
+        bp = (u32)gRandomTable;
         bp += 0x7F;
         do {
             *(u8 *)bp = 0;
@@ -221,7 +221,7 @@ call_init:
     }
 
     func_80029F50(gModuleNameBuffer);
-    D_8009FA70 = 0;
+    gScreenResetFlag = 0;
     func_8005A738();
     func_80049690();
     func_8005A2B0();

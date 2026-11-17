@@ -84,7 +84,7 @@ struct ListNode {
 };
 
 extern s32 gPlayerCount[] __asm__("D_8009FA0C");
-extern struct Unk5BCD4Pool D_800A22A0;
+extern struct Unk5BCD4Pool gOwnerNodeListA __asm__("D_800A22A0");
 extern u8 gMapGrid[] __asm__("D_800A6578");
 extern u8 D_8005B934[];
 
@@ -184,7 +184,7 @@ void func_8005BDE4(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *a
     }
 
     if (found & 0xFF) {
-        pool = &D_800A22A0;
+        pool = &gOwnerNodeListA;
         node = func_8005BCD4(pool, owner);
         if (node == 0) {
             node = (struct Unk5BCD4Node *)func_8003BEF0((struct ListNode *)pool);

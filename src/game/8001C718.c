@@ -3,7 +3,7 @@ typedef unsigned char u8;
 typedef struct { int a, b, c, pos, e, f; } Entry;
 typedef struct { int state, a, b, c, index, d, callback, saved, buffer; } State;
 extern State func_80010000;
-extern Entry D_800A6D78[];
+extern Entry gFileSlotTable[] __asm__("D_800A6D78");
 extern int D_8009F610[], D_8009F614[], D_8009F61C[];
 extern u8 gEventBuffer[] __asm__("D_800A0798");
 extern volatile u8 D_1F801800, D_1F801803;
@@ -49,7 +49,7 @@ void func_8001C718(void)
     register int a0 __asm__("$4");
     register char *a1 __asm__("$5");
     register char *a2 __asm__("$6");
-    a1 = (char *)D_800A6D78[func_80010000.index].pos;
+    a1 = (char *)gFileSlotTable[func_80010000.index].pos;
     __asm__ volatile("" : "+r"(a1));
     a0 = (int)D_8009F614;
     __asm__ volatile("" : "+r"(a0));

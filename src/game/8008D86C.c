@@ -8,7 +8,7 @@ extern void func_8008C9B0(void);
 extern void func_8008D7B0(s32);
 extern void func_8008D964(void);
 extern void func_8008DAC0(s32, s32, s32, s32);
-extern s32 D_8009C800;
+extern s32 gModeClearFlag __asm__("D_8009C800");
 
 /**
  * @brief Initializes BIOS/kernel device tables, installs IRQ node D_800A3E00, and invokes BIOS B0:0x12.
@@ -43,6 +43,6 @@ void func_8008D86C(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     func_8008D7B0(0);
     func_8008D964();
     func_8008DAC0(arg0, arg1, arg2, arg3);
-    D_8009C800 = 1;
+    gModeClearFlag = 1;
     __asm__ volatile("" : : : "memory");
 }

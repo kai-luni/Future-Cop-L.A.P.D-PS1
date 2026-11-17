@@ -9,7 +9,7 @@ typedef struct {
 } Unk9EEA4;
 
 extern Unk9EEA4 *gSpuRegBasePtr __asm__("D_8009EEA4");
-extern volatile u32 D_8009EEDC;
+extern volatile u32 gSpuCompareWord __asm__("D_8009EEDC");
 extern u32 gSetupGuard __asm__("D_8009EEF4");
 extern void func_80097990(void);
 extern void func_8008DFF0(u32 arg0, s32 arg1);
@@ -50,8 +50,8 @@ void func_800972F8(void)
         } while (i < 0xF01 && (gSpuRegBasePtr->flags & 0x30));
     }
 
-    if (D_8009EEDC != 0) {
-        ((void (*)(void))D_8009EEDC)();
+    if (gSpuCompareWord != 0) {
+        ((void (*)(void))gSpuCompareWord)();
     } else {
         func_8008DFF0(0xF0000009, 0x20);
     }

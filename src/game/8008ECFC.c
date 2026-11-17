@@ -5,7 +5,8 @@ typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
 
-extern int D_800A3E68, D_800A3E6C;
+extern int gPassCounter __asm__("D_800A3E6C");
+extern int gPollDeadline __asm__("D_800A3E68");
 extern char *D_800A3E70;
 extern char D_80012510[], D_80012498[];
 extern char gCdErrorLogMsg[] __asm__("D_80012488");
@@ -17,7 +18,7 @@ extern void (*D_8009C8AC)(int, void *);
 extern void (*D_8009C8A8)(int, void *);
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u8 D_800A3E58[];
-extern u8 D_800A3E50[];
+extern u8 gStatusBuffer8[] __asm__("D_800A3E50");
 
 extern int func_80091270(int);
 extern void func_8008FF08(char *);
@@ -76,23 +77,23 @@ s32 func_8008ECFC(s32 mode, u8 *result)
     state = gCdStateBytes;
     state1 = state + 1;
     two = 2;
-    D_800A3E68 = now + 0x3c0;
+    gPollDeadline = now + 0x3c0;
     msg = D_80012510;
-    D_800A3E6C = 0;
+    gPassCounter = 0;
     D_800A3E70 = msg;
 
 loop:
-    if (D_800A3E68 < func_80091270(-1)) goto timeout;
+    if (gPollDeadline < func_80091270(-1)) goto timeout;
     {
         register int cur __asm__("$2");
         register int next __asm__("$2");
         register int old __asm__("$3");
-        cur = D_800A3E6C;
+        cur = gPassCounter;
         __asm__("" : "+r"(cur));
         old = cur;
         next = cur + 1;
         __asm__("" : "+r"(old), "+r"(next));
-        D_800A3E6C = next;
+        gPassCounter = next;
         if (0x3c0000 < old) {
         timeout:
             func_8008FF08(gCdErrorLogMsg);
@@ -156,7 +157,7 @@ inner_loop:
                         register int a0 __asm__("$4");
                         a0 = *state;
                         __asm__("" : "+r"(a0));
-                        D_8009C8A8(a0, D_800A3E50);
+                        D_8009C8A8(a0, gStatusBuffer8);
                     }
                 }
             }
@@ -176,7 +177,7 @@ inner_loop:
         register u8 *dst __asm__("$5");
         state[0] = two;
         dst = saved_result;
-        src = D_800A3E50;
+        src = gStatusBuffer8;
         __asm__("" : "+r"(dst), "+r"(src));
         if (dst != 0) {
             int i = 7;

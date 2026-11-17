@@ -8,7 +8,7 @@ typedef struct {
     u8 unk36;
 } Unk8008B8E8;
 
-extern u32 D_8009C7A8;
+extern u32 gPadUpdateByte __asm__("D_8009C7A8");
 extern u32 gPadDataOffset __asm__("D_8009C740");
 extern u32 D_8009C774;
 extern u32 gPadMotorValue __asm__("D_8009C7A0");
@@ -38,7 +38,7 @@ s32 func_8008B8E8(Unk8008B8E8 *arg0)
     s32 ret;
     void *a1;
 
-    if (D_8009C7A8 != 0) {
+    if (gPadUpdateByte != 0) {
         ((void (*)(void *))gPadDataOffset)((u8 *)arg0->unkC + 0x1E0);
         ((void (*)(void *))gPadDataOffset)((u8 *)arg0->unkC + 0x2D0);
     }

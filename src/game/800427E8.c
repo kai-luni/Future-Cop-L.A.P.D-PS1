@@ -10,7 +10,7 @@ struct Unk427E8 {
     void *unkA8;
 };
 
-extern s32 D_8009FAB0;
+extern s32 gRemainingCounter __asm__("D_8009FAB0");
 extern void func_800181D4(void *block);
 
 /**
@@ -30,7 +30,7 @@ extern void func_800181D4(void *block);
  */
 void func_800427E8(struct Unk427E8 *object)
 {
-    D_8009FAB0 -= object->unkA4;
+    gRemainingCounter -= object->unkA4;
     if (object->unkA8 != 0) {
         func_800181D4(object->unkA8);
     }

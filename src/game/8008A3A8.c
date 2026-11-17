@@ -1,7 +1,7 @@
 // Categories: Game Engine > Callback Tables
 extern void func_8008A43C(void);
 extern void func_8008A3D4(void);
-extern void (*D_800A3B64[])(void);
+extern  void (*gCallbackTable2[])(void) __asm__("D_800A3B64");
 
 /**
  *  @brief Initializes two callback entries and their surrounding null entries.
@@ -21,7 +21,7 @@ extern void (*D_800A3B64[])(void);
  */
 void func_8008A3A8(void)
 {
-    void (**p)(void) = D_800A3B64;
+    void (**p)(void) = gCallbackTable2;
     asm volatile("" : "+r"(p));
     p[0] = func_8008A43C;
     p[1] = func_8008A3D4;

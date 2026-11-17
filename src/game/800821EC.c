@@ -12,7 +12,7 @@ struct State821EC {
 };
 
 extern struct State821EC *gSaveProfileImage __asm__("D_8009F92C");
-extern u8 D_8009F8BD;
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 D_8009F8BE;
 
 /**
@@ -37,10 +37,10 @@ void func_800821EC(void)
     if (gSaveProfileImage->mode == 3) {
         gSaveProfileImage->mode = 4;
         if (gSaveProfileImage->flag) {
-            D_8009F8BD = 0;
+            gUiHoldFlag = 0;
             D_8009F8BE = 0;
         } else {
-            D_8009F8BD = 0;
+            gUiHoldFlag = 0;
             D_8009F8BE = 1;
         }
     } else if (gSaveProfileImage->mode == 5) {

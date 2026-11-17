@@ -8,8 +8,8 @@ struct FontEntry {
 };
 
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern s32 D_8009F8F8;
-extern s32 D_8009F8F8_arr[];
+extern s32 gScalarCursor __asm__("D_8009F8F8");
+extern  s32 gScalarCursor_arr[] __asm__("D_8009F8F8");
 extern u16 gStatusTextId __asm__("D_8009F92A");
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 D_800A3938[];

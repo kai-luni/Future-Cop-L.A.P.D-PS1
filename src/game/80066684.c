@@ -3,7 +3,7 @@
 
 typedef struct { s16 x, y, z; } Vec;
 extern u8 gDiscShadeByte __asm__("D_8009FAA4");
-extern s32 D_800A6F60[];
+extern s32 gEffectSizeTable[] __asm__("D_800A6F60");
 extern void func_8001484C(Vec *, s32, s32, s32, s32, s32, s32);
 
 /**
@@ -67,7 +67,7 @@ void func_80066684(u8 *obj, s32 *pos, s32 width, s32 height)
                     q = tmp >> 12;
                     __asm__("" : "+r"(q));
                     v.y = q;
-                    func_8001484C(&v, D_800A6F60[(obj + i)[0xa8] & 31] << 8, 0, 32, scale, 0xe00, 0);
+                    func_8001484C(&v, gEffectSizeTable[(obj + i)[0xa8] & 31] << 8, 0, 32, scale, 0xe00, 0);
                 }
             }
         }

@@ -16,7 +16,7 @@ struct Text8 {
 
 extern struct Text8 gTextBlock __asm__("D_8009F3B8");
 extern u32 D_800A6E58[];
-extern u32 D_800A6E38[];
+extern u32 gExceptionFrame[] __asm__("D_800A6E38");
 
 extern void func_80091480(void);
 extern void func_80091510(void *);
@@ -84,7 +84,7 @@ __attribute__((noreturn)) void func_800773D8(void)
 
     for (j = 0; j < 2; j++) {
         for (i = 0; i < 4; i++) {
-            func_80077278(i * 0x40 + 0x10, j * 0x10 + 0xA0, D_800A6E38[j * 4 + i]);
+            func_80077278(i * 0x40 + 0x10, j * 0x10 + 0xA0, gExceptionFrame[j * 4 + i]);
         }
     }
 

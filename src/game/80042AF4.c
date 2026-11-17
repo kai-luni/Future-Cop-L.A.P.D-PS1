@@ -66,7 +66,7 @@ typedef struct Ent {
     u8 unkA3;
 } Ent;
 
-extern s32 D_8009FAB0;
+extern s32 gRemainingCounter __asm__("D_8009FAB0");
 extern s32 func_80019668(void);
 extern Mat *func_8003D9F8(void *a0, u16 a1, s8 a2, s32 a3, void *a4, Mat *a5);
 extern void func_800188D0(s32 a, s32 b, s32 c, s32 *out);
@@ -200,10 +200,10 @@ after:
         }
         sh0 = 0x20 - self->unkA2;
         sh1 = 0x20 - self->unkA3;
-        if (D_8009FAB0 >= 0x2BC) {
+        if (gRemainingCounter >= 0x2BC) {
             return;
         }
-        D_8009FAB0++;
+        gRemainingCounter++;
         if (self->unk96 < 0) {
             n->r = self->unk92;
         } else {

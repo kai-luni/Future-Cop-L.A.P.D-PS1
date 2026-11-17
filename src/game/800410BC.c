@@ -39,7 +39,7 @@ struct CallArgs {
     s16 unkE;
 };
 
-extern s32 D_8009F324;
+extern s32 gMessageConeFlag __asm__("D_8009F324");
 extern u8 gConeTestFlag __asm__("D_8009F328");
 extern u8 gBandTestFlag __asm__("D_8009F329");
 extern s32 gLightStrengthScale __asm__("D_8009F700");
@@ -162,7 +162,7 @@ void func_800410BC(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3)
 
     D_8009F704 = arg2;
 
-    if (D_8009F324 > 0) {
+    if (gMessageConeFlag > 0) {
         args.unkC = 1;
     } else {
         args.unkC = 0;
@@ -195,7 +195,7 @@ void func_800410BC(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3)
         d = func_8001A750((s32 *)pos, &obj->unk50);
 
         if (d < D_8009F704) {
-            if (d >= D_8009F324) {
+            if (d >= gMessageConeFlag) {
                 if (gBandTestFlag & 1) {
                     s32 yc = obj->unk60;
                     s32 yr = obj->unk68;

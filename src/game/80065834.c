@@ -14,7 +14,7 @@ extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 D_800A6F60[];
+extern u32 gEffectSizeTable[] __asm__("D_800A6F60");
 extern u8 D_8009F37C[];
 extern void func_800694C8(s32 *, s32 *, s32, s32);
 extern void func_80010750(void *);
@@ -82,7 +82,7 @@ void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
         func_800694C8(&sx, &sy, *(s32 *)(entity + 0x58), *(s32 *)(entity + 0x50));
         index = flags & 31;
         __asm__ volatile ("" : : "r"(index) : "$3");
-        colors = D_800A6F60;
+        colors = gEffectSizeTable;
         smallbase = gPacketCursor;
         color = colors[index];
         {
@@ -164,7 +164,7 @@ void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
         lt = (u8 *)(flags & 31);
     }
     large = lp;
-    color = D_800A6F60[(s32)lt];
+    color = gEffectSizeTable[(s32)lt];
     }
     depth = 0x400 - (depth >> 8);
     if (depth <= 0) depth = 1;

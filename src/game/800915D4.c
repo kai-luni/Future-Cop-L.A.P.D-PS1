@@ -1,7 +1,7 @@
 // Categories: Platform > Interrupts
 typedef unsigned short u16;
 
-extern u16 D_8009CC8A;
+extern u16 gFrameClockValid __asm__("D_8009CC8A");
 
 /**
  * @brief Returns the cached interrupt status halfword.
@@ -29,5 +29,5 @@ extern u16 D_8009CC8A;
  */
 u16 func_800915D4(void)
 {
-    return D_8009CC8A;
+    return gFrameClockValid;
 }

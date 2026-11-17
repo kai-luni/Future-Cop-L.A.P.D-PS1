@@ -33,7 +33,7 @@ typedef struct {
     s32 x, y, z;
 } Work;
 
-extern u8 D_80075698[];
+extern u8 gAttachMessageName[] __asm__("D_80075698");
 extern void *func_80017EBC(s32, s32);
 extern void func_800181D4(void *);
 extern u8 func_8003BE2C(void *, s32, s32);
@@ -119,7 +119,7 @@ void *func_800762B0(Src *arg)
         return 0;
     }
     func_8003C14C(dest, src);
-    dest->a24 = (s32)D_80075698;
+    dest->a24 = (s32)gAttachMessageName;
     dest->a72 = src->a41;
     dest->a12 = src->a34;
     dest->a90 = src->a48;

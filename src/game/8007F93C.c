@@ -7,7 +7,7 @@ struct UnkFA94 {
 };
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
-extern u8 D_8009F8BD;
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 D_8009F8BE;
 extern u8 D_800A36BD[];
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
@@ -43,7 +43,7 @@ void func_8007F93C(void)
     func_8007FA88();
     gSaveProfileImage[0x921] = 1;
     p = gSaveProfileImage;
-    D_8009F8BD = 0;
+    gUiHoldFlag = 0;
     D_8009F8BE = 0;
     *(u16 *)(p + 0x942) = 0;
     *(u8 *)(p + 0x944) = 0;

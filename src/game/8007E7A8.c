@@ -9,14 +9,14 @@ typedef struct {
 } Mode;
 
 extern Mode *gGameSession __asm__("D_8009FA94");
-extern u8 D_8009FAC4;
+extern u8 gArmedFlag __asm__("D_8009FAC4");
 extern u8 D_800A35FD[];
 extern u8 D_800A35FB[];
 extern u8 gOctalDigitTable[] __asm__("D_8009C1BC");
 extern u8 gHexDigitTable[] __asm__("D_8009C1AC");
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 D_800A3938[];
-extern volatile s32 D_8009F8F8;
+extern volatile s32 gScalarCursor __asm__("D_8009F8F8");
 extern u16 gStatusTextId __asm__("D_8009F92A");
 extern void func_8007F02C(void);
 
@@ -49,7 +49,7 @@ void func_8007E7A8(void)
     u8 *letter;
     Mode *p;
 
-    D_8009FAC4 = 1;
+    gArmedFlag = 1;
     if (gGameSession->unk0C == 2) {
         D_800A35FD[0] = 0;
     } else {
@@ -73,7 +73,7 @@ void func_8007E7A8(void)
         src++;
     } while (i < 10);
     p = gGameSession;
-    D_8009F8F8 = 0;
+    gScalarCursor = 0;
     __asm__ volatile("" ::: "memory");
     gStatusTextId = 0;
     if (p->unk5C == 1) {

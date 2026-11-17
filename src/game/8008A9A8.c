@@ -10,7 +10,7 @@ typedef struct { u8 pad[0x3c]; u8 *buffer; u8 *other; u8 index; u8 count; } Stat
 typedef struct { volatile u8 data; u8 pad[3]; volatile u16 status; u8 pad2[8]; volatile u16 control; } Port;
 extern Port *gSio0RegBasePtr __asm__("D_8009C78C");
 extern volatile u32 *gInterruptStatusPtr __asm__("D_8009C788");
-extern volatile u32 D_800A6E18;
+extern volatile u32 gCountWrapLimit __asm__("D_800A6E18");
 extern volatile u32 gTimeoutThreshold __asm__("D_800A9448");
 extern int func_8008C8B0(void);
 
@@ -70,7 +70,7 @@ int func_8008A9A8(State *arg, int argvalue)
     port = gSio0RegBasePtr;
     status = port->status;
     gTimeoutThreshold = 0x1ae;
-    D_800A6E18 = timer;
+    gCountWrapLimit = timer;
     if (!(status & 2)) {
         register Port *poll __asm__("$3") = port;
         do { __asm__ volatile(""); } while (!(poll->status & 2));

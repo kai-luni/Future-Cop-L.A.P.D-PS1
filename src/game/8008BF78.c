@@ -10,7 +10,7 @@ extern s32 gPadDispatchIndex __asm__("D_8009C76C");
 extern s32 D_8009C77C;
 extern s32 D_8009C780[];
 extern struct H *gSio0CtrlPtr __asm__("D_8009C7C0");
-extern struct E D_800A3C20[];
+extern struct E gCompareAddress[] __asm__("D_800A3C20");
 extern void func_8008C77C(struct E *);
 extern void func_8008C06C(struct E *);
 extern s32 func_8008A6CC(struct E *);
@@ -38,7 +38,7 @@ extern s32 func_8008A6CC(struct E *);
 void func_8008BF78(s32 arg)
 {
     register s32 a __asm__("$5") = arg;
-    register s32 base __asm__("$17") = (s32)D_800A3C20;
+    register s32 base __asm__("$17") = (s32)gCompareAddress;
     register s32 neg __asm__("$19") = -9;
     register s32 *tab __asm__("$18") = D_8009C780;
     s32 done;

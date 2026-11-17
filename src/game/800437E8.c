@@ -67,7 +67,7 @@ struct Unk437E8 {
 };
 
 extern s32 gSceneFrameCounter[] __asm__("D_8009FA50");
-extern s32 D_8009FAB0;
+extern s32 gRemainingCounter __asm__("D_8009FAB0");
 
 extern struct Unk437E8Transform *func_8003D9F8(void *model, s32 flags, s32 part,
                                                s32 count, void *sub, void *matrix);
@@ -238,7 +238,7 @@ s32 func_800437E8(struct Unk437E8 *node, s32 arg)
         if (h != 0 && ((h -= arg, v = h, ({ __asm__ volatile("" : "+r"(h)); h << 16; })) <= 0)) {
         remove:
             func_800427A8(nd, prev, cur);
-            D_8009FAB0--;
+            gRemainingCounter--;
         } else {
             prev = cur;
             cur->unk18 = v | (cur->unk18 & 0xE000);

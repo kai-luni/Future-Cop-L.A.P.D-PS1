@@ -10,7 +10,7 @@ struct UnkD0A0 {
     s32 f14;
 };
 
-extern struct UnkD0A0 D_800A6D78[];
+extern struct UnkD0A0 gFileSlotTable[] __asm__("D_800A6D78");
 extern u8 D_8009F614[];
 extern u8 D_8009F615[];
 extern u8 gEventBuffer[] __asm__("D_800A0798");
@@ -47,12 +47,12 @@ s32 func_8001D0A0(s32 index)
     register u8 *a0 __asm__("$4");
     register u8 *a1 __asm__("$5");
     register u8 *a2 __asm__("$6");
-    s32 t = D_800A6D78[index].flags & 0xF;
+    s32 t = gFileSlotTable[index].flags & 0xF;
 
     if (t == 1 || t == 0x11) {
         s32 r;
 
-        a1 = (u8 *)D_800A6D78[index].f0C;
+        a1 = (u8 *)gFileSlotTable[index].f0C;
         a0 = D_8009F614;
         __asm__("" : "+r"(a0));
         func_8001C494(a0, a1);

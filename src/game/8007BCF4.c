@@ -19,7 +19,7 @@ extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern u8 D_8009B3D4[];
-extern s8 D_800A3838[];
+extern s8 gScreenDescriptor[] __asm__("D_800A3838");
 
 extern void func_8007B460(s32);
 extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
@@ -90,7 +90,7 @@ void func_8007BCF4(s32 arg0)
         return;
     }
 
-    if (gFontBankTable != D_800A3838) {
+    if (gFontBankTable != gScreenDescriptor) {
         func_8007B460(gActivePlayerIndex);
     }
 

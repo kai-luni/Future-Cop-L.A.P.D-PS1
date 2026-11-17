@@ -13,9 +13,9 @@ struct UnkB4E4 {
     u8 pad[0x03];
 };
 
-extern struct UnkA3808 D_800A3808;
+extern struct UnkA3808 gMenuDescriptor __asm__("D_800A3808");
 extern u8 gPauseFlag __asm__("D_8009F3E8");
-extern u8 D_8009FA10;
+extern u8 gRowClearFlag __asm__("D_8009FA10");
 extern u8 D_80011E60[];
 extern struct UnkB4E4 gWideTextTable[] __asm__("D_8009B4E4");
 
@@ -51,14 +51,14 @@ void func_80079F54(void)
 {
     u32 i;
 
-    if (D_800A3808.unk24 != 0) {
+    if (gMenuDescriptor.unk24 != 0) {
         if (gPauseFlag != 0) {
             func_80082DDC((s32)D_80011E60, 0);
             gPauseFlag = 0;
         }
-        D_800A3808.unk24 = 0;
+        gMenuDescriptor.unk24 = 0;
     }
-    D_8009FA10 = 0;
+    gRowClearFlag = 0;
     for (i = 0; i < 16; i++) {
         gWideTextTable[i].unk1F = 0;
         gWideTextTable[i].unk20 = 0;

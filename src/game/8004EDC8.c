@@ -12,7 +12,7 @@ extern s32 gCommandListHead[] __asm__("D_800A8F90");
 extern s32 gFreedPointer __asm__("D_8009F7B0");
 extern struct Node *gEffectListHead[] __asm__("D_800A8F98");
 extern u32 gDiscShadeByte __asm__("D_8009FAA4");
-extern void *D_800A6F60[];
+extern void *gEffectSizeTable[] __asm__("D_800A6F60");
 extern void func_8005A9C4(struct Obj *);
 extern void func_8005B088(s32 *, void *, s32, s32);
 
@@ -63,7 +63,7 @@ void func_8004EDC8(struct Obj *obj)
         n = *p++;
         if (n->count > 0 && (type = n->type) != 0 && !(n->flags & 0x30)) {
             if ((type & 31) < 23 || enabled)
-                func_8005B088(n->pos, D_800A6F60[type & 31], size, type >> 5);
+                func_8005B088(n->pos, gEffectSizeTable[type & 31], size, type >> 5);
         }
         count--;
     }
@@ -76,7 +76,7 @@ void func_8004EDC8(struct Obj *obj)
                 pos[0] = extra->coords[count * 2 + 1] << 9;
                 pos[2] = extra->coords[count * 2] << 9;
                 if ((type & 31) < 23 || enabled)
-                    func_8005B088(pos, D_800A6F60[type & 31], size, type >> 5);
+                    func_8005B088(pos, gEffectSizeTable[type & 31], size, type >> 5);
             }
         }
     }

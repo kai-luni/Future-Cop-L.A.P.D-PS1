@@ -14,7 +14,7 @@ extern struct Unk780DC D_800A35C8[2];
 extern struct Unk780DC D_800A35D8[2];
 extern struct Unk780DC D_800A35E8[2];
 
-extern u8 D_8009FAC4;
+extern u8 gArmedFlag __asm__("D_8009FAC4");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern s32 gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern s32 D_8009F3F4;
@@ -59,7 +59,7 @@ void func_800780DC(void)
     void *p;
     u32 i;
 
-    D_8009FAC4 = 0;
+    gArmedFlag = 0;
     gModuleLoadState = 1;
     gPendingModuleNameFlag = 0;
     func_80077FFC();

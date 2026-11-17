@@ -14,7 +14,8 @@ extern int gCdResponseCount __asm__("D_8009C8BC");
 extern int gCdLogLevel __asm__("D_8009C8B0");
 extern int gCdStatusByte __asm__("D_8009C8B4");
 extern unsigned char gCdStateBytes[] __asm__("D_8009CB84");
-extern unsigned char D_800A3E50[], D_800A3E58[], D_800A3E60[];
+extern unsigned char D_800A3E58[], D_800A3E60[];
+extern unsigned char gStatusBuffer8[] __asm__("D_800A3E50");
 extern char D_800124B4[], D_800124C0[], D_800124DC[], D_800124F0[];
 extern void func_8008E000();
 extern void func_8008FF08();
@@ -135,7 +136,7 @@ skip_input:
             status = gCdStateBytes;
             __asm__("" : "+r"(status));
             *status = flag;
-            COPY(D_800A3E50);
+            COPY(gStatusBuffer8);
             return 2;
         }
         {
@@ -150,7 +151,7 @@ skip_input:
                 status = gCdStateBytes;
                 __asm__("" : "+r"(status));
                 *status = flag;
-                COPY(D_800A3E50);
+                COPY(gStatusBuffer8);
                 return 1;
             }
         }
@@ -159,7 +160,7 @@ skip_input:
             __asm__("" : "+r"(status));
             *status = 2;
         }
-        COPY(D_800A3E50);
+        COPY(gStatusBuffer8);
         return 2;
     case2:
         {
@@ -168,7 +169,7 @@ skip_input:
             __asm__("" : "+r"(state));
             __asm__("lui $1, %%hi(D_8009CB84)\n\tsb %0, %%lo(D_8009CB84)($1)" : : "r"(state) : "$1", "memory");
         }
-        COPY(D_800A3E50);
+        COPY(gStatusBuffer8);
         return 2;
     case1:
         if (s1 && s0 == 1) s1 = 0;
@@ -209,7 +210,7 @@ skip_input:
         return 4;
     case5:
         {
-        register unsigned char *dest __asm__("$4") = D_800A3E50;
+        register unsigned char *dest __asm__("$4") = gStatusBuffer8;
         register unsigned char *status __asm__("$2") = gCdStateBytes;
         __asm__("" : "+r"(dest), "+r"(status));
         {

@@ -9,7 +9,7 @@ extern void *D_8009F240;
 extern void D_8001CDD0(void);
 extern void D_8001CDF0(void);
 extern u8 D_8009AABC[];
-extern s32 D_800A6D78[];
+extern s32 gFileSlotTable[] __asm__("D_800A6D78");
 extern s32 D_800A8E68[];
 extern u32 jtbl_80010AA4[];
 extern s32 func_8001D130(s32 arg0);
@@ -88,7 +88,7 @@ have_args:
 cleared:
 
     i = 0;
-    clear = (s32 *)D_800A6D78;
+    clear = (s32 *)gFileSlotTable;
     for (; i < 4; i++) {
         *clear = 0;
         clear = (s32 *)((u8 *)clear + 0x18);

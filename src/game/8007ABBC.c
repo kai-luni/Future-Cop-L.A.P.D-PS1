@@ -12,9 +12,9 @@ extern u8 *D_8009F878;
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
-extern u8 D_800A6FE0[];
+extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 extern u8 D_800A3928[];
-extern s32 D_8009F8F8[];
+extern s32 gScalarCursor[] __asm__("D_8009F8F8");
 extern u8 D_8009F3F8[8];
 extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 
@@ -92,12 +92,12 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
     case 3: {
         s8 *flag = &gPlayerMenuDepth[idx];
         if (*flag != 0) {
-            func_8007AA9C(D_800A6FE0 + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878);
+            func_8007AA9C(gPlayerNameTable + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878);
             *flag = 0;
         } else {
             *flag = 1;
-            D_8009F8F8[idx] = 0;
-            func_8007A9D0(D_800A6FE0 + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878, gPlayerNameLength);
+            gScalarCursor[idx] = 0;
+            func_8007A9D0(gPlayerNameTable + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878, gPlayerNameLength);
         }
         break;
     }
@@ -105,7 +105,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
         if (gPlayerMenuDepth[idx] != 0) {
             u8 *p;
             func_80046C84(0x46, 0);
-            i = D_8009F8F8[idx];
+            i = gScalarCursor[idx];
             chars = D_800A3928 + idx * 8;
             p = chars + i;
             if (*p != 0) {
@@ -119,7 +119,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
         if (gPlayerMenuDepth[idx] != 0) {
             u8 *p;
             func_80046C84(0x46, 0);
-            i = D_8009F8F8[idx];
+            i = gScalarCursor[idx];
             chars = D_800A3928 + idx * 8;
             p = chars + i;
             (*p)++;
@@ -130,7 +130,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
         break;
     case 1:
         if (gPlayerMenuDepth[idx] != 0) {
-            s32 *p = &D_8009F8F8[idx];
+            s32 *p = &gScalarCursor[idx];
             (*p)++;
             if (*p >= 8) {
                 *p = 0;
@@ -140,7 +140,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
         break;
     case 2:
         if (gPlayerMenuDepth[idx] != 0) {
-            s32 *p = &D_8009F8F8[idx];
+            s32 *p = &gScalarCursor[idx];
             (*p)--;
             if (*p < 0) {
                 *p = 7;
@@ -164,7 +164,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
             font = func_80048E88();
             chars = D_800A3928 + idx * 8;
             baseX -= step * 4;
-            base = D_8009F8F8;
+            base = gScalarCursor;
             off = idx << 2;
             fontHeight = font->height;
             __asm__("" : "+r"(off) : "r"(fontHeight));
@@ -196,7 +196,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
                 baseX += step;
             }
         } else {
-            u8 *str = D_800A6FE0 + idx * 9;
+            u8 *str = gPlayerNameTable + idx * 9;
             func_800492A0(str, &fontUnk8, &fontHeight);
             func_80049100(str, baseX - fontUnk8 / 2, y, 0xF);
         }

@@ -1,10 +1,10 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern u8 D_8009FAC4;
-extern u8 D_8009FA10;
-extern u8 D_800A3838[];
-extern u8 D_800A3808[];
+extern u8 gArmedFlag __asm__("D_8009FAC4");
+extern u8 gRowClearFlag __asm__("D_8009FA10");
+extern u8 gScreenDescriptor[] __asm__("D_800A3838");
+extern u8 gMenuDescriptor[] __asm__("D_800A3808");
 extern void func_80078650(u8 *, s32);
 
 /**
@@ -26,9 +26,9 @@ extern void func_80078650(u8 *, s32);
  */
 void func_8007F5D0(void)
 {
-    if (D_8009FAC4 == 0 && D_8009FA10 != 0) {
-        func_80078650(D_800A3838, 1);
+    if (gArmedFlag == 0 && gRowClearFlag != 0) {
+        func_80078650(gScreenDescriptor, 1);
     } else {
-        func_80078650(D_800A3808, 1);
+        func_80078650(gMenuDescriptor, 1);
     }
 }

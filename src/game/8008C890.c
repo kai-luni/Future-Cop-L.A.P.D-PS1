@@ -1,7 +1,7 @@
 // Categories: Platform > Timer | Input > Controller
 #include "game/types.h"
 
-extern u32 D_800A6E18;
+extern u32 gCountWrapLimit __asm__("D_800A6E18");
 extern u32 gTimeoutThreshold __asm__("D_800A9448");
 
 /**
@@ -30,5 +30,5 @@ void func_8008C890(u32 a0)
 
     count = *(volatile u16 *)0x1F801120;
     gTimeoutThreshold = a0;
-    D_800A6E18 = count;
+    gCountWrapLimit = count;
 }

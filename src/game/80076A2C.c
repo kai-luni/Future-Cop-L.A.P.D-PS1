@@ -44,7 +44,7 @@ extern u8 D_8009F3A0[];
 extern u8 D_8009F3A8[];
 extern u8 D_8009F3B0[];
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
-extern u8 D_80011E3C[];
+extern u8 gEaLogoName[] __asm__("D_80011E3C");
 extern u8 D_80011E48[];
 
 extern void func_800965C8(void);
@@ -228,7 +228,7 @@ s32 func_80076A2C(void)
         s3 = 1;
         func_8007FA48();
 
-        func_80089D44(D_80011E3C, 4, 0, 0, s0, 0xF0);
+        func_80089D44(gEaLogoName, 4, 0, 0, s0, 0xF0);
 
         func_8008CD30(local, D_8009F3A0, D_8009F3D0, (s32)D_80011E48);
         func_80089D44(local, 4, 0, 0x18, s0, 0xC0);

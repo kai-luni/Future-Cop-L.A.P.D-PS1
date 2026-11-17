@@ -1,7 +1,7 @@
 // Categories: Game Engine > Data Selection
 #include "../../include/game/types.h"
 
-extern u8 D_800A3C20[];
+extern u8 gCompareAddress[] __asm__("D_800A3C20");
 
 /**
  *  @brief Selects one of two addresses in a global byte array.
@@ -25,7 +25,7 @@ u8 *func_8008C3EC(u32 flags)
 {
     u8 *result;
 
-    result = D_800A3C20;
+    result = gCompareAddress;
     if ((flags & 0xF0) != 0) {
         result += 0xF0;
     }

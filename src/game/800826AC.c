@@ -9,7 +9,7 @@ typedef struct { u16 n; s8 a; s8 b; u32 t[2]; } Ent;
 extern Ent gDescriptorTable[] __asm__("D_8009B32C");
 extern s8 gOverlayDelay __asm__("D_8009F874");
 extern u8 D_8009F876;
-extern int **D_8009F3F4;
+extern int **gPublishedBlockPtr __asm__("D_8009F3F4");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern void func_800861E4(int, int, int, int);
@@ -53,7 +53,7 @@ void func_800826AC(int idx)
     int col;
 
     if (cur == idx) goto tail;
-    tbl = (int *)D_8009F3F4;
+    tbl = (int *)gPublishedBlockPtr;
     gOverlayDelay = val;
     if (tbl == 0) return;
     cur = val < 14;
@@ -84,7 +84,7 @@ void func_800826AC(int idx)
         en = (Ent *)((int)(e * 12) + (int)tab);
         for (; j < 2; q++, r++, j++, en = (Ent *)((u8 *)en + 4)) {
             u32 t = en->t[0];
-            if (t && ((int *)D_8009F3F4)[t]) {
+            if (t && ((int *)gPublishedBlockPtr)[t]) {
                 n++;
                 { register u32 one __asm__("$2") = 1; if (i == one) {
                     if (j != 0) r[6] = 0; else { register int m32 __asm__("$2") = 0x20; h[6] = m32; }
@@ -100,7 +100,7 @@ void func_800826AC(int idx)
             s = g;
             for (; j < 2; j++, s++) {
                 { register int m2 __asm__("$2") = -1; if (s[1] != m2)
-                    func_800861E4(*D_8009F3F4[tab[e].t[j]], D_8009F876, s[1] + 0x140, off + s[3]); }
+                    func_800861E4(*gPublishedBlockPtr[tab[e].t[j]], D_8009F876, s[1] + 0x140, off + s[3]); }
                 off += 0x100;
             }
         }

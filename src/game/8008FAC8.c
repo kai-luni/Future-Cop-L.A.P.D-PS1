@@ -2,7 +2,8 @@
 #include "game/dma_globals.h"
 
 typedef unsigned char u8;
-extern int D_800A3E68, D_800A3E6C;
+extern int gPassCounter __asm__("D_800A3E6C");
+extern int gPollDeadline __asm__("D_800A3E68");
 extern char *D_800A3E70;
 extern char D_80012594[], D_80012498[];
 extern char gCdErrorLogMsg[] __asm__("D_80012488");
@@ -67,12 +68,12 @@ int func_8008FAC8(int mode)
     other = gIndexEntryTable;
     state = gCdStateBytes;
     table = gLowByteEntryTable;
-    D_800A3E68 = now + 0x3c0;
-    D_800A3E6C = 0;
+    gPollDeadline = now + 0x3c0;
+    gPassCounter = 0;
     D_800A3E70 = D_80012594;
     do {
-        if (D_800A3E68 < func_80091270(-1)) goto timeout;
-        next = D_800A3E6C;
+        if (gPollDeadline < func_80091270(-1)) goto timeout;
+        next = gPassCounter;
         __asm__("" : "+r"(next));
         count = next;
         next = next + 1;

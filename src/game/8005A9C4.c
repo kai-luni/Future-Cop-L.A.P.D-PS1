@@ -41,7 +41,7 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk5A9C4FA94 *gGameSession __asm__("D_8009FA94");
 extern struct Unk5A9C4Other *D_8009FA58[];
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
-extern s32 D_800A6F60[32];
+extern s32 gEffectSizeTable[32] __asm__("D_800A6F60");
 
 extern void func_8005A740(s32 origin, s32 id, s32 colour);
 extern u8 func_8005A934(struct Unk5A9C4 *object, s32 z, s32 x, s32 *angle);

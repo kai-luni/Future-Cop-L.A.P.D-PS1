@@ -4,7 +4,7 @@
 typedef void (*SpuDmaCallback)(void);
 
 extern s32 gSecondCallGuard __asm__("D_8009EE94");
-extern s32 D_8009EEDC;
+extern s32 gSpuCompareWord __asm__("D_8009EEDC");
 extern SpuDmaCallback gInstalledHandler __asm__("D_8009EEE0");
 extern void *gSpuDmaCallback __asm__("D_8009EA2C");
 

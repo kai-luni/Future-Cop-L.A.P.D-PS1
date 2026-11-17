@@ -10,7 +10,8 @@ extern s32 gFrameTickCounter[] __asm__("D_8009FA2C");
 extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s32 gStillRunningState __asm__("D_8009F464");
 extern s8 D_8009F45A, D_8009F889, D_8009F880, D_8009F888, D_8009F882;
-extern s8 D_8009F3F1, D_8009FA10;
+extern s8 D_8009F3F1;
+extern s8 gRowClearFlag __asm__("D_8009FA10");
 extern u8 D_8009F8D9;
 extern u8 gUnlockFlag __asm__("D_8009F3C2");
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
@@ -68,7 +69,7 @@ void func_800782EC(void)
         }
         if (D_8009F3F1 != D_8009F458) {
         set_flag:
-            D_8009FA10 = 1;
+            gRowClearFlag = 1;
         }
         func_80078210();
         break;

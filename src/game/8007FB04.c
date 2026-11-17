@@ -4,13 +4,13 @@
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gStillRunningState __asm__("D_8009F464");
-extern u8 D_8009F8BD;
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 D_8009F8BE;
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_800A36E8[];
 extern u8 D_800A36B8[];
-extern u8 D_800A3718[];
-extern u8 D_800120A4[];
+extern u8 gMenuActivationBlock[] __asm__("D_800A3718");
+extern u8 gProfileImageName[] __asm__("D_800120A4");
 
 extern s32 func_800207B4();
 extern void func_80078740(void);
@@ -96,7 +96,7 @@ s32 func_8007FB04(void)
             gSaveProfileImage[0x201] = 0;
             gSaveProfileImage[0x202] = 0;
             s0 = 1;
-            D_8009F8BD = s0;
+            gUiHoldFlag = s0;
             D_8009F8BE = s0;
             s1 = gSaveProfileImage[0x203];
 
@@ -131,7 +131,7 @@ s32 func_8007FB04(void)
                             }
                         } else {
                             gSaveProfileImage[0x205] = s1;
-                            D_8009F8BD = 0;
+                            gUiHoldFlag = 0;
                         }
                     } else {
                         *(s16 *)(gSaveProfileImage + 0x942) = 0x37A0;
@@ -140,16 +140,16 @@ s32 func_8007FB04(void)
             }
 
             if (gSaveProfileImage[0x202] == 0) {
-                if (func_80020C90(D_800120A4) != 0) {
+                if (func_80020C90(gProfileImageName) != 0) {
                     func_80081204();
                 } else if (func_80020E68(0x678) == 0) {
-                    D_8009F8BD = 0;
+                    gUiHoldFlag = 0;
                     gSaveProfileImage[0x206] = 1;
                 } else {
                     func_8001E4C0(gSaveProfileImage + 0x20C, 0, 0x678);
                     func_80080010();
                     if (gSaveProfileImage[0x921] == 0) {
-                        D_8009F8BD = 0;
+                        gUiHoldFlag = 0;
                     }
                 }
             }
@@ -162,7 +162,7 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x200] = 0;
                 gSaveProfileImage[0x201] = 0;
                 gSaveProfileImage[0x207] = 0;
-                D_8009F8BD = 0;
+                gUiHoldFlag = 0;
                 D_8009F8BE = 1;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 func_80082020();
@@ -173,9 +173,9 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x202] = 0;
                 gSaveProfileImage[0x201] = 0;
                 gSaveProfileImage[0x207] = 0;
-                func_80078650(D_800A3718, 1);
+                func_80078650(gMenuActivationBlock, 1);
                 gFontBankTable[0] = 1;
-                D_8009F8BD = 1;
+                gUiHoldFlag = 1;
                 D_8009F8BE = 1;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 func_80082020();
@@ -186,7 +186,7 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x202] = 0;
                 gSaveProfileImage[0x201] = 0;
                 gSaveProfileImage[0x207] = 0;
-                D_8009F8BD = 0;
+                gUiHoldFlag = 0;
                 D_8009F8BE = 0;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 func_80082020();
@@ -196,7 +196,7 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x200] = 2;
                 gSaveProfileImage[0x201] = 1;
                 gSaveProfileImage[0x207] = 0;
-                D_8009F8BD = 0;
+                gUiHoldFlag = 0;
                 D_8009F8BE = 0;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 func_80082020();
@@ -210,7 +210,7 @@ s32 func_8007FB04(void)
                     gSaveProfileImage[0x201] = 2;
                 }
                 gSaveProfileImage[0x207] = 0;
-                D_8009F8BD = 0;
+                gUiHoldFlag = 0;
                 D_8009F8BE = 0;
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;
                 break;
@@ -219,7 +219,7 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x202] = 0;
                 gSaveProfileImage[0x201] = 3;
                 gSaveProfileImage[0x207] = 1;
-                D_8009F8BD = 0;
+                gUiHoldFlag = 0;
                 D_8009F8BE = 0;
                 func_80082020();
                 *(s16 *)(gSaveProfileImage + 0x942) = 0;

@@ -6,7 +6,7 @@ extern volatile u32 D_8009EE90;
 extern volatile u16 D_800A6EA0[];
 extern volatile u16 table[] __asm__("D_800A6EA0");
 extern volatile u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
-extern volatile u32 D_8009EA5C;
+extern volatile u32 gModeEntryWord __asm__("D_8009EA5C");
 
 /**
  *  @brief Reads or modifies a 24-bit value stored across two halfword entries.
@@ -65,7 +65,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
         if (D_8009EE90 & 1) {
             *(volatile u16 *)((char *)table + offset) |= value;
             table[high] |= (value >> 16) & 0xff;
-            D_8009EA5C |= 1 << ((low - 0xc6) >> 1);
+            gModeEntryWord |= 1 << ((low - 0xc6) >> 1);
         } else {
             register volatile u16 *other __asm__("$5") = gSpuRegBasePtr;
             *(volatile u16 *)(offset + (u32)other) |= value;
@@ -81,7 +81,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
         if (D_8009EE90 & 1) {
             *(volatile u16 *)(offset + (u32)table) &= ~value;
             table[high] &= ~((value >> 16) & 0xff);
-            D_8009EA5C |= 1 << ((low - 0xc6) >> 1);
+            gModeEntryWord |= 1 << ((low - 0xc6) >> 1);
         } else {
             register volatile u16 *other __asm__("$5") = gSpuRegBasePtr;
             *(volatile u16 *)(offset + (u32)other) &= ~value;
@@ -97,7 +97,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
         if (D_8009EE90 & 1) {
             table[low] = value;
             *(volatile u16 *)(offset + (u32)table) = (value >> 16) & 0xff;
-            D_8009EA5C |= 1 << ((low - 0xc6) >> 1);
+            gModeEntryWord |= 1 << ((low - 0xc6) >> 1);
         } else {
             register s32 looff __asm__("$2") = low << 1;
             register volatile u16 *other __asm__("$4");

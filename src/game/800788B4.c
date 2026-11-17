@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 *gFontBankTable __asm__("D_8009F468");
-extern s8 D_8009F8BC;
+extern s8 gPanelSyncValue __asm__("D_8009F8BC");
 extern s32 func_80048E28(s32 index);
 
 /**
@@ -32,12 +32,12 @@ void func_800788B4(void)
     register s32 index __asm__("$4");
 
     state = gFontBankTable;
-    previous = D_8009F8BC;
+    previous = gPanelSyncValue;
     index = *(s8 *)(state + 8);
     if (previous == index) {
         goto done;
     }
-    D_8009F8BC = state[8];
+    gPanelSyncValue = state[8];
     func_80048E28(index);
 done:
     ;

@@ -12,7 +12,7 @@ extern s32 *gVmCountdowns __asm__("D_8009F9A4");
 extern s32 *gOpcodeTable __asm__("D_8009F9F8");
 extern s32 *gGameSession __asm__("D_8009FA94");
 extern s32 *D_8009FAD4;
-extern s8 D_800A8540[];
+extern s8 gRandomTable[] __asm__("D_800A8540");
 
 extern s32 func_80019668(void);
 extern s32 func_80029A60(s32, struct Entity *, s32);
@@ -290,7 +290,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             a = (a == 0);
             goto push;
         case 10:
-            a = D_800A8540[a];
+            a = gRandomTable[a];
             goto push;
         case 11:
             if (a >= 0) {

@@ -75,21 +75,24 @@ extern GameState *gGameSession __asm__("D_8009FA94");
 extern Upgrade gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
-extern s32 D_8009F8F8[];
+extern s32 gScalarCursor[] __asm__("D_8009F8F8");
 extern u8 D_800A3928[];
-extern u8 D_800A6FE0[];
-extern u8 D_800A3718[];
+extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
+extern u8 gMenuActivationBlock[] __asm__("D_800A3718");
 extern u8 *D_8009F878;
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern u8 D_8009F8BD, D_8009F8BE;
+extern u8 D_8009F8BE;
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern s8 D_8009F880, D_8009F881, D_8009F882;
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
 extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
 extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
-extern u8 D_8009F3E6, D_8009F3E7, D_8009F3F1, D_8009F458, D_8009F459;
-extern u8 D_8009FA10;
+extern u8 D_8009F3F1, D_8009F458, D_8009F459;
+extern u8 gLayoutPointerFlagB __asm__("D_8009F3E7");
+extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
+extern u8 gRowClearFlag __asm__("D_8009FA10");
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern u16 gPlaceholderGlyph __asm__("D_8009F470");
 extern u8 D_8009F498[], D_8009F4A0[];
@@ -123,7 +126,7 @@ extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
 #define SLOT(i) (((SaveSlot *)((u8 *)gSaveProfileImage + 0x428))[i])
 #define SELECTED SLOT(gSaveProfileImage->selected)
 
-extern u8 D_800120A4[];
+extern u8 gProfileImageName[] __asm__("D_800120A4");
 extern s32 func_80020D3C(void *, s32, u32);
 
 /**
@@ -155,7 +158,7 @@ void func_80081204(void)
     ((u8 *)gSaveProfileImage)[0x922] = 3;
     ((u8 *)gSaveProfileImage)[0x201] = 1;
     ((u8 *)gSaveProfileImage)[0x202] = 1;
-    D_8009F8BD = 0;
+    gUiHoldFlag = 0;
     D_8009F8BE = 0;
-    func_80020D3C(D_800120A4, (s32)((u8 *)gSaveProfileImage + 0x20C), 0x678);
+    func_80020D3C(gProfileImageName, (s32)((u8 *)gSaveProfileImage + 0x20C), 0x678);
 }

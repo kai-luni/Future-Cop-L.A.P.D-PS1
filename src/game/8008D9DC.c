@@ -2,7 +2,7 @@
 extern void func_8008C9A0(void);
 extern void func_8008CA10(int, void *);
 extern void func_8008C9B0(void);
-extern char D_800A3E00[];
+extern char gIrqNode[] __asm__("D_800A3E00");
 
 /**
  * @brief Dequeues the BIOS priority-1 interrupt chain node D_800A3E00 inside a critical section.
@@ -33,7 +33,7 @@ int func_8008D9DC(void)
 {
     func_8008C9A0();
     {
-        register void *base __asm__("$5") = D_800A3E00;
+        register void *base __asm__("$5") = gIrqNode;
         __asm__ volatile("" : "+r"(base));
         func_8008CA10(1, base);
     }

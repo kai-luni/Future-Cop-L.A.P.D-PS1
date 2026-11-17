@@ -9,7 +9,7 @@ typedef struct { u32 tag, color; s16 x0,y0,x1,y1,x2,y2,x3,y3; } Packet;
 extern s32 D_8009F7E0, D_8009F7E4, D_8009F7E8, D_8009F7EC;
 extern Packet *gPacketCursor __asm__("D_8009FA90");
 extern Packet *gPacketLimit __asm__("D_8009F9C0");
-extern u16 D_800A8EA6;
+extern u16 gEffectUvV __asm__("D_800A8EA6");
 #define MUL(out,a,b) __asm__ volatile("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(out) : "r"(a), "r"(b) : "$8", "$9")
 /**
  * @brief Draws one marker (radar blip or world marker) with distance culling and
@@ -78,7 +78,7 @@ ready0:
         v0 = xx + 53; v1 = side << 1; v0 = (v0 + v1) >> 1; __asm__("" : "=r"(v0) : "0"(v0)); q->x0 = v0; __asm__ volatile("" ::: "memory"); v0 = (yy + 86) >> 1; __asm__("" : "=r"(v0) : "0"(v0)); q->y0 = v0; __asm__ volatile("" ::: "memory");
         q->x2 = 3; q->y2 = 3; __asm__ volatile("" ::: "memory");
         ((u8 *)q)[12] = 128; ((u8 *)q)[13] = 201; __asm__ volatile("" ::: "memory");
-        v0 = D_800A8EA6; __asm__("" : "=r"(v0) : "0"(v0)); q->y1 = v0;
+        v0 = gEffectUvV; __asm__("" : "=r"(v0) : "0"(v0)); q->y1 = v0;
     } else if (type == 1) {
         register Packet *q __asm__("$5");
         register int sd __asm__("$4");

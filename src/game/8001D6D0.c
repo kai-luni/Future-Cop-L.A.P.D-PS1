@@ -10,7 +10,7 @@ struct UnkD6D0 {
     s32 f14;
 };
 
-extern volatile struct UnkD6D0 D_800A6D78[];
+extern volatile struct UnkD6D0 gFileSlotTable[] __asm__("D_800A6D78");
 
 extern s32 func_8001C478(void);
 extern s32 func_8001D0A0(s32 index);
@@ -52,20 +52,20 @@ s32 func_8001D6D0(s32 arg0, s32 arg1, s32 arg2)
 
     a1 = -9;
     if ((u32)arg0 < 4) {
-        if (D_800A6D78[arg0].f00 != 0) {
-            a1 = D_800A6D78[arg0].f00;
+        if (gFileSlotTable[arg0].f00 != 0) {
+            a1 = gFileSlotTable[arg0].f00;
         }
     }
     if (a1 < 0) {
         return a1;
     }
 
-    while ((D_800A6D78[arg0].f00 & 0xFF) == 2 ||
-           (D_800A6D78[arg0].f00 & 0xFF) == 3) {
+    while ((gFileSlotTable[arg0].f00 & 0xFF) == 2 ||
+           (gFileSlotTable[arg0].f00 & 0xFF) == 3) {
     }
 
-    flags = D_800A6D78[arg0].flags;
-    D_800A6D78[arg0].f00 = 2;
+    flags = gFileSlotTable[arg0].flags;
+    gFileSlotTable[arg0].f00 = 2;
 
     test = flags & 0xF;
     __asm__("" : "+r"(test) : "r"(flags));
@@ -77,8 +77,8 @@ s32 func_8001D6D0(s32 arg0, s32 arg1, s32 arg2)
     }
 
     sel = arg2 & 7;
-    a1 = D_800A6D78[arg0].f04;
-    a2 = D_800A6D78[arg0].f0C;
+    a1 = gFileSlotTable[arg0].f04;
+    a2 = gFileSlotTable[arg0].f0C;
 
     switch (sel) {
     case 3:
@@ -92,13 +92,13 @@ s32 func_8001D6D0(s32 arg0, s32 arg1, s32 arg2)
         break;
     case 2: {
         register s32 tmp __asm__("$2");
-        tmp = a1 + D_800A6D78[arg0].f08;
+        tmp = a1 + gFileSlotTable[arg0].f08;
         a0 = tmp + arg1;
         break;
     }
     }
 
-    lim = D_800A6D78[arg0].f08;
+    lim = gFileSlotTable[arg0].f08;
     arg1 = a0 - a1;
     if (arg1 > lim || arg1 < 0) {
         if (arg1 < 0) {
@@ -108,7 +108,7 @@ s32 func_8001D6D0(s32 arg0, s32 arg1, s32 arg2)
         }
         a0 = arg1 + a1;
     }
-    D_800A6D78[arg0].f0C = a0;
+    gFileSlotTable[arg0].f0C = a0;
 
     if (arg2 & 8) {
         s32 ret = func_8001D0A0(arg0);
@@ -119,10 +119,10 @@ s32 func_8001D6D0(s32 arg0, s32 arg1, s32 arg2)
 
     {
         register s32 lim2 __asm__("$2");
-        lim2 = D_800A6D78[arg0].f08;
-        D_800A6D78[arg0].f00 = 1;
+        lim2 = gFileSlotTable[arg0].f08;
+        gFileSlotTable[arg0].f00 = 1;
         if (arg1 >= lim2) {
-            D_800A6D78[arg0].f00 |= 0x100;
+            gFileSlotTable[arg0].f00 |= 0x100;
         }
     }
     return arg1;

@@ -45,7 +45,7 @@ extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern State *gGameSession __asm__("D_8009FA94");
 extern Game *gSinglePlayerEntity __asm__("D_8009F9EC");
-extern u8 D_800117C0[];
+extern u8 gCounterFormatString[] __asm__("D_800117C0");
 extern u8 gStageLineFormat[] __asm__("D_8009F354");
 extern u8 gScoreFormatString[] __asm__("D_8009F34C");
 extern u8 **gPlayerAvatarSprite __asm__("D_8009F348");
@@ -234,7 +234,7 @@ void func_80047F30(Game *game)
                 func_80049100(text, arg, 20, c);
             }
         }
-        func_8008CD30(text, D_800117C0, gGameSession->count1, gGameSession->count2);
+        func_8008CD30(text, gCounterFormatString, gGameSession->count1, gGameSession->count2);
         func_8001C214(1, (x + 127) * 2, 64, 60, 20, 1);
         func_80049100(text, x + 130, 32, 1);
         if (gPlayerCount != 1) return;
@@ -277,7 +277,7 @@ void func_80047F30(Game *game)
                 func_80049100(text, arg, 44, c);
             }
         }
-        func_8008CD30(text, D_800117C0, gGameSession->count3, gGameSession->count4);
+        func_8008CD30(text, gCounterFormatString, gGameSession->count3, gGameSession->count4);
         func_8001C214(1, (x + 127) * 2, 112, 60, height, one);
         }
         func_80049100(text, x + 130, 56, 3);
@@ -297,7 +297,7 @@ void func_80047F30(Game *game)
         color = 3;
         if (flash) color = 9;
         func_80049100(text, 6, 20, color);
-        func_8008CD30(text, D_800117C0, gGameSession->count3, gGameSession->count4);
+        func_8008CD30(text, gCounterFormatString, gGameSession->count3, gGameSession->count4);
         func_8001C214(1, 6, 64, 60, 20, 1);
         func_80049100(text, 6, 32, 3);
     }

@@ -14,7 +14,7 @@ typedef struct {
 extern Unk8009F970 *gQueueBlock __asm__("D_8009F970");
 extern s32 D_8009F510;
 extern s32 D_8009F514;
-extern u8 D_80088D74[];
+extern u8 gCodeDataSource[] __asm__("D_80088D74");
 extern u8 func_800889DC[];
 
 extern s32 func_8008E154(s32 mode, u8 *result);
@@ -67,7 +67,7 @@ void func_800895E4(s32 arg0)
         gQueueBlock->unk410 = 0;
         gQueueBlock->unk408 = 0;
         gQueueBlock->unk40C = 0;
-        D_8009F510 = func_8008E194((s32)D_80088D74);
+        D_8009F510 = func_8008E194((s32)gCodeDataSource);
         D_8009F514 = func_8008E1A8((s32)(func_800889DC + 0x40));
         gQueueBlock->unk420 = 1;
         gQueueBlock->unk41C = 1;

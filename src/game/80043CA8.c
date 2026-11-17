@@ -59,7 +59,7 @@ struct Unk3D9F8Ret {
 };
 
 extern u32 gSceneFrameCounter __asm__("D_8009FA50");
-extern s32 D_8009FAB0;
+extern s32 gRemainingCounter __asm__("D_8009FAB0");
 extern struct Unk3D9F8Ret *func_8003D9F8(s32 arg0, u16 arg1, s8 arg2, s32 arg3,
                                           struct Unk3D9F8Ctx *arg4, s32 *arg5);
 extern void func_80042864(struct Unk43CA8Inner *object, s32 amount);
@@ -222,7 +222,7 @@ s32 func_80043CA8(struct Unk43CA8 *node, s32 arg)
             vec[2] = (cur->unk08 << 4) + ret->unk2C;
             if (vec[1] < func_80066F78(vec, 0, 0, 0)) {
                 func_800427A8(node, prev, cur);
-                D_8009FAB0--;
+                gRemainingCounter--;
                 goto next_iter;
             }
         }
@@ -231,7 +231,7 @@ s32 func_80043CA8(struct Unk43CA8 *node, s32 arg)
             rem -= arg;
             if ((s16)rem <= 0) {
                 func_800427A8(node, prev, cur);
-                D_8009FAB0--;
+                gRemainingCounter--;
                 goto next_iter;
             }
         }

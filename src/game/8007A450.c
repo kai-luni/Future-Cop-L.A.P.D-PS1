@@ -11,8 +11,8 @@ struct Unk78210Mode {
 extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009F3F1;
 extern u8 D_8009F458;
-extern u8 D_8009F3E7;
-extern void *D_8009F8C4;
+extern u8 gLayoutPointerFlagB __asm__("D_8009F3E7");
+extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 D_800A377D[];
 extern u8 D_800A386D[];
@@ -56,9 +56,9 @@ void func_8007A450(s32 a0)
     D_8009F458 = 0;
     func_800776B8();
     gDeferredTransition = 4;
-    D_8009F8C4 = 0;
-    if (D_8009F3E7 == 0) {
-        D_8009F3E7 = 1;
-        D_8009F8C4 = D_80012088;
+    gPendingRowCapture = 0;
+    if (gLayoutPointerFlagB == 0) {
+        gLayoutPointerFlagB = 1;
+        gPendingRowCapture = D_80012088;
     }
 }

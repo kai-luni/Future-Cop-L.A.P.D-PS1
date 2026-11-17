@@ -10,20 +10,20 @@ typedef struct {
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 *gGameSession __asm__("D_8009FA94");
-extern u8 D_800A6FE0[];
+extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
-extern u8 D_800120A4[];
+extern u8 gProfileImageName[] __asm__("D_800120A4");
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
-extern u8 D_8009F3E6;
-extern u8 D_8009F3E7;
+extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
+extern u8 gLayoutPointerFlagB __asm__("D_8009F3E7");
 extern u8 D_8009F458;
 extern u8 D_8009F3F1;
-extern u8 D_8009FAC4;
-extern u8 D_8009F8BD;
+extern u8 gArmedFlag __asm__("D_8009FAC4");
+extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 D_8009F8BE;
 
 extern u8 *func_80089914(u16 id);
@@ -111,8 +111,8 @@ void func_80080B70(void)
     *(s32 *)(gSaveProfileImage + 0x40C) = 1;
     func_80080A5C(gSaveProfileImage + 0x40C);
     func_80080A5C(REC + 0x474);
-    func_8008CCB0(REC + 0x440, D_800A6FE0);
-    func_8008CCB0(REC + 0x44C, D_800A6FE0 + 9);
+    func_8008CCB0(REC + 0x440, gPlayerNameTable);
+    func_8008CCB0(REC + 0x44C, gPlayerNameTable + 9);
     S(0x459) = gGameSession[0x8C];
     S(0x45A) = gGameSession[0x90];
     S(0x45B) = gGameSession[0x94];
@@ -127,8 +127,8 @@ void func_80080B70(void)
     S(0x470) = gGameSession[0xC];
     S(0x468) = gGameSession[0x5C];
     S(0x469) = gFrontEndListFlag;
-    S(0x46A) = D_8009F3E6;
-    S(0x46B) = D_8009F3E7;
+    S(0x46A) = gLayoutPointerFlagA;
+    S(0x46B) = gLayoutPointerFlagB;
     S(0x46C) = gPlayerWrapLimit;
     S(0x46D) = gPausedMenuFlag;
     S(0x46F) = gLockedMenuFlag;
@@ -146,9 +146,9 @@ void func_80080B70(void)
         register u8 *p __asm__("$2") = gSaveProfileImage;
         __asm__("" : "+r"(p));
         p[0x202] = 1;
-        D_8009FAC4 = 1;
+        gArmedFlag = 1;
     }
-    D_8009F8BD = 0;
+    gUiHoldFlag = 0;
     D_8009F8BE = 0;
     gWideTextTable[gFrontEndListTable[0]].unk20 = gWideTextTable[gFrontEndListTable[0]].unk1F;
     gWideTextTable[gFrontEndListTable[1]].unk20 = gWideTextTable[gFrontEndListTable[1]].unk1F;
@@ -156,7 +156,7 @@ void func_80080B70(void)
     gWideTextTable[gFrontEndListTable[3]].unk20 = gWideTextTable[gFrontEndListTable[3]].unk1F;
     gWideTextTable[gFrontEndListTable[4]].unk20 = gWideTextTable[gFrontEndListTable[4]].unk1F;
     for (;;) {
-        if (func_80020FDC(D_800120A4, gSaveProfileImage + 0x20C, 0x678, 0) != 0) {
+        if (func_80020FDC(gProfileImageName, gSaveProfileImage + 0x20C, 0x678, 0) != 0) {
             break;
         }
         if (*(s8 *)(gSaveProfileImage + 0x922) != 0) {
@@ -167,7 +167,7 @@ void func_80080B70(void)
         gSaveProfileImage[0x201] = 0;
         gSaveProfileImage[0x204] = 2;
         gSaveProfileImage[0x202] = 3;
-        D_8009F8BD = 1;
+        gUiHoldFlag = 1;
         D_8009F8BE = 1;
         break;
     }

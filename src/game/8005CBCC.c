@@ -98,7 +98,7 @@ struct Unk402DCOwner {
     s32 unk08;
 };
 
-extern struct Unk5CB80Pool D_800A22B0;
+extern struct Unk5CB80Pool gOwnerNodeListB __asm__("D_800A22B0");
 extern u8 gMapGrid[] __asm__("D_800A6578");
 
 extern struct Unk5CB80Node *func_8005CB80(struct Unk5CB80Pool *pool, void *target);
@@ -177,7 +177,7 @@ void func_8005CBCC(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 *arg
     u8 *base;
     register s32 tmp __asm__("$2");
     register struct Unk5CBCCArg0 *owner __asm__("$3");
-    struct Unk5CB80Pool *pool = &D_800A22B0;
+    struct Unk5CB80Pool *pool = &gOwnerNodeListB;
     register s32 part __asm__("$18") = partin;
 
     node = (struct Unk5CBCCNode *)func_8005CB80(pool, arg0);

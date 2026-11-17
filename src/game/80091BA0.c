@@ -3,7 +3,7 @@
 
 #include "game/types.h"
 
-extern s32 D_8009DD30[];
+extern s32 gValueMatchTable[] __asm__("D_8009DD30");
 extern volatile s32 gVSyncTickCounter __asm__("D_8009DD50");
 extern s32 *gTimer1ModePtr __asm__("D_8009DD54");
 
@@ -39,7 +39,7 @@ void *func_80091BA0(void)
 {
     *gTimer1ModePtr = 0x107;
     gVSyncTickCounter = 0;
-    func_80091C90(D_8009DD30, 8);
+    func_80091C90(gValueMatchTable, 8);
     func_800914B0(0, func_80091BF8);
     return func_80091C64;
 }

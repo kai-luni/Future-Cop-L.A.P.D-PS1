@@ -8,8 +8,8 @@ struct FontEntry {
 };
 
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern s32 D_8009F8F8;
-extern s32 D_8009F8F8_arr[];
+extern s32 gScalarCursor __asm__("D_8009F8F8");
+extern  s32 gScalarCursor_arr[] __asm__("D_8009F8F8");
 extern u16 gStatusTextId __asm__("D_8009F92A");
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 D_800A3938[];
@@ -129,7 +129,7 @@ state_1:
         func_80046C84(0x46, 0);
         {
             u8 *p;
-            i = D_8009F8F8;
+            i = gScalarCursor;
             p = gPasswordBuffer + i;
             if (*p == 0) {
                 *p = 0x19;
@@ -143,7 +143,7 @@ state_2:
         func_80046C84(0x46, 0);
         {
             u8 *p;
-            i = D_8009F8F8;
+            i = gScalarCursor;
             p = gPasswordBuffer + i;
             (*p)++;
             if (*p >= 0x1A) {
@@ -153,17 +153,17 @@ state_2:
         goto done;
 state_3:
         gStatusTextId = 0;
-        D_8009F8F8++;
-        if (D_8009F8F8 >= 0xA) {
-            D_8009F8F8 = 0;
+        gScalarCursor++;
+        if (gScalarCursor >= 0xA) {
+            gScalarCursor = 0;
         }
         func_80046C84(0x47, 0);
         goto done;
 state_4:
         gStatusTextId = 0;
-        D_8009F8F8--;
-        if (D_8009F8F8 < 0) {
-            D_8009F8F8 = 9;
+        gScalarCursor--;
+        if (gScalarCursor < 0) {
+            gScalarCursor = 9;
         }
         func_80046C84(0x47, 0);
         goto done;
@@ -192,7 +192,7 @@ state_5:
         x = baseX - 5 * (fontUnk8 + 1);
         text[1] = 0;
         {
-            base = D_8009F8F8_arr;
+            base = gScalarCursor_arr;
             off = idx << 2;
             __asm__("" : "+r"(off) : "r"(fontHeight));
             sel = (s32 *)((u8 *)base + off);

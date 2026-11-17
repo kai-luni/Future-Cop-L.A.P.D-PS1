@@ -59,8 +59,8 @@ extern struct DrawObj *D_8009FA58[];
 extern struct DrawObj *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct DrawObj *gGameSession __asm__("D_8009FA94");
 extern u32 D_8009AFC0[];
-extern u32 D_800A6F60[];
-extern u16 D_800A8EA6[];
+extern u32 gEffectSizeTable[] __asm__("D_800A6F60");
+extern u16 gEffectUvV[] __asm__("D_800A8EA6");
 
 extern s32 func_80018580(s32 arg0, s32 arg1);
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);

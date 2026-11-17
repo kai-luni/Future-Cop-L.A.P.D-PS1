@@ -4,7 +4,7 @@
 extern s32 gStillRunningState __asm__("D_8009F464");
 extern void *gSpriteAtlasBlock __asm__("D_8009F460");
 extern s32 gAtlasTable __asm__("D_8009F45C");
-extern void **D_8009F3F4;
+extern void **gPublishedBlockPtr __asm__("D_8009F3F4");
 
 extern void func_800898E8(void);
 extern void func_8007FACC(void);
@@ -46,14 +46,14 @@ void func_8007852C(void)
         gAtlasTable = 0;
     }
     gStillRunningState = 0;
-    if (D_8009F3F4 != 0) {
+    if (gPublishedBlockPtr != 0) {
         for (i = 0; i < 0x1E; i++) {
-            if (D_8009F3F4[i] != 0) {
-                func_800181D4(D_8009F3F4[i]);
-                D_8009F3F4[i] = 0;
+            if (gPublishedBlockPtr[i] != 0) {
+                func_800181D4(gPublishedBlockPtr[i]);
+                gPublishedBlockPtr[i] = 0;
             }
         }
-        func_800181D4(D_8009F3F4);
-        D_8009F3F4 = 0;
+        func_800181D4(gPublishedBlockPtr);
+        gPublishedBlockPtr = 0;
     }
 }

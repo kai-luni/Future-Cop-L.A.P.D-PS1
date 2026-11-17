@@ -54,12 +54,12 @@ extern s32 gSpuAlignEnable __asm__("D_8009EEC8");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern s32 gSpuAlignBase __asm__("D_8009EED0");
 extern s32 gSpuAlignMask __asm__("D_8009EED4");
-extern s32 D_8009EED8;
-extern s32 D_8009EEDC;
+extern s32 gSpuClearFlag __asm__("D_8009EED8");
+extern s32 gSpuCompareWord __asm__("D_8009EEDC");
 extern s32 gInstalledHandler __asm__("D_8009EEE0");
 extern u8 gSpuInitData[] __asm__("D_8009EEE4");
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
-extern u16 D_800A7028[];
+extern u16 gSpuInitWord[] __asm__("D_800A7028");
 extern u8 D_80012CDC[];
 extern u8 D_80012CEC[];
 
@@ -135,7 +135,7 @@ again:
     }
 cont:
     i = 0;
-    p = D_800A7028;
+    p = gSpuInitWord;
     gSpuAlignEnable = 2;
     gSpuAddrShift = 3;
     gSpuAlignBase = 8;
@@ -206,10 +206,10 @@ done:
     ret = 0;
     __asm__ volatile("" : "+r"(ret));
     tl = gSpuRegBasePtr;
-    D_8009EED8 = 1;
+    gSpuClearFlag = 1;
     tl->f1AA = 0xC000;
     __asm__ volatile("" ::: "memory");
-    D_8009EEDC = 0;
+    gSpuCompareWord = 0;
     gInstalledHandler = 0;
     __asm__ volatile("" ::: "memory");
     return ret;

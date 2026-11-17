@@ -12,8 +12,8 @@ extern s32 D_800A35CC;
 extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
 extern u8 D_800A377D[];
 extern u8 D_8009F459;
-extern u8 D_8009F3E6;
-extern void *D_8009F8C4;
+extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
+extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 D_80012094[];
 extern u8 D_800A368B;
@@ -59,10 +59,10 @@ void func_8007A4CC(s32 a0)
         D_8009F459 = 0;
         func_80077708();
         gDeferredTransition = 5;
-        D_8009F8C4 = 0;
-        if (D_8009F3E6 == 0) {
-            D_8009F3E6 = 1;
-            D_8009F8C4 = D_80012094;
+        gPendingRowCapture = 0;
+        if (gLayoutPointerFlagA == 0) {
+            gLayoutPointerFlagA = 1;
+            gPendingRowCapture = D_80012094;
         }
         {
             register s32 b3 __asm__("$3") = 0x800A0000;

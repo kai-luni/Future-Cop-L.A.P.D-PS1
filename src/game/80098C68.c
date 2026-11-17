@@ -5,9 +5,10 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef struct { volatile u16 a, b, c, d; } Ports;
 typedef struct { char pad[0x188]; u16 a, b, c, d; } Device;
-extern volatile u32 D_8009EE90, D_8009EA5C, D_8009EA58;
+extern volatile u32 D_8009EE90, D_8009EA58;
+extern volatile u32 gModeEntryWord __asm__("D_8009EA5C");
 extern u32 D_8009EA30;
-extern Ports D_800A7028;
+extern Ports gSpuInitWord __asm__("D_800A7028");
 extern Device *gSpuRegBasePtr __asm__("D_8009EEA4");
 
 /**
@@ -45,7 +46,7 @@ void func_80098C68(int mode, u32 mask)
             __asm__("lui %0,%%hi(D_800A7028)\n\taddiu %0,%0,%%lo(D_800A7028)" : "=r"(port));
             port->a = m;
             port->b = high;
-            D_8009EA5C |= 1;
+            gModeEntryWord |= 1;
             D_8009EA58 |= m;
             if (port->c & m) port->c &= ~m;
             if (port->d & high) ((u16 *)port)[3] = port->d & ~high;
@@ -65,7 +66,7 @@ off:
             __asm__("lui %0,%%hi(D_800A7028)\n\taddiu %0,%0,%%lo(D_800A7028)" : "=r"(port));
             port->c = m;
             port->d = high;
-            D_8009EA5C |= 1;
+            gModeEntryWord |= 1;
             __asm__("" : "+r"(m));
             inv = ~m;
             D_8009EA58 &= inv;

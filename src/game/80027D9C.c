@@ -9,7 +9,7 @@ struct UnkFA94 {
 extern u8 gMenuModeFlag __asm__("D_8009F680");
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern s32 D_8009FA70;
+extern s32 gScreenResetFlag __asm__("D_8009FA70");
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 
 /* Incomplete array type keeps this out of small data, so the compiler has to
@@ -56,17 +56,17 @@ void func_80027D9C(void)
 
     func_80029C34();
 
-    if (D_8009FA70 <= 0) {
+    if (gScreenResetFlag <= 0) {
         goto tail;
     }
 
-    D_8009FA70 = D_8009FA70 - gFrameId;
+    gScreenResetFlag = gScreenResetFlag - gFrameId;
 
-    if (D_8009FA70 > 0) {
+    if (gScreenResetFlag > 0) {
         goto tail;
     }
 
-    D_8009FA70 = -1;
+    gScreenResetFlag = -1;
 
     if (gGameSession->unk5C == 1) {
         for (i = 0, slot = D_8009FA58; i < 2; i++) {
