@@ -9,7 +9,8 @@ typedef struct AnimNode { struct AnimNode *next; s32 pad; s32 count; AnimEntry e
 typedef struct Header { u32 a, b; AnimNode *anim; u32 flags; u32 x10, x14, x18; u8 *p1c, *p20, *p24, *p28, *p2c; u32 p30; u32 *p34; u32 p38; } Header;
 extern u32 gModelTriangleListSize __asm__("D_8009F528");
 extern Header *gModelGeometryChunk __asm__("D_8009F52C");
-extern u8 *D_8009F538, *D_8009F53C, *D_8009F540;
+extern u8 *D_8009F53C, *D_8009F540;
+extern u8 *gModelHierarchy __asm__("D_8009F538");
 extern u8 *gModelTriangleList __asm__("D_8009F534");
 extern u8 *gModelPolygonList __asm__("D_8009F530");
 extern AnimNode *D_8009F544, *D_8009F564;
@@ -152,7 +153,7 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
     }
 
     if ((h->flags >> 25) & 1) {
-        h->x14 = (u32)D_8009F538;
+        h->x14 = (u32)gModelHierarchy;
         h->x18 = (u32)D_8009F53C;
     }
     h->x10 = (u32)D_8009F544;
