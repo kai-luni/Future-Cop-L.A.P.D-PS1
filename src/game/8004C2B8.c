@@ -59,7 +59,7 @@ struct Unk4C2B8Owner {
 };
 
 extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
-extern s32 D_8009F9DC;
+extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 
 extern void func_800181D4(void *block);
 extern void func_8003A8C0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);

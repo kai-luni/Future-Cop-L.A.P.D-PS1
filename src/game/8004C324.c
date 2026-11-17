@@ -12,7 +12,7 @@ struct Owner {
     u8 flags; u8 pad7c[4]; void *unk80; struct Node *head;
 };
 extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
-extern s32 D_8009F9DC;
+extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 extern void func_800181D4(void *);
 extern void func_8003A8C0(s32, s32, struct Owner *, s32);
 extern s32 func_8003C7B8(s32, struct Owner *, s32, s32);
@@ -128,7 +128,7 @@ case10:
     if (obj->flags & 8) func_800181D4(obj->unk80);
     node = obj->head;
     while (node) {
-        D_8009F9DC--;
+        gLiveNodeCount--;
         next = node->next;
         if (!func_8004AAD4(obj, 0, node)) break;
         node = next;

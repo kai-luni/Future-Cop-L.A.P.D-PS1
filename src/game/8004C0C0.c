@@ -45,7 +45,7 @@ struct Unk4C0C0Loc {
     u8 unk49;
 };
 
-extern s32 D_8009F9DC;
+extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 
 extern struct Unk4C0C0Node *func_8004AAD4(struct Unk4C0C0Owner *owner,
                                            struct Unk4C0C0Node *previous,
@@ -100,11 +100,11 @@ void func_8004C0C0(struct Unk4C0C0Owner *owner)
     while (node != 0) {
         next = node->next;
         if (node->unk44 < 0) {
-            D_8009F9DC--;
+            gLiveNodeCount--;
             if (func_8004AAD4(owner, previous, node) == 0) {
                 owner->unk0F |= 1;
             }
-            if ((D_8009F9DC & 3) >= 2) {
+            if ((gLiveNodeCount & 3) >= 2) {
                 if (owner->unk64 != 0) {
                     if (node->flags & 0x80) {
                         loc.vec = node->u.parent->vec;
