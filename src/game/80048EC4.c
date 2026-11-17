@@ -10,7 +10,7 @@ extern u16 D_8009F76A;
 extern u16 D_8009F768;
 extern struct FontEntry *gFont __asm__("D_8009F35C");
 extern s32 D_8009F360;
-extern s32 D_8009F364;
+extern s32 gFontBankCount __asm__("D_8009F364");
 
 extern void func_80048978(s32 blue, s32 green, s32 red);
 
@@ -46,7 +46,7 @@ void func_80048EC4(void)
     }
     gFont = 0;
     D_8009F360 = 0;
-    D_8009F364 = 0;
+    gFontBankCount = 0;
     D_8009FACC[0] = 0;
     func_80048978(0x1F, 0x1F, 0x1F);
 }

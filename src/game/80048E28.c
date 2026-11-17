@@ -6,7 +6,7 @@ struct FontEntry {
 };
 
 extern struct FontEntry D_800A19A0[];
-extern s32 D_8009F364;
+extern s32 gFontBankCount __asm__("D_8009F364");
 extern s32 D_8009F76C;
 extern struct FontEntry *gFont __asm__("D_8009F35C");
 
@@ -37,7 +37,7 @@ s32 func_80048E28(s32 index)
 {
     s32 result;
 
-    if (index < D_8009F364) {
+    if (index < gFontBankCount) {
         goto valid;
     }
     result = 0;

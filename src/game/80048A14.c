@@ -36,7 +36,7 @@ struct FontInfo {
 };
 
 extern struct FontEntry D_800A19A0[];
-extern s32 D_8009F364;
+extern s32 gFontBankCount __asm__("D_8009F364");
 
 extern s32 func_800489EC(unsigned char *value);
 extern void func_80048BF8(s32 index);
@@ -77,11 +77,11 @@ void func_80048A14(s32 arg0, s32 *arg1)
     s32 off14;
 
     src = (struct FontSource *)arg0;
-    if (D_8009F364 >= 4) {
+    if (gFontBankCount >= 4) {
         return;
     }
 
-    e = &D_800A19A0[D_8009F364];
+    e = &D_800A19A0[gFontBankCount];
     off = src->off1C;
     e->f18 = (s32)arg1;
     e->f02 = (s16)(s8)src->f12;
@@ -122,9 +122,9 @@ void func_80048A14(s32 arg0, s32 *arg1)
     e->f00 = (s16)func_800489EC((u8 *)info);
     e->f0E = (s16)((((info->f04 * func_800489EC((u8 *)info)) + 0x1F) & ~0x1F) >> 3);
 
-    func_80048BF8(D_8009F364);
-    D_8009F364++;
-    if (D_8009F364 == 1) {
+    func_80048BF8(gFontBankCount);
+    gFontBankCount++;
+    if (gFontBankCount == 1) {
         func_80048E28(0);
     }
 }
