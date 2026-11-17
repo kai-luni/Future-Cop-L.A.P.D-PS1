@@ -147,6 +147,21 @@ extern s32 func_8002AD58(s32 kind, struct Object597C0 *object, void *arg2, s32 a
  * 10. func_800596C4(object->0xB4) runs after the loop and finishes the object's
  *     per-frame work.
  *
+ * @par Player model assembly and visibility
+ * state is the owning player object; object is its companion. The five calls
+ * submit the player's main instance, the companion instance and three extra
+ * instances in the player's info block. Each submission may still be culled
+ * or suppressed by func_80017508; five calls do not guarantee five visible
+ * parts. func_80016A64 interprets arg as a polygon-group bit mask:
+ * - info+0xBC == 0: main 0x03, companion 0x05;
+ * - info+0xBC == 0x10000: main 0x05, companion 0x0B;
+ * - other values: main 0x07, companion 0x0F.
+ * The three extra instances each use 0x01. func_80055988 updates +0xBC during
+ * the form transition. The actual resource IDs and anatomical assignments,
+ * including which instance contains the legs, are not established here.
+ * The separate .NET FcModelViewer currently loads one Cobj and uses mask
+ * 0xFF; it does not assemble these instances or reproduce these masks.
+ *
  * @par Calls
  * func_80013AA0 (three times), func_80017508 (five times), func_800592D0,
  * func_80017668, func_80010820, func_8001010C, func_80019D90, func_8001047C,

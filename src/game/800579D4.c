@@ -119,6 +119,14 @@ extern void func_80051AF8(struct Object *);
  * The state block's +0x311, +0x313, +0x2FE, +0x300, +0x174 and +0x176 fields
  * are simply cleared here.
  *
+ * @par Player model assembly
+ * The resource list also supplies the main instance through the shared spawn
+ * path (func_8002A5F4). The child created here binds obj->modelE0 as its own
+ * instance in func_8005920C. func_800597C0 submits five instances: main,
+ * child, two instances of modelE4, and one of modelE8. These are four resource
+ * slots, not necessarily four distinct assets. The anatomical identity of
+ * each slot, including which contains the legs, is not established.
+ *
  * @par Likely role
  * The per-player spawn of a compound craft: it books one of the two slots of
  * D_8009FA58, increases the global D_8009FA0C that selects the screen layout

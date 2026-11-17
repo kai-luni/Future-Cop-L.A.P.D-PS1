@@ -68,6 +68,14 @@ extern void func_8001AC28(void *, void *, s32, void *);
  * Finally the 3x3 basis is copied into state->matrix and state->pos is refreshed
  * by func_80017668(&obj->model, 2, &state->pos) - part 2.
  *
+ * @par Player model assembly
+ * obj is the companion and info is the owning player object in this path.
+ * Point 0 of the player's main instance anchors the companion. func_80052D7C
+ * derives matrices for the two instances at player state +0x178 and +0x1C4
+ * from the companion's model hierarchy; its optional timer offsets are applied
+ * afterwards. The instance at +0x210 receives the companion basis and point 2
+ * as its position. These placements do not by themselves identify body parts.
+ *
  * @par Likely
  * Aiming/tracking for a turret, character or chase camera: the +-400 pitch limit
  * suggests a restricted vertical arc, and the 24-unit slew a deliberately slow

@@ -49,6 +49,14 @@ extern void func_80010234(u8 *frame, u8 *output, s32 count);
  * `models->frames + (frame << 4) + 8` (a 16-byte record per frame, 8 bytes
  * header) and the destination is the part's 0x14-byte output block.
  *
+ * @par Player model assembly
+ * Called for the companion by func_80057E40, this uses the companion instance
+ * as the hierarchy source and writes the matrices of the owner's instances at
+ * state+0x178 and state+0x1C4. func_80052960 copies the fifth record's matrix
+ * to the first instance and the third record's matrix to the second, provided
+ * the hierarchy walk reaches those records before its termination flag. Both
+ * instances use the same resource, bound in func_800579D4; their anatomy is open.
+ *
  * @par Likely role
  * The two-part rig of an animated object (body plus turret, or the two halves of
  * a walk cycle) - the parts share the coordinate block but have their own frames.

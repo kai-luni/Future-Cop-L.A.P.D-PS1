@@ -65,6 +65,12 @@ extern void func_80044988(u8 *data, u8 *track, u8 forward, s32 index);
  * unk74 is cleared, the definition position is copied and the flags become
  * (flags & 0xBFFFFFFF) | 0xA20210.
  *
+ * @par Player model assembly
+ * When spawned by func_80057914, def->type is the owning player object.
+ * Its +0xE0 model is bound as the companion instance. The companion is placed
+ * at point 0 of the player's main instance and participates in the five-instance
+ * draw in func_800597C0. Its anatomical identity is not established.
+ *
  * @par Likely role
  * The message-2 path of func_80059ABC: the companion object starts with
  * its type's default animation and a fixed flag set (bit 0x40000000
