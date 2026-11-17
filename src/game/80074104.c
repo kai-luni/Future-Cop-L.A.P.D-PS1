@@ -13,7 +13,7 @@ typedef struct { s32 x, y, z; } Vec;
 typedef struct { s32 e[9]; } Matrix;
 typedef struct { s32 page, x, y, w, h; } Texture;
 extern Texture D_8009B234[];
-extern u8 *D_8009F9F0;
+extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u8 D_800A3548[];
 extern Point D_800A6418[];
@@ -330,8 +330,8 @@ void func_80074104(u8 *input, s32 *pos)
             }
             depth = ((cur->z + H((u8 *)D_800A6418+offset,4)) >> 1) - 0x100;
             if (tex) {
-                cursor = D_8009F9F0;
-                if (cursor < gPrimPoolEnd) D_8009F9F0 = cursor + 0x34;
+                cursor = gPrimPoolNext;
+                if (cursor < gPrimPoolEnd) gPrimPoolNext = cursor + 0x34;
                 __asm__("" : "=r"(prim) : "0"(cursor));
                 H(prim,8) = cur->x + D_800A7840[i];
                 H(prim,0x14) = cur->x - D_800A7840[i];
@@ -347,7 +347,7 @@ void func_80074104(u8 *input, s32 *pos)
                       (H(prim,0x14)<320 && H(prim,0x16)<240) ||
                       (H(prim,0x20)<320 && H(prim,0x22)<240) ||
                       (H(prim,0x2c)<320 && H(prim,0x2e)<240))) {
-                    D_8009F9F0 -= 0x34;
+                    gPrimPoolNext -= 0x34;
                     goto next_node;
                 }
                 {
@@ -378,13 +378,13 @@ void func_80074104(u8 *input, s32 *pos)
             } else {
                 register u32 cmdhi asm("$4");
                 s32 room;
-                cursor = D_8009F9F0;
+                cursor = gPrimPoolNext;
                 if (cursor >= gPrimPoolEnd) {
                     __asm__("" : "=r"(prim) : "0"(cursor));
                     __asm__("lui %0,0xe100" : "=r"(cmdhi) : "r"(cursor));
                 } else {
                     __asm__("" : "=r"(prim) : "0"(cursor));
-                    D_8009F9F0 = prim + 0x34;
+                    gPrimPoolNext = prim + 0x34;
                     __asm__("lui %0,0xe100" : "=r"(cmdhi) : "r"(prim));
                 }
                 {
@@ -392,7 +392,7 @@ void func_80074104(u8 *input, s32 *pos)
                 __asm__("" : "=r"(tagdepth) : "0"(depth), "r"(cmdhi));
                 W(prim,0) = (s16)tagdepth | 0x01000000;
                 }
-                cursor = D_8009F9F0;
+                cursor = gPrimPoolNext;
                 room = cursor < gPrimPoolEnd;
                 W(prim,4) = cmdhi | 0x6a0;
                 if (!room) {
@@ -401,7 +401,7 @@ void func_80074104(u8 *input, s32 *pos)
                 } else {
                     __asm__("" : "+r"(cursor));
                     prim = cursor;
-                    D_8009F9F0 = prim + 0x34;
+                    gPrimPoolNext = prim + 0x34;
                 }
                 H(prim,8) = cur->x + D_800A7840[i];
                 H(prim,0xa) = cur->y + D_800A7898[i];
@@ -428,8 +428,8 @@ void func_80074104(u8 *input, s32 *pos)
                     W(prim,0) = (s16)depth | 0x08000000;
                     W(prim,0x1c) = c1 >> 8;
                     }
-                    cursor = D_8009F9F0;
-                    if (cursor < gPrimPoolEnd) D_8009F9F0 = cursor + 0x34;
+                    cursor = gPrimPoolNext;
+                    if (cursor < gPrimPoolEnd) gPrimPoolNext = cursor + 0x34;
                     __asm__("" : "=r"(prim) : "0"(cursor));
                     H(prim,8) = cur->x;
                     H(prim,0xa) = cur->y;
@@ -450,8 +450,8 @@ void func_80074104(u8 *input, s32 *pos)
                         W(prim,4) = ((u32)W(node,0x14) >> 8) | 0x3a000000;
                         W(prim,0) = (s16)depth | 0x08000000;
                         W(prim,0x14) = (u32)W(PTR(node,0),0x14) >> 8;
-                    } else D_8009F9F0 -= 0x34;
-                } else D_8009F9F0 -= 0x34;
+                    } else gPrimPoolNext -= 0x34;
+                } else gPrimPoolNext -= 0x34;
             }
 next_node:
             node = PTR(node,0);

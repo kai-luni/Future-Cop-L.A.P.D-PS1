@@ -27,7 +27,7 @@ extern s32 D_8009F5F4;
 extern s32 D_8009F5F8;
 extern s32 D_8009F5FC;
 extern s32 D_8009F600;
-extern u32 D_8009F9F0;
+extern u32 gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 D_8009FA90;
 extern s32 D_8009F9D4;
 extern u32 D_8009F9C0;
@@ -146,7 +146,7 @@ void func_8001B4A8(s32 arg0)
         h = 0x100;
     }
 
-    xbase = D_8009F9F0;
+    xbase = gPrimPoolNext;
     v = 0x100 - h;
     D_8009F9D4 = v;
     v = D_8009FA90;
@@ -406,7 +406,7 @@ void func_8001B4A8(s32 arg0)
     __asm__("" : : "r"(xbase));
     v -= 0x34;
     D_8009F5E0 = shift;
-    D_8009F9F0 = shift;
+    gPrimPoolNext = shift;
     shift += v;
     D_8009F5E4 = val;
     D_8009FA90 = val;

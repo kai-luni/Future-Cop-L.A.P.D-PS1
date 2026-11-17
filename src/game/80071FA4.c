@@ -88,21 +88,21 @@ extern u8 D_800AB389[];
 extern s16 D_800A7840[];
 extern s16 D_800A7898[];
 extern Cam *gCamera __asm__("D_8009F9E4");
-extern Prim *D_8009F9F0;
+extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
 extern s32 D_8009F9B8;
 
 #define ALLOC(p) \
-    p = D_8009F9F0; \
-    if (D_8009F9F0 < gPrimPoolEnd) D_8009F9F0 = (Prim *)((u8 *)D_8009F9F0 + 0x34)
+    p = gPrimPoolNext; \
+    if (gPrimPoolNext < gPrimPoolEnd) gPrimPoolNext = (Prim *)((u8 *)gPrimPoolNext + 0x34)
 
-#define ALLOC_T(p) p = (D_8009F9F0 >= gPrimPoolEnd) ? D_8009F9F0 : D_8009F9F0++
-#define ALLOC_U(p) p = (D_8009F9F0 < gPrimPoolEnd) ? D_8009F9F0++ : D_8009F9F0
+#define ALLOC_T(p) p = (gPrimPoolNext >= gPrimPoolEnd) ? gPrimPoolNext : gPrimPoolNext++
+#define ALLOC_U(p) p = (gPrimPoolNext < gPrimPoolEnd) ? gPrimPoolNext++ : gPrimPoolNext
 #define ALLOC_A(p) ALLOC(p)
 
 #define ALLOC_REG(p, reg) do { \
-    register Prim *cur __asm__(reg) = D_8009F9F0; \
-    p = cur; if (cur < gPrimPoolEnd) { D_8009F9F0 = (Prim *)((u8 *)p + 0x34); } \
+    register Prim *cur __asm__(reg) = gPrimPoolNext; \
+    p = cur; if (cur < gPrimPoolEnd) { gPrimPoolNext = (Prim *)((u8 *)p + 0x34); } \
 } while (0)
 
 #define SETW0(p, v) (p)->w0 = ((p)->w0 & 0xFF000000) | ((s16)(v) & 0xFFFFFF)
@@ -330,7 +330,7 @@ void func_80071FA4(Node *node, s32 *org)
                 p->y2 = D_800A6418[j][1] + D_800A7898[j];
                 if (!(INB(p->x0, p->y0) || INB(p->x1, p->y1) || INB(p->x2, p->y2) || INB(p->x3, p->y3))) {
 reject_segment:
-                    D_8009F9F0 = (Prim *)((u8 *)D_8009F9F0 - 0x34);
+                    gPrimPoolNext = (Prim *)((u8 *)gPrimPoolNext - 0x34);
                     continue;
                 }
                 {

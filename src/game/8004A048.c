@@ -20,7 +20,7 @@ typedef struct Node {
 extern s32 *gCamera __asm__("D_8009F9E4");
 extern s32 D_8009FAA4;
 typedef struct Pkt { u8 b[0x34]; } Pkt;
-extern Pkt *D_8009F9F0;
+extern Pkt *gPrimPoolNext __asm__("D_8009F9F0");
 extern Pkt *gPrimPoolEnd __asm__("D_8009FA28");
 extern u8 *D_8009F77C;
 extern u8 *D_8009F778;
@@ -186,7 +186,7 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
         }
         *(s32 *)&rot[1] = *(s32 *)&node->v[1];
         func_80049F4C(rot);
-        s0 = (u8 *)(D_8009F9F0 >= gPrimPoolEnd ? D_8009F9F0 : D_8009F9F0++);
+        s0 = (u8 *)(gPrimPoolNext >= gPrimPoolEnd ? gPrimPoolNext : gPrimPoolNext++);
         s6 = rot[0].z - 0x100;
         if (node->flags & 8) {
             s1 = rot[0].x >> 1;
@@ -273,7 +273,7 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
             s3 = D_8009F77C + ((-node->idx) * 12 - 8);
             s4 = *(u8 **)(s3 + 8) + (((D_8009FAA4 - node->c) / node->d) % s3[0]) * 8;
         }
-        s0 = (u8 *)(D_8009F9F0 >= gPrimPoolEnd ? D_8009F9F0 : D_8009F9F0++);
+        s0 = (u8 *)(gPrimPoolNext >= gPrimPoolEnd ? gPrimPoolNext : gPrimPoolNext++);
         s6 = ((rot[0].z + rot[1].z + rot[2].z + rot[3].z) >> 2) - 0x100;
         if (fl) {
             W(8) = *(s32 *)&rot[1]; W(0x14) = *(s32 *)&rot[2];

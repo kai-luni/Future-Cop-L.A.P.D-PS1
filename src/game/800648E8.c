@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 D_8009AFE8[];
-extern u32 *D_8009F9F0;
+extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_800A8E80[];
 extern u8 D_800A2630[];
@@ -184,12 +184,12 @@ void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
     } else {
         avg = (v0->h4 + v1->h4 + v2->h4 + v3->h4) >> 2;
     }
-    if (D_8009F9F0 >= gPrimPoolEnd) {
-        o = (u8 *)D_8009F9F0;
+    if (gPrimPoolNext >= gPrimPoolEnd) {
+        o = (u8 *)gPrimPoolNext;
         __asm__ __volatile__("");
     } else {
-        o = (u8 *)D_8009F9F0;
-        D_8009F9F0 = (u32 *)o + 13;
+        o = (u8 *)gPrimPoolNext;
+        gPrimPoolNext = (u32 *)o + 13;
     }
     *(u32 *)o = (*(u32 *)o & 0xFF000000) | (avg & 0xFFFFFF);
     p5 = (u16 *)((u8 *)tbl[1] + ((arg1 >> 21) & 0x7FE));

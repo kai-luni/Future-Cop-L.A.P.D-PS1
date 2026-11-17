@@ -13,7 +13,7 @@ struct Packet {
     u32 xy3;
     s16 u3, v3;
 };
-extern u8 *D_8009F9F0;
+extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 
 /**
@@ -46,13 +46,13 @@ void func_80042004(s32 x, u8 *points, u8 *flags)
     register u32 mask __asm__("$8");
     f = flags[0] | flags[1] | flags[4] | flags[3];
     if (!(f & 1) && f == 0xc0) {
-        if (D_8009F9F0 >= gPrimPoolEnd) {
-            p = (struct Packet *)D_8009F9F0;
+        if (gPrimPoolNext >= gPrimPoolEnd) {
+            p = (struct Packet *)gPrimPoolNext;
             __asm__ volatile ("");
             goto ready;
         }
-        p = (struct Packet *)D_8009F9F0;
-        D_8009F9F0 = (u8 *)p + 0x34;
+        p = (struct Packet *)gPrimPoolNext;
+        gPrimPoolNext = (u8 *)p + 0x34;
 ready:
         mask = 0xffffff;
         a = *(s16 *)(points+4);

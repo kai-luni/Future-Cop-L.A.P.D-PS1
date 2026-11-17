@@ -57,7 +57,7 @@ typedef struct {
 } Prim82B0C;
 
 extern Table82B0C *D_8009F45C;
-extern Prim82B0C *D_8009F9F0;
+extern Prim82B0C *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim82B0C *gPrimPoolEnd __asm__("D_8009FA28");
 
 /**
@@ -130,13 +130,13 @@ Prim82B0C *func_80082B0C(register s32 idx, s32 x, s32 y, s32 w, s32 h, s32 tag, 
             break;
         }
 
-        if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc;
+        if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc;
         __asm__("");
-        prim = D_8009F9F0;
+        prim = gPrimPoolNext;
         goto L_done;
     L_alloc:
-        prim = D_8009F9F0;
-        D_8009F9F0 = (Prim82B0C *)((u8 *)prim + 0x34);
+        prim = gPrimPoolNext;
+        gPrimPoolNext = (Prim82B0C *)((u8 *)prim + 0x34);
     L_done:
 
         prim->hdr.bytes[3] = 9;

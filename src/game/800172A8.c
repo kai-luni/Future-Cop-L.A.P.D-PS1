@@ -17,7 +17,7 @@ typedef struct {
     u32 w[13];
 } Prim17;
 
-extern Prim17 *D_8009F9F0;
+extern Prim17 *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim17 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u16 D_8009F580;
 
@@ -78,13 +78,13 @@ s32 func_800172A8(s32 arg0, u32 arg1, u32 *a2, Vtx17 *arg3)
     base = D_8009F580;
     vp = (u8 *)arg3 + 0x20;
 
-    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc;
+    if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc;
     __asm__("");
-    prim = D_8009F9F0;
+    prim = gPrimPoolNext;
     goto L_done;
 L_alloc:
-    prim = D_8009F9F0;
-    D_8009F9F0 = (Prim17 *)((u8 *)prim + 0x34);
+    prim = gPrimPoolNext;
+    gPrimPoolNext = (Prim17 *)((u8 *)prim + 0x34);
 L_done:
     tmp = (fl & 2) << 24;
     lb = fl & 0xFF;

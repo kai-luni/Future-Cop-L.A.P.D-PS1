@@ -8,7 +8,7 @@ typedef struct {
 typedef struct { u8 flags, pad; u16 off; u8 pad4[4]; u8 index[4]; } Part17;
 typedef struct { u32 xy[4]; u32 link; u8 mode, pad; u16 value; } Work17;
 
-extern Prim17 *D_8009F9F0;
+extern Prim17 *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim17 *gPrimPoolEnd __asm__("D_8009FA28");
 extern void func_80015F14(void *a0, void *a1, void *a2);
 
@@ -49,13 +49,13 @@ void func_80015F38(Part17 *part, Work17 *work, u8 *texture, u8 *light)
 
     texw = (u32 *)(texture + part->off);
     fl = part->flags;
-    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc;
+    if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc;
     __asm__("");
-    prim = D_8009F9F0;
+    prim = gPrimPoolNext;
     goto L_done;
 L_alloc:
-    prim = D_8009F9F0;
-    D_8009F9F0 = (Prim17 *)((u8 *)prim + 0x34);
+    prim = gPrimPoolNext;
+    gPrimPoolNext = (Prim17 *)((u8 *)prim + 0x34);
 L_done:
     tmp = (fl & 2) << 24;
     prim->w[0] = (prim->w[0] & 0xFF000000) | (work->link & 0xFFFFFF);

@@ -6,7 +6,7 @@ typedef struct { u32 c0, c4; s32 a8, aC; u8 b10, b11, b12, b13, tex, pad15[3]; u
 typedef struct { u8 b[0x34]; } Prim;
 
 extern Cam *gCamera __asm__("D_8009F9E4");
-extern Prim *D_8009F9F0;
+extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
 extern void func_80010820(void *);
 extern void func_8001047C(u16 *, u16 *, u8 *, s32);
@@ -15,8 +15,8 @@ extern void func_8001047C(u16 *, u16 *, u8 *, s32);
 #define W(p, o) (*(u32 *)((u8 *)(p) + (o)))
 #define B3(p) (*((u8 *)(p) + 3))
 #define IN(x, y) (H(p, x) < 0x140 && H(p, y) < 0xF0)
-#define ALLOC0(p) do { Prim *h = D_8009F9F0; if (h < gPrimPoolEnd) D_8009F9F0 = h + 1; p = h; } while (0)
-#define ALLOC(p, under, done) do { Prim *h = D_8009F9F0; if (h < gPrimPoolEnd) goto under; p = h; asm volatile("" : "+r"(p)); goto done; under: p = h; D_8009F9F0 = h + 1; done: asm volatile("" : "+r"(p)); } while (0)
+#define ALLOC0(p) do { Prim *h = gPrimPoolNext; if (h < gPrimPoolEnd) gPrimPoolNext = h + 1; p = h; } while (0)
+#define ALLOC(p, under, done) do { Prim *h = gPrimPoolNext; if (h < gPrimPoolEnd) goto under; p = h; asm volatile("" : "+r"(p)); goto done; under: p = h; gPrimPoolNext = h + 1; done: asm volatile("" : "+r"(p)); } while (0)
 #define FIN(p) W(p, 0) = (W(p, 0) & 0xFF000000) | ((s16)t6 & 0xFFFFFF)
 
 /**
@@ -142,7 +142,7 @@ void func_80014C64(s32 *from, s32 *to, Eff *e)
             FIN(p);
             goto second;
         }
-        D_8009F9F0 -= 1;
+        gPrimPoolNext -= 1;
         goto second;
     }
     if (e->flags & 1) {
@@ -202,7 +202,7 @@ void func_80014C64(s32 *from, s32 *to, Eff *e)
                 goto fin;
             }
         }
-        D_8009F9F0 -= 1;
+        gPrimPoolNext -= 1;
         return;
     }
     H(p, 0x10) = pp[0] + t0;
@@ -214,7 +214,7 @@ void func_80014C64(s32 *from, s32 *to, Eff *e)
     H(p, 0x8) = qq[0] + t0;
     H(p, 0xA) = qq[1] + t1;
     if (!(IN(8, 0xA) || IN(0x10, 0x12) || IN(0x18, 0x1A) || IN(0x20, 0x22))) {
-        D_8009F9F0 -= 1;
+        gPrimPoolNext -= 1;
         return;
     }
         B3(p) = 8;
@@ -237,7 +237,7 @@ second:
     H(p, 0x20) = pp[0] + t0;
     H(p, 0x22) = pp[1] + t1;
     if (!(IN(8, 0xA) || IN(0x10, 0x12) || IN(0x18, 0x1A) || IN(0x20, 0x22))) {
-        D_8009F9F0 -= 1;
+        gPrimPoolNext -= 1;
         goto second;
     }
         B3(p) = 8;

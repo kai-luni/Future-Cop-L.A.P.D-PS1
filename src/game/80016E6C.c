@@ -5,7 +5,7 @@ typedef struct { u32 tag, color, xy0, uv0, xy1, uv1, xy2, uv2, xy3, uv3, rest[3]
 typedef struct { u32 xy0, xy1, xy2, xy3, tag; u8 pad[1], code, pad2[2]; u32 data[4]; } Input;
 typedef struct { u32 flags; u8 a[4], b[4]; } Indices;
 typedef struct { u32 a, b; } Entry;
-extern Packet *D_8009F9F0;
+extern Packet *gPrimPoolNext __asm__("D_8009F9F0");
 extern Packet *gPrimPoolEnd __asm__("D_8009FA28");
 extern void func_80016C88(Entry *, Entry *, void *, void *);
 /**
@@ -36,13 +36,13 @@ void func_80016E6C(Indices *idx, Input *in, Entry *base1, Entry *base0)
     Packet *p;
     u32 uv;
     void *data;
-    if (D_8009F9F0 < gPrimPoolEnd) goto alloc;
+    if (gPrimPoolNext < gPrimPoolEnd) goto alloc;
     __asm__ volatile ("");
-    p = D_8009F9F0;
+    p = gPrimPoolNext;
     goto next;
 alloc:
-    p = D_8009F9F0;
-    D_8009F9F0 = p + 1;
+    p = gPrimPoolNext;
+    gPrimPoolNext = p + 1;
 next:
     p->tag = (p->tag & 0xff000000) | (in->tag & 0xffffff);
     uv = in->data[3];

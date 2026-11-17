@@ -17,7 +17,7 @@ typedef struct Packet {
     u8 rest[16];
 } Packet;
 
-extern Packet *D_8009F9F0;
+extern Packet *gPrimPoolNext __asm__("D_8009F9F0");
 extern Packet *gPrimPoolEnd __asm__("D_8009FA28");
 extern int func_80028FD4(void);
 extern void func_8002385C(void);
@@ -51,12 +51,12 @@ void func_80025690(void)
     register int base __asm__("$2");
 
     value = func_80028FD4();
-    if (D_8009F9F0 >= gPrimPoolEnd) {
-        p = D_8009F9F0;
+    if (gPrimPoolNext >= gPrimPoolEnd) {
+        p = gPrimPoolNext;
         goto first;
     }
-    p = D_8009F9F0;
-    D_8009F9F0 = p + 1;
+    p = gPrimPoolNext;
+    gPrimPoolNext = p + 1;
 first:
     p->code = 0x60;
     p->r0 = 0x60;
@@ -68,12 +68,12 @@ first:
     p->addr = 3;
     p->len = 3;
     p->c.s.h = 10;
-    if (D_8009F9F0 >= gPrimPoolEnd) {
-        p = D_8009F9F0;
+    if (gPrimPoolNext >= gPrimPoolEnd) {
+        p = gPrimPoolNext;
         goto second;
     }
-    p = D_8009F9F0;
-    D_8009F9F0 = p + 1;
+    p = gPrimPoolNext;
+    gPrimPoolNext = p + 1;
 second:
     p->code = 0x60;
     p->x0 = 0x20;
@@ -85,12 +85,12 @@ second:
     p->addr = 2;
     p->len = 3;
     p->c.s.h = 8;
-    if (D_8009F9F0 >= gPrimPoolEnd) {
-        p = D_8009F9F0;
+    if (gPrimPoolNext >= gPrimPoolEnd) {
+        p = gPrimPoolNext;
         goto third;
     }
-    p = D_8009F9F0;
-    D_8009F9F0 = p + 1;
+    p = gPrimPoolNext;
+    gPrimPoolNext = p + 1;
 third:
     p->code = 0x38;
     p->addr = 1;
@@ -117,12 +117,12 @@ third:
     p->y2 = 0x9a;
     p->x3 = 0x20 + value / 4;
     p->y3 = 0x9a;
-    if (D_8009F9F0 >= gPrimPoolEnd) {
-        p = D_8009F9F0;
+    if (gPrimPoolNext >= gPrimPoolEnd) {
+        p = gPrimPoolNext;
         goto fourth;
     }
-    p = D_8009F9F0;
-    D_8009F9F0 = p + 1;
+    p = gPrimPoolNext;
+    gPrimPoolNext = p + 1;
 fourth:
     p->code = 0x38;
     p->addr = 1;

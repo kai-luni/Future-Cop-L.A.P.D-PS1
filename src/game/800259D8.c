@@ -15,7 +15,7 @@ extern s32 D_8009FA30;
 extern volatile u8 D_8009FA3C;
 extern s32 D_8009FAA4;
 
-extern u32 *D_8009F9F0;
+extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
 extern volatile s32 D_8009F9D4;
 extern u8 *D_8009F9A0;
@@ -93,9 +93,9 @@ s32 func_800259D8(void)
     while (D_8009FA3C != 0) {
     }
 
-    p = D_8009F9F0;
+    p = gPrimPoolNext;
     if (p < gPrimPoolEnd) {
-        D_8009F9F0 = p + 0xD;
+        gPrimPoolNext = p + 0xD;
     }
 
     {

@@ -9,7 +9,7 @@ struct Poly {
     u8 pad[0x1C];
 };
 
-extern struct Poly *D_8009F9F0;
+extern struct Poly *gPrimPoolNext __asm__("D_8009F9F0");
 extern struct Poly *gPrimPoolEnd __asm__("D_8009FA28");
 
 /**
@@ -33,13 +33,13 @@ void func_80083060(s32 x0, s32 y0, s32 x1, s32 y1, s32 x2, s32 y2, s32 x3, s32 y
 {
     struct Poly *p;
 
-    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc;
+    if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc;
     __asm__("");
-    p = D_8009F9F0;
+    p = gPrimPoolNext;
     goto L_done;
 L_alloc:
-    p = D_8009F9F0;
-    D_8009F9F0 = (struct Poly *)((u8 *)p + 0x34);
+    p = gPrimPoolNext;
+    gPrimPoolNext = (struct Poly *)((u8 *)p + 0x34);
 L_done:
 
     p->len = 5;

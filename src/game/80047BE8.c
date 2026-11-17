@@ -13,7 +13,7 @@ typedef struct {
     s16 x3, y3;
 } Prim;
 
-extern Prim *D_8009F9F0;
+extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
 extern u8 D_8009FAA4;
 
@@ -79,12 +79,12 @@ void func_80047BE8(s32 x, s32 y_in, s32 z, s32 p3, s32 p4, s32 p5, s32 flag)
 
     z = (z + 1) / 2;
 
-    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc1;
-    prim = D_8009F9F0;
+    if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc1;
+    prim = gPrimPoolNext;
     goto L_done1;
 L_alloc1:
-    prim = D_8009F9F0;
-    D_8009F9F0 = (Prim *)((u8 *)prim + 0x34);
+    prim = gPrimPoolNext;
+    gPrimPoolNext = (Prim *)((u8 *)prim + 0x34);
 L_done1:
     prim->x0 = x;
     prim->x2 = x;
@@ -111,12 +111,12 @@ L_done1:
     prim->y2 = y;
     prim->hdr.word = prim->hdr.word & 0xFF000000;
 
-    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc2;
-    prim = D_8009F9F0;
+    if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc2;
+    prim = gPrimPoolNext;
     goto L_done2;
 L_alloc2:
-    prim = D_8009F9F0;
-    D_8009F9F0 = (Prim *)((u8 *)prim + 0x34);
+    prim = gPrimPoolNext;
+    gPrimPoolNext = (Prim *)((u8 *)prim + 0x34);
 L_done2:
     right = x + 4;
     prim->x0 = x;

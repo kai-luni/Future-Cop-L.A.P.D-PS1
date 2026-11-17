@@ -58,7 +58,7 @@ struct Prim72F7C {
 };
 
 extern struct Camera72F7C *const gCamera __asm__("D_8009F9E4");
-extern struct Prim72F7C *D_8009F9F0;
+extern struct Prim72F7C *gPrimPoolNext __asm__("D_8009F9F0");
 extern struct Prim72F7C *gPrimPoolEnd __asm__("D_8009FA28");
 
 extern s32 func_8001A100(V3_72F7C *vector);
@@ -177,11 +177,11 @@ void func_80072F7C(struct Node72F7C *node, V3_72F7C *arg)
                     }
                 }
             }
-            p = D_8009F9F0 < gPrimPoolEnd ? D_8009F9F0++ : D_8009F9F0;
+            p = gPrimPoolNext < gPrimPoolEnd ? gPrimPoolNext++ : gPrimPoolNext;
                 p->hdr.bytes[3] = 1;
                 *(u32 *)&p->r = 0xE10006A0;
                 p->hdr.fields.addr = shorts[k].z;
-                p = D_8009F9F0 < gPrimPoolEnd ? D_8009F9F0++ : D_8009F9F0;
+                p = gPrimPoolNext < gPrimPoolEnd ? gPrimPoolNext++ : gPrimPoolNext;
                 depth = shorts[k].z;
                 p->code = 0x42;
                 p->hdr.fields.addr = depth;

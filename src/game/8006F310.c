@@ -28,7 +28,7 @@ struct Camera {
 };
 
 extern struct Camera *gCamera __asm__("D_8009F9E4");
-extern u8 *D_8009F9F0;
+extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_8009F388;
 
@@ -254,13 +254,13 @@ void func_8006F310(struct Node *node, Vec3 *pos)
 
     s6 = node->field40;
     w = D_8009F388;
-    if (D_8009F9F0 < gPrimPoolEnd) goto L_alloc;
+    if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc;
     __asm__("");
-    prim = D_8009F9F0;
+    prim = gPrimPoolNext;
     goto L_done;
 L_alloc:
-    prim = D_8009F9F0;
-    D_8009F9F0 = prim + 0x34;
+    prim = gPrimPoolNext;
+    gPrimPoolNext = prim + 0x34;
 L_done:
 
     *(u32 *)(prim + 4) = 0xE10006A0;
