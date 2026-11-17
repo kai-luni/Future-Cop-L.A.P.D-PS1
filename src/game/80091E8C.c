@@ -1,7 +1,7 @@
 // Categories: Platform > Register Control
 #include "game/dma_globals.h"
 
-extern unsigned int D_8009DD64[];
+extern unsigned int gDmaCallbackTable[] __asm__("D_8009DD64");
 extern unsigned int *gDmaInterruptCtrlPtr __asm__("D_8009DD60");
 
 /**
@@ -32,7 +32,7 @@ unsigned int func_80091E8C(int arg0, unsigned int arg1)
     register unsigned int result __asm__("$2");
     __asm__ volatile("" : "=r"(index) : "0"(index));
     value = arg1;
-    base = D_8009DD64;
+    base = gDmaCallbackTable;
     old = base[index];
     result = old;
     if (value != old) {

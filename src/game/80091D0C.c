@@ -11,7 +11,7 @@ typedef struct DmaChannel {
 } DmaChannel;
 
 extern volatile u32 *gDmaInterruptCtrlPtr __asm__("D_8009DD60");
-extern void (*D_8009DD64[])(void);
+extern  void (*gDmaCallbackTable[])(void) __asm__("D_8009DD64");
 extern DmaChannel *gDmaChannelRegBasePtr __asm__("D_8009DD84");
 
 extern char D_8001286C[];
@@ -49,8 +49,8 @@ void func_80091D0C(void)
         for (s0 = 0; s1 != 0 && s0 < 7; s0++, s1 >>= 1) {
             if (s1 & 1) {
                 *gDmaInterruptCtrlPtr &= (1 << (s0 + 24)) | 0xFFFFFF;
-                if (D_8009DD64[s0] != 0) {
-                    D_8009DD64[s0]();
+                if (gDmaCallbackTable[s0] != 0) {
+                    gDmaCallbackTable[s0]();
                 }
             }
         }
