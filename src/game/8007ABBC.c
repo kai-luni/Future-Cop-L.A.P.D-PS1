@@ -16,7 +16,7 @@ extern u8 D_800A6FE0[];
 extern u8 D_800A3928[];
 extern s32 D_8009F8F8[];
 extern u8 D_8009F3F8[8];
-extern s32 D_8009FA60[];
+extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 
 extern void func_8007AA9C(u8 *dst, u8 *src, s32 len, u8 *table);
 extern void func_8007A9D0(u8 *src, u8 *dst, s32 len, u8 *table, s32 tableLen);
@@ -184,7 +184,7 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
                     boxKind = 2;
                     pal = D_8009F3F8;
                     __asm__("" : "=r"(boxX), "=r"(boxKind), "=r"(pal) : "0"(boxX), "1"(boxKind), "2"(pal));
-                    c_idx = (D_8009FA60[0] >> 4) & 7;
+                    c_idx = (gPaletteCycleCounter[0] >> 4) & 7;
                     c_idx += (s32)pal;
                     color = *(u8 *)c_idx + 0x80;
                     func_80082EF0(boxX, y + fontHeight + 2, fontUnk8, boxKind, 10, color, color, color);

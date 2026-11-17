@@ -92,7 +92,7 @@ extern u16 D_8009F470;
 extern u8 D_8009F484[], D_8009F498[], D_8009F4A0[], D_8009F4A4[];
 extern u8 D_800120BC[], D_800120C8[], D_800120D4[];
 extern u8 D_8009F3F8[];
-extern s32 D_8009FA60[];
+extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 
 extern void func_8007AA9C(u8 *, u8 *, s32, u8 *);
 extern void func_8007A9D0(u8 *, u8 *, s32, u8 *, s32);

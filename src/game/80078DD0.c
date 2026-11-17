@@ -52,7 +52,7 @@ extern void func_80082DDC(u32, s32), func_8005780C(u32, struct InputAction *);
 extern s8 D_8009F8C0[];
 extern u8 D_8009F8BD, D_8009F46C, D_8009F3FB, D_8009F3F8[], D_8009B3D4[], D_8009B3E0[];
 extern s32 D_8009F8C4, D_8009F8C8;
-extern volatile s32 D_8009FA60;
+extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern volatile u8 D_8009FA3C;
 struct GameContext { u8 pad00[12]; s32 type; u8 pad10[0x4c]; s32 stage; };
 extern struct GameContext *D_8009FA94;
@@ -283,7 +283,7 @@ reset_timer:
                         if (j == D_8009F468->selection[i] && item->enabled) {
                             if (D_8009F8C0[i]) color = D_8009F3FB + 0x80;
                             else {
-                                s32 frame = D_8009FA60;
+                                s32 frame = gPaletteCycleCounter;
                                 __asm__("lui %0,%%hi(D_8009F3F8)\n\taddiu %0,%0,%%lo(D_8009F3F8)" : "=r"(rgb) : "r"(frame));
                                 color = *(((u8 *)((frame >> 4) & 7)) + (u32)rgb) + 0x80;
                             }
@@ -296,7 +296,7 @@ reset_timer:
                             u8 *rgb2;
                             color = 0x11;
                             if (D_8009F8C0[i]) rgb2 = D_8009B3E0;
-                            else rgb2 = &D_8009B3D4[((D_8009FA60 >> 4) & 7) * 3];
+                            else rgb2 = &D_8009B3D4[((gPaletteCycleCounter >> 4) & 7) * 3];
                             func_800493C0(color, rgb2[0], rgb2[1], rgb2[2]);
                         } else {
                             color = 15;

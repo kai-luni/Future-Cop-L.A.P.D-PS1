@@ -3,7 +3,7 @@
 
 extern s32 D_8009F9FC;
 extern s32 D_8009FA30;
-extern s32 D_8009FA60;
+extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 D_8009FAA4;
 
 extern void func_80057864(void);
@@ -38,7 +38,7 @@ void func_80027E68(void)
 
     do {
         func_80057864();
-        current = D_8009FA60;
+        current = gPaletteCycleCounter;
         diff = current - D_8009FA30;
         D_8009FAA4 = current;
     } while (diff < 5);

@@ -6,7 +6,7 @@ extern s32 D_8009F9FC;
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA30;
 extern s32 D_8009FA50;
-extern volatile s32 D_8009FA60;
+extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 D_8009FAA4;
 
 extern void func_80027E68(void);
@@ -38,8 +38,8 @@ extern void func_80078DD0(void);
 void func_80027EE4(void)
 {
     s32 t;
-    D_8009FA60 = 0;
-    t = D_8009FA60;
+    gPaletteCycleCounter = 0;
+    t = gPaletteCycleCounter;
     D_8009F9FC = 8;
     D_8009FAA4 = t;
     D_8009FA30 = t;

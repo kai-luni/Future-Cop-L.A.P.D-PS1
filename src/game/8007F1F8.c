@@ -16,7 +16,7 @@ extern u8 D_800A3938[];
 extern u8 D_8009C1AC[];
 extern u8 D_8009C1BC[];
 extern u8 D_8009F3F8[8];
-extern s32 D_8009FA60[];
+extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 extern void *jtbl_800121A4[];
 
 extern s32 func_8007EA78(void);
@@ -172,7 +172,7 @@ state_5:
             func_800493C0(0x11, 0x1F, 0xA, 0xA);
             func_800788F0(0, 0xA0, 0x82, 0x11, D_8009F92A, 4, 8, 1);
         }
-        if ((D_8009FA60[0] >> 9) & 1) {
+        if ((gPaletteCycleCounter[0] >> 9) & 1) {
             func_80078B34(0x6E5, 0, 0);
             func_80078B34(0x6E0, 1, 0);
         } else {
@@ -205,7 +205,7 @@ state_5:
                     boxW = fontUnk8;
                     boxKind = 2;
                     __asm__ volatile("" : "+r"(boxKind) : "r"(boxX), "r"(boxY), "r"(boxW));
-                    color = D_8009F3F8[(D_8009FA60[0] >> 4) & 7] + 0x80;
+                    color = D_8009F3F8[(gPaletteCycleCounter[0] >> 4) & 7] + 0x80;
                     func_80082EF0(boxX, boxY, boxW, boxKind, 10, color, color, color);
                     y = 8;
                 } else {

@@ -7,7 +7,7 @@ struct Unk9F9A0 {
     u8 unk11D;
 };
 
-extern volatile s32 D_8009FA60;
+extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern volatile s32 D_8009FA30;
 extern s32 D_8009F9FC;
 extern s32 gScreenState __asm__("D_8009FA00");
@@ -57,7 +57,7 @@ void func_8002703C(void)
     struct Unk9F9A0 *obj;
 
     do {
-        s32 cur = D_8009FA60;
+        s32 cur = gPaletteCycleCounter;
         s32 prev = D_8009FA30;
         diff = cur - prev;
         D_8009FAA4 = cur;
@@ -96,7 +96,7 @@ void func_8002703C(void)
         }
         nsum = D_8009FA30 + D_8009F9FC;
         D_8009FAA4 = nsum;
-        D_8009FA60 = nsum;
+        gPaletteCycleCounter = nsum;
     }
 
     D_8009FA30 = D_8009FAA4;

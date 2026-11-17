@@ -1,7 +1,7 @@
 // Categories: Game Engine > Gameplay Frame Loop | Graphics > Rendering | Physics > Camera
 #include "game/types.h"
 
-extern volatile s32 D_8009FA60;
+extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 D_8009F9FC;
 extern s32 D_8009FA50;
 extern s32 D_8009FAA4;
@@ -87,8 +87,8 @@ void func_80028618(void)
     register s32 work __asm__("$16");
     register u8 **cursor __asm__("$17");
 
-    D_8009FA60 = 0;
-    saved = D_8009FA60;
+    gPaletteCycleCounter = 0;
+    saved = gPaletteCycleCounter;
     work = 8;
     D_8009F9FC = work;
     b = *(u8 *)&D_8009F9FC;

@@ -1,7 +1,7 @@
 // Categories: Game Engine > Timing | Platform > Interrupts
 #include "game/types.h"
 
-extern s32 D_8009FA60;
+extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 D_8009F9CC, D_8009F99C;
 extern u8 D_8009FA20;
@@ -35,7 +35,7 @@ void func_8001F0B8(void)
 {
     register u8 *callback_table __asm__("$4");
     callback_table = D_8001EFF8;
-    D_8009FA60 = 0;
+    gPaletteCycleCounter = 0;
     gFrameTickCounter = 0;
     D_8009F9CC = 0;
     D_8009F99C = 0;

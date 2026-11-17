@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s8 *D_8009F468;
-extern s32 D_8009FA60;
+extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
 extern s32 func_8004522C(void);
 extern s32 func_80045288(void);
@@ -52,5 +52,5 @@ void func_8007CFA0(s32 arg0)
     case 5: func_80078B34(0x10EA, 0, 0); break;
     case 0: func_80078B34(0x10D6, 0, 0); break;
     }
-    func_80078B34(((D_8009FA60 >> 9) & 1) ? 0x10CC : 0x44C, 1, 0);
+    func_80078B34(((gPaletteCycleCounter >> 9) & 1) ? 0x10CC : 0x44C, 1, 0);
 }

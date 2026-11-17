@@ -46,7 +46,7 @@ extern u8 *D_8009F2D0;
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_8009F680;
 extern s32 D_8009FA38;
-extern s32 D_8009FA60;
+extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern u32 D_8009FAA4;
 extern s32 D_8009FA30;
 extern s32 D_8009FA24;
@@ -151,8 +151,8 @@ void func_800271A4(void)
 
     if (!(flags & 0x20)) {
         if (D_8009F680 != 0) {
-            D_8009FA60 = D_8009FA38;
-            clock_value = *(volatile s32 *)&D_8009FA60;
+            gPaletteCycleCounter = D_8009FA38;
+            clock_value = *(volatile s32 *)&gPaletteCycleCounter;
             D_8009FAA4 = clock_value;
             D_8009FA30 = clock_value;
             func_80047690(1);
@@ -197,7 +197,7 @@ void func_800271A4(void)
         D_8009FA24 = 0;
     } else {
         if (D_8009F680 == 0) {
-            D_8009FA38 = D_8009FA60;
+            D_8009FA38 = gPaletteCycleCounter;
             func_8001EB6C();
             func_800476D0();
             func_80046C84(0x3E, (s32)D_8009FA58);

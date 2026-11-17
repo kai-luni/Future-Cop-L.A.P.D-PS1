@@ -32,7 +32,7 @@ typedef struct {
     s16 unk6;
 } UnkFont;
 
-extern s32 D_8009FA60[];
+extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 extern u8 D_8009F3F8;
 extern Unk8009C0A8 D_8009C0A8[];
 extern s8 *D_8009F468;
@@ -127,7 +127,7 @@ void func_8007D7CC(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
 
     if (flag) {
         c3 = 2;
-        ci = D_8009FA60[0];
+        ci = gPaletteCycleCounter[0];
         __asm__("lui %0,%%hi(D_8009F3F8)\n\taddiu %0,%0,%%lo(D_8009F3F8)" : "=r"(pal));
         c0 = c1 = c2 = *(u8 *)(((ci >> 4) & 7) + (u32)pal) + 0x80;
     } else {

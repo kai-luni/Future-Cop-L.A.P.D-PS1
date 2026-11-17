@@ -16,7 +16,7 @@ extern u8 D_800A3938[];
 extern u8 D_8009C1AC[];
 extern u8 D_8009C1BC[];
 extern u8 D_8009F3F8[8];
-extern s32 D_8009FA60[];
+extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 extern void *jtbl_800121A4[];
 
 extern s32 func_8007EA78(void);
