@@ -7,7 +7,7 @@ struct Unk5FF70 {
 };
 
 extern s32 gDefinitionEntryCount __asm__("D_8009F7F8");
-extern struct Unk5FF70 D_800A2300[];
+extern struct Unk5FF70 gEffectKeyTable[] __asm__("D_800A2300");
 
 /**
  * @brief Finds the index of a spawn/definition record by its key byte.
@@ -32,7 +32,7 @@ s32 func_8005FF70(s32 key)
     s32 i;
 
     for (i = 0; i < gDefinitionEntryCount; i++) {
-        if (D_800A2300[i].key == key) {
+        if (gEffectKeyTable[i].key == key) {
             return i;
         }
     }

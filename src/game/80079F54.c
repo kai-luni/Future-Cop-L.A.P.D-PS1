@@ -14,7 +14,7 @@ struct UnkB4E4 {
 };
 
 extern struct UnkA3808 D_800A3808;
-extern u8 D_8009F3E8;
+extern u8 gPauseFlag __asm__("D_8009F3E8");
 extern u8 D_8009FA10;
 extern u8 D_80011E60[];
 extern struct UnkB4E4 D_8009B4E4[];
@@ -52,9 +52,9 @@ void func_80079F54(void)
     u32 i;
 
     if (D_800A3808.unk24 != 0) {
-        if (D_8009F3E8 != 0) {
+        if (gPauseFlag != 0) {
             func_80082DDC((s32)D_80011E60, 0);
-            D_8009F3E8 = 0;
+            gPauseFlag = 0;
         }
         D_800A3808.unk24 = 0;
     }

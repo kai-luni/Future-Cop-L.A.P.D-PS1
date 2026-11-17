@@ -16,7 +16,7 @@ extern int D_8009C774;
 extern int gPadPresentFlag __asm__("D_8009C760");
 extern  void (*D_8009C728)(), (*D_8009C72C)(), (*gPadTxByteHook)() __asm__("D_8009C730");
 extern void (*D_8009C734)(), (*D_8009C738)(), (*D_8009C73C)(), (*D_8009C74C)();
-extern Obj *D_8009C75C;
+extern Obj *gPadBasePort __asm__("D_8009C75C");
 extern Obj D_800A3C20[];
 extern u8 D_800A3B90[], D_800A3BD8[];
 extern void func_8008BF78(), func_8008BF10(), func_8008C07C(), func_8008C138();
@@ -71,7 +71,7 @@ void func_8008BDB0(u8 *a, u8 *b)
     __asm__("" : "+r"(value) : : "memory");
     q = (u8 *)p;
     __asm__("" : "+r"(q) : : "memory");
-    D_8009C75C = p;
+    gPadBasePort = p;
     D_8009C74C = value;
     func_8008CD00(q, 0x1e0);
     i = 0;

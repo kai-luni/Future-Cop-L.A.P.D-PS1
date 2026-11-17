@@ -1,7 +1,7 @@
 // Categories: Graphics > Model Renderer > Effects | Gameplay > Effects
 #include "game/types.h"
 
-extern void *D_800A22F0[];
+extern void *gDomeEffectBlock[] __asm__("D_800A22F0");
 
 extern void func_8005DFF0(void *effect);
 
@@ -22,8 +22,8 @@ void func_8005E160(void)
     s32 i;
 
     for (i = 0; i < 4; i++) {
-        if (D_800A22F0[i] != 0) {
-            func_8005DFF0(D_800A22F0[i]);
+        if (gDomeEffectBlock[i] != 0) {
+            func_8005DFF0(gDomeEffectBlock[i]);
         }
     }
 }

@@ -48,8 +48,8 @@ struct Unk49C38 {
 };
 
 extern struct Unk49C38List *gSpriteRegionTable __asm__("D_8009F778");
-extern s32 D_8009F780;
-extern struct LinkState *D_8009F784;
+extern s32 gLightGrid __asm__("D_8009F780");
+extern struct LinkState *gLightNodePool __asm__("D_8009F784");
 extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
 
 extern struct LinkNode *func_800195A4(struct LinkState *state);
@@ -108,7 +108,7 @@ s32 func_80049C38(struct Unk49C38 *object, s32 arg1)
             return 0;
         }
     }
-    if (D_8009F780 == 0) {
+    if (gLightGrid == 0) {
         return 0;
     }
     key = object->unk15;
@@ -129,10 +129,10 @@ s32 func_80049C38(struct Unk49C38 *object, s32 arg1)
     done:
         index = i;
     }
-    node = (struct Unk49C38Node *)func_800195A4(D_8009F784);
+    node = (struct Unk49C38Node *)func_800195A4(gLightNodePool);
     if (node == 0) {
         func_800497A8();
-        node = (struct Unk49C38Node *)func_800195A4(D_8009F784);
+        node = (struct Unk49C38Node *)func_800195A4(gLightNodePool);
         if (node == 0) {
             return 0;
         }

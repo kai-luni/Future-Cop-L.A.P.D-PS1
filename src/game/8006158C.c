@@ -20,7 +20,7 @@ struct Unk60E28Table {
     struct Unk6158CEntry *entries[0x80];
 };
 
-extern struct Unk60E28Table *D_8009F800;
+extern struct Unk60E28Table *gRegistryTable __asm__("D_8009F800");
 extern void func_800614BC(struct Unk6158CEntry *entry);
 
 /**
@@ -54,7 +54,7 @@ void func_8006158C(s32 id)
     register s32 target __asm__("$8");
 
     target = id;
-    table = D_8009F800;
+    table = gRegistryTable;
     cursor = table->entries;
     for (remaining = table->count; remaining > 0; remaining--) {
         entry = *cursor++;

@@ -1,7 +1,7 @@
 // Categories: Gameplay > Map
 #include "../../include/game/types.h"
 
-extern u32 D_800A6578[];
+extern u32 gMapGrid[] __asm__("D_800A6578");
 
 /**
  * @brief Computes a pointer to a cell word in the 256-column map grid D_800A6578.
@@ -34,5 +34,5 @@ u32 *func_8003B3D8(u32 column, u32 row)
 
     rowOffset = row << 10;
     columnOffset = (column & 0xFF) << 2;
-    return (u32 *)((u8 *)D_800A6578 + rowOffset + columnOffset);
+    return (u32 *)((u8 *)gMapGrid + rowOffset + columnOffset);
 }

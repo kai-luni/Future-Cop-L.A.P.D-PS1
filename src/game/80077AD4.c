@@ -96,7 +96,7 @@ extern u8 D_8009F8BE;
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
 extern s32 D_8009F8C4;
-extern s32 D_8009F8C8;
+extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern s32 D_8009F870;
 extern s32 gFrameTickCounter[] __asm__("D_8009FA2C");
 
@@ -257,7 +257,7 @@ void func_80077AD4(void)
     gPlayerMenuDepth = 0;
     D_8009F8C1 = 0;
     D_8009F8C4 = 0;
-    D_8009F8C8 = -1;
+    gDeferredTransition = -1;
     D_8009F8BC = -1;
     func_800782EC();
     D_8009F870 = gFrameTickCounter[0] + 0x2328;

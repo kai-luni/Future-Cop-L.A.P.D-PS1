@@ -1,6 +1,6 @@
 // Categories: Gameplay > Map | Graphics > HUD > Minimap
 typedef int s32;
-extern s32 D_800A2950[4];
+extern s32 gWorldClipRect[4] __asm__("D_800A2950");
 /**
  * @brief Clamps a position triple to the current map bounds and reports which
  *        axes were corrected.
@@ -33,7 +33,7 @@ s32 func_800665E8(s32 *arg0, s32 arg1)
     register s32 x __asm__("$8");
     s32 z;
     register s32 changed __asm__("$6");
-    s32 *bounds = D_800A2950;
+    s32 *bounds = gWorldClipRect;
     arg1 -= 0x4000;
     __asm__ volatile ("" : "=r" (reserved));
     first = bounds[0];
@@ -52,9 +52,9 @@ upper_z:
 changed_z:
     changed = 1;
 check_x:
-    lower = D_800A2950[2] + 0x14000;
+    lower = gWorldClipRect[2] + 0x14000;
     if (x < lower) goto changed_x;
-    lower = D_800A2950[3] - 0x14000;
+    lower = gWorldClipRect[3] - 0x14000;
     {
         register s32 cmp __asm__("$2") = lower < x;
         __asm__("" : "+r" (cmp));

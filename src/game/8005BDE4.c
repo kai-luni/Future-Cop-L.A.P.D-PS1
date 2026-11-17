@@ -85,7 +85,7 @@ struct ListNode {
 
 extern s32 gPlayerCount[] __asm__("D_8009FA0C");
 extern struct Unk5BCD4Pool D_800A22A0;
-extern u8 D_800A6578[];
+extern u8 gMapGrid[] __asm__("D_800A6578");
 extern u8 D_8005B934[];
 
 extern void func_80069580(u32 index, struct DestinationTriple *destination);
@@ -216,7 +216,7 @@ void func_8005BDE4(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *a
 
             row = func_8003BF50(owner);
     {
-        u8 *p = D_800A6578;
+        u8 *p = gMapGrid;
         p[(source->unk0F << 2) + (row << 10)] &= 0xFB;
     }
 

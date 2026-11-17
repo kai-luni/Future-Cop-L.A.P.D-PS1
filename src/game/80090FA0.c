@@ -16,7 +16,7 @@ struct State {
     s32 callback2;
     s32 callback3;
 };
-extern struct State D_8009CBD0;
+extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
 extern volatile s32 D_8009CBF4[];
 extern s32 D_8009CBF8[];
 extern s32 D_8009C814;
@@ -87,7 +87,7 @@ s32 func_80090FA0(s32 count, void *buffer, s32 mode)
     }
 ready:
     __asm__ volatile("");
-    state = &D_8009CBD0;
+    state = &gSectorBufferPtr;
     __asm__ volatile("" : "+r" (state));
     state->mode = m;
     switch (((volatile struct State *)state)->mode & 0x30) {
@@ -100,12 +100,12 @@ ready:
     default:
         command = 0x246;
         __asm__ volatile("" : "+r" (command));
-        other = &D_8009CBD0;
+        other = &gSectorBufferPtr;
         __asm__ volatile("" : "+r" (other));
         other->command = command;
         break;
     }
-    busy = (volatile s32 *)&D_8009CBD0;
+    busy = (volatile s32 *)&gSectorBufferPtr;
     __asm__ volatile("" : "+r" (busy));
     mv = ((volatile struct State *)busy)->mode;
     __asm__ volatile("" : "+r"(mv));

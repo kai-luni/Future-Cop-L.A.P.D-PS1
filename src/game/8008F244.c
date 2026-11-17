@@ -5,10 +5,12 @@ typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
 
-extern int D_8009CAEC[], D_8009C9EC[];
+extern int D_8009C9EC[];
+extern int gCommandParamMask[] __asm__("D_8009CAEC");
 extern int gCdLogLevel __asm__("D_8009C8B0");
 extern int D_8009C8CC[], D_8009C94C[];
-extern u8 D_8009C8C4, D_8009C8C5;
+extern u8 gLastResultByte __asm__("D_8009C8C5");
+extern u8 gLastCommandResult __asm__("D_8009C8C4");
 extern u8 gCdTargetLocation[] __asm__("D_8009C8C0");
 extern u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
@@ -101,7 +103,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
         fourteen = 14;
         __asm__("" : "+r"(cmd_lo), "+r"(fourteen));
         if (cmd_lo == fourteen) {
-            D_8009C8C4 = *param;
+            gLastCommandResult = *param;
         }
         {
             register u8 *st __asm__("$5");
@@ -150,7 +152,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
     {
         register volatile u8 *p70 __asm__("$2") = gCdromCommandPtr;
         __asm__("" : "+r"(p70));
-        D_8009C8C5 = s1;
+        gLastResultByte = s1;
         *p70 = s1;
     }
     if (state != 0) return 0;
@@ -207,7 +209,7 @@ loop:
                 first <<= 2;
                 __asm__("" : "+r"(first));
                 fifth = *(int *)second;
-                index = D_8009C8C5;
+                index = gLastResultByte;
                 __asm__("" : "+r"(first), "+r"(fifth), "+r"(index));
                 first = first + (int)table;
                 __asm__("" : "+r"(first), "+r"(fifth), "+r"(index));

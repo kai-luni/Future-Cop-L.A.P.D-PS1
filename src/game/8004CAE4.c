@@ -10,7 +10,7 @@ struct Unk4CAE4State {
 
 extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 extern s32 D_8009F7A4;
-extern s32 D_8009F7A8;
+extern s32 gPendingMessageMask __asm__("D_8009F7A8");
 extern u8 D_8009F7AC;
 extern s32 gLastSpawnSlot[] __asm__("D_8009F9F4");
 extern s32 D_8009FA40;
@@ -104,7 +104,7 @@ void func_8004CAE4(void)
     gLastSpawnSlot[0] = 0;
 
     D_8009F7AC = 1;
-    D_8009F7A8 = 0;
+    gPendingMessageMask = 0;
     if (gGameSession[0]->mode5C != 1) {
         goto check_secondary;
     }

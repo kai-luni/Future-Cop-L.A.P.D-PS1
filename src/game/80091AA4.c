@@ -13,7 +13,7 @@ typedef struct {
     u8 payload[1];
 } Context;
 
-extern Context D_8009CC88;
+extern Context gFrameClockAnchor __asm__("D_8009CC88");
 extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern u32 *gDmaControlPtr __asm__("D_8009DD1C");
 extern void func_80091B80(void *);

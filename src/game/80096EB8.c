@@ -56,7 +56,7 @@ extern s32 gSpuAlignBase __asm__("D_8009EED0");
 extern s32 gSpuAlignMask __asm__("D_8009EED4");
 extern s32 D_8009EED8;
 extern s32 D_8009EEDC;
-extern s32 D_8009EEE0;
+extern s32 gInstalledHandler __asm__("D_8009EEE0");
 extern u8 gSpuInitData[] __asm__("D_8009EEE4");
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern u16 D_800A7028[];
@@ -210,7 +210,7 @@ done:
     tl->f1AA = 0xC000;
     __asm__ volatile("" ::: "memory");
     D_8009EEDC = 0;
-    D_8009EEE0 = 0;
+    gInstalledHandler = 0;
     __asm__ volatile("" ::: "memory");
     return ret;
 }

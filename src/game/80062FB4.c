@@ -15,7 +15,7 @@ extern u8 gGridOriginY __asm__("D_8009F835");
 extern u8 gGridOriginX __asm__("D_8009F834");
 extern u32 *gCellMap __asm__("D_8009F820");
 extern Rect gClipRect __asm__("D_800A2970");
-extern Entry D_800A8DC0[];
+extern Entry gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
 extern void func_80062C3C(void), func_80062874(void), func_80062614(void);
 /**
  * @brief Computes the active screen region and marks its pixels in the region
@@ -81,7 +81,7 @@ void func_80062FB4(void)
     else func_80062874();
     i = 0;
     __asm__ volatile ("" : "+r" (i));
-    entry = D_800A8DC0;
+    entry = gPlayerCollisionCandidates;
     do { entry->flag = 0; i++; entry++; } while (i < 2);
     func_80062614();
 }

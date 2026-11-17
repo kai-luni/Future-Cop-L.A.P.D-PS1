@@ -7,10 +7,10 @@ typedef struct Node {
     struct Node *next;
 } Node;
 
-extern Node **D_8009F780;
-extern void *D_8009F784;
-extern int D_8009F78C;
-extern int D_8009F790;
+extern Node **gLightGrid __asm__("D_8009F780");
+extern void *gLightNodePool __asm__("D_8009F784");
+extern int gLightGridWidth __asm__("D_8009F78C");
+extern int gLightGridHeight __asm__("D_8009F790");
 extern int gDiscShadeByte __asm__("D_8009FAA4");
 extern void func_800195D0(void *, Node *);
 
@@ -43,19 +43,19 @@ void func_800497A8(void)
     register Node *next __asm__("$2");
     register Node *head __asm__("$5");
 
-    if (D_8009F780 != 0) {
-        for (i = D_8009F78C * D_8009F790 - 1; i >= 0; i--) {
-            node = D_8009F780[i];
+    if (gLightGrid != 0) {
+        for (i = gLightGridWidth * gLightGridHeight - 1; i >= 0; i--) {
+            node = gLightGrid[i];
             while (node != 0 && node->unk4 >= 0 && !(node->unk8 & 0x40)) {
                 if (node->unk4 <= gDiscShadeByte) {
-                    head = D_8009F780[i];
+                    head = gLightGrid[i];
                     prev = head;
                     if (node == head) {
                         next = node->next;
                         __asm__ volatile("" : "+r"(next));
                         node = next;
-                        D_8009F780[i] = node;
-                        func_800195D0(D_8009F784, head);
+                        gLightGrid[i] = node;
+                        func_800195D0(gLightNodePool, head);
                         continue;
                     }
                     if (prev->next != node) {
@@ -68,7 +68,7 @@ void func_800497A8(void)
                     head = node;
                     node = prev;
                     node->next = head->next;
-                    func_800195D0(D_8009F784, head);
+                    func_800195D0(gLightNodePool, head);
                 }
                 node = node->next;
             }

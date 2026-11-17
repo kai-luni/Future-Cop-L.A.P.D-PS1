@@ -2,7 +2,7 @@
 extern void func_8008C444(void);
 extern void func_8008C858(void);
 extern void func_8008C518(void);
-extern void (*D_8009C740)(void);
+extern  void (*gPadDataOffset)(void) __asm__("D_8009C740");
 extern  void (*gReadyCheckHook)(void) __asm__("D_8009C744");
 
 /**
@@ -24,7 +24,7 @@ extern  void (*gReadyCheckHook)(void) __asm__("D_8009C744");
  */
 void func_8008C410(void)
 {
-    D_8009C740 = func_8008C444;
+    gPadDataOffset = func_8008C444;
     gReadyCheckHook = func_8008C858;
     {
         register char *base __asm__("$1");

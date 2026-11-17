@@ -6,7 +6,7 @@ typedef unsigned short u16;
 struct E { char pad[0xF0]; };
 struct H { char pad[10]; u16 v; };
 extern s32 gPadSlotIndex __asm__("D_8009C768");
-extern s32 D_8009C76C;
+extern s32 gPadDispatchIndex __asm__("D_8009C76C");
 extern s32 D_8009C77C;
 extern s32 D_8009C780[];
 extern struct H *gSio0CtrlPtr __asm__("D_8009C7C0");
@@ -56,7 +56,7 @@ void func_8008BF78(s32 arg)
                 func_8008C06C(p);
             }
         }
-        D_8009C76C = 0;
+        gPadDispatchIndex = 0;
         gSio0CtrlPtr->v = 0;
         gPadSlotIndex++;
         done = (D_8009C77C < gPadSlotIndex) ? 1 : func_8008A6CC((struct E *)(gPadSlotIndex * 240 + base));

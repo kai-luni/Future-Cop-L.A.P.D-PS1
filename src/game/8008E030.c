@@ -1,5 +1,5 @@
 // Categories: Game Engine > State Access
-extern unsigned char D_8009C8C5;
+extern unsigned char gLastResultByte __asm__("D_8009C8C5");
 
 /**
  *  @brief Returns the current value of a global byte.
@@ -20,5 +20,5 @@ extern unsigned char D_8009C8C5;
  */
 int func_8008E030(void)
 {
-    return D_8009C8C5;
+    return gLastResultByte;
 }

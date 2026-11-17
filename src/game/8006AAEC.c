@@ -7,7 +7,7 @@ struct Unk6AAEC {
 };
 
 extern s32 gDescriptorRegistryCount __asm__("D_8009F848");
-extern struct Unk6AAEC D_800A3340[];
+extern struct Unk6AAEC gVmRecordTable[] __asm__("D_800A3340");
 
 /**
  * @brief Finds the record with the given id in the object registry.
@@ -28,8 +28,8 @@ struct Unk6AAEC *func_8006AAEC(u8 id)
     s32 i;
 
     for (i = 0; i < gDescriptorRegistryCount; i++) {
-        if (D_800A3340[i].id == id) {
-            return &D_800A3340[i];
+        if (gVmRecordTable[i].id == id) {
+            return &gVmRecordTable[i];
         }
     }
     return 0;

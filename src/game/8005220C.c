@@ -53,7 +53,7 @@ struct Unk5220CList {
     struct Unk5220CEntry entries[8];
 };
 
-extern struct Unk5220CList D_800A8DC0[];
+extern struct Unk5220CList gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk5220CEntity *D_8009FA58[];
 
@@ -97,7 +97,7 @@ s32 func_8005220C(struct Unk5220CEntity *self)
     s32 result;
 
     info = self->info;
-    list = &D_800A8DC0[info->playerIndex];
+    list = &gPlayerCollisionCandidates[info->playerIndex];
     if (list->count == 0 && gPlayerCount == 1) {
         return 0;
     }

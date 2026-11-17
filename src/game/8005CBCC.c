@@ -99,7 +99,7 @@ struct Unk402DCOwner {
 };
 
 extern struct Unk5CB80Pool D_800A22B0;
-extern u8 D_800A6578[];
+extern u8 gMapGrid[] __asm__("D_800A6578");
 
 extern struct Unk5CB80Node *func_8005CB80(struct Unk5CB80Pool *pool, void *target);
 extern struct ListNode *func_8003BEF0(struct ListNode *node);
@@ -227,7 +227,7 @@ void func_8005CBCC(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 *arg
         }
 
         row = func_8003BF50(arg0);
-        base = D_800A6578;
+        base = gMapGrid;
         p = &base[(arg5->unk0F << 2) + (row << 10)];
         *p &= 0xFB;
 

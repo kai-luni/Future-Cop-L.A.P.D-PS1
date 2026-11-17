@@ -4,12 +4,12 @@
 struct FixedPool;
 
 extern s32 D_800A0C70[];
-extern s32 D_800A7040[2][256];
+extern s32 gSpawnRecordMap[2][256] __asm__("D_800A7040");
 extern s32 D_800A1070[];
 
 extern s32 D_8009F310;
 extern s32 gPendingSpawnList __asm__("D_8009F314");
-extern struct FixedPool *D_8009F70C;
+extern struct FixedPool *gDeferredPool __asm__("D_8009F70C");
 
 extern void func_8006EDC4(void);
 extern void func_8005E1BC(void);
@@ -49,7 +49,7 @@ void func_8003F79C(void)
     }
 
     for (j = 0; j < 2; j++) {
-        s32 *p = D_800A7040[j];
+        s32 *p = gSpawnRecordMap[j];
         for (i = 0xFF; i >= 0; i--) {
             p[i] = 0;
         }
@@ -58,7 +58,7 @@ void func_8003F79C(void)
     D_8009F310 = 0;
     func_8006EDC4();
     func_8005E1BC();
-    D_8009F70C = func_800194DC(0x100, 8, 1);
+    gDeferredPool = func_800194DC(0x100, 8, 1);
     gPendingSpawnList = 0;
 
     for (i = 6; i >= 0; i--) {

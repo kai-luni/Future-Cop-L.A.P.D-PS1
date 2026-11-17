@@ -46,7 +46,7 @@ struct Unk60668Out {
 
 extern s32 func_8005FF70(s32 key);
 extern s32 func_8006062C(u32 id);
-extern struct Unk5FF70 D_800A2300[];
+extern struct Unk5FF70 gEffectKeyTable[] __asm__("D_800A2300");
 
 /**
  * @brief Initializes a 0x28-byte attack/weapon scheduler slot from a 16-byte config descriptor.
@@ -82,7 +82,7 @@ void func_80060668(struct Unk60668In *in, struct Unk60668Out *out)
         out->f00 = 0;
     } else {
         index = func_8005FF70(in->f00);
-        out->f00 = &D_800A2300[index];
+        out->f00 = &gEffectKeyTable[index];
         out->f04 = in->f02;
         out->f06 = in->f05;
         out->f08 = in->f06;

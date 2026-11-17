@@ -6,7 +6,7 @@ struct Obj { u8 pad0[0x16]; u8 kind; u8 pad17; u8 flags; u8 pad19[0x93]; void *d
 struct Entry { Obj *obj; Obj *owner; u8 pad08[4]; s32 time; s32 value; u8 pad14[0x38]; s16 low; s16 high; s16 other; u16 flags; s32 index; };
 typedef struct { s16 other, low, high; } Params;
 typedef struct { u8 pad[0xA]; s16 value, other, low, high; } Extra;
-extern Entry *D_800A22F0[4];
+extern Entry *gDomeEffectBlock[4] __asm__("D_800A22F0");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern Entry *func_8005D3FC(Obj *, s32);
 
@@ -47,8 +47,8 @@ s32 func_8005D690(Obj *arg0, Params *arg1, Extra *arg2)
     __asm__("" : "+r"(result));
     e = 0;
     for (i = 0; i < 4; i++) {
-        if (D_800A22F0[i] && D_800A22F0[i]->owner == obj) {
-            e = D_800A22F0[i];
+        if (gDomeEffectBlock[i] && gDomeEffectBlock[i]->owner == obj) {
+            e = gDomeEffectBlock[i];
             break;
         }
     }

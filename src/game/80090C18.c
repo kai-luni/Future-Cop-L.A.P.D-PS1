@@ -14,7 +14,7 @@ struct State {
     s32 busy;
 };
 
-extern struct State D_8009CBD0;
+extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
 extern s32 D_8009CBDC;
 extern s32 D_8009C814;
 

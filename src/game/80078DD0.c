@@ -32,7 +32,7 @@ struct Menu {
     u32 unk24;
     struct Item *items;
 };
-extern s32 D_8009F464;
+extern s32 gStillRunningState __asm__("D_8009F464");
 extern struct Menu *D_8009F468;
 extern u8 D_8009F8CC, D_8009F3F2, D_8009F3F3, D_8009F45A, D_8009F8BE;
 extern s32 D_8009F870, D_8009F8B0, D_8009F8B4;
@@ -52,7 +52,8 @@ extern u8 func_80078C88(void), func_80082D30(s32 *, s32);
 extern void func_80082DDC(u32, s32), func_8005780C(u32, struct InputAction *);
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 D_8009F8BD, D_8009F46C, D_8009F3FB, D_8009F3F8[], D_8009B3D4[], D_8009B3E0[];
-extern s32 D_8009F8C4, D_8009F8C8;
+extern s32 D_8009F8C4;
+extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 struct GameContext { u8 pad00[12]; s32 type; u8 pad10[0x4c]; s32 stage; };
@@ -97,7 +98,7 @@ void func_80078DD0(void)
     struct Menu *menu;
     struct Item *item;
     u8 *rgb;
-    if (D_8009F464 == 0) return;
+    if (gStillRunningState == 0) return;
     D_8009F8B0 = D_8009F8D0;
     buttons[0] = D_8009F8D0 = func_8001EF8C(0);
     D_8009F8B4 = D_8009F8D4;
@@ -108,7 +109,7 @@ void func_80078DD0(void)
         if (buttons[i] & 0x800000) { if (!D_8009F8A0[i]) D_8009F8A0[i] = gFrameTickCounter; } else D_8009F8A0[i] = 0;
         if (buttons[i] & 0x200000) { if (!D_8009F8A8[i]) D_8009F8A8[i] = gFrameTickCounter; } else D_8009F8A8[i] = 0;
     }
-    if (D_8009F464 != 1) {
+    if (gStillRunningState != 1) {
         changed = count = step = first = 0;
         if (!D_8009F8CC) { func_80077990(); D_8009F8CC = 1; }
         if (D_8009F468 == &D_800A3808) {
@@ -321,9 +322,9 @@ reset_timer:
             if (D_8009F468->update) D_8009F468->update(i);
         }
         func_800826A0();
-        if (D_8009F8C8 == -1) func_80078B98();
+        if (gDeferredTransition == -1) func_80078B98();
         else { func_80078B34(0, 0, 0); func_80078B34(0, 1, 0); }
-        if (D_8009F8C8 != -1) {
+        if (gDeferredTransition != -1) {
             D_8009F8BD = 1;
             if (D_8009F8C4) {
                 func_80078B34(500, 0, 0);
@@ -332,7 +333,7 @@ reset_timer:
                 while (gFrameBarrier) { }
                 func_80082DDC(D_8009F8C4, 1);
             }
-            switch (D_8009F8C8) {
+            switch (gDeferredTransition) {
             case 1:
                 if (gGameSession->type == 2) {
                     if (gGameSession->stage == 1) {
@@ -370,7 +371,7 @@ reset_timer:
                 }
                 break;
             }
-            D_8009F8C8 = -1;
+            gDeferredTransition = -1;
             D_8009F8C4 = 0;
         }
     }

@@ -9,7 +9,7 @@ struct Node {
     s32 size;
 };
 
-extern s32 D_8009F464;
+extern s32 gStillRunningState __asm__("D_8009F464");
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 D_800120E0[];
 
@@ -52,7 +52,7 @@ void func_80082358(struct Node *node)
     u8 *chunk_data;
     s32 chunk_data_size;
 
-    if (D_8009F464 != 0 && node->tag == 0x436D6963) {
+    if (gStillRunningState != 0 && node->tag == 0x436D6963) {
         dst = gSaveProfileImage;
         dst[0] = 0x43;
         dst[2] = 0x13;

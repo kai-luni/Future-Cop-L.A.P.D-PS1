@@ -28,7 +28,7 @@ struct Unk60838Entry {
 };
 
 extern s32 gDefinitionEntryCount __asm__("D_8009F7F8");
-extern struct Unk60838Entry D_800A2300[];
+extern struct Unk60838Entry gEffectKeyTable[] __asm__("D_800A2300");
 
 extern void *func_80019C38(u32 a0, u32 a1, u32 a2, u32 a3);
 extern void *func_80019CA0(u32 a0, u32 a1, u32 a2, u32 a3);
@@ -72,7 +72,7 @@ void func_80060838(struct Unk60838Arg *arg0)
     index = gDefinitionEntryCount++;
 
     data = func_80019C38(arg0->unk00, arg0->unk20, 0x74414354, arg0->unk1C);
-    entry = &D_800A2300[index];
+    entry = &gEffectKeyTable[index];
 
     memcpy(entry, data + 0x10, 0x20);
 

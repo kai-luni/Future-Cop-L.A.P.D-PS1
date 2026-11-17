@@ -34,7 +34,7 @@ struct Unk6AAEC {
 };
 
 extern s32 gDescriptorRegistryCount __asm__("D_8009F848");
-extern struct Unk6AAEC D_800A3340[];
+extern struct Unk6AAEC gVmRecordTable[] __asm__("D_800A3340");
 extern u8 D_800A3344[];
 
 extern void *func_80019C38(u32 a0, u32 a1, u32 a2, u32 a3);
@@ -78,7 +78,7 @@ void func_8006A918(struct Unk60838Arg *arg0)
 
         data = func_80019C38(arg0->unk00, arg0->unk20, 0x74414354, arg0->unk1C);
 
-        memcpy(&D_800A3340[index], data + 0x10, 0x44);
+        memcpy(&gVmRecordTable[index], data + 0x10, 0x44);
 
         func_8006A898((struct Unk6A898 *)(D_800A3344 + (u32)(index * 84)));
         func_8006A898((struct Unk6A898 *)(D_800A3344 + (u32)(index * 84) + 0x20));

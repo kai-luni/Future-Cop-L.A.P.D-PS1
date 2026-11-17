@@ -18,7 +18,7 @@ typedef struct Unk800899A4 {
     s32 unk1C;
 } Unk800899A4;
 
-extern Unk800899A4 *D_8009F518;
+extern Unk800899A4 *gTextLookupTable __asm__("D_8009F518");
 
 /**
  * @brief Resolves a text id to its string via binary search over the loaded
@@ -45,8 +45,8 @@ extern Unk800899A4 *D_8009F518;
 u8 *func_80089914(u16 id)
 {
     register u8 *result __asm__("$9") = 0;
-    if (D_8009F518 != 0) {
-        register TableHeader *header __asm__("$2") = D_8009F518->header;
+    if (gTextLookupTable != 0) {
+        register TableHeader *header __asm__("$2") = gTextLookupTable->header;
         register s32 count __asm__("$3");
         register s32 low __asm__("$7");
         register s32 high __asm__("$6");

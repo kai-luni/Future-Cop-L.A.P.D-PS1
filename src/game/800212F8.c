@@ -4,7 +4,7 @@ typedef struct Request {
     void (*callback)(int);
     int context, mode;
 } Request;
-extern Request D_800A8EA8[];
+extern Request gPendingEntryList[] __asm__("D_800A8EA8");
 extern int D_8009F998, D_8009FA80, D_8009FAD0, D_8009FA34;
 extern void func_80021490(Request *);
 
@@ -28,7 +28,7 @@ extern void func_80021490(Request *);
  */
 void func_800212F8(Request *req)
 {
-    register Request *dst __asm__("$2") = &D_800A8EA8[D_8009F998];
+    register Request *dst __asm__("$2") = &gPendingEntryList[D_8009F998];
     dst->a = req->a;
     dst->b = req->b;
     dst->c = req->c;

@@ -51,7 +51,7 @@ struct Unk60E74Global {
     struct Unk60E74Arg *entries[1];
 };
 
-extern struct Unk60E74Global *D_8009F800;
+extern struct Unk60E74Global *gRegistryTable __asm__("D_8009F800");
 
 extern void func_80019A74(struct Resource *resource);
 extern void *func_80019CA0(u32 a0, u32 a1, u32 a2, u32 a3);
@@ -103,7 +103,7 @@ void func_80060E74(struct Unk60E74Arg *arg0)
 
     func_80019A74((struct Resource *)arg0);
 
-    *(D_8009F800->entries + D_8009F800->count++) = arg0;
+    *(gRegistryTable->entries + gRegistryTable->count++) = arg0;
 
     data = func_80019CA0(arg0->unk00, arg0->unk20, 0x74534143, arg0->unk1C);
     arg0->unk04 = data;

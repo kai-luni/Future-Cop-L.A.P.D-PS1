@@ -5,7 +5,7 @@ extern volatile unsigned char *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern volatile unsigned char *gCdromCommandPtr __asm__("D_8009CB70");
 extern volatile unsigned char *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile unsigned char *gCdromRequestStatusPtr __asm__("D_8009CB78");
-extern unsigned char D_8009C8C5;
+extern unsigned char gLastResultByte __asm__("D_8009C8C5");
 extern int D_8009CA6C[];
 extern int D_8009C96C[];
 extern int D_8009C8CC[];
@@ -81,7 +81,7 @@ int func_8008E7A0(void)
     if (mode == 3) {
         register int index __asm__("$2");
         register int value __asm__("$2");
-        index = D_8009C8C5 << 2;
+        index = gLastResultByte << 2;
         __asm__("lui $1, %%hi(D_8009CA6C)\n\taddu $1, $1, %1\n\tlw %0, %%lo(D_8009CA6C)($1)" : "=r"(value) : "r"(index) : "$1");
         if (!value) goto skip_input;
     }
@@ -107,7 +107,7 @@ skip_input:
             register int val __asm__("$5");
             register int a __asm__("$6");
             register int b __asm__("$7");
-            index = D_8009C8C5;
+            index = gLastResultByte;
             a = gCdStatusByte;
             b = D_8009C8B8;
             __asm__("" : "+r"(index), "+r"(a), "+r"(b));
@@ -141,7 +141,7 @@ skip_input:
         {
             register int index __asm__("$2");
             register int value __asm__("$2");
-            index = D_8009C8C5 << 2;
+            index = gLastResultByte << 2;
             __asm__("lui $1, %%hi(D_8009C96C)\n\taddu $1, $1, %1\n\tlw %0, %%lo(D_8009C96C)($1)" : "=r"(value) : "r"(index) : "$1");
             if (value != 0) {
                 register int flag __asm__("$2") = 3;

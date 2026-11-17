@@ -9,7 +9,7 @@ typedef struct {
 } Unk8008B8E8;
 
 extern u32 D_8009C7A8;
-extern u32 D_8009C740;
+extern u32 gPadDataOffset __asm__("D_8009C740");
 extern u32 D_8009C774;
 extern u32 D_8009C7A0;
 extern s32 func_8008AB80(Unk8008B8E8 *, void *);
@@ -39,8 +39,8 @@ s32 func_8008B8E8(Unk8008B8E8 *arg0)
     void *a1;
 
     if (D_8009C7A8 != 0) {
-        ((void (*)(void *))D_8009C740)((u8 *)arg0->unkC + 0x1E0);
-        ((void (*)(void *))D_8009C740)((u8 *)arg0->unkC + 0x2D0);
+        ((void (*)(void *))gPadDataOffset)((u8 *)arg0->unkC + 0x1E0);
+        ((void (*)(void *))gPadDataOffset)((u8 *)arg0->unkC + 0x2D0);
     }
     a1 = 0;
     if (arg0->unk36 == 0) {

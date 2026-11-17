@@ -63,7 +63,7 @@ struct TableEntry {
 
 extern struct Node *D_8009F30C;
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern struct TableEntry *D_800A7040[][0x100];
+extern struct TableEntry *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void func_800181D4(struct Node *node);
 extern s32 func_8001A100(s32 *vector);
@@ -130,7 +130,7 @@ void func_8003FF7C(void)
 
     node = D_8009F30C;
     while (node != 0) {
-        entry = D_800A7040[node->arg08][node->type];
+        entry = gSpawnRecordMap[node->arg08][node->type];
         next = node->next;
 
         if (entry != 0) {

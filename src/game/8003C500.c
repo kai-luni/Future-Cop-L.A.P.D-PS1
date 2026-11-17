@@ -7,7 +7,7 @@ struct Unk3C500Cell {
     u8 next;
 };
 
-extern struct Unk3C500Cell *D_800A7040[][0x100];
+extern struct Unk3C500Cell *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern void func_8003C4C4(u8 column, s32 row, u8 bits);
 
 /**
@@ -44,7 +44,7 @@ void func_8003C500(s32 column, s32 stop, s32 row)
     rowValue = row;
     columnValue = column;
     stopValue = stop;
-    line = (base = D_800A7040[0], rowValue * 0x100 + base);
+    line = (base = gSpawnRecordMap[0], rowValue * 0x100 + base);
     do {
         cell = line[(u8)columnValue];
         __asm__("" : : "r"(columnValue));

@@ -12,8 +12,8 @@ typedef struct {
     s32 data[6];
 } Params88120;
 
-extern u8 D_8009F504;
-extern u32 D_8009F4DC;
+extern u8 gLayerOpenResult __asm__("D_8009F504");
+extern u32 gChunkSkipFlag __asm__("D_8009F4DC");
 extern void *D_8009F4EC;
 extern void *D_8009F4F0;
 extern void *D_8009F4F4;
@@ -141,7 +141,7 @@ u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
     u32 b;
 
     result = 0;
-    if (D_8009F504 == 0) {
+    if (gLayerOpenResult == 0) {
         return 0;
     }
     handle = func_8001D5E4(arg0, gFileSearchGroup);
@@ -151,14 +151,14 @@ u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
     }
     params = gFileTable;
 
-    if ((D_8009F4DC & 0x24) == 0x24) {
+    if ((gChunkSkipFlag & 0x24) == 0x24) {
         rectA.x = 0;
         rectA.w = 0x140;
         rectA.h = 1;
         rectB.x = 0;
         rectB.w = 0x1E0;
         rectB.h = 1;
-        masked = D_8009F4DC & 2;
+        masked = gChunkSkipFlag & 2;
         page = func_8001C034();
         if (page == 0) {
             rectA.y = 0x100;
@@ -240,7 +240,7 @@ u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
     }
     func_8001D3A8(handle);
 
-    if ((D_8009F4DC & 0x24) == 0x24) {
+    if ((gChunkSkipFlag & 0x24) == 0x24) {
         rectC.x = 0;
         rectC.w = 0x1E0;
         rectC.h = 1;

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 D_8009C774;
-extern u8 *D_8009C75C;
+extern u8 *gPadBasePort __asm__("D_8009C75C");
 
 /**
  *  @brief Tests whether a selected table entry has the value eight.
@@ -29,7 +29,7 @@ s32 func_80089E40(s32 arg0)
     if (D_8009C774 == 0) {
         result = 0;
     } else {
-        result = D_8009C75C[(arg0 >> 4) * 240 + 0xE8] == 8;
+        result = gPadBasePort[(arg0 >> 4) * 240 + 0xE8] == 8;
     }
     return result;
 }

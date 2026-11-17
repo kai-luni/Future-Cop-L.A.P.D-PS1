@@ -11,7 +11,7 @@ typedef struct Other {
     char pad2[12];
     void *field14;
 } Other;
-extern char D_8009CC88[];
+extern char gFrameClockAnchor[] __asm__("D_8009CC88");
 extern char D_8009CCC4[];
 extern volatile u16 *gInterruptStatusHalfPtr __asm__("D_8009DD14");
 extern volatile u16 *gInterruptMaskPtr __asm__("D_8009DD18");
@@ -49,7 +49,7 @@ extern void func_8008C9B0(void);
  */
 void *func_80091614(void)
 {
-    register char *p __asm__("$16") = D_8009CC88;
+    register char *p __asm__("$16") = gFrameClockAnchor;
     volatile u16 *a;
     volatile u16 *b;
     __asm__("" : "+r"(p));

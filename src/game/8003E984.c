@@ -94,7 +94,7 @@ struct SpawnWork {
     s32 vec2[4];                /* +78: retail sp+98 */
 };
 
-extern void *D_800A7040[][0x100];
+extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Player *D_8009FA58;
 extern struct Player *D_8009FA5C;
@@ -260,7 +260,7 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
     s32 dist2;
     register s32 last_matrix_word __asm__("$8");
 
-    source = (struct Source *)D_800A7040[arg4][type];
+    source = (struct Source *)gSpawnRecordMap[arg4][type];
     if (source == 0) {
         goto failed;
     }

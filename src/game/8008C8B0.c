@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern volatile u32 D_800A6E18;
-extern volatile u32 D_800A9448;
+extern volatile u32 gTimeoutThreshold __asm__("D_800A9448");
 
 /**
  * @brief Checks whether the PS1 Root Counter 2 pad-polling timeout armed by func_8008C890 has elapsed.
@@ -40,8 +40,8 @@ s32 func_8008C8B0(void)
     }
 
     if (*(volatile u16 *)0x1F801124 & 0x200) {
-        return (count - D_800A6E18) >= D_800A9448;
+        return (count - D_800A6E18) >= gTimeoutThreshold;
     } else {
-        return ((count - D_800A6E18) >> 3) >= D_800A9448;
+        return ((count - D_800A6E18) >> 3) >= gTimeoutThreshold;
     }
 }

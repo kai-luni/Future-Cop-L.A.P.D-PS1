@@ -1,7 +1,7 @@
 // Categories: Game Engine > State Machine | Gameplay > Entity Script
 #include "game/types.h"
 
-extern s32 *D_8009F9A4;
+extern s32 *gVmCountdowns __asm__("D_8009F9A4");
 
 /**
  * @brief Decrements all positive script-VM countdown entries in D_8009F9A4[0..31] by amount, clamping values below 5 to 0.
@@ -30,7 +30,7 @@ void func_80069D0C(s32 amount)
     register s32 value __asm__("$3");
 
     i = 0;
-    timer = D_8009F9A4;
+    timer = gVmCountdowns;
     for (; i < 0x20; i++, timer++) {
         if (*timer > 0) {
             value = *timer - amount;

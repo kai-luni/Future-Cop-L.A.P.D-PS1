@@ -2,8 +2,8 @@
 #include "game/types.h"
 
 extern void *gSpriteDescriptorTable __asm__("D_8009F77C");
-extern void *D_8009F780;
-extern s32 D_8009F784;
+extern void *gLightGrid __asm__("D_8009F780");
+extern s32 gLightNodePool __asm__("D_8009F784");
 
 extern void func_800181D4(void *block);
 extern void func_80019584(s32 pool);
@@ -36,10 +36,10 @@ void func_8004963C(void)
         func_800181D4(gSpriteDescriptorTable);
     }
     gSpriteDescriptorTable = 0;
-    func_80019584(D_8009F784);
-    D_8009F784 = 0;
-    if (D_8009F780 != 0) {
-        func_800181D4(D_8009F780);
+    func_80019584(gLightNodePool);
+    gLightNodePool = 0;
+    if (gLightGrid != 0) {
+        func_800181D4(gLightGrid);
     }
-    D_8009F780 = 0;
+    gLightGrid = 0;
 }

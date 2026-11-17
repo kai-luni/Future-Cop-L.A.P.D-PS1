@@ -1,7 +1,7 @@
 // Categories: Graphics > Video Layer
 #include "game/types.h"
 
-extern u8 D_8009F504;
+extern u8 gLayerOpenResult __asm__("D_8009F504");
 
 /**
  * @brief Reports whether the video/image layer is open.
@@ -15,5 +15,5 @@ extern u8 D_8009F504;
  */
 u8 func_80087D3C(void)
 {
-    return D_8009F504;
+    return gLayerOpenResult;
 }

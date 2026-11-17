@@ -21,7 +21,7 @@ struct UnkEntityTable {
     struct UnkEntity *items[1];
 };
 
-extern struct UnkEntityTable *D_8009F800;
+extern struct UnkEntityTable *gRegistryTable __asm__("D_8009F800");
 extern void func_8006125C(struct UnkEntity *entity, s32 arg);
 
 /**
@@ -53,8 +53,8 @@ void func_800616A0(s32 elapsed)
     s32 i;
     u16 flags;
 
-    cursor = D_8009F800->items;
-    for (remaining = D_8009F800->count; remaining > 0; remaining--) {
+    cursor = gRegistryTable->items;
+    for (remaining = gRegistryTable->count; remaining > 0; remaining--) {
         entity = *cursor++;
         sub = entity->sub;
         for (i = (sub->unk10 >> 8) & 0xF; i > 0; i--) {

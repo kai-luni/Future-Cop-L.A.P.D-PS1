@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 D_8009F7C0[];
-extern u32 D_8009F7C4;
+extern u32 gControlMaskWord __asm__("D_8009F7C4");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 
 /**
@@ -84,7 +84,7 @@ void func_800576A8(u32 *out, s32 index)
     }
 
     if (gPlayerCount == 1) {
-        in = D_8009F7C4;
+        in = gControlMaskWord;
         if (in & 0x08000000) {
             res |= 0x04000000;
         }

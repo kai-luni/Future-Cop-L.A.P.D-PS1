@@ -16,7 +16,7 @@ struct EntityMessage {
 };
 
 extern struct EntityMessage D_800A2090[];
-extern s32 D_8009F7A8;
+extern s32 gPendingMessageMask __asm__("D_8009F7A8");
 
 /**
  *  @brief Allocates and initializes an entity message slot.
@@ -44,18 +44,18 @@ s32 func_8004D9EC(struct Entity *target, u8 kind, u8 value)
     s32 bit;
     s32 result;
 
-    if (D_8009F7A8 == 0xFFFF) {
+    if (gPendingMessageMask == 0xFFFF) {
         return 0;
     }
     message = D_800A2090;
     bit = 1;
-    while (D_8009F7A8 & bit) {
+    while (gPendingMessageMask & bit) {
         bit <<= 1;
         message++;
     }
     result = 1;
     message->target = target;
-    D_8009F7A8 |= bit;
+    gPendingMessageMask |= bit;
     message->kind = kind;
     message->value = value;
     message->id = target->id;

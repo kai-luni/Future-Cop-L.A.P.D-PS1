@@ -11,7 +11,7 @@ struct Pool {
     struct PoolNode *free;
 };
 
-extern struct Pool D_800A3538;
+extern struct Pool gObjectPool __asm__("D_800A3538");
 extern u8 func_8006EE14(struct PoolNode *node, void *arg);
 extern void func_8003BF1C(struct Pool *pool, struct PoolNode *previous,
                           struct PoolNode *node);
@@ -42,11 +42,11 @@ void func_8006F170(void *arg)
     struct PoolNode *previous;
 
     previous = 0;
-    node = D_800A3538.active;
+    node = gObjectPool.active;
     while (node != 0) {
         next = node->next;
         if (func_8006EE14(node, arg) != 1) {
-            func_8003BF1C(&D_800A3538, previous, node);
+            func_8003BF1C(&gObjectPool, previous, node);
         } else {
             previous = node;
         }

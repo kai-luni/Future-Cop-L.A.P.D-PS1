@@ -6,7 +6,7 @@ struct Info { char pad[0xc1]; signed char index; };
 struct Object { int unused; int (*callback)(int,Object *,Object *,int); int id; char pad0c[0xa]; unsigned char type; char pad17[0xd]; unsigned int flags; Coord coord; char pad70[0x18]; Object *closest; char pad8c[4]; short distance; char pad92[0x1a]; struct Info *info; };
 struct Entry { int id; Object *object; };
 struct Bucket { unsigned char count; char pad[3]; struct Entry entries[8]; };
-extern struct Bucket D_800A8DC0[];
+extern struct Bucket gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
 extern int func_80061CAC(Coord *, Coord *);
 
 /**
@@ -74,7 +74,7 @@ void func_800620D8(Object *a, Object *b, unsigned int flags)
                 if ((flags & 0x40000040) == 0x40000040 && d < 0x1800) {
                     if (a->type == 1) { owner = a; other = b; }
                     else { owner = b; other = a; }
-                    bucket = &D_800A8DC0[owner->info->index];
+                    bucket = &gPlayerCollisionCandidates[owner->info->index];
                     index = bucket->count;
                     next = index + 1;
                     index = (index & 7) << 3;

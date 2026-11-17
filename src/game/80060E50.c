@@ -3,7 +3,7 @@
 
 struct Unk60E28Table;
 
-extern struct Unk60E28Table *D_8009F800;
+extern struct Unk60E28Table *gRegistryTable __asm__("D_8009F800");
 extern void func_800181D4(void *block);
 
 /**
@@ -30,5 +30,5 @@ extern void func_800181D4(void *block);
  */
 void func_80060E50(void)
 {
-    func_800181D4(D_8009F800);
+    func_800181D4(gRegistryTable);
 }

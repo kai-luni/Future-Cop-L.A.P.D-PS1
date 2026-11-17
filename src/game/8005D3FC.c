@@ -54,7 +54,7 @@ struct Entity {
     u8 *unkAC;
 };
 
-extern struct Block *D_800A22F0[4];
+extern struct Block *gDomeEffectBlock[4] __asm__("D_800A22F0");
 
 extern void *func_80017EBC(s32 size, s32 tag);
 extern void *func_8006C84C(s32 arg0, s32 arg1);
@@ -97,7 +97,7 @@ struct Block *func_8005D3FC(struct Entity *ent, s32 idx)
     c60 = 0x60;
     c40 = 0x40;
 
-    base = D_800A22F0;
+    base = gDomeEffectBlock;
     __asm__("" : "+r"(base));
     p = base;
     do {

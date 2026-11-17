@@ -1,5 +1,5 @@
 // Categories: Platform > CD-ROM
-extern unsigned char D_8009C8C4;
+extern unsigned char gLastCommandResult __asm__("D_8009C8C4");
 
 /**
  * @brief Returns the CD driver result byte.
@@ -20,5 +20,5 @@ extern unsigned char D_8009C8C4;
  */
 int func_8008E020(void)
 {
-    return D_8009C8C4;
+    return gLastCommandResult;
 }

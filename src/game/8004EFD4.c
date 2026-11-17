@@ -1,7 +1,7 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern s32 D_8009F7B0;
+extern s32 gFreedPointer __asm__("D_8009F7B0");
 
 /**
  *  @brief Clears a global signed integer.
@@ -21,5 +21,5 @@ extern s32 D_8009F7B0;
  */
 void func_8004EFD4(void)
 {
-    D_8009F7B0 = 0;
+    gFreedPointer = 0;
 }

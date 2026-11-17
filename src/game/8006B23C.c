@@ -103,7 +103,7 @@ struct Unk6B23C_Callback {
 
 extern s32 D_8009F380;
 extern s32 D_8009F384;
-extern void *D_800A7040[][0x100];
+extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern struct Unk6B23C_Item *func_8006AAEC(u8 id);
 extern void func_80046CF0(struct Unk6B23C *arg0, u8 arg1);
@@ -247,7 +247,7 @@ void func_8006B23C(struct Unk6B23C *arg0, s32 index, s32 arg2)
     s1 = 0;
     if (s3->type == 0x0B) {
         if (s3->unk1B != 0) {
-            s1 = (struct Unk6B23C_S1 *)D_800A7040[1][s3->unk1B];
+            s1 = (struct Unk6B23C_S1 *)gSpawnRecordMap[1][s3->unk1B];
             if (s1 != 0 && s1->unk04 != 0x58)
                 s1 = 0;
         }

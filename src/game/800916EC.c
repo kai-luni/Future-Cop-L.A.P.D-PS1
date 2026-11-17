@@ -5,7 +5,7 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef void (*Callback)(void);
 struct State { u16 active, busy; Callback handlers[11]; u16 mask; };
-extern struct State D_8009CC88;
+extern struct State gFrameClockAnchor __asm__("D_8009CC88");
 extern u16 D_8009CCB8, D_8009CC8A;
 extern u16 *gInterruptStatusHalfPtr __asm__("D_8009DD14");
 extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
@@ -36,7 +36,7 @@ extern void func_80091B60(void);
  */
 void func_800916EC(void)
 {
-    register struct State *state __asm__("$17") = &D_8009CC88;
+    register struct State *state __asm__("$17") = &gFrameClockAnchor;
     u16 pending;
     register u16 mask __asm__("$3");
     register u16 *pa1 __asm__("$4");

@@ -42,13 +42,13 @@ struct CallArgs {
 extern s32 D_8009F324;
 extern u8 D_8009F328;
 extern u8 D_8009F329;
-extern s32 D_8009F700;
+extern s32 gLightStrengthScale __asm__("D_8009F700");
 extern s32 D_8009F704;
-extern s16 D_8009F710;
+extern s16 gShadowThreshold __asm__("D_8009F710");
 extern s16 D_8009F718;
 extern s16 D_8009F71C;
 
-extern struct Object *D_800A8F98[];
+extern struct Object *gEffectListHead[] __asm__("D_800A8F98");
 
 extern s32 func_8001A750(s32 *a, s32 *b);
 
@@ -150,14 +150,14 @@ void func_800410BC(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3)
         a0 = -a0;
     negative:
         MULU16(r, a0, 0x80000000u / (u32)half);
-        D_8009F700 = -r;
+        gLightStrengthScale = -r;
     } else {
         a0 = -a0;
         half = -arg2;
         half >>= 1;
     positive:
         MULU16(r, a0, 0x80000000u / (u32)half);
-        D_8009F700 = r;
+        gLightStrengthScale = r;
     }
 
     D_8009F704 = arg2;
@@ -178,7 +178,7 @@ void func_800410BC(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3)
         args.unk8 = 0;
     }
 
-    list = D_800A8F98;
+    list = gEffectListHead;
     n = ((s32 *)list)[-2];
 
     for (; n > 0; n--) {
@@ -215,7 +215,7 @@ void func_800410BC(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3)
                     s32 tx = ((obj->unk50 - pos->x) << 4) / denom;
                     s32 tz = ((obj->unk58 - pos->z) << 4) / denom;
                     s32 sum = ((D_8009F718 * tx) >> 12) + ((D_8009F71C * tz) >> 12);
-                    if (sum < D_8009F710) {
+                    if (sum < gShadowThreshold) {
                         continue;
                     }
                 }
@@ -223,7 +223,7 @@ void func_800410BC(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3)
                 {
                     s32 k;
                     s0 = D_8009F704 - d;
-                    k = D_8009F700;
+                    k = gLightStrengthScale;
                     MUL16(s0, s0, k);
                 }
                 s0 >>= 16;

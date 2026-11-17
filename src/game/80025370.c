@@ -3,7 +3,7 @@ typedef unsigned char u8;
 typedef signed char s8;
 struct Entry { char *name; s8 type; u8 value; char pad[2]; };
 extern u8 gUploadRequestFlag __asm__("D_8009F3E5");
-extern s8 D_8009F3F0;
+extern s8 gModuleLoadState __asm__("D_8009F3F0");
 extern struct Entry D_8009B42C[];
 extern char gFormatNamePair[] __asm__("D_8009F2E4");
 extern int gModulePrefixCW __asm__("D_8009F3D8");
@@ -68,8 +68,8 @@ int func_80025370(void)
     int size;
     struct Entry *entry;
     int saved;
-    if (!gUploadRequestFlag && D_8009F3F0 < 23) {
-        entry = &D_8009B42C[D_8009F3F0];
+    if (!gUploadRequestFlag && gModuleLoadState < 23) {
+        entry = &D_8009B42C[gModuleLoadState];
         {
             int arg;
             if (entry->type == 1)

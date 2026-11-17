@@ -15,8 +15,8 @@ typedef struct MaskEntry {
     u8 pad[12];
 } MaskEntry;
 
-extern Node **D_8009F780;
-extern s32 D_8009F78C;
+extern Node **gLightGrid __asm__("D_8009F780");
+extern s32 gLightGridWidth __asm__("D_8009F78C");
 extern s32 D_8009F794;
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
@@ -58,7 +58,7 @@ void func_8004A924(s32 arg0, s32 arg1, MaskEntry *arg2)
     Node *node;
     MaskEntry *entry;
 
-    if (D_8009F780 == 0) {
+    if (gLightGrid == 0) {
         return;
     }
 
@@ -75,7 +75,7 @@ void func_8004A924(s32 arg0, s32 arg1, MaskEntry *arg2)
             if (mask == 0) {
                 continue;
             }
-            node = D_8009F780[(arg0 + i) + D_8009F78C * (arg1 + j)];
+            node = gLightGrid[(arg0 + i) + gLightGridWidth * (arg1 + j)];
             if (node == 0) {
                 continue;
             }

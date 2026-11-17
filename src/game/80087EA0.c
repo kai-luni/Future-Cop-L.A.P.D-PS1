@@ -2,8 +2,8 @@
 #include "game/types.h"
 
 extern u8 D_8009F4E0;
-extern u8 D_8009F504;
-extern s32 D_8009F4DC;
+extern u8 gLayerOpenResult __asm__("D_8009F504");
+extern s32 gChunkSkipFlag __asm__("D_8009F4DC");
 extern s32 D_8009F4E4;
 extern s32 D_8009F4E8;
 extern s32 D_8009F4EC;
@@ -91,7 +91,7 @@ s32 func_80087EA0(s32 arg0)
     s32 var_a0;
     s32 var_a3;
 
-    if (D_8009F504 != 0) {
+    if (gLayerOpenResult != 0) {
         return 1;
     }
 
@@ -129,7 +129,7 @@ s32 func_80087EA0(s32 arg0)
         var_a0 = 0x22D00;
     }
 
-    D_8009F4DC = arg0;
+    gChunkSkipFlag = arg0;
     D_8009F4E4 = func_8008799C(var_a0);
     if (D_8009F4E4 == 0) {
         goto fail;
@@ -162,7 +162,7 @@ s32 func_80087EA0(s32 arg0)
     }
 
     var_a3 = 0x10000;
-    if (D_8009F4DC & 1) {
+    if (gChunkSkipFlag & 1) {
         var_a3 = 0x6DE0;
     }
 
@@ -197,7 +197,7 @@ s32 func_80087EA0(s32 arg0)
         goto fail;
     }
 
-    D_8009F504 = 1;
+    gLayerOpenResult = 1;
     return 1;
 
 fail:

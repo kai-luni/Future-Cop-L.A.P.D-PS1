@@ -3,7 +3,7 @@
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 *D_8009F468;
-extern s32 D_8009F464;
+extern s32 gStillRunningState __asm__("D_8009F464");
 extern u8 D_8009F8BD;
 extern u8 D_8009F8BE;
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
@@ -125,9 +125,9 @@ s32 func_8007FB04(void)
                                 gSaveProfileImage[0x205] = 3;
                                 *(s16 *)(gSaveProfileImage + 0x942) = 0x37D2;
                             }
-                            if (D_8009F464 == s1) {
+                            if (gStillRunningState == s1) {
                                 func_80080AD4();
-                                D_8009F464 = 3;
+                                gStillRunningState = 3;
                             }
                         } else {
                             gSaveProfileImage[0x205] = s1;

@@ -3,7 +3,7 @@
 
 typedef void (*Callback)(void);
 extern s32 D_8009EE94;
-extern void *D_8009EA2C;
+extern void *gSpuDmaCallback __asm__("D_8009EA2C");
 extern void func_800972F8(void);
 extern void func_8008C9A0(void);
 extern void func_8008C9B0(void);

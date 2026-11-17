@@ -10,7 +10,7 @@ struct Unk56994 {
     u8 step;
 };
 
-extern u8 D_800A2290[][8];
+extern u8 gSideStepTable[][8] __asm__("D_800A2290");
 
 /**
  * @brief Advances the camera preset phase timer and returns the current
@@ -43,5 +43,5 @@ u8 func_80056994(struct Unk56994 *state, s32 elapsed)
         state->timer = 3000;
         state->step++;
     }
-    return D_800A2290[state->side][state->step];
+    return gSideStepTable[state->side][state->step];
 }

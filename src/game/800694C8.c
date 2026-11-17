@@ -9,7 +9,7 @@ struct MapBounds {
 };
 
 extern int gTileMapTable __asm__("D_8009F80C");
-extern struct MapBounds D_800A2950;
+extern struct MapBounds gWorldClipRect __asm__("D_800A2950");
 
 /**
  * @brief Converts a world position into 0..53 minimap cell coordinates.
@@ -33,10 +33,10 @@ extern struct MapBounds D_800A2950;
 void func_800694C8(int *out_x, int *out_z, int x, int z)
 {
     if (gTileMapTable) {
-        x -= D_800A2950.x;
-        x *= D_800A2950.x_scale >> 8;
-        z -= D_800A2950.z;
-        z *= D_800A2950.z_scale >> 8;
+        x -= gWorldClipRect.x;
+        x *= gWorldClipRect.x_scale >> 8;
+        z -= gWorldClipRect.z;
+        z *= gWorldClipRect.z_scale >> 8;
         x += 0x800000;
         x >>= 24;
         z += 0x800000;

@@ -3,7 +3,8 @@
 
 typedef void (*Handler)(s32 port);
 
-extern s32 D_8009C77C, D_8009C778, D_8009C75C;
+extern s32 D_8009C77C, D_8009C778;
+extern s32 gPadBasePort __asm__("D_8009C75C");
 extern s32 gPadPresentFlag __asm__("D_8009C760");
 extern Handler D_8009C72C;
 extern s32 D_800A3B70[], D_800A3B74[];
@@ -40,7 +41,7 @@ s32 func_8008A290(s32 arg)
             __asm__("lui %0,%%hi(D_800A3B70)\n\taddiu %0,%0,%%lo(D_800A3B70)" : "=r"(p));
             t = p[0];
             D_8009C778 = 0;
-            if (t >= 150) D_8009C72C(D_8009C75C);
+            if (t >= 150) D_8009C72C(gPadBasePort);
             p[0] = 0;
         } else D_8009C778 = 1;
         if (arg & 2) {
@@ -52,7 +53,7 @@ s32 func_8008A290(s32 arg)
             __asm__ volatile("" : "=r"(q) : "0"(q));
             t = q[0];
             D_8009C77C = one;
-            if (t >= 150) D_8009C72C(D_8009C75C + 0xF0);
+            if (t >= 150) D_8009C72C(gPadBasePort + 0xF0);
             q[0] = 0;
         } else D_8009C77C = 0;
         gPadPresentFlag = 1;

@@ -18,7 +18,7 @@ struct State {
     volatile s32 unk34;     /* 0x34 */
 };
 
-extern struct State D_8009CBD0;
+extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
 extern s32 D_8009C814;
 extern u32 D_8009C810;
 
@@ -56,7 +56,7 @@ void func_80090B48(void)
 {
     register struct State *state __asm__("$16");
 
-    state = &D_8009CBD0;
+    state = &gSectorBufferPtr;
     state->unk8 += state->command * 4;
     state->unk14--;
     state->unk20++;

@@ -27,7 +27,7 @@ struct Script5FFB8 {
     struct Cmd commands[4];
 };
 
-extern struct Entry5FFB8 D_800A2300[];
+extern struct Entry5FFB8 gEffectKeyTable[] __asm__("D_800A2300");
 extern s32 func_8005FF70(s32 key);
 extern void func_8002A5B4(struct Script5FFB8 *script, s32 index);
 
@@ -66,7 +66,7 @@ void func_8005FFB8(struct Obj5FFB8 *obj, struct Script5FFB8 *script)
     s32 idx;
 
     i = 0;
-    tbl = D_800A2300;
+    tbl = gEffectKeyTable;
     p = (u8 *)script;
     while (i < 4) {
         op = p[0xC];

@@ -6,7 +6,7 @@ struct Unk60E28Table {
     void *entries[0x80];
 };
 
-extern struct Unk60E28Table *D_8009F800;
+extern struct Unk60E28Table *gRegistryTable __asm__("D_8009F800");
 extern void *func_80017EBC(s32 size, s32 tag);
 
 /**
@@ -36,6 +36,6 @@ void func_80060E28(void)
     struct Unk60E28Table *table;
 
     table = func_80017EBC(0x204, 2);
-    D_8009F800 = table;
+    gRegistryTable = table;
     table->count = 0;
 }

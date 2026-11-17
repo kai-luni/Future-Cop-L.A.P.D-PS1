@@ -36,9 +36,9 @@ extern s32 D_8009F864;
 extern s8 D_8009F868;
 extern s8 D_8009F869;
 extern u8 gUploadRequestFlag __asm__("D_8009F3E5");
-extern u8 D_8009F3F0;
+extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern u8 D_8009F4E0;
-extern s32 D_8009F3EC;
+extern s32 gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern s32 D_8009F3D0;
 extern u8 D_8009F3A0[];
 extern u8 D_8009F3A8[];
@@ -210,7 +210,7 @@ s32 func_80076A2C(void)
         func_8001B2C8(0xC8, 0x200);
 
         gUploadRequestFlag = 0;
-        D_8009F3F0 = 0x14;
+        gModuleLoadState = 0x14;
 
         func_80025370();
         func_8007F9CC();
@@ -274,16 +274,16 @@ s32 func_80076A2C(void)
             gPendingScreenState = gGameSession->unk10;
             switch (gGameSession->unk10) {
             case 0:
-                if (D_8009F3EC != 0) {
-                    func_8008CCB0(D_8009B300, D_8009F3EC);
+                if (gPendingModuleNameFlag != 0) {
+                    func_8008CCB0(D_8009B300, gPendingModuleNameFlag);
                     func_8008CC90(D_8009B300, D_8009F3B0);
                     gPendingScreenState = 3;
-                    D_8009F3EC = 0;
-                    D_8009F3F0 = 5;
+                    gPendingModuleNameFlag = 0;
+                    gModuleLoadState = 5;
                     break;
                 }
             case 3:
-                D_8009F3F0 = s3;
+                gModuleLoadState = s3;
                 s2 = 1;
             }
 

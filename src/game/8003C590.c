@@ -19,7 +19,7 @@ typedef struct UnkC590Cell {
     s16 unk48;
 } UnkC590Cell;
 
-extern UnkC590Cell *D_800A7040[][0x100];
+extern UnkC590Cell *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern u32 *func_8003B3D8(u32 column, u32 row);
 extern void func_8003C4C4(u8 column, s32 row, u8 bits);
 extern void func_8003C500(s32 column, s32 stop, s32 row);
@@ -68,7 +68,7 @@ void func_8003C590(s32 arg0)
     i = 1;
     tableBase = table;
     visited = table + 1;
-    base = D_800A7040[0];
+    base = gSpawnRecordMap[0];
     rowOff = row << 10;
     line = (UnkC590Cell **)(rowOff + (s32)base);
     scan = line + 1;

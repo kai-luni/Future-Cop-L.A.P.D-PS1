@@ -14,7 +14,7 @@ extern s8 gSelectedRow __asm__("D_8009F87E");
 extern s8 gLineCount __asm__("D_8009F87F");
 extern s8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern  s8 gPlayerMenuDepth_arr[] __asm__("D_8009F8C0");
-extern s32 D_8009F8C8;
+extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
 extern u8 D_8009F484[];
@@ -116,7 +116,7 @@ void func_8007BCF4(s32 arg0)
         }
     }
 
-    if (D_8009F8C8 != -1) {
+    if (gDeferredTransition != -1) {
         return;
     }
 

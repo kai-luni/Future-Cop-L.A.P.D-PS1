@@ -1,7 +1,7 @@
 // Categories: Resources > Cleanup
 #include "game/types.h"
 
-extern s32 D_8009F464;
+extern s32 gStillRunningState __asm__("D_8009F464");
 extern void *D_8009F460;
 extern s32 D_8009F45C;
 extern void **D_8009F3F4;
@@ -34,7 +34,7 @@ void func_8007852C(void)
 {
     u32 i;
 
-    if (D_8009F464 == 0) {
+    if (gStillRunningState == 0) {
         return;
     }
     func_800898E8();
@@ -45,7 +45,7 @@ void func_8007852C(void)
         D_8009F460 = 0;
         D_8009F45C = 0;
     }
-    D_8009F464 = 0;
+    gStillRunningState = 0;
     if (D_8009F3F4 != 0) {
         for (i = 0; i < 0x1E; i++) {
             if (D_8009F3F4[i] != 0) {

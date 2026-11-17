@@ -21,7 +21,7 @@ struct Unk4AADOwner {
     struct Unk4AADNode *head;
 };
 
-extern struct Unk4AADNode *D_8009F798;
+extern struct Unk4AADNode *gFragmentFreeList __asm__("D_8009F798");
 
 /**
  * @brief Unlinks a debris node from an owner's active list, pushes it onto free list D_8009F798, and updates its parent.
@@ -54,8 +54,8 @@ struct Unk4AADNode *func_8004AAD4(struct Unk4AADOwner *owner, struct Unk4AADNode
     } else {
         owner->head = node->next;
     }
-    node->next = D_8009F798;
-    D_8009F798 = node;
+    node->next = gFragmentFreeList;
+    gFragmentFreeList = node;
     if (node->flags & 0x80) {
         node->parent->count--;
         node->parent->flags |= 1;

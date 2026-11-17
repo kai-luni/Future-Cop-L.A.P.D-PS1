@@ -1,12 +1,13 @@
 // Categories: Input > Port Processing
 #include "game/sio_globals.h"
 
-extern int D_8009C778, D_8009C77C, D_8009C76C;
+extern int D_8009C778, D_8009C77C;
+extern int gPadDispatchIndex __asm__("D_8009C76C");
 extern int gPadActuatorCostSum __asm__("D_8009C770");
 extern int gPadSlotIndex __asm__("D_8009C768");
 extern int gPadPresentFlag __asm__("D_8009C760");
 extern int D_800A3B70, D_800A3B74;
-extern char *D_8009C75C;
+extern char *gPadBasePort __asm__("D_8009C75C");
 extern short *gSio0RegBasePtr __asm__("D_8009C78C");
 extern void (*D_8009C728)(int);
 extern int func_8008A6CC(char *);
@@ -55,14 +56,14 @@ int func_8008A43C(void)
     }
     if (gPadPresentFlag != 0) {
         if (D_8009C778 <= D_8009C77C) {
-            D_8009C76C = 0;
+            gPadDispatchIndex = 0;
             gPadSlotIndex = D_8009C778;
-            if (func_8008A6CC(D_8009C75C + D_8009C778 * 240) == 0) {
+            if (func_8008A6CC(gPadBasePort + D_8009C778 * 240) == 0) {
                 D_8009C728(0xFFFF);
             }
             gPadActuatorCostSum = 0;
             while (gPadSlotIndex <= D_8009C77C) {
-                func_8008A8E0(D_8009C75C + gPadSlotIndex * 240);
+                func_8008A8E0(gPadBasePort + gPadSlotIndex * 240);
             }
             gSio0RegBasePtr[7] = 0x88;
         }

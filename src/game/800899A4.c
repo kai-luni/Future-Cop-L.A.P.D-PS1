@@ -7,7 +7,7 @@ typedef struct Unk800899A4 {
     s32 unk1C;
 } Unk800899A4;
 
-extern Unk800899A4 *D_8009F518;
+extern Unk800899A4 *gTextLookupTable __asm__("D_8009F518");
 extern void func_800181D4(Unk800899A4 *arg0);
 
 /**
@@ -44,16 +44,16 @@ void func_800899A4(Unk800899A4 *arg0)
         func_800181D4(arg0);
         return;
     }
-    if (D_8009F518 != 0) {
-        func_800181D4(D_8009F518);
+    if (gTextLookupTable != 0) {
+        func_800181D4(gTextLookupTable);
     }
     id = arg0->unk0[0];
-    D_8009F518 = arg0;
+    gTextLookupTable = arg0;
     if (id != temp) {
         flag = 1;
     }
     if (flag != 0) {
         func_800181D4(arg0);
-        D_8009F518 = 0;
+        gTextLookupTable = 0;
     }
 }

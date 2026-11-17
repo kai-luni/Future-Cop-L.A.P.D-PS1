@@ -32,9 +32,9 @@ extern s32 D_8009F7A4;
 extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
 extern struct Pos *D_8009FA58[];
 extern struct Pos *D_8009F9A0[];
-extern struct Entity *D_800A8F98[];
+extern struct Entity *gEffectListHead[] __asm__("D_800A8F98");
 extern s32 gCommandListHead[] __asm__("D_800A8F90");
-extern s32 D_800A8F94[];
+extern s32 gEffectPoolCapacity[] __asm__("D_800A8F94");
 
 extern s32 func_80045678(s32 sound, s32 id, s32 arg2, s32 arg3, s32 arg4);
 extern void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index);

@@ -1,7 +1,7 @@
 // Categories: Utilities > Coordinate Calculations
 #include "game/types.h"
 struct Pair { s32 x; s32 y; };
-extern struct Pair *D_8009F7B0;
+extern struct Pair *gFreedPointer __asm__("D_8009F7B0");
 
 /**
  *  @brief Computes clamped coordinate intermediates and returns the next pair.
@@ -24,7 +24,7 @@ extern struct Pair *D_8009F7B0;
  */
 struct Pair *func_8004F09C(s32 *arg)
 {
-    register struct Pair *p __asm__("$5") = D_8009F7B0;
+    register struct Pair *p __asm__("$5") = gFreedPointer;
     register struct Pair *next __asm__("$7") = p + 1;
     register s32 x __asm__("$4") = (s32)arg;
     register s32 y __asm__("$6");

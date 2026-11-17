@@ -10,7 +10,7 @@ struct State {
     volatile s32 busy;
     s32 callback, callback2, callback3;
 };
-extern struct State D_8009CBD0;
+extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
 extern s32 D_8009C814;
 extern s32 D_800908A0[];
 extern s32 D_8009CBF8[];
@@ -96,7 +96,7 @@ void func_80090E00(void)
     register struct State *state __asm__("$16");
     struct State *other;
     if (D_8009C814 & 1) func_8008E5FC(0);
-    state = &D_8009CBD0;
+    state = &gSectorBufferPtr;
     __asm__ volatile("" : "+r"(state));
     state->unk14 = 0;
     if (wait_ready(state)) {

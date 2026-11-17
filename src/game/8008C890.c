@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 D_800A6E18;
-extern u32 D_800A9448;
+extern u32 gTimeoutThreshold __asm__("D_800A9448");
 
 /**
  * @brief Arms the PS1 Root Counter 2 timeout state for serial controller/pad polling.
@@ -29,6 +29,6 @@ void func_8008C890(u32 a0)
     u32 count;
 
     count = *(volatile u16 *)0x1F801120;
-    D_800A9448 = a0;
+    gTimeoutThreshold = a0;
     D_800A6E18 = count;
 }

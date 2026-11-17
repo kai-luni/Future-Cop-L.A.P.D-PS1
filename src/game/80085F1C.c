@@ -3,7 +3,7 @@
 
 typedef struct { s32 v[4]; } Matrix;
 extern Matrix D_8001220C;
-extern u8 D_8009F4D4;
+extern u8 gInitGuardFlag __asm__("D_8009F4D4");
 extern u8 D_800A3958[];
 extern u8 D_800A3A58[];
 
@@ -63,7 +63,7 @@ void func_80085F1C(void)
     u8 *table;
     register s32 max __asm__("$5");
     s32 k;
-    if (!D_8009F4D4) {
+    if (!gInitGuardFlag) {
         size = 1;
         level = 1;
         matrix = D_8001220C;
@@ -128,6 +128,6 @@ loop:
 endloop:
         test = k < 256;
         __asm__("" : : "r"(test));
-        D_8009F4D4 = 1;
+        gInitGuardFlag = 1;
     }
 }

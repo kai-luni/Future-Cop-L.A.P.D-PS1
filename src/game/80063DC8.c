@@ -25,7 +25,7 @@ extern Res63DC8 * volatile gTileMapTable __asm__("D_8009F80C");
 extern Unk63DC8 *D_8009F810;
 extern void *gCellMap __asm__("D_8009F820");
 
-extern s32 D_800A2950[];
+extern s32 gWorldClipRect[] __asm__("D_800A2950");
 extern s32 gClipRect[] __asm__("D_800A2970");
 
 extern void *func_80017EBC(s32 size, s32 tag);
@@ -117,17 +117,17 @@ void func_80063DC8(Unk63DC8 *arg0)
 
     z_bottom = local.z;
     work_x = (u32)(z_bottom + (resource->unk18 << 17));
-    D_800A2950[0] = (s32)work_x;
+    gWorldClipRect[0] = (s32)work_x;
 
     right = z_bottom + (resource->unk04 << 17)
         - ((resource->unk18 + 1) << 17);
     work_x = (u32)((right - (s32)work_x) >> 1);
     work_x = numerator_q2 / work_x;
-    D_800A2950[1] = right;
+    gWorldClipRect[1] = right;
 
     work_y = local.x;
     work_y += resource->unk18 << 17;
-    D_800A2950[2] = work_y;
+    gWorldClipRect[2] = work_y;
 
     z_bottom = z_bottom + (resource->unk08 << 17)
         - ((resource->unk18 + 1) << 17);
@@ -135,10 +135,10 @@ void func_80063DC8(Unk63DC8 *arg0)
     numerator_q2 = numerator_q2 / (u32)work_y;
 
     FIXMUL(product, work_x);
-    D_800A2950[4] = product;
+    gWorldClipRect[4] = product;
     FIXMUL(product, numerator_q2);
-    D_800A2950[5] = product;
-    D_800A2950[3] = z_bottom;
+    gWorldClipRect[5] = product;
+    gWorldClipRect[3] = z_bottom;
 
     gClipRect[4] = (resource->unk04 - 1) << 2;
     gClipRect[5] = (resource->unk08 - 1) << 2;

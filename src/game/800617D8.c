@@ -4,7 +4,7 @@
 extern s32 gCellEntityList[2] __asm__("D_8009F818");
 extern s32 gCellMap __asm__("D_8009F820");
 extern s32 D_8009F830;
-extern u8 D_800A8DC0[];
+extern u8 gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
 
 extern s32 func_80017EBC(s32, s32);
 
@@ -44,6 +44,6 @@ void func_800617D8(void)
     }
     D_8009F830 = func_80017EBC(0x400, 2);
     for (i = 1; i >= 0; i--) {
-        D_800A8DC0[i * 0x44] = 0;
+        gPlayerCollisionCandidates[i * 0x44] = 0;
     }
 }

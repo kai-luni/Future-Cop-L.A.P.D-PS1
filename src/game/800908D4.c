@@ -28,7 +28,7 @@ struct Local {
     u8 pad[0xC];
 };
 
-extern struct State D_8009CBD0;
+extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
 extern s32 D_8009CBD8[];
 extern s32 D_8009CBF0[];
 extern s32 D_8009C814;
@@ -75,11 +75,11 @@ void func_800908D4(u8 mode, s32 arg1)
     struct State *st;
     s32 ret;
 
-    D_8009CBD0.unk34 = saved;
+    gSectorBufferPtr.unk34 = saved;
     if (mode == 1) {
-        if (D_8009CBD0.unk14 > 0) {
+        if (gSectorBufferPtr.unk14 > 0) {
             __asm__ volatile("");
-            if (D_8009CBD0.command == 0x200) {
+            if (gSectorBufferPtr.command == 0x200) {
                 if (D_8009C814 & 1) {
                     func_8008E5D8(0);
                     func_8008E5B8(&tmp.loc, 3);
@@ -120,12 +120,12 @@ void func_800908D4(u8 mode, s32 arg1)
             }
         }
     } else {
-        D_8009CBD0.unk14 = -1;
+        gSectorBufferPtr.unk14 = -1;
     }
 
     {
         s32 t = func_80091270(-1);
-        st = &D_8009CBD0;
+        st = &gSectorBufferPtr;
         __asm__("" : "+r"(st));
         st->unk18 = t;
     }

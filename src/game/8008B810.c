@@ -14,7 +14,7 @@ extern u32 D_8009C764;
 extern u32 D_8009C758;
 extern u32 D_8009C754;
 extern u32 D_8009C7A8;
-extern u32 D_8009C740;
+extern u32 gPadDataOffset __asm__("D_8009C740");
 extern s32 func_8008AB80(Unk8008B810 *, u32);
 
 /**
@@ -48,8 +48,8 @@ s32 func_8008B810(Unk8008B810 *arg0)
         }
     }
     if (D_8009C7A8 != 0) {
-        ((void (*)(void *))D_8009C740)(arg0->unkC);
-        ((void (*)(void *))D_8009C740)((u8 *)arg0->unkC + 0xF0);
+        ((void (*)(void *))gPadDataOffset)(arg0->unkC);
+        ((void (*)(void *))gPadDataOffset)((u8 *)arg0->unkC + 0xF0);
     }
     a0 = arg0;
     if (arg0->unk36 != 0) {

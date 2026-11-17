@@ -9,8 +9,9 @@ struct Port { u8 pad0[0x3c]; u8 *response; u8 pad40[4]; u8 index; u8 count; u8 p
 struct Device { volatile u8 data; u8 pad1[3]; volatile u16 status; u8 pad6[8]; volatile u16 control; };
 extern struct Device *gSio0RegBasePtr __asm__("D_8009C78C");
 extern volatile u32 *gInterruptStatusPtr __asm__("D_8009C788");
-extern u32 D_8009C76C;
-extern u32 D_800A6E18, D_800A9448;
+extern u32 gPadDispatchIndex __asm__("D_8009C76C");
+extern u32 D_800A6E18;
+extern u32 gTimeoutThreshold __asm__("D_800A9448");
 extern void func_8008C890(u32);
 extern s32 func_8008C8B0(void);
 
@@ -83,11 +84,11 @@ done:;
                 count += 0x10000;
         }
         if (*(volatile u16 *)0x1f801124 & 0x200) {
-            if (count - D_800A6E18 >= D_800A9448) return -2;
+            if (count - D_800A6E18 >= gTimeoutThreshold) return -2;
         }
-        if ((count - D_800A6E18) >> 3 >= D_800A9448) return -2;
+        if ((count - D_800A6E18) >> 3 >= gTimeoutThreshold) return -2;
     }
-    if (port->id != 8 && D_8009C76C == 2) {
+    if (port->id != 8 && gPadDispatchIndex == 2) {
         func_8008C890(60);
         while (!func_8008C8B0()) {}
     }

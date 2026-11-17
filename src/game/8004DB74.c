@@ -16,7 +16,7 @@ struct EntityMessage {
 };
 
 extern struct EntityMessage D_800A2090[];
-extern u32 D_8009F7A8;
+extern u32 gPendingMessageMask __asm__("D_8009F7A8");
 
 extern u8 func_8004DA84(struct Entity *entity, u8 kind, u8 value, s32 retry);
 
@@ -46,10 +46,10 @@ void func_8004DB74(s32 elapsed)
     struct EntityMessage *message;
     u32 bit;
 
-    if (D_8009F7A8 == 0) {
+    if (gPendingMessageMask == 0) {
         return;
     }
-    pending = D_8009F7A8;
+    pending = gPendingMessageMask;
     message = D_800A2090;
     i = 0;
     bit = 1;
@@ -66,7 +66,7 @@ void func_8004DB74(s32 elapsed)
             func_8004DA84(message->target, message->kind, message->value, 0) == 0) {
             goto next;
         }
-        D_8009F7A8 ^= bit << i;
+        gPendingMessageMask ^= bit << i;
 next:
         i++;
         message++;

@@ -24,8 +24,8 @@ typedef struct Node {
     struct Node *next;
 } Node;
 
-extern Node **D_8009F780;
-extern s32 D_8009F78C;
+extern Node **gLightGrid __asm__("D_8009F780");
+extern s32 gLightGridWidth __asm__("D_8009F78C");
 
 extern void func_800188D0(s32 angle, s32 arg7, s32 arg8, struct TransformMatrix *matrix);
 extern void func_8001AF84(struct TransformMatrix *matrix, struct TransformPoint *source,
@@ -98,12 +98,12 @@ void func_80049980(Node *node, s32 x, s32 z, s32 y, s32 width, s32 depth,
     s32 w32;
     s32 d32;
 
-    index = (z >> 17) + D_8009F78C * (x >> 17);
+    index = (z >> 17) + gLightGridWidth * (x >> 17);
     if (index != node->unk2) {
         if (node->unk2 >= 0) {
-            curr = D_8009F780[node->unk2];
+            curr = gLightGrid[node->unk2];
             if (curr == node) {
-                D_8009F780[node->unk2] = node->next;
+                gLightGrid[node->unk2] = node->next;
             } else {
                 while (curr != 0) {
                     if (curr->next == node) {
@@ -116,11 +116,11 @@ void func_80049980(Node *node, s32 x, s32 z, s32 y, s32 width, s32 depth,
         }
 
         node->unk2 = index;
-        if (node->unk4 >= 0 || D_8009F780[index] == 0) {
-            node->next = D_8009F780[index];
-            D_8009F780[index] = node;
+        if (node->unk4 >= 0 || gLightGrid[index] == 0) {
+            node->next = gLightGrid[index];
+            gLightGrid[index] = node;
         } else {
-            curr = D_8009F780[index];
+            curr = gLightGrid[index];
             while (curr->next != 0) {
                 curr = curr->next;
             }

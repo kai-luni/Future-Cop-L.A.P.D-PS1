@@ -115,7 +115,7 @@ struct Locals5F018 {
     __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
                      : "=r"(out) : "r"(a), "r"(b) : "$8", "$9")
 
-extern void *D_800A7040[][0x100];
+extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void func_80017668(struct ModelInstance *instance, s32 part, s32 *out);
 extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
@@ -202,7 +202,7 @@ void func_8005F018(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec3
     flag = 0;
 
     if (arg0->data->unk01 == 0xB && arg0->data->unk1B != 0) {
-        obj = (struct Obj5F018 *)D_800A7040[0][arg0->data->unk1B];
+        obj = (struct Obj5F018 *)gSpawnRecordMap[0][arg0->data->unk1B];
         if (obj != 0 && obj->unk04 != 0x58) {
             obj = 0;
         }

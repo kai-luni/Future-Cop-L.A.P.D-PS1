@@ -7,7 +7,7 @@ extern char *D_800A3E70;
 extern char D_80012594[], D_80012498[];
 extern char gCdErrorLogMsg[] __asm__("D_80012488");
 extern int D_8009C8CC[], D_8009C94C[];
-extern u8 D_8009C8C5;
+extern u8 gLastResultByte __asm__("D_8009C8C5");
 extern u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern int *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
 extern int func_80091270(int);
@@ -99,7 +99,7 @@ int func_8008FAC8(int mode)
                     first <<= 2;
                     __asm__("" : "+r"(first));
                     fifth = *(int *)second;
-                    index = D_8009C8C5;
+                    index = gLastResultByte;
                     __asm__("" : "+r"(first), "+r"(fifth), "+r"(index));
                     {
                         register int fourth __asm__("$7");

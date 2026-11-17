@@ -8,8 +8,8 @@ struct GridObject {
     struct GridObject *next;
 };
 
-extern struct GridObject **D_8009F780;
-extern s32 D_8009F784;
+extern struct GridObject **gLightGrid __asm__("D_8009F780");
+extern s32 gLightNodePool __asm__("D_8009F784");
 
 extern void func_800195D0(s32 pool, struct GridObject *object);
 
@@ -39,7 +39,7 @@ void func_800498F0(struct GridObject *object)
     struct GridObject *node;
 
     if (object->cell >= 0) {
-        cell = &D_8009F780[object->cell];
+        cell = &gLightGrid[object->cell];
         node = *cell;
         if (node == object) {
             *cell = object->next;
@@ -53,5 +53,5 @@ void func_800498F0(struct GridObject *object)
             }
         }
     }
-    func_800195D0(D_8009F784, object);
+    func_800195D0(gLightNodePool, object);
 }

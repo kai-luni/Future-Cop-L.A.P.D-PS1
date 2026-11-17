@@ -6,7 +6,7 @@ struct Unk402DCOwner {
     s32 unk08;
 };
 
-extern void *D_800A7040[][0x100];
+extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern u8 D_8009F31C;
 
 extern u32 *func_8003B3D8(u32 column, u32 row);
@@ -55,7 +55,7 @@ extern void *func_8003FD74(s32 column, s32 row, struct Unk402DCOwner *owner, s32
  */
 s32 func_800402DC(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4)
 {
-    if (D_800A7040[row][column] == 0) {
+    if (gSpawnRecordMap[row][column] == 0) {
         return 0;
     }
     if ((*(u16 *)func_8003B3D8(column, row) & 5) == 4) {

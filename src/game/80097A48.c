@@ -5,8 +5,8 @@ typedef void (*SpuDmaCallback)(void);
 
 extern s32 D_8009EE94;
 extern s32 D_8009EEDC;
-extern SpuDmaCallback D_8009EEE0;
-extern void *D_8009EA2C;
+extern SpuDmaCallback gInstalledHandler __asm__("D_8009EEE0");
+extern void *gSpuDmaCallback __asm__("D_8009EA2C");
 
 extern void func_8008C9A0(void);
 extern void func_8008C9B0(void);
@@ -52,8 +52,8 @@ void func_80097A48(void)
             "sw\t$zero,%lo(D_8009EEE0)($at)\n\t"
             ".set\treorder\n\t"
         );
-        func_8008C970(D_8009EA2C);
-        func_8008C990(D_8009EA2C);
+        func_8008C970(gSpuDmaCallback);
+        func_8008C990(gSpuDmaCallback);
         func_8008C9B0();
     }
 }

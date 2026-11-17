@@ -74,7 +74,7 @@ struct Unk3D680 {
 
 extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
 extern struct Unk3D680 *D_8009F320;
-extern void *D_800A7040[][0x100];
+extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void *func_80017EBC(s32 size, s32 tag);
 extern u32 *func_8003B3D8(u32 column, u32 row);
@@ -221,7 +221,7 @@ struct Unk3D680 *func_8003D680(struct Unk3D680Source *source, u8 type, s32 row,
 
     column = type & 0xFF;
     result = func_8003B3D8(column, row);
-    entry = (struct Unk3D680Entry *)D_800A7040[row][column];
+    entry = (struct Unk3D680Entry *)gSpawnRecordMap[row][column];
 
     if (entry != 0 && result != 0 &&
         ((s32)arg5 != 0 || (entry->unk32 & 0x40) || (*(u8 *)result & 4))) {

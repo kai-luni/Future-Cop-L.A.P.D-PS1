@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
-extern s32 D_8009F464;
+extern s32 gStillRunningState __asm__("D_8009F464");
 
 extern void func_8007FB04(void);
 
@@ -40,11 +40,11 @@ void func_80080B08(void)
         break;
     case 2:
         if (gSaveProfileImage[0x201] != 1) {
-            D_8009F464 = 3;
+            gStillRunningState = 3;
         }
         break;
     default:
-        D_8009F464 = 3;
+        gStillRunningState = 3;
         break;
     }
 }

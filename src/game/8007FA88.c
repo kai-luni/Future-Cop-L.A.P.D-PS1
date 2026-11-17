@@ -11,7 +11,7 @@ typedef struct {
 } UnkStruct;
 
 extern UnkStruct *gSaveProfileImage __asm__("D_8009F92C");
-extern u8 D_8009F496;
+extern u8 gPendingFlag __asm__("D_8009F496");
 
 extern void func_800206D0(void);
 
@@ -48,6 +48,6 @@ void func_8007FA88(void)
         register UnkStruct *q __asm__("$3") = gSaveProfileImage;
         register s32 one __asm__("$2") = 1;
         q->unk203 = six;
-        D_8009F496 = one;
+        gPendingFlag = one;
     }
 }

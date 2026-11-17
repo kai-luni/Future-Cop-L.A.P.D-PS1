@@ -132,6 +132,78 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 
 Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage).
 
+## Effekt-Renderer, Lichtraster, Frontend und Pad-Treiber
+
+Fünfzig weitere Globals in **einem** Commit. Zwei Kandidaten fielen beim Byte-Vergleich durch (`D_8009F79C`, `D_8009F7C0`) und bleiben stehen; `D_8009EA00` erwies sich als reines Inline-Asm-Symbol ohne C-Deklaration und wurde durch `D_8009EEE0` ersetzt.
+
+### Effekte, Objekte und Skript-VM
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_800A2950` | `gWorldClipRect` | `s32[4]` | Welt-Rechteck für x/z mit 0x800 Rand, gegen das Positionen geprüft werden. |
+| `D_800A6578` | `gMapGrid` | `u32[]` | 256-Spalten-Zellenraster, dessen Zellwort per Zeigerrechnung adressiert wird. |
+| `D_800A7040` | `gSpawnRecordMap` | `s32[2][256]` | Spawn-Datensatz je Karte; beim Eintragen wird das Raster-Byte gelöscht. |
+| `D_800A8DC0` | `gPlayerCollisionCandidates` | `Entry[]` | Kandidatenliste für Spieler-Kollisionen gegen den Gegenspieler. |
+| `D_800A8EA8` | `gPendingEntryList` | `Request[]` | Ausstehende Einträge; beim Verwerfen wird der Completion-Callback (`+0x0C`) genullt. |
+| `D_800A8F94` | `gEffectPoolCapacity` | `s32` | Kapazität des Effektpools; bei Erreichen schrumpft die Grenze von 0x38000 auf 0x20000. |
+| `D_800A8F98` | `gEffectListHead` | `Node *[]` | Listenkopf der Effektkette, Zähler steht zwei Langwörter daneben. |
+| `D_800A2290` | `gSideStepTable` | `u8[][8]` | Tabelle `[Seite][Schritt]` für den Verfolger-Kamerapfad. |
+| `D_800A22F0` | `gDomeEffectBlock` | `Block *[4]` | Angehängter Effektblock (0x1B0 Bytes) mit Kuppelnetz und zwölf Bewegungs-Einträgen. |
+| `D_800A2300` | `gEffectKeyTable` | `Entry[]` | Schlüssel-Tabelle; das Feld `unk02` landet in `obj->unk20`. |
+| `D_800A3538` | `gObjectPool` | `Pool` | Objektpool, den `func_8006EDC4` verwaltet. |
+| `D_800A353C` | `gObjectListHead` | `PoolNode *` | Kopf der Objektliste, je Eintrag einmal aufgerufen. |
+| `D_800A3320` | `gOperandStack` | `s32[]` | Globaler Operandenstapel der Skript-VM. |
+| `D_800A3340` | `gVmRecordTable` | `Entry[]` | Datensätze der VM; Rückgabe ist der Zeiger auf den Treffer oder 0. |
+| `D_8009F9A4` | `gVmCountdowns` | `s32[32]` | 32 Countdown-Einträge der Skript-VM, um `amount` dekrementiert und bei 0 geklemmt. |
+
+### Lichtraster und Fragmente
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F780` | `gLightGrid` | `Node **` | Eimer-Raster der räumlichen Lichtknoten. |
+| `D_8009F784` | `gLightNodePool` | `FixedPool *` | Pool-Handle für 0x180 Knoten zu je 0x44 Bytes. |
+| `D_8009F78C` | `gLightGridWidth` | `s32` | Spaltenzahl des Lichtrasters. |
+| `D_8009F790` | `gLightGridHeight` | `s32` | Zeilenzahl des Lichtrasters. |
+| `D_8009F700` | `gLightStrengthScale` | `s32` | Faktor der Lichtstärke: `(Radius - Distanz) * Wert >> 16`. |
+| `D_8009F710` | `gShadowThreshold` | `s16` | Schwelle, unterhalb derer Schattenhalbwörter gesetzt werden. |
+| `D_8009F798` | `gFragmentFreeList` | `Node *` | Freiliste der Fragmentknoten. |
+| `D_8009F7B0` | `gFreedPointer` | `s32` | Zeiger, der beim Aufräumen freigegeben und genullt wird. |
+| `D_8009F7C4` | `gControlMaskWord` | `u32` | Zweites Steuerwort des Layout-Maskenpfads. |
+
+### Frontend-Zustände
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F3E8` | `gPauseFlag` | `u8` | Pause-Flag, wird beim Start von Sound 0x49 gelöscht. |
+| `D_8009F3EC` | `gPendingModuleNameFlag` | `s32` | Zeigt an, dass ein Modulname kopiert und um `".mis"` ergänzt werden soll. |
+| `D_8009F3F0` | `gModuleLoadState` | `s8` | Zustandsnummer des Modul-Ladepfads (nach dem Kopieren auf 5 gesetzt). |
+| `D_8009F464` | `gStillRunningState` | `s32` | Wird auf 2 geschrieben, solange `func_8007F8CC` „läuft noch" meldet. |
+| `D_8009F496` | `gPendingFlag` | `u8` | Ausstehendes Flag, das `func_8007FACC` konsumiert. |
+| `D_8009F4D4` | `gInitGuardFlag` | `u8` | Wächter gegen einen zweiten Durchlauf der einmaligen Arbeit. |
+| `D_8009F4DC` | `gChunkSkipFlag` | `s32` | Bit 0 bewirkt, dass Chunks ab 0x424C Bytes übersprungen werden. |
+| `D_8009F504` | `gLayerOpenResult` | `u8` | 1 nach erfolgreichem Öffnen der Ebene, sonst 0. |
+| `D_8009F518` | `gTextLookupTable` | `void *` | Aktive Text-Lookup-Tabelle, die `func_800898E8` freigibt. |
+| `D_8009F8C8` | `gDeferredTransition` | `s32` | Verzögerte Zustandsumschaltung, wenn das Übergangsbyte nicht 1 ist. |
+
+### Pad- und CD-Treiber
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009C740` | `gPadDataOffset` | `u32` | Offset auf den Datenzeiger samt 0xF0-Versatz bei aktivem Pfad. |
+| `D_8009C75C` | `gPadBasePort` | `char *` | Basis-Port, der an den Handler gegeben wird. |
+| `D_8009C76C` | `gPadDispatchIndex` | `s32` | Dispatch-Index, steuert die Nachbereitung des Aufrufs. |
+| `D_8009C7AC` | `gPadHandlerTable` | `s32 (*[])(void)` | Tabelle der indiziert aufgerufenen Pad-Handler. |
+| `D_8009C8C4` | `gLastCommandResult` | `u8` | Zuletzt gespeichertes Kommandoergebnis des Treibers. |
+| `D_8009C8C5` | `gLastResultByte` | `u8` | Einzelbyte dazu, vorzeichenlos gelesen und weitergereicht. |
+| `D_8009CAEC` | `gCommandParamMask` | `int[]` | Je Kommando ein Flag: nur dann ist ein Parameterpuffer erforderlich. |
+| `D_8009CBD0` | `gSectorBufferPtr` | `struct State` | Pufferzeiger, der je abgeschlossenem Sektor um `unk8` weiterläuft. |
+| `D_8009CC88` | `gFrameClockAnchor` | `char[]` | Anker der Frame-Uhr; die Initialisierung liefert diese Adresse oder null. |
+| `D_800A9448` | `gTimeoutThreshold` | `volatile u32` | Zeitüberschreitungsschwelle (60, 0x50, 0x91, 400). |
+| `D_8009EEE0` | `gInstalledHandler` | `s32` | Zwischengespeicherter, aktuell installierter Handler; bei Treffer kehrt der Rumpf sofort zurück. |
+| `D_8009EA2C` | `gSpuDmaCallback` | `void *` | SPU-DMA-Kanal-4-Callback, beim Aufräumen gelöscht. |
+
+**Nicht umbenannt:** `D_8009F79C` (Zähler der aktiven Knoten) und `D_8009F7C0` (Controller-/Profilwörter `[0..1]`) — Byte-Vergleich kippt nach dem Rename. `D_8009EA00` existiert nur als Inline-Asm-Symbol ohne C-Deklaration und kann deshalb keinen C-Namen tragen.
+
 ## Heap, CD-Treiber, Layer und Mischer
 
 Fünfzig weitere Globals, wieder in **einem** Commit. Zwei davon mussten in `8001C808.c` von Hand nachgezogen werden, weil dort Mehrfach-Deklarationen stehen, die das Umbenennungsskript überspringt.

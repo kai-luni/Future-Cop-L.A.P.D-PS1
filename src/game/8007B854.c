@@ -28,11 +28,12 @@ extern s8 gLineCount __asm__("D_8009F87F");
 extern s8 gSelectedRow __asm__("D_8009F87E");
 extern s8 *D_8009F884;
 extern u8 D_8009F8BD;
-extern s32 D_8009F8C4, D_8009F8C8;
+extern s32 D_8009F8C4;
+extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 D_8009B300[], D_8009F444[], D_8009F488[];
 extern u8 D_800A3628[], D_800A3658[], D_800A3838[];
-extern u8 *D_8009F3EC;
-extern u8 D_8009F3F0;
+extern u8 *gPendingModuleNameFlag __asm__("D_8009F3EC");
+extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern u8 *D_8009F468;
 extern void func_80078650(void *, s32);
 extern s32 func_80046C84(s32, s32);
@@ -176,20 +177,20 @@ SELECTION_DONE:;
                     if (gGameSession->unkC == 1) message = D_800A3628;
                     else message = D_800A3658;
                     func_80078650(message, 1);
-                    D_8009F8C8 = 2;
+                    gDeferredTransition = 2;
                     D_8009F8C4 = 0;
                     if (SELECTED.unk1F == 10) special = SELECTED.unkE;
                 }
             } else {
-                D_8009F8C8 = 1;
+                gDeferredTransition = 1;
                 D_8009F8C4 = SELECTED.unk4;
             }
-            if (D_8009F8C8 != 0) {
+            if (gDeferredTransition != 0) {
                 func_8008CCB0(D_8009B300, SELECTED.unk0);
-                if (func_8008CCA0(D_8009B300, D_8009F444) == 0) D_8009F3EC = D_8009F488;
-                else D_8009F3EC = 0;
-                if (special != 0) D_8009F3F0 = special;
-                else if (SELECTED.unkC != 0) D_8009F3F0 = SELECTED.unkC;
+                if (func_8008CCA0(D_8009B300, D_8009F444) == 0) gPendingModuleNameFlag = D_8009F488;
+                else gPendingModuleNameFlag = 0;
+                if (special != 0) gModuleLoadState = special;
+                else if (SELECTED.unkC != 0) gModuleLoadState = SELECTED.unkC;
             }
         } else {
             *p = 1;

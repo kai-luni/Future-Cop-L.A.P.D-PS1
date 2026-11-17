@@ -27,7 +27,7 @@ struct OutC2A4 {
 };
 
 extern s32 D_8009F310;
-extern struct UnkC2A4 *D_800A7040[][0x100];
+extern struct UnkC2A4 *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void *func_80017EBC(s32 size, s32 tag);
 extern void func_800188D0(s32 arg0, s32 arg1, s32 arg2, s32 *out);
@@ -75,7 +75,7 @@ u8 func_8003C2A4(struct UnkC2A4 *data)
                       (((matrix[7] >> 4) * data->unk1C) >> 8);
     out->position.z += ((matrix[8] >> 4) * data->unk1C) >> 8;
     func_8003FD74(data->unk14, D_8009F310, 0, (s32)out);
-    object = D_800A7040[D_8009F310][data->unk14];
+    object = gSpawnRecordMap[D_8009F310][data->unk14];
     if (object != 0 && (object->flags & 1) != 0) {
         return 1;
     }

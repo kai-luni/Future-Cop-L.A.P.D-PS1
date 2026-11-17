@@ -25,7 +25,7 @@ extern  u8 (*gPadTxByteHook)(UnkBA34_Arg *, s32) __asm__("D_8009C730");
 extern void (*D_8009C734)();
 extern void (*D_8009C748)(u8 *);
 extern void (*D_8009C74C)(u8 *);
-extern UnkBA34_Item *D_8009C75C;
+extern UnkBA34_Item *gPadBasePort __asm__("D_8009C75C");
 extern s32 gPadSlotIndex __asm__("D_8009C768");
 extern s32 D_8009C774;
 extern s32 D_8009C780[2];
@@ -101,7 +101,7 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
             break;
         }
         if (D_8009C780[idx] > 0) {
-            ptr = D_8009C75C[idx].unk0C + D_8009C780[idx] * 0xF0 - 0xF0;
+            ptr = gPadBasePort[idx].unk0C + D_8009C780[idx] * 0xF0 - 0xF0;
             D_8009C748(ptr);
         }
         switch (D_8009C780[idx]) {
@@ -114,7 +114,7 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
             break;
         case 0:
         case 1:
-            ptr = (u8 *)&D_8009C75C[idx];
+            ptr = (u8 *)&gPadBasePort[idx];
             D_8009C748(ptr);
             D_8009C74C(ptr);
             D_8009C780[idx] = -1;

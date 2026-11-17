@@ -12,7 +12,7 @@ struct Unk8003F854 {
 extern struct Unk8003F854 *D_800A1070[7];
 extern struct Unk8003F854 *gPendingSpawnList __asm__("D_8009F314");
 extern struct Unk8003F854 *D_8009F30C;
-extern void *D_800A7040[0x200];
+extern void *gSpawnRecordMap[0x200] __asm__("D_800A7040");
 extern void *D_800A0C70[0x100];
 
 extern void func_800181D4(void *block);
@@ -105,7 +105,7 @@ void func_8003F854(s32 arg0)
 
         bank = 0;
         both = 2;
-        row = D_800A7040;
+        row = gSpawnRecordMap;
         do {
             if (mode == both || mode == bank) {
                 register s32 i __asm__("$17");

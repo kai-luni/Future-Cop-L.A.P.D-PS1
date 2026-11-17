@@ -1,7 +1,7 @@
 // Categories: Graphics > Video Layer | Resources > Memory Management
 #include "game/types.h"
 
-extern u32 D_8009F4DC;
+extern u32 gChunkSkipFlag __asm__("D_8009F4DC");
 extern void *D_8009F4E4;
 extern void *D_8009F4E8;
 extern void *D_8009F4EC;
@@ -10,7 +10,7 @@ extern void *D_8009F4F4;
 extern void *D_8009F4F8;
 extern void *D_8009F4FC;
 extern void *D_8009F500;
-extern u8 D_8009F504;
+extern u8 gLayerOpenResult __asm__("D_8009F504");
 
 extern void func_80085A24(void);
 extern void func_80085AC4(s32, s32);
@@ -48,7 +48,7 @@ void func_80087D48(void)
 {
     func_80085A24();
 
-    if (!(D_8009F4DC & 0x20)) {
+    if (!(gChunkSkipFlag & 0x20)) {
         func_80085AC4(1, 0);
         func_8001C088((u8)func_800858E0(), 0);
         func_80091270(0);
@@ -64,7 +64,7 @@ void func_80087D48(void)
     if (D_8009F4F0 != 0) {
         func_800879BC(D_8009F4F0);
     }
-    if (!(D_8009F4DC & 1)) {
+    if (!(gChunkSkipFlag & 1)) {
         if (D_8009F4EC != 0) {
             func_800879BC(D_8009F4EC);
         }
@@ -90,5 +90,5 @@ void func_80087D48(void)
     D_8009F4F8 = 0;
     D_8009F4FC = 0;
     D_8009F500 = 0;
-    D_8009F504 = 0;
+    gLayerOpenResult = 0;
 }

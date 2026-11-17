@@ -6,7 +6,7 @@ struct Unk4AA90 {
     struct Unk4AA90 *next;
 };
 
-extern struct Unk4AA90 *D_8009F798;
+extern struct Unk4AA90 *gFragmentFreeList __asm__("D_8009F798");
 
 /**
  * @brief Pops the head of the fragment free list D_8009F798, keeping the
@@ -31,11 +31,11 @@ struct Unk4AA90 *func_8004AA90(void)
 {
     struct Unk4AA90 *current;
 
-    current = D_8009F798;
+    current = gFragmentFreeList;
     if (current->next == 0) {
         goto empty;
     }
-    D_8009F798 = current->next;
+    gFragmentFreeList = current->next;
     goto done;
 empty:
     current = 0;

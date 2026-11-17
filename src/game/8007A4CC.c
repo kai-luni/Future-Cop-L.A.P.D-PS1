@@ -14,7 +14,7 @@ extern u8 D_800A377D[];
 extern u8 D_8009F459;
 extern u8 D_8009F3E6;
 extern void *D_8009F8C4;
-extern s32 D_8009F8C8;
+extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 D_80012094[];
 extern u8 D_800A368B;
 
@@ -58,7 +58,7 @@ void func_8007A4CC(s32 a0)
         __asm__ volatile("" ::: "memory");
         D_8009F459 = 0;
         func_80077708();
-        D_8009F8C8 = 5;
+        gDeferredTransition = 5;
         D_8009F8C4 = 0;
         if (D_8009F3E6 == 0) {
             D_8009F3E6 = 1;

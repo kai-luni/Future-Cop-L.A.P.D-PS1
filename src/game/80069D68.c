@@ -7,8 +7,8 @@ struct Entity {
 };
 
 extern u8 gScriptVmDisabled __asm__("D_8009F840");
-extern s32 D_800A3320[];
-extern s32 *D_8009F9A4;
+extern s32 gOperandStack[] __asm__("D_800A3320");
+extern s32 *gVmCountdowns __asm__("D_8009F9A4");
 extern s32 *D_8009F9F8;
 extern s32 *gGameSession __asm__("D_8009FA94");
 extern s32 *D_8009FAD4;
@@ -166,12 +166,12 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
     }
 
     depth = 1;
-    D_800A3320[0] = depth;
+    gOperandStack[0] = depth;
     if (arg2 >= 0) {
-        D_800A3320[1] = arg2;
+        gOperandStack[1] = arg2;
         depth = 2;
     }
-    stack = &D_800A3320[depth];
+    stack = &gOperandStack[depth];
 
     do {
         op = *code++;
@@ -221,7 +221,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             a = *(s32 *)(gGameSession[a + 0x39]);
             goto push;
         case 18:
-            a = D_8009F9A4[a] / 5;
+            a = gVmCountdowns[a] / 5;
             goto push;
         case 19:
             a = D_8009FAD4[a];
@@ -233,7 +233,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             *(s32 *)(gGameSession[a + 0x39]) = b;
             break;
         case 31:
-            D_8009F9A4[a] = b * 5;
+            gVmCountdowns[a] = b * 5;
             break;
         case 32:
             D_8009FAD4[a] = b;
@@ -245,7 +245,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             gGameSession[a + 0x39]++;
             goto push;
         case 23:
-            D_8009F9A4[a] += 5;
+            gVmCountdowns[a] += 5;
             goto push;
         case 24:
             D_8009FAD4[a]++;
@@ -257,7 +257,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             gGameSession[a + 0x39]--;
             goto push;
         case 27:
-            D_8009F9A4[a] -= 5;
+            gVmCountdowns[a] -= 5;
             goto push;
         case 28:
             D_8009FAD4[a]--;
@@ -269,7 +269,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             gGameSession[a + 0x39] += b;
             goto push;
         case 50:
-            D_8009F9A4[a] += b * 5;
+            gVmCountdowns[a] += b * 5;
             goto push;
         case 51:
             D_8009FAD4[a] += b;
@@ -281,7 +281,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             gGameSession[a + 0x39] -= b;
             goto push;
         case 54:
-            D_8009F9A4[a] -= b * 5;
+            gVmCountdowns[a] -= b * 5;
             goto push;
         case 55:
             D_8009FAD4[a] -= b;
@@ -410,5 +410,5 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
     } while (*code != 0);
 
     depth--;
-    return D_800A3320[depth];
+    return gOperandStack[depth];
 }

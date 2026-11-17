@@ -9,7 +9,7 @@ struct Pool {
 
 extern struct Pool D_800A22A0;
 extern struct Pool D_800A22B0;
-extern void *D_800A22F0[];
+extern void *gDomeEffectBlock[] __asm__("D_800A22F0");
 extern s16 D_800A22E8[];
 extern s32 D_8009F374;
 
@@ -42,7 +42,7 @@ void func_8005E1BC(void)
     func_8003BE2C(&D_800A22A0, 0x38, 0xA);
     func_8003BE2C(&D_800A22B0, 0x60, 0xA);
     for (i = 3; i >= 0; i--) {
-        D_800A22F0[i] = 0;
+        gDomeEffectBlock[i] = 0;
     }
     D_8009F374 = 0;
 }

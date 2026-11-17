@@ -25,8 +25,8 @@ extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 D_8009F7A4;
 extern struct Entity *D_8009FA40;
 extern s32 gCommandListHead __asm__("D_800A8F90");
-extern s32 D_800A8F94;
-extern struct Entity *D_800A8F98[];
+extern s32 gEffectPoolCapacity __asm__("D_800A8F94");
+extern struct Entity *gEffectListHead[] __asm__("D_800A8F98");
 extern s32 func_80045678(s32, s32, s32, s32, s32);
 extern void func_8004572C(s32, s32, s32, s32, s32);
 extern void func_800457B8(s32, s32);
@@ -94,7 +94,7 @@ outer_head:
         flag = 1;
         D_8009F7A4 = gDiscShadeByte + 0x12C;
     }
-    out = D_800A8F98;
+    out = gEffectListHead;
     count = 0;
     e = D_8009FA40;
     if (e != 0) {

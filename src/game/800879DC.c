@@ -1,7 +1,7 @@
 // Categories: Resources > Movie Playback > Stream Demux | Graphics > Video Decode | Platform > Sound
 #include "game/types.h"
 
-extern u32 D_8009F4DC;
+extern u32 gChunkSkipFlag __asm__("D_8009F4DC");
 extern u8 D_8009F4E0;
 extern u32 D_8009F958;
 extern u32 D_8009F95C;
@@ -126,7 +126,7 @@ s32 func_800879DC(u8 *arg0, u8 *arg1, s32 arg2)
         size = ((*(u32 *)(data + 4) >> 24) | ((*(u32 *)(data + 4) >> 8) & 0xFF00) |
                 ((*(u32 *)(data + 4) & 0xFF00) << 8) | (*(u32 *)(data + 4) << 24));
 
-        if (D_8009F4DC & 1) {
+        if (gChunkSkipFlag & 1) {
             if (size >= 0x424C) {
                 slot = 4;
                 goto common;

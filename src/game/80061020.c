@@ -69,7 +69,7 @@ struct GlobalFA94 {
     s32 unk5C;
 };
 
-extern struct Table *D_8009F800;
+extern struct Table *gRegistryTable __asm__("D_8009F800");
 extern struct Unit *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct GlobalFA94 *gGameSession __asm__("D_8009FA94");
 extern struct Actor *D_8009FA58[];
@@ -106,7 +106,7 @@ void func_80061020(struct Unit *arg0)
     register s32 targetId __asm__("$10");
     register s32 one __asm__("$9");
 
-    table = D_8009F800;
+    table = gRegistryTable;
     targetId = arg0->unk14;
     cursor = table->entries;
     remaining = table->count;

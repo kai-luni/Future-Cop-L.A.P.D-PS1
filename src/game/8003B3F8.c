@@ -6,8 +6,8 @@ struct Unk3B3F8 {
     u8 flags;
 };
 
-extern void *D_800A7040[][0x100];
-extern u8 D_800A6578[][0x100][4];
+extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
+extern u8 gMapGrid[][0x100][4] __asm__("D_800A6578");
 
 /**
  * @brief Copies spawn-table cell flags into a newly created object's +0x10 flags byte.
@@ -36,7 +36,7 @@ extern u8 D_800A6578[][0x100][4];
 void func_8003B3F8(struct Unk3B3F8 *object, u32 column, s32 row)
 {
     column &= 0xFF;
-    if (D_800A7040[row][column] != 0) {
-        object->flags |= D_800A6578[row][column][0];
+    if (gSpawnRecordMap[row][column] != 0) {
+        object->flags |= gMapGrid[row][column][0];
     }
 }

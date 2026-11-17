@@ -13,8 +13,8 @@ typedef struct UnkFAD4Local {
     s16 rect[4];
 } UnkFAD4Local;
 
-extern UnkFAD4Node *D_8009F708;
-extern s32 D_8009F70C;
+extern UnkFAD4Node *gDeferredList __asm__("D_8009F708");
+extern s32 gDeferredPool __asm__("D_8009F70C");
 extern s32 D_8009F9B8;
 extern s32 gScreenUvBase __asm__("D_8009FAA0");
 
@@ -58,7 +58,7 @@ extern void func_80092C8C(s32 arg0);
  */
 void func_8003FAD4(void)
 {
-    UnkFAD4Node *node = D_8009F708;
+    UnkFAD4Node *node = gDeferredList;
     UnkFAD4Local local;
 
     func_8003C590(0);
@@ -69,7 +69,7 @@ void func_8003FAD4(void)
         node = node->next;
     }
 
-    func_80019584(D_8009F70C);
+    func_80019584(gDeferredPool);
 
     local.color[0] = 0xC210C210;
     local.color[1] = 0xC210C210;
@@ -77,8 +77,8 @@ void func_8003FAD4(void)
     gScreenUvBase = 0x15E;
     local.rect[0] = 0x380;
     local.rect[1] = 0x100;
-    D_8009F70C = 0;
-    D_8009F708 = 0;
+    gDeferredPool = 0;
+    gDeferredList = 0;
     local.rect[2] = 2;
     local.rect[3] = 2;
 
