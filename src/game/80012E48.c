@@ -2,7 +2,7 @@
 typedef unsigned int u32;
 typedef unsigned char u8;
 extern u32 gModelTriangleListSize __asm__("D_8009F528");
-extern u8 *D_8009F540;
+extern u8 *gModelBoundingBox __asm__("D_8009F540");
 extern u8 *gModelMeshInfo __asm__("D_8009F53C");
 extern u8 *gModelHierarchy __asm__("D_8009F538");
 extern u8 *gModelTriangleList __asm__("D_8009F534");
@@ -50,7 +50,7 @@ void func_80012E48(u8 *base, u32 size)
         case 0x34444e4c: D_8009F558[index] = data; break;
         case 0x3344524c: D_8009F55C[index] = data; break;
         case 0x33445246: D_8009F560[index] = data; break;
-        case 0x33444242: D_8009F540 = p + 8; break;
+        case 0x33444242: gModelBoundingBox = p + 8; break;
         case 0x34444749: gModelGeometryChunk = p; break;
         case 0x3344514c: gModelPolygonList = data; break;
         case 0x3344544c: gModelTriangleList = data; gModelTriangleListSize = length - 12; break;
