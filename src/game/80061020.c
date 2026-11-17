@@ -70,7 +70,7 @@ struct GlobalFA94 {
 };
 
 extern struct Table *D_8009F800;
-extern struct Unit *D_8009F9EC;
+extern struct Unit *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct GlobalFA94 *D_8009FA94;
 extern struct Actor *D_8009FA58[];
 
@@ -113,7 +113,7 @@ void func_80061020(struct Unit *arg0)
     if (remaining > 0) {
         one = 1;
         __asm__ volatile ("" : : "r"(one));
-        unit = D_8009F9EC;
+        unit = gSinglePlayerEntity;
         do {
             entry = *cursor++;
             info = entry->info;

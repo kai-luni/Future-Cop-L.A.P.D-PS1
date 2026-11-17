@@ -43,7 +43,7 @@ typedef struct State {
 extern s32 D_8009FA00, D_8009FAA4;
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern State *D_8009FA94;
-extern Game *D_8009F9EC;
+extern Game *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern u8 D_8009F34C[], D_8009F354[], D_800117C0[];
 extern u8 **D_8009F348;
 extern void func_80047888(void);
@@ -278,10 +278,10 @@ void func_80047F30(Game *game)
         func_8001C214(1, (x + 127) * 2, 112, 60, height, one);
         }
         func_80049100(text, x + 130, 56, 3);
-        if (!D_8009F9EC) return;
+        if (!gSinglePlayerEntity) return;
         func_8008CD30(text, D_8009F354, D_8009FA94->stage + 1);
         func_80049100(text, 274, 216, 8);
-        other = D_8009F9EC;
+        other = gSinglePlayerEntity;
         if (other->health > 0) {
             ratio = (other->health << 16) / other->maxhealth;
             intensity = (s8)((other->extra->a4 * other->extra->a8 + 0x8000) >> 16);

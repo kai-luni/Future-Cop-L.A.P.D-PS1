@@ -89,7 +89,7 @@ struct Unk331CCPlayer {
 
 extern struct Unk331CCGlobal *D_8009FA94;
 extern struct Unk331CCPlayer *D_8009FA58;
-extern struct Unk331CCObj *D_8009F9EC;
+extern struct Unk331CCObj *gSinglePlayerEntity __asm__("D_8009F9EC");
 
 extern void func_80032180(s32, struct Unk331CCObj *, struct Unk331CCSrcOuter *, s32);
 extern struct Unk331CCEntry *func_80017EBC(s32, s32);
@@ -238,7 +238,7 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
     }
     obj->unk134->unk48 = 0;
     obj->unk134->unk4C = 0;
-    D_8009F9EC = obj;
+    gSinglePlayerEntity = obj;
     func_8005A09C(obj->unk134->unkA0);
     func_8005A0C4(obj->unk134->unkA0, obj->unk1C, obj->unk1E);
     return 0;

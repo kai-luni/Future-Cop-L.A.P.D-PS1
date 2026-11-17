@@ -3,7 +3,7 @@
 
 extern u8 D_8009FA8C[];
 extern volatile s32 D_8009FAA4;
-extern s32 D_8009F9EC[];
+extern s32 gSinglePlayerEntity[] __asm__("D_8009F9EC");
 
 struct Unk6C080 {
     u8 pad00[0x84];
@@ -80,7 +80,7 @@ void func_8006C080(struct Arg6C080 *arg0)
         __asm__("" : "=r"(arr) : "0"(arr));
         func_8006BF44(a0, *(u8 *)((u32)c + (u32)arr), a2, 0xE0);
     }
-    if (D_8009F9EC[0] != 0) {
+    if (gSinglePlayerEntity[0] != 0) {
         func_8006BF44(-1, 0, 0x124, 0xE0);
     }
 }

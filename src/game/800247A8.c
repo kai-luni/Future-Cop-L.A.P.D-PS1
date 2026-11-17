@@ -19,7 +19,7 @@ extern struct Unk247A8 D_800A0B20[2];
 extern u8 D_8009FA98[];
 
 extern s32 D_8009F660;
-extern s32 D_8009F9EC;
+extern s32 gSinglePlayerEntity __asm__("D_8009F9EC");
 extern s32 D_8009FA30;
 extern u16 D_8009F65E;
 extern u16 D_8009F65C;
@@ -50,7 +50,7 @@ void func_800247A8(void)
     s32 i;
 
     D_8009F660 = 0x40000;
-    D_8009F9EC = 0;
+    gSinglePlayerEntity = 0;
     D_8009FA30 = 0;
     D_8009F65E = 0;
     D_8009F65C = 0;

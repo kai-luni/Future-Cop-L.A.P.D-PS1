@@ -82,7 +82,7 @@ struct Menu {
 
 extern struct Ent *D_8009FA58[2];
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern struct Ent *D_8009F9EC;
+extern struct Ent *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct Menu *D_8009FA94;
 extern void func_80069D68();
 
@@ -199,7 +199,7 @@ check_distance:
     {
         struct Ent *e;
         i = 0;
-        if (gPlayerCount == 1 && (e = D_8009F9EC) != 0 && e->unk18 == id) {
+        if (gPlayerCount == 1 && (e = gSinglePlayerEntity) != 0 && e->unk18 == id) {
             struct Menu *m = D_8009FA94;
             m->unk64[1]++;
             m->unk7C[1]++;

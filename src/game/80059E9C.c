@@ -5,7 +5,7 @@ struct State { u8 pad[0x134]; struct Defaults *defaults; };
 struct Defaults { u8 pad[0x28]; u16 values[0]; };
 struct Global { u8 pad[0xAC]; struct Player *player; };
 extern s32 *D_8009FA94[];
-extern struct State *D_8009F9EC[];
+extern struct State *gSinglePlayerEntity[] __asm__("D_8009F9EC");
 extern struct Global *D_8009FA58[];
 /**
  * @brief Resolves a player stat id to its value, with per-player and
@@ -61,7 +61,7 @@ fetch:
             return *ptr;
         default:
             if (player) return player->values[id];
-            return D_8009F9EC[0]->defaults->values[id];
+            return gSinglePlayerEntity[0]->defaults->values[id];
         }
     } else if (id < 19) {
         if (id >= 17) {
@@ -77,7 +77,7 @@ player_value:
           }
         }
         {
-            register struct Defaults *base2 __asm__("$2") = D_8009F9EC[0]->defaults;
+            register struct Defaults *base2 __asm__("$2") = gSinglePlayerEntity[0]->defaults;
             s32 offset;
             __asm__ volatile("" : "=r"(base2) : "0"(base2));
             offset = id * 4;

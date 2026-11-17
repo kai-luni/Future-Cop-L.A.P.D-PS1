@@ -10,7 +10,7 @@ struct Sub { u8 pad[0x12]; s16 count; u8 p14[2]; u16 total; s32 arg1, arg2; u8 d
 struct Entity { u8 pad[4]; struct Sub *sub; };
 struct Mode { u8 pad[0x5c]; s32 active; };
 extern struct Mode *D_8009FA94;
-extern struct Player *D_8009F9EC;
+extern struct Player *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct Other *D_8009FA58, *D_8009FA5C;
 extern s32 func_80069D68(s32, s32, s32, s32);
 extern s32 func_8004D4F8(void *);
@@ -46,7 +46,7 @@ void func_8006125C(struct Entity *entity)
         s->total++;
         if (D_8009FA94->active == 1) {
             info = s->info;
-            if (D_8009F9EC && D_8009F9EC->id == info->id) {
+            if (gSinglePlayerEntity && gSinglePlayerEntity->id == info->id) {
                 stats = 0;
             } else if ((other = D_8009FA58) && info->id == other->id) {
                 stats = other->stats;
@@ -55,16 +55,16 @@ void func_8006125C(struct Entity *entity)
             } else goto done;
             switch (info->type) {
             case 1:
-                if (stats) stats->a++; else D_8009F9EC->stats->a++;
+                if (stats) stats->a++; else gSinglePlayerEntity->stats->a++;
                 break;
             case 2:
-                if (stats) stats->b++; else D_8009F9EC->stats->b++;
+                if (stats) stats->b++; else gSinglePlayerEntity->stats->b++;
                 break;
             case 3:
-                if (stats) stats->c++; else D_8009F9EC->stats->c++;
+                if (stats) stats->c++; else gSinglePlayerEntity->stats->c++;
                 break;
             case 4:
-                if (stats) stats->d++; else D_8009F9EC->stats->d++;
+                if (stats) stats->d++; else gSinglePlayerEntity->stats->d++;
                 break;
             }
         }

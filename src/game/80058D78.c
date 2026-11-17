@@ -11,7 +11,8 @@ extern struct Mode *D_8009FA94;
 extern void *D_8009FAA4;
 extern int D_8009FA00;
 extern int gPlayerCount __asm__("D_8009FA0C");
-extern Obj *D_8009F9EC, *D_8009FA58[];
+extern Obj *D_8009FA58[];
+extern Obj *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern void D_800578B4(), D_800578E4();
 extern int func_8002A810(Obj *, int, int);
 extern void func_80058C3C(void *, void *, Obj *);
@@ -113,9 +114,9 @@ void func_80058D78(Obj *o)
             if (o->id) {
                 found = func_8004D664(o->id & 0x3fffffff);
                 if (gPlayerCount == 1) {
-                    if (found && D_8009F9EC && D_8009F9EC->tag == (found->tag & 0x3fff)) {
-                        ((struct Stats *)D_8009F9EC->stats)->b++;
-                        ((struct Stats *)D_8009F9EC->stats)->a = 0;
+                    if (found && gSinglePlayerEntity && gSinglePlayerEntity->tag == (found->tag & 0x3fff)) {
+                        ((struct Stats *)gSinglePlayerEntity->stats)->b++;
+                        ((struct Stats *)gSinglePlayerEntity->stats)->a = 0;
                     }
                 } else {
                     data = o->data;

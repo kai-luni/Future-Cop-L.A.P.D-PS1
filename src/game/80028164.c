@@ -41,7 +41,7 @@ extern struct MenuInfo28164 *D_8009FA94;
 extern struct MenuData28164 *D_8009F2C0;
 extern struct Game28164 *D_8009FA58;
 extern struct Game28164 *D_8009FA5C[4];
-extern s32 D_8009F9EC;
+extern s32 gSinglePlayerEntity __asm__("D_8009F9EC");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern s32 D_8009FA00;
 extern u32 D_8009FAA4;
@@ -114,7 +114,7 @@ void func_80028164(void)
 
     game = D_8009FA58;
     p1 = game->unkAC;
-    if (D_8009F9EC == 0) {
+    if (gSinglePlayerEntity == 0) {
         p2 = D_8009FA5C[0]->unkAC;
     } else {
         p2 = 0;
