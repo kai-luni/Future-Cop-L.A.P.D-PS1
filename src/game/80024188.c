@@ -11,7 +11,7 @@ struct Unk4749CHandle {
     s32 serial;
 };
 
-extern struct Unk4749CHandle D_800A0A80;
+extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 extern s32 func_800474C4(struct Unk4749CHandle *handle);
 
 /**
@@ -42,8 +42,8 @@ s32 func_80024188(void)
 {
     register s32 value __asm__("$4");
 
-    if ((u8)func_800474C4(&D_800A0A80) == 1) {
-        value = (s32)D_800A0A80.resource;
+    if ((u8)func_800474C4(&gAssetHandle) == 1) {
+        value = (s32)gAssetHandle.resource;
     } else {
         value = 0;
     }

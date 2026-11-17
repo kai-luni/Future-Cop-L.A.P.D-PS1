@@ -17,7 +17,7 @@ struct StreamState {
     struct StreamChannel channels[3];
 };
 
-extern struct StreamState D_800A0968;
+extern struct StreamState gMixerState __asm__("D_800A0968");
 
 /**
  *  @brief Sets the start and length of a stream channel and optionally enables looping.
@@ -42,8 +42,8 @@ extern struct StreamState D_800A0968;
 void func_80022B28(s32 start, s32 length, s32 channel, u8 looping)
 {
     if (looping) {
-        D_800A0968.channels[channel].looping = 1;
+        gMixerState.channels[channel].looping = 1;
     }
-    D_800A0968.channels[channel].length = length;
-    D_800A0968.channels[channel].start = start;
+    gMixerState.channels[channel].length = length;
+    gMixerState.channels[channel].start = start;
 }

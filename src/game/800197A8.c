@@ -3,9 +3,9 @@
 
 extern s32 gRandSeed __asm__("D_8009F214");
 extern s32 D_8009F5A8;
-extern s32 D_8009F5AC;
-extern s32 D_800A0480[];
-extern s32 D_800A04D0[];
+extern s32 gFreeRangeCursor __asm__("D_8009F5AC");
+extern s32 gStateTable[] __asm__("D_800A0480");
+extern s32 gStateEntryTable[] __asm__("D_800A04D0");
 
 extern s32 func_80019720(void);
 
@@ -37,11 +37,11 @@ void func_800197A8(s32 seed)
 
     gRandSeed = seed;
     D_8009F5A8 = 0x14;
-    D_8009F5AC = 0x14;
+    gFreeRangeCursor = 0x14;
     for (i = 0; i < 0x14; i++) {
-        D_800A0480[i] = func_80019720();
+        gStateTable[i] = func_80019720();
     }
     for (i = 0; i < 0x14; i++) {
-        D_800A04D0[i] = func_80019720();
+        gStateEntryTable[i] = func_80019720();
     }
 }

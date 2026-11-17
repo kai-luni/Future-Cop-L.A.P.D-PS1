@@ -32,7 +32,7 @@ typedef struct {
     s32 unk98;
 } SomeState;
 
-extern s32 D_8009FA84;
+extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern SomeState *gGameSession __asm__("D_8009FA94");
 extern LoadedData *D_8009F7D0;
 extern u8 D_80011B00[];
@@ -75,7 +75,7 @@ void func_80059BFC(s32 countArg, s32 seed, u8 *nameArg)
     register s32 i __asm__("$4");
 
     func_800197A8(seed);
-    if (D_8009FA84 <= 0) {
+    if (gModuleLoadedFlag <= 0) {
         return;
     }
 
@@ -87,7 +87,7 @@ void func_80059BFC(s32 countArg, s32 seed, u8 *nameArg)
         name[len - 4] = 0;
     }
 
-    func_8008CD30(buffer, D_80011B00, name, count + 0x40, D_8009FA84);
+    func_8008CD30(buffer, D_80011B00, name, count + 0x40, gModuleLoadedFlag);
     if (wasExt) {
         register u8 *restore __asm__("$3") = (u8 *)(len + (s32)name);
         restore[-4] = '.';
@@ -123,6 +123,6 @@ void func_80059BFC(s32 countArg, s32 seed, u8 *nameArg)
         D_8009F7D0->end2 = ptr;
     } else {
         __asm__("" : "+r"(data));
-        D_8009FA84 = 0;
+        gModuleLoadedFlag = 0;
     }
 }

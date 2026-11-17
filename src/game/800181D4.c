@@ -13,7 +13,7 @@ extern struct LinkState *D_8009FA4C;
 extern struct LinkState *D_8009F9D0;
 extern struct LinkState *D_8009FAAC;
 extern s32 *D_8009F590;
-extern s32 D_8009F594;
+extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
 
 extern void func_800195D0(struct LinkState *state, s32 *link);
@@ -78,7 +78,7 @@ void func_800181D4(void *block)
          (s32)block >= (s32)pool && (s32)block < (s32)pool->end)) {
         func_800195D0(pool, (s32 *)block);
     } else if ((s32)block >= (s32)D_8009F590[0] &&
-               (s32)block < (s32)D_8009F590[D_8009F594]) {
+               (s32)block < (s32)D_8009F590[gFreeRangeCount]) {
         block = (u8 *)block - 4;
         index = func_8001814C(block);
         end = (u8 *)block + *(s32 *)block;
@@ -88,11 +88,11 @@ void func_800181D4(void *block)
         if (block == slot[0]) {
             if (end == slot[1]) {
                 if (index != 0) {
-                    if (index != D_8009F594 - 1) {
+                    if (index != gFreeRangeCount - 1) {
                         func_8001E318((u8 *)slot,
                                       (u8 *)(slot + 2),
-                                      (D_8009F594 - index - 1) * 4);
-                        D_8009F594 -= 2;
+                                      (gFreeRangeCount - index - 1) * 4);
+                        gFreeRangeCount -= 2;
                         if (gHeapSearchCursor >= index) {
                             gHeapSearchCursor -= 2;
                         }
@@ -107,14 +107,14 @@ void func_800181D4(void *block)
             } else {
                 func_8001E44C((u8 *)(table + 3),
                               (u8 *)(table + 1),
-                              D_8009F594 * 4);
+                              gFreeRangeCount * 4);
                 D_8009F590[1] = (s32)block;
                 D_8009F590[2] = (s32)end;
-                D_8009F594 += 2;
+                gFreeRangeCount += 2;
                 gHeapSearchCursor += 2;
             }
         } else if (end == slot[1]) {
-            total = D_8009F594;
+            total = gFreeRangeCount;
             if (index + 1 < total) {
                 slot[1] = block;
             } else {
@@ -123,7 +123,7 @@ void func_800181D4(void *block)
                 total += 2;
                 last[0] = block;
                 last[1] = end;
-                D_8009F594 = total;
+                gFreeRangeCount = total;
                 last[2] = old;
             }
         } else {
@@ -131,8 +131,8 @@ void func_800181D4(void *block)
             slot += 3;
             func_8001E44C((u8 *)slot,
                           (u8 *)copy_source,
-                          (D_8009F594 - index) * 4);
-            D_8009F594 += 2;
+                          (gFreeRangeCount - index) * 4);
+            gFreeRangeCount += 2;
             if (index < gHeapSearchCursor) {
                 gHeapSearchCursor += 2;
             }

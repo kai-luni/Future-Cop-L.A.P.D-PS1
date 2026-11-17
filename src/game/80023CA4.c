@@ -1,5 +1,5 @@
 // Categories: Platform > Requests
-extern int D_8009F278;
+extern int gSpuBufferPtr __asm__("D_8009F278");
 extern int D_8009F9BC;
 extern volatile int D_8009F650;
 extern void D_80023C94(void);
@@ -33,8 +33,8 @@ int func_80023CA4(void *data, unsigned int size, int mode)
     struct Request req;
     int result = 0;
     int timeout = 0xfffff;
-    if (D_8009F278) {
-        if (mode == 1) D_8009F9BC = D_8009F278;
+    if (gSpuBufferPtr) {
+        if (mode == 1) D_8009F9BC = gSpuBufferPtr;
         size = (size + 63) >> 6 << 6;
         req.mode = 1;
         req.address = D_8009F9BC;

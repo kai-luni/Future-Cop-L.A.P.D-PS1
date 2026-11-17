@@ -26,9 +26,9 @@ struct SoundVoice {
     s8 extra;
 };
 
-extern struct Unk4749CHandle D_800A0A80;
+extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern u8 D_8009F26C;
+extern u8 gChannelEnableFlag __asm__("D_8009F26C");
 
 extern void func_80023E84(void);
 extern s32 func_800450A4(s32 id, s8 *mix);
@@ -58,23 +58,23 @@ void func_80023D78(void)
 {
     s8 mix[0x18];
 
-    if (D_800A0A80.unk10 != 0) {
-        if (D_800A0A80.unk10 > gFrameTickCounter + 0xBB8 ||
-            D_800A0A80.unk10 < gFrameTickCounter) {
-            D_800A0A80.unk10 = 0;
+    if (gAssetHandle.unk10 != 0) {
+        if (gAssetHandle.unk10 > gFrameTickCounter + 0xBB8 ||
+            gAssetHandle.unk10 < gFrameTickCounter) {
+            gAssetHandle.unk10 = 0;
             func_80023E84();
         }
-    } else if (D_800A0A80.state != 0) {
-        D_800A0A80.unk10 = 0;
+    } else if (gAssetHandle.state != 0) {
+        gAssetHandle.unk10 = 0;
         func_80023E84();
     }
 
-    if (D_8009F26C != 0 &&
-        D_800A0A80.state != 0 &&
-        D_800A0A80.flag18 != 0) {
-        if ((u8)func_800450A4(D_800A0A80.unk0C, mix) != 0 &&
-            (u8)func_800474C4(&D_800A0A80) == 1) {
-            func_80047800((struct SoundVoice *)D_800A0A80.resource,
+    if (gChannelEnableFlag != 0 &&
+        gAssetHandle.state != 0 &&
+        gAssetHandle.flag18 != 0) {
+        if ((u8)func_800450A4(gAssetHandle.unk0C, mix) != 0 &&
+            (u8)func_800474C4(&gAssetHandle) == 1) {
+            func_80047800((struct SoundVoice *)gAssetHandle.resource,
                           mix[1], mix[0], -1);
         } else {
             func_80023E84();

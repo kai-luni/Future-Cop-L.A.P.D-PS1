@@ -1,9 +1,9 @@
 // Categories: Graphics > Text | Resources > Save Data
 #include "game/types.h"
 
-extern u16 D_8009AB18[];
+extern u16 gPunctuationTable[] __asm__("D_8009AB18");
 struct Range { u16 base, start; };
-extern struct Range D_8009AB0C[];
+extern struct Range gCharRangeTable[] __asm__("D_8009AB0C");
 
 /**
  * @brief Maps an ASCII character (0x20..0x7E) to a byte-swapped 16-bit Shift-JIS glyph code.
@@ -50,10 +50,10 @@ u16 func_800210D0(u8 c)
         __asm__ ("" : "+r" (input));
         index = offset + 0x1F;
         __asm__ ("" : "+r" (index));
-        raw = D_8009AB18[input - index];
+        raw = gPunctuationTable[input - index];
     }
     else {
-        register struct Range *base __asm__("$2") = D_8009AB0C;
+        register struct Range *base __asm__("$2") = gCharRangeTable;
         register struct Range *range __asm__("$3");
         __asm__ ("" : "+r" (base));
         range = (struct Range *)((group << 2) + (u32)base);

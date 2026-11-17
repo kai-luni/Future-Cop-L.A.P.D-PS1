@@ -18,7 +18,7 @@ struct Unk4749CHandle {
     u8 flag18;
 };
 
-extern struct Unk4749CHandle D_800A0A80;
+extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 
 extern void func_80022240(s32 owner);
 extern void func_80029720(void);
@@ -47,16 +47,16 @@ extern s32 func_800474F0(struct Unk4749CHandle *handle);
  */
 void func_80023E84(void)
 {
-    if (D_800A0A80.state == 1) {
-        if (D_800A0A80.resource != 0) {
-            func_80022240(D_800A0A80.resource->owner);
+    if (gAssetHandle.state == 1) {
+        if (gAssetHandle.resource != 0) {
+            func_80022240(gAssetHandle.resource->owner);
         }
-        D_800A0A80.state = 0;
-        if (D_800A0A80.flag18 == 0) {
+        gAssetHandle.state = 0;
+        if (gAssetHandle.flag18 == 0) {
             func_80045370();
         }
     }
-    func_800474F0(&D_800A0A80);
-    D_800A0A80.unk10 = 0;
+    func_800474F0(&gAssetHandle);
+    gAssetHandle.unk10 = 0;
     func_80029720();
 }

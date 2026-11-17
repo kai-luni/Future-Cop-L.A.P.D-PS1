@@ -1,7 +1,7 @@
 // Categories: Game Engine > Callbacks
 #include "game/types.h"
 
-extern s32 D_8009F99C;
+extern s32 gScreenModeHook __asm__("D_8009F99C");
 
 /**
  *  @brief Clears the registered callback value if it matches the argument.
@@ -23,11 +23,11 @@ extern s32 D_8009F99C;
  */
 s32 func_8001F12C(s32 callback)
 {
-    if (D_8009F99C == 0) {
+    if (gScreenModeHook == 0) {
         return 3;
     }
-    if (callback == D_8009F99C) {
-        D_8009F99C = 0;
+    if (callback == gScreenModeHook) {
+        gScreenModeHook = 0;
         return 0;
     }
     return 3;

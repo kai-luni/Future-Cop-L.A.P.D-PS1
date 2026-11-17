@@ -20,7 +20,7 @@ typedef struct State {
     volatile int f1BB4;
 } State;
 
-extern State *D_8009AB08;
+extern State *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(int);
 extern void func_8008D670(int, int, void *);
 extern void func_8008D680(int, int, void *);
@@ -54,19 +54,19 @@ int func_8001F394(void)
     unsigned int i;
     int n;
 
-    D_8009AB08->f1BB0 = 0;
-    D_8009AB08->f9A8 = 1;
-    switch ((unsigned int)D_8009AB08->mode) {
+    gOperationState->f1BB0 = 0;
+    gOperationState->f9A8 = 1;
+    switch ((unsigned int)gOperationState->mode) {
     case 1:
         return 0;
     case 2:
-        D_8009AB08->f994++;
-        if (D_8009AB08->f994 == 1)
+        gOperationState->f994++;
+        if (gOperationState->f994 == 1)
             return 0;
         sum = 0;
         for (i = 2; i < 32; i++)
-            sum += (D_8009AB08->arr[i] ^ D_8009AB08->arr[32 - i]) + i;
-        p = D_8009AB08;
+            sum += (gOperationState->arr[i] ^ gOperationState->arr[32 - i]) + i;
+        p = gOperationState;
         if (p->f90C != 0 && (p->arr[0] != p->v998 || p->arr[1] != sum)) {
             if (p->f9A0 > 0) {
                 p->f9A0--;
@@ -77,26 +77,26 @@ int func_8001F394(void)
                 return 0;
             }
         } else {
-            r = D_8009AB08;
+            r = gOperationState;
             if (r->f90C) {
                 func_8001E318((void *)r->ptr, (void *)&r->arr[2], 0x78);
-                r = D_8009AB08;
+                r = gOperationState;
                 r->ptr = r->ptr + 0x78;
             } else {
                 func_8001E318((void *)r->ptr, (void *)&r->arr[0], 0x80);
-                r = D_8009AB08;
+                r = gOperationState;
                 r->ptr = r->ptr + 0x80;
             }
-            p = D_8009AB08;
+            p = gOperationState;
             p->f9A0 = 3;
             p->v998++;
             p->f99C--;
             if (p->f99C <= 0) {
                 if (p->f8F8 == 1)
                     p->f8F8 = 0;
-                D_8009AB08->f900 = D_8009AB08->h;
-                D_8009AB08->mode = 0;
-                func_8008D640(D_8009AB08->h);
+                gOperationState->f900 = gOperationState->h;
+                gOperationState->mode = 0;
+                func_8008D640(gOperationState->h);
                 return 0;
             }
         }
@@ -105,44 +105,44 @@ int func_8001F394(void)
     case 3:
     case 6:
         sum2 = 0;
-        D_8009AB08->f994++;
-        if (D_8009AB08->f994 == 1)
+        gOperationState->f994++;
+        if (gOperationState->f994 == 1)
             return 0;
-        D_8009AB08->f99C--;
-        if (D_8009AB08->f99C <= 0) {
-            if (D_8009AB08->mode == 6) {
-                D_8009AB08->v998 = D_8009AB08->f1BB4;
-                D_8009AB08->f99C = 1;
-                n = D_8009AB08->f1BB4;
-                D_8009AB08->f90C = 0;
-                D_8009AB08->f994 = 0;
-                D_8009AB08->f9A4 = 0;
-                D_8009AB08->f8F8 = 3;
-                D_8009AB08->ptr = (char *)D_8009AB08 + ((n << 7) + 0x9B0);
+        gOperationState->f99C--;
+        if (gOperationState->f99C <= 0) {
+            if (gOperationState->mode == 6) {
+                gOperationState->v998 = gOperationState->f1BB4;
+                gOperationState->f99C = 1;
+                n = gOperationState->f1BB4;
+                gOperationState->f90C = 0;
+                gOperationState->f994 = 0;
+                gOperationState->f9A4 = 0;
+                gOperationState->f8F8 = 3;
+                gOperationState->ptr = (char *)gOperationState + ((n << 7) + 0x9B0);
                 goto reset;
             }
-            D_8009AB08->f900 = D_8009AB08->h;
+            gOperationState->f900 = gOperationState->h;
             goto reset;
         }
-        D_8009AB08->f9A0 = 3;
-        D_8009AB08->v998++;
-        if (D_8009AB08->f90C) {
-            D_8009AB08->ptr = D_8009AB08->ptr + 0x78;
-            func_8001E318((void *)&D_8009AB08->arr[2], (void *)D_8009AB08->ptr, 0x78);
+        gOperationState->f9A0 = 3;
+        gOperationState->v998++;
+        if (gOperationState->f90C) {
+            gOperationState->ptr = gOperationState->ptr + 0x78;
+            func_8001E318((void *)&gOperationState->arr[2], (void *)gOperationState->ptr, 0x78);
             for (i = 2; i < 32; i++)
-                sum2 += (D_8009AB08->arr[i] ^ D_8009AB08->arr[32 - i]) + i;
-            D_8009AB08->arr[0] = D_8009AB08->v998;
-            D_8009AB08->arr[1] = sum2;
+                sum2 += (gOperationState->arr[i] ^ gOperationState->arr[32 - i]) + i;
+            gOperationState->arr[0] = gOperationState->v998;
+            gOperationState->arr[1] = sum2;
         } else {
-            D_8009AB08->ptr = D_8009AB08->ptr + 0x80;
-            func_8001E318((void *)&D_8009AB08->arr[0], (void *)D_8009AB08->ptr, 0x80);
+            gOperationState->ptr = gOperationState->ptr + 0x80;
+            func_8001E318((void *)&gOperationState->arr[0], (void *)gOperationState->ptr, 0x80);
         }
-        func_8008D670(D_8009AB08->h, D_8009AB08->v998, (void *)&D_8009AB08->arr[0]);
+        func_8008D670(gOperationState->h, gOperationState->v998, (void *)&gOperationState->arr[0]);
         return 0;
     default:
     reset:
-        D_8009AB08->mode = 0;
-        func_8008D640(D_8009AB08->h);
+        gOperationState->mode = 0;
+        func_8008D640(gOperationState->h);
         return 0;
     }
 }

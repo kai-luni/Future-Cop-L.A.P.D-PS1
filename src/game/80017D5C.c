@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 *D_8009F590;
-extern s32 D_8009F594;
+extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
 
 /**
@@ -40,7 +40,7 @@ s32 func_80017D5C(s32 size)
     s32 *block;
 
     block = &D_8009F590[gHeapSearchCursor];
-    for (i = gHeapSearchCursor; i < D_8009F594; i += 2, block += 2) {
+    for (i = gHeapSearchCursor; i < gFreeRangeCount; i += 2, block += 2) {
         if (block[1] - block[0] >= size) {
             return i;
         }

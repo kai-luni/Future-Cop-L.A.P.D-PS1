@@ -1,9 +1,9 @@
 // Categories: Platform > CD-ROM | Resources > Device Init
 #include "game/types.h"
 
-extern u8 D_8009F234;
-extern s32 D_8009F22C;
-extern s32 D_8009F230;
+extern u8 gMediaBypassFlag __asm__("D_8009F234");
+extern s32 gFreeCallback __asm__("D_8009F22C");
+extern s32 gAllocCallback __asm__("D_8009F230");
 extern void *D_8009F240;
 
 extern void D_8001CDD0(void);
@@ -79,12 +79,12 @@ s32 func_8001D248(s32 arg0, s32 arg1, u8 *arg2)
     if (arg1 != 0) {
         return -0x11;
     }
-    D_8009F230 = (s32)&D_8001CDD0;
-    D_8009F22C = (s32)&D_8001CDF0;
+    gAllocCallback = (s32)&D_8001CDD0;
+    gFreeCallback = (s32)&D_8001CDF0;
     goto cleared;
 have_args:
-    D_8009F230 = arg0;
-    D_8009F22C = arg1;
+    gAllocCallback = arg0;
+    gFreeCallback = arg1;
 cleared:
 
     i = 0;
@@ -142,7 +142,7 @@ next:
     if (count == 0) {
         return -7;
     }
-    D_8009F234 = 1;
+    gMediaBypassFlag = 1;
     if (arg2_reg == 0) {
         D_8009F240 = D_8009AABC;
         return 0;

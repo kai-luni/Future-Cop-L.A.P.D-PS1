@@ -20,7 +20,7 @@ extern s32 D_8009F3EC;
 extern s32 D_8009F3F4;
 extern s32 D_8009F8B0;
 extern s32 D_8009F8B4;
-extern s32 D_8009FA84;
+extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 
 extern void func_80077FFC(void);
 extern void *func_80017EBC(s32 size, s32 tag);
@@ -87,5 +87,5 @@ void func_800780DC(void)
     func_80077AD4(1);
     D_8009F8B0 = 0;
     D_8009F8B4 = 0;
-    D_8009FA84 = 0;
+    gModuleLoadedFlag = 0;
 }

@@ -1,7 +1,7 @@
 // Categories: Platform > Memory Card | Resources > Save Data
 #include "game/types.h"
 
-extern u32 *D_8009AB08;
+extern u32 *gOperationState __asm__("D_8009AB08");
 extern u8 D_80010B0C[];
 
 extern s32 func_80020C90(void *arg0);
@@ -47,7 +47,7 @@ s32 func_80020D3C(void *arg0, s32 arg1, u32 arg2)
     if (arg2 != 0) {
         r = func_80020C90(arg0);
         if (r != 0) {
-            func_8008CD30(buf, D_80010B0C, *D_8009AB08 >> 4, arg0);
+            func_8008CD30(buf, D_80010B0C, *gOperationState >> 4, arg0);
             n = (arg2 + 0x7F) >> 7;
             func_8001F1B8(r << 6, n, arg1, ret);
             if (func_8001F37C() == 0) {

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
-extern s32 D_8009F99C;
+extern s32 gScreenModeHook __asm__("D_8009F99C");
 
 /**
  * @brief Registers the subsystem callback, once only.
@@ -23,9 +23,9 @@ s32 func_8001F0FC(s32 callback)
     if (gFrameCallbackEnabled == 0) {
         return 3;
     }
-    if (D_8009F99C != 0) {
+    if (gScreenModeHook != 0) {
         return 3;
     }
-    D_8009F99C = callback;
+    gScreenModeHook = callback;
     return 0;
 }

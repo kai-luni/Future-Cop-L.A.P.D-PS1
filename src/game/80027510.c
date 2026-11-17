@@ -39,13 +39,13 @@ struct Menu {
 extern union { struct Game *ptr; u32 raw; } D_8009FA58;
 extern struct Game *D_8009FA58_arr[];
 extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C;
-extern s32 D_8009F678[];
+extern s32 gSlotVoiceHandle[] __asm__("D_8009F678");
 extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C_b, D_8009FA5C_c, D_8009FA5C_d, D_8009FA5C_e;
 extern s32 gScreenState __asm__("D_8009FA00");
 extern struct Menu *gGameSession __asm__("D_8009FA94");
 extern s32 D_8009FA6C;
 extern u32 gSceneFrameCounter __asm__("D_8009FA50");
-extern s32 D_8009FA84;
+extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern u8 D_8009F680;
 extern s32 D_8009FA38;
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
@@ -182,9 +182,9 @@ void func_80027510(void)
             game->unkAC->saved_position = game->position;
             game->unkAC->unk310 = !game->unkAC->unk310;
             if (!game->unkAC->unk310) {
-                if (D_8009F678[i] != 0) {
-                    func_80046A34(D_8009F678[i]);
-                    D_8009F678[i] = 0;
+                if (gSlotVoiceHandle[i] != 0) {
+                    func_80046A34(gSlotVoiceHandle[i]);
+                    gSlotVoiceHandle[i] = 0;
                 }
                 func_80046C84(0x3E, game);
             } else if (gGameSession->unk5C == 1 && gGameSession->unkC == 2) {
@@ -202,7 +202,7 @@ void func_80027510(void)
         flags |= 2;
         if (gGameSession->unk5C == 0 || D_8009FA6C != 0) flags |= 0x20;
     }
-    if (gSceneFrameCounter >= 2 && (func_8001EF34(0) == 0 || func_8001EF34(1) == 0) && D_8009FA84 == 0) {
+    if (gSceneFrameCounter >= 2 && (func_8001EF34(0) == 0 || func_8001EF34(1) == 0) && gModuleLoadedFlag == 0) {
         flags |= 0x20;
     }
     if (!(flags & 0x20)) {
@@ -245,7 +245,7 @@ void func_80027510(void)
         zero_arg = 0;
         __asm__ volatile("" : "=r"(zero_arg) : "0"(zero_arg));
         func_80026F68(zero_arg, zero_arg);
-        if (D_8009FA84 > 0 && (gDiscShadeByte & 0x100)) {
+        if (gModuleLoadedFlag > 0 && (gDiscShadeByte & 0x100)) {
             banner = (u8 *)0x800A0000;
             __asm__ volatile("" : "=r"(banner) : "0"(banner));
             func_80049100(banner - 0xD0C, 0x41, 0x14, 1);
@@ -254,7 +254,7 @@ void func_80027510(void)
             D_8009FA5C.ptr->unk24 &= ~0x20;
             D_8009FA5C.ptr->unkDC->unk24 &= ~0x20;
         }
-        if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && D_8009FA84 == 0) {
+        if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && gModuleLoadedFlag == 0) {
             text = D_8009F2D0;
             x = 0x140 - func_80049340(text);
             color = 1;
@@ -282,12 +282,12 @@ void func_80027510(void)
             }
         }
         func_80026F68(1, 0);
-        if (D_8009FA84 > 0 && (gDiscShadeByte & 0x100)) {
+        if (gModuleLoadedFlag > 0 && (gDiscShadeByte & 0x100)) {
             banner = (u8 *)0x800A0000;
             __asm__ volatile("" : "=r"(banner) : "0"(banner));
             func_80049100(banner - 0xD0C, 0x41, 0x14, 1);
         }
-        if (gSceneFrameCounter >= 2 && func_8001EF34(1) == 0 && D_8009FA84 == 0) {
+        if (gSceneFrameCounter >= 2 && func_8001EF34(1) == 0 && gModuleLoadedFlag == 0) {
             text = D_8009F2D0;
             x = 0x140 - func_80049340(text);
             color = 1;

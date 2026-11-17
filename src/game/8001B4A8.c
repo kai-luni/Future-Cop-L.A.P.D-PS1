@@ -6,8 +6,8 @@ extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 extern u8 gDisplayListHead[] __asm__("D_800A63E0");
 extern u8 D_800A0520[];
 extern u8 D_800A0528[];
-extern u8 D_800A0660[];
-extern u32 D_8009AA68[];
+extern u8 gUploadRing[] __asm__("D_800A0660");
+extern u32 gSingleShotQueue[] __asm__("D_8009AA68");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 
 extern u32 D_8009F5C8[];
@@ -338,19 +338,19 @@ void func_8001B4A8(s32 arg0)
         } while (D_8009F220 != D_8009F218);
     }
 
-    if (D_8009AA68[0] != 0) {
-        func_80092F38((u32)D_8009AA68 + 8, D_8009AA68[0]);
+    if (gSingleShotQueue[0] != 0) {
+        func_80092F38((u32)gSingleShotQueue + 8, gSingleShotQueue[0]);
         func_80092C8C(0);
-        if (D_8009AA68[1] != 0) {
-            func_80029650(D_8009AA68[1]);
+        if (gSingleShotQueue[1] != 0) {
+            func_80029650(gSingleShotQueue[1]);
         }
-        D_8009AA68[0] = 0;
+        gSingleShotQueue[0] = 0;
     }
 
     if (({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; }) || gSubScreenActive == 0 || gPlayerCount == 1) {
         if (D_8009F5EC != D_8009F5F0) {
             do {
-                v = (u32)D_800A0660 + D_8009F5EC * 20;
+                v = (u32)gUploadRing + D_8009F5EC * 20;
                 hnd = *(u32 *)(v + 4);
                 if (hnd != 0) {
                     func_80029650(hnd);
@@ -364,7 +364,7 @@ void func_8001B4A8(s32 arg0)
 
         if (D_8009F5F0 != D_8009F5E8) {
             do {
-                xbase = (u32)D_800A0660 + D_8009F5F0 * 20;
+                xbase = (u32)gUploadRing + D_8009F5F0 * 20;
                 func_800861E4(*(u32 *)xbase, *(u8 *)(xbase + 8),
                               *(u32 *)(xbase + 0xC), *(u32 *)(xbase + 0x10));
                 func_80092C8C(0);

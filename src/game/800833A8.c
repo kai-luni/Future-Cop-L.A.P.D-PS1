@@ -1,7 +1,7 @@
 // Categories: Resources > File Access > Module Names | Game Engine > Screen Loading
 #include "game/types.h"
 
-extern s32 D_8009C1CC[5];
+extern s32 gSpecialistModules[5] __asm__("D_8009C1CC");
 extern s32 gModulePrefixCW __asm__("D_8009F3D8");
 extern s32 gModulePrefixPA __asm__("D_8009F3E0");
 
@@ -49,7 +49,7 @@ s32 func_800833A8(s32 arg0)
     u32 i;
 
     for (i = 0; i < 5; i++) {
-        if (func_8008CCA0(arg0, D_8009C1CC[i]) == 0) {
+        if (func_8008CCA0(arg0, gSpecialistModules[i]) == 0) {
             break;
         }
     }

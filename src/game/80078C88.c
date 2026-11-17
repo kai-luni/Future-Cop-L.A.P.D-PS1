@@ -27,7 +27,7 @@ struct Sub78C88 {
 extern struct Entry78C88 D_8009B730[];
 extern struct Sub78C88 D_8009B4E4[];
 extern struct Obj78C88 *gGameSession __asm__("D_8009FA94");
-extern s32 D_8009FA84;
+extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern u8 D_8009F3F2;
 extern u8 D_8009F3F0;
@@ -86,7 +86,7 @@ s32 func_80078C88(void)
     }
     func_8008CCB0(D_8009B300, D_8009B4E4[e->unk0].unk00);
     unk0C = D_8009B4E4[e->unk0].unk0C;
-    D_8009FA84 = 1;
+    gModuleLoadedFlag = 1;
     gScreenState = 5;
     D_8009F45A = 3;
     D_8009F3F0 = unk0C;

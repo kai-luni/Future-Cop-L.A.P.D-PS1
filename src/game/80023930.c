@@ -10,10 +10,10 @@ typedef struct Node {
     u32 tag;
 } Node;
 
-extern u8 D_8009F26C;
+extern u8 gChannelEnableFlag __asm__("D_8009F26C");
 extern Node *D_8009F270;
 extern Node *D_8009F274;
-extern Node *D_8009F640[2];
+extern Node *gStreamStatePair[2] __asm__("D_8009F640");
 
 extern void func_800181D4(Node *node);
 extern void func_800236FC(void);
@@ -42,7 +42,7 @@ void func_80023930(Node *node)
     s32 i;
     register Node **p __asm__("$3");
 
-    if (D_8009F26C != 0) {
+    if (gChannelEnableFlag != 0) {
         switch (node->tag) {
         case 0x43766B68:
             D_8009F270 = node;
@@ -59,7 +59,7 @@ void func_80023930(Node *node)
             }
 
             i = 0;
-            p = D_8009F640;
+            p = gStreamStatePair;
             for (; i < 2; i++, p++) {
                 if (*p == 0) {
                     *p = node;

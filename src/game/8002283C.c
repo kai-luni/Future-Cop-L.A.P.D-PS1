@@ -32,7 +32,7 @@ struct StreamMix {
     s32 pan;
 };
 
-extern struct StreamState D_800A0968;
+extern struct StreamState gMixerState __asm__("D_800A0968");
 
 extern void func_800227BC(s32 channel, s32 left, s32 right);
 extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
@@ -75,14 +75,14 @@ void func_8002283C(s32 channel, s32 left, s32 right)
     }
     channel = clamped;
     func_800227BC(channel, left, right);
-    if (D_800A0968.active == 0) {
+    if (gMixerState.active == 0) {
         return;
     }
-    voice = D_800A0968.channels[channel].voice;
+    voice = gMixerState.channels[channel].voice;
     if (voice == 0) {
         return;
     }
-    func_800477D8(voice, D_800A0968.channels[channel].right, D_800A0968.channels[channel].left, -1);
+    func_800477D8(voice, gMixerState.channels[channel].right, gMixerState.channels[channel].left, -1);
     mix.volume = voice->volume;
     mix.pan = voice->pan;
     mix.unk00 = -1;

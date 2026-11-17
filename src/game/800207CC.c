@@ -22,7 +22,7 @@ struct CardManager {
     struct CardDirectoryFrame directory[15];
 };
 
-extern struct CardManager *D_8009AB08;
+extern struct CardManager *gOperationState __asm__("D_8009AB08");
 extern const struct Packed9 D_80010AE8;
 extern const struct Packed9 D_80010AF4;
 extern const struct Packed9 D_80010B00;
@@ -58,12 +58,12 @@ void func_800207CC(void)
     struct CardManager *initial;
     u32 slot;
 
-    initial = D_8009AB08;
-    D_8009AB08->state[0] = 1;
-    *D_8009AB08->primary[0] = D_80010AE8;
+    initial = gOperationState;
+    gOperationState->state[0] = 1;
+    *gOperationState->primary[0] = D_80010AE8;
     __asm__("" ::: "memory");
     frame = initial->directory;
-    *D_8009AB08->secondary[0] = D_80010AE8;
+    *gOperationState->secondary[0] = D_80010AE8;
     for (slot = 1; slot < 16; slot++) {
         u8 checksum;
         u8 *cursor;
@@ -84,23 +84,23 @@ void func_800207CC(void)
         case 0xA0:
         case 0xA1:
         case 0xA3: {
-            D_8009AB08->state[slot] = 2;
-            *(struct Packed6 *)D_8009AB08->primary[slot] = D_8009F260;
+            gOperationState->state[slot] = 2;
+            *(struct Packed6 *)gOperationState->primary[slot] = D_8009F260;
             __asm__("" ::: "memory");
-            *(struct Packed6 *)D_8009AB08->secondary[slot] = D_8009F260;
+            *(struct Packed6 *)gOperationState->secondary[slot] = D_8009F260;
             break;
         }
         case 0x51:
-            D_8009AB08->state[slot] = 1;
-            func_8001E318(D_8009AB08->primary[slot], &frame->bytes[10], 20);
+            gOperationState->state[slot] = 1;
+            func_8001E318(gOperationState->primary[slot], &frame->bytes[10], 20);
             __asm__("" ::: "memory");
-            *D_8009AB08->secondary[slot] = D_80010AF4;
+            *gOperationState->secondary[slot] = D_80010AF4;
             break;
         default:
-            D_8009AB08->state[slot] = 1;
-            *D_8009AB08->primary[slot] = D_80010B00;
+            gOperationState->state[slot] = 1;
+            *gOperationState->primary[slot] = D_80010B00;
             __asm__("" ::: "memory");
-            *D_8009AB08->secondary[slot] = D_80010B00;
+            *gOperationState->secondary[slot] = D_80010B00;
             break;
         }
         frame++;

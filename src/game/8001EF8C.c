@@ -6,7 +6,7 @@ typedef struct {
     u8 pad[0x20];
 } UnkA78F0;
 
-extern void (*D_8009F99C)(void);
+extern  void (*gScreenModeHook)(void) __asm__("D_8009F99C");
 extern s32 D_8009F9CC;
 extern s32 gScreenState __asm__("D_8009FA00");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");

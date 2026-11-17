@@ -11,9 +11,9 @@ typedef struct {
     u8 pad0C[4];
 } Unk800A0A00;
 
-extern u8 D_8009F26C;
-extern s32 D_8009F278;
-extern s32 D_8009F27C;
+extern u8 gChannelEnableFlag __asm__("D_8009F26C");
+extern s32 gSpuBufferPtr __asm__("D_8009F278");
+extern s32 gVolatileBase __asm__("D_8009F27C");
 extern u8 D_80023314[];
 extern Unk800A0A00 gObjectSlots[8] __asm__("D_800A0A00");
 
@@ -46,20 +46,20 @@ extern void func_80044FEC(void);
  */
 void func_80023478(void)
 {
-    if (D_8009F26C != 0) {
-        if (D_8009F27C != 0) {
-            func_80098708(D_8009F27C);
-            D_8009F27C = 0;
+    if (gChannelEnableFlag != 0) {
+        if (gVolatileBase != 0) {
+            func_80098708(gVolatileBase);
+            gVolatileBase = 0;
         }
-        if (D_8009F278 != 0) {
-            func_80098708(D_8009F278);
-            D_8009F278 = 0;
+        if (gSpuBufferPtr != 0) {
+            func_80098708(gSpuBufferPtr);
+            gSpuBufferPtr = 0;
         }
         func_8001F12C((s32)D_80023314);
         func_80021250();
         func_80023BF8();
         func_80021C80();
         func_80044FEC();
-        D_8009F26C = 0;
+        gChannelEnableFlag = 0;
     }
 }

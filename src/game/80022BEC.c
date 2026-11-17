@@ -8,8 +8,8 @@ struct Data {
     s32 width;
     s32 height;
 };
-extern struct Data D_800A0968;
-extern volatile s32 D_8009F27C;
+extern struct Data gMixerState __asm__("D_800A0968");
+extern volatile s32 gVolatileBase __asm__("D_8009F27C");
 
 /**
  *  @brief Assigns sequential buffer addresses to entries in a global table.
@@ -36,7 +36,7 @@ s32 func_80022BEC(void)
     register s32 result __asm__("$9") = i;
     s32 value;
     u32 count;
-    register s32 base __asm__("$8") = D_8009F27C;
+    register s32 base __asm__("$8") = gVolatileBase;
     register u32 high __asm__("$2") = 0x800A0000;
     register struct Data *ptr __asm__("$3");
     register struct Data *fixed __asm__("$5");

@@ -14,7 +14,7 @@ struct Context {
     u8 pad9ac[0x1bb0 - 0x9ac];
     s32 field1bb0;
 };
-extern struct Context *D_8009AB08;
+extern struct Context *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(s32);
 
 /**
@@ -38,7 +38,7 @@ extern void func_8008D640(s32);
  */
 s32 func_8001F784(void)
 {
-    volatile struct Context *p = D_8009AB08;
+    volatile struct Context *p = gOperationState;
     p->field1bb0 = 0;
     p->field9a8 = 1;
     switch (p->state) {
@@ -52,9 +52,9 @@ s32 func_8001F784(void)
         func_8008D640(p->field8fc);
         break;
     default:
-        ((volatile struct Context *)D_8009AB08)->field8f8 = 0;
-        ((volatile struct Context *)D_8009AB08)->state = 0;
-        func_8008D640(((volatile struct Context *)D_8009AB08)->field8fc);
+        ((volatile struct Context *)gOperationState)->field8f8 = 0;
+        ((volatile struct Context *)gOperationState)->state = 0;
+        func_8008D640(((volatile struct Context *)gOperationState)->field8fc);
         break;
     }
     return 0;

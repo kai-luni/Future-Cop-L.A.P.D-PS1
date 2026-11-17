@@ -1,5 +1,5 @@
 // Categories: Game Engine > Mode Flag
-extern int D_800A0A88;
+extern int gPlayerCountRecord __asm__("D_800A0A88");
 
 /**
  * @brief Reports whether the game is in the single-player/one-player mode.
@@ -21,5 +21,5 @@ extern int D_800A0A88;
  */
 int func_80024170(void)
 {
-    return D_800A0A88 == 1;
+    return gPlayerCountRecord == 1;
 }

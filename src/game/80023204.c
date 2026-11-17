@@ -1,7 +1,7 @@
 // Categories: Game Engine > Scheduling
 #include "game/types.h"
 
-extern u8 D_800A0968[];
+extern u8 gMixerState[] __asm__("D_800A0968");
 extern volatile u32 D_8009F634;
 
 extern void func_80022D84(void);
@@ -39,7 +39,7 @@ void func_80023204(s32 arg0)
     u32 m;
     u8 *q;
 
-    base = D_800A0968;
+    base = gMixerState;
     if ((u16)arg0 != *(volatile u16 *)(base + 0x10)) {
         return;
     }
@@ -68,7 +68,7 @@ void func_80023204(s32 arg0)
     if (fn != 0) {
         ((void (*)(s32))fn)(3);
     }
-    q = D_800A0968;
+    q = gMixerState;
     __asm__ __volatile__("" ::: "memory");
     if (arg0 < 0) {
         *(volatile u32 *)(q + 0x40) = *(volatile u32 *)(q + 0x78);

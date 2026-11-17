@@ -1,8 +1,8 @@
 // Categories: Game Engine > State Access
 #include "game/types.h"
 
-extern u8 D_8009FA68;
-extern s32 D_8009F620;
+extern u8 gCompletionFlag __asm__("D_8009FA68");
+extern s32 gFileSlotState __asm__("D_8009F620");
 
 /**
  *  @brief Sets a global flag and stores a signed value.
@@ -23,6 +23,6 @@ extern s32 D_8009F620;
  */
 void func_8001DFF0(s32 arg0)
 {
-    D_8009FA68 = 1;
-    D_8009F620 = arg0;
+    gCompletionFlag = 1;
+    gFileSlotState = arg0;
 }

@@ -38,10 +38,10 @@ struct Unk9A0 {
 };
 
 extern struct Game *D_8009FA58;
-extern s32 D_8009F678;
+extern s32 gSlotVoiceHandle __asm__("D_8009F678");
 extern u32 gScreenState __asm__("D_8009FA00");
 extern u32 gSceneFrameCounter __asm__("D_8009FA50");
-extern s32 D_8009FA84;
+extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern u8 *D_8009F2D0;
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_8009F680;
@@ -127,9 +127,9 @@ void func_800271A4(void)
         player->saved_position = D_8009FA58->position;
         player->unk310 = !player->unk310;
         if (!player->unk310) {
-            if (D_8009F678 != 0) {
-                func_80046A34(D_8009F678);
-                D_8009F678 = 0;
+            if (gSlotVoiceHandle != 0) {
+                func_80046A34(gSlotVoiceHandle);
+                gSlotVoiceHandle = 0;
             }
         }
     }
@@ -138,7 +138,7 @@ void func_800271A4(void)
         flags |= 0x21;
     }
 
-    if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && D_8009FA84 == 0) {
+    if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && gModuleLoadedFlag == 0) {
         text = D_8009F2D0;
         x = (0x280 - func_80049340(text)) / 4;
         color = 1;
@@ -183,7 +183,7 @@ void func_800271A4(void)
         }
     }
 
-    if (D_8009FA84 > 0 && (gDiscShadeByte & 0x100)) {
+    if (gModuleLoadedFlag > 0 && (gDiscShadeByte & 0x100)) {
         func_80049100(D_8009F2F4, 0x91, 0x14, 1);
     }
 

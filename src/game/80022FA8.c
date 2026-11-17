@@ -26,7 +26,7 @@ struct Stream22FA8 {
     s32 busy;        /* 0x90 */
 };
 
-extern struct Stream22FA8 D_800A0968;
+extern struct Stream22FA8 gMixerState __asm__("D_800A0968");
 extern s32 D_800A0988[2];
 extern s32 D_800A099C[2];
 extern s32 D_800A09F8[2];
@@ -63,37 +63,37 @@ void func_80022FA8(void)
 {
     register u32 quot __asm__("$3");
     func_80022F7C();
-    if (D_800A0968.busy != 0) {
+    if (gMixerState.busy != 0) {
         return;
     }
-    D_800A0968.busy = 1;
-    if (D_800A0968.active == 0) {
+    gMixerState.busy = 1;
+    if (gMixerState.active == 0) {
         D_800A09F8[0] = 0;
         return;
     }
-    if (D_800A0968.unk84 != 0) {
+    if (gMixerState.unk84 != 0) {
         if (D_8009F634 != 0) {
             ((void (*)(s32))D_8009F634)(6);
         }
         D_800A09F8[0] = 0;
         return;
     }
-    if (D_800A0968.unk74 < D_800A0968.unk70) {
-        D_800A0968.unk74++;
+    if (gMixerState.unk74 < gMixerState.unk70) {
+        gMixerState.unk74++;
     }
-    if (D_800A0968.ready != 0) {
-        if (D_800A0968.start != 0) {
+    if (gMixerState.ready != 0) {
+        if (gMixerState.start != 0) {
             D_800A0988[0] = 0;
             func_80022D84();
         } else {
             if (D_8009F634 != 0) {
                 ((void (*)(s32))D_8009F634)(3);
             }
-            if (D_800A0968.start != 0) {
+            if (gMixerState.start != 0) {
                 D_800A0988[0] = 0;
                 func_80022D84();
             } else {
-                if (D_800A0968.unk74 == D_800A0968.unk70 - 1) {
+                if (gMixerState.unk74 == gMixerState.unk70 - 1) {
                     if (D_8009F634 != 0) {
                         ((void (*)(s32))D_8009F634)(4);
                     }
@@ -105,28 +105,28 @@ void func_80022FA8(void)
             }
         }
     }
-    if (D_800A0968.looping != 0 && D_800A0968.unk40 == D_800A0968.unk7C) {
-        quot = (D_800A0968.length * 3 + (D_800A0968.length >> 1)) * 300 / D_800A0968.rate;
-        D_800A0968.unk84 = 1;
+    if (gMixerState.looping != 0 && gMixerState.unk40 == gMixerState.unk7C) {
+        quot = (gMixerState.length * 3 + (gMixerState.length >> 1)) * 300 / gMixerState.rate;
+        gMixerState.unk84 = 1;
         {
-            u32 tmp = D_800A0968.unk40 - 16;
-            D_800A0968.unk7C = tmp + D_800A0968.length;
+            u32 tmp = gMixerState.unk40 - 16;
+            gMixerState.unk7C = tmp + gMixerState.length;
         }
-        D_800A0968.unk88 = gFrameTickCounter[0] + (quot + 10) * 3;
+        gMixerState.unk88 = gFrameTickCounter[0] + (quot + 10) * 3;
     } else {
         u32 product;
-        product = D_800A0968.unk70 * D_800A0968.unk6C;
-        D_800A0968.unk7C += D_800A0968.unk6C;
-        if (D_800A0968.unk7C >= product) {
-            D_800A0968.unk7C = 0;
+        product = gMixerState.unk70 * gMixerState.unk6C;
+        gMixerState.unk7C += gMixerState.unk6C;
+        if (gMixerState.unk7C >= product) {
+            gMixerState.unk7C = 0;
         }
         __asm__ volatile("" ::: "memory");
-        D_800A0968.unk88 = gFrameTickCounter[0] + D_800A0968.unk8C;
+        gMixerState.unk88 = gFrameTickCounter[0] + gMixerState.unk8C;
     }
-    if (D_800A0968.unk88 < 20) {
-        D_800A0968.unk88 = 20;
+    if (gMixerState.unk88 < 20) {
+        gMixerState.unk88 = 20;
     }
-    func_80098BB8(D_800A0968.unk44 + D_800A0968.unk7C);
+    func_80098BB8(gMixerState.unk44 + gMixerState.unk7C);
     func_80098A78(1);
     D_800A09F8[0] = 0;
 }

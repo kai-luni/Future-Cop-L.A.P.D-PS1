@@ -2,12 +2,12 @@
 #include "game/types.h"
 
 extern s32 *D_8009F590;
-extern s32 D_8009F594;
+extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
 extern void *D_8009F9D0;
-extern s32 D_8009F9E8;
+extern s32 gHeapMainBlockSize __asm__("D_8009F9E8");
 extern void *D_8009FA4C;
-extern s32 D_8009FA9C;
+extern s32 gHeapPoolBase __asm__("D_8009FA9C");
 extern void *D_8009FAAC;
 
 extern void *func_800194DC(s32 count, s32 size, s32 tag);
@@ -41,12 +41,12 @@ extern void *func_800194DC(s32 count, s32 size, s32 tag);
  */
 void func_80017C68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    s32 off = D_8009F9E8;
+    s32 off = gHeapMainBlockSize;
     s32 *ptr = D_8009F590;
     s32 base;
 
-    D_8009F594 = 3;
-    base = D_8009FA9C;
+    gFreeRangeCount = 3;
+    base = gHeapPoolBase;
     gHeapSearchCursor = 1;
     ptr[0] = base;
     ptr[1] = base;

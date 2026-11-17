@@ -10,7 +10,7 @@ typedef struct {
 
 extern Unk800A6D78 D_800A6D78[];
 extern s32 D_8009F258[];
-extern s32 (*D_8009F230)(s32, s32);
+extern  s32 (*gAllocCallback)(s32, s32) __asm__("D_8009F230");
 
 extern s32 func_8001D424(s32 arg0, s32 arg1, void *arg2);
 extern s32 func_8001D5E4(s32 arg0, s32 arg1);
@@ -88,7 +88,7 @@ s32 func_8001E110(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4)
         }
     }
 
-    ret = D_8009F230(value, arg4);
+    ret = gAllocCallback(value, arg4);
     *arg2 = ret;
     if (ret == 0) {
         return -0x16;

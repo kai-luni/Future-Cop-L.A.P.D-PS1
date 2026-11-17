@@ -10,7 +10,7 @@ typedef struct {
     s32 unk88;
 } Unk800A0968;
 
-extern Unk800A0968 D_800A0968;
+extern Unk800A0968 gMixerState __asm__("D_800A0968");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern void func_800226D8(void);
 extern void func_8002A23C(void);
@@ -34,11 +34,11 @@ extern void func_8002A23C(void);
  */
 void func_80022654(void)
 {
-    if (D_800A0968.unk04 != 0) {
-        if (D_800A0968.unk0C != 0) {
+    if (gMixerState.unk04 != 0) {
+        if (gMixerState.unk0C != 0) {
             func_800226D8();
-        } else if (D_800A0968.unk88 < gFrameTickCounter) {
-            D_800A0968.unk88 = -1;
+        } else if (gMixerState.unk88 < gFrameTickCounter) {
+            gMixerState.unk88 = -1;
             func_8002A23C();
         }
     }

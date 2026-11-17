@@ -12,7 +12,7 @@ struct LinkState {
 struct LinkNode;
 
 extern s32 *D_8009F590;
-extern s32 D_8009F594;
+extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
 extern struct LinkState *D_8009FA4C;
 extern struct LinkState *D_8009FAAC;
@@ -132,10 +132,10 @@ retry:
         *(s32 *)result = size;
         result = (u8 *)result + 4;
         D_8009F590[index] += size;
-        if (D_8009F590[index] == D_8009F590[index + 1] && D_8009F594 >= 4) {
+        if (D_8009F590[index] == D_8009F590[index + 1] && gFreeRangeCount >= 4) {
             func_8001E318((u8 *)&D_8009F590[index], (u8 *)(&D_8009F590[index] + 2),
-                         (D_8009F594 - index - 1) * 4);
-            D_8009F594 -= 2;
+                         (gFreeRangeCount - index - 1) * 4);
+            gFreeRangeCount -= 2;
         }
         break;
 
@@ -153,10 +153,10 @@ retry:
         result = (void *)D_8009F590[index + 1];
         *(s32 *)result = size;
         result = (u8 *)result + 4;
-        if (D_8009F590[index] == D_8009F590[index + 1] && D_8009F594 >= 4) {
+        if (D_8009F590[index] == D_8009F590[index + 1] && gFreeRangeCount >= 4) {
             func_8001E318((u8 *)&D_8009F590[index], (u8 *)(&D_8009F590[index] + 2),
-                         (D_8009F594 - index - 1) * 4);
-            D_8009F594 -= 2;
+                         (gFreeRangeCount - index - 1) * 4);
+            gFreeRangeCount -= 2;
             if (gHeapSearchCursor >= index + 2) {
                 gHeapSearchCursor -= 2;
             }

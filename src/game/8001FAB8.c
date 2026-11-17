@@ -23,7 +23,7 @@ struct S {
     volatile s32 s1BB0;
 };
 
-extern struct S *D_8009AB08;
+extern struct S *gOperationState __asm__("D_8009AB08");
 
 extern void func_8008D640(s32);
 extern void func_8008D650(s32);
@@ -60,7 +60,7 @@ s32 func_8001FAB8(void)
     s32 x, y;
     struct S *q;
 
-    p = D_8009AB08;
+    p = gOperationState;
     p->s1BB0 = 0;
     p->s9A8 = 1;
     a = p->s8F4;
@@ -96,11 +96,11 @@ s32 func_8001FAB8(void)
         func_8008D650(p->s8FC);
         return 0;
     }
-    if (D_8009AB08->s8F8 == 5) {
-        D_8009AB08->s904 = 1;
-        D_8009AB08->s8F8 = 6;
+    if (gOperationState->s8F8 == 5) {
+        gOperationState->s904 = 1;
+        gOperationState->s8F8 = 6;
     }
-    q = D_8009AB08;
+    q = gOperationState;
     if (q->s8F8 == 2) {
         q->s9A0 = 3;
         q->s8F4 = 2;
@@ -115,16 +115,16 @@ s32 func_8001FAB8(void)
         q->s8F8 = 0;
         if (q->s90C != 0) {
             func_8001E318(&q->d[2], (void *)q->s910, 0x78);
-            q = D_8009AB08;
+            q = gOperationState;
             for (i = 2; i < 32; i++) {
                 sum += (q->d[i] ^ q->d[32 - i]) + i;
             }
-            D_8009AB08->d[0] = D_8009AB08->s998;
-            D_8009AB08->d[1] = sum;
+            gOperationState->d[0] = gOperationState->s998;
+            gOperationState->d[1] = sum;
         } else {
             func_8001E318(q->d, (void *)q->s910, 0x80);
         }
-        q = D_8009AB08;
+        q = gOperationState;
         q->s900 = -5;
         func_8008D670(q->s8FC, q->s998, q->d);
         return 0;

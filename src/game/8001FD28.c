@@ -15,7 +15,7 @@ typedef struct {
     s32 reset;
 } State;
 
-extern State *D_8009AB08;
+extern State *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(s32);
 extern void func_8008D690(s32);
 
@@ -43,13 +43,13 @@ s32 func_8001FD28(void)
 {
     register State *p asm("$2");
     State *q;
-    D_8009AB08->reset = 0;
-    D_8009AB08->enabled = 1;
-    switch (D_8009AB08->state) {
+    gOperationState->reset = 0;
+    gOperationState->enabled = 1;
+    switch (gOperationState->state) {
     case 2:
     case 3:
     case 6:
-        p = D_8009AB08;
+        p = gOperationState;
         p->result = -3;
         p->mode = 0;
         p->state = 0;
@@ -58,7 +58,7 @@ s32 func_8001FD28(void)
         asm volatile("" : : : "memory");
         goto finish;
     case 1:
-        q = D_8009AB08;
+        q = gOperationState;
         q->result = -1;
         asm volatile("" : : : "memory");
         if (q->mode == 5) {
@@ -69,13 +69,13 @@ s32 func_8001FD28(void)
             q->mode = 0;
         }
     case 4:
-        p = D_8009AB08;
+        p = gOperationState;
         p->state = 0;
     finish:
         func_8008D640(p->handle);
         break;
     default:
-        p = D_8009AB08;
+        p = gOperationState;
         p->result = -2;
         p->mode = 0;
         p->state = 4;

@@ -16,7 +16,7 @@ struct Ctx {
     s32 unk1BB0;
 };
 
-extern volatile struct Ctx *D_8009AB08;
+extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(s32);
 
 /**
@@ -41,31 +41,31 @@ extern void func_8008D640(s32);
 s32 func_8001FE40(void)
 {
     register volatile struct Ctx *ctx __asm__("$2");
-    D_8009AB08->unk1BB0 = 0;
-    D_8009AB08->unk9A4 = 1;
-    switch (D_8009AB08->unk8F4) {
+    gOperationState->unk1BB0 = 0;
+    gOperationState->unk9A4 = 1;
+    switch (gOperationState->unk8F4) {
     case 2:
     case 3:
     case 6:
-        ctx = D_8009AB08;
+        ctx = gOperationState;
         ctx->unk900 = -3;
         goto reset;
     case 0:
-        if (D_8009AB08->unk9A8 > 0) {
-            D_8009AB08->unk9A8--;
+        if (gOperationState->unk9A8 > 0) {
+            gOperationState->unk9A8--;
         } else {
-            D_8009AB08->unk900 = -3;
-            D_8009AB08->unk8F8 = 0;
-            D_8009AB08->unk8F4 = 0;
-            D_8009AB08->unk904 = 0;
-            D_8009AB08->unk9A8 = 1;
+            gOperationState->unk900 = -3;
+            gOperationState->unk8F8 = 0;
+            gOperationState->unk8F4 = 0;
+            gOperationState->unk904 = 0;
+            gOperationState->unk9A8 = 1;
         }
-        ctx = D_8009AB08;
+        ctx = gOperationState;
         break;
     default:
-        D_8009AB08->unk900 = -3;
+        gOperationState->unk900 = -3;
     case 1:
-        ctx = D_8009AB08;
+        ctx = gOperationState;
     reset:
         ctx->unk8F8 = 0;
         ctx->unk8F4 = 0;

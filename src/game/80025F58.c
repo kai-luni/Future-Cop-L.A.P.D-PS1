@@ -10,7 +10,7 @@ struct Unk25F58 {
 
 extern struct Unk25F58 *D_8009F2CC;
 extern u8 D_8009F2EC[];
-extern u8 D_8009ABE8[];
+extern u8 gItemCodeTable[] __asm__("D_8009ABE8");
 
 extern s32 func_800451E0(void);
 extern s32 func_8004522C(void);
@@ -63,5 +63,5 @@ void func_80025F58(void)
     func_8008CD30(ptr + func_8008CCC0(ptr) - 3, D_8009F2EC, value);
 
     value = func_800451E0();
-    D_8009ABE8[4] = value ? 4 : 5;
+    gItemCodeTable[4] = value ? 4 : 5;
 }

@@ -6,9 +6,12 @@ extern St func_80010000;
 extern Ent D_800A6D78[];
 extern u8 D_800A85C0[];
 extern u8 D_8009F61C[];
-extern volatile unsigned int *D_8009F250;
-extern volatile unsigned int *D_8009F254;
-extern int D_8009F244, D_8009F24C, D_8009F228, D_8009F618;
+extern volatile unsigned int *gTransferPending __asm__("D_8009F250");
+extern volatile unsigned int *gTransferStatusPtr __asm__("D_8009F254");
+extern int gTransferError __asm__("D_8009F244");
+extern int gTransferRetryCount __asm__("D_8009F24C");
+extern int D_8009F618;
+extern int gCdAbortFlag __asm__("D_8009F228");
 extern volatile u8 D_800A0798[];
 extern int func_8008E0D8(int);
 extern int func_8008E598(void *, int);
@@ -41,11 +44,11 @@ extern void D_8001C808(void);
  * +0x18, the destination pointer +0x20 and a flag byte +0x24; the result is cleared
  * on entry, and func_8001CE54 and func_8001D130 fill the same fields, which is how
  * their roles are known.
- * State 2 (transfer): when D_8009F250 is non-zero the code first waits for bit
- * 0x1000000 of the word pointed at by D_8009F254, with a 0x10000 iteration cap.
+ * State 2 (transfer): when gTransferPending is non-zero the code first waits for bit
+ * 0x1000000 of the word pointed at by gTransferStatusPtr, with a 0x10000 iteration cap.
  * A 3-unit header is read into a 0x10-byte stack buffer and func_8001C588 turns it
  * into a sector address; that address is compared with the slot word at +0x08
- * masked with -0x800. On a mismatch D_8009F244 is set to -1, two drain reads (0x200
+ * masked with -0x800. On a mismatch gTransferError is set to -1, two drain reads (0x200
  * and 0x46 units) are issued, and the directory read is restarted with
  * func_8001C718 unless the wanted address lies fewer than 0x10 sectors ahead, in
  * which case the sector is simply dropped.
@@ -58,11 +61,11 @@ extern void D_8001C808(void);
  * Counters advance only on success (destination, position and slot +0x08 by length,
  * remaining down by length). When the result is negative or nothing remains, the
  * state returns to 0, the slot flag word is set to 1 (plus 0x100 when the flag byte
- * is 1), D_8009F24C is re-armed to 0x8CA and the requester's callback is called with
+ * is 1), gTransferRetryCount is re-armed to 0x8CA and the requester's callback is called with
  * (position, result), bracketed by D_8009F618 = 1 and 0.
  * State 1 does nothing, so a pending transfer waits for the next callback. State 0
  * advances the sector address the same way and runs the 0x8CA countdown in
- * D_8009F24C; at zero it calls func_8001C680 and reloads the countdown. Any other
+ * gTransferRetryCount; at zero it calls func_8001C680 and reloads the countdown. Any other
  * state sets the result to -0x18.
  * Abort path (mode other than 1): result -0x1D, D_8009F228 = 1, then a retry loop
  * that polls func_8008E1BC(1, 0, D_800A0798), leaves when bit 0x10 of the event byte
@@ -87,7 +90,7 @@ extern void D_8001C808(void);
  *   also make 0x46 the 280-byte EDC/ECC tail of such a sector, yet the 3-unit header
  *   read then covers the 12-byte sync block, while func_8001C588 parses the first
  *   three bytes as minute, second and sector.
- * - What D_8009F250 and D_8009F254 point at; only the 0x1000000 handshake bit is
+ * - What gTransferPending and gTransferStatusPtr point at; only the 0x1000000 handshake bit is
  *   visible.
  * - The exact meaning of the -0xC, -0x18 and -0x1D result codes.
  *
@@ -126,8 +129,8 @@ void func_8001C808(int arg)
         case 1:
             break;
         case 2:
-            if (D_8009F250 != 0) {
-                port = D_8009F254;
+            if (gTransferPending != 0) {
+                port = gTransferStatusPtr;
                 i = 0;
                 while ((*port & 0x1000000) && i++ != 0x10000) { }
                 __asm__ volatile ("" : : "r" (i));
@@ -138,7 +141,7 @@ void func_8001C808(int arg)
             q = &func_80010000;
             want = entries[q->idx].c & -0x800;
             if (cur != want) {
-                D_8009F244 = -1;
+                gTransferError = -1;
                 func_8008E598(D_800A85C0, 0x200);
                 func_8008E598(buf2, 0x46);
                 if (cur < want && want < cur + 0x10)
@@ -161,7 +164,7 @@ void func_8001C808(int arg)
                     __asm__ volatile ("" : : "r" (idx));
                     cnt = len;
                     __asm__ volatile ("" : : "r" (idx), "r" (cnt) : "$5");
-                    D_8009F244 = D_800A6D78[idx].c & -0x800;
+                    gTransferError = D_800A6D78[idx].c & -0x800;
                     func_8008CD10(q->buf, D_800A85C0 + n, cnt);
                 } else {
                     q->result = -0xC;
@@ -180,7 +183,7 @@ void func_8001C808(int arg)
             if (func_80010000.result < 0 || func_80010000.remain <= 0) {
                 func_80010000.state = 0;
                 D_800A6D78[func_80010000.idx].flags = 1;
-                D_8009F24C = 0x8CA;
+                gTransferRetryCount = 0x8CA;
                 if (func_80010000.flag == 1)
                     D_800A6D78[func_80010000.idx].flags |= 0x100;
                 D_8009F618 = 1;
@@ -192,11 +195,11 @@ void func_8001C808(int arg)
             loc = D_8009F61C;
             __asm__ volatile ("" : : "r" (loc));
             func_8001C288(loc);
-            if (D_8009F24C != 0) {
-                D_8009F24C--;
-                if (D_8009F24C == 0) {
+            if (gTransferRetryCount != 0) {
+                gTransferRetryCount--;
+                if (gTransferRetryCount == 0) {
                     func_8001C680();
-                    D_8009F24C = 0x8CA;
+                    gTransferRetryCount = 0x8CA;
                 }
             }
             break;
@@ -206,7 +209,7 @@ void func_8001C808(int arg)
         }
     } else {
         s->result = -0x1D;
-        D_8009F228 = one;
+        gCdAbortFlag = one;
         do {
             func_8008E1BC(1, 0, (void *)D_800A0798);
             if (!(D_800A0798[0] & 0x10)) break;
@@ -219,7 +222,7 @@ void func_8001C808(int arg)
             D_8009F618 = 0;
         } while (D_800A0798[0] & 0x10);
         func_8001C718();
-        D_8009F228 = 0;
+        gCdAbortFlag = 0;
     }
     func_8008E0D8(saved);
 }

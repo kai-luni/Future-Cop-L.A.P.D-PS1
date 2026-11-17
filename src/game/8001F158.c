@@ -1,7 +1,7 @@
 // Categories: Game Engine > Timing | Platform > Interrupts
 #include "game/types.h"
 
-extern s32 D_8009F99C;
+extern s32 gScreenModeHook __asm__("D_8009F99C");
 extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 
 extern s32 func_80091510(void (*callback)(void));
@@ -31,6 +31,6 @@ extern s32 func_80091510(void (*callback)(void));
 void func_8001F158(void)
 {
     func_80091510(0);
-    D_8009F99C = 0;
+    gScreenModeHook = 0;
     gFrameCallbackEnabled = 0;
 }

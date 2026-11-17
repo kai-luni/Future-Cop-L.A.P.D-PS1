@@ -18,7 +18,7 @@ struct Unk8009AB08 {
     s32 unk1BB4;
 };
 
-extern struct Unk8009AB08 *D_8009AB08;
+extern struct Unk8009AB08 *gOperationState __asm__("D_8009AB08");
 extern char D_80010B0C[];
 
 extern s32 func_8008CD30(char *dst, char *fmt, u32 arg2, u32 arg3);
@@ -69,7 +69,7 @@ s32 func_80020FDC(u32 arg0, u32 arg1, u32 arg2)
     __asm__("" : "=r"(p2) : "0"(p2));
     __asm__("" : "=r"(result) : "0"(result));
 
-    func_8008CD30(buf, D_80010B0C, D_8009AB08->unk0000 >> 4, p0);
+    func_8008CD30(buf, D_80010B0C, gOperationState->unk0000 >> 4, p0);
     a0 = p0;
     __asm__("" : "=r"(a0) : "0"(a0));
     tmp = p2 + 0x7F;

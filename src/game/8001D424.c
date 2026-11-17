@@ -4,8 +4,8 @@ typedef unsigned char u8;
 typedef struct { volatile s32 state; volatile s32 pos; s32 value; s32 copy; s32 mode; s32 other; } Entry;
 typedef struct { u8 loc[4]; s32 value; } File;
 extern Entry D_800A6D78[];
-extern char D_800A6DD8[];
-extern File D_800A6E20[];
+extern char gFileOpenResult[] __asm__("D_800A6DD8");
+extern File gFileTable[] __asm__("D_800A6E20");
 extern s32 func_8001CE10(void);
 extern s32 func_8001DC48(s32, s32, void *, char *);
 extern s32 func_8001C478(s32);
@@ -83,14 +83,14 @@ s32 func_8001D424(s32 arg0, s32 arg1, void *arg2)
     if (ret < 0) return ret;
     j = 0;
     do {
-        if (func_8008FF20(D_800A6E20, name + 0x6dd8)) break;
+        if (func_8008FF20(gFileTable, name + 0x6dd8)) break;
         j++;
     } while (j < 5);
     if (j != 5) {
         register s32 value __asm__("$2");
         register s32 copy __asm__("$4");
-        D_800A6D78[i].pos = func_8001C588(D_800A6E20);
-        value = D_800A6E20[0].value;
+        D_800A6D78[i].pos = func_8001C588(gFileTable);
+        value = gFileTable[0].value;
         copy = D_800A6D78[i].pos;
         D_800A6D78[i].mode = arg1;
         D_800A6D78[i].value = value;

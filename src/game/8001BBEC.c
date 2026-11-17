@@ -11,7 +11,7 @@ typedef struct {
 } Unk800A0660;
 
 extern s32 D_8009F5E8;
-extern Unk800A0660 D_800A0660[];
+extern Unk800A0660 gUploadRing[] __asm__("D_800A0660");
 
 /**
  *  @brief Writes five values into the next entry of a four-slot ring.
@@ -39,7 +39,7 @@ void func_8001BBEC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, u8 arg4)
     Unk800A0660 *base;
     Unk800A0660 *entry;
 
-    base = D_800A0660;
+    base = gUploadRing;
     entry = base + D_8009F5E8;
     entry->unk8 = arg4;
     entry->unk4 = arg0;

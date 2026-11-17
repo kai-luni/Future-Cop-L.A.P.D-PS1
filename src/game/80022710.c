@@ -9,8 +9,8 @@ struct StreamState {
     s32 ready;
 };
 
-extern struct StreamState D_800A0968;
-extern s32 D_800A0970[2];
+extern struct StreamState gMixerState __asm__("D_800A0968");
+extern s32 gMixerWord[2] __asm__("D_800A0970");
 extern u16 D_8009F268;
 
 extern void func_80022CA8(void);
@@ -44,7 +44,7 @@ s32 func_80022710(void)
 
     i = 0xFFFF;
     func_80022CA8();
-    p = &D_800A0968;
+    p = &gMixerState;
     p->flag = 1;
     D_8009F268++;
     if (D_8009F268 == 0) {
@@ -62,7 +62,7 @@ s32 func_80022710(void)
         } while (j != 0 && q->ready == 0);
     }
     if (i != 0) {
-        D_800A0970[0] = 1;
+        gMixerWord[0] = 1;
     }
-    return D_800A0970[0];
+    return gMixerWord[0];
 }

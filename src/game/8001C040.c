@@ -10,8 +10,8 @@ struct Unk1C040 {
     u8 unk1C[0x40];
 };
 
-extern u8 D_8009F225;
-extern struct Unk1C040 D_800A06E0[];
+extern u8 gLayerIndex __asm__("D_8009F225");
+extern struct Unk1C040 gLayerBlocks[] __asm__("D_800A06E0");
 
 /**
  * @brief Sets the colour of all fade layers.
@@ -34,9 +34,9 @@ void func_8001C040(u32 color)
 {
     s32 i;
 
-    for (i = 0; i < D_8009F225; i++) {
-        D_800A06E0[i].red = color >> 16;
-        D_800A06E0[i].green = color >> 8;
-        D_800A06E0[i].blue = color;
+    for (i = 0; i < gLayerIndex; i++) {
+        gLayerBlocks[i].red = color >> 16;
+        gLayerBlocks[i].green = color >> 8;
+        gLayerBlocks[i].blue = color;
     }
 }

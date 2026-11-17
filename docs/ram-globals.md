@@ -132,6 +132,92 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 
 Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage).
 
+## Heap, CD-Treiber, Layer und Mischer
+
+Fünfzig weitere Globals, wieder in **einem** Commit. Zwei davon mussten in `8001C808.c` von Hand nachgezogen werden, weil dort Mehrfach-Deklarationen stehen, die das Umbenennungsskript überspringt.
+
+### Heap des Loaders
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F9E8` | `gHeapMainBlockSize` | `s32` | Größe des Hauptblocks, im Retail `0x15A000`. |
+| `D_8009F594` | `gFreeRangeCount` | `s32` | Anzahl gültiger Wörter in der Frei-Bereichstabelle. |
+| `D_8009F5AC` | `gFreeRangeCursor` | `s32` | Cursor in diese Tabelle, um `-0x12` gewickelt ab `0x14`. |
+| `D_8009FA9C` | `gHeapPoolBase` | `s32` | Basis der Pools; die Freibereiche entstehen als `{base, base, base+size, base+size}`. |
+| `D_8009F230` | `gAllocCallback` | `s32` | Installierter Allokations-Callback (Tag 2, Next-Fit). |
+| `D_8009F22C` | `gFreeCallback` | `s32` | Standard-Callback zum Freigeben, von `func_8001D248` gesetzt. |
+| `D_80010028` | `gHeapHighWater` | `s32` | Hochwassermarke, wächst um `4 + size` je Anforderung. |
+| `D_8001002C` | `gHeapHighWaterPeak` | `s32` | Zweite Marke, wird nicht zurückgesetzt. |
+
+### CD-/Kartentreiber
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F250` | `gTransferPending` | `volatile u32 *` | Transfer ausstehend; im Zustand 2 wird auf Bit `0x1000000` des Ziels gewartet. |
+| `D_8009F254` | `gTransferStatusPtr` | `volatile u32 *` | Zeiger auf das Statuswort dieses Transfers. |
+| `D_8009F244` | `gTransferError` | `int` | Wird bei einem Vergleichsfehler auf `-1` gesetzt. |
+| `D_8009F24C` | `gTransferRetryCount` | `int` | Wartezähler, wird auf `0x8CA` nachgeladen. |
+| `D_8009F228` | `gCdAbortFlag` | `int` | Abbruch-Flag des Treibers (Ergebnis `-0x1D`). |
+| `D_8009F234` | `gMediaBypassFlag` | `u8` | `1` = Bereitschaftsprüfung wird übersprungen (Rückgabe 0 statt -2). |
+| `D_800A6DD8` | `gFileOpenResult` | `char[]` | Ergebnispuffer von `func_8001DC48(mode, …)`. |
+| `D_800A6E20` | `gFileTable` | `File[]` | Dateitabelle, die nach dem Moduswechsel aufgebaut wird. |
+| `D_8009F620` | `gFileSlotState` | `int` | Slot-Zustand der Datei; negative Codes sind Fehler (-9, -0x11). |
+
+### Layer, Ringe und Warteschlangen
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_800A06E0` | `gLayerBlocks` | `struct Display[]` | Layer-Blöcke; `[0]` liegt bei (0,0), `[1]` bei (0,0x100). |
+| `D_800A06B0` | `gDrawBlocks` | `struct Draw[]` | Zeichenblöcke, 0x140 × 0xF0, über `func_800921F4` gesetzt. |
+| `D_8009F224` | `gSelectedLayer` | `s8` | Gewählter Layer-Index; negativ bedeutet „kein Layer". |
+| `D_8009F225` | `gLayerIndex` | `u8` | Zweites Layer-Feld, im Retail `2`. |
+| `D_800A0660` | `gUploadRing` | `u8[]` | Upload-Ring; beim Flush werden die eingereihten Handles freigegeben. |
+| `D_8009AA68` | `gSingleShotQueue` | `u32[]` | Warteschlange für einmalige Aufträge, wie die Handle-Warteschlange behandelt. |
+| `D_800A0480` | `gStateTable` | `s32[]` | Zustandstabelle, von `func_800197A8` befüllt. |
+| `D_800A04D0` | `gStateEntryTable` | `s32[]` | Zu jedem Eintrag der alte Wert plus der Zuwachs. |
+| `D_8009FA68` | `gCompletionFlag` | `int` | Abschluss-Flag eines Slots im Anforderungspfad. |
+| `D_8009F9C8` | `gInitDoneFlag` | `s32` | Nur bei ungleich 0 laufen die drei Aufräumaufrufe. |
+| `D_8009F99C` | `gScreenModeHook` | `void (*)(void)` | Wird in den Bildschirmmodi 4 und folgende aufgerufen, wenn gesetzt. |
+
+### Text- und Zeichenhilfen
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009AB08` | `gOperationState` | `struct Unk8001F180 *` | Aktiver Operationszustand (`+0x8F4`) und eingereihte Kommandos (`+0x8F8`). |
+| `D_8009AB18` | `gPunctuationTable` | `u16[]` | Lookup für Satzzeichen-Bereiche beim Aufteilen druckbarer ASCII-Zeichen. |
+| `D_8009AB0C` | `gCharRangeTable` | `struct Range[]` | Bereichstabelle (Basis/Start) für Ziffern, Groß- und Kleinschreibung. |
+
+### Mischer und SPU
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F27C` | `gVolatileBase` | `volatile s32` | Flüchtige Basisadresse für die Kanalarbeit. |
+| `D_8009F26C` | `gChannelEnableFlag` | `u8` | Aktivierungs-Byte; nur bei ungleich 0 läuft der Slot-Durchlauf. |
+| `D_8009F640` | `gStreamStatePair` | `s32[2]` | Zwei Zustandswörter, beim Aufsetzen genullt. |
+| `D_8009F278` | `gSpuBufferPtr` | `s32` | SPU-Puffer, angefordert mit `func_80097B28(0xC000)`. |
+| `D_8009F648` | `gStreamCommandState` | `s32` | Bei `1` beginnt/stoppt der Aufrufer den Stream, sonst andere Aktion. |
+| `D_8009F280` | `gActiveStreamId` | `s32` | Aktive Stream-Id, an `func_8002A31C` mit Lautstärke 0 übergeben. |
+| `D_800A0968` | `gMixerState` | `u8[]` | Initialisierter Mischer-Zustand samt Einträgen. |
+| `D_800A0970` | `gMixerWord` | `s32[2]` | Zugriffsfunktion liefert `[0]`. |
+| `D_800A07B4` | `gChannelTable` | `s32` | Kanaltabelle für Konvertierung und Voice-Auswahl. |
+
+### Mission, Modul und Panel
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung |
+|---|---|---|---|
+| `D_8009F684` | `gMissionId` | `s32` | Missions-/Level-Id, an den Aufrufer weitergegeben. |
+| `D_800A0B30` | `gModuleNameBuffer` | `u8[]` | Modulname, über den BIOS-`strcpy`-Stub mit 0x80 Bytes kopiert. |
+| `D_8009FA84` | `gModuleLoadedFlag` | `s32` | Nur bei ungleich 0 läuft der Modul-Ladepfad. |
+| `D_8009C1CC` | `gSpecialistModules[5]` | `s32[5]` | Die fünf Spezialisten-Module, sonst `"PA\"`. |
+| `D_8009F678` | `gSlotVoiceHandle` | `s32[]` | Voice-Handle je Slot; wird gestoppt, wenn der Track wechselt. |
+| `D_8009FA78` | `gSlotTrackId` | `s32[]` | Track-Id je Slot für denselben Vergleich. |
+| `D_8009ABE8` | `gItemCodeTable` | `u8[]` | Sechs Item-Codes der Auswahl im Panel. |
+| `D_800A0A80` | `gAssetHandle` | `s32[3]` | Handle, Resource und Flag eines Assets samt Zustand. |
+| `D_800A0A88` | `gPlayerCountRecord` | `int` | Spielerzahl-Datensatz; nur der Wert 1 zählt als Einzelspieler. |
+| `D_8009F688` | `gMissionParam` | `s32` | Parameter für `func_80059BFC(flag, …)`, Flag 2 bei `unk0C == 2`. |
+
+**Nicht umbenannt:** `D_8009F61C` (Anfangs-Statuswort des CD-Lesers) und `D_8009F618` (Klammer-Flag um den Callback-Aufruf) — bei beiden kippt der Byte-Vergleich nach dem Rename, sie bleiben mit Retail-Namen stehen.
+
 ## Grafik-, Sound- und Weltbereich: die zweite Runde
 
 Fünfundfünfzig weitere Globals, wieder in **einem** Commit umbenannt. Bei allen war die Rolle in der Datei-Doku belegt; die Belegstelle steht jeweils daneben.

@@ -1,7 +1,7 @@
 // Categories: Graphics > Display Setup | Graphics > Fade Layers
 #include "game/types.h"
 
-extern s8 D_8009F224;
+extern s8 gSelectedLayer __asm__("D_8009F224");
 extern u8 gDisplayEnabled __asm__("D_8009F608");
 extern void func_8001C088(s32, u8);
 
@@ -20,5 +20,5 @@ extern void func_8001C088(s32, u8);
  */
 void func_8001BFA8(void)
 {
-    func_8001C088((1 - D_8009F224) & 0xFF, gDisplayEnabled);
+    func_8001C088((1 - gSelectedLayer) & 0xFF, gDisplayEnabled);
 }

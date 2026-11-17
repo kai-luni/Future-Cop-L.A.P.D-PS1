@@ -16,7 +16,7 @@ typedef struct {
     volatile int field1bb0;
 } State;
 
-extern State *volatile D_8009AB08;
+extern State *volatile gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(int);
 extern void func_8008D670(int, int, void *);
 extern void func_8008D680(int, int, void *);
@@ -42,7 +42,7 @@ extern void func_8008D680(int, int, void *);
  */
 int func_8001F968(void)
 {
-    register State *p asm("$6") = D_8009AB08;
+    register State *p asm("$6") = gOperationState;
     p->field1bb0 = 0;
     switch (p->state) {
     case 2:
@@ -60,7 +60,7 @@ int func_8001F968(void)
         break;
     case 3:
     case 6:
-        p = D_8009AB08;
+        p = gOperationState;
         if (p->counter > 0) {
             p->counter--;
             func_8008D670(p->field8fc, p->field998, p->field914);
@@ -75,7 +75,7 @@ int func_8001F968(void)
         break;
     default:
         {
-            State *q = D_8009AB08;
+            State *q = gOperationState;
             q->done = 1;
             q->field8f8 = 0;
             q->state = 0;

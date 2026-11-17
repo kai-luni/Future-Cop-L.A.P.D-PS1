@@ -76,7 +76,7 @@ struct Locals569EC {
 
 extern struct Mode569EC *gGameSession __asm__("D_8009FA94");
 extern struct Override569EC *D_8009F9A0;
-extern s32 D_8009FA84;
+extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern struct Camera569EC *gCamera __asm__("D_8009F9E4");
 extern struct State569EC D_8009AEC4[];
 extern struct Offset569EC D_8009AD08[];
@@ -277,7 +277,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
             selected = info->selected;
         }
     }
-    if (D_8009FA84 > 0) state = func_80056994(info, elapsed);
+    if (gModuleLoadedFlag > 0) state = func_80056994(info, elapsed);
     {
         register struct Camera569EC *saved __asm__("$8");
         register s32 id __asm__("$4");

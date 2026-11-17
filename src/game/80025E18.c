@@ -9,8 +9,8 @@ struct SoundVoice {
     s8 extra;
 };
 
-extern s32 D_8009F678[];
-extern s32 D_8009FA78[];
+extern s32 gSlotVoiceHandle[] __asm__("D_8009F678");
+extern s32 gSlotTrackId[] __asm__("D_8009FA78");
 extern void *D_8009FA58[];
 
 extern void func_80046A34(s32 handle);
@@ -50,17 +50,17 @@ void func_80025E18(s32 track, s32 volume, s32 slot)
     s32 handle;
     u32 offset;
 
-    if (D_8009F678[slot] != 0) {
-        if (track != D_8009FA78[slot] || volume == 0) {
-            func_80046A34(D_8009F678[slot]);
-            D_8009F678[slot] = 0;
-            D_8009FA78[slot] = 0;
+    if (gSlotVoiceHandle[slot] != 0) {
+        if (track != gSlotTrackId[slot] || volume == 0) {
+            func_80046A34(gSlotVoiceHandle[slot]);
+            gSlotVoiceHandle[slot] = 0;
+            gSlotTrackId[slot] = 0;
         }
     }
     offset = (u32)slot << 2;
     if (volume > 0) {
         s32 *handle_slot;
-        handle_slot = (s32 *)((u8 *)D_8009F678 + offset);
+        handle_slot = (s32 *)((u8 *)gSlotVoiceHandle + offset);
         if (*handle_slot != 0) {
             voice = (struct SoundVoice *)*handle_slot;
             func_80047800(voice, voice->pan, volume, -1);
@@ -69,9 +69,9 @@ void func_80025E18(s32 track, s32 volume, s32 slot)
             *handle_slot = handle;
             if (handle != 0) {
                 func_80046E88(track, 0, 0, -1, handle, *(void **)((u8 *)D_8009FA58 + offset));
-                *(s32 *)((u8 *)D_8009FA78 + offset) = track;
+                *(s32 *)((u8 *)gSlotTrackId + offset) = track;
             } else {
-                *(s32 *)((u8 *)D_8009FA78 + offset) = 0;
+                *(s32 *)((u8 *)gSlotTrackId + offset) = 0;
             }
         }
     }

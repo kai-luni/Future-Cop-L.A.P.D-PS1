@@ -16,7 +16,7 @@ typedef struct State {
     volatile int field1bb0;
 } State;
 
-extern State *D_8009AB08;
+extern State *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(int);
 extern void func_8008D670(int, int, void *);
 extern void func_8008D680(int, int, void *);
@@ -42,7 +42,7 @@ extern void func_8008D680(int, int, void *);
  */
 int func_8001F818(void)
 {
-    register State *p asm("$6") = D_8009AB08;
+    register State *p asm("$6") = gOperationState;
     p->field1bb0 = 0;
     switch (p->mode) {
     case 2:
@@ -60,7 +60,7 @@ int func_8001F818(void)
         break;
     case 3:
     case 6:
-        p = D_8009AB08;
+        p = gOperationState;
         if (p->timer != 0) {
             p->timer--;
             func_8008D670(p->handle, p->value, p->data);
@@ -74,7 +74,7 @@ int func_8001F818(void)
         }
         break;
     default: {
-        State *q = D_8009AB08;
+        State *q = gOperationState;
         q->done = 1;
         q->active = 0;
         q->mode = 0;

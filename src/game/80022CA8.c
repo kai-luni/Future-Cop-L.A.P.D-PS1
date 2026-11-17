@@ -33,7 +33,7 @@ struct StreamTail {
     s32 deadline;
 };
 
-extern struct StreamState D_800A0968;
+extern struct StreamState gMixerState __asm__("D_800A0968");
 
 /**
  * @brief Resets the global audio stream controller state D_800A0968 and its first two channels.
@@ -60,22 +60,22 @@ void func_80022CA8(void)
     struct StreamTail *tail;
     u32 i;
 
-    tail = (struct StreamTail *)&D_800A0968;
-    D_800A0968.flag = 0;
-    D_800A0968.active = 0;
+    tail = (struct StreamTail *)&gMixerState;
+    gMixerState.flag = 0;
+    gMixerState.active = 0;
     tail->deadline = 0;
-    D_800A0968.unk08 = 0;
-    D_800A0968.stopping = 0;
-    D_800A0968.unk20 = 0;
-    D_800A0968.unk10 = 0;
+    gMixerState.unk08 = 0;
+    gMixerState.stopping = 0;
+    gMixerState.unk20 = 0;
+    gMixerState.unk10 = 0;
     tail->unk84 = 0;
     tail->unk78 = 0;
     tail->unk7C = 0;
     tail->ready = 1;
     tail->currentRate = tail->rate;
     for (i = 0; i < 2; i++) {
-        D_800A0968.channels[i].left = 0;
-        D_800A0968.channels[i].right = 0x40;
-        D_800A0968.channels[i].id = -1;
+        gMixerState.channels[i].left = 0;
+        gMixerState.channels[i].right = 0x40;
+        gMixerState.channels[i].id = -1;
     }
 }

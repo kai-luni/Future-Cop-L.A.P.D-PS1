@@ -11,7 +11,7 @@ typedef struct {
     } array[1];
 } Unk800A0968;
 
-extern Unk800A0968 D_800A0968;
+extern Unk800A0968 gMixerState __asm__("D_800A0968");
 
 /**
  *  @brief Clears a field in each counted entry of a global array.
@@ -38,8 +38,8 @@ s32 func_80022C68(void)
     i = 0;
     ret = i;
 
-    for (; i < D_800A0968.count; i++) {
-        D_800A0968.array[i].field = 0;
+    for (; i < gMixerState.count; i++) {
+        gMixerState.array[i].field = 0;
     }
 
     return ret;

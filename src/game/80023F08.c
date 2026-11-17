@@ -4,8 +4,8 @@
 struct Resource { u8 pad[13]; s8 owner; };
 struct Handle { struct Resource *resource; s32 serial, state, id, time, delay; u8 flag; };
 struct Params { s32 pitch, volume, pan; };
-extern struct Handle D_800A0A80;
-extern s32 D_8009F278;
+extern struct Handle gAssetHandle __asm__("D_800A0A80");
+extern s32 gSpuBufferPtr __asm__("D_8009F278");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern void func_80023E84(void);
 extern s32 func_800474C4(struct Handle *);
@@ -41,11 +41,11 @@ s32 func_80023F08(void)
     s32 channel;
     struct Resource *resource;
 
-    if (!D_8009F278) func_80023E84();
-    if ((u8)func_800474C4(&D_800A0A80) == 1) {
-        resource = D_800A0A80.resource;
-        if (D_800A0A80.flag) {
-            if (!(u8)func_800450A4(D_800A0A80.id, mix)) {
+    if (!gSpuBufferPtr) func_80023E84();
+    if ((u8)func_800474C4(&gAssetHandle) == 1) {
+        resource = gAssetHandle.resource;
+        if (gAssetHandle.flag) {
+            if (!(u8)func_800450A4(gAssetHandle.id, mix)) {
                 resource = 0;
                 func_80023E84();
             }
@@ -57,16 +57,16 @@ s32 func_80023F08(void)
             params.pitch = 0x400;
             params.volume = mix[0];
             params.pan = mix[1];
-            if (func_800220C4(100, resource->owner, &params, D_8009F278) == -1) {
-                func_800474F0(&D_800A0A80);
+            if (func_800220C4(100, resource->owner, &params, gSpuBufferPtr) == -1) {
+                func_800474F0(&gAssetHandle);
             } else {
-                if (D_800A0A80.flag) func_80047800(resource, mix[1], mix[0], -1);
+                if (gAssetHandle.flag) func_80047800(resource, mix[1], mix[0], -1);
                 channel = resource->owner;
                 func_800221E4(1, &channel);
-                D_800A0A80.state = 1;
-                D_800A0A80.time = gFrameTickCounter + D_800A0A80.delay;
+                gAssetHandle.state = 1;
+                gAssetHandle.time = gFrameTickCounter + gAssetHandle.delay;
             }
         }
     }
-    return D_800A0A80.state == 1;
+    return gAssetHandle.state == 1;
 }

@@ -15,7 +15,7 @@ struct Ctx {
     s32 unk1BB0;
 };
 
-extern volatile struct Ctx *D_8009AB08;
+extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(s32);
 
 /**
@@ -43,13 +43,13 @@ s32 func_8001FF44(void)
     register s32 count __asm__("$2");
     register volatile struct Ctx *ctx __asm__("$3");
     register volatile struct Ctx *result __asm__("$2");
-    D_8009AB08->unk1BB0 = 0;
-    D_8009AB08->unk9A4 = 1;
-    if ((u32)D_8009AB08->unk8F4 < 7)
-        goto *table[D_8009AB08->unk8F4];
+    gOperationState->unk1BB0 = 0;
+    gOperationState->unk9A4 = 1;
+    if ((u32)gOperationState->unk8F4 < 7)
+        goto *table[gOperationState->unk8F4];
     goto fallback;
 case0:
-    ctx = D_8009AB08;
+    ctx = gOperationState;
     if (ctx->unk9A8 > 0) {
         count = ctx->unk9A8 - 1;
     } else {
@@ -63,10 +63,10 @@ case0:
     }
     ctx->unk9A8 = count;
     __asm__ volatile("" ::: "memory");
-    result = D_8009AB08;
+    result = gOperationState;
     goto done;
 fallback:
-    result = D_8009AB08;
+    result = gOperationState;
     result->unk900 = -3;
     result->unk8F8 = 0;
     result->unk8F4 = 0;

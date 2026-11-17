@@ -17,7 +17,7 @@ struct Ctx {
     u32 unk1BB0;
 };
 
-extern volatile struct Ctx *D_8009AB08;
+extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
 
 extern void func_8008D640(s32 value);
 
@@ -40,14 +40,14 @@ extern void func_8008D640(s32 value);
  */
 void func_80020024(void)
 {
-    if (D_8009AB08->unk1BB0++ >= 0x3D) {
-        D_8009AB08->unk1BB0 = 0;
-        D_8009AB08->unk8F8 = 0;
-        D_8009AB08->unk8F4 = 0;
-        D_8009AB08->unk904 = 0;
-        D_8009AB08->unk900 = -3;
-        D_8009AB08->unk9A4 = 1;
-        func_8008D640(D_8009AB08->unk8FC);
+    if (gOperationState->unk1BB0++ >= 0x3D) {
+        gOperationState->unk1BB0 = 0;
+        gOperationState->unk8F8 = 0;
+        gOperationState->unk8F4 = 0;
+        gOperationState->unk904 = 0;
+        gOperationState->unk900 = -3;
+        gOperationState->unk9A4 = 1;
+        func_8008D640(gOperationState->unk8FC);
     }
-    D_8009AB08->unk8CC();
+    gOperationState->unk8CC();
 }

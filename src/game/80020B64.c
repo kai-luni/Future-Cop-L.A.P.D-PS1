@@ -4,7 +4,7 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef int s32;
 
-extern u8 *D_8009AB08;
+extern u8 *gOperationState __asm__("D_8009AB08");
 extern void *func_8001E4C0(void *destination, int value, unsigned int count);
 extern void func_80020B28(void *records);
 extern s32 func_8001F180(void);
@@ -53,7 +53,7 @@ int func_80020B64(void)
     register u32 mk __asm__("$11");
     register u32 ff __asm__("$10");
 
-    base = D_8009AB08;
+    base = gOperationState;
     records = base + 0x9B0;
     func_8001E4C0(records, 0, 0x1200);
     h1 = 0x4D;
@@ -67,8 +67,8 @@ int func_80020B64(void)
     end = base + 0x11B0;
     do {
         if (record == first) {
-            *(volatile u8 *)(D_8009AB08 + 0x9B0) = h1;
-            *(volatile u8 *)(D_8009AB08 + 0x9B1) = h2;
+            *(volatile u8 *)(gOperationState + 0x9B0) = h1;
+            *(volatile u8 *)(gOperationState + 0x9B1) = h2;
         } else {
             record[0] = mk;
             *(u16 *)(record + 8) = ff;
@@ -89,7 +89,7 @@ int func_80020B64(void)
     if (func_8001F180() != 0) {
         return 1;
     }
-    g = D_8009AB08;
+    g = gOperationState;
     *(s32 *)(g + 0x998) = 1;
     *(s32 *)(g + 0x99C) = 0x23;
     *(s32 *)(g + 0x910) = (s32)(g + 0xA30);

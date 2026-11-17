@@ -16,21 +16,21 @@ extern s32 D_8009F284;
 extern s32 gRequestListHead __asm__("D_8009F668");
 extern s32 gRequestListTail __asm__("D_8009F66C");
 extern u8 D_8009F680;
-extern s32 D_8009F684;
-extern s32 D_8009F688;
+extern s32 gMissionId __asm__("D_8009F684");
+extern s32 gMissionParam __asm__("D_8009F688");
 extern s32 gScratchBlockPtr __asm__("D_8009F68C");
 extern s32 D_8009FA24;
 extern s32 D_8009FA6C;
 extern s32 D_8009FA70;
-extern s32 D_8009FA84;
+extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern struct Obj *gGameSession __asm__("D_8009FA94");
 extern s32 D_8009FAC0;
 
-extern s32 D_8009F678[];
-extern s32 D_8009FA78[];
+extern s32 gSlotVoiceHandle[] __asm__("D_8009F678");
+extern s32 gSlotTrackId[] __asm__("D_8009FA78");
 extern struct Name D_80010DC0;
 extern void *D_8009F9A0;
-extern u8 D_800A0B30[];
+extern u8 gModuleNameBuffer[] __asm__("D_800A0B30");
 extern u8 D_800A8540[];
 extern s32 D_8009FA5C[];
 
@@ -122,8 +122,8 @@ void func_80024A24(s32 arg0)
         register s32 *q __asm__("$5");
 
         i = 0;
-        q = D_8009FA78;
-        p = D_8009F678;
+        q = gSlotTrackId;
+        p = gSlotVoiceHandle;
         do {
             *p = 0;
             *q = 0;
@@ -146,12 +146,12 @@ void func_80024A24(s32 arg0)
 
 call_init:
     D_8009F9A0 = 0;
-    D_8009F684 = arg0;
+    gMissionId = arg0;
     func_80017C68(0x168, 0x82, 0x118, 0x64, 0xFC, 0x145);
     D_8009FA24 = 0;
     D_8009FA6C = 0;
     func_800860CC();
-    func_8008CCB0(D_800A0B30, arg0);
+    func_8008CCB0(gModuleNameBuffer, arg0);
 
     {
         register s32 n __asm__("$3");
@@ -186,15 +186,15 @@ call_init:
     func_80019A64();
 
     seed = D_8009F284;
-    v = D_8009FA84;
+    v = gModuleLoadedFlag;
     if (v != 0) {
         if (v > 0) {
             func_800197A8(seed);
             func_80056924();
-            v = D_8009FA84;
+            v = gModuleLoadedFlag;
         }
         seed = ((v >> 31) + v) ^ (v >> 31);
-        D_8009F688 = seed;
+        gMissionParam = seed;
     }
 
     func_80019828();
@@ -214,13 +214,13 @@ call_init:
     func_800617D8();
     func_8004783C();
 
-    if (D_8009FA84 != 0) {
+    if (gModuleLoadedFlag != 0) {
         s32 flag = (gGameSession->unk0C == 2) ? 2 : 1;
 
-        func_80059BFC(flag, D_8009F688, arg0);
+        func_80059BFC(flag, gMissionParam, arg0);
     }
 
-    func_80029F50(D_800A0B30);
+    func_80029F50(gModuleNameBuffer);
     D_8009FA70 = 0;
     func_8005A738();
     func_80049690();

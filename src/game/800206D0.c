@@ -24,7 +24,7 @@ struct Ctx {
     s32 unk1BB0;
 };
 
-extern volatile struct Ctx *D_8009AB08;
+extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
 
 extern void *func_8001E4C0(void *destination, int value, unsigned int count);
 extern void func_80020530(void);
@@ -56,27 +56,27 @@ extern void func_8008D640(s32 value);
  */
 void func_800206D0(void)
 {
-    s32 t = D_8009AB08->unk000;
+    s32 t = gOperationState->unk000;
 
-    D_8009AB08->unk8F4 = 0;
-    D_8009AB08->unk8F8 = 0;
-    D_8009AB08->unk910 = 0;
-    D_8009AB08->unk8FC = t;
-    D_8009AB08->unk900 = -2;
-    D_8009AB08->unk904 = 0;
-    D_8009AB08->unk908 = 1;
-    D_8009AB08->unk90C = 0;
-    D_8009AB08->unk994 = 0;
-    D_8009AB08->unk998 = 0;
-    D_8009AB08->unk9A0 = 3;
-    D_8009AB08->unk9AC = 3;
-    D_8009AB08->unk9A8 = 1;
-    D_8009AB08->unk9A4 = 0;
-    D_8009AB08->unk1BB0 = 0;
+    gOperationState->unk8F4 = 0;
+    gOperationState->unk8F8 = 0;
+    gOperationState->unk910 = 0;
+    gOperationState->unk8FC = t;
+    gOperationState->unk900 = -2;
+    gOperationState->unk904 = 0;
+    gOperationState->unk908 = 1;
+    gOperationState->unk90C = 0;
+    gOperationState->unk994 = 0;
+    gOperationState->unk998 = 0;
+    gOperationState->unk9A0 = 3;
+    gOperationState->unk9AC = 3;
+    gOperationState->unk9A8 = 1;
+    gOperationState->unk9A4 = 0;
+    gOperationState->unk1BB0 = 0;
 
-    func_8001E4C0(D_8009AB08->unk914, 0, 0x80);
-    func_8001E4C0(D_8009AB08->unk9B0, 0, 0x1200);
+    func_8001E4C0(gOperationState->unk914, 0, 0x80);
+    func_8001E4C0(gOperationState->unk9B0, 0, 0x1200);
     func_80020530();
     func_80020120();
-    func_8008D640(D_8009AB08->unk8FC);
+    func_8008D640(gOperationState->unk8FC);
 }

@@ -11,7 +11,7 @@ struct SoundSystem {
 extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 extern s32 D_800A07AC;
 extern s32 D_800A07B0;
-extern s32 D_800A07B4;
+extern s32 gChannelTable __asm__("D_800A07B4");
 
 extern s32 func_80021740(s32 *table, s32 key, s32 *value, s32 *index);
 extern void func_800216D8(void);
@@ -77,10 +77,10 @@ s32 func_80021554(s32 *arguments)
     value = 0;
     valuePtr = &value;
     if (func_80021740(arguments, 9, valuePtr, 0) != 0) {
-        D_800A07B4 = value;
+        gChannelTable = value;
     }
 
-    p = (u8 *)D_800A07B4;
+    p = (u8 *)gChannelTable;
     count = channelCount * 28;
     while (count--) {
         *p++ = 0;

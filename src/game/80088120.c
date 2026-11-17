@@ -22,7 +22,7 @@ extern s32 D_8009F960;
 extern s32 D_8009F964;
 extern s32 D_8009F968;
 extern s32 gFileSearchGroup __asm__("D_8009F238");
-extern Params88120 D_800A6E20;
+extern Params88120 gFileTable __asm__("D_800A6E20");
 
 extern s32 func_8001D5E4(s32 arg0, s32 arg1);
 extern void func_8001D3A8(s32 handle);
@@ -149,7 +149,7 @@ u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
         func_80092BF4(1);
         return 0;
     }
-    params = D_800A6E20;
+    params = gFileTable;
 
     if ((D_8009F4DC & 0x24) == 0x24) {
         rectA.x = 0;

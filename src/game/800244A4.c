@@ -1,9 +1,9 @@
 // Categories: Game Engine > Subsystem Initialization
 #include "game/types.h"
 
-extern u8 D_8009F26C;
-extern s32 D_8009F280;
-extern s32 D_8009F648;
+extern u8 gChannelEnableFlag __asm__("D_8009F26C");
+extern s32 gActiveStreamId __asm__("D_8009F280");
+extern s32 gStreamCommandState __asm__("D_8009F648");
 extern s32 D_8009F64C;
 
 extern u8 func_8002443C[];
@@ -47,17 +47,17 @@ s32 func_800244A4(void)
     s32 result;
 
     result = 0;
-    if (D_8009F26C != 0) {
+    if (gChannelEnableFlag != 0) {
         if ((func_800226C8() & 0xFF) != 0) {
             func_800226D8();
-            if (D_8009F280 != 0) {
-                func_8002A31C(D_8009F280, result);
-                D_8009F280 = 0;
+            if (gActiveStreamId != 0) {
+                func_8002A31C(gActiveStreamId, result);
+                gActiveStreamId = 0;
             }
         }
-        D_8009F648 = 1;
+        gStreamCommandState = 1;
         D_8009F64C = 0x1C2;
-        D_8009F280 = 0;
+        gActiveStreamId = 0;
         if (func_80022484(1, 0x37B4, 2, 0x2FC0, 3, 3, 10, 2, 6,
                           (s32)(func_8002443C + 0x34), 0) < 0) {
             func_80024630(0);

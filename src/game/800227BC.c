@@ -26,7 +26,7 @@ struct StreamState {
     struct StreamChannel channels[3];
 };
 
-extern struct StreamState D_800A0968;
+extern struct StreamState gMixerState __asm__("D_800A0968");
 
 /**
  *  @brief Sets the stored left and right levels for a stream channel.
@@ -86,6 +86,6 @@ void func_800227BC(s32 channel, s32 left, s32 right)
     }
     channel = clampedChannel;
 
-    D_800A0968.channels[channel].left = left;
-    D_800A0968.channels[channel].right = right;
+    gMixerState.channels[channel].left = left;
+    gMixerState.channels[channel].right = right;
 }

@@ -7,7 +7,7 @@ struct CardManager {
     void *primary[16];
 };
 
-extern struct CardManager *D_8009AB08;
+extern struct CardManager *gOperationState __asm__("D_8009AB08");
 
 extern s32 func_80020A9C(s32 a0);
 extern void func_800207CC(void);
@@ -45,8 +45,8 @@ s32 func_80020C90(void *arg0)
         i = ret;
         one = 1;
         do {
-            if (D_8009AB08->state[i] == one) {
-                if (func_8008CCA0(arg0, D_8009AB08->primary[i]) == 0) {
+            if (gOperationState->state[i] == one) {
+                if (func_8008CCA0(arg0, gOperationState->primary[i]) == 0) {
                     ret = i;
                     break;
                 }

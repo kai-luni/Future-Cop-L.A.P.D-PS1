@@ -1,7 +1,7 @@
 // Categories: Graphics > Display State
 #include "game/types.h"
 
-extern u8 D_8009F224;
+extern u8 gSelectedLayer __asm__("D_8009F224");
 
 /**
  * @brief Returns the current screen-offset selector.
@@ -17,5 +17,5 @@ extern u8 D_8009F224;
  */
 u8 func_8001C034(void)
 {
-    return D_8009F224;
+    return gSelectedLayer;
 }

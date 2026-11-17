@@ -32,13 +32,13 @@ extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 D_8009FA6C;
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FAC0;
-extern s8 D_8009ABE8[];
+extern s8 gItemCodeTable[] __asm__("D_8009ABE8");
 extern s8 D_8009ABEC[];
 extern s8 D_8009ABED[];
 extern s32 D_8009FA58[];
 extern s32 D_8009F670[];
-extern s32 D_8009F678[2];
-extern s32 D_8009FA78[2];
+extern s32 gSlotVoiceHandle[2] __asm__("D_8009F678");
+extern s32 gSlotTrackId[2] __asm__("D_8009FA78");
 extern struct InputAction260B8 D_800A0AD0[];
 extern struct InputAction260B8 D_800A0AE0[];
 extern struct InputAction260B8 D_800A0AB0[];
@@ -182,7 +182,7 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
     func_8005780C(state->buttons, p4);
 
     x = (selection - 0xDC) / 2;
-    items = D_8009ABE8;
+    items = gItemCodeTable;
     func_8001C214(0x5294, x - 2, 0x9E, 0xE0, 0xB6, 1);
     func_8001C214(0, x, 0xA0, 0xDC, 0xB2, 1);
 
@@ -240,9 +240,9 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
             items[5] = 6;
             state->selected = selection;
             D_8009FA6C--;
-            if (D_8009F678[slotArg] != 0) {
-                func_80046A34(D_8009F678[slotArg]);
-                D_8009F678[slotArg] = 0;
+            if (gSlotVoiceHandle[slotArg] != 0) {
+                func_80046A34(gSlotVoiceHandle[slotArg]);
+                gSlotVoiceHandle[slotArg] = 0;
             }
             goto store_selected;
         }
@@ -301,7 +301,7 @@ store_selected:
     state->selected = selection;
 
 display:
-    if (selection != -1 && D_8009F678[slotArg] != 0) {
+    if (selection != -1 && gSlotVoiceHandle[slotArg] != 0) {
         switch (code = items[selection]) {
         case 1:
             id = D_8009FAC0;
@@ -316,9 +316,9 @@ display:
             id = 0;
             break;
         }
-        if (D_8009FA78[slotArg] != id) {
-            func_80046A34(D_8009F678[slotArg]);
-            D_8009F678[slotArg] = 0;
+        if (gSlotTrackId[slotArg] != id) {
+            func_80046A34(gSlotVoiceHandle[slotArg]);
+            gSlotVoiceHandle[slotArg] = 0;
         }
     }
 

@@ -40,7 +40,7 @@ struct Request {
     s32 mode;
 };
 
-extern struct StreamState D_800A0968;
+extern struct StreamState gMixerState __asm__("D_800A0968");
 
 extern void func_80022D1C(void *data, s32 mode, s32 length);
 extern void func_80023204(void);
@@ -70,47 +70,47 @@ void func_80022D84(void)
     s32 mode;
     s32 channel;
 
-    channel = D_800A0968.unk20;
+    channel = gMixerState.unk20;
     if (channel == 0) {
-        if (D_800A0968.channels[0].start == 0 || D_800A0968.unk74 == 0) {
+        if (gMixerState.channels[0].start == 0 || gMixerState.unk74 == 0) {
             return;
         }
     }
 
-    if (D_800A0968.unk08 != 0) {
+    if (gMixerState.unk08 != 0) {
         if (channel == 0) {
-            if (D_800A0968.unk74 == D_800A0968.unk70) {
-                D_800A0968.unk78 = D_800A0968.unk7C + D_800A0968.unk6C;
-                if (D_800A0968.unk78 == D_800A0968.unk74 * D_800A0968.unk6C) {
-                    D_800A0968.unk78 = 0;
+            if (gMixerState.unk74 == gMixerState.unk70) {
+                gMixerState.unk78 = gMixerState.unk7C + gMixerState.unk6C;
+                if (gMixerState.unk78 == gMixerState.unk74 * gMixerState.unk6C) {
+                    gMixerState.unk78 = 0;
                 }
-                D_800A0968.unk74--;
+                gMixerState.unk74--;
             }
         }
     }
 
-    D_800A0968.ready = 0;
+    gMixerState.ready = 0;
     if (channel == 0) {
-        D_800A0968.unk74--;
+        gMixerState.unk74--;
     }
 
-    if (D_800A0968.channels[channel].looping != 0) {
+    if (gMixerState.channels[channel].looping != 0) {
         mode = 3;
-    } else if (D_800A0968.unk78 == 0) {
+    } else if (gMixerState.unk78 == 0) {
         mode = 0;
-    } else if (D_800A0968.unk78 == (D_800A0968.unk70 - 1) * D_800A0968.unk6C) {
+    } else if (gMixerState.unk78 == (gMixerState.unk70 - 1) * gMixerState.unk6C) {
         mode = 1;
     } else {
         mode = 2;
     }
 
-    func_80022D1C((void *)D_800A0968.channels[channel].start, mode, D_800A0968.channels[channel].length);
+    func_80022D1C((void *)gMixerState.channels[channel].start, mode, gMixerState.channels[channel].length);
 
-    req.address = D_800A0968.channels[channel].unk20 + D_800A0968.unk78;
-    req.size = D_800A0968.channels[channel].length;
-    req.data = (void *)D_800A0968.channels[channel].start;
+    req.address = gMixerState.channels[channel].unk20 + gMixerState.unk78;
+    req.size = gMixerState.channels[channel].length;
+    req.data = (void *)gMixerState.channels[channel].start;
     req.callback = func_80023204;
-    req.unused = D_800A0968.unk10;
+    req.unused = gMixerState.unk10;
     if (mode == 3) {
         req.unused |= 0x80000000;
     }

@@ -1,8 +1,8 @@
 // Categories: Resources > Memory Management | Platform > Memory
 #include "game/types.h"
 
-extern s32 D_80010028;
-extern s32 D_8001002C;
+extern s32 gHeapHighWater __asm__("D_80010028");
+extern s32 gHeapHighWaterPeak __asm__("D_8001002C");
 
 extern s32 *func_8008CA90(s32 size);
 
@@ -42,13 +42,13 @@ s32 *func_8001E240(s32 size)
 
     block = func_8008CA90(size + 4);
 
-    next = D_80010028 + 4;
+    next = gHeapHighWater + 4;
     next += size;
-    D_80010028 = next;
-    if (next < D_8001002C) {
-        next = D_8001002C;
+    gHeapHighWater = next;
+    if (next < gHeapHighWaterPeak) {
+        next = gHeapHighWaterPeak;
     }
-    D_8001002C = next;
+    gHeapHighWaterPeak = next;
 
     if (block == 0) {
         return 0;

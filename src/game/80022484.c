@@ -24,7 +24,7 @@ struct State22484 {
     struct Entry22484 entries[3];
 };
 
-extern u8 D_800A0968[];
+extern u8 gMixerState[] __asm__("D_800A0968");
 extern u32 D_8009F630;
 extern u32 D_8009F634;
 extern u32 D_8009F638;
@@ -80,7 +80,7 @@ s32 func_80022484(s32 arg0, ...)
     local0 = 0;
     local10 = 0;
 
-    base = D_800A0968;
+    base = gMixerState;
     func_8001E4C0(base, 0, 0x98);
 
     D_8009F630 = 0;
@@ -112,12 +112,12 @@ s32 func_80022484(s32 arg0, ...)
     result = func_80022BEC();
     func_80022CA8();
 
-    for (i = 0; i < ((struct State22484 *)D_800A0968)->count; i++) {
+    for (i = 0; i < ((struct State22484 *)gMixerState)->count; i++) {
         ((struct State22484 *)base)->entries[i].zero18 = 0;
         ((struct State22484 *)base)->entries[i].id1C = -1;
         ((struct State22484 *)base)->entries[i].zero10 = 0;
     }
 
-    D_800A0968[0] = 1;
+    gMixerState[0] = 1;
     return result;
 }

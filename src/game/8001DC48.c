@@ -4,8 +4,8 @@ extern int func_8008CCC0(const u8 *);
 extern void func_8008CCB0(u8 *, const u8 *);
 extern void func_8008CC90(u8 *, const u8 *);
 extern u8 func_8008CCE0(int);
-extern int D_8009FA68;
-extern int D_8009F620;
+extern int gCompletionFlag __asm__("D_8009FA68");
+extern int gFileSlotState __asm__("D_8009F620");
 
 /**
  * @brief Builds the on-disc path of a file request: joins directory and name,

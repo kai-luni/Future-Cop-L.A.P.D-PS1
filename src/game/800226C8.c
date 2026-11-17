@@ -1,7 +1,7 @@
 // Categories: Game Engine > State
 #include "../../include/game/types.h"
 
-extern u8 D_800A0968;
+extern u8 gMixerState __asm__("D_800A0968");
 
 /**
  *  @brief Returns the current value of a global byte.
@@ -22,5 +22,5 @@ extern u8 D_800A0968;
  */
 u32 func_800226C8(void)
 {
-    return D_800A0968;
+    return gMixerState;
 }

@@ -39,7 +39,7 @@ struct StreamState {
     s32 unk8C;
 };
 
-extern struct StreamState D_800A0968;
+extern struct StreamState gMixerState __asm__("D_800A0968");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern void D_80022FA8(void);
 
@@ -79,31 +79,31 @@ s32 func_800228F4(void)
     s32 params[4];
     s32 channels[2];
 
-    if (D_800A0968.unk08 != 0) {
-        D_800A0968.active = 1;
-        D_800A0968.unk7C = D_800A0968.unk6C;
+    if (gMixerState.unk08 != 0) {
+        gMixerState.active = 1;
+        gMixerState.unk7C = gMixerState.unk6C;
         func_80098BF8(D_80022FA8);
         func_80022F44();
 
-        params[0] = D_800A0968.unk18;
-        for (i = 0; i < D_800A0968.channelCount; i++) {
-            params[1] = D_800A0968.channels[i].unk08;
-            params[2] = D_800A0968.channels[i].unk0C;
-            voice = func_80046B04(D_800A0968.channels[i].unk08, 0xA, 0, 0xFF);
-            D_800A0968.channels[i].voice = voice;
+        params[0] = gMixerState.unk18;
+        for (i = 0; i < gMixerState.channelCount; i++) {
+            params[1] = gMixerState.channels[i].unk08;
+            params[2] = gMixerState.channels[i].unk0C;
+            voice = func_80046B04(gMixerState.channels[i].unk08, 0xA, 0, 0xFF);
+            gMixerState.channels[i].voice = voice;
             if (voice != 0) {
                 func_800477D8(voice, params[2], params[1], -1);
                 params[1] = voice->volume;
                 params[2] = voice->pan;
-                channels[i] = D_800A0968.channels[i].id =
+                channels[i] = gMixerState.channels[i].id =
                     func_800220C4(0x64, voice->unk0D, params,
-                                  D_800A0968.channels[i].unk20);
+                                  gMixerState.channels[i].unk20);
             } else {
                 channels[i] = -1;
             }
         }
-        func_800221E4(D_800A0968.channelCount, channels);
-        D_800A0968.unk88 = gFrameTickCounter + D_800A0968.unk8C;
+        func_800221E4(gMixerState.channelCount, channels);
+        gMixerState.unk88 = gFrameTickCounter + gMixerState.unk8C;
     } else {
         ret = -1;
     }

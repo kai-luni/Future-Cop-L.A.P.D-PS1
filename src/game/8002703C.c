@@ -11,7 +11,7 @@ extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern volatile s32 D_8009FA30;
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern s32 D_8009FA84;
+extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern u8 D_8009F690;
 extern u8 D_8009F691;
@@ -87,7 +87,7 @@ void func_8002703C(void)
     }
 
     func_80057864();
-    if (D_8009FA84 > 0) {
+    if (gModuleLoadedFlag > 0) {
         value = func_80059DB8();
         gFrameId = value;
         if (value < 0) {

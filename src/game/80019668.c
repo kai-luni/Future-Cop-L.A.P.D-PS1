@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 D_8009F5A8;
-extern s32 D_800A0480[];
+extern s32 gStateTable[] __asm__("D_800A0480");
 
 /* additive Lagged-Fibonacci-Generator, 31 bit random number */
 /**
@@ -39,5 +39,5 @@ s32 func_80019668(void)
         j = D_8009F5A8 - 0x12;
     }
     D_8009F5A8 = i;
-    return D_800A0480[i] += D_800A0480[j];
+    return gStateTable[i] += gStateTable[j];
 }

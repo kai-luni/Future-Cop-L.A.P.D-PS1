@@ -8,7 +8,7 @@ struct CardContext {
     void (*savedCallback)(void);
 };
 
-extern struct CardContext *D_8009AB08;
+extern struct CardContext *gOperationState __asm__("D_8009AB08");
 
 extern void func_8008C9C0(void);
 extern s32 func_80091510(void (*callback)(void));
@@ -35,10 +35,10 @@ extern void func_8008C9E0(void);
  */
 void func_8002059C(void)
 {
-    if (--D_8009AB08->lockCount == 0) {
+    if (--gOperationState->lockCount == 0) {
         func_8008C9C0();
-        func_80091510(D_8009AB08->savedCallback);
-        D_8009AB08->savedCallback = 0;
+        func_80091510(gOperationState->savedCallback);
+        gOperationState->savedCallback = 0;
         func_8008C9E0();
     }
 }

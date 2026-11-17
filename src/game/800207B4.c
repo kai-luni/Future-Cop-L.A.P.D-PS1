@@ -4,7 +4,7 @@ struct GlobalState {
     int value;
 };
 
-extern struct GlobalState *D_8009AB08;
+extern struct GlobalState *gOperationState __asm__("D_8009AB08");
 
 /**
  * @brief Returns the memory-card operation status/result code at D_8009AB08 + 0x900.
@@ -31,5 +31,5 @@ extern struct GlobalState *D_8009AB08;
  */
 int func_800207B4(void)
 {
-    return D_8009AB08->value;
+    return gOperationState->value;
 }

@@ -1,7 +1,7 @@
 // Categories: Game Engine > Frame | Platform > GPU | Graphics > Display Setup
 #include "game/types.h"
 
-extern void (*D_8009F99C)(void);
+extern  void (*gScreenModeHook)(void) __asm__("D_8009F99C");
 extern s32 D_8009F9CC;
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
@@ -41,8 +41,8 @@ extern void func_8001BFA8(void);
  */
 void func_8001EFF8(void)
 {
-    if (D_8009F99C != 0) {
-        D_8009F99C();
+    if (gScreenModeHook != 0) {
+        gScreenModeHook();
     }
     if (gScreenState == 4 || gScreenState == 13) {
         gPaletteCycleCounter += 5;

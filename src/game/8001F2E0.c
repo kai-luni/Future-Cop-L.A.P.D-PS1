@@ -17,7 +17,7 @@ struct Unk8009AB08 {
     s32 unk1BB4;
 };
 
-extern struct Unk8009AB08 *D_8009AB08;
+extern struct Unk8009AB08 *gOperationState __asm__("D_8009AB08");
 extern s32 func_8001F180(u32 arg0, u32 arg1, u32 arg2, u32 arg3);
 
 /**
@@ -50,7 +50,7 @@ void func_8001F2E0(u32 arg0, u32 arg1, u32 arg2, u32 arg3)
     register u32 temp __asm__("$3");
 
     if (func_8001F180(arg0, arg1, arg2, arg3) == 0) {
-        p = D_8009AB08;
+        p = gOperationState;
         temp = a >> 6;
         p->unk998 = a;
         p->unk99C = b;
@@ -61,6 +61,6 @@ void func_8001F2E0(u32 arg0, u32 arg1, u32 arg2, u32 arg3)
         p->unk910 = c;
         p->unk8F8 = 6;
     } else {
-        D_8009AB08->unk9A4 = 1;
+        gOperationState->unk9A4 = 1;
     }
 }

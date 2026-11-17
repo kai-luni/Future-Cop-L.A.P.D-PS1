@@ -7,7 +7,7 @@ struct Unk8001F180 {
     s32 field_8F8;
 };
 
-extern struct Unk8001F180 *D_8009AB08;
+extern struct Unk8001F180 *gOperationState __asm__("D_8009AB08");
 
 /**
  * @brief Checks whether the memory-card manager is busy with an active state or queued command.
@@ -35,7 +35,7 @@ extern struct Unk8001F180 *D_8009AB08;
  */
 s32 func_8001F180(void)
 {
-    struct Unk8001F180 *state = D_8009AB08;
+    struct Unk8001F180 *state = gOperationState;
 
     if (state->field_8F4 != 0) goto one;
     if (state->field_8F8 != 0) goto one;
