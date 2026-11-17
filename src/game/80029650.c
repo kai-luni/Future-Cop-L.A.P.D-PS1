@@ -12,7 +12,7 @@ typedef struct {
     Node *head;
 } List;
 
-extern List D_800A0B70;
+extern List gStreamBufferList __asm__("D_800A0B70");
 extern void func_800288BC(Node *node);
 
 /**
@@ -48,7 +48,7 @@ void func_80029650(Node **arg0)
 
     (*arg0)->count--;
     __asm__ volatile("" : : : "memory");
-    list = &D_800A0B70;
+    list = &gStreamBufferList;
     __asm__ volatile("" : "+r"(list));
     current = list->head;
     if (current != 0) {

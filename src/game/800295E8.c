@@ -18,7 +18,7 @@ struct Data_800A0B70 {
     struct Node *link;
 };
 
-extern struct Data_800A0B70 D_800A0B70;
+extern struct Data_800A0B70 gStreamBufferList __asm__("D_800A0B70");
 
 extern void func_8002902C(u8 arg);
 extern void func_800195D0(struct LinkState *state, int *link);
@@ -68,14 +68,14 @@ s32 func_800295E8(u8 arg)
     if (arg != 0) {
         func_8002902C(arg);
     }
-    node = D_800A0B70.link;
+    node = gStreamBufferList.link;
     if (node == 0) {
         return 0;
     }
     value = node->value;
     next = node->next;
-    state = D_800A0B70.state;
-    D_800A0B70.link = next;
+    state = gStreamBufferList.state;
+    gStreamBufferList.link = next;
     func_800195D0(state, (int *)node);
     return value;
 }

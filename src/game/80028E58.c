@@ -2,7 +2,7 @@
 #include "game/types.h"
 typedef struct Node { struct Node *next; } Node;
 typedef struct State { u8 pad[0x10]; Node *pending; Node *head; u8 pad18[8]; u8 flag; } State;
-extern State D_800A0B70;
+extern State gStreamBufferList __asm__("D_800A0B70");
 extern Node *D_800A0C20[];
 extern Node *D_800A0C10[];
 extern s32 D_8009F6A4;
@@ -33,7 +33,7 @@ extern void func_80028AB4(void);
  */
 Node *func_80028E58(u8 arg)
 {
-    State *state = &D_800A0B70;
+    State *state = &gStreamBufferList;
     Node *node;
     Node *p;
     if (state->flag == 0) {

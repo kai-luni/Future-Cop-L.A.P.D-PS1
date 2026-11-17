@@ -13,7 +13,7 @@ typedef struct {
     s32 unk4C;
 } Unk800A0B70;
 
-extern Unk800A0B70 D_800A0B70;
+extern Unk800A0B70 gStreamBufferList __asm__("D_800A0B70");
 extern u8 D_8009F6B8;
 extern s32 D_8009F6DC;
 extern s32 D_8009F6E0;
@@ -51,7 +51,7 @@ void func_8002A16C(s32 arg0)
         value = 1;
     }
 
-    p = &D_800A0B70;
+    p = &gStreamBufferList;
 
     if (p->unk44 != 0 && value > 0 && p->unk20 != 0 &&
         !(D_8009F6B8 & 0x40)) {

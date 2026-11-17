@@ -20,7 +20,7 @@ struct Unk800A0B70 {
     struct LinkNode *head;
 };
 
-extern struct Unk800A0B70 D_800A0B70;
+extern struct Unk800A0B70 gStreamBufferList __asm__("D_800A0B70");
 
 extern struct LinkNode *func_800195A4(struct LinkState *state);
 
@@ -54,15 +54,15 @@ void func_80028DC0(s32 arg)
     struct LinkNode *node;
     struct LinkNode *cur;
 
-    node = func_800195A4(D_800A0B70.state);
+    node = func_800195A4(gStreamBufferList.state);
     if (node != 0) {
         node->next = 0;
         node->data = arg;
 
-        if (D_800A0B70.head == 0) {
-            D_800A0B70.head = node;
+        if (gStreamBufferList.head == 0) {
+            gStreamBufferList.head = node;
         } else {
-            cur = D_800A0B70.head;
+            cur = gStreamBufferList.head;
             while (cur->next != 0) {
                 cur = cur->next;
             }

@@ -11,7 +11,7 @@ typedef struct State {
     u8 pad[0x10];
     Node *head;
 } State;
-extern State D_800A0B70;
+extern State gStreamBufferList __asm__("D_800A0B70");
 
 /**
  * @brief Resets a stream/asset buffer node's reference count and appends it to D_800A0B70.head.
@@ -39,10 +39,10 @@ void func_800288BC(Node *node)
 {
     Node *cur;
     node->count = 0;
-    if (D_800A0B70.head == 0) {
-        D_800A0B70.head = node;
+    if (gStreamBufferList.head == 0) {
+        gStreamBufferList.head = node;
     } else {
-        cur = D_800A0B70.head;
+        cur = gStreamBufferList.head;
         while (cur->next != 0) {
             cur = cur->next;
         }

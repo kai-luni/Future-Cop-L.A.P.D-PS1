@@ -10,7 +10,7 @@ struct Sound { u8 *data; u8 pad[0x1c]; s32 size; };
 struct SoundLoad { Sound *sound; s32 soundpos; };
 struct State { u8 pad0[8]; s32 pos; u8 padc[8]; File *file; s32 pad18; s32 limit; u8 playing; u8 pad21[3]; struct SoundLoad load; u8 pad2c[0x12]; u16 count; u16 rate; u8 pad42[2]; s32 a, b, c; };
 struct Other { u8 pad0[8]; Chunk *chunks[2]; u8 pad10; u8 count; u8 sum; u8 pad13; s32 size; };
-extern struct State D_800A0B70;
+extern struct State gStreamBufferList __asm__("D_800A0B70");
 extern struct Other D_800A0C30;
 extern Chunk *D_800A0C50[4];
 extern u8 D_8009F6B8, D_8009F6C0;
@@ -56,7 +56,7 @@ void func_8002902C(void)
     File copy;
     register s32 pos __asm__("$5");
     if (!func_80028E58(1)) return;
-    state = &D_800A0B70;
+    state = &gStreamBufferList;
     file = state->file;
     if (!file) return;
     queue = D_800A0C50;

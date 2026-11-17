@@ -28,7 +28,7 @@ typedef struct {
 } State29C34;
 
 extern Queue29C34 gRingBuffer __asm__("D_800A0BC0");
-extern State29C34 D_800A0B70;
+extern State29C34 gStreamBufferList __asm__("D_800A0B70");
 extern u8 D_8009F6B8;
 extern s32 D_8009F6BC;
 extern u8 D_8009F6C0;
@@ -71,7 +71,7 @@ void func_80029C34(void)
     s32 index;
     s32 value;
 
-    state = &D_800A0B70;
+    state = &gStreamBufferList;
 
     if (gRingBuffer.count <= 0) {
         return;

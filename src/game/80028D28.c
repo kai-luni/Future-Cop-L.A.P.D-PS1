@@ -14,7 +14,7 @@ struct State {
     struct Node *other;
 };
 
-extern struct State D_800A0B70;
+extern struct State gStreamBufferList __asm__("D_800A0B70");
 extern void func_800288BC(struct Node *node);
 
 /**
@@ -38,15 +38,15 @@ void func_80028D28(void)
     struct Node *node;
     struct Node *cur;
 
-    node = D_800A0B70.head;
-    D_800A0B70.head = node->next;
+    node = gStreamBufferList.head;
+    gStreamBufferList.head = node->next;
     node->next = 0;
     node->unk08 = 0;
     if (node->count > 0) {
-        if (D_800A0B70.other == 0) {
-            D_800A0B70.other = node;
+        if (gStreamBufferList.other == 0) {
+            gStreamBufferList.other = node;
         } else {
-            cur = D_800A0B70.other;
+            cur = gStreamBufferList.other;
             while (cur->next != 0) {
                 cur = cur->next;
             }

@@ -22,7 +22,7 @@ typedef struct State {
     u8 pad3d[0xf];
     s32 unk4c;
 } State;
-extern State D_800A0B70;
+extern State gStreamBufferList __asm__("D_800A0B70");
 extern Node *D_800A0C10[];
 extern u8 D_8009F6A8;
 extern Node * volatile D_8009F6AC;
@@ -62,11 +62,11 @@ void func_80028918(s32 arg0, s32 arg1)
     Node *node;
     register s32 pos asm("$6");
     register s32 node_value asm("$2");
-    if (D_800A0B70.unk00 < 0) {
+    if (gStreamBufferList.unk00 < 0) {
         D_8009F6A8 = 0;
         return;
     }
-    state = &D_800A0B70;
+    state = &gStreamBufferList;
     if (arg0 != state->unk1c) arg1 = 5;
     pos = state->unk08;
     node_value = D_8009F6AC->unk04;

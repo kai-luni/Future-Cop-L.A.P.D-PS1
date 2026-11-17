@@ -13,7 +13,7 @@ struct Unk800A0B70 {
     s32 unk4C;
 };
 
-extern struct Unk800A0B70 D_800A0B70;
+extern struct Unk800A0B70 gStreamBufferList __asm__("D_800A0B70");
 extern volatile u8 D_8009F6A8;
 
 extern void func_80029DD8(void);
@@ -48,19 +48,19 @@ void func_80029EB8(void)
     s32 old;
     register s32 pending __asm__("$4");
 
-    old = D_800A0B70.unk00;
-    D_800A0B70.unk00 = -1;
+    old = gStreamBufferList.unk00;
+    gStreamBufferList.unk00 = -1;
     func_80029DD8();
     func_80029520();
-    D_800A0B70.unk04 = 0;
-    D_800A0B70.unk08 = 0;
-    D_800A0B70.unk44 = 0;
-    D_800A0B70.unk48 = 0;
-    D_800A0B70.unk4C = 0;
-    pending = D_800A0B70.unk2C;
+    gStreamBufferList.unk04 = 0;
+    gStreamBufferList.unk08 = 0;
+    gStreamBufferList.unk44 = 0;
+    gStreamBufferList.unk48 = 0;
+    gStreamBufferList.unk4C = 0;
+    pending = gStreamBufferList.unk2C;
     if (pending != 0) {
         func_80019584();
-        D_800A0B70.unk2C = 0;
+        gStreamBufferList.unk2C = 0;
     }
     if (old != -1) {
         while (D_8009F6A8 != 0) {

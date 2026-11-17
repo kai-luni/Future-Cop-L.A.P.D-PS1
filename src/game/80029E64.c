@@ -6,7 +6,7 @@ struct Unk800A0B70 {
     void *unk2C;
 };
 
-extern struct Unk800A0B70 D_800A0B70;
+extern struct Unk800A0B70 gStreamBufferList __asm__("D_800A0B70");
 extern s32 D_8009F6E8;
 extern void func_80019584();
 
@@ -29,8 +29,8 @@ extern void func_80019584();
  */
 void func_80029E64(void)
 {
-    if (D_800A0B70.unk2C != 0 && D_8009F6E8 == 0) {
-        func_80019584(D_800A0B70.unk2C);
-        D_800A0B70.unk2C = 0;
+    if (gStreamBufferList.unk2C != 0 && D_8009F6E8 == 0) {
+        func_80019584(gStreamBufferList.unk2C);
+        gStreamBufferList.unk2C = 0;
     }
 }

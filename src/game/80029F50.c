@@ -50,7 +50,7 @@ struct FixedPool {
     void *free;
 };
 
-extern State800A0B70 D_800A0B70;
+extern State800A0B70 gStreamBufferList __asm__("D_800A0B70");
 extern Node *D_8009FA48;
 extern s32 D_8009F238;
 extern Unk800A6D78 D_800A6D78[];
@@ -164,7 +164,7 @@ void func_80029F50(void *arg0)
         node = (Node *)((u8 *)prev + stride);
     } while (--count != 0);
 
-    state = &D_800A0B70;
+    state = &gStreamBufferList;
     state->unk1C = 0x6000;
     state->unk3C = 1;
     state->unk40 = 0xFFFF;
