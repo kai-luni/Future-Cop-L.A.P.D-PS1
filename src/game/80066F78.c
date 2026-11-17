@@ -15,7 +15,7 @@ struct Map {
 
 extern struct Map *D_8009F80C;
 extern u8 **D_8009F808;
-extern u8 D_8009AFE8[][4];
+extern u8 gVertexIndexTable[][4] __asm__("D_8009AFE8");
 extern u8 D_8009B1A4[];
 
 extern s32 func_80067480(s8 *data, u32 index, s32 x, s32 y, s32 *out);
@@ -236,7 +236,7 @@ s32 func_80066F78(s32 *position, s32 *output, s32 *a2, s32 *a3)
             register u32 vv __asm__("$2") = t5v >> 15;
             type = vv & 0x7F;
         }
-        p = D_8009AFE8[type];
+        p = gVertexIndexTable[type];
         {
             u32 i0 = p[0], i1 = p[1], i2 = p[2];
             s8 *q0 = s6 + i0, *q1 = s6 + i1, *q2 = s6 + i2;

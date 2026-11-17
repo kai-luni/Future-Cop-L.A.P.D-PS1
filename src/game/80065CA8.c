@@ -1,7 +1,7 @@
 // Categories: Graphics > Renderer > Map Tile Icons | Graphics > GPU Primitives | Graphics > 2D Drawing
 #include "game/types.h"
 
-extern u8 D_8009AFE8[][4];
+extern u8 gVertexIndexTable[][4] __asm__("D_8009AFE8");
 extern u8 D_8009B1A4[];
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
@@ -160,7 +160,7 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
         if (t0 >= 0x47) {
             return;
         }
-        { u8 *e = D_8009AFE8[t0];
+        { u8 *e = gVertexIndexTable[t0];
         a1 = base[e[0]] + base[e[1]] + base[e[2]] + base[e[3]]; }
         switch (D_8009B1A4[t0] >> 3) {
         case 0:

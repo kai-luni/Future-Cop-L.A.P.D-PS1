@@ -1,7 +1,7 @@
 // Categories: Graphics > Renderer > Map Cell Geometry | Graphics > GPU Primitives | Graphics > Clipping
 #include "game/types.h"
 
-extern u32 D_8009AFE8[];
+extern u32 gVertexIndexTable[] __asm__("D_8009AFE8");
 extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_800A8E80[];
@@ -142,7 +142,7 @@ void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
     u16 *cl;
     u32 e;
 
-    w = D_8009AFE8[(arg1 >> 15) & 0x7F];
+    w = gVertexIndexTable[(arg1 >> 15) & 0x7F];
     b0 = w & 0xFF;
     w >>= 8;
     b1 = w & 0xFF;

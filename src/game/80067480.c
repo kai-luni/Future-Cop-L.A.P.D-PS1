@@ -1,7 +1,7 @@
 // Categories: Physics > Collision | Gameplay > Map
 typedef unsigned char u8;
 typedef signed char s8;
-extern u8 D_8009AFE8[][4];
+extern u8 gVertexIndexTable[][4] __asm__("D_8009AFE8");
 extern u8 D_8009B1A4[];
 
 /**
@@ -32,7 +32,7 @@ int func_80067480(s8 *data, unsigned int index, int x, int y, int *out)
     int a, b, c, d;
     int left, right;
     int mode;
-    u8 *p = D_8009AFE8[index];
+    u8 *p = gVertexIndexTable[index];
     a = data[p[0]];
     b = data[p[1]];
     c = data[p[2]];
