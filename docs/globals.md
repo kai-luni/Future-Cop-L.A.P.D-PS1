@@ -6,7 +6,7 @@
 
 Diese Datei erklärt **49 globale Variablen**, die sich im Originalprogramm befinden und als Inhalt eine Adresse eines PlayStation-Hardwareregisters tragen. Es sind **49 verschiedene Variablen**, aber nur **37 verschiedene Hardware-Zieladressen**: Manche Programmteile besitzen einen eigenen Zeiger auf dasselbe Register.
 
-Die Datei dokumentiert **nur diese bisher untersuchten Hardware-Zeiger**, nicht alle globalen Variablen des Spiels. Sie hilft beim Verstehen des C-Codes und beim Nachschlagen, welche Funktion mit welchem Gerät spricht. Der Abschnitt „Spielzustand, Treiber und Warteschlangen" enthält zusätzlich 33 normale Daten-Globals (Ringindizes, Treiberzustände, Rückrufe), die bereits im C-Code lesbare Namen tragen.
+Die Datei dokumentiert **nur diese bisher untersuchten Hardware-Zeiger**, nicht alle globalen Variablen des Spiels. Sie hilft beim Verstehen des C-Codes und beim Nachschlagen, welche Funktion mit welchem Gerät spricht. Der Abschnitt „Spielzustand, Treiber und Warteschlangen" enthält zusätzlich 43 normale Daten-Globals (Ringindizes, Treiberzustände, Rückrufe), die bereits im C-Code lesbare Namen tragen.
 
 ### Das wichtigste Prinzip
 
@@ -201,12 +201,32 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 | `D_8009F5B8` | `gResourceList` | `struct Resource *` | Kopf der einfach verketteten Ressourcenliste; wird in mehreren Funktionen durchlaufen und am Ende freigegeben. **Bestätigt.** | `func_80019AA8`, `func_800198DC` |
 | `D_800A07A8` | `gSoundSystem` | `struct SoundSystem` | Globaler Zustand des Klangsystems mit Bank-Liste und Anzahl. **Bestätigt.** | `func_80021508` |
 
+### Grafik-Puffer und Pakete
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009FA90` | `gPacketCursor` | `u8 *` | Schreibzeiger im GPU-Paketpuffer; das Makro `ALLOC` vergleicht ihn mit dem Limit und rückt ihn weiter. **Bestätigt** (Doku nennt ihn „the GPU packet cursor"). | `func_80014490`, `func_8001484C` |
+| `D_8009F9C0` | `gPacketLimit` | `u8 * volatile` | Ende des aktuellen Paketpuffers; liegt der Cursor darüber, wird neu alloziert. **Bestätigt** („the packet limit"). | `func_80014490`, `func_8001484C` |
+| `D_8009F9F0` | `gPrimPoolNext` | `Prim *` | Nächster freier Eintrag im Primitive-Pool (`h < Ende` prüft die Grenze). **Bestätigt.** | `func_80014C64`, `func_80015F38` |
+| `D_8009FA28` | `gPrimPoolEnd` | `Prim *` | Ende des Primitive-Pools; die Allokationsmakros vergleichen dagegen. **Bestätigt.** | `func_80014C64`, `func_800164F4` |
+
+### Spielzustand und Warteschlangen
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009FA00` | `gScreenState` | `s32` | Aktueller Bildschirmzustand der Hauptschleife (z. B. 1 = „loading", 13 = HUD-Phase). **Bestätigt.** | `func_80024E3C`, `func_8001EFF8` |
+| `D_8009FA2C` | `gFrameTickCounter` | `s32` | Frame-Taktzähler; Rumble-Timer und andere Zeitgeber werden dagegen verglichen. **Bestätigt** (Doku: „frame tick counter"). | `func_8001EC94`, `func_8001F0B8` |
+| `D_8009FA60` | `gPaletteCycleCounter` | `s32` | Zähler für den Palettenwechsel; das HUD liest `(>> 4) & 7` daraus. **Bestätigt.** | `func_8001EFF8` |
+| `D_800A0BC0` | `gRingBuffer` | `Queue298EC` | Ringpuffer mit Länge, Basisindex und acht 8-Byte-Slots für Kommandos. **Bestätigt.** | `func_800298EC` |
+| `D_800A0B70` | `gStreamBufferList` | `State` | Kopf der Liste von Stream-/Asset-Puffern (`head` bei +0x10); neue Knoten werden hinten angehängt. **Bestätigt.** | `func_800288BC` |
+
 ### Spieler und Match
 
 | Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
 |---|---|---|---|---|
 | `D_8009FA0C` | `gPlayerCount` | `s32` / `int` | Anzahl der Spieler im laufenden Match (1 = Einzelspieler, 2 = Zweispieler); viele Pfade verzweigen darauf. **Bestätigt.** Die Funktionsdoku in `src/game/8002D1A0.c` nennt sie „player count". | `func_8002D1A0`, `func_80027510` |
 | `D_8009F9EC` | `gSinglePlayerEntity` | `struct Ent *` / `Game *` | Zeiger auf die Spielfigur im Einzelspielermodus; wird nur bei `gPlayerCount == 1` ausgewertet und über die Entity-Id verglichen. **Bestätigt.** | `func_8002D1A0`, `func_80027510` |
+| `D_8009F8B8` | `gActivePlayerIndex` | `s32` | Index des Spielers, dessen Menü aktiv ist (1 bei Zweispieler-Menü, sonst 0). **Bestätigt.** | `func_8007A7A0`, `func_8007A5F0` |
 
 <!-- OFFEN: D_8009FA58 (Zwei-Slot-Array der Spieler-Entities) bleibt vorerst
      unbenannt. In src/game/80027510.c wird dasselbe Symbol doppelt deklariert
