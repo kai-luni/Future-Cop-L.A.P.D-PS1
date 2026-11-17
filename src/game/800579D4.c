@@ -58,7 +58,7 @@ struct Game { u8 pad00[8]; s32 mode0; s32 mode; u8 pad10[0x5C-0x10]; s32 unk5C; 
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Object *D_8009FA58[];
 extern struct Object *table_after[] __asm__("D_8009FA58+0");
-extern s8 D_8009FA8C[];
+extern s8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 extern struct Game *D_8009FA94;
 extern void *func_80017EBC(s32, s32);
 extern void func_8002AD58(s32, struct Object *, struct Data *, s32);
@@ -227,7 +227,7 @@ found:
         special |= 0xFF9C;
         idx = s->index;
         __asm__ volatile ("" : "+r" (idx) : "r" (special));
-        D_8009FA8C[idx] = 1;
+        gPlayerInvulnerable[idx] = 1;
         value = special;
         break;
     }

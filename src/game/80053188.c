@@ -37,7 +37,7 @@ struct Unk53188Arg {
 };
 
 extern u8 *D_8009FA94;
-extern u8 D_8009FA8C[];
+extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 extern s8 D_8009ACF4[][10];
 
 extern void func_8005908C(s32 arg0, struct Unk53188 *arg1,
@@ -170,7 +170,7 @@ void func_80053188(struct Unk53188 *arg0, u32 arg1)
                 __asm__("" : "+r"(p));
                 index = p->unkC1;
                 __asm__("" : "+r"(index));
-                if (D_8009FA8C[index] != 0) {
+                if (gPlayerInvulnerable[index] != 0) {
                     goto case1_body;
                 }
                 p->unkDE = 1;
@@ -192,7 +192,7 @@ void func_80053188(struct Unk53188 *arg0, u32 arg1)
                 __asm__("" : "+r"(r));
                 index = r->unkC1;
                 __asm__("" : "+r"(index));
-                if (D_8009FA8C[index] == 0) {
+                if (gPlayerInvulnerable[index] == 0) {
                     arg.unk4 = 10000;
                 }
                 }
@@ -220,7 +220,7 @@ void func_80053188(struct Unk53188 *arg0, u32 arg1)
                 __asm__("" : "+r"(p) : : "$2");
                 slot = p->unkC1;
                 __asm__("" : "+r"(slot));
-                if (D_8009FA8C[slot] != 0) {
+                if (gPlayerInvulnerable[slot] != 0) {
                     break;
                 }
                 if (arg1 == 0xE && slot != 0) {

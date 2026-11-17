@@ -56,7 +56,7 @@ struct Unk6BA50Tgt {
 };
 
 extern struct Unk6BA50Node *D_8009FA40;
-extern u8 D_8009FA8C[];
+extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
 extern s32 func_80046C84(s32 id, struct Unk6BA50Obj *obj);
 extern struct Unk6BA50Tgt *func_8006AAEC(u8 id);
@@ -188,7 +188,7 @@ void func_8006BA50(struct Unk6BA50Obj *obj, s32 idx)
         if (ok) {
             c = ctl->unkC1;
             __asm__ volatile("" : "+r"(c));
-            if (D_8009FA8C[c] == 0) {
+            if (gPlayerInvulnerable[c] == 0) {
                 val = val - 1;
             } else {
                 val = val ^ 1;

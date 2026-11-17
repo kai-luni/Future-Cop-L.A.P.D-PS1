@@ -57,7 +57,7 @@ extern struct UnkFA94 *D_8009FA94;
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 D_8009FA70;
-extern u8 D_8009FA8C[];
+extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
 extern u32 func_80060DD8(u32 state);
 extern void func_8005A0C4(struct Unk5A190Gauge *gauge, s32 value, s32 divisor);
@@ -132,7 +132,7 @@ s32 func_80060A0C(u32 state, s32 index)
 
     case 0x031F78DF:
         __asm__ volatile ("" ::: "memory");
-        D_8009FA8C[index] = 1;
+        gPlayerInvulnerable[index] = 1;
         break;
 
     case 0x01BD6EFD:

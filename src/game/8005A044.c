@@ -1,7 +1,7 @@
 // Categories: Game Engine > Init | Gameplay > Player
 #include "../../include/game/types.h"
 
-extern u8 D_8009FA8C[];
+extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
 /**
  * @brief Clears the 2-byte per-player gate/status array D_8009FA8C at mission boot.
@@ -31,7 +31,7 @@ void func_8005A044(void)
     s32 remaining;
 
     remaining = 1;
-    cursor = &D_8009FA8C[1];
+    cursor = &gPlayerInvulnerable[1];
     do {
         *cursor-- = 0;
     } while (--remaining >= 0);

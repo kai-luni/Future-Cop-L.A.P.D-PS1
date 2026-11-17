@@ -35,7 +35,7 @@ struct Unk58210Global {
     s32 unk5C;
 };
 
-extern u8 D_8009FA8C[];
+extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 extern struct Unk58210Global *D_8009FA94;
 
 extern void func_80057358(void *object, s32 amount);

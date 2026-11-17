@@ -1,7 +1,7 @@
 // Categories: Graphics > HUD > Status Bar | Graphics > 2D Drawing
 #include "game/types.h"
 
-extern u8 D_8009FA8C[];
+extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 extern volatile s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 gSinglePlayerEntity[] __asm__("D_8009F9EC");
 
@@ -52,7 +52,7 @@ void func_8006C080(struct Arg6C080 *arg0)
     register u8 *base __asm__("$22");
 
     i = 0;
-    base = D_8009FA8C;
+    base = gPlayerInvulnerable;
     x = 0x33;
     d = arg0->ptr;
     y = 0x22;
@@ -76,7 +76,7 @@ void func_8006C080(struct Arg6C080 *arg0)
         c = d->fieldC1;
         __asm__("" : "=r"(c) : "0"(c));
         __asm__("" : "=r"(c) : "0"(c));
-        arr = D_8009FA8C;
+        arr = gPlayerInvulnerable;
         __asm__("" : "=r"(arr) : "0"(arr));
         func_8006BF44(a0, *(u8 *)((u32)c + (u32)arr), a2, 0xE0);
     }
