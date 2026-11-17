@@ -48,7 +48,7 @@ typedef union {
 } SpuRXX;
 
 extern SpuRXX *gSpuRegBasePtr __asm__("D_8009EEA4");
-extern u16 D_8009EA60[];
+extern u16 gVoiceSampleNote[] __asm__("D_8009EA60");
 extern u16 func_800999F4(s32, s32, s32, s32);
 extern void func_80097808(s32, u32);
 
@@ -91,7 +91,7 @@ void func_80099368(SpuVoiceAttr *arg)
 
     ch = 0;
     mask = arg->mask;
-    note = D_8009EA60;
+    note = gVoiceSampleNote;
     set_all = (mask == 0);
 
     for (; ch < 24; ch++, note++) {

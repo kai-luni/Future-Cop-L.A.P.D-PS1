@@ -72,7 +72,7 @@ typedef union {
 } SpuRXX;
 
 extern SpuRXX *gSpuRegBasePtr __asm__("D_8009EEA4");
-extern u16 D_8009EA60[];
+extern u16 gVoiceSampleNote[] __asm__("D_8009EA60");
 extern u16 func_800999F4(s32, s32, s32, s32);
 extern void func_80097808(s32, u32);
 
@@ -119,7 +119,7 @@ void func_80099C58(s32 ch, SpuVoiceAttr *arg)
         (gSpuRegBasePtr->voice + ch)->pitch = arg->pitch;
     }
     if (set_all || (mask & 0x40)) {
-        D_8009EA60[ch] = arg->sample_note;
+        gVoiceSampleNote[ch] = arg->sample_note;
     }
     if (set_all || (mask & 0x20)) {
         /* ASPSX expands the symbolic load through its *destination* register here
