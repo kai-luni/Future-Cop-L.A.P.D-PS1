@@ -120,6 +120,18 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
      Umbenennung verändert dort die erzeugten Bytes. Erst die Doppeldeklaration
      auflösen, dann benennen. -->
 
+## Upload-Pfad und Renderer-Hooks
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009F3E5` | `gUploadRequestFlag` | `u8` | Anforderungsflag für den Upload-Pfad; die Funktion läuft nur bei 0 und löscht es am Ende. **Bestätigt.** | `func_80025370` |
+| `D_8009F9C4` | `gUploadInProgress` | `s32` | Upload-Sperre: während des Ladens auf 1, danach wird der alte Wert zurückgeschrieben; steuert die Verzweigung auf den „PA"-Loader. **Bestätigt.** | `func_80025370` |
+| `D_8009F68C` | `gScratchBlockPtr` | `s32` | Zeiger auf einen Arbeitsblock, der beim Init einmalig freigegeben wird (nur wenn ungleich 0). **Bestätigt.** | `func_80024D14` |
+| `D_8009F2E4` | `gFormatNamePair` | `u8[]` | Format-String `"%s%s"`, mit dem Präfix und Name zusammengesetzt werden. **Bestätigt.** | `func_80024E3C`, `func_80025370` |
+| `D_8009C744` | `gReadyCheckHook` | `s32 (*)(void)` | Hook, der die Bereitschaft eines Treiberobjekts abfragt; `func_8008B168`/`func_8008B210` werden dort installiert. **Bestätigt.** | `func_8008B094` |
+
+Nicht benannt, weil ein Rename die Codegen bricht (das Symbol wird in den betroffenen Units zusätzlich lokal definiert bzw. ohne `__asm__` gebunden): `D_8009C728` (Dispatch-Zeiger), `D_8009C72C` (Handler ohne Modus), `D_8009C73C` (State-Abfrage). Ebenso offen: `D_8009C730`, `D_8009C750`, `D_8009C770`, `D_8009C790` — dort ist die Rolle nur vage beschrieben.
+
 ## Model-Loader: Chunk-Slots der Cobj-Ressource
 
 `func_80012E48` läuft über die Rohtabelle einer Modellressource und legt je Chunk-Tag einen Zeiger in einen eigenen globalen Slot. Die Tags sind ASCII, big-endian gelesen:
