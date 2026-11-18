@@ -24,13 +24,15 @@ struct Unk77884 {
 };
 
 /**
- *  @brief Initializes the fields of a state record.
+ *  @brief Initializes a menu descriptor and binds its item array.
  *
- *  Clears most fields and installs fixed defaults alongside two caller values.
- *  The record's more specific purpose is not established by this source.
+ *  Clears its callback slots, selection indices and parent pointer, then
+ *  stores the item array at +0x28 and item count at +0x02. Defaults include
+ *  font/layout bytes at +0x0A/+0x0B and a width of 100 at +0x06; callers
+ *  may override these before activating the descriptor.
  *  @param state Record to initialize.
- *  @param arg1 Value stored in the field at offset 0x28.
- *  @param arg2 Value stored in the field at offset 0x02.
+ *  @param arg1 Address stored at offset 0x28 (menu item array).
+ *  @param arg2 Number of items stored at offset 0x02.
  *  @par Globals
  *  None accessed directly.
  *  @par Control flow
@@ -42,7 +44,9 @@ struct Unk77884 {
  *  @par Callers
  *  Confirmed: func_80077AD4.
  */
-void func_80077884(struct Unk77884 *state, s32 arg1, u8 arg2)
+void gInitMenuDescriptor(struct Unk77884 *state, s32 arg1, u8 arg2) __asm__("func_80077884");
+
+void gInitMenuDescriptor(struct Unk77884 *state, s32 arg1, u8 arg2)
 {
     state->unk03 = -1;
     state->unk06 = 100;

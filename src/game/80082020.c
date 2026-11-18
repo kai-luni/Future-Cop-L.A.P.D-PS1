@@ -2,26 +2,25 @@
 #include "game/types.h"
 
 extern s8 *gFontBankTable __asm__("D_8009F468");
-extern void func_800787D8(s32 arg0, s32 arg1, s32 arg2);
+extern void gSelectEnabledMenuItem(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800787D8");
 
 /**
- * @brief Re-applies the front-end mode stored in D_8009F468.
+ * @brief Re-selects an enabled group-0 item starting at the saved index.
  *
- * The saved mode byte (signed) is passed to func_800787D8 together with the
- * override flag 1 and no extra argument, so the screen returns to whatever mode
- * was recorded before the menu change.
+ * Passes the active menu's group-0 selection as the starting index, with
+ * forward direction 1 and group 0.
  * @par Globals
- * D_8009F468 - saved front-end mode byte.
+ * D_8009F468 - active menu descriptor and group-0 selection.
  * @par Control flow
  * None.
  * @par Calls
- * func_800787D8 - screen mode setter.
+ * gSelectEnabledMenuItem (func_800787D8) - selects an enabled menu item.
  * @par Side effects
- * Changes the front-end presentation mode.
+ * May update the active menu's group-0 selection.
  * @par Callers
  * Unknown: no direct edge in edges.json.
  */
 void func_80082020(void)
 {
-    func_800787D8((s32)gFontBankTable[0], 0x1, 0x0);
+    gSelectEnabledMenuItem((s32)gFontBankTable[0], 0x1, 0x0);
 }

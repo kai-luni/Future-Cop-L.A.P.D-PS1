@@ -17,20 +17,27 @@ extern u8 D_8009F875;
 extern u8 D_8009F876;
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
-extern u8 D_8009F8CC;
-extern void func_800785F8(void);
-extern void func_800787D8(s32 a, s32 b, s32 c);
-extern void func_800788B4(void);
+extern u8 gMenuSetupCalled __asm__("D_8009F8CC");
+extern void gResetMenuDirectionHoldTicks(void) __asm__("func_800785F8");
+extern void gSelectEnabledMenuItem(s32 a, s32 b, s32 c) __asm__("func_800787D8");
+extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
 extern void D_8007B3F4(void);
 
 /**
- * @brief Activates a menu screen: optionally links the previous screen as parent, switches the font bank, resets input/highlight state, runs the screen's init callback and selects its first enabled item.
+ * @brief Activates a menu, optionally links its parent, resets input, runs the
+ * on-enter callback and selects its first enabled item.
+ *
+ * The screen registered at D_800A3808 has seven items in D_8009BBF8.
+ * On the default boot path, func_800782EC first activates the title
+ * descriptor; func_800778E4 replaces it with D_800A3808 after its timeout.
+ * Here activation selects enabled items and invokes the descriptor's init
+ * callback. A push saves the previous screen as parent; replace does not.
  *
  * @param arg0 Menu block to activate (becomes D_8009F468).
  * @param arg1 Nonzero = push: store the old screen in arg0->unk24 and run the font-bank switch first.
  *
  * @par Globals
- * D_8009F468 - active menu pointer, replaced. D_8009F8C0/D_8009F8C1 - item highlight arrays, cleared; D_8009F8CC - one-shot draw-setup gate, cleared so func_80077990 reruns. D_8009F875/D_8009F876 - cached copies of cursor unk03/unk04 when unk03 != -1.
+ * D_8009F468 - active menu pointer, replaced. D_8009F8C0/D_8009F8C1 - per-player menu-depth bytes, cleared; D_8009F8CC - one-shot draw-setup gate, cleared so func_80077990 reruns. D_8009F875/D_8009F876 - cached copies of cursor unk03/unk04 when unk03 != -1.
  *
  * @par Control flow
  * Straight-line with guards: push-only steps, null init-callback check, a second item selection when unk05 is 2 or 3, and a second init call when the callback equals func_8007B3F4.
@@ -53,18 +60,18 @@ void func_80078650(Menu *arg0, s32 arg1)
     }
     gFontBankTable = arg0;
     if (arg1 != 0) {
-        func_800788B4();
+        gSyncMenuFontBank();
     }
     gPlayerMenuDepth = 0;
     D_8009F8C1 = 0;
-    func_800785F8();
-    D_8009F8CC = 0;
+    gResetMenuDirectionHoldTicks();
+    gMenuSetupCalled = 0;
     if (gFontBankTable->unk10 != 0) {
         gFontBankTable->unk10();
     }
-    func_800787D8(0, 1, 0);
+    gSelectEnabledMenuItem(0, 1, 0);
     if ((u8)(gFontBankTable->unk05 - 2) < 2) {
-        func_800787D8(0, 1, 1);
+        gSelectEnabledMenuItem(0, 1, 1);
     }
     if ((void *)gFontBankTable->unk10 == (void *)D_8007B3F4) {
         gFontBankTable->unk10();

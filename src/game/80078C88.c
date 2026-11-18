@@ -31,7 +31,7 @@ extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern u8 D_8009F3F2;
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
-extern u8 D_8009F45A;
+extern u8 gFrontEndReturnMode __asm__("D_8009F45A");
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern u8 D_8009F8D9;
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
@@ -88,7 +88,7 @@ s32 func_80078C88(void)
     unk0C = gWideTextTable[e->unk0].unk0C;
     gModuleLoadedFlag = 1;
     gScreenState = 5;
-    D_8009F45A = 3;
+    gFrontEndReturnMode = 3;
     gModuleLoadState = unk0C;
     gRumbleEnabled = func_8001EB2C(0);
     D_8009F8D9 = func_8001EB2C(1);

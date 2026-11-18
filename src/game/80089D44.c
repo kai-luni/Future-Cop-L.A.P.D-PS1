@@ -38,8 +38,8 @@ extern s32 func_8008A5A8(void);
  * D_8009F9xx).
  *
  * @par Callers
- * func_80076A2C (EA logo and intro frame during boot), func_80082DDC (mission
- * briefing artwork, modes 1, 0 and 2, coordinates 0x20/0x31 and 0/0x18).
+ * func_80076A2C (EA logo and intro during boot), func_80082DDC (movie
+ * playback, modes 1, 0 and 2, coordinates 0x20/0x31 and 0/0x18).
  */
 void gDrawImageResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80089D44");
 

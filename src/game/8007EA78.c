@@ -36,7 +36,7 @@ extern u8 gMissionListMaxIndex __asm__("D_8009F882");
 extern void func_80077FFC(void);
 extern void func_80077708(void);
 extern void func_800776B8(void);
-extern void func_8007A168(void);
+extern void gUpdateMainMenuUnlocks(void) __asm__("func_8007A168");
 
 #define CLAMPN(x, m) do { if ((s8)(x) >= 0) { if ((s8)(x) > (m)) { t = (m); } else { t = (x); } } else { t = 0; } (x) = t; } while (0)
 
@@ -259,7 +259,7 @@ s32 func_8007EA78(void)
                     D_8009F881 = 0;
                     gSelectedMissionIndex = v;
                 }
-                func_8007A168();
+                gUpdateMainMenuUnlocks();
                 ret = 1;
             }
         }

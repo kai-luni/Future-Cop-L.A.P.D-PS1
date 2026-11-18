@@ -27,7 +27,7 @@ extern void *func_80017EBC(s32 size, s32 tag);
 extern void *func_8001E4C0(void *destination, int value, unsigned int count);
 extern void func_800898C8(void);
 extern void func_8007F9CC(void);
-extern void func_80077AD4(s32 arg);
+extern void gSetupFrontEndMenus(s32 arg) __asm__("func_80077AD4");
 
 /**
  * Initialises the object registry and the per-slot flag tables of this subsystem.
@@ -38,10 +38,9 @@ extern void func_80077AD4(s32 arg);
  * i.e. 29 usable slots) and func_8007852C frees every occupied slot plus the array
  * on teardown. The block is therefore a 30-entry registry keyed by a type id.
  *
- * The seven 2-entry tables below each receive state 2 in unk4 and one distinct bit
- * in unk0 (bits 19..23, 28 and 30). They are written only here and in the adjacent
- * func_800780C0; the readers are not decompiled yet, so the meaning of the bits is
- * still open - a per-channel/slot flag set is the plausible reading, not a proof.
+ * The seven 2-entry tables receive state 2 in unk4 and distinct controller bits
+ * in unk0 (bits 19..23, 28 and 30). func_80078DD0 reads them for both players:
+ * up, down, left, right, confirm, back and an additional confirm input.
  *
  * Called as the final step of func_80024904, the per-session setup that also sets
  * the view window, seeds the RNG and programs the display mode.
@@ -50,8 +49,7 @@ extern void func_80077AD4(s32 arg);
  * func_80024904 only, as the final step of the per-session setup.
  *
  * @par Unknown
- * The reader side of the seven flag tables (bits 19..23, 28, 30) and the
- * exact role of func_80077FFC, func_800898C8 and func_8007F9CC in this
+ * The exact role of func_80077FFC, func_800898C8 and func_8007F9CC in this
  * sequence.
  */
 void func_800780DC(void)
@@ -84,7 +82,7 @@ void func_800780DC(void)
         D_800A35D8[i].unk0 = 0x10000000;
     }
     func_8007F9CC();
-    func_80077AD4(1);
+    gSetupFrontEndMenus(1);
     D_8009F8B0 = 0;
     D_8009F8B4 = 0;
     gModuleLoadedFlag = 0;

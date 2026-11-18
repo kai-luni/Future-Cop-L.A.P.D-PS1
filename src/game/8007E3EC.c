@@ -7,7 +7,7 @@ extern volatile s32 D_8009F8E0;
 extern volatile s32 D_8009F8E4;
 extern s32 D_8009F8E0_arr[];
 extern s32 *gGameSession __asm__("D_8009FA94");
-extern u8 D_8009F45A;
+extern u8 gFrontEndReturnMode __asm__("D_8009F45A");
 extern s8 D_8009F924[2];
 extern s8 D_8009F926[2];
 extern s8 D_8009F928[2];
@@ -63,17 +63,17 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             if (D_8009F8E0 != 0 && D_8009F8E4 != 0) {
                 flag = 1;
                 if (gGameSession[23] == 1) {
-                    D_8009F45A = 2;
+                    gFrontEndReturnMode = 2;
                 } else {
-                    D_8009F45A = 1;
+                    gFrontEndReturnMode = 1;
                 }
             }
         } else {
             flag = 1;
             if (gGameSession[23] == 1) {
-                D_8009F45A = 2;
+                gFrontEndReturnMode = 2;
             } else {
-                D_8009F45A = 1;
+                gFrontEndReturnMode = 1;
             }
         }
         if (flag != 0) {

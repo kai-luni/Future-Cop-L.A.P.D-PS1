@@ -20,7 +20,7 @@ extern u8 D_80011E60[];
 extern struct UnkB4E4 gWideTextTable[] __asm__("D_8009B4E4");
 
 extern void func_80082DDC(s32 arg0, s32 arg1);
-extern void func_8007A168(void);
+extern void gUpdateMainMenuUnlocks(void) __asm__("func_8007A168");
 
 /**
  * @brief Resets the profile list state: clears the pending flag, the 16
@@ -29,8 +29,8 @@ extern void func_8007A168(void);
  * @return Nothing.
  *
  * @par Confirmed
- * When D_800A3808.unk24 is set: with D_8009F3E8 non-zero a debug box is
- * drawn via func_80082DDC(D_80011E60, 0) and the flag cleared, then unk24
+ * When D_800A3808.unk24 is set: with D_8009F3E8 non-zero the credits movie
+ * is played via func_80082DDC(D_80011E60, 0) and the flag cleared, then unk24
  * is zeroed. D_8009FA10 becomes 0, the +0x1F/+0x20 bytes of all 16 entries
  * in D_8009B4E4 are cleared, and func_8007A168 runs.
  *
@@ -40,7 +40,7 @@ extern void func_8007A168(void);
  * markers the list drawer func_8007B460 reads.
  *
  * @par Unknown
- * What the debug box D_80011E60 reports.
+ * The precise interpretation of the remaining per-slot state.
  *
  * @par Callers
  * No direct callers in the call graph. func_80077AD4 stores the address in
@@ -63,5 +63,5 @@ void func_80079F54(void)
         gWideTextTable[i].unk1F = 0;
         gWideTextTable[i].unk20 = 0;
     }
-    func_8007A168();
+    gUpdateMainMenuUnlocks();
 }

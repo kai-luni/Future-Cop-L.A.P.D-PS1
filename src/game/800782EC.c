@@ -9,7 +9,8 @@ extern s32 gPendingScreenState[] __asm__("D_8009F9A8");
 extern s32 gFrameTickCounter[] __asm__("D_8009FA2C");
 extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s32 gStillRunningState __asm__("D_8009F464");
-extern s8 D_8009F45A, D_8009F889, D_8009F888;
+extern s8 gFrontEndReturnMode __asm__("D_8009F45A");
+extern s8 D_8009F889, D_8009F888;
 extern s8 gMissionListMaxIndex __asm__("D_8009F882");
 extern s8 gSelectedMissionIndex __asm__("D_8009F880");
 extern s8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
@@ -56,7 +57,7 @@ void func_800782EC(void)
     u32 i;
     gStillRunningState = 4;
     gIdleDeadline = gFrameTickCounter[0] + 9000;
-    switch (D_8009F45A) {
+    switch (gFrontEndReturnMode) {
     case 1:
         if (gPendingScreenState[0] == 0) {
             s8 *p;

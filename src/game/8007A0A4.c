@@ -15,24 +15,19 @@ extern u8 D_80011E60[];
 extern void func_80082DDC(s32 arg0, s32 arg1);
 
 /**
- * @brief Debug dump of five profile values (twin of func_80079FE0 with the
- *        D_8009B72C index table).
+ * @brief Plays the videos referenced by the five-entry front-end list.
  *
- * @param arg0 Only action 3 runs the dump.
+ * @param arg0 Only action 3 starts playback.
  * @return Nothing.
  *
  * @par Confirmed
- * Same loop as func_80079FE0 but over five entries of D_8009B72C; non-zero
- * values go to func_80082DDC(val, 2), gMovieAbortFlag aborts, the fallback box
- * is func_80082DDC(D_80011E60, 0).
- *
- * @par Likely role
- * The five-slot variant of the profile inspection page (the loadout table
- * uses the same D_8009B72C indices).
+ * The loop matches func_80079FE0 but uses five entries of D_8009B72C.
+ * Non-zero values go to func_80082DDC(val, 2), gMovieAbortFlag aborts,
+ * and D_80011E60 names the credits movie played afterward if not aborted.
  *
  * @par Callers
- * No direct callers in the call graph and no address reference in the
- * sources; likely a debug-only page (dispatch unconfirmed).
+ * The retail main-menu item table D_8009BBF8 references this handler at
+ * entry 5; func_8007A168 can enable that entry.
  */
 void func_8007A0A4(s32 arg0)
 {

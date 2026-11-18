@@ -42,7 +42,7 @@ extern struct State D_800A36B8;
 extern struct State gMenuActivationBlock __asm__("D_800A3718");
 
 extern u8 D_8009BED0[];
-extern u8 gScreenPersistentBlock[] __asm__("D_8009BBF8");
+extern u8 gMainMenuItems[] __asm__("D_8009BBF8");
 extern u8 D_8009BAE0[];
 extern u8 D_8009BB34[];
 extern u8 D_8009BD10[];
@@ -100,17 +100,29 @@ extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s32 gFrameTickCounter[] __asm__("D_8009FA2C");
 
-extern void func_80077884(struct State *state, u8 *name, s32 kind);
+extern void gInitMenuDescriptor(struct State *state, u8 *name, s32 kind) __asm__("func_80077884");
 extern void func_800778E4(void);
 extern void func_80077990(void);
 extern void func_8007FACC(void);
 extern void func_800782EC(void);
 
 /**
- *  @brief Initializes a collection of global state descriptors and related control values.
+ *  @brief Registers the front-end menu descriptors and selects an initial screen.
  *
- *  Registers each descriptor with a name and kind, then assigns fields and handlers.
- *  Shared handler pointers and per-descriptor settings establish the initial configuration.
+ *  The title descriptor D_800A38F8 uses D_8009BED0 and transitions through
+ *  func_800778E4. The main descriptor gMenuDescriptor uses the seven 0x1C-byte
+ *  entries at gMainMenuItems (D_8009BBF8). In the retail executable,
+ *  entries 0/1 select one/two-player non-split mode via func_8007A3AC and
+ *  func_8007A450; entries 3/4 select one/two-player split mode via
+ *  func_8007A4CC and func_8007A56C. Entries 2/5 initially have enabled=0
+ *  and use func_80079FE0/func_8007A0A4; func_8007A168 can enable them.
+ *  Entry 6 links to D_800A36E8. Text IDs resolve through game resources.
+ *  Descriptor +0x0C calls D_8007A2C4, which returns input unchanged and draws
+ *  headings for player 0; +0x10 resets the menu with D_80079F54. Other
+ *  descriptors have their own item tables and callbacks. gInitMenuDescriptor
+ *  sets defaults before overrides.
+ *  func_800782EC chooses the initial active panel based on the current mode;
+ *  the default path activates the title, not the main menu directly.
  *  @par Globals
  *  D_800A35F8 through D_800A38F8 are the configured state descriptors.
  *  D_8009B744 through D_8009BED0 supply names; D_8007A2C4 and other
@@ -127,9 +139,11 @@ extern void func_800782EC(void);
  *  @par Callers
  *  Confirmed: func_800780DC.
  */
-void func_80077AD4(void)
+void gSetupFrontEndMenus(void) __asm__("func_80077AD4");
+
+void gSetupFrontEndMenus(void)
 {
-    func_80077884(&D_800A38F8, D_8009BED0, 1);
+    gInitMenuDescriptor(&D_800A38F8, D_8009BED0, 1);
     D_800A38F8.unk06 = 0;
     D_800A38F8.unk03 = 0;
     D_800A38F8.unk09 = 1;
@@ -139,13 +153,13 @@ void func_80077AD4(void)
     gOverlayDelay = -1;
     D_8009F875 = 0;
     D_8009F876 = 1;
-    func_80077884(&gMenuDescriptor, gScreenPersistentBlock, 7);
+    gInitMenuDescriptor(&gMenuDescriptor, gMainMenuItems, 7);
     gMenuDescriptor.unk0C = D_8007A2C4;
     gMenuDescriptor.unk06 = 0;
     gMenuDescriptor.unk03 = 1;
     gMenuDescriptor.unk08 = 1;
     gMenuDescriptor.unk10 = D_80079F54;
-    func_80077884(&D_800A37A8, D_8009BAE0, 3);
+    gInitMenuDescriptor(&D_800A37A8, D_8009BAE0, 3);
     D_800A37A8.unk06 = 0;
     D_800A37A8.unk03 = 1;
     D_800A37A8.unk08 = 1;
@@ -154,7 +168,7 @@ void func_80077AD4(void)
     D_800A37A8.unk1C = D_8007B0D4;
     D_800A37A8.unk10 = D_8007B004;
     D_800A37A8.unk0C = D_8007AB0C;
-    func_80077884(&D_800A37D8, D_8009BB34, 7);
+    gInitMenuDescriptor(&D_800A37D8, D_8009BB34, 7);
     D_800A37D8.unk06 = 0;
     D_800A37D8.unk03 = 3;
     D_800A37D8.unk08 = 1;
@@ -163,7 +177,7 @@ void func_80077AD4(void)
     D_800A37D8.unk1C = D_8007B0D4;
     D_800A37D8.unk10 = D_8007B004;
     D_800A37D8.unk0C = D_8007AB0C;
-    func_80077884(&D_800A3868, D_8009BD10, 6);
+    gInitMenuDescriptor(&D_800A3868, D_8009BD10, 6);
     D_800A3868.unk06 = 0;
     D_800A3868.unk03 = 1;
     D_800A3868.unk08 = 1;
@@ -171,14 +185,14 @@ void func_80077AD4(void)
     D_800A3868.unk10 = D_8007B3F4;
     D_800A3868.unk05 = 1;
     D_800A3868.unk20 = D_8007F618;
-    func_80077884(&D_800A3898, D_8009BDB8, 4);
+    gInitMenuDescriptor(&D_800A3898, D_8009BDB8, 4);
     D_800A3898.unk06 = 0;
     D_800A3898.unk03 = 1;
     D_800A3898.unk08 = 1;
     D_800A3898.unk18 = D_8007BCF4;
     D_800A3898.unk10 = D_8007B3F4;
     D_800A3898.unk20 = D_8007F618;
-    func_80077884(&D_800A38C8, D_8009BE28, 6);
+    gInitMenuDescriptor(&D_800A38C8, D_8009BE28, 6);
     D_800A38C8.unk06 = 0;
     D_800A38C8.unk03 = 1;
     D_800A38C8.unk08 = 1;
@@ -186,14 +200,14 @@ void func_80077AD4(void)
     D_800A38C8.unk10 = D_8007B3F4;
     D_800A38C8.unk20 = D_8007F618;
     D_800A38C8.unk05 = 1;
-    func_80077884(&D_800A3748, D_8009BA1C, 1);
+    gInitMenuDescriptor(&D_800A3748, D_8009BA1C, 1);
     D_800A3748.unk10 = D_8007C088;
     D_800A3748.unk18 = D_8007C6EC;
     D_800A3748.unk06 = 0;
     D_800A3748.unk03 = 1;
     D_800A3748.unk08 = 1;
     D_800A3748.unk0C = D_8007C93C;
-    func_80077884(&D_800A3778, D_8009BA38, 6);
+    gInitMenuDescriptor(&D_800A3778, D_8009BA38, 6);
     D_800A3778.unk10 = D_8007D18C;
     D_800A3778.unk18 = D_8007CFA0;
     D_800A3778.unk0C = D_8007CACC;
@@ -201,44 +215,44 @@ void func_80077AD4(void)
     D_800A3778.unk03 = 1;
     D_800A3778.unk08 = 2;
     D_800A3778.unk14 = D_8007CA30;
-    func_80077884(&D_800A3628, D_8009B760, 4);
+    gInitMenuDescriptor(&D_800A3628, D_8009B760, 4);
     D_800A3628.unk06 = 0;
     D_800A3628.unk03 = 2;
     D_800A3628.unk08 = 1;
     D_800A3628.unk18 = D_8007DD08;
     D_800A3628.unk10 = D_8007D408;
     D_800A3628.unk05 = 1;
-    func_80077884(&D_800A3658, D_8009B7D0, 8);
+    gInitMenuDescriptor(&D_800A3658, D_8009B7D0, 8);
     D_800A3658.unk06 = 0;
     D_800A3658.unk03 = 4;
     D_800A3658.unk08 = 2;
     D_800A3658.unk18 = D_8007DD08;
     D_800A3658.unk10 = D_8007D408;
     D_800A3658.unk05 = 2;
-    func_80077884(&D_800A3688, D_8009B8B0, 1);
+    gInitMenuDescriptor(&D_800A3688, D_8009B8B0, 1);
     D_800A3688.unk03 = 5;
     D_800A3688.unk06 = 0;
     D_800A3688.unk08 = 1;
     D_800A3688.unk18 = D_8007E67C;
-    func_80077884(&D_800A35F8, D_8009B744, 1);
+    gInitMenuDescriptor(&D_800A35F8, D_8009B744, 1);
     D_800A35F8.unk10 = D_8007E7A8;
     D_800A35F8.unk06 = 0;
     D_800A35F8.unk03 = 1;
     D_800A35F8.unk08 = 1;
     D_800A35F8.unk1C = D_8007F5C8;
-    func_80077884(&gScreenDescriptor, D_8009BCBC, 3);
+    gInitMenuDescriptor(&gScreenDescriptor, D_8009BCBC, 3);
     gScreenDescriptor.unk06 = 0;
     gScreenDescriptor.unk03 = 1;
     gScreenDescriptor.unk08 = 1;
     gScreenDescriptor.unk10 = D_8007F678;
-    func_80077884(&D_800A36E8, D_8009B8CC, 0xA);
+    gInitMenuDescriptor(&D_800A36E8, D_8009B8CC, 0xA);
     D_800A36E8.unk10 = D_8007F8FC;
     D_800A36E8.unk14 = func_8007FACC;
     D_800A36E8.unk18 = D_80080038;
     D_800A36E8.unk06 = 0;
     D_800A36E8.unk0A = 0x57;
     D_800A36E8.unk0B = 0x35;
-    func_80077884(&D_800A36B8, D_8009B8CC, 0xA);
+    gInitMenuDescriptor(&D_800A36B8, D_8009B8CC, 0xA);
     D_800A36B8.unk10 = D_8007F93C;
     D_800A36B8.unk14 = func_8007FACC;
     D_800A36B8.unk18 = D_80080038;
@@ -247,7 +261,7 @@ void func_80077AD4(void)
     D_800A36B8.unk0B = 0x35;
     D_800A36B8.unk1C = D_8008228C;
     D_800A36B8.unk0C = D_8007AB0C;
-    func_80077884(&gMenuActivationBlock, D_8009B9E4, 2);
+    gInitMenuDescriptor(&gMenuActivationBlock, D_8009B9E4, 2);
     gMenuActivationBlock.unk14 = D_800821EC;
     gMenuActivationBlock.unk18 = D_80080038;
     gMenuActivationBlock.unk06 = 0;

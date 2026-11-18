@@ -9,7 +9,7 @@
  * fragment; the same shape is used by src/game/80078C88.c and
  * src/game/800867B0.c.
  *
- *   lui   $v0, %hi(D_8009FA2C)     ; base of the item table
+ *   lui   $v0, %hi(D_8009FA2C)     ; frame tick counter
  *   lw    $v0, %lo(D_8009FA2C)($v0)
  *   lbu   $v1, 0x1D0($gp)          ; D_8009F3E4, the "already set up" flag
  *
@@ -18,12 +18,12 @@
  */
 
 /**
- *  @brief Loads the item table pointer and setup flag into registers.
+ *  @brief Loads the frame tick counter and setup flag into registers.
  *
  *  This assembler fragment contains the hoisted loads preceding the rest of
  *  a larger retail block; it has no return instruction of its own.
  *  @par Globals
- *  D_8009FA2C supplies the item table pointer; D_8009F3E4 supplies the
+ *  D_8009FA2C supplies the frame tick counter; D_8009F3E4 supplies the
  *  setup flag. D_8009F8E8 is declared but not accessed by this fragment.
  *  @par Control flow
  *  Three instructions execute sequentially, with no branch or return.

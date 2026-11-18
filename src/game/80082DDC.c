@@ -12,11 +12,11 @@ extern void gDrawImageResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4,
 extern s32 func_8008CD30(u8 *buffer, u8 *format, s32 value, s32 arg3);
 
 /**
- * @brief Draws a timed debug text box in one of two layouts and accounts the
+ * @brief Plays a named video resource in one of two layouts and accounts the
  *        elapsed time.
  *
- * @param arg0 Value formatted into the text.
- * @param arg1 Layout: 1 the small centred box, 0/2 the wide bottom box.
+ * @param arg0 Video resource name appended to the movie path prefix.
+ * @param arg1 Layout: 1 selects the small layout, 0/2 the wide layout.
  * @return Nothing.
  *
  * @par Confirmed
@@ -26,14 +26,10 @@ extern s32 func_8008CD30(u8 *buffer, u8 *format, s32 value, s32 arg3);
  * at (4, 0, 0x18, 0x140, 0xC0). Re-enables, sets D_8009F874 = -1 and adds
  * the elapsed D_8009FA2C delta to D_8009F870.
  *
- * @par Likely role
- * A profiling/debug overlay of the front-end helpers func_80079F54,
- * func_80079FE0, func_8007A0A4: the elapsed-time accounting suggests a
- * frame-cost display. Note gDrawImageResource ignores its width/height
- * arguments (measured in round 3).
- *
- * @par Unknown
- * The format string behind D_8009F4AC.
+ * @par Confirmed resource path
+ * D_8009F4AC is "%s%s" in the retail executable; D_8009F3D0 supplies the
+ * movie path prefix. gDrawImageResource ultimately calls gPlayVideoFile.
+ * Its width and height arguments are unused.
  *
  * @par Callers
  * func_80079F54, func_80079FE0, func_8007A0A4.

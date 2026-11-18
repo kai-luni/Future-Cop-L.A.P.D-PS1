@@ -1,10 +1,10 @@
 // Categories: Game Engine > Menu System | Input > Menu Navigation
 #include "game/types.h"
 
-extern s32 D_8009F890[];
-extern s32 D_8009F898[];
-extern s32 D_8009F8A0[];
-extern s32 D_8009F8A8[];
+extern s32 gMenuUpHoldTicks[] __asm__("D_8009F890");
+extern s32 gMenuDownHoldTicks[] __asm__("D_8009F898");
+extern s32 gMenuLeftHoldTicks[] __asm__("D_8009F8A0");
+extern s32 gMenuRightHoldTicks[] __asm__("D_8009F8A8");
 
 /**
  * @brief Clears all four two-player menu directional repeat-timer arrays.
@@ -26,14 +26,16 @@ extern s32 D_8009F8A8[];
  * @par Callers
  * Confirmed: func_80078650 (on menu push/replace); also direct call at 0x8007878C in asm/us/main.s (menu pop).
  */
-void func_800785F8(void)
+void gResetMenuDirectionHoldTicks(void) __asm__("func_800785F8");
+
+void gResetMenuDirectionHoldTicks(void)
 {
     u32 i;
 
     for (i = 0; i < 2; i++) {
-        D_8009F890[i] = 0;
-        D_8009F898[i] = 0;
-        D_8009F8A0[i] = 0;
-        D_8009F8A8[i] = 0;
+        gMenuUpHoldTicks[i] = 0;
+        gMenuDownHoldTicks[i] = 0;
+        gMenuLeftHoldTicks[i] = 0;
+        gMenuRightHoldTicks[i] = 0;
     }
 }

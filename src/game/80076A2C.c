@@ -41,8 +41,8 @@ extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
 extern s32 gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern s32 D_8009F3D0;
 extern u8 D_8009F3A0[];
-extern u8 D_8009F3A8[];
-extern u8 D_8009F3B0[];
+extern u8 gFrontEndBootstrapModule[] __asm__("D_8009F3A8");
+extern u8 gMissionModuleSuffix[] __asm__("D_8009F3B0");
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern u8 gEaLogoName[] __asm__("D_80011E3C");
 extern u8 D_80011E48[];
@@ -128,8 +128,12 @@ extern s32 func_80083130(void *);
  *   func_800287F4(D_8009B300, 0) and copied back afterwards. The screen
  *   module therefore works on copies, and the loop keeps the authoritative
  *   values.
- * - If unk4C (menu cursor, 10 = last entry) equals 10 and unk5C/unkC equal 1,
- *   unk10 is forced to 0 - i.e. the last menu entry confirms the selection.
+ * - The session setup path func_80024904 -> func_800780DC calls
+ *   gSetupFrontEndMenus (func_80077AD4). The descriptor setup and menu
+ *   dispatcher in src/game/80077AD4.c and src/game/80078DD0.c describe the
+ *   menu itself; this loop loads modules rather than drawing items directly.
+ * - If unk4C (selection field, compared to 10) equals 10 and unk5C/unkC equal 1,
+ *   unk10 is forced to 0; the precise meaning of this special case is unknown.
  * - switch on unk10: case 0 handles a pending D_8009F3EC (copy the name with
  *   strcpy, strcat ".mis", switch to state 3 and set D_8009F3F0 = 5) and falls
  *   through to case 3, which re-arms the screen with D_8009F3F0 = 1 and s2 = 1
@@ -172,7 +176,9 @@ extern s32 func_80083130(void *);
  * - What func_80083130() returns in local + 0x50 and what the two blits show.
  * - The exact meaning of unk5C and unkC (both compared against literal 1).
  */
-s32 func_80076A2C(void)
+s32 gGameMain(void) __asm__("func_80076A2C");
+
+s32 gGameMain(void)
 {
     u8 local[0x54];
     s32 s0;
@@ -239,8 +245,8 @@ s32 func_80076A2C(void)
 
         for (;;) {
             if (s2) {
-                func_800287F4(D_8009F3A8, 1);
-                func_8008CC90(gFrontEndModuleName, D_8009F3B0);
+                func_800287F4(gFrontEndBootstrapModule, 1);
+                func_8008CC90(gFrontEndModuleName, gMissionModuleSuffix);
                 s2 = 0;
                 continue;
             }
@@ -276,7 +282,7 @@ s32 func_80076A2C(void)
             case 0:
                 if (gPendingModuleNameFlag != 0) {
                     func_8008CCB0(gFrontEndModuleName, gPendingModuleNameFlag);
-                    func_8008CC90(gFrontEndModuleName, D_8009F3B0);
+                    func_8008CC90(gFrontEndModuleName, gMissionModuleSuffix);
                     gPendingScreenState = 3;
                     gPendingModuleNameFlag = 0;
                     gModuleLoadState = 5;

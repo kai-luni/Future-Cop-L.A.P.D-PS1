@@ -6,9 +6,9 @@ extern u8 D_8009F875;
 extern u8 D_8009F876;
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
-extern u8 D_8009F8CC;
-extern void func_800785F8(void);
-extern void func_800788B4(void);
+extern u8 gMenuSetupCalled __asm__("D_8009F8CC");
+extern void gResetMenuDirectionHoldTicks(void) __asm__("func_800785F8");
+extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
 
 /**
  * @brief Pops the current front-end menu panel back to its parent panel.
@@ -45,9 +45,9 @@ s32 func_80078740(void)
         gFontBankTable = *(u8 **)(gFontBankTable + 0x24);
         gPlayerMenuDepth = 0;
         D_8009F8C1 = 0;
-        func_800785F8();
-        D_8009F8CC = 0;
-        func_800788B4();
+        gResetMenuDirectionHoldTicks();
+        gMenuSetupCalled = 0;
+        gSyncMenuFontBank();
         if ((s8)gFontBankTable[3] != -1) {
             D_8009F875 = gFontBankTable[3];
             D_8009F876 = gFontBankTable[4];

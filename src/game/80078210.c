@@ -22,7 +22,7 @@ extern u8 D_800A377D[];
 extern s32 D_8009F8E0;
 extern s32 D_8009F8E4;
 
-extern void func_8007A168(void);
+extern void gUpdateMainMenuUnlocks(void) __asm__("func_8007A168");
 extern void func_80078650(struct Unk78210Panel *panel, s32 arg1);
 
 /**
@@ -47,7 +47,7 @@ extern void func_80078650(struct Unk78210Panel *panel, s32 arg1);
  */
 void func_80078210(void)
 {
-    func_8007A168();
+    gUpdateMainMenuUnlocks();
     if (gGameSession[0]->players == 1) {
         if (gGameSession[0]->split == 1) {
             func_80078650(&D_800A38C8, 0);

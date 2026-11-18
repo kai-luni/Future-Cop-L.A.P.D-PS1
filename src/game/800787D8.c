@@ -32,7 +32,9 @@ extern u8 *gFontBankTable __asm__("D_8009F468");
  * @par Callers
  * Confirmed: func_80078650, func_8007B3F4, func_80080010, func_80082020; also direct calls at 0x800796A0 and 0x8007976C in asm/us/main.s.
  */
-void func_800787D8(s8 arg0, s8 arg1, s8 arg2)
+void gSelectEnabledMenuItem(s8 arg0, s8 arg1, s8 arg2) __asm__("func_800787D8");
+
+void gSelectEnabledMenuItem(s8 arg0, s8 arg1, s8 arg2)
 {
     Entry *entries;
     s8 i;

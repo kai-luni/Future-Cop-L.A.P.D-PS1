@@ -81,6 +81,8 @@ sich nicht auf einen Begriff bringen lässt.
 | Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
 |---|---|---|---|---|
 | `D_8009FA00` | `gScreenState` | `s32` | Aktueller Bildschirmzustand der Hauptschleife (z. B. 1 = „loading", 13 = HUD-Phase). **Bestätigt.** | `func_80024E3C`, `func_8001EFF8` |
+| `D_8009F3A8` | `gFrontEndBootstrapModule` | `u8[]` | Dateiname `FE.mis` für den initialen Front-End-Modullauf. **Bestätigt.** | `gGameMain` |
+| `D_8009F3B0` | `gMissionModuleSuffix` | `u8[]` | Endung `.mis`, die beim Aufbau des Modulnamens angehängt wird. **Bestätigt.** | `gGameMain` |
 | `D_8009F9A8` | `gPendingScreenState` | `s32` | Nächster Bildschirmzustand; spiegelt `unk10` der Hauptschleife, solange er ungleich 0 ist, läuft die Schleife weiter. **Bestätigt.** | `func_80076A2C` |
 | `D_8009FA60` | `gPaletteCycleCounter` | `s32` | Zähler für den Palettenwechsel; das HUD liest `(>> 4) & 7` daraus. **Bestätigt.** | `func_8001EFF8` |
 | `D_8009FA20` | `gFrameCallbackEnabled` | `u8` | Schalter für den Pro-Frame-Rücksprung; 0 bedeutet „läuft noch nicht". **Bestätigt** (Doku: „per-frame-callback enabled flag"). | `func_8001E4E4`, `func_8001E540` |
@@ -194,8 +196,16 @@ Einundsechzig weitere Globals in **einem** Commit. Damit sind alle Symbole abgea
 | `D_80010DCC` | `gTimeMmSsFormat` | Format für die mm:ss-Ausgabe, neben der Dezimalvariante. |
 | `D_800117C0` | `gCounterFormatString` | Format des Zählertextes, gezeichnet bei `x + 138 - Breite`, y 20. |
 | `D_80011E3C` | `gEaLogoName` | Dateiname `"Ea_logo.fsv"`, gezeichnet bei (0,0) mit Modus 4. |
+| `D_80011E60` | — | Dateiname `"credits.wve"`, beim Abspann verwendet. |
+| `D_8009F8E8` | `gTitleScreenDeadline` | Bestätigt: Ablaufzeit des Titelbildschirms in Ticks; initialisiert in `func_8007799C`, gelesen in `func_800778E4`. |
+| `D_8009F8CC` | `gMenuSetupCalled` | Bestätigt: verhindert wiederholten Aufruf von `func_80077990`; beim Menüwechsel gelöscht. |
+| `D_8009F45A` | `gFrontEndReturnMode` | Bestätigt: steuert die Rückkehr ins Frontend; wird unter anderem bei Missionsstart und Demoablauf gesetzt und von `func_800782EC` ausgewertet. |
+| `D_8009F890` | `gMenuUpHoldTicks` | Bestätigt: Start-Ticks der Aufwärts-Eingabe für zwei Spieler; `func_80078DD0` setzt sie, `func_800785F8` löscht sie. |
+| `D_8009F898` | `gMenuDownHoldTicks` | Bestätigt: Start-Ticks der Abwärts-Eingabe für zwei Spieler; `func_80078DD0` setzt sie, `func_800785F8` löscht sie. |
+| `D_8009F8A0` | `gMenuLeftHoldTicks` | Bestätigt: Start-Ticks der Links-Eingabe für zwei Spieler; `func_80078DD0` setzt sie, `func_800785F8` löscht sie. |
+| `D_8009F8A8` | `gMenuRightHoldTicks` | Bestätigt: Start-Ticks der Rechts-Eingabe für zwei Spieler; `func_80078DD0` setzt sie, `func_800785F8` löscht sie. |
 | `D_800120A4` | `gProfileImageName` | Name, den die Profilbild-Speicherschleife an `func_80080B70` übergibt. |
-| `D_8009BBF8` | `gScreenPersistentBlock` | Persistenter Bildschirmblock, in den zwei unabhängige Prüfungen schreiben. |
+| `D_8009BBF8` | `gMainMenuItems` | Sieben Hauptmenü-Einträge zu je 0x1C Bytes; zwei können zur Laufzeit freigeschaltet werden. |
 | `D_8009C030` | `gRowRecordTable` | Quelle der Zeilendatensätze (y 0x35/0x5F/0x89). |
 | `D_8009F3E6` | `gLayoutPointerFlagA` | Beeinflusst die Zeigerzuweisung, nur bei `a0 == 3` erreicht. |
 | `D_8009F3E7` | `gLayoutPointerFlagB` | Dasselbe für die abschließende Zeigerauswahl. |
@@ -275,7 +285,7 @@ Einundsechzig weitere Globals in **einem** Commit. Damit sind alle Symbole abgea
 
 **Nur Inline-Asm, kein C-Name setzbar:** `D_8009EA00`, `D_8009F7C8` (in `8001C808.c` von Hand gesetzt, in weiteren Units asm-only), `D_A000DFAC`.
 
-**Bedeutung nicht bestimmbar:** `D_80010000` (erstes Wort des Programmbilds), `D_80010B0C`, `D_80011E60`, `D_80012088`, `D_8004C324`, `D_8008DCC0`, `D_8008DCD4`, `D_800908D4`, `D_8009EF04`, `D_8009F628` (nur „direkter Schreibzugriff"), `D_8009F670` (Konfiguration oder Fahrzeugindex), `D_8009F8E8`, `D_8009FA99`, `D_800A0974` (nur „direkter Schreibzugriff"), `D_800A09DC` (Wert unbelegt), `D_800A0C10` (Teil einer Vierer-Gruppe), `D_800A2730`, `D_800A3938`, `D_800A3B60`, `D_800AB388`.
+**Bedeutung nicht bestimmbar:** `D_80010000` (erstes Wort des Programmbilds), `D_80010B0C`, `D_80012088`, `D_8004C324`, `D_8008DCC0`, `D_8008DCD4`, `D_800908D4`, `D_8009EF04`, `D_8009F628` (nur „direkter Schreibzugriff"), `D_8009F670` (Konfiguration oder Fahrzeugindex), `D_8009FA99`, `D_800A0974` (nur „direkter Schreibzugriff"), `D_800A09DC` (Wert unbelegt), `D_800A0C10` (Teil einer Vierer-Gruppe), `D_800A2730`, `D_800A3938`, `D_800A3B60`, `D_800AB388`.
 
 ## Steuerung, Skript-VM, Panels und CD-Treiber: die große Runde
 

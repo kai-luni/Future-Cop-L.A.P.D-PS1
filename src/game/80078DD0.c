@@ -34,7 +34,9 @@ struct Menu {
 };
 extern s32 gStillRunningState __asm__("D_8009F464");
 extern struct Menu *gFontBankTable __asm__("D_8009F468");
-extern u8 D_8009F8CC, D_8009F3F2, D_8009F3F3, D_8009F45A;
+extern u8 gMenuSetupCalled __asm__("D_8009F8CC");
+extern u8 D_8009F3F2, D_8009F3F3;
+extern u8 gFrontEndReturnMode __asm__("D_8009F45A");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern s32 D_8009F8B0, D_8009F8B4;
 extern s32 gIdleDeadline __asm__("D_8009F870");
@@ -42,14 +44,19 @@ extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s32 prev_buttons[2] __asm__("D_8009F8B0");
 extern u32 D_8009F8D0, D_8009F8D4;
 extern volatile u32 D_8009F8D0_arr[] __asm__("D_8009F8D0");
-extern s32 D_8009F890[], D_8009F898[], D_8009F8A0[], D_8009F8A8[];
+extern s32 gMenuUpHoldTicks[] __asm__("D_8009F890");
+extern s32 gMenuDownHoldTicks[] __asm__("D_8009F898");
+extern s32 gMenuLeftHoldTicks[] __asm__("D_8009F8A0");
+extern s32 gMenuRightHoldTicks[] __asm__("D_8009F8A8");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u32 D_8009B324[];
 extern struct Menu gMenuDescriptor __asm__("D_800A3808");
 extern s16 gSlotRecordTable[2][4] __asm__("D_800A3578");
 extern struct InputAction D_800A3588[], D_800A3598[], D_800A35A8[], D_800A35B8[], D_800A35C8[], D_800A35D8[], D_800A35E8[];
 extern u32 func_8001EF8C(u32);
-extern void func_80077990(void), func_800788B4(void), func_80077AD4(s32);
+extern void func_80077990(void);
+extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
+extern void gSetupFrontEndMenus(s32) __asm__("func_80077AD4");
 extern u8 func_80078C88(void), func_80082D30(s32 *, s32);
 extern void func_80082DDC(u32, s32), func_8005780C(u32, struct InputAction *);
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
@@ -65,7 +72,8 @@ extern struct GameContext *gGameSession __asm__("D_8009FA94");
 extern struct Menu D_800A38F8, D_800A36B8, D_800A3658, D_800A3628, D_800A37D8, D_800A37A8, D_800A3688;
 extern struct Menu *D_8009B8B8[];
 extern s32 func_80046C84(s32, s32), func_80078740(void);
-extern void func_80078650(struct Menu *, s32), func_8008227C(void), func_800787D8(s8, s32, s8);
+extern void func_80078650(struct Menu *, s32), func_8008227C(void);
+extern void gSelectEnabledMenuItem(s8, s32, s8) __asm__("func_800787D8");
 extern void func_8001C214(u32, s32, s32, s32, s32, u8);
 extern void func_800493C0(u32, u8, u8, u8);
 extern void func_80082AB0(s32,s32,s32,s32,s32,s32,s32,s32,s32);
@@ -77,6 +85,14 @@ extern void func_800826A0(void), func_80078B98(void), func_80078B34(s32,s32,s32)
  *
  *  Polls two controllers, processes menu actions and callbacks, draws items,
  *  and handles inactivity and pending menu transitions when the menu is active.
+ *  Each item is a 0x1C-byte record: text, action callback, next panel, icon,
+ *  enabled/group bytes, coordinates and presentation fields. On confirm the
+ *  selected item's handler receives action 3; its next-panel pointer then
+ *  pushes a menu, or -1 pops one. A disabled item is skipped by func_800787D8.
+ *  The draw pass uses an icon when present, otherwise text or a text ID, and
+ *  calls each item's handler with action 0. The descriptor's +0x18 callback
+ *  then runs once per active player. Labels backed by text IDs require the
+ *  game resources.
  *  @par Globals
  *  D_8009F464 gates processing; D_8009F468 selects the menu; D_8009F8D0 and D_8009F8D4 hold button states.
  *  D_8009F890, D_8009F898, D_8009F8A0 and D_8009F8A8 track directional holds; D_800A3588 through D_800A35E8 hold action states.
@@ -108,14 +124,14 @@ void func_80078DD0(void)
     D_8009F8B4 = D_8009F8D4;
     buttons[1] = D_8009F8D4 = func_8001EF8C(1);
     for (i = 0; i < 2; i++) {
-        if (buttons[i] & 0x100000) { if (!D_8009F890[i]) D_8009F890[i] = gFrameTickCounter; } else D_8009F890[i] = 0;
-        if (buttons[i] & 0x400000) { if (!D_8009F898[i]) D_8009F898[i] = gFrameTickCounter; } else D_8009F898[i] = 0;
-        if (buttons[i] & 0x800000) { if (!D_8009F8A0[i]) D_8009F8A0[i] = gFrameTickCounter; } else D_8009F8A0[i] = 0;
-        if (buttons[i] & 0x200000) { if (!D_8009F8A8[i]) D_8009F8A8[i] = gFrameTickCounter; } else D_8009F8A8[i] = 0;
+        if (buttons[i] & 0x100000) { if (!gMenuUpHoldTicks[i]) gMenuUpHoldTicks[i] = gFrameTickCounter; } else gMenuUpHoldTicks[i] = 0;
+        if (buttons[i] & 0x400000) { if (!gMenuDownHoldTicks[i]) gMenuDownHoldTicks[i] = gFrameTickCounter; } else gMenuDownHoldTicks[i] = 0;
+        if (buttons[i] & 0x800000) { if (!gMenuLeftHoldTicks[i]) gMenuLeftHoldTicks[i] = gFrameTickCounter; } else gMenuLeftHoldTicks[i] = 0;
+        if (buttons[i] & 0x200000) { if (!gMenuRightHoldTicks[i]) gMenuRightHoldTicks[i] = gFrameTickCounter; } else gMenuRightHoldTicks[i] = 0;
     }
     if (gStillRunningState != 1) {
         changed = count = step = first = 0;
-        if (!D_8009F8CC) { func_80077990(); D_8009F8CC = 1; }
+        if (!gMenuSetupCalled) { func_80077990(); gMenuSetupCalled = 1; }
         if (gFontBankTable == &gMenuDescriptor) {
             for (j = 0; j < 2; j++) if (buttons[j] != prev_buttons[j]) goto reset_timer;
         } else {
@@ -126,9 +142,9 @@ reset_timer:
             u8 active = 0;
             if (D_8009F3F2) active = func_80078C88();
             if (!active) {
-                D_8009F45A = 5;
+                gFrontEndReturnMode = 5;
                 func_80082DDC(D_8009B324[D_8009F3F3], 0);
-                func_80077AD4(0);
+                gSetupFrontEndMenus(0);
                 D_8009F3F3++;
                 if (D_8009F3F3 >= 2) { D_8009F3F3 = 0; D_8009F3F2 = 1; }
             }
@@ -142,7 +158,7 @@ reset_timer:
             } while (j < 2);
             i++;
         } while (i < 2);
-        func_800788B4();
+        gSyncMenuFontBank();
         if (gFontBankTable->filter) {
             D_8009F8D0 = gFontBankTable->filter(D_8009F8D0, 0);
             D_8009F8D4 = (*(u32 (**)(u32, s32))((u8 *)gFontBankTable + 12))(D_8009F8D4, 1);
@@ -235,7 +251,7 @@ reset_timer:
                     __asm__("lui %0,%%hi(D_8009F8C0)\n\taddiu %0,%0,%%lo(D_8009F8C0)" : "=r"(cbase) : "r"(i));
                     if (!*((s8 *)i + cbase)) {
                         oldsel = gFontBankTable->selection[i];
-                        func_800787D8((s8)(gFontBankTable->selection[i] - 1), -1, (s8)i);
+                        gSelectEnabledMenuItem((s8)(gFontBankTable->selection[i] - 1), -1, (s8)i);
                         if (oldsel != gFontBankTable->selection[i]) func_80046C84(0x46, 0);
                     }
                     if (gFontBankTable->items[gFontBankTable->selection[i]].handler)
@@ -246,7 +262,7 @@ reset_timer:
                     __asm__("lui %0,%%hi(D_8009F8C0)\n\taddiu %0,%0,%%lo(D_8009F8C0)" : "=r"(cbase) : "r"(i));
                     if (!*((s8 *)i + cbase)) {
                         oldsel = gFontBankTable->selection[i];
-                        func_800787D8((s8)(gFontBankTable->selection[i] + 1), 1, (s8)i);
+                        gSelectEnabledMenuItem((s8)(gFontBankTable->selection[i] + 1), 1, (s8)i);
                         if (oldsel != gFontBankTable->selection[i]) func_80046C84(0x46, 0);
                     }
                     if (gFontBankTable->items[gFontBankTable->selection[i]].handler)

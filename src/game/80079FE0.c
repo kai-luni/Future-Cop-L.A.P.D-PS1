@@ -15,27 +15,22 @@ extern u8 D_80011E60[];
 extern void func_80082DDC(s32 arg0, s32 arg1);
 
 /**
- * @brief Debug dump of eight profile values through the timed text box.
+ * @brief Plays the videos referenced by the eight-entry mission list.
  *
- * @param arg0 Only action 3 runs the dump.
+ * @param arg0 Only action 3 starts playback.
  * @return Nothing.
  *
  * @par Confirmed
- * Walks i = 0..7 over the index table D_8009B724; each non-zero value
- * D_8009B4E4[table[i]].unk08 is shown via func_80082DDC(val, 2) (the wide
- * layout). gMovieAbortFlag aborts the loop early; when it stays 0, the fallback
- * box func_80082DDC(D_80011E60, 0) runs.
- *
- * @par Likely role
- * A development inspection page for the eight-slot profile table, sibling
- * of func_8007A0A4 (five slots, other index table).
+ * Walks i = 0..7 over D_8009B724; each non-zero D_8009B4E4[table[i]].unk08
+ * is passed to func_80082DDC(val, 2) for playback. gMovieAbortFlag aborts
+ * the loop early; otherwise the credits movie D_80011E60 is played.
  *
  * @par Unknown
- * What gMovieAbortFlag signals (likely a user abort).
+ * The exact meaning of gMovieAbortFlag.
  *
  * @par Callers
- * No direct callers in the call graph and no address reference in the
- * sources; likely a debug-only page (dispatch unconfirmed).
+ * The retail main-menu item table D_8009BBF8 references this handler at
+ * entry 2; func_8007A168 can enable that entry.
  */
 void func_80079FE0(s32 arg0)
 {

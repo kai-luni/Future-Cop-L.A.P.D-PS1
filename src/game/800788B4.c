@@ -25,7 +25,9 @@ extern s32 func_80048E28(s32 index);
  * @par Callers
  * Confirmed: func_800778E4 (0x8007792C), func_80078650 (0x80078674), func_80078740 (0x80078798 in asm/us/main.s), func_80078DD0 (0x800790D8 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-void func_800788B4(void)
+void gSyncMenuFontBank(void) __asm__("func_800788B4");
+
+void gSyncMenuFontBank(void)
 {
     register u8 *state __asm__("$2");
     register s32 previous __asm__("$3");
