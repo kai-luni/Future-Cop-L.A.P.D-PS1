@@ -136,8 +136,10 @@ void gRunPolygonPass(struct Emitter *e, s32 step) __asm__("func_80075A84");
  * func_8003F4A0.
  *
  * @par Environment path
- * The polygon pass over one scene list: culls, lights and draws each node -
- * the step that turns submitted instances into GTE triangles.
+ * Polygon pass over one scene pool: walks the active particle list, culls and
+ * lights each node and draws it through func_800751A4. It is the last of the
+ * six passes gRunSceneListPasses runs; the pool is what the object lists hand
+ * over, not the map tiles.
  */
 void gRunPolygonPass(struct Emitter *e, s32 step)
 {
