@@ -24,7 +24,9 @@
  * @par Callers
  * func_8007ABBC, func_8008125C.
  */
-void func_8007AA9C(u8 *dst, u8 *src, s32 len, u8 *table)
+void gDecodeGlyphsToName(u8 *dst, u8 *src, s32 len, u8 *table) __asm__("func_8007AA9C");
+
+void gDecodeGlyphsToName(u8 *dst, u8 *src, s32 len, u8 *table)
 {
     s32 i;
     s32 flag = 0;

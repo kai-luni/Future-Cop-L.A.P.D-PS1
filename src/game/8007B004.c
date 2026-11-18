@@ -46,7 +46,9 @@ extern u8 D_800A37DB[];
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8007B004(void)
+void gInitMissionSelectState(void) __asm__("func_8007B004");
+
+void gInitMissionSelectState(void)
 {
     register Unk7B004Mode *mode __asm__("$3");
     Unk7B004Node *node;

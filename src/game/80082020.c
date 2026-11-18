@@ -20,7 +20,9 @@ extern void gSelectEnabledMenuItem(s32 arg0, s32 arg1, s32 arg2) __asm__("func_8
  * @par Callers
  * Unknown: no direct edge in edges.json.
  */
-void func_80082020(void)
+void gReselectEnabledItem(void) __asm__("func_80082020");
+
+void gReselectEnabledItem(void)
 {
     gSelectEnabledMenuItem((s32)gFontBankTable[0], 0x1, 0x0);
 }

@@ -41,7 +41,9 @@ extern void gSelectEnabledMenuItem(s32, s32, s32) __asm__("func_800787D8");
  * @par Callers
  * Confirmed: address taken by func_80077AD4 (0x80077C74 for D_800A3868/898/8C8 .unk10) and func_80078650 (0x800786F4, pointer test re-invoking D_8009F468->unk10) / Likely: none / Unknown: none.
  */
-void func_8007B3F4(void)
+void gEnterGameHubMenu(void) __asm__("func_8007B3F4");
+
+void gEnterGameHubMenu(void)
 {
     Unk8009FA94 *g;
 

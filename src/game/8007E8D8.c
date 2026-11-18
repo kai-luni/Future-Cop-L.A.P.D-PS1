@@ -31,7 +31,9 @@
  *  @par Callers
  *  Confirmed: func_8007F02C.
  */
-void func_8007E8D8(u8 *out0, u32 a, u32 b, u32 c0, u32 d0, u32 e0, u32 f0, u32 g0, u32 h0, u32 i0, u32 j0, u32 k0, u32 l0, u32 m0)
+void gPackInputRecord(u8 *out0, u32 a, u32 b, u32 c0, u32 d0, u32 e0, u32 f0, u32 g0, u32 h0, u32 i0, u32 j0, u32 k0, u32 l0, u32 m0) __asm__("func_8007E8D8");
+
+void gPackInputRecord(u8 *out0, u32 a, u32 b, u32 c0, u32 d0, u32 e0, u32 f0, u32 g0, u32 h0, u32 i0, u32 j0, u32 k0, u32 l0, u32 m0)
 {
     register u8 *out __asm__("$24") = out0;
     register u32 c __asm__("$18");

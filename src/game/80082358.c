@@ -13,7 +13,7 @@ extern s32 gStillRunningState __asm__("D_8009F464");
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 D_800120E0[];
 
-extern void func_800822CC(u8 *arg0);
+extern void gEncodeProfileNameGlyphs(u8 *arg0) __asm__("func_800822CC");
 extern u8 *func_8001E318(u8 *destination, u8 *source, u32 count);
 extern void func_800181D4(struct Node *node);
 
@@ -62,7 +62,7 @@ void func_80082358(struct Node *node)
         dst[0] = 0x43;
         dst[2] = 0x13;
         dst[3] = 1;
-        func_800822CC(D_800120E0);
+        gEncodeProfileNameGlyphs(D_800120E0);
         has_pl16 = 0;
 
         cursor = node->data;

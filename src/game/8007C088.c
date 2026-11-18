@@ -35,7 +35,9 @@ extern u8 func_8001EB2C(s32 arg0);
  * @par Callers
  * Confirmed: address taken by func_80077AD4 (0x80077D28 in asm/us/main.s, stored into D_800A3748.unk10) / Likely: invoked indirectly via D_8009F468->unk10() in func_80078650 / Unknown: other indirect callers.
  */
-void func_8007C088(void)
+void gSnapshotControllerPresets(void) __asm__("func_8007C088");
+
+void gSnapshotControllerPresets(void)
 {
     D_8009F900 = gPresetIndexPerPort;
     D_8009F901 = D_8009FA99;

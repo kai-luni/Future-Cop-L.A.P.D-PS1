@@ -19,7 +19,7 @@ extern u8 gHighlightShadeTable[8] __asm__("D_8009F3F8");
 extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 extern void *jtbl_800121A4[];
 
-extern s32 func_8007EA78(void);
+extern s32 gApplyPasswordUnlocks(void) __asm__("func_8007EA78");
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern void func_80078740(void);
 extern void func_800493C0(u32 index, u8 blue, u8 green, u8 red);
@@ -29,7 +29,9 @@ extern void func_80082EF0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 
 extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
 extern struct FontEntry *func_80048E88(void);
-extern void func_8007F128(s32 input0, s32 input1, s32 input2, s32 input3, s32 arg5, s32 arg6)
+extern void gDecodeCodeDisplay(s32 input0, s32 input1, s32 input2, s32 input3, s32 arg5, s32 arg6) __asm__("func_8007F128");
+
+extern void gDecodeCodeDisplay(s32 input0, s32 input1, s32 input2, s32 input3, s32 arg5, s32 arg6)
 {
     u8 buf[12];
     s32 a0;

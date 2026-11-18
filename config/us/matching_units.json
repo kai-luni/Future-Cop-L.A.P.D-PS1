@@ -37931,7 +37931,7 @@
    ]
   },
   {
-   "name": "D_8007D150",
+   "name": "func_8007D150",
    "address": "0x8007D150",
    "size": "0x3C",
    "source": "src/game/8007D150.c",
@@ -38031,7 +38031,7 @@
    ]
   },
   {
-   "name": "D_8007D27C",
+   "name": "func_8007D27C",
    "address": "0x8007D27C",
    "size": "0x60",
    "source": "src/game/8007D27C.c",

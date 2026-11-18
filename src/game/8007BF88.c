@@ -3,7 +3,7 @@
 
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 *gPendingRowCapture __asm__("D_8009F8C4");
-extern u8 D_80012094[];
+extern u8 gMultiBrfMovieName[] __asm__("D_80012094");
 
 /**
  *  @brief Selects a fixed global state and data pointer for argument 3.
@@ -22,10 +22,12 @@ extern u8 D_80012094[];
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8007BF88(s32 arg0)
+void gQueueMultiBrfMovie(s32 arg0) __asm__("func_8007BF88");
+
+void gQueueMultiBrfMovie(s32 arg0)
 {
     if (arg0 == 3) {
         gDeferredTransition = 5;
-        gPendingRowCapture = D_80012094;
+        gPendingRowCapture = gMultiBrfMovieName;
     }
 }

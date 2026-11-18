@@ -21,7 +21,7 @@ extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern u8 D_8009B3D4[];
 extern s8 gScreenDescriptor[] __asm__("D_800A3838");
 
-extern void func_8007B460(s32);
+extern void gDrawProfileSlotList(s32) __asm__("func_8007B460");
 extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
 extern void func_800493C0(u32, u8, u8, u8);
 extern s32 func_8008CD30(u8 *, u8 *, s32);
@@ -72,7 +72,9 @@ extern void func_80078B34(s32, s32, s32);
  * D_800A38C8, which also share the +0x10 pointer D_8007B3F4 and the +0x20
  * pointer D_8007F618, so the screen dispatcher reaches it indirectly.
  */
-void func_8007BCF4(s32 arg0)
+void gDrawGameHubMenu(s32 arg0) __asm__("func_8007BCF4");
+
+void gDrawGameHubMenu(s32 arg0)
 {
     u8 text[8];
     s32 y;
@@ -91,7 +93,7 @@ void func_8007BCF4(s32 arg0)
     }
 
     if (gFontBankTable != gScreenDescriptor) {
-        func_8007B460(gActivePlayerIndex);
+        gDrawProfileSlotList(gActivePlayerIndex);
     }
 
     { register s32 idx __asm__("$2") = gActivePlayerIndex; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = gPlayerMenuDepth_arr; __asm__("" : "+r"(base)); v = *(s8 *)(idx + (s32)base); }

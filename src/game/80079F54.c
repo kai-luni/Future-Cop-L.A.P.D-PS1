@@ -47,7 +47,9 @@ extern void gUpdateMainMenuUnlocks(void) __asm__("func_8007A168");
  * the screen callback block D_800A3808.unk10, so the screen dispatcher
  * reaches it indirectly.
  */
-void func_80079F54(void)
+void gResetProfileListState(void) __asm__("func_80079F54");
+
+void gResetProfileListState(void)
 {
     u32 i;
 

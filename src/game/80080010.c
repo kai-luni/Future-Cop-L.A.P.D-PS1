@@ -22,7 +22,9 @@ extern s32 gSelectEnabledMenuItem(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80
  * @par Callers
  * Unknown: no direct edge; reached from the menu state handlers.
  */
-s32 func_80080010(void)
+s32 gSelectFirstEnabledItem(void) __asm__("func_80080010");
+
+s32 gSelectFirstEnabledItem(void)
 {
     return gSelectEnabledMenuItem(0, 1, 0);
 }

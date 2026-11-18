@@ -80,7 +80,9 @@ extern s32 func_80046C84(s32 id, s32 arg1);
  * @par Callers
  * Confirmed: none direct; address `0x8007D27C` sits at `0x8009BAAC` in D_8009BA38 (bound by func_80077AD4) / Likely: indirect call from menu input loop / Unknown: exact call site.
  */
-void D_8007D27C(s32 arg0)
+void gToggleSoundEnable(s32 arg0) __asm__("func_8007D27C");
+
+void gToggleSoundEnable(s32 arg0)
 {
 
     if (arg0 < 3) if (arg0 > 0) {

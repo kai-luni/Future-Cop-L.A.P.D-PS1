@@ -75,7 +75,9 @@ extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
  * kind-7 screen whose slot byte is 2. analysis/edges.json records it as
  * an "address_taken" edge from 0x80077BCC.
  */
-void func_8007B17C(s32 arg0)
+void gDrawMenuCommandsRow(s32 arg0) __asm__("func_8007B17C");
+
+void gDrawMenuCommandsRow(s32 arg0)
 {
     s32 b = 0;
     s32 a = 0;

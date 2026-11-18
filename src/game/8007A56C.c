@@ -15,7 +15,7 @@ extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 D_800A377D[];
 extern u8 D_800A368B[];
-extern u8 D_80012094[];
+extern u8 gMultiBrfMovieName[] __asm__("D_80012094");
 
 extern void func_80077708(void);
 
@@ -38,7 +38,9 @@ extern void func_80077708(void);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8007A56C(s32 a0)
+void gSelectPrecinctAssault2P(s32 a0) __asm__("func_8007A56C");
+
+void gSelectPrecinctAssault2P(s32 a0)
 {
     register struct Unk78210Mode *mode __asm__("$3");
 
@@ -56,7 +58,7 @@ void func_8007A56C(s32 a0)
     gPendingRowCapture = 0;
     if (gLayoutPointerFlagA == 0) {
         gLayoutPointerFlagA = 1;
-        gPendingRowCapture = D_80012094;
+        gPendingRowCapture = gMultiBrfMovieName;
     }
     D_800A368B[0] = 5;
 }

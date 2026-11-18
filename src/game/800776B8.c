@@ -4,13 +4,13 @@
 extern u8 gMissionListTable[] __asm__("D_8009B724");
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gSelectedMissionIndex __asm__("D_8009F880");
-extern u8 D_8009F881;
+extern u8 gMissionListMinIndex __asm__("D_8009F881");
 extern u8 gMissionListMaxIndex __asm__("D_8009F882");
-extern u8 D_8009F889;
+extern u8 gMissionListMode __asm__("D_8009F889");
 extern u8 gCrimeWarProgress __asm__("D_8009F458");
 extern u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
-extern u8 *D_8009F884;
-extern u8 D_8009F888;
+extern u8 *gMissionListTablePtr __asm__("D_8009F884");
+extern u8 gMissionListEntryCount __asm__("D_8009F888");
 
 /**
  * @brief Resets the front-end mission list state to the default 8-entry table (D_8009B724).
@@ -34,11 +34,13 @@ extern u8 D_8009F888;
  * @par Callers
  * Confirmed: func_8007A3AC, func_8007A450, func_8007EA78, func_8007F8FC, func_8008125C.
  */
-void func_800776B8(void)
+void gSetupCrimeWarMissionList(void) __asm__("func_800776B8");
+
+void gSetupCrimeWarMissionList(void)
 {
     gSelectedMissionIndex = 0;
-    D_8009F881 = 0;
-    D_8009F889 = 0;
+    gMissionListMinIndex = 0;
+    gMissionListMode = 0;
     if (gFrontEndListFlag != 0) {
         gMissionListMaxIndex = 7;
         gCrimeWarProgress = 8;
@@ -46,6 +48,6 @@ void func_800776B8(void)
     } else {
         gMissionListMaxIndex = 0;
     }
-    D_8009F884 = gMissionListTable;
-    D_8009F888 = 8;
+    gMissionListTablePtr = gMissionListTable;
+    gMissionListEntryCount = 8;
 }

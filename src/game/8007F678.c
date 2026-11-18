@@ -18,7 +18,9 @@ extern unsigned char *gFontBankTable __asm__("D_8009F468");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-int func_8007F678(void)
+int gSetMenuCursorToItem2(void) __asm__("func_8007F678");
+
+int gSetMenuCursorToItem2(void)
 {
     int x = 2;
     *gFontBankTable = x;

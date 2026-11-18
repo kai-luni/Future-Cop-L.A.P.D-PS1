@@ -11,13 +11,13 @@ extern u8 D_8009C090[], D_8009C070[];
 extern u8 D_800A362B[];
 extern s8 D_8009F924[2], D_8009F926[2], D_8009F928[2];
 extern s8 gSelectedMissionIndex __asm__("D_8009F880");
-extern s8 *D_8009F884;
+extern s8 *gMissionListTablePtr __asm__("D_8009F884");
 extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern u8 D_8009C0C5[], D_8009C0D9[];
 extern int D_8009F8E0, D_8009F8E4;
 typedef struct { u8 pad[0x16]; u16 a; u8 pad2[0x6E]; u16 b; } Tail;
 extern Tail D_8009B7D0;
-extern u8 func_8007D39C(List *, u8);
+extern u8 gFindListEntryByValue(List *, u8) __asm__("func_8007D39C");
 #define CLAMP(x,lo,hi) ((x)<(lo)?(lo):(u8)((x)>(hi)?(hi):(x)))
 
 /**
@@ -41,7 +41,9 @@ extern u8 func_8007D39C(List *, u8);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8007D408(void)
+void gInitSelectionIndices(void) __asm__("func_8007D408");
+
+void gInitSelectionIndices(void)
 {
     if (gGameSession->mode == 1) {
         gLoadoutTable[2].entries = D_8009C090;
@@ -54,25 +56,25 @@ void func_8007D408(void)
         D_800A362B[0] = 2;
         gLoadoutTable[1].count = 5;
     }
-    D_8009F924[0] = func_8007D39C(&gLoadoutTable[0], gGameSession->a);
-    D_8009F924[1] = func_8007D39C(&gLoadoutTable[0], gGameSession->d);
-    D_8009F926[0] = func_8007D39C(&gLoadoutTable[1], gGameSession->b);
-    D_8009F926[1] = func_8007D39C(&gLoadoutTable[1], gGameSession->e);
-    D_8009F928[0] = func_8007D39C(&gLoadoutTable[2], gGameSession->c);
-    D_8009F928[1] = func_8007D39C(&gLoadoutTable[2], gGameSession->f);
+    D_8009F924[0] = gFindListEntryByValue(&gLoadoutTable[0], gGameSession->a);
+    D_8009F924[1] = gFindListEntryByValue(&gLoadoutTable[0], gGameSession->d);
+    D_8009F926[0] = gFindListEntryByValue(&gLoadoutTable[1], gGameSession->b);
+    D_8009F926[1] = gFindListEntryByValue(&gLoadoutTable[1], gGameSession->e);
+    D_8009F928[0] = gFindListEntryByValue(&gLoadoutTable[2], gGameSession->c);
+    D_8009F928[1] = gFindListEntryByValue(&gLoadoutTable[2], gGameSession->f);
     if (gGameSession->x) gLoadoutTable[0].min = 0;
     else gLoadoutTable[0].min = 1;
-    gLoadoutTable[0].max = gWideTextTable[D_8009F884[gSelectedMissionIndex]].max0;
+    gLoadoutTable[0].max = gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]].max0;
     D_8009F924[0] = CLAMP(D_8009F924[0], gLoadoutTable[0].min, gLoadoutTable[0].max);
     D_8009F924[1] = CLAMP(D_8009F924[1], gLoadoutTable[0].min, gLoadoutTable[0].max);
     if (gGameSession->y) D_8009C0C5[0] = 0;
     else D_8009C0C5[0] = 1;
-    gLoadoutTable[1].max = gWideTextTable[D_8009F884[gSelectedMissionIndex]].max1;
+    gLoadoutTable[1].max = gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]].max1;
     D_8009F926[0] = CLAMP(D_8009F926[0], gLoadoutTable[1].min, gLoadoutTable[1].max);
     D_8009F926[1] = CLAMP(D_8009F926[1], gLoadoutTable[1].min, gLoadoutTable[1].max);
     if (gGameSession->z) D_8009C0D9[0] = 0;
     else D_8009C0D9[0] = 1;
-    gLoadoutTable[2].max = gWideTextTable[D_8009F884[gSelectedMissionIndex]].max2;
+    gLoadoutTable[2].max = gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]].max2;
     D_8009F928[0] = CLAMP(D_8009F928[0], gLoadoutTable[2].min, gLoadoutTable[2].max);
     D_8009F928[1] = CLAMP(D_8009F928[1], gLoadoutTable[2].min, gLoadoutTable[2].max);
     D_8009F8E0 = 0;

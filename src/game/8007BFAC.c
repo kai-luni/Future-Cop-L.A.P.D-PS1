@@ -3,7 +3,7 @@
 
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern void *gPendingRowCapture __asm__("D_8009F8C4");
-extern u8 D_80012088[];
+extern u8 gCwRulesMovieName[] __asm__("D_80012088");
 
 /**
  *  @brief Selects a fixed state and data pointer when the argument is 3.
@@ -23,10 +23,12 @@ extern u8 D_80012088[];
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8007BFAC(s32 a0)
+void gQueueCwRulesMovie(s32 a0) __asm__("func_8007BFAC");
+
+void gQueueCwRulesMovie(s32 a0)
 {
     if (a0 == 3) {
         gDeferredTransition = a0;
-        gPendingRowCapture = D_80012088;
+        gPendingRowCapture = gCwRulesMovieName;
     }
 }

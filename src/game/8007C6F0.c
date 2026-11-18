@@ -5,7 +5,7 @@ extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 
 extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b);
-extern void func_8007C0F8(s32 arg0);
+extern void gDrawVehicleSchematic(s32 arg0) __asm__("func_8007C0F8");
 extern s32 func_8001EF34(s32 port);
 extern u8 func_8001EAEC(s32 arg0);
 extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
@@ -40,7 +40,9 @@ extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
  * sources; likely reached through a runtime-built screen table
  * (unconfirmed).
  */
-void func_8007C6F0(s32 slot)
+void gDrawProfileSlotScreen(s32 slot) __asm__("func_8007C6F0");
+
+void gDrawProfileSlotScreen(s32 slot)
 {
     register s32 target __asm__("$2");
     s32 a;
@@ -52,7 +54,7 @@ void func_8007C6F0(s32 slot)
     }
 
     func_80082EF0(0x20, 0x30, 0x100, 0x90, 0xBB8, 0, 0, 0);
-    func_8007C0F8(slot);
+    gDrawVehicleSchematic(slot);
 
     a = 0x6AE;
     b = 0x1324;

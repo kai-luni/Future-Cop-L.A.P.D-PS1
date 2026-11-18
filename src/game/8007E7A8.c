@@ -39,7 +39,9 @@ extern void func_8007F02C(void);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8007E7A8(void)
+void gInitModeDependentState(void) __asm__("func_8007E7A8");
+
+void gInitModeDependentState(void)
 {
     s32 i;
     u8 *odd;

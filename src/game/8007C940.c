@@ -42,7 +42,9 @@ extern void func_8001E96C(s32, s32);
  * @par Callers
  * Unknown: no direct edge; the signature suggests a per-frame pad hook.
  */
-s32 func_8007C940(s32 arg0, s32 arg1)
+s32 gToggleVibrationPair(s32 arg0, s32 arg1) __asm__("func_8007C940");
+
+s32 gToggleVibrationPair(s32 arg0, s32 arg1)
 {
     register s32 input __asm__("$2");
     register s32 player __asm__("$17") = arg1;

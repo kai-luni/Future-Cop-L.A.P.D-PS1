@@ -43,7 +43,9 @@ extern void func_80020618(s32 arg0, void *arg1);
  * @par Callers
  * func_80076A2C (boot) and func_800780DC (module start).
  */
-void func_8007F9CC(void)
+void gOpenProfileSaveSubsystem(void) __asm__("func_8007F9CC");
+
+void gOpenProfileSaveSubsystem(void)
 {
     void *p;
     void *q;

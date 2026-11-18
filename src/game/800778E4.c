@@ -32,7 +32,9 @@ extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
  * @par Callers
  * Confirmed: direct call at 0x80077978 in asm/us/main.s (same file, outside matching_units); address taken in func_80077AD4 (0x80077B34, stored at D_800A38F8+0x18). / Likely: front-end screen loop.
  */
-void func_800778E4(s32 arg0)
+void gUpdateTitleScreenTimeout(s32 arg0) __asm__("func_800778E4");
+
+void gUpdateTitleScreenTimeout(s32 arg0)
 {
     if (arg0 != 0) {
         return;
@@ -50,6 +52,6 @@ void func_80077944(s32 arg0)
 {
     if (arg0 == 3 && D_8009F46C != 0) {
         gTitleScreenDeadline = gFrameTickCounter + 1;
-        func_800778E4(0);
+        gUpdateTitleScreenTimeout(0);
     }
 }

@@ -30,12 +30,12 @@ extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
 extern u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
 extern u8 gCrimeWarProgress __asm__("D_8009F458");
 extern u8 gSelectedMissionIndex __asm__("D_8009F880");
-extern u8 D_8009F881;
+extern u8 gMissionListMinIndex __asm__("D_8009F881");
 extern u8 gMissionListMaxIndex __asm__("D_8009F882");
 
 extern void func_80077FFC(void);
-extern void func_80077708(void);
-extern void func_800776B8(void);
+extern void gSetupPrecinctAssaultMissionList(void) __asm__("func_80077708");
+extern void gSetupCrimeWarMissionList(void) __asm__("func_800776B8");
 extern void gUpdateMainMenuUnlocks(void) __asm__("func_8007A168");
 
 #define CLAMPN(x, m) do { if ((s8)(x) >= 0) { if ((s8)(x) > (m)) { t = (m); } else { t = (x); } } else { t = 0; } (x) = t; } while (0)
@@ -63,7 +63,9 @@ extern void gUpdateMainMenuUnlocks(void) __asm__("func_8007A168");
  * @par Callers
  * Confirmed: func_8007F1F8 (state 0 password commit handler).
  */
-s32 func_8007EA78(void)
+s32 gApplyPasswordUnlocks(void) __asm__("func_8007EA78");
+
+s32 gApplyPasswordUnlocks(void)
 {
     u8 buf[12];
     u32 i;
@@ -250,13 +252,13 @@ s32 func_8007EA78(void)
                 gWideTextTable[gFrontEndListTable[4]].unk20 = n5;
                 func_80077FFC();
                 if (gGameSession->unk5C == 1) {
-                    func_80077708();
+                    gSetupPrecinctAssaultMissionList();
                 } else {
-                    func_800776B8();
+                    gSetupCrimeWarMissionList();
                     v = gCrimeWarProgress;
                     if ((s8)gCrimeWarProgress >= 0) { if ((s8)gCrimeWarProgress < 8) { } else { v = 7; } } else { v = 0; }
                     gMissionListMaxIndex = v;
-                    D_8009F881 = 0;
+                    gMissionListMinIndex = 0;
                     gSelectedMissionIndex = v;
                 }
                 gUpdateMainMenuUnlocks();

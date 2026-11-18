@@ -18,8 +18,8 @@ extern s32 gScalarCursor[] __asm__("D_8009F8F8");
 extern u8 gHighlightShadeTable[8] __asm__("D_8009F3F8");
 extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
 
-extern void func_8007AA9C(u8 *dst, u8 *src, s32 len, u8 *table);
-extern void func_8007A9D0(u8 *src, u8 *dst, s32 len, u8 *table, s32 tableLen);
+extern void gDecodeGlyphsToName(u8 *dst, u8 *src, s32 len, u8 *table) __asm__("func_8007AA9C");
+extern void gEncodeNameToGlyphs(u8 *src, u8 *dst, s32 len, u8 *table, s32 tableLen) __asm__("func_8007A9D0");
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern struct FontEntry *func_80048E88(void);
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
@@ -73,7 +73,9 @@ extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
  * 0x8009BB00, 0x8009BB70 and 0x8009BBC4, so it is invoked through the front-end widget
  * list.
  */
-void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
+void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY) __asm__("func_8007ABBC");
+
+void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
 {
     u8 text[8];
     s32 width;
@@ -92,12 +94,12 @@ void func_8007ABBC(s32 action, s32 baseX, s32 baseY)
     case 3: {
         s8 *flag = &gPlayerMenuDepth[idx];
         if (*flag != 0) {
-            func_8007AA9C(gPlayerNameTable + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878);
+            gDecodeGlyphsToName(gPlayerNameTable + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878);
             *flag = 0;
         } else {
             *flag = 1;
             gScalarCursor[idx] = 0;
-            func_8007A9D0(gPlayerNameTable + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878, gPlayerNameLength);
+            gEncodeNameToGlyphs(gPlayerNameTable + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878, gPlayerNameLength);
         }
         break;
     }

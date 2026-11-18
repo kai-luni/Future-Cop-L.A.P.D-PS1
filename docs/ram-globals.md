@@ -285,7 +285,23 @@ Einundsechzig weitere Globals in **einem** Commit. Damit sind alle Symbole abgea
 
 **Nur Inline-Asm, kein C-Name setzbar:** `D_8009EA00`, `D_8009F7C8` (in `8001C808.c` von Hand gesetzt, in weiteren Units asm-only), `D_A000DFAC`.
 
-**Bedeutung nicht bestimmbar:** `D_80010000` (erstes Wort des Programmbilds), `D_80010B0C`, `D_80012088`, `D_8004C324`, `D_8008DCC0`, `D_8008DCD4`, `D_800908D4`, `D_8009EF04`, `D_8009F628` (nur „direkter Schreibzugriff"), `D_8009F670` (Konfiguration oder Fahrzeugindex), `D_8009FA99`, `D_800A0974` (nur „direkter Schreibzugriff"), `D_800A09DC` (Wert unbelegt), `D_800A0C10` (Teil einer Vierer-Gruppe), `D_800A2730`, `D_800A3938`, `D_800A3B60`, `D_800AB388`.
+**Bedeutung nicht bestimmbar:** `D_80010000` (erstes Wort des Programmbilds), `D_80010B0C`, `D_8004C324`, `D_8008DCC0`, `D_8008DCD4`, `D_800908D4`, `D_8009EF04`, `D_8009F628` (nur „direkter Schreibzugriff"), `D_8009F670` (Konfiguration oder Fahrzeugindex), `D_8009FA99`, `D_800A0974` (nur „direkter Schreibzugriff"), `D_800A09DC` (Wert unbelegt), `D_800A0C10` (Teil einer Vierer-Gruppe), `D_800A2730`, `D_800A3938`, `D_800A3B60`, `D_800AB388`.
+
+## Frontend-Pfad: Hauptmenü bis Precinct Assault
+
+Die Variablen, die den Weg **Hauptmenü → 1 Player → Precinct Assault → Aufstellungsbildschirm → Hub → Levelauswahl** tragen. Grundlage ist die Menü-Record-Tabelle in `asm/us/main.s` sowie die Einträge der Retail-EXE; die Missions- und Filmtabellen sind zusätzlich über die Host-Tests `tests/host/precinct_path_harness.c` abgesichert.
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009B730` | `gFrontEndEntrySequence` | `struct Entry78C88[5]` | Eintragsfolge des Frontends: je vier Bytes aus Level-Index, Spieltyp, Spielerzahl und einem vierten Wert. Wird beim Aufbau der Menüs abgearbeitet. **Bestätigt.** | `func_80078C88` |
+| `D_8009BB66` | `gMenuPreviewScaleP1` | `s16` | Vorschau-Skalierung des ersten Spielers im Panel-Block `D_8009BB34` (Feld `+0x32`); wird beim Bestätigen der Spieleraufstellung auf 100 gesetzt. **Wahrscheinlich** (Feldrolle aus dem Schreibmuster, Einheit der Skala offen). | `func_8007A5F0` |
+| `D_8009BBBA` | `gMenuPreviewScaleP2` | `s16` | Dasselbe für den zweiten Spieler (Feld `+0x86` desselben Blocks). **Wahrscheinlich.** | `func_8007A5F0` |
+| `D_8009F881` | `gMissionListMinIndex` | `u8` | Untere Grenze des Missionscursors; beide List-Setups und die Ladepfade setzen sie auf 0. **Bestätigt.** | `gSetupCrimeWarMissionList`, `gSetupPrecinctAssaultMissionList` |
+| `D_8009F884` | `gMissionListTablePtr` | `u8 *` | Zeiger auf die aktive Missionsliste: Crime War → `gMissionListTable` (8 Einträge), Precinct Assault → `gFrontEndListTable` (5 Einträge). **Bestätigt.** | `gSetupCrimeWarMissionList` |
+| `D_8009F888` | `gMissionListEntryCount` | `u8` | Zahl der Einträge der aktiven Liste: 8 bei Crime War, 4 + Freischalt-Flag bei Precinct Assault. **Bestätigt.** | `gSetupPrecinctAssaultMissionList` |
+| `D_8009F889` | `gMissionListMode` | `u8` | Art der aktiven Liste: 0 = Crime War, 1 = Precinct Assault; adressiert damit das Fortschrittspaar `D_8009F458`/`D_8009F459`. **Bestätigt.** | `gSetupPrecinctAssaultMissionList` |
+| `D_80012088` | `gCwRulesMovieName` | `char[12]` | Zeichenkette `"cwrules.wve"`: das Regelvideo des Crime-War-Modus, das die Einträge 0 und 1 des Hauptmenüs einmalig einreihen. **Bestätigt.** | `gSelectCrimeWar1P` |
+| `D_80012094` | `gMultiBrfMovieName` | `char[12]` | Zeichenkette `"MultiBrf.wve"`: das Briefingvideo beim ersten Precinct-Assault-Einstieg. **Bestätigt.** | `gSelectPrecinctAssault1P` |
 
 ## Steuerung, Skript-VM, Panels und CD-Treiber: die große Runde
 

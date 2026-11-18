@@ -22,11 +22,11 @@ extern s32 D_8009F8B0;
 extern s32 D_8009F8B4;
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 
-extern void func_80077FFC(void);
+extern void gUpdatePrecinctUnlockFlag(void) __asm__("func_80077FFC");
 extern void *func_80017EBC(s32 size, s32 tag);
 extern void *func_8001E4C0(void *destination, int value, unsigned int count);
 extern void func_800898C8(void);
-extern void func_8007F9CC(void);
+extern void gOpenProfileSaveSubsystem(void) __asm__("func_8007F9CC");
 extern void gSetupFrontEndMenus(s32 arg) __asm__("func_80077AD4");
 
 /**
@@ -60,7 +60,7 @@ void func_800780DC(void)
     gArmedFlag = 0;
     gModuleLoadState = 1;
     gPendingModuleNameFlag = 0;
-    func_80077FFC();
+    gUpdatePrecinctUnlockFlag();
     p = func_80017EBC(0x78, 2);
     D_8009F3F4 = (s32)p;
     func_8001E4C0(p, 0, 0x78);
@@ -81,7 +81,7 @@ void func_800780DC(void)
         D_800A35C8[i].unk0 = 0x40000000;
         D_800A35D8[i].unk0 = 0x10000000;
     }
-    func_8007F9CC();
+    gOpenProfileSaveSubsystem();
     gSetupFrontEndMenus(1);
     D_8009F8B0 = 0;
     D_8009F8B4 = 0;

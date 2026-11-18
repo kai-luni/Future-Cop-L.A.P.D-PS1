@@ -10,7 +10,7 @@ extern s32 func_80045288(void);
 extern s32 func_8002A58C(void);
 extern void func_80024630(s32 arg0);
 extern void func_8002A16C(s32 arg0);
-extern void func_8007BFCC(s32 port, s32 value);
+extern void gApplyControllerPreset(s32 port, s32 value) __asm__("func_8007BFCC");
 
 /**
  * @brief Restores audio volumes, device enables, and controller presets from a saved option sub-block.
@@ -35,7 +35,9 @@ extern void func_8007BFCC(s32 port, s32 value);
  * @par Callers
  * Confirmed: func_80080AD4 (0x80080AF0, applies D_8009F92C + 0x40C when byte +0x923 is set) and func_8008125C (0x80081694, applies selected profile record +0x474).
  */
-void func_80080984(u8 *arg0, s32 arg1)
+void gApplySavedAudioSettings(u8 *arg0, s32 arg1) __asm__("func_80080984");
+
+void gApplySavedAudioSettings(u8 *arg0, s32 arg1)
 {
     func_800451B4(arg0[7]);
     func_800451F8(arg0[4]);
@@ -43,8 +45,8 @@ void func_80080984(u8 *arg0, s32 arg1)
     func_80045294(arg0[6]);
     func_8001EC04(0, arg0[0xA]);
     func_8001EC04(1, arg0[0xB]);
-    func_8007BFCC(0, *(s8 *)(arg0 + 8));
-    func_8007BFCC(1, *(s8 *)(arg0 + 9));
+    gApplyControllerPreset(0, *(s8 *)(arg0 + 8));
+    gApplyControllerPreset(1, *(s8 *)(arg0 + 9));
 
     if (func_80045288() == 0) {
         if ((func_8002A58C() & 0xFF) == 1) {

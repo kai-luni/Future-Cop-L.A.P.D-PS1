@@ -34,7 +34,9 @@ extern s8 *gFontBankTable __asm__("D_8009F468");
  * @par Callers
  * Confirmed: func_8007DD08 (loadout draw pass, mode=0), func_8007E3EC (loadout confirm pass, mode=1).
  */
-void func_8007D2DC(int mode)
+void gClampLoadoutSelections(int mode) __asm__("func_8007D2DC");
+
+void gClampLoadoutSelections(int mode)
 {
     int i, j;
     struct Entry *p;

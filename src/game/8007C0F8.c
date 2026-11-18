@@ -82,7 +82,9 @@ extern void func_80082EF0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6
  * @par Callers
  * func_8007C6F0.
  */
-void func_8007C0F8(s32 slot)
+void gDrawVehicleSchematic(s32 slot) __asm__("func_8007C0F8");
+
+void gDrawVehicleSchematic(s32 slot)
 {
     u8 text[0x10];
     u8 *selData;

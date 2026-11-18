@@ -60,7 +60,9 @@ extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
  * No direct callers in the call graph and no address reference in the
  * sources; likely reached through a runtime-built widget table (unconfirmed).
  */
-void func_8007E1A4(s32 mode, s32 x, s32 y, s32 color, s32 idx)
+void gStepOptionsSetting(s32 mode, s32 x, s32 y, s32 color, s32 idx) __asm__("func_8007E1A4");
+
+void gStepOptionsSetting(s32 mode, s32 x, s32 y, s32 color, s32 idx)
 {
     struct E8007E1A4 *e;
     struct E8007E1A4 *e2;

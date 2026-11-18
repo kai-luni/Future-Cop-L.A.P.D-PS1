@@ -22,7 +22,9 @@ typedef struct { Entry *entries; int unused; u8 count; } List;
  *  @par Callers
  *  Confirmed: func_8007D408.
  */
-u8 func_8007D39C(List *list, u8 value)
+u8 gFindListEntryByValue(List *list, u8 value) __asm__("func_8007D39C");
+
+u8 gFindListEntryByValue(List *list, u8 value)
 {
     Entry *entries = list->entries;
     u8 i = 0;

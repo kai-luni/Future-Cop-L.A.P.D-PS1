@@ -15,7 +15,7 @@ extern u8 D_8009F459;
 extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
 extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
-extern u8 D_80012094[];
+extern u8 gMultiBrfMovieName[] __asm__("D_80012094");
 extern u8 D_800A368B;
 
 extern void func_80077708(void);
@@ -43,7 +43,9 @@ extern s32 func_80046C84(s32 id, s32 arg1);
  * @par Callers
  * Confirmed: none direct (function pointer in D_8009BBF8 at 0x8009BC50 in asm/us/main.s) / Likely: menu widget dispatch via D_8009BBF8 / Unknown: none.
  */
-void func_8007A4CC(s32 a0)
+void gSelectPrecinctAssault1P(s32 a0) __asm__("func_8007A4CC");
+
+void gSelectPrecinctAssault1P(s32 a0)
 {
     struct Unk78210Mode *mode;
 
@@ -62,7 +64,7 @@ void func_8007A4CC(s32 a0)
         gPendingRowCapture = 0;
         if (gLayoutPointerFlagA == 0) {
             gLayoutPointerFlagA = 1;
-            gPendingRowCapture = D_80012094;
+            gPendingRowCapture = gMultiBrfMovieName;
         }
         {
             register s32 b3 __asm__("$3") = 0x800A0000;

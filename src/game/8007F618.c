@@ -22,7 +22,9 @@ extern void func_8007F5D0(void);
  * @par Callers
  * Unknown: no direct edge; reached from the menu input handler.
  */
-void func_8007F618(void)
+void gLeavePauseMenu(void) __asm__("func_8007F618");
+
+void gLeavePauseMenu(void)
 {
     func_80046C84(0x49, 0);
     gPauseFlag = 0;

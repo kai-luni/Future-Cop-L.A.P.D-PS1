@@ -47,7 +47,9 @@ extern s32 func_800452C8(void);
  * @par Callers
  * Confirmed: no direct callers; the address is stored at 0x80077D70 (inside func_80077AD4) into D_800A3778+0x10 as the init callback beside update func_8007CACC and draw func_8007CFA0. Unknown: which framework routine performs the indirect call.
  */
-void func_8007D18C(void)
+void gInitOptionsScreen(void) __asm__("func_8007D18C");
+
+void gInitOptionsScreen(void)
 {
     register Unk8009FA94 *p __asm__("$3");
     s32 tmp;

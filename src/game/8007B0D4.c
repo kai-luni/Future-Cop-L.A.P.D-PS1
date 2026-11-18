@@ -24,7 +24,9 @@ extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-s32 func_8007B0D4(void)
+s32 gMenuReadyToAdvancePredicate(void) __asm__("func_8007B0D4");
+
+s32 gMenuReadyToAdvancePredicate(void)
 {
     s8 *p;
     register s32 t __asm__("$5");

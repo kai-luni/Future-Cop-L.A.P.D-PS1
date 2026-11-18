@@ -93,7 +93,9 @@ extern s32 func_8008CD30(u8 *, u8 *, s32);
  * in the screen callback block D_800A36E8.unk18, so the screen dispatcher
  * reaches it indirectly.
  */
-void func_80080038(s32 arg0)
+void gDrawProfileDetailScreen(s32 arg0) __asm__("func_80080038");
+
+void gDrawProfileDetailScreen(s32 arg0)
 {
     u16 msg;
     s32 cnt, j, x, wd;

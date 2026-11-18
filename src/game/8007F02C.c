@@ -26,10 +26,10 @@ extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
 extern u8 gCrimeWarProgress __asm__("D_8009F458");
 extern u8 D_800A3938[];
 
-extern void func_8007E8D8(u8 *output, u32 value1, u32 value2, u32 value3,
+extern void gPackInputRecord(u8 *output, u32 value1, u32 value2, u32 value3,
                           u32 value4, u32 value5, u32 value6, u32 value7,
                           u32 value8, u32 value9, u32 value10, u32 value11,
-                          u32 value12, u32 value13);
+                          u32 value12, u32 value13) __asm__("func_8007E8D8");
 
 /**
  *  @brief Pass current mode and selection values to an output builder.
@@ -51,7 +51,7 @@ extern void func_8007E8D8(u8 *output, u32 value1, u32 value2, u32 value3,
  */
 void func_8007F02C(void)
 {
-    func_8007E8D8(D_800A3938,
+    gPackInputRecord(D_800A3938,
                   gGameSession->unk8C,
                   gGameSession->unk90,
                   gGameSession->unk94,

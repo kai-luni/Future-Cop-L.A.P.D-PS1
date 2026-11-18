@@ -79,7 +79,9 @@ extern s32 func_80046C84(s32 id, s32 arg1);
  * @par Callers
  * Confirmed: none direct; address 0x8007D150 is stored in options widget table D_8009BABE at 0x8009BAC8 / Likely: dispatched indirectly by options menu UI on widget exit/cancel (action 3) / Unknown: exact table dispatcher.
  */
-void D_8007D150(s32 arg0)
+void gStopOptionsPreview(s32 arg0) __asm__("func_8007D150");
+
+void gStopOptionsPreview(s32 arg0)
 {
     s32 handle;
 

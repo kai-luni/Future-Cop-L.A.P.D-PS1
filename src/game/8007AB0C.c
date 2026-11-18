@@ -9,7 +9,7 @@ extern u8 D_800A3928[];
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern u8 *D_8009F878;
 
-extern void func_8007A9D0(u8 *arg0, u8 *arg1, s32 arg2, u8 *arg3, s32 arg4);
+extern void gEncodeNameToGlyphs(u8 *arg0, u8 *arg1, s32 arg2, u8 *arg3, s32 arg4) __asm__("func_8007A9D0");
 extern s32 func_80046C84(s32 id, s32 arg1);
 
 /**
@@ -37,12 +37,14 @@ extern s32 func_80046C84(s32 id, s32 arg1);
  * three screen callback blocks (D_800A37A8.unk0C, D_800A37D8.unk0C,
  * D_800A36B8.unk0C), so the screen dispatcher reaches it indirectly.
  */
-s32 func_8007AB0C(s32 arg0, s32 arg1)
+s32 gResetNameEntryState(s32 arg0, s32 arg1) __asm__("func_8007AB0C");
+
+s32 gResetNameEntryState(s32 arg0, s32 arg1)
 {
     if (gPlayerMenuDepth[arg1] != 0) {
         if ((arg0 & ~D_8009F8B0[arg1]) < 0) {
             gScalarCursor[arg1] = 0;
-            func_8007A9D0(gPlaceholderGlyph, D_800A3928 + arg1 * 8, 8, D_8009F878, gPlayerNameLength);
+            gEncodeNameToGlyphs(gPlaceholderGlyph, D_800A3928 + arg1 * 8, 8, D_8009F878, gPlayerNameLength);
             func_80046C84(0x48, 0);
         }
     }

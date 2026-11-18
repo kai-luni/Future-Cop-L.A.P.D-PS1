@@ -16,7 +16,7 @@ extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 D_800A377D[];
 extern u8 D_800A386D[];
-extern u8 D_80012088[];
+extern u8 gCwRulesMovieName[] __asm__("D_80012088");
 
 extern void func_800776B8(void);
 
@@ -39,7 +39,9 @@ extern void func_800776B8(void);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8007A450(s32 a0)
+void gSelectCrimeWar2P(s32 a0) __asm__("func_8007A450");
+
+void gSelectCrimeWar2P(s32 a0)
 {
     register struct Unk78210Mode *mode __asm__("$3");
 
@@ -59,6 +61,6 @@ void func_8007A450(s32 a0)
     gPendingRowCapture = 0;
     if (gLayoutPointerFlagB == 0) {
         gLayoutPointerFlagB = 1;
-        gPendingRowCapture = D_80012088;
+        gPendingRowCapture = gCwRulesMovieName;
     }
 }

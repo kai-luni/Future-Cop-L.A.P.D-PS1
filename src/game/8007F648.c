@@ -22,7 +22,9 @@ extern void func_8007F5D0(void);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8007F648(s32 a0)
+void gRequestPauseMenu(s32 a0) __asm__("func_8007F648");
+
+void gRequestPauseMenu(s32 a0)
 {
     if (a0 == 3) {
         gPauseFlag = 1;

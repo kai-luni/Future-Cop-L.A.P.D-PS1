@@ -97,7 +97,9 @@ extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
  * @par Callers
  * func_8007DD08, three times, for the record indices 0, 1 and 2.
  */
-void func_8007D7CC(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
+void gDrawLoadoutListRow(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel) __asm__("func_8007D7CC");
+
+void gDrawLoadoutListRow(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
 {
     s32 c0, c1, c2, c3;
     s32 c;

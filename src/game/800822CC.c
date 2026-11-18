@@ -27,7 +27,9 @@ extern s32 func_800210D0(u8 arg0);
  * @par Callers
  * func_80080B70.
  */
-void func_800822CC(u8 *arg0)
+void gEncodeProfileNameGlyphs(u8 *arg0) __asm__("func_800822CC");
+
+void gEncodeProfileNameGlyphs(u8 *arg0)
 {
     s32 count;
     s32 i;

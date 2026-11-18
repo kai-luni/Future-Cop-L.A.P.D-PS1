@@ -7,7 +7,7 @@ extern s8 D_8009F900[];
 extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 extern u8 D_8009F902[];
 
-extern void func_8007BFCC(s32 port, s32 value);
+extern void gApplyControllerPreset(s32 port, s32 value) __asm__("func_8007BFCC");
 extern void func_8001EC04(s32 port, s32 enable);
 extern s32 func_80046C84(s32 id, s32 arg1);
 
@@ -41,7 +41,9 @@ extern s32 func_80046C84(s32 id, s32 arg1);
  * @par Callers
  * Unknown: no direct edge; reached from the menu dispatcher.
  */
-void func_8007C80C(s32 action)
+void gHandleControllerSetupAction(s32 action) __asm__("func_8007C80C");
+
+void gHandleControllerSetupAction(s32 action)
 {
     s32 port;
 
@@ -49,7 +51,7 @@ void func_8007C80C(s32 action)
     if (port == gSnapshotResult) {
         switch (action) {
         case 3:
-            func_8007BFCC(port, D_8009F900[port]);
+            gApplyControllerPreset(port, D_8009F900[port]);
             func_8001EC04(port, gRumbleEnabled[port]);
             break;
         case 4:

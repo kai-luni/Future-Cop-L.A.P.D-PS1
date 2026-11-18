@@ -85,7 +85,9 @@ extern s32 func_80046C84(s32 id, s32 arg1);
  * @par Callers
  * func_8007CFA0.
  */
-void func_8007CE04(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void gDrawOptionsGaugeRow(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8007CE04");
+
+void gDrawOptionsGaugeRow(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     Unk8007CE04 *p;
     s32 diff;

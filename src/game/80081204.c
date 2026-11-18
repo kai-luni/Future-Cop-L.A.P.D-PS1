@@ -84,7 +84,7 @@ extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
-extern s8 D_8009F881;
+extern s8 gMissionListMinIndex __asm__("D_8009F881");
 extern s8 gMissionListMaxIndex __asm__("D_8009F882");
 extern s8 gSelectedMissionIndex __asm__("D_8009F880");
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
@@ -116,7 +116,7 @@ extern u8 *func_80089914(s32);
 extern void func_80078650(void *, s32);
 extern s32 func_80046C84(s32, s32);
 extern void func_80077FFC(void);
-extern void func_80077708(void);
+extern void gSetupPrecinctAssaultMissionList(void) __asm__("func_80077708");
 extern void func_800776B8(void);
 extern void func_8007FACC(void);
 extern void func_80078210(void);
@@ -157,7 +157,9 @@ extern s32 func_80020D3C(void *, s32, u32);
  * @par Callers
  * Confirmed: the save/load menu dispatcher (func_80080B70 neighbourhood).
  */
-void func_80081204(void)
+void gShowSaveMenuReading(void) __asm__("func_80081204");
+
+void gShowSaveMenuReading(void)
 {
     ((u8 *)gSaveProfileImage)[0x922] = 3;
     ((u8 *)gSaveProfileImage)[0x201] = 1;

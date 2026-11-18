@@ -29,7 +29,9 @@ extern void func_80082DDC(s32 arg0, s32 arg1);
  * The retail main-menu item table D_8009BBF8 references this handler at
  * entry 5; func_8007A168 can enable that entry.
  */
-void func_8007A0A4(s32 arg0)
+void gPlayPrecinctMissionMovies(s32 arg0) __asm__("func_8007A0A4");
+
+void gPlayPrecinctMissionMovies(s32 arg0)
 {
     u32 i;
     s32 val;

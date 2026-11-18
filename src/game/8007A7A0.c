@@ -43,7 +43,9 @@ extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
  * No direct callers in the call graph and no address reference found;
  * dispatch unconfirmed (likely a widget table entry).
  */
-void func_8007A7A0(s32 command, s32 x, s32 y)
+void gStepPlayersOptionPane(s32 command, s32 x, s32 y) __asm__("func_8007A7A0");
+
+void gStepPlayersOptionPane(s32 command, s32 x, s32 y)
 {
     s32 index;
     s32 textId;

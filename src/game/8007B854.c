@@ -23,12 +23,12 @@ extern State *gGameSession __asm__("D_8009FA94");
 extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern s8 D_8009F881;
+extern s8 gMissionListMinIndex __asm__("D_8009F881");
 extern s8 gMissionListMaxIndex __asm__("D_8009F882");
 extern s8 gSelectedMissionIndex __asm__("D_8009F880");
 extern s8 gLineCount __asm__("D_8009F87F");
 extern s8 gSelectedRow __asm__("D_8009F87E");
-extern s8 *D_8009F884;
+extern s8 *gMissionListTablePtr __asm__("D_8009F884");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern s32 gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
@@ -44,8 +44,8 @@ extern s32 func_80046C84(s32, s32);
 extern void func_8008CCB0(void *, s32);
 extern s32 func_8008CCA0(void *, void *);
 extern void func_80078B34(s32, s32, s32);
-extern void func_8007B460(s32);
-#define SELECTED (gWideTextTable[D_8009F884[gSelectedMissionIndex]])
+extern void gDrawProfileSlotList(s32) __asm__("func_8007B460");
+#define SELECTED (gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]])
 
 /**
  * @brief Item handler of the profile-list screen: confirm opens the level list,
@@ -120,7 +120,9 @@ extern void func_8007B460(s32);
  * func_80078DD0 reaches it through the handler pointer, so the dispatch is
  * indirect.
  */
-void func_8007B854(s32 arg0)
+void gHandleProfileListItem(s32 arg0) __asm__("func_8007B854");
+
+void gHandleProfileListItem(s32 arg0)
 {
     State *state;
     u8 special;
@@ -148,7 +150,7 @@ void func_8007B854(s32 arg0)
                 if (state->unkC == 1) {
                     if (*p == 1) {
                         sel = gWideTextTable;
-                        scaled = D_8009F884[gSelectedMissionIndex] * 36;
+                        scaled = gMissionListTablePtr[gSelectedMissionIndex] * 36;
                         __asm__("addu %0, %1, %2" : "=r"(ep) : "r"(scaled), "r"(sel));
                         value = ep->unk1F;
                         if (value != 0) {
@@ -212,7 +214,7 @@ SELECTION_DONE:;
                 if (gSelectedRow < 0) gSelectedRow = gLineCount;
             } else {
                 gSelectedMissionIndex--;
-                if (gSelectedMissionIndex < D_8009F881) gSelectedMissionIndex = gMissionListMaxIndex;
+                if (gSelectedMissionIndex < gMissionListMinIndex) gSelectedMissionIndex = gMissionListMaxIndex;
             }
         }
         break;
@@ -228,7 +230,7 @@ SELECTION_DONE:;
                 if (gSelectedRow > gLineCount) gSelectedRow = 0;
             } else {
                 gSelectedMissionIndex++;
-                if (gSelectedMissionIndex > gMissionListMaxIndex) gSelectedMissionIndex = D_8009F881;
+                if (gSelectedMissionIndex > gMissionListMaxIndex) gSelectedMissionIndex = gMissionListMinIndex;
             }
         }
         break;
@@ -236,7 +238,7 @@ SELECTION_DONE:;
         if (gFontBankTable == gScreenDescriptor) {
             func_80078B34(0x44C, 0, 0);
             func_80078B34(0x10CC, 1, 0);
-            func_8007B460(gActivePlayerIndex);
+            gDrawProfileSlotList(gActivePlayerIndex);
         }
         break;
     }

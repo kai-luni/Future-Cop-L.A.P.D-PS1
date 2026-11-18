@@ -38,7 +38,9 @@ extern void func_80024630(s32 arg0);
  * @par Callers
  * Confirmed: none direct; func_80077AD4 stores the D_8007CA30 prefix at 0x80077D94 into D_800A3778.unk14. Unknown: which menu framework dispatcher calls the +0x14 slot.
  */
-void func_8007CA34(void)
+void gExitOptionsRestoreSound(void) __asm__("func_8007CA34");
+
+void gExitOptionsRestoreSound(void)
 {
     register s32 flag __asm__("$2");
 

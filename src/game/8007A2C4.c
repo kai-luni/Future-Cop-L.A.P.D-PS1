@@ -30,7 +30,9 @@ extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
  * (lui/addiu at 0x80077B88) into the screen callback block, so the screen
  * dispatcher reaches it indirectly.
  */
-s32 func_8007A2C4(s32 arg0, s32 arg1)
+s32 gDrawModeHeadingPage(s32 arg0, s32 arg1) __asm__("func_8007A2C4");
+
+s32 gDrawModeHeadingPage(s32 arg0, s32 arg1)
 {
     s32 ret;
 

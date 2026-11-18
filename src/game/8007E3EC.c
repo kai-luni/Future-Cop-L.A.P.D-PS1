@@ -19,7 +19,7 @@ extern u8 *gLoadoutTable[] __asm__("D_8009C0A8");
 extern s16 D_8009B856[4];
 extern s16 D_8009B7E6[4];
 
-extern void func_8007D2DC(s32 mode);
+extern void gClampLoadoutSelections(s32 mode) __asm__("func_8007D2DC");
 
 /**
  *  @brief Updates selection readiness or initiates a shared state transition.
@@ -43,7 +43,9 @@ extern void func_8007D2DC(s32 mode);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
+void gFinalizeMissionLoadout(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4) __asm__("func_8007E3EC");
+
+void gFinalizeMissionLoadout(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
 {
     u8 flag;
     s32 want;
@@ -77,7 +79,7 @@ void func_8007E3EC(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             }
         }
         if (flag != 0) {
-            func_8007D2DC(1);
+            gClampLoadoutSelections(1);
             gGameSession[10] = gRowRecordTable[D_8009F924[0] * 6];
             gGameSession[11] = D_8009C050[D_8009F926[0] * 6];
             gGameSession[12] = gLoadoutTable[10][D_8009F928[0] * 6];

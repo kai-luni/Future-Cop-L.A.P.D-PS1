@@ -11,15 +11,15 @@ struct Entry {
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gUnlockFlag __asm__("D_8009F3C2");
 extern u8 gSelectedMissionIndex __asm__("D_8009F880");
-extern u8 D_8009F881;
+extern u8 gMissionListMinIndex __asm__("D_8009F881");
 extern u8 gMissionListMaxIndex __asm__("D_8009F882");
-extern s8 *D_8009F884;
-extern u8 D_8009F888;
-extern u8 D_8009F889;
+extern s8 *gMissionListTablePtr __asm__("D_8009F884");
+extern u8 gMissionListEntryCount __asm__("D_8009F888");
+extern u8 gMissionListMode __asm__("D_8009F889");
 extern struct Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 
-void func_80077FFC(void);
+extern void gUpdatePrecinctUnlockFlag(void) __asm__("func_80077FFC");
 
 /**
  * @brief Resets the front-end list state to the D_8009B72C table and optionally unlocks all five entries.
@@ -43,11 +43,13 @@ void func_80077FFC(void);
  * @par Callers
  * Confirmed: func_8007A4CC, func_8007A56C, func_8007EA78, func_8008125C.
  */
-void func_80077708(void)
+void gSetupPrecinctAssaultMissionList(void) __asm__("func_80077708");
+
+void gSetupPrecinctAssaultMissionList(void)
 {
     gSelectedMissionIndex = 0;
-    D_8009F881 = 0;
-    D_8009F889 = 1;
+    gMissionListMinIndex = 0;
+    gMissionListMode = 1;
 
     if (gFrontEndListFlag != 0) {
         gWideTextTable[gFrontEndListTable[0]].unk1F = 10;
@@ -63,7 +65,7 @@ void func_80077708(void)
         func_80077FFC();
     }
 
-    D_8009F884 = gFrontEndListTable;
+    gMissionListTablePtr = gFrontEndListTable;
     gMissionListMaxIndex = gUnlockFlag + 3;
-    D_8009F888 = gUnlockFlag + 4;
+    gMissionListEntryCount = gUnlockFlag + 4;
 }

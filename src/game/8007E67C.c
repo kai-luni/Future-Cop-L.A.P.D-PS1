@@ -41,7 +41,9 @@ extern void func_80078B34(s32, s32, s32);
  * the screen callback block (D_800A3688.unk18 = D_8007E67C), so the screen
  * dispatcher reaches it indirectly.
  */
-void func_8007E67C(s32 arg0)
+void gDrawFrontEndStatics(s32 arg0) __asm__("func_8007E67C");
+
+void gDrawFrontEndStatics(s32 arg0)
 {
     Entry *p;
     u32 i;

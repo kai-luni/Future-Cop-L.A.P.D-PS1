@@ -25,8 +25,8 @@ extern volatile s32 D_8009F8E0;
 extern s32 D_8009F8E0_arr[];
 extern volatile s32 D_8009F8E4;
 extern u8 D_8009BB34[];
-extern s16 D_8009BB66[];
-extern s16 D_8009BBBA[];
+extern s16 gMenuPreviewScaleP1[] __asm__("D_8009BB66");
+extern s16 gMenuPreviewScaleP2[] __asm__("D_8009BBBA");
 extern struct Unk78210Panel D_800A3868;
 extern struct Unk78210Panel D_800A3898;
 extern struct Unk78210Panel D_800A38C8;
@@ -55,7 +55,9 @@ extern void func_80078650(struct Unk78210Panel *panel, s32 arg1);
  * @par Callers
  * Unknown: no direct calls; address placed as menu-item callback pointers at 0x8009BAE4, 0x8009BB54, and 0x8009BBA8 in asm/us/main.s.
  */
-void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
+void gHandlePlayerJoinSelection(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4) __asm__("func_8007A5F0");
+
+void gHandlePlayerJoinSelection(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
 {
     register struct Unk78210Mode *mode __asm__("$6");
     register s8 *p __asm__("$3");
@@ -106,17 +108,17 @@ void func_8007A5F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             register s32 off __asm__("$3") = player << 2;
             *(s32 *)((u8 *)D_8009F8E0_arr + off) = 0;
             if (player == 1) {
-                D_8009BBBA[0] = 0x64;
+                gMenuPreviewScaleP2[0] = 0x64;
             } else {
-                D_8009BB66[0] = 0x64;
+                gMenuPreviewScaleP1[0] = 0x64;
             }
             player = gActivePlayerIndex;
         }
         if (D_8009F8E0_arr[player] != 0) {
             if (player == 1) {
-                D_8009BBBA[0] = 0x6E;
+                gMenuPreviewScaleP2[0] = 0x6E;
             } else {
-                D_8009BB66[0] = 0x6E;
+                gMenuPreviewScaleP1[0] = 0x6E;
             }
         }
     }

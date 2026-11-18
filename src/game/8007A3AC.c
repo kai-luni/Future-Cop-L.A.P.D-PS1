@@ -17,7 +17,7 @@ extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 D_800A377D[];
 extern u8 D_800A386D[];
-extern u8 D_80012088[];
+extern u8 gCwRulesMovieName[] __asm__("D_80012088");
 
 extern void func_800776B8(void);
 extern s32 func_80046C84(s32 id, s32 arg1);
@@ -44,7 +44,9 @@ extern s32 func_80046C84(s32 id, s32 arg1);
  * @par Callers
  * Confirmed: none direct (function pointer in D_8009BBF8 at 0x8009BBFC in asm/us/main.s) / Likely: menu widget dispatch via D_8009BBF8 / Unknown: none.
  */
-void func_8007A3AC(s32 a0)
+void gSelectCrimeWar1P(s32 a0) __asm__("func_8007A3AC");
+
+void gSelectCrimeWar1P(s32 a0)
 {
     struct Unk78210Mode *mode;
 
@@ -65,7 +67,7 @@ void func_8007A3AC(s32 a0)
         gPendingRowCapture = 0;
         if (gLayoutPointerFlagB == 0) {
             gLayoutPointerFlagB = 1;
-            gPendingRowCapture = D_80012088;
+            gPendingRowCapture = gCwRulesMovieName;
         }
     } else {
         func_80046C84(0x4C, 0);

@@ -55,7 +55,9 @@ extern u8 func_8001EB2C(s32 arg0);
  * @par Callers
  * func_80076A2C (preset 0 for ports 0 and 1), func_8007C80C, func_80080984.
  */
-void func_8007BFCC(s32 port, s32 value)
+void gApplyControllerPreset(s32 port, s32 value) __asm__("func_8007BFCC");
+
+void gApplyControllerPreset(s32 port, s32 value)
 {
     extern u8 D_8009FA99[];
     s32 clampedPort;

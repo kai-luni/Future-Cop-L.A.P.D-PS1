@@ -25,7 +25,9 @@ extern s32 func_8008CCC0(u8 *str);
  * @par Callers
  * func_8007AB0C, func_8007ABBC, func_8008125C.
  */
-void func_8007A9D0(u8 *src, u8 *dst, s32 len, u8 *table, s32 tableLen)
+void gEncodeNameToGlyphs(u8 *src, u8 *dst, s32 len, u8 *table, s32 tableLen) __asm__("func_8007A9D0");
+
+void gEncodeNameToGlyphs(u8 *src, u8 *dst, s32 len, u8 *table, s32 tableLen)
 {
     s32 i;
     s32 j;

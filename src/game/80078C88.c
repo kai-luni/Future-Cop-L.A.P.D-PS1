@@ -24,7 +24,7 @@ struct Sub78C88 {
     u8 pad0D[0x17];
 };
 
-extern struct Entry78C88 D_8009B730[];
+extern struct Entry78C88 gFrontEndEntrySequence[] __asm__("D_8009B730");
 extern struct Sub78C88 gWideTextTable[] __asm__("D_8009B4E4");
 extern struct Obj78C88 *gGameSession __asm__("D_8009FA94");
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
@@ -67,7 +67,7 @@ s32 func_80078C88(void)
 
     e = 0;
     if (D_8009F3F2 != 0) {
-        e = &D_8009B730[D_8009F3F2];
+        e = &gFrontEndEntrySequence[D_8009F3F2];
     }
     if (D_8009F3F2 != 0) {
         D_8009F3F2 = D_8009F3F2 + 1;

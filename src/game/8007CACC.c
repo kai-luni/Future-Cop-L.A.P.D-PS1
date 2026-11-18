@@ -72,7 +72,9 @@ extern void func_80047800(struct Voice *voice, s32 pan, s32 volume, s32 extra);
  * that func_80077AD4 installs (pointer load at 0x80077D88). Unknown: the
  * dispatcher that calls the slot.
  */
-s32 func_8007CACC(s32 flags, s32 arg1)
+s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1) __asm__("func_8007CACC");
+
+s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
 {
     s32 mode;
     register s32 k __asm__("$2");
