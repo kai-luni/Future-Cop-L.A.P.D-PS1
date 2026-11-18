@@ -103,6 +103,8 @@ extern void func_80075478(void *p);
 extern void func_800754B8(struct Emitter *e, void *node, void *vec, struct Xform *x);
 extern s32 func_80066F78(void *a, s32 b, s32 c, s32 d);
 extern u8 func_800751A4(struct Particle *p, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void gRunPolygonPass(struct Emitter *e, s32 step) __asm__("func_80075A84");
+
 
 /**
  * @brief The main polygon pass: walks one scene list, culls, lights and draws each
@@ -132,8 +134,12 @@ extern u8 func_800751A4(struct Particle *p, s32 a, s32 b, s32 c, s32 d, s32 e, s
  *
  * @par Callers
  * func_8003F4A0.
+ *
+ * @par Environment path
+ * The polygon pass over one scene list: culls, lights and draws each node -
+ * the step that turns submitted instances into GTE triangles.
  */
-void func_80075A84(struct Emitter *e, s32 step)
+void gRunPolygonPass(struct Emitter *e, s32 step)
 {
     s32 tmp[3];
     s32 vec[3];

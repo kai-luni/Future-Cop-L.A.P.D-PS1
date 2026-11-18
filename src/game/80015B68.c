@@ -66,9 +66,11 @@ typedef struct {
 extern Vertex *gPartVertexBuffer __asm__("D_8009F578");
 extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
 
-extern s32 func_80015AF4(s32 origin, s32 first, s32 second, void *out);
+extern s32 gEmitFrontFacingTriangle(s32 origin, s32 first, s32 second, void *out) __asm__("func_80015AF4");
 extern s32 func_80015830(Part *part, Work *work, Arg2 *arg2, s32 arg3);
 extern void func_8001484C(Vertex *vtx, u32 a1, u32 a2, u16 a3, s32 a4, s32 a5, s32 a6);
+s32 gPrepareModelPart(Part *part, Work *work, Arg2 *arg2, s32 arg3) __asm__("func_80015B68");
+
 
 /**
  * @brief Prepares one model part: rejects back-facing or off-screen parts,
@@ -121,8 +123,13 @@ extern void func_8001484C(Vertex *vtx, u32 a1, u32 a2, u16 a3, s32 a4, s32 a5, s
  * @par Callers
  * func_80016A64 and func_80017058, the two variants of the per-part traversal
  * (call sites 0x80016A68 and 0x8001705C).
+ *
+ * @par Environment path
+ * Prepares one model part: backface and on-screen rejection, then the
+ * screen-space corners and the depth into the work block; billboard and
+ * sprite parts are submitted directly.
  */
-s32 func_80015B68(Part *part, Work *work, Arg2 *arg2, s32 arg3)
+s32 gPrepareModelPart(Part *part, Work *work, Arg2 *arg2, s32 arg3)
 {
     Vertex *vtx = gPartVertexBuffer;
     u32 i0, i1, i2, i3;
@@ -137,7 +144,7 @@ s32 func_80015B68(Part *part, Work *work, Arg2 *arg2, s32 arg3)
         if (((flags = gClipFlagBuffer[i0] | gClipFlagBuffer[i1] | gClipFlagBuffer[i2]) & 1) || flags != 0xC0) {
             return 0;
         }
-        if (func_80015AF4(vtx[i0].u.xy, vtx[i1].u.xy, vtx[i2].u.xy, work)) {
+        if (gEmitFrontFacingTriangle(vtx[i0].u.xy, vtx[i1].u.xy, vtx[i2].u.xy, work)) {
             return 0;
         }
         vz = vtx[i0].z + vtx[i1].z + vtx[i2].z;
@@ -153,7 +160,7 @@ s32 func_80015B68(Part *part, Work *work, Arg2 *arg2, s32 arg3)
         if (((flags = gClipFlagBuffer[i0] | gClipFlagBuffer[i1] | gClipFlagBuffer[i2] | gClipFlagBuffer[i3]) & 1) || flags != 0xC0) {
             return 0;
         }
-        if (func_80015AF4(vtx[i0].u.xy, vtx[i1].u.xy, vtx[i3].u.xy, work)) {
+        if (gEmitFrontFacingTriangle(vtx[i0].u.xy, vtx[i1].u.xy, vtx[i3].u.xy, work)) {
             return 0;
         }
         work->u.xy3 = vtx[i2].u.xy;

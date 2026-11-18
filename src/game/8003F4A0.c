@@ -9,7 +9,9 @@ extern void func_800441DC(void *a0, void *a1);
 extern void func_80040A00(void *a0, void *a1);
 extern void func_80070048(void *a0, void *a1);
 extern void func_8004C228(void *a0, void *a1);
-extern void func_80075A84(void *a0, void *a1);
+extern void gRunPolygonPass(void *a0, void *a1) __asm__("func_80075A84");
+void gRunSceneListPasses(void *arg) __asm__("func_8003F4A0");
+
 
 /**
  * @brief Runs all render passes over the six global scene lists, in a fixed
@@ -30,8 +32,13 @@ extern void func_80075A84(void *a0, void *a1);
  *
  * @par Callers
  * func_8003F530.
+ *
+ * @par Environment path
+ * Runs the six per-layer render passes over the global scene lists in a fixed
+ * order; the entry a frame uses to draw every object list on top of the
+ * environment.
  */
-void func_8003F4A0(void *arg)
+void gRunSceneListPasses(void *arg)
 {
     func_8007364C((s32)arg);
     func_8006F170(arg);
@@ -40,5 +47,5 @@ void func_8003F4A0(void *arg)
     func_80040A00(gListHeads[0], arg);
     func_80070048(gListHeads[1], arg);
     func_8004C228(gListHeads[4], arg);
-    func_80075A84(gListHeads[5], arg);
+    gRunPolygonPass(gListHeads[5], arg);
 }

@@ -46,7 +46,7 @@ extern void func_800175F8(struct Obj *o, s32 frame);
 extern void gSinCos(s32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
-extern void func_80017508(struct Obj *o, u32 *flags, s32 arg);
+extern void gSubmitModelInstance(struct Obj *o, u32 *flags, s32 arg) __asm__("func_80017508");
 extern void func_8008363C(struct Obj *o);
 void gDrawCellWindowModels(s32 x, s32 y, u32 *p) __asm__("func_80084398");
 
@@ -232,7 +232,7 @@ void gDrawCellWindowModels(s32 x, s32 y, u32 *p)
                                               &o->unk34, 1);
                             }
                         }
-                        func_80017508(o, &local, 1);
+                        gSubmitModelInstance(o, &local, 1);
                         if (o->unk57) {
                             func_8008363C(o);
                         }

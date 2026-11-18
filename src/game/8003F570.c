@@ -16,7 +16,7 @@ extern struct Unk3F570Node *gPendingSpawnList __asm__("D_8009F314");
 extern s32 func_8003F2AC(struct Unk3F570Node *object, s32 arg1);
 extern void func_8003B44C(struct Unk3F570Node *object);
 extern void func_8003D240(void);
-extern void func_8003F530(s32 arg);
+extern void gRunSceneListPassesOnScratch(s32 arg) __asm__("func_8003F530");
 extern void func_8003FF7C(void);
 extern void func_8004C2B8(struct Unk3F570Node *object);
 extern void func_8003F428(struct Unk3F570Node *node, s32 arg);
@@ -86,7 +86,7 @@ void func_8003F570(s32 arg0)
         i++;
     } while (i < 7);
 
-    func_8003F530(arg0);
+    gRunSceneListPassesOnScratch(arg0);
     func_8004C2B8(gListHeads[4]);
     func_8003F428(gListHeads[5], arg0);
     if (gNodeCList != 0) {

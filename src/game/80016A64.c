@@ -17,8 +17,10 @@ extern s32 gEnvMapTexpageWord __asm__("D_800A8EA4");
 extern void func_80019470(Matrix *, Matrix *);
 extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
 extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
-extern s32 func_80015B68(Part *, Work *, void *, s32);
+extern s32 gPrepareModelPart(Part *, Work *, void *, s32) __asm__("func_80015B68");
 extern void func_80016E6C(Part *, Work *, void *, void *);
+void gDrawModelInstanceParts(Instance *inst, s32 mode, s32 mask) __asm__("func_80016A64");
+
 extern void func_80015F38(Part *, Work *, void *, void *);
 /**
  * @brief Renders the masked parts of a model instance, with a billboard
@@ -51,8 +53,12 @@ extern void func_80015F38(Part *, Work *, void *, void *);
  *
  * @par Callers
  * func_80017508.
+ *
+ * @par Environment path
+ * Draws the masked parts of one model instance, with a billboard path for
+ * flag-0x40 models; a submitted mech instance is rendered here.
  */
-void func_80016A64(Instance *inst, s32 mode, s32 mask)
+void gDrawModelInstanceParts(Instance *inst, s32 mode, s32 mask)
 {
     Matrix transposed;
     Work work;
@@ -127,7 +133,7 @@ void func_80016A64(Instance *inst, s32 mode, s32 mask)
         bit = 1 << ((part->flags >> 12) & 7);
         __asm__("" : "+r" (bit));
         if (mask & bit) {
-            if (func_80015B68(part, &work, p2c, flag)) {
+            if (gPrepareModelPart(part, &work, p2c, flag)) {
                 if ((part->flags >> 15) & 1) func_80016E6C(part, &work, global, other);
                 func_80015F38(part, &work, p28, global);
             }

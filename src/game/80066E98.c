@@ -25,7 +25,7 @@ extern void gDrawRegionTiles(s32, s32, void *) __asm__("func_8006531C");
 extern void gDrawCellWindowObjects(s32, s32, void *) __asm__("func_8004A924");
 extern void gDrawCellWindowModels(s32, s32, void *) __asm__("func_80084398");
 extern void gRunRegionObjectPass(s32) __asm__("func_80062EB8");
-extern void func_8003F6E4(s32);
+extern void gRunViewScenePasses(s32) __asm__("func_8003F6E4");
 void gDrawViewLayers(s32 index, struct Object66E98 *object) __asm__("func_80066E98");
 
 
@@ -70,5 +70,5 @@ void gDrawViewLayers(s32 index, struct Object66E98 *object)
     gDrawCellWindowObjects(x, y, region);
     gDrawCellWindowModels(x, y, region);
     gRunRegionObjectPass(index);
-    func_8003F6E4(index);
+    gRunViewScenePasses(index);
 }

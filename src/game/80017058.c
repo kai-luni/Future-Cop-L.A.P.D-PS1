@@ -17,7 +17,7 @@ extern s32 gEnvMapTexpageWord __asm__("D_800A8EA4");
 extern void func_80019470(Matrix *, Matrix *);
 extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
 extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
-extern s32 func_80015B68(Part *, Work *, void *, s32);
+extern s32 gPrepareModelPart(Part *, Work *, void *, s32) __asm__("func_80015B68");
 extern void func_80016E6C(Part *, Work *, void *, void *);
 extern void func_80015F38(Part *, Work *, void *, void *);
 /**
@@ -124,7 +124,7 @@ void func_80017058(Instance *inst, u32 *enabled, s32 mask)
         bit = 1 << ((part->flags >> 12) & 7);
         __asm__("" : "+r" (bit));
         if ((mask & bit) && (enabled[count / 32] & (1 << (count & 31)))) {
-            if (func_80015B68(part, &work, p2c, flag)) {
+            if (gPrepareModelPart(part, &work, p2c, flag)) {
                 if ((part->flags >> 15) & 1) func_80016E6C(part, &work, global, other);
                 func_80015F38(part, &work, p28, global);
             }

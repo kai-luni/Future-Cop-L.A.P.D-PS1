@@ -6,7 +6,9 @@ struct Unk17508 {
 };
 
 extern u8 func_80013F08(struct Unk17508 *instance);
-extern void func_80016A64(struct Unk17508 *instance, s32 mode, s32 arg2);
+extern void gDrawModelInstanceParts(struct Unk17508 *instance, s32 mode, s32 arg2) __asm__("func_80016A64");
+u8 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
+
 
 /**
  * @brief Visibility gate and submission for one model instance.
@@ -24,8 +26,13 @@ extern void func_80016A64(struct Unk17508 *instance, s32 mode, s32 arg2);
  *
  * @par Callers
  * func_8002ACB4, func_80030960, func_8003CF6C, func_800597C0.
+ *
+ * @par Environment path
+ * Visibility gate and submission for one model instance; a model becomes
+ * visible by being handed to this function, which is why the port needs it
+ * before anything can appear.
  */
-u8 func_80017508(struct Unk17508 *instance, u32 *flags, s32 arg2)
+u8 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2)
 {
     u8 visible;
 
@@ -34,7 +41,7 @@ u8 func_80017508(struct Unk17508 *instance, u32 *flags, s32 arg2)
     }
     visible = func_80013F08(instance);
     if (visible) {
-        func_80016A64(instance, (*flags >> 25) & 1, arg2);
+        gDrawModelInstanceParts(instance, (*flags >> 25) & 1, arg2);
     }
     return visible;
 }

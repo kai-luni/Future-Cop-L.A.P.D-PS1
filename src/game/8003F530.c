@@ -2,7 +2,9 @@
 #include "game/types.h"
 
 extern u32 gHookInstallFlag __asm__("D_8009FAD8");
-extern void func_8003F4A0(void);
+extern void gRunSceneListPasses(void) __asm__("func_8003F4A0");
+void gRunSceneListPassesOnScratch(void) __asm__("func_8003F530");
+
 
 /**
  * @brief Runs the scene traversal func_8003F4A0 on a scratchpad stack.
@@ -16,8 +18,12 @@ extern void func_8003F4A0(void);
  *
  * @par Callers
  * func_8003F570.
+ *
+ * @par Environment path
+ * Runs gRunSceneListPasses on the scratchpad stack, so the passes get their
+ * own stack for the frame.
  */
-void func_8003F530(void)
+void gRunSceneListPassesOnScratch(void)
 {
     __asm__ volatile(
         "addiu $sp, $sp, -0x4\n\t"

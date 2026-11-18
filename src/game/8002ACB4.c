@@ -23,7 +23,7 @@ struct Unk2ACB4 {
 };
 
 extern void func_80013AA0(s32 low, s32 high);
-extern s32 func_80017508(struct Unk17508 *instance, u32 *flags, s32 arg2);
+extern s32 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
 
 /**
  * @brief Advances one model instance by a frame value with the depth-cue
@@ -60,7 +60,7 @@ s32 func_8002ACB4(struct Unk2ACB4 *object, s32 value)
         if ((object->u90.word & m) != 0) {
             func_80013AA0(object->u90.bytes.unk92, object->u90.bytes.unk93);
         }
-        result = func_80017508(&object->inst, &object->flags, value & 0xFF);
+        result = gSubmitModelInstance(&object->inst, &object->flags, value & 0xFF);
         if ((object->u90.word & m) != 0) {
             func_80013AA0(0, 0);
         }

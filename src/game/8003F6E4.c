@@ -34,6 +34,8 @@ extern void func_8006E988(s32 arg0, struct DestinationTriple *arg1);
 extern void func_800445B0(s32 arg0, struct DestinationTriple *arg1);
 extern void func_80070158(s32 arg0, struct DestinationTriple *arg1);
 extern void func_80074104(s32 arg0, struct DestinationTriple *arg1);
+void gRunViewScenePasses(s32 arg0) __asm__("func_8003F6E4");
+
 
 /**
  * @brief Scene traversal driver: resolves one view position and runs the
@@ -61,8 +63,13 @@ extern void func_80074104(s32 arg0, struct DestinationTriple *arg1);
  *
  * @par Callers
  * func_80066E98 (region drawing).
+ *
+ * @par Environment path
+ * The second view driver: resolves the view position, runs the object
+ * dispatcher and then five layer passes. The environment pass calls it last,
+ * which is where actors and effects are drawn over the terrain.
  */
-void func_8003F6E4(s32 arg0)
+void gRunViewScenePasses(s32 arg0)
 {
     struct DestinationTriple position;
     register struct Unk8009F9A0 *p __asm__("$6");

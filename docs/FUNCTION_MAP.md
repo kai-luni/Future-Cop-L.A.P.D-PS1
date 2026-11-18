@@ -704,7 +704,7 @@ graph LR
 | `func_80026DDC` | 64 | Game Engine > Front-End > Map Screen · Scratchpad | `func_800267C8` | `func_80027510` |
 | `gRunRegionPass` (`func_80026E1C`) | 64 | Game Engine > Frame · Scratchpad | `func_80066E98` | `func_80027510` |
 | `func_80026E5C` | 64 | Game Engine > Frame · Scratchpad | `func_80066C9C` | `func_80027510` |
-| `func_8003F530` | 64 | Game Engine > Frame · Scratchpad | `func_8003F4A0` | `func_8003F570` |
+| `gRunSceneListPassesOnScratch` (`func_8003F530`) | 64 | Game Engine > Frame · Scratchpad | `func_8003F4A0` | `func_8003F570` |
 | `func_80047690` | 64 | Game Engine > Frame · Display | `func_8002A16C`, `func_80047554` | `func_800259D8`, `func_80025B7C`, `func_80027510`, `func_80082DDC` |
 | `func_800586D4` | 64 | Game Engine > Stack Trampoline · Entity Update | `func_80055988` | `func_800588D4` |
 | `func_80086D74` | 64 | Game Engine > State | - | - |
@@ -1816,7 +1816,7 @@ graph LR
 | `func_800445B0` | 96 | Graphics > Model Renderer > Object Placement · Object List Walk | `func_80044260` | `func_8003F6E4` |
 | `func_800496D0` | 100 | Graphics > Lighting · Memory Pools, Map | - | `func_80063DC8` |
 | `func_800834C4` | 104 | Graphics > Scene Graph · Memory Pools, Map | - | `func_80063DC8` |
-| `func_80015AF4` | 116 | Graphics > Model Renderer > Culling | - | `func_80015B68` |
+| `gEmitFrontFacingTriangle` (`func_80015AF4`) | 116 | Graphics > Model Renderer > Culling | - | `func_80015B68` |
 | `func_8004CC68` | 116 | Graphics > Effects | - | `func_8002703C` |
 | `func_8005E22C` | 116 | Graphics > Effects · World Reset | `func_8003BDEC`, `func_8005E074` | `func_8003F854` |
 | `func_800536B4` | 124 | Graphics > Renderer > Depth Cue Pass · Effects | - | `func_800592D0` |
@@ -1824,11 +1824,11 @@ graph LR
 | `func_800441DC` | 132 | Graphics > Renderer > Scene Traversal · Scene Graph | `func_800437E8`, `func_80043CA8` | `func_8003F4A0` |
 | `func_8005DFF0` | 132 | Graphics > Model Renderer > Effects · Effects | `func_8006CB58` | `func_8005E160` |
 | `func_8006F0E8` | 136 | Graphics > Effects > Beams · Object Pool | `func_8003BEF0`, `func_8006EEF8` | `func_8005F6E8`, `func_8006B23C` |
-| `func_8003F4A0` | 144 | Graphics > Renderer > Scene Traversal · Frame | `func_80040A00`, `func_800441DC`, `func_8004C228`, `func_8006D770`, `func_8006F170`, `func_80070048`, `func_8007364C`, `func_80075A84` | `func_8003F530` |
+| `gRunSceneListPasses` (`func_8003F4A0`) | 144 | Graphics > Renderer > Scene Traversal · Frame | `func_80040A00`, `func_800441DC`, `func_8004C228`, `func_8006D770`, `func_8006F170`, `func_80070048`, `func_8007364C`, `func_80075A84` | `func_8003F530` |
 | `func_8004C228` | 144 | Graphics > Renderer > Scene Traversal · Scene Graph | `func_8004AFC0`, `func_8004BEE8` | `func_8003F4A0` |
 | `func_80073500` | 144 | Graphics > Scene Graph > Node Allocation · Memory Pools | `func_80017EBC` | `func_8005B3D4`, `func_8005D060`, `func_8005D8F4`, `func_8005F018`, `func_8006B23C`, `func_80073BBC` |
 | `func_8005A6A4` | 148 | Graphics > Effects > Object Pool · Memory Management | `func_80049C38`, `func_8005A654` | `func_80040734`, `func_800752E0` |
-| `func_80017508` | 152 | Graphics > Model Renderer > Instance Submission · Culling | `func_80013F08`, `func_80016A64` | `func_8002ACB4`, `func_80030960`, `func_8003CF6C`, `func_800597C0` |
+| `gSubmitModelInstance` (`func_80017508`) | 152 | Graphics > Model Renderer > Instance Submission · Culling | `func_80013F08`, `func_80016A64` | `func_8002ACB4`, `func_80030960`, `func_8003CF6C`, `func_800597C0` |
 | `func_80042864` | 152 | Graphics > Effects > Particles · Frame | - | `func_800437E8`, `func_80043CA8` |
 | `func_800447F0` | 156 | Graphics > Effects > Object Pool · Object Spawning | `func_80017EBC`, `func_800181D4`, `func_80043430` | `func_8003E984` |
 | `func_80013BD8` | 168 | Graphics > Model Renderer > Instance Setup | `func_80013AF0` | `func_8002A5F4`, `func_800302E8`, `func_800317BC`, `func_80035904`, `func_80036940`, `func_80037064`, `func_80038754`, `func_800516A0`, `func_800579D4`, `func_8005920C`, `func_80083A10` |
@@ -1839,7 +1839,7 @@ graph LR
 | `func_8004ED18` | 176 | Graphics > Renderer > Entity Pass · Frame | `func_80065834` | `func_8006680C` |
 | `func_8005E0AC` | 180 | Graphics > Effects > Dispatcher · Frame | `func_8005B3D4`, `func_8005BD20`, `func_8005C0C0`, `func_8005D8F4`, `func_8005E074` | `func_8003F570` |
 | `func_8007364C` | 180 | Graphics > Scene Graph > Object List Walk · Part Animation | `func_80071A68`, `func_80071B40` | `func_8003F4A0` |
-| `func_8003F6E4` | 184 | Graphics > Renderer > Scene Traversal · Scene Graph | `func_8003CF6C`, `func_800445B0`, `func_8004C5C8`, `func_8005E160`, `func_80069580`, `func_8006E988`, `func_8006F844`, `func_80070158`, `func_80073700`, `func_80074104` | `func_80066E98` |
+| `gRunViewScenePasses` (`func_8003F6E4`) | 184 | Graphics > Renderer > Scene Traversal · Scene Graph | `func_8003CF6C`, `func_800445B0`, `func_8004C5C8`, `func_8005E160`, `func_80069580`, `func_8006E988`, `func_8006F844`, `func_80070158`, `func_80073700`, `func_80074104` | `func_80066E98` |
 | `func_80073590` | 188 | Graphics > Effects > Object Pool · Object Spawning | `func_80017EBC` | `func_8005D8F4`, `func_8006A524`, `func_80073BBC` |
 | `func_8005BD20` | 196 | Graphics > Effects > Object Pool · Memory Management | `func_8003BF1C` | `func_8005E0AC` |
 | `func_8005C0C0` | 196 | Graphics > Effects > Object Pool · Memory Management | `func_8003BF1C` | `func_8005E0AC` |
@@ -1881,7 +1881,7 @@ graph LR
 | `func_8004EDC8` | 524 | Graphics > Renderer > Object Pass · Primitives | `func_8005A9C4`, `func_8005B088` | `func_80047F30` |
 | `func_80013CB8` | 532 | Graphics > Scene Graph > Node Transform · Animation, GTE | `func_8001006C`, `func_80010820`, `func_80018DC0` | `func_80013F08`, `func_8001428C` |
 | `func_800518A8` | 544 | Graphics > Effects > Shadow / Cone · GTE | `func_80010234`, `func_80010750`, `func_80095900` | `func_80051AF8`, `func_80055988` |
-| `func_80016A64` | 548 | Graphics > Model Renderer > Draw Path · GTE | - | `func_80017508` |
+| `gDrawModelInstanceParts` (`func_80016A64`) | 548 | Graphics > Model Renderer > Draw Path · GTE | - | `func_80017508` |
 | `func_80017058` | 592 | Graphics > Model Renderer > Draw Path · GTE | - | `func_800175A0` |
 | `func_80049C38` | 592 | Graphics > Lighting > Spawn · Object Pool | `func_800195A4`, `func_80019668`, `func_800497A8`, `func_80049980`, `func_80067684` | `func_80049E88`, `func_8005A6A4` |
 | `func_8006D520` | 592 | Graphics > Effects > Shadow · 3D Drawing | `func_8001846C`, `func_8003D9F8`, `func_800413EC`, `func_80041428` | `func_8006D770` |
@@ -1902,7 +1902,7 @@ graph LR
 | `func_80044260` | 848 | Graphics > Model Renderer > Object Placement · GTE | `func_8001006C`, `func_80010750`, `func_80010820`, `func_8001A100`, `func_8003D9C4` | `func_800445B0` |
 | `func_8006A524` | 860 | Graphics > Effects > Ribbon Beam · Target Selection, Object Pool | `func_80019668`, `func_80073590`, `func_8007377C` | `func_8006B23C` |
 | `func_8005D060` | 924 | Graphics > Effects > Particles · Model Renderer | `func_8001006C`, `func_80010820`, `func_800188D0`, `func_80019668`, `func_80073500`, `func_8007377C` | `func_8005D8F4` |
-| `func_80015B68` | 940 | Graphics > Model Renderer > Part Geometry · 2D Drawing | `func_8001484C`, `func_80015830`, `func_80015AF4` | - |
+| `gPrepareModelPart` (`func_80015B68`) | 940 | Graphics > Model Renderer > Part Geometry · 2D Drawing | `func_8001484C`, `func_80015830`, `func_80015AF4` | - |
 | `func_80043430` | 952 | Graphics > Effects > Particles · Object Setup, Memory Management | `func_80017B88`, `func_80017EBC`, `func_800188D0`, `func_8003C14C`, `func_80043250` | `func_800447F0` |
 | `func_80014490` | 956 | Graphics > Effects > Disc Primitives · Primitive Submission, Trigonometry | `func_8001846C` | `func_80070158` |
 | `func_80073BBC` | 972 | Graphics > Effects > Ribbon Beam · Message Handler, Node Allocation | `func_80017EBC`, `func_800181D4`, `func_8003C7B8`, `func_8003C980`, `func_80070710`, `func_80073500`, `func_80073590`, `func_8007377C`, `func_80073BA8` | - |
@@ -1925,7 +1925,7 @@ graph LR
 | `func_8003AA94` | 1712 | Graphics > Effects > Particles · Object Spawn, Model Renderer | `func_8001006C`, `func_80010820`, `func_80017EBC`, `func_80018DC0`, `func_80019668`, `func_8003A90C`, `func_8004B244`, `func_8004B310`, `func_80066F78` | `func_8003B2D0` |
 | `func_80042AF4` | 1884 | Graphics > Effects > Particles · Model Renderer | `func_800188D0`, `func_80019668`, `func_8001B148`, `func_8003D9F8`, `func_80042764`, `func_80042788` | `func_80044610` |
 | `gBeamPartUpdate` (`func_8006B23C`) | 2068 | Graphics > Effects > Part Motion · Motion, Line Pass | `func_80017668`, `func_8001846C`, `func_80019668`, `func_8001AB00`, `func_800402DC`, `func_800410BC`, `func_80046CF0`, `func_8005BDE4`, `func_800684AC`, `func_8006A524`, `func_8006AAEC`, `func_8006F0E8`, `func_80073500`, `func_8007377C` | `func_8006BA50` |
-| `func_80075A84` | 2092 | Graphics > Renderer > Polygon Pass · Lighting | `func_8001006C`, `func_80010820`, `func_80017668`, `func_80019F54`, `func_8001A81C`, `func_8003BEF0`, `func_8003BF1C`, `func_8003D9C4`, `func_8003D9F8`, `func_80066F78`, `func_800751A4`, `func_800753D0`, `func_80075478`, `func_800754B8` | `func_8003F4A0` |
+| `gRunPolygonPass` (`func_80075A84`) | 2092 | Graphics > Renderer > Polygon Pass · Lighting | `func_8001006C`, `func_80010820`, `func_80017668`, `func_80019F54`, `func_8001A81C`, `func_8003BEF0`, `func_8003BF1C`, `func_8003D9C4`, `func_8003D9F8`, `func_80066F78`, `func_800751A4`, `func_800753D0`, `func_80075478`, `func_800754B8` | `func_8003F4A0` |
 | `func_800648E8` | 2124 | Graphics > Renderer > Map Cell Geometry · GPU Primitives, Clipping | `func_800648BC` | `func_80065134` |
 | `gDrawMapCellNode` (`func_8004A048`) | 2268 | Graphics > Renderer > Map Cell Sprite · Projection, Clipping | `func_8001010C`, `func_8001047C`, `func_8001846C`, `func_80019D90`, `func_80019E70`, `func_80049EF8`, `func_80049F4C` | - |
 | `func_8004B5F8` | 2288 | Graphics > Effects > Debris Spawner · Motion, Mesh Fracture | `func_80017B88`, `func_80019668`, `func_8001AF08`, `func_8001B148`, `func_8003D680`, `func_8003E984`, `func_8004AA90`, `func_8004AAC0`, `func_8004B244`, `func_8004B310` | `func_8004C324` |

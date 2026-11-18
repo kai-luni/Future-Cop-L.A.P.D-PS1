@@ -98,7 +98,7 @@ extern void func_800302E8(struct Actor306A0 *, s32, s32);
 extern u8 func_8002F8B8(u8, s16, s32, s32);
 extern void func_80030498(struct Actor306A0 *, s32);
 extern s32 func_8002AD58(s32, struct Actor306A0 *, s32);
-extern u8 func_80017508(struct ModelInstance *, u32 *, s32);
+extern u8 gSubmitModelInstance(struct ModelInstance *, u32 *, s32) __asm__("func_80017508");
 
 /**
  * @brief Per-frame state machine of an animated actor: impact countdown, two

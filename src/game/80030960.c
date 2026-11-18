@@ -20,7 +20,7 @@ extern void func_800302E8(Object *, void *, s32);
 extern u8 func_8002F8B8(u8, s16, void *, u8);
 extern void func_80030498(Object *, void *);
 extern s32 func_8002AD58(s32, Object *, void *);
-extern u8 func_80017508(void *, u32 *, s32);
+extern u8 gSubmitModelInstance(void *, u32 *, s32) __asm__("func_80017508");
 extern s32 func_800306A0(Object *, void *);
 
 /**
@@ -91,7 +91,7 @@ case3:
     } else {
         flags = 0;
     }
-    return func_80017508(self->unkD4, &flags, 1);
+    return gSubmitModelInstance(self->unkD4, &flags, 1);
 case6:
     return func_800306A0(self, other);
 fallback:

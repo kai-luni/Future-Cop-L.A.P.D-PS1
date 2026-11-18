@@ -1,5 +1,7 @@
 // Categories: Graphics > Model Renderer > Culling
 #include "game/types.h"
+s32 gEmitFrontFacingTriangle(s32 origin, s32 first, s32 second, s32 *out) __asm__("func_80015AF4");
+
 
 /**
  * @brief Backface/winding test for a triangle in packed 16.16 coordinates;
@@ -22,8 +24,12 @@
  *
  * @par Callers
  * func_80015B68.
+ *
+ * @par Environment path
+ * Backface/winding test for a triangle in packed 16.16 coordinates; emits the
+ * vertex triple only when it faces the viewer.
  */
-s32 func_80015AF4(s32 origin, s32 first, s32 second, s32 *out)
+s32 gEmitFrontFacingTriangle(s32 origin, s32 first, s32 second, s32 *out)
 {
     if (((s16)first - (s16)origin) * ((second >> 16) - (origin >> 16)) -
         ((s16)second - (s16)origin) * ((first >> 16) - (origin >> 16)) < 0) {

@@ -27,7 +27,7 @@ extern struct Node8003CF6C *gNodeListHead __asm__("D_8009F320");
 
 extern s32 func_8001A100(s32 *vector);
 extern void func_80013AA0(s32 low, s32 high);
-extern u8 func_80017508(struct Obj8003CF6C *instance, u32 *flags, s32 arg2);
+extern u8 gSubmitModelInstance(struct Obj8003CF6C *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
 extern void gDrawModelFrame(struct Obj8003CF6C *obj) __asm__("func_800164F4");
 
 /**
@@ -68,7 +68,7 @@ void func_8003CF6C(s32 arg0)
             if (node->unk40 != 0) {
                 func_80013AA0(((u8 *)node)[0x40], ((u8 *)node)[0x41]);
             }
-            func_80017508(node->obj, &flags, node->unk42);
+            gSubmitModelInstance(node->obj, &flags, node->unk42);
             if (node->unk40 != 0) {
                 func_80013AA0(0, 0);
             }

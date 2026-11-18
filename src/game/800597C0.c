@@ -76,7 +76,7 @@ extern struct Camera597C0 *gCamera __asm__("D_8009F9E4");
 extern struct Global597C0 *gGameSession[] __asm__("D_8009FA94");
 
 extern void func_80013AA0(s32 low, s32 high);
-extern u8 func_80017508(struct Unk17508 *instance, u32 *flags, s32 arg2);
+extern u8 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
 extern void func_80017668(struct Unk17508 *instance, s32 part, s32 *out);
 extern s32 func_80019D90(s16 *point, s32 margin);
 extern s32 func_800584BC(s32 message, struct State597C0 *object, void *hit, s32 arg3, s32 arg4);
@@ -249,7 +249,7 @@ void func_800597C0(struct Object597C0 *object)
     if (info->unkBC != 0x10000) {
         arg2 |= 2;
     }
-    func_80017508(&state->instance, &state->flags, arg2);
+    gSubmitModelInstance(&state->instance, &state->flags, arg2);
 
     arg2 = 1;
     if (info->unkBC != 0) {
@@ -258,12 +258,12 @@ void func_800597C0(struct Object597C0 *object)
     if (info->unkBC != 0x10000) {
         arg2 |= 4;
     }
-    func_80017508(&object->instance, &object->flags, arg2);
+    gSubmitModelInstance(&object->instance, &object->flags, arg2);
 
-    func_80017508(&info->unk178, &object->flags, 1);
-    func_80017508(&info->unk1C4, &object->flags, 1);
+    gSubmitModelInstance(&info->unk178, &object->flags, 1);
+    gSubmitModelInstance(&info->unk1C4, &object->flags, 1);
     func_80013AA0(0, 0);
-    func_80017508(&info->unk210, &object->flags, 1);
+    gSubmitModelInstance(&info->unk210, &object->flags, 1);
     func_800592D0(state);
 
     offset = 0;
