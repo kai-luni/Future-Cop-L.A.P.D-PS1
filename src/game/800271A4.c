@@ -73,7 +73,7 @@ extern void func_80026D1C(void);
 extern void func_80026D5C(void);
 extern void func_80026D9C(s32 arg0);
 extern void func_80026DDC(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void func_80026E1C(s32 arg0, s32 arg1);
+extern void gRunRegionPass(s32 arg0, s32 arg1) __asm__("func_80026E1C");
 extern void func_80026E5C(s32 arg0, s32 arg1);
 extern void func_80026F68(s32 arg0, s32 arg1);
 extern void func_80031DE8(s32 arg0);
@@ -175,7 +175,7 @@ void func_800271A4(void)
         if (!(flags & 0x20)) {
             func_80026D5C();
         }
-        func_80026E1C(0, (s32)D_8009FA58);
+        gRunRegionPass(0, (s32)D_8009FA58);
         func_80026F68(0, 1);
         unk = (struct Unk9A0 *)gMissionWorkingSet[0];
         if (unk == 0 || unk->unk11F == 0) {

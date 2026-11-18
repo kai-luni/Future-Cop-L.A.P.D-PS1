@@ -113,7 +113,7 @@ extern s32 func_800564A8(s16 pitch);
 extern s32 func_80066F78(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3);
 extern void func_8005A070(u8 *object);
 extern s32 func_80017994(void);
-extern void func_80017B60(s32 id);
+extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
 extern void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
                           s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8);
 extern void gSetCameraRotation(s32 yaw, s32 pitch, s32 roll) __asm__("func_80017860");
@@ -267,7 +267,7 @@ void gResetActorAndPlaceView(struct Arg0 *arg0, struct Arg1 *arg1)
 
     id = func_80017994();
     entity->fieldAC = id;
-    func_80017B60((s8)id);
+    gSelectViewRecord((s8)id);
 
     entity->fieldA6 = 1;
     entity->fieldA7 = 1;

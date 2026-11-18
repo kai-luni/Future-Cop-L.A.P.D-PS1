@@ -45,7 +45,7 @@ extern Object56634 *D_8009FA58[2];
 
 extern void func_8005612C(Vec56634 *pos, s32 angle, s32 angle2, s32 pitch, s32 dist,
                           Vec56634 *src, Vec56634 *dst, s32 val, s32 val2);
-extern void func_80017B60(s32 id);
+extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
 extern void gSetCameraPosition(Vec56634 *position) __asm__("func_800177AC");
 extern void gSetCameraRotation(s32 yaw, s32 pitch, s32 roll) __asm__("func_80017860");
 void gPlacePlayerViews(void) __asm__("func_80056634");
@@ -107,7 +107,7 @@ void gPlacePlayerViews(void)
                       entry->f4, &entry->pos, &out,
                       D_8009FA58[i]->info->valA8, D_8009FA58[i]->info->valBC);
 
-        func_80017B60(D_8009FA58[i]->info->idAC);
+        gSelectViewRecord(D_8009FA58[i]->info->idAC);
         gSetCameraPosition(&out);
         gSetCameraRotation(angle, entry->f2, 0);
 

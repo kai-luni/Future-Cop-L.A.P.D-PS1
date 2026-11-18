@@ -3,6 +3,8 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
 typedef struct { int x, y, z; } Vec;
+void gEmitCellGeometry(void *obj, void *list, int a, int b, unsigned int index) __asm__("func_80065134");
+
 extern void func_800648E8(void *, u32, Vec *);
 /**
  * @brief Walks a packed minimap cell list and emits the visible cells as
@@ -39,8 +41,12 @@ extern void func_800648E8(void *, u32, Vec *);
  *
  * @par Callers
  * func_8006531C.
+ *
+ * @par Environment path
+ * Emits the visible cells of one region as geometry; func_8006531C calls it
+ * for each of the 4x4 sub-cells whose mask bit is set.
  */
-void func_80065134(void *obj, void *list, int a, int b, unsigned int index)
+void gEmitCellGeometry(void *obj, void *list, int a, int b, unsigned int index)
 {
     Vec pos;
     u32 *p;

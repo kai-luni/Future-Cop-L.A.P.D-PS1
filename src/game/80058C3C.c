@@ -63,7 +63,7 @@ struct Unk58C3CRequest {
 extern void D_80036E6C();
 extern void *gCamera __asm__("D_8009F9E4");
 
-extern void func_80017B60(s32 id);
+extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
 extern s32 func_80019668(void);
 extern void gSolveLobVector(s32, void *, void *, void *, s32) __asm__("func_8005E624");
 extern void gSpawnQueuedEntity(struct Unk58C3CRequest *) __asm__("func_8004D444");
@@ -134,7 +134,7 @@ void func_80058C3C(void *owner, struct Vec3s32 *position, struct Unk58C3CObject 
     args.position = *position;
 
     old = gCamera;
-    func_80017B60(object->unkAC->unkAC);
+    gSelectViewRecord(object->unkAC->unkAC);
     gSolveLobVector((func_80019668() & 0xF) | 0xE0, &sub, position,
                   gCamera, sub.unk0C);
     gCamera = old;

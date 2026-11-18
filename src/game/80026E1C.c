@@ -2,7 +2,9 @@
 #include "game/types.h"
 
 extern u32 gHookInstallFlag __asm__("D_8009FAD8");
-extern void func_80066E98(void);
+extern void gDrawViewLayers(void) __asm__("func_80066E98");
+void gRunRegionPass(void) __asm__("func_80026E1C");
+
 
 /**
  * @brief Runs the region drawing pass func_80066E98 on a scratchpad stack.
@@ -16,8 +18,12 @@ extern void func_80066E98(void);
  *
  * @par Callers
  * func_80027510.
+ *
+ * @par Environment path
+ * Runs the environment pass func_80066E98 on the scratchpad stack; the frame
+ * driver func_80027510 calls it once per frame.
  */
-void func_80026E1C(void)
+void gRunRegionPass(void)
 {
     __asm__ volatile(
         "addiu $sp, $sp, -0x4\n\t"

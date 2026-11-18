@@ -48,6 +48,8 @@ extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 extern void func_80017508(struct Obj *o, u32 *flags, s32 arg);
 extern void func_8008363C(struct Obj *o);
+void gDrawCellWindowModels(s32 x, s32 y, u32 *p) __asm__("func_80084398");
+
 
 /**
  * @brief Walks the 5x5 cell window of one region block and animates plus
@@ -97,8 +99,12 @@ extern void func_8008363C(struct Obj *o);
  *
  * @par Callers
  * func_80066E98, after func_8006531C and func_8004A924 on the same region.
+ *
+ * @par Environment path
+ * Layer 3 of the environment pass: animates and submits the models of the
+ * same cell window, i.e. the props standing on the terrain.
  */
-void func_80084398(s32 x, s32 y, u32 *p)
+void gDrawCellWindowModels(s32 x, s32 y, u32 *p)
 {
     u32 local;
     u32 *q;

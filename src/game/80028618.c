@@ -23,7 +23,7 @@ extern u8 *D_8009FA58[];
 extern void func_8001BFD8(u8 value);
 extern void func_8002703C(void);
 extern void func_800271A4(void);
-extern void func_80027510(void);
+extern void gRunSessionFrame(void) __asm__("func_80027510");
 extern void func_80028164(void);
 extern void func_80027D9C(void);
 extern void func_80027D70(void);
@@ -31,7 +31,7 @@ extern void func_8001B4A8(s32 arg);
 extern void func_800451EC(s32 value);
 extern void func_800462D0(void);
 extern void func_8008352C(s32 arg);
-extern void func_80017B60(s32 id);
+extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
 extern void func_80045884(s32 *position, s32 arg1, s32 angle, s32 index);
 
 /**
@@ -113,7 +113,7 @@ frame:
         if (gPlayerCount == 1) {
             func_800271A4();
         } else {
-            func_80027510();
+            gRunSessionFrame();
         }
         {
             register s32 frame_id __asm__("$4");
@@ -131,7 +131,7 @@ frame:
             if (*cursor == 0) {
                 break;
             }
-            func_80017B60((s32)*(s8 *)(*(u8 **)(*cursor + 0xAC) + 0xAC));
+            gSelectViewRecord((s32)*(s8 *)(*(u8 **)(*cursor + 0xAC) + 0xAC));
             position = gMissionWorkingSet[0];
             if (position != 0) {
                 position += 0x50;

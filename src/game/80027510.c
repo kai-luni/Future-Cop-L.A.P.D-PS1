@@ -71,11 +71,11 @@ extern void func_8004CE04(void);
 extern void func_8003F570(s32);
 extern void func_80026E5C(s32, struct Game *);
 extern void func_80026D5C(void);
-extern void func_80017B60(s32);
+extern void gSelectViewRecord(s32) __asm__("func_80017B60");
 extern void gUpdateLightDirection(void) __asm__("func_80013C80");
 extern void func_80026DDC(struct Game *, s32, s32, s32);
 extern void func_8001C214(u32, s32, s32, s32, s32, u8);
-extern void func_80026E1C(s32, struct Game *);
+extern void gRunRegionPass(s32, struct Game *) __asm__("func_80026E1C");
 extern void func_80047F30(struct Game *);
 extern void func_80026F68(s32, s32);
 extern s32 func_80049340(u8 *);
@@ -89,6 +89,8 @@ extern void func_80026D9C(s32);
 extern void gSweepRetiredEntities(void) __asm__("func_8004D598");
 extern void func_8001EB6C(void);
 extern void gSoundPauseVoices(void) __asm__("func_800476D0");
+void gRunSessionFrame(void) __asm__("func_80027510");
+
 
 /**
  * @brief Per-frame driver of a two-player session.
@@ -149,8 +151,13 @@ extern void gSoundPauseVoices(void) __asm__("func_800476D0");
  * @par Callers
  * No direct callers in the call graph; reached indirectly through the
  * screen-state dispatch.
+ *
+ * @par Environment path
+ * The frame driver: runs the environment pass through func_80026E1C and the
+ * light direction update once per frame, around the controller and text
+ * handling.
  */
-void func_80027510(void)
+void gRunSessionFrame(void)
 {
     u32 flags;
     s32 i;
@@ -233,13 +240,13 @@ void func_80027510(void)
             game2->unk24 |= 0x20;
             D_8009FA5C.ptr->unkDC->unk24 |= 0x20;
         }
-        func_80017B60(D_8009FA58.ptr->unkAC->unkAC);
+        gSelectViewRecord(D_8009FA58.ptr->unkAC->unkAC);
         gUpdateLightDirection();
         if (flags & 1) {
             func_80026DDC(D_8009FA58.ptr, 0, flags & 0x20, gGameSession->unk5C == 1);
             func_8001C214(1, 0x13E, 0, 2, 0x1E0, 0);
         } else {
-            func_80026E1C(0, D_8009FA58.ptr);
+            gRunRegionPass(0, D_8009FA58.ptr);
             func_80047F30(D_8009FA58.ptr);
         }
         zero_arg = 0;
@@ -272,12 +279,12 @@ void func_80027510(void)
                 D_8009FA58.ptr->unk24 |= 0x20;
                 D_8009FA58.ptr->unkDC->unk24 |= 0x20;
             }
-            func_80017B60(D_8009FA5C_b.ptr->unkAC->unkAC);
+            gSelectViewRecord(D_8009FA5C_b.ptr->unkAC->unkAC);
             gUpdateLightDirection();
             if (flags & 2) {
                 func_80026DDC(D_8009FA5C_c.ptr, 1, flags & 0x20, gGameSession->unk5C == 1);
             } else {
-                func_80026E1C(1, D_8009FA5C_d.ptr);
+                gRunRegionPass(1, D_8009FA5C_d.ptr);
                 func_80047F30(D_8009FA5C_e.ptr);
             }
         }
@@ -304,7 +311,7 @@ void func_80027510(void)
         }
         func_8001BBAC();
     }
-    func_80017B60(D_8009FA58.ptr->unkAC->unkAC);
+    gSelectViewRecord(D_8009FA58.ptr->unkAC->unkAC);
     if (!(flags & 0x20)) {
         func_80026D1C();
         func_800616A0(gFrameId);

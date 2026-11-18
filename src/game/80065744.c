@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+s32 gWorldToRadarCell(s32 arg0) __asm__("func_80065744");
+
 
 /**
  * @brief Converts one world coordinate into a minimap cell index, with a
@@ -27,8 +29,12 @@ extern s32 gDiscShadeByte __asm__("D_8009FAA4");
  *
  * @par Callers
  * func_8006531C, func_8006680C.
+ *
+ * @par Environment path
+ * Maps a world coordinate onto the tile/radar grid coordinate; the tile grid
+ * packs two of its results into the colour word it hands to the cell pass.
  */
-s32 func_80065744(s32 arg0)
+s32 gWorldToRadarCell(s32 arg0)
 {
     s32 v;
 

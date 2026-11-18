@@ -38,6 +38,8 @@ extern s32 func_80049EF8(s32 a, s32 b, s32 c);
 #define getClut(x, y) (((y) << 6) | (((x) >> 4) & 0x3f))
 #define H(o)(*(s16 *)(s0 + (o)))
 #define W(o) (*(s32 *)(s0 + (o)))
+void gDrawMapCellNode(Node *node, s32 arg1, s32 arg2) __asm__("func_8004A048");
+
 
 /**
  * @brief Projects and emits the sprite of one map cell: either a camera-facing
@@ -149,8 +151,13 @@ extern s32 func_80049EF8(s32 a, s32 b, s32 c);
  *   a texture id >= 10 the function reads s4 + 7, but s4 is only built on the
  *   idx < 0 path, so retail consumes a stale pointer there. It is reproduced for
  *   byte identity and must be treated as uninitialised by any port.
+ *
+ * @par Environment path
+ * Draws one map-cell object as a camera-facing billboard or a four-corner
+ * quad, after a perspective cull, a clip-flag test and an optional backface
+ * test.
  */
-void func_8004A048(Node *node, s32 arg1, s32 arg2)
+void gDrawMapCellNode(Node *node, s32 arg1, s32 arg2)
 {
     V8 rot[5];
     V8 out[5];

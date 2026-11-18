@@ -11,7 +11,9 @@ struct Object {
 };
 extern s32 gCellEntityCount[] __asm__("D_8009F828");
 extern struct Object **gCellEntityList[] __asm__("D_8009F818");
-extern void func_800164F4(void *);
+extern void gDrawModelFrame(void *) __asm__("func_800164F4");
+void gRunRegionObjectPass(s32 index) __asm__("func_80062EB8");
+
 
 /**
  * @brief Two passes over the object table of one region: message 3 to
@@ -33,8 +35,12 @@ extern void func_800164F4(void *);
  *
  * @par Callers
  * func_80066E98 (region drawing).
+ *
+ * @par Environment path
+ * Update and draw pass over the entity table of one region: message 3 to
+ * every object, then the polygons of the visible subset via func_800164F4.
  */
-void func_80062EB8(s32 index)
+void gRunRegionObjectPass(s32 index)
 {
     s32 count;
     struct Object **cursor;
@@ -63,7 +69,7 @@ void func_80062EB8(s32 index)
     while (count > 0) {
         object = *cursor;
         if (!(object->flags & 0x20) && (object->flags72 & 0x10)) {
-            func_800164F4(object->data);
+            gDrawModelFrame(object->data);
         }
         count--;
         cursor++;

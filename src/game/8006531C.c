@@ -7,10 +7,12 @@ struct Table { s8 pad[4]; s32 entries[100]; };
 extern struct Table gTileDefTable __asm__("D_800A6F38");
 extern s32 gTableBuffer __asm__("D_8009FA08");
 extern s16 gTileColourWord __asm__("D_8009F83C");
-extern void func_800654F8(s32);
-extern s32 func_80065744(s32);
-extern void func_800646BC(void *, s32, void *, s32);
-extern void func_80065134(void *, s32, s32, s32, s32);
+extern void gBuildTilePattern(s32) __asm__("func_800654F8");
+extern s32 gWorldToRadarCell(s32) __asm__("func_80065744");
+extern void gEmitTexturedSurface(void *, s32, void *, s32) __asm__("func_800646BC");
+extern void gEmitCellGeometry(void *, s32, s32, s32, s32) __asm__("func_80065134");
+void gDrawRegionTiles(s32 x, s32 y, s32 *region) __asm__("func_8006531C");
+
 
 /**
  * @brief Draws a 5x5 grid of map regions: copies the tile header into the
@@ -37,8 +39,13 @@ extern void func_80065134(void *, s32, s32, s32, s32);
  *
  * @par Callers
  * func_80066E98 (region drawing).
+ *
+ * @par Environment path
+ * Layer 1 of the environment pass: draws the 5x5 window of map regions (the
+ * tiled ground surfaces) around the camera position - the visible terrain of
+ * a minimum scene.
  */
-void func_8006531C(s32 x, s32 y, s32 *region)
+void gDrawRegionTiles(s32 x, s32 y, s32 *region)
 {
     s32 *src = gTileShapeTable;
     s32 *dst = (s32 *)0x1F800000;
@@ -62,14 +69,14 @@ void func_8006531C(s32 x, s32 y, s32 *region)
                 id = obj[0x36F];
                 if (id != -1 && id != gTileDefTable.pad[1]) {
                     gTileDefTable.pad[1] = id;
-                    func_800654F8(gTileDefTable.entries[id]);
+                    gBuildTilePattern(gTileDefTable.entries[id]);
                 }
-                hi = func_80065744(obj[0x3C9]);
-                gTileColourWord = (hi << 8) | func_80065744(obj[0x3C8]);
-                func_800646BC(obj, base, region + 2, mask << 16);
+                hi = gWorldToRadarCell(obj[0x3C9]);
+                gTileColourWord = (hi << 8) | gWorldToRadarCell(obj[0x3C8]);
+                gEmitTexturedSurface(obj, base, region + 2, mask << 16);
                 for (a = 0xC0; a >= 0; a -= 0x40) {
                     for (b = 0xC; b >= 0; b -= 4) {
-                        if (mask & 1) func_80065134(obj, base, dx, dy, a + b);
+                        if (mask & 1) gEmitCellGeometry(obj, base, dx, dy, a + b);
                         mask >>= 1;
                     }
                 }

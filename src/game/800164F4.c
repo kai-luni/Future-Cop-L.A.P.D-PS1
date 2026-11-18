@@ -17,6 +17,8 @@ extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(struct V16 *, struct V32 *, s32) __asm__("func_80010234");
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern s32 func_8001047C(struct V16 *, struct V16 *, u8 *, s32);
+void gDrawModelFrame(struct Obj *obj) __asm__("func_800164F4");
+
 
 /**
  * @brief Draws one animated model frame as textured, depth-cued triangles.
@@ -43,8 +45,12 @@ extern s32 func_8001047C(struct V16 *, struct V16 *, u8 *, s32);
  *
  * @par Callers
  * func_80010234's callers, i.e. the object renderers of the 0x8002-0x8005 range.
+ *
+ * @par Environment path
+ * Draws one animated model frame as textured, depth-cued triangles; the
+ * region object pass submits its visible entities through it.
  */
-void func_800164F4(struct Obj *obj)
+void gDrawModelFrame(struct Obj *obj)
 {
     struct V16 p[5], q[5];
     struct V32 transformed[5];

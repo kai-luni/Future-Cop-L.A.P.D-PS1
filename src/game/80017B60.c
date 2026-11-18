@@ -3,7 +3,9 @@
 
 extern void *gCamera __asm__("D_8009F9E4");
 
-extern void *func_80017B28(s32 id);
+extern void *gFindInstanceById(s32 id) __asm__("func_80017B28");
+void gSelectViewRecord(s32 id) __asm__("func_80017B60");
+
 
 /**
  * @brief Selects the active map record by id and stores it in D_8009F9E4.
@@ -19,8 +21,12 @@ extern void *func_80017B28(s32 id);
  * @par Callers
  * func_80027510, func_80056634, func_800569EC, func_800573A4,
  * func_80058C3C, func_80066C9C, func_80066E98.
+ *
+ * @par Environment path
+ * Picks the view record the environment is drawn from; each region pass
+ * starts here, so this is the switch between the two players' views.
  */
-void func_80017B60(s32 id)
+void gSelectViewRecord(s32 id)
 {
-    gCamera = func_80017B28(id);
+    gCamera = gFindInstanceById(id);
 }

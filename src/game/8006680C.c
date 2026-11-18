@@ -16,8 +16,8 @@ extern u8 *gTileBlockTable __asm__("D_8009F808");
 extern s16 gTileColourWord __asm__("D_8009F83C");
 extern s32 D_800A2960[], D_800A2964[];
 extern s32 func_800665E8(s32 *, s32);
-extern void func_800654F8(s32);
-extern s32 func_80065744(s32);
+extern void gBuildTilePattern(s32) __asm__("func_800654F8");
+extern s32 gWorldToRadarCell(s32) __asm__("func_80065744");
 extern void func_80065CA8(u8 *, s32, s32, s32);
 extern void func_8004ED18(s32 *, s32 *, s32);
 extern void func_800694C8(s32 *, s32 *, s32, s32);
@@ -99,12 +99,12 @@ void func_8006680C(struct Owner *owner, s32 *pos)
             id = *(s8 *)(tile + 0x36f);
             if (id != -1 && id != gTileDefTable.pad[1]) {
                 gTileDefTable.pad[1] = id;
-                func_800654F8(gTileDefTable.entries[id]);
+                gBuildTilePattern(gTileDefTable.entries[id]);
             }
             i = 0;
             cb = col << 4;
-            hi = func_80065744(*(s8 *)(tile + 0x3c9));
-            gTileColourWord = (hi << 8) | func_80065744(*(s8 *)(tile + 0x3c8));
+            hi = gWorldToRadarCell(*(s8 *)(tile + 0x3c9));
+            gTileColourWord = (hi << 8) | gWorldToRadarCell(*(s8 *)(tile + 0x3c8));
             for (; i < 16; i++) {
                 yy = (row << 4) + i - x0v[0];
                 if (yy < 0) continue;

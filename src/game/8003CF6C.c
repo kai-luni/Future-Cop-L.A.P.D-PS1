@@ -28,7 +28,7 @@ extern struct Node8003CF6C *gNodeListHead __asm__("D_8009F320");
 extern s32 func_8001A100(s32 *vector);
 extern void func_80013AA0(s32 low, s32 high);
 extern u8 func_80017508(struct Obj8003CF6C *instance, u32 *flags, s32 arg2);
-extern void func_800164F4(struct Obj8003CF6C *obj);
+extern void gDrawModelFrame(struct Obj8003CF6C *obj) __asm__("func_800164F4");
 
 /**
  * @brief Walks the depth-cued object list and draws the visible nodes.
@@ -73,7 +73,7 @@ void func_8003CF6C(s32 arg0)
                 func_80013AA0(0, 0);
             }
             if (node->obj->flags4A & 0x10) {
-                func_800164F4(node->obj);
+                gDrawModelFrame(node->obj);
             }
         }
     }

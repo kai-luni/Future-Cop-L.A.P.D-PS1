@@ -8,6 +8,8 @@ struct Unk17764 {
 };
 
 extern struct Unk17764 *gTransformRecordList __asm__("D_8009F588");
+struct Unk17764 *gFindInstanceById(s32 id) __asm__("func_80017B28");
+
 
 /**
  * @brief Finds a draw instance by id in the active list.
@@ -25,8 +27,12 @@ extern struct Unk17764 *gTransformRecordList __asm__("D_8009F588");
  *
  * @par Callers
  * func_80017B60.
+ *
+ * @par Environment path
+ * Resolves a draw instance by its id (+0x88); the view record selection uses
+ * it to turn the passed id into the active record.
  */
-struct Unk17764 *func_80017B28(s32 id)
+struct Unk17764 *gFindInstanceById(s32 id)
 {
     struct Unk17764 *node;
 

@@ -19,13 +19,15 @@ struct Coord66E98 {
 extern u8 *gCamera __asm__("D_8009F9E4");
 extern struct Region66E98 gCoverageGrid[] __asm__("D_800AB3B8");
 extern struct Coord66E98 gGridOriginX[] __asm__("D_8009F834");
-extern void func_80017B60(s32);
+extern void gSelectViewRecord(s32) __asm__("func_80017B60");
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
-extern void func_8006531C(s32, s32, void *);
-extern void func_8004A924(s32, s32, void *);
-extern void func_80084398(s32, s32, void *);
-extern void func_80062EB8(s32);
+extern void gDrawRegionTiles(s32, s32, void *) __asm__("func_8006531C");
+extern void gDrawCellWindowObjects(s32, s32, void *) __asm__("func_8004A924");
+extern void gDrawCellWindowModels(s32, s32, void *) __asm__("func_80084398");
+extern void gRunRegionObjectPass(s32) __asm__("func_80062EB8");
 extern void func_8003F6E4(s32);
+void gDrawViewLayers(s32 index, struct Object66E98 *object) __asm__("func_80066E98");
+
 
 /**
  * @brief Draws the three region layers of one object and commits the pass.
@@ -45,22 +47,28 @@ extern void func_8003F6E4(s32);
  * @par Likely role
  * The per-object region pass: three layers (background, actors, foreground) of
  * the same screen region, drawn through the camera.
+ *
+ * @par Environment path
+ * The environment pass of one view: selects the view record, loads the camera
+ * rotation, then draws the same region in three layers (tiles, cell objects,
+ * cell models) and closes it. It draws what the view sees, independent of the
+ * actor lists, so it is the piece a minimal scene needs.
  */
-void func_80066E98(s32 index, struct Object66E98 *object)
+void gDrawViewLayers(s32 index, struct Object66E98 *object)
 {
     struct Region66E98 *region;
     s32 x;
     s32 y;
 
-    func_80017B60(object->info->id);
+    gSelectViewRecord(object->info->id);
     gGteLoadRotation(gCamera + 0x28);
     region = &gCoverageGrid[index];
     x = gGridOriginX[index].x;
     y = gGridOriginX[index].y;
-    func_8006531C(x, y, region);
+    gDrawRegionTiles(x, y, region);
     gGteLoadRotation(gCamera + 0x28);
-    func_8004A924(x, y, region);
-    func_80084398(x, y, region);
-    func_80062EB8(index);
+    gDrawCellWindowObjects(x, y, region);
+    gDrawCellWindowModels(x, y, region);
+    gRunRegionObjectPass(index);
     func_8003F6E4(index);
 }

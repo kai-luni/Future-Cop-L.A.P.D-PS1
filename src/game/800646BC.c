@@ -24,6 +24,10 @@
  * @par Unknown
  * The meaning of 0x33/0x198 (likely 51-byte vertex records and 408-byte packet
  * groups).
+ *
+ * @par Environment path
+ * Emits the textured triangle strips of one region surface with per-strip
+ * clipping; the tile grid calls it once per populated region.
  */
 __asm__(
     ".set noreorder\n"

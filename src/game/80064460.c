@@ -8,6 +8,8 @@ typedef struct { s32 a,width; char pad[0x1c]; u32 offsets[1]; } Map;
 extern Camera *gCamera __asm__("D_8009F9E4");
 extern Map *gTileMapTable __asm__("D_8009F80C");
 extern char *gTileBlockTable __asm__("D_8009F808");
+void gSampleCellWindow(s32 arg0, s32 arg1, Entry *arg2) __asm__("func_80064460");
+
 extern s32 func_8006429C(void *, Vec);
 /**
  * @brief Samples the 5x5 cell window of the map attribute grid at a cell
@@ -53,8 +55,12 @@ extern s32 func_8006429C(void *, Vec);
  * @par Callers
  * func_80066C9C, the per-view camera anchor update, with a block of
  * D_800AB3B8 at a derived offset.
+ *
+ * @par Environment path
+ * Fills the 25 window entries (mask, node, world position) that the three
+ * region layers then draw.
  */
-void func_80064460(s32 arg0, s32 arg1, Entry *arg2)
+void gSampleCellWindow(s32 arg0, s32 arg1, Entry *arg2)
 {
     register s32 x __asm__("$22");
     register s32 y __asm__("$23");

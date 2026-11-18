@@ -38,9 +38,9 @@ extern struct Pair gScenePositionPairs[] __asm__("D_800A3190");
 extern struct Block gCoverageGrid[] __asm__("D_800AB3B8");
 extern u8 gGridOriginX[] __asm__("D_8009F834");
 
-extern void func_80017B60(s32 id);
+extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
 extern void gGteLoadRotation(u8 *matrix) __asm__("func_80010820");
-extern void func_80064460(s32 a0, s32 a1, struct Block *block);
+extern void gSampleCellWindow(s32 a0, s32 a1, struct Block *block) __asm__("func_80064460");
 
 #define FMUL(a, b) ({ s32 r_; __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 #define FMULU(a, b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
@@ -93,7 +93,7 @@ void func_80066C9C(s32 index, struct Entity *obj)
     register s32 s2 __asm__("$18");
     s32 m;
 
-    func_80017B60(obj->unkAC->unkAC);
+    gSelectViewRecord(obj->unkAC->unkAC);
     gGteLoadRotation(gCamera->matrix);
 
     t = obj->unk54;

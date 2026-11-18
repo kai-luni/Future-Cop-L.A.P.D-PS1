@@ -86,7 +86,7 @@ extern s32 func_80031B40(struct Vec569EC *, void *);
 extern s32 func_80056530(struct Obj569EC *, s32, s32);
 extern s32 func_80056870(struct Obj569EC *);
 extern u8 func_80056994(struct Info569EC *, s32);
-extern void func_80017B60(s32);
+extern void gSelectViewRecord(s32) __asm__("func_80017B60");
 extern void gPlaceCameraFromPreset(struct Obj569EC *, s32, struct Vec569EC *, s32) __asm__("func_8005678C");
 extern void func_8005612C(struct Vec569EC *, s32, s32, s32, s32, struct Vec569EC *, struct Vec569EC *, s32, s32);
 extern s32 func_80055EE8(struct Vec569EC *, struct Vec569EC *);
@@ -291,7 +291,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
         saved = gCamera;
         id = info->camera;
         local.saved = saved;
-        func_80017B60(id);
+        gSelectViewRecord(id);
     }
     if (selected > 0) {
         gPlaceCameraFromPreset(object, selected, &local.out, 1);

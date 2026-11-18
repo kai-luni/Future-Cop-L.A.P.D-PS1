@@ -6,6 +6,8 @@ extern u8 D_800A2730[];
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern s32 func_80018534(u32);
+void gBuildTilePattern(u32 input) __asm__("func_800654F8");
+
 
 /**
  * @brief Generates the 256-byte minimap background tile: a sine interference
@@ -35,8 +37,12 @@ extern s32 func_80018534(u32);
  *
  * @par Callers
  * func_8006531C, func_8006680C.
+ *
+ * @par Environment path
+ * Builds the 256-byte pattern uploaded for a tileset; the tile grid calls it
+ * whenever the tileset id of a region changes.
  */
-void func_800654F8(u32 input)
+void gBuildTilePattern(u32 input)
 {
     register u32 arg __asm__("$4") = input;
 

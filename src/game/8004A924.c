@@ -21,7 +21,9 @@ extern s32 D_8009F794;
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern void func_800497A8(void);
-extern void func_8004A048(Node *node, s32 arg1, s32 arg2);
+extern void gDrawMapCellNode(Node *node, s32 arg1, s32 arg2) __asm__("func_8004A048");
+void gDrawCellWindowObjects(s32 arg0, s32 arg1, MaskEntry *arg2) __asm__("func_8004A924");
+
 
 /**
  * @brief Draws the map-cell objects in a 5x5 cell window, filtered by a
@@ -49,8 +51,12 @@ extern void func_8004A048(Node *node, s32 arg1, s32 arg2);
  *
  * @par Callers
  * func_80066E98.
+ *
+ * @par Environment path
+ * Layer 2 of the environment pass: draws the map-cell objects (walls, props)
+ * of the 5x5 cell window, filtered by the per-cell mask.
  */
-void func_8004A924(s32 arg0, s32 arg1, MaskEntry *arg2)
+void gDrawCellWindowObjects(s32 arg0, s32 arg1, MaskEntry *arg2)
 {
     s32 i;
     s32 j;
@@ -82,7 +88,7 @@ void func_8004A924(s32 arg0, s32 arg1, MaskEntry *arg2)
             do {
                 if (node->unk4 < 0 || node->unk4 > gDiscShadeByte) {
                     if (mask & node->unk12) {
-                        func_8004A048(node, arg0 + i, arg1 + j);
+                        gDrawMapCellNode(node, arg0 + i, arg1 + j);
                     }
                 }
                 node = node->next;
