@@ -35,7 +35,7 @@ extern s32 func_8004F330(struct StateF764 *, struct ObjectF764 *, s32);
 extern s32 func_8001A100(s32 *);
 extern void func_8001AB78(s32, s32 *);
 extern s32 func_80095C30(s32, s32);
-extern void func_8001846C(u32, s32 *, s32 *);
+extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 
 #define MULU16(out, a, b) \
     __asm__("multu\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
@@ -235,13 +235,13 @@ void func_8004F764(struct StateF764 *state, struct ObjectF764 *obj, u8 update)
             v0 = s->targetPitch;
             s->pitch = v0;
             s->oldPitch = v0;
-            func_8001846C((s16)v0, &localSine, &s->sinePitch);
+            gSinCos((s16)v0, &localSine, &s->sinePitch);
         }
         if (!(s->flags & 0x1000)) {
             v0 = s->targetYaw;
             s->yaw = v0;
             s->oldYaw = v0;
-            func_8001846C((s16)v0, &s->sineYaw, &s->cosineYaw);
+            gSinCos((s16)v0, &s->sineYaw, &s->cosineYaw);
         }
         return;
     }

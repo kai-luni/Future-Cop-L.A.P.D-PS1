@@ -2,7 +2,9 @@
 extern unsigned char *gCamera __asm__("D_8009F9E4");
 extern unsigned char gLightVectorIn[] __asm__("D_8009A228");
 extern unsigned char gLightVectorOut[] __asm__("D_800A02E0");
-extern void func_8001A81C(void *, void *, void *);
+extern void gMulMatrixVector(void *, void *, void *) __asm__("func_8001A81C");
+void gUpdateLightDirection(void) __asm__("func_80013C80");
+
 
 /**
  * @brief Rotates the fixed world vector D_8009A228 into the camera frame.
@@ -26,8 +28,13 @@ extern void func_8001A81C(void *, void *, void *);
  * @par Callers
  * Confirmed: func_80027510 (0x800278E0, 0x80027AEC) in the per-player frame block, right before the map-screen row update.
  * Unknown: one call at 0x800273C0 from a routine that is not in the matching set.
+ *
+ * @par Environment path
+ * Derives the frame's light direction from the camera matrix; called by the
+ * frame driver func_80027510 and func_800271A4, so it must run after
+ * gSetCameraRotation.
  */
-void func_80013C80(void)
+void gUpdateLightDirection(void)
 {
-    func_8001A81C(gCamera + 0x28, gLightVectorIn, gLightVectorOut);
+    gMulMatrixVector(gCamera + 0x28, gLightVectorIn, gLightVectorOut);
 }

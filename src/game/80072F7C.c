@@ -62,7 +62,7 @@ extern struct Prim72F7C *gPrimPoolNext __asm__("D_8009F9F0");
 extern struct Prim72F7C *gPrimPoolEnd __asm__("D_8009FA28");
 
 extern s32 func_8001A100(V3_72F7C *vector);
-extern void func_80010820(u8 *matrix);
+extern void gGteLoadRotation(u8 *matrix) __asm__("func_80010820");
 extern void func_8001047C(S3X_72F7C *in, S3X_72F7C *out, u8 *flags, s32 count);
 
 /**
@@ -134,7 +134,7 @@ void func_80072F7C(struct Node72F7C *node, V3_72F7C *arg)
             shorts[j].z = (node->entries[i].verts[j].z - camera->eye.z) >> 4;
             }
         }
-        func_80010820(gCamera->matrix);
+        gGteLoadRotation(gCamera->matrix);
         screen_arg = shorts;
         __asm__ volatile("" : : "r"(screen_arg));
         call_entries = node->entries;

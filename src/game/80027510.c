@@ -72,7 +72,7 @@ extern void func_8003F570(s32);
 extern void func_80026E5C(s32, struct Game *);
 extern void func_80026D5C(void);
 extern void func_80017B60(s32);
-extern void func_80013C80(void);
+extern void gUpdateLightDirection(void) __asm__("func_80013C80");
 extern void func_80026DDC(struct Game *, s32, s32, s32);
 extern void func_8001C214(u32, s32, s32, s32, s32, u8);
 extern void func_80026E1C(s32, struct Game *);
@@ -234,7 +234,7 @@ void func_80027510(void)
             D_8009FA5C.ptr->unkDC->unk24 |= 0x20;
         }
         func_80017B60(D_8009FA58.ptr->unkAC->unkAC);
-        func_80013C80();
+        gUpdateLightDirection();
         if (flags & 1) {
             func_80026DDC(D_8009FA58.ptr, 0, flags & 0x20, gGameSession->unk5C == 1);
             func_8001C214(1, 0x13E, 0, 2, 0x1E0, 0);
@@ -273,7 +273,7 @@ void func_80027510(void)
                 D_8009FA58.ptr->unkDC->unk24 |= 0x20;
             }
             func_80017B60(D_8009FA5C_b.ptr->unkAC->unkAC);
-            func_80013C80();
+            gUpdateLightDirection();
             if (flags & 2) {
                 func_80026DDC(D_8009FA5C_c.ptr, 1, flags & 0x20, gGameSession->unk5C == 1);
             } else {

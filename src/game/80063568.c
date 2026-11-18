@@ -22,7 +22,7 @@ struct AnimNode {
 extern struct AnimNode *D_8009FA04;
 extern u8 D_800A2730[];
 
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
 
 /**
@@ -119,9 +119,9 @@ void func_80063568(s32 dt)
                 angle &= 0x7FFF;
                 e->timer = angle;
                 if (e->type == 0x11) {
-                    func_8001846C(angle >> 3, &val, &other);
+                    gSinCos(angle >> 3, &val, &other);
                 } else {
-                    func_8001846C((angle & 0x3FFF) >> 3, &other, &val);
+                    gSinCos((angle & 0x3FFF) >> 3, &other, &val);
                 }
                 val += 0x10000;
                 val = (val * e->max) >> 17;

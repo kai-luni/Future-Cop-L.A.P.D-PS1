@@ -61,13 +61,13 @@ extern void *gVertexSourceAltPtr __asm__("D_8009F574");
 extern void *gPartVertexBuffer __asm__("D_8009F578");
 extern void *gClipFlagBuffer __asm__("D_8009F57C");
 
-extern void func_800178DC(void *coord, struct Matrix *matrix);
-extern void func_80010750(struct Matrix *matrix);
-extern void func_800101D4(void *src, s16 *dst, s32 count);
+extern void gTransformToViewSpace(void *coord, struct Matrix *matrix) __asm__("func_800178DC");
+extern void gGteLoadMatrix(struct Matrix *matrix) __asm__("func_80010750");
+extern void gGteTransformVerticesV0(void *src, s16 *dst, s32 count) __asm__("func_800101D4");
 extern u8 func_80019E70(s16 *point, s32 margin);
 extern void func_80013ECC(struct Vec3s32 *vec);
 extern void func_80013CB8(s32 idx, struct Input *input, s16 *table, s32 frame);
-extern void func_8001010C(void *src, void *dst, s32 count);
+extern void gGteTransformVertices(void *src, void *dst, s32 count) __asm__("func_8001010C");
 extern void func_8001047C(void *src, void *dst_points, void *dst_flags, s32 count);
 extern void func_8001AE14(struct Matrix *matrix, struct Vec3s32 *in, struct Vec3s32 *out);
 
@@ -170,9 +170,9 @@ s32 func_80013F08(struct Instance *instance)
         index = instance->frame;
     }
 
-    func_800178DC(&instance->coord, gBoneMatrices);
-    func_80010750(gBoneMatrices);
-    func_800101D4((char *)instance->model->unk34 + (index * 16 + 8), point, 1);
+    gTransformToViewSpace(&instance->coord, gBoneMatrices);
+    gGteLoadMatrix(gBoneMatrices);
+    gGteTransformVerticesV0((char *)instance->model->unk34 + (index * 16 + 8), point, 1);
 
     if (func_80019E70(point, instance->unk40) != 2) {
         return 0;
@@ -213,10 +213,10 @@ s32 func_80013F08(struct Instance *instance)
             u8 unk4;
 
             func_80013CB8(matrixIndex, input, model->table, instance->frame);
-            func_80010750((struct Matrix *)(matrixIndex * 48 + (u32)mat));
+            gGteLoadMatrix((struct Matrix *)(matrixIndex * 48 + (u32)mat));
             u1 = input->unk1;
             unk2 = input->unk2;
-            func_8001010C((char *)model->unk20[1] + (u1 * 8 + 4),
+            gGteTransformVertices((char *)model->unk20[1] + (u1 * 8 + 4),
                           (void *)((u1 * 8) + (u32)fae),
                           unk2);
             u3 = input->unk3;

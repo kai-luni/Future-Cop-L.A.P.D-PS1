@@ -9,9 +9,9 @@ struct Object { struct Flags *flags; u8 pad[0x14]; struct Mat mat; struct Vec po
 struct State { struct Vec dir; s16 a[2]; s16 b[2]; s32 time; s8 index; u8 flags; };
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 func_80019668(void);
-extern void func_80010820(void *);
-extern void func_8001006C(struct Vec *, struct Vec *, s32);
-extern void func_800188D0(s32, s32, s32, struct Mat *);
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
+extern void gGteTransformWords(struct Vec *, struct Vec *, s32) __asm__("func_8001006C");
+extern void gBuildRotationMatrix(s32, s32, s32, struct Mat *) __asm__("func_800188D0");
 extern void *func_80073500(struct Vec *, s32, s32, s32);
 extern void func_8007377C(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
 
@@ -55,8 +55,8 @@ void func_8005D060(struct Object *obj, struct State *st)
         v.x = ((st->dir.x >> 4) * obj->scale) >> 8;
         v.y = ((st->dir.y >> 4) * obj->scale) >> 8;
         v.z = ((st->dir.z >> 4) * obj->scale) >> 8;
-        func_80010820(&obj->mat);
-        func_8001006C(&v, &v, 1);
+        gGteLoadRotation(&obj->mat);
+        gGteTransformWords(&v, &v, 1);
         v.x += obj->pos.x;
         v.y += obj->pos.y;
         v.z += obj->pos.z;
@@ -79,13 +79,13 @@ void func_8005D060(struct Object *obj, struct State *st)
                 if (t < 0) st->b[st->index] = -0x200 - t;
             }
         }
-        func_800188D0(st->a[st->index], st->b[st->index], 0, &m);
+        gBuildRotationMatrix(st->a[st->index], st->b[st->index], 0, &m);
         st->dir = *(struct Vec *)m.t;
         v.x = ((st->dir.x >> 4) * obj->scale) >> 8;
         v.y = ((st->dir.y >> 4) * obj->scale) >> 8;
         v.z = ((st->dir.z >> 4) * obj->scale) >> 8;
-        func_80010820(&obj->mat);
-        func_8001006C(&v, &v, 1);
+        gGteLoadRotation(&obj->mat);
+        gGteTransformWords(&v, &v, 1);
         v.x += obj->pos.x;
         v.y += obj->pos.y;
         v.z += obj->pos.z;

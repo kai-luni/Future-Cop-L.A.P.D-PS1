@@ -53,10 +53,10 @@ extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 extern void func_800536B4(s32 *near, s32 *far);
 extern s32 func_80095C30(s32 x, s32 y);
-extern void func_80018DC0();
-extern void func_800178DC(struct Unk178DC *object, s32 arg1);
-extern void func_80010750(void *arg0);
-extern void func_800101D4(void *arg0, void *arg1, s32 arg2);
+extern void gBuildRotationMatrixVariant() __asm__("func_80018DC0");
+extern void gTransformToViewSpace(struct Unk178DC *object, s32 arg1) __asm__("func_800178DC");
+extern void gGteLoadMatrix(void *arg0) __asm__("func_80010750");
+extern void gGteTransformVerticesV0(void *arg0, void *arg1, s32 arg2) __asm__("func_800101D4");
 extern s32 func_80019E70(s16 *point, s32 margin);
 extern void func_8001047C(void *arg0, void *arg1, void *arg2, s32 arg3);
 
@@ -141,14 +141,14 @@ void func_800592D0(struct Unk592D0 *arg0)
     __asm__("" : "=r"(anglearg) : "0"(anglearg));
     zero = 0;
     __asm__("" : "=r"(zero) : "0"(zero));
-    func_80018DC0(anglearg, zero, zero, &frame.object);
-    func_800178DC(&frame.object, (s32)frame.matrix);
-    func_80010750(frame.matrix);
+    gBuildRotationMatrixVariant(anglearg, zero, zero, &frame.object);
+    gTransformToViewSpace(&frame.object, (s32)frame.matrix);
+    gGteLoadMatrix(frame.matrix);
 
     afbase = 0x800A0000;
     __asm__("" : "=r"(afbase) : "0"(afbase));
     afptr = (u8 *)(afbase - 0x50C0);
-    func_800101D4(afptr, frame.point, 1);
+    gGteTransformVerticesV0(afptr, frame.point, 1);
     if ((func_80019E70((s16 *)frame.point, 0x400) & 0xFF) != 2) {
         return;
     }

@@ -21,6 +21,11 @@
  * @par Callers
  * 39 sites, including func_800164F4, func_80065834 and the whole 0x8002-0x8005
  * range of object renderers.
+ *
+ * @par Environment path
+ * Batch vertex transform with 32-bit output and stride 0xC. Its 39 callers
+ * are the map-cell drawers (func_8002B588, func_8002C584, func_8002CC30) and
+ * the part/instance builders of the scene lists.
  */
 __asm__(
     ".set noreorder\n"

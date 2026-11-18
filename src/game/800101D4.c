@@ -15,6 +15,11 @@
  *
  * @par Callers
  * func_80013F08 and func_800592D0.
+ *
+ * @par Environment path
+ * Same contract as the 8-byte batch transform, but it multiplies the GTE V0
+ * vector instead of IR. Called by the light setup func_80013F08 and the
+ * player update func_800592D0.
  */
 __asm__(
     ".set noreorder\n"

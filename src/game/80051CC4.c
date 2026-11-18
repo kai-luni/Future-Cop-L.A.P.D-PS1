@@ -6,8 +6,8 @@ typedef struct { char pad[0x24]; V pos; } Transform;
 typedef struct { char pad[0x150]; s32 x; char pad2[4]; s32 z; } Data;
 typedef struct { char pad[0xac]; Data *data; } Obj;
 typedef struct { s16 x,y,z,dx,dy,dz; } Bounds;
-extern void func_80010820(void *);
-extern void func_8001010C(SV *, SV *, s32);
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
+extern void gGteTransformVertices(SV *, SV *, s32) __asm__("func_8001010C");
 /**
  * @brief Moves an object toward a position with a speed, clamped to its bounds.
  *
@@ -42,8 +42,8 @@ void func_80051CC4(Obj *obj, V *pos, s32 unused, Bounds *bounds, Transform *tran
     local.x = (pos->x - trans->pos.x) >> 4;
     local.y = (pos->y - trans->pos.y) >> 4;
     local.z = (pos->z - trans->pos.z) >> 4;
-    func_80010820(matrix);
-    func_8001010C(&local, &rotated, 1);
+    gGteLoadRotation(matrix);
+    gGteTransformVertices(&local, &rotated, 1);
     speed = 0x2400;
     x = rotated.x - bounds->x;
     y = rotated.y - bounds->y;
@@ -78,8 +78,8 @@ void func_80051CC4(Obj *obj, V *pos, s32 unused, Bounds *bounds, Transform *tran
         if (bz) step.z = 0;
     done:;
     }
-    func_80010820(trans);
-    func_8001010C(&step, &output, 1);
+    gGteLoadRotation(trans);
+    gGteTransformVertices(&step, &output, 1);
     data = obj->data;
     data->x += output.x << 4;
     data->z += output.z << 4;

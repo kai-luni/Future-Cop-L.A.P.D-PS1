@@ -34,8 +34,8 @@ struct Unk41728 {
     u8 unkCB;
 };
 
-extern void func_80010750(void *matrix);
-extern void func_80010234(void *frame, void *out, s32 count);
+extern void gGteLoadMatrix(void *matrix) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *frame, void *out, s32 count) __asm__("func_80010234");
 extern void func_8002A5B4(void *script, s32 index);
 
 /**
@@ -91,7 +91,7 @@ void func_80041728(struct Unk41728 *self)
             self->unkCA = arg;
             self->unkC0 = -1;
             self->unk54 = self->unkA0[arg];
-            func_80010750(self->unk2C);
+            gGteLoadMatrix(self->unk2C);
             out = self->unk5C;
             cnt = 1;
             offset = self->unk70;
@@ -100,7 +100,7 @@ void func_80041728(struct Unk41728 *self)
             __asm__("" : "=r"(offset) : "0"(offset));
             pointer = ((struct Unk28 *)pointer)->unk34;
             offset += 8;
-            func_80010234(pointer + offset, out, cnt);
+            gGteTransformVerticesWide(pointer + offset, out, cnt);
             goto done;
         small:
             if (self->unkC0 <= 0) {

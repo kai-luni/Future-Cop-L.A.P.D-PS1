@@ -63,7 +63,7 @@ extern u32 gEffectSizeTable[] __asm__("D_800A6F60");
 extern u16 gEffectUvV[] __asm__("D_800A8EA6");
 
 extern s32 func_80018580(s32 arg0, s32 arg1);
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void func_800694C8(s32 *outX, s32 *outY, s32 arg2, s32 arg3);
 extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
 
@@ -118,7 +118,7 @@ void func_8005AB8C(struct Unk5AB8C *input, s32 *arg1, s32 *arg2)
     D_8009F7E8 = head;
     __asm__ volatile ("" : : : "memory");
     offset = 0;
-    func_8001846C(-0x400 - (func_80018580(arg2[2], arg2[0]) << 4),
+    gSinCos(-0x400 - (func_80018580(arg2[2], arg2[0]) << 4),
                   D_8009F7E0, D_8009F7E4);
 
     obj = arg0->unkAC;

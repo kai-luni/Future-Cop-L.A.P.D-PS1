@@ -115,13 +115,13 @@ extern void gVectorAddScaled(s32 *a, s32 *b, s32 delta, s32 *out) __asm__("func_
 extern s32 func_800684AC(s32 *a, s32 *b, s32 *out, s32 arg3, s32 arg4);
 extern s32 func_80066F78(s32 *a, s32 b, s32 c, s32 d);
 extern s32 func_80069A38(s32 *a);
-extern void func_800188D0(s32 a, s32 b, s32 angle, s32 *out);
+extern void gBuildRotationMatrix(s32 a, s32 b, s32 angle, s32 *out) __asm__("func_800188D0");
 extern void func_80019310(s32 *first, s32 *second, s32 *basis);
-extern void func_80010820(s32 *basis);
-extern void func_8001006C(s32 *a, s32 *b, s32 c);
-extern void func_80010750(s32 *a);
-extern void func_80010234(s32 *a, s32 *b, s32 c);
-extern void func_80010974(s32 *a, s32 *b, s32 *out);
+extern void gGteLoadRotation(s32 *basis) __asm__("func_80010820");
+extern void gGteTransformWords(s32 *a, s32 *b, s32 c) __asm__("func_8001006C");
+extern void gGteLoadMatrix(s32 *a) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(s32 *a, s32 *b, s32 c) __asm__("func_80010234");
+extern void gGteCrossProduct(s32 *a, s32 *b, s32 *out) __asm__("func_80010974");
 extern s32 func_80019FCC(s32 *vector);
 extern s32 func_80095900(s32 angle);
 extern void func_800410BC(s32 *pos, s32 speed, s32 angle, struct Obj35B7C *target);
@@ -454,7 +454,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
             if (*(s32 *)((u8 *)self + 0x54) - (self->unkA2 << 8) >= 0x4001) self->unkE0 = 1;
             { register s32 y __asm__("$3"); s32 c; c = 0x18000; y = self->unk7C; y *= 3; self->unk7C = (y + c) / 4; }
             func_8001A180(&self->unk78);
-            func_80010974(&self->unk78, (s32 *)((u8 *)self + 0x2C), &self->unkB4);
+            gGteCrossProduct(&self->unk78, (s32 *)((u8 *)self + 0x2C), &self->unkB4);
             break;
         case 1:
         case 3:
@@ -562,15 +562,15 @@ skip:
         ang += (delta << 12) >> 6;
         ang &= 0xFFF;
         self->unkD6 = ang;
-        func_800188D0(0, 0, ang, (s32 *)((u8 *)self + 0x2C));
+        gBuildRotationMatrix(0, 0, ang, (s32 *)((u8 *)self + 0x2C));
         func_80019310((s32 *)((u8 *)self + 0x78), spE0, spB8);
-        func_80010820(spB8);
-        func_8001006C((s32 *)((u8 *)self + 0x2C), (s32 *)((u8 *)self + 0x2C), 3);
+        gGteLoadRotation(spB8);
+        gGteTransformWords((s32 *)((u8 *)self + 0x2C), (s32 *)((u8 *)self + 0x2C), 3);
     } else {
         func_80019310((s32 *)((u8 *)self + 0x78), spE0, (s32 *)((u8 *)self + 0x2C));
     }
-    func_80010750((s32 *)((u8 *)self + 0x2C));
-    func_80010234((s32 *)((u8 *)self->mi.model->frames + ((self->mi.frame << 4) + 8)),
+    gGteLoadMatrix((s32 *)((u8 *)self + 0x2C));
+    gGteTransformVerticesWide((s32 *)((u8 *)self->mi.model->frames + ((self->mi.frame << 4) + 8)),
                   (s32 *)((u8 *)self + 0x5C), 1);
 }
 

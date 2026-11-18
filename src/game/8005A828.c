@@ -11,7 +11,7 @@ extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern s16 gRadiusTable[] __asm__("D_8009AFB4");
 
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 
 /**
  * @brief Emits a three-segment line fan around an origin.
@@ -53,7 +53,7 @@ void func_8005A828(s32 origin, u32 angle, s32 code)
     arg1 = &sine;
     __asm__ volatile ("" : "+r"(arg0), "+r"(arg1), "+r"(saved_code));
     arg2 = &cosine;
-    func_8001846C(arg0, arg1, arg2);
+    gSinCos(arg0, arg1, arg2);
     line = (struct LineF3 *)gPacketCursor;
     if (gPacketCursor < gPacketLimit) {
         gPacketCursor += 0x1C;

@@ -63,7 +63,7 @@ extern struct Game *gGameSession __asm__("D_8009FA94");
 extern void *func_80017EBC(s32, s32);
 extern void func_8002AD58(s32, struct Object *, struct Data *, s32);
 extern void func_80044988(void *, void *, s32, s32);
-extern void func_800573A4(struct Data8 *, struct Object *);
+extern void gResetActorAndPlaceView(struct Data8 *, struct Object *) __asm__("func_800573A4");
 extern void func_80013BD8(void *, void *, s32);
 extern struct Object *func_80057914(struct Object *);
 extern s32 func_80067684(void *, s32);
@@ -187,7 +187,7 @@ found:
     D_8009FA58[index] = obj;
     state->index = index;
     state->unkDF = 0;
-    func_800573A4(data->d8, obj);
+    gResetActorAndPlaceView(data->d8, obj);
     obj->unkC4 = 0;
     d4 = data->d4;
     if (d4->p18) obj->modelE0 = *d4->p18; else obj->modelE0 = 0;

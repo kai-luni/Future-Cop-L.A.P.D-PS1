@@ -29,6 +29,11 @@
  * @par Siblings
  * func_800101D4 (vector register as input), func_8001016C (adds a 15/16
  * correction on Y), func_80010234 (32-bit results, output stride 0xC).
+ *
+ * @par Environment path
+ * Batch vertex transform of 8-byte vertices. Called by the light setups
+ * (func_80013F08, func_8001428C), the map-cell drawers (func_8004A048,
+ * func_80051CC4) and the player instance submission (func_800597C0).
  */
 __asm__(
     ".set noreorder\n"

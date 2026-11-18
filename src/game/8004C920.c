@@ -58,7 +58,7 @@ struct Unk4C920 {
 extern u8 D_8004C324[];
 extern void *func_80017EBC(s32 size, s32 tag);
 extern void func_8003C14C(struct Unk4C920 *dest, struct Unk4C920Source *src);
-extern void func_800188D0(s32, s32, s32, struct Unk4C920Work *);
+extern void gBuildRotationMatrix(s32, s32, s32, struct Unk4C920Work *) __asm__("func_800188D0");
 
 /**
  * @brief Allocates and initializes a 0x88-byte debris/fracture entity for spawn-source kind 0x5A with handler D_8004C324.
@@ -97,7 +97,7 @@ void *func_8004C920(struct Unk4C920Source *src)
     dest->unk68 = src->unk3A;
     dest->unk6A = src->unk3C;
     dest->unk6C = src->unk3E;
-    func_800188D0(src->unk40, -src->unk42, 0, &work);
+    gBuildRotationMatrix(src->unk40, -src->unk42, 0, &work);
     dest->unk70 = work.x >> 4;
     dest->unk72 = work.y >> 4;
     dest->unk74 = work.z >> 4;

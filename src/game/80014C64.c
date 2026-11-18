@@ -8,7 +8,7 @@ typedef struct { u8 b[0x34]; } Prim;
 extern Cam *gCamera __asm__("D_8009F9E4");
 extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
-extern void func_80010820(void *);
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void func_8001047C(u16 *, u16 *, u8 *, s32);
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
@@ -69,7 +69,7 @@ void func_80014C64(s32 *from, s32 *to, Eff *e)
     qq[0] = (to[0] - gCamera->cx) >> 4;
     qq[1] = (to[1] - gCamera->cy) >> 4;
     qq[2] = (to[2] - gCamera->cz) >> 4;
-    func_80010820(gCamera->m);
+    gGteLoadRotation(gCamera->m);
     func_8001047C(pp, pp, out, 2);
     if ((out[0] | out[1]) & 1) return;
 

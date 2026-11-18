@@ -14,8 +14,8 @@ typedef struct Obj {
 } Obj;
 extern void func_80040550(Obj *, s32);
 extern void func_80040600(Obj *, s32,s32,s32);
-extern void func_80010820(void *);
-extern void func_8001006C(Vec *, Vec *, s32);
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
+extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
 extern void func_80049980(void *,s32,s32,s32,s32,s32,s32,s32,s32);
 /**
  * @brief Integrates the motion of an object list and moves its light.
@@ -84,15 +84,15 @@ void func_80040A00(Obj *node, s32 dt)
             if (o->parent) p = o->parent->parent;
             if (p) {
                 if (!(o->flags1a & 0x100)) goto direct;
-                func_80010820((u8 *)p + 4);
-                func_8001006C(&o->pos, &pos, 1);
+                gGteLoadRotation((u8 *)p + 4);
+                gGteTransformWords(&o->pos, &pos, 1);
                 pos.x = o->pos.x + p->x;
                 pos.y = o->pos.y + p->y;
                 pos.z = o->pos.z + p->z;
             } else {
                 if (!(o->flags1a & 0x100) || !o->parent) goto direct;
-                func_80010820((u8 *)o->parent + 4);
-                func_8001006C(&o->pos, &pos, 1);
+                gGteLoadRotation((u8 *)o->parent + 4);
+                gGteTransformWords(&o->pos, &pos, 1);
                 pos.x = o->pos.x + o->parent->x;
                 pos.y = o->pos.y + o->parent->y;
                 pos.z = o->pos.z + o->parent->z;

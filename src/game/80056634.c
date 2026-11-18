@@ -46,8 +46,10 @@ extern Object56634 *D_8009FA58[2];
 extern void func_8005612C(Vec56634 *pos, s32 angle, s32 angle2, s32 pitch, s32 dist,
                           Vec56634 *src, Vec56634 *dst, s32 val, s32 val2);
 extern void func_80017B60(s32 id);
-extern void func_800177AC(Vec56634 *position);
-extern void func_80017860(s32 yaw, s32 pitch, s32 roll);
+extern void gSetCameraPosition(Vec56634 *position) __asm__("func_800177AC");
+extern void gSetCameraRotation(s32 yaw, s32 pitch, s32 roll) __asm__("func_80017860");
+void gPlacePlayerViews(void) __asm__("func_80056634");
+
 
 /**
  * @brief Places both players' view objects using the per-view offset table.
@@ -74,8 +76,13 @@ extern void func_80017860(s32 yaw, s32 pitch, s32 roll);
  *
  * @par Callers
  * func_800259D8.
+ *
+ * @par Environment path
+ * Places both players' view objects before the frame is drawn; it is the pair
+ * of gSetCameraPosition/gSetCameraRotation that puts the mech's third-person
+ * eye into the active view record.
  */
-void func_80056634(void)
+void gPlacePlayerViews(void)
 {
     s32 i;
     s32 angle;
@@ -101,8 +108,8 @@ void func_80056634(void)
                       D_8009FA58[i]->info->valA8, D_8009FA58[i]->info->valBC);
 
         func_80017B60(D_8009FA58[i]->info->idAC);
-        func_800177AC(&out);
-        func_80017860(angle, entry->f2, 0);
+        gSetCameraPosition(&out);
+        gSetCameraRotation(angle, entry->f2, 0);
 
         {
             Info56634 *info = D_8009FA58[i]->info;

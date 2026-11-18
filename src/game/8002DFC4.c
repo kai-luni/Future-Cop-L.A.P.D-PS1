@@ -79,7 +79,7 @@ struct Arg {
 };
 
 extern s32 func_80067684(struct Vec3 *pos, s32 sel);
-extern void func_800188D0(s32 yaw, s32 pitch, s32 roll, void *matrix);
+extern void gBuildRotationMatrix(s32 yaw, s32 pitch, s32 roll, void *matrix) __asm__("func_800188D0");
 extern s32 func_8001A100(s32 *vector);
 extern void func_80044988(u8 *data, void *track, u8 forward, s32 index);
 extern void func_80060668(void *in, void *out);
@@ -155,7 +155,7 @@ s32 func_8002DFC4(struct Obj *obj, struct Arg *arg)
     sel = st->unk35 == 0 ? -1 : st->unk35 == 1 ? -2 : st->unk35 - 2;
     obj->pos.y = func_80067684(&obj->pos, sel) + (st->unk36 << 4);
     obj->unkE4 = st->unk38.u;
-    func_800188D0(st->unk38.s, 0, 0, (u8 *)obj + 0x2C);
+    gBuildRotationMatrix(st->unk38.s, 0, 0, (u8 *)obj + 0x2C);
 
     obj->unkE8 = (st->unk40 << 4) / 300;
     if (st->unk40 > 0 && obj->unkE8 == 0) {

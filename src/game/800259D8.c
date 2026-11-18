@@ -31,7 +31,7 @@ extern void func_80025690(void);
 extern void func_80024EC8(void);
 extern void func_80047690(u8 enable);
 extern void func_8006AB38(void *arg0);
-extern void func_80056634(void);
+extern void gPlacePlayerViews(void) __asm__("func_80056634");
 
 /**
  * @brief Runs one front-end screen frame: prepare the screen, draw the
@@ -159,7 +159,7 @@ s32 gPrepareAndSubmitFrame(void)
 
     one = 1;
     if (gMissionWorkingSet != 0) {
-        func_80056634();
+        gPlacePlayerViews();
         one = 1;
     }
 

@@ -67,8 +67,8 @@ struct Unk4ABE4 {
 
 extern void *func_80017EBC(s32 size, s32 tag);
 extern s32 func_80019668(void);
-extern void func_80010820(u8 *arg0);
-extern void func_8001006C(void *arg0, void *arg1, s32 arg2);
+extern void gGteLoadRotation(u8 *arg0) __asm__("func_80010820");
+extern void gGteTransformWords(void *arg0, void *arg1, s32 arg2) __asm__("func_8001006C");
 extern void func_8003E984(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
 /**
@@ -176,8 +176,8 @@ s32 func_8004ABE4(struct Unk4ABE4 *object, struct Unk4ABE4Arg1 *arg1)
     }
 
     if (object->unk1A & 0x104) {
-        func_80010820(context + 4);
-        func_8001006C((u8 *)object->unk80 + 0x0C, (u8 *)object->unk80 + 0x0C, 1);
+        gGteLoadRotation(context + 4);
+        gGteTransformWords((u8 *)object->unk80 + 0x0C, (u8 *)object->unk80 + 0x0C, 1);
     }
 
     if (arg1 != 0 && (arg1->unk49 & 2)) {

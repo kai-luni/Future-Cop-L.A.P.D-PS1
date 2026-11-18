@@ -20,12 +20,12 @@ struct Obj {
 
 extern void func_80017668(void *, s32, void *);
 extern s32 func_80095C30(s32, s32);
-extern void func_800188D0(s32, s32, s32, void *);
-extern void func_80010820(void *);
-extern void func_8001006C(void *, void *, s32);
-extern void func_8001846C(s32, s32 *, s32 *);
-extern void func_80010750(void *);
-extern void func_80010234(void *, void *, s32);
+extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
+extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
+extern void gSinCos(s32, s32 *, s32 *) __asm__("func_8001846C");
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern s32 func_80044B34(void *, void *, s32, s32);
 extern void func_800175F8(void *, s32);
 extern s32 func_80060238(void *, s32, void *, void *, s32);
@@ -239,10 +239,10 @@ void func_80038A00(struct Obj *obj, s32 dt)
             STEP(yaw, s2);
         }
 apply:
-        func_800188D0(obj->yaw, obj->pitch, 0, obj->m);
+        gBuildRotationMatrix(obj->yaw, obj->pitch, 0, obj->m);
         if (!(obj->info->flags & 0x1000)) {
-            func_80010820(info->m);
-            func_8001006C(obj->m, obj->m, 3);
+            gGteLoadRotation(info->m);
+            gGteTransformWords(obj->m, obj->m, 3);
         }
     } else {
         s32 h = (s16)info->h10C;
@@ -268,7 +268,7 @@ apply:
             register s32 i6 __asm__("$4");
             register s32 p3 __asm__("$3");
             register s32 p2 __asm__("$2");
-            func_8001846C(obj->pitch, &sc[0], &sc[1]);
+            gSinCos(obj->pitch, &sc[0], &sc[1]);
             {
                 s32 t0 = info->m[0], t1 = info->m[1], t2 = info->m[2];
                 obj->m[0] = t0; obj->m[1] = t1; obj->m[2] = t2;
@@ -293,7 +293,7 @@ apply:
             FMUL(p2, c, i6); FMUL(p3, s, i3); p2 += p3; obj->m[8] = p2;
         }
     }
-    func_80010750(obj->m);
+    gGteLoadMatrix(obj->m);
     {
         register s32 *out __asm__("$5");
         register s32 one __asm__("$6");
@@ -312,7 +312,7 @@ apply:
         __asm__("" : : "r"(frames));
         fo += 8;
         __asm__("" : : "r"(fo));
-        func_80010234((u8 *)((s32)frames + fo), out, one);
+        gGteTransformVerticesWide((u8 *)((s32)frames + fo), out, one);
     }
     obj->old[0] = obj->m[6]; obj->old[1] = obj->m[7]; obj->old[2] = obj->m[8];
     __asm__ volatile ("" : : : "memory");

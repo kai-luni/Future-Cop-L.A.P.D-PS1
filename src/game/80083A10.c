@@ -66,12 +66,12 @@ extern void func_80083834(s32 arg0, s32 arg1);
 extern void func_80013BD8(struct Node3A10 *node, struct Model3A10 *model, s32 options);
 extern u32 func_80019668(void);
 extern s32 func_80067684(void *vec, s32 adjust);
-extern void func_800188D0(s32 x, s32 y, s32 z, void *arg3);
-extern void func_80010820(void *matrix);
-extern void func_8001006C(void *src, void *dst, s32 count);
+extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, void *arg3) __asm__("func_800188D0");
+extern void gGteLoadRotation(void *matrix) __asm__("func_80010820");
+extern void gGteTransformWords(void *src, void *dst, s32 count) __asm__("func_8001006C");
 extern s32 func_80083764(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-extern void func_80010750(void *a);
-extern void func_80010234(void *a, void *b, s32 c);
+extern void gGteLoadMatrix(void *a) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 
 /**
  * @brief Turns one spawn request into a render node: takes a node from the
@@ -305,7 +305,7 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
             }
             node->unk57 = 0;
         }
-        func_800188D0(px, py, pz, &node->mat[0][0]);
+        gBuildRotationMatrix(px, py, pz, &node->mat[0][0]);
         i = 0;
         if (req->unk1F != 0x40 || req->unk20 != 0x4040) {
             q = (s8 *)node;
@@ -350,8 +350,8 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
     mtx[6] = 0;
     mtx[7] = 0;
     mtx[8] = blk[5] << 4;
-    func_80010820(&node->mat[0][0]);
-    func_8001006C(mtx, dst, 4);
+    gGteLoadRotation(&node->mat[0][0]);
+    gGteTransformWords(mtx, dst, 4);
     originX = node->unk28;
     dst[3].y += node->unk2C;
     dst[3].z += node->unk30;
@@ -423,12 +423,12 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
     gBucketArray[idx].arena = gDiscShadeByte;
     if (node->unk57 != 0) {
         register s32 frame __asm__("$4");
-        func_80010750(&node->mat[0][0]);
+        gGteLoadMatrix(&node->mat[0][0]);
         frame = node->unk48;
         frame <<= 4;
         __asm__("" : "+r"(frame));
         frame += 8;
-        func_80010234((u8 *)node->model->unk34 + frame,
+        gGteTransformVerticesWide((u8 *)node->model->unk34 + frame,
                       &node->unk34, 1);
     }
     return 1;

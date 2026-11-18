@@ -39,9 +39,9 @@ struct Par {
 extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
 extern s32 func_80019668(void);
 extern void func_8003D0F0(s32 *a, s32 b, s32 c, s32 *d);
-extern void func_80010820(s32 *a);
-extern void func_8001006C(void *a, void *b, s32 c);
-extern void func_800188D0(s32 a, s32 b, s32 c, void *d);
+extern void gGteLoadRotation(s32 *a) __asm__("func_80010820");
+extern void gGteTransformWords(void *a, void *b, s32 c) __asm__("func_8001006C");
+extern void gBuildRotationMatrix(s32 a, s32 b, s32 c, void *d) __asm__("func_800188D0");
 
 static inline s32 rot_a(struct Obj *o, s32 *dst, struct Mtx *m)
 {
@@ -64,7 +64,7 @@ static inline s32 rot_a(struct Obj *o, s32 *dst, struct Mtx *m)
         if (tb < 0) {
             b = (u32)func_80019668() % (u32)-o->b;
         }
-        func_800188D0(a, -b, 0, m);
+        gBuildRotationMatrix(a, -b, 0, m);
         __asm__ ("" : "+r"(dst));
         {
             s32 t, s;
@@ -118,7 +118,7 @@ static inline s32 rot_b(struct Obj *o, void *m)
     if ((s16)a == 0 && (s16)b == 0x400) {
         return 0;
     }
-    func_800188D0((s16)a, 0x400 - (s16)b, 0, m);
+    gBuildRotationMatrix((s16)a, 0x400 - (s16)b, 0, m);
     return 1;
 }
 
@@ -267,14 +267,14 @@ void func_8003DB70(struct Obj *o, s32 *x, struct Par *p_arg, u8 *y, s32 *out, s1
             }
             if (!(o->flags & 0x100)) {
                 if (o->flags & 4) {
-                    func_80010820(s1 + 1);
-                    func_8001006C(out + 9, out + 9, 1);
+                    gGteLoadRotation(s1 + 1);
+                    gGteTransformWords(out + 9, out + 9, 1);
                     out[9] += s1[10];
                     out[10] += s1[11];
                     out[11] += s1[12];
                     if (rot_b(o, &m2) & 0xFF) {
-                        func_80010820(p->unk34 + 1);
-                        func_8001006C(&m2, out, 3);
+                        gGteLoadRotation(p->unk34 + 1);
+                        gGteTransformWords(&m2, out, 3);
                     } else {
                         out[0] = p->unk34[1];
                         out[1] = p->unk34[2];
@@ -322,8 +322,8 @@ L4D8:
             }
             if (o->flags & 0x104) {
                 if (rot_b(o, &m2) & 0xFF) {
-                    func_80010820(p->w + 1);
-                    func_8001006C(&m2, out, 3);
+                    gGteLoadRotation(p->w + 1);
+                    gGteTransformWords(&m2, out, 3);
                 } else {
                     out[0] = p->w[1];
                     out[1] = p->w[2];

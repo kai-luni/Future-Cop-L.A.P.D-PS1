@@ -29,8 +29,8 @@ struct Ent {
 };
 
 extern void func_80019470(struct Mat3 *source, struct Mat3 *destination);
-extern void func_80010820(void *matrix);
-extern void func_8001006C(s32 *source, s32 *destination, s32 count);
+extern void gGteLoadRotation(void *matrix) __asm__("func_80010820");
+extern void gGteTransformWords(s32 *source, s32 *destination, s32 count) __asm__("func_8001006C");
 
 /**
  * @brief Overlap test between two entities: a world-axis broad phase
@@ -121,8 +121,8 @@ s32 func_80031238(struct Ent *self, struct Ent *other)
     r[1] = sb->unk38 - sa->unk2C;
     r[2] = sb->unk3C - sa->unk30;
 
-    func_80010820(&matrix);
-    func_8001006C(r, r, 1);
+    gGteLoadRotation(&matrix);
+    gGteTransformWords(r, r, 1);
 
     first = r[0];
     {

@@ -3,7 +3,7 @@
 
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 
 /**
  * @brief Rotates a 2D fixed-point vector in place by a 12-bit angle.
@@ -38,7 +38,7 @@ void func_8001A578(u32 angle, s32 *vec)
     register s32 a __asm__("$4");
     register s32 x __asm__("$5");
 
-    func_8001846C(angle, &sine, &cosine);
+    gSinCos(angle, &sine, &cosine);
 
     x = vec[0];
     b = cosine;

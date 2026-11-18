@@ -19,9 +19,9 @@ extern u8 func_80060238(void *, s32, u8 *, s32, s32);
 extern void func_800448D8(void *, s32, s32, u8);
 extern void func_8005F6E8(void *, u8 *, u8 *, s32);
 extern s32 func_80095C30(s32, s32);
-extern void func_800188D0(s32, s32, s32, void *);
-extern void func_80010750(void *);
-extern void func_80010234(void *, void *, s32);
+extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern void func_8001AC28(void *, void *, s32, void *);
 extern void func_800457B8(s32, s32);
 
@@ -306,9 +306,9 @@ case_2:
         base += step;
         base &= 0xFFF;
         U(obj,0xE4) = base;
-        func_800188D0(base, 0, 0, obj + 0x2C);
-        func_80010750(obj + 0x2C);
-        func_80010234(P(P(obj,0x28),0x34) + ((H(obj,0x70) << 4) + 8), obj + 0x5C, 1);
+        gBuildRotationMatrix(base, 0, 0, obj + 0x2C);
+        gGteLoadMatrix(obj + 0x2C);
+        gGteTransformVerticesWide(P(P(obj,0x28),0x34) + ((H(obj,0x70) << 4) + 8), obj + 0x5C, 1);
         *(Vec *)(obj + 0x78) = *(Vec *)(obj + 0x44);
     }
     }
@@ -362,8 +362,8 @@ tail:
         func_800175F8(obj + 0x28, H(obj,0xD4));
     }
 tail2:
-    func_80010750(obj + 0x2C);
-    func_80010234(P(P(obj,0x28),0x34) + ((H(obj,0x70) << 4) + 8), obj + 0x5C, 1);
+    gGteLoadMatrix(obj + 0x2C);
+    gGteTransformVerticesWide(P(P(obj,0x28),0x34) + ((H(obj,0x70) << 4) + 8), obj + 0x5C, 1);
     if (B(obj,0xDD) & 0x40) {
         if (B(obj,0xDC) == 1 || B(obj,0xDC) == 3) {
             B(obj,0x21) = B(obj,0x113);

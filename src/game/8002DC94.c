@@ -68,11 +68,11 @@ struct Arg1 {
 extern s32 func_8002AD58(s32 message, struct Self *self, struct Arg1 *arg1, s32 arg2);
 extern s32 func_80067684(struct Vec3s32 *pos, s32 sel);
 extern s32 func_80066F78(struct Vec3s32 *pos, struct Vec3s32 *out, s32 a2, s32 a3);
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void func_800192AC(struct Vec3s32 *first, struct Vec3s32 *second, struct Basis *basis);
 extern void func_80044988(u8 *data, u8 *track, u8 forward, s32 index);
-extern void func_80010750(struct Basis *basis);
-extern void func_80010234(u8 *ptr, u8 *unk5C, s32 a2);
+extern void gGteLoadMatrix(struct Basis *basis) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(u8 *ptr, u8 *unk5C, s32 a2) __asm__("func_80010234");
 
 /**
  * @brief Spawn initializer for a weapon-derived object: reads the weapon
@@ -148,13 +148,13 @@ s32 func_8002DC94(struct Self *self, struct Arg1 *arg1, s32 arg2)
     self->pos.y = func_80067684(&self->pos, sel) + base;
     if (flag & 1) {
         self->pos.y = func_80066F78(&self->pos, &out, 0, 0) + base;
-        func_8001846C(angle, &sine, &cosine);
+        gSinCos(angle, &sine, &cosine);
         vec.x = cosine;
         vec.y = 0;
         vec.z = sine;
         func_800192AC(&out, &vec, &self->inst.basis);
     } else {
-        func_8001846C(angle, &sine2, &cosine2);
+        gSinCos(angle, &sine2, &cosine2);
         self->inst.basis.rows[2].y = 0;
         self->inst.basis.rows[1].z = 0;
         self->inst.basis.rows[1].x = 0;
@@ -168,8 +168,8 @@ s32 func_8002DC94(struct Self *self, struct Arg1 *arg1, s32 arg2)
     if (self->inst.model->anim != 0) {
         func_80044988(self->inst.model->anim, self->animTrack, 1, 0);
     }
-    func_80010750(&self->inst.basis);
-    func_80010234(self->inst.model->unk34 + (((s32)self->unk70 << 4) + 8), self->unk5C, 1);
+    gGteLoadMatrix(&self->inst.basis);
+    gGteTransformVerticesWide(self->inst.model->unk34 + (((s32)self->unk70 << 4) + 8), self->unk5C, 1);
     self->unkB4 = 0;
     return 0;
 }

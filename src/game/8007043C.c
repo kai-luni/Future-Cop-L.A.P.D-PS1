@@ -80,7 +80,7 @@ extern u8 D_8006FF44[];
 extern void *func_80017EBC(s32 size, s32 tag);
 extern void func_8003C14C(Dest7043C *dest, Source7043C *src);
 extern s32 func_80019668(void);
-extern void func_800188D0(s32 x, s32 y, s32 z, Work7043C *work);
+extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, Work7043C *work) __asm__("func_800188D0");
 
 /**
  * @brief Constructor for spawn kind 0x59: allocates the 0x9C-byte scene object,
@@ -180,7 +180,7 @@ void *func_8007043C(Source7043C *src)
         y = src->unk4C;
     }
 
-    func_800188D0(x, -y, 0, &work);
+    gBuildRotationMatrix(x, -y, 0, &work);
 
     dest->unk94 = (s16)(((work.x >> 4) * src->unk4E) >> 12);
     dest->unk96 = (s16)(((work.y >> 4) * src->unk4E) >> 12);

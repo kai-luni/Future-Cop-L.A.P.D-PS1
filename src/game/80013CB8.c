@@ -26,9 +26,9 @@ struct Input {
 };
 
 extern struct Matrix gBoneMatrices[] __asm__("D_800A0300");
-extern void func_80018DC0(s32, s32, s32, struct Matrix *);
-extern void func_80010820(struct Matrix *);
-extern void func_8001006C(struct Matrix *, struct Matrix *, s32);
+extern void gBuildRotationMatrixVariant(s32, s32, s32, struct Matrix *) __asm__("func_80018DC0");
+extern void gGteLoadRotation(struct Matrix *) __asm__("func_80010820");
+extern void gGteTransformWords(struct Matrix *, struct Matrix *, s32) __asm__("func_8001006C");
 
 /**
  * @brief Composes the transform of node arg0 in the matrix stack
@@ -83,7 +83,7 @@ void func_80013CB8(s32 arg0, struct Input *input, s16 *table, s32 offset)
         rz = table[offset + (u16)input->rz];
     }
 
-    func_80018DC0(rx, ry, rz, &matrix);
+    gBuildRotationMatrixVariant(rx, ry, rz, &matrix);
 
     if (flags & 0x20) {
         matrix.x = input->x << 4;
@@ -106,8 +106,8 @@ void func_80013CB8(s32 arg0, struct Input *input, s16 *table, s32 offset)
     dest = &gBoneMatrices[arg0];
     parent = &gBoneMatrices[arg0 - 1];
 
-    func_80010820(parent);
-    func_8001006C(&matrix, dest, 4);
+    gGteLoadRotation(parent);
+    gGteTransformWords(&matrix, dest, 4);
 
     dest->x += parent->x;
     dest->y += parent->y;

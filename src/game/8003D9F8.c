@@ -6,8 +6,8 @@ typedef int s32;
 typedef struct Matrix { char rot[0x24]; s32 x, y, z; } Matrix;
 typedef struct Parent { char pad[4]; Matrix matrix; } Parent;
 extern s32 D_800A10B4[];
-extern void func_80010820(Matrix *);
-extern void func_8001006C(void *, void *, s32);
+extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
+extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
 
 /**
  * @brief Resolves an object's transform: parent chain, flags and the shared
@@ -40,8 +40,8 @@ Matrix *func_8003D9F8(Parent *arg0, u16 flags, s8 arg2, s32 arg3, Parent *arg4, 
     register s32 px __asm__("$5");
     if (arg0) {
         if (flags & 0x100) {
-            func_80010820(&arg0->matrix);
-            func_8001006C(&arg5->x, D_800A10B4, 1);
+            gGteLoadRotation(&arg0->matrix);
+            gGteTransformWords(&arg5->x, D_800A10B4, 1);
             x = arg5->x;
         y = arg5->y;
         py = arg0->matrix.y;
@@ -55,14 +55,14 @@ Matrix *func_8003D9F8(Parent *arg0, u16 flags, s8 arg2, s32 arg3, Parent *arg4, 
         __asm__ volatile ("" : "+r" (y), "+r" (py) : : "memory");
         D_800A10B4[2] = y + py;
             if ((u8)arg3) {
-                func_80010820(&arg0->matrix);
-                func_8001006C(arg5, (char *)D_800A10B4 - 0x24, 3);
+                gGteLoadRotation(&arg0->matrix);
+                gGteTransformWords(arg5, (char *)D_800A10B4 - 0x24, 3);
             }
             return (Matrix *)((char *)D_800A10B4 - 0x24);
         }
     } else if ((flags & 0x100) && arg4) {
-        func_80010820(&arg4->matrix);
-        func_8001006C(&arg5->x, D_800A10B4, 1);
+        gGteLoadRotation(&arg4->matrix);
+        gGteTransformWords(&arg5->x, D_800A10B4, 1);
         x = arg5->x;
         y = arg5->y;
         py = arg4->matrix.y;
@@ -76,8 +76,8 @@ Matrix *func_8003D9F8(Parent *arg0, u16 flags, s8 arg2, s32 arg3, Parent *arg4, 
         __asm__ volatile ("" : "+r" (y), "+r" (py) : : "memory");
         D_800A10B4[2] = y + py;
         if ((u8)arg3) {
-            func_80010820(&arg4->matrix);
-            func_8001006C(arg5, (char *)D_800A10B4 - 0x24, 3);
+            gGteLoadRotation(&arg4->matrix);
+            gGteTransformWords(arg5, (char *)D_800A10B4 - 0x24, 3);
         }
         return (Matrix *)((char *)D_800A10B4 - 0x24);
     }

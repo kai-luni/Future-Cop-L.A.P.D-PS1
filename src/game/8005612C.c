@@ -22,7 +22,7 @@ struct Locals {
 };
 
 extern s32 gMissionWorkingSet __asm__("D_8009F9A0");
-extern void func_8001846C(s32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(s32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 
 #define FMUL(a, b) ({ s32 r_; __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 #define UFMUL(a, b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
@@ -90,7 +90,7 @@ void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
     s32 absCos;
 
     L.base = *position;
-    func_8001846C(heading, &L.sinH, &L.cosH);
+    gSinCos(heading, &L.sinH, &L.cosH);
 
     L.vec = *(struct Vec3s32 *)data;
 
@@ -111,7 +111,7 @@ void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
         L.vec.z = 0;
     }
 
-    func_8001846C(pitch, &L.sinP, &L.cosP);
+    gSinCos(pitch, &L.sinP, &L.cosP);
 
     absCos = L.cosP;
     if (absCos > 0) {
@@ -154,7 +154,7 @@ scale_done:
         rz = FMUL(sh, vz) + FMUL(ch, vx);
     }
 
-    func_8001846C(angle, &L.sinA, &L.cosA);
+    gSinCos(angle, &L.sinA, &L.cosA);
 
     {
         register s32 b __asm__("$3");

@@ -7,11 +7,11 @@ typedef struct { int m[9]; Vec pos; } Matrix;
 typedef struct { int count, stride; char data[1]; } Shape;
 typedef struct { char pad[12]; u32 flags; char pad10[0x24]; Shape *shape; } Model;
 typedef struct { Model *model; Matrix mat; Vec pos; int radius; char pad44[4]; short frame; } Coord;
-extern void func_80018860(void *, void *);
+extern void gBuildViewMatrix(void *, void *) __asm__("func_80018860");
 extern void func_80019470(void *, void *);
 extern void func_8001A970(void *, void *, void *);
-extern void func_80010820(void *);
-extern void func_8001006C(void *, void *, int);
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
+extern void gGteTransformWords(void *, void *, int) __asm__("func_8001006C");
 extern int func_800618CC(void *, void *, int, int, int);
 extern u32 func_800619C0(void *, void *, void *, int, int);
 
@@ -93,14 +93,14 @@ case0:
         return 0x10001;
 case1:
         pa = (char *)sa + ((a->frame << 4) + 8);
-        func_80018860(&a->mat, &m1);
+        gBuildViewMatrix(&a->mat, &m1);
         func_8001A970(&m1, &b->pos, &v);
         n = func_800618CC(pa, &v, b->radius, sa->count, sa->stride);
         if (n < 0) goto ret0;
         return (1 << (31-n)) | 1;
 case2:
         pb = (char *)sb + ((b->frame << 4) + 8);
-        func_80018860(&b->mat, &m1);
+        gBuildViewMatrix(&b->mat, &m1);
         func_8001A970(&m1, &a->pos, &v);
         n = func_800618CC(pb, &v, a->radius, sb->count, sb->stride);
         if (n < 0) goto ret0;
@@ -114,8 +114,8 @@ case3:
         a->mat.pos.y -= b->mat.pos.y;
         a->mat.pos.z -= b->mat.pos.z;
         bits = i = 0;
-        func_80010820(&m1);
-        func_8001006C(&a->mat, &m2, 4);
+        gGteLoadRotation(&m1);
+        gGteTransformWords(&a->mat, &m2, 4);
         a->mat.pos = *(Vec *)&v;
         n = sa->count;
         p = pa;
@@ -126,7 +126,7 @@ case3:
             hits[i] = hit;
         }
         if (bits == 0) goto ret0;
-        func_80018860(&m2, &m1);
+        gBuildViewMatrix(&m2, &m1);
         j = 0; p = pb; n = sb->count; mask = 0x80000000;
         if (n >= 2) { j = 1; p += sb->stride; mask = 0x40000000; }
         result = 0;

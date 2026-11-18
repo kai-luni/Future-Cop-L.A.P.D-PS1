@@ -18,6 +18,11 @@
  * @par Callers
  * None in the symbol table (inlined); the callers are the model renderers that
  * need a rotation-only matrix.
+ *
+ * @par Environment path
+ * Same upload without translation, i.e. the orientation only. func_80066E98
+ * calls it once before each of the two region draws, so the camera rotation
+ * at gCamera+0x28 is re-established for each layer.
  */
 __asm__(
     ".set noreorder\n"

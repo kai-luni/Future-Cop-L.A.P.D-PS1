@@ -26,7 +26,7 @@ typedef struct {
 typedef struct { u8 pad00[8]; Data *data; } DataHolder;
 
 extern s32 func_8002AD58(s32, Object *, DataHolder *);
-extern void func_800188D0(s32, s32, s32, void *);
+extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern s32 func_80066F78(void *, s32, s32, s32);
 extern u32 func_80095900(s32);
 
@@ -68,7 +68,7 @@ s32 func_80041E0C(s32 arg0, Object *obj, DataHolder *holder)
     register u32 flags __asm__("$2");
     func_8002AD58(2, obj, holder);
     data = holder->data;
-    func_800188D0(data->x, data->y, data->z, obj->coord);
+    gBuildRotationMatrix(data->x, data->y, data->z, obj->coord);
     obj->position.y = func_80066F78(&obj->position, 0, 0, 0) + (data->offset << 4);
     obj->previous = obj->position;
     flags = obj->flags;

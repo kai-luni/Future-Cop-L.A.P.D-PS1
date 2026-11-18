@@ -89,11 +89,11 @@ struct Emitter {
     s16 unk98;
 };
 
-extern void func_8001006C(void *src, void *dst, s32 count);
-extern void func_80010820(void *m);
+extern void gGteTransformWords(void *src, void *dst, s32 count) __asm__("func_8001006C");
+extern void gGteLoadRotation(void *m) __asm__("func_80010820");
 extern void func_80017668(void *inst, s32 part, s32 *out);
 extern s32 func_80019F54(s32 *v);
-extern void func_8001A81C(void *m, void *in, void *out);
+extern void gMulMatrixVector(void *m, void *in, void *out) __asm__("func_8001A81C");
 extern void *func_8003BEF0(void *node);
 extern void func_8003BF1C(void *pool, void *prev, void *node);
 extern struct Xform *func_8003D9C4(struct Emitter *e);
@@ -188,12 +188,12 @@ void func_80075A84(struct Emitter *e, s32 step)
                 func_8003D9F8(e->sub ? e->sub->child : 0, e->flags1A, e->part, 1, e->sub, &e->mat);
             }
             if (self->flags1A & 0x100) {
-                func_8001A81C(xf, self->pad58, vec);
+                gMulMatrixVector(xf, self->pad58, vec);
             } else if (self->flags8E & 0x10) {
                 *(struct Vec3s32 *)vec = self->pos;
             } else {
-                func_80010820(xf);
-                func_8001006C(&self->pos, vec, 1);
+                gGteLoadRotation(xf);
+                gGteTransformWords(&self->pos, vec, 1);
                 vec[0] = self->pos.x + xf->pos.x;
                 vec[1] = self->pos.y + xf->pos.y;
                 vec[2] = self->pos.z + xf->pos.z;

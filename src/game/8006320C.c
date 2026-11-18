@@ -10,7 +10,7 @@ typedef struct { Object *obj; u8 id; char pad[3]; } Entry;
 extern s32 gQueueCount __asm__("D_8009F838");
 extern Entry gObjectKeyTable[] __asm__("D_800A31A0");
 extern s32 func_8001A750(s32 *, s32 *);
-extern void func_80018860(void *, void *);
+extern void gBuildViewMatrix(void *, void *) __asm__("func_80018860");
 extern void func_8001A970(void *, void *, void *);
 
 /**
@@ -54,7 +54,7 @@ Object *func_8006320C(Vec *pos, Vec *out, s32 *height, u8 *id)
         if (!(obj->flags & 0x20000000)) goto next;
         t = &obj->transform;
         if (func_8001A750(&obj->transform.matrix[12], (s32 *)pos) >= (t->radius << 4)) goto next;
-        func_80018860(&t->matrix, matrix);
+        gBuildViewMatrix(&t->matrix, matrix);
         func_8001A970(matrix, pos, &local);
         offset = (t->index << 4) + 8;
         model = t->model;

@@ -27,8 +27,8 @@ extern s32 func_8002AD58(s32, struct Object *, struct Other *);
 extern void func_80050E0C(void *, void *, s32, void *, void *);
 extern s32 func_80050D14(void *, struct Other *, struct Object *);
 extern void func_80039BD0(struct Object *);
-extern void func_80010750(void *);
-extern void func_80010234(void *, void *, s32);
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern struct Object *gMissionWorkingSet __asm__("D_8009F9A0");
 #define current gMissionWorkingSet
 #define barrier() __asm__ volatile("" : : : "memory")
@@ -73,14 +73,14 @@ s32 func_80039C58(s32 message, struct Object *self, struct Other *other)
         func_80050E0C(part->data, self->anim, other->info->value, self, &self->position);
         self->flags &= 0x7fffffff;
         if (self->state) {
-            func_80010750(self->matrix);
+            gGteLoadMatrix(self->matrix);
             offset = self->frame;
             pointer = (u8 *)self->state;
             offset <<= 4;
             __asm__("" : "=r"(offset) : "0"(offset));
             pointer = ((struct State *)pointer)->frames;
             offset += 8;
-            func_80010234(pointer + offset, &self->output, 1);
+            gGteTransformVerticesWide(pointer + offset, &self->output, 1);
         } else {
             self->output = self->position;
         }
@@ -91,14 +91,14 @@ s32 func_80039C58(s32 message, struct Object *self, struct Other *other)
         if (self->command) func_80039BD0(self);
         if (func_80050D14(self->anim, other, self)) {
             if (self->state) {
-                func_80010750(self->matrix);
+                gGteLoadMatrix(self->matrix);
                 offset = self->frame;
             pointer = (u8 *)self->state;
             offset <<= 4;
             __asm__("" : "=r"(offset) : "0"(offset));
             pointer = ((struct State *)pointer)->frames;
             offset += 8;
-            func_80010234(pointer + offset, &self->output, 1);
+            gGteTransformVerticesWide(pointer + offset, &self->output, 1);
             } else {
                 self->output = self->position;
             }

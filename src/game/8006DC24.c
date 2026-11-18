@@ -48,11 +48,11 @@ extern s32 gTexpageBaseTable[] __asm__("D_800A8E80");
 
 extern s32 *func_8003D9F8();
 extern s32 func_8001A100();
-extern void func_80010820();
-extern void func_8001006C();
-extern void func_80010750();
+extern void gGteLoadRotation() __asm__("func_80010820");
+extern void gGteTransformWords() __asm__("func_8001006C");
+extern void gGteLoadMatrix() __asm__("func_80010750");
 extern void func_8001047C();
-extern void func_8001846C();
+extern void gSinCos() __asm__("func_8001846C");
 
 /**
  * @brief Draws a model node as a textured mesh part: vertices, UVs and packets.
@@ -122,8 +122,8 @@ void func_8006DC24(Obj *o, s32 *pos)
     vec[0] = s0[9] - gCamera[0x1F];
     vec[1] = s0[10] - gCamera[0x20];
     vec[2] = s0[11] - gCamera[0x21];
-    func_80010820(gCamera + 10);
-    func_8001006C(s2, w.flag, 1);
+    gGteLoadRotation(gCamera + 10);
+    gGteTransformWords(s2, w.flag, 1);
     if (o->f98 & 0x20) {
         mt = o->mat.m[0];
         w.mat[1] = o->mat.m[1];
@@ -136,10 +136,10 @@ void func_8006DC24(Obj *o, s32 *pos)
         w.mat[8] = o->mat.m[8];
         w.mat[0] = mt;
     } else {
-        func_80010820(gCamera + 10);
-        func_8001006C(s0, w.mat, 3);
+        gGteLoadRotation(gCamera + 10);
+        gGteTransformWords(s0, w.mat, 3);
     }
-    func_80010750(w.mat);
+    gGteLoadMatrix(w.mat);
     step = 0x200 / half;
     fp = 8;
     if (o->f98 & 0x400) fp = 2;
@@ -148,7 +148,7 @@ void func_8006DC24(Obj *o, s32 *pos)
     else
         cnt = half;
     for (k = 0; k < cnt; k++) {
-        func_8001846C(angle, &c, &s);
+        gSinCos(angle, &c, &s);
         c >>= 4;
         s >>= 4;
         pts[0][0] = (o->f12 * c) >> 12;
@@ -161,7 +161,7 @@ void func_8006DC24(Obj *o, s32 *pos)
         }
         if (k == half - 1) angle = 0x200;
         else angle += step;
-        func_8001846C(angle, &c, &s);
+        gSinCos(angle, &c, &s);
         c >>= 4;
         s >>= 4;
         if (o->f98 & 0x10) {

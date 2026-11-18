@@ -24,9 +24,9 @@ struct Obj {
 };
 extern void func_8002CB20(struct Obj *);
 extern void func_80060238(void *, s32, struct Obj *, s32, s32);
-extern void func_800188D0(s32, s32, s32, void *);
-extern void func_80010750(void *);
-extern void func_80010234(void *, void *, s32);
+extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern struct Obj *func_8004E80C(struct Obj *, s32, s32, s32, s32, s32, s32);
 extern s32 func_8001A100(s32 *);
 extern s32 func_80095C30(s32, s32);
@@ -155,9 +155,9 @@ s32 func_8002CC30(struct Obj *self, s32 dt)
     if (self->flags & 4) goto done;
     if (self->flags & 2) {
         self->yaw = (self->yaw + dt * self->speed) & 0xfff;
-        func_800188D0(self->timer, 0, self->yaw, self->matrix);
-        func_80010750(self->matrix);
-        func_80010234(&self->model->frames->frame[self->frame], &self->pos, 1);
+        gBuildRotationMatrix(self->timer, 0, self->yaw, self->matrix);
+        gGteLoadMatrix(self->matrix);
+        gGteTransformVerticesWide(&self->model->frames->frame[self->frame], &self->pos, 1);
         goto done;
     }
     if (!(self->flags & 1)) goto done;
@@ -265,9 +265,9 @@ rotate:
             if (diff < 0) step = -step;
             self->pitch = (self->pitch + step) & 0xfff;
         }
-        func_800188D0(self->yaw, self->pitch, 0, self->matrix);
-        func_80010750(self->matrix);
-        func_80010234(&self->model->frames->frame[self->frame], &self->pos, 1);
+        gBuildRotationMatrix(self->yaw, self->pitch, 0, self->matrix);
+        gGteLoadMatrix(self->matrix);
+        gGteTransformVerticesWide(&self->model->frames->frame[self->frame], &self->pos, 1);
         self->old.x = *(s32 *)(self->matrix + 0x18);
         self->old.y = *(s32 *)(self->matrix + 0x1c);
         self->old.z = *(s32 *)(self->matrix + 0x20);

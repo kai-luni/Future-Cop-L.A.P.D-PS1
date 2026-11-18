@@ -25,7 +25,7 @@ struct Obj {
 };
 extern s32 gSceneFrameCounter __asm__("D_8009FA50");
 extern void func_8006D520(Obj *);
-extern void func_800188D0(s32, s32, s32, void *);
+extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 
 /**
  * @brief Per-frame update of a list of effect nodes: colour fade, sprite-sheet
@@ -120,7 +120,7 @@ void func_8006D770(Obj *node, s32 dt)
         if (*(s32 *)&p->field94) {
             p->field90 = (p->field90 + (s16)((dt * p->field94) >> 8)) % 4096;
             p->field92 = (p->field92 + (s16)((dt * p->field96) >> 8)) % 4096;
-            func_800188D0(p->field90, 1024 - p->field92, 0, p->matrix);
+            gBuildRotationMatrix(p->field90, 1024 - p->field92, 0, p->matrix);
         }
         if (p->field6a > 0) {
             p->field68 -= (p->field6a * dt) >> 7;

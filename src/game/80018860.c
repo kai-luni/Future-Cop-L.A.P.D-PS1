@@ -17,7 +17,9 @@ struct Matrix {
 };
 
 extern void func_80019470(struct Matrix32 *source, struct Matrix32 *destination);
-extern void func_8001A81C(struct Matrix32 *matrix, struct Vec3s32 *input, struct Vec3s32 *output);
+extern void gMulMatrixVector(struct Matrix32 *matrix, struct Vec3s32 *input, struct Vec3s32 *output) __asm__("func_8001A81C");
+void gBuildViewMatrix(u8 *rotation, u8 *matrix) __asm__("func_80018860");
+
 
 /**
  * @brief Converts a rotation-plus-translation pose into the inverse view
@@ -40,8 +42,12 @@ extern void func_8001A81C(struct Matrix32 *matrix, struct Vec3s32 *input, struct
  *
  * @par Callers
  * func_80017860, func_80061CAC.
+ *
+ * @par Environment path
+ * Builds the view matrix from a pose record; the camera setter func_80017860
+ * calls it, and its result is what gGteLoadMatrix uploads.
  */
-void func_80018860(u8 *rotation, u8 *matrix)
+void gBuildViewMatrix(u8 *rotation, u8 *matrix)
 {
     struct Matrix *rot = (struct Matrix *)rotation;
     struct Matrix *mat = (struct Matrix *)matrix;
@@ -49,7 +55,7 @@ void func_80018860(u8 *rotation, u8 *matrix)
 
     func_80019470(&rot->rotation, &mat->rotation);
     t = &mat->translation;
-    func_8001A81C(&mat->rotation, &rot->translation, t);
+    gMulMatrixVector(&mat->rotation, &rot->translation, t);
     mat->translation.x = -mat->translation.x;
     t->y = -t->y;
     t->z = -t->z;

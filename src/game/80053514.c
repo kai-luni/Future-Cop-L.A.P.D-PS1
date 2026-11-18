@@ -35,7 +35,7 @@ typedef struct {
     void *unkC4;
 } Unk53514Obj;
 
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void func_8001A578(s32 angle, s32 *offset, s32 arg2);
 
 /**
@@ -94,7 +94,7 @@ void func_80053514(Unk53514Obj *arg0, Unk53514Arg *arg1)
             if (delta != 0) {
                 angle = (obj->unkB0 + delta) & 0xFFF;
                 obj->unkB0 = angle;
-                func_8001846C(angle, &obj->unkA0, &obj->unkA8);
+                gSinCos(angle, &obj->unkA0, &obj->unkA8);
 
                 av = sub->unk5C;
                 unk50v = sub->unk50;

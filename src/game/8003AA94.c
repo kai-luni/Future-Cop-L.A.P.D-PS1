@@ -66,9 +66,9 @@ extern s32 func_80019668(void);
 extern Entry *func_8003A90C(Entry *, s32);
 extern s32 func_8004B244(void *, void *, Vec *);
 extern void func_8004B310(void *, Vec *, Vec *, s32, s16 *, s16 *, s32 *, Vec *);
-extern void func_80018DC0(s32, s32, s32, Matrix *);
-extern void func_80010820(Matrix *);
-extern void func_8001006C(Matrix *, Matrix *, s32);
+extern void gBuildRotationMatrixVariant(s32, s32, s32, Matrix *) __asm__("func_80018DC0");
+extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
+extern void gGteTransformWords(Matrix *, Matrix *, s32) __asm__("func_8001006C");
 extern s32 func_80066F78(Vec *, s32, s32, s32);
 
 /**
@@ -205,14 +205,14 @@ s32 func_8003AA94(s32 unused, Object *out, Arg *arg)
             if (flags & 4) rx = entry->rx; else rx = table[offset + entry->rx];
             if (flags & 2) ry = entry->ry; else ry = table[offset + entry->ry];
             if (flags & 1) rz = entry->rz; else rz = table[offset + entry->rz];
-            func_80018DC0(rx, ry, rz, &matrix);
+            gBuildRotationMatrixVariant(rx, ry, rz, &matrix);
             if (flags & 0x20) matrix.x = entry->x << 4; else matrix.x = table[offset + entry->x] << 4;
             if (flags & 0x10) matrix.y = entry->y << 4; else matrix.y = table[offset + entry->y] << 4;
             if (flags & 8) matrix.z = entry->z << 4; else matrix.z = table[offset + entry->z] << 4;
             parent = &matrices[parentIndex - 1];
             dest = &matrices[parentIndex];
-            func_80010820(parent);
-            func_8001006C(&matrix, dest, 4);
+            gGteLoadRotation(parent);
+            gGteTransformWords(&matrix, dest, 4);
             dest->x += parent->x;
             dest->y += parent->y;
             dest->z += parent->z;

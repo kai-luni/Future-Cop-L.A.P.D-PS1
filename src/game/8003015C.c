@@ -37,9 +37,9 @@ extern void func_8002FA20(struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3);
 extern void func_80030060(struct Obj3015C *obj, struct Arg3015C *arg);
 extern s32 func_8002F8B8(u8 arg0, s16 arg1, struct Arg3015C *arg2, u8 arg3);
 extern s32 func_8002FF6C(struct Obj3015C *obj, struct Arg3015C *arg);
-extern s32 func_800188D0(s32 a, s32 b, s32 c, void *d);
-extern void func_80010750(void *a);
-extern void func_80010234(void *a, void *b, s32 c);
+extern s32 gBuildRotationMatrix(s32 a, s32 b, s32 c, void *d) __asm__("func_800188D0");
+extern void gGteLoadMatrix(void *a) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 extern s32 func_8002AD58(s32 message, struct Obj3015C *object, struct Arg3015C *data);
 
 /**
@@ -88,9 +88,9 @@ s32 func_8003015C(s32 cmd, struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3)
             s32 val;
             val = (obj->unkC6 + (s32)arg * obj->unkD4) & 0xFFF;
             obj->unkC6 = val;
-            func_800188D0(val, 0, 0, (u8 *)obj + 0x2C);
-            func_80010750((u8 *)obj + 0x2C);
-            func_80010234(obj->unk28->unk34 + ((obj->unk70 << 4) + 8),
+            gBuildRotationMatrix(val, 0, 0, (u8 *)obj + 0x2C);
+            gGteLoadMatrix((u8 *)obj + 0x2C);
+            gGteTransformVerticesWide(obj->unk28->unk34 + ((obj->unk70 << 4) + 8),
                           (u8 *)obj + 0x5C, 1);
             if ((obj->unkC8 & 0xF0) && (gDiscShadeByte & 0x80)) {
                 obj->unk24 |= 0x2000000;

@@ -30,9 +30,9 @@ struct Args {
     s16 offset;
 };
 
-extern void func_80018DC0(s32, s32, s32, struct Matrix *);
-extern void func_80010820(struct Matrix *);
-extern void func_8001006C(struct Matrix *, struct Matrix *, s32);
+extern void gBuildRotationMatrixVariant(s32, s32, s32, struct Matrix *) __asm__("func_80018DC0");
+extern void gGteLoadRotation(struct Matrix *) __asm__("func_80010820");
+extern void gGteTransformWords(struct Matrix *, struct Matrix *, s32) __asm__("func_8001006C");
 
 #define COPY_MATRIX(d, s) \
     do { \
@@ -150,7 +150,7 @@ void func_80052960(struct Args *a0, struct Matrix *first, struct Matrix *second)
             rz = table[offset + rec->rz];
         }
 
-        func_80018DC0(rx, ry, rz, &matrix);
+        gBuildRotationMatrixVariant(rx, ry, rz, &matrix);
 
         if (flags & 0x20) {
             matrix.m[9] = rec->x << 4;
@@ -171,8 +171,8 @@ void func_80052960(struct Args *a0, struct Matrix *first, struct Matrix *second)
         dest = &local[index];
         parent = &local[index - 1];
 
-        func_80010820(parent);
-        func_8001006C(&matrix, dest, 4);
+        gGteLoadRotation(parent);
+        gGteTransformWords(&matrix, dest, 4);
 
         dest->m[9] += parent->m[9];
         dest->m[10] += parent->m[10];

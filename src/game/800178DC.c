@@ -20,8 +20,10 @@ struct Unk178DC {
 
 extern struct Camera *gCamera __asm__("D_8009F9E4");
 
-extern void func_80010820(u8 *matrix);
-extern void func_8001006C(struct Unk178DC *object, s32 arg1, s32 count);
+extern void gGteLoadRotation(u8 *matrix) __asm__("func_80010820");
+extern void gGteTransformWords(struct Unk178DC *object, s32 arg1, s32 count) __asm__("func_8001006C");
+void gTransformToViewSpace(struct Unk178DC *object, s32 arg1) __asm__("func_800178DC");
+
 
 /**
  * @brief Transforms four vertices of an object relative to the camera eye.
@@ -39,8 +41,13 @@ extern void func_8001006C(struct Unk178DC *object, s32 arg1, s32 count);
  * @par Likely role
  * The "place this object in camera space without touching its stored position"
  * step, used where a model has to be drawn relative to the viewer.
+ *
+ * @par Environment path
+ * Transforms four vertices into view space relative to the eye. Called by the
+ * light setups (func_80013F08, func_8001428C), func_80042128 and the player
+ * update func_800592D0, i.e. on the path that draws the player's model.
  */
-void func_800178DC(struct Unk178DC *object, s32 arg1)
+void gTransformToViewSpace(struct Unk178DC *object, s32 arg1)
 {
     struct Vec3s32 saved;
     struct Camera *camera;
@@ -50,7 +57,7 @@ void func_800178DC(struct Unk178DC *object, s32 arg1)
     object->translation.x -= camera->eye.x;
     object->translation.y -= camera->eye.y;
     object->translation.z -= camera->eye.z;
-    func_80010820(camera->matrix);
-    func_8001006C(object, arg1, 4);
+    gGteLoadRotation(camera->matrix);
+    gGteTransformWords(object, arg1, 4);
     object->translation = saved;
 }

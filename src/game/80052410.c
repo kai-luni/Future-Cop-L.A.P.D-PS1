@@ -11,8 +11,8 @@ struct Obj52410 {
 };
 
 extern void func_80051C50(struct Obj52410 *, s32, struct Vec52410 *, void *);
-extern void func_80010750(void *);
-extern void func_80010234(void *, struct Vec52410 *, s32);
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, struct Vec52410 *, s32) __asm__("func_80010234");
 extern s32 func_800684AC(void *, void *, void *, s32, s32);
 
 /**
@@ -55,8 +55,8 @@ s32 func_80052410(struct Obj52410 *obj, struct Vec52410 *points, struct Vec52410
     i = result;
     offset = 0x20;
     func_80051C50(obj, obj->angle, target, view);
-    func_80010750(p);
-    func_80010234(base, points, 4);
+    gGteLoadMatrix(p);
+    gGteTransformVerticesWide(base, points, 4);
     q = out;
     p = points;
     for (; i < 4; i++) {

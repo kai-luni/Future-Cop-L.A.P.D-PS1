@@ -92,7 +92,7 @@ extern void func_80069D68(void *, s32, u32, void *);
 extern s32 func_800402DC(void *, u8, s32, s32, s32);
 extern void *func_800448D8(struct AnimTrack *, s32, s32, u8);
 extern void func_800175F8(struct ModelInstance *, s32);
-extern void func_800188D0(s16, s32, s32, void *);
+extern void gBuildRotationMatrix(s16, s32, s32, void *) __asm__("func_800188D0");
 extern s32 func_80044B34(void *, void *, s32, s32);
 extern void func_800302E8(struct Actor306A0 *, s32, s32);
 extern u8 func_8002F8B8(u8, s16, s32, s32);
@@ -200,7 +200,7 @@ s32 func_800306A0(struct Actor306A0 *actor, s32 delta)
         } else {
             actor->unkC8 = (actor->unkC8 + (delta << 2)) & 0xFFF;
         }
-        func_800188D0((s16)actor->unkC8, 0, 0, (u8 *)actor + 0xD8);
+        gBuildRotationMatrix((s16)actor->unkC8, 0, 0, (u8 *)actor + 0xD8);
     }
 
     temp = func_80044B34(actor, &actor->animA0, delta, 0);

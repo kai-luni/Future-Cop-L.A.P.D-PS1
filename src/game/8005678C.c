@@ -33,8 +33,10 @@ extern struct Unk5678COffset gViewPresetTable[] __asm__("D_8009AD08");
 
 extern void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
                           s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8);
-extern void func_80017860(s32 angle, s32 pitch, s32 arg2);
-extern void func_800177AC(s32 *out);
+extern void gSetCameraRotation(s32 angle, s32 pitch, s32 arg2) __asm__("func_80017860");
+extern void gSetCameraPosition(s32 *out) __asm__("func_800177AC");
+void gPlaceCameraFromPreset(struct Unk5678C *object, s32 index, s32 *out, s32 apply) __asm__("func_8005678C");
+
 
 /**
  * @brief Places the camera from a preset offset around an object, optionally
@@ -60,8 +62,12 @@ extern void func_800177AC(s32 *out);
  *
  * @par Callers
  * func_80056870, func_800569EC.
+ *
+ * @par Environment path
+ * Computes a camera position from a preset offset around a follow target and,
+ * when asked, applies it through gSetCameraPosition/gSetCameraRotation.
  */
-void func_8005678C(struct Unk5678C *object, s32 index, s32 *out, s32 apply)
+void gPlaceCameraFromPreset(struct Unk5678C *object, s32 index, s32 *out, s32 apply)
 {
     struct Vec3s32 position;
     struct Unk5678COffset *offset;
@@ -74,7 +80,7 @@ void func_8005678C(struct Unk5678C *object, s32 index, s32 *out, s32 apply)
                   offset->distance, offset->data, out, object->info->unkA8,
                   object->info->unkBC);
     if (apply) {
-        func_80017860(object->heading + offset->angle, offset->pitch, 0);
-        func_800177AC(out);
+        gSetCameraRotation(object->heading + offset->angle, offset->pitch, 0);
+        gSetCameraPosition(out);
     }
 }

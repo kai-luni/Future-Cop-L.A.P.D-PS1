@@ -39,7 +39,7 @@ extern struct Block gCoverageGrid[] __asm__("D_800AB3B8");
 extern u8 gGridOriginX[] __asm__("D_8009F834");
 
 extern void func_80017B60(s32 id);
-extern void func_80010820(u8 *matrix);
+extern void gGteLoadRotation(u8 *matrix) __asm__("func_80010820");
 extern void func_80064460(s32 a0, s32 a1, struct Block *block);
 
 #define FMUL(a, b) ({ s32 r_; __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
@@ -94,7 +94,7 @@ void func_80066C9C(s32 index, struct Entity *obj)
     s32 m;
 
     func_80017B60(obj->unkAC->unkAC);
-    func_80010820(gCamera->matrix);
+    gGteLoadRotation(gCamera->matrix);
 
     t = obj->unk54;
     d = -t;

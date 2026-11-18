@@ -77,10 +77,10 @@ extern struct Unk8009F9E4 *gCamera __asm__("D_8009F9E4");
 extern s32 *func_8003D9C4(struct Node4C5C8 *node);
 extern s32 func_8001A100(s32 *vec);
 extern void func_80013AA0(s32 low, s32 high);
-extern void func_800188D0(s16 a, s16 b, s32 c, s32 *out);
-extern void func_80010820(s32 *p);
-extern void func_8001006C(s32 *src, s32 *dst, s32 n);
-extern void func_80010750(s32 *m);
+extern void gBuildRotationMatrix(s16 a, s16 b, s32 c, s32 *out) __asm__("func_800188D0");
+extern void gGteLoadRotation(s32 *p) __asm__("func_80010820");
+extern void gGteTransformWords(s32 *src, s32 *dst, s32 n) __asm__("func_8001006C");
+extern void gGteLoadMatrix(s32 *m) __asm__("func_80010750");
 extern void func_8001047C(struct Sub4C5C8 *sub, struct Work50 *w, u8 *out, u8 idx);
 extern void func_800172A8(s32 idx, u8 a1, s32 a2, struct Work50 *work);
 
@@ -200,7 +200,7 @@ void func_8004C5C8(struct Node4C5C8 *arg0, s32 *arg1)
         }
         while (sub != 0) {
             idx = sub->unk28 & 0x7F;
-            func_800188D0(sub->unk2C, sub->unk2E, 0, f.buf78);
+            gBuildRotationMatrix(sub->unk2C, sub->unk2E, 0, f.buf78);
             if (sub->unk28 & 0x80) {
                 f.src = *(struct Vec3 *)((u8 *)sub->unk4C + 0x28);
             } else {
@@ -210,10 +210,10 @@ void func_8004C5C8(struct Node4C5C8 *arg0, s32 *arg1)
             f.vec[0] = f.src.v[0] - g->unk7C;
             f.vec[1] = f.src.v[1] - g->unk80;
             f.vec[2] = f.src.v[2] - g->unk84;
-            func_80010820(&g->unk28[0]);
-            func_8001006C(f.vec, f.out34, 1);
-            func_8001006C(f.buf78, f.mat, 3);
-            func_80010750(f.mat);
+            gGteLoadRotation(&g->unk28[0]);
+            gGteTransformWords(f.vec, f.out34, 1);
+            gGteTransformWords(f.buf78, f.mat, 3);
+            gGteLoadMatrix(f.mat);
             func_8001047C(sub, wp, f.out, idx);
             if (!((f.out[0] | f.out[1] | f.out[2] | f.out[idx - 1]) & 1)) {
                 f.work.unk20 = sub->unk20;

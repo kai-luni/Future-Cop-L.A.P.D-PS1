@@ -98,8 +98,8 @@ struct Self {
 extern s32 func_8002AD58(s32 message, struct Self *self, struct Arg *arg, s32 arg2);
 extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options);
 extern void func_80044988(u8 *data, struct AnimTrack *track, u8 forward, s32 index);
-extern void func_80010750(void *basis);
-extern void func_80010234(void *a, void *b, s32 c);
+extern void gGteLoadMatrix(void *basis) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 
 /**
  * @brief Spawn initialisation of one object class: binds the model instance and its
@@ -225,6 +225,6 @@ void func_80038754(struct Self *self, struct Arg *arg1, s32 arg2)
         self->unk24 = f & ~0x20000;
     }
 
-    func_80010750(&self->unk28.matrix);
-    func_80010234(self->unk28.model->unk34 + (((s32)self->unk70 << 4) + 8), &self->unk5C, 1);
+    gGteLoadMatrix(&self->unk28.matrix);
+    gGteTransformVerticesWide(self->unk28.model->unk34 + (((s32)self->unk70 << 4) + 8), &self->unk5C, 1);
 }

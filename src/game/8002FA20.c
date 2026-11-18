@@ -20,7 +20,7 @@ struct Self {
 };
 extern s32 func_8002AD58(s32, struct Self *, struct Arg *, s32);
 extern s32 func_80067684(s32 *, s32);
-extern void func_800188D0(s32, s32, s32, void *);
+extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 #define FMULU(a,b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 /**
  * @brief Message-2 spawn setup of the second script family: applies the placement
@@ -109,7 +109,7 @@ void func_8002FA20(struct Self *self, struct Arg *arg, s32 arg2)
     self->pos[1] = func_80067684(self->pos, mode) + (sub->height << 4);
     self->flags |= 0x800001;
     if (sub->angle >= 0) {
-        func_800188D0(sub->angle, 0, 0, self->matrix);
+        gBuildRotationMatrix(sub->angle, 0, 0, self->matrix);
         self->fieldd4 = 0;
     } else {
         rate = sub->rate << 4;

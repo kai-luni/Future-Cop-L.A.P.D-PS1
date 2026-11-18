@@ -33,7 +33,7 @@ extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gColourWord __asm__("D_8009F388");
 
 extern s32 func_8001A100(s32 *vector);
-extern void func_80010820(u8 *matrix);
+extern void gGteLoadRotation(u8 *matrix) __asm__("func_80010820");
 extern void func_80010704(s16 *src, s16 *dst);
 extern void func_8006F21C(DVECTOR a0, DVECTOR a1, DVECTOR a2, DVECTOR a3, s32 s3, s32 s4, u32 s5, u32 s6, s32 depth);
 
@@ -186,7 +186,7 @@ void func_8006F310(struct Node *node, Vec3 *pos)
         diff[0] = nptr->v[0].x - cam->x;
         diff[1] = nptr->v[0].y - cam->y;
         diff[2] = nptr->v[0].z - cam->z;
-        func_80010820((u8 *)cam + 0x28);
+        gGteLoadRotation((u8 *)cam + 0x28);
         proj[1][2].vx = diff[0] >> 4;
         proj[1][2].vy = diff[1] >> 4;
         proj[1][3].vx = diff[2] >> 4;

@@ -118,7 +118,7 @@ struct Locals5F018 {
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void func_80017668(struct ModelInstance *instance, s32 part, s32 *out);
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
 extern s32 func_80019904(s32 arg0);
 extern s32 func_80019FCC(struct Vec3s32 *v);
@@ -244,8 +244,8 @@ void func_8005F018(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec3
 
         flag = 1;
 
-        func_8001846C(func_80019668() & 0xFFF, &locals.sin1, &locals.cos1);
-        func_8001846C(func_80019668() & 0xFFF, &locals.sin2, &locals.cos2);
+        gSinCos(func_80019668() & 0xFFF, &locals.sin1, &locals.cos1);
+        gSinCos(func_80019668() & 0xFFF, &locals.sin2, &locals.cos2);
 
         {
             register s32 ma __asm__("$4");

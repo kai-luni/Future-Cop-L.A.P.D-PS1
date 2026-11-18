@@ -102,7 +102,7 @@ extern s32 func_8004F330(struct Unk50E0COut *out, struct Unk50E0CArg3 *arg3, s32
 extern void func_8001AB78(s32 scale, s32 *vector);
 extern s32 func_8001A100(s32 *vector);
 extern s32 func_80095C30(s32 x, s32 y);
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 
 /**
  * @brief Initialises a rail/spline mover block for the map cell that contains a
@@ -249,7 +249,7 @@ void func_80050E0C(struct Unk50E0CArg0 *arg0, struct Unk50E0COut *out, struct Un
 
     angle = func_80095C30(arg3->unk78, arg3->unk80) & 0xFFF;
     out->unk4C = out->unk4E = out->unk50 = angle;
-    func_8001846C(out->unk50, &out->unk64, &out->unk6C);
+    gSinCos(out->unk50, &out->unk64, &out->unk6C);
 
     a3 = arg3->unk78;
     if (a3 < 0) {

@@ -44,9 +44,9 @@ typedef struct Obj70730 {
 extern u32 gPlayerCount __asm__("D_8009FA0C");
 extern Base70730 *D_8009FA58[];
 
-extern void func_8001006C(Vec70730 *dst, Vec70730 *src, s32 count);
-extern void func_80010820(void *arg);
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gGteTransformWords(Vec70730 *dst, Vec70730 *src, s32 count) __asm__("func_8001006C");
+extern void gGteLoadRotation(void *arg) __asm__("func_80010820");
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
 extern s32 func_80019F54(s32 *vector);
 extern void func_8003D0F0(Base70730 *base, s32 type, s32 flags, Vec70730 *out);
@@ -190,8 +190,8 @@ s16 func_80070730(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg
         target = out;
 
         if (mode == 0) {
-            func_80010820((u8 *)obj->base + 4);
-            func_8001006C(out, out, 1);
+            gGteLoadRotation((u8 *)obj->base + 4);
+            gGteTransformWords(out, out, 1);
             out->x += obj->base->offX;
             out->y += obj->base->offY;
             out->z += obj->base->offZ;
@@ -238,7 +238,7 @@ s16 func_80070730(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg
 
     if ((obj->flags.h & 9) != 0) {
         speed16 = (u32)((func_80019668() & 0xFFF) * speed16) >> 12;
-        func_8001846C(func_80019668() & 0xFFF, &vec.x, &vec.z);
+        gSinCos(func_80019668() & 0xFFF, &vec.x, &vec.z);
         vec.y = 0;
 
         if (((obj->flags.h & 8) != 0) && (arg != 0)) {
@@ -314,8 +314,8 @@ s16 func_80070730(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg
         s32 p2;
         register s32 product __asm__("$3");
 
-        func_8001846C(func_80019668() & 0xFFF, &trig[0], &trig[1]);
-        func_8001846C(func_80019668() & 0xFFF, &trig[2], &trig[3]);
+        gSinCos(func_80019668() & 0xFFF, &trig[0], &trig[1]);
+        gSinCos(func_80019668() & 0xFFF, &trig[2], &trig[3]);
 
         cos1 = trig[1] >> 2;
         sin2 = trig[2] >> 2;

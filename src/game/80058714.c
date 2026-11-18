@@ -68,8 +68,8 @@ struct Unk58714 {
     struct UnkDC *unkDC;
 };
 
-extern void func_80010750(u8 *coord);
-extern void func_80010234(u8 *vertices, s32 *out, s32 count);
+extern void gGteLoadMatrix(u8 *coord) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(u8 *vertices, s32 *out, s32 count) __asm__("func_80010234");
 extern void func_80017668(struct ModelInstance *instance, s32 part, s32 *out);
 extern void func_8005A190(struct Unk5A190 *object, s32 index, s32 value);
 extern void func_80051AF8(struct Unk58714 *arg0);
@@ -122,8 +122,8 @@ void func_80058714(struct Unk58714 *arg0)
 
     *(struct Vec3s32 *)(arg0->model.coord + 0x24) = s1->unkC4;
 
-    func_80010750(arg0->model.coord);
-    func_80010234((u8 *)arg0->model.model->unk34 +
+    gGteLoadMatrix(arg0->model.coord);
+    gGteTransformVerticesWide((u8 *)arg0->model.model->unk34 +
                       ((arg0->model.frame << 4) + 8),
                   (s32 *)(arg0->model.coord + 0x30), 1);
     func_80017668(&arg0->model, 0, (s32 *)((u8 *)arg0->unkDC + 0x50));

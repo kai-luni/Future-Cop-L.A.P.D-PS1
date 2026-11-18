@@ -7,10 +7,10 @@ struct Model { u8 pad[0x34]; u8 *data; };
 struct Self { u8 pad[0x21]; u8 old; u8 pad22[6]; struct Model *model; u8 basis[0x24]; s32 pos[3]; u8 rest[0x14]; s16 index; u8 pad72[0x2e]; s32 values[3]; s32 speeds[3]; s32 other[2]; s32 current; s16 zero; u8 flags; u8 kind; s8 count; s8 last; s8 end; s8 mode; u8 previous; volatile u8 extra; };
 extern void func_8002AD58(s32, struct Self *, struct Arg *, s32);
 extern void func_8006314C(struct Self *, u8);
-extern void func_800188D0(s32, s32, s32, void *);
+extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern s32 func_80066F78(void *, s32, s32, s32);
-extern void func_80010750(void *);
-extern void func_80010234(void *, void *, s32);
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 /**
  * @brief Initialises the waypoint sequence of an entity from a script record.
  *
@@ -96,11 +96,11 @@ void func_80041488(struct Self *self, struct Arg *arg, s32 a2)
     else self->current = self->speeds[self->last];
     self->zero = 0;
     func_8006314C(self, d->kind);
-    func_800188D0(d->angle, 0, 0, self->basis);
+    gBuildRotationMatrix(d->angle, 0, 0, self->basis);
     base = func_80066F78(self->pos, 0, 0, 0);
     for (i = 0; i < self->count; i++) self->values[i] += base;
     self->pos[1] = self->values[self->last];
-    func_80010750(self->basis);
+    gGteLoadMatrix(self->basis);
     offset = (self->index << 4) + 8;
-    func_80010234(self->model->data + offset, (u8 *)self + 0x5c, 1);
+    gGteTransformVerticesWide(self->model->data + offset, (u8 *)self + 0x5c, 1);
 }

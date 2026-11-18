@@ -111,7 +111,7 @@ extern struct Unk6B23C_Item *gRegistryFind(u8 id) __asm__("func_8006AAEC");
 extern void func_80046CF0(struct Unk6B23C *arg0, u8 arg1);
 extern void func_80017668(void *instance, s32 part, s32 *out);
 extern s32 func_80019668(void);
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_8001AB00(s32 *a, s32 *b);
 extern s32 func_800684AC(s32 *a, s32 *b, s32 *c, s32 d, s32 e);
 extern void func_800410BC(void *a, s16 b, s32 c, struct Unk6B23C *d);
@@ -295,9 +295,9 @@ void gBeamPartUpdate(struct Unk6B23C *arg0, s32 index, s32 arg2)
 
         fp = 1;
         angle = func_80019668() & 0xFFF;
-        func_8001846C(angle, &sc1[0], &sc1[1]);
+        gSinCos(angle, &sc1[0], &sc1[1]);
         angle = func_80019668() & 0xFFF;
-        func_8001846C(angle, &sc2[0], &sc2[1]);
+        gSinCos(angle, &sc2[0], &sc2[1]);
 
         ma = sc1[0] >> 2;
         mb = sc2[1] >> 2;

@@ -19,6 +19,11 @@
  *
  * @par Callers
  * None in the symbol table (inlined).
+ *
+ * @par Environment path
+ * Cross product variant that restores the caller's GTE matrix afterwards. It
+ * has no caller in the US binary, so only the documented contract matters for
+ * the port.
  */
 __asm__(
     ".set noreorder\n"

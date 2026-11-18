@@ -30,7 +30,7 @@ struct Poly {
 
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 * volatile gPacketLimit __asm__("D_8009F9C0");
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 
 /**
  * @brief Emits the rotating variant of the translucent disc: one draw-mode
@@ -242,7 +242,7 @@ write_poly:
     angle = argangle >> 8;
     shift = argangle & 0xFF;
     while (fp / 4 >= i) {
-        func_8001846C(angle + accu / 32, &sine, &cosine);
+        gSinCos(angle + accu / 32, &sine, &cosine);
         sinprod = cosine;
         cosprod = sinprod * quot;
         va = cosprod >> 16;

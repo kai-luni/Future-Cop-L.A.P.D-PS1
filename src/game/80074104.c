@@ -23,10 +23,10 @@ extern u8 *gCamera __asm__("D_8009F9E4");
 extern u8 *func_8003D9F8();
 extern u8 *func_8003D9C4();
 extern s32 func_8001A100();
-extern void func_8001A81C();
-extern void func_80010820();
-extern void func_8001006C();
-extern void func_80010750();
+extern void gMulMatrixVector() __asm__("func_8001A81C");
+extern void gGteLoadRotation() __asm__("func_80010820");
+extern void gGteTransformWords() __asm__("func_8001006C");
+extern void gGteLoadMatrix() __asm__("func_80010750");
 extern void func_8001047C();
 
 /**
@@ -199,7 +199,7 @@ void func_80074104(u8 *input, s32 *pos)
             PTR(gHeaderPrimitiveRecord,0) = node;
             UB(gHeaderPrimitiveRecord,0x17) = UB(owner,0x79);
             if (UH(owner,0x1a) & 0x100) {
-                func_8001A81C(m, owner+0x58, &frame.trans);
+                gMulMatrixVector(m, owner+0x58, &frame.trans);
                 gPreparedVertexTable[count].x = frame.trans.x >> 4;
                 gPreparedVertexTable[count].y = frame.trans.y >> 4;
                 gPreparedVertexTable[count].z = frame.trans.z >> 4;
@@ -209,8 +209,8 @@ void func_80074104(u8 *input, s32 *pos)
                 gPreparedVertexTable[count].y = (frame.trans.y-W(gCamera,0x80)) >> 4;
                 gPreparedVertexTable[count].z = (frame.trans.z-W(gCamera,0x84)) >> 4;
             } else {
-                func_80010820(m);
-                func_8001006C(owner+0x28, &frame.trans, 1);
+                gGteLoadRotation(m);
+                gGteTransformWords(owner+0x28, &frame.trans, 1);
                 frame.trans.x = W(owner,0x28)+W(m,0x24);
                 frame.trans.y = W(owner,0x2c)+W(m,0x28);
                 frame.trans.z = W(owner,0x30)+W(m,0x2c);
@@ -243,8 +243,8 @@ void func_80074104(u8 *input, s32 *pos)
             frame.v.x = W(m,0x24)-W(gCamera,0x7c);
             frame.v.y = W(m,0x28)-W(gCamera,0x80);
             frame.v.z = W(m,0x2c)-W(gCamera,0x84);
-            func_80010820(gCamera+0x28);
-            func_8001006C(m, &frame.mat, 3);
+            gGteLoadRotation(gCamera+0x28);
+            gGteTransformWords(m, &frame.mat, 3);
         } else {
             frame.v.x = W(base,0x24)-W(gCamera,0x7c);
             frame.v.y = W(base,0x28)-W(gCamera,0x80);
@@ -260,11 +260,11 @@ void func_80074104(u8 *input, s32 *pos)
             frame.mat.e[8] = W(gCamera,0x48);
             frame.mat.e[0] = mat0;
         }
-        func_80010820(gCamera+0x28);
-        func_8001006C(&frame.v, &frame.projected, 1);
+        gGteLoadRotation(gCamera+0x28);
+        gGteTransformWords(&frame.v, &frame.projected, 1);
         node = (u8 *)&frame.mat;
-        if (UH(owner,0x1a) & 0x100) func_80010750(node);
-        else func_80010820(node);
+        if (UH(owner,0x1a) & 0x100) gGteLoadMatrix(node);
+        else gGteLoadRotation(node);
         func_8001047C(gPreparedVertexTable, gPreparedVertexTable, D_800AB388, count);
         if (!(UH(owner,0x8e) & 0x2000)) node = gHeaderPrimitiveRecord;
         else node = PTR(owner,0x68);

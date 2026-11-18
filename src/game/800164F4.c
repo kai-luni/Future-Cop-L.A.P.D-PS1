@@ -13,9 +13,9 @@ extern struct Packet *gPrimPoolNext __asm__("D_8009F9F0");
 extern struct Packet *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gScreenUvBase __asm__("D_8009FAA0");
 extern s32 func_80066F78(struct V32 *, s32, s32, void *);
-extern void func_80010750(void *);
-extern void func_80010234(struct V16 *, struct V32 *, s32);
-extern void func_80010820(void *);
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(struct V16 *, struct V32 *, s32) __asm__("func_80010234");
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern s32 func_8001047C(struct V16 *, struct V16 *, u8 *, s32);
 
 /**
@@ -82,8 +82,8 @@ void func_800164F4(struct Obj *obj)
     p[2].x = x + dx; p[2].y = 0; p[2].z = z;
     p[3].x = x; p[3].y = 0; p[3].z = z + dz;
     p[4].x = x; p[4].y = 0; p[4].z = z;
-    func_80010750(obj->matrix);
-    func_80010234(p, transformed, 5);
+    gGteLoadMatrix(obj->matrix);
+    gGteTransformVerticesWide(p, transformed, 5);
     {
         struct V32 *src = transformed;
         register struct V16 *dst __asm__("$4");
@@ -97,7 +97,7 @@ void func_800164F4(struct Obj *obj)
             src++; dst++;
         } while (++j < 5);
     }
-    func_80010820(gCamera->matrix);
+    gGteLoadRotation(gCamera->matrix);
     if (func_8001047C(p, p, codes, 5) & 0x1c66000) return;
     t = codes[0] | codes[1] | codes[2] | codes[3];
     if (t & 1) return;

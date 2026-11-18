@@ -83,7 +83,7 @@ struct Work549F0 {
 extern s32 func_800538C8(u8 *, u32 *, s32 *, s32 *);
 extern void func_80052E28(struct Obj549F0 *);
 extern void func_80051AC8(struct Obj549F0 *, s32);
-extern void func_8001846C(u32, s32 *, s32 *);
+extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 extern s32 func_80066F78(void *, void *, void *, void *);
 extern void func_80054590(struct Obj549F0 *, s32, s32, void *, s32);
 extern s32 func_80052550(struct Obj549F0 *, void *);
@@ -457,7 +457,7 @@ after_action:
 
         angle = self->angle & 0x0FFF;
         self->angle = angle;
-        func_8001846C(angle, &self->axis.x, &self->axis.z);
+        gSinCos(angle, &self->axis.x, &self->axis.z);
     }
     self->axis.y = 0;
     w.delta.y = 0;

@@ -110,12 +110,12 @@ struct Unk754B8Transform {
     struct Vec3s32 pos;
 };
 
-extern void func_8001006C(void *source, void *destination, s32 count);
-extern void func_80010820(void *matrix);
+extern void gGteTransformWords(void *source, void *destination, s32 count) __asm__("func_8001006C");
+extern void gGteLoadRotation(void *matrix) __asm__("func_80010820");
 extern void func_80017668(void *instance, s32 part, s32 *out);
 extern void func_800181D4(void *block);
 extern s32 func_80019668(void);
-extern void func_8001A81C(void *matrix, void *source, void *destination);
+extern void gMulMatrixVector(void *matrix, void *source, void *destination) __asm__("func_8001A81C");
 extern void func_8001B148(struct RotationMatrix *matrix,
                          struct RotationPoint *source,
                          struct RotationPoint *destination, s32 count);
@@ -333,12 +333,12 @@ case0:
             (struct ListNode *)&object->pool);
         if (node != 0) {
             if (object->flags1A & 0x100) {
-                func_8001A81C(transform, &object->unk58, &vec);
+                gMulMatrixVector(transform, &object->unk58, &vec);
             } else if (object->flags8E & 0x10) {
                 vec = object->position;
             } else {
-                func_80010820(transform);
-                func_8001006C(&object->position, &vec, 1);
+                gGteLoadRotation(transform);
+                gGteTransformWords(&object->position, &vec, 1);
                 vec.x = object->position.x + transform->pos.x;
                 vec.y = object->position.y + transform->pos.y;
                 vec.z = object->position.z + transform->pos.z;

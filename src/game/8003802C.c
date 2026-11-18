@@ -36,8 +36,8 @@ typedef struct Unk3802C {
 extern s32 func_80050D14(void *arg0, s32 arg1, void *arg2);
 extern s32 func_80066F78(void *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void func_80037EB4(Unk3802C *arg0);
-extern void func_80010750(void *arg0);
-extern void func_80010234(void *arg0, void *arg1, s32 arg2);
+extern void gGteLoadMatrix(void *arg0) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__("func_80010234");
 
 /**
  * @brief Advances a falling or flying object by one time step, clamps it
@@ -104,8 +104,8 @@ void func_8003802C(s32 arg0, Unk3802C *arg1, s32 arg2)
             func_80037EB4(arg1);
         }
         if (ret != 0) {
-            func_80010750(&arg1->unk2C);
-            func_80010234((arg1->unk70 << 4) + 8 + arg1->unk28->unk34, &arg1->unk5C, 1);
+            gGteLoadMatrix(&arg1->unk2C);
+            gGteTransformVerticesWide((arg1->unk70 << 4) + 8 + arg1->unk28->unk34, &arg1->unk5C, 1);
         }
     }
 }

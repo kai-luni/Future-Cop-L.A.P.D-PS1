@@ -9,10 +9,10 @@
 
 extern void func_8004F764(u8 *, u8 *, s32);
 extern void func_8004D958(u8 *);
-extern void func_8001846C(s32, s32 *, s32 *);
-extern void func_800188D0(s32, s32, s32, u8 *);
-extern void func_80010750(u8 *);
-extern void func_80010234(u8 *, u8 *, s32);
+extern void gSinCos(s32, s32 *, s32 *) __asm__("func_8001846C");
+extern void gBuildRotationMatrix(s32, s32, s32, u8 *) __asm__("func_800188D0");
+extern void gGteLoadMatrix(u8 *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(u8 *, u8 *, s32) __asm__("func_80010234");
 extern void func_80037EB4(u8 *);
 extern s32 func_80095C30(s32, s32);
 extern void func_8004FFD0(u8 *, s32, u8 *);
@@ -198,7 +198,7 @@ loop:
                 if (x != y && !(f1 & 0x100)) {
                     U(s, 0x52) = c;
                     U(s, 0x54) = c;
-                    func_8001846C(y, &sv3, (s32 *)(s + 0x68));
+                    gSinCos(y, &sv3, (s32 *)(s + 0x68));
                     ret |= 2;
                 }
                 {
@@ -208,7 +208,7 @@ loop:
                     if (x2 != y2 && !(F(s, 0x3C) & 0x1000)) {
                         U(s, 0x4C) = c2;
                         U(s, 0x4E) = c2;
-                        func_8001846C(y2, (s32 *)(s + 0x64), (s32 *)(s + 0x6C));
+                        gSinCos(y2, (s32 *)(s + 0x64), (s32 *)(s + 0x6C));
                         ret |= 2;
                     }
                 }
@@ -231,9 +231,9 @@ loop:
         U(s, 0x0C) = U(s, 0x12);
         U(s, 0x0E) = U(s, 0x14);
         if (H(s, 0x48) == H(s, 0x46) && (F(s, 0x3C) & 0x400)) {
-            func_800188D0((H(s, 0x50) + 0x800) & 0xFFF, 0, 0, o + 0x2C);
-            func_80010750(o + 0x2C);
-            func_80010234((u8 *)W((u8 *)W(o, 0x28), 0x34) + ((H(o, 0x70) << 4) + 8), o + 0x5C, 1);
+            gBuildRotationMatrix((H(s, 0x50) + 0x800) & 0xFFF, 0, 0, o + 0x2C);
+            gGteLoadMatrix(o + 0x2C);
+            gGteTransformVerticesWide((u8 *)W((u8 *)W(o, 0x28), 0x34) + ((H(o, 0x70) << 4) + 8), o + 0x5C, 1);
             func_80037EB4(o);
             if (!(F(s, 0x3C) & 0x1000)) {
                 v = func_80095C30(W(o, 0x78), W(o, 0x80));
@@ -338,12 +338,12 @@ l900:
                 goto done;
             }
             if (!(f3 & 0x100)) {
-                func_8001846C(H(s, 0x54), &sv1, (s32 *)(s + 0x68));
+                gSinCos(H(s, 0x54), &sv1, (s32 *)(s + 0x68));
             }
             if (F(s, 0x3C) & 0x1000) {
                 goto done;
             }
-            func_8001846C(H(s, 0x4E), (s32 *)(s + 0x64), (s32 *)(s + 0x6C));
+            gSinCos(H(s, 0x4E), (s32 *)(s + 0x64), (s32 *)(s + 0x6C));
             goto done;
         }
         r1 = (H(s, 0x20) << 8) - W(s, 0x1C);
@@ -356,8 +356,8 @@ l900:
             if (F(s, 0x3C) & 0x1000) {
                 goto done;
             }
-            func_8001846C(H(s, 0x54), &sv2, (s32 *)(s + 0x68));
-            func_8001846C(H(s, 0x4E), (s32 *)(s + 0x64), (s32 *)(s + 0x6C));
+            gSinCos(H(s, 0x54), &sv2, (s32 *)(s + 0x68));
+            gSinCos(H(s, 0x4E), (s32 *)(s + 0x64), (s32 *)(s + 0x6C));
             goto done;
         }
         if (H(s, 0x46) < 0) {

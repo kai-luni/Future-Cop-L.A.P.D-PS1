@@ -1,7 +1,7 @@
 // Categories: Graphics > Mesh Generation | Graphics > Effects
 #include "game/types.h"
 
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 
 /**
  * @brief Generates the 3D s16 vertex grid for a spherical octant dome-patch mesh.
@@ -52,12 +52,12 @@ void func_8006C4C4(s16 *dst, s16 step, s16 count)
 
     n++;
     for (row = step; row < 0x401; row += step) {
-        func_8001846C(row, &sine, &cosine);
+        gSinCos(row, &sine, &cosine);
         sine >>= 4;
         cosine >>= 4;
         if (count != 0) {
             for (col = 0; col < 0x201; col += step) {
-                func_8001846C(col, &s, &c);
+                gSinCos(col, &s, &c);
                 s >>= 4;
                 c >>= 4;
                 dst[n * 4 + 0] = (s16)((sine * s) >> 12);
@@ -68,7 +68,7 @@ void func_8006C4C4(s16 *dst, s16 step, s16 count)
             total += inc;
         } else {
             for (col = 0; col < 0x201; col += step) {
-                func_8001846C(col, &s, &c);
+                gSinCos(col, &s, &c);
                 s >>= 4;
                 c >>= 4;
                 dst[n * 4 + 1] = (s16)((0x1000 * cosine) >> 12);

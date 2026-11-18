@@ -2,7 +2,7 @@
 typedef short s16;
 typedef int s32;
 typedef unsigned char u8;
-extern void func_8001010C(s16 *, s16 *, s32);
+extern void gGteTransformVertices(s16 *, s16 *, s32) __asm__("func_8001010C");
 extern s32 func_80019904(s32, s32);
 /**
  * @brief Computes a per-vertex shade/UV value: normal dot product, transform,
@@ -40,7 +40,7 @@ void func_80016C88(s16 *p, s16 *n, s32 *q, u8 *out)
     r[0] = ((dot * n[0]) >> 11) - x;
     r[1] = ((dot * n[1]) >> 11) - y;
     r[2] = ((dot * n[2]) >> 11) - z;
-    func_8001010C(r, v, 1);
+    gGteTransformVertices(r, v, 1);
     len = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]) >> 12;
     b = a = 0x1000;
     if (len > 0) {

@@ -111,9 +111,9 @@ extern u8 D_8002DEA8[];
 extern s32 func_8002AD58(s32 message, struct Unk2C584Obj *obj, void *data, s32 arg3);
 extern struct Unk2C584Obj *gSpawnQueuedEntity(void *def) __asm__("func_8004D444");
 extern void func_80017668(void *a, s32 b, void *c);
-extern void func_80010750(void *a);
-extern void func_80010234(void *a, void *b, s32 c);
-extern void func_800188D0(s32 a, s32 b, s32 c, void *d);
+extern void gGteLoadMatrix(void *a) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
+extern void gBuildRotationMatrix(s32 a, s32 b, s32 c, void *d) __asm__("func_800188D0");
 extern void func_80060668(void *a, void *b);
 extern s32 func_80067684(void *a, s32 b);
 extern void func_80044988(void *a, void *b, s32 c, s32 d);
@@ -299,8 +299,8 @@ void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
             obj->unk100->unk104 = obj->unk104;
             obj->unk100->flags |= 0x800000;
             func_80017668((u8 *)obj->unk104 + 0x28, 1, (u8 *)obj->unk100 + 0x50);
-            func_80010750((u8 *)obj->unk100 + 0x2C);
-            func_80010234((u8 *)obj->unk100->unk28->unk34 + ((obj->unk100->unk70 << 4) + 8),
+            gGteLoadMatrix((u8 *)obj->unk100 + 0x2C);
+            gGteTransformVerticesWide((u8 *)obj->unk100->unk28->unk34 + ((obj->unk100->unk70 << 4) + 8),
                           (u8 *)obj->unk100 + 0x5C, 1);
         } else {
             obj->unk100 = 0;
@@ -344,7 +344,7 @@ void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
     if (st->unk40 & 2) {
         obj->unkDF |= 8;
     }
-    func_800188D0(st->unk38, 0, 0, (u8 *)obj + 0x2C);
+    gBuildRotationMatrix(st->unk38, 0, 0, (u8 *)obj + 0x2C);
     {
         u16 h = st->unk38;
         obj->unkF4 = 0;
@@ -377,8 +377,8 @@ void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
     if (*(s32 *)((u8 *)obj->unk28 + 0x10)) {
         func_80044988(*(void **)((u8 *)obj->unk28 + 0x10), (u8 *)obj + 0xC8, 1, 0);
     }
-    func_80010750((u8 *)obj + 0x2C);
-    func_80010234((u8 *)obj->unk28->unk34 + ((obj->unk70 << 4) + 8), (u8 *)obj + 0x5C, 1);
+    gGteLoadMatrix((u8 *)obj + 0x2C);
+    gGteTransformVerticesWide((u8 *)obj->unk28->unk34 + ((obj->unk70 << 4) + 8), (u8 *)obj + 0x5C, 1);
     if (st->unk40 & 0x10) {
         func_8006314C(obj, 0);
         obj->unkDF |= 0x20;

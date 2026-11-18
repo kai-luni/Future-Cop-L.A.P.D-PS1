@@ -20,6 +20,11 @@
  * @par Callers
  * func_800192AC, func_80019310, func_8001937C, func_800193F8, gGuidedProjectileUpdate,
  * func_80051C50, func_80053A74.
+ *
+ * @par Environment path
+ * Cross product used to build a normal from two vectors: the light setups
+ * (func_800192AC, func_80019310, func_8001937C, func_800193F8) and the
+ * map-cell drawers (func_80035B7C, func_80051C50, func_80053A74).
  */
 __asm__(
     ".set noreorder\n"

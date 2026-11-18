@@ -30,7 +30,7 @@ extern s32 gSavedChunkBase __asm__("D_8009F310");
 extern struct UnkC2A4 *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void *func_80017EBC(s32 size, s32 tag);
-extern void func_800188D0(s32 arg0, s32 arg1, s32 arg2, s32 *out);
+extern void gBuildRotationMatrix(s32 arg0, s32 arg1, s32 arg2, s32 *out) __asm__("func_800188D0");
 extern s32 func_80066F78(struct Vec3C2A4 *position, s32 arg1, s32 arg2, s32 arg3);
 extern void *func_8003FD74(s32 type, s32 arg08, void *source, s32 arg18);
 
@@ -68,7 +68,7 @@ u8 func_8003C2A4(struct UnkC2A4 *data)
     }
     out = func_80017EBC(0x4C, 2);
     out->unk49 = 4;
-    func_800188D0(data->unk18, -data->unk1A, 0, matrix);
+    gBuildRotationMatrix(data->unk18, -data->unk1A, 0, matrix);
     out->position = data->position;
     out->position.x += ((matrix[6] >> 4) * data->unk1C) >> 8;
     out->position.y = func_80066F78(&data->position, 0, 0, 0) +

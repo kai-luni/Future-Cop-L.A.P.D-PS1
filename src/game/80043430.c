@@ -83,7 +83,7 @@ typedef struct {
 extern void func_8003C14C(Obj43430 *p, Def43430 *src);
 extern s32 func_80017B88(void);
 extern void *func_80017EBC(s32 size, s32 tag);
-extern void func_800188D0(s32 x, s32 y, s32 z, s32 *out);
+extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, s32 *out) __asm__("func_800188D0");
 extern void func_80043250(Obj43430 *p);
 
 /**
@@ -180,7 +180,7 @@ u8 func_80043430(Obj43430 *p, Def43430 *src)
     p->unk8D = src->unk5B;
     p->unkA0 = src->unk5C;
 
-    func_800188D0(src->unk3E, -src->unk40, 0, matrix);
+    gBuildRotationMatrix(src->unk3E, -src->unk40, 0, matrix);
     p->unk76 = ((matrix[6] >> 4) * src->unk42) >> 12;
     p->unk78 = ((matrix[7] >> 4) * src->unk42) >> 12;
     p->unk7A = ((matrix[8] >> 4) * src->unk42) >> 12;

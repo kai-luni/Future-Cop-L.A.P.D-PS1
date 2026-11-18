@@ -7,9 +7,9 @@ struct State { u8 pad[0x34]; u8 *frames; };
 struct Obj { u8 pad0[0x21]; u8 active; u8 pad22[6]; struct State *state; u8 matrix[0x18]; u8 matrix2[0xc]; struct Vec pos; u8 out[0x14]; s16 frame; u8 pad72[0x2e]; u8 type; u8 enabled, flags, oldactive, other; u8 padA5[3]; s32 speed; struct Vec start; struct Vec end; };
 extern void func_8002AD58(s32, struct Obj *, struct Arg *, s32);
 extern s32 func_80067684(struct Vec *, s32);
-extern void func_800188D0(s32,s32,s32,void *);
-extern void func_80010750(void *);
-extern void func_80010234(void *,void *,s32);
+extern void gBuildRotationMatrix(s32,s32,s32,void *) __asm__("func_800188D0");
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *,void *,s32) __asm__("func_80010234");
 extern void func_8001AC28(void *,void *,s32,void *);
 extern void func_8006314C(void *,s32);
 /**
@@ -109,7 +109,7 @@ s32 func_8002EED8(struct Obj *obj, struct Arg *arg, s32 extra)
     st=arg->src;
     sel=st->sel == 0 ? -1 : st->sel == 1 ? -2 : st->sel-2;
     obj->pos.y=func_80067684(&obj->pos,sel)+(st->height<<4);
-    func_800188D0(st->angle,0,0,obj->matrix);
+    gBuildRotationMatrix(st->angle,0,0,obj->matrix);
     obj->speed=st->speed/300;
     obj->type=st->type; __asm__ volatile("" : : : "memory");
     oldactive=obj->active;
@@ -135,33 +135,33 @@ s32 func_8002EED8(struct Obj *obj, struct Arg *arg, s32 extra)
             typ=obj->type;
             __asm__ volatile("" : "+r"(cur), "+r"(typ) : : "memory");
             obj->start.y=cur; __asm__ volatile("" : : : "memory");
-            if (typ==4) func_800188D0(obj->start.z,obj->start.y,0,obj->matrix);
-            else if (typ==5) func_800188D0(obj->start.z,0,obj->start.y,obj->matrix);
-            else func_800188D0(obj->start.y,0,0,obj->matrix);
+            if (typ==4) gBuildRotationMatrix(obj->start.z,obj->start.y,0,obj->matrix);
+            else if (typ==5) gBuildRotationMatrix(obj->start.z,0,obj->start.y,obj->matrix);
+            else gBuildRotationMatrix(obj->start.y,0,0,obj->matrix);
         } else {
             obj->enabled=0;
             obj->start.y=obj->start.x;
         }
-        func_80010750(obj->matrix);
+        gGteLoadMatrix(obj->matrix);
         offset = obj->frame;
         pointer = (u8 *)obj->state;
         offset <<= 4;
         __asm__("" : "=r"(offset) : "0"(offset));
         pointer = ((struct State *)pointer)->frames;
         offset += 8;
-        func_80010234(pointer + offset,obj->out,1);
+        gGteTransformVerticesWide(pointer + offset,obj->out,1);
     } else {
         if (obj->speed <= 0) obj->speed=0;
         if (st->u.distance < 0) obj->speed=-obj->speed;
         obj->start=obj->pos;
-        func_80010750(obj->matrix);
+        gGteLoadMatrix(obj->matrix);
         offset = obj->frame;
         pointer = (u8 *)obj->state;
         offset <<= 4;
         __asm__("" : "=r"(offset) : "0"(offset));
         pointer = ((struct State *)pointer)->frames;
         offset += 8;
-        func_80010234(pointer + offset,obj->out,1);
+        gGteTransformVerticesWide(pointer + offset,obj->out,1);
         switch(obj->type) {
         case 2: func_8001AC28(&obj->pos,obj->matrix2,st->u.distance,&obj->end); break;
         case 1: func_8001AC28(&obj->pos,obj->matrix,st->u.distance,&obj->end); break;

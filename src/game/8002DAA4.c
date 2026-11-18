@@ -9,10 +9,10 @@ struct DataInner { u8 pad[0x24]; s32 height; s16 id; s16 mode; };
 struct Data { u8 pad[8]; struct DataInner *inner; };
 extern s32 func_8002AD58(s32, struct Object *, struct Data *, s32);
 extern void func_80044988(void *, void *, s32, s32);
-extern void func_800188D0(s32, s32, s32, void *);
+extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern s32 func_80067684(void *, s32);
-extern void func_80010750(void *);
-extern void func_80010234(void *, void *, s32);
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 /**
  * @brief Advances one entity's animation and places its frame vertex.
  *
@@ -43,7 +43,7 @@ s32 func_8002DAA4(struct Object *self, struct Data *data, s32 arg2)
     if (self->model->anim != 0)
         func_80044988(self->model->anim, self->track, 1, 0);
     inner = data->inner;
-    func_800188D0(inner->id, 0, 0, self->coord);
+    gBuildRotationMatrix(inner->id, 0, 0, self->coord);
     value = inner->mode;
     if (value == 0) goto zero;
     if (value == 1) { mode = -2; goto done; }
@@ -54,7 +54,7 @@ zero:
 done:
     self->pos[1] = func_80067684(self->pos, mode) + inner->height;
     self->flags |= 0xA00000;
-    func_80010750(self->coord);
-    func_80010234(((self->frame << 4) + 8) + self->model->frames, self->mat, 1);
+    gGteLoadMatrix(self->coord);
+    gGteTransformVerticesWide(((self->frame << 4) + 8) + self->model->frames, self->mat, 1);
     return 0;
 }

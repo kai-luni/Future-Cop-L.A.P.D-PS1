@@ -42,8 +42,8 @@ typedef struct {
     State518A8 *unkAC;
 } Obj518A8;
 
-extern void func_80010750(void *a0);
-extern void func_80010234(void *a0, void *a1, s32 a2);
+extern void gGteLoadMatrix(void *a0) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *a0, void *a1, s32 a2) __asm__("func_80010234");
 extern s32 func_80095900(s32 a0);
 
 /**
@@ -112,8 +112,8 @@ void func_800518A8(Model518A8 *model, s16 *buf, s32 t, Obj518A8 *obj)
     buf[10] = f04 - p2;
     buf[12] = f00 - f06;
     buf[14] = f04 - p2;
-    func_80010750(model);
-    func_80010234(buf, (s16 *)((u8 *)buf + 0x20), 4);
+    gGteLoadMatrix(model);
+    gGteTransformVerticesWide(buf, (s16 *)((u8 *)buf + 0x20), 4);
 
     cenx = 294 + ((-358 * t) >> 17);
     rad = (51 * (0x10000 - t)) >> 17;

@@ -116,8 +116,10 @@ extern s32 func_80017994(void);
 extern void func_80017B60(s32 id);
 extern void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
                           s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8);
-extern void func_80017860(s32 yaw, s32 pitch, s32 roll);
-extern void func_800177AC(struct Vec3s32 *position);
+extern void gSetCameraRotation(s32 yaw, s32 pitch, s32 roll) __asm__("func_80017860");
+extern void gSetCameraPosition(struct Vec3s32 *position) __asm__("func_800177AC");
+void gResetActorAndPlaceView(struct Arg0 *arg0, struct Arg1 *arg1) __asm__("func_800573A4");
+
 
 /**
  * @brief Resets an actor's mobility state from its spawn record and places the
@@ -176,8 +178,13 @@ extern void func_800177AC(struct Vec3s32 *position);
  *
  * @par Callers
  * func_800579D4, right after it allocated the actor's 0x328 state block.
+ *
+ * @par Environment path
+ * Start-position step: resets an actor from its spawn record and places the
+ * third-person view that belongs to it, which is what makes the mech visible
+ * at its spawn point.
  */
-void func_800573A4(struct Arg0 *arg0, struct Arg1 *arg1)
+void gResetActorAndPlaceView(struct Arg0 *arg0, struct Arg1 *arg1)
 {
     struct Entity *entity;
     struct UnkAD08 *offset;
@@ -273,8 +280,8 @@ void func_800573A4(struct Arg0 *arg0, struct Arg1 *arg1)
                   offset->distance, offset->data, (s32 *)&position,
                   entity->fieldA8, entity->fieldBC);
 
-    func_80017860(arg1->fieldB0 + offset->angle, offset->pitch, 0);
-    func_800177AC(&position);
+    gSetCameraRotation(arg1->fieldB0 + offset->angle, offset->pitch, 0);
+    gSetCameraPosition(&position);
 
     *(struct Vec3s32 *)&entity->fieldB0 = *(struct Vec3s32 *)offset->data;
 

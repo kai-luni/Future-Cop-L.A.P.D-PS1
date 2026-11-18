@@ -43,9 +43,9 @@ extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern s32 func_800196C4(void);
 extern void func_800175F8(struct Obj *o, s32 frame);
-extern void func_8001846C(s32 angle, s32 *sine, s32 *cosine);
-extern void func_80010750(void *p);
-extern void func_80010234(void *a, void *b, s32 c);
+extern void gSinCos(s32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
+extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 extern void func_80017508(struct Obj *o, u32 *flags, s32 arg);
 extern void func_8008363C(struct Obj *o);
 
@@ -203,7 +203,7 @@ void func_80084398(s32 x, s32 y, u32 *p)
                                 }
                             }
                             if (e != 0) {
-                                func_8001846C(e, &sn, &cs);
+                                gSinCos(e, &sn, &cs);
                                 o->unk1C = sn;
                                 t2 = -sn;
                                 v = cs;
@@ -217,12 +217,12 @@ void func_80084398(s32 x, s32 y, u32 *p)
                             o->unk0C = t2;
                             if (o->unk57) {
                                 register s32 frame __asm__("$4");
-                                func_80010750(&o->unk04);
+                                gGteLoadMatrix(&o->unk04);
                                 frame = o->unk48;
                                 frame <<= 4;
                                 __asm__("" : "+r"(frame));
                                 frame += 8;
-                                func_80010234((u8 *)o->model->unk34 + frame,
+                                gGteTransformVerticesWide((u8 *)o->model->unk34 + frame,
                                               &o->unk34, 1);
                             }
                         }

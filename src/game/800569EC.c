@@ -87,23 +87,25 @@ extern s32 func_80056530(struct Obj569EC *, s32, s32);
 extern s32 func_80056870(struct Obj569EC *);
 extern u8 func_80056994(struct Info569EC *, s32);
 extern void func_80017B60(s32);
-extern void func_8005678C(struct Obj569EC *, s32, struct Vec569EC *, s32);
+extern void gPlaceCameraFromPreset(struct Obj569EC *, s32, struct Vec569EC *, s32) __asm__("func_8005678C");
 extern void func_8005612C(struct Vec569EC *, s32, s32, s32, s32, struct Vec569EC *, struct Vec569EC *, s32, s32);
 extern s32 func_80055EE8(struct Vec569EC *, struct Vec569EC *);
 extern s32 func_8005605C(s32, s32, s32);
 extern s32 func_800564A8(s32);
 extern s32 func_8001A314(struct Vec569EC *);
 extern void func_8001AB78(s32, struct Vec569EC *);
-extern void func_80017860(s32, s32, s32);
+extern void gSetCameraRotation(s32, s32, s32) __asm__("func_80017860");
 extern void func_8001AC28(struct Vec569EC *, struct Vec569EC *, s32, struct Vec569EC *);
 extern s32 func_80095C14(s32);
 extern s32 func_80019668(void);
 extern void func_8001EA20(struct Obj569EC *, s32);
-extern void func_800177AC(struct Vec569EC *);
+extern void gSetCameraPosition(struct Vec569EC *) __asm__("func_800177AC");
 
 #define ABS569EC(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 
 #define RELOAD_OBJECT() (*(struct Obj569EC *volatile *)&object)
+void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile s32 speed) __asm__("func_800569EC");
+
 
 /**
  * @brief Chase-camera step of one player unit: selects the camera preset, probes
@@ -189,8 +191,13 @@ extern void func_800177AC(struct Vec569EC *);
  * func_800588D4, the message 6 handler of the unit class, which forwards its own
  * elapsed and odd-step accumulator; its documentation names this function as the
  * camera step.
+ *
+ * @par Environment path
+ * Chase-camera step: selects the preset, probes it against the map and
+ * smooths yaw, pitch, boom and eye offset into the view record selected by
+ * the unit's camera id - the camera the environment is drawn from.
  */
-void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 speed)
+void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile s32 speed)
 {
     struct Locals569EC local;
     struct Info569EC *info;
@@ -287,7 +294,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
         func_80017B60(id);
     }
     if (selected > 0) {
-        func_8005678C(object, selected, &local.out, 1);
+        gPlaceCameraFromPreset(object, selected, &local.out, 1);
         goto done;
     }
     {
@@ -502,7 +509,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
     }
     func_8005612C(&local.position, heading, yaw, pitch, distance, &info->offset,
                  &local.out, info->zoom, info->distance);
-    func_80017860(yaw, pitch, 0);
+    gSetCameraRotation(yaw, pitch, 0);
     func_8001AC28(&local.out, &gCamera->axis70, info->zoom << 7, &local.out);
     {
     s32 t;
@@ -553,7 +560,7 @@ void func_800569EC(struct Obj569EC *object, volatile s32 elapsed, volatile s32 s
             func_8001EA20(object, 0);
         }
     }
-    func_800177AC(&local.out);
+    gSetCameraPosition(&local.out);
 done:
     {
         register struct Camera569EC *saved __asm__("$8");

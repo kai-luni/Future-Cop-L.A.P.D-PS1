@@ -15,8 +15,8 @@ extern void *gVertexSourcePtr __asm__("D_8009F570");
 extern Vec *gCamera __asm__("D_8009F9E4");
 extern s32 gEnvMapTexpageWord __asm__("D_800A8EA4");
 extern void func_80019470(Matrix *, Matrix *);
-extern void func_80010820(Matrix *);
-extern void func_8001006C(Vec *, Vec *, s32);
+extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
+extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
 extern s32 func_80015B68(Part *, Work *, void *, s32);
 extern void func_80016E6C(Part *, Work *, void *, void *);
 extern void func_80015F38(Part *, Work *, void *, void *);
@@ -84,7 +84,7 @@ void func_80016A64(Instance *inst, s32 mode, s32 mask)
         if (flags & 0x40) {
         other = gVertexSourceAltPtr;
         func_80019470(&inst->matrix, &transposed);
-        func_80010820(&transposed);
+        gGteLoadRotation(&transposed);
         {
             register Vec *a __asm__("$4") = (Vec *)&vec;
             register Vec *b __asm__("$5") = a;
@@ -105,9 +105,9 @@ void func_80016A64(Instance *inst, s32 mode, s32 mask)
                 vec.x = px - ix;
                 vec.z = pz - iz;
             }
-            func_8001006C(a, b, one);
+            gGteTransformWords(a, b, one);
         }
-        func_80010820(&inst->matrix);
+        gGteLoadRotation(&inst->matrix);
         vec.extra = gEnvMapTexpageWord;
         {
             s32 x = vec.x;

@@ -38,12 +38,12 @@ extern u8 *gVertexSourceAltPtr __asm__("D_8009F574");
 extern u8 *gPartVertexBuffer __asm__("D_8009F578");
 extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
 
-extern void func_800178DC(void *object, s32 arg1);
+extern void gTransformToViewSpace(void *object, s32 arg1) __asm__("func_800178DC");
 extern void func_80013ECC(u32 *arg0);
 extern void func_80013CB8(s32 a0, u8 *a1, s32 a2, s32 a3);
-extern void func_80014164(u8 *a0, u8 *a1, void *a2, void *a3);
-extern void func_80010750(void *a0);
-extern void func_8001010C(u8 *a0, u8 *a1, s32 a2);
+extern void gComposeTransform(u8 *a0, u8 *a1, void *a2, void *a3) __asm__("func_80014164");
+extern void gGteLoadMatrix(void *a0) __asm__("func_80010750");
+extern void gGteTransformVertices(u8 *a0, u8 *a1, s32 a2) __asm__("func_8001010C");
 extern void func_8001047C(u8 *a0, u8 *a1, u8 *a2, s32 a3);
 
 /**
@@ -94,7 +94,7 @@ void func_8001428C(struct Arg0 *arg0, u8 *arg1)
     __asm__("" : "+m"(arg0));
     reload = arg0;
     s3 = reload->unk00;
-    func_800178DC(object, (s32)buf2);
+    gTransformToViewSpace(object, (s32)buf2);
     /* Ordered matrix/global setup; the call and render loop remain C. */
     __asm__ __volatile__(
         "lui\t$17,%%hi(D_800A02F0)\n\t"
@@ -164,9 +164,9 @@ void func_8001428C(struct Arg0 *arg0, u8 *arg1)
         __asm__("" : : "r"(count) : "$24");
         reload = arg0;
         func_80013CB8(idx, callp, count, reload->unk48);
-        func_80014164(arg1, (u8 *)(idx * 0x30 + (s32)dest), buf1, buf2);
-        func_80010750(buf1);
-        func_8001010C(s3->unk20->unk4 + (p[1] * 8 + 4), (u8 *)(p[1] * 8 + (s32)fae0),
+        gComposeTransform(arg1, (u8 *)(idx * 0x30 + (s32)dest), buf1, buf2);
+        gGteLoadMatrix(buf1);
+        gGteTransformVertices(s3->unk20->unk4 + (p[1] * 8 + 4), (u8 *)(p[1] * 8 + (s32)fae0),
                       p[2]);
         func_8001047C(s3->unk1C->unk4 + (p[3] * 8 + 4), tblA + p[3] * 8,
                       tblB + p[3], p[4]);

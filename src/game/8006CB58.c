@@ -63,9 +63,9 @@ extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 D_8009F9B8;
 
-extern void func_80010820(void *);
-extern void func_8001006C(void *, void *, s32);
-extern void func_80010750(void *);
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
+extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void func_8001047C(void *, void *, void *, s32);
 extern void func_8006CAAC(void *, void *, s16, void *, s16);
 
@@ -264,12 +264,12 @@ void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
     L.vin[0] = op->x - gCamera->px;
     L.vin[1] = op->y - gCamera->py;
     L.vin[2] = op->z - gCamera->pz;
-    func_80010820(&gCamera->mtx);
-    func_8001006C(L.vin, L.vout, 1);
+    gGteLoadRotation(&gCamera->mtx);
+    gGteTransformWords(L.vin, L.vout, 1);
     mat = &L.mtx;
     if (mp->flg & 8) {
-        func_80010820(&gCamera->mtx);
-        func_8001006C(op, mat, 3);
+        gGteLoadRotation(&gCamera->mtx);
+        gGteTransformWords(op, mat, 3);
     } else {
         tmp = gCamera->mtx.m[1];
         m0 = gCamera->mtx.m[0];
@@ -292,7 +292,7 @@ void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
             func_8006CAAC(mp->verts, mp->tbl, mp->stride, vp, i++);
         } while (i < n);
     }
-    func_80010750(&L.mtx);
+    gGteLoadMatrix(&L.mtx);
     func_8001047C(mp->verts, mp->verts, mp->flags, mp->stride * n);
 
     c = 0;

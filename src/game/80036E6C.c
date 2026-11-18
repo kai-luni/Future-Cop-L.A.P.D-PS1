@@ -55,8 +55,8 @@ extern void func_8001937C(struct Vec3s32 *axis, void *basis);
 extern void func_800193F8(struct Vec3s32 *axis, void *basis);
 extern s32 func_8001A750(struct Vec3s32 *a, void *b);
 extern void func_8004D958(struct Entity *entity);
-extern void func_80010750(void *p);
-extern void func_80010234(void *a, void *b, s32 c);
+extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 extern void func_80036AB4(struct Entity *self, s32 arg3);
 extern s32 func_8002AD58(s32 message, struct Entity *self, s32 arg2, s32 arg3);
 extern void *jtbl_80011380[];
@@ -141,14 +141,14 @@ message_3:
         if (func_8001A750(&self->unk50, &self->unkC8) > 0x58000) {
             func_8004D958(self);
         }
-        func_80010750(self->unk2C);
+        gGteLoadMatrix(self->unk2C);
         {
             register s32 vertex_offset __asm__("$4");
             register u8 *vertices __asm__("$2");
 
             vertices = self->unk28->unk34;
             vertex_offset = self->unk70 << 4;
-            func_80010234(vertices + 8 + vertex_offset, self->unk5C, 1);
+            gGteTransformVerticesWide(vertices + 8 + vertex_offset, self->unk5C, 1);
         }
         return 0;
     }

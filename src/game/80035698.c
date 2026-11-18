@@ -80,7 +80,7 @@ extern void *jtbl_80011318[];
 extern s32 func_80019668(void);
 extern void func_80033608(struct Self *self, void *anim);
 extern void func_800330E8(struct Self *self);
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void func_800193F8(struct Vec3 *axis, struct Basis *basis);
 extern s32 func_800331CC();
 extern s32 func_8003532C();
@@ -140,7 +140,7 @@ void func_80035698(struct Self *self) {
         other2->unk1A = 0;
         func_800330E8(self);
     }
-    func_8001846C(func_80019668() & 0xFFF, &sine, &cosine);
+    gSinCos(func_80019668() & 0xFFF, &sine, &cosine);
     trig = sine;
     self->unk78.x = trig;
     trig = cosine;

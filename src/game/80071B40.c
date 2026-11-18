@@ -29,8 +29,8 @@ typedef struct Node {
     s16 reset;
 } Node;
 extern void func_8003D0F0(Base *, s32, s32, Vec *);
-extern void func_80010820(void *);
-extern void func_8001006C(Vec *, Vec *, s32);
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
+extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
 extern s32 func_800718B8(Node *, s32, s32, s32, s32);
 
 /**
@@ -70,10 +70,10 @@ void func_80071B40(Node *node, s32 dt)
     if (obj && obj->id && obj->base && obj->id->id != obj->saved) {
         func_8003D0F0(obj->base, *(s8 *)&obj->pos, obj->flags & 0x10, &obj->pos);
         if (n->flags & 8) {
-            func_80010820((u8 *)n->obj1->base + 4);
+            gGteLoadRotation((u8 *)n->obj1->base + 4);
             {
                 register Obj *p __asm__("$4") = n->obj2;
-                func_8001006C(&p->pos, &p->pos, 1);
+                gGteTransformWords(&p->pos, &p->pos, 1);
             }
             n->obj2->pos.x += n->obj1->base->x;
             n->obj2->pos.y += n->obj1->base->y;
@@ -86,10 +86,10 @@ void func_80071B40(Node *node, s32 dt)
     if (obj && obj->id && obj->base && obj->id->id != obj->saved) {
         func_8003D0F0(obj->base, *(s8 *)&obj->pos, obj->flags & 0x10, &obj->pos);
         if (n->flags & 8) {
-            func_80010820((u8 *)n->obj1->base + 4);
+            gGteLoadRotation((u8 *)n->obj1->base + 4);
             {
                 register Obj *p __asm__("$4") = n->obj1;
-                func_8001006C(&p->pos, &p->pos, 1);
+                gGteTransformWords(&p->pos, &p->pos, 1);
             }
             n->obj1->pos.x += n->obj1->base->x;
             n->obj1->pos.y += n->obj1->base->y;

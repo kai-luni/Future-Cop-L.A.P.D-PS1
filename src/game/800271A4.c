@@ -68,7 +68,7 @@ extern void func_8001EB6C(void);
 extern void gSoundPauseVoices(void) __asm__("func_800476D0");
 extern void gSweepRetiredEntities(void) __asm__("func_8004D598");
 extern s32 func_8001EF34(s32 arg0);
-extern void func_80013C80(void);
+extern void gUpdateLightDirection(void) __asm__("func_80013C80");
 extern void func_80026D1C(void);
 extern void func_80026D5C(void);
 extern void func_80026D9C(s32 arg0);
@@ -170,7 +170,7 @@ void func_800271A4(void)
     if (flags & 1) {
         func_80026DDC((s32)D_8009FA58, 0, flags & 0x20, 0);
     } else {
-        func_80013C80();
+        gUpdateLightDirection();
         func_80026E5C(0, (s32)D_8009FA58);
         if (!(flags & 0x20)) {
             func_80026D5C();

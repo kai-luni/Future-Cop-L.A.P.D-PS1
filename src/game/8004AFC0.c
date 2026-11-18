@@ -42,9 +42,9 @@ struct UnkObject {
     struct UnkAlloc *unk80;
 };
 
-extern void func_800188D0(s16 a, s16 b, s32 c, void *out);
-extern void func_80010820(void *p);
-extern void func_8001006C(void *dst, void *src, s32 n);
+extern void gBuildRotationMatrix(s16 a, s16 b, s32 c, void *out) __asm__("func_800188D0");
+extern void gGteLoadRotation(void *p) __asm__("func_80010820");
+extern void gGteTransformWords(void *dst, void *src, s32 n) __asm__("func_8001006C");
 extern void gVectorAddScaled(struct Vec3s32 *a, struct Vec3s32 *b, s32 scale, struct Vec3s32 *out) __asm__("func_8001ACA4");
 extern s32 func_80066F78(struct Vec3s32 *pos, s32 a1, s32 a2, s32 a3);
 
@@ -94,9 +94,9 @@ void func_8004AFC0(struct UnkObject *object, s32 arg)
         return;
     }
 
-    func_800188D0(object->unk80->unk04, object->unk80->unk06, 0, mat);
-    func_80010820(mat);
-    func_8001006C(object->unk34, sub->unk04, 3);
+    gBuildRotationMatrix(object->unk80->unk04, object->unk80->unk06, 0, mat);
+    gGteLoadRotation(mat);
+    gGteTransformWords(object->unk34, sub->unk04, 3);
 
     vec.x = 0;
     vec.y = object->unk80->unk00;

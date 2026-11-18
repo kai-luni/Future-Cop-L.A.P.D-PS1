@@ -24,9 +24,9 @@ struct Object {
 };
 extern void func_80017668(void *, s32, void *);
 extern s32 func_80095C30(s32, s32);
-extern void func_800188D0(s32, s32, s32, void *);
-extern void func_80010750(void *);
-extern void func_80010234(void *, void *, s32);
+extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern void func_80052D7C(void *, s32);
 extern void func_8001AC28(void *, void *, s32, void *);
 
@@ -173,16 +173,16 @@ void func_80057E40(struct Object *obj, s32 step)
         if (diff < 24) info->yawOffset = yaw;
         else info->yawOffset += 24;
     }
-    func_800188D0(info->yaw + info->yawOffset, info->pitch, info->roll, &obj->matrix);
+    gBuildRotationMatrix(info->yaw + info->yawOffset, info->pitch, info->roll, &obj->matrix);
     obj->origin = info->pos;
-    func_80010750(&obj->matrix);
+    gGteLoadMatrix(&obj->matrix);
     offset = obj->frame;
     pointer = (u8 *)obj->model;
     offset <<= 4;
     __asm__("" : "=r"(offset) : "0"(offset));
     pointer = ((struct Model *)pointer)->frames;
     offset += 8;
-    func_80010234(pointer + offset, &obj->vertex, 1);
+    gGteTransformVerticesWide(pointer + offset, &obj->vertex, 1);
     func_80052D7C(obj, step);
     for (i = 0; i < 2; i++) {
         timer = state->timer[i];

@@ -4,8 +4,8 @@ typedef int s32;
 typedef unsigned int u32;
 typedef struct { s32 m[9]; s32 x,y,z; } Matrix;
 typedef struct { char pad[0x24]; s32 x,y,z; } Base;
-extern void func_80010820(Base *);
-extern void func_8001006C(Matrix *, Matrix *, s32);
+extern void gGteLoadRotation(Base *) __asm__("func_80010820");
+extern void gGteTransformWords(Matrix *, Matrix *, s32) __asm__("func_8001006C");
 /**
  * @brief Turns one oriented box into a world axis-aligned box and reports which
  *        of a list of radius-bounded entries it overlaps.
@@ -68,8 +68,8 @@ u32 func_800619C0(Base *base, s16 *box, char *objects, s32 count, s32 stride)
     a.m[0]=box[3]<<4; a.m[1]=0; a.m[2]=0;
     a.m[3]=0; a.m[4]=box[4]<<4; a.m[5]=0;
     a.m[6]=0; a.m[7]=0; a.m[8]=box[5]<<4;
-    func_80010820(base);
-    func_8001006C(&a,&b,4);
+    gGteLoadRotation(base);
+    gGteTransformWords(&a,&b,4);
     z=0; y=z; x=b.m[0];
     __asm__ volatile ("" : : "r" (z), "r" (y), "r" (x) : "memory");
     t0=b.y; t1=base->y; t2=base->x;

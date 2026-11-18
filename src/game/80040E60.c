@@ -75,7 +75,7 @@ extern s32 gMessage10Counter __asm__("D_8009F318");
 extern u8 D_80040874[];
 extern void *func_80017EBC(s32, s32);
 extern void func_8003C14C(struct Unk40E60 *, struct Unk40E60Source *);
-extern void func_800188D0(s32, s32, s32, struct Unk40E60Work *);
+extern void gBuildRotationMatrix(s32, s32, s32, struct Unk40E60Work *) __asm__("func_800188D0");
 extern void func_800403D0(void *);
 
 /**
@@ -111,7 +111,7 @@ void *func_80040E60(struct Unk40E60Source *src)
     func_8003C14C(dest, src);
     dest->unk64 = src->unk34;
     dest->unk12 = src->unk36;
-    func_800188D0((s32)src->unk38, -(s32)src->unk3A, 0, &work);
+    gBuildRotationMatrix((s32)src->unk38, -(s32)src->unk3A, 0, &work);
     dest->unk70 = ((work.x >> 4) * src->unk3C) >> 12;
     dest->unk72 = ((work.y >> 4) * src->unk3C) >> 12;
     dest->unk74 = ((work.z >> 4) * src->unk3C) >> 12;

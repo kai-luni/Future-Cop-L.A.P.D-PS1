@@ -55,7 +55,7 @@ struct Unk371FC {
 
 extern struct Unk4E80CList gCommandListHead __asm__("D_800A8F90");
 extern void func_8003BC0C(struct Unk371FC *object);
-extern void func_800188D0(s32 a0, s32 a1, s32 a2, s32 *a3);
+extern void gBuildRotationMatrix(s32 a0, s32 a1, s32 a2, s32 *a3) __asm__("func_800188D0");
 extern s32 func_80066F78(struct Vec371 *pos, s32 a1, s32 a2, s32 a3);
 extern s32 func_800684AC(struct Vec371 *a, struct Vec371 *b, struct Vec371 *out, s32 d, s32 e);
 extern void gVectorAddScaled(struct Vec371 *a, struct Vec371 *b, s32 scale, struct Vec371 *out) __asm__("func_8001ACA4");
@@ -212,7 +212,7 @@ void func_800371FC(struct Unk371FC *arg0, s32 arg1)
         register s32 currentY __asm__("$4");
         if (self->unkD0 & 2) {
             self->unkD1 += step;
-            func_800188D0(self->unkD1 << 4, 0, 0, &self->unk2C);
+            gBuildRotationMatrix(self->unkD1 << 4, 0, 0, &self->unk2C);
         }
         h = func_80066F78(&self->pos, 0, 0, 0);
         ground = self->unk68;

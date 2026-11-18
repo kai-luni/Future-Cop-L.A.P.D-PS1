@@ -18,8 +18,8 @@ extern void func_8001A6F8(Vec *, Vec *);
 extern void func_8001AB78(s32, Vec *);
 extern void func_800457B8(s32, s32);
 extern int func_80050D14(void *, s32, Obj *);
-extern void func_80010750(void *);
-extern void func_80010234(void *, void *, int);
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, int) __asm__("func_80010234");
 extern void func_80039E8C(int);
 extern int func_8002AD58(int, void *, void *);
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
@@ -267,14 +267,14 @@ smooth_force:
     if (obj->motion[0]) scale = func_80050D14(obj->motion, dt, obj);
     if (scale) {
         if (obj->model) {
-            func_80010750(obj->transform);
+            gGteLoadMatrix(obj->transform);
             {
                 register s32 part __asm__("$4");
                 register char *parts __asm__("$2");
                 register Vec *dest __asm__("$5") = &obj->lastPosition;
                 register s32 one __asm__("$6") = 1;
                 __asm__ volatile("lh %0,%2\n\tlw %1,%3\n\tsll %0,%0,4\n\tlw %1,0x34(%1)\n\taddiu %0,%0,8" : "=&r"(part), "=&r"(parts) : "m"(obj->part), "m"(obj->model), "r"(dest), "r"(one));
-                func_80010234(parts + part, dest, one);
+                gGteTransformVerticesWide(parts + part, dest, one);
             }
         } else obj->lastPosition = obj->position;
     }

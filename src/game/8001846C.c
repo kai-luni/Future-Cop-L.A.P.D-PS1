@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u16 gSineTable[] __asm__("D_8009A234");
+void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
+
 
 /**
  * @brief Sine/cosine from the engine's 4096-step angle table.
@@ -18,8 +20,13 @@ extern u16 gSineTable[] __asm__("D_8009A234");
  * @par Likely role
  * The table holds quarter-wave values (0x400 = 1024 entries for a quarter turn)
  * and the doubling converts its 15-bit entries to 16-bit.
+ *
+ * @par Environment path
+ * Sine/cosine pair of the 4096-step table: the rotation factories
+ * func_800188D0/func_80018DC0 and the object builders call it before they
+ * fill a matrix.
  */
-void func_8001846C(u32 angle, s32 *sine, s32 *cosine)
+void gSinCos(u32 angle, s32 *sine, s32 *cosine)
 {
     s32 index;
     s32 s;

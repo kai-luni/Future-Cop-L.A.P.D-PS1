@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
+void gMulMatrixVector(volatile s32 *matrix, volatile s32 *input, s32 *output) __asm__("func_8001A81C");
+
 
 /**
  * @brief Software 3x3 matrix-times-vector product in 16.16 fixed point.
@@ -24,8 +26,12 @@
  *
  * @par Callers
  * func_80013C80, func_800177AC, func_80018860, func_80074104, func_80075A84.
+ *
+ * @par Environment path
+ * Software matrix-times-vector in 16.16 used whenever the GTE must not be
+ * disturbed, e.g. by the light direction update and the polygon pass.
  */
-void func_8001A81C(volatile s32 *matrix, volatile s32 *input, s32 *output)
+void gMulMatrixVector(volatile s32 *matrix, volatile s32 *input, s32 *output)
 {
     register s32 x __asm__("$12");
     register s32 y __asm__("$11");

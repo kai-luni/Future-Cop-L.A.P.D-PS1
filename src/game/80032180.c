@@ -124,7 +124,7 @@ extern void func_80060668(void *, void *);
 extern void func_800320E4(struct Unk320E4 *);
 extern s32 func_80066F78(s32 *, s32, s32, s32);
 extern s32 func_80019668(void);
-extern void func_8001846C(u32, s32 *, s32 *);
+extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 extern void func_800193F8(s32 *, void *);
 extern void func_80044988(u8 *, struct AnimTrack *, u8, s32);
 
@@ -258,7 +258,7 @@ s32 func_80032180(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg)
     obj->unkEC = 0;
     obj->unkF0 = 0;
 
-    func_8001846C(func_80019668() & 0xFFF, &sc[0], &sc[1]);
+    gSinCos(func_80019668() & 0xFFF, &sc[0], &sc[1]);
     obj->unk78 = sc[0];
     obj->unk80 = sc[1];
     obj->unk7C = 0;

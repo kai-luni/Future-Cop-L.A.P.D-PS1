@@ -18,6 +18,11 @@
  * The 32-bit-precision sibling of func_8001010C for vertices that keep
  * fractional coordinates - 30 call sites, from the object renderers to
  * func_8006DC24 and func_80071FA4.
+ *
+ * @par Environment path
+ * Batch vertex transform with 12-byte 32-bit vertices. Its 30 callers are the
+ * map-cell and part drawers (func_80014164, func_80016A64, func_80017058,
+ * func_800178DC, func_80031238, func_80035B7C, func_80038A00).
  */
 __asm__(
     ".set noreorder\n"

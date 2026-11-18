@@ -77,9 +77,9 @@ typedef struct Prim {
 } Prim;
 
 extern s32 func_8001A100(s32 *v);
-extern void func_80010820(void *m);
-extern void func_80010750(void *m);
-extern void func_8001006C(void *a, void *b, s32 c);
+extern void gGteLoadRotation(void *m) __asm__("func_80010820");
+extern void gGteLoadMatrix(void *m) __asm__("func_80010750");
+extern void gGteTransformWords(void *a, void *b, s32 c) __asm__("func_8001006C");
 extern void func_8001047C(void *a, void *b, void *c, s32 n);
 
 extern s16 gPreparedVertexTable[][4] __asm__("D_800A6418");
@@ -186,10 +186,10 @@ void func_80071FA4(Node *node, s32 *org)
             v[0] = node->a->sub->f28 - gCamera->ox;
             v[1] = node->a->sub->f2C - gCamera->oy;
             v[2] = node->a->sub->f30 - gCamera->oz;
-            func_80010820(&gCamera->mtx);
-            func_8001006C((u8 *)node->a->sub + 4, &m, 3);
-            func_80010820(&gCamera->mtx);
-            func_8001006C(v, &m.m[9], 1);
+            gGteLoadRotation(&gCamera->mtx);
+            gGteTransformWords((u8 *)node->a->sub + 4, &m, 3);
+            gGteLoadRotation(&gCamera->mtx);
+            gGteTransformWords(v, &m.m[9], 1);
         } else {
             s32 first;
             first = gCamera->mtx.m[0];
@@ -206,8 +206,8 @@ void func_80071FA4(Node *node, s32 *org)
             m.m[11] = gCamera->mtx.m[11];
             m.m[0] = first;
         }
-        if (node->flags & 8) func_80010750(&m);
-        else func_80010820(&m);
+        if (node->flags & 8) gGteLoadMatrix(&m);
+        else gGteLoadRotation(&m);
 
         func_8001047C(gPreparedVertexTable, gPreparedVertexTable, D_800AB388, node->ents[i].cnt + 1);
 

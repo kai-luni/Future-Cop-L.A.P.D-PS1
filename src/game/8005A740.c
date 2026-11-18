@@ -13,7 +13,7 @@ struct LineF2 {
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
-extern void func_8001846C(s32 id, s32 *first, s32 *second);
+extern void gSinCos(s32 id, s32 *first, s32 *second) __asm__("func_8001846C");
 
 /**
  * @brief Emits a line primitive from an origin along an angle.
@@ -37,7 +37,7 @@ void func_8005A740(s32 origin, s32 id)
     s32 first;
     s32 second;
 
-    func_8001846C(id, &first, &second);
+    gSinCos(id, &first, &second);
     line = (struct LineF2 *)gPacketCursor;
     if (gPacketCursor < gPacketLimit) {
         gPacketCursor += 0x1C;

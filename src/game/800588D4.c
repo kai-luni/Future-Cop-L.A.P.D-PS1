@@ -111,12 +111,12 @@ extern s32 func_80046C84(s32 id, s32 arg1);
 extern s32 func_800584BC(s32 message, struct Unk584BC *object,
                          struct Unk584BCHitLocal *hit, s32 arg3, s32 arg4);
 extern void func_8006C34C(struct Unk55E10 *object, s32 arg1);
-extern void func_80010750(void *arg);
-extern void func_80010234(void *arg0, void *arg1, s32 arg2);
+extern void gGteLoadMatrix(void *arg) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__("func_80010234");
 extern void func_80057E40(void *object, s32 arg1);
 extern void func_8006C3E0(void *object, s32 arg1);
 extern void gWeaponSlotInput(struct Unk55E10 *object, s32 arg1) __asm__("func_80055E10");
-extern void func_800569EC(void *object, s32 arg1, s32 arg2);
+extern void gUpdateChaseCamera(void *object, s32 arg1, s32 arg2) __asm__("func_800569EC");
 
 /**
  * @brief Per-frame tick of a player/vehicle entity: services timers, contact damage and
@@ -260,18 +260,18 @@ s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
         }
     }
 
-    func_80010750(object->unk2C);
+    gGteLoadMatrix(object->unk2C);
     offset = object->unk70 << 4;
     __asm__("" : "=r"(offset) : "0"(offset));
     offset += 8;
     v = (s32)object->unk28->unk34;
-    func_80010234((void *)(v + offset), object->unk5C, 1);
+    gGteTransformVerticesWide((void *)(v + offset), object->unk5C, 1);
     func_80057E40(object->unkDC, arg1);
     func_8006C3E0(object, arg1);
     if (gScreenState == 4) {
         gWeaponSlotInput((struct Unk55E10 *)object, arg1);
     }
-    func_800569EC(object, arg1, s4);
+    gUpdateChaseCamera(object, arg1, s4);
 
     if (data->unk324 > 0) {
         data->unk324 -= arg1;

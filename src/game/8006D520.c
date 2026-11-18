@@ -43,7 +43,7 @@ extern s32 D_8009FA58;
 extern s32 D_8009FA5C;
 
 extern u8 *func_8003D9F8(s32 arg0, s32 arg1, s32 arg2, s32 arg3, void *arg4, void *arg5);
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void func_800413EC(s32 arg0, s32 arg1, s32 arg2, s32 context, s32 arg4, s32 mode);
 extern void func_80041428(s32 arg0, s32 arg1, s32 arg2, s32 context, struct Vec3s32 *position,
                           s32 height, s32 arg6);
@@ -87,9 +87,9 @@ void func_8006D520(struct Unk8006D520 *arg0)
         base = func_8003D9F8(e->unk1C != 0 ? e->unk1C->unk34 : 0,
                              e->unk1A, e->unk0E, 1, e->unk1C, e->unk34);
         if (e->unk98 & 0x200) {
-            func_8001846C(0x100, &sine, &cosine);
+            gSinCos(0x100, &sine, &cosine);
         } else {
-            func_8001846C(0x200, &sine, &cosine);
+            gSinCos(0x200, &sine, &cosine);
         }
         func_80041428((s32)(base + 0x24), e->unk20->unk2E,
                       (e->unk98 & 0x10 ? e->unk12 + e->unk70 * 2 : e->unk12 + e->unk70) << 4,

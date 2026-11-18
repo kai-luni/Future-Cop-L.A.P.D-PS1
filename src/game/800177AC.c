@@ -18,7 +18,9 @@ struct Camera {
 
 extern struct Camera *gCamera __asm__("D_8009F9E4");
 
-extern void func_8001A81C(u8 *matrix, struct Vec3s32 *input, struct Vec3s32 *output);
+extern void gMulMatrixVector(u8 *matrix, struct Vec3s32 *input, struct Vec3s32 *output) __asm__("func_8001A81C");
+void gSetCameraPosition(struct Vec3s32 *position) __asm__("func_800177AC");
+
 
 /**
  * @brief Sets the active camera's position and recomputes the inverse
@@ -38,14 +40,19 @@ extern void func_8001A81C(u8 *matrix, struct Vec3s32 *input, struct Vec3s32 *out
  *
  * @par Callers
  * func_80056634, func_8005678C, func_800569EC, func_800573A4.
+ *
+ * @par Environment path
+ * Minimal-environment step 1: writes the eye position of a view record and
+ * its inverse. The four view placements (func_80056634, func_8005678C,
+ * func_800569EC, func_800573A4) call it together with func_80017860.
  */
-void func_800177AC(struct Vec3s32 *position)
+void gSetCameraPosition(struct Vec3s32 *position)
 {
     struct Vec3s32 rotated;
 
     gCamera->position = *position;
     gCamera->eye = *position;
-    func_8001A81C(gCamera->matrix, position, &rotated);
+    gMulMatrixVector(gCamera->matrix, position, &rotated);
     rotated.x = -rotated.x;
     rotated.y = -rotated.y;
     rotated.z = -rotated.z;

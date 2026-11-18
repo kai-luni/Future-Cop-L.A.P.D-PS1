@@ -20,7 +20,7 @@ extern u8 *gCamera __asm__("D_8009F9E4");
 extern struct Region66E98 gCoverageGrid[] __asm__("D_800AB3B8");
 extern struct Coord66E98 gGridOriginX[] __asm__("D_8009F834");
 extern void func_80017B60(s32);
-extern void func_80010820(void *);
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void func_8006531C(s32, s32, void *);
 extern void func_8004A924(s32, s32, void *);
 extern void func_80084398(s32, s32, void *);
@@ -53,12 +53,12 @@ void func_80066E98(s32 index, struct Object66E98 *object)
     s32 y;
 
     func_80017B60(object->info->id);
-    func_80010820(gCamera + 0x28);
+    gGteLoadRotation(gCamera + 0x28);
     region = &gCoverageGrid[index];
     x = gGridOriginX[index].x;
     y = gGridOriginX[index].y;
     func_8006531C(x, y, region);
-    func_80010820(gCamera + 0x28);
+    gGteLoadRotation(gCamera + 0x28);
     func_8004A924(x, y, region);
     func_80084398(x, y, region);
     func_80062EB8(index);

@@ -25,11 +25,11 @@ extern Pkt *gPrimPoolEnd __asm__("D_8009FA28");
 extern u8 *gSpriteDescriptorTable __asm__("D_8009F77C");
 extern u8 *gSpriteRegionTable __asm__("D_8009F778");
 
-extern void func_8001010C(V8 *in, V8 *out, s32 n);
+extern void gGteTransformVertices(V8 *in, V8 *out, s32 n) __asm__("func_8001010C");
 extern s32 func_80019D90(V8 *p, s32 m);
 extern s32 func_80019E70(V8 *p, s32 m);
 extern void func_80049F4C(V8 *p);
-extern void func_8001846C(s32 angle, s32 *s, s32 *c);
+extern void gSinCos(s32 angle, s32 *s, s32 *c) __asm__("func_8001846C");
 extern void func_8001047C(V8 *a, V8 *b, u8 *c, s32 n);
 extern s32 func_80049EF8(s32 a, s32 b, s32 c);
 
@@ -176,7 +176,7 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
         out[0].x = node->v[0].x + d[0];
         out[0].y = node->v[0].y + d[1];
         out[0].z = node->v[0].z + d[2];
-        func_8001010C(out, rot, 1);
+        gGteTransformVertices(out, rot, 1);
         if ((func_80019D90(rot, node->margin) & 0xFF) != 2) {
             return;
         }
@@ -191,7 +191,7 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
         if (node->flags & 8) {
             s1 = rot[0].x >> 1;
             s2 = rot[0].y >> 1;
-            func_8001846C(*(s16 *)&node->v[1].z, &sn, &cs);
+            gSinCos(*(s16 *)&node->v[1].z, &sn, &cs);
             sn >>= 4;
             cs >>= 4;
             if (node->idx < 0) {
@@ -252,7 +252,7 @@ void func_8004A048(Node *node, s32 arg1, s32 arg2)
             out[i].y = node->v[i].y + d[1];
             out[i].z = node->v[i].z + d[2];
         }
-        func_8001010C(out, rot, 1);
+        gGteTransformVertices(out, rot, 1);
         if ((func_80019E70(rot, node->margin) & 0xFF) != 2) {
             return;
         }

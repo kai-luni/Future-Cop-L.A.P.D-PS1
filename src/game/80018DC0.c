@@ -1,7 +1,9 @@
 // Categories: Utilities > Mathematics > Trigonometry | Graphics > GTE > Matrix Setup | Graphics > Geometry > Rotation
 typedef int s32;
 typedef unsigned int u32;
-extern void func_8001846C(u32, s32 *, s32 *);
+extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
+void gBuildRotationMatrixVariant(s32 x, s32 y, s32 z, s32 *m) __asm__("func_80018DC0");
+
 
 /**
  * @brief Builds a fixed-point rotation matrix from three angles.
@@ -43,8 +45,14 @@ extern void func_8001846C(u32, s32 *, s32 *);
  * @par Callers
  * func_80013CB8, func_80014164, func_8003AA94, func_80052960 and func_800592D0 -
  * the scene-graph, camera, effect and multi-point polygon paths.
+ *
+ * @par Environment path
+ * Rotation factory with the same contract as func_800188D0 but a shifted
+ * multiply sequence. Callers: the object/scene path (func_80013CB8,
+ * func_80014164, func_8003AA94, func_80052960) and the player update
+ * func_800592D0.
  */
-void func_80018DC0(s32 x, s32 y, s32 z, s32 *m)
+void gBuildRotationMatrixVariant(s32 x, s32 y, s32 z, s32 *m)
 {
     s32 sx, cx, sy, cy, sz, cz;
     z &= 0xFFF;
@@ -58,7 +66,7 @@ void func_80018DC0(s32 x, s32 y, s32 z, s32 *m)
             m[3] = 0;
             m[1] = 0;
             if (x != 0) {
-                func_8001846C(x, &sx, &cx);
+                gSinCos(x, &sx, &cx);
                 {
                     register s32 c __asm__("$3");
                     register s32 s ;
@@ -76,7 +84,7 @@ void func_80018DC0(s32 x, s32 y, s32 z, s32 *m)
                 m[2] = 0;
             }
         } else {
-            func_8001846C(y, &sy, &cy);
+            gSinCos(y, &sy, &cy);
             if (x == 0) {
                 register s32 c __asm__("$3");
                 register s32 s ;
@@ -93,7 +101,7 @@ void func_80018DC0(s32 x, s32 y, s32 z, s32 *m)
                 m[4] = c;
                 m[7] = -s;
             } else {
-                func_8001846C(x, &sx, &cx);
+                gSinCos(x, &sx, &cx);
                 m[0] = cx;
                 m[1] = 0;
                 m[2] = -sx;
@@ -110,7 +118,7 @@ void func_80018DC0(s32 x, s32 y, s32 z, s32 *m)
             }
         }
     } else {
-        func_8001846C(z, &sz, &cz);
+        gSinCos(z, &sz, &cz);
         if (y == 0) {
             if (x == 0) {
                 register s32 c __asm__("$4");
@@ -128,7 +136,7 @@ void func_80018DC0(s32 x, s32 y, s32 z, s32 *m)
                 m[1] = s;
                 m[3] = -s;
             } else {
-                func_8001846C(x, &sx, &cx);
+                gSinCos(x, &sx, &cx);
                 {
                     register s32 s __asm__("$3");
                     register s32 n ;
@@ -173,7 +181,7 @@ void func_80018DC0(s32 x, s32 y, s32 z, s32 *m)
                 }
             }
         } else {
-            func_8001846C(y, &sy, &cy);
+            gSinCos(y, &sy, &cy);
             if (x == 0) {
                 m[0] = cz;
                 m[2] = 0;
@@ -194,7 +202,7 @@ void func_80018DC0(s32 x, s32 y, s32 z, s32 *m)
                 }
             } else {
                 s32 p;
-                func_8001846C(x, &sx, &cx);
+                gSinCos(x, &sx, &cx);
                 p = sx;
                 sz >>= 2;
                 cz >>= 2;

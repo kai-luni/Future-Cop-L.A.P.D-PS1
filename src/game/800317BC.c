@@ -17,8 +17,8 @@ struct Object {
 };
 extern s32 func_8002AD58(s32, struct Object *, void *, void *);
 extern void func_80013BD8(void *, struct Model *, s32);
-extern void func_80010750(struct Matrix *);
-extern void func_80010234(void *, void *, s32);
+extern void gGteLoadMatrix(struct Matrix *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 
 /**
  * @brief Attaches a model to an entity and fetches its frame vertex.
@@ -55,7 +55,7 @@ void func_800317BC(struct Object *obj, struct Input *input, void *arg)
     obj->matrix.v[7] = src->matrix->v[7];
     obj->matrix.v[8] = src->matrix->v[8];
     obj->position = *(struct Vec3 *)&obj->matrix.v[6];
-    func_80010750(&obj->matrix);
-    func_80010234((obj->frame * 16 + 8) + (char *)obj->model->frames, (char *)obj + 0x5c, 1);
+    gGteLoadMatrix(&obj->matrix);
+    gGteTransformVerticesWide((obj->frame * 16 + 8) + (char *)obj->model->frames, (char *)obj + 0x5c, 1);
 }
 

@@ -12,9 +12,9 @@ typedef struct { s32 x, y, z; } Vec3;
 extern u8 func_800538C8(void *context, u32 *flags, s32 *v, s32 *h);
 extern void func_800471C4(s32 anim, u8 *o);
 extern void func_80052E28(u8 *o);
-extern void func_8001846C(s32 angle, s32 *sin, s32 *cos);
+extern void gSinCos(s32 angle, s32 *sin, s32 *cos) __asm__("func_8001846C");
 extern void func_800537D0(u8 *o, s32 a1, s32 a2, s32 *v, s32 t);
-extern void func_80010974(s32 *a, s32 *b, s32 *c);
+extern void gGteCrossProduct(s32 *a, s32 *b, s32 *c) __asm__("func_80010974");
 extern s32 func_8001A7AC(s32 *v);
 extern void func_8001ABE0(s32 scale, s32 *v);
 extern s32 func_80052550(u8 *o, s32 *v);
@@ -281,7 +281,7 @@ s32 func_80053A74(u8 *o_, s32 dt, s32 n_, u32 flags)
                 s32 angle = *(u16 *)(o + 0xB0) & 0xFFF;
 
                 *(u16 *)(o + 0xB0) = angle;
-                func_8001846C(angle, (s32 *)(o + 0xA0), (s32 *)(o + 0xA8));
+                gSinCos(angle, (s32 *)(o + 0xA0), (s32 *)(o + 0xA8));
             }
             a1 = 0;
             *(s32 *)(o + 0xA4) = 0;
@@ -339,8 +339,8 @@ s32 func_80053A74(u8 *o_, s32 dt, s32 n_, u32 flags)
                 }
             }
             func_800537D0(o, a1, a2, &v18.x, t0);
-            func_80010974(s6, &v18.x, s5);
-            func_80010974(s5, s6, &v18.x);
+            gGteCrossProduct(s6, &v18.x, s5);
+            gGteCrossProduct(s5, s6, &v18.x);
             if (!(*(u8 *)(o + 0xB9) & 1)) {
                 s32 s0v;
                 s32 vx, vz;

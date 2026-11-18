@@ -13,9 +13,9 @@ struct Self {
 };
 extern s32 func_80066F78(struct Vec *, struct Vec *, s32, s32);
 extern void func_800192AC(struct Vec *, struct Vec *, struct Vec *);
-extern void func_800188D0(s32,s32,s32,struct Vec *);
-extern void func_80010750(struct Vec *);
-extern void func_80010234(u8 *, void *, s32);
+extern void gBuildRotationMatrix(s32,s32,s32,struct Vec *) __asm__("func_800188D0");
+extern void gGteLoadMatrix(struct Vec *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(u8 *, void *, s32) __asm__("func_80010234");
 /**
  * @brief Orients an object's model basis (ground-normal or fixed) and fetches its
  *        frame vertex.
@@ -79,12 +79,12 @@ void func_80037EB4(struct Self *arg)
   c = self->unk130; d = self->unk136;
   basis = self->basis;
   if (self->flags >> 30) { c = self->unkB0; d = self->unkB4; }
-  func_800188D0(self->unk12a, c, d, basis);
-  func_80010750(basis);
+  gBuildRotationMatrix(self->unk12a, c, d, basis);
+  gGteLoadMatrix(basis);
   index = self->unk70 << 4;
   data = self->model->data;
   __asm__("" : "+r"(index));
   index += 8;
-  func_80010234(data + index, self->unk5c, 1);
+  gGteTransformVerticesWide(data + index, self->unk5c, 1);
  }
 }

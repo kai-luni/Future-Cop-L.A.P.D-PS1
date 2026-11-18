@@ -8,7 +8,7 @@ extern s32 func_8001A7AC(s32 *vec);
 extern void func_8001ABE0(s32 scale, s32 *p);
 extern s32 func_80095900(s32 value);
 extern s32 func_80095C30(s32 x, s32 y);
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 
 #define MULU16(out, a, b) \
     __asm__ volatile("multu\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
@@ -179,7 +179,7 @@ void gSolveLobVector(s32 angle, s32 *out, s32 *src, s32 *dst, s32 scale)
     }
 
     q3 = func_80095C30(a0, 0x10000);
-    func_8001846C((q3 << 12) >> 12, &vec[2], &vec[3]);
+    gSinCos((q3 << 12) >> 12, &vec[2], &vec[3]);
     c = vec[3];
     if (c < 0) {
         vec[3] = -c;

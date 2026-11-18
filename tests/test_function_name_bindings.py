@@ -65,9 +65,11 @@ class FunctionNameBindingTest(unittest.TestCase):
             if not path.is_file():
                 continue
             text = path.read_text(errors="ignore")
-            if re.search(r'__asm__\("func_[0-9A-F]{8}"\)', text):
+            bound = re.search(rf'\b{name}\s*\([^;{{}}]*\)\s*__asm__\(', text)
+            if bound:
                 self.fail(
-                    f"{filename} is now asm-labelled; drop {name} from KNOWN_UNBOUND")
+                    f"{name} in {filename} is now asm-labelled; drop it from"
+                    " KNOWN_UNBOUND")
             self.assertIn(
                 name, {n for n, _ in definitions(text)},
                 f"{name} no longer defined in {filename}")

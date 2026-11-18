@@ -53,8 +53,8 @@ extern void func_80060668(void *in, void *out);
 extern void func_80050E0C(void *a, void *b, s32 c, void *d, void *e);
 extern void func_80037EB4(void *self);
 extern void func_80044988(void *data, void *track, u8 forward, s32 index);
-extern void func_80010750(void *matrix);
-extern void func_80010234(void *frame, void *output, s32 count);
+extern void gGteLoadMatrix(void *matrix) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *frame, void *output, s32 count) __asm__("func_80010234");
 extern s32 func_8006314C(void *key, u8 value);
 
 /**
@@ -101,14 +101,14 @@ void func_800378BC(s32 message, struct Unk378BC *self, struct Unk378BCOther *oth
         }
         func_80044988(self->state->animData, self->unkC8, 1, index);
     }
-    func_80010750(self->matrix);
+    gGteLoadMatrix(self->matrix);
     offset = self->frame;
     pointer = (u8 *)self->state;
     offset <<= 4;
     __asm__("" : "=r"(offset) : "0"(offset));
     pointer = ((struct Unk378BCState *)pointer)->frames;
     offset += 8;
-    func_80010234(pointer + offset, self->unk5C, 1);
+    gGteTransformVerticesWide(pointer + offset, self->unk5C, 1);
     if (self->flags & 0x4000) {
         func_8006314C(self, 0);
     }

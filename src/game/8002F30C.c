@@ -28,9 +28,9 @@ struct Obj {
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 
 extern void func_8002F280(struct Obj *);
-extern void func_800188D0(s32, s32, s32, s32 *);
-extern void func_80010750(s32 *);
-extern void func_80010234(void *, void *, s32);
+extern void gBuildRotationMatrix(s32, s32, s32, s32 *) __asm__("func_800188D0");
+extern void gGteLoadMatrix(s32 *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern void func_800457B8(s32, s32);
 extern void func_80047284(s32, s32, s32, s32);
 
@@ -130,9 +130,9 @@ s32 func_8002F30C(struct Obj *obj, s32 dt)
         } else {
             rx = newv; rz = 0; ry = 0;
         }
-        func_800188D0(rx, ry, rz, obj->matrix);
-        func_80010750(obj->matrix);
-        func_80010234(obj->inner->base + (obj->part * 16 + 8), obj->transform, 1);
+        gBuildRotationMatrix(rx, ry, rz, obj->matrix);
+        gGteLoadMatrix(obj->matrix);
+        gGteTransformVerticesWide(obj->inner->base + (obj->part * 16 + 8), obj->transform, 1);
         break;
     case 1:
     case 2:
@@ -184,8 +184,8 @@ s32 func_8002F30C(struct Obj *obj, s32 dt)
             obj->direction = (obj->direction + 1) & 1;
         }
     update:
-        func_80010750(obj->matrix);
-        func_80010234(obj->inner->base + (obj->part * 16 + 8), obj->transform, 1);
+        gGteLoadMatrix(obj->matrix);
+        gGteTransformVerticesWide(obj->inner->base + (obj->part * 16 + 8), obj->transform, 1);
     }
     if (changed) {
         if (!(obj->flags & 0x400000) && !obj->sound_state && obj->start_sound)

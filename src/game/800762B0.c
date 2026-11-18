@@ -39,7 +39,7 @@ extern void func_800181D4(void *);
 extern u8 func_8003BE2C(void *, s32, s32);
 extern void func_8003C14C(void *, void *);
 extern u32 func_80019668(void);
-extern void func_800188D0(s32, s32, s32, Work *);
+extern void gBuildRotationMatrix(s32, s32, s32, Work *) __asm__("func_800188D0");
 
 /**
  * @brief Constructor of spawn kind 0x57: allocates the 0xA0 object and its
@@ -137,7 +137,7 @@ void *func_800762B0(Src *arg)
         y = second;
         angle = x;
     }
-    func_800188D0(angle, -y, 0, &work);
+    gBuildRotationMatrix(angle, -y, 0, &work);
     dest->a9a = ((work.x >> 4) * src->a4e) >> 12;
     dest->a9c = ((work.y >> 4) * src->a4e) >> 12;
     dest->a9e = ((work.z >> 4) * src->a4e) >> 12;

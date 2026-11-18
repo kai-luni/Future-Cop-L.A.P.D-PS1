@@ -13,7 +13,7 @@ struct Unk56870 {
 };
 
 extern u32 func_80019668(void);
-extern void func_8005678C(struct Unk56870 *object, s32 index, struct Vec3s32 *out, s32 apply);
+extern void gPlaceCameraFromPreset(struct Unk56870 *object, s32 index, struct Vec3s32 *out, s32 apply) __asm__("func_8005678C");
 extern s32 func_80055EE8(struct Vec3s32 *from, struct Vec3s32 *to);
 
 /**
@@ -48,7 +48,7 @@ s32 func_80056870(struct Unk56870 *object)
     slot = (func_80019668() & 7) + 9;
     position = object->position;
     for (tries = 8; tries > 0; tries--) {
-        func_8005678C(object, slot, &out, 0);
+        gPlaceCameraFromPreset(object, slot, &out, 0);
         blocked = func_80055EE8(&position, &out);
         if (blocked == 0) {
             break;

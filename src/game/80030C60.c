@@ -21,8 +21,8 @@ struct Entity {
     struct Entity *child;
 };
 struct Owner { u8 pad00[0x94]; void *callback; u8 pad98[8]; struct Vec position; };
-extern void func_80010750(void *);
-extern void func_80010234(void *, void *, s32);
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern void func_80069D68(void *, s32, s32, void *);
 extern s16 D_8009FA44[];
 
@@ -51,8 +51,8 @@ s32 func_80030C60(struct Owner *owner, struct Entity *entity)
     if (entity->type == 0x12)
         entity = entity->child;
     entity->position = owner->position;
-    func_80010750(entity->pad2c);
-    func_80010234((entity->part << 4) + 8 + entity->model->data, &entity->other, 1);
+    gGteLoadMatrix(entity->pad2c);
+    gGteTransformVerticesWide((entity->part << 4) + 8 + entity->model->data, &entity->other, 1);
     if (entity->type == 1) {
         __asm__ volatile ("" : : : "memory");
         index = entity->extra->index;

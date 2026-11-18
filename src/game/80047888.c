@@ -17,7 +17,7 @@ extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u32 D_800A8EA0[];
 extern void func_80017668(void *, int, Vec *);
 extern int func_800684AC(Vec *, Vec *, Vec *, int, int);
-extern void func_80010820(void *);
+extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void func_8001047C(SVec *, SVec *, int *, int);
 /**
  * @brief Draws the marker of an object's current target: a 16x16 sprite at the
@@ -116,7 +116,7 @@ void func_80047888(Object *obj)
         screen[i].y = (points[i].y - gCamera->pos.y) >> 4;
         screen[i].z = (points[i].z - gCamera->pos.z) >> 4;
     }
-    func_80010820((u8 *)gCamera + 0x28);
+    gGteLoadRotation((u8 *)gCamera + 0x28);
     func_8001047C(screen, screen, &flag, 3);
     if (((u8 *)&flag)[2] & 1) return;
     if (gPacketCursor < gPacketLimit) goto a1;

@@ -49,8 +49,8 @@ extern void func_8001A644(V3 *);
 extern void func_8001AB78(s32, V3 *);
 extern void func_8001A6F8(V3 *, V3 *);
 extern void func_80019310(V3 *, V3 *, V3 *);
-extern void func_80010750(V3 *);
-extern void func_80010234(s32, void *, s32);
+extern void gGteLoadMatrix(V3 *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(s32, void *, s32) __asm__("func_80010234");
 #define FMUL(d, x, y) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(x), "r"(y) : "$8", "$9")
 
 extern void func_80060238(u32 *, s32, struct Obj *, s32, s32);
@@ -360,7 +360,7 @@ L_ED0:
     a.y = ay;
 L_ED8:
     func_80019310(q, &a, &o->f2C);
-    func_80010750(&o->f2C);
-    func_80010234((o->f70 << 4) + 8 + o->f28->f34, (u8 *)o + 0x5C, 1);
+    gGteLoadMatrix(&o->f2C);
+    gGteTransformVerticesWide((o->f70 << 4) + 8 + o->f28->f34, (u8 *)o + 0x5C, 1);
     return 0;
 }

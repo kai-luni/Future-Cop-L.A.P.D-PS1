@@ -1,7 +1,7 @@
 // Categories: Utilities > Mathematics | Gameplay > AI
 #include "game/types.h"
 
-extern void func_8001846C(u32 id, s32 *first, s32 *second);
+extern void gSinCos(u32 id, s32 *first, s32 *second) __asm__("func_8001846C");
 
 /**
  * @brief Returns the cosine value for a 4096-step angle, clamped to -0x10000 at or above half a turn.
@@ -34,6 +34,6 @@ s32 func_8006062C(u32 id)
     if (id >= 0x800) {
         return -0x10000;
     }
-    func_8001846C(id, &first, &second);
+    gSinCos(id, &first, &second);
     return second;
 }

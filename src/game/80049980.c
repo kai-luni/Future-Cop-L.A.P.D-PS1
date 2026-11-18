@@ -27,7 +27,7 @@ typedef struct Node {
 extern Node **gLightGrid __asm__("D_8009F780");
 extern s32 gLightGridWidth __asm__("D_8009F78C");
 
-extern void func_800188D0(s32 angle, s32 arg7, s32 arg8, struct TransformMatrix *matrix);
+extern void gBuildRotationMatrix(s32 angle, s32 arg7, s32 arg8, struct TransformMatrix *matrix) __asm__("func_800188D0");
 extern void func_8001AF84(struct TransformMatrix *matrix, struct TransformPoint *source,
                           struct TransformPoint *destination, s32 count);
 extern u16 func_80083764(s32 x, s32 y, s32 left, s32 right, s32 top, s32 bottom);
@@ -148,7 +148,7 @@ void func_80049980(Node *node, s32 x, s32 z, s32 y, s32 width, s32 depth,
         matrix.values[10] = y;
         matrix.values[9] = x & 0x1FFFF;
         matrix.values[11] = z & 0x1FFFF;
-        func_800188D0(angle, arg7, arg8, &matrix);
+        gBuildRotationMatrix(angle, arg7, arg8, &matrix);
         w32 = (width / 2) >> 4;
         points[1].z = w32;
         points[2].z = w32;

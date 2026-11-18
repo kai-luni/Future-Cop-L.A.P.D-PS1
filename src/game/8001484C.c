@@ -28,7 +28,7 @@ struct PolyG3 {
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 * volatile gPacketLimit __asm__("D_8009F9C0");
 
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 
 /**
  * @brief Emits a gouraud-shaded disc (fan of triangles) around a centre.
@@ -147,14 +147,14 @@ page_ready:
 
     angle_hi[0] = angle >> 8;
     angle &= 0xFF;
-    func_8001846C(angle_hi[0], sin0, cos0);
+    gSinCos(angle_hi[0], sin0, cos0);
 
     cos0[0] = (cos0[0] * scaled[0]) >> 16;
     sin0[0] = (sin0[0] * scaled[0]) >> 16;
     step = 0x20000 / fp;
 
     for (i = 1; i <= fp / 4; i++) {
-        func_8001846C(angle_hi[0] + (((i + angle) * step) / 32), &sin1, &cos1);
+        gSinCos(angle_hi[0] + (((i + angle) * step) / 32), &sin1, &cos1);
 
         poly->x1 = *(u16 *)cos0 + vx;
         poly->y1 = *(u16 *)sin0 + vy;

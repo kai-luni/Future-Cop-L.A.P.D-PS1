@@ -18,8 +18,8 @@ struct Unk51C50 {
     s16 angle;
 };
 
-extern void func_80010974(struct Vec3s32 *up, struct Vec3s32 *target, struct Unk51C50View *view);
-extern void func_800188D0(s32 arg0, s32 arg1, s32 angle, struct Unk51C50View *view);
+extern void gGteCrossProduct(struct Vec3s32 *up, struct Vec3s32 *target, struct Unk51C50View *view) __asm__("func_80010974");
+extern void gBuildRotationMatrix(s32 arg0, s32 arg1, s32 angle, struct Unk51C50View *view) __asm__("func_800188D0");
 
 /**
  * @brief Builds the view frame of an object: look-at form when its angle
@@ -52,8 +52,8 @@ void func_80051C50(struct Unk51C50 *object, s32 arg1, struct Vec3s32 *target,
         view->up.x = 0;
         view->up.y = 0x10000;
         view->up.z = 0;
-        func_80010974(&view->up, &view->target, view);
+        gGteCrossProduct(&view->up, &view->target, view);
     } else {
-        func_800188D0(arg1, 0, object->angle, view);
+        gBuildRotationMatrix(arg1, 0, object->angle, view);
     }
 }

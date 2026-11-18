@@ -80,7 +80,7 @@ extern void *jtbl_80011318[];
 extern s32 func_80019668(void);
 extern void func_80033608(struct Self *self, void *anim);
 extern void func_800330E8(struct Self *self);
-extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
+extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void func_800193F8(struct Vec3 *axis, struct Basis *basis);
 extern s32 func_800331CC();
 extern s32 func_8003532C();

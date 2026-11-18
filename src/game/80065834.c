@@ -17,8 +17,8 @@ extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gEffectSizeTable[] __asm__("D_800A6F60");
 extern u8 D_8009F37C[];
 extern void func_800694C8(s32 *, s32 *, s32, s32);
-extern void func_80010750(void *);
-extern void func_80010234(struct SVec *, struct Vec *, s32);
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(struct SVec *, struct Vec *, s32) __asm__("func_80010234");
 extern void func_80049100(u8 *, s32, s32, s32);
 
 /**
@@ -136,13 +136,13 @@ void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
     p[2].x = x + dx; p[2].y = y; p[2].z = z - dz;
     p[3].x = xm; p[3].y = y; p[3].z = z - dz;
     if (entity[0x16] == 1) graphic = (struct Graphic *)(entity + 0x28);
-    func_80010750(graphic->transform);
+    gGteLoadMatrix(graphic->transform);
     {
         register struct SVec *pstart __asm__("$4");
         pstart = p;
         __asm__ volatile ("" : : "r"(pstart) : "$16");
         cur = v;
-        func_80010234(pstart, cur, 4);
+        gGteTransformVerticesWide(pstart, cur, 4);
     }
     depth = 0;
     for (i = 0; i < 4; i++) {

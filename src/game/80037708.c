@@ -13,8 +13,8 @@ struct Obj {
 };
 extern void func_80037064(struct Obj *, struct Data *, s32);
 extern void func_800371FC(struct Obj *, struct Data *);
-extern void func_80010750(void *);
-extern void func_80010234(void *, void *, s32);
+extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern s32 func_8002AD58(s32, struct Obj *, struct Data *, s32);
 extern s32 func_8002AD58_case9(s32, struct Obj *, struct Data *, s32);
 extern void func_800410BC(void *, s32, s32, struct Data *);
@@ -55,8 +55,8 @@ s32 func_80037708(s32 msg, struct Obj *obj, struct Data *data, s32 arg3)
         return 0;
     case 6:
         func_800371FC(obj, data);
-        func_80010750((u8 *)obj + 0x2c);
-        func_80010234(obj->sub->data + ((obj->val70 << 4) + 8), obj->mat, 1);
+        gGteLoadMatrix((u8 *)obj + 0x2c);
+        gGteTransformVerticesWide(obj->sub->data + ((obj->val70 << 4) + 8), obj->mat, 1);
         return 0;
     case 10:
         if (obj->other->id == data->id || data->type == 15)

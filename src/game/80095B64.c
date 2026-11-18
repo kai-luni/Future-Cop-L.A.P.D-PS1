@@ -21,6 +21,10 @@
  *
  * @par Sibling
  * func_80095BBC is the sf = 0 form (0x4B70000C).
+ *
+ * @par Environment path
+ * Cross product through a temporary matrix. It has no caller in the US
+ * binary, so only the documented contract matters for the port.
  */
 __asm__(
     ".set noreorder\n"

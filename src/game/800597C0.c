@@ -83,9 +83,9 @@ extern s32 func_800584BC(s32 message, struct State597C0 *object, void *hit, s32 
 extern void func_8005920C(struct Object597C0 *object, void *spawn, s32 arg2);
 extern void func_800592D0(struct State597C0 *state);
 extern void func_800596C4(struct State597C0 *state);
-extern void func_8001010C(s16 *a, s16 *b, s32 c);
+extern void gGteTransformVertices(s16 *a, s16 *b, s32 c) __asm__("func_8001010C");
 extern void func_8001047C(s16 *a, s16 *b, s16 *c, s32 d);
-extern void func_80010820(u8 *a);
+extern void gGteLoadRotation(u8 *a) __asm__("func_80010820");
 extern void func_8001484C(s16 *a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 extern s32 func_8002AD58(s32 kind, struct Object597C0 *object, void *arg2, s32 arg3);
 
@@ -293,8 +293,8 @@ void func_800597C0(struct Object597C0 *object)
         loc.coords[1] = loc.from[1] >> 4;
         loc.coords[2] = loc.from[2] >> 4;
 
-        func_80010820((u8 *)cam + 0x28);
-        func_8001010C(loc.coords, loc.point, 1);
+        gGteLoadRotation((u8 *)cam + 0x28);
+        gGteTransformVertices(loc.coords, loc.point, 1);
 
         if ((u8)func_80019D90(loc.point, 0x700) == 2) {
             func_8001047C(loc.coords, loc.point, loc.hit, 1);

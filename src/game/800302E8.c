@@ -74,9 +74,9 @@ struct Entity {
 
 extern s32 func_8002AD58(s32 message, struct Entity *self, struct Spawn *data, s32 arg3);
 extern s32 func_80067684(struct Vec3 *pos, s32 mode);
-extern void func_800188D0(s32 yaw, s32 pitch, s32 roll, void *matrix);
-extern void func_80010750(void *coord);
-extern void func_80010234(void *vertices, void *out, s32 count);
+extern void gBuildRotationMatrix(s32 yaw, s32 pitch, s32 roll, void *matrix) __asm__("func_800188D0");
+extern void gGteLoadMatrix(void *coord) __asm__("func_80010750");
+extern void gGteTransformVerticesWide(void *vertices, void *out, s32 count) __asm__("func_80010234");
 extern void func_80044988(void *data, void *track, u8 forward, s32 index);
 extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options);
 extern void func_80017668(void *instance, s32 part, void *out);
@@ -146,9 +146,9 @@ void func_800302E8(struct Entity *self, struct Spawn *data, s32 arg2)
     value = func_80067684(&self->pos, mode);
     self->pos.y = value + (sub->unk28 << 4);
     self->flags |= 0x800001;
-    func_800188D0(sub->unk30, 0, 0, self->coord);
-    func_80010750(self->coord);
-    func_80010234(self->model->unk34 + ((self->unk70 << 4) + 8), self->verts, 1);
+    gBuildRotationMatrix(sub->unk30, 0, 0, self->coord);
+    gGteLoadMatrix(self->coord);
+    gGteTransformVerticesWide(self->model->unk34 + ((self->unk70 << 4) + 8), self->verts, 1);
     func_80044988(self->model->unk10, self->unkA0, 1, 0);
 
     inst = &self->d4;

@@ -69,7 +69,7 @@ typedef struct Ent {
 extern s32 gRemainingCounter __asm__("D_8009FAB0");
 extern s32 func_80019668(void);
 extern Mat *func_8003D9F8(void *a0, u16 a1, s8 a2, s32 a3, void *a4, Mat *a5);
-extern void func_800188D0(s32 a, s32 b, s32 c, s32 *out);
+extern void gBuildRotationMatrix(s32 a, s32 b, s32 c, s32 *out) __asm__("func_800188D0");
 extern void func_8001B148(Mat *m, s16 *src, s16 *dst, s32 n);
 extern Node *func_80042764(Ent *e);
 extern void func_80042788(Ent *e, Node *n);
@@ -163,7 +163,7 @@ void func_80042AF4(Ent *self, Node *src, u8 flag)
         } else {
             s4 = (u16)self->unk82;
         }
-        func_800188D0(s3, s0, 0, buf);
+        gBuildRotationMatrix(s3, s0, 0, buf);
         *(Vec *)&buf[10] = *(Vec *)&buf[3];
         if (self->unkA0 == 0) {
             n->x4 = 0;
