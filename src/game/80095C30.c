@@ -1,6 +1,8 @@
 // Categories: Utilities > Mathematics > Trigonometry
 #include "game/types.h"
 
+extern int gSolveLobVector();
+
 extern s16 gRatioTable[] __asm__("D_8009E0A0");
 
 /**
@@ -26,7 +28,7 @@ extern s16 gRatioTable[] __asm__("D_8009E0A0");
  * @par Callers
  * func_8002AD58, func_8002B6C8, func_8002CC30, func_8002E630, func_80038A00,
  * func_8004F764, func_8005027C, func_80050E0C, func_80057E40, func_800592D0,
- * func_8005A934, func_8005E624.
+ * func_8005A934, gSolveLobVector.
  */
 s32 func_80095C30(s32 x, s32 y)
 {

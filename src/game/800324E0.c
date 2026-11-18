@@ -42,7 +42,7 @@ extern void func_8003BA50(struct Obj *, s32);
 extern void func_8003B898(s32, struct Obj *, s32, s32, s32);
 extern struct Hit *func_8004D664(s32);
 extern void func_80069D68(s32, s32, s32, struct Obj *);
-extern void func_8001ACA4(V3 *, V3 *, s32, V3 *);
+extern void gVectorAddScaled(V3 *, V3 *, s32, V3 *) __asm__("func_8001ACA4");
 extern void func_8001A180(V3 *);
 extern s32 func_8001A750(V3 *, V3 *);
 extern void func_8001A644(V3 *);
@@ -89,7 +89,7 @@ extern void func_80060238(u32 *, s32, struct Obj *, s32, s32);
  * class word (+0x14) against the player block D_8009FA58 and increments a counter
  * through its +0xAC pointer, runs the script at +0x98 via func_80069D68, and enters
  * state 5. While airborne it bounces: the velocity at +0xE8 is pulled back toward
- * the wander point by func_8001ACA4 with a negative step and jittered by
+ * the wander point by gVectorAddScaled with a negative step and jittered by
  * (random 4 bits - 3) << 9, then +0xDC and +0x5C are chased with lerps of dt << 8.
  * 4 - descent: y falls by (dt * +0xF4) >> 9 until the body is within (+0x114 << 4)
  * of the ground height from func_80069A38 plus (+0x6C << 4), then back to 0.
@@ -255,12 +255,12 @@ L5E4:
             o->fFA = 5;
             return 0;
         }
-        func_8001ACA4(&o->fE8, &o->fDC, -0x400, &o->fE8);
+        gVectorAddScaled(&o->fE8, &o->fDC, -0x400, &o->fE8);
         t3 = func_80019668();
         c3 = dt << 8;
         o->fE8.y -= ((t3 & 0xF) - 3) << 9;
-        func_8001ACA4(&o->fDC, &o->fE8, c3, &o->fDC);
-        func_8001ACA4(pp, &o->fDC, c3, pp);
+        gVectorAddScaled(&o->fDC, &o->fE8, c3, &o->fDC);
+        gVectorAddScaled(pp, &o->fDC, c3, pp);
         a = o->f38;
         a.y = a.y + 0x2000;
         f78p = &o->f78;

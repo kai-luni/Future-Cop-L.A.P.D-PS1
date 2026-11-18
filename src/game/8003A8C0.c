@@ -1,6 +1,8 @@
 // Categories: Gameplay > Object Spawning | Graphics > Effects | Game Engine > Object Setup
 #include "game/types.h"
 
+extern int gSpawnQueuedEntity();
+
 struct Unk3A8C0Args {
     s32 arg0;
     s32 arg2;
@@ -21,7 +23,7 @@ extern void func_8004D4D4(struct Unk3A8C0Request *request);
 /**
  * @brief Queues a spawn request for a particle-emitter entity handled by func_8003B2D0.
  *
- * Confirmed: populates stack-local request (handler = D_8003B2D0 [func_8003B2D0], unk04 = 0, unk0C = 0, args = &args) and args (arg0, arg2, arg3, u8 arg1) and calls func_8004D4D4(&request), which spawns the entity via func_8004D444 and discards its entity id.
+ * Confirmed: populates stack-local request (handler = D_8003B2D0 [func_8003B2D0], unk04 = 0, unk0C = 0, args = &args) and args (arg0, arg2, arg3, u8 arg1) and calls func_8004D4D4(&request), which spawns the entity via gSpawnQueuedEntity and discards its entity id.
  * Category follows spawn dispatcher func_8004D4D4, particle-emitter handler func_8003B2D0 (type 0xCC, particle decay and skinned-part draw), and debris caller func_8004C324.
  * Likely: spawns a short-lived particle-emitter attachment for debris/fracture objects using the nine copied matrix words; Unknown: exact meaning of arg0..arg3 inside the packed Unk3A8C0Args layout read by func_8003AA94.
  *

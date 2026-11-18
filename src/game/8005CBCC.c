@@ -1,6 +1,8 @@
 // Categories: Graphics > Renderer > Map Cell Sprite | Graphics > Effects > Object-Attached Effect | Gameplay > Object Attachment
 #include "game/types.h"
 
+extern int gWeaponFireDispatch();
+
 typedef struct {
     s32 x;
     s32 y;
@@ -104,7 +106,7 @@ extern u8 gMapGrid[] __asm__("D_800A6578");
 extern struct Unk5CB80Node *func_8005CB80(struct Unk5CB80Pool *pool, void *target);
 extern struct ListNode *func_8003BEF0(struct ListNode *node);
 extern void func_80017668(struct ModelInstance *instance, s32 part, s32 *out);
-extern void func_8005E2A0(s32 *a, s32 *b, s32 c, s32 d, void *e, void *f, s32 g);
+extern void gSolveLeadDirection(s32 *a, s32 *b, s32 c, s32 d, void *e, void *f, s32 g) __asm__("func_8005E2A0");
 extern void func_8001A180(s32 *vec);
 extern void func_800193F8(s32 *a, s32 *b);
 extern s32 func_8003BF50(struct Unk5CBCCArg0 *arg0);
@@ -136,7 +138,7 @@ extern void D_8005CA04(void);
  *    index returns first. func_80017668(instance, part, &pos) yields the part
  *    position in world space, which is copied into the node's vector field.
  * 3. With a configuration the orientation is either the randomised vector from
- *    func_8005E2A0(pos, temp, speed << 4, spread << 4, arg2+0x5C, arg2+0x78,
+ *    gSolveLeadDirection(pos, temp, speed << 4, spread << 4, arg2+0x5C, arg2+0x78,
  *    arg2+0x84) when the speed is positive, or the plain vector from arg2+0x5C to
  *    the part position normalised by func_8001A180; func_800193F8 then builds the
  *    nine-word matrix. Without a configuration the matrix is copied verbatim from
@@ -165,9 +167,12 @@ extern void D_8005CA04(void);
  * - The exact callback contract of D_8005CA04, installed but called elsewhere.
  *
  * @par Callers
- * func_8005F6E8 (message 17) and func_8006ACB0 (message 0x11).
+ * func_8005F6E8 (message 17) and gWeaponFireDispatch (message 0x11).
  */
-void func_8005CBCC(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 *arg2,
+void gAttachPartEffect(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 *arg2,
+                   struct ModelInstance *arg3, s32 partin, struct Unk5CBCCArg5 *arg5) __asm__("func_8005CBCC");
+
+void gAttachPartEffect(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 *arg2,
                    struct ModelInstance *arg3, s32 partin, struct Unk5CBCCArg5 *arg5)
 {
     struct Unk5CBCCLocal local;
@@ -203,7 +208,7 @@ void func_8005CBCC(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 *arg
 
         if (arg2 != 0) {
             if (arg5->unk06 > 0) {
-                func_8005E2A0(&local.vec.x, &local.temp.x, arg5->unk06 << 4,
+                gSolveLeadDirection(&local.vec.x, &local.temp.x, arg5->unk06 << 4,
                               arg5->unk0A << 4, &arg2->unk5C, arg2->unk78, arg2->unk84);
             } else {
                 local.temp.x = arg2->unk5C - local.vec.x;

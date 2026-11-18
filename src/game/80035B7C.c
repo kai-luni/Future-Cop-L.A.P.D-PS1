@@ -111,7 +111,7 @@ extern void func_8001A180(s32 *vector);
 extern s32 func_8001A314(s32 *vector);
 extern s32 func_8001A6F8(s32 *a, s32 *b);
 extern s32 func_8001AB00(s32 *a, s32 *b);
-extern void func_8001ACA4(s32 *a, s32 *b, s32 delta, s32 *out);
+extern void gVectorAddScaled(s32 *a, s32 *b, s32 delta, s32 *out) __asm__("func_8001ACA4");
 extern s32 func_800684AC(s32 *a, s32 *b, s32 *out, s32 arg3, s32 arg4);
 extern s32 func_80066F78(s32 *a, s32 b, s32 c, s32 d);
 extern s32 func_80069A38(s32 *a);
@@ -126,11 +126,11 @@ extern s32 func_80019FCC(s32 *vector);
 extern s32 func_80095900(s32 angle);
 extern void func_800410BC(s32 *pos, s32 speed, s32 angle, struct Obj35B7C *target);
 extern s32 func_8002AD58(s32 state, struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3);
-extern void func_80035904(struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3);
+extern void gProjectileInit(struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3) __asm__("func_80035904");
 extern s32 func_800402DC(void *owner, u8 column, s32 arg2, s32 row, s32 arg4);
 extern void func_8003B898(u8 arg0, struct Obj35B7C *self, s32 arg2, s32 arg3, s32 arg4);
 extern void *func_8004E80C(struct Obj35B7C *target, u8 arg1, s16 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
-extern void *func_8005E47C(struct SpawnInfo35B7C *info, struct Model *model, s32 *vec80, s32 *vec70, struct Obj35B7C *unkC8, struct Obj35B7C *s1p, s32 unk24, s32 arg7, s32 arg8, s32 arg9, s32 arg10, u32 unkE4);
+extern void *gSpawnDirectShot(struct SpawnInfo35B7C *info, struct Model *model, s32 *vec80, s32 *vec70, struct Obj35B7C *unkC8, struct Obj35B7C *s1p, s32 unk24, s32 arg7, s32 arg8, s32 arg9, s32 arg10, u32 unkE4) __asm__("func_8005E47C");
 extern void *func_8006C224(struct Obj35B7C *target, struct Obj35B7C *arg1, s32 arg2, s32 arg3);
 extern void func_80044B34(struct Obj35B7C *self, void *unkE8, s32 delta, s32 arg3);
 
@@ -184,7 +184,7 @@ extern void func_80044B34(struct Obj35B7C *self, void *unkE8, s32 delta, s32 arg
  * 5. Burst: when unkDC == 0x12 and s4 >= 0x3001, a spawn info block is filled
  *    (unk06 = unkD4, unk08 = unkD2, unk00 = unk1A, unk0A = unkA6 << 4,
  *    unk12 = 0, unk0E = unk20, unk02 = unkD0 >> 4) and up to three children are
- *    created with func_8005E47C(&info, model, vec80, vec70, unkC8, p2, unk24,
+ *    created with gSpawnDirectShot(&info, model, vec80, vec70, unkC8, p2, unk24,
  *    3, 0, 0, 0, unkE4). The per-child direction gets +0x2000 in x and z for
  *    child 0, -0x2000 for child 1 and +0x2000 in y for child 2, is normalised
  *    with func_8001A180, and is skipped when the dot product with self +0x44
@@ -213,7 +213,7 @@ extern void func_80044B34(struct Obj35B7C *self, void *unkE8, s32 delta, s32 arg
  *      onto the direction (or stops when closer than 8), otherwise the velocity
  *      is smoothed toward it with func_8001A6F8, normalised, lifted by 0x2000
  *      in y and cross-producted into unkB4.
- * 8. func_8001ACA4(position, velocity, s3, position) integrates the position.
+ * 8. gVectorAddScaled(position, velocity, s3, position) integrates the position.
  *    For unkDC == 0x15 the state 3 -> state 1 transition happens and, when the
  *    target is at least 0x301 away while the height above the floor is below
  *    0x800, the position is raised by 0x200, state 3 is re-entered and the
@@ -234,10 +234,10 @@ extern void func_80044B34(struct Obj35B7C *self, void *unkE8, s32 delta, s32 arg
  *
  * @par Calls
  * func_8003B898 (effect attach), func_8004E80C / func_8006C224 (spawn source
- * lookup), func_8005E47C (child object creation), func_800402DC (post-create
+ * lookup), gSpawnDirectShot (child object creation), func_800402DC (post-create
  * parameter), func_80044B34 / func_800175F8 (animation), func_8001A4E8 and
  * func_8001A314 (octagonal / exact distance), func_8001A180 (normalise),
- * func_8001A6F8 (3/4 low pass), func_8001AB00 (dot product), func_8001ACA4
+ * func_8001A6F8 (3/4 low pass), func_8001AB00 (dot product), gVectorAddScaled
  * (add scaled vector), func_80010974 (cross product), func_800684AC
  * (collision), func_80066F78 (floor height), func_80069A38, func_8001A13C,
  * func_800188D0 / func_80019310 / func_80010820 / func_8001006C / func_80010750 /
@@ -272,7 +272,9 @@ extern void func_80044B34(struct Obj35B7C *self, void *unkE8, s32 delta, s32 arg
  * - Whether the +0xB4/+0xB8/+0xBC vector is a heading, an up vector or a
  *   velocity for the second body; it is fed to func_80019310 as basis input.
  */
-void func_80035B7C(struct Obj35B7C *self, s32 delta)
+void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta) __asm__("func_80035B7C");
+
+void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
 {
     struct Obj35B7C *p1;
     struct Obj35B7C *p2;
@@ -413,7 +415,7 @@ void func_80035B7C(struct Obj35B7C *self, s32 delta)
             func_8001A180(vec70);
             temp = func_8001AB00((s32 *)((u8 *)self + 0x44), vec70);
             if (temp > -0xEC83) {
-                void *created = func_8005E47C(&info, self->mi.model, vec80, vec70,
+                void *created = gSpawnDirectShot(&info, self->mi.model, vec80, vec70,
                                               self->unkC8, p2, self->unk24, 3, 0, 0, 0,
                                               self->unkE4);
                 vecA8[i] = (s32)created;
@@ -470,7 +472,7 @@ void func_80035B7C(struct Obj35B7C *self, s32 delta)
             if (p1 != 0) {
                 *(struct Vec3_35B7C *)sp60 = *(struct Vec3_35B7C *)((u8 *)p1 + 0x5C);
                 if ((s32)p1->unk08 > (s32)self->unk08) {
-                    func_8001ACA4(sp60, (s32 *)((u8 *)p1 + 0x78), p1->unk84 * delta, sp60);
+                    gVectorAddScaled(sp60, (s32 *)((u8 *)p1 + 0x78), p1->unk84 * delta, sp60);
                 }
                 vec30[0] = sp60[0] - *(s32 *)((u8 *)self + 0x50);
                 vec30[1] = sp60[1] - *(s32 *)((u8 *)self + 0x54);
@@ -517,7 +519,7 @@ void func_80035B7C(struct Obj35B7C *self, s32 delta)
         }
 
         {
-            func_8001ACA4((s32 *)((u8 *)self + 0x50), &self->unk78, s3,
+            gVectorAddScaled((s32 *)((u8 *)self + 0x50), &self->unk78, s3,
                           (s32 *)((u8 *)self + 0x50));
             if (self->unkDC == 0x15) {
                 if (self->unkE0 == 3) self->unkE0 = 1;

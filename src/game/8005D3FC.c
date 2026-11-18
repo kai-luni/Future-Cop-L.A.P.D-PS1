@@ -1,6 +1,8 @@
 // Categories: Graphics > Effects | Game Engine > Object Setup
 #include "game/types.h"
 
+extern int gWeaponEffectUpdate();
+
 struct Entity;
 
 struct Sub {
@@ -81,7 +83,7 @@ extern void func_8005CEA8(struct Sub *state);
  * @par Side effects
  * Writes new Block pointer into D_800A22F0, allocates heap tag 2 and mesh buffers.
  * @par Callers
- * Confirmed: func_8005D690 (lazy slot allocation), func_8006AB38 (kind-13 weapon slot setup).
+ * Confirmed: gWeaponEffectUpdate (lazy slot allocation), func_8006AB38 (kind-13 weapon slot setup).
  */
 struct Block *func_8005D3FC(struct Entity *ent, s32 idx)
 {

@@ -58,7 +58,7 @@ extern void func_8003BC0C(struct Unk371FC *object);
 extern void func_800188D0(s32 a0, s32 a1, s32 a2, s32 *a3);
 extern s32 func_80066F78(struct Vec371 *pos, s32 a1, s32 a2, s32 a3);
 extern s32 func_800684AC(struct Vec371 *a, struct Vec371 *b, struct Vec371 *out, s32 d, s32 e);
-extern void func_8001ACA4(struct Vec371 *a, struct Vec371 *b, s32 scale, struct Vec371 *out);
+extern void gVectorAddScaled(struct Vec371 *a, struct Vec371 *b, s32 scale, struct Vec371 *out) __asm__("func_8001ACA4");
 extern s32 func_8001A100(struct Vec371 *vector);
 extern void func_8001A180(struct Vec371 *vector);
 
@@ -106,7 +106,7 @@ extern void func_8001A180(struct Vec371 *vector);
  * floor, velocity.y loses +0xB8 * arg1 / 300 per step, clamped at 0
  * when the result would overshoot.
  * Then the previous position is copied to +0xAC, the position is
- * advanced with func_8001ACA4(position, velocity, arg1 * 218,
+ * advanced with gVectorAddScaled(position, velocity, arg1 * 218,
  * position), and func_800684AC(+0xAC, position, out, 0, 0) & 0xFF is
  * the grid clip: any hit writes +0x1C = -1, stores the corrected
  * position and returns immediately.
@@ -249,7 +249,7 @@ void func_800371FC(struct Unk371FC *arg0, s32 arg1)
         call2 = step * 218;
         call3 = pos;
         __asm__("" : "+r"(call0), "+r"(call1), "+r"(call2), "+r"(call3));
-        func_8001ACA4(call0, call1, call2, call3);
+        gVectorAddScaled(call0, call1, call2, call3);
         old = &self->old;
         __asm__("" : "+r"(old));
         if (func_800684AC(old, pos, &out, 0, 0) & 0xFF) {

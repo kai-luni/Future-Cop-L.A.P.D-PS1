@@ -1,6 +1,8 @@
 // Categories: Gameplay > AI > Target Selection | Gameplay > Object Lookup | Physics > Collision
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+
 struct Unk4E80C {
     u8 pad00[8];
     s32 unk08;
@@ -73,14 +75,14 @@ extern s32 func_80019668(void);
  * range already shifted into 1/16 units, the 0xFFFF0000 facing constant and 0/1
  * for the priority flag, and cache the result together with its +0x08 id to
  * notice later that the object was recycled (func_800324E0, func_8004F330,
- * func_80035B7C all do that).
+ * gGuidedProjectileUpdate all do that).
  *
  * @par Unknown
  * The class numbering, whether the +0x19 nibble really is a threat priority, and
  * the meaning of the +0x24 bits used as exclusion flags.
  *
  * @par Callers
- * func_8002CC30, func_800324E0, func_80035B7C (two sites), func_8004F330,
+ * func_8002CC30, func_800324E0, gGuidedProjectileUpdate (two sites), func_8004F330,
  * func_800600E8.
  */
 struct Unk4E80C *func_8004E80C(struct Unk4E80C *ctx, s32 type, s32 val, s32 mode,

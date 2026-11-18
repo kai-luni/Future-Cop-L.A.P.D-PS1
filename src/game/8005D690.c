@@ -1,5 +1,7 @@
 // Categories: Gameplay > Weapons | Graphics > Effects | Game Engine > Object Pool
 #include "game/types.h"
+
+extern int gWeaponFireDispatch();
 typedef struct Obj Obj;
 typedef struct Entry Entry;
 struct Obj { u8 pad0[0x16]; u8 kind; u8 pad17; u8 flags; u8 pad19[0x93]; void *data; };
@@ -14,7 +16,7 @@ extern Entry *func_8005D3FC(Obj *, s32);
  * @brief Finds or allocates a 4-slot D_800A22F0 weapon-effect block for an owner and updates its active timing and parameters.
  *
  * Confirmed: searches D_800A22F0[0..3] for an entry matching owner == arg0, else allocates one via func_8005D3FC(arg0, 0) and initializes low/high/other from arg1 (clamping high >= (low * 8) / 5); for kind == 1 with non-null arg2, toggles flags bit 0 when D_8009FAA4 > time, sets time = D_8009FAA4 + 60, and when bit 0 is set copies value/low/high/other from arg2 and toggles bit 2 of e->flags and e->obj->flags from *(s16 *)((u8 *)arg0->data + index * 2 + 0x8A); otherwise sets time = D_8009FAA4 + 120 and flags |= 1.
- * Category follows 4-slot effect array D_800A22F0, kind == 1 player check, and weapon dispatch callers func_8005F6E8 (case 13) and func_8006ACB0 (case 0xD).
+ * Category follows 4-slot effect array D_800A22F0, kind == 1 player check, and weapon dispatch callers func_8005F6E8 (case 13) and gWeaponFireDispatch (case 0xD).
  * Likely: drives a persistent toggleable beam/special weapon effect (e.g., player vs AI sustained effect) with timed flicker/state gating; Unknown: exact effect type in D_800A22F0 and meaning of params fields low/high/other.
  *
  * @param arg0 Owner entity pointer (+0x16 kind, +0xAC data).
@@ -31,9 +33,11 @@ extern Entry *func_8005D3FC(Obj *, s32);
  * @par Side effects
  * Allocates/updates D_800A22F0 slot entries and toggles flag bit 2 on e->flags and e->obj->flags.
  * @par Callers
- * Confirmed: func_8005F6E8 (0x8005FD3C, case 13 with arg2 = 0); func_8006ACB0 (0x8006B13C, case 0xD with arg2 = def) / Likely: none / Unknown: none.
+ * Confirmed: func_8005F6E8 (0x8005FD3C, case 13 with arg2 = 0); gWeaponFireDispatch (0x8006B13C, case 0xD with arg2 = def) / Likely: none / Unknown: none.
  */
-s32 func_8005D690(Obj *arg0, Params *arg1, Extra *arg2)
+s32 gWeaponEffectUpdate(Obj *arg0, Params *arg1, Extra *arg2) __asm__("func_8005D690");
+
+s32 gWeaponEffectUpdate(Obj *arg0, Params *arg1, Extra *arg2)
 {
     register Obj *obj __asm__("$17") = arg0;
     register Params *params __asm__("$18") = arg1;

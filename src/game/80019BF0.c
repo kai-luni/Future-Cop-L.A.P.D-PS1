@@ -1,6 +1,8 @@
 // Categories: Resources > Asset Loader | Resources > Memory Management
 #include "game/types.h"
 
+extern int gRegistryLoad();
+
 struct Resource {
     u8 unk00[0x0C];
     struct Resource *next;
@@ -34,7 +36,7 @@ extern struct Resource *gResourceList __asm__("D_8009F5B8");
  * None observed.
  *
  * @par Callers
- * Confirmed: func_80060838 (0x800609A4), func_80060E74 (0x80060FC0), func_80084110 (0x80084164), func_8004D6D4 (0x8004D894 in asm/us/main.s), and func_8006A918 (0x8006AA9C in asm/us/main.s) / Likely: none / Unknown: none.
+ * Confirmed: func_80060838 (0x800609A4), func_80060E74 (0x80060FC0), func_80084110 (0x80084164), func_8004D6D4 (0x8004D894 in asm/us/main.s), and gRegistryLoad (0x8006AA9C in asm/us/main.s) / Likely: none / Unknown: none.
  */
 struct Resource *func_80019BF0(s32 group, s32 name)
 {

@@ -1,6 +1,8 @@
 // Categories: Gameplay > Entity Script | Gameplay > Damage | Physics > Collision
 #include "game/types.h"
 
+extern int gAttachPartEffect();
+
 /* Second half of the original 8005C344.c: the catalogue treats this as its own
    function (0x8005CA04, 380 bytes), the answer delivered both in one translation unit. */
 
@@ -62,7 +64,7 @@ struct Obj2 {
 extern s32 func_8005C344(struct Owner *owner, struct Target *t);
 
 /**
- * @brief Message handler for beam/segment-sweep attack instances installed at node +0x24 by func_8005CBCC.
+ * @brief Message handler for beam/segment-sweep attack instances installed at node +0x24 by gAttachPartEffect.
  *
  * Dispatches messages 1 (tick/sweep), 2 (latch target flag), and 3 (activate flags) when
  * obj->unk20->type (+0x04) == 0x57; message 1 ticks target->unk18 lifetime, retires on
@@ -83,7 +85,7 @@ extern s32 func_8005C344(struct Owner *owner, struct Target *t);
  * @par Side effects
  * Mutates obj flags (+0x0F, +0x10, +0x8E), target lifetime/flags (+0x18, +0x28), and runs segment damage sweep.
  * @par Callers
- * Confirmed: address taken as D_8005CA04 in func_8005CBCC (0x8005CDE0, stored at node+0x24). / Likely: entity update loop via node+0x24.
+ * Confirmed: address taken as D_8005CA04 in gAttachPartEffect (0x8005CDE0, stored at node+0x24). / Likely: entity update loop via node+0x24.
  */
 s32 func_8005CA04(u32 msg, struct Obj2 *obj, s32 arg2, s32 arg3)
 {

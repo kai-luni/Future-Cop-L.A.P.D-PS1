@@ -1,6 +1,8 @@
 // Categories: Graphics > Effects > Ribbon Beam | Graphics > Effects > Object Pool
 #include "game/types.h"
 
+extern int gBeamPartUpdate();
+
 typedef struct Entry Entry;
 typedef struct Node Node;
 
@@ -79,7 +81,7 @@ extern void func_80070E48(Node *node, Entry *entry, s32 mode);
  *
  * @par Callers
  * func_8005B3D4, func_8005D060, func_8005D8F4, func_8005F018, func_8006A524,
- * func_8006B23C, func_80073BBC.
+ * gBeamPartUpdate, func_80073BBC.
  */
 void *func_8007377C(void *a0, void *a1, s32 a2, s32 count,
                     u8 r, u8 g, u8 b, s16 divisor,

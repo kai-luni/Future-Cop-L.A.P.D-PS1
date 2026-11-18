@@ -42,7 +42,7 @@ struct Entity {
     s32 unkD0;
 };
 
-extern void func_8001ACA4(void *a, void *b, s32 c, s32 *d);
+extern void gVectorAddScaled(void *a, void *b, s32 c, s32 *d) __asm__("func_8001ACA4");
 extern s32 func_800684AC(void *a, s32 *b, s32 c, s32 d, s32 e);
 extern s32 func_8001A100(s32 *vector);
 extern void func_8001A180(struct Vec3s32 *vector);
@@ -82,7 +82,7 @@ extern void *jtbl_80011380[];
  * Gravity: old = +0xA0.y, new = old - (+0xAC * arg1) / 300, stored back; the
  * crossing flag is set only when old was non-negative and new is negative, i.e.
  * on the frame the vertical component turns downward.
- * Swept move: func_8001ACA4(&self->+0x50, &self->+0xA0, arg1 * 218, tmp) gives
+ * Swept move: gVectorAddScaled(&self->+0x50, &self->+0xA0, arg1 * 218, tmp) gives
  * position + motion * (arg1 * 218) in 16.16. When func_800684AC(&self->+0x50,
  * tmp, 0, 0, 1) reports a hit the step is refused: +0x1C = -1 and bit 3 of +0x72
  * is set; otherwise +0x50 takes the three words from tmp.
@@ -138,7 +138,7 @@ void func_80036BD4(struct Entity *self, s32 arg1, s32 arg2)
         i = (u32)valA4 >> 31;
     }
 
-    func_8001ACA4(&self->unk50, &self->unkA0, arg1 * 218, tmp);
+    gVectorAddScaled(&self->unk50, &self->unkA0, arg1 * 218, tmp);
     if (func_800684AC(&self->unk50, tmp, 0, 0, 1) != 0) {
         self->unk1C = -1;
         self->unk72 |= 8;

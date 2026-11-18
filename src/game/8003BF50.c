@@ -1,6 +1,9 @@
 // Categories: Gameplay > Object Classification
 #include "game/types.h"
 
+extern int gWriteCellEventValue();
+extern int gAttachPartEffect();
+
 struct Unk3BF50Object {
     u8 unk00[0x16];
     u8 kind;
@@ -32,7 +35,7 @@ struct Unk3BF50Object {
  *
  * @par Callers
  * func_8003B898, func_8003BAE4, func_8003BC0C, func_8005B6A8, func_8005BDE4,
- * func_8005C048, func_8005C184, func_8005C344, func_8005CBCC.
+ * gWriteCellEventValue, func_8005C184, func_8005C344, gAttachPartEffect.
  */
 s32 func_8003BF50(struct Unk3BF50Object *object)
 {

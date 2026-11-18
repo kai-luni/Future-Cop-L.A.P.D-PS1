@@ -1,6 +1,8 @@
 // Categories: Graphics > Animation > Track Advance | Game Engine > Frame
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+
 struct AnimClip;
 
 struct AnimTrack {
@@ -91,7 +93,7 @@ extern void func_80044AE8(u32 code, u32 key, s32 *shift, u32 *bits);
  * @par Callers
  * 13 direct callers: func_8002B588, func_8002B784, func_8002CC30,
  * func_8002DB9C, func_8002DEA8, func_8002E630 (four sites), func_800306A0 (two
- * sites), func_800324E0, func_80035B7C, func_800382B4, func_80038A00,
+ * sites), func_800324E0, gGuidedProjectileUpdate, func_800382B4, func_80038A00,
  * func_800549F0 and func_80055988 (two sites).
  */
 u32 func_80044B34(struct AnimScript *script, struct AnimTrack *track, s32 speed,

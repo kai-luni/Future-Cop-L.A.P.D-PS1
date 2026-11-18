@@ -1,6 +1,8 @@
 // Categories: Gameplay > Map > Occupancy | Game Engine > Object Setup
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+
 struct Entity {
     u8 pad00[0x20];
     u8 column;
@@ -44,7 +46,7 @@ extern s32 func_800402DC(struct Entity *entity, u8 column, s32 arg2, s32 row, s3
  * What the special mode 2 changes in func_8003B4E0.
  *
  * @par Callers
- * func_8002A810, func_8002B1DC, func_8002ED7C, func_800324E0, func_80035B7C,
+ * func_8002A810, func_8002B1DC, func_8002ED7C, func_800324E0, gGuidedProjectileUpdate,
  * func_800382B4.
  */
 void func_8003B898(u8 index, struct Entity *entity, s32 arg2, u16 flags, s32 mode)

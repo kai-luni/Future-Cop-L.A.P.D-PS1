@@ -1,6 +1,8 @@
 // Categories: Graphics > Animation > Track Setup
 #include "game/types.h"
 
+extern int gProjectileInit();
+
 struct AnimClip {
     u8 unk00[4];
     s16 start;
@@ -45,7 +47,7 @@ extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 di
  *
  * @par Callers
  * func_8002C584, func_8002DAA4, func_8002DC94, func_8002DFC4, func_800302E8,
- * func_80032180, func_80035904, func_800378BC, func_80038754, func_800579D4,
+ * func_80032180, gProjectileInit, func_800378BC, func_80038754, func_800579D4,
  * func_8005920C.
  */
 void func_80044988(u8 *data, struct AnimTrack *track, u8 forward, s32 index)

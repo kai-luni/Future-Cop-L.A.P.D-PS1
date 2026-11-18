@@ -2,6 +2,9 @@
 
 #include "game/types.h"
 
+extern int gAttachPartEffect();
+extern int gGuidedProjectileUpdate();
+
 struct Vec3s32 {
     s32 x;
     s32 y;
@@ -36,7 +39,7 @@ extern s32 func_80019904(s32 value);
  *
  * @par Callers
  * Twenty direct callers, among them func_800192AC, func_80019310,
- * func_80035B7C, func_80066F78 and func_8005CBCC.
+ * gGuidedProjectileUpdate, func_80066F78 and gAttachPartEffect.
  */
 void func_8001A180(struct Vec3s32 *vector)
 {

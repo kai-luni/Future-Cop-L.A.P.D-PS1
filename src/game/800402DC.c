@@ -1,6 +1,12 @@
 // Categories: Gameplay > Object Spawning | Gameplay > Map | Game Engine > Object Setup
 #include "game/types.h"
 
+extern int gWriteCellEventValue();
+extern int gAttachPartEffect();
+extern int gGuidedProjectileUpdate();
+extern int gBeamPartUpdate();
+extern int gWeaponFireDispatch();
+
 struct Unk402DCOwner {
     u8 unk00[8];
     s32 unk08;
@@ -47,11 +53,11 @@ extern void *func_8003FD74(s32 column, s32 row, struct Unk402DCOwner *owner, s32
  * in the constructor.
  *
  * @par Callers
- * func_8002C174, func_800306A0, func_80035B7C, func_80036BD4, func_8003B898,
+ * func_8002C174, func_800306A0, gGuidedProjectileUpdate, func_80036BD4, func_8003B898,
  * func_8003BAE4, func_8003BC0C, func_8003FD10, func_8004C0C0, func_800584BC,
- * func_800588D4, func_80058D78, func_8005B6A8, func_8005BDE4, func_8005C048,
- * func_8005C184, func_8005C344, func_8005CBCC, func_8005F018, func_8005F6E8,
- * func_8006ACB0, func_8006B23C.
+ * func_800588D4, func_80058D78, func_8005B6A8, func_8005BDE4, gWriteCellEventValue,
+ * func_8005C184, func_8005C344, gAttachPartEffect, func_8005F018, func_8005F6E8,
+ * gWeaponFireDispatch, gBeamPartUpdate.
  */
 s32 func_800402DC(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4)
 {

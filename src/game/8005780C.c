@@ -1,6 +1,8 @@
 // Categories: Game Engine > Input > Edge Detection
 #include "game/types.h"
 
+extern int gWeaponSlotInput();
+
 struct InputAction {
     u32 buttons;
     s32 phase;
@@ -25,7 +27,7 @@ struct InputAction {
  * fresh release, 3 drives repeat actions while held.
  *
  * @par Callers
- * func_800260B8, func_800267C8, func_80027510, func_80055E10, func_800569EC.
+ * func_800260B8, func_800267C8, func_80027510, gWeaponSlotInput, func_800569EC.
  */
 void func_8005780C(u32 buttons, struct InputAction *action)
 {

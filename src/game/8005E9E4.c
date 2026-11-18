@@ -1,6 +1,8 @@
 // Categories: Gameplay > Weapons > Spawning | Gameplay > Combat
 #include "game/types.h"
 
+extern int gWeaponFireDispatch();
+
 struct Vec3s32 { s32 x; s32 y; s32 z; };
 struct Unk5EE04Obj {
     u16 unk00; s16 unk02; u8 unk04; u8 unk05; s16 unk06; u8 unk08;
@@ -21,8 +23,8 @@ struct UnkSubArg {
 };
 struct UnkRequest { void (*handler)(); s32 unk04; struct UnkArgs *args; s32 unk0C; };
 extern void D_80036E6C();
-extern void func_8005E624(s32 a0, void *a1, struct Vec3s32 *a2, struct Vec3s32 *a3, s32 a4);
-extern void *func_8004D444(struct UnkRequest *request);
+extern void gSolveLobVector(s32 a0, void *a1, struct Vec3s32 *a2, struct Vec3s32 *a3, s32 a4) __asm__("func_8005E624");
+extern void *gSpawnQueuedEntity(struct UnkRequest *request) __asm__("func_8004D444");
 
 /**
  * @brief Spawns a kind-7 projectile through the lob solver and the spawn
@@ -34,24 +36,28 @@ extern void *func_8004D444(struct UnkRequest *request);
  * @param pos Launch position; y raised by the owner's muzzle offset << 4.
  * @param ent Firing entity (flags +0x14, kind +0x16, team bytes).
  * @param a5, a6, flags, ... Forwarded solver/flag arguments.
- * @return The spawned entity from func_8004D444.
+ * @return The spawned entity from gSpawnQueuedEntity.
  *
  * @par Confirmed
  * args.flags = ent flags | 0x8000 (+0x4000 when the entity kind is 0x12);
  * args.unk14 = flags | 8, plus 0x100 when ent flag 0x100 is set. kind = 7,
- * unk18 = 0x28, model id from obj. func_8005E624(obj->unk06 << 4, &sub,
- * pos, a6, sub.unk0C) solves the launch direction, then func_8004D444
+ * unk18 = 0x28, model id from obj. gSolveLobVector(obj->unk06 << 4, &sub,
+ * pos, a6, sub.unk0C) solves the launch direction, then gSpawnQueuedEntity
  * queues the spawn with handler D_80036E6C.
  *
  * @par Likely role
  * The lobbed/grenade projectile path of the two fire dispatchers
- * (func_8005F6E8 AI, func_8006ACB0 player): the elevation solver gives the
+ * (func_8005F6E8 AI, gWeaponFireDispatch player): the elevation solver gives the
  * arcing shot, the muzzle offset lifts the spawn out of the body.
  *
  * @par Callers
- * func_8005F6E8, func_8006ACB0.
+ * func_8005F6E8, gWeaponFireDispatch.
  */
-void *func_8005E9E4(u8 a0, struct Unk5EE04Obj *obj, struct SubChild ***ptr,
+void *gSpawnLobShot(u8 a0, struct Unk5EE04Obj *obj, struct SubChild ***ptr,
+                    struct Vec3s32 *pos, struct Unk5EE04Ent *ent, s32 a5,
+                    struct Vec3s32 *a6, u32 flags, u8 a8) __asm__("func_8005E9E4");
+
+void *gSpawnLobShot(u8 a0, struct Unk5EE04Obj *obj, struct SubChild ***ptr,
                     struct Vec3s32 *pos, struct Unk5EE04Ent *ent, s32 a5,
                     struct Vec3s32 *a6, u32 flags, u8 a8)
 {
@@ -104,6 +110,6 @@ void *func_8005E9E4(u8 a0, struct Unk5EE04Obj *obj, struct SubChild ***ptr,
     pos->y += (*p)->unk34->unk14 << 4;
     args.position = *pos;
 
-    func_8005E624(obj->unk06 << 4, &sub, pos, a6, sub.unk0C);
-    return func_8004D444(&request);
+    gSolveLobVector(obj->unk06 << 4, &sub, pos, a6, sub.unk0C);
+    return gSpawnQueuedEntity(&request);
 }

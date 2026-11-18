@@ -1,6 +1,8 @@
 // Categories: Gameplay > Weapons > Spawning | Gameplay > Combat
 #include "game/types.h"
 
+extern int gWeaponFireDispatch();
+
 struct Unk5EE04Vec {
     s32 x;
     s32 y;
@@ -73,7 +75,7 @@ struct Unk5EE04Request {
 extern void D_80037708();
 extern s32 func_80019668(void);
 extern void func_8001AB78(s32 value, void *data);
-extern void func_8004D444(struct Unk5EE04Request *request);
+extern void gSpawnQueuedEntity(struct Unk5EE04Request *request) __asm__("func_8004D444");
 
 /**
  * @brief Spawns a kind-0xF projectile with jittered speed and inherited or
@@ -86,7 +88,7 @@ extern void func_8004D444(struct Unk5EE04Request *request);
  * @param arg4 Fallback direction vector.
  * @param flag Non-zero skips the velocity scaling.
  * @param flags Base flag word.
- * @return Nothing (the spawn is queued via func_8004D444).
+ * @return Nothing (the spawn is queued via gSpawnQueuedEntity).
  *
  * @par Confirmed
  * Standard flag composition (|0x8000, +0x4000 for kind 0x12, unk14 = flags
@@ -103,7 +105,7 @@ extern void func_8004D444(struct Unk5EE04Request *request);
  * moving.
  *
  * @par Callers
- * func_8005F6E8, func_8006ACB0.
+ * func_8005F6E8, gWeaponFireDispatch.
  */
 void func_8005EE04(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
                    struct Unk5EE04Ent *ent, struct Unk5EE04Vec *arg4, u8 flag, u32 flags)
@@ -181,5 +183,5 @@ void func_8005EE04(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
         }
     }
 
-    func_8004D444(&request);
+    gSpawnQueuedEntity(&request);
 }

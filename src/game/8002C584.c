@@ -109,7 +109,7 @@ struct Unk2C584Obj {
 extern u8 D_8002DEA8[];
 
 extern s32 func_8002AD58(s32 message, struct Unk2C584Obj *obj, void *data, s32 arg3);
-extern struct Unk2C584Obj *func_8004D444(void *def);
+extern struct Unk2C584Obj *gSpawnQueuedEntity(void *def) __asm__("func_8004D444");
 extern void func_80017668(void *a, s32 b, void *c);
 extern void func_80010750(void *a);
 extern void func_80010234(void *a, void *b, s32 c);
@@ -147,14 +147,14 @@ extern s32 func_8006314C(void *a, s32 b);
  * @par Confirmed child entities (kind 8, 0x21, 0x24)
  * The kind is st+0x4. For these three kinds a definition record is built:
  * handler = D_8002DEA8, buffer = a local copy of the V4 at inner+0x14, state =
- * st, zero = 0, and obj+0x104 = func_8004D444(record) creates the child. The
+ * st, zero = 0, and obj+0x104 = gSpawnQueuedEntity(record) creates the child. The
  * child gets a back pointer to obj at +0xB4, both entities receive bit 0x800000
  * (plus 0x200000 on the child) and obj+0x24 gets 0x800000. st+0x21 is saved,
  * cleared and restored around the call, and st+0x20 becomes 0 during the call
  * unless bit 0x40 is set.
  *
  * Kind 0x21 additionally builds a second child, but from the data block itself
- * (func_8004D444(data), not from the local record): st+0x38 is
+ * (gSpawnQueuedEntity(data), not from the local record): st+0x38 is
  * swapped with st+0x42, the inner V4 pair at +0x4 is swapped with the pair at
  * +0x24 and st+0x4 is temporarily set to 6 so the child is created with the
  * "empty" kind; all three are restored afterwards. obj+0x100 = the second child,
@@ -218,7 +218,7 @@ extern s32 func_8006314C(void *a, s32 b);
  * 6. Matrix and part transform, two optional flag bits.
  *
  * @par Calls
- * func_8002AD58 (message 2), func_8004D444 (create child, two sites),
+ * func_8002AD58 (message 2), gSpawnQueuedEntity (create child, two sites),
  * func_80017668 (read model part, two sites), func_80067684 (ground height),
  * func_80060668 (16-byte copy), func_80044988 (attach animation),
  * func_800188D0 (matrix), func_80010750 (matrix to GTE), func_80010234 (part
@@ -229,7 +229,7 @@ extern s32 func_8006314C(void *a, s32 b);
  * the state block temporarily (st+0x4, +0x20, +0x21, +0x38, and the inner V4
  * pairs) and restores it; rewrites almost the whole object block and loads the
  * GTE matrix. No global variable is written besides the entity pool behind
- * func_8004D444.
+ * gSpawnQueuedEntity.
  *
  * @par Callers
  * func_8002D664, message 2 (analysis/edges.json, kind "direct").
@@ -277,7 +277,7 @@ void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
         st->unk21 = 0;
         buf.unk04.a = p->unk14.a;
         buf.unk04.b = p->unk14.b;
-        obj->unk104 = func_8004D444(&def);
+        obj->unk104 = gSpawnQueuedEntity(&def);
         *(struct Unk2C584Obj **)((u8 *)obj->unk104 + 0xB4) = obj;
         obj->unk104->flags |= 0x200000;
         obj->unk104->flags |= 0x800000;
@@ -292,7 +292,7 @@ void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
             p2->unk04.a = p2->unk24.a;
             p2->unk04.b = p2->unk24.b;
             st->unk04 = 6;
-            obj->unk100 = func_8004D444(d);
+            obj->unk100 = gSpawnQueuedEntity(d);
             st->unk38 = s0;
             st->unk04 = s3;
             obj->unk100->unk100 = obj;

@@ -1,6 +1,8 @@
 // Categories: Utilities > Mathematics > Fixed Point
 #include "game/types.h"
 
+extern int gSolveLobVector();
+
 /**
  * @brief Scales a 2-element 16.16 fixed-point vector in place by a signed 16.16 factor.
  *
@@ -22,7 +24,7 @@
  * Overwrites p[0] and p[1] in place.
  *
  * @par Callers
- * Confirmed: func_8001A7AC (0x8001A7F8), func_80051EB8 (0x80051F70), func_80053A74 (0x80054020, 0x80054214), func_80054590 (0x80054800), and func_8005E624 (0x8005E980).
+ * Confirmed: func_8001A7AC (0x8001A7F8), func_80051EB8 (0x80051F70), func_80053A74 (0x80054020, 0x80054214), func_80054590 (0x80054800), and gSolveLobVector (0x8005E980).
  */
 void func_8001ABE0(s32 scale, s32 *p)
 {

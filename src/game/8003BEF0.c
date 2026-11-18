@@ -19,7 +19,7 @@ struct ListNode {
  * "unlink and re-insert" step rather than a plain pop.
  *
  * @par Callers
- * The scene walkers: func_8005BDE4, func_8005CBCC, func_8006F0E8,
+ * The scene walkers: func_8005BDE4, gAttachPartEffect, func_8006F0E8,
  * func_80075A84 and the unit at 0x80075698.
  *
  * @par Unknown

@@ -1,6 +1,9 @@
 // Categories: Game Engine > Object Setup > Spawn Queue | Gameplay > Object Spawning
 #include "game/types.h"
 
+extern int gSpawnLobShot();
+extern int gSpawnDirectShot();
+
 struct Entity;
 
 struct EntityDef {
@@ -39,9 +42,11 @@ extern void func_8004D3D4(struct Entity *entity);
  *
  * @par Callers
  * func_8002C584, func_80039418, func_8004D4D4, func_80057914, func_80058C3C,
- * func_8005E47C, func_8005E9E4, func_8005EB74, func_8005ECB8, func_8005EE04.
+ * gSpawnDirectShot, gSpawnLobShot, func_8005EB74, func_8005ECB8, func_8005EE04.
  */
-struct Entity *func_8004D444(struct EntityDef *def)
+struct Entity *gSpawnQueuedEntity(struct EntityDef *def) __asm__("func_8004D444");
+
+struct Entity *gSpawnQueuedEntity(struct EntityDef *def)
 {
     struct Entity *entity;
     s32 (*handler)(s32, struct Entity *, struct EntityDef *, s32);

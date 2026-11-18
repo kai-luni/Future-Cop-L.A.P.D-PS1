@@ -1,6 +1,8 @@
 // Categories: Utilities > Mathematics > Vector
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 
 #define FMULN(d, a, b) __asm__("nop\n\tnop\n\tmult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
@@ -32,7 +34,7 @@ extern s32 func_80095900(s32 value);
  * The exact domain of func_80095900 (reciprocal square root table).
  *
  * @par Callers
- * func_80035B7C, func_8004B180, func_80053A74, func_800549F0, func_800569EC,
+ * gGuidedProjectileUpdate, func_8004B180, func_80053A74, func_800549F0, func_800569EC,
  * func_8006EEF8, func_80070E48.
  */
 s32 func_8001A314(s32 *vec)

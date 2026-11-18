@@ -1,6 +1,8 @@
 // Categories: Graphics > Effects > Ribbon Beam | Gameplay > Target Selection | Graphics > Effects > Object Pool
 #include "game/types.h"
 
+extern int gBeamPartUpdate();
+
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 
 struct Vec3 {
@@ -111,7 +113,7 @@ extern void func_8007377C(struct Unk73590 *a, struct Unk73590 *b, s32 arg2, s32 
  *
  * @par Likely role
  * The branching half of a tether: after the main segment hits something,
- * func_8006B23C calls this to arc a second beam from the tether to one random
+ * gBeamPartUpdate calls this to arc a second beam from the tether to one random
  * object of a different class, so a struck target forks lightning or rope onto
  * a neighbour. The kind mismatch and the delta limit keep the arc from hitting
  * its own class or jumping across the level, and the 0x0E message hands the
@@ -122,7 +124,7 @@ extern void func_8007377C(struct Unk73590 *a, struct Unk73590 *b, s32 arg2, s32 
  * rather than one.
  *
  * @par Callers
- * func_8006B23C, on the type-0x0B beam branch when the swept test reported a
+ * gBeamPartUpdate, on the type-0x0B beam branch when the swept test reported a
  * hit.
  */
 void func_8006A524(struct Ctx *ctx, struct Object *current, s32 arg2, u16 *arg3,

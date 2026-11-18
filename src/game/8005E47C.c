@@ -1,6 +1,9 @@
 // Categories: Gameplay > Weapons > Spawning | Gameplay > Combat
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+extern int gWeaponFireDispatch();
+
 struct Vec { s32 x, y, z; };
 struct Obj {
     u16 unk00; s16 unk02; u16 unk04; u16 unk06; s16 unk08;
@@ -20,7 +23,7 @@ struct Args {
 };
 struct Request { void (*handler)(); s32 unk04; struct Args *args; s32 unk0C; };
 extern void D_80036624();
-extern void *func_8004D444(struct Request *);
+extern void *gSpawnQueuedEntity(struct Request *) __asm__("func_8004D444");
 
 /**
  * @brief Spawns a kind-2 projectile with explicit speed and parameter words
@@ -33,7 +36,7 @@ extern void *func_8004D444(struct Request *);
  * @param ent Firing entity (flags, kind, team bytes).
  * @param a7..a11 Extra parameter bytes/words forwarded to the projectile.
  * @param flags Base flag word.
- * @return The spawned entity from func_8004D444.
+ * @return The spawned entity from gSpawnQueuedEntity.
  *
  * @par Confirmed
  * Same flag composition as the other spawners (|0x8000, +0x4000 for kind
@@ -43,13 +46,17 @@ extern void *func_8004D444(struct Request *);
  *
  * @par Likely role
  * The direct-fire projectile path (bullets/shells) of the fire dispatchers
- * and func_80035B7C: the two speed scales likely separate tracer and
+ * and gGuidedProjectileUpdate: the two speed scales likely separate tracer and
  * shell velocities, the extra words carry damage/homing parameters.
  *
  * @par Callers
- * func_80035B7C, func_8005F6E8, func_8006ACB0.
+ * gGuidedProjectileUpdate, func_8005F6E8, gWeaponFireDispatch.
  */
-void *func_8005E47C(struct Obj *obj, void *a1, struct Vec *pos, void *a3,
+void *gSpawnDirectShot(struct Obj *obj, void *a1, struct Vec *pos, void *a3,
+                    struct Ent *ent, void *a5, u32 flags, u8 a7, u8 a8,
+                    u16 a9, u8 a10, s32 a11) __asm__("func_8005E47C");
+
+void *gSpawnDirectShot(struct Obj *obj, void *a1, struct Vec *pos, void *a3,
                     struct Ent *ent, void *a5, u32 flags, u8 a7, u8 a8,
                     u16 a9, u8 a10, s32 a11)
 {
@@ -101,5 +108,5 @@ void *func_8005E47C(struct Obj *obj, void *a1, struct Vec *pos, void *a3,
     if (a5) args.unk30 = 1;
     else args.unk30 = 0;
     args.unk44 = obj->unk02 << 4;
-    return func_8004D444(&request);
+    return gSpawnQueuedEntity(&request);
 }

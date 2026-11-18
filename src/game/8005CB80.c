@@ -1,6 +1,8 @@
 // Categories: Graphics > Effects > Object Pool | Gameplay > Object Lookup
 #include "game/types.h"
 
+extern int gAttachPartEffect();
+
 struct Unk5CB80Node {
     struct Unk5CB80Node *next;
     void *first;
@@ -29,10 +31,10 @@ struct Unk5CB80Pool {
  * matching the 0x28-byte map-cell sprite records.
  *
  * @par Likely role
- * The duplicate guard of the map-cell sprite handler func_8005CBCC.
+ * The duplicate guard of the map-cell sprite handler gAttachPartEffect.
  *
  * @par Callers
- * func_8005CBCC.
+ * gAttachPartEffect.
  */
 struct Unk5CB80Node *func_8005CB80(struct Unk5CB80Pool *pool, void *target)
 {

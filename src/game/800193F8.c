@@ -1,6 +1,9 @@
 // Categories: Graphics > Geometry | Utilities > Mathematics
 #include "game/types.h"
 
+extern int gAttachPartEffect();
+extern int gProjectileInit();
+
 struct Vec3s32 {
     s32 x;
     s32 y;
@@ -32,8 +35,8 @@ extern void func_8001A180(struct Vec3s32 *vector);
  * perpendicular in the y/z plane.
  *
  * @par Callers
- * func_80032180, func_80035698, func_80035904, func_80036E6C,
- * func_80037064, func_8005CBCC.
+ * func_80032180, func_80035698, gProjectileInit, func_80036E6C,
+ * func_80037064, gAttachPartEffect.
  */
 void func_800193F8(struct Vec3s32 *axis, struct Basis *basis)
 {

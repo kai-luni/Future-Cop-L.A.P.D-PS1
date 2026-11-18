@@ -1,6 +1,9 @@
 // Categories: Utilities > Mathematics > Vector
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+extern int gSolveLeadDirection();
+
 /**
  * @brief Fast approximate distance between two points: max + (mid+min)/4.
  *
@@ -14,12 +17,12 @@
  *
  * @par Likely role
  * The range gate of the combat code: the beam timer func_8005B3D4 and the
- * aim solver func_8005E2A0 compare against it, the base handler's hit path
+ * aim solver gSolveLeadDirection compare against it, the base handler's hit path
  * func_8002AB8C uses it for reach checks — cheap enough for per-frame
  * distance tests without a square root.
  *
  * @par Callers
- * func_8002AB8C, func_80035B7C, func_80036AB4, func_8005B3D4, func_8005E2A0.
+ * func_8002AB8C, gGuidedProjectileUpdate, func_80036AB4, func_8005B3D4, gSolveLeadDirection.
  */
 s32 func_8001A4E8(s32 *a, s32 *b)
 {

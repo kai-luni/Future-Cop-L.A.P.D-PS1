@@ -1,6 +1,8 @@
 // Categories: Graphics > Effects > Beams | Graphics > Effects > Object Pool
 #include "game/types.h"
 
+extern int gBeamPartUpdate();
+
 struct ListNode {
     struct ListNode *previous;
     struct ListNode *next;
@@ -30,14 +32,14 @@ extern void func_8006EEF8(struct ListNode *node, s32 arg0, s16 arg1, s32 arg2, s
  *
  * @par Likely role
  * The tracer spawn used by the actor dispatcher func_8005F6E8 and the
- * effect handler func_8006B23C: a stretched beam between muzzle and impact.
+ * effect handler gBeamPartUpdate: a stretched beam between muzzle and impact.
  *
  * @par Unknown
  * The pool capacity of D_800A3538 and the meaning of arg1..arg3 in the
  * initialiser.
  *
  * @par Callers
- * func_8005F6E8, func_8006B23C.
+ * func_8005F6E8, gBeamPartUpdate.
  */
 s32 func_8006F0E8(s32 arg0, s16 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5)
 {

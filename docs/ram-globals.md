@@ -1,6 +1,6 @@
 # Globale RAM-Variablen in Future Cop: L.A.P.D.
 
-**Stand: 17. November 2026 · US-Version (`SLUS_007.39`)**
+**Stand: 18. November 2026 · US-Version (`SLUS_007.39`)**
 
 ## Worum geht es hier?
 
@@ -914,6 +914,14 @@ Diese Gruppe bildet den Kern der 3D-Ausgabe: Transformationspuffer, Clip-Flags, 
 | `D_8009F364` | `gFontBankCount` | `s32` | Anzahl der Fontbänke; ein Index ab diesem Wert wird abgelehnt. **Bestätigt.** | `func_80048E28` |
 | `D_8009B724` | `gMissionListTable` | `u8[]` | Acht-Einträge-Standardtabelle der Missionsliste im Frontend; wird beim Zurücksetzen wiederhergestellt. **Bestätigt.** | `func_800776B8` |
 | `D_8009B72C` | `gFrontEndListTable` | `s8[]` | Zustandstabelle der Frontend-Liste; beim Zurücksetzen werden optional alle fünf Einträge freigeschaltet. **Bestätigt.** | `func_80077708` |
+
+## Schuss- und Strahl-Pfad
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_800A3344` | `gVmRecordObjects` | `u8[]` | Objektbereich der Datensatz-Tabelle, also `gVmRecordTable` + 4: je Datensatz zwei 0x20-Byte-Objekte (bei `+0x04` und `+0x24`), die vier aufgelösten Referenzen sitzen bei `+0x44`. **Bestätigt.** | `gRegistryLoad` |
+
+Drei Wörter dieses Pfads bleiben ohne C-Namen: `D_8009F378`, `D_8009F380` und `D_8009F384` werden nur als viertes Argument (Zeitbasis des Strahlsegments) an `func_8006F0E8` übergeben; was die Werte bedeuten, sagt der Code nicht.
 
 ## Diagnose
 

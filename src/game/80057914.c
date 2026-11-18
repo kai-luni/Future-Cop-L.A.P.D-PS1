@@ -52,7 +52,7 @@ struct Unk57914 {
 extern void D_80059ABC();
 
 extern void func_80017668(void *source, s32 arg1, struct Vec3s32 *out);
-extern void *func_8004D444(struct Unk57914Request *request);
+extern void *gSpawnQueuedEntity(struct Unk57914Request *request) __asm__("func_8004D444");
 
 /**
  * @brief Spawns a kind-0x12 object at a model part's position through the
@@ -67,7 +67,7 @@ extern void *func_8004D444(struct Unk57914Request *request);
  * Builds a request {handler = D_80059ABC, args, unk04 = unk0C = 0}; the args
  * carry kind 0x12, the descriptor's tag/flags/parameters, the position from
  * func_80017668(object->coord, 0, &args.position) and owner = object.
- * func_8004D444(&request) queues it.
+ * gSpawnQueuedEntity(&request) queues it.
  *
  * @par Likely role
  * The player-class spawner of the effect handler func_800579D4: kind 0x12
@@ -103,5 +103,5 @@ void func_80057914(struct Unk57914 *object)
     args.unk1F = 0;
     args.unk22 = object->unk92;
     args.unk23 = object->unk93;
-    func_8004D444(&request);
+    gSpawnQueuedEntity(&request);
 }

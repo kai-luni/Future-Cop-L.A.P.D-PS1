@@ -32,14 +32,14 @@ struct State {
 struct Owner { u8 pad[0xac]; struct State *state; };
 struct Global { u8 pad[8]; s32 field8; u8 padc[0x8c]; s32 field98; };
 extern struct Global *gGameSession __asm__("D_8009FA94");
-extern struct Data *func_8006AAEC(u8);
+extern struct Data *gRegistryFind(u8) __asm__("func_8006AAEC");
 extern void func_8005D3FC(struct Owner *, s32);
 
 /**
  * @brief (Re)initialises the three weapon slots for a difficulty level.
  *
  * For each of the three slot indices in 0x90 the record is fetched with
- * func_8006AAEC and its two damage/range values are scaled by the active
+ * gRegistryFind and its two damage/range values are scaled by the active
  * difficulty field of D_8009FA94 (0x8 for the normal path, 0x98 when 0xC1 is
  * set): mode 1 adds a quarter, mode 2 adds a half and mode 3 sets both to 9999.
  * The pair is stored in 0x84/0x8A, the record's third value in 0x93 and the
@@ -56,7 +56,7 @@ extern void func_8005D3FC(struct Owner *, s32);
  * Three-iteration loop with a four-way switch on the difficulty mode.
  *
  * @par Calls
- * func_8006AAEC - weapon record lookup. func_8005D3FC - per-slot setup.
+ * gRegistryFind - weapon record lookup. func_8005D3FC - per-slot setup.
  *
  * @par Side effects
  * Rewrites the three weapon slots and clears the selection.
@@ -73,7 +73,7 @@ void func_8006AB38(struct Owner *owner)
     register s32 b __asm__("$4");
     state = owner->state;
     for (i = 0; i < 3; i++) {
-        data = func_8006AAEC(state->field90[i]);
+        data = gRegistryFind(state->field90[i]);
         a = data->value1;
         b = data->value3;
         if (owner->state->fieldc1 == 0)

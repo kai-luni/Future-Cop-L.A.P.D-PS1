@@ -1,6 +1,8 @@
 // Categories: Gameplay > Map > Occupancy | Gameplay > Weapons
 #include "game/types.h"
 
+extern int gWeaponFireDispatch();
+
 struct Unk5C048Def {
     u8 unk00[4];
     u8 kind;
@@ -37,7 +39,7 @@ extern struct Unk5C048Result *func_800402DC(void *owner, u8 column, s32 arg2, s3
  * event->value.
  *
  * @par Likely role
- * The weapon-fire interaction of func_8006ACB0 with special map objects
+ * The weapon-fire interaction of gWeaponFireDispatch with special map objects
  * (kind 0x5C): likely a switch/target that stores the last trigger value,
  * e.g. a destructible panel or a scoring trigger.
  *
@@ -45,9 +47,11 @@ extern struct Unk5C048Result *func_800402DC(void *owner, u8 column, s32 arg2, s3
  * What object kind 0x5C represents.
  *
  * @par Callers
- * func_8006ACB0.
+ * gWeaponFireDispatch.
  */
-void func_8005C048(void *object, struct Unk5C048Event *event)
+void gWriteCellEventValue(void *object, struct Unk5C048Event *event) __asm__("func_8005C048");
+
+void gWriteCellEventValue(void *object, struct Unk5C048Event *event)
 {
     struct Unk5C048Result *result;
 

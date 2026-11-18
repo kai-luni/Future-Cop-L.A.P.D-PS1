@@ -1,6 +1,8 @@
 // Categories: Gameplay > Target Selection | AI > Target Selection
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+
 typedef struct Entity {
     u8 unk00[0x08];
     s32 unk08;
@@ -45,7 +47,7 @@ extern s32 func_8004E5F0(Entity *source, Entity *target, s32 maxDist, s32 flags)
  * None observed.
  *
  * @par Callers
- * Confirmed: func_80035B7C (0x80035C58, 0x80035E8C, flyer target search), func_8006C34C (0x8006C398, player lock-on acquisition).
+ * Confirmed: gGuidedProjectileUpdate (0x80035C58, 0x80035E8C, flyer target search), func_8006C34C (0x8006C398, player lock-on acquisition).
  */
 Entity *func_8006C224(Entity *source, Entity *exclude, s32 maxDist, s32 flags)
 {

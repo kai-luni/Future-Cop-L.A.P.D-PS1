@@ -1,6 +1,8 @@
 // Categories: Utilities > Mathematics > Vector
 #include "game/types.h"
 
+extern int gVectorAddScaled();
+
 union Product1AC28 { long long value; u32 word[2]; };
 
 /**
@@ -20,7 +22,7 @@ union Product1AC28 { long long value; u32 word[2]; };
  * @par Likely role
  * The position integrator of the attack/mover handlers (func_8002E630,
  * func_8002EED8) and the camera rig: advances a position along a direction
- * by a frame-scaled step, the same arithmetic as func_8001ACA4.
+ * by a frame-scaled step, the same arithmetic as gVectorAddScaled.
  *
  * @par Callers
  * func_8002E630, func_8002EED8, func_80052550, func_800569EC, func_80057E40.

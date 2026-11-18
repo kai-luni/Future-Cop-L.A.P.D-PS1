@@ -1,6 +1,8 @@
 // Categories: Game Engine > Entity Lifecycle | Gameplay > Object Spawning
 #include "game/types.h"
 
+extern int gSpawnQueuedEntity();
+
 struct Entity {
     struct Entity *next;
     s32 (*update)(s32 message, struct Entity *entity, s32 arg2, s32 arg3);
@@ -16,7 +18,7 @@ extern void func_8004D3D4(struct Entity *entity);
  * @brief Allocates an entity block of a given size, stamps a fresh serial id and
  *        links it into the active entity list.
  *
- * The slim variant of func_8004D444: the size comes from the caller instead of a
+ * The slim variant of gSpawnQueuedEntity: the size comes from the caller instead of a
  * handler's size query and no spawn message is sent. The id at +0x8 comes from
  * the monotonic D_8009F7A0, which lets the pool garbage collector tell recycled
  * blocks from live ones; the block is then appended at the tail of the active

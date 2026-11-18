@@ -1,6 +1,8 @@
 // Categories: Graphics > Model Renderer > Instance Setup
 #include "game/types.h"
 
+extern int gProjectileInit();
+
 struct Model;
 
 struct Matrix3x3 {
@@ -38,7 +40,7 @@ extern void func_80013AF0(struct ModelInstance *instance, struct Model *model, u
  * Which code path last wrote D_8009AA38 before a given spawn.
  *
  * @par Callers
- * func_8002A5F4, func_800302E8, func_800317BC, func_80035904, func_80036940,
+ * func_8002A5F4, func_800302E8, func_800317BC, gProjectileInit, func_80036940,
  * func_80037064, func_80038754, func_800516A0, func_800579D4, func_8005920C,
  * func_80083A10.
  */

@@ -1,6 +1,8 @@
 // Categories: Gameplay > Target Selection | Gameplay > Player
 #include "game/types.h"
 
+extern int gWeaponSlotInput();
+
 typedef struct Unk6C34CControl Unk6C34CControl;
 
 typedef struct Entity {
@@ -42,7 +44,7 @@ extern Entity *func_8006C224(Entity *source, Entity *exclude, s32 maxDist, s32 f
  * Writes control->unk68, control->unk6C, and control->unk70.
  *
  * @par Callers
- * Confirmed: func_80055E10 (0x80055E78, arg1=0 on fire press), func_800588D4 (0x80058B74, arg1=1 when unk6C==0).
+ * Confirmed: gWeaponSlotInput (0x80055E78, arg1=0 on fire press), func_800588D4 (0x80058B74, arg1=1 when unk6C==0).
  */
 void func_8006C34C(Entity *object, s32 arg1)
 {

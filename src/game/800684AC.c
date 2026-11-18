@@ -1,6 +1,9 @@
 // Categories: Gameplay > Map > Grid Raycast | Physics > Collision | Utilities > Mathematics > Fixed Point
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+extern int gBeamPartUpdate();
+
 typedef struct { s32 x, y, z; } Vec3;
 extern s32 *gTileMapTable __asm__("D_8009F80C");
 extern s32 func_80067914(s32 *, s32 *, s32, s32, s32);
@@ -110,9 +113,9 @@ extern s32 func_80067914(s32 *, s32 *, s32, s32, s32);
  * The exact out-buffer layout arg2/arg3 receive from func_80067914.
  *
  * @par Callers
- * func_80035B7C, func_80036BD4, func_800371FC, func_80047888, func_8004E80C,
+ * gGuidedProjectileUpdate, func_80036BD4, func_800371FC, func_80047888, func_8004E80C,
  * func_80052410, func_800549F0, func_80055EE8, func_8005B6A8, func_8005C344,
- * func_8005F018, func_8005F6E8, func_8006B23C.
+ * func_8005F018, func_8005F6E8, gBeamPartUpdate.
  */
 s32 func_800684AC(s32 *p, s32 *q, s32 arg2, s32 arg3, s32 flag)
 {

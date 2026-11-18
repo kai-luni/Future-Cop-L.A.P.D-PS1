@@ -54,7 +54,7 @@ extern void func_800319D4(struct Unk4D6D4 *arg0);
 extern void func_80084110(struct Unk4D6D4 *arg0);
 extern void func_80049EA8(struct Unk4D6D4 *arg0);
 extern void func_80060838(struct Unk4D6D4 *arg0);
-extern void func_8006A918(struct Unk4D6D4 *arg0);
+extern void gRegistryLoad(struct Unk4D6D4 *arg0) __asm__("func_8006A918");
 extern void func_8004488C(struct Unk4D6D4 *arg0);
 extern void func_80041070(struct Unk4D6D4 *arg0);
 extern void func_8006ED78(struct Unk4D6D4 *arg0);
@@ -114,7 +114,7 @@ void func_8004D6D4(struct Unk4D6D4 *arg0)
         func_80060838(arg0);
         break;
     case 0x63:
-        func_8006A918(arg0);
+        gRegistryLoad(arg0);
         break;
     case 0x5E:
         func_8004488C(arg0);

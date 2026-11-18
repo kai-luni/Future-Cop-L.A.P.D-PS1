@@ -1,6 +1,8 @@
 // Categories: Game Engine > Init | Gameplay > Player
 #include "../../include/game/types.h"
 
+extern int gWeaponSlotUpdate();
+
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
 /**
@@ -11,7 +13,7 @@ extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
  * @param void No parameters.
  *
  * @par Globals
- * D_8009FA8C - 2-entry per-player byte flag array read/written in func_80053188, func_800579D4, func_80058210, func_80060A0C, func_8006BA50, and func_8006C080.
+ * D_8009FA8C - 2-entry per-player byte flag array read/written in func_80053188, func_800579D4, func_80058210, func_80060A0C, gWeaponSlotUpdate, and func_8006C080.
  *
  * @par Control flow
  * Two-iteration do-while countdown loop clearing D_8009FA8C[1] then D_8009FA8C[0].

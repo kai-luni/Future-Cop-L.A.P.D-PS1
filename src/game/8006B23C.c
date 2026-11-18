@@ -1,6 +1,8 @@
 // Categories: Graphics > Effects > Part Motion | Physics > Motion | Graphics > Renderer > Line Pass
 #include "game/types.h"
 
+extern int gWeaponSlotUpdate();
+
 typedef struct {
     s32 x;
     s32 y;
@@ -105,7 +107,7 @@ extern s32 D_8009F380;
 extern s32 D_8009F384;
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
-extern struct Unk6B23C_Item *func_8006AAEC(u8 id);
+extern struct Unk6B23C_Item *gRegistryFind(u8 id) __asm__("func_8006AAEC");
 extern void func_80046CF0(struct Unk6B23C *arg0, u8 arg1);
 extern void func_80017668(void *instance, s32 part, s32 *out);
 extern s32 func_80019668(void);
@@ -159,7 +161,7 @@ struct Frame6B23C {
  *
  * @par Confirmed
  * b = self->unkAC, c = b->unk6C (a render/collision handle, may be 0) and
- * item = func_8006AAEC(b->unk90[index]). Two record halves are used:
+ * item = gRegistryFind(b->unk90[index]). Two record halves are used:
  * item + 0x24 when b->unk8A[index] > 0, else item + 0x04 (s3).
  * func_80046CF0(self, s3->unk1C) is called on every pass.
  * The variant selector s7 is (u16)b->unk8A[index] & 1 for the positive case,
@@ -201,9 +203,11 @@ struct Frame6B23C {
  * s1; which indices the caller walks.
  *
  * @par Callers
- * func_8006BA50.
+ * gWeaponSlotUpdate.
  */
-void func_8006B23C(struct Unk6B23C *arg0, s32 index, s32 arg2)
+void gBeamPartUpdate(struct Unk6B23C *arg0, s32 index, s32 arg2) __asm__("func_8006B23C");
+
+void gBeamPartUpdate(struct Unk6B23C *arg0, s32 index, s32 arg2)
 {
     register struct Unk6B23C *self __asm__("$22") = arg0;
     struct Frame6B23C F;
@@ -232,7 +236,7 @@ void func_8006B23C(struct Unk6B23C *arg0, s32 index, s32 arg2)
 
     b = self->unkAC;
     c = b->unk6C;
-    item = func_8006AAEC(b->unk90[index]);
+    item = gRegistryFind(b->unk90[index]);
     flag = (((struct Unk6B23C_B *)((u8 *)b + (index << 1)))->unk8A[0] > 0);
     if (flag)
         s3 = (struct Unk6B23C_Sub *)((u8 *)item + 0x24);

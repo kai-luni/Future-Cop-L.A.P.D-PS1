@@ -1,6 +1,10 @@
 // Categories: Gameplay > Entity Script | Gameplay > Combat | Game Engine > Entity Lifecycle
 #include "game/types.h"
 
+extern int gSpawnQueuedEntity();
+extern int gSpawnDirectShot();
+extern int gWeaponFireDispatch();
+
 struct Entity {
     u8 pad00[8];
     struct Entity *link;
@@ -31,8 +35,8 @@ struct Entity {
     u8 pade8[4];
     struct Entity *target;
 };
-extern void func_80035904(struct Entity *, struct Entity *, s32);
-extern void func_80035B7C(struct Entity *, struct Entity *);
+extern void gProjectileInit(struct Entity *, struct Entity *, s32) __asm__("func_80035904");
+extern void gGuidedProjectileUpdate(struct Entity *, struct Entity *) __asm__("func_80035B7C");
 extern s32 func_8002AD58(s32, struct Entity *, struct Entity *, s32);
 extern s32 func_80019FCC(s32 *);
 extern s32 func_80095900(s32);
@@ -50,15 +54,15 @@ extern void func_800410BC(void *, s32, s32, struct Entity *);
  *        +0xD8, mode +0xE4, state +0xE8, flag word +0xEC, target +0xF4.
  * @param data Case payload: the spawn descriptor for 2, another entity for 9, 10
  *        and 11, the time step for 6.
- * @param extra Forwarded to the base handler and to func_80035904.
+ * @param extra Forwarded to the base handler and to gProjectileInit.
  * @return Case 1: 0xFC. Cases 2, 6, 9, 11 and 5: 0. Case 10: 1 when the candidate is
  *         acceptable, 0 when it is not. Case 4: the base handler result. Default:
  *         the base handler result.
  *
  * @par Confirmed
  * 1 returns 0xFC, the size the spawn queue asks for before it allocates.
- * 2 runs func_80035904(self, data, extra), the spawn half, and returns 0.
- * 6 runs func_80035B7C(self, data), the mover tick, and returns 0.
+ * 2 runs gProjectileInit(self, data, extra), the spawn half, and returns 0.
+ * 6 runs gGuidedProjectileUpdate(self, data), the mover tick, and returns 0.
  * 10 is the candidate test. The stored other (+0xD0) is first resolved through one
  * indirection: for type 0x12 through its +0xBC owner, for type 0x15 through its
  * +0xF4 target, and the candidate is refused when that owner equals the payload. A
@@ -96,10 +100,10 @@ extern void func_800410BC(void *, s32, s32, struct Entity *);
  *   marks an invulnerable or already-consumed object.
  *
  * @par Callers
- * No direct callers in the call graph. func_8005E47C stores the address as
- * request.handler and passes the request to func_8004D444, which allocates the block
- * from the message-1 size and then drives messages 1 and 2; func_8005E47C itself is
- * called by func_80035B7C (child creation), func_8005F6E8 and func_8006ACB0.
+ * No direct callers in the call graph. gSpawnDirectShot stores the address as
+ * request.handler and passes the request to gSpawnQueuedEntity, which allocates the block
+ * from the message-1 size and then drives messages 1 and 2; gSpawnDirectShot itself is
+ * called by gGuidedProjectileUpdate (child creation), func_8005F6E8 and gWeaponFireDispatch.
  */
 s32 func_80036624(s32 msg, struct Entity *self, struct Entity *data, s32 extra)
 {
@@ -113,10 +117,10 @@ s32 func_80036624(s32 msg, struct Entity *self, struct Entity *data, s32 extra)
     case 1:
         return 0xfc;
     case 2:
-        func_80035904(self, data, extra);
+        gProjectileInit(self, data, extra);
         return 0;
     case 6:
-        func_80035B7C(self, data);
+        gGuidedProjectileUpdate(self, data);
         return 0;
     case 10:
         other = self->other;

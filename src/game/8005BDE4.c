@@ -1,6 +1,9 @@
 // Categories: Graphics > Renderer > Map Cell Sprite | Graphics > Effects > Object-Attached Effect | Graphics > Culling
 #include "game/types.h"
 
+extern int gAttachPartEffect();
+extern int gBeamPartUpdate();
+
 struct Model;
 
 struct ModelInstance {
@@ -136,7 +139,7 @@ struct Locals5BDE4 {
  *    (which is then stored at +0x44), plus 0x20 with a non-negative part, in which
  *    case func_80017668 writes the part position to node+0x2C.
  * 5. func_8003BF50(owner) yields the row and the byte at D_800A6578[(column << 2) +
- *    (row << 10)] has bit 2 cleared - unlike func_8005CBCC, bit 0 is not set here.
+ *    (row << 10)] has bit 2 cleared - unlike gAttachPartEffect, bit 0 is not set here.
  *    node+0x24 receives the address of D_8005B934, node->self = node and +0x18 = 0x32
  *    (a 50 frame lifetime).
  * 6. func_800402DC(owner, column, flags ? &param : 0, row, &node->self) submits the
@@ -146,7 +149,7 @@ struct Locals5BDE4 {
  *    and +0x10 = arg2->+0x08.
  *
  * @par Likely role
- * The proximity-gated variant of func_8005CBCC: the same map-cell sprite submission,
+ * The proximity-gated variant of gAttachPartEffect: the same map-cell sprite submission,
  * but with a 0x1FFFF squared radius test against a table of world points, which fits
  * lamps, beacons or checkpoint markers that only emit their sprite when the player
  * is close.
@@ -158,7 +161,7 @@ struct Locals5BDE4 {
  * - Whether D_800A3190 holds map points, waypoints or light positions.
  *
  * @par Callers
- * func_8005F6E8 (message 14) and func_8006B23C (definition type 0x0E).
+ * func_8005F6E8 (message 14) and gBeamPartUpdate (definition type 0x0E).
  */
 void func_8005BDE4(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *arg2,
                    struct ModelInstance *instance, u8 part, struct Unk5BDE4Source *in_source)

@@ -115,7 +115,7 @@ extern void func_80010750(void *arg);
 extern void func_80010234(void *arg0, void *arg1, s32 arg2);
 extern void func_80057E40(void *object, s32 arg1);
 extern void func_8006C3E0(void *object, s32 arg1);
-extern void func_80055E10(struct Unk55E10 *object, s32 arg1);
+extern void gWeaponSlotInput(struct Unk55E10 *object, s32 arg1) __asm__("func_80055E10");
 extern void func_800569EC(void *object, s32 arg1, s32 arg2);
 
 /**
@@ -160,7 +160,7 @@ extern void func_800569EC(void *object, s32 arg1, s32 arg2);
  * func_80010750 loads object + 0x2C into the GTE and func_80010234 transforms the
  * vertex at source + 0x34, offset by (part index shifted 4) + 8, into object + 0x5C.
  * The sub-systems follow: func_80057E40(companion, arg1), func_8006C3E0(object, arg1)
- * for its three value words, func_80055E10 only in screen state 4 - the controller
+ * for its three value words, gWeaponSlotInput only in screen state 4 - the controller
  * polling - and func_800569EC(object, arg1, halves) for the camera. Timers
  * state + 0x324 and +0x326 are decremented last.
  *
@@ -269,7 +269,7 @@ s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
     func_80057E40(object->unkDC, arg1);
     func_8006C3E0(object, arg1);
     if (gScreenState == 4) {
-        func_80055E10((struct Unk55E10 *)object, arg1);
+        gWeaponSlotInput((struct Unk55E10 *)object, arg1);
     }
     func_800569EC(object, arg1, s4);
 

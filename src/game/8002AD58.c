@@ -1,6 +1,8 @@
 // Categories: Gameplay > Entity Script | Game Engine > Object Setup
 #include "game/types.h"
 
+extern int gProjectileInit();
+
 struct Unk2AD58 {
     u8 unk00[0x24];
     u32 flags;
@@ -48,7 +50,7 @@ extern s32 func_80095C30(s32 x, s32 y);
  * func_8002DC94, func_8002DEA8, func_8002ED7C, func_8002EED8, func_8002F7C8,
  * func_8002FA20, func_8003015C, func_800302E8, func_80030960, func_80030AD4,
  * func_80030D3C, func_80030DE0, func_8003151C, func_800317BC, func_8003190C,
- * func_80032180, func_80032F3C, func_80035904, func_80036624, func_80036940,
+ * func_80032180, func_80032F3C, gProjectileInit, func_80036624, func_80036940,
  * func_80036E6C, func_80037064, func_80037708, func_800378BC, func_800379D4,
  * func_800382B4, func_80038754, func_80039298, func_800395A8, func_800398EC,
  * func_80039C58, func_80039E8C, func_8003A844, func_80041488, func_80041B6C,

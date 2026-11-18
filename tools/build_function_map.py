@@ -25,18 +25,26 @@ def load():
     manifest = json.load(open(ROOT / 'config/us/matching_units.json'))
     man = {u['name']: u for u in manifest['units']}
     cats = {}
+    cnames = {}
     for path in sorted((ROOT / 'src/game').glob('*.c')):
         name = 'func_' + path.stem.upper()
         if name not in man:
             continue
-        first = path.read_text(errors='ignore').split('\n', 1)[0]
+        text = path.read_text(errors='ignore')
+        first = text.split('\n', 1)[0]
         m = CATEGORY_RE.match(first)
         if not m:
             continue
         cats[name] = [c.strip() for c in m.group(1).split('|') if c.strip()]
+        # A renamed function carries its readable name on the prototype:
+        # `s32 gWeaponFireDispatch(...) __asm__("func_8006ACB0");`
+        alias = re.search(
+            r'\b([A-Za-z_]\w*)\s*\([^;{)]*\)\s*__asm__\("' + name + r'"\)', text)
+        if alias:
+            cnames[name] = alias.group(1)
     edges = [e for e in json.load(open(ROOT / 'analysis/edges.json'))['edges']
              if e.get('kind') == 'direct' and e.get('from') and e.get('to')]
-    return man, cats, edges
+    return man, cats, cnames, edges
 
 
 def group_of(primary):
@@ -104,7 +112,7 @@ SUMMARIES = {
 
 
 def render():
-    man, cats, edges = load()
+    man, cats, cnames, edges = load()
     size_of = {n: int(man[n]['size'], 0) for n in cats}
     addr_of = {n: int(man[n]['address'], 16) for n in cats}
     name_of = {a: n for n, a in addr_of.items()}
@@ -169,7 +177,8 @@ def render():
              'Markdown map of every function whose source carries a `// Categories:` line: the '
              'category is the first line of each `src/game/<addr>.c`, sizes come from '
              '`config/us/matching_units.json`, edges from `analysis/edges.json`.\n',
-             '**Reading the map.** Each node is a documented function (hex address). Edges are '
+             '**Reading the map.** Each node is a documented function; a renamed function shows its '
+             'C name first and the retail address in parentheses. Edges are '
              '**direct calls** and only between two documented functions, so a missing edge means '
              '"the caller lies outside this set" or "not in the graph", never "no call". `jalr` '
              'calls, jump tables and `address_taken` edges are not drawn. The category column shows '
@@ -213,7 +222,8 @@ def render():
             cs = ', '.join(f'`{b}`' for b in sorted(callees[a])) or '-'
             rs = ', '.join(f'`{b}`' for b in sorted(callers[a])) or '-'
             ex = f' · {", ".join(extra[a])}' if extra[a] else ''
-            lines.append(f'| `{a}` | {size_of[a]} | {primary[a]}{ex} | {cs} | {rs} |')
+            label = f'`{cnames[a]}` (`{a}`)' if a in cnames else f'`{a}`'
+            lines.append(f'| {label} | {size_of[a]} | {primary[a]}{ex} | {cs} | {rs} |')
         lines += ['']
 
     lines += ['## Rendering core chain\n',

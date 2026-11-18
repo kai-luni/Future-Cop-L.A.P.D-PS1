@@ -1,6 +1,9 @@
 // Categories: Platform > Sound
 #include "game/types.h"
 
+extern int gWeaponFireDispatch();
+extern int gWeaponSlotUpdate();
+
 extern u8 gSoundIdTable[] __asm__("D_800A1880");
 
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
@@ -31,7 +34,7 @@ extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
  * @par Callers
  * D_8007D27C (data reference), func_800260B8, func_800267C8, func_80027510,
  * func_8003E984, func_80047088, func_80049260, func_80055988, func_800588D4,
- * func_80058D78, func_8005A154, func_8006ACB0, func_8006BA50, func_8007A3AC,
+ * func_80058D78, func_8005A154, gWeaponFireDispatch, gWeaponSlotUpdate, func_8007A3AC,
  * func_8007A4CC, func_8007A7A0, func_8007AB0C, func_8007ABBC, func_8007B854,
  * func_8007C80C, func_8007C940, func_8007E1A4, func_8007F1F8, func_8007F618,
  * func_8008125C.

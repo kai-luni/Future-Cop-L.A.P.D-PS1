@@ -1,6 +1,9 @@
 // Categories: Gameplay > Combat > Targeting | Utilities > Mathematics
 #include "game/types.h"
 
+extern int gAttachPartEffect();
+extern int gWeaponFireDispatch();
+
 typedef struct {
     s32 x;
     s32 y;
@@ -32,7 +35,7 @@ extern void func_8001A180(s32 *v);
  *
  * @par Likely role
  * The lead/deflection solver of the fire paths (func_8005F6E8,
- * func_8006ACB0, func_8005CBCC): marching toward the target and taking
+ * gWeaponFireDispatch, gAttachPartEffect): marching toward the target and taking
  * the residual gives a smoothed aim direction that accounts for the
  * projectile travel; the half-step bias centres the estimate.
  *
@@ -40,9 +43,12 @@ extern void func_8001A180(s32 *v);
  * Why the iteration cap differs with the scale/step ratio.
  *
  * @par Callers
- * func_8005CBCC, func_8005F6E8, func_8006ACB0.
+ * gAttachPartEffect, func_8005F6E8, gWeaponFireDispatch.
  */
-void func_8005E2A0(Vec3 *target, Vec3 *out, s32 arg2, s32 arg3,
+void gSolveLeadDirection(Vec3 *target, Vec3 *out, s32 arg2, s32 arg3,
+                   Vec3 *start, Vec3 *dir, s32 scale) __asm__("func_8005E2A0");
+
+void gSolveLeadDirection(Vec3 *target, Vec3 *out, s32 arg2, s32 arg3,
                    Vec3 *start, Vec3 *dir, s32 scale)
 {
     Vec3 d;

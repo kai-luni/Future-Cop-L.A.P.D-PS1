@@ -45,7 +45,7 @@ struct UnkObject {
 extern void func_800188D0(s16 a, s16 b, s32 c, void *out);
 extern void func_80010820(void *p);
 extern void func_8001006C(void *dst, void *src, s32 n);
-extern void func_8001ACA4(struct Vec3s32 *a, struct Vec3s32 *b, s32 scale, struct Vec3s32 *out);
+extern void gVectorAddScaled(struct Vec3s32 *a, struct Vec3s32 *b, s32 scale, struct Vec3s32 *out) __asm__("func_8001ACA4");
 extern s32 func_80066F78(struct Vec3s32 *pos, s32 a1, s32 a2, s32 a3);
 
 /**
@@ -64,7 +64,7 @@ extern s32 func_80066F78(struct Vec3s32 *pos, s32 a1, s32 a2, s32 a3);
  * the rotation from unk80->unk04/unk06, func_80010820 loads it and
  * func_8001006C transforms the three vectors at object->unk34 into
  * sub->unk04. With vec = (0, unk80->unk00, 0) and scale = arg * 218,
- * func_8001ACA4 accumulates vec * scale into unk80->unk0C and then
+ * gVectorAddScaled accumulates vec * scale into unk80->unk0C and then
  * unk80->unk0C * scale into sub->pos. The angles advance by
  * (unk08 * arg) >> 8 and (unk0A * arg) >> 8. When
  * func_80066F78(&sub->pos, 0, 0, 0) >= sub->pos.y, unk18 = -1 (ground
@@ -104,8 +104,8 @@ void func_8004AFC0(struct UnkObject *object, s32 arg)
 
     scale = arg * 218;
 
-    func_8001ACA4(&object->unk80->unk0C, &vec, scale, &object->unk80->unk0C);
-    func_8001ACA4(&sub->pos, &object->unk80->unk0C, scale, &sub->pos);
+    gVectorAddScaled(&object->unk80->unk0C, &vec, scale, &object->unk80->unk0C);
+    gVectorAddScaled(&sub->pos, &object->unk80->unk0C, scale, &sub->pos);
 
     object->unk80->unk04 += (object->unk80->unk08 * arg) >> 8;
     object->unk80->unk06 += (object->unk80->unk0A * arg) >> 8;

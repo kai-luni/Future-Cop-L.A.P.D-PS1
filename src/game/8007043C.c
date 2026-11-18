@@ -1,6 +1,8 @@
 // Categories: Gameplay > Object Spawning > Constructor | Game Engine > Object Setup
 #include "game/types.h"
 
+extern int gSpawnQueuedEntity();
+
 typedef struct {
     u8 unk00[0x34];
     u16 unk34;
@@ -121,7 +123,7 @@ extern void func_800188D0(s32 x, s32 y, s32 z, Work7043C *work);
  * - Whether +0x08 and +0x0A are a frame index and a count, and what +0x9A selects.
  * - Why the handler address is stored in a field that other classes use as a plain
  *   flag word; the pool tag and the handler installation look like the record is
- *   handed to func_8004D444's queue later.
+ *   handed to gSpawnQueuedEntity's queue later.
  *
  * @par Callers
  * func_8003E984, case 0x59 of its constructor switch (the generic level-object

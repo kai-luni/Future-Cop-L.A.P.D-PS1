@@ -1,6 +1,10 @@
 // Categories: Gameplay > Object Registry | Utilities > Lookup
 #include "game/types.h"
 
+extern int gBeamPartUpdate();
+extern int gWeaponFireDispatch();
+extern int gWeaponSlotUpdate();
+
 struct Unk6AAEC {
     u8 id;
     u8 unk01[0x53];
@@ -20,10 +24,12 @@ extern struct Unk6AAEC gVmRecordTable[] __asm__("D_800A3340");
  * first match wins.
  *
  * @par Callers
- * func_8006AB38, func_8006ACB0, func_8006B23C, func_8006BA50,
+ * func_8006AB38, gWeaponFireDispatch, gBeamPartUpdate, gWeaponSlotUpdate,
  * func_8006BDFC, func_8006BE90, func_8006C080.
  */
-struct Unk6AAEC *func_8006AAEC(u8 id)
+struct Unk6AAEC *gRegistryFind(u8 id) __asm__("func_8006AAEC");
+
+struct Unk6AAEC *gRegistryFind(u8 id)
 {
     s32 i;
 

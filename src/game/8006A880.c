@@ -1,12 +1,15 @@
 // Categories: Game Engine > Init | Gameplay > Object Registry
 #include "game/types.h"
 
+extern int gRegistryLoad();
+extern int gRegistryFind();
+
 extern s32 gDescriptorRegistryCount __asm__("D_8009F848");
 
 /**
  * @brief Clears the 6-entry object/texture descriptor registry count D_8009F848 during mission boot.
  *
- * Zeroes D_8009F848 in the start-of-mission boot path func_80024A24, resetting the 0x54-stride table D_800A3340 before entries are registered by func_8006A918 and queried by func_8006AAEC. Category Game Engine > Init | Gameplay > Object Registry follows the boot caller and registry counter global.
+ * Zeroes D_8009F848 in the start-of-mission boot path func_80024A24, resetting the 0x54-stride table D_800A3340 before entries are registered by gRegistryLoad and queried by gRegistryFind. Category Game Engine > Init | Gameplay > Object Registry follows the boot caller and registry counter global.
  *
  * @param void No parameters.
  *

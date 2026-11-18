@@ -56,7 +56,7 @@ struct Request {
 
 extern void func_80039298();
 extern void func_80017668(u8 *coord, s32 part, struct Vec3s32 *out);
-extern void *func_8004D444(struct Request *request);
+extern void *gSpawnQueuedEntity(struct Request *request) __asm__("func_8004D444");
 
 /**
  * @brief Spawns a kind-0x15 object through the request queue with handler
@@ -68,7 +68,7 @@ extern void *func_8004D444(struct Request *request);
  * @param arg3 Model part index for the position lookup; also args.unk2A.
  * @param arg4, arg5 Parameter bytes.
  * @param arg6 Forwarded as args.unk2C.
- * @return The request queue result of func_8004D444.
+ * @return The request queue result of gSpawnQueuedEntity.
  *
  * @par Confirmed
  * The request carries kind 0x15, the parent's tag/parameters, flags masked
@@ -115,5 +115,5 @@ void *func_80039418(struct Object *object, s32 arg1, s16 arg2, s32 arg3, u8 arg4
     args.unk22 = object->unk92;
     args.unk23 = object->unk93;
     func_80017668(object->coord, arg3, &args.position);
-    return func_8004D444(&request);
+    return gSpawnQueuedEntity(&request);
 }

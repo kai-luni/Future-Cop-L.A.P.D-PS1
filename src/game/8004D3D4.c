@@ -1,6 +1,8 @@
 // Categories: Game Engine > Entity Lifecycle | Game Engine > Object Pool
 #include "game/types.h"
 
+extern int gSpawnQueuedEntity();
+
 struct Entity {
     struct Entity *next;
 };
@@ -28,7 +30,7 @@ extern struct Entity *gListTailBranch __asm__("D_8009FA88");
  * Updates D_8009FA88->next or D_8009FA40, advances D_8009FA88, and clears entity->next.
  *
  * @par Callers
- * Confirmed: func_8004D3FC (0x8004D424), func_8004D444 (0x8004D4B0), func_8004D4F8 (0x8004D564).
+ * Confirmed: func_8004D3FC (0x8004D424), gSpawnQueuedEntity (0x8004D4B0), func_8004D4F8 (0x8004D564).
  */
 void func_8004D3D4(struct Entity *entity)
 {

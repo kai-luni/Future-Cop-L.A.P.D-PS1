@@ -18,7 +18,7 @@
  * matrix; func_80095B64 is the IR-vector form.
  *
  * @par Callers
- * func_800192AC, func_80019310, func_8001937C, func_800193F8, func_80035B7C,
+ * func_800192AC, func_80019310, func_8001937C, func_800193F8, gGuidedProjectileUpdate,
  * func_80051C50, func_80053A74.
  */
 __asm__(

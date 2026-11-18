@@ -1,6 +1,8 @@
 // Categories: Gameplay > Damage > Expanding Contact Field | Physics > Collision > Radius Tests | Gameplay > Object Dynamics
 #include "game/types.h"
 
+extern int gBeamPartUpdate();
+
 struct Vec3s32 {
     s32 x;
     s32 y;
@@ -104,7 +106,7 @@ extern s32 func_8001A750(s32 *a, s32 *b);
  * @par Likely role
  * The shared explosion/contact-damage broadcaster. Callers compute an amount
  * from their own attack parameters (func_80036624 scales it by the distance
- * ratio), func_80036AB4 fires it as its "explode now" path, func_8006B23C runs
+ * ratio), func_80036AB4 fires it as its "explode now" path, gBeamPartUpdate runs
  * it per effect part, and func_8003E984 uses it once a spawned object asks for
  * it. Message 9 is the same damage channel the object handler family answers,
  * with the position and the strength in the payload. The optional band makes it a
@@ -120,7 +122,7 @@ extern s32 func_8001A750(s32 *a, s32 *b);
  *
  * @par Callers
  * func_80036624, func_80036AB4, func_80037708, func_8003E984, func_800413EC,
- * func_80041428, func_8006B23C (two sites).
+ * func_80041428, gBeamPartUpdate (two sites).
  */
 void func_800410BC(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3)
 {

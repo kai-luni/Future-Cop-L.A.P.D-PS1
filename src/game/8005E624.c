@@ -1,6 +1,9 @@
 // Categories: Utilities > Mathematics > Ballistic Trajectory | Physics > Motion > Projectile | Graphics > GTE
 #include "game/types.h"
 
+extern int gSpawnLobShot();
+extern int gWeaponFireDispatch();
+
 extern s32 func_8001A7AC(s32 *vec);
 extern void func_8001ABE0(s32 scale, s32 *p);
 extern s32 func_80095900(s32 value);
@@ -56,8 +59,8 @@ extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
  * and the height difference determine the elevation, scale bends the
  * arc (a gravity or curvature constant), and angle selects the launch
  * speed, so the output is a muzzle velocity for a grenade-type attack.
- * func_8005F6E8 calls it for its attack type 9, func_8005E9E4 and
- * func_8006ACB0 call it with table-driven angle and scale values from
+ * func_8005F6E8 calls it for its attack type 9, gSpawnLobShot and
+ * gWeaponFireDispatch call it with table-driven angle and scale values from
  * their descriptors, and func_80058C3C calls it for a kind-7 effect.
  *
  * @par Unknown
@@ -67,11 +70,13 @@ extern void func_8001846C(u32 angle, s32 *sine, s32 *cosine);
  * func_80058C3C passes the camera pointer as dst.
  *
  * @par Callers
- * func_80058C3C (0x80058D48), func_8005E9E4 (0x8005EB54),
- * func_8005F6E8 (0x8005FCE8) and func_8006ACB0 (0x8006B010); all
+ * func_80058C3C (0x80058D48), gSpawnLobShot (0x8005EB54),
+ * func_8005F6E8 (0x8005FCE8) and gWeaponFireDispatch (0x8006B010); all
  * analysis/edges.json kind "direct".
  */
-void func_8005E624(s32 angle, s32 *out, s32 *src, s32 *dst, s32 scale)
+void gSolveLobVector(s32 angle, s32 *out, s32 *src, s32 *dst, s32 scale) __asm__("func_8005E624");
+
+void gSolveLobVector(s32 angle, s32 *out, s32 *src, s32 *dst, s32 scale)
 {
     s32 vec[4];
     s32 len;

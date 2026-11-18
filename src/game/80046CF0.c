@@ -1,6 +1,8 @@
 // Categories: Platform > Sound > SE | Gameplay > Weapons
 #include "game/types.h"
 
+extern int gBeamPartUpdate();
+
 struct Unk6C488Stats {
     u8 unk00[0xC1];
     s8 unkC1;
@@ -50,7 +52,7 @@ extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
  * handle pointer.
  *
  * @par Likely role
- * The sustained-fire sound manager of the weapon handlers (func_8006B23C,
+ * The sustained-fire sound manager of the weapon handlers (gBeamPartUpdate,
  * func_8006C488): the handle identity check restarts the loop only when
  * the voice was recycled, so continuous fire does not retrigger.
  *
@@ -58,7 +60,7 @@ extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
  * What status 0x1E encodes in the voice state machine.
  *
  * @par Callers
- * func_8006B23C, func_8006C488.
+ * gBeamPartUpdate, func_8006C488.
  */
 void func_80046CF0(struct Unk6C488 *object, s32 state)
 {

@@ -39,7 +39,7 @@ struct Node4BEE8 {
 };
 
 extern s32 gSceneFrameCounter __asm__("D_8009FA50");
-extern void func_8001ACA4(struct Vec3s32 *a, struct Vec3s32 *b, s32 scale, struct Vec3s32 *out);
+extern void gVectorAddScaled(struct Vec3s32 *a, struct Vec3s32 *b, s32 scale, struct Vec3s32 *out) __asm__("func_8001ACA4");
 extern s32 func_80066F78(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3);
 
 /**
@@ -53,7 +53,7 @@ extern s32 func_80066F78(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3)
  * @par Confirmed
  * scale = arg * 218. An empty list sets flag bit 0 and returns. Per shard:
  * vel.y += unk40 * scale (64-bit multiply, >> 16), position integrated via
- * func_8001ACA4 (the +0x80 flag selects the attached object's position
+ * gVectorAddScaled (the +0x80 flag selects the attached object's position
  * over the local one), spin words += (unk30/unk32 * arg) >> 8. Every 8th
  * shard ((frame ^ i) & 7 == 0, frame = D_8009FA50) a ground test
  * func_80066F78(pos, 0, 0, 0) >= pos.y kills it (unk44 = -1); a positive
@@ -106,9 +106,9 @@ void func_8004BEE8(struct Node4BEE8 *node, s32 arg_)
         cur->vel.y += mul;
 
         if (cur->unk28 & 0x80) {
-            func_8001ACA4(&cur->u.obj->pos, &cur->vel, scale, &cur->u.obj->pos);
+            gVectorAddScaled(&cur->u.obj->pos, &cur->vel, scale, &cur->u.obj->pos);
         } else {
-            func_8001ACA4(&cur->u.pos, &cur->vel, scale, &cur->u.pos);
+            gVectorAddScaled(&cur->u.pos, &cur->vel, scale, &cur->u.pos);
         }
 
         cur->unk2C += (s16)((cur->unk30 * arg) >> 8);

@@ -42,7 +42,7 @@ struct Entity {
     s32 unkD0;
 };
 
-extern void func_8001ACA4(void *a, void *b, s32 c, s32 *d);
+extern void gVectorAddScaled(void *a, void *b, s32 c, s32 *d) __asm__("func_8001ACA4");
 extern s32 func_800684AC(void *a, s32 *b, s32 c, s32 d, s32 e);
 extern s32 func_8001A100(s32 *vector);
 extern void func_8001A180(struct Vec3s32 *vector);

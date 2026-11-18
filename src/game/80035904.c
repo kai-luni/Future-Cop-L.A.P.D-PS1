@@ -163,7 +163,9 @@ extern void func_800193F8(struct Vec3 *axis, void *basis);
  * @par Callers
  * func_80036624, message 2 of its switch.
  */
-void func_80035904(struct Self35904 *self, struct Arg35904 *arg1, s32 arg2)
+void gProjectileInit(struct Self35904 *self, struct Arg35904 *arg1, s32 arg2) __asm__("func_80035904");
+
+void gProjectileInit(struct Self35904 *self, struct Arg35904 *arg1, s32 arg2)
 {
     struct Data35904 *data;
 

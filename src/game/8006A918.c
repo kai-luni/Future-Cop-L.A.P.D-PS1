@@ -35,7 +35,7 @@ struct Unk6AAEC {
 
 extern s32 gDescriptorRegistryCount __asm__("D_8009F848");
 extern struct Unk6AAEC gVmRecordTable[] __asm__("D_800A3340");
-extern u8 D_800A3344[];
+extern u8 gVmRecordObjects[] __asm__("D_800A3344");
 
 extern void *func_80019C38(u32 a0, u32 a1, u32 a2, u32 a3);
 extern void *func_80019CA0(u32 a0, u32 a1, u32 a2, u32 a3);
@@ -52,7 +52,7 @@ extern void *memcpy(void *dest, const void *src, u32 count);
  *  @param arg0 Descriptor supplying resource lookup fields.
  *  @par Globals
  *  D_8009F848 counts entries and is incremented before loading.
- *  D_800A3340 stores copied records; D_800A3344 addresses their embedded objects.
+ *  gVmRecordTable stores copied records; gVmRecordObjects is the object area of that table (base + 4).
  *  @par Control flow
  *  If the count is below six, loads two records and loops over four references.
  *  A zero reference name produces a null pointer; otherwise it is resolved.
@@ -65,7 +65,9 @@ extern void *memcpy(void *dest, const void *src, u32 count);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8006A918(struct Unk60838Arg *arg0)
+void gRegistryLoad(struct Unk60838Arg *arg0) __asm__("func_8006A918");
+
+void gRegistryLoad(struct Unk60838Arg *arg0)
 {
     struct Unk6AAEC *entry;
     u8 *data;
@@ -80,11 +82,11 @@ void func_8006A918(struct Unk60838Arg *arg0)
 
         memcpy(&gVmRecordTable[index], data + 0x10, 0x44);
 
-        func_8006A898((struct Unk6A898 *)(D_800A3344 + (u32)(index * 84)));
-        func_8006A898((struct Unk6A898 *)(D_800A3344 + (u32)(index * 84) + 0x20));
+        func_8006A898((struct Unk6A898 *)(gVmRecordObjects + (u32)(index * 84)));
+        func_8006A898((struct Unk6A898 *)(gVmRecordObjects + (u32)(index * 84) + 0x20));
 
         second = func_80019CA0(arg0->unk00, arg0->unk20, 0x6152534C, arg0->unk1C);
-        entry = (struct Unk6AAEC *)(D_800A3344 + (u32)(index * 84) - 4);
+        entry = (struct Unk6AAEC *)(gVmRecordObjects + (u32)(index * 84) - 4);
         __asm__("" : : "r"(entry));
 
         {

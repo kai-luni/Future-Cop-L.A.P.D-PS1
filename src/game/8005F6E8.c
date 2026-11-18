@@ -97,12 +97,12 @@ extern s32 func_8001AB00(s32 *coord, s32 *vec);
 extern s32 func_800402DC(void *owner, u8 column, s32 arg2, s32 row, s32 arg4);
 extern void func_80047284(s32 id, s32 arg1, s32 arg2, s32 arg3);
 extern void func_8005BDE4(void *a0, s32 a1, struct S1_5F6E8 *a2, void *a3, s32 a4, void *a5);
-extern void func_8005CBCC(void *a0, s32 a1, struct S1_5F6E8 *a2, void *a3, s32 a4, void *a5);
-extern s32 func_8005D690(void *a0, void *a1, s32 a2);
-extern s32 func_8005E2A0(s32 a0, void *a1, s32 a2, s32 a3, void *a4, void *a5, u32 a6);
-extern s32 func_8005E47C(void *a0, s32 a1, void *a2, void *a3, void *a4, void *a5, u32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11);
-extern s32 func_8005E624(s32 a0, void *a1, void *a2, void *a3, s32 a4);
-extern s32 func_8005E9E4(s32 a0, void *a1, void *a2, void *a3, void *a4, void *a5, void *a6, u32 a7, s32 a8);
+extern void gAttachPartEffect(void *a0, s32 a1, struct S1_5F6E8 *a2, void *a3, s32 a4, void *a5) __asm__("func_8005CBCC");
+extern s32 gWeaponEffectUpdate(void *a0, void *a1, s32 a2) __asm__("func_8005D690");
+extern s32 gSolveLeadDirection(s32 a0, void *a1, s32 a2, s32 a3, void *a4, void *a5, u32 a6) __asm__("func_8005E2A0");
+extern s32 gSpawnDirectShot(void *a0, s32 a1, void *a2, void *a3, void *a4, void *a5, u32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11) __asm__("func_8005E47C");
+extern s32 gSolveLobVector(s32 a0, void *a1, void *a2, void *a3, s32 a4) __asm__("func_8005E624");
+extern s32 gSpawnLobShot(s32 a0, void *a1, void *a2, void *a3, void *a4, void *a5, void *a6, u32 a7, s32 a8) __asm__("func_8005E9E4");
 extern s32 func_8005EB74(void *a0, void *a1, void *a2, void *a3, void *a4, void *a5, u32 a6);
 extern s32 func_8005ECB8(void *a0, void *a1, void *a2, void *a3, u32 a4);
 extern s32 func_8005EE04(void *a0, void *a1, void *a2, void *a3, void *a4, s32 a5, u32 a6);
@@ -131,7 +131,7 @@ extern s32 func_8006F0E8(s32 a0, s32 a1, s32 a2, u32 a3, void *a4, void *a5);
  * bits 0x80/0x200/0x400 of a0->unk4 into 0x80000/0x200/1. The first switch
  * over the attack type (s2->unk01) builds the direction: types 1/3/9..14/
  * 17..19/0x15 normalise (target - muzzle) via func_8001A180; type 7 uses
- * the actor's own vector; type 2 runs the lead prediction func_8005E2A0
+ * the actor's own vector; type 2 runs the lead prediction gSolveLeadDirection
  * unless the target class (unk16 1 or 0x12) has a positive timer at
  * +0x324; types 4/20, 5, 6, 8 fire their spawners directly. Jitter: flag
  * 0x8 adds (rand & 0x1FFF) - 0x1000 to y, flag 0x10 to x/z. The angle gate
@@ -140,10 +140,10 @@ extern s32 func_8006F0E8(s32 a0, s32 a1, s32 a2, u32 a3, void *a4, void *a5);
  * map to mask bits 1/2/4 tested against flags 0x807. The second switch:
  * type 12 clips via func_800684AC, delivers message 0x0E on a miss and
  * spawns the tracer func_8006F0E8(0x140, 0x60, 0x30000, ...); 14/17 call
- * func_8005BDE4/func_8005CBCC; 10/11 call func_8005F018 (subtype 1/8);
- * 8/9 func_8005EE04 (9 with func_8005E624 first); 13 func_8005D690; the
+ * func_8005BDE4/gAttachPartEffect; 10/11 call func_8005F018 (subtype 1/8);
+ * 8/9 func_8005EE04 (9 with gSolveLobVector first); 13 gWeaponEffectUpdate; the
  * default requires a clear func_800684AC line of sight and fires
- * func_8005E47C. The tail decrements ammo, spawns the secondary object
+ * gSpawnDirectShot. The tail decrements ammo, spawns the secondary object
  * via func_800402DC (column s2->unk1B, impact column unk1A when flagged)
  * and always calls func_80047284(s2->unk1C, ...). The fail path bumps
  * unk26 and drains unk24 by (rand + 0xC8) & 0xFF.
@@ -250,7 +250,7 @@ s32 func_8005F6E8(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3)
                 goto L814;
             }
         }
-        func_8005E2A0((s32)pos, vec, s2->unk12 << 4, s2->unk16 << 4,
+        gSolveLeadDirection((s32)pos, vec, s2->unk12 << 4, s2->unk16 << 4,
                       (u8 *)s1 + 0x5C, (u8 *)s1 + 0x78, s1->unk84);
         goto L9B4;
 
@@ -259,7 +259,7 @@ s32 func_8005F6E8(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3)
         if ((a3 & 0xFF) == 0) {
             goto FEEC;
         }
-        ret = func_8005E9E4(s2->unk01, (u8 *)a0->unk0 + 0x0C,
+        ret = gSpawnLobShot(s2->unk01, (u8 *)a0->unk0 + 0x0C,
                             (u8 *)a0->unk0 + 0x20, pos, a1, s1,
                             (u8 *)s1 + 0x5C, s4, s2->unk1B);
         goto FE28;
@@ -353,7 +353,7 @@ L9B4:
         if ((a3 & 0xFF) == 0) {
             goto FEEC;
         }
-        func_8005CBCC(a1, a2, s1, (u8 *)a1 + 0x28, a0->unk23, (u8 *)a0->unk0 + 0x0C);
+        gAttachPartEffect(a1, a2, s1, (u8 *)a1 + 0x28, a0->unk23, (u8 *)a0->unk0 + 0x0C);
         s7 = 0;
         goto FE2C;
 
@@ -378,7 +378,7 @@ L9B4:
         if ((a3 & 0xFF) == 0) {
             goto FEEC;
         }
-        func_8005E624(s2->unk12 << 4, vec, pos, (u8 *)s1 + 0x5C, s2->unk16 << 4);
+        gSolveLobVector(s2->unk12 << 4, vec, pos, (u8 *)s1 + 0x5C, s2->unk16 << 4);
         ret = func_8005EE04((u8 *)s2 + 0x0C, (u8 *)s2 + 0x20, pos, a1, vec, 1, s4);
         goto FE28;
 
@@ -386,7 +386,7 @@ L9B4:
         if ((a3 & 0xFF) == 0) {
             goto FEEC;
         }
-        func_8005D690(a1, (u8 *)a0->unk0 + 0x0C, 0);
+        gWeaponEffectUpdate(a1, (u8 *)a0->unk0 + 0x0C, 0);
         ret = 0;
         s7 = 0;
         goto FE2C;
@@ -409,7 +409,7 @@ L9B4:
         if (a0->unk4 & 0x2000) {
             mask |= 2;
         }
-        ret = func_8005E47C((u8 *)s2 + 0x0C, (s2->unk20 != 0) ? *(s32 *)s2->unk20 : 0, pos, vec, a1, s1,
+        ret = gSpawnDirectShot((u8 *)s2 + 0x0C, (s2->unk20 != 0) ? *(s32 *)s2->unk20 : 0, pos, vec, a1, s1,
                             s4, s2->unk01, a0->unk6, a0->unk8,
                             s2->unk1B, mask);
         goto FE28;

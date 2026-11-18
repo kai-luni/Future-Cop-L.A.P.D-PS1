@@ -1,6 +1,8 @@
 // Categories: Utilities > Fixed Point | Utilities > Heightfield Sampling
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+
 typedef struct {
     s32 unk0;
     s32 unk4;
@@ -36,7 +38,7 @@ extern Unk800A2940 gCellDataOutput __asm__("D_800A2940");
  * None observed.
  *
  * @par Callers
- * Confirmed: func_800324E0, func_80035B7C.
+ * Confirmed: func_800324E0, gGuidedProjectileUpdate.
  */
 s32 func_80069A38(s32 *arg0)
 {

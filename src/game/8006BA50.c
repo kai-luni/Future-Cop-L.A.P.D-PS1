@@ -1,6 +1,8 @@
 // Categories: Gameplay > Weapons > Input Weapon Slot | Graphics > Effects > Dispatcher | Platform > Sound
 #include "game/types.h"
 
+extern int gWeaponSlotInput();
+
 struct Unk6BA50Node {
     struct Unk6BA50Node *next;
     u8 unk04[4];
@@ -59,9 +61,9 @@ extern struct Unk6BA50Node *gUnitListHead __asm__("D_8009FA40");
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
 extern s32 func_80046C84(s32 id, struct Unk6BA50Obj *obj);
-extern struct Unk6BA50Tgt *func_8006AAEC(u8 id);
-extern s32 func_8006ACB0(struct Unk6BA50Obj *obj, s32 idx);
-extern void func_8006B23C(struct Unk6BA50Obj *obj, s32 idx, s32 arg2);
+extern struct Unk6BA50Tgt *gRegistryFind(u8 id) __asm__("func_8006AAEC");
+extern s32 gWeaponFireDispatch(struct Unk6BA50Obj *obj, s32 idx) __asm__("func_8006ACB0");
+extern void gBeamPartUpdate(struct Unk6BA50Obj *obj, s32 idx, s32 arg2) __asm__("func_8006B23C");
 
 #define S16(off) (*(s16 *)((u32)ctl + (idx << 1) + (off)))
 
@@ -71,7 +73,7 @@ extern void func_8006B23C(struct Unk6BA50Obj *obj, s32 idx, s32 arg2);
  *        either fires the weapon or updates the beam part.
  *
  * @param obj Owner block; +0xAC is the control block (ctl below).
- * @param idx Slot index, only 0..2 are accepted. func_80055E10 maps the pad to
+ * @param idx Slot index, only 0..2 are accepted. gWeaponSlotInput maps the pad to
  *            the slots: 0 for button 0x04000000, 1 for button 0x00400000, 2 on
  *            the weapon-switch edge.
  * @return Nothing.
@@ -92,10 +94,10 @@ extern void func_8006B23C(struct Unk6BA50Obj *obj, s32 idx, s32 arg2);
  *    otherwise from +0x84 idx. A value <= 0 plays SE 0xD through
  *    func_80046C84 and returns.
  * 4. A value of 5 plays SE 0xE (func_80046C84) and continues.
- * 5. The definition record func_8006AAEC(+0x90 idx) is read at +0x24 when the
+ * 5. The definition record gRegistryFind(+0x90 idx) is read at +0x24 when the
  *    flag is set, else at +0x04. Entry types 10..12 and 14 go to
- *    func_8006B23C(obj, idx, entry + 0x1F), the beam/part update, and everything
- *    else to func_8006ACB0(obj, idx), the weapon fire.
+ *    gBeamPartUpdate(obj, idx, entry + 0x1F), the beam/part update, and everything
+ *    else to gWeaponFireDispatch(obj, idx), the weapon fire.
  * 6. When the sub-call reports success the counter is written back: it is
  *    decremented when D_8009FA8C[+0xC1] is 0 and toggled in bit 0 otherwise; the
  *    target is +0x8A or +0x84 idx. The cycle counter +0x93 idx is then
@@ -116,9 +118,11 @@ extern void func_8006B23C(struct Unk6BA50Obj *obj, s32 idx, s32 arg2);
  * and why slot 2 consumes the pending node instead of firing.
  *
  * @par Callers
- * func_80055E10 only, which calls it three times per frame (slots 0, 1 and 2).
+ * gWeaponSlotInput only, which calls it three times per frame (slots 0, 1 and 2).
  */
-void func_8006BA50(struct Unk6BA50Obj *obj, s32 idx)
+void gWeaponSlotUpdate(struct Unk6BA50Obj *obj, s32 idx) __asm__("func_8006BA50");
+
+void gWeaponSlotUpdate(struct Unk6BA50Obj *obj, s32 idx)
 {
     struct Unk6BA50Ctl *ctl;
     struct Unk6BA50Node *n;
@@ -177,13 +181,13 @@ void func_8006BA50(struct Unk6BA50Obj *obj, s32 idx)
         if (val == 5) {
             func_80046C84(0xE, obj);
         }
-        tgt = func_8006AAEC(ctl->unk90[idx]);
+        tgt = gRegistryFind(ctl->unk90[idx]);
         e = (struct Unk6BA50Entry *)((u8 *)tgt + (flag ? 0x24 : 0x4));
         ty = e->type;
         if (ty >= 10 && (ty < 13 || ty == 14)) {
-            func_8006B23C(obj, idx, e->unk1F);
+            gBeamPartUpdate(obj, idx, e->unk1F);
         } else {
-            ok = func_8006ACB0(obj, idx);
+            ok = gWeaponFireDispatch(obj, idx);
         }
         if (ok) {
             c = ctl->unkC1;

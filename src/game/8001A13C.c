@@ -1,6 +1,8 @@
 // Categories: Utilities > Mathematics > Vector | Physics > Collision
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+
 extern s32 func_8001A074(s32 *vector);
 
 /**
@@ -29,7 +31,7 @@ extern s32 func_8001A074(s32 *vector);
  * None observed: the stack local is the only memory it writes.
  *
  * @par Callers
- * Confirmed: func_80035B7C (mover update), func_800513D0.
+ * Confirmed: gGuidedProjectileUpdate (mover update), func_800513D0.
  */
 s32 func_8001A13C(s32 *a, s32 *b)
 {

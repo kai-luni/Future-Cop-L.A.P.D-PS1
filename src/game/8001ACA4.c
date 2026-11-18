@@ -1,6 +1,8 @@
 // Categories: Utilities > Mathematics > Vector
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+
 union Product1ACA4 { long long value; u32 word[2]; };
 
 /**
@@ -24,10 +26,12 @@ union Product1ACA4 { long long value; u32 word[2]; };
  * form advances positions in place each frame.
  *
  * @par Callers
- * func_800324E0, func_80035B7C, func_80036BD4, func_800371FC, func_8004AFC0,
+ * func_800324E0, gGuidedProjectileUpdate, func_80036BD4, func_800371FC, func_8004AFC0,
  * func_8004BEE8.
  */
-void func_8001ACA4(s32 *a, s32 *b, s32 scale, s32 *out)
+void gVectorAddScaled(s32 *a, s32 *b, s32 scale, s32 *out) __asm__("func_8001ACA4");
+
+void gVectorAddScaled(s32 *a, s32 *b, s32 scale, s32 *out)
 {
     register union Product1ACA4 wide __asm__("$8");
     register u32 sum __asm__("$2");

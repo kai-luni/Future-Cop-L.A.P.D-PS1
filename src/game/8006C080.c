@@ -19,7 +19,7 @@ struct Arg6C080 {
     struct Unk6C080 *ptr;
 };
 
-extern void func_8006AAEC(u8 id);
+extern void gRegistryFind(u8 id) __asm__("func_8006AAEC");
 extern void func_800491F8(s32 value, s32 x, s32 y, s32 color);
 extern void func_8006BF44(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
@@ -31,7 +31,7 @@ extern void func_8006BF44(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
  * @return Nothing.
  *
  * @par Confirmed
- * A loop of three slots, stepping x and y by 0x29 each: func_8006AAEC(id) for the
+ * A loop of three slots, stepping x and y by 0x29 each: gRegistryFind(id) for the
  * icon, func_800491F8(count, x, 0xCE, color) for the number, and
  * func_8006BF44(i, highlight, y, 0xE0) for the sprite; the colour is 9 when bit
  * 0x40 of the frame counter D_8009FAA4 is set, else 0xC. A second pass draws the
@@ -57,7 +57,7 @@ void func_8006C080(struct Arg6C080 *arg0)
     d = arg0->ptr;
     y = 0x22;
     for (; i < 3; x += 0x29, i++, y += 0x29) {
-        func_8006AAEC(d->field90[i]);
+        gRegistryFind(d->field90[i]);
         flag = 0;
         if (*(u8 *)((u32)d->fieldC1 + (u32)base) == 0 && d->field8A[i] > 0) {
             flag = 1;

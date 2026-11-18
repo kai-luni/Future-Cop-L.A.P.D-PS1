@@ -1,6 +1,9 @@
 // Categories: Utilities > Mathematics > Vector Dot Product | Utilities > Mathematics > Fixed Point
 #include "game/types.h"
 
+extern int gGuidedProjectileUpdate();
+extern int gBeamPartUpdate();
+
 /**
  * @brief Dot product of two three-component vectors in 16.16 fixed point.
  *
@@ -20,8 +23,8 @@
  * its orientation test.
  *
  * @par Callers
- * func_80035B7C, func_80037B28, func_80052550, func_8005B934, func_8005C344,
- * func_8005CED4, func_8005D8F4, func_8005F018, func_8005F6E8, func_8006B23C.
+ * gGuidedProjectileUpdate, func_80037B28, func_80052550, func_8005B934, func_8005C344,
+ * func_8005CED4, func_8005D8F4, func_8005F018, func_8005F6E8, gBeamPartUpdate.
  */
 s32 func_8001AB00(s32 *a, s32 *b)
 {
