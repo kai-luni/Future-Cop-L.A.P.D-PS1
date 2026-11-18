@@ -7,7 +7,7 @@ be reproduced instead of guessed. All statements name the file they come from.
 
 One tick is a 1/300-second unit. `func_8002703C` waits for at least five palette ticks per frame
 (`do { ... } while (diff < 5)`) and caps the frame delta at `0x3C`; `func_8001EFF8:48` adds five per
-VSync. So `gFrameId` (called `delta` below) is 5 on a 60 Hz frame, and every timer, speed and leash is
+VSync. So `gFrameDelta` (called `delta` below) is 5 on a 60 Hz frame, and every timer, speed and leash is
 expressed in those ticks.
 
 ## Trigger logic

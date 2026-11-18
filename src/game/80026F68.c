@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s16 gTeamFlag[] __asm__("D_8009F65C");
-extern s16 gSlotTimerTable[] __asm__("D_8009FA44");
+extern s16 gPlayerFadeTimers[] __asm__("D_8009FA44");
 extern s32 gFrameDelta __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 
@@ -44,12 +44,12 @@ void func_80026F68(s32 arg0, s32 arg1)
         } else {
             gTeamFlag[arg0] += gFrameDelta;
         }
-    } else if (gSlotTimerTable[arg0] != 0) {
-        temp = gSlotTimerTable[arg0] - (gFrameDelta + gFrameDelta / 2);
+    } else if (gPlayerFadeTimers[arg0] != 0) {
+        temp = gPlayerFadeTimers[arg0] - (gFrameDelta + gFrameDelta / 2);
         if (temp <= 0) {
             temp = 0;
         }
-        gSlotTimerTable[arg0] = temp;
+        gPlayerFadeTimers[arg0] = temp;
         if (temp > 0) {
             if (temp >= 0x100) {
                 temp = 0xFF;

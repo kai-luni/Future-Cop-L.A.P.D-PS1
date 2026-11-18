@@ -23,7 +23,7 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 | `D_8009DEF8` | `gSavedIrqMask` | `u32` | Dasselbe für den Transferpfad: Maske sichern, Arbeit erledigen, Maske zurück. **Bestätigt.** | `func_80094F4C`, `func_8009509C` |
 | `D_8009DD10` | `gIrqCallbackTable` | `struct CallbackTable *` | Zeiger auf die Tabelle mit dem IRQ-Rücksprung, der beim Betreten/Verlassen der Handler gerufen wird. **Wahrscheinlich** (Inhalt der Tabelle nicht vollständig analysiert). | `func_80091480`, `func_800914B0` |
 | `D_8009FA2C` | `gFrameTickCounter` | `s32` | Frame-Taktzähler; Rumble-Timer und andere Zeitgeber werden dagegen verglichen. **Bestätigt** (Doku: „frame tick counter"). | `func_8001EC94`, `func_8001F0B8` |
-| `D_8009F9FC` | `gFrameId` | `s32` | Frame-Kennung für Zeitvergleiche; wird auf 5 gesetzt und bei Bedarf aus der Zeitbasis berechnet. **Wahrscheinlich.** | `func_800259D8`, `func_80025B7C` |
+| `D_8009F9FC` | `gFrameDelta` | `s32` | Frame-Kennung für Zeitvergleiche; wird auf 5 gesetzt und bei Bedarf aus der Zeitbasis berechnet. **Wahrscheinlich.** | `func_800259D8`, `func_80025B7C` |
 | `D_8009FA3C` | `gFrameBarrier` | `volatile u8` | Frame-Schranke: am Frame-Ende auf 1 gesetzt, andere Stellen warten `while (gFrameBarrier)`. **Bestätigt.** | `func_8001B4A8`, `func_8001EFF8` |
 
 ## GPU-Warteschlange
@@ -84,7 +84,7 @@ sich nicht auf einen Begriff bringen lässt.
 | `D_8009F3A8` | `gFrontEndBootstrapModule` | `u8[]` | Dateiname `FE.mis` für den initialen Front-End-Modullauf. **Bestätigt.** | `gGameMain` |
 | `D_8009F3B0` | `gMissionModuleSuffix` | `u8[]` | Endung `.mis`, die beim Aufbau des Modulnamens angehängt wird. **Bestätigt.** | `gGameMain` |
 | `D_8009F9A8` | `gPendingScreenState` | `s32` | Nächster Bildschirmzustand; spiegelt `unk10` der Hauptschleife, solange er ungleich 0 ist, läuft die Schleife weiter. **Bestätigt.** | `func_80076A2C` |
-| `D_8009FA60` | `gPaletteCycleCounter` | `s32` | Zähler für den Palettenwechsel; das HUD liest `(>> 4) & 7` daraus. **Bestätigt.** | `func_8001EFF8` |
+| `D_8009FA60` | `gGameClock` | `s32` | Zähler für den Palettenwechsel; das HUD liest `(>> 4) & 7` daraus. **Bestätigt.** | `func_8001EFF8` |
 | `D_8009FA20` | `gFrameCallbackEnabled` | `u8` | Schalter für den Pro-Frame-Rücksprung; 0 bedeutet „läuft noch nicht". **Bestätigt** (Doku: „per-frame-callback enabled flag"). | `func_8001E4E4`, `func_8001E540` |
 | `D_800A0BC0` | `gRingBuffer` | `Queue298EC` | Ringpuffer mit Länge, Basisindex und acht 8-Byte-Slots für Kommandos. **Bestätigt.** | `func_800298EC` |
 | `D_800A0B70` | `gStreamBufferList` | `State` | Kopf der Liste von Stream-/Asset-Puffern (`head` bei +0x10); neue Knoten werden hinten angehängt. **Bestätigt.** | `func_800288BC` |
@@ -95,10 +95,10 @@ sich nicht auf einen Begriff bringen lässt.
 | Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
 |---|---|---|---|---|
 | `D_8009F9E4` | `gCamera` | `struct Camera *` | Die aktive Kamera; die Funktionen setzen Position, Blickpunkt, Rotation und die daraus gebaute Matrix. **Bestätigt.** | `func_800177AC`, `func_80017860` |
-| `D_8009AA38` | `gBaseMatrix` | `struct Matrix3x3` | Grundmatrix, aus der Instanzen ihre Transformationsmatrix kopieren. **Wahrscheinlich.** | `func_80013BD8` |
+| `D_8009AA38` | `gIdentityMatrix` | `struct Matrix3x3` | Grundmatrix, aus der Instanzen ihre Transformationsmatrix kopieren. **Wahrscheinlich.** | `func_80013BD8` |
 | `D_800A0300` | `gBoneMatrices` | `struct Matrix[]` | Matrix je Knochen-/Segmentindex; Eintrag `i-1` ist der Elternknoten von `i`. **Wahrscheinlich.** | `func_80013CB8` |
-| `D_8009F588` | `gTransformRecordList` | `void *` | Kopf der Liste der Transform-Sätze; wird beim Init auf 0 gesetzt und beim Durchlaufen verkettet. **Bestätigt.** | `func_8001774C`, `func_80017994` |
-| `D_8009F58C` | `gTransformSerialCounter` | `s32` | Fortlaufende ID für Transform-Sätze (`node->id = gTransformSerialCounter++`). **Bestätigt.** | `func_80017994` |
+| `D_8009F588` | `gCameraList` | `void *` | Kopf der Liste der Transform-Sätze; wird beim Init auf 0 gesetzt und beim Durchlaufen verkettet. **Bestätigt.** | `func_8001774C`, `func_80017994` |
+| `D_8009F58C` | `gNextCameraId` | `s32` | Fortlaufende ID für Transform-Sätze (`node->id = gNextCameraId++`). **Bestätigt.** | `func_80017994` |
 | `D_8009F214` | `gRandSeed` | `s32` | Zustand des Zufallszahlengenerators (Multiplikation mit 16807, Park-Miller). **Bestätigt.** | `func_80019720` |
 | `D_8009F5B8` | `gResourceList` | `struct Resource *` | Kopf der einfach verketteten Ressourcenliste; wird in mehreren Funktionen durchlaufen und am Ende freigegeben. **Bestätigt.** | `func_80019AA8`, `func_800198DC` |
 | `D_800A07A8` | `gSoundSystem` | `struct SoundSystem` | Globaler Zustand des Klangsystems mit Bank-Liste und Anzahl. **Bestätigt.** | `func_80021508` |
@@ -148,9 +148,9 @@ sich nicht auf einen Begriff bringen lässt.
 | `D_8009F9EC` | `gSinglePlayerEntity` | `struct Ent *` / `Game *` | Zeiger auf die Spielfigur im Einzelspielermodus; wird nur bei `gPlayerCount == 1` ausgewertet und über die Entity-Id verglichen. **Bestätigt.** | `func_8002D1A0`, `func_80027510` |
 | `D_8009F8B8` | `gActivePlayerIndex` | `s32` | Index des Spielers, dessen Menü aktiv ist (1 bei Zweispieler-Menü, sonst 0). **Bestätigt.** | `func_8007A7A0`, `func_8007A5F0` |
 
-<!-- OFFEN: D_8009FA58 (Zwei-Slot-Array der Spieler-Entities) bleibt vorerst
+<!-- OFFEN: gPlayerEntities (Zwei-Slot-Array der Spieler-Entities) bleibt vorerst
      unbenannt. In src/game/80027510.c wird dasselbe Symbol doppelt deklariert
-     (einmal als Union `D_8009FA58`, einmal als Array `D_8009FA58_arr`); eine
+     (einmal als Union `gPlayerEntities`, einmal als Array `D_8009FA58_arr`); eine
      Umbenennung verändert dort die erzeugten Bytes. Erst die Doppeldeklaration
      auflösen, dann benennen. -->
 
@@ -183,7 +183,7 @@ Zehn Symbole, die keinen erklärenden Kommentar in ihrer Unit hatten. Drei waren
 | `D_8009F882` | `gMissionListMaxIndex` | Inklusive Obergrenze der wählbaren Einträge (7 im Crime-War-Modus, `gUnlockFlag + 3` in Precinct Assault). | `800776B8.c:43`, `80077708.c:67` |
 | `D_8009F4C4` | `gStripDitherEnabled` | Begleitflag zur Streifenskalierung: 1 bei `gStripScaleEnable == 1` (Step 3), 0 im Step-2-Modus. | `800859D8.c:30-35` |
 
-**Nicht umbenannt:** `D_8009FA5C` — es ist nur das zweite Element hinter `D_8009FA58` (die `bp--`-Schleife in `80024A24.c:175-181` nullt beide rückwärts), und die Units deklarieren es unvereinbar (`struct {…}`, `_b`…`_e`, `s32[]`). Dieselbe Sperre wie bei `D_8009FA58`.
+**Nicht umbenannt:** `D_8009FA5C` — es ist nur das zweite Element hinter `gPlayerEntities` (die `bp--`-Schleife in `80024A24.c:175-181` nullt beide rückwärts), und die Units deklarieren es unvereinbar (`struct {…}`, `_b`…`_e`, `s32[]`). Dieselbe Sperre wie bei `gPlayerEntities`.
 
 ## Letzte belegte Runde und die Grenze des Benennbaren
 
@@ -270,7 +270,7 @@ Einundsechzig weitere Globals in **einem** Commit. Damit sind alle Symbole abgea
 | `D_800A6D78` | `gFileSlotTable` | Dateislots des Loaders, indiziert über `func_80010000.index`. |
 | `D_800A6E18` | `gCountWrapLimit` | Umschlaggrenze der Zählung (0x1F801128 oder 0x10000). |
 | `D_800A6E38` | `gExceptionFrame` | Nimmt `$at`, `$v0` und die COP0-Cause beim Ausnahmezustand auf. |
-| `D_800A6F60` | `gEffectSizeTable` | Größe je Effekttyp: `[type & 31]`, Größenklasse `type >> 5`. |
+| `D_800A6F60` | `gMarkerColorTable` | Größe je Effekttyp: `[type & 31]`, Größenklasse `type >> 5`. |
 | `D_800A6FE0` | `gPlayerNameTable` | Spielernamen im Header, `+ slot * 9`. |
 | `D_800A7028` | `gSpuInitWord` | Wort, das beim SPU-Aufsetzen mitgeschrieben wird. |
 | `D_800A8540` | `gRandomTable` | Tabelle für den Zufalls-Opcode 0x0B, ein nicht-negativer Operand indiziert sie. |
@@ -342,9 +342,9 @@ Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-V
 | `D_8009F9D8` | `gByteTable` | `u8[]` | Byte-Tabelle, in die das Ergebnis indiziert; drei Bytes werden gepackt. |
 | `D_8009F9F8` | `gOpcodeTable` | — | 32 Einträge; ein negativer Wert führt `func_80019668()` modulo. |
 | `D_8009FA08` | `gTableBuffer` | — | Basisadresse des allokierten Tabellenpuffers. |
-| `D_8009F9D0` | `gPool1Size` | — | Erster Pool: Größe `a0`, Anzahl `a1`. |
-| `D_8009FAAC` | `gPool2Size` | — | Zweiter Pool: Größe `a2`, Anzahl `a3`. |
-| `D_8009FA4C` | `gPool3Size` | — | Dritter Pool: Größe `a4`, Anzahl `a5`. |
+| `D_8009F9D0` | `gFixedPool1` | — | Erster Pool: Größe `a0`, Anzahl `a1`. |
+| `D_8009FAAC` | `gFixedPool2` | — | Zweiter Pool: Größe `a2`, Anzahl `a3`. |
+| `D_8009FA4C` | `gFixedPool3` | — | Dritter Pool: Größe `a4`, Anzahl `a5`. |
 | `D_8009F800` | `gRegistryTable` | — | 0x80-Slot-Registertabelle (Nachtrag). |
 | `D_8009F708` | `gDeferredList` | — | Einfach verkettete Liste `{next, object}` (Nachtrag). |
 | `D_8009F70C` | `gDeferredPool` | — | Pool aus 256 Acht-Byte-Knoten (Nachtrag). |
@@ -366,7 +366,7 @@ Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-V
 | `D_8009AFA0` | `gSourceBlock20` | — | 20-Byte-Block, den `func_8005A070` kopiert. |
 | `D_8009ABED` | `gItemLabelByte` | `u8` | Label-Byte zwischen 8 und 7; 8 ruft `func_80060A0C`. |
 | `D_8009F65C` | `gTeamFlag` | — | Mannschafts-Flag, schützt den Kamerapfad. |
-| `D_8009F680` | `gMenuModeFlag` | — | Wird auf 1 gesetzt, wenn Menümodus 0 oder `unk312` gesetzt ist. |
+| `D_8009F680` | `gWasSuspended` | — | Wird auf 1 gesetzt, wenn Menümodus 0 oder `unk312` gesetzt ist. |
 | `D_8009F698` | `gResourceSubChunkPtr` | — | Veröffentlichter `0x74544F53`-Subchunk-Zeiger einer `0x43746F73`-Ressource. |
 | `D_8009F69C` | `gRegisterGuard` | — | Einzige Wächterprüfung auf 0, danach geradliniger Rumpf. |
 | `D_8009FA6C` | `gPanelSelection` | — | Auswahl im Panel; Code 0 verlässt es mit Sound 0x3E und `-1`. |
@@ -385,7 +385,7 @@ Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-V
 | `D_8009F92A` | `gStatusTextId` | — | Status-Text-Id (0, solange nichts läuft). |
 | `D_8009F944` | `gMissionClearFlag` | — | Wird genullt und sonst nirgends geschrieben. |
 | `D_8009F968` | `gLayerModeBits` | — | Bit 0 wählt die schmale Variante (`0x27`). |
-| `D_8009F9A0` | `gMissionWorkingSet` | — | Wird genullt, bevor `func_80017C68(0x168, …)` die Pools anlegt. |
+| `gFocusPositions` | `gFocusPositions` | — | Wird genullt, bevor `func_80017C68(0x168, …)` die Pools anlegt. |
 | `D_8009F9B0` | `gStreamPreemptFlag` | — | Markiert beim Verdrängen abgebaute Stream-Voices. |
 | `D_8009F9CC` | `gDisplaySetupToggle` | — | Wechselt zwischen 0 und 1 nach dem Display-Aufbau. |
 | `D_800A0AA0` | `gActionRecords` | — | Fünf Acht-Byte-Aktionsdatensätze (Tastenmaske, Phase). |
@@ -679,7 +679,7 @@ Fünfzig weitere Globals, wieder in **einem** Commit. Zwei davon mussten in `800
 |---|---|---|---|
 | `D_8009F684` | `gMissionId` | `s32` | Missions-/Level-Id, an den Aufrufer weitergegeben. |
 | `D_800A0B30` | `gModuleNameBuffer` | `u8[]` | Modulname, über den BIOS-`strcpy`-Stub mit 0x80 Bytes kopiert. |
-| `D_8009FA84` | `gModuleLoadedFlag` | `s32` | Nur bei ungleich 0 läuft der Modul-Ladepfad. |
+| `D_8009FA84` | `gDemoPlayback` | `s32` | Nur bei ungleich 0 läuft der Modul-Ladepfad. |
 | `D_8009C1CC` | `gSpecialistModules[5]` | `s32[5]` | Die fünf Spezialisten-Module, sonst `"PA\"`. |
 | `D_8009F678` | `gSlotVoiceHandle` | `s32[]` | Voice-Handle je Slot; wird gestoppt, wenn der Track wechselt. |
 | `D_8009FA78` | `gSlotTrackId` | `s32[]` | Track-Id je Slot für denselben Vergleich. |
@@ -885,7 +885,7 @@ Nicht benannt bleiben `D_8009F548` (`3DHS`), `D_8009F54C` (`3DTA`), `D_8009F550`
 | Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
 |---|---|---|---|---|
 | `D_8009F370` | `gDiscColourWordSecondary` | `s32` | Zweites Farbwort für `func_8001484C` (vier Dreiecke, Skalierung 0x70, Tiefenversatz 0x200). **Bestätigt.** | `func_800597C0` |
-| `D_8009FAA4` | `gDiscShadeByte` | `u32` | Byte, dessen `>> 2` als hohe Farbe der Disc dient, wenn das Info-Block-Feld `+0x324` positiv ist. **Bestätigt.** | `func_800597C0` |
+| `D_8009FAA4` | `gFrameTime` | `u32` | Byte, dessen `>> 2` als hohe Farbe der Disc dient, wenn das Info-Block-Feld `+0x324` positiv ist. **Bestätigt.** | `func_800597C0` |
 | `D_8009AF3C` | `gDiscPartIndexTable` | `u8[]` | Byte-Tabelle der Modellteil-Indizes, von denen zwei für die Discs genutzt werden. **Bestätigt.** | `func_800597C0` |
 
 `D_8009F36D` (Rampen-Byte, `u8`-Definition innerhalb der Unit) und `D_8009F36C` (nur in Kommentaren erwähnt, kein eigenes Symbol) bleiben unverändert.
@@ -907,7 +907,7 @@ Diese Gruppe bildet den Kern der 3D-Ausgabe: Transformationspuffer, Clip-Flags, 
 | `D_8009FA1C` | `gLevelVertexBlock` | `void *` | 0x400-Byte-Block für Vertizes, beim Level-Setup mit Tag 2 alloziert. **Bestätigt.** | `func_80013A14` |
 | `D_8009F578` | `gPartVertexBuffer` | `void *` / `Vertex *` | 0x800-Byte-Puffer mit den transformierten Vertizes eines Bauteils; der Polygon-Emitter liest hier. **Bestätigt.** | `func_80013A14`, `func_80015B68` |
 | `D_8009F57C` | `gClipFlagBuffer` | `void *` / `u8 *` | Ein Clip-Flag-Byte je Vertex; der Wert `0xC0` bedeutet sichtbar. **Bestätigt.** | `func_80015B68` |
-| `D_8009F580` | `gDepthTagWord` | `s16` | Gemeinsames 16-Bit-Wort für Tiefe und Tag; zwei Bytes werden hineingepackt. **Bestätigt.** | `func_80013AA0`, `func_80013A14` |
+| `D_8009F580` | `gModelUvOffset` | `s16` | Gemeinsames 16-Bit-Wort für Tiefe und Tag; zwei Bytes werden hineingepackt. **Bestätigt.** | `func_80013AA0`, `func_80013A14` |
 | `D_8009FAE0` | `gScriptVertexBuffer` | `char[]` | Zielpuffer der transformierten Vertizes im skriptgesteuerten Pfad. **Bestätigt.** | `func_80013F08` |
 | `D_8009A228` | `gLightVectorIn` | `unsigned char[]` | 12-Byte-Konstantvektor, den die Lichtberechnung mit der Kamera-Matrix multipliziert. **Bestätigt.** | `func_80013C80` |
 | `D_800A02E0` | `gLightVectorOut` | `unsigned char[]` | 12-Byte-Zielvektor derselben Lichtberechnung. **Bestätigt.** | `func_80013C80` |
