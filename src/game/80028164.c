@@ -39,12 +39,12 @@ struct MenuData28164 {
 extern s32 *gScratchBlockPtr __asm__("D_8009F68C");
 extern struct MenuInfo28164 *gGameSession __asm__("D_8009FA94");
 extern struct MenuData28164 *D_8009F2C0;
-extern struct Game28164 *D_8009FA58;
+extern struct Game28164 *gPlayerEntities __asm__("D_8009FA58");
 extern struct Game28164 *D_8009FA5C[4];
 extern s32 gSinglePlayerEntity __asm__("D_8009F9EC");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern u32 gDiscShadeByte __asm__("D_8009FAA4");
+extern u32 gFrameTime __asm__("D_8009FAA4");
 extern u8 D_8009F300[];
 extern u8 D_8009ABF0[];
 extern u8 D_8009AC08[];
@@ -53,7 +53,7 @@ extern u8 D_8009AC20[];
 extern u8 D_8009AC2C[];
 extern u8 D_8009AC44[];
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void func_8008CD30(u8 *dest, u8 *src, s32 count);
 extern void func_800576A8(void *arg0, s32 arg1);
 extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
@@ -98,7 +98,7 @@ void func_80028164(void)
     s32 x;
 
     if (gScratchBlockPtr == 0) {
-        gScratchBlockPtr = func_80017EBC(0xC8, 3);
+        gScratchBlockPtr = gAllocMemory(0xC8, 3);
         gScratchBlockPtr[0] = 0;
         gScratchBlockPtr[2] = gGameSession->unk40 == gGameSession->unk44;
         if (gPlayerCount == 1) {
@@ -112,7 +112,7 @@ void func_80028164(void)
 
     gScratchBlockPtr[1] = 3;
 
-    game = D_8009FA58;
+    game = gPlayerEntities;
     p1 = game->unkAC;
     if (gSinglePlayerEntity == 0) {
         p2 = D_8009FA5C[0]->unkAC;
@@ -150,7 +150,7 @@ void func_80028164(void)
         text = D_8009F2C0->unk08;
         length = func_80049340(text);
         func_80049100(text, (0x258 - length) / 4 + 0xA, 0x14,
-                       (gDiscShadeByte & 0x20) ? 8 : 2);
+                       (gFrameTime & 0x20) ? 8 : 2);
     }
 
     func_80027F80(0, D_8009ABF0, 0xA0, 9);

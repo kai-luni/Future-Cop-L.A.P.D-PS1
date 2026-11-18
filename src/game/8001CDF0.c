@@ -1,5 +1,5 @@
 // Categories: Resources > Memory Management | Platform > CD-ROM
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Default memory deallocator wrapper registered by the file/CD layer.
@@ -26,6 +26,6 @@ extern void func_800181D4(void *block);
  */
 int func_8001CDF0(void *block)
 {
-    func_800181D4(block);
+    gFreeBlock(block);
     return 0;
 }

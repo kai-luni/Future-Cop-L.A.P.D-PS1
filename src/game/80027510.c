@@ -36,8 +36,9 @@ struct Menu {
     u8 pad10[0x4C];
     s32 unk5C;
 };
+/* Union alias: renaming the declarator changes the codegen, so the retail name stays. */
 extern union { struct Game *ptr; u32 raw; } D_8009FA58;
-extern struct Game *D_8009FA58_arr[];
+extern struct Game *gPlayerEntities_arr[] __asm__("D_8009FA58_arr");
 extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C;
 extern s32 gSlotVoiceHandle[] __asm__("D_8009F678");
 extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C_b, D_8009FA5C_c, D_8009FA5C_d, D_8009FA5C_e;
@@ -45,19 +46,19 @@ extern s32 gScreenState __asm__("D_8009FA00");
 extern struct Menu *gGameSession __asm__("D_8009FA94");
 extern s32 gPanelSelection __asm__("D_8009FA6C");
 extern u32 gSceneFrameCounter __asm__("D_8009FA50");
-extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
-extern u8 gMenuModeFlag __asm__("D_8009F680");
+extern s32 gDemoPlayback __asm__("D_8009FA84");
+extern u8 gWasSuspended __asm__("D_8009F680");
 extern s32 gSavedTickCounter __asm__("D_8009FA38");
-extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern u32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gGameClock __asm__("D_8009FA60");
+extern u32 gFrameTime __asm__("D_8009FAA4");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
-extern s32 gFrameId __asm__("D_8009F9FC");
-extern u8 *D_8009F2D0;
+extern s32 gFrameDelta __asm__("D_8009F9FC");
+extern u8 *gLoadingTextPtr __asm__("D_8009F2D0");
 extern u8 gBannerString[] __asm__("D_8009F2F4");
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
-extern s32 gPauseInhibitFlag __asm__("D_8009FA24");
+extern s32 gGameSuspended __asm__("D_8009FA24");
 
-extern void func_8005780C(u32, struct InputAction *);
+extern void gDecodeButtonEdge(u32, struct InputAction *) __asm__("func_8005780C");
 extern void func_80046A34(s32);
 extern s32 func_80046C84(s32, struct Game *);
 extern s32 func_8001EF34(s32);
@@ -68,7 +69,7 @@ extern void func_8004CECC(void);
 extern void func_8004CD6C(s32, s32, s32);
 extern void func_80031DE8(s32);
 extern void func_8004CE04(void);
-extern void func_8003F570(s32);
+extern void gRunEntityWorldTick(s32) __asm__("func_8003F570");
 extern void func_80026E5C(s32, struct Game *);
 extern void func_80026D5C(void);
 extern void gSelectViewRecord(s32) __asm__("func_80017B60");
@@ -179,10 +180,10 @@ void gRunSessionFrame(void)
     flags = 0;
     __asm__ volatile("" : "=r"(i) : "0"(flags));
     for (;;) {
-        base = D_8009FA58_arr;
+        base = gPlayerEntities_arr;
         __asm__ volatile("" : "=r"(base) : "0"(base));
         game = base[i];
-        func_8005780C(game->unkAC->unk30, &game->unkAC->unk31C);
+        gDecodeButtonEdge(game->unkAC->unk30, &game->unkAC->unk31C);
         if (game->unkAC->unk31C.phase == 0 && gScreenState == 4 && game->unkAC->unk312 == -1) {
             game->unkAC->unk316 = 0;
             game->unkAC->unk314 = 0;
@@ -209,25 +210,25 @@ void gRunSessionFrame(void)
         flags |= 2;
         if (gGameSession->unk5C == 0 || gPanelSelection != 0) flags |= 0x20;
     }
-    if (gSceneFrameCounter >= 2 && (func_8001EF34(0) == 0 || func_8001EF34(1) == 0) && gModuleLoadedFlag == 0) {
+    if (gSceneFrameCounter >= 2 && (func_8001EF34(0) == 0 || func_8001EF34(1) == 0) && gDemoPlayback == 0) {
         flags |= 0x20;
     }
     if (!(flags & 0x20)) {
-        if (gMenuModeFlag != 0) {
-            gPaletteCycleCounter = gSavedTickCounter;
-            clock_value = *(volatile s32 *)&gPaletteCycleCounter;
-            gDiscShadeByte = clock_value;
+        if (gWasSuspended != 0) {
+            gGameClock = gSavedTickCounter;
+            clock_value = *(volatile s32 *)&gGameClock;
+            gFrameTime = clock_value;
             gFrameTickBase = clock_value;
             func_80047690(1);
         }
-        gMenuModeFlag = 0;
-        func_80069D0C(gFrameId);
+        gWasSuspended = 0;
+        func_80069D0C(gFrameDelta);
         func_8004E248();
         func_8004CECC();
-        func_8004CD6C(6, gFrameId, 0);
-        func_80031DE8(gFrameId);
+        func_8004CD6C(6, gFrameDelta, 0);
+        func_80031DE8(gFrameDelta);
         func_8004CE04();
-        func_8003F570(gFrameId);
+        gRunEntityWorldTick(gFrameDelta);
     }
     if (D_8009FA58.ptr != 0 && !(flags & 1)) func_80026E5C(0, D_8009FA58.ptr);
     if (D_8009FA5C.ptr != 0 && !(flags & 2)) func_80026E5C(1, D_8009FA5C.ptr);
@@ -252,7 +253,7 @@ void gRunSessionFrame(void)
         zero_arg = 0;
         __asm__ volatile("" : "=r"(zero_arg) : "0"(zero_arg));
         func_80026F68(zero_arg, zero_arg);
-        if (gModuleLoadedFlag > 0 && (gDiscShadeByte & 0x100)) {
+        if (gDemoPlayback > 0 && (gFrameTime & 0x100)) {
             banner = (u8 *)0x800A0000;
             __asm__ volatile("" : "=r"(banner) : "0"(banner));
             func_80049100(banner - 0xD0C, 0x41, 0x14, 1);
@@ -261,8 +262,8 @@ void gRunSessionFrame(void)
             D_8009FA5C.ptr->unk24 &= ~0x20;
             D_8009FA5C.ptr->unkDC->unk24 &= ~0x20;
         }
-        if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && gModuleLoadedFlag == 0) {
-            text = D_8009F2D0;
+        if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && gDemoPlayback == 0) {
+            text = gLoadingTextPtr;
             x = 0x140 - func_80049340(text);
             color = 1;
             if (x < 0) x += 3;
@@ -289,13 +290,13 @@ void gRunSessionFrame(void)
             }
         }
         func_80026F68(1, 0);
-        if (gModuleLoadedFlag > 0 && (gDiscShadeByte & 0x100)) {
+        if (gDemoPlayback > 0 && (gFrameTime & 0x100)) {
             banner = (u8 *)0x800A0000;
             __asm__ volatile("" : "=r"(banner) : "0"(banner));
             func_80049100(banner - 0xD0C, 0x41, 0x14, 1);
         }
-        if (gSceneFrameCounter >= 2 && func_8001EF34(1) == 0 && gModuleLoadedFlag == 0) {
-            text = D_8009F2D0;
+        if (gSceneFrameCounter >= 2 && func_8001EF34(1) == 0 && gDemoPlayback == 0) {
+            text = gLoadingTextPtr;
             x = 0x140 - func_80049340(text);
             color = 1;
             if (x < 0) x += 3;
@@ -314,13 +315,13 @@ void gRunSessionFrame(void)
     gSelectViewRecord(D_8009FA58.ptr->unkAC->unkAC);
     if (!(flags & 0x20)) {
         func_80026D1C();
-        func_800616A0(gFrameId);
-        func_80026D9C(gFrameId);
+        func_800616A0(gFrameDelta);
+        func_80026D9C(gFrameDelta);
         gSweepRetiredEntities();
-        gPauseInhibitFlag = 0;
+        gGameSuspended = 0;
     } else {
-        if (gMenuModeFlag == 0) {
-            gSavedTickCounter = gPaletteCycleCounter;
+        if (gWasSuspended == 0) {
+            gSavedTickCounter = gGameClock;
             func_8001EB6C();
             gSoundPauseVoices();
             if (gGameSession->unk5C == 0) {
@@ -328,11 +329,11 @@ void gRunSessionFrame(void)
                 __asm__ volatile("" : "=r"(index) : "0"(index));
                 index = !index;
             } else index = D_8009FA58.ptr->unkAC->unk312 != 0;
-            endbase = D_8009FA58_arr;
+            endbase = gPlayerEntities_arr;
             __asm__ volatile("" : "=r"(endbase) : "0"(endbase));
             func_80046C84(0x3E, endbase[index]);
         }
-        gMenuModeFlag = 1;
-        gPauseInhibitFlag = 1;
+        gWasSuspended = 1;
+        gGameSuspended = 1;
     }
 }

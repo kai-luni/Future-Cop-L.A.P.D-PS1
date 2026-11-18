@@ -22,7 +22,7 @@ extern s32 func_8003C980(s32, struct Obj *, s32, s32);
 extern void func_8006E720(struct Obj *);
 extern void *func_8006C84C(s16, s32);
 extern void func_8006CA68(void *);
-extern void func_800181D4(void *);
+extern void gFreeBlock(void *) __asm__("func_800181D4");
 
 /**
  * @brief Message handler of a mesh-carrying effect object: init with an
@@ -79,7 +79,7 @@ s32 func_8006E814(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
         return 1;
     case 10:
         if ((obj->flags98 & 0x40) && obj->mesh) func_8006CA68(obj->mesh);
-        func_800181D4(obj);
+        gFreeBlock(obj);
         return 0;
     case 6:
         return obj->field86 == 0;

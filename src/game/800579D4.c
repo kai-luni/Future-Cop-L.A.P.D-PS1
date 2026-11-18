@@ -56,13 +56,13 @@ struct Data4 { u8 pad00[0x18]; void **p18; u8 pad1C[4]; void **p20; u8 pad24[4];
 struct Data { u8 pad00[4]; struct Data4 *d4; struct Data8 *d8; };
 struct Game { u8 pad00[8]; s32 mode0; s32 mode; u8 pad10[0x5C-0x10]; s32 unk5C; u8 pad60[0x98-0x60]; s32 mode1; };
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern struct Object *D_8009FA58[];
+extern struct Object *gPlayerEntities[] __asm__("D_8009FA58");
 extern struct Object *table_after[] __asm__("D_8009FA58+0");
 extern s8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 extern struct Game *gGameSession __asm__("D_8009FA94");
-extern void *func_80017EBC(s32, s32);
-extern void func_8002AD58(s32, struct Object *, struct Data *, s32);
-extern void func_80044988(void *, void *, s32, s32);
+extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
+extern void gEntityBaseHandler(s32, struct Object *, struct Data *, s32) __asm__("func_8002AD58");
+extern void gSetAnimClipTable(void *, void *, s32, s32) __asm__("func_80044988");
 extern void gResetActorAndPlaceView(struct Data8 *, struct Object *) __asm__("func_800573A4");
 extern void func_80013BD8(void *, void *, s32);
 extern struct Object *func_80057914(struct Object *);
@@ -159,7 +159,7 @@ void func_800579D4(struct Object *arg0, struct Data *arg1, s32 arg2)
     data = arg1;
     arg = arg2;
     __asm__ ("" : "+r" (obj), "+r" (data), "+r" (arg));
-    obj->state = func_80017EBC(0x328, 2);
+    obj->state = gAllocMemory(0x328, 2);
     i = 15;
     state = obj->state;
     p = &state->values[15];
@@ -167,24 +167,24 @@ void func_800579D4(struct Object *arg0, struct Data *arg1, s32 arg2)
     i = 3;
     q = (s32 *)state + 3;
     for (; i >= 0; i--) { q[8] = 0; q--; }
-    func_8002AD58(2, obj, data, arg);
-    func_80044988(obj->obj28->anim, obj->anim, 1, 0);
+    gEntityBaseHandler(2, obj, data, arg);
+    gSetAnimClipTable(obj->obj28->anim, obj->anim, 1, 0);
     obj->flags72 = (obj->flags72 & 0xEF) | 0x20;
     gPlayerCount++;
     index = data->d8->index;
     if (index != -1) {
         register s32 offset __asm__("$3") = index * 4;
         __asm__ volatile ("" : "+r" (offset));
-        if (*(struct Object **)((u8 *)D_8009FA58 + offset) == 0) goto found;
+        if (*(struct Object **)((u8 *)gPlayerEntities + offset) == 0) goto found;
     }
     index = 0;
-    if (D_8009FA58[0] != 0) {
+    if (gPlayerEntities[0] != 0) {
         register struct Object **p __asm__("$3") = table_after;
         do { p++; index++; } while (*p != 0);
     }
 found:
     __asm__ volatile ("" : "+r" (index));
-    D_8009FA58[index] = obj;
+    gPlayerEntities[index] = obj;
     state->index = index;
     state->unkDF = 0;
     gResetActorAndPlaceView(data->d8, obj);

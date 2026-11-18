@@ -4,6 +4,8 @@
 extern void gGteLoadRotation(s32 *) __asm__("func_80010820");
 extern void gGteTransformWords(s32 *, s32 *, s32) __asm__("func_8001006C");
 extern s32 func_8001AB00(s32 *, s32 *);
+s32 gTakeArmedLobePoint(u8 *a0, s32 *a1, u8 *a2) __asm__("func_8005CED4");
+
 
 /**
  * @brief Finds the first active attachment record of an object and
@@ -34,16 +36,18 @@ extern s32 func_8001AB00(s32 *, s32 *);
  * func_8005D8F4.
  *
  * @par Environment path
- * Scans the attachment records of an object (stride 0x1C up to a0 + 0x150)
- * for the first record whose byte +0x71 has bit 0 set, scales its +0x58
- * triple by the object factor at +0x48, transforms it in place with
- * func_80010820 and func_8001006C and adds the object origin at +0x3C. Unless
- * the word at the pointer held in the object header plus 0x18 has bit 2, the
- * result must also pass the dot-product test of func_8001AB00 against the
- * reference position at +0x50, otherwise 0 is returned. The active bit is
- * cleared on success; the caller is func_8005D8F4 and no global is read.
+ * Helper of the damage-field update func_8005D8F4 (its only caller): it scans
+ * the twelve 0x1C-byte lobes from +0x58 for the first one whose armed bit
+ * (+0x71 bit 0) is set, scales the lobe offset by the field radius at +0x48,
+ * rotates it by the field matrix at +0x18 (func_80010820, func_8001006C) and
+ * adds the field centre at +0x3C. Unless bit 2 of the byte at (record at
+ * +0x00) + 0x18 is set, the lobe must also face the target (func_8001AB00 dot
+ * product of the offset and the target-minus-centre vector must be
+ * non-negative), otherwise it returns 0. On success it clears the lobe's
+ * armed bit and returns 1; the caller then spawns a beam from that point to
+ * the target. No globals are read.
  */
-s32 func_8005CED4(u8 *a0, s32 *a1, u8 *a2)
+s32 gTakeArmedLobePoint(u8 *a0, s32 *a1, u8 *a2)
 {
     u8 *p;
     s32 vec[3];

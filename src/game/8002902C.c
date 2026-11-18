@@ -18,7 +18,7 @@ extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern s32 D_8009F6C4, D_8009F6E0;
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern volatile s32 D_8009F6D4;
-extern s32 gPauseInhibitFlag __asm__("D_8009FA24");
+extern s32 gGameSuspended __asm__("D_8009FA24");
 extern s32 func_80028E58(s32);
 extern void func_80028D28(void);
 extern s32 func_80028BCC(void *, void *);
@@ -152,7 +152,7 @@ void func_8002902C(void)
                                 gBitFieldState |= 8;
                                 gLatchFlag = 0;
                             }
-                            if (!gPauseInhibitFlag) {
+                            if (!gGameSuspended) {
                                 state->playing = one;
                                 func_8002A16C(1);
                             }

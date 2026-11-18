@@ -9,7 +9,7 @@ extern void **gPublishedBlockPtr __asm__("D_8009F3F4");
 extern void func_800898E8(void);
 extern void gReleaseProfileCardOperation(void) __asm__("func_8007FACC");
 extern void gShutdownProfileSubsystem(void) __asm__("func_8007FA48");
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  *  @brief Releases the active resource state and its allocated blocks.
@@ -41,7 +41,7 @@ void func_8007852C(void)
     gReleaseProfileCardOperation();
     gShutdownProfileSubsystem();
     if (gSpriteAtlasBlock != 0) {
-        func_800181D4(gSpriteAtlasBlock);
+        gFreeBlock(gSpriteAtlasBlock);
         gSpriteAtlasBlock = 0;
         gAtlasTable = 0;
     }
@@ -49,11 +49,11 @@ void func_8007852C(void)
     if (gPublishedBlockPtr != 0) {
         for (i = 0; i < 0x1E; i++) {
             if (gPublishedBlockPtr[i] != 0) {
-                func_800181D4(gPublishedBlockPtr[i]);
+                gFreeBlock(gPublishedBlockPtr[i]);
                 gPublishedBlockPtr[i] = 0;
             }
         }
-        func_800181D4(gPublishedBlockPtr);
+        gFreeBlock(gPublishedBlockPtr);
         gPublishedBlockPtr = 0;
     }
 }

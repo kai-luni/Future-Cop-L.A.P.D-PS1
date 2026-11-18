@@ -14,7 +14,7 @@ struct Self80052708 {
     u8 unkB8;
 };
 
-extern s32 func_80052410(struct Self80052708 *self, struct Vec3 *outA, struct Vec3 *outB);
+extern s32 gTestFootprintEdges(struct Self80052708 *self, struct Vec3 *outA, struct Vec3 *outB) __asm__("func_80052410");
 
 /**
  * @brief Footprint collision response: pushes the motion block off blocked edges.
@@ -69,7 +69,7 @@ void func_80052708(struct Self80052708 *self, s32 arg1)
     u8 *p;
 
     p = self->unkAC;
-    mask = func_80052410(self, outA, outB);
+    mask = gTestFootprintEdges(self, outA, outB);
 
     ((struct Vec3 *)(p + 0x10C))[0] = outA[0];
     ((struct Vec3 *)(p + 0x10C))[1] = outA[1];

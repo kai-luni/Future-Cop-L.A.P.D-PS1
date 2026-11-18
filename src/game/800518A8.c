@@ -45,6 +45,8 @@ typedef struct {
 extern void gGteLoadMatrix(void *a0) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a0, void *a1, s32 a2) __asm__("func_80010234");
 extern s32 func_80095900(s32 a0);
+void gUpdateMorphBounds(Model518A8 *model, s16 *buf, s32 t, Obj518A8 *obj) __asm__("func_800518A8");
+
 
 /**
  * @brief Builds the four-corner geometry of a projected cone (shadow/light beam).
@@ -68,17 +70,18 @@ extern s32 func_80095900(s32 a0);
  * scaled by the reciprocal of its distance, so the shape narrows with height.
  *
  * @par Environment path
- * Builds the four-corner geometry of a projected cone (ground shadow or light
- * beam): it derives two depth planes from the element record, writes the
- * centre column and four corners into buf, loads the matrix with
- * func_80010750, transforms the corners into buf + 0x20 with func_80010234
- * and computes the two perspective divisors with the GTE reciprocal
- * func_80095900. Callers are the player form dispatcher func_80055988 (line
- * 231) and func_80051AF8 (line 140). Not on the environment path: it produces
- * the player's own shadow geometry into a state block and never walks a view
- * list or draws the terrain.
+ * Updates the player unit's progress-dependent footprint for the form change:
+ * from the model's current frame element it interpolates, by the progress
+ * value t (state + 0xBC), a rectangle at height 174 - 154t/65536 with half
+ * extents grown from the element, writes its four corners into buf and
+ * transforms them into buf + 0x20 with func_80010750 and func_80010234. It
+ * then writes the interpolated extents and a height range into the collision
+ * element at state + 0x2DC + 8 and derives two radius values (state + 0x29C,
+ * +0x2A2 and the element's last field) with func_80095900 from sums of
+ * squared extents. Callers are func_80055988 (every tick) and func_80051AF8
+ * (reset).
  */
-void func_800518A8(Model518A8 *model, s16 *buf, s32 t, Obj518A8 *obj)
+void gUpdateMorphBounds(Model518A8 *model, s16 *buf, s32 t, Obj518A8 *obj)
 {
     Elem518A8 *e;
     Sub518A8 *sub;

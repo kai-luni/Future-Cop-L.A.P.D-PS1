@@ -11,10 +11,12 @@ struct Self {
  s16 unk130; u8 pad132[4]; s16 unk136; u8 pad138[8];
  struct Vec unk140;
 };
-extern s32 func_80066F78(struct Vec *, struct Vec *, s32, s32);
+extern s32 gGetGroundHeight(struct Vec *, struct Vec *, s32, s32) __asm__("func_80066F78");
 extern void func_800192AC(struct Vec *, struct Vec *, struct Vec *);
 extern void gBuildRotationMatrix(s32,s32,s32,struct Vec *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(struct Vec *) __asm__("func_80010750");
+void gOrientEntityBasis(struct Self *arg) __asm__("func_80037EB4");
+
 extern void gGteTransformVerticesWide(u8 *, void *, s32) __asm__("func_80010234");
 /**
  * @brief Orients an object's model basis (ground-normal or fixed) and fetches its
@@ -38,17 +40,17 @@ extern void gGteTransformVerticesWide(u8 *, void *, s32) __asm__("func_80010234"
  * follows the surface normal unless the flags pin it.
  *
  * @par Environment path
- * Orients an object's model basis and refreshes its frame vertex: depending
- * on flags 0x200 and 0x100 it either snaps the position to the ground with
- * func_80066F78, blends the surface normal into the existing basis with
- * func_800192AC, writes the fixed yaw/pitch basis, or builds the matrix with
- * func_800188D0, loads it with func_80010750 and transforms one frame vertex
- * with func_80010234. Callers are func_800378BC (line 93) and func_8002B784
- * (line 202), both per-frame entity updates. Not on the render path: it
- * produces the transform the model pass later consumes, but it emits nothing,
- * touches no global and no packet pool.
+ * Orients an entity's model basis according to flags 0x200 and 0x100. With
+ * both set it snaps the position to the ground with func_80066F78 and writes
+ * a fixed yaw basis from the direction at +0x140; with only 0x200 it blends
+ * the ground normal from func_80066F78 into the up axis (1:3) and rebuilds
+ * the basis with func_800192AC; with only 0x100 it writes the fixed yaw
+ * basis. Otherwise it builds the matrix from the angles with func_800188D0
+ * (the +0xB0/+0xB4 pair when the top flag bits are set), loads it and
+ * transforms one frame vertex. Callers are func_8002B784, func_800378BC,
+ * func_8003802C and func_8005027C.
  */
-void func_80037EB4(struct Self *arg)
+void gOrientEntityBasis(struct Self *arg)
 {
  register struct Self *self __asm__("$17") = arg;
  struct Vec tmp;
@@ -61,11 +63,11 @@ void func_80037EB4(struct Self *arg)
  register u8 *data __asm__("$2");
  if (self->flags & 0x200) {
   if (self->flags & 0x100) {
-   self->pos.y = func_80066F78(&self->pos, 0, 0, 0);
+   self->pos.y = gGetGroundHeight(&self->pos, 0, 0, 0);
    a = self->unk140.z; b = self->unk140.x;
    goto fixed;
   }
-  func_80066F78(&self->pos, &tmp, 0, 0);
+  gGetGroundHeight(&self->pos, &tmp, 0, 0);
   tmp.x = (tmp.x + self->basis[1].x * 3) >> 2;
   tmp.y = (tmp.y + self->basis[1].y * 3) >> 2;
   tmp.z = (tmp.z + self->basis[1].z * 3) >> 2;

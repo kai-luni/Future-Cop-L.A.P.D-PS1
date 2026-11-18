@@ -95,11 +95,13 @@ struct Self {
     struct Sub *unkEC;
 };
 
-extern s32 func_8002AD58(s32 message, struct Self *self, struct Arg *arg, s32 arg2);
+extern s32 gEntityBaseHandler(s32 message, struct Self *self, struct Arg *arg, s32 arg2) __asm__("func_8002AD58");
 extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options);
-extern void func_80044988(u8 *data, struct AnimTrack *track, u8 forward, s32 index);
+extern void gSetAnimClipTable(u8 *data, struct AnimTrack *track, u8 forward, s32 index) __asm__("func_80044988");
 extern void gGteLoadMatrix(void *basis) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
+void gInitActorFromSpawn(struct Self *self, struct Arg *arg1, s32 arg2) __asm__("func_80038754");
+
 
 /**
  * @brief Spawn initialisation of one object class: binds the model instance and its
@@ -159,28 +161,26 @@ extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_800
  * func_80039298, message 2 of its switch - the entity script dispatcher of this class.
  *
  * @par Environment path
- * Spawn setup of one moving object class: after the shared func_8002AD58 hook
- * it stores the flag half-word and the shared block pointer, binds the
- * descriptor model through func_80013BD8, installs the model animation track
- * with func_80044988 or clears the instance and copies the spawn position
- * when there is no holder. It then derives the heading (raising flag 0x4000
- * and taking the magnitude when the descriptor value is below -2), the type
- * byte, the visual angle from the shared block plus its +0x12A bias, the
- * speed factor from the descriptor value divided by 218, the shape words and
- * the object flag bits 0, 0x20000, 0x200000 and 0x800000, and finishes with
- * func_80010750 on the instance matrix and one func_80010234 vertex transform
- * from the frame list. Its caller is func_80039298, message 2 of the entity
- * script dispatcher, and it reads no globals, so it prepares an actor for the
- * model renderer without touching the map, the camera or the primitive pool.
+ * Message-2 (init) handler of the object class whose dispatcher is
+ * func_80039298; that dispatcher returns 0 for message 6, so this class has
+ * no per-tick update of its own. After the shared func_8002AD58 hook it
+ * stores the flag half-word and the shared block pointer, binds the
+ * descriptor model with func_80013BD8 and installs its animation through
+ * func_80044988, or clears the model and copies the spawn position when there
+ * is none. It then derives heading (flag 0x4000 for negative values below
+ * -2), the type byte, an angle optionally biased by the shared block's
+ * +0x12A, a speed factor (descriptor value / 218), copied shape words and
+ * object flag bits, and finishes with func_80010750 plus one func_80010234
+ * vertex transform; it reads no globals.
  */
-void func_80038754(struct Self *self, struct Arg *arg1, s32 arg2)
+void gInitActorFromSpawn(struct Self *self, struct Arg *arg1, s32 arg2)
 {
     struct Data *data;
     struct Sub *p;
     s32 i;
     u32 f;
 
-    func_8002AD58(2, self, arg1, arg2);
+    gEntityBaseHandler(2, self, arg1, arg2);
     data = arg1->unk08;
 
     self->unkE8.h = data->unk2B;
@@ -190,7 +190,7 @@ void func_80038754(struct Self *self, struct Arg *arg1, s32 arg2)
     if (data->unk2C != 0) {
         func_80013BD8(&self->unk28, data->unk2C->model, 0);
         if (self->unk28.model->unk10 != 0) {
-            func_80044988(self->unk28.model->unk10, &self->unkC8, 1, 0);
+            gSetAnimClipTable(self->unk28.model->unk10, &self->unkC8, 1, 0);
         }
     } else {
         self->unk28.model = 0;

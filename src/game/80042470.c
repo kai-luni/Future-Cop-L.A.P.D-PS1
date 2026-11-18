@@ -16,7 +16,7 @@ struct Unk423F0Object {
     s8 side;
 };
 
-extern struct Unk423F0Player *D_8009FA58[];
+extern struct Unk423F0Player *gPlayerEntities[] __asm__("D_8009FA58");
 
 /**
  *  @brief Clears matching player target references to an object.
@@ -51,9 +51,9 @@ s32 func_80042470(s32 message, struct Unk423F0Object *object)
         first = 1;
     }
     for (i = first; i <= last; i++) {
-        if (D_8009FA58[i] != 0 && D_8009FA58[i]->info != 0 &&
-            D_8009FA58[i]->info->target == object) {
-            D_8009FA58[i]->info->target = 0;
+        if (gPlayerEntities[i] != 0 && gPlayerEntities[i]->info != 0 &&
+            gPlayerEntities[i]->info->target == object) {
+            gPlayerEntities[i]->info->target = 0;
         }
     }
     return 0;

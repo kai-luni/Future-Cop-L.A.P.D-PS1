@@ -21,7 +21,7 @@ extern void func_800379D4(s32 message, Object8002C3F0 *object, Data8002C3F0 *dat
 extern void func_8002BFB4(Object8002C3F0 *object, void *data);
 extern void func_8002AF94(s32 message, Object8002C3F0 *object, Data8002C3F0 *data);
 extern void func_80037B28(s32 message, Object8002C3F0 *object, Data8002C3F0 *data);
-extern s32 func_8002AD58(s32 message, Object8002C3F0 *object, Data8002C3F0 *data);
+extern s32 gEntityBaseHandler(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_8002AD58");
 extern void func_8002C174(Object8002C3F0 *object);
 extern void func_8002B784(Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3);
 extern s32 func_8002ACB4(Object8002C3F0 *object, s32 value);
@@ -100,13 +100,13 @@ L_C488:
     if (s0->unk15F == 7) {
         return 0;
     }
-    func_8002AD58(message, s0, s1);
+    gEntityBaseHandler(message, s0, s1);
     func_8002BFB4(s0, s1->unk08);
     return 0;
 
 L_C4B4:
     if (s0->unk15F != 7) {
-        s2 = func_8002AD58(message, s0, s1);
+        s2 = gEntityBaseHandler(message, s0, s1);
         if (s2 > 0) {
             func_8002BFB4(s0, s1->unk08);
         }
@@ -137,5 +137,5 @@ L_C550:
     return s0->unk163;
 
 default_case:
-    return func_8002AD58(message, s0, s1);
+    return gEntityBaseHandler(message, s0, s1);
 }

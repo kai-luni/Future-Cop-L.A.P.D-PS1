@@ -58,7 +58,7 @@ struct Unk31690Sub {
 };
 
 extern void D_8003190C(void);
-extern u8 func_80083A10(struct Unk31690Sub *arg0, void *arg1, s32 arg2, void *arg3);
+extern u8 gSpawnSceneNode(struct Unk31690Sub *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_80083A10");
 extern s32 func_8004D4D4(struct Unk31690Request *request);
 
 /**
@@ -100,7 +100,7 @@ s32 func_80031690(struct Entity *self)
         sub.unk22 = 0;
         sub.unk00 = self->unk08 + 0x10000;
         range = (self->unk24 & 0x800) ? -1 : 0x4650;
-        if (func_80083A10(&sub, self->unk74, range, self->unk2C) != 0) {
+        if (gSpawnSceneNode(&sub, self->unk74, range, self->unk2C) != 0) {
             return -1;
         }
     }

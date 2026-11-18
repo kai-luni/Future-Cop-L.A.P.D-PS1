@@ -11,7 +11,7 @@ struct Resource {
 extern struct Resource *gResourceList __asm__("D_8009F5B8");
 extern struct Resource *gListTailFlag __asm__("D_8009F5BC");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Invokes a resource node's release callback, unlinks it, and frees it.
@@ -57,5 +57,5 @@ void func_80019AF8(struct Resource *resource)
             gListTailFlag->next = 0;
         }
     }
-    func_800181D4(resource);
+    gFreeBlock(resource);
 }

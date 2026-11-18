@@ -72,7 +72,7 @@ struct GlobalFA94 {
 extern struct Table *gRegistryTable __asm__("D_8009F800");
 extern struct Unit *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct GlobalFA94 *gGameSession __asm__("D_8009FA94");
-extern struct Actor *D_8009FA58[];
+extern struct Actor *gPlayerEntities[] __asm__("D_8009FA58");
 
 /**
  *  @brief Updates matching definition counts and conditional team statistics for a unit.
@@ -133,12 +133,12 @@ void func_80061020(struct Unit *arg0)
                 if (unit->team == def->team) {
                     sub = 0;
                 } else {
-                    sub = D_8009FA58[0]->unkAC;
+                    sub = gPlayerEntities[0]->unkAC;
                 }
-            } else if (def->team == D_8009FA58[0]->team) {
-                sub = D_8009FA58[0]->unkAC;
+            } else if (def->team == gPlayerEntities[0]->team) {
+                sub = gPlayerEntities[0]->unkAC;
             } else {
-                sub = D_8009FA58[1]->unkAC;
+                sub = gPlayerEntities[1]->unkAC;
             }
             switch (def->type) {
             case 1:

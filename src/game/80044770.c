@@ -6,7 +6,7 @@ struct Unk44770 {
 };
 
 extern u8 func_8003C2A4(struct Unk44770 *data);
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void func_8003C404(struct Unk44770 *data);
 
 /**
@@ -40,7 +40,7 @@ void func_80044770(struct Unk44770 *source)
     if (func_8003C2A4(source) != 0) {
         return;
     }
-    copy = func_80017EBC(0x60, 2);
+    copy = gAllocMemory(0x60, 2);
     *copy = *source;
     func_8003C404(copy);
 }

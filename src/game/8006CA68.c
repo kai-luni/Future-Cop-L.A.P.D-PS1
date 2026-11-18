@@ -6,7 +6,7 @@ struct Unk6CA68 {
     void *second;
 };
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Frees a two-pointer mesh/effect wrapper and both of its sub-allocations.
@@ -32,7 +32,7 @@ extern void func_800181D4(void *block);
  */
 void func_8006CA68(struct Unk6CA68 *object)
 {
-    func_800181D4(object->first);
-    func_800181D4(object->second);
-    func_800181D4(object);
+    gFreeBlock(object->first);
+    gFreeBlock(object->second);
+    gFreeBlock(object);
 }

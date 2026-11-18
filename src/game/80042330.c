@@ -8,9 +8,9 @@ typedef struct {
     u8 unkA0;
 } Object;
 
-extern s32 func_8002AD58(s32 message, Object *object, void *data);
+extern s32 gEntityBaseHandler(s32 message, Object *object, void *data) __asm__("func_8002AD58");
 extern s32 func_80041E0C(s32 message, Object *object, void *data);
-extern void func_80042128(Object *object);
+extern void gDrawPortraitScreen(Object *object) __asm__("func_80042128");
 extern void func_8004228C(Object *object, void *data);
 
 /**
@@ -55,7 +55,7 @@ s32 func_80042330(s32 message, Object *object, void *data)
         if (object->flags & 0x20) {
             return 0;
         }
-        func_80042128(object);
+        gDrawPortraitScreen(object);
         return 1;
     case 6:
         if (object->unkA0 & 1) {
@@ -73,6 +73,6 @@ s32 func_80042330(s32 message, Object *object, void *data)
     case 14:
         return 0;
     default:
-        return func_8002AD58(message, object, data);
+        return gEntityBaseHandler(message, object, data);
     }
 }

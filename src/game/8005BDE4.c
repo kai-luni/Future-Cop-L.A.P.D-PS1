@@ -95,7 +95,7 @@ extern void func_80069580(u32 index, struct DestinationTriple *destination);
 extern s32 func_8001A100(s32 *vector);
 extern struct Unk5BCD4Node *func_8005BCD4(struct Unk5BCD4Pool *pool, void *target);
 extern struct ListNode *func_8003BEF0(struct ListNode *node);
-extern void func_80017668(struct ModelInstance *instance, s32 part, s32 *out);
+extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_8003BF50(struct Unk402DCOwner *owner);
 extern s32 func_800402DC(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4);
 
@@ -214,7 +214,7 @@ void func_8005BDE4(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *a
             if ((s8)part >= 0) {
                 scratch.param.part = part;
                 scratch.param.flags |= 0x20;
-                func_80017668(instance, (s8)part, &node->unk2C);
+                gTransformPartVertex(instance, (s8)part, &node->unk2C);
             }
 
             row = func_8003BF50(owner);

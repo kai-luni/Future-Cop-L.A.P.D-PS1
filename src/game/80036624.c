@@ -37,7 +37,7 @@ struct Entity {
 };
 extern void gProjectileInit(struct Entity *, struct Entity *, s32) __asm__("func_80035904");
 extern void gGuidedProjectileUpdate(struct Entity *, struct Entity *) __asm__("func_80035B7C");
-extern s32 func_8002AD58(s32, struct Entity *, struct Entity *, s32);
+extern s32 gEntityBaseHandler(s32, struct Entity *, struct Entity *, s32) __asm__("func_8002AD58");
 extern s32 func_80019FCC(s32 *);
 extern s32 func_80095900(s32);
 extern void func_800410BC(void *, s32, s32, struct Entity *);
@@ -156,7 +156,7 @@ s32 func_80036624(s32 msg, struct Entity *self, struct Entity *data, s32 extra)
     case 9:
         if (!data->link) return 0;
         if ((data->flags & 1) && data->link->kind == self->kind) return 0;
-        func_8002AD58(msg, self, data, extra);
+        gEntityBaseHandler(msg, self, data, extra);
         return 0;
     case 4:
         if (self->strength > 0) {
@@ -174,5 +174,5 @@ s32 func_80036624(s32 msg, struct Entity *self, struct Entity *data, s32 extra)
     case 5:
         return 0;
     }
-    return func_8002AD58(msg, self, data, extra);
+    return gEntityBaseHandler(msg, self, data, extra);
 }

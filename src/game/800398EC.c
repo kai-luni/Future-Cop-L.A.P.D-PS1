@@ -24,9 +24,9 @@ struct Self {
     struct Child *child[1];
 };
 extern s32 func_800397AC(s32, struct Self *, void *, s32);
-extern s32 func_8002AD58(s32, void *, void *, s32);
+extern s32 gEntityBaseHandler(s32, void *, void *, s32) __asm__("func_8002AD58");
 extern s32 func_800382B4(s32, struct Self *, void *, s32);
-extern void func_80038A00(struct Child *, void *);
+extern void gUpdateMountedTurret(struct Child *, void *) __asm__("func_80038A00");
 extern void func_8004D958(struct Child *);
 extern void func_8003BA50(struct Child *, s32);
 
@@ -73,12 +73,12 @@ s32 func_800398EC(s32 message, struct Self *object, void *data, s32 extra)
         return func_800397AC(msg, self, arg2, arg3);
     case 3:
         if (self->flags & 0x20) return 0;
-        func_8002AD58(msg, self, arg2, arg3);
+        gEntityBaseHandler(msg, self, arg2, arg3);
         i = 0;
         if (i < self->count) {
             p = self;
             do {
-                if (p->child[0]) func_8002AD58(msg, p->child[0], arg2, arg3);
+                if (p->child[0]) gEntityBaseHandler(msg, p->child[0], arg2, arg3);
                 p = (struct Self *)((u8 *)p + 4);
                 i++;
             } while (i < self->count);
@@ -90,7 +90,7 @@ s32 func_800398EC(s32 message, struct Self *object, void *data, s32 extra)
         if (i < self->count) {
             p = self;
             do {
-                if (p->child[0]) func_80038A00(p->child[0], arg2);
+                if (p->child[0]) gUpdateMountedTurret(p->child[0], arg2);
                 p = (struct Self *)((u8 *)p + 4);
                 i++;
             } while (i < self->count);

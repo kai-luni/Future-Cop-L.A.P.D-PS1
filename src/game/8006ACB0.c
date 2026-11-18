@@ -41,7 +41,7 @@ struct Locals6ACB0 {
 
 extern s32 gCommandListHead[2] __asm__("D_800A8F90");
 
-extern void func_80017668(void *instance, s32 part, void *out);
+extern void gTransformPartVertex(void *instance, s32 part, void *out) __asm__("func_80017668");
 extern void func_8001A180(void *arg0);
 extern void gWriteCellEventValue(void *object, void *event) __asm__("func_8005C048");
 extern s32 func_80046C84(s32 id, s32 arg1);
@@ -130,7 +130,7 @@ s32 gWeaponFireDispatch(struct Owner6ACB0 *owner, s32 index)
         }
     }
 
-    func_80017668((void *)(state + 0x178 + offset * 76), 0, &locals.posA);
+    gTransformPartVertex((void *)(state + 0x178 + offset * 76), 0, &locals.posA);
 
     config = (u8 *)gRegistryFind(*(u8 *)(index + state + 0x90));
 
@@ -282,7 +282,7 @@ s32 gWeaponFireDispatch(struct Owner6ACB0 *owner, s32 index)
         *(s32 *)(state + 0x9C) = *(s32 *)(result + 8);
     }
 
-    func_80017668((void *)(owner->unkDC + 0x28), offset, &locals.posA);
+    gTransformPartVertex((void *)(owner->unkDC + 0x28), offset, &locals.posA);
 
     if (*(u8 *)(def + 0x1B) != 0) {
         if (result != 0) {

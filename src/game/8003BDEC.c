@@ -11,7 +11,7 @@ struct Pool {
     struct PoolNode *free;
 };
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Releases the backing storage of a fixed pool.
@@ -41,7 +41,7 @@ extern void func_800181D4(void *block);
 void func_8003BDEC(struct Pool *pool)
 {
     if (pool->storage != 0) {
-        func_800181D4(pool->storage);
+        gFreeBlock(pool->storage);
         pool->storage = 0;
     }
 }

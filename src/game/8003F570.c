@@ -21,6 +21,8 @@ extern void func_8003FF7C(void);
 extern void func_8004C2B8(struct Unk3F570Node *object);
 extern void func_8003F428(struct Unk3F570Node *node, s32 arg);
 extern void func_8005E0AC(s32 object);
+void gRunEntityWorldTick(s32 arg0) __asm__("func_8003F570");
+
 
 /**
  * @brief The entity world's per-frame tick: effects, transform sync, the
@@ -50,19 +52,18 @@ extern void func_8005E0AC(s32 object);
  * func_80027510.
  *
  * @par Environment path
- * The per-frame tick of the entity world: it drives the effect system
- * (func_8005E0AC) and the transform sync (func_8003D240), then walks the
- * seven buckets of gListHeads and retires every node whose func_8003F2AC
- * result has the low byte set, unlinking it and sending message 10 to its
- * handler. Afterwards it runs func_8003F530, func_8004C2B8 on bucket 4,
+ * The per-frame tick of the entity world, called with the frame delta by both
+ * session updates, func_800271A4 (one player) and gRunSessionFrame
+ * (func_80027510). It drives the effect system (func_8005E0AC) and the
+ * transform sync (func_8003D240), then walks the seven buckets of gListHeads
+ * and retires every node whose func_8003F2AC result has the low byte set,
+ * unlinking it and sending message 10 to its handler. Afterwards it runs the
+ * list update passes through func_8003F530, func_8004C2B8 on bucket 4,
  * func_8003F428 on bucket 5, the proximity gate func_8003FF7C when gNodeCList
- * is non-empty, and finally drains gPendingSpawnList through func_8003B44C.
- * It is gameplay update, not a drawing pass, but it is called with the frame
- * delta from gRunSessionFrame (func_80027510, src/game/80027510.c:230), the
- * same session frame the environment pass runs under, so it executes
- * alongside gDrawViewLayers rather than inside it.
+ * is non-empty, and finally moves each object queued in gPendingSpawnList
+ * into its bucket with func_8003B44C.
  */
-void func_8003F570(s32 arg0)
+void gRunEntityWorldTick(s32 arg0)
 {
     struct Unk3F570Node *node;
     struct Unk3F570Node *next;

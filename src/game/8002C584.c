@@ -108,16 +108,18 @@ struct Unk2C584Obj {
 
 extern u8 D_8002DEA8[];
 
-extern s32 func_8002AD58(s32 message, struct Unk2C584Obj *obj, void *data, s32 arg3);
+extern s32 gEntityBaseHandler(s32 message, struct Unk2C584Obj *obj, void *data, s32 arg3) __asm__("func_8002AD58");
 extern struct Unk2C584Obj *gSpawnQueuedEntity(void *def) __asm__("func_8004D444");
-extern void func_80017668(void *a, s32 b, void *c);
+extern void gTransformPartVertex(void *a, s32 b, void *c) __asm__("func_80017668");
 extern void gGteLoadMatrix(void *a) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 extern void gBuildRotationMatrix(s32 a, s32 b, s32 c, void *d) __asm__("func_800188D0");
 extern void func_80060668(void *a, void *b);
 extern s32 func_80067684(void *a, s32 b);
-extern void func_80044988(void *a, void *b, s32 c, s32 d);
+extern void gSetAnimClipTable(void *a, void *b, s32 c, s32 d) __asm__("func_80044988");
 extern s32 func_8006314C(void *a, s32 b);
+void gInitObjectFromDef(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2) __asm__("func_8002C584");
+
 
 /**
  * @brief Message-2 handler of an object class: rebuilds one object from its
@@ -235,20 +237,21 @@ extern s32 func_8006314C(void *a, s32 b);
  * func_8002D664, message 2 (analysis/edges.json, kind "direct").
  *
  * @par Environment path
- * Message-2 setup handler of one object class: it saves the state word,
- * honours flag 0x80, forwards the message to func_8002AD58, and for spawn
- * kinds 8, 0x21 and 0x24 builds a definition record whose handler is
- * D_8002DEA8 and creates up to two children with gSpawnQueuedEntity, linking
- * both back through +0x100 and +0x104. It then derives the motion and
- * animation fields - heading matrix from func_800188D0, speed from the two
- * divisors 218 and 300, ground height from func_80067684 or the child part
- * position from func_80017668, the 16-byte state copy of func_80060668 and
- * the animation track attached by func_80044988 - and finishes with a GTE
- * matrix load and one part transform. The caller is func_8002D664, message 2
- * of the class table, and the body otherwise writes only through its two
- * pointer arguments, so this is object setup rather than draw code.
+ * Message-2 (init) handler for the object classes dispatched through
+ * func_8002D664 (class ids 6, 8, 30, 33 and 36 in the func_8002AE54 table):
+ * it forwards the message to the generic setup func_8002AD58 first. For state
+ * kinds 8, 0x21 and 0x24 it spawns a companion entity with gSpawnQueuedEntity
+ * whose handler is func_8002DEA8 (the class-11 handler, referenced as data
+ * symbol D_8002DEA8) and links it through +0x104/+0xB4; kind 0x21
+ * additionally spawns a kind-6 copy of itself with swapped path points into
+ * +0x100, and kind 0x24 copies six bytes plus a word of extra parameters. It
+ * then builds the heading matrix with func_800188D0, derives speed fields
+ * from the divisors 218 and 300, takes the ground height from func_80067684
+ * (or the companion's part position via func_80017668), attaches the
+ * animation through func_80044988 and transforms the reference vertex; it is
+ * object setup, not draw code.
  */
-void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
+void gInitObjectFromDef(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
 {
     struct Unk2C584State *st;
     struct Unk2C584Data *d;
@@ -273,7 +276,7 @@ void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
     if (st->unk40 & 0x80) {
         st->unk20 = 0;
     }
-    func_8002AD58(2, obj, data, arg2);
+    gEntityBaseHandler(2, obj, data, arg2);
     if (st->unk04 == 8 || st->unk04 == 0x21 || st->unk04 == 0x24) {
         p = d->unk04;
         def.handler = D_8002DEA8;
@@ -312,7 +315,7 @@ void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
             obj->unk100->unk100 = obj;
             obj->unk100->unk104 = obj->unk104;
             obj->unk100->flags |= 0x800000;
-            func_80017668((u8 *)obj->unk104 + 0x28, 1, (u8 *)obj->unk100 + 0x50);
+            gTransformPartVertex((u8 *)obj->unk104 + 0x28, 1, (u8 *)obj->unk100 + 0x50);
             gGteLoadMatrix((u8 *)obj->unk100 + 0x2C);
             gGteTransformVerticesWide((u8 *)obj->unk100->unk28->unk34 + ((obj->unk100->unk70 << 4) + 8),
                           (u8 *)obj->unk100 + 0x5C, 1);
@@ -380,7 +383,7 @@ void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
         obj->unkDF |= 2;
     }
     if (obj->unk104) {
-        func_80017668((u8 *)obj->unk104 + 0x28, 0, (u8 *)obj + 0x50);
+        gTransformPartVertex((u8 *)obj->unk104 + 0x28, 0, (u8 *)obj + 0x50);
     } else {
         s32 a;
         s32 v = (s8)st->unk34;
@@ -389,7 +392,7 @@ void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
     }
     func_80060668(st->unk24, (u8 *)obj + 0xA0);
     if (*(s32 *)((u8 *)obj->unk28 + 0x10)) {
-        func_80044988(*(void **)((u8 *)obj->unk28 + 0x10), (u8 *)obj + 0xC8, 1, 0);
+        gSetAnimClipTable(*(void **)((u8 *)obj->unk28 + 0x10), (u8 *)obj + 0xC8, 1, 0);
     }
     gGteLoadMatrix((u8 *)obj + 0x2C);
     gGteTransformVerticesWide((u8 *)obj->unk28->unk34 + ((obj->unk70 << 4) + 8), (u8 *)obj + 0x5C, 1);

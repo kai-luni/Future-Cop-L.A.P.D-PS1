@@ -15,10 +15,10 @@ extern Camera *gCamera __asm__("D_8009F9E4");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u32 D_800A8EA0[];
-extern void func_80017668(void *, int, Vec *);
+extern void gTransformPartVertex(void *, int, Vec *) __asm__("func_80017668");
 extern int func_800684AC(Vec *, Vec *, Vec *, int, int);
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
-extern void func_8001047C(SVec *, SVec *, int *, int);
+extern void gProjectVertexBatch(SVec *, SVec *, int *, int) __asm__("func_8001047C");
 /**
  * @brief Draws the marker of an object's current target: a 16x16 sprite at the
  *        target's screen position plus a two-point line from the object to a
@@ -109,7 +109,7 @@ void func_80047888(Object *obj)
     Target *target = obj->state->target;
     if (!target || (obj->flags & 0x1000000)) return;
     points[2] = target->pos;
-    func_80017668(obj->model + 0x28, 0, &points[0]);
+    gTransformPartVertex(obj->model + 0x28, 0, &points[0]);
     if (!func_800684AC(&points[0], &points[2], &points[1], 0, 1)) points[1] = points[2];
     for (i = 0; i < 3; i++) {
         screen[i].x = (points[i].x - gCamera->pos.x) >> 4;
@@ -117,7 +117,7 @@ void func_80047888(Object *obj)
         screen[i].z = (points[i].z - gCamera->pos.z) >> 4;
     }
     gGteLoadRotation((u8 *)gCamera + 0x28);
-    func_8001047C(screen, screen, &flag, 3);
+    gProjectVertexBatch(screen, screen, &flag, 3);
     if (((u8 *)&flag)[2] & 1) return;
     if (gPacketCursor < gPacketLimit) goto a1;
     __asm__(""); packet = gPacketCursor; goto p1;

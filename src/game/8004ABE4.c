@@ -65,11 +65,13 @@ struct Unk4ABE4 {
     s32 unk84;
 };
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern s32 func_80019668(void);
 extern void gGteLoadRotation(u8 *arg0) __asm__("func_80010820");
 extern void gGteTransformWords(void *arg0, void *arg1, s32 arg2) __asm__("func_8001006C");
 extern void func_8003E984(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+s32 gLaunchDebrisObject(struct Unk4ABE4 *object, struct Unk4ABE4Arg1 *arg1) __asm__("func_8004ABE4");
+
 
 /**
  * @brief Burst variant of an object's death handling: allocates a 28-byte motion
@@ -120,22 +122,20 @@ extern void func_8003E984(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
  * the fracture path (bit 0x10) sits in the same handler.
  *
  * @par Environment path
- * Burst variant of the death handling: it reads the inner block's basis
- * context, allocates a 0x1C-byte motion record with func_80017EBC(0x1C, 1)
- * and fills it with a large fixed impulse scaled by the object's signed
- * percentage, a random speed between the +0x76 and +0x78 bounds and a random
- * scale applied to the +0x70/+0x72/+0x74 direction. When the flag word +0x1A
- * carries bit 0x100 or 0x004 that direction is rotated into world space with
- * func_80010820 and func_8001006C, and a driver block adds an angular impulse
- * scaled from its +0x40 magnitude with the 0x200 and 0x400 flags inverting or
- * zeroing it. It then clears three object fields and, when the child type
- * +0x65 is non-zero, spawns that child through func_8003E984; on a missing
- * basis context it sets bit 0 at +0x0F and returns 0. It is an effects and
- * lifecycle routine called from message 0 of func_8004C324
- * (src/game/8004C324.c:101) on the flag-bit-8 branch, so it is off the
- * environment render path: it touches no global and emits no geometry.
+ * Starts the ballistic flight of a debris object when it is destroyed;
+ * func_8004C324 calls it from message 0 when flag 8 is set. It allocates a
+ * 0x1C-byte flight record with func_80017EBC(0x1C, 1) and fills it with a
+ * random lift impulse scaled by the percentage at +0x7C, two random spin
+ * rates between the +0x76 and +0x78 bounds and a velocity made from the
+ * +0x70/+0x72/+0x74 direction times a random scale between +0x6A and +0x6C.
+ * When flag 0x100 or 0x004 at +0x1A is set the velocity is rotated into world
+ * space (func_80010820, func_8001006C), and a driver argument with bit 2 at
+ * +0x49 adds its own velocity scaled from its +0x40 value (inverted by flag
+ * 0x400, suppressed by 0x200). It then copies the timer, clears three fields
+ * and spawns the child type at +0x65 through func_8003E984 when it is
+ * non-zero; without a basis context it sets bit 0 at +0x0F and returns 0.
  */
-s32 func_8004ABE4(struct Unk4ABE4 *object, struct Unk4ABE4Arg1 *arg1)
+s32 gLaunchDebrisObject(struct Unk4ABE4 *object, struct Unk4ABE4Arg1 *arg1)
 {
     u8 *context;
     s32 value;
@@ -153,7 +153,7 @@ s32 func_8004ABE4(struct Unk4ABE4 *object, struct Unk4ABE4Arg1 *arg1)
         return 0;
     }
 
-    object->unk80 = func_80017EBC(0x1C, 1);
+    object->unk80 = gAllocMemory(0x1C, 1);
     if (object->unk80 == 0) {
         return 0;
     }

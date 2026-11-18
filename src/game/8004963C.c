@@ -5,7 +5,7 @@ extern void *gSpriteDescriptorTable __asm__("D_8009F77C");
 extern void *gLightGrid __asm__("D_8009F780");
 extern s32 gLightNodePool __asm__("D_8009F784");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_80019584(s32 pool);
 
 /**
@@ -33,13 +33,13 @@ extern void func_80019584(s32 pool);
 void func_8004963C(void)
 {
     if (gSpriteDescriptorTable != 0) {
-        func_800181D4(gSpriteDescriptorTable);
+        gFreeBlock(gSpriteDescriptorTable);
     }
     gSpriteDescriptorTable = 0;
     func_80019584(gLightNodePool);
     gLightNodePool = 0;
     if (gLightGrid != 0) {
-        func_800181D4(gLightGrid);
+        gFreeBlock(gLightGrid);
     }
     gLightGrid = 0;
 }

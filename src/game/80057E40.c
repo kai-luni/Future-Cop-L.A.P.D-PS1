@@ -22,13 +22,15 @@ struct Object {
     u8 pad68[8]; s16 frame; u8 pad72[6]; Vec3 origin; s32 unk84;
     u8 pad88[0x2c]; struct Info *info;
 };
-extern void func_80017668(void *, s32, void *);
+extern void gTransformPartVertex(void *, s32, void *) __asm__("func_80017668");
 extern s32 func_80095C30(s32, s32);
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
-extern void func_80052D7C(void *, s32);
+extern void gUpdateTwoPartRig(void *, s32) __asm__("func_80052D7C");
 extern void func_8001AC28(void *, void *, s32, void *);
+void gSlewEntityAim(struct Object *obj, s32 step) __asm__("func_80057E40");
+
 
 /**
  * @brief Steers an entity's orientation toward its target and refreshes it.
@@ -90,20 +92,19 @@ extern void func_8001AC28(void *, void *, s32, void *);
  * func_800588D4 (sole direct caller).
  *
  * @par Environment path
- * Steers one entity's orientation toward its tracked target: it samples the
- * animated instance with func_80017668, drops the target when its id no
- * longer matches the state id, derives pitch from func_80095C30(dy, planar
- * distance) clamped to +-400 and yaw from func_80095C30(dx, dz) wrapped into
- * +-128, and slews both stored angles by 24 units per call (snapping when the
- * difference is 23 or less). It then builds the basis with
- * gBuildRotationMatrix (func_800188D0), loads it with gGteLoadMatrix
- * (func_80010750), transforms one model frame with gGteTransformVerticesWide
- * and copies the basis into the state block, while decaying the two child
- * part timers through func_8001AC28. Its only caller is func_800588D4:269,
- * which passes the companion block, so it is an entity update that feeds the
- * model draw and reads no global.
+ * Aims the player unit's two-part gun assembly (the +0xDC companion passed by
+ * func_800588D4, its only caller): it places the assembly on the owner's part
+ * 0 with func_80017668, drops a target whose id no longer matches, derives
+ * pitch (clamped to +-400) and a yaw offset relative to the owner's yaw
+ * (clamped to +-128) with func_80095C30, and slews both by at most 24 units
+ * per call. It builds the matrix from owner yaw + offset, pitch and roll with
+ * func_800188D0, transforms the frame vertex (func_80010750, func_80010234)
+ * and composes the two part matrices with func_80052D7C. While a part's
+ * recoil timer runs it shifts that part along its axis with the scaled vector
+ * add func_8001AC28, and finally copies the rotation into the owner state and
+ * fetches part 2's position with func_80017668. No globals are read.
  */
-void func_80057E40(struct Object *obj, s32 step)
+void gSlewEntityAim(struct Object *obj, s32 step)
 {
     struct Info *info;
     struct State *state;
@@ -114,7 +115,7 @@ void func_80057E40(struct Object *obj, s32 step)
     register u8 *pointer __asm__("$2");
     info = obj->info;
     obj->unk84 = info->unk84;
-    func_80017668(info->instance, 0, &obj->pos);
+    gTransformPartVertex(info->instance, 0, &obj->pos);
     state = info->state;
     target = state->target;
     pitch = 0;
@@ -197,7 +198,7 @@ void func_80057E40(struct Object *obj, s32 step)
     pointer = ((struct Model *)pointer)->frames;
     offset += 8;
     gGteTransformVerticesWide(pointer + offset, &obj->vertex, 1);
-    func_80052D7C(obj, step);
+    gUpdateTwoPartRig(obj, step);
     for (i = 0; i < 2; i++) {
         timer = state->timer[i];
         if (timer > 0) {
@@ -221,5 +222,5 @@ void func_80057E40(struct Object *obj, s32 step)
     state->matrix.m[6] = obj->matrix.m[6];
     state->matrix.m[7] = obj->matrix.m[7];
     state->matrix.m[8] = obj->matrix.m[8];
-    func_80017668(&obj->model, 2, &state->pos);
+    gTransformPartVertex(&obj->model, 2, &state->pos);
 }

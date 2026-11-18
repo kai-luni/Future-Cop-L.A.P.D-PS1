@@ -6,9 +6,9 @@ struct Unk17764 {
     struct Unk17764 *next;
 };
 
-extern struct Unk17764 *gTransformRecordList __asm__("D_8009F588");
+extern struct Unk17764 *gCameraList __asm__("D_8009F588");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Releases every record of the transform list D_8009F588 and clears the
@@ -48,11 +48,11 @@ void func_80017764(void)
     struct Unk17764 *node;
     struct Unk17764 *current;
 
-    node = gTransformRecordList;
+    node = gCameraList;
     while (node != 0) {
         current = node;
         node = node->next;
-        func_800181D4(current);
+        gFreeBlock(current);
     }
-    gTransformRecordList = 0;
+    gCameraList = 0;
 }

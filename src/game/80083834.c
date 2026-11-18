@@ -19,7 +19,7 @@ extern void *gMissionState __asm__("D_8009F934");
 extern Bucket *gBucketArray __asm__("D_8009F938");
 extern int gMissionGridHeight __asm__("D_8009F940");
 extern int gMissionGridWidth __asm__("D_8009F93C");
-extern int gDiscShadeByte __asm__("D_8009FAA4");
+extern int gFrameTime __asm__("D_8009FAA4");
 extern void func_800457B8(int, int);
 extern void func_800195D0(void *, Node *);
 /**
@@ -62,7 +62,7 @@ void func_80083834(int arg0, unsigned char arg1)
         node = gBucketArray[i].head;
         while (node != 0 && !(node->flags & 0x80)) {
             if (node->time < 0) break;
-            if (node->time <= gDiscShadeByte) {
+            if (node->time <= gFrameTime) {
                 if (node->active && (index = node->index) >= 0) {
                     mask = state->mask | (1 << index);
                     __asm__("" : "+r"(index) : "r"(mask));

@@ -53,8 +53,8 @@ typedef struct Unk382B4 {
 
 extern void *jtbl_800113DC[16];
 
-extern s32 func_8002AD58(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3);
-extern void func_800378BC(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3);
+extern s32 gEntityBaseHandler(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) __asm__("func_8002AD58");
+extern void gInitRailMoverEntity(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) __asm__("func_800378BC");
 extern void func_800379D4(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3);
 extern void func_800381D4(Unk382B4 *arg1);
 extern void func_800448D8(void *arg0, u8 arg1, s32 arg2, s32 arg3);
@@ -62,9 +62,9 @@ extern void func_8003B898(u8 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3, s32 arg4)
 extern void func_80037B28(s32 arg0, Unk382B4 *arg1, s32 arg2);
 extern void func_8002A5B4(Unk382B4 *arg0, s32 arg1);
 extern s32 func_80044B34(Unk382B4 *arg0, void *arg1, s32 arg2, s32 arg3);
-extern void func_800175F8(void *arg0, s32 arg1);
+extern void gSetModelFrame(void *arg0, s32 arg1) __asm__("func_800175F8");
 extern void func_80060238(void *arg0, s32 arg1, Unk382B4 *arg2, s32 arg3, s32 arg4);
-extern void func_8003802C(s32 arg0, Unk382B4 *arg1, s32 arg2);
+extern void gUpdateFallMotion(s32 arg0, Unk382B4 *arg1, s32 arg2) __asm__("func_8003802C");
 extern s32 func_8002ACB4(Unk382B4 *arg0, u8 arg1);
 extern void func_80063194(s32 key);
 
@@ -172,7 +172,7 @@ L80038310:
     return 0x15C;
 
 L80038318:
-    func_800378BC(arg0, arg1, arg2, arg3);
+    gInitRailMoverEntity(arg0, arg1, arg2, arg3);
 
 L8003832C:
     return zero;
@@ -181,7 +181,7 @@ L80038334:
     if (arg1->unk16 == 5 && arg1->unk15A == 1) {
         return 0;
     }
-    func_8002AD58(arg0, arg1, arg2, arg3);
+    gEntityBaseHandler(arg0, arg1, arg2, arg3);
     goto L8003839C;
 
 L8003836C:
@@ -278,7 +278,7 @@ L800384B0:
         }
     }
     temp = func_80044B34(arg1, arg1->unkC8, scale, 0);
-    func_800175F8((void *)&arg1->unk28, arg1->unkD4);
+    gSetModelFrame((void *)&arg1->unk28, arg1->unkD4);
     temp >>= 1;
     if (arg1->unk16 == 5 && temp == 3 && arg1->unk15A == 1) {
         arg1->unk1C = -1;
@@ -290,7 +290,7 @@ L800385BC:
     if (arg1->unkA0 != 0) {
         func_80060238(&arg1->unkA0, arg2, arg1, 0, 1);
     }
-    func_8003802C(arg0, arg1, arg2);
+    gUpdateFallMotion(arg0, arg1, arg2);
     return 0;
 
 L800385FC:
@@ -352,5 +352,5 @@ L8003870C:
 L80038718:
 L8003871C:
 L80038720:
-    return func_8002AD58(arg0, arg1, arg2, arg3);
+    return gEntityBaseHandler(arg0, arg1, arg2, arg3);
 }

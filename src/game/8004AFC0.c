@@ -46,7 +46,9 @@ extern void gBuildRotationMatrix(s16 a, s16 b, s32 c, void *out) __asm__("func_8
 extern void gGteLoadRotation(void *p) __asm__("func_80010820");
 extern void gGteTransformWords(void *dst, void *src, s32 n) __asm__("func_8001006C");
 extern void gVectorAddScaled(struct Vec3s32 *a, struct Vec3s32 *b, s32 scale, struct Vec3s32 *out) __asm__("func_8001ACA4");
-extern s32 func_80066F78(struct Vec3s32 *pos, s32 a1, s32 a2, s32 a3);
+extern s32 gGetGroundHeight(struct Vec3s32 *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80066F78");
+void gStepDebrisFlight(struct UnkObject *object, s32 arg) __asm__("func_8004AFC0");
+
 
 /**
  * @brief Advances a launched object one step: rotates its frame, moves
@@ -78,17 +80,17 @@ extern s32 func_80066F78(struct Vec3s32 *pos, s32 a1, s32 a2, s32 a3);
  * func_8004C228.
  *
  * @par Environment path
- * Advances a launched object one step: it returns with flag 1 set when the
- * object has no attachment, otherwise it builds the rotation with
- * func_800188D0, loads it with func_80010820, transforms the three vectors
- * through func_8001006C, integrates the vertical speed into the launch record
- * and the sub-record position with func_8001ACA4, advances the two angles by
- * their rates and tests the ground with func_80066F78, setting the fuse +0x18
- * to -1 on impact. Its only caller is func_8004C228 (line 40), the
- * breakable-object pass over scene list 4. Not on the render path: it is
- * ballistic physics and writes no packet, no view state and no camera.
+ * Advances a launched debris object by one step; func_8004C228 calls it while
+ * walking gListHeads bucket 4. Without an attached mesh record (+0x1C with
+ * bit 2 at +0x39) it sets bit 0 at +0x0F and returns. Otherwise it builds the
+ * rotation from the two spin angles with func_800188D0, rotates the object's
+ * axes into the mesh record with func_80010820 and func_8001006C, adds the
+ * lift term to the velocity and the velocity to the mesh position with
+ * func_8001ACA4, advances both angles by their rates, and sets the timer at
+ * +0x18 to -1 when func_80066F78 reports the ground at or above the position,
+ * else counts it down.
  */
-void func_8004AFC0(struct UnkObject *object, s32 arg)
+void gStepDebrisFlight(struct UnkObject *object, s32 arg)
 {
     struct UnkSub *sub;
     struct Vec3s32 vec;
@@ -121,7 +123,7 @@ void func_8004AFC0(struct UnkObject *object, s32 arg)
     object->unk80->unk04 += (object->unk80->unk08 * arg) >> 8;
     object->unk80->unk06 += (object->unk80->unk0A * arg) >> 8;
 
-    if (func_80066F78(&sub->pos, 0, 0, 0) >= sub->pos.y) {
+    if (gGetGroundHeight(&sub->pos, 0, 0, 0) >= sub->pos.y) {
         object->unk80->unk18 = -1;
         return;
     }

@@ -88,11 +88,11 @@ struct Unk331CCPlayer {
 };
 
 extern struct Unk331CCGlobal *gGameSession __asm__("D_8009FA94");
-extern struct Unk331CCPlayer *D_8009FA58;
+extern struct Unk331CCPlayer *gPlayerEntities __asm__("D_8009FA58");
 extern struct Unk331CCObj *gSinglePlayerEntity __asm__("D_8009F9EC");
 
 extern void func_80032180(s32, struct Unk331CCObj *, struct Unk331CCSrcOuter *, s32);
-extern struct Unk331CCEntry *func_80017EBC(s32, s32);
+extern struct Unk331CCEntry *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void func_80060668(void *, void *);
 extern s32 func_80019668(void);
 extern void func_800330E8(struct Unk331CCObj *);
@@ -144,7 +144,7 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
         src->unk26 = f | 6;
     }
     func_80032180(arg0, obj, arg2, arg3);
-    obj->unk134 = func_80017EBC(0xB4, 2);
+    obj->unk134 = gAllocMemory(0xB4, 2);
 
     {
         u32 g;
@@ -231,7 +231,7 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
     }
     gGameSession->unk68 = 0;
     obj->unk134->unkC = obj->unk50;
-    *(struct Vec3 *)obj->unk134 = D_8009FA58->unk50;
+    *(struct Vec3 *)obj->unk134 = gPlayerEntities->unk50;
     func_800330E8(obj);
     for (i = 0; i < 16; i++) {
         obj->unk134->unk28[i] = 0;

@@ -4,7 +4,7 @@
 struct Unk60E28Table;
 
 extern struct Unk60E28Table *gRegistryTable __asm__("D_8009F800");
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Frees the 0x80-slot live-object registry table D_8009F800.
@@ -30,5 +30,5 @@ extern void func_800181D4(void *block);
  */
 void func_80060E50(void)
 {
-    func_800181D4(gRegistryTable);
+    gFreeBlock(gRegistryTable);
 }

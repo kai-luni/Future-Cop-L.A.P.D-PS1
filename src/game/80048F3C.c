@@ -10,7 +10,7 @@ struct FontEntry {
 extern struct FontEntry gGlyphEntryTable[] __asm__("D_800A19A0");
 extern s32 gFontBankCount __asm__("D_8009F364");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Frees the glyph buffers for all loaded fonts in the font table.
@@ -36,6 +36,6 @@ void func_80048F3C(void)
     s32 i;
 
     for (i = 0; i < gFontBankCount; i++) {
-        func_800181D4(gGlyphEntryTable[i].glyphs);
+        gFreeBlock(gGlyphEntryTable[i].glyphs);
     }
 }

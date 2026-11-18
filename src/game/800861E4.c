@@ -33,8 +33,8 @@ extern void *gByteTable __asm__("D_8009F9D8");
 extern Block100 gScratchTable __asm__("D_800A3958");
 extern Block108 gSecondScratchTable __asm__("D_800A3A58");
 extern void D_80085074(void);
-extern void *func_80017EBC(s32, s32);
-extern void func_800181D4(void *);
+extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
+extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void *func_8001E4C0(void *, s32, u32);
 extern void gMovieSetScaleMode(s32) __asm__("func_800859D8");
 extern void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
@@ -136,16 +136,16 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         gMovieSetScaleMode(flag);
     }
     if (gUploadInProgress) {
-        buf1 = func_80017EBC(0x6000, 2);
+        buf1 = gAllocMemory(0x6000, 2);
         if (!buf1) goto cleanup;
-        buf2 = func_80017EBC(0x600, 2);
+        buf2 = gAllocMemory(0x600, 2);
         if (!buf2) goto cleanup;
         func_80089A88(buf1, buf2, 0);
     } else {
         buf1 = D_8009F948;
         buf2 = D_8009F94C;
     }
-    gMovieSliceContext = func_80017EBC(0x130, gUploadInProgress ? 2 : 3);
+    gMovieSliceContext = gAllocMemory(0x130, gUploadInProgress ? 2 : 3);
     if (!gMovieSliceContext) goto cleanup;
     func_8001E4C0(gMovieSliceContext, 0, 0x130);
     func_8008C9C0();
@@ -156,9 +156,9 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
     if (gStripScaleEnable == 1) gTransferPending = gStripScaleEnable;
     func_8008C9E0();
     if (gUploadInProgress) {
-        gMovieSliceContext->buffer28[0] = func_80017EBC(0x10000, 2);
+        gMovieSliceContext->buffer28[0] = gAllocMemory(0x10000, 2);
         if (!gMovieSliceContext->buffer28[0]) goto cleanup;
-        gMovieSliceContext->buffer24 = func_80017EBC(0x3000, 2);
+        gMovieSliceContext->buffer24 = gAllocMemory(0x3000, 2);
         if (!gMovieSliceContext->buffer24) goto cleanup;
         {
         register u32 masked __asm__("$2") = mode & 0xFF;
@@ -227,16 +227,16 @@ cleanup:
     func_8008C9E0();
     func_80095E90(1);
     if (gUploadInProgress) {
-        if (buf1) func_800181D4(buf1);
-        if (buf2) func_800181D4(buf2);
+        if (buf1) gFreeBlock(buf1);
+        if (buf2) gFreeBlock(buf2);
         if (gMovieSliceContext) {
-            if (gMovieSliceContext->buffer28[0]) func_800181D4(gMovieSliceContext->buffer28[0]);
-            if (gMovieSliceContext->buffer24) func_800181D4(gMovieSliceContext->buffer24);
-            func_800181D4(gMovieSliceContext);
+            if (gMovieSliceContext->buffer28[0]) gFreeBlock(gMovieSliceContext->buffer28[0]);
+            if (gMovieSliceContext->buffer24) gFreeBlock(gMovieSliceContext->buffer24);
+            gFreeBlock(gMovieSliceContext);
             gMovieSliceContext = 0;
         }
     } else if (gMovieSliceContext) {
-        func_800181D4(gMovieSliceContext);
+        gFreeBlock(gMovieSliceContext);
         gMovieSliceContext = 0;
     }
     return result;

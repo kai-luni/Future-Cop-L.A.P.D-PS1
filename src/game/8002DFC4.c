@@ -81,7 +81,7 @@ struct Arg {
 extern s32 func_80067684(struct Vec3 *pos, s32 sel);
 extern void gBuildRotationMatrix(s32 yaw, s32 pitch, s32 roll, void *matrix) __asm__("func_800188D0");
 extern s32 func_8001A100(s32 *vector);
-extern void func_80044988(u8 *data, void *track, u8 forward, s32 index);
+extern void gSetAnimClipTable(u8 *data, void *track, u8 forward, s32 index) __asm__("func_80044988");
 extern void func_80060668(void *in, void *out);
 
 /**
@@ -205,7 +205,7 @@ s32 func_8002DFC4(struct Obj *obj, struct Arg *arg)
     }
 
     if (obj->unk28->unk10 != 0) {
-        func_80044988(obj->unk28->unk10, obj->unkC8, 1, 0);
+        gSetAnimClipTable(obj->unk28->unk10, obj->unkC8, 1, 0);
     }
     func_80060668((u8 *)st + 0x24, (u8 *)obj + 0xA0);
 

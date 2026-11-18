@@ -50,7 +50,7 @@ extern s8 gCrimeWarProgress[] __asm__("D_8009F458");
 extern u8 D_8009F444[];
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern u8 D_8009F488[];
-extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
+extern s32 gGameClock __asm__("D_8009FA60");
 extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
 extern struct MenuEntry gWideTextTable[] __asm__("D_8009B4E4");
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
@@ -149,7 +149,7 @@ void gDrawProfileSlotList(s32 arg0)
 
         flag = 0;
         __asm__("" : "+r"(flag));
-        c1 = ({ register s32 idx __asm__("$2") = gPaletteCycleCounter; register s32 base; __asm__("lui\t%0,0x800a\n\taddiu\t%0,%0,-3080" : "=r"(base) : "r"(idx)); *(u8 *)(((idx >> 4) & 7) + base); }) + 0x80;
+        c1 = ({ register s32 idx __asm__("$2") = gGameClock; register s32 base; __asm__("lui\t%0,0x800a\n\taddiu\t%0,%0,-3080" : "=r"(base) : "r"(idx)); *(u8 *)(((idx >> 4) & 7) + base); }) + 0x80;
         c2 = c1;
         func_800788F0(0, 0x97, 0xB1, 0x10, e->unk10, 1, 8, 2);
         c3 = c1;

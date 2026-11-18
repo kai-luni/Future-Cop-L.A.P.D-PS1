@@ -14,11 +14,11 @@ typedef struct {
 extern UnkFA94 *gGameSession __asm__("D_8009FA94");
 
 extern s32 gUploadInProgress __asm__("D_8009F9C4");
-extern s32 gFrameId __asm__("D_8009F9FC");
+extern s32 gFrameDelta __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 gScreenResetFlag __asm__("D_8009FA70");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *jtbl_80010DDC[];
 
 extern void func_80092C8C(s32 arg0);
@@ -105,8 +105,8 @@ state_8:
                 if (gScreenState != state && func_80024170() == 0) {
                     break;
                 }
-                gFrameId = gDiscShadeByte - gFrameTickBase;
-                gFrameTickBase = gDiscShadeByte;
+                gFrameDelta = gFrameTime - gFrameTickBase;
+                gFrameTickBase = gFrameTime;
                 func_80025348();
             }
         }

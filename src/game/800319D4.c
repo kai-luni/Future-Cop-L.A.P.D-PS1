@@ -49,9 +49,9 @@ struct Node {
 extern struct Node *gMapZoneList __asm__("D_8009F6F8");
 
 extern u8 *func_80019C38(u8 *arg0, u32 arg1, u32 arg2, s32 arg3);
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern s32 func_80019668(void);
-extern void func_800181D4(void *obj);
+extern void gFreeBlock(void *obj) __asm__("func_800181D4");
 extern s32 func_80067684(struct Vec3s32 *position, s32 mode);
 
 /**
@@ -93,7 +93,7 @@ void func_800319D4(struct Obj *obj)
 
     r = func_80019C38(obj->f0, obj->f20, 0x74414354, obj->f1C);
     d = (struct Data *)(r - 4);
-    node = (struct Node *)func_80017EBC(0x28, 3);
+    node = (struct Node *)gAllocMemory(0x28, 3);
 
     node->f24 = gMapZoneList;
     node->f18 = obj->f24;
@@ -124,5 +124,5 @@ void func_800319D4(struct Obj *obj)
     node->f20 = -1;
     node->f15 = 0;
     node->f16 = func_80019668() & 0xFF;
-    func_800181D4(obj);
+    gFreeBlock(obj);
 }

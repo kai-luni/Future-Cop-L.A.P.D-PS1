@@ -34,7 +34,7 @@ extern void *func_80019C38(u32 a0, u32 a1, u32 a2, u32 a3);
 extern void *func_80019CA0(u32 a0, u32 a1, u32 a2, u32 a3);
 extern struct Resource *func_80019BF0(s32 group, s32 name);
 extern void func_800607B8(struct Unk607B8 *value);
-extern void func_800181D4(struct Unk60838Arg *arg0);
+extern void gFreeBlock(struct Unk60838Arg *arg0) __asm__("func_800181D4");
 extern void *memcpy(void *dest, const void *src, u32 count);
 
 /**
@@ -92,5 +92,5 @@ void func_80060838(struct Unk60838Arg *arg0)
         }
     }
 
-    func_800181D4(arg0);
+    gFreeBlock(arg0);
 }

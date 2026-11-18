@@ -48,14 +48,16 @@ struct Unk378BC {
     u8 unk15A;
 };
 
-extern s32 func_8002AD58(s32 message, void *object, void *data);
+extern s32 gEntityBaseHandler(s32 message, void *object, void *data) __asm__("func_8002AD58");
 extern void func_80060668(void *in, void *out);
 extern void func_80050E0C(void *a, void *b, s32 c, void *d, void *e);
-extern void func_80037EB4(void *self);
-extern void func_80044988(void *data, void *track, u8 forward, s32 index);
+extern void gOrientEntityBasis(void *self) __asm__("func_80037EB4");
+extern void gSetAnimClipTable(void *data, void *track, u8 forward, s32 index) __asm__("func_80044988");
 extern void gGteLoadMatrix(void *matrix) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *frame, void *output, s32 count) __asm__("func_80010234");
 extern s32 func_8006314C(void *key, u8 value);
+void gInitRailMoverEntity(s32 message, struct Unk378BC *self, struct Unk378BCOther *other) __asm__("func_800378BC");
+
 
 /**
  * @brief Runs one entity message: parts, animation and the transformed frame.
@@ -80,28 +82,27 @@ extern s32 func_8006314C(void *key, u8 value);
  * func_80030C60, with the partner's info value as an extra parameter.
  *
  * @par Environment path
- * Message handler of a two-part character: it forwards the message to
- * func_8002AD58, copies the partner animation block with func_80060668, mixes
- * the partner info value into the entity block with func_80050E0C, always
- * runs the basis orientation func_80037EB4 (line 93), starts the animation
- * track with func_80044988 and refreshes the frame vertex through
- * func_80010750 and func_80010234. When flag 0x4000 of the entity is set it
- * closes with the script VM func_8006314C. Not on the render path: it is an
- * update message handler that prepares the entity transform, and it declares
- * no global at all.
+ * Spawn helper of the class-5 handler func_800382B4 (message 2): it runs the
+ * base handler, initialises the entity's attack scheduler slot from the
+ * partner's descriptor with func_80060668 and its rail mover block with
+ * func_80050E0C, and orients the basis with func_80037EB4. It then starts the
+ * animation track with func_80044988 (taking the start index and two bytes
+ * from the partner when the entity's type byte is 5) and refreshes the frame
+ * vertex with func_80010750 and func_80010234. With flag 0x4000 set it
+ * appends an event to the frame queue with func_8006314C(self, 0).
  */
-void func_800378BC(s32 message, struct Unk378BC *self, struct Unk378BCOther *other)
+void gInitRailMoverEntity(s32 message, struct Unk378BC *self, struct Unk378BCOther *other)
 {
     struct Unk378BCPart *part;
     s32 index;
     register u8 *pointer __asm__("$2");
     register s32 offset __asm__("$4");
 
-    func_8002AD58(message, self, other);
+    gEntityBaseHandler(message, self, other);
     part = other->part;
     func_80060668(part->animIn, self->unkA0);
     func_80050E0C(part->output, self->unkDC, other->info->value, self, self->unk50);
-    func_80037EB4(self);
+    gOrientEntityBasis(self);
     self->unk15A = 0;
     if (self->state->animData != 0) {
         index = 0;
@@ -110,7 +111,7 @@ void func_800378BC(s32 message, struct Unk378BC *self, struct Unk378BCOther *oth
             self->unk159 = part->unk49 | 1;
             index = part->unk48;
         }
-        func_80044988(self->state->animData, self->unkC8, 1, index);
+        gSetAnimClipTable(self->state->animData, self->unkC8, 1, index);
     }
     gGteLoadMatrix(self->matrix);
     offset = self->frame;

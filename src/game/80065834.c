@@ -14,12 +14,14 @@ extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 gEffectSizeTable[] __asm__("D_800A6F60");
-extern u8 D_8009F37C[];
+extern u32 gMarkerColorTable[] __asm__("D_800A6F60");
+extern u8 gMarkerLabelText[] __asm__("D_8009F37C");
 extern void func_800694C8(s32 *, s32 *, s32, s32);
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(struct SVec *, struct Vec *, s32) __asm__("func_80010234");
 extern void func_80049100(u8 *, s32, s32, s32);
+void gDrawRadarBlip(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3) __asm__("func_80065834");
+
 
 /**
  * @brief Draws one entity as a screen-space marker primitive (small or large
@@ -50,18 +52,20 @@ extern void func_80049100(u8 *, s32, s32, s32);
  * func_8004ED18 (the entity pass).
  *
  * @par Environment path
- * Draws one entity as a screen-space marker: it first emits a fixed small
- * packet for the selected entity type when the session mode is 1, then
- * radius-culls the entity against the clip box, projects the four corners of
- * its model bounds with func_80010234 and emits the large quad packet with
- * the two effect colours. The corners are scaled into the 80 by 80 cell grid
- * by shifts and the packet depth is derived from the summed y component, and
- * a type 1 entity additionally gets the label string at D_8009F37C drawn over
- * the quad with func_80049100. Its only caller is the entity pass
- * func_8004ED18 (src/game/8004ED18.c:44); it uses the same packet pools as
- * the model drawers but is a bounds/HUD overlay, not the region grid.
+ * Draws one entity onto the radar/minimap; its only caller is the entity pass
+ * func_8004ED18, which supplies the map window min/max. In game mode 1
+ * (session +0x5C), entities of type 0x1C with flag class 2 first get a 2x2
+ * rectangle at their minimap cell (func_800694C8, offset 0x50 when arg3 is
+ * set) from the gPacketCursor pool. The entity (type 1, the player unit, uses
+ * its +0xAC graphic and triple size) is then culled against the window, the
+ * four corners of its model bound are transformed with
+ * func_80010750/func_80010234, scaled into the 80-unit radar frame, and
+ * emitted from gPrimPoolNext as one gouraud triangle (front midpoint and the
+ * two rear corners) in the colour D_800A6F60[flags & 31]; for type 1 the
+ * label string D_8009F37C (the letter P) is drawn at the triangle centre with
+ * func_80049100.
  */
-void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
+void gDrawRadarBlip(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
 {
     register s32 offset __asm__("$17");
     s32 sx, sy;
@@ -94,7 +98,7 @@ void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
         func_800694C8(&sx, &sy, *(s32 *)(entity + 0x58), *(s32 *)(entity + 0x50));
         index = flags & 31;
         __asm__ volatile ("" : : "r"(index) : "$3");
-        colors = gEffectSizeTable;
+        colors = gMarkerColorTable;
         smallbase = gPacketCursor;
         color = colors[index];
         {
@@ -176,7 +180,7 @@ void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
         lt = (u8 *)(flags & 31);
     }
     large = lp;
-    color = gEffectSizeTable[(s32)lt];
+    color = gMarkerColorTable[(s32)lt];
     }
     depth = 0x400 - (depth >> 8);
     if (depth <= 0) depth = 1;
@@ -213,7 +217,7 @@ void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
         nx >>= 31;
         mode = (mode == 1) * 8;
         __asm__ volatile ("" : : "r"(mode) : "$4");
-        text = D_8009F37C;
+        text = gMarkerLabelText;
         __asm__("" : "=r"(hx) : "0"(hx), "r"(text));
         nx = hx - nx - 4;
         __asm__("" : "=r"(ny) : "0"(ny), "r"(nx));

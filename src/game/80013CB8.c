@@ -29,6 +29,8 @@ extern struct Matrix gBoneMatrices[] __asm__("D_800A0300");
 extern void gBuildRotationMatrixVariant(s32, s32, s32, struct Matrix *) __asm__("func_80018DC0");
 extern void gGteLoadRotation(struct Matrix *) __asm__("func_80010820");
 extern void gGteTransformWords(struct Matrix *, struct Matrix *, s32) __asm__("func_8001006C");
+void gComposeBoneMatrix(s32 arg0, struct Input *input, s16 *table, s32 offset) __asm__("func_80013CB8");
+
 
 /**
  * @brief Composes the transform of node arg0 in the matrix stack
@@ -56,19 +58,17 @@ extern void gGteTransformWords(struct Matrix *, struct Matrix *, s32) __asm__("f
  * func_80013F08, func_8001428C.
  *
  * @par Environment path
- * Builds the local transform of one scene-graph node and composes it into the
- * matrix stack: the three angles and the three translation components come
- * literally from the input record or as samples of the animation table
- * depending on the flags byte, func_80018DC0 builds the rotation,
- * func_80010820 loads the parent slot of D_800A0300 and func_8001006C
- * concatenates the result into the node slot before the parent translation is
- * added. Its callers func_80013F08 and func_8001428C are the model-instance
- * matrix builders, which then load D_800A0300 into the GTE and test the
- * instance against the view volume. It therefore sits one level below the
- * model submit that the environment pass calls, and it touches no camera, no
- * primitive buffer and no map data.
+ * Builds the local transform of one hierarchy level and composes it into the
+ * bone matrix array D_800A0300: each of the three angles and three
+ * translations comes either literally from the input record or from the
+ * animation table at offset+field, depending on the flags byte. func_80018DC0
+ * builds the rotation, func_80010820 loads the parent slot (index arg0 - 1),
+ * func_8001006C concatenates into slot arg0 and the parent translation is
+ * added. Its only callers are the hierarchical projection loops of
+ * func_80013F08 and func_8001428C, which load the resulting slot into the GTE
+ * and transform that part's vertices.
  */
-void func_80013CB8(s32 arg0, struct Input *input, s16 *table, s32 offset)
+void gComposeBoneMatrix(s32 arg0, struct Input *input, s16 *table, s32 offset)
 {
     struct Matrix matrix;
     struct Matrix *dest;

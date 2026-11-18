@@ -4,7 +4,7 @@
 extern void *gCellMap __asm__("D_8009F820");
 extern void *gCellEntityList[2] __asm__("D_8009F818");
 extern void *D_8009F830;
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Frees the spatial visibility grid D_8009F820 and the render work buffers D_8009F818 and D_8009F830.
@@ -33,10 +33,10 @@ void func_80061860(void)
     s32 i;
 
     if (gCellMap != 0) {
-        func_800181D4(gCellMap);
+        gFreeBlock(gCellMap);
     }
     for (i = 0; i < 2; i++) {
-        func_800181D4(gCellEntityList[i]);
+        gFreeBlock(gCellEntityList[i]);
     }
-    func_800181D4(D_8009F830);
+    gFreeBlock(D_8009F830);
 }

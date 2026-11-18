@@ -5,7 +5,7 @@ extern void **gLightGrid __asm__("D_8009F780");
 extern s32 gLightGridWidth __asm__("D_8009F78C");
 extern s32 gLightGridHeight __asm__("D_8009F790");
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates and zeroes the spatial light-node bucket grid D_8009F780.
@@ -39,7 +39,7 @@ void func_800496D0(s32 width, s32 height)
     count = width * height;
     gLightGridHeight = height;
     gLightGridWidth = width;
-    cells = func_80017EBC(count * 4, 2);
+    cells = gAllocMemory(count * 4, 2);
     gLightGrid = cells;
     for (i = count - 1; i >= 0; i--) {
         cells[i] = 0;

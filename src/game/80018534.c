@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u16 gSineTable[] __asm__("D_8009A234");
+s32 gSineLookup(u32 angle) __asm__("func_80018534");
+
 
 /**
  * @brief Sine lookup over a 1024-entry quarter-wave table, 12-bit angle.
@@ -23,16 +25,14 @@ extern u16 gSineTable[] __asm__("D_8009A234");
  * func_800654F8.
  *
  * @par Environment path
- * Sine lookup over the 1024-entry quarter-wave table: the angle is masked to
- * 12 bits, the index is mirrored at 0x400, the table value is doubled and
- * negated when bit 0x800 is set. Its only caller is gBuildTilePattern
- * (func_800654F8, line 88), the 256-byte minimap/tileset pattern generator
- * that gDrawRegionTiles (func_8006531C, line 72) invokes whenever the tileset
- * id of a region changes. It is therefore a leaf of the environment tile
- * layer rather than of the model path: no actor or effect renderer calls it,
- * and it writes nothing.
+ * Sine lookup over the quarter-wave table gSineTable: the angle is masked to
+ * 12 bits, the index is mirrored as 0x400 - index in the second and fourth
+ * quadrants (so entries 0..0x400 are used), the value is doubled and negated
+ * when bit 0x800 is set. Its only caller is gBuildTilePattern
+ * (func_800654F8), the 256-byte map tile pattern generator. It writes
+ * nothing.
  */
-s32 func_80018534(u32 angle)
+s32 gSineLookup(u32 angle)
 {
     s32 index;
     s32 value;

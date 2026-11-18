@@ -10,7 +10,7 @@ struct Unk7364C {
 extern struct Unk7364C *gModelNodeList __asm__("D_8009F38C");
 
 extern void func_80071A68(struct Unk7364C *node);
-extern void func_80071B40(struct Unk7364C *node, s32 arg);
+extern void gStepBeamNode(struct Unk7364C *node, s32 arg) __asm__("func_80071B40");
 
 /**
  * @brief Per-frame pass over the list at D_8009F38C: retires flagged
@@ -52,7 +52,7 @@ void func_8007364C(s32 arg)
             node->next = 0;
             func_80071A68(node);
         } else if (flags & 0x800) {
-            func_80071B40(node, arg);
+            gStepBeamNode(node, arg);
             previous = node;
         } else {
             node->flags = flags | 0x800;

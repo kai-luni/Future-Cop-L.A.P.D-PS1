@@ -91,17 +91,17 @@ struct Emitter {
 
 extern void gGteTransformWords(void *src, void *dst, s32 count) __asm__("func_8001006C");
 extern void gGteLoadRotation(void *m) __asm__("func_80010820");
-extern void func_80017668(void *inst, s32 part, s32 *out);
+extern void gTransformPartVertex(void *inst, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_80019F54(s32 *v);
 extern void gMulMatrixVector(void *m, void *in, void *out) __asm__("func_8001A81C");
 extern void *func_8003BEF0(void *node);
 extern void func_8003BF1C(void *pool, void *prev, void *node);
 extern struct Xform *func_8003D9C4(struct Emitter *e);
-extern void func_8003D9F8(void *a, s32 b, s32 c, s32 d, void *e, void *f);
+extern void gResolveNodeTransform(void *a, s32 b, s32 c, s32 d, void *e, void *f) __asm__("func_8003D9F8");
 extern void func_800753D0(struct Particle *p);
 extern void func_80075478(void *p);
-extern void func_800754B8(struct Emitter *e, void *node, void *vec, struct Xform *x);
-extern s32 func_80066F78(void *a, s32 b, s32 c, s32 d);
+extern void gInitEmitterParticle(struct Emitter *e, void *node, void *vec, struct Xform *x) __asm__("func_800754B8");
+extern s32 gGetGroundHeight(void *a, s32 b, s32 c, s32 d) __asm__("func_80066F78");
 extern u8 func_800751A4(struct Particle *p, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void gRunPolygonPass(struct Emitter *e, s32 step) __asm__("func_80075A84");
 
@@ -183,7 +183,7 @@ void gRunPolygonPass(struct Emitter *e, s32 step)
                 void *child;
                 child = e->sub ? e->sub->child : 0;
                 if (child != 0 && e->part >= 0 && e->part < 4) {
-                    func_80017668(child, e->part, (s32 *)&local.pos);
+                    gTransformPartVertex(child, e->part, (s32 *)&local.pos);
                     { s32 t0 = e->mat.m[0]; local.m.m[1] = e->mat.m[1]; local.m.m[2] = e->mat.m[2]; local.m.m[3] = e->mat.m[3]; local.m.m[4] = e->mat.m[4]; local.m.m[5] = e->mat.m[5]; local.m.m[6] = e->mat.m[6]; local.m.m[7] = e->mat.m[7]; local.m.m[8] = e->mat.m[8]; local.m.m[0] = t0; }
                     o = lp;
                 } else {
@@ -193,7 +193,7 @@ void gRunPolygonPass(struct Emitter *e, s32 step)
                 self->pos.y = o->pos.y - xf->pos.y;
                 self->pos.z = o->pos.z - xf->pos.z;
             } else {
-                func_8003D9F8(e->sub ? e->sub->child : 0, e->flags1A, e->part, 1, e->sub, &e->mat);
+                gResolveNodeTransform(e->sub ? e->sub->child : 0, e->flags1A, e->part, 1, e->sub, &e->mat);
             }
             if (self->flags1A & 0x100) {
                 gMulMatrixVector(xf, self->pad58, vec);
@@ -217,7 +217,7 @@ void gRunPolygonPass(struct Emitter *e, s32 step)
                         cnt -= self->limit;
                         np = func_8003BEF0(&self->pool);
                         if (np != 0) {
-                            func_800754B8(self, np, vec, xf);
+                            gInitEmitterParticle(self, np, vec, xf);
                         }
                     }
                 }
@@ -293,7 +293,7 @@ void gRunPolygonPass(struct Emitter *e, s32 step)
                     }
                 } else {
                     if (self->flags8E & 8) {
-                        s32 r2 = func_80066F78(&p->pos, 0, 0, 0);
+                        s32 r2 = gGetGroundHeight(&p->pos, 0, 0, 0);
                         prev = p;
                         if (p->pos.y < r2) {
                             p->flags |= 1;

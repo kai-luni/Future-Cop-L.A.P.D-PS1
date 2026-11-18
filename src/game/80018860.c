@@ -16,7 +16,7 @@ struct Matrix {
     struct Vec3s32 translation;
 };
 
-extern void func_80019470(struct Matrix32 *source, struct Matrix32 *destination);
+extern void gTransposeMatrix3x3(struct Matrix32 *source, struct Matrix32 *destination) __asm__("func_80019470");
 extern void gMulMatrixVector(struct Matrix32 *matrix, struct Vec3s32 *input, struct Vec3s32 *output) __asm__("func_8001A81C");
 void gBuildViewMatrix(u8 *rotation, u8 *matrix) __asm__("func_80018860");
 
@@ -53,7 +53,7 @@ void gBuildViewMatrix(u8 *rotation, u8 *matrix)
     struct Matrix *mat = (struct Matrix *)matrix;
     struct Vec3s32 *t;
 
-    func_80019470(&rot->rotation, &mat->rotation);
+    gTransposeMatrix3x3(&rot->rotation, &mat->rotation);
     t = &mat->translation;
     gMulMatrixVector(&mat->rotation, &rot->translation, t);
     mat->translation.x = -mat->translation.x;

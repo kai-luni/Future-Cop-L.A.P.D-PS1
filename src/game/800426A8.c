@@ -8,7 +8,7 @@ struct Entity {
     u8 unkA1;
 };
 
-extern s32 func_8002AD58(s32 message, struct Entity *self, void *data);
+extern s32 gEntityBaseHandler(s32 message, struct Entity *self, void *data) __asm__("func_8002AD58");
 extern void func_800423F0(struct Entity *self);
 extern s32 func_80042470(s32 message, struct Entity *self);
 extern s32 func_80042504(s32 message, struct Entity *self, void *data);
@@ -65,6 +65,6 @@ s32 func_800426A8(s32 message, struct Entity *self, void *data)
         return func_80042470(message, self);
     case 12:
     default:
-        return func_8002AD58(message, self, data);
+        return gEntityBaseHandler(message, self, data);
     }
 }

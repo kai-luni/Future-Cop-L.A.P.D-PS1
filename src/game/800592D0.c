@@ -46,8 +46,8 @@ struct Frame592D0 {
 
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u8 *gGameSession __asm__("D_8009FA94");
-extern struct Unk592D0 *D_8009FA58[];
-extern u8 D_8009AF40[];
+extern struct Unk592D0 *gPlayerEntities[] __asm__("D_8009FA58");
+extern u8 gEffectVertexBlock[] __asm__("D_8009AF40");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
@@ -58,7 +58,9 @@ extern void gTransformToViewSpace(struct Unk178DC *object, s32 arg1) __asm__("fu
 extern void gGteLoadMatrix(void *arg0) __asm__("func_80010750");
 extern void gGteTransformVerticesV0(void *arg0, void *arg1, s32 arg2) __asm__("func_800101D4");
 extern s32 func_80019E70(s16 *point, s32 margin);
-extern void func_8001047C(void *arg0, void *arg1, void *arg2, s32 arg3);
+extern void gProjectVertexBatch(void *arg0, void *arg1, void *arg2, s32 arg3) __asm__("func_8001047C");
+void gDrawOtherPlayerArrow(struct Unk592D0 *arg0) __asm__("func_800592D0");
+
 
 /**
  * @brief Draws the seven-point polygon of a special effect object.
@@ -84,20 +86,21 @@ extern void func_8001047C(void *arg0, void *arg1, void *arg2, s32 arg3);
  * only in the higher view mode, with a distance-dependent fade.
  *
  * @par Environment path
- * Draws the seven-point polygon effect of a two-player object: it returns
- * when the player count is below 2, when the session word at +0x5C is
- * non-zero, when the near and far pair from func_800536B4 is empty or when
- * func_80019E70 rejects the projected point. Otherwise it builds the object
- * frame with func_80018DC0 from the angle to the other player slot, makes it
- * camera relative with func_800178DC, loads it with func_80010750, transforms
- * the vertex block at 0x8009AF40 with func_800101D4 and projects all seven
- * points with func_8001047C, then emits the clear packet and four 0x1C
- * packets with the colour ramped by far shifted by 7 capped at 0x7F. Its
- * caller is func_800597C0, the object update that also advances this object's
- * animation, so this is an effect layer attached to the actors, not part of
- * the tile or region pass.
+ * Two-player overlay drawn from the player-unit draw handler func_800597C0:
+ * it returns unless gPlayerCount is at least 2, the session word +0x5C is
+ * zero and the depth-cue factor 'far' from func_800536B4 (non-zero only when
+ * the view distance D_8009FA64 reaches 0x1A000) is positive. It places a
+ * frame above the unit (y raised by 0x27C0 minus a term from the state's
+ * +0xBC), rotates it with func_80018DC0 toward the other entry of the player
+ * table D_8009FA58 (1 - own slot index at +0xC1), makes it camera-relative
+ * with func_800178DC and loads it with func_80010750. If the reference vertex
+ * of the seven-point shape at 0x8009AF40 passes func_80019E70, all seven
+ * points are projected with func_8001047C and emitted as one draw-mode
+ * packet, one semi-transparent flat quad and three flat triangles from the
+ * gPacketCursor pool, whose intensity is far >> 9 capped at 0x7F - an arrow
+ * toward the other player that fades in with distance.
  */
-void func_800592D0(struct Unk592D0 *arg0)
+void gDrawOtherPlayerArrow(struct Unk592D0 *arg0)
 {
     struct Frame592D0 frame;
     struct Unk592D0 *other;
@@ -147,7 +150,7 @@ void func_800592D0(struct Unk592D0 *arg0)
     index = 1 - arg0->unkAC->unkC1;
     height_input = arg0->x;
     __asm__ __volatile__("" : "=r"(index), "=r"(height_input) : "0"(index), "1"(height_input) : "$3");
-    table = D_8009FA58;
+    table = gPlayerEntities;
     __asm__("" : "=r"(table) : "0"(table));
     other = table[index];
     angle = func_80095C30(other->x - height_input, other->z - arg0->z);
@@ -166,7 +169,7 @@ void func_800592D0(struct Unk592D0 *arg0)
     if ((func_80019E70((s16 *)frame.point, 0x400) & 0xFF) != 2) {
         return;
     }
-    func_8001047C(afptr, frame.point, frame.unkA8, 7);
+    gProjectVertexBatch(afptr, frame.point, frame.unkA8, 7);
 
     sum = frame.point[0].z;
     point1z = frame.point[1].z;

@@ -18,8 +18,8 @@ struct Entity {
     struct Entity *unkC8;
 };
 
-extern struct Entity *D_8009FA58[2];
-extern struct Entity *gPaletteCycleCounter[2] __asm__("D_8009FA60");
+extern struct Entity *gPlayerEntities[2] __asm__("D_8009FA58");
+extern struct Entity *gGameClock[2] __asm__("D_8009FA60");
 
 /**
  * @brief Compares one entity field with a value and optionally checks the pair table.
@@ -109,8 +109,8 @@ s32 func_8002F8B8(u8 arg0, s16 arg1, struct Entity *arg2, u8 arg3)
         if (arg3 != 0) {
             register s32 one __asm__("$7") = 1;
             register u8 unk16 __asm__("$4") = arg2->unk16;
-            p = D_8009FA58;
-            end = gPaletteCycleCounter;
+            p = gPlayerEntities;
+            end = gGameClock;
             do {
                 if (unk16 == one) {
                     if (arg2 != *p) {

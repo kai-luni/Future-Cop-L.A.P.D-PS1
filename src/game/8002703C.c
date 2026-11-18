@@ -7,23 +7,23 @@ struct Unk9F9A0 {
     u8 unk11D;
 };
 
-extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
+extern volatile s32 gGameClock __asm__("D_8009FA60");
 extern volatile s32 gFrameTickBase __asm__("D_8009FA30");
-extern s32 gFrameId __asm__("D_8009F9FC");
+extern s32 gFrameDelta __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gDemoPlayback __asm__("D_8009FA84");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 extern u8 gFrameDeltaNewest __asm__("D_8009F690");
 extern u8 gFrameDeltaPrev1 __asm__("D_8009F691");
 extern u8 gFrameDeltaPrev2 __asm__("D_8009F692");
 extern u8 gFrameDeltaRemainder __asm__("D_8009F693");
-extern u8 *gMissionWorkingSet[] __asm__("D_8009F9A0");
+extern u8 *gFocusPositions[] __asm__("D_8009F9A0");
 
 extern void func_80057864(void);
 extern s32 func_80059DB8(void);
 extern void func_8004DB74(s32 elapsed);
 extern void func_80063568(s32 arg);
-extern void func_800136C8(s32 arg);
+extern void gStepAnimations(s32 arg) __asm__("func_800136C8");
 extern void func_8004CC68(void);
 
 /**
@@ -57,51 +57,51 @@ void func_8002703C(void)
     struct Unk9F9A0 *obj;
 
     do {
-        s32 cur = gPaletteCycleCounter;
+        s32 cur = gGameClock;
         s32 prev = gFrameTickBase;
         diff = cur - prev;
-        gDiscShadeByte = cur;
+        gFrameTime = cur;
     } while (diff < 5);
 
     __asm__ volatile("");
     sum = diff + (s8)gFrameDeltaNewest + (s8)gFrameDeltaPrev1;
-    gFrameId = diff;
+    gFrameDelta = diff;
     sum = sum + (s8)gFrameDeltaPrev2 + (s8)gFrameDeltaRemainder;
-    gFrameId = sum;
-    gFrameDeltaRemainder = *(u8 *)&gFrameId & 3;
+    gFrameDelta = sum;
+    gFrameDeltaRemainder = *(u8 *)&gFrameDelta & 3;
     if (sum < 0) {
         sum += 3;
     }
     __asm__ volatile("");
-    obj = gMissionWorkingSet[0];
-    gFrameId = sum >> 2;
+    obj = gFocusPositions[0];
+    gFrameDelta = sum >> 2;
     gFrameDeltaPrev2 = gFrameDeltaPrev1;
     gFrameDeltaPrev1 = gFrameDeltaNewest;
     gFrameDeltaNewest = diff;
     if (obj != 0 && obj->unk11C != 0 && obj->unk11D != 0) {
-        gFrameId = obj->unk11D * 5;
+        gFrameDelta = obj->unk11D * 5;
     }
 
-    if (gFrameId >= 0x3C) {
-        gFrameId = 0x3C;
+    if (gFrameDelta >= 0x3C) {
+        gFrameDelta = 0x3C;
     }
 
     func_80057864();
-    if (gModuleLoadedFlag > 0) {
+    if (gDemoPlayback > 0) {
         value = func_80059DB8();
-        gFrameId = value;
+        gFrameDelta = value;
         if (value < 0) {
             gScreenState = 5;
-            gFrameId = 5;
+            gFrameDelta = 5;
         }
-        nsum = gFrameTickBase + gFrameId;
-        gDiscShadeByte = nsum;
-        gPaletteCycleCounter = nsum;
+        nsum = gFrameTickBase + gFrameDelta;
+        gFrameTime = nsum;
+        gGameClock = nsum;
     }
 
-    gFrameTickBase = gDiscShadeByte;
-    func_8004DB74(gFrameId);
-    func_80063568(gFrameId);
-    func_800136C8(gFrameId);
+    gFrameTickBase = gFrameTime;
+    func_8004DB74(gFrameDelta);
+    func_80063568(gFrameDelta);
+    gStepAnimations(gFrameDelta);
     func_8004CC68();
 }

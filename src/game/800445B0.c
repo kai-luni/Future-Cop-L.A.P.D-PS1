@@ -7,7 +7,7 @@ struct Unk445B0Node {
     u8 flags;
 };
 
-extern void func_80044260(struct Unk445B0Node *node, void *arg);
+extern void gDrawObjectPointTiles(struct Unk445B0Node *node, void *arg) __asm__("func_80044260");
 
 /**
  * @brief Walks a node list and places every node whose flag bit 3 is
@@ -28,7 +28,7 @@ void func_800445B0(struct Unk445B0Node *node, void *arg)
 {
     while (node != 0) {
         if (!(node->flags & 8)) {
-            func_80044260(node, arg);
+            gDrawObjectPointTiles(node, arg);
         }
         node = node->next;
     }

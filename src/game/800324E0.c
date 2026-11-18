@@ -28,16 +28,16 @@ struct Obj {
 };
 
 extern s32 *gGameSession __asm__("D_8009FA94");
-extern struct Hit *D_8009FA58;
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern struct Hit *gPlayerEntities __asm__("D_8009FA58");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern void func_80044B34(void *, void *, s32, s32);
-extern void func_800175F8(void *, s32);
+extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_80019668(void);
 extern struct Res *func_8004E80C(void *, s32, s32, s32, s32, s32, s32);
 extern void func_800320E4(struct Obj *);
 extern s32 func_80069A38(V3 *);
-extern s32 func_80066F78(V3 *, s32, s32, s32);
+extern s32 gGetGroundHeight(V3 *, s32, s32, s32) __asm__("func_80066F78");
 extern void func_8003BA50(struct Obj *, s32);
 extern void func_8003B898(s32, struct Obj *, s32, s32, s32);
 extern struct Hit *func_8004D664(s32);
@@ -132,20 +132,26 @@ extern void func_80060238(u32 *, s32, struct Obj *, s32, s32);
  * func_8003532C.
  *
  * @par Environment path
- * Message-6 tick of a hovering attacker: it re-acquires a target through
- * func_8004E80C, runs the approach, dive, descent and death states of the
- * byte at +0xFA, dives onto a terrain probe (func_80066F78) with an occupancy
- * update (func_8003B898), a hit record fetch (func_8004D664) and a script
- * call (func_80069D68), and steers with func_8001A644 / func_8001A6F8 /
- * func_8001A750 while holding an altitude band above the ground height from
- * func_80069A38. The resulting basis is built by func_80019310 and loaded
- * with gGteLoadMatrix (func_80010750) before the current model frame is
- * transformed into +0x5C by gGteTransformVerticesWide (func_80010234). It is
- * gameplay AI, not a render pass: it reads the session word
- * gGameSession[0x13] for the dive timer and the player table D_8009FA58 for
- * the kill counter, but emits no primitive.
+ * Shared flyer motion tick, called from the message handlers func_80032F3C
+ * and func_8003532C: it advances the animation (func_80044B34,
+ * func_800175F8), periodically re-acquires a target with func_8004E80C and
+ * toggles between the pursue (0) and wander (1) states on random timers. In
+ * states 0/1 it steers toward the target or its home point (func_8001A750,
+ * func_8001A644, func_8001AB78, func_8001A6F8), holds an altitude band above
+ * the heightfield sample func_80069A38, integrates the position and ticks its
+ * attack descriptor with func_80060238; state 4 climbs back into the band.
+ * State 3 is the crash fall: it tumbles with random jitter until the ground
+ * height from func_80066F78 is reached, and for type 0x25 then registers map
+ * occupancy (func_8003B898), stamps the record at +0x134 with the frame time
+ * D_8009FAA4, credits a kill to player slot 0 of D_8009FA58 when it was the
+ * killer (func_8004D664) and runs the death script with func_80069D68 before
+ * entering the dead state 5. Every live path ends by building the basis with
+ * func_80019310 and transforming the frame vertex (func_80010750,
+ * func_80010234); no primitives are emitted.
  */
-s32 func_800324E0(s32 unused, struct Obj *o, s32 dt)
+s32 gUpdateHoverEnemy(s32 unused, struct Obj *o, s32 dt) __asm__("func_800324E0");
+
+s32 gUpdateHoverEnemy(s32 unused, struct Obj *o, s32 dt)
 {
     V3 a;
     V3 b;
@@ -155,7 +161,7 @@ s32 func_800324E0(s32 unused, struct Obj *o, s32 dt)
 
     if (o->f28->f10 != 0) {
         func_80044B34(o, (u8 *)o + 0x120, dt, 0);
-        func_800175F8((u8 *)o + 0x28, o->f12C);
+        gSetModelFrame((u8 *)o + 0x28, o->f12C);
     }
 
     if (o->type != 0x25) {
@@ -239,7 +245,7 @@ L5E4:
         s32 t3;
         s32 c3;
         pp = &o->pos;
-        t3 = func_80066F78(pp, 0, 0, 0);
+        t3 = gGetGroundHeight(pp, 0, 0, 0);
         if (!(t3 + (o->f68 >> 1) < o->pos.y)) {
             if (o->type == 0x25) {
                 s32 k;
@@ -254,14 +260,14 @@ L5E4:
                 o->f1C = -1;
                 func_8003B898(o->f20, o, 0, (o->f19 >> 3) & 0x1E, 2);
                 if (o->f134->f48 == 0)
-                    o->f134->f48 = gDiscShadeByte;
+                    o->f134->f48 = gFrameTime;
                 o->f134->f3E++;
                 if (o->f8C != 0) {
                     struct Hit *h;
                     h = func_8004D664(o->f8C & 0x3FFFFFFF);
-                    if (h != 0 && D_8009FA58 != 0 &&
-                        (h->f14 & 0x3FFF) == D_8009FA58->f14)
-                        D_8009FA58->fAC->f14++;
+                    if (h != 0 && gPlayerEntities != 0 &&
+                        (h->f14 & 0x3FFF) == gPlayerEntities->f14)
+                        gPlayerEntities->fAC->f14++;
                 }
                 if (o->f98 != 0)
                     func_80069D68(o->f98, 0, -1, o);

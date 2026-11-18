@@ -104,9 +104,9 @@ struct Self35904 {
     u8 unkE8[0x14];
 };
 
-extern s32 func_8002AD58(s32 message, struct Self35904 *object, struct Arg35904 *data, s32 arg3);
+extern s32 gEntityBaseHandler(s32 message, struct Self35904 *object, struct Arg35904 *data, s32 arg3) __asm__("func_8002AD58");
 extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options);
-extern void func_80044988(u8 *data, struct AnimTrack *track, u8 forward, s32 index);
+extern void gSetAnimClipTable(u8 *data, struct AnimTrack *track, u8 forward, s32 index) __asm__("func_80044988");
 extern s32 func_80019668(void);
 extern void func_800193F8(struct Vec3 *axis, void *basis);
 
@@ -169,7 +169,7 @@ void gProjectileInit(struct Self35904 *self, struct Arg35904 *arg1, s32 arg2)
 {
     struct Data35904 *data;
 
-    func_8002AD58(2, self, arg1, arg2);
+    gEntityBaseHandler(2, self, arg1, arg2);
     data = arg1->unk08;
 
     func_80013BD8(&self->unk28, data->unk24, 0);
@@ -181,7 +181,7 @@ void gProjectileInit(struct Self35904 *self, struct Arg35904 *arg1, s32 arg2)
     self->unk24 |= 0x40000;
 
     if (self->unk28.model != 0 && self->unk28.model->unk10 != 0) {
-        func_80044988(self->unk28.model->unk10, (struct AnimTrack *)self->unkE8, 1, 0);
+        gSetAnimClipTable(self->unk28.model->unk10, (struct AnimTrack *)self->unkE8, 1, 0);
     }
 
     self->unkE0 = data->unk30;

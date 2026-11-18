@@ -51,7 +51,7 @@ struct Unk57914 {
 
 extern void D_80059ABC();
 
-extern void func_80017668(void *source, s32 arg1, struct Vec3s32 *out);
+extern void gTransformPartVertex(void *source, s32 arg1, struct Vec3s32 *out) __asm__("func_80017668");
 extern void *gSpawnQueuedEntity(struct Unk57914Request *request) __asm__("func_8004D444");
 
 /**
@@ -96,7 +96,7 @@ void func_80057914(struct Unk57914 *object)
     args.flags = object->flags;
     args.unk18 = object->unk1C;
     args.unk1A = object->unk1A;
-    func_80017668(object->coord, 0, &args.position);
+    gTransformPartVertex(object->coord, 0, &args.position);
     args.owner = object;
     args.unk20 = 0;
     args.unk21 = 0;

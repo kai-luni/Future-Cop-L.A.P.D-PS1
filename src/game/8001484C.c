@@ -29,6 +29,8 @@ extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 * volatile gPacketLimit __asm__("D_8009F9C0");
 
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
+void gEmitGouraudDisc(Vec *v, u32 color0, u32 color1, s32 count, s32 scale, s32 offset_z, s32 angle) __asm__("func_8001484C");
+
 
 /**
  * @brief Emits a gouraud-shaded disc (fan of triangles) around a centre.
@@ -69,7 +71,7 @@ extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
  * render path used by gSubmitModelInstance (func_80017508), not to the
  * gDrawViewLayers region layers.
  */
-void func_8001484C(Vec *v, u32 color0, u32 color1, s32 count, s32 scale, s32 offset_z, s32 angle)
+void gEmitGouraudDisc(Vec *v, u32 color0, u32 color1, s32 count, s32 scale, s32 offset_z, s32 angle)
 {
     register s32 vx __asm__("$23");
     s32 vy;

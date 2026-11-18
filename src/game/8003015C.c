@@ -31,7 +31,7 @@ struct Arg3015C {
     u8 unk16;
 };
 
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern void func_8002FA20(struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3);
 extern void func_80030060(struct Obj3015C *obj, struct Arg3015C *arg);
@@ -40,7 +40,9 @@ extern s32 func_8002FF6C(struct Obj3015C *obj, struct Arg3015C *arg);
 extern s32 gBuildRotationMatrix(s32 a, s32 b, s32 c, void *d) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *a) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
-extern s32 func_8002AD58(s32 message, struct Obj3015C *object, struct Arg3015C *data);
+extern s32 gEntityBaseHandler(s32 message, struct Obj3015C *object, struct Arg3015C *data) __asm__("func_8002AD58");
+s32 gHandleRotatingPropMsg(s32 cmd, struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3) __asm__("func_8003015C");
+
 
 /**
  * @brief Entity message handler of the second script family.
@@ -76,7 +78,7 @@ extern s32 func_8002AD58(s32 message, struct Obj3015C *object, struct Arg3015C *
  * instead of on the environment path. The class it belongs to is only visible
  * through the helpers it calls, not through a name in the file.
  */
-s32 func_8003015C(s32 cmd, struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3)
+s32 gHandleRotatingPropMsg(s32 cmd, struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3)
 {
     switch (cmd) {
     case 1:
@@ -104,12 +106,12 @@ s32 func_8003015C(s32 cmd, struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3)
             gGteLoadMatrix((u8 *)obj + 0x2C);
             gGteTransformVerticesWide(obj->unk28->unk34 + ((obj->unk70 << 4) + 8),
                           (u8 *)obj + 0x5C, 1);
-            if ((obj->unkC8 & 0xF0) && (gDiscShadeByte & 0x80)) {
+            if ((obj->unkC8 & 0xF0) && (gFrameTime & 0x80)) {
                 obj->unk24 |= 0x2000000;
             }
         }
         return 0;
     default:
-        return func_8002AD58(cmd, obj, arg);
+        return gEntityBaseHandler(cmd, obj, arg);
     }
 }

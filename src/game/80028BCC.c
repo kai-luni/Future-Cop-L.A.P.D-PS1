@@ -27,7 +27,7 @@ typedef struct Unk80028BCC {
 } Unk80028BCC;
 
 extern s32 func_80069D68(void *data, s32 arg1, s32 arg2, s32 arg3);
-extern u8 *func_80017EBC(u8 *data, s32 arg1);
+extern u8 *gAllocMemory(u8 *data, s32 arg1) __asm__("func_80017EBC");
 extern void func_80028BA0(u32 *destination, const u32 *source, u32 byte_count);
 
 /**
@@ -101,7 +101,7 @@ s32 func_80028BCC(Unk80028BCCOut *out, Unk80028BCC *arg)
         }
 
         base = (u32)obj->unk20 + 0x30;
-        result = (Unk80028BCCResult *)func_80017EBC((u8 *)(size + base), obj->unk14);
+        result = (Unk80028BCCResult *)gAllocMemory((u8 *)(size + base), obj->unk14);
         out->unk00 = result;
         out->unk04 = 0;
         func_80028BA0((u32 *)((u8 *)result + 0x14), (const u32 *)((u8 *)obj + 0x14), size + 0x1C);

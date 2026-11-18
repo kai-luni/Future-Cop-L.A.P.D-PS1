@@ -33,7 +33,7 @@ extern s8 *gFontBankTable __asm__("D_8009F468");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern s8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern struct Ctx *gSaveProfileImage __asm__("D_8009F92C");
-extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
+extern volatile s32 gGameClock __asm__("D_8009FA60");
 extern s8 gMenuActivationBlock[] __asm__("D_800A3718");
 extern s8 gMissionListTable[] __asm__("D_8009B724");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
@@ -127,7 +127,7 @@ void gDrawProfileDetailScreen(s32 arg0)
                 s32 on = p[0x428];
                 __asm__("" : : "r"(p), "r"(on));
                 if (on != 0) {
-                if (((gPaletteCycleCounter >> 9) & 1) != 0) {
+                if (((gGameClock >> 9) & 1) != 0) {
                     func_80078B34(0x3912, 0, 0);
                 }
             }
@@ -135,8 +135,8 @@ void gDrawProfileDetailScreen(s32 arg0)
             func_80078B34(0x3908, 1, 0);
         } else {
             if (gPlayerMenuDepth != 0) {
-                if (((gPaletteCycleCounter >> 9) & 1) != 0) {
-                    if (((gPaletteCycleCounter >> 10) & 1) != 0) {
+                if (((gGameClock >> 9) & 1) != 0) {
+                    if (((gGameClock >> 10) & 1) != 0) {
                         func_80078B34(0x6E5, 0, 0);
                     } else {
                         func_80078B34(0x6D6, 0, 0);

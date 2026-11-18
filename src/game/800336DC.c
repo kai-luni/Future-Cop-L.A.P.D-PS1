@@ -84,8 +84,8 @@ struct Glob {
 extern struct Unit *gUnitListHead __asm__("D_8009FA40");
 extern struct Glob *gGameSession __asm__("D_8009FA94");
 extern struct Unit *gSinglePlayerEntity __asm__("D_8009F9EC");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
-extern void *D_8009FA58;
+extern s32 gFrameTime __asm__("D_8009FAA4");
+extern void *gPlayerEntities __asm__("D_8009FA58");
 extern u8 D_8009AC50[];
 extern u8 D_8009AC54[];
 
@@ -558,7 +558,7 @@ void func_800336DC(struct Unit *self)
     L_c5:
         APPROACH(c5)
     } else if (cntA < 10) {
-        if (self->c8 != D_8009FA58) func_800336A8(self, D_8009FA58);
+        if (self->c8 != gPlayerEntities) func_800336A8(self, gPlayerEntities);
     } else {
         self->ai->mode = 0;
         G->f9C = 0;
@@ -745,7 +745,7 @@ L4170:
             s32 idx = (self->ai->c1C == 1 ? D_8009AC54 : D_8009AC50)[i];
             if (G->a0[idx] == 0) {
                 if (G->f68 >= 0x1E) {
-                    if (G->f88 == 0) gSinglePlayerEntity->ai->s4C = gDiscShadeByte;
+                    if (G->f88 == 0) gSinglePlayerEntity->ai->s4C = gFrameTime;
                     G->a0[idx] = self->team;
                     G->f68 -= 0x1E;
                     if (G->f68 < 0x1E) break;

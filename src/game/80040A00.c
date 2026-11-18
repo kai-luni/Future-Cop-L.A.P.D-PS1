@@ -16,6 +16,8 @@ extern void func_80040550(Obj *, s32);
 extern void func_80040600(Obj *, s32,s32,s32);
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
+void gUpdateObjectLights(Obj *node, s32 dt) __asm__("func_80040A00");
+
 extern void func_80049980(void *,s32,s32,s32,s32,s32,s32,s32,s32);
 /**
  * @brief Integrates the motion of an object list and moves its light.
@@ -52,7 +54,7 @@ extern void func_80049980(void *,s32,s32,s32,s32,s32,s32,s32,s32);
  * this is the physics and lighting step of dynamic objects; the file lists no
  * global data access.
  */
-void func_80040A00(Obj *node, s32 dt)
+void gUpdateObjectLights(Obj *node, s32 dt)
 {
     Obj *o;
     Parent *p;

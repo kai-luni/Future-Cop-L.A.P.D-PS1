@@ -80,17 +80,17 @@ extern s32 func_8001A100(s32 *v);
 extern void gGteLoadRotation(void *m) __asm__("func_80010820");
 extern void gGteLoadMatrix(void *m) __asm__("func_80010750");
 extern void gGteTransformWords(void *a, void *b, s32 c) __asm__("func_8001006C");
-extern void func_8001047C(void *a, void *b, void *c, s32 n);
+extern void gProjectVertexBatch(void *a, void *b, void *c, s32 n) __asm__("func_8001047C");
 
 extern s16 gPreparedVertexTable[][4] __asm__("D_800A6418");
-extern u8 D_800AB388[];
+extern u8 gRibbonClipFlags[] __asm__("D_800AB388");
 extern u8 D_800AB389[];
-extern s16 D_800A7840[];
-extern s16 D_800A7898[];
+extern s16 gRibbonSegmentDx[] __asm__("D_800A7840");
+extern s16 gRibbonSegmentDy[] __asm__("D_800A7898");
 extern Cam *gCamera __asm__("D_8009F9E4");
 extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
-extern s32 D_8009F9B8;
+extern s32 gTexturePageWord __asm__("D_8009F9B8");
 
 #define ALLOC(p) \
     p = gPrimPoolNext; \
@@ -108,6 +108,8 @@ extern s32 D_8009F9B8;
 #define SETW0(p, v) (p)->w0 = ((p)->w0 & 0xFF000000) | ((s16)(v) & 0xFFFFFF)
 
 #define INB(x, y) ((x) < 0x140 && (y) < 0xF0)
+void gDrawBeamNode(Node *node, s32 *org) __asm__("func_80071FA4");
+
 
 /**
  * @brief The full model renderer: per-vertex transform, lighting, projection and
@@ -136,18 +138,18 @@ extern s32 D_8009F9B8;
  * func_80073700 only.
  *
  * @par Environment path
- * The full model renderer for one node: per entry it runs the radius test
- * func_8001A100, builds the model or camera matrix, loads it with
- * func_80010750 or func_80010820, transforms the vertices with func_8001006C,
- * projects them into gPreparedVertexTable with func_8001047C and emits
- * per-segment Gouraud quads, plus a two-point line when a projected segment
- * has no width, from the D_8009F9F0 pool. It is called only by the object
- * dispatcher func_80073700 (line 42), which gRunViewScenePasses
- * (func_8003F6E4, line 83) runs inside every environment view. It is
- * therefore the model layer of the environment pass, and func_80072F7C is the
- * flat-shaded fallback for nodes without geometry pointers.
+ * Draws one beam node, a set of point strips stretched between two end
+ * objects: per strip it makes the points camera-relative or loads the end
+ * object's matrix, projects them into gPreparedVertexTable with func_8001047C
+ * and reads the clip bytes it returns. For each segment it computes a
+ * perpendicular screen offset whose width is interpolated from the first to
+ * the second end object's +0x1C value and divided by depth, and emits a
+ * Gouraud quad, or a two-point line when the offset is zero, from
+ * gPrimPoolNext with optional textured variants using gTexturePageWord. It is
+ * called only by func_80073700 for nodes that have end objects; nodes without
+ * them go to func_80072F7C.
  */
-void func_80071FA4(Node *node, s32 *org)
+void gDrawBeamNode(Node *node, s32 *org)
 {
     Mtx m;
     s32 v[3];
@@ -221,25 +223,25 @@ void func_80071FA4(Node *node, s32 *org)
         if (node->flags & 8) gGteLoadMatrix(&m);
         else gGteLoadRotation(&m);
 
-        func_8001047C(gPreparedVertexTable, gPreparedVertexTable, D_800AB388, node->ents[i].cnt + 1);
+        gProjectVertexBatch(gPreparedVertexTable, gPreparedVertexTable, gRibbonClipFlags, node->ents[i].cnt + 1);
 
         {
             s32 a3 = 0, a2 = 1;
             s32 t3 = node->a->f1C << 4;
             s32 step = ((node->b->f1C - node->a->f1C) << 4) / (node->ents[i].cnt + 1);
             for (j = 0; j < node->ents[i].cnt + 1; j++) {
-                if (!((D_800AB388[j] | D_800AB388[a3] | D_800AB388[a2]) & 1)) {
+                if (!((gRibbonClipFlags[j] | gRibbonClipFlags[a3] | gRibbonClipFlags[a2]) & 1)) {
                     s32 sc = ((t3 >> 4) << 10) / gPreparedVertexTable[a3][2];
                     s32 ax, ay, t, len, rawax;
                     s32 raway;
                     s32 product;
                     if (sc < 3) sc = 3;
-                    D_800A7840[j] = gPreparedVertexTable[a2][1] - gPreparedVertexTable[a3][1];
-                    D_800A7898[j] = gPreparedVertexTable[a3][0] - gPreparedVertexTable[a2][0];
-                    rawax = D_800A7840[j];
+                    gRibbonSegmentDx[j] = gPreparedVertexTable[a2][1] - gPreparedVertexTable[a3][1];
+                    gRibbonSegmentDy[j] = gPreparedVertexTable[a3][0] - gPreparedVertexTable[a2][0];
+                    rawax = gRibbonSegmentDx[j];
                     ax = rawax;
                     if (ax < 0) ax = -ax;
-                    ay = D_800A7898[j];
+                    ay = gRibbonSegmentDy[j];
                     if (ay < 0) ay = -ay;
                     if (ax < ay) { ax ^= ay; ay ^= ax; ax ^= ay; }
                     if ((ax >> 1) < ay) {
@@ -252,13 +254,13 @@ void func_80071FA4(Node *node, s32 *org)
                     if (len > 0) {
                         sc = (sc << 10) / len;
                         product = rawax * sc;
-                        D_800A7840[j] = product >> 10;
-                        raway = D_800A7898[j];
+                        gRibbonSegmentDx[j] = product >> 10;
+                        raway = gRibbonSegmentDy[j];
                         product = raway * sc;
-                        D_800A7898[j] = product >> 10;
+                        gRibbonSegmentDy[j] = product >> 10;
                     } else {
-                        D_800A7898[j] = 0;
-                        D_800A7840[j] = 0;
+                        gRibbonSegmentDy[j] = 0;
+                        gRibbonSegmentDx[j] = 0;
                     }
                 }
                 a2 = j + 2;
@@ -273,9 +275,9 @@ void func_80071FA4(Node *node, s32 *org)
         for (j = 0; j < node->ents[i].cnt; j++) {
             Prim *p;
             s32 z;
-            if ((D_800AB388[j] | D_800AB388[j + 1]) & 1) continue;
+            if ((gRibbonClipFlags[j] | gRibbonClipFlags[j + 1]) & 1) continue;
             z = ((gPreparedVertexTable[j][2] + gPreparedVertexTable[j + 1][2]) >> 1) - 0x100;
-            if (D_800A7840[j] == 0 && D_800A7898[j] == 0) {
+            if (gRibbonSegmentDx[j] == 0 && gRibbonSegmentDy[j] == 0) {
                 s16 dx = gPreparedVertexTable[j + 1][0] - gPreparedVertexTable[j][0];
                 s16 dy = gPreparedVertexTable[j + 1][1] - gPreparedVertexTable[j][1];
                 if (dx < 0) {
@@ -306,10 +308,10 @@ void func_80071FA4(Node *node, s32 *org)
                 ALLOC_T(p);
                 p->x0 = gPreparedVertexTable[j][0];
                 p->y0 = gPreparedVertexTable[j][1];
-                p->x1 = gPreparedVertexTable[j][0] - D_800A7840[j];
-                p->y1 = gPreparedVertexTable[j][1] - D_800A7898[j];
-                p->x3 = gPreparedVertexTable[j + 1][0] - D_800A7840[j + 1];
-                p->y3 = gPreparedVertexTable[j + 1][1] - D_800A7898[j + 1];
+                p->x1 = gPreparedVertexTable[j][0] - gRibbonSegmentDx[j];
+                p->y1 = gPreparedVertexTable[j][1] - gRibbonSegmentDy[j];
+                p->x3 = gPreparedVertexTable[j + 1][0] - gRibbonSegmentDx[j + 1];
+                p->y3 = gPreparedVertexTable[j + 1][1] - gRibbonSegmentDy[j + 1];
                 p->x2 = gPreparedVertexTable[j + 1][0];
                 p->y2 = gPreparedVertexTable[j + 1][1];
                 if (INB(p->x0, p->y0) || INB(p->x1, p->y1) || INB(p->x2, p->y2) || INB(p->x3, p->y3)) {
@@ -326,7 +328,7 @@ void func_80071FA4(Node *node, s32 *org)
                     p->w3 = 0;
                     p->t24 = 0x101;
                     p->t30 = 0x100;
-                    p->w6 = (D_8009F9B8 << 16) | 1;
+                    p->w6 = (gTexturePageWord << 16) | 1;
                     SETW0(p, z);
                 } else {
                     goto reject_segment;
@@ -336,10 +338,10 @@ void func_80071FA4(Node *node, s32 *org)
                 p->y0 = gPreparedVertexTable[j][1];
                 p->x1 = gPreparedVertexTable[j + 1][0];
                 p->y1 = gPreparedVertexTable[j + 1][1];
-                p->x3 = gPreparedVertexTable[j + 1][0] + D_800A7840[j + 1];
-                p->y3 = gPreparedVertexTable[j + 1][1] + D_800A7898[j + 1];
-                p->x2 = gPreparedVertexTable[j][0] + D_800A7840[j];
-                p->y2 = gPreparedVertexTable[j][1] + D_800A7898[j];
+                p->x3 = gPreparedVertexTable[j + 1][0] + gRibbonSegmentDx[j + 1];
+                p->y3 = gPreparedVertexTable[j + 1][1] + gRibbonSegmentDy[j + 1];
+                p->x2 = gPreparedVertexTable[j][0] + gRibbonSegmentDx[j];
+                p->y2 = gPreparedVertexTable[j][1] + gRibbonSegmentDy[j];
                 if (!(INB(p->x0, p->y0) || INB(p->x1, p->y1) || INB(p->x2, p->y2) || INB(p->x3, p->y3))) {
 reject_segment:
                     gPrimPoolNext = (Prim *)((u8 *)gPrimPoolNext - 0x34);
@@ -359,7 +361,7 @@ reject_segment:
                     p->w3 = 0;
                     p->t24 = 0x101;
                     p->t30 = 0x100;
-                    p->w6 = (D_8009F9B8 << 16) | 1;
+                    p->w6 = (gTexturePageWord << 16) | 1;
                     SETW0(p, z);
                 }
 

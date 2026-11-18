@@ -37,6 +37,8 @@ struct Unk41728 {
 extern void gGteLoadMatrix(void *matrix) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *frame, void *out, s32 count) __asm__("func_80010234");
 extern void func_8002A5B4(void *script, s32 index);
+void gRunEntityCommands(struct Unk41728 *self) __asm__("func_80041728");
+
 
 /**
  * @brief Executes up to four queued commands of an entity and refreshes its frame.
@@ -55,16 +57,16 @@ extern void func_8002A5B4(void *script, s32 index);
  * A small script interpreter: two opcodes here, the rest delegated.
  *
  * @par Environment path
- * Runs up to four queued script commands of an entity and then refreshes its
- * frame vertex: opcode 0x53 sets or clears bit 1 of +0xC6, opcode 0x52
- * selects an animation slot (or, for arguments above 10, writes
- * +0xCA/+0xC0/+0x54, loads the matrix and transforms one vertex), and every
- * other opcode is delegated to func_8002A5B4. The tail always loads +0x2C
- * with func_80010750 and transforms one frame vertex with func_80010234. Not
- * on the render path: it is an entity script step whose only caller is
- * func_80041880 (line 148), and it draws nothing.
+ * Processes the four-slot command queue at +0x0C of a waypoint-following
+ * entity. Opcode 0x53 sets or clears bit 1 of +0xC6; opcode 0x52 with
+ * argument 0 resets +0xC0 to -1, with 1..10 selects a new index and direction
+ * at +0xCA/+0xCB, and with 11 or more switches to the slot at +0xA0[arg -
+ * 11], writes it to +0x54 and refreshes the frame vertex with func_80010750
+ * and func_80010234. Each handled command is then removed from the queue with
+ * func_8002A5B4; unknown opcodes are skipped and stay queued. Its only caller
+ * is func_80041880.
  */
-void func_80041728(struct Unk41728 *self)
+void gRunEntityCommands(struct Unk41728 *self)
 {
     s32 i;
     s32 op;

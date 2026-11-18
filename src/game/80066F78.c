@@ -21,6 +21,8 @@ extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
 extern s32 func_80067480(s8 *data, u32 index, s32 x, s32 y, s32 *out);
 extern s32 *func_8006320C(s32 *pos, s32 *out, s32 *a, u8 *b);
 extern void func_8001A180(s32 *v);
+s32 gGetGroundHeight(s32 *position, s32 *output, s32 *a2, s32 *a3) __asm__("func_80066F78");
+
 
 /**
  * @brief Returns the ground height under a world position.
@@ -86,20 +88,21 @@ extern void func_8001A180(s32 *v);
  *
  * @par Environment path
  * Returns the ground height under a world position by walking one map cell:
- * the map header at D_8009F80C gives the dimensions, the cell index is (z >>
- * 17) plus width times (x >> 17), the descriptor word at block + 0x3CC
- * selects the surface count and the descriptor list, and every surface is
- * sampled with func_80067480 into the height table at block + (a4 + a5) * 3 +
- * 0xC. It keeps the lowest surface and the greatest one below the ceiling
- * position[1] + 0x200, falls back to the lowest when nothing qualifies,
- * optionally accepts a dynamic record from func_8006320C and otherwise
- * decodes the winning descriptor through D_8009AFE8 and D_8009B1A4 into a
- * normal that func_8001A180 normalises. Twenty-two direct callers use it for
- * placement and collision, among them func_80041C6C, func_80041488,
- * func_800164F4, func_8003802C and func_80041880, and it reads the same tile
- * blocks that gDrawRegionTiles renders while producing no geometry.
+ * gTileMapTable (D_8009F80C) gives the grid size and per-cell index, the cell
+ * is (z >> 17) + w * (x >> 17), gTileBlockTable (D_8009F808) yields the cell
+ * block, and the half-word at block + 0x3CC for the 8192-unit sub-tile
+ * selects the surface count and descriptor list. Each surface is sampled with
+ * func_80067480 from the corner heights at block + 0xC; the function keeps
+ * the extreme surface and the best one within the limit position[1] + 0x200
+ * (falling back to the extreme one), optionally lets a dynamic object from
+ * func_8006320C win, reports the surface attribute byte when within 0x2000,
+ * and, when an output vector is requested, builds the surface normal from
+ * gVertexIndexTable (D_8009AFE8) and gTileShapeTable (D_8009B1A4) and
+ * normalises it with func_8001A180. It has 22 direct callers for placement
+ * and collision (among them func_80041C6C, func_80041488, func_800164F4 and
+ * func_8003802C) and produces no geometry.
  */
-s32 func_80066F78(s32 *position, s32 *output, s32 *a2, s32 *a3)
+s32 gGetGroundHeight(s32 *position, s32 *output, s32 *a2, s32 *a3)
 {
     s32 *pos = position;
     register s32 *out __asm__("$10") = output;

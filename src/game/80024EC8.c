@@ -21,7 +21,7 @@ extern s32 gScreenState __asm__("D_8009FA00");
 
 extern struct Node24EC8 *func_800295E8(s32 arg0);
 extern void func_80013550(struct Node24EC8 *node);
-extern void func_800181D4(struct Node24EC8 *node);
+extern void gFreeBlock(struct Node24EC8 *node) __asm__("func_800181D4");
 extern void func_80023930(struct Node24EC8 *node);
 extern void func_80029E20(struct Node24EC8 *node);
 extern void func_8003C110(struct Node24EC8 *node);
@@ -209,7 +209,7 @@ loop_test:
                 break;
             default:
             default_action:
-                func_800181D4(node);
+                gFreeBlock(node);
                 break;
             }
         }

@@ -20,6 +20,8 @@ struct Unk51C50 {
 
 extern void gGteCrossProduct(struct Vec3s32 *up, struct Vec3s32 *target, struct Unk51C50View *view) __asm__("func_80010974");
 extern void gBuildRotationMatrix(s32 arg0, s32 arg1, s32 angle, struct Unk51C50View *view) __asm__("func_800188D0");
+void gBuildObjectBasis(struct Unk51C50 *object, s32 arg1, struct Vec3s32 *target, struct Unk51C50View *view) __asm__("func_80051C50");
+
 
 /**
  * @brief Builds the view frame of an object: look-at form when its angle
@@ -45,15 +47,16 @@ extern void gBuildRotationMatrix(s32 arg0, s32 arg1, s32 angle, struct Unk51C50V
  * func_80052410.
  *
  * @par Environment path
- * Builds the view frame of an object into a three-vector record: when the
- * angle at +0xF0 is zero it stores the target triple, sets the up vector to
- * (0, 0x10000, 0) and calls func_80010974 to write the cross product into the
- * first triple, otherwise it builds a rotated frame with func_800188D0
- * passing arg1 as yaw and the object angle as roll. Its only caller is
- * func_80052410, and the file describes the result as a camera or turret
- * view. It touches no globals and only writes through the view pointer.
+ * Builds an object's orientation matrix into the 3x3 block passed as the last
+ * argument (the caller passes the object's own matrix at +0x2C): when the
+ * object's angle field at +0xF0 is zero it copies the direction vector into
+ * the third row, sets the second row to the up vector (0, 0x10000, 0) and
+ * lets func_80010974 write their cross product into the first row; otherwise
+ * it builds the rotation with func_800188D0 from arg1 and the +0xF0 angle.
+ * Its only caller is the footprint test func_80052410, which loads the result
+ * into the GTE to transform the footprint corners. It touches no globals.
  */
-void func_80051C50(struct Unk51C50 *object, s32 arg1, struct Vec3s32 *target,
+void gBuildObjectBasis(struct Unk51C50 *object, s32 arg1, struct Vec3s32 *target,
                    struct Unk51C50View *view)
 {
     if (object->angle == 0) {

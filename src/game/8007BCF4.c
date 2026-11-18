@@ -15,7 +15,7 @@ extern s8 gLineCount __asm__("D_8009F87F");
 extern s8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern  s8 gPlayerMenuDepth_arr[] __asm__("D_8009F8C0");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
-extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
+extern s32 gGameClock __asm__("D_8009FA60");
 extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern u8 D_8009B3D4[];
@@ -106,7 +106,7 @@ void gDrawGameHubMenu(s32 arg0)
                 if (i == gSelectedRow) {
                     u8 *p;
                     c = 0x11;
-                    p = D_8009B3D4 + ((gPaletteCycleCounter >> 4) & 7) * 3;
+                    p = D_8009B3D4 + ((gGameClock >> 4) & 7) * 3;
                     func_800493C0(c, p[0], p[1], p[2]);
                 } else {
                     c = 0xF;
@@ -166,7 +166,7 @@ case_5:
     a0 = 0xC30;
 
 common:
-    if ((gPaletteCycleCounter >> 9) & 1) {
+    if ((gGameClock >> 9) & 1) {
         s0 = 0x10CC;
     }
     func_80078B34(a0, 0, 0);

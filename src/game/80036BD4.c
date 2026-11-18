@@ -58,7 +58,7 @@ extern void func_8004D958(struct Entity *entity);
 extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 extern void func_80036AB4(struct Entity *self, s32 arg3);
-extern s32 func_8002AD58(s32 message, struct Entity *self, s32 arg2, s32 arg3);
+extern s32 gEntityBaseHandler(s32 message, struct Entity *self, s32 arg2, s32 arg3) __asm__("func_8002AD58");
 extern void *jtbl_80011380[];
 
 /**

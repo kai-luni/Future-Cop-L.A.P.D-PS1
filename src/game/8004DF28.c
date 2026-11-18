@@ -29,9 +29,9 @@ struct Entity {
 
 extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 extern s32 D_8009F7A4;
-extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
-extern struct Pos *D_8009FA58[];
-extern struct Pos *gMissionWorkingSet[] __asm__("D_8009F9A0");
+extern s32 gFrameTime[] __asm__("D_8009FAA4");
+extern struct Pos *gPlayerEntities[] __asm__("D_8009FA58");
+extern struct Pos *gFocusPositions[] __asm__("D_8009F9A0");
 extern struct Entity *gEffectListHead[] __asm__("D_800A8F98");
 extern s32 gCommandListHead[] __asm__("D_800A8F90");
 extern s32 gEffectPoolCapacity[] __asm__("D_800A8F94");
@@ -87,8 +87,8 @@ void func_8004DF28(void)
 
     best = 0;
     bestDist = 0x40000000;
-    a = D_8009FA58[0];
-    b = gMissionWorkingSet[0];
+    a = gPlayerEntities[0];
+    b = gFocusPositions[0];
     saved50 = a->unk50;
     saved58 = a->unk58;
     if (b != 0) {
@@ -99,11 +99,11 @@ void func_8004DF28(void)
     threshold = 0x38000;
 
     for (;;) {
-        if (D_8009F7A4 > gDiscShadeByte[0]) {
+        if (D_8009F7A4 > gFrameTime[0]) {
             goto skip;
         }
         flag = 1;
-        D_8009F7A4 = gDiscShadeByte[0] + 0x12C;
+        D_8009F7A4 = gFrameTime[0] + 0x12C;
     skip:
         outHigh = (char *)0x800B0000;
         __asm__("" : "=r"(outHigh) : "0"(outHigh));

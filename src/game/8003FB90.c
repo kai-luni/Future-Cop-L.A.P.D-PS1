@@ -34,7 +34,7 @@ extern struct UnkFB90Node *gListHeads[7] __asm__("D_800A1070");
 extern struct UnkFB90Global *gNodeCList __asm__("D_8009F30C");
 
 extern void func_8003CA80(void *object);
-extern void func_800181D4(void *object);
+extern void gFreeBlock(void *object) __asm__("func_800181D4");
 
 /**
  * @brief Retires active D_800A1070 nodes and frees deferred D_8009F30C entries matching an owner and kind.
@@ -99,7 +99,7 @@ void func_8003FB90(void *object_, s32 kind_)
                 gNodeCList = next;
             }
             entry->next = 0;
-            func_800181D4(entry);
+            gFreeBlock(entry);
         } else {
             previous = entry;
         }

@@ -8,12 +8,14 @@ typedef struct { int count, stride; char data[1]; } Shape;
 typedef struct { char pad[12]; u32 flags; char pad10[0x24]; Shape *shape; } Model;
 typedef struct { Model *model; Matrix mat; Vec pos; int radius; char pad44[4]; short frame; } Coord;
 extern void gBuildViewMatrix(void *, void *) __asm__("func_80018860");
-extern void func_80019470(void *, void *);
+extern void gTransposeMatrix3x3(void *, void *) __asm__("func_80019470");
 extern void func_8001A970(void *, void *, void *);
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(void *, void *, int) __asm__("func_8001006C");
 extern int func_800618CC(void *, void *, int, int, int);
-extern u32 func_800619C0(void *, void *, void *, int, int);
+extern u32 gBoxOverlapBitmask(void *, void *, void *, int, int) __asm__("func_800619C0");
+u32 gTestPartPairHit(Coord *arg0, Coord *arg1) __asm__("func_80061CAC");
+
 
 /**
  * @brief Narrow-phase hit test between two coord records.
@@ -80,7 +82,7 @@ extern u32 func_800619C0(void *, void *, void *, int, int);
  * (src/game/80052098.c:91) and from func_800620D8 (src/game/800620D8.c:93),
  * and it touches no global.
  */
-u32 func_80061CAC(Coord *arg0, Coord *arg1)
+u32 gTestPartPairHit(Coord *arg0, Coord *arg1)
 {
     register Coord *a __asm__("$17") = arg0;
     register Coord *b __asm__("$18") = arg1;
@@ -124,7 +126,7 @@ case2:
 case3:
         pa = (char *)sa + ((a->frame << 4) + 8);
         pb = (char *)sb + ((b->frame << 4) + 8);
-        func_80019470(&b->mat, &m1);
+        gTransposeMatrix3x3(&b->mat, &m1);
         *(Vec *)&v = a->mat.pos;
         a->mat.pos.x -= b->mat.pos.x;
         a->mat.pos.y -= b->mat.pos.y;
@@ -137,7 +139,7 @@ case3:
         p = pa;
         if (n >= 2) { p += sa->stride; i = 1; hits[0] = 0; }
         for (; i < n; i++, p += sa->stride) {
-            hit = func_800619C0(&m2, p, pb, sb->count, sb->stride);
+            hit = gBoxOverlapBitmask(&m2, p, pb, sb->count, sb->stride);
             bits |= hit;
             hits[i] = hit;
         }
@@ -148,7 +150,7 @@ case3:
         result = 0;
         for (; j < n;) {
             if (mask & bits) {
-                hit = func_800619C0(&m1, p, pa, sa->count, sa->stride);
+                hit = gBoxOverlapBitmask(&m1, p, pa, sa->count, sa->stride);
                 if (hit) { register u32 k __asm__("$4"); register u32 cnt __asm__("$5"); register u32 rowbit __asm__("$6"); register u32 one __asm__("$7"); i = 0; k = sa->count; if (k != 0) { __asm__("addiu\t%2,$0,1\n\taddiu\t$2,$0,15\n\tsubu\t$2,$2,%4\n\tsllv\t%1,%2,$2\n\taddu\t%0,%3,$0" : "=r"(cnt), "=r"(rowbit), "=r"(one) : "r"(k), "r"(j) : "$2"); do {
                     if ((hit & 0x80000000) && ((hits[i] << j) & 0x80000000))
                         { result |= one << (31-i); result |= rowbit; }

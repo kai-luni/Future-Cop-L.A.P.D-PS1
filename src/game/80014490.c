@@ -31,6 +31,8 @@ struct Poly {
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 * volatile gPacketLimit __asm__("D_8009F9C0");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
+void gEmitRayBurst(struct Src *src, u32 p1, u32 p2, s32 p3, s32 p4, s32 p5, s32 p6) __asm__("func_80014490");
+
 
 /**
  * @brief Emits the rotating variant of the translucent disc: one draw-mode
@@ -130,16 +132,15 @@ extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
  * func_80070158, recorded at 0x80070158 (direct call at 0x8007033C).
  *
  * @par Environment path
- * Emits the rotating variant of the translucent disc: one 0x1C-byte header
- * packet followed by a ring of semi-transparent Gouraud triangles whose
- * vertices are swept around the centre by an angle advanced per iteration
- * through func_8001846C. Its only caller is func_80070158 (line 138), the
- * effect layer pass that func_8003F6E4 runs last inside one environment view,
- * so it draws over the terrain produced by gDrawRegionTiles rather than being
- * part of it. The fixed-colour sibling is func_8001484C, and func_80070158
- * picks between the two on a node flag.
+ * Emits a ray burst: one 0x1C-byte header packet (draw mode 0xE10006A0) and a
+ * set of semi-transparent Gouraud triangles (code 0x32) from gPacketCursor,
+ * each a thin spike from beside the centre out to a point on the radius,
+ * swept around the full circle in four mirrored quadrants with gSinCos
+ * (func_8001846C) starting at the given angle. Its only caller is
+ * func_80070158, which picks it for nodes with flag 4 at +0x8C and the
+ * filled-disc sibling func_8001484C for the other nodes.
  */
-void func_80014490(struct Src *src, u32 p1, u32 p2, s32 p3, s32 p4, s32 p5, s32 p6)
+void gEmitRayBurst(struct Src *src, u32 p1, u32 p2, s32 p3, s32 p4, s32 p5, s32 p6)
 {
     s32 sine;
     s32 cosine;

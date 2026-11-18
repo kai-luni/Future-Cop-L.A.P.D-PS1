@@ -11,7 +11,7 @@ struct Entity {
 
 extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 extern s32 gEntityIdCounter __asm__("D_8009F7A0");
-extern void *D_8009FA58[];
+extern void *gPlayerEntities[] __asm__("D_8009FA58");
 
 extern void func_8004D958(struct Entity *entity);
 extern void gSweepRetiredEntities(void) __asm__("func_8004D598");
@@ -57,6 +57,6 @@ void gRetireAndFreeAllEntities(void)
     gSweepRetiredEntities();
     gEntityIdCounter = 0;
     for (i = 1; i >= 0; i--) {
-        D_8009FA58[i] = 0;
+        gPlayerEntities[i] = 0;
     }
 }

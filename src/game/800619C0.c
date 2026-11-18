@@ -5,6 +5,8 @@ typedef unsigned int u32;
 typedef struct { s32 m[9]; s32 x,y,z; } Matrix;
 typedef struct { char pad[0x24]; s32 x,y,z; } Base;
 extern void gGteLoadRotation(Base *) __asm__("func_80010820");
+u32 gBoxOverlapBitmask(Base *base, s16 *box, char *objects, s32 count, s32 stride) __asm__("func_800619C0");
+
 extern void gGteTransformWords(Matrix *, Matrix *, s32) __asm__("func_8001006C");
 /**
  * @brief Turns one oriented box into a world axis-aligned box and reports which
@@ -68,7 +70,7 @@ extern void gGteTransformWords(Matrix *, Matrix *, s32) __asm__("func_8001006C")
  * it is collision broad phase, not a render pass: it emits no primitive and
  * touches no global.
  */
-u32 func_800619C0(Base *base, s16 *box, char *objects, s32 count, s32 stride)
+u32 gBoxOverlapBitmask(Base *base, s16 *box, char *objects, s32 count, s32 stride)
 {
     Matrix a, b;
     register s32 x __asm__("$9"), y __asm__("$7"), z __asm__("$8");

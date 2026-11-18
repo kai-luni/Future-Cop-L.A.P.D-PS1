@@ -6,7 +6,7 @@ extern void *D_8009F94C;
 extern void *gWorkAreaBlock __asm__("D_8009F950");
 extern void *D_8009F954;
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates the four static working buffers of the image decoder.
@@ -49,8 +49,8 @@ void func_800860CC(void)
     gWorkAreaBlock = (void *)0;
     D_8009F954 = (void *)0;
 
-    D_8009F948 = func_80017EBC(0x6000, 2);
-    D_8009F94C = func_80017EBC(0x600, 2);
-    D_8009F954 = func_80017EBC(0x2000, 2);
-    gWorkAreaBlock = func_80017EBC(0x600, 2);
+    D_8009F948 = gAllocMemory(0x6000, 2);
+    D_8009F94C = gAllocMemory(0x600, 2);
+    D_8009F954 = gAllocMemory(0x2000, 2);
+    gWorkAreaBlock = gAllocMemory(0x600, 2);
 }

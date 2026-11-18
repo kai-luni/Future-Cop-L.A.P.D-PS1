@@ -4,11 +4,11 @@
 extern s32 *gFreeRangeTablePtr __asm__("D_8009F590");
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
-extern void *gPool1Size __asm__("D_8009F9D0");
+extern void *gFixedPool1 __asm__("D_8009F9D0");
 extern s32 gHeapMainBlockSize __asm__("D_8009F9E8");
-extern void *gPool3Size __asm__("D_8009FA4C");
+extern void *gFixedPool3 __asm__("D_8009FA4C");
 extern s32 gHeapPoolBase __asm__("D_8009FA9C");
-extern void *gPool2Size __asm__("D_8009FAAC");
+extern void *gFixedPool2 __asm__("D_8009FAAC");
 
 extern void *func_800194DC(s32 count, s32 size, s32 tag);
 
@@ -52,7 +52,7 @@ void func_80017C68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
     ptr[1] = base;
     ptr[2] = base + off;
     ptr[3] = base + off;
-    gPool1Size = func_800194DC(a1, a0, 2);
-    gPool3Size = func_800194DC(a5, a4, 2);
-    gPool2Size = func_800194DC(a3, a2, 2);
+    gFixedPool1 = func_800194DC(a1, a0, 2);
+    gFixedPool3 = func_800194DC(a5, a4, 2);
+    gFixedPool2 = func_800194DC(a3, a2, 2);
 }

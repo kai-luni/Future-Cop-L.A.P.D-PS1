@@ -1,7 +1,7 @@
 // Categories: Graphics > HUD > Minimap | Utilities > Mathematics
 #include "game/types.h"
 
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 s32 gWorldToRadarCell(s32 arg0) __asm__("func_80065744");
 
 
@@ -43,14 +43,14 @@ s32 gWorldToRadarCell(s32 arg0)
     }
     if (arg0 >= 0x21) {
         arg0 -= 0x20;
-        v = (arg0 * gDiscShadeByte) >> 10;
+        v = (arg0 * gFrameTime) >> 10;
         return (v & 1) ? 0x1C : 0;
     }
     if (arg0 > 0) {
-        v = (arg0 * gDiscShadeByte) >> 6;
+        v = (arg0 * gFrameTime) >> 6;
         return v % 28;
     }
-    v = ((-arg0) * gDiscShadeByte) >> 6;
+    v = ((-arg0) * gFrameTime) >> 6;
     v = v % 28;
     return 27 - v;
 }

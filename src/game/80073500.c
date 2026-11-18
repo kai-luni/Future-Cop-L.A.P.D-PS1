@@ -18,7 +18,7 @@ struct Unk73500 {
     s16 unk1E;
 };
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates and initialises a scene node for a position.
@@ -44,7 +44,7 @@ struct Unk73500 *func_80073500(struct Vec3s32 *position, s16 arg1, s16 arg2, s16
 {
     struct Unk73500 *node;
 
-    node = func_80017EBC(0x20, 1);
+    node = gAllocMemory(0x20, 1);
     if (node == 0) {
         return 0;
     }

@@ -30,9 +30,11 @@ struct Unk52D7C {
     struct Unk52D7CInfo *info;
 };
 
-extern void func_80052960(u8 *coord, u8 *first, u8 *second);
+extern void gComposeJointChain(u8 *coord, u8 *first, u8 *second) __asm__("func_80052960");
 extern void gGteLoadMatrix(u8 *matrix) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(u8 *frame, u8 *output, s32 count) __asm__("func_80010234");
+void gUpdateTwoPartRig(struct Unk52D7C *object) __asm__("func_80052D7C");
+
 
 /**
  * @brief Transforms both parts of a two-part model for the current frame.
@@ -62,26 +64,21 @@ extern void gGteTransformVerticesWide(u8 *frame, u8 *output, s32 count) __asm__(
  * a walk cycle) - the parts share the coordinate block but have their own frames.
  *
  * @par Environment path
- * Transforms both parts of a two-part model for the current frame:
- * func_80052960 builds the two part matrices from the object's coordinate
- * block and the two model records, then for each part gGteLoadMatrix loads
- * that matrix and gGteTransformVerticesWide transforms one vertex from
- * models->frames + (frame << 4) + 8 into the part's 0x14-byte output block.
- * It is the per-frame rig update of a compound actor, the body plus turret or
- * the two halves of a walk cycle, not a scene pass: it emits no polygon and
- * reads no global. Its caller is the player/companion step func_80057E40
- * (src/game/80057E40.c:186), which runs before the model is submitted, so the
- * unit only keeps the instance vertex data current for the actor passes that
- * draw it later.
+ * Refreshes the two auxiliary model instances held in an entity's state block
+ * (object->+0xB4->+0xAC, instances at +0x178): func_80052960 builds both part
+ * matrices from the object's coordinate block, then for each part
+ * gGteLoadMatrix loads the matrix and gGteTransformVerticesWide transforms
+ * one frame vertex into the part's 0x14-byte output block. It emits no
+ * polygon and reads no global. Its only caller is func_80057E40.
  */
-void func_80052D7C(struct Unk52D7C *object)
+void gUpdateTwoPartRig(struct Unk52D7C *object)
 {
     struct Unk52D7CState *state;
     register u8 *pointer __asm__("$2");
     register s32 offset __asm__("$4");
 
     state = object->info->state;
-    func_80052960(object->coord, state->parts[0].matrix, state->parts[1].matrix);
+    gComposeJointChain(object->coord, state->parts[0].matrix, state->parts[1].matrix);
     gGteLoadMatrix(state->parts[0].matrix);
     offset = state->parts[0].frame;
     pointer = (u8 *)state->parts[0].model;

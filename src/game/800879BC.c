@@ -1,7 +1,7 @@
 // Categories: Graphics > Video Layer | Resources > Memory Management
 #include "game/types.h"
 
-extern void func_800181D4(void);
+extern void gFreeBlock(void) __asm__("func_800181D4");
 
 /**
  * @brief Releases the video-decode buffer through the top allocator.
@@ -20,5 +20,5 @@ void gMovieFreeDecodeBuffer(void) __asm__("func_800879BC");
 
 void gMovieFreeDecodeBuffer(void)
 {
-    func_800181D4();
+    gFreeBlock();
 }

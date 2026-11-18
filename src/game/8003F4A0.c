@@ -4,9 +4,9 @@
 extern void *gListHeads[] __asm__("D_800A1070");
 extern void func_8007364C(s32 arg);
 extern void func_8006F170(void *arg);
-extern void func_8006D770(void *a0, void *a1);
+extern void gTickEffectNodes(void *a0, void *a1) __asm__("func_8006D770");
 extern void func_800441DC(void *a0, void *a1);
-extern void func_80040A00(void *a0, void *a1);
+extern void gUpdateObjectLights(void *a0, void *a1) __asm__("func_80040A00");
 extern void func_80070048(void *a0, void *a1);
 extern void func_8004C228(void *a0, void *a1);
 extern void gRunPolygonPass(void *a0, void *a1) __asm__("func_80075A84");
@@ -42,9 +42,9 @@ void gRunSceneListPasses(void *arg)
 {
     func_8007364C((s32)arg);
     func_8006F170(arg);
-    func_8006D770(gListHeads[2], arg);
+    gTickEffectNodes(gListHeads[2], arg);
     func_800441DC(gListHeads[3], arg);
-    func_80040A00(gListHeads[0], arg);
+    gUpdateObjectLights(gListHeads[0], arg);
     func_80070048(gListHeads[1], arg);
     func_8004C228(gListHeads[4], arg);
     gRunPolygonPass(gListHeads[5], arg);

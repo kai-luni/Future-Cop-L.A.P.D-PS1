@@ -28,7 +28,7 @@ extern void *gCellMap __asm__("D_8009F820");
 extern s32 gWorldClipRect[] __asm__("D_800A2950");
 extern s32 gClipRect[] __asm__("D_800A2970");
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void func_800496D0(s32 width, s32 height);
 extern void func_800834C4(s32 width, s32 height);
 
@@ -144,7 +144,7 @@ void func_80063DC8(Unk63DC8 *arg0)
     gClipRect[5] = (resource->unk08 - 1) << 2;
 
     product = (resource->unk04 - 1) * (resource->unk08 - 1);
-    result = func_80017EBC(product << 4, 2);
+    result = gAllocMemory(product << 4, 2);
     call_resource = gTileMapTable;
     gCellMap = result;
 

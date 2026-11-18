@@ -49,7 +49,7 @@ struct Entity {
     u16 unkAE;
 };
 
-extern s32 func_8002AD58(s32 message, struct Entity *self, struct Spawn *data, s32 arg3);
+extern s32 gEntityBaseHandler(s32 message, struct Entity *self, struct Spawn *data, s32 arg3) __asm__("func_8002AD58");
 extern s32 func_80067684(struct Vec3 *pos, s32 mode);
 
 /**
@@ -93,7 +93,7 @@ s32 func_80030AD4(struct Entity *self, struct Spawn *data, s32 arg2)
     s32 value;
     u16 size;
 
-    func_8002AD58(2, self, data, arg2);
+    gEntityBaseHandler(2, self, data, arg2);
     sub = data->unk08;
 
     self->unkA8 = sub->unk24 << 1;

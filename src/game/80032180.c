@@ -119,14 +119,14 @@ struct Unk32180 {
     struct AnimTrack unk120;
 };
 
-extern void func_8002AD58(s32, struct Unk32180 *, struct Unk32180Arg *);
+extern void gEntityBaseHandler(s32, struct Unk32180 *, struct Unk32180Arg *) __asm__("func_8002AD58");
 extern void func_80060668(void *, void *);
 extern void func_800320E4(struct Unk320E4 *);
-extern s32 func_80066F78(s32 *, s32, s32, s32);
+extern s32 gGetGroundHeight(s32 *, s32, s32, s32) __asm__("func_80066F78");
 extern s32 func_80019668(void);
 extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 extern void func_800193F8(s32 *, void *);
-extern void func_80044988(u8 *, struct AnimTrack *, u8, s32);
+extern void gSetAnimClipTable(u8 *, struct AnimTrack *, u8, s32) __asm__("func_80044988");
 
 /**
  * @brief Message-2 spawn initialiser of the hovering flyer class: copies the
@@ -198,7 +198,7 @@ s32 func_80032180(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg)
     s32 sc[2];
     u32 kind;
 
-    func_8002AD58(arg0, obj, arg);
+    gEntityBaseHandler(arg0, obj, arg);
     src = arg->unk8;
     func_80060668((u8 *)src + 0x24, (u8 *)obj + 0xA0);
 
@@ -236,14 +236,14 @@ s32 func_80032180(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg)
     }
 
     pos = &obj->pos.x;
-    value = func_80066F78(pos, 0, 0, 0);
+    value = gGetGroundHeight(pos, 0, 0, 0);
     obj->pos.y = value + (obj->unk114 << 4);
     obj->unkD0 = obj->pos;
 
     if (obj->unkFB & 1) {
         func_800320E4((struct Unk320E4 *)obj);
         obj->pos = obj->unkDC;
-        value = func_80066F78(pos, 0, 0, 0);
+        value = gGetGroundHeight(pos, 0, 0, 0);
         obj->pos.y = value + (obj->unk114 << 4);
     }
 
@@ -269,7 +269,7 @@ s32 func_80032180(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg)
     obj->unk11C = (u32)0x80000000 / (u32)((obj->unk114 - obj->unk110) << 3);
 
     if (obj->unk28->unk10 != 0) {
-        func_80044988(obj->unk28->unk10, &obj->unk120, 1, 0);
+        gSetAnimClipTable(obj->unk28->unk10, &obj->unk120, 1, 0);
     }
 
     return 0;

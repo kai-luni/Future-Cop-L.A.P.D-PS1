@@ -7,7 +7,7 @@ struct Unk17764 {
     struct Unk17764 *next;
 };
 
-extern struct Unk17764 *gTransformRecordList __asm__("D_8009F588");
+extern struct Unk17764 *gCameraList __asm__("D_8009F588");
 struct Unk17764 *gFindInstanceById(s32 id) __asm__("func_80017B28");
 
 
@@ -36,7 +36,7 @@ struct Unk17764 *gFindInstanceById(s32 id)
 {
     struct Unk17764 *node;
 
-    for (node = gTransformRecordList; node != 0; node = node->next) {
+    for (node = gCameraList; node != 0; node = node->next) {
         if (id == node->id) {
             return node;
         }

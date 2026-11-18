@@ -8,7 +8,7 @@ typedef struct Unk800899A4 {
 } Unk800899A4;
 
 extern Unk800899A4 *gTextLookupTable __asm__("D_8009F518");
-extern void func_800181D4(Unk800899A4 *arg0);
+extern void gFreeBlock(Unk800899A4 *arg0) __asm__("func_800181D4");
 
 /**
  * @brief Registers and validates the loaded binary-search text table resource.
@@ -41,11 +41,11 @@ void func_800899A4(Unk800899A4 *arg0)
     s32 id;
 
     if (temp != 1) {
-        func_800181D4(arg0);
+        gFreeBlock(arg0);
         return;
     }
     if (gTextLookupTable != 0) {
-        func_800181D4(gTextLookupTable);
+        gFreeBlock(gTextLookupTable);
     }
     id = arg0->unk0[0];
     gTextLookupTable = arg0;
@@ -53,7 +53,7 @@ void func_800899A4(Unk800899A4 *arg0)
         flag = 1;
     }
     if (flag != 0) {
-        func_800181D4(arg0);
+        gFreeBlock(arg0);
         gTextLookupTable = 0;
     }
 }

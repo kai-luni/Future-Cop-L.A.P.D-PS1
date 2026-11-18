@@ -69,14 +69,14 @@ struct Unk437E8 {
 extern s32 gSceneFrameCounter[] __asm__("D_8009FA50");
 extern s32 gRemainingCounter __asm__("D_8009FAB0");
 
-extern struct Unk437E8Transform *func_8003D9F8(void *model, s32 flags, s32 part,
-                                               s32 count, void *sub, void *matrix);
+extern struct Unk437E8Transform *gResolveNodeTransform(void *model, s32 flags, s32 part,
+                                               s32 count, void *sub, void *matrix) __asm__("func_8003D9F8");
 extern void func_80042864(struct Unk437E8Part *object, s32 amount);
 extern void func_800428FC(struct Unk437E8 *node, struct Unk437E8Part *cur,
                           s32 a2, s32 a3, s32 a5);
 extern void func_800427A8(struct Unk437E8 *owner, struct Unk437E8Part *previous,
                           struct Unk437E8Part *node);
-extern s32 func_80066F78(s32 *pos, s32 arg1, s32 arg2, s32 arg3);
+extern s32 gGetGroundHeight(s32 *pos, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
 
 /**
  * @brief Per-frame update of the particle/segment chain of a model-bound effect
@@ -159,7 +159,7 @@ s32 func_800437E8(struct Unk437E8 *node, s32 arg)
     s32 result;
 
     nd = node;
-    transform = func_8003D9F8(nd->sub != 0 ? nd->sub->model : 0,
+    transform = gResolveNodeTransform(nd->sub != 0 ? nd->sub->model : 0,
                               nd->unk1A, nd->unk0E, 0, nd->sub, nd->matrix);
     cur = nd->active;
     if (cur == 0) {
@@ -230,7 +230,7 @@ s32 func_800437E8(struct Unk437E8 *node, s32 arg)
             vec[0] = (cur->unk04 << 4) + transform->pos.x;
             vec[1] = (cur->unk06 << 4) + transform->pos.y;
             vec[2] = (cur->unk08 << 4) + transform->pos.z;
-            if (vec[1] < func_80066F78(vec, 0, 0, 0))
+            if (vec[1] < gGetGroundHeight(vec, 0, 0, 0))
                 goto remove;
         }
         h = cur->unk18 & 0x1FFF;

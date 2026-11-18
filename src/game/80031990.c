@@ -19,7 +19,7 @@ struct Unk31Node {
 };
 
 extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Frees all nodes in the map trigger/zone linked list D_8009F6F8 and clears its head.
@@ -52,7 +52,7 @@ void func_80031990(void)
     node = gMapZoneList;
     while (node != 0) {
         next = node->next;
-        func_800181D4(node);
+        gFreeBlock(node);
         node = next;
     }
     gMapZoneList = 0;

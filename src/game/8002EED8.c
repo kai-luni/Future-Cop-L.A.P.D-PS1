@@ -5,12 +5,14 @@ struct Source { u8 pad[0x24]; u8 type, flags; s8 sel; u8 other; s16 height, angl
 struct Arg { u8 pad[8]; struct Source *src; };
 struct State { u8 pad[0x34]; u8 *frames; };
 struct Obj { u8 pad0[0x21]; u8 active; u8 pad22[6]; struct State *state; u8 matrix[0x18]; u8 matrix2[0xc]; struct Vec pos; u8 out[0x14]; s16 frame; u8 pad72[0x2e]; u8 type; u8 enabled, flags, oldactive, other; u8 padA5[3]; s32 speed; struct Vec start; struct Vec end; };
-extern void func_8002AD58(s32, struct Obj *, struct Arg *, s32);
+extern void gEntityBaseHandler(s32, struct Obj *, struct Arg *, s32) __asm__("func_8002AD58");
 extern s32 func_80067684(struct Vec *, s32);
 extern void gBuildRotationMatrix(s32,s32,s32,void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *,void *,s32) __asm__("func_80010234");
 extern void func_8001AC28(void *,void *,s32,void *);
+s32 gInitMoverObject(struct Obj *obj, struct Arg *arg, s32 extra) __asm__("func_8002EED8");
+
 extern void func_8006314C(void *,s32);
 /**
  * @brief Position, orient and animate one object from its spawn descriptor.
@@ -110,7 +112,7 @@ extern void func_8006314C(void *,s32);
  * globals at all, and its caller is func_8002F7C8, message 2 of the type
  * handler.
  */
-s32 func_8002EED8(struct Obj *obj, struct Arg *arg, s32 extra)
+s32 gInitMoverObject(struct Obj *obj, struct Arg *arg, s32 extra)
 {
     struct Source *st;
     s32 sel;
@@ -121,7 +123,7 @@ s32 func_8002EED8(struct Obj *obj, struct Arg *arg, s32 extra)
     register u32 other __asm__("$3");
     register s32 offset __asm__("$4");
     register u8 *pointer __asm__("$2");
-    func_8002AD58(2,obj,arg,extra);
+    gEntityBaseHandler(2,obj,arg,extra);
     st=arg->src;
     sel=st->sel == 0 ? -1 : st->sel == 1 ? -2 : st->sel-2;
     obj->pos.y=func_80067684(&obj->pos,sel)+(st->height<<4);

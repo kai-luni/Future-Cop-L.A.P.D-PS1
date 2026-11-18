@@ -104,7 +104,7 @@ struct SpawnInfo35B7C {
     u8 unk12;
 };
 
-extern void func_800175F8(struct ModelInstance *instance, s32 frame);
+extern void gSetModelFrame(struct ModelInstance *instance, s32 frame) __asm__("func_800175F8");
 extern s32 func_8001A13C(s32 *a, s32 *b);
 extern s32 func_8001A4E8(s32 *a, s32 *b);
 extern void func_8001A180(s32 *vector);
@@ -113,7 +113,7 @@ extern s32 func_8001A6F8(s32 *a, s32 *b);
 extern s32 func_8001AB00(s32 *a, s32 *b);
 extern void gVectorAddScaled(s32 *a, s32 *b, s32 delta, s32 *out) __asm__("func_8001ACA4");
 extern s32 func_800684AC(s32 *a, s32 *b, s32 *out, s32 arg3, s32 arg4);
-extern s32 func_80066F78(s32 *a, s32 b, s32 c, s32 d);
+extern s32 gGetGroundHeight(s32 *a, s32 b, s32 c, s32 d) __asm__("func_80066F78");
 extern s32 func_80069A38(s32 *a);
 extern void gBuildRotationMatrix(s32 a, s32 b, s32 angle, s32 *out) __asm__("func_800188D0");
 extern void func_80019310(s32 *first, s32 *second, s32 *basis);
@@ -125,7 +125,7 @@ extern void gGteCrossProduct(s32 *a, s32 *b, s32 *out) __asm__("func_80010974");
 extern s32 func_80019FCC(s32 *vector);
 extern s32 func_80095900(s32 angle);
 extern void func_800410BC(s32 *pos, s32 speed, s32 angle, struct Obj35B7C *target);
-extern s32 func_8002AD58(s32 state, struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3);
+extern s32 gEntityBaseHandler(s32 state, struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3) __asm__("func_8002AD58");
 extern void gProjectileInit(struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3) __asm__("func_80035904");
 extern s32 func_800402DC(void *owner, u8 column, s32 arg2, s32 row, s32 arg4);
 extern void func_8003B898(u8 arg0, struct Obj35B7C *self, s32 arg2, s32 arg3, s32 arg4);
@@ -342,7 +342,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
             break;
         }
         func_80044B34(self, self->unkE8, temp, 0);
-        func_800175F8(&self->mi, self->unkF4);
+        gSetModelFrame(&self->mi, self->unkF4);
     }
 
     if (self->unkC8 != 0) {
@@ -538,7 +538,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
                 self->unk1C = -1;
                 *(struct Vec3_35B7C *)((u8 *)self + 0x50) = *(struct Vec3_35B7C *)sp50;
             } else {
-                temp = func_80066F78((s32 *)((u8 *)self + 0x50), 0, 0, 0);
+                temp = gGetGroundHeight((s32 *)((u8 *)self + 0x50), 0, 0, 0);
                 if (*(s32 *)((u8 *)self + 0x54) < temp) {
                     self->unk1C = -1;
                     *(s32 *)((u8 *)self + 0x50) =

@@ -52,15 +52,17 @@ struct Transform70158 {
 
 extern struct Camera70158 *gCamera __asm__("D_8009F9E4");
 
-extern struct Transform70158 *func_8003D9F8(void *model, s32 flags, s32 part,
-                                            s32 count, void *sub, void *matrix);
+extern struct Transform70158 *gResolveNodeTransform(void *model, s32 flags, s32 part,
+                                            s32 count, void *sub, void *matrix) __asm__("func_8003D9F8");
 extern s32 func_8001A100(s32 *vector);
 extern void gGteLoadRotation(void *matrix) __asm__("func_80010820");
 extern void gGteTransformVertices(void *src, void *dst, s32 arg2) __asm__("func_8001010C");
-extern s32 func_80019D90(s16 *point, s32 margin);
+extern s32 gTestFrustumFixedNear(s16 *point, s32 margin) __asm__("func_80019D90");
 extern void func_80010704(u32 *src, u32 *dst);
-extern void func_80014490(void *dst, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
-extern void func_8001484C(void *dst, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
+extern void gEmitRayBurst(void *dst, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6) __asm__("func_80014490");
+extern void gEmitGouraudDisc(void *dst, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6) __asm__("func_8001484C");
+void gDrawGlowNodeList(struct Node70158 *node, s32 *origin) __asm__("func_80070158");
+
 
 /**
  * @brief Walks a model node list, culls by radius and draws the textured nodes.
@@ -94,7 +96,7 @@ extern void func_8001484C(void *dst, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32
  * gDrawViewLayers opens, so it draws the glow/light nodes that belong to the
  * visible region.
  */
-void func_80070158(struct Node70158 *node, s32 *origin)
+void gDrawGlowNodeList(struct Node70158 *node, s32 *origin)
 {
     register struct Node70158 *n __asm__("$16");
     register s32 *org __asm__("$21");
@@ -119,7 +121,7 @@ void func_80070158(struct Node70158 *node, s32 *origin)
         if (sub != 0) {
             model = sub->model;
         }
-        t = func_8003D9F8(model, n->unk1A, n->unk0E, 0, sub, &n->unk34);
+        t = gResolveNodeTransform(model, n->unk1A, n->unk0E, 0, sub, &n->unk34);
 
         vec[0] = t->x - org[0];
         vec[1] = t->y - org[1];
@@ -138,19 +140,19 @@ void func_80070158(struct Node70158 *node, s32 *origin)
         gGteLoadRotation(&camera->unk28);
 
         gGteTransformVertices(src, dst, 1);
-        if ((func_80019D90(dst, n->unk12 << 4) & 0xFF) != 2) {
+        if ((gTestFrustumFixedNear(dst, n->unk12 << 4) & 0xFF) != 2) {
             continue;
         }
         func_80010704(src, dst);
 
         if (n->unk8C & 2) {
-            func_8001484C(dst, n->unk78, n->unk7C, n->unk8E, n->unk12, 0x200,
+            gEmitGouraudDisc(dst, n->unk78, n->unk7C, n->unk8E, n->unk12, 0x200,
                           (n->unk90 << 8) | n->unk8F);
         } else if (n->unk8C & 4) {
-            func_80014490(dst, n->unk78, n->unk7C, n->unk8E, n->unk12, 0x200,
+            gEmitRayBurst(dst, n->unk78, n->unk7C, n->unk8E, n->unk12, 0x200,
                           (n->unk90 << 8) | n->unk8F);
         } else {
-            func_8001484C(dst, n->unk78, n->unk7C, n->unk8E, n->unk12, 0x200, 0);
+            gEmitGouraudDisc(dst, n->unk78, n->unk7C, n->unk8E, n->unk12, 0x200, 0);
         }
     }
 }

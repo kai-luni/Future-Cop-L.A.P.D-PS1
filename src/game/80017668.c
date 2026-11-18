@@ -34,6 +34,8 @@ struct ModelInstance {
 
 extern void gGteLoadMatrix(u8 *coord) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(u8 *vertices, s32 *out, s32 count) __asm__("func_80010234");
+void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
+
 
 /**
  * @brief Fetches and transforms one animated vertex of a model part.
@@ -56,19 +58,18 @@ extern void gGteTransformVerticesWide(u8 *vertices, s32 *out, s32 count) __asm__
  * where the whole model does not need to be transformed.
  *
  * @par Environment path
- * Fetches a single animated vertex of a model part and transforms it:
- * gGteLoadMatrix (func_80010750) loads the instance coordinate block and
- * gGteTransformVerticesWide (func_80010234) transforms exactly one vertex
- * into the caller's buffer. The source record depends on bit 25 of the model
- * flag word - the per-frame table at model->table when the bit is set,
- * otherwise the static part array indexed through model->parts[part] and the
- * animation record. It is the attachment-point accessor of the renderer: the
- * polygon pass gRunPolygonPass (func_80075A84, src/game/80075A84.c:186) and
- * the compound-object reset func_80058714 (src/game/80058714.c:129) call it,
- * so it is a leaf helper of the render path. It never emits geometry, never
- * touches a global and only produces one transformed point.
+ * Fetches one vertex of a model part for the instance's current animation
+ * frame and transforms it: gGteLoadMatrix (func_80010750) loads the instance
+ * coordinate block and gGteTransformVerticesWide (func_80010234) transforms
+ * exactly one vertex into the caller's buffer. With bit 25 of the model flag
+ * word set the vertex comes from the per-frame table at model->table (frame *
+ * count * 8 + part * 8); otherwise it comes from the animation record
+ * anim->frames[frame] at model->parts[part] * 8 + 4. It is a widely used
+ * attachment-point accessor with about twenty callers, among them
+ * func_80075A84, func_800754B8, func_800302E8 and func_80058714; it emits no
+ * geometry and touches no global.
  */
-void func_80017668(struct ModelInstance *instance, s32 part, s32 *out)
+void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out)
 {
     struct Model *model;
     u8 *vertices;

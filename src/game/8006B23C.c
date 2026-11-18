@@ -109,7 +109,7 @@ extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern struct Unk6B23C_Item *gRegistryFind(u8 id) __asm__("func_8006AAEC");
 extern void func_80046CF0(struct Unk6B23C *arg0, u8 arg1);
-extern void func_80017668(void *instance, s32 part, s32 *out);
+extern void gTransformPartVertex(void *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_80019668(void);
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_8001AB00(s32 *a, s32 *b);
@@ -256,10 +256,10 @@ void gBeamPartUpdate(struct Unk6B23C *arg0, s32 index, s32 arg2)
                 s1 = 0;
         }
         instance = (void *)((u8 *)b + 0x178);
-        func_80017668(instance, 0, (s32 *)&v58);
+        gTransformPartVertex(instance, 0, (s32 *)&v58);
     } else {
         instance = (void *)((u8 *)b + 0x178 + s7 * 0x4C);
-        func_80017668(instance, 0, (s32 *)&v58);
+        gTransformPartVertex(instance, 0, (s32 *)&v58);
     }
 
     if (s1 != 0)
@@ -272,7 +272,7 @@ void gBeamPartUpdate(struct Unk6B23C *arg0, s32 index, s32 arg2)
         if (s1 != 0) {
             ang = s1->unk1E;
             if (ang < 4) {
-                func_80017668((void *)((u8 *)c + 0x28), (s8)ang, (s32 *)&v38);
+                gTransformPartVertex((void *)((u8 *)c + 0x28), (s8)ang, (s32 *)&v38);
                 goto after_movement;
             } else {
                 t = s1->unk34;

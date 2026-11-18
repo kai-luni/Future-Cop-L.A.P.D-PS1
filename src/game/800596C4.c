@@ -29,9 +29,9 @@ struct Unk596C4Effect {
 extern s32 gDescriptorBlock __asm__("D_8009AF88");
 extern s32 D_8009AF94[];
 
-extern void func_80017668(struct Unk596C4Part *part, s32 arg1, s32 *out);
+extern void gTransformPartVertex(struct Unk596C4Part *part, s32 arg1, s32 *out) __asm__("func_80017668");
 extern u32 func_80019668(void);
-extern void func_80014C64(s32 *from, s32 *to, struct Unk596C4Effect *effect);
+extern void gDrawBeamQuad(s32 *from, s32 *to, struct Unk596C4Effect *effect) __asm__("func_80014C64");
 
 /**
  * @brief Emits one short effect segment from the active part of an object.
@@ -70,13 +70,13 @@ void func_800596C4(struct Unk596C4 *object)
         return;
     }
     part = &object->state->parts[index];
-    func_80017668(part, 0, from);
+    gTransformPartVertex(part, 0, from);
     to[0] = from[0] + ((part->x << 4) >> 8);
     to[1] = from[1] + ((part->y << 4) >> 8);
     z = from[2] + ((part->z << 4) >> 8);
     __asm__("" : : "r"(z));
     to[2] = z;
     gDescriptorBlock = D_8009AF94[func_80019668() % 3];
-    func_80014C64(from, to,
+    gDrawBeamQuad(from, to,
                   (struct Unk596C4Effect *)((u8 *)&gDescriptorBlock - 0x10));
 }

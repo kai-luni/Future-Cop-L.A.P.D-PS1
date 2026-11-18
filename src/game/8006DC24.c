@@ -42,17 +42,19 @@ typedef struct Obj {
 extern s32 *gCamera __asm__("D_8009F9E4");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 D_8009F9B8;
-extern u32 D_8009B214[];
+extern u32 gTexturePageWord __asm__("D_8009F9B8");
+extern u32 gMeshMirrorTable[] __asm__("D_8009B214");
 extern s32 gTexpageBaseTable[] __asm__("D_800A8E80");
 
-extern s32 *func_8003D9F8();
+extern s32 *gResolveNodeTransform() __asm__("func_8003D9F8");
 extern s32 func_8001A100();
 extern void gGteLoadRotation() __asm__("func_80010820");
 extern void gGteTransformWords() __asm__("func_8001006C");
 extern void gGteLoadMatrix() __asm__("func_80010750");
-extern void func_8001047C();
+extern void gProjectVertexBatch() __asm__("func_8001047C");
 extern void gSinCos() __asm__("func_8001846C");
+void gDrawFlatRing(Obj *o, s32 *pos) __asm__("func_8006DC24");
+
 
 /**
  * @brief Draws a model node as a textured mesh part: vertices, UVs and packets.
@@ -80,21 +82,21 @@ extern void gSinCos() __asm__("func_8001846C");
  * func_8006E988.
  *
  * @par Environment path
- * Draws one scene node as a textured ring or cylinder mesh: it resolves the
- * transform with func_8003D9F8, culls the node by radius against the passed
- * origin, builds the local matrix, then tessellates the ring from the node's
- * inner and outer radii with gSinCos and mirrors the result into up to eight
- * orientations taken from D_8009B214. Each band is projected with
- * func_8001047C, its clip bytes are tested, and a textured packet is emitted
- * from the prim pool with the UV corners and the texpage word; the
- * non-textured variant instead emits gouraud quads with the node's two
- * colours. It is called from the scene node walk func_8006E988
- * (src/game/8006E988.c:83) and is the model-side detail renderer, not the
- * region tile pass. The meaning of the flag bits at +0x98 (4-vertex versus
- * 6-vertex band, half tessellation, single quad) is only inferable from the
- * loop bounds.
+ * Draws one model-list node as a flat ring (annulus) in its local x/z plane;
+ * its only caller is the node walk func_8006E988 for nodes that are not
+ * effect shapes. It resolves the node transform with func_8003D9F8, culls by
+ * radius against the view position, builds the camera-relative matrix from
+ * gCamera (or uses the node rotation when flag 0x20 is set) and tessellates
+ * one 45-degree sector between the inner radius +0x12 and the outer radius
+ * (+0x70, a second band with flag 0x10) using gSinCos. The sector is
+ * replicated into the eight octants by the swap/negate bits of D_8009B214 (2
+ * octants with flag 0x400, half sector with 0x200), each octant is projected
+ * with func_8001047C, and every unclipped band is emitted from gPrimPoolNext
+ * either as a textured quad on page gTexpageBaseTable[5] with the node UV
+ * rectangle (flag 1) or as a gouraud semi-transparent quad with the two node
+ * colours on the solid page D_8009F9B8.
  */
-void func_8006DC24(Obj *o, s32 *pos)
+void gDrawFlatRing(Obj *o, s32 *pos)
 {
     struct { s32 mat[9]; s32 flag[3]; s32 mask[2]; } w;
     s16 pts[6][4];
@@ -127,7 +129,7 @@ void func_8006DC24(Obj *o, s32 *pos)
         r3 = r1 + (o->f70 << 1);
         nverts = 6;
     }
-    s0 = func_8003D9F8(o->f1C ? (s32)o->f1C[0xD] : 0, o->f1A, o->f0E, 1, o->f1C, &o->mat);
+    s0 = gResolveNodeTransform(o->f1C ? (s32)o->f1C[0xD] : 0, o->f1A, o->f0E, 1, o->f1C, &o->mat);
     vec[0] = s0[9] - pos[0];
     vec[1] = s0[10] - pos[1];
     vec[2] = s0[11] - pos[2];
@@ -192,19 +194,19 @@ void func_8006DC24(Obj *o, s32 *pos)
         for (i = 0; i < 8; i++) {
             for (j = 0; j < n; j++) {
                 s32 a, b, x, y;
-                if ((D_8009B214[i] >> 2) & 1) { a = pts[j][1]; b = pts[j][0]; x = a; }
+                if ((gMeshMirrorTable[i] >> 2) & 1) { a = pts[j][1]; b = pts[j][0]; x = a; }
                 else { b = pts[j][1]; a = pts[j][0]; x = a; }
-                if (D_8009B214[i] & 1) x = -a;
+                if (gMeshMirrorTable[i] & 1) x = -a;
                 out[i][j][0] = x;
                 out[i][j][1] = 0;
                 y = b;
-                if ((D_8009B214[i] >> 1) & 1) y = -b;
+                if ((gMeshMirrorTable[i] >> 1) & 1) y = -b;
                 out[i][j][2] = y;
             }
             if (i == 1 && (o->f98 & 0x400)) break;
         }
         for (i = 0; i < fp; i++) {
-            func_8001047C(out[i], v, w.mask, nverts);
+            gProjectVertexBatch(out[i], v, w.mask, nverts);
             if (w.mask[0] & 0x01010101) continue;
             if ((o->f98 & 0x10) && ((u16)w.mask[1] & 0x101)) continue;
             if (o->f98 & 1) {
@@ -333,7 +335,7 @@ void func_8006DC24(Obj *o, s32 *pos)
 }
                 p->h[18] = 0x101;
                 p->h[24] = 0x100;
-                p->w[6] = ((u32)D_8009F9B8 << 16) | 1;
+                p->w[6] = ((u32)gTexturePageWord << 16) | 1;
                 if (o->f98 & 0x10) {
                     if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc4;
                     __asm__("");
@@ -360,7 +362,7 @@ void func_8006DC24(Obj *o, s32 *pos)
     }
                     p->h[18] = 0x101;
                     p->h[24] = 0x100;
-                    p->w[6] = ((u32)D_8009F9B8 << 16) | 1;
+                    p->w[6] = ((u32)gTexturePageWord << 16) | 1;
                 }
             }
         }

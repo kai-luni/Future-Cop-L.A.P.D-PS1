@@ -26,6 +26,8 @@ struct Obj {
 extern s32 gSceneFrameCounter __asm__("D_8009FA50");
 extern void func_8006D520(Obj *);
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
+void gTickEffectNodes(Obj *node, s32 dt) __asm__("func_8006D770");
+
 
 /**
  * @brief Per-frame update of a list of effect nodes: colour fade, sprite-sheet
@@ -75,18 +77,19 @@ extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0")
  * func_8003F4A0, the second of its six list passes, over D_800A1070[2].
  *
  * @par Environment path
- * Per-frame tick of the effect list: it fades the two RGB triples at
- * +0x89..+0x8F, advances a sprite-sheet frame using the timers +0x74..+0x84,
- * rebuilds the billboard rotation with func_800188D0, decays the scale
- * towards 4096 and calls func_8006D520 to re-emit a node every fourth frame
- * and when the lifetime +0x6E is reached. It is called by gRunSceneListPasses
- * (func_8003F4A0, line 45) as the first of its six per-layer passes, over
- * scene list D_800A1070[2]. That is the object-list pass that runs on top of
- * the environment, not the region pass of gDrawViewLayers itself, which never
- * reaches this function directly; the visible output is produced by
- * func_8006D520.
+ * Per-frame update of the effect objects in gListHeads bucket 2;
+ * gRunSceneListPasses (func_8003F4A0) calls it with the frame delta as the
+ * first of its list passes, inside the entity tick and not in the render
+ * path. For every live node it fades the six colour bytes at +0x89..+0x8F and
+ * retires the node when all reach zero, advances the sprite-sheet frame and
+ * its texture offsets from the timers at +0x72..+0x84, grows the value at
+ * +0x12 by the rate at +0x68 (which decays towards 4096 by +0x6A), and
+ * rebuilds the spin matrix with func_800188D0 when spin rates are set. When
+ * the type's +0x2E field is set it calls func_8006D520 every fourth frame
+ * (gSceneFrameCounter & 3) and once more at the end of the node's life, when
+ * +0x12 reaches +0x6E and the node is retired.
  */
-void func_8006D770(Obj *node, s32 dt)
+void gTickEffectNodes(Obj *node, s32 dt)
 {
     Obj *p;
     s32 amount;

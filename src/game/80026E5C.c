@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 gHookInstallFlag __asm__("D_8009FAD8");
-extern void func_80066C9C(void);
+extern void gUpdateCameraAnchor(void) __asm__("func_80066C9C");
 
 /**
  * @brief Scratchpad-stack trampoline for the camera anchor update

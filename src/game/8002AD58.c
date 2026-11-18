@@ -19,6 +19,8 @@ extern s32 func_8002A940(struct Unk2AD58 *object, void *data);
 extern s32 func_8002AA1C(s32 message, struct Unk2AD58 *object, void *hit);
 extern s32 func_8002AB8C(struct Unk2AD58 *object, void *data);
 extern s32 func_80095C30(s32 x, s32 y);
+s32 gEntityBaseHandler(s32 message, struct Unk2AD58 *object, void *data) __asm__("func_8002AD58");
+
 
 /**
  * @brief The shared base entity handler: default cases for spawn, draw,
@@ -70,7 +72,7 @@ extern s32 func_80095C30(s32 x, s32 y);
  * per-entity dispatch layer beside the environment pass rather than inside
  * it: the file reads no global, calls no GTE function and emits no geometry.
  */
-s32 func_8002AD58(s32 message, struct Unk2AD58 *object, void *data)
+s32 gEntityBaseHandler(s32 message, struct Unk2AD58 *object, void *data)
 {
     switch (message) {
     case 1:

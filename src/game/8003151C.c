@@ -38,14 +38,14 @@ struct Entity {
 };
 
 extern struct Entity *func_8004D69C(s32 tag);
-extern void func_80017668(void *instance, s32 part, s32 *out);
+extern void gTransformPartVertex(void *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_80030DE0(struct Entity *self, void *data, s32 arg);
 extern u8 func_8002F8B8(u8 arg0, s16 arg1, void *arg2, s32 arg3);
-extern s32 func_80031238(struct Entity *self, void *data);
+extern s32 gTestEntityOverlap(struct Entity *self, void *data) __asm__("func_80031238");
 extern s32 func_80031120(struct Entity *self, void *data, s32 arg);
-extern s32 func_8002AD58(s32 message, struct Entity *self, void *data);
+extern s32 gEntityBaseHandler(s32 message, struct Entity *self, void *data) __asm__("func_8002AD58");
 extern void func_80031004(struct Entity *self);
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *jtbl_8001123C[];
 
 /**
@@ -106,10 +106,10 @@ m10:
     result = func_8002F8B8(self->unkA1, self->unkA2, data, ((u32)a3v >> 2) & 1);
     if (result != 0) {
         if (self->unk16 == 0x26) {
-            result = func_80031238(self, data);
+            result = gTestEntityOverlap(self, data);
         }
         if (result != 0) {
-            if (self->unkA4 == gDiscShadeByte && (self->unkA0 & 4)) {
+            if (self->unkA4 == gFrameTime && (self->unkA0 & 4)) {
                 result = 0;
             }
         }
@@ -127,5 +127,5 @@ m6:
 mzero:
     return 0;
 fallback:
-    return func_8002AD58(message, self, data);
+    return gEntityBaseHandler(message, self, data);
 }

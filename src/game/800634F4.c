@@ -5,7 +5,7 @@ extern void *gTileBlockTable __asm__("D_8009F808");
 extern void *D_8009F810;
 extern void *gTableBuffer __asm__("D_8009FA08");
 extern void *D_800A294C[];
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Frees non-null map and mesh buffers D_8009F808, D_8009F810, D_8009FA08, and D_800A294C[0].
@@ -32,15 +32,15 @@ extern void func_800181D4(void *block);
 void func_800634F4(void)
 {
     if (gTileBlockTable != 0) {
-        func_800181D4(gTileBlockTable);
+        gFreeBlock(gTileBlockTable);
     }
     if (D_8009F810 != 0) {
-        func_800181D4(D_8009F810);
+        gFreeBlock(D_8009F810);
     }
     if (gTableBuffer != 0) {
-        func_800181D4(gTableBuffer);
+        gFreeBlock(gTableBuffer);
     }
     if (D_800A294C[0] != 0) {
-        func_800181D4(D_800A294C[0]);
+        gFreeBlock(D_800A294C[0]);
     }
 }

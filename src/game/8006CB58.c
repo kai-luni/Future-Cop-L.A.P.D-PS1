@@ -61,13 +61,15 @@ typedef struct Obj {
 extern Cam *gCamera __asm__("D_8009F9E4");
 extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 D_8009F9B8;
+extern u32 gTexturePageWord __asm__("D_8009F9B8");
 
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
-extern void func_8001047C(void *, void *, void *, s32);
+extern void gProjectVertexBatch(void *, void *, void *, s32) __asm__("func_8001047C");
 extern void func_8006CAAC(void *, void *, s16, void *, s16);
+void gDrawShadedModel(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b, u8 arg_tr, u8 arg_tg, u8 arg_tb) __asm__("func_8006CB58");
+
 
 /**
  * @brief Draws one model with a base colour: transform, project and emit the
@@ -98,21 +100,20 @@ extern void func_8006CAAC(void *, void *, s16, void *, s16);
  * func_8005DFF0 (effects) and func_8006E988 (the model list walker).
  *
  * @par Environment path
- * Draws one model with a base colour and a colour gradient: it subtracts the
- * camera translation from the object position, transforms the delta with the
- * camera rotation (gGteLoadRotation func_80010820 / gGteTransformWords
- * func_8001006C) and picks the basis either from the camera matrix or from a
- * transform of the object, applies the per-vertex scale table with
- * func_8006CAAC, projects with func_8001047C, then emits one polygon per
- * face-list entry whose three or four vertices all carry exactly 0xC0 in the
- * model's clip-flag array. Packets come from the D_8009F9F0 pool and stop at
- * D_8009FA28; the texpage word is D_8009F9B8 and the colour ramp steps by the
- * model's div/cnt fields. It is a coloured single-model draw entry of the
- * renderer, called per node by the object-list walker func_8006E988:80 and by
- * the effects unit func_8005DFF0, and it does not go through the
- * gDrawViewLayers region pass.
+ * Draws one procedural effect shape with a colour gradient: it generates up
+ * to sixteen mirrored corner points (+-size on each axis, halves skipped by
+ * model flags 2 and 4), expands each corner into the model's vertex stream
+ * with func_8006CAAC, takes the camera-relative position (func_80010820,
+ * func_8001006C on gCamera) and either the camera rotation or the object's
+ * rotated basis (flag 8), and projects all vertices with func_8001047C. It
+ * then walks the face list and, for every triangle or quad whose clip flags
+ * are exactly 0xC0, emits a gouraud textured semi-transparent packet from the
+ * gPrimPoolNext pool, with the colour stepping from (r,g,b) toward (tr,tg,tb)
+ * every cnt faces (div steps) and UVs sampling the solid patch on page
+ * D_8009F9B8. Its callers are the effect-model draw func_8005DFF0 and the
+ * model-node list walker func_8006E988.
  */
-void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
+void gDrawShadedModel(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
                    u8 arg_tr, u8 arg_tg, u8 arg_tb)
 {
     struct {
@@ -308,7 +309,7 @@ void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
         } while (i < n);
     }
     gGteLoadMatrix(&L.mtx);
-    func_8001047C(mp->verts, mp->verts, mp->flags, mp->stride * n);
+    gProjectVertexBatch(mp->verts, mp->verts, mp->flags, mp->stride * n);
 
     c = 0;
     if (mp->flg & 1) {
@@ -426,7 +427,7 @@ void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
                     p->wC = 0;
                     p->w20 = tmp;
                     __asm__ volatile ("" : : : "memory");
-                    tex = D_8009F9B8;
+                    tex = gTexturePageWord;
                     tmp = 0x101; *(u16 *)&p->w24 = tmp;
                     tmp = 0x100; *(u16 *)&p->w30 = tmp;
                     __asm__ volatile ("" : "+r"(tex) : : "memory");
@@ -472,7 +473,7 @@ void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
                     p->wC = 0;
                     p->w20 = tmp;
                     __asm__ volatile ("" : : : "memory");
-                    tmp = D_8009F9B8;
+                    tmp = gTexturePageWord;
                     *(u16 *)&p->w24 = 1;
                     p->w18 = (tmp << 16) | 0x101;
                 }

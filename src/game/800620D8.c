@@ -7,7 +7,7 @@ struct Object { int unused; int (*callback)(int,Object *,Object *,int); int id; 
 struct Entry { int id; Object *object; };
 struct Bucket { unsigned char count; char pad[3]; struct Entry entries[8]; };
 extern struct Bucket gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
-extern int func_80061CAC(Coord *, Coord *);
+extern int gTestPartPairHit(Coord *, Coord *) __asm__("func_80061CAC");
 
 /**
  *  @brief Tests an object pair for proximity and possible collision.
@@ -90,7 +90,7 @@ void func_800620D8(Object *a, Object *b, unsigned int flags)
                     int test = dist - ((ca->w + cb->w) << 4);
                     d = 0;
                     if (test < 0 && (((dy >> 31) + dy) ^ (dy >> 31)) - ((ca->h + cb->h) << 4) < 0)
-                        hit = func_80061CAC(ca, cb);
+                        hit = gTestPartPairHit(ca, cb);
                 }
             }
             if (hit) {

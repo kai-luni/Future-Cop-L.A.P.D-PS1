@@ -21,11 +21,13 @@ struct AnimNode {
 
 extern struct AnimNode *gAnimNodeList __asm__("D_8009F564");
 extern struct AnimNode *gAnimWaveList __asm__("D_8009F568");
-extern u32 gDiscShadeByte __asm__("D_8009FAA4");
+extern u32 gFrameTime __asm__("D_8009FAA4");
 
 extern void func_800135C0(struct AnimNode *node, u32 arg1);
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
+void gStepAnimations(s32 a0) __asm__("func_800136C8");
+
 
 /**
  * @brief Advances animated entries in D_8009F568 and the linked list D_8009F564.
@@ -50,18 +52,17 @@ extern s32 func_80019668(void);
  * Confirmed: func_8002703C (0x80027184, main frame tick) / Likely: none / Unknown: none.
  *
  * @par Environment path
- * Advances the two global animation lists once per frame: func_800135C0 is
- * called with the wave list D_8009F568 and the frame stamp D_8009FAA4, then
- * every node of the list D_8009F564 is walked and each entry either counts
- * its timer down and steps the sprite index (types 0..3, including the
- * ping-pong and random cases) or advances a sine/cosine index for types 16
- * and above. On a change it copies 6 or 8 bytes from the entry's src to its
- * dst pointer. It is the animation stepper of the frame tick - func_8002703C
- * calls it with the frame id D_8009F9FC - and it is not on the environment
- * render path: it touches no camera, no GTE matrix and no packet pool, it
- * only rewrites the destination half-words the entries point at.
+ * Advances the two global texture-animation lists once per frame;
+ * func_8002703C calls it with the frame delta D_8009F9FC. It first hands the
+ * wave list D_8009F568 and the frame time D_8009FAA4 to func_800135C0, then
+ * walks every node of D_8009F564: entries of types 0..3 count their timer
+ * down by the delta and step their frame index (loop, reverse, ping-pong,
+ * random via func_80019668), entries of type 16 and above advance a phase and
+ * derive the index from a func_8001846C sine/cosine. When the index changes
+ * it copies 3 or 4 half-words from src + index * 6/8 to the entry's dst
+ * pointer. It touches no camera, GTE matrix or packet pool.
  */
-void func_800136C8(s32 a0)
+void gStepAnimations(s32 a0)
 {
     register s32 dt __asm__("$19");
     struct AnimNode *node;
@@ -76,7 +77,7 @@ void func_800136C8(s32 a0)
     s32 off;
 
     dt = a0;
-    func_800135C0(gAnimWaveList, gDiscShadeByte);
+    func_800135C0(gAnimWaveList, gFrameTime);
 
     for (node = gAnimNodeList; node != 0; node = node->next) {
         e = node->entries;

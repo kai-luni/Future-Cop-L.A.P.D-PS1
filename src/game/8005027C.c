@@ -13,7 +13,7 @@ extern void gSinCos(s32, s32 *, s32 *) __asm__("func_8001846C");
 extern void gBuildRotationMatrix(s32, s32, s32, u8 *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(u8 *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(u8 *, u8 *, s32) __asm__("func_80010234");
-extern void func_80037EB4(u8 *);
+extern void gOrientEntityBasis(u8 *) __asm__("func_80037EB4");
 extern s32 func_80095C30(s32, s32);
 extern void func_8004FFD0(u8 *, s32, u8 *);
 
@@ -25,6 +25,8 @@ typedef struct { s32 x, y, z; } V3;
 #define MUL16(out, a, b) \
     __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
                      : "=r"(out) : "r"((s32)(a)), "r"((s32)(b)) : "$8", "$9")
+s32 gStepPathMover(u8 *s, s32 step, u8 *op) __asm__("func_8005027C");
+
 
 /**
  * @brief Advances a path-following entity along its spline for one step and
@@ -98,22 +100,23 @@ typedef struct { s32 x, y, z; } V3;
  * 0x50 is clear and to func_80050D14 otherwise).
  *
  * @par Environment path
- * Integrates one step of a rail or spline following entity: the hold timer at
- * +0x40 runs down and reseeds the speed from the base speed, the speed at
- * +0x32 ramps toward the render object value with the acceleration and
- * deceleration rates divided by 16, and the progress at +0x1C is consumed
- * segment by segment, rebuilding the render position from the segment start,
- * the velocity and the fixed-point ratio 0x80000000 divided by half the
- * segment length. On a segment change func_8004F764 picks the next segment,
- * the level nibbles of the 12-byte map entries are moved from the old index
- * to the new one, and a -2 exit code with flag 0x8000 tears the entity down
- * through func_8004D958, after which the yaw and pitch snapshots are
- * refreshed with func_8001846C. Every pass ends with func_800188D0 building
- * the matrix, func_80010750 loading it, func_80010234 transforming the frame
- * vertex and func_80037EB4 re-orienting the basis; the caller is the mover
- * dispatcher func_80050D14 and no global is accessed.
+ * Advances an object along its path-network route by one step; the only
+ * caller is the motion dispatcher func_80050D14. A hold timer at +0x40 counts
+ * down and then restores the target speed +0x32 from the base speed +0x30,
+ * the object's current speed at +0x84 ramps toward that target with the
+ * acceleration/deceleration rates +0x36/+0x38 divided by 16, and the
+ * travelled distance +0x1C is consumed segment by segment while the position
+ * +0x50..+0x58 is interpolated from the segment start and delta. At a segment
+ * end func_8004F764 picks the next node (an exit code of -2 with flag 0x8000
+ * frees the object through func_8004D958), the 4-bit occupancy counters of
+ * the previous and next 12-byte node entries are decremented and incremented,
+ * heading snapshots are refreshed with func_8001846C, and only when the route
+ * reaches its marked node with flag 0x400 does it rebuild the matrix with
+ * func_800188D0, transform the frame vertex (func_80010750, func_80010234)
+ * and re-orient through func_80037EB4. Curve segments are delegated to
+ * func_8004FFD0; no globals are accessed.
  */
-s32 func_8005027C(u8 *s, s32 step, u8 *op)
+s32 gStepPathMover(u8 *s, s32 step, u8 *op)
 {
     register u8 *o __asm__("$19");
     register s32 a2 __asm__("$4");
@@ -250,7 +253,7 @@ loop:
             gBuildRotationMatrix((H(s, 0x50) + 0x800) & 0xFFF, 0, 0, o + 0x2C);
             gGteLoadMatrix(o + 0x2C);
             gGteTransformVerticesWide((u8 *)W((u8 *)W(o, 0x28), 0x34) + ((H(o, 0x70) << 4) + 8), o + 0x5C, 1);
-            func_80037EB4(o);
+            gOrientEntityBasis(o);
             if (!(F(s, 0x3C) & 0x1000)) {
                 v = func_80095C30(W(o, 0x78), W(o, 0x80));
                 U(s, 0x50) = v & 0xFFF;

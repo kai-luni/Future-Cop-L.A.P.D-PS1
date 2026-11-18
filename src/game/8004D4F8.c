@@ -17,7 +17,7 @@ struct Entity {
 
 extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gAppendEntityToList(struct Entity *entity) __asm__("func_8004D3D4");
 
 /**
@@ -50,7 +50,7 @@ s32 gSpawnTargetableEntityId(struct EntityDef *def)
     struct Entity *entity;
     s32 (*handler)(s32, struct Entity *, struct EntityDef *, s32);
 
-    entity = func_80017EBC(def->handler(1, 0, 0, 0), 3);
+    entity = gAllocMemory(def->handler(1, 0, 0, 0), 3);
     handler = def->handler;
     entity->update = handler;
     entity->id = ++gEntityIdCounter;

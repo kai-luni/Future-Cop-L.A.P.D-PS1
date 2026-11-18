@@ -10,10 +10,12 @@ struct Obj52410 {
     s16 angle;
 };
 
-extern void func_80051C50(struct Obj52410 *, s32, struct Vec52410 *, void *);
+extern void gBuildObjectBasis(struct Obj52410 *, s32, struct Vec52410 *, void *) __asm__("func_80051C50");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, struct Vec52410 *, s32) __asm__("func_80010234");
 extern s32 func_800684AC(void *, void *, void *, s32, s32);
+s32 gTestFootprintEdges(struct Obj52410 *obj, struct Vec52410 *points, struct Vec52410 *out) __asm__("func_80052410");
+
 
 /**
  * @brief Transforms a quad and tests its four edges.
@@ -36,15 +38,16 @@ extern s32 func_800684AC(void *, void *, void *, s32, s32);
  * level geometry and the four codes say which sides are blocked.
  *
  * @par Environment path
- * Prepares the matrices with func_80051C50, loads one through func_80010750,
- * transforms four vertices with func_80010234 and then runs func_800684AC
- * once per quad edge, packing the four 3-bit edge results into a single
- * return word. Its only caller, func_80052708, uses that word as a packed
- * footprint mask (src/game/80052708.c:72). It is a collision/geometry query
- * with a GTE transform inside and touches no region, tile, camera or packet
- * state, so it is not on the environment render path.
+ * Builds the object's basis with func_80051C50, loads it with func_80010750
+ * and transforms the four footprint corners of the record at other+0xEC with
+ * func_80010234. It then runs the map-grid segment test func_800684AC eight
+ * times - four rays from the footprint's reference points to the transformed
+ * corners and the four quad edges between the corners - and packs the eight
+ * 3-bit hit codes into one return word, writing the hit points to the out
+ * array. Its only caller func_80052708 uses that word as the footprint
+ * collision mask; this is collision, not rendering.
  */
-s32 func_80052410(struct Obj52410 *obj, struct Vec52410 *points, struct Vec52410 *out)
+s32 gTestFootprintEdges(struct Obj52410 *obj, struct Vec52410 *points, struct Vec52410 *out)
 {
     s32 i;
     register s32 result __asm__("$18");
@@ -63,7 +66,7 @@ s32 func_80052410(struct Obj52410 *obj, struct Vec52410 *points, struct Vec52410
     result = 0;
     i = result;
     offset = 0x20;
-    func_80051C50(obj, obj->angle, target, view);
+    gBuildObjectBasis(obj, obj->angle, target, view);
     gGteLoadMatrix(p);
     gGteTransformVerticesWide(base, points, 4);
     q = out;

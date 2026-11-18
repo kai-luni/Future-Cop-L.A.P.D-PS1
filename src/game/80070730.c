@@ -42,7 +42,7 @@ typedef struct Obj70730 {
 } Obj70730;
 
 extern u32 gPlayerCount __asm__("D_8009FA0C");
-extern Base70730 *D_8009FA58[];
+extern Base70730 *gPlayerEntities[] __asm__("D_8009FA58");
 
 extern void gGteTransformWords(Vec70730 *dst, Vec70730 *src, s32 count) __asm__("func_8001006C");
 extern void gGteLoadRotation(void *arg) __asm__("func_80010820");
@@ -51,6 +51,8 @@ extern s32 func_80019668(void);
 extern s32 func_80019F54(s32 *vector);
 extern void func_8003D0F0(Base70730 *base, s32 type, s32 flags, Vec70730 *out);
 extern s32 func_80067684(Vec70730 *vec, s32 adjust);
+s16 gComputeEffectEndPoint(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg) __asm__("func_80070730");
+
 
 /**
  * @brief Computes one end point of an effect segment - position, random scatter
@@ -154,21 +156,20 @@ extern s32 func_80067684(Vec70730 *vec, s32 adjust);
  * address also has an "address_taken" edge.
  *
  * @par Environment path
- * Computes one end point of an effect segment: the base point comes either
- * from the inline vector at obj + 0xC or from func_8003D0F0 with the object
- * matrix transformed into GTE space, and the radius is derived from the
- * range, a negative range becoming base + 0x46 scaled by the magnitude. When
- * flag bit 2 of the object is set one randomly chosen player entity is
- * proximity tested with func_80019F54 and the point snaps onto it when the
- * scaled distance falls inside the tolerance. The point is then scattered by
- * a Q12-scaled random direction with y replaced by ground height from
- * func_80067684, and the return value is the index into gPlayerEntities of
- * the entity that was hit, or -1, which the caller func_80070E48 uses to
- * address the damage message. It is an impact/effect placement routine, not
- * an environment pass: it loads the base matrix into the GTE and consumes the
- * global random generator but writes no global.
+ * Computes one end point of a beam or ribbon strip and returns the index of
+ * the player entity it locked onto, or -1; func_80070E48 calls it for both
+ * ends and uses the index to send the damage event. The base point is the
+ * vector at obj + 0xC, or func_8003D0F0's point rotated and offset into the
+ * base object's frame, and the scatter radius comes from the range field (a
+ * negative range scales the base object's +0x46 value). With flag bit 1 set,
+ * a random player in gPlayerEntities is tested half of the time and the point
+ * snaps to that player's position when it lies within the radius plus the
+ * player's +0x6E radius. Otherwise the point is scattered: with flag mask 9
+ * by a random horizontal offset and then snapped to the ground with
+ * func_80067684, or without it in a random 3D direction; in mode 1 the base
+ * object's offset is subtracted from the result.
  */
-s16 func_80070730(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg)
+s16 gComputeEffectEndPoint(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg)
 {
     Vec70730 vec;
     s32 trig[4];
@@ -231,13 +232,13 @@ s16 func_80070730(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg
 
         if ((func_80019668() & 1) != 0) {
             shift = (world->flagsE & 0x20) ? 4 : 5;
-            vec.x = target->x - D_8009FA58[r]->pos.x;
-            vec.y = target->y - D_8009FA58[r]->pos.y;
-            vec.z = target->z - D_8009FA58[r]->pos.z;
+            vec.x = target->x - gPlayerEntities[r]->pos.x;
+            vec.y = target->y - gPlayerEntities[r]->pos.y;
+            vec.z = target->z - gPlayerEntities[r]->pos.z;
             dist = func_80019F54((s32 *)&vec);
 
-            if ((dist >> shift) < ((s16)speed + D_8009FA58[r]->unk6E)) {
-                target = &D_8009FA58[r]->pos;
+            if ((dist >> shift) < ((s16)speed + gPlayerEntities[r]->unk6E)) {
+                target = &gPlayerEntities[r]->pos;
                 speed = 0;
                 selected = r;
             }

@@ -21,12 +21,14 @@ struct Locals {
     s32 cosA;
 };
 
-extern s32 gMissionWorkingSet __asm__("D_8009F9A0");
+extern s32 gFocusPositions __asm__("D_8009F9A0");
 extern void gSinCos(s32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 
 #define FMUL(a, b) ({ s32 r_; __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 #define UFMUL(a, b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 #define FMULR(a, b) ({ s32 r_; __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(r_) : "r"(a), "0"(b) : "$8", "$9"); r_; })
+void gComputeCameraEye(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch, s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8) __asm__("func_8005612C");
+
 
 /**
  * @brief Places one point on a heading/pitch ray from a base position, with a
@@ -78,18 +80,16 @@ extern void gSinCos(s32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
  * func_80056634, func_8005678C, func_800569EC (four sites) and func_800573A4.
  *
  * @par Environment path
- * Places one point on a heading/pitch ray from a base position: it scales the
- * lateral offset block by (0x100 - arg7/2)/256, folds the base height in,
- * converts the remaining height into a ground step with the pitch cotangent
- * (built from func_8001846C and a 16.16 half-reciprocal), rotates the offset
- * by the heading and writes the result to out[0..2]. Callers are the four
- * view placements func_80056634, func_8005678C, func_800569EC (four sites)
- * and func_800573A4, i.e. the code that positions the players' views before
- * the environment pass runs. It is one step upstream of gDrawViewLayers
- * rather than part of it: it produces the anchor the view object later uses,
- * and when D_8009F9A0 is set the lateral offset is silently zeroed.
+ * Computes a camera eye position around a base point: the per-view offset
+ * block is scaled by (0x100 - arg7/2)/256, lowered by arg8 and raised by the
+ * base height, then rotated by the heading; the eye height is distance +
+ * base.y / 2, and the horizontal distance needed to look down at the offset
+ * point at the given pitch ((height - offset.y) * cos/sin) is subtracted
+ * along the view angle. The result is written to out[0..2]. When D_8009F9A0
+ * (the focus entity) is set the offset is zeroed. Callers are the camera
+ * placements func_80056634, func_8005678C, func_800569EC and func_800573A4.
  */
-void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
+void gComputeCameraEye(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
                    s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8)
 {
     struct Locals L;
@@ -117,7 +117,7 @@ void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
     L.vec.y += position->y;
     distance += position->y / 2;
 
-    if (gMissionWorkingSet != 0) {
+    if (gFocusPositions != 0) {
         L.vec.x = 0;
         L.vec.y = 0;
         L.vec.z = 0;

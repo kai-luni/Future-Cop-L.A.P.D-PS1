@@ -16,7 +16,7 @@ extern u8 D_800A3938[];
 extern u8 gHexDigitTable[] __asm__("D_8009C1AC");
 extern u8 gOctalDigitTable[] __asm__("D_8009C1BC");
 extern u8 gHighlightShadeTable[8] __asm__("D_8009F3F8");
-extern s32 gPaletteCycleCounter[] __asm__("D_8009FA60");
+extern s32 gGameClock[] __asm__("D_8009FA60");
 extern void *jtbl_800121A4[];
 
 extern s32 gApplyPasswordUnlocks(void) __asm__("func_8007EA78");

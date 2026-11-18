@@ -1,7 +1,7 @@
 // Categories: Resources > Memory Management | Graphics > Effects
 #include "game/types.h"
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Releases a memory block through func_800181D4.
@@ -27,5 +27,5 @@ extern void func_800181D4(void *block);
  */
 void func_80042844(void *block)
 {
-    func_800181D4(block);
+    gFreeBlock(block);
 }

@@ -27,10 +27,10 @@ typedef struct UnkFA94 {
     s32 unk5C;
 } UnkFA94;
 
-extern s32 gFrameId __asm__("D_8009F9FC");
+extern s32 gFrameDelta __asm__("D_8009F9FC");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern UnkFA94 *gGameSession __asm__("D_8009FA94");
-extern UnkFC90Obj *D_8009FA58[2];
+extern UnkFC90Obj *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern void func_8005A190(UnkFC90Sub *sub, s32 index, s32 value);
 extern void func_8003BA50(UnkFC90Obj *obj, s32 value);
@@ -87,7 +87,7 @@ void func_8002FC90(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4)
     __asm__("" : "+r"(temp));
     flag0 = bits & temp;
     if (flag0 == 0) {
-        *arg3 += gFrameId;
+        *arg3 += gFrameDelta;
         if (*arg3 < *arg4) {
             return;
         }
@@ -122,7 +122,7 @@ void func_8002FC90(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4)
     for (; i < 2; i++) {
         __asm__("" : "+r"(i));
         {
-            UnkFC90Obj **table = D_8009FA58;
+            UnkFC90Obj **table = gPlayerEntities;
             __asm__ volatile("" : "+r"(table) : : "memory");
             obj = table[i];
         }

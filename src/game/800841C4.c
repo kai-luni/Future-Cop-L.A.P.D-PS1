@@ -22,7 +22,7 @@ extern struct LinkState *gMissionState __asm__("D_8009F934");
 extern struct Cell841C4 *gBucketArray __asm__("D_8009F938");
 extern s32 gMissionGridWidth __asm__("D_8009F93C");
 extern s32 gMissionGridHeight __asm__("D_8009F940");
-extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
+extern s32 gFrameTime[] __asm__("D_8009FAA4");
 extern void func_800195D0(struct LinkState *state, int *link);
 
 /**
@@ -73,7 +73,7 @@ void func_800841C4(s32 id, s32 mode, s32 index)
                         func_800195D0(gMissionState, (int *)node);
                     } else {
                         if (index < 0) { node->field50 = -1; }
-                        else { node->field50 = gDiscShadeByte[0] + index * 300; }
+                        else { node->field50 = gFrameTime[0] + index * 300; }
                         node->flags &= 0x7F;
                     }
                     return;

@@ -15,8 +15,8 @@ typedef struct {
     u8 pad19[3];
 } Mesh;
 
-extern void *func_80017EBC(s32 size, s32 tag);
-extern void func_800181D4(void *ptr);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+extern void gFreeBlock(void *ptr) __asm__("func_800181D4");
 extern void func_8006C4C4(void *vertices, s16 step, s16 flags);
 extern void func_8006C768(void *faces, s32 rows, s32 cols, s32 count);
 extern s32 gTableBuffer __asm__("D_8009FA08");
@@ -73,7 +73,7 @@ Mesh *func_8006C84C(s16 arg0, s32 flags)
         step = 0x200 / (0x200 / arg0);
     }
     count = 0x200 / step;
-    mesh = func_80017EBC(0x1c, 1);
+    mesh = gAllocMemory(0x1c, 1);
     rows = count + 1;
     stride = rows * 2;
     cols = stride - 1;
@@ -95,15 +95,15 @@ Mesh *func_8006C84C(s16 arg0, s32 flags)
     tmp = product - 1;
     mesh->face_count = rows + tmp;
     }
-    mesh->vertices = func_80017EBC(mesh->vertex_count * 8, 1);
+    mesh->vertices = gAllocMemory(mesh->vertex_count * 8, 1);
     if (mesh->vertices == 0) {
-        func_800181D4(mesh);
+        gFreeBlock(mesh);
         return 0;
     }
-    mesh->faces = func_80017EBC(mesh->face_count * 5, 1);
+    mesh->faces = gAllocMemory(mesh->face_count * 5, 1);
     if (mesh->faces == 0) {
-        func_800181D4(mesh->vertices);
-        func_800181D4(mesh);
+        gFreeBlock(mesh->vertices);
+        gFreeBlock(mesh);
         return 0;
     }
     mesh->flags = flags;

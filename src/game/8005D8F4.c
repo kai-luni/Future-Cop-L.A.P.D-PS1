@@ -87,14 +87,14 @@ struct CandList {
     struct Cand *items[1];
 };
 
-extern s32 gDiscShadeByte[] __asm__("D_8009FAA4");
+extern s32 gFrameTime[] __asm__("D_8009FAA4");
 extern struct CandList gCommandListHead __asm__("D_800A8F90");
 
-extern void func_80017668(u8 *instance, s32 part, s32 *out);
+extern void gTransformPartVertex(u8 *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_80019668(void);
 extern s32 func_8001AB00(s32 *a, s32 *b);
-extern u8 func_8005CED4(struct Fx *a, s32 *b, struct Cand *c);
-extern void func_8005D060(struct Fx *a, u8 *b);
+extern u8 gTakeArmedLobePoint(struct Fx *a, s32 *b, struct Cand *c) __asm__("func_8005CED4");
+extern void gSpawnLobeArc(struct Fx *a, u8 *b) __asm__("func_8005D060");
 extern void func_8006C488(struct Cand *a);
 extern void *func_80073500(s32 *pos, s32 a1, s32 a2, s32 a3);
 extern void *func_80073590(struct Cand *owner, void *coord, s32 kind, s32 a3, s32 a4, s32 a5);
@@ -231,12 +231,12 @@ u8 func_8005D8F4(struct Fx *self_, s32 a1)
         self->unk3C = self->unk04->unk50;
         self->unk40 = self->unk04->unk54;
         self->unk44 = self->unk04->unk58;
-        func_80017668((u8 *)self->unk04 + 0x28, 0, &self->unk3C);
+        gTransformPartVertex((u8 *)self->unk04 + 0x28, 0, &self->unk3C);
     }
     i = 0;
     tmp = 0x58;
     while (i < 12) {
-        func_8005D060(self, (u8 *)self + tmp);
+        gSpawnLobeArc(self, (u8 *)self + tmp);
         tmp += 0x1C;
         i++;
     }
@@ -284,7 +284,7 @@ u8 func_8005D8F4(struct Fx *self_, s32 a1)
                 } else {
                     cand->stats->unk84[self->unk54] = tmp;
                 }
-                self->unk14 = gDiscShadeByte[0] + self->unk10;
+                self->unk14 = gFrameTime[0] + self->unk10;
             }
         }
     } else {
@@ -366,7 +366,7 @@ u8 func_8005D8F4(struct Fx *self_, s32 a1)
         cand->handler(0xE, cand, &msg, 0);
     check:
         if ((self->flags & 4) != 0 && notified != 0 &&
-            func_8005CED4(self, delta, cand) != 0) {
+            gTakeArmedLobePoint(self, delta, cand) != 0) {
             func_8007377C(func_80073500(delta, 0, 0x18, 0),
                           func_80073590(cand, 0, -1, 0, 0x18, 0), 0x20, 1, 0x7F, 0x7F, 0xFF, 0x2AA,
                           0x4000, -0x3000, 0, 0, 0, 1);

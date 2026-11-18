@@ -7,13 +7,15 @@ struct Vec4 { s32 x, y, z, pad; };
 struct Flags { u8 pad[0x18]; u8 flags; };
 struct Object { struct Flags *flags; u8 pad[0x14]; struct Mat mat; struct Vec pos; s16 scale; };
 struct State { struct Vec dir; s16 a[2]; s16 b[2]; s32 time; s8 index; u8 flags; };
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 extern s32 func_80019668(void);
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(struct Vec *, struct Vec *, s32) __asm__("func_8001006C");
 extern void gBuildRotationMatrix(s32, s32, s32, struct Mat *) __asm__("func_800188D0");
 extern void *func_80073500(struct Vec *, s32, s32, s32);
 extern void func_8007377C(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void gSpawnLobeArc(struct Object *obj, struct State *st) __asm__("func_8005D060");
+
 
 /**
  * @brief Spawns and animates the parts of a particle/smoke object at a time
@@ -41,18 +43,20 @@ extern void func_8007377C(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32
  * The effect update loop of the entity renderer.
  *
  * @par Environment path
- * Spawns and animates the two alternating puffs of a smoke or exhaust emitter
- * whenever the global tick has passed the stored time: it scales the
- * direction vector by the object's scale, rotates it with func_800188D0 while
- * offsetting the two accumulator angles, and emits the pair through
- * func_80073500 and func_8007377C. The next time is the current tick plus 63
- * to 190 ticks, and the slot index alternates so the two streams stay
- * phase-shifted. It is an effect spawner driven from the entity update
- * (func_8005D8F4, src/game/8005D8F4.c:239) and emits its own packets, so it
- * is not part of the environment pass. The exact unit of the two accumulator
- * angles is not visible in the file.
+ * Steps one of the twelve lobes of the damage field updated by func_8005D8F4
+ * (its only caller): once the frame time D_8009FAA4 passes the lobe's next
+ * time it schedules the next step 63..190 time units later, takes the current
+ * lobe tip (direction scaled by the field radius +0x48, rotated by the field
+ * matrix with func_80010820/func_8001006C, plus the field centre) as an
+ * anchor node from func_80073500, wanders the two lobe angles by a random
+ * amount (optionally clamped to +-0x400 / +-0x200 by the owner flags),
+ * rebuilds the tip direction with func_800188D0 and anchors the new tip the
+ * same way. It then links both anchors with a beam node via func_8007377C (8
+ * strips, colour 0x30/0x30/0x40) - an arc from the old to the new tip -
+ * alternates the slot index and, with probability 1/8, sets the lobe's armed
+ * bit used by func_8005CED4. It emits no packets itself.
  */
-void func_8005D060(struct Object *obj, struct State *st)
+void gSpawnLobeArc(struct Object *obj, struct State *st)
 {
     struct Vec4 v;
     struct Mat m;
@@ -60,10 +64,10 @@ void func_8005D060(struct Object *obj, struct State *st)
     void *node;
     s16 t;
     s32 interval;
-    if (gDiscShadeByte > st->time) {
+    if (gFrameTime > st->time) {
         other = st->index ^ 1;
         interval = (func_80019668() & 0x7f) + 0x3f;
-        st->time = gDiscShadeByte + interval;
+        st->time = gFrameTime + interval;
         v.x = ((st->dir.x >> 4) * obj->scale) >> 8;
         v.y = ((st->dir.y >> 4) * obj->scale) >> 8;
         v.z = ((st->dir.z >> 4) * obj->scale) >> 8;

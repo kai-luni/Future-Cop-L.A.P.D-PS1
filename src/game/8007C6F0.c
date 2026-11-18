@@ -1,7 +1,7 @@
 // Categories: Game Engine > Front-End Configuration | Graphics > HUD
 #include "game/types.h"
 
-extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
+extern volatile s32 gGameClock __asm__("D_8009FA60");
 extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 
 extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b);
@@ -59,10 +59,10 @@ void gDrawProfileSlotScreen(s32 slot)
     a = 0x6AE;
     b = 0x1324;
     t = (slot == 1);
-    if (((gPaletteCycleCounter >> 9) & 1) == 0) {
+    if (((gGameClock >> 9) & 1) == 0) {
         b = 0x132E;
         a = 0x10CC;
-        if (((gPaletteCycleCounter >> 10) & 1) != 0) {
+        if (((gGameClock >> 10) & 1) != 0) {
             if (func_8001EF34(t) && func_8001EAEC(t)) {
                 __asm__("");
                 if (gRumbleEnabled[slot] != 0) {

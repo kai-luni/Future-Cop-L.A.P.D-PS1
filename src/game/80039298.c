@@ -20,8 +20,8 @@ struct Object {
     u8 padEA[2];
     struct Child *child;
 };
-extern void func_80038754(struct Object *, void *, s32);
-extern s32 func_8002AD58(s32, struct Object *, void *, s32);
+extern void gInitActorFromSpawn(struct Object *, void *, s32) __asm__("func_80038754");
+extern s32 gEntityBaseHandler(s32, struct Object *, void *, s32) __asm__("func_8002AD58");
 extern void func_800395A8(s32, struct Child *, void *, s32);
 extern void func_800398EC(s32, struct Child *, void *, s32);
 
@@ -68,7 +68,7 @@ s32 func_80039298(s32 message, struct Object *object, void *data, s32 arg3)
     case 1:
         return 0xF0;
     case 2:
-        func_80038754(obj, data, arg3);
+        gInitActorFromSpawn(obj, data, arg3);
     case 3:
     case 6:
         return 0;
@@ -131,5 +131,5 @@ s32 func_80039298(s32 message, struct Object *object, void *data, s32 arg3)
             return 0;
         }
     }
-    return func_8002AD58(message, obj, data, arg3);
+    return gEntityBaseHandler(message, obj, data, arg3);
 }

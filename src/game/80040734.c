@@ -91,15 +91,15 @@ extern s32 gMessage10Counter __asm__("D_8009F318");
 extern s32 func_8005A6A4(s32 id, struct Unk40734Request *request,
                          struct Unk40734Light **result);
 extern s32 func_8003C7B8(s32 message, void *object, void *arg2, void *arg3);
-extern struct Unk40734Transform *func_8003D9F8(void *model, s32 flags, s32 part,
+extern struct Unk40734Transform *gResolveNodeTransform(void *model, s32 flags, s32 part,
                                                s32 count, void *sub,
-                                               void *matrix);
+                                               void *matrix) __asm__("func_8003D9F8");
 extern void func_8001B148(struct RotationMatrix *matrix,
                           struct RotationPoint *source,
                           struct RotationPoint *destination, s32 count);
 extern s32 func_800196C4(void);
 extern void func_800498F0(void *object);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern s32 func_8003C980(s32 message, void *object, void *arg2, void *arg3);
 
 /**

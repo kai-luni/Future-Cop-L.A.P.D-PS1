@@ -16,9 +16,9 @@ struct Unk447F0 {
 
 extern void D_80044610();
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern u8 func_80043430(struct Unk447F0 *object, s32 def);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Allocates and initialises a periodic effect object (0xAC bytes,
@@ -44,12 +44,12 @@ struct Unk447F0 *func_800447F0(s32 def)
 {
     struct Unk447F0 *object;
 
-    object = func_80017EBC(0xAC, 1);
+    object = gAllocMemory(0xAC, 1);
     if (object == 0) {
         return 0;
     }
     if (func_80043430(object, def) == 0) {
-        func_800181D4(object);
+        gFreeBlock(object);
         return 0;
     }
     object->update = D_80044610;

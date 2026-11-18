@@ -60,12 +60,12 @@ struct Unk3D9F8Ret {
 
 extern u32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 gRemainingCounter __asm__("D_8009FAB0");
-extern struct Unk3D9F8Ret *func_8003D9F8(s32 arg0, u16 arg1, s8 arg2, s32 arg3,
-                                          struct Unk3D9F8Ctx *arg4, s32 *arg5);
+extern struct Unk3D9F8Ret *gResolveNodeTransform(s32 arg0, u16 arg1, s8 arg2, s32 arg3,
+                                          struct Unk3D9F8Ctx *arg4, s32 *arg5) __asm__("func_8003D9F8");
 extern void func_80042864(struct Unk43CA8Inner *object, s32 amount);
 extern void func_800428FC(struct Unk43CA8 *node, struct Unk43CA8Inner *inner,
                           s32 arg2, s32 arg3, s32 arg4);
-extern s32 func_80066F78(s32 *vec, s32 arg1, s32 arg2, s32 arg3);
+extern s32 gGetGroundHeight(s32 *vec, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
 extern void func_800427A8(struct Unk43CA8 *owner, struct Unk43CA8Inner *prev,
                           struct Unk43CA8Inner *node);
 
@@ -163,7 +163,7 @@ s32 func_80043CA8(struct Unk43CA8 *node, s32 arg)
     if (node->unk1C != 0) {
         ctx = node->unk1C->unk34;
     }
-    ret = func_8003D9F8(ctx, node->unk1A, node->unk0E, 0, node->unk1C, &node->unk34);
+    ret = gResolveNodeTransform(ctx, node->unk1A, node->unk0E, 0, node->unk1C, &node->unk34);
     cur = node->unk68;
     if (cur == 0 && node->unk07 == -1) {
         node->unk0F |= 1;
@@ -220,7 +220,7 @@ s32 func_80043CA8(struct Unk43CA8 *node, s32 arg)
             vec[0] = (cur->unk04 << 4) + ret->unk24;
             vec[1] = (cur->unk06 << 4) + ret->unk28;
             vec[2] = (cur->unk08 << 4) + ret->unk2C;
-            if (vec[1] < func_80066F78(vec, 0, 0, 0)) {
+            if (vec[1] < gGetGroundHeight(vec, 0, 0, 0)) {
                 func_800427A8(node, prev, cur);
                 gRemainingCounter--;
                 goto next_iter;

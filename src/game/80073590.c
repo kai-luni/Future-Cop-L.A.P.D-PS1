@@ -20,7 +20,7 @@ struct Unk73590 {
     s16 unk1E;
 };
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates a 0x20-byte effect node bound to an owner and a coordinate
@@ -51,7 +51,7 @@ struct Unk73590 *func_80073590(struct Unk73590Owner *owner, void *coord, u8 kind
 {
     struct Unk73590 *node;
 
-    node = func_80017EBC(0x20, 1);
+    node = gAllocMemory(0x20, 1);
     if (node == 0) {
         return 0;
     }

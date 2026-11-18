@@ -70,11 +70,13 @@ struct Unk58714 {
 
 extern void gGteLoadMatrix(u8 *coord) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(u8 *vertices, s32 *out, s32 count) __asm__("func_80010234");
-extern void func_80017668(struct ModelInstance *instance, s32 part, s32 *out);
+extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern void func_8005A190(struct Unk5A190 *object, s32 index, s32 value);
 extern void func_80051AF8(struct Unk58714 *arg0);
 extern void func_8006BE90(struct Unk58714 *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk58714 *arg3);
+void gRespawnPlayerEntity(struct Unk58714 *arg0) __asm__("func_80058714");
+
 
 /**
  * @brief Reset/initialization pass of a compound object: clears state
@@ -105,22 +107,19 @@ extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk58714 *arg3)
  * func_800588D4.
  *
  * @par Environment path
- * Reset pass of a compound object: it clears flag bit 0x00800000 on the
- * object and on its linked secondary record, masks the low nibble of +0x19,
- * copies the controller's position into the model coordinate block, loads
- * that matrix with gGteLoadMatrix and transforms one frame vertex, and
- * fetches the world position of part 0 into the secondary record with
- * func_80017668. The controller's signed +0xD2 becomes the absolute value in
- * +0xB0 and its sign is mirrored into two flag bytes, three velocity/offset
- * words are zeroed and two further flag masks are applied, then the
- * controller slot is reset via func_8005A190, the three sub-objects are
- * restarted through func_8006BE90 and an optional attachment is notified via
- * func_80069D68. It is initialisation and state clearing, not drawing: it is
- * called only by func_800588D4 (src/game/800588D4.c:216) and reads no global
- * of its own, though the instance it primes is drawn by the model passes
- * later.
+ * Respawns a player entity when its respawn countdown has run out; it is
+ * called only from func_800588D4. It clears flag 0x00800000 on the entity and
+ * its companion record at +0xDC, places the model at the stored point at
+ * state + 0xC4, refreshes the frame vertex and fetches part 0's world
+ * position into the companion with func_80017668. The signed form value at
+ * state + 0xD2 becomes the magnitude at +0xB0 and its sign the current and
+ * requested form bytes (+0xAD, +0x2FD); motion words and several flag bits
+ * are cleared, the gauge is reset to the value at +0x1E with func_8005A190,
+ * the three counter slots are refilled with func_8006BE90, the animation
+ * tracks are restarted with func_80051AF8, and the attached script at +0x98
+ * is run with func_80069D68 when present.
  */
-void func_80058714(struct Unk58714 *arg0)
+void gRespawnPlayerEntity(struct Unk58714 *arg0)
 {
     struct Unk5A190 *s1;
     s32 i;
@@ -142,7 +141,7 @@ void func_80058714(struct Unk58714 *arg0)
     gGteTransformVerticesWide((u8 *)arg0->model.model->unk34 +
                       ((arg0->model.frame << 4) + 8),
                   (s32 *)(arg0->model.coord + 0x30), 1);
-    func_80017668(&arg0->model, 0, (s32 *)((u8 *)arg0->unkDC + 0x50));
+    gTransformPartVertex(&arg0->model, 0, (s32 *)((u8 *)arg0->unkDC + 0x50));
 
     d2 = s1->unkD2;
     arg0->unkB0 = d2;

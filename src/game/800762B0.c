@@ -34,8 +34,8 @@ typedef struct {
 } Work;
 
 extern u8 gAttachMessageName[] __asm__("D_80075698");
-extern void *func_80017EBC(s32, s32);
-extern void func_800181D4(void *);
+extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
+extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern u8 func_8003BE2C(void *, s32, s32);
 extern void func_8003C14C(void *, void *);
 extern u32 func_80019668(void);
@@ -112,10 +112,10 @@ void *func_800762B0(Src *arg)
     register s32 a4e __asm__("$2");
 
     src = arg;
-    dest = func_80017EBC(0xA0, 1);
+    dest = gAllocMemory(0xA0, 1);
     if (!dest) return 0;
     if (func_8003BE2C(dest->pool, 0x30, 0x28) != 1) {
-        func_800181D4(dest);
+        gFreeBlock(dest);
         return 0;
     }
     func_8003C14C(dest, src);

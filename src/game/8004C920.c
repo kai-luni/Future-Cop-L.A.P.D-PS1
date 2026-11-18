@@ -56,7 +56,7 @@ struct Unk4C920 {
 };
 
 extern u8 D_8004C324[];
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void func_8003C14C(struct Unk4C920 *dest, struct Unk4C920Source *src);
 extern void gBuildRotationMatrix(s32, s32, s32, struct Unk4C920Work *) __asm__("func_800188D0");
 
@@ -88,7 +88,7 @@ void *func_8004C920(struct Unk4C920Source *src)
     struct Unk4C920 *dest;
     struct Unk4C920Work work;
 
-    dest = func_80017EBC(0x88, 1);
+    dest = gAllocMemory(0x88, 1);
     if (dest == 0) {
         return 0;
     }

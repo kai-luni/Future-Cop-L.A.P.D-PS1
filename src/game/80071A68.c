@@ -18,7 +18,7 @@ struct Unk71A68 {
 };
 
 extern void func_80070710(void *block);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Destroys a compound effect object: two pooled blocks, an entry
@@ -52,10 +52,10 @@ void func_80071A68(struct Unk71A68 *object)
     }
     for (i = 0; i < object->count; i++) {
         if (object->entries[i].extra != 0) {
-            func_800181D4(object->entries[i].extra);
+            gFreeBlock(object->entries[i].extra);
         }
-        func_800181D4(object->entries[i].data);
+        gFreeBlock(object->entries[i].data);
     }
-    func_800181D4(object->entries);
-    func_800181D4(object);
+    gFreeBlock(object->entries);
+    gFreeBlock(object);
 }

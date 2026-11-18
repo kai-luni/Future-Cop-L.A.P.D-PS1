@@ -10,7 +10,7 @@ struct Unk6ED78 {
 
 extern u8 *func_80019C38(s32 arg0, s32 arg1, u32 tag, s32 arg3);
 extern void func_8006EAF0(u8 *data);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Extracts a type-0x5C `0x74414354` spawn record, registers it via func_8006EAF0, and frees the request block.
@@ -40,5 +40,5 @@ void func_8006ED78(struct Unk6ED78 *resource)
 {
     func_8006EAF0(func_80019C38(resource->unk00, resource->unk20,
                                 0x74414354, resource->unk1C) - 4);
-    func_800181D4(resource);
+    gFreeBlock(resource);
 }

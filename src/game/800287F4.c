@@ -4,7 +4,7 @@
 extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u8 gFrameBarrier __asm__("D_8009FA3C");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 extern u8 D_8009FAA8;
 
 extern u8 gStartModuleByName(s32 arg0) __asm__("func_80024E3C");
@@ -15,7 +15,7 @@ extern s32 func_80048E94(void);
 extern s32 func_80048E28(s32 arg0);
 extern void func_8003FAD4(void);
 extern void func_80027EE4(void);
-extern void func_80028618(s32 arg0);
+extern void gRunGameFrameLoop(s32 arg0) __asm__("func_80028618");
 extern void gFinishScreenModule(s32 arg0) __asm__("func_80025B7C");
 
 /**
@@ -66,7 +66,7 @@ s32 gRunScreenModule(s32 arg0, u8 arg1)
 {
     gPlayerCount = 0;
     gUploadInProgress = arg1;
-    gDiscShadeByte = 0;
+    gFrameTime = 0;
     D_8009FAA8 = 0;
 
     if (gStartModuleByName(arg0) == 0) {
@@ -84,7 +84,7 @@ s32 gRunScreenModule(s32 arg0, u8 arg1)
     if (gUploadInProgress != 0) {
         func_80027EE4();
     } else {
-        func_80028618(arg0);
+        gRunGameFrameLoop(arg0);
     }
 
     gFinishScreenModule(arg0);

@@ -1,5 +1,7 @@
 // Categories: Graphics > Camera > Distance
 #include "game/types.h"
+s32 gComputeBoomDistance(s32 arg0) __asm__("func_800564A8");
+
 
 /**
  * @brief Maps a camera parameter through a quadratic curve to a boom
@@ -25,16 +27,15 @@
  * func_800569EC, func_800573A4.
  *
  * @par Environment path
- * Maps one camera parameter through a quadratic curve to a boom distance: the
- * value is 0x10000 minus the parameter minus 0x14A shifted by 16 and divided
- * by 600, then the result is 0x20000 times 0x10000 minus that value squared
- * in 16.16 arithmetic, plus 0xD800, with everything at or below 0x8FFF raised
- * to 0x9000 so the camera stays out of the model. The two camera preset
- * functions func_800569EC and func_800573A4 call it with the pitch and store
- * the word as boom length, so it belongs to the camera rig rather than the
- * map renderer. It reads no globals and has no side effects.
+ * Maps a pitch angle to a camera distance: value = 0x10000 - ((pitch - 0x14A)
+ * << 16) / 600, then 0x20000 * (0x10000 - value^2) in 16.16 arithmetic plus
+ * 0xD800, with results at or below 0x8FFF raised to 0x9000. The chase-camera
+ * step func_800569EC uses it for the boom length after smoothing the pitch,
+ * and the actor reset func_800573A4 uses it to fill the distance of each
+ * camera preset entry from that entry's pitch. It reads no globals and has no
+ * side effects.
  */
-s32 func_800564A8(s32 arg0)
+s32 gComputeBoomDistance(s32 arg0)
 {
     register u32 lo0 __asm__("$8");
     register u32 hi0 __asm__("$9");

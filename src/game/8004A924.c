@@ -18,7 +18,7 @@ typedef struct MaskEntry {
 extern Node **gLightGrid __asm__("D_8009F780");
 extern s32 gLightGridWidth __asm__("D_8009F78C");
 extern s32 D_8009F794;
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern void func_800497A8(void);
 extern void gDrawMapCellNode(Node *node, s32 arg1, s32 arg2) __asm__("func_8004A048");
@@ -68,9 +68,9 @@ void gDrawCellWindowObjects(s32 arg0, s32 arg1, MaskEntry *arg2)
         return;
     }
 
-    if (D_8009F794 + 0x4B0 < gDiscShadeByte) {
+    if (D_8009F794 + 0x4B0 < gFrameTime) {
         func_800497A8();
-        D_8009F794 = gDiscShadeByte;
+        D_8009F794 = gFrameTime;
     }
 
     entry = arg2;
@@ -86,7 +86,7 @@ void gDrawCellWindowObjects(s32 arg0, s32 arg1, MaskEntry *arg2)
                 continue;
             }
             do {
-                if (node->unk4 < 0 || node->unk4 > gDiscShadeByte) {
+                if (node->unk4 < 0 || node->unk4 > gFrameTime) {
                     if (mask & node->unk12) {
                         gDrawMapCellNode(node, arg0 + i, arg1 + j);
                     }

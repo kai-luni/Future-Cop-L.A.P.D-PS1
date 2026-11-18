@@ -6,7 +6,7 @@ extern Obj *D_8009F270, *D_8009F274;
 extern Slot gObjectSlots[] __asm__("D_800A0A00");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 func_80023528(s32, s32 *);
-extern void func_800181D4(Obj *);
+extern void gFreeBlock(Obj *) __asm__("func_800181D4");
 extern s32 func_80021CB0(s32, s32, s32, void *, s32);
 extern void func_80023500(void);
 
@@ -43,8 +43,8 @@ void func_800236FC(void)
             if (i >= 8) failed = 1;
         } else failed = 1;
         if (failed) {
-            func_800181D4(D_8009F270);
-            func_800181D4(D_8009F274);
+            gFreeBlock(D_8009F270);
+            gFreeBlock(D_8009F274);
         } else {
             result = func_80021CB0(D_8009F270->value, D_8009F274->value, -1, func_80023500, i);
             if (result >= 0) {

@@ -18,7 +18,7 @@ struct Self {
     u8 pad70[0x44]; s32 x,y,z,kind; s16 value, fieldc6;
     s32 fieldc8; volatile s32 speed; s32 fieldd0, fieldd4;
 };
-extern s32 func_8002AD58(s32, struct Self *, struct Arg *, s32);
+extern s32 gEntityBaseHandler(s32, struct Self *, struct Arg *, s32) __asm__("func_8002AD58");
 extern s32 func_80067684(s32 *, s32);
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 #define FMULU(a,b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
@@ -78,7 +78,7 @@ void func_8002FA20(struct Self *self, struct Arg *arg, s32 arg2)
     struct Sub *sub;
     s32 max, speed, mode, type;
     register s32 rate __asm__("$3");
-    func_8002AD58(2, self, arg, arg2);
+    gEntityBaseHandler(2, self, arg, arg2);
     sub = arg->sub;
     max = sub->x;
     if (max < sub->y) max = sub->y;

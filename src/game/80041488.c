@@ -5,11 +5,13 @@ struct Data { u8 pad[0x24]; s8 count; u8 end; s16 pos[3]; s16 speed[3]; s16 othe
 struct Arg { u8 pad[8]; struct Data *data; };
 struct Model { u8 pad[0x34]; u8 *data; };
 struct Self { u8 pad[0x21]; u8 old; u8 pad22[6]; struct Model *model; u8 basis[0x24]; s32 pos[3]; u8 rest[0x14]; s16 index; u8 pad72[0x2e]; s32 values[3]; s32 speeds[3]; s32 other[2]; s32 current; s16 zero; u8 flags; u8 kind; s8 count; s8 last; s8 end; s8 mode; u8 previous; volatile u8 extra; };
-extern void func_8002AD58(s32, struct Self *, struct Arg *, s32);
+extern void gEntityBaseHandler(s32, struct Self *, struct Arg *, s32) __asm__("func_8002AD58");
 extern void func_8006314C(struct Self *, u8);
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
-extern s32 func_80066F78(void *, s32, s32, s32);
+extern s32 gGetGroundHeight(void *, s32, s32, s32) __asm__("func_80066F78");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+void gInitElevator(struct Self *self, struct Arg *arg, s32 a2) __asm__("func_80041488");
+
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 /**
  * @brief Initialises the waypoint sequence of an entity from a script record.
@@ -56,27 +58,27 @@ extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_8001023
  * func_80041B6C (sole direct caller).
  *
  * @par Environment path
- * Message-2 initialisation of a waypoint-sequence entity, called only from
- * func_80041B6C:41: after the shared hook func_8002AD58(2, self, arg, a2) it
- * copies the record count, the three waypoint values (<< 4), the segment
- * speeds (<< 8, divided by 218) and the two derived values (<< 4, divided by
- * 300) into the entity, resolves the entity kind with func_8006314C, builds
- * the basis from the record angle with gBuildRotationMatrix (func_800188D0)
- * and snaps every waypoint height to the ground height from func_80066F78
- * before placing the entity on the last waypoint. It finishes with
- * gGteLoadMatrix / gGteTransformVerticesWide to fetch one model frame. It
- * sets up state only, emits no primitive and touches no global, so it is
- * spawned data for the path walker rather than part of the environment render
- * pass.
+ * Message-2 (init) handler of the lift object stepped by func_80041880
+ * (gStepElevator); its only caller is the class handler func_80041B6C. After
+ * func_8002AD58 it copies the stop count, the three stop heights (<< 4) into
+ * +0xA0, the three per-stop dwell times ((t << 8) / 218) into +0xAC - the
+ * table func_80041880 reloads the dwell timer from - and the up/down speeds
+ * ((v << 4) / 300) into +0xB8/+0xBC, sets the start stop and direction, and
+ * seeds the dwell timer +0xC0 (1 for player-triggered lifts with flags & 5).
+ * It resolves the object kind with func_8006314C, builds the matrix from the
+ * record angle with func_800188D0, offsets every stop height by the ground
+ * height from func_80066F78, places the lift at its start stop and transforms
+ * the reference vertex (func_80010750, func_80010234); no globals are
+ * touched.
  */
-void func_80041488(struct Self *self, struct Arg *arg, s32 a2)
+void gInitElevator(struct Self *self, struct Arg *arg, s32 a2)
 {
     struct Data *d;
     s32 i, base, offset;
     register s32 end __asm__("$3"); register s32 old __asm__("$2");
     register s32 count __asm__("$4");
     register s32 last __asm__("$3");
-    func_8002AD58(2, self, arg, a2);
+    gEntityBaseHandler(2, self, arg, a2);
     d = arg->data;
     self->count = d->count;
     self->values[0] = d->pos[0] << 4;
@@ -111,7 +113,7 @@ void func_80041488(struct Self *self, struct Arg *arg, s32 a2)
     self->zero = 0;
     func_8006314C(self, d->kind);
     gBuildRotationMatrix(d->angle, 0, 0, self->basis);
-    base = func_80066F78(self->pos, 0, 0, 0);
+    base = gGetGroundHeight(self->pos, 0, 0, 0);
     for (i = 0; i < self->count; i++) self->values[i] += base;
     self->pos[1] = self->values[self->last];
     gGteLoadMatrix(self->basis);

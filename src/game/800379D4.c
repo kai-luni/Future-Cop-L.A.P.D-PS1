@@ -22,7 +22,7 @@ typedef struct Obj379D4 {
     s16 val124;
 } Obj379D4;
 
-extern s32 func_8002AD58(s32 message, Obj379D4 *object, void *data);
+extern s32 gEntityBaseHandler(s32 message, Obj379D4 *object, void *data) __asm__("func_8002AD58");
 
 /**
  * @brief Resolves a contact between two objects of the same family.
@@ -127,6 +127,6 @@ COND:
     notify = flags & 0x80;
     if (notify != 0) {
       NOTIFY:
-        func_8002AD58(t2, object, data);
+        gEntityBaseHandler(t2, object, data);
     }
 }

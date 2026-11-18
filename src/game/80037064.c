@@ -75,7 +75,7 @@ struct Dest37064 {
     s16 unkD2;
 };
 
-extern s32 func_8002AD58(s32 message, void *object, void *data, s32 arg4);
+extern s32 gEntityBaseHandler(s32 message, void *object, void *data, s32 arg4) __asm__("func_8002AD58");
 extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options);
 extern void func_8001A180(struct Vec3s32 *vector);
 extern void func_800193F8(struct Vec3s32 *axis, struct Basis *basis);
@@ -114,7 +114,7 @@ void func_80037064(struct Dest37064 *dest, struct Holder37064 *holder, s32 arg2)
     struct State37064 *p;
     s32 w;
 
-    func_8002AD58(2, dest, holder, arg2);
+    gEntityBaseHandler(2, dest, holder, arg2);
     p = holder->state;
 
     dest->unk20 = p->unk48;

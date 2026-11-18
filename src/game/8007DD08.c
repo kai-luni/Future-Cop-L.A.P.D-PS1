@@ -20,7 +20,7 @@ extern s8 D_8009F928[];
 extern u8 gRowRecordTable[] __asm__("D_8009C030");
 extern u8 D_8009C050[];
 extern u8 *D_8009C0D0;
-extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
+extern s32 gGameClock __asm__("D_8009FA60");
 
 extern void gClampLoadoutSelections(s32) __asm__("func_8007D2DC");
 extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
@@ -116,7 +116,7 @@ void gDrawLoadoutScreen(s32 arg0)
     if (s4 >= 0 && gLoadoutTable[s4].values[arg0] > gLoadoutTable[s4].limit)
         func_80078B34(0x521C, 0, s3);
     func_80078B34(0x10CC, 1, s3);
-    if ((gPaletteCycleCounter >> 9) & 1) {
+    if ((gGameClock >> 9) & 1) {
         switch (s6) {
         case 1: func_80078B34(0x297C, 1, s3); break;
         case 2: func_80078B34(0x2972, 1, s3); break;

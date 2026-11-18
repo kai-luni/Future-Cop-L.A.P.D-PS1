@@ -19,7 +19,7 @@ typedef struct Unk824CCObject {
 } Unk824CCObject;
 
 extern void func_800953F0(Unk824CCEntry *entry, u8 *ptr);
-extern void func_800181D4(Unk824CCObject *object);
+extern void gFreeBlock(Unk824CCObject *object) __asm__("func_800181D4");
 
 /**
  * @brief Uploads texture atlas image blocks from a Ctdt resource via func_800953F0 and frees object.
@@ -86,5 +86,5 @@ void func_800824CC(Unk824CCObject *object)
             } while (i < header->count);
         }
     }
-    func_800181D4(object);
+    gFreeBlock(object);
 }

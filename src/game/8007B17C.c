@@ -18,7 +18,7 @@ struct Unk8009F468 {
 extern struct Unk8009F468 *gFontBankTable __asm__("D_8009F468");
 extern struct Unk8009FA94 *gGameSession __asm__("D_8009FA94");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
-extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
+extern volatile s32 gGameClock __asm__("D_8009FA60");
 
 extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                           s32 alignX, s32 alignY, s32 font);
@@ -118,9 +118,9 @@ void gDrawMenuCommandsRow(s32 arg0)
         __asm__ volatile("");
         if (gPlayerMenuDepth[arg0] != 0) {
             s32 id;
-            if ((gPaletteCycleCounter >> 9) & 1) {
+            if ((gGameClock >> 9) & 1) {
                 id = 0x6C2;
-            } else if ((gPaletteCycleCounter >> 10) & 1) {
+            } else if ((gGameClock >> 10) & 1) {
                 id = 0x6E5;
             } else {
                 id = 0x6D6;
@@ -142,7 +142,7 @@ void gDrawMenuCommandsRow(s32 arg0)
         break;
     }
 
-    if ((gPaletteCycleCounter >> 9) & 1) {
+    if ((gGameClock >> 9) & 1) {
         func_80078B34(0x10CC, 1, b);
     }
 }

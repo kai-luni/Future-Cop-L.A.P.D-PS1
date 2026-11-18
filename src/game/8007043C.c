@@ -77,7 +77,7 @@ typedef struct {
 } Work7043C;
 
 extern u8 D_8006FF44[];
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void func_8003C14C(Dest7043C *dest, Source7043C *src);
 extern s32 func_80019668(void);
 extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, Work7043C *work) __asm__("func_800188D0");
@@ -141,7 +141,7 @@ void *func_8007043C(Source7043C *src)
     u16 src50;
     u8 dest8E;
 
-    dest = func_80017EBC(0x9C, 1);
+    dest = gAllocMemory(0x9C, 1);
     if (dest == 0) {
         return 0;
     }

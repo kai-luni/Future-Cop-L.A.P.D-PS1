@@ -5,7 +5,7 @@ struct Unk17508 {
     void *model;
 };
 
-extern u8 func_80013F08(struct Unk17508 *instance);
+extern u8 gProjectModelInstance(struct Unk17508 *instance) __asm__("func_80013F08");
 extern void gDrawModelInstanceParts(struct Unk17508 *instance, s32 mode, s32 arg2) __asm__("func_80016A64");
 u8 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
 
@@ -39,7 +39,7 @@ u8 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2)
     if (instance->model == 0 || (*flags & 0x20)) {
         return 0;
     }
-    visible = func_80013F08(instance);
+    visible = gProjectModelInstance(instance);
     if (visible) {
         gDrawModelInstanceParts(instance, (*flags >> 25) & 1, arg2);
     }

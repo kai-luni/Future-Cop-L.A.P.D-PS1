@@ -2,9 +2,9 @@
 #include "game/types.h"
 
 typedef struct { s16 x, y, z; } Vec;
-extern u8 gDiscShadeByte __asm__("D_8009FAA4");
-extern s32 gEffectSizeTable[] __asm__("D_800A6F60");
-extern void func_8001484C(Vec *, s32, s32, s32, s32, s32, s32);
+extern u8 gFrameTime __asm__("D_8009FAA4");
+extern s32 gMarkerColorTable[] __asm__("D_800A6F60");
+extern void gEmitGouraudDisc(Vec *, s32, s32, s32, s32, s32, s32) __asm__("func_8001484C");
 
 /**
  * @brief Draws the point markers of one minimap object: up to eight
@@ -47,7 +47,7 @@ void func_80066684(u8 *obj, s32 *pos, s32 width, s32 height)
     p = obj;
     __asm__("" : "+r"(p));
     v.z = 0x1000;
-    scale = gDiscShadeByte * 2;
+    scale = gFrameTime * 2;
     offset = scale * 103;
     width += offset;
     height += offset;
@@ -67,7 +67,7 @@ void func_80066684(u8 *obj, s32 *pos, s32 width, s32 height)
                     q = tmp >> 12;
                     __asm__("" : "+r"(q));
                     v.y = q;
-                    func_8001484C(&v, gEffectSizeTable[(obj + i)[0xa8] & 31] << 8, 0, 32, scale, 0xe00, 0);
+                    gEmitGouraudDisc(&v, gMarkerColorTable[(obj + i)[0xa8] & 31] << 8, 0, 32, scale, 0xe00, 0);
                 }
             }
         }

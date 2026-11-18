@@ -11,6 +11,8 @@ typedef struct { u32 xy[4]; u32 link; u8 mode, pad; u16 value; } Work17;
 extern Prim17 *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim17 *gPrimPoolEnd __asm__("D_8009FA28");
 extern void func_80015F14(void *a0, void *a1, void *a2);
+void gEmitShadedPart(Part17 *part, Work17 *work, u8 *texture, u8 *light) __asm__("func_80015F38");
+
 
 /**
  * @brief Emits one shaded part of a model: textured quad with per-vertex colour
@@ -37,17 +39,17 @@ extern void func_80015F14(void *a0, void *a1, void *a2);
  * func_800172A8 and the model draw entries.
  *
  * @par Environment path
- * Turns one prepared model part into a single GPU packet: it picks the
- * triangle or quad form from the part flags, copies the projected corners out
- * of the work block, adds the texture word at texture + part->off and shades
- * every vertex through func_80015F14 (NCCS) when the per-vertex colour bit is
- * set. The packet comes from the D_8009F9F0 prim pool, so the caller only has
- * to have projected the part first. func_80016A64 and func_80017058 call it
- * in their part loops (src/game/80017058.c:129) and func_800172A8 uses it
- * too; the environment region pass emits tiles through func_800646BC and
- * func_80065134 instead, so this unit belongs to the actor model renderer.
+ * Turns one prepared model part into a single GPU packet from the
+ * gPrimPoolNext pool: the part flags select flat/gouraud,
+ * textured/untextured, triangle/quad (codes 0x20..0x3C), the projected
+ * corners come from the work block, the colour word comes from texture +
+ * part->off, and every UV word is shifted by the per-instance offset
+ * work->value (the D_8009F580 value). When flag bit 0 is set each vertex
+ * colour is lit through func_80015F14 from the per-vertex light entries. Its
+ * callers are the part loops of func_80016A64 and func_80017058; it belongs
+ * to the actor/object model renderer.
  */
-void func_80015F38(Part17 *part, Work17 *work, u8 *texture, u8 *light)
+void gEmitShadedPart(Part17 *part, Work17 *work, u8 *texture, u8 *light)
 {
     Prim17 *prim;
     u32 *texw;

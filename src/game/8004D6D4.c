@@ -48,7 +48,7 @@ extern void *func_80019CA0(s32 arg0, s32 arg1, u32 tag, s32 arg3);
 extern struct Resource *func_80019BF0(s32 group, s32 name);
 extern s32 func_8002AE54(u8 type);
 extern s32 func_8004D4D4(struct EntityDef *def);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 extern void func_800319D4(struct Unk4D6D4 *arg0);
 extern void func_80084110(struct Unk4D6D4 *arg0);
@@ -159,7 +159,7 @@ void func_8004D6D4(struct Unk4D6D4 *arg0)
         arg0->unk08 = 0;
         arg0->unk00 = (s32)list;
         arg0->unk04 = func_8004D4D4(defp);
-        func_800181D4(arg0);
+        gFreeBlock(arg0);
         break;
     }
 }

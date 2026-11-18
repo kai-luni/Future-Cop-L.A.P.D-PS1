@@ -11,7 +11,8 @@ struct Entity { u8 pad[4]; struct Sub *sub; };
 struct Mode { u8 pad[0x5c]; s32 active; };
 extern struct Mode *gGameSession __asm__("D_8009FA94");
 extern struct Player *gSinglePlayerEntity __asm__("D_8009F9EC");
-extern struct Other *D_8009FA58, *D_8009FA5C;
+extern struct Other *gPlayerEntities __asm__("D_8009FA58");
+extern struct Other *D_8009FA5C;
 extern s32 func_80069D68(s32, s32, s32, s32);
 extern s32 gSpawnTargetableEntityId(void *) __asm__("func_8004D4F8");
 
@@ -48,7 +49,7 @@ void func_8006125C(struct Entity *entity)
             info = s->info;
             if (gSinglePlayerEntity && gSinglePlayerEntity->id == info->id) {
                 stats = 0;
-            } else if ((other = D_8009FA58) && info->id == other->id) {
+            } else if ((other = gPlayerEntities) && info->id == other->id) {
                 stats = other->stats;
             } else if ((other = D_8009FA5C) && info->id == other->id) {
                 stats = other->stats;

@@ -17,7 +17,7 @@ struct Unk2AB8C {
     s32 unk84;
 };
 
-extern struct Unk2AB8C *D_8009FA58[2];
+extern struct Unk2AB8C *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern s32 func_8001A4E8(s32 *a, s32 *b);
 
@@ -70,7 +70,7 @@ s32 func_8002AB8C(struct Unk2AB8C *object, s32 query)
     case 5:
         min = 0x7FFFFFFF;
         i = 0;
-        p = D_8009FA58;
+        p = gPlayerEntities;
         do {
             dist = func_8001A4E8(object->unk5C, (*p)->unk5C) -
                    (object->unk68 + (*p)->unk68);

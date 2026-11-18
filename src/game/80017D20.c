@@ -1,11 +1,11 @@
 // Categories: Resources > Memory Pools
 #include "game/types.h"
 
-extern void *gPool3Size __asm__("D_8009FA4C");
-extern void *gPool2Size __asm__("D_8009FAAC");
-extern void *gPool1Size __asm__("D_8009F9D0");
+extern void *gFixedPool3 __asm__("D_8009FA4C");
+extern void *gFixedPool2 __asm__("D_8009FAAC");
+extern void *gFixedPool1 __asm__("D_8009F9D0");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Releases the three fixed-size pools created by func_80017C68().
@@ -23,7 +23,7 @@ extern void func_800181D4(void *block);
  */
 void func_80017D20(void)
 {
-    func_800181D4(gPool3Size);
-    func_800181D4(gPool2Size);
-    func_800181D4(gPool1Size);
+    gFreeBlock(gFixedPool3);
+    gFreeBlock(gFixedPool2);
+    gFreeBlock(gFixedPool1);
 }

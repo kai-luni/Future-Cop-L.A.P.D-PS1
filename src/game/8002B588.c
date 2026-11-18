@@ -8,7 +8,9 @@ extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *,void *,s32) __asm__("func_80010234");
 extern void func_8002B0EC(void *,s32);
 extern void func_80044B34(void *,void *,s32,s32);
-extern void func_800175F8(void *,s32);
+void gTurnEntityToAngle(struct Obj *o, s32 angle, s32 speed) __asm__("func_8002B588");
+
+extern void gSetModelFrame(void *,s32) __asm__("func_800175F8");
 /**
  * @brief Rotates an entity by an angle at a speed and re-fetches its frame vertex.
  *
@@ -32,17 +34,16 @@ extern void func_800175F8(void *,s32);
  * animated frame in sync - a "look at" step, not a physics move.
  *
  * @par Environment path
- * Turns an entity towards a target yaw at a limited speed and refreshes its
- * frame vertex: the wrapped difference is clamped to speed * 3 << 9 >> 8, the
- * new angle is built into a matrix with func_800188D0, loaded with
- * func_80010750 and used by func_80010234 to transform one frame vertex. The
- * animation is then stepped with func_8002B0EC, func_80044B34 and
- * func_800175F8, and the position is copied to the second position word. It
- * is not on the render path: its only callers are the per-frame actor updates
- * func_8002B6C8 (line 62) and func_8002B784 (line 190), and it emits no
- * packet and touches no camera or pool state.
+ * Turns an entity towards a target yaw at a limited speed: when the wrapped
+ * difference is no larger than 0x40 it does nothing, otherwise it steps the
+ * yaw at +0x15C by at most speed * 3 << 9 >> 8, builds the yaw matrix with
+ * func_800188D0, loads it with func_80010750 and transforms one frame vertex
+ * with func_80010234, and copies the position to the second position field.
+ * In the same branch, when the byte at +0x162 is clear, it also steps the
+ * animation with func_8002B0EC, func_80044B34 and func_800175F8. Its callers
+ * are func_8002B6C8 and func_8002B784.
  */
-void func_8002B588(struct Obj *o, s32 angle, s32 speed)
+void gTurnEntityToAngle(struct Obj *o, s32 angle, s32 speed)
 {
     s32 diff, step, mag;
     register s32 sign __asm__("$2");
@@ -85,7 +86,7 @@ void func_8002B588(struct Obj *o, s32 angle, s32 speed)
         if (o->flag == 0) {
             func_8002B0EC(o, o->anim);
             func_80044B34(o, o->track, speed, 0);
-            func_800175F8(&o->model, o->trackframe);
+            gSetModelFrame(&o->model, o->trackframe);
         }
     }
 }

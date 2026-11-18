@@ -1,10 +1,10 @@
 // Categories: Game Engine > Interactive Loop | Graphics > Frame Timing
 #include "game/types.h"
 
-extern s32 gFrameId __asm__("D_8009F9FC");
+extern s32 gFrameDelta __asm__("D_8009F9FC");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
-extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gGameClock __asm__("D_8009FA60");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern void func_80057864(void);
 
@@ -38,15 +38,15 @@ void func_80027E68(void)
 
     do {
         func_80057864();
-        current = gPaletteCycleCounter;
+        current = gGameClock;
         diff = current - gFrameTickBase;
-        gDiscShadeByte = current;
+        gFrameTime = current;
     } while (diff < 5);
 
     if (diff >= 0x12D) {
         diff = 0x12C;
     }
 
-    gFrameId = diff;
+    gFrameDelta = diff;
     gFrameTickBase = current;
 }

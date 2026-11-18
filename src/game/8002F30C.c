@@ -33,6 +33,8 @@ extern void gGteLoadMatrix(s32 *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern void func_800457B8(s32, s32);
 extern void func_80047284(s32, s32, s32, s32);
+s32 gStepMoverObject(struct Obj *obj, s32 dt) __asm__("func_8002F30C");
+
 
 /**
  * @brief Message-6 tick of a scripted mover: sweeps one angle or one axis of
@@ -101,7 +103,7 @@ extern void func_80047284(s32, s32, s32, s32);
  * gGteTransformVerticesWide convention with the view code and reads no
  * global.
  */
-s32 func_8002F30C(struct Obj *obj, s32 dt)
+s32 gStepMoverObject(struct Obj *obj, s32 dt)
 {
     s32 speed;
     s32 target;

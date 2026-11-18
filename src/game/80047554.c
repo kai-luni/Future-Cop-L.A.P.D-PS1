@@ -22,7 +22,7 @@ extern u8 gStreamAudioFlag __asm__("D_8009F739");
 extern s32 D_8009F32C;
 extern struct Unk47554Node *gVoicePriorityList __asm__("D_8009F744");
 extern struct Unk47554Node *gVoiceList __asm__("D_8009F74C");
-extern void *D_8009FA58[2];
+extern void *gPlayerEntities[2] __asm__("D_8009FA58");
 extern struct Unk4749CHandle D_800A10C0[];
 
 extern void func_80023E84(void);
@@ -73,7 +73,7 @@ void gSoundHaltAllVoices(struct Unk47554Node *node)
     {
         register void **p __asm__("$16");
         i = 0;
-        p = D_8009FA58;
+        p = gPlayerEntities;
         do {
             if (*p != 0) {
                 func_80047088(0x27, *p);

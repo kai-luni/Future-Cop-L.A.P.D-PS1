@@ -15,7 +15,7 @@ struct Unk50D14Arg {
 
 extern void func_8004F188(struct Unk50D14 *object, struct Unk50D14Arg *arg);
 extern u8 func_80050B54(struct Unk50D14 *object, s32 arg1, struct Unk50D14Arg *arg);
-extern s32 func_8005027C(struct Unk50D14 *object, s32 arg1, struct Unk50D14Arg *arg);
+extern s32 gStepPathMover(struct Unk50D14 *object, s32 arg1, struct Unk50D14Arg *arg) __asm__("func_8005027C");
 
 /**
  * @brief Movement dispatcher: optional pre-step, then either the bounded
@@ -54,5 +54,5 @@ s32 func_80050D14(struct Unk50D14 *object, s32 arg1, struct Unk50D14Arg *arg)
         }
         return 0;
     }
-    return func_8005027C(object, arg1, arg);
+    return gStepPathMover(object, arg1, arg);
 }

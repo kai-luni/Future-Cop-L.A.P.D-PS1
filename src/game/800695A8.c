@@ -14,8 +14,8 @@ struct Map {
 extern struct Map *gTileMapTable __asm__("D_8009F80C");
 extern s8 **gTileBlockTable __asm__("D_8009F808");
 extern s32 gCellDataOutput[] __asm__("D_800A2940");
-extern s8 *func_80017EBC(s32, s32);
-extern void func_800181D4(s8 *);
+extern s8 *gAllocMemory(s32, s32) __asm__("func_80017EBC");
+extern void gFreeBlock(s8 *) __asm__("func_800181D4");
 
 #define MAX(a, b) ((a) - ((((a) - (b)) >> 31) & ((a) - (b))))
 #define MIN(a, b) (((((a) - (b)) >> 31) & ((a) - (b))) + (b))
@@ -127,7 +127,7 @@ void func_800695A8(void)
     h = h - mb;
     h = h + 2;
     prod = w * h;
-    buf = func_80017EBC(prod << 6, 1);
+    buf = gAllocMemory(prod << 6, 1);
     bd = gTileMapTable->border;
     base = bd - 1;
     for (fb = 0; fb < h; fb++) {
@@ -176,7 +176,7 @@ void func_800695A8(void)
     }
     W = w << 3;
     H = h << 3;
-    out = func_80017EBC(W * H, 2);
+    out = gAllocMemory(W * H, 2);
     x = 0;
     if (x < H) {
         limit = W - 1;
@@ -273,7 +273,7 @@ void func_800695A8(void)
         neg--;
         } while (x < H);
     }
-    func_800181D4(buf);
+    gFreeBlock(buf);
     gCellDataOutput[3] = (s32)out;
     gCellDataOutput[0] = ((gTileMapTable->border - 1) << 17) + 0x2000;
     gCellDataOutput[1] = W;

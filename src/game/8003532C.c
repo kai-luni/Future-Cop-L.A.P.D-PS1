@@ -52,7 +52,7 @@ extern struct State *func_80035184(struct Entity *self, s32 *out);
 extern void func_8003526C(struct Entity *self);
 extern void func_800336DC(struct Entity *self);
 extern void func_80060238(void *arg0, s32 arg1, struct Entity *arg2, s32 arg3, s32 arg4);
-extern void func_800324E0(void *arg0, struct Entity *self, s32 arg2);
+extern void gUpdateHoverEnemy(void *arg0, struct Entity *self, s32 arg2) __asm__("func_800324E0");
 
 /**
  * @brief Message-6 tick of the drone class: runs the two-stage approach to a
@@ -228,5 +228,5 @@ L_timer:
 L_final:
     func_80060238((u8 *)self->unk134 + 0x50, arg2, self, 0, 1);
     func_80060238((u8 *)self->unk134 + 0x78, arg2, self, 0, 1);
-    func_800324E0(arg0, self, arg2);
+    gUpdateHoverEnemy(arg0, self, arg2);
 }

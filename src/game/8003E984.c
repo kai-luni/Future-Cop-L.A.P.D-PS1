@@ -96,13 +96,13 @@ struct SpawnWork {
 
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern struct Player *D_8009FA58;
+extern struct Player *gPlayerEntities __asm__("D_8009FA58");
 extern struct Player *D_8009FA5C;
 extern void *gPendingMotion __asm__("D_8009F374");
 extern struct Object *gPendingSpawnList __asm__("D_8009F314");
 
-extern void func_8003DB70(struct Source *, struct Object *, struct Parent *, void *, struct Matrix *, u16 *, s8 *);
-extern struct Data *func_8003D9F8(struct Holder *, u16, s8, s32, struct Parent *, struct Matrix *);
+extern void gBuildNodePlacement(struct Source *, struct Object *, struct Parent *, void *, struct Matrix *, u16 *, s8 *) __asm__("func_8003DB70");
+extern struct Data *gResolveNodeTransform(struct Holder *, u16, s8, s32, struct Parent *, struct Matrix *) __asm__("func_8003D9F8");
 extern u32 *func_8003B3D8(u32, u32);
 extern void func_8003B3F8(struct Object *, u32, s32);
 extern s32 func_8003CDAC(struct Holder *, s8);
@@ -270,8 +270,8 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
         holder = (struct Holder *)parent->holder34;
     }
 
-    func_8003DB70(source, link, parent, arg3, &work.matrix, &work.half, &work.slot);
-    data = func_8003D9F8(holder, source->flags32, source->unk1E, 0, parent, &work.matrix);
+    gBuildNodePlacement(source, link, parent, arg3, &work.matrix, &work.half, &work.slot);
+    data = gResolveNodeTransform(holder, source->flags32, source->unk1E, 0, parent, &work.matrix);
 
     if ((*(u8 *)func_8003B3D8(type, arg4) & 5) == 0) {
         found = 0;
@@ -365,11 +365,11 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
     if (object->flags1A & 0x2010) {
         amount = (object->flags1A & 0x2000) ? 0x3E8 : 0x12C;
 
-        work.distVec[0] = D_8009FA58->x - data->x;
-        work.distVec[1] = D_8009FA58->y - data->y;
-        work.distVec[2] = D_8009FA58->z - data->z;
+        work.distVec[0] = gPlayerEntities->x - data->x;
+        work.distVec[1] = gPlayerEntities->y - data->y;
+        work.distVec[2] = gPlayerEntities->z - data->z;
         if (ABS(func_80019F54(work.distVec)) <= 0x1FFFF) {
-            func_80057358(D_8009FA58, amount);
+            func_80057358(gPlayerEntities, amount);
         }
 
         if (gPlayerCount >= 2) {
@@ -407,16 +407,16 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
         if ((type >= 0x3D && type < 0x45) || (type >= 0x64 && type < 0x77)) {
             if (gPlayerCount >= 2) {
                 if (target != 0) {
-                    work.vec1[0] = target->x - D_8009FA58->x;
-                    work.vec1[1] = target->y - D_8009FA58->y;
-                    work.vec1[2] = target->z - D_8009FA58->z;
+                    work.vec1[0] = target->x - gPlayerEntities->x;
+                    work.vec1[1] = target->y - gPlayerEntities->y;
+                    work.vec1[2] = target->z - gPlayerEntities->z;
                     work.vec2[0] = target->x - D_8009FA5C->x;
                     work.vec2[1] = target->y - D_8009FA5C->y;
                     work.vec2[2] = target->z - D_8009FA5C->z;
                 } else {
-                    work.vec1[0] = object->matrix.m[9] - D_8009FA58->x;
-                    work.vec1[1] = object->matrix.m[10] - D_8009FA58->y;
-                    work.vec1[2] = object->matrix.m[11] - D_8009FA58->z;
+                    work.vec1[0] = object->matrix.m[9] - gPlayerEntities->x;
+                    work.vec1[1] = object->matrix.m[10] - gPlayerEntities->y;
+                    work.vec1[2] = object->matrix.m[11] - gPlayerEntities->z;
                     work.vec2[0] = object->matrix.m[9] - D_8009FA5C->x;
                     work.vec2[1] = object->matrix.m[10] - D_8009FA5C->y;
                     work.vec2[2] = object->matrix.m[11] - D_8009FA5C->z;
@@ -425,24 +425,24 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
                 dist2 = func_80019F54(work.vec2);
                 if (dist < dist2) {
                     if (dist <= 0x1FFFF) {
-                        func_80046C84(object->soundId11, (s32)D_8009FA58);
+                        func_80046C84(object->soundId11, (s32)gPlayerEntities);
                     } else if (dist2 <= 0x1FFFF) {
                         func_80046C84(object->soundId11, (s32)D_8009FA5C);
                     }
                 }
             } else {
                 if (target != 0) {
-                    work.vec1[0] = target->x - D_8009FA58->x;
-                    work.vec1[1] = target->y - D_8009FA58->y;
-                    work.vec1[2] = target->z - D_8009FA58->z;
+                    work.vec1[0] = target->x - gPlayerEntities->x;
+                    work.vec1[1] = target->y - gPlayerEntities->y;
+                    work.vec1[2] = target->z - gPlayerEntities->z;
                 } else {
-                    work.vec1[0] = object->matrix.m[9] - D_8009FA58->x;
-                    work.vec1[1] = object->matrix.m[10] - D_8009FA58->y;
-                    work.vec1[2] = object->matrix.m[11] - D_8009FA58->z;
+                    work.vec1[0] = object->matrix.m[9] - gPlayerEntities->x;
+                    work.vec1[1] = object->matrix.m[10] - gPlayerEntities->y;
+                    work.vec1[2] = object->matrix.m[11] - gPlayerEntities->z;
                 }
                 dist = func_80019F54(work.vec1);
                 if (dist <= 0x1FFFF) {
-                    func_80046C84(object->soundId11, (s32)D_8009FA58);
+                    func_80046C84(object->soundId11, (s32)gPlayerEntities);
                 }
             }
         } else {

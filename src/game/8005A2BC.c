@@ -13,7 +13,7 @@ typedef struct {
     Struct5A2BCItem items[1];
 } Struct5A2BC;
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern s32 func_800195F0(u32 value);
 extern void func_8004979C(void *value);
 
@@ -61,7 +61,7 @@ s32 func_8005A2BC(void **array, s32 count)
     s32 col;
     s32 row;
 
-    header = func_80017EBC(count * 12 + 4, 2);
+    header = gAllocMemory(count * 12 + 4, 2);
     if (header == 0) {
         return 0;
     }

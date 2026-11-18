@@ -6,7 +6,7 @@ extern void *D_8009F94C;
 extern void *gWorkAreaBlock __asm__("D_8009F950");
 extern void *D_8009F954;
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  *  @brief Processes up to four stored block pointers and clears them.
@@ -27,16 +27,16 @@ extern void func_800181D4(void *block);
 void func_80086164(void)
 {
     if (D_8009F948) {
-        func_800181D4(D_8009F948);
+        gFreeBlock(D_8009F948);
     }
     if (D_8009F94C) {
-        func_800181D4(D_8009F94C);
+        gFreeBlock(D_8009F94C);
     }
     if (gWorkAreaBlock) {
-        func_800181D4(gWorkAreaBlock);
+        gFreeBlock(gWorkAreaBlock);
     }
     if (D_8009F954) {
-        func_800181D4(D_8009F954);
+        gFreeBlock(D_8009F954);
     }
     D_8009F948 = (void *)0;
     D_8009F94C = (void *)0;

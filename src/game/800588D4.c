@@ -97,13 +97,13 @@ struct Unk588D4Locals {
 
 extern s32 gScreenState __asm__("D_8009FA00");
 extern struct Unk588D4Global *gGameSession __asm__("D_8009FA94");
-extern u32 gDiscShadeByte __asm__("D_8009FAA4");
+extern u32 gFrameTime __asm__("D_8009FAA4");
 
 extern void func_8005A190(struct Unk5A190 *object, s32 index, s32 value);
 extern void func_800585B8(struct Unk588D4 *object);
-extern s32 func_80066F78(void *object, s32 arg1, s32 arg2, s32 *arg3);
+extern s32 gGetGroundHeight(void *object, s32 arg1, s32 arg2, s32 *arg3) __asm__("func_80066F78");
 extern void func_80058378(struct Unk584BC *object, s32 amount, s32 source);
-extern void func_80058714(struct Unk588D4 *object);
+extern void gRespawnPlayerEntity(struct Unk588D4 *object) __asm__("func_80058714");
 extern void func_800576A8(void *object);
 extern s32 func_800586D4(void *object, s32 arg1, s32 arg2, s32 *arg3);
 extern s32 func_800402DC(void *owner, u8 column, void *arg2, s32 row, s32 arg4);
@@ -113,10 +113,12 @@ extern s32 func_800584BC(s32 message, struct Unk584BC *object,
 extern void func_8006C34C(struct Unk55E10 *object, s32 arg1);
 extern void gGteLoadMatrix(void *arg) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__("func_80010234");
-extern void func_80057E40(void *object, s32 arg1);
+extern void gSlewEntityAim(void *object, s32 arg1) __asm__("func_80057E40");
 extern void func_8006C3E0(void *object, s32 arg1);
 extern void gWeaponSlotInput(struct Unk55E10 *object, s32 arg1) __asm__("func_80055E10");
 extern void gUpdateChaseCamera(void *object, s32 arg1, s32 arg2) __asm__("func_800569EC");
+s32 gUpdatePlayerEntity(struct Unk588D4 *object, s32 arg1) __asm__("func_800588D4");
+
 
 /**
  * @brief Per-frame tick of a player/vehicle entity: services timers, contact damage and
@@ -176,22 +178,22 @@ extern void gUpdateChaseCamera(void *object, s32 arg1, s32 arg2) __asm__("func_8
  * func_8005908C, message 6 of its switch - the entity script dispatcher of this class.
  *
  * @par Environment path
- * Per-frame tick of a player-controlled unit, the message-6 case of
- * func_8005908C: it sets state +0x2FC to -1 and re-arms the model with
- * func_8005A190, measures the ground distance with func_80066F78 and books
- * one damage point through func_80058378 when the object is more than 0x3800
- * above it, counts the +0x318/+0x31A timers down, and derives the sub-tick
- * fractions from the +0xB6/+0xB7 accumulators. It then runs the gameplay half
- * (func_800576A8 and func_800586D4, posting a message through func_800402DC
- * or a hit through func_800584BC while screen state is 4), refreshes the
- * basis transform with gGteLoadMatrix / gGteTransformVerticesWide, and drives
- * the sub-systems func_80057E40, func_8006C3E0, gWeaponSlotInput
- * (func_80055E10) and finally gUpdateChaseCamera (func_800569EC). It is the
- * player's frame update feeding the renderer, not part of the environment
- * pass: it writes no global, it reads the screen state and the session block
- * and the frame stamp.
+ * Per-frame tick of the player unit, called from its class handler
+ * func_8005908C: it resets state +0x2FC, re-arms the model with func_8005A190
+ * and, when state byte +0xDE is set, kills the unit through func_80058378
+ * with damage health + 1 if the ground height from func_80066F78 lies more
+ * than 0x3800 above it. It counts the +0x31A/+0x318 timers down (returning
+ * early while +0x318 runs and clearing the hit flags when it expires), splits
+ * the step into the +0xB6/+0xB7 sub-tick accumulators, and in game mode 1
+ * (session +0x5C) adds the step to the per-player time and stamps +0x24 with
+ * the frame time D_8009FAA4. For player slots 0/1 in screen state 4 it runs
+ * the movement/collision half (func_800576A8, func_800586D4), posting a
+ * message via func_800402DC or self-damage via func_800584BC, then refreshes
+ * the frame vertex and drives func_80057E40, func_8006C3E0, gWeaponSlotInput
+ * (func_80055E10, screen state 4 only) and, unconditionally,
+ * gUpdateChaseCamera (func_800569EC).
  */
-s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
+s32 gUpdatePlayerEntity(struct Unk588D4 *object, s32 arg1)
 {
     struct Unk588D4Data *data;
     register s32 s2 __asm__("$18");
@@ -212,7 +214,7 @@ s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
     }
 
     if (object->unkAC->unkDE != 0) {
-        ret = func_80066F78(object->unk50, 0, 0, &locals.out18);
+        ret = gGetGroundHeight(object->unk50, 0, 0, &locals.out18);
         if (object->unk54 + 0x3800 < ret) {
             func_80058378((struct Unk584BC *)object, object->unk1C + 1, 0);
         }
@@ -229,7 +231,7 @@ s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
         }
         object->unk24 &= -0xA6;
         object->unkDC->unk24 &= -0xA6;
-        func_80058714(object);
+        gRespawnPlayerEntity(object);
         return 0;
     }
 
@@ -247,7 +249,7 @@ s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
     if (gGameSession->unk5C == 1) {
         *(s32 *)((u32)data + (data->unkAD << 2) + 0x28) += arg1;
         if (object->unkAC->unk24 == 0 && *(s32 *)((c1 << 2) + (u32)gGameSession + 0x84) > 0) {
-            object->unkAC->unk24 = gDiscShadeByte;
+            object->unkAC->unk24 = gFrameTime;
         }
     }
 
@@ -282,7 +284,7 @@ s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
     offset += 8;
     v = (s32)object->unk28->unk34;
     gGteTransformVerticesWide((void *)(v + offset), object->unk5C, 1);
-    func_80057E40(object->unkDC, arg1);
+    gSlewEntityAim(object->unkDC, arg1);
     func_8006C3E0(object, arg1);
     if (gScreenState == 4) {
         gWeaponSlotInput((struct Unk55E10 *)object, arg1);

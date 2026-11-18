@@ -39,12 +39,12 @@ typedef struct Player56634 {
     s8 index;
 } Player56634;
 
-extern Player56634 *gMissionWorkingSet __asm__("D_8009F9A0");
+extern Player56634 *gFocusPositions __asm__("D_8009F9A0");
 extern Entry56634 gFormCodeTable[] __asm__("D_8009ACF4");
-extern Object56634 *D_8009FA58[2];
+extern Object56634 *gPlayerEntities[2] __asm__("D_8009FA58");
 
-extern void func_8005612C(Vec56634 *pos, s32 angle, s32 angle2, s32 pitch, s32 dist,
-                          Vec56634 *src, Vec56634 *dst, s32 val, s32 val2);
+extern void gComputeCameraEye(Vec56634 *pos, s32 angle, s32 angle2, s32 pitch, s32 dist,
+                          Vec56634 *src, Vec56634 *dst, s32 val, s32 val2) __asm__("func_8005612C");
 extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
 extern void gSetCameraPosition(Vec56634 *position) __asm__("func_800177AC");
 extern void gSetCameraRotation(s32 yaw, s32 pitch, s32 roll) __asm__("func_80017860");
@@ -92,30 +92,30 @@ void gPlacePlayerViews(void)
     register Entry56634 *entries __asm__("$2");
     s32 index;
 
-    index = gMissionWorkingSet->index;
+    index = gFocusPositions->index;
     __asm__("" : : "r"(index));
-    angle = gMissionWorkingSet->angle;
+    angle = gFocusPositions->angle;
     entries = gFormCodeTable;
     entry = &entries[index];
 
     for (i = 0; i < 2; i++) {
-        if (D_8009FA58[i] == 0) {
+        if (gPlayerEntities[i] == 0) {
             continue;
         }
 
-        func_8005612C(&gMissionWorkingSet->pos, angle, angle + entry->f0, entry->f2,
+        gComputeCameraEye(&gFocusPositions->pos, angle, angle + entry->f0, entry->f2,
                       entry->f4, &entry->pos, &out,
-                      D_8009FA58[i]->info->valA8, D_8009FA58[i]->info->valBC);
+                      gPlayerEntities[i]->info->valA8, gPlayerEntities[i]->info->valBC);
 
-        gSelectViewRecord(D_8009FA58[i]->info->idAC);
+        gSelectViewRecord(gPlayerEntities[i]->info->idAC);
         gSetCameraPosition(&out);
         gSetCameraRotation(angle, entry->f2, 0);
 
         {
-            Info56634 *info = D_8009FA58[i]->info;
+            Info56634 *info = gPlayerEntities[i]->info;
             info->flagA7 = 1;
             info->flagA6 = 1;
         }
-        D_8009FA58[i]->info->valAA = 0;
+        gPlayerEntities[i]->info->valAA = 0;
     }
 }

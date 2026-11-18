@@ -58,17 +58,17 @@ struct UnkS2_55988 {
     s16 unkF2;
 };
 
-extern struct Entity *gMissionWorkingSet __asm__("D_8009F9A0");
+extern struct Entity *gFocusPositions __asm__("D_8009F9A0");
 
 extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction, u8 flags);
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern void func_800471C4(s32 track, struct Unk471C4Object *object);
-extern void func_800518A8(void *arg0, void *arg1, s32 arg2, void *arg3);
+extern void gUpdateMorphBounds(void *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_800518A8");
 extern void func_80044B34(void *arg0, void *arg1, s32 arg2, s32 arg3);
 extern void func_8001E930(void *state, s32 flag);
-extern void func_800175F8(struct ModelInstance *instance, s32 frame);
+extern void gSetModelFrame(struct ModelInstance *instance, s32 frame) __asm__("func_800175F8");
 extern void func_8004D958(struct Entity *entity);
-extern void func_80053A74(void *arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gTickHoverPhysics(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80053A74");
 extern void func_800549F0(void *arg0, s32 arg1, s32 arg2, s32 arg3);
 
 /**
@@ -174,7 +174,7 @@ void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
 
     if ((flags & 0x2800000) == 0x2800000) {
         if (state->unkC0 == 0) {
-            if (gMissionWorkingSet == 0) {
+            if (gFocusPositions == 0) {
                 if (obj->state->unkDE == 0) {
                     if (obj->state->unk146 != 0) {
                         func_80046C84(0x2A, (s32)obj);
@@ -228,7 +228,7 @@ void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
             }
         }
 
-        func_800518A8((void *)((u8 *)obj + 0x28), state->unkEC, state->unkBC, obj);
+        gUpdateMorphBounds((void *)((u8 *)obj + 0x28), state->unkEC, state->unkBC, obj);
 
         height = (state->unkBC << 12) >> 16;
         obj->unk54 += height - obj->unkF2;
@@ -242,19 +242,19 @@ void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
             func_8001E930(obj, 0);
         }
 
-        func_800175F8((struct ModelInstance *)((u8 *)model + 0x28), model->unkAC);
-        func_800175F8((struct ModelInstance *)((u8 *)obj + 0x28), obj->unkD4);
+        gSetModelFrame((struct ModelInstance *)((u8 *)model + 0x28), model->unkAC);
+        gSetModelFrame((struct ModelInstance *)((u8 *)obj + 0x28), obj->unkD4);
         flags &= 0xC0000;
         state->flags &= 0x54C0000;
     }
 
-    if (gMissionWorkingSet == 0) {
+    if (gFocusPositions == 0) {
         if (state->unk31A <= 0 && obj->state->unkDE == 0) {
             goto skip_mask;
         }
     } else {
         if (state->flags & 0x80000) {
-            func_8004D958(gMissionWorkingSet);
+            func_8004D958(gFocusPositions);
             state->unk320 = 3;
         }
     }
@@ -269,6 +269,6 @@ skip_mask:
     if (state->unkAD != 1) {
         func_800549F0(obj, step, parameter, flags);
     } else {
-        func_80053A74(obj, step, parameter, flags);
+        gTickHoverPhysics(obj, step, parameter, flags);
     }
 }

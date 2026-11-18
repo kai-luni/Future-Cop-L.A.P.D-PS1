@@ -66,8 +66,8 @@ struct ModelInstance;
 
 extern void func_800516A0(void *owner);
 extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction, u8 flags);
-extern void func_800175F8(struct ModelInstance *instance, s32 frame);
-extern void func_800518A8(void *arg0, void *arg1, s32 arg2, void *arg3);
+extern void gSetModelFrame(struct ModelInstance *instance, s32 frame) __asm__("func_800175F8");
+extern void gUpdateMorphBounds(void *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_800518A8");
 
 /**
  * @brief Resets a compound entity's state and restarts its animation tracks.
@@ -134,10 +134,10 @@ void func_80051AF8(struct Unk51AF8Arg *arg0)
 
     model = (struct ModelInstance *)((u8 *)arg0 + 0x28);
     func_800448D8((struct AnimTrack *)(arg0->unkDC + 0xA0), s1->unkAD == 1, 1, 0);
-    func_800175F8((struct ModelInstance *)(arg0->unkDC + 0x28),
+    gSetModelFrame((struct ModelInstance *)(arg0->unkDC + 0x28),
                   *(s16 *)(arg0->unkDC + 0xAC));
-    func_800175F8(model, arg0->unkD4);
-    func_800518A8(model, (u8 *)s1 + 0xEC, s1->unkBC, arg0);
+    gSetModelFrame(model, arg0->unkD4);
+    gUpdateMorphBounds(model, (u8 *)s1 + 0xEC, s1->unkBC, arg0);
 
     s1->unkE8 = 0;
     s1->unkE4 = 0;

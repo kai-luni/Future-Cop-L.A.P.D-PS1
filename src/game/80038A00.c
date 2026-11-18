@@ -18,7 +18,7 @@ struct Obj {
     struct Info *info;
 };
 
-extern void func_80017668(void *, s32, void *);
+extern void gTransformPartVertex(void *, s32, void *) __asm__("func_80017668");
 extern s32 func_80095C30(s32, s32);
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
@@ -27,7 +27,7 @@ extern void gSinCos(s32, s32 *, s32 *) __asm__("func_8001846C");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern s32 func_80044B34(void *, void *, s32, s32);
-extern void func_800175F8(void *, s32);
+extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_80060238(void *, s32, void *, void *, s32);
 extern void func_800448D8(void *, s32, s32, s32);
 extern void func_8005F6E8(void *, void *, void *, s32);
@@ -48,6 +48,8 @@ union Prod { long long val; struct { u32 lo, hi; } w; };
         if (df < 0) lim = -lim; \
         obj->field = (obj->field + lim) & 0xFFF; \
     }
+void gUpdateMountedTurret(struct Obj *obj, s32 dt) __asm__("func_80038A00");
+
 
 /**
  * @brief Per-frame orientation update of a scripted entity: steers yaw and pitch
@@ -155,22 +157,21 @@ union Prod { long long val; struct { u32 lo, hi; } w; };
  * - The semantics of the script return value tested with & 0xFF.
  *
  * @par Environment path
- * Per-frame orientation update of a scripted entity: it returns when the Info
- * count is zero or negative, resolves the part position with func_80017668,
- * and then either steers yaw and pitch toward a target using the twelve-bit
- * arctangent func_80095C30, the yaw bias and the bounded STEP macro, or, when
- * flag bit 1 is set, tilts the entity with the slope derived from the Info
- * height and limit words using func_8001846C. The resulting matrix comes from
- * func_800188D0 and is concatenated with the Info matrix through
- * func_80010820 and func_8001006C, then loaded with func_80010750, used to
- * transform one model frame vertex with func_80010234, and followed by the
- * animation command word from func_80044B34, the frame commit func_800175F8
- * and the entity script func_80060238 or func_8005F6E8. Callers are
- * func_800395A8 and func_800398EC from message 6 of their dispatch tables,
- * and the function touches no globals - everything arrives through the
- * entity, its Info and its Target.
+ * Per-tick update of a child entity mounted on a parent (the +0x158 child of
+ * func_800395A8 and child[0] of func_800398EC, both from message 6): it
+ * returns while the parent's count is not positive, places itself on the
+ * parent's model part with func_80017668 and then either aims yaw and pitch
+ * at its target (func_80095C30 arctangents, parent yaw bias, rate-limited
+ * STEP, yaw clamped to +-0x300 around the heading when flag 0x4000 is set)
+ * or, with flag 2, tilts only by a pitch derived from the parent's height and
+ * limit words. The rotation from func_800188D0 is concatenated with the
+ * parent matrix (func_80010820, func_8001006C) or built with func_8001846C,
+ * loaded with func_80010750 and used to transform one frame vertex with
+ * func_80010234. Finally it advances the animation (func_80044B34,
+ * func_800175F8) and runs the attack timeline func_80060238 or fires directly
+ * through the attack dispatcher func_8005F6E8; it touches no globals.
  */
-void func_80038A00(struct Obj *obj, s32 dt)
+void gUpdateMountedTurret(struct Obj *obj, s32 dt)
 {
     struct Info *info;
     s32 d[3];
@@ -180,7 +181,7 @@ void func_80038A00(struct Obj *obj, s32 dt)
 
     info = obj->info;
     if (info->count <= 0) return;
-    func_80017668(info->instance - 0, obj->part, obj->pos);
+    gTransformPartVertex(info->instance - 0, obj->part, obj->pos);
     f = obj->flags;
     if (!(f & 2)) {
         if (f & 0x20) {
@@ -342,7 +343,7 @@ apply:
             }
             a >>= 6;
         }
-        func_800175F8(&obj->model, obj->animFrame);
+        gSetModelFrame(&obj->model, obj->animFrame);
     }
     f = obj->flags;
     if (f & 4) return;

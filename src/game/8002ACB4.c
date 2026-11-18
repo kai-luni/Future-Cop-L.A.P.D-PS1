@@ -22,7 +22,7 @@ struct Unk2ACB4 {
     union Unk90 u90;
 };
 
-extern void func_80013AA0(s32 low, s32 high);
+extern void gSetModelUvOffset(s32 low, s32 high) __asm__("func_80013AA0");
 extern s32 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
 
 /**
@@ -58,11 +58,11 @@ s32 func_8002ACB4(struct Unk2ACB4 *object, s32 value)
         m = 0xFFFF0000;
 
         if ((object->u90.word & m) != 0) {
-            func_80013AA0(object->u90.bytes.unk92, object->u90.bytes.unk93);
+            gSetModelUvOffset(object->u90.bytes.unk92, object->u90.bytes.unk93);
         }
         result = gSubmitModelInstance(&object->inst, &object->flags, value & 0xFF);
         if ((object->u90.word & m) != 0) {
-            func_80013AA0(0, 0);
+            gSetModelUvOffset(0, 0);
         }
         return result & 0xFF;
     }

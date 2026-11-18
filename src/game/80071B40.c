@@ -32,6 +32,8 @@ extern void func_8003D0F0(Base *, s32, s32, Vec *);
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
 extern s32 func_800718B8(Node *, s32, s32, s32, s32);
+void gStepBeamNode(Node *node, s32 dt) __asm__("func_80071B40");
+
 
 /**
  * @brief Advances the parts of a model node and re-fetches their vertices.
@@ -54,19 +56,19 @@ extern s32 func_800718B8(Node *, s32, s32, s32, s32);
  * each part rotates around its base and its vertex is transformed once.
  *
  * @par Environment path
- * Advances the parts of one model node: for obj2 and then obj1 it re-places
- * the base with func_8003D0F0 whenever the id changed, optionally rotates the
- * part position into the parent frame with func_80010820 and func_8001006C,
- * adds the parent translation and clears the base and id pointers, releasing
- * flag 0x800 after obj1. It then applies the three node speeds scaled by the
- * step, runs func_800718B8 per part index, integrates each part vertex from
- * its own velocity table, maintains the timer with the 0x8000 and 0x1000 flag
- * bits, and finally sets 0x1000 when no handler reported a hit and the low
- * flag bit is set. Caller is func_8007364C, which dispatches here when flag
- * 0x800 is set, so this is per-frame part animation of a compound model and
- * it reads no globals.
+ * Per-frame step of one beam node, called by the list pass func_8007364C over
+ * gModelNodeList (D_8009F38C) once the node carries flag 0x800. For the two
+ * anchors obj2 and obj1 it re-fetches the anchor point from its model with
+ * func_8003D0F0 whenever the anchor id changed, optionally rotates it into
+ * obj1's base frame (func_80010820, func_8001006C) and adds that base's
+ * translation, then drops the anchor pointers and clears flag 8. Unless flag
+ * 0x4000 is set it scales the three node speeds by the step, runs the repeat
+ * timer (flag 0x8000), ticks every beam entry with func_800718B8 and, while
+ * the node is active, integrates each entry's polyline points from their
+ * velocities; when no entry reports activity and flag 1 is set it raises
+ * 0x1000 so the list pass retires the node. No globals are read.
  */
-void func_80071B40(Node *node, s32 dt)
+void gStepBeamNode(Node *node, s32 dt)
 {
     register s32 i __asm__("$16");
     register Node *n __asm__("$17") = node;

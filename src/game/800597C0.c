@@ -66,7 +66,7 @@ struct Global597C0 {
     s32 unk5C;
 };
 
-extern u8 gDiscShadeByte[] __asm__("D_8009FAA4");
+extern u8 gFrameTime[] __asm__("D_8009FAA4");
 extern u8 gDiscPartIndexTable[] __asm__("D_8009AF3C");
 u8 D_8009F36D;
 extern u8 D_8009F36E;
@@ -75,19 +75,19 @@ extern s32 gDiscColourWordSecondary __asm__("D_8009F370");
 extern struct Camera597C0 *gCamera __asm__("D_8009F9E4");
 extern struct Global597C0 *gGameSession[] __asm__("D_8009FA94");
 
-extern void func_80013AA0(s32 low, s32 high);
+extern void gSetModelUvOffset(s32 low, s32 high) __asm__("func_80013AA0");
 extern u8 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
-extern void func_80017668(struct Unk17508 *instance, s32 part, s32 *out);
-extern s32 func_80019D90(s16 *point, s32 margin);
+extern void gTransformPartVertex(struct Unk17508 *instance, s32 part, s32 *out) __asm__("func_80017668");
+extern s32 gTestFrustumFixedNear(s16 *point, s32 margin) __asm__("func_80019D90");
 extern s32 func_800584BC(s32 message, struct State597C0 *object, void *hit, s32 arg3, s32 arg4);
 extern void func_8005920C(struct Object597C0 *object, void *spawn, s32 arg2);
-extern void func_800592D0(struct State597C0 *state);
+extern void gDrawOtherPlayerArrow(struct State597C0 *state) __asm__("func_800592D0");
 extern void func_800596C4(struct State597C0 *state);
 extern void gGteTransformVertices(s16 *a, s16 *b, s32 c) __asm__("func_8001010C");
-extern void func_8001047C(s16 *a, s16 *b, s16 *c, s32 d);
+extern void gProjectVertexBatch(s16 *a, s16 *b, s16 *c, s32 d) __asm__("func_8001047C");
 extern void gGteLoadRotation(u8 *a) __asm__("func_80010820");
-extern void func_8001484C(s16 *a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-extern s32 func_8002AD58(s32 kind, struct Object597C0 *object, void *arg2, s32 arg3);
+extern void gEmitGouraudDisc(s16 *a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) __asm__("func_8001484C");
+extern s32 gEntityBaseHandler(s32 kind, struct Object597C0 *object, void *arg2, s32 arg3) __asm__("func_8002AD58");
 
 /**
  * @brief Draw handler of one effect object: re-arms its model instances, then
@@ -233,13 +233,13 @@ void func_800597C0(struct Object597C0 *object)
         if (condition > 0) {
             register s32 value __asm__("$2");
             __asm__ volatile("" : : : "memory");
-            value = *(volatile u8 *)gDiscShadeByte;
+            value = *(volatile u8 *)gFrameTime;
             __asm__ volatile("" : "+r"(value));
             high = value >> 2;
         } else {
             high = state->unk93;
         }
-        func_80013AA0(low, high);
+        gSetModelUvOffset(low, high);
     }
 
     arg2 = 1;
@@ -262,9 +262,9 @@ void func_800597C0(struct Object597C0 *object)
 
     gSubmitModelInstance(&info->unk178, &object->flags, 1);
     gSubmitModelInstance(&info->unk1C4, &object->flags, 1);
-    func_80013AA0(0, 0);
+    gSetModelUvOffset(0, 0);
     gSubmitModelInstance(&info->unk210, &object->flags, 1);
-    func_800592D0(state);
+    gDrawOtherPlayerArrow(state);
 
     offset = 0;
     i = offset;
@@ -283,7 +283,7 @@ void func_800597C0(struct Object597C0 *object)
         D_8009F36F = 0;
         D_8009F36D = quotient;
 
-        func_80017668(&info->unk210, *(u8 *)(i + (u32)parts), loc.from);
+        gTransformPartVertex(&info->unk210, *(u8 *)(i + (u32)parts), loc.from);
 
         cam = gCamera;
         loc.from[0] -= cam->unk7C;
@@ -296,9 +296,9 @@ void func_800597C0(struct Object597C0 *object)
         gGteLoadRotation((u8 *)cam + 0x28);
         gGteTransformVertices(loc.coords, loc.point, 1);
 
-        if ((u8)func_80019D90(loc.point, 0x700) == 2) {
-            func_8001047C(loc.coords, loc.point, loc.hit, 1);
-            func_8001484C(loc.point, *(s32 *)(color - 1), gDiscColourWordSecondary, 4, 0x70, 0x200, 0);
+        if ((u8)gTestFrustumFixedNear(loc.point, 0x700) == 2) {
+            gProjectVertexBatch(loc.coords, loc.point, loc.hit, 1);
+            gEmitGouraudDisc(loc.point, *(s32 *)(color - 1), gDiscColourWordSecondary, 4, 0x70, 0x200, 0);
             offset += count >> 1;
         }
         i++;

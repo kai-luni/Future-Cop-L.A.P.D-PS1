@@ -44,6 +44,8 @@ extern void gSampleCellWindow(s32 a0, s32 a1, struct Block *block) __asm__("func
 
 #define FMUL(a, b) ({ s32 r_; __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 #define FMULU(a, b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
+void gUpdateCameraAnchor(s32 index, struct Entity *obj) __asm__("func_80066C9C");
+
 
 /**
  * @brief Projects an entity's height against the camera eye and stores the
@@ -78,19 +80,18 @@ extern void gSampleCellWindow(s32 a0, s32 a1, struct Block *block) __asm__("func
  * func_80026E5C.
  *
  * @par Environment path
- * Per-view camera anchor update: it selects the view record with
- * func_80017B60, loads the camera rotation with func_80010820, projects the
- * entity height against the camera eye using the reciprocal of half the
- * camera rate word, writes the resulting ground position pair into
- * gScenePositionPairs (D_800A3190) together with two 17-bit-shifted scale
- * bytes into D_8009F834, and fills one region of the coverage grid through
- * gSampleCellWindow (func_80064460). It runs once per player and frame from
- * the scratchpad trampoline func_80026E5C, which gRunSessionFrame
- * (func_80027510, lines 232 and 233) calls just before the draw pass. It
- * draws nothing itself, but it produces the position func_80069580 hands to
- * the scene traversal and the cell data that gDrawViewLayers then renders.
+ * Per-view look-at update: it selects the player's view record with
+ * gSelectViewRecord, loads the camera rotation, and intersects the camera's
+ * view direction (gCamera + 0x70/+0x74/+0x78) from the eye (+0x7C/+0x84) with
+ * the entity's height, writing the resulting ground point to
+ * gScenePositionPairs[index]. From that point it derives the coarse grid
+ * origin ((coordinate >> 17) - 2) for both axes, stores the two bytes at
+ * D_8009F834[index * 2], and fills the view's 400-byte block of gCoverageGrid
+ * through gSampleCellWindow (func_80064460). It runs once per player and
+ * frame through the scratchpad trampoline func_80026E5C, which both
+ * func_800271A4 and gRunSessionFrame (func_80027510) call.
  */
-void func_80066C9C(s32 index, struct Entity *obj)
+void gUpdateCameraAnchor(s32 index, struct Entity *obj)
 {
     struct Camera *cam;
     s32 t;

@@ -21,7 +21,7 @@ struct Unk74024 {
 
 extern void func_80073BBC();
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void func_8003C14C(struct Unk74024 *object, struct Unk74024Def *def);
 
 /**
@@ -53,7 +53,7 @@ struct Unk74024 *func_80074024(struct Unk74024Def *def)
     struct Unk74024 *object;
     s32 size;
 
-    object = func_80017EBC(0x68, 1);
+    object = gAllocMemory(0x68, 1);
     if (object == 0) {
         return 0;
     }

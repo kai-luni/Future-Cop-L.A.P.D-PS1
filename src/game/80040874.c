@@ -14,12 +14,12 @@ struct Obj {
 extern s32 gMessage10Counter __asm__("D_8009F318");
 extern s32 func_8003C7B8(s32, struct Obj *, s32, s32);
 extern s32 func_8003C980(s32, struct Obj *, s32, s32);
-extern void *func_8003D9F8(void *, u16, s8, s32, struct Parent *, void *);
+extern void *gResolveNodeTransform(void *, u16, s8, s32, struct Parent *, void *) __asm__("func_8003D9F8");
 extern void func_8001B148(void *, void *, void *, s32);
 extern s32 func_800196C4(void);
 extern u8 func_80040734(struct Obj *, void *);
 extern void func_800498F0(void *);
-extern void func_800181D4(struct Obj *);
+extern void gFreeBlock(struct Obj *) __asm__("func_800181D4");
 
 /**
  * @brief Entity message handler with randomized countdown fields and a
@@ -64,7 +64,7 @@ case0:
     parent = obj->parent;
     child = 0;
     if (parent) child = parent->child;
-    matrix = func_8003D9F8(child, obj->flags, obj->index, 1, parent, obj->matrix);
+    matrix = gResolveNodeTransform(child, obj->flags, obj->index, 1, parent, obj->matrix);
     if (obj->flags & 4) func_8001B148(matrix, obj->point, obj->point, 1);
     if (obj->field7a < 0) obj->field7a = ((func_800196C4() & 0xfff) * -obj->field7a) >> 12;
     if (obj->field7c < 0) obj->field7c = ((func_800196C4() & 0xfff) * -obj->field7c) >> 12;
@@ -75,7 +75,7 @@ case10:
         func_800498F0(obj->field6c);
         obj->field6c = 0;
     }
-    func_800181D4(obj);
+    gFreeBlock(obj);
     goto ret0;
 dflt:
     return func_8003C980(message, obj, arg2, arg3);

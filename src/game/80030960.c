@@ -15,11 +15,11 @@ typedef struct Object {
 } Object;
 
 extern void *jtbl_800111DC[];
-extern u32 gDiscShadeByte __asm__("D_8009FAA4");
-extern void func_800302E8(Object *, void *, s32);
+extern u32 gFrameTime __asm__("D_8009FAA4");
+extern void gInitTerrainEntity(Object *, void *, s32) __asm__("func_800302E8");
 extern u8 func_8002F8B8(u8, s16, void *, u8);
 extern void func_80030498(Object *, void *);
-extern s32 func_8002AD58(s32, Object *, void *);
+extern s32 gEntityBaseHandler(s32, Object *, void *) __asm__("func_8002AD58");
 extern u8 gSubmitModelInstance(void *, u32 *, s32) __asm__("func_80017508");
 extern s32 func_800306A0(Object *, void *);
 
@@ -73,7 +73,7 @@ s32 func_80030960(s32 message, Object *object, void *data, s32 arg3)
 case1:
     return 0x134;
 case2:
-    func_800302E8(self, other, arg3);
+    gInitTerrainEntity(self, other, arg3);
     return 0;
 case10:
     if (self->unkBD == 2 || self->unkBD == 0) {
@@ -85,8 +85,8 @@ case10:
 case3:
     if (self->unkBD != 2 && self->unkBD != 5) goto fallback;
     if (self->flags & 0x20) return 0;
-    func_8002AD58(message, self, other);
-    if ((self->unkB4 & 0xF0) && (gDiscShadeByte & 0x80)) {
+    gEntityBaseHandler(message, self, other);
+    if ((self->unkB4 & 0xF0) && (gFrameTime & 0x80)) {
         flags = 0x2000000;
     } else {
         flags = 0;
@@ -95,5 +95,5 @@ case3:
 case6:
     return func_800306A0(self, other);
 fallback:
-    return func_8002AD58(message, self, other);
+    return gEntityBaseHandler(message, self, other);
 }

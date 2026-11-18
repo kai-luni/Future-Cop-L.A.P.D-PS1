@@ -5,7 +5,7 @@ extern s32 *gBucketArray __asm__("D_8009F938");
 extern s32 gMissionGridWidth __asm__("D_8009F93C");
 extern s32 gMissionGridHeight __asm__("D_8009F940");
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates and zeroes the 8-byte-per-cell scene-graph bucket grid D_8009F938.
@@ -39,7 +39,7 @@ void func_800834C4(s32 width, s32 height)
     count = width * height;
     gMissionGridHeight = height;
     gMissionGridWidth = width;
-    cells = func_80017EBC(count * 8, 2);
+    cells = gAllocMemory(count * 8, 2);
     gBucketArray = cells;
     for (i = count - 1; i >= 0; i--) {
         cells[i * 2] = 0;

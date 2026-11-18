@@ -4,7 +4,7 @@
 extern s32 gFileSearchGroup __asm__("D_8009F238");
 
 extern s32 func_8001E110(s32 name, s32 arg1, void **data, s32 *size, s32 arg4);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Loads a whole file and returns its buffer, releasing the partial buffer
@@ -47,7 +47,7 @@ void *func_80059BA0(s32 name)
         goto success;
     }
     if (data != 0) {
-        func_800181D4(data);
+        gFreeBlock(data);
     }
     result = 0;
     goto done;

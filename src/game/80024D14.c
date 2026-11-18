@@ -3,7 +3,7 @@
 
 extern void *gScratchBlockPtr __asm__("D_8009F68C");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_800734BC(void);
 extern void func_8003F854(s32 arg0);
 extern void func_8004ABBC(void);
@@ -69,7 +69,7 @@ void gResetMissionSubsystems(s32 arg0) __asm__("func_80024D14");
 void gResetMissionSubsystems(s32 arg0)
 {
     if (gScratchBlockPtr != 0) {
-        func_800181D4(gScratchBlockPtr);
+        gFreeBlock(gScratchBlockPtr);
     }
     func_800734BC();
     func_8003F854(2);

@@ -1,7 +1,7 @@
 // Categories: Resources > Memory Management | Resources > Movie Playback
 #include "game/types.h"
 
-void func_80017EBC(s32 arg0, s32 arg1);
+void gAllocMemory(s32 arg0, s32 arg1) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates a movie playback buffer of arg0 bytes via mode-2 free-range search.
@@ -26,6 +26,6 @@ void func_80017EBC(s32 arg0, s32 arg1);
  * Confirmed: gOpenVideoLayer (0x80087F5C, 0x80087F70, 0x80087F84, 0x80087FF0, 0x80088064, 0x800880A4 in asm/us/main.s), gPlayVideoFile (0x80088220, 0x80088234, 0x80088508, 0x8008851C in asm/us/main.s) / Likely: none / Unknown: none.
  */
 void func_8008799C(s32 arg0) {
-    func_80017EBC(arg0, 2);
+    gAllocMemory(arg0, 2);
     return;
 }

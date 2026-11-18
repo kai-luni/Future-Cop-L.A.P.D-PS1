@@ -25,9 +25,9 @@ typedef struct {
 } Data;
 typedef struct { u8 pad00[8]; Data *data; } DataHolder;
 
-extern s32 func_8002AD58(s32, Object *, DataHolder *);
+extern s32 gEntityBaseHandler(s32, Object *, DataHolder *) __asm__("func_8002AD58");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
-extern s32 func_80066F78(void *, s32, s32, s32);
+extern s32 gGetGroundHeight(void *, s32, s32, s32) __asm__("func_80066F78");
 extern u32 func_80095900(s32);
 
 /**
@@ -66,10 +66,10 @@ s32 func_80041E0C(s32 arg0, Object *obj, DataHolder *holder)
     s32 width, height;
     s32 i;
     register u32 flags __asm__("$2");
-    func_8002AD58(2, obj, holder);
+    gEntityBaseHandler(2, obj, holder);
     data = holder->data;
     gBuildRotationMatrix(data->x, data->y, data->z, obj->coord);
-    obj->position.y = func_80066F78(&obj->position, 0, 0, 0) + (data->offset << 4);
+    obj->position.y = gGetGroundHeight(&obj->position, 0, 0, 0) + (data->offset << 4);
     obj->previous = obj->position;
     flags = obj->flags;
     obj->unkA4 = -10;

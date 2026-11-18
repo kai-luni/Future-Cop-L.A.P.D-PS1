@@ -15,6 +15,8 @@ struct Unk56870 {
 extern u32 func_80019668(void);
 extern void gPlaceCameraFromPreset(struct Unk56870 *object, s32 index, struct Vec3s32 *out, s32 apply) __asm__("func_8005678C");
 extern s32 func_80055EE8(struct Vec3s32 *from, struct Vec3s32 *to);
+s32 gFindClearCameraPreset(struct Unk56870 *object) __asm__("func_80056870");
+
 
 /**
  * @brief Searches the alternate camera presets for an unblocked view of the
@@ -49,7 +51,7 @@ extern s32 func_80055EE8(struct Vec3s32 *from, struct Vec3s32 *to);
  * src/game/800569EC.c:512) and gSetCameraPosition (func_800177AC, call site
  * src/game/800569EC.c:563).
  */
-s32 func_80056870(struct Unk56870 *object)
+s32 gFindClearCameraPreset(struct Unk56870 *object)
 {
     struct Vec3s32 out;
     struct Vec3s32 position;

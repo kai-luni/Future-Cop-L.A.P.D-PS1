@@ -4,7 +4,7 @@
 extern void **gTextureDescriptorTable __asm__("D_8009F7D8");
 extern s32 D_8009F7DC;
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Frees all per-entry sprite/tile descriptor blocks in D_8009F7D8 and resets D_8009F7DC.
@@ -34,9 +34,9 @@ void func_8005A220(void)
 
     if (gTextureDescriptorTable != 0) {
         for (i = D_8009F7DC - 1; i >= 0; i--) {
-            func_800181D4(gTextureDescriptorTable[i]);
+            gFreeBlock(gTextureDescriptorTable[i]);
         }
-        func_800181D4(gTextureDescriptorTable);
+        gFreeBlock(gTextureDescriptorTable);
         gTextureDescriptorTable = 0;
     }
     D_8009F7DC = 0;

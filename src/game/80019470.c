@@ -4,6 +4,8 @@
 struct Matrix32 {
     s32 m[3][3];
 };
+void gTransposeMatrix3x3(struct Matrix32 *source, struct Matrix32 *destination) __asm__("func_80019470");
+
 
 /**
  * @brief Transposes a 3x3 32-bit matrix from source into destination.
@@ -38,7 +40,7 @@ struct Matrix32 {
  * func_80016A64 and func_80017058 and the two routines func_80051EB8 and
  * func_80061CAC. It reads and writes only its two arguments.
  */
-void func_80019470(struct Matrix32 *source, struct Matrix32 *destination)
+void gTransposeMatrix3x3(struct Matrix32 *source, struct Matrix32 *destination)
 {
     destination->m[0][0] = source->m[0][0];
     destination->m[0][1] = source->m[1][0];

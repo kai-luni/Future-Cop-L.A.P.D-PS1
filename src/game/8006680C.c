@@ -23,6 +23,8 @@ extern void func_8004ED18(s32 *, s32 *, s32);
 extern void func_800694C8(s32 *, s32 *, s32, s32);
 extern void func_8001C214(s32, s32, s32, s32, s32, s32);
 extern void func_80066684(void *, s32 *, s32, s32);
+void gDrawMapView(struct Owner *owner, s32 *pos) __asm__("func_8006680C");
+
 
 /**
  * @brief Draws the 16x16 tile block of the minimap around a position.
@@ -49,21 +51,19 @@ extern void func_80066684(void *, s32 *, s32, s32);
  * id).
  *
  * @par Environment path
- * Draws the minimap block around a position: func_800665E8 maps the position
- * to the grid, the two loops cover the 24-cell window (32 pixels, 16 when
- * gPlayerCount is at least 2), and each cell is masked to a tile through
- * gTileMapTable and gTileBlockTable, whose tile id selects the pattern via
- * gBuildTilePattern and whose two colour bytes set gTileColourWord through
- * gWorldToRadarCell before func_80065CA8 draws the 16 by 16 pixel tile. The
- * block is then framed: func_8004ED18 fills the rectangle, func_800694C8
- * converts the start corner to screen space, func_8001C214 draws the blended
- * frame and func_80066684 draws the markers. It is the radar sibling of the
- * terrain pass - it shares gTileDefTable, gTileColourWord, gBuildTilePattern
- * and gWorldToRadarCell with gDrawRegionTiles (func_8006531C) - but it draws
- * the map into the HUD rather than into the view, and it is called from
- * func_800267C8 (src/game/800267C8.c:335).
+ * Draws the map view around a position for the map screen; it is called from
+ * func_800267C8. After func_800665E8 clamps the position to the map bounds it
+ * walks the map cells of a window 32 cells wide (16 when gPlayerCount is at
+ * least 2) and about 26 cells high. For each map tile it fetches the tile
+ * through gTileMapTable and gTileBlockTable, rebuilds the 256-byte pattern
+ * with gBuildTilePattern when the tileset id changes (cached in
+ * gTileDefTable), sets gTileColourWord from the tile's two colour bytes
+ * through gWorldToRadarCell, and calls func_80065CA8 once for each visible
+ * cell of the 16x16 tile. Afterwards it calls func_8004ED18 for the window,
+ * converts the start corner with func_800694C8, draws a blended rectangle
+ * with func_8001C214 and the object markers with func_80066684.
  */
-void func_8006680C(struct Owner *owner, s32 *pos)
+void gDrawMapView(struct Owner *owner, s32 *pos)
 {
     s32 x;
     s32 start[2];

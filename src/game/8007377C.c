@@ -39,8 +39,8 @@ struct Node {
 };
 
 extern Node *gModelNodeList __asm__("D_8009F38C");
-extern void *func_80017EBC(s32 size, s32 tag);
-extern void func_800181D4(void *block);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_80070710(void *block);
 extern void func_80070E48(Node *node, Entry *entry, s32 mode);
 
@@ -104,7 +104,7 @@ void *func_8007377C(void *a0, void *a1, s32 a2, s32 count,
     c11 = arg11;
     fa = flagsArg;
     fl = fa;
-    node = func_80017EBC(0x2C, 1);
+    node = gAllocMemory(0x2C, 1);
     ((u8 *)&rgb)[0] = r;
     ((u8 *)&rgb)[1] = g;
     ((u8 *)&rgb)[2] = b;
@@ -147,7 +147,7 @@ void *func_8007377C(void *a0, void *a1, s32 a2, s32 count,
         node->field22 = q2;
     }
 
-    node->entries = func_80017EBC(count << 4, 1);
+    node->entries = gAllocMemory(count << 4, 1);
     if (node->entries == 0) {
         goto free_node;
     }
@@ -163,13 +163,13 @@ void *func_8007377C(void *a0, void *a1, s32 a2, s32 count,
 
     for (i = 0; i < count; i++) {
         if (node->field14 != 0) {
-            node->entries[i].field4 = func_80017EBC((a2 + 1) * 3 * 2, 1);
+            node->entries[i].field4 = gAllocMemory((a2 + 1) * 3 * 2, 1);
             if (node->entries[i].field4 == 0) {
                 goto fail_entries;
             }
         }
 
-        node->entries[i].field0 = func_80017EBC((a2 + 1) * 3 * 4, 1);
+        node->entries[i].field0 = gAllocMemory((a2 + 1) * 3 * 4, 1);
         if (node->entries[i].field0 == 0) {
             goto fail_entries;
         }
@@ -191,17 +191,17 @@ fail_entries:
     if (i >= 0) {
         for (; j <= i; j++) {
             if (node->entries[j].field4 != 0) {
-                func_800181D4(node->entries[j].field4);
+                gFreeBlock(node->entries[j].field4);
             }
             if (node->entries[j].field0 != 0) {
-                func_800181D4(node->entries[j].field0);
+                gFreeBlock(node->entries[j].field0);
             }
         }
     }
-    func_800181D4(node->entries);
+    gFreeBlock(node->entries);
 
 free_node:
-    func_800181D4(node);
+    gFreeBlock(node);
 
 cleanup:
     if (a0 != 0) {

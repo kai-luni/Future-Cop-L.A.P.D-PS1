@@ -22,16 +22,16 @@
  * three-at-a-time (RTPT) version with the same flag logic.
  *
  * @par Environment path
- * The batched RTPS projection pass of the model path: it loads each 8-byte
- * source vertex into VXY0/VZ0, runs rtps, stores SXY2 plus SZ3 and one clip
- * byte per vertex, and returns the OR of every FLAG register it saw so the
- * caller can reject the whole run in one test. It is called by the full model
- * renderer func_80071FA4 (line 212), by the per-part path through
- * func_80013F08 (line 255) and func_80014C64 (line 73), and by func_800164F4
- * (line 107), so it sits directly behind the model layer that gDrawViewLayers
- * starts. The clip byte is assembled from SZ3 against 0x400, x against the
- * screen width and y against 0xF0, with a GTE saturation bit forcing it to 1.
- * func_800102A0 is the three-at-a-time RTPT sibling with the same flag logic.
+ * The batched RTPS projection step: it loads each 8-byte source vertex into
+ * VXY0/VZ0, runs rtps, stores SXY2 and SZ3 into an 8-byte output slot plus
+ * one clip byte per vertex, and returns the OR of every FLAG register value
+ * so the caller can reject the run with one test. The clip byte is 1 when
+ * FLAG has any of the 0x1C66000 error bits set; otherwise bit 0 is set when
+ * SZ3 < 0x400, bit 6 when x is below the screen width (0x140 with
+ * gPlayerCount == 1, otherwise 0xA0) and bit 7 when y < 0xF0. It has fifteen
+ * callers across the model, effect and ribbon renderers, among them
+ * func_80013F08, func_800164F4, func_8004C5C8, func_80071FA4 and
+ * func_80074104.
  */
 __asm__(
     ".set noreorder\n"

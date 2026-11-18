@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s16 gSlotTimerTable[] __asm__("D_8009FA44");
-extern s32 *D_8009FA58[];
+extern s32 *gPlayerEntities[] __asm__("D_8009FA58");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 
 extern s32 func_8001A4E8(s32 *a, s32 *b);
@@ -37,7 +37,7 @@ void func_80025D6C(s32 *arg0)
     i = 0;
     if (i < gPlayerCount) {
         out = gSlotTimerTable;
-        in = D_8009FA58;
+        in = gPlayerEntities;
         do {
             distance = func_8001A4E8(arg0, *in + 20);
             if (distance >= 0x6000) { value = 0x168; value -= (distance - 0x6000) >> 8; if (value < 0) value = 0; } else { value = 0x168; }

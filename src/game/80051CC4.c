@@ -7,6 +7,8 @@ typedef struct { char pad[0x150]; s32 x; char pad2[4]; s32 z; } Data;
 typedef struct { char pad[0xac]; Data *data; } Obj;
 typedef struct { s16 x,y,z,dx,dy,dz; } Bounds;
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
+void gPushFromPartBox(Obj *obj, V *pos, s32 unused, Bounds *bounds, Transform *trans, void *matrix, s32 flags) __asm__("func_80051CC4");
+
 extern void gGteTransformVertices(SV *, SV *, s32) __asm__("func_8001010C");
 /**
  * @brief Moves an object toward a position with a speed, clamped to its bounds.
@@ -31,18 +33,18 @@ extern void gGteTransformVertices(SV *, SV *, s32) __asm__("func_8001010C");
  * the two transforms and the bounds decide which components are allowed.
  *
  * @par Environment path
- * Moves an object toward a target position inside an axis-aligned bound: it
- * subtracts the transform position from the target, rotates the delta with
- * gGteLoadRotation (func_80010820) plus gGteTransformVertices
- * (func_8001010C), compares the result with the bound centre and sets every
- * step component to +0x2400 or -0x2400 (0x4000 when flag 0x400 is set), then
- * zeroes or halves the components whose deviation is already inside the bound
- * half extents. The step is rotated back through the second transform and
- * added to the data block at +0x150/+0x158. It is a movement/clamping helper
- * called from func_80051EB8:160, not a render pass: it only borrows the GTE
- * for the two rotations and references no global.
+ * Collision push against one box-shaped model part, called from the masked
+ * part loop of func_80051EB8 for every part bit set in its mask. It rotates
+ * the pusher's position relative to the part (func_80010820, func_8001010C
+ * with the transposed part matrix), compares it with the box centre and picks
+ * a step of +-0x2400 (+-0x4000 with flag 0x400) per axis pointing away from
+ * the centre; when the pusher is inside the box vertically the vertical step
+ * is dropped and the horizontal axis that is already inside the half extent
+ * is zeroed (both halved when inside on x and z). The step is rotated back to
+ * world space with the part matrix and added to the x/z position of the
+ * object's +0xAC block; no globals are referenced.
  */
-void func_80051CC4(Obj *obj, V *pos, s32 unused, Bounds *bounds, Transform *trans, void *matrix, s32 flags)
+void gPushFromPartBox(Obj *obj, V *pos, s32 unused, Bounds *bounds, Transform *trans, void *matrix, s32 flags)
 {
     SV local, rotated, step, output;
     Data *data;

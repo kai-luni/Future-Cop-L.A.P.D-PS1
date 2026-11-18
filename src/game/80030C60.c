@@ -25,6 +25,8 @@ extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern void func_80069D68(void *, s32, s32, void *);
 extern s16 gSlotTimerTable[] __asm__("D_8009FA44");
+s32 gWarpEntityToSelf(struct Owner *owner, struct Entity *entity) __asm__("func_80030C60");
+
 
 /**
  * @brief Draws one vertex of an entity and hands it to the entity callback.
@@ -46,17 +48,15 @@ extern s16 gSlotTimerTable[] __asm__("D_8009FA44");
  * model pass; 0x12 is the two-part entity type.
  *
  * @par Environment path
- * Message 11 body of the entity handler func_80030D3C (line 48): it
- * substitutes entity->child when the type byte is 0x12, copies the owner
- * position into the entity, loads the entity matrix with func_80010750,
- * transforms the part selected by +0x70 with func_80010234, stamps 300 into
- * the D_8009FA44 slot named by the entity's extra record and finally runs the
- * owner script through the script VM func_80069D68 when the owner has one. It
- * returns 0 on every path. Not a render routine: the transform is a position
- * probe for the script side, it emits no packet, and its only caller is
- * func_80030D3C.
+ * Message-11 body of the type-29 handler func_80030D3C: it moves the entity
+ * that sent the message (or that entity's child when its type is 0x12) to
+ * this entity's position at +0xA4, loads its matrix with func_80010750 and
+ * transforms the part selected by +0x70 with func_80010234. When the moved
+ * entity is type 1 it sets the screen-fade timer D_8009FA44 for the player
+ * index at +0xC1 of its extra record to 300, and it runs this entity's script
+ * with func_80069D68 when one is attached. It always returns 0.
  */
-s32 func_80030C60(struct Owner *owner, struct Entity *entity)
+s32 gWarpEntityToSelf(struct Owner *owner, struct Entity *entity)
 {
     int index;
     if (entity->type == 0x12)

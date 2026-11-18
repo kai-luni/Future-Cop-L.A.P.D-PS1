@@ -7,6 +7,8 @@ struct InputAction {
     u32 buttons;
     s32 phase;
 };
+void gDecodeButtonEdge(u32 buttons, struct InputAction *action) __asm__("func_8005780C");
+
 
 /**
  * @brief Four-phase input action state machine: idle, press edge, held,
@@ -38,7 +40,7 @@ struct InputAction {
  * func_800271A4 calls it at the top of its frame (src/game/800271A4.c:120).
  * It is pure input state and has nothing to do with the render path.
  */
-void func_8005780C(u32 buttons, struct InputAction *action)
+void gDecodeButtonEdge(u32 buttons, struct InputAction *action)
 {
     if (buttons & action->buttons) {
         if (action->phase == 2) {

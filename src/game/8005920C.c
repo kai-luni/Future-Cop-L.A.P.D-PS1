@@ -44,10 +44,10 @@ struct Unk5920C {
     struct Unk5920CType *type;
 };
 
-extern void func_8002AD58(s32 kind, struct Unk5920C *object, struct Unk5920CSpawn *spawn,
-                          s32 arg3);
+extern void gEntityBaseHandler(s32 kind, struct Unk5920C *object, struct Unk5920CSpawn *spawn,
+                          s32 arg3) __asm__("func_8002AD58");
 extern void func_80013BD8(struct Unk5920CModel **model, s32 arg1, s32 arg2);
-extern void func_80044988(u8 *data, u8 *track, u8 forward, s32 index);
+extern void gSetAnimClipTable(u8 *data, u8 *track, u8 forward, s32 index) __asm__("func_80044988");
 
 /**
  * @brief Spawn case of the kind-0x12 companion handler: binds the type's
@@ -86,12 +86,12 @@ void func_8005920C(struct Unk5920C *object, struct Unk5920CSpawn *spawn, s32 arg
 {
     struct Unk5920CDef *def;
 
-    func_8002AD58(2, object, spawn, arg2);
+    gEntityBaseHandler(2, object, spawn, arg2);
     def = spawn->def;
     object->type = def->type;
     func_80013BD8(&object->model, object->type->unkE0, 0);
     object->flags72 |= 0x30;
-    func_80044988(object->model->animation, object->track, 1, 0);
+    gSetAnimClipTable(object->model->animation, object->track, 1, 0);
     object->unk74 = 0;
     object->position = def->position;
     object->flags = (object->flags & 0xBFFFFFFF) | 0xA20210;

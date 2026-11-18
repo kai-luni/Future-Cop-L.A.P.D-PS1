@@ -6,7 +6,7 @@ struct Defaults { u8 pad[0x28]; u16 values[0]; };
 struct Global { u8 pad[0xAC]; struct Player *player; };
 extern s32 *gGameSession[] __asm__("D_8009FA94");
 extern struct State *gSinglePlayerEntity[] __asm__("D_8009F9EC");
-extern struct Global *D_8009FA58[];
+extern struct Global *gPlayerEntities[] __asm__("D_8009FA58");
 /**
  * @brief Resolves a player stat id to its value, with per-player and
  *        default fallbacks and three special front-end words.
@@ -84,7 +84,7 @@ player_value:
             return *(s32 *)((char *)base2 + offset + 12);
         }
     } else {
-        if (!player) player = D_8009FA58[0]->player;
+        if (!player) player = gPlayerEntities[0]->player;
         return player->a + player->b;
     }
 }

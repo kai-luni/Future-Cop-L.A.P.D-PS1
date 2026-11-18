@@ -28,7 +28,7 @@ struct Arg0 {
     s16 unk48;
 };
 
-extern struct Mat12 gBaseMatrix __asm__("D_8009AA38");
+extern struct Mat12 gIdentityMatrix __asm__("D_8009AA38");
 extern struct Mat12 gBoneMatrices __asm__("D_800A0300");
 extern struct Blk3 gLightVectorOut __asm__("D_800A02E0");
 extern struct Blk3 gLightVectorSource __asm__("D_800A02F0");
@@ -40,11 +40,13 @@ extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
 
 extern void gTransformToViewSpace(void *object, s32 arg1) __asm__("func_800178DC");
 extern void func_80013ECC(u32 *arg0);
-extern void func_80013CB8(s32 a0, u8 *a1, s32 a2, s32 a3);
+extern void gComposeBoneMatrix(s32 a0, u8 *a1, s32 a2, s32 a3) __asm__("func_80013CB8");
 extern void gComposeTransform(u8 *a0, u8 *a1, void *a2, void *a3) __asm__("func_80014164");
 extern void gGteLoadMatrix(void *a0) __asm__("func_80010750");
 extern void gGteTransformVertices(u8 *a0, u8 *a1, s32 a2) __asm__("func_8001010C");
-extern void func_8001047C(u8 *a0, u8 *a1, u8 *a2, s32 a3);
+extern void gProjectVertexBatch(u8 *a0, u8 *a1, u8 *a2, s32 a3) __asm__("func_8001047C");
+void gProjectBoneParts(struct Arg0 *arg0, u8 *arg1) __asm__("func_8001428C");
+
 
 /**
  * @brief Draws a multi-part object: per-part matrices, lighting, transform and
@@ -74,17 +76,17 @@ extern void func_8001047C(u8 *a0, u8 *a1, u8 *a2, s32 a3);
  * The meaning of the table fields p[1]..p[7] beyond their use as indices.
  *
  * @par Environment path
- * Draws a multi-part object: per part it builds the camera-relative transform
- * with func_800178DC, sets the depth/tag pair through func_80013CB8, composes
- * the part matrix with func_80014164 and projects the part's vertices with
- * one func_8001010C call and one func_8001047C call. func_800175A0 calls it
- * directly before func_80017058 submits the parts
- * (src/game/800175A0.c:17-18). It writes the same renderer slots as the
- * environment path (D_800A0300, D_8009FAE0, D_8009F570 to D_8009F57C) but
- * transforms actors, not the region grid, so it is a sibling of the model
- * path rather than part of the terrain pass.
+ * Transforms and projects a jointed model part by part without emitting any
+ * primitive. It builds the view transform with func_800178DC, seeds slot 0 of
+ * D_800A0300 from D_8009AA38, copies the view light vector D_800A02E0 into
+ * D_800A02F0 for func_80013ECC, and publishes D_8009FAE0 and the model's UV
+ * list as the vertex sources. Per input record it composes the bone matrix
+ * with func_80013CB8, applies the per-part offset record through
+ * func_80014164, transforms the part's vertices with func_8001010C and
+ * projects/clips them with func_8001047C until the record with flag 0x80. Its
+ * only caller func_800175A0 then hands the projected parts to func_80017058.
  */
-void func_8001428C(struct Arg0 *arg0, u8 *arg1)
+void gProjectBoneParts(struct Arg0 *arg0, u8 *arg1)
 {
     register struct S3 *s3 __asm__("$19");
     register struct Mat12 *dest __asm__("$20");
@@ -174,12 +176,12 @@ void func_8001428C(struct Arg0 *arg0, u8 *arg1)
         count = s3->unk18;
         __asm__("" : : "r"(count) : "$24");
         reload = arg0;
-        func_80013CB8(idx, callp, count, reload->unk48);
+        gComposeBoneMatrix(idx, callp, count, reload->unk48);
         gComposeTransform(arg1, (u8 *)(idx * 0x30 + (s32)dest), buf1, buf2);
         gGteLoadMatrix(buf1);
         gGteTransformVertices(s3->unk20->unk4 + (p[1] * 8 + 4), (u8 *)(p[1] * 8 + (s32)fae0),
                       p[2]);
-        func_8001047C(s3->unk1C->unk4 + (p[3] * 8 + 4), tblA + p[3] * 8,
+        gProjectVertexBatch(s3->unk1C->unk4 + (p[3] * 8 + 4), tblA + p[3] * 8,
                       tblB + p[3], p[4]);
         if (p[7] & 0x80) {
             break;

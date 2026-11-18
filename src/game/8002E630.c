@@ -12,7 +12,7 @@
 typedef struct { s32 x, y, z; } Vec;
 
 extern s32 func_80044B34(u8 *, void *, s32, s32);
-extern void func_800175F8(void *, s32);
+extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern void func_8002E528(u8 *);
 extern void func_8002E2BC(u8 *, s32);
 extern u8 func_80060238(void *, s32, u8 *, s32, s32);
@@ -26,6 +26,8 @@ extern void func_8001AC28(void *, void *, s32, void *);
 extern void func_800457B8(s32, s32);
 
 #define FMULU(a,b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
+s32 gTickActor(u8 *obj, s32 dt) __asm__("func_8002E630");
+
 
 /**
  * @brief Per-frame tick of an animated actor: state machine, travel along a
@@ -160,18 +162,17 @@ extern void func_800457B8(s32, s32);
  * message table as well.
  *
  * @par Environment path
- * Per-frame tick of an animated actor, forwarded unchanged as message 6 by
- * the class message table func_8002ED7C. It serves a command queue with
- * func_8002E528, runs a five-state machine (idle, travel, steer, arrive,
- * exit), moves along the start-to-end segment with func_8001AC28, steers the
- * yaw with func_80095C30 and func_800188D0, steps the animation with
- * func_80044B34 and func_800448D8, transforms the model part through
- * func_80010750 and func_80010234, and raises one sound through
- * func_800457B8. Not on the render path: it only prepares the object
- * transform the model pass reads later, and the file reads or writes no D_
- * symbol at all.
+ * Message-6 (per-frame) body of the type-27 handler func_8002ED7C. It
+ * services the command queue with func_8002E528 and runs a state machine on
+ * +0xDC: 0 waits while the attack descriptor (func_80060238) looks for a
+ * target, 1 and 3 move the object out and back along the segment at
+ * +0xF4/+0x100 with func_8001AC28, 2 animates, fires through func_8005F6E8
+ * and turns the yaw towards its target (func_80095C30, func_800188D0), and 4
+ * plays a final animation before switching to 5. Every path refreshes the
+ * frame vertex with func_80010750 and func_80010234, and with flag 0x40 at
+ * +0xDD it raises a sound through func_800457B8. The file uses no D_ symbol.
  */
-s32 func_8002E630(u8 *obj, s32 dt)
+s32 gTickActor(u8 *obj, s32 dt)
 {
     s32 s0;
     s32 a2;
@@ -184,7 +185,7 @@ s32 func_8002E630(u8 *obj, s32 dt)
 
     if (B(obj,0xDC) == 4) {
         s0 = func_80044B34(obj, obj + 0xC8, dt, 0);
-        func_800175F8(obj + 0x28, H(obj,0xD4));
+        gSetModelFrame(obj + 0x28, H(obj,0xD4));
         s0 = (u32)s0 >> 1;
         if (s0 != 3) {
             goto done;
@@ -371,7 +372,7 @@ case_13:
     }
 tail:
     if (W(P(obj,0x28),0x10)) {
-        func_800175F8(obj + 0x28, H(obj,0xD4));
+        gSetModelFrame(obj + 0x28, H(obj,0xD4));
     }
 tail2:
     gGteLoadMatrix(obj + 0x2C);

@@ -41,7 +41,7 @@ struct Entity {
 
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk8009FA94 *gGameSession __asm__("D_8009FA94");
-extern void *D_8009FA58[2];
+extern void *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern void func_80058210(void *object, s32 amount);
 extern struct Entity *func_8004D664(s32 id);
@@ -96,7 +96,7 @@ void func_80058378(struct Unk80058378 *object, s32 amount, s32 source)
 
     if (gPlayerCount >= 2 && gGameSession->unk5C == 0) {
         i = 0;
-        p = D_8009FA58;
+        p = gPlayerEntities;
         do {
             if (object->unkAC->unkC1 != i && *p != 0) {
                 func_80058210(*p, amount);

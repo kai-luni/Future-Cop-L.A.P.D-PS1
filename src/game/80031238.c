@@ -28,9 +28,11 @@ struct Ent {
     s16 unkB6;
 };
 
-extern void func_80019470(struct Mat3 *source, struct Mat3 *destination);
+extern void gTransposeMatrix3x3(struct Mat3 *source, struct Mat3 *destination) __asm__("func_80019470");
 extern void gGteLoadRotation(void *matrix) __asm__("func_80010820");
 extern void gGteTransformWords(s32 *source, s32 *destination, s32 count) __asm__("func_8001006C");
+s32 gTestEntityOverlap(struct Ent *self, struct Ent *other) __asm__("func_80031238");
+
 
 /**
  * @brief Overlap test between two entities: a world-axis broad phase
@@ -70,7 +72,7 @@ extern void gGteTransformWords(s32 *source, s32 *destination, s32 count) __asm__
  * the render path, even though the matrices it consumes are the same ones the
  * model pipeline builds.
  */
-s32 func_80031238(struct Ent *self, struct Ent *other)
+s32 gTestEntityOverlap(struct Ent *self, struct Ent *other)
 {
     register struct Ent *pa __asm__("$18");
     register struct Ent *pb __asm__("$7");
@@ -127,7 +129,7 @@ s32 func_80031238(struct Ent *self, struct Ent *other)
         return 0;
     }
 
-    func_80019470(&pb->sub.mat, &matrix);
+    gTransposeMatrix3x3(&pb->sub.mat, &matrix);
 
     r[0] = sb->unk34 - sa->unk28;
     r[1] = sb->unk38 - sa->unk2C;

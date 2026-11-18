@@ -84,7 +84,7 @@ extern s32 func_800538C8(u8 *, u32 *, s32 *, s32 *);
 extern void func_80052E28(struct Obj549F0 *);
 extern void func_80051AC8(struct Obj549F0 *, s32);
 extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
-extern s32 func_80066F78(void *, void *, void *, void *);
+extern s32 gGetGroundHeight(void *, void *, void *, void *) __asm__("func_80066F78");
 extern void func_80054590(struct Obj549F0 *, s32, s32, void *, s32);
 extern s32 func_80052550(struct Obj549F0 *, void *);
 extern void func_8006943C(s32 *);
@@ -100,7 +100,7 @@ extern s32 func_8001A7AC(s32);
 extern s32 func_80044B34(struct Obj549F0 *, struct AnimTrack549F0 *, s32, s32);
 extern void func_80047088(s32, struct Obj549F0 *);
 extern s32 func_8001A314(s32 *);
-extern void func_800175F8(void *, s32);
+extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_8005220C(struct Obj549F0 *);
 extern void func_80052708(struct Obj549F0 *, s32);
 extern s32 func_80052F54(struct Obj549F0 *, s32);
@@ -309,7 +309,7 @@ s32 func_800549F0(struct Obj549F0 *selfArg, s32 unused, s32 speedArg, u32 argFla
         w.probe.x = self->position.x + (self->axis.x >> 3);
         w.probe.y = self->position.y + 0x10000;
         w.probe.z = self->position.z + (self->axis.z >> 3);
-        lane = func_80066F78(&w.probe, (void *)move, (void *)move,
+        lane = gGetGroundHeight(&w.probe, (void *)move, (void *)move,
                             &w.surface) - self->position.y;
         move = 0x0F;
         if (lane >= 0x0AE2) {
@@ -700,7 +700,7 @@ dispatch_done:
     w.probe.x = self->position.x;
     w.probe.y = self->position.y + 0x0CCC;
     w.probe.z = self->position.z;
-    lane = func_80066F78(&w.probe, normalPtr, &wflags, &w.surface);
+    lane = gGetGroundHeight(&w.probe, normalPtr, &wflags, &w.surface);
     if (self->sub->unkDE != 0) {
         lane = self->position.y - 0xC0;
         self->sub->velocity.y = 0;
@@ -757,7 +757,7 @@ above_ground:
             w.probe.x = w.previous.x;
             w.probe.y = w.previous.y + 0x0CCC;
             w.probe.z = w.previous.z;
-            floor = func_80066F78(&w.probe, (void *)anim,
+            floor = gGetGroundHeight(&w.probe, (void *)anim,
                                  &fallbackFlags, &fallbackSurface);
             if (self->position.y < floor ||
                 self->position.y - floor < 0x333) {
@@ -911,6 +911,6 @@ end:
     if (self->unk84 == 0) {
         self->velocity = self->axis;
     }
-    func_800175F8((u8 *)self + 0x28, self->track.frame);
+    gSetModelFrame((u8 *)self + 0x28, self->track.frame);
     return impactTotal;
 }

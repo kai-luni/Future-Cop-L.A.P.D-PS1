@@ -83,7 +83,7 @@ extern s32 D_8009F6E4;
 extern s32 D_8009F6E8;
 extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern struct FixedPool *func_800194DC(s32 count, s32 size, s32 tag);
 extern s32 func_8001D5E4(void *arg0, s32 arg1);
 
@@ -151,7 +151,7 @@ void func_80029F50(void *arg0)
 
     stride = 0x6014;
     D_800A0B9C[0] = 0;
-    node = func_80017EBC(0x18050, 2);
+    node = gAllocMemory(0x18050, 2);
     gChainedNodes = node;
 
     prev = 0;

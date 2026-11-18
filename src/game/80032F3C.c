@@ -25,8 +25,8 @@ struct Unk32F3C {
 extern u32 func_80019668(void);
 extern void func_8001AB78(s32 arg0, void *arg1);
 extern s32 func_80032180(u32 arg0, void *arg1, s32 arg2, s32 arg3);
-extern s32 func_800324E0(s32 arg0, void *arg1, s32 arg2);
-extern s32 func_8002AD58(u32 message, void *object, s32 arg2, s32 arg3);
+extern s32 gUpdateHoverEnemy(s32 arg0, void *arg1, s32 arg2) __asm__("func_800324E0");
+extern s32 gEntityBaseHandler(u32 message, void *object, s32 arg2, s32 arg3) __asm__("func_8002AD58");
 
 /**
  * @brief Message handler of a flyer variant: delegates spawn/tick and adds
@@ -68,7 +68,7 @@ s32 func_80032F3C(u32 arg0, struct Unk32F3C *obj, s32 arg2, s32 arg3)
     case 2:
         return func_80032180(2, obj, arg2, arg3);
     case 6:
-        return func_800324E0(6, obj, arg2);
+        return gUpdateHoverEnemy(6, obj, arg2);
     case 4:
         c5 = 5;
         if (obj->unkFA == c5) {
@@ -96,5 +96,5 @@ s32 func_80032F3C(u32 arg0, struct Unk32F3C *obj, s32 arg2, s32 arg3)
         break;
     }
 dflt:
-    return func_8002AD58(arg0, obj, arg2, arg3);
+    return gEntityBaseHandler(arg0, obj, arg2, arg3);
 }

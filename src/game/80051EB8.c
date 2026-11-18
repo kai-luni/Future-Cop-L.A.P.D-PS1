@@ -61,13 +61,13 @@ struct Arg1 {
     s16 unk48;
 };
 
-extern s32 gFrameId __asm__("D_8009F9FC");
+extern s32 gFrameDelta __asm__("D_8009F9FC");
 
-extern void func_80019470(struct Matrix32 *source, struct Matrix32 *destination);
+extern void gTransposeMatrix3x3(struct Matrix32 *source, struct Matrix32 *destination) __asm__("func_80019470");
 extern s32 func_8001A7AC(s32 *arg0);
 extern void func_8001ABE0(s32 scale, s32 *p);
-extern void func_80051CC4(struct Arg0 *arg0, void *arg1, s32 arg2, void *arg3,
-                          struct Matrix32 *arg4, struct Matrix32 *arg5, s32 arg6);
+extern void gPushFromPartBox(struct Arg0 *arg0, void *arg1, s32 arg2, void *arg3,
+                          struct Matrix32 *arg4, struct Matrix32 *arg5, s32 arg6) __asm__("func_80051CC4");
 
 /**
  * @brief Feeds one model instance either a camera push or its transform pass.
@@ -124,7 +124,7 @@ void func_80051EB8(struct Arg0 *arg0, struct Arg1 *arg1, s32 arg2, s32 arg3)
         } else {
             scale = 0x1000;
         }
-        diff = scale * gFrameId;
+        diff = scale * gFrameDelta;
         func_8001ABE0(diff << 1, vec);
         arg0->unkAC->x += vec[0];
         arg0->unkAC->z += vec[1];
@@ -146,7 +146,7 @@ void func_80051EB8(struct Arg0 *arg0, struct Arg1 *arg1, s32 arg2, s32 arg3)
         s3 = arg1->unk00->unk34;
         offset = (arg1->unk48 << 4) + 8;
         s2 = (u8 *)s3 + offset;
-        func_80019470(src_mat, dst_mat);
+        gTransposeMatrix3x3(src_mat, dst_mat);
 
         mask = 0x8000;
         count = s3->count - 1;
@@ -157,7 +157,7 @@ void func_80051EB8(struct Arg0 *arg0, struct Arg1 *arg1, s32 arg2, s32 arg3)
 
         for (; count >= 0; count--) {
             if (arg2 & mask) {
-                func_80051CC4(arg0, (u8 *)fp_val + 0x34, s7, s2, src_mat, dst_mat, arg3);
+                gPushFromPartBox(arg0, (u8 *)fp_val + 0x34, s7, s2, src_mat, dst_mat, arg3);
             }
             mask >>= 1;
             s2 += s3->stride;

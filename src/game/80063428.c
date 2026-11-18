@@ -13,7 +13,7 @@ extern int *gTileBlockTable __asm__("D_8009F808");
 extern int *gTableBuffer __asm__("D_8009FA08");
 
 extern void func_80063134(void);
-extern void *func_80017EBC(s32 size, s32 mode);
+extern void *gAllocMemory(s32 size, s32 mode) __asm__("func_80017EBC");
 extern int func_80018460(int *value);
 extern void func_8008CD20(void *ptr, s32 arg1, s32 arg2);
 
@@ -59,9 +59,9 @@ int *func_80063428(void)
     func_80063134();
     gTileMapTable = 0;
     D_8009F810 = 0;
-    gTileBlockTable = func_80017EBC(0x1A0, 2);
+    gTileBlockTable = gAllocMemory(0x1A0, 2);
     func_8008CD20(gTileBlockTable, 0, func_80018460(gTileBlockTable));
-    gTableBuffer = func_80017EBC(0x1B18, 2);
+    gTableBuffer = gAllocMemory(0x1B18, 2);
     func_8008CD20(gTableBuffer, 0, func_80018460(gTableBuffer));
 
     for (i = 9; i >= 0; i--) {

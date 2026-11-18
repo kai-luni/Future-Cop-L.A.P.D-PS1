@@ -73,8 +73,8 @@ struct PlayerFA58 {
 };
 
 extern struct GlobalFA94 *gGameSession __asm__("D_8009FA94");
-extern struct PlayerFA58 *D_8009FA58;
-extern u16 gFrameId __asm__("D_8009F9FC");
+extern struct PlayerFA58 *gPlayerEntities __asm__("D_8009FA58");
+extern u16 gFrameDelta __asm__("D_8009F9FC");
 extern void *jtbl_80011318[];
 
 extern s32 func_80019668(void);

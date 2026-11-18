@@ -9,7 +9,7 @@ struct Unk4C228 {
     u8 flags7B;
 };
 
-extern void func_8004AFC0(struct Unk4C228 *node, s32 arg);
+extern void gStepDebrisFlight(struct Unk4C228 *node, s32 arg) __asm__("func_8004AFC0");
 extern void func_8004BEE8(struct Unk4C228 *node, s32 arg);
 
 /**
@@ -37,7 +37,7 @@ void func_8004C228(struct Unk4C228 *node, s32 arg)
     while (node != 0) {
         if (!(node->flags0F & 8)) {
             if (node->flags7B & 8) {
-                func_8004AFC0(node, arg);
+                gStepDebrisFlight(node, arg);
             } else if (!(node->flags7B & 0x10)) {
                 func_8004BEE8(node, arg);
             }

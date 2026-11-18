@@ -21,19 +21,19 @@ struct Unk800A1070 {
     s32 unk14;
 };
 
-extern struct Unk8009F9A0 *gMissionWorkingSet __asm__("D_8009F9A0");
+extern struct Unk8009F9A0 *gFocusPositions __asm__("D_8009F9A0");
 extern struct Unk800A1070 gListHeads __asm__("D_800A1070");
 
 extern void func_80069580(u32 index, struct DestinationTriple *destination);
 extern void func_80073700(s32 arg);
 extern void func_8006F844(s32 arg);
 extern void func_8005E160(s32 arg);
-extern void func_8003CF6C(s32 arg);
-extern void func_8004C5C8(s32 arg0, struct DestinationTriple *arg1);
+extern void gDrawNodeListModels(s32 arg) __asm__("func_8003CF6C");
+extern void gDrawDebrisFragments(s32 arg0, struct DestinationTriple *arg1) __asm__("func_8004C5C8");
 extern void func_8006E988(s32 arg0, struct DestinationTriple *arg1);
 extern void func_800445B0(s32 arg0, struct DestinationTriple *arg1);
-extern void func_80070158(s32 arg0, struct DestinationTriple *arg1);
-extern void func_80074104(s32 arg0, struct DestinationTriple *arg1);
+extern void gDrawGlowNodeList(s32 arg0, struct DestinationTriple *arg1) __asm__("func_80070158");
+extern void gDrawRibbonList(s32 arg0, struct DestinationTriple *arg1) __asm__("func_80074104");
 void gRunViewScenePasses(s32 arg0) __asm__("func_8003F6E4");
 
 
@@ -74,7 +74,7 @@ void gRunViewScenePasses(s32 arg0)
     struct DestinationTriple position;
     register struct Unk8009F9A0 *p __asm__("$6");
 
-    p = gMissionWorkingSet;
+    p = gFocusPositions;
     if (p != 0) {
         position = p->position;
     } else {
@@ -83,10 +83,10 @@ void gRunViewScenePasses(s32 arg0)
     func_80073700((s32)&position);
     func_8006F844((s32)&position);
     func_8005E160((s32)&position);
-    func_8003CF6C((s32)&position);
-    func_8004C5C8(gListHeads.unk10, &position);
+    gDrawNodeListModels((s32)&position);
+    gDrawDebrisFragments(gListHeads.unk10, &position);
     func_8006E988(gListHeads.unk08, &position);
     func_800445B0(gListHeads.unk0C, &position);
-    func_80070158(gListHeads.unk04, &position);
-    func_80074104(gListHeads.unk14, &position);
+    gDrawGlowNodeList(gListHeads.unk04, &position);
+    gDrawRibbonList(gListHeads.unk14, &position);
 }

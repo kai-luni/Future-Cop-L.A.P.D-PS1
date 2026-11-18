@@ -14,11 +14,13 @@ struct Unk17994Node {
     struct Unk17994Node *previous;
 };
 
-extern struct Unk17994Block gBaseMatrix __asm__("D_8009AA38");
-extern struct Unk17994Node *gTransformRecordList __asm__("D_8009F588");
-extern s32 gTransformSerialCounter __asm__("D_8009F58C");
+extern struct Unk17994Block gIdentityMatrix __asm__("D_8009AA38");
+extern struct Unk17994Node *gCameraList __asm__("D_8009F588");
+extern s32 gNextCameraId __asm__("D_8009F58C");
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+s32 gCreateCamera(void) __asm__("func_80017994");
+
 
 /**
  * @brief Allocates a node with two copies of the neutral matrix template.
@@ -47,25 +49,24 @@ extern void *func_80017EBC(s32 size, s32 tag);
  * Confirmed: func_800573A4.
  *
  * @par Environment path
- * Allocates a 0x94-byte record with func_80017EBC and fills both of its
- * 12-word matrix blocks from the neutral 16.16 matrix template D_8009AA38,
- * then stamps the node with the next value of the serial counter D_8009F58C
- * and appends it to the doubly linked list at D_8009F588 (tail walk, next and
- * previous set). It returns the new id. It draws nothing and is not part of
- * the render path itself, but its only caller func_800573A4:268 stores that
- * id in the actor and immediately passes it to gSelectViewRecord
- * (func_80017B60), so the record is the per-actor node whose id selects the
- * map/camera view record.
+ * Allocates a 0x94-byte camera record with func_80017EBC(0x94, 2),
+ * initialises both of its 12-word matrix blocks (+0x28 and +0x58) from the
+ * template D_8009AA38, gives it the next id from D_8009F58C and appends it to
+ * the doubly linked list D_8009F588. It returns the id. Its only caller, the
+ * actor reset func_800573A4, stores the id in the actor and immediately
+ * passes it to func_80017B60, which looks the record up in the same list
+ * (func_80017B28) and makes it the active gCamera (D_8009F9E4) - consistent
+ * with gCamera's rotation at +0x28 and centre at +0x7C. It draws nothing.
  */
-s32 func_80017994(void)
+s32 gCreateCamera(void)
 {
     register struct Unk17994Node *node __asm__("$5");
     register struct Unk17994Node *tail __asm__("$6");
     register struct Unk17994Block *template __asm__("$3");
     register s32 firstWord __asm__("$4");
 
-    node = func_80017EBC(0x94, 2);
-    template = &gBaseMatrix;
+    node = gAllocMemory(0x94, 2);
+    template = &gIdentityMatrix;
     firstWord = template->words[0];
     node->first.words[0] = firstWord;
     node->first.words[1] = template->words[1];
@@ -91,19 +92,19 @@ s32 func_80017994(void)
     node->second.words[9] = template->words[9];
     node->second.words[10] = template->words[10];
     node->second.words[11] = template->words[11];
-    node->id = gTransformSerialCounter++;
+    node->id = gNextCameraId++;
     node->next = 0;
     node->previous = 0;
 
-    if (gTransformRecordList != 0) {
-        tail = gTransformRecordList;
+    if (gCameraList != 0) {
+        tail = gCameraList;
         while (tail->next != 0) {
             tail = tail->next;
         }
         tail->next = node;
         node->previous = tail;
     } else {
-        gTransformRecordList = node;
+        gCameraList = node;
     }
     return node->id;
 }

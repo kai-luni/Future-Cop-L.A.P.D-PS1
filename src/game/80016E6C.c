@@ -7,7 +7,9 @@ typedef struct { u32 flags; u8 a[4], b[4]; } Indices;
 typedef struct { u32 a, b; } Entry;
 extern Packet *gPrimPoolNext __asm__("D_8009F9F0");
 extern Packet *gPrimPoolEnd __asm__("D_8009FA28");
-extern void func_80016C88(Entry *, Entry *, void *, void *);
+void gEmitEnvMapPolygon(Indices *idx, Input *in, Entry *base1, Entry *base0) __asm__("func_80016E6C");
+
+extern void gComputeEnvMapUV(Entry *, Entry *, void *, void *) __asm__("func_80016C88");
 /**
  * @brief Emits one textured polygon packet (triangle or quad) from an index
  *        record.
@@ -32,18 +34,17 @@ extern void func_80016C88(Entry *, Entry *, void *, void *);
  * func_80016C88's callers, i.e. the mesh emitters of func_8006DC24.
  *
  * @par Environment path
- * Turns one model part into a textured polygon packet: the tag and the first
- * three XY words come from the input block, func_80016C88 resolves each UV
- * pair from the two base tables, and the face type in bits 8..11 of the flags
- * word selects triangle (packet length 7, colour 0x24808080) or quad (length
- * 9, colour 0x2C808080, fourth corner and fourth UV pair). It is called only
- * from the two per-part traversals func_80016A64 (line 137) and func_80017058
- * (line 128), i.e. from the model layer that func_8006E988 walks through
- * func_8006DC24 inside one environment view. It takes its storage from the
- * D_8009F9F0 packet pool that the whole render path shares, so it is a leaf
- * of the environment model layer, not of the region drawers.
+ * Emits one environment-mapped textured polygon for a model part: it takes a
+ * 0x34-byte packet from gPrimPoolNext (bounded by gPrimPoolEnd), copies the
+ * tag and the first three screen XY words from the input block and fills the
+ * UV bytes with func_80016C88 from the two normal/position tables, while the
+ * tpage and CLUT half-words come from the input data. Bits 8..11 of the part
+ * flags select a triangle (length 7, code 0x24 with the input code ORed in)
+ * or a quad (length 9, code 0x2C, fourth corner and fourth UV pair). It is
+ * called only from func_80016A64 and func_80017058, and only for parts with
+ * flag bit 15 set.
  */
-void func_80016E6C(Indices *idx, Input *in, Entry *base1, Entry *base0)
+void gEmitEnvMapPolygon(Indices *idx, Input *in, Entry *base1, Entry *base0)
 {
     Packet *p;
     u32 uv;
@@ -62,22 +63,22 @@ next:
     data = &in->data[0];
     p->xy1 = in->xy1;
     p->xy2 = in->xy2;
-    func_80016C88(base0 + idx->a[0], base1 + idx->b[0], data, &p->uv0);
-    func_80016C88(base0 + idx->a[1], base1 + idx->b[1], data, &p->uv1);
+    gComputeEnvMapUV(base0 + idx->a[0], base1 + idx->b[0], data, &p->uv0);
+    gComputeEnvMapUV(base0 + idx->a[1], base1 + idx->b[1], data, &p->uv1);
     *(u16 *)((u8 *)&p->uv0 + 2) = uv >> 16;
     *(u16 *)((u8 *)&p->uv1 + 2) = uv;
     switch ((idx->flags >> 8) & 15) {
     case 3:
         ((u8 *)p)[3] = 7;
         p->color = ((u32)in->code << 24) | 0x24808080;
-        func_80016C88(base0 + idx->a[2], base1 + idx->b[2], data, &p->uv2);
+        gComputeEnvMapUV(base0 + idx->a[2], base1 + idx->b[2], data, &p->uv2);
         break;
     case 4:
         p->xy3 = in->xy3;
         ((u8 *)p)[3] = 9;
         p->color = ((u32)in->code << 24) | 0x2c808080;
-        func_80016C88(base0 + idx->a[3], base1 + idx->b[3], data, &p->uv2);
-        func_80016C88(base0 + idx->a[2], base1 + idx->b[2], data, &p->uv3);
+        gComputeEnvMapUV(base0 + idx->a[3], base1 + idx->b[3], data, &p->uv2);
+        gComputeEnvMapUV(base0 + idx->a[2], base1 + idx->b[2], data, &p->uv3);
         break;
     }
 }

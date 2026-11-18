@@ -112,8 +112,8 @@ struct Unk754B8Transform {
 
 extern void gGteTransformWords(void *source, void *destination, s32 count) __asm__("func_8001006C");
 extern void gGteLoadRotation(void *matrix) __asm__("func_80010820");
-extern void func_80017668(void *instance, s32 part, s32 *out);
-extern void func_800181D4(void *block);
+extern void gTransformPartVertex(void *instance, s32 part, s32 *out) __asm__("func_80017668");
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern s32 func_80019668(void);
 extern void gMulMatrixVector(void *matrix, void *source, void *destination) __asm__("func_8001A81C");
 extern void func_8001B148(struct RotationMatrix *matrix,
@@ -124,11 +124,13 @@ extern struct ListNode *func_8003BEF0(struct ListNode *node);
 extern s32 func_8003C7B8(s32 message, void *object, void *arg2, void *arg3);
 extern s32 func_8003C980(s32 message, void *object, void *arg2, void *arg3);
 extern struct Unk754B8Transform *func_8003D9C4(void *object);
-extern void func_8003D9F8(void *model, s32 flags, s32 part, s32 count,
-                         void *sub, void *matrix);
+extern void gResolveNodeTransform(void *model, s32 flags, s32 part, s32 count,
+                         void *sub, void *matrix) __asm__("func_8003D9F8");
 extern void *jtbl_80011E10[];
 extern void func_800752E0(void *object);
 extern void func_80075478(struct Unk75478 *object);
+void gInitEmitterParticle(struct Unk754B8 *object, struct RenderState *render, struct Vec3s32 *position, struct RotationMatrix *matrix) __asm__("func_800754B8");
+
 
 /**
  * @brief Fills one sprite-list node from a 3D-sprite object and emits it.
@@ -180,23 +182,20 @@ extern void func_80075478(struct Unk75478 *object);
  * (the polygon pass).
  *
  * @par Environment path
- * Fills one sprite-list node from a 3D-sprite object and emits it: it writes
- * the world position, the size, the RGB triple at object +0x73/+0x76/+0x79
- * and, when +0x72 is negative, a blend preset of 1, 4 and 0x4B into the
- * render node. When flag 0x8000 of +0x8E is set it rotates the object's
- * anchor point into the node with func_8001B148 using either the object
- * matrix or the caller's matrix, allows the sub-object callback to supply a
- * different anchor, and adds a random jitter scaled by +0x94; when flag bit 2
- * is set the node is handed to the emitter func_800752E0. The same
- * translation unit also defines the attach/message handler, which resolves
- * the transform through func_8003D9C4, computes the position with
- * func_8003D9F8 or func_80017668, takes a node from the object's own pool and
- * calls the fill routine. That handler is reached from the polygon pass
- * gRunPolygonPass (func_80075A84, src/game/80075A84.c:220), so the unit is
- * the sprite/billboard leaf of the render path; it touches no global, only
- * object fields and the callback slot.
+ * Initialises one particle node that an emitter object has just taken from
+ * its pool: it writes the world position, the size from +0x12, the RGB triple
+ * from +0x73/+0x76/+0x79 and, when +0x72 is negative, a blend preset of 1, 4
+ * and 0x4B. With flag 0x8000 at +0x8E it rotates the emitter's direction
+ * point (or one supplied by the sub-object callback) by the emitter's matrix
+ * or the caller's matrix with func_8001B148 and adds random jitter scaled by
+ * +0x94; with flag 2 it calls func_800752E0, which spawns a coloured light
+ * for the node. It is called from the emitter pass func_80075A84, which
+ * spawns nodes along the distance the emitter has moved, and from the message
+ * handler in the same translation unit. That handler resolves the transform
+ * with func_8003D9C4, func_8003D9F8 or func_80017668 on message 0, frees the
+ * pool on message 10 and forwards everything else to func_8003C980.
  */
-void func_800754B8(struct Unk754B8 *object, struct RenderState *render,
+void gInitEmitterParticle(struct Unk754B8 *object, struct RenderState *render,
                    struct Vec3s32 *position, struct RotationMatrix *matrix)
 {
     struct RotationPoint *source;
@@ -311,7 +310,7 @@ case0:
             current = transform;
 
             if (model != 0 && object->part >= 0 && object->part < 4) {
-                func_80017668(model, object->part, (s32 *)&local.pos);
+                gTransformPartVertex(model, object->part, (s32 *)&local.pos);
                 first = object->matrix.values[0];
                 local.matrix.values[1] = object->matrix.values[1];
                 local.matrix.values[2] = object->matrix.values[2];
@@ -338,7 +337,7 @@ case0:
             if (sub != 0) {
                 model = sub->model;
             }
-            func_8003D9F8(model, object->flags1A, object->part, 1, sub,
+            gResolveNodeTransform(model, object->flags1A, object->part, 1, sub,
                           &object->matrix);
         }
 
@@ -361,7 +360,7 @@ case0:
                 vec.z = object->position.z + transform->pos.z;
             }
 
-            func_800754B8(object, node, &vec, (struct RotationMatrix *)transform);
+            gInitEmitterParticle(object, node, &vec, (struct RotationMatrix *)transform);
         }
         return 1;
 
@@ -378,7 +377,7 @@ case10:
         }
 
         func_8003BDEC(&object->pool);
-        func_800181D4(object);
+        gFreeBlock(object);
         return 0;
 
 case7:

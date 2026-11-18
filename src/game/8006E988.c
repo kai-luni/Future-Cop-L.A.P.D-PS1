@@ -30,10 +30,10 @@ struct Node {
     s32 data9c;
 };
 
-extern struct Object *func_8003D9F8(s32, u16, s8, s32, struct Parent *, void *);
+extern struct Object *gResolveNodeTransform(s32, u16, s8, s32, struct Parent *, void *) __asm__("func_8003D9F8");
 extern s32 func_8001A100(s32 *);
-extern void func_8006CB58(s32, struct Object *, s32, s32, s32, s32, s32, s32, s32);
-extern void func_8006DC24(struct Node *, s32 *);
+extern void gDrawShadedModel(s32, struct Object *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_8006CB58");
+extern void gDrawFlatRing(struct Node *, s32 *) __asm__("func_8006DC24");
 
 /**
  * @brief Walks the model node list and draws each node (or its parent) with a
@@ -72,15 +72,15 @@ void func_8006E988(struct Node *node, s32 *origin)
                 if (parent != 0) {
                     arg = parent->value;
                 }
-                object = func_8003D9F8(arg, node->param, node->type, mask, parent, node->data34);
+                object = gResolveNodeTransform(arg, node->param, node->type, mask, parent, node->data34);
                 vec[0] = object->x - origin[0];
                 vec[1] = object->y - origin[1];
                 vec[2] = object->z - origin[2];
                 if (func_8001A100(vec) - (node->radius << 4) <= 0x1ffff) {
-                    func_8006CB58(node->data9c, object, node->radius, node->a89, node->a8a, node->a8b, node->a8d, node->a8e, node->a8f);
+                    gDrawShadedModel(node->data9c, object, node->radius, node->a89, node->a8a, node->a8b, node->a8d, node->a8e, node->a8f);
                 }
             } else {
-                func_8006DC24(node, origin);
+                gDrawFlatRing(node, origin);
             }
         }
         node = node->next;

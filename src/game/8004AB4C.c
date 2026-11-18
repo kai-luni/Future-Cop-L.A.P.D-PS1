@@ -11,7 +11,7 @@ extern struct Unk4AADNode *D_8009F798;
 extern struct Unk4AADNode *D_8009F79C;
 extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void *func_8008CD20(void *buffer, s32 value, s32 size);
 
 /**
@@ -55,7 +55,7 @@ void func_8004AB4C(void)
     s32 i;
 
     gLiveNodeCount = 0;
-    pool = func_80017EBC(0x44C0, 2);
+    pool = gAllocMemory(0x44C0, 2);
     D_8009F798 = pool;
     D_8009F79C = pool;
     if (pool != 0) {

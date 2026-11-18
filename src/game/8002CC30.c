@@ -31,7 +31,9 @@ extern struct Obj *func_8004E80C(struct Obj *, s32, s32, s32, s32, s32, s32);
 extern s32 func_8001A100(s32 *);
 extern s32 func_80095C30(s32, s32);
 extern void func_80044B34(struct Obj *, void *, s32, s32);
-extern void func_800175F8(void *, s32);
+extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
+s32 gUpdatePropTick(struct Obj *self, s32 dt) __asm__("func_8002CC30");
+
 
 /**
  * @brief Message-6 tick of an animated object: serves the command queue, steps
@@ -142,22 +144,22 @@ extern void func_800175F8(void *, s32);
  * func_8002D664, message 6 (analysis/edges.json, kind "direct").
  *
  * @par Environment path
- * Message-6 tick of the animated prop class that func_8002D664 dispatches at
- * message 6: it services the command queue with func_8002CB20, steps the
- * object script with func_80060238, then follows one of three branches chosen
- * by the flag word at +0xDF - spin about the facing axis, steer yaw/pitch at
- * a fixed or periodically re-searched target (func_8004E80C, range test with
- * func_8001A100, atan2 with func_80095C30), or idle. Every branch rate-limits
- * the requested angles to dt * speed and, when something changed, rebuilds
- * and loads the matrix (gBuildRotationMatrix func_800188D0, gGteLoadMatrix
- * func_80010750) and transforms the current model frame
- * (gGteTransformVerticesWide func_80010234) before caching matrix row 2 at
- * +0x78. It ends by stepping the animation (func_80044B34) and the frame
- * index (func_800175F8). It is an object update rather than a render pass -
- * it refreshes one object's matrix and part vertex and references no global
- * at all.
+ * Message-6 tick of the object classes dispatched by func_8002D664 (the same
+ * classes whose init is func_8002C584): it services the pending command bytes
+ * with func_8002CB20, returns when no model is bound, and ticks the attached
+ * attack descriptor with func_80060238 (the attack timeline that fires
+ * through func_8005F6E8). Depending on the flag byte +0xDF it then spins in
+ * place (flag 2), aims yaw and pitch at a fixed target or at one re-acquired
+ * every 1500 time units with func_8004E80C and range-checked with
+ * func_8001A100 (flag 1, atan2 via func_80095C30, pitch clamped to +-512, yaw
+ * optionally limited to +-0x300 around the heading), or stays idle. Angle
+ * changes are rate-limited to dt * speed; when they change it rebuilds and
+ * loads the matrix (func_800188D0, func_80010750), transforms the current
+ * frame vertex (func_80010234) and caches matrix row 2 at +0x78, and it
+ * always finishes with func_80044B34 and func_800175F8. No globals are
+ * referenced.
  */
-s32 func_8002CC30(struct Obj *self, s32 dt)
+s32 gUpdatePropTick(struct Obj *self, s32 dt)
 {
     s32 delta[3];
     struct Obj *target;
@@ -291,7 +293,7 @@ rotate:
 done:
     if (self->model->anim) {
         func_80044B34(self, self->anim, dt, 0);
-        func_800175F8(&self->model, self->animFrame);
+        gSetModelFrame(&self->model, self->animFrame);
     }
     return 0;
 }

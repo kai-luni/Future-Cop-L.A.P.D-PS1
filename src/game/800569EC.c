@@ -75,23 +75,23 @@ struct Locals569EC {
 };
 
 extern struct Mode569EC *gGameSession __asm__("D_8009FA94");
-extern struct Override569EC *gMissionWorkingSet __asm__("D_8009F9A0");
-extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
+extern struct Override569EC *gFocusPositions __asm__("D_8009F9A0");
+extern s32 gDemoPlayback __asm__("D_8009FA84");
 extern struct Camera569EC *gCamera __asm__("D_8009F9E4");
 extern struct State569EC gPresetEntryTable[] __asm__("D_8009AEC4");
 extern struct Offset569EC gViewPresetTable[] __asm__("D_8009AD08");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern void func_8005780C(void *, struct Vec569EC *);
+extern void gDecodeButtonEdge(void *, struct Vec569EC *) __asm__("func_8005780C");
 extern s32 func_80031B40(struct Vec569EC *, void *);
 extern s32 func_80056530(struct Obj569EC *, s32, s32);
-extern s32 func_80056870(struct Obj569EC *);
+extern s32 gFindClearCameraPreset(struct Obj569EC *) __asm__("func_80056870");
 extern u8 func_80056994(struct Info569EC *, s32);
 extern void gSelectViewRecord(s32) __asm__("func_80017B60");
 extern void gPlaceCameraFromPreset(struct Obj569EC *, s32, struct Vec569EC *, s32) __asm__("func_8005678C");
-extern void func_8005612C(struct Vec569EC *, s32, s32, s32, s32, struct Vec569EC *, struct Vec569EC *, s32, s32);
+extern void gComputeCameraEye(struct Vec569EC *, s32, s32, s32, s32, struct Vec569EC *, struct Vec569EC *, s32, s32) __asm__("func_8005612C");
 extern s32 func_80055EE8(struct Vec569EC *, struct Vec569EC *);
 extern s32 func_8005605C(s32, s32, s32);
-extern s32 func_800564A8(s32);
+extern s32 gComputeBoomDistance(s32) __asm__("func_800564A8");
 extern s32 func_8001A314(struct Vec569EC *);
 extern void func_8001AB78(s32, struct Vec569EC *);
 extern void gSetCameraRotation(s32, s32, s32) __asm__("func_80017860");
@@ -225,7 +225,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
     register s32 scaled __asm__("$3");
     struct Vec569EC *posPtr;
 
-    func_8005780C(object->info->model, &object->info->position);
+    gDecodeButtonEdge(object->info->model, &object->info->position);
     obj = RELOAD_OBJECT();
     __asm__("" : "+r"(obj));
     info = obj->info;
@@ -264,7 +264,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
         info->selected = 17;
     } else if (info->mode != 0 && gGameSession->mode != 1) {
         if (info->selected == 0) {
-            info->selected = func_80056870(object);
+            info->selected = gFindClearCameraPreset(object);
         }
     } else {
         if (info->selected != 0) info->selected = 0;
@@ -272,7 +272,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
     {
         register struct Override569EC *override __asm__("$7");
         register s32 overrideIndex __asm__("$2");
-        override = gMissionWorkingSet;
+        override = gFocusPositions;
         selected = 0;
         if (override != 0) {
             heading = override->heading;
@@ -284,7 +284,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
             selected = info->selected;
         }
     }
-    if (gModuleLoadedFlag > 0) state = func_80056994(info, elapsed);
+    if (gDemoPlayback > 0) state = func_80056994(info, elapsed);
     {
         register struct Camera569EC *saved __asm__("$8");
         register s32 id __asm__("$4");
@@ -367,7 +367,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
             testOut = &local.out;
             offset = (struct Offset569EC *)(index * 20 + (s32)base);
         }
-        func_8005612C(argPosition, heading, heading + offset->yaw, offset->pitch,
+        gComputeCameraEye(argPosition, heading, heading + offset->yaw, offset->pitch,
                      offset->distance, &offset->offset, testOut, info->zoom, info->distance);
         prevPtr = &local.previous;
         blocked = func_80055EE8(prevPtr, testOut);
@@ -395,7 +395,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
                         base = (struct Offset569EC *)((s32)base - 0x52F8);
                         offset = (struct Offset569EC *)(index * 20 + (s32)base);
                     }
-                    func_8005612C(argPosition, heading, heading + offset->yaw, offset->pitch,
+                    gComputeCameraEye(argPosition, heading, heading + offset->yaw, offset->pitch,
                                  offset->distance, &offset->offset, testOut, info->zoom, info->distance);
                     if (func_80055EE8(prevPtr, testOut) == 0) {
                         blocked = 0;
@@ -414,7 +414,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
                         base = (struct Offset569EC *)((s32)base - 0x52F8);
                         offset = (struct Offset569EC *)(index * 20 + (s32)base);
                     }
-                    func_8005612C(&local.position, heading, heading + offset->yaw, offset->pitch,
+                    gComputeCameraEye(&local.position, heading, heading + offset->yaw, offset->pitch,
                                  offset->distance, &offset->offset, &local.out, info->zoom, info->distance);
                     if (func_80055EE8(&local.previous, &local.out) == 0) {
                         info->current = info->next;
@@ -488,7 +488,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
         difference = old - yaw;
         if (difference > rate) yaw = old - rate;
     }
-    distance = func_800564A8(pitch);
+    distance = gComputeBoomDistance(pitch);
     deltaPtr = &local.delta;
     local.delta.x = offset->offset.x - info->offset.x;
     local.delta.y = offset->offset.y - info->offset.y;
@@ -507,7 +507,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
         info->offset.y += local.delta.y;
         info->offset.z += local.delta.z;
     }
-    func_8005612C(&local.position, heading, yaw, pitch, distance, &info->offset,
+    gComputeCameraEye(&local.position, heading, yaw, pitch, distance, &info->offset,
                  &local.out, info->zoom, info->distance);
     gSetCameraRotation(yaw, pitch, 0);
     func_8001AC28(&local.out, &gCamera->axis70, info->zoom << 7, &local.out);

@@ -105,7 +105,7 @@ extern u8 gMapGrid[] __asm__("D_800A6578");
 
 extern struct Unk5CB80Node *func_8005CB80(struct Unk5CB80Pool *pool, void *target);
 extern struct ListNode *func_8003BEF0(struct ListNode *node);
-extern void func_80017668(struct ModelInstance *instance, s32 part, s32 *out);
+extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern void gSolveLeadDirection(s32 *a, s32 *b, s32 c, s32 d, void *e, void *f, s32 g) __asm__("func_8005E2A0");
 extern void func_8001A180(s32 *vec);
 extern void func_800193F8(s32 *a, s32 *b);
@@ -203,7 +203,7 @@ void gAttachPartEffect(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 
             return;
         }
 
-        func_80017668(arg3, part, &local.vec.x);
+        gTransformPartVertex(arg3, part, &local.vec.x);
         node->vec = local.vec;
 
         if (arg2 != 0) {

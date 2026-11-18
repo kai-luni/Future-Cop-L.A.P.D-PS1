@@ -15,7 +15,7 @@ struct Unk8007F9CC {
 
 extern struct Unk8007F9CC *gSaveProfileImage __asm__("D_8009F92C");
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void *func_8001E4C0(void *destination, int value, unsigned int count);
 extern int func_80020610(void);
 extern void func_80020618(s32 arg0, void *arg1);
@@ -51,12 +51,12 @@ void gOpenProfileSaveSubsystem(void)
     void *q;
     struct Unk8007F9CC *s;
 
-    p = func_80017EBC(0x948, 2);
+    p = gAllocMemory(0x948, 2);
     gSaveProfileImage = p;
     func_8001E4C0(p, 0, 0x948);
     gSaveProfileImage->unk208 = 3;
     gSaveProfileImage->unk945 = 2;
-    q = func_80017EBC(func_80020610(), 2);
+    q = gAllocMemory(func_80020610(), 2);
     s = gSaveProfileImage;
     s->unk200 = 1;
     s->unk904 = q;

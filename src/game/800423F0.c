@@ -16,7 +16,7 @@ struct Unk423F0Object {
     s8 side;
 };
 
-extern struct Unk423F0Player *D_8009FA58[];
+extern struct Unk423F0Player *gPlayerEntities[] __asm__("D_8009FA58");
 
 /**
  *  @brief Assigns an object as the target for selected players.
@@ -49,8 +49,8 @@ void func_800423F0(struct Unk423F0Object *object)
         first = 1;
     }
     for (i = first; i <= last; i++) {
-        if (D_8009FA58[i] != 0 && D_8009FA58[i]->info != 0) {
-            D_8009FA58[i]->info->target = object;
+        if (gPlayerEntities[i] != 0 && gPlayerEntities[i]->info != 0) {
+            gPlayerEntities[i]->info->target = object;
         }
     }
 }

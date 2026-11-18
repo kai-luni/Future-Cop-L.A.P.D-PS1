@@ -36,7 +36,7 @@ struct Par {
     s32 *unk34;
 };
 
-extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
+extern s32 gIdentityMatrix[9] __asm__("D_8009AA38");
 extern s32 func_80019668(void);
 extern void func_8003D0F0(s32 *a, s32 b, s32 c, s32 *d);
 extern void gGteLoadRotation(s32 *a) __asm__("func_80010820");
@@ -121,6 +121,8 @@ static inline s32 rot_b(struct Obj *o, void *m)
     gBuildRotationMatrix((s16)a, 0x400 - (s16)b, 0, m);
     return 1;
 }
+void gBuildNodePlacement(struct Obj *o, s32 *x, struct Par *p_arg, u8 *y, s32 *out, s16 *o16, s8 *o8_arg) __asm__("func_8003DB70");
+
 
 /**
  * @brief Spawns a burst of debris/particle nodes around an object.
@@ -149,18 +151,19 @@ static inline s32 rot_b(struct Obj *o, void *m)
  * func_8003E984 and func_80044610.
  *
  * @par Environment path
- * Resolves the placement of an effect or spawned node: it picks the scale and
- * the model id from the object type (0x57..0x5E) or from the caller's source
- * record, then writes a 9-word basis into out[0..8] and a world position into
- * out[9..11], taken from the parent matrix through func_8001006C, from a
- * rotation built by func_800188D0 (with func_80019668 supplying remainders
- * for negative angles), or from the neutral template D_8009AA38. It is called
- * by the spawn constructor func_8003E984 (line 273), which stores the block
- * as its work matrix, and by the effect handler func_80044610 (line 82). Not
- * on the render path: it prepares a node's matrix and position for later
- * passes and emits no geometry itself.
+ * Resolves the placement of a spawned node into a 12-word block: a nine-word
+ * basis in out[0..8] and a world position in out[9..11], plus a scale and an
+ * id. With flag 8 and a template it copies both from the template; otherwise
+ * the scale comes from the source record or the type-specific field (types
+ * 0x57..0x5E) and the id from the record or the object. The position is taken
+ * from the parent through func_8003D0F0 and optionally rotated into the
+ * parent frame, or from the parent's translation, plus an optional offset
+ * built with func_800188D0; the basis comes from the parent, from a rotation
+ * built with func_800188D0, or from gIdentityMatrix (D_8009AA38). Negative angle
+ * fields mean a random angle below their magnitude (func_80019668). It is
+ * called by func_8003E984 and func_80044610.
  */
-void func_8003DB70(struct Obj *o, s32 *x, struct Par *p_arg, u8 *y, s32 *out, s16 *o16, s8 *o8_arg)
+void gBuildNodePlacement(struct Obj *o, s32 *x, struct Par *p_arg, u8 *y, s32 *out, s16 *o16, s8 *o8_arg)
 {
     register struct Par *p __asm__("$21") = p_arg;
     register s8 *o8 __asm__("$8") = o8_arg;
@@ -357,15 +360,15 @@ L4D8:
 LDefault:
 
     if (rot_b(o, out) != 1) {
-        out[0] = gBaseMatrix[0];
-        out[1] = gBaseMatrix[1];
-        out[2] = gBaseMatrix[2];
-        out[3] = gBaseMatrix[3];
-        out[4] = gBaseMatrix[4];
-        out[5] = gBaseMatrix[5];
-        out[6] = gBaseMatrix[6];
-        out[7] = gBaseMatrix[7];
-        out[8] = gBaseMatrix[8];
+        out[0] = gIdentityMatrix[0];
+        out[1] = gIdentityMatrix[1];
+        out[2] = gIdentityMatrix[2];
+        out[3] = gIdentityMatrix[3];
+        out[4] = gIdentityMatrix[4];
+        out[5] = gIdentityMatrix[5];
+        out[6] = gIdentityMatrix[6];
+        out[7] = gIdentityMatrix[7];
+        out[8] = gIdentityMatrix[8];
     }
     return;
 

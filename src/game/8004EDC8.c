@@ -11,8 +11,8 @@ extern struct Packet *gPacketLimit __asm__("D_8009F9C0");
 extern s32 gCommandListHead[] __asm__("D_800A8F90");
 extern s32 gFreedPointer __asm__("D_8009F7B0");
 extern struct Node *gEffectListHead[] __asm__("D_800A8F98");
-extern u32 gDiscShadeByte __asm__("D_8009FAA4");
-extern void *gEffectSizeTable[] __asm__("D_800A6F60");
+extern u32 gFrameTime __asm__("D_8009FAA4");
+extern void *gMarkerColorTable[] __asm__("D_800A6F60");
 extern void func_8005A9C4(struct Obj *);
 extern void func_8005B088(s32 *, void *, s32, s32);
 
@@ -57,13 +57,13 @@ void func_8004EDC8(struct Obj *obj)
     packet->cmd = 0xe100069e;
     packet->tag &= 0xff000000;
     ((u8 *)packet)[3] = 1;
-    enabled = gDiscShadeByte & 0x80;
+    enabled = gFrameTime & 0x80;
     count = gCommandListHead[0];
     while (count > 0) {
         n = *p++;
         if (n->count > 0 && (type = n->type) != 0 && !(n->flags & 0x30)) {
             if ((type & 31) < 23 || enabled)
-                func_8005B088(n->pos, gEffectSizeTable[type & 31], size, type >> 5);
+                func_8005B088(n->pos, gMarkerColorTable[type & 31], size, type >> 5);
         }
         count--;
     }
@@ -76,7 +76,7 @@ void func_8004EDC8(struct Obj *obj)
                 pos[0] = extra->coords[count * 2 + 1] << 9;
                 pos[2] = extra->coords[count * 2] << 9;
                 if ((type & 31) < 23 || enabled)
-                    func_8005B088(pos, gEffectSizeTable[type & 31], size, type >> 5);
+                    func_8005B088(pos, gMarkerColorTable[type & 31], size, type >> 5);
             }
         }
     }

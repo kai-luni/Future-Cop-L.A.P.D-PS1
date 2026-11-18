@@ -7,7 +7,7 @@ struct Unk60E28Table {
 };
 
 extern struct Unk60E28Table *gRegistryTable __asm__("D_8009F800");
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates the 0x80-slot registry table behind D_8009F800.
@@ -35,7 +35,7 @@ void func_80060E28(void)
 {
     struct Unk60E28Table *table;
 
-    table = func_80017EBC(0x204, 2);
+    table = gAllocMemory(0x204, 2);
     gRegistryTable = table;
     table->count = 0;
 }

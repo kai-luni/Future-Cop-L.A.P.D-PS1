@@ -6,7 +6,7 @@ struct Packet { u32 addr:24; u32 len:8; u8 r,g,b,code; short x,y; u8 u,v; u16 cl
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u32 gEnvMapTexpageWord[] __asm__("D_800A8EA4");
-extern u32 gDiscShadeByte __asm__("D_8009FAA4");
+extern u32 gFrameTime __asm__("D_8009FAA4");
 /**
  * @brief Emits a 16x16 textured sprite, optionally highlighted.
  *
@@ -69,7 +69,7 @@ sprt_ready:
     ((struct Packet *)packet)->code = 0x66;
     ((struct Packet *)packet)->addr = 0;
     ((struct Packet *)packet)->len = 4;
-    if (a1 && (gDiscShadeByte & 0x40)) {
+    if (a1 && (gFrameTime & 0x40)) {
         ((struct Packet *)packet)->r = 0xC0;
         ((struct Packet *)packet)->g = 0xA0;
         ((struct Packet *)packet)->b = 0xA0;

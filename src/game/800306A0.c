@@ -84,20 +84,20 @@ struct Actor306A0 {
     s16 unk12C;
 };
 
-extern u32 gDiscShadeByte __asm__("D_8009FAA4");
+extern u32 gFrameTime __asm__("D_8009FAA4");
 extern void *jtbl_800111DC[];
 
 extern void func_8002FC90(void *, u32, s16, s32, s32);
 extern void func_80069D68(void *, s32, u32, void *);
 extern s32 func_800402DC(void *, u8, s32, s32, s32);
 extern void *func_800448D8(struct AnimTrack *, s32, s32, u8);
-extern void func_800175F8(struct ModelInstance *, s32);
+extern void gSetModelFrame(struct ModelInstance *, s32) __asm__("func_800175F8");
 extern void gBuildRotationMatrix(s16, s32, s32, void *) __asm__("func_800188D0");
 extern s32 func_80044B34(void *, void *, s32, s32);
-extern void func_800302E8(struct Actor306A0 *, s32, s32);
+extern void gInitTerrainEntity(struct Actor306A0 *, s32, s32) __asm__("func_800302E8");
 extern u8 func_8002F8B8(u8, s16, s32, s32);
 extern void func_80030498(struct Actor306A0 *, s32);
-extern s32 func_8002AD58(s32, struct Actor306A0 *, s32);
+extern s32 gEntityBaseHandler(s32, struct Actor306A0 *, s32) __asm__("func_8002AD58");
 extern u8 gSubmitModelInstance(struct ModelInstance *, u32 *, s32) __asm__("func_80017508");
 
 /**
@@ -193,7 +193,7 @@ s32 func_800306A0(struct Actor306A0 *actor, s32 delta)
         if (*(u32 *)((u8 *)actor->instanceD4.model + 0x10) != 0) {
             s32 zero = 0;
             func_80044B34(zero, (u8 *)actor + 0x120, delta, zero);
-            func_800175F8(&actor->instanceD4, actor->unk12C);
+            gSetModelFrame(&actor->instanceD4, actor->unk12C);
         }
         if (actor->unkB4 & 0xF0) {
             actor->unkC8 = (actor->unkC8 - (delta << 4)) & 0xFFF;
@@ -213,7 +213,7 @@ s32 func_800306A0(struct Actor306A0 *actor, s32 delta)
         frame = actor->animA0.frame;
         __asm__ volatile ("" : "+r" (shift), "+r" (inst), "+r" (frame));
         shift >>= 1;
-        func_800175F8(inst, frame);
+        gSetModelFrame(inst, frame);
         temp = shift;
     }
     temp &= 0x3F;

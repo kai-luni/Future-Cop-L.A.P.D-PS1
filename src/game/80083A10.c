@@ -60,7 +60,7 @@ struct Bucket3A { struct Node3A10 *head; s32 arena; };
 extern void *gMissionState __asm__("D_8009F934");
 extern struct Bucket3A *gBucketArray __asm__("D_8009F938");
 extern s32 gMissionGridWidth __asm__("D_8009F93C");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *func_800195A4(void *state);
 extern void func_80083834(s32 arg0, s32 arg1);
 extern void func_80013BD8(struct Node3A10 *node, struct Model3A10 *model, s32 options);
@@ -72,6 +72,8 @@ extern void gGteTransformWords(void *src, void *dst, s32 count) __asm__("func_80
 extern s32 func_80083764(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 extern void gGteLoadMatrix(void *a) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
+u8 gSpawnSceneNode(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3) __asm__("func_80083A10");
+
 
 /**
  * @brief Turns one spawn request into a render node: takes a node from the
@@ -190,23 +192,22 @@ extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_800
  * address also carries an "address_taken" edge.
  *
  * @par Environment path
- * Turns one spawn request into a render node: it takes a node from the
- * scene-node pool D_8009F934 with func_800195A4 (retrying once after a
- * func_80083834 reset request), attaches the model with func_80013BD8, copies
- * the request fields, and builds the transform either from the caller's
- * 12-word matrix or from the record angles with gBuildRotationMatrix
- * (func_800188D0) plus Q6 row scaling, with an optional upright correction.
- * It then derives the world bound by transforming the model's six bound
- * half-words with gGteLoadRotation (func_80010820) and gGteTransformWords
- * (func_8001006C), hands the result to func_80083764 and links the node into
- * bucket D_8009F938[(z >> 17) + D_8009F93C * (x >> 17)] - head for dynamic
- * nodes, tail for static ones - stamping the arena with D_8009FAA4. It is the
- * insertion side of the environment pass: gDrawCellWindowModels
- * (func_80084398) walks exactly that bucket array, so this function decides
- * which nodes the region layers can draw; callers are func_80031690:103 and
- * func_80084110.
+ * Creates one map-cell model node and inserts it into the cell bucket grid:
+ * it takes a 0x5C-byte node from the 250-entry pool D_8009F934 with
+ * func_800195A4, and when the pool is empty first evicts the nodes of buckets
+ * not drawn during the last 0x5DC time units (func_80083834 with D_8009FAA4 -
+ * 0x5DC) and retries once. It binds the model with func_80013BD8, copies the
+ * request fields (frame rate as 300 / rate, flags, spin rate), builds the
+ * matrix from the caller's matrix or from the request angles with
+ * func_800188D0 plus optional scaling and upright correction, transforms the
+ * model's bound half-words (func_80010820, func_8001006C) and passes the
+ * result to func_80083764. Finally it links the node into gBucketArray[(z >>
+ * 17) + width * (x >> 17)] (at the head when z2 >= 0 or the bucket is empty,
+ * otherwise behind the head) and stamps the bucket's last-use time with
+ * D_8009FAA4; gDrawCellWindowModels (func_80084398) walks the same buckets.
+ * Callers are func_80031690 and func_80084110.
  */
-u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3)
+u8 gSpawnSceneNode(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3)
 {
     struct Node3A10 *node;
     s32 mtx[12];
@@ -234,7 +235,7 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
 
     node = (struct Node3A10 *)func_800195A4(gMissionState);
     if (node == 0) {
-        func_80083834(gDiscShadeByte - 0x5DC, 1);
+        func_80083834(gFrameTime - 0x5DC, 1);
         node = (struct Node3A10 *)func_800195A4(gMissionState);
         if (node == 0) {
             return 0;
@@ -263,7 +264,7 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
         node->unk4D = 0;
     }
     if (z2 >= 0) {
-        z2 = z2 + gDiscShadeByte;
+        z2 = z2 + gFrameTime;
         node->unk50.word = z2;
     } else {
         node->flags4C |= 0x80;
@@ -437,7 +438,7 @@ u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3
         head->next = node;
         node->next = 0;
     }
-    gBucketArray[idx].arena = gDiscShadeByte;
+    gBucketArray[idx].arena = gFrameTime;
     if (node->unk57 != 0) {
         register s32 frame __asm__("$4");
         gGteLoadMatrix(&node->mat[0][0]);

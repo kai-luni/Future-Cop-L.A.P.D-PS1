@@ -9,7 +9,7 @@ struct Entry { Obj *obj; Obj *owner; u8 pad08[4]; s32 time; s32 value; u8 pad14[
 typedef struct { s16 other, low, high; } Params;
 typedef struct { u8 pad[0xA]; s16 value, other, low, high; } Extra;
 extern Entry *gDomeEffectBlock[4] __asm__("D_800A22F0");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 extern Entry *func_8005D3FC(Obj *, s32);
 
 /**
@@ -66,12 +66,12 @@ s32 gWeaponEffectUpdate(Obj *arg0, Params *arg1, Extra *arg2)
     }
     if (obj->kind == 1 && extra) {
         o = obj;
-        if (gDiscShadeByte > e->time) {
+        if (gFrameTime > e->time) {
             if (e->flags & 1) e->flags &= ~1;
             else e->flags |= 1;
         }
         __asm__("" : "+r"(o));
-        e->time = gDiscShadeByte + 60;
+        e->time = gFrameTime + 60;
         if (e->flags & 1) {
             e->value = extra->value;
             __asm__("" : : : "memory");
@@ -93,7 +93,7 @@ s32 gWeaponEffectUpdate(Obj *arg0, Params *arg1, Extra *arg2)
             result = 1;
         } else result = 0;
     } else {
-        e->time = gDiscShadeByte + 120;
+        e->time = gFrameTime + 120;
         e->flags |= 1;
     }
     return result;

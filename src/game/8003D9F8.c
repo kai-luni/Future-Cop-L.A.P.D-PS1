@@ -8,6 +8,8 @@ typedef struct Parent { char pad[4]; Matrix matrix; } Parent;
 extern s32 gScratchMatrixPos[] __asm__("D_800A10B4");
 extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
 extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
+Matrix *gResolveNodeTransform(Parent *arg0, u16 flags, s8 arg2, s32 arg3, Parent *arg4, Matrix *arg5) __asm__("func_8003D9F8");
+
 
 /**
  * @brief Resolves an object's transform: parent chain, flags and the shared
@@ -33,20 +35,20 @@ extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
  * func_80073700): "world matrix of this node, given its parents".
  *
  * @par Environment path
- * Resolves an object's world transform from its parents: with a primary
- * parent it loads that parent's rotation with gGteLoadRotation
- * (func_80010820), transforms the caller's translation through
- * gGteTransformWords (func_8001006C), adds the parent translation into the
- * shared scratch block at D_800A10B4 and, when the caller's byte is non-zero,
- * also transforms the three axis vectors. Without a primary parent the same
- * work is done from a secondary parent when flag 0x100 is set; otherwise the
- * caller's own matrix block is returned unchanged. Both resolved paths return
- * the shared scratch matrix at D_800A10B4 - 0x24. It is the resolver the
- * scene-node walkers use - gRunPolygonPass (func_80075A84,
- * src/game/80075A84.c:196) and func_8006E988 (src/game/8006E988.c:75) among
- * them - so it sits directly under the render path but emits nothing itself.
+ * Resolves an object's world transform from a parent, but only when flag
+ * 0x100 is set. With the flag and a primary parent it loads that parent's
+ * rotation with gGteLoadRotation (func_80010820), transforms the caller's
+ * translation with gGteTransformWords (func_8001006C), adds the parent
+ * translation into the shared scratch block at D_800A10B4 and, when the low
+ * byte of arg3 is non-zero, also rotates the three axis vectors. Without a
+ * primary parent it does the same from the secondary parent; in every other
+ * case, including a primary parent without flag 0x100, it returns the
+ * caller's own matrix block unchanged. The resolved paths return the scratch
+ * matrix at D_800A10B4 - 0x24; the third parameter is unused, and the
+ * function has more than a dozen callers among the scene-node walkers
+ * (func_8006E988, func_80075A84, func_800754B8 and others).
  */
-Matrix *func_8003D9F8(Parent *arg0, u16 flags, s8 arg2, s32 arg3, Parent *arg4, Matrix *arg5)
+Matrix *gResolveNodeTransform(Parent *arg0, u16 flags, s8 arg2, s32 arg3, Parent *arg4, Matrix *arg5)
 {
     register s32 x __asm__("$4");
     register s32 y __asm__("$2");

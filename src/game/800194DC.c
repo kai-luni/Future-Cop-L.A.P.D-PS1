@@ -9,7 +9,7 @@ struct FixedPool {
     void *free;
 };
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates and initializes a fixed-size block pool with an intrusive singly-linked free list.
@@ -46,7 +46,7 @@ struct FixedPool *func_800194DC(s32 count, s32 size, s32 tag)
 
     stride = (size + 3) & ~3;
     bytes = count * stride + 0x14;
-    pool = func_80017EBC(bytes, tag);
+    pool = gAllocMemory(bytes, tag);
     if (pool != 0) {
         previous = 0;
         node = (void **)(pool + 1);

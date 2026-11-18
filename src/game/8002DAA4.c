@@ -7,11 +7,13 @@ struct Model { u8 pad[0x10]; void *anim; u8 pad14[0x20]; u8 *frames; };
 struct Object { u8 pad00[0x24]; u32 flags; struct Model *model; u8 coord[0x24]; s32 pos[3]; u8 mat[0x14]; s16 frame; u8 pad72[0x2e]; u8 track[1]; };
 struct DataInner { u8 pad[0x24]; s32 height; s16 id; s16 mode; };
 struct Data { u8 pad[8]; struct DataInner *inner; };
-extern s32 func_8002AD58(s32, struct Object *, struct Data *, s32);
-extern void func_80044988(void *, void *, s32, s32);
+extern s32 gEntityBaseHandler(s32, struct Object *, struct Data *, s32) __asm__("func_8002AD58");
+extern void gSetAnimClipTable(void *, void *, s32, s32) __asm__("func_80044988");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern s32 func_80067684(void *, s32);
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
+s32 gInitGroundObject(struct Object *self, struct Data *data, s32 arg2) __asm__("func_8002DAA4");
+
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 /**
  * @brief Advances one entity's animation and places its frame vertex.
@@ -35,23 +37,23 @@ extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_8001023
  * floor query func_80067684 keeps the frame on the terrain.
  *
  * @par Environment path
- * Runs one tick of a ground entity: func_8002AD58(2, ...) executes the
- * scripted behaviour, the animation track is advanced with func_80044988, and
- * the frame vertex is refreshed through func_800188D0, func_80010750 and
- * func_80010234. The vertical position is the terrain query func_80067684
- * plus the height from the data record, which is what keeps the frame on the
- * ground. It hands a transformed frame vertex to the model renderer but
- * touches no region, tile, camera or packet state, so it is upstream of the
- * environment pass rather than part of it.
+ * Message-2 (init) handler of object type 13, called from its class handler
+ * func_8002DB9C: after the shared setup func_8002AD58(2, ...) it installs the
+ * model's animation clip table on the object's track with func_80044988,
+ * builds the heading matrix from the record angle with func_800188D0, places
+ * the object on the ground (func_80067684 with the record's ground-mode byte,
+ * plus the record height) and sets flags 0xA00000. It finishes by
+ * transforming the frame's reference vertex (func_80010750, func_80010234).
+ * It is setup, not a per-frame tick, and touches no globals.
  */
-s32 func_8002DAA4(struct Object *self, struct Data *data, s32 arg2)
+s32 gInitGroundObject(struct Object *self, struct Data *data, s32 arg2)
 {
     struct DataInner *inner;
     s32 mode;
     s32 value;
-    func_8002AD58(2, self, data, arg2);
+    gEntityBaseHandler(2, self, data, arg2);
     if (self->model->anim != 0)
-        func_80044988(self->model->anim, self->track, 1, 0);
+        gSetAnimClipTable(self->model->anim, self->track, 1, 0);
     inner = data->inner;
     gBuildRotationMatrix(inner->id, 0, 0, self->coord);
     value = inner->mode;

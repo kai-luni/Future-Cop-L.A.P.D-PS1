@@ -51,7 +51,7 @@ extern u8 D_8009F4A0[];
 extern u8 gDefaultNameString[] __asm__("D_8009F4A4");
 extern u8 gMenuActivationBlock[] __asm__("D_800A3718");
 extern u8 gHighlightShadeTable[] __asm__("D_8009F3F8");
-extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
+extern s32 gGameClock __asm__("D_8009FA60");
 
 extern void func_8007AA9C(u8 *a, u8 *b, s32 c, u8 *d);
 extern void func_8007A9D0(u8 *a, u8 *b, s32 c, u8 *d, s32 e);
@@ -396,7 +396,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                         dst = (u8 *)n;
                         one = 1;
                         savedBase = gHighlightShadeTable;
-                        step = gPaletteCycleCounter;
+                        step = gGameClock;
                         heightTmp = h;
                         __asm__("sra %0,%0,4\n\tandi %0,%0,7\n\taddu %0,%0,%1"
                             : "+r"(step) : "r"(savedBase), "r"(heightTmp), "r"(dst), "r"(one));

@@ -72,9 +72,9 @@ typedef struct Node {
     s16 field24;
 } Node;
 
-extern Dev *D_8009FA58[];
+extern Dev *gPlayerEntities[] __asm__("D_8009FA58");
 
-extern s16 func_80070730(Node *node, Obj *obj, V3 *out, void *arg);
+extern s16 gComputeEffectEndPoint(Node *node, Obj *obj, V3 *out, void *arg) __asm__("func_80070730");
 extern s32 func_80019668(void);
 extern s32 func_8001A314(V3 *v);
 
@@ -209,7 +209,7 @@ void func_80070E48(Node *node, Entry *e, s32 mode)
     }
 
     if ((u8)mode) {
-        idx = func_80070730(node, node->a, e->verts, 0);
+        idx = gComputeEffectEndPoint(node, node->a, e->verts, 0);
         if (idx != -1) {
             ma.m.f0 = 0;
             ma.m.f6 = 8;
@@ -222,7 +222,7 @@ void func_80070E48(Node *node, Entry *e, s32 mode)
                 ((Dev **)base)[idx]->fn(14, ((Dev **)base)[idx], &ma.m, 0);
             }
         }
-        idx = func_80070730(node, node->b, e->verts + e->count, e->verts);
+        idx = gComputeEffectEndPoint(node, node->b, e->verts + e->count, e->verts);
         if (idx != -1) {
             mc.m.f0 = 0;
             mc.m.f6 = 8;

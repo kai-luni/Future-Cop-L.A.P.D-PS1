@@ -19,11 +19,11 @@ struct Object {
     struct Child *unkB4;
 };
 
-extern s32 func_8002DC94(struct Object *, void *, s32);
-extern s32 func_8002AD58(s32, struct Object *, void *);
+extern s32 gInitType11Entity(struct Object *, void *, s32) __asm__("func_8002DC94");
+extern s32 gEntityBaseHandler(s32, struct Object *, void *) __asm__("func_8002AD58");
 extern void func_8002D664(s32, struct Child *, void *, s32);
 extern void func_80044B34(struct Object *, void *, void *, s32);
-extern void func_800175F8(void *, s32);
+extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 
 /**
  * @brief Message handler of object type 11: a parent entity that forwards
@@ -64,7 +64,7 @@ s32 func_8002DEA8(s32 message, struct Object *object, void *data, s32 arg3)
     case 1:
         return 0xB8;
     case 2:
-        return func_8002DC94(object, data, arg3);
+        return gInitType11Entity(object, data, arg3);
     case 10:
         child = object->unkB4;
         cmp = child != data;
@@ -78,21 +78,21 @@ s32 func_8002DEA8(s32 message, struct Object *object, void *data, s32 arg3)
         if (object->unkB4 != 0) {
             return 0;
         }
-        return func_8002AD58(message, object, data);
+        return gEntityBaseHandler(message, object, data);
     case 11:
     case 14:
         if (object->unkB4 != 0) {
             func_8002D664(message, object->unkB4, data, arg3);
             return 0;
         }
-        return func_8002AD58(message, object, data);
+        return gEntityBaseHandler(message, object, data);
     case 6:
         if (object->model->unk10 != 0) {
             func_80044B34(object, object->unkA0, data, 0);
-            func_800175F8(&object->model, object->unkAC);
+            gSetModelFrame(&object->model, object->unkAC);
         }
         return 0;
     default:
-        return func_8002AD58(message, object, data);
+        return gEntityBaseHandler(message, object, data);
     }
 }

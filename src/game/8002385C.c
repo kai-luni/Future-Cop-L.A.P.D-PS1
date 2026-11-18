@@ -15,7 +15,7 @@ extern u8 gChannelEnableFlag __asm__("D_8009F26C");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern Slot gObjectSlots[] __asm__("D_800A0A00");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_800235D4(s32 id);
 extern void func_80023478(void);
 
@@ -48,7 +48,7 @@ s32 func_8002385C(void)
             slot = &gObjectSlots[i];
             if (slot->state == 2) {
                 if (slot->block != 0) {
-                    func_800181D4(slot->block);
+                    gFreeBlock(slot->block);
                     slot->block = 0;
                 }
                 slot->state = 0;

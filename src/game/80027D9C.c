@@ -6,15 +6,15 @@ struct UnkFA94 {
     s32 unk5C;
 };
 
-extern u8 gMenuModeFlag __asm__("D_8009F680");
-extern s32 gFrameId __asm__("D_8009F9FC");
+extern u8 gWasSuspended __asm__("D_8009F680");
+extern s32 gFrameDelta __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gScreenResetFlag __asm__("D_8009FA70");
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 
 /* Incomplete array type keeps this out of small data, so the compiler has to
    materialise the base address with lui/addiu like the retail code does. */
-extern u8 *D_8009FA58[];
+extern u8 *gPlayerEntities[] __asm__("D_8009FA58");
 
 extern void func_80029C34(void);
 extern void func_80047088(s32 arg0, void *object);
@@ -46,7 +46,7 @@ void func_80027D9C(void)
     u8 *object;
     register u8 **slot __asm__("$16");
 
-    if (gMenuModeFlag != 0) {
+    if (gWasSuspended != 0) {
         goto tail;
     }
 
@@ -60,7 +60,7 @@ void func_80027D9C(void)
         goto tail;
     }
 
-    gScreenResetFlag = gScreenResetFlag - gFrameId;
+    gScreenResetFlag = gScreenResetFlag - gFrameDelta;
 
     if (gScreenResetFlag > 0) {
         goto tail;
@@ -69,7 +69,7 @@ void func_80027D9C(void)
     gScreenResetFlag = -1;
 
     if (gGameSession->unk5C == 1) {
-        for (i = 0, slot = D_8009FA58; i < 2; i++) {
+        for (i = 0, slot = gPlayerEntities; i < 2; i++) {
             object = *slot;
 
             if (object != 0) {

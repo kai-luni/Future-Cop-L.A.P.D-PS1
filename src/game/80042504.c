@@ -30,7 +30,7 @@ struct Unk42504Object {
     s32 words[8];
 };
 
-extern void func_8002AD58(s32 kind);
+extern void gEntityBaseHandler(s32 kind) __asm__("func_8002AD58");
 
 /**
  *  @brief Initializes an object from its spawn definition.
@@ -57,7 +57,7 @@ s32 func_80042504(s32 message, struct Unk42504Object *object, struct Unk42504Spa
     struct Unk42504Def *def;
     s32 i;
 
-    func_8002AD58(2);
+    gEntityBaseHandler(2);
     object->flags |= 0x20000D;
     def = spawn->def;
     object->valueA0 = def->value24;

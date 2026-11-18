@@ -31,8 +31,8 @@ struct Unk5678C {
 
 extern struct Unk5678COffset gViewPresetTable[] __asm__("D_8009AD08");
 
-extern void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
-                          s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8);
+extern void gComputeCameraEye(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
+                          s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8) __asm__("func_8005612C");
 extern void gSetCameraRotation(s32 angle, s32 pitch, s32 arg2) __asm__("func_80017860");
 extern void gSetCameraPosition(s32 *out) __asm__("func_800177AC");
 void gPlaceCameraFromPreset(struct Unk5678C *object, s32 index, s32 *out, s32 apply) __asm__("func_8005678C");
@@ -76,7 +76,7 @@ void gPlaceCameraFromPreset(struct Unk5678C *object, s32 index, s32 *out, s32 ap
     heading = object->heading;
     position = object->position;
     offset = &gViewPresetTable[index];
-    func_8005612C(&position, heading, heading + offset->angle, offset->pitch,
+    gComputeCameraEye(&position, heading, heading + offset->angle, offset->pitch,
                   offset->distance, offset->data, out, object->info->unkA8,
                   object->info->unkBC);
     if (apply) {

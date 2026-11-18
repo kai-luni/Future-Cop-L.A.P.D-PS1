@@ -65,14 +65,16 @@ struct Arg1 {
     struct Weapon *weapon;
 };
 
-extern s32 func_8002AD58(s32 message, struct Self *self, struct Arg1 *arg1, s32 arg2);
+extern s32 gEntityBaseHandler(s32 message, struct Self *self, struct Arg1 *arg1, s32 arg2) __asm__("func_8002AD58");
 extern s32 func_80067684(struct Vec3s32 *pos, s32 sel);
-extern s32 func_80066F78(struct Vec3s32 *pos, struct Vec3s32 *out, s32 a2, s32 a3);
+extern s32 gGetGroundHeight(struct Vec3s32 *pos, struct Vec3s32 *out, s32 a2, s32 a3) __asm__("func_80066F78");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void func_800192AC(struct Vec3s32 *first, struct Vec3s32 *second, struct Basis *basis);
-extern void func_80044988(u8 *data, u8 *track, u8 forward, s32 index);
+extern void gSetAnimClipTable(u8 *data, u8 *track, u8 forward, s32 index) __asm__("func_80044988");
 extern void gGteLoadMatrix(struct Basis *basis) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(u8 *ptr, u8 *unk5C, s32 a2) __asm__("func_80010234");
+s32 gInitType11Entity(struct Self *self, struct Arg1 *arg1, s32 arg2) __asm__("func_8002DC94");
+
 
 /**
  * @brief Spawn initializer for a weapon-derived object: reads the weapon
@@ -103,21 +105,18 @@ extern void gGteTransformVerticesWide(u8 *ptr, u8 *unk5C, s32 a2) __asm__("func_
  * func_8002DEA8.
  *
  * @par Environment path
- * Spawn initializer for a weapon-derived entity: it remaps weapon mode 0x18
- * to 0xB, selects one of two field sets (the alternate one also sets the flag
- * word to (flags | 0x11) & 0xFFEFDEF7), runs the base initializer
- * func_8002AD58(2, ...), maps the mode to a terrain selector and sets pos.y
- * from func_80067684 plus a base height. When the flag bit is set it refines
- * the height with func_80066F78 and builds a slope-aligned basis through
- * func_800192AC from the (cos, 0, sin) direction produced by gSinCos,
- * otherwise it writes the explicit yaw matrix into the instance basis. It
- * finishes by starting the animation track (func_80044988), loading the basis
- * with gGteLoadMatrix and transforming one frame vertex with
- * gGteTransformVerticesWide. That GTE work prepares state the submit consumes
- * later, so the unit is placement rather than drawing; it is called only from
- * message 2 of func_8002DEA8 (src/game/8002DEA8.c:67) and reads no global.
+ * Spawn initializer of the type-11 entity, called only from message 2 of
+ * func_8002DEA8. It remaps spawn mode 0x18 to 0xB, runs the base initializer
+ * func_8002AD58(2, ...), and for modes 8, 0x21 and 0x24 takes the alternate
+ * field set and sets the flag word to (flags | 0x11) & 0xFFEFDEF7. It maps
+ * the terrain type to a selector, sets pos.y from func_80067684 plus the base
+ * height, and either refines the height with func_80066F78 and builds a
+ * slope-aligned basis with func_800192AC, or writes a plain yaw basis. It
+ * finishes by starting the animation track (func_80044988), transforming one
+ * frame vertex with gGteLoadMatrix and gGteTransformVerticesWide and clearing
+ * the child pointer at +0xB4.
  */
-s32 func_8002DC94(struct Self *self, struct Arg1 *arg1, s32 arg2)
+s32 gInitType11Entity(struct Self *self, struct Arg1 *arg1, s32 arg2)
 {
     struct Weapon *w;
     s32 mode;
@@ -138,14 +137,14 @@ s32 func_8002DC94(struct Self *self, struct Arg1 *arg1, s32 arg2)
     }
     mode = w->mode;
     if (mode == 8 || mode == 0x21 || mode == 0x24) {
-        func_8002AD58(2, self, arg1, arg2);
+        gEntityBaseHandler(2, self, arg1, arg2);
         self->flags = (self->flags | 0x11) & 0xFFEFDEF7;
         mode = w->unk34;
         flag = w->unk44;
         base = w->unk3A << 4;
         angle = w->unk46;
     } else {
-        func_8002AD58(2, self, arg1, arg2);
+        gEntityBaseHandler(2, self, arg1, arg2);
         mode = w->unk24;
         base = w->unk28;
         flag = w->unk25;
@@ -162,7 +161,7 @@ s32 func_8002DC94(struct Self *self, struct Arg1 *arg1, s32 arg2)
     }
     self->pos.y = func_80067684(&self->pos, sel) + base;
     if (flag & 1) {
-        self->pos.y = func_80066F78(&self->pos, &out, 0, 0) + base;
+        self->pos.y = gGetGroundHeight(&self->pos, &out, 0, 0) + base;
         gSinCos(angle, &sine, &cosine);
         vec.x = cosine;
         vec.y = 0;
@@ -181,7 +180,7 @@ s32 func_8002DC94(struct Self *self, struct Arg1 *arg1, s32 arg2)
         self->inst.basis.rows[0].z = -sine2;
     }
     if (self->inst.model->anim != 0) {
-        func_80044988(self->inst.model->anim, self->animTrack, 1, 0);
+        gSetAnimClipTable(self->inst.model->anim, self->animTrack, 1, 0);
     }
     gGteLoadMatrix(&self->inst.basis);
     gGteTransformVerticesWide(self->inst.model->unk34 + (((s32)self->unk70 << 4) + 8), self->unk5C, 1);

@@ -1,7 +1,7 @@
 // Categories: Resources > Memory Management | Platform > CD-ROM
 #include "game/types.h"
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Default mode-2 memory allocator wrapper registered by the file/CD layer.
@@ -28,5 +28,5 @@ extern void *func_80017EBC(s32 size, s32 tag);
  */
 void *func_8001CDD0(s32 size)
 {
-    return func_80017EBC(size, 2);
+    return gAllocMemory(size, 2);
 }

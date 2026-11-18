@@ -73,8 +73,8 @@ struct PlayerFA58 {
 };
 
 extern struct GlobalFA94 *gGameSession __asm__("D_8009FA94");
-extern struct PlayerFA58 *D_8009FA58;
-extern u16 gFrameId __asm__("D_8009F9FC");
+extern struct PlayerFA58 *gPlayerEntities __asm__("D_8009FA58");
+extern u16 gFrameDelta __asm__("D_8009F9FC");
 extern void *jtbl_80011318[];
 
 extern s32 func_80019668(void);
@@ -147,7 +147,7 @@ case_4:
     }
     {
         register s32 diff __asm__("$2");
-        diff = a1->unk100 - gFrameId;
+        diff = a1->unk100 - gFrameDelta;
         a1->unk100 = diff;
         if ((s16)diff > 0) {
             return 0;
@@ -161,7 +161,7 @@ case_9:
     if (p == 0) {
         goto case_default;
     }
-    q = D_8009FA58;
+    q = gPlayerEntities;
     lhs = p->unk14;
     goto cmp_ptr;
 
@@ -170,7 +170,7 @@ case_14:
     if (a2 == 0) {
         goto case_default;
     }
-    q = D_8009FA58;
+    q = gPlayerEntities;
     lhs = q->unk14;
     rhs = a2->unk00;
     goto cmp_val;
@@ -179,7 +179,7 @@ case_11:
     if (a2 == 0) {
         goto case_default;
     }
-    q = D_8009FA58;
+    q = gPlayerEntities;
     lhs = a2->unk14;
 
 cmp_ptr:

@@ -4,7 +4,7 @@
 extern u32 D_8009F7C0[2];
 extern u32 func_8001E620(u32 profile);
 extern s32 func_8005908C(s32 arg0);
-extern s32 func_8002AD58();
+extern s32 gEntityBaseHandler() __asm__("func_8002AD58");
 
 /**
  *  @brief Refreshes two stored profile values.

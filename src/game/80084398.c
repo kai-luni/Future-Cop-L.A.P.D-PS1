@@ -39,10 +39,10 @@ struct Slot {
 
 extern struct Slot *gBucketArray __asm__("D_8009F938");
 extern s32 gMissionGridWidth __asm__("D_8009F93C");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern s32 func_800196C4(void);
-extern void func_800175F8(struct Obj *o, s32 frame);
+extern void gSetModelFrame(struct Obj *o, s32 frame) __asm__("func_800175F8");
 extern void gSinCos(s32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
@@ -148,13 +148,13 @@ void gDrawCellWindowModels(s32 x, s32 y, u32 *p)
             }
             do {
                 if (!(o->flags & 0x10)) {
-                    t = gDiscShadeByte;
+                    t = gFrameTime;
                     gBucketArray[idx].unk04 = t;
                     if (mask & o->unk4E) {
                         if (!(o->flags & 8) && o->unk4D != 0) {
                             if (o->flags & 0x20) {
                                 s = o->unk48;
-                                w = o->unk4D - (*(u8 *)&gDiscShadeByte & 7);
+                                w = o->unk4D - (*(u8 *)&gFrameTime & 7);
                                 o->unk4D = w;
                                 if ((u8)(w - 1) < 0xF0) {
                                 } else {
@@ -178,15 +178,15 @@ void gDrawCellWindowModels(s32 x, s32 y, u32 *p)
                                 s = ((u32)t % (o->unk4D * o->model->frames)) / o->unk4D;
                             }
                             if (s != o->unk48) {
-                                func_800175F8(o, s);
+                                gSetModelFrame(o, s);
                             }
                         }
                         d = o->unk56;
                         if (d != 0) {
                             if (d >= 0) {
-                                e = ((gDiscShadeByte & 0xFFF) * d) & 0xFFF;
+                                e = ((gFrameTime & 0xFFF) * d) & 0xFFF;
                             } else {
-                                e = ~((gDiscShadeByte & 0xFFF) * -d) & 0xFFF;
+                                e = ~((gFrameTime & 0xFFF) * -d) & 0xFFF;
                             }
                             if (o->flags & 0x80) {
                                 m = o->unk52;

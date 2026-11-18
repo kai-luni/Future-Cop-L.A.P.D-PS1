@@ -19,7 +19,7 @@ extern s32 func_8001A7AC(s32 *v);
 extern void func_8001ABE0(s32 scale, s32 *v);
 extern s32 func_80052550(u8 *o, s32 *v);
 extern void func_8006943C(s32 *p);
-extern s32 func_80066F78(s32 *a, s32 *b, s32 *c, s32 *d);
+extern s32 gGetGroundHeight(s32 *a, s32 *b, s32 *c, s32 *d) __asm__("func_80066F78");
 extern void func_80053514(u8 *o, s32 a);
 extern void func_80053188(u8 *o, s32 a);
 extern s32 func_80052F54(u8 *o);
@@ -27,6 +27,8 @@ extern void func_8001AD20(s32 *a, s32 *b, s32 *c);
 extern s32 func_8005220C(u8 *o);
 extern void func_80052708(u8 *o, s32 a);
 extern s32 func_8001A314(s32 *v);
+s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags) __asm__("func_80053A74");
+
 
 /**
  * @brief Runs the hover-form physics tick: drive mode and steering from the
@@ -127,18 +129,20 @@ extern s32 func_8001A314(s32 *v);
  * func_80055988, the form dispatcher, when state +0xAD is 1.
  *
  * @par Environment path
- * The hover/vehicle drive tick of the player: it polls the controller with
- * func_800538C8, maps the input flags onto eight drive modes plus 0x13, ramps
- * the throttle at +0xDC and the bank angle at +0xC2, applies thrust through
- * func_800537D0 and expresses it in world space with func_80010974, then
- * integrates velocity, applies gravity and the horizontal speed limit, moves
- * the position, clamps it with func_8006943C and snaps to the ground through
- * func_80066F78, func_80053514 and func_80053188 before publishing direction
- * and speed at +0x78/+0x84. Its only caller is the form dispatcher
- * func_80055988, when state +0xAD is 1. Not on the render path: it is local
- * physics and writes no packet, no GTE matrix and no camera.
+ * Drive integrator of the player unit in form 1 (state + 0xAD == 1, the hover
+ * form in the caller's documentation); its only caller is func_80055988. It
+ * reads the stick with func_800538C8, maps the direction flags to a drive
+ * mode in +0xBB (1..8 or 0x13, plus strafe bits 0x20/0x40) and selects the
+ * animation through func_800471C4, counting an idle timer at state + 0xDC up
+ * to 0x800 while no mode is active. For each sub-step it sets the bank value
+ * at state + 0xC2 from the stick, computes thrust with func_800537D0,
+ * re-orthogonalises the basis with two cross products (func_80010974),
+ * integrates and limits velocity, moves and clamps the position
+ * (func_8006943C) and handles ground contact through func_80066F78,
+ * func_80053514 and func_80053188. At the end it publishes the direction at
+ * +0x78 and the speed at +0x84.
  */
-s32 func_80053A74(u8 *o_, s32 dt, s32 n_, u32 flags)
+s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags)
 {
     Vec3 v18;
     Vec3 v28;
@@ -436,7 +440,7 @@ s32 func_80053A74(u8 *o_, s32 dt, s32 n_, u32 flags)
             v28.z = *(s32 *)(o + 0x58);
             {
                 s32 s0v;
-                s0v = func_80066F78(s5, (s32 *)(s + 0x168), &v60, &v64) + *(s16 *)(o + 0xF2);
+                s0v = gGetGroundHeight(s5, (s32 *)(s + 0x168), &v60, &v64) + *(s16 *)(o + 0xF2);
                 func_80053514(o, v64);
                 *(u8 *)(*(u8 **)(o + 0xAC) + 0x147) = 0;
                 *(u8 *)(*(u8 **)(o + 0xAC) + 0x146) = 0;
@@ -465,7 +469,7 @@ s32 func_80053A74(u8 *o_, s32 dt, s32 n_, u32 flags)
                     v28.x = v38.x;
                     v28.y = v38.y + 0xCCC;
                     v28.z = v38.z;
-                    vv = func_80066F78(s5, 0, &v68, &v6C);
+                    vv = gGetGroundHeight(s5, 0, &v68, &v6C);
                     if (*(s32 *)(o + 0x54) < vv || *(s32 *)(o + 0x54) - s0v < 0x333) {
                         *(Vec3 *)(o + 0x50) = v38;
                         v68 &= ~0xC0;

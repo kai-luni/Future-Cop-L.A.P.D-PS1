@@ -3,7 +3,7 @@
 
 extern void *gReciprocalTablePtr __asm__("D_8009F5B0");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Frees the 1024-entry reciprocal table built at boot.
@@ -32,6 +32,6 @@ void gFreeReciprocalTable(void) __asm__("func_800198DC");
 void gFreeReciprocalTable(void)
 {
     if (gReciprocalTablePtr != 0) {
-        func_800181D4(gReciprocalTablePtr);
+        gFreeBlock(gReciprocalTablePtr);
     }
 }

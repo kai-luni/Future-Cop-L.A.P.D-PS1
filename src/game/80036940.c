@@ -79,7 +79,7 @@ struct Entity {
     struct Vec3s32 unkC8;
 };
 
-extern void func_8002AD58(s32 message, struct Entity *self, struct EntitySpawn *other, s32 arg3);
+extern void gEntityBaseHandler(s32 message, struct Entity *self, struct EntitySpawn *other, s32 arg3) __asm__("func_8002AD58");
 extern void func_80013BD8(struct ModelInstance *instance, void *model, s32 options);
 
 /**
@@ -113,7 +113,7 @@ void func_80036940(struct Entity *self, struct EntitySpawn *other, s32 arg2)
 {
     struct EntityData *data;
 
-    func_8002AD58(2, self, other, arg2);
+    gEntityBaseHandler(2, self, other, arg2);
     data = other->unk08;
 
     self->unk20 = data->unk48;

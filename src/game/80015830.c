@@ -4,6 +4,8 @@ typedef struct { s16 x,y,z,pad; } Point;
 typedef struct { u8 pad[4]; u8 a,b,c,d; } Input;
 typedef struct { s16 xy[8]; s32 z; } Output;
 extern Point *gPartVertexBuffer __asm__("D_8009F578");
+s32 gBuildLineQuad(Input *in, Output *out, s16 *width) __asm__("func_80015830");
+
 extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
 /**
  * @brief Builds the screen-space quad of a type-7 model part: two projected
@@ -62,7 +64,7 @@ extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
  * gDrawModelInstanceParts (func_80016A64), so it is part-geometry preparation
  * on the model render path.
  */
-s32 func_80015830(Input *in, Output *out, s16 *width)
+s32 gBuildLineQuad(Input *in, Output *out, s16 *width)
 {
     register Point *p __asm__("$9");
     register Point *q __asm__("$10");

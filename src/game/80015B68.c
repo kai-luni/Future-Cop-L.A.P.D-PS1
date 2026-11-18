@@ -67,8 +67,8 @@ extern Vertex *gPartVertexBuffer __asm__("D_8009F578");
 extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
 
 extern s32 gEmitFrontFacingTriangle(s32 origin, s32 first, s32 second, void *out) __asm__("func_80015AF4");
-extern s32 func_80015830(Part *part, Work *work, Arg2 *arg2, s32 arg3);
-extern void func_8001484C(Vertex *vtx, u32 a1, u32 a2, u16 a3, s32 a4, s32 a5, s32 a6);
+extern s32 gBuildLineQuad(Part *part, Work *work, Arg2 *arg2, s32 arg3) __asm__("func_80015830");
+extern void gEmitGouraudDisc(Vertex *vtx, u32 a1, u32 a2, u16 a3, s32 a4, s32 a5, s32 a6) __asm__("func_8001484C");
 s32 gPrepareModelPart(Part *part, Work *work, Arg2 *arg2, s32 arg3) __asm__("func_80015B68");
 
 
@@ -190,13 +190,13 @@ s32 gPrepareModelPart(Part *part, Work *work, Arg2 *arg2, s32 arg3)
         return 1;
 
     case 7:
-        return func_80015830(part, work, arg2, arg3);
+        return gBuildLineQuad(part, work, arg2, arg3);
 
     case 8:
         if (gClipFlagBuffer[part->u4.b.b4] & 1) {
             return 0;
         }
-        func_8001484C(&vtx[part->u4.b.b4], part->u4.w4, part->u8.w8, part->u0.h.h1, arg2->data[part->u8.b.b8], arg3, 0);
+        gEmitGouraudDisc(&vtx[part->u4.b.b4], part->u4.w4, part->u8.w8, part->u0.h.h1, arg2->data[part->u8.b.b8], arg3, 0);
         break;
     }
     return 0;

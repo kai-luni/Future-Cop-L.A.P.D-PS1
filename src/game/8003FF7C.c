@@ -65,7 +65,7 @@ extern struct Node *gNodeCList __asm__("D_8009F30C");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct TableEntry *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
-extern void func_800181D4(struct Node *node);
+extern void gFreeBlock(struct Node *node) __asm__("func_800181D4");
 extern s32 func_8001A100(s32 *vector);
 extern void func_8003FE0C(struct Node *node);
 extern void func_8003FE90(struct Node *node);
@@ -142,7 +142,7 @@ void func_8003FF7C(void)
                         gNodeCList = next;
                     }
                     node->next = 0;
-                    func_800181D4(node);
+                    gFreeBlock(node);
                     node = next;
                     continue;
                 }

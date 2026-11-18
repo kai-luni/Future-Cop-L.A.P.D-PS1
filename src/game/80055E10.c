@@ -24,7 +24,7 @@ struct Unk55E10 {
     struct Unk55E10Control *control;
 };
 
-extern void func_8005780C(u32 buttons, struct InputAction *action);
+extern void gDecodeButtonEdge(u32 buttons, struct InputAction *action) __asm__("func_8005780C");
 extern void func_8006C34C(struct Unk55E10 *object, s32 arg1);
 extern void gWeaponSlotUpdate(struct Unk55E10 *object, s32 arg1) __asm__("func_8006BA50");
 
@@ -62,9 +62,9 @@ void gWeaponSlotInput(struct Unk55E10 *object)
         return;
     }
     buttons = control->buttons;
-    func_8005780C(buttons, &control->special);
-    func_8005780C(control->buttons, &control->fire);
-    func_8005780C(control->buttons, &control->weapon);
+    gDecodeButtonEdge(buttons, &control->special);
+    gDecodeButtonEdge(control->buttons, &control->fire);
+    gDecodeButtonEdge(control->buttons, &control->weapon);
     if (control->fire.phase == 0) {
         func_8006C34C(object, 0);
     }

@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gPlayerCount __asm__("D_8009FA0C");
+s32 gTestFrustumFixedNear(s16 *point, s32 margin) __asm__("func_80019D90");
+
 
 /**
  * @brief Frustum visibility test for a point plus a safety margin, with a
@@ -36,7 +38,7 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
  * gDrawCellWindowObjects (func_8004A924:91) - and func_800597C0 both call it,
  * as does the effect unit func_80070158:129.
  */
-s32 func_80019D90(s16 *point, s32 margin)
+s32 gTestFrustumFixedNear(s16 *point, s32 margin)
 {
     s32 depth;
     s32 limit;

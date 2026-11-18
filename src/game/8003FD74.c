@@ -20,7 +20,7 @@ struct Unk3FD74Node {
 };
 
 extern struct Unk3FD74Node *gNodeCList __asm__("D_8009F30C");
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates and prepends a deferred spawn request node to the pending spawn list.
@@ -49,7 +49,7 @@ struct Unk3FD74Node *func_8003FD74(s32 type, s32 arg08,
 {
     struct Unk3FD74Node *node;
 
-    node = func_80017EBC(0x20, 1);
+    node = gAllocMemory(0x20, 1);
     if (node == 0) {
         return 0;
     }

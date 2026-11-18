@@ -21,7 +21,7 @@ extern void func_800379D4(s32 message, Object8002C3F0 *object, Data8002C3F0 *dat
 extern void func_8002BFB4(Object8002C3F0 *object, void *data);
 extern void func_8002AF94(s32 message, Object8002C3F0 *object, Data8002C3F0 *data);
 extern void func_80037B28(s32 message, Object8002C3F0 *object, Data8002C3F0 *data);
-extern s32 func_8002AD58(s32 message, Object8002C3F0 *object, Data8002C3F0 *data);
+extern s32 gEntityBaseHandler(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_8002AD58");
 extern void func_8002C174(Object8002C3F0 *object);
 extern void func_8002B784(Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3);
 extern s32 func_8002ACB4(Object8002C3F0 *object, s32 value);

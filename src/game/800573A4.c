@@ -109,13 +109,13 @@ extern struct UnkAD08 gViewPresetTable[] __asm__("D_8009AD08");
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern u8 gPresetEntryTable[] __asm__("D_8009AEC4");
 
-extern s32 func_800564A8(s16 pitch);
-extern s32 func_80066F78(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3);
+extern s32 gComputeBoomDistance(s16 pitch) __asm__("func_800564A8");
+extern s32 gGetGroundHeight(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
 extern void func_8005A070(u8 *object);
-extern s32 func_80017994(void);
+extern s32 gCreateCamera(void) __asm__("func_80017994");
 extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
-extern void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
-                          s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8);
+extern void gComputeCameraEye(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
+                          s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8) __asm__("func_8005612C");
 extern void gSetCameraRotation(s32 yaw, s32 pitch, s32 roll) __asm__("func_80017860");
 extern void gSetCameraPosition(struct Vec3s32 *position) __asm__("func_800177AC");
 void gResetActorAndPlaceView(struct Arg0 *arg0, struct Arg1 *arg1) __asm__("func_800573A4");
@@ -200,7 +200,7 @@ void gResetActorAndPlaceView(struct Arg0 *arg0, struct Arg1 *arg1)
         i = 0;
         p = &offset->distance;
         do {
-            *p = func_800564A8(*(s16 *)((u8 *)p - 2));
+            *p = gComputeBoomDistance(*(s16 *)((u8 *)p - 2));
             p += 5;
             i++;
         } while (i < 9);
@@ -247,7 +247,7 @@ void gResetActorAndPlaceView(struct Arg0 *arg0, struct Arg1 *arg1)
     entity->fieldAE = 0x384;
 
     arg1->position = arg0->position;
-    arg1->position.y = func_80066F78(&arg1->position, 0, 0, 0);
+    arg1->position.y = gGetGroundHeight(&arg1->position, 0, 0, 0);
 
     entity->field34 = 0x800000;
     entity->field4C = 0x1000000;
@@ -265,7 +265,7 @@ void gResetActorAndPlaceView(struct Arg0 *arg0, struct Arg1 *arg1)
     arg1->fieldBE = 0;
     arg1->fieldC0 = 0;
 
-    id = func_80017994();
+    id = gCreateCamera();
     entity->fieldAC = id;
     gSelectViewRecord((s8)id);
 
@@ -275,7 +275,7 @@ void gResetActorAndPlaceView(struct Arg0 *arg0, struct Arg1 *arg1)
 
     offset = &gViewPresetTable[(*(struct UnkAEC4 **)gPresetEntryTable)->index];
 
-    func_8005612C(&arg1->position, arg1->fieldB0,
+    gComputeCameraEye(&arg1->position, arg1->fieldB0,
                   arg1->fieldB0 + offset->angle, offset->pitch,
                   offset->distance, offset->data, (s32 *)&position,
                   entity->fieldA8, entity->fieldBC);

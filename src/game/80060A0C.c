@@ -51,7 +51,7 @@ struct Actor {
     struct ActorSub *unkAC;
 };
 
-extern struct Actor *D_8009FA58[];
+extern struct Actor *gPlayerEntities[] __asm__("D_8009FA58");
 extern struct Actor *actor0 __asm__("D_8009FA58");
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
@@ -97,14 +97,14 @@ s32 func_80060A0C(u32 state, s32 index)
     switch (state) {
     case 0x00011081:
     label_11081:
-        old = D_8009FA58[index]->unk1C;
-        D_8009FA58[index]->unk1C = D_8009FA58[index]->unk1E;
-        func_8005A0C4(&D_8009FA58[index]->unkAC->gauge,
-                      D_8009FA58[index]->unk1C,
-                      D_8009FA58[index]->unk1E);
-        if (D_8009FA58[index]->tableIndex != 0 &&
-            (D_8009FA58[index]->flags & 0x40000) == 0) {
-            func_8003BA50((struct Unk3BObject *)D_8009FA58[index], old);
+        old = gPlayerEntities[index]->unk1C;
+        gPlayerEntities[index]->unk1C = gPlayerEntities[index]->unk1E;
+        func_8005A0C4(&gPlayerEntities[index]->unkAC->gauge,
+                      gPlayerEntities[index]->unk1C,
+                      gPlayerEntities[index]->unk1E);
+        if (gPlayerEntities[index]->tableIndex != 0 &&
+            (gPlayerEntities[index]->flags & 0x40000) == 0) {
+            func_8003BA50((struct Unk3BObject *)gPlayerEntities[index], old);
         }
         break;
 
@@ -136,43 +136,43 @@ s32 func_80060A0C(u32 state, s32 index)
         break;
 
     case 0x01BD6EFD:
-        func_8006BE90(D_8009FA58[index], 0, -1, 0);
+        func_8006BE90(gPlayerEntities[index], 0, -1, 0);
         break;
 
     case 0x03449B84:
         offset = index * 4;
-        func_8006BE90(*(struct Actor **)((u32)D_8009FA58 + offset), 1, -1, 0);
+        func_8006BE90(*(struct Actor **)((u32)gPlayerEntities + offset), 1, -1, 0);
         break;
 
     case 0x0058E758:
-        func_8006BE90(D_8009FA58[index], 2, -1, 0);
+        func_8006BE90(gPlayerEntities[index], 2, -1, 0);
         break;
 
     case 0x032D496D:
-        func_8006BDFC(D_8009FA58[index], 0);
+        func_8006BDFC(gPlayerEntities[index], 0);
         break;
 
     case 0x004F464F:
         offset = index * 4;
-        func_8006BDFC(*(struct Actor **)((u32)D_8009FA58 + offset), 1);
+        func_8006BDFC(*(struct Actor **)((u32)gPlayerEntities + offset), 1);
         break;
 
     case 0x0063A563:
         offset = index * 4;
-        func_8006BDFC(*(struct Actor **)((u32)D_8009FA58 + offset), 2);
+        func_8006BDFC(*(struct Actor **)((u32)gPlayerEntities + offset), 2);
         break;
 
     case 0xFEDAE5DA:
         offset = index * 4;
-        (*(struct Actor **)((u32)D_8009FA58 + offset))->unkAC->unkDF |= 1;
+        (*(struct Actor **)((u32)gPlayerEntities + offset))->unkAC->unkDF |= 1;
         break;
 
     case 0x00F8F778:
-        gGameSession->unk64[D_8009FA58[index]->unkAC->unkC1] += 0xC8;
+        gGameSession->unk64[gPlayerEntities[index]->unkAC->unkC1] += 0xC8;
         break;
 
     case 0x0A9CF51C:
-        D_8009FA58[index]->unk1E = 0x7FFF;
+        gPlayerEntities[index]->unk1E = 0x7FFF;
         goto label_11081;
 
     default:

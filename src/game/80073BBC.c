@@ -15,8 +15,8 @@ struct Obj {
 };
 extern s32 func_8003C7B8(s32, struct Obj *, void *, s32);
 extern s32 func_8003C980(s32, struct Obj *, void *, s32);
-extern void *func_80017EBC(s32, s32);
-extern void func_800181D4(void *);
+extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
+extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void func_80070710(void *);
 extern void func_80073BA8(void *);
 extern void *func_80073500(void *, s32, s32, s32);
@@ -152,13 +152,13 @@ s32 func_80073BBC(s32 message, struct Obj *obj, void *arg2, s32 arg3)
         obj->effect = effect;
         return effect != 0;
     case 2:
-        copy = func_80017EBC(0x68, 1);
+        copy = gAllocMemory(0x68, 1);
         if (!copy) goto return0;
         *copy = *obj;
         return (s32)copy;
     case 10:
         if (obj->effect) func_80073BA8(obj->effect);
-        func_800181D4(obj);
+        gFreeBlock(obj);
         return 0;
     case 7:
         if (obj->def->flags4a & 0x10) obj->flags0f |= 1;

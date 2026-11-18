@@ -7,7 +7,7 @@ typedef struct {
 } Unk8008263C;
 
 extern Unk8008263C **gPublishedBlockPtr __asm__("D_8009F3F4");
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Files a type-tagged block into the 30-slot registry D_8009F3F4, or
@@ -54,7 +54,7 @@ void gRegisterPublishedBlock(Unk8008263C *arg)
         goto end;
     }
 call:
-    func_800181D4(arg);
+    gFreeBlock(arg);
 end:
     ;
 }

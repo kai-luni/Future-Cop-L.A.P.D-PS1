@@ -33,8 +33,8 @@ struct Unk3D240Transform {
 
 extern struct Unk3D240 *gNodeListHead __asm__("D_8009F320");
 
-extern void *func_80017EBC(s32 size, s32 tag);
-extern void func_800181D4(void *block);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_8003CF20(struct Unk3D240 *object);
 extern void func_8003D0F0(void *source, s32 a1, s32 a2, void *destination);
 
@@ -102,7 +102,7 @@ void func_8003D240(void)
         if (object->unk38 == 0 && object->unk04 != 0 &&
             *(s32 *)((u8 *)object->unk04 + 8) != object->unk08) {
             if (!(object->flags39 & 4)) {
-                object->unk34 = func_80017EBC(0x4C, 1);
+                object->unk34 = gAllocMemory(0x4C, 1);
                 if (object->unk34 != 0) {
                     *(struct Unk3D240 *)object->unk34 =
                         *(struct Unk3D240 *)((u8 *)object->unk04 + 0x28);
@@ -175,7 +175,7 @@ void func_8003D240(void)
             object->unk28 += object->unk34->unk28;
             object->unk2C += object->unk34->unk2C;
             object->unk30 += object->unk34->unk30;
-            func_800181D4(object->unk34);
+            gFreeBlock(object->unk34);
             object->unk34 = 0;
             object->unk38 = 1;
             object->flags39 = (object->flags39 & 0xF5) | 1;

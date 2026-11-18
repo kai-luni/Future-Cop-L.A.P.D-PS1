@@ -23,21 +23,19 @@
  * func_8003F4A0 (the render pass driver).
  *
  * @par Environment path
- * Places and emit one flagged object: the function returns immediately unless
- * bit 0x100 of the flags at +0x1A is set, otherwise func_8003D9C4 resolves
- * the mesh slot, the three deltas between the mesh origin and the reference
- * position are stored in the local frame and the bounding magnitude from
- * func_8001A100 is compared against 0x1FFFF to cull the object. It then loads
- * the camera rotation from gCamera + 0x28, transforms the deltas and the
- * local matrix with func_8001006C and func_80010750, picks the polygon word
- * and size from the object's flag bits, runs one rtps and appends two
- * primitives through gPacketCursor, rolling the cursor back by the reserved
- * primitive size (0x1C or 0x38) when the projected vertex fails the 320x240
- * screen test. This makes it a leaf of the scene renderer that builds
- * display-list packets itself, guarded by gPacketLimit. Its caller is the
- * layer pass func_800445B0 (src/game/800445B0.c:31), one of the passes
- * gRunViewScenePasses (func_8003F6E4, src/game/8003F6E4.c:89) runs with the
- * view position.
+ * Draws an object's point list as small screen-space rectangles. With flag
+ * 0x100 at +0x1A it resolves the mesh slot through func_8003D9C4, culls the
+ * object when func_8001A100 of its offset from the reference position exceeds
+ * 0x1FFFF, and builds the view matrix from the slot's matrix; without the
+ * flag it uses the object's own position at +0x28 and the camera rotation at
+ * gCamera + 0x28. In both cases the translation is made relative to the
+ * camera eye at gCamera + 0x7C and loaded into the GTE. Each point of the
+ * list at +0x68 is then projected with rtps and, when it lands inside 320x240
+ * and is deeper than 0x40, emitted from gPacketCursor as a 0x60 (opaque) or
+ * 0x62 (semi-transparent) TILE packet, optionally preceded by an 0xE1
+ * draw-mode packet chosen by flag bits at +0x8D; otherwise the cursor is
+ * rolled back by 0x1C or 0x38 bytes. Its caller is the list pass
+ * func_800445B0.
  */
 __asm__(
     ".set noreorder\n"

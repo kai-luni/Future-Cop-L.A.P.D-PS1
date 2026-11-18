@@ -14,13 +14,13 @@ extern u8 func_80060238(void *, s32, u8 *, s32, s32);
 extern void func_800448D8(void *, s32, s32, u8);
 extern void func_8005F6E8(void *, u8 *, u8 *, s32);
 extern void func_8002A810(u8 *, s32, s32);
-extern void func_800175F8(void *, s32);
-extern void func_8003802C(s32, u8 *, s32);
+extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
+extern void gUpdateFallMotion(s32, u8 *, s32) __asm__("func_8003802C");
 extern u8 func_8002B1DC(u8 *, s32, u8 *);
 extern s32 func_8001A100(s32 *);
 extern void func_8002B0EC(u8 *, s32);
-extern void func_8002B588(u8 *, s32, s32);
-extern void func_80037EB4(u8 *);
+extern void gTurnEntityToAngle(u8 *, s32, s32) __asm__("func_8002B588");
+extern void gOrientEntityBasis(u8 *) __asm__("func_80037EB4");
 extern void func_8002B1D0(u8 *);
 extern void func_8002B6C8(u8 *, u8 *, s32);
 extern void func_8002B1AC(u8 *);
@@ -151,7 +151,7 @@ void func_8002B784(u8 *obj, s32 step)
         }
         event >>= 6;
     }
-    func_800175F8(obj + 0x28, H(obj,0xD4));
+    gSetModelFrame(obj + 0x28, H(obj,0xD4));
     if (!B(obj,0x162) && (u32)(B(obj,0x15F) - 7) >= 2) {
         func_80060238(obj + 0xA0, step, obj, 0, 1);
     }
@@ -160,7 +160,7 @@ void func_8002B784(u8 *obj, s32 step)
             return;
         }
     }
-    func_8003802C(6, obj, step);
+    gUpdateFallMotion(6, obj, step);
     if (B(obj,0x15F) != 6 && H(obj,0xC0) == 0) {
         func_8002B1DC(obj, 6, 0);
     }
@@ -187,7 +187,7 @@ void func_8002B784(u8 *obj, s32 step)
             }
         } else if (H(obj,0x10E) > 0) {
             if (H(obj,0x15C) != H(obj,0x12A)) {
-                func_8002B588(obj, H(obj,0x12A), step);
+                gTurnEntityToAngle(obj, H(obj,0x12A), step);
                 difference = H(obj,0x15C);
                 __asm__ volatile ("" : "+r" (difference));
                 difference -= H(obj,0x12A);
@@ -199,7 +199,7 @@ void func_8002B784(u8 *obj, s32 step)
             } else {
                 F(obj,0x118) &= ~0x40;
                 W(obj,0x84) = 0;
-                func_80037EB4(obj);
+                gOrientEntityBasis(obj);
                 func_8002B0EC(obj, B(obj,0x165));
             }
         } else if (B(obj,0x15F) != 5) {

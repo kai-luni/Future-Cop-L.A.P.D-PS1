@@ -15,10 +15,12 @@ struct Object {
     u8 pad72[6];
     struct Vec3 position;
 };
-extern s32 func_8002AD58(s32, struct Object *, void *, void *);
+extern s32 gEntityBaseHandler(s32, struct Object *, void *, void *) __asm__("func_8002AD58");
 extern void func_80013BD8(void *, struct Model *, s32);
 extern void gGteLoadMatrix(struct Matrix *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
+void gInitFromSourceModel(struct Object *obj, struct Input *input, void *arg) __asm__("func_800317BC");
+
 
 /**
  * @brief Attaches a model to an entity and fetches its frame vertex.
@@ -40,21 +42,19 @@ extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_8001023
  * target keeps its own matrix.
  *
  * @par Environment path
- * Attaches a donor model to an entity: it forwards message 2 to
- * func_8002AD58, rebinds the model with func_80013BD8(&obj->model,
- * src->model, 0), copies the donor's nine-word matrix into the object,
- * mirrors its translation into the position field, loads the matrix with
- * gGteLoadMatrix and transforms one frame vertex into obj + 0x5C with
- * gGteTransformVerticesWide. The donor model and matrix come from
- * input->source, so the object keeps its own placement and only adopts the
- * model and its orientation. It is entity-side model setup, not a scene pass:
- * no global appears in the file and its only caller is the entity handler
- * func_8003190C (src/game/8003190C.c:50).
+ * Spawn helper of the entity class handled by func_8003190C (message 2): it
+ * forwards message 2 to func_8002AD58, rebinds the model with
+ * func_80013BD8(&obj->model, src->model, 0) and copies all nine words of the
+ * source's matrix into the object. Words 6..8 of that matrix are also copied
+ * into the position field, so the object takes over the source's placement as
+ * well as its model. It finishes by loading the matrix with gGteLoadMatrix
+ * and transforming one frame vertex into obj + 0x5C with
+ * gGteTransformVerticesWide. No global is used.
  */
-void func_800317BC(struct Object *obj, struct Input *input, void *arg)
+void gInitFromSourceModel(struct Object *obj, struct Input *input, void *arg)
 {
     struct Source *src;
-    func_8002AD58(2, obj, input, arg);
+    gEntityBaseHandler(2, obj, input, arg);
     src = input->source;
     func_80013BD8(&obj->model, src->model, 0);
     obj->matrix.v[0] = src->matrix->v[0];

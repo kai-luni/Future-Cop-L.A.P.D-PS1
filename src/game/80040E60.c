@@ -73,7 +73,7 @@ struct Unk40E60 {
 
 extern s32 gMessage10Counter __asm__("D_8009F318");
 extern u8 D_80040874[];
-extern void *func_80017EBC(s32, s32);
+extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void func_8003C14C(struct Unk40E60 *, struct Unk40E60Source *);
 extern void gBuildRotationMatrix(s32, s32, s32, struct Unk40E60Work *) __asm__("func_800188D0");
 extern void func_800403D0(void *);
@@ -104,7 +104,7 @@ void *func_80040E60(struct Unk40E60Source *src)
     if (gMessage10Counter >= 0x15F) {
         return 0;
     }
-    dest = func_80017EBC(0x98, 1);
+    dest = gAllocMemory(0x98, 1);
     if (dest == 0) {
         return 0;
     }

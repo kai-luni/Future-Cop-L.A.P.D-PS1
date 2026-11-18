@@ -15,21 +15,21 @@ struct Name {
 extern s32 gGlobalTick __asm__("D_8009F284");
 extern s32 gRequestListHead __asm__("D_8009F668");
 extern s32 gRequestListTail __asm__("D_8009F66C");
-extern u8 gMenuModeFlag __asm__("D_8009F680");
+extern u8 gWasSuspended __asm__("D_8009F680");
 extern s32 gMissionId __asm__("D_8009F684");
 extern s32 gMissionParam __asm__("D_8009F688");
 extern s32 gScratchBlockPtr __asm__("D_8009F68C");
-extern s32 gPauseInhibitFlag __asm__("D_8009FA24");
+extern s32 gGameSuspended __asm__("D_8009FA24");
 extern s32 gPanelSelection __asm__("D_8009FA6C");
 extern s32 gScreenResetFlag __asm__("D_8009FA70");
-extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
+extern s32 gDemoPlayback __asm__("D_8009FA84");
 extern struct Obj *gGameSession __asm__("D_8009FA94");
 extern s32 gPanelSoundIds __asm__("D_8009FAC0");
 
 extern s32 gSlotVoiceHandle[] __asm__("D_8009F678");
 extern s32 gSlotTrackId[] __asm__("D_8009FA78");
 extern struct Name D_80010DC0;
-extern void *gMissionWorkingSet __asm__("D_8009F9A0");
+extern void *gFocusPositions __asm__("D_8009F9A0");
 extern u8 gModuleNameBuffer[] __asm__("D_800A0B30");
 extern u8 gRandomTable[] __asm__("D_800A8540");
 extern s32 D_8009FA5C[];
@@ -116,7 +116,7 @@ void func_80024A24(s32 arg0)
     s32 target;
 
     gScratchBlockPtr = 0;
-    gMenuModeFlag = 0;
+    gWasSuspended = 0;
     {
         register s32 *p __asm__("$4");
         register s32 *q __asm__("$5");
@@ -145,10 +145,10 @@ void func_80024A24(s32 arg0)
     }
 
 call_init:
-    gMissionWorkingSet = 0;
+    gFocusPositions = 0;
     gMissionId = arg0;
     func_80017C68(0x168, 0x82, 0x118, 0x64, 0xFC, 0x145);
-    gPauseInhibitFlag = 0;
+    gGameSuspended = 0;
     gPanelSelection = 0;
     func_800860CC();
     func_8008CCB0(gModuleNameBuffer, arg0);
@@ -186,12 +186,12 @@ call_init:
     func_80019A64();
 
     seed = gGlobalTick;
-    v = gModuleLoadedFlag;
+    v = gDemoPlayback;
     if (v != 0) {
         if (v > 0) {
             gSeedPrng(seed);
             func_80056924();
-            v = gModuleLoadedFlag;
+            v = gDemoPlayback;
         }
         seed = ((v >> 31) + v) ^ (v >> 31);
         gMissionParam = seed;
@@ -214,7 +214,7 @@ call_init:
     func_800617D8();
     func_8004783C();
 
-    if (gModuleLoadedFlag != 0) {
+    if (gDemoPlayback != 0) {
         s32 flag = (gGameSession->unk0C == 2) ? 2 : 1;
 
         func_80059BFC(flag, gMissionParam, arg0);

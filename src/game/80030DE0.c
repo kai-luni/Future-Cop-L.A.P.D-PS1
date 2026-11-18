@@ -54,7 +54,7 @@ struct Entity {
     s16 unkB6;
 };
 
-extern s32 func_8002AD58(s32 message, struct Entity *self, struct Arg *arg, s32 arg3);
+extern s32 gEntityBaseHandler(s32 message, struct Entity *self, struct Arg *arg, s32 arg3) __asm__("func_8002AD58");
 extern s32 func_80095900(s32 arg0);
 extern s32 func_80067684(struct Vec3 *pos, s32 mode);
 
@@ -103,7 +103,7 @@ s32 func_80030DE0(struct Entity *self, struct Arg *arg, s32 arg2)
     s32 mode;
     s32 type;
 
-    func_8002AD58(2, self, arg, arg2);
+    gEntityBaseHandler(2, self, arg, arg2);
     def = arg->def;
 
     self->unk68 = (s16)def->unk24 << 4;

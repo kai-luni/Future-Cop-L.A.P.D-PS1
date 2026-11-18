@@ -72,19 +72,21 @@ struct Arg2_41C6C {
     struct Data41C6C *unk8;
 };
 
-extern struct Game41880 *D_8009FA58[2];
+extern struct Game41880 *gPlayerEntities[2] __asm__("D_8009FA58");
 
-extern void func_80041728(struct Obj41880 *arg0);
+extern void gRunEntityCommands(struct Obj41880 *arg0) __asm__("func_80041728");
 extern void func_800457B8(s32 arg0, s32 arg1);
 extern void func_80047284(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void gGteLoadMatrix(void *arg0) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__("func_80010234");
-extern void func_80041488(struct Obj41880 *arg0, s32 arg1, s32 arg2);
+extern void gInitElevator(struct Obj41880 *arg0, s32 arg1, s32 arg2) __asm__("func_80041488");
 extern void func_80063194(s32 arg0);
-extern s32 func_8002AD58(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern s32 gEntityBaseHandler(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8002AD58");
 extern void gBuildRotationMatrix(s32 arg0, s32 arg1, s32 arg2, void *arg3) __asm__("func_800188D0");
-extern s32 func_80066F78(void *arg0, s32 arg1, s32 arg2, s32 arg3);
+extern s32 gGetGroundHeight(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
 extern s32 func_8006314C(s32 arg0, u8 arg1);
+s32 gStepElevator(struct Obj41880 *arg0, s32 arg1) __asm__("func_80041880");
+
 
 /**
  * @brief Advances an entity along its waypoint sequence.
@@ -138,18 +140,19 @@ extern s32 func_8006314C(s32 arg0, u8 arg1);
  * func_80041B6C (sole direct caller).
  *
  * @par Environment path
- * Advances an entity along its waypoint sequence: the travelled word at +0x54
- * moves by the segment speed at +0xB8 or +0xBC, the stop index at +0xCA walks
- * the threshold array at +0xA0 and reverses the direction at either end, and
- * on an index change the distance snaps to the old threshold, the dwell timer
- * at +0xC0 restarts from +0xAC or a constant 1, and func_800457B8 or
- * func_80047284 may fire. The whole advance is gated by the timers and by a
- * check whether the entity is the current one of either player slot in
- * D_8009FA58 while that game's word at +0x40 is zero, and the tail always
- * loads the basis with func_80010750 and transforms one frame vertex with
- * func_80010234. The sole caller is func_80041B6C.
+ * Tick of a vertical lift object (sole caller func_80041B6C): after optional
+ * func_80041728 and the hold/delay gates, it checks whether either entry of
+ * the two-slot player table D_8009FA58 currently references this object at
+ * +0xC4 while that player's state word +0x40 is zero. It then moves the
+ * height +0x54 (y of the position at +0x50) up by +0xB8 or down by +0xBC per
+ * step, walks the stop index +0xCA over the height table at +0xA0 and
+ * reverses at either end; on a stop change it snaps to the stop height,
+ * restarts the dwell timer +0xC0 from the per-stop table +0xAC (or 1 when
+ * player-triggered) and may fire func_800457B8 and func_80047284. It always
+ * finishes by reloading the matrix with func_80010750 and transforming one
+ * frame vertex with func_80010234.
  */
-s32 func_80041880(struct Obj41880 *arg0, s32 arg1)
+s32 gStepElevator(struct Obj41880 *arg0, s32 arg1)
 {
     struct Game41880 *game;
     s32 i;
@@ -157,7 +160,7 @@ s32 func_80041880(struct Obj41880 *arg0, s32 arg1)
     s32 oldIndex;
 
     if (arg0->unk0C != 0) {
-        func_80041728(arg0);
+        gRunEntityCommands(arg0);
     }
     if (arg0->unkC6 & 2) {
         goto end;
@@ -171,7 +174,7 @@ s32 func_80041880(struct Obj41880 *arg0, s32 arg1)
     {
         register struct Game41880 **p __asm__("$4");
         i = 0;
-        p = D_8009FA58;
+        p = gPlayerEntities;
         for (; i < 2; i++, p++) {
             game = *p;
             if (game != 0 && arg0 == game->unkC4) {

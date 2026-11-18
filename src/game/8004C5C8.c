@@ -76,13 +76,15 @@ extern struct Unk8009F9E4 *gCamera __asm__("D_8009F9E4");
 
 extern s32 *func_8003D9C4(struct Node4C5C8 *node);
 extern s32 func_8001A100(s32 *vec);
-extern void func_80013AA0(s32 low, s32 high);
+extern void gSetModelUvOffset(s32 low, s32 high) __asm__("func_80013AA0");
 extern void gBuildRotationMatrix(s16 a, s16 b, s32 c, s32 *out) __asm__("func_800188D0");
 extern void gGteLoadRotation(s32 *p) __asm__("func_80010820");
 extern void gGteTransformWords(s32 *src, s32 *dst, s32 n) __asm__("func_8001006C");
 extern void gGteLoadMatrix(s32 *m) __asm__("func_80010750");
-extern void func_8001047C(struct Sub4C5C8 *sub, struct Work50 *w, u8 *out, u8 idx);
+extern void gProjectVertexBatch(struct Sub4C5C8 *sub, struct Work50 *w, u8 *out, u8 idx) __asm__("func_8001047C");
 extern void func_800172A8(s32 idx, u8 a1, s32 a2, struct Work50 *work);
+void gDrawDebrisFragments(struct Node4C5C8 *arg0, s32 *arg1) __asm__("func_8004C5C8");
+
 
 /**
  * @brief Walks one scene-node list and submits the attached parts of every node
@@ -159,20 +161,19 @@ extern void func_800172A8(s32 idx, u8 a1, s32 a2, struct Work50 *work);
  * func_80074104 with the same position triple.
  *
  * @par Environment path
- * Walks one scene-node list and submits the attached parts of every node
- * close enough to the reference point: it skips suppressed nodes (bit 8 at
- * +0x0F, bits 0x18 at +0x7B), culls with func_8001A100 against 0x1FFFF,
- * installs the per-object colour pair through func_80013AA0, and for each
- * part builds the rotation with gBuildRotationMatrix and makes it
- * camera-relative through gGteLoadRotation on gCamera + 0x28, two
- * gGteTransformWords calls and gGteLoadMatrix. func_8001047C then projects
- * the part's vertex list and writes one clip byte per vertex, and
- * func_800172A8 emits the polygon only when the clip test passes. It is a
- * full pass of the view scene: gRunViewScenePasses (func_8003F6E4,
- * src/game/8003F6E4.c:87) calls it with the view position triple, next to
- * func_8006E988, func_800445B0, func_80070158 and func_80074104.
+ * Draws the fragment polygons of the debris objects in one scene list.
+ * gRunViewScenePasses (func_8003F6E4) calls it with gListHeads bucket 4 and
+ * the view position. Nodes are skipped when bit 8 at +0x0F or bits 0x18 at
+ * +0x7B are set, or when func_8001A100 puts them more than 0x1FFFF from the
+ * view position, and an object's depth-cue pair is installed with
+ * func_80013AA0 while its fragments are drawn. For every fragment in the
+ * chain at +0x84 it builds the rotation from the fragment's two angles with
+ * gBuildRotationMatrix, makes it camera-relative against gCamera + 0x28 and
+ * the eye at +0x7C, projects the fragment's vertices with func_8001047C and
+ * emits the polygon with func_800172A8 when none of the tested clip bytes has
+ * bit 0 set.
  */
-void func_8004C5C8(struct Node4C5C8 *arg0, s32 *arg1)
+void gDrawDebrisFragments(struct Node4C5C8 *arg0, s32 *arg1)
 {
     struct Frame f;
     register struct Work50 *wp __asm__("$20");
@@ -210,7 +211,7 @@ void func_8004C5C8(struct Node4C5C8 *arg0, s32 *arg1)
         }
         obj = node->obj;
         if (obj != 0 && obj->unk40 != 0) {
-            func_80013AA0(((u8 *)obj)[0x40], ((u8 *)obj)[0x41]);
+            gSetModelUvOffset(((u8 *)obj)[0x40], ((u8 *)obj)[0x41]);
         }
         while (sub != 0) {
             idx = sub->unk28 & 0x7F;
@@ -228,7 +229,7 @@ void func_8004C5C8(struct Node4C5C8 *arg0, s32 *arg1)
             gGteTransformWords(f.vec, f.out34, 1);
             gGteTransformWords(f.buf78, f.mat, 3);
             gGteLoadMatrix(f.mat);
-            func_8001047C(sub, wp, f.out, idx);
+            gProjectVertexBatch(sub, wp, f.out, idx);
             if (!((f.out[0] | f.out[1] | f.out[2] | f.out[idx - 1]) & 1)) {
                 f.work.unk20 = sub->unk20;
                 func_800172A8(idx, sub->unk29, cur->unk80 + sub->unk2A, wp);
@@ -236,7 +237,7 @@ void func_8004C5C8(struct Node4C5C8 *arg0, s32 *arg1)
             sub = sub->unk48;
         }
         if (cur->obj != 0 && cur->obj->unk40 != 0) {
-            func_80013AA0(0, 0);
+            gSetModelUvOffset(0, 0);
         }
     }
 }

@@ -24,6 +24,8 @@ struct AnimTrack {
 
 extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction,
                                       u8 flags);
+void gSetAnimClipTable(u8 *data, struct AnimTrack *track, u8 forward, s32 index) __asm__("func_80044988");
+
 
 /**
  * @brief Installs an animation clip table on a track and starts the first
@@ -51,16 +53,15 @@ extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 di
  * func_8005920C.
  *
  * @par Environment path
- * Installs a clip table on an animation track: it stores the clip array at
- * data + 4 and the count from data[0], selects the first clip with
- * func_800448D8 in the requested direction and clears elapsed and flags,
- * while a null data pointer only clears the track. It is the reset used by
- * the spawn paths, among them func_8002C584, func_8002DAA4 in this batch,
- * func_8002DC94, gProjectileInit and func_800378BC. The unit holds no
- * graphics state at all, so it is an animation utility that feeds the
- * renderer's frame vertices rather than a render pass.
+ * Installs an animation clip table on a track: it stores the clip array at
+ * data + 4 and the clip count from data[0], selects the requested clip with
+ * func_800448D8 in the forward or backward direction and clears the elapsed
+ * time and flags; a null data pointer only clears the track's clip array. It
+ * is called from the object setup paths, among them func_8002C584,
+ * func_8002DAA4, func_8002DC94, func_80038754, func_800378BC and
+ * func_800579D4. It touches no graphics state.
  */
-void func_80044988(u8 *data, struct AnimTrack *track, u8 forward, s32 index)
+void gSetAnimClipTable(u8 *data, struct AnimTrack *track, u8 forward, s32 index)
 {
     if (data == 0) {
         track->clips = 0;

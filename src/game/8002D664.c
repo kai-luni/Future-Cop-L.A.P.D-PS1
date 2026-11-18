@@ -72,12 +72,12 @@ struct Unk2D664Entity {
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk2D664State *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct Unk2D664Menu *gGameSession __asm__("D_8009FA94");
-extern struct Unk2D664Player *D_8009FA58[2];
+extern struct Unk2D664Player *gPlayerEntities[2] __asm__("D_8009FA58");
 
-extern s32 func_8002AD58(s32 message, struct Unk2D664Obj *object, void *data,
-                         s32 arg3);
-extern void func_8002C584(struct Unk2D664Obj *obj, void *data, s32 arg2);
-extern s32 func_8002CC30(struct Unk2D664Obj *obj, void *data);
+extern s32 gEntityBaseHandler(s32 message, struct Unk2D664Obj *object, void *data,
+                         s32 arg3) __asm__("func_8002AD58");
+extern void gInitObjectFromDef(struct Unk2D664Obj *obj, void *data, s32 arg2) __asm__("func_8002C584");
+extern s32 gUpdatePropTick(struct Unk2D664Obj *obj, void *data) __asm__("func_8002CC30");
 extern void func_8002D1A0(struct Unk2D664Obj *obj, void *data);
 extern void func_80063194(s32 key);
 extern struct Unk2D664Entity *func_8004D664(s32 id);
@@ -122,10 +122,10 @@ s32 func_8002D664(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
     case 1:
         return 0x118;
     case 2:
-        func_8002C584(obj, arg2, arg3);
+        gInitObjectFromDef(obj, arg2, arg3);
         return 0;
     case 6:
-        return func_8002CC30(obj, arg2);
+        return gUpdatePropTick(obj, arg2);
     case 10:
         if (obj->unk16 == 0x24) {
             func_8002D1A0(obj, arg2);
@@ -138,7 +138,7 @@ s32 func_8002D664(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
     case 9:
     case 11:
     case 14:
-        func_8002AD58(message, obj, arg2, arg3);
+        gEntityBaseHandler(message, obj, arg2, arg3);
         if (obj->unk104 != 0) {
             if (obj->flags & 0x2000000) {
                 obj->unk104->flags |= 0x2000000;
@@ -180,7 +180,7 @@ s32 func_8002D664(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
                     (*(struct Unk2D664Menu **)0x8009FA94)->unk68++;
                     (*(struct Unk2D664Menu **)0x8009FA94)->unk80++;
                     __asm__ volatile ("" : : : "memory");
-                    D_8009FA58[0]->unkAC->unk10++;
+                    gPlayerEntities[0]->unkAC->unk10++;
                     p->unk134->unk18 = 0;
                     found = func_8004D664(obj->unk8C & 0x3FFFFFFF);
                     if (found != 0) {
@@ -190,7 +190,7 @@ s32 func_8002D664(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
                             (*(struct Unk2D664Menu **)(base - 0x56C))->unkE0 = 7;
                         }
                     }
-                    return func_8002AD58(message, obj, arg2, arg3);
+                    return gEntityBaseHandler(message, obj, arg2, arg3);
                 }
             }
             menu = (*(struct Unk2D664Menu **)0x8009FA94);
@@ -214,5 +214,5 @@ s32 func_8002D664(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
     default:
         break;
     }
-    return func_8002AD58(message, obj, arg2, arg3);
+    return gEntityBaseHandler(message, obj, arg2, arg3);
 }

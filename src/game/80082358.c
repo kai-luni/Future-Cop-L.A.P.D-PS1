@@ -15,7 +15,7 @@ extern u8 D_800120E0[];
 
 extern void gEncodeProfileNameGlyphs(u8 *arg0) __asm__("func_800822CC");
 extern u8 *func_8001E318(u8 *destination, u8 *source, u32 count);
-extern void func_800181D4(struct Node *node);
+extern void gFreeBlock(struct Node *node) __asm__("func_800181D4");
 
 /**
  *  @brief Extracts selected image and palette chunks from a tagged node.
@@ -99,5 +99,5 @@ void func_80082358(struct Node *node)
             gSaveProfileImage[0x920] = has_pl16;
         }
     }
-    func_800181D4(node);
+    gFreeBlock(node);
 }

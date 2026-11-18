@@ -22,7 +22,7 @@ struct Entity {
     s32 flags;
 };
 
-extern s32 func_80061CAC(struct Coord *coordA, struct Coord *coordB);
+extern s32 gTestPartPairHit(struct Coord *coordA, struct Coord *coordB) __asm__("func_80061CAC");
 extern void func_80058378(void *self, s32 amount, s32 source);
 extern void func_80051EB8(void *self, struct Coord *coordB, s32 ret, s32 flags);
 
@@ -88,7 +88,7 @@ s32 func_80052098(void *self, struct Coord *coordA, struct Coord *coordB, struct
         return 0;
     }
 
-    ret = func_80061CAC(coordA, coordB);
+    ret = gTestPartPairHit(coordA, coordB);
     if (ret == 0) {
         return 0;
     }

@@ -26,9 +26,11 @@ struct Node8003CF6C {
 extern struct Node8003CF6C *gNodeListHead __asm__("D_8009F320");
 
 extern s32 func_8001A100(s32 *vector);
-extern void func_80013AA0(s32 low, s32 high);
+extern void gSetModelUvOffset(s32 low, s32 high) __asm__("func_80013AA0");
 extern u8 gSubmitModelInstance(struct Obj8003CF6C *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
 extern void gDrawModelFrame(struct Obj8003CF6C *obj) __asm__("func_800164F4");
+void gDrawNodeListModels(s32 arg0) __asm__("func_8003CF6C");
+
 
 /**
  * @brief Walks the depth-cued object list and draws the visible nodes.
@@ -49,16 +51,16 @@ extern void gDrawModelFrame(struct Obj8003CF6C *obj) __asm__("func_800164F4");
  * the same render list.
  *
  * @par Environment path
- * Walks the object list at D_8009F320, skips nodes without an object or
- * without bit 1 of the flag byte at +0x39, and drops nodes whose radius test
- * against the passed origin exceeds 0x1FFFF. Each survivor is drawn by
- * gSubmitModelInstance (func_80017508), bracketed by func_80013AA0 calls that
- * install and clear the node's depth-cue pair, and gets gDrawModelFrame
- * (func_800164F4) afterwards when its object asks for it. It feeds the same
- * model submission path the environment grid uses, but it draws the entities
- * around the view rather than the region tiles.
+ * One of the scene passes of func_8003F6E4: it walks the node list
+ * D_8009F320, skips nodes without an object or without bit 1 of flag byte
+ * +0x39, and drops objects whose distance from the passed view position minus
+ * their radius exceeds 0x1FFFF (func_8001A100). Each survivor is submitted
+ * with gSubmitModelInstance (func_80017508); when the node's +0x40 half-word
+ * is non-zero, func_80013AA0 installs the node's UV offset bytes before the
+ * submit and resets it to (0, 0) afterwards, and objects with flag 0x10 at
+ * +0x4A are additionally drawn with gDrawModelFrame (func_800164F4).
  */
-void func_8003CF6C(s32 arg0)
+void gDrawNodeListModels(s32 arg0)
 {
     struct Node8003CF6C *node;
     s32 vec[3];
@@ -76,11 +78,11 @@ void func_8003CF6C(s32 arg0)
                 continue;
             }
             if (node->unk40 != 0) {
-                func_80013AA0(((u8 *)node)[0x40], ((u8 *)node)[0x41]);
+                gSetModelUvOffset(((u8 *)node)[0x40], ((u8 *)node)[0x41]);
             }
             gSubmitModelInstance(node->obj, &flags, node->unk42);
             if (node->unk40 != 0) {
-                func_80013AA0(0, 0);
+                gSetModelUvOffset(0, 0);
             }
             if (node->obj->flags4A & 0x10) {
                 gDrawModelFrame(node->obj);

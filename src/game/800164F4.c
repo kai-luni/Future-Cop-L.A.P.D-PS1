@@ -12,11 +12,11 @@ extern struct Camera *gCamera __asm__("D_8009F9E4");
 extern struct Packet *gPrimPoolNext __asm__("D_8009F9F0");
 extern struct Packet *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gScreenUvBase __asm__("D_8009FAA0");
-extern s32 func_80066F78(struct V32 *, s32, s32, void *);
+extern s32 gGetGroundHeight(struct V32 *, s32, s32, void *) __asm__("func_80066F78");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(struct V16 *, struct V32 *, s32) __asm__("func_80010234");
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
-extern s32 func_8001047C(struct V16 *, struct V16 *, u8 *, s32);
+extern s32 gProjectVertexBatch(struct V16 *, struct V16 *, u8 *, s32) __asm__("func_8001047C");
 void gDrawModelFrame(struct Obj *obj) __asm__("func_800164F4");
 
 
@@ -66,7 +66,7 @@ void gDrawModelFrame(struct Obj *obj)
 
     optional = 0;
     if (obj->flags & 0x20) optional = extra;
-    ground = func_80066F78(&obj->pos, 0, 0, optional);
+    ground = gGetGroundHeight(&obj->pos, 0, 0, optional);
     {
         register s32 distance __asm__("$2");
         distance = (s16)((obj->pos.y - ground) >> 4);
@@ -104,7 +104,7 @@ void gDrawModelFrame(struct Obj *obj)
         } while (++j < 5);
     }
     gGteLoadRotation(gCamera->matrix);
-    if (func_8001047C(p, p, codes, 5) & 0x1c66000) return;
+    if (gProjectVertexBatch(p, p, codes, 5) & 0x1c66000) return;
     t = codes[0] | codes[1] | codes[2] | codes[3];
     if (t & 1) return;
     if (t != 0xc0) return;

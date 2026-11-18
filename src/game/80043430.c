@@ -82,7 +82,7 @@ typedef struct {
 
 extern void func_8003C14C(Obj43430 *p, Def43430 *src);
 extern s32 func_80017B88(void);
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, s32 *out) __asm__("func_800188D0");
 extern void func_80043250(Obj43430 *p);
 
@@ -185,7 +185,7 @@ u8 func_80043430(Obj43430 *p, Def43430 *src)
     p->unk78 = ((matrix[7] >> 4) * src->unk42) >> 12;
     p->unk7A = ((matrix[8] >> 4) * src->unk42) >> 12;
 
-    p->unk6C = func_80017EBC(p->unk8A * 0x1C, 1);
+    p->unk6C = gAllocMemory(p->unk8A * 0x1C, 1);
     if (p->unk6C == 0) {
         return 0;
     }
@@ -204,7 +204,7 @@ u8 func_80043430(Obj43430 *p, Def43430 *src)
     func_80043250(p);
 
     if (p->unk88 < p->unk8A) {
-        p->unkA8 = func_80017EBC(p->unk88 * 0x1C, 1);
+        p->unkA8 = gAllocMemory(p->unk88 * 0x1C, 1);
     } else {
         p->unkA8 = 0;
     }

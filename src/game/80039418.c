@@ -55,7 +55,7 @@ struct Request {
 };
 
 extern void func_80039298();
-extern void func_80017668(u8 *coord, s32 part, struct Vec3s32 *out);
+extern void gTransformPartVertex(u8 *coord, s32 part, struct Vec3s32 *out) __asm__("func_80017668");
 extern void *gSpawnQueuedEntity(struct Request *request) __asm__("func_8004D444");
 
 /**
@@ -114,6 +114,6 @@ void *func_80039418(struct Object *object, s32 arg1, s16 arg2, s32 arg3, u8 arg4
     args.unk1F = object->unk19 & 0xF;
     args.unk22 = object->unk92;
     args.unk23 = object->unk93;
-    func_80017668(object->coord, arg3, &args.position);
+    gTransformPartVertex(object->coord, arg3, &args.position);
     return gSpawnQueuedEntity(&request);
 }

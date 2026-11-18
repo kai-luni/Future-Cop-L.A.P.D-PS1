@@ -5,7 +5,7 @@ extern void *gLevelVertexBlock __asm__("D_8009FA1C");
 extern void *gPartVertexBuffer __asm__("D_8009F578");
 extern void *gClipFlagBuffer __asm__("D_8009F57C");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Frees the three render scratch buffers allocated by func_80013A14.
@@ -32,7 +32,7 @@ extern void func_800181D4(void *block);
  */
 void func_80013AB4(void)
 {
-    func_800181D4(gLevelVertexBlock);
-    func_800181D4(gPartVertexBuffer);
-    func_800181D4(gClipFlagBuffer);
+    gFreeBlock(gLevelVertexBlock);
+    gFreeBlock(gPartVertexBuffer);
+    gFreeBlock(gClipFlagBuffer);
 }

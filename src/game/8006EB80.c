@@ -68,7 +68,7 @@ typedef struct {
 } Dest6EB80;
 
 extern u8 D_8006E814[];
-extern void *func_80017EBC(s32, s32);
+extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void func_8003C14C(Dest6EB80 *, Source6EB80 *);
 
 /**
@@ -101,7 +101,7 @@ void *func_8006EB80(Source6EB80 *src)
     register s32 initialTwenty __asm__("$6");
     register s32 initialFive __asm__("$3");
 
-    dest = func_80017EBC(0xA0, 1);
+    dest = gAllocMemory(0xA0, 1);
     if (dest == 0) {
         return 0;
     }

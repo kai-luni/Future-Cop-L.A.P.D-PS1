@@ -18,8 +18,8 @@ struct Unk5DFF0 {
     s8 flash;
 };
 
-extern void func_8006CB58(s32 model, u8 *coord, s32 size, s32 arg3, s32 arg4, s32 arg5,
-                          s32 red, s32 green, s32 blue);
+extern void gDrawShadedModel(s32 model, u8 *coord, s32 size, s32 arg3, s32 arg4, s32 arg5,
+                          s32 red, s32 green, s32 blue) __asm__("func_8006CB58");
 
 /**
  * @brief Draws one effect model, using the flash colour while the flash counter
@@ -62,5 +62,5 @@ void func_8005DFF0(struct Unk5DFF0 *effect)
         green = effect->baseGreen;
         blue = effect->baseBlue;
     }
-    func_8006CB58(effect->model, effect->coord, effect->size, 0, 0, 0, red, green, blue);
+    gDrawShadedModel(effect->model, effect->coord, effect->size, 0, 0, 0, red, green, blue);
 }

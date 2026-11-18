@@ -7,7 +7,7 @@ struct Pool {
     void *free;
 };
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates and initializes a fixed-stride intrusive free-list pool.
@@ -35,7 +35,7 @@ s32 func_8003BE2C(struct Pool *pool, s32 size, s32 count)
 {
     s32 i;
 
-    pool->storage = func_80017EBC(size * count, 1);
+    pool->storage = gAllocMemory(size * count, 1);
     if (pool->storage == 0) {
         return 0;
     }

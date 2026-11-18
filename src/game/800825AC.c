@@ -14,7 +14,7 @@ typedef struct Unk824CCObject {
 extern Unk824CCObject *gSpriteAtlasBlock __asm__("D_8009F460");
 extern Unk824CCHeader *gAtlasTable __asm__("D_8009F45C");
 
-extern void func_800181D4(Unk824CCObject *object);
+extern void gFreeBlock(Unk824CCObject *object) __asm__("func_800181D4");
 
 /**
  * @brief Registers and validates the loaded 2D texture atlas header resource.
@@ -51,7 +51,7 @@ void func_800825AC(Unk824CCObject *object)
     Unk824CCHeader *header;
 
     if (gSpriteAtlasBlock != 0) {
-        func_800181D4(gSpriteAtlasBlock);
+        gFreeBlock(gSpriteAtlasBlock);
     }
     header = object->header;
     gSpriteAtlasBlock = object;
@@ -60,7 +60,7 @@ void func_800825AC(Unk824CCObject *object)
         flag = 1;
     }
     if (flag != 0) {
-        func_800181D4(gSpriteAtlasBlock);
+        gFreeBlock(gSpriteAtlasBlock);
         gSpriteAtlasBlock = 0;
         gAtlasTable = 0;
     }

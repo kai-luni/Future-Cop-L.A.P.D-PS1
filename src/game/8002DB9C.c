@@ -17,10 +17,10 @@ struct Data {
     u8 unk16;
 };
 
-extern s32 func_8002DAA4(struct Object *, void *, s32);
-extern s32 func_8002AD58(s32, struct Object *, struct Data *, s32);
+extern s32 gInitGroundObject(struct Object *, void *, s32) __asm__("func_8002DAA4");
+extern s32 gEntityBaseHandler(s32, struct Object *, struct Data *, s32) __asm__("func_8002AD58");
 extern void func_80044B34(struct Object *, void *, void *, s32);
-extern void func_800175F8(void *, s32);
+extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 
 /**
  * @brief Message handler of object type 13: spawn, animation tick and a
@@ -58,7 +58,7 @@ s32 func_8002DB9C(s32 message, struct Object *object, struct Data *data, s32 arg
     case 1:
         return 0xB4;
     case 2:
-        return func_8002DAA4(object, data, arg3);
+        return gInitGroundObject(object, data, arg3);
     case 9:
     case 14:
         return 0;
@@ -67,9 +67,9 @@ s32 func_8002DB9C(s32 message, struct Object *object, struct Data *data, s32 arg
     case 6:
         if (object->model->unk10 != 0) {
             func_80044B34(object, object->unkA0, data, 0);
-            func_800175F8(&object->model, object->unkAC);
+            gSetModelFrame(&object->model, object->unkAC);
         }
     default:
-        return func_8002AD58(message, object, data, arg3);
+        return gEntityBaseHandler(message, object, data, arg3);
     }
 }

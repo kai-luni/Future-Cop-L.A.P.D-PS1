@@ -1,8 +1,8 @@
 // Categories: Gameplay > Entity Script | Graphics > Model Renderer
 #include "game/types.h"
 
-extern void func_800317BC(void *, void *, void *);
-extern s32 func_8002AD58(s32, void *, void *, void *);
+extern void gInitFromSourceModel(void *, void *, void *) __asm__("func_800317BC");
+extern s32 gEntityBaseHandler(s32, void *, void *, void *) __asm__("func_8002AD58");
 
 /**
  * @brief Message table of the mountable-model entity class: size query, model
@@ -47,11 +47,11 @@ s32 func_8003190C(u32 message, void *object, void *data, void *arg)
     case 1:
         return 0xA0;
     case 2:
-        func_800317BC(object, data, arg);
+        gInitFromSourceModel(object, data, arg);
     case 4:
     case 6:
         return 0;
     default:
-        return func_8002AD58(message, object, data, arg);
+        return gEntityBaseHandler(message, object, data, arg);
     }
 }

@@ -58,7 +58,7 @@ struct Entity {
 
 extern struct Block *gDomeEffectBlock[4] __asm__("D_800A22F0");
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void *func_8006C84C(s32 arg0, s32 arg1);
 extern void func_8005CEA8(struct Sub *state);
 
@@ -104,7 +104,7 @@ struct Block *func_8005D3FC(struct Entity *ent, s32 idx)
     p = base;
     do {
         if (*p == 0) {
-            *p = func_80017EBC(0x1B0, 2);
+            *p = gAllocMemory(0x1B0, 2);
 
             if (ent->unk16 == 1) {
                 if (*(s16 *)(ent->unkAC + (idx << 1) + 0x8A) > 0) {

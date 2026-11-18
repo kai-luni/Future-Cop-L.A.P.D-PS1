@@ -3,9 +3,9 @@
 
 extern u8 gRampVariantTable[] __asm__("D_800A2630");
 extern u8 D_800A2730[];
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 
-extern s32 func_80018534(u32);
+extern s32 gSineLookup(u32) __asm__("func_80018534");
 void gBuildTilePattern(u32 input) __asm__("func_800654F8");
 
 
@@ -69,7 +69,7 @@ void gBuildTilePattern(u32 input)
         mode = (arg >> 24) & 15;
         shift = ((arg >> 20) & 15) + 8;
         p_tmp = arg >> 8;
-        base = gDiscShadeByte * (arg & 255);
+        base = gFrameTime * (arg & 255);
         phase = p_tmp & 255;
         mask = (0x1000 << n) - 1;
 
@@ -85,7 +85,7 @@ void gBuildTilePattern(u32 input)
 
                 a &= mask;
                 if (a < 0x1000) {
-                    value = func_80018534(a) >> shift;
+                    value = gSineLookup(a) >> shift;
                 }
                 value += phase;
                 value = value < 0 ? 0 : (value > 255 ? 255 : value);

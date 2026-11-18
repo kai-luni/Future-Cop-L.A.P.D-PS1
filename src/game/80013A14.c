@@ -10,11 +10,11 @@ struct Matrix {
 extern void *gLevelVertexBlock __asm__("D_8009FA1C");
 extern void *gPartVertexBuffer __asm__("D_8009F578");
 extern void *gClipFlagBuffer __asm__("D_8009F57C");
-extern s16 gDepthTagWord __asm__("D_8009F580");
+extern s16 gModelUvOffset __asm__("D_8009F580");
 
 extern void func_800959D0(s32 red, s32 green, s32 blue);
 extern void func_800959A0(struct Matrix *matrix);
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
  * @brief Sets the render background colour and allocates the three render
@@ -42,8 +42,8 @@ void func_80013A14(void)
     color.m[0][1] = color.m[0][2] = color.m[1][1] = color.m[1][2] = color.m[2][1] =
         color.m[2][2] = 0;
     func_800959A0(&color);
-    gLevelVertexBlock = func_80017EBC(0x400, 2);
-    gPartVertexBuffer = func_80017EBC(0x800, 2);
-    gClipFlagBuffer = func_80017EBC(0x100, 2);
-    gDepthTagWord = 0;
+    gLevelVertexBlock = gAllocMemory(0x400, 2);
+    gPartVertexBuffer = gAllocMemory(0x800, 2);
+    gClipFlagBuffer = gAllocMemory(0x100, 2);
+    gModelUvOffset = 0;
 }

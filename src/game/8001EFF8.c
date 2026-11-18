@@ -4,7 +4,7 @@
 extern  void (*gScreenModeHook)(void) __asm__("D_8009F99C");
 extern s32 gDisplaySetupToggle __asm__("D_8009F9CC");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
+extern s32 gGameClock __asm__("D_8009FA60");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 
@@ -45,7 +45,7 @@ void func_8001EFF8(void)
         gScreenModeHook();
     }
     if (gScreenState == 4 || gScreenState == 13) {
-        gPaletteCycleCounter += 5;
+        gGameClock += 5;
     }
     gFrameTickCounter += 5;
     if (gFrameBarrier != 0) {

@@ -23,7 +23,7 @@ extern s32 gPrimPoolNext __asm__("D_8009F9F0");
 extern s32 gPrimPoolEnd __asm__("D_8009FA28");
 extern s32 gPacketCursor __asm__("D_8009FA90");
 
-extern s32 func_80017EBC(s32, s32);
+extern s32 gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern u8 func_8001C034(void);
 extern void func_80093178(s32, s32);
 
@@ -90,19 +90,19 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     gNodeCapacity = 0x400;
     gNodeTableLength = arg1;
 
-    D_8009F5C8 = func_80017EBC(gFrameBlockCount * 0x34, 2);
+    D_8009F5C8 = gAllocMemory(gFrameBlockCount * 0x34, 2);
 
     allocationSize = gFrameBlockCount * 0x34;
-    D_8009F5CC = func_80017EBC(allocationSize, 2);
+    D_8009F5CC = gAllocMemory(allocationSize, 2);
 
     allocationSize = gNodeCapacity * 0x1C;
-    gRenderNodeTable = func_80017EBC(allocationSize, 2);
+    gRenderNodeTable = gAllocMemory(allocationSize, 2);
 
     allocationSize = gNodeCapacity * 0x1C;
-    gRenderNodeTableAlt = func_80017EBC(allocationSize, 2);
+    gRenderNodeTableAlt = gAllocMemory(allocationSize, 2);
 
-    D_8009F5D8 = func_80017EBC((arg1 + 2) * 4, 2);
-    D_8009F5DC = func_80017EBC((arg1 + 2) * 4, 2);
+    D_8009F5D8 = gAllocMemory((arg1 + 2) * 4, 2);
+    D_8009F5DC = gAllocMemory((arg1 + 2) * 4, 2);
 
     gNodeTableIndex = 0;
     gPrimPoolNext = D_8009F5C8;

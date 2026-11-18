@@ -72,14 +72,16 @@ struct Entity {
     u8 unk120[0x20];
 };
 
-extern s32 func_8002AD58(s32 message, struct Entity *self, struct Spawn *data, s32 arg3);
+extern s32 gEntityBaseHandler(s32 message, struct Entity *self, struct Spawn *data, s32 arg3) __asm__("func_8002AD58");
 extern s32 func_80067684(struct Vec3 *pos, s32 mode);
 extern void gBuildRotationMatrix(s32 yaw, s32 pitch, s32 roll, void *matrix) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *coord) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *vertices, void *out, s32 count) __asm__("func_80010234");
-extern void func_80044988(void *data, void *track, u8 forward, s32 index);
+extern void gSetAnimClipTable(void *data, void *track, u8 forward, s32 index) __asm__("func_80044988");
 extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options);
-extern void func_80017668(void *instance, s32 part, void *out);
+extern void gTransformPartVertex(void *instance, s32 part, void *out) __asm__("func_80017668");
+void gInitTerrainEntity(struct Entity *self, struct Spawn *data, s32 arg2) __asm__("func_800302E8");
+
 
 /**
  * @brief Spawn initializer for an entity placed on terrain: copies the
@@ -109,19 +111,16 @@ extern void func_80017668(void *instance, s32 part, void *out);
  * func_80030960.
  *
  * @par Environment path
- * Spawn initializer for an entity placed on terrain: it runs the base init
- * func_8002AD58(2, self, data, arg2), copies the spawn sub-block half-words
- * into the entity, maps the sub-block type onto a terrain mode, snaps the
- * ground height with func_80067684 plus the sub-block bias, marks flags with
- * 0x800001, builds and loads the yaw matrix, transforms one model vertex and
- * starts the animation tracks with func_80044988. It then initialises the
- * embedded model instance self->d4 through func_80013BD8 and fetches the
- * world position with func_80017668. Its only caller is func_80030960. Not on
- * the render path: it is the constructor of one object, and the instance it
- * sets up is drawn later by the model pass; no packet, camera or view state
- * is touched.
+ * Spawn initializer of the type-32 entity, called only from its handler
+ * func_80030960. It runs the base init func_8002AD58(2, ...), copies the
+ * spawn sub-block fields into the entity, maps the sub-block terrain type to
+ * a selector, snaps pos.y to func_80067684 plus the sub-block bias, sets
+ * flags 0x800001, builds and loads the yaw matrix, transforms one frame
+ * vertex and starts the animation with func_80044988. It then binds a second
+ * model instance at +0xD4 with func_80013BD8, starts its animation when
+ * present, and stores part 0's world position at +0xFC with func_80017668.
  */
-void func_800302E8(struct Entity *self, struct Spawn *data, s32 arg2)
+void gInitTerrainEntity(struct Entity *self, struct Spawn *data, s32 arg2)
 {
     struct Spawn *copy;
     struct Sub *sub;
@@ -131,7 +130,7 @@ void func_800302E8(struct Entity *self, struct Spawn *data, s32 arg2)
     s32 mode;
     s32 value;
 
-    func_8002AD58(2, self, data, arg2);
+    gEntityBaseHandler(2, self, data, arg2);
 
     copy = data;
     sub = copy->unk08;
@@ -162,7 +161,7 @@ void func_800302E8(struct Entity *self, struct Spawn *data, s32 arg2)
     gBuildRotationMatrix(sub->unk30, 0, 0, self->coord);
     gGteLoadMatrix(self->coord);
     gGteTransformVerticesWide(self->model->unk34 + ((self->unk70 << 4) + 8), self->verts, 1);
-    func_80044988(self->model->unk10, self->unkA0, 1, 0);
+    gSetAnimClipTable(self->model->unk10, self->unkA0, 1, 0);
 
     inst = &self->d4;
     model = 0;
@@ -172,9 +171,9 @@ void func_800302E8(struct Entity *self, struct Spawn *data, s32 arg2)
     func_80013BD8(inst, model, 0);
 
     if (self->d4.model->unk10 != 0) {
-        func_80044988(self->d4.model->unk10, self->unk120, 1, 0);
+        gSetAnimClipTable(self->d4.model->unk10, self->unk120, 1, 0);
     }
 
-    func_80017668(&self->model, 0, self->unkFC);
+    gTransformPartVertex(&self->model, 0, self->unkFC);
     self->unkC8 = 0;
 }

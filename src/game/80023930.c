@@ -15,7 +15,7 @@ extern Node *D_8009F270;
 extern Node *D_8009F274;
 extern Node *gStreamStatePair[2] __asm__("D_8009F640");
 
-extern void func_800181D4(Node *node);
+extern void gFreeBlock(Node *node) __asm__("func_800181D4");
 extern void func_800236FC(void);
 
 /**
@@ -54,7 +54,7 @@ void func_80023930(Node *node)
 
         case 0x43736864:
             if (*node->data != 4) {
-                func_800181D4(node);
+                gFreeBlock(node);
                 break;
             }
 
@@ -67,16 +67,16 @@ void func_80023930(Node *node)
                 }
             }
             if (i == 2) {
-                func_800181D4(node);
+                gFreeBlock(node);
             }
             break;
 
         default:
-            func_800181D4(node);
+            gFreeBlock(node);
             break;
         }
         func_800236FC();
     } else {
-        func_800181D4(node);
+        gFreeBlock(node);
     }
 }

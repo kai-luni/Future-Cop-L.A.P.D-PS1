@@ -90,7 +90,7 @@ struct Msg_5F6E8 {
 
 extern u8 D_8009F378[];
 
-extern void func_80017668(void *instance, s32 part, s32 *out);
+extern void gTransformPartVertex(void *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_80019668(void);
 extern void func_8001A180(s32 *vec);
 extern s32 func_8001AB00(s32 *coord, s32 *vec);
@@ -186,7 +186,7 @@ s32 func_8005F6E8(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3)
         goto fail;
     }
 
-    func_80017668((void *)((u8 *)a1 + 0x28), a0->unk23, (s32 *)pos);
+    gTransformPartVertex((void *)((u8 *)a1 + 0x28), a0->unk23, (s32 *)pos);
 
     s4 = ((a0->unk4 & 0x80) != 0) << 19;
     if (a0->unk4 & 0x200) {

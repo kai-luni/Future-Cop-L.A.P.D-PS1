@@ -23,15 +23,17 @@ struct Object {
 struct Part { u8 pad[0x24]; u8 data[0x14]; u8 bytes[4]; };
 struct Info { u8 pad[0x18]; s32 value; };
 struct Other { u8 pad[4]; struct Info *info; struct Part *part; };
-extern s32 func_8002AD58(s32, struct Object *, struct Other *);
+extern s32 gEntityBaseHandler(s32, struct Object *, struct Other *) __asm__("func_8002AD58");
 extern void func_80050E0C(void *, void *, s32, void *, void *);
 extern s32 func_80050D14(void *, struct Other *, struct Object *);
 extern void func_80039BD0(struct Object *);
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
-extern struct Object *gMissionWorkingSet __asm__("D_8009F9A0");
-#define current gMissionWorkingSet
+extern struct Object *gFocusPositions __asm__("D_8009F9A0");
+#define current gFocusPositions
 #define barrier() __asm__ volatile("" : : : "memory")
+s32 gHandleCameraOverrideMsg(s32 message, struct Object *self, struct Other *other) __asm__("func_80039C58");
+
 
 /**
  * @brief Entity message handler of the third script family, with a "current"
@@ -55,18 +57,20 @@ extern struct Object *gMissionWorkingSet __asm__("D_8009F9A0");
  * object that is currently being driven, and messages 5/6 take or drop that role.
  *
  * @par Environment path
- * Message handler of the entity family whose currently driven object is kept
- * in D_8009F9A0: message 1 returns 0x120, message 2 copies the partner part
- * bytes, updates the part with func_80050E0C and adopts the global current
- * pointer (unless anim flag 0x40 is set), message 5 releases it, and message
- * 6 runs func_80039BD0 plus func_80050D14 and refreshes the frame vertex.
- * Every other case delegates to func_8002AD58. The gGteLoadMatrix /
- * gGteTransformVerticesWide pair only fetches one model frame into the
- * object's output vertex, so the unit is an entity script handler, not a
- * render pass; no direct call site exists in the decompiled tree, it is
- * reached through an entity message table.
+ * Message handler of the camera-override object class (size 0x120 on message
+ * 1); no direct call site exists, it is reached through the object handler
+ * table. Message 2 runs the generic setup func_8002AD58, copies four control
+ * bytes from the spawn part into +0x11C..+0x11F, starts the path motion with
+ * func_80050E0C and refreshes the reference vertex; message 6 drains queued
+ * 0x73 commands (func_80039BD0), steps the path with func_80050D14 and
+ * refreshes the vertex again. Both make the object the global override
+ * D_8009F9A0 unless its flag 0x40 is set (message 6 releases it when the flag
+ * is set), and message 5 clears the global before delegating to
+ * func_8002AD58. While D_8009F9A0 is set, the chase camera func_800569EC
+ * takes its heading, state and position, and func_8002703C can force the
+ * frame step from byte +0x11D.
  */
-s32 func_80039C58(s32 message, struct Object *self, struct Other *other)
+s32 gHandleCameraOverrideMsg(s32 message, struct Object *self, struct Other *other)
 {
     struct Part *part;
     register s32 offset __asm__("$4");
@@ -76,7 +80,7 @@ s32 func_80039C58(s32 message, struct Object *self, struct Other *other)
     case 1:
         return 0x120;
     case 2:
-        func_8002AD58(message, self, other);
+        gEntityBaseHandler(message, self, other);
         part = other->part;
         self->bytes[0] = part->bytes[0];
         self->bytes[1] = part->bytes[1];
@@ -124,12 +128,12 @@ s32 func_80039C58(s32 message, struct Object *self, struct Other *other)
         return result;
     case 5:
         if (current == self) { current = 0; barrier(); }
-        return func_8002AD58(message, self, other);
+        return gEntityBaseHandler(message, self, other);
     case 3: case 4: case 10: case 11: case 13: case 14:
     zero_return:
         barrier();
         return 0;
     default:
-        return func_8002AD58(message, self, other);
+        return gEntityBaseHandler(message, self, other);
     }
 }

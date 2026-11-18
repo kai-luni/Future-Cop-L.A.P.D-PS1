@@ -2,8 +2,8 @@
 #include "game/types.h"
 
 extern void func_80039E8C(s32 message, void *object, void *data);
-extern void func_8003A160(void *object, void *data);
-extern s32 func_8002AD58(s32 message, void *object, void *data);
+extern void gUpdateForceField(void *object, void *data) __asm__("func_8003A160");
+extern s32 gEntityBaseHandler(s32 message, void *object, void *data) __asm__("func_8002AD58");
 
 /**
  * @brief Message table of the force-field entity class: block size, spawn,
@@ -49,9 +49,9 @@ s32 func_8003A844(u32 message, void *object, void *data)
         func_80039E8C(2, object, data);
         return 0;
     case 6:
-        func_8003A160(object, data);
+        gUpdateForceField(object, data);
         return 0;
     default:
-        return func_8002AD58(message, object, data);
+        return gEntityBaseHandler(message, object, data);
     }
 }

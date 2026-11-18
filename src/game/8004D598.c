@@ -13,7 +13,7 @@ extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 extern struct Entity *gListTailBranch __asm__("D_8009FA88");
 
 extern void func_80061020(struct Entity *entity);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Sweeps retired (id == 0) entities from the active list and frees them.
@@ -63,7 +63,7 @@ void gSweepRetiredEntities(void)
             }
             gListTailBranch = previous;
 release:
-            func_800181D4(entity);
+            gFreeBlock(entity);
         } else {
             previous = entity;
         }

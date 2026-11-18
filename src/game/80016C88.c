@@ -3,6 +3,8 @@ typedef short s16;
 typedef int s32;
 typedef unsigned char u8;
 extern void gGteTransformVertices(s16 *, s16 *, s32) __asm__("func_8001010C");
+void gComputeEnvMapUV(s16 *p, s16 *n, s32 *q, u8 *out) __asm__("func_80016C88");
+
 extern s32 func_80019904(s32, s32);
 /**
  * @brief Computes a per-vertex shade/UV value: normal dot product, transform,
@@ -24,19 +26,16 @@ extern s32 func_80019904(s32, s32);
  * (0..0x1F80) values - the format of the GTE's colour registers.
  *
  * @par Environment path
- * Computes the per-corner lighting value of a polygon: the difference vector
- * between the vertex and the reference point is formed, the normal dot
- * product is taken (shifted right by 12) and reflected, the reflection is
- * transformed with gGteTransformVertices (func_8001010C), its magnitude is
- * normalised through func_80019904 and both results are clamped to 0..0x1F7F
- * and packed into two bytes. The clamp boundaries 0x1F80, 0x1F7F and the
- * +0x7D bias match the GTE colour-register format, so this is a
- * vertex-lighting helper, not a drawer. Its only call site is the mesh
- * emitter func_80016E6C (src/game/80016E6C.c:53-54). It is not on the
- * environment path that gDrawViewLayers drives: the file reads no global,
- * loads no camera matrix and no region, tile or session global appears in it.
+ * Computes one environment-map texture coordinate pair for a polygon corner:
+ * the vector from the vertex to the reference point is reflected about the
+ * vertex normal, the reflection is rotated into view space with
+ * gGteTransformVertices (func_8001010C) and normalised through func_80019904,
+ * and its x and z components are clamped and packed as the u and v bytes (u =
+ * (x >> 6) + 1, v = (z >> 6) + 0x7D). Its only caller is func_80016E6C, which
+ * stores the two bytes into the UV fields of the packet it builds. The
+ * function reads no global.
  */
-void func_80016C88(s16 *p, s16 *n, s32 *q, u8 *out)
+void gComputeEnvMapUV(s16 *p, s16 *n, s32 *q, u8 *out)
 {
     s16 d[4], r[4], v[4];
     s32 x, y, z, dot, c;

@@ -12,7 +12,7 @@ struct Resource {
 
 extern struct Resource *gResourceList __asm__("D_8009F5B8");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Scans D_8009F5B8 for a matching resource key and frees the supplied resource block.
@@ -45,5 +45,5 @@ void func_80019D00(struct Resource *resource)
             break;
         }
     }
-    func_800181D4(resource);
+    gFreeBlock(resource);
 }

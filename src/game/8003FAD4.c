@@ -15,7 +15,7 @@ typedef struct UnkFAD4Local {
 
 extern UnkFAD4Node *gDeferredList __asm__("D_8009F708");
 extern s32 gDeferredPool __asm__("D_8009F70C");
-extern s32 D_8009F9B8;
+extern s32 gTexturePageWord __asm__("D_8009F9B8");
 extern s32 gScreenUvBase __asm__("D_8009FAA0");
 
 extern void func_8003C590(s32 arg0);
@@ -73,7 +73,7 @@ void func_8003FAD4(void)
 
     local.color[0] = 0xC210C210;
     local.color[1] = 0xC210C210;
-    D_8009F9B8 = 0x13E;
+    gTexturePageWord = 0x13E;
     gScreenUvBase = 0x15E;
     local.rect[0] = 0x380;
     local.rect[1] = 0x100;

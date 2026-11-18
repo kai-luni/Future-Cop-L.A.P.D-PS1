@@ -9,7 +9,7 @@ struct Unk3CF20 {
     u8 flags;
 };
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Frees a transform-sync node and, when flagged, its owned buffer.
@@ -32,7 +32,7 @@ extern void func_800181D4(void *block);
 void func_8003CF20(struct Unk3CF20 *object)
 {
     if (object->flags & 2) {
-        func_800181D4(object->buffer);
+        gFreeBlock(object->buffer);
     }
-    func_800181D4(object);
+    gFreeBlock(object);
 }

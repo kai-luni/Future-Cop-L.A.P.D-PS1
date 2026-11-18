@@ -14,15 +14,17 @@ struct LinkNode;
 extern s32 *gFreeRangeTablePtr __asm__("D_8009F590");
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
-extern struct LinkState *gPool3Size __asm__("D_8009FA4C");
-extern struct LinkState *gPool2Size __asm__("D_8009FAAC");
-extern struct LinkState *gPool1Size __asm__("D_8009F9D0");
+extern struct LinkState *gFixedPool3 __asm__("D_8009FA4C");
+extern struct LinkState *gFixedPool2 __asm__("D_8009FAAC");
+extern struct LinkState *gFixedPool1 __asm__("D_8009F9D0");
 
 extern s32 func_80017D5C(s32 size);
 extern s32 func_80017E0C(s32 size);
 extern struct LinkNode *func_800195A4(struct LinkState *state);
 extern void *func_8001E240(s32 size, s32 mode);
 extern u8 *func_8001E318(u8 *destination, u8 *source, s32 count);
+void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+
 
 /**
  * Allocates memory using one of several allocation strategies.
@@ -101,7 +103,7 @@ extern u8 *func_8001E318(u8 *destination, u8 *source, s32 count);
  * unit is not on the environment render path; it is the memory layer that
  * every renderer structure is allocated through.
  */
-void *func_80017EBC(s32 size, s32 tag)
+void *gAllocMemory(s32 size, s32 tag)
 {
     s32 index;
     void *result;
@@ -174,11 +176,11 @@ retry:
         break;
 
     case 3:
-        pool = gPool3Size;
+        pool = gFixedPool3;
         if (pool->stride < size || pool->count <= 0) {
-            pool = gPool2Size;
+            pool = gFixedPool2;
             if (pool->stride < size || pool->count <= 0) {
-                pool = gPool1Size;
+                pool = gFixedPool1;
                 if (pool->count <= 0) {
                     tag = 1;
                     goto retry;

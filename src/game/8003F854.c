@@ -15,7 +15,7 @@ extern struct Unk8003F854 *gNodeCList __asm__("D_8009F30C");
 extern void *gSpawnRecordMap[0x200] __asm__("D_800A7040");
 extern void *gOccupancyColumns[0x100] __asm__("D_800A0C70");
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_8003D0AC(void);
 extern void func_8006EDF0(void);
 extern void func_8005E22C(void);
@@ -115,7 +115,7 @@ void func_8003F854(s32 arg0)
                 slot = row;
                 do {
                     if (*slot != 0) {
-                        func_800181D4(*slot);
+                        gFreeBlock(*slot);
                     }
                     *slot = 0;
                     i++;
@@ -135,7 +135,7 @@ void func_8003F854(s32 arg0)
         slot = gOccupancyColumns;
         do {
             if (*slot != 0) {
-                func_800181D4(*slot);
+                gFreeBlock(*slot);
             }
             *slot = 0;
             i++;
@@ -151,9 +151,9 @@ void func_8003F854(s32 arg0)
         while (p != 0) {
             next = p->next;
             if (p->unk18 != 0) {
-                func_800181D4(p->unk18);
+                gFreeBlock(p->unk18);
             }
-            func_800181D4(p);
+            gFreeBlock(p);
             p = next;
         }
         gNodeCList = 0;

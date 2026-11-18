@@ -34,10 +34,12 @@ typedef struct Unk3802C {
 } Unk3802C;
 
 extern s32 func_80050D14(void *arg0, s32 arg1, void *arg2);
-extern s32 func_80066F78(void *arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void func_80037EB4(Unk3802C *arg0);
+extern s32 gGetGroundHeight(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
+extern void gOrientEntityBasis(Unk3802C *arg0) __asm__("func_80037EB4");
 extern void gGteLoadMatrix(void *arg0) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__("func_80010234");
+void gUpdateFallMotion(s32 arg0, Unk3802C *arg1, s32 arg2) __asm__("func_8003802C");
+
 
 /**
  * @brief Advances a falling or flying object by one time step, clamps it
@@ -69,19 +71,18 @@ extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__(
  * func_8002B784, func_800382B4.
  *
  * @par Environment path
- * Advances a falling or hovering object by one time step: func_80050D14
- * supplies the state return, the yaw field is advanced by twice the step and
- * clamped to 1000, the descent speed grows by half the step, the second angle
- * advances by the step times its rate, and the height is limited against the
- * ground height from func_80066F78 plus half of the object offset, which sets
- * the landing bits 0xC0000000 and the -1 word. When the step survives it may
- * call func_80037EB4 to re-orient the base and then loads the matrix with
- * func_80010750 and transforms one frame vertex with func_80010234. Its
- * callers are the tick handlers func_8002B784 and func_800382B4, so this is
- * object dynamics that reuses the same terrain query the environment pass
- * samples; the function touches no globals.
+ * Per-tick motion step used by the tick handlers func_8002B784 and
+ * func_800382B4: it first runs the path/motion step func_80050D14 and, only
+ * while the state word +0x118 has top bits 01 (falling state), advances an
+ * angle at +0xB0 by twice the step (clamped at 1000), grows the descent speed
+ * +0xAC by half the step, spins +0xB4 by step times rate and lowers the
+ * height. The height is limited by the ground query func_80066F78 plus half
+ * the object height; on contact it sets the 0xC0000000 state bits and writes
+ * -1 to +0x1C. When anything moved it may call func_80037EB4 to re-orient the
+ * object and refreshes the reference vertex with func_80010750 and
+ * func_80010234; it touches no globals.
  */
-void func_8003802C(s32 arg0, Unk3802C *arg1, s32 arg2)
+void gUpdateFallMotion(s32 arg0, Unk3802C *arg1, s32 arg2)
 {
     s32 ret;
     u32 unk118;
@@ -98,7 +99,7 @@ void func_8003802C(s32 arg0, Unk3802C *arg1, s32 arg2)
         }
         arg1->unkAC += arg2 >> 1;
         arg1->unkB4 = (arg1->unkB4 + arg2 * arg1->unkAA) & 0xFFF;
-        limit = func_80066F78(&arg1->unk50, 0, 0, 0) + (arg1->unk68 >> 1);
+        limit = gGetGroundHeight(&arg1->unk50, 0, 0, 0) + (arg1->unk68 >> 1);
         delta = arg1->unkAC * arg2;
         if (arg1->unk54 - delta < limit) {
             delta = arg1->unk54 - limit;
@@ -114,7 +115,7 @@ void func_8003802C(s32 arg0, Unk3802C *arg1, s32 arg2)
 
     if (ret != 0) {
         if ((ret & 2) != 0 || (unk118 & 0x200) != 0) {
-            func_80037EB4(arg1);
+            gOrientEntityBasis(arg1);
         }
         if (ret != 0) {
             gGteLoadMatrix(&arg1->unk2C);

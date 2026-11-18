@@ -25,10 +25,10 @@ struct Unk5908CData {
 };
 
 extern s32 func_800579D4(struct Unk5908C *object, struct Unk5908CData *data, s32 arg3);
-extern s32 func_800588D4(struct Unk5908C *object, struct Unk5908CData *data);
+extern s32 gUpdatePlayerEntity(struct Unk5908C *object, struct Unk5908CData *data) __asm__("func_800588D4");
 extern void func_80058D78(struct Unk5908C *object);
-extern void func_800181D4(void *arg0);
-extern s32 func_8002AD58(s32 message, struct Unk5908C *object, struct Unk5908CData *data);
+extern void gFreeBlock(void *arg0) __asm__("func_800181D4");
+extern s32 gEntityBaseHandler(s32 message, struct Unk5908C *object, struct Unk5908CData *data) __asm__("func_8002AD58");
 extern void func_80058378(struct Unk5908C *object, s32 amount, s32 source);
 extern s32 func_800584BC(s32 message, struct Unk5908C *object, struct Unk5908CData *hit,
                          s32 arg3, s32 arg4);
@@ -90,13 +90,13 @@ s32 func_8005908C(s32 message, struct Unk5908C *object, struct Unk5908CData *dat
         }
         return flag;
     case 6:
-        return func_800588D4(s0, s1);
+        return gUpdatePlayerEntity(s0, s1);
     case 4:
         func_80058D78(s0);
         return 0;
     case 5:
         if (s0->unkAC != 0) {
-            func_800181D4(s0->unkAC);
+            gFreeBlock(s0->unkAC);
             s0->unkAC = 0;
         }
         return 0;
@@ -104,7 +104,7 @@ s32 func_8005908C(s32 message, struct Unk5908C *object, struct Unk5908CData *dat
         if (s1->unk08 == s0) {
             return 0;
         }
-        result = func_8002AD58(message, s0, s1);
+        result = gEntityBaseHandler(message, s0, s1);
         if (result <= 0) {
             return 0;
         }
@@ -120,6 +120,6 @@ s32 func_8005908C(s32 message, struct Unk5908C *object, struct Unk5908CData *dat
     case 12:
     case 13:
     default:
-        return func_8002AD58(message, s0, s1);
+        return gEntityBaseHandler(message, s0, s1);
     }
 }

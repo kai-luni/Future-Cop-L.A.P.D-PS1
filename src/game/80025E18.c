@@ -11,7 +11,7 @@ struct SoundVoice {
 
 extern s32 gSlotVoiceHandle[] __asm__("D_8009F678");
 extern s32 gSlotTrackId[] __asm__("D_8009FA78");
-extern void *D_8009FA58[];
+extern void *gPlayerEntities[] __asm__("D_8009FA58");
 
 extern void func_80046A34(s32 handle);
 extern s32 func_80046A58(s32 arg0, s32 arg1, s32 arg2, s32 id);
@@ -68,7 +68,7 @@ void func_80025E18(s32 track, s32 volume, s32 slot)
             handle = func_80046A58(volume, 0xA, 0, track);
             *handle_slot = handle;
             if (handle != 0) {
-                func_80046E88(track, 0, 0, -1, handle, *(void **)((u8 *)D_8009FA58 + offset));
+                func_80046E88(track, 0, 0, -1, handle, *(void **)((u8 *)gPlayerEntities + offset));
                 *(s32 *)((u8 *)gSlotTrackId + offset) = track;
             } else {
                 *(s32 *)((u8 *)gSlotTrackId + offset) = 0;

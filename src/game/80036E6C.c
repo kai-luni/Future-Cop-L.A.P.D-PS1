@@ -58,8 +58,10 @@ extern void func_8004D958(struct Entity *entity);
 extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 extern void func_80036AB4(struct Entity *self, s32 arg3);
-extern s32 func_8002AD58(s32 message, struct Entity *self, s32 arg2, s32 arg3);
+extern s32 gEntityBaseHandler(s32 message, struct Entity *self, s32 arg2, s32 arg3) __asm__("func_8002AD58");
 extern void *jtbl_80011380[];
+s32 gHandleProjectileMsg(s32 arg0, struct Entity *arg1, s32 arg2, s32 arg3) __asm__("func_80036E6C");
+
 
 /**
  * @brief Entity message handler dispatched through the jump table at
@@ -92,17 +94,19 @@ extern void *jtbl_80011380[];
  * handler table.
  *
  * @par Environment path
- * Message dispatcher of a moving entity class, entered through the jump table
- * jtbl_80011380 for messages 1 to 11 and through func_8002AD58 for everything
- * else. Message 2 runs the spawn helper func_80036940, message 3 updates the
- * entity with func_80036BD4, rebuilds the orientation basis with
- * func_8001937C or func_800193F8, recycles the entity through func_8004D958
- * when it strays past 0x58000 and then refreshes the frame vertex, message 4
- * compares the team word and message 5 clears a state word. The unit ends in
- * the same GTE frame-vertex transform as the other entity handlers, so it
- * produces model animation input and is not itself an environment pass.
+ * Message handler of a projectile entity class (size 0xD4), reached only
+ * through its handler table via the jump table jtbl_80011380. Message 2 runs
+ * the spawn helper func_80036940; message 3 advances the projectile with
+ * func_80036BD4 (gravity-biased motion, child spawn), re-orients the basis
+ * along the motion vector with func_8001937C or func_800193F8, frees the
+ * entity through func_8004D958 once it is more than 0x58000 from its start
+ * point, and refreshes the frame vertex. Message 4 reports whether another
+ * entity is a valid target (different team word +0x14 and not the source
+ * link), message 5 clears +0x1C, message 6 runs the blast tick func_80036AB4,
+ * messages 7-11 are forwarded to func_8002AD58 unless filtered by the link,
+ * and all others go to func_8002AD58.
  */
-s32 func_80036E6C(s32 arg0, struct Entity *arg1, s32 arg2, s32 arg3)
+s32 gHandleProjectileMsg(s32 arg0, struct Entity *arg1, s32 arg2, s32 arg3)
 {
     register s32 message __asm__("$18");
     register struct Entity *self __asm__("$16");
@@ -182,10 +186,10 @@ message_6:
 message_forward:
     if (other->unk08 != 0) {
         if (!(other->unk0C & 1) || other->unk08->unk18 != self->unk18) {
-            func_8002AD58(message, self, (s32)other, value);
+            gEntityBaseHandler(message, self, (s32)other, value);
         }
     }
     return 0;
 fallback:
-    return func_8002AD58(message, self, (s32)other, value);
+    return gEntityBaseHandler(message, self, (s32)other, value);
 }

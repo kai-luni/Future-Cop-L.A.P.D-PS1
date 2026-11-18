@@ -60,8 +60,8 @@ typedef struct {
 typedef struct { Object *source; void *force; void *force2; u8 value; } Config;
 typedef struct { u8 pad[8]; Config *config; } Arg;
 
-extern Matrix gBaseMatrix __asm__("D_8009AA38");
-extern void *func_80017EBC(s32, s32);
+extern Matrix gIdentityMatrix __asm__("D_8009AA38");
+extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern s32 func_80019668(void);
 extern Entry *func_8003A90C(Entry *, s32);
 extern s32 func_8004B244(void *, void *, Vec *);
@@ -69,7 +69,9 @@ extern void func_8004B310(void *, Vec *, Vec *, s32, s16 *, s16 *, s32 *, Vec *)
 extern void gBuildRotationMatrixVariant(s32, s32, s32, Matrix *) __asm__("func_80018DC0");
 extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
 extern void gGteTransformWords(Matrix *, Matrix *, s32) __asm__("func_8001006C");
-extern s32 func_80066F78(Vec *, s32, s32, s32);
+extern s32 gGetGroundHeight(Vec *, s32, s32, s32) __asm__("func_80066F78");
+s32 gSpawnModelDebris(s32 unused, Object *out, Arg *arg) __asm__("func_8003AA94");
+
 
 /**
  * @brief Spawn handler (message 2) that turns a source object into a particle
@@ -126,22 +128,20 @@ extern s32 func_80066F78(Vec *, s32, s32, s32);
  * func_8003B2D0, message 2 (the spawn case of that object's handler).
  *
  * @par Environment path
- * Message-2 spawn of a particle emitter that func_8003B2D0 dispatches at
- * message 2: it takes the 0xF0-byte particle array from func_80017EBC, copies
- * the model and the bytes at source +0x92/+0x93 into the new object, forces
- * the type byte to 4 and the flag word to (flags | 0x120001D) & 0xFFBFDFFF,
- * then seeds one particle per model entry - with per-bone velocities from
- * func_8004B310 when the config carries a force field, or random values from
- * func_80019668 otherwise. For the force-field case the template D_8009AA38
- * seeds the root matrix slot, func_80018DC0 builds each bone rotation and
- * func_8001006C composes it into the per-bone matrices. It closes with the
- * entry count at +0xB1/+0xBA, the ground offset at +0xA4 and a polygon mask
- * that marks every polygon whose four indices fall inside one entry's
- * start..start+count range. It only creates data for the effect drawer to
- * consume, so it is the spawn side of the effects path rather than the render
- * path.
+ * Message-2 (spawn) case of the object class handled by func_8003B2D0: it
+ * allocates a 0xF0-byte piece array with func_80017EBC(0xF0, 3), copies the
+ * source object's model and selected bytes, forces type 4 and the flag word
+ * to (flags | 0x120001D) & 0xFFBFDFFF, and creates one piece per model bone
+ * entry. With an impulse record (func_8004B244) each bone's world position is
+ * composed from D_8009AA38 through func_80018DC0, func_80010820 and
+ * func_8001006C and fed to the debris launch sampler func_8004B310; otherwise
+ * velocities and spin angles are random (func_80019668). It stores the piece
+ * count at +0xA1/+0xA2, the height above ground (func_80066F78) at +0xA4, and
+ * a 256-bit polygon mask of all polygons whose vertices lie inside one bone's
+ * vertex range (func_8003A90C), so the model can be drawn broken into its
+ * bone pieces.
  */
-s32 func_8003AA94(s32 unused, Object *out, Arg *arg)
+s32 gSpawnModelDebris(s32 unused, Object *out, Arg *arg)
 {
     Config *config;
     s32 count;
@@ -170,7 +170,7 @@ s32 func_8003AA94(s32 unused, Object *out, Arg *arg)
 
     config = arg->config;
     source = config->source;
-    out->particles = func_80017EBC(0xf0, 3);
+    out->particles = gAllocMemory(0xf0, 3);
     *(Copy *)&out->model = *(Copy *)&source->model;
     out->b22 = -1;
     out->ba0 = config->value;
@@ -194,18 +194,18 @@ s32 func_8003AA94(s32 unused, Object *out, Arg *arg)
     particle = out->particles;
     entry = model->entries;
     if (config->force) {
-        matrices[0].m[1] = gBaseMatrix.m[1];
-        matrices[0].m[2] = gBaseMatrix.m[2];
-        matrices[0].m[3] = gBaseMatrix.m[3];
-        matrices[0].m[4] = gBaseMatrix.m[4];
-        matrices[0].m[5] = gBaseMatrix.m[5];
-        matrices[0].m[6] = gBaseMatrix.m[6];
-        matrices[0].m[7] = gBaseMatrix.m[7];
-        matrices[0].m[8] = gBaseMatrix.m[8];
-        matrices[0].x = gBaseMatrix.x;
-        matrices[0].y = gBaseMatrix.y;
-        matrices[0].z = gBaseMatrix.z;
-        matrices[0].m[0] = gBaseMatrix.m[0];
+        matrices[0].m[1] = gIdentityMatrix.m[1];
+        matrices[0].m[2] = gIdentityMatrix.m[2];
+        matrices[0].m[3] = gIdentityMatrix.m[3];
+        matrices[0].m[4] = gIdentityMatrix.m[4];
+        matrices[0].m[5] = gIdentityMatrix.m[5];
+        matrices[0].m[6] = gIdentityMatrix.m[6];
+        matrices[0].m[7] = gIdentityMatrix.m[7];
+        matrices[0].m[8] = gIdentityMatrix.m[8];
+        matrices[0].x = gIdentityMatrix.x;
+        matrices[0].y = gIdentityMatrix.y;
+        matrices[0].z = gIdentityMatrix.z;
+        matrices[0].m[0] = gIdentityMatrix.m[0];
         table = model->table;
         offset = out->tableOffset;
         forceEnabled = func_8004B244(config->force, config->force2, &force);
@@ -266,7 +266,7 @@ s32 func_8003AA94(s32 unused, Object *out, Arg *arg)
         } while (1);
     }
     {
-        s32 y = func_80066F78(&out->position, 0, 0, 0);
+        s32 y = gGetGroundHeight(&out->position, 0, 0, 0);
         out->ba2 = count;
         out->fielda4 = (y - out->position.y) >> 3;
         out->ba1 = count;

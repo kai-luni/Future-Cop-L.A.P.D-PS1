@@ -35,7 +35,7 @@ extern struct VabEntry gObjectSlots[] __asm__("D_800A0A00");
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 extern void func_80021DAC(s32 index);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_800242B4(s32 slot, u8 program);
 
 /**
@@ -100,11 +100,11 @@ void func_80023AB4(s32 arg0)
                 entry->id = m1;
             }
             if (entry->block4 != 0) {
-                func_800181D4(entry->block4);
+                gFreeBlock(entry->block4);
                 entry->block4 = 0;
             }
             if (entry->block8 != 0) {
-                func_800181D4(entry->block8);
+                gFreeBlock(entry->block8);
                 entry->block8 = 0;
             }
             entry->status = m1;

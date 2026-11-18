@@ -63,7 +63,7 @@ extern struct Prim72F7C *gPrimPoolEnd __asm__("D_8009FA28");
 
 extern s32 func_8001A100(V3_72F7C *vector);
 extern void gGteLoadRotation(u8 *matrix) __asm__("func_80010820");
-extern void func_8001047C(S3X_72F7C *in, S3X_72F7C *out, u8 *flags, s32 count);
+extern void gProjectVertexBatch(S3X_72F7C *in, S3X_72F7C *out, u8 *flags, s32 count) __asm__("func_8001047C");
 
 /**
  * @brief Draws a model node as flat-shaded polygons (the cheap renderer path).
@@ -141,7 +141,7 @@ void func_80072F7C(struct Node72F7C *node, V3_72F7C *arg)
         __asm__ volatile("" : : "r"(call_entries));
         screen_out = screen_arg;
         __asm__ volatile("" : : "r"(screen_out));
-        func_8001047C(screen_arg, screen_out, buf, call_entries[i].count + 1);
+        gProjectVertexBatch(screen_arg, screen_out, buf, call_entries[i].count + 1);
         for (k = 0; k < node->entries[i].count; k++) {
             if ((buf[k] | buf[k + 1]) & 1) {
                 continue;

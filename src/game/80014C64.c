@@ -9,7 +9,7 @@ extern Cam *gCamera __asm__("D_8009F9E4");
 extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
-extern void func_8001047C(u16 *, u16 *, u8 *, s32);
+extern void gProjectVertexBatch(u16 *, u16 *, u8 *, s32) __asm__("func_8001047C");
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define W(p, o) (*(u32 *)((u8 *)(p) + (o)))
@@ -18,6 +18,8 @@ extern void func_8001047C(u16 *, u16 *, u8 *, s32);
 #define ALLOC0(p) do { Prim *h = gPrimPoolNext; if (h < gPrimPoolEnd) gPrimPoolNext = h + 1; p = h; } while (0)
 #define ALLOC(p, under, done) do { Prim *h = gPrimPoolNext; if (h < gPrimPoolEnd) goto under; p = h; asm volatile("" : "+r"(p)); goto done; under: p = h; gPrimPoolNext = h + 1; done: asm volatile("" : "+r"(p)); } while (0)
 #define FIN(p) W(p, 0) = (W(p, 0) & 0xFF000000) | ((s16)t6 & 0xFFFFFF)
+void gDrawBeamQuad(s32 *from, s32 *to, Eff *e) __asm__("func_80014C64");
+
 
 /**
  * @brief Draws an effect as an axis-aligned screen quad between two projected
@@ -56,7 +58,7 @@ extern void func_8001047C(u16 *, u16 *, u8 *, s32);
  * segment endpoints from a model part, so this is the beam layer of the frame
  * and not the environment tile pass.
  */
-void func_80014C64(s32 *from, s32 *to, Eff *e)
+void gDrawBeamQuad(s32 *from, s32 *to, Eff *e)
 {
     u16 pp[4];
     u16 qq[4];
@@ -81,7 +83,7 @@ void func_80014C64(s32 *from, s32 *to, Eff *e)
     qq[1] = (to[1] - gCamera->cy) >> 4;
     qq[2] = (to[2] - gCamera->cz) >> 4;
     gGteLoadRotation(gCamera->m);
-    func_8001047C(pp, pp, out, 2);
+    gProjectVertexBatch(pp, pp, out, 2);
     if ((out[0] | out[1]) & 1) return;
 
     a0 = e->a8;

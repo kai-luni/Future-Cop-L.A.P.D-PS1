@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern void *gTextLookupTable __asm__("D_8009F518");
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  *  @brief Releases the stored block if one is present.
@@ -23,7 +23,7 @@ extern void func_800181D4(void *block);
 void func_800898E8(void)
 {
     if (gTextLookupTable != (void *)0) {
-        func_800181D4(gTextLookupTable);
+        gFreeBlock(gTextLookupTable);
         gTextLookupTable = (void *)0;
     }
 }

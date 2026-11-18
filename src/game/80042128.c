@@ -5,8 +5,10 @@ extern s32 gFrameSwitch __asm__("D_8009FAC8");
 extern void gTransformToViewSpace(void *, void *) __asm__("func_800178DC");
 extern s32 func_80019E70(s16 *, s32);
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
-extern void func_8001047C(void *, void *, void *, s32);
+extern void gProjectVertexBatch(void *, void *, void *, s32) __asm__("func_8001047C");
 extern void func_80042004(s32, u8 *, u8 *);
+void gDrawPortraitScreen(u8 *object) __asm__("func_80042128");
+
 
 /**
  * @brief Draws the ten quads of an effect object, after a gate and a backface test.
@@ -30,19 +32,18 @@ extern void func_80042004(s32, u8 *, u8 *);
  * 0x20-wide band, drawn only when the effect faces the camera.
  *
  * @par Environment path
- * Draws the ten quads of one effect object: it bails out when the
- * overlay/frame switch D_8009FAC8 is 0, fetches the camera-relative transform
- * with func_800178DC, culls with func_80019E70(point, distance << 4)
- * requiring exactly 2, and rejects the back side by the dot product of the
- * point with matrix words 6..8 unless gate byte +0xA1 bit 0 is set. It then
- * loads the matrix, projects fifteen vertices with func_8001047C and emits
- * two quads per loop step through func_80042004, starting at screen x 0xCC00
- * and advancing by 0xC00. It is a 2-D effect draw emitting straight into the
- * packet builder, reached from message 3 (draw) of the object-type-34 handler
- * func_80042330:58, so it is beside the region pass, not inside
- * gDrawViewLayers.
+ * Draw case (message 3 of the type-34 handler func_80042330) of an in-world
+ * screen that shows the animated comm portrait: it returns while D_8009FAC8
+ * is zero - the per-frame result of func_80029748, which is non-zero only
+ * while a portrait animation runs and uploads its current frame to VRAM
+ * (0x3C0, 0x1CC) - then builds the camera-relative matrix with func_800178DC,
+ * culls with func_80019E70 (radius +0xA2 << 4) and rejects back-facing
+ * screens unless +0xA1 bit 0 is set. It projects the fifteen grid vertices at
+ * +0xA8 with func_8001047C and emits eight textured quads (two per row, four
+ * rows) through func_80042004, whose UVs (v from 0xCC in steps of 0x0C, tpage
+ * 0x11F) address exactly that VRAM rectangle.
  */
-void func_80042128(u8 *object)
+void gDrawPortraitScreen(u8 *object)
 {
     s16 point[3];
     s32 matrix[12];
@@ -63,7 +64,7 @@ void func_80042128(u8 *object)
         if (point[0] * matrix[6] + point[1] * matrix[7] + point[2] * matrix[8] > 0) return;
     }
     gGteLoadMatrix(matrix);
-    func_8001047C(object + 0xa8, points, flags, 15);
+    gProjectVertexBatch(object + 0xa8, points, flags, 15);
     p = points;
     f = flags;
     i = 0;

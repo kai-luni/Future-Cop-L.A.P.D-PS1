@@ -9,9 +9,9 @@ struct LinkState {
     s32 *link;
 };
 
-extern struct LinkState *gPool3Size __asm__("D_8009FA4C");
-extern struct LinkState *gPool1Size __asm__("D_8009F9D0");
-extern struct LinkState *gPool2Size __asm__("D_8009FAAC");
+extern struct LinkState *gFixedPool3 __asm__("D_8009FA4C");
+extern struct LinkState *gFixedPool1 __asm__("D_8009F9D0");
+extern struct LinkState *gFixedPool2 __asm__("D_8009FAAC");
 extern s32 *gFreeRangeTablePtr __asm__("D_8009F590");
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 extern s32 gHeapSearchCursor __asm__("D_8009F598");
@@ -21,6 +21,8 @@ extern s32 func_8001814C(void *block);
 extern void func_8001E2C0(void *block);
 extern u8 *func_8001E318(u8 *destination, u8 *source, s32 count);
 extern u8 *func_8001E44C(u8 *destination, u8 *source, s32 count);
+void gFreeBlock(void *block) __asm__("func_800181D4");
+
 
 /**
  * @brief Frees a block obtained from func_80017EBC(): pool, free-range or
@@ -71,7 +73,7 @@ extern u8 *func_8001E44C(u8 *destination, u8 *source, s32 count);
  * tables, which is why the map loaders (func_800634F4) and the whole
  * executable use it.
  */
-void func_800181D4(void *block)
+void gFreeBlock(void *block)
 {
     struct LinkState *pool;
     u8 *end;
@@ -84,11 +86,11 @@ void func_800181D4(void *block)
     u32 offset;
     register s32 total __asm__("$3");
 
-    if (((pool = gPool3Size),
+    if (((pool = gFixedPool3),
          (s32)block >= (s32)pool && (s32)block < (s32)pool->end) ||
-        ((pool = gPool1Size),
+        ((pool = gFixedPool1),
          (s32)block >= (s32)pool && (s32)block < (s32)pool->end) ||
-        ((pool = gPool2Size),
+        ((pool = gFixedPool2),
          (s32)block >= (s32)pool && (s32)block < (s32)pool->end)) {
         func_800195D0(pool, (s32 *)block);
     } else if ((s32)block >= (s32)gFreeRangeTablePtr[0] &&

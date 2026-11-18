@@ -1,7 +1,7 @@
 // Categories: Resources > Memory Management
 #include "game/types.h"
 
-extern void func_800181D4(void);
+extern void gFreeBlock(void) __asm__("func_800181D4");
 
 /**
  * @brief Thin wrapper around the upper allocator's free entry
@@ -23,5 +23,5 @@ extern void func_800181D4(void);
  */
 void func_80019584(void)
 {
-    func_800181D4();
+    gFreeBlock();
 }

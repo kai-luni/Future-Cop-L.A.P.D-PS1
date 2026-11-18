@@ -11,14 +11,14 @@ struct Owner {
     u8 pad18[4]; struct Link *volatile link; u8 pad20[0x5b];
     u8 flags; u8 pad7c[4]; void *unk80; struct Node *head;
 };
-extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
+extern s32 gIdentityMatrix[9] __asm__("D_8009AA38");
 extern s32 gLiveNodeCount __asm__("D_8009F9DC");
-extern void func_800181D4(void *);
+extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void func_8003A8C0(s32, s32, struct Owner *, s32);
 extern s32 func_8003C7B8(s32, struct Owner *, s32, s32);
 extern s32 func_8003C980(s32, struct Owner *, s32, s32);
 extern struct Node *func_8004AAD4(struct Owner *, struct Node *, struct Node *);
-extern u8 func_8004ABE4(struct Owner *, s32);
+extern u8 gLaunchDebrisObject(struct Owner *, s32) __asm__("func_8004ABE4");
 extern u8 func_8004B5F8(struct Owner *, s32);
 
 /**
@@ -98,7 +98,7 @@ case0:
     link = obj->link;
     sub = 0;
     if (link) sub = link->sub;
-    if (obj->flags & 8) return func_8004ABE4(obj, arg2);
+    if (obj->flags & 8) return gLaunchDebrisObject(obj, arg2);
     if (obj->flags & 0x10) {
         if (sub && sub->sub->flag) {
             hi = (s32 *)0x800A0000;
@@ -125,7 +125,7 @@ failed:
     }
     return func_8004B5F8(obj, arg2);
 case10:
-    if (obj->flags & 8) func_800181D4(obj->unk80);
+    if (obj->flags & 8) gFreeBlock(obj->unk80);
     node = obj->head;
     while (node) {
         gLiveNodeCount--;
@@ -133,7 +133,7 @@ case10:
         if (!func_8004AAD4(obj, 0, node)) break;
         node = next;
     }
-    func_800181D4(obj);
+    gFreeBlock(obj);
     return 0;
 default_case:
     return func_8003C980(message, obj, arg2, arg3);

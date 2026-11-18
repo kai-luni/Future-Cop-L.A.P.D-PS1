@@ -20,8 +20,8 @@ typedef struct {
 extern void **gTextureDescriptorTable __asm__("D_8009F7D8");
 extern s32 D_8009F7DC;
 
-extern void *func_80017EBC(s32 size, s32 tag);
-extern void func_800181D4(void *block);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_8005A220(void);
 extern void func_8008CD10(void *dest, void *src, s32 size);
 extern void func_80092F38(RectA414 *rect, void *data);
@@ -96,7 +96,7 @@ void func_8005A414(ArgA414 *arg0)
     }
 
     D_8009F7DC = count;
-    gTextureDescriptorTable = func_80017EBC(count * 4, 2);
+    gTextureDescriptorTable = gAllocMemory(count * 4, 2);
     p = (u8 *)header + 0xC;
     if (gTextureDescriptorTable == 0) {
         goto cleanup;
@@ -104,7 +104,7 @@ void func_8005A414(ArgA414 *arg0)
 
     for (i = 0; i < count; i++) {
         size = p[2] * 8;
-        gTextureDescriptorTable[i] = func_80017EBC(size + 8, 2);
+        gTextureDescriptorTable[i] = gAllocMemory(size + 8, 2);
         *(s32 *)gTextureDescriptorTable[i] = *(s32 *)p;
         func_8008CD10((u8 *)gTextureDescriptorTable[i] + 8, p + 4, size);
         p += size + 4;
@@ -147,5 +147,5 @@ cleanup:
     func_8005A220();
 
 done:
-    func_800181D4(arg0);
+    gFreeBlock(arg0);
 }

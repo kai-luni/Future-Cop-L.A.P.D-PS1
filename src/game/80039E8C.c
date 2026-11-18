@@ -57,7 +57,7 @@ typedef struct {
     u8 unk42;
 } Unk39E8C_I;
 
-extern s32 func_8002AD58(s32, Unk39E8C_O *, Unk39E8C_A *);
+extern s32 gEntityBaseHandler(s32, Unk39E8C_O *, Unk39E8C_A *) __asm__("func_8002AD58");
 extern s32 func_80067684(void *, s32);
 extern void func_80050E0C(void *, void *, s32, void *, void *);
 
@@ -104,7 +104,7 @@ void func_80039E8C(s32 arg0, Unk39E8C_O *obj, Unk39E8C_A *arg2)
     register s32 h __asm__("$4");
     u8 x;
 
-    func_8002AD58(arg0, obj, arg2);
+    gEntityBaseHandler(arg0, obj, arg2);
     in = (Unk39E8C_I *)arg2->unk08;
     obj->unk54 = obj->unk60 = func_80067684(&obj->unk50, -1);
     func_80050E0C(&in->unk24, (u8 *)obj + 0xA0, arg2->unk04->unk18, obj, &obj->unk50);

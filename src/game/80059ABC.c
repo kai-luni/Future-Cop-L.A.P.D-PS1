@@ -18,10 +18,12 @@ struct O59ABC {
 
 extern struct G59ABC *gGameSession __asm__("D_8009FA94");
 
-extern s32 func_8002AD58(s32 message, struct O59ABC *object, s32 data);
+extern s32 gEntityBaseHandler(s32 message, struct O59ABC *object, s32 data) __asm__("func_8002AD58");
 extern s32 func_800584BC(s32 message, struct C59ABC *child, s32 data, s32 arg3, s32 arg4);
 extern void func_8005920C(struct O59ABC *object, s32 a, s32 b);
 extern void func_800597C0(struct O59ABC *object);
+s32 gHandleCompanionMessage(s32 message, struct O59ABC *object, s32 data, s32 arg3) __asm__("func_80059ABC");
+
 
 /**
  * @brief Message handler of the kind-0x12 spawned class: spawn, conditional
@@ -56,17 +58,16 @@ extern void func_800597C0(struct O59ABC *object);
  * request.handler, so the spawn dispatcher reaches it indirectly.
  *
  * @par Environment path
- * Message handler of the kind-0x12 spawned class: case 1 reports type 0xB8,
- * case 2 runs the spawn body func_8005920C, case 3 draws through
- * func_800597C0 unless the child block has flag 0x20 set, case 10 reports
- * whether the child pointer differs from the argument, cases 11 and 14
- * forward to the child handler func_800584BC and every other case goes to the
- * shared hook func_8002AD58. It is reached indirectly only: func_80057914
- * stores its address as a request handler, so the call graph has no direct
- * caller. Not on the render path: its draw case delegates to func_800597C0
- * and the function never touches the packet pool itself.
+ * Message handler of the kind-0x12 companion object that func_80057914 queues
+ * on a part of the player unit, so it has no direct callers. Message 1
+ * returns 0xB8, message 2 runs the spawn body func_8005920C, messages 6 and 9
+ * return 0, message 10 reports whether the owner pointer at +0xB4 differs
+ * from the argument, and message 3 draws through func_800597C0 (returning 5)
+ * unless the owner's flag 0x20 is set. Messages 11 and 14 forward the hit to
+ * the owner with func_800584BC, message 4 returns 0 when gGameSession + 0x5C
+ * is 1, and every other message goes to the base handler func_8002AD58.
  */
-s32 func_80059ABC(s32 message, struct O59ABC *object, s32 data, s32 arg3)
+s32 gHandleCompanionMessage(s32 message, struct O59ABC *object, s32 data, s32 arg3)
 {
     switch (message) {
     case 1:
@@ -93,6 +94,6 @@ zero:
             goto zero;
         }
     default:
-        return func_8002AD58(message, object, data);
+        return gEntityBaseHandler(message, object, data);
     }
 }

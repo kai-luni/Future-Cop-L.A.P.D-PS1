@@ -8,7 +8,7 @@ extern void *gRenderNodeTableAlt __asm__("D_8009F5D4");
 extern void *D_8009F5D8;
 extern void *D_8009F5DC;
 
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Releases the render arena allocated by func_8001B2C8().
@@ -31,10 +31,10 @@ extern void func_800181D4(void *block);
  */
 void func_8001B448(void)
 {
-    func_800181D4(D_8009F5C8);
-    func_800181D4(D_8009F5CC);
-    func_800181D4(gRenderNodeTable);
-    func_800181D4(gRenderNodeTableAlt);
-    func_800181D4(D_8009F5D8);
-    func_800181D4(D_8009F5DC);
+    gFreeBlock(D_8009F5C8);
+    gFreeBlock(D_8009F5CC);
+    gFreeBlock(gRenderNodeTable);
+    gFreeBlock(gRenderNodeTableAlt);
+    gFreeBlock(D_8009F5D8);
+    gFreeBlock(D_8009F5DC);
 }

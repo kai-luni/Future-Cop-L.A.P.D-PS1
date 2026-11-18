@@ -9,19 +9,19 @@ typedef struct { s32 count; Part part[1]; } Parts;
 typedef struct { char pad[12]; u32 flags; char pad10[20]; Parts *parts; void *p28; void **p2c; } Model;
 typedef struct { Model *model; Matrix matrix; Vec pos; char pad34[20]; s16 index; u8 flags; } Instance;
 typedef struct { char data[20]; u8 mode, flag; u16 value; } Work;
-extern u16 gDepthTagWord __asm__("D_8009F580");
+extern u16 gModelUvOffset __asm__("D_8009F580");
 extern void *gVertexSourceAltPtr __asm__("D_8009F574");
 extern void *gVertexSourcePtr __asm__("D_8009F570");
 extern Vec *gCamera __asm__("D_8009F9E4");
 extern s32 gEnvMapTexpageWord __asm__("D_800A8EA4");
-extern void func_80019470(Matrix *, Matrix *);
+extern void gTransposeMatrix3x3(Matrix *, Matrix *) __asm__("func_80019470");
 extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
 extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
 extern s32 gPrepareModelPart(Part *, Work *, void *, s32) __asm__("func_80015B68");
-extern void func_80016E6C(Part *, Work *, void *, void *);
+extern void gEmitEnvMapPolygon(Part *, Work *, void *, void *) __asm__("func_80016E6C");
 void gDrawModelInstanceParts(Instance *inst, s32 mode, s32 mask) __asm__("func_80016A64");
 
-extern void func_80015F38(Part *, Work *, void *, void *);
+extern void gEmitShadedPart(Part *, Work *, void *, void *) __asm__("func_80015F38");
 /**
  * @brief Renders the masked parts of a model instance, with a billboard
  *        path for flag 0x40 models.
@@ -68,7 +68,7 @@ void gDrawModelInstanceParts(Instance *inst, s32 mode, s32 mask)
     void *p28, *p2c, *global, *other;
     s32 count, flag, bit;
     register s32 index __asm__("$16");
-    work.value = gDepthTagWord;
+    work.value = gModelUvOffset;
     other = 0;
     index = (s32)other;
     model = inst->model;
@@ -89,7 +89,7 @@ void gDrawModelInstanceParts(Instance *inst, s32 mode, s32 mask)
         flag = !(flags & 8) << 8;
         if (flags & 0x40) {
         other = gVertexSourceAltPtr;
-        func_80019470(&inst->matrix, &transposed);
+        gTransposeMatrix3x3(&inst->matrix, &transposed);
         gGteLoadRotation(&transposed);
         {
             register Vec *a __asm__("$4") = (Vec *)&vec;
@@ -134,8 +134,8 @@ void gDrawModelInstanceParts(Instance *inst, s32 mode, s32 mask)
         __asm__("" : "+r" (bit));
         if (mask & bit) {
             if (gPrepareModelPart(part, &work, p2c, flag)) {
-                if ((part->flags >> 15) & 1) func_80016E6C(part, &work, global, other);
-                func_80015F38(part, &work, p28, global);
+                if ((part->flags >> 15) & 1) gEmitEnvMapPolygon(part, &work, global, other);
+                gEmitShadedPart(part, &work, p28, global);
             }
         }
         count--;

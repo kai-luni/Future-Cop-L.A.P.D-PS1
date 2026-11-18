@@ -1,10 +1,10 @@
 // Categories: Game Engine > Gameplay Frame Loop | Graphics > Rendering | Physics > Camera
 #include "game/types.h"
 
-extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern s32 gFrameId __asm__("D_8009F9FC");
+extern volatile s32 gGameClock __asm__("D_8009FA60");
+extern s32 gFrameDelta __asm__("D_8009F9FC");
 extern s32 gSceneFrameCounter __asm__("D_8009FA50");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
@@ -17,12 +17,12 @@ extern void *gCamera __asm__("D_8009F9E4");
 
 /* Incomplete array types keep these out of small data on the MIPS backend,
    which is why the oracle addresses them with lui/lw instead of ($gp). */
-extern u8 *gMissionWorkingSet[] __asm__("D_8009F9A0");
-extern u8 *D_8009FA58[];
+extern u8 *gFocusPositions[] __asm__("D_8009F9A0");
+extern u8 *gPlayerEntities[] __asm__("D_8009FA58");
 
 extern void func_8001BFD8(u8 value);
 extern void func_8002703C(void);
-extern void func_800271A4(void);
+extern void gRunSoloSessionFrame(void) __asm__("func_800271A4");
 extern void gRunSessionFrame(void) __asm__("func_80027510");
 extern void func_80028164(void);
 extern void func_80027D9C(void);
@@ -33,6 +33,8 @@ extern void func_800462D0(void);
 extern void func_8008352C(s32 arg);
 extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
 extern void func_80045884(s32 *position, s32 arg1, s32 angle, s32 index);
+void gRunGameFrameLoop(void) __asm__("func_80028618");
+
 
 /**
  * @brief The in-game frame loop: input, update, camera matrix per player,
@@ -81,34 +83,35 @@ extern void func_80045884(s32 *position, s32 arg1, s32 angle, s32 index);
  * func_800287F4, on the path where arg1 == 0 (game mode).
  *
  * @par Environment path
- * The in-game frame loop: it seeds gPaletteCycleCounter, gFrameId,
- * gSceneFrameCounter, the four frame-delta history bytes , and then repeats
- * one iteration while the screen state is 4, 8 or 0xD. Each iteration ticks
- * input (func_8002703C), runs the one-player update func_800271A4 or the
- * two-player gRunSessionFrame, builds one view matrix per player slot with
- * gSelectViewRecord plus func_80045884(position, gCamera + 0x7C, angle,
- * index), renders the world with func_800451EC and func_800462D0 and submits
- * the last frame through func_80028164 and func_8001B4A8(1) on state 0xD. It
- * is the driver directly above the environment path: gDrawViewLayers and the
- * region passes run inside the world render this loop performs every frame.
- * Its only caller is gRunScreenModule (func_800287F4,
- * src/game/800287F4.c:87).
+ * The in-game frame loop: it clears the game clock, sets the frame delta to
+ * 8, resets gSceneFrameCounter and seeds the four frame-delta history bytes,
+ * then repeats one iteration while gScreenState is 4, 8 or 0xD. Each
+ * iteration advances gSceneFrameCounter, samples timing and input through
+ * func_8002703C, runs the one-player update func_800271A4 or the two-player
+ * gRunSessionFrame (func_80027510), calls func_8008352C with the frame delta
+ * and, for each occupied slot of D_8009FA58, selects the slot's view record
+ * with gSelectViewRecord and calls func_80045884(position, gCamera + 0x7C,
+ * gCamera angle, slot), using the focus entity's +0x50 position instead of
+ * the player's when D_8009F9A0 is set. It then calls func_800451EC and
+ * func_800462D0, on state 0xD submits the last frame through func_80028164
+ * and func_8001B4A8(1), finishes with func_80027D70/func_80027D9C and raises
+ * gFrameBarrier; its only caller is gRunScreenModule (func_800287F4).
  */
-void func_80028618(void)
+void gRunGameFrameLoop(void)
 {
     register s32 saved __asm__("$3");
     register u32 b __asm__("$2");
     register s32 work __asm__("$16");
     register u8 **cursor __asm__("$17");
 
-    gPaletteCycleCounter = 0;
-    saved = gPaletteCycleCounter;
+    gGameClock = 0;
+    saved = gGameClock;
     work = 8;
-    gFrameId = work;
-    b = *(u8 *)&gFrameId;
+    gFrameDelta = work;
+    b = *(u8 *)&gFrameDelta;
     gSceneFrameCounter = 0;
     gFrameDeltaRemainder = 0;
-    gDiscShadeByte = saved;
+    gFrameTime = saved;
     gFrameTickBase = saved - 8;
     gFrameDeltaNewest = b;
     gFrameDeltaPrev1 = b;
@@ -125,14 +128,14 @@ frame:
         gSceneFrameCounter = gSceneFrameCounter + 1;
         func_8002703C();
         if (gPlayerCount == 1) {
-            func_800271A4();
+            gRunSoloSessionFrame();
         } else {
             gRunSessionFrame();
         }
         {
             register s32 frame_id __asm__("$4");
-            frame_id = gFrameId;
-            cursor = D_8009FA58;
+            frame_id = gFrameDelta;
+            cursor = gPlayerEntities;
             work = 0;
             func_8008352C(frame_id);
         }
@@ -146,7 +149,7 @@ frame:
                 break;
             }
             gSelectViewRecord((s32)*(s8 *)(*(u8 **)(*cursor + 0xAC) + 0xAC));
-            position = gMissionWorkingSet[0];
+            position = gFocusPositions[0];
             if (position != 0) {
                 position += 0x50;
                 camera = (u8 *)gCamera;

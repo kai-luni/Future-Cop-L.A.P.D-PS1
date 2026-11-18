@@ -30,6 +30,8 @@ struct ModelInstance {
     s16 frame;
     u8 flags;
 };
+void gInitModelInstance(struct ModelInstance *instance, struct Model *model, u32 options) __asm__("func_80013AF0");
+
 
 /**
  * @brief Initialises a model instance: binds the model, copies the frame-0
@@ -70,7 +72,7 @@ struct ModelInstance {
  * submitted later by gSubmitModelInstance (func_80017508) through
  * func_8002ACB4.
  */
-void func_80013AF0(struct ModelInstance *instance, struct Model *model, u32 options)
+void gInitModelInstance(struct ModelInstance *instance, struct Model *model, u32 options)
 {
     instance->model = model;
     if (model == 0) {

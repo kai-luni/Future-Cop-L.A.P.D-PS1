@@ -6,7 +6,7 @@ extern s32 gCellMap __asm__("D_8009F820");
 extern s32 D_8009F830;
 extern u8 gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
 
-extern s32 func_80017EBC(s32, s32);
+extern s32 gAllocMemory(s32, s32) __asm__("func_80017EBC");
 
 /**
  * @brief Allocates the three 0x400-byte work buffers of a subsystem and clears them.
@@ -39,10 +39,10 @@ void func_800617D8(void)
 
     gCellMap = 0;
     for (i = 0, p = gCellEntityList; i < 2; i++) {
-        *p = func_80017EBC(0x400, 2);
+        *p = gAllocMemory(0x400, 2);
         p++;
     }
-    D_8009F830 = func_80017EBC(0x400, 2);
+    D_8009F830 = gAllocMemory(0x400, 2);
     for (i = 1; i >= 0; i--) {
         gPlayerCollisionCandidates[i * 0x44] = 0;
     }

@@ -72,11 +72,11 @@ struct Unk3D680 {
     s32 unk48;
 };
 
-extern s32 gBaseMatrix[9] __asm__("D_8009AA38");
+extern s32 gIdentityMatrix[9] __asm__("D_8009AA38");
 extern struct Unk3D680 *gNodeListHead __asm__("D_8009F320");
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
-extern void *func_80017EBC(s32 size, s32 tag);
+extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern u32 *func_8003B3D8(u32 column, u32 row);
 
 /**
@@ -146,7 +146,7 @@ struct Unk3D680 *func_8003D680(struct Unk3D680Source *source, u8 type, s32 row,
     s32 parentY;
     s32 parentZ;
 
-    object = func_80017EBC(0x4C, 1);
+    object = gAllocMemory(0x4C, 1);
     if (object == 0) {
         return 0;
     }
@@ -182,15 +182,15 @@ struct Unk3D680 *func_8003D680(struct Unk3D680Source *source, u8 type, s32 row,
             object->unk20 = parent->unk38;
             object->unk24 = parent->unk3C;
         } else {
-            object->unk04 = gBaseMatrix[0];
-            object->unk08 = gBaseMatrix[1];
-            object->unk0C = gBaseMatrix[2];
-            object->unk10 = gBaseMatrix[3];
-            object->unk14 = gBaseMatrix[4];
-            object->unk18 = gBaseMatrix[5];
-            object->unk1C = gBaseMatrix[6];
-            object->unk20 = gBaseMatrix[7];
-            object->unk24 = gBaseMatrix[8];
+            object->unk04 = gIdentityMatrix[0];
+            object->unk08 = gIdentityMatrix[1];
+            object->unk0C = gIdentityMatrix[2];
+            object->unk10 = gIdentityMatrix[3];
+            object->unk14 = gIdentityMatrix[4];
+            object->unk18 = gIdentityMatrix[5];
+            object->unk1C = gIdentityMatrix[6];
+            object->unk20 = gIdentityMatrix[7];
+            object->unk24 = gIdentityMatrix[8];
         }
         object->unk38 = 1;
     }

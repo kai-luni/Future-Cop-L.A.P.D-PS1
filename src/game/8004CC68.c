@@ -8,8 +8,8 @@ struct Unk4CC68 {
     s32 unk4C;
 };
 
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
-extern struct Unk4CC68 gEffectSizeTable __asm__("D_800A6F60");
+extern s32 gFrameTime __asm__("D_8009FAA4");
+extern struct Unk4CC68 gMarkerColorTable __asm__("D_800A6F60");
 
 /**
  *  @brief Computes three packed values from a global phase-like counter.
@@ -31,7 +31,7 @@ void func_8004CC68(void)
 {
     s32 level;
 
-    level = gDiscShadeByte >> 3;
+    level = gFrameTime >> 3;
     level &= 0x3F;
     if (level >= 0x20) {
         level = 0x3F - level;
@@ -40,7 +40,7 @@ void func_8004CC68(void)
     if (level >= 0x20) {
         level = 0x1F;
     }
-    gEffectSizeTable.unk44 = level << 3;
-    gEffectSizeTable.unk48 = ((level / 2) << 3) | ((level / 2) << 11) | (level << 19);
-    gEffectSizeTable.unk4C = level << 11;
+    gMarkerColorTable.unk44 = level << 3;
+    gMarkerColorTable.unk48 = ((level / 2) << 3) | ((level / 2) << 11) | (level << 19);
+    gMarkerColorTable.unk4C = level << 11;
 }

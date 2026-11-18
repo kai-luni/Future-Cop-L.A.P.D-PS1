@@ -11,7 +11,7 @@ typedef struct Obj {
 } Obj;
 typedef struct Model { u8 pad[0x34]; void *parts; } Model;
 extern int gPlayerCount __asm__("D_8009FA0C");
-extern Obj *D_8009FA58[];
+extern Obj *gPlayerEntities[] __asm__("D_8009FA58");
 extern void func_8003A09C(Obj *);
 extern s32 func_8001A100(Vec *);
 extern void func_8001A6F8(Vec *, Vec *);
@@ -21,11 +21,13 @@ extern int func_80050D14(void *, s32, Obj *);
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, int) __asm__("func_80010234");
 extern void func_80039E8C(int);
-extern int func_8002AD58(int, void *, void *);
+extern int gEntityBaseHandler(int, void *, void *) __asm__("func_8002AD58");
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 #define FMUL(d,a,b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 #define FMULP(d,a,b) do { register s32 mul __asm__("$2") = (b); FMUL(d,a,mul); } while (0)
 #define FMULV(d,a,b) do { register s32 in __asm__("$2") = (a); register s32 out __asm__("$7"); __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(out) : "r"(in), "r"(b) : "$8", "$9"); (d) = out; } while (0)
+void gUpdateForceField(Obj *obj, s32 dt) __asm__("func_8003A160");
+
 
 /**
  * @brief Per-frame update of a force-field object: every tick it computes one
@@ -134,7 +136,7 @@ extern int func_8002AD58(int, void *, void *);
  * and func_80010234. It is a physics unit that changes state owned by other
  * objects; no view, region or camera state is touched.
  */
-void func_8003A160(Obj *obj, s32 dt)
+void gUpdateForceField(Obj *obj, s32 dt)
 {
     Vec force, delta;
     s32 i, scale;
@@ -160,7 +162,7 @@ void func_8003A160(Obj *obj, s32 dt)
     if ((obj->effectFlags & 0x81) == 0x81) {
         obj->soundPlaying = obj->soundType;
         for (i = gPlayerCount - 1; i >= 0; i--) {
-            target = D_8009FA58[i];
+            target = gPlayerEntities[i];
             if (target != 0 && (!(obj->effectFlags & 4) || target->sub->state == 0x10000)) goto valid_target;
             force.z = 0;
             force.y = 0;

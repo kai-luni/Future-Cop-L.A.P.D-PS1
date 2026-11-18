@@ -31,7 +31,7 @@ struct Obj44610 {
 
 extern s32 func_8003C7B8(s32, struct Obj44610 *, s32, s32);
 extern s32 func_8003C980(s32, struct Obj44610 *, s32, s32);
-extern void func_8003DB70(void *, s32, struct Node44610 *, s32, s32 *, s16 *, s16 *);
+extern void gBuildNodePlacement(void *, s32, struct Node44610 *, s32, s32 *, s16 *, s16 *) __asm__("func_8003DB70");
 extern void func_80042AF4(struct Obj44610 *, void *, s32);
 extern void func_800427E8(struct Obj44610 *);
 
@@ -79,7 +79,7 @@ case0:
         obj->unk16 = 0;
         return 1;
 case1:
-    func_8003DB70(obj->unk20, 0, obj->parent, 0, &obj->unk34, &obj->unk12, &obj->unk0e);
+    gBuildNodePlacement(obj->unk20, 0, obj->parent, 0, &obj->unk34, &obj->unk12, &obj->unk0e);
     func_80042AF4(obj, obj->unkA8, 0);
     return 1;
 case10:

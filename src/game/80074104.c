@@ -17,17 +17,20 @@ extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u8 gHeaderPrimitiveRecord[] __asm__("D_800A3548");
 extern Point gPreparedVertexTable[] __asm__("D_800A6418");
-extern u8 D_800AB388[];
-extern s16 D_800A7840[], D_800A7898[];
+extern u8 gRibbonClipFlags[] __asm__("D_800AB388");
+extern s16 gRibbonSegmentDx[] __asm__("D_800A7840");
+extern s16 gRibbonSegmentDy[] __asm__("D_800A7898");
 extern u8 *gCamera __asm__("D_8009F9E4");
-extern u8 *func_8003D9F8();
+extern u8 *gResolveNodeTransform() __asm__("func_8003D9F8");
 extern u8 *func_8003D9C4();
 extern s32 func_8001A100();
 extern void gMulMatrixVector() __asm__("func_8001A81C");
 extern void gGteLoadRotation() __asm__("func_80010820");
 extern void gGteTransformWords() __asm__("func_8001006C");
 extern void gGteLoadMatrix() __asm__("func_80010750");
-extern void func_8001047C();
+extern void gProjectVertexBatch() __asm__("func_8001047C");
+void gDrawRibbonList(u8 *input, s32 *pos) __asm__("func_80074104");
+
 
 /**
  * @brief Renders one object list as camera-facing polygon ribbons: every list
@@ -159,7 +162,7 @@ extern void func_8001047C();
  * gRunViewScenePasses (func_8003F6E4:91) calls it with the list head and the
  * resolved view position, in the same pass that runs the region layers.
  */
-void func_80074104(u8 *input, s32 *pos)
+void gDrawRibbonList(u8 *input, s32 *pos)
 {
     register u8 *obj asm("$23") = input;
     register u8 *owner asm("$19");
@@ -190,7 +193,7 @@ void func_80074104(u8 *input, s32 *pos)
         owner = obj;
         if (!node) goto advance;
         p = PTR(obj, 0x1c);
-        base = func_8003D9F8(p ? W(p, 0x34) : 0, UH(obj, 0x1a), B(obj, 0xe), 1, p, obj + 0x34);
+        base = gResolveNodeTransform(p ? W(p, 0x34) : 0, UH(obj, 0x1a), B(obj, 0xe), 1, p, obj + 0x34);
         m = func_8003D9C4(obj);
         if (!(UB(obj,0x10) & 1)) {
             if (m) {
@@ -280,12 +283,12 @@ void func_80074104(u8 *input, s32 *pos)
         node = (u8 *)&frame.mat;
         if (UH(owner,0x1a) & 0x100) gGteLoadMatrix(node);
         else gGteLoadRotation(node);
-        func_8001047C(gPreparedVertexTable, gPreparedVertexTable, D_800AB388, count);
+        gProjectVertexBatch(gPreparedVertexTable, gPreparedVertexTable, gRibbonClipFlags, count);
         if (!(UH(owner,0x8e) & 0x2000)) node = gHeaderPrimitiveRecord;
         else node = PTR(owner,0x68);
-        dx = D_800A7840; dy = D_800A7898;
+        dx = gRibbonSegmentDx; dy = gRibbonSegmentDy;
         for (i=0; i<count; i++) {
-            t = D_800AB388[i] | D_800AB388[previous] | D_800AB388[next];
+            t = gRibbonClipFlags[i] | gRibbonClipFlags[previous] | gRibbonClipFlags[next];
             if (!(t & 1) && t == 0xc0) {
                 width = (H(node,0x10) << 9) / gPreparedVertexTable[previous].z;
                 if (width < 3) width = 3;
@@ -333,7 +336,7 @@ void func_80074104(u8 *input, s32 *pos)
         cur = gPreparedVertexTable;
         offset = 8;
         for (i=0; i<count-1; ++i, ++cur, offset+=8) {
-            t = D_800AB388[i] | D_800AB388[i+1];
+            t = gRibbonClipFlags[i] | gRibbonClipFlags[i+1];
             if ((t & 1) || t != 0xc0) goto next_node;
             if (!(UH(owner,0x8e) & 4) && B(owner,0x72) < 0) {
                 p = PTR(node,0);
@@ -348,16 +351,16 @@ void func_80074104(u8 *input, s32 *pos)
                 cursor = gPrimPoolNext;
                 if (cursor < gPrimPoolEnd) gPrimPoolNext = cursor + 0x34;
                 __asm__("" : "=r"(prim) : "0"(cursor));
-                H(prim,8) = cur->x + D_800A7840[i];
-                H(prim,0x14) = cur->x - D_800A7840[i];
-                H(prim,0xa) = cur->y + D_800A7898[i];
-                H(prim,0x16) = cur->y - D_800A7898[i];
+                H(prim,8) = cur->x + gRibbonSegmentDx[i];
+                H(prim,0x14) = cur->x - gRibbonSegmentDx[i];
+                H(prim,0xa) = cur->y + gRibbonSegmentDy[i];
+                H(prim,0x16) = cur->y - gRibbonSegmentDy[i];
                 __asm__("" : "=r"(following) : "0"(gPreparedVertexTable), "r"(offset));
                 following = (Point *)((u8 *)following + offset);
-                H(prim,0x2c) = following->x - D_800A7840[i+1];
-                H(prim,0x20) = following->x + D_800A7840[i+1];
-                H(prim,0x2e) = following->y - D_800A7898[i+1];
-                H(prim,0x22) = following->y + D_800A7898[i+1];
+                H(prim,0x2c) = following->x - gRibbonSegmentDx[i+1];
+                H(prim,0x20) = following->x + gRibbonSegmentDx[i+1];
+                H(prim,0x2e) = following->y - gRibbonSegmentDy[i+1];
+                H(prim,0x22) = following->y + gRibbonSegmentDy[i+1];
                 if (!((H(prim,8)<320 && H(prim,0xa)<240) ||
                       (H(prim,0x14)<320 && H(prim,0x16)<240) ||
                       (H(prim,0x20)<320 && H(prim,0x22)<240) ||
@@ -418,14 +421,14 @@ void func_80074104(u8 *input, s32 *pos)
                     prim = cursor;
                     gPrimPoolNext = prim + 0x34;
                 }
-                H(prim,8) = cur->x + D_800A7840[i];
-                H(prim,0xa) = cur->y + D_800A7898[i];
+                H(prim,8) = cur->x + gRibbonSegmentDx[i];
+                H(prim,0xa) = cur->y + gRibbonSegmentDy[i];
                 H(prim,0x10) = cur->x;
                 H(prim,0x12) = cur->y;
                 __asm__("" : "=r"(following) : "0"(gPreparedVertexTable), "r"(offset));
                 following = (Point *)((u8 *)following + offset);
-                H(prim,0x18) = following->x + D_800A7840[i+1];
-                H(prim,0x1a) = following->y + D_800A7898[i+1];
+                H(prim,0x18) = following->x + gRibbonSegmentDx[i+1];
+                H(prim,0x1a) = following->y + gRibbonSegmentDy[i+1];
                 H(prim,0x20) = following->x;
                 H(prim,0x22) = following->y;
                 if ((H(prim,8)<320 && H(prim,0xa)<240) ||
@@ -448,14 +451,14 @@ void func_80074104(u8 *input, s32 *pos)
                     __asm__("" : "=r"(prim) : "0"(cursor));
                     H(prim,8) = cur->x;
                     H(prim,0xa) = cur->y;
-                    H(prim,0x10) = cur->x - D_800A7840[i];
-                    H(prim,0x12) = cur->y - D_800A7898[i];
+                    H(prim,0x10) = cur->x - gRibbonSegmentDx[i];
+                    H(prim,0x12) = cur->y - gRibbonSegmentDy[i];
                     __asm__("" : "=r"(following) : "0"(gPreparedVertexTable), "r"(offset));
                 following = (Point *)((u8 *)following + offset);
                 H(prim,0x18) = following->x;
                     H(prim,0x1a) = following->y;
-                    H(prim,0x20) = following->x - D_800A7840[i+1];
-                    H(prim,0x22) = following->y - D_800A7898[i+1];
+                    H(prim,0x20) = following->x - gRibbonSegmentDx[i+1];
+                    H(prim,0x22) = following->y - gRibbonSegmentDy[i+1];
                     if ((H(prim,8)<320 && H(prim,0xa)<240) ||
                         (H(prim,0x10)<320 && H(prim,0x12)<240) ||
                         (H(prim,0x18)<320 && H(prim,0x1a)<240) ||

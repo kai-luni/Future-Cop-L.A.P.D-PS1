@@ -49,6 +49,8 @@ extern void gGteTransformWords(struct Matrix *, struct Matrix *, s32) __asm__("f
         (d)->m[10] = (s)->m[10]; \
         (d)->m[11] = (s)->m[11]; \
     } while (0)
+void gComposeJointChain(struct Args *a0, struct Matrix *first, struct Matrix *second) __asm__("func_80052960");
+
 
 /**
  * @brief Walks a short joint record list and builds the world matrices of a limb
@@ -96,18 +98,19 @@ extern void gGteTransformWords(struct Matrix *, struct Matrix *, s32) __asm__("f
  * func_80052D7C.
  *
  * @par Environment path
- * Walks a short joint record list and builds the world matrices of a limb:
- * for each record the three angles and the translation come literally or from
- * the shared sixteen-bit table depending on the flags byte, func_80018DC0
- * builds the 3x3 rotation, the translation is placed at words 9 to 11 scaled
- * by 16, and func_80010820 plus func_8001006C concatenate the result onto the
- * parent slot selected by the record index before the parent translation is
- * added. Level 3 is copied into the second output, level 5 into the first,
- * and flag 0x80 ends the walk. Its caller is func_80052D7C, which transforms
- * both parts of a two-part model, so this is part geometry inside the model
- * pipeline; the function uses no global data.
+ * Composes a joint chain into a local matrix stack seeded with the object's
+ * coordinate matrix: for each record the three angles and three translations
+ * come literally or from the shared animation table at the object's frame
+ * offset depending on the flags byte, func_80018DC0 builds the rotation, and
+ * func_80010820 plus func_8001006C concatenate it onto the slot before the
+ * record's index before the parent translation is added (the same scheme as
+ * func_80013CB8, but on a stack local to this call). The matrix produced by
+ * the third record is copied to the second output and the fifth to the first
+ * output; flag 0x80 ends the walk early. Its only caller func_80052D7C passes
+ * the two part matrices of a two-part model and then transforms each part's
+ * reference vertex; no globals are used.
  */
-void func_80052960(struct Args *a0, struct Matrix *first, struct Matrix *second)
+void gComposeJointChain(struct Args *a0, struct Matrix *first, struct Matrix *second)
 {
     struct Matrix matrix;
     struct Matrix local[4];

@@ -13,7 +13,7 @@ extern int gUploadInProgress __asm__("D_8009F9C4");
 extern void func_8008CD30(char *, char *, int, char *);
 extern void func_8001E110(char *, int, void **, int *, int);
 extern void func_800861E4(void *, int, int, int);
-extern void func_800181D4(void *);
+extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void func_8002549C(int);
 extern void func_8001B4A8(int);
 
@@ -89,7 +89,7 @@ int func_80025370(void)
                 func_800861E4(base + (*(int *)base + 8), entry->value, 320, 256);
             }
             gUploadInProgress = saved;
-            func_800181D4(data);
+            gFreeBlock(data);
             func_8002549C(0);
             func_8001B4A8(1);
         }

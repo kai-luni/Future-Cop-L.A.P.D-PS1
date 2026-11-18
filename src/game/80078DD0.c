@@ -58,14 +58,15 @@ extern void func_80077990(void);
 extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
 extern void gSetupFrontEndMenus(s32) __asm__("func_80077AD4");
 extern u8 func_80078C88(void), func_80082D30(s32 *, s32);
-extern void func_80082DDC(u32, s32), func_8005780C(u32, struct InputAction *);
+extern void func_80082DDC(u32, s32);
+extern void gDecodeButtonEdge(u32, struct InputAction *) __asm__("func_8005780C");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 D_8009F46C, D_8009F3FB, D_8009B3D4[], D_8009B3E0[];
 extern u8 gHighlightShadeTable[] __asm__("D_8009F3F8");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern s32 gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
-extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
+extern volatile s32 gGameClock __asm__("D_8009FA60");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 struct GameContext { u8 pad00[12]; s32 type; u8 pad10[0x4c]; s32 stage; };
 extern struct GameContext *gGameSession __asm__("D_8009FA94");
@@ -167,13 +168,13 @@ reset_timer:
         for (j = 0; j < 2; j++) {
             u32 *btns;
             __asm__("lui %0,%%hi(D_8009F8D0)\n\taddiu %0,%0,%%lo(D_8009F8D0)" : "=r"(btns));
-            func_8005780C(btns[j], &D_800A3588[j]);
-            func_8005780C(btns[j], &D_800A3598[j]);
-            func_8005780C(btns[j], &D_800A35A8[j]);
-            func_8005780C(btns[j], &D_800A35B8[j]);
-            func_8005780C(btns[j], &D_800A35C8[j]);
-            func_8005780C(btns[j], &D_800A35D8[j]);
-            func_8005780C(btns[j], &D_800A35E8[j]);
+            gDecodeButtonEdge(btns[j], &D_800A3588[j]);
+            gDecodeButtonEdge(btns[j], &D_800A3598[j]);
+            gDecodeButtonEdge(btns[j], &D_800A35A8[j]);
+            gDecodeButtonEdge(btns[j], &D_800A35B8[j]);
+            gDecodeButtonEdge(btns[j], &D_800A35C8[j]);
+            gDecodeButtonEdge(btns[j], &D_800A35D8[j]);
+            gDecodeButtonEdge(btns[j], &D_800A35E8[j]);
             up[j] = 0;
             down[j] = 0;
             left[j] = 0;
@@ -306,7 +307,7 @@ reset_timer:
                         if (j == gFontBankTable->selection[i] && item->enabled) {
                             if (gPlayerMenuDepth[i]) color = D_8009F3FB + 0x80;
                             else {
-                                s32 frame = gPaletteCycleCounter;
+                                s32 frame = gGameClock;
                                 __asm__("lui %0,%%hi(D_8009F3F8)\n\taddiu %0,%0,%%lo(D_8009F3F8)" : "=r"(rgb) : "r"(frame));
                                 color = *(((u8 *)((frame >> 4) & 7)) + (u32)rgb) + 0x80;
                             }
@@ -319,7 +320,7 @@ reset_timer:
                             u8 *rgb2;
                             color = 0x11;
                             if (gPlayerMenuDepth[i]) rgb2 = D_8009B3E0;
-                            else rgb2 = &D_8009B3D4[((gPaletteCycleCounter >> 4) & 7) * 3];
+                            else rgb2 = &D_8009B3D4[((gGameClock >> 4) & 7) * 3];
                             func_800493C0(color, rgb2[0], rgb2[1], rgb2[2]);
                         } else {
                             color = 15;

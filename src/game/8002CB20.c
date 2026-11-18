@@ -24,7 +24,7 @@ struct Unk2CB20 {
     struct Model *models[4];
 };
 
-extern void func_80013AF0(void *instance, struct Model *model, u32 options);
+extern void gInitModelInstance(void *instance, struct Model *model, u32 options) __asm__("func_80013AF0");
 extern void func_8002A5B4(struct Unk2CB20 *self, s32 index);
 
 /**
@@ -83,7 +83,7 @@ void func_8002CB20(struct Unk2CB20 *self)
             break;
         case 0x2E:
             if (self->unk16 == 0x1E && arg < 4) {
-                func_80013AF0(&self->unk28, self->models[arg], self->options);
+                gInitModelInstance(&self->unk28, self->models[arg], self->options);
             }
             break;
         default:

@@ -40,7 +40,7 @@ typedef struct State {
     u8 pad7c[8];
     s32 total1, total2;
 } State;
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern State *gGameSession __asm__("D_8009FA94");
@@ -182,7 +182,7 @@ void func_80047F30(Game *game)
     player = game->player;
     intensity = (s8)((player->value58 * player->value5c + 0x8000) >> 16);
     if (intensity < 0) intensity = 0;
-    if (player->value326 > 0 && (gDiscShadeByte & 0x80)) {
+    if (player->value326 > 0 && (gFrameTime & 0x80)) {
         func_80047BE8(12, 206, intensity, 0, 64, 127, player->value64 < 2);
     } else {
         ratio = ((game->health - ((game->health >> 31) & game->health)) << 16) / game->maxhealth;
@@ -205,7 +205,7 @@ void func_80047F30(Game *game)
     score = state->score[game->player->valuec1];
     func_8008CD30(text, gScoreFormatString, score);
     flash = 0;
-    if (score >= 30 && (gDiscShadeByte & 0x80)) {
+    if (score >= 30 && (gFrameTime & 0x80)) {
         register s32 a __asm__("$3") = gGameSession->total1;
         register s32 b __asm__("$2") = gGameSession->total2;
         __asm__ volatile("" : "+r"(a), "+r"(b));
@@ -244,7 +244,7 @@ void func_80047F30(Game *game)
         score = gGameSession->score[1];
         func_8008CD30(text, gScoreFormatString, score);
         flash = 0;
-        if (score >= 30 && (gDiscShadeByte & 0x80)) {
+        if (score >= 30 && (gFrameTime & 0x80)) {
             register s32 a __asm__("$3") = gGameSession->total1;
             register s32 b __asm__("$2") = gGameSession->total2;
             __asm__ volatile("" : "+r"(a), "+r"(b));

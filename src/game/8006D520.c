@@ -39,10 +39,10 @@ struct Unk8006D520 {
     s16 unk9A;
 };
 
-extern s32 D_8009FA58;
+extern s32 gPlayerEntities __asm__("D_8009FA58");
 extern s32 D_8009FA5C;
 
-extern u8 *func_8003D9F8(s32 arg0, s32 arg1, s32 arg2, s32 arg3, void *arg4, void *arg5);
+extern u8 *gResolveNodeTransform(s32 arg0, s32 arg1, s32 arg2, s32 arg3, void *arg4, void *arg5) __asm__("func_8003D9F8");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void func_800413EC(s32 arg0, s32 arg1, s32 arg2, s32 context, s32 arg4, s32 mode);
 extern void func_80041428(s32 arg0, s32 arg1, s32 arg2, s32 context, struct Vec3s32 *position,
@@ -84,7 +84,7 @@ void func_8006D520(struct Unk8006D520 *arg0)
     u8 *base;
 
     if (e->unk98 & 0x400) {
-        base = func_8003D9F8(e->unk1C != 0 ? e->unk1C->unk34 : 0,
+        base = gResolveNodeTransform(e->unk1C != 0 ? e->unk1C->unk34 : 0,
                              e->unk1A, e->unk0E, 1, e->unk1C, e->unk34);
         if (e->unk98 & 0x200) {
             gSinCos(0x100, &sine, &cosine);
@@ -100,12 +100,12 @@ void func_8006D520(struct Unk8006D520 *arg0)
         register s32 a0 __asm__("$4");
         s32 color;
 
-        a0 = (s32)func_8003D9F8(e->unk1C != 0 ? e->unk1C->unk34 : 0,
+        a0 = (s32)gResolveNodeTransform(e->unk1C != 0 ? e->unk1C->unk34 : 0,
                                 e->unk1A, e->unk0E, 0, e->unk1C, e->unk34);
 
         if (e->unk10 & 0x08) {
             a0 += 0x24;
-            color = D_8009FA58;
+            color = gPlayerEntities;
         } else if (e->unk10 & 0x10) {
             a0 += 0x24;
             color = D_8009FA5C;

@@ -2,12 +2,12 @@
 #include "game/types.h"
 
 extern s32 gGlobalTick __asm__("D_8009F284");
-extern s32 gFrameId __asm__("D_8009F9FC");
+extern s32 gFrameDelta __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 gSceneFrameCounter __asm__("D_8009FA50");
-extern volatile s32 gPaletteCycleCounter __asm__("D_8009FA60");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern volatile s32 gGameClock __asm__("D_8009FA60");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern void func_80027E68(void);
 extern void func_80027EBC(void);
@@ -38,10 +38,10 @@ extern void func_80078DD0(void);
 void func_80027EE4(void)
 {
     s32 t;
-    gPaletteCycleCounter = 0;
-    t = gPaletteCycleCounter;
-    gFrameId = 8;
-    gDiscShadeByte = t;
+    gGameClock = 0;
+    t = gGameClock;
+    gFrameDelta = 8;
+    gFrameTime = t;
     gFrameTickBase = t;
     gSceneFrameCounter = 0;
 

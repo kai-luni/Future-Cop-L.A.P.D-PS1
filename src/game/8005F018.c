@@ -117,7 +117,7 @@ struct Locals5F018 {
 
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
-extern void func_80017668(struct ModelInstance *instance, s32 part, s32 *out);
+extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
 extern s32 func_80019904(s32 arg0);
@@ -224,7 +224,7 @@ void func_8005F018(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec3
 
         if (obj != 0) {
             if (obj->unk1E < 4) {
-                func_80017668((struct ModelInstance *)((u8 *)arg3 + 0x28), (s8)obj->unk1E, &locals.vec38.x);
+                gTransformPartVertex((struct ModelInstance *)((u8 *)arg3 + 0x28), (s8)obj->unk1E, &locals.vec38.x);
                 goto common;
             }
             if (arg0->data->unk0E != 0) {
@@ -450,7 +450,7 @@ common:
         struct ModelInstance *instance;
 
         instance = (struct ModelInstance *)((u8 *)arg1 + 0x28);
-        func_80017668(instance, arg0->unk23, &locals.effect.position.x);
+        gTransformPartVertex(instance, arg0->unk23, &locals.effect.position.x);
         locals.effect.unk00 = 0x300;
         locals.effect.unk44 = instance;
         locals.effect.unk48 = 0;

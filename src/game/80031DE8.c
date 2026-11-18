@@ -40,11 +40,11 @@ typedef struct {
 
 extern Node80031DE8 *gMapZoneList __asm__("D_8009F6F8");
 extern Manager80031DE8 gCommandListHead __asm__("D_800A8F90");
-extern Target80031DE8 *D_8009FA58[2];
+extern Target80031DE8 *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern s32 func_80019668(void);
 extern s32 func_80031C74(Node80031DE8 *node, Target80031DE8 *target);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Per-frame tick of the trigger-node list D_8009F6F8.
@@ -161,7 +161,7 @@ void func_80031DE8(s32 delta)
 
     i = 0;
 load_target:
-    target = D_8009FA58[i];
+    target = gPlayerEntities[i];
 
 check:
     if (target == 0) {
@@ -177,7 +177,7 @@ remove:
     } else {
         gMapZoneList = node->next;
     }
-    func_800181D4(node);
+    gFreeBlock(node);
     node = prev;
     goto next;
 
@@ -190,7 +190,7 @@ after_call:
         goto next;
     }
     do {
-        if (D_8009FA58[i] != 0) {
+        if (gPlayerEntities[i] != 0) {
             goto load_target;
         }
         i++;

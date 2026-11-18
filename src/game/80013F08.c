@@ -66,10 +66,12 @@ extern void gGteLoadMatrix(struct Matrix *matrix) __asm__("func_80010750");
 extern void gGteTransformVerticesV0(void *src, s16 *dst, s32 count) __asm__("func_800101D4");
 extern u8 func_80019E70(s16 *point, s32 margin);
 extern void func_80013ECC(struct Vec3s32 *vec);
-extern void func_80013CB8(s32 idx, struct Input *input, s16 *table, s32 frame);
+extern void gComposeBoneMatrix(s32 idx, struct Input *input, s16 *table, s32 frame) __asm__("func_80013CB8");
 extern void gGteTransformVertices(void *src, void *dst, s32 count) __asm__("func_8001010C");
-extern void func_8001047C(void *src, void *dst_points, void *dst_flags, s32 count);
+extern void gProjectVertexBatch(void *src, void *dst_points, void *dst_flags, s32 count) __asm__("func_8001047C");
 extern void func_8001AE14(struct Matrix *matrix, struct Vec3s32 *in, struct Vec3s32 *out);
+s32 gProjectModelInstance(struct Instance *instance) __asm__("func_80013F08");
+
 
 /**
  * @brief Computes one model instance's matrix, tests it against the view volume
@@ -169,7 +171,7 @@ extern void func_8001AE14(struct Matrix *matrix, struct Vec3s32 *in, struct Vec3
  * that gDrawViewLayers runs for the terrain. It draws nothing itself; the
  * emitters consume the buffers it fills.
  */
-s32 func_80013F08(struct Instance *instance)
+s32 gProjectModelInstance(struct Instance *instance)
 {
     struct Model *model;
     s32 index;
@@ -225,7 +227,7 @@ s32 func_80013F08(struct Instance *instance)
             s32 u3;
             u8 unk4;
 
-            func_80013CB8(matrixIndex, input, model->table, instance->frame);
+            gComposeBoneMatrix(matrixIndex, input, model->table, instance->frame);
             gGteLoadMatrix((struct Matrix *)(matrixIndex * 48 + (u32)mat));
             u1 = input->unk1;
             unk2 = input->unk2;
@@ -234,7 +236,7 @@ s32 func_80013F08(struct Instance *instance)
                           unk2);
             u3 = input->unk3;
             unk4 = input->unk4;
-            func_8001047C((char *)model->unk1C[1] + (u3 * 8 + 4),
+            gProjectVertexBatch((char *)model->unk1C[1] + (u3 * 8 + 4),
                           (char *)pts + (u3 * 8),
                           (char *)flg + u3,
                           unk4);
@@ -265,7 +267,7 @@ s32 func_80013F08(struct Instance *instance)
         count = *p1C;
         gVertexSourceAltPtr = t0;
         gVertexSourcePtr = p20;
-        func_8001047C(t0, a1_pts, flg, count);
+        gProjectVertexBatch(t0, a1_pts, flg, count);
     }
 
     return 1;

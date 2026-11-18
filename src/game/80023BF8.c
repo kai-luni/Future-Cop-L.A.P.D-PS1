@@ -8,7 +8,7 @@ extern volatile s32 D_8009F650;
 
 extern void func_80023AB4(s32 arg0);
 extern void func_80023A24(void);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_80044EF8(void);
 
 /**
@@ -57,7 +57,7 @@ void func_80023BF8(void)
         do {
             block = *slot;
             if (block != 0) {
-                func_800181D4(block);
+                gFreeBlock(block);
                 *slot = 0;
             }
             i++;

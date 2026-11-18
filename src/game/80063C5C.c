@@ -29,7 +29,7 @@ extern Res63C5C *func_8001996C(void *arg0, s32 arg1);
 extern void func_80092F38(Rect63C5C *rect, void *data);
 extern void func_80092C8C(s32 arg0);
 extern void func_80048DEC(void);
-extern void func_800181D4(void *block);
+extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
  * @brief Blits a decoded image resource into the frame buffer and releases it.
@@ -128,5 +128,5 @@ void func_80063C5C(Arg63C5C *arg0)
 
     gTexpageBaseTable[s0] = (attr << 16) | s6;
 
-    func_800181D4(arg0);
+    gFreeBlock(arg0);
 }

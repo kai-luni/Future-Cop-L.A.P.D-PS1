@@ -20,9 +20,9 @@ struct Unk395A8Self {
 };
 
 extern void func_80039504(s32 arg0, void *arg1, void *arg2, s32 arg3);
-extern s32 func_8002AD58(s32 message, void *object, void *data, s32 arg3);
+extern s32 gEntityBaseHandler(s32 message, void *object, void *data, s32 arg3) __asm__("func_8002AD58");
 extern void func_800382B4(s32 arg0, void *arg1, void *arg2, s32 arg3);
-extern void func_80038A00(void *arg0, void *arg1);
+extern void gUpdateMountedTurret(void *arg0, void *arg1) __asm__("func_80038A00");
 extern void func_8003BA50(struct Unk395A8Child *object, s32 value);
 
 /**
@@ -65,16 +65,16 @@ s32 func_800395A8(s32 message, struct Unk395A8Self *object, void *arg2, s32 arg3
         if (self->unk24 & 0x20) {
             return 0;
         }
-        func_8002AD58(msg, self, data, extra);
+        gEntityBaseHandler(msg, self, data, extra);
         if (self->unk158 != 0) {
-            func_8002AD58(msg, self->unk158, data, extra);
+            gEntityBaseHandler(msg, self->unk158, data, extra);
         }
         return 0;
     case 6:
         func_800382B4(msg, self, data, extra);
         if (self->unk158 != 0) {
             self->unk158->unk1C = self->unk1C;
-            func_80038A00(self->unk158, data);
+            gUpdateMountedTurret(self->unk158, data);
         }
         return 0;
     case 9:

@@ -9,17 +9,17 @@ typedef struct {
 extern UnkFA94 *gGameSession __asm__("D_8009FA94");
 
 extern s32 gUploadInProgress __asm__("D_8009F9C4");
-extern s32 gFrameId __asm__("D_8009F9FC");
+extern s32 gFrameDelta __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
-extern s32 gDiscShadeByte __asm__("D_8009FAA4");
+extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
 extern volatile s32 gScreenOffsetValue __asm__("D_8009F9D4");
-extern u8 *gMissionWorkingSet __asm__("D_8009F9A0");
-extern u8 *D_8009FA58[];
+extern u8 *gFocusPositions __asm__("D_8009F9A0");
+extern u8 *gPlayerEntities[] __asm__("D_8009FA58");
 
 extern void func_8001BFD8(u8 value);
 extern void func_80025370(void);
@@ -82,8 +82,8 @@ s32 gPrepareAndSubmitFrame(void)
     register s32 mode __asm__("$16");
 
     gFrameTickBase = 0;
-    gDiscShadeByte = 0;
-    gFrameId = 5;
+    gFrameTime = 0;
+    gFrameDelta = 5;
 
     func_8001BFD8(0);
     func_80025370();
@@ -147,7 +147,7 @@ s32 gPrepareAndSubmitFrame(void)
         register u8 **cursor __asm__("$16");
 
         i = 0;
-        cursor = D_8009FA58;
+        cursor = gPlayerEntities;
         do {
             if (*cursor != 0) {
                 func_8006AB38(*cursor);
@@ -158,12 +158,12 @@ s32 gPrepareAndSubmitFrame(void)
     }
 
     one = 1;
-    if (gMissionWorkingSet != 0) {
+    if (gFocusPositions != 0) {
         gPlacePlayerViews();
         one = 1;
     }
 
-    gDiscShadeByte = 0;
+    gFrameTime = 0;
     gFrameTickBase = 0;
     gGameSession->unk10 = one;
     return one;
