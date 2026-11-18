@@ -13,3 +13,13 @@ __pycache__/
 *.iso
 *.exe
 /tests/host/build/
+/tests/host/build-*/
+/gccdump.*
+/test_scale_v5.c.*
+/v3.c.*
+/tmp_*
+/t6.*
+/explore.py
+/ak27-entry/
+/akb-entry/
+/`/
