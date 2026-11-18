@@ -4,7 +4,7 @@
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 
-extern void func_8009745C(s32 arg0, ...);
+extern void gSpuTransfer(s32 arg0, ...) __asm__("func_8009745C");
 
 /**
  *  @brief Issues a three-command sequence and returns the supplied length.
@@ -19,7 +19,7 @@ extern void func_8009745C(s32 arg0, ...);
  *  @par Control flow
  *  Dispatches commands 2, 0, and 3 in that order without branching.
  *  @par Calls
- *  func_8009745C receives each command and its associated arguments.
+ *  gSpuTransfer receives each command and its associated arguments.
  *  @par Side effects
  *  The dispatched commands may modify state or perform external operations.
  *  @par Callers
@@ -27,8 +27,8 @@ extern void func_8009745C(s32 arg0, ...);
  */
 s32 func_80097760(s32 arg0, s32 arg1)
 {
-    func_8009745C(2, gSpuTransferAddr << gSpuAddrShift);
-    func_8009745C(0);
-    func_8009745C(3, arg0, arg1);
+    gSpuTransfer(2, gSpuTransferAddr << gSpuAddrShift);
+    gSpuTransfer(0);
+    gSpuTransfer(3, arg0, arg1);
     return arg1;
 }

@@ -21,8 +21,8 @@ extern void *func_8001E4C0(void *, int, unsigned int);
 extern void func_80086C74(void *, int, int);
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
-extern int func_80098BF8(void *);
-extern int func_80098FB8(void *);
+extern int gSpuInstallIrqCallback(void *) __asm__("func_80098BF8");
+extern int gSpuSetTransferCallback(void *) __asm__("func_80098FB8");
 extern int func_80091510(void *);
 extern char D_80086950[];
 extern char D_80086D74[];
@@ -41,7 +41,7 @@ extern char D_80086D74[];
  * func_8001E4C0 zeroes the block; 0x300 bytes at +0x7811 are set to 2 in
  * 0x10 steps. one = 1, zero = 0, the five arguments are stored,
  * func_80086C74 configures both buffers. Under func_8008C9C0 (interrupts
- * off): irq = func_80098BF8(0), other = func_80098FB8(D_80086950) (the
+ * off): irq = gSpuInstallIrqCallback(0), other = gSpuSetTransferCallback(D_80086950) (the
  * SPU DMA latch), enabled stored, callback = func_80091510(D_80086D74)
  * when enabled else 0; func_8008C9E0 re-enables interrupts.
  *
@@ -57,7 +57,9 @@ extern char D_80086D74[];
  * gPlayVideoFile (verified in the retail listing; the call-graph edge is
  * missing).
  */
-int func_80087824(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b, int arg_e, int arg_enabled)
+int gInitMovieAudio(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b, int arg_e, int arg_enabled) __asm__("func_80087824");
+
+int gInitMovieAudio(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b, int arg_e, int arg_enabled)
 {
     register void *c __asm__("$19") = arg_c;
     register int a __asm__("$17") = arg_a;
@@ -83,8 +85,8 @@ int func_80087824(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b, 
     func_80086C74(gMovieAudioState->c, gMovieAudioState->a, e);
     func_80086C74(gMovieAudioState->d, gMovieAudioState->b, e);
     func_8008C9C0();
-    gMovieAudioState->irq = func_80098BF8(0);
-    gMovieAudioState->other = func_80098FB8(D_80086950);
+    gMovieAudioState->irq = gSpuInstallIrqCallback(0);
+    gMovieAudioState->other = gSpuSetTransferCallback(D_80086950);
     gMovieAudioState->enabled = enabled;
     if (enabled) gMovieAudioState->callback = func_80091510(D_80086D74);
     else { __asm__ volatile ("" : "=r"(zero)); gMovieAudioState->callback = zero; }

@@ -9,9 +9,9 @@ typedef struct {
 } Unk9EEA4;
 
 extern Unk9EEA4 *gSpuRegBasePtr __asm__("D_8009EEA4");
-extern volatile u32 gSpuCompareWord __asm__("D_8009EEDC");
+extern volatile u32 gSpuTransferCallback __asm__("D_8009EEDC");
 extern u32 gSetupGuard __asm__("D_8009EEF4");
-extern void func_80097990(void);
+extern void gSpuBusyWait(void) __asm__("func_80097990");
 extern void func_8008DFF0(u32 arg0, s32 arg1);
 
 /**
@@ -26,7 +26,7 @@ extern void func_8008DFF0(u32 arg0, s32 arg1);
  *  Runs setup when D_8009EEF4 is zero, then polls at most 0xF01 times.
  *  Dispatches either the callback or the fallback after polling.
  *  @par Calls
- *  func_80097990 performs preliminary setup when needed.
+ *  gSpuBusyWait performs preliminary setup when needed.
  *  func_8008DFF0 receives 0xF0000009 and 0x20 when no callback is registered.
  *  @par Side effects
  *  Clears flag bits 0x30 and invokes setup or a completion action.
@@ -38,7 +38,7 @@ void func_800972F8(void)
     u32 i;
 
     if (gSetupGuard == 0) {
-        func_80097990();
+        gSpuBusyWait();
     }
 
     gSpuRegBasePtr->flags &= 0xFFCF;
@@ -50,8 +50,8 @@ void func_800972F8(void)
         } while (i < 0xF01 && (gSpuRegBasePtr->flags & 0x30));
     }
 
-    if (gSpuCompareWord != 0) {
-        ((void (*)(void))gSpuCompareWord)();
+    if (gSpuTransferCallback != 0) {
+        ((void (*)(void))gSpuTransferCallback)();
     } else {
         func_8008DFF0(0xF0000009, 0x20);
     }

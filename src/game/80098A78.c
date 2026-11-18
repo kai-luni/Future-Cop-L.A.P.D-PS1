@@ -12,10 +12,12 @@ extern Unk9EEA4 *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern void func_8008E000(char *a, char *b);
 
 /**
- * @brief Waits for the SPU transfer flag to settle, with a timeout.
+ * @brief Enables or disables the SPU IRQ and waits until the register reflects it.
  *
- * Modes 0 and 3 clear bit 0x40 of the status word and then spin until the bit
- * is gone; modes 1 and 3 set it and spin until it appears. Both waits give up
+ * Bit 0x40 of the control word at 0x1AA (SPUCNT, 0x1F801DAA) is the IRQ9
+ * enable; the surrounding reset path clears it. Modes 0 and 3 clear the bit
+ * and then spin until it is gone; modes 1 and 3 set it and spin until it
+ * appears. Both waits give up
  * after 0xF00 iterations and report the timeout through func_8008E000 with
  * two fixed strings from the image (0x80012D2C/0x80012D3C when clearing,
  * 0x80012D2C/0x80012D4C when setting), returning -1. Otherwise the mode is
@@ -37,10 +39,12 @@ extern void func_8008E000(char *a, char *b);
  * Writes the status bit; the spin loops read hardware state.
  *
  * @par Callers
- * Confirmed: func_80087750 (sound shutdown). Likely: func_80022F44,
+ * Confirmed: gShutdownMovieAudio (sound shutdown). Likely: func_80022F44,
  * func_80022F7C, func_80022FA8 (same block).
  */
-s32 func_80098A78(s32 arg)
+s32 gSpuSetIrqEnable(s32 arg) __asm__("func_80098A78");
+
+s32 gSpuSetIrqEnable(s32 arg)
 {
     u32 i;
     register char *a0 __asm__("$4");

@@ -23,8 +23,8 @@ struct StreamState {
 extern struct StreamState gMixerState __asm__("D_800A0968");
 
 extern void func_80022F7C(void);
-extern void func_80098BF8(s32 mode);
-extern void func_8002129C(void);
+extern void gSpuInstallIrqCallback(s32 mode) __asm__("func_80098BF8");
+extern void gSpuCancelDmaRequests(void) __asm__("func_8002129C");
 extern void func_80022240(s32 owner);
 extern void func_80046A34(s32 handle);
 
@@ -32,7 +32,7 @@ extern void func_80046A34(s32 handle);
  * @brief Stops an active audio stream and releases its SPU and voice resources.
  *
  * Clears the active stream state in D_800A0968, tears down SPU transfer/IRQ hooks via
- * func_80022F7C and func_80098BF8(0), drains CD streaming via func_8002129C, and
+ * func_80022F7C and gSpuInstallIrqCallback(0), drains CD streaming via gSpuCancelDmaRequests, and
  * frees each allocated stream channel's sound and voice handles.
  *
  * @param void No parameters.
@@ -45,7 +45,7 @@ extern void func_80046A34(s32 handle);
  * Returns 0 early if D_800A0968.active == 0; otherwise resets stream flags, tears down SPU/CD hooks, and loops i = 0..channelCount-1 stopping non-(-1) channels.
  *
  * @par Calls
- * func_80022F7C - clears D_800A09F0 and calls func_80098A78(0); func_80098BF8 - clears SPU IRQ callback; func_8002129C - waits for CD stream idle; func_80022240 - stops channel id in D_800A07A8; func_80046A34 - releases voice handle.
+ * func_80022F7C - clears D_800A09F0 and calls gSpuSetIrqEnable(0); gSpuInstallIrqCallback - clears SPU IRQ callback; gSpuCancelDmaRequests - waits for CD stream idle; func_80022240 - stops channel id in D_800A07A8; func_80046A34 - releases voice handle.
  *
  * @par Side effects
  * Clears D_800A0968 active/flag/unk08/unk10, removes SPU IRQ handler, and frees stream voices.
@@ -62,11 +62,11 @@ s32 func_80022A64(void)
     }
     gMixerState.unk10 = 0;
     func_80022F7C();
-    func_80098BF8(0);
+    gSpuInstallIrqCallback(0);
     gMixerState.flag = 0;
     gMixerState.active = 0;
     gMixerState.unk08 = 0;
-    func_8002129C();
+    gSpuCancelDmaRequests();
     for (i = 0; i < gMixerState.channelCount; i++) {
         if (gMixerState.channels[i].id != -1) {
             func_80022240(gMixerState.channels[i].id);

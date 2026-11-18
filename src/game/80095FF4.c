@@ -1,7 +1,7 @@
 // Categories: Graphics > Video Decode | Platform > MDEC
 #include "game/types.h"
 
-extern void func_80096240(u32 *arg0, u16 arg1);
+extern void gStartMdecBlockTransfer(u32 *arg0, u16 arg1) __asm__("func_80096240");
 
 /**
  * @brief Sets or clears two control bits of the decode control word and
@@ -15,7 +15,7 @@ extern void func_80096240(u32 *arg0, u16 arg1);
  *
  * @par Confirmed
  * The two bits are written with opposite polarity, then
- * func_80096240(arg0, *(u16 *)arg0) commits the word together with its
+ * gStartMdecBlockTransfer(arg0, *(u16 *)arg0) commits the word together with its
  * low halfword.
  *
  * @par Unknown
@@ -39,5 +39,5 @@ void func_80095FF4(u32 *arg0, s32 arg1)
         *arg0 &= 0xFDFFFFFF;
     }
 
-    func_80096240(arg0, *(u16 *)arg0);
+    gStartMdecBlockTransfer(arg0, *(u16 *)arg0);
 }

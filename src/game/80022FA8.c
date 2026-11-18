@@ -36,7 +36,7 @@ extern u32 D_8009F634;
 extern void func_80022F7C(void);
 extern void func_80022D84(void);
 extern void func_80098BB8(s32 address);
-extern void func_80098A78(s32 mode);
+extern void gSpuSetIrqEnable(s32 mode) __asm__("func_80098A78");
 
 /**
  *  @brief Advances stream state and schedules the next audio transfer.
@@ -52,7 +52,7 @@ extern void func_80098A78(s32 mode);
  *  Looping and normal paths calculate offsets and deadlines differently; the deadline is clamped.
  *  @par Calls
  *  func_80022F7C runs first; func_80022D84 handles a ready stream when requested.
- *  func_80098BB8 sets the transfer address and func_80098A78 starts mode 1.
+ *  func_80098BB8 sets the transfer address and gSpuSetIrqEnable starts mode 1.
  *  @par Side effects
  *  Updates stream fields and control state, invokes callbacks, and schedules a transfer.
  *  The busy field is set before inactive and flagged-stream early returns.
@@ -127,6 +127,6 @@ void func_80022FA8(void)
         gMixerState.unk88 = 20;
     }
     func_80098BB8(gMixerState.unk44 + gMixerState.unk7C);
-    func_80098A78(1);
+    gSpuSetIrqEnable(1);
     D_800A09F8[0] = 0;
 }

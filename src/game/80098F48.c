@@ -12,7 +12,7 @@ extern s32 gOpOrderFlag __asm__("D_8009EEC0");
  *
  * @par Confirmed
  * D_8009EA34 takes the raw mode, D_8009EEC0 takes 1 only for mode == 1
- * (0 otherwise). Both words are read back by func_80098F78 and the transfer
+ * (0 otherwise). Both words are read back by gSpuGetTransferMode and the transfer
  * paths.
  *
  * @par Likely role
@@ -22,7 +22,9 @@ extern s32 gOpOrderFlag __asm__("D_8009EEC0");
  * @par Callers
  * func_800211FC, func_8008684C.
  */
-void func_80098F48(s32 mode)
+void gSpuSetTransferMode(s32 mode) __asm__("func_80098F48");
+
+void gSpuSetTransferMode(s32 mode)
 {
     s32 enabled;
 

@@ -4,8 +4,8 @@
 extern u8 gSubsystemTable[] __asm__("D_800A085C");
 
 extern void func_80097A28(void);
-extern void func_80096E40(void);
-extern void func_80097AC8(s32 count, u8 *table);
+extern void gSpuInitDmaEvent(void) __asm__("func_80096E40");
+extern void gSpuInitPool(s32 count, u8 *table) __asm__("func_80097AC8");
 extern void func_80021824(void);
 
 /**
@@ -15,13 +15,13 @@ extern void func_80021824(void);
  * @return Nothing.
  *
  * @par Confirmed
- * Fixed sequence: func_80097A28() (forwards to func_80096D58(0), the
- * warm-start form), func_80096E40(), func_80097AC8(0x20, D_800A085C)
+ * Fixed sequence: func_80097A28() (forwards to gSpuInitSubsystem(0), the
+ * warm-start form), gSpuInitDmaEvent(), gSpuInitPool(0x20, D_800A085C)
  * (installs a 32-entry table), func_80021824().
  *
  * @par Likely role
  * Runs once when the subsystem comes up; the table at D_800A085C feeds
- * the buffer/slot management installed by func_80097AC8.
+ * the buffer/slot management installed by gSpuInitPool.
  *
  * @par Callers
  * func_8002333C.
@@ -29,7 +29,7 @@ extern void func_80021824(void);
 void func_80021B50(void)
 {
     func_80097A28();
-    func_80096E40();
-    func_80097AC8(0x20, gSubsystemTable);
+    gSpuInitDmaEvent();
+    gSpuInitPool(0x20, gSubsystemTable);
     func_80021824();
 }

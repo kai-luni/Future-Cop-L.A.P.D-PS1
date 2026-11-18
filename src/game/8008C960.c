@@ -21,7 +21,7 @@
  * Allocates a kernel event slot and binds its callback in BIOS RAM.
  *
  * @par Callers
- * Confirmed: func_80020120 (0x8002015C..0x80020274), func_80096E40 (0x80096E80).
+ * Confirmed: func_80020120 (0x8002015C..0x80020274), gSpuInitDmaEvent (0x80096E80).
  */
 __asm__(
     ".set noreorder\n"

@@ -36,7 +36,7 @@ extern s32 func_800474C4(struct Unk4749CHandle *handle);
  * None observed.
  *
  * @par Callers
- * Confirmed: func_800476D0 (0x80047704, resolves the preserved background stream voice node during pause) / Likely: none / Unknown: none.
+ * Confirmed: gSoundPauseVoices (0x80047704, resolves the preserved background stream voice node during pause) / Likely: none / Unknown: none.
  */
 s32 func_80024188(void)
 {

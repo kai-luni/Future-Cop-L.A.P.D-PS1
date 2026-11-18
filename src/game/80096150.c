@@ -11,7 +11,7 @@ extern volatile u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
 extern u32 D_8009E8B0[];
 extern u32 D_8009E934[];
 extern u8 D_80010000[];
-extern void func_80096240(u32 *, u32);
+extern void gStartMdecBlockTransfer(u32 *, u32) __asm__("func_80096240");
 extern void func_8008E000(void *, s32);
 
 /**
@@ -26,7 +26,7 @@ extern void func_8008E000(void *, s32);
  * Three-way switch; option 1 adds a volatile read-back of the DMA1 control word after clearing it.
  *
  * @par Calls
- * func_80096240 - uploads each command block through MDECin DMA (option 0 only). func_8008E000 - printf-style error output with the format string at D_80010000+0x2B8C (default case).
+ * gStartMdecBlockTransfer - uploads each command block through MDECin DMA (option 0 only). func_8008E000 - printf-style error output with the format string at D_80010000+0x2B8C (default case).
  *
  * @par Side effects
  * Writes MDEC control and DMA channel registers; starts two DMA command uploads on option 0.
@@ -48,8 +48,8 @@ void func_80096150(s32 option)
         *q = 0;
         *gDma1ChannelCtrlPtr = 0;
         *gMdecControlStatusPtr = 0x60000000;
-        func_80096240(D_8009E8B0, 0x20);
-        func_80096240(D_8009E934, 0x20);
+        gStartMdecBlockTransfer(D_8009E8B0, 0x20);
+        gStartMdecBlockTransfer(D_8009E934, 0x20);
         break;
     case 1:
         *gMdecControlStatusPtr = 0x80000000;

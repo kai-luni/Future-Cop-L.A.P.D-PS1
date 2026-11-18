@@ -55,7 +55,7 @@ extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern s32 gSpuAlignBase __asm__("D_8009EED0");
 extern s32 gSpuAlignMask __asm__("D_8009EED4");
 extern s32 gSpuClearFlag __asm__("D_8009EED8");
-extern s32 gSpuCompareWord __asm__("D_8009EEDC");
+extern s32 gSpuTransferCallback __asm__("D_8009EEDC");
 extern s32 gInstalledHandler __asm__("D_8009EEE0");
 extern u8 gSpuInitData[] __asm__("D_8009EEE4");
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
@@ -63,9 +63,9 @@ extern u16 gSpuInitWord[] __asm__("D_800A7028");
 extern u8 D_80012CDC[];
 extern u8 D_80012CEC[];
 
-extern void func_80097990(void);
+extern void gSpuBusyWait(void) __asm__("func_80097990");
 extern void func_8008E000(void *fmt, void *msg);
-extern void func_80097138(void *attr, s32 size);
+extern void gSpuWriteMemBlock(void *attr, s32 size) __asm__("func_80097138");
 
 /**
  * @brief Resets SPU hardware registers and optionally initializes all 24 SPU voices.
@@ -76,21 +76,25 @@ extern void func_80097138(void *attr, s32 size);
  * @return Always 0.
  *
  * @par Globals
- * D_8009EEA4 - SPU base (0x1F801C00); D_8009EEB4 - SPU delay/control ptr; D_800A7028/D_8009EEE4/D_8009EEC0..D_8009EEE0/D_8009EEBC - SPU driver state.
+ * D_8009EEA4 - SPU base (0x1F801C00); D_8009EEB4 - SPU delay/control ptr; D_800A7028/D_8009EEE4/D_8009EEC0..D_8009EEE0/D_8009EEBC - SPU driver state;
+ * D_8009EEDC (gSpuTransferCallback) is the transfer-complete callback and is
+ * cleared here.
  *
  * @par Control flow
  * Busy-wait loop with 0xF00 timeout cap, 10-entry clear loop, conditional warm-start block with 24-voice init loop, and final enable.
  *
  * @par Calls
- * func_80097990 - hardware delay loop; func_8008E000 - prints "SPU: T/O [wait (reset)]"; func_80097138 - uploads D_8009EEE4 to SPU RAM.
+ * gSpuBusyWait - hardware delay loop; func_8008E000 - prints "SPU: T/O [wait (reset)]"; gSpuWriteMemBlock - uploads D_8009EEE4 to SPU RAM.
  *
  * @par Side effects
  * Writes SPU MMIO registers (0x1F801C00..), SPU RAM at 0x200, D_800A7028, and SPU globals.
  *
  * @par Callers
- * Confirmed: func_80096D58 (0x80096D6C, SPU subsystem init) / Likely: none / Unknown: none.
+ * Confirmed: gSpuInitSubsystem (0x80096D6C, SPU subsystem init) / Likely: none / Unknown: none.
  */
-s32 func_80096EB8(s32 arg0)
+s32 gSpuResetHardware(s32 arg0) __asm__("func_80096EB8");
+
+s32 gSpuResetHardware(s32 arg0)
 {
     register Spu *spu __asm__("$2");
     register Voice *voice __asm__("$3");
@@ -113,7 +117,7 @@ s32 func_80096EB8(s32 arg0)
     spu->f180 = 0;
     spu->f182 = 0;
     spu->f1AA = 0;
-    func_80097990();
+    gSpuBusyWait();
     spu = gSpuRegBasePtr;
     spu->f180 = 0;
     spu->f182 = 0;
@@ -171,7 +175,7 @@ cont:
     spu->f1B4 = 0;
     spu->f1B6 = 0;
     __asm__ volatile("" ::: "memory");
-    func_80097138(arr, 0x10);
+    gSpuWriteMemBlock(arr, 0x10);
     i = 0;
     c1 = 0x3FFF;
     c2 = 0x200;
@@ -191,17 +195,17 @@ cont:
     spu = gSpuRegBasePtr;
     spu->f188 = 0xFFFF;
     spu->f18A = 0xFF;
-    func_80097990();
-    func_80097990();
-    func_80097990();
-    func_80097990();
+    gSpuBusyWait();
+    gSpuBusyWait();
+    gSpuBusyWait();
+    gSpuBusyWait();
     spu = gSpuRegBasePtr;
     spu->f18C = 0xFFFF;
     spu->f18E = 0xFF;
-    func_80097990();
-    func_80097990();
-    func_80097990();
-    func_80097990();
+    gSpuBusyWait();
+    gSpuBusyWait();
+    gSpuBusyWait();
+    gSpuBusyWait();
 done:
     ret = 0;
     __asm__ volatile("" : "+r"(ret));
@@ -209,7 +213,7 @@ done:
     gSpuClearFlag = 1;
     tl->f1AA = 0xC000;
     __asm__ volatile("" ::: "memory");
-    gSpuCompareWord = 0;
+    gSpuTransferCallback = 0;
     gInstalledHandler = 0;
     __asm__ volatile("" ::: "memory");
     return ret;

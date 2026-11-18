@@ -17,7 +17,7 @@ typedef struct {
 
 extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 
-extern void func_80098F48(s32 mode);
+extern void gSpuSetTransferMode(s32 mode) __asm__("func_80098F48");
 extern u32 func_80098EE8(u32 address);
 extern void func_80098E88(u8 *data, u32 size);
 
@@ -35,7 +35,7 @@ extern void func_80098E88(u8 *data, u32 size);
  *  A loop marks every 16-byte block; boundary branches adjust the first or
  *  last marker, and a separate branch conditionally increments the counter.
  *  @par Calls
- *  func_80098F48 selects mode 0, func_80098EE8 sets the address, and
+ *  gSpuSetTransferMode selects mode 0, func_80098EE8 sets the address, and
  *  func_80098E88 transfers 0x300 bytes from the buffer.
  *  @par Side effects
  *  Modifies buffer markers and shared slot state, then initiates the transfer.
@@ -65,7 +65,7 @@ void func_8008684C(u8 *arg0, u32 arg1, u32 arg2)
         gMovieAudioState->unk7B44 = gMovieAudioState->unk7B44 + 1;
     }
 
-    func_80098F48(0);
+    gSpuSetTransferMode(0);
     func_80098EE8(addr);
     func_80098E88(arg0, 0x300);
 }

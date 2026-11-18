@@ -23,7 +23,7 @@
  * Unmasks interrupts in PS1 kernel critical-section state.
  *
  * @par Callers
- * Confirmed: func_8008A5BC, func_8008A688, func_8008D6E0, func_8008D74C, func_8008D7DC, func_8008D86C, func_8008D964, func_8008D9DC, func_8008DBB0, func_8008DE20, func_80091614, func_80091AA4, func_80095DB0, func_80096E40, func_80097A48 / Likely: none / Unknown: none.
+ * Confirmed: func_8008A5BC, func_8008A688, func_8008D6E0, func_8008D74C, func_8008D7DC, func_8008D86C, func_8008D964, func_8008D9DC, func_8008DBB0, func_8008DE20, func_80091614, func_80091AA4, func_80095DB0, gSpuInitDmaEvent, gSpuShutdownDmaEvent / Likely: none / Unknown: none.
  */
 void func_8008C9B0(void)
 {

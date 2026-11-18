@@ -35,7 +35,9 @@ extern struct Struct800A8EA8 gPendingEntryList[] __asm__("D_800A8EA8");
  * @par Callers
  * Confirmed: func_80022A64 (0x80022AAC in asm/us/main.s), func_80021250 (0x80021260 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-void func_8002129C(void)
+void gSpuCancelDmaRequests(void) __asm__("func_8002129C");
+
+void gSpuCancelDmaRequests(void)
 {
     s32 timeout = 0xFFFF;
 

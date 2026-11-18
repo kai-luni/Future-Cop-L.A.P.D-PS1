@@ -43,7 +43,7 @@ extern struct StreamState gMixerState __asm__("D_800A0968");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern void D_80022FA8(void);
 
-extern SpuIrqCallback func_80098BF8(SpuIrqCallback callback);
+extern SpuIrqCallback gSpuInstallIrqCallback(SpuIrqCallback callback) __asm__("func_80098BF8");
 extern void func_80022F44(void);
 extern struct SoundVoice *func_80046B04(s32 sound, s32 arg1, s32 arg2, s32 arg3);
 extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
@@ -63,7 +63,7 @@ extern void func_800221E4(s32 count, s32 *channels);
  *  An availability check gates setup; a loop handles each configured channel,
  *  recording -1 in the submitted list when voice allocation fails.
  *  @par Calls
- *  func_80098BF8 installs D_80022FA8; func_80022F44 prepares the stream.
+ *  gSpuInstallIrqCallback installs D_80022FA8; func_80022F44 prepares the stream.
  *  func_80046B04 obtains voices; func_800477D8 configures them;
  *  func_800220C4 creates channel IDs and func_800221E4 submits the list.
  *  @par Side effects
@@ -82,7 +82,7 @@ s32 func_800228F4(void)
     if (gMixerState.unk08 != 0) {
         gMixerState.active = 1;
         gMixerState.unk7C = gMixerState.unk6C;
-        func_80098BF8(D_80022FA8);
+        gSpuInstallIrqCallback(D_80022FA8);
         func_80022F44();
 
         params[0] = gMixerState.unk18;

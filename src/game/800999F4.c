@@ -20,7 +20,7 @@
  *  @par Side effects
  *  None.
  *  @par Callers
- *  Confirmed: func_80099368, func_80099C58.
+ *  Confirmed: gSpuSetVoiceAttributes, gSpuSetVoiceAttributesOne.
  */
 u16 func_800999F4(u16 a0, u16 a1, u16 a2, u16 a3)
 {

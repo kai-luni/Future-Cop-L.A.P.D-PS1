@@ -30,7 +30,7 @@ struct Local80021AD0 {
     u16 unk3C;
 };
 
-extern void func_80099C58(s32, void *);
+extern void gSpuSetVoiceAttributesOne(s32, void *) __asm__("func_80099C58");
 
 /**
  *  @brief Builds and submits a channel parameter block.
@@ -46,7 +46,7 @@ extern void func_80099C58(s32, void *);
  *  @par Control flow
  *  Initializes selected block fields and submits the block once.
  *  @par Calls
- *  func_80099C58 receives the channel index and local parameter block.
+ *  gSpuSetVoiceAttributesOne receives the channel index and local parameter block.
  *  @par Side effects
  *  Invokes the channel operation; other local block fields are not initialized here.
  *  @par Callers
@@ -67,5 +67,5 @@ void func_80021AD0(struct Arg80021AD0 *arg0, s16 arg1, s16 arg2, s16 arg3)
     sp.unk3A = v1->unk0A;
     sp.unk3C = v1->unk0C;
     sp.unk20 = v1->unk10;
-    func_80099C58(arg0->unk0C, &sp);
+    gSpuSetVoiceAttributesOne(arg0->unk0C, &sp);
 }

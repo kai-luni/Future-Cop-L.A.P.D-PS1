@@ -2,7 +2,7 @@
 #include "game/spu_globals.h"
 
 /*
- * func_80099C58  (0x80099C58, 0x5D0 bytes) - PSY-Q SPU driver, single-voice
+ * gSpuSetVoiceAttributesOne  (0x80099C58, 0x5D0 bytes) - PSY-Q SPU driver, single-voice
  * SpuVoiceAttr update.  Byte-exact with this profile (fcq measure: 372/372
  * words, 1488/1488 bytes, exact=True):
  *
@@ -97,7 +97,9 @@ extern void func_80097808(s32, u32);
  *  @par Callers
  *  Confirmed: func_80021AD0, func_800222CC.
  */
-void func_80099C58(s32 ch, SpuVoiceAttr *arg)
+void gSpuSetVoiceAttributesOne(s32 ch, SpuVoiceAttr *arg) __asm__("func_80099C58");
+
+void gSpuSetVoiceAttributesOne(s32 ch, SpuVoiceAttr *arg)
 {
     s32 ch8;
     s32 mask;

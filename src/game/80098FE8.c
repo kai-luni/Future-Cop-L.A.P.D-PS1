@@ -60,7 +60,9 @@ extern SpuRegisters *gSpuRegBasePtr __asm__("D_8009EEA4");
  * @par Callers
  * Confirmed: func_80021824 (0x80021870), func_80086C74 (0x80086CA8) / Likely: none / Unknown: none.
  */
-void func_80098FE8(SpuCommonAttr *attr)
+void gSpuSetCommonAttributes(SpuCommonAttr *attr) __asm__("func_80098FE8");
+
+void gSpuSetCommonAttributes(SpuCommonAttr *attr)
 {
     s32 mask;
     s32 setAll;

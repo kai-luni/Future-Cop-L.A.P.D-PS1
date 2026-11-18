@@ -73,7 +73,9 @@ extern void func_80097808(s32, u32);
  *  @par Callers
  *  Confirmed: func_80021B90, func_80021BD0, func_80086C74.
  */
-void func_80099368(SpuVoiceAttr *arg)
+void gSpuSetVoiceAttributes(SpuVoiceAttr *arg) __asm__("func_80099368");
+
+void gSpuSetVoiceAttributes(SpuVoiceAttr *arg)
 {
     s32 ch;
     s32 ch8;

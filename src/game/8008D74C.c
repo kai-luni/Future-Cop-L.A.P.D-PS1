@@ -26,7 +26,7 @@ extern void func_8008C9B0(void);
  * Masks and restores interrupts via BIOS syscall 0 and updates BIOS B0:4B/B0:5B card/pad state.
  *
  * @par Callers
- * Confirmed: func_800200A8 (0x800200C8).
+ * Confirmed: gInitMemoryCardBios (0x800200C8).
  */
 void func_8008D74C(void)
 {

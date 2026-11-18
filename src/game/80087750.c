@@ -18,13 +18,13 @@ typedef struct {
 extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 
 extern void func_8008C9C0(void);
-extern void func_800876EC(void);
-extern void func_80098A78(s32 arg);
-extern SpuIrqCallback func_80098BF8(SpuIrqCallback callback);
+extern void gHaltMovieAudioStream(void) __asm__("func_800876EC");
+extern void gSpuSetIrqEnable(s32 arg) __asm__("func_80098A78");
+extern SpuIrqCallback gSpuInstallIrqCallback(SpuIrqCallback callback) __asm__("func_80098BF8");
 extern void func_8008C9E0(void);
-extern void func_80098FB8(s32 value);
+extern void gSpuSetTransferCallback(s32 value) __asm__("func_80098FB8");
 extern void func_80091510(void *argument);
-extern void func_80087688(void);
+extern void gResetMovieAudioState(void) __asm__("func_80087688");
 
 /**
  * @brief Shuts the sound subsystem down: stops the DMA, waits for the
@@ -33,15 +33,15 @@ extern void func_80087688(void);
  * @return Nothing.
  *
  * @par Confirmed
- * Under func_8008C9C0: func_800876EC, func_80098A78(0), then
- * func_80098BF8(gMovieAudioState->unk7B14) restores the IRQ callback;
+ * Under func_8008C9C0: gHaltMovieAudioStream, gSpuSetIrqEnable(0), then
+ * gSpuInstallIrqCallback(gMovieAudioState->unk7B14) restores the IRQ callback;
  * func_8008C9E0 unmask. A busy loop waits for unk7B48 == 0. Under mask
- * again: func_80098FB8(unk7B18) restores the SPU DMA latch, unk7B20 = 0,
+ * again: gSpuSetTransferCallback(unk7B18) restores the SPU DMA latch, unk7B20 = 0,
  * unk7B1C != 0 installs func_80091510(unk7B10), unk7B24 = 0; unmask and
- * func_80087688 finish.
+ * gResetMovieAudioState finish.
  *
  * @par Likely role
- * The teardown counterpart of func_80087824 (both called by
+ * The teardown counterpart of gInitMovieAudio (both called by
  * gPlayVideoFile): the busy wait drains the in-flight transfer before the
  * latch is restored, so no IRQ fires into a freed state.
  *
@@ -52,25 +52,27 @@ extern void func_80087688(void);
  * gPlayVideoFile (verified in the retail listing; the call-graph edge is
  * missing).
  */
-void func_80087750(void)
+void gShutdownMovieAudio(void) __asm__("func_80087750");
+
+void gShutdownMovieAudio(void)
 {
     func_8008C9C0();
-    func_800876EC();
-    func_80098A78(0);
+    gHaltMovieAudioStream();
+    gSpuSetIrqEnable(0);
 
-    func_80098BF8(gMovieAudioState->unk7B14);
+    gSpuInstallIrqCallback(gMovieAudioState->unk7B14);
     func_8008C9E0();
 
     while (gMovieAudioState->unk7B48 != 0) {
     }
 
     func_8008C9C0();
-    func_80098FB8(gMovieAudioState->unk7B18);
+    gSpuSetTransferCallback(gMovieAudioState->unk7B18);
     gMovieAudioState->unk7B20 = 0;
     if (gMovieAudioState->unk7B1C != 0) {
         func_80091510(gMovieAudioState->unk7B10);
     }
     gMovieAudioState->unk7B24 = 0;
     func_8008C9E0();
-    func_80087688();
+    gResetMovieAudioState();
 }

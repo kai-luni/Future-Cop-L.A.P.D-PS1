@@ -61,7 +61,7 @@ extern void func_80046804(struct SoundVoice *voice);
  * Mutates voice, priority/free/bank lists and counts, and optionally voice->owner->unk28.
  *
  * @par Callers
- * Confirmed: func_800457B8 (0x80045808), func_800462D0 (0x800463D8, 0x80046620), func_80046A34 (0x80046A40), func_80046B04 (0x80046BE4), func_80046E88 (0x80046F64), func_80046F9C (0x80047058), func_80047554 (0x80047608, 0x8004763C).
+ * Confirmed: func_800457B8 (0x80045808), func_800462D0 (0x800463D8, 0x80046620), func_80046A34 (0x80046A40), func_80046B04 (0x80046BE4), func_80046E88 (0x80046F64), func_80046F9C (0x80047058), gSoundHaltAllVoices (0x80047608, 0x8004763C).
  */
 void func_80046698(struct SoundVoice *voice)
 {

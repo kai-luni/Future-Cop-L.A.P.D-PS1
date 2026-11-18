@@ -43,7 +43,7 @@ extern s32 func_800474F0(struct Unk4749CHandle *handle);
  *  @par Side effects
  *  Changes handle fields and invokes cleanup routines.
  *  @par Callers
- *  Confirmed: func_80023D78, func_80047554.
+ *  Confirmed: func_80023D78, gSoundHaltAllVoices.
  */
 void func_80023E84(void)
 {

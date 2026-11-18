@@ -7,9 +7,9 @@ extern s32 D_8009FA34;
 extern s32 D_8009FAD0;
 extern s32 gInitDoneFlag __asm__("D_8009F9C8");
 
-extern void func_8002129C(void);
-extern void func_80098F48(s32 value);
-extern s32 func_80098FB8(s32 callback);
+extern void gSpuCancelDmaRequests(void) __asm__("func_8002129C");
+extern void gSpuSetTransferMode(s32 value) __asm__("func_80098F48");
+extern s32 gSpuSetTransferCallback(s32 callback) __asm__("func_80098FB8");
 
 /**
  *  @brief Performs conditional cleanup and clears three state flags.
@@ -23,7 +23,7 @@ extern s32 func_80098FB8(s32 callback);
  *  The three calls run only when D_8009F9C8 is nonzero; all three clears
  *  occur unconditionally afterward.
  *  @par Calls
- *  func_8002129C performs cleanup; func_80098F48 and func_80098FB8
+ *  gSpuCancelDmaRequests performs cleanup; gSpuSetTransferMode and gSpuSetTransferCallback
  *  receive the saved values, with the latter's return value ignored.
  *  @par Side effects
  *  Clears three globals and may cause additional effects through the calls.
@@ -33,9 +33,9 @@ extern s32 func_80098FB8(s32 callback);
 void func_80021250(void)
 {
     if (gInitDoneFlag != 0) {
-        func_8002129C();
-        func_80098F48(D_8009FA14);
-        func_80098FB8(D_8009F9AC);
+        gSpuCancelDmaRequests();
+        gSpuSetTransferMode(D_8009FA14);
+        gSpuSetTransferCallback(D_8009F9AC);
     }
     D_8009FA34 = 0;
     D_8009FAD0 = 0;

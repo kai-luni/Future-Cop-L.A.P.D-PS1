@@ -26,7 +26,7 @@ extern u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
  *  @par Side effects
  *  For other selectors, writes the truncated shifted address to the selected register.
  *  @par Callers
- *  Confirmed: func_80098BB8, func_80098EE8, func_80099368, func_80099C58.
+ *  Confirmed: func_80098BB8, func_80098EE8, gSpuSetVoiceAttributes, gSpuSetVoiceAttributesOne.
  */
 u32 func_80097808(s32 reg, u32 addr)
 {

@@ -55,9 +55,11 @@ extern s32 func_800474F0(struct Unk4749CHandle *handle);
  * Clears D_8009F739, stops streams and voices, frees voice nodes, and mutes SPU hardware channels.
  *
  * @par Callers
- * Confirmed: func_80047690 (0x800476B8, disable audio with arg 0), func_800476D0 (0x80047710, transition/pause audio).
+ * Confirmed: func_80047690 (0x800476B8, disable audio with arg 0), gSoundPauseVoices (0x80047710, transition/pause audio).
  */
-void func_80047554(struct Unk47554Node *node)
+void gSoundHaltAllVoices(struct Unk47554Node *node) __asm__("func_80047554");
+
+void gSoundHaltAllVoices(struct Unk47554Node *node)
 {
     s32 i;
     struct Unk47554Node *entry;

@@ -7,8 +7,8 @@ extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern s32 D_8009EF04;
 extern s32 gTableCursor __asm__("D_8009EF08");
 extern s32 *gSpuEntryTable __asm__("D_8009EF0C");
-extern void func_80097DF8(void);
-extern s32 func_800980F8(s32, s32, s32);
+extern void gSpuCompactPool(void) __asm__("func_80097DF8");
+extern s32 gSpuSplitPoolBlock(s32, s32, s32) __asm__("func_800980F8");
 
 /**
  * @brief Allocates an aligned block of the requested size from the block
@@ -35,14 +35,14 @@ extern s32 func_800980F8(s32, s32, s32);
  *    replaces the header (x, size and the tail). The record count is stored back
  *    into D_8009EF08 and the capacity test is D_8009EF04 - 2 < D_8009EF08 for
  *    the two-record case and D_8009EF04 - 1 < D_8009EF08 otherwise.
- * 5. Otherwise func_80097DF8() coalesces the table first. Records whose address
+ * 5. Otherwise gSpuCompactPool() coalesces the table first. Records whose address
  *    word has bit 0x80000000 are then examined: a record matches when x lies
  *    inside it and either the block extends past x + size or the next record is
  *    the tail, and the remaining space must be at least size. A record without
  *    bit 0x80000000 but with 0x40000000 is the tail: its size minus the reserve
  *    has to be at least size and it is used as is.
- * 6. The chosen record is split by func_800980F8(record index, x, size) and that
- *    return value is the result; func_80097DF8() runs once more before returning.
+ * 6. The chosen record is split by gSpuSplitPoolBlock(record index, x, size) and that
+ *    return value is the result; gSpuCompactPool() runs once more before returning.
  *
  * @par Likely role
  * The linear heap behind the sprite/asset subsystem's 0x11E80-byte work buffer:
@@ -118,7 +118,7 @@ s32 func_80098458(s32 arg, s32 size)
         __asm__ volatile ("lui %0,%%hi(D_8009EF08)" : "=r" (hi) : : "memory");
         *(s32 *)((char *)hi - 4344) = count;
     } else {
-        func_80097DF8();
+        gSpuCompactPool();
         i = 0;
         for (;;) {
             register s32 cond __asm__("$2");
@@ -177,8 +177,8 @@ s32 func_80098458(s32 arg, s32 size)
                 break;
             }
         }
-        x = func_800980F8(i, start, size);
+        x = gSpuSplitPoolBlock(i, start, size);
     }
-    func_80097DF8();
+    gSpuCompactPool();
     return x;
 }

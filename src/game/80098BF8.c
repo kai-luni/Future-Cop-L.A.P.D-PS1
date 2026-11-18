@@ -4,7 +4,7 @@
 typedef void (*SpuIrqCallback)(void);
 
 extern SpuIrqCallback gInstalledHandler __asm__("D_8009EEE0");
-extern void func_80098C38(SpuIrqCallback callback);
+extern void gSpuSetIrqCallback(SpuIrqCallback callback) __asm__("func_80098C38");
 
 /**
  * @brief Installs the SPU interrupt handler, skipping redundant installs.
@@ -21,23 +21,25 @@ extern void func_80098C38(SpuIrqCallback callback);
  * One compare; the driver call is taken only when the handler differs.
  *
  * @par Calls
- * func_80098C38 - forwards the handler as interrupt 9 to func_800914B0, the driver's interrupt-hook dispatcher.
+ * gSpuSetIrqCallback - forwards the handler as interrupt 9 to func_800914B0, the driver's interrupt-hook dispatcher.
  *
  * @par Side effects
- * The SPU interrupt vector changes; a redundant call leaves both the cache and the vector untouched. func_80097A48 clears the cache to 0 through this path at shutdown.
+ * The SPU interrupt vector changes; a redundant call leaves both the cache and the vector untouched. gSpuShutdownDmaEvent clears the cache to 0 through this path at shutdown.
  *
  * @par Callers
- * Confirmed: func_80087750 (0x8008777C) and func_80087824 (0x80087908), sound shutdown and init, func_800228F4 (0x80022940), func_80022A64 (0x80022A9C).
- * Unknown: two calls at 0x80086AE8 and 0x80086C50 from a routine that is not in the matching set.
+ * Confirmed: gShutdownMovieAudio (0x8008777C) and gInitMovieAudio (0x80087908), sound shutdown and init, func_800228F4 (0x80022940), func_80022A64 (0x80022A9C).
+ * func_80086AC0 (0x80086AE8 and 0x80086C50), which is in the matching set.
  */
-SpuIrqCallback func_80098BF8(SpuIrqCallback callback)
+SpuIrqCallback gSpuInstallIrqCallback(SpuIrqCallback callback) __asm__("func_80098BF8");
+
+SpuIrqCallback gSpuInstallIrqCallback(SpuIrqCallback callback)
 {
     SpuIrqCallback previous;
 
     previous = gInstalledHandler;
     if (callback != previous) {
         gInstalledHandler = callback;
-        func_80098C38(callback);
+        gSpuSetIrqCallback(callback);
     }
     return previous;
 }

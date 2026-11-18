@@ -30,7 +30,7 @@ extern void func_8008C9B0(void);
  * Masks interrupts, configures BIOS card/pad services, writes patch code to 0xDF80, and patches kernel C0/B0 tables.
  *
  * @par Callers
- * Confirmed: func_800200A8 (0x800200B8).
+ * Confirmed: gInitMemoryCardBios (0x800200B8).
  */
 void func_8008D6E0(s32 mode)
 {

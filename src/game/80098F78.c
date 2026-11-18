@@ -14,13 +14,15 @@ extern s32 gOpOrderFlag __asm__("D_8009EEC0");
  * otherwise to 0, and the result is returned. No other side effect.
  *
  * @par Likely role
- * The query side of func_80098F48: the asset driver func_800211FC checks
+ * The query side of gSpuSetTransferMode: the asset driver func_800211FC checks
  * whether the sound DMA is currently enabled before queueing more traffic.
  *
  * @par Callers
  * func_800211FC.
  */
-s32 func_80098F78(void)
+s32 gSpuGetTransferMode(void) __asm__("func_80098F78");
+
+s32 gSpuGetTransferMode(void)
 {
     s32 mode;
 

@@ -65,7 +65,7 @@ extern void func_8004CD6C(s32 message, s32 arg2, s32 arg3);
 extern void func_8004CE04(void);
 extern void func_8001BBAC(void);
 extern void func_8001EB6C(void);
-extern void func_800476D0(void);
+extern void gSoundPauseVoices(void) __asm__("func_800476D0");
 extern void func_8004D598(void);
 extern s32 func_8001EF34(s32 arg0);
 extern void func_80013C80(void);
@@ -199,7 +199,7 @@ void func_800271A4(void)
         if (gMenuModeFlag == 0) {
             D_8009FA38 = gPaletteCycleCounter;
             func_8001EB6C();
-            func_800476D0();
+            gSoundPauseVoices();
             func_80046C84(0x3E, (s32)D_8009FA58);
         }
         gMenuModeFlag = 1;

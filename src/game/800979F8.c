@@ -23,12 +23,14 @@ extern void func_800914E0(s32 channel, SpuDmaCallback callback);
  * func_800914E0 - forwards (4, handler) to the driver's callback slot.
  *
  * @par Side effects
- * The SPU DMA completion handler changes; a null handler disarms it. func_80096E40 (0x80096E68) registers func_800972F8 here, func_80097A48 (0x80097A7C) passes 0 when it tears the event down.
+ * The SPU DMA completion handler changes; a null handler disarms it. gSpuInitDmaEvent (0x80096E68) registers func_800972F8 here, gSpuShutdownDmaEvent (0x80097A7C) passes 0 when it tears the event down.
  *
  * @par Callers
- * Confirmed: func_80096E40 (0x80096E68) at SPU DMA init and func_80097A48 (0x80097A7C) at its teardown.
+ * Confirmed: gSpuInitDmaEvent (0x80096E68) at SPU DMA init and gSpuShutdownDmaEvent (0x80097A7C) at its teardown.
  */
-void func_800979F8(SpuDmaCallback callback)
+void gSpuSetDmaCallback(SpuDmaCallback callback) __asm__("func_800979F8");
+
+void gSpuSetDmaCallback(SpuDmaCallback callback)
 {
     func_800914E0(4, callback);
 }

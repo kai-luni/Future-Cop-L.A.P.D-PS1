@@ -21,8 +21,8 @@ typedef struct {
 
 extern volatile Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 
-extern void func_80098A78(s32);
-extern void func_80098BF8(void *);
+extern void gSpuSetIrqEnable(s32) __asm__("func_80098A78");
+extern void gSpuInstallIrqCallback(void *) __asm__("func_80098BF8");
 extern void *func_800869D8(u32);
 extern void *func_80086A4C(u32);
 extern void func_8008684C(void *, s32, s32);
@@ -41,7 +41,7 @@ void func_80086AC0(void);
  *  An inactive stream returns immediately; otherwise buffer submission depends on pending state and a counter threshold.
  *  On even counter values, a nonzero entry in a four-element table is processed before the counter advances.
  *  @par Calls
- *  func_80098A78 and func_80098BF8 control callback setup; func_800869D8 and func_80086A4C obtain buffers.
+ *  gSpuSetIrqEnable and gSpuInstallIrqCallback control callback setup; func_800869D8 and func_80086A4C obtain buffers.
  *  func_8008684C submits a buffer; func_800867B0 processes a table value; func_80098BB8 receives the cyclic address.
  *  @par Side effects
  *  Updates stream state, submits data, changes callback configuration and registers func_80086AC0 for the next callback.
@@ -56,8 +56,8 @@ void func_80086AC0(void)
         return;
     }
 
-    func_80098A78(0);
-    func_80098BF8(0);
+    gSpuSetIrqEnable(0);
+    gSpuInstallIrqCallback(0);
 
     if (gMovieAudioState->unk7B48 == 0) {
         if ((gMovieAudioState->unk7B44 * 2 - gMovieAudioState->unk7B40) < 6) {
@@ -91,6 +91,6 @@ void func_80086AC0(void)
 
     gMovieAudioState->unk7B40++;
     func_80098BB8(gMovieAudioState->unk7B5C + (gMovieAudioState->unk7B40 & 7) * 0x180);
-    func_80098BF8(func_80086AC0);
-    func_80098A78(1);
+    gSpuInstallIrqCallback(func_80086AC0);
+    gSpuSetIrqEnable(1);
 }

@@ -11,7 +11,7 @@ extern s32 D_8009E8B0[];
 extern s32 D_8009E8B4[];
 extern s32 D_8009E8F4[];
 extern s32 D_8009E934[];
-extern void func_80096240(s32 *data, u32 size);
+extern void gStartMdecBlockTransfer(s32 *data, u32 size) __asm__("func_80096240");
 
 /**
  *  @brief Copies decoder quantization tables and submits two data blocks.
@@ -26,7 +26,7 @@ extern void func_80096240(s32 *data, u32 size);
  *  @par Control flow
  *  Two loops copy 16 words each, followed by two helper calls.
  *  @par Calls
- *  func_80096240 receives each global block with size 0x20.
+ *  gStartMdecBlockTransfer receives each global block with size 0x20.
  *  @par Side effects
  *  Overwrites the two global table regions; the helper may have further effects.
  *  @par Callers
@@ -50,8 +50,8 @@ DecDctEnv *func_80095F50(DecDctEnv *environment)
         *destination++ = *source++;
     }
 
-    func_80096240(D_8009E8B0, 0x20);
-    func_80096240(D_8009E934, 0x20);
+    gStartMdecBlockTransfer(D_8009E8B0, 0x20);
+    gStartMdecBlockTransfer(D_8009E934, 0x20);
 
     return environment;
 }

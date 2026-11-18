@@ -41,11 +41,11 @@ extern void gMoviePresentFrame(void) __asm__("func_80085914");
 extern void func_80085AC4(u32 arg0, u32 arg1);
 extern void gMovieAudioClockDisable(void) __asm__("func_80086F30");
 extern s32 gMovieStreamReaderInit(void *arg0, void (*callback)(void), Params88120 *params, s32 arg3, s32 arg4) __asm__("func_80089700");
-extern s32 func_80087824(void *arg0, s32 arg1, void *arg2, s32 arg3, void *arg4, s32 arg5, s32 arg6);
+extern s32 gInitMovieAudio(void *arg0, s32 arg1, void *arg2, s32 arg3, void *arg4, s32 arg5, s32 arg6) __asm__("func_80087824");
 extern void gMovieSetAudioMode(u32 value) __asm__("func_80086F08");
 extern s32 gMovieStreamDemux(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800879DC");
 extern s32 gMovieAudioBusyCount(void) __asm__("func_80086FA8");
-extern void func_80087750(void);
+extern void gShutdownMovieAudio(void) __asm__("func_80087750");
 extern void gMovieStreamReaderClose(void) __asm__("func_80089874");
 extern s32 func_800858E0(void);
 extern void func_8001C088(u8 mode, u8 enable);
@@ -96,7 +96,7 @@ extern s32 func_8001BFE4(void);
  *    5-6-5 to 24 bit while a central 0x100 x 0x90 region (rows 0x31..0xC0,
  *    columns 0x20..0x11F) is forced to black when the mode mask applies.
  * 4. The proper decode path then runs the resource through
- *    gMovieStreamReaderInit/func_80087824 with the parameter block D_800A6E20, writes the
+ *    gMovieStreamReaderInit/gInitMovieAudio with the parameter block D_800A6E20, writes the
  *    result with func_80092F38 / func_80092FF8 and converts back to RGB555
  *    afterwards.
  *
@@ -228,7 +228,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
 
     func_80085AC4(0, 1);
     if (gMovieStreamReaderInit(gMovieStreamBuffer, gMovieAudioClockDisable, &params, 1, 0x800) != 0) {
-        if (func_80087824(gMovieAudioBlock, 0x400000, gMovieSpuBufferA, 0x800000, gMovieSpuBufferB, D_8009F964, 1) != 0) {
+        if (gInitMovieAudio(gMovieAudioBlock, 0x400000, gMovieSpuBufferA, 0x800000, gMovieSpuBufferB, D_8009F964, 1) != 0) {
             gMovieSetAudioMode(0);
             result = gMovieStreamDemux(arg1, arg2, gLayerModeBits * D_8009F960);
             count = 3;
@@ -236,7 +236,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
                 func_80091270(0);
                 count--;
             }
-            func_80087750();
+            gShutdownMovieAudio();
         }
         gMovieStreamReaderClose();
     }

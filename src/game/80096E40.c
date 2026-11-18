@@ -7,7 +7,7 @@ extern void *gSpuDmaCallback __asm__("D_8009EA2C");
 extern void func_800972F8(void);
 extern void func_8008C9A0(void);
 extern void func_8008C9B0(void);
-extern void func_800979F8(Callback callback);
+extern void gSpuSetDmaCallback(Callback callback) __asm__("func_800979F8");
 extern void *func_8008C960(u32, s32, s32, s32);
 extern void func_8008C980(void *);
 
@@ -19,7 +19,7 @@ extern void func_8008C980(void *);
  *
  * @par Confirmed
  * Under the D_8009EE94 == 0 guard: EnterCriticalSection (syscall 1 via
- * func_8008C9A0), func_800979F8(func_800972F8) installs the DMA callback,
+ * func_8008C9A0), gSpuSetDmaCallback(func_800972F8) installs the DMA callback,
  * OpenEvent(0xF0000009, 0x20, 0x2000, 0) (BIOS B0:08 via func_8008C960)
  * creates the event and its handle is stored in D_8009EA2C, EnableEvent
  * (B0:0C via func_8008C980) arms it, ExitCriticalSection (syscall 2 via
@@ -35,9 +35,11 @@ extern void func_8008C980(void *);
  * The meaning of event spec 0x20.
  *
  * @par Callers
- * func_80021B50, func_80096D58.
+ * func_80021B50, gSpuInitSubsystem.
  */
-void func_80096E40(void)
+void gSpuInitDmaEvent(void) __asm__("func_80096E40");
+
+void gSpuInitDmaEvent(void)
 {
     if (gSecondCallGuard == 0) {
         __asm__ volatile(".set\tnoreorder\n\t"
@@ -46,7 +48,7 @@ void func_80096E40(void)
                          "jal\tfunc_8008C9A0\n\t"
                          "sw\t$v0,%%lo(D_8009EE94)($at)\n\t"
                          ".set\treorder" ::: "memory");
-        func_800979F8(func_800972F8);
+        gSpuSetDmaCallback(func_800972F8);
         func_8008C960(0xF0000009, 0x20, 0x2000, 0);
         __asm__ volatile(".set\tnoreorder\n\t"
                          "addu\t$a0,$v0,$zero\n\t"

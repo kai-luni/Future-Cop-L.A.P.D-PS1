@@ -3,7 +3,7 @@
 /**
  * @brief BIOS trampoline A0:70 (_bu_init): initializes the PS1 memory card / backup unit BIOS subsystem.
  *
- * Handwritten MIPS stub executing `addiu $t2, $zero, 0xA0; jr $t2; addiu $t1, $zero, 0x70`, dispatching to PS1 BIOS vector A0 function 0x70 (_bu_init) after CARD setup in func_800200A8. Category BIOS > System Calls | Platform > Memory Card follows BIOS vector A0:70 and the surrounding CARD init sequence.
+ * Handwritten MIPS stub executing `addiu $t2, $zero, 0xA0; jr $t2; addiu $t1, $zero, 0x70`, dispatching to PS1 BIOS vector A0 function 0x70 (_bu_init) after CARD setup in gInitMemoryCardBios. Category BIOS > System Calls | Platform > Memory Card follows BIOS vector A0:70 and the surrounding CARD init sequence.
  *
  * @param void No parameters.
  *
@@ -20,7 +20,7 @@
  * Initializes BIOS memory card / backup unit state via BIOS A0:70.
  *
  * @par Callers
- * Confirmed: func_800200A8 (0x800200D0 in asm/us/main.s) / Likely: none / Unknown: none.
+ * Confirmed: gInitMemoryCardBios (0x800200D0 in asm/us/main.s) / Likely: none / Unknown: none.
  */
 __asm__(
     ".set noreorder\n"

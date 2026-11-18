@@ -37,10 +37,12 @@ extern struct Entry *gSpuEntryTable __asm__("D_8009EF0C");
  *
  * @par Callers
  * Confirmed: func_80097B28 (after every alloc/split, sites 0x80097BD0,
- * 0x80097D00, 0x80097DB4), func_800980F8 (site 0x8009843C) and
+ * 0x80097D00, 0x80097DB4), gSpuSplitPoolBlock (site 0x8009843C) and
  * func_80098458 (site 0x800985E0); func_80098708 per its documentation.
  */
-void func_80097DF8(void)
+void gSpuCompactPool(void) __asm__("func_80097DF8");
+
+void gSpuCompactPool(void)
 {
     s32 i, j;
     u32 a, b, size;

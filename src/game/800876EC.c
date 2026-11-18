@@ -35,9 +35,11 @@ extern u32 func_80098788(s32, u32);
  * Clears gMovieAudioState->unk8 (+0x08) and updates SPU voice key-off and register state via callees.
  *
  * @par Callers
- * Confirmed: func_80087750 (0x80087760 in asm/us/main.s, audio stream shutdown) / Likely: none / Unknown: none.
+ * Confirmed: gShutdownMovieAudio (0x80087760 in asm/us/main.s, audio stream shutdown) / Likely: none / Unknown: none.
  */
-void func_800876EC(void)
+void gHaltMovieAudioStream(void) __asm__("func_800876EC");
+
+void gHaltMovieAudioStream(void)
 {
     gMovieAudioState->unk8 = 0;
     func_80098C68(0, gMovieAudioState->unk7B64 | gMovieAudioState->unk7B68);

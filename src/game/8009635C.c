@@ -29,7 +29,7 @@ extern void func_8009649C(void *);
  * Polls hardware register 0x1F801824; on timeout resets MDEC and DMA channels 0 and 1.
  *
  * @par Callers
- * Confirmed: func_80096090 (mode 0 sync), func_80096240 (before starting MDEC-in DMA0 transfer).
+ * Confirmed: func_80096090 (mode 0 sync), gStartMdecBlockTransfer (before starting MDEC-in DMA0 transfer).
  */
 s32 func_8009635C(void)
 {

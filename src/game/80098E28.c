@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gSpuClearFlag __asm__("D_8009EED8");
-extern s32 gSpuCompareWord __asm__("D_8009EEDC");
+extern s32 gSpuTransferCallback __asm__("D_8009EEDC");
 extern void func_80097760(s32 arg0, u32 arg1);
 
 /**
@@ -35,7 +35,7 @@ u32 func_80098E28(s32 arg0, u32 arg1)
 
     func_80097760(arg0, size);
 
-    if (gSpuCompareWord != 0) {
+    if (gSpuTransferCallback != 0) {
         return size;
     }
     gSpuClearFlag = 0;

@@ -17,7 +17,7 @@ extern u32 *gDma4MemAddrPtr __asm__("D_8009EEA8");
 extern u32 *gDma4BlockCtrlPtr __asm__("D_8009EEAC");
 extern u32 *gDma4ChannelCtrlPtr __asm__("D_8009EEB0");
 extern u32 gSetupGuard __asm__("D_8009EEF4");
-extern void func_80097990(void);
+extern void gSpuBusyWait(void) __asm__("func_80097990");
 extern void func_80097968(void);
 
 /**
@@ -34,7 +34,7 @@ extern void func_80097968(void);
  *  @par Control flow
  *  Performs the writes and helper calls in a fixed sequence without branches.
  *  @par Calls
- *  func_80097990 is called twice around the field update and shift;
+ *  gSpuBusyWait is called twice around the field update and shift;
  *  func_80097968 is called before the control targets are written.
  *  @par Side effects
  *  Modifies hardware fields, control targets, and D_8009EEF4.
@@ -45,11 +45,11 @@ void func_800973B4(u32 arg0, u32 arg1, u32 arg2)
 {
     register u32 control __asm__("$4");
     gSpuRegBasePtr->field1A6 = arg1;
-    func_80097990();
+    gSpuBusyWait();
     gSpuRegBasePtr->field1AA |= 0x30;
     __asm__ volatile("" : "+r" (arg2) : : "memory");
     arg2 <<= 16;
-    func_80097990();
+    gSpuBusyWait();
     __asm__ volatile("" : "+r" (arg2));
     func_80097968();
     control = 0x01000200;

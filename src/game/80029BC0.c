@@ -25,7 +25,7 @@ extern u32 func_80045028(u32 arg);
  * None observed.
  *
  * @par Callers
- * Confirmed: func_800476D0 (0x800476F0, decides whether to preserve the background stream voice on pause) / Likely: none / Unknown: none.
+ * Confirmed: gSoundPauseVoices (0x800476F0, decides whether to preserve the background stream voice on pause) / Likely: none / Unknown: none.
  */
 u8 func_80029BC0(void)
 {

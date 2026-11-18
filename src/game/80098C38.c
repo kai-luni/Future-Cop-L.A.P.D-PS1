@@ -22,9 +22,11 @@ extern void func_800914B0(s32 interrupt, SpuIrqCallback callback);
  * @par Side effects
  * Replaces the SPU interrupt handler.
  * @par Callers
- * Unknown: no direct edge in edges.json.
+ * Confirmed: gSpuInstallIrqCallback (0x80098C18), which wraps this call.
  */
-void func_80098C38(SpuIrqCallback callback)
+void gSpuSetIrqCallback(SpuIrqCallback callback) __asm__("func_80098C38");
+
+void gSpuSetIrqCallback(SpuIrqCallback callback)
 {
     func_800914B0(9, callback);
 }

@@ -29,9 +29,11 @@ extern u32 gSpuAddrShift __asm__("D_8009EECC");
  * Writes one 16-bit SPU hardware register at D_8009EEA4[index].
  *
  * @par Callers
- * Confirmed: func_80096D58 (0x80096DE0, writes D_8009EF14 to register 0xD1 with flag 0) / Likely: none / Unknown: none.
+ * Confirmed: gSpuInitSubsystem (0x80096DE0, writes D_8009EF14 to register 0xD1 with flag 0) / Likely: none / Unknown: none.
  */
-void func_800977C4(s32 index, u32 value, s32 flag)
+void gSpuWriteRegister(s32 index, u32 value, s32 flag) __asm__("func_800977C4");
+
+void gSpuWriteRegister(s32 index, u32 value, s32 flag)
 {
     if (flag == 0) {
         gSpuRegBasePtr[index] = value;

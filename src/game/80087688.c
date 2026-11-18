@@ -29,14 +29,16 @@ extern void func_8008C9E0(void);
  * unmask.
  *
  * @par Likely role
- * The last step of the sound shutdown func_80087750: after the DMA drain
+ * The last step of the sound shutdown gShutdownMovieAudio: after the DMA drain
  * this zeroes the transfer state so a later re-init starts clean, the 1
  * at +0x7B3C likely marks "initialised/idle".
  *
  * @par Callers
- * func_80087750.
+ * gShutdownMovieAudio.
  */
-void func_80087688(void)
+void gResetMovieAudioState(void) __asm__("func_80087688");
+
+void gResetMovieAudioState(void)
 {
     u32 i;
 

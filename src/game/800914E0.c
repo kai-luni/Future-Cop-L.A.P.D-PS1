@@ -24,7 +24,7 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  * @par Callers
  * func_8008E5D8, func_80092AE0, func_80094A3C, func_80094CEC,
  * func_800953F0, func_800954DC, func_800955C8, func_8009570C,
- * func_80095808, func_80096108, func_8009612C, func_800979F8.
+ * func_80095808, func_80096108, func_8009612C, gSpuSetDmaCallback.
  */
 void func_800914E0(void)
 {

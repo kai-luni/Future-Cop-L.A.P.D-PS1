@@ -1,6 +1,8 @@
 // Categories: Platform > Sound | Game Engine > Init
 #include "game/types.h"
 
+extern int gSpuSetCommonAttributes() __asm__("func_80098FE8");
+
 struct Unk21824 {
     u32 f0;
     u16 f4;
@@ -27,7 +29,7 @@ struct Unk21824 {
  * @par Confirmed
  * Builds a 0x28-byte SpuCommonAttr on the stack: mask 0x3FC3, the two volume
  * words 0x3FFF/0x3FFF, all remaining fields 0, and passes it to
- * func_80098FE8, which applies the masked fields to the SPU.
+ * gSpuSetCommonAttributes, which applies the masked fields to the SPU.
  *
  * @par Likely role
  * The sound init step of the asset driver func_80021B50: 0x3FFF is the
@@ -59,5 +61,5 @@ void func_80021824(void)
     attr.f1E = 0;
     attr.f20 = 0;
     attr.f24 = 0;
-    func_80098FE8(&attr);
+    gSpuSetCommonAttributes(&attr);
 }

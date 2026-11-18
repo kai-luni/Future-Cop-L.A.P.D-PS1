@@ -5,8 +5,8 @@ extern s32 gOpOrderFlag __asm__("D_8009EEC0");
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 
-extern void func_80097138(s32 arg0, s32 arg1);
-extern void func_8009745C(s32 arg0, ...);
+extern void gSpuWriteMemBlock(s32 arg0, s32 arg1) __asm__("func_80097138");
+extern void gSpuTransfer(s32 arg0, ...) __asm__("func_8009745C");
 
 /**
  *  @brief Dispatches two arguments through the selected global path.
@@ -21,7 +21,7 @@ extern void func_8009745C(s32 arg0, ...);
  *  @par Control flow
  *  If D_8009EEC0 is zero, dispatches operations 2, 1, and 3 in that order.
  *  @par Calls
- *  func_8009745C handles the three operations; func_80097138 handles the
+ *  gSpuTransfer handles the three operations; gSpuWriteMemBlock handles the
  *  alternative path.
  *  @par Side effects
  *  Invokes the selected helper or helpers; their effects are not shown.
@@ -31,11 +31,11 @@ extern void func_8009745C(s32 arg0, ...);
 s32 func_800976DC(s32 arg0, s32 arg1)
 {
     if (gOpOrderFlag == 0) {
-        func_8009745C(2, gSpuTransferAddr << gSpuAddrShift);
-        func_8009745C(1);
-        func_8009745C(3, arg0, arg1);
+        gSpuTransfer(2, gSpuTransferAddr << gSpuAddrShift);
+        gSpuTransfer(1);
+        gSpuTransfer(3, arg0, arg1);
     } else {
-        func_80097138(arg0, arg1);
+        gSpuWriteMemBlock(arg0, arg1);
     }
     return arg1;
 }

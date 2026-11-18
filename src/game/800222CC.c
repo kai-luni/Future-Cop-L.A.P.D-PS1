@@ -5,7 +5,7 @@ struct Ch { s32 unk00; s32 unk04; s32 unk08; s32 unk0C; s32 unk10; s32 unk14; s3
 struct Cmd { u32 unk00; u32 unk04; s16 unk08; s16 unk0A; u8 unk0C[8]; s16 unk14; u8 unk16[6]; u32 unk1C; u32 unk20; u8 unk24[0x16]; u16 unk3A; u16 unk3C; };
 extern struct Ch *gChannelTable __asm__("D_800A07B4");
 extern void func_800223B0(s32,s32,s32,s32*,s32*);
-extern void func_80099C58(s32,void*);
+extern void gSpuSetVoiceAttributesOne(s32,void*) __asm__("func_80099C58");
 
 /**
  *  @brief Builds and submits a voice mix command for an indexed channel.
@@ -19,7 +19,7 @@ extern void func_80099C58(s32,void*);
  *  @par Control flow
  *  Includes the optional value if nonnegative and both outputs if either is nonnegative.
  *  @par Calls
- *  func_800223B0 calculates the output pair; func_80099C58 submits the command.
+ *  func_800223B0 calculates the output pair; gSpuSetVoiceAttributesOne submits the command.
  *  @par Side effects
  *  Submits a command for the selected voice; only flagged command fields are initialized.
  *  @par Callers
@@ -41,5 +41,5 @@ void func_800222CC(s32 index, struct Mix *mix) {
     o1 = out[0];
     if (value >= 0) { cmd.unk04 = 0x10; cmd.unk14 = value; }
     if (o1 >= 0 || o2 >= 0) { cmd.unk08 = o1; cmd.unk0A = o2; cmd.unk04 |= 3; }
-    func_80099C58(entry->unk0C, &cmd);
+    gSpuSetVoiceAttributesOne(entry->unk0C, &cmd);
 }

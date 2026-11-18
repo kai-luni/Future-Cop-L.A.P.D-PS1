@@ -14,7 +14,7 @@ extern s32 D_8009EF04;
 extern s32 gTableCursor __asm__("D_8009EF08");
 extern struct Entry *gSpuEntryTable __asm__("D_8009EF0C");
 
-extern void func_80097DF8(void);
+extern void gSpuCompactPool(void) __asm__("func_80097DF8");
 
 /**
  * @brief Splits a record in the SPU pool block table D_8009EF0C at address a1 for size a2.
@@ -33,15 +33,17 @@ extern void func_80097DF8(void);
  * Bounds check, two-way split on tail flag 0x40000000 vs free record, each branching on leading gap t1 > 0 and trailing space.
  *
  * @par Calls
- * func_80097DF8 - coalesces adjacent free records and compacts tombstones in D_8009EF0C.
+ * gSpuCompactPool - coalesces adjacent free records and compacts tombstones in D_8009EF0C.
  *
  * @par Side effects
- * Rewrites records in D_8009EF0C, updates D_8009EF08, and compacts via func_80097DF8.
+ * Rewrites records in D_8009EF0C, updates D_8009EF08, and compacts via gSpuCompactPool.
  *
  * @par Callers
  * Confirmed: func_80098458 (0x800986D0, aligned SPU/heap allocator) / Likely: none / Unknown: none.
  */
-s32 func_800980F8(s32 a0, u32 a1, s32 a2)
+s32 gSpuSplitPoolBlock(s32 a0, u32 a1, s32 a2) __asm__("func_800980F8");
+
+s32 gSpuSplitPoolBlock(s32 a0, u32 a1, s32 a2)
 {
     register s32 a0_reg __asm__("$10") = a0;
     register u32 mask __asm__("$4");
@@ -249,6 +251,6 @@ s32 func_800980F8(s32 a0, u32 a1, s32 a2)
         }
     }
 
-    func_80097DF8();
+    gSpuCompactPool();
     return s0;
 }

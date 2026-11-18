@@ -37,18 +37,18 @@ struct Msg86 {
     char pad3[6];
 };
 extern struct State86 *gMovieAudioState __asm__("D_8009F4D8");
-extern void func_80098FE8(struct Setup86 *);
+extern void gSpuSetCommonAttributes(struct Setup86 *) __asm__("func_80098FE8");
 extern s32 func_800452C8(void);
-extern void func_80099368(struct Msg86 *);
+extern void gSpuSetVoiceAttributes(struct Msg86 *) __asm__("func_80099368");
 
 /**
  * @brief Sends a positioned playback message to the sound engine.
  *
  * First a setup block of type 3 with both scale fields 0x3FFF is handed to
- * func_80098FE8. Then a message of kind 0xFF93 is filled: the object pointer,
+ * gSpuSetCommonAttributes. Then a message of kind 0xFF93 is filled: the object pointer,
  * a panning value that is a random 0..127 only for the two tracked objects
  * (gMovieAudioState->first and ->second), the caller value, and a block of fixed
- * fields (1, 1, 3, 0, 0, 0, 0, 15). func_80099368 consumes the message.
+ * fields (1, 1, 3, 0, 0, 0, 0, 15). gSpuSetVoiceAttributes consumes the message.
  *
  * @param object Entity the sound is attached to.
  * @param value Payload passed through in the message.
@@ -61,14 +61,14 @@ extern void func_80099368(struct Msg86 *);
  * Straight-line fill of two stack blocks.
  *
  * @par Calls
- * func_80098FE8 - setup. func_80099368 - message dispatch.
+ * gSpuSetCommonAttributes - setup. gSpuSetVoiceAttributes - message dispatch.
  * func_800452C8 - random source for the panning values.
  *
  * @par Side effects
  * Emits one engine message; no globals written.
  *
  * @par Callers
- * Confirmed: func_80087824 (sound initialisation).
+ * Confirmed: gInitMovieAudio (sound initialisation).
  */
 void func_80086C74(void *object, s32 value, s32 c)
 {
@@ -78,7 +78,7 @@ void func_80086C74(void *object, s32 value, s32 c)
     setup.type = 3;
     setup.a = 0x3FFF;
     setup.b = 0x3FFF;
-    func_80098FE8(&setup);
+    gSpuSetCommonAttributes(&setup);
     msg.object = object;
     msg.kind = 0xFF93;
     msg.a = object == gMovieAudioState->first ? func_800452C8() * 127 : 0;
@@ -93,6 +93,6 @@ void func_80086C74(void *object, s32 value, s32 c)
     msg.f = 0;
     msg.g = 0;
     msg.h = 15;
-    func_80099368(&msg);
+    gSpuSetVoiceAttributes(&msg);
 }
 

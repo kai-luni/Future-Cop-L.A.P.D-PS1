@@ -255,7 +255,7 @@ Einundsechzig weitere Globals in **einem** Commit. Damit sind alle Symbole abgea
 | `D_8009DD30` | `gValueMatchTable` | Tabelle, gegen die ein gelieferter Wert verglichen wird. |
 | `D_8009EA5C` | `gModeEntryWord` | Wird von den unterstützten Modi als flüchtiger Eintrag geschrieben. |
 | `D_8009EED8` | `gSpuClearFlag` | Kann beim Aufräumen gelöscht werden. |
-| `D_8009EEDC` | `gSpuCompareWord` | Vergleichs- und Schreibwort ohne weitere Wirkung. |
+| `D_8009EEDC` | `gSpuTransferCallback` | Abschluss-Callback des SPU-DMA-Transfers; wird in `func_800972F8` gerufen und sonst durch `func_8008DFF0(0xF0000009, 0x20)` ersetzt. **Bestätigt.** |
 | `D_8009F324` | `gMessageConeFlag` | Teil des Meldungsdatensatzes, steuert den Kegeltest. |
 | `D_8009F6F0` | `gGpStateWord` | 32-Bit-Zustandswort bei `0x4DC($gp)`, genullt. |
 | `D_8009F7AC` | `gMessageDoneFlag` | Wird vor der Vorverarbeitung gelöscht, wenn gesetzt. |

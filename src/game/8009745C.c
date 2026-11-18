@@ -46,7 +46,9 @@ extern void func_80097968(void);
  *  @par Callers
  *  Confirmed: func_800976DC, func_80097760.
  */
-s32 func_8009745C(s32 arg0, ...)
+s32 gSpuTransfer(s32 arg0, ...) __asm__("func_8009745C");
+
+s32 gSpuTransfer(s32 arg0, ...)
 {
     s32 *vl;
     u16 target;

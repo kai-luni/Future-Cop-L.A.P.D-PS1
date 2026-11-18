@@ -4,14 +4,14 @@
 struct Entry { u32 value; u32 other; };
 extern s32 D_8009EF04;
 extern struct Entry *gSpuEntryTable __asm__("D_8009EF0C");
-extern void func_80097DF8(void);
+extern void gSpuCompactPool(void) __asm__("func_80097DF8");
 
 /**
  * @brief Marks one entry of a fixed table as "used" by setting its high bit.
  *
  * @param value Key to look for; the matching entry's word becomes
  *        `value | 0x80000000`.
- * @return Nothing; func_80097DF8() is always called afterwards.
+ * @return Nothing; gSpuCompactPool() is always called afterwards.
  *
  * @par Confirmed
  * The table base is D_8009EF0C, the count D_8009EF04; the loop stops at
@@ -53,5 +53,5 @@ body:
         }
     }
     }
-    func_80097DF8();
+    gSpuCompactPool();
 }

@@ -21,7 +21,7 @@
  * Enables event dispatch for the supplied BIOS event handle.
  *
  * @par Callers
- * Confirmed: func_80020120 (0x8002028C..0x80020334), func_80096E40 (0x80096E90).
+ * Confirmed: func_80020120 (0x8002028C..0x80020334), gSpuInitDmaEvent (0x80096E90).
  */
 __asm__(
     ".set noreorder\n"

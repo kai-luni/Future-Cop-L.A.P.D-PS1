@@ -10,9 +10,9 @@ extern s32 D_8009FAD0;
 extern s32 gInitDoneFlag __asm__("D_8009F9C8");
 
 extern void gPerFrameHook(void) __asm__("D_8002139C");
-extern s32 func_80098FB8(void (*callback)(void));
-extern s32 func_80098F78(void);
-extern void func_80098F48(s32 value);
+extern s32 gSpuSetTransferCallback(void (*callback)(void)) __asm__("func_80098FB8");
+extern s32 gSpuGetTransferMode(void) __asm__("func_80098F78");
+extern void gSpuSetTransferMode(s32 value) __asm__("func_80098F48");
 
 /**
  * @brief Initializes the subsystem's interrupt side: installs the
@@ -21,9 +21,9 @@ extern void func_80098F48(s32 value);
  * @return Nothing.
  *
  * @par Confirmed
- * D_8009F9AC = func_80098FB8(D_8002139C) - the callee stores the callback
- * address in D_8009EEDC; D_8009FA14 = func_80098F78() (mode query over
- * D_8009EEC0); func_80098F48(0) (disable form). D_8009FA80, D_8009F998,
+ * D_8009F9AC = gSpuSetTransferCallback(D_8002139C) - the callee stores the callback
+ * address in D_8009EEDC; D_8009FA14 = gSpuGetTransferMode() (mode query over
+ * D_8009EEC0); gSpuSetTransferMode(0) (disable form). D_8009FA80, D_8009F998,
  * D_8009FA34, D_8009FAD0 are zeroed, D_8009F9C8 = 1.
  *
  * @par Likely role
@@ -35,9 +35,9 @@ extern void func_80098F48(s32 value);
  */
 void func_800211FC(void)
 {
-    D_8009F9AC = func_80098FB8(gPerFrameHook);
-    D_8009FA14 = func_80098F78();
-    func_80098F48(0);
+    D_8009F9AC = gSpuSetTransferCallback(gPerFrameHook);
+    D_8009FA14 = gSpuGetTransferMode();
+    gSpuSetTransferMode(0);
     gSlotIndexLimit = 0;
     D_8009F998 = 0;
     D_8009FA34 = 0;

@@ -27,7 +27,7 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  * Invokes the registered interrupt-callback installer with caller's $a0/$a1 arguments.
  *
  * @par Callers
- * Confirmed: func_8001C808 (0x8001CBE8), func_8001D130 (0x8001D190), func_8008F89C (0x8008F8D0), func_8008F8E8 (0x8008F950), func_80091BA0 (0x80091BD8), func_80091CC0 (0x80091CEC), func_80098C38 (0x80098C44).
+ * Confirmed: func_8001C808 (0x8001CBE8), func_8001D130 (0x8001D190), func_8008F89C (0x8008F8D0), func_8008F8E8 (0x8008F950), func_80091BA0 (0x80091BD8), func_80091CC0 (0x80091CEC), gSpuSetIrqCallback (0x80098C44).
  */
 void func_800914B0(void)
 {

@@ -26,9 +26,9 @@ extern u32 D_8009EF14;
 extern u16 gSpuInitWords[] __asm__("D_8009EA8E");
 
 extern void func_80091480(void);
-extern void func_80096EB8(s32 arg);
-extern void func_80096E40(void);
-extern void func_800977C4(s32 index, u32 value, s32 flag);
+extern void gSpuResetHardware(s32 arg) __asm__("func_80096EB8");
+extern void gSpuInitDmaEvent(void) __asm__("func_80096E40");
+extern void gSpuWriteRegister(s32 index, u32 value, s32 flag) __asm__("func_800977C4");
 
 /**
  * @brief (Re)initialises the SPU sound subsystem: hardware reset, warm-start voice table fill, DMA event setup and state reset.
@@ -45,7 +45,7 @@ extern void func_800977C4(s32 index, u32 value, s32 flag);
  * Straight-line except the backwards 0x18-slot fill loop; empty asm volatile statements pin registers and order the stores.
  *
  * @par Calls
- * func_80091480 - runs the registered display callback once. func_80096EB8 - SPU hardware reset with busy-wait timeout. func_80096E40 - one-time SPU DMA completion event setup. func_800977C4 - writes the arena limit to SPU halfword register 0xD1 (0x1F801DA2), flag 0 = unshifted.
+ * func_80091480 - runs the registered display callback once. gSpuResetHardware - SPU hardware reset with busy-wait timeout. gSpuInitDmaEvent - one-time SPU DMA completion event setup. gSpuWriteRegister - writes the arena limit to SPU halfword register 0xD1 (0x1F801DA2), flag 0 = unshifted.
  *
  * @par Side effects
  * SPU registers via callees; clears sound state and allocator counters; voice table written on warm start only.
@@ -53,7 +53,9 @@ extern void func_800977C4(s32 index, u32 value, s32 flag);
  * @par Callers
  * Confirmed: func_80097A28 (warm-start wrapper, passes 0). No other direct caller in edges or listing; a cold-start entry was not found.
  */
-void func_80096D58(s32 cold_start)
+void gSpuInitSubsystem(s32 cold_start) __asm__("func_80096D58");
+
+void gSpuInitSubsystem(s32 cold_start)
 {
     u16 fill;
     u16 *p;
@@ -63,7 +65,7 @@ void func_80096D58(s32 cold_start)
     struct Unk96D58 *q;
 
     func_80091480();
-    func_80096EB8(cold_start);
+    gSpuResetHardware(cold_start);
 
     fill = 0xC000;
 
@@ -76,7 +78,7 @@ void func_80096D58(s32 cold_start)
         }
     }
 
-    func_80096E40();
+    gSpuInitDmaEvent();
 
     idx = 0xD1;
     __asm__ volatile("" : "=r"(idx) : "0"(idx));
@@ -91,7 +93,7 @@ void func_80096D58(s32 cold_start)
     q->unk8 = 0;
     q->unkC = 0;
     gArenaCursor = val;
-    func_800977C4(idx, val, 0);
+    gSpuWriteRegister(idx, val, 0);
 
     D_8009EF04 = 0;
     gTableCursor = 0;

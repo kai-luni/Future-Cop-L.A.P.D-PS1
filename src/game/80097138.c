@@ -18,7 +18,7 @@ extern char D_80012CDC[];
 extern char D_80012CFC[];
 extern char D_80012D10[];
 
-extern void func_80097990(void);
+extern void gSpuBusyWait(void) __asm__("func_80097990");
 extern void func_8008E000(char *arg0, char *arg1);
 
 /**
@@ -36,15 +36,17 @@ extern void func_8008E000(char *arg0, char *arg1);
  * Outer chunk loop (<= 0x40 bytes) with inner halfword FIFO loop, 0xF00-capped wrdy wait loop, and final 0xF00-capped dmaf wait loop.
  *
  * @par Calls
- * func_80097990 - hardware settling delay loop; func_8008E000 - logs SPU timeout diagnostic if wrdy or dmaf wait exceeds 0xF00 polls.
+ * gSpuBusyWait - hardware settling delay loop; func_8008E000 - logs SPU timeout diagnostic if wrdy or dmaf wait exceeds 0xF00 polls.
  *
  * @par Side effects
  * Writes SPU transfer address, FIFO, and control registers, uploading data into SPU Sound RAM.
  *
  * @par Callers
- * Confirmed: func_80096EB8 (0x80097048), func_800976DC (0x80097740) / Likely: none / Unknown: none.
+ * Confirmed: gSpuResetHardware (0x80097048), func_800976DC (0x80097740) / Likely: none / Unknown: none.
  */
-void func_80097138(u16 *arg0, u32 arg1)
+void gSpuWriteMemBlock(u16 *arg0, u32 arg1) __asm__("func_80097138");
+
+void gSpuWriteMemBlock(u16 *arg0, u32 arg1)
 {
     register u32 rem __asm__("$17") = arg1;
     register u16 *src __asm__("$18") = arg0;
@@ -63,7 +65,7 @@ void func_80097138(u16 *arg0, u32 arg1)
 
     want = gSpuRegBasePtr->field1AE & 0x7FF;
     gSpuRegBasePtr->field1A6 = gSpuTransferAddr;
-    func_80097990();
+    gSpuBusyWait();
 
     while (rem != 0) {
         count = 0x40;
@@ -83,7 +85,7 @@ void func_80097138(u16 *arg0, u32 arg1)
         mask = (ctl & 0xFFCF) | 0x10;
         __asm__ volatile ("" : "+r" (mask));
         ptr->field1AA = mask;
-        func_80097990();
+        gSpuBusyWait();
         i = 0;
         while (gSpuRegBasePtr->field1AE & 0x400) {
             if (++i >= 0xF01) {
@@ -99,8 +101,8 @@ void func_80097138(u16 *arg0, u32 arg1)
             }
         }
         rem -= count;
-        func_80097990();
-        func_80097990();
+        gSpuBusyWait();
+        gSpuBusyWait();
     }
 
     ptr2 = gSpuRegBasePtr;

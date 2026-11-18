@@ -88,7 +88,7 @@ extern void func_800616A0(s32);
 extern void func_80026D9C(s32);
 extern void func_8004D598(void);
 extern void func_8001EB6C(void);
-extern void func_800476D0(void);
+extern void gSoundPauseVoices(void) __asm__("func_800476D0");
 
 /**
  * @brief Per-frame driver of a two-player session.
@@ -133,7 +133,7 @@ extern void func_800476D0(void);
  * Closing: func_80017B60 again, then unpaused func_80026D1C,
  * func_800616A0(D_8009F9FC), func_80026D9C(D_8009F9FC), func_8004D598 and
  * D_8009FA24 = 0; paused D_8009FA38 = D_8009FA60, func_8001EB6C,
- * func_800476D0, func_80046C84(0x3E, arr[index]) with index = !(flags & 1) when
+ * gSoundPauseVoices, func_80046C84(0x3E, arr[index]) with index = !(flags & 1) when
  * the menu mode is 0, else (player->unk312 != 0), then D_8009F680 = 1 and
  * D_8009FA24 = 1.
  *
@@ -315,7 +315,7 @@ void func_80027510(void)
         if (gMenuModeFlag == 0) {
             D_8009FA38 = gPaletteCycleCounter;
             func_8001EB6C();
-            func_800476D0();
+            gSoundPauseVoices();
             if (gGameSession->unk5C == 0) {
                 index = flags & 1;
                 __asm__ volatile("" : "=r"(index) : "0"(index));
