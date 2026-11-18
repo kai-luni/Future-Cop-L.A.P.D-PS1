@@ -21,6 +21,38 @@ OUT = ROOT / 'docs' / 'FUNCTION_MAP.md'
 CATEGORY_RE = re.compile(r'^// Categories: (.+)$')
 
 
+def readable_name(text, retail):
+    """Return the C name bound to *retail* by an asm-labelled prototype.
+
+    Parameters may contain function pointers, so the argument list is
+    balanced by hand instead of matched with a regular expression.
+    """
+    marker = f'__asm__("{retail}")'
+    index = 0
+    while True:
+        index = text.find(marker, index)
+        if index < 0:
+            return None
+        close = index
+        while close > 0 and text[close - 1] in " \t\n":
+            close -= 1
+        if close > 0 and text[close - 1] == ')':
+            depth = 0
+            open_at = close - 1
+            while open_at >= 0:
+                if text[open_at] == ')':
+                    depth += 1
+                elif text[open_at] == '(':
+                    depth -= 1
+                    if depth == 0:
+                        break
+                open_at -= 1
+            name = re.search(r'([A-Za-z_]\w*)\s*$', text[:open_at])
+            if name:
+                return name.group(1)
+        index += len(marker)
+
+
 def load():
     manifest = json.load(open(ROOT / 'config/us/matching_units.json'))
     man = {u['name']: u for u in manifest['units']}
@@ -36,12 +68,9 @@ def load():
         if not m:
             continue
         cats[name] = [c.strip() for c in m.group(1).split('|') if c.strip()]
-        # A renamed function carries its readable name on the prototype:
-        # `s32 gWeaponFireDispatch(...) __asm__("func_8006ACB0");`
-        alias = re.search(
-            r'\b([A-Za-z_]\w*)\s*\([^;{)]*\)\s*__asm__\("' + name + r'"\)', text)
+        alias = readable_name(text, name)
         if alias:
-            cnames[name] = alias.group(1)
+            cnames[name] = alias
     edges = [e for e in json.load(open(ROOT / 'analysis/edges.json'))['edges']
              if e.get('kind') == 'direct' and e.get('from') and e.get('to')]
     return man, cats, cnames, edges

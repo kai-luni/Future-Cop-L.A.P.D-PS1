@@ -50,8 +50,11 @@ sweep-candidates: verify toolchain
 report:
 	$(PYTHON) tools/generate_decomp_report.py
 
-check: verify function-inventory verify-matching verify-noncode report
+check: verify function-inventory verify-matching verify-noncode report function-map
 	$(PYTHON) -m unittest discover -s tests -t . -v
+
+function-map:
+	$(PYTHON) tools/build_function_map.py --check
 
 extract: $(FILES)/.extracted
 
