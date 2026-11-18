@@ -65,9 +65,12 @@ void gRunViewScenePasses(s32 arg0) __asm__("func_8003F6E4");
  * func_80066E98 (region drawing).
  *
  * @par Environment path
- * The second view driver: resolves the view position, runs the object
- * dispatcher and then five layer passes. The environment pass calls it last,
- * which is where actors and effects are drawn over the terrain.
+ * Resolves the view position (from gFocusPositions, otherwise func_80069580)
+ * and then runs nine list passes in a fixed order: three position-filling
+ * passes (func_80073700, func_8006F844, func_8005E160) followed by the model,
+ * debris, glow and ribbon lists. gDrawViewLayers calls it last, which is
+ * where actors and effects appear over the terrain; it does not run the
+ * region or scene-list passes.
  */
 void gRunViewScenePasses(s32 arg0)
 {

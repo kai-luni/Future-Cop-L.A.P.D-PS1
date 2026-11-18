@@ -50,8 +50,19 @@ sweep-candidates: verify toolchain
 report:
 	$(PYTHON) tools/generate_decomp_report.py
 
-check: verify function-inventory verify-matching verify-noncode report function-map
+check: verify function-inventory verify-matching verify-noncode report function-map host-env
 	$(PYTHON) -m unittest discover -s tests -t . -v
+
+# Run the environment/matrix render cores under qemu. Skipped (not failed) when
+# the local qemu-user build or the retail executable is missing, so a fresh
+# checkout can still run the rest of `make check`.
+host-env:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -f baseroms/us/SLUS_007.39 ]; then \
+	  bash tests/host/env_test.sh; \
+	else \
+	  echo "host-env: qemu or baseroms/us/SLUS_007.39 missing, skipped"; \
+	fi
 
 function-map:
 	$(PYTHON) tools/build_function_map.py --check

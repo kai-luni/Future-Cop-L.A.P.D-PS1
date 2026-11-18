@@ -21,10 +21,10 @@
  * None in the symbol table; the model renderers call it from inlined code.
  *
  * @par Environment path
- * Minimal-environment step 4: uploads the finished view matrix into the GTE
- * (rows 1..3 built as F*M^T with F = diag(1,-1,1), translation y negated) so
- * every following pass draws through the same eye. See
- * docs/environment-render-path.md.
+ * The per-model matrix upload: moves a finished model matrix into the GTE
+ * (rows 1..3 as F*M^T with F = diag(1,-1,1), y translation negated) so the
+ * following model pass transforms through it. The view matrix is uploaded
+ * elsewhere - gDrawViewLayers calls gGteLoadRotation (80066E98.c:64 and :69).
  */
 __asm__(
     ".set noreorder\n"
