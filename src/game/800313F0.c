@@ -37,7 +37,7 @@ struct Entity {
     s8 unkB1;
 };
 
-extern struct Entity *func_8004D69C(s32 tag);
+extern struct Entity *gFindEntityByTag(s32 tag) __asm__("func_8004D69C");
 extern void func_80017668(void *instance, s32 part, s32 *out);
 extern s32 func_80030DE0(struct Entity *self, void *data, s32 arg);
 extern u8 func_8002F8B8(u8 arg0, s16 arg1, void *arg2, s32 arg3);
@@ -58,7 +58,7 @@ extern void *jtbl_8001123C[];
  * @return Nothing.
  *
  * @par Confirmed
- * With unkB1 set, the target is re-resolved through func_8004D69C(unkAC)
+ * With unkB1 set, the target is re-resolved through gFindEntityByTag(unkAC)
  * and the id refreshed. While the target exists and its id still matches,
  * the nine transform words are copied; the position comes from the target's
  * unk50 when unkB0 < 0, otherwise from func_80017668(target + 0x28, unkB0).
@@ -78,7 +78,7 @@ void func_800313F0(struct Entity *self)
 
     if (self->unkB1 != 0) {
         self->unkB1 = 0;
-        other = func_8004D69C(self->unkAC);
+        other = gFindEntityByTag(self->unkAC);
         if (other != 0) {
             id = other->unk08;
             self->unkA8 = other;

@@ -29,7 +29,9 @@ extern void func_8007F02C(void);
  * @par Callers
  * func_80076A2C (boot, after arming the transfer) and func_8007F8FC.
  */
-void func_8007F8E0(void)
+void gResetProfileTransferFlags(void) __asm__("func_8007F8E0");
+
+void gResetProfileTransferFlags(void)
 {
     gSaveProfileImage[0x921] = 0;
     gUiHoldFlag = 0;

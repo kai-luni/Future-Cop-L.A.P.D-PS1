@@ -36,10 +36,10 @@ extern u8 *gByteTable __asm__("D_8009F9D8");
 extern u8 gScratchTable[0x100] __asm__("D_800A3958");
 extern u8 gSecondScratchTable[0x108] __asm__("D_800A3A58");
 
-extern void func_80089BBC(u8 *arg0, s32 arg1);
+extern void gMovieDecodeVlcStream(u8 *arg0, s32 arg1) __asm__("func_80089BBC");
 extern void func_80095E90(s32 option);
-extern u32 func_80095FE8(u16 *value);
-extern void func_80095FF4(s32 arg0, s32 arg1);
+extern u32 gMdecReadHalfword(u16 *value) __asm__("func_80095FE8");
+extern void gMdecStartDecode(s32 arg0, s32 arg1) __asm__("func_80095FF4");
 extern void func_80096070(s32 destination, u32 size);
 extern s32 func_800960CC(s32 mode);
 
@@ -63,7 +63,7 @@ extern s32 func_800960CC(s32 mode);
  *    tables are copied into the scratchpad - 0x100 bytes from D_800A3958 to
  *    0x1F800000 and 0x108 bytes from D_800A3A58 to 0x1F800100 - and D_8009FABC and
  *    D_8009F9D8 are repointed at those copies.
- * 3. func_80095FE8(payload) reads the first half-word of the payload and raises the
+ * 3. gMdecReadHalfword(payload) reads the first half-word of the payload and raises the
  *    running maximum in D_8009F4D0.
  * 4. The context descriptor is written as three quads of four half-words:
  *    +0x00 = (arg1 * rate) >> 1, +0x02 = arg2, +0x04 = (size8 * rate) >> 1,
@@ -71,9 +71,9 @@ extern s32 func_800960CC(s32 mode);
  *    +0x0C = (size8 * rate) >> 1, +0x0E = sizeA; +0x10 = 0; and +0x1C =
  *    (arg1 * rate) >> 1, +0x1E = arg2, +0x20 = rate << 3, +0x22 = sizeA.
  * 5. First call (context +0x118 == 0): no transfer; when the tag matched,
- *    func_80089BBC(payload, ctx+0x28[ctx+0x30]) decodes into the current buffer, and
+ *    gMovieDecodeVlcStream(payload, ctx+0x28[ctx+0x30]) decodes into the current buffer, and
  *    +0x11C is cleared.
- * 6. Later calls: +0x11C is cleared, func_80095FF4(ctx+0x28[1 - ctx+0x30], mode)
+ * 6. Later calls: +0x11C is cleared, gMdecStartDecode(ctx+0x28[1 - ctx+0x30], mode)
  *    prepares the other buffer, func_80096070(ctx+0x24, width * height / 2) starts
  *    the transfer, the optional decode follows, func_800960CC(0) runs, and a bounded
  *    loop of 0x30D40 (200000) iterations waits for the callback to raise +0x11C.
@@ -166,7 +166,7 @@ void gMovieSliceFeedDma(u8 *data, s32 input_arg1, s32 input_arg2)
     }
 
 
-    value = func_80095FE8((u16 *)payload);
+    value = gMdecReadHalfword((u16 *)payload);
     if (gFrameTimeMax < value) {
         gFrameTimeMax = value;
     }
@@ -201,7 +201,7 @@ void gMovieSliceFeedDma(u8 *data, s32 input_arg1, s32 input_arg2)
         state->field0C = (u16)half;
 
         if (magic == tag) {
-            func_80089BBC(payload,
+            gMovieDecodeVlcStream(payload,
                           state->field28[state->field30]);
         }
         gMovieSliceContext->field11C = 0;
@@ -209,7 +209,7 @@ void gMovieSliceFeedDma(u8 *data, s32 input_arg1, s32 input_arg2)
         s32 prod;
 
         state->field11C = 0;
-        func_80095FF4(state->field28[1 - state->field30], gStripScaleEnable);
+        gMdecStartDecode(state->field28[1 - state->field30], gStripScaleEnable);
 
         {
             u16 v20 = *(volatile u16 *)&gMovieSliceContext->field20;
@@ -220,7 +220,7 @@ void gMovieSliceFeedDma(u8 *data, s32 input_arg1, s32 input_arg2)
         func_80096070(gMovieSliceContext->field24, (u32)(prod / 2));
 
         if (magic == 0x4D444543) {
-            func_80089BBC(payload,
+            gMovieDecodeVlcStream(payload,
                           gMovieSliceContext->field28[gMovieSliceContext->field30]);
         }
 

@@ -40,9 +40,9 @@ extern void func_8008CCB0(void *a0, s32 a1);
 extern void func_80019D60(void);
 extern void func_8006A880(void);
 extern void func_80019A64(void);
-extern void func_800197A8(s32 seed);
+extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
 extern void func_80056924(void);
-extern void func_80019828(void);
+extern void gInitReciprocalTable(void) __asm__("func_80019828");
 extern void func_8005A044(void);
 extern void func_800609F4(void);
 extern void func_80069B58(void);
@@ -189,7 +189,7 @@ call_init:
     v = gModuleLoadedFlag;
     if (v != 0) {
         if (v > 0) {
-            func_800197A8(seed);
+            gSeedPrng(seed);
             func_80056924();
             v = gModuleLoadedFlag;
         }
@@ -197,8 +197,8 @@ call_init:
         gMissionParam = seed;
     }
 
-    func_80019828();
-    func_800197A8(seed);
+    gInitReciprocalTable();
+    gSeedPrng(seed);
     func_8005A044();
     func_800609F4();
     func_80069B58();

@@ -24,12 +24,12 @@ extern u32 gStripScaleEnable __asm__("D_8009F4C0");
 extern u32 gStripStepWidth __asm__("D_8009F4C8");
 extern u32 gFrameTimeMax __asm__("D_8009F4D0");
 
-extern s32 func_80095FE8(u16 *value);
+extern s32 gMdecReadHalfword(u16 *value) __asm__("func_80095FE8");
 extern void func_80096070(s32 destination, u32 size);
 extern s32 func_800960CC(s32 mode);
 extern void func_80095E90(s32 option);
-extern void func_80095FF4(s32 arg0, s32 arg1);
-extern void func_80089BBC(u16 *arg0, s32 arg1);
+extern void gMdecStartDecode(s32 arg0, s32 arg1) __asm__("func_80095FF4");
+extern void gMovieDecodeVlcStream(u16 *arg0, s32 arg1) __asm__("func_80089BBC");
 extern void func_80092F38(Local *local, s32 arg1);
 
 /**
@@ -65,11 +65,11 @@ extern void func_80092F38(Local *local, s32 arg1);
  * 2. The local descriptor at sp+0x10 is filled: +0x0 = (count * rate) >> 1,
  *    +0x2 = volume (volume + 0x100 when ctx+0x114 != 0), +0x4 = rate << 3,
  *    +0x6 = s3.
- * 3. result = func_80095FE8(src); D_8009F4D0 = max(D_8009F4D0, result).
- * 4. First call (ctx+0x118 == 0): when the tag matches, func_80089BBC(src,
+ * 3. result = gMdecReadHalfword(src); D_8009F4D0 = max(D_8009F4D0, result).
+ * 4. First call (ctx+0x118 == 0): when the tag matches, gMovieDecodeVlcStream(src,
  *    ctx+0x28[ctx+0x30]) decodes the bit stream into the buffer selected by
  *    ctx+0x30; then ctx+0x11C = 0. Nothing is transferred on this path.
- * 5. Later calls: func_80095FF4(ctx+0x28[1 - ctx+0x30], D_8009F4C0) prepares the
+ * 5. Later calls: gMdecStartDecode(ctx+0x28[1 - ctx+0x30], D_8009F4C0) prepares the
  *    other buffer's control word, then
  *    func_80096070(ctx+0x24, ((s3 * (rate << 3)) >> 1) * (s2 >> 4)) starts the
  *    transfer, the optional decode follows, func_800960CC(0) waits for it, and a
@@ -149,7 +149,7 @@ void gMovieSliceFeedRows(u8 *data, u32 count, s32 volume)
     }
 
     src = (u16 *)(p + 8);
-    result = func_80095FE8(src);
+    result = gMdecReadHalfword(src);
     if (gFrameTimeMax < result) {
         gFrameTimeMax = result;
     }
@@ -157,15 +157,15 @@ void gMovieSliceFeedRows(u8 *data, u32 count, s32 volume)
     st = gMovieSliceContext;
     if (st->unk118 == 0) {
         if (s4 == 0x4D444543) {
-            func_80089BBC(src, st->unk28[st->unk30]);
+            gMovieDecodeVlcStream(src, st->unk28[st->unk30]);
         }
         *(volatile s32 *)&gMovieSliceContext->unk11C = 0;
     } else {
         s1 = st->unk24;
-        func_80095FF4(st->unk28[1 - st->unk30], gStripScaleEnable);
+        gMdecStartDecode(st->unk28[1 - st->unk30], gStripScaleEnable);
         func_80096070(s1, ((s3 * (gStripStepWidth << 3)) >> 1) * (s2 >> 4));
         if (s4 == 0x4D444543) {
-            func_80089BBC(src, gMovieSliceContext->unk28[gMovieSliceContext->unk30]);
+            gMovieDecodeVlcStream(src, gMovieSliceContext->unk28[gMovieSliceContext->unk30]);
         }
         func_800960CC(0);
         for (i = 0; i < s2; i += 0x10) {

@@ -18,7 +18,7 @@ struct Save {
 };
 
 extern struct Save *gSaveProfileImage __asm__("D_8009F92C");
-extern s32 func_8007F824(u8 *data, u32 len, u32 expectedSum, u32 expectedOther, s32 clear);
+extern s32 gVerifyDualChecksum(u8 *data, u32 len, u32 expectedSum, u32 expectedOther, s32 clear) __asm__("func_8007F824");
 
 /**
  *  @brief Checks the save header and all ten save entries.
@@ -44,14 +44,14 @@ s32 func_8007F750(void)
     u32 i;
 
     ok = 1;
-    if (func_8007F824(gSaveProfileImage->header, 0x10, gSaveProfileImage->sum, gSaveProfileImage->other, 0) != 0) {
+    if (gVerifyDualChecksum(gSaveProfileImage->header, 0x10, gSaveProfileImage->sum, gSaveProfileImage->other, 0) != 0) {
         gSaveProfileImage->valid = ok;
     } else {
         ok = 0;
         gSaveProfileImage->valid = 0;
     }
     for (i = 0; i < 10; i++) {
-        if (func_8007F824(gSaveProfileImage->entries[i].data, 0x68, gSaveProfileImage->entries[i].sum,
+        if (gVerifyDualChecksum(gSaveProfileImage->entries[i].data, 0x68, gSaveProfileImage->entries[i].sum,
                           gSaveProfileImage->entries[i].other, 1) == 0) {
             ok = 0;
         }

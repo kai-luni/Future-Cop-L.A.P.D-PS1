@@ -36,7 +36,9 @@ extern u8 *gMovieVlcTableB __asm__("D_8009F520");
  * Every working value is pinned to a retail register ($2-$10, $24, $25); the
  * shift/refill sequence is what reproduces the retail instruction order.
  */
-int func_80089BBC(u16 *input, u16 *output)
+int gMovieDecodeVlcStream(u16 *input, u16 *output) __asm__("func_80089BBC");
+
+int gMovieDecodeVlcStream(u16 *input, u16 *output)
 {
     register u16 *src __asm__("$9") = input;
     register unsigned int count __asm__("$8") = 0;

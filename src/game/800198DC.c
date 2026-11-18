@@ -27,7 +27,9 @@ extern void func_800181D4(void *block);
  * @par Callers
  * Confirmed: func_800249BC (0x800249FC) and func_80024D14 (0x80024E00), the game-state reset and the subsystem shutdown.
  */
-void func_800198DC(void)
+void gFreeReciprocalTable(void) __asm__("func_800198DC");
+
+void gFreeReciprocalTable(void)
 {
     if (gReciprocalTablePtr != 0) {
         func_800181D4(gReciprocalTablePtr);

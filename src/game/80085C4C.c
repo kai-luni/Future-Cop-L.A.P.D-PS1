@@ -14,8 +14,10 @@ extern void func_80085AC4(int,int);
 extern void func_80092140(void *,int,int,int,int);
 extern void func_800921F4(void *,int,int,int,int);
 extern void func_80091270(int), func_800932F0(void *), func_800934BC(void *), func_80092BF4(int), func_80095E90(int);
-extern void func_8008C9C0(void), func_8008C9E0(void), func_80085F1C(void);
-extern int func_8009612C(void *), func_80096108(int), func_80092B94(int);
+extern void func_8008C9C0(void), func_8008C9E0(void);
+extern void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
+extern int func_8009612C(void *), func_80092B94(int);
+extern int gMdecSetInCallback(int) __asm__("func_80096108");
 /**
  * @brief Initialises the video decoder context: clears the 0x130-byte block,
  *        registers four draw/display environments for a 320x240 picture, stores
@@ -69,10 +71,10 @@ extern int func_8009612C(void *), func_80096108(int), func_80092B94(int);
  * 7. ctx+0x28 = a1, ctx+0x2C = a2, ctx+0x24 = a3.
  * 8. func_80095E90(0); func_8008C9C0(); ctx+0x12C = a4.
  * 9. When a4 != 0: ctx+0x120 = func_8009612C(&D_80085074),
- *    ctx+0x124 = func_80096108(0), ctx+0x128 = func_80092B94(0) and, if
+ *    ctx+0x124 = gMdecSetInCallback(0), ctx+0x128 = func_80092B94(0) and, if
  *    D_8009F4C0 == 1, D_8009F508 = 1. Otherwise the same three calls with a null
  *    first argument and D_8009F508 = 0.
- * 10. func_8008C9E0(); func_80085F1C(); return 1.
+ * 10. func_8008C9E0(); gMovieBuildDitherTables(); return 1.
  *
  * @par Calls
  * func_8001E4C0, func_80085AC4, func_80092140 (twice), func_800921F4 (twice),
@@ -109,7 +111,9 @@ extern int func_8009612C(void *), func_80096108(int), func_80092B94(int);
  * prologue; the direct call is at 0x8008803C). gOpenVideoLayer itself is called
  * only by gDrawImageResource.
  */
-int func_80085C4C(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, int a6)
+int gMovieInitContext(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, int a6) __asm__("func_80085C4C");
+
+int gMovieInitContext(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, int a6)
 {
  if (ctx) {
  if (a1 && a2 && a3) {
@@ -135,16 +139,16 @@ int func_80085C4C(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, int a6
  func_80095E90(0); func_8008C9C0(); gMovieSliceContext->f12c=a4;
  if (a4) {
   gMovieSliceContext->f120=func_8009612C(D_80085074);
-  gMovieSliceContext->f124=func_80096108(0);
+  gMovieSliceContext->f124=gMdecSetInCallback(0);
   gMovieSliceContext->f128=func_80092B94(0);
   if (gStripScaleEnable==1) gReleaseDoneFlag=1;
  } else {
   gMovieSliceContext->f120=func_8009612C(0);
-  gMovieSliceContext->f124=func_80096108(0);
+  gMovieSliceContext->f124=gMdecSetInCallback(0);
   gMovieSliceContext->f128=func_80092B94(0);
   gReleaseDoneFlag=0;
  }
- func_8008C9E0(); func_80085F1C(); return 1;
+ func_8008C9E0(); gMovieBuildDitherTables(); return 1;
  }
  }
  return 0;

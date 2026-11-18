@@ -6,7 +6,7 @@ extern s32 D_8009F948;
 extern s32 D_8009F94C;
 
 extern void func_80089A88(s32 arg0, s32 arg1, s32 arg2);
-extern void func_80085F1C(void);
+extern void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
 
 /**
  * @brief Hands the two decode parameters to the video decoder and marks it busy.
@@ -24,8 +24,10 @@ extern void func_80085F1C(void);
  * @par Callers
  * The frame loop of the video playback path.
  */
-void func_80086134(void)
+void gMoviePrepareDecodeTables(void) __asm__("func_80086134");
+
+void gMoviePrepareDecodeTables(void)
 {
     func_80089A88(D_8009F948, D_8009F94C, 0);
-    func_80085F1C();
+    gMovieBuildDitherTables();
 }

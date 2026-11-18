@@ -103,7 +103,7 @@ extern s32 gFrameTickCounter[] __asm__("D_8009FA2C");
 extern void gInitMenuDescriptor(struct State *state, u8 *name, s32 kind) __asm__("func_80077884");
 extern void func_800778E4(void);
 extern void func_80077990(void);
-extern void func_8007FACC(void);
+extern void gReleaseProfileCardOperation(void) __asm__("func_8007FACC");
 extern void func_800782EC(void);
 
 /**
@@ -247,14 +247,14 @@ void gSetupFrontEndMenus(void)
     gScreenDescriptor.unk10 = D_8007F678;
     gInitMenuDescriptor(&D_800A36E8, D_8009B8CC, 0xA);
     D_800A36E8.unk10 = D_8007F8FC;
-    D_800A36E8.unk14 = func_8007FACC;
+    D_800A36E8.unk14 = gReleaseProfileCardOperation;
     D_800A36E8.unk18 = D_80080038;
     D_800A36E8.unk06 = 0;
     D_800A36E8.unk0A = 0x57;
     D_800A36E8.unk0B = 0x35;
     gInitMenuDescriptor(&D_800A36B8, D_8009B8CC, 0xA);
     D_800A36B8.unk10 = D_8007F93C;
-    D_800A36B8.unk14 = func_8007FACC;
+    D_800A36B8.unk14 = gReleaseProfileCardOperation;
     D_800A36B8.unk18 = D_80080038;
     D_800A36B8.unk06 = 0;
     D_800A36B8.unk0A = 0x57;

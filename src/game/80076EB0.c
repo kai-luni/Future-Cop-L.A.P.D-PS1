@@ -11,7 +11,7 @@ extern u8 D_8009B2DC[];
 
 extern void func_8008CA30(u32 arg0, u32 arg1);
 extern u32 *func_8001E240(s32 arg0, s32 arg1);
-extern void func_80017BE8(void);
+extern void gInitHeap(void) __asm__("func_80017BE8");
 extern void func_8008DEA0(void);
 extern s32 func_8001E4E4(void);
 extern s32 func_8001BF78(void);
@@ -40,7 +40,7 @@ extern void func_8002333C(void);
  *    0xE4 of the 0xF4 bytes; the last 0x10 bytes are left untouched).
  * 3. D_8009FAD4 = 0x190 bytes, D_8009F9A4 and D_8009F9F8 = 0x80 bytes each -
  *    three more work buffers.
- * 4. func_80017BE8() initialises the heap (range table + 0x15A000-byte block),
+ * 4. gInitHeap() initialises the heap (range table + 0x15A000-byte block),
  *    func_8008DEA0() initialises the CD-ROM subsystem (its failure string is
  *    "CdInit: Init failed\n").
  * 5. Two capability checks, func_8001E4E4() and func_8001BF78(); a non-zero
@@ -69,7 +69,9 @@ extern void func_8002333C(void);
  * The roles of D_8009FAD4, D_8009F9A4 and D_8009F9F8 (0x190/0x80/0x80 bytes)
  * are not visible from the call graph; they are only freed by func_80076FE0.
  */
-s32 func_80076EB0(void)
+s32 gInitRuntime(void) __asm__("func_80076EB0");
+
+s32 gInitRuntime(void)
 {
     register s32 result __asm__("$16");
     s32 i;
@@ -86,7 +88,7 @@ s32 func_80076EB0(void)
     gVmCountdowns = func_8001E240(0x80, 3);
     gOpcodeTable = func_8001E240(0x80, 3);
 
-    func_80017BE8();
+    gInitHeap();
     func_8008DEA0();
 
     if (func_8001E4E4() != 0) {

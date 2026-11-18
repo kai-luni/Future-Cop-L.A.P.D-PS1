@@ -23,7 +23,7 @@ extern u8 *D_8009FA58[];
 
 extern void func_8001BFD8(u8 value);
 extern void func_80025370(void);
-extern void func_80086134(void);
+extern void gMoviePrepareDecodeTables(void) __asm__("func_80086134");
 extern void func_80092660(u32 *arg0, s16 *arg1, s32 arg2, s32 arg3);
 extern void func_8001B4A8(s32 arg0);
 extern u8 func_8002385C(void);
@@ -44,7 +44,7 @@ extern void func_80056634(void);
  * @par Confirmed flow
  * 1. D_8009FA30/D_8009FAA4 = 0, D_8009F9FC = 5, func_8001BFD8(0) arms the
  *    display, func_80025370() serves the pending loading screen and, in the
- *    "non-UI" mode (D_8009F9C4 == 0), func_80086134() prepares the image layer.
+ *    "non-UI" mode (D_8009F9C4 == 0), gMoviePrepareDecodeTables() prepares the image layer.
  * 2. Waits for the frame barrier D_8009FA3C to clear, then takes one 52-byte
  *    packet from the D_8009F9F0 pool.
  * 3. Builds a full-screen rectangle (0, 0x100 - offset, 0x140, 0xF0) and emits
@@ -70,7 +70,9 @@ extern void func_80056634(void);
  * @par Callers
  * func_800287F4, as the first half of every screen.
  */
-s32 func_800259D8(void)
+s32 gPrepareAndSubmitFrame(void) __asm__("func_800259D8");
+
+s32 gPrepareAndSubmitFrame(void)
 {
     u32 *p;
     volatile s16 rect[4];
@@ -87,7 +89,7 @@ s32 func_800259D8(void)
     func_80025370();
 
     if (gUploadInProgress == 0) {
-        func_80086134();
+        gMoviePrepareDecodeTables();
     }
 
     while (gFrameBarrier != 0) {

@@ -16,7 +16,9 @@ extern void func_800181D4(void);
  * @par Callers
  * The movie/image playback path.
  */
-void func_800879BC(void)
+void gMovieFreeDecodeBuffer(void) __asm__("func_800879BC");
+
+void gMovieFreeDecodeBuffer(void)
 {
     func_800181D4();
 }

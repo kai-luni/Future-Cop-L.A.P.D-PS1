@@ -8,12 +8,12 @@ extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern void func_8002078C(void);
 
 /**
- * @brief Commits a pending profile transfer.
+ * @brief Releases a pending profile card operation and restores UI flags.
  *
  * If D_8009F496 is set, the two UI flags D_8009F8BD and D_8009F8BE are raised,
  * func_8002078C() releases the card operation (BIOS card events closed, lock
  * dropped) and the pending flag is cleared. A second call does nothing, which
- * makes this the idempotent "apply" half of the func_8007FA88 / func_8007FACC
+ * makes this the idempotent release half of the func_8007FA88 / func_8007FACC
  * pair.
  *
  * @return Nothing.
@@ -21,7 +21,9 @@ extern void func_8002078C(void);
  * @par Callers
  * func_80076A2C, func_80077AD4, func_8008125C and the unit at 0x80078530.
  */
-void func_8007FACC(void)
+void gReleaseProfileCardOperation(void) __asm__("func_8007FACC");
+
+void gReleaseProfileCardOperation(void)
 {
     if (gPendingFlag) {
         gUiHoldFlag = 1;

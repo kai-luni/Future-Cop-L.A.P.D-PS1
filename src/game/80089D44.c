@@ -1,7 +1,7 @@
 // Categories: Graphics > Image Display | Resources > Deferred Initialisation
 #include "game/types.h"
 
-extern u8 func_80087D3C(void);
+extern u8 gIsVideoLayerOpen(void) __asm__("func_80087D3C");
 extern u8 gOpenVideoLayer(s32 arg0) __asm__("func_80087EA0");
 extern void gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80088120");
 extern void gCloseVideoLayer(void) __asm__("func_80087D48");
@@ -24,7 +24,7 @@ extern s32 func_8008A5A8(void);
  * @return Nothing.
  *
  * @par Confirmed flow
- * 1. func_80087D3C() reports whether the image layer is already open.
+ * 1. gIsVideoLayerOpen() reports whether the image layer is already open.
  * 2. If not, gOpenVideoLayer(arg1) opens/initialises it for that mode; a zero
  *    result means "cannot draw" and the function returns without drawing.
  * 3. flag records that this call opened the layer.
@@ -48,7 +48,7 @@ void gDrawImageResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     u8 flag;
 
     flag = 0;
-    if (!(func_80087D3C() & 0xFF)) {
+    if (!(gIsVideoLayerOpen() & 0xFF)) {
         if (!(gOpenVideoLayer(arg1) & 0xFF)) {
             return;
         }

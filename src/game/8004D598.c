@@ -34,7 +34,9 @@ extern void func_800181D4(void *block);
  * @par Callers
  * Confirmed: func_80027510 (main update), func_8004CCDC (entity world reset), func_800271A4 (at 0x8002749C in asm/us/main.s).
  */
-void func_8004D598(void)
+void gSweepRetiredEntities(void) __asm__("func_8004D598");
+
+void gSweepRetiredEntities(void)
 {
     struct Entity *entity;
     struct Entity *next;

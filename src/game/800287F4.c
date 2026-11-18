@@ -7,8 +7,8 @@ extern u8 gFrameBarrier __asm__("D_8009FA3C");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern u8 D_8009FAA8;
 
-extern u8 func_80024E3C(s32 arg0);
-extern void func_800259D8(void);
+extern u8 gStartModuleByName(s32 arg0) __asm__("func_80024E3C");
+extern void gPrepareAndSubmitFrame(void) __asm__("func_800259D8");
 extern void func_80029E64(void);
 extern void func_80010030(s32 arg0, s32 arg1, s32 arg2);
 extern s32 func_80048E94(void);
@@ -16,7 +16,7 @@ extern s32 func_80048E28(s32 arg0);
 extern void func_8003FAD4(void);
 extern void func_80027EE4(void);
 extern void func_80028618(s32 arg0);
-extern void func_80025B7C(s32 arg0);
+extern void gFinishScreenModule(s32 arg0) __asm__("func_80025B7C");
 
 /**
  * @brief Starts (or re-enters) one front-end screen module by name and runs
@@ -34,17 +34,17 @@ extern void func_80025B7C(s32 arg0);
  *
  * @par Confirmed flow
  * 1. D_8009FA0C, D_8009F9C4 (from arg1), D_8009FAA4, D_8009FAA8 are reset.
- * 2. func_80024E3C(arg0) resolves the name to "<prefix><name>" and dispatches
+ * 2. gStartModuleByName(arg0) resolves the name to "<prefix><name>" and dispatches
  *    to func_80024904 (when D_8009F9C4 != 0) or func_80024A24; a zero result
  *    aborts the whole function.
- * 3. D_8009FA3C = 0, func_800259D8(), func_80029E64() prepare the frame.
+ * 3. D_8009FA3C = 0, gPrepareAndSubmitFrame(), func_80029E64() prepare the frame.
  * 4. func_80010030(D_8009FA0C == 1 ? 0xA0 : 0x50, 0x78, 0x200) - a GTE/projection
  *    set-up with an x offset that depends on D_8009FA0C (set by the module).
  * 5. func_80048E28(func_80048E94()) and func_8003FAD4() run the per-frame
  *    engine step.
  * 6. Either func_80027EE4() (when D_8009F9C4 != 0, i.e. arg1 != 0) or
  *    func_80028618(arg0) produce the screen contents.
- * 7. func_80025B7C(arg0) finishes the frame.
+ * 7. gFinishScreenModule(arg0) finishes the frame.
  *
  * @par Globals
  * D_8009FA0C (set by the module, read for the projection offset),
@@ -60,19 +60,21 @@ extern void func_80025B7C(s32 arg0);
  * func_80076A2C only - once with "FE.mis" and mode 1, then once per frame with
  * the module name and mode 0.
  */
-s32 func_800287F4(s32 arg0, u8 arg1)
+s32 gRunScreenModule(s32 arg0, u8 arg1) __asm__("func_800287F4");
+
+s32 gRunScreenModule(s32 arg0, u8 arg1)
 {
     gPlayerCount = 0;
     gUploadInProgress = arg1;
     gDiscShadeByte = 0;
     D_8009FAA8 = 0;
 
-    if (func_80024E3C(arg0) == 0) {
+    if (gStartModuleByName(arg0) == 0) {
         return 0;
     }
 
     gFrameBarrier = 0;
-    func_800259D8();
+    gPrepareAndSubmitFrame();
     func_80029E64();
 
     func_80010030((gPlayerCount == 1) ? 0xA0 : 0x50, 0x78, 0x200);
@@ -85,6 +87,6 @@ s32 func_800287F4(s32 arg0, u8 arg1)
         func_80028618(arg0);
     }
 
-    func_80025B7C(arg0);
+    gFinishScreenModule(arg0);
     return 0;
 }

@@ -17,7 +17,7 @@ extern s32 func_800960CC(s32 mode);
 extern void func_80092C8C(s32 arg);
 extern void func_8008C9C0(void);
 extern DecDctCallback func_8009612C(DecDctCallback callback);
-extern DecDctCallback func_80096108(DecDctCallback callback);
+extern DecDctCallback gMdecSetInCallback(DecDctCallback callback) __asm__("func_80096108");
 extern void func_80092B94(DecDctCallback callback);
 extern void func_8008C9E0(void);
 extern void func_80095E90(s32 option);
@@ -45,7 +45,9 @@ extern void func_80095E90(s32 option);
  * @par Callers
  * gCloseVideoLayer.
  */
-void func_80085A24(void)
+void gMovieStopAndRestoreCallbacks(void) __asm__("func_80085A24");
+
+void gMovieStopAndRestoreCallbacks(void)
 {
     if (gMovieSliceContext != 0) {
         func_80096090(0);
@@ -54,7 +56,7 @@ void func_80085A24(void)
         func_8008C9C0();
 
         func_8009612C(gMovieSliceContext->unk120);
-        func_80096108(gMovieSliceContext->unk124);
+        gMdecSetInCallback(gMovieSliceContext->unk124);
         func_80092B94(gMovieSliceContext->unk128);
 
         gMovieSliceContext->unk120 = 0;

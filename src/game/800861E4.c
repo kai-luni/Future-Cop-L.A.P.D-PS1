@@ -36,19 +36,19 @@ extern void D_80085074(void);
 extern void *func_80017EBC(s32, s32);
 extern void func_800181D4(void *);
 extern void *func_8001E4C0(void *, s32, u32);
-extern void func_800859D8(s32);
-extern void func_80085F1C(void);
+extern void gMovieSetScaleMode(s32) __asm__("func_800859D8");
+extern void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
 extern void func_80089A88(void *, void *, s32);
-extern void func_80089BBC(void *, void *);
+extern void gMovieDecodeVlcStream(void *, void *) __asm__("func_80089BBC");
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
 extern void *func_80092B94(void *);
 extern void func_80095E90(s32);
-extern void func_80095FF4(void *, s32);
+extern void gMdecStartDecode(void *, s32) __asm__("func_80095FF4");
 extern void func_80096070(void *, s32);
 extern void *func_80096090(void *);
 extern void *func_800960CC(void *);
-extern void *func_80096108(void *);
+extern void *gMdecSetInCallback(void *) __asm__("func_80096108");
 extern void *func_8009612C(void *);
 
 /**
@@ -68,13 +68,13 @@ extern void *func_8009612C(void *);
  *
  * @par Confirmed flow
  * 1. func_80096090/800960CC/80095E90 reset three decoder/DMA channels;
- *    func_800859D8(mode != 0) tells the uploader whether a scale pass is used.
+ *    gMovieSetScaleMode(mode != 0) tells the uploader whether a scale pass is used.
  * 2. Buffers: in allocating mode (D_8009F9C4 != 0) func_80017EBC(0x6000) plus
  *    func_80017EBC(0x600) are taken and func_80089A88(buf1, buf2, 0) unpacks
  *    the compressed data; otherwise the static D_8009F948/D_8009F94C are used.
  * 3. The job block gMovieSliceContext = 0x130 bytes (pool mode 3 when not allocating)
  *    is zeroed and the three callback slots are filled through func_8009612C
- *    (the frame-complete hook func_80085074), func_80096108(0) and
+ *    (the frame-complete hook func_80085074), gMdecSetInCallback(0) and
  *    func_80092B94(0). func_8008C9C0/8008C9E0 bracket the critical section.
  * 4. In allocating mode the two work buffers 0x10000 and 0x3000 bytes are
  *    taken; with a non-zero mode the two 0x100/0x108-byte tables D_800A3958 and
@@ -84,8 +84,8 @@ extern void *func_8009612C(void *);
  * 5. Geometry: w = width * D_8009F4C8 >> 1, x = (x * D_8009F4C8) >> 1,
  *    w2 = D_8009F4C8 << 3, h/h2 = height; the destination buffer is
  *    buffer28[index].
- * 6. func_80089BBC(input->data, buffer) unpacks the source block,
- *    func_80095FF4(buffer, D_8009F4C0) starts the transfer and
+ * 6. gMovieDecodeVlcStream(input->data, buffer) unpacks the source block,
+ *    gMdecStartDecode(buffer, D_8009F4C0) starts the transfer and
  *    func_80096070(buffer24, w2 * h2 / 2) clears the work area (the /2 is the
  *    16-bit pixel size).
  * 7. The result is fetched by polling job->done up to 200000 times - the
@@ -133,7 +133,7 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
             flag = 1;
             __asm__ volatile("" : "+r"(flag));
         }
-        func_800859D8(flag);
+        gMovieSetScaleMode(flag);
     }
     if (gUploadInProgress) {
         buf1 = func_80017EBC(0x6000, 2);
@@ -151,7 +151,7 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
     func_8008C9C0();
     gMovieSliceContext->field12C = 1;
     gMovieSliceContext->callback120 = func_8009612C(D_80085074);
-    gMovieSliceContext->callback124 = func_80096108(0);
+    gMovieSliceContext->callback124 = gMdecSetInCallback(0);
     gMovieSliceContext->callback128 = func_80092B94(0);
     if (gStripScaleEnable == 1) gTransferPending = gStripScaleEnable;
     func_8008C9E0();
@@ -164,7 +164,7 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         register u32 masked __asm__("$2") = mode & 0xFF;
         __asm__ volatile("" : "+r"(masked));
         if (masked) {
-            func_80085F1C();
+            gMovieBuildDitherTables();
             *(Block100 *)0x1F800000 = gScratchTable;
             gCharTable = (void *)0x1F800000;
             *(Block108 *)0x1F800100 = gSecondScratchTable;
@@ -194,9 +194,9 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         state->h2 = height;
         state->field10 = 0;
         state->done = 0;
-        func_80089BBC(input->data, state->buffer28[state->index]);
+        gMovieDecodeVlcStream(input->data, state->buffer28[state->index]);
     }
-    func_80095FF4(gMovieSliceContext->buffer28[gMovieSliceContext->index], gStripScaleEnable);
+    gMdecStartDecode(gMovieSliceContext->buffer28[gMovieSliceContext->index], gStripScaleEnable);
     {
         u32 width = gMovieSliceContext->w2;
         u32 height = gMovieSliceContext->h2;
@@ -221,7 +221,7 @@ cleanup:
     if (gStripScaleEnable == 1) gTransferPending = 0;
     if (gMovieSliceContext) {
         func_8009612C(gMovieSliceContext->callback120);
-        func_80096108(gMovieSliceContext->callback124);
+        gMdecSetInCallback(gMovieSliceContext->callback124);
         func_80092B94(gMovieSliceContext->callback128);
     }
     func_8008C9E0();

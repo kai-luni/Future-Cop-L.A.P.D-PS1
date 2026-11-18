@@ -21,9 +21,9 @@ extern s32 gChainedNodes[] __asm__("D_8009FA48");
 
 extern s32 func_8001EF8C(s32);
 extern void func_800859B0(void);
-extern void func_800859D8(s32);
+extern void gMovieSetScaleMode(s32) __asm__("func_800859D8");
 extern s32 func_80085A1C(void);
-extern s32 func_80085C4C(s32, s32, s32, s32, s32, s32, s32);
+extern s32 gMovieInitContext(s32, s32, s32, s32, s32, s32, s32) __asm__("func_80085C4C");
 extern s32 func_80087814(void);
 extern s32 func_8008781C(void);
 extern s32 func_8008799C(s32);
@@ -57,10 +57,10 @@ extern s32 func_80097B28(s32);
  *    display; func_8008F7AC() then prepares the video hardware.
  * 4. Main buffer: func_8008799C(0x22D00) (or 0xF6C0), then 0x6000 and 0x600
  *    bytes; func_80089A88(video, table, 0) builds the decode tables.
- * 5. func_800859D8(0/1) or func_800859B0() select the scaling mode according
+ * 5. gMovieSetScaleMode(0/1) or func_800859B0() select the scaling mode according
  *    to the mode bits.
  * 6. func_8008799C(func_80085A1C()) sizes the ring buffer and
- *    func_80085C4C(ring, ptr, ptr+a3, ptr+2*a3, 1, narrow, 0) initialises the
+ *    gMovieInitContext(ring, ptr, ptr+a3, ptr+2*a3, 1, narrow, 0) initialises the
  *    decoder with a3 = 0x10000 (or 0x6DE0 in the narrow variant).
  * 7. One more buffer of func_800896D4(D_8009F968, 0x4400, 1) bytes for the
  *    wide variant (the narrow one reuses D_8009FA48[0] and still calls
@@ -150,9 +150,9 @@ s32 gOpenVideoLayer(s32 arg0)
     func_80089A88(D_8009F4FC, D_8009F500, 0);
 
     if (arg0 & 8) {
-        func_800859D8(0);
+        gMovieSetScaleMode(0);
     } else if (arg0 & 0x10) {
-        func_800859D8(1);
+        gMovieSetScaleMode(1);
     } else if (arg0 & 4) {
         func_800859B0();
     }
@@ -169,7 +169,7 @@ s32 gOpenVideoLayer(s32 arg0)
     }
 
     ptr = D_8009F4E4;
-    if (func_80085C4C(var_a0, ptr, ptr + var_a3,
+    if (gMovieInitContext(var_a0, ptr, ptr + var_a3,
                        ptr + var_a3 * 2, 1, var_s0, 0) == 0) {
         goto fail;
     }

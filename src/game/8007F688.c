@@ -21,7 +21,9 @@
  *  @par Callers
  *  Confirmed: func_8007F6E0, func_8007F824.
  */
-void func_8007F688(u8 *data, u32 len, u32 *sum, u32 *other)
+void gComputeDualChecksum(u8 *data, u32 len, u32 *sum, u32 *other) __asm__("func_8007F688");
+
+void gComputeDualChecksum(u8 *data, u32 len, u32 *sum, u32 *other)
 {
     u32 i;
 

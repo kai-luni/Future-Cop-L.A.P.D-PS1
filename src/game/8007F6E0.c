@@ -3,7 +3,7 @@
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 
-extern void func_8007F688(u8 *arg0, s32 arg1, u8 *arg2, u8 *arg3);
+extern void gComputeDualChecksum(u8 *arg0, s32 arg1, u8 *arg2, u8 *arg3) __asm__("func_8007F688");
 
 /**
  * @brief Recomputes the dual 32-bit checksums for the front-end profile image in D_8009F92C.
@@ -27,14 +27,16 @@ extern void func_8007F688(u8 *arg0, s32 arg1, u8 *arg2, u8 *arg3);
  * @par Callers
  * Confirmed: func_80080B70 (0x80081084 in asm/us/main.s, profile save image builder) / Likely: none / Unknown: none.
  */
-void func_8007F6E0(void)
+void gUpdateProfileChecksums(void) __asm__("func_8007F6E0");
+
+void gUpdateProfileChecksums(void)
 {
     u32 i;
     s32 offset;
 
-    func_8007F688(gSaveProfileImage + 0x40C, 0x10, gSaveProfileImage + 0x41C, gSaveProfileImage + 0x420);
+    gComputeDualChecksum(gSaveProfileImage + 0x40C, 0x10, gSaveProfileImage + 0x41C, gSaveProfileImage + 0x420);
     for (i = 0, offset = 0x424; i < 10; i++) {
-        func_8007F688(gSaveProfileImage + offset, 0x68, gSaveProfileImage + offset + 0x68, gSaveProfileImage + offset + 0x6C);
+        gComputeDualChecksum(gSaveProfileImage + offset, 0x68, gSaveProfileImage + offset + 0x68, gSaveProfileImage + offset + 0x6C);
         offset += 0x70;
     }
 }

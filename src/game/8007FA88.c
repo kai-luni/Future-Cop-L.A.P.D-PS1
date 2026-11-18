@@ -31,7 +31,9 @@ extern void func_800206D0(void);
  * @par Callers
  * func_80076A2C, func_8007F8FC, func_8007F93C.
  */
-void func_8007FA88(void)
+void gArmProfileTransfer(void) __asm__("func_8007FA88");
+
+void gArmProfileTransfer(void)
 {
     register s32 six __asm__("$5");
 

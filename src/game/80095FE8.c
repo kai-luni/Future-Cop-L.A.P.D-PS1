@@ -15,7 +15,9 @@ typedef unsigned short u16;
  * @par Callers
  * gMovieSliceFeedDma, gMovieSliceFeedRows.
  */
-u16 func_80095FE8(u16 *value)
+u16 gMdecReadHalfword(u16 *value) __asm__("func_80095FE8");
+
+u16 gMdecReadHalfword(u16 *value)
 {
     return *value;
 }

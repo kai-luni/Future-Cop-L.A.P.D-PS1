@@ -45,7 +45,9 @@ extern void func_80078650(struct Unk78210Panel *panel, s32 arg1);
  * @par Callers
  * Confirmed: func_8008125C (0x80081BF8 in asm/us/main.s); func_800782EC (0x800784E4 in asm/us/main.s, cases 1 and 2) / Likely: none / Unknown: none.
  */
-void func_80078210(void)
+void gRouteFrontEndModeMenu(void) __asm__("func_80078210");
+
+void gRouteFrontEndModeMenu(void)
 {
     gUpdateMainMenuUnlocks();
     if (gGameSession[0]->players == 1) {

@@ -19,7 +19,9 @@ extern void func_80020600(void);
  * func_80076A2C (boot, before the intro movie is drawn) and the unit at
  * 0x80078530.
  */
-void func_8007FA48(void)
+void gShutdownProfileSubsystem(void) __asm__("func_8007FA48");
+
+void gShutdownProfileSubsystem(void)
 {
     func_80020600();
     func_800181D4(*(void **)(gSaveProfileImage + 0x904));

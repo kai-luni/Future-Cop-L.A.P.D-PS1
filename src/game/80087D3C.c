@@ -13,7 +13,9 @@ extern u8 gLayerOpenResult __asm__("D_8009F504");
  * gDrawImageResource uses it to decide whether it has to open the layer itself
  * (and therefore close it again) or can draw into an already open one.
  */
-u8 func_80087D3C(void)
+u8 gIsVideoLayerOpen(void) __asm__("func_80087D3C");
+
+u8 gIsVideoLayerOpen(void)
 {
     return gLayerOpenResult;
 }

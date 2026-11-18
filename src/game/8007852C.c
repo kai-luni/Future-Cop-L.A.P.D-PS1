@@ -7,8 +7,8 @@ extern s32 gAtlasTable __asm__("D_8009F45C");
 extern void **gPublishedBlockPtr __asm__("D_8009F3F4");
 
 extern void func_800898E8(void);
-extern void func_8007FACC(void);
-extern void func_8007FA48(void);
+extern void gReleaseProfileCardOperation(void) __asm__("func_8007FACC");
+extern void gShutdownProfileSubsystem(void) __asm__("func_8007FA48");
 extern void func_800181D4(void *block);
 
 /**
@@ -38,8 +38,8 @@ void func_8007852C(void)
         return;
     }
     func_800898E8();
-    func_8007FACC();
-    func_8007FA48();
+    gReleaseProfileCardOperation();
+    gShutdownProfileSubsystem();
     if (gSpriteAtlasBlock != 0) {
         func_800181D4(gSpriteAtlasBlock);
         gSpriteAtlasBlock = 0;

@@ -31,7 +31,9 @@ extern void func_8009649C(void *);
  * @par Callers
  * Confirmed: func_800960CC (mode 0 sync), func_800962D0 (before starting MDEC-out DMA1 transfer).
  */
-s32 func_800963F0(void)
+s32 gMdecWaitOutSync(void) __asm__("func_800963F0");
+
+s32 gMdecWaitOutSync(void)
 {
     volatile s32 count = 0x100000;
 

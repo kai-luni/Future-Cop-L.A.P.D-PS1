@@ -12,28 +12,28 @@ extern void *D_8009F4FC;
 extern void *D_8009F500;
 extern u8 gLayerOpenResult __asm__("D_8009F504");
 
-extern void func_80085A24(void);
+extern void gMovieStopAndRestoreCallbacks(void) __asm__("func_80085A24");
 extern void func_80085AC4(s32, s32);
 extern s32 func_800858E0(void);
 extern void func_8001C088(u8, u8);
 extern void func_80091270(s32);
 extern s32 func_8001BFE4(void);
 extern void func_80098708(void *);
-extern void func_800879BC(void *);
+extern void gMovieFreeDecodeBuffer(void *) __asm__("func_800879BC");
 
 /**
  * @brief Closes the video/image layer and releases everything gOpenVideoLayer()
  *        allocated.
  *
  * @par Confirmed flow
- * 1. func_80085A24() stops the decoder.
+ * 1. gMovieStopAndRestoreCallbacks() stops the decoder.
  * 2. Unless the flag bit 0x20 is set in gMovieDisplayMode: func_80085AC4(1, 0),
  *    func_8001C088(func_800858E0(), 0) (disable the fade layer that the video
  *    used), func_80091270(0) and func_8001BFE4() restore the display.
  * 3. Then each of the eight buffers is released: gMovieSpuBufferB and gMovieSpuBufferA
  *    with func_80098708(), gMovieAudioBlock freely, gMovieStreamBuffer only when flag bit 0
  *    is clear, then D_8009F4E8, D_8009F500, D_8009F4FC, D_8009F4E4 with
- *    func_800879BC().
+ *    gMovieFreeDecodeBuffer().
  * 4. All pointers and D_8009F504 are cleared, so the layer is "closed".
  *
  * @par Globals
@@ -48,7 +48,7 @@ void gCloseVideoLayer(void) __asm__("func_80087D48");
 
 void gCloseVideoLayer(void)
 {
-    func_80085A24();
+    gMovieStopAndRestoreCallbacks();
 
     if (!(gMovieDisplayMode & 0x20)) {
         func_80085AC4(1, 0);
@@ -64,24 +64,24 @@ void gCloseVideoLayer(void)
         func_80098708(gMovieSpuBufferA);
     }
     if (gMovieAudioBlock != 0) {
-        func_800879BC(gMovieAudioBlock);
+        gMovieFreeDecodeBuffer(gMovieAudioBlock);
     }
     if (!(gMovieDisplayMode & 1)) {
         if (gMovieStreamBuffer != 0) {
-            func_800879BC(gMovieStreamBuffer);
+            gMovieFreeDecodeBuffer(gMovieStreamBuffer);
         }
     }
     if (D_8009F4E8 != 0) {
-        func_800879BC(D_8009F4E8);
+        gMovieFreeDecodeBuffer(D_8009F4E8);
     }
     if (D_8009F500 != 0) {
-        func_800879BC(D_8009F500);
+        gMovieFreeDecodeBuffer(D_8009F500);
     }
     if (D_8009F4FC != 0) {
-        func_800879BC(D_8009F4FC);
+        gMovieFreeDecodeBuffer(D_8009F4FC);
     }
     if (D_8009F4E4 != 0) {
-        func_800879BC(D_8009F4E4);
+        gMovieFreeDecodeBuffer(D_8009F4E4);
     }
 
     D_8009F4E4 = 0;

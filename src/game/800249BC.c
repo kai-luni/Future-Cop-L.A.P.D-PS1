@@ -8,7 +8,7 @@ extern void func_8001B448(void);
 extern void func_80047868(void);
 extern void func_80019BA4(void);
 extern void func_80023BF8(void);
-extern void func_800198DC(void);
+extern void gFreeReciprocalTable(void) __asm__("func_800198DC");
 extern void func_80069D04(void);
 extern void func_80017D20(void);
 
@@ -34,7 +34,9 @@ extern void func_80017D20(void);
  * @par Callers
  * func_80025B7C.
  */
-void func_800249BC(void)
+void gUnloadFrontEndSubsystems(void) __asm__("func_800249BC");
+
+void gUnloadFrontEndSubsystems(void)
 {
     func_8007852C();
     func_80029EB8();
@@ -43,7 +45,7 @@ void func_800249BC(void)
     func_80047868();
     func_80019BA4();
     func_80023BF8();
-    func_800198DC();
+    gFreeReciprocalTable();
     func_80069D04();
     func_80017D20();
 }

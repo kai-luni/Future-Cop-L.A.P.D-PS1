@@ -7,7 +7,7 @@ extern s32 gFreeRangeCursor __asm__("D_8009F5AC");
 extern s32 gStateTable[] __asm__("D_800A0480");
 extern s32 gStateEntryTable[] __asm__("D_800A04D0");
 
-extern s32 func_80019720(void);
+extern s32 gNextLcgRand(void) __asm__("func_80019720");
 
 /**
  * @brief Seeds the PRNG LCG state and populates both 20-entry lagged-Fibonacci ring buffers.
@@ -31,7 +31,9 @@ extern s32 func_80019720(void);
  * @par Callers
  * Confirmed: func_80019828 (0x800198B4, boot seed 0x457), func_80024904 (0x8002496C), func_80024A24 (0x80024BC0, 0x80024BF0), and func_80059BFC (0x80059C1C).
  */
-void func_800197A8(s32 seed)
+void gSeedPrng(s32 seed) __asm__("func_800197A8");
+
+void gSeedPrng(s32 seed)
 {
     s32 i;
 
@@ -39,9 +41,9 @@ void func_800197A8(s32 seed)
     D_8009F5A8 = 0x14;
     gFreeRangeCursor = 0x14;
     for (i = 0; i < 0x14; i++) {
-        gStateTable[i] = func_80019720();
+        gStateTable[i] = gNextLcgRand();
     }
     for (i = 0; i < 0x14; i++) {
-        gStateEntryTable[i] = func_80019720();
+        gStateEntryTable[i] = gNextLcgRand();
     }
 }

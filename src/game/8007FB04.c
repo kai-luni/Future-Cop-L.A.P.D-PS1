@@ -13,10 +13,10 @@ extern u8 gMenuActivationBlock[] __asm__("D_800A3718");
 extern u8 gProfileImageName[] __asm__("D_800120A4");
 
 extern s32 func_800207B4();
-extern void func_80078740(void);
+extern void gPopMenuPanel(void) __asm__("func_80078740");
 extern s32 func_8001F37C(void);
 extern void func_80080B70(void);
-extern void func_8008204C(void);
+extern void gQueueMemoryCardFormat(void) __asm__("func_8008204C");
 extern void func_80081204(void);
 extern s32 func_8007F750(void);
 extern void func_80080010(void);
@@ -37,7 +37,7 @@ extern void func_80082020(void);
  * 1. func_800207B4(0) returns the memory-card result code; an unchanged code
  *    (cached at +0x208) exits immediately - a card result, not a stream status.
  * 2. When the active front-end screen is neither D_800A36E8 nor D_800A36B8 (the
- *    two save screens) the menu stack is popped one level with func_80078740().
+ *    two save screens) the menu stack is popped one level with gPopMenuPanel().
  *    D_8009F468 holds that screen descriptor; the identifier gFontBankTable is a
  *    leftover of an earlier round.
  * 3. The previous state and sub-state are copied to +0x203/+0x204, the state
@@ -70,7 +70,7 @@ s32 func_8007FB04(void)
         if (gFontBankTable != 0 &&
             gFontBankTable != D_800A36E8 &&
             gFontBankTable != D_800A36B8) {
-            func_80078740();
+            gPopMenuPanel();
         }
 
         gSaveProfileImage[0x203] = gSaveProfileImage[0x200];
@@ -92,7 +92,7 @@ s32 func_8007FB04(void)
                         if (gSaveProfileImage[0x204] == s1) {
                             func_80080B70();
                         } else if (gSaveProfileImage[0x204] == 3) {
-                            func_8008204C();
+                            gQueueMemoryCardFormat();
                         } else {
                             func_80081204();
                         }

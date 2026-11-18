@@ -21,7 +21,9 @@ typedef unsigned int u32;
  *  @par Callers
  *  Confirmed: gMovieAudioChunkPushSplit.
  */
-void func_8008731C(u8 *dst, u8 *src, u32 count)
+void gExpand15To16Padded(u8 *dst, u8 *src, u32 count) __asm__("func_8008731C");
+
+void gExpand15To16Padded(u8 *dst, u8 *src, u32 count)
 {
     u32 i;
     for (i = 0; i < count; i += 15) {

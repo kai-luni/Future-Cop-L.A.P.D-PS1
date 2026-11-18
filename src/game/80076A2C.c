@@ -48,26 +48,26 @@ extern u8 gEaLogoName[] __asm__("D_80011E3C");
 extern u8 D_80011E48[];
 
 extern void func_800965C8(void);
-extern u8 func_80076EB0(void);
-extern void func_80076FE0(void);
+extern u8 gInitRuntime(void) __asm__("func_80076EB0");
+extern void gShutdownRuntime(void) __asm__("func_80076FE0");
 extern void func_8007BFCC(s32, s32);
 extern void func_80077050(void);
 extern void func_8001B2C8(s32, s32);
 extern void func_80025370(void);
 extern void func_8007F9CC(void);
-extern void func_8007F8BC(void);
-extern void func_8007FA88(void);
-extern void func_8007F8E0(void);
-extern void func_80080B08(void);
-extern s32 func_8007F8CC(void);
-extern void func_8007FACC(void);
-extern void func_8007FA48(void);
+extern void gBeginBootProfileTransfer(void) __asm__("func_8007F8BC");
+extern void gArmProfileTransfer(void) __asm__("func_8007FA88");
+extern void gResetProfileTransferFlags(void) __asm__("func_8007F8E0");
+extern void gStepBootProfileTransfer(void) __asm__("func_80080B08");
+extern s32 gIsBootProfileTransferDone(void) __asm__("func_8007F8CC");
+extern void gReleaseProfileCardOperation(void) __asm__("func_8007FACC");
+extern void gShutdownProfileSubsystem(void) __asm__("func_8007FA48");
 extern void gDrawImageResource(void *, s32, s32, s32, s32, s32) __asm__("func_80089D44");
 extern void func_8008CD30(void *, void *, s32, s32);
 extern void func_8001B448(void);
 extern void func_80077088(void);
 extern void func_800780C0(s32);
-extern void func_800287F4(void *, s32);
+extern void gRunScreenModule(void *, s32) __asm__("func_800287F4");
 extern void func_8008CC90(void *, void *);
 extern void func_8008CCB0(void *, s32);
 extern s32 func_80083130(void *);
@@ -90,7 +90,7 @@ extern s32 func_80083130(void *);
  * 1. func_800965C8() - one-shot initialiser with a guard flag in D_8009EA00;
  *    its constructor loop runs from func_80010000 with count 0, so in the
  *    retail build it only sets the guard.
- * 2. func_80076EB0() - device/state initialisation. A non-zero result means
+ * 2. gInitRuntime() - device/state initialisation. A non-zero result means
  *    "runtime up", 0 skips the whole loop.
  * 3. The 0xF4-byte state block D_8009FA94 is initialised: unk28/unk2C/unk34/
  *    unk38 = 0/0x10/0/0x10 and unk30/unk3C = 0x20 (a 32x16 rectangle),
@@ -105,9 +105,9 @@ extern s32 func_80083130(void *);
  * 7. func_80025370() serves the loading screen, func_8007F9CC/8007F8BC/
  *    func_8007FA88/8007F8E0 arm the movie/graphics layer.
  * 8. Busy wait until D_8009FA2C has advanced by 0x5DC (~timing ticks) *and*
- *    func_8007F8CC() reports completion; func_80080B08() is pumped in between
+ *    gIsBootProfileTransferDone() reports completion; gStepBootProfileTransfer() is pumped in between
  *    (this is the only place the delay loop body appears).
- * 9. func_8007FACC(), func_8007FA48(), then two gDrawImageResource image draws:
+ * 9. gReleaseProfileCardOperation(), gShutdownProfileSubsystem(), then two gDrawImageResource image draws:
  *    D_80011E3C ("Ea_logo.fsv") at (0,0) with mode 4, and the name built by
  *    func_8008CD30(local, "%s%s", D_8009F3D0, "Intro.wve") where D_8009F3D0
  *    points at the path prefix "Movies\\"
@@ -120,12 +120,12 @@ extern s32 func_80083130(void *);
  *
  * Steady-state loop
  * -----------------
- * - First pass only (s2 == 1): func_800287F4("FE.mis", 1) starts the
+ * - First pass only (s2 == 1): gRunScreenModule("FE.mis", 1) starts the
  *   front-end module, then strcat(D_8009B300, ".mis") completes the module
  *   name buffer; afterwards the loop runs with that name.
  * - The six geometry words of the state block are shadowed into
  *   D_8009F850..D_8009F864 plus the two flags D_8009F868/D_8009F869 before
- *   func_800287F4(D_8009B300, 0) and copied back afterwards. The screen
+ *   gRunScreenModule(D_8009B300, 0) and copied back afterwards. The screen
  *   module therefore works on copies, and the loop keeps the authoritative
  *   values.
  * - The session setup path func_80024904 -> func_800780DC calls
@@ -144,8 +144,8 @@ extern s32 func_80083130(void *);
  *   pool is re-armed (func_80077050) and up to two 320x192 blits are emitted
  *   from the buffer at local + 0x28, then func_80077088() releases the pool.
  *
- * @return Always 0; the function only returns after func_80076EB0() failed
- *         (runtime could not start) or after func_80076FE0() shut the runtime
+ * @return Always 0; the function only returns after gInitRuntime() failed
+ *         (runtime could not start) or after gShutdownRuntime() shut the runtime
  *         down, which the retail code never reaches because of the for(;;).
  *
  * @par Globals read/written
@@ -187,7 +187,7 @@ s32 gGameMain(void)
 
     func_800965C8();
     s2 = 1;
-    if (func_80076EB0() != 0) {
+    if (gInitRuntime() != 0) {
         register s32 z0 __asm__("$4") = 0;
         register s32 z1 __asm__("$5") = z0;
         register s32 ten __asm__("$6");
@@ -220,19 +220,19 @@ s32 gGameMain(void)
 
         func_80025370();
         func_8007F9CC();
-        func_8007F8BC();
-        func_8007FA88();
-        func_8007F8E0();
+        gBeginBootProfileTransfer();
+        gArmProfileTransfer();
+        gResetProfileTransferFlags();
 
         s0 = gFrameTickCounter + 0x5DC;
-        while (gFrameTickCounter < s0 || func_8007F8CC() == 0) {
-            func_80080B08();
+        while (gFrameTickCounter < s0 || gIsBootProfileTransferDone() == 0) {
+            gStepBootProfileTransfer();
         }
 
         s0 = 0x140;
-        func_8007FACC();
+        gReleaseProfileCardOperation();
         s3 = 1;
-        func_8007FA48();
+        gShutdownProfileSubsystem();
 
         gDrawImageResource(gEaLogoName, 4, 0, 0, s0, 0xF0);
 
@@ -245,7 +245,7 @@ s32 gGameMain(void)
 
         for (;;) {
             if (s2) {
-                func_800287F4(gFrontEndBootstrapModule, 1);
+                gRunScreenModule(gFrontEndBootstrapModule, 1);
                 func_8008CC90(gFrontEndModuleName, gMissionModuleSuffix);
                 s2 = 0;
                 continue;
@@ -260,7 +260,7 @@ s32 gGameMain(void)
             D_8009F868 = ((u8 *)gGameSession)[8];
             D_8009F869 = ((u8 *)gGameSession)[0x98];
 
-            func_800287F4(gFrontEndModuleName, 0);
+            gRunScreenModule(gFrontEndModuleName, 0);
 
             gGameSession->unk28 = D_8009F850;
             gGameSession->unk2C = D_8009F854;
@@ -318,6 +318,6 @@ s32 gGameMain(void)
         }
     }
 
-    func_80076FE0();
+    gShutdownRuntime();
     return 0;
 }

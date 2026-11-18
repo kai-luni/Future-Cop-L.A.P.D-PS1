@@ -22,7 +22,9 @@ extern s32 gBufferCount __asm__("D_8009F4CC");
  * @par Callers
  * func_800861E4 (with mode != 0) and gOpenVideoLayer (data-dependent).
  */
-void func_800859D8(s32 arg0)
+void gMovieSetScaleMode(s32 arg0) __asm__("func_800859D8");
+
+void gMovieSetScaleMode(s32 arg0)
 {
     if ((arg0 & 0xFF) != 0) {
         gStripScaleEnable = 1;

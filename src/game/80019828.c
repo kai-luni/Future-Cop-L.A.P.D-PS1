@@ -7,7 +7,7 @@ extern void *func_80017EBC(s32 size, s32 tag);
 extern u32 func_80018818(u32 divisor);
 extern u32 func_800187C8(u32 value);
 extern s32 func_80095C14(u32 value);
-extern void func_800197A8(s32 seed);
+extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
 
 /**
  * @brief Builds the 1024-entry reciprocal/mantissa table D_8009F5B0 and
@@ -19,7 +19,7 @@ extern void func_800197A8(s32 seed);
  * Allocates 0x800 bytes from pool tag 2. For input 0..0x3FF: value =
  * func_800187C8(func_80018818(input)); shift = 0x15 minus the leading-zero
  * count (func_80095C14) when value != 0; value >>= shift (when positive),
- * then entry = (value << 5) | shift. Finally func_800197A8(0x457) seeds
+ * then entry = (value << 5) | shift. Finally gSeedPrng(0x457) seeds
  * the RNG.
  *
  * @par Likely role
@@ -34,7 +34,9 @@ extern void func_800197A8(s32 seed);
  * @par Callers
  * func_80024904, func_80024A24.
  */
-void func_80019828(void)
+void gInitReciprocalTable(void) __asm__("func_80019828");
+
+void gInitReciprocalTable(void)
 {
     s32 i;
     u32 input;
@@ -55,5 +57,5 @@ void func_80019828(void)
         value |= shift;
         gReciprocalTablePtr[i++] = value;
     }
-    func_800197A8(0x457);
+    gSeedPrng(0x457);
 }

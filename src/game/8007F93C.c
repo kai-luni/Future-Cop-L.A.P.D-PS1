@@ -12,7 +12,7 @@ extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern u8 D_800A36BD[];
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 
-extern void func_8007FA88(void);
+extern void gArmProfileTransfer(void) __asm__("func_8007FA88");
 extern void func_8007F02C(void);
 
 /**
@@ -40,7 +40,7 @@ void func_8007F93C(void)
     gSaveProfileImage[0x93D] = 0;
     gSaveProfileImage[0x93F] = 0;
     gSaveProfileImage[0x940] = 1;
-    func_8007FA88();
+    gArmProfileTransfer();
     gSaveProfileImage[0x921] = 1;
     p = gSaveProfileImage;
     gUiHoldFlag = 0;

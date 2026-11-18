@@ -10,7 +10,7 @@ extern u32 *gDma0MemAddrPtr __asm__("D_8009E9C0");
 extern u32 *gDma0BlockCtrlPtr __asm__("D_8009E9C4");
 extern u32 *gMdecCommandPtr __asm__("D_8009E9F0");
 extern u32 *gDma0ChannelCtrlPtr __asm__("D_8009E9C8");
-extern s32 func_8009635C(void);
+extern s32 gMdecWaitInSync(void) __asm__("func_8009635C");
 
 /**
  * @brief Starts one MDEC block transfer through DMA channel 0.
@@ -21,7 +21,7 @@ extern s32 func_8009635C(void);
  * @return Nothing.
  *
  * @par Confirmed
- * func_8009635C() runs first (transfer-complete wait), then the channel
+ * gMdecWaitInSync() runs first (transfer-complete wait), then the channel
  * words are programmed: D_8009E9F8 |= 0x88 (control), D_8009E9C0 = arg0 + 1
  * (address), D_8009E9C4 = (arg1 >> 5) << 16 | 0x20 (block count/size),
  * D_8009E9F0 = *arg0 (MDEC command word), D_8009E9C8 = 0x01000201 (channel
@@ -44,7 +44,7 @@ void gStartMdecBlockTransfer(u32 *arg0, u32 arg1) __asm__("func_80096240");
 
 void gStartMdecBlockTransfer(u32 *arg0, u32 arg1)
 {
-    func_8009635C();
+    gMdecWaitInSync();
     *gDmaControlMdecPtr |= 0x88;
     *gDma0MemAddrPtr = (u32)(arg0 + 1);
     *gDma0BlockCtrlPtr = ((arg1 >> 5) << 16) | 0x20;

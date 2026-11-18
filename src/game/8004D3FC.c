@@ -12,7 +12,7 @@ struct Entity {
 extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 
 extern void *func_80017EBC(s32 size, s32 tag);
-extern void func_8004D3D4(struct Entity *entity);
+extern void gAppendEntityToList(struct Entity *entity) __asm__("func_8004D3D4");
 
 /**
  * @brief Allocates an entity block of a given size, stamps a fresh serial id and
@@ -48,12 +48,14 @@ extern void func_8004D3D4(struct Entity *entity);
  * Confirmed: func_80036BD4 (four debris children per burst, size 0xD4, each
  * copying a 0xD4-byte record and fixing up the two pool header words).
  */
-struct Entity *func_8004D3FC(s32 size)
+struct Entity *gAllocAndLinkEntity(s32 size) __asm__("func_8004D3FC");
+
+struct Entity *gAllocAndLinkEntity(s32 size)
 {
     struct Entity *entity;
 
     entity = func_80017EBC(size, 3);
     entity->id = ++gEntityIdCounter;
-    func_8004D3D4(entity);
+    gAppendEntityToList(entity);
     return entity;
 }

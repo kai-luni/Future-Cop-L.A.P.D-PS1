@@ -10,7 +10,7 @@ extern u8 gFormatNamePair[] __asm__("D_8009F2E4");
 extern void func_800247A8(void);
 extern s32 func_800833A8(s32 arg0);
 extern void func_8008CD30(void *dst, void *src, s32 len, s32 arg3);
-extern void func_80024904(s32 arg);
+extern void gLoadFrontEndModule(s32 arg) __asm__("func_80024904");
 extern void func_80024A24(s32 arg);
 
 /**
@@ -30,7 +30,7 @@ extern void func_80024A24(s32 arg);
  * 3. prefix = func_800833A8(arg0) returns "CW\\" when the name matches one of
  *    the five specialist modules in D_8009C1CC, "PA\\" otherwise.
  * 4. sprintf(buf, "%s%s", prefix, arg0) - D_8009F2E4 is "%s%s".
- * 5. Dispatch on D_8009F9C4: non-zero runs the "PA" loader func_80024904(buf),
+ * 5. Dispatch on D_8009F9C4: non-zero runs the "PA" loader gLoadFrontEndModule(buf),
  *    zero runs func_80024A24(buf).
  *
  * @par Globals
@@ -44,7 +44,9 @@ extern void func_80024A24(s32 arg);
  * @par Unknown
  * What distinguishes the five D_8009C1CC names (the "CW" group) from the rest.
  */
-s32 func_80024E3C(s32 arg0)
+s32 gStartModuleByName(s32 arg0) __asm__("func_80024E3C");
+
+s32 gStartModuleByName(s32 arg0)
 {
     u8 buf[0x28];
     s32 r;
@@ -58,7 +60,7 @@ s32 func_80024E3C(s32 arg0)
     func_8008CD30(buf, gFormatNamePair, r, arg0);
 
     if (gUploadInProgress != 0) {
-        func_80024904((s32)buf);
+        gLoadFrontEndModule((s32)buf);
     } else {
         func_80024A24((s32)buf);
     }

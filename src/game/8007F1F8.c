@@ -21,7 +21,7 @@ extern void *jtbl_800121A4[];
 
 extern s32 func_8007EA78(void);
 extern s32 func_80046C84(s32 id, s32 arg1);
-extern void func_80078740(void);
+extern void gPopMenuPanel(void) __asm__("func_80078740");
 extern void func_800493C0(u32 index, u8 blue, u8 green, u8 red);
 extern void func_800788F0(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
 extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
@@ -121,7 +121,7 @@ state_0:
             func_80046C84(0x4C, 0);
         } else {
             func_80046C84(0x4D, 0);
-            func_80078740();
+            gPopMenuPanel();
         }
         goto done;
 state_1:

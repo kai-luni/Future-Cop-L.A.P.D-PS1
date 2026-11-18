@@ -5,8 +5,8 @@ extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 
-extern void func_8007FA88(void);
-extern void func_8007F8E0(void);
+extern void gArmProfileTransfer(void) __asm__("func_8007FA88");
+extern void gResetProfileTransferFlags(void) __asm__("func_8007F8E0");
 extern void func_800776B8(void);
 
 /**
@@ -37,8 +37,8 @@ void func_8007F8FC(void)
 {
     u8 *p;
 
-    func_8007FA88();
-    func_8007F8E0();
+    gArmProfileTransfer();
+    gResetProfileTransferFlags();
     p = gSaveProfileImage;
     gUiHoldFlag = 0;
     gUiInteractionEnabled = 0;

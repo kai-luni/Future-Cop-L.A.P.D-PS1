@@ -31,7 +31,9 @@ extern void func_8009649C(void *);
  * @par Callers
  * Confirmed: func_80096090 (mode 0 sync), gStartMdecBlockTransfer (before starting MDEC-in DMA0 transfer).
  */
-s32 func_8009635C(void)
+s32 gMdecWaitInSync(void) __asm__("func_8009635C");
+
+s32 gMdecWaitInSync(void)
 {
     volatile s32 count = 0x100000;
 

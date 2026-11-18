@@ -71,7 +71,8 @@ struct GameContext { u8 pad00[12]; s32 type; u8 pad10[0x4c]; s32 stage; };
 extern struct GameContext *gGameSession __asm__("D_8009FA94");
 extern struct Menu D_800A38F8, D_800A36B8, D_800A3658, D_800A3628, D_800A37D8, D_800A37A8, D_800A3688;
 extern struct Menu *D_8009B8B8[];
-extern s32 func_80046C84(s32, s32), func_80078740(void);
+extern s32 func_80046C84(s32, s32);
+extern s32 gPopMenuPanel(void) __asm__("func_80078740");
 extern void func_80078650(struct Menu *, s32), func_8008227C(void);
 extern void gSelectEnabledMenuItem(s8, s32, s8) __asm__("func_800787D8");
 extern void func_8001C214(u32, s32, s32, s32, s32, u8);
@@ -216,7 +217,7 @@ reset_timer:
                     }
                     if (item->next) {
                         if (item->next == (struct Menu *)-1) {
-                            if (func_80078740()) { changed = 1; continue; }
+                            if (gPopMenuPanel()) { changed = 1; continue; }
                         } else {
                             func_80078650(item->next, 1);
                             changed = 1; continue;
@@ -241,7 +242,7 @@ reset_timer:
                     if (menu->cancel) {
                         menu->cancel();
                         if (gFontBankTable != menu) { changed = 1; continue; }
-                    } else if (func_80078740()) {
+                    } else if (gPopMenuPanel()) {
                         func_80046C84(0x49, 0);
                         changed = 1; continue;
                     }

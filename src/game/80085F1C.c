@@ -8,7 +8,7 @@ extern u8 gScratchTable[] __asm__("D_800A3958");
 extern u8 gSecondScratchTable[] __asm__("D_800A3A58");
 
 /**
- * @brief Builds the two decode/quantisation tables in D_800A3958 and D_800A3A58
+ * @brief Builds the dither and colour quantisation tables in D_800A3958 and D_800A3A58
  *        from the matrix D_8001220C.
  *
  * @return Nothing. The work is done once: D_8009F4D4 guards a repeat call.
@@ -26,15 +26,16 @@ extern u8 gSecondScratchTable[] __asm__("D_800A3A58");
  * D_8001220C (four-word source matrix), D_800A3958/D_800A3A58 (the tables),
  * D_8009F4D4 (built-once flag).
  *
- * @par Likely role
- * These two tables are exactly what func_800861E4 copies into the scratchpad at
- * 0x1F800000/0x1F800100 before decoding, which makes them the IDCT/quantiser
- * tables of the video decoder.
+ * @par Role
+ * func_800861E4 copies these tables into scratchpad memory. func_800847E0
+ * uses them for ordered dithering and RGB555 channel quantisation.
  *
  * @par Callers
  * func_800861E4 only.
  */
-void func_80085F1C(void)
+void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
+
+void gMovieBuildDitherTables(void)
 {
     Matrix matrix;
     register s32 size __asm__("$7");

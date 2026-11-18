@@ -37,7 +37,7 @@ extern SomeState *gGameSession __asm__("D_8009FA94");
 extern LoadedData *gStreamDescriptorPtr __asm__("D_8009F7D0");
 extern u8 D_80011B00[];
 
-extern void func_800197A8(s32 seed);
+extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
 extern s32 func_8008CCC0(u8 *str);
 extern void func_8008CD30(u8 *dst, u8 *fmt, u8 *name, s32 arg3, s32 arg4);
 extern void *func_80059BA0(s32 name);
@@ -45,7 +45,7 @@ extern void *func_80059BA0(s32 name);
 /**
  * @brief Seeds the RNG, formats a mission demo filename, loads the file, and partitions its stream buffer.
  *
- * Confirmed: calls func_800197A8(seed) and returns early if D_8009FA84 <= 0. Uses func_8008CCC0 to strip any trailing ".mis" on nameArg, formats buffer via func_8008CD30 with D_80011B00 ("%s_%c%d.dem"), nameArg, countArg + 0x40, and D_8009FA84, restores '.', and loads via func_80059BA0 into D_8009F7D0. On success, copies data->unk01..unk07 into D_8009FA94 (+0x08/+0x98/+0x28..+0x3C), sets ptrs1/ptrs2[0..countArg-1] across data->data advancing by data->sizes[i] * 4, and sets end1/end2; on failure, clears D_8009FA84 = 0. Category follows file load func_80059BA0, ".dem" extension, and mission init caller.
+ * Confirmed: calls gSeedPrng(seed) and returns early if D_8009FA84 <= 0. Uses func_8008CCC0 to strip any trailing ".mis" on nameArg, formats buffer via func_8008CD30 with D_80011B00 ("%s_%c%d.dem"), nameArg, countArg + 0x40, and D_8009FA84, restores '.', and loads via func_80059BA0 into D_8009F7D0. On success, copies data->unk01..unk07 into D_8009FA94 (+0x08/+0x98/+0x28..+0x3C), sets ptrs1/ptrs2[0..countArg-1] across data->data advancing by data->sizes[i] * 4, and sets end1/end2; on failure, clears D_8009FA84 = 0. Category follows file load func_80059BA0, ".dem" extension, and mission init caller.
  * Likely: loads A/B demo input recordings during mission boot (countArg 1 or 2 -> 'A' or 'B'). Unknown: exact meaning of header bytes unk01..unk07 in D_8009FA94.
  *
  * @param countArg Number of stream pairs to slice (1 or 2; +0x40 gives 'A' or 'B').
@@ -74,7 +74,7 @@ void func_80059BFC(s32 countArg, s32 seed, u8 *nameArg)
     register u8 *ptr __asm__("$5");
     register s32 i __asm__("$4");
 
-    func_800197A8(seed);
+    gSeedPrng(seed);
     if (gModuleLoadedFlag <= 0) {
         return;
     }

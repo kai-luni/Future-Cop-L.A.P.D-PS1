@@ -29,7 +29,7 @@ extern void func_8001D3A8(s32 handle);
 extern void func_80092BF4(s32 arg0);
 extern u8 func_8001C034(void);
 extern void *func_8008799C(s32 size);
-extern void func_800879BC(void *ptr);
+extern void gMovieFreeDecodeBuffer(void *ptr) __asm__("func_800879BC");
 extern void func_80092C8C(s32 arg0);
 extern void func_80092F98(Rect88120 *rect, void *buf);
 extern void func_80092F38(Rect88120 *rect, void *buf);
@@ -175,7 +175,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         }
         buf8 = func_8008799C(0x3C0);
         if (buf8 == 0) {
-            func_800879BC(buf16);
+            gMovieFreeDecodeBuffer(buf16);
             return 0;
         }
         for (row = 0; row < 0x100; row++) {
@@ -205,8 +205,8 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             rectB.y++;
         }
         func_80092C8C(0);
-        func_800879BC(buf8);
-        func_800879BC(buf16);
+        gMovieFreeDecodeBuffer(buf8);
+        gMovieFreeDecodeBuffer(buf16);
         func_800858F4(page);
         func_80085900(1);
         func_80091270(0);
@@ -263,7 +263,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         }
         out16 = func_8008799C(0x280);
         if (out16 == 0) {
-            func_800879BC(in8);
+            gMovieFreeDecodeBuffer(in8);
             return 0;
         }
         for (line = 0; line < 0x100; line++) {
@@ -284,8 +284,8 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             rectD.y++;
         }
         func_80092C8C(0);
-        func_800879BC(out16);
-        func_800879BC(in8);
+        gMovieFreeDecodeBuffer(out16);
+        gMovieFreeDecodeBuffer(in8);
         func_8001C088(mode, 0);
         func_80091270(0);
         func_8001BFE4();

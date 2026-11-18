@@ -20,7 +20,9 @@ extern void func_8007FB04(void);
  * @par Callers
  * func_80076A2C only (boot wait loop).
  */
-void func_80080B08(void)
+void gStepBootProfileTransfer(void) __asm__("func_80080B08");
+
+void gStepBootProfileTransfer(void)
 {
     u8 s;
 

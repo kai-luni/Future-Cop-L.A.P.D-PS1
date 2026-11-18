@@ -39,7 +39,7 @@ extern void func_80063DC8(struct Node24EC8 *node);
 extern void func_80082358(struct Node24EC8 *node);
 extern void func_800824CC(struct Node24EC8 *node);
 extern void func_800825AC(struct Node24EC8 *node);
-extern void func_8008263C(struct Node24EC8 *node);
+extern void gRegisterPublishedBlock(struct Node24EC8 *node) __asm__("func_8008263C");
 extern void func_800899A4(struct Node24EC8 *node);
 
 /**
@@ -139,7 +139,7 @@ loop_test:
                 func_800824CC(node);
                 break;
             case 0x436D6463:
-                func_8008263C(node);
+                gRegisterPublishedBlock(node);
                 break;
             case 0x4361746C:
             case 0x4374696C:

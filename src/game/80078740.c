@@ -31,7 +31,9 @@ extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
  * @par Callers
  * Confirmed: func_8007F1F8, func_8007FB04, func_80082154; func_80078DD0 (at 0x80079548, 0x80079630 in asm/us/main.s).
  */
-s32 func_80078740(void)
+s32 gPopMenuPanel(void) __asm__("func_80078740");
+
+s32 gPopMenuPanel(void)
 {
     register s32 ret __asm__("$3");
     register u8 *p __asm__("$4");

@@ -19,7 +19,9 @@ extern void func_8001E2C0(s32 block);
  * @par Callers
  * func_80076FE0 only, at the very end of the shutdown path.
  */
-void func_80017BA0(void)
+void gShutdownHeap(void) __asm__("func_80017BA0");
+
+void gShutdownHeap(void)
 {
     if (gHeapPoolBase != 0) {
         func_8001E2C0(gHeapPoolBase);

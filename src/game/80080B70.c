@@ -31,7 +31,7 @@ extern void func_800822CC(u8 *arg0);
 extern u8 *func_8001E318(u8 *destination, u8 *source, u32 count);
 extern void func_80080A5C(u8 *arg0);
 extern void func_8008CCB0(u8 *arg0, u8 *arg1);
-extern void func_8007F6E0(void);
+extern void gUpdateProfileChecksums(void) __asm__("func_8007F6E0");
 extern s32 func_80020FDC(u8 *arg0, u8 *arg1, s32 arg2, s32 arg3);
 
 typedef struct { u8 b[0x70]; } Rec;
@@ -139,7 +139,7 @@ void func_80080B70(void)
     S(0x458) = gCrimeWarProgress;
     gSavedCrimeWarProgress = gCrimeWarProgress;
     func_8008CCB0(REC + 0x428, gSaveProfileImage + 0x925);
-    func_8007F6E0();
+    gUpdateProfileChecksums();
     gSaveProfileImage[0x922] = 3;
     gSaveProfileImage[0x201] = 2;
     {

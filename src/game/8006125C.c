@@ -13,7 +13,7 @@ extern struct Mode *gGameSession __asm__("D_8009FA94");
 extern struct Player *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct Other *D_8009FA58, *D_8009FA5C;
 extern s32 func_80069D68(s32, s32, s32, s32);
-extern s32 func_8004D4F8(void *);
+extern s32 gSpawnTargetableEntityId(void *) __asm__("func_8004D4F8");
 
 /**
  *  @brief Updates entity counters and matching participant statistics after a successful check.
@@ -69,7 +69,7 @@ void func_8006125C(struct Entity *entity)
             }
         }
     done:
-        func_8004D4F8(s->def);
+        gSpawnTargetableEntityId(s->def);
         func_80069D68(s->arg2, 0, -1, 0);
     }
 }

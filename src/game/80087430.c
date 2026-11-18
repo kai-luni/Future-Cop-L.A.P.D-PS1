@@ -10,7 +10,7 @@ typedef struct {
 } Ring;
 
 extern volatile Ring *gMovieAudioState __asm__("D_8009F4D8");
-extern void func_8008731C(u8 *dst, u8 *src, u32 count);
+extern void gExpand15To16Padded(u8 *dst, u8 *src, u32 count) __asm__("func_8008731C");
 
 /**
  *  @brief Copies two packed input streams into a pair of ring buffers.
@@ -57,13 +57,13 @@ void gMovieAudioChunkPushSplit(u8 *arg0)
     s1 = ((0x3C00 - gMovieAudioState->unk4 % 0x3C00) >> 4) * 15;
 
     if (s1 >= s0) {
-        func_8008731C(gMovieAudioState->buf0 + gMovieAudioState->unk4 % 0x3C00, s2, s0);
-        func_8008731C(gMovieAudioState->buf1 + gMovieAudioState->unk4 % 0x3C00, s4, s0);
+        gExpand15To16Padded(gMovieAudioState->buf0 + gMovieAudioState->unk4 % 0x3C00, s2, s0);
+        gExpand15To16Padded(gMovieAudioState->buf1 + gMovieAudioState->unk4 % 0x3C00, s4, s0);
     } else {
-        func_8008731C(gMovieAudioState->buf0 + gMovieAudioState->unk4 % 0x3C00, s2, s1);
-        func_8008731C(gMovieAudioState->buf0, s2 + s1, s0 - s1);
-        func_8008731C(gMovieAudioState->buf1 + gMovieAudioState->unk4 % 0x3C00, s4, s1);
-        func_8008731C(gMovieAudioState->buf1, s4 + s1, s0 - s1);
+        gExpand15To16Padded(gMovieAudioState->buf0 + gMovieAudioState->unk4 % 0x3C00, s2, s1);
+        gExpand15To16Padded(gMovieAudioState->buf0, s2 + s1, s0 - s1);
+        gExpand15To16Padded(gMovieAudioState->buf1 + gMovieAudioState->unk4 % 0x3C00, s4, s1);
+        gExpand15To16Padded(gMovieAudioState->buf1, s4 + s1, s0 - s1);
     }
     gMovieAudioState->unk4 += s5;
 }

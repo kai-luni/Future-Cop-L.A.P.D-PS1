@@ -22,7 +22,9 @@ extern s32 gRandSeed __asm__("D_8009F214");
  *  @par Callers
  *  Confirmed: func_800197A8.
  */
-s32 func_80019720(void)
+s32 gNextLcgRand(void) __asm__("func_80019720");
+
+s32 gNextLcgRand(void)
 {
     u32 high;
     u32 low;

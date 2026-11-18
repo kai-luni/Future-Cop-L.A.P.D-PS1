@@ -1,7 +1,7 @@
 // Categories: Utilities > Data Validation
 #include "game/types.h"
 
-extern void func_8007F688(u8 *data, u32 len, u32 *sum, u32 *other);
+extern void gComputeDualChecksum(u8 *data, u32 len, u32 *sum, u32 *other) __asm__("func_8007F688");
 extern void *func_8001E4C0(void *destination, int value, unsigned int count);
 
 /**
@@ -26,12 +26,14 @@ extern void *func_8001E4C0(void *destination, int value, unsigned int count);
  *  @par Callers
  *  Confirmed: func_8007F750.
  */
-s32 func_8007F824(u8 *data, u32 len, u32 expectedSum, u32 expectedOther, s32 clear)
+s32 gVerifyDualChecksum(u8 *data, u32 len, u32 expectedSum, u32 expectedOther, s32 clear) __asm__("func_8007F824");
+
+s32 gVerifyDualChecksum(u8 *data, u32 len, u32 expectedSum, u32 expectedOther, s32 clear)
 {
     u32 sum;
     u32 other;
 
-    func_8007F688(data, len, &sum, &other);
+    gComputeDualChecksum(data, len, &sum, &other);
     if (expectedSum != sum || expectedOther != other) {
         if (clear != 0) {
             func_8001E4C0(data, 0, len);

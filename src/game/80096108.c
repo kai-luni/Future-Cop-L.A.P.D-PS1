@@ -18,7 +18,9 @@ extern DecDctCallback func_800914E0(s32 channel, DecDctCallback callback);
  * The two decode channels of the MDEC stream: one for the bitstream, one for the
  * finished frame.
  */
-DecDctCallback func_80096108(DecDctCallback callback)
+DecDctCallback gMdecSetInCallback(DecDctCallback callback) __asm__("func_80096108");
+
+DecDctCallback gMdecSetInCallback(DecDctCallback callback)
 {
     return func_800914E0(0, callback);
 }

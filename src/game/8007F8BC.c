@@ -14,7 +14,9 @@ extern s32 gStillRunningState __asm__("D_8009F464");
  * @return Nothing. @par Callers func_80076A2C (boot), before the wait loop that
  * also pumps the intro movie.
  */
-void func_8007F8BC(void)
+void gBeginBootProfileTransfer(void) __asm__("func_8007F8BC");
+
+void gBeginBootProfileTransfer(void)
 {
     gStillRunningState = 2;
 }

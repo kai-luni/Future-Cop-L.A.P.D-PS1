@@ -70,7 +70,9 @@ extern void gSpuSetVoiceAttributes(struct Msg86 *) __asm__("func_80099368");
  * @par Callers
  * Confirmed: gInitMovieAudio (sound initialisation).
  */
-void func_80086C74(void *object, s32 value, s32 c)
+void gMovieAudioSetVoiceAttrs(void *object, s32 value, s32 c) __asm__("func_80086C74");
+
+void gMovieAudioSetVoiceAttrs(void *object, s32 value, s32 c)
 {
     struct Msg86 msg;
     struct Setup86 setup;

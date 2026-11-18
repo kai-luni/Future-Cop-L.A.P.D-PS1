@@ -35,7 +35,9 @@ extern struct Entity *gUnitListHead __asm__("D_8009FA40");
  * @par Callers
  * Confirmed: func_800313F0 (0x80031414, resolves attachment target from self->unkAC) / Likely: none / Unknown: none.
  */
-struct Entity *func_8004D69C(s32 tag)
+struct Entity *gFindEntityByTag(s32 tag) __asm__("func_8004D69C");
+
+struct Entity *gFindEntityByTag(s32 tag)
 {
     struct Entity *entity;
 

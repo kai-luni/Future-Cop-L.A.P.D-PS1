@@ -8,7 +8,7 @@ extern u32 *gDma1BlockCtrlPtr __asm__("D_8009E9D0");
 extern u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
 extern u32 *gDmaControlMdecPtr __asm__("D_8009E9F8");
 
-extern void func_800963F0(s32 destination, u32 size);
+extern s32 gMdecWaitOutSync(s32 destination, u32 size) __asm__("func_800963F0");
 
 /**
  * @brief Starts a block transfer into the decode buffer.
@@ -18,7 +18,7 @@ extern void func_800963F0(s32 destination, u32 size);
  * @return Nothing.
  *
  * @par Confirmed sequence
- * 1. func_800963F0() waits (with timeout) until bit 0x01000000 of *D_8009E9D4
+ * 1. gMdecWaitOutSync() waits (with timeout) until bit 0x01000000 of *D_8009E9D4
  *    clears.
  * 2. *D_8009E9F8 |= 0x88 (two control bits set), *D_8009E9D4 = 0.
  * 3. *D_8009E9CC = destination, *D_8009E9D0 = ((size >> 5) << 16) | 0x20,
@@ -34,7 +34,7 @@ extern void func_800963F0(s32 destination, u32 size);
  */
 void func_800962D0(s32 destination, u32 size)
 {
-    func_800963F0(destination, size);
+    gMdecWaitOutSync(destination, size);
     *gDmaControlMdecPtr |= 0x88;
     *gDma1ChannelCtrlPtr = 0;
     *gDma1MemAddrPtr = destination;

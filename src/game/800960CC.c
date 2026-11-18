@@ -1,7 +1,7 @@
 // Categories: Platform > DMA | Graphics > Image Transfer
 #include "game/types.h"
 
-extern s32 func_800963F0(void);
+extern s32 gMdecWaitOutSync(void) __asm__("func_800963F0");
 extern u32 func_80096484(void);
 
 /**
@@ -24,7 +24,7 @@ s32 func_800960CC(s32 mode)
     s32 result;
 
     if (mode == 0) {
-        result = func_800963F0();
+        result = gMdecWaitOutSync();
     } else {
         result = (func_80096484() >> 24) & 1;
     }

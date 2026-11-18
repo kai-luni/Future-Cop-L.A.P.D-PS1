@@ -66,7 +66,7 @@ extern void func_8004CE04(void);
 extern void func_8001BBAC(void);
 extern void func_8001EB6C(void);
 extern void gSoundPauseVoices(void) __asm__("func_800476D0");
-extern void func_8004D598(void);
+extern void gSweepRetiredEntities(void) __asm__("func_8004D598");
 extern s32 func_8001EF34(s32 arg0);
 extern void func_80013C80(void);
 extern void func_80026D1C(void);
@@ -193,7 +193,7 @@ void func_800271A4(void)
         func_80026D1C();
         func_800616A0(gFrameId);
         func_80026D9C(gFrameId);
-        func_8004D598();
+        gSweepRetiredEntities();
         D_8009FA24 = 0;
     } else {
         if (gMenuModeFlag == 0) {

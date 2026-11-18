@@ -36,7 +36,9 @@ extern s32 func_8001E240(s32, s32);
  * a small-data/allocation-mode request that the callee does not read; the
  * rebuild is byte-exact without it.
  */
-void func_80017BE8(void)
+void gInitHeap(void) __asm__("func_80017BE8");
+
+void gInitHeap(void)
 {
     D_8009F59C = 0x203;
     gHeapPoolBase = 0;

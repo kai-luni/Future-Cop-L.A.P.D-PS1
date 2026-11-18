@@ -71,8 +71,8 @@ extern void func_800788F0(u8 *a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h
 extern void func_80077FFC(void);
 extern void func_80077708(void);
 extern void func_800776B8(void);
-extern void func_8007FACC(void);
-extern void func_80078210(void);
+extern void gReleaseProfileCardOperation(void) __asm__("func_8007FACC");
+extern void gRouteFrontEndModeMenu(void) __asm__("func_80078210");
 
 #define REC(off) (gSaveProfileImage->recs[gSaveProfileImage->index].b[(off) - 0x424])
 #define RECP(base, off) ((base) + (base)[0x924] * 0x70 + (off))
@@ -318,8 +318,8 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                 gSelectedMissionIndex = v;
             }
             gRowClearFlag = 0;
-            func_8007FACC();
-            func_80078210();
+            gReleaseProfileCardOperation();
+            gRouteFrontEndModeMenu();
             break;
         case 4:
             *(u16 *)(RAW + 0x942) = 0;

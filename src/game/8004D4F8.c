@@ -18,7 +18,7 @@ struct Entity {
 extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 
 extern void *func_80017EBC(s32 size, s32 tag);
-extern void func_8004D3D4(struct Entity *entity);
+extern void gAppendEntityToList(struct Entity *entity) __asm__("func_8004D3D4");
 
 /**
  * @brief Allocates, initializes, links, and target-flags a new entity from an EntityDef descriptor.
@@ -43,7 +43,9 @@ extern void func_8004D3D4(struct Entity *entity);
  * @par Callers
  * Confirmed: func_8006125C (0x8006148C in asm/us/main.s) / Likely: none / Unknown: none.
  */
-s32 func_8004D4F8(struct EntityDef *def)
+s32 gSpawnTargetableEntityId(struct EntityDef *def) __asm__("func_8004D4F8");
+
+s32 gSpawnTargetableEntityId(struct EntityDef *def)
 {
     struct Entity *entity;
     s32 (*handler)(s32, struct Entity *, struct EntityDef *, s32);
@@ -53,7 +55,7 @@ s32 func_8004D4F8(struct EntityDef *def)
     entity->update = handler;
     entity->id = ++gEntityIdCounter;
     handler(2, entity, def, 0);
-    func_8004D3D4(entity);
+    gAppendEntityToList(entity);
     entity->flags |= 0x10000000;
     return entity->id;
 }

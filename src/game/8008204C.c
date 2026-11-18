@@ -15,11 +15,11 @@ extern s32 func_80078740(void);
 /**
  * @brief Runs the card format step of the profile transfer.
  *
- * While func_80020B64 reports an active format it waits one tick
- * (func_80091270(0)) and polls the card result code func_800207B4(0); any answer
- * other than -1 aborts after five iterations. When the format ends on its own -
- * or when none is running - the state bytes [0x922], [0x201], [0x202] and
- * [0x207] are set to 3, 3, 1, 1 and both UI flags are cleared; an aborted wait
+ * func_80020B64 queues a format when the card manager is idle and returns 1
+ * when it is busy. While busy, this function waits one tick and retries up to
+ * five times, stopping early if func_800207B4(0) returns anything other than -1.
+ * Once the format is queued, bytes [0x922], [0x201], [0x202] and [0x207] are
+ * set to 3, 3, 1, 1 and both UI flags are cleared. Exhaustion or an early stop
  * leaves [0x201] at 4.
  *
  * @par Globals
@@ -30,13 +30,15 @@ extern s32 func_80078740(void);
  * Bounded loop (five iterations) with two exit conditions.
  *
  * @par Calls
- * func_80020B64 - format in progress. func_800207B4 - card result code.
+ * func_80020B64 - queues a format if idle. func_800207B4 - card result code.
  * func_80091270 - frame tick.
  *
  * @par Callers
  * Confirmed: func_8007FB04 (transfer pump, sub-state 3).
  */
-void func_8008204C(void)
+void gQueueMemoryCardFormat(void) __asm__("func_8008204C");
+
+void gQueueMemoryCardFormat(void)
 {
     u32 i;
 

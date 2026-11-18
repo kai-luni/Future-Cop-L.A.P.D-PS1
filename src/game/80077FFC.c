@@ -30,7 +30,9 @@ extern u8 gUnlockFlag __asm__("D_8009F3C2");
  * @par Callers
  * Confirmed: func_80077708, func_800780DC, func_8007EA78, func_8008125C.
  */
-void func_80077FFC(void)
+void gUpdatePrecinctUnlockFlag(void) __asm__("func_80077FFC");
+
+void gUpdatePrecinctUnlockFlag(void)
 {
     if (gWideTextTable[gFrontEndListTable[0]].state == 10 &&
         gWideTextTable[gFrontEndListTable[1]].state == gWideTextTable[gFrontEndListTable[0]].state &&

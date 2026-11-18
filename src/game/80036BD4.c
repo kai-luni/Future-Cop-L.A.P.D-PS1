@@ -46,7 +46,7 @@ extern void gVectorAddScaled(void *a, void *b, s32 c, s32 *d) __asm__("func_8001
 extern s32 func_800684AC(void *a, s32 *b, s32 c, s32 d, s32 e);
 extern s32 func_8001A100(s32 *vector);
 extern void func_8001A180(struct Vec3s32 *vector);
-extern struct Entity *func_8004D3FC(s32 size);
+extern struct Entity *gAllocAndLinkEntity(s32 size) __asm__("func_8004D3FC");
 extern s32 func_80019668(void);
 extern s32 func_800402DC(void *owner, u8 column, s32 arg2, s32 row, s32 arg4);
 
@@ -90,7 +90,7 @@ extern void *jtbl_80011380[];
  * normalises +0x78 in place, so +0x78/+0x84 end up as unit heading and speed in
  * the units the rest of the entity code expects.
  * Burst: when +0xB4 == 20 and the crossing flag is set, four children are taken
- * from func_8004D3FC(0xD4) - the pool that stamps a serial id - and each one
+ * from gAllocAndLinkEntity(0xD4) - the pool that stamps a serial id - and each one
  * copies the whole 0xD4-byte record first, saving and restoring the pool's two
  * header words at +0x08 and +0x00, then sets +0xB4 = 4 and +0x22 = -1 and
  * jitters the motion vector: x and z get +-0x2000 alternating by bit 0 and bit 1
@@ -152,7 +152,7 @@ void func_80036BD4(struct Entity *self, s32 arg1, s32 arg2)
 
     if (self->unkB4 == 20 && (i & 0xFF) != 0) {
         for (i = 0; i < 4; i++) {
-            new = func_8004D3FC(0xD4);
+            new = gAllocAndLinkEntity(0xD4);
             if (new != 0) {
                 saved08 = new->unk08;
                 saved00 = new->unk00;

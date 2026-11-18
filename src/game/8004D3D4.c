@@ -32,7 +32,9 @@ extern struct Entity *gListTailBranch __asm__("D_8009FA88");
  * @par Callers
  * Confirmed: func_8004D3FC (0x8004D424), gSpawnQueuedEntity (0x8004D4B0), func_8004D4F8 (0x8004D564).
  */
-void func_8004D3D4(struct Entity *entity)
+void gAppendEntityToList(struct Entity *entity) __asm__("func_8004D3D4");
+
+void gAppendEntityToList(struct Entity *entity)
 {
     if (gListTailBranch != 0) {
         gListTailBranch->next = entity;

@@ -25,7 +25,9 @@ extern void gStartMdecBlockTransfer(u32 *arg0, u16 arg1) __asm__("func_80096240"
  * @par Callers
  * gMovieSliceFeedDma, gMovieSliceFeedRows, func_800861E4.
  */
-void func_80095FF4(u32 *arg0, s32 arg1)
+void gMdecStartDecode(u32 *arg0, s32 arg1) __asm__("func_80095FF4");
+
+void gMdecStartDecode(u32 *arg0, s32 arg1)
 {
     if (arg1 & 1) {
         *arg0 &= 0xF7FFFFFF;

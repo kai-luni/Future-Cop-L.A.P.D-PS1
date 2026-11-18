@@ -39,7 +39,9 @@ extern void func_800181D4(void *block);
  * @par Callers
  * Confirmed: func_80024EC8 (the request whose tag is 0x436D6463, "Cmdc").
  */
-void func_8008263C(Unk8008263C *arg)
+void gRegisterPublishedBlock(Unk8008263C *arg) __asm__("func_8008263C");
+
+void gRegisterPublishedBlock(Unk8008263C *arg)
 {
     if ((u32)(arg->unk1C - 1) < 0x1D) {
         if (gPublishedBlockPtr == 0) {

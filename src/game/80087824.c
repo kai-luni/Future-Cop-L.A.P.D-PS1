@@ -18,7 +18,7 @@ typedef struct State {
 } State;
 extern volatile State *gMovieAudioState __asm__("D_8009F4D8");
 extern void *func_8001E4C0(void *, int, unsigned int);
-extern void func_80086C74(void *, int, int);
+extern void gMovieAudioSetVoiceAttrs(void *, int, int) __asm__("func_80086C74");
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
 extern int gSpuInstallIrqCallback(void *) __asm__("func_80098BF8");
@@ -82,8 +82,8 @@ int gInitMovieAudio(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b
     gMovieAudioState->c = c;
     gMovieAudioState->d = d;
     gMovieAudioState->e = e;
-    func_80086C74(gMovieAudioState->c, gMovieAudioState->a, e);
-    func_80086C74(gMovieAudioState->d, gMovieAudioState->b, e);
+    gMovieAudioSetVoiceAttrs(gMovieAudioState->c, gMovieAudioState->a, e);
+    gMovieAudioSetVoiceAttrs(gMovieAudioState->d, gMovieAudioState->b, e);
     func_8008C9C0();
     gMovieAudioState->irq = gSpuInstallIrqCallback(0);
     gMovieAudioState->other = gSpuSetTransferCallback(D_80086950);

@@ -28,8 +28,8 @@ extern void func_80025348(void);
 extern void func_80047690(u8 enable);
 extern void func_80029DD8(void);
 extern void func_80023BF8(void);
-extern void func_800249BC(s32 arg0);
-extern void func_80024D14(s32 arg0);
+extern void gUnloadFrontEndSubsystems(s32 arg0) __asm__("func_800249BC");
+extern void gResetMissionSubsystems(s32 arg0) __asm__("func_80024D14");
 
 /**
  * @brief Closes a front-end screen: maps the module's exit state to the next
@@ -51,7 +51,7 @@ extern void func_80024D14(s32 arg0);
  *
  * After the switch: func_80047690(0) releases the display, func_80029DD8() and
  * func_80023BF8() finish the render side, unk60 is cleared and the module is
- * unloaded through func_800249BC(arg0) (UI mode) or func_80024D14(arg0).
+ * unloaded through gUnloadFrontEndSubsystems(arg0) (UI mode) or gResetMissionSubsystems(arg0).
  *
  * @par Globals
  * D_8009FA00 (current state), D_8009FA70, D_8009F9FC/D_8009FAA4/D_8009FA30
@@ -65,7 +65,9 @@ extern void func_80024D14(s32 arg0);
  * @par Callers
  * func_800287F4, as the last step of every screen.
  */
-void func_80025B7C(s32 arg0)
+void gFinishScreenModule(s32 arg0) __asm__("func_80025B7C");
+
+void gFinishScreenModule(s32 arg0)
 {
     register s32 state __asm__("$16");
     register s32 saved_arg __asm__("$17");
@@ -127,8 +129,8 @@ state_done:
 
     gGameSession->unk60 = 0;
     if (gUploadInProgress != 0) {
-        func_800249BC(saved_arg);
+        gUnloadFrontEndSubsystems(saved_arg);
     } else {
-        func_80024D14(saved_arg);
+        gResetMissionSubsystems(saved_arg);
     }
 }

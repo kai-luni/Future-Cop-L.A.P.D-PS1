@@ -13,7 +13,9 @@ extern s32 gStillRunningState __asm__("D_8009F464");
  * @par Callers
  * func_80076A2C, in the condition of the boot wait loop.
  */
-s32 func_8007F8CC(void)
+s32 gIsBootProfileTransferDone(void) __asm__("func_8007F8CC");
+
+s32 gIsBootProfileTransferDone(void)
 {
     return gStillRunningState != 2;
 }

@@ -14,7 +14,7 @@ extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 extern void *D_8009FA58[];
 
 extern void func_8004D958(struct Entity *entity);
-extern void func_8004D598(void);
+extern void gSweepRetiredEntities(void) __asm__("func_8004D598");
 
 /**
  * @brief Retires and frees all active entities and resets entity-world globals.
@@ -41,7 +41,9 @@ extern void func_8004D598(void);
  * @par Callers
  * Confirmed: func_80024D14 (global subsystem reset).
  */
-void func_8004CCDC(void)
+void gRetireAndFreeAllEntities(void) __asm__("func_8004CCDC");
+
+void gRetireAndFreeAllEntities(void)
 {
     struct Entity *entity;
     s32 i;
@@ -52,7 +54,7 @@ void func_8004CCDC(void)
             func_8004D958(entity);
         }
     }
-    func_8004D598();
+    gSweepRetiredEntities();
     gEntityIdCounter = 0;
     for (i = 1; i >= 0; i--) {
         D_8009FA58[i] = 0;

@@ -19,7 +19,7 @@ struct Entity {
 extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 
 extern void *func_80017EBC(s32 size, s32 tag);
-extern void func_8004D3D4(struct Entity *entity);
+extern void gAppendEntityToList(struct Entity *entity) __asm__("func_8004D3D4");
 
 /**
  * @brief The spawn-queue core: allocates an entity from its handler's size
@@ -56,6 +56,6 @@ struct Entity *gSpawnQueuedEntity(struct EntityDef *def)
     entity->update = handler;
     entity->id = ++gEntityIdCounter;
     handler(2, entity, def, 0);
-    func_8004D3D4(entity);
+    gAppendEntityToList(entity);
     return entity;
 }
