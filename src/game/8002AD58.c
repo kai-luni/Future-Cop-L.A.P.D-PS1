@@ -56,6 +56,19 @@ extern s32 func_80095C30(s32 x, s32 y);
  * func_80039C58, func_80039E8C, func_8003A844, func_80041488, func_80041B6C,
  * func_80041C6C, func_80041E0C, func_80042330, func_80042504, func_800426A8,
  * func_800578E4, func_800579D4, func_8005908C, func_8005920C, func_80059ABC.
+ *
+ * @par Environment path
+ * The shared base entity message handler: message 1 returns the 0xA0 base
+ * block size, message 2 runs the base spawn func_8002A5F4, message 3 draws
+ * through func_8002ACB4 unless flag bit 0x20 is set, message 4 returns
+ * func_8002A810(object, 1, 1), messages 9, 11, 12 and 14 dispatch to the
+ * query and damage helpers, and message 15 returns func_80095C30(unk78,
+ * unk80) & 0xFFF, the atan2 of the stored heading vector. Messages 5 to 8,
+ * 10, 13 and 16 return constants and every other message returns -1. Only
+ * message 3 reaches the renderer, and it does so through func_8002ACB4, which
+ * calls gSubmitModelInstance (func_80017508). The unit is therefore the
+ * per-entity dispatch layer beside the environment pass rather than inside
+ * it: the file reads no global, calls no GTE function and emits no geometry.
  */
 s32 func_8002AD58(s32 message, struct Unk2AD58 *object, void *data)
 {

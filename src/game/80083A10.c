@@ -188,6 +188,23 @@ extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_800
  * @par Callers
  * func_80031690 and func_80084110 (analysis/edges.json, kind "direct"); the
  * address also carries an "address_taken" edge.
+ *
+ * @par Environment path
+ * Turns one spawn request into a render node: it takes a node from the
+ * scene-node pool D_8009F934 with func_800195A4 (retrying once after a
+ * func_80083834 reset request), attaches the model with func_80013BD8, copies
+ * the request fields, and builds the transform either from the caller's
+ * 12-word matrix or from the record angles with gBuildRotationMatrix
+ * (func_800188D0) plus Q6 row scaling, with an optional upright correction.
+ * It then derives the world bound by transforming the model's six bound
+ * half-words with gGteLoadRotation (func_80010820) and gGteTransformWords
+ * (func_8001006C), hands the result to func_80083764 and links the node into
+ * bucket D_8009F938[(z >> 17) + D_8009F93C * (x >> 17)] - head for dynamic
+ * nodes, tail for static ones - stamping the arena with D_8009FAA4. It is the
+ * insertion side of the environment pass: gDrawCellWindowModels
+ * (func_80084398) walks exactly that bucket array, so this function decides
+ * which nodes the region layers can draw; callers are func_80031690:103 and
+ * func_80084110.
  */
 u8 func_80083A10(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3)
 {

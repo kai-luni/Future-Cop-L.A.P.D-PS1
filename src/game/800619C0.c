@@ -53,6 +53,20 @@ extern void gGteTransformWords(Matrix *, Matrix *, s32) __asm__("func_8001006C")
  * @par Callers
  * func_80061CAC, which calls it once per entry of the first shape and again with
  * the mirrored matrices to confirm the pair.
+ *
+ * @par Environment path
+ * Turns one oriented box into a world axis-aligned box and returns a
+ * per-entry overlap bitmask: it builds a diagonal scale matrix from the box
+ * half extents, composes it with the base 3x3 rotation through
+ * gGteLoadRotation (func_80010820) and gGteTransformWords (func_8001006C),
+ * moves the result by the base position and sums the absolute basis
+ * components per axis to obtain the AABB. It then walks the entries from
+ * index 1 when count is 2 or more, at the given stride, and sets one bit per
+ * entry whose centre/radius box overlaps on all three axes with strict
+ * comparisons, shifting the result so entry j lands on bit 31 - j. Both call
+ * sites in func_80061CAC:124/135 run it on the two sides of a hitbox pair, so
+ * it is collision broad phase, not a render pass: it emits no primitive and
+ * touches no global.
  */
 u32 func_800619C0(Base *base, s16 *box, char *objects, s32 count, s32 stride)
 {

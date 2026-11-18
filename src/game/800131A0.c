@@ -14,9 +14,10 @@ extern u8 *gModelMeshInfo __asm__("D_8009F53C");
 extern u8 *gModelHierarchy __asm__("D_8009F538");
 extern u8 *gModelTriangleList __asm__("D_8009F534");
 extern u8 *gModelPolygonList __asm__("D_8009F530");
-extern AnimNode *D_8009F564;
+extern AnimNode *gAnimNodeList __asm__("D_8009F564");
 extern AnimNode *gModelAnimData __asm__("D_8009F544");
-extern u32 *D_8009F548, *D_8009F550, *D_8009F568;
+extern u32 *D_8009F548, *D_8009F550;
+extern u32 *gAnimWaveList __asm__("D_8009F568");
 extern AnimNode *D_8009F54C;
 extern u8 **gRefBlockTable __asm__("D_8009F560");
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
@@ -102,8 +103,8 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
         node = D_8009F54C;
         h->anim = node;
         h->flags |= 0x1000000;
-        node->next = D_8009F564;
-        D_8009F564 = node;
+        node->next = gAnimNodeList;
+        gAnimNodeList = node;
         e = node->entries;
         anim_end = (u8 *)(e + node->count);
         for (i = 0; i < node->count; i++, e++) {
@@ -123,8 +124,8 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
     node2 = D_8009F550;
     if (node2) {
         u8 *hp = h->p24;
-        u32 *old = D_8009F568;
-        D_8009F568 = node2;
+        u32 *old = gAnimWaveList;
+        gAnimWaveList = node2;
         node2[1] = (u32)(hp + 4);
         node2[0] = (u32)old;
     }

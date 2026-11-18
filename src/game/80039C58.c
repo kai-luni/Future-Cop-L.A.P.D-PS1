@@ -53,6 +53,18 @@ extern struct Object *gMissionWorkingSet __asm__("D_8009F9A0");
  * @par Likely role
  * The handler of the "active/attached" entity family: D_8009F9A0 holds the one
  * object that is currently being driven, and messages 5/6 take or drop that role.
+ *
+ * @par Environment path
+ * Message handler of the entity family whose currently driven object is kept
+ * in D_8009F9A0: message 1 returns 0x120, message 2 copies the partner part
+ * bytes, updates the part with func_80050E0C and adopts the global current
+ * pointer (unless anim flag 0x40 is set), message 5 releases it, and message
+ * 6 runs func_80039BD0 plus func_80050D14 and refreshes the frame vertex.
+ * Every other case delegates to func_8002AD58. The gGteLoadMatrix /
+ * gGteTransformVerticesWide pair only fetches one model frame into the
+ * object's output vertex, so the unit is an entity script handler, not a
+ * render pass; no direct call site exists in the decompiled tree, it is
+ * reached through an entity message table.
  */
 s32 func_80039C58(s32 message, struct Object *self, struct Other *other)
 {

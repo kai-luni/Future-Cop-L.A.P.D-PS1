@@ -178,6 +178,23 @@ extern void func_80075478(struct Unk75478 *object);
  * @par Callers
  * D_80075698 (message 0 of the same file, the attach path) and func_80075A84
  * (the polygon pass).
+ *
+ * @par Environment path
+ * Fills one sprite-list node from a 3D-sprite object and emits it: it writes
+ * the world position, the size, the RGB triple at object +0x73/+0x76/+0x79
+ * and, when +0x72 is negative, a blend preset of 1, 4 and 0x4B into the
+ * render node. When flag 0x8000 of +0x8E is set it rotates the object's
+ * anchor point into the node with func_8001B148 using either the object
+ * matrix or the caller's matrix, allows the sub-object callback to supply a
+ * different anchor, and adds a random jitter scaled by +0x94; when flag bit 2
+ * is set the node is handed to the emitter func_800752E0. The same
+ * translation unit also defines the attach/message handler, which resolves
+ * the transform through func_8003D9C4, computes the position with
+ * func_8003D9F8 or func_80017668, takes a node from the object's own pool and
+ * calls the fill routine. That handler is reached from the polygon pass
+ * gRunPolygonPass (func_80075A84, src/game/80075A84.c:220), so the unit is
+ * the sprite/billboard leaf of the render path; it touches no global, only
+ * object fields and the callback slot.
  */
 void func_800754B8(struct Unk754B8 *object, struct RenderState *render,
                    struct Vec3s32 *position, struct RotationMatrix *matrix)

@@ -21,6 +21,16 @@ extern u16 gSineTable[] __asm__("D_8009A234");
  *
  * @par Callers
  * func_800654F8.
+ *
+ * @par Environment path
+ * Sine lookup over the 1024-entry quarter-wave table: the angle is masked to
+ * 12 bits, the index is mirrored at 0x400, the table value is doubled and
+ * negated when bit 0x800 is set. Its only caller is gBuildTilePattern
+ * (func_800654F8, line 88), the 256-byte minimap/tileset pattern generator
+ * that gDrawRegionTiles (func_8006531C, line 72) invokes whenever the tileset
+ * id of a region changes. It is therefore a leaf of the environment tile
+ * layer rather than of the model path: no actor or effect renderer calls it,
+ * and it writes nothing.
  */
 s32 func_80018534(u32 angle)
 {

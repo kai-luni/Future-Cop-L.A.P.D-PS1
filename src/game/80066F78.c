@@ -83,6 +83,21 @@ extern void func_8001A180(s32 *v);
  * @par Callers
  * Twenty-two direct callers, among them func_80041C6C, func_80041488,
  * func_800164F4 and func_8004AFC0.
+ *
+ * @par Environment path
+ * Returns the ground height under a world position by walking one map cell:
+ * the map header at D_8009F80C gives the dimensions, the cell index is (z >>
+ * 17) plus width times (x >> 17), the descriptor word at block + 0x3CC
+ * selects the surface count and the descriptor list, and every surface is
+ * sampled with func_80067480 into the height table at block + (a4 + a5) * 3 +
+ * 0xC. It keeps the lowest surface and the greatest one below the ceiling
+ * position[1] + 0x200, falls back to the lowest when nothing qualifies,
+ * optionally accepts a dynamic record from func_8006320C and otherwise
+ * decodes the winning descriptor through D_8009AFE8 and D_8009B1A4 into a
+ * normal that func_8001A180 normalises. Twenty-two direct callers use it for
+ * placement and collision, among them func_80041C6C, func_80041488,
+ * func_800164F4, func_8003802C and func_80041880, and it reads the same tile
+ * blocks that gDrawRegionTiles renders while producing no geometry.
  */
 s32 func_80066F78(s32 *position, s32 *output, s32 *a2, s32 *a3)
 {

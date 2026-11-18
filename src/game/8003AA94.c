@@ -124,6 +124,22 @@ extern s32 func_80066F78(Vec *, s32, s32, s32);
  *
  * @par Callers
  * func_8003B2D0, message 2 (the spawn case of that object's handler).
+ *
+ * @par Environment path
+ * Message-2 spawn of a particle emitter that func_8003B2D0 dispatches at
+ * message 2: it takes the 0xF0-byte particle array from func_80017EBC, copies
+ * the model and the bytes at source +0x92/+0x93 into the new object, forces
+ * the type byte to 4 and the flag word to (flags | 0x120001D) & 0xFFBFDFFF,
+ * then seeds one particle per model entry - with per-bone velocities from
+ * func_8004B310 when the config carries a force field, or random values from
+ * func_80019668 otherwise. For the force-field case the template D_8009AA38
+ * seeds the root matrix slot, func_80018DC0 builds each bone rotation and
+ * func_8001006C composes it into the per-bone matrices. It closes with the
+ * entry count at +0xB1/+0xBA, the ground offset at +0xA4 and a polygon mask
+ * that marks every polygon whose four indices fall inside one entry's
+ * start..start+count range. It only creates data for the effect drawer to
+ * consume, so it is the spawn side of the effects path rather than the render
+ * path.
  */
 s32 func_8003AA94(s32 unused, Object *out, Arg *arg)
 {

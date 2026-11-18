@@ -54,6 +54,20 @@ extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_8001023
  *
  * @par Callers
  * func_80041B6C (sole direct caller).
+ *
+ * @par Environment path
+ * Message-2 initialisation of a waypoint-sequence entity, called only from
+ * func_80041B6C:41: after the shared hook func_8002AD58(2, self, arg, a2) it
+ * copies the record count, the three waypoint values (<< 4), the segment
+ * speeds (<< 8, divided by 218) and the two derived values (<< 4, divided by
+ * 300) into the entity, resolves the entity kind with func_8006314C, builds
+ * the basis from the record angle with gBuildRotationMatrix (func_800188D0)
+ * and snaps every waypoint height to the ground height from func_80066F78
+ * before placing the entity on the last waypoint. It finishes with
+ * gGteLoadMatrix / gGteTransformVerticesWide to fetch one model frame. It
+ * sets up state only, emits no primitive and touches no global, so it is
+ * spawned data for the path walker rather than part of the environment render
+ * pass.
  */
 void func_80041488(struct Self *self, struct Arg *arg, s32 a2)
 {

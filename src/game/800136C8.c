@@ -19,8 +19,8 @@ struct AnimNode {
     struct AnimEntry entries[1];
 };
 
-extern struct AnimNode *D_8009F564;
-extern struct AnimNode *D_8009F568;
+extern struct AnimNode *gAnimNodeList __asm__("D_8009F564");
+extern struct AnimNode *gAnimWaveList __asm__("D_8009F568");
 extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 
 extern void func_800135C0(struct AnimNode *node, u32 arg1);
@@ -48,6 +48,18 @@ extern s32 func_80019668(void);
  *
  * @par Callers
  * Confirmed: func_8002703C (0x80027184, main frame tick) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Advances the two global animation lists once per frame: func_800135C0 is
+ * called with the wave list D_8009F568 and the frame stamp D_8009FAA4, then
+ * every node of the list D_8009F564 is walked and each entry either counts
+ * its timer down and steps the sprite index (types 0..3, including the
+ * ping-pong and random cases) or advances a sine/cosine index for types 16
+ * and above. On a change it copies 6 or 8 bytes from the entry's src to its
+ * dst pointer. It is the animation stepper of the frame tick - func_8002703C
+ * calls it with the frame id D_8009F9FC - and it is not on the environment
+ * render path: it touches no camera, no GTE matrix and no packet pool, it
+ * only rewrites the destination half-words the entries point at.
  */
 void func_800136C8(s32 a0)
 {
@@ -64,9 +76,9 @@ void func_800136C8(s32 a0)
     s32 off;
 
     dt = a0;
-    func_800135C0(D_8009F568, gDiscShadeByte);
+    func_800135C0(gAnimWaveList, gDiscShadeByte);
 
-    for (node = D_8009F564; node != 0; node = node->next) {
+    for (node = gAnimNodeList; node != 0; node = node->next) {
         e = node->entries;
         for (i = 0; i < node->count; i++, e++) {
             flags = e->flags;

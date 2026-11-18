@@ -52,6 +52,18 @@ struct ModelInstance {
  * func_8002B588, func_8002B784, func_8002CC30, func_8002DB9C, func_8002DEA8,
  * func_8002E630, func_800306A0, func_800324E0, gGuidedProjectileUpdate, func_800382B4,
  * func_80038A00, func_80051AF8, func_800549F0, func_80055988.
+ *
+ * @par Environment path
+ * Commits a new animation frame on a model instance: it returns when the
+ * frame is unchanged, otherwise it stores the index and copies the frame
+ * radius shifted left by 4 into the instance radius plus the frame header
+ * words unk00 and unk06, exactly the triple func_80013AF0 initialises from
+ * frame 0. Fourteen handlers call it, among them func_80038A00,
+ * gGuidedProjectileUpdate, func_80051AF8 and func_8002E630, so it is the
+ * frame commit at the end of an animation tick and runs before the instance
+ * is submitted. The refreshed radius field is the value the file itself calls
+ * the culling radius, so the pose change becomes visible to whatever culls
+ * the instance; the function touches no globals.
  */
 void func_800175F8(struct ModelInstance *instance, s32 frame)
 {

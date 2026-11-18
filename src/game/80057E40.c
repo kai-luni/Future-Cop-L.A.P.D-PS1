@@ -88,6 +88,20 @@ extern void func_8001AC28(void *, void *, s32, void *);
  *
  * @par Callers
  * func_800588D4 (sole direct caller).
+ *
+ * @par Environment path
+ * Steers one entity's orientation toward its tracked target: it samples the
+ * animated instance with func_80017668, drops the target when its id no
+ * longer matches the state id, derives pitch from func_80095C30(dy, planar
+ * distance) clamped to +-400 and yaw from func_80095C30(dx, dz) wrapped into
+ * +-128, and slews both stored angles by 24 units per call (snapping when the
+ * difference is 23 or less). It then builds the basis with
+ * gBuildRotationMatrix (func_800188D0), loads it with gGteLoadMatrix
+ * (func_80010750), transforms one model frame with gGteTransformVerticesWide
+ * and copies the basis into the state block, while decaying the two child
+ * part timers through func_8001AC28. Its only caller is func_800588D4:269,
+ * which passes the companion block, so it is an entity update that feeds the
+ * model draw and reads no global.
  */
 void func_80057E40(struct Object *obj, s32 step)
 {

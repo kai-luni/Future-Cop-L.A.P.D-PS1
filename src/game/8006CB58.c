@@ -96,6 +96,21 @@ extern void func_8006CAAC(void *, void *, s16, void *, s16);
  *
  * @par Callers
  * func_8005DFF0 (effects) and func_8006E988 (the model list walker).
+ *
+ * @par Environment path
+ * Draws one model with a base colour and a colour gradient: it subtracts the
+ * camera translation from the object position, transforms the delta with the
+ * camera rotation (gGteLoadRotation func_80010820 / gGteTransformWords
+ * func_8001006C) and picks the basis either from the camera matrix or from a
+ * transform of the object, applies the per-vertex scale table with
+ * func_8006CAAC, projects with func_8001047C, then emits one polygon per
+ * face-list entry whose three or four vertices all carry exactly 0xC0 in the
+ * model's clip-flag array. Packets come from the D_8009F9F0 pool and stop at
+ * D_8009FA28; the texpage word is D_8009F9B8 and the colour ramp steps by the
+ * model's div/cnt fields. It is a coloured single-model draw entry of the
+ * renderer, called per node by the object-list walker func_8006E988:80 and by
+ * the effects unit func_8005DFF0, and it does not go through the
+ * gDrawViewLayers region pass.
  */
 void func_8006CB58(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b,
                    u8 arg_tr, u8 arg_tg, u8 arg_tb)

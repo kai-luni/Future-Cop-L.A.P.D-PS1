@@ -28,6 +28,19 @@ extern void func_80042004(s32, u8 *, u8 *);
  * @par Likely role
  * The screen-facing glow card of an effect: ten Chequerboard quads covering a
  * 0x20-wide band, drawn only when the effect faces the camera.
+ *
+ * @par Environment path
+ * Draws the ten quads of one effect object: it bails out when the
+ * overlay/frame switch D_8009FAC8 is 0, fetches the camera-relative transform
+ * with func_800178DC, culls with func_80019E70(point, distance << 4)
+ * requiring exactly 2, and rejects the back side by the dot product of the
+ * point with matrix words 6..8 unless gate byte +0xA1 bit 0 is set. It then
+ * loads the matrix, projects fifteen vertices with func_8001047C and emits
+ * two quads per loop step through func_80042004, starting at screen x 0xCC00
+ * and advancing by 0xC00. It is a 2-D effect draw emitting straight into the
+ * packet builder, reached from message 3 (draw) of the object-type-34 handler
+ * func_80042330:58, so it is beside the region pass, not inside
+ * gDrawViewLayers.
  */
 void func_80042128(u8 *object)
 {

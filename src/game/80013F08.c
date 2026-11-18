@@ -155,6 +155,19 @@ extern void func_8001AE14(struct Matrix *matrix, struct Vec3s32 *in, struct Vec3
  *
  * @par Callers
  * func_80017508, recorded at 0x80017508; it is the only direct caller.
+ *
+ * @par Environment path
+ * Computes one model instance's camera-relative matrix, tests the frame's
+ * reference vertex against the view volume and hands the instance's vertex
+ * lists to the polygon clipper. It is the per-instance half of
+ * gSubmitModelInstance (func_80017508), which calls it at
+ * src/game/80017508.c:42 and turns the returned 1/0 into visible/hidden. It
+ * works in the same matrix workspace and publishes the same vertex and
+ * clip-flag slots (D_800A0300, D_8009F570, D_8009F574, D_8009F578,
+ * D_8009F57C) as the model draw path and refreshes the GTE light direction
+ * with func_80013ECC, so it is the actor-side counterpart of the region pass
+ * that gDrawViewLayers runs for the terrain. It draws nothing itself; the
+ * emitters consume the buffers it fills.
  */
 s32 func_80013F08(struct Instance *instance)
 {

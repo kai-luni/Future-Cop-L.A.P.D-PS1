@@ -153,6 +153,22 @@ union Prod { long long val; struct { u32 lo, hi; } w; };
  *   and 3 of info->m, which is consistent with a pitch about the X axis but not
  *   proven by a constant.
  * - The semantics of the script return value tested with & 0xFF.
+ *
+ * @par Environment path
+ * Per-frame orientation update of a scripted entity: it returns when the Info
+ * count is zero or negative, resolves the part position with func_80017668,
+ * and then either steers yaw and pitch toward a target using the twelve-bit
+ * arctangent func_80095C30, the yaw bias and the bounded STEP macro, or, when
+ * flag bit 1 is set, tilts the entity with the slope derived from the Info
+ * height and limit words using func_8001846C. The resulting matrix comes from
+ * func_800188D0 and is concatenated with the Info matrix through
+ * func_80010820 and func_8001006C, then loaded with func_80010750, used to
+ * transform one model frame vertex with func_80010234, and followed by the
+ * animation command word from func_80044B34, the frame commit func_800175F8
+ * and the entity script func_80060238 or func_8005F6E8. Callers are
+ * func_800395A8 and func_800398EC from message 6 of their dispatch tables,
+ * and the function touches no globals - everything arrives through the
+ * entity, its Info and its Target.
  */
 void func_80038A00(struct Obj *obj, s32 dt)
 {

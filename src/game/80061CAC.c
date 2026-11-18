@@ -63,6 +63,22 @@ extern u32 func_800619C0(void *, void *, void *, int, int);
  * @par Callers
  * func_80052098 (broad-phase distance test, then damage and reaction through
  * func_80058378 and func_80051EB8) and func_800620D8.
+ *
+ * @par Environment path
+ * Narrow-phase hit test between two coord records: bit 27 of each model flag
+ * word gives a two-bit mode, and the function returns a 32-bit mask whose
+ * bits 31..16 name the colliding element of the first record and bits 15..0
+ * the one of the second, with marker bits 0 and 16 telling the caller which
+ * half is valid. Modes 1 and 2 test one shape against the other's position
+ * and radius through gBuildViewMatrix, func_8001A970 and func_800618CC, while
+ * mode 3 combines the two matrices with func_80019470, gGteLoadRotation and
+ * gGteTransformWords, tests every element of A against all of B with
+ * func_800619C0 and accepts a pair only when both directions agree. Mode 0
+ * returns 0x10001 without testing anything and any other value returns 0. The
+ * unit uses the GTE and the view matrix but is a collision routine, not a
+ * render pass: it is called from the broad-phase test func_80052098
+ * (src/game/80052098.c:91) and from func_800620D8 (src/game/800620D8.c:93),
+ * and it touches no global.
  */
 u32 func_80061CAC(Coord *arg0, Coord *arg1)
 {

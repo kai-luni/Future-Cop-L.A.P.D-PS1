@@ -174,6 +174,22 @@ extern void gUpdateChaseCamera(void *object, s32 arg1, s32 arg2) __asm__("func_8
  *
  * @par Callers
  * func_8005908C, message 6 of its switch - the entity script dispatcher of this class.
+ *
+ * @par Environment path
+ * Per-frame tick of a player-controlled unit, the message-6 case of
+ * func_8005908C: it sets state +0x2FC to -1 and re-arms the model with
+ * func_8005A190, measures the ground distance with func_80066F78 and books
+ * one damage point through func_80058378 when the object is more than 0x3800
+ * above it, counts the +0x318/+0x31A timers down, and derives the sub-tick
+ * fractions from the +0xB6/+0xB7 accumulators. It then runs the gameplay half
+ * (func_800576A8 and func_800586D4, posting a message through func_800402DC
+ * or a hit through func_800584BC while screen state is 4), refreshes the
+ * basis transform with gGteLoadMatrix / gGteTransformVerticesWide, and drives
+ * the sub-systems func_80057E40, func_8006C3E0, gWeaponSlotInput
+ * (func_80055E10) and finally gUpdateChaseCamera (func_800569EC). It is the
+ * player's frame update feeding the renderer, not part of the environment
+ * pass: it writes no global, it reads the screen state and the session block
+ * and the frame stamp.
  */
 s32 func_800588D4(struct Unk588D4 *object, s32 arg1)
 {

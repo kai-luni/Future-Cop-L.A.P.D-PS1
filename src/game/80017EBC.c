@@ -90,6 +90,16 @@ extern u8 *func_8001E318(u8 *destination, u8 *source, s32 count);
  * retail control flow: when a range allocation fails the header word is
  * subtracted again before the general allocator is tried, so the byte match
  * depends on this exact order.
+ *
+ * @par Environment path
+ * The universal allocator: mode 0 goes to the general allocator
+ * func_8001E240, modes 1 and 2 carve from the front or the back of the
+ * free-range table D_8009F590 found by func_80017D5C and func_80017E0C, and
+ * mode 3 pops a node from one of the three fixed pools. Exhausted ranges are
+ * removed with func_8001E318 and mode 2 keeps the search cursor D_8009F598.
+ * Nothing here touches the GPU, the GTE, a region block or the camera, so the
+ * unit is not on the environment render path; it is the memory layer that
+ * every renderer structure is allocated through.
  */
 void *func_80017EBC(s32 size, s32 tag)
 {

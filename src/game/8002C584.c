@@ -233,6 +233,20 @@ extern s32 func_8006314C(void *a, s32 b);
  *
  * @par Callers
  * func_8002D664, message 2 (analysis/edges.json, kind "direct").
+ *
+ * @par Environment path
+ * Message-2 setup handler of one object class: it saves the state word,
+ * honours flag 0x80, forwards the message to func_8002AD58, and for spawn
+ * kinds 8, 0x21 and 0x24 builds a definition record whose handler is
+ * D_8002DEA8 and creates up to two children with gSpawnQueuedEntity, linking
+ * both back through +0x100 and +0x104. It then derives the motion and
+ * animation fields - heading matrix from func_800188D0, speed from the two
+ * divisors 218 and 300, ground height from func_80067684 or the child part
+ * position from func_80017668, the 16-byte state copy of func_80060668 and
+ * the animation track attached by func_80044988 - and finishes with a GTE
+ * matrix load and one part transform. The caller is func_8002D664, message 2
+ * of the class table, and the body otherwise writes only through its two
+ * pointer arguments, so this is object setup rather than draw code.
  */
 void func_8002C584(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2)
 {

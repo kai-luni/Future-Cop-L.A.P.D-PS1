@@ -118,6 +118,22 @@ extern void func_8003E984(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
  * @par Callers
  * func_8004C324, message 0, on the branch where the object flags carry bit 8;
  * the fracture path (bit 0x10) sits in the same handler.
+ *
+ * @par Environment path
+ * Burst variant of the death handling: it reads the inner block's basis
+ * context, allocates a 0x1C-byte motion record with func_80017EBC(0x1C, 1)
+ * and fills it with a large fixed impulse scaled by the object's signed
+ * percentage, a random speed between the +0x76 and +0x78 bounds and a random
+ * scale applied to the +0x70/+0x72/+0x74 direction. When the flag word +0x1A
+ * carries bit 0x100 or 0x004 that direction is rotated into world space with
+ * func_80010820 and func_8001006C, and a driver block adds an angular impulse
+ * scaled from its +0x40 magnitude with the 0x200 and 0x400 flags inverting or
+ * zeroing it. It then clears three object fields and, when the child type
+ * +0x65 is non-zero, spawns that child through func_8003E984; on a missing
+ * basis context it sets bit 0 at +0x0F and returns 0. It is an effects and
+ * lifecycle routine called from message 0 of func_8004C324
+ * (src/game/8004C324.c:101) on the flag-bit-8 branch, so it is off the
+ * environment render path: it touches no global and emits no geometry.
  */
 s32 func_8004ABE4(struct Unk4ABE4 *object, struct Unk4ABE4Arg1 *arg1)
 {

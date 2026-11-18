@@ -134,6 +134,18 @@ extern s32 D_8009F9B8;
  *
  * @par Callers
  * func_80073700 only.
+ *
+ * @par Environment path
+ * The full model renderer for one node: per entry it runs the radius test
+ * func_8001A100, builds the model or camera matrix, loads it with
+ * func_80010750 or func_80010820, transforms the vertices with func_8001006C,
+ * projects them into gPreparedVertexTable with func_8001047C and emits
+ * per-segment Gouraud quads, plus a two-point line when a projected segment
+ * has no width, from the D_8009F9F0 pool. It is called only by the object
+ * dispatcher func_80073700 (line 42), which gRunViewScenePasses
+ * (func_8003F6E4, line 83) runs inside every environment view. It is
+ * therefore the model layer of the environment pass, and func_80072F7C is the
+ * flat-shaded fallback for nodes without geometry pointers.
  */
 void func_80071FA4(Node *node, s32 *org)
 {

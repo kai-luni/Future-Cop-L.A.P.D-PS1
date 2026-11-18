@@ -157,6 +157,20 @@ extern void func_800172A8(s32 idx, u8 a1, s32 a2, struct Work50 *work);
  * func_8003F6E4, recorded at 0x8003F6E4 (direct call at 0x8003F750), the layer
  * dispatcher that also calls func_8006E988, func_800445B0, func_80070158 and
  * func_80074104 with the same position triple.
+ *
+ * @par Environment path
+ * Walks one scene-node list and submits the attached parts of every node
+ * close enough to the reference point: it skips suppressed nodes (bit 8 at
+ * +0x0F, bits 0x18 at +0x7B), culls with func_8001A100 against 0x1FFFF,
+ * installs the per-object colour pair through func_80013AA0, and for each
+ * part builds the rotation with gBuildRotationMatrix and makes it
+ * camera-relative through gGteLoadRotation on gCamera + 0x28, two
+ * gGteTransformWords calls and gGteLoadMatrix. func_8001047C then projects
+ * the part's vertex list and writes one clip byte per vertex, and
+ * func_800172A8 emits the polygon only when the clip test passes. It is a
+ * full pass of the view scene: gRunViewScenePasses (func_8003F6E4,
+ * src/game/8003F6E4.c:87) calls it with the view position triple, next to
+ * func_8006E988, func_800445B0, func_80070158 and func_80074104.
  */
 void func_8004C5C8(struct Node4C5C8 *arg0, s32 *arg1)
 {

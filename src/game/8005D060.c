@@ -39,6 +39,18 @@ extern void func_8007377C(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32
  *
  * @par Callers
  * The effect update loop of the entity renderer.
+ *
+ * @par Environment path
+ * Spawns and animates the two alternating puffs of a smoke or exhaust emitter
+ * whenever the global tick has passed the stored time: it scales the
+ * direction vector by the object's scale, rotates it with func_800188D0 while
+ * offsetting the two accumulator angles, and emits the pair through
+ * func_80073500 and func_8007377C. The next time is the current tick plus 63
+ * to 190 ticks, and the slot index alternates so the two streams stay
+ * phase-shifted. It is an effect spawner driven from the entity update
+ * (func_8005D8F4, src/game/8005D8F4.c:239) and emits its own packets, so it
+ * is not part of the environment pass. The exact unit of the two accumulator
+ * angles is not visible in the file.
  */
 void func_8005D060(struct Object *obj, struct State *st)
 {

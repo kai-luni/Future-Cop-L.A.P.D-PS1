@@ -44,6 +44,17 @@ extern void func_8001047C(u16 *, u16 *, u8 *, s32);
  *
  * @par Callers
  * func_800596C4.
+ *
+ * @par Environment path
+ * Projects two world points relative to the camera centre, loads the camera
+ * matrix with func_80010820, projects both points with func_8001047C, and
+ * emits a stretched screen-space quad of 0x34 bytes from the D_8009F9F0 pool,
+ * clipped against the 0x140 by 0xF0 screen through the IN macro. The flags
+ * word of the effect record selects the packet shape and the three texture
+ * codes 0x2E, 0x3A and 0x3E, and the FIN macro writes the ordering-table tag.
+ * Its only caller is the effect emitter func_800596C4, which takes the
+ * segment endpoints from a model part, so this is the beam layer of the frame
+ * and not the environment tile pass.
  */
 void func_80014C64(s32 *from, s32 *to, Eff *e)
 {

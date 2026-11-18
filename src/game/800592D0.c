@@ -82,6 +82,20 @@ extern void func_8001047C(void *arg0, void *arg1, void *arg2, s32 arg3);
  * @par Likely role
  * The "wall/beam" effect: a seven-vertex outline (two seven-point rings) drawn
  * only in the higher view mode, with a distance-dependent fade.
+ *
+ * @par Environment path
+ * Draws the seven-point polygon effect of a two-player object: it returns
+ * when the player count is below 2, when the session word at +0x5C is
+ * non-zero, when the near and far pair from func_800536B4 is empty or when
+ * func_80019E70 rejects the projected point. Otherwise it builds the object
+ * frame with func_80018DC0 from the angle to the other player slot, makes it
+ * camera relative with func_800178DC, loads it with func_80010750, transforms
+ * the vertex block at 0x8009AF40 with func_800101D4 and projects all seven
+ * points with func_8001047C, then emits the clear packet and four 0x1C
+ * packets with the colour ramped by far shifted by 7 capped at 0x7F. Its
+ * caller is func_800597C0, the object update that also advances this object's
+ * animation, so this is an effect layer attached to the actors, not part of
+ * the tile or region pass.
  */
 void func_800592D0(struct Unk592D0 *arg0)
 {

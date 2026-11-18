@@ -36,6 +36,18 @@ extern s32 func_80055EE8(struct Vec3s32 *from, struct Vec3s32 *to);
  *
  * @par Callers
  * func_800569EC.
+ *
+ * @par Environment path
+ * Searches the alternate camera presets 9..16 for a view of the followed
+ * object that is not blocked: it starts at a random slot (func_80019668 & 7)
+ * + 9, asks func_8005678C for the preset position without applying it, tests
+ * the line from the object position with func_80055EE8, and returns the first
+ * unblocked slot or -1 after eight tries, wrapping the slot from 16 back to
+ * 9. It is camera rig code, not the environment pass: its only caller is
+ * gUpdateChaseCamera (func_800569EC:267), the rig that afterwards commits the
+ * view through gSetCameraRotation (func_80017860, call site
+ * src/game/800569EC.c:512) and gSetCameraPosition (func_800177AC, call site
+ * src/game/800569EC.c:563).
  */
 s32 func_80056870(struct Unk56870 *object)
 {

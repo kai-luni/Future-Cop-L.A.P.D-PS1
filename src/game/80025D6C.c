@@ -1,7 +1,7 @@
 // Categories: Game Engine > Spatial Calculations
 #include "game/types.h"
 
-extern s16 D_8009FA44[];
+extern s16 gSlotTimerTable[] __asm__("D_8009FA44");
 extern s32 *D_8009FA58[];
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 
@@ -36,7 +36,7 @@ void func_80025D6C(s32 *arg0)
 
     i = 0;
     if (i < gPlayerCount) {
-        out = D_8009FA44;
+        out = gSlotTimerTable;
         in = D_8009FA58;
         do {
             distance = func_8001A4E8(arg0, *in + 20);

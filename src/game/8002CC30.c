@@ -140,6 +140,22 @@ extern void func_800175F8(void *, s32);
  *
  * @par Callers
  * func_8002D664, message 6 (analysis/edges.json, kind "direct").
+ *
+ * @par Environment path
+ * Message-6 tick of the animated prop class that func_8002D664 dispatches at
+ * message 6: it services the command queue with func_8002CB20, steps the
+ * object script with func_80060238, then follows one of three branches chosen
+ * by the flag word at +0xDF - spin about the facing axis, steer yaw/pitch at
+ * a fixed or periodically re-searched target (func_8004E80C, range test with
+ * func_8001A100, atan2 with func_80095C30), or idle. Every branch rate-limits
+ * the requested angles to dt * speed and, when something changed, rebuilds
+ * and loads the matrix (gBuildRotationMatrix func_800188D0, gGteLoadMatrix
+ * func_80010750) and transforms the current model frame
+ * (gGteTransformVerticesWide func_80010234) before caching matrix row 2 at
+ * +0x78. It ends by stepping the animation (func_80044B34) and the frame
+ * index (func_800175F8). It is an object update rather than a render pass -
+ * it refreshes one object's matrix and part vertex and references no global
+ * at all.
  */
 s32 func_8002CC30(struct Obj *self, s32 dt)
 {

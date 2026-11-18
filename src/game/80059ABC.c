@@ -54,6 +54,17 @@ extern void func_800597C0(struct O59ABC *object);
  * @par Callers
  * No direct callers in the call graph. func_80057914 stores the address as
  * request.handler, so the spawn dispatcher reaches it indirectly.
+ *
+ * @par Environment path
+ * Message handler of the kind-0x12 spawned class: case 1 reports type 0xB8,
+ * case 2 runs the spawn body func_8005920C, case 3 draws through
+ * func_800597C0 unless the child block has flag 0x20 set, case 10 reports
+ * whether the child pointer differs from the argument, cases 11 and 14
+ * forward to the child handler func_800584BC and every other case goes to the
+ * shared hook func_8002AD58. It is reached indirectly only: func_80057914
+ * stores its address as a request handler, so the call graph has no direct
+ * caller. Not on the render path: its draw case delegates to func_800597C0
+ * and the function never touches the packet pool itself.
  */
 s32 func_80059ABC(s32 message, struct O59ABC *object, s32 data, s32 arg3)
 {

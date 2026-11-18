@@ -57,6 +57,18 @@ extern void gGteTransformWords(s32 *source, s32 *destination, s32 count) __asm__
  *
  * @par Callers
  * func_8003151C.
+ *
+ * @par Environment path
+ * Overlap test between two entities: three branch-free absolute differences
+ * against the summed half extents scaled by 16 form the world-axis broad
+ * phase, then func_80019470 transposes the other entity's orientation matrix,
+ * func_80010820 loads it and func_8001006C rotates the position delta in
+ * place for the three slab tests, each comparing a shifted component against
+ * the summed half extents. The function returns 0 on the first failure and 1
+ * when every component passes. Its only caller is func_8003151C and it reads
+ * nothing but the two entity blocks, so it is a physics query, not part of
+ * the render path, even though the matrices it consumes are the same ones the
+ * model pipeline builds.
  */
 s32 func_80031238(struct Ent *self, struct Ent *other)
 {

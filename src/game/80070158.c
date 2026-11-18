@@ -81,6 +81,18 @@ extern void func_8001484C(void *dst, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32
  * @par Likely role
  * The textured-node pass of the scene walker: it is the RTPS-based sibling of
  * func_80075A84 and is driven by the same render lists.
+ *
+ * @par Environment path
+ * Walks the node list from the argument, resolves each node's transform with
+ * func_8003D9F8, culls it by radius against the origin, converts the centre
+ * to camera space and projects it as a single point through func_80010820,
+ * func_8001010C and func_80010704. Nodes that pass the on-screen test emit a
+ * gouraud disc with func_8001484C, or its rotating variant func_80014490 when
+ * the node flag asks for it, using the node's colour, size and depth fields.
+ * It is called by gRunViewScenePasses (func_8003F6E4) at
+ * src/game/8003F6E4.c:90, the step that closes the environment pass
+ * gDrawViewLayers opens, so it draws the glow/light nodes that belong to the
+ * visible region.
  */
 void func_80070158(struct Node70158 *node, s32 *origin)
 {

@@ -76,6 +76,18 @@ extern void gSinCos(s32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
  *
  * @par Callers
  * func_80056634, func_8005678C, func_800569EC (four sites) and func_800573A4.
+ *
+ * @par Environment path
+ * Places one point on a heading/pitch ray from a base position: it scales the
+ * lateral offset block by (0x100 - arg7/2)/256, folds the base height in,
+ * converts the remaining height into a ground step with the pitch cotangent
+ * (built from func_8001846C and a 16.16 half-reciprocal), rotates the offset
+ * by the heading and writes the result to out[0..2]. Callers are the four
+ * view placements func_80056634, func_8005678C, func_800569EC (four sites)
+ * and func_800573A4, i.e. the code that positions the players' views before
+ * the environment pass runs. It is one step upstream of gDrawViewLayers
+ * rather than part of it: it produces the anchor the view object later uses,
+ * and when D_8009F9A0 is set the lateral offset is silently zeroed.
  */
 void func_8005612C(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
                    s32 distance, u8 *data, s32 *out, s32 arg7, s32 arg8)

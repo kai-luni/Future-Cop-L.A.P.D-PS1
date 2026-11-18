@@ -66,6 +66,17 @@ extern s32 func_80095900(s32 a0);
  * @par Likely role
  * The ground shadow or light cone of an object: four corners at two depths, each
  * scaled by the reciprocal of its distance, so the shape narrows with height.
+ *
+ * @par Environment path
+ * Builds the four-corner geometry of a projected cone (ground shadow or light
+ * beam): it derives two depth planes from the element record, writes the
+ * centre column and four corners into buf, loads the matrix with
+ * func_80010750, transforms the corners into buf + 0x20 with func_80010234
+ * and computes the two perspective divisors with the GTE reciprocal
+ * func_80095900. Callers are the player form dispatcher func_80055988 (line
+ * 231) and func_80051AF8 (line 140). Not on the environment path: it produces
+ * the player's own shadow geometry into a state block and never walks a view
+ * list or draws the terrain.
  */
 void func_800518A8(Model518A8 *model, s16 *buf, s32 t, Obj518A8 *obj)
 {

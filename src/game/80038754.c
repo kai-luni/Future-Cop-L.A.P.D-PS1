@@ -157,6 +157,21 @@ extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_800
  *
  * @par Callers
  * func_80039298, message 2 of its switch - the entity script dispatcher of this class.
+ *
+ * @par Environment path
+ * Spawn setup of one moving object class: after the shared func_8002AD58 hook
+ * it stores the flag half-word and the shared block pointer, binds the
+ * descriptor model through func_80013BD8, installs the model animation track
+ * with func_80044988 or clears the instance and copies the spawn position
+ * when there is no holder. It then derives the heading (raising flag 0x4000
+ * and taking the magnitude when the descriptor value is below -2), the type
+ * byte, the visual angle from the shared block plus its +0x12A bias, the
+ * speed factor from the descriptor value divided by 218, the shape words and
+ * the object flag bits 0, 0x20000, 0x200000 and 0x800000, and finishes with
+ * func_80010750 on the instance matrix and one func_80010234 vertex transform
+ * from the frame list. Its caller is func_80039298, message 2 of the entity
+ * script dispatcher, and it reads no globals, so it prepares an actor for the
+ * model renderer without touching the map, the camera or the primitive pool.
  */
 void func_80038754(struct Self *self, struct Arg *arg1, s32 arg2)
 {

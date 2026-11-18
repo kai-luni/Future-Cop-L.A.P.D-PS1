@@ -158,6 +158,18 @@ extern void func_800457B8(s32, s32);
  * func_8002ED7C, message 6 only (analysis/edges.json, kind "direct"). The same
  * address appears once as an "address_taken" edge, i.e. it is installed in a
  * message table as well.
+ *
+ * @par Environment path
+ * Per-frame tick of an animated actor, forwarded unchanged as message 6 by
+ * the class message table func_8002ED7C. It serves a command queue with
+ * func_8002E528, runs a five-state machine (idle, travel, steer, arrive,
+ * exit), moves along the start-to-end segment with func_8001AC28, steers the
+ * yaw with func_80095C30 and func_800188D0, steps the animation with
+ * func_80044B34 and func_800448D8, transforms the model part through
+ * func_80010750 and func_80010234, and raises one sound through
+ * func_800457B8. Not on the render path: it only prepares the object
+ * transform the model pass reads later, and the file reads or writes no D_
+ * symbol at all.
  */
 s32 func_8002E630(u8 *obj, s32 dt)
 {

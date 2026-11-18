@@ -35,6 +35,17 @@ extern void func_80015F14(void *a0, void *a1, void *a2);
  *
  * @par Callers
  * func_800172A8 and the model draw entries.
+ *
+ * @par Environment path
+ * Turns one prepared model part into a single GPU packet: it picks the
+ * triangle or quad form from the part flags, copies the projected corners out
+ * of the work block, adds the texture word at texture + part->off and shades
+ * every vertex through func_80015F14 (NCCS) when the per-vertex colour bit is
+ * set. The packet comes from the D_8009F9F0 prim pool, so the caller only has
+ * to have projected the part first. func_80016A64 and func_80017058 call it
+ * in their part loops (src/game/80017058.c:129) and func_800172A8 uses it
+ * too; the environment region pass emits tiles through func_800646BC and
+ * func_80065134 instead, so this unit belongs to the actor model renderer.
  */
 void func_80015F38(Part17 *part, Work17 *work, u8 *texture, u8 *light)
 {

@@ -152,6 +152,21 @@ extern s32 func_80067684(Vec70730 *vec, s32 adjust);
  * @par Callers
  * func_80070E48, two call sites (analysis/edges.json, kind "direct"); the same
  * address also has an "address_taken" edge.
+ *
+ * @par Environment path
+ * Computes one end point of an effect segment: the base point comes either
+ * from the inline vector at obj + 0xC or from func_8003D0F0 with the object
+ * matrix transformed into GTE space, and the radius is derived from the
+ * range, a negative range becoming base + 0x46 scaled by the magnitude. When
+ * flag bit 2 of the object is set one randomly chosen player entity is
+ * proximity tested with func_80019F54 and the point snaps onto it when the
+ * scaled distance falls inside the tolerance. The point is then scattered by
+ * a Q12-scaled random direction with y replaced by ground height from
+ * func_80067684, and the return value is the index into gPlayerEntities of
+ * the entity that was hit, or -1, which the caller func_80070E48 uses to
+ * address the damage message. It is an impact/effect placement routine, not
+ * an environment pass: it loads the base matrix into the GTE and consumes the
+ * global random generator but writes no global.
  */
 s16 func_80070730(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg)
 {

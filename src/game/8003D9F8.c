@@ -5,7 +5,7 @@ typedef signed char s8;
 typedef int s32;
 typedef struct Matrix { char rot[0x24]; s32 x, y, z; } Matrix;
 typedef struct Parent { char pad[4]; Matrix matrix; } Parent;
-extern s32 D_800A10B4[];
+extern s32 gScratchMatrixPos[] __asm__("D_800A10B4");
 extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
 extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
 
@@ -31,6 +31,20 @@ extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
  * @par Likely role
  * The transform resolver of the node walkers (func_8006E988, func_80075A84,
  * func_80073700): "world matrix of this node, given its parents".
+ *
+ * @par Environment path
+ * Resolves an object's world transform from its parents: with a primary
+ * parent it loads that parent's rotation with gGteLoadRotation
+ * (func_80010820), transforms the caller's translation through
+ * gGteTransformWords (func_8001006C), adds the parent translation into the
+ * shared scratch block at D_800A10B4 and, when the caller's byte is non-zero,
+ * also transforms the three axis vectors. Without a primary parent the same
+ * work is done from a secondary parent when flag 0x100 is set; otherwise the
+ * caller's own matrix block is returned unchanged. Both resolved paths return
+ * the shared scratch matrix at D_800A10B4 - 0x24. It is the resolver the
+ * scene-node walkers use - gRunPolygonPass (func_80075A84,
+ * src/game/80075A84.c:196) and func_8006E988 (src/game/8006E988.c:75) among
+ * them - so it sits directly under the render path but emits nothing itself.
  */
 Matrix *func_8003D9F8(Parent *arg0, u16 flags, s8 arg2, s32 arg3, Parent *arg4, Matrix *arg5)
 {
@@ -41,45 +55,45 @@ Matrix *func_8003D9F8(Parent *arg0, u16 flags, s8 arg2, s32 arg3, Parent *arg4, 
     if (arg0) {
         if (flags & 0x100) {
             gGteLoadRotation(&arg0->matrix);
-            gGteTransformWords(&arg5->x, D_800A10B4, 1);
+            gGteTransformWords(&arg5->x, gScratchMatrixPos, 1);
             x = arg5->x;
         y = arg5->y;
         py = arg0->matrix.y;
         px = arg0->matrix.x;
         __asm__ volatile ("" : "+r" (x), "+r" (y), "+r" (py), "+r" (px));
-        D_800A10B4[1] = y + py;
+        gScratchMatrixPos[1] = y + py;
         y = arg5->z;
         py = arg0->matrix.z;
         __asm__ volatile ("" : "+r" (x), "+r" (y), "+r" (py), "+r" (px));
-        D_800A10B4[0] = x + px;
+        gScratchMatrixPos[0] = x + px;
         __asm__ volatile ("" : "+r" (y), "+r" (py) : : "memory");
-        D_800A10B4[2] = y + py;
+        gScratchMatrixPos[2] = y + py;
             if ((u8)arg3) {
                 gGteLoadRotation(&arg0->matrix);
-                gGteTransformWords(arg5, (char *)D_800A10B4 - 0x24, 3);
+                gGteTransformWords(arg5, (char *)gScratchMatrixPos - 0x24, 3);
             }
-            return (Matrix *)((char *)D_800A10B4 - 0x24);
+            return (Matrix *)((char *)gScratchMatrixPos - 0x24);
         }
     } else if ((flags & 0x100) && arg4) {
         gGteLoadRotation(&arg4->matrix);
-        gGteTransformWords(&arg5->x, D_800A10B4, 1);
+        gGteTransformWords(&arg5->x, gScratchMatrixPos, 1);
         x = arg5->x;
         y = arg5->y;
         py = arg4->matrix.y;
         px = arg4->matrix.x;
         __asm__ volatile ("" : "+r" (x), "+r" (y), "+r" (py), "+r" (px));
-        D_800A10B4[1] = y + py;
+        gScratchMatrixPos[1] = y + py;
         y = arg5->z;
         py = arg4->matrix.z;
         __asm__ volatile ("" : "+r" (x), "+r" (y), "+r" (py), "+r" (px));
-        D_800A10B4[0] = x + px;
+        gScratchMatrixPos[0] = x + px;
         __asm__ volatile ("" : "+r" (y), "+r" (py) : : "memory");
-        D_800A10B4[2] = y + py;
+        gScratchMatrixPos[2] = y + py;
         if ((u8)arg3) {
             gGteLoadRotation(&arg4->matrix);
-            gGteTransformWords(arg5, (char *)D_800A10B4 - 0x24, 3);
+            gGteTransformWords(arg5, (char *)gScratchMatrixPos - 0x24, 3);
         }
-        return (Matrix *)((char *)D_800A10B4 - 0x24);
+        return (Matrix *)((char *)gScratchMatrixPos - 0x24);
     }
     return arg5;
 }

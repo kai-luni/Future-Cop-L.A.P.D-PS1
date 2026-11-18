@@ -37,6 +37,20 @@ extern void func_80049980(void *,s32,s32,s32,s32,s32,s32,s32,s32);
  * @par Likely role
  * The physics/lighting step of the object list (the sibling of func_80071B40 and
  * func_80075A84): velocity integration plus one light per object.
+ *
+ * @par Environment path
+ * Walks a linked object list and integrates one time step per node: with bit
+ * 3 of the flags byte clear and an inner record present it accelerates the
+ * vertical velocity by the rate at +0x82, integrates the velocity into the
+ * position when the flag bit of +0x68 is set, advances the size and the two
+ * angles from their rates, and drives func_80040550 or func_80040600 when the
+ * count and flag bits allow it. The position is then rotated into the parent
+ * frame with func_80010820 and func_8001006C, or taken directly when the
+ * parent flags suppress it, and finally handed to func_80049980 as a light
+ * with the deliberate x, z, y argument order and a scale of 0x500 or size
+ * shifted by 5. func_8003F4A0 calls it once per frame for the list head, so
+ * this is the physics and lighting step of dynamic objects; the file lists no
+ * global data access.
  */
 void func_80040A00(Obj *node, s32 dt)
 {

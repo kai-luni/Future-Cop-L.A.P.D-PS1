@@ -63,6 +63,18 @@ extern s32 func_8002AD58(s32 message, struct Obj3015C *object, struct Arg3015C *
  *
  * @par Unknown
  * The meaning of the return 0xD8 and of arg->unk16 == 0x25.
+ *
+ * @par Environment path
+ * Message handler of one entity class: message 1 answers 0xD8, message 2 runs
+ * the placement half func_8002FA20, message 10 dispatches to func_80030060 or
+ * func_8002F8B8, message 11 goes to func_8002FF6C when obj->unk8 is set, and
+ * message 6 advances the spin angle obj->unkC6 by arg times obj->unkD4 before
+ * rebuilding the matrix and refreshing the frame vertex. Everything else is
+ * forwarded to the base handler func_8002AD58. The shared path refreshes the
+ * entity's own frame vertex through the GTE, but the unit draws nothing and
+ * reads no view, region or camera state, so it is upstream of the renderer
+ * instead of on the environment path. The class it belongs to is only visible
+ * through the helpers it calls, not through a name in the file.
  */
 s32 func_8003015C(s32 cmd, struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3)
 {

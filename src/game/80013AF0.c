@@ -56,6 +56,19 @@ struct ModelInstance {
  *
  * @par Callers
  * func_80013BD8, func_8002CB20.
+ *
+ * @par Environment path
+ * Binds a model to a model instance: it stores the model pointer, copies the
+ * frame-0 radius shifted left by four together with the two frame header
+ * words, resets frame and flags, and decodes three option bits (0x80000,
+ * 0x8000, 0x10000) into instance flags, adding 0x40 when bit 30 of the model
+ * flag word is set. With a null model the radius and both header words are
+ * zeroed. It is instance setup, not a drawing routine: it loads no matrix,
+ * emits nothing and touches no global. Its only call sites are func_80013BD8
+ * (src/game/80013BD8.c:49) and func_8002CB20 (src/game/8002CB20.c:86), so it
+ * sits one level upstream of the render path - the instance it prepares is
+ * submitted later by gSubmitModelInstance (func_80017508) through
+ * func_8002ACB4.
  */
 void func_80013AF0(struct ModelInstance *instance, struct Model *model, u32 options)
 {

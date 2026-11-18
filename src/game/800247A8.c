@@ -23,7 +23,7 @@ extern s32 gSinglePlayerEntity __asm__("D_8009F9EC");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern u16 D_8009F65E;
 extern u16 gTeamFlag __asm__("D_8009F65C");
-extern u16 D_8009FA44;
+extern u16 gSlotTimerTable __asm__("D_8009FA44");
 extern s32 D_8009F664;
 
 /**
@@ -55,7 +55,7 @@ void func_800247A8(void)
     D_8009F65E = 0;
     gTeamFlag = 0;
     *(u16 *)0x8009FA46 = 0;
-    D_8009FA44 = 0;
+    gSlotTimerTable = 0;
     D_8009F664 = 2;
 
     for (i = 0; i < 2; i++) {

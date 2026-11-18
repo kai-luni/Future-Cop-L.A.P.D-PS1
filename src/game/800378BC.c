@@ -78,6 +78,17 @@ extern s32 func_8006314C(void *key, u8 value);
  * @par Likely role
  * The "one message of a two-part character" handler - the same shape as
  * func_80030C60, with the partner's info value as an extra parameter.
+ *
+ * @par Environment path
+ * Message handler of a two-part character: it forwards the message to
+ * func_8002AD58, copies the partner animation block with func_80060668, mixes
+ * the partner info value into the entity block with func_80050E0C, always
+ * runs the basis orientation func_80037EB4 (line 93), starts the animation
+ * track with func_80044988 and refreshes the frame vertex through
+ * func_80010750 and func_80010234. When flag 0x4000 of the entity is set it
+ * closes with the script VM func_8006314C. Not on the render path: it is an
+ * update message handler that prepares the entity transform, and it declares
+ * no global at all.
  */
 void func_800378BC(s32 message, struct Unk378BC *self, struct Unk378BCOther *other)
 {

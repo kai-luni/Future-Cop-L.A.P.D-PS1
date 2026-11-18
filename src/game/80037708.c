@@ -44,6 +44,19 @@ extern void func_800410BC(void *, s32, s32, struct Data *);
  * @par Callers
  * No direct callers in the call graph; dispatched indirectly through a
  * handler table.
+ *
+ * @par Environment path
+ * Entity message handler with its own record size: message 2 runs the spawn
+ * helper func_80037064, message 6 runs func_800371FC, loads the matrix at obj
+ * + 0x2C into the GTE and transforms one frame vertex into obj->mat, message
+ * 10 is a destroy veto comparing obj->other->id with data->id (and accepting
+ * type 15), message 11 writes -1 to +0x1C, message 9 gates on the data link,
+ * and message 4 calls func_800410BC with the object position before
+ * forwarding to the base handler. Every unhandled message falls through to
+ * func_8002AD58. Only message 6 touches the GTE, and it does so per entity,
+ * so the unit keeps an entity's matrix current for the later submit rather
+ * than drawing anything. It declares no data symbol of its own and has no
+ * direct callers: it is dispatched from a handler table.
  */
 s32 func_80037708(s32 msg, struct Obj *obj, struct Data *data, s32 arg3)
 {

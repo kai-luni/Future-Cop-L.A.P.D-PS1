@@ -78,6 +78,21 @@ extern void gSinCos() __asm__("func_8001846C");
  *
  * @par Callers
  * func_8006E988.
+ *
+ * @par Environment path
+ * Draws one scene node as a textured ring or cylinder mesh: it resolves the
+ * transform with func_8003D9F8, culls the node by radius against the passed
+ * origin, builds the local matrix, then tessellates the ring from the node's
+ * inner and outer radii with gSinCos and mirrors the result into up to eight
+ * orientations taken from D_8009B214. Each band is projected with
+ * func_8001047C, its clip bytes are tested, and a textured packet is emitted
+ * from the prim pool with the UV corners and the texpage word; the
+ * non-textured variant instead emits gouraud quads with the node's two
+ * colours. It is called from the scene node walk func_8006E988
+ * (src/game/8006E988.c:83) and is the model-side detail renderer, not the
+ * region tile pass. The meaning of the flag bits at +0x98 (4-vertex versus
+ * 6-vertex band, half tessellation, single quad) is only inferable from the
+ * loop bounds.
  */
 void func_8006DC24(Obj *o, s32 *pos)
 {

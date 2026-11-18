@@ -52,6 +52,22 @@ extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
  * @par Likely role
  * The glow/light disc of an effect: a filled circle whose centre is brighter than
  * the rim, emitted as a single untextured fan.
+ *
+ * @par Environment path
+ * Emits one gouraud-shaded triangle fan as a filled disc: it returns
+ * immediately when depth minus the depth offset is not positive, derives the
+ * segment count from (scale << 9) / depth rounded down to a multiple of four
+ * (minimum four), writes a 0xE10006A0 texpage word and then one triangle per
+ * segment with the centre colour at the first corner and the rim colour at
+ * the other two, walking the fan in four quadrants with two func_8001846C
+ * sine/cosine samples so the rim points land on four primitives at once.
+ * Packets come from the D_8009FA90 cursor and the emission stops at
+ * D_8009F9C0. It is a callee of the model part path - gPrepareModelPart
+ * (func_80015B68) submits type-8 parts through it at line 199 - and is also
+ * called directly by the effect units func_80070158:135/141 and
+ * func_80066684:70, so it belongs to the primitive-emission side of the
+ * render path used by gSubmitModelInstance (func_80017508), not to the
+ * gDrawViewLayers region layers.
  */
 void func_8001484C(Vec *v, u32 color0, u32 color1, s32 count, s32 scale, s32 offset_z, s32 angle)
 {

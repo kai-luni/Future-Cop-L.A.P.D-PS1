@@ -125,6 +125,18 @@ extern s32 func_8001A314(s32 *v);
  *
  * @par Callers
  * func_80055988, the form dispatcher, when state +0xAD is 1.
+ *
+ * @par Environment path
+ * The hover/vehicle drive tick of the player: it polls the controller with
+ * func_800538C8, maps the input flags onto eight drive modes plus 0x13, ramps
+ * the throttle at +0xDC and the bank angle at +0xC2, applies thrust through
+ * func_800537D0 and expresses it in world space with func_80010974, then
+ * integrates velocity, applies gravity and the horizontal speed limit, moves
+ * the position, clamps it with func_8006943C and snaps to the ground through
+ * func_80066F78, func_80053514 and func_80053188 before publishing direction
+ * and speed at +0x78/+0x84. Its only caller is the form dispatcher
+ * func_80055988, when state +0xAD is 1. Not on the render path: it is local
+ * physics and writes no packet, no GTE matrix and no camera.
  */
 s32 func_80053A74(u8 *o_, s32 dt, s32 n_, u32 flags)
 {

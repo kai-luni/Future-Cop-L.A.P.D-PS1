@@ -147,6 +147,18 @@ static inline s32 rot_b(struct Obj *o, void *m)
  *
  * @par Callers
  * func_8003E984 and func_80044610.
+ *
+ * @par Environment path
+ * Resolves the placement of an effect or spawned node: it picks the scale and
+ * the model id from the object type (0x57..0x5E) or from the caller's source
+ * record, then writes a 9-word basis into out[0..8] and a world position into
+ * out[9..11], taken from the parent matrix through func_8001006C, from a
+ * rotation built by func_800188D0 (with func_80019668 supplying remainders
+ * for negative angles), or from the neutral template D_8009AA38. It is called
+ * by the spawn constructor func_8003E984 (line 273), which stores the block
+ * as its work matrix, and by the effect handler func_80044610 (line 82). Not
+ * on the render path: it prepares a node's matrix and position for later
+ * passes and emits no geometry itself.
  */
 void func_8003DB70(struct Obj *o, s32 *x, struct Par *p_arg, u8 *y, s32 *out, s16 *o16, s8 *o8_arg)
 {

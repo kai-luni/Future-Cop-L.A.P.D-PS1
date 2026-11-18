@@ -13,10 +13,10 @@ extern s32 gFrameId __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern s32 gDiscShadeByte __asm__("D_8009FAA4");
-extern u8 D_8009F690;
-extern u8 D_8009F691;
-extern u8 D_8009F692;
-extern u8 D_8009F693;
+extern u8 gFrameDeltaNewest __asm__("D_8009F690");
+extern u8 gFrameDeltaPrev1 __asm__("D_8009F691");
+extern u8 gFrameDeltaPrev2 __asm__("D_8009F692");
+extern u8 gFrameDeltaRemainder __asm__("D_8009F693");
 extern u8 *gMissionWorkingSet[] __asm__("D_8009F9A0");
 
 extern void func_80057864(void);
@@ -64,20 +64,20 @@ void func_8002703C(void)
     } while (diff < 5);
 
     __asm__ volatile("");
-    sum = diff + (s8)D_8009F690 + (s8)D_8009F691;
+    sum = diff + (s8)gFrameDeltaNewest + (s8)gFrameDeltaPrev1;
     gFrameId = diff;
-    sum = sum + (s8)D_8009F692 + (s8)D_8009F693;
+    sum = sum + (s8)gFrameDeltaPrev2 + (s8)gFrameDeltaRemainder;
     gFrameId = sum;
-    D_8009F693 = *(u8 *)&gFrameId & 3;
+    gFrameDeltaRemainder = *(u8 *)&gFrameId & 3;
     if (sum < 0) {
         sum += 3;
     }
     __asm__ volatile("");
     obj = gMissionWorkingSet[0];
     gFrameId = sum >> 2;
-    D_8009F692 = D_8009F691;
-    D_8009F691 = D_8009F690;
-    D_8009F690 = diff;
+    gFrameDeltaPrev2 = gFrameDeltaPrev1;
+    gFrameDeltaPrev1 = gFrameDeltaNewest;
+    gFrameDeltaNewest = diff;
     if (obj != 0 && obj->unk11C != 0 && obj->unk11D != 0) {
         gFrameId = obj->unk11D * 5;
     }

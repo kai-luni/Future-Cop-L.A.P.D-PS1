@@ -54,6 +54,17 @@ extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_800
  *
  * @par Unknown
  * The meaning of the return value 0xA4 (distance, state or handle).
+ *
+ * @par Environment path
+ * Message handler of another entity class: message 1 answers 0xA4, message 2
+ * rebuilds the orientation from the descriptor's two angles with
+ * func_800188D0, snaps the object onto the terrain with func_80066F78, stores
+ * the resulting height plus the state byte at +0xA0, and refreshes the frame
+ * vertex through func_80010750 and func_80010234; message 5 releases the
+ * object through func_80063194 before forwarding, and messages 3, 4 and 7 to
+ * 10 go straight to func_8002AD58. Like the other handlers of this family it
+ * only prepares the model input and reads no view, region or camera state, so
+ * it is not part of the environment render pass itself.
  */
 s32 func_80041C6C(s32 msg, struct Obj *obj, struct Arg *arg, s32 a3)
 {

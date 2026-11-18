@@ -30,6 +30,17 @@ extern void func_800175F8(void *,s32);
  * @par Likely role
  * The turret/aiming update: it turns the entity toward an angle and keeps its
  * animated frame in sync - a "look at" step, not a physics move.
+ *
+ * @par Environment path
+ * Turns an entity towards a target yaw at a limited speed and refreshes its
+ * frame vertex: the wrapped difference is clamped to speed * 3 << 9 >> 8, the
+ * new angle is built into a matrix with func_800188D0, loaded with
+ * func_80010750 and used by func_80010234 to transform one frame vertex. The
+ * animation is then stepped with func_8002B0EC, func_80044B34 and
+ * func_800175F8, and the position is copied to the second position word. It
+ * is not on the render path: its only callers are the per-frame actor updates
+ * func_8002B6C8 (line 62) and func_8002B784 (line 190), and it emits no
+ * packet and touches no camera or pool state.
  */
 void func_8002B588(struct Obj *o, s32 angle, s32 speed)
 {

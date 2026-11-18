@@ -23,6 +23,18 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
  *
  * @par Callers
  * func_8004A048, func_800597C0, func_80070158.
+ *
+ * @par Environment path
+ * Frustum visibility test for one point plus a safety margin, with a fixed
+ * near threshold: depth = z << 4 returns 1 as soon as depth <= 0x1000,
+ * otherwise the horizontal bound is built from the screen-width mode in
+ * D_8009FA0C (one player: margin << 4 and |x| << 8; otherwise margin << 5 and
+ * |x| << 9) and the vertical bound is a fixed function of depth and margin,
+ * the result of that last test shifted left by one so callers read 0 or 2. It
+ * is the fixed-near twin of func_80019E70. It sits in the culling stage of
+ * the environment pass: func_8004A048 - the map-cell node drawer reached from
+ * gDrawCellWindowObjects (func_8004A924:91) - and func_800597C0 both call it,
+ * as does the effect unit func_80070158:129.
  */
 s32 func_80019D90(s16 *point, s32 margin)
 {

@@ -76,6 +76,17 @@ extern s32 func_80066F78(struct Vec3s32 *pos, s32 a1, s32 a2, s32 a3);
  *
  * @par Callers
  * func_8004C228.
+ *
+ * @par Environment path
+ * Advances a launched object one step: it returns with flag 1 set when the
+ * object has no attachment, otherwise it builds the rotation with
+ * func_800188D0, loads it with func_80010820, transforms the three vectors
+ * through func_8001006C, integrates the vertical speed into the launch record
+ * and the sub-record position with func_8001ACA4, advances the two angles by
+ * their rates and tests the ground with func_80066F78, setting the fuse +0x18
+ * to -1 on impact. Its only caller is func_8004C228 (line 40), the
+ * breakable-object pass over scene list 4. Not on the render path: it is
+ * ballistic physics and writes no packet, no view state and no camera.
  */
 void func_8004AFC0(struct UnkObject *object, s32 arg)
 {

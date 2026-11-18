@@ -48,6 +48,18 @@ extern void func_80049100(u8 *, s32, s32, s32);
  *
  * @par Callers
  * func_8004ED18 (the entity pass).
+ *
+ * @par Environment path
+ * Draws one entity as a screen-space marker: it first emits a fixed small
+ * packet for the selected entity type when the session mode is 1, then
+ * radius-culls the entity against the clip box, projects the four corners of
+ * its model bounds with func_80010234 and emits the large quad packet with
+ * the two effect colours. The corners are scaled into the 80 by 80 cell grid
+ * by shifts and the packet depth is derived from the summed y component, and
+ * a type 1 entity additionally gets the label string at D_8009F37C drawn over
+ * the quad with func_80049100. Its only caller is the entity pass
+ * func_8004ED18 (src/game/8004ED18.c:44); it uses the same packet pools as
+ * the model drawers but is a bounds/HUD overlay, not the region grid.
  */
 void func_80065834(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
 {

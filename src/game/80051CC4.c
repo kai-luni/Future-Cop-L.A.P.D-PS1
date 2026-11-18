@@ -29,6 +29,18 @@ extern void gGteTransformVertices(SV *, SV *, s32) __asm__("func_8001010C");
  * @par Likely role
  * The "slide along the surface" step of a moving entity: the direction comes from
  * the two transforms and the bounds decide which components are allowed.
+ *
+ * @par Environment path
+ * Moves an object toward a target position inside an axis-aligned bound: it
+ * subtracts the transform position from the target, rotates the delta with
+ * gGteLoadRotation (func_80010820) plus gGteTransformVertices
+ * (func_8001010C), compares the result with the bound centre and sets every
+ * step component to +0x2400 or -0x2400 (0x4000 when flag 0x400 is set), then
+ * zeroes or halves the components whose deviation is already inside the bound
+ * half extents. The step is rotated back through the second transform and
+ * added to the data block at +0x150/+0x158. It is a movement/clamping helper
+ * called from func_80051EB8:160, not a render pass: it only borrows the GTE
+ * for the two rotations and references no global.
  */
 void func_80051CC4(Obj *obj, V *pos, s32 unused, Bounds *bounds, Transform *trans, void *matrix, s32 flags)
 {

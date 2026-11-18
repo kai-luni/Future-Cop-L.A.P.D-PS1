@@ -8,10 +8,10 @@ extern s32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern u8 D_8009F690;
-extern u8 D_8009F691;
-extern u8 D_8009F692;
-extern u8 D_8009F693;
+extern u8 gFrameDeltaNewest __asm__("D_8009F690");
+extern u8 gFrameDeltaPrev1 __asm__("D_8009F691");
+extern u8 gFrameDeltaPrev2 __asm__("D_8009F692");
+extern u8 gFrameDeltaRemainder __asm__("D_8009F693");
 extern u8 gFrameBarrier __asm__("D_8009FA3C");
 extern void *gCamera __asm__("D_8009F9E4");
 
@@ -79,6 +79,20 @@ extern void func_80045884(s32 *position, s32 arg1, s32 angle, s32 index);
  *
  * @par Callers
  * func_800287F4, on the path where arg1 == 0 (game mode).
+ *
+ * @par Environment path
+ * The in-game frame loop: it seeds gPaletteCycleCounter, gFrameId,
+ * gSceneFrameCounter, the four frame-delta history bytes , and then repeats
+ * one iteration while the screen state is 4, 8 or 0xD. Each iteration ticks
+ * input (func_8002703C), runs the one-player update func_800271A4 or the
+ * two-player gRunSessionFrame, builds one view matrix per player slot with
+ * gSelectViewRecord plus func_80045884(position, gCamera + 0x7C, angle,
+ * index), renders the world with func_800451EC and func_800462D0 and submits
+ * the last frame through func_80028164 and func_8001B4A8(1) on state 0xD. It
+ * is the driver directly above the environment path: gDrawViewLayers and the
+ * region passes run inside the world render this loop performs every frame.
+ * Its only caller is gRunScreenModule (func_800287F4,
+ * src/game/800287F4.c:87).
  */
 void func_80028618(void)
 {
@@ -93,12 +107,12 @@ void func_80028618(void)
     gFrameId = work;
     b = *(u8 *)&gFrameId;
     gSceneFrameCounter = 0;
-    D_8009F693 = 0;
+    gFrameDeltaRemainder = 0;
     gDiscShadeByte = saved;
     gFrameTickBase = saved - 8;
-    D_8009F690 = b;
-    D_8009F691 = b;
-    D_8009F692 = b;
+    gFrameDeltaNewest = b;
+    gFrameDeltaPrev1 = b;
+    gFrameDeltaPrev2 = b;
 
     func_8001BFD8(0);
 

@@ -27,6 +27,16 @@ struct Matrix32 {
  *
  * @par Callers
  * Confirmed: func_80016A64 (0x80016B0C), func_80017058 (0x80017100), func_80018860 (0x80018874), func_80031238 (0x800312F8), func_80051EB8 (0x80051FD0), and func_80061CAC (0x80061E7C).
+ *
+ * @par Environment path
+ * Transposes a 3x3 s32 matrix into the destination with nine element
+ * assignments and no loop, branch or call. func_80018860 (gBuildViewMatrix)
+ * calls it to obtain the transposed rotation of the inverse view matrix, so
+ * the function sits directly on the camera path under the view setup, and
+ * func_80031238 calls it to bring the position delta into the other entity's
+ * local frame before its slab test. Other call sites are the part traversals
+ * func_80016A64 and func_80017058 and the two routines func_80051EB8 and
+ * func_80061CAC. It reads and writes only its two arguments.
  */
 void func_80019470(struct Matrix32 *source, struct Matrix32 *destination)
 {

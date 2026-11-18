@@ -43,6 +43,15 @@ extern void gBuildRotationMatrix(s32 arg0, s32 arg1, s32 angle, struct Unk51C50V
  *
  * @par Callers
  * func_80052410.
+ *
+ * @par Environment path
+ * Builds the view frame of an object into a three-vector record: when the
+ * angle at +0xF0 is zero it stores the target triple, sets the up vector to
+ * (0, 0x10000, 0) and calls func_80010974 to write the cross product into the
+ * first triple, otherwise it builds a rotated frame with func_800188D0
+ * passing arg1 as yaw and the object angle as roll. Its only caller is
+ * func_80052410, and the file describes the result as a camera or turret
+ * view. It touches no globals and only writes through the view pointer.
  */
 void func_80051C50(struct Unk51C50 *object, s32 arg1, struct Vec3s32 *target,
                    struct Unk51C50View *view)

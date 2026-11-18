@@ -48,6 +48,19 @@ extern void func_8005E0AC(s32 object);
  *
  * @par Callers
  * func_80027510.
+ *
+ * @par Environment path
+ * The per-frame tick of the entity world: it drives the effect system
+ * (func_8005E0AC) and the transform sync (func_8003D240), then walks the
+ * seven buckets of gListHeads and retires every node whose func_8003F2AC
+ * result has the low byte set, unlinking it and sending message 10 to its
+ * handler. Afterwards it runs func_8003F530, func_8004C2B8 on bucket 4,
+ * func_8003F428 on bucket 5, the proximity gate func_8003FF7C when gNodeCList
+ * is non-empty, and finally drains gPendingSpawnList through func_8003B44C.
+ * It is gameplay update, not a drawing pass, but it is called with the frame
+ * delta from gRunSessionFrame (func_80027510, src/game/80027510.c:230), the
+ * same session frame the environment pass runs under, so it executes
+ * alongside gDrawViewLayers rather than inside it.
  */
 void func_8003F570(s32 arg0)
 {

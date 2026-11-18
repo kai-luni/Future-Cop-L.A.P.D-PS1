@@ -130,6 +130,20 @@ extern void func_80060238(u32 *, s32, struct Obj *, s32, s32);
  * @par Callers
  * func_80032F3C (the message-6 case of the type's message table) and
  * func_8003532C.
+ *
+ * @par Environment path
+ * Message-6 tick of a hovering attacker: it re-acquires a target through
+ * func_8004E80C, runs the approach, dive, descent and death states of the
+ * byte at +0xFA, dives onto a terrain probe (func_80066F78) with an occupancy
+ * update (func_8003B898), a hit record fetch (func_8004D664) and a script
+ * call (func_80069D68), and steers with func_8001A644 / func_8001A6F8 /
+ * func_8001A750 while holding an altitude band above the ground height from
+ * func_80069A38. The resulting basis is built by func_80019310 and loaded
+ * with gGteLoadMatrix (func_80010750) before the current model frame is
+ * transformed into +0x5C by gGteTransformVerticesWide (func_80010234). It is
+ * gameplay AI, not a render pass: it reads the session word
+ * gGameSession[0x13] for the dive timer and the player table D_8009FA58 for
+ * the kill counter, but emits no primitive.
  */
 s32 func_800324E0(s32 unused, struct Obj *o, s32 dt)
 {

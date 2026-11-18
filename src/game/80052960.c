@@ -94,6 +94,18 @@ extern void gGteTransformWords(struct Matrix *, struct Matrix *, s32) __asm__("f
  *
  * @par Callers
  * func_80052D7C.
+ *
+ * @par Environment path
+ * Walks a short joint record list and builds the world matrices of a limb:
+ * for each record the three angles and the translation come literally or from
+ * the shared sixteen-bit table depending on the flags byte, func_80018DC0
+ * builds the 3x3 rotation, the translation is placed at words 9 to 11 scaled
+ * by 16, and func_80010820 plus func_8001006C concatenate the result onto the
+ * parent slot selected by the record index before the parent translation is
+ * added. Level 3 is copied into the second output, level 5 into the first,
+ * and flag 0x80 ends the walk. Its caller is func_80052D7C, which transforms
+ * both parts of a two-part model, so this is part geometry inside the model
+ * pipeline; the function uses no global data.
  */
 void func_80052960(struct Args *a0, struct Matrix *first, struct Matrix *second)
 {

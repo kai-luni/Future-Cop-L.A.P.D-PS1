@@ -34,6 +34,15 @@ extern s32 func_800684AC(void *, void *, void *, s32, s32);
  * @par Likely role
  * The footprint test of a vehicle or building: each edge is checked against the
  * level geometry and the four codes say which sides are blocked.
+ *
+ * @par Environment path
+ * Prepares the matrices with func_80051C50, loads one through func_80010750,
+ * transforms four vertices with func_80010234 and then runs func_800684AC
+ * once per quad edge, packing the four 3-bit edge results into a single
+ * return word. Its only caller, func_80052708, uses that word as a packed
+ * footprint mask (src/game/80052708.c:72). It is a collision/geometry query
+ * with a GTE transform inside and touches no region, tile, camera or packet
+ * state, so it is not on the environment render path.
  */
 s32 func_80052410(struct Obj52410 *obj, struct Vec52410 *points, struct Vec52410 *out)
 {

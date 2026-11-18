@@ -103,6 +103,22 @@ extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk58714 *arg3)
  *
  * @par Callers
  * func_800588D4.
+ *
+ * @par Environment path
+ * Reset pass of a compound object: it clears flag bit 0x00800000 on the
+ * object and on its linked secondary record, masks the low nibble of +0x19,
+ * copies the controller's position into the model coordinate block, loads
+ * that matrix with gGteLoadMatrix and transforms one frame vertex, and
+ * fetches the world position of part 0 into the secondary record with
+ * func_80017668. The controller's signed +0xD2 becomes the absolute value in
+ * +0xB0 and its sign is mirrored into two flag bytes, three velocity/offset
+ * words are zeroed and two further flag masks are applied, then the
+ * controller slot is reset via func_8005A190, the three sub-objects are
+ * restarted through func_8006BE90 and an optional attachment is notified via
+ * func_80069D68. It is initialisation and state clearing, not drawing: it is
+ * called only by func_800588D4 (src/game/800588D4.c:216) and reads no global
+ * of its own, though the instance it primes is drawn by the model passes
+ * later.
  */
 void func_80058714(struct Unk58714 *arg0)
 {

@@ -128,6 +128,16 @@ extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
  *
  * @par Callers
  * func_80070158, recorded at 0x80070158 (direct call at 0x8007033C).
+ *
+ * @par Environment path
+ * Emits the rotating variant of the translucent disc: one 0x1C-byte header
+ * packet followed by a ring of semi-transparent Gouraud triangles whose
+ * vertices are swept around the centre by an angle advanced per iteration
+ * through func_8001846C. Its only caller is func_80070158 (line 138), the
+ * effect layer pass that func_8003F6E4 runs last inside one environment view,
+ * so it draws over the terrain produced by gDrawRegionTiles rather than being
+ * part of it. The fixed-colour sibling is func_8001484C, and func_80070158
+ * picks between the two on a node flag.
  */
 void func_80014490(struct Src *src, u32 p1, u32 p2, s32 p3, s32 p4, s32 p5, s32 p6)
 {

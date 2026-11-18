@@ -90,6 +90,17 @@ extern void *jtbl_80011380[];
  * @par Callers
  * No direct callers in the call graph; dispatched indirectly through a
  * handler table.
+ *
+ * @par Environment path
+ * Message dispatcher of a moving entity class, entered through the jump table
+ * jtbl_80011380 for messages 1 to 11 and through func_8002AD58 for everything
+ * else. Message 2 runs the spawn helper func_80036940, message 3 updates the
+ * entity with func_80036BD4, rebuilds the orientation basis with
+ * func_8001937C or func_800193F8, recycles the entity through func_8004D958
+ * when it strays past 0x58000 and then refreshes the frame vertex, message 4
+ * compares the team word and message 5 clears a state word. The unit ends in
+ * the same GTE frame-vertex transform as the other entity handlers, so it
+ * produces model animation input and is not itself an environment pass.
  */
 s32 func_80036E6C(s32 arg0, struct Entity *arg1, s32 arg2, s32 arg3)
 {

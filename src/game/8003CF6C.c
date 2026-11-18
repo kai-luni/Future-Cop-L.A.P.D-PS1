@@ -47,6 +47,16 @@ extern void gDrawModelFrame(struct Obj8003CF6C *obj) __asm__("func_800164F4");
  * @par Likely role
  * The "far objects, depth-cued" pass, sibling of func_80075A84 and driven from
  * the same render list.
+ *
+ * @par Environment path
+ * Walks the object list at D_8009F320, skips nodes without an object or
+ * without bit 1 of the flag byte at +0x39, and drops nodes whose radius test
+ * against the passed origin exceeds 0x1FFFF. Each survivor is drawn by
+ * gSubmitModelInstance (func_80017508), bracketed by func_80013AA0 calls that
+ * install and clear the node's depth-cue pair, and gets gDrawModelFrame
+ * (func_800164F4) afterwards when its object asks for it. It feeds the same
+ * model submission path the environment grid uses, but it draws the entities
+ * around the view rather than the region tiles.
  */
 void func_8003CF6C(s32 arg0)
 {

@@ -48,6 +48,18 @@ extern void func_80015F38(Part *, Work *, void *, void *);
  *
  * @par Callers
  * func_800175A0.
+ *
+ * @par Environment path
+ * Draws the parts of a model instance with the same per-part traversal as
+ * func_80016A64, but draws a part only when both the caller's group mask and
+ * a per-part enable bit are set, and it forces work.mode to 0. The work block
+ * starts from the depth/tag word D_8009F580 and, for instances with flag
+ * 0x40, it loads the transposed matrix and the camera-relative vector scaled
+ * by the env-map texpage word D_800A8EA4. Each accepted part goes through
+ * gPrepareModelPart (func_80015B68) and is then emitted by func_80016E6C or
+ * func_80015F38. It is called by func_800175A0 after func_8001428C
+ * (src/game/800175A0.c:28), that is, it is the part-submission stage of the
+ * actor renderer, not the region pass.
  */
 void func_80017058(Instance *inst, u32 *enabled, s32 mask)
 {

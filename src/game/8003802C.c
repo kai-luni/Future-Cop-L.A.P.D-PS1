@@ -67,6 +67,19 @@ extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__(
  *
  * @par Callers
  * func_8002B784, func_800382B4.
+ *
+ * @par Environment path
+ * Advances a falling or hovering object by one time step: func_80050D14
+ * supplies the state return, the yaw field is advanced by twice the step and
+ * clamped to 1000, the descent speed grows by half the step, the second angle
+ * advances by the step times its rate, and the height is limited against the
+ * ground height from func_80066F78 plus half of the object offset, which sets
+ * the landing bits 0xC0000000 and the -1 word. When the step survives it may
+ * call func_80037EB4 to re-orient the base and then loads the matrix with
+ * func_80010750 and transforms one frame vertex with func_80010234. Its
+ * callers are the tick handlers func_8002B784 and func_800382B4, so this is
+ * object dynamics that reuses the same terrain query the environment pass
+ * samples; the function touches no globals.
  */
 void func_8003802C(s32 arg0, Unk3802C *arg1, s32 arg2)
 {

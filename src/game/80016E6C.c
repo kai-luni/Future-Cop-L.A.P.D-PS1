@@ -30,6 +30,18 @@ extern void func_80016C88(Entry *, Entry *, void *, void *);
  *
  * @par Callers
  * func_80016C88's callers, i.e. the mesh emitters of func_8006DC24.
+ *
+ * @par Environment path
+ * Turns one model part into a textured polygon packet: the tag and the first
+ * three XY words come from the input block, func_80016C88 resolves each UV
+ * pair from the two base tables, and the face type in bits 8..11 of the flags
+ * word selects triangle (packet length 7, colour 0x24808080) or quad (length
+ * 9, colour 0x2C808080, fourth corner and fourth UV pair). It is called only
+ * from the two per-part traversals func_80016A64 (line 137) and func_80017058
+ * (line 128), i.e. from the model layer that func_8006E988 walks through
+ * func_8006DC24 inside one environment view. It takes its storage from the
+ * D_8009F9F0 packet pool that the whole render path shares, so it is a leaf
+ * of the environment model layer, not of the region drawers.
  */
 void func_80016E6C(Indices *idx, Input *in, Entry *base1, Entry *base0)
 {

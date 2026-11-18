@@ -60,6 +60,19 @@ extern void gGteTransformVerticesWide(u8 *frame, u8 *output, s32 count) __asm__(
  * @par Likely role
  * The two-part rig of an animated object (body plus turret, or the two halves of
  * a walk cycle) - the parts share the coordinate block but have their own frames.
+ *
+ * @par Environment path
+ * Transforms both parts of a two-part model for the current frame:
+ * func_80052960 builds the two part matrices from the object's coordinate
+ * block and the two model records, then for each part gGteLoadMatrix loads
+ * that matrix and gGteTransformVerticesWide transforms one vertex from
+ * models->frames + (frame << 4) + 8 into the part's 0x14-byte output block.
+ * It is the per-frame rig update of a compound actor, the body plus turret or
+ * the two halves of a walk cycle, not a scene pass: it emits no polygon and
+ * reads no global. Its caller is the player/companion step func_80057E40
+ * (src/game/80057E40.c:186), which runs before the model is submitted, so the
+ * unit only keeps the instance vertex data current for the actor passes that
+ * draw it later.
  */
 void func_80052D7C(struct Unk52D7C *object)
 {

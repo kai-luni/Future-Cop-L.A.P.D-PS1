@@ -45,11 +45,11 @@ extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern u8 *D_8009F2D0;
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 gMenuModeFlag __asm__("D_8009F680");
-extern s32 D_8009FA38;
+extern s32 gSavedTickCounter __asm__("D_8009FA38");
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
-extern s32 D_8009FA24;
+extern s32 gPauseInhibitFlag __asm__("D_8009FA24");
 extern s32 gFrameId __asm__("D_8009F9FC");
 extern u8 *gMissionWorkingSet[4] __asm__("D_8009F9A0");
 extern u8 gBannerString[] __asm__("D_8009F2F4");
@@ -105,6 +105,17 @@ extern void func_800616A0(s32 arg0);
  *  Changes player and global state, draws text, and invokes subsystem updates.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Environment path
+ * The single-player frame driver: it decodes the player's buttons with
+ * func_8005780C, toggles the player state and its voice handle, draws the
+ * centred loading text while the module is not up yet, and then runs either
+ * the gameplay or the paused branch. The gameplay branch calls
+ * gUpdateLightDirection and then gRunRegionPass plus the entity, sound and
+ * timing updates, so this is the frame that carries the environment pass; the
+ * paused branch instead parks the sound voices and the tick counters. It is
+ * the sibling of gRunSessionFrame (func_80027510) and has no direct caller in
+ * the call graph because the session driver enters it.
  */
 void func_800271A4(void)
 {
@@ -151,7 +162,7 @@ void func_800271A4(void)
 
     if (!(flags & 0x20)) {
         if (gMenuModeFlag != 0) {
-            gPaletteCycleCounter = D_8009FA38;
+            gPaletteCycleCounter = gSavedTickCounter;
             clock_value = *(volatile s32 *)&gPaletteCycleCounter;
             gDiscShadeByte = clock_value;
             gFrameTickBase = clock_value;
@@ -194,15 +205,15 @@ void func_800271A4(void)
         func_800616A0(gFrameId);
         func_80026D9C(gFrameId);
         gSweepRetiredEntities();
-        D_8009FA24 = 0;
+        gPauseInhibitFlag = 0;
     } else {
         if (gMenuModeFlag == 0) {
-            D_8009FA38 = gPaletteCycleCounter;
+            gSavedTickCounter = gPaletteCycleCounter;
             func_8001EB6C();
             gSoundPauseVoices();
             func_80046C84(0x3E, (s32)D_8009FA58);
         }
         gMenuModeFlag = 1;
-        D_8009FA24 = 1;
+        gPauseInhibitFlag = 1;
     }
 }

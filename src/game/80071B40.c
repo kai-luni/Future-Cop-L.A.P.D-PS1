@@ -52,6 +52,19 @@ extern s32 func_800718B8(Node *, s32, s32, s32, s32);
  * @par Likely role
  * The per-frame animation of a compound model (turret parts, wheels, doors):
  * each part rotates around its base and its vertex is transformed once.
+ *
+ * @par Environment path
+ * Advances the parts of one model node: for obj2 and then obj1 it re-places
+ * the base with func_8003D0F0 whenever the id changed, optionally rotates the
+ * part position into the parent frame with func_80010820 and func_8001006C,
+ * adds the parent translation and clears the base and id pointers, releasing
+ * flag 0x800 after obj1. It then applies the three node speeds scaled by the
+ * step, runs func_800718B8 per part index, integrates each part vertex from
+ * its own velocity table, maintains the timer with the 0x8000 and 0x1000 flag
+ * bits, and finally sets 0x1000 when no handler reported a hit and the low
+ * flag bit is set. Caller is func_8007364C, which dispatches here when flag
+ * 0x800 is set, so this is per-frame part animation of a compound model and
+ * it reads no globals.
  */
 void func_80071B40(Node *node, s32 dt)
 {

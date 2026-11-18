@@ -45,6 +45,17 @@ extern void *func_80017EBC(s32 size, s32 tag);
  *
  * @par Callers
  * Confirmed: func_800573A4.
+ *
+ * @par Environment path
+ * Allocates a 0x94-byte record with func_80017EBC and fills both of its
+ * 12-word matrix blocks from the neutral 16.16 matrix template D_8009AA38,
+ * then stamps the node with the next value of the serial counter D_8009F58C
+ * and appends it to the doubly linked list at D_8009F588 (tail walk, next and
+ * previous set). It returns the new id. It draws nothing and is not part of
+ * the render path itself, but its only caller func_800573A4:268 stores that
+ * id in the actor and immediately passes it to gSelectViewRecord
+ * (func_80017B60), so the record is the per-actor node whose id selects the
+ * map/camera view record.
  */
 s32 func_80017994(void)
 {

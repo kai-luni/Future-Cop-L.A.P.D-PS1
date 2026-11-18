@@ -19,7 +19,7 @@ extern u8 gMenuModeFlag __asm__("D_8009F680");
 extern s32 gMissionId __asm__("D_8009F684");
 extern s32 gMissionParam __asm__("D_8009F688");
 extern s32 gScratchBlockPtr __asm__("D_8009F68C");
-extern s32 D_8009FA24;
+extern s32 gPauseInhibitFlag __asm__("D_8009FA24");
 extern s32 gPanelSelection __asm__("D_8009FA6C");
 extern s32 gScreenResetFlag __asm__("D_8009FA70");
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
@@ -148,7 +148,7 @@ call_init:
     gMissionWorkingSet = 0;
     gMissionId = arg0;
     func_80017C68(0x168, 0x82, 0x118, 0x64, 0xFC, 0x145);
-    D_8009FA24 = 0;
+    gPauseInhibitFlag = 0;
     gPanelSelection = 0;
     func_800860CC();
     func_8008CCB0(gModuleNameBuffer, arg0);

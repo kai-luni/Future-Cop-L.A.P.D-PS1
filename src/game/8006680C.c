@@ -47,6 +47,21 @@ extern void func_80066684(void *, s32 *, s32, s32);
  * @par Unknown
  * The meaning of the table field D_800A6F38.pad[1] (compared against the actor's
  * id).
+ *
+ * @par Environment path
+ * Draws the minimap block around a position: func_800665E8 maps the position
+ * to the grid, the two loops cover the 24-cell window (32 pixels, 16 when
+ * gPlayerCount is at least 2), and each cell is masked to a tile through
+ * gTileMapTable and gTileBlockTable, whose tile id selects the pattern via
+ * gBuildTilePattern and whose two colour bytes set gTileColourWord through
+ * gWorldToRadarCell before func_80065CA8 draws the 16 by 16 pixel tile. The
+ * block is then framed: func_8004ED18 fills the rectangle, func_800694C8
+ * converts the start corner to screen space, func_8001C214 draws the blended
+ * frame and func_80066684 draws the markers. It is the radar sibling of the
+ * terrain pass - it shares gTileDefTable, gTileColourWord, gBuildTilePattern
+ * and gWorldToRadarCell with gDrawRegionTiles (func_8006531C) - but it draws
+ * the map into the HUD rather than into the view, and it is called from
+ * func_800267C8 (src/game/800267C8.c:335).
  */
 void func_8006680C(struct Owner *owner, s32 *pos)
 {

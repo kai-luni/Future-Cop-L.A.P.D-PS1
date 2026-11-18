@@ -53,6 +53,16 @@ extern void func_8002A5B4(void *script, s32 index);
  *
  * @par Likely role
  * A small script interpreter: two opcodes here, the rest delegated.
+ *
+ * @par Environment path
+ * Runs up to four queued script commands of an entity and then refreshes its
+ * frame vertex: opcode 0x53 sets or clears bit 1 of +0xC6, opcode 0x52
+ * selects an animation slot (or, for arguments above 10, writes
+ * +0xCA/+0xC0/+0x54, loads the matrix and transforms one vertex), and every
+ * other opcode is delegated to func_8002A5B4. The tail always loads +0x2C
+ * with func_80010750 and transforms one frame vertex with func_80010234. Not
+ * on the render path: it is an entity script step whose only caller is
+ * func_80041880 (line 148), and it draws nothing.
  */
 void func_80041728(struct Unk41728 *self)
 {

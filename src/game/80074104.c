@@ -143,6 +143,21 @@ extern void func_8001047C();
  * positions inside the 0x34-byte block are confirmed. The purpose of the two
  * flags 0x2000 (in +0x1A and in +0x8E) is not established beyond which code
  * path they select.
+ *
+ * @par Environment path
+ * Renders every entry of a linked object list as camera-facing ribbons: per
+ * entry it builds the strip transform with func_8003D9F8, applies a hard far
+ * cull with func_8001A100 above 0x1FFFF, fills the shared point array
+ * D_800A6418 with the header point and the vertex chain (camera subtraction
+ * and >> 4, or verbatim when object flag 0x100 is set), rebuilds the basis
+ * from D_8009F9E4 and projects the points with func_8001047C into the clip
+ * flags D_800AB388. Each segment whose endpoint flags are all 0xC0 gets a
+ * width of (halfwidth << 9) / depth with a 3-pixel minimum and a normal
+ * rescaled by the octagonal length approximation into D_800A7840 /
+ * D_800A7898, and is then emitted as one textured quad or as two flat quads
+ * from the D_8009F9F0 pool. It is on the environment path:
+ * gRunViewScenePasses (func_8003F6E4:91) calls it with the list head and the
+ * resolved view position, in the same pass that runs the region layers.
  */
 void func_80074104(u8 *input, s32 *pos)
 {

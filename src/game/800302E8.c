@@ -107,6 +107,19 @@ extern void func_80017668(void *instance, s32 part, void *out);
  *
  * @par Callers
  * func_80030960.
+ *
+ * @par Environment path
+ * Spawn initializer for an entity placed on terrain: it runs the base init
+ * func_8002AD58(2, self, data, arg2), copies the spawn sub-block half-words
+ * into the entity, maps the sub-block type onto a terrain mode, snaps the
+ * ground height with func_80067684 plus the sub-block bias, marks flags with
+ * 0x800001, builds and loads the yaw matrix, transforms one model vertex and
+ * starts the animation tracks with func_80044988. It then initialises the
+ * embedded model instance self->d4 through func_80013BD8 and fetches the
+ * world position with func_80017668. Its only caller is func_80030960. Not on
+ * the render path: it is the constructor of one object, and the instance it
+ * sets up is drawn later by the model pass; no packet, camera or view state
+ * is touched.
  */
 void func_800302E8(struct Entity *self, struct Spawn *data, s32 arg2)
 {

@@ -73,6 +73,18 @@ extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0")
  *
  * @par Callers
  * func_8003F4A0, the second of its six list passes, over D_800A1070[2].
+ *
+ * @par Environment path
+ * Per-frame tick of the effect list: it fades the two RGB triples at
+ * +0x89..+0x8F, advances a sprite-sheet frame using the timers +0x74..+0x84,
+ * rebuilds the billboard rotation with func_800188D0, decays the scale
+ * towards 4096 and calls func_8006D520 to re-emit a node every fourth frame
+ * and when the lifetime +0x6E is reached. It is called by gRunSceneListPasses
+ * (func_8003F4A0, line 45) as the first of its six per-layer passes, over
+ * scene list D_800A1070[2]. That is the object-list pass that runs on top of
+ * the environment, not the region pass of gDrawViewLayers itself, which never
+ * reaches this function directly; the visible output is produced by
+ * func_8006D520.
  */
 void func_8006D770(Obj *node, s32 dt)
 {

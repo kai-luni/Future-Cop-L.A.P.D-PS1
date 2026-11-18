@@ -93,6 +93,22 @@ extern void func_8006314C(void *,s32);
  * func_8002F7C8, recorded at 0x8002F7C8 (direct call at 0x8002F840). That
  * dispatcher itself has no direct caller in analysis/edges.json, so this
  * function is reached through an object-type table.
+ *
+ * @par Environment path
+ * Message-2 body of one object-type behaviour: it calls the shared
+ * func_8002AD58 first, then sets the ground height from func_80067684 plus
+ * the descriptor height shifted by 4, builds the base matrix from the
+ * descriptor angle with func_800188D0, converts the descriptor speed by
+ * dividing 300, and copies type, flags, the old active flag and the extra
+ * byte into the object. Types 0, 4 and 5 take the orientation path with the
+ * twelve-bit masked start and end angles and an optional second matrix, types
+ * 1, 2 and 3 take the travel path with the distance applied through
+ * func_8001AC28, and both paths end with a GTE matrix load and one vertex
+ * transform out of the state frame list before the tail may call
+ * func_8006314C or deactivate the object. The file states that the listing
+ * contains no absolute and no gp-relative access, so the function reads no
+ * globals at all, and its caller is func_8002F7C8, message 2 of the type
+ * handler.
  */
 s32 func_8002EED8(struct Obj *obj, struct Arg *arg, s32 extra)
 {

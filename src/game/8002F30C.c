@@ -84,6 +84,22 @@ extern void func_80047284(s32, s32, s32, s32);
  *
  * @par Callers
  * func_8002F7C8, the message table that dispatches message 6 here.
+ *
+ * @par Environment path
+ * Message-6 tick of a one-degree-of-freedom mover that func_8002F7C8
+ * dispatches at message 6: depending on the mode byte at +0xA0 it sweeps one
+ * rotation angle (modes 0, 4 and 5, applied as the x, y or z rotation),
+ * translates in the plane along the matrix x/z axes (modes 1 and 2) or moves
+ * y (mode 3) toward a target at dt * speed, clamps every step so the goal is
+ * never passed, flips the direction for ping-pong when bit 2 of the options
+ * byte is set, and then reloads the matrix and transforms one model part.
+ * While anything moves it arms the start sound at +0xA3 and caches matrix
+ * words 6..8; once nothing moves it clears the sound state and, when flag
+ * 0x400000 is set, stops the looped sound with func_800457B8 and plays the
+ * end sound positionally with func_80047284. It is an object update outside
+ * the render path - it shares only the gGteLoadMatrix /
+ * gGteTransformVerticesWide convention with the view code and reads no
+ * global.
  */
 s32 func_8002F30C(struct Obj *obj, s32 dt)
 {

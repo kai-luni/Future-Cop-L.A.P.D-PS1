@@ -56,6 +56,20 @@ extern u8 *func_8001E44C(u8 *destination, u8 *source, s32 count);
  * The $2/$3/$5 pins and the comma-expression in the pool test reproduce the
  * retail register allocation and branch layout; the logic is a plain
  * three-way dispatch.
+ *
+ * @par Environment path
+ * Frees a block obtained from func_80017EBC: it first tests whether the block
+ * lies inside one of the three fixed pools and, if so, pushes the node back
+ * onto that pool's free list through func_800195D0. Otherwise, when the block
+ * lies inside the free-range table window, it restores the 4-byte header,
+ * finds the matching range with func_8001814C and merges the start/end pair
+ * with its neighbours via the word moves func_8001E318 and func_8001E44C
+ * while keeping gFreeRangeCount and the heap search cursor consistent.
+ * Anything else is handed to the general allocator free func_8001E2C0. It is
+ * a memory routine, not part of the environment path: nothing here reads the
+ * camera, a region or a model, and the only effects are edits to the heap
+ * tables, which is why the map loaders (func_800634F4) and the whole
+ * executable use it.
  */
 void func_800181D4(void *block)
 {

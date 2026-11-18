@@ -47,7 +47,7 @@ extern s32 gPanelSelection __asm__("D_8009FA6C");
 extern u32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 gModuleLoadedFlag __asm__("D_8009FA84");
 extern u8 gMenuModeFlag __asm__("D_8009F680");
-extern s32 D_8009FA38;
+extern s32 gSavedTickCounter __asm__("D_8009FA38");
 extern s32 gPaletteCycleCounter __asm__("D_8009FA60");
 extern u32 gDiscShadeByte __asm__("D_8009FAA4");
 extern s32 gFrameTickBase __asm__("D_8009FA30");
@@ -55,7 +55,7 @@ extern s32 gFrameId __asm__("D_8009F9FC");
 extern u8 *D_8009F2D0;
 extern u8 gBannerString[] __asm__("D_8009F2F4");
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
-extern s32 D_8009FA24;
+extern s32 gPauseInhibitFlag __asm__("D_8009FA24");
 
 extern void func_8005780C(u32, struct InputAction *);
 extern void func_80046A34(s32);
@@ -214,7 +214,7 @@ void gRunSessionFrame(void)
     }
     if (!(flags & 0x20)) {
         if (gMenuModeFlag != 0) {
-            gPaletteCycleCounter = D_8009FA38;
+            gPaletteCycleCounter = gSavedTickCounter;
             clock_value = *(volatile s32 *)&gPaletteCycleCounter;
             gDiscShadeByte = clock_value;
             gFrameTickBase = clock_value;
@@ -317,10 +317,10 @@ void gRunSessionFrame(void)
         func_800616A0(gFrameId);
         func_80026D9C(gFrameId);
         gSweepRetiredEntities();
-        D_8009FA24 = 0;
+        gPauseInhibitFlag = 0;
     } else {
         if (gMenuModeFlag == 0) {
-            D_8009FA38 = gPaletteCycleCounter;
+            gSavedTickCounter = gPaletteCycleCounter;
             func_8001EB6C();
             gSoundPauseVoices();
             if (gGameSession->unk5C == 0) {
@@ -333,6 +333,6 @@ void gRunSessionFrame(void)
             func_80046C84(0x3E, endbase[index]);
         }
         gMenuModeFlag = 1;
-        D_8009FA24 = 1;
+        gPauseInhibitFlag = 1;
     }
 }

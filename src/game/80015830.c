@@ -48,6 +48,19 @@ extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
  *
  * @par Callers
  * func_80015B68, case 7 of its part-type switch (the only direct call site).
+ *
+ * @par Environment path
+ * Builds the screen-space quad of a type-7 model part from two transformed
+ * vertices: it rejects the part when either endpoint's clip byte in
+ * D_8009F57C has bit 0 set, takes the half width of each end from width[index
+ * + 2] scaled by 0x200 / z, and offsets both endpoints along the normal of
+ * the projected edge rescaled with the octagonal length approximation (larger
+ * axis plus a quarter of the smaller, minus a 64th). The depth written to
+ * out+0x10 is the mean of the two vertex depths. It emits no packet itself;
+ * its only call site is case 7 of gPrepareModelPart (func_80015B68, line
+ * 193), one level below gSubmitModelInstance (func_80017508) through
+ * gDrawModelInstanceParts (func_80016A64), so it is part-geometry preparation
+ * on the model render path.
  */
 s32 func_80015830(Input *in, Output *out, s16 *width)
 {

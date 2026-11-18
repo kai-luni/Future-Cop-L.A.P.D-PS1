@@ -38,6 +38,18 @@ extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_8001023
  * @par Likely role
  * The "mount this model on this entity" message: the donor supplies the model, the
  * target keeps its own matrix.
+ *
+ * @par Environment path
+ * Attaches a donor model to an entity: it forwards message 2 to
+ * func_8002AD58, rebinds the model with func_80013BD8(&obj->model,
+ * src->model, 0), copies the donor's nine-word matrix into the object,
+ * mirrors its translation into the position field, loads the matrix with
+ * gGteLoadMatrix and transforms one frame vertex into obj + 0x5C with
+ * gGteTransformVerticesWide. The donor model and matrix come from
+ * input->source, so the object keeps its own placement and only adopts the
+ * model and its orientation. It is entity-side model setup, not a scene pass:
+ * no global appears in the file and its only caller is the entity handler
+ * func_8003190C (src/game/8003190C.c:50).
  */
 void func_800317BC(struct Object *obj, struct Input *input, void *arg)
 {

@@ -76,6 +76,19 @@ extern void gSampleCellWindow(s32 a0, s32 a1, struct Block *block) __asm__("func
  *
  * @par Callers
  * func_80026E5C.
+ *
+ * @par Environment path
+ * Per-view camera anchor update: it selects the view record with
+ * func_80017B60, loads the camera rotation with func_80010820, projects the
+ * entity height against the camera eye using the reciprocal of half the
+ * camera rate word, writes the resulting ground position pair into
+ * gScenePositionPairs (D_800A3190) together with two 17-bit-shifted scale
+ * bytes into D_8009F834, and fills one region of the coverage grid through
+ * gSampleCellWindow (func_80064460). It runs once per player and frame from
+ * the scratchpad trampoline func_80026E5C, which gRunSessionFrame
+ * (func_80027510, lines 232 and 233) calls just before the draw pass. It
+ * draws nothing itself, but it produces the position func_80069580 hands to
+ * the scene traversal and the cell data that gDrawViewLayers then renders.
  */
 void func_80066C9C(s32 index, struct Entity *obj)
 {

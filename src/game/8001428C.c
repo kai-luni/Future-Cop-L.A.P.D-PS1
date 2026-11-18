@@ -72,6 +72,17 @@ extern void func_8001047C(u8 *a0, u8 *a1, u8 *a2, s32 a3);
  *
  * @par Unknown
  * The meaning of the table fields p[1]..p[7] beyond their use as indices.
+ *
+ * @par Environment path
+ * Draws a multi-part object: per part it builds the camera-relative transform
+ * with func_800178DC, sets the depth/tag pair through func_80013CB8, composes
+ * the part matrix with func_80014164 and projects the part's vertices with
+ * one func_8001010C call and one func_8001047C call. func_800175A0 calls it
+ * directly before func_80017058 submits the parts
+ * (src/game/800175A0.c:17-18). It writes the same renderer slots as the
+ * environment path (D_800A0300, D_8009FAE0, D_8009F570 to D_8009F57C) but
+ * transforms actors, not the region grid, so it is a sibling of the model
+ * path rather than part of the terrain pass.
  */
 void func_8001428C(struct Arg0 *arg0, u8 *arg1)
 {

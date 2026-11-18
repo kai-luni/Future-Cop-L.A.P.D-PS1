@@ -136,6 +136,18 @@ extern s32 func_8006314C(s32 arg0, u8 arg1);
  *
  * @par Callers
  * func_80041B6C (sole direct caller).
+ *
+ * @par Environment path
+ * Advances an entity along its waypoint sequence: the travelled word at +0x54
+ * moves by the segment speed at +0xB8 or +0xBC, the stop index at +0xCA walks
+ * the threshold array at +0xA0 and reverses the direction at either end, and
+ * on an index change the distance snaps to the old threshold, the dwell timer
+ * at +0xC0 restarts from +0xAC or a constant 1, and func_800457B8 or
+ * func_80047284 may fire. The whole advance is gated by the timers and by a
+ * check whether the entity is the current one of either player slot in
+ * D_8009FA58 while that game's word at +0x40 is zero, and the tail always
+ * loads the basis with func_80010750 and transforms one frame vertex with
+ * func_80010234. The sole caller is func_80041B6C.
  */
 s32 func_80041880(struct Obj41880 *arg0, s32 arg1)
 {

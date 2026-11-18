@@ -36,6 +36,17 @@ extern void gGteTransformVerticesWide(u8 *, void *, s32) __asm__("func_80010234"
  * @par Likely role
  * The "stand on the terrain" orientation of a ground object: the model's up axis
  * follows the surface normal unless the flags pin it.
+ *
+ * @par Environment path
+ * Orients an object's model basis and refreshes its frame vertex: depending
+ * on flags 0x200 and 0x100 it either snaps the position to the ground with
+ * func_80066F78, blends the surface normal into the existing basis with
+ * func_800192AC, writes the fixed yaw/pitch basis, or builds the matrix with
+ * func_800188D0, loads it with func_80010750 and transforms one frame vertex
+ * with func_80010234. Callers are func_800378BC (line 93) and func_8002B784
+ * (line 202), both per-frame entity updates. Not on the render path: it
+ * produces the transform the model pass later consumes, but it emits nothing,
+ * touches no global and no packet pool.
  */
 void func_80037EB4(struct Self *arg)
 {

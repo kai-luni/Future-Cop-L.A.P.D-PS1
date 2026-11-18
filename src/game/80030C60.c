@@ -24,7 +24,7 @@ struct Owner { u8 pad00[0x94]; void *callback; u8 pad98[8]; struct Vec position;
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern void func_80069D68(void *, s32, s32, void *);
-extern s16 D_8009FA44[];
+extern s16 gSlotTimerTable[] __asm__("D_8009FA44");
 
 /**
  * @brief Draws one vertex of an entity and hands it to the entity callback.
@@ -44,6 +44,17 @@ extern s16 D_8009FA44[];
  * @par Likely role
  * The per-entity "attach this part's screen position to the caller" step of the
  * model pass; 0x12 is the two-part entity type.
+ *
+ * @par Environment path
+ * Message 11 body of the entity handler func_80030D3C (line 48): it
+ * substitutes entity->child when the type byte is 0x12, copies the owner
+ * position into the entity, loads the entity matrix with func_80010750,
+ * transforms the part selected by +0x70 with func_80010234, stamps 300 into
+ * the D_8009FA44 slot named by the entity's extra record and finally runs the
+ * owner script through the script VM func_80069D68 when the owner has one. It
+ * returns 0 on every path. Not a render routine: the transform is a position
+ * probe for the script side, it emits no packet, and its only caller is
+ * func_80030D3C.
  */
 s32 func_80030C60(struct Owner *owner, struct Entity *entity)
 {
@@ -57,7 +68,7 @@ s32 func_80030C60(struct Owner *owner, struct Entity *entity)
         __asm__ volatile ("" : : : "memory");
         index = entity->extra->index;
         __asm__ volatile ("" : "=r" (index) : "0" (index));
-        D_8009FA44[index] = 300;
+        gSlotTimerTable[index] = 300;
     }
     if (owner->callback)
         func_80069D68(owner->callback, 0, entity->flags & 0x7fff, owner);

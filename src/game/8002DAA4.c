@@ -33,6 +33,16 @@ extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_8001023
  * @par Likely role
  * The "walk animator" of a ground entity: height from the data record plus the
  * floor query func_80067684 keeps the frame on the terrain.
+ *
+ * @par Environment path
+ * Runs one tick of a ground entity: func_8002AD58(2, ...) executes the
+ * scripted behaviour, the animation track is advanced with func_80044988, and
+ * the frame vertex is refreshed through func_800188D0, func_80010750 and
+ * func_80010234. The vertical position is the terrain query func_80067684
+ * plus the height from the data record, which is what keeps the frame on the
+ * ground. It hands a transformed frame vertex to the model renderer but
+ * touches no region, tile, camera or packet state, so it is upstream of the
+ * environment pass rather than part of it.
  */
 s32 func_8002DAA4(struct Object *self, struct Data *data, s32 arg2)
 {

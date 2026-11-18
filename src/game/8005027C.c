@@ -96,6 +96,22 @@ typedef struct { s32 x, y, z; } V3;
  * @par Callers
  * func_80050D14 (the mover dispatcher, which routes to this function when flags
  * 0x50 is clear and to func_80050D14 otherwise).
+ *
+ * @par Environment path
+ * Integrates one step of a rail or spline following entity: the hold timer at
+ * +0x40 runs down and reseeds the speed from the base speed, the speed at
+ * +0x32 ramps toward the render object value with the acceleration and
+ * deceleration rates divided by 16, and the progress at +0x1C is consumed
+ * segment by segment, rebuilding the render position from the segment start,
+ * the velocity and the fixed-point ratio 0x80000000 divided by half the
+ * segment length. On a segment change func_8004F764 picks the next segment,
+ * the level nibbles of the 12-byte map entries are moved from the old index
+ * to the new one, and a -2 exit code with flag 0x8000 tears the entity down
+ * through func_8004D958, after which the yaw and pitch snapshots are
+ * refreshed with func_8001846C. Every pass ends with func_800188D0 building
+ * the matrix, func_80010750 loading it, func_80010234 transforming the frame
+ * vertex and func_80037EB4 re-orienting the basis; the caller is the mover
+ * dispatcher func_80050D14 and no global is accessed.
  */
 s32 func_8005027C(u8 *s, s32 step, u8 *op)
 {

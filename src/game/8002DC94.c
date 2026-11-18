@@ -101,6 +101,21 @@ extern void gGteTransformVerticesWide(u8 *ptr, u8 *unk5C, s32 a2) __asm__("func_
  *
  * @par Callers
  * func_8002DEA8.
+ *
+ * @par Environment path
+ * Spawn initializer for a weapon-derived entity: it remaps weapon mode 0x18
+ * to 0xB, selects one of two field sets (the alternate one also sets the flag
+ * word to (flags | 0x11) & 0xFFEFDEF7), runs the base initializer
+ * func_8002AD58(2, ...), maps the mode to a terrain selector and sets pos.y
+ * from func_80067684 plus a base height. When the flag bit is set it refines
+ * the height with func_80066F78 and builds a slope-aligned basis through
+ * func_800192AC from the (cos, 0, sin) direction produced by gSinCos,
+ * otherwise it writes the explicit yaw matrix into the instance basis. It
+ * finishes by starting the animation track (func_80044988), loading the basis
+ * with gGteLoadMatrix and transforming one frame vertex with
+ * gGteTransformVerticesWide. That GTE work prepares state the submit consumes
+ * later, so the unit is placement rather than drawing; it is called only from
+ * message 2 of func_8002DEA8 (src/game/8002DEA8.c:67) and reads no global.
  */
 s32 func_8002DC94(struct Self *self, struct Arg1 *arg1, s32 arg2)
 {

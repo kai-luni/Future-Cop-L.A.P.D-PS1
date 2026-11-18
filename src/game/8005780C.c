@@ -28,6 +28,15 @@ struct InputAction {
  *
  * @par Callers
  * func_800260B8, func_800267C8, func_80027510, gWeaponSlotInput, func_800569EC.
+ *
+ * @par Environment path
+ * Four-phase button decoder: a set bit in the current mask moves the action
+ * record to the press edge (phase 0) or to held (phase 3), a released mask
+ * moves it to the release edge (phase 1) or back to idle (phase 2), and phase
+ * 2 stays put until the button is pressed again. Every frame driver and
+ * camera/menu handler runs it on its own two-word action record, and
+ * func_800271A4 calls it at the top of its frame (src/game/800271A4.c:120).
+ * It is pure input state and has nothing to do with the render path.
  */
 void func_8005780C(u32 buttons, struct InputAction *action)
 {

@@ -122,6 +122,17 @@ extern int func_8002AD58(int, void *, void *);
  *
  * @par Callers
  * func_8003A844, message 6 (analysis/edges.json, kind "direct").
+ *
+ * @par Environment path
+ * Per-frame tick of a force-field object, called from message 6 of its own
+ * handler func_8003A844. It runs the phase timer, computes one force vector
+ * per player slot from the distance to the actor (radial, along z or along x
+ * depending on the mode byte), scales it by the fall-off curve, the strength
+ * and the frame delta, and adds the result to the velocity of every actor in
+ * D_8009FA58. When the object owns a motion block it also steps it with
+ * func_80050D14 and rewrites its own model frame vertex through func_80010750
+ * and func_80010234. It is a physics unit that changes state owned by other
+ * objects; no view, region or camera state is touched.
  */
 void func_8003A160(Obj *obj, s32 dt)
 {
