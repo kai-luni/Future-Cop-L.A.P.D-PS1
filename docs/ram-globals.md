@@ -921,7 +921,7 @@ Diese Gruppe bildet den Kern der 3D-Ausgabe: Transformationspuffer, Clip-Flags, 
 |---|---|---|---|---|
 | `D_800A3344` | `gVmRecordObjects` | `u8[]` | Objektbereich der Datensatz-Tabelle, also `gVmRecordTable` + 4: je Datensatz zwei 0x20-Byte-Objekte (bei `+0x04` und `+0x24`), die vier aufgelösten Referenzen sitzen bei `+0x44`. **Bestätigt.** | `gRegistryLoad` |
 
-Drei Wörter dieses Pfads bleiben ohne C-Namen: `D_8009F378`, `D_8009F380` und `D_8009F384` werden nur als viertes Argument (Zeitbasis des Strahlsegments) an `func_8006F0E8` übergeben; was die Werte bedeuten, sagt der Code nicht.
+Drei Wörter dieses Pfads bleiben ohne C-Namen: `D_8009F378`, `D_8009F380` und `D_8009F384` gehen als viertes Argument an `func_8006F0E8`, wo der Wert als Divisor wirkt (`sra $s1,4`, dann `div`), obwohl die statischen Werte wie Farbwörter aussehen. Was sie bedeuten, sagt der Code nicht.
 
 ## Diagnose
 
