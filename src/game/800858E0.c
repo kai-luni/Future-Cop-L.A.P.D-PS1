@@ -6,21 +6,21 @@ struct UnkF4BC {
     s32 unk114;
 };
 
-extern struct UnkF4BC *gDecodeJob __asm__("D_8009F4BC");
+extern struct UnkF4BC *gMovieSliceContext __asm__("D_8009F4BC");
 
 /**
  * @brief Returns the active buffer index of the playback context.
  *
- * @return D_8009F4BC->unk114, the 0/1 selector of the double buffer pair.
+ * @return gMovieSliceContext->unk114, the 0/1 selector of the double buffer pair.
  *
  * @par Confirmed
  * Single field read. func_80085AC4 uses the same field to pick the
  * inactive buffer pair when flipping.
  *
  * @par Callers
- * func_80087D48.
+ * gCloseVideoLayer.
  */
 s32 func_800858E0(void)
 {
-    return gDecodeJob->unk114;
+    return gMovieSliceContext->unk114;
 }

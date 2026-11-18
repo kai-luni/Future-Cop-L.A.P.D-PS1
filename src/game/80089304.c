@@ -21,7 +21,7 @@ struct Unk80089304State {
     s32 unk44C;
 };
 
-extern struct Unk80089304State *gQueueBlock __asm__("D_8009F970");
+extern struct Unk80089304State *gMovieStreamContext __asm__("D_8009F970");
 extern void func_80089018(void);
 
 /**
@@ -31,7 +31,7 @@ extern void func_80089018(void);
  *  After updating the counters, the function checks whether to switch nodes.
  *  @param arg0 Amount added to the current node and page accounting.
  *  @par Globals
- *  D_8009F970 points to the state and nodes whose counters and pointers are updated.
+ *  gMovieStreamContext points to the state and nodes whose counters and pointers are updated.
  *  @par Control flow
  *  A boundary branch updates the remainder and page count; after the call, a
  *  completed current node switches to the replacement if they differ.
@@ -41,9 +41,11 @@ extern void func_80089018(void);
  *  Updates node progress and state counters; a switch clears unk44C and loads
  *  the replacement node's unk28 as the new remainder.
  *  @par Callers
- *  Confirmed: func_800879DC.
+ *  Confirmed: gMovieStreamDemux.
  */
-void func_80089304(s32 arg0)
+void gMovieStreamAdvance(s32 arg0) __asm__("func_80089304");
+
+void gMovieStreamAdvance(s32 arg0)
 {
     {
         register s32 amount __asm__("$5");
@@ -54,7 +56,7 @@ void func_80089304(s32 arg0)
 
         amount = arg0;
         __asm__("" : "+r"(amount));
-        state = gQueueBlock;
+        state = gMovieStreamContext;
         node = state->unk42C;
         rem = state->unk444;
         __asm__("" : "+r"(node) : "r"(rem));
@@ -75,15 +77,15 @@ void func_80089304(s32 arg0)
     {
         register struct Unk80089304State *state __asm__("$5");
         register struct Unk80089304Node *node __asm__("$4");
-        state = gQueueBlock;
+        state = gMovieStreamContext;
         node = state->unk42C;
         if (node->unk04 == node->unk10 && state->unk430 != node) {
             if (state->unk444 != 0) {
                 state->unk440++;
             }
-            gQueueBlock->unk44C = 0;
-            gQueueBlock->unk42C = gQueueBlock->unk430;
-            gQueueBlock->unk444 = gQueueBlock->unk42C->unk28;
+            gMovieStreamContext->unk44C = 0;
+            gMovieStreamContext->unk42C = gMovieStreamContext->unk430;
+            gMovieStreamContext->unk444 = gMovieStreamContext->unk42C->unk28;
         }
     }
 }

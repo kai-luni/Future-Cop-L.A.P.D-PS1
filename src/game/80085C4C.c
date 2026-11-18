@@ -4,7 +4,7 @@ typedef struct {
  u8 pad00[0x24]; void *a24; void *a28; void *a2c;
  u8 pad30[0xcc]; u8 fc, fd; u8 padfe[8]; s16 f106; u8 pad108[2]; s16 f10a; u8 pad10c[4]; u8 f110, f111; u8 pad112[2]; s32 f114; u8 pad118[8]; s32 f120, f124, f128, f12c;
 } Ctx;
-extern Ctx *gDecodeJob __asm__("D_8009F4BC");
+extern Ctx *gMovieSliceContext __asm__("D_8009F4BC");
 extern int gStripDitherEnabled __asm__("D_8009F4C4");
 extern int gReleaseDoneFlag __asm__("D_8009F508");
 extern int gStripScaleEnable __asm__("D_8009F4C0");
@@ -35,7 +35,7 @@ extern int func_8009612C(void *), func_80096108(int), func_80092B94(int);
  *         pointers was null (0x80085C80..0x80085C98).
  *
  * @par Globals
- * - D_8009F4BC (0x8009F4BC, $gp 0x2A8): the global playback context; overwritten
+ * - gMovieSliceContext (0x8009F4BC, $gp 0x2A8): the global playback context; overwritten
  *   with @c ctx and then used for every field access.
  * - D_8009F4C0 (0x8009F4C0, $gp 0x2AC): compared with 1 to select the
  *   interlaced flag pair and to set D_8009F508.
@@ -49,7 +49,7 @@ extern int func_8009612C(void *), func_80096108(int), func_80092B94(int);
  * Confirmed:
  * 1. Null checks for ctx, a1, a2 and a3, then func_8001E4C0(ctx, 0, 0x130)
  *    (memset) at 0x80085CA0.
- * 2. D_8009F4BC = ctx; func_80085AC4((unsigned char)a5, 0).
+ * 2. gMovieSliceContext = ctx; func_80085AC4((unsigned char)a5, 0).
  * 3. Four environment blocks, two of 92 bytes and two of 20 bytes (the offsets
  *    differ by exactly 0x5C and 0x14):
  *    func_80092140(ctx+0x34, 0, 0, 0x140, 0xF0),
@@ -88,7 +88,7 @@ extern int func_8009612C(void *), func_80096108(int), func_80092B94(int);
  * func_8008C9C0 and func_8008C9E0.
  *
  * @par Likely role
- * The "open playback context" half of func_80087EA0: that caller allocates one
+ * The "open playback context" half of gOpenVideoLayer: that caller allocates one
  * ring buffer and a3 = 0x10000 (0x6DE0 in its narrow variant), then passes the
  * ring, ring + a3 and ring + 2 * a3 as a1, a2 and a3 with a4 = 1, a5 = narrow and
  * a6 = 0, which fits a triple-buffered 320x240 decoder. The 92-byte and 20-byte
@@ -105,43 +105,43 @@ extern int func_8009612C(void *), func_80096108(int), func_80092B94(int);
  *   the code reads it back.
  *
  * @par Callers
- * func_80087EA0, recorded at 0x80087EA4 (the second instruction of its
- * prologue; the direct call is at 0x8008803C). func_80087EA0 itself is called
- * only by func_80089D44.
+ * gOpenVideoLayer, recorded at 0x80087EA4 (the second instruction of its
+ * prologue; the direct call is at 0x8008803C). gOpenVideoLayer itself is called
+ * only by gDrawImageResource.
  */
 int func_80085C4C(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, int a6)
 {
  if (ctx) {
  if (a1 && a2 && a3) {
  func_8001E4C0(ctx,0,0x130);
- gDecodeJob=ctx;
+ gMovieSliceContext=ctx;
  func_80085AC4((u8)a5,0);
- func_80092140((u8 *)gDecodeJob+0x34,0,0,0x140,0xf0);
- func_800921F4((u8 *)gDecodeJob+0xec,0,0,0x140,0xf0);
- func_80092140((u8 *)gDecodeJob+0x90,0,0x100,0x140,0xf0);
- func_800921F4((u8 *)gDecodeJob+0x100,0,0x100,0x140,0xf0);
+ func_80092140((u8 *)gMovieSliceContext+0x34,0,0,0x140,0xf0);
+ func_800921F4((u8 *)gMovieSliceContext+0xec,0,0,0x140,0xf0);
+ func_80092140((u8 *)gMovieSliceContext+0x90,0,0x100,0x140,0xf0);
+ func_800921F4((u8 *)gMovieSliceContext+0x100,0,0x100,0x140,0xf0);
  if (gStripScaleEnable == 1 && gStripDitherEnabled == 0) {
-  gDecodeJob->fd=1; gDecodeJob->f111=1;
- } else { gDecodeJob->fd=0; gDecodeJob->f111=0; }
- gDecodeJob->fc=0; gDecodeJob->f110=0;
- gDecodeJob->f114=0; *(s16 *)((u8 *)gDecodeJob+0xf6)=0; gDecodeJob->f10a=0;
+  gMovieSliceContext->fd=1; gMovieSliceContext->f111=1;
+ } else { gMovieSliceContext->fd=0; gMovieSliceContext->f111=0; }
+ gMovieSliceContext->fc=0; gMovieSliceContext->f110=0;
+ gMovieSliceContext->f114=0; *(s16 *)((u8 *)gMovieSliceContext+0xf6)=0; gMovieSliceContext->f10a=0;
  if (a6) {
   func_80091270(0);
-  func_800932F0((u8 *)gDecodeJob+0x34+(1-gDecodeJob->f114)*92);
-  func_800934BC((u8 *)gDecodeJob+0xec+(1-gDecodeJob->f114)*20);
+  func_800932F0((u8 *)gMovieSliceContext+0x34+(1-gMovieSliceContext->f114)*92);
+  func_800934BC((u8 *)gMovieSliceContext+0xec+(1-gMovieSliceContext->f114)*20);
   func_80092BF4(1);
  }
- gDecodeJob->a28=a1; gDecodeJob->a2c=a2; gDecodeJob->a24=a3;
- func_80095E90(0); func_8008C9C0(); gDecodeJob->f12c=a4;
+ gMovieSliceContext->a28=a1; gMovieSliceContext->a2c=a2; gMovieSliceContext->a24=a3;
+ func_80095E90(0); func_8008C9C0(); gMovieSliceContext->f12c=a4;
  if (a4) {
-  gDecodeJob->f120=func_8009612C(D_80085074);
-  gDecodeJob->f124=func_80096108(0);
-  gDecodeJob->f128=func_80092B94(0);
+  gMovieSliceContext->f120=func_8009612C(D_80085074);
+  gMovieSliceContext->f124=func_80096108(0);
+  gMovieSliceContext->f128=func_80092B94(0);
   if (gStripScaleEnable==1) gReleaseDoneFlag=1;
  } else {
-  gDecodeJob->f120=func_8009612C(0);
-  gDecodeJob->f124=func_80096108(0);
-  gDecodeJob->f128=func_80092B94(0);
+  gMovieSliceContext->f120=func_8009612C(0);
+  gMovieSliceContext->f124=func_80096108(0);
+  gMovieSliceContext->f128=func_80092B94(0);
   gReleaseDoneFlag=0;
  }
  func_8008C9E0(); func_80085F1C(); return 1;

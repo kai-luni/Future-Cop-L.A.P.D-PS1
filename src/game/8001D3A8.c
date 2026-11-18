@@ -29,7 +29,7 @@ extern Unk800A6D78 gFileSlotTable[] __asm__("D_800A6D78");
  * Clears `D_800A6D78[index].field0` to `0` when the slot is not in state `2` or `3`.
  *
  * @par Callers
- * Confirmed: func_8001E004 (0x8001E0E4), func_80029EB8 (0x80029F2C), and func_80088120 (0x800884A4 in asm/us/main.s) / Likely: none / Unknown: none.
+ * Confirmed: func_8001E004 (0x8001E0E4), func_80029EB8 (0x80029F2C), and gPlayVideoFile (0x800884A4 in asm/us/main.s) / Likely: none / Unknown: none.
  */
 s32 func_8001D3A8(u32 index)
 {

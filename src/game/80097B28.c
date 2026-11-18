@@ -76,7 +76,7 @@ extern void func_80097DF8(void);
  * over a long session.
  *
  * @par Callers
- * func_80021898 (0x800218E0), func_8002333C (0x8002342C) and func_80087EA0
+ * func_80021898 (0x800218E0), func_8002333C (0x8002342C) and gOpenVideoLayer
  * (0x800880C0, 0x800880DC); all analysis/edges.json kind "direct".
  */
 s32 func_80097B28(s32 size)

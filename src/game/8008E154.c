@@ -22,7 +22,7 @@ extern s32 func_8008ECFC(s32 mode, u8 *result);
  * @par Side effects
  * Completes or aborts the running CD command.
  * @par Callers
- * Confirmed: func_800895E4 (device start/stop).
+ * Confirmed: gCdStreamService (device start/stop).
  */
 s32 func_8008E154(s32 mode, u8 *result)
 {

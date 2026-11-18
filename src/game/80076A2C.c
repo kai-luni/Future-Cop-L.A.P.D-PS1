@@ -37,7 +37,7 @@ extern s8 D_8009F868;
 extern s8 D_8009F869;
 extern u8 gUploadRequestFlag __asm__("D_8009F3E5");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
-extern u8 gLoopAbortFlag __asm__("D_8009F4E0");
+extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
 extern s32 gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern s32 D_8009F3D0;
 extern u8 D_8009F3A0[];
@@ -62,7 +62,7 @@ extern void func_80080B08(void);
 extern s32 func_8007F8CC(void);
 extern void func_8007FACC(void);
 extern void func_8007FA48(void);
-extern void func_80089D44(void *, s32, s32, s32, s32, s32);
+extern void gDrawImageResource(void *, s32, s32, s32, s32, s32) __asm__("func_80089D44");
 extern void func_8008CD30(void *, void *, s32, s32);
 extern void func_8001B448(void);
 extern void func_80077088(void);
@@ -107,12 +107,12 @@ extern s32 func_80083130(void *);
  * 8. Busy wait until D_8009FA2C has advanced by 0x5DC (~timing ticks) *and*
  *    func_8007F8CC() reports completion; func_80080B08() is pumped in between
  *    (this is the only place the delay loop body appears).
- * 9. func_8007FACC(), func_8007FA48(), then two func_80089D44 image draws:
+ * 9. func_8007FACC(), func_8007FA48(), then two gDrawImageResource image draws:
  *    D_80011E3C ("Ea_logo.fsv") at (0,0) with mode 4, and the name built by
  *    func_8008CD30(local, "%s%s", D_8009F3D0, "Intro.wve") where D_8009F3D0
  *    points at the path prefix "Movies\\"
  *    at (0,0x18) with mode 4. The two trailing arguments of those calls
- *    (0x140/0xF0 and 0x140/0xC0) are width/height values that func_80089D44
+ *    (0x140/0xF0 and 0x140/0xC0) are width/height values that gDrawImageResource
  *    does not read - the rebuild is byte-exact without them.
  * 10. func_8001B448() and func_80077088() release the boot-time allocations,
  *     func_800780C0() installs the character table, and the infinite loop
@@ -151,7 +151,7 @@ extern s32 func_80083130(void *);
  *   state block used by the screen module.
  * - D_8009F9A8: mirror of unk10, the active screen state.
  * - D_8009FA2C: time base used for the boot wait.
- * - D_8009F3E5 / D_8009F3F0 / D_8009F3EC / D_8009F4E0: loading-screen request
+ * - D_8009F3E5 / D_8009F3F0 / D_8009F3EC / gMovieAbortFlag: loading-screen request
  *   flag, screen index (see D_8009B42C), pending module name and an "inhibit
  *   overlay" flag.
  * - D_8009F3A8 ("FE.mis"), D_8009F3B0 (".mis"), D_8009F3A0 ("%s%s"),
@@ -228,10 +228,10 @@ s32 func_80076A2C(void)
         s3 = 1;
         func_8007FA48();
 
-        func_80089D44(gEaLogoName, 4, 0, 0, s0, 0xF0);
+        gDrawImageResource(gEaLogoName, 4, 0, 0, s0, 0xF0);
 
         func_8008CD30(local, D_8009F3A0, D_8009F3D0, (s32)D_80011E48);
-        func_80089D44(local, 4, 0, 0x18, s0, 0xC0);
+        gDrawImageResource(local, 4, 0, 0x18, s0, 0xC0);
 
         func_8001B448();
         func_80077088();
@@ -300,12 +300,12 @@ s32 func_80076A2C(void)
 
             if (s0 != 0) {
                 func_8008CD30(local + 0x28, D_8009F3A0, D_8009F3D0, s0);
-                func_80089D44(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
+                gDrawImageResource(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
             }
 
-            if (gLoopAbortFlag == 0 && *(s32 *)(local + 0x50) != 0) {
+            if (gMovieAbortFlag == 0 && *(s32 *)(local + 0x50) != 0) {
                 func_8008CD30(local + 0x28, D_8009F3A0, D_8009F3D0, *(s32 *)(local + 0x50));
-                func_80089D44(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
+                gDrawImageResource(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
             }
 
             func_80077088();

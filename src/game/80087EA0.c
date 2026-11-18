@@ -1,19 +1,19 @@
 // Categories: Graphics > Video Layer | Resources > Movie Playback
 #include "game/types.h"
 
-extern u8 gLoopAbortFlag __asm__("D_8009F4E0");
+extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
 extern u8 gLayerOpenResult __asm__("D_8009F504");
-extern s32 gChunkSkipFlag __asm__("D_8009F4DC");
+extern s32 gMovieDisplayMode __asm__("D_8009F4DC");
 extern s32 D_8009F4E4;
 extern s32 D_8009F4E8;
-extern s32 D_8009F4EC;
-extern s32 D_8009F4F0;
-extern s32 D_8009F4F4;
-extern s32 D_8009F4F8;
+extern s32 gMovieStreamBuffer __asm__("D_8009F4EC");
+extern s32 gMovieAudioBlock __asm__("D_8009F4F0");
+extern s32 gMovieSpuBufferA __asm__("D_8009F4F4");
+extern s32 gMovieSpuBufferB __asm__("D_8009F4F8");
 extern s32 D_8009F4FC;
 extern s32 D_8009F500;
-extern s32 D_8009F958;
-extern s32 D_8009F95C;
+extern s32 gMoviePadMask0 __asm__("D_8009F958");
+extern s32 gMoviePadMask1 __asm__("D_8009F95C");
 extern s32 D_8009F960;
 extern s32 D_8009F964;
 extern s32 gLayerModeBits __asm__("D_8009F968");
@@ -27,7 +27,7 @@ extern s32 func_80085C4C(s32, s32, s32, s32, s32, s32, s32);
 extern s32 func_80087814(void);
 extern s32 func_8008781C(void);
 extern s32 func_8008799C(s32);
-extern void func_80087D48(void);
+extern void gCloseVideoLayer(void) __asm__("func_80087D48");
 extern s32 func_800896D4(s32, s32, s32);
 extern void func_80089A88(s32, s32, s32);
 extern void func_8008F7AC(void);
@@ -45,12 +45,12 @@ extern s32 func_80097B28(s32);
  *             display reset; bits 2 (0x4), 3 (0x8) and 4 (0x10) select the
  *             decoder initialisation path.
  * @return 1 when the layer is open, 0 when an allocation failed (the layer is
- *         then closed again through func_80087D48).
+ *         then closed again through gCloseVideoLayer).
  *
  * @par Confirmed flow
  * 1. Already open (D_8009F504 != 0) returns 1 immediately.
  * 2. func_8001EF8C(0) and func_8001EF8C(1) are masked with 0x40080000 and
- *    stored in D_8009F958/D_8009F95C (two per-channel flag sets).
+ *    stored in gMoviePadMask0/gMoviePadMask1 (two per-channel flag sets).
  *    D_8009F960 = 0x400, D_8009F964 = 0x800 (destination strides) and
  *    D_8009F968 = 0xC8 or 0x27 (row length).
  * 3. Unless bit 0x20 is set, func_80092BF4(0) and func_80091F60(0) reset the
@@ -67,12 +67,12 @@ extern s32 func_80097B28(s32);
  *    func_800896D4 with 0x424C), then func_8008781C() bytes, and two blocks of
  *    func_80087814() bytes each.
  * 8. D_8009F504 = 1 and 1 is returned; any failed allocation jumps to the
- *    failure path that calls func_80087D48() and returns 0.
+ *    failure path that calls gCloseVideoLayer() and returns 0.
  *
  * @par Globals
- * D_8009F4DC (mode + derived flags), D_8009F958/D_8009F95C/D_8009F960/
- * D_8009F964/D_8009F968 (geometry), D_8009F4E4/D_8009F4E8/D_8009F4EC/
- * D_8009F4F0/D_8009F4F4/D_8009F4F8/D_8009F4FC/D_8009F500 (buffers),
+ * gMovieDisplayMode (mode + derived flags), gMoviePadMask0/gMoviePadMask1/D_8009F960/
+ * D_8009F964/D_8009F968 (geometry), D_8009F4E4/D_8009F4E8/gMovieStreamBuffer/
+ * gMovieAudioBlock/gMovieSpuBufferA/gMovieSpuBufferB/D_8009F4FC/D_8009F500 (buffers),
  * D_8009F504 (open flag), D_8009FA48.
  *
  * @par Likely role
@@ -81,9 +81,11 @@ extern s32 func_80097B28(s32);
  * two tables that later get copied into the scratchpad by func_800861E4.
  *
  * @par Callers
- * func_80089D44, at most once per draw unless the layer is already open.
+ * gDrawImageResource, at most once per draw unless the layer is already open.
  */
-s32 func_80087EA0(s32 arg0)
+s32 gOpenVideoLayer(s32 arg0) __asm__("func_80087EA0");
+
+s32 gOpenVideoLayer(s32 arg0)
 {
     register s32 var_s0 __asm__("$16");
     register s32 var_v0 __asm__("$2");
@@ -95,12 +97,12 @@ s32 func_80087EA0(s32 arg0)
         return 1;
     }
 
-    gLoopAbortFlag = 0;
+    gMovieAbortFlag = 0;
     var_a0 = func_8001EF8C(0);
     var_s0 = 0x40080000;
-    D_8009F958 = var_a0 & var_s0;
+    gMoviePadMask0 = var_a0 & var_s0;
     var_v0 = func_8001EF8C(1) & var_s0;
-    D_8009F95C = var_v0;
+    gMoviePadMask1 = var_v0;
     var_v0 = 0x400;
     D_8009F960 = var_v0;
     var_v0 = 0x800;
@@ -129,7 +131,7 @@ s32 func_80087EA0(s32 arg0)
         var_a0 = 0x22D00;
     }
 
-    gChunkSkipFlag = arg0;
+    gMovieDisplayMode = arg0;
     D_8009F4E4 = func_8008799C(var_a0);
     if (D_8009F4E4 == 0) {
         goto fail;
@@ -162,7 +164,7 @@ s32 func_80087EA0(s32 arg0)
     }
 
     var_a3 = 0x10000;
-    if (gChunkSkipFlag & 1) {
+    if (gMovieDisplayMode & 1) {
         var_a3 = 0x6DE0;
     }
 
@@ -173,27 +175,27 @@ s32 func_80087EA0(s32 arg0)
     }
 
     if (!(arg0 & 1)) {
-        D_8009F4EC = func_8008799C(func_800896D4(gLayerModeBits, 0x4400, 1));
-        if (D_8009F4EC == 0) {
+        gMovieStreamBuffer = func_8008799C(func_800896D4(gLayerModeBits, 0x4400, 1));
+        if (gMovieStreamBuffer == 0) {
             goto fail;
         }
     } else {
-        D_8009F4EC = gChainedNodes[0];
+        gMovieStreamBuffer = gChainedNodes[0];
         func_800896D4(gLayerModeBits, 0x424C, 1);
     }
 
-    D_8009F4F0 = func_8008799C(func_8008781C());
-    if (D_8009F4F0 == 0) {
+    gMovieAudioBlock = func_8008799C(func_8008781C());
+    if (gMovieAudioBlock == 0) {
         goto fail;
     }
 
-    D_8009F4F4 = func_80097B28(func_80087814());
-    if (D_8009F4F4 == 0) {
+    gMovieSpuBufferA = func_80097B28(func_80087814());
+    if (gMovieSpuBufferA == 0) {
         goto fail;
     }
 
-    D_8009F4F8 = func_80097B28(func_80087814());
-    if (D_8009F4F8 == 0) {
+    gMovieSpuBufferB = func_80097B28(func_80087814());
+    if (gMovieSpuBufferB == 0) {
         goto fail;
     }
 
@@ -201,6 +203,6 @@ s32 func_80087EA0(s32 arg0)
     return 1;
 
 fail:
-    func_80087D48();
+    gCloseVideoLayer();
     return 0;
 }

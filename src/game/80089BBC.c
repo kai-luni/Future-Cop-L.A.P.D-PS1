@@ -1,7 +1,7 @@
 // Categories: Graphics > Video Decode | Resources > Decompression
 #include "game/types.h"
-extern u8 *D_8009F51C;
-extern u8 *D_8009F520;
+extern u8 *gMovieVlcTableA __asm__("D_8009F51C");
+extern u8 *gMovieVlcTableB __asm__("D_8009F520");
 
 /**
  * @brief Decodes one compressed bit stream into code words using the tables
@@ -27,7 +27,7 @@ extern u8 *D_8009F520;
  * 5. The output is padded with 0xFE00 up to a total of 64 words.
  *
  * @par Globals
- * D_8009F51C/D_8009F520 (decode tables, read-only here).
+ * gMovieVlcTableA/gMovieVlcTableB (decode tables, read-only here).
  *
  * @par Callers
  * func_800861E4, after func_80089A88 built the tables.
@@ -40,8 +40,8 @@ int func_80089BBC(u16 *input, u16 *output)
 {
     register u16 *src __asm__("$9") = input;
     register unsigned int count __asm__("$8") = 0;
-    register u8 *table1 __asm__("$12") = D_8009F51C;
-    register u8 *table2 __asm__("$11") = D_8009F520;
+    register u8 *table1 __asm__("$12") = gMovieVlcTableA;
+    register u8 *table2 __asm__("$11") = gMovieVlcTableB;
     register u16 *values1 __asm__("$14") = (u16 *)(table1 + 0x2000);
     register u16 *values2 __asm__("$13") = (u16 *)(table2 + 0x200);
     register unsigned int bits __asm__("$6");

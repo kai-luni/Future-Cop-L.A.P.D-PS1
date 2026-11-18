@@ -41,8 +41,40 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 | `D_8009F9C0` | `gPacketLimit` | `u8 * volatile` | Ende des aktuellen Paketpuffers; liegt der Cursor darüber, wird neu alloziert. **Bestätigt** („the packet limit"). | `func_80014490`, `func_8001484C` |
 | `D_8009F9F0` | `gPrimPoolNext` | `Prim *` | Nächster freier Eintrag im Primitive-Pool (`h < Ende` prüft die Grenze). **Bestätigt.** | `func_80014C64`, `func_80015F38` |
 | `D_8009FA28` | `gPrimPoolEnd` | `Prim *` | Ende des Primitive-Pools; die Allokationsmakros vergleichen dagegen. **Bestätigt.** | `func_80014C64`, `func_800164F4` |
-| `D_8009F4BC` | `gDecodeJob` | `s32` | Kennung des laufenden Dekodierauftrags (Rechteck-Paar, Index, Ziel, Flag). **Wahrscheinlich** (Doku: „decode job: rects[2], index, rect, dest, flag"). | `func_80085074` |
+| `D_8009F4BC` | `gMovieSliceContext` | `s32` | Kontext eines Videostreifens: zwei Rechteck-Paare, Quellenindex `+0x30`, Ziel `+0x24`/`+0x28`, Latch `+0x11C` (0 = erster Durchlauf, 1 = Folgeschritt). **Bestätigt.** | `gMovieSliceFeedDma`, `gMovieSliceFeedRows` |
 | `D_8009F4C0` | `gStripScaleEnable` | `s32` | Schalter für horizontales Skalieren eines Streifens; nur bei `== 1` und gesetztem `D_8009F4C4` aktiv. **Bestätigt.** | `func_80085074` |
+
+## Video und Filmwiedergabe
+
+Der Ablauf steht in [`video-loading-path.md`](video-loading-path.md). Diese Tabelle listet die
+Datenvariablen dazu; `gMovieDisplayMode`/`gMovieAbortFlag`/`gMovieStreamContext`/
+`gMovieStreamDescriptors`/`gMovieSliceContext` waren vorher als `gChunkSkipFlag`,
+`gLoopAbortFlag`, `gQueueBlock`, `gStreamDescriptors` und `gDecodeJob` benannt.
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
+|---|---|---|---|---|
+| `D_8009F4D8` | `gMovieAudioState` | `s32 *` | 0x7B80 Byte großer Audiozustand des Films: zwei 0x3C00-Byte-ADPCM-Ringe bei `+0x10`/`+0x3C10` mit Lese-/Schreibzeiger `+0x00`/`+0x04`, Uhr-Freigabe `+0x7B20`, Uhrstand `+0x7B24`, vier Beschäftigt-Wörter `+0x7B2C`, Modus `+0x7B74`. **Bestätigt.** | `gMovieAudioChunkPush`, `gMovieFrameDeadline` |
+| `D_8009F4DC` | `gMovieDisplayMode` | `s32` | Anzeigemodus des Films: Bit 0 erlaubt Chunks ab 0x424C Byte, Bit 1 maskiert die Mitte im 24-Bit-Pfad, Bit 5 (mit Bit 2) wählt die RGB555→RGB888-Hochrechnung. **Bestätigt.** | `gOpenVideoLayer`, `gPlayVideoFile` |
+| `D_8009F4E0` | `gMovieAbortFlag` | `u8` | Gesetzt, wenn während der Wiedergabe Cross gedrückt wird oder der Stream einen Fehler meldet; Ladebildschirme brechen damit ab. **Bestätigt.** | `gMovieStreamDemux` |
+| `D_8009F958` | `gMoviePadMask0` | `u32` | Vorherige Start/Cross-Maske von Port 0 (`func_8001EF8C(0) & 0x40080000`) für die Flankenerkennung. **Bestätigt.** | `gMovieStreamDemux` |
+| `D_8009F95C` | `gMoviePadMask1` | `u32` | Dasselbe für Port 1. **Bestätigt.** | `gMovieStreamDemux` |
+| `D_8009F970` | `gMovieStreamContext` | `u32 *` | Kontext des CD-Stream-Lesers: Zähler `+0x414`…`+0x44C`, Positionen `+0x424`/`+0x428`, Callback `+0x570`, getauschte DMA3-/CD-Hooks `+0x574`/`+0x578`, 56-Byte-Einträge ab `+0x57C`. **Bestätigt.** | `gMovieStreamReaderInit` |
+| `D_8009F974` | `gMovieStreamDescriptors` | `u32 *` | Basis des 56-Byte-Eintragsarrays (Kontext `+0x57C`); je Eintrag wird ein 24-Byte-Deskriptor bei `+12` abgelegt. **Bestätigt.** | `gMovieStreamReaderInit` |
+| `D_8009F978` | `gMovieRingStart` | `u32 *` | Lesezeiger des Ringpuffers, direkt hinter dem Eintragsarray. **Bestätigt.** | `gMovieStreamReaderInit` |
+| `D_8009F97C` | `gMovieRingEnd` | `u32 *` | Ende des Rings (`gMovieRingStart + gMovieRingBytes`). **Bestätigt.** | `gMovieStreamReaderInit` |
+| `D_8009F984` | `gMovieRingBytes` | `s32` | Ringlänge in Bytes: 0x4400, im toleranten Modus 0x424C. **Bestätigt.** | `gMovieStreamReaderInit` |
+| `D_8009F988` | `gMovieDescriptorCount` | `s32` | Zahl der Stream-Deskriptoren im Eintragsarray. **Bestätigt.** | `gMovieStreamReaderInit` |
+| `D_8009F4EC` | `gMovieStreamBuffer` | `s32` | Heapblock, den `gMovieStreamReaderInit` als Streamkontext übernimmt. **Bestätigt.** | `gOpenVideoLayer`, `gPlayVideoFile` |
+| `D_8009F4F0` | `gMovieAudioBlock` | `s32` | 0x7B80-Byte-Block für den Audiozustand, von `func_80087824` gefüllt. **Bestätigt.** | `gOpenVideoLayer` |
+| `D_8009F4F4` | `gMovieSpuBufferA` | `s32` | SPU-Puffer A, 0xC00 Byte, vom SPU-Allokator `func_80097B28` (Freigabe `func_80098708`). **Wahrscheinlich.** | `gOpenVideoLayer` |
+| `D_8009F4F8` | `gMovieSpuBufferB` | `s32` | SPU-Puffer B derselben Größe. **Wahrscheinlich.** | `gOpenVideoLayer` |
+| `D_8009F51C` | `gMovieVlcTableA` | `u32` | Erstes Tabellenblatt der Huffman-/VLC-Dekodierung, von `func_80089A88` gefüllt. **Bestätigt.** | `gMovieBuildVlcTables` |
+| `D_8009F520` | `gMovieVlcTableB` | `u32` | Zweites Tabellenblatt derselben Dekodierung. **Bestätigt.** | `gMovieBuildVlcTables` |
+
+Ohne Namen bleiben `D_8009F960` (0x400) und `D_8009F964` (0x800): beide sind Bildgeometrie, aber aus
+dem Code ist keine Achsenzuordnung belegbar. `D_8009F980` übernimmt in `func_800896D4` das
+Ebenen-Moduswort und wird zugleich als Kontextgröße und als Ring-Divisor benutzt — eine Rolle, die
+sich nicht auf einen Begriff bringen lässt.
 
 ## Spielzustand und Warteschlangen
 
@@ -68,7 +100,7 @@ Konfidenz: **bestätigt** = Schreiben und Lesen belegen die Rolle eindeutig; **w
 | `D_8009F214` | `gRandSeed` | `s32` | Zustand des Zufallszahlengenerators (Multiplikation mit 16807, Park-Miller). **Bestätigt.** | `func_80019720` |
 | `D_8009F5B8` | `gResourceList` | `struct Resource *` | Kopf der einfach verketteten Ressourcenliste; wird in mehreren Funktionen durchlaufen und am Ende freigegeben. **Bestätigt.** | `func_80019AA8`, `func_800198DC` |
 | `D_800A07A8` | `gSoundSystem` | `struct SoundSystem` | Globaler Zustand des Klangsystems mit Bank-Liste und Anzahl. **Bestätigt.** | `func_80021508` |
-| `D_8009F92C` | `gSaveProfileImage` | `u8 *` | 0x678 Byte großes Profil-/Spielstandabbild; Titel und Profilfelder werden an festen Offsets (+4, +0x20C) hineingeschrieben. **Bestätigt.** | `func_80081204`, `func_800822CC` |
+| `D_8009F92C` | `gSaveProfileImage` | `u8 *` | 0x948 Byte großer Profilkontext des Speicherkartenpfads: Live-Kopf (0x200 Byte) bei `+0`, Zustandsbytes `+0x200`…`+0x208`, 0x678-Byte-Kartenabbild bei `+0x20C`, Optionsblock `+0x40C`, zehn 0x70-Byte-Sätze `+0x424`, Karten-Treiberzeiger `+0x904`. **Bestätigt.** | `func_8007F9CC`, `func_80081204` |
 
 ## Ton (SPU-Treiber)
 
@@ -239,7 +271,7 @@ Einundsechzig weitere Globals in **einem** Commit. Damit sind alle Symbole abgea
 
 **Handler- und Callback-Adressen.** Sie werden nur als `handler`-Feld registriert oder indirekt über den Dispatcher erreicht; der Beleg nennt keine Aufgabe: `D_8001C808`, `D_8001EFF8`, `D_8002DEA8`, `D_8003190C`, `D_80036E6C`, `D_80037708`, `D_8003B2D0`, `D_80044610`, `D_800578B4`, `D_80059ABC`, `D_8005B934`, `D_8005CA04`, `D_8006E814`, `D_8007D150`, `D_8007D18C`, `D_8007D27C`, `D_8007F618`, `D_80080038`, `D_80085074`, `D_80086950`, `D_80086D74`, `D_800A36B8`, `D_800A36E8`, `D_800A3778`, `D_800A38F8`.
 
-**Byte-Vergleich kippt nach dem Rename** (Symbol zusätzlich lokal definiert oder ohne `__asm__` gebunden): `D_8009BEF4`, `D_8009C810`, `D_8009F4D8`, `D_8009F614`, `D_8009F79C`, `D_8009F7C0`, `D_8009F8B0`, `D_800A3E80`, `D_800A445C`, `D_800A4480`, `D_800A4484`. Dazu `D_8009C8A8`/`D_8009C8AC` (Mehrfachdeklaration mit abweichenden Typen).
+**Byte-Vergleich kippt nach dem Rename** (Symbol zusätzlich lokal definiert oder ohne `__asm__` gebunden): `D_8009BEF4`, `D_8009C810`, `D_8009F614`, `D_8009F79C`, `D_8009F7C0`, `D_8009F8B0`, `D_800A3E80`, `D_800A445C`, `D_800A4480`, `D_800A4484`. Dazu `D_8009C8A8`/`D_8009C8AC` (Mehrfachdeklaration mit abweichenden Typen). `D_8009F4D8` stand hier früher auch: der Block wird in über zwanzig Units mit jeweils eigenem Struct-Typ deklariert, deshalb half nur ein Name mit `__asm__`-Bindung **pro Unit** (jetzt `gMovieAudioState`).
 
 **Nur Inline-Asm, kein C-Name setzbar:** `D_8009EA00`, `D_8009F7C8` (in `8001C808.c` von Hand gesetzt, in weiteren Units asm-only), `D_A000DFAC`.
 
@@ -258,8 +290,7 @@ Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-V
 | `D_8009F388` | `gColourWord` | — | Farbwort: `(Wert >> 8) \| 0x3A000000`, Farbe ist `field40 >> 8`. |
 | `D_8009F45C` | `gAtlasTable` | — | Atlas mit `count`; der Index muss darin liegen. |
 | `D_8009F460` | `gSpriteAtlasBlock` | — | Wird vor dem Neuaufbau freigegeben; bei Typ ungleich 2 wird ein Flag gesetzt. |
-| `D_8009F468` | `gFontBankTable` | — | Schriftbank-Tabelle; ändert sich `[8]`, wechselt `func_80048E28` die Bank. |
-| `D_8009F4E0` | `gLoopAbortFlag` | — | Bricht die Schleife früh ab; bleibt 0, greift der Fallback. |
+| `D_8009F468` | `gFontBankTable` | — | Zeiger auf den **aktiven Front-End-Menüschirm**: `[0]` ist der Cursor der Gruppe 0, `+2` die Eintragszahl, `+0x24` der Elternschirm, `+0x28` die Eintragstabelle. Der C-Name stammt aus einer früheren Runde und ist falsch; die Rolle ist über 37 Units belegt. |
 | `D_8009F508` | `gReleaseDoneFlag` | — | Wird im Completion-Callback gesetzt. |
 | `D_8009F5BC` | `gListTailFlag` | — | Bei ungleich 0 wird hinter dem Ende angehängt, sonst Kopf und Ende gesetzt. |
 | `D_8009FABC` | `gCharTable` | `u8[]` | 0x100-Byte-Zeichentabelle; der Zeiger rückt um 16 weiter. |
@@ -396,7 +427,7 @@ Diese Adressen tragen alle denselben Charakter: sie werden als `handler`-Feld in
 
 ## Textformatierung, Audio-Pegel, Missions- und Dateitabellen
 
-Fünfzig weitere Globals in **einem** Commit. Fünf Kandidaten aus der CD-/Verzeichnisgruppe kippten beim Byte-Vergleich (`D_8009F4D8`, `D_800A445C`, `D_800A4480`, `D_800A4484`, `D_800A3E80`) und bleiben stehen.
+Fünfzig weitere Globals in **einem** Commit. Vier Kandidaten aus der CD-/Verzeichnisgruppe kippten beim Byte-Vergleich (`D_800A445C`, `D_800A4480`, `D_800A4484`, `D_800A3E80`) und bleiben stehen; `D_8009F4D8` kam später über per-Unit-Bindungen als `gMovieAudioState` doch noch durch.
 
 ### Frontend-Texte und Formate
 
@@ -455,8 +486,6 @@ Fünfzig weitere Globals in **einem** Commit. Fünf Kandidaten aus der CD-/Verze
 | `D_8009F93C` | `gMissionGridWidth` | `int` | Rasterbreite in Zellen. |
 | `D_8009F940` | `gMissionGridHeight` | `int` | Rasterhöhe in Zellen. |
 | `D_8009F950` | `gWorkAreaBlock` | `void *` | Zielblock samt Arbeitsbereich beim Allokieren. |
-| `D_8009F970` | `gQueueBlock` | `Queue *` | Warteschlangenblock: Einträge ab `+0x08`, Index und Zähler nach 257 Wörtern. |
-| `D_8009F974` | `gStreamDescriptors` | `Ent88F00 *` | Ziel für die zu kopierenden Stream-Deskriptoren. |
 
 ### Datei- und Verzeichnistabellen
 
@@ -523,10 +552,9 @@ Fünfzig weitere Globals in **einem** Commit. Zwei Kandidaten fielen beim Byte-V
 | `D_8009F3E8` | `gPauseFlag` | `u8` | Pause-Flag, wird beim Start von Sound 0x49 gelöscht. |
 | `D_8009F3EC` | `gPendingModuleNameFlag` | `s32` | Zeigt an, dass ein Modulname kopiert und um `".mis"` ergänzt werden soll. |
 | `D_8009F3F0` | `gModuleLoadState` | `s8` | Zustandsnummer des Modul-Ladepfads (nach dem Kopieren auf 5 gesetzt). |
-| `D_8009F464` | `gStillRunningState` | `s32` | Wird auf 2 geschrieben, solange `func_8007F8CC` „läuft noch" meldet. |
-| `D_8009F496` | `gPendingFlag` | `u8` | Ausstehendes Flag, das `func_8007FACC` konsumiert. |
+| `D_8009F464` | `gStillRunningState` | `s32` | Zustand des Boot-Profilladevorgangs: 2 = läuft (`func_8007F8BC`), 3 = fertig (`func_80080B08`); `func_8007F8CC` meldet „fertig". |
+| `D_8009F496` | `gPendingFlag` | `u8` | Ausstehender Profil-Transfer, den `func_8007FACC` konsumiert und dabei den Kartenschritt abbaut. |
 | `D_8009F4D4` | `gInitGuardFlag` | `u8` | Wächter gegen einen zweiten Durchlauf der einmaligen Arbeit. |
-| `D_8009F4DC` | `gChunkSkipFlag` | `s32` | Bit 0 bewirkt, dass Chunks ab 0x424C Bytes übersprungen werden. |
 | `D_8009F504` | `gLayerOpenResult` | `u8` | 1 nach erfolgreichem Öffnen der Ebene, sonst 0. |
 | `D_8009F518` | `gTextLookupTable` | `void *` | Aktive Text-Lookup-Tabelle, die `func_800898E8` freigibt. |
 | `D_8009F8C8` | `gDeferredTransition` | `s32` | Verzögerte Zustandsumschaltung, wenn das Übergangsbyte nicht 1 ist. |

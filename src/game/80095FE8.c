@@ -13,7 +13,7 @@ typedef unsigned short u16;
  * which writes the control bits).
  *
  * @par Callers
- * func_80085228, func_80085630.
+ * gMovieSliceFeedDma, gMovieSliceFeedRows.
  */
 u16 func_80095FE8(u16 *value)
 {

@@ -35,7 +35,7 @@ struct State80089018 {
     void (*unk570)(void);
 };
 
-extern struct State80089018 *gQueueBlock __asm__("D_8009F970");
+extern struct State80089018 *gMovieStreamContext __asm__("D_8009F970");
 extern u32 D_8009F980;
 extern u8 gCodeDataSource[8] __asm__("D_80088D74");
 
@@ -49,7 +49,7 @@ extern void func_8008E42C(s32 arg0, void *arg1, s32 arg2);
 extern void func_800889DC(s32 arg0, s32 arg1, s32 arg2);
 extern s32 func_80088770(s32 arg0, s32 arg1, s32 arg2);
 extern void func_80088974(s32 arg0, s32 arg1, s32 arg2);
-extern void func_80088F00(void);
+extern void gMovieStreamPrimeEntry(void) __asm__("func_80088F00");
 extern s32 func_800886C8(s32 a, s32 b);
 
 /**
@@ -58,7 +58,7 @@ extern s32 func_800886C8(s32 a, s32 b);
  *  Uses a shared state structure and ring capacity to prepare a command and
  *  schedule either a special transfer or a contiguous portion of remaining work.
  *  @par Globals
- *  D_8009F970 holds transfer state, parameters, and an optional callback;
+ *  gMovieStreamContext holds transfer state, parameters, and an optional callback;
  *  D_8009F980 supplies ring capacity and D_80088D74 supplies a callback address.
  *  @par Control flow
  *  A reset branch invokes the callback, waits for readiness, and reinitializes state.
@@ -69,26 +69,26 @@ extern s32 func_800886C8(s32 a, s32 b);
  *  func_8008E1A8, func_8008E1BC, and func_8008E42C configure the operation.
  *  func_800886E4 polls readiness; func_800889DC prepares parameters;
  *  func_80088770 issues a command and func_80088974 starts a transfer.
- *  func_80088F00 handles zero remaining work; func_800886C8 bounds the size.
+ *  gMovieStreamPrimeEntry handles zero remaining work; func_800886C8 bounds the size.
  *  @par Side effects
  *  Updates shared transfer fields, invokes an optional callback, and may start I/O.
  *  @par Callers
- *  Confirmed: func_80089304.
+ *  Confirmed: gMovieStreamAdvance.
  */
 void func_80089018(void)
 {
     u8 local;
     s32 work;
 
-    if (gQueueBlock->unk424 >= 2) {
-        if (gQueueBlock->unk570 != 0) {
-            gQueueBlock->unk570();
+    if (gMovieStreamContext->unk424 >= 2) {
+        if (gMovieStreamContext->unk570 != 0) {
+            gMovieStreamContext->unk570();
         }
         func_8008C9C0();
-        gQueueBlock->unk410 = 0;
-        gQueueBlock->unk408 = 0;
-        gQueueBlock->unk40C = 0;
-        gQueueBlock->unk41C = 0;
+        gMovieStreamContext->unk410 = 0;
+        gMovieStreamContext->unk408 = 0;
+        gMovieStreamContext->unk40C = 0;
+        gMovieStreamContext->unk41C = 0;
         func_8008E194(0);
         func_8008E1A8(0);
         func_8008C9E0();
@@ -101,17 +101,17 @@ void func_80089018(void)
         func_8008C9C0();
         func_8008E194((s32)gCodeDataSource);
         func_8008E1A8((s32)func_800889DC + 0x40);
-        gQueueBlock->unk41C = work;
-        gQueueBlock->unk414 = work;
-        gQueueBlock->unk424 = 0;
+        gMovieStreamContext->unk41C = work;
+        gMovieStreamContext->unk414 = work;
+        gMovieStreamContext->unk424 = 0;
         func_8008C9E0();
-        if ((gQueueBlock->unk414 != 0) && (gQueueBlock->unk000 != 0)) {
+        if ((gMovieStreamContext->unk414 != 0) && (gMovieStreamContext->unk000 != 0)) {
             {
                 register struct Sub80089018 *parameter __asm__("$5");
                 register s32 address __asm__("$4");
                 register s32 sector __asm__("$6");
 
-                parameter = gQueueBlock->unk430;
+                parameter = gMovieStreamContext->unk430;
                 address = (s32)((u8 *)parameter + 0xC);
                 sector = parameter->unk08;
                 parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
@@ -121,35 +121,35 @@ void func_80089018(void)
                 register struct State80089018 *state __asm__("$3");
                 register struct Sub80089018 *parameter __asm__("$5");
 
-                state = gQueueBlock;
+                state = gMovieStreamContext;
                 parameter = state->unk430;
                 state->unk418 = 2;
                 parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
                 if (func_80088770(0x15, (s32)parameter, 0) == 0) {
-                    gQueueBlock->unk43C = work;
+                    gMovieStreamContext->unk43C = work;
                     return;
                 }
             }
-            work = (s32)gQueueBlock->unk000;
-            func_80088974(gQueueBlock->unk004, work,
-                          (s32)((u8 *)gQueueBlock->unk430 + 0x24));
+            work = (s32)gMovieStreamContext->unk000;
+            func_80088974(gMovieStreamContext->unk004, work,
+                          (s32)((u8 *)gMovieStreamContext->unk430 + 0x24));
         } else {
-            gQueueBlock->unk414 = 0;
+            gMovieStreamContext->unk414 = 0;
         }
     }
 
-    if (gQueueBlock->unk414 != 0) {
+    if (gMovieStreamContext->unk414 != 0) {
         return;
     }
 
     {
         struct Sub80089018 *sub;
 
-        sub = gQueueBlock->unk430;
+        sub = gMovieStreamContext->unk430;
         work = sub->unk00 - sub->unk08;
     }
     if (work == 0) {
-        func_80088F00();
+        gMovieStreamPrimeEntry();
     }
 
     {
@@ -160,7 +160,7 @@ void func_80089018(void)
         register u32 dividend __asm__("$2");
         register u32 remainder __asm__("$3");
 
-        state = gQueueBlock;
+        state = gMovieStreamContext;
         capacity = D_8009F980;
         read_position = state->unk440;
         write_position = state->unk448;
@@ -178,7 +178,7 @@ void func_80089018(void)
             register s32 address __asm__("$4");
             register s32 sector __asm__("$6");
 
-            parameter = gQueueBlock->unk430;
+            parameter = gMovieStreamContext->unk430;
             address = (s32)((u8 *)parameter + 0xC);
             sector = parameter->unk08;
             parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
@@ -188,13 +188,13 @@ void func_80089018(void)
             register struct State80089018 *state __asm__("$3");
             register struct Sub80089018 *parameter __asm__("$5");
 
-            state = gQueueBlock;
+            state = gMovieStreamContext;
             parameter = state->unk430;
             parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
             state->unk44C = state->unk448 + work;
             state->unk418 = 2;
             if (func_80088770(0x15, (s32)parameter, 0) == 0) {
-                gQueueBlock->unk43C = 1;
+                gMovieStreamContext->unk43C = 1;
                 return;
             }
         }
@@ -207,7 +207,7 @@ void func_80089018(void)
             register u8 *parameter __asm__("$6");
             register u32 start __asm__("$3");
 
-            state = gQueueBlock;
+            state = gMovieStreamContext;
             sub = state->unk430;
             dividend = state->unk448;
             address = sub->unk34;

@@ -32,7 +32,7 @@ struct State80089404 {
     volatile u32 unk448;
 };
 
-extern struct State80089404 *gQueueBlock __asm__("D_8009F970");
+extern struct State80089404 *gMovieStreamContext __asm__("D_8009F970");
 extern u32 D_8009F980;
 
 extern s32 func_800886C8(s32 delta, s32 value);
@@ -47,7 +47,7 @@ extern void func_8008CD10(s32 arg0, s32 arg1);
  *  @param out Requested amount, replaced with the adjusted amount.
  *  @return Computed buffer address, or zero if waiting is aborted or retries are exhausted.
  *  @par Globals
- *  D_8009F970 supplies buffer positions, state, and retry counters; D_8009F980 supplies the ring size.
+ *  gMovieStreamContext supplies buffer positions, state, and retry counters; D_8009F980 supplies the ring size.
  *  @par Control flow
  *  Polls availability, aborts on the state flag, and retries recovery at most twice before failing.
  *  @par Calls
@@ -55,9 +55,11 @@ extern void func_8008CD10(s32 arg0, s32 arg1);
  *  @par Side effects
  *  Updates the requested amount and may increment the state retry counter or invoke recovery and wrap handling.
  *  @par Callers
- *  Confirmed: func_800879DC.
+ *  Confirmed: gMovieStreamDemux.
  */
-s32 func_80089404(s32 *out)
+s32 gMovieStreamReserve(s32 *out) __asm__("func_80089404");
+
+s32 gMovieStreamReserve(s32 *out)
 {
     u32 i;
     u32 retry;
@@ -75,15 +77,15 @@ s32 func_80089404(s32 *out)
     register struct Sub80089404 *sub __asm__("$6");
 
     i = 0;
-    *out = func_800886C8(gQueueBlock->unk42C->unk10 - gQueueBlock->unk42C->unk04, *out);
+    *out = func_800886C8(gMovieStreamContext->unk42C->unk10 - gMovieStreamContext->unk42C->unk04, *out);
     retry = i;
 
-    available = gQueueBlock->unk448;
-    available = gQueueBlock->unk440;
-    (void)gQueueBlock->unk444;
+    available = gMovieStreamContext->unk448;
+    available = gMovieStreamContext->unk440;
+    (void)gMovieStreamContext->unk444;
 
     for (;;) {
-        available = (gQueueBlock->unk448 << 11) - ((gQueueBlock->unk440 << 11) + gQueueBlock->unk444);
+        available = (gMovieStreamContext->unk448 << 11) - ((gMovieStreamContext->unk440 << 11) + gMovieStreamContext->unk444);
         if (available < 0) {
             available = 0;
         }
@@ -91,16 +93,16 @@ s32 func_80089404(s32 *out)
             break;
         }
 
-        if (gQueueBlock->unk43C != 0) {
+        if (gMovieStreamContext->unk43C != 0) {
             return 0;
         }
 
         i++;
         if (i > 0x3D0900U) {
-            gQueueBlock->unk424 += 2;
+            gMovieStreamContext->unk424 += 2;
         }
 
-        if (gQueueBlock->unk414 != 0 && gQueueBlock->unk424 < 2) {
+        if (gMovieStreamContext->unk414 != 0 && gMovieStreamContext->unk424 < 2) {
             continue;
         }
 
@@ -113,7 +115,7 @@ s32 func_80089404(s32 *out)
         i = 0;
     }
 
-    state = gQueueBlock;
+    state = gMovieStreamContext;
     old440 = state->unk440;
     old444 = state->unk444;
     sub = ((volatile struct State80089404 *)state)->unk42C;

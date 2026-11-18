@@ -19,7 +19,7 @@ typedef struct {
     s16 unk6;
 } Local;
 
-extern State *gDecodeJob __asm__("D_8009F4BC");
+extern State *gMovieSliceContext __asm__("D_8009F4BC");
 extern u32 gStripScaleEnable __asm__("D_8009F4C0");
 extern u32 gStripStepWidth __asm__("D_8009F4C8");
 extern u32 gFrameTimeMax __asm__("D_8009F4D0");
@@ -48,7 +48,7 @@ extern void func_80092F38(Local *local, s32 arg1);
  * @return Nothing.
  *
  * @par Globals
- * - D_8009F4BC (0x8009F4BC, $gp 0x2A8): the playback context. Fields used:
+ * - gMovieSliceContext (0x8009F4BC, $gp 0x2A8): the playback context. Fields used:
  *   +0x24 destination address, +0x28/+0x2C the two buffer pointers,
  *   +0x30 the current buffer index, +0x114 a flag that raises the volume by
  *   0x100, +0x118 the call counter, +0x11C a "frame submitted" flag.
@@ -105,11 +105,13 @@ extern void func_80092F38(Local *local, s32 arg1);
  *   16-bit field and is never used otherwise.
  *
  * @par Callers
- * func_8008589C, recorded at 0x800858A0 (the direct call is at 0x800858C8); that
- * wrapper calls this function only when ctx+0x12C == 0 and func_80085228
+ * gMovieDecodeSlice, recorded at 0x800858A0 (the direct call is at 0x800858C8); that
+ * wrapper calls this function only when ctx+0x12C == 0 and gMovieSliceFeedDma
  * otherwise.
  */
-void func_80085630(u8 *data, u32 count, s32 volume)
+void gMovieSliceFeedRows(u8 *data, u32 count, s32 volume) __asm__("func_80085630");
+
+void gMovieSliceFeedRows(u8 *data, u32 count, s32 volume)
 {
     Local local;
     u32 magic;
@@ -133,7 +135,7 @@ void func_80085630(u8 *data, u32 count, s32 volume)
     s2 = (*(u16 *)(data + 8) >> 8) |
          ((*(u16 *)(data + 8) & 0xFF) << 8);
 
-    if (gDecodeJob->unk114 != 0) {
+    if (gMovieSliceContext->unk114 != 0) {
         local.unk2 = volume + 0x100;
     } else {
         local.unk2 = volume;
@@ -152,18 +154,18 @@ void func_80085630(u8 *data, u32 count, s32 volume)
         gFrameTimeMax = result;
     }
 
-    st = gDecodeJob;
+    st = gMovieSliceContext;
     if (st->unk118 == 0) {
         if (s4 == 0x4D444543) {
             func_80089BBC(src, st->unk28[st->unk30]);
         }
-        *(volatile s32 *)&gDecodeJob->unk11C = 0;
+        *(volatile s32 *)&gMovieSliceContext->unk11C = 0;
     } else {
         s1 = st->unk24;
         func_80095FF4(st->unk28[1 - st->unk30], gStripScaleEnable);
         func_80096070(s1, ((s3 * (gStripStepWidth << 3)) >> 1) * (s2 >> 4));
         if (s4 == 0x4D444543) {
-            func_80089BBC(src, gDecodeJob->unk28[gDecodeJob->unk30]);
+            func_80089BBC(src, gMovieSliceContext->unk28[gMovieSliceContext->unk30]);
         }
         func_800960CC(0);
         for (i = 0; i < s2; i += 0x10) {
@@ -171,11 +173,11 @@ void func_80085630(u8 *data, u32 count, s32 volume)
             s1 += (local.unk4 * local.unk6) << 1;
             { u32 step = gStripStepWidth << 3; local.unk0 += step; }
         }
-        gDecodeJob->unk11C = 1;
+        gMovieSliceContext->unk11C = 1;
     }
 
     func_80095E90(1);
 
-    gDecodeJob->unk118++;
-    gDecodeJob->unk30 = 1 - gDecodeJob->unk30;
+    gMovieSliceContext->unk118++;
+    gMovieSliceContext->unk30 = 1 - gMovieSliceContext->unk30;
 }

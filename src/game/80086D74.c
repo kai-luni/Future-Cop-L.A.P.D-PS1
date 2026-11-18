@@ -6,7 +6,7 @@ typedef struct State {
     volatile int count;
 } State;
 
-extern State *D_8009F4D8;
+extern State *gMovieAudioState __asm__("D_8009F4D8");
 
 /**
  *  @brief Advances two state counters when the state is active.
@@ -14,7 +14,7 @@ extern State *D_8009F4D8;
  *  Checks the active field of the shared state and, when nonzero,
  *  adds 0x100 to its volatile value and increments its volatile count.
  *  @par Globals
- *  D_8009F4D8 points to the state whose fields are read and updated.
+ *  gMovieAudioState points to the state whose fields are read and updated.
  *  @par Control flow
  *  A single active-state branch controls both updates.
  *  @par Calls
@@ -26,7 +26,7 @@ extern State *D_8009F4D8;
  */
 void func_80086D74(void)
 {
-    State *state = D_8009F4D8;
+    State *state = gMovieAudioState;
     if (state->active != 0) {
         state->value += 0x100;
         state->count++;

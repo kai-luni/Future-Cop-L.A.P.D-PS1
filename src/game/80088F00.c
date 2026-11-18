@@ -27,10 +27,10 @@ typedef struct {
     s32 unk44C;
 } Unk88F00;
 
-extern Unk88F00 *gQueueBlock __asm__("D_8009F970");
-extern Ent88F00 *gStreamDescriptors __asm__("D_8009F974");
-extern s32 D_8009F978;
-extern s32 D_8009F97C;
+extern Unk88F00 *gMovieStreamContext __asm__("D_8009F970");
+extern Ent88F00 *gMovieStreamDescriptors __asm__("D_8009F974");
+extern s32 gMovieRingStart __asm__("D_8009F978");
+extern s32 gMovieRingEnd __asm__("D_8009F97C");
 
 /**
  *  @brief Initializes the next table entry when the state is ready.
@@ -39,8 +39,8 @@ extern s32 D_8009F97C;
  *  the state index; exhaustion changes the state code to 2.
  *  @return The current state code, including any exhaustion update.
  *  @par Globals
- *  D_8009F970 holds the state and entry pointers; D_8009F974 is the array base.
- *  D_8009F978 and D_8009F97C supply two values copied into the entry.
+ *  gMovieStreamContext holds the state and entry pointers; gMovieStreamDescriptors is the array base.
+ *  gMovieRingStart and gMovieRingEnd supply two values copied into the entry.
  *  @par Control flow
  *  A nonzero state is returned unchanged; the first entry also resets totals.
  *  @par Calls
@@ -48,35 +48,37 @@ extern s32 D_8009F97C;
  *  @par Side effects
  *  Updates the state, selected entry, and possibly the first-entry pointer.
  *  @par Callers
- *  Confirmed: func_80089700.
+ *  Confirmed: gMovieStreamReaderInit.
  */
-s32 func_80088F00(void)
+s32 gMovieStreamPrimeEntry(void) __asm__("func_80088F00");
+
+s32 gMovieStreamPrimeEntry(void)
 {
-    if (gQueueBlock->unk43C == 0) {
-        if (gQueueBlock->unk434 < gQueueBlock->unk438) {
-            gQueueBlock->unk430 = gStreamDescriptors + gQueueBlock->unk434;
-            if (gQueueBlock->unk42C == 0) {
-                gQueueBlock->unk42C = gQueueBlock->unk430;
+    if (gMovieStreamContext->unk43C == 0) {
+        if (gMovieStreamContext->unk434 < gMovieStreamContext->unk438) {
+            gMovieStreamContext->unk430 = gMovieStreamDescriptors + gMovieStreamContext->unk434;
+            if (gMovieStreamContext->unk42C == 0) {
+                gMovieStreamContext->unk42C = gMovieStreamContext->unk430;
             }
-            gQueueBlock->unk430->w0 = (gQueueBlock->unk430->w10 + 0x7FF) >> 11;
-            gQueueBlock->unk430->w4 = 0;
-            gQueueBlock->unk430->w8 = 0;
-            gQueueBlock->unk430->w28 = 0;
-            if (gQueueBlock->unk434 == 0) {
-                gQueueBlock->unk444 = 0;
-                gQueueBlock->unk440 = 0;
-                gQueueBlock->unk448 = 0;
-                gQueueBlock->unk44C = 0;
+            gMovieStreamContext->unk430->w0 = (gMovieStreamContext->unk430->w10 + 0x7FF) >> 11;
+            gMovieStreamContext->unk430->w4 = 0;
+            gMovieStreamContext->unk430->w8 = 0;
+            gMovieStreamContext->unk430->w28 = 0;
+            if (gMovieStreamContext->unk434 == 0) {
+                gMovieStreamContext->unk444 = 0;
+                gMovieStreamContext->unk440 = 0;
+                gMovieStreamContext->unk448 = 0;
+                gMovieStreamContext->unk44C = 0;
             }
-            gQueueBlock->unk434++;
-            gQueueBlock->unk430->w34 = 0;
-            gQueueBlock->unk430->w2C = D_8009F978;
-            gQueueBlock->unk430->w30 = D_8009F97C;
-            gQueueBlock->unk43C = 0;
+            gMovieStreamContext->unk434++;
+            gMovieStreamContext->unk430->w34 = 0;
+            gMovieStreamContext->unk430->w2C = gMovieRingStart;
+            gMovieStreamContext->unk430->w30 = gMovieRingEnd;
+            gMovieStreamContext->unk43C = 0;
         } else {
-            gQueueBlock->unk43C = 2;
+            gMovieStreamContext->unk43C = 2;
         }
-        return gQueueBlock->unk43C;
+        return gMovieStreamContext->unk43C;
     }
-    return gQueueBlock->unk43C;
+    return gMovieStreamContext->unk43C;
 }

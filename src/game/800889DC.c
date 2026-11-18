@@ -44,7 +44,7 @@ struct State800889DC {
     u8 unk458[0x46];
 };
 
-extern volatile struct State800889DC *gQueueBlock __asm__("D_8009F970");
+extern volatile struct State800889DC *gMovieStreamContext __asm__("D_8009F970");
 extern s32 gReleaseDoneFlag __asm__("D_8009F508");
 extern volatile u32 *D_8009F50C;
 extern u32 D_8009F980;
@@ -107,18 +107,18 @@ void func_80088A1C(u8 mode)
     s32 r0;
 
     if (mode != 1) {
-        gQueueBlock->unk424++;
+        gMovieStreamContext->unk424++;
         return;
     }
 
-    if (gQueueBlock->unk424 >= 2) {
+    if (gMovieStreamContext->unk424 >= 2) {
         return;
     }
-    gQueueBlock->unk424 = 0;
-    if (gQueueBlock->unk414 != 2) {
+    gMovieStreamContext->unk424 = 0;
+    if (gMovieStreamContext->unk414 != 2) {
         return;
     }
-    if (gQueueBlock->unk00 == 0) {
+    if (gMovieStreamContext->unk00 == 0) {
         return;
     }
 
@@ -133,38 +133,38 @@ done:
         ;
     }
 
-    if (!(gQueueBlock->unk04 & 3)) {
+    if (!(gMovieStreamContext->unk04 & 3)) {
         func_8008E598(&tmp.loc, 3);
         func_8008E5FC(0);
         sector = func_8008E720(&tmp.loc);
 
-        disc1 = gQueueBlock->unk430;
+        disc1 = gMovieStreamContext->unk430;
         func_800889DC(&disc1->loc0C, &disc1->loc24, disc1->unk08);
         //(&disc->loc0C, &disc->loc24, disc->unk08);
 
-        if (func_8008E720(&gQueueBlock->unk430->loc24) != sector) {
-            func_8008E598((void *)gQueueBlock->unk04, 0x200);
+        if (func_8008E720(&gMovieStreamContext->unk430->loc24) != sector) {
+            func_8008E598((void *)gMovieStreamContext->unk04, 0x200);
             func_8008E5FC(0);
-            func_8008E598(gQueueBlock->unk458, 0x46);
+            func_8008E598(gMovieStreamContext->unk458, 0x46);
             func_8008E5FC(0);
-            disc2 = gQueueBlock->unk430;
+            disc2 = gMovieStreamContext->unk430;
             func_800889DC(&disc2->loc0C, &disc2->loc24, disc2->unk08);
-            disc4 = gQueueBlock->unk430;
-            gQueueBlock->unk428++;
-            gQueueBlock->unk418 = 2;
-            gQueueBlock->unk414 = 1;
+            disc4 = gMovieStreamContext->unk430;
+            gMovieStreamContext->unk428++;
+            gMovieStreamContext->unk418 = 2;
+            gMovieStreamContext->unk414 = 1;
             func_8008888C(0x15, (s32)&disc4->loc24, 0);
-            a4 = gQueueBlock->unk04;
-            disc5 = gQueueBlock->unk430;
-            b4 = gQueueBlock->unk00;
+            a4 = gMovieStreamContext->unk04;
+            disc5 = gMovieStreamContext->unk430;
+            b4 = gMovieStreamContext->unk00;
             func_800889A8(a4, b4, (s32)&disc5->loc24);
         } else {
-            func_8008E598((void *)gQueueBlock->unk04, 0x200);
+            func_8008E598((void *)gMovieStreamContext->unk04, 0x200);
             func_8008E5FC(0);
-            func_8008E598(gQueueBlock->unk458, 0x46);
+            func_8008E598(gMovieStreamContext->unk458, 0x46);
             func_8008E5FC(0);
 
-            p = gQueueBlock;
+            p = gMovieStreamContext;
             p->unk04 += 0x800;
             r0 = p->unk00;
             disc6 = p->unk430;
@@ -189,19 +189,19 @@ done:
                 c = func_800886C8(a0v, D_8009F980 - rem);
                 d = func_800886C8(c, temp);
                 if (d != 0) {
-                    disc7 = (struct DiscThing800889DC *)gQueueBlock->unk430;
-                    if (gQueueBlock->unk04 == disc7->unk30 + (D_8009F980 << 11)) {
-                        gQueueBlock->unk04 = disc7->unk30;
+                    disc7 = (struct DiscThing800889DC *)gMovieStreamContext->unk430;
+                    if (gMovieStreamContext->unk04 == disc7->unk30 + (D_8009F980 << 11)) {
+                        gMovieStreamContext->unk04 = disc7->unk30;
                     }
-                    gQueueBlock->unk00 = d;
+                    gMovieStreamContext->unk00 = d;
                 } else {
-                    gQueueBlock->unk00 = 0;
-                    gQueueBlock->unk414 = 0;
+                    gMovieStreamContext->unk00 = 0;
+                    gMovieStreamContext->unk414 = 0;
                 }
             }
         }
     } else {
-        gQueueBlock->unk414 = 0;
+        gMovieStreamContext->unk414 = 0;
     }
 }
 
@@ -211,43 +211,43 @@ void gCodeDataSource(u8 mode)
     s32 b;
 
     if (mode != 2) {
-        gQueueBlock->unk424++;
+        gMovieStreamContext->unk424++;
         return;
     }
 
-    if (gQueueBlock->unk424 >= 2) {
+    if (gMovieStreamContext->unk424 >= 2) {
         return;
     }
-    gQueueBlock->unk424 = 0;
-    if (gQueueBlock->unk41C == 0) {
+    gMovieStreamContext->unk424 = 0;
+    if (gMovieStreamContext->unk41C == 0) {
         return;
     }
-    if (gQueueBlock->unk410 == 0) {
+    if (gMovieStreamContext->unk410 == 0) {
         return;
     }
-    if (gQueueBlock->unk418 != 0) {
-        gQueueBlock->unk418--;
-        if (gQueueBlock->unk418 == 0) {
+    if (gMovieStreamContext->unk418 != 0) {
+        gMovieStreamContext->unk418--;
+        if (gMovieStreamContext->unk418 == 0) {
             {
-                s32 x = gQueueBlock->unk450;
-                s32 y = gQueueBlock->unk454;
-                gQueueBlock->unk04 = x;
-                gQueueBlock->unk00 = y;
+                s32 x = gMovieStreamContext->unk450;
+                s32 y = gMovieStreamContext->unk454;
+                gMovieStreamContext->unk04 = x;
+                gMovieStreamContext->unk00 = y;
             }
-            gQueueBlock->unk414 = mode;
+            gMovieStreamContext->unk414 = mode;
         }
     }
-    gQueueBlock->unk410--;
-    gQueueBlock->unk408 += 3;
-    gQueueBlock->unk408 %= 48;
-    if (gQueueBlock->unk410 == 0) {
+    gMovieStreamContext->unk410--;
+    gMovieStreamContext->unk408 += 3;
+    gMovieStreamContext->unk408 %= 48;
+    if (gMovieStreamContext->unk410 == 0) {
         return;
     }
     {
-        s32 t = gQueueBlock->unk08[gQueueBlock->unk408];
-        s32 b = gQueueBlock->unk08[gQueueBlock->unk408 + 1];
+        s32 t = gMovieStreamContext->unk08[gMovieStreamContext->unk408];
+        s32 b = gMovieStreamContext->unk08[gMovieStreamContext->unk408 + 1];
         s32 a = t;
-        (void)gQueueBlock->unk08[gQueueBlock->unk408 + 2];
+        (void)gMovieStreamContext->unk08[gMovieStreamContext->unk408 + 2];
         while (func_8008E2F8(a & 0xFF, b) == 0) {
             ;
         }

@@ -6,7 +6,7 @@ typedef struct {
     s32 unk11C;
 } Unk8009F4BC;
 
-extern Unk8009F4BC *gDecodeJob __asm__("D_8009F4BC");
+extern Unk8009F4BC *gMovieSliceContext __asm__("D_8009F4BC");
 
 /**
  *  @brief Writes a signed value to a global object's field.
@@ -15,7 +15,7 @@ extern Unk8009F4BC *gDecodeJob __asm__("D_8009F4BC");
  *  in the object referenced by the global pointer.
  *  @param arg0 Signed value to store.
  *  @par Globals
- *  D_8009F4BC supplies the object pointer.
+ *  gMovieSliceContext supplies the object pointer.
  *  @par Control flow
  *  Performs the store unconditionally.
  *  @par Calls
@@ -27,5 +27,5 @@ extern Unk8009F4BC *gDecodeJob __asm__("D_8009F4BC");
  */
 void func_80085900(s32 arg0)
 {
-    *(volatile s32 *)&gDecodeJob->unk11C = arg0;
+    *(volatile s32 *)&gMovieSliceContext->unk11C = arg0;
 }

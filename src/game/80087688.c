@@ -13,7 +13,7 @@ typedef struct {
     s32 unk7B3C;
 } Unk8009F4D8;
 
-extern Unk8009F4D8 *D_8009F4D8;
+extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
 
@@ -24,7 +24,7 @@ extern void func_8008C9E0(void);
  * @return Nothing.
  *
  * @par Confirmed
- * Under func_8008C9C0: D_8009F4D8->unk0/unk4/unkC = 0, the four words at
+ * Under func_8008C9C0: gMovieAudioState->unk0/unk4/unkC = 0, the four words at
  * +0x7B2C = 0, +0x7B3C = 1, the volatile +0x7B24 = 0; func_8008C9E0
  * unmask.
  *
@@ -42,16 +42,16 @@ void func_80087688(void)
 
     func_8008C9C0();
 
-    D_8009F4D8->unk0 = 0;
-    D_8009F4D8->unk4 = 0;
-    D_8009F4D8->unkC = 0;
+    gMovieAudioState->unk0 = 0;
+    gMovieAudioState->unk4 = 0;
+    gMovieAudioState->unkC = 0;
 
     for (i = 0; i < 4; i++) {
-        D_8009F4D8->unk7B2C[i] = 0;
+        gMovieAudioState->unk7B2C[i] = 0;
     }
 
-    D_8009F4D8->unk7B3C = 1;
-    D_8009F4D8->unk7B24 = 0;
+    gMovieAudioState->unk7B3C = 1;
+    gMovieAudioState->unk7B24 = 0;
 
     func_8008C9E0();
 }

@@ -1,18 +1,18 @@
-// Categories: Resources > Movie Playback | Game Engine > Timing
+// Categories: Resources > Save Data | Game Engine > Timing
 #include "game/types.h"
 
 extern s32 gStillRunningState __asm__("D_8009F464");
 
 /**
- * @brief Marks the movie player as "running" so that the wait loop keeps
- *        pumping it.
+ * @brief Marks the boot profile transfer as in progress.
  *
- * Writes D_8009F464 = 2. func_8007F8CC() reports "still running" exactly as
- * long as this state is 2, and func_80080B08() sets 3 once the player reaches
- * a terminal state - so 2 and 3 are the two states the boot wait distinguishes.
+ * Writes D_8009F464 = 2. func_8007F8CC() reports "done" as soon as the state is
+ * no longer 2, and func_80080B08() sets 3 when the transfer ends - so 2 and 3 are
+ * the two states the boot wait distinguishes. The transfer is the memory-card
+ * profile read; the name has nothing to do with the movie player.
  *
- * @return Nothing. @par Callers func_80076A2C, right before the wait that
- * plays "Intro.wve".
+ * @return Nothing. @par Callers func_80076A2C (boot), before the wait loop that
+ * also pumps the intro movie.
  */
 void func_8007F8BC(void)
 {

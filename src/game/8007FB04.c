@@ -1,4 +1,4 @@
-// Categories: Resources > Movie Playback | Game Engine > State Machine | Platform > MDEC
+// Categories: Resources > Save Data | Front-End > Screen State Machine | Platform > Memory Card
 #include "game/types.h"
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
@@ -28,51 +28,36 @@ extern void func_80078650(u8 *arg0, s32 arg1);
 extern void func_80082020(void);
 
 /**
- * @brief One step of the movie player: polls the decoder, tracks the state
- *        bytes and handles the end of the stream.
+ * @brief One step of the profile save/load transfer state machine.
  *
- * @return The decoder status returned by func_800207B4(0): >= 0 is a normal
- *         stream status, negative values are the terminal states handled below.
+ * @return 0 when nothing changed, non-zero after a state transition (the
+ *         callers only test for zero).
  *
- * @par Confirmed structure
- * - The status is compared with the cached value at context + 0x208; when it is
- *   unchanged the whole body is skipped, so the work only runs on a status
- *   change.
- * - On a change the current state bytes 0x200 (state) and 0x201 (sub-state) are
- *   first copied to 0x203/0x204 ("previous"), a pending image buffer
- *   D_8009F468 is released when it is not one of the two static buffers, and
- *   the display flags D_8009F8BD/D_8009F8BE are armed.
- * - status >= 0: state becomes 2 and the sub-state 0. If the previous state was
- *   2 with a sub-state of 1..3 the transition depends on func_8001F37C()
- *   (present?) and on the countdown byte 0x922: it is decremented, or the
- *   sub-state becomes 3 when it reaches 0. Sub-state 1 with func_8007F750()
- *   success calls func_80080010() and, when the frame counter at 0x40C does not
- *   match, sets sub-state 3 and the constant 0x37D2 at 0x942; when the player
- *   state D_8009F464 equals 2 the movie is finished: func_80080AD4() runs and
- *   D_8009F464 = 3. Sub-state 2 writes 0x37A0 at 0x942.
- * - Sub-state 0 then looks for the next stream: func_80020C90(D_800120A4)
- *   (open file), else func_80020E68(0x678) (read 0x678 bytes); the latter
- *   success clears the 0x678-byte area at 0x20C, calls func_80080010() and
- *   clears D_8009F8BD when the counter at 0x921 is 0.
- * - status < 0 maps the terminal codes: default (0 and unknown) -> state 0,
- *   -1 -> state 3 with a marker in D_8009F468, -2 -> state 1, -4 -> state 2 with
- *   sub-state 1, -5 -> state 2 with sub-state 2 or 3 (depending on 0x207),
- *   -6 -> state 3 with sub-state 3 and 0x207 = 1. D_8009F8C0 is cleared and the
- *   status is cached at 0x208.
+ * @par Confirmed flow
+ * 1. func_800207B4(0) returns the memory-card result code; an unchanged code
+ *    (cached at +0x208) exits immediately - a card result, not a stream status.
+ * 2. When the active front-end screen is neither D_800A36E8 nor D_800A36B8 (the
+ *    two save screens) the menu stack is popped one level with func_80078740().
+ *    D_8009F468 holds that screen descriptor; the identifier gFontBankTable is a
+ *    leftover of an earlier round.
+ * 3. The previous state and sub-state are copied to +0x203/+0x204, the state
+ *    becomes 2 and both UI flags are raised.
+ * 4. The sub-state selects the step: 1 -> func_80081204 (load), 2 ->
+ *    func_80080B70 (save), 3 -> func_8008204C (format). The retry budget at
+ *    +0x922 is decremented first, and a spent budget sets +0x202 = 3.
+ * 5. After a load, func_8007F750() validates the image and func_80080AD4()
+ *    applies the options; while the boot wait is active (D_8009F464 == 2) the
+ *    wait is released (= 3).
+ * 6. Sub-state 0 probes the card: func_80020C90(BASLUS-00739FCOPLAPD) returns the
+ *    slot of an existing save, otherwise func_80020E68(0x678) looks for 0x678
+ *    contiguous free bytes; on success the 0x678-byte image at +0x20C is
+ *    cleared. -1 (no save on the card) enters state 3 and pushes the save-slot
+ *    menu D_800A3718 with the group-0 cursor on slot 1.
  *
  * @par Globals
- * D_8009F92C (movie context), D_8009F464 (player state), D_8009F468 (frame
- * buffer), D_8009F8BD/D_8009F8BE/D_8009F8C0 (display flags), D_800A36E8/
- * D_800A36B8 (static frame buffers), D_800A3718, D_800120A4 (file name).
- *
- * @par Likely meaning of the context bytes
- * 0x200 = player state, 0x201 = sub-state, 0x202 = next state, 0x203/0x204 =
- * previous state/sub-state, 0x205/0x206 = transition flags, 0x207 = "repeated
- * end" marker, 0x208 = cached decoder status, 0x921 = frames remaining,
- * 0x922 = countdown, 0x942 = last written value.
- *
- * @par Callers
- * func_80080B08 (one pump per boot-loop iteration) and func_80080038.
+ * D_8009F92C (profile context), D_8009F464 (boot wait state),
+ * D_8009F8BD/D_8009F8BE (UI flags), D_8009F468 (active screen),
+ * D_800120A4 (save file name).
  */
 s32 func_8007FB04(void)
 {

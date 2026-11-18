@@ -20,7 +20,7 @@ extern s32 gBufferCount __asm__("D_8009F4CC");
  * D_8009F4CC (buffer count).
  *
  * @par Callers
- * func_800861E4 (with mode != 0) and func_80087EA0 (data-dependent).
+ * func_800861E4 (with mode != 0) and gOpenVideoLayer (data-dependent).
  */
 void func_800859D8(s32 arg0)
 {

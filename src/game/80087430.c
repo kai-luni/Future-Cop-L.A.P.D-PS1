@@ -9,7 +9,7 @@ typedef struct {
     u8 buf1[0x3C00];
 } Ring;
 
-extern volatile Ring *D_8009F4D8;
+extern volatile Ring *gMovieAudioState __asm__("D_8009F4D8");
 extern void func_8008731C(u8 *dst, u8 *src, u32 count);
 
 /**
@@ -19,7 +19,7 @@ extern void func_8008731C(u8 *dst, u8 *src, u32 count);
  *  down to 15-byte groups, and accounts for 16 ring bytes per group.
  *  @param arg0 Input block containing the header and two consecutive streams.
  *  @par Globals
- *  D_8009F4D8 supplies the ring buffers and producer and consumer counters.
+ *  gMovieAudioState supplies the ring buffers and producer and consumer counters.
  *  @par Control flow
  *  Busy-waits for space, then copies each stream either once or in two pieces
  *  when the destination wraps around the 0x3C00-byte ring.
@@ -28,9 +28,11 @@ extern void func_8008731C(u8 *dst, u8 *src, u32 count);
  *  @par Side effects
  *  Writes both ring buffers and advances the producer counter.
  *  @par Callers
- *  Confirmed: func_800879DC.
+ *  Confirmed: gMovieStreamDemux.
  */
-void func_80087430(u8 *arg0)
+void gMovieAudioChunkPushSplit(u8 *arg0) __asm__("func_80087430");
+
+void gMovieAudioChunkPushSplit(u8 *arg0)
 {
     u32 magic;
     u32 s0;
@@ -49,19 +51,19 @@ void func_80087430(u8 *arg0)
     s5 = s0 / 15 * 16;
 
     do {
-        used = D_8009F4D8->unk4 - 0x3C00;
-    } while (D_8009F4D8->unk0 - used < s5);
+        used = gMovieAudioState->unk4 - 0x3C00;
+    } while (gMovieAudioState->unk0 - used < s5);
 
-    s1 = ((0x3C00 - D_8009F4D8->unk4 % 0x3C00) >> 4) * 15;
+    s1 = ((0x3C00 - gMovieAudioState->unk4 % 0x3C00) >> 4) * 15;
 
     if (s1 >= s0) {
-        func_8008731C(D_8009F4D8->buf0 + D_8009F4D8->unk4 % 0x3C00, s2, s0);
-        func_8008731C(D_8009F4D8->buf1 + D_8009F4D8->unk4 % 0x3C00, s4, s0);
+        func_8008731C(gMovieAudioState->buf0 + gMovieAudioState->unk4 % 0x3C00, s2, s0);
+        func_8008731C(gMovieAudioState->buf1 + gMovieAudioState->unk4 % 0x3C00, s4, s0);
     } else {
-        func_8008731C(D_8009F4D8->buf0 + D_8009F4D8->unk4 % 0x3C00, s2, s1);
-        func_8008731C(D_8009F4D8->buf0, s2 + s1, s0 - s1);
-        func_8008731C(D_8009F4D8->buf1 + D_8009F4D8->unk4 % 0x3C00, s4, s1);
-        func_8008731C(D_8009F4D8->buf1, s4 + s1, s0 - s1);
+        func_8008731C(gMovieAudioState->buf0 + gMovieAudioState->unk4 % 0x3C00, s2, s1);
+        func_8008731C(gMovieAudioState->buf0, s2 + s1, s0 - s1);
+        func_8008731C(gMovieAudioState->buf1 + gMovieAudioState->unk4 % 0x3C00, s4, s1);
+        func_8008731C(gMovieAudioState->buf1, s4 + s1, s0 - s1);
     }
-    D_8009F4D8->unk4 += s5;
+    gMovieAudioState->unk4 += s5;
 }

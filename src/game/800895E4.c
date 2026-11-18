@@ -11,7 +11,7 @@ typedef struct {
     volatile s32 unk420;
 } Unk8009F970;
 
-extern Unk8009F970 *gQueueBlock __asm__("D_8009F970");
+extern Unk8009F970 *gMovieStreamContext __asm__("D_8009F970");
 extern s32 D_8009F510;
 extern s32 D_8009F514;
 extern u8 gCodeDataSource[] __asm__("D_80088D74");
@@ -38,7 +38,7 @@ extern s32 func_8008E1A8(s32 value);
  * @param arg0 Non-zero starts the service, zero stops it.
  *
  * @par Globals
- * D_8009F970 - device state block; D_8009F510/D_8009F514 - handle pair;
+ * gMovieStreamContext - device state block; D_8009F510/D_8009F514 - handle pair;
  * D_80088D74 - data source; func_800889DC - code/data base used for the second handle.
  *
  * @par Control flow
@@ -53,9 +53,11 @@ extern s32 func_8008E1A8(s32 value);
  * Writes the state block and both handle globals.
  *
  * @par Callers
- * Likely: func_80089700 (undocumented sibling in the same address block).
+ * Likely: gMovieStreamReaderInit (undocumented sibling in the same address block).
  */
-void func_800895E4(s32 arg0)
+void gCdStreamService(s32 arg0) __asm__("func_800895E4");
+
+void gCdStreamService(s32 arg0)
 {
     u8 buf[8];
 
@@ -64,28 +66,28 @@ void func_800895E4(s32 arg0)
         buf[0] = 0xA0;
         func_8008E42C(0xE, buf, 0);
         func_8008C9C0();
-        gQueueBlock->unk410 = 0;
-        gQueueBlock->unk408 = 0;
-        gQueueBlock->unk40C = 0;
+        gMovieStreamContext->unk410 = 0;
+        gMovieStreamContext->unk408 = 0;
+        gMovieStreamContext->unk40C = 0;
         D_8009F510 = func_8008E194((s32)gCodeDataSource);
         D_8009F514 = func_8008E1A8((s32)(func_800889DC + 0x40));
-        gQueueBlock->unk420 = 1;
-        gQueueBlock->unk41C = 1;
+        gMovieStreamContext->unk420 = 1;
+        gMovieStreamContext->unk41C = 1;
     } else {
         s32 active;
 
         func_8008C9C0();
-        active = gQueueBlock->unk420;
-        gQueueBlock->unk41C = 0;
-        gQueueBlock->unk410 = 0;
-        gQueueBlock->unk408 = 0;
-        gQueueBlock->unk40C = 0;
+        active = gMovieStreamContext->unk420;
+        gMovieStreamContext->unk41C = 0;
+        gMovieStreamContext->unk410 = 0;
+        gMovieStreamContext->unk408 = 0;
+        gMovieStreamContext->unk40C = 0;
         if (active != 0) {
             func_8008E194(D_8009F510);
             func_8008E1A8(D_8009F514);
             D_8009F510 = 0;
             D_8009F514 = 0;
-            gQueueBlock->unk420 = 0;
+            gMovieStreamContext->unk420 = 0;
         }
     }
     func_8008C9E0();

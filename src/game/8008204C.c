@@ -1,4 +1,4 @@
-// Categories: Resources > Movie Playback | Platform > CD-ROM
+// Categories: Resources > Save Data | Platform > Memory Card
 #include "game/types.h"
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
@@ -13,32 +13,28 @@ extern s32 func_800207B4(s32 arg0);
 extern s32 func_80078740(void);
 
 /**
- * @brief Waits for a streaming transfer to finish and sets the video registers.
+ * @brief Runs the card format step of the profile transfer.
  *
- * While func_80020B64 reports an active transfer the loop waits one tick
- * (func_80091270(0)) and polls func_800207B4(0). Any answer other than -1
- * aborts after five iterations; if the transfer ends on its own the state
- * bytes at D_8009F92C[0x922], [0x201], [0x202] and [0x207] are set to
- * 3, 3, 1 and 1 and both D_8009F8BD and D_8009F8BE are cleared. The same block
- * is written when no transfer is running at all; an aborted wait leaves
- * [0x201] at 4.
+ * While func_80020B64 reports an active format it waits one tick
+ * (func_80091270(0)) and polls the card result code func_800207B4(0); any answer
+ * other than -1 aborts after five iterations. When the format ends on its own -
+ * or when none is running - the state bytes [0x922], [0x201], [0x202] and
+ * [0x207] are set to 3, 3, 1, 1 and both UI flags are cleared; an aborted wait
+ * leaves [0x201] at 4.
  *
  * @par Globals
- * D_8009F92C - video/decoder state block indexed by byte offset.
- * D_8009F8BD, D_8009F8BE - per-frame flags cleared on completion.
+ * D_8009F92C - profile context indexed by byte offset.
+ * D_8009F8BD, D_8009F8BE - hold and interaction flags, cleared on completion.
  *
  * @par Control flow
  * Bounded loop (five iterations) with two exit conditions.
  *
  * @par Calls
- * func_80020B64 - transfer active. func_800207B4 - transfer poll.
+ * func_80020B64 - format in progress. func_800207B4 - card result code.
  * func_80091270 - frame tick.
  *
- * @par Side effects
- * Writes four state bytes plus the two flags.
- *
  * @par Callers
- * Confirmed: func_8007FB04 (film player).
+ * Confirmed: func_8007FB04 (transfer pump, sub-state 3).
  */
 void func_8008204C(void)
 {

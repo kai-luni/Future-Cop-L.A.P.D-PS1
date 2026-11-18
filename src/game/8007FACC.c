@@ -1,4 +1,4 @@
-// Categories: Resources > Movie Playback | Graphics > Display State
+// Categories: Resources > Save Data | Graphics > Display State
 #include "game/types.h"
 
 extern u8 gPendingFlag __asm__("D_8009F496");
@@ -8,12 +8,13 @@ extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern void func_8002078C(void);
 
 /**
- * @brief Commits a pending movie start.
+ * @brief Commits a pending profile transfer.
  *
- * If D_8009F496 is set, the two display flags D_8009F8BD and D_8009F8BE are
- * raised, func_8002078C() starts the decoder and the pending flag is cleared.
- * A second call does nothing, which makes this the idempotent "apply" half of
- * the func_8007FA88 / func_8007FACC pair.
+ * If D_8009F496 is set, the two UI flags D_8009F8BD and D_8009F8BE are raised,
+ * func_8002078C() releases the card operation (BIOS card events closed, lock
+ * dropped) and the pending flag is cleared. A second call does nothing, which
+ * makes this the idempotent "apply" half of the func_8007FA88 / func_8007FACC
+ * pair.
  *
  * @return Nothing.
  *

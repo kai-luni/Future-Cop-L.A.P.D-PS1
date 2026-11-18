@@ -8,7 +8,7 @@ typedef struct {
     volatile s32 count;
 } Queue;
 
-extern Queue *gQueueBlock __asm__("D_8009F970");
+extern Queue *gMovieStreamContext __asm__("D_8009F970");
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
 extern s32 func_8008E1BC(s32, s32, s32);
@@ -28,7 +28,7 @@ extern s32 func_8008E1BC(s32, s32, s32);
  * @return Always 1.
  *
  * @par Globals
- * D_8009F970 - queue block: entries from 0x08, index and count after 257 words.
+ * gMovieStreamContext - queue block: entries from 0x08, index and count after 257 words.
  *
  * @par Control flow
  * Lock, three stores, wraparound, then one blocking or one non-blocking exit.
@@ -49,7 +49,7 @@ s32 func_80088770(s32 arg0, s32 arg1, s32 arg2)
     register s32 a __asm__("$16") = arg0;
     Queue *queue;
     func_8008C9C0();
-    queue = gQueueBlock;
+    queue = gMovieStreamContext;
     queue->entries[queue->index++] = a & 0xff;
     queue->entries[queue->index++] = b;
     queue->entries[queue->index++] = c;

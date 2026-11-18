@@ -10,7 +10,7 @@ typedef struct {
     DecDctCallback unk128;
 } Unk8009F4BC;
 
-extern Unk8009F4BC *gDecodeJob __asm__("D_8009F4BC");
+extern Unk8009F4BC *gMovieSliceContext __asm__("D_8009F4BC");
 
 extern s32 func_80096090(s32 mode);
 extern s32 func_800960CC(s32 mode);
@@ -26,7 +26,7 @@ extern void func_80095E90(s32 option);
  * @brief Stops the running MDEC movie and restores the saved DMA callbacks,
  *        all inside a COP0 critical section.
  *
- * @return Nothing; a no-op when no decode context is active (D_8009F4BC == 0).
+ * @return Nothing; a no-op when no decode context is active (gMovieSliceContext == 0).
  *
  * @par Confirmed
  * With an active context: func_80096090(0) and func_800960CC(0) stop the two
@@ -38,31 +38,31 @@ extern void func_80095E90(s32 option);
  * the context pointer is nulled.
  *
  * @par Likely role
- * The movie teardown of the video layer func_80087D48: the decode was
+ * The movie teardown of the video layer gCloseVideoLayer: the decode was
  * hijacking the DMA callbacks, so stopping it must hand them back to the
  * previous owners (sound stream, display) atomically.
  *
  * @par Callers
- * func_80087D48.
+ * gCloseVideoLayer.
  */
 void func_80085A24(void)
 {
-    if (gDecodeJob != 0) {
+    if (gMovieSliceContext != 0) {
         func_80096090(0);
         func_800960CC(0);
         func_80092C8C(0);
         func_8008C9C0();
 
-        func_8009612C(gDecodeJob->unk120);
-        func_80096108(gDecodeJob->unk124);
-        func_80092B94(gDecodeJob->unk128);
+        func_8009612C(gMovieSliceContext->unk120);
+        func_80096108(gMovieSliceContext->unk124);
+        func_80092B94(gMovieSliceContext->unk128);
 
-        gDecodeJob->unk120 = 0;
-        gDecodeJob->unk124 = 0;
-        gDecodeJob->unk128 = 0;
+        gMovieSliceContext->unk120 = 0;
+        gMovieSliceContext->unk124 = 0;
+        gMovieSliceContext->unk128 = 0;
 
         func_8008C9E0();
         func_80095E90(1);
-        gDecodeJob = 0;
+        gMovieSliceContext = 0;
     }
 }

@@ -18,7 +18,7 @@ typedef struct {
     u32 unk7B70;
 } Unk80086DB4;
 
-extern volatile Unk80086DB4 *D_8009F4D8;
+extern volatile Unk80086DB4 *gMovieAudioState __asm__("D_8009F4D8");
 
 extern void *func_800869D8(u32 index);
 extern void *func_80086A4C(u32 arg);
@@ -33,7 +33,7 @@ extern void func_80098C68(s32 a, u32 b);
  *  On first use, prepares three 0x300-byte transfers and waits for each to
  *  finish before performing the final initialization step.
  *  @par Globals
- *  D_8009F4D8 holds transfer flags, buffers, initialization state, and voice masks.
+ *  gMovieAudioState holds transfer flags, buffers, initialization state, and voice masks.
  *  @par Control flow
  *  The initialization branch loops three times and busy-waits on unk7B48;
  *  voice-mask operations run on every call.
@@ -44,39 +44,41 @@ extern void func_80098C68(s32 a, u32 b);
  *  @par Side effects
  *  Updates shared transfer and mask state and invokes audio operations.
  *  @par Callers
- *  Confirmed: func_800879DC.
+ *  Confirmed: gMovieStreamDemux.
  */
-void func_80086DB4(void)
+void gMovieAudioStart(void) __asm__("func_80086DB4");
+
+void gMovieAudioStart(void)
 {
     u8 *buf;
     u8 *other;
     u32 i;
 
-    if (D_8009F4D8->unk08 == 0) {
-        D_8009F4D8->unk7B3C = 0x300;
+    if (gMovieAudioState->unk08 == 0) {
+        gMovieAudioState->unk7B3C = 0x300;
         for (i = 0; i < 3; i++) {
             buf = func_800869D8(0x300);
             if (buf != 0) {
                 other = func_80086A4C(0x300);
             } else {
-                buf = (u8 *)D_8009F4D8 + 0x7810;
+                buf = (u8 *)gMovieAudioState + 0x7810;
                 other = buf;
             }
-            D_8009F4D8->unk7B48 = 1;
-            D_8009F4D8->unk7B4C = 1;
-            D_8009F4D8->unk7B50 = other;
-            D_8009F4D8->unk7B54 = 1;
-            func_8008684C(buf, D_8009F4D8->unk7B3C, 0);
-            D_8009F4D8->unk7B3C = D_8009F4D8->unk7B3C + 0x300;
-            while (D_8009F4D8->unk7B48 != 0) {
+            gMovieAudioState->unk7B48 = 1;
+            gMovieAudioState->unk7B4C = 1;
+            gMovieAudioState->unk7B50 = other;
+            gMovieAudioState->unk7B54 = 1;
+            func_8008684C(buf, gMovieAudioState->unk7B3C, 0);
+            gMovieAudioState->unk7B3C = gMovieAudioState->unk7B3C + 0x300;
+            while (gMovieAudioState->unk7B48 != 0) {
             }
         }
-        D_8009F4D8->unk7B48 = 3;
-        D_8009F4D8->unk08 = 1;
+        gMovieAudioState->unk7B48 = 3;
+        gMovieAudioState->unk08 = 1;
         func_80086AC0();
-        D_8009F4D8->unk7B48 = 0;
+        gMovieAudioState->unk7B48 = 0;
     }
-    D_8009F4D8->unk7B6C = func_80098788(0, D_8009F4D8->unk7B64);
-    D_8009F4D8->unk7B70 = func_80098788(0, D_8009F4D8->unk7B68);
-    func_80098C68(1, D_8009F4D8->unk7B64 | D_8009F4D8->unk7B68);
+    gMovieAudioState->unk7B6C = func_80098788(0, gMovieAudioState->unk7B64);
+    gMovieAudioState->unk7B70 = func_80098788(0, gMovieAudioState->unk7B68);
+    func_80098C68(1, gMovieAudioState->unk7B64 | gMovieAudioState->unk7B68);
 }

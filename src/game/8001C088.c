@@ -36,7 +36,7 @@ extern void func_800932F0(struct Unk1C040 *entry);
  *
  * @par Callers
  * func_80076EB0 (boot: select layer 1 and enable, then layer 0 and enable),
- * func_8001BFA8, func_80087D48, the unit at 0x80088124.
+ * func_8001BFA8, gCloseVideoLayer, the unit at 0x80088124.
  */
 void func_8001C088(u8 mode, u8 enable)
 {

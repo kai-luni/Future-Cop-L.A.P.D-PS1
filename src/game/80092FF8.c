@@ -26,7 +26,7 @@ extern Context *gVramWriteCallback __asm__("D_8009DDE8");
  * screen-copy paths.
  *
  * @par Callers
- * func_80088120 only.
+ * gPlayVideoFile only.
  */
 int func_80092FF8(Rect *r, int a, int b)
 {

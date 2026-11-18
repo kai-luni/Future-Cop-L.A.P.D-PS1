@@ -1,7 +1,8 @@
 // Categories: Graphics > Video Decode Tables | Resources > Decompression
 #include "game/types.h"
 typedef struct { u8 bits; u8 pad; u16 code; } Entry;
-extern u8 *D_8009F51C, *D_8009F520;
+extern u8 *gMovieVlcTableA __asm__("D_8009F51C");
+extern u8 *gMovieVlcTableB __asm__("D_8009F520");
 extern u16 gDefaultSymbolTable[] __asm__("D_8009C560");
 extern Entry D_8009C360[];
 extern Entry gSymbolBitLengthTable[] __asm__("D_8009C1E0");
@@ -25,7 +26,7 @@ extern Entry gSymbolBitLengthTable[] __asm__("D_8009C1E0");
  * half into arg1.
  *
  * @par Globals
- * D_8009F51C/D_8009F520 (the two table pointers, cached for the decoder),
+ * gMovieVlcTableA/gMovieVlcTableB (the two table pointers, cached for the decoder),
  * D_8009C1E0 (symbol table), D_8009C560 (default symbols), D_8009C360.
  *
  * @par Likely role
@@ -33,7 +34,7 @@ extern Entry gSymbolBitLengthTable[] __asm__("D_8009C1E0");
  * bits maximum code length, 0x60 symbols.
  *
  * @par Callers
- * func_800861E4 and func_80087EA0 - both right before they decode a stream.
+ * func_800861E4 and gOpenVideoLayer - both right before they decode a stream.
  */
 s32 func_80089A88(u8 *arg0, u8 *arg1, u16 *arg2)
 {
@@ -52,8 +53,8 @@ s32 func_80089A88(u8 *arg0, u8 *arg1, u16 *arg2)
     register s32 code __asm__("$3");
     register s32 shift __asm__("$2");
 
-    D_8009F51C = arg0;
-    D_8009F520 = arg1;
+    gMovieVlcTableA = arg0;
+    gMovieVlcTableB = arg1;
     if (!arg0 || !arg1) return -1;
     out = (u16 *)(arg0 + 0x2000);
     if (!arg2) arg2 = gDefaultSymbolTable;

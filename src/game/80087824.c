@@ -16,7 +16,7 @@ typedef struct State {
     char pad4[0x10];
     int e;
 } State;
-extern volatile State *D_8009F4D8;
+extern volatile State *gMovieAudioState __asm__("D_8009F4D8");
 extern void *func_8001E4C0(void *, int, unsigned int);
 extern void func_80086C74(void *, int, int);
 extern void func_8008C9C0(void);
@@ -30,7 +30,7 @@ extern char D_80086D74[];
  * @brief Initialises the sound subsystem state: buffers, DMA latches and
  *        the optional interrupt callback.
  *
- * @param state The 0x7B80-byte state block (stored in D_8009F4D8).
+ * @param state The 0x7B80-byte state block (stored in gMovieAudioState).
  * @param arg_c, arg_d The two buffer pointers.
  * @param arg_a, arg_b Their sizes.
  * @param arg_e Forwarded to both buffer setups.
@@ -46,7 +46,7 @@ extern char D_80086D74[];
  * when enabled else 0; func_8008C9E0 re-enables interrupts.
  *
  * @par Likely role
- * The one-time sound init behind func_80088120: the 0x300 bytes of 2s
+ * The one-time sound init behind gPlayVideoFile: the 0x300 bytes of 2s
  * are likely the 768 voice-state nibbles, the two buffers the SPU transfer
  * areas, and D_80086950/D_80086D74 the DMA and IRQ callback descriptors.
  *
@@ -54,7 +54,7 @@ extern char D_80086D74[];
  * The layout of the state block beyond the named fields.
  *
  * @par Callers
- * func_80088120 (verified in the retail listing; the call-graph edge is
+ * gPlayVideoFile (verified in the retail listing; the call-graph edge is
  * missing).
  */
 int func_80087824(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b, int arg_e, int arg_enabled)
@@ -69,25 +69,25 @@ int func_80087824(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b, 
     unsigned int i;
     if (state) {
     if (!a || !b || !c || !d) return 0;
-    D_8009F4D8 = state;
+    gMovieAudioState = state;
     func_8001E4C0(state, 0, 0x7B80);
     for (i = 0; i < 0x300; i += 0x10)
-        *(i + (char *)D_8009F4D8 + 0x7811) = 2;
-    D_8009F4D8->one = 1;
-    D_8009F4D8->zero = 0;
-    D_8009F4D8->a = a;
-    D_8009F4D8->b = b;
-    D_8009F4D8->c = c;
-    D_8009F4D8->d = d;
-    D_8009F4D8->e = e;
-    func_80086C74(D_8009F4D8->c, D_8009F4D8->a, e);
-    func_80086C74(D_8009F4D8->d, D_8009F4D8->b, e);
+        *(i + (char *)gMovieAudioState + 0x7811) = 2;
+    gMovieAudioState->one = 1;
+    gMovieAudioState->zero = 0;
+    gMovieAudioState->a = a;
+    gMovieAudioState->b = b;
+    gMovieAudioState->c = c;
+    gMovieAudioState->d = d;
+    gMovieAudioState->e = e;
+    func_80086C74(gMovieAudioState->c, gMovieAudioState->a, e);
+    func_80086C74(gMovieAudioState->d, gMovieAudioState->b, e);
     func_8008C9C0();
-    D_8009F4D8->irq = func_80098BF8(0);
-    D_8009F4D8->other = func_80098FB8(D_80086950);
-    D_8009F4D8->enabled = enabled;
-    if (enabled) D_8009F4D8->callback = func_80091510(D_80086D74);
-    else { __asm__ volatile ("" : "=r"(zero)); D_8009F4D8->callback = zero; }
+    gMovieAudioState->irq = func_80098BF8(0);
+    gMovieAudioState->other = func_80098FB8(D_80086950);
+    gMovieAudioState->enabled = enabled;
+    if (enabled) gMovieAudioState->callback = func_80091510(D_80086D74);
+    else { __asm__ volatile ("" : "=r"(zero)); gMovieAudioState->callback = zero; }
     func_8008C9E0();
     return 1;
     }

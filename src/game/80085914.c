@@ -10,7 +10,7 @@ typedef struct {
     s32 unk11C;
 } Unk8009F4BC;
 
-extern Unk8009F4BC *gDecodeJob __asm__("D_8009F4BC");
+extern Unk8009F4BC *gMovieSliceContext __asm__("D_8009F4BC");
 extern void func_80092C8C(s32);
 extern void func_80091270(s32);
 extern void func_800934BC(void *);
@@ -22,7 +22,7 @@ extern void func_800932F0(void *);
  *  When enabled, this routine invokes two setup calls, passes the current
  *  20-byte buffer to a helper, and selects the other 92-byte buffer.
  *  @par Globals
- *  D_8009F4BC supplies the enable flag, buffer arrays, and current index.
+ *  gMovieSliceContext supplies the enable flag, buffer arrays, and current index.
  *  @par Control flow
  *  If unk11C is zero, returns without action; otherwise toggles unk114 as 1 minus
  *  its current value and passes the newly selected buffer to the final helper.
@@ -32,18 +32,20 @@ extern void func_800932F0(void *);
  *  @par Side effects
  *  Updates unk114 and invokes helpers that may have additional effects.
  *  @par Callers
- *  Confirmed: func_800879DC.
+ *  Confirmed: gMovieStreamDemux.
  */
-void func_80085914(void)
+void gMoviePresentFrame(void) __asm__("func_80085914");
+
+void gMoviePresentFrame(void)
 {
     s32 t;
 
-    if (gDecodeJob->unk11C != 0) {
+    if (gMovieSliceContext->unk11C != 0) {
         func_80092C8C(0);
         func_80091270(0);
-        func_800934BC((void *)&gDecodeJob->unkEC[gDecodeJob->unk114][0]);
-        t = 1 - gDecodeJob->unk114;
-        gDecodeJob->unk114 = t;
-        func_800932F0((void *)&gDecodeJob->unk34[t][0]);
+        func_800934BC((void *)&gMovieSliceContext->unkEC[gMovieSliceContext->unk114][0]);
+        t = 1 - gMovieSliceContext->unk114;
+        gMovieSliceContext->unk114 = t;
+        func_800932F0((void *)&gMovieSliceContext->unk34[t][0]);
     }
 }

@@ -6,7 +6,7 @@ typedef int s32;
 
 extern u8 *gByteTable __asm__("D_8009F9D8");
 extern u8 *gCharTable __asm__("D_8009FABC");
-extern s32 gDecodeJob __asm__("D_8009F4BC");
+extern s32 gMovieSliceContext __asm__("D_8009F4BC");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 gStripDitherEnabled __asm__("D_8009F4C4");
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
@@ -46,7 +46,7 @@ extern s32 gStripStepWidth __asm__("D_8009F4C8");
  * the table is 16 pattern rows of 16 bytes and the rows cycle.
  * The +8 bump makes indices up to 15 + 8 = 23 reachable per group, which is why
  * the lookup table is longer than 256 bytes: the movie path copies a 0x100-byte
- * and a 0x108-byte table into the scratchpad (see func_80085228), and 0x108 is
+ * and a 0x108-byte table into the scratchpad (see gMovieSliceFeedDma), and 0x108 is
  * the 264-entry size that bump needs.
  *
  * @par Likely role

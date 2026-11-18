@@ -23,7 +23,7 @@ extern void func_80096240(u32 *arg0, u16 arg1);
  * MDEC path) is not proven from this body alone.
  *
  * @par Callers
- * func_80085228, func_80085630, func_800861E4.
+ * gMovieSliceFeedDma, gMovieSliceFeedRows, func_800861E4.
  */
 void func_80095FF4(u32 *arg0, s32 arg1)
 {

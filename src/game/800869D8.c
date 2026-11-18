@@ -8,7 +8,7 @@ typedef struct {
     u32 unk7B78;
 } Unk800869D8;
 
-extern Unk800869D8 *D_8009F4D8;
+extern Unk800869D8 *gMovieAudioState __asm__("D_8009F4D8");
 
 /**
  *  @brief Returns a pointer into the first buffer region when available.
@@ -18,7 +18,7 @@ extern Unk800869D8 *D_8009F4D8;
  *  @param index Index used for the availability check.
  *  @return Pointer at start modulo 15360 plus 0x10, or null if unavailable.
  *  @par Globals
- *  D_8009F4D8 points to the buffer state and storage.
+ *  gMovieAudioState points to the buffer state and storage.
  *  @par Control flow
  *  Returns the computed pointer only when both checks pass.
  *  @par Calls
@@ -30,6 +30,6 @@ extern Unk800869D8 *D_8009F4D8;
  */
 void *func_800869D8(u32 index)
 {
-    Unk800869D8 *p = D_8009F4D8;
+    Unk800869D8 *p = gMovieAudioState;
     return (index < p->end - p->start && p->unk7B78 == 0) ? (u8 *)p + ((p->start % 15360) + 0x10) : 0;
 }

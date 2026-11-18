@@ -1,0 +1,14 @@
+
+;; Function func_8004AFC0
+
+(note 2 0 3 "" NOTE_INSN_DELETED)
+
+(note 3 2 4 "" NOTE_INSN_FUNCTION_BEG)
+
+(note 4 3 6 "" NOTE_INSN_DELETED)
+
+(note 6 4 12 "" NOTE_INSN_BLOCK_BEG)
+
+(note 12 6 92 "" NOTE_INSN_DELETED)
+
+(note 92 12 0 "" NOTE_INSN_BLOCK_END)

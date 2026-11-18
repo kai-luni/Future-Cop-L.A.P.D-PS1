@@ -19,7 +19,7 @@ typedef unsigned int u32;
  *  @par Side effects
  *  Writes 16 bytes per iteration to dst.
  *  @par Callers
- *  Confirmed: func_80087430.
+ *  Confirmed: gMovieAudioChunkPushSplit.
  */
 void func_8008731C(u8 *dst, u8 *src, u32 count)
 {

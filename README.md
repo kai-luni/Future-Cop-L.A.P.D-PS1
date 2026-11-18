@@ -150,6 +150,8 @@ See [`docs/OFFLINE_DECOMP.md`](docs/OFFLINE_DECOMP.md) for the resumable, parall
 candidate-search worker, and [`docs/RESEARCH.md`](docs/RESEARCH.md) for the research
 log. [`docs/FUNCTION_MAP.md`](docs/FUNCTION_MAP.md) is the generated architecture map
 of the functions whose source carries a category line (`tools/build_function_map.py`).
+[`docs/video-loading-path.md`](docs/video-loading-path.md) traces the movie path from
+the file open through the CD stream, the MDEC slice decode and the audio clock pacing.
 
 ## Repository layout
 

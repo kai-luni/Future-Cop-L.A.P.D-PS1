@@ -9,7 +9,7 @@ struct UnkB4E4 {
 
 extern struct UnkB4E4 gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
-extern u8 gLoopAbortFlag __asm__("D_8009F4E0");
+extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
 extern u8 D_80011E60[];
 
 extern void func_80082DDC(s32 arg0, s32 arg1);
@@ -23,7 +23,7 @@ extern void func_80082DDC(s32 arg0, s32 arg1);
  *
  * @par Confirmed
  * Same loop as func_80079FE0 but over five entries of D_8009B72C; non-zero
- * values go to func_80082DDC(val, 2), D_8009F4E0 aborts, the fallback box
+ * values go to func_80082DDC(val, 2), gMovieAbortFlag aborts, the fallback box
  * is func_80082DDC(D_80011E60, 0).
  *
  * @par Likely role
@@ -45,13 +45,13 @@ void func_8007A0A4(s32 arg0)
             val = gWideTextTable[gFrontEndListTable[i]].unk08;
             if (val != 0) {
                 func_80082DDC(val, 2);
-                if (gLoopAbortFlag != 0) {
+                if (gMovieAbortFlag != 0) {
                     return;
                 }
             }
             i++;
         } while (i < 5);
-        if (gLoopAbortFlag == 0) {
+        if (gMovieAbortFlag == 0) {
             func_80082DDC((s32)D_80011E60, 0);
         }
     }

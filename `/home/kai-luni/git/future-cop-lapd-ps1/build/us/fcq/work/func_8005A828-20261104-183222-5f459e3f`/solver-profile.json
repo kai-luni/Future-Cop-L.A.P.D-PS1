@@ -1,0 +1,10 @@
+{
+ "compiler": "gcc-2.7.2-cdk",
+ "compiler_flags_extra": [
+  "-G4",
+  "-O2"
+ ],
+ "maspsx_flags_extra": [],
+ "link": true,
+ "rodata_address": null
+}

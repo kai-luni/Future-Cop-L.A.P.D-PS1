@@ -32,7 +32,7 @@ extern s32 func_8008ECFC(s32, void *);
  * @par Side effects
  * Transfers command parameters and may advance the driver state machine.
  * @par Callers
- * Confirmed: func_800895E4 (device start/stop).
+ * Confirmed: gCdStreamService (device start/stop).
  */
 s32 func_8008E42C(s32 command, void *param, void *result)
 {

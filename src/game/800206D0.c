@@ -1,4 +1,4 @@
-// Categories: Resources > Movie Playback | Platform > MDEC
+// Categories: Resources > Save Data | Platform > Memory Card
 #include "game/types.h"
 
 struct Ctx {
@@ -32,27 +32,20 @@ extern void func_80020120(void);
 extern void func_8008D640(s32 value);
 
 /**
- * @brief Resets the movie decoder context to its start-of-stream state.
+ * @brief Resets the memory-card manager to idle.
  *
- * @return Nothing.
- *
- * @par Confirmed field values written
- * unk8F4 = unk8F8 = unk910 = 0, unk8FC = the context's first word (the channel
- * value set by func_80020618), unk900 = -2, unk904 = 0, unk908 = 1, unk90C = 0,
- * unk994 = unk998 = 0, unk9A0 = 3, unk9AC = 3, unk9A8 = 1, unk9A4 = 0,
- * unk1BB0 = 0; then the 0x80-byte area at unk914 and the 0x1200-byte area at
- * unk9B0 are cleared, func_80020530() and func_80020120() re-arm the two
- * sub-blocks and func_8008D640(unk8FC) hands the channel back to the driver.
+ * Zeroes the command and result words, the slot counters and the busy flag,
+ * sets the state fields +0x9A0 and +0x9AC to 3, the result word +0x900 to -2,
+ * clears the 0x80-byte name frame (+0x914) and the 0x1200-byte format image
+ * (+0x9B0). Then it takes the driver lock (func_80020530), opens the eight BIOS
+ * card events (func_80020120) and restores the channel selected in the first
+ * word (func_8008D640).
  *
  * @par Globals
- * D_8009AB08 (decoder context).
- *
- * @par Likely role
- * "rewind to frame 0" before a new movie is armed; func_8007FA88 is what calls
- * it, right before it sets the player state to 6 and requests playback.
+ * D_8009AB08 - the manager context; nothing else.
  *
  * @par Callers
- * func_8007FA88 only.
+ * func_8007FA88 (arming a profile transfer).
  */
 void func_800206D0(void)
 {

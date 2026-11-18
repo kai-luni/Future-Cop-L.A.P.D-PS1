@@ -13,7 +13,7 @@ typedef struct {
     volatile s32 flag;
 } State;
 
-extern State *gDecodeJob __asm__("D_8009F4BC");
+extern State *gMovieSliceContext __asm__("D_8009F4BC");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 gStripDitherEnabled __asm__("D_8009F4C4");
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
@@ -41,7 +41,7 @@ extern void func_80096070(s32, s32);
  *    reset to the other buffer's origin.
  *
  * @par Globals
- * D_8009F4BC (decode job: rects[2], index, rect, dest, flag), D_8009F4C0
+ * gMovieSliceContext (decode job: rects[2], index, rect, dest, flag), D_8009F4C0
  * (scaling mode), D_8009F4C4 (scale enable), D_8009F4C8 (column step).
  *
  * @par Callers
@@ -53,16 +53,16 @@ void func_80085074(void)
     Rect rect;
     State *s;
     if (gStripScaleEnable == 1 && gStripDitherEnabled != 0) {
-        rect.x = ((s16)gDecodeJob->rect.x * 2) / 3;
-        rect.y = gDecodeJob->rect.y;
-        rect.w = ((s16)gDecodeJob->rect.w * 2) / 3;
-        rect.h = gDecodeJob->rect.h;
-        func_800847E0(gDecodeJob->dest, gDecodeJob->dest, &rect);
-        func_80092F38(&rect, gDecodeJob->dest);
+        rect.x = ((s16)gMovieSliceContext->rect.x * 2) / 3;
+        rect.y = gMovieSliceContext->rect.y;
+        rect.w = ((s16)gMovieSliceContext->rect.w * 2) / 3;
+        rect.h = gMovieSliceContext->rect.h;
+        func_800847E0(gMovieSliceContext->dest, gMovieSliceContext->dest, &rect);
+        func_80092F38(&rect, gMovieSliceContext->dest);
     } else {
-        func_80092F38(&gDecodeJob->rect, gDecodeJob->dest);
+        func_80092F38(&gMovieSliceContext->rect, gMovieSliceContext->dest);
     }
-    s = gDecodeJob;
+    s = gMovieSliceContext;
     s->rect.x += gStripStepWidth * 8;
     if ((s16)s->rect.x < (s16)s->rects[s->index].x + (s16)s->rects[s->index].w) {
         func_80096070(s->dest, ((s16)s->rect.w * (s16)s->rect.h) / 2);

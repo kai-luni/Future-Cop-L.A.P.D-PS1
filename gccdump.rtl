@@ -1,0 +1,175 @@
+
+;; Function func_8004AFC0
+
+(note 2 0 3 "" NOTE_INSN_DELETED)
+
+(note 3 2 4 "" NOTE_INSN_FUNCTION_BEG)
+
+(note 4 3 6 "" NOTE_INSN_DELETED)
+
+(note 6 4 9 "" NOTE_INSN_BLOCK_BEG)
+
+(insn 9 6 12 (set (reg/v:SI 72)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(note 12 9 14 "" NOTE_INSN_DELETED)
+
+(code_label 14 12 17 2 "")
+
+(jump_insn 17 14 19 (set (pc)
+        (if_then_else (ne:SI (reg/v:SI 72)
+                (const_int 0))
+            (label_ref 24)
+            (pc))) -1 (nil)
+    (nil))
+
+(note 19 17 21 "" NOTE_INSN_DELETED)
+
+(jump_insn 21 19 22 (set (pc)
+        (label_ref 95)) -1 (nil)
+    (nil))
+
+(barrier 22 21 24)
+
+(code_label 24 22 27 3 "")
+
+(insn 27 24 29 (set (reg:SI 4 a0)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 29 27 31 (set (reg:SI 5 a1)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 31 29 33 (set (reg:SI 6 a2)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 33 31 35 (set (reg:SI 7 a3)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(call_insn 35 33 38 (parallel[ 
+            (call (mem:SI (symbol_ref:SI ("func_800188D0")))
+                (const_int 16))
+            (clobber (reg:SI 31 ra))
+        ] ) -1 (nil)
+    (nil)
+    (expr_list (use (reg:SI 7 a3))
+        (expr_list (use (reg:SI 6 a2))
+            (expr_list (use (reg:SI 5 a1))
+                (expr_list (use (reg:SI 4 a0))
+                    (nil))))))
+
+(insn 38 35 40 (set (reg:SI 4 a0)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(call_insn 40 38 43 (parallel[ 
+            (call (mem:SI (symbol_ref:SI ("func_80010820")))
+                (const_int 16))
+            (clobber (reg:SI 31 ra))
+        ] ) -1 (nil)
+    (nil)
+    (expr_list (use (reg:SI 4 a0))
+        (nil)))
+
+(insn 43 40 45 (set (reg:SI 4 a0)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 45 43 47 (set (reg:SI 5 a1)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 47 45 49 (set (reg:SI 6 a2)
+        (const_int 3)) -1 (nil)
+    (nil))
+
+(call_insn 49 47 56 (parallel[ 
+            (call (mem:SI (symbol_ref:SI ("func_8001006C")))
+                (const_int 16))
+            (clobber (reg:SI 31 ra))
+        ] ) -1 (nil)
+    (nil)
+    (expr_list (use (reg:SI 6 a2))
+        (expr_list (use (reg:SI 5 a1))
+            (expr_list (use (reg:SI 4 a0))
+                (nil)))))
+
+(insn 56 49 58 (set (reg:SI 4 a0)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 58 56 60 (set (reg:SI 5 a1)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 60 58 62 (set (reg:SI 6 a2)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 62 60 64 (set (reg:SI 7 a3)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(call_insn 64 62 67 (parallel[ 
+            (call (mem:SI (symbol_ref:SI ("func_8001ACA4")))
+                (const_int 16))
+            (clobber (reg:SI 31 ra))
+        ] ) -1 (nil)
+    (nil)
+    (expr_list (use (reg:SI 7 a3))
+        (expr_list (use (reg:SI 6 a2))
+            (expr_list (use (reg:SI 5 a1))
+                (expr_list (use (reg:SI 4 a0))
+                    (nil))))))
+
+(insn 67 64 69 (set (reg:SI 4 a0)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 69 67 71 (set (reg:SI 5 a1)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 71 69 73 (set (reg:SI 6 a2)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(insn 73 71 75 (set (reg:SI 7 a3)
+        (const_int 0)) -1 (nil)
+    (nil))
+
+(call_insn 75 73 80 (parallel[ 
+            (call (mem:SI (symbol_ref:SI ("func_8001ACA4")))
+                (const_int 16))
+            (clobber (reg:SI 31 ra))
+        ] ) -1 (nil)
+    (nil)
+    (expr_list (use (reg:SI 7 a3))
+        (expr_list (use (reg:SI 6 a2))
+            (expr_list (use (reg:SI 5 a1))
+                (expr_list (use (reg:SI 4 a0))
+                    (nil))))))
+
+(note 80 75 82 "" NOTE_INSN_DELETED)
+
+(jump_insn 82 80 83 (set (pc)
+        (label_ref 95)) -1 (nil)
+    (nil))
+
+(barrier 83 82 85)
+
+(code_label 85 83 88 4 "")
+
+(note 88 85 90 "" NOTE_INSN_DELETED)
+
+(code_label 90 88 92 5 "")
+
+(note 92 90 93 "" NOTE_INSN_BLOCK_END)
+
+(note 93 92 95 "" NOTE_INSN_FUNCTION_END)
+
+(code_label 95 93 0 1 "")

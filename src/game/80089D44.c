@@ -2,9 +2,9 @@
 #include "game/types.h"
 
 extern u8 func_80087D3C(void);
-extern u8 func_80087EA0(s32 arg0);
-extern void func_80088120(s32 arg0, s32 arg1, s32 arg2);
-extern void func_80087D48(void);
+extern u8 gOpenVideoLayer(s32 arg0) __asm__("func_80087EA0");
+extern void gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80088120");
+extern void gCloseVideoLayer(void) __asm__("func_80087D48");
 extern s32 func_8008A5A8(void);
 
 /**
@@ -25,11 +25,11 @@ extern s32 func_8008A5A8(void);
  *
  * @par Confirmed flow
  * 1. func_80087D3C() reports whether the image layer is already open.
- * 2. If not, func_80087EA0(arg1) opens/initialises it for that mode; a zero
+ * 2. If not, gOpenVideoLayer(arg1) opens/initialises it for that mode; a zero
  *    result means "cannot draw" and the function returns without drawing.
  * 3. flag records that this call opened the layer.
- * 4. func_80088120(arg0, arg2, arg3) performs the actual draw.
- * 5. If this call opened the layer it is closed again with func_80087D48(),
+ * 4. gPlayVideoFile(arg0, arg2, arg3) performs the actual draw.
+ * 5. If this call opened the layer it is closed again with gCloseVideoLayer(),
  *    so a single shot draws and tears down, while a layer that was already
  *    open stays open.
  *
@@ -41,19 +41,21 @@ extern s32 func_8008A5A8(void);
  * func_80076A2C (EA logo and intro frame during boot), func_80082DDC (mission
  * briefing artwork, modes 1, 0 and 2, coordinates 0x20/0x31 and 0/0x18).
  */
-void func_80089D44(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void gDrawImageResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80089D44");
+
+void gDrawImageResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     u8 flag;
 
     flag = 0;
     if (!(func_80087D3C() & 0xFF)) {
-        if (!(func_80087EA0(arg1) & 0xFF)) {
+        if (!(gOpenVideoLayer(arg1) & 0xFF)) {
             return;
         }
         flag = 1;
     }
-    func_80088120(arg0, arg2, arg3);
+    gPlayVideoFile(arg0, arg2, arg3);
     if (flag & 0xFF) {
-        func_80087D48();
+        gCloseVideoLayer();
     }
 }

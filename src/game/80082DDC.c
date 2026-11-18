@@ -8,7 +8,7 @@ extern s8 gOverlayDelay __asm__("D_8009F874");
 extern u8 D_8009F4AC[];
 
 extern void func_80047690(u8 enable);
-extern void func_80089D44(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+extern void gDrawImageResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) __asm__("func_80089D44");
 extern s32 func_8008CD30(u8 *buffer, u8 *format, s32 value, s32 arg3);
 
 /**
@@ -22,14 +22,14 @@ extern s32 func_8008CD30(u8 *buffer, u8 *format, s32 value, s32 arg3);
  * @par Confirmed
  * Saves D_8009FA2C, disables via func_80047690(0), formats
  * func_8008CD30(buf, D_8009F4AC, D_8009F3D0, arg0) and draws through
- * func_80089D44: layout 1 at (0x26, 0x20, 0x31, 0x100, 0x90), layouts 0/2
+ * gDrawImageResource: layout 1 at (0x26, 0x20, 0x31, 0x100, 0x90), layouts 0/2
  * at (4, 0, 0x18, 0x140, 0xC0). Re-enables, sets D_8009F874 = -1 and adds
  * the elapsed D_8009FA2C delta to D_8009F870.
  *
  * @par Likely role
  * A profiling/debug overlay of the front-end helpers func_80079F54,
  * func_80079FE0, func_8007A0A4: the elapsed-time accounting suggests a
- * frame-cost display. Note func_80089D44 ignores its width/height
+ * frame-cost display. Note gDrawImageResource ignores its width/height
  * arguments (measured in round 3).
  *
  * @par Unknown
@@ -48,12 +48,12 @@ void func_80082DDC(s32 arg0, s32 arg1)
     switch (arg1) {
     case 1:
         func_8008CD30(buf, D_8009F4AC, D_8009F3D0, arg0);
-        func_80089D44((s32)buf, 0x26, 0x20, 0x31, 0x100, 0x90);
+        gDrawImageResource((s32)buf, 0x26, 0x20, 0x31, 0x100, 0x90);
         break;
     case 0:
     case 2:
         func_8008CD30(buf, D_8009F4AC, D_8009F3D0, arg0);
-        func_80089D44((s32)buf, 4, 0, 0x18, 0x140, 0xC0);
+        gDrawImageResource((s32)buf, 4, 0, 0x18, 0x140, 0xC0);
         break;
     }
     func_80047690(1);

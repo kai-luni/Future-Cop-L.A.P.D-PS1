@@ -36,7 +36,7 @@ extern s32 func_8001D424(s32 arg0, s32 arg1, s32 arg2);
  * D_8009F240 (search-group manager, filled by the file layer).
  *
  * @par Callers
- * func_8001E110 (file loading) and func_80088120 (video resources).
+ * func_8001E110 (file loading) and gPlayVideoFile (video resources).
  */
 s32 func_8001D5E4(s32 arg0, s32 arg1)
 {

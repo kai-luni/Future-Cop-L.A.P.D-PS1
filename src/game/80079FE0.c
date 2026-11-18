@@ -9,7 +9,7 @@ struct UnkB4E4 {
 
 extern struct UnkB4E4 gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gMissionListTable[] __asm__("D_8009B724");
-extern u8 gLoopAbortFlag __asm__("D_8009F4E0");
+extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
 extern u8 D_80011E60[];
 
 extern void func_80082DDC(s32 arg0, s32 arg1);
@@ -23,7 +23,7 @@ extern void func_80082DDC(s32 arg0, s32 arg1);
  * @par Confirmed
  * Walks i = 0..7 over the index table D_8009B724; each non-zero value
  * D_8009B4E4[table[i]].unk08 is shown via func_80082DDC(val, 2) (the wide
- * layout). D_8009F4E0 aborts the loop early; when it stays 0, the fallback
+ * layout). gMovieAbortFlag aborts the loop early; when it stays 0, the fallback
  * box func_80082DDC(D_80011E60, 0) runs.
  *
  * @par Likely role
@@ -31,7 +31,7 @@ extern void func_80082DDC(s32 arg0, s32 arg1);
  * of func_8007A0A4 (five slots, other index table).
  *
  * @par Unknown
- * What D_8009F4E0 signals (likely a user abort).
+ * What gMovieAbortFlag signals (likely a user abort).
  *
  * @par Callers
  * No direct callers in the call graph and no address reference in the
@@ -48,13 +48,13 @@ void func_80079FE0(s32 arg0)
             val = gWideTextTable[gMissionListTable[i]].unk08;
             if (val != 0) {
                 func_80082DDC(val, 2);
-                if (gLoopAbortFlag != 0) {
+                if (gMovieAbortFlag != 0) {
                     return;
                 }
             }
             i++;
         } while (i < 8);
-        if (gLoopAbortFlag == 0) {
+        if (gMovieAbortFlag == 0) {
             func_80082DDC((s32)D_80011E60, 0);
         }
     }

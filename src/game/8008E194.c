@@ -24,7 +24,7 @@ extern s32 D_8009C8A8;
  * D_8009C8A8 is overwritten on every call, so the driver immediately dispatches to the new handler.
  *
  * @par Callers
- * Confirmed: func_8001C614, func_8001C718 (0x8001C7B4) and func_8001CE54 (0x8001D018, 0x8001D058) install and restore the card completion handler; func_800895E4, func_800908A0, func_800908D4, func_80090B48, func_80090C18, func_80090E00 and func_80090FA0 also call it.
+ * Confirmed: func_8001C614, func_8001C718 (0x8001C7B4) and func_8001CE54 (0x8001D018, 0x8001D058) install and restore the card completion handler; gCdStreamService, func_800908A0, func_800908D4, func_80090B48, func_80090C18, func_80090E00 and func_80090FA0 also call it.
  * Unknown: two further calls at 0x80089074 and 0x800890CC from a driver routine that is not in the matching set.
  */
 s32 func_8008E194(s32 value)

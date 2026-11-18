@@ -1,0 +1,582 @@
+
+;; Function func_80051EB8
+
+(note 2 0 4 "" NOTE_INSN_DELETED)
+
+(insn 4 2 6 (set (reg/v:SI 80)
+        (reg:SI 4 a0)) 168 {movsi_internal2} (nil)
+    (expr_list:REG_DEAD (reg:SI 4 a0)
+        (expr_list:REG_EQUIV (mem:SI (reg:SI 0 $0))
+            (nil))))
+
+(insn 6 4 8 (set (reg/v:SI 81)
+        (reg:SI 5 a1)) 168 {movsi_internal2} (nil)
+    (expr_list:REG_DEAD (reg:SI 5 a1)
+        (expr_list:REG_EQUIV (mem:SI (plus:SI (reg:SI 0 $0)
+                    (const_int 4)))
+            (nil))))
+
+(insn 8 6 10 (set (reg/v:SI 82)
+        (reg:SI 6 a2)) 168 {movsi_internal2} (nil)
+    (expr_list:REG_DEAD (reg:SI 6 a2)
+        (expr_list:REG_EQUIV (mem:SI (plus:SI (reg:SI 0 $0)
+                    (const_int 8)))
+            (nil))))
+
+(insn 10 8 11 (set (reg/v:SI 83)
+        (reg:SI 7 a3)) 168 {movsi_internal2} (nil)
+    (expr_list:REG_DEAD (reg:SI 7 a3)
+        (expr_list:REG_EQUIV (mem:SI (plus:SI (reg:SI 0 $0)
+                    (const_int 12)))
+            (nil))))
+
+(note 11 10 12 "" NOTE_INSN_FUNCTION_BEG)
+
+(note 12 11 14 "" NOTE_INSN_DELETED)
+
+(note 14 12 16 "" NOTE_INSN_BLOCK_BEG)
+
+(insn 16 14 18 (set (reg:SI 84)
+        (and:SI (reg/v:SI 82)
+            (const_int 1))) 97 {andsi3} (insn_list 8 (nil))
+    (nil))
+
+(jump_insn 18 16 20 (set (pc)
+        (if_then_else (eq:SI (reg:SI 84)
+                (const_int 0))
+            (label_ref 121)
+            (pc))) 239 {branch_zero} (insn_list 16 (nil))
+    (expr_list:REG_DEAD (reg:SI 84)
+        (nil)))
+
+(note 20 18 23 "" NOTE_INSN_BLOCK_BEG)
+
+(insn 23 20 25 (set (reg:SI 88)
+        (mem/s:SI (plus:SI (reg/v:SI 81)
+                (const_int 52)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 25 23 27 (set (reg:SI 89)
+        (mem/s:SI (plus:SI (reg/v:SI 80)
+                (const_int 80)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 27 25 29 (set (reg:SI 90)
+        (minus:SI (reg:SI 88)
+            (reg:SI 89))) 16 {subsi3_internal} (insn_list 23 (insn_list 25 (nil)))
+    (expr_list:REG_DEAD (reg:SI 88)
+        (expr_list:REG_DEAD (reg:SI 89)
+            (nil))))
+
+(insn 29 27 32 (set (mem/s:SI (plus:SI (reg:SI 30 $fp)
+                (const_int 32)))
+        (reg:SI 90)) 168 {movsi_internal2} (insn_list 27 (nil))
+    (expr_list:REG_DEAD (reg:SI 90)
+        (nil)))
+
+(insn 32 29 34 (set (reg:SI 91)
+        (mem/s:SI (plus:SI (reg/v:SI 81)
+                (const_int 60)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 34 32 36 (set (reg:SI 92)
+        (mem/s:SI (plus:SI (reg/v:SI 80)
+                (const_int 88)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 36 34 38 (set (reg:SI 93)
+        (minus:SI (reg:SI 91)
+            (reg:SI 92))) 16 {subsi3_internal} (insn_list 32 (insn_list 34 (nil)))
+    (expr_list:REG_DEAD (reg:SI 91)
+        (expr_list:REG_DEAD (reg:SI 92)
+            (nil))))
+
+(insn 38 36 41 (set (mem/s:SI (plus:SI (reg:SI 30 $fp)
+                (const_int 36)))
+        (reg:SI 93)) 168 {movsi_internal2} (insn_list 36 (nil))
+    (expr_list:REG_DEAD (reg:SI 93)
+        (nil)))
+
+(insn 41 38 43 (set (reg:SI 4 a0)
+        (plus:SI (reg:SI 30 $fp)
+            (const_int 32))) 3 {addsi3_internal} (nil)
+    (nil))
+
+(call_insn 43 41 45 (parallel[ 
+            (set (reg:SI 2 v0)
+                (call (mem:SI (symbol_ref:SI ("func_8001A7AC")))
+                    (const_int 16)))
+            (clobber (reg:SI 31 ra))
+        ] ) -1 (insn_list 41 (nil))
+    (expr_list:REG_DEAD (reg:SI 4 a0)
+        (expr_list:REG_UNUSED (reg:SI 31 ra)
+            (nil)))
+    (expr_list (use (reg:SI 4 a0))
+        (nil)))
+
+(note 45 43 48 "" NOTE_INSN_DELETED)
+
+(insn 48 45 50 (set (reg:SI 94)
+        (mem/s:SI (plus:SI (reg/v:SI 81)
+                (const_int 64)))) 168 {movsi_internal2} (nil)
+    (expr_list:REG_DEAD (reg/v:SI 81)
+        (nil)))
+
+(insn 50 48 52 (set (reg:SI 95)
+        (mem/s:SI (plus:SI (reg/v:SI 80)
+                (const_int 104)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 52 50 54 (set (reg:SI 96)
+        (plus:SI (reg:SI 94)
+            (reg:SI 95))) 3 {addsi3_internal} (insn_list 48 (insn_list 50 (nil)))
+    (expr_list:REG_DEAD (reg:SI 94)
+        (expr_list:REG_DEAD (reg:SI 95)
+            (nil))))
+
+(insn 54 52 57 (set (reg/v:SI 86)
+        (minus:SI (reg:SI 2 v0)
+            (reg:SI 96))) 16 {subsi3_internal} (insn_list 43 (insn_list 52 (nil)))
+    (expr_list:REG_DEAD (reg:SI 2 v0)
+        (expr_list:REG_DEAD (reg:SI 96)
+            (nil))))
+
+(insn 57 54 60 (set (reg/v:SI 87)
+        (const_int -4096)) 168 {movsi_internal2} (nil)
+    (expr_list:REG_EQUAL (const_int -4096)
+        (nil)))
+
+(insn 60 57 61 (set (reg:SI 97)
+        (lt:SI (reg/v:SI 86)
+            (const_int -4096))) 276 {slt_si} (insn_list 54 (nil))
+    (nil))
+
+(jump_insn 61 60 63 (set (pc)
+        (if_then_else (eq:SI (reg:SI 97)
+                (const_int 0))
+            (pc)
+            (label_ref 77))) 239 {branch_zero} (insn_list 60 (nil))
+    (expr_list:REG_DEAD (reg:SI 97)
+        (nil)))
+
+(note 63 61 65 "" NOTE_INSN_DELETED)
+
+(insn 65 63 68 (set (reg/v:SI 87)
+        (const_int 4096)) 168 {movsi_internal2} (nil)
+    (expr_list:REG_EQUAL (const_int 4096)
+        (nil)))
+
+(insn 68 65 69 (set (reg:SI 98)
+        (lt:SI (reg/v:SI 86)
+            (const_int 4097))) 276 {slt_si} (nil)
+    (nil))
+
+(jump_insn 69 68 71 (set (pc)
+        (if_then_else (eq:SI (reg:SI 98)
+                (const_int 0))
+            (label_ref 77)
+            (pc))) 239 {branch_zero} (insn_list 68 (nil))
+    (expr_list:REG_DEAD (reg:SI 98)
+        (nil)))
+
+(note 71 69 73 "" NOTE_INSN_DELETED)
+
+(insn 73 71 77 (set (reg/v:SI 87)
+        (reg/v:SI 86)) 168 {movsi_internal2} (nil)
+    (expr_list:REG_DEAD (reg/v:SI 86)
+        (nil)))
+
+(code_label 77 73 80 3 "")
+
+(insn 80 77 82 (set (reg:SI 99)
+        (mem:SI (symbol_ref/v:SI ("D_8009F9FC")))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 82 80 84 (parallel[ 
+            (set (reg/v:SI 86)
+                (mult:SI (reg/v:SI 87)
+                    (reg:SI 99)))
+            (clobber (scratch:SI))
+            (clobber (scratch:SI))
+        ] ) 33 {mulsi3_internal} (insn_list 80 (nil))
+    (expr_list:REG_DEAD (reg/v:SI 87)
+        (expr_list:REG_DEAD (reg:SI 99)
+            (expr_list:REG_UNUSED (scratch:SI)
+                (expr_list:REG_UNUSED (scratch:SI)
+                    (nil))))))
+
+(note 84 82 86 "" NOTE_INSN_DELETED)
+
+(insn 86 84 88 (set (reg:SI 4 a0)
+        (ashift:SI (reg/v:SI 86)
+            (const_int 1))) 201 {ashlsi3} (insn_list 82 (nil))
+    (expr_list:REG_DEAD (reg/v:SI 86)
+        (nil)))
+
+(insn 88 86 90 (set (reg:SI 5 a1)
+        (plus:SI (reg:SI 30 $fp)
+            (const_int 32))) 3 {addsi3_internal} (nil)
+    (nil))
+
+(call_insn 90 88 93 (parallel[ 
+            (call (mem:SI (symbol_ref:SI ("func_8001ABE0")))
+                (const_int 16))
+            (clobber (reg:SI 31 ra))
+        ] ) -1 (insn_list 86 (insn_list 88 (nil)))
+    (expr_list:REG_DEAD (reg:SI 4 a0)
+        (expr_list:REG_DEAD (reg:SI 5 a1)
+            (expr_list:REG_UNUSED (reg:SI 31 ra)
+                (nil))))
+    (expr_list (use (reg:SI 5 a1))
+        (expr_list (use (reg:SI 4 a0))
+            (nil))))
+
+(insn 93 90 97 (set (reg:SI 101)
+        (mem/s:SI (plus:SI (reg/v:SI 80)
+                (const_int 172)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 97 93 99 (set (reg:SI 103)
+        (mem/s:SI (plus:SI (reg:SI 101)
+                (const_int 336)))) 168 {movsi_internal2} (insn_list 93 (nil))
+    (nil))
+
+(insn 99 97 101 (set (reg:SI 104)
+        (mem/s:SI (plus:SI (reg:SI 30 $fp)
+                (const_int 32)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 101 99 103 (set (reg:SI 105)
+        (plus:SI (reg:SI 103)
+            (reg:SI 104))) 3 {addsi3_internal} (insn_list 97 (insn_list 99 (nil)))
+    (expr_list:REG_DEAD (reg:SI 103)
+        (expr_list:REG_DEAD (reg:SI 104)
+            (nil))))
+
+(insn 103 101 106 (set (mem/s:SI (plus:SI (reg:SI 101)
+                (const_int 336)))
+        (reg:SI 105)) 168 {movsi_internal2} (insn_list 101 (nil))
+    (expr_list:REG_DEAD (reg:SI 105)
+        (expr_list:REG_DEAD (reg:SI 101)
+            (nil))))
+
+(insn 106 103 110 (set (reg:SI 106)
+        (mem/s:SI (plus:SI (reg/v:SI 80)
+                (const_int 172)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 110 106 112 (set (reg:SI 108)
+        (mem/s:SI (plus:SI (reg:SI 106)
+                (const_int 344)))) 168 {movsi_internal2} (insn_list 106 (nil))
+    (nil))
+
+(insn 112 110 114 (set (reg:SI 109)
+        (mem/s:SI (plus:SI (reg:SI 30 $fp)
+                (const_int 36)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 114 112 116 (set (reg:SI 110)
+        (plus:SI (reg:SI 108)
+            (reg:SI 109))) 3 {addsi3_internal} (insn_list 110 (insn_list 112 (nil)))
+    (expr_list:REG_DEAD (reg:SI 108)
+        (expr_list:REG_DEAD (reg:SI 109)
+            (nil))))
+
+(insn 116 114 118 (set (mem/s:SI (plus:SI (reg:SI 106)
+                (const_int 344)))
+        (reg:SI 110)) 168 {movsi_internal2} (insn_list 114 (nil))
+    (expr_list:REG_DEAD (reg:SI 110)
+        (expr_list:REG_DEAD (reg:SI 106)
+            (nil))))
+
+(note 118 116 119 "" NOTE_INSN_BLOCK_END)
+
+(jump_insn 119 118 120 (set (pc)
+        (label_ref 243)) -1 (nil)
+    (nil))
+
+(barrier 120 119 121)
+
+(code_label 121 120 123 2 "")
+
+(note 123 121 126 "" NOTE_INSN_BLOCK_BEG)
+
+(insn 126 123 129 (set (reg/v:SI 111)
+        (plus:SI (reg/v:SI 81)
+            (const_int 4))) 3 {addsi3_internal} (nil)
+    (nil))
+
+(insn 129 126 132 (set (reg/v:SI 112)
+        (plus:SI (reg:SI 30 $fp)
+            (const_int 40))) 3 {addsi3_internal} (nil)
+    (nil))
+
+(insn 132 129 134 (set (reg:SI 122)
+        (mem/s:SI (reg/v:SI 81))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 134 132 137 (set (reg/v:SI 113)
+        (mem/s:SI (plus:SI (reg:SI 122)
+                (const_int 52)))) 168 {movsi_internal2} (insn_list 132 (nil))
+    (expr_list:REG_DEAD (reg:SI 122)
+        (nil)))
+
+(note 137 134 138 "" NOTE_INSN_DELETED)
+
+(note 138 137 139 "" NOTE_INSN_DELETED)
+
+(insn 139 138 140 (set (reg:SI 123)
+        (sign_extend:SI (mem/s:HI (plus:SI (reg/v:SI 81)
+                    (const_int 72))))) 132 {extendhisi2_internal} (nil)
+    (expr_list:REG_DEAD (reg/v:SI 81)
+        (nil)))
+
+(insn 140 139 142 (set (reg:SI 126)
+        (ashift:SI (reg:SI 123)
+            (const_int 4))) 201 {ashlsi3} (insn_list 139 (nil))
+    (expr_list:REG_DEAD (reg:SI 123)
+        (nil)))
+
+(insn 142 140 145 (set (reg/v:SI 121)
+        (plus:SI (reg:SI 126)
+            (const_int 8))) 3 {addsi3_internal} (insn_list 140 (nil))
+    (expr_list:REG_DEAD (reg:SI 126)
+        (nil)))
+
+(insn 145 142 148 (set (reg/v:SI 114)
+        (plus:SI (reg/v:SI 113)
+            (reg/v:SI 121))) 3 {addsi3_internal} (insn_list 134 (insn_list 142 (nil)))
+    (expr_list:REG_DEAD (reg/v:SI 121)
+        (nil)))
+
+(insn 148 145 150 (set (reg:SI 4 a0)
+        (reg/v:SI 111)) 168 {movsi_internal2} (insn_list 126 (nil))
+    (nil))
+
+(insn 150 148 152 (set (reg:SI 5 a1)
+        (reg/v:SI 112)) 168 {movsi_internal2} (insn_list 129 (nil))
+    (expr_list:REG_EQUAL (plus:SI (reg:SI 30 $fp)
+            (const_int 40))
+        (nil)))
+
+(call_insn 152 150 155 (parallel[ 
+            (call (mem:SI (symbol_ref:SI ("func_80019470")))
+                (const_int 16))
+            (clobber (reg:SI 31 ra))
+        ] ) -1 (insn_list 148 (insn_list 150 (nil)))
+    (expr_list:REG_DEAD (reg:SI 4 a0)
+        (expr_list:REG_DEAD (reg:SI 5 a1)
+            (expr_list:REG_UNUSED (reg:SI 31 ra)
+                (nil))))
+    (expr_list (use (reg:SI 5 a1))
+        (expr_list (use (reg:SI 4 a0))
+            (nil))))
+
+(insn 155 152 158 (set (reg/v:SI 115)
+        (const_int 32768)) 168 {movsi_internal2} (nil)
+    (expr_list:REG_EQUAL (const_int 32768)
+        (nil)))
+
+(insn 158 155 160 (set (reg:SI 127)
+        (mem/s:SI (reg/v:SI 113))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 160 158 163 (set (reg/v:SI 116)
+        (plus:SI (reg:SI 127)
+            (const_int -1))) 3 {addsi3_internal} (insn_list 158 (nil))
+    (expr_list:REG_DEAD (reg:SI 127)
+        (nil)))
+
+(insn 163 160 165 (set (reg:SI 128)
+        (mem/s:SI (plus:SI (reg/v:SI 80)
+                (const_int 220)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(note 165 163 168 "" NOTE_INSN_DELETED)
+
+(insn 168 165 170 (set (reg:SI 129)
+        (mem/s:SI (plus:SI (reg/v:SI 80)
+                (const_int 40)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 170 168 172 (set (reg/v:SI 118)
+        (mem/s:SI (plus:SI (reg:SI 129)
+                (const_int 52)))) 168 {movsi_internal2} (insn_list 168 (nil))
+    (expr_list:REG_DEAD (reg:SI 129)
+        (nil)))
+
+(note 172 170 173 "" NOTE_INSN_DELETED)
+
+(insn 173 172 174 (set (reg:SI 130)
+        (sign_extend:SI (mem/s:HI (plus:SI (reg:SI 128)
+                    (const_int 112))))) 132 {extendhisi2_internal} (insn_list 163 (nil))
+    (expr_list:REG_DEAD (reg:SI 128)
+        (nil)))
+
+(insn 174 173 176 (set (reg:SI 132)
+        (ashift:SI (reg:SI 130)
+            (const_int 4))) 201 {ashlsi3} (insn_list 173 (nil))
+    (expr_list:REG_DEAD (reg:SI 130)
+        (nil)))
+
+(insn 176 174 180 (set (reg:SI 133)
+        (plus:SI (reg/v:SI 118)
+            (reg:SI 132))) 3 {addsi3_internal} (insn_list 170 (insn_list 174 (nil)))
+    (expr_list:REG_DEAD (reg/v:SI 118)
+        (expr_list:REG_DEAD (reg:SI 132)
+            (nil))))
+
+(note 180 176 181 "" NOTE_INSN_DELETED)
+
+(note 181 180 182 "" NOTE_INSN_DELETED)
+
+(insn 182 181 185 (set (reg/v:SI 117)
+        (sign_extend:SI (mem:HI (plus:SI (reg:SI 133)
+                    (const_int 22))))) 132 {extendhisi2_internal} (insn_list 176 (nil))
+    (expr_list:REG_DEAD (reg:SI 133)
+        (nil)))
+
+(insn 185 182 255 (set (reg/v:SI 120)
+        (plus:SI (reg/v:SI 80)
+            (const_int 40))) 3 {addsi3_internal} (nil)
+    (nil))
+
+(jump_insn 255 185 187 (set (pc)
+        (if_then_else (lt:SI (reg/v:SI 116)
+                (const_int 0))
+            (label_ref 243)
+            (pc))) 239 {branch_zero} (insn_list 160 (nil))
+    (nil))
+
+(note 187 255 193 "" NOTE_INSN_LOOP_BEG)
+
+(code_label 193 187 195 9 "")
+
+(note 195 193 196 "" NOTE_INSN_DELETED)
+
+(insn 196 195 198 (set (reg:SI 137)
+        (and:SI (reg/v:SI 82)
+            (reg/v:SI 115))) 97 {andsi3} (nil)
+    (nil))
+
+(jump_insn 198 196 200 (set (pc)
+        (if_then_else (eq:SI (reg:SI 137)
+                (const_int 0))
+            (label_ref 220)
+            (pc))) 239 {branch_zero} (insn_list 196 (nil))
+    (expr_list:REG_DEAD (reg:SI 137)
+        (nil)))
+
+(note 200 198 202 "" NOTE_INSN_DELETED)
+
+(note 202 200 204 "" NOTE_INSN_DELETED)
+
+(insn 204 202 206 (set (mem:SI (plus:SI (reg:SI 29 sp)
+                (const_int 16)))
+        (reg/v:SI 111)) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 206 204 208 (set (mem:SI (plus:SI (reg:SI 29 sp)
+                (const_int 20)))
+        (reg/v:SI 112)) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 208 206 210 (set (mem:SI (plus:SI (reg:SI 29 sp)
+                (const_int 24)))
+        (reg/v:SI 83)) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 210 208 212 (set (reg:SI 4 a0)
+        (reg/v:SI 80)) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 212 210 214 (set (reg:SI 5 a1)
+        (plus:SI (reg/v:SI 120)
+            (const_int 52))) 3 {addsi3_internal} (nil)
+    (nil))
+
+(insn 214 212 216 (set (reg:SI 6 a2)
+        (reg/v:SI 117)) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 216 214 218 (set (reg:SI 7 a3)
+        (reg/v:SI 114)) 168 {movsi_internal2} (nil)
+    (nil))
+
+(call_insn 218 216 220 (parallel[ 
+            (call (mem:SI (symbol_ref:SI ("func_80051CC4")))
+                (const_int 32))
+            (clobber (reg:SI 31 ra))
+        ] ) -1 (insn_list 210 (insn_list 212 (insn_list 214 (insn_list 216 (nil)))))
+    (expr_list:REG_DEAD (reg:SI 4 a0)
+        (expr_list:REG_DEAD (reg:SI 5 a1)
+            (expr_list:REG_DEAD (reg:SI 6 a2)
+                (expr_list:REG_DEAD (reg:SI 7 a3)
+                    (expr_list:REG_UNUSED (reg:SI 31 ra)
+                        (nil))))))
+    (expr_list (use (reg:SI 7 a3))
+        (expr_list (use (reg:SI 6 a2))
+            (expr_list (use (reg:SI 5 a1))
+                (expr_list (use (reg:SI 4 a0))
+                    (nil))))))
+
+(code_label 220 218 222 10 "")
+
+(insn 222 220 225 (set (reg/v:SI 115)
+        (lshiftrt:SI (reg/v:SI 115)
+            (const_int 1))) 221 {lshrsi3} (nil)
+    (nil))
+
+(insn 225 222 227 (set (reg:SI 139)
+        (mem/s:SI (plus:SI (reg/v:SI 113)
+                (const_int 4)))) 168 {movsi_internal2} (nil)
+    (nil))
+
+(insn 227 225 230 (set (reg/v:SI 114)
+        (plus:SI (reg/v:SI 114)
+            (reg:SI 139))) 3 {addsi3_internal} (insn_list 225 (nil))
+    (expr_list:REG_DEAD (reg:SI 139)
+        (nil)))
+
+(note 230 227 233 "" NOTE_INSN_LOOP_CONT)
+
+(insn 233 230 258 (set (reg/v:SI 116)
+        (plus:SI (reg/v:SI 116)
+            (const_int -1))) 3 {addsi3_internal} (nil)
+    (nil))
+
+(note 258 233 190 "" NOTE_INSN_LOOP_VTOP)
+
+(jump_insn 190 258 239 (set (pc)
+        (if_then_else (ge:SI (reg/v:SI 116)
+                (const_int 0))
+            (label_ref 193)
+            (pc))) 239 {branch_zero} (insn_list 233 (nil))
+    (expr_list:REG_NONNEG (nil)
+        (nil)))
+
+(note 239 190 242 "" NOTE_INSN_LOOP_END)
+
+(note 242 239 243 "" NOTE_INSN_BLOCK_END)
+
+(code_label 243 242 246 5 "")
+
+(insn 246 243 247 (set (reg:QI 140)
+        (mem/s:QI (plus:SI (reg/v:SI 80)
+                (const_int 184)))) 186 {movqi_internal2} (nil)
+    (nil))
+
+(insn 247 246 249 (set (reg:SI 141)
+        (ior:SI (subreg:SI (reg:QI 140) 0)
+            (const_int 16))) 101 {iorsi3} (insn_list 246 (nil))
+    (expr_list:REG_DEAD (reg:QI 140)
+        (nil)))
+
+(insn 249 247 251 (set (mem/s:QI (plus:SI (reg/v:SI 80)
+                (const_int 184)))
+        (subreg:QI (reg:SI 141) 0)) 186 {movqi_internal2} (insn_list 247 (nil))
+    (expr_list:REG_DEAD (reg:SI 141)
+        (expr_list:REG_DEAD (reg/v:SI 80)
+            (nil))))
+
+(note 251 249 0 "" NOTE_INSN_BLOCK_END)

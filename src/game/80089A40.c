@@ -1,8 +1,8 @@
 // Categories: Graphics > Video Decode Tables | Resources > Movie Playback
 #include "game/types.h"
 
-extern u32 D_8009F51C;
-extern u32 D_8009F520;
+extern u32 gMovieVlcTableA __asm__("D_8009F51C");
+extern u32 gMovieVlcTableB __asm__("D_8009F520");
 extern u8 gDefaultSymbolTable[] __asm__("D_8009C560");
 extern void func_80089A88(u32, u32, void *);
 
@@ -15,18 +15,20 @@ extern void func_80089A88(u32, u32, void *);
  * @return Nothing.
  *
  * @par Confirmed
- * func_80089A88(D_8009F51C, D_8009F520, arg0 or D_8009C560): the two
+ * func_80089A88(gMovieVlcTableA, gMovieVlcTableB, arg0 or D_8009C560): the two
  * globals hold table blocks A and B, the callee builds the Huffman
  * lookup tables (block A's length table lives at +0x2000).
  *
  * @par Callers
- * func_800879DC.
+ * gMovieStreamDemux.
  */
-void func_80089A40(void *arg0)
+void gMovieBuildVlcTables(void *arg0) __asm__("func_80089A40");
+
+void gMovieBuildVlcTables(void *arg0)
 {
     if (arg0 != 0) {
-        func_80089A88(D_8009F51C, D_8009F520, arg0);
+        func_80089A88(gMovieVlcTableA, gMovieVlcTableB, arg0);
     } else {
-        func_80089A88(D_8009F51C, D_8009F520, gDefaultSymbolTable);
+        func_80089A88(gMovieVlcTableA, gMovieVlcTableB, gDefaultSymbolTable);
     }
 }

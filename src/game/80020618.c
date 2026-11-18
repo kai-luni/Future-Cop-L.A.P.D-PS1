@@ -1,4 +1,4 @@
-// Categories: Resources > Movie Playback | Platform > MDEC
+// Categories: Resources > Save Data | Platform > Memory Card
 #include "game/types.h"
 
 extern u8 *gOperationState __asm__("D_8009AB08");
@@ -7,31 +7,22 @@ extern void *func_8001E4C0(void *destination, int value, unsigned int count);
 extern int func_80020610(void);
 
 /**
- * @brief Creates the movie decoder context inside a caller-provided block.
+ * @brief Initialises the memory-card manager inside a caller-supplied block.
  *
- * @param arg0 Channel/mode selector; only values 0 and 1 are accepted.
- * @param arg1 Block of at least 0x1BB8 bytes (see func_80020610).
- *
- * @return The context pointer on success, NULL when a context already exists
- *         (D_8009AB08 != 0) or the selector was out of range.
+ * @param arg0 Channel selector; only 0 and 1 are accepted and the value is
+ *             stored shifted left by 4 in the first word of the block.
+ * @param arg1 Block of func_80020610() (0x1BB8) bytes.
+ * @return arg1 on success, 0 when a manager is already installed or arg0 >= 2.
  *
  * @par Confirmed flow
- * 1. If no context exists and arg0 < 2: store arg1 in D_8009AB08 and clear
- *    0x1BB8 bytes.
- * 2. Two tables of 16 pointers are built: at +0x44 they point to
- *    base + 0xC4 + i * 0x80, at +0x84 to base + 0x104 + i * 0x80. Those are
- *    two 16-entry, 0x80-byte-stride buffer rings (2 KB each).
- * 3. The first word receives arg0 << 4 (channel number in the upper nibble).
+ * The block is zeroed, then the 16 slot pointers at +0x44 and the 16 directory
+ * pointers at +0x84 are filled with the 0x80-byte frames at +0xC4 and +0x104.
  *
  * @par Globals
- * D_8009AB08 (the single decoder context).
- *
- * @par Likely role
- * The MDEC/XA context set-up for the movie player: the two pointer rings are
- * the input/output frame queues the decode step rotates through.
+ * D_8009AB08 - receives arg1 (memory-card manager context).
  *
  * @par Callers
- * func_8007F9CC only.
+ * func_8007F9CC (profile open).
  */
 void *func_80020618(s32 arg0, void *arg1)
 {

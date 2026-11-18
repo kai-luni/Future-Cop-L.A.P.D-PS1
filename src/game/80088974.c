@@ -1,19 +1,19 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern u8 *gQueueBlock __asm__("D_8009F970");
+extern u8 *gMovieStreamContext __asm__("D_8009F970");
 extern void func_80088770(s32, s32, s32);
 
 /**
  *  @brief Stores two state values and invokes a helper with a third.
  *
- *  Writes two signed words into the structure addressed by D_8009F970,
+ *  Writes two signed words into the structure addressed by gMovieStreamContext,
  *  then passes a fixed selector and the remaining argument to a helper.
  *  @param arg0 Value stored at byte offset 0x450.
  *  @param arg1 Value stored at byte offset 0x454.
  *  @param arg2 Value forwarded to the helper.
  *  @par Globals
- *  D_8009F970 supplies the base address for both stores.
+ *  gMovieStreamContext supplies the base address for both stores.
  *  @par Control flow
  *  Performs both stores before the unconditional helper call.
  *  @par Calls
@@ -25,7 +25,7 @@ extern void func_80088770(s32, s32, s32);
  */
 void func_80088974(s32 arg0, s32 arg1, s32 arg2)
 {
-    s32 *base = (s32 *)gQueueBlock;
+    s32 *base = (s32 *)gMovieStreamContext;
 
     base[0x114] = arg0;
     base[0x115] = arg1;

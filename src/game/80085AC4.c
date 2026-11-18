@@ -7,7 +7,7 @@ typedef struct {
     s32 unk118;
 } Ctx85AC4;
 
-extern Ctx85AC4 *gDecodeJob __asm__("D_8009F4BC");
+extern Ctx85AC4 *gMovieSliceContext __asm__("D_8009F4BC");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 extern u32 gStripStepWidth __asm__("D_8009F4C8");
 
@@ -32,7 +32,7 @@ extern void func_80095E90(s32 arg0);
  * @return Nothing.
  *
  * @par Confirmed
- * Clears D_8009F4BC->unk114/unk118, busy-waits until D_8009FA3C == 0,
+ * Clears gMovieSliceContext->unk114/unk118, busy-waits until D_8009FA3C == 0,
  * then func_80092C8C(0), func_80096090(0), func_800960CC(0).
  * arg0 path: two func_80092E10 uploads of {0, 0, v, 0xF0} and
  * {0, 0x100, v, 0xF0} with v = ((D_8009F4C8 * 5) << 6) >> 1, each followed
@@ -46,14 +46,14 @@ extern void func_80095E90(s32 arg0);
  * environment of both buffers, the flip exchanges the active pair.
  *
  * @par Callers
- * func_80085C4C, func_80087D48.
+ * func_80085C4C, gCloseVideoLayer.
  */
 void func_80085AC4(u32 arg0, u32 arg1)
 {
     s16 buf[4];
 
-    gDecodeJob->unk114 = 0;
-    gDecodeJob->unk118 = 0;
+    gMovieSliceContext->unk114 = 0;
+    gMovieSliceContext->unk118 = 0;
 
     while (gFrameBarrier != 0) {
     }
@@ -80,8 +80,8 @@ void func_80085AC4(u32 arg0, u32 arg1)
 
     if ((arg1 & 0xFF) != 0) {
         func_80091270(0);
-        func_800932F0((u8 *)gDecodeJob + 0x34 + (1 - gDecodeJob->unk114) * 92);
-        func_800934BC((u8 *)gDecodeJob + 0xEC + (1 - gDecodeJob->unk114) * 20);
+        func_800932F0((u8 *)gMovieSliceContext + 0x34 + (1 - gMovieSliceContext->unk114) * 92);
+        func_800934BC((u8 *)gMovieSliceContext + 0xEC + (1 - gMovieSliceContext->unk114) * 20);
         func_80092BF4(1);
     }
 

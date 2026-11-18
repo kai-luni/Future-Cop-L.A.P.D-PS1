@@ -28,7 +28,7 @@ extern void func_800934BC(struct Unk1BFE4 *entry);
  * entry array).
  *
  * @par Callers
- * func_80076EB0 (boot), func_80087D48 (image layer teardown), the unit at
+ * func_80076EB0 (boot), gCloseVideoLayer (image layer teardown), the unit at
  * 0x80088124 and func_8001EFF8 (the per-frame callback table).
  */
 s32 func_8001BFE4(void)

@@ -15,7 +15,7 @@ typedef struct {
     s32 unk7B5C[4];
 } Unk8009F4D8;
 
-extern Unk8009F4D8 *D_8009F4D8;
+extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 
 extern void func_80098F48(s32 mode);
 extern u32 func_80098EE8(u32 address);
@@ -30,7 +30,7 @@ extern void func_80098E88(u8 *data, u32 size);
  *  @param arg1 Value recorded for the current slot.
  *  @param arg2 Index into the base-address array; 1 also advances the counter.
  *  @par Globals
- *  D_8009F4D8 supplies the slot counter, recorded values, and base addresses.
+ *  gMovieAudioState supplies the slot counter, recorded values, and base addresses.
  *  @par Control flow
  *  A loop marks every 16-byte block; boundary branches adjust the first or
  *  last marker, and a separate branch conditionally increments the counter.
@@ -51,18 +51,18 @@ void func_8008684C(u8 *arg0, u32 arg1, u32 arg2)
         arg0[i + 1] = 2;
     }
 
-    if ((D_8009F4D8->unk7B44 & 3) == 0) {
+    if ((gMovieAudioState->unk7B44 & 3) == 0) {
         arg0[1] = 6;
-    } else if (((D_8009F4D8->unk7B44 + 1) & 3) == 0) {
+    } else if (((gMovieAudioState->unk7B44 + 1) & 3) == 0) {
         arg0[0x2F1] = 3;
     }
 
-    D_8009F4D8->unk7B2C[D_8009F4D8->unk7B44 & 3] = arg1;
+    gMovieAudioState->unk7B2C[gMovieAudioState->unk7B44 & 3] = arg1;
 
-    addr = D_8009F4D8->unk7B5C[arg2] + (D_8009F4D8->unk7B44 & 3) * 0x300;
+    addr = gMovieAudioState->unk7B5C[arg2] + (gMovieAudioState->unk7B44 & 3) * 0x300;
 
     if (arg2 == 1) {
-        D_8009F4D8->unk7B44 = D_8009F4D8->unk7B44 + 1;
+        gMovieAudioState->unk7B44 = gMovieAudioState->unk7B44 + 1;
     }
 
     func_80098F48(0);

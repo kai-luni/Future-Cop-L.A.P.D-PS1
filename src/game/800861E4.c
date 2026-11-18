@@ -25,7 +25,7 @@ extern s32 gStripStepWidth __asm__("D_8009F4C8");
 extern s32 gTransferPending __asm__("D_8009F250");
 extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
-extern State861E4 *gDecodeJob __asm__("D_8009F4BC");
+extern State861E4 *gMovieSliceContext __asm__("D_8009F4BC");
 extern void *D_8009F948, *D_8009F94C, *D_8009F954;
 extern void *gWorkAreaBlock __asm__("D_8009F950");
 extern void *gCharTable __asm__("D_8009FABC");
@@ -72,7 +72,7 @@ extern void *func_8009612C(void *);
  * 2. Buffers: in allocating mode (D_8009F9C4 != 0) func_80017EBC(0x6000) plus
  *    func_80017EBC(0x600) are taken and func_80089A88(buf1, buf2, 0) unpacks
  *    the compressed data; otherwise the static D_8009F948/D_8009F94C are used.
- * 3. The job block D_8009F4BC = 0x130 bytes (pool mode 3 when not allocating)
+ * 3. The job block gMovieSliceContext = 0x130 bytes (pool mode 3 when not allocating)
  *    is zeroed and the three callback slots are filled through func_8009612C
  *    (the frame-complete hook func_80085074), func_80096108(0) and
  *    func_80092B94(0). func_8008C9C0/8008C9E0 bracket the critical section.
@@ -95,7 +95,7 @@ extern void *func_8009612C(void *);
  *    D_8009F250.
  *
  * @par Globals
- * D_8009F4BC (job block), D_8009F9C4 (allocating mode flag), D_8009F4C0
+ * gMovieSliceContext (job block), D_8009F9C4 (allocating mode flag), D_8009F4C0
  * (scale/exit-channel mode), D_8009F4C8 (horizontal scale factor),
  * D_8009F250, D_8009F948/D_8009F94C/D_8009F950/D_8009F954 (static buffers),
  * D_8009FABC/D_8009F9D8 (scratchpad tables), D_800A3958/D_800A3A58 (the two
@@ -145,21 +145,21 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         buf1 = D_8009F948;
         buf2 = D_8009F94C;
     }
-    gDecodeJob = func_80017EBC(0x130, gUploadInProgress ? 2 : 3);
-    if (!gDecodeJob) goto cleanup;
-    func_8001E4C0(gDecodeJob, 0, 0x130);
+    gMovieSliceContext = func_80017EBC(0x130, gUploadInProgress ? 2 : 3);
+    if (!gMovieSliceContext) goto cleanup;
+    func_8001E4C0(gMovieSliceContext, 0, 0x130);
     func_8008C9C0();
-    gDecodeJob->field12C = 1;
-    gDecodeJob->callback120 = func_8009612C(D_80085074);
-    gDecodeJob->callback124 = func_80096108(0);
-    gDecodeJob->callback128 = func_80092B94(0);
+    gMovieSliceContext->field12C = 1;
+    gMovieSliceContext->callback120 = func_8009612C(D_80085074);
+    gMovieSliceContext->callback124 = func_80096108(0);
+    gMovieSliceContext->callback128 = func_80092B94(0);
     if (gStripScaleEnable == 1) gTransferPending = gStripScaleEnable;
     func_8008C9E0();
     if (gUploadInProgress) {
-        gDecodeJob->buffer28[0] = func_80017EBC(0x10000, 2);
-        if (!gDecodeJob->buffer28[0]) goto cleanup;
-        gDecodeJob->buffer24 = func_80017EBC(0x3000, 2);
-        if (!gDecodeJob->buffer24) goto cleanup;
+        gMovieSliceContext->buffer28[0] = func_80017EBC(0x10000, 2);
+        if (!gMovieSliceContext->buffer28[0]) goto cleanup;
+        gMovieSliceContext->buffer24 = func_80017EBC(0x3000, 2);
+        if (!gMovieSliceContext->buffer24) goto cleanup;
         {
         register u32 masked __asm__("$2") = mode & 0xFF;
         __asm__ volatile("" : "+r"(masked));
@@ -172,14 +172,14 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         }
         }
     } else {
-        gDecodeJob->buffer28[0] = D_8009F954;
-        gDecodeJob->buffer24 = gWorkAreaBlock;
+        gMovieSliceContext->buffer28[0] = D_8009F954;
+        gMovieSliceContext->buffer24 = gWorkAreaBlock;
     }
     {
         register u32 scale __asm__("$5") = gStripStepWidth;
         register u32 product __asm__("$8") = x * scale;
         register u32 width __asm__("$2") = input->w * scale;
-        register State861E4 *state __asm__("$3") = gDecodeJob;
+        register State861E4 *state __asm__("$3") = gMovieSliceContext;
         register u32 height __asm__("$6") = input->h;
         register u32 xpos __asm__("$4");
         state->y = y;
@@ -196,16 +196,16 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         state->done = 0;
         func_80089BBC(input->data, state->buffer28[state->index]);
     }
-    func_80095FF4(gDecodeJob->buffer28[gDecodeJob->index], gStripScaleEnable);
+    func_80095FF4(gMovieSliceContext->buffer28[gMovieSliceContext->index], gStripScaleEnable);
     {
-        u32 width = gDecodeJob->w2;
-        u32 height = gDecodeJob->h2;
+        u32 width = gMovieSliceContext->w2;
+        u32 height = gMovieSliceContext->h2;
         __asm__("" : "+r"(width), "+r"(height));
-        func_80096070(gDecodeJob->buffer24, ((s32)(width << 16) >> 16) * ((s32)(height << 16) >> 16) / 2);
+        func_80096070(gMovieSliceContext->buffer24, ((s32)(width << 16) >> 16) * ((s32)(height << 16) >> 16) / 2);
     }
     func_800960CC(0);
     {
-        register State861E4 *state __asm__("$5") = gDecodeJob;
+        register State861E4 *state __asm__("$5") = gMovieSliceContext;
         __asm__ volatile("" : "+r"(state));
         count = 0;
         while (!state->done) {
@@ -219,25 +219,25 @@ cleanup:
     func_800960CC(0);
     func_8008C9C0();
     if (gStripScaleEnable == 1) gTransferPending = 0;
-    if (gDecodeJob) {
-        func_8009612C(gDecodeJob->callback120);
-        func_80096108(gDecodeJob->callback124);
-        func_80092B94(gDecodeJob->callback128);
+    if (gMovieSliceContext) {
+        func_8009612C(gMovieSliceContext->callback120);
+        func_80096108(gMovieSliceContext->callback124);
+        func_80092B94(gMovieSliceContext->callback128);
     }
     func_8008C9E0();
     func_80095E90(1);
     if (gUploadInProgress) {
         if (buf1) func_800181D4(buf1);
         if (buf2) func_800181D4(buf2);
-        if (gDecodeJob) {
-            if (gDecodeJob->buffer28[0]) func_800181D4(gDecodeJob->buffer28[0]);
-            if (gDecodeJob->buffer24) func_800181D4(gDecodeJob->buffer24);
-            func_800181D4(gDecodeJob);
-            gDecodeJob = 0;
+        if (gMovieSliceContext) {
+            if (gMovieSliceContext->buffer28[0]) func_800181D4(gMovieSliceContext->buffer28[0]);
+            if (gMovieSliceContext->buffer24) func_800181D4(gMovieSliceContext->buffer24);
+            func_800181D4(gMovieSliceContext);
+            gMovieSliceContext = 0;
         }
-    } else if (gDecodeJob) {
-        func_800181D4(gDecodeJob);
-        gDecodeJob = 0;
+    } else if (gMovieSliceContext) {
+        func_800181D4(gMovieSliceContext);
+        gMovieSliceContext = 0;
     }
     return result;
 }

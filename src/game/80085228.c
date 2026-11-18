@@ -26,7 +26,7 @@ struct State {
 
 extern void *memcpy(void *, const void *, u32);
 
-extern struct State *gDecodeJob __asm__("D_8009F4BC");
+extern struct State *gMovieSliceContext __asm__("D_8009F4BC");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 gStripDitherEnabled __asm__("D_8009F4C4");
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
@@ -81,12 +81,12 @@ extern s32 func_800960CC(s32 mode);
  *    +0x30 = 1 - +0x30, so consecutive slices alternate buffers.
  *
  * @par Likely role
- * The callback twin of func_80085630: func_8008589C routes every slice here when the
- * context's callback mode (+0x12C) is set, and to func_80085630 when it is not. The
+ * The callback twin of gMovieSliceFeedRows: gMovieDecodeSlice routes every slice here when the
+ * context's callback mode (+0x12C) is set, and to gMovieSliceFeedRows when it is not. The
  * slice header, the tag test, the double buffer, the scratchpad tables and the
  * counter/flip tail are identical; the difference is that this variant hands the
  * whole block to one DMA transfer and then waits for the interrupt, while
- * func_80085630 walks the rows itself and sets +0x11C directly.
+ * gMovieSliceFeedRows walks the rows itself and sets +0x11C directly.
  *
  * @par Unknown
  * - The exact meaning of the three descriptor quads: they repeat the same scaled
@@ -96,9 +96,11 @@ extern s32 func_800960CC(s32 mode);
  *   running maximum.
  *
  * @par Callers
- * func_8008589C (the slice dispatcher, call site 0x800858A0).
+ * gMovieDecodeSlice (the slice dispatcher, call site 0x800858A0).
  */
-void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
+void gMovieSliceFeedDma(u8 *data, s32 input_arg1, s32 input_arg2) __asm__("func_80085228");
+
+void gMovieSliceFeedDma(u8 *data, s32 input_arg1, s32 input_arg2)
 {
     register s32 arg1 __asm__("$21");
     register s32 arg2 __asm__("$18");
@@ -169,7 +171,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
         gFrameTimeMax = value;
     }
 
-    state = gDecodeJob;
+    state = gMovieSliceContext;
     if (state->field118 == 0) {
         register s32 scale __asm__("$4");
         register u32 tag __asm__("$5");
@@ -202,7 +204,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
             func_80089BBC(payload,
                           state->field28[state->field30]);
         }
-        gDecodeJob->field11C = 0;
+        gMovieSliceContext->field11C = 0;
     } else {
         s32 prod;
 
@@ -210,16 +212,16 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
         func_80095FF4(state->field28[1 - state->field30], gStripScaleEnable);
 
         {
-            u16 v20 = *(volatile u16 *)&gDecodeJob->field20;
-            u16 v22 = *(volatile u16 *)&gDecodeJob->field22;
+            u16 v20 = *(volatile u16 *)&gMovieSliceContext->field20;
+            u16 v22 = *(volatile u16 *)&gMovieSliceContext->field22;
 
             prod = (s32)(s16)v20 * (s32)(s16)v22;
         }
-        func_80096070(gDecodeJob->field24, (u32)(prod / 2));
+        func_80096070(gMovieSliceContext->field24, (u32)(prod / 2));
 
         if (magic == 0x4D444543) {
             func_80089BBC(payload,
-                          gDecodeJob->field28[gDecodeJob->field30]);
+                          gMovieSliceContext->field28[gMovieSliceContext->field30]);
         }
 
         func_800960CC(0);
@@ -227,7 +229,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
         {
             register struct State *sp __asm__("$4");
 
-            sp = gDecodeJob;
+            sp = gMovieSliceContext;
             i = 0;
             while (sp->field11C == 0) {
                 if (i > 0x30D40) {
@@ -242,7 +244,7 @@ void func_80085228(u8 *data, s32 input_arg1, s32 input_arg2)
     {
         register struct State *tp __asm__("$3");
 
-        tp = gDecodeJob;
+        tp = gMovieSliceContext;
         tp->field118++;
         tp->field30 = 1 - tp->field30;
     }

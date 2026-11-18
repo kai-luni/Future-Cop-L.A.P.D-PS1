@@ -24,7 +24,7 @@ extern s32 D_8009C810;
  * Overwrites D_8009C810 with $a0.
  *
  * @par Callers
- * Confirmed: func_80089700 (0x80089834, saves and clears callback on stream start), func_80089874 (0x800898A8 in asm/us/main.s, restores saved callback on stream stop) / Likely: none / Unknown: none.
+ * Confirmed: gMovieStreamReaderInit (0x80089834, saves and clears callback on stream start), gMovieStreamReaderClose (0x800898A8 in asm/us/main.s, restores saved callback on stream stop) / Likely: none / Unknown: none.
  */
 __asm__(
     ".text\n\t"

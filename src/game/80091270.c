@@ -35,7 +35,7 @@ extern void func_800913E8(s32, s32);
  * frame counter, the 0x400000/0x80000000 pair a display-status handshake.
  *
  * @par Callers
- * func_8008204C, func_80085C4C, func_800879DC, func_80087D48,
+ * func_8008204C, func_80085C4C, gMovieStreamDemux, gCloseVideoLayer,
  * func_8008ECFC, func_8008EF7C, func_8008F244, func_8008FAC8,
  * func_800908D4, func_80090C18, func_80090E00, func_80090FA0,
  * func_8009113C, func_800951D8, func_8009520C, func_800953F0,

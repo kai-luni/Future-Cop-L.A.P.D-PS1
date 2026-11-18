@@ -13,11 +13,11 @@ typedef struct {
 } Params88120;
 
 extern u8 gLayerOpenResult __asm__("D_8009F504");
-extern u32 gChunkSkipFlag __asm__("D_8009F4DC");
-extern void *D_8009F4EC;
-extern void *D_8009F4F0;
-extern void *D_8009F4F4;
-extern void *D_8009F4F8;
+extern u32 gMovieDisplayMode __asm__("D_8009F4DC");
+extern void *gMovieStreamBuffer __asm__("D_8009F4EC");
+extern void *gMovieAudioBlock __asm__("D_8009F4F0");
+extern void *gMovieSpuBufferA __asm__("D_8009F4F4");
+extern void *gMovieSpuBufferB __asm__("D_8009F4F8");
 extern s32 D_8009F960;
 extern s32 D_8009F964;
 extern s32 gLayerModeBits __asm__("D_8009F968");
@@ -37,16 +37,16 @@ extern void func_80092FF8(Rect88120 *rect, s32 x, s32 y);
 extern void func_800858F4(s32 value);
 extern void func_80085900(s32 value);
 extern void func_80091270(s32 arg0);
-extern void func_80085914(void);
+extern void gMoviePresentFrame(void) __asm__("func_80085914");
 extern void func_80085AC4(u32 arg0, u32 arg1);
-extern void func_80086F30(void);
-extern s32 func_80089700(void *arg0, void (*callback)(void), Params88120 *params, s32 arg3, s32 arg4);
+extern void gMovieAudioClockDisable(void) __asm__("func_80086F30");
+extern s32 gMovieStreamReaderInit(void *arg0, void (*callback)(void), Params88120 *params, s32 arg3, s32 arg4) __asm__("func_80089700");
 extern s32 func_80087824(void *arg0, s32 arg1, void *arg2, s32 arg3, void *arg4, s32 arg5, s32 arg6);
-extern void func_80086F08(u32 value);
-extern s32 func_800879DC(s32 arg0, s32 arg1, s32 arg2);
-extern s32 func_80086FA8(void);
+extern void gMovieSetAudioMode(u32 value) __asm__("func_80086F08");
+extern s32 gMovieStreamDemux(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800879DC");
+extern s32 gMovieAudioBusyCount(void) __asm__("func_80086FA8");
 extern void func_80087750(void);
-extern void func_80089874(void);
+extern void gMovieStreamReaderClose(void) __asm__("func_80089874");
 extern s32 func_800858E0(void);
 extern void func_8001C088(u8 mode, u8 enable);
 extern s32 func_8001BFE4(void);
@@ -77,7 +77,7 @@ extern s32 func_8001BFE4(void);
  *        320x256 frame buffer between RGB555 and RGB888, decodes and blits.
  *
  * @param arg0 Resource/file name passed to func_8001D5E4 (the file layer).
- * @param arg1 Mode/format selector from the caller (see func_80089D44: 4 for
+ * @param arg1 Mode/format selector from the caller (see gDrawImageResource: 4 for
  *             full screens, 0x26 for the narrow variant).
  * @param arg2 Second coordinate/offset from the caller.
  *
@@ -96,19 +96,21 @@ extern s32 func_8001BFE4(void);
  *    5-6-5 to 24 bit while a central 0x100 x 0x90 region (rows 0x31..0xC0,
  *    columns 0x20..0x11F) is forced to black when the mode mask applies.
  * 4. The proper decode path then runs the resource through
- *    func_80089700/func_80087824 with the parameter block D_800A6E20, writes the
+ *    gMovieStreamReaderInit/func_80087824 with the parameter block D_800A6E20, writes the
  *    result with func_80092F38 / func_80092FF8 and converts back to RGB555
  *    afterwards.
  *
  * @par Globals
- * D_8009F504 (layer open), D_8009F4DC (mode flags), D_8009F4EC/D_8009F4F0/
- * D_8009F4F4/D_8009F4F8 (buffers), D_8009F960/D_8009F964/D_8009F968
+ * D_8009F504 (layer open), gMovieDisplayMode (mode flags), gMovieStreamBuffer/gMovieAudioBlock/
+ * gMovieSpuBufferA/gMovieSpuBufferB (buffers), D_8009F960/D_8009F964/D_8009F968
  * (geometry), D_8009F238 (file layer parameter), D_800A6E20 (parameter block).
  *
  * @par Callers
- * func_80089D44 only.
+ * gDrawImageResource only.
  */
-u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
+u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80088120");
+
+u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
 {
     Params88120 params;
     Rect88120 rectA;
@@ -151,14 +153,14 @@ u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
     }
     params = gFileTable;
 
-    if ((gChunkSkipFlag & 0x24) == 0x24) {
+    if ((gMovieDisplayMode & 0x24) == 0x24) {
         rectA.x = 0;
         rectA.w = 0x140;
         rectA.h = 1;
         rectB.x = 0;
         rectB.w = 0x1E0;
         rectB.h = 1;
-        masked = gChunkSkipFlag & 2;
+        masked = gMovieDisplayMode & 2;
         page = func_8001C034();
         if (page == 0) {
             rectA.y = 0x100;
@@ -208,7 +210,7 @@ u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
         func_800858F4(page);
         func_80085900(1);
         func_80091270(0);
-        func_80085914();
+        gMoviePresentFrame();
         rectA.x = 0;
         rectA.w = 0x1E0;
         rectA.h = 0x100;
@@ -225,22 +227,22 @@ u8 func_80088120(s32 arg0, s32 arg1, s32 arg2)
     }
 
     func_80085AC4(0, 1);
-    if (func_80089700(D_8009F4EC, func_80086F30, &params, 1, 0x800) != 0) {
-        if (func_80087824(D_8009F4F0, 0x400000, D_8009F4F4, 0x800000, D_8009F4F8, D_8009F964, 1) != 0) {
-            func_80086F08(0);
-            result = func_800879DC(arg1, arg2, gLayerModeBits * D_8009F960);
+    if (gMovieStreamReaderInit(gMovieStreamBuffer, gMovieAudioClockDisable, &params, 1, 0x800) != 0) {
+        if (func_80087824(gMovieAudioBlock, 0x400000, gMovieSpuBufferA, 0x800000, gMovieSpuBufferB, D_8009F964, 1) != 0) {
+            gMovieSetAudioMode(0);
+            result = gMovieStreamDemux(arg1, arg2, gLayerModeBits * D_8009F960);
             count = 3;
-            while (func_80086FA8() != 0 && count > 0) {
+            while (gMovieAudioBusyCount() != 0 && count > 0) {
                 func_80091270(0);
                 count--;
             }
             func_80087750();
         }
-        func_80089874();
+        gMovieStreamReaderClose();
     }
     func_8001D3A8(handle);
 
-    if ((gChunkSkipFlag & 0x24) == 0x24) {
+    if ((gMovieDisplayMode & 0x24) == 0x24) {
         rectC.x = 0;
         rectC.w = 0x1E0;
         rectC.h = 1;

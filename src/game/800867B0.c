@@ -8,7 +8,7 @@ typedef struct {
     s32 unk7B7C;
 } Unk8009F4D8;
 
-extern Unk8009F4D8 *D_8009F4D8;
+extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 extern s32 func_800966B0(unsigned long long p, s32 a, s32 b);
 
 /**
@@ -19,7 +19,7 @@ extern s32 func_800966B0(unsigned long long p, s32 a, s32 b);
  *  @param arg0 Unsigned input value to scale.
  *  @return The helper result for a selected pair, or zero for other modes.
  *  @par Globals
- *  D_8009F4D8 supplies the mode and the value tested against 0x800.
+ *  gMovieAudioState supplies the mode and the value tested against 0x800.
  *  @par Control flow
  *  Mode 1 selects 0x40 and 0x3F; mode 0 selects a pair based on the value.
  *  @par Calls
@@ -39,7 +39,7 @@ s32 func_800867B0(u32 arg0)
     register s32 val __asm__("$3");
     unsigned long long p;
 
-    mode = D_8009F4D8->unk7B74;
+    mode = gMovieAudioState->unk7B74;
     if (mode != 0) {
         if (mode == 1) {
             __asm__ volatile("");
@@ -50,7 +50,7 @@ s32 func_800867B0(u32 arg0)
             ret = func_800966B0((unsigned long long)arg0 * k, a2, a3);
         }
     } else {
-        val = D_8009F4D8->unk7B7C;
+        val = gMovieAudioState->unk7B7C;
         if (val == 0x800) {
             __asm__ volatile("");
             k = 0x14D0;

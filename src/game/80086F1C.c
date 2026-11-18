@@ -6,36 +6,40 @@ typedef struct {
     volatile u32 value;
 } D_8009F4D8_Data;
 
-extern D_8009F4D8_Data * const D_8009F4D8;
+extern D_8009F4D8_Data * const gMovieAudioState __asm__("D_8009F4D8");
 
 /**
- * @brief Enables audio-sync timestamp updates in D_8009F4D8 (paired with func_80086F30).
+ * @brief Enables audio-sync timestamp updates in gMovieAudioState (paired with gMovieAudioClockDisable).
  *
- * Sets D_8009F4D8->value (+0x7B20) to 1 so the SPU IRQ callback func_80086D74 advances the audio clock at +0x7B24 and counter at +0x7B28. This 40-byte unit also contains func_80086F30 at 0x80086F30, which clears +0x7B20 to 0.
+ * Sets gMovieAudioState->value (+0x7B20) to 1 so the SPU IRQ callback func_80086D74 advances the audio clock at +0x7B24 and counter at +0x7B28. This 40-byte unit also contains gMovieAudioClockDisable at 0x80086F30, which clears +0x7B20 to 0.
  *
  * @param void No parameters.
  *
  * @par Globals
- * D_8009F4D8 - pointer to the 0x7B80-byte streaming audio/video state block; writes 1 to +0x7B20.
+ * gMovieAudioState - pointer to the 0x7B80-byte streaming audio/video state block; writes 1 to +0x7B20.
  *
  * @par Control flow
- * Straight-line store of 1 to D_8009F4D8->value (+0x7B20) and return.
+ * Straight-line store of 1 to gMovieAudioState->value (+0x7B20) and return.
  *
  * @par Calls
  * None.
  *
  * @par Side effects
- * Writes 1 to D_8009F4D8 + 0x7B20 (enabling clock increments in func_80086D74).
+ * Writes 1 to gMovieAudioState + 0x7B20 (enabling clock increments in func_80086D74).
  *
  * @par Callers
- * Confirmed: func_800879DC (0x80087C9C, enables audio clock before video frame decode) / Likely: none / Unknown: none.
+ * Confirmed: gMovieStreamDemux (0x80087C9C, enables audio clock before video frame decode) / Likely: none / Unknown: none.
  */
-void func_80086F1C(void)
+void gMovieAudioClockEnable(void) __asm__("func_80086F1C");
+
+void gMovieAudioClockEnable(void)
 {
-    D_8009F4D8->value = 1;
+    gMovieAudioState->value = 1;
 }
 
-void func_80086F30(void)
+void gMovieAudioClockDisable(void) __asm__("func_80086F30");
+
+void gMovieAudioClockDisable(void)
 {
-    D_8009F4D8->value = 0;
+    gMovieAudioState->value = 0;
 }

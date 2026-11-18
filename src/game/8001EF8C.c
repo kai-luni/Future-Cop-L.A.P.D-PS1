@@ -53,7 +53,7 @@ extern void func_8001BFA8(void);
  * Updates D_800A78F0[port] and the pad state block of the port.
  *
  * @par Callers
- * Confirmed: func_800879DC (stream demux, both ports every pass). Also listed:
+ * Confirmed: gMovieStreamDemux (stream demux, both ports every pass). Also listed:
  * func_8001E620.
  */
 u32 func_8001EF8C(u32 arg0)

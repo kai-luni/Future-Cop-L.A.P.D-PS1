@@ -13,64 +13,62 @@ One box per area; the number on an edge is the count of direct calls between doc
 ```mermaid
 graph LR
     g0["Boot & Front-End<br/>400 functions"]
-    g1["Memory & Resources<br/>140 functions"]
-    g2["Video, MDEC & Movies<br/>21 functions"]
+    g1["Memory & Resources<br/>154 functions"]
+    g2["Video, MDEC & Movies<br/>7 functions"]
     g3["GTE Pipeline<br/>39 functions"]
     g4["Renderer & Scene<br/>151 functions"]
     g5["GPU, 2D & HUD<br/>241 functions"]
     g6["Gameplay, AI & Physics<br/>295 functions"]
-    g7["Platform<br/>365 functions"]
-    g8["Utilities<br/>113 functions"]
+    g7["Platform<br/>366 functions"]
+    g8["Utilities<br/>112 functions"]
     g6 -->|180| g8
     g0 -->|119| g7
     g0 -->|101| g5
     g4 -->|89| g3
     g6 -->|83| g5
     g6 -->|80| g3
+    g0 -->|78| g1
     g5 -->|72| g7
     g6 -->|67| g0
-    g0 -->|66| g1
     g0 -->|65| g6
     g4 -->|65| g8
     g6 -->|62| g4
     g7 -->|50| g0
     g7 -->|47| g8
+    g1 -->|46| g7
     g0 -->|45| g8
     g5 -->|40| g8
     g4 -->|38| g6
-    g1 -->|34| g7
-    g6 -->|33| g1
+    g6 -->|34| g1
     g4 -->|31| g1
     g4 -->|30| g5
+    g1 -->|28| g8
     g6 -->|24| g7
-    g1 -->|24| g8
     g0 -->|20| g4
     g5 -->|19| g1
+    g1 -->|19| g0
     g7 -->|18| g5
-    g2 -->|18| g7
     g5 -->|17| g3
     g5 -->|17| g4
     g1 -->|16| g6
     g7 -->|15| g1
-    g1 -->|13| g0
-    g0 -->|12| g2
     g0 -->|10| g3
     g5 -->|10| g6
-    g2 -->|9| g0
+    g1 -->|9| g5
     g5 -->|8| g0
-    g1 -->|8| g5
-    g2 -->|8| g5
-    g2 -->|7| g8
-    g2 -->|6| g1
+    g2 -->|8| g7
+    g2 -->|7| g5
     g3 -->|4| g8
     g1 -->|3| g4
     g4 -->|3| g0
+    g2 -->|3| g0
+    g2 -->|2| g1
     g3 -->|1| g1
     g3 -->|1| g7
-    g6 -->|1| g2
     g4 -->|1| g7
     g8 -->|1| g1
     g8 -->|1| g7
+    g2 -->|1| g8
 ```
 
 ## Areas in detail
@@ -613,7 +611,7 @@ graph LR
 | `func_8001DFF0` | 20 | Game Engine > State Access | - | - |
 | `func_8002A598` | 20 | Game Engine > Init | - | `func_80024A24` |
 | `func_80085900` | 20 | Game Engine > State Access | - | - |
-| `func_80086F08` | 20 | Game Engine > State Access | - | - |
+| `gMovieSetAudioMode` (`func_80086F08`) | 20 | Game Engine > State Access | - | - |
 | `func_8008A5A8` | 20 | Game Engine > State Access | - | `func_80089DE0` |
 | `func_8008B73C` | 20 | Game Engine > Command State | - | `func_8008AE8C` |
 | `func_8008B7B0` | 20 | Game Engine > Command State | - | `func_8008B168` |
@@ -694,7 +692,7 @@ graph LR
 | `func_8004665C` | 60 | Game Engine > Audio | - | `func_80046B04` |
 | `func_80069B1C` | 60 | Game Engine > State Machine · Entity Script | - | `func_80069B58` |
 | `func_800788B4` | 60 | Game Engine > Menu System · Text | - | `func_800778E4`, `func_80078650` |
-| `func_80086FA8` | 60 | Game Engine > State Inspection | - | - |
+| `gMovieAudioBusyCount` (`func_80086FA8`) | 60 | Game Engine > State Inspection | - | - |
 | `func_8001BBAC` | 64 | Game Engine > Frame · Display | `func_8001B4A8` | `func_80027510` |
 | `func_8001E96C` | 64 | Input > Vibration · Controller | `func_8001E9AC` | `func_8007C940` |
 | `func_8001EAEC` | 64 | Input > DualShock · Controller | - | `func_8007C6F0`, `func_8007C940` |
@@ -734,7 +732,7 @@ graph LR
 | `func_800776B8` | 80 | Game Engine > Front End · Level Table | - | `func_8007A3AC`, `func_8007A450`, `func_8007EA78`, `func_8007F8FC`, `func_8008125C` |
 | `func_8008227C` | 80 | Game Engine > State | - | - |
 | `func_80027E68` | 84 | Game Engine > Interactive Loop · Frame Timing | `func_80057864` | `func_80027EE4` |
-| `func_80089874` | 84 | Game Engine > State Management | - | - |
+| `gMovieStreamReaderClose` (`func_80089874`) | 84 | Game Engine > State Management | - | - |
 | `func_8008B668` | 84 | Input > Controller Protocol | - | - |
 | `func_8001BBEC` | 88 | Game Engine > State Management | - | - |
 | `func_8001EF34` | 88 | Game Engine > Input > Controller | - | `func_8001E7B8`, `func_8001EF8C`, `func_80027510`, `func_8007C0F8`, `func_8007C6F0`, `func_8007C940` |
@@ -879,7 +877,7 @@ graph LR
 | `func_80023D78` | 268 | Game Engine > Audio | `func_80023E84`, `func_800450A4`, `func_800474C4`, `func_80047800` | - |
 | `func_80023204` | 272 | Game Engine > Scheduling | `func_80022D84` | - |
 | `func_8008352C` | 272 | Game Engine > Audio | `func_80045768`, `func_800457B8` | - |
-| `func_80088F00` | 280 | Game Engine > State | - | `func_80089700` |
+| `gMovieStreamPrimeEntry` (`func_80088F00`) | 280 | Game Engine > State | - | `func_80089700` |
 | `func_8008A290` | 280 | Input > Port State | - | - |
 | `func_8007C6F0` | 284 | Game Engine > Front-End Configuration · HUD | `func_8001EAEC`, `func_8001EF34`, `func_80078B34`, `func_8007C0F8`, `func_80082EF0` | - |
 | `func_80021E1C` | 288 | Game Engine > Audio | `func_80021AD0`, `func_80098C68` | `func_80021F3C`, `func_80023314` |
@@ -972,7 +970,7 @@ graph LR
 | `func_8008125C` | 3524 | Game Engine > Front-End Configuration · Name Entry, Text, Slot Table | `func_80046C84`, `func_80048E88`, `func_80049100`, `func_800492A0`, `func_800776B8`, `func_80077708`, `func_80077FFC`, `func_80078210`, `func_80078650`, `func_800788F0`, `func_8007A9D0`, `func_8007AA9C`, `func_8007FACC`, `func_80080984`, `func_80080B70`, `func_80082EF0`, `func_80089914`, `func_8008CCB0`, `func_8008CCC0`, `func_8008CD30` | - |
 | `func_80078DD0` | 4484 | Game Engine > Menu · Controller, Menu Rendering | - | `func_80027EE4` |
 
-### Memory & Resources - 140 functions, 147 calls inside the area
+### Memory & Resources - 154 functions, 158 calls inside the area
 
 Two allocators (block allocator at the bottom, mode allocator at the top), three pools, the four file slots (`D_800A6D78`) and the load/unpack paths. The rest of the program takes its buffers here; the CD-ROM and movie code feeds this layer.
 
@@ -1109,6 +1107,17 @@ graph LR
     f80076878 --> f80019c38
     f80077050 --> f80017c68
     f80077088 --> f80017d20
+    f8007f8fc --> f8007f8e0
+    f8007f8fc --> f8007fa88
+    f8007f9cc --> f80017ebc
+    f8007f9cc --> f80020618
+    f8007fa48 --> f800181d4
+    f8007fa48 --> f80020600
+    f8007fa88 --> f800206d0
+    f8007fb04 --> f80080ad4
+    f8007fb04 --> f80080b70
+    f8007fb04 --> f8008204c
+    f80080b08 --> f8007fb04
     f80080b70 --> f8007f6e0
     f80080b70 --> f80080a5c
     f80080b70 --> f80089914
@@ -1159,6 +1168,9 @@ graph LR
     f8001e110["8001E110"]
     f8001e240["8001E240"]
     f8001e2c0["8001E2C0"]
+    f80020600["80020600"]
+    f80020618["80020618"]
+    f800206d0["800206D0"]
     f80021898["80021898"]
     f80023528["80023528"]
     f800235d4["800235D4"]
@@ -1214,8 +1226,17 @@ graph LR
     f80077050["80077050"]
     f80077088["80077088"]
     f8007f6e0["8007F6E0"]
+    f8007f8e0["8007F8E0"]
+    f8007f8fc["8007F8FC"]
+    f8007f9cc["8007F9CC"]
+    f8007fa48["8007FA48"]
+    f8007fa88["8007FA88"]
+    f8007fb04["8007FB04"]
     f80080a5c["80080A5C"]
+    f80080ad4["80080AD4"]
+    f80080b08["80080B08"]
     f80080b70["80080B70"]
+    f8008204c["8008204C"]
     f80082358["80082358"]
     f800824cc["800824CC"]
     f800825ac["800825AC"]
@@ -1233,12 +1254,16 @@ graph LR
     f80098708["80098708"]
 ```
 
-36 further functions of this area without a documented connection (see the table below): `func_80012E1C`, `func_80017BA0`, `func_80018460`, `func_8001996C`, `func_80019A64`, `func_8001B448`, `func_8001CC6C`, `func_8001CE10`, `func_8001D6D0`, `func_8001D90C`, `func_8001DC48`, `func_80021800`, `func_800219EC`, `func_80022710`, `func_80022BEC`, `func_8002385C`, `func_80024064`, `func_8003A90C`, `func_80047344`, `func_8004749C`, `func_800474C4`, `func_8005A290`, `func_8005A654`, `func_8006A918`, `func_8007852C`, `func_80080984`, `func_80080AD4`, `func_80083130`, `func_800833A8`, `func_80085A24`, `func_80086164`, `func_80089304`, `func_80089404`, `func_8008A118`, `func_8008E0EC`, `func_8008E120`.
+38 further functions of this area without a documented connection (see the table below): `func_80012E1C`, `func_80017BA0`, `func_80018460`, `func_8001996C`, `func_80019A64`, `func_8001B448`, `func_8001CC6C`, `func_8001CE10`, `func_8001D6D0`, `func_8001D90C`, `func_8001DC48`, `func_80021800`, `func_800219EC`, `func_80022710`, `func_80022BEC`, `func_8002385C`, `func_80024064`, `func_8003A90C`, `func_80047344`, `func_8004749C`, `func_800474C4`, `func_8005A290`, `func_8005A654`, `func_8006A918`, `func_8007852C`, `func_8007F8BC`, `func_8007F8CC`, `func_8007FACC`, `func_80080984`, `func_80083130`, `func_800833A8`, `func_80085A24`, `func_80086164`, `func_80089304`, `func_80089404`, `func_8008A118`, `func_8008E0EC`, `func_8008E120`.
 
 | Function | Bytes | Categories | calls (documented) | called by (documented) |
 |---|---|---|---|---|
 | `func_80018460` | 12 | Resources > Memory Management | - | `func_80063428` |
 | `func_80019A64` | 16 | Resources > Resource Registry · Init | - | `func_80024904`, `func_80024A24` |
+| `func_80020600` | 16 | Resources > Save Data · Memory Card | - | `func_8007FA48` |
+| `func_8007F8BC` | 16 | Resources > Save Data · Timing | - | `func_80076A2C` |
+| `func_8007F8CC` | 20 | Resources > Save Data | - | `func_80076A2C` |
+| `func_8007F8E0` | 28 | Resources > Save Data · Frame State | - | `func_80076A2C`, `func_8007F8FC` |
 | `func_80019584` | 32 | Resources > Memory Management | `func_800181D4` | `func_80029E64`, `func_80029EB8`, `func_8003FAD4` |
 | `func_800195D0` | 32 | Resources > Memory Pools | - | `func_800181D4`, `func_800295E8`, `func_800498F0` |
 | `func_8001CDD0` | 32 | Resources > Memory Management · CD-ROM | `func_80017EBC` | - |
@@ -1262,14 +1287,18 @@ graph LR
 | `func_8008E0EC` | 52 | Resources > Lookup | - | - |
 | `func_8008E120` | 52 | Resources > Lookup | - | - |
 | `func_80077050` | 56 | Resources > Memory Pools | `func_80017C68` | `func_80076A2C` |
+| `func_8007FACC` | 56 | Resources > Save Data · Display State | - | `func_80076A2C`, `func_8008125C` |
 | `func_80017D20` | 60 | Resources > Memory Pools | - | `func_800249BC`, `func_80024D14`, `func_80077088` |
 | `func_8003C110` | 60 | Resources > Asset Loader · Memory Management | `func_800181D4`, `func_8003BFD0` | `func_80024EC8` |
 | `func_80063C20` | 60 | Resources > Resource State | `func_80019A74`, `func_800639D4` | `func_80024EC8` |
 | `func_8003BDEC` | 64 | Resources > Memory Pools | `func_800181D4` | `func_8005E22C`, `func_8006EDF0` |
+| `func_8007F8FC` | 64 | Resources > Save Data · Frame State | `func_800776B8`, `func_8007F8E0`, `func_8007FA88` | - |
+| `func_8007FA48` | 64 | Resources > Save Data · Memory Management | `func_800181D4`, `func_80020600` | `func_80076A2C` |
 | `func_80019A20` | 68 | Resources > Record Lookup | - | `func_80051318`, `func_80051580` |
 | `func_8001CE10` | 68 | Resources > Asset Loader · CD-ROM | `func_8001D248` | `func_8001D424`, `func_8001D5E4` |
 | `func_8001E2C0` | 68 | Resources > Memory Management · Memory | `func_8008CB40` | `func_800181D4`, `func_80076FE0` |
 | `func_80029E20` | 68 | Resources > Asset Loader · Loader Post-Process | `func_80019A74`, `func_80019C38` | `func_80024EC8` |
+| `func_8007FA88` | 68 | Resources > Save Data · State Machine | `func_800206D0` | `func_80076A2C`, `func_8007F8FC`, `func_8007F93C` |
 | `func_80017BA0` | 72 | Resources > Memory Management · Memory | - | `func_80076FE0` |
 | `func_80019BF0` | 72 | Resources > Asset Loader · Memory Management | - | `func_80060838`, `func_80060E74`, `func_80084110` |
 | `func_80019BA4` | 76 | Resources > Memory Management · Asset Loader | `func_80019AF8` | `func_800249BC`, `func_80024D14` |
@@ -1296,12 +1325,14 @@ graph LR
 | `func_80019C38` | 104 | Resources > Asset Loader · File Access | - | `func_80029E20`, `func_800319D4`, `func_8003BDA0`, `func_80041070`, `func_8004488C`, `func_80049420`, `func_80049EA8`, `func_8004CA98`, `func_80060838`, `func_80060E74`, `func_8006ED78`, `func_800706C4`, `func_800740B8`, `func_80076878`, `func_80084110` |
 | `func_800295E8` | 104 | Resources > Asset Loader · File Access | `func_800195D0`, `func_8002902C` | `func_80024EC8` |
 | `func_80049734` | 104 | Resources > Loader Post-Process · Lighting | `func_80019A74`, `func_80019AA8`, `func_80019D00` | `func_80024EC8` |
+| `func_80080B08` | 104 | Resources > Save Data · State Machine | `func_8007FB04` | `func_80076A2C` |
 | `func_800860CC` | 104 | Resources > Memory Management · Image Decode & Upload | `func_80017EBC` | `func_80024A24` |
 | `func_80013550` | 112 | Resources > Loader Post-Process | `func_800131A0`, `func_80019A74`, `func_80019AA8`, `func_80019D00` | `func_80024EC8` |
 | `func_8007F6E0` | 112 | Resources > Save Data · Front-End Configuration | `func_8007F688` | `func_80080B70` |
 | `func_80080A5C` | 120 | Resources > Save Data · Volume, Front End | `func_8001EB2C`, `func_800451E0`, `func_8004522C`, `func_80045288`, `func_800452C8` | `func_80080B70` |
 | `func_8001D3A8` | 124 | Resources > File Access · CD-ROM | - | `func_8001E004`, `func_80029EB8` |
 | `func_80022BEC` | 124 | Resources > Buffer Management | - | - |
+| `func_8007F9CC` | 124 | Resources > Save Data · Memory Card | `func_80017EBC`, `func_8001E4C0`, `func_80020610`, `func_80020618` | `func_80076A2C`, `func_800780DC` |
 | `func_80098708` | 124 | Resources > Object Table · Object List | `func_80097DF8` | `func_80021998`, `func_80087D48` |
 | `func_80017BE8` | 128 | Resources > Memory Management · Memory | `func_8001E240` | `func_80076EB0` |
 | `func_8001E240` | 128 | Resources > Memory Management · Memory | `func_8008CA90` | `func_80017BE8`, `func_80017EBC`, `func_80076EB0` |
@@ -1328,6 +1359,8 @@ graph LR
 | `func_8001996C` | 180 | Resources > Asset Loading · Textures | - | `func_80063C5C` |
 | `func_80084110` | 180 | Resources > Asset Loading · Object Spawning | `func_800181D4`, `func_80019BF0`, `func_80019C38`, `func_80019CA0`, `func_80083A10` | - |
 | `func_80017C68` | 184 | Resources > Memory Pools · Memory | `func_800194DC` | `func_80024904`, `func_80024A24`, `func_80077050` |
+| `func_80020618` | 184 | Resources > Save Data · Memory Card | `func_8001E4C0`, `func_80020610` | `func_8007F9CC` |
+| `func_800206D0` | 188 | Resources > Save Data · Memory Card | `func_8001E4C0`, `func_80020120`, `func_80020530`, `func_8008D640` | `func_8007FA88` |
 | `func_8003BE2C` | 196 | Resources > Object Pool · Memory Management | `func_80017EBC` | `func_8005E1BC`, `func_8006EDC4`, `func_800762B0` |
 | `func_80029520` | 200 | Resources > Asset Registry · Reference Counting | `func_80029650` | `func_80029C34`, `func_80029EB8` |
 | `func_8007852C` | 204 | Resources > Cleanup | - | `func_800249BC` |
@@ -1339,7 +1372,8 @@ graph LR
 | `func_800824CC` | 224 | Resources > Texture Atlas · Image Transfer, GPU | `func_800181D4`, `func_800953F0` | `func_80024EC8` |
 | `func_80023930` | 244 | Resources > Node Registration | - | `func_80024EC8` |
 | `func_80021898` | 256 | Resources > Requests | `func_800212F8`, `func_80097B28` | `func_80021CB0` |
-| `func_80089304` | 256 | Resources > Transfer State | `func_80089018` | `func_800879DC` |
+| `gMovieStreamAdvance` (`func_80089304`) | 256 | Resources > Transfer State | `func_80089018` | `func_800879DC` |
+| `func_8008204C` | 264 | Resources > Save Data · Memory Card | `func_800207B4`, `func_80020B64`, `func_80091270` | `func_8007FB04`, `func_80082154` |
 | `func_80024064` | 268 | Resources > Handles | - | - |
 | `func_80049420` | 284 | Resources > Loader Post-Process · Random | `func_80019668`, `func_80019A74`, `func_80019C38`, `func_80019CA0` | `func_80024EC8` |
 | `func_8003BC7C` | 292 | Resources > Object Copy · Object Pool | `func_80017EBC`, `func_800181D4` | `func_8003BDA0`, `func_8003BFD0` |
@@ -1358,7 +1392,7 @@ graph LR
 | `func_80059BFC` | 436 | Resources > File Access · Init, Demo Playback | `func_800197A8`, `func_80059BA0`, `func_8008CCC0`, `func_8008CD30` | `func_80024A24` |
 | `func_80060838` | 444 | Resources > Asset Loader · Object Setup | `func_800181D4`, `func_80019BF0`, `func_80019C38`, `func_80019CA0`, `func_800607B8` | - |
 | `gRegistryLoad` (`func_8006A918`) | 468 | Resources > Loading | - | - |
-| `func_80089404` | 480 | Resources > Streaming | - | `func_800879DC` |
+| `gMovieStreamReserve` (`func_80089404`) | 480 | Resources > Streaming | - | `func_800879DC` |
 | `func_80012E48` | 548 | Resources > Chunk Parsing | - | `func_800131A0` |
 | `func_80063DC8` | 560 | Resources > Asset Loader · Map | `func_80017EBC`, `func_800496D0`, `func_800834C4` | `func_80024EC8` |
 | `func_8001D6D0` | 572 | Resources > File Access · CD-ROM | `func_8001C478`, `func_8001D0A0` | `func_80028AB4` |
@@ -1376,36 +1410,19 @@ graph LR
 | `func_800131A0` | 944 | Resources > Data Initialization · Animation | `func_80012E48`, `func_8001306C` | `func_80013550` |
 | `func_80024EC8` | 1152 | Resources > Asset Loader · Asset Dispatch | `func_80013550`, `func_800181D4`, `func_80023930`, `func_800295E8`, `func_80029E20`, `func_8003C110`, `func_80048E9C`, `func_80049420`, `func_80049734`, `func_8004D6D4`, `func_8004D924`, `func_800511E4`, `func_8005A414`, `func_80060E74`, `func_80063C20`, `func_80063C5C`, `func_80063DC8`, `func_80082358`, `func_800824CC`, `func_800825AC`, `func_8008263C`, `func_800899A4` | `func_80025348`, `func_80025690`, `func_800259D8`, `func_80027EBC` |
 | `func_8002902C` | 1268 | Resources > Asset Loader · Streaming Audio | `func_80023CA4`, `func_800244A4`, `func_80028BA0`, `func_80028BCC`, `func_80028D28`, `func_80028DC0`, `func_80028E58`, `func_8002A16C`, `func_8002A544` | `func_800295E8` |
+| `func_8007FB04` | 1292 | Resources > Save Data · Screen State Machine, Memory Card | `func_8001E4C0`, `func_8001F37C`, `func_800207B4`, `func_80020C90`, `func_80020E68`, `func_80078650`, `func_80078740`, `func_8007F750`, `func_80080010`, `func_80080AD4`, `func_80080B70`, `func_80081204`, `func_80082020`, `func_8008204C` | `func_80080038`, `func_80080B08` |
 | `func_80080B70` | 1684 | Resources > Save Data · File Transfer, Front End | `func_8001E318`, `func_80020FDC`, `func_8007F6E0`, `func_80080A5C`, `func_800822CC`, `func_80089914`, `func_8008CCB0` | `func_8007FB04`, `func_8008125C` |
 
-### Video, MDEC & Movies - 21 functions, 11 calls inside the area
+### Video, MDEC & Movies - 7 functions, 4 calls inside the area
 
 MDEC tables, decode callbacks and movie/image output. Few internal edges because these functions are driven from the (not yet documented) playback path.
 
 ```mermaid
 graph LR
-    f8007f8fc --> f8007f8e0
-    f8007f8fc --> f8007fa88
-    f8007f9cc --> f80020618
-    f8007fa48 --> f80020600
-    f8007fa88 --> f800206d0
-    f8007fb04 --> f8008204c
-    f80080b08 --> f8007fb04
     f800879dc --> f80086f1c
     f800879dc --> f80086f44
     f800879dc --> f80086f58
     f800879dc --> f80086fe4
-    f80020600["80020600"]
-    f80020618["80020618"]
-    f800206d0["800206D0"]
-    f8007f8e0["8007F8E0"]
-    f8007f8fc["8007F8FC"]
-    f8007f9cc["8007F9CC"]
-    f8007fa48["8007FA48"]
-    f8007fa88["8007FA88"]
-    f8007fb04["8007FB04"]
-    f80080b08["80080B08"]
-    f8008204c["8008204C"]
     f80086f1c["80086F1C"]
     f80086f44["80086F44"]
     f80086f58["80086F58"]
@@ -1413,31 +1430,17 @@ graph LR
     f800879dc["800879DC"]
 ```
 
-5 further functions of this area without a documented connection (see the table below): `func_8007F8BC`, `func_8007F8CC`, `func_8007FACC`, `func_80085228`, `func_80089700`.
+2 further functions of this area without a documented connection (see the table below): `func_80085228`, `func_80089700`.
 
 | Function | Bytes | Categories | calls (documented) | called by (documented) |
 |---|---|---|---|---|
-| `func_80020600` | 16 | Resources > Movie Playback | - | `func_8007FA48` |
-| `func_8007F8BC` | 16 | Resources > Movie Playback · Timing | - | `func_80076A2C` |
-| `func_8007F8CC` | 20 | Resources > Movie Playback | - | `func_80076A2C` |
-| `func_80086F44` | 20 | Resources > Movie Playback · Sound | - | `func_800879DC` |
-| `func_8007F8E0` | 28 | Resources > Movie Playback · Frame State | - | `func_80076A2C`, `func_8007F8FC` |
-| `func_80086F1C` | 40 | Resources > Movie Playback · Sound | - | `func_800879DC` |
-| `func_8007FACC` | 56 | Resources > Movie Playback · Display State | - | `func_80076A2C`, `func_8008125C` |
-| `func_8007F8FC` | 64 | Resources > Movie Playback · Frame State | `func_800776B8`, `func_8007F8E0`, `func_8007FA88` | - |
-| `func_8007FA48` | 64 | Resources > Movie Playback · Memory Management | `func_800181D4`, `func_80020600` | `func_80076A2C` |
-| `func_8007FA88` | 68 | Resources > Movie Playback · State Machine | `func_800206D0` | `func_80076A2C`, `func_8007F8FC`, `func_8007F93C` |
-| `func_80086F58` | 80 | Resources > Movie Playback · Video Decode | - | `func_800879DC` |
-| `func_80080B08` | 104 | Resources > Movie Playback · State Machine | `func_8007FB04` | `func_80076A2C` |
-| `func_8007F9CC` | 124 | Resources > Movie Playback · MDEC | `func_80017EBC`, `func_8001E4C0`, `func_80020610`, `func_80020618` | `func_80076A2C`, `func_800780DC` |
-| `func_80020618` | 184 | Resources > Movie Playback · MDEC | `func_8001E4C0`, `func_80020610` | `func_8007F9CC` |
-| `func_800206D0` | 188 | Resources > Movie Playback · MDEC | `func_8001E4C0`, `func_80020120`, `func_80020530`, `func_8008D640` | `func_8007FA88` |
-| `func_8008204C` | 264 | Resources > Movie Playback · CD-ROM | `func_800207B4`, `func_80020B64`, `func_80091270` | `func_8007FB04`, `func_80082154` |
-| `func_80089700` | 372 | Resources > Movie Playback > Stream Demux · Streaming | `func_8001E4C0`, `func_80088F00`, `func_800895E4`, `func_8008E5D8`, `func_80091240` | - |
-| `func_80086FE4` | 824 | Resources > Movie Playback · Sound | `func_8008CD10` | `func_800879DC` |
-| `func_800879DC` | 864 | Resources > Movie Playback > Stream Demux · Video Decode, Sound | `func_8001EF8C`, `func_8008589C`, `func_80085914`, `func_80086DB4`, `func_80086F1C`, `func_80086F44`, `func_80086F58`, `func_80086FE4`, `func_80087430`, `func_80089304`, `func_80089404`, `func_80089A40`, `func_80091270` | - |
-| `func_80085228` | 1032 | Resources > Movie Playback · Frame Slice Upload, MDEC, DMA | `func_80089BBC`, `func_80095E90`, `func_80095FE8`, `func_80095FF4`, `func_80096070`, `func_800960CC` | - |
-| `func_8007FB04` | 1292 | Resources > Movie Playback · State Machine, MDEC | `func_8001E4C0`, `func_8001F37C`, `func_800207B4`, `func_80020C90`, `func_80020E68`, `func_80078650`, `func_80078740`, `func_8007F750`, `func_80080010`, `func_80080AD4`, `func_80080B70`, `func_80081204`, `func_80082020`, `func_8008204C` | `func_80080038`, `func_80080B08` |
+| `gMovieAudioClockRead` (`func_80086F44`) | 20 | Resources > Movie Playback · Sound | - | `func_800879DC` |
+| `gMovieAudioClockEnable` (`func_80086F1C`) | 40 | Resources > Movie Playback · Sound | - | `func_800879DC` |
+| `gMovieFrameDeadline` (`func_80086F58`) | 80 | Resources > Movie Playback · Video Decode | - | `func_800879DC` |
+| `gMovieStreamReaderInit` (`func_80089700`) | 372 | Resources > Movie Playback > Stream Demux · Streaming | `func_8001E4C0`, `func_80088F00`, `func_800895E4`, `func_8008E5D8`, `func_80091240` | - |
+| `gMovieAudioChunkPush` (`func_80086FE4`) | 824 | Resources > Movie Playback · Sound | `func_8008CD10` | `func_800879DC` |
+| `gMovieStreamDemux` (`func_800879DC`) | 864 | Resources > Movie Playback > Stream Demux · Video Decode, Sound | `func_8001EF8C`, `func_8008589C`, `func_80085914`, `func_80086DB4`, `func_80086F1C`, `func_80086F44`, `func_80086F58`, `func_80086FE4`, `func_80087430`, `func_80089304`, `func_80089404`, `func_80089A40`, `func_80091270` | - |
+| `gMovieSliceFeedDma` (`func_80085228`) | 1032 | Resources > Movie Playback · Frame Slice Upload, MDEC, DMA | `func_80089BBC`, `func_80095E90`, `func_80095FE8`, `func_80095FF4`, `func_80096070`, `func_800960CC` | - |
 
 ### GTE Pipeline - 39 functions, 5 calls inside the area
 
@@ -2372,10 +2375,10 @@ graph LR
 | `func_800493C0` | 64 | Graphics > Palette · Text | - | `func_8007BCF4`, `func_8007F1F8` |
 | `func_80094960` | 64 | Graphics > Command Transfer | - | - |
 | `func_8001BD2C` | 68 | Graphics > Color | - | - |
-| `func_8008589C` | 68 | Graphics > Video Decode · MDEC, Movie Playback | - | `func_800879DC` |
+| `gMovieDecodeSlice` (`func_8008589C`) | 68 | Graphics > Video Decode · MDEC, Movie Playback | - | `func_800879DC` |
 | `func_800859D8` | 68 | Graphics > Video Decode Output | - | `func_800861E4` |
 | `func_8001C040` | 72 | Graphics > Fade Layers · Colour | - | `func_80076EB0` |
-| `func_80089A40` | 72 | Graphics > Video Decode Tables · Movie Playback | `func_80089A88` | `func_800879DC` |
+| `gMovieBuildVlcTables` (`func_80089A40`) | 72 | Graphics > Video Decode Tables · Movie Playback | `func_80089A88` | `func_800879DC` |
 | `func_80044AE8` | 76 | Graphics > Animation > Events | - | `func_80044B34` |
 | `func_8001BFE4` | 80 | Graphics > Fade Layers · GPU | - | `func_8001EFF8`, `func_80076EB0`, `func_80087D48` |
 | `func_80048978` | 80 | Graphics > Text · Init | `func_800488A4` | `func_80048EC4` |
@@ -2426,8 +2429,8 @@ graph LR
 | `func_80093F78` | 152 | Graphics > GPU Primitives > Draw Area | - | `func_8009398C`, `func_80093AF0`, `func_80093CE8` |
 | `func_80094010` | 152 | Graphics > GPU Primitives > Draw Area | - | `func_8009398C`, `func_80093AF0`, `func_80093CE8` |
 | `func_80095F50` | 152 | Graphics > Decoder Environment | `func_80096240` | - |
-| `func_80085914` | 156 | Graphics > Buffer Switching | - | `func_800879DC` |
-| `func_80089D44` | 156 | Graphics > Image Display · Deferred Initialisation | `func_80087D3C`, `func_80087D48`, `func_80087EA0`, `func_80088120` | `func_80076A2C`, `func_80082DDC` |
+| `gMoviePresentFrame` (`func_80085914`) | 156 | Graphics > Buffer Switching | - | `func_800879DC` |
+| `gDrawImageResource` (`func_80089D44`) | 156 | Graphics > Image Display · Deferred Initialisation | `func_80087D3C`, `func_80087D48`, `func_80087EA0`, `func_80088120` | `func_80076A2C`, `func_80082DDC` |
 | `func_800492A0` | 160 | Graphics > Text > Measurement | `func_800489C8` | `func_800788F0`, `func_8007ABBC`, `func_8007E1A4`, `func_8007F1F8`, `func_8008125C` |
 | `func_8002ACB4` | 164 | Graphics > Animation · Instance Submission | `func_80013AA0`, `func_80017508` | `func_8002AD58`, `func_8002C3F0`, `func_8002ED7C`, `func_800382B4` |
 | `func_80093178` | 172 | Graphics > GPU Command Lists · GPU | - | `func_8001B2C8`, `func_8001B4A8` |
@@ -2488,7 +2491,7 @@ graph LR
 | `func_800485AC` | 336 | Graphics > HUD > Frame · 2D Drawing | - | `func_80027510`, `func_800486FC` |
 | `func_80056634` | 344 | Graphics > Camera · Player | `func_800177AC`, `func_80017860`, `func_80017B60`, `func_8005612C` | `func_800259D8` |
 | `func_8005A2BC` | 344 | Graphics > Textures · Descriptor Table | `func_80017EBC`, `func_800195F0`, `func_8004979C` | `func_8005A414` |
-| `func_80087D48` | 344 | Graphics > Video Layer · Memory Management | `func_8001BFE4`, `func_8001C088`, `func_800858E0`, `func_80085A24`, `func_80085AC4`, `func_800879BC`, `func_80091270`, `func_80098708` | `func_80089D44` |
+| `gCloseVideoLayer` (`func_80087D48`) | 344 | Graphics > Video Layer · Memory Management | `func_8001BFE4`, `func_8001C088`, `func_800858E0`, `func_80085A24`, `func_80085AC4`, `func_800879BC`, `func_80091270`, `func_80098708` | `func_80089D44` |
 | `func_8007A168` | 348 | Graphics > HUD · Front End | - | `func_80078210`, `func_80079F54`, `func_8007EA78` |
 | `func_80048F98` | 360 | Graphics > Text > Glyph Rendering · GPU Primitives | `func_800489C8` | - |
 | `func_80063C5C` | 364 | Graphics > 2D Drawing > Images · Memory Management | `func_800181D4`, `func_8001996C`, `func_80048DEC`, `func_80092C8C`, `func_80092F38` | `func_80024EC8` |
@@ -2522,9 +2525,9 @@ graph LR
 | `func_8009446C` | 572 | Graphics > Image Transfer · DMA | `func_800951D8`, `func_8009520C` | - |
 | `func_800788F0` | 580 | Graphics > Text > Rendering · HUD | `func_80048E28`, `func_80048E88`, `func_80049100`, `func_800492A0`, `func_80089914`, `func_8008CCC0`, `func_8008CCD0` | `func_80078B98`, `func_8007A2C4`, `func_8007A7A0`, `func_8007B17C`, `func_8007B460`, `func_8007BCF4`, `func_8007C0F8`, `func_8007CE04`, `func_8007CFA0`, `func_8007D7CC`, `func_8007DD08`, `func_8007E1A4`, `func_8007E67C`, `func_8007F128`, `func_8007F1F8`, `func_80080038`, `func_8008125C` |
 | `func_800654F8` | 588 | Graphics > HUD > Minimap · Textures | `func_80018534` | `func_8006531C`, `func_8006680C` |
-| `func_80085630` | 620 | Graphics > Video Decode > Frame Slice Upload · DMA, Movie Playback, MDEC | `func_80089BBC`, `func_80092F38`, `func_80095E90`, `func_80095FE8`, `func_80095FF4`, `func_80096070`, `func_800960CC` | - |
+| `gMovieSliceFeedRows` (`func_80085630`) | 620 | Graphics > Video Decode > Frame Slice Upload · DMA, Movie Playback, MDEC | `func_80089BBC`, `func_80092F38`, `func_80095E90`, `func_80095FE8`, `func_80095FF4`, `func_80096070`, `func_800960CC` | - |
 | `func_80062C3C` | 636 | Graphics > Culling > Object Grid · Minimap | - | `func_80062FB4` |
-| `func_80087EA0` | 640 | Graphics > Video Layer · Movie Playback | - | `func_80089D44` |
+| `gOpenVideoLayer` (`func_80087EA0`) | 640 | Graphics > Video Layer · Movie Playback | - | `func_80089D44` |
 | `func_800946A8` | 640 | Graphics > GPU Transfer · DMA | `func_800951D8`, `func_8009520C` | - |
 | `func_8006C4C4` | 676 | Graphics > Mesh Generation · Effects | `func_8001846C` | `func_8006C84C` |
 | `func_80085C4C` | 720 | Graphics > Video Layer > Playback Context · MDEC, Draw Environments, Movie Playback | `func_8001E4C0`, `func_80085AC4`, `func_80085F1C`, `func_8008C9C0`, `func_8008C9E0`, `func_80091270`, `func_80092140`, `func_800921F4`, `func_80092B94`, `func_80092BF4`, `func_800932F0`, `func_800934BC`, `func_80095E90`, `func_80096108`, `func_8009612C` | - |
@@ -2541,7 +2544,7 @@ graph LR
 | `func_80028164` | 1204 | Graphics > Menu Rendering · State Transitions | - | - |
 | `func_8005AB8C` | 1276 | Graphics > HUD > Markers · Radar | `func_8001846C`, `func_80018580`, `func_8001C214`, `func_800694C8` | `func_800267C8`, `func_80047F30` |
 | `func_8007D7CC` | 1340 | Graphics > HUD > Loadout Row · Atlas, Gouraud Quad, Text | `func_80048E88`, `func_800788F0`, `func_80082AB0`, `func_80082B0C`, `func_80082EF0`, `func_80083060` | `func_8007DD08` |
-| `func_80088120` | 1448 | Graphics > Video Decode Output · Frame Conversion | - | `func_80089D44` |
+| `gPlayVideoFile` (`func_80088120`) | 1448 | Graphics > Video Decode Output · Frame Conversion | - | `func_80089D44` |
 | `func_800861E4` | 1484 | Graphics > Image Decode & Upload · MDEC, Resources | `func_80017EBC`, `func_800181D4`, `func_8001E4C0`, `func_800859D8`, `func_80085F1C`, `func_80089A88`, `func_80089BBC`, `func_8008C9C0`, `func_8008C9E0`, `func_80092B94`, `func_80095E90`, `func_80095FF4`, `func_80096070`, `func_80096090`, `func_800960CC`, `func_80096108`, `func_8009612C` | `func_8001B4A8`, `func_80025370`, `func_800826AC` |
 | `func_80047F30` | 1660 | Graphics > HUD > Race HUD · Text, Scoring | `func_8001C214`, `func_80047888`, `func_80047BE8`, `func_80049100`, `func_80049340`, `func_8004EDC8`, `func_8005AB8C`, `func_8006C080`, `func_8008CD30` | `func_80027510` |
 | `func_80083A10` | 1792 | Graphics > Scene > Node Spawn · Culling, Entity Lifecycle | `func_8001006C`, `func_80010234`, `func_80010750`, `func_80010820`, `func_80013BD8`, `func_800188D0`, `func_800195A4`, `func_80019668`, `func_80067684`, `func_80083764`, `func_80083834` | `func_80031690`, `func_80084110` |
@@ -3586,7 +3589,7 @@ graph LR
 | `func_800549F0` | 3992 | Gameplay > Player > On-Foot Locomotion · Ground Follow, Track Playback | `func_800175F8`, `func_8001846C`, `func_80019FCC`, `func_8001A180`, `func_8001A314`, `func_8001A6F8`, `func_8001A7AC`, `func_800448D8`, `func_80044B34`, `func_80047088`, `func_80051AC8`, `func_8005220C`, `func_80052550`, `func_80052708`, `func_80052E28`, `func_80052F54`, `func_80053188`, `func_80053514`, `func_800538C8`, `func_80054590`, `func_80066F78`, `func_800684AC`, `func_8006943C`, `func_80095900` | `func_80055988` |
 | `func_800336DC` | 6824 | AI > Strategic > Build Order · Economy, Precinct Assault | `func_80019668`, `func_800330E8`, `func_80033608`, `func_800336A8`, `func_80095900` | `func_8003532C` |
 
-### Platform - 365 functions, 496 calls inside the area
+### Platform - 366 functions, 496 calls inside the area
 
 CD-ROM, interrupts, BIOS wrappers and memory card - constraints, not graphics code.
 
@@ -4402,11 +4405,12 @@ graph LR
     f80099c58["80099C58"]
 ```
 
-55 further functions of this area without a documented connection (see the table below): `func_8001DB60`, `func_8001E004`, `func_8001EBA8`, `func_80021998`, `func_80021C20`, `func_800227BC`, `func_80022CA8`, `func_80023BF8`, `func_80023CA4`, `func_800246A8`, `func_8002A544`, `func_8002A58C`, `func_800451E0`, `func_8004572C`, `func_800576A8`, `func_8007F750`, `func_80083834`, `func_80086DB4`, `func_80087430`, `func_80089018`, `func_80089E8C`, `func_8008C858`, `func_8008CCE0`, `func_8008CD00`, `func_8008CD20`, `func_8008D5C0`, `func_8008D6D0`, `func_8008DAD0`, `func_8008DC50`, `func_8008DC7C`, `func_8008DCC0`, `func_8008F650`, `func_80091240`, `func_80091D0C`, `func_80091E8C`, `func_80091F60`, `func_800922E4`, `func_80092A84`, `func_80092B94`, `func_80092C8C`, `func_80092EA0`, `func_80092F38`, `func_80093280`, `func_8009398C`, `func_80093A0C`, `func_800949A0`, `func_800949E8`, `func_80095870`, `func_800965C8`, `func_800966A0`, `func_800978E8`, `func_80097940`, `func_80097AC8`, `func_80098C68`, `func_80098F78`.
+56 further functions of this area without a documented connection (see the table below): `func_8001DB60`, `func_8001E004`, `func_8001EBA8`, `func_80020610`, `func_80021998`, `func_80021C20`, `func_800227BC`, `func_80022CA8`, `func_80023BF8`, `func_80023CA4`, `func_800246A8`, `func_8002A544`, `func_8002A58C`, `func_800451E0`, `func_8004572C`, `func_800576A8`, `func_8007F750`, `func_80083834`, `func_80086DB4`, `func_80087430`, `func_80089018`, `func_80089E8C`, `func_8008C858`, `func_8008CCE0`, `func_8008CD00`, `func_8008CD20`, `func_8008D5C0`, `func_8008D6D0`, `func_8008DAD0`, `func_8008DC50`, `func_8008DC7C`, `func_8008DCC0`, `func_8008F650`, `func_80091240`, `func_80091D0C`, `func_80091E8C`, `func_80091F60`, `func_800922E4`, `func_80092A84`, `func_80092B94`, `func_80092C8C`, `func_80092EA0`, `func_80092F38`, `func_80093280`, `func_8009398C`, `func_80093A0C`, `func_800949A0`, `func_800949E8`, `func_80095870`, `func_800965C8`, `func_800966A0`, `func_800978E8`, `func_80097940`, `func_80097AC8`, `func_80098C68`, `func_80098F78`.
 
 | Function | Bytes | Categories | calls (documented) | called by (documented) |
 |---|---|---|---|---|
 | `func_8001C470` | 8 | Platform > CD-ROM · Memory Management | - | `func_8001C808`, `func_8001D130` |
+| `func_80020610` | 8 | Platform > Memory Card · Constants | - | `func_80020618`, `func_8007F9CC` |
 | `func_80095870` | 8 | Platform > Assembly | - | - |
 | `func_8002A58C` | 12 | Platform > Streaming Audio · Sound | - | `func_8007CA34`, `func_80080984` |
 | `func_800451E0` | 12 | Platform > Sound | - | `func_80025F58`, `func_80080A5C` |
@@ -4683,7 +4687,7 @@ graph LR
 | `func_800954DC` | 236 | Platform > GPU · Debug Validation | `func_80091270`, `func_800914E0`, `func_80092CF4`, `func_8009520C` | - |
 | `func_8001C718` | 240 | Platform > Memory Card · File Access | `func_8001C27C`, `func_8001C494`, `func_8008CC80`, `func_8008E174`, `func_8008E194`, `func_8008E1BC`, `func_8008E2F8` | `func_8001C808` |
 | `func_8007C940` | 240 | Platform > Controller Input | `func_8001E96C`, `func_8001EAEC`, `func_8001EB2C`, `func_8001EC04`, `func_8001EF34`, `func_80046C84` | - |
-| `func_800895E4` | 240 | Platform > Device Service · Audio | `func_8008C9C0`, `func_8008C9E0`, `func_8008E154`, `func_8008E194`, `func_8008E1A8`, `func_8008E42C` | `func_80089700` |
+| `gCdStreamService` (`func_800895E4`) | 240 | Platform > Device Service · Audio | `func_8008C9C0`, `func_8008C9E0`, `func_8008E154`, `func_8008E194`, `func_8008E1A8`, `func_8008E42C` | `func_80089700` |
 | `func_8008F7AC` | 240 | Platform > Hardware Registers | - | `func_8008DF30`, `func_8008E04C` |
 | `func_80096150` | 240 | Platform > MDEC · Video Decode | `func_8008E000`, `func_80096240` | `func_80095E90` |
 | `func_8001C494` | 244 | Platform > CD-ROM | - | `func_8001C718`, `func_8001CE54`, `func_8001D0A0` |
@@ -4715,7 +4719,7 @@ graph LR
 | `func_8001F818` | 336 | Platform > Asynchronous Operations | `func_8008D640`, `func_8008D670`, `func_8008D680` | - |
 | `func_8001F968` | 336 | Platform > Asynchronous Operations | `func_8008D640`, `func_8008D670`, `func_8008D680` | - |
 | `func_80094F4C` | 336 | Platform > Hardware Init | `func_800915FC`, `func_80095350`, `func_80095830` | `func_80092910` |
-| `func_80086DB4` | 340 | Platform > Audio | - | `func_800879DC` |
+| `gMovieAudioStart` (`func_80086DB4`) | 340 | Platform > Audio | - | `func_800879DC` |
 | `func_8001D248` | 352 | Platform > CD-ROM · Device Init | `func_8001D130` | `func_8001CE10`, `func_80076EB0` |
 | `func_800576A8` | 356 | Platform > Controller Input · Remapping | - | `func_800267C8`, `func_800588D4` |
 | `func_8008FAC8` | 360 | Platform > Device Wait · Memory Card | `func_8008E000`, `func_8008F6D8`, `func_8008FF08`, `func_80091270` | `func_8008E5FC` |
@@ -4743,7 +4747,7 @@ graph LR
 | `func_8008AB80` | 564 | Platform > Controller Input · Timer, Controller | `func_8008C890`, `func_8008C8B0` | `func_8008B810`, `func_8008B8E8`, `func_8008B9A8`, `func_8008BA34` |
 | `func_8001CE54` | 588 | Platform > Memory Card > File Operations · File Access | `func_8001C27C`, `func_8001C3F8`, `func_8001C478`, `func_8001C494`, `func_8001CC6C`, `func_8008C9C0`, `func_8008C9E0`, `func_8008E174`, `func_8008E194`, `func_8008E1BC` | `func_8001D90C` |
 | `func_80020120` | 588 | Platform > Memory Card · Events | `func_8008C960`, `func_8008C980`, `func_8008C9C0`, `func_8008C9E0` | `func_800206D0` |
-| `func_80087430` | 600 | Platform > Ring Buffer | `func_8008731C` | `func_800879DC` |
+| `gMovieAudioChunkPushSplit` (`func_80087430`) | 600 | Platform > Ring Buffer | `func_8008731C` | `func_800879DC` |
 | `func_80022FA8` | 604 | Platform > Audio Streaming | `func_80022D84`, `func_80022F7C`, `func_80098A78`, `func_80098BB8` | - |
 | `func_80094CEC` | 608 | Platform > Hardware Init · Image Transfer | `func_800914E0`, `func_800915FC` | `func_80094A3C`, `func_8009509C` |
 | `func_8001FAB8` | 624 | Platform > Device I/O | `func_8001E318`, `func_8008D640`, `func_8008D650`, `func_8008D670`, `func_8008D680` | - |
@@ -4772,7 +4776,7 @@ graph LR
 | `func_80099368` | 1528 | Platform > Audio | `func_80097808`, `func_800999F4` | `func_80021B90`, `func_80021BD0`, `func_80086C74` |
 | `func_800458E8` | 2028 | Platform > Sound · Vector Length | `func_8001A074` | `func_800450A4`, `func_80046E88` |
 
-### Utilities - 113 functions, 29 calls inside the area
+### Utilities - 112 functions, 29 calls inside the area
 
 Mathematics (vector length, fixed point, reciprocal tables) and the lagged-Fibonacci RNG over `D_800A0480`, used by the renderer and the effects.
 
@@ -4844,7 +4848,7 @@ graph LR
     f80096748["80096748"]
 ```
 
-80 further functions of this area without a documented connection (see the table below): `func_80018534`, `func_80018580`, `func_80019470`, `func_800195F0`, `func_80019668`, `func_800196C4`, `func_800198DC`, `func_80019FCC`, `func_8001A4E8`, `func_8001A6F8`, `func_8001A750`, `func_8001A81C`, `func_8001A970`, `func_8001AB00`, `func_8001AB78`, `func_8001AC28`, `func_8001ACA4`, `func_8001AD20`, `func_8001AE14`, `func_8001AF08`, `func_8001BE40`, `func_8001BE48`, `func_8001BE50`, `func_8001BE58`, `func_8001C27C`, `func_8001C288`, `func_8001E304`, `func_8001E318`, `func_8001E44C`, `func_80020610`, `func_80021740`, `func_80022B84`, `func_80028BA0`, `func_8003B65C`, `func_800403D0`, `func_80048E94`, `func_80049EF8`, `func_8004AAC0`, `func_8004DA58`, `func_8004F00C`, `func_8004F08C`, `func_8004F09C`, `func_800607B8`, `func_80069A38`, `func_800780C0`, `func_8007D39C`, `func_8007E8D8`, `func_8008731C`, `func_800886C8`, `func_800896D4`, `func_8008CA90`, `func_8008CB40`, `func_8008CC90`, `func_8008CCA0`, `func_8008CCB0`, `func_8008CCD0`, `func_8008CCF0`, `func_8008CD30`, `func_8008E000`, `func_80091B1C`, `func_80091C90`, `func_80091F38`, `func_80092324`, `func_80092340`, `func_800923D4`, `func_800923F8`, `func_80092410`, `func_80092438`, `func_80092578`, `func_8009258C`, `func_800925A0`, `func_8009272C`, `func_80092764`, `func_80092868`, `func_8009494C`, `func_80095830`, `func_800978AC`, `func_80099968`, `func_800999F4`, `func_80099B2C`.
+79 further functions of this area without a documented connection (see the table below): `func_80018534`, `func_80018580`, `func_80019470`, `func_800195F0`, `func_80019668`, `func_800196C4`, `func_800198DC`, `func_80019FCC`, `func_8001A4E8`, `func_8001A6F8`, `func_8001A750`, `func_8001A81C`, `func_8001A970`, `func_8001AB00`, `func_8001AB78`, `func_8001AC28`, `func_8001ACA4`, `func_8001AD20`, `func_8001AE14`, `func_8001AF08`, `func_8001BE40`, `func_8001BE48`, `func_8001BE50`, `func_8001BE58`, `func_8001C27C`, `func_8001C288`, `func_8001E304`, `func_8001E318`, `func_8001E44C`, `func_80021740`, `func_80022B84`, `func_80028BA0`, `func_8003B65C`, `func_800403D0`, `func_80048E94`, `func_80049EF8`, `func_8004AAC0`, `func_8004DA58`, `func_8004F00C`, `func_8004F08C`, `func_8004F09C`, `func_800607B8`, `func_80069A38`, `func_800780C0`, `func_8007D39C`, `func_8007E8D8`, `func_8008731C`, `func_800886C8`, `func_800896D4`, `func_8008CA90`, `func_8008CB40`, `func_8008CC90`, `func_8008CCA0`, `func_8008CCB0`, `func_8008CCD0`, `func_8008CCF0`, `func_8008CD30`, `func_8008E000`, `func_80091B1C`, `func_80091C90`, `func_80091F38`, `func_80092324`, `func_80092340`, `func_800923D4`, `func_800923F8`, `func_80092410`, `func_80092438`, `func_80092578`, `func_8009258C`, `func_800925A0`, `func_8009272C`, `func_80092764`, `func_80092868`, `func_8009494C`, `func_80095830`, `func_800978AC`, `func_80099968`, `func_800999F4`, `func_80099B2C`.
 
 | Function | Bytes | Categories | calls (documented) | called by (documented) |
 |---|---|---|---|---|
@@ -4852,7 +4856,6 @@ graph LR
 | `func_8001BE48` | 8 | Utilities > No-op | - | - |
 | `func_8001BE50` | 8 | Utilities > No-op | - | - |
 | `func_8001BE58` | 8 | Utilities > No-op | - | - |
-| `func_80020610` | 8 | Utilities > Constants · Movie Playback | - | `func_80020618`, `func_8007F9CC` |
 | `func_80048E94` | 8 | Utilities > Constants | - | `func_800287F4` |
 | `func_8001C27C` | 12 | Utilities > Memory > Copy | - | `func_8001C680`, `func_8001C718`, `func_8001CE54` |
 | `func_8008CD30` | 12 | Utilities > Formatting · Library | - | `func_80020D3C`, `func_80020FDC`, `func_80024E3C`, `func_80025370`, `func_80025F58`, `func_80027F80`, `func_80047F30`, `func_800491F8`, `func_80059BFC`, `func_80076A2C`, `func_8007B460`, `func_8007BCF4`, `func_8007C0F8`, `func_8007E1A4`, `func_80080038`, `func_8008125C`, `func_80082DDC` |
