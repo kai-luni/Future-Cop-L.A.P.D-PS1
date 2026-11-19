@@ -1,32 +1,28 @@
 // Categories: Game Engine > World Reset
+
+void gStubGteProjectionTeardown(void) __asm__("func_80019D88");
+
 /**
- * @brief Empty reset stub invoked near the end of the global subsystem reset.
+ * @brief Returns immediately from the projection teardown slot in the mission
+ * reset path.
+ * @return Nothing.
  *
- * No-op function (jr $ra; nop) called by func_80024D14 during between-mission cleanup.
- *
- * @param void No parameters.
+ * @par Confirmed mechanics
+ * The two instructions are JR $ra and a NOP in its delay slot.
  *
  * @par Globals
- * None.
- *
- * @par Control flow
- * Immediate return; no instructions besides jr $ra and nop.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * None observed.
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * Confirmed: func_80024D14 (0x80024E08, mission reset sequence) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from gResetMissionSubsystems.
  *
- * @par Environment path
- * Empty function (jr $ra; nop) with no parameters, globals or calls. Its only
- * caller is gResetMissionSubsystems (func_80024D14), which calls it once per
- * mission reset, so a port can omit it. No name is given because an empty
- * body proves no role.
+ * @par Role and path
+ * The mission teardown calls this entry opposite the stage that initializes
+ * projection state.
+ *
+ * @par Unknown
+ * Any cleanup once intended for this slot is open.
  */
-void func_80019D88(void)
+void gStubGteProjectionTeardown(void)
 {
 }

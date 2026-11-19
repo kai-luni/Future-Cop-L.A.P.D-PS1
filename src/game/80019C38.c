@@ -1,43 +1,43 @@
 // Categories: Resources > Asset Loader | Resources > File Access
 #include "game/types.h"
 
+u8 *gFindSectionPayload(u8 *arg0, u32 arg1, u32 arg2, s32 arg3) __asm__("func_80019C38");
+
 /**
- * @brief Finds a record by tag and section id in a chunked blob and returns a
- *        pointer to its payload.
+ * @brief Scans a chunked resource for a section ID and tag and returns the
+ * corresponding payload address.
  *
- * Records are self describing: tag word at +0x0, byte size at +0x4, id at +0x8,
- * payload from +0xC. The payload still starts with the record's own 12-byte
- * header, which is why callers subtract 4 from the result before handing it to a
- * loader (func_800319D4, func_80076878, func_8004D6D4). Known tags in the callers
- * are 0x74455854 ("tEXT") and 0x74414354 ("tACT").
+ * @param arg0 Start of the blob.
+ * @param arg1 Blob extent in bytes.
+ * @param arg2 Tag to compare at +0.
+ * @param arg3 Section ID to compare at +8.
+ * @return Matching record +0x0C, or the exhausted cursor +0x0C on a miss. A
+ *     zero section ID returns null.
  *
- * @param arg0 Blob base.
- * @param arg1 Blob length in bytes; the walk stops once the offset reaches it.
- * @param arg2 Tag word, compared with the record's +0x0.
- * @param arg3 Section id, compared with the record's +0x8.
- * @return Payload pointer (record + 0xC). 0 only when arg3 is 0; a failed search
- *         returns the current position + 0xC, not 0.
+ * @par Confirmed mechanics
+ * A zero ID takes the immediate zero-return branch. Otherwise checks the byte
+ * offset against the extent, compares words at +8 and +0, and advances using
+ * each record's +4 word. The exit computes cursor +0x0C even after exhaustion.
  *
  * @par Globals
- * None; the blob and its length are arguments.
- *
- * @par Control flow
- * While the offset is below arg1 and the record has not matched, advance by the
- * record's own +0x4 size - a corrupt size therefore walks past the end. The tag
- * test is an equality check on the XOR, the id test a plain compare.
- *
- * @par Calls
- * None; the scan is inline.
- *
- * @par Side effects
- * None observed: no writes at all.
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * Confirmed: 15 sites, among them func_800319D4 (map zones), func_8004D6D4
- * (actor definition), func_80049420, func_8006ED78, func_8003BDA0 and
- * func_80041070, plus func_80076878, func_80084110 and eight more.
+ * Direct calls in the retail listing are from func_80029E20, gLoadMapZone,
+ * func_8003BDA0, gLoadActorDef5D, gLoadActorDef5E, func_80049420,
+ * gLoadActorLightNode, gLoadActorDef5A, func_8004D6D4, func_80060838,
+ * func_80060E74, gRegistryLoad, gLoadActorDef5C, gLoadActorDef59,
+ * func_800740B8, func_80076878, func_80084110.
+ *
+ * @par Role and path
+ * Resource readers use the payload address for tagged level and actor
+ * sections.
+ *
+ * @par Unknown
+ * The higher-level resource format determines which requested sections are
+ * guaranteed present.
  */
-u8 *func_80019C38(u8 *arg0, u32 arg1, u32 arg2, s32 arg3)
+u8 *gFindSectionPayload(u8 *arg0, u32 arg1, u32 arg2, s32 arg3)
 {
     u8 *p;
     s32 found;

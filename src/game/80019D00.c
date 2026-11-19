@@ -14,29 +14,35 @@ extern struct Resource *gResourceListHead __asm__("D_8009F5B8");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
+void gScanAndFreeResource(struct Resource *resource) __asm__("func_80019D00");
+
 /**
- * @brief Scans D_8009F5B8 for a matching resource key and frees the supplied resource block.
+ * @brief Scans the resource registry for the supplied descriptor's keys and
+ * frees the supplied descriptor.
  *
- * Confirmed: traverses the doubly-linked resource registry at D_8009F5B8 (+0x0C next) comparing group (+0x18) and name (+0x1C), breaks on match without referencing the found node, and unconditionally passes resource to func_800181D4. Likely: duplicate-resource cleanup path when func_80019AA8 reports an existing entry.
+ * @param resource Descriptor to free, containing the keys used for the scan.
+ * @return Nothing.
  *
- * @param resource Resource descriptor (+0x18 group, +0x1C name) to release.
+ * @par Confirmed mechanics
+ * Compares +0x18 and +0x1C along the list until matching or exhausting it.
+ * Both exits call gFreeBlock with the original $a0. The matched node is left
+ * linked.
  *
  * @par Globals
- * D_8009F5B8 - head pointer of the active resource registry list (read-only walk).
- *
- * @par Control flow
- * Single for loop along D_8009F5B8->next with early break on (group, name) match, followed by func_800181D4(resource).
- *
- * @par Calls
- * func_800181D4 - frees the resource memory block.
- *
- * @par Side effects
- * Releases resource via func_800181D4 without unlinking any node from D_8009F5B8.
+ * Reads gResourceListHead.
  *
  * @par Callers
- * Confirmed: gPrepareModelResource (0x800135A4), func_80049734 (0x80049780), func_800511E4 (0x800512E8), func_80051650 (0x80051684) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from gPrepareModelResource,
+ * func_80049734, func_800511E4, func_80051650.
+ *
+ * @par Role and path
+ * Asset post-load handlers reach this path after gHasRegisteredResource finds
+ * an existing entry.
+ *
+ * @par Unknown
+ * What the repeated key scan was intended to establish is open.
  */
-void func_80019D00(struct Resource *resource)
+void gScanAndFreeResource(struct Resource *resource)
 {
     struct Resource *node;
 

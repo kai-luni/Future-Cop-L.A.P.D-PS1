@@ -14,31 +14,34 @@ extern struct Resource *gResourceListHead __asm__("D_8009F5B8");
 
 /* checks if a resource is already loaded */
 
+s32 gHasRegisteredResource(struct Resource *resource) __asm__("func_80019AA8");
+
 /**
- * @brief Checks whether a resource with matching group and name is already in D_8009F5B8.
+ * @brief Tests whether a descriptor's key pair is present in the shared
+ * resource registry.
  *
- * Walks the loaded-resource singly-linked list starting at D_8009F5B8 (+0x0C next pointer),
- * comparing node->group (+0x1C) and node->name (+0x20) against the target struct Resource.
+ * @param resource Descriptor whose key words at +0x18 and +0x1C are tested.
+ * @return One if the pair is present, otherwise zero.
  *
- * @param resource Resource descriptor whose group (+0x1C) and name (+0x20) are queried.
- * @return 1 if a matching entry is present in D_8009F5B8, else 0.
+ * @par Confirmed mechanics
+ * Walks the +0x0C links from gResourceListHead and compares the words at +0x18
+ * and +0x1C. SLTU converts the final node pointer to a Boolean in the return
+ * delay slot.
  *
  * @par Globals
- * D_8009F5B8 - head pointer of the loaded resource list.
- *
- * @par Control flow
- * Single pointer-chasing for-loop breaking on first matching group and name, returning node != 0.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * None observed.
+ * Reads gResourceListHead.
  *
  * @par Callers
- * Confirmed: gPrepareModelResource (0x80013560), func_80049734 (0x80049740), func_800511E4 (0x800511F8), and func_80051650 (0x8005165C) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from gPrepareModelResource,
+ * func_80049734, func_800511E4, func_80051650.
+ *
+ * @par Role and path
+ * Asset preparation uses this test to choose the new or duplicate load path.
+ *
+ * @par Unknown
+ * The interpretation of individual key values depends on the asset family.
  */
-s32 func_80019AA8(struct Resource *resource)
+s32 gHasRegisteredResource(struct Resource *resource)
 {
     struct Resource *node;
 

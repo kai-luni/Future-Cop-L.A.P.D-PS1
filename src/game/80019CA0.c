@@ -3,28 +3,40 @@
 
 extern int gRegistryLoad();
 
+u8 *gFindSectionHeader(u8 *arg0, u32 arg1, u32 arg2, s32 arg3) __asm__("func_80019CA0");
+
 /**
- * @brief Searches a chunked blob for a record matching tag and section ID, returning its header pointer.
+ * @brief Scans a chunked resource for a section ID and tag and returns a
+ * record header.
  *
- * Walks variable-length chunks from arg0 up to arg1 bytes (tag at +0x00, byte size at +0x04, section ID at +0x08). Unlike func_80019C38, returns the chunk start rather than payload +0x0C, and does not special-case arg3 == 0. On miss, returns the last visited chunk (or 0 if arg1 == 0).
+ * @param arg0 Start of the blob.
+ * @param arg1 Blob extent in bytes.
+ * @param arg2 Tag to compare at +0.
+ * @param arg3 Section ID to compare at +8.
+ * @return Matching header, last examined header on exhaustion, or null if no
+ *     header was visited.
  *
- * @param arg0 Base pointer of chunked data.
- * @param arg1 Blob size in bytes.
- * @param arg2 Four-byte tag compared with +0x00.
- * @param arg3 Section ID compared with +0x08.
- * @return Pointer to matching chunk header (or last chunk visited on miss; 0 if arg1 == 0).
+ * @par Confirmed mechanics
+ * Checks the byte offset, records the current header, compares words at +8 and
+ * +0, and advances by +4 on a miss. The return register receives the last
+ * inspected header.
+ *
  * @par Globals
- * None.
- * @par Control flow
- * Loops while !found && (u32)(p - arg0) < arg1; sets result = p, tests *(s32*)(p+8)==arg3 && *(u32*)p==arg2, and advances p = result + *(s32*)(result+4) on mismatch.
- * @par Calls
- * None.
- * @par Side effects
- * None observed.
+ * No RAM globals accessed directly.
+ *
  * @par Callers
- * Confirmed: func_80049420 (0x8004944C), func_80060838 (0x80060984), func_80060E74 (0x80060EC8, 0x80060F58), func_80084110 (0x80084138), func_8004D6D4 (0x8004D83C), gRegistryLoad (0x8006AA74).
+ * Direct calls in the retail listing are from func_80049420, func_8004D6D4,
+ * func_80060838, func_80060E74, gRegistryLoad, func_80084110.
+ *
+ * @par Role and path
+ * Asset readers use this lookup when they need the header along with the
+ * payload.
+ *
+ * @par Unknown
+ * The return value alone does not distinguish a missing entry from a match at
+ * the last record.
  */
-u8 *func_80019CA0(u8 *arg0, u32 arg1, u32 arg2, s32 arg3)
+u8 *gFindSectionHeader(u8 *arg0, u32 arg1, u32 arg2, s32 arg3)
 {
     u8 *p;
     u8 *result;

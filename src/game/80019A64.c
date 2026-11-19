@@ -6,31 +6,29 @@ struct ScriptTimer;
 extern struct ScriptTimer *gResourceListHead __asm__("D_8009F5B8");
 extern s32 gResourceListTail __asm__("D_8009F5BC");
 
+void gResetResourceRegistry(void) __asm__("func_80019A64");
+
 /**
- * @brief Clears the global resource registry head and tail pointers during level initialization.
+ * @brief Clears the head and tail of the shared resource registry.
+ * @return Nothing.
  *
- * Confirmed: zeroes D_8009F5B8 and D_8009F5BC without walking or freeing nodes. Cross-checking func_80019A74, func_80019AF8, and func_80019BA4 confirms D_8009F5B8 and D_8009F5BC are the head and tail pointers of the doubly-linked resource registry (the local ScriptTimer forward tag in 80019A64.c is an unlinked placeholder name). Category Resources > Resource Registry | Game Engine > Init reflects those globals and the two mission-init callers.
- * Likely: resets the list pointers on a clean mission boot after prior teardown already drained or released resources.
- * Unknown: none.
- *
- * @param void No parameters.
+ * @par Confirmed mechanics
+ * Stores zero into two consecutive GP-relative words and returns.
  *
  * @par Globals
- * D_8009F5B8 - resource registry list head (cleared to 0). D_8009F5BC - resource registry list tail (cleared to 0).
- *
- * @par Control flow
- * Two unconditional zero stores and return.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * Clears D_8009F5B8 and D_8009F5BC.
+ * Clears gResourceListHead and gResourceListTail.
  *
  * @par Callers
- * Confirmed: func_80024904 (0x80024958) and func_80024A24 (0x80024BA0), during mission/level initialization / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from gLoadFrontEndModule,
+ * func_80024A24.
+ *
+ * @par Role and path
+ * Front end and mission initialization start a fresh resource registry.
+ *
+ * @par Unknown
+ * The wider lifecycle determines when any former nodes are released.
  */
-void func_80019A64(void)
+void gResetResourceRegistry(void)
 {
     gResourceListHead = 0;
     gResourceListTail = 0;

@@ -13,30 +13,34 @@ extern struct Resource *gResourceListTail __asm__("D_8009F5BC");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
+void gReleaseRegisteredResource(struct Resource *resource) __asm__("func_80019AF8");
+
 /**
- * @brief Invokes a resource node's release callback, unlinks it, and frees it.
+ * @brief Calls a resource's release callback, unlinks the descriptor, and
+ * frees it.
  *
- * Runs resource->release if non-null, splices the node out of the global doubly-linked
- * list D_8009F5B8..D_8009F5BC, and returns the block to the heap via func_800181D4.
+ * @param resource Registered descriptor with optional release callback at +8.
+ * @return Nothing.
  *
- * @param resource Pointer to the Resource node (+0x08 release callback, +0x0C next, +0x10 prev).
+ * @par Confirmed mechanics
+ * If the +8 word is nonzero, invokes it via JALR with the descriptor still in
+ * $a0. Patches adjacent +0x0C and +0x10 links or updates list endpoints, then
+ * passes the descriptor to gFreeBlock.
  *
  * @par Globals
- * D_8009F5B8 - doubly-linked resource list head; D_8009F5BC - list tail (updated when removing head or tail).
- *
- * @par Control flow
- * Conditionally calls resource->release(resource), updates prev->next or D_8009F5B8 and next->prev or D_8009F5BC, then calls func_800181D4.
- *
- * @par Calls
- * Indirect call to resource->release (+0x08); func_800181D4 - frees the Resource structure.
- *
- * @par Side effects
- * Executes release callback, mutates neighbor links and/or D_8009F5B8/D_8009F5BC, and frees resource.
+ * Updates gResourceListHead and gResourceListTail when removing an endpoint.
  *
  * @par Callers
- * Confirmed: func_80019BA4 (0x80019BC4, teardown walk over all registry nodes).
+ * Direct calls in the retail listing are from gReleaseAllResources.
+ *
+ * @par Role and path
+ * The registry teardown path releases the payload through its callback and
+ * returns the descriptor's allocation.
+ *
+ * @par Unknown
+ * The action of the release callback depends on the resource type.
  */
-void func_80019AF8(struct Resource *resource)
+void gReleaseRegisteredResource(struct Resource *resource)
 {
     if (resource->release != 0) {
         resource->release(resource);

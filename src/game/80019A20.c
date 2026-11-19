@@ -7,28 +7,35 @@ typedef struct Unk80019A20 {
     u8 unk08[4];
 } Unk80019A20;
 
+void *gFindRecordPayloadById(s32 id, u8 *base, s32 size) __asm__("func_80019A20");
+
 /**
- *  @brief Finds a record by ID in an offset-linked buffer.
+ * @brief Finds the payload of a variable-size record by its first word.
  *
- *  Examines record headers starting at base and advances by each header's
- *  offset until a matching ID is found or the size boundary is reached.
- *  The first header is examined even when size is nonpositive.
- *  @param id Record ID to find.
- *  @param base Start of the record buffer.
- *  @param size Byte extent used to limit subsequent record traversal.
- *  @return Pointer 12 bytes past the matching header, or null if not found.
- *  @par Globals
- *  None.
- *  @par Control flow
- *  A do-while loop follows offsets and exits immediately on a match.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  None.
- *  @par Callers
- *  Confirmed: func_80051318, func_80051580.
+ * @param id Record ID to find.
+ * @param base Start of the record buffer.
+ * @param size Byte extent for subsequent records.
+ * @return Matching header plus 0x0C, or null on exhaustion.
+ *
+ * @par Confirmed mechanics
+ * Compares the ID at +0, returns record +0xC on match, and otherwise advances
+ * by the word at +4. Tests the signed offset against the size after advancing.
+ *
+ * @par Globals
+ * No RAM globals accessed directly.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from func_80051318, func_80051580.
+ *
+ * @par Role and path
+ * Resource readers use this helper to select a record within an already loaded
+ * buffer.
+ *
+ * @par Unknown
+ * The first header is read before the size comparison, and the record format
+ * supplies valid lengths.
  */
-void *func_80019A20(s32 id, u8 *base, s32 size)
+void *gFindRecordPayloadById(s32 id, u8 *base, s32 size)
 {
     u8 *current = base;
     u8 *found;

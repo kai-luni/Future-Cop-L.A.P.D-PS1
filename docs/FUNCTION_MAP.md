@@ -568,7 +568,7 @@ graph LR
 
 | Function | Bytes | Categories | calls (documented) | called by (documented) |
 |---|---|---|---|---|
-| `func_80019D88` | 8 | Game Engine > World Reset | - | `func_80024D14` |
+| `gStubGteProjectionTeardown` (`func_80019D88`) | 8 | Game Engine > World Reset | - | `func_80024D14` |
 | `func_8001BE60` | 8 | Game Engine > Unclassified | - | - |
 | `func_8001C60C` | 8 | Game Engine > Unclassified | - | - |
 | `func_8002A5AC` | 8 | Game Engine > World Reset | - | `func_80024D14` |
@@ -1259,7 +1259,7 @@ graph LR
 | Function | Bytes | Categories | calls (documented) | called by (documented) |
 |---|---|---|---|---|
 | `gReadHeapBlockSize` (`func_80018460`) | 12 | Resources > Memory Management | - | `func_80063428` |
-| `func_80019A64` | 16 | Resources > Resource Registry · Init | - | `func_80024904`, `func_80024A24` |
+| `gResetResourceRegistry` (`func_80019A64`) | 16 | Resources > Resource Registry · Init | - | `func_80024904`, `func_80024A24` |
 | `gClearMcStatePtr` (`func_80020600`) | 16 | Resources > Save Data · Memory Card | - | `func_8007FA48` |
 | `gBeginBootProfileTransfer` (`func_8007F8BC`) | 16 | Resources > Save Data · Timing | - | `func_80076A2C` |
 | `gIsBootProfileTransferDone` (`func_8007F8CC`) | 20 | Resources > Save Data | - | `func_80076A2C` |
@@ -1282,7 +1282,7 @@ graph LR
 | `gTakeFixedPoolSlot` (`func_800195A4`) | 44 | Resources > Memory Pools | - | `func_80017EBC`, `func_80028DC0`, `func_80049C38`, `func_80083A10` |
 | `func_800474C4` | 44 | Resources > Handles | - | `func_80023D78`, `func_80024188` |
 | `func_800898E8` | 44 | Resources > Memory | - | `func_800898C8` |
-| `func_80019A74` | 52 | Resources > Resource Registry · Asset Loader | - | `func_80013550`, `func_80029E20`, `func_80049420`, `func_80049734`, `func_8004D924`, `func_800511E4`, `func_80051650`, `func_80060E74`, `func_80063C20` |
+| `gAppendResourceRegistryEntry` (`func_80019A74`) | 52 | Resources > Resource Registry · Asset Loader | - | `func_80013550`, `func_80029E20`, `func_80049420`, `func_80049734`, `func_8004D924`, `func_800511E4`, `func_80051650`, `func_80060E74`, `func_80063C20` |
 | `func_8004D924` | 52 | Resources > Resource State · Entity Update | `func_80019A74` | `func_80024EC8` |
 | `func_80080AD4` | 52 | Resources > Save Data · Sound, Port Presets | - | `func_8007FB04` |
 | `gGetCdCommandName` (`func_8008E0EC`) | 52 | Resources > Lookup | - | - |
@@ -1295,13 +1295,13 @@ graph LR
 | `func_8003BDEC` | 64 | Resources > Memory Pools | `func_800181D4` | `func_8005E22C`, `func_8006EDF0` |
 | `func_8007F8FC` | 64 | Resources > Save Data · Frame State | `func_800776B8`, `func_8007F8E0`, `func_8007FA88` | - |
 | `gShutdownProfileSubsystem` (`func_8007FA48`) | 64 | Resources > Save Data · Memory Management | `func_800181D4`, `func_80020600` | `func_80076A2C` |
-| `func_80019A20` | 68 | Resources > Record Lookup | - | `func_80051318`, `func_80051580` |
+| `gFindRecordPayloadById` (`func_80019A20`) | 68 | Resources > Record Lookup | - | `func_80051318`, `func_80051580` |
 | `gCheckMediaReady` (`func_8001CE10`) | 68 | Resources > Asset Loader · CD-ROM | `func_8001D248` | `func_8001D424`, `func_8001D5E4` |
 | `gHeapFreeRaw` (`func_8001E2C0`) | 68 | Resources > Memory Management · Memory | `func_8008CB40` | `func_800181D4`, `func_80076FE0` |
 | `func_80029E20` | 68 | Resources > Asset Loader · Loader Post-Process | `func_80019A74`, `func_80019C38` | `func_80024EC8` |
 | `gArmProfileTransfer` (`func_8007FA88`) | 68 | Resources > Save Data · State Machine | `func_800206D0` | `func_80076A2C`, `func_8007F8FC`, `func_8007F93C` |
 | `gShutdownHeap` (`func_80017BA0`) | 72 | Resources > Memory Management · Memory | - | `func_80076FE0` |
-| `func_80019BF0` | 72 | Resources > Asset Loader · Memory Management | - | `func_80060838`, `func_80060E74`, `func_80084110` |
+| `gFindRegisteredResource` (`func_80019BF0`) | 72 | Resources > Asset Loader · Memory Management | - | `func_80060838`, `func_80060E74`, `func_80084110` |
 | `gReleaseAllResources` (`func_80019BA4`) | 76 | Resources > Memory Management · Asset Loader | `func_80019AF8` | `func_800249BC`, `func_80024D14` |
 | `func_8003BDA0` | 76 | Resources > Asset Loader · Memory Management | `func_800181D4`, `func_80019C38`, `func_8003BC7C` | - |
 | `gLoadActorDef5D` (`func_80041070`) | 76 | Resources > Asset Loader · Object Spawning | `func_800181D4`, `func_80019C38`, `func_80040DCC` | - |
@@ -1311,7 +1311,7 @@ graph LR
 | `gLoadActorDef59` (`func_800706C4`) | 76 | Resources > Asset Loader · Object Spawning | `func_800181D4`, `func_80019C38`, `func_800703A8` | - |
 | `func_800740B8` | 76 | Resources > Asset Loader · Object Spawning | `func_800181D4`, `func_80019C38`, `func_80073F88` | - |
 | `func_80076878` | 76 | Resources > Asset Loader · Object Spawning | `func_800181D4`, `func_80019C38`, `func_800767E4` | - |
-| `func_80019AA8` | 80 | Resources > Asset Loader · Resource Management | - | `func_80013550`, `func_80049734`, `func_800511E4`, `func_80051650` |
+| `gHasRegisteredResource` (`func_80019AA8`) | 80 | Resources > Asset Loader · Resource Management | - | `func_80013550`, `func_80049734`, `func_800511E4`, `func_80051650` |
 | `gLoadActorLightNode` (`func_80049EA8`) | 80 | Resources > Asset Loader · Lighting | `func_800181D4`, `func_80019C38`, `func_80049E88` | - |
 | `func_80051650` | 80 | Resources > Asset Loader · Resource Management | `func_80019A74`, `func_80019AA8`, `func_80019D00` | - |
 | `func_8005A654` | 80 | Resources > Slot Table · Object Pool | - | `func_8005A6A4` |
@@ -1320,10 +1320,10 @@ graph LR
 | `func_800288BC` | 92 | Resources > Reference Counting · Streaming Audio | - | `func_80028918`, `func_80028D28`, `func_80029650` |
 | `func_800427E8` | 92 | Resources > Memory Management · Effects | `func_800181D4` | `func_80044610` |
 | `func_80059BA0` | 92 | Resources > File Access · CD-ROM | `func_800181D4`, `func_8001E110` | `func_80059BFC` |
-| `func_80019CA0` | 96 | Resources > Asset Loader · File Access | - | `func_80049420`, `func_80060838`, `func_80060E74`, `func_80084110` |
-| `func_80019D00` | 96 | Resources > Resource Registry · Memory Management | - | `func_80013550`, `func_80049734`, `func_800511E4`, `func_80051650` |
+| `gFindSectionHeader` (`func_80019CA0`) | 96 | Resources > Asset Loader · File Access | - | `func_80049420`, `func_80060838`, `func_80060E74`, `func_80084110` |
+| `gScanAndFreeResource` (`func_80019D00`) | 96 | Resources > Resource Registry · Memory Management | - | `func_80013550`, `func_80049734`, `func_800511E4`, `func_80051650` |
 | `func_8001B448` | 96 | Resources > Memory Management | - | `func_800249BC`, `func_80024D14`, `func_80076A2C` |
-| `func_80019C38` | 104 | Resources > Asset Loader · File Access | - | `func_80029E20`, `func_800319D4`, `func_8003BDA0`, `func_80041070`, `func_8004488C`, `func_80049420`, `func_80049EA8`, `func_8004CA98`, `func_80060838`, `func_80060E74`, `func_8006ED78`, `func_800706C4`, `func_800740B8`, `func_80076878`, `func_80084110` |
+| `gFindSectionPayload` (`func_80019C38`) | 104 | Resources > Asset Loader · File Access | - | `func_80029E20`, `func_800319D4`, `func_8003BDA0`, `func_80041070`, `func_8004488C`, `func_80049420`, `func_80049EA8`, `func_8004CA98`, `func_80060838`, `func_80060E74`, `func_8006ED78`, `func_800706C4`, `func_800740B8`, `func_80076878`, `func_80084110` |
 | `func_800295E8` | 104 | Resources > Asset Loader · File Access | `func_800195D0`, `func_8002902C` | `func_80024EC8` |
 | `func_80049734` | 104 | Resources > Loader Post-Process · Lighting | `func_80019A74`, `func_80019AA8`, `func_80019D00` | `func_80024EC8` |
 | `gStepBootProfileTransfer` (`func_80080B08`) | 104 | Resources > Save Data · State Machine | `func_8007FB04` | `func_80076A2C` |
@@ -1352,7 +1352,7 @@ graph LR
 | `gMovieStopAndRestoreCallbacks` (`func_80085A24`) | 160 | Resources > Video Decode · GPU, Interrupts | - | `func_80087D48` |
 | `gCreateFixedPool` (`func_800194DC`) | 168 | Resources > Memory Pools · Memory Management | `func_80017EBC` | `func_80017C68`, `func_80029F50`, `func_8003F79C`, `func_80049690`, `func_8008347C` |
 | `gGetPadCombInfo` (`func_8008A118`) | 168 | Resources > Data Access | - | - |
-| `func_80019AF8` | 172 | Resources > Memory Management · Resource Registry | `func_800181D4` | `func_80019BA4` |
+| `gReleaseRegisteredResource` (`func_80019AF8`) | 172 | Resources > Memory Management · Resource Registry | `func_800181D4` | `func_80019BA4` |
 | `func_80022710` | 172 | Resources > Streaming | `func_80022CA8`, `func_80022D84` | - |
 | `func_80023528` | 172 | Resources > Lookup | - | `func_800235D4` |
 | `gFindHeapRangeForward` (`func_80017D5C`) | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
@@ -2336,7 +2336,7 @@ graph LR
 | `gMdecSetInCallback` (`func_80096108`) | 36 | Graphics > MDEC > Decode Callbacks · MDEC | `func_800914E0` | `func_80085C4C`, `func_800861E4` |
 | `func_8009612C` | 36 | Graphics > MDEC > Decode Callbacks · MDEC | `func_800914E0` | `func_80085C4C`, `func_800861E4` |
 | `gSelectViewRecord` (`func_80017B60`) | 40 | Graphics > Map · Asset Selection | `func_80017B28` | `func_80027510`, `func_80056634`, `func_800569EC`, `func_800573A4`, `func_80058C3C`, `func_80066C9C`, `func_80066E98` |
-| `func_80019D60` | 40 | Graphics > Display Setup | `func_80010030` | `func_80024A24` |
+| `gInitGteProjection` (`func_80019D60`) | 40 | Graphics > Display Setup | `func_80010030` | `func_80024A24` |
 | `func_800489EC` | 40 | Graphics > Text > Font Upload | - | `func_80048A14` |
 | `func_80048E9C` | 40 | Graphics > Text > Font Upload · Asset Loading | `func_80048A14` | `func_80024EC8` |
 | `gGetViewGroundAnchor` (`func_80069580`) | 40 | Graphics > Camera > Position Lookup · Player | - | `func_8003E984`, `func_8003F6E4`, `func_8003FF7C`, `func_8005BDE4` |

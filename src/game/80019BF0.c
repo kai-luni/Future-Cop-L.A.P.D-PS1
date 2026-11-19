@@ -14,31 +14,36 @@ struct Resource {
 
 extern struct Resource *gResourceListHead __asm__("D_8009F5B8");
 
+struct Resource *gFindRegisteredResource(s32 group, s32 name) __asm__("func_80019BF0");
+
 /**
- * @brief Searches the global resource list D_8009F5B8 for a node matching `(group, name)`.
+ * @brief Searches the resource registry for a descriptor with the given two
+ * key words.
  *
- * Traverses the doubly linked registry maintained by func_80019A74/func_80019BA4 and compares `group` (+0x18) and `name` (+0x1C) on each `Resource` node. Category Resources > Asset Loader | Resources > Memory Management follows the D_8009F5B8 resource registry and asset loader callers.
+ * @param group First key at descriptor offset +0x18.
+ * @param name Second key at descriptor offset +0x1C.
+ * @return Matching descriptor, or null if exhausted.
  *
- * @param group Resource group identifier compared against `node->group` (+0x18).
- * @param name Resource entry identifier compared against `node->name` (+0x1C).
- * @return Pointer to the first matching `struct Resource`, or 0 if not found.
+ * @par Confirmed mechanics
+ * Loads the head and follows +0x0C links, comparing the incoming registers
+ * with +0x18 and +0x1C. Returns the first matching pointer; the exit on
+ * exhaustion leaves zero.
  *
  * @par Globals
- * D_8009F5B8 - head of the active global resource linked list.
- *
- * @par Control flow
- * Single `for` loop following `node->next` from D_8009F5B8 until null, returning early on the first `(group, name)` match.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * None observed.
+ * Reads gResourceListHead.
  *
  * @par Callers
- * Confirmed: func_80060838 (0x800609A4), func_80060E74 (0x80060FC0), func_80084110 (0x80084164), func_8004D6D4 (0x8004D894 in asm/us/main.s), and gRegistryLoad (0x8006AA9C in asm/us/main.s) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from func_8004D6D4, func_80060838,
+ * func_80060E74, gRegistryLoad, func_80084110.
+ *
+ * @par Role and path
+ * Asset consumers use this registry lookup to obtain a previously registered
+ * descriptor.
+ *
+ * @par Unknown
+ * Individual callers define the interpretation of their key values.
  */
-struct Resource *func_80019BF0(s32 group, s32 name)
+struct Resource *gFindRegisteredResource(s32 group, s32 name)
 {
     struct Resource *node;
 

@@ -13,32 +13,39 @@ extern struct Resource *gResourceListTail __asm__("D_8009F5BC");
 /* Appends a resource to the global doubly linked list.
  * D_8009F5B8 is the first node and D_8009F5BC the last; a new entry is linked
  * behind the tail and becomes the new tail, or becomes head and tail when the
- * list is still empty. Registered nodes are what func_80019BF0 searches by
+ * list is still empty. Registered nodes are what gFindRegisteredResource searches by
  * (group, name). */
 
+void gAppendResourceRegistryEntry(struct Resource *resource) __asm__("func_80019A74");
+
 /**
- * @brief Appends a resource record to the global doubly linked resource list.
+ * @brief Appends a resource descriptor to the shared doubly linked registry.
  *
- * Clears resource->next and resource->prev and links the node at the tail D_8009F5BC (initializing head D_8009F5B8 as well if empty), registering it for lookups such as func_80019BF0.
+ * @param resource Resource descriptor to append.
+ * @return Nothing.
  *
- * @param resource Resource descriptor with next (+0x0C) and prev (+0x10) pointers.
+ * @par Confirmed mechanics
+ * Clears links at +0x0C and +0x10. A non-null old tail becomes the new node's
+ * previous link and receives its next link. If the tail was null, the new node
+ * also becomes the head.
  *
  * @par Globals
- * D_8009F5B8 - head of resource list (written when empty); D_8009F5BC - tail of resource list (always updated to resource).
- *
- * @par Control flow
- * Single branch on D_8009F5BC != 0: appends after tail when non-empty, otherwise sets both head and tail.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * Mutates resource->next/prev, previous tail->next, and D_8009F5B8/D_8009F5BC.
+ * Reads and writes gResourceListTail and sets gResourceListHead when the list
+ * was empty.
  *
  * @par Callers
- * Confirmed: gPrepareModelResource, func_80029E20, func_80049420, func_80049734, func_8004D924, func_800511E4, func_80051650, func_80060E74, func_80063C20.
+ * Direct calls in the retail listing are from gPrepareModelResource,
+ * func_80029E20, func_80049420, func_80049734, func_8004D924, func_800511E4,
+ * func_80051650, func_80060E74, func_80063C20.
+ *
+ * @par Role and path
+ * Asset post-load handlers register prepared resources for later lookups and
+ * release.
+ *
+ * @par Unknown
+ * The caller supplies the descriptor's keys and release callback.
  */
-void func_80019A74(struct Resource *resource)
+void gAppendResourceRegistryEntry(struct Resource *resource)
 {
     resource->next = 0;
     resource->prev = 0;

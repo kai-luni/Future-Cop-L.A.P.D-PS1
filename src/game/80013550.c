@@ -10,10 +10,10 @@ struct Unk13550 {
     s32 unk20;
 };
 
-extern u8 func_80019AA8(struct Unk13550 *resource);
+extern u8 gHasRegisteredResource(struct Unk13550 *resource) __asm__("func_80019AA8");
 extern void gRelocateModelResource(void **out, void *data, s32 arg2, s32 arg3) __asm__("func_800131A0");
-extern void func_80019A74(struct Unk13550 *resource);
-extern void func_80019D00(struct Unk13550 *resource);
+extern void gAppendResourceRegistryEntry(struct Unk13550 *resource) __asm__("func_80019A74");
+extern void gScanAndFreeResource(struct Unk13550 *resource) __asm__("func_80019D00");
 
 void gPrepareModelResource(struct Unk13550 *resource) __asm__("func_80013550");
 
@@ -26,9 +26,9 @@ void gPrepareModelResource(struct Unk13550 *resource) __asm__("func_80013550");
  * @return Nothing.
  *
  * @par Confirmed mechanics
- * Tests the low byte of func_80019AA8. If it is zero, passes descriptor words
+ * Tests the low byte of gHasRegisteredResource. If it is zero, passes descriptor words
  * +0, +0x20, and +0x1C to gRelocateModelResource, installs its output at +0,
- * clears +8, and calls func_80019A74. The other branch calls func_80019D00.
+ * clears +8, and calls gAppendResourceRegistryEntry. The other branch calls gScanAndFreeResource.
  *
  * @par Globals
  * No RAM globals accessed directly.
@@ -48,12 +48,12 @@ void gPrepareModelResource(struct Unk13550 *resource)
     void *loaded;
 
     loaded = 0;
-    if (func_80019AA8(resource) == 0) {
+    if (gHasRegisteredResource(resource) == 0) {
         gRelocateModelResource(&loaded, resource->data, resource->unk20, resource->unk1C);
         resource->unk08 = 0;
         resource->data = loaded;
-        func_80019A74(resource);
+        gAppendResourceRegistryEntry(resource);
     } else {
-        func_80019D00(resource);
+        gScanAndFreeResource(resource);
     }
 }
