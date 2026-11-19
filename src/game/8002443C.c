@@ -3,26 +3,33 @@
 
 extern int gGetAudioStreamBlockCount() __asm__("func_80022B74");
 
-extern s32 D_8009F64C;
+extern s32 gStreamBlockDeficitScale __asm__("D_8009F64C");
+
+s32 gScaleAudioStreamBlockDeficit(void) __asm__("func_8002443C");
 
 /**
- *  @brief Computes a scaled value from a global and a function result.
+ * @brief Multiplies three minus the current audio stream block count by the stream scale.
  *
- *  Subtracts the result of gGetAudioStreamBlockCount from three and multiplies it
- *  by the current value of D_8009F64C.
- *  @return The computed signed product.
- *  @par Globals
- *  D_8009F64C is read as the multiplier.
- *  @par Control flow
- *  Calls the helper and evaluates the arithmetic without branching.
- *  @par Calls
- *  gGetAudioStreamBlockCount supplies the value subtracted from three.
- *  @par Side effects
- *  No direct writes; the helper's effects are not specified here.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return The computed signed product.
+ *
+ * @par Confirmed mechanics
+ * Calls gGetAudioStreamBlockCount, subtracts the result from 3, multiplies by the word at gp
+ * +0x438 and returns LO.
+ *
+ * @par Globals
+ * Reads gStreamBlockDeficitScale and indirectly reads gStreamAvailableBlocks.
+ *
+ * @par Callers
+ * Direct calls from func_80029BE4.
+ *
+ * @par Role and path
+ * The stream control path uses the scaled deficit to decide when it can deliver more data.
+ *
+ * @par Unknown
+ * The product is returned as a signed word and its units depend on the configured scale.
  */
-s32 func_8002443C(void)
+s32 gScaleAudioStreamBlockDeficit(void)
 {
-    return D_8009F64C * (3 - gGetAudioStreamBlockCount());
+    return gStreamBlockDeficitScale * (3 - gGetAudioStreamBlockCount());
 }

@@ -4,9 +4,9 @@
 extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern s32 gActiveStreamId __asm__("D_8009F280");
 extern s32 gStreamCommandState __asm__("D_8009F648");
-extern s32 D_8009F64C;
+extern s32 gStreamBlockDeficitScale __asm__("D_8009F64C");
 
-extern u8 func_8002443C[];
+extern u8 gScaleAudioStreamBlockDeficit[] __asm__("func_8002443C");
 
 extern s32 gConfigureAudioStreaming(s32 arg0, ...) __asm__("func_80022484");
 extern u32 gIsAudioStreamConfigured(void) __asm__("func_800226C8");
@@ -14,35 +14,41 @@ extern void gStopAudioStreamAndClearChannels(void) __asm__("func_800226D8");
 extern s32 gPrimeAudioStream(void) __asm__("func_80022710");
 extern void gStoreStreamChannelMix(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800227BC");
 extern void gStartAudioStreamChannels(void) __asm__("func_800228F4");
-extern void func_80024630(s32 arg0);
-extern s32 func_800246A8(s32 arg0);
+extern void gShutdownVagmAudioStream(s32 arg0) __asm__("func_80024630");
+extern s32 gReplaceVagmAudioStreamBuffer(s32 arg0) __asm__("func_800246A8");
 extern void func_8002A31C(s32 arg0, s32 arg1);
 extern s32 func_800451E0(void);
 extern s32 func_80045288(void);
 
+s32 gInitializeVagmAudioStream(void) __asm__("func_800244A4");
+
 /**
- *  @brief Conditionally initializes and configures a subsystem.
+ * @brief Configures, primes and starts the two-channel VAGM audio stream.
  *
- *  When enabled, the routine handles an existing operation, sets global state,
- *  submits a fixed configuration, and applies two channel settings on success.
- *  @return Zero when disabled or on the explicit failure paths; otherwise the
- *  value returned by func_800246A8.
- *  @par Globals
- *  D_8009F26C enables the routine; D_8009F280 holds an operation to clear.
- *  D_8009F648 and D_8009F64C receive fixed values; func_8002443C supplies an address.
- *  @par Control flow
- *  Initialization failure invokes cleanup; a later readiness failure cleans up
- *  and returns zero. A mode query selects asymmetric or equal channel values.
- *  @par Calls
- *  gIsAudioStreamConfigured, gStopAudioStreamAndClearChannels, and func_8002A31C handle an existing operation.
- *  gConfigureAudioStreaming, func_80024630, func_800246A8, and gPrimeAudioStream initialize or clean up.
- *  func_800451E0, func_80045288, gStoreStreamChannelMix, and gStartAudioStreamChannels configure and finish.
- *  @par Side effects
- *  Changes global state and may stop, initialize, or configure the subsystem.
- *  @par Callers
- *  Confirmed: func_8002902C.
+ * @param void No parameters.
+ * @return Zero when disabled or on the explicit failure paths; otherwise the value returned by
+ * gReplaceVagmAudioStreamBuffer.
+ *
+ * @par Confirmed mechanics
+ * Requires the CVK enable byte, stops an existing stream if configured and sets the stream
+ * state and scale. Passes rate 0x37B4, block size 0x2FC0, three blocks and two channels to the
+ * configurator. Acquires a buffer, primes it, then selects pans 0 and 0x7F or two centered pans
+ * before starting channels.
+ *
+ * @par Globals
+ * Reads gCvkSystemActive, clears or replaces gActiveStreamId and sets gStreamCommandState and
+ * gStreamBlockDeficitScale.
+ *
+ * @par Callers
+ * Direct calls from func_8002902C.
+ *
+ * @par Role and path
+ * The VAGM module-chunk path initializes the software stream and the SPU playback chain here.
+ *
+ * @par Unknown
+ * The startup helper's channel-allocation result is not propagated.
  */
-s32 func_800244A4(void)
+s32 gInitializeVagmAudioStream(void)
 {
     s32 result;
 
@@ -56,16 +62,16 @@ s32 func_800244A4(void)
             }
         }
         gStreamCommandState = 1;
-        D_8009F64C = 0x1C2;
+        gStreamBlockDeficitScale = 0x1C2;
         gActiveStreamId = 0;
         if (gConfigureAudioStreaming(1, 0x37B4, 2, 0x2FC0, 3, 3, 10, 2, 6,
-                          (s32)(func_8002443C + 0x34), 0) < 0) {
-            func_80024630(0);
+                          (s32)(gScaleAudioStreamBlockDeficit + 0x34), 0) < 0) {
+            gShutdownVagmAudioStream(0);
         } else {
-            result = func_800246A8(4);
+            result = gReplaceVagmAudioStreamBuffer(4);
             if (result != 0) {
                 if (gPrimeAudioStream() == 0) {
-                    func_80024630(0);
+                    gShutdownVagmAudioStream(0);
                     return 0;
                 }
                 if (func_800451E0() != 0) {

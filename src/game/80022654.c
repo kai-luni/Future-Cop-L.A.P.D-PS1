@@ -33,7 +33,7 @@ void gPollAudioStreamStop(void) __asm__("func_80022654");
  * Reads gMixerState and gFrameTickCounter and may reset the mixer deadline.
  *
  * @par Callers
- * Direct calls from func_8002441C.
+ * Direct calls from gServiceAudioStreamStop (func_8002441C).
  *
  * @par Role and path
  * The stream polling wrapper runs this deferred stop and timeout path.

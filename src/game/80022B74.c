@@ -19,7 +19,7 @@ s32 gGetAudioStreamBlockCount(void) __asm__("func_80022B74");
  * Reads gStreamAvailableBlocks, which aliases gMixerState +0x74.
  *
  * @par Callers
- * Direct calls from func_8002443C.
+ * Direct calls from gScaleAudioStreamBlockDeficit (func_8002443C).
  *
  * @par Role and path
  * The event callback calculates a scaled value from the difference between three and this

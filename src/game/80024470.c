@@ -1,30 +1,40 @@
 // Categories: Game Engine > Dispatch
 #include "game/types.h"
 
-extern s32 D_8009F64C;
+extern int gReplaceVagmAudioStreamBuffer() __asm__("func_800246A8");
+
+extern s32 gStreamBlockDeficitScale __asm__("D_8009F64C");
+
+void gHandleAudioStreamRefillEvent(s32 arg0) __asm__("func_80024470");
 
 /**
- *  @brief Forwards values in the range three through four to a helper.
+ * @brief Requests a replacement stream buffer for event codes 3 and 4.
  *
- *  This wrapper filters its argument before dispatching it unchanged.
- *  Values outside the accepted range cause no call.
- *  @param arg0 Signed value to test and potentially forward.
- *  @par Globals
- *  None accessed directly.
- *  @par Control flow
- *  Checks for a value below five and then for a value at least three.
- *  @par Calls
- *  func_800246A8 receives arg0 when both checks pass.
- *  @par Side effects
- *  No direct writes; the helper's effects are not specified here.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param arg0 Signed value to test and potentially forward.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Uses two signed SLTI checks to admit 3 and 4, then calls gReplaceVagmAudioStreamBuffer with
+ * the event argument.
+ *
+ * @par Globals
+ * None directly. The replacement helper accesses gActiveStreamId.
+ *
+ * @par Callers
+ * No direct JAL callers in the retail listing.
+ *
+ * @par Role and path
+ * The configurator registers this callback through the address gScaleAudioStreamBlockDeficit
+ * +0x34.
+ *
+ * @par Unknown
+ * The distinction between event 3 and event 4 is unused by this handler.
  */
-void func_80024470(s32 arg0)
+void gHandleAudioStreamRefillEvent(s32 arg0)
 {
     if (arg0 < 5) {
         if (arg0 >= 3) {
-            func_800246A8(arg0);
+            gReplaceVagmAudioStreamBuffer(arg0);
         }
     }
 }

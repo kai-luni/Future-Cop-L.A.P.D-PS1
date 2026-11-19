@@ -19,7 +19,8 @@ void gStopAudioStreamAndClearChannels(void) __asm__("func_800226D8");
  * None directly. Both callees update gMixerState.
  *
  * @par Callers
- * Direct calls from gPollAudioStreamStop (func_80022654), func_800244A4, func_80024630.
+ * Direct calls from gPollAudioStreamStop (func_80022654), gInitializeVagmAudioStream
+ * (func_800244A4), gShutdownVagmAudioStream (func_80024630).
  *
  * @par Role and path
  * Used for shutdown, deferred stop and reconfiguration.

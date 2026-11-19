@@ -21,7 +21,7 @@ register s32 zero __asm__("$5");
  *
  * @par Globals
  * D_8009F65C - two 16-bit per-team "already reported" flags (index 0 and 1 are
- * the words at 0x8009F65C and 0x8009F65E, both cleared by func_800247A8 at
+ * the words at 0x8009F65C and 0x8009F65E, both cleared by gInitializePanelInputActions at
  * module load).
  *
  * @par Control flow

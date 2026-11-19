@@ -19,7 +19,7 @@ void gMarkAudioStreamStopPending(void) __asm__("func_80022700");
  * Writes gStreamStopPending, which aliases gMixerState +0x0C.
  *
  * @par Callers
- * Direct calls from func_80024630.
+ * Direct calls from gShutdownVagmAudioStream (func_80024630).
  *
  * @par Role and path
  * The nonzero variant of stream shutdown sets this marker for the polling path.

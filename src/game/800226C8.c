@@ -19,7 +19,7 @@ u32 gIsAudioStreamConfigured(void) __asm__("func_800226C8");
  * Reads the first byte of gMixerState.
  *
  * @par Callers
- * Direct calls from func_800244A4.
+ * Direct calls from gInitializeVagmAudioStream (func_800244A4).
  *
  * @par Role and path
  * Audio stream startup checks this flag before stopping a previous configuration.

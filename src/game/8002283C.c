@@ -57,7 +57,7 @@ void gApplyStreamChannelMix(s32 channel, s32 left, s32 right) __asm__("func_8002
  * Reads active state, the channel mix and the voice pointer in gMixerState.
  *
  * @par Callers
- * Direct calls from func_80024730.
+ * Direct calls from gSetVagmAudioStreamVolume (func_80024730).
  *
  * @par Role and path
  * Used when the stream volume or stereo/mono selection changes during playback.

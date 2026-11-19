@@ -46,7 +46,8 @@ void gStoreStreamChannelMix(s32 channel, s32 left, s32 right) __asm__("func_8002
  * Updates the selected record in gMixerState.
  *
  * @par Callers
- * Direct calls from gApplyStreamChannelMix (func_8002283C), func_800244A4.
+ * Direct calls from gApplyStreamChannelMix (func_8002283C), gInitializeVagmAudioStream
+ * (func_800244A4).
  *
  * @par Role and path
  * Startup stores these values before voice allocation. Live mix changes call the same setter

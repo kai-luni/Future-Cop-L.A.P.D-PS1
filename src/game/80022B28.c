@@ -38,7 +38,7 @@ void gSetAudioStreamChannelRange(s32 start, s32 length, s32 channel, u8 looping)
  * Writes channel fields in gMixerState.
  *
  * @par Callers
- * Direct calls from func_800246A8.
+ * Direct calls from gReplaceVagmAudioStreamBuffer (func_800246A8).
  *
  * @par Role and path
  * Buffer replacement uses this to supply the source range to the next transfer request.

@@ -55,7 +55,7 @@ s32 gConfigureAudioStreaming(s32 arg0, ...) __asm__("func_80022484");
  * and D_8009F63C.
  *
  * @par Callers
- * Direct calls from func_800244A4.
+ * Direct calls from gInitializeVagmAudioStream (func_800244A4).
  *
  * @par Role and path
  * Prepares the mixer before the stream startup path waits for its first request.

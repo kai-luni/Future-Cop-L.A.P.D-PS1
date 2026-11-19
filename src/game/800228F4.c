@@ -68,7 +68,7 @@ s32 gStartAudioStreamChannels(void) __asm__("func_800228F4");
  * Updates gMixerState and reads gFrameTickCounter.
  *
  * @par Callers
- * Direct calls from func_800244A4.
+ * Direct calls from gInitializeVagmAudioStream (func_800244A4).
  *
  * @par Role and path
  * Finishes audio stream startup after the priming request succeeds.

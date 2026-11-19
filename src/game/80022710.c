@@ -34,7 +34,7 @@ s32 gPrimeAudioStream(void) __asm__("func_80022710");
  * Updates gMixerState, gStreamRequestSequence and gMixerWord.
  *
  * @par Callers
- * Direct calls from func_800244A4.
+ * Direct calls from gInitializeVagmAudioStream (func_800244A4).
  *
  * @par Role and path
  * Initial stream setup uses the returned word before starting configured channels.
