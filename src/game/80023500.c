@@ -21,7 +21,7 @@ extern void func_80098708(s32 arg0);
 extern s32 gClearScreenModeHook(s32 callback) __asm__("func_8001F12C");
 extern void func_80021250(void);
 extern void func_80023BF8(void);
-extern void func_80021C80(void);
+extern void gShutdownSoundSystem(void) __asm__("func_80021C80");
 extern void func_80044FEC(void);
 
 /**

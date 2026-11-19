@@ -22,29 +22,38 @@ struct SoundSystem {
 };
 
 extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
-extern void *D_800A07BC;
+extern void *gSoundChannelEnableMask __asm__("D_800A07BC");
 
 extern void func_80098C68(s32, void *);
 extern void func_80021AD0(struct SoundChannel *, s32, s32, s32);
 
+void gFlushSoundChannelUpdates(void) __asm__("func_80021E1C");
+
 /**
- *  @brief Processes pending sound-system state and channel mask bits.
+ * @brief Applies pending sound-channel updates and clears the queued state.
  *
- *  A reentrancy flag protects processing of a pending pointer and channels.
- *  Selected channels are processed before the remaining mask is submitted.
- *  @par Globals
- *  D_800A07A8 holds the active flag, pending pointer, channels and mask.
- *  @par Control flow
- *  Returns if active; otherwise processes the pointer and loops over channels
- *  when the mask is nonzero, then clears the mask and active flag.
- *  @par Calls
- *  func_80098C68 submits the pointer or mask; func_80021AD0 handles a channel.
- *  @par Side effects
- *  Clears pending state, sets channel status to 2 and invokes audio operations.
- *  @par Callers
- *  Confirmed: func_80021F3C, func_80023314.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Tests and sets the guard at +0x10, sends and clears the word at +0x18 in mode 0, then visits
+ * the 0x1C-byte channel records when +0x14 is nonzero. It calls func_80021AD0 for matching
+ * channel bits, sets each visited status to 2, sends a nonzero +0x14 mask in mode 1 and clears
+ * the mask and guard.
+ *
+ * @par Globals
+ * Reads and writes gSoundSystem. gSoundChannelEnableMask aliases its +0x14 word.
+ *
+ * @par Callers
+ * Direct calls from D_80023314, gQueueSoundChannelShutdown (func_80021F3C).
+ *
+ * @par Role and path
+ * Used both as a guarded periodic flush and during driver shutdown.
+ *
+ * @par Unknown
+ * The meaning of channel status 2 beyond this flush is unresolved.
  */
-void func_80021E1C(void)
+void gFlushSoundChannelUpdates(void)
 {
     struct SoundSystem *sys;
     struct SoundChannel *chan;

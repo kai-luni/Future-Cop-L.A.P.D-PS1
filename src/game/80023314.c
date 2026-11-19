@@ -3,7 +3,7 @@
 
 extern u8 gCvkSystemActive __asm__("D_8009F26C");
 
-extern void func_80021E1C(void);
+extern void gFlushSoundChannelUpdates(void) __asm__("func_80021E1C");
 
 /**
  *  @brief Calls a helper only when a global flag is nonzero.
@@ -15,7 +15,7 @@ extern void func_80021E1C(void);
  *  @par Control flow
  *  One conditional determines whether the helper is called.
  *  @par Calls
- *  func_80021E1C is invoked when the flag is nonzero.
+ *  gFlushSoundChannelUpdates is invoked when the flag is nonzero.
  *  @par Side effects
  *  Any effects are those of the conditional helper call.
  *  @par Callers
@@ -24,6 +24,6 @@ extern void func_80021E1C(void);
 void func_80023314(void)
 {
     if (gCvkSystemActive != 0) {
-        func_80021E1C();
+        gFlushSoundChannelUpdates();
     }
 }

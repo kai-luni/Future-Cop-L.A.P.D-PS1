@@ -24,7 +24,7 @@ extern struct State gSoundSystem __asm__("D_800A07A8");
  *  @par Side effects
  *  Writes the two output values through a3 and a4.
  *  @par Callers
- *  Confirmed: func_80021F98, func_800220C4, func_800222CC.
+ *  Confirmed: gQueueBankSampleOnChannel, gAllocateSoundChannelVoice, func_800222CC.
  */
 void func_800223B0(u8 *a0, s32 a1, s32 a2, s32 *a3, s32 *a4)
 {

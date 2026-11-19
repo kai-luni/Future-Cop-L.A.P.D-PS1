@@ -34,7 +34,7 @@ struct VabEntry {
 extern struct VabEntry gObjectSlots[] __asm__("D_800A0A00");
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
-extern void func_80021DAC(s32 index);
+extern void gUnregisterSoundBank(s32 index) __asm__("func_80021DAC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_800242B4(s32 slot, u8 program);
 
@@ -49,7 +49,7 @@ extern void func_800242B4(s32 slot, u8 program);
  *  @par Control flow
  *  Searches for the first matching entry, then scans each bank's samples backward.
  *  @par Calls
- *  func_800242B4 processes matching slot and program pairs; func_80021DAC handles
+ *  func_800242B4 processes matching slot and program pairs; gUnregisterSoundBank handles
  *  a valid entry ID; func_800181D4 releases each nonnull block4 and block8.
  *  @par Side effects
  *  Resets the matching entry's ID, released block pointers, status, and pad2.
@@ -96,7 +96,7 @@ void func_80023AB4(s32 arg0)
             } while (slot < 0x6E);
 
             if (entry->id != m1) {
-                func_80021DAC(entry->id);
+                gUnregisterSoundBank(entry->id);
                 entry->id = m1;
             }
             if (entry->block4 != 0) {

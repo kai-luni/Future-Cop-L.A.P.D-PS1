@@ -7,7 +7,7 @@ extern Slot gObjectSlots[] __asm__("D_800A0A00");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 func_80023528(s32, s32 *);
 extern void gFreeBlock(Obj *) __asm__("func_800181D4");
-extern s32 func_80021CB0(s32, s32, s32, void *, s32);
+extern s32 gRegisterSoundBank(s32, s32, s32, void *, s32) __asm__("func_80021CB0");
 extern void func_80023500(void);
 
 /**
@@ -22,7 +22,7 @@ extern void func_80023500(void);
  *  Validation or capacity failure releases both objects; a negative operation result leaves the slot unchanged.
  *  @par Calls
  *  func_80023528 checks eligibility; func_800181D4 releases objects on validation failure.
- *  func_80021CB0 starts the operation with func_80023500 as its callback.
+ *  gRegisterSoundBank starts the operation with func_80023500 as its callback.
  *  @par Side effects
  *  May release objects or populate a slot; clears both pending pointers whenever both were present.
  *  @par Callers
@@ -46,7 +46,7 @@ void func_800236FC(void)
             gFreeBlock(gPendingCvkhNode);
             gFreeBlock(gPendingCvkbNode);
         } else {
-            result = func_80021CB0(gPendingCvkhNode->value, gPendingCvkbNode->value, -1, func_80023500, i);
+            result = gRegisterSoundBank(gPendingCvkhNode->value, gPendingCvkbNode->value, -1, func_80023500, i);
             if (result >= 0) {
                 gObjectSlots[i].active = 1;
                 time = gFrameTickCounter + 1500;

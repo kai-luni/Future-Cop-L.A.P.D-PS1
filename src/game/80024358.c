@@ -24,7 +24,7 @@ struct Args {
     s32 unk08;
 };
 
-extern s32 func_80021F98(s32, s32, s32, s32, s32, struct Args *);
+extern s32 gQueueBankSampleOnChannel(s32, s32, s32, s32, s32, struct Args *) __asm__("func_80021F98");
 
 /**
  *  @brief Submits a voice sample request when its sample bank is valid.
@@ -42,7 +42,7 @@ extern s32 func_80021F98(s32, s32, s32, s32, s32, struct Args *);
  *  @par Control flow
  *  Skips the call for bank -1 and converts the call result to zero or one.
  *  @par Calls
- *  func_80021F98 processes the sample request.
+ *  gQueueBankSampleOnChannel processes the sample request.
  *  @par Side effects
  *  The called routine may modify state; its effects are not shown here.
  *  @par Callers
@@ -55,7 +55,7 @@ s32 func_80024358(struct Bank *bank, struct Voice *voice, s32 pan, s32 volume, s
     args.unk04 = volume;
     args.unk08 = pan;
     args.unk00 = -1;
-    if (voice->sample->bank != -1 && func_80021F98(voice->sample->bank, voice->sample->index, 0, bank->cursor, voice->slot, &args)) {
+    if (voice->sample->bank != -1 && gQueueBankSampleOnChannel(voice->sample->bank, voice->sample->index, 0, bank->cursor, voice->slot, &args)) {
         result = 1;
     } else {
         result = 0;

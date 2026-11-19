@@ -7,30 +7,37 @@ extern Table gSoundSystem __asm__("D_800A07A8");
 extern s32 func_80021898(Entry *, s32, s32, s32);
 extern void func_800219EC(Entry *, s32);
 
+s32 gRegisterSoundBank(Entry *entry, s32 arg1, s32 arg2, s32 arg3, s32 arg4) __asm__("func_80021CB0");
+
 /**
- *  @brief Initialize an entry and register it in an available table slot.
+ * @brief Initializes a sound bank and installs it in a selected or automatically chosen slot.
  *
- *  A negative slot argument searches for the first null entry; otherwise the
- *  supplied index is used directly. Initialization must return a positive amount.
- *  @param entry Entry to initialize and register.
- *  @param arg1 First argument forwarded to the initialization calculation.
- *  @param arg2 Slot index, or a negative value to search for a free slot.
- *  @param arg3 Second argument forwarded to the initialization calculation.
- *  @param arg4 Third argument forwarded to the initialization calculation.
- *  @return Slot index on success, -1 if the search exceeds the count,
- *  -2 if the selected slot is occupied, or -3 if initialization fails.
- *  @par Globals
- *  D_800A07A8 supplies the item table and search count.
- *  @par Control flow
- *  Optionally scans for a null slot, then checks occupancy and initialization.
- *  @par Calls
- *  func_80021898 calculates the amount; func_800219EC applies it to the entry.
- *  @par Side effects
- *  On success, writes entry->value and stores the entry pointer in the table.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param entry Entry to initialize and register.
+ * @param arg1 First argument forwarded to the initialization calculation.
+ * @param arg2 Slot index, or a negative value to search for a free slot.
+ * @param arg3 Second argument forwarded to the initialization calculation.
+ * @param arg4 Third argument forwarded to the initialization calculation.
+ * @return Slot index on success, -1 if the search exceeds the count, -2 if the selected slot is
+ * occupied, or -3 if initialization fails.
+ *
+ * @par Confirmed mechanics
+ * Tests a2 for a negative index, then scans four-byte entries until a null pointer or an index
+ * strictly greater than the limit. It calls func_80021898 and, on a positive result, stores the
+ * value at entry +0x08, calls func_800219EC and installs the entry.
+ *
+ * @par Globals
+ * Reads the bank index limit and table from gSoundSystem, then writes the selected table cell.
+ *
+ * @par Callers
+ * Direct calls from func_800236FC.
+ *
+ * @par Role and path
+ * Registers a loaded bank for later indexed playback and release.
+ *
+ * @par Unknown
+ * The entry layout beyond the field at +0x08 is established elsewhere.
  */
-s32 func_80021CB0(Entry *entry, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
+s32 gRegisterSoundBank(Entry *entry, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     Entry **cursor = gSoundSystem.items;
     s32 index = 0;

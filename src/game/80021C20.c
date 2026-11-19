@@ -4,29 +4,37 @@
 extern void func_80021508(void);
 extern void func_80022CA8(void);
 extern s32 func_80021554(s32 *arguments);
-extern void func_80021C80(void);
+extern void gShutdownSoundSystem(void) __asm__("func_80021C80");
+
+s32 gConfigureSoundSystem(s32 first, ...) __asm__("func_80021C20");
 
 /**
- * @brief Variadic sound-command wrapper: prepare, execute against the
- *        sound system state, commit on success.
+ * @brief Resets sound and stream state before forwarding a variadic sound configuration.
  *
- * @param first First command word; the remaining varargs are passed by
- *              address to the executor.
- * @return The executor's result.
+ * @param first First word of the sound configuration list.
+ * @param ... Remaining configuration words in the caller's argument area.
+ * @return The parser's status word.
  *
- * @par Confirmed
- * func_80021508(); func_80022CA8(); result = func_80021554(&first);
- * when result != 0, func_80021C80(); return result. func_80021554 works
- * on the SoundSystem block D_800A07A8 (bank and channel tables).
+ * @par Confirmed mechanics
+ * Spills a0 through a3, calls func_80021508 and func_80022CA8, then passes the address of first
+ * to func_80021554. It preserves the result across a call to gShutdownSoundSystem on nonzero
+ * status.
  *
- * @par Likely role
- * The two surrounding calls lock/prepare and commit the sound state; the
- * variadic form carries command-specific parameters.
+ * @par Globals
+ * None directly. The reset and configuration callees update gSoundSystem and gMixerState.
  *
  * @par Callers
- * func_8002333C.
+ * Direct calls from gInitCvkStreamSubsystem (func_8002333C).
+ *
+ * @par Role and path
+ * The sound-bank setup path feeds its key/value configuration through this wrapper. The retail
+ * parser clears the result before returning, so the conditional teardown is not reached through
+ * that parser.
+ *
+ * @par Unknown
+ * The wrapper alone does not establish the full configuration record format.
  */
-s32 func_80021C20(s32 first, ...)
+s32 gConfigureSoundSystem(s32 first, ...)
 {
     s32 result;
 
@@ -34,7 +42,7 @@ s32 func_80021C20(s32 first, ...)
     func_80022CA8();
     result = func_80021554(&first);
     if (result != 0) {
-        func_80021C80();
+        gShutdownSoundSystem();
     }
     return result;
 }

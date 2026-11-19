@@ -47,7 +47,7 @@ extern SpuIrqCallback gSpuInstallIrqCallback(SpuIrqCallback callback) __asm__("f
 extern void func_80022F44(void);
 extern struct SoundVoice *func_80046B04(s32 sound, s32 arg1, s32 arg2, s32 arg3);
 extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
-extern s32 func_800220C4(s32 arg0, s32 arg1, s32 *arg2, s32 arg3);
+extern s32 gAllocateSoundChannelVoice(s32 arg0, s32 arg1, s32 *arg2, s32 arg3) __asm__("func_800220C4");
 extern void func_800221E4(s32 count, s32 *channels);
 
 /**
@@ -65,7 +65,7 @@ extern void func_800221E4(s32 count, s32 *channels);
  *  @par Calls
  *  gSpuInstallIrqCallback installs D_80022FA8; func_80022F44 prepares the stream.
  *  func_80046B04 obtains voices; func_800477D8 configures them;
- *  func_800220C4 creates channel IDs and func_800221E4 submits the list.
+ *  gAllocateSoundChannelVoice creates channel IDs and func_800221E4 submits the list.
  *  @par Side effects
  *  Changes stream state, installs a callback and invokes audio setup routines.
  *  @par Callers
@@ -96,7 +96,7 @@ s32 func_800228F4(void)
                 params[1] = voice->volume;
                 params[2] = voice->pan;
                 channels[i] = gMixerState.channels[i].id =
-                    func_800220C4(0x64, voice->unk0D, params,
+                    gAllocateSoundChannelVoice(0x64, voice->unk0D, params,
                                   gMixerState.channels[i].unk20);
             } else {
                 channels[i] = -1;
