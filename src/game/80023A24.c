@@ -11,24 +11,31 @@ struct Entry {
 extern struct Entry gSoundEntryTable[] __asm__("D_800A7938");
 extern void func_800242B4(s32, s32);
 
+void gClearSoundProgramSamples(void) __asm__("func_80023A24");
+
 /**
- *  @brief Dispatches each table entry's first data byte according to its count.
+ * @brief Drains the sample lists of all 110 sound programs.
  *
- *  Scans 110 entries and passes the entry index and first data byte to the
- *  dispatch function once for each unit of the entry's count.
- *  @par Globals
- *  D_800A7938 supplies the entries, counts, and data bytes.
- *  @par Control flow
- *  An outer loop visits all entries; a nonzero count starts an inner loop.
- *  The data pointer is not advanced within that loop.
- *  @par Calls
- *  func_800242B4 receives the entry index and repeated data byte.
- *  @par Side effects
- *  Invokes the dispatch function; its effects are not shown here.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Walks 0x1C-byte records. The inner loop captures the count at +0x10 and repeatedly loads the
+ * first byte of that same record before calling func_800242B4.
+ *
+ * @par Globals
+ * Reads gSoundEntryTable. The removal helper changes its selected record.
+ *
+ * @par Callers
+ * Direct calls from gReleaseCvkSoundBanksAndVoices (func_80023BF8).
+ *
+ * @par Role and path
+ * Used during CVK sound-bank teardown after bank-specific removals.
+ *
+ * @par Unknown
+ * The helper decides how each removal compacts the record.
  */
-void func_80023A24(void)
+void gClearSoundProgramSamples(void)
 {
     register s32 i __asm__("$18");
     register s32 j __asm__("$16");

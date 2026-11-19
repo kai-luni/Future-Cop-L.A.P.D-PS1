@@ -26,13 +26,13 @@ extern void func_80028BA0(void *, void *, u32);
 extern void func_80028DC0(void *);
 extern s32 func_800244A4(void);
 extern void func_8002A544(void);
-extern u8 func_80023CA4(void *, s32, s32);
+extern u8 gUploadCvkSpuDataAndWait(void *, s32, s32) __asm__("func_80023CA4");
 extern void func_8002A16C(s32);
 
 /**
  * @brief Parses streamed module container files from D_800A0B70 and dispatches SHOC/CTRL/CANM/FILL/VAGB/VAGM chunks.
  *
- * Guarded by func_80028E58(1) and D_800A0B70.file. Walks chunks up to state->limit: SHOC (0x53484F43) handles SHDR headers via func_80028BCC and SDAT audio payloads via func_80028BA0/func_80028DC0; CTRL initializes playback rate; VAGM queues VAG frames and starts audio via func_800244A4; VAGB uploads sound bank chunks via func_80023CA4 and triggers func_8002A16C(1); CANM queues animation chunks; FILL skips to limit.
+ * Guarded by func_80028E58(1) and D_800A0B70.file. Walks chunks up to state->limit: SHOC (0x53484F43) handles SHDR headers via func_80028BCC and SDAT audio payloads via func_80028BA0/func_80028DC0; CTRL initializes playback rate; VAGM queues VAG frames and starts audio via func_800244A4; VAGB uploads sound bank chunks via gUploadCvkSpuDataAndWait and triggers func_8002A16C(1); CANM queues animation chunks; FILL skips to limit.
  *
  * @param void No parameters.
  * @par Globals
@@ -40,7 +40,7 @@ extern void func_8002A16C(s32);
  * @par Control flow
  * Loops while D_800A0B70.file != 0; inner loop dispatches chunk tags until file->pos >= state->limit, then retires the file via func_80028D28 and drains pending files via func_80028E58(0).
  * @par Calls
- * func_80028E58, func_80028BCC, func_80028BA0, func_80028DC0, func_800244A4, func_8002A544, func_80023CA4, func_8002A16C, func_80028D28.
+ * func_80028E58, func_80028BCC, func_80028BA0, func_80028DC0, func_800244A4, func_8002A544, gUploadCvkSpuDataAndWait, func_8002A16C, func_80028D28.
  * @par Side effects
  * Advances file->pos/refs, allocates/fills sound buffers, uploads SPU data, queues CANM/VAGM chunks, and starts/stops audio streaming.
  * @par Callers
@@ -142,7 +142,7 @@ void func_8002902C(void)
                     goto dispatch_end;
                 vagb:
                     gBitFieldState |= 1;
-                    if (func_80023CA4((u8 *)chunk + 0x18, size - 0x18, chunk->index)) {
+                    if (gUploadCvkSpuDataAndWait((u8 *)chunk + 0x18, size - 0x18, chunk->index)) {
                         if (chunk->index == one) other->size = 0;
                         other->size += ((size + 0x27) >> 6) << 6;
                         if (chunk->index == chunk->total) {

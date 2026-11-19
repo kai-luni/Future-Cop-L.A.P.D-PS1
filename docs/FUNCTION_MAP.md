@@ -644,7 +644,7 @@ graph LR
 | `gStopFrameCallback` (`func_8001F158`) | 40 | Game Engine > Timing · Interrupts | `func_80091510` | `func_8001E540` |
 | `func_80021A8C` | 40 | Game Engine > Event Flags | - | `func_8002238C` |
 | `gFlushSoundChannelsIfCvkActive` (`func_80023314`) | 40 | Game Engine > State | `func_80021E1C` | - |
-| `func_80023500` | 40 | Game Engine > State | - | - |
+| `gMarkCvkSlotReady` (`func_80023500`) | 40 | Game Engine > State | - | - |
 | `func_80025348` | 40 | Game Engine > Frame · Asset Loading | `func_8001B4A8`, `func_80024EC8` | `func_80025B7C` |
 | `func_80027EBC` | 40 | Game Engine > Frame · Display | `func_8001B4A8`, `func_80024EC8` | `func_80027EE4` |
 | `func_80029720` | 40 | Game Engine > State | - | `func_80023E84` |
@@ -788,7 +788,7 @@ graph LR
 | `gEncodeProfileNameGlyphs` (`func_800822CC`) | 140 | Game Engine > Front-End Configuration · Encoding | `func_800210D0`, `func_8008CCC0` | `func_80080B70` |
 | `gSetLargeMotor` (`func_8001EA5C`) | 144 | Input > Controller Vibration | - | `func_8001EA20`, `func_8001EBA8` |
 | `gSetPadRumbleEnabled` (`func_8001EC04`) | 144 | Input > Controller Setup · Controller Input | `func_8001EBA8` | `func_8007C80C`, `func_8007C940`, `func_80080984` |
-| `func_80023A24` | 144 | Game Engine > Table Processing | `func_800242B4` | - |
+| `gClearSoundProgramSamples` (`func_80023A24`) | 144 | Game Engine > Table Processing | `func_800242B4` | - |
 | `func_8003C500` | 144 | Game Engine > Object Setup · Map, Scene List | `func_8003C4C4` | `func_8003C590` |
 | `gRetireAndFreeAllEntities` (`func_8004CCDC`) | 144 | Game Engine > Entity Lifecycle · World Reset | `func_8004D598`, `func_8004D958` | `func_80024D14` |
 | `gSpawnQueuedEntity` (`func_8004D444`) | 144 | Game Engine > Object Setup > Spawn Queue · Object Spawning | `func_80017EBC`, `func_8004D3D4` | `func_8002C584`, `func_80039418`, `func_8004D4D4`, `func_80057914`, `func_80058C3C`, `func_8005E47C`, `func_8005E9E4`, `func_8005EB74`, `func_8005ECB8`, `func_8005EE04` |
@@ -893,12 +893,12 @@ graph LR
 | `func_800780DC` | 308 | Game Engine > Object Setup > Registry · Init | `func_80017EBC`, `func_80077AD4`, `func_80077FFC`, `func_8007F9CC`, `func_800898C8` | `func_80024904` |
 | `func_8007799C` | 312 | Game Engine > Front-End Configuration · Text Tables | `func_80089914`, `func_8008CCB0`, `func_8008CCC0` | - |
 | `func_8002AE54` | 320 | Game Engine > Dispatch | - | `func_80060E74` |
-| `func_80023AB4` | 324 | Game Engine > Audio · Sound Banks | `func_800181D4`, `func_80021DAC`, `func_800242B4` | - |
+| `gUnloadCvkSoundBank` (`func_80023AB4`) | 324 | Game Engine > Audio · Sound Banks | `func_800181D4`, `func_80021DAC`, `func_800242B4` | - |
 | `func_80078C88` | 328 | Game Engine > State Transitions · Port Control | - | - |
 | `gRespPadInfoProbe` (`func_8008AF10`) | 332 | Input > Controller Protocol | `func_8008B05C`, `func_8008B094` | `func_8008C518` |
 | `func_80023F08` | 348 | Game Engine > Sound Playback | - | - |
 | `func_800247A8` | 348 | Input > Configuration | - | `func_80024E3C` |
-| `func_800236FC` | 352 | Game Engine > Object Coordination | - | - |
+| `gRegisterPendingCvkPair` (`func_800236FC`) | 352 | Game Engine > Object Coordination | - | - |
 | `func_80025F58` | 352 | Game Engine > Options Menu · Formatting | `func_800451E0`, `func_8004522C`, `func_80045288`, `func_800452C8`, `func_8008CCC0`, `func_8008CD30` | `func_800260B8`, `func_800267C8` |
 | `func_80029A60` | 352 | Game Engine > Event Queue · Streaming Audio, Entity Script | `func_80029DD8`, `func_80041DC4` | `func_80069D68` |
 | `gInitPadPorts` (`func_8008BDB0`) | 352 | Input > Port Initialization | `func_8008A3A8`, `func_8008C410`, `func_8008CD00` | `func_8001E87C` |
@@ -1353,7 +1353,7 @@ graph LR
 | `gGetPadCombInfo` (`func_8008A118`) | 168 | Resources > Data Access | - | - |
 | `func_80019AF8` | 172 | Resources > Memory Management · Resource Registry | `func_800181D4` | `func_80019BA4` |
 | `gPrimeAudioStream` (`func_80022710`) | 172 | Resources > Streaming | `func_80022CA8`, `func_80022D84` | - |
-| `func_80023528` | 172 | Resources > Lookup | - | `func_800235D4` |
+| `gFindCshdSoundGroup` (`func_80023528`) | 172 | Resources > Lookup | - | `func_800235D4` |
 | `func_80017D5C` | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
 | `func_80017E0C` | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
 | `gParseTextureContainer` (`func_8001996C`) | 180 | Resources > Asset Loading · Textures | - | `func_80063C5C` |
@@ -1366,7 +1366,7 @@ graph LR
 | `func_8007852C` | 204 | Resources > Cleanup | - | `func_800249BC` |
 | `func_80029650` | 208 | Resources > Asset Registry · Reference Counting | `func_800288BC` | `func_8001B4A8`, `func_80029520`, `func_8002A31C`, `func_8002A408` |
 | `func_80051580` | 208 | Resources > Lookup | `func_80019A20`, `func_8001AB78` | - |
-| `func_8002385C` | 212 | Resources > Slot Table · Frame | - | `func_80025690`, `func_800259D8` |
+| `gPollCvkBankSlots` (`func_8002385C`) | 212 | Resources > Slot Table · Frame | - | `func_80025690`, `func_800259D8` |
 | `func_80071A68` | 216 | Resources > Memory Management · Effects | `func_800181D4`, `func_80070710` | `func_8007364C` |
 | `gApplySavedAudioSettings` (`func_80080984`) | 216 | Resources > Save Data · Volume, Port Presets | `func_8001EC04`, `func_80024630`, `func_8002A16C`, `func_8002A58C`, `func_800451B4`, `func_800451F8`, `func_80045238`, `func_80045288`, `func_80045294`, `func_8007BFCC` | `func_8008125C` |
 | `gLoadCtdtImages` (`func_800824CC`) | 224 | Resources > Texture Atlas · Image Transfer, GPU | `func_800181D4`, `func_800953F0` | `func_80024EC8` |
@@ -1377,7 +1377,7 @@ graph LR
 | `func_80024064` | 268 | Resources > Handles | - | - |
 | `func_80049420` | 284 | Resources > Loader Post-Process · Random | `func_80019668`, `func_80019A74`, `func_80019C38`, `func_80019CA0` | `func_80024EC8` |
 | `func_8003BC7C` | 292 | Resources > Object Copy · Object Pool | `func_80017EBC`, `func_800181D4` | `func_8003BDA0`, `func_8003BFD0` |
-| `func_800235D4` | 296 | Resources > Table Processing | `func_80023528`, `func_800241D0` | - |
+| `gInstallCvkGroupSamples` (`func_800235D4`) | 296 | Resources > Table Processing | `func_80023528`, `func_800241D0` | - |
 | `func_800511E4` | 296 | Resources > Loader Post-Process · Placement | `func_80019A74`, `func_80019AA8`, `func_80019D00`, `func_80067684` | `func_80024EC8` |
 | `gLoadFileAlloc` (`func_8001E110`) | 304 | Resources > File Access · CD-ROM | `func_8001D424`, `func_8001D5E4`, `func_8001E004` | `func_80025370`, `func_80059BA0` |
 | `func_8001306C` | 308 | Resources > Table Remapping | - | `func_800131A0` |
@@ -4602,7 +4602,7 @@ graph LR
 | `func_80020F34` | 168 | Platform > Memory Card · Save Data | `func_8001E318`, `func_8008CCC0` | `func_80020FDC` |
 | `func_800973B4` | 168 | Platform > Hardware Control | `func_80097968`, `func_80097990` | - |
 | `func_80020C90` | 172 | Platform > Memory Card · Save Data | `func_800207CC`, `func_80020A9C`, `func_8008CCA0` | `func_80020D3C`, `func_80020FDC`, `func_8007FB04` |
-| `func_80023BF8` | 172 | Platform > Sound · Sound Banks, Reset | - | `func_800249BC`, `func_80024D14`, `func_80025B7C` |
+| `gReleaseCvkSoundBanksAndVoices` (`func_80023BF8`) | 172 | Platform > Sound · Sound Banks, Reset | - | `func_800249BC`, `func_80024D14`, `func_80025B7C` |
 | `func_80091E8C` | 172 | Platform > Register Control | - | - |
 | `func_80095DB0` | 172 | Platform > Interrupts · Init | `func_8008C9B0`, `func_8008DBA0` | `func_80095878` |
 | `func_8002A26C` | 176 | Platform > Streaming Audio · Reference Counting, Frame | `func_80029DD8`, `func_8002A16C`, `func_8002A408` | - |
@@ -4620,7 +4620,7 @@ graph LR
 | `gInitPadDriverIrq` (`func_8008A5BC`) | 204 | Platform > Controller Input · System Calls, Interrupts | `func_8008C9B0`, `func_8008CA00`, `func_8008CA10`, `func_8008CA20` | `func_80089E00` |
 | `func_8002A16C` | 208 | Platform > Sound · Streaming Audio | `func_80045288` | `func_8002902C`, `func_8002A26C`, `func_80047690`, `func_80080984` |
 | `gCdDmaCompleteCb` (`func_80090B48`) | 208 | Platform > CD-ROM · Interrupts, DMA | `func_8008E194`, `func_8008E1A8`, `func_8008E2F8`, `func_8008E5D8` | - |
-| `func_80023CA4` | 212 | Platform > Requests | `func_800212F8` | `func_8002902C` |
+| `gUploadCvkSpuDataAndWait` (`func_80023CA4`) | 212 | Platform > Requests | `func_800212F8` | `func_8002902C` |
 | `func_8007F750` | 212 | Platform > Save Data | `func_8007F824` | `func_8007FB04` |
 | `gResetCdHardware` (`func_8008F6D8`) | 212 | Platform > CD-ROM > Control | - | `func_8008E0B8`, `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008FAC8` |
 | `gSendPadCmdHeader` (`func_8008B810`) | 216 | Platform > Dispatch | `func_8008AB80` | - |

@@ -38,7 +38,7 @@ extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
  *  @par Side effects
  *  Decrements the bank count and may overwrite an entry.
  *  @par Callers
- *  Confirmed: func_80023A24, func_80023AB4.
+ *  Confirmed: gClearSoundProgramSamples, gUnloadCvkSoundBank.
  */
 s32 func_800242B4(s32 bankIndex, u8 key)
 {

@@ -20,28 +20,35 @@ extern Unk800A0A00 gObjectSlots[8] __asm__("D_800A0A00");
 extern void func_80098708(s32 arg0);
 extern s32 gClearScreenModeHook(s32 callback) __asm__("func_8001F12C");
 extern void func_80021250(void);
-extern void func_80023BF8(void);
+extern void gReleaseCvkSoundBanksAndVoices(void) __asm__("func_80023BF8");
 extern void gShutdownSoundSystem(void) __asm__("func_80021C80");
 extern void func_80044FEC(void);
 
+void gMarkCvkSlotReady(u32 arg0) __asm__("func_80023500");
+
 /**
- *  @brief Sets the status byte of an indexed entry to 2.
+ * @brief Marks a CVK slot ready for processing after its bank load.
  *
- *  Updates the unk02 field in an eight-entry global table.
- *  Indices outside the table are ignored.
- *  @param arg0 Unsigned index of the entry to update.
- *  @par Globals
- *  D_800A0A00 is the table whose selected unk02 field is written.
- *  @par Control flow
- *  Checks that arg0 is less than 8 before writing.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  May change one table entry's status byte.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param arg0 Unsigned index of the entry to update.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Checks the unsigned index against eight, multiplies it by 16 and stores byte 2 at slot +0x02.
+ *
+ * @par Globals
+ * Writes the state byte in gObjectSlots.
+ *
+ * @par Callers
+ * No direct JAL callers in the retail listing.
+ *
+ * @par Role and path
+ * Passed by gRegisterPendingCvkPair to the sound-bank loader as its completion callback, via
+ * retail alias gMarkCvkSlotReady.
+ *
+ * @par Unknown
+ * How the loader maps completion arguments to this slot index is outside this callback.
  */
-void func_80023500(u32 arg0)
+void gMarkCvkSlotReady(u32 arg0)
 {
     if (arg0 < 8) {
         gObjectSlots[arg0].unk02 = 2;

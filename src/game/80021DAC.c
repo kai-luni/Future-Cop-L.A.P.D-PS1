@@ -26,7 +26,7 @@ void gUnregisterSoundBank(s32 index) __asm__("func_80021DAC");
  * Reads the limit and table pointer from gSoundSystem and clears one table cell.
  *
  * @par Callers
- * Direct calls from func_800217A8, func_80023AB4.
+ * Direct calls from func_800217A8, gUnloadCvkSoundBank (func_80023AB4).
  *
  * @par Role and path
  * The bank-release path uses this to drop the SPU allocation and remove its lookup entry.

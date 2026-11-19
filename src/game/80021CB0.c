@@ -29,7 +29,7 @@ s32 gRegisterSoundBank(Entry *entry, s32 arg1, s32 arg2, s32 arg3, s32 arg4) __a
  * Reads the bank index limit and table from gSoundSystem, then writes the selected table cell.
  *
  * @par Callers
- * Direct calls from func_800236FC.
+ * Direct calls from gRegisterPendingCvkPair (func_800236FC).
  *
  * @par Role and path
  * Registers a loaded bank for later indexed playback and release.

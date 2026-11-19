@@ -38,25 +38,33 @@ extern void gUnregisterSoundBank(s32 index) __asm__("func_80021DAC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_800242B4(s32 slot, u8 program);
 
+void gUnloadCvkSoundBank(s32 arg0) __asm__("func_80023AB4");
+
 /**
- *  @brief Releases the first VAB entry matching a nonnegative status value.
+ * @brief Unloads the first CVK bank slot matching a nonnegative group ID.
  *
- *  Before releasing the entry, scans sound-bank samples and processes each
- *  program whose VAB field matches the requested value.
- *  @param arg0 Status and sample VAB value to match; negative values are ignored.
- *  @par Globals
- *  D_800A0A00 contains eight VAB entries; D_800A7938 contains 110 sound banks.
- *  @par Control flow
- *  Searches for the first matching entry, then scans each bank's samples backward.
- *  @par Calls
- *  func_800242B4 processes matching slot and program pairs; gUnregisterSoundBank handles
- *  a valid entry ID; func_800181D4 releases each nonnull block4 and block8.
- *  @par Side effects
- *  Resets the matching entry's ID, released block pointers, status, and pad2.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param arg0 Status and sample VAB value to match; negative values are ignored.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Scans eight slots by signed byte +1. For the first match, scans the 110 program records
+ * backward within each sample list and removes samples with that group byte. Releases bank byte
+ * +0 if valid, frees both nonnull slot pointers, then writes -1 to +1 and zero to +2.
+ *
+ * @par Globals
+ * Reads and updates gObjectSlots and gSoundEntryTable.
+ *
+ * @par Callers
+ * Direct calls from gReleaseCvkSoundBanksAndVoices (func_80023BF8).
+ *
+ * @par Role and path
+ * Called during CVK teardown to drop a group's samples, sound-bank registration and backing
+ * nodes.
+ *
+ * @par Unknown
+ * Only the first matching slot is retired.
  */
-void func_80023AB4(s32 arg0)
+void gUnloadCvkSoundBank(s32 arg0)
 {
     register s32 arg __asm__("$21") = arg0;
     register s32 m1 __asm__("$22");
