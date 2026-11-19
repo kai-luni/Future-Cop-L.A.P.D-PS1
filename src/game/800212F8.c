@@ -29,8 +29,8 @@ void gEnqueueSpuTransfer(Request *req) __asm__("func_800212F8");
  * Reads gSlotIndexLimit. Updates gPendingEntryList and gSpuTransferWriteIndex.
  *
  * @par Callers
- * Direct calls in the retail listing are from gUploadSoundBankToSpu, func_80022D84,
- * func_80023CA4.
+ * Direct calls in the retail listing are from gUploadSoundBankToSpu,
+ * func_80022D84, func_80023CA4.
  *
  * @par Role and path
  * SPU transfer producers use this queue to serialize requests.

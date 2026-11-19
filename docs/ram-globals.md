@@ -1153,6 +1153,46 @@ Zeiger). `D_8009DD10` (`gIrqCallbackTable`) behielt seinen Namen.
 Registeradressen in `0x1F80xxxx` (nur als Zeigerwörter geführt) sowie die zwölf Units dieser Runde,
 deren Rolle nicht belegbar ist — sie stehen in `docs/FUNCTION_MAP.md` ohne Namen.
 
+## Runde A – Modellressourcen, Speicherverwaltung und Engine-Dienste
+
+Die folgenden RAM-Symbole wurden anhand der Zugriffe in den 100 Units dieser Runde benannt.
+Die Spalte „Beleg“ nennt die Funktionen, in denen die Verwendung nachvollziehbar ist.
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_80010AE8` | `gCardSlotZeroLabel` | `const struct Packed9` | Neun Bytes für „UNKNOWNA“ mit Nullabschluss. Der Parser kopiert sie in beide Namensfelder von Kartenplatz 0. **Wahrscheinlich.** | `gParseCardDirectory` (Lesen) |
+| `D_80010AF4` | `gCardFileSecondaryLabel` | `const struct Packed9` | Neun Bytes für „UNKNOWNB“ mit Nullabschluss. Der Parser nutzt sie als zweiten Namen bei Verzeichnistyp 0x51. **Wahrscheinlich.** | `gParseCardDirectory` (Lesen) |
+| `D_80010B00` | `gCardOtherSlotLabel` | `const struct Packed9` | Neun Bytes für „UNKNOWNC“ mit Nullabschluss für Kartenplätze außerhalb der gesondert behandelten Typen. **Wahrscheinlich.** | `gParseCardDirectory` (Lesen) |
+| `D_80010B0C` | `gCardDevicePathFormat` | `u8[] / char[]` | Formatzeichenfolge „bu0%1ld:%s“ für den Kartenpfad aus Portnummer und Dateiname. **Wahrscheinlich.** | `gQueueCardFileRead`, `gQueueCardFileWrite` (Lesen) |
+| `D_8009F218` | `gVramUploadEndIndex` | `s32` | Endgrenze, bis zu der die 20 Plätze große Upload-Warteschlange abgearbeitet wird. **Wahrscheinlich.** | `gSubmitRenderFrame` (Lesen) |
+| `D_8009F21C` | `gVramUploadReclaimIndex` | `s32` | Umlaufender Index der Freigabeschleife für die 20 Plätze große VRAM-Upload-Warteschlange. **Bestätigt.** | `gSubmitRenderFrame` (Lesen und Schreiben) |
+| `D_8009F220` | `gVramUploadSubmitIndex` | `s32` | Umlaufender Index der Übergabeschleife für VRAM-Uploads und Endgrenze der Freigabeschleife. **Bestätigt.** | `gSubmitRenderFrame` (Lesen und Schreiben) |
+| `D_8009F226` | `gAppliedDisplayLayer` | `u8` | Kopie des gewählten Anzeigeindex beim Anwenden der zugehörigen Display-Umgebung. **Wahrscheinlich.** | `gApplySelectedDisplayEnv` (Schreiben) |
+| `D_8009F260` | `gCardEmptySlotLabel` | `const struct Packed6` | Sechs Bytes für „Empty“ mit Nullabschluss, die für freie Kartenplätze in beide Namensfelder kopiert werden. **Wahrscheinlich.** | `gParseCardDirectory` (Lesen) |
+| `D_8009F548` | `gModel3dhsPayload` | `u8 * / u32 *` | Zeiger auf Offset +8 des Modellchunks mit Tag 0x33444853 (3DHS). Er wird in das Modellfeld +0x38 übernommen. **Bestätigt.** | `gIndexModelChunks` (Schreiben), `gRelocateModelResource` (Lesen) |
+| `D_8009F54C` | `gModelAnimTrackChunk` | `u8 * / AnimNode *` | Optionaler 3DTA-Chunk. Bei der Relokation wird er als Kopf in die Liste `gAnimNodeList` eingehängt. **Bestätigt.** | `gIndexModelChunks` (Schreiben), `gRelocateModelResource` (Lesen) |
+| `D_8009F550` | `gModelAnimWaveChunk` | `u8 * / u32 *` | Optionaler 3DAL-Chunk. Bei der Relokation wird der Kopf von `gAnimWaveList` darauf gesetzt. **Bestätigt.** | `gIndexModelChunks` (Schreiben), `gRelocateModelResource` (Lesen) |
+| `D_8009F5A0` | `gHeapRangeCountThreshold` | `s32` | Schwellenwert für die Zahl gültiger Wörter in der Heap-Grenztabelle. Die Initialisierung setzt ihn auf 0x182. **Bestätigt.** | `gInitHeap` (Schreiben), `gIsHeapRangeCountAtThreshold` (Lesen) |
+| `D_8009F5A8` | `gPrimaryPrngCursor` | `s32` | Index des ersten additiven Zufallszahlengenerators mit 20 Zustandswörtern. Die Startfunktion setzt ihn auf 0x14, der Generator aktualisiert ihn nach jedem Schritt. **Bestätigt.** | `gSeedPrng` (Initialisierung), `gAdvancePrimaryPrng` (Lesen und Schreiben) |
+| `D_8009F5C8` | `gPacketBufferBases` | `s32 / u32[] / void *` | Basiswort des ersten 0x34-Byte-Paketpuffers und Beginn des Paars, das beim Pufferwechsel indiziert wird. **Bestätigt.** | `gAllocateRenderBuffers` (Schreiben), `gSubmitRenderFrame` (Lesen) |
+| `D_8009F5CC` | `gSecondPacketBufferBase` | `s32 / void *` | Zweites Basiswort des Paketpufferpaars `gPacketBufferBases` bei +4. **Bestätigt.** | `gAllocateRenderBuffers` (Schreiben), `gFreeRenderBuffers` (Lesen) |
+| `D_8009F5D8` | `gOrderingTableBuffers` | `s32 / u32[] / void *` | Basiswort des ersten Ordering-Table-Puffers und Beginn des beim Framewechsel indizierten Paars. **Bestätigt.** | `gAllocateRenderBuffers` (Schreiben), `gSubmitRenderFrame` (Lesen) |
+| `D_8009F5DC` | `gSecondOrderingTableBuffer` | `s32 / void *` | Zweites Basiswort des Ordering-Table-Paars `gOrderingTableBuffers` bei +4. **Bestätigt.** | `gAllocateRenderBuffers` (Schreiben), `gFreeRenderBuffers` (Lesen) |
+| `D_8009F5EC` | `gMdecUploadReclaimIndex` | `s32` | Index der Freigabeschleife für bereits verarbeitete Einträge des vier Plätze großen Upload-Rings. **Bestätigt.** | `gAllocateRenderBuffers` (Initialisierung), `gSubmitRenderFrame` (Lesen und Schreiben) |
+| `D_8009F5F0` | `gMdecUploadSubmitIndex` | `s32` | Index der Übergabeschleife im vier Plätze großen Upload-Ring. Die Freigabeschleife endet an dieser Grenze. **Bestätigt.** | `gAllocateRenderBuffers` (Initialisierung), `gSubmitRenderFrame` (Lesen und Schreiben) |
+| `D_8009F628` | `gSpuUploadCompleted` | `s32 / volatile int` | Abschlussflag für den synchronen SPU-Upload einer Soundbank. Der Aufrufer setzt es auf 0 und wartet auf den Wert 1 aus dem Callback. **Bestätigt.** | `gUploadSoundBankToSpu` (Lesen und Rücksetzen), `gSignalSpuUploadComplete` (Schreiben) |
+| `D_8009F998` | `gSpuTransferWriteIndex` | `int` | Schreibindex des SPU-Transferrings mit neun Slots. Er läuft nach Eintrag 8 auf 0 zurück. **Bestätigt.** | `gEnqueueSpuTransfer` (Schreiben), `gCompleteSpuTransfer` (Lesen) |
+| `D_8009F9AC` | `gSavedSpuTransferCallback` | `s32` | Gesicherter vorheriger SPU-Transfercallback, der beim Abbau der Warteschlange wieder installiert wird. **Bestätigt.** | `800211FC.c` (Schreiben), `gShutdownSpuTransferQueue` (Lesen) |
+| `D_8009FA14` | `gSavedSpuTransferMode` | `s32` | Gesicherter vorheriger SPU-Transfermodus für die Wiederherstellung beim Abbau der Warteschlange. **Bestätigt.** | `800211FC.c` (Schreiben), `gShutdownSpuTransferQueue` (Lesen) |
+| `D_8009FA34` | `gSpuTransferActive` | `s32 / int` | Aktivkennzeichen der SPU-Transferwarteschlange. Es wird beim Start gesetzt und nach dem letzten Abschluss gelöscht. **Bestätigt.** | `gStartSpuTransfer`, `gCompleteSpuTransfer` (Schreiben), `8002129C.c` (Lesen) |
+| `D_8009FAD0` | `gSpuTransferDispatching` | `s32 / int` | Sperrwort gegen einen erneuten Eintritt in den SPU-Transferabschluss während eines Callbacks. **Bestätigt.** | `gCompleteSpuTransfer` (Lesen und Schreiben) |
+| `D_800A0520` | `gVramUploadQueue` | `u8[]` | Beginn der 20 Upload-Einträge mit einer Schrittweite von 16 Bytes. Wort +0 liefert die Bilddaten, Wort +4 einen Eintrag für die Freigabe. **Wahrscheinlich.** | `gSubmitRenderFrame` (Lesen) |
+| `D_800A0528` | `gVramUploadRectFields` | `u8[]` | Rechteckfeld bei +8 jedes 16-Byte-Eintrags in `gVramUploadQueue`. Die Adresse geht als erstes Argument an `gLoadImage`. **Wahrscheinlich.** | `gSubmitRenderFrame` (Lesen) |
+| `D_800A07AC` | `gSoundBankSlots` | `s32` | Adresswort der Tabelle der Soundbank-Zeiger, Feld +4 von `gSoundSystem`. **Bestätigt.** | `gInitSoundStorage` (Schreiben), `gReleaseSoundBankSpuHandle` (Lesen) |
+| `D_800A07B0` | `gSoundChannelCount` | `s32` | Anzahl der Soundkanal-Einträge, Feld +8 von `gSoundSystem`. **Bestätigt.** | `gInitSoundStorage` (Schreiben), `80021F3C.c` (Lesen über die Struktur) |
+
+Nicht belegte RAM-Symbole behalten ihre Retail-Namen. Die Kommentare der betreffenden Units nennen die offenen Zuordnungen.
+
 ## Wie diese Datei weitergeführt wird
 
 Am besten **eine neue Variable nach der anderen** ergänzen und die bestehende Gliederung beibehalten. Ein neuer Eintrag braucht zunächst nur:

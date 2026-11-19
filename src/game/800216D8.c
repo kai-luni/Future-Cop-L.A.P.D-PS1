@@ -20,9 +20,9 @@ void gClearSoundStorage(void) __asm__("func_800216D8");
  * @return Nothing.
  *
  * @par Confirmed mechanics
- * If the bank pointer at +4 is nonzero, calls gUnloadAllSoundBanks and clears pointer
- * and count. If the channel pointer at +0x0C is nonzero, clears it and the
- * count at +8.
+ * If the bank pointer at +4 is nonzero, calls gUnloadAllSoundBanks and clears
+ * pointer and count. If the channel pointer at +0x0C is nonzero, clears it and
+ * the count at +8.
  *
  * @par Globals
  * Reads and clears fields of gSoundSystem, including gSoundBankSlots,

@@ -26,9 +26,10 @@ void gPrepareModelResource(struct Unk13550 *resource) __asm__("func_80013550");
  * @return Nothing.
  *
  * @par Confirmed mechanics
- * Tests the low byte of gHasRegisteredResource. If it is zero, passes descriptor words
- * +0, +0x20, and +0x1C to gRelocateModelResource, installs its output at +0,
- * clears +8, and calls gAppendResourceRegistryEntry. The other branch calls gScanAndFreeResource.
+ * Tests the low byte of gHasRegisteredResource. If it is zero, passes
+ * descriptor words +0, +0x20, and +0x1C to gRelocateModelResource, installs
+ * its output at +0, clears +8, and calls gAppendResourceRegistryEntry. The
+ * other branch calls gScanAndFreeResource.
  *
  * @par Globals
  * No RAM globals accessed directly.
