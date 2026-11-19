@@ -3,25 +3,31 @@
 
 extern void gFreeBlock(void) __asm__("func_800181D4");
 
+void gFreeFixedPool(void) __asm__("func_80019584");
+
 /**
- * @brief Thin wrapper around the upper allocator's free entry
- *        func_800181D4.
- *
+ * @brief Passes a pool allocation to the shared heap free routine.
  * @return Nothing.
  *
- * @par Confirmed
- * Calls func_800181D4 with no arguments of its own (the block pointer
- * passes through the register convention).
+ * @par Confirmed mechanics
+ * The JAL reaches gFreeBlock with the incoming $a0 unchanged. The C
+ * reconstruction preserves this pass-through with a void signature.
  *
- * @par Likely role
- * A teardown shim used by the reset paths (func_80029E64, func_80029EB8,
- * func_8003FAD4): keeps the call site stable while the free implementation
- * sits in a different linkage group.
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_80029E64, func_80029EB8, func_8003FAD4.
+ * Direct calls in the retail listing are from func_80029E64, func_80029EB8,
+ * gFinishLevelLoad, gReleaseMapLightData, func_80083428.
+ *
+ * @par Role and path
+ * Pool-owning subsystems use this wrapper to release a block created by
+ * gCreateFixedPool.
+ *
+ * @par Unknown
+ * The wrapper contains no pool-specific destructor or cleanup policy.
  */
-void func_80019584(void)
+void gFreeFixedPool(void)
 {
     gFreeBlock();
 }

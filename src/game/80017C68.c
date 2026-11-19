@@ -10,7 +10,7 @@ extern void *gFixedPool3 __asm__("D_8009FA4C");
 extern s32 gHeapPoolBase __asm__("D_8009FA9C");
 extern void *gFixedPool2 __asm__("D_8009FAAC");
 
-extern void *func_800194DC(s32 count, s32 size, s32 tag);
+extern void *gCreateFixedPool(s32 count, s32 size, s32 tag) __asm__("func_800194DC");
 
 void gInitHeapAndFixedPools(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) __asm__("func_80017C68");
 
@@ -28,7 +28,7 @@ void gInitHeapAndFixedPools(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) __as
  * @par Confirmed mechanics
  * Sets the range count to 3 and cursor to 1. Writes the heap base twice and
  * heap end twice to the table. Passes each count and slot size pair to
- * func_800194DC with tag 2.
+ * gCreateFixedPool with tag 2.
  *
  * @par Globals
  * Reads gFreeRangeTablePtr, gHeapPoolBase, and gHeapMainBlockSize. Writes
@@ -59,7 +59,7 @@ void gInitHeapAndFixedPools(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
     ptr[1] = base;
     ptr[2] = base + off;
     ptr[3] = base + off;
-    gFixedPool1 = func_800194DC(a1, a0, 2);
-    gFixedPool3 = func_800194DC(a5, a4, 2);
-    gFixedPool2 = func_800194DC(a3, a2, 2);
+    gFixedPool1 = gCreateFixedPool(a1, a0, 2);
+    gFixedPool3 = gCreateFixedPool(a5, a4, 2);
+    gFixedPool2 = gCreateFixedPool(a3, a2, 2);
 }

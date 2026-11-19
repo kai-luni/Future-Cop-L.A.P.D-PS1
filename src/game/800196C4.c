@@ -4,27 +4,34 @@
 extern s32 gFreeRangeCursor __asm__("D_8009F5AC");
 extern s32 gStateEntryTable[] __asm__("D_800A04D0");
 
+s32 gAdvanceSecondaryPrng(void) __asm__("func_800196C4");
+
 /**
- * @brief Lagged-additive random step over a 20-entry state table.
+ * @brief Advances the secondary lagged-additive random sequence and returns
+ * its updated word.
+ * @return The updated 32-bit state word.
  *
- * @return The updated table entry D_800A04D0[i] (old value plus the entry
- *         three positions ahead).
+ * @par Confirmed mechanics
+ * Decrements the cursor, wrapping a negative result to 19. Forms the second
+ * index from the old cursor plus 2 or old cursor minus 18. Adds both words
+ * with ADDU, stores the sum in the decremented slot, and returns that word.
  *
- * @par Confirmed
- * i = D_8009F5AC - 1 wrapped to 0x13 when negative; j = D_8009F5AC + 2
- * wrapped by -0x12 when >= 0x14; the cursor D_8009F5AC becomes i and the
- * returned entry is D_800A04D0[i] += D_800A04D0[j]. The two taps are 3 apart
- * modulo 20.
- *
- * @par Likely role
- * The gameplay random source (sibling of func_80019668): the spawn and
- * effect handlers func_8003D0F0/func_80040874 draw from it for jitter and
- * spread decisions.
+ * @par Globals
+ * Reads and writes gFreeRangeCursor and gStateEntryTable. The existing name
+ * gFreeRangeCursor denotes the cursor of this PRNG stream here.
  *
  * @par Callers
- * func_8003D0F0, func_80040874.
+ * Direct calls in the retail listing are from func_8003D0F0,
+ * gHandleLightObjectMsg, gDrawCellWindowModels.
+ *
+ * @par Role and path
+ * gSeedPrng initializes this second stream, which is used by a separate set of
+ * entity routines.
+ *
+ * @par Unknown
+ * The rationale for selecting this stream in individual callers is open.
  */
-s32 func_800196C4(void)
+s32 gAdvanceSecondaryPrng(void)
 {
     s32 i;
     s32 j;

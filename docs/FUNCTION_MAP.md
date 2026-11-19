@@ -1265,8 +1265,8 @@ graph LR
 | `gIsBootProfileTransferDone` (`func_8007F8CC`) | 20 | Resources > Save Data | - | `func_80076A2C` |
 | `gIsHeapRangeCountAtThreshold` (`func_80017B88`) | 24 | Resources > Memory Management · Memory | - | `func_80043430`, `func_8004B5F8` |
 | `gResetProfileTransferFlags` (`func_8007F8E0`) | 28 | Resources > Save Data · Frame State | - | `func_80076A2C`, `func_8007F8FC` |
-| `func_80019584` | 32 | Resources > Memory Management | `func_800181D4` | `func_80029E64`, `func_80029EB8`, `func_8003FAD4` |
-| `func_800195D0` | 32 | Resources > Memory Pools | - | `func_800181D4`, `func_800295E8`, `func_800498F0` |
+| `gFreeFixedPool` (`func_80019584`) | 32 | Resources > Memory Management | `func_800181D4` | `func_80029E64`, `func_80029EB8`, `func_8003FAD4` |
+| `gReturnFixedPoolSlot` (`func_800195D0`) | 32 | Resources > Memory Pools | - | `func_800181D4`, `func_800295E8`, `func_800498F0` |
 | `func_8001CDD0` | 32 | Resources > Memory Management · CD-ROM | `func_80017EBC` | - |
 | `func_8001CDF0` | 32 | Resources > Memory Management · CD-ROM | `func_800181D4` | - |
 | `func_80042844` | 32 | Resources > Memory Management · Effects | `func_800181D4` | - |
@@ -1279,7 +1279,7 @@ graph LR
 | `func_8004749C` | 40 | Resources > Handles | - | - |
 | `func_8004EFE4` | 40 | Resources > Memory Management · Renderer | `func_800181D4` | - |
 | `gInitModelBlockTables` (`func_80012E1C`) | 44 | Resources > Asset Loader · Animation | - | `func_80024A24` |
-| `func_800195A4` | 44 | Resources > Memory Pools | - | `func_80017EBC`, `func_80028DC0`, `func_80049C38`, `func_80083A10` |
+| `gTakeFixedPoolSlot` (`func_800195A4`) | 44 | Resources > Memory Pools | - | `func_80017EBC`, `func_80028DC0`, `func_80049C38`, `func_80083A10` |
 | `func_800474C4` | 44 | Resources > Handles | - | `func_80023D78`, `func_80024188` |
 | `func_800898E8` | 44 | Resources > Memory | - | `func_800898C8` |
 | `func_80019A74` | 52 | Resources > Resource Registry · Asset Loader | - | `func_80013550`, `func_80029E20`, `func_80049420`, `func_80049734`, `func_8004D924`, `func_800511E4`, `func_80051650`, `func_80060E74`, `func_80063C20` |
@@ -1350,7 +1350,7 @@ graph LR
 | `func_80029EB8` | 152 | Resources > Asset Registry · Reset, Reference Counting | `func_80019584`, `func_8001D3A8`, `func_80029520`, `func_80029DD8` | `func_800249BC`, `func_80024D14` |
 | `func_800899A4` | 156 | Resources > Text Tables · Text | `func_800181D4` | `func_80024EC8` |
 | `gMovieStopAndRestoreCallbacks` (`func_80085A24`) | 160 | Resources > Video Decode · GPU, Interrupts | - | `func_80087D48` |
-| `func_800194DC` | 168 | Resources > Memory Pools · Memory Management | `func_80017EBC` | `func_80017C68`, `func_80029F50`, `func_8003F79C`, `func_80049690`, `func_8008347C` |
+| `gCreateFixedPool` (`func_800194DC`) | 168 | Resources > Memory Pools · Memory Management | `func_80017EBC` | `func_80017C68`, `func_80029F50`, `func_8003F79C`, `func_80049690`, `func_8008347C` |
 | `gGetPadCombInfo` (`func_8008A118`) | 168 | Resources > Data Access | - | - |
 | `func_80019AF8` | 172 | Resources > Memory Management · Resource Registry | `func_800181D4` | `func_80019BA4` |
 | `func_80022710` | 172 | Resources > Streaming | `func_80022CA8`, `func_80022D84` | - |
@@ -4841,7 +4841,7 @@ graph LR
 | `func_800978AC` | 60 | Utilities > Table Access | - | - |
 | `func_8001A030` | 68 | Utilities > Mathematics > Fixed Point | - | `func_8001A7AC` |
 | `func_8001A13C` | 68 | Utilities > Mathematics > Vector · Collision | `func_8001A074` | `func_80035B7C`, `func_800513D0` |
-| `func_80018818` | 72 | Utilities > Mathematics > Fixed Point | - | `func_80019828` |
+| `gComputeU32Reciprocal` (`func_80018818`) | 72 | Utilities > Mathematics > Fixed Point | - | `func_80019828` |
 | `func_8001ABE0` | 72 | Utilities > Mathematics > Fixed Point | - | `func_8001A7AC`, `func_80051EB8`, `func_80053A74`, `func_80054590`, `func_8005E624` |
 | `func_8003B65C` | 72 | Utilities > Mathematics · Map Occupancy | - | `func_8003BA50`, `func_8003BAE4` |
 | `gSineLookup` (`func_80018534`) | 76 | Utilities > Mathematics > Trigonometry | - | `func_800654F8` |
@@ -4850,8 +4850,8 @@ graph LR
 | `func_8004F09C` | 84 | Utilities > Coordinate Calculations | - | - |
 | `gEaseVectorQuarter` (`func_8001A6F8`) | 88 | Utilities > Mathematics > Vector · Smoothing | - | `func_800324E0`, `func_80035B7C`, `func_8003A160`, `func_800549F0` |
 | `gComputeDualChecksum` (`func_8007F688`) | 88 | Utilities > Checksums | - | `func_8007F6E0`, `func_8007F824` |
-| `func_80019668` | 92 | Utilities > Random Numbers | - | `func_800136C8`, `func_8002AF94`, `func_8002B0EC`, `func_8002C174`, `func_8002E2BC`, `func_800319D4`, `func_80031DE8`, `func_800320E4`, `func_80032180`, `func_800324E0`, `func_80032F3C`, `func_800331CC`, `func_800336DC`, `func_8003526C`, `func_8003532C`, `func_80035698`, `func_80035904`, `func_80036BD4`, `func_800381D4`, `func_8003AA94`, `func_8003B4E0`, `func_8003DB70`, `func_80042AF4`, `func_80044B34`, `func_80049420`, `func_80049C38`, `func_8004ABE4`, `func_8004B310`, `func_8004B5F8`, `func_8004E80C`, `func_8004F330`, `func_80056870`, `func_80056924`, `func_800569EC`, `func_80058C3C`, `func_800596C4`, `func_8005D060`, `func_8005D8F4`, `func_8005EE04`, `func_8005F018`, `func_8005F6E8`, `func_80060238`, `func_80060E74`, `func_80063568`, `func_80069B58`, `func_80069D68`, `func_8006A524`, `func_8006B23C`, `func_8007043C`, `func_80070730`, `func_80070E48`, `func_800718B8`, `func_800752E0`, `func_800754B8`, `func_800762B0`, `func_80083A10` |
-| `func_800196C4` | 92 | Utilities > Random Numbers | - | `func_8003D0F0`, `func_80040874` |
+| `gAdvancePrimaryPrng` (`func_80019668`) | 92 | Utilities > Random Numbers | - | `func_800136C8`, `func_8002AF94`, `func_8002B0EC`, `func_8002C174`, `func_8002E2BC`, `func_800319D4`, `func_80031DE8`, `func_800320E4`, `func_80032180`, `func_800324E0`, `func_80032F3C`, `func_800331CC`, `func_800336DC`, `func_8003526C`, `func_8003532C`, `func_80035698`, `func_80035904`, `func_80036BD4`, `func_800381D4`, `func_8003AA94`, `func_8003B4E0`, `func_8003DB70`, `func_80042AF4`, `func_80044B34`, `func_80049420`, `func_80049C38`, `func_8004ABE4`, `func_8004B310`, `func_8004B5F8`, `func_8004E80C`, `func_8004F330`, `func_80056870`, `func_80056924`, `func_800569EC`, `func_80058C3C`, `func_800596C4`, `func_8005D060`, `func_8005D8F4`, `func_8005EE04`, `func_8005F018`, `func_8005F6E8`, `func_80060238`, `func_80060E74`, `func_80063568`, `func_80069B58`, `func_80069D68`, `func_8006A524`, `func_8006B23C`, `func_8007043C`, `func_80070730`, `func_80070E48`, `func_800718B8`, `func_800752E0`, `func_800754B8`, `func_800762B0`, `func_80083A10` |
+| `gAdvanceSecondaryPrng` (`func_800196C4`) | 92 | Utilities > Random Numbers | - | `func_8003D0F0`, `func_80040874` |
 | `func_8001A750` | 92 | Utilities > Mathematics > Vector | - | `func_800324E0`, `func_80036E6C`, `func_800410BC` |
 | `func_80019FCC` | 100 | Utilities > Mathematics > Vector | - | `func_80036624`, `func_800549F0`, `func_8005B5A0`, `func_8005C344`, `func_8005F018` |
 | `func_80019904` | 104 | Utilities > Mathematics > Fixed Point · Geometry | - | `func_80016C88`, `func_8001A180`, `func_8005F018` |
