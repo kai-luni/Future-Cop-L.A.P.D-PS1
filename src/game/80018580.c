@@ -1,25 +1,33 @@
 // Categories: Utilities > Mathematics > Trigonometry
+
+int gApproximateAngle256(int x, int y) __asm__("func_80018580");
+
 /**
- * @brief Eight-octant arctangent with a 256-unit full circle (32 units per
- *        quadrant).
+ * @brief Approximates the signed angle of two components on a 256-unit circle.
  *
- * @param x, y Signed components.
- * @return The angle in -128..128 units, 0 for the origin.
+ * @param x First signed component, the zero-angle axis.
+ * @param y Second signed component.
+ * @return Signed angle in 256 units per turn, or zero at the origin.
  *
- * @par Confirmed
- * The signs and the |x| < |y| comparison build a 3-bit case selector;
- * each case divides the smaller component << 5 by the larger and offsets
- * by 0/64/128 with the matching sign. Pure arithmetic, no tables.
+ * @par Confirmed mechanics
+ * Handles the zero vector first. The two signs and the absolute-magnitude
+ * comparison select one of eight jump-table cases. Each case divides the
+ * smaller magnitude shifted left by five by the larger magnitude and applies a
+ * signed offset from 0, 64, or 128.
  *
- * @par Likely role
- * The coarse heading solver of the radar sweep func_8005AB8C: the 256-unit
- * circle matches the byte-wide angle fields, unlike the 12-bit
- * func_80095C30 used by the entity code.
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_8005AB8C.
+ * Direct calls in the retail listing are from func_8005AB8C.
+ *
+ * @par Role and path
+ * The heading calculation in func_8005AB8C uses this coarse angle.
+ *
+ * @par Unknown
+ * The arithmetic does not identify the components with world axes.
  */
-int func_80018580(int x, int y)
+int gApproximateAngle256(int x, int y)
 {
     unsigned char flags;
     int ax, ay;

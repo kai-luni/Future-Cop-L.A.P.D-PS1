@@ -13,10 +13,10 @@ One box per area; the number on an edge is the count of direct calls between doc
 ```mermaid
 graph LR
     g0["Boot & Front-End<br/>401 functions"]
-    g1["Memory & Resources<br/>154 functions"]
+    g1["Memory & Resources<br/>155 functions"]
     g2["Video, MDEC & Movies<br/>7 functions"]
     g3["GTE Pipeline<br/>39 functions"]
-    g4["Renderer & Scene<br/>150 functions"]
+    g4["Renderer & Scene<br/>149 functions"]
     g5["GPU, 2D & HUD<br/>238 functions"]
     g6["Gameplay, AI & Physics<br/>295 functions"]
     g7["Platform<br/>362 functions"]
@@ -40,7 +40,7 @@ graph LR
     g5 -->|38| g8
     g4 -->|38| g6
     g6 -->|34| g1
-    g4 -->|31| g1
+    g4 -->|33| g1
     g4 -->|30| g5
     g6 -->|24| g7
     g1 -->|24| g8
@@ -970,7 +970,7 @@ graph LR
 | `gHandleProfileSlotWidget` (`func_8008125C`) | 3524 | Game Engine > Front-End Configuration · Name Entry, Text, Slot Table | `func_80046C84`, `func_80048E88`, `func_80049100`, `func_800492A0`, `func_800776B8`, `func_80077708`, `func_80077FFC`, `func_80078210`, `func_80078650`, `func_800788F0`, `func_8007A9D0`, `func_8007AA9C`, `func_8007FACC`, `func_80080984`, `func_80080B70`, `func_80082EF0`, `func_80089914`, `func_8008CCB0`, `func_8008CCC0`, `func_8008CD30` | - |
 | `func_80078DD0` | 4484 | Game Engine > Menu · Controller, Menu Rendering | - | `func_80027EE4` |
 
-### Memory & Resources - 154 functions, 158 calls inside the area
+### Memory & Resources - 155 functions, 158 calls inside the area
 
 Two allocators (block allocator at the bottom, mode allocator at the top), three pools, the four file slots (`D_800A6D78`) and the load/unpack paths. The rest of the program takes its buffers here; the CD-ROM and movie code feeds this layer.
 
@@ -1254,15 +1254,16 @@ graph LR
     f80098708["80098708"]
 ```
 
-38 further functions of this area without a documented connection (see the table below): `func_80012E1C`, `func_80017BA0`, `func_80018460`, `func_8001996C`, `func_80019A64`, `func_8001B448`, `func_8001CC6C`, `func_8001CE10`, `func_8001D6D0`, `func_8001D90C`, `func_8001DC48`, `func_80021800`, `func_800219EC`, `func_80022710`, `func_80022BEC`, `func_8002385C`, `func_80024064`, `func_8003A90C`, `func_80047344`, `func_8004749C`, `func_800474C4`, `func_8005A290`, `func_8005A654`, `func_8006A918`, `func_8007852C`, `func_8007F8BC`, `func_8007F8CC`, `func_8007FACC`, `func_80080984`, `func_80083130`, `func_800833A8`, `func_80085A24`, `func_80086164`, `func_80089304`, `func_80089404`, `func_8008A118`, `func_8008E0EC`, `func_8008E120`.
+39 further functions of this area without a documented connection (see the table below): `func_80012E1C`, `func_80017B88`, `func_80017BA0`, `func_80018460`, `func_8001996C`, `func_80019A64`, `func_8001B448`, `func_8001CC6C`, `func_8001CE10`, `func_8001D6D0`, `func_8001D90C`, `func_8001DC48`, `func_80021800`, `func_800219EC`, `func_80022710`, `func_80022BEC`, `func_8002385C`, `func_80024064`, `func_8003A90C`, `func_80047344`, `func_8004749C`, `func_800474C4`, `func_8005A290`, `func_8005A654`, `func_8006A918`, `func_8007852C`, `func_8007F8BC`, `func_8007F8CC`, `func_8007FACC`, `func_80080984`, `func_80083130`, `func_800833A8`, `func_80085A24`, `func_80086164`, `func_80089304`, `func_80089404`, `func_8008A118`, `func_8008E0EC`, `func_8008E120`.
 
 | Function | Bytes | Categories | calls (documented) | called by (documented) |
 |---|---|---|---|---|
-| `func_80018460` | 12 | Resources > Memory Management | - | `func_80063428` |
+| `gReadHeapBlockSize` (`func_80018460`) | 12 | Resources > Memory Management | - | `func_80063428` |
 | `func_80019A64` | 16 | Resources > Resource Registry · Init | - | `func_80024904`, `func_80024A24` |
 | `gClearMcStatePtr` (`func_80020600`) | 16 | Resources > Save Data · Memory Card | - | `func_8007FA48` |
 | `gBeginBootProfileTransfer` (`func_8007F8BC`) | 16 | Resources > Save Data · Timing | - | `func_80076A2C` |
 | `gIsBootProfileTransferDone` (`func_8007F8CC`) | 20 | Resources > Save Data | - | `func_80076A2C` |
+| `gIsHeapRangeCountAtThreshold` (`func_80017B88`) | 24 | Resources > Memory Management · Memory | - | `func_80043430`, `func_8004B5F8` |
 | `gResetProfileTransferFlags` (`func_8007F8E0`) | 28 | Resources > Save Data · Frame State | - | `func_80076A2C`, `func_8007F8FC` |
 | `func_80019584` | 32 | Resources > Memory Management | `func_800181D4` | `func_80029E64`, `func_80029EB8`, `func_8003FAD4` |
 | `func_800195D0` | 32 | Resources > Memory Pools | - | `func_800181D4`, `func_800295E8`, `func_800498F0` |
@@ -1288,7 +1289,7 @@ graph LR
 | `gGetCdIntName` (`func_8008E120`) | 52 | Resources > Lookup | - | - |
 | `func_80077050` | 56 | Resources > Memory Pools | `func_80017C68` | `func_80076A2C` |
 | `gReleaseProfileCardOperation` (`func_8007FACC`) | 56 | Resources > Save Data · Display State | - | `func_80076A2C`, `func_8008125C` |
-| `func_80017D20` | 60 | Resources > Memory Pools | - | `func_800249BC`, `func_80024D14`, `func_80077088` |
+| `gFreeFixedPools` (`func_80017D20`) | 60 | Resources > Memory Pools | - | `func_800249BC`, `func_80024D14`, `func_80077088` |
 | `func_8003C110` | 60 | Resources > Asset Loader · Memory Management | `func_800181D4`, `func_8003BFD0` | `func_80024EC8` |
 | `func_80063C20` | 60 | Resources > Resource State | `func_80019A74`, `func_800639D4` | `func_80024EC8` |
 | `func_8003BDEC` | 64 | Resources > Memory Pools | `func_800181D4` | `func_8005E22C`, `func_8006EDF0` |
@@ -1340,7 +1341,7 @@ graph LR
 | `func_800833A8` | 128 | Resources > File Access > Module Names · Screen Loading | `func_8008CCA0` | `func_80024E3C` |
 | `func_80086164` | 128 | Resources > Memory | - | `func_80024D14` |
 | `func_800219EC` | 132 | Resources > Data Adjustment | - | `func_80021CB0` |
-| `func_8001814C` | 136 | Resources > Memory Management | - | `func_800181D4` |
+| `gFindHeapBoundaryIndex` (`func_8001814C`) | 136 | Resources > Memory Management | - | `func_800181D4` |
 | `func_800617D8` | 136 | Resources > Memory Allocation · Subsystem Init | `func_80017EBC` | `func_80024A24` |
 | `gRegisterActorDef5C` (`func_8006EAF0`) | 144 | Resources > Spawn Tables · Object Spawning | `func_80017EBC`, `func_8003C2A4`, `func_8003C404` | `func_8003BFD0`, `func_8006ED78` |
 | `gValidateAtlasSpriteId` (`func_800825AC`) | 144 | Resources > Texture Atlas · 2D Sprites | `func_800181D4` | `func_80024EC8` |
@@ -1354,11 +1355,11 @@ graph LR
 | `func_80019AF8` | 172 | Resources > Memory Management · Resource Registry | `func_800181D4` | `func_80019BA4` |
 | `func_80022710` | 172 | Resources > Streaming | `func_80022CA8`, `func_80022D84` | - |
 | `func_80023528` | 172 | Resources > Lookup | - | `func_800235D4` |
-| `func_80017D5C` | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
-| `func_80017E0C` | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
+| `gFindHeapRangeForward` (`func_80017D5C`) | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
+| `gFindHeapRangeBackward` (`func_80017E0C`) | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
 | `gParseTextureContainer` (`func_8001996C`) | 180 | Resources > Asset Loading · Textures | - | `func_80063C5C` |
 | `func_80084110` | 180 | Resources > Asset Loading · Object Spawning | `func_800181D4`, `func_80019BF0`, `func_80019C38`, `func_80019CA0`, `func_80083A10` | - |
-| `func_80017C68` | 184 | Resources > Memory Pools · Memory | `func_800194DC` | `func_80024904`, `func_80024A24`, `func_80077050` |
+| `gInitHeapAndFixedPools` (`func_80017C68`) | 184 | Resources > Memory Pools · Memory | `func_800194DC` | `func_80024904`, `func_80024A24`, `func_80077050` |
 | `gInitMcState` (`func_80020618`) | 184 | Resources > Save Data · Memory Card | - | `func_8007F9CC` |
 | `gResetMcManager` (`func_800206D0`) | 188 | Resources > Save Data · Memory Card | `func_80020120`, `func_80020530`, `func_8008D640` | `func_8007FA88` |
 | `func_8003BE2C` | 196 | Resources > Object Pool · Memory Management | `func_80017EBC` | `func_8005E1BC`, `func_8006EDC4`, `func_800762B0` |
@@ -1507,7 +1508,7 @@ graph LR
 | `func_800102A0` | 476 | Graphics > GTE > Projection · Clipping | - | - |
 | `gComputeEnvMapUV` (`func_80016C88`) | 484 | Graphics > GTE > Per-Vertex Lighting · Geometry | `func_8001010C`, `func_80019904` | `func_80016E6C` |
 
-### Renderer & Scene - 150 functions, 143 calls inside the area
+### Renderer & Scene - 149 functions, 141 calls inside the area
 
 Dispatcher `func_80073700` (nodes with geometry go to `func_80071FA4`, empty ones to `func_80072F7C`), six layer lists in `func_8003F4A0` (order 2, 3, 0, 1, 4, 5), polygon pass `func_80075A84`, model entries `func_8006CB58`/`func_8006DC24`.
 
@@ -1551,7 +1552,6 @@ graph LR
     f80042af4 --> f8003d9f8
     f80042af4 --> f80042764
     f80042af4 --> f80042788
-    f80043430 --> f80017b88
     f80043430 --> f80043250
     f800437e8 --> f8003d9f8
     f800437e8 --> f800427a8
@@ -1571,7 +1571,6 @@ graph LR
     f80049c38 --> f80049980
     f80049e88 --> f80049c38
     f8004a048 --> f80049f4c
-    f8004b5f8 --> f80017b88
     f8004b5f8 --> f8004aa90
     f8004b5f8 --> f8004b310
     f8004c5c8 --> f800172a8
@@ -1676,7 +1675,6 @@ graph LR
     f80017508["80017508"]
     f800175a0["800175A0"]
     f80017668["80017668"]
-    f80017b88["80017B88"]
     f8002cb20["8002CB20"]
     f8003aa94["8003AA94"]
     f8003bef0["8003BEF0"]
@@ -1782,8 +1780,7 @@ graph LR
 
 | Function | Bytes | Categories | calls (documented) | called by (documented) |
 |---|---|---|---|---|
-| `func_8001774C` | 24 | Graphics > Scene Graph · Init | - | `func_80024A24` |
-| `func_80017B88` | 24 | Graphics > Model Renderer > Detail Level | - | `func_80043430`, `func_8004B5F8` |
+| `gResetCameraState` (`func_8001774C`) | 24 | Graphics > Scene Graph · Init | - | `func_80024A24` |
 | `func_80042788` | 32 | Graphics > Effects > Object Pool · Utilities | - | `func_80042AF4` |
 | `func_80049E88` | 32 | Graphics > Lighting · Effects | `func_80049C38` | `func_80049EA8` |
 | `func_80042764` | 36 | Graphics > Effects > Object Pool · Utilities | - | `func_80042AF4` |
@@ -4848,7 +4845,7 @@ graph LR
 | `func_8001ABE0` | 72 | Utilities > Mathematics > Fixed Point | - | `func_8001A7AC`, `func_80051EB8`, `func_80053A74`, `func_80054590`, `func_8005E624` |
 | `func_8003B65C` | 72 | Utilities > Mathematics · Map Occupancy | - | `func_8003BA50`, `func_8003BAE4` |
 | `gSineLookup` (`func_80018534`) | 76 | Utilities > Mathematics > Trigonometry | - | `func_800654F8` |
-| `func_800187C8` | 80 | Utilities > Mathematics > Fixed Point | - | `func_80019828` |
+| `gSqrtU32Q8` (`func_800187C8`) | 80 | Utilities > Mathematics > Fixed Point | - | `func_80019828` |
 | `func_80049EF8` | 84 | Utilities > Mathematics · Clipping | - | `func_8004A048` |
 | `func_8004F09C` | 84 | Utilities > Coordinate Calculations | - | - |
 | `gEaseVectorQuarter` (`func_8001A6F8`) | 88 | Utilities > Mathematics > Vector · Smoothing | - | `func_800324E0`, `func_80035B7C`, `func_8003A160`, `func_800549F0` |
@@ -4905,7 +4902,7 @@ graph LR
 | `gNormalizeVector` (`func_8001A180`) | 404 | Utilities > Mathematics · Geometry | `func_80019904`, `func_80095C14` | `func_800192AC`, `func_80019310`, `func_8001937C`, `func_800193F8`, `func_8002C174`, `func_800324E0`, `func_80035B7C`, `func_80036BD4`, `func_80037064`, `func_800371FC`, `func_8004B310`, `func_80052550`, `func_800549F0`, `func_8005B934`, `func_8005C344`, `func_8005CBCC`, `func_8005E2A0`, `func_8005F6E8`, `func_80066F78`, `func_8006ACB0` |
 | `gPackInputRecord` (`func_8007E8D8`) | 416 | Utilities > Data Packing | - | `func_8007F02C` |
 | `gNormalizeGetLength` (`func_8001A314`) | 468 | Utilities > Mathematics > Vector | `func_80095900` | `func_80035B7C`, `func_8004B180`, `func_80053A74`, `func_800549F0`, `func_800569EC`, `func_8006EEF8`, `func_80070E48` |
-| `func_80018580` | 584 | Utilities > Mathematics > Trigonometry | - | `func_8005AB8C` |
+| `gApproximateAngle256` (`func_80018580`) | 584 | Utilities > Mathematics > Trigonometry | - | `func_8005AB8C` |
 | `gSolveLobVector` (`func_8005E624`) | 960 | Utilities > Mathematics > Ballistic Trajectory · Projectile, GTE | `func_8001846C`, `func_8001A7AC`, `func_8001ABE0`, `func_80095900`, `func_80095C30` | `func_80058C3C`, `func_8005E9E4`, `func_8005F6E8`, `func_8006ACB0` |
 | `gBuildRotationMatrixVariant` (`func_80018DC0`) | 1260 | Utilities > Mathematics > Trigonometry · Matrix Setup, Rotation | `func_8001846C` | `func_80013CB8`, `func_80014164`, `func_8003AA94`, `func_80052960`, `func_800592D0` |
 | `gBuildRotationMatrix` (`func_800188D0`) | 1264 | Utilities > Mathematics > Trigonometry · Rotation | `func_8001846C` | `func_80017860`, `func_8002B588`, `func_8002C584`, `func_8002CC30`, `func_8002DAA4`, `func_8002DFC4`, `func_8002E630`, `func_8002EED8`, `func_8002F30C`, `func_8002FA20`, `func_8003015C`, `func_800302E8`, `func_800306A0`, `func_80035B7C`, `func_800371FC`, `func_80037EB4`, `func_80038A00`, `func_8003C2A4`, `func_8003DB70`, `func_80041488`, `func_80041C6C`, `func_80041E0C`, `func_80042AF4`, `func_80043430`, `func_80049980`, `func_8004AFC0`, `func_8004C5C8`, `func_8004C920`, `func_8005027C`, `func_80051C50`, `func_80057E40`, `func_8005D060`, `func_8006D770`, `func_8007043C`, `func_800762B0`, `func_80083A10` |

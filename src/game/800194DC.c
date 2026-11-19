@@ -34,7 +34,7 @@ extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
  * Allocates heap memory and populates the FixedPool header and embedded node links.
  *
  * @par Callers
- * Confirmed: func_80017C68 (0x80017CCC, 0x80017CE0, 0x80017CF4), func_80029F50 (0x8002A090), func_8003F79C (0x8003F814), func_80049690 (0x800496B0), and func_8008347C (0x80083494).
+ * Confirmed: gInitHeapAndFixedPools (0x80017CCC, 0x80017CE0, 0x80017CF4), func_80029F50 (0x8002A090), func_8003F79C (0x8003F814), func_80049690 (0x800496B0), and func_8008347C (0x80083494).
  */
 struct FixedPool *func_800194DC(s32 count, s32 size, s32 tag)
 {

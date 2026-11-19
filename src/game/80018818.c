@@ -23,7 +23,7 @@
  * None observed.
  *
  * @par Callers
- * Confirmed: func_80019828 (0x80019858, computes reciprocal input 0..0x3FF before func_800187C8 builds D_8009F5B0) / Likely: none / Unknown: none.
+ * Confirmed: func_80019828 (0x80019858, computes reciprocal input 0..0x3FF before gSqrtU32Q8 builds D_8009F5B0) / Likely: none / Unknown: none.
  */
 u32 func_80018818(u32 divisor)
 {

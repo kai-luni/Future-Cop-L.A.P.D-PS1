@@ -1,29 +1,35 @@
-// Categories: Graphics > Model Renderer > Detail Level
+// Categories: Resources > Memory Management | Platform > Memory
 #include "game/types.h"
 
 extern s32 gFreeRangeCount __asm__("D_8009F594");
-extern s32 D_8009F5A0;
+extern s32 gHeapRangeCountThreshold __asm__("D_8009F5A0");
+
+s32 gIsHeapRangeCountAtThreshold(void) __asm__("func_80017B88");
 
 /**
- * @brief Detail-level predicate: compares two global quality words.
+ * @brief Tests whether the allocator's range-table word count has reached its
+ * threshold.
+ * @return One when the range count is at least the threshold, otherwise zero.
  *
- * @return 1 when D_8009F594 >= D_8009F5A0, else 0.
+ * @par Confirmed mechanics
+ * Loads gFreeRangeCount and gHeapRangeCountThreshold, performs signed SLT, and
+ * inverts the Boolean result in the return delay slot.
  *
- * @par Confirmed
- * Pure comparison of the two globals, no side effects.
- *
- * @par Likely role
- * The high-detail gate of the effect code: func_8004B5F8 halves its
- * fragment budget when this returns 1, func_80043430 branches on it —
- * the pair likely encodes the current detail setting against a threshold.
- *
- * @par Unknown
- * Which global is the setting and which the threshold.
+ * @par Globals
+ * Reads gFreeRangeCount and gHeapRangeCountThreshold.
  *
  * @par Callers
- * func_80043430, func_8004B5F8.
+ * Direct calls in the retail listing are from func_80043430,
+ * gSpawnMeshFractureDebris.
+ *
+ * @par Role and path
+ * Heap initialization installs the threshold. Gameplay callers query it
+ * through this predicate.
+ *
+ * @par Unknown
+ * The callers determine what action to take at the threshold.
  */
-s32 func_80017B88(void)
+s32 gIsHeapRangeCountAtThreshold(void)
 {
-    return gFreeRangeCount >= D_8009F5A0;
+    return gFreeRangeCount >= gHeapRangeCountThreshold;
 }

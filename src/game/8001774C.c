@@ -5,31 +5,30 @@ extern void *gCamera[] __asm__("D_8009F9E4");
 extern void *gCameraList __asm__("D_8009F588");
 extern s32 gNextCameraId __asm__("D_8009F58C");
 
+void gResetCameraState(void) __asm__("func_8001774C");
+
 /**
- * @brief Resets the camera pointer and transform-record list state at mission boot.
+ * @brief Clears the active camera and resets transform-record bookkeeping.
+ * @return Nothing.
  *
- * Clears D_8009F9E4 (active camera pointer), D_8009F588 (0x94-byte transform-record list head freed by func_80017764), and D_8009F58C (serial ID counter incremented by func_80017994).
- *
- * @param void No parameters.
+ * @par Confirmed mechanics
+ * Stores zero to gCamera via its absolute address and to two consecutive
+ * GP-relative words.
  *
  * @par Globals
- * D_8009F9E4 - active camera block pointer, set to 0.
- * D_8009F588 - transform-record singly-linked list head (0x374($gp)), set to 0.
- * D_8009F58C - transform-record serial ID counter (0x378($gp)), set to 0.
- *
- * @par Control flow
- * Straight-line stores of zero to all three globals, then return.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * Writes 0 to D_8009F9E4, D_8009F588, and D_8009F58C.
+ * Clears gCamera, gCameraList, and gNextCameraId.
  *
  * @par Callers
- * Confirmed: func_80024A24 (0x80024C10, mission boot sequence) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from func_80024A24.
+ *
+ * @par Role and path
+ * Mission startup runs this before the camera registration and update
+ * functions.
+ *
+ * @par Unknown
+ * The camera selected after reset depends on later calls.
  */
-void func_8001774C(void)
+void gResetCameraState(void)
 {
     gCamera[0] = 0;
     gCameraList = 0;

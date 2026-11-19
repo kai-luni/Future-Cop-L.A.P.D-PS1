@@ -12,34 +12,41 @@ extern void *gFixedPool2 __asm__("D_8009FAAC");
 
 extern void *func_800194DC(s32 count, s32 size, s32 tag);
 
+void gInitHeapAndFixedPools(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) __asm__("func_80017C68");
+
 /**
- * @brief Installs the three fixed-size pools from three (size, count) pairs and
- *        resets the free-range table to one empty span.
+ * @brief Seeds the heap range table and creates three fixed-size pools.
  *
- * @param a0, a1 First pool: size a0, count a1 (stored in D_8009F9D0).
- * @param a2, a3 Second pool: size a2, count a3 (stored in D_8009FAAC).
- * @param a4, a5 Third pool: size a4, count a5 (stored in D_8009FA4C).
- *
+ * @param a0 Slot size for the first pool.
+ * @param a1 Slot count for the first pool.
+ * @param a2 Slot size for the second pool.
+ * @param a3 Slot count for the second pool.
+ * @param a4 Slot size for the third pool.
+ * @param a5 Slot count for the third pool.
  * @return Nothing.
  *
- * @par Confirmed flow
- * D_8009F594 = 3 (three valid words in the range table), D_8009F598 = 1 (the
- * search cursor, so range 0 is skipped), and the table is rewritten to
- * { base, base, base + size, base + size } where base = D_8009FA9C and size =
- * D_8009F9E8 - i.e. one free span covering the whole heap.
- * The three pools are then created with func_800194DC(count, size, 2).
+ * @par Confirmed mechanics
+ * Sets the range count to 3 and cursor to 1. Writes the heap base twice and
+ * heap end twice to the table. Passes each count and slot size pair to
+ * func_800194DC with tag 2.
  *
  * @par Globals
- * D_8009F590/D_8009F594/D_8009F598 (range table and cursor),
- * D_8009FA9C/D_8009F9E8 (heap base and size), D_8009F9D0, D_8009FAAC,
- * D_8009FA4C (pools).
+ * Reads gFreeRangeTablePtr, gHeapPoolBase, and gHeapMainBlockSize. Writes
+ * table entries, gFreeRangeCount, gHeapSearchCursor, gFixedPool1, gFixedPool2,
+ * and gFixedPool3.
  *
  * @par Callers
- * func_80077050 (all three pools with size 8, count 0), func_80024904
- * (0x168/0, 0x118/0, 0xFC/0) and func_80024A24 - i.e. every screen start
- * rebuilds the pool layer for its own size mix.
+ * Direct calls in the retail listing are from gLoadFrontEndModule,
+ * func_80024A24, func_80077050.
+ *
+ * @par Role and path
+ * Mission and subsystem startup set up the shared allocator and fixed-size
+ * pools used by later allocations.
+ *
+ * @par Unknown
+ * The callers choose the element layouts and counts.
  */
-void func_80017C68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+void gInitHeapAndFixedPools(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     s32 off = gHeapMainBlockSize;
     s32 *ptr = gFreeRangeTablePtr;

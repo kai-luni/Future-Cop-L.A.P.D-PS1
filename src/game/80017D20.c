@@ -7,21 +7,32 @@ extern void *gFixedPool1 __asm__("D_8009F9D0");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
+void gFreeFixedPools(void) __asm__("func_80017D20");
+
 /**
- * @brief Releases the three fixed-size pools created by func_80017C68().
- *
- * D_8009FA4C, D_8009FAAC and D_8009F9D0 are handed to the shared deallocator
- * in that order. The order is the reverse of the creation order inside
- * func_80017C68 and the pointers are not cleared, so the pair must not run
- * twice without a new set-up.
- *
+ * @brief Frees all three shared fixed-size pools.
  * @return Nothing.
  *
+ * @par Confirmed mechanics
+ * Loads and passes gFixedPool3, gFixedPool2, then gFixedPool1 to gFreeBlock.
+ * The three global slots remain intact.
+ *
+ * @par Globals
+ * Reads gFixedPool3, gFixedPool2, and gFixedPool1.
+ *
  * @par Callers
- * func_80077088 (per-frame), func_800249BC and func_80024D14 (module
- * teardown) - so every screen start/end rebuilds the pool layer.
+ * Direct calls in the retail listing are from gUnloadFrontEndSubsystems,
+ * gResetMissionSubsystems, func_80077088.
+ *
+ * @par Role and path
+ * Mission and subsystem teardown release the pools created by
+ * gInitHeapAndFixedPools.
+ *
+ * @par Unknown
+ * The allocator's handling of individual invalid pointers belongs to
+ * gFreeBlock.
  */
-void func_80017D20(void)
+void gFreeFixedPools(void)
 {
     gFreeBlock(gFixedPool3);
     gFreeBlock(gFixedPool2);

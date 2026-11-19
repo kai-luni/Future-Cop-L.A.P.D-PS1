@@ -1,28 +1,29 @@
 // Categories: Resources > Memory Management
+
+int gReadHeapBlockSize(int *value) __asm__("func_80018460");
+
 /**
- * @brief Returns the allocation size stored in the 4-byte header before a heap block.
+ * @brief Reads the size word immediately preceding a heap allocation.
  *
- * Reads value[-1] (offset -4 from the pointer returned by func_80017EBC), matching the header layout inspected by func_800181D4 when releasing blocks.
+ * @param value Pointer to the start of the allocated payload.
+ * @return The signed size word from offset -4.
  *
- * @param value Pointer to an allocated heap block.
- * @return Signed 32-bit size word from value[-1].
+ * @par Confirmed mechanics
+ * Loads from $a0 - 4 into $v0 and returns.
  *
  * @par Globals
- * None.
- *
- * @par Control flow
- * Single memory load (lw $v0, -0x4($a0)) and immediate return.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * None observed.
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * Confirmed: func_80063428 (0x80063474, 0x800634A0, zeroing terrain buffers) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from func_80063428.
+ *
+ * @par Role and path
+ * The map and mesh buffer setup calls this heap-header accessor.
+ *
+ * @par Unknown
+ * The routine assumes the supplied pointer permits the header read.
  */
-int func_80018460(int *value)
+int gReadHeapBlockSize(int *value)
 {
     return value[-1];
 }

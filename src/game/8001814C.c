@@ -4,23 +4,34 @@
 extern s32 *gFreeRangeTablePtr __asm__("D_8009F590");
 extern s32 gFreeRangeCount __asm__("D_8009F594");
 
+s32 gFindHeapBoundaryIndex(s32 value) __asm__("func_8001814C");
+
 /**
- * @brief Binary search for the free-range entry that contains an address.
+ * @brief Finds the heap boundary index at or immediately below an address.
  *
- * @param value Address to look up.
- * @return The table index of the range containing @c value: the highest index
- *         whose start address is <= value.
+ * @param value Address to look up in the heap boundary table.
+ * @return Index of the selected boundary.
  *
- * @par Confirmed flow
- * The table D_8009F590 holds start/end pairs and D_8009F594 is the word count.
- * The loop halves the interval while it is at least two entries wide, then
- * returns @c high when value >= table[high], otherwise @c low.
+ * @par Confirmed mechanics
+ * Bisects between index 0 and gFreeRangeCount minus 1 using signed
+ * comparisons. With adjacent bounds it compares the address to the upper
+ * boundary and selects the lower index if necessary.
+ *
+ * @par Globals
+ * Reads gFreeRangeTablePtr and gFreeRangeCount.
  *
  * @par Callers
- * func_800181D4, to find which range a freed block belongs to before merging it
- * with its neighbours.
+ * Direct calls in the retail listing are from func_800181D4.
+ *
+ * @par Role and path
+ * gFreeBlock uses this lookup to locate the table interval in which to merge a
+ * released allocation.
+ *
+ * @par Unknown
+ * The lookup assumes that the boundary table is sorted and the address is in
+ * its domain.
  */
-s32 func_8001814C(s32 value)
+s32 gFindHeapBoundaryIndex(s32 value)
 {
     s32 high = gFreeRangeCount - 1;
     s32 *table = gFreeRangeTablePtr;
