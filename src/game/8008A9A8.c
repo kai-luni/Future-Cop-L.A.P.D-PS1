@@ -12,7 +12,9 @@ extern Port *gSio0RegBasePtr __asm__("D_8009C78C");
 extern volatile u32 *gInterruptStatusPtr __asm__("D_8009C788");
 extern volatile u32 gCountWrapLimit __asm__("D_800A6E18");
 extern volatile u32 gTimeoutThreshold __asm__("D_800A9448");
-extern int func_8008C8B0(void);
+extern int gCheckTimer2Timeout(void) __asm__("func_8008C8B0");
+int gExchangeSio0Byte(State *arg, int argvalue) __asm__("func_8008A9A8");
+
 
 /**
  *  @brief Exchanges a byte with the hardware port or performs a negative-value handshake.
@@ -32,8 +34,17 @@ extern int func_8008C8B0(void);
  *  Reads and writes hardware registers, updates timing globals, and modifies the transfer state and buffers.
  *  @par Callers
  *  Confirmed: func_8008B7D0, func_8008BA34.
+ *
+ * @par Role and path
+ * If argvalue is negative, resets state->index to 0xFF, sets state->count to
+ * 1, stores ~argvalue in *state->other, waits for SIO0 status bit 1 and
+ * func_8008C8B0(), and writes ~argvalue to JOY_DATA. For nonnegative values,
+ * sets gCountWrapLimit and gTimeoutThreshold from Timer 2 (0x1F801120),
+ * updates JOY_CTRL, polls I_STAT bit 0x80 via func_8008C8B0() (returning -20
+ * on timeout), writes argvalue to JOY_DATA, and stores the received byte into
+ * state->buffer. Called by func_8008B7D0 and func_8008BA34.
  */
-int func_8008A9A8(State *arg, int argvalue)
+int gExchangeSio0Byte(State *arg, int argvalue)
 {
     register State *state __asm__("$16") = arg;
     register int value __asm__("$18");
@@ -54,7 +65,7 @@ int func_8008A9A8(State *arg, int argvalue)
         if (!(negport->status & 1)) {
             do { __asm__ volatile(""); } while (!(negport->status & 1));
         }
-        while (!func_8008C8B0()) {}
+        while (!gCheckTimer2Timeout()) {}
         {
             register int inverted __asm__("$2") = ~value;
             __asm__("" : "+r"(inverted));
@@ -81,7 +92,7 @@ int func_8008A9A8(State *arg, int argvalue)
         p->control = control;
     }
     while (!(*gInterruptStatusPtr & 0x80)) {
-        if (func_8008C8B0()) return -20;
+        if (gCheckTimer2Timeout()) return -20;
     }
     gSio0RegBasePtr->data = value;
     state->count++;

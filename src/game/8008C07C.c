@@ -14,6 +14,8 @@ typedef struct {
     u8 pad46[0x11];
     u8 enabled[6];
 } Object;
+int gReadPadTxByte(Object *obj) __asm__("func_8008C07C");
+
 
 /**
  *  @brief Reads a mode-dependent byte from an object's data arrays.
@@ -33,8 +35,16 @@ typedef struct {
  *  None; reads in modes zero and 0x4D use a volatile-qualified pointer.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Computes index = obj->index - 3 and selects a byte according to obj->mode:
+ * mode 0 checks obj->enabled[index] for indices below 6 and reads
+ * obj->data0[index] when within obj->count0, mode 0x4D reads
+ * obj->data1[index] or returns 0xFF when out of range, and default reads
+ * obj->data1[index] or returns 0. Bound to gPadTxByteHook (D_8009C730) by
+ * func_8008BDB0.
  */
-int func_8008C07C(Object *obj)
+int gReadPadTxByte(Object *obj)
 {
     int index = obj->index - 3;
     volatile u8 *p;

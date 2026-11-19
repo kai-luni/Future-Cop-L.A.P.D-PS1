@@ -14,6 +14,12 @@
  * func_80024904 / func_80024A24 (storing the current module path), func_8001DC48,
  * func_8007799C, func_8007B854, func_80080B70, func_8008125C and the unit at
  * 0x80078C8C - it is the single most used string helper in the game.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x19 to
+ * invoke PS1 BIOS A0:19 (strcpy), copying string $a1 to $a0 and returning
+ * $a0. Called by func_80076A2C, func_80024904, func_80024A24, func_8001DC48,
+ * and other string callers.
  */
 __asm__(
     ".set noreorder\n"

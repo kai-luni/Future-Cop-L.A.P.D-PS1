@@ -12,6 +12,12 @@
  * Whatever the C0 routine performs.
  * @par Callers
  * Confirmed: the interrupt/event block of the CD driver.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xC0 and $t1 = 0x02 to
+ * invoke PS1 BIOS C0:02 (SysEnqIntRP), enqueuing an interrupt handler node on
+ * a BIOS priority list. Called by func_8008A5BC and the CD/interrupt setup
+ * path.
  */
 __asm__(
     ".set noreorder\n"

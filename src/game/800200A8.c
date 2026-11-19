@@ -1,12 +1,12 @@
 // Categories: Platform > Memory Card | Platform > BIOS | Platform > Interrupts
 #include "game/types.h"
 
-extern void func_8008C9C0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void func_8008D6E0(s32 mode);
 extern void func_8008D660(s32 channel);
 extern void func_8008D74C(void);
 extern void func_8008C950(void);
-extern void func_8008C9E0(void);
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 
 /**
  * @brief Initialises the memory-card BIOS support inside a critical section.
@@ -37,10 +37,10 @@ void gInitMemoryCardBios(void) __asm__("func_800200A8");
 
 void gInitMemoryCardBios(void)
 {
-    func_8008C9C0();
+    gDisableCpuInterrupts();
     func_8008D6E0(0);
     func_8008D660(0);
     func_8008D74C();
     func_8008C950();
-    func_8008C9E0();
+    gEnableCpuInterrupts();
 }

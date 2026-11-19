@@ -1,3 +1,5 @@
+void gEnterCriticalSection(void) __asm__("func_8008C9A0");
+
 // Categories: BIOS > System Calls | Platform > Interrupts
 /**
  * @brief Enters a PS1 BIOS critical section by invoking syscall 0 with function code 1 (EnterCriticalSection).
@@ -22,8 +24,14 @@
  *
  * @par Callers
  * Confirmed: func_8008A5BC, func_8008A688, func_8008D6E0, func_8008D74C, func_8008D7DC, func_8008D86C, func_8008D964, func_8008D9DC, func_8008DB28, func_8008DBB0, func_8008DCE8, func_8008DD7C, func_8008DE20, func_80091A04, func_80095DB0, gSpuInitDmaEvent, gSpuShutdownDmaEvent / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Invokes PS1 kernel syscall 0 with $a0 = 1 (EnterCriticalSection) to mask
+ * interrupts during atomic BIOS, event, and DMA updates. Paired with
+ * func_8008C9B0 by callers including func_8008A5BC, func_80095DB0, and
+ * gSpuInitDmaEvent.
  */
-void func_8008C9A0(void)
+void gEnterCriticalSection(void)
 {
     __asm__ volatile("addiu $a0, $zero, 0x1\n\tsyscall 0");
 }

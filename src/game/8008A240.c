@@ -1,6 +1,8 @@
 // Categories: Input > DualShock | Platform > Controller
-extern void *(*D_8009C73C)(int);
-extern void func_8008AE70(void *, int, int);
+extern void *(*gPadLookupPortFn)(int) __asm__("D_8009C73C");
+extern void gBindActuatorBuffer(void *, int, int) __asm__("func_8008AE70");
+void gSetPadActuatorBuf(int arg0, int arg1, int arg2) __asm__("func_8008A240");
+
 
 /**
  * @brief Binds a rumble actuator data buffer to a controller port's CommandState (PadSetAct).
@@ -26,8 +28,13 @@ extern void func_8008AE70(void *, int, int);
  *
  * @par Callers
  * Confirmed: func_8001EC94 (0x8001EDA4, binds s->values of length 2 during DualShock actuator setup) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Resolves the port CommandState for arg0 via D_8009C73C(arg0) and passes it
+ * with buffer pointer arg1 and length arg2 to func_8008AE70. Called by
+ * func_8001EC94 during DualShock rumble actuator setup.
  */
-void func_8008A240(int arg0, int arg1, int arg2)
+void gSetPadActuatorBuf(int arg0, int arg1, int arg2)
 {
-    func_8008AE70(D_8009C73C(arg0), arg1, arg2);
+    gBindActuatorBuffer(gPadLookupPortFn(arg0), arg1, arg2);
 }

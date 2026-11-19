@@ -60,7 +60,7 @@ extern void func_80080984(u8 *a, s32 b);
 extern void func_8008CCB0(u8 *a, u8 *b);
 extern s32 func_8008CCC0(u8 *a);
 extern s32 func_8008CD30(u8 *a, u8 *fmt, ...);
-extern u8 *func_80089914(s32 id);
+extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern void func_80078650(u8 *a, s32 b);
 extern void func_80046C84(s32 id, s32 b);
 extern void func_800492A0(u8 *text, s32 *w, s32 *h);
@@ -232,14 +232,14 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                             CNT(gWideTextTable[gFrontEndListTable[arg2]])
                         }
                         CNT(gWideTextTable[gFrontEndListTable[4]])
-                        arg2 = (s32)func_80089914(0x52D0);
+                        arg2 = (s32)gLookupTextString(0x52D0);
                         if (((u8 *)arg2) != 0 && func_8008CCC0(((u8 *)arg2)) < 5) {
                             func_8008CD30(RAW + 0x925, D_800120BC, ((u8 *)arg2), n, txt);
                         } else {
                             func_8008CD30(RAW + 0x925, D_800120C8, n, txt);
                         }
                     } else {
-                        arg2 = (s32)func_80089914(0x3868);
+                        arg2 = (s32)gLookupTextString(0x3868);
                         if (((u8 *)arg2) != 0 && func_8008CCC0(((u8 *)arg2)) < 7) {
                             func_8008CD30(RAW + 0x925, D_8009F498, ((u8 *)arg2), gMissionListMaxIndex + 1, txt);
                         } else {
@@ -429,7 +429,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                 }
             } else {
                 if (RAW[arg4 * 0x70 + 0x428] == 0) {
-                    q = func_80089914(0x3714);
+                    q = gLookupTextString(0x3714);
                     if (q == 0 || func_8008CCC0(q) >= 9) {
                         q = gDefaultNameString;
                     }

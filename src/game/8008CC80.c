@@ -23,6 +23,11 @@
  *
  * @par Callers
  * Confirmed: func_8001C680 (0x8001C6CC, CD-ROM init failure) and func_8001C718 (0x8001C79C, CD-ROM directory-read failure) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xB0 and $t1 = 0x38 to
+ * invoke PS1 BIOS B0:38 (exit), terminating execution with exit code $a0.
+ * Called by func_8001C680 and func_8001C718 on fatal CD-ROM failure.
  */
 __asm__(
     ".set noreorder\n"

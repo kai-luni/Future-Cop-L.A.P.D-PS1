@@ -7,8 +7,8 @@ extern s32 D_800A3E0C;
 extern u8 D_8008DA14[];
 extern u8 D_8008DA7C[];
 
-extern void func_8008C9A0(void);
-extern void func_8008C9B0(void);
+extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void func_8008CA00(s32, void *);
 extern void func_8008CA10(s32, void *);
 
@@ -41,7 +41,7 @@ s32 func_8008D964(void)
     register s32 one __asm__("$4");
     s32 *q;
 
-    func_8008C9A0();
+    gEnterCriticalSection();
 
     one = 1;
     p = D_800A3E04;
@@ -54,7 +54,7 @@ s32 func_8008D964(void)
 
     func_8008CA10(one, q);
     func_8008CA00(1, q);
-    func_8008C9B0();
+    gExitCriticalSection();
 
     return 1;
 }

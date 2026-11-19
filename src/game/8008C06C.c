@@ -1,5 +1,7 @@
 // Categories: Game Engine > Command State
 #include "../../include/game/command_state.h"
+int gConsumePadCmd(struct CommandState *state) __asm__("func_8008C06C");
+
 
 /**
  *  @brief Moves the current command value to previous and clears current.
@@ -18,8 +20,14 @@
  *  Modifies the current and previous fields of state.
  *  @par Callers
  *  Confirmed: func_8008BF78.
+ *
+ * @par Role and path
+ * Reads state->current from the CommandState struct, clears state->current to
+ * 0, stores the original value into state->previous, and returns it. Called
+ * directly by func_8008BF78 and bound to D_8009C74C by func_8008BDB0 for
+ * indirect dispatch.
  */
-int func_8008C06C(struct CommandState *state)
+int gConsumePadCmd(struct CommandState *state)
 {
     int current = state->current;
     state->current = 0;

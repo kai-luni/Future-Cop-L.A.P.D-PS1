@@ -11,7 +11,9 @@ struct State {
     u8 pad39[0x10];
     u8 mode;
 };
-extern struct State *(*D_8009C73C)(void);
+extern struct State *(*gPadLookupPortFn)(void) __asm__("D_8009C73C");
+int gGetPadPortState(void) __asm__("func_80089E8C");
+
 
 /**
  *  @brief Returns a state mode with conditional remapping for active conditions.
@@ -30,10 +32,15 @@ extern struct State *(*D_8009C73C)(void);
  *  None directly; the provider may have side effects.
  *  @par Callers
  *  Confirmed: func_8001EC94.
+ *
+ * @par Role and path
+ * Obtains a State record via the function pointer D_8009C73C and, if upper
+ * flag bits, non-self-linked busy state, or data[0] are set, remaps mode 2 or
+ * 3 to 1 and mode 6 to 4 before returning the mode. Called by func_8001EC94.
  */
-int func_80089E8C(void)
+int gGetPadPortState(void)
 {
-    struct State *s = D_8009C73C();
+    struct State *s = gPadLookupPortFn();
     if ((s->flags & 0xffff0000) || (s != s->next && s->busy) || s->data[0]) {
         switch (s->mode) {
         case 2: return 1;

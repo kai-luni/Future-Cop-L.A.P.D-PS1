@@ -1,9 +1,11 @@
 // Categories: Game Engine > Callback Setup
-extern void func_8008C444(void);
-extern void func_8008C858(void);
-extern void func_8008C518(void);
+extern void gDispatchPadStep(void) __asm__("func_8008C444");
+extern void gCheckPadReady(void) __asm__("func_8008C858");
+extern void gHandlePadResponse(void) __asm__("func_8008C518");
 extern  void (*gPadDataOffset)(void) __asm__("D_8009C740");
 extern  void (*gReadyCheckHook)(void) __asm__("D_8009C744");
+void gInstallPadProtoHooks(void) __asm__("func_8008C410");
+
 
 /**
  *  @brief Installs three function pointers in global callback slots.
@@ -21,16 +23,22 @@ extern  void (*gReadyCheckHook)(void) __asm__("D_8009C744");
  *  Replaces the contents of three function-pointer slots.
  *  @par Callers
  *  Confirmed: func_8008BDB0.
+ *
+ * @par Role and path
+ * Called by func_8008BDB0 to install three pad protocol callbacks:
+ * func_8008C444 into gPadDataOffset (D_8009C740), func_8008C858 into
+ * gReadyCheckHook (D_8009C744), and func_8008C518 into address 0x8009C748
+ * (0x800A0000 - 14520). Performs no branches or calls.
  */
-void func_8008C410(void)
+void gInstallPadProtoHooks(void)
 {
-    gPadDataOffset = func_8008C444;
-    gReadyCheckHook = func_8008C858;
+    gPadDataOffset = gDispatchPadStep;
+    gReadyCheckHook = gCheckPadReady;
     {
         register char *base __asm__("$1");
         register void (*value)(void) __asm__("$2");
         __asm__("" ::: "memory");
-        value = func_8008C518;
+        value = gHandlePadResponse;
         __asm__("" : "+r" (value) : : "memory");
         base = (char *)0x800a0000;
         __asm__("" : "+r" (base));

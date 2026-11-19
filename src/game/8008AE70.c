@@ -1,5 +1,7 @@
 // Categories: Input > DualShock | Platform > Controller
 #include "../../include/game/command_state.h"
+void gBindActuatorBuffer(struct CommandState *state, int value, u8 type) __asm__("func_8008AE70");
+
 
 /**
  * @brief Binds a rumble actuator data buffer and byte count to a controller port command state.
@@ -22,8 +24,13 @@
  * Mutates state->inline_data[4..7] (+0x28) and state->type (+0x34) on the supplied CommandState.
  * @par Callers
  * Confirmed: func_8008A240 (0x8008A26C in asm/us/main.s, called by func_8001EC94 with D_8009C73C(port), s->values, 2) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Stores value into *(int *)&state->inline_data[4] (offset +0x28) and type
+ * into state->type (offset +0x34) on the supplied CommandState. Called by
+ * func_8008A240 during DualShock rumble setup, with no globals or callees.
  */
-void func_8008AE70(struct CommandState *state, int value, u8 type)
+void gBindActuatorBuffer(struct CommandState *state, int value, u8 type)
 {
     *(int *)&state->inline_data[4] = value;
     state->type = type;

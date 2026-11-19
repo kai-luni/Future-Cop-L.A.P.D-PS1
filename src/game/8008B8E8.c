@@ -10,9 +10,11 @@ typedef struct {
 
 extern u32 gPadUpdateByte __asm__("D_8009C7A8");
 extern u32 gPadDataOffset __asm__("D_8009C740");
-extern u32 D_8009C774;
+extern u32 gPadExtEnableFlag __asm__("D_8009C774");
 extern u32 gPadMotorValue __asm__("D_8009C7A0");
-extern s32 func_8008AB80(Unk8008B8E8 *, void *);
+extern s32 gTransferSio0Byte(Unk8008B8E8 *, void *) __asm__("func_8008AB80");
+s32 gBeginPadExchange(Unk8008B8E8 *arg0) __asm__("func_8008B8E8");
+
 
 /**
  *  @brief Processes an object and derives a shared value from the result.
@@ -32,8 +34,16 @@ extern s32 func_8008AB80(Unk8008B8E8 *, void *);
  *  May invoke callbacks and updates D_8009C7A0 on success.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Starts a pad exchange by optionally invoking gPadDataOffset on unkC + 0x1E0
+ * and unkC + 0x2D0 when gPadUpdateByte is nonzero, then calls func_8008AB80
+ * with arg0 and D_8009C774 when arg0->unk36 is zero. Rejects responses with a
+ * zero high nibble by returning -9, or passes through negative errors from
+ * func_8008AB80. On success it sets gPadMotorValue to twice the low nibble,
+ * or 0x20 when that nibble is zero, and returns 0.
  */
-s32 func_8008B8E8(Unk8008B8E8 *arg0)
+s32 gBeginPadExchange(Unk8008B8E8 *arg0)
 {
     s32 ret;
     void *a1;
@@ -44,9 +54,9 @@ s32 func_8008B8E8(Unk8008B8E8 *arg0)
     }
     a1 = 0;
     if (arg0->unk36 == 0) {
-        a1 = (void *)D_8009C774;
+        a1 = (void *)gPadExtEnableFlag;
     }
-    ret = func_8008AB80(arg0, a1);
+    ret = gTransferSio0Byte(arg0, a1);
     if (ret < 0) {
         return ret;
     }

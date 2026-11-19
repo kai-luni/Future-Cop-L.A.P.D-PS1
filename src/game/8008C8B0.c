@@ -3,6 +3,8 @@
 
 extern volatile u32 gCountWrapLimit __asm__("D_800A6E18");
 extern volatile u32 gTimeoutThreshold __asm__("D_800A9448");
+s32 gCheckTimer2Timeout(void) __asm__("func_8008C8B0");
+
 
 /**
  * @brief Checks whether the PS1 Root Counter 2 pad-polling timeout armed by func_8008C890 has elapsed.
@@ -24,8 +26,16 @@ extern volatile u32 gTimeoutThreshold __asm__("D_800A9448");
  * Reads volatile Root Counter 2 MMIO registers (0x1F801120, 0x1F801124, 0x1F801128).
  * @par Callers
  * Confirmed: func_8008A9A8 (0x8008AA24, 0x8008AAF8), func_8008AB80 (0x8008AD38), func_8008ADB4 (0x8008ADE8) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Samples PS1 Root Counter 2 at 0x1F801120, adjusts for wraparound using
+ * target 0x1F801128 (or 0x10000 when zero) if count < gCountWrapLimit, and
+ * compares the elapsed ticks (unshifted when 0x1F801124 & 0x200 is set, else
+ * >> 3) against gTimeoutThreshold. Returns 1 if elapsed time meets or exceeds
+ * gTimeoutThreshold, otherwise 0; called by func_8008A9A8, func_8008AB80, and
+ * func_8008ADB4.
  */
-s32 func_8008C8B0(void)
+s32 gCheckTimer2Timeout(void)
 {
     u32 count;
 

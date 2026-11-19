@@ -24,8 +24,10 @@ struct PadPort {
 #define PAD_RESPONSE(port) \
     (*(u8 *volatile *)&(port)->response)
 
-extern s32 func_8008B05C(struct PadPort *port);
-extern s32 func_8008B094(struct PadPort *port, u8 *buffer);
+extern s32 gCalcPadTableSize(struct PadPort *port) __asm__("func_8008B05C");
+extern s32 gInitPadHandshake(struct PadPort *port, u8 *buffer) __asm__("func_8008B094");
+s32 gRespPadInfoProbe(struct PadPort *port) __asm__("func_8008AF10");
+
 
 /**
  *  @brief Processes a controller information response for the current sequence step.
@@ -46,8 +48,16 @@ extern s32 func_8008B094(struct PadPort *port, u8 *buffer);
  *  Updates port information, sequence and communication fields as applicable.
  *  @par Callers
  *  Confirmed: func_8008C518.
+ *
+ * @par Role and path
+ * Processes controller info replies by sequence_step: step 2 records
+ * mode_count, current_mode_index, actuator_count, and combination_count; step
+ * 3 records current_extended_id; step 4 accumulates combination_storage_bytes
+ * and, after the last combination, checks func_8008B05C(port) >= 0x81 to
+ * error (step 0xFE, state 2) or calls func_8008B094(port, (u8 *)port + 0x63)
+ * and restarts at step 2. Called by func_8008C518.
  */
-s32 func_8008AF10(struct PadPort *port)
+s32 gRespPadInfoProbe(struct PadPort *port)
 {
     u32 chunk;
     register u32 next __asm__("$2");
@@ -84,14 +94,14 @@ return_zero:
             return 0;
         }
 
-        if (func_8008B05C(port) >= 0x81) {
+        if (gCalcPadTableSize(port) >= 0x81) {
             port->sequence_step = 0xFE;
             port->communication_state = 2;
             goto return_zero;
         }
 
         port->sequence_step = 0xFF;
-        func_8008B094(port, (u8 *)port + 0x63);
+        gInitPadHandshake(port, (u8 *)port + 0x63);
         port->sequence_step = 2;
         goto return_zero;
     }

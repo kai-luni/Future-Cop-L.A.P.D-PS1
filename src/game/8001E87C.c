@@ -15,8 +15,8 @@ typedef struct {
 extern Slot gPadActuators[] __asm__("D_800A6FF8");
 extern u8 gPadBuffers[] __asm__("D_800A78F0");
 
-extern void func_8008BDB0(u8 *start, u8 *end);
-extern void func_80089E00(void);
+extern void gInitPadPorts(u8 *start, u8 *end) __asm__("func_8008BDB0");
+extern void gStartPadDriver(void) __asm__("func_80089E00");
 void gInitPadActuators(void) __asm__("func_8001E87C");
 
 
@@ -72,6 +72,6 @@ void gInitPadActuators(void)
         }
 
     }
-    func_8008BDB0(gPadBuffers, gPadBuffers + 0x24);
-    func_80089E00();
+    gInitPadPorts(gPadBuffers, gPadBuffers + 0x24);
+    gStartPadDriver();
 }

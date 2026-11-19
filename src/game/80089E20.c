@@ -1,7 +1,9 @@
 // Categories: Platform > Device Shutdown | Platform > Interrupts
 #include "game/types.h"
 
-extern void func_8008A688(void);
+extern void gStopPadDriverIrq(void) __asm__("func_8008A688");
+void gStopPadDriver(void) __asm__("func_80089E20");
+
 
 /**
  * @brief Stops the controller/pad interrupt driver by delegating to func_8008A688.
@@ -24,8 +26,13 @@ extern void func_8008A688(void);
  *
  * @par Callers
  * Confirmed: func_8001E910 (0x8001E918, called by func_8001E540 device shutdown) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Thin wrapper that calls func_8008A688 to disable BIOS IRQ3 clear control
+ * and dequeue the pad interrupt node D_800A3B60. Called by func_8001E910
+ * during device shutdown.
  */
-void func_80089E20(void)
+void gStopPadDriver(void)
 {
-    func_8008A688();
+    gStopPadDriverIrq();
 }

@@ -112,7 +112,7 @@ extern void func_80080984(void *, s32);
 extern void func_8008CCB0(void *, void *);
 extern s32 func_8008CCC0(void *);
 extern void func_8008CD30(void *, void *, ...);
-extern u8 *func_80089914(s32);
+extern u8 *gLookupTextString(s32) __asm__("func_80089914");
 extern void func_80078650(void *, s32);
 extern s32 func_80046C84(s32, s32);
 extern void func_80077FFC(void);

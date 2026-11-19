@@ -16,6 +16,11 @@
  *  Sets $t2 and $t1; further effects depend on the BIOS service.
  *  @par Callers
  *  Confirmed: func_8001FAB8.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0xAC to
+ * invoke PS1 BIOS A0:AC (_card_load), initiating a memory card load on
+ * channel $a0. Called by func_8001FAB8.
  */
 __asm__(
     ".set noreorder\n"

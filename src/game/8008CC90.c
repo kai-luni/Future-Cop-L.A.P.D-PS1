@@ -14,6 +14,11 @@
  * @par Callers
  * func_80076A2C appends ".mis" to the module name in D_8009B300, and
  * func_8001DC48.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x15 to
+ * invoke PS1 BIOS A0:15 (strcat), appending $a1 onto $a0 and returning $a0.
+ * Called by func_80076A2C and func_8001DC48.
  */
 __asm__(
     ".set noreorder\n"

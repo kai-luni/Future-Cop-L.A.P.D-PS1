@@ -1,7 +1,9 @@
 // Categories: Game Engine > Callback Tables
-extern void func_8008A43C(void);
-extern void func_8008A3D4(void);
+extern void gPollPadPorts(void) __asm__("func_8008A43C");
+extern void gPadVsyncDispatchHook(void) __asm__("func_8008A3D4");
 extern  void (*gCallbackTable2[])(void) __asm__("D_800A3B64");
+void gInitPadCallbackTable(void) __asm__("func_8008A3A8");
+
 
 /**
  *  @brief Initializes two callback entries and their surrounding null entries.
@@ -18,13 +20,18 @@ extern  void (*gCallbackTable2[])(void) __asm__("D_800A3B64");
  *  Changes the table entries at indices -1 through 2.
  *  @par Callers
  *  Confirmed: func_8008BDB0.
+ *
+ * @par Role and path
+ * Stores func_8008A43C and func_8008A3D4 into gCallbackTable2[0..1] and
+ * clears gCallbackTable2[-1] and gCallbackTable2[2]. Called by func_8008BDB0
+ * during pad driver initialization.
  */
-void func_8008A3A8(void)
+void gInitPadCallbackTable(void)
 {
     void (**p)(void) = gCallbackTable2;
     asm volatile("" : "+r"(p));
-    p[0] = func_8008A43C;
-    p[1] = func_8008A3D4;
+    p[0] = gPollPadPorts;
+    p[1] = gPadVsyncDispatchHook;
     p[-1] = 0;
     p[2] = 0;
 }

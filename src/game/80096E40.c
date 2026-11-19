@@ -5,8 +5,8 @@ typedef void (*Callback)(void);
 extern s32 gSecondCallGuard __asm__("D_8009EE94");
 extern void *gSpuDmaCallback __asm__("D_8009EA2C");
 extern void func_800972F8(void);
-extern void func_8008C9A0(void);
-extern void func_8008C9B0(void);
+extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void gSpuSetDmaCallback(Callback callback) __asm__("func_800979F8");
 extern void *func_8008C960(u32, s32, s32, s32);
 extern void func_8008C980(void *);
@@ -56,6 +56,6 @@ void gSpuInitDmaEvent(void)
                          "jal\tfunc_8008C980\n\t"
                          "sw\t$a0,%%lo(D_8009EA2C)($at)\n\t"
                          ".set\treorder" ::: "memory");
-        func_8008C9B0();
+        gExitCriticalSection();
     }
 }

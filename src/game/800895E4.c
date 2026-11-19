@@ -19,8 +19,8 @@ extern u8 func_800889DC[];
 
 extern s32 func_8008E154(s32 mode, u8 *result);
 extern void func_8008E42C(s32 mode, u8 *buf, s32 arg2);
-extern void func_8008C9C0(void);
-extern void func_8008C9E0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern s32 func_8008E194(s32 value);
 extern s32 func_8008E1A8(s32 value);
 
@@ -65,7 +65,7 @@ void gCdStreamService(s32 arg0)
         func_8008E154(0, 0);
         buf[0] = 0xA0;
         func_8008E42C(0xE, buf, 0);
-        func_8008C9C0();
+        gDisableCpuInterrupts();
         gMovieStreamContext->unk410 = 0;
         gMovieStreamContext->unk408 = 0;
         gMovieStreamContext->unk40C = 0;
@@ -76,7 +76,7 @@ void gCdStreamService(s32 arg0)
     } else {
         s32 active;
 
-        func_8008C9C0();
+        gDisableCpuInterrupts();
         active = gMovieStreamContext->unk420;
         gMovieStreamContext->unk41C = 0;
         gMovieStreamContext->unk410 = 0;
@@ -90,5 +90,5 @@ void gCdStreamService(s32 arg0)
             gMovieStreamContext->unk420 = 0;
         }
     }
-    func_8008C9E0();
+    gEnableCpuInterrupts();
 }

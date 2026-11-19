@@ -9,6 +9,8 @@ struct StatusState {
 };
 
 extern struct StatusState *gSio0RegBasePtr __asm__("D_8009C78C");
+void gWaitSio0TxReady(void) __asm__("func_8008AE44");
+
 
 /**
  *  @brief Waits until bit 1 of a status field is set.
@@ -25,8 +27,12 @@ extern struct StatusState *gSio0RegBasePtr __asm__("D_8009C78C");
  *  Performs repeated volatile reads and may wait indefinitely.
  *  @par Callers
  *  Confirmed: func_8008A6CC, func_8008BA34.
+ *
+ * @par Role and path
+ * Spins on gSio0RegBasePtr->status & 2 until bit 1 (SIO0 TX ready) becomes
+ * nonzero, with no timeout. Called by func_8008A6CC and func_8008BA34.
  */
-void func_8008AE44(void)
+void gWaitSio0TxReady(void)
 {
     while ((gSio0RegBasePtr->status & 2) == 0) {
     }

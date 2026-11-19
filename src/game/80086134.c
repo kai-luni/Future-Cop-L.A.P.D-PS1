@@ -5,7 +5,7 @@
 extern s32 D_8009F948;
 extern s32 D_8009F94C;
 
-extern void func_80089A88(s32 arg0, s32 arg1, s32 arg2);
+extern void gBuildMovieVlcTables(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80089A88");
 extern void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
 
 /**
@@ -28,6 +28,6 @@ void gMoviePrepareDecodeTables(void) __asm__("func_80086134");
 
 void gMoviePrepareDecodeTables(void)
 {
-    func_80089A88(D_8009F948, D_8009F94C, 0);
+    gBuildMovieVlcTables(D_8009F948, D_8009F94C, 0);
     gMovieBuildDitherTables();
 }

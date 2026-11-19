@@ -10,9 +10,9 @@ struct CardContext {
 
 extern struct CardContext *gOperationState __asm__("D_8009AB08");
 
-extern void func_8008C9C0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern s32 func_80091510(void (*callback)(void));
-extern void func_8008C9E0(void);
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 void gReleaseMcCallback(void) __asm__("func_8002059C");
 
 
@@ -45,9 +45,9 @@ void gReleaseMcCallback(void) __asm__("func_8002059C");
 void gReleaseMcCallback(void)
 {
     if (--gOperationState->lockCount == 0) {
-        func_8008C9C0();
+        gDisableCpuInterrupts();
         func_80091510(gOperationState->savedCallback);
         gOperationState->savedCallback = 0;
-        func_8008C9E0();
+        gEnableCpuInterrupts();
     }
 }

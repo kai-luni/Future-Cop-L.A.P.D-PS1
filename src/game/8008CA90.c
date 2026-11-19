@@ -2,6 +2,8 @@
 typedef unsigned int u32;
 typedef struct Block { struct Block *next; int size; } Block;
 extern Block *gSessionBlockBase __asm__("D_8009C7D0");
+void *gAllocHeapBlock(u32 size) __asm__("func_8008CA90");
+
 
 /**
  *  @brief Allocates an aligned payload from a circular free-block list.
@@ -21,8 +23,15 @@ extern Block *gSessionBlockBase __asm__("D_8009C7D0");
  *  Changes free-list links or block sizes and writes the allocated block header.
  *  @par Callers
  *  Confirmed: func_8001E240.
+ *
+ * @par Role and path
+ * Allocates an 8-byte-aligned block from the circular free list rooted at
+ * gSessionBlockBase (D_8009C7D0), returning null if size is zero or no block
+ * fits. Searches one pass from gSessionBlockBase->next, unlinking exact fits
+ * or splitting from the high-address end of larger blocks, updates
+ * gSessionBlockBase to prev, and returns p + 1. Called by func_8001E240.
  */
-void *func_8008CA90(u32 size)
+void *gAllocHeapBlock(u32 size)
 {
     Block *p, *prev;
     int n;

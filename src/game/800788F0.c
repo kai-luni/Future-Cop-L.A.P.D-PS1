@@ -8,7 +8,7 @@ struct FontEntry {
 
 extern s8 gPanelSyncValue __asm__("D_8009F8BC");
 
-extern u8 *func_80089914(s32 id);
+extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern s32 func_80048E28(s32 index);
 extern struct FontEntry *func_80048E88(void);
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
@@ -71,7 +71,7 @@ void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
 
     if (text == 0) {
         if (textId != 0) {
-            text = func_80089914(textId & 0xFFFF);
+            text = gLookupTextString(textId & 0xFFFF);
         }
         if (text == 0) {
             return;

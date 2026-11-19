@@ -12,6 +12,12 @@
  * @par Callers
  * func_80083130 and func_800833A8 (module-name lookups, always compared against
  * 0), func_80020C90, func_8007B854 and func_800904DC.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x17 to
+ * invoke PS1 BIOS A0:17 (strcmp), comparing strings $a0 and $a1. Called by
+ * func_80083130, func_800833A8, func_80020C90, func_8007B854, and
+ * func_800904DC.
  */
 __asm__(
     ".set noreorder\n"

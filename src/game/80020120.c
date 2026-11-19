@@ -11,8 +11,8 @@ typedef struct {
 extern State *gOperationState __asm__("D_8009AB08");
 extern u8 D_8001FAB8[], D_8001FF44[], D_8001FE40[], D_8001FD28[];
 extern u8 D_8001F394[], D_8001F968[], D_8001F818[], D_8001F784[];
-extern void func_8008C9C0(void);
-extern void func_8008C9E0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern s32 func_8008C960(u32, u32, u32, void *);
 extern void func_8008C980(s32);
 void gAcquireMcEvents(void) __asm__("func_80020120");
@@ -61,7 +61,7 @@ void gAcquireMcEvents(void) __asm__("func_80020120");
 void gAcquireMcEvents(void)
 {
     if (gOperationState->count == 0) {
-        func_8008C9C0();
+        gDisableCpuInterrupts();
         gOperationState->h0 = func_8008C960(0xF4000001, 4, 0x1000, D_8001FAB8);
         gOperationState->h1 = func_8008C960(0xF4000001, 0x8000, 0x1000, D_8001FF44);
         gOperationState->h2 = func_8008C960(0xF4000001, 0x100, 0x1000, D_8001FE40);
@@ -78,7 +78,7 @@ void gAcquireMcEvents(void)
         func_8008C980(gOperationState->h5);
         func_8008C980(gOperationState->h6);
         func_8008C980(gOperationState->h7);
-        func_8008C9E0();
+        gEnableCpuInterrupts();
     }
     gOperationState->count++;
 }

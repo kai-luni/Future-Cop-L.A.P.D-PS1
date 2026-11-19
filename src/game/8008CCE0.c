@@ -22,6 +22,11 @@
  *
  * @par Callers
  * Confirmed: func_8001DC48 (0x8001DDC4 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x25 to
+ * invoke PS1 BIOS A0:25 (toupper), converting character $a0 to uppercase.
+ * Called by func_8001DC48.
  */
 __asm__(
     ".set noreorder\n"

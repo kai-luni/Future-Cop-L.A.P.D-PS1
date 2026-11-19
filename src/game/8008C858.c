@@ -7,6 +7,8 @@ typedef struct {
     u8 pad_47[0x9F];
     u16 ready;
 } Unk8008C858;
+s32 gCheckPadReady(Unk8008C858 *state) __asm__("func_8008C858");
+
 
 /**
  *  @brief Tests a device state using its ready and device fields.
@@ -25,8 +27,13 @@ typedef struct {
  *  None.
  *  @par Callers
  *  Confirmed: func_8008C518.
+ *
+ * @par Role and path
+ * Installed into gReadyCheckHook (D_8009C744) by func_8008C410 and called by
+ * func_8008C518. Returns 0 when state->ready is nonzero and state->device
+ * equals 0xFF, and 1 otherwise.
  */
-s32 func_8008C858(Unk8008C858 *state)
+s32 gCheckPadReady(Unk8008C858 *state)
 {
     register u32 tmp __asm__("$2");
     register u32 device __asm__("$3");

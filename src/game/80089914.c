@@ -19,6 +19,8 @@ typedef struct Unk800899A4 {
 } Unk800899A4;
 
 extern Unk800899A4 *gTextLookupTable __asm__("D_8009F518");
+u8 *gLookupTextString(u16 id) __asm__("func_80089914");
+
 
 /**
  * @brief Resolves a text id to its string via binary search over the loaded
@@ -41,8 +43,15 @@ extern Unk800899A4 *gTextLookupTable __asm__("D_8009F518");
  *
  * @par Callers
  * func_8007799C, func_800788F0, func_8007E1A4, func_80080B70, func_8008125C.
+ *
+ * @par Role and path
+ * Resolves a 16-bit text id by binary searching the sorted entries array in
+ * gTextLookupTable->header and returning (u8 *)entries + entry->offset, or 0
+ * if no table is loaded or the id is absent. Called by text and UI routines
+ * including func_8007799C, func_800788F0, func_8007E1A4, func_80080B70, and
+ * func_8008125C.
  */
-u8 *func_80089914(u16 id)
+u8 *gLookupTextString(u16 id)
 {
     register u8 *result __asm__("$9") = 0;
     if (gTextLookupTable != 0) {

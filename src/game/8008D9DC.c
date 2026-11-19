@@ -1,7 +1,7 @@
 // Categories: BIOS > System Calls | Platform > Interrupts
-extern void func_8008C9A0(void);
+extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void func_8008CA10(int, void *);
-extern void func_8008C9B0(void);
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern char gIrqNode[] __asm__("D_800A3E00");
 
 /**
@@ -31,12 +31,12 @@ extern char gIrqNode[] __asm__("D_800A3E00");
  */
 int func_8008D9DC(void)
 {
-    func_8008C9A0();
+    gEnterCriticalSection();
     {
         register void *base __asm__("$5") = gIrqNode;
         __asm__ volatile("" : "+r"(base));
         func_8008CA10(1, base);
     }
-    func_8008C9B0();
+    gExitCriticalSection();
     return 1;
 }

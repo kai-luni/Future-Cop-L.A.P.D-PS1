@@ -1,7 +1,9 @@
 // Categories: Input > Controller Init | Platform > Interrupts
 #include "game/types.h"
 
-extern void func_8008A5BC(void);
+extern void gInitPadDriverIrq(void) __asm__("func_8008A5BC");
+void gStartPadDriver(void) __asm__("func_80089E00");
+
 
 /**
  * @brief Starts the controller/pad interrupt driver by delegating to func_8008A5BC.
@@ -24,8 +26,13 @@ extern void func_8008A5BC(void);
  *
  * @par Callers
  * Confirmed: func_8001E87C (0x8001E8F8, controller slot/device hook initialization) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Thin wrapper that calls func_8008A5BC to install the pad IRQ handler node
+ * on BIOS chain 2, unmask VSync IRQ0, and reset both controller ports. Called
+ * by func_8001E87C during controller initialization.
  */
-void func_80089E00(void)
+void gStartPadDriver(void)
 {
-    func_8008A5BC();
+    gInitPadDriverIrq();
 }

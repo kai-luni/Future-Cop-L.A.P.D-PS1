@@ -22,6 +22,12 @@
  *
  * @par Callers
  * Confirmed: func_8001F394, func_8001F784, func_8001F818, func_8001F968, func_8001FAB8, func_8001FD28, func_8001FE40, func_8001FF44, func_80020024, func_800206D0 / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0xAB to
+ * invoke PS1 BIOS A0:AB (_card_info), querying memory card status for channel
+ * $a0. Called by memory-card state machine routines including func_8001F394
+ * through func_800206D0.
  */
 __asm__(
     ".set noreorder\n"

@@ -1,5 +1,7 @@
 // Categories: Input > DualShock | Platform > Controller
 #include "../../include/game/command_state.h"
+void gSetPadActInfoCmd(struct CommandState *state, u8 value) __asm__("func_8008B770");
+
 
 /**
  * @brief Queues DualShock command 0x46 (actuator capability query) with a 1-byte index on a CommandState.
@@ -21,8 +23,13 @@
  * Arms state to transmit 1-byte parameter command 0x46 on the next pad poll cycle.
  * @par Callers
  * Confirmed: func_8008B168 (0x8008B1C4 in asm/us/main.s, sequence_step 3 with port->info_record_index) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Sets state->current to 0x46, state->value to state->inline_data,
+ * state->inline_data[0] to value, and state->active to 1. Called by
+ * func_8008B168 at sequence_step 3.
  */
-void func_8008B770(struct CommandState *state, u8 value)
+void gSetPadActInfoCmd(struct CommandState *state, u8 value)
 {
     state->current = 0x46;
     state->value = state->inline_data;

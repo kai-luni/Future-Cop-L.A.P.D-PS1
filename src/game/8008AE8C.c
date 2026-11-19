@@ -9,9 +9,11 @@ struct PadPort {
     u8 current_mode_index;
 };
 
-extern void func_8008B73C(struct PadPort *port);
-extern void func_8008B750(struct PadPort *port, u8 index);
-extern void func_8008B790(struct PadPort *port, u8 index);
+extern void gSetPadModelQueryCmd(struct PadPort *port) __asm__("func_8008B73C");
+extern void gSetPadModeConstCmd(struct PadPort *port, u8 index) __asm__("func_8008B750");
+extern void gSetPadCombInfoCmd(struct PadPort *port, u8 index) __asm__("func_8008B790");
+void gCmdPadInfoModeFirst(struct PadPort *port) __asm__("func_8008AE8C");
+
 
 /**
  * @brief Continues a pad handshake at its current step (mode-first variant).
@@ -31,20 +33,26 @@ extern void func_8008B790(struct PadPort *port, u8 index);
  * Queues the next DualShock command.
  * @par Callers
  * Unknown: no direct edge; driven by the pad polling loop.
+ *
+ * @par Role and path
+ * Switches on port->sequence_step: step 2 calls func_8008B73C(port), step 3
+ * calls func_8008B750(port, port->current_mode_index), and step 4 calls
+ * func_8008B790(port, port->info_record_index). Driven indirectly by the pad
+ * polling loop.
  */
-void func_8008AE8C(struct PadPort *port)
+void gCmdPadInfoModeFirst(struct PadPort *port)
 {
     s32 state = port->sequence_step;
 
     switch (state) {
     case 2:
-        func_8008B73C(port);
+        gSetPadModelQueryCmd(port);
         break;
     case 3:
-        func_8008B750(port, port->current_mode_index);
+        gSetPadModeConstCmd(port, port->current_mode_index);
         break;
     case 4:
-        func_8008B790(port, port->info_record_index);
+        gSetPadCombInfoCmd(port, port->info_record_index);
         break;
     }
 }

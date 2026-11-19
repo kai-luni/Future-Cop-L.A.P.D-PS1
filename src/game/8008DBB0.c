@@ -1,8 +1,8 @@
 // Categories: BIOS > System Calls | Platform > BIOS
 #include "game/types.h"
 
-extern void func_8008C9A0(void);
-extern void func_8008C9B0(void);
+extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void func_8008DBA0(void);
 
 /**

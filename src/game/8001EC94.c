@@ -8,11 +8,11 @@ typedef struct {
 } State;
 extern State gPadActuators[] __asm__("D_800A6FF8");
 extern volatile int gFrameTickCounter __asm__("D_8009FA2C");
-extern int func_80089E8C(int);
-extern int func_8008A044(int, int, int);
-extern void func_8008A240(int, u8 *, int);
-extern int func_8008A1C0(int, u8 *);
-extern int func_80089F4C(int, int, int);
+extern int gGetPadPortState(int) __asm__("func_80089E8C");
+extern int gGetPadActuatorInfo(int, int, int) __asm__("func_8008A044");
+extern void gSetPadActuatorBuf(int, u8 *, int) __asm__("func_8008A240");
+extern int gSetPadActuatorAlign(int, u8 *) __asm__("func_8008A1C0");
+extern int gQueryPadInfo(int, int, int) __asm__("func_80089F4C");
 void gUpdatePadActuators(u32 arg) __asm__("func_8001EC94");
 
 
@@ -69,7 +69,7 @@ void gUpdatePadActuators(u32 arg)
             s->times[i] = 0;
         }
     }
-    mode = func_80089E8C(port);
+    mode = gGetPadPortState(port);
     if (!mode) return;
     one = 1;
     __asm__ volatile("" : "=r"(one) : "0"(one));
@@ -84,7 +84,7 @@ void gUpdatePadActuators(u32 arg)
         for (i = 1; i >= 0; i--) s->times[i] = 0;
     }
     if (!s->active) {
-        func_8008A240(port, s->values, 2);
+        gSetPadActuatorBuf(port, s->values, 2);
         if (mode == 2) goto enable;
         if (mode != 6) return;
         n = 0;
@@ -100,10 +100,10 @@ void gUpdatePadActuators(u32 arg)
         __asm__ volatile("" : : "r"(i));
         p = (u8 *)s + 1;
         for (; i >= 0; i--) { p[4] = fill; p--; }
-        count = func_8008A044(port, -1, 0);
+        count = gGetPadActuatorInfo(port, -1, 0);
         if (count >= 3) count = 2;
         for (i = 0; i < count; i++) {
-            kind = func_8008A044(port, i, 3);
+            kind = gGetPadActuatorInfo(port, i, 3);
             if (kind == 0) {
                 if (s->slots[0] == 255) {
                     s->command[i] = n;
@@ -118,11 +118,11 @@ void gUpdatePadActuators(u32 arg)
                 }
             }
         }
-        if (func_8008A1C0(port, s->command)) {
+        if (gSetPadActuatorAlign(port, s->command)) {
         enable:
             s->active = 1;
         }
-    } else if (!func_80089F4C(port, 2, 0)) {
+    } else if (!gQueryPadInfo(port, 2, 0)) {
         if (s->times[0]) {
             s->values[0] = 64;
             s->values[1] = 1;

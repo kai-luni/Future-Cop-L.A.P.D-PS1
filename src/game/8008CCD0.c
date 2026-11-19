@@ -19,6 +19,11 @@
  *
  * @par Callers
  * func_800788F0.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x1E to
+ * invoke PS1 BIOS A0:1E (strchr), returning a pointer to the first occurrence
+ * of $a1 in $a0 or 0. Called by func_800788F0.
  */
 __asm__(
     ".set noreorder\n"

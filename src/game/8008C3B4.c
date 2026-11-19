@@ -2,6 +2,8 @@
 #include "../../include/game/types.h"
 
 extern u8 gCompareAddress[] __asm__("D_800A3C20");
+int gGetPadPortCode(void *address) __asm__("func_8008C3B4");
+
 
 /**
  *  @brief Maps either of two exact addresses to a small code.
@@ -20,8 +22,14 @@ extern u8 gCompareAddress[] __asm__("D_800A3C20");
  *  None.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Compares address against gCompareAddress (D_800A3C20) and gCompareAddress +
+ * 0xF0 in a two-iteration loop, returning 0x10 for the first port struct,
+ * 0x20 for the second, or 0xFF if neither matches. Bound to D_8009C738 by
+ * func_8008BDB0.
  */
-int func_8008C3B4(void *address)
+int gGetPadPortCode(void *address)
 {
     int index;
     int result;

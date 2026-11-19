@@ -1,5 +1,7 @@
 // Categories: Input > DualShock | Platform > Controller
 #include "../../include/game/command_state.h"
+void gSetPadModeConstCmd(struct CommandState *state, u8 value) __asm__("func_8008B750");
+
 
 /**
  * @brief Queues DualShock command 0x4C (mode/constant query) with a 1-byte index on a CommandState.
@@ -21,8 +23,13 @@
  * Arms state to transmit 1-byte parameter command 0x4C on the next pad poll cycle.
  * @par Callers
  * Confirmed: func_8008AE8C (0x8008AEE4 with port->current_mode_index); func_8008B168 (0x8008B1B0 with port->info_record_index) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Sets state->current to 0x4C, state->value to state->inline_data,
+ * state->inline_data[0] to value, and state->active to 1. Called by
+ * func_8008AE8C and func_8008B168.
  */
-void func_8008B750(struct CommandState *state, u8 value)
+void gSetPadModeConstCmd(struct CommandState *state, u8 value)
 {
     state->current = 0x4C;
     state->value = state->inline_data;

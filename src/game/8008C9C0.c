@@ -1,3 +1,5 @@
+void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
+
 // Categories: Platform > Interrupts | Platform > CPU
 /**
  * @brief Enters a critical section: disables interrupts.
@@ -11,8 +13,13 @@
  *
  * @par Callers
  * func_800861E4, around the job set-up and again in the cleanup path.
+ *
+ * @par Role and path
+ * Unconditionally disables CPU interrupts by reading COP0 status register
+ * $12, masking with -0x402, and writing the result back to $12 without saving
+ * the prior state. Called by func_800861E4 around job setup and cleanup.
  */
-void func_8008C9C0(void) {
+void gDisableCpuInterrupts(void) {
     __asm__ volatile (
         "mfc0 $4, $12\n\t"
         "nop\n\t"

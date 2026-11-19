@@ -2,6 +2,8 @@
 #include "../../include/game/types.h"
 
 extern u8 gCompareAddress[] __asm__("D_800A3C20");
+u8 *gLookupPadPort(u32 flags) __asm__("func_8008C3EC");
+
 
 /**
  *  @brief Selects one of two addresses in a global byte array.
@@ -20,8 +22,13 @@ extern u8 gCompareAddress[] __asm__("D_800A3C20");
  *  None.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Returns gCompareAddress (D_800A3C20) when (flags & 0xF0) is zero, or
+ * gCompareAddress + 0xF0 when any of bits 4 through 7 are set. Bound to
+ * D_8009C73C by func_8008BDB0 and called indirectly by pad slot helpers.
  */
-u8 *func_8008C3EC(u32 flags)
+u8 *gLookupPadPort(u32 flags)
 {
     u8 *result;
 

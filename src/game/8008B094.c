@@ -35,8 +35,10 @@ struct PadPort {
 };
 
 extern  s32 (*gReadyCheckHook)(void) __asm__("D_8009C744");
-extern void func_8008B168(struct PadPort *port);
-extern s32 func_8008B210(struct PadPort *port);
+extern void gCmdPadTableHandshake(struct PadPort *port) __asm__("func_8008B168");
+extern s32 gRespPadTableHandshake(struct PadPort *port) __asm__("func_8008B210");
+s32 gInitPadHandshake(struct PadPort *port, u8 *buffer) __asm__("func_8008B094");
+
 
 /**
  *  @brief Arm a controller port's configuration handshake using a buffer.
@@ -58,6 +60,13 @@ extern s32 func_8008B210(struct PadPort *port);
  *  Sets port state, sequence, handlers, table pointers, and record index.
  *  @par Callers
  *  Confirmed: func_8008AF10.
+ *
+ * @par Role and path
+ * Returns 0 if buffer is null, port->capabilities is already set, or
+ * gReadyCheckHook() returns nonzero. Otherwise sets communication_state to 4
+ * and sequence_step to 1, installs func_8008B168 and func_8008B210 as command
+ * and response handlers, and partitions the 4-byte-aligned buffer into
+ * mode_table, capabilities, and combinations. Called by func_8008AF10.
  */
 /*
  * Initialise a pad port on top of a raw transfer buffer.
@@ -71,7 +80,7 @@ extern s32 func_8008B210(struct PadPort *port);
  * Returns 0 when the port is already set up, the buffer is missing or the global
  * readiness callback D_8009C744 reports the device as unavailable; 1 once armed.
  */
-s32 func_8008B094(struct PadPort *port, u8 *buffer)
+s32 gInitPadHandshake(struct PadPort *port, u8 *buffer)
 {
     register s32 cursor __asm__("$5");
     s32 result;
@@ -98,11 +107,11 @@ return_zero:
     port->communication_state = state;
     state = 1;
     port->sequence_step = state;
-    port->command_handler = (void (*)(void *))func_8008B168;
+    port->command_handler = (void (*)(void *))gCmdPadTableHandshake;
     __asm__ volatile("" ::: "memory");
     row_count = *(volatile u8 *)&port->mode_count;
     __asm__ volatile("" : "=r"(row_count) : "0"(row_count));
-    process_function = func_8008B210;
+    process_function = gRespPadTableHandshake;
     port->response_handler = process_function;
     __asm__ volatile("" ::: "memory");
     column_count = port->actuator_count;

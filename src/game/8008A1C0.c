@@ -3,7 +3,10 @@
 
 struct PadPort;
 
-extern struct PadPort *(*D_8009C73C)(s32 slot);
+extern struct PadPort *(*gPadLookupPortFn)(s32 slot) __asm__("D_8009C73C");
+extern s32 gStartPadActAlign(struct PadPort *port, u8 *command) __asm__("func_8008B484");
+s32 gSetPadActuatorAlign(s32 slot, u8 *command) __asm__("func_8008A1C0");
+
 
 /**
  *  @brief Passes a slot's pad port and a command to the pad routine.
@@ -23,8 +26,13 @@ extern struct PadPort *(*D_8009C73C)(s32 slot);
  *  Any effects are those of the lookup and pad routines.
  *  @par Callers
  *  Confirmed: func_8001EC94.
+ *
+ * @par Role and path
+ * Resolves the controller port for slot via D_8009C73C(slot) and forwards the
+ * port and command buffer to func_8008B484. Returns the result from
+ * func_8008B484. Called by func_8001EC94.
  */
-s32 func_8008A1C0(s32 slot, u8 *command)
+s32 gSetPadActuatorAlign(s32 slot, u8 *command)
 {
-    return func_8008B484(D_8009C73C(slot), command);
+    return gStartPadActAlign(gPadLookupPortFn(slot), command);
 }

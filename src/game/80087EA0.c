@@ -28,8 +28,8 @@ extern s32 func_80087814(void);
 extern s32 func_8008781C(void);
 extern s32 func_8008799C(s32);
 extern void gCloseVideoLayer(void) __asm__("func_80087D48");
-extern s32 func_800896D4(s32, s32, s32);
-extern void func_80089A88(s32, s32, s32);
+extern s32 gCalcMovieBufferSize(s32, s32, s32) __asm__("func_800896D4");
+extern void gBuildMovieVlcTables(s32, s32, s32) __asm__("func_80089A88");
 extern void func_8008F7AC(void);
 extern s32 func_80091F60(s32);
 extern void func_80092BF4(s32);
@@ -147,7 +147,7 @@ s32 gOpenVideoLayer(s32 arg0)
         goto fail;
     }
 
-    func_80089A88(D_8009F4FC, D_8009F500, 0);
+    gBuildMovieVlcTables(D_8009F4FC, D_8009F500, 0);
 
     if (arg0 & 8) {
         gMovieSetScaleMode(0);
@@ -175,13 +175,13 @@ s32 gOpenVideoLayer(s32 arg0)
     }
 
     if (!(arg0 & 1)) {
-        gMovieStreamBuffer = func_8008799C(func_800896D4(gLayerModeBits, 0x4400, 1));
+        gMovieStreamBuffer = func_8008799C(gCalcMovieBufferSize(gLayerModeBits, 0x4400, 1));
         if (gMovieStreamBuffer == 0) {
             goto fail;
         }
     } else {
         gMovieStreamBuffer = gChainedNodes[0];
-        func_800896D4(gLayerModeBits, 0x424C, 1);
+        gCalcMovieBufferSize(gLayerModeBits, 0x424C, 1);
     }
 
     gMovieAudioBlock = func_8008799C(func_8008781C());

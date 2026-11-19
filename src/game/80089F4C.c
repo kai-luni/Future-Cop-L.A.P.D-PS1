@@ -13,7 +13,9 @@ struct Data {
     u16 fieldE6;
     u8 fieldE8;
 };
-extern struct Data *(*D_8009C73C)(int);
+extern struct Data *(*gPadLookupPortFn)(int) __asm__("D_8009C73C");
+int gQueryPadInfo(int arg0, int kind, int index) __asm__("func_80089F4C");
+
 
 /**
  *  @brief Retrieves a selected field or table entry from a data record.
@@ -34,10 +36,16 @@ extern struct Data *(*D_8009C73C)(int);
  *  No direct writes; the resolver may have side effects.
  *  @par Callers
  *  Confirmed: func_8001EC94.
+ *
+ * @par Role and path
+ * Resolves a pad port Data struct via D_8009C73C(arg0) and returns fieldE8
+ * (kind 1), fieldE6 (kind 2), fieldE4 (kind 3), field4c (kind 100), or for
+ * kind 4 either count (index < 0) or table[index] when in bounds. Called by
+ * func_8001EC94.
  */
-int func_80089F4C(int arg0, int kind, int index)
+int gQueryPadInfo(int arg0, int kind, int index)
 {
-    struct Data *data = D_8009C73C(arg0);
+    struct Data *data = gPadLookupPortFn(arg0);
     switch (kind) {
     case 1: return data->fieldE8;
     case 2: return data->fieldE6;

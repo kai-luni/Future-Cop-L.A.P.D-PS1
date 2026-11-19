@@ -36,11 +36,11 @@ struct State80089018 {
 };
 
 extern struct State80089018 *gMovieStreamContext __asm__("D_8009F970");
-extern u32 D_8009F980;
+extern u32 gMovieRingSectors __asm__("D_8009F980");
 extern u8 gCodeDataSource[8] __asm__("D_80088D74");
 
-extern void func_8008C9C0(void);
-extern void func_8008C9E0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern s32 func_8008E194(s32 value);
 extern s32 func_8008E1A8(s32 value);
 extern void func_8008E1BC(s32 arg0, s32 arg1, s32 arg2);
@@ -84,27 +84,27 @@ void func_80089018(void)
         if (gMovieStreamContext->unk570 != 0) {
             gMovieStreamContext->unk570();
         }
-        func_8008C9C0();
+        gDisableCpuInterrupts();
         gMovieStreamContext->unk410 = 0;
         gMovieStreamContext->unk408 = 0;
         gMovieStreamContext->unk40C = 0;
         gMovieStreamContext->unk41C = 0;
         func_8008E194(0);
         func_8008E1A8(0);
-        func_8008C9E0();
+        gEnableCpuInterrupts();
         func_8008E1BC(8, 0, 0);
         while (func_800886E4() != 0) {
         }
         local = 0xA0;
         func_8008E42C(0xE, &local, 0);
         work = 1;
-        func_8008C9C0();
+        gDisableCpuInterrupts();
         func_8008E194((s32)gCodeDataSource);
         func_8008E1A8((s32)func_800889DC + 0x40);
         gMovieStreamContext->unk41C = work;
         gMovieStreamContext->unk414 = work;
         gMovieStreamContext->unk424 = 0;
-        func_8008C9E0();
+        gEnableCpuInterrupts();
         if ((gMovieStreamContext->unk414 != 0) && (gMovieStreamContext->unk000 != 0)) {
             {
                 register struct Sub80089018 *parameter __asm__("$5");
@@ -161,7 +161,7 @@ void func_80089018(void)
         register u32 remainder __asm__("$3");
 
         state = gMovieStreamContext;
-        capacity = D_8009F980;
+        capacity = gMovieRingSectors;
         read_position = state->unk440;
         write_position = state->unk448;
         dividend = state->unk448;
@@ -211,7 +211,7 @@ void func_80089018(void)
             sub = state->unk430;
             dividend = state->unk448;
             address = sub->unk34;
-            divisor = D_8009F980;
+            divisor = gMovieRingSectors;
             dividend += address;
             address = dividend % divisor;
             parameter = (u8 *)sub;

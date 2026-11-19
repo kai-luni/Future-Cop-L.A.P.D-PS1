@@ -5,7 +5,7 @@ extern u8 gIsVideoLayerOpen(void) __asm__("func_80087D3C");
 extern u8 gOpenVideoLayer(s32 arg0) __asm__("func_80087EA0");
 extern void gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80088120");
 extern void gCloseVideoLayer(void) __asm__("func_80087D48");
-extern s32 func_8008A5A8(void);
+extern s32 gTakePadVblankIrq(void) __asm__("func_8008A5A8");
 
 /**
  * @brief Draws a named image, initialising the image layer on first use.

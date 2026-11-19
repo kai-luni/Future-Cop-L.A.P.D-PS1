@@ -1,7 +1,7 @@
 // Categories: Platform > BIOS | Platform > Interrupts
 #include "game/types.h"
 
-extern void func_8008C9C0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void func_8008D784(void);
 void gResetBiosDevices(void) __asm__("func_800200F0");
 
@@ -36,7 +36,7 @@ void gResetBiosDevices(void) __asm__("func_800200F0");
  */
 void gResetBiosDevices(void)
 {
-    func_8008C9C0();
+    gDisableCpuInterrupts();
     func_8008D784();
-    func_8008C9C0();
+    gDisableCpuInterrupts();
 }

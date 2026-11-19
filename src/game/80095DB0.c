@@ -2,8 +2,8 @@
 #include "game/types.h"
 
 extern s32 gGpuLibSavedRa __asm__("D_800A63D0");
-extern void func_8008C9A0(void);
-extern void func_8008C9B0(void);
+extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void func_8008DBA0(void);
 
 asm(".set D_80095E5C, 0x80095E5C");

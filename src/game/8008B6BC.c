@@ -8,7 +8,9 @@ struct PadPort {
     u8 mode_already_selected;
 };
 
-extern void (*D_8009C72C)(struct PadPort *port);
+extern void (*gPadResetPortHook)(struct PadPort *port) __asm__("D_8009C72C");
+s32 gRespPadModeSelect(struct PadPort *port) __asm__("func_8008B6BC");
+
 
 /**
  *  @brief Checks or advances a controller mode-selection sequence.
@@ -27,8 +29,14 @@ extern void (*D_8009C72C)(struct PadPort *port);
  *  May change the sequence step or invoke a callback with additional effects.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * If port->mode_already_selected is nonzero, returns 1 when sequence_step is
+ * 2 or sets sequence_step to 0xFE and returns 0 otherwise. If
+ * mode_already_selected is zero, invokes D_8009C72C(port) and returns 0.
+ * Installed as response_handler by func_8008B5D0.
  */
-s32 func_8008B6BC(struct PadPort *port)
+s32 gRespPadModeSelect(struct PadPort *port)
 {
     if (port->mode_already_selected != 0) {
         if (port->sequence_step == 2) {
@@ -38,6 +46,6 @@ s32 func_8008B6BC(struct PadPort *port)
         return 0;
     }
 
-    D_8009C72C(port);
+    gPadResetPortHook(port);
     return 0;
 }

@@ -15,8 +15,10 @@ struct C444Layout {
 struct PadPort;
 struct CommandState;
 
-extern void func_8008B71C(struct CommandState *state, u8 value);
-extern void func_8008AE8C(struct PadPort *port);
+extern void gSetPadConfigModeCmd(struct CommandState *state, u8 value) __asm__("func_8008B71C");
+extern void gCmdPadInfoModeFirst(struct PadPort *port) __asm__("func_8008AE8C");
+s32 gDispatchPadStep(struct C444Layout *state) __asm__("func_8008C444");
+
 
 /**
  *  @brief Dispatches a controller command sequence step.
@@ -37,11 +39,19 @@ extern void func_8008AE8C(struct PadPort *port);
  *  Called handlers or the callback may modify state or perform I/O.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Installed into gPadDataOffset (D_8009C740) by func_8008C410 to dispatch a
+ * pad sequence step. Calls func_8008B71C(state, 0) if ptr_3C[0] is 0xF3 and
+ * field_E8 is 0; otherwise steps 0 and 0xFF do nothing, step 1 calls
+ * func_8008B71C(state, 1), step 0xFE calls func_8008B71C(state, 0), and other
+ * steps invoke state->callback_14 or fall back to func_8008AE8C. Always
+ * returns 0.
  */
-s32 func_8008C444(struct C444Layout *state)
+s32 gDispatchPadStep(struct C444Layout *state)
 {
     if (state->ptr_3C[0] == 0xF3 && state->field_E8 == 0) {
-        func_8008B71C((struct CommandState *)state, 0);
+        gSetPadConfigModeCmd((struct CommandState *)state, 0);
     } else {
         s32 step = state->sequence_step;
 
@@ -49,10 +59,10 @@ s32 func_8008C444(struct C444Layout *state)
         case 0:
             break;
         case 1:
-            func_8008B71C((struct CommandState *)state, 1);
+            gSetPadConfigModeCmd((struct CommandState *)state, 1);
             break;
         case 0xFE:
-            func_8008B71C((struct CommandState *)state, 0);
+            gSetPadConfigModeCmd((struct CommandState *)state, 0);
             break;
         case 0xFF:
             break;
@@ -60,7 +70,7 @@ s32 func_8008C444(struct C444Layout *state)
             if (state->callback_14 != 0) {
                 state->callback_14(state);
             } else {
-                func_8008AE8C((struct PadPort *)state);
+                gCmdPadInfoModeFirst((struct PadPort *)state);
             }
             break;
         }

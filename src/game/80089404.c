@@ -33,7 +33,7 @@ struct State80089404 {
 };
 
 extern struct State80089404 *gMovieStreamContext __asm__("D_8009F970");
-extern u32 D_8009F980;
+extern u32 gMovieRingSectors __asm__("D_8009F980");
 
 extern s32 func_800886C8(s32 delta, s32 value);
 extern void func_80089018(void);
@@ -121,7 +121,7 @@ s32 gMovieStreamReserve(s32 *out)
     sub = ((volatile struct State80089404 *)state)->unk42C;
     dividend = state->unk440;
     rem1 = sub->unk34;
-    divisor = D_8009F980;
+    divisor = gMovieRingSectors;
     dividend += rem1;
     rem1 = dividend % divisor;
     rem2 = old440 % divisor;
@@ -139,8 +139,8 @@ s32 gMovieStreamReserve(s32 *out)
     rem1 = (u32)offset < rem1;
 
     if (rem1) {
-        func_8008CD10(value - (D_8009F980 << 11), value);
-        value -= D_8009F980 << 11;
+        func_8008CD10(value - (gMovieRingSectors << 11), value);
+        value -= gMovieRingSectors << 11;
     }
 
     return value;

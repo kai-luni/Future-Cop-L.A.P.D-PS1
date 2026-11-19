@@ -9,7 +9,7 @@ extern u32 *gVmCountdowns __asm__("D_8009F9A4");
 extern u32 *gOpcodeTable __asm__("D_8009F9F8");
 extern u8 D_8009B2DC[];
 
-extern void func_8008CA30(u32 arg0, u32 arg1);
+extern void gInitHeapBlocks(u32 arg0, u32 arg1) __asm__("func_8008CA30");
 extern u32 *gHeapAllocRaw(s32 arg0, s32 arg1) __asm__("func_8001E240");
 extern void gInitHeap(void) __asm__("func_80017BE8");
 extern void func_8008DEA0(void);
@@ -77,7 +77,7 @@ s32 gInitRuntime(void)
     s32 i;
 
     result = 0;
-    func_8008CA30(D_8009EA04, (D_8009EA08 >> 3) << 3);
+    gInitHeapBlocks(D_8009EA04, (D_8009EA08 >> 3) << 3);
 
     gGameSession = gHeapAllocRaw(0xF4, 3);
     for (i = 0x38; i >= 0; i--) {

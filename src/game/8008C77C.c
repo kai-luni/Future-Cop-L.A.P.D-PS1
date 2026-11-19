@@ -16,7 +16,9 @@ struct Obj {
     u8 pad50[0x98];
     u8 active;
 };
-extern void (*D_8009C72C)(struct Obj *);
+extern void (*gPadResetPortHook)(struct Obj *) __asm__("D_8009C72C");
+void gUpdatePadTimer(struct Obj *self) __asm__("func_8008C77C");
+
 
 /**
  *  @brief Advance a communication timer and handle state-dependent completion.
@@ -35,8 +37,16 @@ extern void (*D_8009C72C)(struct Obj *);
  *  Updates timer and possibly count, flag, state, output bytes, and active.
  *  @par Callers
  *  Confirmed: func_8008BF78.
+ *
+ * @par Role and path
+ * Called by func_8008BF78 to advance a pad port communication timer and
+ * handle timeout/reset states. Increments self->timer, counts self->count up
+ * to 2 in state 1 (setting flag = 2 and state = 255) or up to 4 in other
+ * nonzero states before invoking D_8009C72C(self) when self->flag is nonzero,
+ * and resets out[0] = 255, out[1] = 0, and active = 0 when *self->cmd is not
+ * 0xF3.
  */
-void func_8008C77C(struct Obj *self)
+void gUpdatePadTimer(struct Obj *self)
 {
     self->timer++;
     if (self->state != 0) {
@@ -54,7 +64,7 @@ void func_8008C77C(struct Obj *self)
             return;
         }
         if (self->flag != 0) {
-            D_8009C72C(self);
+            gPadResetPortHook(self);
         }
     }
     if (*self->cmd != 0xf3) {

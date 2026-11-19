@@ -1,5 +1,7 @@
 // Categories: BIOS > System Calls | Platform > Interrupts
 #include "game/types.h"
+void gExitCriticalSection(void) __asm__("func_8008C9B0");
+
 
 /**
  * @brief Exits a PS1 BIOS critical section by invoking syscall 0 with function code 2 (ExitCriticalSection).
@@ -24,8 +26,14 @@
  *
  * @par Callers
  * Confirmed: func_8008A5BC, func_8008A688, func_8008D6E0, func_8008D74C, func_8008D7DC, func_8008D86C, func_8008D964, func_8008D9DC, func_8008DBB0, func_8008DE20, func_80091614, func_80091AA4, func_80095DB0, gSpuInitDmaEvent, gSpuShutdownDmaEvent / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Invokes PS1 kernel syscall 0 with $a0 = 2 (ExitCriticalSection) to restore
+ * interrupts after atomic BIOS, event, and DMA updates. Paired with
+ * func_8008C9A0 by callers including func_8008A5BC, func_80095DB0, and
+ * gSpuInitDmaEvent.
  */
-void func_8008C9B0(void)
+void gExitCriticalSection(void)
 {
     __asm__ volatile("addiu $a0, $zero, 0x2\n\tsyscall 0");
 }

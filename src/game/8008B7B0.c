@@ -1,5 +1,7 @@
 // Categories: Game Engine > Command State
 #include "../../include/game/command_state.h"
+void gSetPadCombContCmd(struct CommandState *state) __asm__("func_8008B7B0");
+
 
 /**
  *  @brief Initializes a command state with command code 0x4B.
@@ -17,8 +19,13 @@
  *  Overwrites the current, value, and active fields of state.
  *  @par Callers
  *  Confirmed: func_8008B168.
+ *
+ * @par Role and path
+ * Sets state->current to 0x4B, state->value to 0, and state->active to 0.
+ * Called by func_8008B168 at sequence_step 4 when combination_bytes_remaining
+ * is nonzero.
  */
-void func_8008B7B0(struct CommandState *state)
+void gSetPadCombContCmd(struct CommandState *state)
 {
     state->current = 0x4B;
     state->value = 0;

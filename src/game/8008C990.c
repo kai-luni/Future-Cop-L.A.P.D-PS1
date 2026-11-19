@@ -12,6 +12,11 @@
  * Returns the event handle of the opened event in $v0.
  * @par Callers
  * Confirmed: func_8002036C (device handle release), card init paths.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xB0 and $t1 = 0x0D to
+ * invoke PS1 BIOS B0:0D (DisableEvent), disabling a kernel event descriptor.
+ * Called by func_8002036C and card teardown paths.
  */
 __asm__(
     ".set noreorder\n"

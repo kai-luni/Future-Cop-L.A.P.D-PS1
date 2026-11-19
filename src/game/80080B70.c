@@ -26,7 +26,7 @@ extern u8 gArmedFlag __asm__("D_8009FAC4");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 
-extern u8 *func_80089914(u16 id);
+extern u8 *gLookupTextString(u16 id) __asm__("func_80089914");
 extern void func_800822CC(u8 *arg0);
 extern u8 *gCopyMemory(u8 *destination, u8 *source, u32 count) __asm__("func_8001E318");
 extern void func_80080A5C(u8 *arg0);
@@ -103,7 +103,7 @@ void func_80080B70(void)
     u8 *r;
     u32 i;
 
-    r = func_80089914(0x36C4);
+    r = gLookupTextString(0x36C4);
     if (r != 0) {
         func_800822CC(r);
     }

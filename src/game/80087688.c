@@ -14,8 +14,8 @@ typedef struct {
 } Unk8009F4D8;
 
 extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
-extern void func_8008C9C0(void);
-extern void func_8008C9E0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 
 /**
  * @brief Final sound-state reset: clears the head words and the four
@@ -42,7 +42,7 @@ void gResetMovieAudioState(void)
 {
     u32 i;
 
-    func_8008C9C0();
+    gDisableCpuInterrupts();
 
     gMovieAudioState->unk0 = 0;
     gMovieAudioState->unk4 = 0;
@@ -55,5 +55,5 @@ void gResetMovieAudioState(void)
     gMovieAudioState->unk7B3C = 1;
     gMovieAudioState->unk7B24 = 0;
 
-    func_8008C9E0();
+    gEnableCpuInterrupts();
 }

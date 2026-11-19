@@ -11,6 +11,11 @@
  * @par Callers
  * func_80083130 lower-cases the module name before the table lookup, so
  * "FE.mis", "fe.mis" and "Fe.Mis" all resolve to the same entry.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x26 to
+ * invoke PS1 BIOS A0:26 (tolower), converting character $a0 to lowercase.
+ * Called by func_80083130.
  */
 __asm__(
     ".set noreorder\n"

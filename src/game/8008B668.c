@@ -16,6 +16,8 @@ struct PadPort {
     u8 pad_54[9];
     u8 actuator_map[6];
 };
+void gCmdPadModeSelect(struct PadPort *port) __asm__("func_8008B668");
+
 
 /**
  *  @brief Prepares a controller command for selected sequence steps.
@@ -34,8 +36,14 @@ struct PadPort {
  *  Updates the port's command, payload pointer, and payload length for handled steps.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Switches on port->sequence_step: step 2 sets command 0x44 with a 2-byte
+ * payload at port + 0x51 (requested_mode_index/lock), and step 3 sets command
+ * 0x4D with the 6-byte actuator_map payload. Installed as command_handler by
+ * func_8008B5D0.
  */
-void func_8008B668(struct PadPort *port)
+void gCmdPadModeSelect(struct PadPort *port)
 {
     s32 state = port->sequence_step;
 

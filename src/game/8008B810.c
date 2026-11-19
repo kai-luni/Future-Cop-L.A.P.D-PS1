@@ -9,13 +9,15 @@ typedef struct {
 } Unk8008B810;
 
 extern u32 gPadSlotIndex __asm__("D_8009C768");
-extern u32 D_8009C778;
-extern u32 D_8009C764;
-extern u32 D_8009C758;
-extern u32 D_8009C754;
+extern u32 gPadStartSlot __asm__("D_8009C778");
+extern u32 gPadPollPreHookFlag __asm__("D_8009C764");
+extern u32 gPadPollPreHookA __asm__("D_8009C758");
+extern u32 gPadPollPreHookB __asm__("D_8009C754");
 extern u32 gPadUpdateByte __asm__("D_8009C7A8");
 extern u32 gPadDataOffset __asm__("D_8009C740");
-extern s32 func_8008AB80(Unk8008B810 *, u32);
+extern s32 gTransferSio0Byte(Unk8008B810 *, u32) __asm__("func_8008AB80");
+s32 gSendPadCmdHeader(Unk8008B810 *arg0) __asm__("func_8008B810");
+
 
 /**
  *  @brief Runs configured callbacks and dispatches an object with a selected code.
@@ -36,15 +38,21 @@ extern s32 func_8008AB80(Unk8008B810 *, u32);
  *  Invokes configured callbacks and the final dispatch helper.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * When gPadSlotIndex equals D_8009C778 and D_8009C764 is nonzero, invokes
+ * D_8009C758() and D_8009C754(). If gPadUpdateByte is nonzero, invokes
+ * gPadDataOffset on arg0->unkC and arg0->unkC + 0xF0, then calls
+ * func_8008AB80 with arg0->unk36 (or 0x42 if zero).
  */
-s32 func_8008B810(Unk8008B810 *arg0)
+s32 gSendPadCmdHeader(Unk8008B810 *arg0)
 {
     register Unk8008B810 *a0 __asm__("$4");
 
-    if (gPadSlotIndex == D_8009C778) {
-        if (D_8009C764 != 0) {
-            ((void (*)(void))D_8009C758)();
-            ((void (*)(void))D_8009C754)();
+    if (gPadSlotIndex == gPadStartSlot) {
+        if (gPadPollPreHookFlag != 0) {
+            ((void (*)(void))gPadPollPreHookA)();
+            ((void (*)(void))gPadPollPreHookB)();
         }
     }
     if (gPadUpdateByte != 0) {
@@ -53,7 +61,7 @@ s32 func_8008B810(Unk8008B810 *arg0)
     }
     a0 = arg0;
     if (arg0->unk36 != 0) {
-        return func_8008AB80(a0, arg0->unk36);
+        return gTransferSio0Byte(a0, arg0->unk36);
     }
-    return func_8008AB80(a0, 0x42);
+    return gTransferSio0Byte(a0, 0x42);
 }

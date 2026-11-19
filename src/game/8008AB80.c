@@ -12,8 +12,10 @@ extern volatile u32 *gInterruptStatusPtr __asm__("D_8009C788");
 extern u32 gPadDispatchIndex __asm__("D_8009C76C");
 extern u32 gCountWrapLimit __asm__("D_800A6E18");
 extern u32 gTimeoutThreshold __asm__("D_800A9448");
-extern void func_8008C890(u32);
-extern s32 func_8008C8B0(void);
+extern void gStartTimer2Timeout(u32) __asm__("func_8008C890");
+extern s32 gCheckTimer2Timeout(void) __asm__("func_8008C8B0");
+s32 gTransferSio0Byte(struct Port *port, s32 value_) __asm__("func_8008AB80");
+
 
 /**
  * @brief Exchanges one serial byte with a controller or memory card over PS1 SIO0 with Root Counter 2 timeouts.
@@ -38,8 +40,17 @@ extern s32 func_8008C8B0(void);
  *
  * @par Callers
  * Confirmed: func_8008B810 (0x8008B8D0), func_8008B8E8 (0x8008B94C), func_8008B9A8 (0x8008B9F8), func_8008BA34 (0x8008BB08) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Waits for SIO0 JOY_STAT bit 1, arms a 400-tick timer via func_8008C890,
+ * reads JOY_DATA, sets JOY_CTRL (0x88 or 0x22 for multitap 0x8x packets), and
+ * polls I_STAT bit 0x80 using Timer 2 (0x1F801120/24/28) to return -2 on
+ * timeout. When port->id != 8 and gPadDispatchIndex == 2 it waits 60 ticks
+ * via func_8008C890/func_8008C8B0, then writes value to JOY_DATA and records
+ * the received byte in port->response. Called by func_8008B810,
+ * func_8008B8E8, func_8008B9A8, and func_8008BA34.
  */
-s32 func_8008AB80(struct Port *port, s32 value_)
+s32 gTransferSio0Byte(struct Port *port, s32 value_)
 {
     register s32 control __asm__("$17");
     register s32 received __asm__("$18");
@@ -61,7 +72,7 @@ s32 func_8008AB80(struct Port *port, s32 value_)
         __asm__ volatile ("nop" : "+r"(poll));
         while (!(poll->status & 2)) {}
     }
-    func_8008C890(400);
+    gStartTimer2Timeout(400);
     device = gSio0RegBasePtr;
     data = device->data;
     index = *(volatile u8 *)&port->index;
@@ -89,8 +100,8 @@ done:;
         if ((count - gCountWrapLimit) >> 3 >= gTimeoutThreshold) return -2;
     }
     if (port->id != 8 && gPadDispatchIndex == 2) {
-        func_8008C890(60);
-        while (!func_8008C8B0()) {}
+        gStartTimer2Timeout(60);
+        while (!gCheckTimer2Timeout()) {}
     }
     gSio0RegBasePtr->data = value;
     port->count++;

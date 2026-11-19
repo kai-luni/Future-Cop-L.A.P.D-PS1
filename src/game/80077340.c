@@ -3,8 +3,8 @@ typedef unsigned int u32;
 
 extern u32 gExceptionVectorBackup[] __asm__("D_80076A0C");
 extern void func_80076878(void);
-extern void func_8008C9C0(void);
-extern void func_8008C9E0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 
 /**
  * @brief Saves the MIPS general exception vector and installs a custom trampoline.
@@ -39,7 +39,7 @@ void func_80077340(void)
     register u32 second __asm__("$4");
     int i;
 
-    func_8008C9C0();
+    gDisableCpuInterrupts();
     for (i = 0; i < 8; i++) {
         *dst++ = *src++;
     }
@@ -61,5 +61,5 @@ void func_80077340(void)
     ((u32 *)0x80)[1] = second;
     ((u32 *)0x80)[2] = instruction;
     ((u32 *)0x80)[3] = 0;
-    func_8008C9E0();
+    gEnableCpuInterrupts();
 }

@@ -2,7 +2,9 @@
 #include "game/types.h"
 
 extern u32 gPadTxByteHook __asm__("D_8009C730");
-extern s32 func_8008AB80(void *s, u32 a1);
+extern s32 gTransferSio0Byte(void *s, u32 a1) __asm__("func_8008AB80");
+s32 gSendPadCmdByte(void *s) __asm__("func_8008B9A8");
+
 
 /**
  *  @brief Runs a callback and normalizes the result of a follow-up operation.
@@ -22,8 +24,15 @@ extern s32 func_8008AB80(void *s, u32 a1);
  *  Invokes the callback and helper; their effects are not shown.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Computes a selection flag that is 1 only when the high nibble of the byte
+ * pointed to at offset 0x3C is 8 and the byte at offset 0x36 is zero, then
+ * invokes gPadTxByteHook with s and that flag. Passes the low byte of the
+ * hook result to func_8008AB80(s, r0 & 0xFF) and returns negative errors, 0,
+ * or 0x5A unchanged while mapping any other nonnegative result to -9.
  */
-s32 func_8008B9A8(void *s)
+s32 gSendPadCmdByte(void *s)
 {
     u32 flag;
     u32 r0;
@@ -35,7 +44,7 @@ s32 func_8008B9A8(void *s)
         flag = (*(u8 *)((u8 *)s + 0x36) == 0);
     }
     r0 = ((u32 (*)(void *, u32))gPadTxByteHook)(s, flag);
-    r = func_8008AB80(s, r0 & 0xFF);
+    r = gTransferSio0Byte(s, r0 & 0xFF);
     ret = r;
     if (r == 0x5A) {
         goto end;

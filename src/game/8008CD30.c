@@ -32,6 +32,12 @@
  * Every formatted path/name in the front-end goes through this entry, e.g.
  * sprintf(buf, "%s%s", prefix, name) - see func_80024E3C, func_80025370,
  * func_80083130 and the mission loaders.
+ *
+ * @par Role and path
+ * Handwritten MIPS assembly spill prologue storing $a1, $a2, and $a3 into the
+ * caller's o32 argument save area before falling through into the sprintf
+ * formatter body at func_8008CD3C. Called by front-end and mission-loading
+ * path formatters such as func_80024E3C, func_80025370, and func_80083130.
  */
 __asm__(
     ".set noreorder\n"

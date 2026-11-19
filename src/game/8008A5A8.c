@@ -2,6 +2,8 @@
 #include "../../include/game/types.h"
 
 extern s32 gPadVblankIrqFlag __asm__("D_8009C790");
+s32 gTakePadVblankIrq(void) __asm__("func_8008A5A8");
+
 
 /**
  *  @brief Returns and clears a signed global value.
@@ -18,8 +20,12 @@ extern s32 gPadVblankIrqFlag __asm__("D_8009C790");
  *  Clears D_8009C790.
  *  @par Callers
  *  Confirmed: func_80089DE0.
+ *
+ * @par Role and path
+ * Reads gPadVblankIrqFlag, resets it to 0, and returns the previous value.
+ * Called by func_80089DE0.
  */
-s32 func_8008A5A8(void)
+s32 gTakePadVblankIrq(void)
 {
     s32 previous;
 

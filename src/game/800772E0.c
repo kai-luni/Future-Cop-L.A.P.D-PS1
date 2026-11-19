@@ -1,7 +1,7 @@
 // Categories: Platform > Interrupts | Platform > BIOS
 extern unsigned int gExceptionVectorBackup[] __asm__("D_80076A0C");
-extern void func_8008C9C0(void);
-extern void func_8008C9E0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 
 /**
  * @brief Restores the eight words of the general exception vector from
@@ -42,9 +42,9 @@ void func_800772E0(void)
     unsigned int *dst = (unsigned int *)0x80;
     int i;
 
-    func_8008C9C0();
+    gDisableCpuInterrupts();
     for (i = 0; i < 8; i++) {
         *dst++ = *src++;
     }
-    func_8008C9E0();
+    gEnableCpuInterrupts();
 }

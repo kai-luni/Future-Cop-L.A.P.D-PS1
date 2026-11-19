@@ -20,6 +20,8 @@ struct PadPort {
     u8 pad_63[0x86];
     u8 actuator_count;
 };
+s32 gRespPadActAlign(struct PadPort *port) __asm__("func_8008B508");
+
 
 /**
  *  @brief Validate requested actuator assignments and advance the port sequence.
@@ -40,8 +42,15 @@ struct PadPort {
  *  Updates matching actuator map bytes and sets sequence_step to 0xFE.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * For each actuator up to actuator_count, counts occurrences in the 6-byte
+ * requested_actuator_map and compares against
+ * capabilities[actuator].payload_bytes (minimum 1), writing actuator or 0xFF
+ * into port->actuator_map. Sets port->sequence_step to 0xFE and returns 0.
+ * Installed as response_handler by func_8008B484.
  */
-s32 func_8008B508(struct PadPort *port)
+s32 gRespPadActAlign(struct PadPort *port)
 {
     s32 actuator;
     s32 unused;

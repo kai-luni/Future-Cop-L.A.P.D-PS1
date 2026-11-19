@@ -16,6 +16,11 @@
  *  Sets $t2 and $t1; further effects depend on the BIOS service.
  *  @par Callers
  *  Confirmed: func_8008BDB0, func_8008C138.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x28 to
+ * invoke PS1 BIOS A0:28 (bzero), zeroing memory at $a0 for $a1 bytes. Called
+ * by func_8008BDB0 and func_8008C138.
  */
 __asm__(
     ".set noreorder\n"

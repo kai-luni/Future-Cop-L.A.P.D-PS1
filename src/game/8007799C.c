@@ -12,7 +12,7 @@ extern struct Name7 D_8009F47C;
 extern u32 gTitleScreenDeadline __asm__("D_8009F8E8");
 extern u8 gSetupDoneFlag __asm__("D_8009F3E4");
 
-extern u8 *func_80089914(s32 id);
+extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern s32 func_8008CCC0(u8 *s);
 extern void func_8008CCB0(void *dst, u8 *src);
 
@@ -48,14 +48,14 @@ void func_8007799C(void)
     gTitleScreenDeadline = base + 0x5DC;
     ok = 0;
     if (flag == 0) {
-        p = func_80089914(0xC8);
+        p = gLookupTextString(0xC8);
         if (p != 0 && func_8008CCC0(p) < 9) {
             func_8008CCB0(&gPlayerNameTable, p);
         } else {
             gPlayerNameTable = D_8009F474;
             ok = 1;
         }
-        p = func_80089914(0xD2);
+        p = gLookupTextString(0xD2);
         if (p != 0 && func_8008CCC0(p) < 9) {
             func_8008CCB0(&D_800A6FE9, p);
         } else {

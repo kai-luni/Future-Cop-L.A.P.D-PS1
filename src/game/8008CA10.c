@@ -21,6 +21,12 @@
  *
  * @par Callers
  * Confirmed: the CD/interrupt block around func_80091270.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xC0 and $t1 = 0x03 to
+ * invoke PS1 BIOS C0:03 (SysDeqIntRP), dequeuing an interrupt handler node
+ * from a BIOS priority list. Called by func_8008A5BC and the CD/interrupt
+ * block around func_80091270.
  */
 __asm__(
     ".set noreorder\n"

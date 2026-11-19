@@ -19,8 +19,8 @@ typedef struct State {
 extern volatile State *gMovieAudioState __asm__("D_8009F4D8");
 extern void *gFillMemory(void *, int, unsigned int) __asm__("func_8001E4C0");
 extern void gMovieAudioSetVoiceAttrs(void *, int, int) __asm__("func_80086C74");
-extern void func_8008C9C0(void);
-extern void func_8008C9E0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern int gSpuInstallIrqCallback(void *) __asm__("func_80098BF8");
 extern int gSpuSetTransferCallback(void *) __asm__("func_80098FB8");
 extern int func_80091510(void *);
@@ -84,13 +84,13 @@ int gInitMovieAudio(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b
     gMovieAudioState->e = e;
     gMovieAudioSetVoiceAttrs(gMovieAudioState->c, gMovieAudioState->a, e);
     gMovieAudioSetVoiceAttrs(gMovieAudioState->d, gMovieAudioState->b, e);
-    func_8008C9C0();
+    gDisableCpuInterrupts();
     gMovieAudioState->irq = gSpuInstallIrqCallback(0);
     gMovieAudioState->other = gSpuSetTransferCallback(D_80086950);
     gMovieAudioState->enabled = enabled;
     if (enabled) gMovieAudioState->callback = func_80091510(D_80086D74);
     else { __asm__ volatile ("" : "=r"(zero)); gMovieAudioState->callback = zero; }
-    func_8008C9E0();
+    gEnableCpuInterrupts();
     return 1;
     }
     return 0;

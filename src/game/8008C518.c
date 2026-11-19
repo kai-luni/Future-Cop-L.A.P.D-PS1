@@ -28,9 +28,11 @@ struct Port {
     u8 current_id;
 };
 
-extern void (*D_8009C72C)(struct Port *port);
-extern s32 func_8008C858(struct Port *port);
-extern s32 func_8008AF10(struct Port *port);
+extern void (*gPadResetPortHook)(struct Port *port) __asm__("D_8009C72C");
+extern s32 gCheckPadReady(struct Port *port) __asm__("func_8008C858");
+extern s32 gRespPadInfoProbe(struct Port *port) __asm__("func_8008AF10");
+void gHandlePadResponse(struct Port *port) __asm__("func_8008C518");
+
 
 /**
  *  @brief Processes a controller response and advances the port sequence.
@@ -51,8 +53,16 @@ extern s32 func_8008AF10(struct Port *port);
  *  Changes port ID, response buffer, flags, communication state and sequence.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Installed at 0x8009C748 by func_8008C410 to process a controller response
+ * packet. Updates port->current_id from port->response[0] >> 4 (preserving
+ * saved_id if 0xF, otherwise copying response bytes into port->field30),
+ * invokes D_8009C72C(port) on failed status, ID change with
+ * func_8008C858(port) == 0, or non-0xF3 response during active steps, and
+ * advances port->sequence_step via port->field18 or func_8008AF10.
  */
-void func_8008C518(struct Port *port)
+void gHandlePadResponse(struct Port *port)
 {
     u32 saved_id;
     u8 new_id;
@@ -76,17 +86,17 @@ void func_8008C518(struct Port *port)
     if ((port->response[1] == 0 &&
          (port->sequence_step != 1 || port->field14 != 0) &&
          port->field50 == 0) ||
-        (func_8008C858(port) == 0 &&
+        (gCheckPadReady(port) == 0 &&
          port->field37 == 0 &&
          port->field4A == 0 &&
          port->current_id != saved_id)) {
-        D_8009C72C(port);
+        gPadResetPortHook(port);
     }
 
     port->field4A = 0;
     if ((u8)(port->sequence_step - 2) < 0xFC &&
         port->response[0] != 0xF3) {
-        D_8009C72C(port);
+        gPadResetPortHook(port);
     }
 
     step = port->sequence_step;
@@ -120,7 +130,7 @@ void func_8008C518(struct Port *port)
         if (port->field18 != 0) {
             delta = port->field18(port);
         } else {
-            delta = func_8008AF10(port);
+            delta = gRespPadInfoProbe(port);
         }
         port->sequence_step += delta;
         return;

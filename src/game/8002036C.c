@@ -17,10 +17,10 @@ typedef struct Unk8009AB08 {
 
 extern Unk8009AB08 *gOperationState __asm__("D_8009AB08");
 
-extern void func_8008C9C0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void func_8008C990(s32 arg0);
 extern void func_8008C970(s32 arg0);
-extern void func_8008C9E0(void);
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 void gReleaseMcEvents(void) __asm__("func_8002036C");
 
 
@@ -58,7 +58,7 @@ void gReleaseMcEvents(void) __asm__("func_8002036C");
 void gReleaseMcEvents(void)
 {
     if (--gOperationState->unk8C8 == 0) {
-        func_8008C9C0();
+        gDisableCpuInterrupts();
         func_8008C990(gOperationState->unk8D4);
         func_8008C990(gOperationState->unk8D8);
         func_8008C990(gOperationState->unk8DC);
@@ -75,6 +75,6 @@ void gReleaseMcEvents(void)
         func_8008C970(gOperationState->unk8E8);
         func_8008C970(gOperationState->unk8EC);
         func_8008C970(gOperationState->unk8F0);
-        func_8008C9E0();
+        gEnableCpuInterrupts();
     }
 }

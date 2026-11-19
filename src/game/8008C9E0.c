@@ -1,5 +1,7 @@
 // Categories: Platform > Interrupts | Platform > CPU
 #include "game/types.h"
+void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
+
 
 /**
  * @brief Leaves a critical section: enables interrupts.
@@ -13,8 +15,13 @@
  *
  * @par Callers
  * func_800861E4, right after the callback set-up.
+ *
+ * @par Role and path
+ * Unconditionally enables CPU interrupts by reading COP0 status register $12,
+ * ORing 0x401, and writing the result back to $12. Called by func_800861E4
+ * after callback setup.
  */
-void func_8008C9E0(void)
+void gEnableCpuInterrupts(void)
 {
     __asm__ volatile (
         "mfc0 $4, $12\n\t"

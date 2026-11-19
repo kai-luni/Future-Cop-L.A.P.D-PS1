@@ -20,6 +20,8 @@ struct State {
     u8 pade8;
     u8 e9, ea;
 };
+void gResetPadPortState(struct State *s) __asm__("func_8008BF10");
+
 
 /**
  *  @brief Resets selected state fields when the reset flag is set.
@@ -37,8 +39,15 @@ struct State {
  *  Modifies the supplied state, including two volatile writes to e6.
  *  @par Callers
  *  Unknown: No direct callers are listed.
+ *
+ * @par Role and path
+ * Checks s->flag49 and, when nonzero, clears flag49, flag46, counters a, b,
+ * c, x, y, bytes e3, e4, e9, ea, and volatile u16 e6 (written twice), then
+ * fills the six entries bytes with 0xFF. Bound to D_8009C72C by func_8008BDB0
+ * and called through that hook by func_8008A5BC, func_8008B6BC, and
+ * func_8008C518.
  */
-void func_8008BF10(struct State *s)
+void gResetPadPortState(struct State *s)
 {
     int i;
     int fill;

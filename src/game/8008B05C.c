@@ -9,6 +9,8 @@ struct BufferShape {
     u8 pad_EA[2];
     u32 data;
 };
+s32 gCalcPadTableSize(struct BufferShape *shape) __asm__("func_8008B05C");
+
 
 /**
  * @brief Computes the required aligned byte size for a controller port handshake table block.
@@ -30,8 +32,14 @@ struct BufferShape {
  * None observed.
  * @par Callers
  * Confirmed: func_8008AF10 (0x8008B004 in asm/us/main.s, checked against >= 0x81 before calling func_8008B094) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Computes (((width + 1) >> 1) << 2) + (((height * 5 + 3) & 0xFFC) + 4) +
+ * data from BufferShape fields at +0xE3, +0xE9, and +0xEC. Called by
+ * func_8008AF10 to verify the table block fits below 0x81 bytes before
+ * calling func_8008B094.
  */
-s32 func_8008B05C(struct BufferShape *shape)
+s32 gCalcPadTableSize(struct BufferShape *shape)
 {
     s32 width;
     s32 height;

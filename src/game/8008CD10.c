@@ -14,6 +14,11 @@
  *
  * @par Why handwritten
  * No C form reproduces the `jr $t2` dispatch, so the words are transcribed 1:1.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x2A to
+ * invoke PS1 BIOS A0:2A (memcpy), copying $a2 bytes from $a1 to $a0 and
+ * returning $a0. Called by func_8005A414.
  */
 __asm__(
     ".set noreorder\n"

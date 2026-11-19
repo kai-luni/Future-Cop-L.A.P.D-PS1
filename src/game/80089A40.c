@@ -4,7 +4,7 @@
 extern u32 gMovieVlcTableA __asm__("D_8009F51C");
 extern u32 gMovieVlcTableB __asm__("D_8009F520");
 extern u8 gDefaultSymbolTable[] __asm__("D_8009C560");
-extern void func_80089A88(u32, u32, void *);
+extern void gBuildMovieVlcTables(u32, u32, void *) __asm__("func_80089A88");
 
 /**
  * @brief Builds the VLC decoding tables from the saved table blocks,
@@ -27,8 +27,8 @@ void gMovieBuildVlcTables(void *arg0) __asm__("func_80089A40");
 void gMovieBuildVlcTables(void *arg0)
 {
     if (arg0 != 0) {
-        func_80089A88(gMovieVlcTableA, gMovieVlcTableB, arg0);
+        gBuildMovieVlcTables(gMovieVlcTableA, gMovieVlcTableB, arg0);
     } else {
-        func_80089A88(gMovieVlcTableA, gMovieVlcTableB, gDefaultSymbolTable);
+        gBuildMovieVlcTables(gMovieVlcTableA, gMovieVlcTableB, gDefaultSymbolTable);
     }
 }

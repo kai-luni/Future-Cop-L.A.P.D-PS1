@@ -1,3 +1,5 @@
+void gSetPadCommandState(unsigned char *state, int a, int b, int c) __asm__("func_8008AE7C");
+
 // Categories: Game Engine > State
 /**
  *  @brief Writes three values into fields of a state buffer.
@@ -18,8 +20,12 @@
  *  Overwrites the three fields in the supplied buffer.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Writes (u8)a to state[0x36], b to *(int *)(state + 0x2C), and (u8)c to
+ * state[0x35]. Leaf function with no globals or direct callers.
  */
-void func_8008AE7C(unsigned char *state, int a, int b, int c)
+void gSetPadCommandState(unsigned char *state, int a, int b, int c)
 {
     state[0x36] = a;
     *(int *)(state + 0x2c) = b;

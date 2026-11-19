@@ -16,8 +16,10 @@ struct PadPort {
 };
 
 extern  s32 (*gReadyCheckHook)(struct PadPort *port) __asm__("D_8009C744");
-extern void func_8008B668(struct PadPort *port);
-extern s32 func_8008B6BC(struct PadPort *port);
+extern void gCmdPadModeSelect(struct PadPort *port) __asm__("func_8008B668");
+extern s32 gRespPadModeSelect(struct PadPort *port) __asm__("func_8008B6BC");
+s32 gStartPadModeSelect(struct PadPort *port, s32 mode, s32 lock) __asm__("func_8008B5D0");
+
 
 /**
  *  @brief Starts a controller mode-selection sequence when the port is available.
@@ -38,8 +40,15 @@ extern s32 func_8008B6BC(struct PadPort *port);
  *  On success, updates the port's handlers, request fields, and mode comparison flag.
  *  @par Callers
  *  Confirmed: func_8008A1F8.
+ *
+ * @par Role and path
+ * Calls gReadyCheckHook(port) and returns 0 if nonzero. Otherwise sets
+ * sequence_step to 1, installs func_8008B668 and func_8008B6BC as command and
+ * response handlers, stores mode and lock, sets mode_already_selected if
+ * (mode & 0xFF) equals current_mode_index, and returns 1. Called by
+ * func_8008A1F8.
  */
-s32 func_8008B5D0(struct PadPort *port, s32 mode, s32 lock)
+s32 gStartPadModeSelect(struct PadPort *port, s32 mode, s32 lock)
 {
     register s32 compare_mode __asm__("$19");
     register s32 flag __asm__("$3");
@@ -58,8 +67,8 @@ s32 func_8008B5D0(struct PadPort *port, s32 mode, s32 lock)
     __asm__("" : "=r"(current_mode) : "0"(current_mode));
     flag = 1;
     port->sequence_step = flag;
-    port->command_handler = (void (*)(void *))func_8008B668;
-    port->response_handler = func_8008B6BC;
+    port->command_handler = (void (*)(void *))gCmdPadModeSelect;
+    port->response_handler = gRespPadModeSelect;
     __asm__("" : "=r"(compare_mode) : "0"(compare_mode) : "memory");
     flag = compare_mode & 0xFF;
     __asm__("" : "=r"(flag) : "0"(flag));

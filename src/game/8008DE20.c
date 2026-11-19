@@ -4,8 +4,8 @@
 extern u32 D_8008DE90[];
 extern u32 D_8008DE9C[];
 extern s32 gRaParkPatch __asm__("D_800A3E40");
-extern void func_8008C9A0(void);
-extern void func_8008C9B0(void);
+extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void func_8008DBA0(void);
 
 /**

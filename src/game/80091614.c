@@ -24,7 +24,7 @@ extern void func_80091B80(void *);
 extern void *func_80091BA0(void);
 extern void *func_80091CC0(void);
 extern void func_80091B48(void *);
-extern void func_8008C9B0(void);
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 
 /**
  *  @brief Initializes a global subsystem and returns its state address.
@@ -70,6 +70,6 @@ void *func_80091614(void)
     gIrqCallbackTable->field4 = func_80091CC0();
     func_80091B48(gIrqCallbackTable);
     p -= 0x3c;
-    func_8008C9B0();
+    gExitCriticalSection();
     return p;
 }

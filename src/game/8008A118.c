@@ -15,7 +15,9 @@ struct Data {
     u8 count;
 };
 
-extern struct Data *(*D_8009C73C)(int);
+extern struct Data *(*gPadLookupPortFn)(int) __asm__("D_8009C73C");
+int gGetPadCombInfo(int arg0, int index, int kind) __asm__("func_8008A118");
+
 
 /**
  *  @brief Queries a count or byte from a callback-provided data table.
@@ -36,10 +38,16 @@ extern struct Data *(*D_8009C73C)(int);
  *  No direct writes; the callback may have side effects.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Resolves the port Data struct via D_8009C73C(arg0) and returns data->count
+ * when index is negative. For a valid index, returns entry->a when kind is
+ * negative or entry->ptr[kind] when kind is less than entry->a, otherwise
+ * returning 0. No direct callers are present in the codebase.
  */
-int func_8008A118(int arg0, int index, int kind)
+int gGetPadCombInfo(int arg0, int index, int kind)
 {
-    struct Data *data = D_8009C73C(arg0);
+    struct Data *data = gPadLookupPortFn(arg0);
     struct Entry *entry;
     if (index < 0) return data->count;
     if (index < data->count) {

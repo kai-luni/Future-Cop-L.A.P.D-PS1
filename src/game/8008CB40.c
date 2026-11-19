@@ -9,9 +9,11 @@ typedef struct Snapshot {
     unsigned int size;
 } Snapshot;
 extern Header *gSessionBlockBase __asm__("D_8009C7D0");
-extern Snapshot D_800A6568;
-extern Snapshot D_800A8F80;
-extern Header *D_800A8E78;
+extern Snapshot gFreedBlockSnap __asm__("D_800A6568");
+extern Snapshot gPrevBlockSnap __asm__("D_800A8F80");
+extern Header *gSavedFreeCursor __asm__("D_800A8E78");
+void gFreeHeapBlock(Header *ptr) __asm__("func_8008CB40");
+
 
 /**
  *  @brief Returns a block to the circular free list and coalesces adjacent blocks.
@@ -31,8 +33,15 @@ extern Header *D_800A8E78;
  *  Updates snapshots, free-list headers, and D_8009C7D0 to the predecessor.
  *  @par Callers
  *  Confirmed: func_8001E2C0.
+ *
+ * @par Role and path
+ * Inserts the block header preceding ptr into the circular free list at
+ * gSessionBlockBase (D_8009C7D0) in address order, coalescing with adjacent
+ * nonempty successor and predecessor blocks. Records pre-merge snapshots in
+ * D_800A6568 and D_800A8F80, saves the prior cursor in D_800A8E78, and
+ * updates gSessionBlockBase via 0x800A0000 - 0x3830. Called by func_8001E2C0.
  */
-void func_8008CB40(Header *ptr)
+void gFreeHeapBlock(Header *ptr)
 {
     Header *p;
     Header *bp;
@@ -47,20 +56,20 @@ void func_8008CB40(Header *ptr)
             break;
     }
     __asm__ volatile("" : : : "memory");
-    s = &D_800A6568;
+    s = &gFreedBlockSnap;
     __asm__ volatile("" : "+r"(s));
     s->self = bp;
     s->size = bp->size;
     __asm__ volatile("" : : : "memory");
     next = bp->next;
     __asm__ volatile("" : "+r"(next));
-    t = &D_800A8F80;
+    t = &gPrevBlockSnap;
     __asm__ volatile("" : "+r"(t));
     t->self = p;
     s->next = next;
     t->size = p->size;
     t->next = p->next;
-    D_800A8E78 = gSessionBlockBase;
+    gSavedFreeCursor = gSessionBlockBase;
     if (bp + bp->size == p->next && p->next->size != 0) {
         bp->size += p->next->size;
         bp->next = p->next->next;

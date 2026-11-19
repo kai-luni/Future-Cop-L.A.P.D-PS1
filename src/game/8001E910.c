@@ -1,7 +1,7 @@
 // Categories: Platform > Device Shutdown | Platform > Interrupts
 #include "game/types.h"
 
-extern void func_80089E20(void);
+extern void gStopPadDriver(void) __asm__("func_80089E20");
 void gShutdownPadDriver(void) __asm__("func_8001E910");
 
 
@@ -34,5 +34,5 @@ void gShutdownPadDriver(void) __asm__("func_8001E910");
  */
 void gShutdownPadDriver(void)
 {
-    func_80089E20();
+    gStopPadDriver();
 }

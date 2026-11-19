@@ -8,15 +8,17 @@ typedef void (*Handler)(s32 port);
 extern s32 gPadPresentFlag __asm__("D_8009C760");
 extern s32 *gInterruptStatusPtr __asm__("D_8009C788");
 extern s32 gPadBasePort __asm__("D_8009C75C");
-extern Handler D_8009C72C;
-extern u8 D_800A3B60[];
-extern s32 D_800A3B70[];
+extern Handler gPadResetPortHook __asm__("D_8009C72C");
+extern u8 gPadIrqNode[] __asm__("D_800A3B60");
+extern s32 gPadPort0IdleCount[] __asm__("D_800A3B70");
 
-extern void func_8008C9A0(void);
-extern void func_8008C9B0(void);
+extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void func_8008CA00(s32 arg0, u8 *arg1);
 extern void func_8008CA10(s32 arg0, u8 *arg1);
 extern void func_8008CA20(s32 arg0, s32 arg1);
+void gInitPadDriverIrq(void) __asm__("func_8008A5BC");
+
 
 /**
  * @brief Installs the pad interrupt handler in BIOS chain 2, enables VSync IRQ0, and resets pad ports.
@@ -41,8 +43,16 @@ extern void func_8008CA20(s32 arg0, s32 arg1);
  *
  * @par Callers
  * Confirmed: func_80089E00 (0x80089E08, pad subsystem start wrapper).
+ *
+ * @par Role and path
+ * Enters a critical section via func_8008C9A0, dequeues and re-enqueues
+ * D_800A3B60 on BIOS chain 2 via func_8008CA10 and func_8008CA00,
+ * acknowledges and unmasks VSync IRQ0 in gInterruptStatusPtr, configures root
+ * counter 3 via func_8008CA20, and exits the critical section via
+ * func_8008C9B0. It then resets both pad ports via D_8009C72C, clears
+ * D_800A3B70[0..1], and sets gPadPresentFlag to 1. Called by func_80089E00.
  */
-void func_8008A5BC(void)
+void gInitPadDriverIrq(void)
 {
     u8 *buf;
     register s32 *state __asm__("$3");
@@ -52,9 +62,9 @@ void func_8008A5BC(void)
 
     __asm__ volatile("lui %0, %%hi(D_8009C760)" : "=r"(base));
     base[-0x38A0 / 4] = 0;
-    func_8008C9A0();
+    gEnterCriticalSection();
     __asm__ volatile("" ::: "$16");
-    buf = D_800A3B60;
+    buf = gPadIrqNode;
     func_8008CA10(2, buf);
     func_8008CA00(2, buf);
 
@@ -66,12 +76,12 @@ void func_8008A5BC(void)
     state[1] |= 1;
     func_8008CA20(arg, 0);
 
-    func_8008C9B0();
+    gExitCriticalSection();
 
-    D_8009C72C(gPadBasePort);
-    D_8009C72C(gPadBasePort + 0xF0);
+    gPadResetPortHook(gPadBasePort);
+    gPadResetPortHook(gPadBasePort + 0xF0);
 
-    end = D_800A3B70;
+    end = gPadPort0IdleCount;
     __asm__ volatile("" : "+r"(end));
     end[1] = 0;
     end[0] = 0;

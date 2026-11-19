@@ -16,6 +16,11 @@
  *  Sets $t2 and $t1; further effects depend on the BIOS service.
  *  @par Callers
  *  Confirmed: func_8008CD3C.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x2E to
+ * invoke PS1 BIOS A0:2E (memchr), scanning up to $a2 bytes at $a0 for byte
+ * $a1. Called by func_8008CD3C.
  */
 __asm__(
     ".set noreorder\n"

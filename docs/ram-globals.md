@@ -72,9 +72,9 @@ Datenvariablen dazu; `gMovieDisplayMode`/`gMovieAbortFlag`/`gMovieStreamContext`
 | `D_8009F520` | `gMovieVlcTableB` | `u32` | Zweites Tabellenblatt derselben Dekodierung. **Bestätigt.** | `gMovieBuildVlcTables` |
 
 Ohne Namen bleiben `D_8009F960` (0x400) und `D_8009F964` (0x800): beide sind Bildgeometrie, aber aus
-dem Code ist keine Achsenzuordnung belegbar. `D_8009F980` übernimmt in `func_800896D4` das
-Ebenen-Moduswort und wird zugleich als Kontextgröße und als Ring-Divisor benutzt — eine Rolle, die
-sich nicht auf einen Begriff bringen lässt.
+dem Code ist keine Achsenzuordnung belegbar. `D_8009F980` heißt inzwischen `gMovieRingSectors`:
+`gCalcMovieBufferSize` schreibt dort die Ring-Kapazität in 2048-Byte-Sektoren, der Ring-Schreiber
+liest sie als Divisor.
 
 ## Spielzustand und Warteschlangen
 
@@ -285,7 +285,7 @@ Einundsechzig weitere Globals in **einem** Commit. Damit sind alle Symbole abgea
 
 **Nur Inline-Asm, kein C-Name setzbar:** `D_8009EA00`, `D_8009F7C8` (in `8001C808.c` von Hand gesetzt, in weiteren Units asm-only), `D_A000DFAC`.
 
-**Bedeutung nicht bestimmbar:** `D_80010000` (erstes Wort des Programmbilds), `D_80010B0C`, `D_8004C324`, `D_8008DCC0`, `D_8008DCD4`, `D_800908D4`, `D_8009EF04`, `D_8009F628` (nur „direkter Schreibzugriff"), `D_8009F670` (Konfiguration oder Fahrzeugindex), `D_8009FA99`, `D_800A0974` (nur „direkter Schreibzugriff"), `D_800A09DC` (Wert unbelegt), `D_800A0C10` (Teil einer Vierer-Gruppe), `D_800A2730`, `D_800A3938`, `D_800A3B60`, `D_800AB388`.
+**Bedeutung nicht bestimmbar:** `D_80010000` (erstes Wort des Programmbilds), `D_80010B0C`, `D_8004C324`, `D_8008DCC0`, `D_8008DCD4`, `D_800908D4`, `D_8009EF04`, `D_8009F628` (nur „direkter Schreibzugriff"), `D_8009F670` (Konfiguration oder Fahrzeugindex), `D_8009FA99`, `D_800A0974` (nur „direkter Schreibzugriff"), `D_800A09DC` (Wert unbelegt), `D_800A0C10` (Teil einer Vierer-Gruppe), `D_800A2730`, `D_800A3938`, `D_800AB388`.
 
 ## Frontend-Pfad: Hauptmenü bis Precinct Assault
 
@@ -1006,6 +1006,51 @@ Zwölf Globals dieses Pfads in **einem** Commit. Die Namen folgen dem, was die U
 `D_8009F610` stand schon vorher als `gCdCommandParam` in der Datei; zwei Units deklarierten ihn noch mit Retail-Namen und sind jetzt angeglichen.
 
 **Nicht umbenannt:** `D_8009F611` und `D_8009F615` sind einzelne Bytes **innerhalb** von `gCdCommandParam` und `gCdTargetLoc` (`D_8009F615 - 1` zeigt auf den Zielort). Ein eigener Name würde ein Byte aus dem Puffer herausreißen, deshalb bleiben sie stehen. `func_80010000`/`D_80010000` (Laderzustand an der Speichergrenze) bleibt ebenfalls: das Symbol wird in zwei Units unterschiedlich benannt und steht zusätzlich in Inline-Asm-Blöcken.
+
+## Controller-Pfad, Hook-Tabelle und Heap-Snapshots: die fünfte Runde
+
+Die Controller-/DualShock-Strecke war der letzte große Block ohne Namen. Ihre Hooks stehen als Tabelle
+im Datenbereich: dieselbe Tabelle, die den Port-Zustand kennt, trägt die Zeiger auf Start-, Abbruch-
+und Abschluss-Routinen. Neu benannt sind daneben ein Formatierer-Spezialfall und drei Sicherungen des
+Heap-Freigebers.
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_80012250` | `gHexLowerTable` | `char[16]` | Zifferntabelle für `%x`: Kleinbuchstaben 0–f, indexiert vom Divisionsrest. **Wahrscheinlich.** | `8008CD3C.c:258` (Lesen) |
+| `D_8009C360` | `gVlcSubTableEntries` | `s32[]` | Zweite VLC-Tabelle (9-Bit-Codes) der Film-Dekodierung, von `gBuildMovieVlcTables` gefüllt. **Wahrscheinlich.** | `80089A88.c:102` (Lesen) |
+| `D_8009C728` | `gPadStepErrorHook` | `void (*)(void)` | Wird gerufen, wenn ein Übertragungsschritt des Controllers fehlschlägt. **Bestätigt.** | `8008BDB0.c:63` (Schreiben), `8008A43C.c:62` (Lesen) |
+| `D_8009C72C` | `gPadResetPortHook` | `void (*)(void)` | Setzt einen Port-Block zurück; beim Aufsetzen des Treibers eingehängt. **Bestätigt.** | `8008BDB0.c:64` (Schreiben), `8008A290.c:44` (Lesen) |
+| `D_8009C734` | `gPadConfigHook` | `void (*)(void)` | Konfiguriert die Freigabebits der Ports; zeigt auf `gGetPadPortCode`. **Bestätigt.** | `8008BDB0.c:66` (Schreiben), `8008BA34.c:72` (Aufruf) |
+| `D_8009C738` | `gPadAddrToCodeHook` | `void (*)(void)` | Übersetzt eine Port-Adresse in den Protokoll-Code; zeigt auf `gLookupPadPort`. **Wahrscheinlich.** | `8008BDB0.c:67` (Schreiben) |
+| `D_8009C73C` | `gPadLookupPortFn` | `struct PadPort *(*)(s32)` | Löst einen Slot in seinen Port-Block auf; von den Wrapper-Funktionen benutzt. **Bestätigt.** | `8008BDB0.c:68` (Schreiben), `80089E8C.c:36` (Lesen) |
+| `D_8009C748` | `gPadDrainPortHook` | `void (*)(void)` | Läuft, solange noch Ports abzuarbeiten sind. **Bestätigt.** | `8008A6CC.c:72`, `8008BA34.c:105` (Lesen) |
+| `D_8009C74C` | `gPadCompleteHook` | `void (*)(void)` | Abschluss-Callback, sobald der Zähler offener Ports null erreicht. **Bestätigt.** | `8008BDB0.c:75` (Schreiben), `8008A6CC.c:87` (Lesen) |
+| `D_8009C750` | `gPadIrqCallback` | `void (*)(void)` | Optionaler Nutzer-Callback im VSync-Handler des Controllers. **Wahrscheinlich.** | `8008A3D4.c:35` (Lesen) |
+| `D_8009C754` | `gPadPollPreHookB` | `void (*)(void)` | Zweiter optionaler Vorlauf-Callback vor dem Poll. **Wahrscheinlich.** | `8008B810.c:47` (Lesen) |
+| `D_8009C758` | `gPadPollPreHookA` | `void (*)(void)` | Erster optionaler Vorlauf-Callback vor dem Poll. **Wahrscheinlich.** | `8008B810.c:46` (Lesen) |
+| `D_8009C764` | `gPadPollPreHookFlag` | `s32` | Schaltet die beiden Vorlauf-Callbacks frei. **Wahrscheinlich.** | `8008B810.c:45` (Lesen) |
+| `D_8009C774` | `gPadExtEnableFlag` | `s32` | Freigabe für die erweiterten Port-Zustandsabfragen. **Bestätigt.** | `8008BDB0.c:60` (Schreiben), `80089E40.c:29` (Lesen) |
+| `D_8009C778` | `gPadStartSlot` | `s32` | Erster aktiver Slot: 0, wenn Port 0 freigegeben ist, sonst 1. **Bestätigt.** | `8008A290.c:43` (Schreiben), `8008A43C.c:58` (Lesen) |
+| `D_8009C77C` | `gPadEndSlot` | `s32` | Letzter aktiver Slot: 1, wenn Port 1 freigegeben ist, sonst 0. **Bestätigt.** | `8008A290.c:55` (Schreiben), `8008A43C.c:58` (Lesen) |
+| `D_8009C780` | `gPadPendingCounts` | `s32[]` | Zähler je Slot, wie viele Rückrufe noch abzuarbeiten sind. **Bestätigt.** | `8008A6CC.c:61` (Lesen), `8008BA34.c:109` (Schreiben) |
+| `D_8009C7E0` | `gDefaultFormatSpec` | `Spec` | Vorlage einer Formatangabe, die `gFormatStringBody` zu Beginn jedes Umwandlungszeichens kopiert. **Wahrscheinlich.** | `8008CD3C.c:79` (Lesen) |
+| `D_8009F980` | `gMovieRingSectors` | `s32` | Kapazität des Film-Rings in 2048-Byte-Sektoren. **Bestätigt.** | `800896D4.c:32` (Schreiben), `80089700.c:87` (Lesen) |
+| `D_800A3B60` | `gPadIrqNode` | `s32[]` | Knoten der BIOS-Interruptkette (Priorität 2), an dem der Controller-Poll hängt. **Bestätigt.** | `8008A5BC.c:57`, `8008A688.c:40` (Lesen) |
+| `D_800A3B70` | `gPadPort0IdleCount` | `s32` | Zählt Bilder ohne Aktivität auf Port 0. **Bestätigt.** | `8008A43C.c:47` (Schreiben), `8008A290.c:42` (Lesen) |
+| `D_800A3B74` | `gPadPort1IdleCount` | `s32` | Dasselbe für Port 1. **Bestätigt.** | `8008A43C.c:54` (Schreiben), `8008A290.c:54` (Lesen) |
+| `D_800A3B90` | `gPadWorkBufA` | `u8[]` | Erster Arbeitspuffer je Port, im Abstand 0x23 zugewiesen. **Wahrscheinlich.** | `8008BDB0.c:81` (Lesen) |
+| `D_800A3BD8` | `gPadWorkBufB` | `u8[]` | Zweiter Arbeitspuffer derselben Aufteilung. **Wahrscheinlich.** | `8008BDB0.c:80` (Lesen) |
+| `D_800A6568` | `gFreedBlockSnap` | `s32[]` | Sicherung des Kopfs des freigegebenen Blocks, bevor er mit dem Nachbarn verschmilzt. **Wahrscheinlich.** | `8008CB40.c:50` (Schreiben) |
+| `D_800A8E78` | `gSavedFreeCursor` | `s32[]` | Zeigerstand der Freiliste vor dem Umsetzen des Cursors. **Wahrscheinlich.** | `8008CB40.c:63` (Schreiben) |
+| `D_800A8F80` | `gPrevBlockSnap` | `s32[]` | Sicherung des Vorgänger-Kopfs während derselben Verschmelzung. **Wahrscheinlich.** | `8008CB40.c:57` (Schreiben) |
+
+Drei Symbole dieses Blocks trugen ihre Namen schon vorher und sind nur mitgewandert: `D_8009C744`
+(`gReadyCheckHook`), `D_800A3B64` (`gCallbackTable2`) und `D_8009C7AC` (`gPadHandlerTable`).
+
+**Nicht umbenannt:** die Timer-Register `0x1F801120`, `0x1F801124` und `0x1F801128` werden als rohe
+Zeigerliterale (`*(volatile u16 *)0x1F801120`) angesprochen, nicht über ein Symbol — dort gibt es
+nichts umzubenennen. Die BIOS-Sprungstellen `func_8008C950` bis `func_8008D650` bleiben ebenfalls
+Retail-benannt: handgeschriebene Trampoline, kein C-Code.
 
 ## Wie diese Datei weitergeführt wird
 

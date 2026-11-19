@@ -25,6 +25,8 @@ struct Port {
 };
 extern void func_8008CD00(u8 *, int);
 extern int gPadActuatorCostSum __asm__("D_8009C770");
+void gSelectPadActuators(struct Port *p) __asm__("func_8008C138");
+
 
 /**
  *  @brief Selects enabled controller entries subject to a shared cost limit.
@@ -43,8 +45,16 @@ extern int gPadActuatorCostSum __asm__("D_8009C770");
  *  Writes enabled flags and may increase the shared cost counter.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Clears the six-byte p->enabled array via func_8008CD00, then enables
+ * entries in p->enabled when p->fieldE6 and p->flags are nonzero by matching
+ * p->ids and p->flags against p->entries while keeping gPadActuatorCostSum
+ * below 61. When p->fieldE6 is zero, it applies fallback rules for port types
+ * 4, 5, and 7 (cost 10), type 3 (enables slot 0), or other types (enables all
+ * six slots).
  */
-void func_8008C138(struct Port *p)
+void gSelectPadActuators(struct Port *p)
 {
     int i, j, n;
     register int mask __asm__("$7");

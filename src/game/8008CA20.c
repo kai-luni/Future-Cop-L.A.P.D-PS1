@@ -12,6 +12,12 @@
  * Alters the current thread's scheduling class.
  * @par Callers
  * Confirmed: func_80091270's neighbourhood (frame/timer bridge).
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xC0 and $t1 = 0x0A to
+ * invoke PS1 BIOS C0:0A (ChangeClearRCnt), configuring root counter
+ * auto-clear behavior. Called by func_8008A5BC and the frame/timer bridge
+ * around func_80091270.
  */
 __asm__(
     ".set noreorder\n"

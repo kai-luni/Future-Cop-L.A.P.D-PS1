@@ -33,6 +33,8 @@ struct PadPort {
 };
 
 extern u8 *gCombinationPtr __asm__("D_800A3B80");
+s32 gRespPadTableHandshake(struct PadPort *input_port) __asm__("func_8008B210");
+
 
 /**
  *  @brief Stores a controller handshake reply in the current information table.
@@ -53,6 +55,13 @@ extern u8 *gCombinationPtr __asm__("D_800A3B80");
  *  and sets communication state 6 and step 0xFE after the last combination.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Parses handshake replies into mode_table (step 2), 5-byte
+ * PadCapabilityRecord entries (step 3), and multi-packet PadCombinationRecord
+ * payloads using gCombinationPtr (step 4). When all combination records
+ * complete, sets communication_state to 6 and sequence_step to 0xFE.
+ * Installed as response_handler by func_8008B094.
  */
 /*
  * Response handler of the pad handshake: copies one reply into the table of the
@@ -64,7 +73,7 @@ extern u8 *gCombinationPtr __asm__("D_800A3B80");
  * After the last combination record the port is marked complete (state 6,
  * step 0xFE). Returns 1 when the step is done, 0 when another reply is needed.
  */
-s32 func_8008B210(struct PadPort *input_port)
+s32 gRespPadTableHandshake(struct PadPort *input_port)
 {
     register struct PadPort *port = input_port;
 

@@ -22,6 +22,11 @@
  *
  * @par Callers
  * Confirmed: func_80020120 (0x8002028C..0x80020334), gSpuInitDmaEvent (0x80096E90).
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xB0 and $t1 = 0x0C to
+ * invoke PS1 BIOS B0:0C (EnableEvent), arming a kernel event descriptor.
+ * Called by func_80020120 and gSpuInitDmaEvent.
  */
 __asm__(
     ".set noreorder\n"

@@ -1,12 +1,14 @@
 // Categories: BIOS > System Calls | Platform > Interrupts
 #include "game/types.h"
 
-extern u8 D_800A3B60[];
+extern u8 gPadIrqNode[] __asm__("D_800A3B60");
 
-extern void func_8008C9A0(void);
-extern void func_8008C9B0(void);
+extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void func_8008CA10(s32 arg0, u8 *arg1);
 extern void func_8008CA20(s32 arg0, s32 arg1);
+void gStopPadDriverIrq(void) __asm__("func_8008A688");
+
 
 /**
  * @brief Disables BIOS IRQ3 clear control and dequeues interrupt-chain node D_800A3B60 in a critical section.
@@ -32,11 +34,16 @@ extern void func_8008CA20(s32 arg0, s32 arg1);
  *
  * @par Callers
  * Confirmed: func_80089E20 (0x80089E28 in asm/us/main.s, reached from func_8001E910 / func_8001E540) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Enters a critical section via func_8008C9A0, calls func_8008CA20(3, 1),
+ * dequeues D_800A3B60 from BIOS chain 2 via func_8008CA10, and exits the
+ * critical section via func_8008C9B0. Called by func_80089E20.
  */
-void func_8008A688(void)
+void gStopPadDriverIrq(void)
 {
-    func_8008C9A0();
+    gEnterCriticalSection();
     func_8008CA20(3, 1);
-    func_8008CA10(2, D_800A3B60);
-    func_8008C9B0();
+    func_8008CA10(2, gPadIrqNode);
+    gExitCriticalSection();
 }

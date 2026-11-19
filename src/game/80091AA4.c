@@ -17,7 +17,7 @@ extern Context gFrameClockAnchor __asm__("D_8009CC88");
 extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern u32 *gDmaControlPtr __asm__("D_8009DD1C");
 extern void func_80091B80(void *);
-extern void func_8008C9B0(void);
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 
 /**
  * @brief Starts one CD device-transfer context and arms the hardware.
@@ -56,7 +56,7 @@ Context *func_80091AA4(void)
     value = ctx->data;
     __asm__ volatile("nop" : "+r"(value));
     *dest = value;
-    func_8008C9B0();
+    gExitCriticalSection();
     result = ctx;
     goto done;
 busy:

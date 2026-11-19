@@ -21,7 +21,7 @@ extern u8 gNumberFormatString[] __asm__("D_8009F490");
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern s32 func_80048E28(s32 index);
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
-extern u8 *func_80089914(s32 id);
+extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern void func_8008CD30(u8 *dest, u8 *fmt, ...);
 extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                           s32 alignX, s32 alignY, s32 font);
@@ -107,7 +107,7 @@ void gStepOptionsSetting(s32 mode, s32 x, s32 y, s32 color, s32 idx)
         e2 = &gLoadoutTable[b];
         n = e2->unkA - e2->unk9 + 1;
         if (n >= 2) {
-            s = func_80089914(e2->unkC);
+            s = gLookupTextString(e2->unkC);
             if (s != 0) {
                 old = -1;
                 if (gPanelSyncValue != 2) {

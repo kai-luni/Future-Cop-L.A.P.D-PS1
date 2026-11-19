@@ -8,8 +8,8 @@ extern s32 gSpuTransferCallback __asm__("D_8009EEDC");
 extern SpuDmaCallback gInstalledHandler __asm__("D_8009EEE0");
 extern void *gSpuDmaCallback __asm__("D_8009EA2C");
 
-extern void func_8008C9A0(void);
-extern void func_8008C9B0(void);
+extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
+extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void gSpuSetDmaCallback(SpuDmaCallback callback) __asm__("func_800979F8");
 extern void func_8008C970(void *arg);
 extern void func_8008C990(void *arg);
@@ -56,6 +56,6 @@ void gSpuShutdownDmaEvent(void)
         );
         func_8008C970(gSpuDmaCallback);
         func_8008C990(gSpuDmaCallback);
-        func_8008C9B0();
+        gExitCriticalSection();
     }
 }

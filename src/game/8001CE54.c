@@ -43,8 +43,8 @@ extern void gCopyCdSectorChunk(void) __asm__("func_8001CC6C");
 extern void gByteOffsetToCdlLoc(u8 *dst, s32 arg1) __asm__("func_8001C494");
 extern s32 gCompareCdlLoc(u8 *a, u8 *b) __asm__("func_8001C3F8");
 extern void gCopyWord(void *dst, void *src) __asm__("func_8001C27C");
-extern void func_8008C9C0(void);
-extern void func_8008C9E0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern s32 func_8008E174(s32 mode, u8 *result);
 extern s32 func_8008E194(s32 ptr);
 extern s32 func_8008E1BC(s32 mode, void *src, void *dst);
@@ -157,7 +157,7 @@ s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         goto failure;
     }
     if (gCdCallbackActive == 0) {
-        func_8008C9C0();
+        gDisableCpuInterrupts();
     }
     LOAD_ADDRESS(a, D_8009F61C);
     LOAD_ADDRESS(b, D_8009F614);
@@ -166,7 +166,7 @@ s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         if (gCdCallbackActive != 0) {
             goto success;
         }
-        func_8008C9E0();
+        gEnableCpuInterrupts();
         goto success;
     }
     stateHigh = 0x80010000;

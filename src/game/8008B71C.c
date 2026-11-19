@@ -1,5 +1,7 @@
 // Categories: Input > DualShock | Platform > Controller
 #include "../../include/game/command_state.h"
+void gSetPadConfigModeCmd(struct CommandState *state, u8 value) __asm__("func_8008B71C");
+
 
 /**
  * @brief Queues DualShock escape/config-mode command 0x43 with a 1-byte argument on a CommandState.
@@ -21,8 +23,13 @@
  * Arms state to transmit 1-byte parameter command 0x43 on the next pad poll cycle.
  * @par Callers
  * Confirmed: func_8008C444 (0x8008C4C0 for step 1 with value 1; 0x8008C4D0 for step 0xFE or response[0]==0xF3 && field_E8==0 with value 0) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Sets state->current to 0x43, state->value to state->inline_data,
+ * state->inline_data[0] to value, and state->active to 1. Called by
+ * func_8008C444 to enter or exit DualShock configuration mode.
  */
-void func_8008B71C(struct CommandState *state, u8 value)
+void gSetPadConfigModeCmd(struct CommandState *state, u8 value)
 {
     state->current = 0x43;
     state->value = state->inline_data;

@@ -1,7 +1,9 @@
 // Categories: Game Engine > Dispatch
 #include "game/types.h"
 
-extern void func_8008A5A8(void);
+extern void gTakePadVblankIrq(void) __asm__("func_8008A5A8");
+void gTakePadVblankFlag(void) __asm__("func_80089DE0");
+
 
 /**
  *  @brief Calls func_8008A5A8 without arguments.
@@ -18,8 +20,12 @@ extern void func_8008A5A8(void);
  *  Any effects of func_8008A5A8 are not specified by this source.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Thin wrapper that calls func_8008A5A8 to read and clear gPadVblankIrqFlag
+ * (D_8009C790). No direct callers are present in the codebase.
  */
-void func_80089DE0(void)
+void gTakePadVblankFlag(void)
 {
-    func_8008A5A8();
+    gTakePadVblankIrq();
 }

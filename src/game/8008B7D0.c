@@ -3,7 +3,9 @@ typedef unsigned int u32;
 
 extern u32 gPadDataOffset __asm__("D_8009C740");
 extern u32 gPadUpdateByte __asm__("D_8009C7A8");
-extern int func_8008A9A8(u32 arg, int argvalue);
+extern int gExchangeSio0Byte(u32 arg, int argvalue) __asm__("func_8008A9A8");
+void gStartPadTapTransfer(u32 arg) __asm__("func_8008B7D0");
+
 
 /**
  *  @brief Dispatches an argument and records the returned value.
@@ -22,11 +24,17 @@ extern int func_8008A9A8(u32 arg, int argvalue);
  *  Updates D_8009C7A8; called functions may have additional effects.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Calls the function pointer in gPadDataOffset(arg), stores its return value
+ * in gPadUpdateByte, and calls func_8008A9A8(arg, -2) to perform a
+ * negative-value SIO0 handshake. No direct callers are present in the
+ * codebase.
  */
-void func_8008B7D0(u32 arg)
+void gStartPadTapTransfer(u32 arg)
 {
     u32 r;
     r = ((u32 (*)(u32))gPadDataOffset)(arg);
     gPadUpdateByte = r;
-    func_8008A9A8(arg, -2);
+    gExchangeSio0Byte(arg, -2);
 }

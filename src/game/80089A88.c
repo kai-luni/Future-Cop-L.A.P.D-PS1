@@ -4,8 +4,10 @@ typedef struct { u8 bits; u8 pad; u16 code; } Entry;
 extern u8 *gMovieVlcTableA __asm__("D_8009F51C");
 extern u8 *gMovieVlcTableB __asm__("D_8009F520");
 extern u16 gDefaultSymbolTable[] __asm__("D_8009C560");
-extern Entry D_8009C360[];
+extern Entry gVlcSubTableEntries[] __asm__("D_8009C360");
 extern Entry gSymbolBitLengthTable[] __asm__("D_8009C1E0");
+s32 gBuildMovieVlcTables(u8 *arg0, u8 *arg1, u16 *arg2) __asm__("func_80089A88");
+
 
 /**
  * @brief Builds the variable-length (Huffman) decoding tables.
@@ -35,8 +37,16 @@ extern Entry gSymbolBitLengthTable[] __asm__("D_8009C1E0");
  *
  * @par Callers
  * func_800861E4 and gOpenVideoLayer - both right before they decode a stream.
+ *
+ * @par Role and path
+ * Saves arg0 and arg1 into gMovieVlcTableA and gMovieVlcTableB, returning -1
+ * if either is null, then populates a 13-bit VLC lookup table (0x60 entries
+ * from gSymbolBitLengthTable) in arg0 and a 9-bit table (0x80 entries from
+ * D_8009C360) in arg1 using arg2 or gDefaultSymbolTable. Called by
+ * func_80087EA0, func_800861E4, func_80086134, and func_80089A40 before
+ * stream decoding.
  */
-s32 func_80089A88(u8 *arg0, u8 *arg1, u16 *arg2)
+s32 gBuildMovieVlcTables(u8 *arg0, u8 *arg1, u16 *arg2)
 {
     register s32 i __asm__("$11");
     register s32 j __asm__("$7");
@@ -99,7 +109,7 @@ s32 func_80089A88(u8 *arg0, u8 *arg1, u16 *arg2)
         i = 0;
         maxbits2 = 9;
         one2 = 1;
-        addr = (u8 *)D_8009C360;
+        addr = (u8 *)gVlcSubTableEntries;
         __asm__("" : "+r"(addr));
         codes2 = (u16 *)(addr + 2);
         ptr2 = addr;

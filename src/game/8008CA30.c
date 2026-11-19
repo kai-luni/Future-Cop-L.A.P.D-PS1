@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u32 *gSessionBlockBase __asm__("D_8009C7D0");
+void gInitHeapBlocks(u32 *arg0, u32 arg1) __asm__("func_8008CA30");
+
 
 /**
  * @brief Seeds the low-level block allocator with one free block covering the
@@ -29,8 +31,15 @@ extern u32 *gSessionBlockBase __asm__("D_8009C7D0");
  *
  * @par Callers
  * func_80076EB0 only.
+ *
+ * @par Role and path
+ * Seeds the circular linked-block allocator at gSessionBlockBase (D_8009C7D0)
+ * with a single free block spanning arg0 through arg0 + (arg1 & ~7). Ignores
+ * null arg0 or zero arg1, writes a zero-size terminator node at the end of
+ * the rounded area, and sets arg0[0] to the terminator and arg0[1] to ((arg1
+ * + 7) >> 3) - 1. Called by func_80076EB0.
  */
-void func_8008CA30(u32 *arg0, u32 arg1)
+void gInitHeapBlocks(u32 *arg0, u32 arg1)
 {
     u32 *ptr;
     register u32 count __asm__("$2");

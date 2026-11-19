@@ -21,6 +21,11 @@
  *
  * @par Callers
  * Confirmed: gInitMemoryCardBios (0x800200D0 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x70 to
+ * invoke PS1 BIOS A0:70 (_bu_init), initializing the memory card / backup
+ * unit subsystem. Called by gInitMemoryCardBios.
  */
 __asm__(
     ".set noreorder\n"

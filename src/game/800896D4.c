@@ -1,9 +1,11 @@
 // Categories: Utilities > Address Calculation
 #include "game/types.h"
 
-extern s32 D_8009F980;
+extern s32 gMovieRingSectors __asm__("D_8009F980");
 extern s32 gMovieRingBytes __asm__("D_8009F984");
 extern s32 gMovieDescriptorCount __asm__("D_8009F988");
+s32 gCalcMovieBufferSize(s32 a0, s32 a1, s32 a2) __asm__("func_800896D4");
+
 
 /**
  *  @brief Stores three inputs and computes a combined offset.
@@ -24,12 +26,18 @@ extern s32 gMovieDescriptorCount __asm__("D_8009F988");
  *  Updates the three input globals.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Stores a0, a1, and a2 into D_8009F980, gMovieRingBytes, and
+ * gMovieDescriptorCount, and returns 0x57C + (a0 << 11) + a1 + a2 * 56.
+ * Called by func_80087EA0 when sizing movie stream buffers, with no callees
+ * of its own.
  */
-s32 func_800896D4(s32 a0, s32 a1, s32 a2)
+s32 gCalcMovieBufferSize(s32 a0, s32 a1, s32 a2)
 {
     s32 t;
 
-    D_8009F980 = a0;
+    gMovieRingSectors = a0;
     a0 <<= 11;
     a0 += 0x57C;
     gMovieRingBytes = a1;

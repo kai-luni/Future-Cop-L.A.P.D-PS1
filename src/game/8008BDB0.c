@@ -12,16 +12,31 @@ struct Obj {
     u8 flags[6];
     u8 rest[0x8d];
 };
-extern int D_8009C774;
+extern int gPadExtEnableFlag __asm__("D_8009C774");
 extern int gPadPresentFlag __asm__("D_8009C760");
-extern  void (*D_8009C728)(), (*D_8009C72C)(), (*gPadTxByteHook)() __asm__("D_8009C730");
-extern void (*D_8009C734)(), (*D_8009C738)(), (*D_8009C73C)(), (*D_8009C74C)();
+extern void (*gPadStepErrorHook)() __asm__("D_8009C728");
+extern void (*gPadResetPortHook)() __asm__("D_8009C72C");
+extern void (*gPadTxByteHook)() __asm__("D_8009C730");
+extern void (*gPadConfigHook)() __asm__("D_8009C734");
+extern void (*gPadAddrToCodeHook)() __asm__("D_8009C738");
+extern void (*gPadLookupPortFn)() __asm__("D_8009C73C");
+extern void (*gPadCompleteHook)() __asm__("D_8009C74C");
 extern Obj *gPadBasePort __asm__("D_8009C75C");
 extern Obj gCompareAddress[] __asm__("D_800A3C20");
-extern u8 D_800A3B90[], D_800A3BD8[];
-extern void func_8008BF78(), func_8008BF10(), func_8008C07C(), func_8008C138();
-extern void func_8008C3B4(), func_8008C3EC(), func_8008C06C();
-extern void func_8008C410(), func_8008CD00(), func_8008A3A8();
+extern u8 gPadWorkBufA[] __asm__("D_800A3B90");
+extern u8 gPadWorkBufB[] __asm__("D_800A3BD8");
+extern void gAdvancePadSlot() __asm__("func_8008BF78");
+extern void gResetPadPortState() __asm__("func_8008BF10");
+extern void gReadPadTxByte() __asm__("func_8008C07C");
+extern void gSelectPadActuators() __asm__("func_8008C138");
+extern void gGetPadPortCode() __asm__("func_8008C3B4");
+extern void gLookupPadPort() __asm__("func_8008C3EC");
+extern void gConsumePadCmd() __asm__("func_8008C06C");
+extern void gInstallPadProtoHooks() __asm__("func_8008C410");
+extern void func_8008CD00();
+extern void gInitPadCallbackTable() __asm__("func_8008A3A8");
+void gInitPadPorts(u8 *a, u8 *b) __asm__("func_8008BDB0");
+
 
 /**
  *  @brief Initializes two port objects and installs their dispatch functions.
@@ -42,8 +57,17 @@ extern void func_8008C410(), func_8008CD00(), func_8008A3A8();
  *  Writes global state, object storage and the first two bytes of each supplied output buffer.
  *  @par Callers
  *  Confirmed: func_8001E87C.
+ *
+ * @par Role and path
+ * Resets gPadPresentFlag and D_8009C774, calls func_8008C410(), installs
+ * seven pad dispatch function pointers (D_8009C728..D_8009C73C and
+ * D_8009C74C), points gPadBasePort at gCompareAddress (D_800A3C20), and
+ * zeroes 0x1E0 bytes via func_8008CD00. Initializes both 0xF0-byte port
+ * structures with caller output buffers a and b, internal buffers D_800A3B90
+ * and D_800A3BD8 at stride 0x23, and six 0xFF flag bytes, then calls
+ * func_8008A3A8() and sets gPadPresentFlag to 1.
  */
-void func_8008BDB0(u8 *a, u8 *b)
+void gInitPadPorts(u8 *a, u8 *b)
 {
     register int i __asm__("$8");
     register int j __asm__("$3");
@@ -57,28 +81,28 @@ void func_8008BDB0(u8 *a, u8 *b)
     register u8 *x __asm__("$6");
     register u8 *y __asm__("$7");
     gPadPresentFlag = 0;
-    D_8009C774 = 0;
-    func_8008C410();
+    gPadExtEnableFlag = 0;
+    gInstallPadProtoHooks();
     p = gCompareAddress;
-    D_8009C728 = func_8008BF78;
-    D_8009C72C = func_8008BF10;
-    gPadTxByteHook = func_8008C07C;
-    D_8009C734 = func_8008C138;
-    D_8009C738 = func_8008C3B4;
-    D_8009C73C = func_8008C3EC;
+    gPadStepErrorHook = gAdvancePadSlot;
+    gPadResetPortHook = gResetPadPortState;
+    gPadTxByteHook = gReadPadTxByte;
+    gPadConfigHook = gSelectPadActuators;
+    gPadAddrToCodeHook = gGetPadPortCode;
+    gPadLookupPortFn = gLookupPadPort;
     __asm__("" ::: "memory");
-    value = func_8008C06C;
+    value = gConsumePadCmd;
     __asm__("" : "+r"(value) : : "memory");
     q = (u8 *)p;
     __asm__("" : "+r"(q) : : "memory");
     gPadBasePort = p;
-    D_8009C74C = value;
+    gPadCompleteHook = value;
     func_8008CD00(q, 0x1e0);
     i = 0;
     ff = 255;
     q = (u8 *)p + 0x40;
-    y = D_800A3BD8;
-    x = D_800A3B90;
+    y = gPadWorkBufB;
+    x = gPadWorkBufA;
     p[0].out = arg1;
     p[1].out = arg2;
     do {
@@ -97,7 +121,7 @@ void func_8008BDB0(u8 *a, u8 *b)
         q += 0xf0;
         p++;
     } while (i < 2);
-    func_8008A3A8();
+    gInitPadCallbackTable();
     gPadPresentFlag = 1;
     __asm__("" ::: "memory");
 }

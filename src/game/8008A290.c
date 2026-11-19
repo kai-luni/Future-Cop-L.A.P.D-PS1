@@ -3,11 +3,15 @@
 
 typedef void (*Handler)(s32 port);
 
-extern s32 D_8009C77C, D_8009C778;
+extern s32 gPadEndSlot __asm__("D_8009C77C");
+extern s32 gPadStartSlot __asm__("D_8009C778");
 extern s32 gPadBasePort __asm__("D_8009C75C");
 extern s32 gPadPresentFlag __asm__("D_8009C760");
-extern Handler D_8009C72C;
-extern s32 D_800A3B70[], D_800A3B74[];
+extern Handler gPadResetPortHook __asm__("D_8009C72C");
+extern s32 gPadPort0IdleCount[] __asm__("D_800A3B70");
+extern s32 gPadPort1IdleCount[] __asm__("D_800A3B74");
+s32 gSetPadPortMask(s32 arg) __asm__("func_8008A290");
+
 
 /**
  *  @brief Updates two port-state bits and returns their previous combination.
@@ -29,10 +33,18 @@ extern s32 D_800A3B70[], D_800A3B74[];
  *  Updates global state and counters and may invoke the handler.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Computes the previous 2-bit port mask from D_8009C77C and (D_8009C778 == 0)
+ * and, if different from arg, temporarily clears gPadPresentFlag while
+ * updating D_8009C778 and D_8009C77C. When enabling a bit whose idle counter
+ * D_800A3B70 or D_800A3B74 is at least 150, invokes D_8009C72C on the
+ * corresponding port in gPadBasePort before clearing the counter and
+ * restoring gPadPresentFlag.
  */
-s32 func_8008A290(s32 arg)
+s32 gSetPadPortMask(s32 arg)
 {
-    s32 combined = (D_8009C77C << 1) | (D_8009C778 == 0);
+    s32 combined = (gPadEndSlot << 1) | (gPadStartSlot == 0);
     if (combined != arg) {
         gPadPresentFlag = 0;
         if (arg & 1) {
@@ -40,22 +52,22 @@ s32 func_8008A290(s32 arg)
             s32 t;
             __asm__("lui %0,%%hi(D_800A3B70)\n\taddiu %0,%0,%%lo(D_800A3B70)" : "=r"(p));
             t = p[0];
-            D_8009C778 = 0;
-            if (t >= 150) D_8009C72C(gPadBasePort);
+            gPadStartSlot = 0;
+            if (t >= 150) gPadResetPortHook(gPadBasePort);
             p[0] = 0;
-        } else D_8009C778 = 1;
+        } else gPadStartSlot = 1;
         if (arg & 2) {
             register s32 one __asm__("$3") = 1;
             register s32 *q __asm__("$16");
             s32 t;
             __asm__ volatile("" : : "r"(one));
-            q = D_800A3B74;
+            q = gPadPort1IdleCount;
             __asm__ volatile("" : "=r"(q) : "0"(q));
             t = q[0];
-            D_8009C77C = one;
-            if (t >= 150) D_8009C72C(gPadBasePort + 0xF0);
+            gPadEndSlot = one;
+            if (t >= 150) gPadResetPortHook(gPadBasePort + 0xF0);
             q[0] = 0;
-        } else D_8009C77C = 0;
+        } else gPadEndSlot = 0;
         gPadPresentFlag = 1;
     }
     return combined;

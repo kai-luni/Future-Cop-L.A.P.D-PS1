@@ -20,23 +20,25 @@ typedef struct UnkBA34_Arg {
     u8 unk44;
 } UnkBA34_Arg;
 
-extern void (*D_8009C728)(s32);
+extern void (*gPadStepErrorHook)(s32) __asm__("D_8009C728");
 extern  u8 (*gPadTxByteHook)(UnkBA34_Arg *, s32) __asm__("D_8009C730");
-extern void (*D_8009C734)();
-extern void (*D_8009C748)(u8 *);
-extern void (*D_8009C74C)(u8 *);
+extern void (*gPadConfigHook)() __asm__("D_8009C734");
+extern void (*gPadDrainPortHook)(u8 *) __asm__("D_8009C748");
+extern void (*gPadCompleteHook)(u8 *) __asm__("D_8009C74C");
 extern UnkBA34_Item *gPadBasePort __asm__("D_8009C75C");
 extern s32 gPadSlotIndex __asm__("D_8009C768");
-extern s32 D_8009C774;
-extern s32 D_8009C780[2];
+extern s32 gPadExtEnableFlag __asm__("D_8009C774");
+extern s32 gPadPendingCounts[2] __asm__("D_8009C780");
 extern s32 gPadMotorValue __asm__("D_8009C7A0");
 extern volatile u8 *gSio0RxDataPtr __asm__("D_8009C7A4");
 
-extern s32 func_8008A9A8(UnkBA34_Arg *, u8);
-extern s32 func_8008AB80(UnkBA34_Arg *, u8);
-extern s32 func_8008ADB4(void);
-extern void func_8008AE44(void);
-extern void func_8008C890(s32);
+extern s32 gExchangeSio0Byte(UnkBA34_Arg *, u8) __asm__("func_8008A9A8");
+extern s32 gTransferSio0Byte(UnkBA34_Arg *, u8) __asm__("func_8008AB80");
+extern s32 gWaitSio0AckClear(void) __asm__("func_8008ADB4");
+extern void gWaitSio0TxReady(void) __asm__("func_8008AE44");
+extern void gStartTimer2Timeout(s32) __asm__("func_8008C890");
+s32 gRunPadTransfer(UnkBA34_Arg *arg0) __asm__("func_8008BA34");
+
 
 /**
  *  @brief Runs a callback-driven sequence of device operations.
@@ -59,8 +61,19 @@ extern void func_8008C890(s32);
  *  Invokes callbacks, changes global sequence state, and appends an output byte.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Runs a multi-phase pad transfer by calling D_8009C734, optionally
+ * exchanging preliminary bytes via func_8008AB80 when D_8009C774 is nonzero
+ * and the high nibble at *arg0->unk3C is 8, and then stepping D_8009C780[idx]
+ * through states 4, 3, 1, and 0 while transferring bytes with func_8008A9A8
+ * until gPadMotorValue is exhausted. Each byte step delays with
+ * func_8008C890(0x3C) and checks func_8008ADB4(), returning -3 on check
+ * failure or any negative transfer error. At completion it calls
+ * func_8008AE44(), appends *gSio0RxDataPtr to arg0->unk3C, and calls
+ * D_8009C728(0).
  */
-s32 func_8008BA34(UnkBA34_Arg *arg0)
+s32 gRunPadTransfer(UnkBA34_Arg *arg0)
 {
     s32 i;
     s32 off;
@@ -69,10 +82,10 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
     u8 *ptr;
     s32 ret;
 
-    D_8009C734();
+    gPadConfigHook();
 
     s4 = 0;
-    if (D_8009C774 != 0 && ((*arg0->unk3C >> 4) == 8)) {
+    if (gPadExtEnableFlag != 0 && ((*arg0->unk3C >> 4) == 8)) {
         s4 = (arg0->unk36 == 0);
     }
 
@@ -82,14 +95,14 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
                 break;
             }
             if (i >= 0) {
-                D_8009C734(arg0->unk0C + off);
+                gPadConfigHook(arg0->unk0C + off);
             }
-            ret = func_8008AB80(arg0, gPadTxByteHook(arg0, 1));
+            ret = gTransferSio0Byte(arg0, gPadTxByteHook(arg0, 1));
             if (ret < 0) {
                 return ret;
             }
-            func_8008C890(0x3C);
-            if (func_8008ADB4() == 0) {
+            gStartTimer2Timeout(0x3C);
+            if (gWaitSio0AckClear() == 0) {
                 return -3;
             }
         }
@@ -97,53 +110,53 @@ s32 func_8008BA34(UnkBA34_Arg *arg0)
 
     idx = (gPadSlotIndex == 0);
     while (gPadMotorValue >= 2) {
-        if (D_8009C780[idx] < 0) {
+        if (gPadPendingCounts[idx] < 0) {
             break;
         }
-        if (D_8009C780[idx] > 0) {
-            ptr = gPadBasePort[idx].unk0C + D_8009C780[idx] * 0xF0 - 0xF0;
-            D_8009C748(ptr);
+        if (gPadPendingCounts[idx] > 0) {
+            ptr = gPadBasePort[idx].unk0C + gPadPendingCounts[idx] * 0xF0 - 0xF0;
+            gPadDrainPortHook(ptr);
         }
-        switch (D_8009C780[idx]) {
+        switch (gPadPendingCounts[idx]) {
         case 4:
-            D_8009C780[idx] = 3;
+            gPadPendingCounts[idx] = 3;
             break;
         case 3:
-            D_8009C748(ptr - 0xF0);
-            D_8009C780[idx] = 1;
+            gPadDrainPortHook(ptr - 0xF0);
+            gPadPendingCounts[idx] = 1;
             break;
         case 0:
         case 1:
             ptr = (u8 *)&gPadBasePort[idx];
-            D_8009C748(ptr);
-            D_8009C74C(ptr);
-            D_8009C780[idx] = -1;
+            gPadDrainPortHook(ptr);
+            gPadCompleteHook(ptr);
+            gPadPendingCounts[idx] = -1;
             break;
         }
-        ret = func_8008A9A8(arg0, gPadTxByteHook(arg0, s4));
+        ret = gExchangeSio0Byte(arg0, gPadTxByteHook(arg0, s4));
         if (ret < 0) {
             return ret;
         }
-        func_8008C890(0x3C);
-        if (func_8008ADB4() == 0) {
+        gStartTimer2Timeout(0x3C);
+        if (gWaitSio0AckClear() == 0) {
             return -3;
         }
         --gPadMotorValue;
     }
 
     while (--gPadMotorValue > 0) {
-        ret = func_8008A9A8(arg0, gPadTxByteHook(arg0, s4));
+        ret = gExchangeSio0Byte(arg0, gPadTxByteHook(arg0, s4));
         if (ret < 0) {
             return ret;
         }
-        func_8008C890(0x3C);
-        if (func_8008ADB4() == 0) {
+        gStartTimer2Timeout(0x3C);
+        if (gWaitSio0AckClear() == 0) {
             return -3;
         }
     }
 
-    func_8008AE44();
+    gWaitSio0TxReady();
     arg0->unk3C[arg0->unk44++] = *gSio0RxDataPtr;
-    D_8009C728(0);
+    gPadStepErrorHook(0);
     return 0;
 }

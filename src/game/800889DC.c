@@ -47,7 +47,7 @@ struct State800889DC {
 extern volatile struct State800889DC *gMovieStreamContext __asm__("D_8009F970");
 extern s32 gReleaseDoneFlag __asm__("D_8009F508");
 extern volatile u32 *D_8009F50C;
-extern u32 D_8009F980;
+extern u32 gMovieRingSectors __asm__("D_8009F980");
 
 extern s32 func_800886C8(s32, s32);
 extern void func_8008888C(s32, s32, s32);
@@ -183,14 +183,14 @@ done:
                 sector = p->unk00;
                 u08 = ((volatile struct DiscThing800889DC *)a0v)->unk08;
                 dividend = p->unk448 + sector;
-                rem = dividend % D_8009F980;
+                rem = dividend % gMovieRingSectors;
                 temp = ((volatile struct DiscThing800889DC *)a0v)->unk00 - (u08 + sector);
-                a0v = p->unk440 + D_8009F980 - dividend;
-                c = func_800886C8(a0v, D_8009F980 - rem);
+                a0v = p->unk440 + gMovieRingSectors - dividend;
+                c = func_800886C8(a0v, gMovieRingSectors - rem);
                 d = func_800886C8(c, temp);
                 if (d != 0) {
                     disc7 = (struct DiscThing800889DC *)gMovieStreamContext->unk430;
-                    if (gMovieStreamContext->unk04 == disc7->unk30 + (D_8009F980 << 11)) {
+                    if (gMovieStreamContext->unk04 == disc7->unk30 + (gMovieRingSectors << 11)) {
                         gMovieStreamContext->unk04 = disc7->unk30;
                     }
                     gMovieStreamContext->unk00 = d;

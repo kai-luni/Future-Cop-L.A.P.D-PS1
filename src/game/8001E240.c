@@ -4,7 +4,7 @@
 extern s32 gHeapHighWater __asm__("D_80010028");
 extern s32 gHeapHighWaterPeak __asm__("D_8001002C");
 
-extern s32 *func_8008CA90(s32 size);
+extern s32 *gAllocHeapBlock(s32 size) __asm__("func_8008CA90");
 s32 *gHeapAllocRaw(s32 size) __asm__("func_8001E240");
 
 
@@ -49,7 +49,7 @@ s32 *gHeapAllocRaw(s32 size)
         return 0;
     }
 
-    block = func_8008CA90(size + 4);
+    block = gAllocHeapBlock(size + 4);
 
     next = gHeapHighWater + 4;
     next += size;

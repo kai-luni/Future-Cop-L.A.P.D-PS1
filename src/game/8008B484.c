@@ -12,8 +12,10 @@ struct PadPort {
 };
 
 extern  s32 (*gReadyCheckHook)(struct PadPort *port) __asm__("D_8009C744");
-extern void func_8008B4EC(struct PadPort *port);
-extern s32 func_8008B508(struct PadPort *port);
+extern void gCmdPadActAlign(struct PadPort *port) __asm__("func_8008B4EC");
+extern s32 gRespPadActAlign(struct PadPort *port) __asm__("func_8008B508");
+s32 gStartPadActAlign(struct PadPort *port, u8 *command) __asm__("func_8008B484");
+
 
 /**
  *  @brief Sets up an actuator-map command sequence when the port is available.
@@ -34,8 +36,14 @@ extern s32 func_8008B508(struct PadPort *port);
  *  On success, writes the sequence step, handlers, and map pointer in the port.
  *  @par Callers
  *  Confirmed: func_8008A1C0.
+ *
+ * @par Role and path
+ * Calls gReadyCheckHook(port) and returns 0 if nonzero. Otherwise sets
+ * sequence_step to 1, stores command into port->requested_actuator_map,
+ * installs func_8008B4EC and func_8008B508 as command and response handlers,
+ * and returns 1. Called by func_8008A1C0.
  */
-s32 func_8008B484(struct PadPort *port, u8 *command)
+s32 gStartPadActAlign(struct PadPort *port, u8 *command)
 {
     s32 result;
     s32 active;
@@ -48,9 +56,9 @@ s32 func_8008B484(struct PadPort *port, u8 *command)
         __asm__ volatile("" : "=r"(result) : "0"(result));
         active = 1;
         port->sequence_step = active;
-        port->command_handler = (void (*)(void *))func_8008B4EC;
+        port->command_handler = (void (*)(void *))gCmdPadActAlign;
         port->requested_actuator_map = command;
-        port->response_handler = func_8008B508;
+        port->response_handler = gRespPadActAlign;
     }
     return result;
 }

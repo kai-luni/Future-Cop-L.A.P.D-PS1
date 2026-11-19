@@ -12,6 +12,12 @@
  * Delivers the event identified by the caller's arguments.
  * @par Callers
  * Confirmed: func_8002036C, func_8008DFE0 and the card/driver teardown paths.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xB0 and $t1 = 0x09 to
+ * invoke PS1 BIOS B0:09 (CloseEvent), closing a kernel event descriptor.
+ * Called by func_8002036C while tearing down the event handles and by
+ * func_80097A48 to clear the SPU DMA callback.
  */
 __asm__(
     ".set noreorder\n"

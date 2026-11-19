@@ -17,11 +17,11 @@ typedef struct {
 
 extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 
-extern void func_8008C9C0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gHaltMovieAudioStream(void) __asm__("func_800876EC");
 extern void gSpuSetIrqEnable(s32 arg) __asm__("func_80098A78");
 extern SpuIrqCallback gSpuInstallIrqCallback(SpuIrqCallback callback) __asm__("func_80098BF8");
-extern void func_8008C9E0(void);
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern void gSpuSetTransferCallback(s32 value) __asm__("func_80098FB8");
 extern void func_80091510(void *argument);
 extern void gResetMovieAudioState(void) __asm__("func_80087688");
@@ -56,23 +56,23 @@ void gShutdownMovieAudio(void) __asm__("func_80087750");
 
 void gShutdownMovieAudio(void)
 {
-    func_8008C9C0();
+    gDisableCpuInterrupts();
     gHaltMovieAudioStream();
     gSpuSetIrqEnable(0);
 
     gSpuInstallIrqCallback(gMovieAudioState->unk7B14);
-    func_8008C9E0();
+    gEnableCpuInterrupts();
 
     while (gMovieAudioState->unk7B48 != 0) {
     }
 
-    func_8008C9C0();
+    gDisableCpuInterrupts();
     gSpuSetTransferCallback(gMovieAudioState->unk7B18);
     gMovieAudioState->unk7B20 = 0;
     if (gMovieAudioState->unk7B1C != 0) {
         func_80091510(gMovieAudioState->unk7B10);
     }
     gMovieAudioState->unk7B24 = 0;
-    func_8008C9E0();
+    gEnableCpuInterrupts();
     gResetMovieAudioState();
 }

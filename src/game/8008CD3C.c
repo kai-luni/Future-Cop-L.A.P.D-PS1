@@ -15,14 +15,16 @@ typedef struct Spec {
     s32 prec;
 } Spec;
 
-extern Spec D_8009C7E0;
+extern Spec gDefaultFormatSpec __asm__("D_8009C7E0");
 extern u8 gHexUpperTable[] __asm__("D_8001223C");
-extern u8 D_80012250[];
+extern u8 gHexLowerTable[] __asm__("D_80012250");
 extern s32 func_8008CCC0(u8 *s);
 extern u8 *func_8008D5C0(u8 *s, s32 c, s32 n);
-extern u8 *func_8008D5D0(u8 *dest, u8 *src, s32 count);
+extern u8 *gCopyMemOverlap(u8 *dest, u8 *src, s32 count) __asm__("func_8008D5D0");
 
 #define VA(T) ((T)*ap[0]++)
+s32 gFormatStringBody(u8 *buf, signed char *fmt) __asm__("func_8008CD3C");
+
 
 /**
  *  @brief Formats arguments into a null-terminated output buffer.
@@ -46,8 +48,16 @@ extern u8 *func_8008D5D0(u8 *dest, u8 *src, s32 count);
  *  Writes buf and any count destination supplied for %n; performs no buffer bounds check.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Implements the printf-style formatting body entered from func_8008CD30,
+ * reading variadic arguments past fmt and writing the NUL-terminated result
+ * into buf. Initializes each conversion Spec from D_8009C7E0, formats
+ * d/i/u/o/p/X/x/c/s/n/%% conversions using D_80012250 and 0x8001223C hex
+ * tables, and calls func_8008CCC0 (strlen), func_8008D5C0 (memchr), and
+ * func_8008D5D0 to measure and copy fields.
  */
-s32 func_8008CD3C(u8 *buf, signed char *fmt)
+s32 gFormatStringBody(u8 *buf, signed char *fmt)
 {
     u8 digits[0x200];
     Spec spec;
@@ -76,7 +86,7 @@ s32 func_8008CD3C(u8 *buf, signed char *fmt)
             goto literal;
         }
         {
-            register Spec *p __asm__("$5") = &D_8009C7E0;
+            register Spec *p __asm__("$5") = &gDefaultFormatSpec;
             __asm__ volatile(
                 "lw\t$2,0(%3)\n\t"
                 "lw\t$3,4(%3)\n\t"
@@ -255,7 +265,7 @@ decimal:
                     hex += 0x223C;
                     goto hexcommon;
             case 'x':
-                    hex = D_80012250;
+                    hex = gHexLowerTable;
 hexcommon:
                     n = VA(u32);
                     __asm__ volatile("" : "+r"(n), "+m"(spec));
@@ -352,7 +362,7 @@ done:
                 } while (len < spec.width);
             }
         }
-        func_8008D5D0(buf + i, (u8 *)s, len);
+        gCopyMemOverlap(buf + i, (u8 *)s, len);
         i += len;
         while (len < spec.width) {
             buf[i++] = ks;

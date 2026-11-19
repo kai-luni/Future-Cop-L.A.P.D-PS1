@@ -15,7 +15,8 @@ extern void gSetDefDrawEnv(void *,int,int,int,int) __asm__("func_80092140");
 extern void gSetDefDispEnv(void *,int,int,int,int) __asm__("func_800921F4");
 extern void func_80091270(int), func_800932F0(void *), func_80092BF4(int), func_80095E90(int);
 extern void gPutDispEnvCached(void *) __asm__("func_800934BC");
-extern void func_8008C9C0(void), func_8008C9E0(void);
+extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
+extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
 extern int func_8009612C(void *), func_80092B94(int);
 extern int gMdecSetInCallback(int) __asm__("func_80096108");
@@ -137,7 +138,7 @@ int gMovieInitContext(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, in
   func_80092BF4(1);
  }
  gMovieSliceContext->a28=a1; gMovieSliceContext->a2c=a2; gMovieSliceContext->a24=a3;
- func_80095E90(0); func_8008C9C0(); gMovieSliceContext->f12c=a4;
+ func_80095E90(0); gDisableCpuInterrupts(); gMovieSliceContext->f12c=a4;
  if (a4) {
   gMovieSliceContext->f120=func_8009612C(D_80085074);
   gMovieSliceContext->f124=gMdecSetInCallback(0);
@@ -149,7 +150,7 @@ int gMovieInitContext(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, in
   gMovieSliceContext->f128=func_80092B94(0);
   gReleaseDoneFlag=0;
  }
- func_8008C9E0(); gMovieBuildDitherTables(); return 1;
+ gEnableCpuInterrupts(); gMovieBuildDitherTables(); return 1;
  }
  }
  return 0;

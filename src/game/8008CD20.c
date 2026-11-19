@@ -22,6 +22,11 @@
  * Overwrites size bytes starting at dst via BIOS memset.
  * @par Callers
  * Confirmed: func_8004AB4C (0x8004AB78, zeroes 0x44C0-byte node pool); func_80063428 (0x80063484 zeroes D_8009F808, 0x800634B0 zeroes D_8009FA08) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Handwritten MIPS BIOS trampoline setting $t2 = 0xA0 and $t1 = 0x2B to
+ * invoke PS1 BIOS A0:2B (memset), filling $a2 bytes at $a0 with byte $a1.
+ * Called by func_8004AB4C and func_80063428.
  */
 __asm__(
     ".set noreorder\n"

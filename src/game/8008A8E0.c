@@ -2,9 +2,11 @@
 #include "game/types.h"
 extern s32 gPadDispatchIndex __asm__("D_8009C76C");
 extern  s32 (*gPadHandlerTable[])(void) __asm__("D_8009C7AC");
-extern void (*D_8009C728)(s32);
-extern void func_8008C890(u32);
-extern s32 func_8008ADB4(void);
+extern void (*gPadStepErrorHook)(s32) __asm__("D_8009C728");
+extern void gStartTimer2Timeout(u32) __asm__("func_8008C890");
+extern s32 gWaitSio0AckClear(void) __asm__("func_8008ADB4");
+void gRunPadPollStep(void) __asm__("func_8008A8E0");
+
 
 /**
  *  @brief Dispatches the next indexed callback and handles its result.
@@ -24,8 +26,16 @@ extern s32 func_8008ADB4(void);
  *  Updates the dispatch index and invokes callbacks and conditional helper calls.
  *  @par Callers
  *  Confirmed: func_8008A43C.
+ *
+ * @par Role and path
+ * Fetches and increments gPadDispatchIndex (D_8009C76C) and invokes
+ * gPadHandlerTable[n](). On a nonnegative result, if gPadDispatchIndex is
+ * nonzero it arms a 60-tick delay via func_8008C890(60), calls
+ * func_8008ADB4() (invoking D_8009C728(-3) on failure), and clamps
+ * gPadDispatchIndex back if >= 5; negative results pass directly to
+ * D_8009C728. Called by func_8008A43C.
  */
-void func_8008A8E0(void)
+void gRunPadPollStep(void)
 {
     s32 result;
     register s32 *index asm("$5") = (s32 *)0x800A0000;
@@ -40,9 +50,9 @@ void func_8008A8E0(void)
     result = fn();
     if (result >= 0) {
         if (gPadDispatchIndex != 0) {
-            func_8008C890(60);
-            if (!func_8008ADB4()) {
-                D_8009C728(-3);
+            gStartTimer2Timeout(60);
+            if (!gWaitSio0AckClear()) {
+                gPadStepErrorHook(-3);
             }
         }
         if (gPadDispatchIndex >= 5) {
@@ -54,6 +64,6 @@ void func_8008A8E0(void)
             *(s32 *)((char *)p - 0x3894) = n2;
         }
     } else {
-        D_8009C728(result);
+        gPadStepErrorHook(result);
     }
 }

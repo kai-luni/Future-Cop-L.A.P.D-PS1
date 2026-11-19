@@ -2,7 +2,9 @@
 typedef unsigned char u8;
 struct Entry { u8 a, b, c, d, e; };
 struct Data { void *pad; struct Entry *entries; u8 pad08[0xE1]; u8 count; };
-extern struct Data *(*D_8009C73C)(int);
+extern struct Data *(*gPadLookupPortFn)(int) __asm__("D_8009C73C");
+int gGetPadActuatorInfo(int arg0, int index, int kind) __asm__("func_8008A044");
+
 
 /**
  * @brief Queries actuator count or a single capability field for a controller port.
@@ -26,10 +28,17 @@ extern struct Data *(*D_8009C73C)(int);
  * None observed (read-only query).
  * @par Callers
  * Confirmed: func_8001EC94 (0x8001EE00 with index=-1 to get count; 0x8001EE38 with kind=3 to inspect actuator payload type) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Resolves the controller port Data struct via D_8009C73C(arg0) and returns
+ * data->count when index is negative. Otherwise, if index is within
+ * data->count, selects field a through e of data->entries[index] for kind 1
+ * through 5, returning 0 if out of range. Called by func_8001EC94 during
+ * DualShock actuator setup.
  */
-int func_8008A044(int arg0, int index, int kind)
+int gGetPadActuatorInfo(int arg0, int index, int kind)
 {
-    struct Data *data = D_8009C73C(arg0);
+    struct Data *data = gPadLookupPortFn(arg0);
     struct Entry *entry;
     if (index < 0) return data->count;
     if (index < data->count) {

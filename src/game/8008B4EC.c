@@ -1,5 +1,7 @@
 // Categories: Game Engine > Command State
 #include "../../include/game/command_state.h"
+void gCmdPadActAlign(struct CommandState *state) __asm__("func_8008B4EC");
+
 
 /**
  *  @brief Sets a command state to command 0x4D with active value 6.
@@ -17,8 +19,13 @@
  *  Modifies the current, active, and value fields of state.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Sets state->current to 0x4D, state->active to 6, and state->value to
+ * state->source. Installed as command_handler by func_8008B484 with no
+ * globals or callees.
  */
-void func_8008B4EC(struct CommandState *state)
+void gCmdPadActAlign(struct CommandState *state)
 {
     state->current = 0x4D;
     state->active = 6;

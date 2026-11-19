@@ -7,13 +7,15 @@ struct E { char pad[0xF0]; };
 struct H { char pad[10]; u16 v; };
 extern s32 gPadSlotIndex __asm__("D_8009C768");
 extern s32 gPadDispatchIndex __asm__("D_8009C76C");
-extern s32 D_8009C77C;
-extern s32 D_8009C780[];
+extern s32 gPadEndSlot __asm__("D_8009C77C");
+extern s32 gPadPendingCounts[] __asm__("D_8009C780");
 extern struct H *gSio0CtrlPtr __asm__("D_8009C7C0");
 extern struct E gCompareAddress[] __asm__("D_800A3C20");
-extern void func_8008C77C(struct E *);
-extern void func_8008C06C(struct E *);
-extern s32 func_8008A6CC(struct E *);
+extern void gUpdatePadTimer(struct E *) __asm__("func_8008C77C");
+extern void gConsumePadCmd(struct E *) __asm__("func_8008C06C");
+extern s32 gBeginPadSioTransfer(struct E *) __asm__("func_8008A6CC");
+void gAdvancePadSlot(s32 arg) __asm__("func_8008BF78");
+
 
 /**
  *  @brief Process controller entries from the current index until traversal ends.
@@ -34,13 +36,21 @@ extern s32 func_8008A6CC(struct E *);
  *  Advances the global index, clears shared fields, and may process entries.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Iterates over 0xF0-byte port entries in gCompareAddress (D_800A3C20)
+ * starting at gPadSlotIndex until gPadSlotIndex exceeds D_8009C77C or
+ * func_8008A6CC returns nonzero. For each visited slot it skips when arg is
+ * -9, zeroes D_8009C780[gPadSlotIndex] when arg is 0, or calls func_8008C77C
+ * and func_8008C06C otherwise, then clears gPadDispatchIndex and
+ * gSio0CtrlPtr->v before incrementing gPadSlotIndex.
  */
-void func_8008BF78(s32 arg)
+void gAdvancePadSlot(s32 arg)
 {
     register s32 a __asm__("$5") = arg;
     register s32 base __asm__("$17") = (s32)gCompareAddress;
     register s32 neg __asm__("$19") = -9;
-    register s32 *tab __asm__("$18") = D_8009C780;
+    register s32 *tab __asm__("$18") = gPadPendingCounts;
     s32 done;
     register s32 zero __asm__("$0");
     __asm__("" : "=r"(zero));
@@ -52,14 +62,14 @@ void func_8008BF78(s32 arg)
             if (!a) {
                 tab[gPadSlotIndex] = zero;
             } else {
-                func_8008C77C(p);
-                func_8008C06C(p);
+                gUpdatePadTimer(p);
+                gConsumePadCmd(p);
             }
         }
         gPadDispatchIndex = 0;
         gSio0CtrlPtr->v = 0;
         gPadSlotIndex++;
-        done = (D_8009C77C < gPadSlotIndex) ? 1 : func_8008A6CC((struct E *)(gPadSlotIndex * 240 + base));
+        done = (gPadEndSlot < gPadSlotIndex) ? 1 : gBeginPadSioTransfer((struct E *)(gPadSlotIndex * 240 + base));
         a = 0xFFFF;
     } while (!done);
 }

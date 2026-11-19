@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void func_800898E8(void);
+void gFreeTextTable(void) __asm__("func_800898C8");
+
 
 /**
  * @brief Releases the active text lookup table during subsystem initialization.
@@ -24,8 +26,13 @@ extern void func_800898E8(void);
  *
  * @par Callers
  * Confirmed: func_800780DC (0x8007811C, per-session subsystem setup) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Unconditional wrapper that calls func_800898E8 to release and clear the
+ * active text lookup table D_8009F518. Driven by func_800780DC during
+ * per-session subsystem setup.
  */
-void func_800898C8(void)
+void gFreeTextTable(void)
 {
     func_800898E8();
 }

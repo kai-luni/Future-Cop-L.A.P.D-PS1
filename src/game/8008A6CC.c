@@ -10,12 +10,14 @@ struct State { u8 a[4]; volatile u16 status; u8 b[2]; volatile u16 x; volatile u
 struct Obj { u8 a[12]; u8 *data; u8 b[0x2C]; u8 *p; u8 c[0x10]; u8 v50; u8 d[0x97]; u8 ve8; };
 extern struct State *gSio0RegBasePtr __asm__("D_8009C78C");
 extern s32 gPadSlotIndex __asm__("D_8009C768");
-extern s32 D_8009C780[];
-extern void (*D_8009C748)(void *);
-extern void (*D_8009C74C)(void *);
+extern s32 gPadPendingCounts[] __asm__("D_8009C780");
+extern void (*gPadDrainPortHook)(void *) __asm__("D_8009C748");
+extern void (*gPadCompleteHook)(void *) __asm__("D_8009C74C");
 extern s32 *gInterruptStatusPtr __asm__("D_8009C788");
-extern void func_8008C890(s32);
-extern void func_8008AE44(void);
+extern void gStartTimer2Timeout(s32) __asm__("func_8008C890");
+extern void gWaitSio0TxReady(void) __asm__("func_8008AE44");
+s32 gBeginPadSioTransfer(struct Obj *obj) __asm__("func_8008A6CC");
+
 
 /**
  *  @brief Configures the port and processes pending callbacks for an object.
@@ -35,8 +37,16 @@ extern void func_8008AE44(void);
  *  Writes hardware registers and pending counts, invokes callbacks, and may clear the byte at obj->p.
  *  @par Callers
  *  Confirmed: func_8008A43C, func_8008BF78.
+ *
+ * @par Role and path
+ * Resets and configures SIO0 baud/mode/control registers in gSio0RegBasePtr
+ * for gPadSlotIndex, arms the timer via func_8008C890, and drains pending
+ * counts in D_8009C780 by invoking D_8009C748 and D_8009C74C. If SIO0 status
+ * bit 0x200 remains set after reset, sends byte 1, calls func_8008AE44, and
+ * returns 0; otherwise clears *obj->p unless obj->v50 and byte +0x36 are
+ * nonzero. Called by func_8008A43C and func_8008BF78.
  */
-s32 func_8008A6CC(struct Obj *obj)
+s32 gBeginPadSioTransfer(struct Obj *obj)
 {
     s32 result;
     s32 n;
@@ -48,7 +58,7 @@ s32 func_8008A6CC(struct Obj *obj)
     gSio0RegBasePtr->flags = 0;
     gSio0RegBasePtr->x = 13;
     gSio0RegBasePtr->y = 0x88;
-    func_8008C890(obj->ve8 == 8 ? 0x50 : 0x91);
+    gStartTimer2Timeout(obj->ve8 == 8 ? 0x50 : 0x91);
     idx = gPadSlotIndex;
     state = gSio0RegBasePtr;
     flags = 0x1003;
@@ -58,7 +68,7 @@ s32 func_8008A6CC(struct Obj *obj)
     state->flags = flags;
     {
         register u8 *arr __asm__("$3");
-        idx = *(s32 *)((s32)D_8009C780 + idx);
+        idx = *(s32 *)((s32)gPadPendingCounts + idx);
         __asm__("" : "+r"(idx));
         arr = (u8 *)0x800a0000;
         __asm__("" : "+r"(arr));
@@ -69,7 +79,7 @@ s32 func_8008A6CC(struct Obj *obj)
                 __asm__("" : "+r"(base));
                 do {
                     n = --base[gPadSlotIndex];
-                    D_8009C748(obj->data + n * 240);
+                    gPadDrainPortHook(obj->data + n * 240);
                 } while (base[gPadSlotIndex] > 0);
                 __asm__ volatile ("" ::: "memory");
             }
@@ -83,8 +93,8 @@ s32 func_8008A6CC(struct Obj *obj)
                 arr2 -= 0x3880;
                 if (((s32 *)arr2)[index] == 0) {
                     ((s32 *)arr2)[index] = -1;
-                    D_8009C748(obj);
-                    D_8009C74C(obj);
+                    gPadDrainPortHook(obj);
+                    gPadCompleteHook(obj);
                 }
             }
         }
@@ -93,7 +103,7 @@ s32 func_8008A6CC(struct Obj *obj)
         gSio0RegBasePtr->flags |= 0x10;
         if (gSio0RegBasePtr->status & 0x200) {
             *(volatile u8 *)gSio0RegBasePtr = 1;
-            func_8008AE44();
+            gWaitSio0TxReady();
             (void)*(volatile u8 *)gSio0RegBasePtr;
             return 0;
         }

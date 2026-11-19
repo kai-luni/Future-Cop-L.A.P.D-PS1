@@ -1,5 +1,7 @@
 // Categories: Input > DualShock | Platform > Controller
 #include "../../include/game/command_state.h"
+void gSetPadCombInfoCmd(struct CommandState *state, u8 value) __asm__("func_8008B790");
+
 
 /**
  * @brief Queues DualShock command 0x47 (combination record query) with a 1-byte index on a CommandState.
@@ -21,8 +23,13 @@
  * Arms state to transmit 1-byte parameter command 0x47 on the next pad poll cycle.
  * @par Callers
  * Confirmed: func_8008AE8C (0x8008AEF8, sequence_step 4); func_8008B168 (0x8008B1E8, sequence_step 4 when combination_bytes_remaining == 0) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Sets state->current to 0x47, state->value to state->inline_data,
+ * state->inline_data[0] to value, and state->active to 1. Called by
+ * func_8008AE8C and func_8008B168 at sequence_step 4.
  */
-void func_8008B790(struct CommandState *state, u8 value)
+void gSetPadCombInfoCmd(struct CommandState *state, u8 value)
 {
     state->current = 0x47;
     state->value = state->inline_data;

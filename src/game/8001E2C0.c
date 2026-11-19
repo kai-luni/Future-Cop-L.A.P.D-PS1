@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gHeapHighWater __asm__("D_80010028");
-extern void func_8008CB40(s32 *header);
+extern void gFreeHeapBlock(s32 *header) __asm__("func_8008CB40");
 void gHeapFreeRaw(s32 block) __asm__("func_8001E2C0");
 
 
@@ -41,6 +41,6 @@ void gHeapFreeRaw(s32 block)
         s32 size = ((s32 *)block)[-1];
 
         gHeapHighWater = gHeapHighWater - size - 4;
-        func_8008CB40((s32 *)block - 1);
+        gFreeHeapBlock((s32 *)block - 1);
     }
 }

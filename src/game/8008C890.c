@@ -3,6 +3,8 @@
 
 extern u32 gCountWrapLimit __asm__("D_800A6E18");
 extern u32 gTimeoutThreshold __asm__("D_800A9448");
+void gStartTimer2Timeout(u32 a0) __asm__("func_8008C890");
+
 
 /**
  * @brief Arms the PS1 Root Counter 2 timeout state for serial controller/pad polling.
@@ -23,8 +25,14 @@ extern u32 gTimeoutThreshold __asm__("D_800A9448");
  * Reads volatile MMIO 0x1F801120 and overwrites globals D_800A9448 and D_800A6E18.
  * @par Callers
  * Confirmed: func_8008A6CC (0x8008A718), func_8008A8E0 (0x8008A934), func_8008AB80 (0x8008ABF4, 0x8008AD30), func_8008BA34 (0x8008BB18, 0x8008BC98, 0x8008BD10) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Arms a PS1 Root Counter 2 timeout for pad polling by sampling the 16-bit
+ * counter at 0x1F801120 into gCountWrapLimit (D_800A6E18) and storing the
+ * duration threshold a0 into gTimeoutThreshold (D_800A9448). Called by
+ * func_8008A6CC, func_8008A8E0, func_8008AB80, and func_8008BA34.
  */
-void func_8008C890(u32 a0)
+void gStartTimer2Timeout(u32 a0)
 {
     u32 count;
 

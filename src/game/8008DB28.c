@@ -4,7 +4,7 @@
 extern u32 gSavedRaScratch __asm__("D_800A3E10");
 extern u32 jtbl_800A3E18_main;
 extern u32 jtbl_800A3E1C_main;
-extern void func_8008C9A0(void);
+extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void func_8008DBA0(void);
 
 asm(".set jtbl_800A3E18_main, 0x800A3E18");
