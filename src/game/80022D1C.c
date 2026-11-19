@@ -20,7 +20,7 @@ void gMarkAudioStreamAdpcmBlock(u8 *data, int mode, int offset) __asm__("func_80
  * Reads gMode1IndexBase in mode 1.
  *
  * @par Callers
- * Direct calls from func_80022D84.
+ * Direct calls from gSubmitAudioStreamTransfer (func_80022D84).
  *
  * @par Role and path
  * The stream request builder prepares the 16-byte ADPCM block flags before submitting the

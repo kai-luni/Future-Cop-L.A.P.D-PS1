@@ -41,10 +41,10 @@ struct StreamState {
 
 extern struct StreamState gMixerState __asm__("D_800A0968");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern void D_80022FA8(void);
+extern void gHandleAudioStreamSpuIrq(void) __asm__("D_80022FA8");
 
 extern SpuIrqCallback gSpuInstallIrqCallback(SpuIrqCallback callback) __asm__("func_80098BF8");
-extern void func_80022F44(void);
+extern void gArmAudioStreamSpuIrq(void) __asm__("func_80022F44");
 extern struct SoundVoice *func_80046B04(s32 sound, s32 arg1, s32 arg2, s32 arg3);
 extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
 extern s32 gAllocateSoundChannelVoice(s32 arg0, s32 arg1, s32 *arg2, s32 arg3) __asm__("func_800220C4");
@@ -59,9 +59,10 @@ s32 gStartAudioStreamChannels(void) __asm__("func_800228F4");
  * @return Zero if setup was attempted, or -1 if the availability field is zero.
  *
  * @par Confirmed mechanics
- * Requires mixer +0x08, sets +0x04, copies +0x6C to +0x7C, installs D_80022FA8 and arms the
- * IRQ. Iterates over 0x24-byte channel records, obtains voices, builds an index list with -1
- * sentinels, queues the list and stores current tick plus mixer +0x8C as the deadline.
+ * Requires mixer +0x08, sets +0x04, copies +0x6C to +0x7C, installs gHandleAudioStreamSpuIrq
+ * and arms the IRQ. Iterates over 0x24-byte channel records, obtains voices, builds an index
+ * list with -1 sentinels, queues the list and stores current tick plus mixer +0x8C as the
+ * deadline.
  *
  * @par Globals
  * Updates gMixerState and reads gFrameTickCounter.
@@ -86,8 +87,8 @@ s32 gStartAudioStreamChannels(void)
     if (gMixerState.unk08 != 0) {
         gMixerState.active = 1;
         gMixerState.unk7C = gMixerState.unk6C;
-        gSpuInstallIrqCallback(D_80022FA8);
-        func_80022F44();
+        gSpuInstallIrqCallback(gHandleAudioStreamSpuIrq);
+        gArmAudioStreamSpuIrq();
 
         params[0] = gMixerState.unk18;
         for (i = 0; i < gMixerState.channelCount; i++) {

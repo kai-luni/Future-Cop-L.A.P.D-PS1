@@ -14,7 +14,7 @@ extern s32 gMixerWord[2] __asm__("D_800A0970");
 extern u16 gStreamRequestSequence __asm__("D_8009F268");
 
 extern void gResetAudioStreamController(void) __asm__("func_80022CA8");
-extern void func_80022D84(void);
+extern void gSubmitAudioStreamTransfer(void) __asm__("func_80022D84");
 
 s32 gPrimeAudioStream(void) __asm__("func_80022710");
 
@@ -27,8 +27,8 @@ s32 gPrimeAudioStream(void) __asm__("func_80022710");
  *
  * @par Confirmed mechanics
  * Resets the controller, increments the 16-bit sequence and substitutes 1 on wrap to zero.
- * Copies the sequence to mixer +0x10, calls func_80022D84 with a0 set to 1, then polls mixer
- * +0x80 with a 0xFFFF counter. If time remains it writes 1 to gMixerWord.
+ * Copies the sequence to mixer +0x10, calls gSubmitAudioStreamTransfer with a0 set to 1, then
+ * polls mixer +0x80 with a 0xFFFF counter. If time remains it writes 1 to gMixerWord.
  *
  * @par Globals
  * Updates gMixerState, gStreamRequestSequence and gMixerWord.
@@ -58,7 +58,7 @@ s32 gPrimeAudioStream(void)
         gStreamRequestSequence = 1;
     }
     p->unk10 = gStreamRequestSequence;
-    func_80022D84();
+    gSubmitAudioStreamTransfer();
 
     if (p->ready == 0) {
         q = p;

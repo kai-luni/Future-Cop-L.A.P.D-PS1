@@ -643,7 +643,7 @@ graph LR
 | `func_80094928` | 36 | Game Engine > State | - | - |
 | `gStopFrameCallback` (`func_8001F158`) | 40 | Game Engine > Timing · Interrupts | `func_80091510` | `func_8001E540` |
 | `func_80021A8C` | 40 | Game Engine > Event Flags | - | `func_8002238C` |
-| `func_80023314` | 40 | Game Engine > State | `func_80021E1C` | - |
+| `gFlushSoundChannelsIfCvkActive` (`func_80023314`) | 40 | Game Engine > State | `func_80021E1C` | - |
 | `func_80023500` | 40 | Game Engine > State | - | - |
 | `func_80025348` | 40 | Game Engine > Frame · Asset Loading | `func_8001B4A8`, `func_80024EC8` | `func_80025B7C` |
 | `func_80027EBC` | 40 | Game Engine > Frame · Display | `func_8001B4A8`, `func_80024EC8` | `func_80027EE4` |
@@ -875,7 +875,7 @@ graph LR
 | `gRegisterSoundBank` (`func_80021CB0`) | 252 | Game Engine > Entry Management | `func_80021898`, `func_800219EC` | - |
 | `func_8007F02C` | 252 | Game Engine > State Serialization | `func_8007E8D8` | `func_8007E7A8`, `func_8007F93C` |
 | `func_80023D78` | 268 | Game Engine > Audio | `func_80023E84`, `func_800450A4`, `func_800474C4`, `func_80047800` | - |
-| `func_80023204` | 272 | Game Engine > Scheduling | `func_80022D84` | - |
+| `gCompleteAudioStreamTransfer` (`func_80023204`) | 272 | Game Engine > Scheduling | `func_80022D84` | - |
 | `func_8008352C` | 272 | Game Engine > Audio | `func_80045768`, `func_800457B8` | - |
 | `gMovieStreamPrimeEntry` (`func_80088F00`) | 280 | Game Engine > State | - | `func_80089700` |
 | `gSetPadPortMask` (`func_8008A290`) | 280 | Input > Port State | - | - |
@@ -922,7 +922,7 @@ graph LR
 | `func_80069B58` | 428 | Game Engine > State Machine · Entity Script, Random | `func_80019668`, `func_80069B1C` | `func_80024904`, `func_80024A24` |
 | `gHandlePlayerJoinSelection` (`func_8007A5F0`) | 432 | Game Engine > Front-End Configuration · Menu System | `func_80078650` | - |
 | `gServiceMovieAudioIrq` (`func_80086AC0`) | 436 | Game Engine > Streaming | - | - |
-| `func_80022D84` | 448 | Game Engine > Audio Streaming · Requests | `func_800212F8`, `func_80022D1C` | `func_80022710`, `func_80022FA8`, `func_80023204` |
+| `gSubmitAudioStreamTransfer` (`func_80022D84`) | 448 | Game Engine > Audio Streaming · Requests | `func_800212F8`, `func_80022D1C` | `func_80022710`, `func_80022FA8`, `func_80023204` |
 | `gConfigureAudioStreaming` (`func_80022484`) | 464 | Game Engine > Audio Streaming | - | - |
 | `func_800841C4` | 468 | Game Engine > Node Management | - | `func_80069D68` |
 | `gRunGameFrameLoop` (`func_80028618`) | 476 | Game Engine > Gameplay Frame Loop · Rendering, Camera | - | `func_800287F4` |
@@ -4459,7 +4459,7 @@ graph LR
 | `func_80095808` | 40 | Platform > GPU · DMA | `func_800914E0` | - |
 | `func_80097940` | 40 | Platform > Bit Manipulation | - | - |
 | `func_80097968` | 40 | Platform > Bit Manipulation | - | `func_800973B4` |
-| `func_80022F7C` | 44 | Platform > Audio | `func_80098A78` | `func_80022A64`, `func_80022FA8` |
+| `gDisarmAudioStreamSpuIrq` (`func_80022F7C`) | 44 | Platform > Audio | `func_80098A78` | `func_80022A64`, `func_80022FA8` |
 | `func_800451B4` | 44 | Platform > Sound > Volume · Init | - | `func_800260B8`, `func_80044F8C`, `func_8007CA34`, `func_8007D27C`, `func_80080984` |
 | `gCheckPadReady` (`func_8008C858`) | 44 | Platform > Device State | - | `func_8008C518` |
 | `func_8008DC50` | 44 | Platform > Register Operations | - | - |
@@ -4479,7 +4479,7 @@ graph LR
 | `func_800951D8` | 52 | Platform > Hardware Init | `func_80091270` | `func_8009415C`, `func_8009446C`, `func_800946A8`, `func_80094A3C`, `func_8009509C` |
 | `func_80095E90` | 52 | Platform > Interrupts · Display | `func_80091480`, `func_80096150` | `func_80085228`, `func_80085630`, `func_80085C4C`, `func_800861E4` |
 | `gIsMcManagerBusy` (`func_8001F180`) | 56 | Platform > Memory Card · Save Data | - | `func_8001F1B8`, `func_8001F24C`, `func_8001F2E0`, `func_80020B64` |
-| `func_80022F44` | 56 | Platform > Sound > Streaming · SPU Transfer | `func_80098A78`, `func_80098BB8` | `func_800228F4` |
+| `gArmAudioStreamSpuIrq` (`func_80022F44`) | 56 | Platform > Sound > Streaming · SPU Transfer | `func_80098A78`, `func_80098BB8` | `func_800228F4` |
 | `gStartCardAndClearPad` (`func_8008D74C`) | 56 | Platform > Memory Card · System Calls, Interrupts | `func_8008C9B0`, `func_8008D7B0`, `func_8008DC30` | `func_800200A8` |
 | `gStopPadAndRemoveIrq` (`func_8008D92C`) | 56 | BIOS > System Calls · Interrupts | `func_8008D9DC`, `func_8008DAE0`, `func_8008DB14` | - |
 | `gRemovePriority1Irq` (`func_8008D9DC`) | 56 | BIOS > System Calls · Interrupts | `func_8008C9B0`, `func_8008CA10` | `func_8008D92C` |
@@ -4700,7 +4700,7 @@ graph LR
 | `gStartCdFileRead` (`func_8001CE54`) | 588 | Platform > Memory Card > File Operations · File Access | `func_8001C3F8`, `func_8001C478`, `func_8001C494`, `func_8001CC6C`, `func_8008C9E0`, `func_8008E174`, `func_8008E194`, `func_8008E1BC` | `func_8001D90C` |
 | `gAcquireMcEvents` (`func_80020120`) | 588 | Platform > Memory Card · Events | `func_8008C960`, `func_8008C980`, `func_8008C9E0` | `func_800206D0` |
 | `gMovieAudioChunkPushSplit` (`func_80087430`) | 600 | Platform > Ring Buffer | `func_8008731C` | `func_800879DC` |
-| `func_80022FA8` | 604 | Platform > Audio Streaming | `func_80022D84`, `func_80022F7C`, `func_80098A78`, `func_80098BB8` | - |
+| `gHandleAudioStreamSpuIrq` (`func_80022FA8`) | 604 | Platform > Audio Streaming | `func_80022D84`, `func_80022F7C`, `func_80098A78`, `func_80098BB8` | - |
 | `func_80094CEC` | 608 | Platform > Hardware Init · Image Transfer | `func_800914E0`, `func_800915FC` | `func_80094A3C`, `func_8009509C` |
 | `gMcDispatchStep` (`func_8001FAB8`) | 624 | Platform > Device I/O | `func_8001E318`, `func_8008D640`, `func_8008D650`, `func_8008D670`, `func_8008D680` | - |
 | `gBuildRectDrawList` (`func_80093CE8`) | 624 | Platform > GPU · GPU Command Lists, 2D Drawing | `func_80093F58`, `func_80093F78`, `func_80094010`, `func_800940C4` | `func_800932F0`, `func_800933B0` |

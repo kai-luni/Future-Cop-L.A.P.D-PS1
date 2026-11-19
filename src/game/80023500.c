@@ -14,7 +14,7 @@ typedef struct {
 extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern s32 gSpuBufferPtr __asm__("D_8009F278");
 extern s32 gVolatileBase __asm__("D_8009F27C");
-extern u8 D_80023314[];
+extern u8 gFlushSoundChannelsIfCvkActive[] __asm__("D_80023314");
 extern Unk800A0A00 gObjectSlots[8] __asm__("D_800A0A00");
 
 extern void func_80098708(s32 arg0);

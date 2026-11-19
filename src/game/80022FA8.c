@@ -27,55 +27,61 @@ struct Stream22FA8 {
 };
 
 extern struct Stream22FA8 gMixerState __asm__("D_800A0968");
-extern s32 D_800A0988[2];
-extern s32 D_800A099C[2];
-extern s32 D_800A09F8[2];
+extern s32 gStreamDmaChannelIndex[2] __asm__("D_800A0988");
+extern s32 gStreamChannelStart[2] __asm__("D_800A099C");
+extern s32 gStreamIrqBusy[2] __asm__("D_800A09F8");
 extern s32 gFrameTickCounter[2] __asm__("D_8009FA2C");
 extern u32 gStreamEventCallback __asm__("D_8009F634");
 
-extern void func_80022F7C(void);
-extern void func_80022D84(void);
+extern void gDisarmAudioStreamSpuIrq(void) __asm__("func_80022F7C");
+extern void gSubmitAudioStreamTransfer(void) __asm__("func_80022D84");
 extern void func_80098BB8(s32 address);
 extern void gSpuSetIrqEnable(s32 mode) __asm__("func_80098A78");
 
+void gHandleAudioStreamSpuIrq(void) __asm__("func_80022FA8");
+
 /**
- *  @brief Advances stream state and schedules the next audio transfer.
+ * @brief Advances streamed audio playback and arms the next SPU interrupt.
  *
- *  Checks stream readiness, invokes optional status callbacks, and computes the
- *  next buffer offset and deadline, including a special looping transition.
- *  @par Globals
- *  D_800A0968 holds stream state; D_800A0988, D_800A099C, and D_800A09F8 hold control state.
- *  D_8009FA2C supplies the time base; gStreamEventCallback holds an optional callback address.
- *  @par Control flow
- *  Returns early for busy, inactive, or flagged streams; ready streams may dispatch callbacks.
- *  The callback can change start state before it is checked again.
- *  Looping and normal paths calculate offsets and deadlines differently; the deadline is clamped.
- *  @par Calls
- *  func_80022F7C runs first; func_80022D84 handles a ready stream when requested.
- *  func_80098BB8 sets the transfer address and gSpuSetIrqEnable starts mode 1.
- *  @par Side effects
- *  Updates stream fields and control state, invokes callbacks, and schedules a transfer.
- *  The busy field is set before inactive and flagged-stream early returns.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Disarms the IRQ, rejects reentry through mixer +0x90, then handles inactive and flagged
+ * states. It replenishes the block counter, may emit callback codes 3, 4 or 6, and advances or
+ * wraps the offset before programming the next IRQ and clearing the busy word.
+ *
+ * @par Globals
+ * Reads and writes gMixerState, including gStreamDmaChannelIndex, gStreamChannelStart and
+ * gStreamIrqBusy. Reads gFrameTickCounter and gStreamEventCallback.
+ *
+ * @par Callers
+ * No direct JAL callers in the retail listing.
+ *
+ * @par Role and path
+ * Registered by gStartAudioStreamChannels as the SPU IRQ callback using the retail alias
+ * gHandleAudioStreamSpuIrq.
+ *
+ * @par Unknown
+ * The event codes' meanings for callers outside this stream setup are unresolved.
  */
-void func_80022FA8(void)
+void gHandleAudioStreamSpuIrq(void)
 {
     register u32 quot __asm__("$3");
-    func_80022F7C();
+    gDisarmAudioStreamSpuIrq();
     if (gMixerState.busy != 0) {
         return;
     }
     gMixerState.busy = 1;
     if (gMixerState.active == 0) {
-        D_800A09F8[0] = 0;
+        gStreamIrqBusy[0] = 0;
         return;
     }
     if (gMixerState.unk84 != 0) {
         if (gStreamEventCallback != 0) {
             ((void (*)(s32))gStreamEventCallback)(6);
         }
-        D_800A09F8[0] = 0;
+        gStreamIrqBusy[0] = 0;
         return;
     }
     if (gMixerState.unk74 < gMixerState.unk70) {
@@ -83,24 +89,24 @@ void func_80022FA8(void)
     }
     if (gMixerState.ready != 0) {
         if (gMixerState.start != 0) {
-            D_800A0988[0] = 0;
-            func_80022D84();
+            gStreamDmaChannelIndex[0] = 0;
+            gSubmitAudioStreamTransfer();
         } else {
             if (gStreamEventCallback != 0) {
                 ((void (*)(s32))gStreamEventCallback)(3);
             }
             if (gMixerState.start != 0) {
-                D_800A0988[0] = 0;
-                func_80022D84();
+                gStreamDmaChannelIndex[0] = 0;
+                gSubmitAudioStreamTransfer();
             } else {
                 if (gMixerState.unk74 == gMixerState.unk70 - 1) {
                     if (gStreamEventCallback != 0) {
                         ((void (*)(s32))gStreamEventCallback)(4);
                     }
                 }
-                if (D_800A099C[0] != 0) {
-                    D_800A0988[0] = 0;
-                    func_80022D84();
+                if (gStreamChannelStart[0] != 0) {
+                    gStreamDmaChannelIndex[0] = 0;
+                    gSubmitAudioStreamTransfer();
                 }
             }
         }
@@ -128,5 +134,5 @@ void func_80022FA8(void)
     }
     func_80098BB8(gMixerState.unk44 + gMixerState.unk7C);
     gSpuSetIrqEnable(1);
-    D_800A09F8[0] = 0;
+    gStreamIrqBusy[0] = 0;
 }

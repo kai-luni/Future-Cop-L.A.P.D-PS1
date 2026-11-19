@@ -45,7 +45,8 @@ void gFlushSoundChannelUpdates(void) __asm__("func_80021E1C");
  * Reads and writes gSoundSystem. gSoundChannelEnableMask aliases its +0x14 word.
  *
  * @par Callers
- * Direct calls from D_80023314, gQueueSoundChannelShutdown (func_80021F3C).
+ * Direct calls from gFlushSoundChannelsIfCvkActive (D_80023314), gQueueSoundChannelShutdown
+ * (func_80021F3C).
  *
  * @par Role and path
  * Used both as a guarded periodic flush and during driver shutdown.

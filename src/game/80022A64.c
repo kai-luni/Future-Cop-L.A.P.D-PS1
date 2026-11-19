@@ -22,7 +22,7 @@ struct StreamState {
 
 extern struct StreamState gMixerState __asm__("D_800A0968");
 
-extern void func_80022F7C(void);
+extern void gDisarmAudioStreamSpuIrq(void) __asm__("func_80022F7C");
 extern void gSpuInstallIrqCallback(s32 mode) __asm__("func_80098BF8");
 extern void gSpuCancelDmaRequests(void) __asm__("func_8002129C");
 extern void gReleaseSoundVoicesByOwner(s32 owner) __asm__("func_80022240");
@@ -37,9 +37,10 @@ s32 gStopAudioStreamPlayback(void) __asm__("func_80022A64");
  * @return Always 0.
  *
  * @par Confirmed mechanics
- * Tests mixer +0x04, clears the 16-bit sequence and disables the IRQ through func_80022F7C.
- * Uninstalls the handler, clears active and readiness fields, calls gSpuCancelDmaRequests and
- * walks the configured channels, releasing IDs other than -1 and their voice handles.
+ * Tests mixer +0x04, clears the 16-bit sequence and disables the IRQ through
+ * gDisarmAudioStreamSpuIrq. Uninstalls the handler, clears active and readiness fields, calls
+ * gSpuCancelDmaRequests and walks the configured channels, releasing IDs other than -1 and
+ * their voice handles.
  *
  * @par Globals
  * Reads and updates the active fields and channel records in gMixerState.
@@ -61,7 +62,7 @@ s32 gStopAudioStreamPlayback(void)
         return 0;
     }
     gMixerState.unk10 = 0;
-    func_80022F7C();
+    gDisarmAudioStreamSpuIrq();
     gSpuInstallIrqCallback(0);
     gMixerState.flag = 0;
     gMixerState.active = 0;
