@@ -25,34 +25,42 @@ extern s32 func_8008CD30(char *dst, char *fmt, u32 arg2, u32 arg3);
 extern s32 gFindCardFileSlot(void *arg0) __asm__("func_80020C90");
 extern void gQueueMcOpMode3(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8001F24C");
 extern s32 gFindFreeCardBlockRun(s32 arg0) __asm__("func_80020E68");
-extern void func_80020F34(char *text, s32 index);
+extern void gBuildCardFileDirectoryFrame(char *text, s32 index) __asm__("func_80020F34");
 extern void gQueueMcOpMode6(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm__("func_8001F2E0");
 extern u32 gGetMcPendingFlag(void) __asm__("func_8001F37C");
 
+s32 gQueueCardFileWrite(u32 arg0, u32 arg1, u32 arg2) __asm__("func_80020FDC");
+
 /**
- * @brief Queues a memory-card file write (create or overwrite) and returns 0x2000 when the transfer was queued, 0 when refused.
+ * @brief Queues a memory-card write, using a free directory run when the named
+ * file does not exist.
  *
- * @param arg0 File/title name string; the lookup key and the name-packet title.
- * @param arg1 Data pointer stored into the card manager's request word unk910.
- * @param arg2 Transfer size in bytes; rounded up to 128-byte units for the request and to 0x2000-byte blocks for allocation.
- * @return 0x2000 if the request was queued (manager idle, unk9A4 still 0), 0 if the unit was busy or no block run was free.
+ * @param arg0 Filename string supplied as an address word.
+ * @param arg1 Address of the data to write.
+ * @param arg2 Transfer length in bytes.
+ * @return 0x2000 when the pending check is clear after queueing, or zero if no
+ *     slot is obtained or the pending check fails.
+ *
+ * @par Confirmed mechanics
+ * Formats a device path and rounds the transfer length up to 128-byte sectors.
+ * An existing slot takes queue mode 3. Otherwise finds free slots, initializes
+ * the directory frame, and takes queue mode 6. Both pass slot times 64 to the
+ * request helper.
  *
  * @par Globals
- * D_8009AB08 - card manager: unk0000>>4 feeds the debug format, state[16]/primary[16] are walked by the lookup, unk9A4 is the pending flag read back at the end.
- *
- * @par Control flow
- * Lookup first: an existing name updates in place; otherwise allocate a free block run, build the name packet and queue a new entry; allocation failure returns 0 early. The final flag is (unk9A4 < 1) << 13.
- *
- * @par Calls
- * func_8008CD30 - sprintf of the debug trace "bu0%1ld:%s" into a stack buffer that is not read afterwards. gFindCardFileSlot - find the slot whose state is 1 and name matches. func_8001F24C - requeue the directory request for an existing slot. gFindFreeCardBlockRun - allocate ceil(size/0x2000) consecutive state-2 blocks. func_80020F34 - build the 0x80-byte name packet (header, title, XOR checksum). func_8001F2E0 - queue the new entry. func_8001F37C - read back unk9A4.
- *
- * @par Side effects
- * Via the queue helpers: card manager request words unk998/99C/910/90C, command unk8F8 = 3 and pending flag unk9A4; name packet built for the slot.
+ * Reads gOperationState and gCardDevicePathFormat.
  *
  * @par Callers
- * Confirmed: func_80080B70 at call site 0x8008118C (profile-image save loop, passes name D_800120A4, size 0x678). The caller listed in the package work list does not exist in the unit catalog; no such call edge was found.
+ * Direct calls in the retail listing are from func_80080B70.
+ *
+ * @par Role and path
+ * The save UI uses this function to stage a write for the named file.
+ *
+ * @par Unknown
+ * The manager completes the write later. The return value alone contains no
+ * transferred byte count.
  */
-s32 func_80020FDC(u32 arg0, u32 arg1, u32 arg2)
+s32 gQueueCardFileWrite(u32 arg0, u32 arg1, u32 arg2)
 {
     register u32 p0 __asm__("$18") = arg0;
     register u32 p1 __asm__("$21") = arg1;
@@ -83,7 +91,7 @@ s32 func_80020FDC(u32 arg0, u32 arg1, u32 arg2)
     if (slot == 0) {
         return result;
     }
-    func_80020F34(p0, slot);
+    gBuildCardFileDirectoryFrame(p0, slot);
     gQueueMcOpMode6(slot << 6, idx, p1, 0);
 tail:
     result = (gGetMcPendingFlag() < 1) << 13;

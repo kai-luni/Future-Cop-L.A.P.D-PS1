@@ -23,7 +23,7 @@ u32 gFindFreeCardBlockRun(u32 size) __asm__("func_80020E68");
  * No RAM globals accessed directly.
  *
  * @par Callers
- * Direct calls in the retail listing are from func_80020FDC, func_8007FB04.
+ * Direct calls in the retail listing are from gQueueCardFileWrite, func_8007FB04.
  *
  * @par Role and path
  * Card save creation uses the returned start index to stage allocation.

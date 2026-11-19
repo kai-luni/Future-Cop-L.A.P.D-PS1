@@ -21,24 +21,30 @@ struct SoundSystem {
 
 extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
+void gResetSoundSystemState(void) __asm__("func_80021508");
+
 /**
- *  @brief Resets selected sound-system fields and sets the default volume.
+ * @brief Clears selected sound-system words and sets the default scalar at
+ * +0x70 to 127.
+ * @return Nothing.
  *
- *  Initializes bank and channel references, three unknown fields, and the
- *  active flags of the three voice slots in the shared sound-system state.
- *  @par Globals
- *  D_800A07A8 holds the sound-system fields modified by this routine.
- *  @par Control flow
- *  Clears the common fields, loops over voice slots from index 2 down to 0,
- *  and then sets volume to 0x7F.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Overwrites the specified fields; other voice-slot fields are unchanged.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @par Confirmed mechanics
+ * Clears words from +0 to +0x18 and three stride-0x1C words at +0x54, +0x38,
+ * and +0x1C. Stores 0x7F to +0x70 in the return delay slot.
+ *
+ * @par Globals
+ * Writes fields of gSoundSystem.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from func_80021C20.
+ *
+ * @par Role and path
+ * Audio initialization calls this before applying sound table configuration.
+ *
+ * @par Unknown
+ * The surrounding sound code determines the consumers of the default scalar.
  */
-void func_80021508(void)
+void gResetSoundSystemState(void)
 {
     s32 i;
 

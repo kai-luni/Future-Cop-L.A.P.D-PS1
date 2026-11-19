@@ -9,32 +9,44 @@ struct Unk21490 {
     s32 mode;
 };
 
-extern s32 D_8009FA34;
+extern s32 gSpuTransferActive __asm__("D_8009FA34");
 
 extern void func_80098EE8(s32 channel);
 extern void func_80098E88(s32 arg0, s32 arg1);
 extern void func_80098E28(s32 arg0, s32 arg1);
 
+void gStartSpuTransfer(struct Unk21490 *request) __asm__("func_80021490");
+
 /**
- *  @brief Dispatches a channel request using the selected mode.
+ * @brief Marks a queued SPU request active and dispatches its transfer
+ * operation.
  *
- *  Marks the request state, selects the channel, and forwards the two
- *  request arguments to one of two mode-dependent operations.
- *  @param request Request containing the channel, arguments, and mode.
- *  @par Globals
- *  D_8009FA34 is set to 1 before dispatch.
- *  @par Control flow
- *  Mode 1 selects func_80098E88; all other modes select func_80098E28.
- *  @par Calls
- *  func_80098EE8 selects the channel; the selected operation receives arg0 and arg1.
- *  @par Side effects
- *  Updates the global flag and invokes the channel operations.
- *  @par Callers
- *  Confirmed: func_800212F8, func_8002139C.
+ * @param request Request with SPU address at +0 and buffer and count words at
+ *     +4 and +8.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Sets gSpuTransferActive and calls the transfer-address routine with request
+ * word +0. Mode 1 at +0x14 calls func_80098E88, and other modes call
+ * func_80098E28. Both receive request words +8 and +4 in that order.
+ *
+ * @par Globals
+ * Sets gSpuTransferActive.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from gEnqueueSpuTransfer,
+ * gCompleteSpuTransfer.
+ *
+ * @par Role and path
+ * The SPU request ring uses this for the first request and each request
+ * advanced by its completion callback.
+ *
+ * @par Unknown
+ * The dispatch body leaves the mode-specific handling to the transfer callees.
  */
-void func_80021490(struct Unk21490 *request)
+void gStartSpuTransfer(struct Unk21490 *request)
 {
-    D_8009FA34 = 1;
+    gSpuTransferActive = 1;
     func_80098EE8(request->channel);
     if (request->mode == 1) {
         func_80098E88(request->arg0, request->arg1);

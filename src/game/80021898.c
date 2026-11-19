@@ -2,7 +2,7 @@
 typedef struct { int pad[3]; int size; } Input;
 typedef struct { int handle; int size; int arg; void (*callback)(); int context; int flag; } Request;
 extern int func_80097B28(int);
-extern void func_800212F8(Request *);
+extern void gEnqueueSpuTransfer(Request *) __asm__("func_800212F8");
 extern void func_80021888(void);
 extern volatile int D_8009F628;
 
@@ -21,7 +21,7 @@ extern volatile int D_8009F628;
  *  @par Control flow
  *  Allocation failure returns -1; otherwise a null callback causes a bounded polling loop.
  *  @par Calls
- *  func_80097B28 allocates the handle; func_800212F8 submits the request.
+ *  func_80097B28 allocates the handle; gEnqueueSpuTransfer submits the request.
  *  @par Side effects
  *  Submits a request and may clear the completion flag; timeout does not cancel the request.
  *  @par Callers
@@ -49,7 +49,7 @@ int func_80021898(Input *input, int arg, void (*callback)(), int context)
             req.callback = func_80021888;
             D_8009F628 = 0;
         }
-        func_800212F8(&req);
+        gEnqueueSpuTransfer(&req);
         if (!callback) {
             while (!D_8009F628) {
                 if (timeout-- <= 0)

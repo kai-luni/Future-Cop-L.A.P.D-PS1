@@ -1,43 +1,49 @@
-// Categories: Game Engine > State
+// Categories: Platform > Audio | Game Engine > Request Queue
 #include "game/types.h"
 
-extern s32 D_8009F9AC;
-extern s32 D_8009FA14;
-extern s32 D_8009FA34;
-extern s32 D_8009FAD0;
+extern s32 gSavedSpuTransferCallback __asm__("D_8009F9AC");
+extern s32 gSavedSpuTransferMode __asm__("D_8009FA14");
+extern s32 gSpuTransferActive __asm__("D_8009FA34");
+extern s32 gSpuTransferDispatching __asm__("D_8009FAD0");
 extern s32 gInitDoneFlag __asm__("D_8009F9C8");
 
 extern void gSpuCancelDmaRequests(void) __asm__("func_8002129C");
 extern void gSpuSetTransferMode(s32 value) __asm__("func_80098F48");
 extern s32 gSpuSetTransferCallback(s32 callback) __asm__("func_80098FB8");
 
+void gShutdownSpuTransferQueue(void) __asm__("func_80021250");
+
 /**
- *  @brief Performs conditional cleanup and clears three state flags.
+ * @brief Shuts down the SPU transfer queue and restores the previously saved
+ * transfer settings.
+ * @return Nothing.
  *
- *  When the active flag is set, the routine invokes cleanup and passes two
- *  saved values to other functions before resetting its local global state.
- *  @par Globals
- *  D_8009F9C8 gates cleanup and is cleared; D_8009FA14 and D_8009F9AC
- *  supply call arguments; D_8009FA34 and D_8009FAD0 are cleared.
- *  @par Control flow
- *  The three calls run only when D_8009F9C8 is nonzero; all three clears
- *  occur unconditionally afterward.
- *  @par Calls
- *  gSpuCancelDmaRequests performs cleanup; gSpuSetTransferMode and gSpuSetTransferCallback
- *  receive the saved values, with the latter's return value ignored.
- *  @par Side effects
- *  Clears three globals and may cause additional effects through the calls.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @par Confirmed mechanics
+ * If gInitDoneFlag is nonzero, calls the queue cancel entry and restores
+ * transfer mode then callback. Clears the active, dispatch-guard, and
+ * initialization words on both paths.
+ *
+ * @par Globals
+ * Reads gSavedSpuTransferMode and gSavedSpuTransferCallback. Clears
+ * gSpuTransferActive, gSpuTransferDispatching, and gInitDoneFlag.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from gShutdownCvkSystem.
+ *
+ * @par Role and path
+ * The audio teardown path releases ownership of the SPU transfer callback.
+ *
+ * @par Unknown
+ * The cancel routine controls how a transfer in flight is drained.
  */
-void func_80021250(void)
+void gShutdownSpuTransferQueue(void)
 {
     if (gInitDoneFlag != 0) {
         gSpuCancelDmaRequests();
-        gSpuSetTransferMode(D_8009FA14);
-        gSpuSetTransferCallback(D_8009F9AC);
+        gSpuSetTransferMode(gSavedSpuTransferMode);
+        gSpuSetTransferCallback(gSavedSpuTransferCallback);
     }
-    D_8009FA34 = 0;
-    D_8009FAD0 = 0;
+    gSpuTransferActive = 0;
+    gSpuTransferDispatching = 0;
     gInitDoneFlag = 0;
 }

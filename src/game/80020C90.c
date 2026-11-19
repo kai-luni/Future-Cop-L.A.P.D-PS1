@@ -32,7 +32,7 @@ s32 gFindCardFileSlot(void *arg0) __asm__("func_80020C90");
  *
  * @par Callers
  * Direct calls in the retail listing are from gQueueCardFileRead,
- * func_80020FDC, func_8007FB04.
+ * gQueueCardFileWrite, func_8007FB04.
  *
  * @par Role and path
  * The card read, write, and UI paths use the resulting index to find a save

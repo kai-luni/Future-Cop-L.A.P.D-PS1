@@ -25,7 +25,7 @@ struct KeyValue {
  *  @par Side effects
  *  Writes non-null output destinations only when a match is found.
  *  @par Callers
- *  Confirmed: func_80021554.
+ *  Confirmed: gInitSoundStorage.
  */
 s32 func_80021740(struct KeyValue *table, s32 key, s32 *value, s32 *index)
 {

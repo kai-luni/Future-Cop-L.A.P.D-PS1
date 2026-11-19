@@ -23,7 +23,7 @@ extern void func_80021DAC(s32 index);
  *  @par Side effects
  *  Any bank changes are performed by func_80021DAC.
  *  @par Callers
- *  Confirmed: func_800216D8.
+ *  Confirmed: gClearSoundStorage.
  */
 void func_800217A8(void)
 {

@@ -5,28 +5,34 @@ extern u16 gPunctuationTable[] __asm__("D_8009AB18");
 struct Range { u16 base, start; };
 extern struct Range gCharRangeTable[] __asm__("D_8009AB0C");
 
+u16 gEncodeCardTitleGlyph(u8 c) __asm__("func_800210D0");
+
 /**
- * @brief Maps an ASCII character (0x20..0x7E) to a byte-swapped 16-bit Shift-JIS glyph code.
- *
- * Splits printable ASCII into punctuation spans (D_8009AB18 lookup table) and digit/uppercase/lowercase
- * spans (D_8009AB0C Range table with base/start), returning 0 outside 0x20..0x7E and swapping bytes of the u16 result.
+ * @brief Encodes a printable ASCII byte as a byte-swapped Shift-JIS glyph
+ * code.
  *
  * @param c ASCII input byte.
- * @return Byte-swapped 16-bit encoded glyph/Shift-JIS code, or 0 for non-printable bytes.
+ * @return Byte-swapped glyph code, or zero for unsupported input.
+ *
+ * @par Confirmed mechanics
+ * Classifies ASCII ranges, uses a halfword lookup for punctuation and
+ * base-minus-start arithmetic for digits and letters, then swaps the two bytes
+ * of the result.
  *
  * @par Globals
- * D_8009AB18 - u16 punctuation lookup table (spans 0x20..0x2F, 0x3A..0x40, 0x5B..0x60, 0x7B..0x7E);
- * D_8009AB0C - three {base, start} Range descriptors for '0'..'9' (group 0), 'A'..'Z' (group 1), and 'a'..'z' (group 2).
- * @par Control flow
- * Seven-branch range classifier with early return 0, table vs range lookup branch, and 16-bit byte swap.
- * @par Calls
- * None.
- * @par Side effects
- * None observed.
+ * Reads gPunctuationTable and gCharRangeTable.
+ *
  * @par Callers
- * Confirmed: func_800822CC (encodes profile/save title string into D_8009F92C + 4 for func_80080B70).
+ * Direct calls in the retail listing are from gEncodeProfileNameGlyphs.
+ *
+ * @par Role and path
+ * The save-title builder calls this for the encoded text placed in the card
+ * header.
+ *
+ * @par Unknown
+ * The routine handles ASCII input and contains no multibyte decoder.
  */
-u16 func_800210D0(u8 c)
+u16 gEncodeCardTitleGlyph(u8 c)
 {
     register int group __asm__("$5") = 0;
     register u8 offset __asm__("$3") = 0;

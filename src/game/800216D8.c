@@ -12,23 +12,35 @@ extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
 extern void func_800217A8(void);
 
+void gClearSoundStorage(void) __asm__("func_800216D8");
+
 /**
- *  @brief Clears the sound system's bank and channel references.
+ * @brief Releases configured sound banks and clears the bank and channel table
+ * descriptors.
+ * @return Nothing.
  *
- *  Performs bank cleanup when a bank array is present, then resets the
- *  corresponding pointers and counts for each present array.
- *  @par Globals
- *  D_800A07A8 holds the bank and channel pointers and counts being reset.
- *  @par Control flow
- *  Checks each pointer independently; cleanup precedes clearing bank state.
- *  @par Calls
- *  func_800217A8 performs bank cleanup when the bank pointer is non-null.
- *  @par Side effects
- *  Clears present array pointers and their counts; cleanup may have other effects.
- *  @par Callers
- *  Confirmed: func_80021554, func_80021C80.
+ * @par Confirmed mechanics
+ * If the bank pointer at +4 is nonzero, calls func_800217A8 and clears pointer
+ * and count. If the channel pointer at +0x0C is nonzero, clears it and the
+ * count at +8.
+ *
+ * @par Globals
+ * Reads and clears fields of gSoundSystem, including gSoundBankSlots,
+ * gSoundChannelCount, and gChannelTable.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from gInitSoundStorage,
+ * func_80021C80.
+ *
+ * @par Role and path
+ * The sound teardown path detaches the configured storage after unloading bank
+ * entries.
+ *
+ * @par Unknown
+ * The caller retains ownership of the bank-pointer and channel arrays
+ * themselves.
  */
-void func_800216D8(void)
+void gClearSoundStorage(void)
 {
     if (gSoundSystem.banks != 0) {
         func_800217A8();

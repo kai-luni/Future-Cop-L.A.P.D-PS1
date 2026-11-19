@@ -4,32 +4,34 @@ extern u8 *gOperationState __asm__("D_8009AB08");
 extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
 extern void gCopyMemory(void *destination, void *source, int count) __asm__("func_8001E318");
 extern s32 func_8008CCC0(char *text);
+
+void gBuildCardFileDirectoryFrame(char *t, s32 index) __asm__("func_80020F34");
+
 /**
- * @brief Builds a 0x80-byte memory-card name packet with header, title and
- *        XOR checksum.
+ * @brief Builds a 128-byte directory frame for a new memory-card file.
  *
- * @param t Title string.
- * @param index Slot index (packet offset index * 0x80).
+ * @param t Filename copied into the directory frame.
+ * @param index Directory frame index.
  * @return Nothing.
  *
- * @par Confirmed
- * The packet lives at D_8009AB08 + 0x9B0 + index * 0x80, zeroed first.
- * Header: byte 0 = 0x51, +4 = 0x2000, +8 = 0xFFFF. The title (BIOS strlen
- * func_8008CCC0, copied via func_8001E318) starts at +0xA. The XOR of the
- * first 0x7F bytes is stored as byte 0x7F.
+ * @par Confirmed mechanics
+ * Clears the selected frame at manager +0x9B0 plus index times 128. Writes
+ * type 0x51, size 0x2000, and link 0xFFFF, copies the supplied name to +0x0A,
+ * and stores the XOR of bytes 0 through 126 at +0x7F.
  *
- * @par Likely role
- * The save-icon/title packet writer behind func_80020FDC: 0x51 is the
- * card-format magic, 0x2000 likely the icon size/offset word, the checksum
- * protects the directory entry.
- *
- * @par Unknown
- * The exact meaning of the 0x2000/0xFFFF header words.
+ * @par Globals
+ * Reads gOperationState and writes the selected directory frame through it.
  *
  * @par Callers
- * func_80020FDC.
+ * Direct calls in the retail listing are from gQueueCardFileWrite.
+ *
+ * @par Role and path
+ * The card write path builds this frame before staging creation of a new save.
+ *
+ * @par Unknown
+ * The filename length is accepted from the string-length helper.
  */
-void func_80020F34(char *t, s32 index)
+void gBuildCardFileDirectoryFrame(char *t, s32 index)
 {
     register char *text __asm__("$17") = t;
     u8 *packet; register s32 off __asm__("$2");
