@@ -1,25 +1,33 @@
 // Categories: Game Engine > State
 #include "../../include/game/types.h"
 
-extern s32 D_800A0974;
+extern s32 gStreamStopPending __asm__("D_800A0974");
+
+void gMarkAudioStreamStopPending(void) __asm__("func_80022700");
 
 /**
- *  @brief Sets a global state value to one.
+ * @brief Marks an audio stream stop for deferred processing.
  *
- *  This function provides a direct write to D_800A0974; the meaning of
- *  that state value is not established by the source.
- *  @par Globals
- *  D_800A0974 is assigned the value 1.
- *  @par Control flow
- *  Performs one unconditional assignment.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Changes D_800A0974.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Stores 1 to the word at mixer +0x0C. The stream poller tests that word before dispatching the
+ * stop-and-clear routine.
+ *
+ * @par Globals
+ * Writes gStreamStopPending, which aliases gMixerState +0x0C.
+ *
+ * @par Callers
+ * Direct calls from gShutdownVagmAudioStream (func_80024630).
+ *
+ * @par Role and path
+ * The nonzero variant of stream shutdown sets this marker for the polling path.
+ *
+ * @par Unknown
+ * The poller also needs the active field to be nonzero.
  */
-void func_80022700(void)
+void gMarkAudioStreamStopPending(void)
 {
-    D_800A0974 = 1;
+    gStreamStopPending = 1;
 }

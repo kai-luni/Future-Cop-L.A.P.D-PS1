@@ -13,30 +13,32 @@ struct SpuVoiceRequest {
 
 extern void gSpuSetVoiceAttributes(struct SpuVoiceRequest *request) __asm__("func_80099368");
 
+void gSilenceSpuVoicesExcept(s32 voice) __asm__("func_80021BD0");
+
 /**
- * @brief Zeroes left/right volumes and pitch on all SPU channels except one preserved voice.
- *
- * Builds a stack SpuVoiceRequest with voices = ~(1 << voice) & 0xFFFFFF (all 24 channels
- * except voice), mask = 0x13 (left volume, right volume, pitch), and zeroed values for gSpuSetVoiceAttributes.
+ * @brief Zeroes the left and right volumes and pitch of all selected SPU voices while sparing
+ * one voice.
  *
  * @param voice SPU channel index (0..23) spared from muting.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Uses SLLV and NOR to clear the input voice bit from 0xFFFFFF, then submits a stack request
+ * with attribute mask 0x13 and three zero halfwords.
  *
  * @par Globals
- * None directly; gSpuSetVoiceAttributes writes D_8009EEA4 hardware voice registers.
- *
- * @par Control flow
- * Straight-line stack struct setup and single call to gSpuSetVoiceAttributes.
- *
- * @par Calls
- * gSpuSetVoiceAttributes - updates SPU voice pitch and L/R volumes for the selected voice bitmask.
- *
- * @par Side effects
- * Mutes and clears pitch on 23 of the 24 SPU hardware channels via gSpuSetVoiceAttributes.
+ * None directly. The callee writes the selected voice registers through gSpuRegBasePtr.
  *
  * @par Callers
- * Confirmed: gSoundHaltAllVoices (0x8004765C, when sparing a preserved stream voice node->voice during audio shutdown) / Likely: none / Unknown: none.
+ * Direct calls from gSoundHaltAllVoices (func_80047554).
+ *
+ * @par Role and path
+ * The audio halt path uses this form when retaining a voice node.
+ *
+ * @par Unknown
+ * The input index is used in a variable shift without a range check.
  */
-void func_80021BD0(s32 voice)
+void gSilenceSpuVoicesExcept(s32 voice)
 {
     struct SpuVoiceRequest request;
 

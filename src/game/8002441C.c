@@ -1,25 +1,32 @@
 // Categories: Game Engine > Dispatch
 #include "game/types.h"
 
-extern void func_80022654(void);
+extern void gPollAudioStreamStop(void) __asm__("func_80022654");
+
+void gServiceAudioStreamStop(void) __asm__("func_8002441C");
 
 /**
- *  @brief Calls func_80022654 without arguments.
+ * @brief Services the stream's pending-stop and deadline checks.
  *
- *  This wrapper delegates its entire operation to the called function.
- *  The purpose of the delegated operation is not established here.
- *  @par Globals
- *  None accessed directly.
- *  @par Control flow
- *  Makes one unconditional call and returns.
- *  @par Calls
- *  func_80022654 performs the delegated operation.
- *  @par Side effects
- *  Any effects of func_80022654 are not specified by this source.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Calls gPollAudioStreamStop and returns without further dispatch.
+ *
+ * @par Globals
+ * None directly. The callee reads mixer state and the frame tick.
+ *
+ * @par Callers
+ * Direct calls from func_800462D0.
+ *
+ * @par Role and path
+ * The audio update path invokes this wrapper to service deferred stream stops.
+ *
+ * @par Unknown
+ * The hook adds no decisions of its own.
  */
-void func_8002441C(void)
+void gServiceAudioStreamStop(void)
 {
-    func_80022654();
+    gPollAudioStreamStop();
 }

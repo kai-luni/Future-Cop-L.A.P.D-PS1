@@ -3,25 +3,34 @@
 
 extern void func_80021A70(u32 mask);
 
+void gQueueSoundChannelStarts(s32 count, s32 *channels) __asm__("func_800221E4");
+
 /**
- *  @brief Builds a channel bitmask and passes it to the channel operation.
+ * @brief Queues a set of channel indices for activation.
  *
- *  Each channel index other than -1 contributes its corresponding bit to the
- *  mask. Duplicate indices contribute the same bit only once.
- *  @param count Number of channel entries to inspect.
- *  @param channels Pointer to the channel index array; -1 entries are skipped.
- *  @par Globals
- *  None referenced.
- *  @par Control flow
- *  A loop builds the mask, then the function is called even if the mask is zero.
- *  @par Calls
- *  func_80021A70 receives the completed mask.
- *  @par Side effects
- *  Any channel state changes are performed by func_80021A70.
- *  @par Callers
- *  Confirmed: func_800228F4.
+ * @param count Number of channel entries to inspect.
+ * @param channels Pointer to the channel index array; -1 entries are skipped.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Scans four-byte indices, skips -1 and ORs each SLLV-derived bit into a0 before calling
+ * func_80021A70, even for an empty mask.
+ *
+ * @par Globals
+ * None directly. The callee ORs the mask into gSoundSystem +0x14, also addressed as
+ * gSoundChannelEnableMask.
+ *
+ * @par Callers
+ * Direct calls from gStartAudioStreamChannels (func_800228F4), gStartTrackedSoundVoice
+ * (func_80023F08).
+ *
+ * @par Role and path
+ * Stream startup batches its assigned channels into a single update.
+ *
+ * @par Unknown
+ * The loop accepts any index other than the -1 sentinel.
  */
-void func_800221E4(s32 count, s32 *channels)
+void gQueueSoundChannelStarts(s32 count, s32 *channels)
 {
     u32 mask;
     s32 i;

@@ -15,38 +15,53 @@ extern struct Other gReleaseQueues __asm__("D_800A0C30");
 extern Chunk *gVagmRing[4] __asm__("D_800A0C50");
 extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
-extern s32 D_8009F6C4, D_8009F6E0;
+extern s32 gPortraitStreamDeadline __asm__("D_8009F6C4");
+extern s32 gVagmPrimeBlockCount __asm__("D_8009F6E0");
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
-extern volatile s32 D_8009F6D4;
+extern volatile s32 gVagmWriteIndex __asm__("D_8009F6D4");
 extern s32 gGameSuspended __asm__("D_8009FA24");
-extern s32 func_80028E58(s32);
-extern void func_80028D28(void);
-extern s32 func_80028BCC(void *, void *);
-extern void func_80028BA0(void *, void *, u32);
-extern void func_80028DC0(void *);
-extern s32 func_800244A4(void);
+extern s32 gServiceModuleReadQueues(s32) __asm__("func_80028E58");
+extern void gRetireParsedModuleBuffer(void) __asm__("func_80028D28");
+extern s32 gCreateModuleAssetFromHeader(void *, void *) __asm__("func_80028BCC");
+extern void gCopyWholeWords(void *, void *, u32) __asm__("func_80028BA0");
+extern void gQueueCompletedModuleAsset(void *) __asm__("func_80028DC0");
+extern s32 gInitializeVagmAudioStream(void) __asm__("func_800244A4");
 extern void func_8002A544(void);
-extern u8 func_80023CA4(void *, s32, s32);
+extern u8 gUploadCvkSpuDataAndWait(void *, s32, s32) __asm__("func_80023CA4");
 extern void func_8002A16C(s32);
 
+void gParseStreamedModuleChunks(void) __asm__("func_8002902C");
+
 /**
- * @brief Parses streamed module container files from D_800A0B70 and dispatches SHOC/CTRL/CANM/FILL/VAGB/VAGM chunks.
- *
- * Guarded by func_80028E58(1) and D_800A0B70.file. Walks chunks up to state->limit: SHOC (0x53484F43) handles SHDR headers via func_80028BCC and SDAT audio payloads via func_80028BA0/func_80028DC0; CTRL initializes playback rate; VAGM queues VAG frames and starts audio via func_800244A4; VAGB uploads sound bank chunks via func_80023CA4 and triggers func_8002A16C(1); CANM queues animation chunks; FILL skips to limit.
+ * @brief Parses completed module buffers and dispatches their asset, control, audio and
+ * animation chunks.
  *
  * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Services the file rings, increments the parsed-buffer counter, then reads each tag and size
+ * up to the parse limit. SHOC prepares SHDR and copies SDAT data, CTRL initializes the limit
+ * metadata, VAGM queues retained audio blocks, VAGB uploads SPU data, CANM retains animation
+ * blocks and FILL advances to the limit. Retires each parsed buffer before servicing the ring
+ * again.
+ *
  * @par Globals
- * D_800A0B70 (stream file/loader state), D_800A0C30 (chunk/size accumulator), D_800A0C50 (4-slot VAGM ring), D_8009F6B8/D_8009F6C0/D_8009F6C4/D_8009F6D4/D_8009F6DC/D_8009F6E0/D_8009FA24.
- * @par Control flow
- * Loops while D_800A0B70.file != 0; inner loop dispatches chunk tags until file->pos >= state->limit, then retires the file via func_80028D28 and drains pending files via func_80028E58(0).
- * @par Calls
- * func_80028E58, func_80028BCC, func_80028BA0, func_80028DC0, func_800244A4, func_8002A544, func_80023CA4, func_8002A16C, func_80028D28.
- * @par Side effects
- * Advances file->pos/refs, allocates/fills sound buffers, uploads SPU data, queues CANM/VAGM chunks, and starts/stops audio streaming.
+ * Uses gStreamBufferList, gReleaseQueues, gVagmRing, gVagmWriteIndex, gVagmPrimeBlockCount,
+ * gPortraitAudioByteCount, gPortraitStreamDeadline, gBitFieldState, gLatchFlag, gCallGateFlag
+ * and gGameSuspended.
+ *
  * @par Callers
- * Confirmed: func_800295E8.
+ * Direct calls from gPopCompletedModuleAsset (func_800295E8).
+ *
+ * @par Role and path
+ * Called by the asset pop path to deliver module assets and feed the synchronized audio and
+ * portrait queues.
+ *
+ * @par Unknown
+ * Unrecognized tags are advanced by their size and the full tag vocabulary is unresolved.
  */
-void func_8002902C(void)
+void gParseStreamedModuleChunks(void)
 {
     struct State *state;
     File *file;
@@ -57,7 +72,7 @@ void func_8002902C(void)
     s32 one;
     File copy;
     register s32 pos __asm__("$5");
-    if (!func_80028E58(1)) return;
+    if (!gServiceModuleReadQueues(1)) return;
     state = &gStreamBufferList;
     file = state->file;
     if (!file) return;
@@ -89,7 +104,7 @@ void func_8002902C(void)
                     }
                 choc:
                     if (chunk->subtype == 0x53484452) {
-                        if (func_80028BCC(&state->load, chunk)) return;
+                        if (gCreateModuleAssetFromHeader(&state->load, chunk)) return;
                     } else if (chunk->subtype == 0x53444154) {
                         register struct SoundLoad *load __asm__("$16");
                         register s32 newpos __asm__("$2");
@@ -99,10 +114,10 @@ void func_8002902C(void)
                         load = &state->load;
                         if (load->sound) {
                             __asm__("" : "+r"(chunk));
-                            func_80028BA0(load->sound->data + load->soundpos, (u8 *)chunk + 0x14, size);
+                            gCopyWholeWords(load->sound->data + load->soundpos, (u8 *)chunk + 0x14, size);
                             load->soundpos += size;
                             if (load->soundpos == load->sound->size) {
-                                func_80028DC0(load->sound);
+                                gQueueCompletedModuleAsset(load->sound);
                                 load->sound = 0;
                             }
                         }
@@ -117,20 +132,20 @@ void func_8002902C(void)
                     }
                     goto dispatch_end;
                 vagm:
-                    if (gCallGateFlag != 0 && gCallGateFlag != 2 && queue[D_8009F6D4] == 0) {
+                    if (gCallGateFlag != 0 && gCallGateFlag != 2 && queue[gVagmWriteIndex] == 0) {
                         register Chunk *p __asm__("$16");
                         p = chunk;
                         __asm__("" : "+r"(p));
-                        queue[D_8009F6D4] = chunk;
-                        D_8009F6D4++;
-                        if (D_8009F6D4 >= 4) D_8009F6D4 = 0;
+                        queue[gVagmWriteIndex] = chunk;
+                        gVagmWriteIndex++;
+                        if (gVagmWriteIndex >= 4) gVagmWriteIndex = 0;
                         file->refs++;
                         __asm__("" : "+r"(chunk));
                         chunk->owner = file;
                         if (gCallGateFlag == 3) {
-                            D_8009F6E0++;
-                            if ((u32)D_8009F6E0 >= 2) {
-                                if (!func_800244A4()) func_8002A544();
+                            gVagmPrimeBlockCount++;
+                            if ((u32)gVagmPrimeBlockCount >= 2) {
+                                if (!gInitializeVagmAudioStream()) func_8002A544();
                                 else gCallGateFlag = one;
                             }
                         } else gCallGateFlag = one;
@@ -142,11 +157,11 @@ void func_8002902C(void)
                     goto dispatch_end;
                 vagb:
                     gBitFieldState |= 1;
-                    if (func_80023CA4((u8 *)chunk + 0x18, size - 0x18, chunk->index)) {
+                    if (gUploadCvkSpuDataAndWait((u8 *)chunk + 0x18, size - 0x18, chunk->index)) {
                         if (chunk->index == one) other->size = 0;
                         other->size += ((size + 0x27) >> 6) << 6;
                         if (chunk->index == chunk->total) {
-                            D_8009F6C4 = 0;
+                            gPortraitStreamDeadline = 0;
                             gBitFieldState = (gBitFieldState | 4) & 0xbf;
                             if (gLatchFlag) {
                                 gBitFieldState |= 8;
@@ -181,8 +196,8 @@ void func_8002902C(void)
             }
             if (pos < state->limit) goto chunk_loop;
         }
-        func_80028D28();
-        func_80028E58(0);
+        gRetireParsedModuleBuffer();
+        gServiceModuleReadQueues(0);
         file = state->file;
     } while (file);
 }

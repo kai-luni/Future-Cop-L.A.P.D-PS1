@@ -28,7 +28,7 @@ extern s32 gPanelSoundIds __asm__("D_8009FAC0");
 
 extern s32 gSlotVoiceHandle[] __asm__("D_8009F678");
 extern s32 gSlotTrackId[] __asm__("D_8009FA78");
-extern struct Name D_80010DC0;
+extern struct Name gMissionPanelSoundTable __asm__("D_80010DC0");
 extern void *gFocusPositions __asm__("D_8009F9A0");
 extern u8 gModuleNameBuffer[] __asm__("D_800A0B30");
 extern u8 gRandomTable[] __asm__("D_800A8540");
@@ -69,45 +69,37 @@ extern void func_8004AB4C(void);
 extern void func_8003F79C(s32 a0);
 extern void func_800734B0(void);
 
+void gInitializeMissionModule(s32 arg0) __asm__("func_80024A24");
+
 /**
- * @brief Mission boot: clears the run state, resolves the mission parameter
- *        from the name table, seeds the RNG and initialises every subsystem.
+ * @brief Resets mission state, selects a panel value and initializes the mission subsystems.
  *
- * @param arg0 Mission/level id (stored in D_8009F684, copied into the name
- *        buffer and forwarded to the late init calls).
+ * @param arg0 Module name address, stored in the mission word and forwarded to startup helpers.
  * @return Nothing.
  *
- * @par Confirmed
- * Clears D_8009F68C/D_8009F680 and the two-word arrays D_8009F678/
- * D_8009FA78. The 10-byte table D_80010DC0 is scanned in pairs for
- * D_8009FA94->unk28; the matching second byte lands in D_8009FAC0.
- * D_8009F9A0 is nulled, func_80017C68(0x168, 0x82, 0x118, 0x64, 0xFC,
- * 0x145) sets up the viewport, func_800860CC runs, the name buffer
- * D_800A0B30 is copied via the BIOS strcpy stub func_8008CCB0, 0x80 bytes
- * at D_800A8540 and two words at D_8009FA5C are cleared. RNG: with
- * D_8009FA84 > 0 the seed D_8009F284 is installed (func_800197A8) and
- * func_80056924 runs; D_8009F688 takes |D_8009FA84|. Then ~25 subsystem
- * inits run in fixed order (map, entities, HUD, sound, effects, camera:
- * func_80019D60 .. func_8004783C), including func_8001B2C8(0x898, 0x400)
- * and func_80012E1C(func_80063428()). With D_8009FA84 != 0,
- * func_80059BFC(flag, D_8009F688, arg0) runs (flag 2 when unk0C == 2,
- * else 1). The tail initialises the remaining HUD/effect systems
- * (func_80029F50 .. func_800734B0).
+ * @par Confirmed mechanics
+ * Clears two preview-handle and track slots and copies a ten-byte table to the stack. Scans its
+ * five key/value pairs against session +0x28, initializes viewport and decode state, copies the
+ * module name, clears 128 random-table bytes and both player pointers, then runs the fixed
+ * subsystem chain. A nonzero demo flag supplies its absolute value as a mission parameter and
+ * triggers a separate setup call.
  *
- * @par Likely role
- * The start-of-mission entry called by func_80024E3C: the name table maps
- * the mission id to a parameter byte, the seeded RNG makes the run
- * reproducible, and the long init chain brings every subsystem into the
- * mission state.
- *
- * @par Unknown
- * The meaning of the six viewport constants and what func_80059BFC's flag
- * selects (likely single vs two player).
+ * @par Globals
+ * Updates gScratchBlockPtr, gWasSuspended, gSlotVoiceHandle, gSlotTrackId, gPanelSoundIds,
+ * gFocusPositions, gMissionId, gGameSuspended, gOpenPanelCount, gModuleNameBuffer,
+ * gRandomTable, gRequestListHead, gRequestListTail, gPlayerEntities, gMissionParam and
+ * gScreenResetFlag. Reads gMissionPanelSoundTable, gGameSession, gDemoPlayback and gGlobalTick.
  *
  * @par Callers
- * func_80024E3C.
+ * Direct calls from gStartModuleByName (func_80024E3C).
+ *
+ * @par Role and path
+ * The module startup path calls this before gameplay frame processing begins.
+ *
+ * @par Unknown
+ * The meaning of each viewport constant and the flag passed to func_80059BFC is unresolved.
  */
-void func_80024A24(s32 arg0)
+void gInitializeMissionModule(s32 arg0)
 {
     struct Name name;
     s32 i;
@@ -133,7 +125,7 @@ void func_80024A24(s32 arg0)
         } while (i < 2);
     }
 
-    name = D_80010DC0;
+    name = gMissionPanelSoundTable;
 
     gPanelSoundIds = 0;
     target = gGameSession->unk28;

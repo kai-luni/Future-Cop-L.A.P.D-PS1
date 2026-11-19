@@ -27,33 +27,41 @@ struct Entry {
 };
 
 extern u8 *func_80021800(void *base, s32 index);
-extern void func_800223B0(s32 a0, s32 a1, s32 a2, s32 *a3, s32 *a4);
+extern void gComputeStereoVoiceLevels(s32 a0, s32 a1, s32 a2, s32 *a3, s32 *a4) __asm__("func_800223B0");
 extern void func_80021A70(u32 flags);
 
+s32 gQueueBankSampleOnChannel(s32 a0, s32 a1, s32 a2, s32 a3, s32 slot, struct Args *args) __asm__("func_80021F98");
+
 /**
- *  @brief Resolves a bank entry and initializes a sound channel slot.
+ * @brief Resolves a bank sample and queues its parameters on a sound channel.
  *
- *  The selected record supplies a default value when args requests one.
- *  Successful initialization marks the slot through a bitmask call.
- *  @param a0 Bank index checked against the global bank count.
- *  @param a1 Index passed to the bank lookup.
- *  @param a2 Record index within the resolved data.
- *  @param a3 Unused argument.
- *  @param slot Channel slot to initialize and mark.
- *  @param args Channel value and inputs for deriving two additional values.
- *  @return 1 on successful resolution and initialization, otherwise 0.
- *  @par Globals
- *  D_800A07A8 supplies the bank table, count and channel storage.
- *  @par Control flow
- *  Checks the bank index and pointers before initializing the slot.
- *  @par Calls
- *  func_80021800 resolves data; func_800223B0 derives values; func_80021A70 marks the slot.
- *  @par Side effects
- *  Writes the selected channel entry and invokes the slot-marking operation.
- *  @par Callers
- *  Confirmed: func_80024358.
+ * @param a0 Bank index checked against the global bank count.
+ * @param a1 Index passed to the bank lookup.
+ * @param a2 Record index within the resolved data.
+ * @param a3 Unused argument.
+ * @param slot Channel slot to initialize and mark.
+ * @param args Channel value and inputs for deriving two additional values.
+ * @return 1 on successful resolution and initialization, otherwise 0.
+ *
+ * @par Confirmed mechanics
+ * Range-checks the bank index and resolves an indexed bank record, then selects a 20-byte
+ * sample at record +4. It uses sample halfword +0x0E for an input of -1, writes the sample
+ * pointer and computed left/right levels into a 28-byte channel entry and passes its bit to
+ * func_80021A70.
+ *
+ * @par Globals
+ * Reads the bank table and updates the channel array in gSoundSystem.
+ *
+ * @par Callers
+ * Direct calls from gQueueVoiceBankSample (func_80024358).
+ *
+ * @par Role and path
+ * Translates a voice request into channel fields consumed by the sound update path.
+ *
+ * @par Unknown
+ * The fourth register argument is ignored and the sample index is not checked here.
  */
-s32 func_80021F98(s32 a0, s32 a1, s32 a2, s32 a3, s32 slot, struct Args *args)
+s32 gQueueBankSampleOnChannel(s32 a0, s32 a1, s32 a2, s32 a3, s32 slot, struct Args *args)
 {
     s32 out1 = 0;
     s32 out2 = 0;
@@ -70,7 +78,7 @@ s32 func_80021F98(s32 a0, s32 a1, s32 a2, s32 a3, s32 slot, struct Args *args)
                 offset = (a2 * 5) * 4;
                 offset += 4;
                 result = (s32)ptr + offset;
-                func_800223B0(result, args->unk04, args->unk08, &out1, &out2);
+                gComputeStereoVoiceLevels(result, args->unk04, args->unk08, &out1, &out2);
                 entry = (struct Entry *)(gSoundSystem.unk0C + slot * 28);
                 entry->unk00 = result;
                 if (args->unk00 == -1) {

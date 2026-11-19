@@ -15,26 +15,35 @@ typedef struct {
 
 extern Unk23528Header **gCshdNodeSlots[2] __asm__("D_8009F640");
 
+Unk23528Header *gFindCshdSoundGroup(s32 id, s32 *outIndex) __asm__("func_80023528");
+
 /**
- *  @brief Finds the first header containing an entry with the requested ID.
+ * @brief Finds the first CSHD header containing the requested sound group ID.
  *
- *  Searches up to two registered containers in order and optionally reports
- *  the matching entry's index within its header.
- *  @param id Entry ID to find.
- *  @param outIndex Optional destination for the matching entry index.
- *  @return The matching header, or null if no entry matches.
- *  @par Globals
- *  D_8009F640 contains the two container pointers to search.
- *  @par Control flow
- *  Skips null containers and scans each header until a match or its count is reached.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Writes outIndex only when a match is found and the pointer is nonnull.
- *  @par Callers
- *  Confirmed: func_800235D4.
+ * @param id Entry ID to find.
+ * @param outIndex Optional destination for the matching entry index.
+ * @return The matching header, or null if no entry matches.
+ *
+ * @par Confirmed mechanics
+ * Walks two container pointers, dereferences the first word of each nonnull container and
+ * searches the halfword IDs in six-byte records. Returns the header and optionally writes the
+ * matching index.
+ *
+ * @par Globals
+ * Reads gCshdNodeSlots.
+ *
+ * @par Callers
+ * Direct calls from gInstallCvkGroupSamples (func_800235D4), gRegisterPendingCvkPair
+ * (func_800236FC).
+ *
+ * @par Role and path
+ * CVK bank registration checks that the matching sound group exists. The sample insertion pass
+ * also uses the returned index.
+ *
+ * @par Unknown
+ * The lookup trusts the header's entry count.
  */
-Unk23528Header *func_80023528(s32 id, s32 *outIndex)
+Unk23528Header *gFindCshdSoundGroup(s32 id, s32 *outIndex)
 {
     s32 j = 0;
     Unk23528Header *header = 0;

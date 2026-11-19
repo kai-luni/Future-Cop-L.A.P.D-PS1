@@ -42,29 +42,38 @@ struct Request {
 
 extern struct StreamState gMixerState __asm__("D_800A0968");
 
-extern void func_80022D1C(void *data, s32 mode, s32 length);
-extern void func_80023204(void);
+extern void gMarkAudioStreamAdpcmBlock(void *data, s32 mode, s32 length) __asm__("func_80022D1C");
+extern void gCompleteAudioStreamTransfer(void) __asm__("func_80023204");
 extern void func_800212F8(struct Request *req);
 
+void gSubmitAudioStreamTransfer(void) __asm__("func_80022D84");
+
 /**
- *  @brief Prepares and submits a request for the selected stream channel.
+ * @brief Prepares a stream audio block and submits its SPU transfer request.
  *
- *  Uses the stream state to select a transfer mode and construct a request.
- *  The request callback continues processing when the transfer completes.
- *  @par Globals
- *  D_800A0968 supplies channel data and ring state; ready and counters are updated.
- *  @par Control flow
- *  Channel zero can return early; ring bookkeeping precedes mode selection.
- *  Looping selects mode 3; otherwise the offset selects mode 0, 1, or 2.
- *  @par Calls
- *  func_80022D1C prepares the channel buffer for the selected mode.
- *  func_800212F8 submits the request with func_80023204 as its callback.
- *  @par Side effects
- *  Clears ready, adjusts ring bookkeeping, and initiates a transfer.
- *  @par Callers
- *  Confirmed: func_80022710, func_80022FA8, func_80023204.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Selects a channel from mixer +0x20 and checks source and available blocks for channel zero.
+ * Updates ring read offset and readiness, selects mode 0 to 3 from looping and offset, marks
+ * the ADPCM block and fills the stack request with address, length, source, completion
+ * callback, sequence and DMA mode.
+ *
+ * @par Globals
+ * Reads and updates gMixerState, including gStreamDmaChannelIndex and gStreamAvailableBlocks.
+ *
+ * @par Callers
+ * Direct calls from gHandleAudioStreamSpuIrq (D_80022FA8), gCompleteAudioStreamTransfer
+ * (D_80023204), gPrimeAudioStream (func_80022710).
+ *
+ * @par Role and path
+ * Priming, SPU IRQ and DMA completion all use this request builder.
+ *
+ * @par Unknown
+ * The request word's high bit is set for mode 3 and interpreted by the completion callback.
  */
-void func_80022D84(void)
+void gSubmitAudioStreamTransfer(void)
 {
     struct Request req;
     s32 mode;
@@ -104,12 +113,12 @@ void func_80022D84(void)
         mode = 2;
     }
 
-    func_80022D1C((void *)gMixerState.channels[channel].start, mode, gMixerState.channels[channel].length);
+    gMarkAudioStreamAdpcmBlock((void *)gMixerState.channels[channel].start, mode, gMixerState.channels[channel].length);
 
     req.address = gMixerState.channels[channel].unk20 + gMixerState.unk78;
     req.size = gMixerState.channels[channel].length;
     req.data = (void *)gMixerState.channels[channel].start;
-    req.callback = func_80023204;
+    req.callback = gCompleteAudioStreamTransfer;
     req.unused = gMixerState.unk10;
     if (mode == 3) {
         req.unused |= 0x80000000;

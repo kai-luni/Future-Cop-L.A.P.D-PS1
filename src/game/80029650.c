@@ -13,34 +13,36 @@ typedef struct {
 } List;
 
 extern List gStreamBufferList __asm__("D_800A0B70");
-extern void func_800288BC(Node *node);
+extern void gRecycleModuleReadBuffer(Node *node) __asm__("func_800288BC");
+
+void gReleaseStreamAssetReference(Node **arg0) __asm__("func_80029650");
 
 /**
- * @brief Decrements a registered asset's reference count and releases the
- *        asset when it reaches zero.
+ * @brief Decrements an asset buffer's reference count and recycles zero-count retained buffers.
  *
  * @param arg0 Address of the node pointer (the node itself is read through it).
- *
  * @return Nothing.
  *
- * @par Confirmed flow
- * (*arg0)->count is decremented, then the global list D_800A0B70 is walked:
- * every node whose count has reached 0 is unlinked and handed to
- * func_800288BC(). The loop restarts from the head after a removal, so a whole
- * chain of dead nodes is cleaned up in one call; the walk is guarded against
- * a NULL head.
+ * @par Confirmed mechanics
+ * Dereferences the handle and subtracts one from node +0x0C. Walks the retained list, splices
+ * out zero-count successors and checks the head after the walk. Clears each removed link before
+ * calling gRecycleModuleReadBuffer.
  *
  * @par Globals
- * D_800A0B70 (asset list: head pointer at +0x18).
- *
- * @par Likely role
- * The "release handle" step used by the deferred queues in func_8001B4A8: an
- * image or sound keeps a node alive until the last user releases it.
+ * Updates the retained and reusable lists in gStreamBufferList.
  *
  * @par Callers
- * func_8001B4A8 (frame end, both queues).
+ * Direct calls from func_8001B4A8, gFlushDeferredAssetReleases (func_80029520), func_8002A31C,
+ * func_8002A408.
+ *
+ * @par Role and path
+ * Used by frame presentation and deferred release queues when uploaded or consumed chunks no
+ * longer need their source buffer.
+ *
+ * @par Unknown
+ * The handle and its node are expected to be valid at entry.
  */
-void func_80029650(Node **arg0)
+void gReleaseStreamAssetReference(Node **arg0)
 {
     Node *current;
     Node *node;
@@ -58,7 +60,7 @@ void func_80029650(Node **arg0)
                 if (node->count == 0) {
                     current->next = node->next;
                     node->next = 0;
-                    func_800288BC(node);
+                    gRecycleModuleReadBuffer(node);
                 } else {
                     current = node;
                 }
@@ -67,7 +69,7 @@ void func_80029650(Node **arg0)
                 if (node->count == 0) {
                     list->head = node->next;
                     node->next = 0;
-                    func_800288BC(node);
+                    gRecycleModuleReadBuffer(node);
                 }
                 break;
             }

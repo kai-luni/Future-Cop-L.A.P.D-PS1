@@ -2,29 +2,38 @@
 #include "game/types.h"
 
 extern u8 gMixerState[] __asm__("D_800A0968");
-extern volatile u32 D_8009F634;
+extern volatile u32 gStreamEventCallback __asm__("D_8009F634");
 
-extern void func_80022D84(void);
+extern void gSubmitAudioStreamTransfer(void) __asm__("func_80022D84");
+
+void gCompleteAudioStreamTransfer(s32 arg0) __asm__("func_80023204");
 
 /**
- *  @brief Advances a matching global counter and dispatches its work.
+ * @brief Advances stream DMA state when the request sequence matches.
  *
- *  The state block tracks a cycle count, per-entry flags and an offset.
- *  A completed cycle can notify a callback before updating the offset.
- *  @param arg0 Identifier compared as a 16-bit value with the state identifier.
- *  @par Globals
- *  D_800A0968 holds the state block; D_8009F634 holds an optional callback.
- *  @par Control flow
- *  A mismatch returns; otherwise the counter advances and may wrap.
- *  On wrap, a loop clears entry flags, then offset and dispatch checks run.
- *  @par Calls
- *  The optional callback receives 3; func_80022D84 performs dispatched work.
- *  @par Side effects
- *  Changes counters, flags and offsets and may invoke either callback.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param arg0 Identifier compared as a 16-bit value with the state identifier.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Compares the low 16 bits of a0 with mixer +0x10 and increments +0x20. On completing a cycle
+ * it marks ready, clears per-channel source pointers and calls the event handler with 3. A
+ * negative argument saves the offset before wrap handling and the next eligible transfer.
+ *
+ * @par Globals
+ * Updates gMixerState, including the indices and source words, and reads gStreamEventCallback.
+ *
+ * @par Callers
+ * No direct JAL callers in the retail listing.
+ *
+ * @par Role and path
+ * Installed as the completion callback in gSubmitAudioStreamTransfer; the retail listing
+ * addresses it as gCompleteAudioStreamTransfer.
+ *
+ * @par Unknown
+ * The callback consumes the high bit as a sign flag while the low halfword identifies the
+ * request.
  */
-void func_80023204(s32 arg0)
+void gCompleteAudioStreamTransfer(s32 arg0)
 {
     u8 *base;
     u8 *p;
@@ -64,7 +73,7 @@ void func_80023204(s32 arg0)
             goto loop;
         }
     }
-    fn = D_8009F634;
+    fn = gStreamEventCallback;
     if (fn != 0) {
         ((void (*)(s32))fn)(3);
     }
@@ -88,5 +97,5 @@ void func_80023204(s32 arg0)
         return;
     }
 do_call:
-    func_80022D84();
+    gSubmitAudioStreamTransfer();
 }

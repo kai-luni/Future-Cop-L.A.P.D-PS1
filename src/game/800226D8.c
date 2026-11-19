@@ -1,34 +1,35 @@
 // Categories: Platform > Streaming Audio | Platform > Sound > Voices
 #include "game/types.h"
 
-extern void func_80022A64(void);
-extern void func_80022C68(void);
+extern void gStopAudioStreamPlayback(void) __asm__("func_80022A64");
+extern void gClearAudioStreamSpuBuffers(void) __asm__("func_80022C68");
+
+void gStopAudioStreamAndClearChannels(void) __asm__("func_800226D8");
 
 /**
- * @brief Stops active audio stream playback and resets all stream channel fields.
- *
- * Calls func_80022A64 to tear down SPU IRQ/transfer state, drain CD streaming, and release active voices in D_800A0968, then calls func_80022C68 to zero D_800A0968.array[i].field across all active stream channels.
+ * @brief Stops the audio stream and clears the recorded SPU buffer addresses.
  *
  * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Calls gStopAudioStreamPlayback followed by gClearAudioStreamSpuBuffers.
  *
  * @par Globals
- * None directly; both callees operate on D_800A0968 (StreamState).
- *
- * @par Control flow
- * Sequential call to func_80022A64 followed by func_80022C68, then return.
- *
- * @par Calls
- * func_80022A64 - stops stream playback, disables SPU IRQ hook, and frees voice handles.
- * func_80022C68 - clears per-channel state field across D_800A0968.count slots.
- *
- * @par Side effects
- * Halts audio streaming, removes SPU IRQ callback, frees voice handles, and clears D_800A0968 channel fields.
+ * None directly. Both callees update gMixerState.
  *
  * @par Callers
- * Confirmed: func_80022654 (0x80022684), func_800244A4 (0x800244D0 in asm/us/main.s), func_80024630 (0x80024668 in asm/us/main.s) / Likely: none / Unknown: none.
+ * Direct calls from gPollAudioStreamStop (func_80022654), gInitializeVagmAudioStream
+ * (func_800244A4), gShutdownVagmAudioStream (func_80024630).
+ *
+ * @par Role and path
+ * Used for shutdown, deferred stop and reconfiguration.
+ *
+ * @par Unknown
+ * The individual teardown operations are performed by gStopAudioStreamPlayback.
  */
-void func_800226D8(void)
+void gStopAudioStreamAndClearChannels(void)
 {
-    func_80022A64();
-    func_80022C68();
+    gStopAudioStreamPlayback();
+    gClearAudioStreamSpuBuffers();
 }

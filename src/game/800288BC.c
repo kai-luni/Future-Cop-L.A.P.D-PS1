@@ -13,29 +13,33 @@ typedef struct State {
 } State;
 extern State gStreamBufferList __asm__("D_800A0B70");
 
+void gRecycleModuleReadBuffer(Node *node) __asm__("func_800288BC");
+
 /**
- * @brief Resets a stream/asset buffer node's reference count and appends it to D_800A0B70.head.
+ * @brief Clears a stream buffer's reference count and appends it to the reusable list.
  *
- * Confirmed: zeroes node->count (+0x0C) and links node at the tail of the singly-linked list rooted at D_800A0B70.head (+0x10). Category reflects D_800A0B70 stream/asset buffer management (func_80028918, func_80029650).
+ * @param node Buffer node (+0x00 next pointer, +0x0C reference count) to return to the free
+ * list.
+ * @return Nothing.
  *
- * @param node Buffer node (+0x00 next pointer, +0x0C reference count) to return to the free list.
+ * @par Confirmed mechanics
+ * Stores zero at node +0x0C. Writes the node at state +0x10 if the list is empty, otherwise
+ * walks +0x00 next pointers and writes the final link.
  *
  * @par Globals
- * D_800A0B70 - stream/asset buffer state whose head pointer at +0x10 receives or anchors node.
- *
- * @par Control flow
- * Clears node->count, checks D_800A0B70.head == 0 for direct insertion, otherwise traverses cur->next until null.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * Clears node->count (+0x0C) and mutates D_800A0B70.head (+0x10) or the tail node's next link (+0x00).
+ * Updates the reusable-list head in gStreamBufferList or its tail node.
  *
  * @par Callers
- * Confirmed: func_80028918 (0x80028A14, 0x80028A78), func_80028D28 (0x80028DA8), func_80029650 (0x800296C4, 0x80029700) / Likely: none / Unknown: none.
+ * Direct calls from gCompleteModuleBufferRead (D_80028918), gRetireParsedModuleBuffer
+ * (func_80028D28), gReleaseStreamAssetReference (func_80029650).
+ *
+ * @par Role and path
+ * The module loader recycles rejected reads and unreferenced parsed buffers here.
+ *
+ * @par Unknown
+ * The caller supplies a detached node.
  */
-void func_800288BC(Node *node)
+void gRecycleModuleReadBuffer(Node *node)
 {
     Node *cur;
     node->count = 0;
@@ -49,7 +53,7 @@ void func_800288BC(Node *node)
         cur->next = node;
     }
 }
-extern u8 D_8009F6A8;
-extern void *D_8009F6AC;
-extern s32 D_8009F6E8;
-extern s32 D_8009F6B0;
+extern u8 gModuleReadBusy __asm__("D_8009F6A8");
+extern void *gModuleReadActiveBuffer __asm__("D_8009F6AC");
+extern s32 gModuleReadEndCheck __asm__("D_8009F6E8");
+extern s32 gModuleReadCompleteWriteIndex __asm__("D_8009F6B0");

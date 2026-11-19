@@ -7,47 +7,55 @@ struct Params { s32 pitch, volume, pan; };
 extern struct Handle gAssetHandle __asm__("D_800A0A80");
 extern s32 gSpuBufferPtr __asm__("D_8009F278");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern void func_80023E84(void);
+extern void gStopTrackedSoundVoice(void) __asm__("func_80023E84");
 extern s32 func_800474C4(struct Handle *);
 extern s32 func_800450A4(s32, s8 *);
 extern s8 func_80045050(void);
-extern s32 func_800220C4(s32, s32, struct Params *, s32);
+extern s32 gAllocateSoundChannelVoice(s32, s32, struct Params *, s32) __asm__("func_800220C4");
 extern s32 func_800474F0(struct Handle *);
 extern void func_80047800(struct Resource *, s32, s32, s32);
-extern void func_800221E4(s32, s32 *);
+extern void gQueueSoundChannelStarts(s32, s32 *) __asm__("func_800221E4");
+
+s32 gStartTrackedSoundVoice(void) __asm__("func_80023F08");
 
 /**
- *  @brief Attempts to start the sound represented by the global handle.
+ * @brief Attempts to start the tracked sound and reports whether its state is active.
  *
- *  The handle supplies a resource, optional mix lookup and delayed completion time.
- *  A successful start records the active state and schedules its time relative to the global clock.
- *  @return Nonzero if the handle state is 1 after processing, otherwise zero.
- *  @par Globals
- *  D_800A0A80 holds the handle; D_8009F278 supplies a playback argument and D_8009FA2C supplies the clock.
- *  @par Control flow
- *  Initialization and handle readiness gate playback; mix lookup failure resets setup and start failure invokes handle cleanup.
- *  @par Calls
- *  func_80023E84 initializes or resets setup; func_800474C4 checks the handle; func_800450A4 or func_80045050 supplies mix data.
- *  func_800220C4 starts playback; func_800474F0 handles failure; func_80047800 and func_800221E4 perform success-side updates.
- *  @par Side effects
- *  May change handle state and time and invoke sound setup, playback and channel operations.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return Nonzero if the handle state is 1 after processing, otherwise zero.
+ *
+ * @par Confirmed mechanics
+ * Checks the SPU base, validates the handle and chooses looked-up or default level and pan. It
+ * allocates a software voice with pitch 0x400, queues its channel, writes state 1 and sets the
+ * deadline to the current tick plus the stored delay. All exits compare the word at +0x08 to 1.
+ *
+ * @par Globals
+ * Reads and updates gAssetHandle and reads gSpuBufferPtr and gFrameTickCounter.
+ * gTrackedSoundState aliases gAssetHandle +0x08.
+ *
+ * @par Callers
+ * Direct calls from gStepSynchronizedPortrait (func_80029748).
+ *
+ * @par Role and path
+ * The synchronized portrait path uses this to launch its companion voice.
+ *
+ * @par Unknown
+ * The return value indicates current state, including an already-active state.
  */
-s32 func_80023F08(void)
+s32 gStartTrackedSoundVoice(void)
 {
     s8 mix[24];
     struct Params params;
     s32 channel;
     struct Resource *resource;
 
-    if (!gSpuBufferPtr) func_80023E84();
+    if (!gSpuBufferPtr) gStopTrackedSoundVoice();
     if ((u8)func_800474C4(&gAssetHandle) == 1) {
         resource = gAssetHandle.resource;
         if (gAssetHandle.flag) {
             if (!(u8)func_800450A4(gAssetHandle.id, mix)) {
                 resource = 0;
-                func_80023E84();
+                gStopTrackedSoundVoice();
             }
         } else {
             mix[0] = func_80045050();
@@ -57,12 +65,12 @@ s32 func_80023F08(void)
             params.pitch = 0x400;
             params.volume = mix[0];
             params.pan = mix[1];
-            if (func_800220C4(100, resource->owner, &params, gSpuBufferPtr) == -1) {
+            if (gAllocateSoundChannelVoice(100, resource->owner, &params, gSpuBufferPtr) == -1) {
                 func_800474F0(&gAssetHandle);
             } else {
                 if (gAssetHandle.flag) func_80047800(resource, mix[1], mix[0], -1);
                 channel = resource->owner;
-                func_800221E4(1, &channel);
+                gQueueSoundChannelStarts(1, &channel);
                 gAssetHandle.state = 1;
                 gAssetHandle.time = gFrameTickCounter + gAssetHandle.delay;
             }

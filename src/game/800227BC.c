@@ -28,26 +28,36 @@ struct StreamState {
 
 extern struct StreamState gMixerState __asm__("D_800A0968");
 
+void gStoreStreamChannelMix(s32 channel, s32 left, s32 right) __asm__("func_800227BC");
+
 /**
- *  @brief Sets the stored left and right levels for a stream channel.
+ * @brief Stores a clamped level and pan for one stream channel.
  *
- *  Both levels are clamped to the range 0 through 127, and the channel
- *  index is clamped to the three available entries.
- *  @param channel Requested channel index, clamped to 0 through 2.
- *  @param left Requested left level.
- *  @param right Requested right level.
- *  @par Globals
- *  D_800A0968 holds the channel entries whose levels are updated.
- *  @par Control flow
- *  Clamps each argument independently, then writes the selected entry.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Replaces the selected channel's stored left and right values.
- *  @par Callers
- *  Confirmed: func_8002283C.
+ * @param channel Requested channel index, clamped to 0 through 2.
+ * @param left Requested left level.
+ * @param right Requested right level.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Clamps the first and second mix values independently to 0 through 0x7F and the channel to 0
+ * through 2, then writes at mixer offsets +0x2C and +0x30 with a 0x24-byte stride.
+ *
+ * @par Globals
+ * Updates the selected record in gMixerState.
+ *
+ * @par Callers
+ * Direct calls from gApplyStreamChannelMix (func_8002283C), gInitializeVagmAudioStream
+ * (func_800244A4).
+ *
+ * @par Role and path
+ * Startup stores these values before voice allocation. Live mix changes call the same setter
+ * before updating the active voice.
+ *
+ * @par Unknown
+ * The C parameter names left and right are local. The setup and mix callers use the first value
+ * for level and the second for pan.
  */
-void func_800227BC(s32 channel, s32 left, s32 right)
+void gStoreStreamChannelMix(s32 channel, s32 left, s32 right)
 {
     s32 clampedLeft;
     s32 clampedRight;

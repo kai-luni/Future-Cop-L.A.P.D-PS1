@@ -9,33 +9,39 @@ extern s32 gSceneFrameCounter __asm__("D_8009FA50");
 extern volatile s32 gGameClock __asm__("D_8009FA60");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 
-extern void func_80027E68(void);
-extern void func_80027EBC(void);
+extern void gWaitForInteractiveFrameTicks(void) __asm__("func_80027E68");
+extern void gPresentInteractiveScreenFrame(void) __asm__("func_80027EBC");
 extern void func_800451EC(s32 value);
 extern void func_800462D0(void);
 extern void func_80078DD0(void);
 
+void gRunInteractiveScreenLoop(void) __asm__("func_80027EE4");
+
 /**
- * @brief Runs the interactive frame loop of a screen while the state stays 4.
+ * @brief Runs the interactive screen frames while the screen state is 4.
  *
- * Sets up the frame bookkeeping (D_8009FA60 = 0, frame id D_8009F9FC = 8,
- * D_8009FAA4/D_8009FA30 = 0, D_8009FA50 = 0) and then loops as long as
- * D_8009FA00 == 4, each round incrementing D_8009FA50 (frame counter) and
- * D_8009F284 (global tick), and calling, in this order: func_80027E68(),
- * func_800451EC(0), func_800462D0(), func_80078DD0(), func_80027EBC().
+ * @param void No parameters.
+ * @return Nothing; it returns when the state leaves 4, i.e. when the screen decides to end.
  *
- * @return Nothing; it returns when the state leaves 4, i.e. when the screen
- *         decides to end.
+ * @par Confirmed mechanics
+ * Clears time and frame counters and sets the initial delta to 8. Each iteration increments the
+ * two counters, waits for a frame tick, services audio and screen drawing, dispatches assets
+ * and presents before rechecking the screen state.
  *
- * @par globals
- * D_8009FA00 (state, loop condition), D_8009FA60 (cleared), D_8009F9FC (8),
- * D_8009FAA4/D_8009FA30 (frame time base), D_8009FA50 (frame counter),
- * D_8009F284 (global tick).
+ * @par Globals
+ * Reads gScreenState. Initializes gGameClock, gFrameTime, gFrameTickBase, gFrameDelta and
+ * gSceneFrameCounter, and increments gSceneFrameCounter and gGlobalTick.
  *
  * @par Callers
- * func_800287F4, on the path where arg1 != 0 (UI mode).
+ * Direct calls from gRunScreenModule (func_800287F4).
+ *
+ * @par Role and path
+ * The screen module takes this loop for its interactive path.
+ *
+ * @par Unknown
+ * The loop exits on any transition away from state 4.
  */
-void func_80027EE4(void)
+void gRunInteractiveScreenLoop(void)
 {
     s32 t;
     gGameClock = 0;
@@ -48,10 +54,10 @@ void func_80027EE4(void)
     while (gScreenState == 4) {
         gSceneFrameCounter++;
         gGlobalTick++;
-        func_80027E68();
+        gWaitForInteractiveFrameTicks();
         func_800451EC(0);
         func_800462D0();
         func_80078DD0();
-        func_80027EBC();
+        gPresentInteractiveScreenFrame();
     }
 }

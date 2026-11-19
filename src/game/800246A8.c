@@ -5,28 +5,36 @@ extern s32 gActiveStreamId __asm__("D_8009F280");
 
 extern void func_8002A31C(s32 arg0, s32 arg1);
 extern s32 func_8002A398(void);
-extern void func_80022B28(s32 start, s32 length, s32 channel, u8 looping);
+extern void gSetAudioStreamChannelRange(s32 start, s32 length, s32 channel, u8 looping) __asm__("func_80022B28");
+
+s32 gReplaceVagmAudioStreamBuffer(s32 arg0) __asm__("func_800246A8");
 
 /**
- *  @brief Replaces a stored resource and configures two channel buffers.
+ * @brief Releases the current VAGM buffer and installs a queued replacement in two stream
+ * channels.
  *
- *  Releases the previous resource if present, obtains a replacement, and
- *  uses two consecutive 0x2FC0-byte regions after its header when available.
- *  @param arg0 Unused argument.
- *  @return The newly stored resource value, or zero if none was obtained.
- *  @par Globals
- *  D_8009F280 holds the previous resource and is replaced with the new value.
- *  @par Control flow
- *  Conditionally releases the old resource and configures channels only for a nonzero result.
- *  @par Calls
- *  func_8002A31C releases the old value; func_8002A398 obtains a replacement.
- *  func_80022B28 configures channel 1 and then channel 0 without looping.
- *  @par Side effects
- *  Updates D_8009F280, performs a volatile header read, and invokes resource and channel operations.
- *  @par Callers
- *  Confirmed: func_80024470.
+ * @param arg0 Unused argument.
+ * @return The newly stored resource value, or zero if none was obtained.
+ *
+ * @par Confirmed mechanics
+ * Releases a prior nonzero buffer with mode 1, obtains the next via func_8002A398 and records
+ * it. On success reads header +4 and points channels 1 and 0 at successive 0x2FC0-byte regions
+ * beginning at +0x1C.
+ *
+ * @par Globals
+ * Updates gActiveStreamId. The source-range setter updates gMixerState.
+ *
+ * @par Callers
+ * Direct calls from gHandleAudioStreamRefillEvent (func_80024470), gInitializeVagmAudioStream
+ * (func_800244A4).
+ *
+ * @par Role and path
+ * Used both for initial VAGM setup and by the refill callback.
+ *
+ * @par Unknown
+ * The header read result and the incoming argument are unused by this function.
  */
-s32 func_800246A8(s32 arg0)
+s32 gReplaceVagmAudioStreamBuffer(s32 arg0)
 {
     s32 *v1;
     u8 *s0;
@@ -43,8 +51,8 @@ s32 func_800246A8(s32 arg0)
         s0 = (u8 *)v1 + 0x1C;
     }
     if (s0 != 0) {
-        func_80022B28((s32)(s0 + 0x2FC0), 0x2FC0, 1, 0);
-        func_80022B28((s32)s0, 0x2FC0, 0, 0);
+        gSetAudioStreamChannelRange((s32)(s0 + 0x2FC0), 0x2FC0, 1, 0);
+        gSetAudioStreamChannelRange((s32)s0, 0x2FC0, 0, 0);
     }
     return gActiveStreamId;
 }

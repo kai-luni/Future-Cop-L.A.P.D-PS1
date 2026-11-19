@@ -11,25 +11,33 @@ struct Data {
 extern struct Data gMixerState __asm__("D_800A0968");
 extern volatile s32 gVolatileBase __asm__("D_8009F27C");
 
+s32 gAssignAudioStreamSpuBuffers(void) __asm__("func_80022BEC");
+
 /**
- *  @brief Assigns sequential buffer addresses to entries in a global table.
+ * @brief Assigns consecutive SPU buffer addresses to the configured stream channels.
  *
- *  Each address advances by the fixed width times height from the table.
- *  A zero base or a negative computed address stops assignment immediately.
- *  @return Zero on completion, or the first negative address value encountered.
- *  @par Globals
- *  D_800A0968 supplies the count and dimensions and receives entry addresses;
- *  D_8009F27C supplies the volatile base address.
- *  @par Control flow
- *  Iterates over count entries at a 0x24-byte stride, returning early on a negative value.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Writes nonnegative addresses at offset 0x44 of successive table entries.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return Zero on completion, or the first negative address value encountered.
+ *
+ * @par Confirmed mechanics
+ * Loads the base and initial count at entry. Each record receives base plus cumulative block size
+ * times block count at +0x44. The delay-slot store also writes the first negative result before
+ * returning it.
+ *
+ * @par Globals
+ * Reads gVolatileBase and the gMixerState count and dimensions, and writes addresses into the
+ * mixer channel records.
+ *
+ * @par Callers
+ * Direct calls from gConfigureAudioStreaming (func_80022484).
+ *
+ * @par Role and path
+ * Stream initialization partitions the SPU buffer before priming playback.
+ *
+ * @par Unknown
+ * The code treats a zero base as -1 and terminates after writing the failed slot.
  */
-s32 func_80022BEC(void)
+s32 gAssignAudioStreamSpuBuffers(void)
 {
     register s32 offset __asm__("$7") = 0;
     register u32 i __asm__("$6") = offset;

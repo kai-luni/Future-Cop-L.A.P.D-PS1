@@ -16,26 +16,36 @@ extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern Slot gObjectSlots[] __asm__("D_800A0A00");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
-extern void func_800235D4(s32 id);
+extern void gInstallCvkGroupSamples(s32 id) __asm__("func_800235D4");
 extern void gShutdownCvkSystem(void) __asm__("func_80023478");
 
+s32 gPollCvkBankSlots(void) __asm__("func_8002385C");
+
 /**
- * @brief Sweeps the eight fixed slots of D_800A0A00 and retires their resources.
+ * @brief Processes ready CVK banks and shuts down the CVK subsystem on an expired pending bank.
  *
- * @return 1 (default), the value the caller tests.
+ * @param void No parameters.
+ * @return Always 1.
  *
- * @par Confirmed
- * Only when the enable byte D_8009F26C is non-zero. For every slot with
- * state == 2: the block pointer is released with func_800181D4, then
- * func_800235D4(slot->id) and func_80023478() run. Slots older than the frame
- * counter D_8009FA2C are handled in the same pass; the loop never returns early
- * except through the final `return ret`.
+ * @par Confirmed mechanics
+ * When enabled, scans eight 16-byte records. State 2 frees the +0x08 block, clears the state
+ * byte and processes the group. State 1 with an expired deadline calls gShutdownCvkSystem and
+ * exits immediately.
  *
- * @par Likely role
- * The teardown half of the "level resource slots" pair: state 2 marks a slot that
- * was closed but not yet freed.
+ * @par Globals
+ * Reads gCvkSystemActive and gFrameTickCounter and updates gObjectSlots.
+ *
+ * @par Callers
+ * Direct calls from gDrawScreenFadeQuad (func_80025690), gPrepareAndSubmitFrame
+ * (func_800259D8).
+ *
+ * @par Role and path
+ * Frame preparation and fade drawing poll asynchronous CVK bank loads.
+ *
+ * @par Unknown
+ * The retail paths return 1, including after an expired pending slot.
  */
-s32 func_8002385C(void)
+s32 gPollCvkBankSlots(void)
 {
     s32 ret;
     u32 i;
@@ -52,7 +62,7 @@ s32 func_8002385C(void)
                     slot->block = 0;
                 }
                 slot->state = 0;
-                func_800235D4(slot->id);
+                gInstallCvkGroupSamples(slot->id);
             } else if (slot->state == 1) {
                 ret = 0;
                 if (slot->time < gFrameTickCounter) {

@@ -19,27 +19,34 @@ struct StreamState {
 
 extern struct StreamState gMixerState __asm__("D_800A0968");
 
+void gSetAudioStreamChannelRange(s32 start, s32 length, s32 channel, u8 looping) __asm__("func_80022B28");
+
 /**
- *  @brief Sets the start and length of a stream channel and optionally enables looping.
+ * @brief Stores a stream channel's start and length and optionally sets its loop flag.
  *
- *  Updates the selected entry in the shared stream-channel state without
- *  checking the channel index or clearing an existing looping flag.
- *  @param start Start value stored in the channel.
- *  @param length Length value stored in the channel.
- *  @param channel Index of the stream channel to update.
- *  @param looping Nonzero to set the channel's looping flag to one.
- *  @par Globals
- *  D_800A0968 contains the channel array being modified.
- *  @par Control flow
- *  Sets looping only when requested, then stores length and start.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Modifies the selected channel's start, length, and possibly looping flag.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param start Start value stored in the channel.
+ * @param length Length value stored in the channel.
+ * @param channel Index of the stream channel to update.
+ * @param looping Nonzero to set the channel's looping flag to one.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Computes a channel stride of 0x24, writes words at mixer +0x34 and +0x38 and sets byte +0x3C
+ * only when the low byte of a3 is nonzero.
+ *
+ * @par Globals
+ * Writes channel fields in gMixerState.
+ *
+ * @par Callers
+ * Direct calls from gReplaceVagmAudioStreamBuffer (func_800246A8).
+ *
+ * @par Role and path
+ * Buffer replacement uses this to supply the source range to the next transfer request.
+ *
+ * @par Unknown
+ * The caller supplies a valid channel index and an already set loop flag is sticky.
  */
-void func_80022B28(s32 start, s32 length, s32 channel, u8 looping)
+void gSetAudioStreamChannelRange(s32 start, s32 length, s32 channel, u8 looping)
 {
     if (looping) {
         gMixerState.channels[channel].looping = 1;

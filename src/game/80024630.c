@@ -5,47 +5,47 @@ extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern s32 gActiveStreamId __asm__("D_8009F280");
 extern s32 gStreamCommandState __asm__("D_8009F648");
 
-extern void func_800226D8(void);
-extern void func_80022700(void);
+extern void gStopAudioStreamAndClearChannels(void) __asm__("func_800226D8");
+extern void gMarkAudioStreamStopPending(void) __asm__("func_80022700");
 extern void func_8002A31C(s32 arg0, s32 arg1);
 extern void func_8002A544(void);
 
+void gShutdownVagmAudioStream(s32 arg0) __asm__("func_80024630");
+
 /**
- * @brief Shuts the audio stream path down when streaming is active.
+ * @brief Stops VAGM audio immediately or requests a deferred stop, then releases the tracked
+ * buffer.
  *
- * The whole body is gated by D_8009F26C (streaming enabled). A pending mode
- * switch (D_8009F648 == 1) is resolved first: arg0 selects the "begin/stop"
- * variant func_80022700 or func_800226D8, and the pending marker is cleared.
- * An active stream id D_8009F280 is then handed to func_8002A31C with volume 0
- * and forgotten, and func_8002A544 runs the final teardown of the channel.
+ * @param arg0 Nonzero defers the stream stop. Zero stops playback immediately.
+ * @return Nothing.
  *
- * @param arg0 Selects the stop variant: non-zero uses the "begin" path.
+ * @par Confirmed mechanics
+ * Requires the CVK enable byte. When the command state is 1, a nonzero argument sets the
+ * pending stop and zero stops immediately, then the state is cleared. Releases the nonzero
+ * buffer through func_8002A31C with argument 0 before calling func_8002A544.
  *
  * @par Globals
- * D_8009F26C - streaming enabled; D_8009F648 - pending mode switch;
- * D_8009F280 - active stream id.
- *
- * @par Control flow
- * Two gates, then two teardown calls.
- *
- * @par Calls
- * func_80022700 / func_800226D8 - mode switch. func_8002A31C - mute/stop.
- * func_8002A544 - channel teardown.
- *
- * @par Side effects
- * Stops the stream and clears the pending markers.
+ * Reads gCvkSystemActive and reads and clears gStreamCommandState and gActiveStreamId.
  *
  * @par Callers
- * Confirmed: the audio shutdown path (func_800243C4 neighbourhood).
+ * Direct calls from gInitializeVagmAudioStream (func_800244A4), func_8002A23C,
+ * gSoundHaltAllVoices (func_80047554), gExitOptionsRestoreSound (func_8007CA34),
+ * gApplySavedAudioSettings (func_80080984).
+ *
+ * @par Role and path
+ * Used on timeout, audio shutdown and settings changes.
+ *
+ * @par Unknown
+ * The final helper owns teardown of the remaining transport state.
  */
-void func_80024630(s32 arg0)
+void gShutdownVagmAudioStream(s32 arg0)
 {
     if (gCvkSystemActive != 0) {
         if (gStreamCommandState == 1) {
             if (arg0 != 0) {
-                func_80022700();
+                gMarkAudioStreamStopPending();
             } else {
-                func_800226D8();
+                gStopAudioStreamAndClearChannels();
             }
             gStreamCommandState = 0;
         }

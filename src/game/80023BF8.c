@@ -4,36 +4,41 @@
 extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern s8 gObjectSlots[] __asm__("D_800A0A00");
 extern void *gCshdNodeSlots[2] __asm__("D_8009F640");
-extern volatile s32 D_8009F650;
+extern volatile s32 gCvkSpuUploadComplete __asm__("D_8009F650");
 
-extern void func_80023AB4(s32 arg0);
-extern void func_80023A24(void);
+extern void gUnloadCvkSoundBank(s32 arg0) __asm__("func_80023AB4");
+extern void gClearSoundProgramSamples(void) __asm__("func_80023A24");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_80044EF8(void);
 
+void gReleaseCvkSoundBanksAndVoices(void) __asm__("func_80023BF8");
+
 /**
- * @brief Tears down active VAB sound banks, sound program tables, buffers, and voice slots when D_8009F26C is set.
- *
- * Iterates all 8 VAB entries in D_800A0A00 (stride 0x10) to unload active banks, clears 110 sound bank programs, frees non-null buffer pointers in D_8009F640[0..1], and resets voice allocation tables via func_80044EF8. Trailing label D_80023C94 in the same unit sets D_8009F650 = 1.
+ * @brief Releases CVK sound banks, program samples, CSHD nodes and voice allocations.
  *
  * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Tests the enable byte, passes each of eight slot IDs to gUnloadCvkSoundBank and drains the
+ * program list. Frees and clears both nonnull CSHD pointers before calling func_80044EF8.
  *
  * @par Globals
- * D_8009F26C (subsystem active guard), D_800A0A00 (8x 0x10-byte VAB slot array), D_8009F640 (2-element buffer pointer array), D_8009F650 (set to 1 by trailing D_80023C94).
- *
- * @par Control flow
- * Guarded by D_8009F26C != 0: loops i = 0..7 calling func_80023AB4(entry[1]), calls func_80023A24(), loops i = 0..1 freeing and clearing non-null D_8009F640[i] via func_800181D4, then calls func_80044EF8().
- *
- * @par Calls
- * func_80023AB4 (unload VAB bank entry), func_80023A24 (reset 110 sound bank slots), func_800181D4 (free D_8009F640 buffers), func_80044EF8 (reset voice tables and channels).
- *
- * @par Side effects
- * Unloads VAB sound banks, frees and zeroes D_8009F640[0..1], and resets voice/channel tables; D_80023C94 writes D_8009F650 = 1.
+ * Reads gCvkSystemActive and gObjectSlots and clears gCshdNodeSlots. The callees modify the
+ * sample and voice tables.
  *
  * @par Callers
- * Confirmed: func_80023478 (0x800234D4), func_800249BC (0x800249F4), func_80024D14 (0x80024DF8), and func_80025B7C (0x80025CB0).
+ * Direct calls from gShutdownCvkSystem (func_80023478), gUnloadFrontEndSubsystems
+ * (func_800249BC), gResetMissionSubsystems (func_80024D14), gFinishScreenModule
+ * (func_80025B7C).
+ *
+ * @par Role and path
+ * Used by CVK shutdown and by transitions that reset mission or front-end sound resources.
+ *
+ * @par Unknown
+ * Allocation and hardware teardown details reside in the callees.
  */
-void func_80023BF8(void)
+void gReleaseCvkSoundBanksAndVoices(void)
 {
     register u32 i __asm__("$17");
     s8 *entry;
@@ -48,11 +53,11 @@ void func_80023BF8(void)
             value = entry[1];
             entry += 0x10;
             i++;
-            func_80023AB4(value);
+            gUnloadCvkSoundBank(value);
         } while (i < 8);
 
         i = 0;
-        func_80023A24();
+        gClearSoundProgramSamples();
         slot = gCshdNodeSlots;
         do {
             block = *slot;
@@ -68,7 +73,31 @@ void func_80023BF8(void)
     }
 }
 
-void D_80023C94(void)
+void gMarkCvkSpuUploadComplete(void) __asm__("D_80023C94");
+
+/**
+ * @brief Marks the synchronous CVK SPU upload complete.
+ *
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Stores 1 to the word at gp +0x43C and returns.
+ *
+ * @par Globals
+ * Writes gCvkSpuUploadComplete.
+ *
+ * @par Callers
+ * No direct JAL callers in the retail listing.
+ *
+ * @par Role and path
+ * Installed as the DMA completion callback by gUploadCvkSpuDataAndWait. The submitting routine
+ * clears and polls the word.
+ *
+ * @par Unknown
+ * The callback takes no observed request argument.
+ */
+void gMarkCvkSpuUploadComplete(void)
 {
-    D_8009F650 = 1;
+    gCvkSpuUploadComplete = 1;
 }

@@ -5,24 +5,31 @@ extern s32 gCurrentChannel __asm__("D_800A09F0");
 
 extern void gSpuSetIrqEnable(s32 mode) __asm__("func_80098A78");
 
+void gDisarmAudioStreamSpuIrq(void) __asm__("func_80022F7C");
+
 /**
- * @brief Marks the audio stream state as reset and waits for the SPU flag.
+ * @brief Disables the stream SPU interrupt and resets the current channel marker.
  *
- * D_800A09F0 is set to -1 (the "no channel" marker) and gSpuSetIrqEnable(0) then
- * spins until the transfer flag clears, so a following start cannot land on a
- * busy stream.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Passes zero to gSpuSetIrqEnable and writes -1 to the channel word in the call delay slot.
+ *
  * @par Globals
- * D_800A09F0 - channel/stream id, set to -1.
- * @par Control flow
- * None.
- * @par Calls
- * gSpuSetIrqEnable - SPU flag wait.
- * @par Side effects
- * Writes the stream id and waits on hardware state.
+ * Writes gCurrentChannel. The callee clears and polls the IRQ-enable bit.
+ *
  * @par Callers
- * Confirmed: func_80022F44, func_80022FA8 (same block).
+ * Direct calls from gHandleAudioStreamSpuIrq (D_80022FA8), gStopAudioStreamPlayback
+ * (func_80022A64).
+ *
+ * @par Role and path
+ * The stream IRQ handler and the playback shutdown path disarm through this routine.
+ *
+ * @par Unknown
+ * The poll duration depends on the hardware.
  */
-void func_80022F7C(void)
+void gDisarmAudioStreamSpuIrq(void)
 {
     gCurrentChannel = -1;
     gSpuSetIrqEnable(0);

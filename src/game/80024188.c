@@ -14,31 +14,31 @@ struct Unk4749CHandle {
 extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 extern s32 func_800474C4(struct Unk4749CHandle *handle);
 
+s32 gGetTrackedSoundVoice(void) __asm__("func_80024188");
+
 /**
- * @brief Validates the global tracked sound handle D_800A0A80 and returns its resource pointer.
- *
- * Calls func_800474C4(&D_800A0A80) to check that the handle's resource pointer is non-null
- * and its serial matches; returns D_800A0A80.resource if valid (result == 1), otherwise 0.
+ * @brief Returns the tracked voice resource when the handle validates.
  *
  * @param void No parameters.
  * @return Pointer to the active Unk4749CResource cast to s32 if valid, or 0 if stale/null.
  *
+ * @par Confirmed mechanics
+ * Passes the handle address in a0 to func_800474C4 and compares the low byte of the result to
+ * 1. Returns the resource word at offset zero on success or zero otherwise.
+ *
  * @par Globals
- * D_800A0A80 - tracked sound handle struct (resource pointer and serial checked and returned).
- *
- * @par Control flow
- * Single conditional branch checking (u8)func_800474C4(&D_800A0A80) == 1.
- *
- * @par Calls
- * func_800474C4 - checks D_800A0A80.resource != 0 and resource->serial == D_800A0A80.serial.
- *
- * @par Side effects
- * None observed.
+ * Reads gAssetHandle.
  *
  * @par Callers
- * Confirmed: gSoundPauseVoices (0x80047704, resolves the preserved background stream voice node during pause) / Likely: none / Unknown: none.
+ * Direct calls from gSoundPauseVoices (func_800476D0).
+ *
+ * @par Role and path
+ * The pause path resolves the tracked voice so it can spare it when stopping other voices.
+ *
+ * @par Unknown
+ * The validator owns the resource and serial checks.
  */
-s32 func_80024188(void)
+s32 gGetTrackedSoundVoice(void)
 {
     register s32 value __asm__("$4");
 

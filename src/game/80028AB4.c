@@ -16,48 +16,55 @@ typedef struct State {
     u8 unk20;
 } State;
 extern State gStreamBufferList __asm__("D_800A0B70");
-extern Node *D_800A0C20[];
-extern volatile s32 D_8009F6B4;
-extern Node * volatile D_8009F6AC;
-extern u8 D_8009F6A8;
+extern Node *gModuleReadPendingBuffers[] __asm__("D_800A0C20");
+extern volatile s32 gModuleReadPendingIndex __asm__("D_8009F6B4");
+extern Node * volatile gModuleReadActiveBuffer __asm__("D_8009F6AC");
+extern u8 gModuleReadBusy __asm__("D_8009F6A8");
 extern void gSeekFileSlot(s32, s32, s32) __asm__("func_8001D6D0");
 extern void gReadFileSlot(s32, void *, s32, void (*)()) __asm__("func_8001DB60");
-extern void func_80028918();
+extern void gCompleteModuleBufferRead() __asm__("func_80028918");
+
+void gStartNextModuleBufferRead(void) __asm__("func_80028AB4");
 
 /**
- *  @brief Starts the next queued node operation when the state permits it.
+ * @brief Dequeues the next module buffer and starts its file-slot read.
  *
- *  Removes a node from a four-entry ring and records it as the current node.
- *  The operation uses the current state values and a completion callback.
- *  @par Globals
- *  D_800A0B70 supplies the readiness flag and operation arguments.
- *  D_800A0C20 and D_8009F6B4 provide the ring and its read index.
- *  D_8009F6AC records the current node; D_8009F6A8 is set to one.
- *  @par Control flow
- *  Proceeds only for a nonnull node, a clear state flag, and a nonnegative handle.
- *  Advances the read index with wraparound at four.
- *  @par Calls
- *  func_8001D6D0 prepares the operation; func_8001DB60 starts it with node data.
- *  func_80028918 is passed as the completion callback.
- *  @par Side effects
- *  Clears a ring entry, updates queue state and the node, and starts an operation.
- *  @par Callers
- *  Confirmed: func_80028918, func_80028E58.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Requires an occupied queue cell, a clear stop byte and a nonnegative file slot. Clears the
+ * cell and wraps its read index at four, saves the file position on the active node, sets busy
+ * and calls the seek and read routines with the completion callback.
+ *
+ * @par Globals
+ * Reads gStreamBufferList and gModuleReadPendingBuffers. Updates gModuleReadPendingIndex,
+ * gModuleReadActiveBuffer and gModuleReadBusy.
+ *
+ * @par Callers
+ * Direct calls from gCompleteModuleBufferRead (D_80028918), gServiceModuleReadQueues
+ * (func_80028E58).
+ *
+ * @par Role and path
+ * The queue service and read callback use this to keep the module stream supplied.
+ *
+ * @par Unknown
+ * The file-slot routines own the actual I/O scheduling.
  */
-void func_80028AB4(void)
+void gStartNextModuleBufferRead(void)
 {
     Node *node;
     State *state;
     state = &gStreamBufferList;
-    node = D_800A0C20[D_8009F6B4];
+    node = gModuleReadPendingBuffers[gModuleReadPendingIndex];
     if (node != 0 && state->unk20 == 0 && gStreamBufferList.unk00 >= 0) {
-        D_800A0C20[D_8009F6B4] = 0;
-        D_8009F6B4++;
-        if (D_8009F6B4 == 4) D_8009F6B4 = 0;
-        D_8009F6AC = node;
-        D_8009F6AC->unk04 = state->unk08;
-        D_8009F6A8 = 1;
+        gModuleReadPendingBuffers[gModuleReadPendingIndex] = 0;
+        gModuleReadPendingIndex++;
+        if (gModuleReadPendingIndex == 4) gModuleReadPendingIndex = 0;
+        gModuleReadActiveBuffer = node;
+        gModuleReadActiveBuffer->unk04 = state->unk08;
+        gModuleReadBusy = 1;
         gSeekFileSlot(gStreamBufferList.unk00, state->unk08, 0);
-        gReadFileSlot(gStreamBufferList.unk00, node->data, state->unk1c, func_80028918);
+        gReadFileSlot(gStreamBufferList.unk00, node->data, state->unk1c, gCompleteModuleBufferRead);
     }
 }

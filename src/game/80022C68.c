@@ -13,24 +13,32 @@ typedef struct {
 
 extern Unk800A0968 gMixerState __asm__("D_800A0968");
 
+s32 gClearAudioStreamSpuBuffers(void) __asm__("func_80022C68");
+
 /**
- *  @brief Clears a field in each counted entry of a global array.
+ * @brief Clears the stored SPU buffer address of each configured stream channel.
  *
- *  Iterates over the entries described by the global count and writes zero.
- *  Other fields in the entries are left unchanged by this function.
- *  @return Always 0.
- *  @par Globals
- *  D_800A0968 supplies the count and array whose fields are cleared.
- *  @par Control flow
- *  Loops from index zero while the index is less than the count.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Sets each visited array entry's field to zero.
- *  @par Callers
- *  Confirmed: func_800226D8.
+ * @param void No parameters.
+ * @return Always 0.
+ *
+ * @par Confirmed mechanics
+ * Iterates while the signed channel index is below the count, zeroing the word at mixer +0x44
+ * and advancing by 0x24 each time.
+ *
+ * @par Globals
+ * Updates channel buffer words in gMixerState.
+ *
+ * @par Callers
+ * Direct calls from gStopAudioStreamAndClearChannels (func_800226D8).
+ *
+ * @par Role and path
+ * The stop-and-clear wrapper runs this after playback has been stopped.
+ *
+ * @par Unknown
+ * The stores clear recorded addresses. Ownership of the underlying allocation is handled
+ * elsewhere.
  */
-s32 func_80022C68(void)
+s32 gClearAudioStreamSpuBuffers(void)
 {
     s32 i;
     s32 ret;

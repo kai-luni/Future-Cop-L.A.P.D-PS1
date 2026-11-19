@@ -24,32 +24,31 @@ extern struct Unk800A0B70 gStreamBufferList __asm__("D_800A0B70");
 
 extern struct LinkNode *func_800195A4(struct LinkState *state);
 
+void gQueueCompletedModuleAsset(s32 arg) __asm__("func_80028DC0");
+
 /**
- * @brief Pushes a value onto the persistent node list at D_800A0B70.
- *
- * A free node is taken from the linked pool func_800195A4; when the pool is
- * exhausted the call does nothing. The node's next pointer is terminated and the
- * value stored, then the node is appended: either as the new head when the list
- * was empty or behind the current tail, which needs a walk to the end.
+ * @brief Appends a completed module asset to the loader's output list.
  *
  * @param arg Value stored in the node at +0x04.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Takes a two-word node from the pool at state +0x2C. On success stores the asset word and a
+ * null link, then appends to the list at +0x30 or its existing tail.
  *
  * @par Globals
- * D_800A0B70 - list state (state pointer 0x2C, head 0x30).
- *
- * @par Control flow
- * Allocation, then an append with a tail walk.
- *
- * @par Calls
- * func_800195A4 - node allocation from the pool.
- *
- * @par Side effects
- * Consumes one pool node and grows the list.
+ * Reads the pool pointer and updates the completed-asset list in gStreamBufferList.
  *
  * @par Callers
- * Unknown: no direct edge; the persistent list is used by the level/save paths.
+ * Direct calls from gParseStreamedModuleChunks (func_8002902C).
+ *
+ * @par Role and path
+ * The SHOC parser queues an asset once its accumulated data length reaches the expected size.
+ *
+ * @par Unknown
+ * The call returns without queueing when no pool entry is available.
  */
-void func_80028DC0(s32 arg)
+void gQueueCompletedModuleAsset(s32 arg)
 {
     struct LinkNode *node;
     struct LinkNode *cur;

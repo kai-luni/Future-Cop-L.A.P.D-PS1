@@ -12,44 +12,46 @@ typedef struct {
 
 extern Data800A0C30 gReleaseQueues __asm__("D_800A0C30");
 
-extern void func_80029650(s32 arg0);
+extern void gReleaseStreamAssetReference(s32 arg0) __asm__("func_80029650");
+
+void gFlushDeferredAssetReleases(void) __asm__("func_80029520");
 
 /**
- * @brief Flushes both deferred asset-handle release queues in D_800A0C30.
- *
- * Iterates over the queued handle arrays unk00[0..count10-1] and unk08[0..count11-1]
- * in D_800A0C30, releasing each via func_80029650, then resets queue counts and
- * status bytes (unk12 = 0, unk13 = 0xFF).
+ * @brief Releases the handles from both deferred asset queues and resets their state bytes.
  *
  * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Walks the handle array at +0x00 using count +0x10, zeroes that count, then walks the array at
+ * +0x08 using count +0x11. Calls gReleaseStreamAssetReference for each handle and writes 0, 0
+ * and 0xFF at offsets +0x11 through +0x13.
  *
  * @par Globals
- * D_800A0C30 - deferred release queue struct (unk00[2], unk08[2], count10, count11, unk12, unk13).
- *
- * @par Control flow
- * Two sequential for-loops over count10 and count11 calling func_80029650 on each handle, followed by field resets.
- *
- * @par Calls
- * func_80029650 - decrements the asset node reference count and unlinks/releases any zero-count nodes in D_800A0B70.
- *
- * @par Side effects
- * Resets D_800A0C30.count10, count11, unk12 to 0, unk13 to 0xFF, and decrements/releases assets in D_800A0B70.
+ * Reads and resets gReleaseQueues. The release helper may recycle buffers in gStreamBufferList.
  *
  * @par Callers
- * Confirmed: func_80029C34 (0x80029D4C, stream request queue step), func_80029EB8 (0x80029EE4, asset registry teardown).
+ * Direct calls from func_80029C34, func_80029EB8.
+ *
+ * @par Role and path
+ * The stream request transition and asset registry teardown flush these retained references.
+ *
+ * @par Unknown
+ * The arrays are used for different chunk kinds, but this flush applies the same release
+ * operation to both.
  */
-void func_80029520(void)
+void gFlushDeferredAssetReleases(void)
 {
     u32 i;
 
     for (i = 0; i < gReleaseQueues.count10; i++) {
-        func_80029650(gReleaseQueues.unk00[i]);
+        gReleaseStreamAssetReference(gReleaseQueues.unk00[i]);
     }
 
     gReleaseQueues.count10 = 0;
 
     for (i = 0; i < gReleaseQueues.count11; i++) {
-        func_80029650(gReleaseQueues.unk08[i]);
+        gReleaseStreamAssetReference(gReleaseQueues.unk08[i]);
     }
 
     gReleaseQueues.count11 = 0;

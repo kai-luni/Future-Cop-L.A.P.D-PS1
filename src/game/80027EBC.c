@@ -4,24 +4,30 @@
 extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 extern void func_8001B4A8(s32 arg0);
 
+void gPresentInteractiveScreenFrame(void) __asm__("func_80027EBC");
+
 /**
- * @brief Runs the asset pass and then presents the frame.
+ * @brief Runs asset dispatch and presents the interactive screen frame.
  *
+ * @param void No parameters.
  * @return Nothing.
  *
- * @par Confirmed
- * func_80024EC8() (the "graphics assets of the loaded level" pass) followed by
- * func_8001B4A8(1), the frame-end routine that sorts depth buckets, builds the
- * draw list and swaps the buffers.
+ * @par Confirmed mechanics
+ * Calls gLoadQueuedAssets, then calls func_8001B4A8 with mode 1.
  *
- * @par Likely role
- * The per-frame step of a screen that shows level geometry, i.e. exactly the
- * two calls a scene renderer needs.
+ * @par Globals
+ * None directly. The two callees own asset and draw state.
  *
  * @par Callers
- * func_800287F4 (the screen dispatcher).
+ * Direct calls from gRunInteractiveScreenLoop (func_80027EE4).
+ *
+ * @par Role and path
+ * The interactive screen frame loop uses this order before its next iteration.
+ *
+ * @par Unknown
+ * The mode-1 presentation details are handled by func_8001B4A8.
  */
-void func_80027EBC(void)
+void gPresentInteractiveScreenFrame(void)
 {
     (void)gLoadQueuedAssets();
     func_8001B4A8((s32)0x1);

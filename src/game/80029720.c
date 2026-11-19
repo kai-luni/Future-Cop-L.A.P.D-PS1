@@ -3,23 +3,32 @@
 
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 
+void gMarkPortraitVoiceStopped(void) __asm__("func_80029720");
+
 /**
- *  @brief Clears a state flag and conditionally sets another.
+ * @brief Clears the tracked portrait voice flag and marks completion when the animation flag is
+ * clear.
  *
- *  Clears bit 0x10 in the global state byte.
- *  If the original byte lacks bit 0x20, it also sets bit 0x08.
- *  @par Globals
- *  D_8009F6B8 is read and updated as a bit field.
- *  @par Control flow
- *  Tests bit 0x20 from the original value after clearing bit 0x10.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Updates D_8009F6B8; other bits retain their original values.
- *  @par Callers
- *  Confirmed: func_80023E84.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Clears bit 0x10 in the stream flags. When the original value lacks 0x20, sets bit 0x08 as
+ * well.
+ *
+ * @par Globals
+ * Reads and updates gBitFieldState.
+ *
+ * @par Callers
+ * Direct calls from gStopTrackedSoundVoice (func_80023E84).
+ *
+ * @par Role and path
+ * The tracked voice teardown uses this to complete playback once neither leg remains active.
+ *
+ * @par Unknown
+ * The meanings of the other flag bits come from the parser and portrait step.
  */
-void func_80029720(void)
+void gMarkPortraitVoiceStopped(void)
 {
     u8 state = gBitFieldState;
 

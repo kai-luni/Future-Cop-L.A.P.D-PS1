@@ -20,36 +20,43 @@ struct Unk4749CHandle {
 
 extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 
-extern void func_80022240(s32 owner);
-extern void func_80029720(void);
+extern void gReleaseSoundVoicesByOwner(s32 owner) __asm__("func_80022240");
+extern void gMarkPortraitVoiceStopped(void) __asm__("func_80029720");
 extern void func_80045370(void);
 extern s32 func_800474F0(struct Unk4749CHandle *handle);
 
+void gStopTrackedSoundVoice(void) __asm__("func_80023E84");
+
 /**
- *  @brief Resets a global handle and performs associated cleanup.
+ * @brief Releases the tracked sound voice and clears its active state and deadline.
  *
- *  When the handle is in state one, its resource owner is processed if
- *  present and an additional cleanup call depends on the handle flag.
- *  @par Globals
- *  D_800A0A80 supplies the handle, resource and flag; its state and unk10
- *  fields are cleared as applicable.
- *  @par Control flow
- *  State, resource and flag checks gate conditional calls; final cleanup is
- *  always performed after those checks.
- *  @par Calls
- *  func_80022240 processes the resource owner; func_80045370 performs
- *  flag-dependent cleanup; func_800474F0 processes the handle and
- *  func_80029720 performs the final cleanup step.
- *  @par Side effects
- *  Changes handle fields and invokes cleanup routines.
- *  @par Callers
- *  Confirmed: func_80023D78, gSoundHaltAllVoices.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * For state 1, releases software voices by signed owner byte +0x0D when the resource is
+ * present, clears the state and conditionally calls func_80045370. Always releases the tracked
+ * handle, clears +0x10 and calls gMarkPortraitVoiceStopped.
+ *
+ * @par Globals
+ * Reads and modifies gAssetHandle, including gTrackedSoundState at +0x08.
+ *
+ * @par Callers
+ * Direct calls from gUpdateTrackedSoundVoice (func_80023D78), gStartTrackedSoundVoice
+ * (func_80023F08), gAcquireTrackedSoundVoice (func_80024064), func_80029DD8,
+ * gSoundHaltAllVoices (func_80047554).
+ *
+ * @par Role and path
+ * Called by audio shutdown, timeout, failed playback and portrait reset paths.
+ *
+ * @par Unknown
+ * The flag-dependent transport cleanup resides in func_80045370.
  */
-void func_80023E84(void)
+void gStopTrackedSoundVoice(void)
 {
     if (gAssetHandle.state == 1) {
         if (gAssetHandle.resource != 0) {
-            func_80022240(gAssetHandle.resource->owner);
+            gReleaseSoundVoicesByOwner(gAssetHandle.resource->owner);
         }
         gAssetHandle.state = 0;
         if (gAssetHandle.flag18 == 0) {
@@ -58,5 +65,5 @@ void func_80023E84(void)
     }
     func_800474F0(&gAssetHandle);
     gAssetHandle.unk10 = 0;
-    func_80029720();
+    gMarkPortraitVoiceStopped();
 }
