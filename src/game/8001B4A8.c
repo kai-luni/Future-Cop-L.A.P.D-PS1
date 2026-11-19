@@ -4,8 +4,8 @@
 
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 extern u8 gDisplayListHead[] __asm__("D_800A63E0");
-extern u8 D_800A0520[];
-extern u8 D_800A0528[];
+extern u8 gVramUploadQueue[] __asm__("D_800A0520");
+extern u8 gVramUploadRectFields[] __asm__("D_800A0528");
 extern u8 gUploadRing[] __asm__("D_800A0660");
 extern u32 gSingleShotQueue[] __asm__("D_8009AA68");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
@@ -14,9 +14,9 @@ extern u32 gPacketBufferBases[] __asm__("D_8009F5C8");
 extern u32 gRenderNodeTable[] __asm__("D_8009F5D0");
 extern u32 gOrderingTableBuffers[] __asm__("D_8009F5D8");
 
-extern s32 D_8009F218;
-extern s32 D_8009F21C;
-extern s32 D_8009F220;
+extern s32 gVramUploadEndIndex __asm__("D_8009F218");
+extern s32 gVramUploadReclaimIndex __asm__("D_8009F21C");
+extern s32 gVramUploadSubmitIndex __asm__("D_8009F220");
 extern s32 gSubScreenActive __asm__("D_8009F5C0");
 extern u32 gPacketPoolBase __asm__("D_8009F5E0");
 extern u32 gNodePoolBase __asm__("D_8009F5E4");
@@ -44,68 +44,49 @@ extern void func_8009398C(u32 arg0, void *arg1);
 extern void func_80093A0C(u32 arg0, void *arg1);
 extern void gDecodeMdecFrameToVram(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm__("func_800861E4");
 
+void gSubmitRenderFrame(s32 arg0) __asm__("func_8001B4A8");
+
 /**
- * @brief Ends a frame: buckets everything drawn this frame into the ordering
- *        table by depth, submits it, flushes pending uploads and swaps the
- *        double buffer.
+ * @brief Builds and submits an ordering table, services deferred GPU work, and
+ * swaps render buffers.
  *
- * @param arg0 0 = sub-screen frame (0xA0 wide clip when D_8009F5C0 is set),
- *             non-zero = full-screen frame (0x140 x 0xF0 clip). A non-zero
- *             value also raises the frame barrier D_8009FA3C at the end.
- *
+ * @param arg0 Nonzero selects a 320-wide clip and raises the frame barrier
+ *     after submission. Zero selects the conditional 160-wide path.
  * @return Nothing.
  *
- * @par Confirmed flow
- * 1. Spins while D_8009FA3C is set (the previous frame's DMA is still running).
- * 2. h = func_8001C034() ? 0x100 : 0; the x offset is mirrored into
- *    D_8009F9D4.
- * 3. Walks both packet pools backwards from the current cursor
- *    (D_8009F9F0 with 0x34 stride, D_8009FA90 with 0x1C stride) down to the
- *    bases D_8009F5E0/D_8009F5E4, collecting the 24-bit depth tag
- *    (word & 0xFFFFFF) into min/max. Because the pools are walked downwards,
- *    the ordering matches the order the primitives were emitted.
- * 4. Computes the bucket count: quot = (D_8009F5FC + max - 1 - min) /
- *    D_8009F5FC, shift = 0x20 - func_80095C14(quot) (a log2 helper), and
- *    count = ((max - min) >> shift) + 1 (0 when no primitive was emitted).
- * 5. Second pass links every primitive into the bucket list of the ordering
- *    table word at gOrderingTableBuffers[D_8009F600]: the low 24 bits of the primitive's
- *    tag become the bucket index, the previous bucket head is chained into the
- *    primitive and the primitive becomes the new head.
- * 6. If D_8009FA0C >= 2 or arg0 != 0, a drawing area (rect = x, y, w, h) is
- *    installed with func_8009398C and func_80093A0C, and the ordering table
- *    itself is spliced into the display list at D_800A63E0.
- * 7. Deferred work queues are drained in ring-buffer order (0x14 slots):
- *    func_800A0520 entries release handles (func_80029650), D_800A0528
- *    entries submit transfers (func_80092F38) followed by func_80092C8C.
- *    A single-shot queue in D_8009AA68 is handled the same way.
- * 8. When arg0 != 0, D_8009F5C0 == 0 or D_8009FA0C == 1, the 4-slot image
- *    upload ring D_800A0660 is flushed: queued handles are freed and queued
- *    images are uploaded with func_800861E4(ptr, mode, width, offset).
- * 9. func_80092C8C(0) and func_80093280(table + (count + 1) * 4) hand the list
- *    to the GPU (DrawOTag style).
- * 10. Buffer swap: D_8009F600 toggles 0/1, the cursors D_8009F9F0/D_8009FA90
- *     and limits D_8009FA28/D_8009F9C0 are reset to the other buffer pair
- *     (gPacketBufferBases/D_8009F5D0), and func_80093178() terminates the new table.
+ * @par Confirmed mechanics
+ * Waits for the frame barrier, then walks the two active pools backward at
+ * strides 0x34 and 0x1C to find nonzero 24-bit depth extrema. Derives a bucket
+ * shift with the leading-zero helper and relinks packet tags by depth.
+ * Conditionally inserts clipping commands, drains upload and reclamation
+ * cursors, and submits the ordering table. Toggles the buffer index and resets
+ * the next frame's bases, cursors, and bounds.
  *
  * @par Globals
- * D_8009FA3C (frame barrier), D_8009F9D4 (x offset), D_8009F9F0/D_8009FA90
- * (packet cursors), D_8009F5E0/D_8009F5E4 (pool bases), D_8009FA28/D_8009F9C0
- * (pool limits), gPacketBufferBases/D_8009F5D0 (buffer bases), gOrderingTableBuffers (ordering
- * table), D_8009F600 (buffer index), D_8009F5FC (bucket size),
- * D_8009F5F4/D_8009F5F8 (pool entry counts), D_8009FA0C (screen state),
- * D_8009F5C0 (sub-screen flag), D_8009F218/D_8009F21C/D_8009F220 (ring heads),
- * D_8009A0520/D_800A0528/D_800A0660/D_8009AA68 (queues).
+ * Reads gPacketBufferBases, gRenderNodeTable, gOrderingTableBuffers,
+ * gFrameBlockCount, gNodeCapacity, gNodeTableLength, gSubScreenActive, and
+ * D_8009FA0C. Reads or updates gFrameBarrier, gDisplayListHead,
+ * gScreenOffsetValue, gPacketPoolBase, gNodePoolBase, gPrimPoolNext,
+ * gPacketCursor, gPacketLimit, gPrimPoolEnd, and gNodeTableIndex. Services
+ * gVramUploadQueue, gVramUploadRectFields, gVramUploadEndIndex,
+ * gVramUploadReclaimIndex, gVramUploadSubmitIndex, gSingleShotQueue,
+ * gUploadRing, gUploadRingWriteIdx, gMdecUploadReclaimIndex, and
+ * gMdecUploadSubmitIndex.
  *
- * @par Side effects
- * GPU DMA is started, queued images are uploaded to VRAM, handles are freed
- * and the render buffers are swapped. This is the only place the frame is
- * submitted.
+ * @par Callers
+ * Direct calls in the retail listing are from gEndSubScreenFrame,
+ * func_80025348, gShowLoadingScreen, gDrawScreenFadeQuad,
+ * gPrepareAndSubmitFrame, func_80027EBC, gRunGameFrameLoop, func_80078DD0.
+ *
+ * @par Role and path
+ * Frame-end callers use this path to turn emitted primitives into a GPU list
+ * and advance the double buffer.
  *
  * @par Unknown
- * The exact meaning of D_8009FA0C values (0/1/2) beyond selecting the clip
- * rectangle, and of D_8009F5C0.
+ * The full meanings of all values of the reserved word D_8009FA0C and the
+ * exact ownership of deferred resources depend on their producers.
  */
-void func_8001B4A8(s32 arg0)
+void gSubmitRenderFrame(s32 arg0)
 {
     register s32 max __asm__("$16");
     register u32 q __asm__("$17");
@@ -308,34 +289,34 @@ void func_8001B4A8(s32 arg0)
         *(u32 *)(max + 4) = (v & min) | (q & p);
     }
 
-    if (D_8009F21C != D_8009F220) {
+    if (gVramUploadReclaimIndex != gVramUploadSubmitIndex) {
         do {
-            v = (u32)D_800A0520 + (D_8009F21C << 4);
+            v = (u32)gVramUploadQueue + (gVramUploadReclaimIndex << 4);
             hnd = *(u32 *)(v + 4);
             if (hnd != 0) {
                 func_80029650(hnd);
             }
-            D_8009F21C++;
-            if (D_8009F21C >= 0x14) {
-                D_8009F21C = 0;
+            gVramUploadReclaimIndex++;
+            if (gVramUploadReclaimIndex >= 0x14) {
+                gVramUploadReclaimIndex = 0;
             }
-        } while (D_8009F21C != D_8009F220);
+        } while (gVramUploadReclaimIndex != gVramUploadSubmitIndex);
     }
 
-    if (D_8009F220 != D_8009F218) {
-        ptr = (u32)D_800A0528;
+    if (gVramUploadSubmitIndex != gVramUploadEndIndex) {
+        ptr = (u32)gVramUploadRectFields;
         q = ptr - 8;
         do {
-            bv = D_8009F220 << 4;
+            bv = gVramUploadSubmitIndex << 4;
             v = bv + q;
             av = *(u32 *)v;
             gLoadImage(bv + ptr, av);
             func_80092C8C(0);
-            D_8009F220++;
-            if (D_8009F220 >= 0x14) {
-                D_8009F220 = 0;
+            gVramUploadSubmitIndex++;
+            if (gVramUploadSubmitIndex >= 0x14) {
+                gVramUploadSubmitIndex = 0;
             }
-        } while (D_8009F220 != D_8009F218);
+        } while (gVramUploadSubmitIndex != gVramUploadEndIndex);
     }
 
     if (gSingleShotQueue[0] != 0) {

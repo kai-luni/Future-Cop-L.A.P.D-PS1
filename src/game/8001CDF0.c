@@ -1,30 +1,33 @@
 // Categories: Resources > Memory Management | Platform > CD-ROM
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
+int gFreeDefaultCdBuffer(void *block) __asm__("func_8001CDF0");
+
 /**
- * @brief Default memory deallocator wrapper registered by the file/CD layer.
+ * @brief Frees a buffer through the default CD file deallocator callback.
  *
- * Releases block via func_800181D4 and always returns 0. Installed into D_8009F22C by func_8001D248 as the default free callback alongside allocator func_8001CDD0 when custom callbacks are omitted.
+ * @param block Buffer to release.
+ * @return Always zero.
  *
- * @param block Pointer previously obtained from func_80017EBC / func_8001CDD0.
- * @return Always 0.
+ * @par Confirmed mechanics
+ * Calls gFreeBlock with the incoming pointer in $a0, then clears $v0 before
+ * returning.
  *
  * @par Globals
- * None directly; address is stored in D_8009F22C by func_8001D248.
- *
- * @par Control flow
- * Single call to func_800181D4(block), followed by returning 0.
- *
- * @par Calls
- * func_800181D4 - releases the block back to its pool, free-range table, or general allocator.
- *
- * @par Side effects
- * Frees block via func_800181D4.
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * Confirmed: none direct; address taken in func_8001D248 (0x8001D298) into D_8009F22C / Likely: file-layer buffer cleanup via D_8009F22C / Unknown: no indirect call site of D_8009F22C observed in asm/us/main.s.
+ * The retail listing has no direct call or tail jump to this entry.
+ *
+ * @par Role and path
+ * The file layer installs the address alongside gAllocateDefaultCdBuffer when
+ * no custom free callback is supplied.
+ *
+ * @par Unknown
+ * The direct listing does not establish which release requests take this
+ * fallback.
  */
-int func_8001CDF0(void *block)
+int gFreeDefaultCdBuffer(void *block)
 {
     gFreeBlock(block);
     return 0;

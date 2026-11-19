@@ -1,24 +1,27 @@
 // Categories: Utilities > No-op
+
+void gNoOpAt8001BE40(void) __asm__("func_8001BE40");
+
 /**
- *  @brief Performs no operation.
+ * @brief Returns immediately from the empty entry at 0x8001BE40.
+ * @return Nothing.
  *
- *  This function has an empty body and does not access state.
- *  Its purpose is not established by the source.
- *  @par Globals
- *  None.
- *  @par Control flow
- *  Returns immediately.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  None.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @par Confirmed mechanics
+ * Contains JR $ra with a NOP in its delay slot.
+ *
+ * @par Globals
+ * No RAM globals accessed directly.
+ *
+ * @par Callers
+ * The retail listing has no direct call or tail jump to this entry.
  *
  * @par Role and path
- * Empty no-op stub that returns immediately without reading or writing any
- * globals or calling any functions. No callers appear in src/.
+ * This is the first of five consecutive empty entries between render helpers
+ * and GPU setup.
+ *
+ * @par Unknown
+ * No caller or specific interface for this entry is established.
  */
-void func_8001BE40(void)
+void gNoOpAt8001BE40(void)
 {
 }

@@ -6,35 +6,41 @@ struct Unk1BFE4 {
 };
 
 extern s8 gSelectedLayer __asm__("D_8009F224");
-extern u8 D_8009F226;
+extern u8 gAppliedDisplayLayer __asm__("D_8009F226");
 extern struct Unk1BFE4 gDrawBlocks[] __asm__("D_800A06B0");
 
 extern void gPutDispEnvCached(struct Unk1BFE4 *entry) __asm__("func_800934BC");
 
+s32 gApplySelectedDisplayEnv(void) __asm__("func_8001BFE4");
+
 /**
- * @brief Applies the currently selected layer/tile entry.
+ * @brief Installs the display environment selected by a signed layer index.
+ * @return Zero after applying the selected entry, or 0x0F for a negative
+ *     selection.
  *
- * @return 0 when D_8009F224 (the selected layer index, a signed byte) is >= 0
- *         and the entry was applied; 0xF when the index is negative - i.e. "no
- *         layer selected".
- *
- * @par Confirmed flow
- * D_8009F226 = D_8009F224 (the selection is copied to the "active" byte) and
- * func_800934BC(&D_800A06B0[D_8009F224]) uploads the 0x14-byte entry at that
- * index.
+ * @par Confirmed mechanics
+ * Returns 0x0F on a negative selection. Otherwise copies the selection to
+ * gAppliedDisplayLayer, scales it by 0x14, and passes the indexed environment
+ * to gPutDispEnvCached.
  *
  * @par Globals
- * D_8009F224 (selection), D_8009F226 (active copy), D_800A06B0 (0x14-byte
- * entry array).
+ * Reads gSelectedLayer and gDrawBlocks. Writes gAppliedDisplayLayer.
  *
  * @par Callers
- * func_80076EB0 (boot), gCloseVideoLayer (image layer teardown), the unit at
- * 0x80088124 and func_8001EFF8 (the per-frame callback table).
+ * Direct calls in the retail listing are from gPollPadButtons, gInitRuntime,
+ * gCloseVideoLayer, gPlayVideoFile.
+ *
+ * @par Role and path
+ * Boot and display mode transitions reuse this path to apply the selected
+ * buffer's display settings.
+ *
+ * @par Unknown
+ * The routine has no upper-bound check on a nonnegative index.
  */
-s32 func_8001BFE4(void)
+s32 gApplySelectedDisplayEnv(void)
 {
     if (gSelectedLayer >= 0) {
-        D_8009F226 = gSelectedLayer;
+        gAppliedDisplayLayer = gSelectedLayer;
         gPutDispEnvCached(&gDrawBlocks[gSelectedLayer]);
         return 0;
     }

@@ -10,26 +10,33 @@ extern void *gSecondOrderingTableBuffer __asm__("D_8009F5DC");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
+void gFreeRenderBuffers(void) __asm__("func_8001B448");
+
 /**
- * @brief Releases the render arena allocated by gAllocateRenderBuffers().
- *
- * The six blocks are freed in allocation order through func_800181D4(), the
- * shared deallocator: the two 52-byte-record pools, the two 1024-entry
- * 28-byte arrays and the two word tables. The globals keep their (now stale)
- * pointers; nothing is cleared here, so a later free would be a double free -
- * the callers only run this once per module teardown.
- *
+ * @brief Releases the six buffer allocations used by the paired render arenas.
  * @return Nothing.
  *
- * @par Globals written
- * Only through the deallocator; gPacketBufferBases..gSecondOrderingTableBuffer themselves are not
- * reset.
+ * @par Confirmed mechanics
+ * Loads six successive GP-relative pointer words and passes each in turn to
+ * gFreeBlock. There are no stores to those words.
+ *
+ * @par Globals
+ * Reads gPacketBufferBases, gSecondPacketBufferBase, gRenderNodeTable,
+ * gRenderNodeTableAlt, gOrderingTableBuffers, and gSecondOrderingTableBuffer.
  *
  * @par Callers
- * func_800249BC, func_80024D14 (module teardown paths) and func_80076A2C
- * (after the intro has been shown, before the front-end loop starts).
+ * Direct calls in the retail listing are from gUnloadFrontEndSubsystems,
+ * gResetMissionSubsystems, gGameMain.
+ *
+ * @par Role and path
+ * Front end, mission, and subsystem teardown free the storage from
+ * gAllocateRenderBuffers.
+ *
+ * @par Unknown
+ * The caller controls when frame submission has stopped using the saved
+ * pointers.
  */
-void func_8001B448(void)
+void gFreeRenderBuffers(void)
 {
     gFreeBlock(gPacketBufferBases);
     gFreeBlock(gSecondPacketBufferBase);

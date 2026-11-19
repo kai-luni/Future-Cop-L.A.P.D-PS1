@@ -1,24 +1,26 @@
 // Categories: Game Engine > Unclassified
+
+void gNoOpAt8001BE60(void) __asm__("func_8001BE60");
+
 /**
- *  @brief Performs no operation.
+ * @brief Returns immediately from the empty entry at 0x8001BE60.
+ * @return Nothing.
  *
- *  This empty function provides a callable entry point.
- *  Its intended role is not established by the source.
- *  @par Globals
- *  None accessed.
- *  @par Control flow
- *  Returns immediately without branching or looping.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  None.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @par Confirmed mechanics
+ * Contains JR $ra with a NOP in its delay slot.
+ *
+ * @par Globals
+ * No RAM globals accessed directly.
+ *
+ * @par Callers
+ * The retail listing has no direct call or tail jump to this entry.
  *
  * @par Role and path
- * Empty no-op stub that returns immediately without reading or writing any
- * globals or calling any functions. No callers appear in src/.
+ * This is the fifth of five consecutive empty entries before GPU setup.
+ *
+ * @par Unknown
+ * No caller or specific interface for this entry is established.
  */
-void func_8001BE60(void)
+void gNoOpAt8001BE60(void)
 {
 }

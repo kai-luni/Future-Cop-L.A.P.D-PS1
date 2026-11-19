@@ -1,25 +1,28 @@
-// Categories: Game Engine > Unclassified
+// Categories: Platform > CD-ROM | Resources > Callbacks
+
+void gNoOpCdReadCompletion(void) __asm__("func_8001C60C");
+
 /**
- *  @brief Performs no operation.
+ * @brief Provides an empty completion callback for the CD read path.
+ * @return Nothing.
  *
- *  This empty function provides a callable entry point.
- *  Its intended role is not established by the source.
- *  @par Globals
- *  None accessed.
- *  @par Control flow
- *  Returns immediately without branching or looping.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  None.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @par Confirmed mechanics
+ * Contains JR $ra with a NOP in its delay slot. The address is taken at
+ * 0x8001CEDC as gCdlLocToByteOffset plus 0x84.
+ *
+ * @par Globals
+ * No RAM globals accessed directly.
+ *
+ * @par Callers
+ * The retail listing has no direct call or tail jump to this entry.
  *
  * @par Role and path
- * Empty no-op stub that returns immediately with no global accesses or
- * outgoing calls. Used as the default completion callback pointer by
- * func_8001CE54 when the caller passes callback 0.
+ * The CD scheduler installs this callback when the incoming completion pointer
+ * is null.
+ *
+ * @par Unknown
+ * The callback ignores the request's context.
  */
-void func_8001C60C(void)
+void gNoOpCdReadCompletion(void)
 {
 }
