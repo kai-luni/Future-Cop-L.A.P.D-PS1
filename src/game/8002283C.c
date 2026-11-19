@@ -36,7 +36,7 @@ extern struct StreamState gMixerState __asm__("D_800A0968");
 
 extern void func_800227BC(s32 channel, s32 left, s32 right);
 extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
-extern void func_800222CC(s32 voice, struct StreamMix *mix);
+extern void gSetSoundChannelMix(s32 voice, struct StreamMix *mix) __asm__("func_800222CC");
 
 /**
  *  @brief Updates a stream channel's settings and applies its active voice mix.
@@ -52,7 +52,7 @@ extern void func_800222CC(s32 voice, struct StreamMix *mix);
  *  Returns after recording settings if streaming is inactive or the voice is null.
  *  @par Calls
  *  func_800227BC records settings; func_800477D8 updates the voice.
- *  func_800222CC applies the resulting volume and pan to the voice index.
+ *  gSetSoundChannelMix applies the resulting volume and pan to the voice index.
  *  @par Side effects
  *  Updates channel settings and, when applicable, voice and audio mix state.
  *  @par Callers
@@ -86,5 +86,5 @@ void func_8002283C(s32 channel, s32 left, s32 right)
     mix.volume = voice->volume;
     mix.pan = voice->pan;
     mix.unk00 = -1;
-    func_800222CC(voice->voice, &mix);
+    gSetSoundChannelMix(voice->voice, &mix);
 }

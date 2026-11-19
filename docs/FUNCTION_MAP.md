@@ -597,8 +597,8 @@ graph LR
 | `gBindActuatorBuffer` (`func_8008AE70`) | 12 | Input > DualShock · Controller | - | `func_8008A240` |
 | `func_8008FE1C` | 12 | Game Engine > State | - | - |
 | `func_80021888` | 16 | Game Engine > State | - | - |
-| `func_800226C8` | 16 | Game Engine > State | - | - |
-| `func_80022700` | 16 | Game Engine > State | - | - |
+| `gIsAudioStreamConfigured` (`func_800226C8`) | 16 | Game Engine > State | - | - |
+| `gMarkAudioStreamStopPending` (`func_80022700`) | 16 | Game Engine > State | - | - |
 | `func_80022B74` | 16 | Game Engine > State | - | `func_8002443C` |
 | `func_80049400` | 16 | Game Engine > Init · Entity Script | - | `func_80024A24` |
 | `func_80049410` | 16 | Game Engine > Game State > Reset · Entity Script | - | `func_80024D14` |
@@ -741,7 +741,7 @@ graph LR
 | `gResetMenuDirectionHoldTicks` (`func_800785F8`) | 88 | Game Engine > Menu System · Menu Navigation | - | `func_80078650` |
 | `func_8001E4E4` | 92 | Input > Controller Init · Device Init | `func_8001E588`, `func_8001E87C`, `func_800200A8`, `func_80091480`, `func_80095878` | `func_80076EB0` |
 | `gQueueSoundChannelShutdown` (`func_80021F3C`) | 92 | Game Engine > Audio | `func_80021AB4`, `func_80021E1C` | `func_80021C80` |
-| `func_800221E4` | 92 | Game Engine > Audio | `func_80021A70` | `func_800228F4` |
+| `gQueueSoundChannelStarts` (`func_800221E4`) | 92 | Game Engine > Audio | `func_80021A70` | `func_800228F4` |
 | `func_8003FD10` | 92 | Game Engine > Command Queue · Object Spawning | `func_8003FB90`, `func_800402DC` | `func_8004CECC` |
 | `func_800472E8` | 92 | Game Engine > Audio | - | `func_80047344` |
 | `gInitMenuDescriptor` (`func_80077884`) | 96 | Game Engine > State Initialization | - | `func_80077AD4` |
@@ -768,7 +768,7 @@ graph LR
 | `func_8004AB4C` | 112 | Game Engine > Object Pool · Effects | `func_80017EBC`, `func_8008CD20` | `func_80024A24` |
 | `gSnapshotControllerPresets` (`func_8007C088`) | 112 | Game Engine > Front-End Configuration · Port Presets | `func_8001EB2C` | - |
 | `gSetSmallMotor` (`func_8001E9AC`) | 116 | Input > Controller Vibration | - | `func_8001E930`, `func_8001E96C`, `func_8001EBA8` |
-| `func_80022654` | 116 | Game Engine > State | `func_800226D8`, `func_8002A23C` | `func_8002441C` |
+| `gPollAudioStreamStop` (`func_80022654`) | 116 | Game Engine > State | `func_800226D8`, `func_8002A23C` | `func_8002441C` |
 | `func_800869D8` | 116 | Game Engine > Buffer | - | - |
 | `func_80086A4C` | 116 | Game Engine > Buffer | - | - |
 | `func_8004AAD4` | 120 | Game Engine > Object Pool · Effects | - | `func_8004C0C0`, `func_8004C324` |
@@ -780,7 +780,7 @@ graph LR
 | `gCmdPadInfoModeFirst` (`func_8008AE8C`) | 132 | Input > DualShock · Controller | `func_8008B73C`, `func_8008B750`, `func_8008B790` | `func_8008C444` |
 | `func_800298EC` | 136 | Game Engine > Event Queue | `func_800452C8` | `func_80029974`, `func_80069D68` |
 | `func_80031BEC` | 136 | Game Engine > Object State | - | `func_8004DC64` |
-| `func_80022240` | 140 | Game Engine > Audio Voices | `func_8002238C` | `func_80022A64`, `func_80023E84` |
+| `gReleaseSoundVoicesByOwner` (`func_80022240`) | 140 | Game Engine > Audio Voices | `func_8002238C` | `func_80022A64`, `func_80023E84` |
 | `gStartModuleByName` (`func_80024E3C`) | 140 | Game Engine > Screen Loading · File Access | `func_800247A8`, `func_80024904`, `func_80024A24`, `func_800833A8`, `func_8008CD30` | `func_800287F4` |
 | `func_8004DD68` | 140 | Game Engine > Entity Management | `func_8004DA84` | `func_80069D68` |
 | `func_8004DDF4` | 140 | Game Engine > Entity Management | `func_8004DA84` | `func_80069D68` |
@@ -844,7 +844,7 @@ graph LR
 | `gApplyControllerPreset` (`func_8007BFCC`) | 188 | Game Engine > Front-End Configuration · Port Presets | - | `func_80076A2C`, `func_8007C80C`, `func_80080984` |
 | `gReadPadTxByte` (`func_8008C07C`) | 188 | Game Engine > Data Access | - | - |
 | `gFrameCallback` (`func_8001EFF8`) | 192 | Game Engine > Frame · GPU, Display Setup | `func_8001BFA8`, `func_8001BFE4`, `func_80092C8C` | - |
-| `func_800222CC` | 192 | Game Engine > Audio · Audio | `func_800223B0`, `func_80099C58` | `func_8002283C`, `func_800243C4` |
+| `gSetSoundChannelMix` (`func_800222CC`) | 192 | Game Engine > Audio · Audio | `func_800223B0`, `func_80099C58` | `func_8002283C`, `func_800243C4` |
 | `func_800450A4` | 192 | Game Engine > Audio | `func_80045164`, `func_800458E8`, `func_800460D4` | `func_80023D78` |
 | `gClampLoadoutSelections` (`func_8007D2DC`) | 192 | Game Engine > Front-End Configuration · Loadout | - | `func_8007DD08`, `func_8007E3EC` |
 | `gUpdatePrecinctUnlockFlag` (`func_80077FFC`) | 196 | Game Engine > Front End · Save Data | - | `func_80077708`, `func_800780DC`, `func_8007EA78`, `func_8008125C` |
@@ -852,7 +852,7 @@ graph LR
 | `gRespPadActAlign` (`func_8008B508`) | 200 | Input > Controller Configuration | - | - |
 | `gSweepRetiredEntities` (`func_8004D598`) | 204 | Game Engine > Entity Lifecycle · Object Pool | `func_800181D4`, `func_80061020` | `func_80027510`, `func_8004CCDC` |
 | `gInitMissionSelectState` (`func_8007B004`) | 208 | Game Engine > State Initialization | - | - |
-| `func_800223B0` | 212 | Game Engine > Audio | - | `func_80021F98`, `func_800220C4`, `func_800222CC` |
+| `gComputeStereoVoiceLevels` (`func_800223B0`) | 212 | Game Engine > Audio | - | `func_80021F98`, `func_800220C4`, `func_800222CC` |
 | `gGetPadActuatorInfo` (`func_8008A044`) | 212 | Input > DualShock · Controller | - | `func_8001EC94` |
 | `gInitPadHandshake` (`func_8008B094`) | 212 | Input > Controller Configuration | - | `func_8008AF10` |
 | `gDispatchPadStep` (`func_8008C444`) | 212 | Input > Controller Protocol | `func_8008AE8C`, `func_8008B71C` | - |
@@ -923,7 +923,7 @@ graph LR
 | `gHandlePlayerJoinSelection` (`func_8007A5F0`) | 432 | Game Engine > Front-End Configuration · Menu System | `func_80078650` | - |
 | `gServiceMovieAudioIrq` (`func_80086AC0`) | 436 | Game Engine > Streaming | - | - |
 | `func_80022D84` | 448 | Game Engine > Audio Streaming · Requests | `func_800212F8`, `func_80022D1C` | `func_80022710`, `func_80022FA8`, `func_80023204` |
-| `func_80022484` | 464 | Game Engine > Audio Streaming | - | - |
+| `gConfigureAudioStreaming` (`func_80022484`) | 464 | Game Engine > Audio Streaming | - | - |
 | `func_800841C4` | 468 | Game Engine > Node Management | - | `func_80069D68` |
 | `gRunGameFrameLoop` (`func_80028618`) | 476 | Game Engine > Gameplay Frame Loop · Rendering, Camera | - | `func_800287F4` |
 | `gTeardownWorldObjects` (`func_8003F854`) | 480 | Game Engine > World Reset | `func_800181D4`, `func_8003D0AC`, `func_8005E22C`, `func_8006EDF0` | `func_80024D14` |
@@ -1352,7 +1352,7 @@ graph LR
 | `func_800194DC` | 168 | Resources > Memory Pools · Memory Management | `func_80017EBC` | `func_80017C68`, `func_80029F50`, `func_8003F79C`, `func_80049690`, `func_8008347C` |
 | `gGetPadCombInfo` (`func_8008A118`) | 168 | Resources > Data Access | - | - |
 | `func_80019AF8` | 172 | Resources > Memory Management · Resource Registry | `func_800181D4` | `func_80019BA4` |
-| `func_80022710` | 172 | Resources > Streaming | `func_80022CA8`, `func_80022D84` | - |
+| `gPrimeAudioStream` (`func_80022710`) | 172 | Resources > Streaming | `func_80022CA8`, `func_80022D84` | - |
 | `func_80023528` | 172 | Resources > Lookup | - | `func_800235D4` |
 | `func_80017D5C` | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
 | `func_80017E0C` | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
@@ -4439,7 +4439,7 @@ graph LR
 | `gCdDataSync` (`func_8008E5FC`) | 32 | Platform > CD-ROM · Device Wait | `func_8008FAC8` | `func_800908D4`, `func_80090E00` |
 | `gMatchCdFilename` (`func_800901F8`) | 32 | Platform > CD-ROM · String | `func_80090890` | `func_8008FF20` |
 | `func_80097A28` | 32 | Platform > GPU · Display Setup | `func_80096D58` | `func_80021B50` |
-| `func_8002238C` | 36 | Platform > Sound > Voices | `func_80021A8C` | `func_80022240`, `func_800243F8` |
+| `gQueueSoundChannelRelease` (`func_8002238C`) | 36 | Platform > Sound > Voices | `func_80021A8C` | `func_80022240`, `func_800243F8` |
 | `func_800243F8` | 36 | Platform > Sound > Voices | `func_8002238C` | `func_80046698`, `func_80047088`, `func_800471C4` |
 | `func_80029BC0` | 36 | Platform > Streaming Audio · Sound | - | `func_800476D0` |
 | `func_80046A34` | 36 | Platform > Sound > Voices | `func_80046698` | `func_80022A64`, `func_80025E18`, `func_800260B8`, `func_80027510`, `func_800474F0`, `func_8007CA34`, `func_8007CACC`, `func_8007D150` |
@@ -4450,7 +4450,7 @@ graph LR
 | `gSpuSetIrqCallback` (`func_80098C38`) | 36 | Platform > Audio · Interrupts | `func_800914B0` | `func_80098BF8` |
 | `gSpuSetTransferCallback` (`func_80098FB8`) | 36 | Platform > Sound · DMA | - | `func_800211FC`, `func_80087750`, `func_80087824` |
 | `func_8002078C` | 40 | Platform > Memory Card · Events, Interrupts | `func_8002036C`, `func_8002059C` | - |
-| `func_800226D8` | 40 | Platform > Streaming Audio · Voices | `func_80022A64`, `func_80022C68` | `func_80022654` |
+| `gStopAudioStreamAndClearChannels` (`func_800226D8`) | 40 | Platform > Streaming Audio · Voices | `func_80022A64`, `func_80022C68` | `func_80022654` |
 | `gWaitSio0TxReady` (`func_8008AE44`) | 40 | Platform > Status Polling | - | `func_8008A6CC`, `func_8008BA34` |
 | `gInitCdDriverChain` (`func_8008D784`) | 40 | BIOS > System Calls · CD-ROM | `func_8008DC40`, `func_8008DE20` | `func_800200F0` |
 | `gLogCdSyncCallback` (`func_8008DF6C`) | 40 | Platform > Command Dispatch | `func_8008DFF0` | - |

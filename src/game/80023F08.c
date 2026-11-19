@@ -14,7 +14,7 @@ extern s8 func_80045050(void);
 extern s32 gAllocateSoundChannelVoice(s32, s32, struct Params *, s32) __asm__("func_800220C4");
 extern s32 func_800474F0(struct Handle *);
 extern void func_80047800(struct Resource *, s32, s32, s32);
-extern void func_800221E4(s32, s32 *);
+extern void gQueueSoundChannelStarts(s32, s32 *) __asm__("func_800221E4");
 
 /**
  *  @brief Attempts to start the sound represented by the global handle.
@@ -28,7 +28,7 @@ extern void func_800221E4(s32, s32 *);
  *  Initialization and handle readiness gate playback; mix lookup failure resets setup and start failure invokes handle cleanup.
  *  @par Calls
  *  func_80023E84 initializes or resets setup; func_800474C4 checks the handle; func_800450A4 or func_80045050 supplies mix data.
- *  gAllocateSoundChannelVoice starts playback; func_800474F0 handles failure; func_80047800 and func_800221E4 perform success-side updates.
+ *  gAllocateSoundChannelVoice starts playback; func_800474F0 handles failure; func_80047800 and gQueueSoundChannelStarts perform success-side updates.
  *  @par Side effects
  *  May change handle state and time and invoke sound setup, playback and channel operations.
  *  @par Callers
@@ -62,7 +62,7 @@ s32 func_80023F08(void)
             } else {
                 if (gAssetHandle.flag) func_80047800(resource, mix[1], mix[0], -1);
                 channel = resource->owner;
-                func_800221E4(1, &channel);
+                gQueueSoundChannelStarts(1, &channel);
                 gAssetHandle.state = 1;
                 gAssetHandle.time = gFrameTickCounter + gAssetHandle.delay;
             }

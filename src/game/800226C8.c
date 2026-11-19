@@ -3,24 +3,31 @@
 
 extern u8 gMixerState __asm__("D_800A0968");
 
+u32 gIsAudioStreamConfigured(void) __asm__("func_800226C8");
+
 /**
- *  @brief Returns the current value of a global byte.
+ * @brief Returns the audio stream controller's configuration byte.
  *
- *  This accessor reads D_800A0968 without modifying it; the byte's
- *  meaning is not established by the source.
- *  @return The byte value, widened to u32.
- *  @par Globals
- *  D_800A0968 is read.
- *  @par Control flow
- *  Returns the value directly, without branching.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  None.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return The byte value, widened to u32.
+ *
+ * @par Confirmed mechanics
+ * Uses LBU to return the leading mixer byte in v0. The configuration routine sets it to 1 after
+ * initializing the controller.
+ *
+ * @par Globals
+ * Reads the first byte of gMixerState.
+ *
+ * @par Callers
+ * Direct calls from func_800244A4.
+ *
+ * @par Role and path
+ * Audio stream startup checks this flag before stopping a previous configuration.
+ *
+ * @par Unknown
+ * The accessor returns the raw byte.
  */
-u32 func_800226C8(void)
+u32 gIsAudioStreamConfigured(void)
 {
     return gMixerState;
 }

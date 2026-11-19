@@ -27,7 +27,7 @@ struct Entry {
 };
 
 extern u8 *func_80021800(void *base, s32 index);
-extern void func_800223B0(s32 a0, s32 a1, s32 a2, s32 *a3, s32 *a4);
+extern void gComputeStereoVoiceLevels(s32 a0, s32 a1, s32 a2, s32 *a3, s32 *a4) __asm__("func_800223B0");
 extern void func_80021A70(u32 flags);
 
 s32 gQueueBankSampleOnChannel(s32 a0, s32 a1, s32 a2, s32 a3, s32 slot, struct Args *args) __asm__("func_80021F98");
@@ -78,7 +78,7 @@ s32 gQueueBankSampleOnChannel(s32 a0, s32 a1, s32 a2, s32 a3, s32 slot, struct A
                 offset = (a2 * 5) * 4;
                 offset += 4;
                 result = (s32)ptr + offset;
-                func_800223B0(result, args->unk04, args->unk08, &out1, &out2);
+                gComputeStereoVoiceLevels(result, args->unk04, args->unk08, &out1, &out2);
                 entry = (struct Entry *)(gSoundSystem.unk0C + slot * 28);
                 entry->unk00 = result;
                 if (args->unk00 == -1) {

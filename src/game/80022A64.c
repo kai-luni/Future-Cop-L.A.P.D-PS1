@@ -25,7 +25,7 @@ extern struct StreamState gMixerState __asm__("D_800A0968");
 extern void func_80022F7C(void);
 extern void gSpuInstallIrqCallback(s32 mode) __asm__("func_80098BF8");
 extern void gSpuCancelDmaRequests(void) __asm__("func_8002129C");
-extern void func_80022240(s32 owner);
+extern void gReleaseSoundVoicesByOwner(s32 owner) __asm__("func_80022240");
 extern void func_80046A34(s32 handle);
 
 /**
@@ -45,13 +45,13 @@ extern void func_80046A34(s32 handle);
  * Returns 0 early if D_800A0968.active == 0; otherwise resets stream flags, tears down SPU/CD hooks, and loops i = 0..channelCount-1 stopping non-(-1) channels.
  *
  * @par Calls
- * func_80022F7C - clears D_800A09F0 and calls gSpuSetIrqEnable(0); gSpuInstallIrqCallback - clears SPU IRQ callback; gSpuCancelDmaRequests - waits for CD stream idle; func_80022240 - stops channel id in D_800A07A8; func_80046A34 - releases voice handle.
+ * func_80022F7C - clears D_800A09F0 and calls gSpuSetIrqEnable(0); gSpuInstallIrqCallback - clears SPU IRQ callback; gSpuCancelDmaRequests - waits for CD stream idle; gReleaseSoundVoicesByOwner - stops channel id in D_800A07A8; func_80046A34 - releases voice handle.
  *
  * @par Side effects
  * Clears D_800A0968 active/flag/unk08/unk10, removes SPU IRQ handler, and frees stream voices.
  *
  * @par Callers
- * Confirmed: func_800226D8 (0x800226E0, audio stream shutdown sequence).
+ * Confirmed: gStopAudioStreamAndClearChannels (0x800226E0, audio stream shutdown sequence).
  */
 s32 func_80022A64(void)
 {
@@ -69,7 +69,7 @@ s32 func_80022A64(void)
     gSpuCancelDmaRequests();
     for (i = 0; i < gMixerState.channelCount; i++) {
         if (gMixerState.channels[i].id != -1) {
-            func_80022240(gMixerState.channels[i].id);
+            gReleaseSoundVoicesByOwner(gMixerState.channels[i].id);
             func_80046A34(gMixerState.channels[i].voice);
         }
     }

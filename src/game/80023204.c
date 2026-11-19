@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 gMixerState[] __asm__("D_800A0968");
-extern volatile u32 D_8009F634;
+extern volatile u32 gStreamEventCallback __asm__("D_8009F634");
 
 extern void func_80022D84(void);
 
@@ -13,7 +13,7 @@ extern void func_80022D84(void);
  *  A completed cycle can notify a callback before updating the offset.
  *  @param arg0 Identifier compared as a 16-bit value with the state identifier.
  *  @par Globals
- *  D_800A0968 holds the state block; D_8009F634 holds an optional callback.
+ *  D_800A0968 holds the state block; gStreamEventCallback holds an optional callback.
  *  @par Control flow
  *  A mismatch returns; otherwise the counter advances and may wrap.
  *  On wrap, a loop clears entry flags, then offset and dispatch checks run.
@@ -64,7 +64,7 @@ void func_80023204(s32 arg0)
             goto loop;
         }
     }
-    fn = D_8009F634;
+    fn = gStreamEventCallback;
     if (fn != 0) {
         ((void (*)(s32))fn)(3);
     }

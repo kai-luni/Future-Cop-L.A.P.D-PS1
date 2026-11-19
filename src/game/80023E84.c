@@ -20,7 +20,7 @@ struct Unk4749CHandle {
 
 extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 
-extern void func_80022240(s32 owner);
+extern void gReleaseSoundVoicesByOwner(s32 owner) __asm__("func_80022240");
 extern void func_80029720(void);
 extern void func_80045370(void);
 extern s32 func_800474F0(struct Unk4749CHandle *handle);
@@ -37,7 +37,7 @@ extern s32 func_800474F0(struct Unk4749CHandle *handle);
  *  State, resource and flag checks gate conditional calls; final cleanup is
  *  always performed after those checks.
  *  @par Calls
- *  func_80022240 processes the resource owner; func_80045370 performs
+ *  gReleaseSoundVoicesByOwner processes the resource owner; func_80045370 performs
  *  flag-dependent cleanup; func_800474F0 processes the handle and
  *  func_80029720 performs the final cleanup step.
  *  @par Side effects
@@ -49,7 +49,7 @@ void func_80023E84(void)
 {
     if (gAssetHandle.state == 1) {
         if (gAssetHandle.resource != 0) {
-            func_80022240(gAssetHandle.resource->owner);
+            gReleaseSoundVoicesByOwner(gAssetHandle.resource->owner);
         }
         gAssetHandle.state = 0;
         if (gAssetHandle.flag18 == 0) {

@@ -26,7 +26,7 @@ struct State22484 {
 
 extern u8 gMixerState[] __asm__("D_800A0968");
 extern u32 D_8009F630;
-extern u32 D_8009F634;
+extern u32 gStreamEventCallback __asm__("D_8009F634");
 extern u32 D_8009F638;
 extern u32 D_8009F63C;
 
@@ -35,28 +35,34 @@ extern void func_80022B84(s32 *arg0, s32 index, u32 *out, s32 zero);
 extern s32 func_80022BEC(void);
 extern void func_80022CA8(void);
 
+s32 gConfigureAudioStreaming(s32 arg0, ...) __asm__("func_80022484");
+
 /**
- *  @brief Initializes stream state from defaults and supplied options.
+ * @brief Initializes the audio stream controller from a variadic key/value list.
  *
- *  Clears the state, derives timing and rate values, and initializes entries.
- *  Option indices 6, 3, 1, 2, and 10 override the local defaults.
- *  @param arg0 First argument used as the base for option parsing.
- *  @param ... Additional arguments available to the option parser.
- *  @return Result returned by func_80022BEC.
- *  @par Globals
- *  D_800A0968 holds the initialized state and entries.
- *  D_8009F630, D_8009F638, and D_8009F63C are cleared; D_8009F634 receives option 6.
- *  @par Control flow
- *  Parses five options, initializes helpers, then loops over the configured entry count.
- *  @par Calls
- *  func_8001E4C0 clears state; func_80022B84 reads options.
- *  func_80022BEC and func_80022CA8 perform further initialization.
- *  @par Side effects
- *  Replaces global state and sets its first byte to one.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param arg0 First argument used as the base for option parsing.
+ * @param ... Additional arguments available to the option parser.
+ * @return Result returned by func_80022BEC.
+ *
+ * @par Confirmed mechanics
+ * Clears 0x98 bytes, reads keys 6, 3, 1, 2 and 10 and derives timing and rate using unsigned
+ * division and a high-word multiply. Calls func_80022BEC and func_80022CA8, initializes
+ * 0x24-byte channel records and sets the leading byte to 1.
+ *
+ * @par Globals
+ * Writes gMixerState, sets gStreamEventCallback from option 6 and clears D_8009F630, D_8009F638
+ * and D_8009F63C.
+ *
+ * @par Callers
+ * Direct calls from func_800244A4.
+ *
+ * @par Role and path
+ * Prepares the mixer before the stream startup path waits for its first request.
+ *
+ * @par Unknown
+ * D_8009F630, D_8009F638 and D_8009F63C are unresolved beyond their reset writes.
  */
-s32 func_80022484(s32 arg0, ...)
+s32 gConfigureAudioStreaming(s32 arg0, ...)
 {
     u32 local0;
     u32 local4;
@@ -104,7 +110,7 @@ s32 func_80022484(s32 arg0, ...)
     *(u32 *)(base + 0x1C) = local8;
     *(u32 *)(base + 0x6C) = localC;
     *(u32 *)(base + 0x70) = local4_loaded;
-    D_8009F634 = local0_loaded;
+    gStreamEventCallback = local0_loaded;
     *(u32 *)(base + 0x14) = local10_loaded;
     *(u32 *)(base + 0x18) = tmp2;
     *(u32 *)(base + 0x8C) = (tmp + 10) * 3;

@@ -12,31 +12,40 @@ typedef struct {
 
 extern Unk800A0968 gMixerState __asm__("D_800A0968");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern void func_800226D8(void);
+extern void gStopAudioStreamAndClearChannels(void) __asm__("func_800226D8");
 extern void func_8002A23C(void);
 
+void gPollAudioStreamStop(void) __asm__("func_80022654");
+
 /**
- *  @brief Dispatches an operation based on the current state fields.
+ * @brief Stops the active stream or invokes its deadline handler when the corresponding
+ * condition is met.
  *
- *  When the state is enabled, selects a follow-up operation using unk0C
- *  or compares unk88 against the global threshold.
- *  @par Globals
- *  D_800A0968 supplies the state fields and receives the unk88 reset.
- *  D_8009FA2C supplies the comparison threshold.
- *  @par Control flow
- *  Does nothing if unk04 is zero; otherwise branches on unk0C and the comparison.
- *  @par Calls
- *  func_800226D8 handles nonzero unk0C; func_8002A23C follows the reset.
- *  @par Side effects
- *  May set unk88 to -1 and invoke a function with additional effects.
- *  @par Callers
- *  Confirmed: func_8002441C.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Checks mixer +0x04, then dispatches gStopAudioStreamAndClearChannels if +0x0C is nonzero.
+ * Otherwise it compares +0x88 against the current tick and clears the expired value to -1
+ * before calling func_8002A23C.
+ *
+ * @par Globals
+ * Reads gMixerState and gFrameTickCounter and may reset the mixer deadline.
+ *
+ * @par Callers
+ * Direct calls from func_8002441C.
+ *
+ * @par Role and path
+ * The stream polling wrapper runs this deferred stop and timeout path.
+ *
+ * @par Unknown
+ * The deadline helper has a separate gate.
  */
-void func_80022654(void)
+void gPollAudioStreamStop(void)
 {
     if (gMixerState.unk04 != 0) {
         if (gMixerState.unk0C != 0) {
-            func_800226D8();
+            gStopAudioStreamAndClearChannels();
         } else if (gMixerState.unk88 < gFrameTickCounter) {
             gMixerState.unk88 = -1;
             func_8002A23C();

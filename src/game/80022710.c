@@ -11,31 +11,38 @@ struct StreamState {
 
 extern struct StreamState gMixerState __asm__("D_800A0968");
 extern s32 gMixerWord[2] __asm__("D_800A0970");
-extern u16 D_8009F268;
+extern u16 gStreamRequestSequence __asm__("D_8009F268");
 
 extern void func_80022CA8(void);
 extern void func_80022D84(void);
 
+s32 gPrimeAudioStream(void) __asm__("func_80022710");
+
 /**
- *  @brief Starts a stream-state operation and waits briefly for readiness.
+ * @brief Submits the first stream request and polls for readiness within a fixed iteration
+ * budget.
  *
- *  Prepares the shared state and advances its nonzero 16-bit sequence value.
- *  The bounded wait provides a readiness check before returning the shared result.
- *  @return The current value of D_800A0970[0].
- *  @par Globals
- *  D_800A0968 supplies the flag, sequence field, and readiness field.
- *  D_8009F268 is incremented with zero skipped; D_800A0970[0] holds the result.
- *  @par Control flow
- *  Polls readiness for at most 65536 iterations when initially not ready.
- *  Sets the result to 1 if the final counter is nonzero; otherwise leaves it unchanged.
- *  @par Calls
- *  func_80022CA8 runs before state setup; func_80022D84 runs before polling.
- *  @par Side effects
- *  Updates the stream state, sequence counter, and possibly the shared result.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return The current value of D_800A0970[0].
+ *
+ * @par Confirmed mechanics
+ * Resets the controller, increments the 16-bit sequence and substitutes 1 on wrap to zero.
+ * Copies the sequence to mixer +0x10, calls func_80022D84 with a0 set to 1, then polls mixer
+ * +0x80 with a 0xFFFF counter. If time remains it writes 1 to gMixerWord.
+ *
+ * @par Globals
+ * Updates gMixerState, gStreamRequestSequence and gMixerWord.
+ *
+ * @par Callers
+ * Direct calls from func_800244A4.
+ *
+ * @par Role and path
+ * Initial stream setup uses the returned word before starting configured channels.
+ *
+ * @par Unknown
+ * The spin budget counts iterations and the timeout path returns the existing result word.
  */
-s32 func_80022710(void)
+s32 gPrimeAudioStream(void)
 {
     s32 i;
     s32 j;
@@ -46,11 +53,11 @@ s32 func_80022710(void)
     func_80022CA8();
     p = &gMixerState;
     p->flag = 1;
-    D_8009F268++;
-    if (D_8009F268 == 0) {
-        D_8009F268 = 1;
+    gStreamRequestSequence++;
+    if (gStreamRequestSequence == 0) {
+        gStreamRequestSequence = 1;
     }
-    p->unk10 = D_8009F268;
+    p->unk10 = gStreamRequestSequence;
     func_80022D84();
 
     if (p->ready == 0) {

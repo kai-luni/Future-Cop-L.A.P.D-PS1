@@ -31,7 +31,7 @@ extern s32 D_800A0988[2];
 extern s32 D_800A099C[2];
 extern s32 D_800A09F8[2];
 extern s32 gFrameTickCounter[2] __asm__("D_8009FA2C");
-extern u32 D_8009F634;
+extern u32 gStreamEventCallback __asm__("D_8009F634");
 
 extern void func_80022F7C(void);
 extern void func_80022D84(void);
@@ -45,7 +45,7 @@ extern void gSpuSetIrqEnable(s32 mode) __asm__("func_80098A78");
  *  next buffer offset and deadline, including a special looping transition.
  *  @par Globals
  *  D_800A0968 holds stream state; D_800A0988, D_800A099C, and D_800A09F8 hold control state.
- *  D_8009FA2C supplies the time base; D_8009F634 holds an optional callback address.
+ *  D_8009FA2C supplies the time base; gStreamEventCallback holds an optional callback address.
  *  @par Control flow
  *  Returns early for busy, inactive, or flagged streams; ready streams may dispatch callbacks.
  *  The callback can change start state before it is checked again.
@@ -72,8 +72,8 @@ void func_80022FA8(void)
         return;
     }
     if (gMixerState.unk84 != 0) {
-        if (D_8009F634 != 0) {
-            ((void (*)(s32))D_8009F634)(6);
+        if (gStreamEventCallback != 0) {
+            ((void (*)(s32))gStreamEventCallback)(6);
         }
         D_800A09F8[0] = 0;
         return;
@@ -86,16 +86,16 @@ void func_80022FA8(void)
             D_800A0988[0] = 0;
             func_80022D84();
         } else {
-            if (D_8009F634 != 0) {
-                ((void (*)(s32))D_8009F634)(3);
+            if (gStreamEventCallback != 0) {
+                ((void (*)(s32))gStreamEventCallback)(3);
             }
             if (gMixerState.start != 0) {
                 D_800A0988[0] = 0;
                 func_80022D84();
             } else {
                 if (gMixerState.unk74 == gMixerState.unk70 - 1) {
-                    if (D_8009F634 != 0) {
-                        ((void (*)(s32))D_8009F634)(4);
+                    if (gStreamEventCallback != 0) {
+                        ((void (*)(s32))gStreamEventCallback)(4);
                     }
                 }
                 if (D_800A099C[0] != 0) {

@@ -28,7 +28,7 @@ extern Unk800A0968 gMixerState __asm__("D_800A0968");
  *  @par Side effects
  *  Sets each visited array entry's field to zero.
  *  @par Callers
- *  Confirmed: func_800226D8.
+ *  Confirmed: gStopAudioStreamAndClearChannels.
  */
 s32 func_80022C68(void)
 {

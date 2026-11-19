@@ -53,7 +53,7 @@ extern struct StreamState gMixerState __asm__("D_800A0968");
  * @par Side effects
  * Resets global audio streaming fields and channel[0..1] pan/id entries in D_800A0968.
  * @par Callers
- * Confirmed: func_80022710 (0x80022720), gConfigureSoundSystem (0x80021C44 in asm/us/main.s), func_80022484 (0x800225E8 in asm/us/main.s) / Likely: none / Unknown: none.
+ * Confirmed: gPrimeAudioStream (0x80022720), gConfigureSoundSystem (0x80021C44 in asm/us/main.s), gConfigureAudioStreaming (0x800225E8 in asm/us/main.s) / Likely: none / Unknown: none.
  */
 void func_80022CA8(void)
 {

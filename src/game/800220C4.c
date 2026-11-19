@@ -42,7 +42,7 @@ struct VoiceArgs {
 
 extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
-extern void func_800223B0(s32 a0, s32 a1, s32 a2, s32 *a3, s32 *a4);
+extern void gComputeStereoVoiceLevels(s32 a0, s32 a1, s32 a2, s32 *a3, s32 *a4) __asm__("func_800223B0");
 
 s32 gAllocateSoundChannelVoice(s32 unused, s32 index, struct VoiceArgs *args, s32 arg3) __asm__("func_800220C4");
 
@@ -89,7 +89,7 @@ s32 gAllocateSoundChannelVoice(s32 unused, s32 index, struct VoiceArgs *args, s3
     out1 = 0;
     out2 = 0;
     result = -1;
-    func_800223B0(0, args->unk04, args->unk08, &out1, &out2);
+    gComputeStereoVoiceLevels(0, args->unk04, args->unk08, &out1, &out2);
     i = 0;
     one = 1;
     vol = 0x7F;

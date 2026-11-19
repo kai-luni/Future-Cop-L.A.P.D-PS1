@@ -62,7 +62,7 @@ extern void func_800212F8(struct Request *req);
  *  @par Side effects
  *  Clears ready, adjusts ring bookkeeping, and initiates a transfer.
  *  @par Callers
- *  Confirmed: func_80022710, func_80022FA8, func_80023204.
+ *  Confirmed: gPrimeAudioStream, func_80022FA8, func_80023204.
  */
 void func_80022D84(void)
 {

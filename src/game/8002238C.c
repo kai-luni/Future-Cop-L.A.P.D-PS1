@@ -3,29 +3,31 @@
 
 extern void func_80021A8C(u32 mask);
 
+void gQueueSoundChannelRelease(s32 channel) __asm__("func_8002238C");
+
 /**
- * @brief Releases or acknowledges a single sound channel by bitmask.
- *
- * Converts channel index to bitmask (1 << channel) and passes it to func_80021A8C, which clears that bit in D_800A07A8.pending (+0x14) and sets it in D_800A07A8.acknowledged (+0x18).
+ * @brief Queues a sound channel for release and clears its pending enable bit.
  *
  * @param channel Zero-based sound channel index (0..31).
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Uses SLLV to form the channel bit and passes it in the call delay slot to func_80021A8C. That
+ * helper clears the bit at gSoundSystem +0x14 and sets it at +0x18.
  *
  * @par Globals
- * None directly; func_80021A8C updates D_800A07A8 (+0x14 pending, +0x18 acknowledged).
- *
- * @par Control flow
- * Computes 1 << channel and delegates to func_80021A8C.
- *
- * @par Calls
- * func_80021A8C - clears bitmask in pending and sets it in acknowledged inside D_800A07A8.
- *
- * @par Side effects
- * Updates D_800A07A8 pending/acknowledged channel bitmasks via func_80021A8C.
+ * None directly. The callee updates both masks in gSoundSystem.
  *
  * @par Callers
- * Confirmed: func_80022240 (0x8002228C, clears voice slots by owner), func_800243F8 (0x80024404, stops channel from voice descriptor +0x0D) / Likely: none / Unknown: none.
+ * Direct calls from gReleaseSoundVoicesByOwner (func_80022240), func_800243F8.
+ *
+ * @par Role and path
+ * Software voice release and descriptor-based stop both enqueue this update.
+ *
+ * @par Unknown
+ * The helper does not apply the queued change to hardware itself.
  */
-void func_8002238C(s32 channel)
+void gQueueSoundChannelRelease(s32 channel)
 {
     func_80021A8C(1 << channel);
 }

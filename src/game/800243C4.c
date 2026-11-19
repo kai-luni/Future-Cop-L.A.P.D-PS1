@@ -6,7 +6,7 @@ struct TaggedObject {
     s8 tag;
 };
 
-extern void func_800222CC(s32 tag, s32 *values);
+extern void gSetSoundChannelMix(s32 tag, s32 *values) __asm__("func_800222CC");
 
 /**
  *  @brief Dispatches an object's tag with a three-value array.
@@ -21,9 +21,9 @@ extern void func_800222CC(s32 tag, s32 *values);
  *  @par Control flow
  *  Initializes the array and makes one unconditional call.
  *  @par Calls
- *  func_800222CC receives the tag and the local array.
+ *  gSetSoundChannelMix receives the tag and the local array.
  *  @par Side effects
- *  Any external effects are those of func_800222CC.
+ *  Any external effects are those of gSetSoundChannelMix.
  *  @par Callers
  *  Confirmed: func_80047800.
  */
@@ -34,5 +34,5 @@ void func_800243C4(struct TaggedObject *object, s32 third, s32 second)
     values[1] = second;
     values[2] = third;
     values[0] = -1;
-    func_800222CC(object->tag, values);
+    gSetSoundChannelMix(object->tag, values);
 }
