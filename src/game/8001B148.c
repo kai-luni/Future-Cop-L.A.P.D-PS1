@@ -12,25 +12,42 @@ struct RotationPoint {
     s16 pad;
 };
 
+void gRotateS16PointArray(struct RotationMatrix *matrix, struct RotationPoint *source,
+                   struct RotationPoint *destination, s32 count) __asm__("func_8001B148");
+
 /**
- * @brief Transforms a list of points with a 3x3 rotation matrix in plain C.
+ * @brief Transforms an array of packed halfword points using a fixed-point
+ * 3-by-3 matrix.
  *
- * @param matrix Nine 32-bit values (row-major 3x3).
- * @param source Point list (three 32-bit components per point).
- * @param destination Output list, same layout.
- * @param count Point count; <= 0 returns immediately.
+ * @param matrix Nine 32-bit coefficient words.
+ * @param source Input point array with XYZ halfwords in eight-byte records.
+ * @param destination Output point array with the same layout.
+ * @param count Number of points.
  * @return Nothing.
  *
- * @par Confirmed
- * A do/while loop over `count` points with a hand-rolled multiply-add of the nine
- * matrix values against x/y/z - no GTE command, unlike func_8001006C, so the
- * inputs stay in full 32-bit precision.
+ * @par Confirmed mechanics
+ * Returns immediately for nonpositive count. Shifts nine matrix words right by
+ * four. For each eight-byte source record, loads three signed halfwords,
+ * shifts each three-product column sum right by 12, and stores three
+ * halfwords.
  *
- * @par Likely role
- * The CPU-side transform used where the GTE's 16-bit registers would lose
- * precision (level geometry with large coordinates).
+ * @par Globals
+ * No RAM globals accessed directly.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from gHandleLightObjectMsg,
+ * func_80042AF4, gSpawnMeshFractureDebris, gHandleActor59Msg,
+ * gInitEmitterParticle.
+ *
+ * @par Role and path
+ * Gameplay and geometry callers use this translation-free software rotation
+ * path.
+ *
+ * @par Unknown
+ * The fourth halfword in each record is left intact and its interpretation is
+ * caller-specific.
  */
-void func_8001B148(struct RotationMatrix *matrix, struct RotationPoint *source,
+void gRotateS16PointArray(struct RotationMatrix *matrix, struct RotationPoint *source,
                    struct RotationPoint *destination, s32 count)
 {
     s32 m0;

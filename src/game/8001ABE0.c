@@ -3,30 +3,35 @@
 
 extern int gSolveLobVector();
 
+void gScaleVector2Q16(s32 scale, s32 *p) __asm__("func_8001ABE0");
+
 /**
- * @brief Scales a 2-element 16.16 fixed-point vector in place by a signed 16.16 factor.
+ * @brief Scales two fixed-point components in place by a signed factor.
  *
- * Multiplies p[0] and p[1] by scale using 32x32->64 signed multiplication and extracts the middle 32 bits ((hi << 16) | (lo >> 16)), writing results back to p[0] and p[1].
+ * @param scale Signed 16.16 scale factor.
+ * @param p Two writable signed 16.16 components.
+ * @return Nothing.
  *
- * @param scale Signed 16.16 fixed-point scale factor.
- * @param p Pointer to a two-element s32 vector modified in place.
+ * @par Confirmed mechanics
+ * Loads each component, multiplies it by $a0 with signed MULT, extracts
+ * product bits 16 through 47, and stores the result. The second store is in
+ * the return delay slot.
  *
  * @par Globals
- * None.
- *
- * @par Control flow
- * Straight-line inline-assembly mult/mflo/mfhi scaling for p[0] and p[1]; no branches or loops.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * Overwrites p[0] and p[1] in place.
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * Confirmed: gNormalizeVector2Q16 (0x8001A7F8), func_80051EB8 (0x80051F70), func_80053A74 (0x80054020, 0x80054214), func_80054590 (0x80054800), and gSolveLobVector (0x8005E980).
+ * Direct calls in the retail listing are from gNormalizeVector2Q16,
+ * func_80051EB8, gTickHoverPhysics, func_80054590, gSolveLobVector.
+ *
+ * @par Role and path
+ * Shared motion and direction code uses this helper to scale and normalize
+ * two-component vectors.
+ *
+ * @par Unknown
+ * The caller defines the units carried by the vector.
  */
-void func_8001ABE0(s32 scale, s32 *p)
+void gScaleVector2Q16(s32 scale, s32 *p)
 {
     register u32 lo0 __asm__("$8");
     register u32 hi0 __asm__("$9");

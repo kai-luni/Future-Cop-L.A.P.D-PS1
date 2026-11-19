@@ -12,30 +12,40 @@ struct TransformPoint {
     s16 pad;
 };
 
+void gTransformS16PointArray(struct TransformMatrix *matrix, struct TransformPoint *source,
+                   struct TransformPoint *destination, s32 count) __asm__("func_8001AF84");
+
 /**
- * @brief Software-transforms a vertex array by a 3x4 matrix (the CPU twin
- *        of the GTE RTPT path).
+ * @brief Transforms an array of packed halfword points using a fixed-point
+ * affine matrix.
  *
- * @param matrix 12 words: 9 rotation + 3 translation, all >> 4 on load.
- * @param source Input vertices (s16 x/y/z/pad).
- * @param destination Output vertices, same layout.
- * @param count Vertex count (<= 0 returns).
+ * @param matrix Nine coefficient words followed by three translation words.
+ * @param source Input point array with XYZ at offsets +0, +2, and +4 of each
+ *     eight-byte record.
+ * @param destination Output point array with the same stride.
+ * @param count Number of points.
  * @return Nothing.
  *
- * @par Confirmed
- * Per vertex: out.x = (x*m0 + y*m3 + z*m6) >> 12 + tx, and the m1/m4/m7
- * and m2/m5/m8 rows for y/z. The >> 4 matrix preload and >> 12 product
- * shift keep the 16.16 convention.
+ * @par Confirmed mechanics
+ * Returns immediately for nonpositive count. Shifts all 12 matrix words right
+ * by four. For each eight-byte point, multiplies three signed halfwords by
+ * each coefficient column, shifts each sum right by 12, adds the corresponding
+ * shifted translation, and stores three halfwords.
  *
- * @par Likely role
- * The CPU fallback transform of the light node builder func_80049980:
- * small vertex sets (the 5-point diamond) transform cheaper here than via
- * a GTE round trip.
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_80049980.
+ * Direct calls in the retail listing are from func_80049980.
+ *
+ * @par Role and path
+ * The geometry helper at func_80049980 uses this software point transform.
+ *
+ * @par Unknown
+ * The fourth halfword in each eight-byte record is left intact and its
+ * interpretation is caller-specific.
  */
-void func_8001AF84(struct TransformMatrix *matrix, struct TransformPoint *source,
+void gTransformS16PointArray(struct TransformMatrix *matrix, struct TransformPoint *source,
                    struct TransformPoint *destination, s32 count)
 {
     s32 m0;

@@ -1,28 +1,37 @@
 // Categories: Utilities > Mathematics > Geometry | Graphics > GTE > Matrix Math
 #include "game/types.h"
 
+void gMultiplyMatrixVectorWithPreshift(s32 *matrix, s32 *vector, s32 *out) __asm__("func_8001AE14");
+
 /**
- * @brief Software 3x3 matrix-vector transform with the shared fixed-point
- *        scaling.
+ * @brief Applies a 3-by-3 fixed-point matrix to a vector with a preshift on
+ * both inputs.
  *
- * @param matrix Nine s32 words, row-major.
- * @param vector Three s32 components.
- * @param out Three s32 results.
+ * @param matrix Nine matrix words grouped in three rows.
+ * @param vector Three signed vector components.
+ * @param out Destination for three result words.
  * @return Nothing.
  *
- * @par Confirmed
- * Both the vector and every matrix word are pre-scaled >> 2; each output
- * row is the dot product >> 12. No GTE involved, no saturation.
+ * @par Confirmed mechanics
+ * Arithmetic-shifts all loaded components and coefficients by two before
+ * multiplication. For each contiguous matrix row sums three low product words,
+ * shifts the sum right by 12, and stores the result.
  *
- * @par Likely role
- * The CPU-side rotation of the culling path func_80013F08: the same >>2/>>12
- * convention as the GTE matrix helpers keeps the software and hardware
- * paths in the same fixed-point range.
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_80013F08.
+ * Direct calls in the retail listing are from gProjectModelInstance.
+ *
+ * @par Role and path
+ * The model path at gProjectModelInstance uses this software matrix-vector
+ * multiply.
+ *
+ * @par Unknown
+ * The caller controls the input orientation and the coordinate frame of the
+ * result.
  */
-void func_8001AE14(s32 *matrix, s32 *vector, s32 *out)
+void gMultiplyMatrixVectorWithPreshift(s32 *matrix, s32 *vector, s32 *out)
 {
     s32 x;
     s32 y;

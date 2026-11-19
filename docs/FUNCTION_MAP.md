@@ -568,7 +568,7 @@ graph LR
 
 | Function | Bytes | Categories | calls (documented) | called by (documented) |
 |---|---|---|---|---|
-| `gStubGteProjectionTeardown` (`func_80019D88`) | 8 | Game Engine > World Reset | - | `func_80024D14` |
+| `gStubMissionReset` (`func_80019D88`) | 8 | Game Engine > World Reset | - | `func_80024D14` |
 | `func_8001BE60` | 8 | Game Engine > Unclassified | - | - |
 | `func_8001C60C` | 8 | Game Engine > Unclassified | - | - |
 | `func_8002A5AC` | 8 | Game Engine > World Reset | - | `func_80024D14` |
@@ -1388,7 +1388,7 @@ graph LR
 | `func_80028BCC` | 348 | Resources > Loader · Script | `func_80017EBC`, `func_80028BA0`, `func_80069D68` | `func_8002902C` |
 | `gCopyCdSectorChunk` (`func_8001CC6C`) | 356 | Resources > Streaming · CD-ROM | `func_8008CD10` | `func_8001CE54` |
 | `gUploadSaveProfileIcon` (`func_80082358`) | 372 | Resources > Chunk Processing · Image Data | - | `func_80024EC8` |
-| `func_8001B2C8` | 384 | Resources > Memory Allocation · Render Buffers | `func_80017EBC`, `func_8001C034`, `func_80093178` | `func_80024904`, `func_80024A24`, `func_80076A2C` |
+| `gAllocateRenderBuffers` (`func_8001B2C8`) | 384 | Resources > Memory Allocation · Render Buffers | `func_80017EBC`, `func_8001C034`, `func_80093178` | `func_80024904`, `func_80024A24`, `func_80076A2C` |
 | `func_80060E74` | 428 | Resources > Loader Post-Process · Spawn Registration | `func_80019668`, `func_80019A74`, `func_80019BF0`, `func_80019C38`, `func_80019CA0`, `func_8002AE54` | `func_80024EC8` |
 | `func_80059BFC` | 436 | Resources > File Access · Init, Demo Playback | `func_800197A8`, `func_80059BA0`, `func_8008CCC0`, `func_8008CD30` | `func_80024A24` |
 | `func_80060838` | 444 | Resources > Asset Loader · Object Setup | `func_800181D4`, `func_80019BF0`, `func_80019C38`, `func_80019CA0`, `func_800607B8` | - |
@@ -1504,7 +1504,7 @@ graph LR
 | `func_80010630` | 212 | Graphics > GTE > Projection · Clipping | - | - |
 | `func_8001054C` | 228 | Graphics > GTE > Projection · Geometry | - | - |
 | `gComposeTransform` (`func_80014164`) | 296 | Graphics > GTE > Matrix Composition · Camera | `func_8001006C`, `func_80010820`, `func_80018DC0` | `func_8001428C` |
-| `func_8001AF84` | 452 | Graphics > GTE > Software Transform · Mathematics | - | `func_80049980` |
+| `gTransformS16PointArray` (`func_8001AF84`) | 452 | Graphics > GTE > Software Transform · Mathematics | - | `func_80049980` |
 | `func_800102A0` | 476 | Graphics > GTE > Projection · Clipping | - | - |
 | `gComputeEnvMapUV` (`func_80016C88`) | 484 | Graphics > GTE > Per-Vertex Lighting · Geometry | `func_8001010C`, `func_80019904` | `func_80016E6C` |
 
@@ -2486,7 +2486,7 @@ graph LR
 | `gLoadCbmpTexture` (`func_80063C5C`) | 364 | Graphics > 2D Drawing > Images · Memory Management | `func_800181D4`, `func_8001996C`, `func_80048DEC`, `func_80092C8C`, `func_80092F38` | `func_80024EC8` |
 | `gTestCameraSightLine` (`func_80055EE8`) | 372 | Graphics > Camera > Visibility · Grid Raycast | `func_800684AC` | `func_80056870`, `func_800569EC` |
 | `func_800773D8` | 380 | Graphics > Debug Display · Debug | `func_80077278`, `func_80091480`, `func_80091510`, `func_80092140`, `func_800921F4`, `func_80092910`, `func_80092BF4`, `func_80092E10`, `func_800932F0`, `func_800934BC` | - |
-| `func_8001B148` | 384 | Graphics > Geometry > Matrix Transform · Mathematics | - | `func_80040874`, `func_80042AF4`, `func_8004B5F8`, `func_8006FF44`, `func_800754B8` |
+| `gRotateS16PointArray` (`func_8001B148`) | 384 | Graphics > Geometry > Matrix Transform · Mathematics | - | `func_80040874`, `func_80042AF4`, `func_8004B5F8`, `func_8006FF44`, `func_800754B8` |
 | `func_80062FB4` | 384 | Graphics > Screen Regions > Viewports · HUD | `func_80062614`, `func_80062874`, `func_80062C3C` | `func_80026D5C` |
 | `func_8004CAE4` | 388 | Graphics > Color Tables · State Initialization | - | `func_80024A24` |
 | `gDrawMinimapMarkers` (`func_80066684`) | 392 | Graphics > Map > Tile Renderer · Radar, Gouraud Disc | `func_8001484C` | `func_8006680C` |
@@ -4842,7 +4842,7 @@ graph LR
 | `gSquaredLength2Q16` (`func_8001A030`) | 68 | Utilities > Mathematics > Fixed Point | - | `func_8001A7AC` |
 | `gApproximateDistanceXzOctants` (`func_8001A13C`) | 68 | Utilities > Mathematics > Vector · Collision | `func_8001A074` | `func_80035B7C`, `func_800513D0` |
 | `gComputeU32Reciprocal` (`func_80018818`) | 72 | Utilities > Mathematics > Fixed Point | - | `func_80019828` |
-| `func_8001ABE0` | 72 | Utilities > Mathematics > Fixed Point | - | `func_8001A7AC`, `func_80051EB8`, `func_80053A74`, `func_80054590`, `func_8005E624` |
+| `gScaleVector2Q16` (`func_8001ABE0`) | 72 | Utilities > Mathematics > Fixed Point | - | `func_8001A7AC`, `func_80051EB8`, `func_80053A74`, `func_80054590`, `func_8005E624` |
 | `func_8003B65C` | 72 | Utilities > Mathematics · Map Occupancy | - | `func_8003BA50`, `func_8003BAE4` |
 | `gSineLookup` (`func_80018534`) | 76 | Utilities > Mathematics > Trigonometry | - | `func_800654F8` |
 | `gSqrtU32Q8` (`func_800187C8`) | 80 | Utilities > Mathematics > Fixed Point | - | `func_80019828` |
@@ -4868,7 +4868,7 @@ graph LR
 | `gVectorDot` (`func_8001AB00`) | 120 | Utilities > Mathematics > Vector Dot Product · Fixed Point | - | `func_80035B7C`, `func_80037B28`, `func_80052550`, `func_8005B934`, `func_8005C344`, `func_8005CED4`, `func_8005D8F4`, `func_8005F018`, `func_8005F6E8`, `func_8006B23C` |
 | `gVectorMulAdd` (`func_8001AC28`) | 124 | Utilities > Mathematics > Vector | - | `func_8002E630`, `func_8002EED8`, `func_80052550`, `func_800569EC`, `func_80057E40` |
 | `gVectorAddScaled` (`func_8001ACA4`) | 124 | Utilities > Mathematics > Vector | - | `func_800324E0`, `func_80035B7C`, `func_80036BD4`, `func_800371FC`, `func_8004AFC0`, `func_8004BEE8` |
-| `func_8001AF08` | 124 | Utilities > Mathematics > Vector | - | `func_8004B5F8` |
+| `gApproximateLengthS16Scaled16` (`func_8001AF08`) | 124 | Utilities > Mathematics > Vector | - | `func_8004B5F8` |
 | `gSeedPrng` (`func_800197A8`) | 128 | Utilities > Random Numbers | `func_80019720` | `func_80019828`, `func_80024904`, `func_80024A24`, `func_80059BFC` |
 | `func_8004F00C` | 128 | Utilities > Numeric Processing | - | - |
 | `func_800607B8` | 128 | Utilities > Numeric Conversion | - | `func_80060838`, `func_8006A898` |
@@ -4886,8 +4886,8 @@ graph LR
 | `gSinCos` (`func_8001846C`) | 200 | Utilities > Mathematics > Trigonometry · Geometry | - | `func_800136C8`, `func_80014490`, `func_8001484C`, `func_800188D0`, `func_80018DC0`, `func_8001A578`, `func_8002DC94`, `func_80032180`, `func_80035698`, `func_80038A00`, `func_8004A048`, `func_8004F764`, `func_8005027C`, `func_80050E0C`, `func_80053514`, `func_80053A74`, `func_800549F0`, `func_8005612C`, `func_8005A740`, `func_8005A828`, `func_8005AB8C`, `func_8005E624`, `func_8005F018`, `func_8006062C`, `func_80063568`, `func_8006B23C`, `func_8006C4C4`, `func_8006D520`, `func_8006DC24`, `func_80070730` |
 | `gRotateVector2Q16` (`func_8001A578`) | 204 | Utilities > Mathematics > Vector · Trigonometry | `func_8001846C` | `func_800460D4`, `func_80053514` |
 | `func_80069A38` | 228 | Utilities > Fixed Point · Heightfield Sampling | - | `func_800324E0`, `func_80035B7C` |
-| `func_8001AD20` | 244 | Utilities > Fixed-point Math | - | `func_80053A74` |
-| `func_8001AE14` | 244 | Utilities > Mathematics > Geometry · Matrix Math | - | `func_80013F08` |
+| `gCrossProductQ16` (`func_8001AD20`) | 244 | Utilities > Fixed-point Math | - | `func_80053A74` |
+| `gMultiplyMatrixVectorWithPreshift` (`func_8001AE14`) | 244 | Utilities > Mathematics > Geometry · Matrix Math | - | `func_80013F08` |
 | `func_80092764` | 260 | Utilities > Diagnostics | - | - |
 | `gExpand15To16Padded` (`func_8008731C`) | 276 | Utilities > Data Conversion | - | `func_80087430` |
 | `func_80099B2C` | 296 | Utilities > Numeric Conversion | - | - |

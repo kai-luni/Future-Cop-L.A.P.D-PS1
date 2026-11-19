@@ -2,17 +2,17 @@
 #include "game/types.h"
 
 extern s32 gSubScreenActive __asm__("D_8009F5C0");
-extern s32 D_8009F5C8;
-extern s32 D_8009F5CC;
+extern s32 gPacketBufferBases __asm__("D_8009F5C8");
+extern s32 gSecondPacketBufferBase __asm__("D_8009F5CC");
 extern s32 gRenderNodeTable __asm__("D_8009F5D0");
 extern s32 gRenderNodeTableAlt __asm__("D_8009F5D4");
-extern s32 D_8009F5D8;
-extern s32 D_8009F5DC;
+extern s32 gOrderingTableBuffers __asm__("D_8009F5D8");
+extern s32 gSecondOrderingTableBuffer __asm__("D_8009F5DC");
 extern s32 gPacketPoolBase __asm__("D_8009F5E0");
 extern s32 gNodePoolBase __asm__("D_8009F5E4");
 extern volatile s32 gUploadRingWriteIdx __asm__("D_8009F5E8");
-extern volatile s32 D_8009F5EC;
-extern volatile s32 D_8009F5F0;
+extern volatile s32 gMdecUploadReclaimIndex __asm__("D_8009F5EC");
+extern volatile s32 gMdecUploadSubmitIndex __asm__("D_8009F5F0");
 extern s32 gFrameBlockCount __asm__("D_8009F5F4");
 extern s32 gNodeCapacity __asm__("D_8009F5F8");
 extern s32 gNodeTableLength __asm__("D_8009F5FC");
@@ -27,58 +27,43 @@ extern s32 gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern u8 gGetSelectedLayer(void) __asm__("func_8001C034");
 extern void func_80093178(s32, s32);
 
+void gAllocateRenderBuffers(s32 arg0, s32 arg1) __asm__("func_8001B2C8");
+
 /**
- * @brief Allocates the per-level render arena: two packet pools, two
- *        fixed-stride record arrays and two small word tables, and resets their
- *        cursors.
+ * @brief Allocates and initializes the per-scene packet, render-node, and
+ * ordering-table buffers.
  *
- * @param arg0 Number of entries in the packet pool (each entry is 0x34 = 52
- *             bytes). Callers pass 0xC8 (200).
- * @param arg1 Entry count minus two for the two word tables: the allocation is
- *             (arg1 + 2) * 4 bytes each. Callers pass 0x200 (512).
- *
- * @return Nothing; every pointer is stored in a global.
+ * @param arg0 Number of 0x34-byte entries in each packet buffer.
+ * @param arg1 Ordering-table count before the two extra words.
+ * @return Nothing.
  *
  * @par Confirmed mechanics
- * - D_8009F5C8/D_8009F5CC: two blocks of arg0 * 0x34 bytes (mode 2 =
- *   allocate from the front of the free-range table).
- * - D_8009F5D0/D_8009F5D4: two blocks of 0x400 * 0x1C bytes (1024 entries of
- *   28 bytes).
- * - D_8009F5D8/D_8009F5DC: two blocks of (arg1 + 2) * 4 bytes.
- * - D_8009F9F0/D_8009F5E0 are set to the start of the first packet block,
- *   D_8009FA90/D_8009F5E4 to the start of the first 28-byte block;
- *   D_8009FA28 and D_8009F9C0 are set to the *last* entry of those blocks
- *   (base + count * stride - stride), giving the bump allocators their
- *   inclusive limit.
- * - func_80093178(tables, arg1 + 2) writes the block address into the first
- *   table word (see that function).
- * - func_8001C034() returns a screen offset flag; D_8009F9D4 is set to
- *   0x100 - (flag ? 0x100 : 0), i.e. 0 or 0x100, and the three counters
- *   D_8009F5E8/D_8009F5EC/D_8009F5F0 are cleared.
- *
- * @par Likely role (indirect evidence)
- * D_8009F9F0..D_8009FA28 is used throughout the renderer as a 52-byte GPU
- * packet bump allocator (see func_800164F4, which fills tag/colour/vertex/UV
- * fields of exactly that layout), and D_8009F5D0 is a 1024-entry array of
- * 28-byte records. The normal/free pair (C8/CC, D0/D4, D8/DC) matches the
- * double-buffered frame scheme used by the rest of the engine.
+ * Allocates two arrays of arg0 times 0x34 bytes, two arrays of 0x400 times
+ * 0x1C bytes, and two arrays of (arg1 + 2) words with tag 2. Installs initial
+ * bases and last-entry bounds, initializes the first ordering table, and
+ * selects offset 0 or 0x100 by the current layer.
  *
  * @par Globals
- * D_8009F5C0 (counter, cleared), D_8009F5F4 (entry count), D_8009F5F8 (0x400,
- * 28-byte record count), D_8009F5FC (table length), D_8009F600 (cleared),
- * D_8009F9F0/D_8009FA28/D_8009FA90/D_8009F9C0 (pool cursors/limits),
- * D_8009F5E0/D_8009F5E4 (pool bases), D_8009F9D4 (screen offset).
- *
- * @par Calls
- * func_80017EBC(size, 2) is the shared allocator (mode 2 = front of the free
- * range); func_8001C034() supplies the screen offset flag; func_80093178()
- * patches the table head.
+ * Writes gSubScreenActive, gRenderNodeTable, gRenderNodeTableAlt,
+ * gPacketPoolBase, gNodePoolBase, gUploadRingWriteIdx, gFrameBlockCount,
+ * gNodeCapacity, gNodeTableLength, gNodeTableIndex, gPacketLimit,
+ * gScreenOffsetValue, gPrimPoolNext, gPrimPoolEnd, and gPacketCursor. Also
+ * initializes gPacketBufferBases, gSecondPacketBufferBase,
+ * gOrderingTableBuffers, gSecondOrderingTableBuffer, gMdecUploadReclaimIndex,
+ * and gMdecUploadSubmitIndex.
  *
  * @par Callers
- * func_80024904 and func_80024A24 (the two front-end module loaders) and
- * func_80076A2C, each time a screen module is started.
+ * Direct calls in the retail listing are from gLoadFrontEndModule,
+ * func_80024A24, gGameMain.
+ *
+ * @par Role and path
+ * Front end, mission, and subsystem initialization prepare these paired
+ * buffers for the render builder.
+ *
+ * @par Unknown
+ * The caller supplies the packet capacity and ordering-table extent.
  */
-void func_8001B2C8(s32 arg0, s32 arg1)
+void gAllocateRenderBuffers(s32 arg0, s32 arg1)
 {
     s32 allocationSize;
     register s32 value __asm__("$3");
@@ -90,10 +75,10 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     gNodeCapacity = 0x400;
     gNodeTableLength = arg1;
 
-    D_8009F5C8 = gAllocMemory(gFrameBlockCount * 0x34, 2);
+    gPacketBufferBases = gAllocMemory(gFrameBlockCount * 0x34, 2);
 
     allocationSize = gFrameBlockCount * 0x34;
-    D_8009F5CC = gAllocMemory(allocationSize, 2);
+    gSecondPacketBufferBase = gAllocMemory(allocationSize, 2);
 
     allocationSize = gNodeCapacity * 0x1C;
     gRenderNodeTable = gAllocMemory(allocationSize, 2);
@@ -101,16 +86,16 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     allocationSize = gNodeCapacity * 0x1C;
     gRenderNodeTableAlt = gAllocMemory(allocationSize, 2);
 
-    D_8009F5D8 = gAllocMemory((arg1 + 2) * 4, 2);
-    D_8009F5DC = gAllocMemory((arg1 + 2) * 4, 2);
+    gOrderingTableBuffers = gAllocMemory((arg1 + 2) * 4, 2);
+    gSecondOrderingTableBuffer = gAllocMemory((arg1 + 2) * 4, 2);
 
     gNodeTableIndex = 0;
-    gPrimPoolNext = D_8009F5C8;
-    gPacketPoolBase = D_8009F5C8;
+    gPrimPoolNext = gPacketBufferBases;
+    gPacketPoolBase = gPacketBufferBases;
     gPacketCursor = gRenderNodeTable;
     gNodePoolBase = gRenderNodeTable;
 
-    func_80093178(D_8009F5D8, gNodeTableLength + 2);
+    func_80093178(gOrderingTableBuffers, gNodeTableLength + 2);
 
     value = gFrameBlockCount;
     count28 = gNodeCapacity;
@@ -132,7 +117,7 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     }
     offset = 0x100 - value;
     gScreenOffsetValue = offset;
-    D_8009F5EC = 0;
+    gMdecUploadReclaimIndex = 0;
     gUploadRingWriteIdx = 0;
-    D_8009F5F0 = 0;
+    gMdecUploadSubmitIndex = 0;
 }

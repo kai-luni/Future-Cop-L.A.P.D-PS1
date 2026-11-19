@@ -10,9 +10,9 @@ extern u8 gUploadRing[] __asm__("D_800A0660");
 extern u32 gSingleShotQueue[] __asm__("D_8009AA68");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 
-extern u32 D_8009F5C8[];
+extern u32 gPacketBufferBases[] __asm__("D_8009F5C8");
 extern u32 gRenderNodeTable[] __asm__("D_8009F5D0");
-extern u32 D_8009F5D8[];
+extern u32 gOrderingTableBuffers[] __asm__("D_8009F5D8");
 
 extern s32 D_8009F218;
 extern s32 D_8009F21C;
@@ -21,8 +21,8 @@ extern s32 gSubScreenActive __asm__("D_8009F5C0");
 extern u32 gPacketPoolBase __asm__("D_8009F5E0");
 extern u32 gNodePoolBase __asm__("D_8009F5E4");
 extern s32 gUploadRingWriteIdx __asm__("D_8009F5E8");
-extern s32 D_8009F5EC;
-extern s32 D_8009F5F0;
+extern s32 gMdecUploadReclaimIndex __asm__("D_8009F5EC");
+extern s32 gMdecUploadSubmitIndex __asm__("D_8009F5F0");
 extern s32 gFrameBlockCount __asm__("D_8009F5F4");
 extern s32 gNodeCapacity __asm__("D_8009F5F8");
 extern s32 gNodeTableLength __asm__("D_8009F5FC");
@@ -68,7 +68,7 @@ extern void gDecodeMdecFrameToVram(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm
  *    D_8009F5FC, shift = 0x20 - func_80095C14(quot) (a log2 helper), and
  *    count = ((max - min) >> shift) + 1 (0 when no primitive was emitted).
  * 5. Second pass links every primitive into the bucket list of the ordering
- *    table word at D_8009F5D8[D_8009F600]: the low 24 bits of the primitive's
+ *    table word at gOrderingTableBuffers[D_8009F600]: the low 24 bits of the primitive's
  *    tag become the bucket index, the previous bucket head is chained into the
  *    primitive and the primitive becomes the new head.
  * 6. If D_8009FA0C >= 2 or arg0 != 0, a drawing area (rect = x, y, w, h) is
@@ -85,12 +85,12 @@ extern void gDecodeMdecFrameToVram(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm
  *    to the GPU (DrawOTag style).
  * 10. Buffer swap: D_8009F600 toggles 0/1, the cursors D_8009F9F0/D_8009FA90
  *     and limits D_8009FA28/D_8009F9C0 are reset to the other buffer pair
- *     (D_8009F5C8/D_8009F5D0), and func_80093178() terminates the new table.
+ *     (gPacketBufferBases/D_8009F5D0), and func_80093178() terminates the new table.
  *
  * @par Globals
  * D_8009FA3C (frame barrier), D_8009F9D4 (x offset), D_8009F9F0/D_8009FA90
  * (packet cursors), D_8009F5E0/D_8009F5E4 (pool bases), D_8009FA28/D_8009F9C0
- * (pool limits), D_8009F5C8/D_8009F5D0 (buffer bases), D_8009F5D8 (ordering
+ * (pool limits), gPacketBufferBases/D_8009F5D0 (buffer bases), gOrderingTableBuffers (ordering
  * table), D_8009F600 (buffer index), D_8009F5FC (bucket size),
  * D_8009F5F4/D_8009F5F8 (pool entry counts), D_8009FA0C (screen state),
  * D_8009F5C0 (sub-screen flag), D_8009F218/D_8009F21C/D_8009F220 (ring heads),
@@ -218,7 +218,7 @@ void func_8001B4A8(s32 arg0)
     v = gNodeTableIndex;
     __asm__("" : "+r"(mask) : "r"(v));
     mask |= 0xFFFF;
-    xbase = (s32)D_8009F5D8;
+    xbase = (s32)gOrderingTableBuffers;
     v = v << 2;
     v = v + xbase;
     table = *(u32 *)v;
@@ -348,31 +348,31 @@ void func_8001B4A8(s32 arg0)
     }
 
     if (({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; }) || gSubScreenActive == 0 || gPlayerCount == 1) {
-        if (D_8009F5EC != D_8009F5F0) {
+        if (gMdecUploadReclaimIndex != gMdecUploadSubmitIndex) {
             do {
-                v = (u32)gUploadRing + D_8009F5EC * 20;
+                v = (u32)gUploadRing + gMdecUploadReclaimIndex * 20;
                 hnd = *(u32 *)(v + 4);
                 if (hnd != 0) {
                     func_80029650(hnd);
                 }
-                D_8009F5EC++;
-                if (D_8009F5EC >= 4) {
-                    D_8009F5EC = 0;
+                gMdecUploadReclaimIndex++;
+                if (gMdecUploadReclaimIndex >= 4) {
+                    gMdecUploadReclaimIndex = 0;
                 }
-            } while (D_8009F5EC != D_8009F5F0);
+            } while (gMdecUploadReclaimIndex != gMdecUploadSubmitIndex);
         }
 
-        if (D_8009F5F0 != gUploadRingWriteIdx) {
+        if (gMdecUploadSubmitIndex != gUploadRingWriteIdx) {
             do {
-                xbase = (u32)gUploadRing + D_8009F5F0 * 20;
+                xbase = (u32)gUploadRing + gMdecUploadSubmitIndex * 20;
                 gDecodeMdecFrameToVram(*(u32 *)xbase, *(u8 *)(xbase + 8),
                               *(u32 *)(xbase + 0xC), *(u32 *)(xbase + 0x10));
                 func_80092C8C(0);
-                D_8009F5F0++;
-                if (D_8009F5F0 >= 4) {
-                    D_8009F5F0 = 0;
+                gMdecUploadSubmitIndex++;
+                if (gMdecUploadSubmitIndex >= 4) {
+                    gMdecUploadSubmitIndex = 0;
                 }
-            } while (D_8009F5F0 != gUploadRingWriteIdx);
+            } while (gMdecUploadSubmitIndex != gUploadRingWriteIdx);
         }
     }
 
@@ -390,10 +390,10 @@ void func_8001B4A8(s32 arg0)
     xbase = (s32)gRenderNodeTable;
     mask -= v;
     av = mask << 2;
-    v = (s32)D_8009F5D8 + av;
+    v = (s32)gOrderingTableBuffers + av;
     bv = *(u32 *)v;
     __asm__ volatile("" : : "r"(v));
-    v = (s32)D_8009F5C8 + av;
+    v = (s32)gPacketBufferBases + av;
     av += xbase;
     shift = *(u32 *)v;
     val = *(u32 *)av;

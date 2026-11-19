@@ -5,7 +5,7 @@ extern int gSolveLobVector();
 
 extern s32 gSquaredLength2Q16(s32 arg0) __asm__("func_8001A030");
 extern s32 gSqrt12(s32 arg0) __asm__("func_80095900");
-extern void func_8001ABE0(u32 arg0, s32 arg1);
+extern void gScaleVector2Q16(u32 arg0, s32 arg1) __asm__("func_8001ABE0");
 
 s32 gNormalizeVector2Q16(s32 arg0) __asm__("func_8001A7AC");
 
@@ -20,7 +20,7 @@ s32 gNormalizeVector2Q16(s32 arg0) __asm__("func_8001A7AC");
  * @par Confirmed mechanics
  * Calls gSquaredLength2Q16 and gSqrt12 and shifts the latter result left by
  * two. If it is at least 2, divides unsigned 0x80000000 by half that length
- * and passes the quotient and input address to func_8001ABE0.
+ * and passes the quotient and input address to gScaleVector2Q16.
  *
  * @par Globals
  * No RAM globals accessed directly.
@@ -43,7 +43,7 @@ s32 gNormalizeVector2Q16(s32 arg0)
 
     s0 = gSqrt12(gSquaredLength2Q16(arg0)) << 2;
     if (s0 >= 2) {
-        func_8001ABE0(0x80000000u / (u32)(s0 >> 1), arg0);
+        gScaleVector2Q16(0x80000000u / (u32)(s0 >> 1), arg0);
     }
     return s0;
 }

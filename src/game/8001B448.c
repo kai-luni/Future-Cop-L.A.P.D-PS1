@@ -1,17 +1,17 @@
 // Categories: Resources > Memory Management
 #include "game/types.h"
 
-extern void *D_8009F5C8;
-extern void *D_8009F5CC;
+extern void *gPacketBufferBases __asm__("D_8009F5C8");
+extern void *gSecondPacketBufferBase __asm__("D_8009F5CC");
 extern void *gRenderNodeTable __asm__("D_8009F5D0");
 extern void *gRenderNodeTableAlt __asm__("D_8009F5D4");
-extern void *D_8009F5D8;
-extern void *D_8009F5DC;
+extern void *gOrderingTableBuffers __asm__("D_8009F5D8");
+extern void *gSecondOrderingTableBuffer __asm__("D_8009F5DC");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
- * @brief Releases the render arena allocated by func_8001B2C8().
+ * @brief Releases the render arena allocated by gAllocateRenderBuffers().
  *
  * The six blocks are freed in allocation order through func_800181D4(), the
  * shared deallocator: the two 52-byte-record pools, the two 1024-entry
@@ -22,7 +22,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @return Nothing.
  *
  * @par Globals written
- * Only through the deallocator; D_8009F5C8..D_8009F5DC themselves are not
+ * Only through the deallocator; gPacketBufferBases..gSecondOrderingTableBuffer themselves are not
  * reset.
  *
  * @par Callers
@@ -31,10 +31,10 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  */
 void func_8001B448(void)
 {
-    gFreeBlock(D_8009F5C8);
-    gFreeBlock(D_8009F5CC);
+    gFreeBlock(gPacketBufferBases);
+    gFreeBlock(gSecondPacketBufferBase);
     gFreeBlock(gRenderNodeTable);
     gFreeBlock(gRenderNodeTableAlt);
-    gFreeBlock(D_8009F5D8);
-    gFreeBlock(D_8009F5DC);
+    gFreeBlock(gOrderingTableBuffers);
+    gFreeBlock(gSecondOrderingTableBuffer);
 }
