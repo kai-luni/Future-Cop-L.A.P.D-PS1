@@ -646,7 +646,7 @@ graph LR
 | `gFlushSoundChannelsIfCvkActive` (`func_80023314`) | 40 | Game Engine > State | `func_80021E1C` | - |
 | `gMarkCvkSlotReady` (`func_80023500`) | 40 | Game Engine > State | - | - |
 | `gTickLoadingScreenAssets` (`func_80025348`) | 40 | Game Engine > Frame · Asset Loading | `func_8001B4A8`, `func_80024EC8` | `func_80025B7C` |
-| `func_80027EBC` | 40 | Game Engine > Frame · Display | `func_8001B4A8`, `func_80024EC8` | `func_80027EE4` |
+| `gPresentInteractiveScreenFrame` (`func_80027EBC`) | 40 | Game Engine > Frame · Display | `func_8001B4A8`, `func_80024EC8` | `func_80027EE4` |
 | `func_80029720` | 40 | Game Engine > State | - | `func_80023E84` |
 | `func_80045028` | 40 | Game Engine > State | - | `func_80045164` |
 | `func_800477D8` | 40 | Game Engine > Audio | - | `func_8002283C`, `func_800228F4`, `func_8004772C`, `func_80047800` |
@@ -657,7 +657,7 @@ graph LR
 | `gSelectFirstEnabledItem` (`func_80080010`) | 40 | Game Engine > Front End | `func_800787D8` | `func_8007FB04` |
 | `func_800859B0` | 40 | Game Engine > State | - | - |
 | `gClearScreenModeHook` (`func_8001F12C`) | 44 | Game Engine > Callbacks | - | - |
-| `func_80027D70` | 44 | Game Engine > Frame · HUD | `func_800486FC` | - |
+| `gRefreshSoloFrameHud` (`func_80027D70`) | 44 | Game Engine > Frame · HUD | `func_800486FC` | - |
 | `func_80046AD8` | 44 | Game Engine > Audio | `func_80046B04` | `func_800453B8` |
 | `gReselectEnabledItem` (`func_80082020`) | 44 | Game Engine > Front End | `func_800787D8` | `func_8007FB04` |
 | `gInitPadCallbackTable` (`func_8008A3A8`) | 44 | Game Engine > Callback Tables | - | `func_8008BDB0` |
@@ -701,7 +701,7 @@ graph LR
 | `gTickScriptTimersOnScratchpad` (`func_80026D9C`) | 64 | Game Engine > Frame · Scratchpad, Entity Script | `func_80049564` | `func_80027510` |
 | `gRunMapScreenOnScratch` (`func_80026DDC`) | 64 | Game Engine > Front-End > Map Screen · Scratchpad | `func_800267C8` | `func_80027510` |
 | `gRunRegionPass` (`func_80026E1C`) | 64 | Game Engine > Frame · Scratchpad | `func_80066E98` | `func_80027510` |
-| `func_80026E5C` | 64 | Game Engine > Frame · Scratchpad | `func_80066C9C` | `func_80027510` |
+| `gUpdateViewAnchorsOnScratchpad` (`func_80026E5C`) | 64 | Game Engine > Frame · Scratchpad | `func_80066C9C` | `func_80027510` |
 | `gRunSceneListPassesOnScratch` (`func_8003F530`) | 64 | Game Engine > Frame · Scratchpad | `func_8003F4A0` | `func_8003F570` |
 | `func_80047690` | 64 | Game Engine > Frame · Display | `func_8002A16C`, `func_80047554` | `func_800259D8`, `func_80025B7C`, `func_80027510`, `func_80082DDC` |
 | `func_800586D4` | 64 | Game Engine > Stack Trampoline · Entity Update | `func_80055988` | `func_800588D4` |
@@ -730,7 +730,7 @@ graph LR
 | `func_80060DD8` | 80 | Game Engine > Cheat Codes · Hashing | - | `func_80060A0C` |
 | `gSetupCrimeWarMissionList` (`func_800776B8`) | 80 | Game Engine > Front End · Level Table | - | `func_8007A3AC`, `func_8007A450`, `func_8007EA78`, `func_8007F8FC`, `func_8008125C` |
 | `func_8008227C` | 80 | Game Engine > State | - | - |
-| `func_80027E68` | 84 | Game Engine > Interactive Loop · Frame Timing | `func_80057864` | `func_80027EE4` |
+| `gWaitForInteractiveFrameTicks` (`func_80027E68`) | 84 | Game Engine > Interactive Loop · Frame Timing | `func_80057864` | `func_80027EE4` |
 | `gMovieStreamReaderClose` (`func_80089874`) | 84 | Game Engine > State Management | - | - |
 | `gCmdPadModeSelect` (`func_8008B668`) | 84 | Input > Controller Protocol | - | - |
 | `gQueueVramUpload` (`func_8001BBEC`) | 88 | Game Engine > State Management | - | - |
@@ -815,7 +815,7 @@ graph LR
 | `gStartPadModeSelect` (`func_8008B5D0`) | 152 | Input > Controller Protocol | - | `func_8008A1F8` |
 | `gWaitVSyncTarget` (`func_800913E8`) | 152 | Game Engine > Frame · Interrupts, System Calls | `func_8008CA20`, `func_8008D7B0`, `func_8008FF08` | `func_80091270` |
 | `gQueueMcOpMode6` (`func_8001F2E0`) | 156 | Game Engine > State | `func_8001F180` | `func_80020FDC` |
-| `func_80027EE4` | 156 | Game Engine > Interactive Loop · Frame Timing | `func_80027E68`, `func_80027EBC`, `func_800451EC`, `func_800462D0`, `func_80078DD0` | `func_800287F4` |
+| `gRunInteractiveScreenLoop` (`func_80027EE4`) | 156 | Game Engine > Interactive Loop · Frame Timing | `func_80027E68`, `func_80027EBC`, `func_800451EC`, `func_800462D0`, `func_80078DD0` | `func_800287F4` |
 | `func_800455DC` | 156 | Game Engine > Sound Channels | - | `func_80045678` |
 | `func_800867B0` | 156 | Game Engine > Value Scaling | - | - |
 | `gSpawnTargetableEntityId` (`func_8004D4F8`) | 160 | Game Engine > Object Setup > Spawn Queue · Object Spawning | `func_80017EBC`, `func_8004D3D4` | `func_8006125C` |
@@ -902,7 +902,7 @@ graph LR
 | `gRefreshOptionsAudioLabels` (`func_80025F58`) | 352 | Game Engine > Options Menu · Formatting | `func_800451E0`, `func_8004522C`, `func_80045288`, `func_800452C8`, `func_8008CCC0`, `func_8008CD30` | `func_800260B8`, `func_800267C8` |
 | `func_80029A60` | 352 | Game Engine > Event Queue · Streaming Audio, Entity Script | `func_80029DD8`, `func_80041DC4` | `func_80069D68` |
 | `gInitPadPorts` (`func_8008BDB0`) | 352 | Input > Port Initialization | `func_8008A3A8`, `func_8008C410`, `func_8008CD00` | `func_8001E87C` |
-| `func_8002703C` | 360 | Game Engine > Frame · Controller, Animation | `func_800136C8`, `func_8004CC68`, `func_8004DB74`, `func_80057864`, `func_80059DB8`, `func_80063568` | - |
+| `gStepGameplayFrameTime` (`func_8002703C`) | 360 | Game Engine > Frame · Controller, Animation | `func_800136C8`, `func_8004CC68`, `func_8004DB74`, `func_80057864`, `func_80059DB8`, `func_80063568` | - |
 | `gPollPadPorts` (`func_8008A43C`) | 364 | Input > Port Processing | `func_8008A6CC`, `func_8008A8E0` | - |
 | `gStartAudioStreamChannels` (`func_800228F4`) | 368 | Game Engine > Audio Streaming | `func_800220C4`, `func_800221E4`, `func_80022F44`, `func_80046B04`, `func_800477D8`, `func_80098BF8` | - |
 | `gRunEntityWorldTick` (`func_8003F570`) | 372 | Game Engine > Frame · Entity Script | `func_8003B44C`, `func_8003D240`, `func_8003F2AC`, `func_8003F428`, `func_8003F530`, `func_8003FF7C`, `func_8004C2B8`, `func_8005E0AC` | `func_80027510` |
@@ -2448,7 +2448,7 @@ graph LR
 | `gEaseAngleShortest` (`func_8005605C`) | 208 | Graphics > Camera > Smoothing · Mathematics | - | `func_800569EC` |
 | `gDecodeCodeDisplay` (`func_8007F128`) | 208 | Graphics > HUD > Code Entry · Character Table | `func_800788F0` | `func_8007F1F8`, `func_80080038` |
 | `gEmitFlatQuad` (`func_80083060`) | 208 | Graphics > GPU Primitives > Textured Quad · 2D Drawing | - | `func_8007D7CC` |
-| `func_80026F68` | 212 | Graphics > Fade Layers · Frame | `func_80026E9C` | `func_80027510` |
+| `gTickPlayerTransitionFade` (`func_80026F68`) | 212 | Graphics > Fade Layers · Frame | `func_80026E9C` | `func_80027510` |
 | `func_800488A4` | 212 | Graphics > Color Tables | - | `func_80048978` |
 | `func_800487CC` | 216 | Graphics > HUD · State Machine | `func_80048790` | `func_800486FC` |
 | `gTestFrustumFixedNear` (`func_80019D90`) | 224 | Graphics > Culling · Renderer | - | `func_8004A048`, `func_800597C0`, `func_80070158` |
@@ -2504,7 +2504,7 @@ graph LR
 | `gDrawRadarMarkers` (`func_8005A9C4`) | 456 | Graphics > HUD · Radar, Lines | `func_8005A740`, `func_8005A828`, `func_8005A934` | `func_8004EDC8` |
 | `gDrawSevenSegmentChar` (`func_800770A8`) | 464 | Graphics > 2D Drawing > Lines · HUD | `func_80092C8C`, `func_80093224` | `func_80077278` |
 | `gDrawRegionTiles` (`func_8006531C`) | 476 | Graphics > Map > Tile Renderer · Radar | `func_800646BC`, `func_80065134`, `func_800654F8`, `func_80065744` | `func_80066E98` |
-| `func_80027F80` | 484 | Graphics > Text > Rendering · Front-End Configuration | `func_80049100`, `func_80049340`, `func_80059E9C`, `func_8008CD30` | - |
+| `gDrawResultsTextBlock` (`func_80027F80`) | 484 | Graphics > Text > Rendering · Front-End Configuration | `func_80049100`, `func_80049340`, `func_80059E9C`, `func_8008CD30` | - |
 | `func_80048A14` | 484 | Graphics > Text > Rendering · Font Upload | `func_800489EC`, `func_80048BF8`, `func_80048E28` | `func_80048E9C` |
 | `gEmitCellGeometry` (`func_80065134`) | 488 | Graphics > HUD > Minimap · Map Cell Geometry | `func_800648E8` | `func_8006531C` |
 | `gEmitSplitScreenBlit` (`func_8002549C`) | 500 | Graphics > Display Setup · GPU Primitives | - | `func_80025370` |
@@ -2533,7 +2533,7 @@ graph LR
 | `gHandleNameEntryGrid` (`func_8007ABBC`) | 1096 | Graphics > HUD > Name Entry · Text, Character Table, Front-End Configuration | `func_80046C84`, `func_80048E88`, `func_80049100`, `func_800492A0`, `func_8007A9D0`, `func_8007AA9C`, `func_80082EF0` | - |
 | `func_80063568` | 1132 | Graphics > Animation · Frame | `func_8001846C`, `func_80019668` | `func_8002703C` |
 | `gDrawMapView` (`func_8006680C`) | 1168 | Graphics > Map > Tile Renderer · Radar | `func_8001C214`, `func_8004ED18`, `func_800654F8`, `func_80065744`, `func_80065CA8`, `func_800665E8`, `func_80066684`, `func_800694C8` | `func_800267C8` |
-| `func_80028164` | 1204 | Graphics > Menu Rendering · State Transitions | - | - |
+| `gDrawPlayerResultsScreen` (`func_80028164`) | 1204 | Graphics > Menu Rendering · State Transitions | - | - |
 | `func_8005AB8C` | 1276 | Graphics > HUD > Markers · Radar | `func_8001846C`, `func_80018580`, `func_8001C214`, `func_800694C8` | `func_800267C8`, `func_80047F30` |
 | `gDrawLoadoutListRow` (`func_8007D7CC`) | 1340 | Graphics > HUD > Loadout Row · Atlas, Gouraud Quad, Text | `func_80048E88`, `func_800788F0`, `func_80082AB0`, `func_80082B0C`, `func_80082EF0`, `func_80083060` | `func_8007DD08` |
 | `gPlayVideoFile` (`func_80088120`) | 1448 | Graphics > Video Decode Output · Frame Conversion | - | `func_80089D44` |
@@ -3370,7 +3370,7 @@ graph LR
 | `func_8004B180` | 196 | Gameplay > Object Spawning · Entity Update | `func_8001A314`, `func_8003E984` | `func_8004C2B8` |
 | `func_8005920C` | 196 | Gameplay > Object Spawning · Animation | `func_80013BD8`, `func_8002AD58`, `func_80044988` | `func_80059ABC` |
 | `func_8004CE04` | 200 | Gameplay > Entity Update · Grid | `func_8003BAE4` | `func_80027510` |
-| `func_80027D9C` | 204 | Gameplay > State Transitions | - | - |
+| `gAdvanceGameplayScreenCountdown` (`func_80027D9C`) | 204 | Gameplay > State Transitions | - | - |
 | `func_8003B4E0` | 204 | Gameplay > Map · Object Setup | `func_80019668` | `func_8003B898` |
 | `func_8004B244` | 204 | Physics > Motion · Damage | - | `func_8003AA94`, `func_8004B5F8` |
 | `func_800614BC` | 208 | Gameplay > State | - | `func_8006158C` |

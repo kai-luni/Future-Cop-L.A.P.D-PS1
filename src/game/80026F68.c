@@ -8,33 +8,33 @@ extern s32 gScreenState __asm__("D_8009FA00");
 
 extern void gEmitScreenFadeBar(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80026E9C");
 
+void gTickPlayerTransitionFade(s32 arg0, s32 arg1) __asm__("func_80026F68");
+
 /**
- * @brief Per-player screen fade tick: counts the fade-in timer up to the
- *        mode switch, or drains the fade-out rectangle.
+ * @brief Advances a player's retirement transition or drains their screen fade timer.
  *
  * @param arg0 Player index.
  * @param arg1 Non-zero selects the brighter fade colour 0x140 over 0xA0.
  * @return Nothing.
  *
- * @par Confirmed
- * While D_8009F65C[arg0] is non-zero it gains D_8009F9FC per call; at 0x384
- * the screen mode D_8009FA00 becomes 6. Otherwise D_8009FA44[arg0] drains
- * by D_8009F9FC + D_8009F9FC / 2 (clamped at 0); a positive remainder is
- * capped at 0xFF and drawn as a full-screen rectangle through
- * func_80026E9C(v, v, v, colour).
+ * @par Confirmed mechanics
+ * Tests the signed retirement halfword and either adds the frame delta or requests state 6 at
+ * 0x384. Otherwise subtracts delta plus half delta from the fade timer, clamps it at zero and
+ * draws a positive remainder capped at 0xFF with color selected by a1's low byte.
  *
- * @par Likely role
- * The transition fade of the frame driver func_80027510: fade-in runs the
- * timer into the gameplay mode 6, fade-out shrinks a coloured rectangle
- * over the screen at 1.5x the frame step.
- *
- * @par Unknown
- * What screen mode 6 represents (likely the mission-start state).
+ * @par Globals
+ * Reads gFrameDelta, updates gTeamFlag and gPlayerFadeTimers and may write gScreenState.
  *
  * @par Callers
- * func_80027510.
+ * Direct calls from gRunSoloSessionFrame (func_800271A4), gRunSessionFrame (func_80027510).
+ *
+ * @par Role and path
+ * Both session frame paths tick the screen transition for each player.
+ *
+ * @par Unknown
+ * The meaning of screen state 6 comes from the screen dispatcher.
  */
-void func_80026F68(s32 arg0, s32 arg1)
+void gTickPlayerTransitionFade(s32 arg0, s32 arg1)
 {
     s32 temp;
 

@@ -20,27 +20,34 @@ extern void func_80029C34(void);
 extern void func_80047088(s32 arg0, void *object);
 extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 
+void gAdvanceGameplayScreenCountdown(void) __asm__("func_80027D9C");
+
 /**
- *  @brief Update a gated countdown and transition the current state on expiry.
+ * @brief Advances the active screen countdown and runs the asset dispatch pass.
  *
- *  When the gate is clear and the state is 4, runs an update and subtracts
- *  the elapsed amount from a positive countdown. Expiry selects state 0xD
- *  or 0xB according to a field in the current mode record.
- *  @par Globals
- *  D_8009F680 gates processing; D_8009FA00 holds the state.
- *  D_8009FA70 is the countdown and D_8009F9FC is its decrement.
- *  D_8009FA94 selects the expiry branch; D_8009FA58 supplies two objects.
- *  @par Control flow
- *  Early branches reach the common tail; expiry may scan two object slots.
- *  @par Calls
- *  func_80029C34 updates the active state; func_80047088 handles each
- *  non-null object with code 0x27; func_80024EC8 runs at the common tail.
- *  @par Side effects
- *  Changes the countdown and possibly the state, and invokes object handlers.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * When the suspend byte is clear and state is 4, calls func_80029C34 and subtracts frame delta
+ * from a positive countdown. On expiry stores -1 and selects state 0x0B or, for session +0x5C
+ * equal to 1, stops track 0x27 on both present players and selects 0x0D. Every path calls
+ * gLoadQueuedAssets.
+ *
+ * @par Globals
+ * Reads gWasSuspended, gFrameDelta, gGameSession and gPlayerEntities. Updates gScreenResetFlag
+ * as a countdown and may set gScreenState.
+ *
+ * @par Callers
+ * Direct calls from gRunGameFrameLoop (func_80028618).
+ *
+ * @par Role and path
+ * The gameplay frame loop processes active-screen expiry before asset dispatch.
+ *
+ * @par Unknown
+ * The session field at +0x5C selects the transition, and its other uses are unresolved.
  */
-void func_80027D9C(void)
+void gAdvanceGameplayScreenCountdown(void)
 {
     s32 i;
     u8 *object;

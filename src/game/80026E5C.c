@@ -4,27 +4,31 @@
 extern u32 gSavedStackPointer __asm__("D_8009FAD8");
 extern void gUpdateCameraAnchor(void) __asm__("func_80066C9C");
 
+void gUpdateViewAnchorsOnScratchpad(void) __asm__("func_80026E5C");
+
 /**
- * @brief Scratchpad-stack trampoline for the camera anchor update
- *        func_80066C9C.
+ * @brief Runs the per-view camera anchor update on the scratchpad stack.
  *
+ * @param void No parameters.
  * @return Nothing.
  *
- * @par Confirmed
- * Pushes $ra, saves $sp to D_8009FAD8, sets $sp = 0x1F8003F8 (the fast
- * 1 KB scratchpad), calls func_80066C9C, then restores $sp and $ra. Same
- * pattern as gRunHudPassOnScratchpad/func_80026E1C/func_8003F530; the shared save
- * slot means these trampolines cannot nest.
+ * @par Confirmed mechanics
+ * Pushes ra and saves sp, sets sp to 0x1F8003F8, calls gUpdateCameraAnchor and restores the
+ * saved stack pointer and return address.
  *
- * @par Likely role
- * Runs the per-view camera anchor projection on the scratchpad stack for
- * speed: func_80066C9C writes the D_800A3190 position pairs the scene
- * traversal reads back.
+ * @par Globals
+ * Writes and reads gSavedStackPointer. The callee updates gViewGroundAnchors.
  *
  * @par Callers
- * func_80027510.
+ * Direct calls from gRunSoloSessionFrame (func_800271A4), gRunSessionFrame (func_80027510).
+ *
+ * @par Role and path
+ * Both session frame paths build view positions through this scratchpad trampoline.
+ *
+ * @par Unknown
+ * The save word is shared with the other scratchpad trampolines.
  */
-void func_80026E5C(void)
+void gUpdateViewAnchorsOnScratchpad(void)
 {
     __asm__ volatile(
         "addiu $sp, $sp, -0x4\n\t"

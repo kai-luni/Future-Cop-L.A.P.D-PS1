@@ -8,30 +8,33 @@ extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern void func_80057864(void);
 
+void gWaitForInteractiveFrameTicks(void) __asm__("func_80027E68");
+
 /**
- * @brief Waits until at least 5 ticks have elapsed since D_8009FA30 and updates frame delta.
- *
- * Polls func_80057864() (controller profile refresh) and D_8009FA60 until current - D_8009FA30
- * reaches 5 while updating D_8009FAA4, clamps the delta at 0x12C (300), and stores D_8009F9FC and D_8009FA30.
+ * @brief Polls input while waiting for five ticks and then records a capped frame delta.
  *
  * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Calls func_80057864 on each poll, copies the current tick and subtracts the previous tick
+ * until the difference reaches five. Caps the stored delta at 0x12C and advances the base tick.
  *
  * @par Globals
- * D_8009FA60 - tick counter (read); D_8009FA30 - previous tick (updated); D_8009FAA4 - current tick; D_8009F9FC - clamped frame delta.
- *
- * @par Control flow
- * Do-while spin loop while diff < 5, followed by an upper clamp (diff >= 0x12D -> 0x12C).
- *
- * @par Calls
- * func_80057864 - refreshes the two controller/profile words in D_8009F7C0[0..1] on each poll pass.
- *
- * @par Side effects
- * Writes D_8009FAA4, D_8009F9FC, and D_8009FA30, plus D_8009F7C0 via func_80057864.
+ * Reads gGameClock and reads and updates gFrameTickBase. Writes gFrameTime and gFrameDelta. The
+ * input callee updates gPadWords.
  *
  * @par Callers
- * Confirmed: func_80027EE4 (0x80027F34, called once per frame of the interactive UI loop) / Likely: none / Unknown: none.
+ * Direct calls from gRunInteractiveScreenLoop (func_80027EE4).
+ *
+ * @par Role and path
+ * The interactive screen loop uses this pacing routine before each frame's audio and display
+ * passes.
+ *
+ * @par Unknown
+ * The cap applies to the stored frame delta, while the base stores the full current tick.
  */
-void func_80027E68(void)
+void gWaitForInteractiveFrameTicks(void)
 {
     s32 diff;
     s32 current;
