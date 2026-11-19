@@ -16,24 +16,33 @@ extern void func_800959D0(s32 red, s32 green, s32 blue);
 extern void func_800959A0(struct Matrix *matrix);
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
+void gInitModelRendererBuffers(void) __asm__("func_80013A14");
+
 /**
- * @brief Sets the render background colour and allocates the three render
- *        buffers.
- *
+ * @brief Initializes GTE background and color state and allocates three model
+ * renderer buffers.
  * @return Nothing.
  *
- * @par Confirmed
- * func_800959D0(0x40, 0x40, 0x40) sets the colour, the matrix handed to
- * func_800959A0 has 0x1000 in the first column of every row (m[0][0], m[1][0],
- * m[2][0]) and zero elsewhere, then func_80017EBC allocates 0x400, 0x800 and
- * 0x100 bytes with tag 2 into D_8009FA1C, D_8009F578 and D_8009F57C, and
- * D_8009F580 (the depth/tag word) is reset to 0.
+ * @par Confirmed mechanics
+ * Sets the color triplet to 0x40 and builds a 0x1000-diagonal matrix for the
+ * GTE color-matrix helper. Calls the allocator with sizes 0x400, 0x800, and
+ * 0x100, each with tag 2. Clears the UV offset halfword.
  *
- * @par Likely role
- * The one-time render set-up of a level: a 1 KB vertex block, a 2 KB packet
- * block and a 256-byte side buffer.
+ * @par Globals
+ * Writes gLevelVertexBlock, gPartVertexBuffer, gClipFlagBuffer, and
+ * gModelUvOffset.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from func_80024A24.
+ *
+ * @par Role and path
+ * Engine graphics startup prepares GTE state and storage shared by the model
+ * rendering path.
+ *
+ * @par Unknown
+ * The allocator tags have meaning outside this routine.
  */
-void func_80013A14(void)
+void gInitModelRendererBuffers(void)
 {
     struct Matrix color;
 

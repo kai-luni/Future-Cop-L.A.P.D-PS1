@@ -16,39 +16,53 @@ extern u8 *gModelTriangleList __asm__("D_8009F534");
 extern u8 *gModelPolygonList __asm__("D_8009F530");
 extern AnimNode *gAnimNodeList __asm__("D_8009F564");
 extern AnimNode *gModelAnimData __asm__("D_8009F544");
-extern u32 *D_8009F548, *D_8009F550;
+extern u32 *gModel3dhsPayload __asm__("D_8009F548");
+extern u32 *gModelAnimWaveChunk __asm__("D_8009F550");
 extern u32 *gAnimWaveList __asm__("D_8009F568");
-extern AnimNode *D_8009F54C;
+extern AnimNode *gModelAnimTrackChunk __asm__("D_8009F54C");
 extern u8 **gRefBlockTable __asm__("D_8009F560");
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
-extern void func_80012E48(void *, u32, u32);
-extern void func_8001306C(void *);
+extern void gIndexModelChunks(void *, u32, u32) __asm__("func_80012E48");
+extern void gResolveModelBlockIndices(void *) __asm__("func_8001306C");
+
+void gRelocateModelResource(Header **out, void *data, u32 size, u32 arg3) __asm__("func_800131A0");
 
 /**
- *  @brief Initializes a loaded header and resolves its associated data.
+ * @brief Indexes a model resource and relocates its header, draw records, and
+ * optional animation data in place.
  *
- *  Prepares pointer tables, packed records, and optional animation data for use.
- *  @param out Receives the initialized header pointer.
- *  @param data Input data passed to the loader.
- *  @param size Input data size passed to the loader.
- *  @param arg3 Additional loader argument.
- *  @par Globals
- *  D_8009F52C supplies the header; D_8009F560 resolves indexed pointers.
- *  D_8009F528 bounds the record scan; D_800A8E80 translates record values.
- *  D_8009F530, D_8009F534, D_8009F538, D_8009F53C, D_8009F540,
- *  D_8009F544 and D_8009F548 supply header fields; D_8009F54C and
- *  D_8009F550 supply optional nodes linked through D_8009F564 and D_8009F568.
- *  @par Control flow
- *  Scans variable-size records, fixes animation entries, and rewrites packed flags.
- *  Optional nodes and header fields are handled conditionally; unknown record types do not advance the scan.
- *  @par Calls
- *  func_80012E48 loads the data; func_8001306C processes three resolved blocks.
- *  @par Side effects
- *  Modifies the header, records, animation entries, and global node lists.
- *  @par Callers
- *  Confirmed: func_80013550.
+ * @param out Receives the relocated geometry header.
+ * @param data Beginning of the model chunks.
+ * @param size Length of the chunk buffer in bytes.
+ * @param arg3 Word passed in $a2 to gIndexModelChunks, which does not read it.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Calls gIndexModelChunks. Resolves three header references via
+ * gRefBlockTable, rewrites type 2 and 3 triangle records through
+ * gTexpageBaseTable, links animation chunks, and repacks the first byte of
+ * 12-byte polygon records through a jump table. Writes the relocated header to
+ * the output pointer.
+ *
+ * @par Globals
+ * Reads gModelGeometryChunk, gModelBoundingBox, gRefBlockTable,
+ * gModelPolygonList, gModelTriangleList, gModelTriangleListSize,
+ * gModelHierarchy, gModelMeshInfo, gModelAnimData, gModel3dhsPayload,
+ * gModelAnimTrackChunk, gModelAnimWaveChunk, and gTexpageBaseTable. Reads and
+ * updates gAnimNodeList and gAnimWaveList.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from gPrepareModelResource.
+ *
+ * @par Role and path
+ * The Cobj loader runs this pass before registering a model for later
+ * rendering and animation.
+ *
+ * @par Unknown
+ * The exact meanings of all packed polygon bits and the forwarded fourth
+ * argument remain open.
  */
-void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
+void gRelocateModelResource(Header **out, void *data, u32 size, u32 arg3)
 {
     Header *h;
     u8 *end;
@@ -62,7 +76,7 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
     register u32 b __asm__("$5");
     u32 *node2;
 
-    func_80012E48(data, size, arg3);
+    gIndexModelChunks(data, size, arg3);
     h = gModelGeometryChunk;
     h->p34 = (u32 *)gModelBoundingBox;
     h->p34[1] = *(u16 *)&h->flags << 4;
@@ -70,9 +84,9 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
     p = h->p20;
     h->p28 = gModelTriangleList;
     h->p24 = gModelPolygonList;
-    p = gRefBlockTable[(u32)p]; h->p20 = p + 4; func_8001306C(p);
-    p = h->p1c; p = gRefBlockTable[(u32)p]; h->p1c = p + 4; func_8001306C(p);
-    p = h->p2c; p = gRefBlockTable[(u32)p]; h->p2c = p + 4; func_8001306C(p);
+    p = gRefBlockTable[(u32)p]; h->p20 = p + 4; gResolveModelBlockIndices(p);
+    p = h->p1c; p = gRefBlockTable[(u32)p]; h->p1c = p + 4; gResolveModelBlockIndices(p);
+    p = h->p2c; p = gRefBlockTable[(u32)p]; h->p2c = p + 4; gResolveModelBlockIndices(p);
 
     p = end = h->p28;
     end += gModelTriangleListSize;
@@ -99,8 +113,8 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
         }
     }
 
-    if (D_8009F54C) {
-        node = D_8009F54C;
+    if (gModelAnimTrackChunk) {
+        node = gModelAnimTrackChunk;
         h->anim = node;
         h->flags |= 0x1000000;
         node->next = gAnimNodeList;
@@ -121,7 +135,7 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
     }
 
     a = 0;
-    node2 = D_8009F550;
+    node2 = gModelAnimWaveChunk;
     if (node2) {
         u8 *hp = h->p24;
         u32 *old = gAnimWaveList;
@@ -160,6 +174,6 @@ void func_800131A0(Header **out, void *data, u32 size, u32 arg3)
         h->x18 = (u32)gModelMeshInfo;
     }
     h->x10 = (u32)gModelAnimData;
-    h->p38 = (u32)D_8009F548;
+    h->p38 = (u32)gModel3dhsPayload;
     *out = h;
 }

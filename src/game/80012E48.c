@@ -8,42 +8,55 @@ extern u8 *gModelHierarchy __asm__("D_8009F538");
 extern u8 *gModelTriangleList __asm__("D_8009F534");
 extern u8 *gModelPolygonList __asm__("D_8009F530");
 extern u8 *gModelGeometryChunk __asm__("D_8009F52C");
-extern u8 *D_8009F548, *D_8009F54C, *D_8009F550;
+extern u8 *gModel3dhsPayload __asm__("D_8009F548");
+extern u8 *gModelAnimTrackChunk __asm__("D_8009F54C");
+extern u8 *gModelAnimWaveChunk __asm__("D_8009F550");
 extern u8 *gModelAnimData __asm__("D_8009F544");
 extern u8 **gRefBlockTable __asm__("D_8009F560");
 extern u8 **gRelocBlockTable __asm__("D_8009F55C");
 extern u8 **gNormalBlockTable __asm__("D_8009F558");
 extern u8 **gVertexBlockTable __asm__("D_8009F554");
 
+void gIndexModelChunks(u8 *base, u32 size) __asm__("func_80012E48");
+
 /**
- *  @brief Indexes recognized chunks in a length-delimited resource buffer.
+ * @brief Indexes model chunks by tag within a size-delimited buffer.
  *
- *  Each chunk supplies a tag, length, index, and data beginning at offset 12.
- *  Recognized tags populate global pointers or indexed pointer tables.
- *  @param base Start of the chunk buffer.
- *  @param size Number of bytes defining the traversal boundary.
- *  @par Globals
- *  D_8009F554, D_8009F558, D_8009F55C, and D_8009F560 are indexed tables.
- *  D_8009F52C through D_8009F550 receive chunk pointers; D_8009F528 receives a data length.
- *  @par Control flow
- *  Clears four pointers, then advances by each chunk length until size is reached.
- *  A tag switch selects the destination; unrecognized tags are skipped.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Updates global pointers and rewrites the index word of tag 0x416e6d44 as a count.
- *  @par Callers
- *  Confirmed: func_800131A0.
+ * @param base Start of the chunk buffer.
+ * @param size Number of bytes in the chunk buffer.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Loads the tag, length, and index at offsets 0, 4, and 8. The index is scaled
+ * by four for table writes. The animation tag 0x416E6D44 replaces its index
+ * with (length - 12) >> 4. Each iteration advances by the chunk length.
+ *
+ * @par Globals
+ * gVertexBlockTable, gNormalBlockTable, gRelocBlockTable, and gRefBlockTable
+ * supply indexed destinations. gModelGeometryChunk, gModelBoundingBox,
+ * gModelPolygonList, gModelTriangleList, gModelTriangleListSize,
+ * gModelHierarchy, and gModelMeshInfo receive chunk locations or lengths.
+ * gModelAnimData, gModel3dhsPayload, gModelAnimTrackChunk, and
+ * gModelAnimWaveChunk are cleared and then set if present.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from gRelocateModelResource.
+ *
+ * @par Role and path
+ * The model loader collects pointers for the later in-place relocation pass.
+ *
+ * @par Unknown
+ * The tag alone gives no format for the 3DHS payload.
  */
-void func_80012E48(u8 *base, u32 size)
+void gIndexModelChunks(u8 *base, u32 size)
 {
     u8 *p = base;
     u32 tag, length, index;
     u8 *data;
     gModelAnimData = 0;
-    D_8009F548 = 0;
-    D_8009F54C = 0;
-    D_8009F550 = 0;
+    gModel3dhsPayload = 0;
+    gModelAnimTrackChunk = 0;
+    gModelAnimWaveChunk = 0;
     if (size) do {
         tag = *(u32 *)p;
         length = *(u32 *)(p + 4);
@@ -61,9 +74,9 @@ void func_80012E48(u8 *base, u32 size)
         case 0x33444859: gModelHierarchy = data; break;
         case 0x33444d49: gModelMeshInfo = data; break;
         case 0x416e6d44: *(u32 *)(p + 8) = (length - 12) >> 4; gModelAnimData = p + 8; break;
-        case 0x33444853: D_8009F548 = p + 8; break;
-        case 0x33445441: D_8009F54C = p; break;
-        case 0x3344414c: D_8009F550 = p; break;
+        case 0x33444853: gModel3dhsPayload = p + 8; break;
+        case 0x33445441: gModelAnimTrackChunk = p; break;
+        case 0x3344414c: gModelAnimWaveChunk = p; break;
         }
         p += length;
     } while ((u32)(p - base) < size);

@@ -8,29 +8,34 @@ extern s32 gRefBlockTable __asm__("D_8009F560");
 extern s32 gAnimNodeList __asm__("D_8009F564");
 extern s32 gAnimWaveList __asm__("D_8009F568");
 
+void gInitModelBlockTables(s32 arg0) __asm__("func_80012E1C");
+
 /**
- * @brief Partitions the 0x1B18-byte buffer into four 0x400-byte 3D/animation pointer tables and resets list heads.
+ * @brief Splits a buffer into four model block pointer tables and clears the
+ * animation lists.
  *
- * Receives the zeroed D_8009FA08 buffer returned by func_80063428 and assigns 0x400-byte slices to D_8009F554 (LV4D), D_8009F558 (LN4D), D_8009F55C (LR3D), and D_8009F560 (FR3D) populated by func_80012E48, while clearing animation list heads D_8009F564 and D_8009F568.
+ * @param arg0 Base address of the table buffer.
+ * @return Nothing.
  *
- * @param arg0 Base address of the allocated table buffer (D_8009FA08 from func_80063428).
+ * @par Confirmed mechanics
+ * Stores the base and base plus 0x400, 0x800, and 0xC00 to four successive
+ * GP-relative words. Clears the next two words.
  *
  * @par Globals
- * D_8009F554..D_8009F560 - 0x400-byte chunk pointer tables at arg0 + 0x000..+0xC00; D_8009F564/D_8009F568 - active animation node/wave list heads cleared to 0.
- *
- * @par Control flow
- * Straight-line pointer arithmetic and six global stores; no branches or loops.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * Sets D_8009F554..D_8009F560 to arg0 + 0x000/0x400/0x800/0xC00 and clears D_8009F564 and D_8009F568.
+ * gVertexBlockTable, gNormalBlockTable, gRelocBlockTable, and gRefBlockTable
+ * receive the table bases. gAnimNodeList and gAnimWaveList are cleared.
  *
  * @par Callers
- * Confirmed: func_80024A24 (0x80024C5C, receives func_80063428() return during mission boot) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from func_80024A24.
+ *
+ * @par Role and path
+ * Engine startup prepares the indexed block tables before model chunks are
+ * loaded.
+ *
+ * @par Unknown
+ * The routine places no bound on how many entries a subsequent parser writes.
  */
-void func_80012E1C(s32 arg0)
+void gInitModelBlockTables(s32 arg0)
 {
     register s32 next __asm__("$2");
 

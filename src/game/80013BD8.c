@@ -18,33 +18,38 @@ extern struct Matrix3x3 gIdentityMatrix __asm__("D_8009AA38");
 
 extern void gInitModelInstance(struct ModelInstance *instance, struct Model *model, u32 options) __asm__("func_80013AF0");
 
+void gBindModelInstanceWithMatrix(struct ModelInstance *instance, struct Model *model, s32 options) __asm__("func_80013BD8");
+
 /**
- * @brief Binds a model to an instance and copies the current global rotation
- *        matrix into the instance.
+ * @brief Binds a model to an instance and copies the shared matrix into the
+ * instance when a model is supplied.
  *
- * @param instance Model instance; +0 the model pointer, +4 the 3x3 matrix.
- * @param model The model to bind (may be 0).
- * @param options Forwarded to the bind helper.
+ * @param instance Instance receiving the model and its matrix.
+ * @param model Model to bind, or null.
+ * @param options Options forwarded to gInitModelInstance.
  * @return Nothing.
  *
- * @par Confirmed
- * func_80013AF0(instance, model, options) performs the bind; with a non-null
- * model the nine words of D_8009AA38 are copied into instance->matrix.
+ * @par Confirmed mechanics
+ * Calls gInitModelInstance. If the model argument is non-null, copies nine
+ * words from gIdentityMatrix to instance offsets +4 through +0x24.
  *
- * @par Likely role
- * The spawn-time model setup of the entity handlers: D_8009AA38 holds the
- * last built rotation (the matrix factories write it), so a fresh instance
- * starts with the current orientation.
- *
- * @par Unknown
- * Which code path last wrote D_8009AA38 before a given spawn.
+ * @par Globals
+ * Reads gIdentityMatrix when the model is non-null.
  *
  * @par Callers
- * func_8002A5F4, func_800302E8, func_800317BC, gProjectileInit, func_80036940,
- * func_80037064, func_80038754, func_800516A0, func_800579D4, func_8005920C,
- * func_80083A10.
+ * Direct calls in the retail listing are from func_8002A5F4,
+ * gInitTerrainEntity, gInitFromSourceModel, gProjectileInit, func_80036940,
+ * func_80037064, gInitActorFromSpawn, func_800516A0, func_800579D4,
+ * func_8005920C, gSpawnSceneNode.
+ *
+ * @par Role and path
+ * Entity setup callers use this path to initialize both the model binding and
+ * the instance matrix.
+ *
+ * @par Unknown
+ * The retail body does not establish which path last wrote the shared matrix.
  */
-void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options)
+void gBindModelInstanceWithMatrix(struct ModelInstance *instance, struct Model *model, s32 options)
 {
     gInitModelInstance(instance, model, options);
     if (model != 0) {

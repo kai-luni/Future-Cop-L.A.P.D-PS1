@@ -34,7 +34,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * Releases resource via func_800181D4 without unlinking any node from D_8009F5B8.
  *
  * @par Callers
- * Confirmed: func_80013550 (0x800135A4), func_80049734 (0x80049780), func_800511E4 (0x800512E8), func_80051650 (0x80051684) / Likely: none / Unknown: none.
+ * Confirmed: gPrepareModelResource (0x800135A4), func_80049734 (0x80049780), func_800511E4 (0x800512E8), func_80051650 (0x80051684) / Likely: none / Unknown: none.
  */
 void func_80019D00(struct Resource *resource)
 {

@@ -36,7 +36,7 @@ extern struct Resource *gResourceListHead __asm__("D_8009F5B8");
  * None observed.
  *
  * @par Callers
- * Confirmed: func_80013550 (0x80013560), func_80049734 (0x80049740), func_800511E4 (0x800511F8), and func_80051650 (0x8005165C) / Likely: none / Unknown: none.
+ * Confirmed: gPrepareModelResource (0x80013560), func_80049734 (0x80049740), func_800511E4 (0x800511F8), and func_80051650 (0x8005165C) / Likely: none / Unknown: none.
  */
 s32 func_80019AA8(struct Resource *resource)
 {

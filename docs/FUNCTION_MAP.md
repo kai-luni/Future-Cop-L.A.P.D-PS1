@@ -1277,7 +1277,7 @@ graph LR
 | `func_80021800` | 36 | Resources > Offset Tables | - | `func_80021F98` |
 | `func_8004749C` | 40 | Resources > Handles | - | - |
 | `func_8004EFE4` | 40 | Resources > Memory Management · Renderer | `func_800181D4` | - |
-| `func_80012E1C` | 44 | Resources > Asset Loader · Animation | - | `func_80024A24` |
+| `gInitModelBlockTables` (`func_80012E1C`) | 44 | Resources > Asset Loader · Animation | - | `func_80024A24` |
 | `func_800195A4` | 44 | Resources > Memory Pools | - | `func_80017EBC`, `func_80028DC0`, `func_80049C38`, `func_80083A10` |
 | `func_800474C4` | 44 | Resources > Handles | - | `func_80023D78`, `func_80024188` |
 | `func_800898E8` | 44 | Resources > Memory | - | `func_800898C8` |
@@ -1327,7 +1327,7 @@ graph LR
 | `func_80049734` | 104 | Resources > Loader Post-Process · Lighting | `func_80019A74`, `func_80019AA8`, `func_80019D00` | `func_80024EC8` |
 | `gStepBootProfileTransfer` (`func_80080B08`) | 104 | Resources > Save Data · State Machine | `func_8007FB04` | `func_80076A2C` |
 | `gAllocDecodeBuffers` (`func_800860CC`) | 104 | Resources > Memory Management · Image Decode & Upload | `func_80017EBC` | `func_80024A24` |
-| `func_80013550` | 112 | Resources > Loader Post-Process | `func_800131A0`, `func_80019A74`, `func_80019AA8`, `func_80019D00` | `func_80024EC8` |
+| `gPrepareModelResource` (`func_80013550`) | 112 | Resources > Loader Post-Process | `func_800131A0`, `func_80019A74`, `func_80019AA8`, `func_80019D00` | `func_80024EC8` |
 | `gUpdateProfileChecksums` (`func_8007F6E0`) | 112 | Resources > Save Data · Front-End Configuration | `func_8007F688` | `func_80080B70` |
 | `func_80080A5C` | 120 | Resources > Save Data · Volume, Front End | `func_8001EB2C`, `func_800451E0`, `func_8004522C`, `func_80045288`, `func_800452C8` | `func_80080B70` |
 | `gCloseFileSlot` (`func_8001D3A8`) | 124 | Resources > File Access · CD-ROM | - | `func_8001E004`, `func_80029EB8` |
@@ -1380,7 +1380,7 @@ graph LR
 | `func_800235D4` | 296 | Resources > Table Processing | `func_80023528`, `func_800241D0` | - |
 | `func_800511E4` | 296 | Resources > Loader Post-Process · Placement | `func_80019A74`, `func_80019AA8`, `func_80019D00`, `func_80067684` | `func_80024EC8` |
 | `gLoadFileAlloc` (`func_8001E110`) | 304 | Resources > File Access · CD-ROM | `func_8001D424`, `func_8001D5E4`, `func_8001E004` | `func_80025370`, `func_80059BA0` |
-| `func_8001306C` | 308 | Resources > Table Remapping | - | `func_800131A0` |
+| `gResolveModelBlockIndices` (`func_8001306C`) | 308 | Resources > Table Remapping | - | `func_800131A0` |
 | `func_8003BFD0` | 320 | Resources > Asset Loader · Spawn Tables, Object Spawning | `func_8003BC7C`, `func_80040DCC`, `func_80044770`, `func_8004C884`, `func_8006EAF0`, `func_800703A8`, `func_80073F88`, `func_800767E4` | `func_8003C110` |
 | `func_80083130` | 336 | Resources > Mission Table · Front-End Module Lookup | `func_8008CCA0`, `func_8008CCC0`, `func_8008CCF0` | `func_80076A2C` |
 | `func_80047344` | 344 | Resources > Sound Registration | `func_800472E8` | `func_800241D0` |
@@ -1393,7 +1393,7 @@ graph LR
 | `func_80060838` | 444 | Resources > Asset Loader · Object Setup | `func_800181D4`, `func_80019BF0`, `func_80019C38`, `func_80019CA0`, `func_800607B8` | - |
 | `gRegistryLoad` (`func_8006A918`) | 468 | Resources > Loading | - | - |
 | `gMovieStreamReserve` (`func_80089404`) | 480 | Resources > Streaming | - | `func_800879DC` |
-| `func_80012E48` | 548 | Resources > Chunk Parsing | - | `func_800131A0` |
+| `gIndexModelChunks` (`func_80012E48`) | 548 | Resources > Chunk Parsing | - | `func_800131A0` |
 | `gInitMapFromGrdb` (`func_80063DC8`) | 560 | Resources > Asset Loader · Map | `func_80017EBC`, `func_800496D0`, `func_800834C4` | `func_80024EC8` |
 | `gSeekFileSlot` (`func_8001D6D0`) | 572 | Resources > File Access · CD-ROM | `func_8001C478`, `func_8001D0A0` | `func_80028AB4` |
 | `gLoadTextureChunksToVram` (`func_8005A414`) | 576 | Resources > Graphics Assets > Texture Upload · VRAM Transfer | `func_80017EBC`, `func_800181D4`, `func_8005A220`, `func_8005A2BC`, `func_8008CD10`, `func_80092C8C`, `func_80092F38` | `func_80024EC8` |
@@ -1407,7 +1407,7 @@ graph LR
 | `gSpuCompactPool` (`func_80097DF8`) | 768 | Resources > Memory Pools · Sound | - | `func_80097B28`, `func_800980F8`, `func_80098458`, `func_80098708` |
 | `gSpuSplitPoolBlock` (`func_800980F8`) | 864 | Resources > Memory Pools · Sound | `func_80097DF8` | `func_80098458` |
 | `gFormatIso9660Path` (`func_8001DC48`) | 936 | Resources > File Access · String | `func_8008CC90`, `func_8008CCB0`, `func_8008CCC0`, `func_8008CCE0` | `func_8001D424` |
-| `func_800131A0` | 944 | Resources > Data Initialization · Animation | `func_80012E48`, `func_8001306C` | `func_80013550` |
+| `gRelocateModelResource` (`func_800131A0`) | 944 | Resources > Data Initialization · Animation | `func_80012E48`, `func_8001306C` | `func_80013550` |
 | `gLoadQueuedAssets` (`func_80024EC8`) | 1152 | Resources > Asset Loader · Asset Dispatch | `func_80013550`, `func_800181D4`, `func_80023930`, `func_800295E8`, `func_80029E20`, `func_8003C110`, `func_80048E9C`, `func_80049420`, `func_80049734`, `func_8004D6D4`, `func_8004D924`, `func_800511E4`, `func_8005A414`, `func_80060E74`, `func_80063C20`, `func_80063C5C`, `func_80063DC8`, `func_80082358`, `func_800824CC`, `func_800825AC`, `func_8008263C`, `func_800899A4` | `func_80025348`, `func_80025690`, `func_800259D8`, `func_80027EBC` |
 | `func_8002902C` | 1268 | Resources > Asset Loader · Streaming Audio | `func_80023CA4`, `func_800244A4`, `func_80028BA0`, `func_80028BCC`, `func_80028D28`, `func_80028DC0`, `func_80028E58`, `func_8002A16C`, `func_8002A544` | `func_800295E8` |
 | `func_8007FB04` | 1292 | Resources > Save Data · Screen State Machine, Memory Card | `func_8001F37C`, `func_800207B4`, `func_80020C90`, `func_80020E68`, `func_80078650`, `func_80078740`, `func_8007F750`, `func_80080010`, `func_80080AD4`, `func_80080B70`, `func_80081204`, `func_80082020`, `func_8008204C` | `func_80080038`, `func_80080B08` |
@@ -1471,7 +1471,7 @@ graph LR
 | `func_800959F0` | 24 | Graphics > GTE > Projection · GTE | - | `func_80010030` |
 | `func_800959D0` | 32 | Graphics > GTE > Depth Cueing · GTE | - | `func_80013A14` |
 | `func_80095B20` | 32 | Graphics > GTE > Depth Sort · GTE | - | - |
-| `func_8001072C` | 36 | Graphics > GTE > Transform · GTE | - | - |
+| `gGteProjectVertex` (`func_8001072C`) | 36 | Graphics > GTE > Transform · GTE | - | - |
 | `gGteShadeNccs` (`func_80015F14`) | 36 | Graphics > GTE > Lighting · Shading | - | `func_80015F38`, `func_800172A8` |
 | `func_80095AAC` | 36 | Graphics > GTE > Interpolation · GTE | - | - |
 | `func_80095B40` | 36 | Graphics > GTE > Depth Sort · GTE | - | - |
@@ -1494,7 +1494,7 @@ graph LR
 | `gBuildViewMatrix` (`func_80018860`) | 112 | Graphics > GTE > Matrix Build | `func_80019470`, `func_8001A81C` | `func_80017860`, `func_80061CAC` |
 | `func_80095878` | 128 | Graphics > GTE > Initialisation · GTE | `func_80095DB0` | `func_8001E4E4` |
 | `func_80010974` | 132 | Graphics > GTE > Vector Product · Geometry | - | `func_800192AC`, `func_80019310`, `func_8001937C`, `func_800193F8`, `func_80035B7C`, `func_80051C50`, `func_80053A74` |
-| `func_80013A14` | 140 | Graphics > GTE > Initialisation · Renderer Setup | `func_80017EBC`, `func_800959A0`, `func_800959D0` | `func_80024A24` |
+| `gInitModelRendererBuffers` (`func_80013A14`) | 140 | Graphics > GTE > Initialisation · Renderer Setup | `func_80017EBC`, `func_800959A0`, `func_800959D0` | `func_80024A24` |
 | `func_800108D8` | 156 | Graphics > GTE > Vector Product · Geometry | - | - |
 | `func_8001006C` | 160 | Graphics > GTE > Batch Transform · Geometry | - | `func_80013CB8`, `func_80014164`, `func_800178DC`, `func_80031238`, `func_80035B7C`, `func_80038A00`, `func_8003AA94`, `func_8003D9F8`, `func_8003DB70`, `func_80040A00`, `func_80044260`, `func_8004ABE4`, `func_8004AFC0`, `func_8004C5C8`, `func_80052960`, `func_8005CED4`, `func_8005D060`, `func_800619C0`, `func_80061CAC`, `func_8006CB58`, `func_8006DC24`, `func_80070730`, `func_80071B40`, `func_80071FA4`, `func_80074104`, `func_80075A84`, `func_80083A10` |
 | `func_80010820` | 184 | Graphics > GTE > Matrix Setup · Geometry | - | `func_80013CB8`, `func_80014164`, `func_80014C64`, `func_800164F4`, `func_800178DC`, `func_80031238`, `func_80035B7C`, `func_80038A00`, `func_8003AA94`, `func_8003D9F8`, `func_8003DB70`, `func_80040A00`, `func_80044260`, `func_80047888`, `func_8004ABE4`, `func_8004AFC0`, `func_8004C5C8`, `func_80051CC4`, `func_80052960`, `func_800597C0`, `func_8005CED4`, `func_8005D060`, `func_800619C0`, `func_80061CAC`, `func_80066C9C`, `func_80066E98`, `func_8006CB58`, `func_8006DC24`, `func_8006F310`, `func_80070158`, `func_80070730`, `func_80071B40`, `func_80071FA4`, `func_80072F7C`, `func_80074104`, `func_80075A84`, `func_80083A10` |
@@ -1827,7 +1827,7 @@ graph LR
 | `gSubmitModelInstance` (`func_80017508`) | 152 | Graphics > Model Renderer > Instance Submission · Culling | `func_80013F08`, `func_80016A64` | `func_8002ACB4`, `func_80030960`, `func_8003CF6C`, `func_800597C0` |
 | `func_80042864` | 152 | Graphics > Effects > Particles · Frame | - | `func_800437E8`, `func_80043CA8` |
 | `func_800447F0` | 156 | Graphics > Effects > Object Pool · Object Spawning | `func_80017EBC`, `func_800181D4`, `func_80043430` | `func_8003E984` |
-| `func_80013BD8` | 168 | Graphics > Model Renderer > Instance Setup | `func_80013AF0` | `func_8002A5F4`, `func_800302E8`, `func_800317BC`, `func_80035904`, `func_80036940`, `func_80037064`, `func_80038754`, `func_800516A0`, `func_800579D4`, `func_8005920C`, `func_80083A10` |
+| `gBindModelInstanceWithMatrix` (`func_80013BD8`) | 168 | Graphics > Model Renderer > Instance Setup | `func_80013AF0` | `func_8002A5F4`, `func_800302E8`, `func_800317BC`, `func_80035904`, `func_80036940`, `func_80037064`, `func_80038754`, `func_800516A0`, `func_800579D4`, `func_8005920C`, `func_80083A10` |
 | `gUpdateParticleLight` (`func_800753D0`) | 168 | Graphics > Lighting > Light Source · Scene Node | `func_80049980`, `func_800752E0` | `func_80075A84` |
 | `gUpdateTwoPartRig` (`func_80052D7C`) | 172 | Graphics > Model Renderer > Animation · GTE | `func_80010234`, `func_80010750`, `func_80052960` | `func_80057E40` |
 | `func_8006CAAC` | 172 | Graphics > Model Renderer > Vertex Deform · Animation | - | `func_8006CB58` |
@@ -2356,7 +2356,7 @@ graph LR
 | `func_800938F0` | 52 | Graphics > GPU · GPU | `func_8008CD10` | - |
 | `gSetTexWindow` (`func_80093954`) | 56 | Graphics > GPU Command Lists > Draw Mode · GPU | `func_800940C4` | - |
 | `func_80010030` | 60 | Graphics > Display Setup · GTE | `func_800959F0`, `func_80095A10` | `func_80019D60`, `func_800287F4` |
-| `func_80013AB4` | 60 | Graphics > Renderer Setup · Memory Management | - | `func_80024D14` |
+| `gFreeModelRendererBuffers` (`func_80013AB4`) | 60 | Graphics > Renderer Setup · Memory Management | - | `func_80024D14` |
 | `func_80048790` | 60 | Graphics > HUD · State Machine | - | `func_800487CC` |
 | `func_80048DEC` | 60 | Graphics > Text > Font Upload | - | `func_80063C5C` |
 | `gSetDefDispEnv` (`func_800921F4`) | 60 | Graphics > Sprites > State · Utilities | - | `func_8001BE68`, `func_800773D8`, `func_8007757C`, `func_80085C4C` |
@@ -2467,7 +2467,7 @@ graph LR
 | `gRunRegionObjectPass` (`func_80062EB8`) | 252 | Graphics > Region Drawing · Object Update, Model Renderer | `func_800164F4` | `func_80066E98` |
 | `func_8009570C` | 252 | Graphics > Ordering Table · GPU | `func_80091270`, `func_800914E0`, `func_8009520C` | - |
 | `gSpringFollowHeight` (`func_80056530`) | 260 | Graphics > Camera > Smoothing | - | `func_800569EC` |
-| `func_800135C0` | 264 | Graphics > Data Animation | - | `func_800136C8` |
+| `gUpdateModelWaveBytes` (`func_800135C0`) | 264 | Graphics > Data Animation | - | `func_800136C8` |
 | `gEmitRadarTriangle` (`func_8005A828`) | 268 | Graphics > 2D Drawing > Lines · HUD | `func_8001846C` | `func_8005A9C4` |
 | `func_8001BE68` | 272 | Graphics > Display Setup · GPU | `func_80092140`, `func_800921F4`, `func_80092910`, `func_80092A84`, `func_80092BF4` | `func_8001BF78` |
 | `func_80082DDC` | 276 | Graphics > Text > Debug Numbers · Frame | `func_80047690`, `func_80089D44`, `func_8008CD30` | `func_80079F54`, `func_80079FE0`, `func_8007A0A4` |

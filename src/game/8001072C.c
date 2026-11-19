@@ -1,26 +1,33 @@
 // Categories: Graphics > GTE > Transform | Platform > GTE
+
+void gGteProjectVertex(void *src, void *dst) __asm__("func_8001072C");
+
 /**
- * @brief RTPS: perspective-transforms one vertex and returns the projected
- *        screen position plus the GTE flag register.
+ * @brief Projects one packed vertex and outputs the resulting screen
+ * coordinates.
  *
- * @param src Pointer to the packed vertex (VXY0 at +0, VZ0 at +4).
- * @param dst Pointer receiving the projected screen XY (SXY2, 4 bytes).
- * @return In $v0: the GTE FLAG register (cfc2 $2,$31), so the caller can test
- *         for overflow/saturation without a second command.
+ * @param src Packed vertex with VXY at +0 and VZ at +4.
+ * @param dst Destination for the packed SXY2 word.
+ * @return The retail routine leaves GTE FLAG in $v0. The reconstructed C entry
+ *     has a void signature.
  *
  * @par Confirmed mechanics
- * lwc2 $0 / lwc2 $1 load VXY0 and VZ0, two nops, `cop2 0x0180001` is RTPS with
- * sf = 1 and identity matrix/vector (0x0), then swc2 $14 stores SXY2 and
- * cfc2 $2,$31 returns FLAG.
+ * Loads VXY0 and VZ0 via LWC2, issues RTPS, stores SXY2 through SWC2, and
+ * copies FLAG to $v0 through CFC2.
+ *
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_8006F310 and func_80070158 - the per-vertex paths of the model
- * renderer.
+ * The retail listing has no direct call or tail jump to this entry.
  *
- * @par Sibling
- * func_80015F14 is the NCCS (colour shading) variant of the same pattern.
+ * @par Role and path
+ * This is a single-vertex perspective transform entry for the GTE renderer.
+ *
+ * @par Unknown
+ * No caller has been established for this entry.
  */
-void func_8001072C(void *src, void *dst)
+void gGteProjectVertex(void *src, void *dst)
 {
     __asm__ volatile(
         "lwc2 $0, 0($4)\n\t"

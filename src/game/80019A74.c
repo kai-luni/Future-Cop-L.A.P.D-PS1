@@ -36,7 +36,7 @@ extern struct Resource *gResourceListTail __asm__("D_8009F5BC");
  * Mutates resource->next/prev, previous tail->next, and D_8009F5B8/D_8009F5BC.
  *
  * @par Callers
- * Confirmed: func_80013550, func_80029E20, func_80049420, func_80049734, func_8004D924, func_800511E4, func_80051650, func_80060E74, func_80063C20.
+ * Confirmed: gPrepareModelResource, func_80029E20, func_80049420, func_80049734, func_8004D924, func_800511E4, func_80051650, func_80060E74, func_80063C20.
  */
 void func_80019A74(struct Resource *resource)
 {

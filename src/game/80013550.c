@@ -11,43 +11,45 @@ struct Unk13550 {
 };
 
 extern u8 func_80019AA8(struct Unk13550 *resource);
-extern void func_800131A0(void **out, void *data, s32 arg2, s32 arg3);
+extern void gRelocateModelResource(void **out, void *data, s32 arg2, s32 arg3) __asm__("func_800131A0");
 extern void func_80019A74(struct Unk13550 *resource);
 extern void func_80019D00(struct Unk13550 *resource);
 
+void gPrepareModelResource(struct Unk13550 *resource) __asm__("func_80013550");
+
 /**
- * @brief Rebuilds one resource through the node expander.
+ * @brief Relocates a newly loaded Cobj resource or releases the duplicate
+ * through the resource reuse path.
  *
- * For a fresh resource the expander func_800131A0 is called with a local output
- * pointer and the resource's data/size words; the resulting block replaces the
- * resource data, the status is cleared and the resource is re-prepared. Loaded
- * resources take the maintenance path.
- * @param resource Resource block (data 0x00, 0x1C, 0x20).
+ * @param resource Resource descriptor with data at +0 and loader metadata at
+ *     +0x1C and +0x20.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Tests the low byte of func_80019AA8. If it is zero, passes descriptor words
+ * +0, +0x20, and +0x1C to gRelocateModelResource, installs its output at +0,
+ * clears +8, and calls func_80019A74. The other branch calls func_80019D00.
+ *
  * @par Globals
- * None.
- * @par Control flow
- * Two exclusive branches around one expander call.
- * @par Calls
- * func_80019AA8 - state. func_800131A0 - node expander.
- * func_80019A74 - prepare. func_80019D00 - maintenance.
- * @par Side effects
- * Replaces the resource data pointer.
+ * No RAM globals accessed directly.
+ *
  * @par Callers
- * Confirmed: func_80024EC8 (asset loader).
- * @par Texture load path
- * Called by func_80024EC8 on tag `0x436F626A` ("Cobj"). No pixel
- * data is uploaded to VRAM here: func_800131A0 / func_80012E48 only extract
- * geometry and animation chunk pointers (and translate polygon records via
- * D_800A8E80); model/ribbon texture entries come from the static table
- * D_8009B234 read by func_80074104.
+ * Direct calls in the retail listing are from gLoadQueuedAssets.
+ *
+ * @par Role and path
+ * The dispatcher at gLoadQueuedAssets selects this post-load handler for the
+ * Cobj asset tag.
+ *
+ * @par Unknown
+ * The model-specific interpretation of the descriptor word at +0x1C is open.
  */
-void func_80013550(struct Unk13550 *resource)
+void gPrepareModelResource(struct Unk13550 *resource)
 {
     void *loaded;
 
     loaded = 0;
     if (func_80019AA8(resource) == 0) {
-        func_800131A0(&loaded, resource->data, resource->unk20, resource->unk1C);
+        gRelocateModelResource(&loaded, resource->data, resource->unk20, resource->unk1C);
         resource->unk08 = 0;
         resource->data = loaded;
         func_80019A74(resource);

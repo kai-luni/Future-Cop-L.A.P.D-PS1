@@ -7,26 +7,36 @@ typedef struct Node {
     u8 entry[8];
 } Node;
 
+void gUpdateModelWaveBytes(Node *node, int time) __asm__("func_800135C0");
+
 /**
- *  @brief Updates three destination bytes using a time-dependent triangular phase.
+ * @brief Updates three model record bytes from a folded time-dependent phase.
  *
- *  Each node supplies a data base, a count, and an eight-byte entry describing
- *  the destination index, phase multiplier, and interpolation endpoints.
- *  @param node Head of the node list, or null for no work.
- *  @param time Time value multiplied by each node's entry phase multiplier.
- *  @par Globals
- *  None referenced.
- *  @par Control flow
- *  The outer loop traverses nodes; the inner loop repeats count times using the
- *  same entry, since its pointer is not advanced. The phase folds at 0x800.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Writes bytes 5 through 7 of the indexed 12-byte destination record.
- *  @par Callers
- *  Confirmed: func_800136C8.
+ * @param node Head of the wave chunk list, or null.
+ * @param time Clock value used to compute the phase.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Masks time times entry byte 1 to 12 bits and folds the upper half around
+ * 0xFFF. Entry byte 0 selects a 12-byte record. For each endpoint pair it
+ * multiplies the difference by the folded phase, divides by 2048 with
+ * truncation toward zero, and stores bytes +5 through +7. The inner loop
+ * reuses the same entry address for the node count.
+ *
+ * @par Globals
+ * No RAM globals accessed directly.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from gStepAnimations.
+ *
+ * @par Role and path
+ * The model animation tick passes the wave chunk list and the current clock
+ * value.
+ *
+ * @par Unknown
+ * The exact meaning of each of the three output bytes is open.
  */
-void func_800135C0(Node *node, int time)
+void gUpdateModelWaveBytes(Node *node, int time)
 {
     register int count __asm__("$10");
     register int phase __asm__("$7");

@@ -7,30 +7,29 @@ extern void *gClipFlagBuffer __asm__("D_8009F57C");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
+void gFreeModelRendererBuffers(void) __asm__("func_80013AB4");
+
 /**
- * @brief Frees the three render scratch buffers allocated by func_80013A14.
+ * @brief Releases the three buffers allocated for the model renderer.
+ * @return Nothing.
  *
- * Releases the 0x400-byte mesh/graphics buffer D_8009FA1C, the 0x800-byte transformed vertex
- * buffer D_8009F578, and the 0x100-byte clip/visibility flag buffer D_8009F57C via func_800181D4.
- *
- * @param void No parameters.
+ * @par Confirmed mechanics
+ * Loads each of three GP-relative pointer words into $a0 and calls the free
+ * routine. The global words are left as they were.
  *
  * @par Globals
- * D_8009FA1C, D_8009F578, D_8009F57C - render buffer pointers passed sequentially to func_800181D4.
- *
- * @par Control flow
- * Straight-line sequence of three func_800181D4 deallocation calls.
- *
- * @par Calls
- * func_800181D4 - frees each heap/range-allocated render scratch block.
- *
- * @par Side effects
- * Deallocates the three render scratch buffers from the global allocator/range table.
+ * Reads gLevelVertexBlock, gPartVertexBuffer, and gClipFlagBuffer.
  *
  * @par Callers
- * Confirmed: func_80024D14 (0x80024DA0, during between-mission global subsystem reset) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from gResetMissionSubsystems.
+ *
+ * @par Role and path
+ * Engine graphics teardown pairs this with gInitModelRendererBuffers.
+ *
+ * @par Unknown
+ * The caller controls when the saved pointers cease to be usable.
  */
-void func_80013AB4(void)
+void gFreeModelRendererBuffers(void)
 {
     gFreeBlock(gLevelVertexBlock);
     gFreeBlock(gPartVertexBuffer);
