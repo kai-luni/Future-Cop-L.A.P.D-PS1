@@ -17,7 +17,7 @@ extern u8 gBitFieldState __asm__("D_8009F6B8");
  *  @par Side effects
  *  Updates D_8009F6B8; other bits retain their original values.
  *  @par Callers
- *  Confirmed: func_80023E84.
+ *  Confirmed: gStopTrackedSoundVoice.
  */
 void func_80029720(void)
 {

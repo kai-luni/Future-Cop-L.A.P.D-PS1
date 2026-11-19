@@ -21,26 +21,34 @@ struct SoundBank {
 
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
+s32 gRemoveSoundProgramSample(s32 bankIndex, u8 key) __asm__("func_800242B4");
+
 /**
- *  @brief Removes the first matching key from a sound bank.
+ * @brief Removes the first sound program sample whose key matches.
  *
- *  Searches the selected bank's active entries and fills any resulting gap
- *  with the last active entry, so entry order is not preserved.
- *  @param bankIndex Index of the bank to modify.
- *  @param key Entry key to remove.
- *  @return 1 if a matching entry was removed, otherwise 0.
- *  @par Globals
- *  D_800A7938 supplies the bank array and receives the modified entry count.
- *  @par Control flow
- *  Scans until a match or the count is reached; copies the last entry if needed.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Decrements the bank count and may overwrite an entry.
- *  @par Callers
- *  Confirmed: gClearSoundProgramSamples, gUnloadCvkSoundBank.
+ * @param bankIndex Index of the bank to modify.
+ * @param key Entry key to remove.
+ * @return 1 if a matching entry was removed, otherwise 0.
+ *
+ * @par Confirmed mechanics
+ * Indexes the program at stride 0x1C and compares low-byte keys in four-byte sample records.
+ * After decrementing the count, uses unaligned word loads and stores to copy the former last
+ * record into any resulting gap.
+ *
+ * @par Globals
+ * Reads and updates gSoundEntryTable.
+ *
+ * @par Callers
+ * Direct calls from gClearSoundProgramSamples (func_80023A24), gUnloadCvkSoundBank
+ * (func_80023AB4).
+ *
+ * @par Role and path
+ * Both per-bank teardown and the all-program reset use the same removal operation.
+ *
+ * @par Unknown
+ * Removal can change sample order.
  */
-s32 func_800242B4(s32 bankIndex, u8 key)
+s32 gRemoveSoundProgramSample(s32 bankIndex, u8 key)
 {
     struct SoundBank *bank;
     s32 i;

@@ -9,7 +9,7 @@ struct Entry {
 };
 
 extern struct Entry gSoundEntryTable[] __asm__("D_800A7938");
-extern void func_800242B4(s32, s32);
+extern void gRemoveSoundProgramSample(s32, s32) __asm__("func_800242B4");
 
 void gClearSoundProgramSamples(void) __asm__("func_80023A24");
 
@@ -21,7 +21,7 @@ void gClearSoundProgramSamples(void) __asm__("func_80023A24");
  *
  * @par Confirmed mechanics
  * Walks 0x1C-byte records. The inner loop captures the count at +0x10 and repeatedly loads the
- * first byte of that same record before calling func_800242B4.
+ * first byte of that same record before calling gRemoveSoundProgramSample.
  *
  * @par Globals
  * Reads gSoundEntryTable. The removal helper changes its selected record.
@@ -52,7 +52,7 @@ void gClearSoundProgramSamples(void)
             __asm__("" : "+r" (data));
             do {
                 j++;
-                func_800242B4(i, *data);
+                gRemoveSoundProgramSample(i, *data);
             } while (j < count);
         }
         i++;

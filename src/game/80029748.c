@@ -9,14 +9,14 @@ extern s32 gFrameTime __asm__("D_8009FAA4");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern s32 gOutStreamId __asm__("D_8009F6BC");
 extern s32 D_8009F6C8;
-extern void func_80024064(s32, s32, s32);
-extern void func_80023F08(void);
+extern void gAcquireTrackedSoundVoice(s32, s32, s32) __asm__("func_80024064");
+extern void gStartTrackedSoundVoice(void) __asm__("func_80023F08");
 extern void gQueueVramUpload(s32, void *, s32, s32, s32) __asm__("func_8001BBEC");
 
 /**
  * @brief Steps synchronized audio-portrait playback in D_800A0C30 and queues VRAM uploads via func_8001BBEC.
  *
- * Stores stream ID D_8009F6BC into *out, arms voice playback via func_80024064/func_80023F08
+ * Stores stream ID D_8009F6BC into *out, arms voice playback via gAcquireTrackedSoundVoice/gStartTrackedSoundVoice
  * on first entry when D_8009F6B8 bits 0x10/0x20 are clear, advances frame index (D_8009FAA4 - D_8009F6C8) / 30 - 1,
  * and queues a frame upload to VRAM (0x3C0, 0x1CC) via func_8001BBEC whenever the frame index changes.
  *
@@ -29,7 +29,7 @@ extern void gQueueVramUpload(s32, void *, s32, s32, s32) __asm__("func_8001BBEC"
  * @par Control flow
  * Flag guards on D_8009F6B8 bits 4/8/0x30/2, bounds check against state->count, frame-bank traversal, and early return on unchanged index.
  * @par Calls
- * func_80024064/func_80023F08 - allocates and triggers companion sound voice (direct jal at 0x80029790/0x80029798);
+ * gAcquireTrackedSoundVoice/gStartTrackedSoundVoice - allocates and triggers companion sound voice (direct jal at 0x80029790/0x80029798);
  * func_8001BBEC - queues DMA/VRAM upload to (0x3C0, 0x1CC) when the frame index advances.
  * @par Side effects
  * Writes *out, mutates D_8009F6B8/D_8009F6C8 and D_800A0C30.current, triggers voice playback, and queues VRAM uploads.
@@ -49,8 +49,8 @@ s32 func_80029748(s32 *out)
     if (gBitFieldState & 8) return 0;
     if (!(gBitFieldState & 0x30)) {
         gBitFieldState |= 0x30;
-        func_80024064(gOutStreamId, D_800A0C44[0], 0);
-        func_80023F08();
+        gAcquireTrackedSoundVoice(gOutStreamId, D_800A0C44[0], 0);
+        gStartTrackedSoundVoice();
         if (gBitFieldState & 2) D_8009F6C8 = gFrameTime - 30;
         else gBitFieldState &= 0xDF;
     }

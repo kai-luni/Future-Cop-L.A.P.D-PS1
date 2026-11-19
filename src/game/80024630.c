@@ -36,7 +36,7 @@ extern void func_8002A544(void);
  * Stops the stream and clears the pending markers.
  *
  * @par Callers
- * Confirmed: the audio shutdown path (func_800243C4 neighbourhood).
+ * Confirmed: the audio shutdown path (gUpdateVoiceChannelMix neighbourhood).
  */
 void func_80024630(s32 arg0)
 {

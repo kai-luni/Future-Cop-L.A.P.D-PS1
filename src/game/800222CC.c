@@ -25,7 +25,8 @@ void gSetSoundChannelMix(s32 index, struct Mix *mix) __asm__("func_800222CC");
  * Reads gChannelTable, including the sample pointer and hardware voice index.
  *
  * @par Callers
- * Direct calls from gApplyStreamChannelMix (func_8002283C), func_800243C4.
+ * Direct calls from gApplyStreamChannelMix (func_8002283C), gUpdateVoiceChannelMix
+ * (func_800243C4).
  *
  * @par Role and path
  * Applies live stream and sample mix changes at the SPU voice interface.

@@ -26,29 +26,36 @@ struct Args {
 
 extern s32 gQueueBankSampleOnChannel(s32, s32, s32, s32, s32, struct Args *) __asm__("func_80021F98");
 
+s32 gQueueVoiceBankSample(struct Bank *bank, struct Voice *voice, s32 pan, s32 volume, s32 extra) __asm__("func_80024358");
+
 /**
- *  @brief Submits a voice sample request when its sample bank is valid.
+ * @brief Queues a voice's bank sample when its source bank is valid.
  *
- *  Builds an argument record containing volume, pan, and a -1 field, then
- *  passes the sample, bank cursor, and voice slot to the audio routine.
- *  @param bank Bank containing the cursor passed to the request.
- *  @param voice Voice containing the sample and slot.
- *  @param pan Pan value placed in the argument record.
- *  @param volume Volume value placed in the argument record.
- *  @param extra Unused argument.
- *  @return One if the request is made and succeeds; otherwise zero.
- *  @par Globals
- *  None directly accessed.
- *  @par Control flow
- *  Skips the call for bank -1 and converts the call result to zero or one.
- *  @par Calls
- *  gQueueBankSampleOnChannel processes the sample request.
- *  @par Side effects
- *  The called routine may modify state; its effects are not shown here.
- *  @par Callers
- *  Confirmed: func_8004772C.
+ * @param bank Bank containing the cursor passed to the request.
+ * @param voice Voice containing the sample and slot.
+ * @param pan Pan value placed in the argument record.
+ * @param volume Volume value placed in the argument record.
+ * @param extra Unused argument.
+ * @return One if the request is made and succeeds; otherwise zero.
+ *
+ * @par Confirmed mechanics
+ * Reads the source descriptor through voice +0x14, tests its signed bank byte against -1, then
+ * passes its sample byte, record index zero, the voice channel at +0x0D and a stack mix tuple
+ * beginning with -1 to gQueueBankSampleOnChannel. Normalizes the result to zero or one.
+ *
+ * @par Globals
+ * None directly. The callee updates the sound channel in gSoundSystem.
+ *
+ * @par Callers
+ * Direct calls from func_8004772C.
+ *
+ * @par Role and path
+ * The voice playback path converts a sample descriptor to the bank queue call.
+ *
+ * @par Unknown
+ * The fourth forwarded value is read from bank +0x13 and the callee ignores it.
  */
-s32 func_80024358(struct Bank *bank, struct Voice *voice, s32 pan, s32 volume, s32 extra)
+s32 gQueueVoiceBankSample(struct Bank *bank, struct Voice *voice, s32 pan, s32 volume, s32 extra)
 {
     struct Args args;
     register s32 result __asm__("$3");

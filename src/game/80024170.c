@@ -1,25 +1,33 @@
-// Categories: Game Engine > Mode Flag
-extern int gPlayerCountRecord __asm__("D_800A0A88");
+// Categories: Game Engine > Audio | Platform > Sound > Voices
+extern int gTrackedSoundState __asm__("D_800A0A88");
+
+int gIsTrackedSoundPlaying(void) __asm__("func_80024170");
 
 /**
- * @brief Reports whether the game is in the single-player/one-player mode.
+ * @brief Reports whether the tracked sound is in playback state 1.
  *
- * D_800A0A88 holds the player count record; only the value 1 counts as the
- * one-player case. Used by the front-end to hide the split-screen panels.
+ * @param void No parameters.
+ * @return 1 when the tracked sound state equals 1, otherwise 0.
  *
- * @return 1 when the mode word equals 1, else 0.
+ * @par Confirmed mechanics
+ * Loads the word at handle +0x08, XORs it with 1 and uses SLTIU to form the equality result.
+ * The start path writes 1 and the stop path clears the same word.
+ *
  * @par Globals
- * D_800A0A88 - player mode word.
- * @par Control flow
- * None.
- * @par Calls
- * None.
- * @par Side effects
- * None observed.
+ * Reads gTrackedSoundState at gAssetHandle +0x08.
+ *
  * @par Callers
- * Unknown: no direct edge; the front-end queries it through its mode dispatch.
+ * Direct calls from gAcquireTrackedSoundVoice (func_80024064), gFinishScreenModule
+ * (func_80025B7C), gSoundPauseVoices (func_800476D0).
+ *
+ * @par Role and path
+ * The audio pause and screen transition paths use this predicate when deciding how to handle
+ * tracked playback.
+ *
+ * @par Unknown
+ * Other nonzero values have no established meaning here.
  */
-int func_80024170(void)
+int gIsTrackedSoundPlaying(void)
 {
-    return gPlayerCountRecord == 1;
+    return gTrackedSoundState == 1;
 }

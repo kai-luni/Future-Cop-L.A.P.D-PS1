@@ -53,7 +53,7 @@ s32 gQueueBankSampleOnChannel(s32 a0, s32 a1, s32 a2, s32 a3, s32 slot, struct A
  * Reads the bank table and updates the channel array in gSoundSystem.
  *
  * @par Callers
- * Direct calls from func_80024358.
+ * Direct calls from gQueueVoiceBankSample (func_80024358).
  *
  * @par Role and path
  * Translates a voice request into channel fields consumed by the sound update path.

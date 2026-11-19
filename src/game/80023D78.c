@@ -30,31 +30,39 @@ extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 gCvkSystemActive __asm__("D_8009F26C");
 
-extern void func_80023E84(void);
+extern void gStopTrackedSoundVoice(void) __asm__("func_80023E84");
 extern s32 func_800450A4(s32 id, s8 *mix);
 extern s32 func_800474C4(struct Unk4749CHandle *handle);
 extern void func_80047800(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
 
+void gUpdateTrackedSoundVoice(void) __asm__("func_80023D78");
+
 /**
- *  @brief Maintains a sound handle and updates its voice when eligible.
+ * @brief Checks the tracked sound deadline and updates its voice mix when eligible.
  *
- *  A nonzero timestamp is checked against the current counter and a 0xBB8
- *  window. An enabled active handle can also receive updated mix values.
- *  @par Globals
- *  D_800A0A80 holds the handle and timestamp; D_8009FA2C is the current
- *  counter; D_8009F26C enables the mix-update path.
- *  @par Control flow
- *  An invalid timestamp or an active handle with zero timestamp triggers cleanup.
- *  The mix path requires enabled, active, and flag18; failed checks also clean up.
- *  @par Calls
- *  func_80023E84 performs cleanup; func_800450A4 obtains mix values;
- *  func_800474C4 checks the handle; func_80047800 updates the voice.
- *  @par Side effects
- *  May clear the timestamp, invoke cleanup, or update the resource voice.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Loads the deadline at handle +0x10 and clears and stops the sound if it is outside the
+ * current tick through tick +0xBB8, or if an active handle has no deadline. Requires CVK
+ * enable, active state and byte +0x18 before looking up mix values and validating the voice
+ * handle.
+ *
+ * @par Globals
+ * Reads gCvkSystemActive and gFrameTickCounter and accesses the deadline, state and mix
+ * selector in gAssetHandle.
+ *
+ * @par Callers
+ * Direct calls from func_800462D0.
+ *
+ * @par Role and path
+ * The audio update path maintains the active tracked sound between start and release.
+ *
+ * @par Unknown
+ * The mix lookup and handle validator determine why a particular voice becomes invalid.
  */
-void func_80023D78(void)
+void gUpdateTrackedSoundVoice(void)
 {
     s8 mix[0x18];
 
@@ -62,11 +70,11 @@ void func_80023D78(void)
         if (gAssetHandle.unk10 > gFrameTickCounter + 0xBB8 ||
             gAssetHandle.unk10 < gFrameTickCounter) {
             gAssetHandle.unk10 = 0;
-            func_80023E84();
+            gStopTrackedSoundVoice();
         }
     } else if (gAssetHandle.state != 0) {
         gAssetHandle.unk10 = 0;
-        func_80023E84();
+        gStopTrackedSoundVoice();
     }
 
     if (gCvkSystemActive != 0 &&
@@ -77,7 +85,7 @@ void func_80023D78(void)
             func_80047800((struct SoundVoice *)gAssetHandle.resource,
                           mix[1], mix[0], -1);
         } else {
-            func_80023E84();
+            gStopTrackedSoundVoice();
         }
     }
 }

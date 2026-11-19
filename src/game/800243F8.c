@@ -3,28 +3,29 @@
 
 extern void gQueueSoundChannelRelease(s32 arg0) __asm__("func_8002238C");
 
+void gQueueVoiceChannelRelease(s8 *arg0) __asm__("func_800243F8");
+
 /**
- * @brief Releases the hardware sound channel bound to a voice descriptor.
- *
- * Reads the signed channel index at arg0 + 0x0D and passes it to gQueueSoundChannelRelease, which keys off/stops channel mask (1 << channel) via func_80021A8C.
+ * @brief Queues release of the channel selected by a voice descriptor.
  *
  * @param arg0 Voice descriptor pointer containing the signed channel byte at +0x0D.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Loads the signed channel byte at descriptor +0x0D and calls gQueueSoundChannelRelease.
  *
  * @par Globals
- * None.
- *
- * @par Control flow
- * Straight-line signed byte load from arg0 + 0x0D and tail call to gQueueSoundChannelRelease.
- *
- * @par Calls
- * gQueueSoundChannelRelease - stops SPU/driver channel (1 << channel) via func_80021A8C.
- *
- * @par Side effects
- * Stops the hardware sound channel associated with the voice record.
+ * None directly. The callee changes gSoundSystem channel masks.
  *
  * @par Callers
- * Confirmed: func_80046698 (0x800466B8), func_80047088 (0x80047124), func_800471C4 (0x80047228).
+ * Direct calls from func_80046698, func_80047088, func_800471C4.
+ *
+ * @par Role and path
+ * Used by voice cleanup and removal paths before the descriptor is retired.
+ *
+ * @par Unknown
+ * The wrapper does not validate the descriptor.
  */
-void func_800243F8(s8 *arg0) {
+void gQueueVoiceChannelRelease(s8 *arg0) {
     gQueueSoundChannelRelease(*(arg0 + 0xD));
 }

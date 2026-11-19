@@ -7,7 +7,7 @@ typedef struct { u8 value; s8 id; u8 pad[14]; } Mapping;
 typedef struct { u16 key; u8 value; u8 pad[9]; } Item;
 extern Mapping gObjectSlots[] __asm__("D_800A0A00");
 extern Header *gFindCshdSoundGroup(s32, s32 *) __asm__("func_80023528");
-extern s32 func_800241D0(s32, s32, s32, s32, void *);
+extern s32 gAppendSoundProgramSample(s32, s32, s32, s32, void *) __asm__("func_800241D0");
 
 s32 gInstallCvkGroupSamples(s32 id) __asm__("func_800235D4");
 
@@ -20,7 +20,8 @@ s32 gInstallCvkGroupSamples(s32 id) __asm__("func_800235D4");
  * @par Confirmed mechanics
  * Gets a header and entry index, finds the matching ID at byte +1 of an object slot, then uses
  * the entry's count and relative offset to visit 12-byte sample records. For each record it
- * passes its halfword ID and byte value plus the matched group and bank bytes to func_800241D0.
+ * passes its halfword ID and byte value plus the matched group and bank bytes to
+ * gAppendSoundProgramSample.
  *
  * @par Globals
  * Reads gObjectSlots and the CSHD header records returned by the lookup.
@@ -58,7 +59,7 @@ s32 gInstallCvkGroupSamples(s32 id)
             j = 0;
             if (j < header->entries[index].count) {
                 do {
-                    func_800241D0(item->key, item->value, (s8)id, value, item);
+                    gAppendSoundProgramSample(item->key, item->value, (s8)id, value, item);
                     count = header->entries[index].count;
                     __asm__("" : "+r"(j), "+r"(item) : "r"(count));
                     j++;

@@ -38,7 +38,8 @@ void gReleaseSoundVoicesByOwner(s32 owner) __asm__("func_80022240");
  * Reads and updates the software voice records in gSoundSystem.
  *
  * @par Callers
- * Direct calls from gStopAudioStreamPlayback (func_80022A64), func_80023E84.
+ * Direct calls from gStopAudioStreamPlayback (func_80022A64), gStopTrackedSoundVoice
+ * (func_80023E84).
  *
  * @par Role and path
  * Stream shutdown uses the channel number as the software voice owner.

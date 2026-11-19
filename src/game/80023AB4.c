@@ -36,7 +36,7 @@ extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 extern void gUnregisterSoundBank(s32 index) __asm__("func_80021DAC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
-extern void func_800242B4(s32 slot, u8 program);
+extern void gRemoveSoundProgramSample(s32 slot, u8 program) __asm__("func_800242B4");
 
 void gUnloadCvkSoundBank(s32 arg0) __asm__("func_80023AB4");
 
@@ -93,7 +93,7 @@ void gUnloadCvkSoundBank(s32 arg0)
                     samp = (struct SoundSample *)(idx * 4 + (s32)bank);
                     do {
                         if (samp->vab == arg) {
-                            func_800242B4(slot, samp->program);
+                            gRemoveSoundProgramSample(slot, samp->program);
                         }
                         idx--;
                         samp--;

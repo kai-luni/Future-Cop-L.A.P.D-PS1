@@ -19,7 +19,8 @@ void gQueueSoundChannelRelease(s32 channel) __asm__("func_8002238C");
  * None directly. The callee updates both masks in gSoundSystem.
  *
  * @par Callers
- * Direct calls from gReleaseSoundVoicesByOwner (func_80022240), func_800243F8.
+ * Direct calls from gReleaseSoundVoicesByOwner (func_80022240), gQueueVoiceChannelRelease
+ * (func_800243F8).
  *
  * @par Role and path
  * Software voice release and descriptor-based stop both enqueue this update.
