@@ -15,25 +15,34 @@ struct State {
 };
 
 extern struct State gStreamBufferList __asm__("D_800A0B70");
-extern void func_800288BC(struct Node *node);
+extern void gRecycleModuleReadBuffer(struct Node *node) __asm__("func_800288BC");
+
+void gRetireParsedModuleBuffer(void) __asm__("func_80028D28");
 
 /**
- *  @brief Removes the head node and either appends it to another list or handles it.
+ * @brief Removes the first parsed buffer and moves it to the retained or reusable list.
  *
- *  The head must be non-null. Its link and field at offset 0x08 are cleared
- *  before its count determines which destination receives it.
- *  @par Globals
- *  D_800A0B70 contains the source head and the other list head.
- *  @par Control flow
- *  Positive-count nodes are appended by traversing the other list; others are handled.
- *  @par Calls
- *  func_800288BC receives a node whose count is not positive.
- *  @par Side effects
- *  Changes list links and clears the removed node's field at offset 0x08.
- *  @par Callers
- *  Confirmed: func_8002902C.
+ * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Reads the node at state +0x14, advances that head and clears the node link and parse offset.
+ * A positive reference count links it at state +0x18 or that list's tail. Other counts go
+ * through gRecycleModuleReadBuffer.
+ *
+ * @par Globals
+ * Updates the parsed and retained lists in gStreamBufferList.
+ *
+ * @par Callers
+ * Direct calls from func_8002902C.
+ *
+ * @par Role and path
+ * After finishing a buffer, the chunk parser retains it only while chunk references remain.
+ *
+ * @par Unknown
+ * The parser supplies a nonnull source head.
  */
-void func_80028D28(void)
+void gRetireParsedModuleBuffer(void)
 {
     struct Node *node;
     struct Node *cur;
@@ -53,6 +62,6 @@ void func_80028D28(void)
             cur->next = node;
         }
     } else {
-        func_800288BC(node);
+        gRecycleModuleReadBuffer(node);
     }
 }

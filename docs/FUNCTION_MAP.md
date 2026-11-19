@@ -805,8 +805,8 @@ graph LR
 | `func_800486FC` | 148 | Game Engine > Frame · HUD | `func_80029748`, `func_800485AC`, `func_800487CC`, `func_80049260` | `func_80027510`, `func_80027D70` |
 | `func_8004D958` | 148 | Game Engine > Entity Lifecycle · Sound | `func_800457B8`, `func_80069D68` | `func_8002A810`, `func_8002FF6C`, `func_80030060`, `func_80031120`, `func_80031C74`, `func_8003532C`, `func_80036E6C`, `func_800398EC`, `func_8003B144`, `func_8004CCDC`, `func_8004CECC`, `func_8005027C`, `func_80055988` |
 | `gInitPadMapping` (`func_8001E588`) | 152 | Input > Controller Mapping | - | `func_8001E4E4` |
-| `func_80028D28` | 152 | Game Engine > Lists | `func_800288BC` | `func_8002902C` |
-| `func_80028DC0` | 152 | Game Engine > Object Pool · Memory Pools | `func_800195A4` | `func_8002902C` |
+| `gRetireParsedModuleBuffer` (`func_80028D28`) | 152 | Game Engine > Lists | `func_800288BC` | `func_8002902C` |
+| `gQueueCompletedModuleAsset` (`func_80028DC0`) | 152 | Game Engine > Object Pool · Memory Pools | `func_800195A4` | `func_8002902C` |
 | `func_8004CD6C` | 152 | Game Engine > Message Dispatch · Entity Update | - | `func_80027510` |
 | `func_8004F0F0` | 152 | Game Engine > Entity Tables | - | `func_80069D68` |
 | `gPopMenuPanel` (`func_80078740`) | 152 | Game Engine > Front End · Menu Navigation | - | `func_8007F1F8`, `func_8007FB04`, `func_80082154` |
@@ -864,7 +864,7 @@ graph LR
 | `gAppendSoundProgramSample` (`func_800241D0`) | 228 | Game Engine > Audio | `func_80047344` | `func_800235D4` |
 | `func_80059DB8` | 228 | Game Engine > Data Decoding | - | `func_8002703C` |
 | `func_8008888C` | 232 | Game Engine > Command Queue | `func_8008E2F8` | - |
-| `func_80028AB4` | 236 | Game Engine > Queued Operations | `func_8001D6D0`, `func_8001DB60` | `func_80028918`, `func_80028E58` |
+| `gStartNextModuleBufferRead` (`func_80028AB4`) | 236 | Game Engine > Queued Operations | `func_8001D6D0`, `func_8001DB60` | `func_80028918`, `func_80028E58` |
 | `func_80029974` | 236 | Game Engine > Event Queue · Controller Input | `func_800298EC`, `func_80029DD8`, `func_800452C8` | `func_80069D68` |
 | `func_8003FE90` | 236 | Game Engine > Callback Lists | - | `func_8003FF7C` |
 | `func_800425BC` | 236 | Game Engine > Script Processing | `func_8002A5B4` | `func_800426A8` |
@@ -907,7 +907,7 @@ graph LR
 | `gStartAudioStreamChannels` (`func_800228F4`) | 368 | Game Engine > Audio Streaming | `func_800220C4`, `func_800221E4`, `func_80022F44`, `func_80046B04`, `func_800477D8`, `func_80098BF8` | - |
 | `gRunEntityWorldTick` (`func_8003F570`) | 372 | Game Engine > Frame · Entity Script | `func_8003B44C`, `func_8003D240`, `func_8003F2AC`, `func_8003F428`, `func_8003F530`, `func_8003FF7C`, `func_8004C2B8`, `func_8005E0AC` | `func_80027510` |
 | `gVSyncWait` (`func_80091270`) | 376 | Game Engine > Frame · Interrupts | `func_800913E8` | `func_8008204C`, `func_80085C4C`, `func_800879DC`, `func_80087D48`, `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008FAC8`, `func_800908D4`, `func_80090C18`, `func_80090E00`, `func_80090FA0`, `func_8009113C`, `func_800951D8`, `func_8009520C`, `func_800953F0`, `func_800954DC`, `func_800955C8`, `func_8009570C` |
-| `func_80028E58` | 380 | Game Engine > Node Queues | `func_80028AB4` | `func_8002902C` |
+| `gServiceModuleReadQueues` (`func_80028E58`) | 380 | Game Engine > Node Queues | `func_80028AB4` | `func_8002902C` |
 | `func_8003F2AC` | 380 | Game Engine > Entity Lifecycle · Object Spawning, Entity Update | `func_8003CAE4`, `func_8003E984`, `func_800498F0` | `func_8003F570` |
 | `gSetupPrecinctAssaultMissionList` (`func_80077708`) | 380 | Game Engine > Front End · Level Table | `func_80077FFC` | `func_8007A4CC`, `func_8007A56C`, `func_8007EA78`, `func_8008125C` |
 | `gFinishScreenModule` (`func_80025B7C`) | 384 | Game Engine > Screen State Machine · Module Teardown | `func_8001EB6C`, `func_80023BF8`, `func_80024170`, `func_800249BC`, `func_80024D14`, `func_80025348`, `func_80029DD8`, `func_80047690`, `func_80092C8C` | `func_800287F4` |
@@ -916,7 +916,7 @@ graph LR
 | `gInitializeVagmAudioStream` (`func_800244A4`) | 396 | Game Engine > Subsystem Initialization | - | `func_8002902C` |
 | `gMapPadButtons` (`func_8001E620`) | 408 | Input > Button Mapping | `func_8001EF8C` | `func_80057864` |
 | `gDrawOptionsScreen` (`func_8007CFA0`) | 408 | Game Engine > Options Menu · Gauge, Sound | `func_8004522C`, `func_80045288`, `func_800452C8`, `func_800788F0`, `func_80078B34`, `func_8007CE04` | - |
-| `func_80028918` | 412 | Game Engine > Node Queues | `func_800288BC`, `func_80028AB4` | - |
+| `gCompleteModuleBufferRead` (`func_80028918`) | 412 | Game Engine > Node Queues | `func_800288BC`, `func_80028AB4` | - |
 | `gPrepareAndSubmitFrame` (`func_800259D8`) | 420 | Game Engine > Screen Frame · Display Setup | `func_8001B4A8`, `func_8001BFD8`, `func_8002385C`, `func_80024EC8`, `func_80025370`, `func_80025690`, `func_80047690`, `func_80056634`, `func_8006AB38`, `func_80086134`, `func_80092660` | `func_800287F4` |
 | `func_80029C34` | 420 | Game Engine > Request Queues | `func_80029520`, `func_80029BE4`, `func_8002A408`, `func_8002A49C`, `func_80044FF8` | - |
 | `func_80069B58` | 428 | Game Engine > State Machine · Entity Script, Random | `func_80019668`, `func_80069B1C` | `func_80024904`, `func_80024A24` |
@@ -1316,7 +1316,7 @@ graph LR
 | `func_8005A654` | 80 | Resources > Slot Table · Object Pool | - | `func_8005A6A4` |
 | `func_80029E64` | 84 | Resources > Asset Registry | `func_80019584` | `func_800287F4` |
 | `gFindVertexRangeEntry` (`func_8003A90C`) | 84 | Resources > Spawn Tables · Object Spawning | - | `func_8003AA94` |
-| `func_800288BC` | 92 | Resources > Reference Counting · Streaming Audio | - | `func_80028918`, `func_80028D28`, `func_80029650` |
+| `gRecycleModuleReadBuffer` (`func_800288BC`) | 92 | Resources > Reference Counting · Streaming Audio | - | `func_80028918`, `func_80028D28`, `func_80029650` |
 | `func_800427E8` | 92 | Resources > Memory Management · Effects | `func_800181D4` | `func_80044610` |
 | `func_80059BA0` | 92 | Resources > File Access · CD-ROM | `func_800181D4`, `func_8001E110` | `func_80059BFC` |
 | `func_80019CA0` | 96 | Resources > Asset Loader · File Access | - | `func_80049420`, `func_80060838`, `func_80060E74`, `func_80084110` |
@@ -1384,7 +1384,7 @@ graph LR
 | `func_8003BFD0` | 320 | Resources > Asset Loader · Spawn Tables, Object Spawning | `func_8003BC7C`, `func_80040DCC`, `func_80044770`, `func_8004C884`, `func_8006EAF0`, `func_800703A8`, `func_80073F88`, `func_800767E4` | `func_8003C110` |
 | `func_80083130` | 336 | Resources > Mission Table · Front-End Module Lookup | `func_8008CCA0`, `func_8008CCC0`, `func_8008CCF0` | `func_80076A2C` |
 | `func_80047344` | 344 | Resources > Sound Registration | `func_800472E8` | `func_800241D0` |
-| `func_80028BCC` | 348 | Resources > Loader · Script | `func_80017EBC`, `func_80028BA0`, `func_80069D68` | `func_8002902C` |
+| `gCreateModuleAssetFromHeader` (`func_80028BCC`) | 348 | Resources > Loader · Script | `func_80017EBC`, `func_80028BA0`, `func_80069D68` | `func_8002902C` |
 | `gCopyCdSectorChunk` (`func_8001CC6C`) | 356 | Resources > Streaming · CD-ROM | `func_8008CD10` | `func_8001CE54` |
 | `gUploadSaveProfileIcon` (`func_80082358`) | 372 | Resources > Chunk Processing · Image Data | - | `func_80024EC8` |
 | `func_8001B2C8` | 384 | Resources > Memory Allocation · Render Buffers | `func_80017EBC`, `func_8001C034`, `func_80093178` | `func_80024904`, `func_80024A24`, `func_80076A2C` |
@@ -2376,7 +2376,7 @@ graph LR
 | `func_80048978` | 80 | Graphics > Text · Init | `func_800488A4` | `func_80048EC4` |
 | `gInitSpuTransferHook` (`func_800211FC`) | 84 | Graphics > Sprite/Asset Subsystem · Interrupts | `func_80098F48`, `func_80098F78`, `func_80098FB8` | `func_8002333C` |
 | `gSetDrawTPage` (`func_80093A9C`) | 84 | Graphics > GPU Command Lists > Draw Mode · GPU | `func_80093F58`, `func_800940C4` | - |
-| `func_80028FD4` | 88 | Graphics > Fade Layers · Mathematics | - | `func_80025690` |
+| `gGetModuleReadProgressQ10` (`func_80028FD4`) | 88 | Graphics > Fade Layers · Mathematics | - | `func_80025690` |
 | `gStepDemoCameraTable` (`func_80056994`) | 88 | Graphics > Camera > State Machine | - | `func_800569EC` |
 | `gShowSaveMenuReading` (`func_80081204`) | 88 | Graphics > HUD · Save Data | `func_80020D3C` | `func_8007FB04` |
 | `gAccumScaledRgb24` (`func_8001BCD0`) | 92 | Graphics > Color | - | - |
@@ -4835,7 +4835,7 @@ graph LR
 | `gFreeReciprocalTable` (`func_800198DC`) | 40 | Utilities > Mathematics > Tables · Memory Management | - | `func_800249BC`, `func_80024D14` |
 | `func_80092410` | 40 | Utilities > Bit Manipulation | - | - |
 | `func_80092438` | 40 | Utilities > Bit Manipulation | - | - |
-| `func_80028BA0` | 44 | Utilities > Memory | - | `func_80028BCC`, `func_8002902C` |
+| `gCopyWholeWords` (`func_80028BA0`) | 44 | Utilities > Memory | - | `func_80028BCC`, `func_8002902C` |
 | `func_8004DA58` | 44 | Utilities > Range Checks | - | `func_8004DA84` |
 | `gCalcMovieBufferSize` (`func_800896D4`) | 44 | Utilities > Address Calculation | - | - |
 | `func_8009272C` | 56 | Utilities > Record Manipulation | - | - |

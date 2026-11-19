@@ -13,7 +13,7 @@ typedef struct {
 } List;
 
 extern List gStreamBufferList __asm__("D_800A0B70");
-extern void func_800288BC(Node *node);
+extern void gRecycleModuleReadBuffer(Node *node) __asm__("func_800288BC");
 
 /**
  * @brief Decrements a registered asset's reference count and releases the
@@ -26,7 +26,7 @@ extern void func_800288BC(Node *node);
  * @par Confirmed flow
  * (*arg0)->count is decremented, then the global list D_800A0B70 is walked:
  * every node whose count has reached 0 is unlinked and handed to
- * func_800288BC(). The loop restarts from the head after a removal, so a whole
+ * gRecycleModuleReadBuffer(). The loop restarts from the head after a removal, so a whole
  * chain of dead nodes is cleaned up in one call; the walk is guarded against
  * a NULL head.
  *
@@ -58,7 +58,7 @@ void func_80029650(Node **arg0)
                 if (node->count == 0) {
                     current->next = node->next;
                     node->next = 0;
-                    func_800288BC(node);
+                    gRecycleModuleReadBuffer(node);
                 } else {
                     current = node;
                 }
@@ -67,7 +67,7 @@ void func_80029650(Node **arg0)
                 if (node->count == 0) {
                     list->head = node->next;
                     node->next = 0;
-                    func_800288BC(node);
+                    gRecycleModuleReadBuffer(node);
                 }
                 break;
             }

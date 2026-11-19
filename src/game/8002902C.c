@@ -19,11 +19,11 @@ extern s32 D_8009F6C4, D_8009F6E0;
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern volatile s32 D_8009F6D4;
 extern s32 gGameSuspended __asm__("D_8009FA24");
-extern s32 func_80028E58(s32);
-extern void func_80028D28(void);
-extern s32 func_80028BCC(void *, void *);
-extern void func_80028BA0(void *, void *, u32);
-extern void func_80028DC0(void *);
+extern s32 gServiceModuleReadQueues(s32) __asm__("func_80028E58");
+extern void gRetireParsedModuleBuffer(void) __asm__("func_80028D28");
+extern s32 gCreateModuleAssetFromHeader(void *, void *) __asm__("func_80028BCC");
+extern void gCopyWholeWords(void *, void *, u32) __asm__("func_80028BA0");
+extern void gQueueCompletedModuleAsset(void *) __asm__("func_80028DC0");
 extern s32 gInitializeVagmAudioStream(void) __asm__("func_800244A4");
 extern void func_8002A544(void);
 extern u8 gUploadCvkSpuDataAndWait(void *, s32, s32) __asm__("func_80023CA4");
@@ -32,15 +32,15 @@ extern void func_8002A16C(s32);
 /**
  * @brief Parses streamed module container files from D_800A0B70 and dispatches SHOC/CTRL/CANM/FILL/VAGB/VAGM chunks.
  *
- * Guarded by func_80028E58(1) and D_800A0B70.file. Walks chunks up to state->limit: SHOC (0x53484F43) handles SHDR headers via func_80028BCC and SDAT audio payloads via func_80028BA0/func_80028DC0; CTRL initializes playback rate; VAGM queues VAG frames and starts audio via gInitializeVagmAudioStream; VAGB uploads sound bank chunks via gUploadCvkSpuDataAndWait and triggers func_8002A16C(1); CANM queues animation chunks; FILL skips to limit.
+ * Guarded by gServiceModuleReadQueues(1) and D_800A0B70.file. Walks chunks up to state->limit: SHOC (0x53484F43) handles SHDR headers via gCreateModuleAssetFromHeader and SDAT audio payloads via gCopyWholeWords/gQueueCompletedModuleAsset; CTRL initializes playback rate; VAGM queues VAG frames and starts audio via gInitializeVagmAudioStream; VAGB uploads sound bank chunks via gUploadCvkSpuDataAndWait and triggers func_8002A16C(1); CANM queues animation chunks; FILL skips to limit.
  *
  * @param void No parameters.
  * @par Globals
  * D_800A0B70 (stream file/loader state), D_800A0C30 (chunk/size accumulator), D_800A0C50 (4-slot VAGM ring), D_8009F6B8/D_8009F6C0/D_8009F6C4/D_8009F6D4/D_8009F6DC/D_8009F6E0/D_8009FA24.
  * @par Control flow
- * Loops while D_800A0B70.file != 0; inner loop dispatches chunk tags until file->pos >= state->limit, then retires the file via func_80028D28 and drains pending files via func_80028E58(0).
+ * Loops while D_800A0B70.file != 0; inner loop dispatches chunk tags until file->pos >= state->limit, then retires the file via gRetireParsedModuleBuffer and drains pending files via gServiceModuleReadQueues(0).
  * @par Calls
- * func_80028E58, func_80028BCC, func_80028BA0, func_80028DC0, gInitializeVagmAudioStream, func_8002A544, gUploadCvkSpuDataAndWait, func_8002A16C, func_80028D28.
+ * gServiceModuleReadQueues, gCreateModuleAssetFromHeader, gCopyWholeWords, gQueueCompletedModuleAsset, gInitializeVagmAudioStream, func_8002A544, gUploadCvkSpuDataAndWait, func_8002A16C, gRetireParsedModuleBuffer.
  * @par Side effects
  * Advances file->pos/refs, allocates/fills sound buffers, uploads SPU data, queues CANM/VAGM chunks, and starts/stops audio streaming.
  * @par Callers
@@ -57,7 +57,7 @@ void func_8002902C(void)
     s32 one;
     File copy;
     register s32 pos __asm__("$5");
-    if (!func_80028E58(1)) return;
+    if (!gServiceModuleReadQueues(1)) return;
     state = &gStreamBufferList;
     file = state->file;
     if (!file) return;
@@ -89,7 +89,7 @@ void func_8002902C(void)
                     }
                 choc:
                     if (chunk->subtype == 0x53484452) {
-                        if (func_80028BCC(&state->load, chunk)) return;
+                        if (gCreateModuleAssetFromHeader(&state->load, chunk)) return;
                     } else if (chunk->subtype == 0x53444154) {
                         register struct SoundLoad *load __asm__("$16");
                         register s32 newpos __asm__("$2");
@@ -99,10 +99,10 @@ void func_8002902C(void)
                         load = &state->load;
                         if (load->sound) {
                             __asm__("" : "+r"(chunk));
-                            func_80028BA0(load->sound->data + load->soundpos, (u8 *)chunk + 0x14, size);
+                            gCopyWholeWords(load->sound->data + load->soundpos, (u8 *)chunk + 0x14, size);
                             load->soundpos += size;
                             if (load->soundpos == load->sound->size) {
-                                func_80028DC0(load->sound);
+                                gQueueCompletedModuleAsset(load->sound);
                                 load->sound = 0;
                             }
                         }
@@ -181,8 +181,8 @@ void func_8002902C(void)
             }
             if (pos < state->limit) goto chunk_loop;
         }
-        func_80028D28();
-        func_80028E58(0);
+        gRetireParsedModuleBuffer();
+        gServiceModuleReadQueues(0);
         file = state->file;
     } while (file);
 }
