@@ -23,36 +23,44 @@ struct CardManager {
 };
 
 extern struct CardManager *gOperationState __asm__("D_8009AB08");
-extern const struct Packed9 D_80010AE8;
-extern const struct Packed9 D_80010AF4;
-extern const struct Packed9 D_80010B00;
-extern const struct Packed6 D_8009F260;
+extern const struct Packed9 gCardSlotZeroLabel __asm__("D_80010AE8");
+extern const struct Packed9 gCardFileSecondaryLabel __asm__("D_80010AF4");
+extern const struct Packed9 gCardOtherSlotLabel __asm__("D_80010B00");
+extern const struct Packed6 gCardEmptySlotLabel __asm__("D_8009F260");
 
 extern void gCopyMemory(void *destination, const void *source, s32 length) __asm__("func_8001E318");
 
+void gParseCardDirectory(void) __asm__("func_800207CC");
+
 /**
- * @brief Parses the 15 memory-card directory frames in D_8009AB08 into slot state and names.
+ * @brief Parses 15 buffered memory-card directory frames and rebuilds the slot
+ * state and names.
+ * @return Nothing.
  *
- * Sets slot 0 state = 1 with default label D_80010AE8, then iterates slots 1..15 over D_8009AB08->directory[0..14]: verifies the 0x7F-byte XOR checksum (forcing type 0x53 on mismatch), marks 0xA0/0xA1/0xA3 free slots as state 2 (D_8009F260), copies 20-byte save names for 0x51 slots (state 1, D_80010AF4), and sets D_80010B00 otherwise.
- *
- * @param void No parameters.
+ * @par Confirmed mechanics
+ * Initializes slot 0 and walks 0x80-byte frames for slots 1 through 15. XORs
+ * the first 127 bytes and overwrites the type with 0x53 on checksum mismatch.
+ * Type 0x51 copies a 20-byte filename, while types 0xA0, 0xA1, and 0xA3 set
+ * free state 2. Other types receive the fallback label.
  *
  * @par Globals
- * D_8009AB08 - CardManager struct (state[16], primary/secondary[16], directory[15]); D_80010AE8/D_80010AF4/D_80010B00/D_8009F260 - status label strings.
- *
- * @par Control flow
- * Outer 15-slot loop containing a 127-byte XOR checksum loop, checksum mismatch override, and a 3-way switch on frame->bytes[0].
- *
- * @par Calls
- * func_8001E318 - copies 20-byte filename from frame->bytes[10] into primary[slot] for 0x51 entries.
- *
- * @par Side effects
- * Mutates corrupted frame->bytes[0] to 0x53 and updates D_8009AB08 state, primary, and secondary slot labels.
+ * Reads gOperationState and the four labels gCardSlotZeroLabel,
+ * gCardFileSecondaryLabel, gCardOtherSlotLabel, and gCardEmptySlotLabel.
+ * Writes slot state, both label buffers, and any invalid frame type through
+ * the manager.
  *
  * @par Callers
- * Confirmed: func_80020C90 (0x80020CC0), func_80020DF8 (0x80020E2C), func_80020E68 (0x80020E90) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from gFindCardFileSlot,
+ * gReadCardSlotState, gFindFreeCardBlockRun.
+ *
+ * @par Role and path
+ * Card lookup and allocation paths refresh the in-memory slot summary from the
+ * directory frames.
+ *
+ * @par Unknown
+ * The parser assigns generic labels and does not interpret file payloads.
  */
-void func_800207CC(void)
+void gParseCardDirectory(void)
 {
     struct CardDirectoryFrame *frame;
     struct CardManager *initial;
@@ -60,10 +68,10 @@ void func_800207CC(void)
 
     initial = gOperationState;
     gOperationState->state[0] = 1;
-    *gOperationState->primary[0] = D_80010AE8;
+    *gOperationState->primary[0] = gCardSlotZeroLabel;
     __asm__("" ::: "memory");
     frame = initial->directory;
-    *gOperationState->secondary[0] = D_80010AE8;
+    *gOperationState->secondary[0] = gCardSlotZeroLabel;
     for (slot = 1; slot < 16; slot++) {
         u8 checksum;
         u8 *cursor;
@@ -85,22 +93,22 @@ void func_800207CC(void)
         case 0xA1:
         case 0xA3: {
             gOperationState->state[slot] = 2;
-            *(struct Packed6 *)gOperationState->primary[slot] = D_8009F260;
+            *(struct Packed6 *)gOperationState->primary[slot] = gCardEmptySlotLabel;
             __asm__("" ::: "memory");
-            *(struct Packed6 *)gOperationState->secondary[slot] = D_8009F260;
+            *(struct Packed6 *)gOperationState->secondary[slot] = gCardEmptySlotLabel;
             break;
         }
         case 0x51:
             gOperationState->state[slot] = 1;
             gCopyMemory(gOperationState->primary[slot], &frame->bytes[10], 20);
             __asm__("" ::: "memory");
-            *gOperationState->secondary[slot] = D_80010AF4;
+            *gOperationState->secondary[slot] = gCardFileSecondaryLabel;
             break;
         default:
             gOperationState->state[slot] = 1;
-            *gOperationState->primary[slot] = D_80010B00;
+            *gOperationState->primary[slot] = gCardOtherSlotLabel;
             __asm__("" ::: "memory");
-            *gOperationState->secondary[slot] = D_80010B00;
+            *gOperationState->secondary[slot] = gCardOtherSlotLabel;
             break;
         }
         frame++;

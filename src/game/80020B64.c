@@ -6,35 +6,35 @@ typedef int s32;
 
 extern u8 *gOperationState __asm__("D_8009AB08");
 extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
-extern void func_80020B28(void *records);
+extern void gInitCardReplacementFrames(void *records) __asm__("func_80020B28");
 extern s32 gIsMcManagerBusy(void) __asm__("func_8001F180");
 
+int gPrepareCardFormat(void) __asm__("func_80020B64");
+
 /**
- * @brief Formats an empty PS1 memory-card image buffer and queues a card format write.
+ * @brief Builds a blank memory-card system area and stages its write when the
+ * manager is idle.
+ * @return Zero after staging the format request, or one if the manager is
+ *     busy.
  *
- * Zeroes 0x1200 bytes at D_8009AB08 + 0x9B0, writes the "MC" header frame and 15
- * free directory frames (0xA0 tag, 0xFFFF link, XOR checksum at byte 0x7F), fills
- * the broken-sector table via func_80020B28, and queues command 5 when idle.
- *
- * @param void No parameters.
- * @return 1 if func_8001F180() reports the card manager is busy, else 0 after queuing format.
+ * @par Confirmed mechanics
+ * Clears 0x1200 bytes, writes the MC marker and free-directory records, and
+ * writes their XOR checksums. Initializes replacement frames. On an idle
+ * result, fills sector bounds 1 through 0x23 and selects operation 5.
  *
  * @par Globals
- * D_8009AB08 - card manager base (+0x9B0 36-sector image, +0x8F8 command=5, +0x998/+0x99C/+0x910 transfer parameters).
- *
- * @par Control flow
- * Loops over 16 directory frames (0x80 bytes each) computing XOR checksums, calls func_80020B28, returns 1 early if busy, else sets command 5.
- *
- * @par Calls
- * func_8001E4C0 - clears 0x1200-byte buffer; func_80020B28 - fills broken-sector records 16..35; func_8001F180 - checks card manager busy state.
- *
- * @par Side effects
- * Rebuilds the 0x1200-byte card image in D_8009AB08 and queues a 35-sector write (unk8F8 = 5).
+ * Reads gOperationState and updates its system area and operation fields.
  *
  * @par Callers
- * Confirmed: func_8008204C (0x80082058, 0x80082084, card format/wait loop).
+ * Direct calls in the retail listing are from gQueueMemoryCardFormat.
+ *
+ * @par Role and path
+ * The card management screen uses this routine to prepare a format request.
+ *
+ * @par Unknown
+ * The later state machine controls completion of the write.
  */
-int func_80020B64(void)
+int gPrepareCardFormat(void)
 {
     u8 *records;
     u8 *record;
@@ -85,7 +85,7 @@ int func_80020B64(void)
         off += 0x80;
         record += 0x80;
     } while (record < end);
-    func_80020B28(records);
+    gInitCardReplacementFrames(records);
     if (gIsMcManagerBusy() != 0) {
         return 1;
     }

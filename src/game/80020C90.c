@@ -9,38 +9,47 @@ struct CardManager {
 
 extern struct CardManager *gOperationState __asm__("D_8009AB08");
 
-extern s32 func_80020A9C(s32 a0);
-extern void func_800207CC(void);
+extern s32 gIsCardResultUsable(s32 a0) __asm__("func_80020A9C");
+extern void gParseCardDirectory(void) __asm__("func_800207CC");
 extern s32 func_8008CCA0(void *arg0, void *arg1);
 
+s32 gFindCardFileSlot(void *arg0) __asm__("func_80020C90");
+
 /**
- * @brief Searches active memory card slots for a save file matching the given name.
+ * @brief Finds a memory-card directory slot whose stored filename matches the
+ * supplied name.
  *
- * Verifies card presence via func_80020A9C(1), refreshes the directory table in D_8009AB08
- * via func_800207CC, and compares arg0 against primary names across slots 0..15 with state == 1.
+ * @param arg0 Pointer to the filename string.
+ * @return The matching slot index, or zero on a failed check or miss.
  *
- * @param arg0 Null-terminated save filename string to match against primary slot names.
- * @return Matching slot index (1..15, or 0 if slot 0 matched), or 0 if card check fails or no slot matches.
+ * @par Confirmed mechanics
+ * Checks gIsCardResultUsable, refreshes slots with gParseCardDirectory, and
+ * compares the primary name of each state-1 slot with the supplied name. Stops
+ * on the first comparison that returns zero.
  *
  * @par Globals
- * D_8009AB08 - CardManager pointer whose state[0..15] and primary[0..15] arrays are scanned.
- * @par Control flow
- * Guards on func_80020A9C(1) != 0; refreshes directory, then loops i = 0..15 breaking on first state[i]==1 and strcmp==0.
- * @par Calls
- * func_80020A9C (card presence/status check), func_800207CC (directory parse), func_8008CCA0 (string compare).
- * @par Side effects
- * Updates D_8009AB08 directory state via func_800207CC when card is ready.
+ * Reads gOperationState and its slot state and primary name arrays.
+ *
  * @par Callers
- * Confirmed: func_80020D3C (read save slot), func_80020FDC (write/update save slot), func_8007FB04 (front-end card probe).
+ * Direct calls in the retail listing are from gQueueCardFileRead,
+ * func_80020FDC, func_8007FB04.
+ *
+ * @par Role and path
+ * The card read, write, and UI paths use the resulting index to find a save
+ * file.
+ *
+ * @par Unknown
+ * Zero also represents slot 0, so callers cannot distinguish it from a miss
+ * here.
  */
-s32 func_80020C90(void *arg0)
+s32 gFindCardFileSlot(void *arg0)
 {
     register s32 ret asm("s1") = 0;
     register u32 i asm("s0");
     register s32 one asm("s2");
 
-    if (func_80020A9C(1) != 0) {
-        func_800207CC();
+    if (gIsCardResultUsable(1) != 0) {
+        gParseCardDirectory();
         __asm__("" : "=r"(ret) : "0"(ret));
         i = ret;
         one = 1;

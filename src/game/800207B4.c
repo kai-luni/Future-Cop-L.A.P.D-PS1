@@ -6,30 +6,30 @@ struct GlobalState {
 
 extern struct GlobalState *gOperationState __asm__("D_8009AB08");
 
+int gReadCardOperationResult(void) __asm__("func_800207B4");
+
 /**
- * @brief Returns the memory-card operation status/result code at D_8009AB08 + 0x900.
+ * @brief Returns the status word for the current memory-card operation.
+ * @return The word at +0x900 of the card manager.
  *
- * Dereferences D_8009AB08 and returns field +0x900 (value), which card callbacks and state handlers update with the transfer outcome (-1 pending, negative error codes such as -2/-3, or >= 0 completion).
- *
- * @param void No parameters.
- * @return 32-bit status/result word D_8009AB08->value (+0x900).
+ * @par Confirmed mechanics
+ * Loads gOperationState through its absolute address, then loads its word at
+ * +0x900 into $v0.
  *
  * @par Globals
- * D_8009AB08 - pointer to memory-card state block; reads word at +0x900.
- *
- * @par Control flow
- * Single pointer dereference and load; no branches or loops.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * None observed.
+ * Reads gOperationState.
  *
  * @par Callers
- * Confirmed: func_80020A9C (0x80020AAC, 0x80020AD0), func_8007FB04 (0x8007FB18), func_8008204C (0x80082074).
+ * Direct calls in the retail listing are from gIsCardResultUsable,
+ * func_8007FB04, gQueueMemoryCardFormat.
+ *
+ * @par Role and path
+ * The memory-card UI and lookup path use this shared status accessor.
+ *
+ * @par Unknown
+ * Individual negative values are interpreted by its callers.
  */
-int func_800207B4(void)
+int gReadCardOperationResult(void)
 {
     return gOperationState->value;
 }

@@ -10,29 +10,31 @@ extern void gInitMemoryCardBios(void) __asm__("func_800200A8");
 extern void gInitPadActuators(void) __asm__("func_8001E87C");
 extern void gInitPadMapping(u32 port) __asm__("func_8001E588");
 
+s32 gInitPadAndCardServices(void) __asm__("func_8001E4E4");
+
 /**
- * @brief Initialises the controller/device layer for both ports.
+ * @brief Initializes controller input and memory-card services during boot.
+ * @return Always zero.
  *
- * @return 0, always - the caller's error check never triggers.
- *
- * @par Confirmed flow
- * func_80091480(), func_80095878() and gInitMemoryCardBios() reset the three
- * sub-devices, D_8009FAD8 = 0, func_8001E87C() installs the device hooks,
- * D_8009FA20 = 0 marks the layer as "not running yet", and func_8001E588(port)
- * is called for port 0 and port 1 (the two controller ports).
+ * @par Confirmed mechanics
+ * Calls the interrupt reset, platform setup, and card BIOS initialization in
+ * sequence. Clears gSavedStackPointer, initializes pad actuators, clears
+ * gFrameCallbackEnabled, and initializes mappings for ports 0 and 1.
  *
  * @par Globals
- * D_8009FAD8 (device state), D_8009FA20 (per-frame-callback enabled flag, set
- * later by func_8001F0B8).
- *
- * @par Likely role
- * The pad/device bring-up of the boot sequence; func_8001E540() is its
- * teardown counterpart.
+ * Clears gSavedStackPointer and gFrameCallbackEnabled.
  *
  * @par Callers
- * func_80076EB0, once, and only after func_8008DEA0() succeeded.
+ * Direct calls in the retail listing are from gInitRuntime.
+ *
+ * @par Role and path
+ * System boot calls this before enabling per-frame device processing.
+ *
+ * @par Unknown
+ * The implementation of the platform helper at func_80095878 determines its
+ * additional effects.
  */
-s32 func_8001E4E4(void)
+s32 gInitPadAndCardServices(void)
 {
     u32 port;
 

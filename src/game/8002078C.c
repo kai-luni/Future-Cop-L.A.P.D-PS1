@@ -4,29 +4,29 @@
 extern void gReleaseMcEvents(void) __asm__("func_8002036C");
 extern void gReleaseMcCallback(void) __asm__("func_8002059C");
 
+void gReleaseCardEventServices(void) __asm__("func_8002078C");
+
 /**
- * @brief Releases memory-card BIOS event handles and restores the card interrupt callback lock.
+ * @brief Releases the memory-card event and callback services.
+ * @return Nothing.
  *
- * Teardown wrapper calling func_8002036C (decrements refcount D_8009AB08->unk8C8 and disables/closes the 8 card events at zero) followed by func_8002059C (decrements lockCount and restores savedCallback at zero).
- *
- * @param void No parameters.
+ * @par Confirmed mechanics
+ * Calls gReleaseMcEvents followed by gReleaseMcCallback, then returns.
  *
  * @par Globals
- * None directly; callees update D_8009AB08 reference/lock counts and read event handles/savedCallback.
- *
- * @par Control flow
- * Straight-line sequence of two calls; no branches or loops.
- *
- * @par Calls
- * func_8002036C - release BIOS card events; func_8002059C - unlock and restore interrupt callback.
- *
- * @par Side effects
- * Decrements card ref/lock counts in D_8009AB08 and, on zero, closes BIOS events and restores callback via func_80091510.
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * Confirmed: func_8007FACC (0x8007FAE8, omitted from work list).
+ * Direct calls in the retail listing are from gReleaseProfileCardOperation.
+ *
+ * @par Role and path
+ * The memory-card shutdown path calls this wrapper when leaving the card
+ * service.
+ *
+ * @par Unknown
+ * The saved callback and event handles are maintained by the callees.
  */
-void func_8002078C(void)
+void gReleaseCardEventServices(void)
 {
     gReleaseMcEvents();
     gReleaseMcCallback();

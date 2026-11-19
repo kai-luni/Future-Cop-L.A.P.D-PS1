@@ -1,36 +1,42 @@
 // Categories: Platform > Memory Card | Resources > File Access
-extern int func_800207B4(int);
+extern int gReadCardOperationResult(int) __asm__("func_800207B4");
+
+int gIsCardResultUsable(int arg0) __asm__("func_80020A9C");
 
 /**
- * @brief Turns a memory-card poll result into a completion flag.
+ * @brief Converts the current card operation result to a Boolean for the
+ * directory lookup path.
  *
- * -2 and -1 both count as success; -3 triggers one more poll, after which -2
- * still succeeds. Any other value is normalised through an unsigned bit trick
- * ((~value) >> 31), i.e. "value was negative". The wrapper spares callers the
- * raw error codes.
- * @param arg0 Slot/handle passed to the poll function.
- * @return 1 on completion, 0 otherwise.
+ * @param arg0 Word forwarded to the status accessor. The accessor ignores it.
+ * @return One for -2, -1, or a nonnegative checked result, otherwise zero.
+ *
+ * @par Confirmed mechanics
+ * Reads the status once and reads it again for -3. Accepts -1 and -2, and
+ * otherwise shifts the bitwise complement right by 31, testing for a
+ * nonnegative result.
+ *
  * @par Globals
- * None.
- * @par Control flow
- * Two nested code tests.
- * @par Calls
- * func_800207B4 - the poll.
- * @par Side effects
- * May advance the card state machine.
+ * No RAM globals accessed directly.
+ *
  * @par Callers
- * Unknown: no direct edge in edges.json.
+ * Direct calls in the retail listing are from gFindCardFileSlot.
+ *
+ * @par Role and path
+ * The name lookup checks this result before consulting the directory frames.
+ *
+ * @par Unknown
+ * The routine does not establish the individual meanings of -1, -2, and -3.
  */
-int func_80020A9C(int arg0)
+int gIsCardResultUsable(int arg0)
 {
     register int value __asm__("$4");
     register int result __asm__("$2");
 
-    value = func_800207B4(arg0);
+    value = gReadCardOperationResult(arg0);
     if (value == -2)
         return 1;
     if (value == -3) {
-        value = func_800207B4(arg0);
+        value = gReadCardOperationResult(arg0);
         if (value == -2)
             return 1;
         result = 1;

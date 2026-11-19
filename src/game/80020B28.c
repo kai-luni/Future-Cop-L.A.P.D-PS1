@@ -8,30 +8,33 @@ struct TableRecord {
     u8 pad_0A[0x76];
 };
 
+void gInitCardReplacementFrames(struct TableRecord *records) __asm__("func_80020B28");
+
 /**
- * @brief Initializes the 20 broken-sector replacement slots (indices 16..35) in a card image.
+ * @brief Initializes the 20 replacement-sector records in a blank memory-card
+ * system area.
  *
- * Iterates over 0x80-byte directory/sector frames 0x10 through 0x23 and sets each record's
- * 4-byte sector tag (+0x00..+0x03) to 0xFF and its 16-bit link field (+0x08) to 0xFFFF.
+ * @param records Base of a writable card system-area image with space for 36
+ *     frames.
+ * @return Nothing.
  *
- * @param records Pointer to the 36-frame (0x1200-byte) PS1 memory-card image buffer.
+ * @par Confirmed mechanics
+ * Starts at +0x800 and steps 0x80 bytes per record for indices 16 through 35.
+ * Stores 0xFF into bytes 0 through 3 and 0xFFFF at +8.
  *
  * @par Globals
- * None.
- *
- * @par Control flow
- * Single counted for-loop from index 0x10 to 0x23 (20 records of stride 0x80).
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * Writes 0xFF bytes at +0x00..+0x03 and 0xFFFF at +0x08 in records[16..35].
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * Confirmed: func_80020B64 (0x80020C24, when building an empty formatted memory-card image) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from gPrepareCardFormat.
+ *
+ * @par Role and path
+ * The card format builder uses this helper after writing the directory frames.
+ *
+ * @par Unknown
+ * The routine initializes only these replacement-sector fields.
  */
-void func_80020B28(struct TableRecord *records)
+void gInitCardReplacementFrames(struct TableRecord *records)
 {
     u32 index;
 

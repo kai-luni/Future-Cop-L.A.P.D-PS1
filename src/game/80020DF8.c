@@ -8,32 +8,40 @@ struct CardContext {
 
 extern struct CardContext *gOperationState __asm__("D_8009AB08");
 
-extern void func_800207CC(void);
+extern void gParseCardDirectory(void) __asm__("func_800207CC");
+
+s32 gReadCardSlotState(u32 slot) __asm__("func_80020DF8");
 
 /**
- * @brief Returns the memory-card slot index that holds the given game id.
+ * @brief Returns the state of one card slot, refreshing the directory when its
+ * cached state is zero.
  *
- * Slots 0..15 of the card context are searched by their stored id; an empty
- * slot triggers func_800207CC (slot scan/refresh) and the value is read again.
- * Out-of-range slot numbers return -1.
- * @param slot Requested slot number.
- * @return The id stored in that slot, or -1 when out of range.
+ * @param slot Slot index from 0 through 15.
+ * @return The slot state, or -1 for an out-of-range index.
+ *
+ * @par Confirmed mechanics
+ * Rejects unsigned indices of 16 or more. Reads the state word at manager +4
+ * plus index times four, calls gParseCardDirectory if it was zero, then
+ * reloads it.
+ *
  * @par Globals
- * D_8009AB08 - card context (16 slot words).
- * @par Control flow
- * Bounds test, one refresh, one read.
- * @par Calls
- * func_800207CC - slot scan.
- * @par Side effects
- * May refresh the slot table.
+ * Reads gOperationState and the indexed state word.
+ *
  * @par Callers
- * Confirmed: the memory-card save/load paths (80020xxx block).
+ * Direct calls in the retail listing are from gFindFreeCardBlockRun.
+ *
+ * @par Role and path
+ * The free-run scan uses this accessor to distinguish state 2 from other slot
+ * states.
+ *
+ * @par Unknown
+ * Other meanings of the status words belong to the parser and card manager.
  */
-s32 func_80020DF8(u32 slot)
+s32 gReadCardSlotState(u32 slot)
 {
     if (slot < 16) {
         if (gOperationState->slots[slot] == 0) {
-            func_800207CC();
+            gParseCardDirectory();
         }
         return gOperationState->slots[slot];
     }

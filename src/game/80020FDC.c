@@ -19,12 +19,12 @@ struct Unk8009AB08 {
 };
 
 extern struct Unk8009AB08 *gOperationState __asm__("D_8009AB08");
-extern char D_80010B0C[];
+extern char gCardDevicePathFormat[] __asm__("D_80010B0C");
 
 extern s32 func_8008CD30(char *dst, char *fmt, u32 arg2, u32 arg3);
-extern s32 func_80020C90(void *arg0);
+extern s32 gFindCardFileSlot(void *arg0) __asm__("func_80020C90");
 extern void gQueueMcOpMode3(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8001F24C");
-extern s32 func_80020E68(s32 arg0);
+extern s32 gFindFreeCardBlockRun(s32 arg0) __asm__("func_80020E68");
 extern void func_80020F34(char *text, s32 index);
 extern void gQueueMcOpMode6(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm__("func_8001F2E0");
 extern u32 gGetMcPendingFlag(void) __asm__("func_8001F37C");
@@ -44,7 +44,7 @@ extern u32 gGetMcPendingFlag(void) __asm__("func_8001F37C");
  * Lookup first: an existing name updates in place; otherwise allocate a free block run, build the name packet and queue a new entry; allocation failure returns 0 early. The final flag is (unk9A4 < 1) << 13.
  *
  * @par Calls
- * func_8008CD30 - sprintf of the debug trace "bu0%1ld:%s" into a stack buffer that is not read afterwards. func_80020C90 - find the slot whose state is 1 and name matches. func_8001F24C - requeue the directory request for an existing slot. func_80020E68 - allocate ceil(size/0x2000) consecutive state-2 blocks. func_80020F34 - build the 0x80-byte name packet (header, title, XOR checksum). func_8001F2E0 - queue the new entry. func_8001F37C - read back unk9A4.
+ * func_8008CD30 - sprintf of the debug trace "bu0%1ld:%s" into a stack buffer that is not read afterwards. gFindCardFileSlot - find the slot whose state is 1 and name matches. func_8001F24C - requeue the directory request for an existing slot. gFindFreeCardBlockRun - allocate ceil(size/0x2000) consecutive state-2 blocks. func_80020F34 - build the 0x80-byte name packet (header, title, XOR checksum). func_8001F2E0 - queue the new entry. func_8001F37C - read back unk9A4.
  *
  * @par Side effects
  * Via the queue helpers: card manager request words unk998/99C/910/90C, command unk8F8 = 3 and pending flag unk9A4; name packet built for the slot.
@@ -69,17 +69,17 @@ s32 func_80020FDC(u32 arg0, u32 arg1, u32 arg2)
     __asm__("" : "=r"(p2) : "0"(p2));
     __asm__("" : "=r"(result) : "0"(result));
 
-    func_8008CD30(buf, D_80010B0C, gOperationState->unk0000 >> 4, p0);
+    func_8008CD30(buf, gCardDevicePathFormat, gOperationState->unk0000 >> 4, p0);
     a0 = p0;
     __asm__("" : "=r"(a0) : "0"(a0));
     tmp = p2 + 0x7F;
     idx = tmp >> 7;
-    slot = func_80020C90(a0);
+    slot = gFindCardFileSlot(a0);
     if (slot != 0) {
         gQueueMcOpMode3(slot << 6, idx, p1, result);
         goto tail;
     }
-    slot = func_80020E68(p2);
+    slot = gFindFreeCardBlockRun(p2);
     if (slot == 0) {
         return result;
     }
