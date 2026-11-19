@@ -20,7 +20,7 @@ extern void func_8001C040(u32 color);
 extern s32 func_8001BFE4(void);
 extern void func_8001D248(s32 arg0, s32 arg1, u8 *arg2);
 extern void func_8001F0B8(void);
-extern void func_8002333C(void);
+extern void gInitCvkStreamSubsystem(void) __asm__("func_8002333C");
 
 /**
  * @brief Brings the runtime up: heap, device layer, state block, CD-ROM and
@@ -107,7 +107,7 @@ s32 gInitRuntime(void)
     func_8001BFE4();
     func_8001D248(0, 0, D_8009B2DC);
     func_8001F0B8();
-    func_8002333C();
+    gInitCvkStreamSubsystem();
 
 done:
     return result;

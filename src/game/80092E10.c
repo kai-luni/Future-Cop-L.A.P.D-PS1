@@ -3,6 +3,8 @@ typedef unsigned int u32;
 typedef struct { int pad[2]; void (*fn)(void *, void *, int, u32); void *ctx; } Device;
 extern Device *gVramWriteCallback __asm__("D_8009DDE8");
 extern char D_80012A7C[];
+void gClearImage(void *arg0, int arg1, int arg2, int arg3) __asm__("func_80092E10");
+
 extern void func_80092CF4(char *, void *);
 /**
  * @brief Builds and sends a four-component data block to the GPU library.
@@ -18,8 +20,16 @@ extern void func_80092CF4(char *, void *);
  * `D_8009DDE8->fn(ctx, arg0, 8, packed)` - the "upload a quad of bytes" form of
  * the library API. Several `register ... __asm__` pins keep the argument
  * registers in the retail order.
+ *
+ * @par Environment path
+ * VRAM fill request: after the rectangle check (tag string ClearImage) it
+ * calls the GPU library table slot at +8 with the table argument at +0xC, the
+ * rectangle pointer, size 8 and the colour packed as (arg3 and 0xFF) shifted
+ * left 16, (arg2 and 0xFF) shifted left 8 and (arg1 and 0xFF). The debug
+ * screens func_800773D8 and func_8007757C and the playback reset
+ * func_80085AC4 call it with colour 0,0,0 to clear areas to black.
  */
-void func_80092E10(void *arg0, int arg1, int arg2, int arg3)
+void gClearImage(void *arg0, int arg1, int arg2, int arg3)
 {
     register void *a __asm__("$19") = arg0;
     register int b __asm__("$18");

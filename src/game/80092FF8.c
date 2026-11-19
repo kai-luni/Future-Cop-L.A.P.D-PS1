@@ -6,6 +6,8 @@ typedef struct { void *pad0; void *pad4; int (*send)(int, void *, int, int); cha
 extern void func_80092CF4(char *, Rect *);
 extern char gDebugTagRectEmpty[] __asm__("D_80012AAC");
 extern u32 gGpuCmdBlock[] __asm__("D_8009DE90");
+int gMoveImage(Rect *r, int a, int b) __asm__("func_80092FF8");
+
 extern Context *gVramWriteCallback __asm__("D_8009DDE8");
 /**
  * @brief Sends a rectangle to the GPU library as a 20-byte transfer command.
@@ -27,8 +29,16 @@ extern Context *gVramWriteCallback __asm__("D_8009DDE8");
  *
  * @par Callers
  * gPlayVideoFile only.
+ *
+ * @par Environment path
+ * VRAM-to-VRAM copy request: after func_80092CF4 validates the rectangle (tag
+ * string MoveImage), an empty rectangle returns -1, otherwise
+ * gGpuCmdBlock[0..2] receive the source xy, the destination (b shifted left
+ * 16) or (a and 0xFFFF), and the wh, and the table send slot is called with
+ * its argument, the block address minus 8, size 20 and 0. Called by the video
+ * frame processor func_80088120 to move image rectangles within VRAM.
  */
-int func_80092FF8(Rect *r, int a, int b)
+int gMoveImage(Rect *r, int a, int b)
 {
     register int aa __asm__("$18") = a;
     register int bb __asm__("$17") = b;

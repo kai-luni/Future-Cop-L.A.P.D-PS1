@@ -65,7 +65,7 @@ extern u16 gEffectUvV[] __asm__("D_800A8EA6");
 extern s32 func_80018580(s32 arg0, s32 arg1);
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void gWorldToMinimapCell(s32 *outX, s32 *outY, s32 arg2, s32 arg3) __asm__("func_800694C8");
-extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
+extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend) __asm__("func_8001C214");
 
 /**
  * @brief Draws the eight directional markers of one object on the radar.
@@ -271,7 +271,7 @@ ready3:
                 callY = (callY + 0x11) << 1;
                 x = sum;
                 __asm__("addu\t%0,%1,$zero" : "=r"(height) : "r"(width), "r"(callX), "r"(callY), "r"(callColor));
-                func_8001C214(callColor, callX, callY, width, height, 0);
+                gEmitTranslucentTileRect(callColor, callX, callY, width, height, 0);
             }
             __asm__("" : : "r"(i));
         }
@@ -289,7 +289,7 @@ ready3:
                 callY = (callY + 0x11) << 1;
                 x = sum;
                 __asm__("addu\t%0,%1,$zero" : "=r"(height) : "r"(width), "r"(callX), "r"(callY), "r"(callColor));
-                func_8001C214(callColor, callX, callY, width, height, 0);
+                gEmitTranslucentTileRect(callColor, callX, callY, width, height, 0);
             }
         }
 
@@ -357,7 +357,7 @@ ready3:
             callY = 0x56;
             width = 4;
             __asm__("addu\t%0,%1,$zero" : "=r"(height) : "r"(width), "r"(callX), "r"(callY), "r"(callColor));
-            func_8001C214(callColor, callX, callY, width, height, 0);
+            gEmitTranslucentTileRect(callColor, callX, callY, width, height, 0);
         }
     }
 }

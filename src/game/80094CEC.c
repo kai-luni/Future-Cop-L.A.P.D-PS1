@@ -34,6 +34,13 @@
  *
  * @par Callers
  * Confirmed: func_80094F4C (mode 0 continuation).
+ *
+ * @par Environment path
+ * Waits for the image-transfer engine to reach a frame boundary in a
+ * hand-written assembly loop. Saves/restores timing via func_800915FC, polls
+ * D_8009DED4 bit 0x100 and D_8009DEC8 bit 0x400, advances the 6-bit counter
+ * D_8009DEEC while invoking callbacks in D_800A9450, and returns (D_8009DEE8
+ * - D_8009DEEC) & 0x3F.
  */
 __asm__(
     ".text\n\t"

@@ -13,8 +13,10 @@ extern s32 gFreedPointer __asm__("D_8009F7B0");
 extern struct Node *gEffectListHead[] __asm__("D_800A8F98");
 extern u32 gFrameTime __asm__("D_8009FAA4");
 extern void *gMarkerColorTable[] __asm__("D_800A6F60");
-extern void func_8005A9C4(struct Obj *);
+extern void gDrawRadarMarkers(struct Obj *) __asm__("func_8005A9C4");
 extern void func_8005B088(s32 *, void *, s32, s32);
+void gDrawTargetMarkers(struct Obj *obj) __asm__("func_8004EDC8");
+
 
 /**
  * @brief Draws one object's sub-parts: a texpage word plus one primitive per
@@ -37,8 +39,15 @@ extern void func_8005B088(s32 *, void *, s32, s32);
  *
  * @par Likely role
  * The multi-part object renderer (vehicles and turrets made of several nodes).
+ *
+ * @par Environment path
+ * Prepares the object via func_8005A9C4, emits a 0xE100069E texpage packet
+ * into gPacketCursor/gPacketLimit, and iterates over active nodes in
+ * gEffectListHead (count in gCommandListHead[0]) and up to 8 extra controller
+ * slots to draw 2D map/radar marker icons via func_8005B088 (called by
+ * func_80047F30:193).
  */
-void func_8004EDC8(struct Obj *obj)
+void gDrawTargetMarkers(struct Obj *obj)
 {
     struct Node **p;
     struct Node *n;
@@ -48,7 +57,7 @@ void func_8004EDC8(struct Obj *obj)
     u32 flags;
     s32 type;
     s32 pos[3];
-    func_8005A9C4(obj);
+    gDrawRadarMarkers(obj);
     size = 0x5c;
     if (obj->ctl->mode == 0) size = 0xc;
     p = gEffectListHead;

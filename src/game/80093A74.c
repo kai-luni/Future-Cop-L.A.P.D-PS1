@@ -8,6 +8,8 @@ struct Packet {
     u32 command;
     u32 data;
 };
+void gSetMaskBitPacket(struct Packet *packet, int enabled) __asm__("func_80093A74");
+
 
 /**
  * @brief Builds a minimal "mask bit setting" primitive (GP0 0xE6).
@@ -20,8 +22,13 @@ struct Packet {
  * @par Difference to func_80093A4C
  * Both fields are controlled here by a single switch; func_80093A4C exposes
  * them separately.
+ *
+ * @par Environment path
+ * Builds the GP0 E6 mask setting packet: bit 0 (force the mask bit on drawn
+ * pixels) follows the flag, bit 1 (check mask before drawing) stays 0, and
+ * the trailing word is 0. No caller references it in the sources.
  */
-void func_80093A74(struct Packet *packet, int enabled)
+void gSetMaskBitPacket(struct Packet *packet, int enabled)
 {
     packet->length = 2;
     if (enabled)

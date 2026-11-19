@@ -61,9 +61,9 @@ extern s8 gScreenDescriptor[] __asm__("D_800A3838");
 extern u8 gCwRulesMovieName[] __asm__("D_80012088");
 extern u8 gMultiBrfMovieName[] __asm__("D_80012094");
 
-extern void func_80082AB0(s32, s32, s32, s32, s32, s32, s32, s32, s32);
+extern void gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
 extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
-extern void func_80082B0C(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawAtlasSprite(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082B0C");
 extern s32 func_8008CD30(u8 *, u8 *, s32);
 extern void func_8008CCB0(u8 *, u8 *);
 extern s32 func_8008CCA0(u8 *, u8 *);
@@ -125,8 +125,8 @@ void gDrawProfileSlotList(s32 arg0)
     }
 
     neg = -1;
-    func_80082AB0(9, 0x24, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
-    func_80082AB0(8, 0x93, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
+    gEmitAtlasSpriteSimple(9, 0x24, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
+    gEmitAtlasSpriteSimple(8, 0x93, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
 
     end = (s8)gMissionListMaxIndex - (s8)gMissionListMinIndex + 1;
     i = (s8)gMissionListMinIndex;
@@ -212,7 +212,7 @@ void gDrawProfileSlotList(s32 arg0)
             }
         }
 
-        func_80082B0C(len, e->unk16, e->unk18, -1, -1, 0xF, c3, c2, c1, 1, 8);
+        gDrawAtlasSprite(len, e->unk16, e->unk18, -1, -1, 0xF, c3, c2, c1, 1, 8);
         i++;
     } while (i < end);
 }

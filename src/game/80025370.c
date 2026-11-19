@@ -12,10 +12,12 @@ extern int gFileSearchGroup __asm__("D_8009F238");
 extern int gUploadInProgress __asm__("D_8009F9C4");
 extern void func_8008CD30(char *, char *, int, char *);
 extern void func_8001E110(char *, int, void **, int *, int);
-extern void func_800861E4(void *, int, int, int);
+extern void gDecodeMdecFrameToVram(void *, int, int, int) __asm__("func_800861E4");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
-extern void func_8002549C(int);
+extern void gEmitSplitScreenBlit(int) __asm__("func_8002549C");
 extern void func_8001B4A8(int);
+int gShowLoadingScreen(void) __asm__("func_80025370");
+
 
 /**
  * @brief Loads and displays the loading-screen image (*.lsc) selected by the
@@ -60,8 +62,20 @@ extern void func_8001B4A8(int);
  * @par Unknown
  * The meaning of the per-entry @c value byte (0 or 1) beyond being passed to
  * the upload routine, and of D_8009F238 (zero in the retail image).
+ *
+ * @par Environment path
+ * Loading-screen draw step: only when gLoadScreenRequest is 0 and
+ * gLoadScreenIndex is below 23, it formats the file name with func_8008CD30
+ * (format gNameFormatPair, prefix gPathPrefixPA for type 1 else
+ * gPathPrefixCW), loads the file with func_8001E110 into a fresh block and,
+ * with gDecodeAllocMode forced to 1, decodes the two images with
+ * func_800861E4 to destination arguments 320,0 and 320,256. It then frees the
+ * block, emits the two-sprite screen blit via func_8002549C(0) and calls
+ * func_8001B4A8(1); gLoadScreenRequest is cleared on every exit. Callers are
+ * the front-end frame func_800259D8 and the main loop func_80076A2C, which
+ * writes the index.
  */
-int func_80025370(void)
+int gShowLoadingScreen(void)
 {
     char buffer[40];
     void *data = 0;
@@ -82,15 +96,15 @@ int func_80025370(void)
         if (data) {
             saved = gUploadInProgress;
             gUploadInProgress = 1;
-            func_800861E4((char *)data + 8, entry->value, 320, 0);
+            gDecodeMdecFrameToVram((char *)data + 8, entry->value, 320, 0);
             {
                 register char *base __asm__("$2");
                 base = (char *)data;
-                func_800861E4(base + (*(int *)base + 8), entry->value, 320, 256);
+                gDecodeMdecFrameToVram(base + (*(int *)base + 8), entry->value, 320, 256);
             }
             gUploadInProgress = saved;
             gFreeBlock(data);
-            func_8002549C(0);
+            gEmitSplitScreenBlit(0);
             func_8001B4A8(1);
         }
     }

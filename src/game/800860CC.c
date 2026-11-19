@@ -7,6 +7,8 @@ extern void *gWorkAreaBlock __asm__("D_8009F950");
 extern void *D_8009F954;
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+void gAllocDecodeBuffers(void) __asm__("func_800860CC");
+
 
 /**
  * @brief Allocates the four static working buffers of the image decoder.
@@ -41,8 +43,14 @@ extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
  *
  * @par Callers
  * Confirmed: func_80024A24 (mission boot).
+ *
+ * @par Environment path
+ * Not a draw routine, but it provisions the image decode/upload path:
+ * allocates the static working set used by func_800861E4 when it is not in
+ * its allocating mode, all from the tag-2 pool. Called once by the mission
+ * boot func_80024A24; func_80086164 frees the same globals.
  */
-void func_800860CC(void)
+void gAllocDecodeBuffers(void)
 {
     D_8009F948 = (void *)0;
     D_8009F94C = (void *)0;

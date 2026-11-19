@@ -16,6 +16,8 @@ extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 *volatile gGpuGp0PortPtr __asm__("D_8009DEC4");
 extern void func_800951D8(void);
 extern int func_8009520C(void);
+int gUploadImageToGpu(u16 *hdr_, u32 *data_) __asm__("func_8009446C");
+
 
 /**
  *  @brief Sends an image header and pixel data to the graphics hardware.
@@ -35,8 +37,15 @@ extern int func_8009520C(void);
  *  Modifies the header and writes graphics and DMA registers; DMA may continue after return.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Environment path
+ * Uploads a pixel rectangle to GPU VRAM via GP0 and DMA2. Calls
+ * func_800951D8, clamps width/height to D_8009DDF4/D_8009DDF6, polls
+ * D_8009DEC8 bit 0x4000000 with func_8009520C, sends GP0 0xA0000000 plus the
+ * clamped rect header, writes unaligned words to D_8009DEC4, and launches
+ * DMA2 for 16-word blocks.
  */
-int func_8009446C(u16 *hdr_, u32 *data_)
+int gUploadImageToGpu(u16 *hdr_, u32 *data_)
 {
     u32 *data = data_;
     u16 *hdr = hdr_;

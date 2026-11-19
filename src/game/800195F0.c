@@ -1,5 +1,7 @@
 // Categories: Utilities > Bit Manipulation | Graphics > Textures
 #include "game/types.h"
+s32 gCountTrailingZeros(u32 value) __asm__("func_800195F0");
+
 
 /**
  * @brief Counts trailing zero bits in a 32-bit unsigned value (lowest set bit index).
@@ -23,8 +25,14 @@
  *
  * @par Callers
  * Confirmed: func_8005A2BC (0x8005A33C in asm/us/main.s, converts byte +3 of sprite/tile entry into shift/exponent) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Pure bit utility that feeds the texture descriptor path, not a draw
+ * routine: returns 0..31 as the lowest set bit position, i.e. log2 for a
+ * power-of-two input, or 32 for 0. func_8005A2BC applies it to byte 3 of each
+ * atlas block when building its descriptor table.
  */
-s32 func_800195F0(u32 value)
+s32 gCountTrailingZeros(u32 value)
 {
     s32 count;
 

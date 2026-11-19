@@ -38,10 +38,10 @@ extern Unk8009C0A8 gLoadoutTable[] __asm__("D_8009C0A8");
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 
-extern UnkBox *func_80082AB0(s32, s32, s32, s32, s32, s32, s32, s32, s32);
-extern UnkBox *func_80082B0C(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
-extern void func_80082EF0(s32, s32, s32, s32, s32, s32, s32, s32);
-extern void func_80083060(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+extern UnkBox *gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
+extern UnkBox *gDrawAtlasSprite(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082B0C");
+extern void gEmitFlatQuadRect(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082EF0");
+extern void gEmitFlatQuad(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80083060");
 extern UnkFont *func_80048E88(void);
 extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
 
@@ -147,9 +147,9 @@ void gDrawLoadoutListRow(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
     e = (Unk8009C0A8 *)((u32)(idx * 20) + base);
     __asm__ volatile("" : : "r"(e));
     shade = (e->unk4[gActivePlayerIndex] > e->unkA) ? 0x30 : 0x80;
-    box = func_80082AB0(c, x, y, -1, -1, 0x14, shade, 1, 8);
+    box = gEmitAtlasSpriteSimple(c, x, y, -1, -1, 0x14, shade, 1, 8);
     if (box != 0) {
-        func_80082EF0(box->unk8 - c3, box->unkA - c3,
+        gEmitFlatQuadRect(box->unk8 - c3, box->unkA - c3,
                       (box->unk10 - box->unk8) + c3 * 2,
                       (box->unk1A - box->unkA) + c3 * 2,
                       0xBB8, c0, c1, c2);
@@ -166,13 +166,13 @@ void gDrawLoadoutListRow(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
             s2 = s0 - 3;
             s6 = x + 3;
             s4 = 2;
-            func_80083060(x, y + 3, s6, y, s3, s0, s1, s2, 0, 0xFF, 0, 0, s4);
-            func_80083060(x, s2, s6, s0, s3, y, s1, y + 3, 0, 0xFF, 0, 0, s4);
+            gEmitFlatQuad(x, y + 3, s6, y, s3, s0, s1, s2, 0, 0xFF, 0, 0, s4);
+            gEmitFlatQuad(x, s2, s6, s0, s3, y, s1, y + 3, 0, 0xFF, 0, 0, s4);
         }
         if (flag && gFontBankTable[5] != 2) {
-            s2 = (s32)func_80082B0C(e->unkF, e->unk10, e->unk12, -1, -1, 0x14, c0, c1, c2, 1, 8);
+            s2 = (s32)gDrawAtlasSprite(e->unkF, e->unk10, e->unk12, -1, -1, 0x14, c0, c1, c2, 1, 8);
             if (e->unk11) {
-                func_80082B0C(e->unkF, e->unk11, e->unk12, -1, -1, 0x14, c0, c1, c2, 1, 8);
+                gDrawAtlasSprite(e->unkF, e->unk11, e->unk12, -1, -1, 0x14, c0, c1, c2, 1, 8);
             }
             if (s2 != 0) {
                 s0 = ((UnkBox *)s2)->unkA;
@@ -185,7 +185,7 @@ void gDrawLoadoutListRow(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
                 bw = 0x7E - bx;
                 __asm__("" : "+r"(s1) : "r"(ay), "r"(bw));
                 s1 = s1 + (((s32)base - s1) >> 1);
-                func_80082EF0(bx, ay, bw, 1, ten, 0x60, 0xC0, 0xFF);
+                gEmitFlatQuadRect(bx, ay, bw, 1, ten, 0x60, 0xC0, 0xFF);
                 bx = 0x7E;
                 __asm__("" : "+r"(s0) : "r"(bx));
                 s0 = s0 - s1;
@@ -194,10 +194,10 @@ void gDrawLoadoutListRow(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
                 bw = 1;
                 __asm__("" : "+r"(s0) : "r"(ay), "r"(bw));
                 s0 = (dx + s0) ^ dx;
-                func_80082EF0(bx, ay, bw, s0 + 1, ten, 0x60, 0xC0, 0xFF);
+                gEmitFlatQuadRect(bx, ay, bw, s0 + 1, ten, 0x60, 0xC0, 0xFF);
                 dx = box->unk8;
                 __asm__("" : "+r"(dx) : "r"(s1));
-                func_80082EF0(0x7E, s1, box->unk8 - 0x7E - c3, 1, ten, 0x60, 0xC0, 0xFF);
+                gEmitFlatQuadRect(0x7E, s1, box->unk8 - 0x7E - c3, 1, ten, 0x60, 0xC0, 0xFF);
             }
         }
         y -= 1;
@@ -207,7 +207,7 @@ void gDrawLoadoutListRow(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
         x = 0xC1;
         y += 2;
     }
-    func_80082AB0(gLoadoutTable[idx].unkE, x + 1, y - 2, -1, -1, 0x14, 0x80, 1, 8);
+    gEmitAtlasSpriteSimple(gLoadoutTable[idx].unkE, x + 1, y - 2, -1, -1, 0x14, 0x80, 1, 8);
     font = func_80048E88();
     func_800788F0(0, x, y + font->unk6, 0x10, *(u16 *)(p + 4), 1, 8, 2);
 }

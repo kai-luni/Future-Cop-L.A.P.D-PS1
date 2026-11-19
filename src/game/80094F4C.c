@@ -23,7 +23,7 @@ extern u32 func_800915FC(u32 a0);
 extern u32 func_80095350(u32 a0);
 extern void func_80095830(unsigned char *destination, int value, unsigned int count);
 extern void func_800951D8(void);
-extern void func_80094CEC(void);
+extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
 extern s32 func_8009520C(void);
 
 /**

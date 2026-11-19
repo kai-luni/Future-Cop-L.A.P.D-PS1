@@ -1,5 +1,5 @@
 // Categories: Platform > GPU | Platform > DMA
-extern void func_80094CEC(void);
+extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
 extern void func_800914E0(int, void (*)(void));
 
 /**

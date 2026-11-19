@@ -82,12 +82,14 @@ extern s32 gTestFrustumFixedNear(s16 *point, s32 margin) __asm__("func_80019D90"
 extern s32 func_800584BC(s32 message, struct State597C0 *object, void *hit, s32 arg3, s32 arg4);
 extern void func_8005920C(struct Object597C0 *object, void *spawn, s32 arg2);
 extern void gDrawOtherPlayerArrow(struct State597C0 *state) __asm__("func_800592D0");
-extern void func_800596C4(struct State597C0 *state);
+extern void gEmitObjectBeamSegment(struct State597C0 *state) __asm__("func_800596C4");
 extern void gGteTransformVertices(s16 *a, s16 *b, s32 c) __asm__("func_8001010C");
 extern void gProjectVertexBatch(s16 *a, s16 *b, s16 *c, s32 d) __asm__("func_8001047C");
 extern void gGteLoadRotation(u8 *a) __asm__("func_80010820");
 extern void gEmitGouraudDisc(s16 *a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) __asm__("func_8001484C");
 extern s32 gEntityBaseHandler(s32 kind, struct Object597C0 *object, void *arg2, s32 arg3) __asm__("func_8002AD58");
+void gDrawGlowDiscEffect(struct Object597C0 *object) __asm__("func_800597C0");
+
 
 /**
  * @brief Draw handler of one effect object: re-arms its model instances, then
@@ -194,8 +196,15 @@ extern s32 gEntityBaseHandler(s32 kind, struct Object597C0 *object, void *arg2, 
  * func_80059ABC, recorded at 0x80059ABC (direct call at 0x80059B40), from its
  * message 3 branch; the handler returns 5 afterwards. That dispatcher has no
  * direct caller in analysis/edges.json.
+ *
+ * @par Environment path
+ * Draw handler for the player/effect object (called from func_80059ABC:87).
+ * Submits five model instances via gSubmitModelInstance with polygon-group
+ * masks derived from info->unkBC, calls gDrawOtherPlayerArrow, and emits two
+ * translucent discs via gEmitGouraudDisc at parts from gDiscPartIndexTable
+ * when gTestFrustumFixedNear(loc.point, 0x700) == 2.
  */
-void func_800597C0(struct Object597C0 *object)
+void gDrawGlowDiscEffect(struct Object597C0 *object)
 {
     struct State597C0 *state;
     struct Info597C0 *info;
@@ -304,5 +313,5 @@ void func_800597C0(struct Object597C0 *object)
         i++;
     } while (i < 2);
 
-    func_800596C4(object->state);
+    gEmitObjectBeamSegment(object->state);
 }

@@ -8,11 +8,13 @@ typedef struct { u32 addr:24; u32 len:8; u8 r,g,b,code; short x,y; u8 u,v; u16 c
 typedef struct { u16 n; s8 a; s8 b; u32 t[2]; } Ent;
 extern Ent gDescriptorTable[] __asm__("D_8009B32C");
 extern s8 gOverlayDelay __asm__("D_8009F874");
-extern u8 D_8009F876;
+extern u8 gScreenUploadFlag __asm__("D_8009F876");
 extern int **gPublishedBlockPtr __asm__("D_8009F3F4");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
-extern void func_800861E4(int, int, int, int);
+extern void gDecodeMdecFrameToVram(int, int, int, int) __asm__("func_800861E4");
+void gComposeScreenSlices(int idx) __asm__("func_800826AC");
+
 
 /**
  * @brief Composes the two-frame image block of one screen and uploads the slices.
@@ -35,8 +37,15 @@ extern void func_800861E4(int, int, int, int);
  *
  * @par Unknown
  * The record layout of D_8009B32C beyond its two-entry structure.
+ *
+ * @par Environment path
+ * Composes a 320x240 front-end/pause screen from descriptor table
+ * D_8009B32C[idx] and caches idx in D_8009F874. Uploads referenced image
+ * slices from D_8009F3F4 via func_800861E4, then emits two
+ * 0xE1000105/0xE1000115 draw-mode packets and two 160x240 0x64 sprites into
+ * D_8009FA90.
  */
-void func_800826AC(int idx)
+void gComposeScreenSlices(int idx)
 {
     register int cur __asm__("$2");
     register u32 val __asm__("$3");
@@ -100,7 +109,7 @@ void func_800826AC(int idx)
             s = g;
             for (; j < 2; j++, s++) {
                 { register int m2 __asm__("$2") = -1; if (s[1] != m2)
-                    func_800861E4(*gPublishedBlockPtr[tab[e].t[j]], D_8009F876, s[1] + 0x140, off + s[3]); }
+                    gDecodeMdecFrameToVram(*gPublishedBlockPtr[tab[e].t[j]], gScreenUploadFlag, s[1] + 0x140, off + s[3]); }
                 off += 0x100;
             }
         }

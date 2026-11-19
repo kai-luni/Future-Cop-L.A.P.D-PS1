@@ -58,7 +58,7 @@ extern void gDecodeButtonEdge(u32 buttons, struct InputAction *action) __asm__("
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern void func_80046A34(s32 handle);
 extern s32 func_80049340(u8 *text);
-extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
+extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void func_80047690(u8 enable);
 extern void func_80069D0C(s32 amount);
 extern void func_8004CD6C(s32 message, s32 arg2, s32 arg3);
@@ -78,7 +78,7 @@ extern void func_80026E5C(s32 arg0, s32 arg1);
 extern void func_80026F68(s32 arg0, s32 arg1);
 extern void func_80031DE8(s32 arg0);
 extern void gRunEntityWorldTick(s32 arg0) __asm__("func_8003F570");
-extern void func_80047F30(s32 arg0);
+extern void gDrawInGameHud(s32 arg0) __asm__("func_80047F30");
 extern void func_8004CECC(void);
 extern void func_8004DF28(void);
 extern void func_800616A0(s32 arg0);
@@ -161,7 +161,7 @@ void gRunSoloSessionFrame(void)
         if (gFrameTickCounter & 0x80) {
             color = 9;
         }
-        func_80049100(text, x, 0xB4, color);
+        gDrawAlignedString(text, x, 0xB4, color);
         flags |= 0x20;
     }
 
@@ -195,12 +195,12 @@ void gRunSoloSessionFrame(void)
         func_80026F68(0, 1);
         unk = (struct Unk9A0 *)gFocusPositions[0];
         if (unk == 0 || unk->unk11F == 0) {
-            func_80047F30((s32)gPlayerEntities);
+            gDrawInGameHud((s32)gPlayerEntities);
         }
     }
 
     if (gDemoPlayback > 0 && (gFrameTime & 0x100)) {
-        func_80049100(gBannerString, 0x91, 0x14, 1);
+        gDrawAlignedString(gBannerString, 0x91, 0x14, 1);
     }
 
     func_8001BBAC();

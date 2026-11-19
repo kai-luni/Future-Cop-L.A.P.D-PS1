@@ -40,8 +40,8 @@ extern void gMovieDecodeVlcStream(u8 *arg0, s32 arg1) __asm__("func_80089BBC");
 extern void func_80095E90(s32 option);
 extern u32 gMdecReadHalfword(u16 *value) __asm__("func_80095FE8");
 extern void gMdecStartDecode(s32 arg0, s32 arg1) __asm__("func_80095FF4");
-extern void func_80096070(s32 destination, u32 size);
-extern s32 func_800960CC(s32 mode);
+extern void gStartMdecOutDma(s32 destination, u32 size) __asm__("func_80096070");
+extern s32 gMdecOutSync(s32 mode) __asm__("func_800960CC");
 
 /**
  * @brief Decodes and uploads one video/frame slice on the interrupt-driven path,
@@ -217,14 +217,14 @@ void gMovieSliceFeedDma(u8 *data, s32 input_arg1, s32 input_arg2)
 
             prod = (s32)(s16)v20 * (s32)(s16)v22;
         }
-        func_80096070(gMovieSliceContext->field24, (u32)(prod / 2));
+        gStartMdecOutDma(gMovieSliceContext->field24, (u32)(prod / 2));
 
         if (magic == 0x4D444543) {
             gMovieDecodeVlcStream(payload,
                           gMovieSliceContext->field28[gMovieSliceContext->field30]);
         }
 
-        func_800960CC(0);
+        gMdecOutSync(0);
 
         {
             register struct State *sp __asm__("$4");

@@ -59,7 +59,7 @@ struct Entity {
 extern struct Block *gDomeEffectBlock[4] __asm__("D_800A22F0");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void *func_8006C84C(s32 arg0, s32 arg1);
+extern void *gBuildDomePatchMesh(s32 arg0, s32 arg1) __asm__("func_8006C84C");
 extern void func_8005CEA8(struct Sub *state);
 
 /**
@@ -108,7 +108,7 @@ struct Block *func_8005D3FC(struct Entity *ent, s32 idx)
 
             if (ent->unk16 == 1) {
                 if (*(s16 *)(ent->unkAC + (idx << 1) + 0x8A) > 0) {
-                    (*p)->unk00 = func_8006C84C(0x100, 9);
+                    (*p)->unk00 = gBuildDomePatchMesh(0x100, 9);
                     (*p)->unk1AB = c7F;
                     (*p)->unk1AC = c60;
                     (*p)->unk1AD = 0;
@@ -116,7 +116,7 @@ struct Block *func_8005D3FC(struct Entity *ent, s32 idx)
                     (*p)->unk1A9 = c40;
                     (*p)->unk1AA = c60;
                 } else {
-                    (*p)->unk00 = func_8006C84C(0x100, 9);
+                    (*p)->unk00 = gBuildDomePatchMesh(0x100, 9);
                     (*p)->unk1AB = c60;
                     (*p)->unk1AC = 0x30;
                     (*p)->unk1AD = 0;
@@ -125,7 +125,7 @@ struct Block *func_8005D3FC(struct Entity *ent, s32 idx)
                     (*p)->unk1AA = c40;
                 }
             } else {
-                (*p)->unk00 = func_8006C84C(0x200, 0xD);
+                (*p)->unk00 = gBuildDomePatchMesh(0x200, 0xD);
                 (*p)->unk1AB = c7F;
                 (*p)->unk1AC = c7F;
                 (*p)->unk1AD = c7F;

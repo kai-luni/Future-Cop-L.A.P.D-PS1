@@ -59,6 +59,8 @@ typedef struct {
 extern Table82B0C *gAtlasTable __asm__("D_8009F45C");
 extern Prim82B0C *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim82B0C *gPrimPoolEnd __asm__("D_8009FA28");
+Prim82B0C *gDrawAtlasSprite(register s32 idx, s32 x, s32 y, s32 w, s32 h, s32 tag, s32 r, s32 g, s32 b, s8 flagX, s8 flagY) __asm__("func_80082B0C");
+
 
 /**
  * @brief Emits a sprite from the texture atlas table, with optional size and UV
@@ -81,8 +83,15 @@ extern Prim82B0C *gPrimPoolEnd __asm__("D_8009FA28");
  * @par Likely role
  * The HUD/front-end sprite emitter: one call per sprite, with the atlas built
  * once at load time.
+ *
+ * @par Environment path
+ * Looks up entry idx in gAtlasTable, resolves -1 dimensions and alignment
+ * flags (flagX/flagY), allocates a 0x34-byte packet from
+ * gPrimPoolNext/gPrimPoolEnd, and emits a textured quad (POLY_FT4, code 0x2C,
+ * len 9) with entry UVs, CLUT, and tpage (called by func_8007B460,
+ * func_8007D7CC, func_80082AB0).
  */
-Prim82B0C *func_80082B0C(register s32 idx, s32 x, s32 y, s32 w, s32 h, s32 tag, s32 r, s32 g, s32 b, s8 flagX, s8 flagY)
+Prim82B0C *gDrawAtlasSprite(register s32 idx, s32 x, s32 y, s32 w, s32 h, s32 tag, s32 r, s32 g, s32 b, s8 flagX, s8 flagY)
 {
     Table82B0C *table;
     Entry82B0C *e;

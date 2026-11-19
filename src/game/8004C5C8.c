@@ -82,7 +82,7 @@ extern void gGteLoadRotation(s32 *p) __asm__("func_80010820");
 extern void gGteTransformWords(s32 *src, s32 *dst, s32 n) __asm__("func_8001006C");
 extern void gGteLoadMatrix(s32 *m) __asm__("func_80010750");
 extern void gProjectVertexBatch(struct Sub4C5C8 *sub, struct Work50 *w, u8 *out, u8 idx) __asm__("func_8001047C");
-extern void func_800172A8(s32 idx, u8 a1, s32 a2, struct Work50 *work);
+extern void gEmitFlatShadedPoly(s32 idx, u8 a1, s32 a2, struct Work50 *work) __asm__("func_800172A8");
 void gDrawDebrisFragments(struct Node4C5C8 *arg0, s32 *arg1) __asm__("func_8004C5C8");
 
 
@@ -232,7 +232,7 @@ void gDrawDebrisFragments(struct Node4C5C8 *arg0, s32 *arg1)
             gProjectVertexBatch(sub, wp, f.out, idx);
             if (!((f.out[0] | f.out[1] | f.out[2] | f.out[idx - 1]) & 1)) {
                 f.work.unk20 = sub->unk20;
-                func_800172A8(idx, sub->unk29, cur->unk80 + sub->unk2A, wp);
+                gEmitFlatShadedPoly(idx, sub->unk29, cur->unk80 + sub->unk2A, wp);
             }
             sub = sub->unk48;
         }

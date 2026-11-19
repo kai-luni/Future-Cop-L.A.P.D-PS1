@@ -39,7 +39,7 @@ extern struct FontEntry gGlyphEntryTable[] __asm__("D_800A19A0");
 extern s32 gFontBankCount __asm__("D_8009F364");
 
 extern s32 func_800489EC(unsigned char *value);
-extern void func_80048BF8(s32 index);
+extern void gLoadFontAsset(s32 index) __asm__("func_80048BF8");
 extern s32 func_80048E28(s32 index);
 
 /**
@@ -122,7 +122,7 @@ void func_80048A14(s32 arg0, s32 *arg1)
     e->f00 = (s16)func_800489EC((u8 *)info);
     e->f0E = (s16)((((info->f04 * func_800489EC((u8 *)info)) + 0x1F) & ~0x1F) >> 3);
 
-    func_80048BF8(gFontBankCount);
+    gLoadFontAsset(gFontBankCount);
     gFontBankCount++;
     if (gFontBankCount == 1) {
         func_80048E28(0);

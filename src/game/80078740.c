@@ -3,7 +3,7 @@
 
 extern u8 *gFontBankTable __asm__("D_8009F468");
 extern u8 D_8009F875;
-extern u8 D_8009F876;
+extern u8 gScreenUploadFlag __asm__("D_8009F876");
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
 extern u8 gMenuSetupCalled __asm__("D_8009F8CC");
@@ -52,7 +52,7 @@ s32 gPopMenuPanel(void)
         gSyncMenuFontBank();
         if ((s8)gFontBankTable[3] != -1) {
             D_8009F875 = gFontBankTable[3];
-            D_8009F876 = gFontBankTable[4];
+            gScreenUploadFlag = gFontBankTable[4];
         }
         ret = 1;
     }

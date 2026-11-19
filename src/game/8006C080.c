@@ -21,7 +21,9 @@ struct Arg6C080 {
 
 extern void gRegistryFind(u8 id) __asm__("func_8006AAEC");
 extern void func_800491F8(s32 value, s32 x, s32 y, s32 color);
-extern void func_8006BF44(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gEmitStatusSlotIcon(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8006BF44");
+void gDrawThreeSlotStatusBar(struct Arg6C080 *arg0) __asm__("func_8006C080");
+
 
 /**
  * @brief Draws the three-slot status bar (icons plus counters).
@@ -41,8 +43,14 @@ extern void func_8006BF44(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
  * @par Likely role
  * The weapon/item bar: three slots at fixed 0x29 spacing, each with icon, count
  * and a highlighted frame.
+ *
+ * @par Environment path
+ * Draws a three-slot HUD status bar by looping i = 0..2 and calling
+ * func_8006BF44 for each 16x16 icon (highlighted when arg0->unk48 == i) and
+ * func_800491F8 for its numeric counter at y = 0x22 (called by
+ * func_80047F30:181).
  */
-void func_8006C080(struct Arg6C080 *arg0)
+void gDrawThreeSlotStatusBar(struct Arg6C080 *arg0)
 {
     s32 i;
     struct Unk6C080 *d;
@@ -63,7 +71,7 @@ void func_8006C080(struct Arg6C080 *arg0)
             flag = 1;
             func_800491F8(d->field8A[i], x, 0xCE, (gFrameTime & 0x40) ? 0x9 : 0xC);
         }
-        func_8006BF44(i, (*(u8 *)((u32)d->fieldC1 + (u32)base) != 0 || flag != 0) ? 1 : 0, y, 0xE0);
+        gEmitStatusSlotIcon(i, (*(u8 *)((u32)d->fieldC1 + (u32)base) != 0 || flag != 0) ? 1 : 0, y, 0xE0);
         func_800491F8((*(u8 *)((u32)d->fieldC1 + (u32)base) != 0) ? d->field8A[i] : d->field84[i], x, 0xD8, 8);
     }
     {
@@ -78,9 +86,9 @@ void func_8006C080(struct Arg6C080 *arg0)
         __asm__("" : "=r"(c) : "0"(c));
         arr = gPlayerInvulnerable;
         __asm__("" : "=r"(arr) : "0"(arr));
-        func_8006BF44(a0, *(u8 *)((u32)c + (u32)arr), a2, 0xE0);
+        gEmitStatusSlotIcon(a0, *(u8 *)((u32)c + (u32)arr), a2, 0xE0);
     }
     if (gSinglePlayerEntity[0] != 0) {
-        func_8006BF44(-1, 0, 0x124, 0xE0);
+        gEmitStatusSlotIcon(-1, 0, 0x124, 0xE0);
     }
 }

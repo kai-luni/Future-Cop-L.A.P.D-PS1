@@ -76,10 +76,10 @@ extern Upgrade gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern s32 gScalarCursor[] __asm__("D_8009F8F8");
-extern u8 D_800A3928[];
+extern u8 gNameEntryGlyphBuf[] __asm__("D_800A3928");
 extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 extern u8 gMenuActivationBlock[] __asm__("D_800A3718");
-extern u8 *D_8009F878;
+extern u8 *gNameEntryAlphabet __asm__("D_8009F878");
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
@@ -123,8 +123,8 @@ extern void func_80078210(void);
 extern void func_80080B70(void);
 extern void func_800492A0(u8 *, s32 *, s32 *);
 extern FontEntry *func_80048E88(void);
-extern void func_80082EF0(s32, s32, s32, s32, u32, s32, s32, s32);
-extern void func_80049100(u8 *, s32, s32, s32);
+extern void gEmitFlatQuadRect(s32, s32, s32, s32, u32, s32, s32, s32) __asm__("func_80082EF0");
+extern void gDrawAlignedString(u8 *, s32, s32, s32) __asm__("func_80049100");
 extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
 
 #define SLOT(i) (((SaveSlot *)((u8 *)gSaveProfileImage + 0x428))[i])

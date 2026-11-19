@@ -22,12 +22,12 @@ extern u8 *gFocusPositions __asm__("D_8009F9A0");
 extern u8 *gPlayerEntities[] __asm__("D_8009FA58");
 
 extern void func_8001BFD8(u8 value);
-extern void func_80025370(void);
+extern void gShowLoadingScreen(void) __asm__("func_80025370");
 extern void gMoviePrepareDecodeTables(void) __asm__("func_80086134");
-extern void func_80092660(u32 *arg0, s16 *arg1, s32 arg2, s32 arg3);
+extern void gSetDrawMovePacket(u32 *arg0, s16 *arg1, s32 arg2, s32 arg3) __asm__("func_80092660");
 extern void func_8001B4A8(s32 arg0);
 extern u8 func_8002385C(void);
-extern void func_80025690(void);
+extern void gDrawScreenFadeQuad(void) __asm__("func_80025690");
 extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 extern void func_80047690(u8 enable);
 extern void func_8006AB38(void *arg0);
@@ -86,7 +86,7 @@ s32 gPrepareAndSubmitFrame(void)
     gFrameDelta = 5;
 
     func_8001BFD8(0);
-    func_80025370();
+    gShowLoadingScreen();
 
     if (gUploadInProgress == 0) {
         gMoviePrepareDecodeTables();
@@ -128,7 +128,7 @@ s32 gPrepareAndSubmitFrame(void)
         rect[1] = height - half;
         rect[2] = 0x140;
         *(s16 *)&rect[3] = 0xF0;
-        func_80092660(p, rp, zero, color);
+        gSetDrawMovePacket(p, rp, zero, color);
     }
     func_8001B4A8(1);
 
@@ -136,7 +136,7 @@ s32 gPrepareAndSubmitFrame(void)
         if (gScreenState == mode && func_8002385C() != 0) {
             break;
         }
-        func_80025690();
+        gDrawScreenFadeQuad();
         gLoadQueuedAssets();
     }
 

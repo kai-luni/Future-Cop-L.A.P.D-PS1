@@ -17,7 +17,7 @@ extern Slot gObjectSlots[] __asm__("D_800A0A00");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_800235D4(s32 id);
-extern void func_80023478(void);
+extern void gShutdownCvkSystem(void) __asm__("func_80023478");
 
 /**
  * @brief Sweeps the eight fixed slots of D_800A0A00 and retires their resources.
@@ -57,7 +57,7 @@ s32 func_8002385C(void)
                 ret = 0;
                 if (slot->time < gFrameTickCounter) {
                     ret = 1;
-                    func_80023478();
+                    gShutdownCvkSystem();
                     break;
                 }
             }

@@ -12,8 +12,8 @@ typedef struct {
 
 extern Unk8009F4BC *gMovieSliceContext __asm__("D_8009F4BC");
 
-extern s32 func_80096090(s32 mode);
-extern s32 func_800960CC(s32 mode);
+extern s32 gMdecInSync(s32 mode) __asm__("func_80096090");
+extern s32 gMdecOutSync(s32 mode) __asm__("func_800960CC");
 extern void func_80092C8C(s32 arg);
 extern void func_8008C9C0(void);
 extern DecDctCallback func_8009612C(DecDctCallback callback);
@@ -50,8 +50,8 @@ void gMovieStopAndRestoreCallbacks(void) __asm__("func_80085A24");
 void gMovieStopAndRestoreCallbacks(void)
 {
     if (gMovieSliceContext != 0) {
-        func_80096090(0);
-        func_800960CC(0);
+        gMdecInSync(0);
+        gMdecOutSync(0);
         func_80092C8C(0);
         func_8008C9C0();
 

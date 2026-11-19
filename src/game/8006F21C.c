@@ -19,6 +19,8 @@ typedef struct {
 } Prim;
 extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
+void gEmitTracerGouraudQuad(DVECTOR v0, DVECTOR v1, DVECTOR v2, DVECTOR v3, s32 dx, s32 dy_in, u32 unk04, u32 unk1C, u16 tag_in) __asm__("func_8006F21C");
+
 
 /**
  * @brief Emits a 52-byte textured quad packet from four screen vertices.
@@ -43,8 +45,18 @@ extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
  *
  * @par Callers
  * func_8006F310 (the model draw entry).
+ *
+ * @par Environment path
+ * Takes a 0x34-byte packet from the gPrimPoolNext pool, sets length 8 and the
+ * low 24 link bits to the tag argument, then lays out a Gouraud quad: rgb0
+ * plus code (from the caller) with xy0 = v0 + d, rgb1 = 0 with xy1 = v2 + d,
+ * rgb2 = 0 with xy2 = v0, rgb3 = caller value with xy3 = v2; the v1 and v3
+ * parameters are unused. func_8006F310 calls it four times (offset plus and
+ * minus d, for two endpoint pairs) right after emitting texpage E10006A0
+ * (blend bits 5-6 = 1, additive), so the quads form an additive band that
+ * fades to black along the offset edge.
  */
-void func_8006F21C(DVECTOR v0, DVECTOR v1, DVECTOR v2, DVECTOR v3, s32 dx, s32 dy_in, u32 unk04, u32 unk1C, u16 tag_in) {
+void gEmitTracerGouraudQuad(DVECTOR v0, DVECTOR v1, DVECTOR v2, DVECTOR v3, s32 dx, s32 dy_in, u32 unk04, u32 unk1C, u16 tag_in) {
     register s32 dy __asm__("$8") = dy_in;
     register u16 tag __asm__("$7") = tag_in;
     Prim *prim;

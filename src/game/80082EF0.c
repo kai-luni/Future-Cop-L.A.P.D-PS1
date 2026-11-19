@@ -9,6 +9,8 @@ struct Poly {
 };
 extern struct Poly *gPrimPoolNext __asm__("D_8009F9F0");
 extern struct Poly *gPrimPoolEnd __asm__("D_8009FA28");
+void gEmitFlatQuadRect(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b) __asm__("func_80082EF0");
+
 
 /**
  * @brief Emits an axis-aligned gouraud quad (code 0x28) from a rectangle.
@@ -26,8 +28,15 @@ extern struct Poly *gPrimPoolEnd __asm__("D_8009FA28");
  *
  * @par Compare
  * func_80082FA4 is the same with a caller-supplied code byte (OR-ed with 0x28).
+ *
+ * @par Environment path
+ * Takes a 0x34-byte packet from the gPrimPoolNext pool (overwriting the last
+ * slot when gPrimPoolEnd is reached) and builds an untextured single-colour
+ * quad: code 0x28 with rgb, corners (x,y), (x+w,y), (x,y+h), (x+w,y+h) and
+ * the caller ordering link in the low 24 bits. Callers include func_8007ABBC,
+ * func_8007C0F8, func_8007D7CC, func_80080038 and func_80083280.
  */
-void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b)
+void gEmitFlatQuadRect(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b)
 {
     struct Poly *p;
     s32 x0 = x;

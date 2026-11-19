@@ -19,7 +19,7 @@ extern u8 gMarkerLabelText[] __asm__("D_8009F37C");
 extern void gWorldToMinimapCell(s32 *, s32 *, s32, s32) __asm__("func_800694C8");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(struct SVec *, struct Vec *, s32) __asm__("func_80010234");
-extern void func_80049100(u8 *, s32, s32, s32);
+extern void gDrawAlignedString(u8 *, s32, s32, s32) __asm__("func_80049100");
 void gDrawRadarBlip(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3) __asm__("func_80065834");
 
 
@@ -225,6 +225,6 @@ void gDrawRadarBlip(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
         __asm__("mfhi\t%0" : "=r"(hy) : "r"(nx), "r"(ny), "r"(mode), "r"(text));
         ny = hy - ny;
         __asm__("" : "=r"(ny) : "0"(ny));
-        func_80049100(text, nx, ny - 4, mode);
+        gDrawAlignedString(text, nx, ny - 4, mode);
     }
 }

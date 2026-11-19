@@ -19,7 +19,7 @@ extern s32 func_8003C7B8(s32, struct Owner *, s32, s32);
 extern s32 func_8003C980(s32, struct Owner *, s32, s32);
 extern struct Node *func_8004AAD4(struct Owner *, struct Node *, struct Node *);
 extern u8 gLaunchDebrisObject(struct Owner *, s32) __asm__("func_8004ABE4");
-extern u8 func_8004B5F8(struct Owner *, s32);
+extern u8 gSpawnMeshFractureDebris(struct Owner *, s32) __asm__("func_8004B5F8");
 
 /**
  * @brief Message handler of the debris instance built by func_8004C920: message 0
@@ -121,9 +121,9 @@ case0:
         }
 failed:
         obj->flags &= 0xe7;
-        return func_8004B5F8(obj, arg2);
+        return gSpawnMeshFractureDebris(obj, arg2);
     }
-    return func_8004B5F8(obj, arg2);
+    return gSpawnMeshFractureDebris(obj, arg2);
 case10:
     if (obj->flags & 8) gFreeBlock(obj->unk80);
     node = obj->head;

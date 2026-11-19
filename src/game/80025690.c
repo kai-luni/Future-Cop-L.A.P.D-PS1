@@ -23,6 +23,8 @@ extern int func_80028FD4(void);
 extern void func_8002385C(void);
 extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 extern void func_8001B4A8(int);
+void gDrawScreenFadeQuad(void) __asm__("func_80025690");
+
 
 /**
  * @brief Draws one full-screen fade/wipe quad with a brightness ramp.
@@ -41,8 +43,14 @@ extern void func_8001B4A8(int);
  *
  * @par Callers
  * func_800259D8 only.
+ *
+ * @par Environment path
+ * Draws the front-end transition progress/fade bar driven by func_80028FD4().
+ * Emits two 0x60 flat rectangles and two 0x38 Gouraud quads into the 52-byte
+ * D_8009F9F0 pool, then calls func_8002385C, func_80024EC8, and
+ * func_8001B4A8(1).
  */
-void func_80025690(void)
+void gDrawScreenFadeQuad(void)
 {
     Packet *p;
     int value;

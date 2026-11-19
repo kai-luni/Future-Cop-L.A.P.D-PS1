@@ -14,7 +14,7 @@ typedef struct Menu {
 
 extern Menu *gFontBankTable __asm__("D_8009F468");
 extern u8 D_8009F875;
-extern u8 D_8009F876;
+extern u8 gScreenUploadFlag __asm__("D_8009F876");
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
 extern u8 gMenuSetupCalled __asm__("D_8009F8CC");
@@ -79,6 +79,6 @@ void func_80078650(Menu *arg0, s32 arg1)
     m = gFontBankTable;
     if (m->unk03 != -1) {
         D_8009F875 = m->unk03;
-        D_8009F876 = m->unk04;
+        gScreenUploadFlag = m->unk04;
     }
 }

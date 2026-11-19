@@ -11,6 +11,8 @@ struct Poly {
 
 extern struct Poly *gPrimPoolNext __asm__("D_8009F9F0");
 extern struct Poly *gPrimPoolEnd __asm__("D_8009FA28");
+void gEmitFlatQuad(s32 x0, s32 y0, s32 x1, s32 y1, s32 x2, s32 y2, s32 x3, s32 y3, u32 link, s32 r, s32 g, s32 b, s32 code) __asm__("func_80083060");
+
 
 /**
  * @brief Emits a four-corner quad from eight explicit coordinates.
@@ -28,8 +30,13 @@ extern struct Poly *gPrimPoolEnd __asm__("D_8009FA28");
  * @par Compare
  * func_80082EF0/`80082FA4 take a rectangle; this form exists for shapes whose
  * corners are already projected individually.
+ *
+ * @par Environment path
+ * Emits an untextured flat-shaded four-corner quad (POLY_F4, code 0x28 or arg
+ * code) from eight explicit coordinates (x0..y3) and RGB color into the
+ * ordering table (called by func_8007D7CC:169,170).
  */
-void func_80083060(s32 x0, s32 y0, s32 x1, s32 y1, s32 x2, s32 y2, s32 x3, s32 y3, u32 link, s32 r, s32 g, s32 b, s32 code)
+void gEmitFlatQuad(s32 x0, s32 y0, s32 x1, s32 y1, s32 x2, s32 y2, s32 x3, s32 y3, u32 link, s32 r, s32 g, s32 b, s32 code)
 {
     struct Poly *p;
 

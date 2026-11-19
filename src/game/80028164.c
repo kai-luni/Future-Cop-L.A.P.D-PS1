@@ -56,9 +56,9 @@ extern u8 D_8009AC44[];
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void func_8008CD30(u8 *dest, u8 *src, s32 count);
 extern void gTranslatePadButtons(void *arg0, s32 arg1) __asm__("func_800576A8");
-extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
+extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend) __asm__("func_8001C214");
 extern s32 func_80049340(u8 *text);
-extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
+extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void func_80027F80(void *arg0, u8 *text, s32 x, s32 y);
 
 /**
@@ -126,9 +126,9 @@ void func_80028164(void)
     }
 
     blend = 1;
-    func_8001C214(1, 0x14, 0x3E, 0x258, 0x164, blend);
-    func_8001C214(0x6000, 0x14, 0x26, 0x12C, 0x18, blend);
-    func_8001C214(0x18, 0x140, 0x26, 0x12C, 0x18, blend);
+    gEmitTranslucentTileRect(1, 0x14, 0x3E, 0x258, 0x164, blend);
+    gEmitTranslucentTileRect(0x6000, 0x14, 0x26, 0x12C, 0x18, blend);
+    gEmitTranslucentTileRect(0x18, 0x140, 0x26, 0x12C, 0x18, blend);
 
     flag = *(u8 *)&gScratchBlockPtr[2];
     slot = &D_8009F2C0->unk00;
@@ -137,19 +137,19 @@ void func_80028164(void)
     length = func_80049340(text);
     limit = 0x12C;
     x = (limit - length) / 4 + 0xA;
-    func_80049100(text, x, 0x14, 8);
+    gDrawAlignedString(text, x, 0x14, 8);
 
     slot = &D_8009F2C0->unk00;
     if (!flag) slot++;
     text = *slot;
     length = func_80049340(text);
     x = (limit - length) / 4 + 0xA0;
-    func_80049100(text, x, 0x14, 8);
+    gDrawAlignedString(text, x, 0x14, 8);
 
     if (gPlayerCount == blend) {
         text = D_8009F2C0->unk08;
         length = func_80049340(text);
-        func_80049100(text, (0x258 - length) / 4 + 0xA, 0x14,
+        gDrawAlignedString(text, (0x258 - length) / 4 + 0xA, 0x14,
                        (gFrameTime & 0x20) ? 8 : 2);
     }
 
@@ -165,7 +165,7 @@ void func_80028164(void)
     func_80027F80(p2, D_8009AC2C, 0xFA, 8);
     func_80027F80(p2, D_8009AC44, 0xDC, 8);
 
-    func_8001C214(0x300, 0x14, 0x1A2, 0x258, 0x18, 1);
+    gEmitTranslucentTileRect(0x300, 0x14, 0x1A2, 0x258, 0x18, 1);
 
     if (gScratchBlockPtr[2] == 0 && gPlayerCount == 1) {
         tailSlot = &D_8009F2C0->unk60;
@@ -174,7 +174,7 @@ void func_80028164(void)
     }
     text = *tailSlot;
     length = func_80049340(text);
-    func_80049100(text, (0x258 - length) / 4 + 0xA, 0xD2, 8);
+    gDrawAlignedString(text, (0x258 - length) / 4 + 0xA, 0xD2, 8);
 
     if (p1->unk48 != 0 && (p2 == 0 || p2->unk48 != 0)) {
         if (p1->unk320 == 0) goto state14;

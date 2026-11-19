@@ -20,7 +20,7 @@ struct Obj {
 extern s32 func_8003C7B8(s32, struct Obj *, s32, s32);
 extern s32 func_8003C980(s32, struct Obj *, s32, s32);
 extern void func_8006E720(struct Obj *);
-extern void *func_8006C84C(s16, s32);
+extern void *gBuildDomePatchMesh(s16, s32) __asm__("func_8006C84C");
 extern void func_8006CA68(void *);
 extern void gFreeBlock(void *) __asm__("func_800181D4");
 
@@ -73,7 +73,7 @@ s32 func_8006E814(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
             flags = (obj->flags98 & 0x100) ? 0x12 : 2;
             if (obj->flags98 & 0x80) flags |= 1;
             if (obj->flags1a & 0x104) flags |= 8;
-            obj->mesh = func_8006C84C(0x100, (u8)flags);
+            obj->mesh = gBuildDomePatchMesh(0x100, (u8)flags);
             if (!obj->mesh) return 0;
         }
         return 1;

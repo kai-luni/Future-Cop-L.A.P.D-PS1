@@ -18,8 +18,10 @@ extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 gStripDitherEnabled __asm__("D_8009F4C4");
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
 extern void func_800847E0(s32, s32, Rect *);
-extern void func_80092F38(Rect *, s32);
-extern void func_80096070(s32, s32);
+extern void gLoadImage(Rect *, s32) __asm__("func_80092F38");
+extern void gStartMdecOutDma(s32, s32) __asm__("func_80096070");
+void gUploadMovieStrip(void) __asm__("func_80085074");
+
 
 /**
  * @brief Frame-complete callback of the video decoder: writes one decoded
@@ -47,8 +49,20 @@ extern void func_80096070(s32, s32);
  * @par Callers
  * Installed as the frame callback by func_800861E4 (via func_8009612C), so the
  * decoder calls it once per strip.
+ *
+ * @par Environment path
+ * Video draw path, run once per decoded strip: when gStripScaleMode == 1 and
+ * gStripScaleEnable != 0 the strip rectangle is narrowed to two thirds in x
+ * and w, compacted with func_800847E0 and uploaded with func_80092F38,
+ * otherwise the context rectangle is uploaded unchanged to VRAM. The strip x
+ * then advances by gStripStepWidth * 8; while it stays inside the current
+ * destination rectangle func_80096070 starts the next decode-out transfer of
+ * w * h / 2 words into the context buffer, else the frame is flagged complete
+ * (flag = 1, polled by func_800861E4), the double-buffer index flips and the
+ * rectangle resets to the other buffer origin. Installed by func_800861E4 and
+ * func_80085C4C through func_8009612C.
  */
-void func_80085074(void)
+void gUploadMovieStrip(void)
 {
     Rect rect;
     State *s;
@@ -58,14 +72,14 @@ void func_80085074(void)
         rect.w = ((s16)gMovieSliceContext->rect.w * 2) / 3;
         rect.h = gMovieSliceContext->rect.h;
         func_800847E0(gMovieSliceContext->dest, gMovieSliceContext->dest, &rect);
-        func_80092F38(&rect, gMovieSliceContext->dest);
+        gLoadImage(&rect, gMovieSliceContext->dest);
     } else {
-        func_80092F38(&gMovieSliceContext->rect, gMovieSliceContext->dest);
+        gLoadImage(&gMovieSliceContext->rect, gMovieSliceContext->dest);
     }
     s = gMovieSliceContext;
     s->rect.x += gStripStepWidth * 8;
     if ((s16)s->rect.x < (s16)s->rects[s->index].x + (s16)s->rects[s->index].w) {
-        func_80096070(s->dest, ((s16)s->rect.w * (s16)s->rect.h) / 2);
+        gStartMdecOutDma(s->dest, ((s16)s->rect.w * (s16)s->rect.h) / 2);
     } else {
         s->flag = 1;
         s->index = !s->index;

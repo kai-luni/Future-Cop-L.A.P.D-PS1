@@ -35,7 +35,7 @@ extern u8 gRandomTable[] __asm__("D_800A8540");
 extern s32 gPlayerEntity2[] __asm__("D_8009FA5C");
 
 extern void func_80017C68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-extern void func_800860CC(void);
+extern void gAllocDecodeBuffers(void) __asm__("func_800860CC");
 extern void func_8008CCB0(void *a0, s32 a1);
 extern void func_80019D60(void);
 extern void func_8006A880(void);
@@ -150,7 +150,7 @@ call_init:
     func_80017C68(0x168, 0x82, 0x118, 0x64, 0xFC, 0x145);
     gGameSuspended = 0;
     gOpenPanelCount = 0;
-    func_800860CC();
+    gAllocDecodeBuffers();
     func_8008CCB0(gModuleNameBuffer, arg0);
 
     {

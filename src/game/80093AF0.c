@@ -3,11 +3,13 @@
 
 extern u16 gMaxDrawWidth __asm__("D_8009DDF4");
 extern u16 gMaxDrawHeight __asm__("D_8009DDF6");
-extern s32 func_80093F78(s16 x, s16 y);
-extern s32 func_80094010(s32 x, s32 y);
-extern u32 func_800940A8(u32 x, u32 y);
-extern u32 func_80093F58(s32 dfe, s32 dtd, u32 tpage);
-extern s32 func_800940C4(void *p);
+extern s32 gBuildDrawAreaCommands(s16 x, s16 y) __asm__("func_80093F78");
+extern s32 gPackDrawAreaBottomRight(s32 x, s32 y) __asm__("func_80094010");
+extern u32 gPackDrawOffset(u32 x, u32 y) __asm__("func_800940A8");
+extern u32 gBuildDrawModeCommand(s32 dfe, s32 dtd, u32 tpage) __asm__("func_80093F58");
+extern s32 gBuildTexWindowCommand(void *p) __asm__("func_800940C4");
+void gBuildSpritePacket(u8 *arg0, u8 *arg1) __asm__("func_80093AF0");
+
 
 /**
  * @brief Builds a GPU sprite packet from a rectangle descriptor: mode,
@@ -35,8 +37,15 @@ extern s32 func_800940C4(void *p);
  * @par Callers
  * No direct callers in the call graph and no address reference in the
  * sources; dispatch unconfirmed (likely a packet-builder table).
+ *
+ * @par Environment path
+ * Builds a 2D GPU sprite command packet from a rectangle descriptor.
+ * Populates draw-area (func_80093F78, func_80094010), texcoord
+ * (func_800940A8), draw-mode (func_80093F58), texwindow (func_800940C4), and
+ * 0xE6000000 commands, and when rect[0x18] is set appends a 0x60 primitive
+ * clamped to D_8009DDF4/D_8009DDF6.
  */
-void func_80093AF0(u8 *arg0, u8 *arg1)
+void gBuildSpritePacket(u8 *arg0, u8 *arg1)
 {
     u8 *rect = arg1;
     u8 *obj = arg0;
@@ -45,13 +54,13 @@ void func_80093AF0(u8 *arg0, u8 *arg1)
     u32 *p;
     s32 count;
 
-    *(s32 *)(obj + 4) = func_80093F78(*(s16 *)(rect + 0), *(s16 *)(rect + 2));
-    *(s32 *)(obj + 8) = func_80094010(
+    *(s32 *)(obj + 4) = gBuildDrawAreaCommands(*(s16 *)(rect + 0), *(s16 *)(rect + 2));
+    *(s32 *)(obj + 8) = gPackDrawAreaBottomRight(
         (s16)(*(u16 *)(rect + 4) + *(u16 *)(rect + 0) - 1),
         (s16)(*(u16 *)(rect + 2) + *(u16 *)(rect + 6) - 1));
-    *(s32 *)(obj + 0xC) = func_800940A8(*(s16 *)(rect + 8), *(s16 *)(rect + 0xA));
-    *(s32 *)(obj + 0x10) = func_80093F58(*(u8 *)(rect + 0x17), *(u8 *)(rect + 0x16), *(u16 *)(rect + 0x14));
-    *(s32 *)(obj + 0x14) = func_800940C4(rect + 0xC);
+    *(s32 *)(obj + 0xC) = gPackDrawOffset(*(s16 *)(rect + 8), *(s16 *)(rect + 0xA));
+    *(s32 *)(obj + 0x10) = gBuildDrawModeCommand(*(u8 *)(rect + 0x17), *(u8 *)(rect + 0x16), *(u16 *)(rect + 0x14));
+    *(s32 *)(obj + 0x14) = gBuildTexWindowCommand(rect + 0xC);
     *(s32 *)(obj + 0x18) = 0xE6000000;
 
     count = 7;

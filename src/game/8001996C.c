@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 typedef struct Blk { u32 tag; u32 len; u32 body[1]; } Blk;
+u32 *gParseTextureContainer(u8 *data, s32 size) __asm__("func_8001996C");
+
 
 /**
  * @brief Parses a chunked texture container and wires the pixel/CLUT pointers
@@ -38,8 +40,13 @@ typedef struct Blk { u32 tag; u32 len; u32 body[1]; } Blk;
  * `PLUT` (`0x504C5554`), `PDAT` (`0x50444154`), and `PIX4` (`0x50495834`) chunks,
  * writes `ccb[10] = pdat` and `ccb[11] = plut`, and returns `ccb` so
  * func_80063C5C can upload both via func_80092F38.
+ *
+ * @par Environment path
+ * Parses a chunked texture container in memory and wires up the pixel and
+ * CLUT pointers for each texture entry, returning the parsed table pointer
+ * (called by func_80063C5C:83).
  */
-u32 *func_8001996C(u8 *data, s32 size)
+u32 *gParseTextureContainer(u8 *data, s32 size)
 {
     u32 *ccb = 0;
     u32 *pdat = ccb;

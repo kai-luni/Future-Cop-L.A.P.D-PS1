@@ -1,5 +1,7 @@
 // Categories: Platform > GPU | Graphics > Textures
 #include "game/types.h"
+s32 gBuildTexWindowCommand(u8 *p) __asm__("func_800940C4");
+
 
 /**
  * @brief Builds a GPU E2h texture-window command from an 8-byte rectangle.
@@ -21,8 +23,13 @@
  *
  * @par Callers
  * func_80093954, func_80093A9C, func_80093AF0, func_80093CE8.
+ *
+ * @par Environment path
+ * Encodes an 8-byte texture window rectangle into a GP0 0xE2 texture-window
+ * command word and returns it (called by func_80093954, func_80093A9C,
+ * func_80093AF0).
  */
-s32 func_800940C4(u8 *p)
+s32 gBuildTexWindowCommand(u8 *p)
 {
     s32 v[4];
     s32 r;

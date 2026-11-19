@@ -13,7 +13,7 @@ struct Unk3B2D0 {
 };
 
 extern void gSetModelUvOffset(s32 low, s32 high) __asm__("func_80013AA0");
-extern s32 func_800175A0(void *a, s32 b, s32 c, void *d);
+extern s32 gProjectAndRenderMesh(void *a, s32 b, s32 c, void *d) __asm__("func_800175A0");
 extern void gFreeBlock(s32 block) __asm__("func_800181D4");
 extern s32 gSpawnModelDebris(s32 message, struct Unk3B2D0 *object) __asm__("func_8003AA94");
 extern void func_8003B144(s32 message, struct Unk3B2D0 *object);
@@ -68,7 +68,7 @@ s32 func_8003B2D0(s32 message, struct Unk3B2D0 *object)
         if ((object->flags90 & m) != 0) {
             gSetModelUvOffset(((u8 *)object)[0x92], ((u8 *)object)[0x93]);
         }
-        func_800175A0(object->unk28, object->unkA0, object->unkC8, object->unkA8);
+        gProjectAndRenderMesh(object->unk28, object->unkA0, object->unkC8, object->unkA8);
         if ((object->flags90 & m) != 0) {
             gSetModelUvOffset(0, 0);
             return 0;

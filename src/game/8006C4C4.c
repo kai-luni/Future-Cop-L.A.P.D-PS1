@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
+void gGenDomePatchVertices(s16 *dst, s16 step, s16 count) __asm__("func_8006C4C4");
+
 
 /**
  * @brief Generates the 3D s16 vertex grid for a spherical octant dome-patch mesh.
@@ -24,8 +26,14 @@ extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
  * Populates vertex coordinates in dst (up to 3 s16 words per 4-s16 entry).
  * @par Callers
  * Confirmed: func_8006C84C (dome-patch mesh builder, passing flags & 0x10 as count).
+ *
+ * @par Environment path
+ * Generates a 3D s16 vertex grid (4-s16 stride) for a spherical octant
+ * dome-patch mesh into dst (called by func_8006C84C:115). Places the apex at
+ * (0, 0x800, 0) or (0, 0x1000, 0) and sweeps latitude row = step..0x400 and
+ * longitude col = 0..0x200 using Q12 sine/cosine from gSinCos.
  */
-void func_8006C4C4(s16 *dst, s16 step, s16 count)
+void gGenDomePatchVertices(s16 *dst, s16 step, s16 count)
 {
     s32 sine;
     s32 cosine;

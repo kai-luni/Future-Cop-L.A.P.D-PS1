@@ -41,8 +41,10 @@ extern u16 D_800A1E10[];
 extern u16 gTexBankVramY __asm__("D_8009F76A");
 extern u16 gLoadedFont __asm__("D_8009F768");
 
-extern void func_80092F38(Rect *rect, void *data);
+extern void gLoadImage(Rect *rect, void *data) __asm__("func_80092F38");
 extern void func_80092C8C(s32 arg0);
+void gLoadFontAsset(s32 arg0) __asm__("func_80048BF8");
+
 
 /**
  * @brief Uploads one font bank into the texture area and builds its texpage
@@ -65,8 +67,14 @@ extern void func_80092C8C(s32 arg0);
  *
  * @par Callers
  * func_80048DEC (the font selector).
+ *
+ * @par Environment path
+ * Uploads a font bank's glyph bitmap to VRAM (0x1E0, 0) and palette to (0,
+ * 0x1F0) via func_80092F38/func_80092C8C, computes its texpage word via
+ * func_80092230, and populates the font glyph/palette tables (called by
+ * func_80048A14 and func_80048DEC).
  */
-void func_80048BF8(s32 arg0)
+void gLoadFontAsset(s32 arg0)
 {
     struct FontInfo *info;
     s32 size;
@@ -91,7 +99,7 @@ void func_80048BF8(s32 arg0)
             data = (u8 *)info + 0x10;
             rect[0].w = info->f04 / 4;
             rect[0].h = info->f06;
-            func_80092F38(&rect[0], data);
+            gLoadImage(&rect[0], data);
             func_80092C8C(0);
 
             gTexpageTable[arg0] = (((gPaletteTable[arg0] + 0x100) & 0x100) >> 4) | 0xE | (((gPaletteTable[arg0] + 0x100) & 0x200) << 2);
@@ -101,7 +109,7 @@ void func_80048BF8(s32 arg0)
                 rect[1].y = 0x1FF;
                 rect[1].w = 0x10;
                 rect[1].h = 1;
-                func_80092F38(&rect[1], D_800A1E10);
+                gLoadImage(&rect[1], D_800A1E10);
                 func_80092C8C(0);
                 gLoadedFont = 0x7FF8;
             }

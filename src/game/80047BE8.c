@@ -17,7 +17,9 @@ extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
 extern u8 gFrameTime __asm__("D_8009FAA4");
 
-extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
+extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend) __asm__("func_8001C214");
+void gEmitHudGouraudBar(s32 x, s32 y_in, s32 z, s32 p3, s32 p4, s32 p5, s32 flag) __asm__("func_80047BE8");
+
 
 /**
  * @brief Draws a vertical gouraud quad (light beam / glow column).
@@ -40,8 +42,15 @@ extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
  * @par Likely role
  * The energy/smoke column effect: one quad per effect, with the backdrop adding
  * the soft halo.
+ *
+ * @par Environment path
+ * Draws a vertical HUD health/energy gauge at (x, y_in) with height (z+1)/2
+ * (called by func_80047F30). Emits a blended backdrop via func_8001C214, two
+ * side-by-side 4px-wide Gouraud quads (code 0x38) into
+ * gPrimPoolNext/gPrimPoolEnd with color halved when flag != 0 and gFrameTime
+ * >= 0x80, and five white tick rectangles via func_8001C214.
  */
-void func_80047BE8(s32 x, s32 y_in, s32 z, s32 p3, s32 p4, s32 p5, s32 flag)
+void gEmitHudGouraudBar(s32 x, s32 y_in, s32 z, s32 p3, s32 p4, s32 p5, s32 flag)
 {
     Prim *prim;
     register s32 y __asm__("$22");
@@ -56,7 +65,7 @@ void func_80047BE8(s32 x, s32 y_in, s32 z, s32 p3, s32 p4, s32 p5, s32 flag)
     u32 w;
 
     y = y_in;
-    func_8001C214(0x2000, x * 2, y * 2 - 0x60, 0x10, 0x60, 1);
+    gEmitTranslucentTileRect(0x2000, x * 2, y * 2 - 0x60, 0x10, 0x60, 1);
 
     p3 = p3 * 2;
     p4 = p4 * 2;
@@ -153,11 +162,11 @@ L_done2:
     prim->x3 = right;
     prim->hdr.word = prim->hdr.word & 0xFF000000;
 
-    func_8001C214(draw_color, xarg, yy - 0x60, width, 2, 0);
-    func_8001C214(0x7FFF, xx, yy - 0x30, 8, 2, 0);
-    func_8001C214(0x7FFF, xx, yy - 2, 8, 2, 0);
+    gEmitTranslucentTileRect(draw_color, xarg, yy - 0x60, width, 2, 0);
+    gEmitTranslucentTileRect(0x7FFF, xx, yy - 0x30, 8, 2, 0);
+    gEmitTranslucentTileRect(0x7FFF, xx, yy - 2, 8, 2, 0);
     __asm__ volatile ("" : "=r" (x) : "0" (x));
     x = x + 1;
-    func_8001C214(0x7FFF, x * 2, yy - 0x48, 4, 2, 0);
-    func_8001C214(0x7FFF, x * 2, yy - 0x18, 4, 2, 0);
+    gEmitTranslucentTileRect(0x7FFF, x * 2, yy - 0x48, 4, 2, 0);
+    gEmitTranslucentTileRect(0x7FFF, x * 2, yy - 0x18, 4, 2, 0);
 }

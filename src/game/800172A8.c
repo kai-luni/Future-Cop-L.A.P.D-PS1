@@ -22,6 +22,8 @@ extern Prim17 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u16 gModelUvOffset __asm__("D_8009F580");
 
 extern void gGteShadeNccs(void *a0, void *a1, void *a2) __asm__("func_80015F14");
+s32 gEmitFlatShadedPoly(s32 arg0, u32 arg1, u32 *a2, Vtx17 *arg3) __asm__("func_800172A8");
+
 
 /**
  * @brief Emits one gouraud-shaded, depth-cued textured polygon.
@@ -46,8 +48,14 @@ extern void gGteShadeNccs(void *a0, void *a1, void *a2) __asm__("func_80015F14")
  *
  * @par Callers
  * func_80015F38 and func_8006CB58.
+ *
+ * @par Environment path
+ * Allocates one 0x34-byte packet from gPrimPoolNext/gPrimPoolEnd and emits a
+ * flat-shaded triangle or quad (codes 0x20, 0x24, 0x28, 0x2C) selected by
+ * (arg1 & 0xFF) >> 4 (called by func_8004C5C8:130,235). Shades the polygon
+ * with gGteShadeNccs and offsets textured UVs by gModelUvOffset, returning 1.
  */
-s32 func_800172A8(s32 arg0, u32 arg1, u32 *a2, Vtx17 *arg3)
+s32 gEmitFlatShadedPoly(s32 arg0, u32 arg1, u32 *a2, Vtx17 *arg3)
 {
     Prim17 *prim;
     u32 tmp;

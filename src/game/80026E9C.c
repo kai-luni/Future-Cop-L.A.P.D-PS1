@@ -10,6 +10,8 @@ struct Packet {
 struct Page { u32 addr : 24; u32 len : 8; u32 code; };
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
+void gEmitScreenFadeBar(s32 r, s32 g, s32 b, s32 w) __asm__("func_80026E9C");
+
 
 /**
  * @brief Emits a full-height colour bar: texpage word plus a 0x62 rectangle.
@@ -29,8 +31,17 @@ extern u8 *gPacketLimit __asm__("D_8009F9C0");
  * @par Callers
  * func_80026E9C is called from the 2D overlay paths (the same family as
  * func_8001C214).
+ *
+ * @par Environment path
+ * Allocates two 28-byte packets from the gPacketCursor pool, both with link
+ * field 0: texpage E10006A0 (page 0,0, blend bits 5-6 = 1 additive, dither
+ * bit 9 and draw-to-display bit 10 set) and a TILE code 0x62 with the given
+ * rgb, xy 0,0, width w and height 240. Under the additive blend this
+ * brightens the left w pixels of the screen. func_80026F68 calls it from the
+ * per-player fade tick with r = g = b = the remaining fade timer (clamped to
+ * 0xFF) and width 0x140 or 0xA0.
  */
-void func_80026E9C(s32 r, s32 g, s32 b, s32 w)
+void gEmitScreenFadeBar(s32 r, s32 g, s32 b, s32 w)
 {
     u8 *packet;
     if (gPacketCursor < gPacketLimit) goto page_alloc;

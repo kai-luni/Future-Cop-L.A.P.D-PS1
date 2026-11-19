@@ -21,10 +21,10 @@ extern u32 gExceptionFrame[] __asm__("D_800A6E38");
 extern void func_80091480(void);
 extern void func_80091510(void *);
 extern void func_80092910(void *);
-extern void func_80092E10(void *, int, int, int);
-extern void *func_80092140(void *, int, int, int, int);
-extern void *func_800921F4(void *, int, int, int, int);
-extern void func_800934BC(void *);
+extern void gClearImage(void *, int, int, int) __asm__("func_80092E10");
+extern void *gSetDefDrawEnv(void *, int, int, int, int) __asm__("func_80092140");
+extern void *gSetDefDispEnv(void *, int, int, int, int) __asm__("func_800921F4");
+extern void gPutDispEnvCached(void *) __asm__("func_800934BC");
 extern void func_800932F0(void *);
 extern void func_80092BF4(int);
 extern void func_80077278(int, int, unsigned int);
@@ -69,10 +69,10 @@ __attribute__((noreturn)) void func_800773D8(void)
     func_80091510(0);
     func_80092910(0);
 
-    func_80092E10(&text, 0, 0, 0);
-    func_80092140(disp, 0, 0, 0x140, 0xF0);
-    func_800921F4(st, 0, 0, 0x140, 0xF0);
-    func_800934BC(st);
+    gClearImage(&text, 0, 0, 0);
+    gSetDefDrawEnv(disp, 0, 0, 0x140, 0xF0);
+    gSetDefDispEnv(st, 0, 0, 0x140, 0xF0);
+    gPutDispEnvCached(st);
     func_800932F0(disp);
     func_80092BF4(1);
 

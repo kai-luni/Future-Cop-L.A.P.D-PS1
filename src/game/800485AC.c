@@ -28,6 +28,8 @@ extern s32 gStreamPreemptFlag[] __asm__("D_8009F9B0");
 extern s32 gPlayerCount[] __asm__("D_8009FA0C");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
+void gEmitHudPanelSprite(s32 value) __asm__("func_800485AC");
+
 
 /**
  * @brief Draws the HUD frame / border for the current view mode.
@@ -44,8 +46,18 @@ extern u8 *gPacketLimit __asm__("D_8009F9C0");
  *
  * @par Likely role
  * The frame around the play view (letterbox plus side panels).
+ *
+ * @par Environment path
+ * Allocates two 28-byte packets from the gPacketCursor pool with link field
+ * 0: texpage E100011F (page X 960, Y 256, blend bits 5-6 = 0, 15-bit direct
+ * in bits 7-8) and a neutral-colour 0x808080 SPRT 0x64 at y 0xB2 (178)
+ * sampling V 0xCC (204) with height 0x30 (48). In single-player (gPlayerCount
+ * == 1) it is 64 wide at x 0xF4 with U 0; otherwise 32 wide at x 128 for
+ * value 0 or x 0 for value 1, with U 0x20 for value 1. It does nothing when
+ * gHudPanelEnable is 0 or gStreamPreemptCount is non-zero; callers are the
+ * two-player driver func_80027510 and the frame-close hook func_800486FC.
  */
-void func_800485AC(s32 value)
+void gEmitHudPanelSprite(s32 value)
 {
     u8 *packet;
     register s32 arg __asm__("$7") = value;

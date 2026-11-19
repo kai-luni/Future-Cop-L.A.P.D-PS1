@@ -15,6 +15,8 @@ struct Packet {
 };
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
+void gEmitTexturedQuadPacket(s32 x, u8 *points, u8 *flags) __asm__("func_80042004");
+
 
 /**
  * @brief Emits a textured, semi-transparent quad with a computed texture window.
@@ -37,8 +39,13 @@ extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
  *
  * @par Callers
  * func_80042AF4 (the effect manager).
+ *
+ * @par Environment path
+ * Emits a textured, semi-transparent GP0 0x2C (POLY_FT4) quad primitive from
+ * the supplied points and flags arrays with a computed texture window into
+ * the ordering table (called by func_80042128:73,76).
  */
-void func_80042004(s32 x, u8 *points, u8 *flags)
+void gEmitTexturedQuadPacket(s32 x, u8 *points, u8 *flags)
 {
     u32 f;
     struct Packet *p;

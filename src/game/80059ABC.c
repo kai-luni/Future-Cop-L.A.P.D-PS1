@@ -21,7 +21,7 @@ extern struct G59ABC *gGameSession __asm__("D_8009FA94");
 extern s32 gEntityBaseHandler(s32 message, struct O59ABC *object, s32 data) __asm__("func_8002AD58");
 extern s32 func_800584BC(s32 message, struct C59ABC *child, s32 data, s32 arg3, s32 arg4);
 extern void func_8005920C(struct O59ABC *object, s32 a, s32 b);
-extern void func_800597C0(struct O59ABC *object);
+extern void gDrawGlowDiscEffect(struct O59ABC *object) __asm__("func_800597C0");
 s32 gHandleCompanionMessage(s32 message, struct O59ABC *object, s32 data, s32 arg3) __asm__("func_80059ABC");
 
 
@@ -84,7 +84,7 @@ zero:
         if (object->unkB4->flags & 0x20) {
             goto zero;
         }
-        func_800597C0(object);
+        gDrawGlowDiscEffect(object);
         return 5;
     case 11:
     case 14:

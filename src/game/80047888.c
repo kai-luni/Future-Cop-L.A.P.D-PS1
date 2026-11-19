@@ -14,10 +14,12 @@ typedef struct { u32 addr:24; u32 len:8; u8 r,g,b,code; short x0,y0,x1,y1; } Lin
 extern Camera *gCamera __asm__("D_8009F9E4");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
-extern u32 D_800A8EA0[];
+extern u32 gHudTpageClutTable[] __asm__("D_800A8EA0");
 extern void gTransformPartVertex(void *, int, Vec *) __asm__("func_80017668");
 extern int func_800684AC(Vec *, Vec *, Vec *, int, int);
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
+void gDrawTargetMarker(Object *obj) __asm__("func_80047888");
+
 extern void gProjectVertexBatch(SVec *, SVec *, int *, int) __asm__("func_8001047C");
 /**
  * @brief Draws the marker of an object's current target: a 16x16 sprite at the
@@ -97,8 +99,15 @@ extern void gProjectVertexBatch(SVec *, SVec *, int *, int) __asm__("func_800104
  * @par Callers
  * func_80047F30, recorded at 0x80047F30 (direct call at 0x80047F60), reached
  * only when D_8009FA00 == 4.
+ *
+ * @par Environment path
+ * Draws an object's target reticle and leader line when state->target is set
+ * and flag 0x1000000 is clear. Transforms the anchor via func_80017668 and
+ * func_800684AC, projects 3 points via func_80010820 and func_8001047C, then
+ * emits a tpage packet (D_800A8EA0[0] & 0x9FF), a 16x16 0x66 sprite (CLUT
+ * D_800A8EA0[0] >> 16), a 0xE10006A0 packet, and a 0x42 line into D_8009FA90.
  */
-void func_80047888(Object *obj)
+void gDrawTargetMarker(Object *obj)
 {
     Vec points[3];
     SVec screen[3];
@@ -126,7 +135,7 @@ p1:
     { register u32 mask __asm__("$3") = 0xff000000;
       __asm__("" : "=r"(mask) : "0"(mask));
       *(u32 *)packet &= mask; }
-    tex = D_800A8EA0[0];
+    tex = gHudTpageClutTable[0];
     ((Page *)packet)->len = 1;
     ((Page *)packet)->code = (tex & 0x9ff) | 0xe1000000;
     if (gPacketCursor < gPacketLimit) goto a2;

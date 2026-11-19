@@ -8,7 +8,9 @@ struct HalfRect {
     s16 h;
 };
 
-extern void func_8001C148(u8 red, u8 green, u8 blue, struct HalfRect *rect, u8 blend);
+extern void gEmitSolidTileRect(u8 red, u8 green, u8 blue, struct HalfRect *rect, u8 blend) __asm__("func_8001C148");
+void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend) __asm__("func_8001C214");
+
 
 /**
  * @brief Draws a blended rectangle, converting colour and coordinates.
@@ -33,8 +35,13 @@ extern void func_8001C148(u8 red, u8 green, u8 blue, struct HalfRect *rect, u8 b
  * @par Callers
  * func_800260B8, func_800267C8, func_80027510, func_80047BE8, func_80047F30,
  * func_8005AB8C, func_8006680C and two inlined sites.
+ *
+ * @par Environment path
+ * Converts 15-bit color and screen coordinates (x, y, w, h) and delegates to
+ * func_8001C148 to emit a solid or semi-transparent GP0 0x62 TILE rectangle
+ * paired with a GP0 0xE1 DR_TPAGE packet.
  */
-void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend)
+void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend)
 {
     struct HalfRect rect;
 
@@ -42,5 +49,5 @@ void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend)
     rect.y = y >> 1;
     rect.w = w >> 1;
     rect.h = h >> 1;
-    func_8001C148((color >> 8) & 0x7C, (color >> 3) & 0x7C, (color & 0x1F) << 2, &rect, blend);
+    gEmitSolidTileRect((color >> 8) & 0x7C, (color >> 3) & 0x7C, (color & 0x1F) << 2, &rect, blend);
 }

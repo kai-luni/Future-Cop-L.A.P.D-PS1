@@ -11,6 +11,8 @@ extern void func_800451F8(s32 value);
 extern void func_80045238(s32 value);
 extern void func_80045294(s32 value);
 extern void func_800453B8(void);
+void gInitSoundState(void) __asm__("func_80044F8C");
+
 
 /**
  * @brief Initializes the sound state: enable, three level parameters at
@@ -32,8 +34,14 @@ extern void func_800453B8(void);
  *
  * @par Callers
  * func_8002333C.
+ *
+ * @par Environment path
+ * Not on the draw path: initializes the sound/audio subsystem state by
+ * enabling audio and setting volume/stream parameters via func_800451B4,
+ * func_800451EC, func_800451F8, func_80045238, func_80045294, and
+ * func_800453B8 (called by func_8002333C).
  */
-void func_80044F8C(void)
+void gInitSoundState(void)
 {
     func_800451B4(1);
     func_800451EC(0);

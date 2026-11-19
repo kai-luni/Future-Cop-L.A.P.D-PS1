@@ -36,13 +36,13 @@ extern u32 gPrimPoolEnd __asm__("D_8009FA28");
 extern u8 func_8001C034(void);
 extern s32 gGteLeadingZeros(s32 value) __asm__("func_80095C14");
 extern void func_80029650(u32 arg0);
-extern void func_80092F38(u32 arg0, u32 arg1);
+extern void gLoadImage(u32 arg0, u32 arg1) __asm__("func_80092F38");
 extern void func_80092C8C(s32 arg0);
 extern void func_80093178(u32 arg0, s32 arg1);
 extern void func_80093280(u32 arg0);
 extern void func_8009398C(u32 arg0, void *arg1);
 extern void func_80093A0C(u32 arg0, void *arg1);
-extern void func_800861E4(u32 arg0, u32 arg1, u32 arg2, u32 arg3);
+extern void gDecodeMdecFrameToVram(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm__("func_800861E4");
 
 /**
  * @brief Ends a frame: buckets everything drawn this frame into the ordering
@@ -329,7 +329,7 @@ void func_8001B4A8(s32 arg0)
             bv = D_8009F220 << 4;
             v = bv + q;
             av = *(u32 *)v;
-            func_80092F38(bv + ptr, av);
+            gLoadImage(bv + ptr, av);
             func_80092C8C(0);
             D_8009F220++;
             if (D_8009F220 >= 0x14) {
@@ -339,7 +339,7 @@ void func_8001B4A8(s32 arg0)
     }
 
     if (gSingleShotQueue[0] != 0) {
-        func_80092F38((u32)gSingleShotQueue + 8, gSingleShotQueue[0]);
+        gLoadImage((u32)gSingleShotQueue + 8, gSingleShotQueue[0]);
         func_80092C8C(0);
         if (gSingleShotQueue[1] != 0) {
             func_80029650(gSingleShotQueue[1]);
@@ -365,7 +365,7 @@ void func_8001B4A8(s32 arg0)
         if (D_8009F5F0 != D_8009F5E8) {
             do {
                 xbase = (u32)gUploadRing + D_8009F5F0 * 20;
-                func_800861E4(*(u32 *)xbase, *(u8 *)(xbase + 8),
+                gDecodeMdecFrameToVram(*(u32 *)xbase, *(u8 *)(xbase + 8),
                               *(u32 *)(xbase + 0xC), *(u32 *)(xbase + 0x10));
                 func_80092C8C(0);
                 D_8009F5F0++;

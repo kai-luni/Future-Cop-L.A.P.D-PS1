@@ -17,7 +17,9 @@ typedef struct {
 extern u8 gSegmentFlagTable[] __asm__("D_8009B314");
 
 extern void func_80092C8C(s32 arg0);
-extern void func_80093224(u8 *arg0);
+extern void gDrawPrimImmediate(u8 *arg0) __asm__("func_80093224");
+void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800770A8");
+
 
 /**
  * @brief Draws the selected frame segments around a rectangle (corner and
@@ -42,8 +44,13 @@ extern void func_80093224(u8 *arg0);
  *
  * @par Callers
  * func_80077278.
+ *
+ * @par Environment path
+ * Maps an ASCII character (0-9, A-Z, a-z) to a 7-bit segment mask in
+ * gSegTable and draws each active segment from gSegCoords via func_80092C8C
+ * and func_80093224 (called by func_80077278:13,23).
  */
-void func_800770A8(s32 arg0, s32 arg1, s32 arg2)
+void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2)
 {
     u8 flags;
     Unk770A8 local;
@@ -63,7 +70,7 @@ void func_800770A8(s32 arg0, s32 arg1, s32 arg2)
         local.unk08 = arg0;
         local.unk0C = arg0;
         local.unk0E = arg1 + 5;
-        func_80093224((u8 *)&local);
+        gDrawPrimImmediate((u8 *)&local);
         func_80092C8C(0);
     }
 
@@ -72,7 +79,7 @@ void func_800770A8(s32 arg0, s32 arg1, s32 arg2)
         local.unk08 = arg0;
         local.unk0C = arg0;
         local.unk0E = arg1 + 0xC;
-        func_80093224((u8 *)&local);
+        gDrawPrimImmediate((u8 *)&local);
         func_80092C8C(0);
     }
 
@@ -81,7 +88,7 @@ void func_800770A8(s32 arg0, s32 arg1, s32 arg2)
         local.unk0A = arg1 + 0xD;
         local.unk0C = arg0 + 4;
         local.unk0E = arg1 + 0xD;
-        func_80093224((u8 *)&local);
+        gDrawPrimImmediate((u8 *)&local);
         func_80092C8C(0);
     }
 
@@ -90,7 +97,7 @@ void func_800770A8(s32 arg0, s32 arg1, s32 arg2)
         local.unk0A = arg1 + 7;
         local.unk0C = arg0 + 5;
         local.unk0E = arg1 + 0xC;
-        func_80093224((u8 *)&local);
+        gDrawPrimImmediate((u8 *)&local);
         func_80092C8C(0);
     }
 
@@ -99,7 +106,7 @@ void func_800770A8(s32 arg0, s32 arg1, s32 arg2)
         local.unk0A = arg1 + 1;
         local.unk0C = arg0 + 5;
         local.unk0E = arg1 + 5;
-        func_80093224((u8 *)&local);
+        gDrawPrimImmediate((u8 *)&local);
         func_80092C8C(0);
     }
 
@@ -108,7 +115,7 @@ void func_800770A8(s32 arg0, s32 arg1, s32 arg2)
         local.unk0A = arg1;
         local.unk0C = arg0 + 4;
         local.unk0E = arg1;
-        func_80093224((u8 *)&local);
+        gDrawPrimImmediate((u8 *)&local);
         func_80092C8C(0);
     }
 
@@ -121,7 +128,7 @@ void func_800770A8(s32 arg0, s32 arg1, s32 arg2)
             local.unk0A = arg1 + 6;
             local.unk0C = arg0 + 4;
             local.unk0E = arg1 + 6;
-            func_80093224(p);
+            gDrawPrimImmediate(p);
             func_80092C8C(0);
         }
     }

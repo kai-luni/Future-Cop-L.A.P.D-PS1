@@ -10,6 +10,8 @@ struct Poly {
 };
 extern struct Poly *gPrimPoolNext __asm__("D_8009F9F0");
 extern struct Poly *gPrimPoolEnd __asm__("D_8009FA28");
+void gEmitFlatQuadRectMode(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b, s32 code) __asm__("func_80082FA4");
+
 
 /**
  * @brief Emits a gouraud quad with a caller-selected primitive code.
@@ -26,8 +28,16 @@ extern struct Poly *gPrimPoolEnd __asm__("D_8009FA28");
  *
  * @par Likely role
  * The variant the 3D layer uses for blended quads (0x2C) versus opaque (0x28).
+ *
+ * @par Environment path
+ * Takes a 0x34-byte packet from the gPrimPoolNext pool and writes length 5,
+ * code (code or 0x28) with the rgb colour, and the four corners (x,y),
+ * (x+w,y), (x,y+h), (x+w,y+h), with the caller link in the low 24 bits. It is
+ * a POLY_F4 (untextured, single colour), with bit 1 of the code selecting
+ * semi-transparency. Callers include func_8007CE04 (code 2), func_8007D138,
+ * func_8007D150 and func_8007D27C.
  */
-void func_80082FA4(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b, s32 code)
+void gEmitFlatQuadRectMode(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b, s32 code)
 {
     struct Poly *p;
     s32 x0 = x;

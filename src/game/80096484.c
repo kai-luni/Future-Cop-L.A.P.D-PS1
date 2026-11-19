@@ -2,6 +2,8 @@
 #include "game/mdec_globals.h"
 
 extern int *gMdecControlStatusPtr __asm__("D_8009E9F4");
+int gIsMdecBusy(void) __asm__("func_80096484");
+
 
 /**
  * @brief Reads the transfer status word that D_8009E9F4 points at.
@@ -24,8 +26,13 @@ extern int *gMdecControlStatusPtr __asm__("D_8009E9F4");
  *
  * @par Callers
  * Confirmed: func_80096090 (0x800960AC), which takes the result apart as (word >> 29) & 1 for its non-blocking status query, and func_800960CC (0x800960E8).
+ *
+ * @par Environment path
+ * Reads the MDEC transfer status register via D_8009E9F4 and returns bit 29
+ * indicating whether MDEC DMA output/control is busy (called by func_80096090
+ * and func_800960CC).
  */
-int func_80096484(void)
+int gIsMdecBusy(void)
 {
     return *gMdecControlStatusPtr;
 }

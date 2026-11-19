@@ -11,7 +11,7 @@ extern s8 gPanelSyncValue __asm__("D_8009F8BC");
 extern u8 *func_80089914(s32 id);
 extern s32 func_80048E28(s32 index);
 extern struct FontEntry *func_80048E88(void);
-extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
+extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
 extern u8 *func_8008CCD0(u8 *str, s32 c);
 extern s32 func_8008CCC0(u8 *str);
@@ -120,7 +120,7 @@ void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
             }
         }
 
-        func_80049100(text, drawX, drawY, (u16) color);
+        gDrawAlignedString(text, drawX, drawY, (u16) color);
 
         if (p != 0) {
             text = p + 1;

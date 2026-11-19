@@ -75,13 +75,13 @@ extern void func_80026D5C(void);
 extern void gSelectViewRecord(s32) __asm__("func_80017B60");
 extern void gUpdateLightDirection(void) __asm__("func_80013C80");
 extern void gRunMapScreenOnScratch(struct Game *, s32, s32, s32) __asm__("func_80026DDC");
-extern void func_8001C214(u32, s32, s32, s32, s32, u8);
+extern void gEmitTranslucentTileRect(u32, s32, s32, s32, s32, u8) __asm__("func_8001C214");
 extern void gRunRegionPass(s32, struct Game *) __asm__("func_80026E1C");
-extern void func_80047F30(struct Game *);
+extern void gDrawInGameHud(struct Game *) __asm__("func_80047F30");
 extern void func_80026F68(s32, s32);
 extern s32 func_80049340(u8 *);
-extern void func_80049100(u8 *, s32, s32, s32);
-extern void func_800485AC(s32);
+extern void gDrawAlignedString(u8 *, s32, s32, s32) __asm__("func_80049100");
+extern void gEmitHudPanelSprite(s32) __asm__("func_800485AC");
 extern void func_800486FC(s32);
 extern void func_8001BBAC(void);
 extern void func_80026D1C(void);
@@ -245,10 +245,10 @@ void gRunSessionFrame(void)
         gUpdateLightDirection();
         if (flags & 1) {
             gRunMapScreenOnScratch(D_8009FA58.ptr, 0, flags & 0x20, gGameSession->unk5C == 1);
-            func_8001C214(1, 0x13E, 0, 2, 0x1E0, 0);
+            gEmitTranslucentTileRect(1, 0x13E, 0, 2, 0x1E0, 0);
         } else {
             gRunRegionPass(0, D_8009FA58.ptr);
-            func_80047F30(D_8009FA58.ptr);
+            gDrawInGameHud(D_8009FA58.ptr);
         }
         zero_arg = 0;
         __asm__ volatile("" : "=r"(zero_arg) : "0"(zero_arg));
@@ -256,7 +256,7 @@ void gRunSessionFrame(void)
         if (gDemoPlayback > 0 && (gFrameTime & 0x100)) {
             banner = (u8 *)0x800A0000;
             __asm__ volatile("" : "=r"(banner) : "0"(banner));
-            func_80049100(banner - 0xD0C, 0x41, 0x14, 1);
+            gDrawAlignedString(banner - 0xD0C, 0x41, 0x14, 1);
         }
         if (!old_flags) {
             gPlayerEntity2.ptr->unk24 &= ~0x20;
@@ -269,9 +269,9 @@ void gRunSessionFrame(void)
             if (x < 0) x += 3;
             xarg = x >> 2;
             if (gFrameTickCounter & 0x80) color = 9;
-            func_80049100(text, xarg, 0xB4, color);
+            gDrawAlignedString(text, xarg, 0xB4, color);
         }
-        func_800485AC(0);
+        gEmitHudPanelSprite(0);
         func_8001BBAC();
         old_flags2 = 1;
         if (gPlayerEntity2.ptr != 0) {
@@ -286,14 +286,14 @@ void gRunSessionFrame(void)
                 gRunMapScreenOnScratch(D_8009FA5C_c.ptr, 1, flags & 0x20, gGameSession->unk5C == 1);
             } else {
                 gRunRegionPass(1, D_8009FA5C_d.ptr);
-                func_80047F30(D_8009FA5C_e.ptr);
+                gDrawInGameHud(D_8009FA5C_e.ptr);
             }
         }
         func_80026F68(1, 0);
         if (gDemoPlayback > 0 && (gFrameTime & 0x100)) {
             banner = (u8 *)0x800A0000;
             __asm__ volatile("" : "=r"(banner) : "0"(banner));
-            func_80049100(banner - 0xD0C, 0x41, 0x14, 1);
+            gDrawAlignedString(banner - 0xD0C, 0x41, 0x14, 1);
         }
         if (gSceneFrameCounter >= 2 && func_8001EF34(1) == 0 && gDemoPlayback == 0) {
             text = gLoadingTextPtr;
@@ -302,9 +302,9 @@ void gRunSessionFrame(void)
             if (x < 0) x += 3;
             xarg = x >> 2;
             if (gFrameTickCounter & 0x80) color = 9;
-            func_80049100(text, xarg, 0xB4, color);
+            gDrawAlignedString(text, xarg, 0xB4, color);
         }
-        func_800485AC(1);
+        gEmitHudPanelSprite(1);
         func_800486FC(1);
         if (!old_flags2) {
             D_8009FA58.ptr->unk24 &= ~0x20;

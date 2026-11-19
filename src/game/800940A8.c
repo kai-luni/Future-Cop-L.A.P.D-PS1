@@ -1,3 +1,5 @@
+unsigned int gPackDrawOffset(unsigned int x, unsigned int y) __asm__("func_800940A8");
+
 // Categories: Graphics > GPU Primitives > Texture
 /**
  * @brief Builds the GPU texture-window/UV coordinate word (opcode 0xE5).
@@ -16,8 +18,14 @@
  *
  * @par Callers
  * func_80093A0C, func_80093AF0, func_80093CE8.
+ *
+ * @par Environment path
+ * Packs the GP0 E5 drawing-offset command, the x,y added to every vertex of
+ * later primitives (not a texture window, which is E2). Used by func_80093A0C
+ * (2-word offset packet), func_80093AF0 and func_80093CE8 when building
+ * draw-environment lists.
  */
-unsigned int func_800940A8(unsigned int x, unsigned int y)
+unsigned int gPackDrawOffset(unsigned int x, unsigned int y)
 {
     return 0xE5000000 | ((y & 0x7FF) << 11) | (x & 0x7FF);
 }

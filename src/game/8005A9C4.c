@@ -43,9 +43,11 @@ extern struct Unk5A9C4Other *gPlayerEntities[] __asm__("D_8009FA58");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern s32 gMarkerColorTable[32] __asm__("D_800A6F60");
 
-extern void func_8005A740(s32 origin, s32 id, s32 colour);
+extern void gEmitAngledLine(s32 origin, s32 id, s32 colour) __asm__("func_8005A740");
 extern u8 func_8005A934(struct Unk5A9C4 *object, s32 z, s32 x, s32 *angle);
-extern void func_8005A828(s32 colour, s32 angle, s32 colour2);
+extern void gEmitRadarTriangle(s32 colour, s32 angle, s32 colour2) __asm__("func_8005A828");
+void gDrawRadarMarkers(struct Unk5A9C4 *object) __asm__("func_8005A9C4");
+
 
 /**
  * @brief Draws the radar markers of one object: its heading line, the
@@ -72,8 +74,22 @@ extern void func_8005A828(s32 colour, s32 angle, s32 colour2);
  *
  * @par Callers
  * func_8004EDC8.
+ *
+ * @par Environment path
+ * Draws one object's radar overlay into the gPacketCursor pool through its
+ * callees: a heading line via func_8005A740 at angle minus unkB0 minus 0x800,
+ * a bearing line to the other player's entity gPlayerEntities[1 - side] when
+ * gPlayerCount is at least 2 and gGameSession->unk5C is 0, and, while
+ * gFrameTime and 0x180 is non-zero, one func_8005A828 triangle per active
+ * 3-bit slot of the marker node mask, coloured from
+ * gMarkerColorTable[flags[i] and 0x1F]. The local named colour is really the
+ * 16.16 radar origin X (0x780000 = 120 px for side 1, 0x280000 = 40 px
+ * otherwise), because both callees add it to the x coordinate before shifting
+ * by 16; the third arguments 0xF8F8F8 and 0xF800 passed to func_8005A740 are
+ * ignored, since that function takes two parameters and hard-codes colour
+ * 0x808080. Called by func_8004EDC8; func_8005A934 supplies the bearing test.
  */
-void func_8005A9C4(struct Unk5A9C4 *object)
+void gDrawRadarMarkers(struct Unk5A9C4 *object)
 {
     s32 angle;
     register s32 colour __asm__("$20");
@@ -90,7 +106,7 @@ void func_8005A9C4(struct Unk5A9C4 *object)
     colour = (object->unkAC->unkC1 == 1) ? 0x780000 : 0x280000;
 
     angle = -(s32)object->unkB0 - 0x800;
-    func_8005A740(colour, angle, 0xF8F8F8);
+    gEmitAngledLine(colour, angle, 0xF8F8F8);
 
     if (gPlayerCount >= 2 && gGameSession->unk5C == 0) {
         arg = object;
@@ -99,7 +115,7 @@ void func_8005A9C4(struct Unk5A9C4 *object)
         __asm__("lui %0,%%hi(D_8009FA58)\n\taddiu %0,%0,%%lo(D_8009FA58)" : "=r" (base));
         other = base[1 - idx];
         if (func_8005A934(arg, other->unk58, other->unk50, &angle)) {
-            func_8005A740(colour, angle, 0xF800);
+            gEmitAngledLine(colour, angle, 0xF800);
         }
     }
 
@@ -114,7 +130,7 @@ void func_8005A9C4(struct Unk5A9C4 *object)
                     if (mask & 1) {
                         if (func_8005A934(object, node->pos[i].a << 9,
                                           node->pos[i].b << 9, &angle)) {
-                            func_8005A828(colour, angle,
+                            gEmitRadarTriangle(colour, angle,
                                           colours[node->flags[i] & 0x1F]);
                         }
                     }

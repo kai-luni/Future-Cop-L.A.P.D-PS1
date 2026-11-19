@@ -5,6 +5,8 @@ struct Packet {
     unsigned int command;
     unsigned int unused;
 };
+void gSetDrawMaskPacket(struct Packet *packet, int flag1, int flag2) __asm__("func_80093A4C");
+
 
 /**
  * @brief Builds a "mask bit setting" primitive (GP0 0xE6) with both fields.
@@ -22,8 +24,12 @@ struct Packet {
  * @par Callers
  * None in the symbol table - the packet is emitted inline by the effect
  * renderers.
+ *
+ * @par Environment path
+ * Builds a 1-word GP0 0xE6 mask-bit setting primitive packet encoding flag1
+ * and flag2 into the packet word.
  */
-void func_80093A4C(struct Packet *packet, int flag1, int flag2)
+void gSetDrawMaskPacket(struct Packet *packet, int flag1, int flag2)
 {
     unsigned int command;
     packet->length = 2;

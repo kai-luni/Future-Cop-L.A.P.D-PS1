@@ -1,5 +1,7 @@
 // Categories: Graphics > GPU Command Lists > Draw Mode | Platform > GPU
 #include "../../include/game/types.h"
+u32 gBuildDrawModeCommand(s32 dfe, s32 dtd, u32 tpage) __asm__("func_80093F58");
+
 
 /**
  * @brief Builds the E1h GPU draw-mode (texture page) command word.
@@ -18,8 +20,13 @@
  *
  * @par Callers
  * func_80093A9C, func_80093AF0, func_80093CE8.
+ *
+ * @par Environment path
+ * Encodes dfe, dtd, and tpage bits into a 32-bit GP0 0xE1 draw-mode (texture
+ * page) command word and returns it (called by func_80093A9C, func_80093AF0,
+ * func_80093CE8).
  */
-u32 func_80093F58(s32 dfe, s32 dtd, u32 tpage)
+u32 gBuildDrawModeCommand(s32 dfe, s32 dtd, u32 tpage)
 {
     return 0xE1000000
         | (dtd != 0 ? 0x200 : 0)

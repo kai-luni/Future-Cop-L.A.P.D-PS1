@@ -41,8 +41,8 @@ extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 extern void func_800788F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7);
 extern void func_8008CD30(u8 *dst, u8 *fmt, s32 value);
 extern s32 func_8001EF34(s32 port);
-extern void func_80082AB0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8);
-extern void func_80082EF0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7);
+extern void gEmitAtlasSpriteSimple(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8) __asm__("func_80082AB0");
+extern void gEmitFlatQuadRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7) __asm__("func_80082EF0");
 
 #define MIN(a, b) (((((a) - (b)) >> 31) & ((a) - (b))) + (b))
 #define MAX(a, b) ((a) - ((((a) - (b)) >> 31) & ((a) - (b))))
@@ -132,7 +132,7 @@ void gDrawVehicleSchematic(s32 slot)
     if (port == 7) {
         mode = 0x49;
     }
-    func_80082AB0(mode, 0xA0, 0x69, -1, -1, 0x14, 0x80, c4, 0x20);
+    gEmitAtlasSpriteSimple(mode, 0xA0, 0x69, -1, -1, 0x14, 0x80, c4, 0x20);
 
     i = 0;
     layer = 10;
@@ -161,31 +161,31 @@ void gDrawVehicleSchematic(s32 slot)
 
         if (mode == 0x49 && item->amount != 0) {
             if (item->flag == 1) {
-                func_80082EF0(center_x + MIN(item->x, item->amount),
+                gEmitFlatQuadRect(center_x + MIN(item->x, item->amount),
                               center_y + item->y,
                               ABS(item->x - item->amount) + 1,
                               1, layer, red, green, blue);
-                func_80082EF0(center_x + item->amount,
+                gEmitFlatQuadRect(center_x + item->amount,
                               center_y + MIN(item->y3, item->y),
                               1,
                               ABS(item->y3 - item->y) + 1,
                               layer, red, green, blue);
             } else if (i == 4) {
-                func_80082EF0(center_x + MIN(item->x2, item->amount),
+                gEmitFlatQuadRect(center_x + MIN(item->x2, item->amount),
                               center_y + item->y2,
                               1,
                               ABS(item->y3 - item->y2) + 1,
                               layer, blue, blue, yellow);
-                func_80082EF0(center_x + MIN(item->x2, item->amount),
+                gEmitFlatQuadRect(center_x + MIN(item->x2, item->amount),
                               center_y + MAX(item->y2, item->y3),
                               ABS(item->amount - item->x2) + 1,
                               1, layer, blue, blue, yellow);
             } else {
-                func_80082EF0(center_x + MIN(item->x, item->amount),
+                gEmitFlatQuadRect(center_x + MIN(item->x, item->amount),
                               center_y + item->y,
                               ABS(item->x - item->amount) + 1,
                               1, layer, blue, blue, yellow);
-                func_80082EF0(center_x + item->amount,
+                gEmitFlatQuadRect(center_x + item->amount,
                               center_y + MIN(item->y3, item->y),
                               1,
                               ABS(item->y3 - item->y) + 1,
@@ -193,11 +193,11 @@ void gDrawVehicleSchematic(s32 slot)
             }
         }
         if (mode != 0x49 || item->flag == 0) {
-            func_80082EF0(center_x + MIN(item->x, item->x2),
+            gEmitFlatQuadRect(center_x + MIN(item->x, item->x2),
                           center_y + item->y,
                           ABS(item->x - item->x2) + 1,
                           1, layer, red, green, blue);
-            func_80082EF0(center_x + item->x2,
+            gEmitFlatQuadRect(center_x + item->x2,
                           center_y + MIN(item->y2, item->y),
                           1,
                           ABS(item->y2 - item->y) + 1,

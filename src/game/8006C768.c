@@ -1,6 +1,8 @@
 // Categories: Graphics > Mesh Generation | Graphics > Effects
 typedef unsigned char u8;
 typedef short s16;
+void gBuildDomeFaceIndices(u8 *faces, s16 rows, int cols, s16 count) __asm__("func_8006C768");
+
 
 /**
  * @brief Populates 5-byte triangle-fan and quad-strip face records for a dome-patch mesh.
@@ -23,8 +25,16 @@ typedef short s16;
  * Writes ((rows - 1) + quad_count) * 5 bytes into the faces buffer.
  * @par Callers
  * Confirmed: func_8006C84C (dome-patch mesh allocator/builder).
+ *
+ * @par Environment path
+ * Geometry feeding the effect renderer, not a primitive emitter: writes rows
+ * - 1 triangle records (count 3, apex vertex 0, two consecutive rim vertices)
+ * followed by quad-strip records (count 4, vertices first, second, second +
+ * 1, first + 1) until the second index reaches count. The cols parameter is
+ * unused. Called by func_8006C84C, which allocates and fills the dome-patch
+ * mesh.
  */
-void func_8006C768(u8 *faces, s16 rows, int cols, s16 count)
+void gBuildDomeFaceIndices(u8 *faces, s16 rows, int cols, s16 count)
 {
     int index = 0;
     int first = 1;

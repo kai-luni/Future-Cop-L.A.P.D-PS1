@@ -15,6 +15,8 @@ extern Unk824CCObject *gSpriteAtlasBlock __asm__("D_8009F460");
 extern Unk824CCHeader *gAtlasTable __asm__("D_8009F45C");
 
 extern void gFreeBlock(Unk824CCObject *object) __asm__("func_800181D4");
+void gValidateAtlasSpriteId(Unk824CCObject *object) __asm__("func_800825AC");
+
 
 /**
  * @brief Registers and validates the loaded 2D texture atlas header resource.
@@ -44,8 +46,13 @@ extern void gFreeBlock(Unk824CCObject *object) __asm__("func_800181D4");
  * Called by func_80024EC8 on tag `0x4374696E` ("Ctin"); only
  * validates (type == 2, magic == `0x35BFBC73`) and registers the 2D atlas
  * header in D_8009F45C / D_8009F460 with no VRAM pixel upload.
+ *
+ * @par Environment path
+ * Registers and validates a loaded 2D texture atlas header resource from
+ * object, freeing temporary data via gFreeBlock (called by
+ * func_80024EC8:154).
  */
-void func_800825AC(Unk824CCObject *object)
+void gValidateAtlasSpriteId(Unk824CCObject *object)
 {
     register s32 flag __asm__("$16") = 0;
     Unk824CCHeader *header;

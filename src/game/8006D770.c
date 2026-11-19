@@ -24,7 +24,7 @@ struct Obj {
     s16 field9a;
 };
 extern s32 gSceneFrameCounter __asm__("D_8009FA50");
-extern void func_8006D520(Obj *);
+extern void gDrawGroundMarker(Obj *) __asm__("func_8006D520");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 void gTickEffectNodes(Obj *node, s32 dt) __asm__("func_8006D770");
 
@@ -113,7 +113,7 @@ void gTickEffectNodes(Obj *node, s32 dt)
             if (p->c8e < amount) { mask |= 16; p->c8e = 0; } else p->c8e -= amount;
             if (p->c8f < amount) { mask |= 32; p->c8f = 0; } else p->c8f -= amount;
             if (mask == 63) {
-                if (p->sub->field2e) func_8006D520(p);
+                if (p->sub->field2e) gDrawGroundMarker(p);
                 p->flags |= 1;
             }
         }
@@ -141,9 +141,9 @@ void gTickEffectNodes(Obj *node, s32 dt)
             p->field68 -= (p->field6a * dt) >> 7;
             if (p->field68 < 4096) { p->field68 = 4096; p->field6a = 0; }
         }
-        if (p->sub->field2e && (gSceneFrameCounter & 3) == 3) func_8006D520(p);
+        if (p->sub->field2e && (gSceneFrameCounter & 3) == 3) gDrawGroundMarker(p);
         if (p->field12 >= p->field6e) {
-            if (p->sub->field2e && p->field9a != p->field12) func_8006D520(p);
+            if (p->sub->field2e && p->field9a != p->field12) gDrawGroundMarker(p);
             p->flags |= 1;
         }
     }

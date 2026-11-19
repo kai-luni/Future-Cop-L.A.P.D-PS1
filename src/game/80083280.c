@@ -3,7 +3,9 @@
 
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 gHighlightShadeTable[8] __asm__("D_8009F3F8");
-extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b);
+extern void gEmitFlatQuadRect(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b) __asm__("func_80082EF0");
+void gDrawBlinkSelectFrame(s32 x, s32 y, s32 w, s32 h) __asm__("func_80083280");
+
 
 /**
  * @brief Draws a 2-pixel selection frame centred on a rectangle, in the
@@ -26,8 +28,16 @@ extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s3
  * @par Callers
  * No direct callers in the call graph and no address reference in the
  * sources; dispatch unconfirmed.
+ *
+ * @par Environment path
+ * 2D overlay helper: computes a grey level
+ * gHighlightShadeTable[(gFrameTickCounter shifted right 4) and 7] + 0x80 and
+ * draws the top, left, right and bottom 2-pixel borders of a w + 1 by h frame
+ * centred on x,y as four opaque POLY_F4 rectangles (code 0x28) via
+ * func_80082EF0, all with ordering link 0x12C. No caller references this
+ * address in the sources, so how it is reached is unconfirmed.
  */
-void func_80083280(s32 x, s32 y, s32 w, s32 h)
+void gDrawBlinkSelectFrame(s32 x, s32 y, s32 w, s32 h)
 {
     register s32 w1 __asm__("$19") = w + 1;
     s32 x0 = x - (w1 >> 1);
@@ -44,8 +54,8 @@ void func_80083280(s32 x, s32 y, s32 w, s32 h)
     idx = (t >> 4) & 7;
     color = *(u8 *)(idx + (s32)pal) + 0x80;
 
-    func_80082EF0(x0, y0 - 2, w1, 2, 0x12C, color, color, color);
-    func_80082EF0(x0, y0, 2, h, 0x12C, color, color, color);
-    func_80082EF0(x0 + w1 - 2, y0, 2, h, 0x12C, color, color, color);
-    func_80082EF0(x0, y1, w1, 2, 0x12C, color, color, color);
+    gEmitFlatQuadRect(x0, y0 - 2, w1, 2, 0x12C, color, color, color);
+    gEmitFlatQuadRect(x0, y0, 2, h, 0x12C, color, color, color);
+    gEmitFlatQuadRect(x0 + w1 - 2, y0, 2, h, 0x12C, color, color, color);
+    gEmitFlatQuadRect(x0, y1, w1, 2, 0x12C, color, color, color);
 }

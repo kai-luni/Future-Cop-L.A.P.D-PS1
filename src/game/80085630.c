@@ -25,12 +25,12 @@ extern u32 gStripStepWidth __asm__("D_8009F4C8");
 extern u32 gFrameTimeMax __asm__("D_8009F4D0");
 
 extern s32 gMdecReadHalfword(u16 *value) __asm__("func_80095FE8");
-extern void func_80096070(s32 destination, u32 size);
-extern s32 func_800960CC(s32 mode);
+extern void gStartMdecOutDma(s32 destination, u32 size) __asm__("func_80096070");
+extern s32 gMdecOutSync(s32 mode) __asm__("func_800960CC");
 extern void func_80095E90(s32 option);
 extern void gMdecStartDecode(s32 arg0, s32 arg1) __asm__("func_80095FF4");
 extern void gMovieDecodeVlcStream(u16 *arg0, s32 arg1) __asm__("func_80089BBC");
-extern void func_80092F38(Local *local, s32 arg1);
+extern void gLoadImage(Local *local, s32 arg1) __asm__("func_80092F38");
 
 /**
  * @brief Uploads one slice of a video frame: reads the 16-byte slice header,
@@ -163,13 +163,13 @@ void gMovieSliceFeedRows(u8 *data, u32 count, s32 volume)
     } else {
         s1 = st->unk24;
         gMdecStartDecode(st->unk28[1 - st->unk30], gStripScaleEnable);
-        func_80096070(s1, ((s3 * (gStripStepWidth << 3)) >> 1) * (s2 >> 4));
+        gStartMdecOutDma(s1, ((s3 * (gStripStepWidth << 3)) >> 1) * (s2 >> 4));
         if (s4 == 0x4D444543) {
             gMovieDecodeVlcStream(src, gMovieSliceContext->unk28[gMovieSliceContext->unk30]);
         }
-        func_800960CC(0);
+        gMdecOutSync(0);
         for (i = 0; i < s2; i += 0x10) {
-            func_80092F38(&local, s1);
+            gLoadImage(&local, s1);
             s1 += (local.unk4 * local.unk6) << 1;
             { u32 step = gStripStepWidth << 3; local.unk0 += step; }
         }

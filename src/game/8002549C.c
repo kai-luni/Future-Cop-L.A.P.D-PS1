@@ -18,6 +18,8 @@ typedef struct {
 
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
+void gEmitSplitScreenBlit(int value) __asm__("func_8002549C");
+
 
 /**
  * @brief Emits the display set-up for one screen: two texpage/tile words and
@@ -50,8 +52,20 @@ extern u8 *gPacketLimit __asm__("D_8009F9C0");
  * The $4/$7 pins, the repeated "if the pool is full, reuse the last slot"
  * blocks and the @c goto labels are the retail control flow and register
  * allocation; do not tidy them.
+ *
+ * @par Environment path
+ * Allocates four 28-byte packets from the gPacketCursor pool (bounded by
+ * gPacketLimit, reusing the last slot when full), all carrying the low 24
+ * bits of the argument as ordering-table link: texpage E1000105 (page X 320,
+ * Y 0, blend bits 5-6 = 0, 15-bit direct), a 160x240 SPRT 0x64 at screen 0,0
+ * with UV 0,0 and neutral colour 0x808080, texpage E1000115 (page X 320, Y
+ * 256, 15-bit direct), and a second 160x240 sprite at screen x 160. The two
+ * sprites therefore copy the 15-bit image held in VRAM at 320,0 and 320,256
+ * onto the 320x240 screen. func_80025370 calls it with link 0 after its two
+ * func_800861E4 uploads (destination arguments 320,0 and 320,256) and before
+ * func_8001B4A8(1).
  */
-void func_8002549C(int value) {
+void gEmitSplitScreenBlit(int value) {
     u8 *packet;
     register int arg __asm__("$7") = value;
 

@@ -11,7 +11,7 @@ struct Gfx { u8 pad[0x10]; void (*fn)(u32); };
 struct Cache { s16 s[4]; s16 t[4]; s32 w; s32 pad; };
 
 extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
-extern u8 D_8009DDF3;
+extern u8 gGpuReverseFlag __asm__("D_8009DDF3");
 extern struct Gfx *gVramWriteCallback __asm__("D_8009DDE8");
 extern  void (*gLogPrintf)(void *, void *) __asm__("D_8009DDEC");
 extern char D_80012B30[];
@@ -20,6 +20,8 @@ extern s16 D_8009DE64[];
 extern s32 D_8009DE6C[];
 extern int func_80091F74(void);
 extern void func_8008CD10(void *, void *, int);
+struct Prim *gPutDispEnvCached(struct Prim *p) __asm__("func_800934BC");
+
 
 /**
  * @brief Applies a drawing-area state block to the GPU library, with change
@@ -45,8 +47,15 @@ extern void func_8008CD10(void *, void *, int);
  * @par Callers
  * func_8001BFE4, func_8001C088, func_800773D8, func_8007757C and the sprite
  * paths.
+ *
+ * @par Environment path
+ * Applies a 0x14-byte display/drawing-area state block to the GPU via
+ * gVramWriteCallback->fn (GP0/GP1 05h, 06h, 07h, 08h commands) with change
+ * detection against gGpuDebugLevel+0x72 and D_8009DE6C, then copies the block
+ * into gDispEnvCache via func_8008CD10 (called by func_8001BFE4:38,
+ * func_800773D8:75, func_80085C4C:135).
  */
-struct Prim *func_800934BC(struct Prim *p)
+struct Prim *gPutDispEnvCached(struct Prim *p)
 {
     register u32 flags __asm__("$19");
     s32 b, t;
@@ -174,7 +183,7 @@ mode_changed:
         if (p->b12 == 1) flags |= 8;
         if (p->b11) flags |= 0x10;
         if (p->b10) flags |= 0x20;
-        if (D_8009DDF3) flags |= 0x80;
+        if (gGpuReverseFlag) flags |= 0x80;
         if (p->s4 < 0x119) {
         } else if (p->s4 < 0x161) {
             flags |= 1;

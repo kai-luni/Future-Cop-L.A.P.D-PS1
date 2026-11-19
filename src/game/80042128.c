@@ -6,7 +6,7 @@ extern void gTransformToViewSpace(void *, void *) __asm__("func_800178DC");
 extern s32 gTestFrustumMargin(s16 *, s32) __asm__("func_80019E70");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gProjectVertexBatch(void *, void *, void *, s32) __asm__("func_8001047C");
-extern void func_80042004(s32, u8 *, u8 *);
+extern void gEmitTexturedQuadPacket(s32, u8 *, u8 *) __asm__("func_80042004");
 void gDrawPortraitScreen(u8 *object) __asm__("func_80042128");
 
 
@@ -70,10 +70,10 @@ void gDrawPortraitScreen(u8 *object)
     i = 0;
     x = 0xcc00;
     for (; i < 10; i += 2) {
-        func_80042004(x, p, f + i);
+        gEmitTexturedQuadPacket(x, p, f + i);
         p += 8;
         i++;
-        func_80042004(x + 0x20, p, f + i);
+        gEmitTexturedQuadPacket(x + 0x20, p, f + i);
         x += 0xc00;
         p += 16;
     }

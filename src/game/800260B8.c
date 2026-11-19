@@ -41,12 +41,12 @@ extern s32 gSlotVoiceHandle[2] __asm__("D_8009F678");
 extern s32 gSlotTrackId[2] __asm__("D_8009FA78");
 extern struct InputAction260B8 D_800A0AD0[];
 extern struct InputAction260B8 D_800A0AE0[];
-extern struct InputAction260B8 D_800A0AB0[];
-extern struct InputAction260B8 D_800A0AC0[];
+extern struct InputAction260B8 gOptUpAction[] __asm__("D_800A0AB0");
+extern struct InputAction260B8 gOptDownAction[] __asm__("D_800A0AC0");
 extern struct InputAction260B8 gBackActionRecord[] __asm__("D_800A0B20");
 
 extern void gDecodeButtonEdge(u32 buttons, struct InputAction260B8 *action) __asm__("func_8005780C");
-extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
+extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend) __asm__("func_8001C214");
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern u32 func_80060A0C(s32 arg0, s32 arg1);
 extern void func_80046A34(s32 handle);
@@ -59,7 +59,9 @@ extern void func_80045294(s32 volume);
 extern s32 func_800452C8(void);
 extern void func_80025E18(s32 id, s32 value, s32 slot);
 extern void func_80025F58(void);
-extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
+extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
+void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg, s32 active) __asm__("func_800260B8");
+
 
 /**
  * @brief Draws and services one player's options sub-panel: the item list, the
@@ -126,8 +128,14 @@ extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
  * @par Callers
  * func_800267C8 (the parent page, which calls this function only when the shared
  * selection is 0 or greater, i.e. while the sub-panel is open).
+ *
+ * @par Environment path
+ * Draws two blended backdrop rectangles via func_8001C214 and prints the
+ * six-row options list via func_80049100 using gLabelRecord and
+ * gItemCodeTable. Decodes button edges via gDecodeButtonEdge to adjust three
+ * audio volumes, toggle sound, or trigger cheat/confirm via func_80060A0C.
  */
-void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg, s32 active)
+void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg, s32 active)
 {
     s32 flag;
     register struct State260B8 *state __asm__("$22");
@@ -176,15 +184,15 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
     gDecodeButtonEdge(state->buttons, p1);
     p2 = (struct InputAction260B8 *)(actionOffset + (u32)D_800A0AE0);
     gDecodeButtonEdge(state->buttons, p2);
-    p3 = (struct InputAction260B8 *)((u32)D_800A0AB0 + actionOffset);
+    p3 = (struct InputAction260B8 *)((u32)gOptUpAction + actionOffset);
     gDecodeButtonEdge(state->buttons, p3);
-    p4 = (struct InputAction260B8 *)(actionOffset + (u32)D_800A0AC0);
+    p4 = (struct InputAction260B8 *)(actionOffset + (u32)gOptDownAction);
     gDecodeButtonEdge(state->buttons, p4);
 
     x = (selection - 0xDC) / 2;
     items = gItemCodeTable;
-    func_8001C214(0x5294, x - 2, 0x9E, 0xE0, 0xB6, 1);
-    func_8001C214(0, x, 0xA0, 0xDC, 0xB2, 1);
+    gEmitTranslucentTileRect(0x5294, x - 2, 0x9E, 0xE0, 0xB6, 1);
+    gEmitTranslucentTileRect(0, x, 0xA0, 0xDC, 0xB2, 1);
 
     selection = state->selected;
 
@@ -331,7 +339,7 @@ display:
         } else {
             text = *(u8 **)(textOffset + (u32)gLabelRecord);
         }
-        func_80049100(text, x, textY,
+        gDrawAlignedString(text, x, textY,
                       i == selection ? 8 : (flag != 0 ? 0xB : 0x10));
         textY += 0xE;
     }

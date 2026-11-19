@@ -23,7 +23,7 @@ extern u32 func_800915FC(u32 a0);
 extern u32 func_80095350(u32 a0);
 extern void func_80095830(unsigned char *destination, int value, unsigned int count);
 extern void func_800951D8(void);
-extern void func_80094CEC(void);
+extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
 extern s32 func_8009520C(void);
 
 /**
@@ -54,7 +54,7 @@ u32 func_8009509C(u32 a0)
     if (a0 == 0) {
         func_800951D8();
         while (gGpuJobHead != gGpuJobTail) {
-            func_80094CEC();
+            gWaitImageTransferFrame();
             if (func_8009520C() != 0) {
                 return -1;
             }
@@ -68,7 +68,7 @@ u32 func_8009509C(u32 a0)
     } else {
         count = (gGpuJobHead - gGpuJobTail) & 0x3F;
         if (count != 0) {
-            func_80094CEC();
+            gWaitImageTransferFrame();
         }
         if ((*gDma2ChannelCtrlPtr & 0x1000000) || !(*(volatile u32 *)gGpuGp1PortPtr & 0x4000000)) {
             return count ? count : 1;

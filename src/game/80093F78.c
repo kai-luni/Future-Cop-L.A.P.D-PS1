@@ -3,6 +3,8 @@
 
 extern u16 gMaxDrawWidth __asm__("D_8009DDF4");
 extern u16 gMaxDrawHeight __asm__("D_8009DDF6");
+s32 gBuildDrawAreaCommands(s16 x, s16 y) __asm__("func_80093F78");
+
 
 /**
  * @brief Builds the GPU draw-area top-left word (opcode 0xE3) with screen
@@ -23,8 +25,13 @@ extern u16 gMaxDrawHeight __asm__("D_8009DDF6");
  *
  * @par Callers
  * func_8009398C, func_80093AF0, func_80093CE8.
+ *
+ * @par Environment path
+ * Clamps coordinates (x, y) to valid VRAM draw-area bounds and encodes a GP0
+ * 0xE3/0xE4 drawing-area command word (called by func_8009398C,
+ * func_80093AF0, func_80093CE8).
  */
-s32 func_80093F78(s16 x, s16 y)
+s32 gBuildDrawAreaCommands(s16 x, s16 y)
 {
     register s32 v1 __asm__("$3");
     s32 x_tagged;

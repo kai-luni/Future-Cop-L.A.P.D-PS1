@@ -30,7 +30,7 @@ extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 
 extern void func_800951D8(void);
 extern s32 func_8009520C(void);
-extern void func_80094CEC(void);
+extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
 extern u32 func_800915FC(u32);
 extern void func_800914E0(s32, void (*)(void));
 
@@ -72,7 +72,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
         if (func_8009520C() != 0) {
             return -1;
         }
-        func_80094CEC();
+        gWaitImageTransferFrame();
     }
 
     gDispatchSavedIrqMask = func_800915FC(0);
@@ -88,7 +88,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
         return 0;
     }
 
-    func_800914E0(2, func_80094CEC);
+    func_800914E0(2, gWaitImageTransferFrame);
 
     i = 0;
     if (arg2 != 0) {
@@ -111,7 +111,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
 
     gGpuJobHead = (gGpuJobHead + 1) & 0x3F;
     func_800915FC(gDispatchSavedIrqMask);
-    func_80094CEC();
+    gWaitImageTransferFrame();
 
     i = (gGpuJobHead - gGpuJobTail) & 0x3F;
     __asm__ volatile(".set\tnoreorder\n\t.set reorder");

@@ -76,11 +76,12 @@ extern s32 func_80046C84(s32, s32);
 extern s32 gPopMenuPanel(void) __asm__("func_80078740");
 extern void func_80078650(struct Menu *, s32), func_8008227C(void);
 extern void gSelectEnabledMenuItem(s8, s32, s8) __asm__("func_800787D8");
-extern void func_8001C214(u32, s32, s32, s32, s32, u8);
+extern void gEmitTranslucentTileRect(u32, s32, s32, s32, s32, u8) __asm__("func_8001C214");
 extern void func_800493C0(u32, u8, u8, u8);
-extern void func_80082AB0(s32,s32,s32,s32,s32,s32,s32,s32,s32);
+extern void gEmitAtlasSpriteSimple(s32,s32,s32,s32,s32,s32,s32,s32,s32) __asm__("func_80082AB0");
 extern void func_800788F0(void *,s32,s32,s32,s32,s32,s32,s32);
-extern void func_800826A0(void), func_80078B98(void), func_80078B34(s32,s32,s32), func_8001B4A8(s32);
+extern void func_800826A0(void), func_80078B34(s32,s32,s32), func_8001B4A8(s32);
+extern void gDrawSlotStatusLine(void) __asm__("func_80078B98");
 
 /**
  *  @brief Updates controller-driven menu state and renders the active menu.
@@ -296,7 +297,7 @@ reset_timer:
                 menu_y = gFontBankTable->y;
                 if (menu_y + width >= 210) menu_y += 210 - (menu_y + width);
                 if (i == 0 && gFontBankTable->width) {
-                    func_8001C214(0, (menu_x - 6) * 2, (menu_y - 5) * 2, gFontBankTable->width * 2, (width + 10) * 2, 1);
+                    gEmitTranslucentTileRect(0, (menu_x - 6) * 2, (menu_y - 5) * 2, gFontBankTable->width * 2, (width + 10) * 2, 1);
                 }
                 shown = menu_y;
                 for (j = 0; j < gFontBankTable->item_count; j++) {
@@ -314,7 +315,7 @@ reset_timer:
                         }
                         x = item->x;
                         y = item->y;
-                        func_80082AB0(item->icon, x, y, -1, -1, 10, color, item->flags & 7, item->flags & 0x38);
+                        gEmitAtlasSpriteSimple(item->icon, x, y, -1, -1, 10, color, item->flags & 7, item->flags & 0x38);
                     } else if (item->text || item->unk16) {
                         if (j == gFontBankTable->selection[i] && item->enabled) {
                             u8 *rgb2;
@@ -344,13 +345,13 @@ reset_timer:
             if (gFontBankTable->update) gFontBankTable->update(i);
         }
         func_800826A0();
-        if (gDeferredTransition == -1) func_80078B98();
+        if (gDeferredTransition == -1) gDrawSlotStatusLine();
         else { func_80078B34(0, 0, 0); func_80078B34(0, 1, 0); }
         if (gDeferredTransition != -1) {
             gUiHoldFlag = 1;
             if (gPendingRowCapture) {
                 func_80078B34(500, 0, 0);
-                func_80078B98();
+                gDrawSlotStatusLine();
                 func_8001B4A8(1);
                 while (gFrameBarrier) { }
                 func_80082DDC(gPendingRowCapture, 1);

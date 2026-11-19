@@ -42,8 +42,8 @@ extern Unk8009FA94 *gGameSession[2] __asm__("D_8009FA94");
 extern u16 gSoundWidgetLabel[] __asm__("D_8009BABE");
 extern u8 D_800A377B[];
 
-extern void func_80082FA4(s32, s32, s32, s32, s32, s32, s32, s32, s32);
-extern Unk8007CE04 *func_80082AB0(s32, s32, s32, s32, s32, s32, s32, s32, s32);
+extern void gEmitFlatQuadRectMode(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082FA4");
+extern Unk8007CE04 *gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
 extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
 extern void func_80078B34(s32, s32, s32);
 extern void func_8002A16C(s32);

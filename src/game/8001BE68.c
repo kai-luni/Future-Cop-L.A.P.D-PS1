@@ -11,8 +11,8 @@ extern u8 gDisplayEnabled __asm__("D_8009F608");
 extern void func_80092910(int);
 extern void func_80092BF4(int);
 extern void func_80092A84(int);
-extern void func_80092140(struct Display *, int, int, int, int);
-extern void func_800921F4(struct Draw *, int, int, int, int);
+extern void gSetDefDrawEnv(struct Display *, int, int, int, int) __asm__("func_80092140");
+extern void gSetDefDispEnv(struct Draw *, int, int, int, int) __asm__("func_800921F4");
 /**
  * @brief Resets the GPU library and installs the two 320x240 drawing areas.
  *
@@ -40,10 +40,10 @@ int func_8001BE68(void)
     func_80092910(0);
     func_80092BF4(0);
     func_80092A84(0);
-    func_80092140(&gLayerBlocks[0], 0, 0, 0x140, 0xF0);
-    func_80092140(&gLayerBlocks[1], 0, 0x100, 0x140, 0xF0);
-    func_800921F4(&gDrawBlocks[0], 0, 0, 0x140, 0xF0);
-    func_800921F4(&gDrawBlocks[1], 0, 0x100, 0x140, 0xF0);
+    gSetDefDrawEnv(&gLayerBlocks[0], 0, 0, 0x140, 0xF0);
+    gSetDefDrawEnv(&gLayerBlocks[1], 0, 0x100, 0x140, 0xF0);
+    gSetDefDispEnv(&gDrawBlocks[0], 0, 0, 0x140, 0xF0);
+    gSetDefDispEnv(&gDrawBlocks[1], 0, 0x100, 0x140, 0xF0);
     gLayerBlocks[0].x = 0;
     gLayerBlocks[0].y = 0;
     gLayerBlocks[1].x = 0;

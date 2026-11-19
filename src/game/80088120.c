@@ -31,9 +31,9 @@ extern u8 func_8001C034(void);
 extern void *func_8008799C(s32 size);
 extern void gMovieFreeDecodeBuffer(void *ptr) __asm__("func_800879BC");
 extern void func_80092C8C(s32 arg0);
-extern void func_80092F98(Rect88120 *rect, void *buf);
-extern void func_80092F38(Rect88120 *rect, void *buf);
-extern void func_80092FF8(Rect88120 *rect, s32 x, s32 y);
+extern void gStoreImage(Rect88120 *rect, void *buf) __asm__("func_80092F98");
+extern void gLoadImage(Rect88120 *rect, void *buf) __asm__("func_80092F38");
+extern void gMoveImage(Rect88120 *rect, s32 x, s32 y) __asm__("func_80092FF8");
 extern void func_800858F4(s32 value);
 extern void func_80085900(s32 value);
 extern void func_80091270(s32 arg0);
@@ -180,7 +180,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         }
         for (row = 0; row < 0x100; row++) {
             func_80092C8C(0);
-            func_80092F98(&rectA, buf16);
+            gStoreImage(&rectA, buf16);
             func_80092C8C(0);
             x = 0;
             above = row < 0x31;
@@ -200,7 +200,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
                 }
                 src16++;
             }
-            func_80092F38(&rectB, buf8);
+            gLoadImage(&rectB, buf8);
             rectA.y++;
             rectB.y++;
         }
@@ -222,7 +222,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             rectB.y = 0;
         }
         func_80092C8C(0);
-        func_80092FF8(&rectA, 0, rectB.y);
+        gMoveImage(&rectA, 0, rectB.y);
         func_80092C8C(0);
     }
 
@@ -268,7 +268,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         }
         for (line = 0; line < 0x100; line++) {
             func_80092C8C(0);
-            func_80092F98(&rectC, in8);
+            gStoreImage(&rectC, in8);
             func_80092C8C(0);
             col = 0;
             dst16 = out16;
@@ -279,7 +279,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
                 b = *src8++ >> 3;
                 *dst16++ = (b << 10) | (g << 5) | r;
             }
-            func_80092F38(&rectD, out16);
+            gLoadImage(&rectD, out16);
             rectC.y++;
             rectD.y++;
         }
@@ -300,7 +300,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             rectD.y = 0;
         }
         func_80092C8C(0);
-        func_80092FF8(&rectC, 0, rectD.y);
+        gMoveImage(&rectC, 0, rectD.y);
         func_80092C8C(0);
         func_80091270(0);
         func_8001C088(1 - mode, 0);

@@ -17,10 +17,12 @@ typedef struct {
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gFreeBlock(void *ptr) __asm__("func_800181D4");
-extern void func_8006C4C4(void *vertices, s16 step, s16 flags);
-extern void func_8006C768(void *faces, s32 rows, s32 cols, s32 count);
+extern void gGenDomePatchVertices(void *vertices, s16 step, s16 flags) __asm__("func_8006C4C4");
+extern void gBuildDomeFaceIndices(void *faces, s32 rows, s32 cols, s32 count) __asm__("func_8006C768");
 extern s32 gTableBuffer __asm__("D_8009FA08");
 extern s32 gLevelVertexBlock __asm__("D_8009FA1C");
+Mesh *gBuildDomePatchMesh(s16 arg0, s32 flags) __asm__("func_8006C84C");
+
 
 /**
  * @brief Allocates and fills a dome-patch mesh for the effect objects.
@@ -57,8 +59,15 @@ extern s32 gLevelVertexBlock __asm__("D_8009FA1C");
  * @par Callers
  * Confirmed: func_8005D3FC (effect emitter blocks, steps 0x100 and 0x200),
  * func_8006E814 (mesh effect init, step 0x100).
+ *
+ * @par Environment path
+ * Allocates and populates a spherical dome-patch mesh for effect objects
+ * (called by func_8005D3FC and func_8006E814). Quantizes the step to divide
+ * 0x200, allocates the 0x1C-byte header, vertex buffer, and 5-byte face
+ * buffer via func_80017EBC, attaches D_8009FA08 and D_8009FA1C, and calls
+ * func_8006C4C4 and func_8006C768.
  */
-Mesh *func_8006C84C(s16 arg0, s32 flags)
+Mesh *gBuildDomePatchMesh(s16 arg0, s32 flags)
 {
     Mesh *mesh;
     s32 step;
@@ -112,7 +121,7 @@ Mesh *func_8006C84C(s16 arg0, s32 flags)
     }
     mesh->unk10 = gTableBuffer;
     mesh->unk14 = gLevelVertexBlock;
-    func_8006C4C4(mesh->vertices, step, flags & 0x10);
-    func_8006C768(mesh->faces, rows, cols, mesh->vertex_count);
+    gGenDomePatchVertices(mesh->vertices, step, flags & 0x10);
+    gBuildDomeFaceIndices(mesh->faces, rows, cols, mesh->vertex_count);
     return mesh;
 }

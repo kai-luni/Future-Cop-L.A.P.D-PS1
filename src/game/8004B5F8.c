@@ -123,6 +123,8 @@ extern Node *func_8004AA90(void);
 extern void func_8004AAC0(Obj *, Node *);
 extern u8 func_8004B244(Obj *, s32, s32 *);
 extern void func_8004B310(Obj *, s32 *, s32 *, s32, s16 *, s16 *, s32 *, s32 *);
+s32 gSpawnMeshFractureDebris(Obj *obj, s32 arg1) __asm__("func_8004B5F8");
+
 
 /**
  * @brief Fractures a model into single polygons: picks a random subset of the
@@ -196,8 +198,15 @@ extern void func_8004B310(Obj *, s32 *, s32 *, s32, s16 *, s16 *, s32 *, s32 *);
  * @par Callers
  * func_8004C324, message 0 only: once on the default path and once from the
  * shared failure label of the flag-0x10 branch.
+ *
+ * @par Environment path
+ * Selects up to n faces from an entity's 3D model using scratchpad bitmaps
+ * (0x1F800000/0x1F800020) and spawns debris fragment nodes via func_8004AA90,
+ * func_8004B310, and func_8004AAC0. Transforms face vertices with
+ * func_8001B148, computes centroids, applies random spin and lifetime, and
+ * increments gClipLimitOffset.
  */
-s32 func_8004B5F8(Obj *obj, s32 arg1)
+s32 gSpawnMeshFractureDebris(Obj *obj, s32 arg1)
 {
     s16 sum[4];
     s32 pos[4];

@@ -10,7 +10,7 @@ struct Unk73700 {
 extern struct Unk73700 *gBeamNodeList __asm__("D_8009F38C");
 
 extern void gDrawBeamNode(struct Unk73700 *node, s32 arg) __asm__("func_80071FA4");
-extern void func_80072F7C(struct Unk73700 *node, s32 arg);
+extern void gDrawFlatModelNode(struct Unk73700 *node, s32 arg) __asm__("func_80072F7C");
 void gDrawBeamNodeList(s32 arg) __asm__("func_80073700");
 
 
@@ -52,7 +52,7 @@ void gDrawBeamNodeList(s32 arg)
         if (node->first != 0 || node->second != 0) {
             gDrawBeamNode(node, arg);
         } else {
-            func_80072F7C(node, arg);
+            gDrawFlatModelNode(node, arg);
         }
     }
 }

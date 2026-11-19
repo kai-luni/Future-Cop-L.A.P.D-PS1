@@ -45,8 +45,8 @@ extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
 extern void func_80078B34(s32, s32, s32);
 extern void func_8007F128(s32, s32, s32, s32, s32, s32);
 extern void func_8007FB04(void);
-extern void func_80082AB0(s32, s32, s32, s32, s32, s32, s32, s32, s32);
-extern void func_80082EF0(s32, s32, s32, s32, s32, s32, s32, s32);
+extern void gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
+extern void gEmitFlatQuadRect(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082EF0");
 extern s32 func_8008CD30(u8 *, u8 *, s32);
 
 /**
@@ -112,9 +112,9 @@ void gDrawProfileDetailScreen(s32 arg0)
     }
     func_8007FB04();
     neg = -1;
-    func_80082AB0(9, 0x24, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
-    func_80082EF0(0x25, 0x9B, 0x67, 2, 0xA, 0x60, 0xC0, 0xFF);
-    func_80082AB0(8, 0x93, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
+    gEmitAtlasSpriteSimple(9, 0x24, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
+    gEmitFlatQuadRect(0x25, 0x9B, 0x67, 2, 0xA, 0x60, 0xC0, 0xFF);
+    gEmitAtlasSpriteSimple(8, 0x93, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
 
     if (gFontBankTable == gMenuActivationBlock) {
         func_80078B34(0x44C, 0, 0);
@@ -366,7 +366,7 @@ void gDrawProfileDetailScreen(s32 arg0)
                         }
                         func_800788F0((s32)buf, *(u16 *)(e + 0x1C), e[0x1E], 0x10, 0, 4, 0x20, 0);
                     }
-                    func_80082AB0(wd, *(u16 *)(e + 0x16), e[0x18], -1, -1, 0xF, 0x80, 1, 8);
+                    gEmitAtlasSpriteSimple(wd, *(u16 *)(e + 0x16), e[0x18], -1, -1, 0xF, 0x80, 1, 8);
                     j++;
                 } while (j < x);
             }

@@ -22,14 +22,16 @@ extern u8 D_800A8E48[];
 extern u8 D_800AB0E8[];
 extern u8 D_80023314[];
 
-extern void func_80023478(void);
-extern void func_80021B50(void);
+extern void gShutdownCvkSystem(void) __asm__("func_80023478");
+extern void gResetCvkSubsystem(void) __asm__("func_80021B50");
 extern s32 func_80021C20(s32 first, ...);
-extern void func_800211FC(void);
-extern s32 func_8001F0FC(s32 callback);
+extern void gInitSpuTransferHook(void) __asm__("func_800211FC");
+extern s32 gSetScreenModeHook(s32 callback) __asm__("func_8001F0FC");
 extern s32 func_80098458(s32 arg0, s32 arg1);
 extern s32 func_80097B28(s32 arg0);
-extern void func_80044F8C(void);
+extern void gInitSoundState(void) __asm__("func_80044F8C");
+u8 gInitCvkStreamSubsystem(void) __asm__("func_8002333C");
+
 
 /**
  * @brief Brings up the sprite/asset subsystem: resource group, eight object
@@ -61,17 +63,24 @@ extern void func_80044F8C(void);
  *
  * @par Callers
  * func_80076EB0 (boot); func_80023478 undoes it.
+ *
+ * @par Environment path
+ * Brings up the CVK sprite/asset subsystem by resetting tables via
+ * func_80021B50, registering the frame callback via func_8001F0FC,
+ * initializing audio via func_80044F8C, and invoking SPU/stream init helpers
+ * func_800211FC, func_80021C20, func_80023478, func_80097B28, and
+ * func_80098458.
  */
-u8 func_8002333C(void)
+u8 gInitCvkStreamSubsystem(void)
 {
     s32 result;
     u32 i;
 
-    func_80023478();
-    func_80021B50();
+    gShutdownCvkSystem();
+    gResetCvkSubsystem();
     result = func_80021C20(1, 0x1002001, 4, 8, 5, 0x18, 8, D_800A8E48, 9, D_800AB0E8, 0);
-    func_800211FC();
-    func_8001F0FC((s32)D_80023314);
+    gInitSpuTransferHook();
+    gSetScreenModeHook((s32)D_80023314);
     for (i = 0; i < 8; i++) {
         gObjectSlots[i].unk00 = -1;
         gObjectSlots[i].unk01 = -1;
@@ -98,6 +107,6 @@ u8 func_8002333C(void)
     gAssetHandle[0] = 0;
     gAssetHandle[1] = 0;
     gStreamCommandState = 0;
-    func_80044F8C();
+    gInitSoundState();
     return gCvkSystemActive;
 }

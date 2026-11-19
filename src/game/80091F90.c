@@ -8,8 +8,10 @@ typedef struct {
     s16 h;
 } Rect1F90;
 
-extern void func_80092F38(void *rect, void *data);
-extern u16 func_80092230(s32 type, s32 blend, s32 x, s32 y);
+extern void gLoadImage(void *rect, void *data) __asm__("func_80092F38");
+extern u16 gGetTPage(s32 type, s32 blend, s32 x, s32 y) __asm__("func_80092230");
+u16 gLoadTexturePage(void *data, s32 type, s32 blend, s32 x, s32 y, s32 w, s32 h) __asm__("func_80091F90");
+
 
 /**
  * @brief Uploads one pixel type of an image block and returns its texture word.
@@ -31,8 +33,17 @@ extern u16 func_80092230(s32 type, s32 blend, s32 x, s32 y);
  *
  * @par Callers
  * None in the symbol table (inlined into the sprite/texture paths).
+ *
+ * @par Environment path
+ * VRAM upload helper of the texture path: builds a rectangle at x,y with
+ * height h and a width narrowed for the pixel type (4-bit, 8-bit or 15-bit),
+ * sends it with func_80092F38 (the LoadImage-tagged transfer), and returns
+ * func_80092230, which packs (type and 3) into bits 7-8, (blend and 3) into
+ * bits 5-6, x shifted right 6 into the page X bits, y bit 8 into bit 4 and y
+ * bit 9 into bit 11. No caller reaches it in the sources; only func_80092230
+ * mentions it.
  */
-u16 func_80091F90(void *data, s32 type, s32 blend, s32 x, s32 y, s32 w, s32 h)
+u16 gLoadTexturePage(void *data, s32 type, s32 blend, s32 x, s32 y, s32 w, s32 h)
 {
     Rect1F90 rect;
 
@@ -50,6 +61,6 @@ u16 func_80091F90(void *data, s32 type, s32 blend, s32 x, s32 y, s32 w, s32 h)
         rect.w = w;
         break;
     }
-    func_80092F38(&rect, data);
-    return func_80092230(type, blend, x, y);
+    gLoadImage(&rect, data);
+    return gGetTPage(type, blend, x, y);
 }

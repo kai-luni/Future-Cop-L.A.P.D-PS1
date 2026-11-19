@@ -7,7 +7,7 @@ struct Unk5A654Sample {
 };
 
 extern struct Unk5A654Sample **gTextureDescriptorTable __asm__("D_8009F7D8");
-extern s32 D_8009F7DC;
+extern s32 gTexDescriptorCount __asm__("D_8009F7DC");
 
 /**
  * @brief Linear id lookup in the effect/sample table D_8009F7D8.
@@ -31,7 +31,7 @@ s32 func_8005A654(s32 id)
 {
     s32 i;
 
-    for (i = 0; i < D_8009F7DC; i++) {
+    for (i = 0; i < gTexDescriptorCount; i++) {
         if (gTextureDescriptorTable[i]->id == id) {
             return i;
         }

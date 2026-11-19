@@ -7,8 +7,8 @@ struct Unk247A8 {
 };
 
 extern struct Unk247A8 gMapOpenPanelAction[2] __asm__("D_800A0AA0");
-extern struct Unk247A8 D_800A0AB0[2];
-extern struct Unk247A8 D_800A0AC0[2];
+extern struct Unk247A8 gOptUpAction[2] __asm__("D_800A0AB0");
+extern struct Unk247A8 gOptDownAction[2] __asm__("D_800A0AC0");
 extern struct Unk247A8 D_800A0AD0[2];
 extern struct Unk247A8 D_800A0AE0[2];
 extern struct Unk247A8 gMapDigit2Action[2] __asm__("D_800A0AF0");
@@ -61,10 +61,10 @@ void func_800247A8(void)
     for (i = 0; i < 2; i++) {
         gMapOpenPanelAction[i].unk0 = 0x40000;
         gMapOpenPanelAction[i].unk4 = 2;
-        D_800A0AB0[i].unk0 = 0x40000000;
-        D_800A0AB0[i].unk4 = 2;
-        D_800A0AC0[i].unk0 = 0x80000000;
-        D_800A0AC0[i].unk4 = 2;
+        gOptUpAction[i].unk0 = 0x40000000;
+        gOptUpAction[i].unk4 = 2;
+        gOptDownAction[i].unk0 = 0x80000000;
+        gOptDownAction[i].unk4 = 2;
         D_800A0AD0[i].unk0 = 0x10000000;
         D_800A0AD0[i].unk4 = 2;
         D_800A0AE0[i].unk0 = 0x20000000;

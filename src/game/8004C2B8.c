@@ -68,7 +68,7 @@ extern s32 func_8003C980(s32 message, void *object, s32 arg2, s32 arg3);
 extern struct Unk4AADNode *func_8004AAD4(struct Unk4AADOwner *owner, struct Unk4AADNode *previous, struct Unk4AADNode *node);
 extern s32 gLaunchDebrisObject(struct Unk4C2B8Owner *object, s32 arg1) __asm__("func_8004ABE4");
 extern void func_8004B180(void *object);
-extern s32 func_8004B5F8(struct Unk4C2B8Owner *object, s32 arg1);
+extern s32 gSpawnMeshFractureDebris(struct Unk4C2B8Owner *object, s32 arg1) __asm__("func_8004B5F8");
 extern void func_8004C0C0(struct Unk4C2B8Owner *object);
 
 /**

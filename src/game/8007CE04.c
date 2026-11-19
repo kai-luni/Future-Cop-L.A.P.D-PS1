@@ -42,8 +42,8 @@ extern Unk8009FA94 *gGameSession[2] __asm__("D_8009FA94");
 extern u16 gSoundWidgetLabel[] __asm__("D_8009BABE");
 extern u8 D_800A377B[];
 
-extern void func_80082FA4(s32, s32, s32, s32, s32, s32, s32, s32, s32);
-extern Unk8007CE04 *func_80082AB0(s32, s32, s32, s32, s32, s32, s32, s32, s32);
+extern void gEmitFlatQuadRectMode(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082FA4");
+extern Unk8007CE04 *gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
 extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
 extern void func_80078B34(s32, s32, s32);
 extern void func_8002A16C(s32);
@@ -94,8 +94,8 @@ void gDrawOptionsGaugeRow(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     register s32 product __asm__("$2");
     register s32 quot __asm__("$7");
 
-    func_80082FA4(0x9F, arg1 - 1, 0x5A, 6, 0x14, 0, 0, 0xCD, 2);
-    p = func_80082AB0(arg0, 0xA0, arg1, -1, -1, 0x14, 0x80, 1, 8);
+    gEmitFlatQuadRectMode(0x9F, arg1 - 1, 0x5A, 6, 0x14, 0, 0, 0xCD, 2);
+    p = gEmitAtlasSpriteSimple(arg0, 0xA0, arg1, -1, -1, 0x14, 0x80, 1, 8);
     if (p != 0) {
         diff = p->unk14 - p->unk0C;
         product = arg2 * diff;

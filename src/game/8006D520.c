@@ -47,6 +47,8 @@ extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void func_800413EC(s32 arg0, s32 arg1, s32 arg2, s32 context, s32 arg4, s32 mode);
 extern void func_80041428(s32 arg0, s32 arg1, s32 arg2, s32 context, struct Vec3s32 *position,
                           s32 height, s32 arg6);
+void gDrawGroundMarker(struct Unk8006D520 *arg0) __asm__("func_8006D520");
+
 
 /**
  * @brief Draws an object's ground marker: a tilted 3D disc or a flat
@@ -75,8 +77,15 @@ extern void func_80041428(s32 arg0, s32 arg1, s32 arg2, s32 context, struct Vec3
  *
  * @par Callers
  * func_8006D770.
+ *
+ * @par Environment path
+ * Draws an entity's ground shadow/target ring for func_8006D770. Resolves the
+ * base transform via func_8003D9F8; when flag 0x400 is set it computes tilt
+ * via func_8001846C and draws a tilted disc with func_80041428, otherwise it
+ * draws a flat quad with func_800413EC tinted by D_8009FA58, D_8009FA5C, or
+ * the link color.
  */
-void func_8006D520(struct Unk8006D520 *arg0)
+void gDrawGroundMarker(struct Unk8006D520 *arg0)
 {
     struct Unk8006D520 *e = arg0;
     s32 sine;

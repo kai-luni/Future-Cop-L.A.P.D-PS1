@@ -35,7 +35,7 @@ extern u32 gTracerEdgeColour __asm__("D_8009F388");
 extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 extern void gGteLoadRotation(u8 *matrix) __asm__("func_80010820");
 extern void gGteProjectPoint(s16 *src, s16 *dst) __asm__("func_80010704");
-extern void func_8006F21C(DVECTOR a0, DVECTOR a1, DVECTOR a2, DVECTOR a3, s32 s3, s32 s4, u32 s5, u32 s6, s32 depth);
+extern void gEmitTracerGouraudQuad(DVECTOR a0, DVECTOR a1, DVECTOR a2, DVECTOR a3, s32 s3, s32 s4, u32 s5, u32 s6, s32 depth) __asm__("func_8006F21C");
 void gDrawTracerBand(struct Node *node, Vec3 *pos) __asm__("func_8006F310");
 
 
@@ -287,11 +287,11 @@ L_done:
     prim[3] = 1;
     *(u32 *)prim = (*(u32 *)prim & 0xFF000000) | (depth & mask);
 
-    func_8006F21C(proj[0][0], proj[0][1], proj[0][2], proj[0][3], s3, s4, w, s6, depth);
+    gEmitTracerGouraudQuad(proj[0][0], proj[0][1], proj[0][2], proj[0][3], s3, s4, w, s6, depth);
     __asm__ volatile("" : "+r"(s3));
     i = -s3;
     s1 = -s4;
-    func_8006F21C(proj[0][0], proj[0][1], proj[0][2], proj[0][3], i, s1, w, s6, depth);
-    func_8006F21C(proj[1][0], proj[1][1], proj[0][2], proj[0][3], s3, s4, w, s6, depth);
-    func_8006F21C(proj[1][0], proj[1][1], proj[0][2], proj[0][3], i, s1, w, s6, depth);
+    gEmitTracerGouraudQuad(proj[0][0], proj[0][1], proj[0][2], proj[0][3], i, s1, w, s6, depth);
+    gEmitTracerGouraudQuad(proj[1][0], proj[1][1], proj[0][2], proj[0][3], s3, s4, w, s6, depth);
+    gEmitTracerGouraudQuad(proj[1][0], proj[1][1], proj[0][2], proj[0][3], i, s1, w, s6, depth);
 }

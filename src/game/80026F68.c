@@ -6,7 +6,7 @@ extern s16 gPlayerFadeTimers[] __asm__("D_8009FA44");
 extern s32 gFrameDelta __asm__("D_8009F9FC");
 extern s32 gScreenState __asm__("D_8009FA00");
 
-extern void func_80026E9C(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gEmitScreenFadeBar(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80026E9C");
 
 /**
  * @brief Per-player screen fade tick: counts the fade-in timer up to the
@@ -54,7 +54,7 @@ void func_80026F68(s32 arg0, s32 arg1)
             if (temp >= 0x100) {
                 temp = 0xFF;
             }
-            func_80026E9C(temp, temp, temp, (arg1 & 0xFF) ? 0x140 : 0xA0);
+            gEmitScreenFadeBar(temp, temp, temp, (arg1 & 0xFF) ? 0x140 : 0xA0);
         }
     }
 }

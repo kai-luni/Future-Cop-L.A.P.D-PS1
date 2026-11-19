@@ -7,6 +7,8 @@ extern void func_80097A28(void);
 extern void gSpuInitDmaEvent(void) __asm__("func_80096E40");
 extern void gSpuInitPool(s32 count, u8 *table) __asm__("func_80097AC8");
 extern void func_80021824(void);
+void gResetCvkSubsystem(void) __asm__("func_80021B50");
+
 
 /**
  * @brief Initialization chain of the sprite/asset subsystem: library
@@ -25,8 +27,14 @@ extern void func_80021824(void);
  *
  * @par Callers
  * func_8002333C.
+ *
+ * @par Environment path
+ * Clears the 8-entry sprite/asset subsystem table and invokes SPU and
+ * subsystem initialization/reset helpers func_80021824, func_80097A28,
+ * gSpuInitDmaEvent, gSpuInitPool, and gSpuInitSubsystem (called by
+ * func_8002333C).
  */
-void func_80021B50(void)
+void gResetCvkSubsystem(void)
 {
     func_80097A28();
     gSpuInitDmaEvent();

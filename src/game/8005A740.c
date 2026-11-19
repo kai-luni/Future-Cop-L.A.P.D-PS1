@@ -14,6 +14,8 @@ extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 extern void gSinCos(s32 id, s32 *first, s32 *second) __asm__("func_8001846C");
+void gEmitAngledLine(s32 origin, s32 id) __asm__("func_8005A740");
+
 
 /**
  * @brief Emits a line primitive from an origin along an angle.
@@ -30,8 +32,13 @@ extern void gSinCos(s32 id, s32 *first, s32 *second) __asm__("func_8001846C");
  *
  * @par Likely role
  * The free-hand/aim line of the HUD: one call per angle, 28 bytes each.
+ *
+ * @par Environment path
+ * Computes a direction vector from angle id using gSinCos and emits a flat
+ * GP0 0x40 line primitive from origin into the ordering table (called by
+ * func_8005A9C4).
  */
-void func_8005A740(s32 origin, s32 id)
+void gEmitAngledLine(s32 origin, s32 id)
 {
     struct LineF2 *line;
     s32 first;

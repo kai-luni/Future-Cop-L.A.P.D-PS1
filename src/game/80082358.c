@@ -16,6 +16,8 @@ extern u8 D_800120E0[];
 extern void gEncodeProfileNameGlyphs(u8 *arg0) __asm__("func_800822CC");
 extern u8 *func_8001E318(u8 *destination, u8 *source, u32 count);
 extern void gFreeBlock(struct Node *node) __asm__("func_800181D4");
+void gUploadSaveProfileIcon(struct Node *node) __asm__("func_80082358");
+
 
 /**
  *  @brief Extracts selected image and palette chunks from a tagged node.
@@ -43,8 +45,14 @@ extern void gFreeBlock(struct Node *node) __asm__("func_800181D4");
  *  D_8009F464 != 0; copies up to three 0x80-byte `PIX4` (`0x50495834`) chunks
  *  and one 0x20-byte `PL16` (`0x504C3136`) chunk into main-RAM buffer D_8009F92C
  *  (no VRAM upload here), then frees `node` via func_800181D4.
+ *
+ * @par Environment path
+ * Extracts selected image and palette chunks from a tagged resource node via
+ * func_8001E318, encodes the profile name glyphs via
+ * gEncodeProfileNameGlyphs, and frees the node via gFreeBlock (called by
+ * func_80024EC8:209).
  */
-void func_80082358(struct Node *node)
+void gUploadSaveProfileIcon(struct Node *node)
 {
     s32 has_pl16;
     u8 *dst;

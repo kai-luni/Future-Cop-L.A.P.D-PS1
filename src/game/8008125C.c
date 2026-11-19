@@ -18,13 +18,13 @@ typedef struct {
 extern Big *gSaveProfileImage __asm__("D_8009F92C");
 #define RAW ((u8 *)gSaveProfileImage)
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern u8 *D_8009F878;
+extern u8 *gNameEntryAlphabet __asm__("D_8009F878");
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s8 gMissionListMaxIndex __asm__("D_8009F882");
 extern s8 gSelectedMissionIndex __asm__("D_8009F880");
 extern s8 D_8009F881;
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
-extern u8 D_800A3928[];
+extern u8 gNameEntryGlyphBuf[] __asm__("D_800A3928");
 extern s32 gScalarCursor[] __asm__("D_8009F8F8");
 extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 extern u8 *gGameSession __asm__("D_8009FA94");
@@ -65,8 +65,8 @@ extern void func_80078650(u8 *a, s32 b);
 extern void func_80046C84(s32 id, s32 b);
 extern void func_800492A0(u8 *text, s32 *w, s32 *h);
 extern s32 *func_80048E88(void);
-extern void func_80082EF0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h);
-extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
+extern void gEmitFlatQuadRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h) __asm__("func_80082EF0");
+extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void func_800788F0(u8 *a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h);
 extern void func_80077FFC(void);
 extern void func_80077708(void);
@@ -81,6 +81,8 @@ extern void gRouteFrontEndModeMenu(void) __asm__("func_80078210");
         if ((e).unk1F + 1 < 11) { n += 1 + (e).unk1F; } \
         else { n += 10; } \
     } else { n += 1; }
+void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) __asm__("func_8008125C");
+
 
 /**
  * @brief Front-end slot widget: dispatches one action code onto the profile-slot
@@ -157,8 +159,16 @@ extern void gRouteFrontEndModeMenu(void) __asm__("func_80078210");
  * No direct caller. Its address is the callback word at +4 of ten 0x1C-byte records
  * starting at 0x8009B8D0, all of which reference the text D_8009F470 - so it is reached
  * through the front-end widget list.
+ *
+ * @par Environment path
+ * Front-end profile-slot widget handler gated by D_8009F8BD and D_8009F8BE.
+ * Action 0 draws the 8-cell glyph editor with a Gouraud selection box via
+ * func_80082EF0 (link 0xBB8) and func_80049100, or the slot label via
+ * func_800788F0; actions 1/2/4/5 step cursor and glyph indices; action 3
+ * commits the name or applies the saved profile to D_8009FA94 and transitions
+ * via func_8007FACC and func_80078210.
  */
-void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     s32 s2;
     s32 n;
     s32 i;
@@ -196,7 +206,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             if (base[0x921] == 1) {
                 if (gPlayerMenuDepth[s2] != 0) {
                     gPlayerMenuDepth[s2] = 0;
-                    func_8007AA9C(RAW + 0x925, D_800A3928 + s2 * 8, 8, D_8009F878);
+                    func_8007AA9C(RAW + 0x925, gNameEntryGlyphBuf + s2 * 8, 8, gNameEntryAlphabet);
                     func_80080B70();
                     break;
                 }
@@ -242,7 +252,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                     func_8008CCB0(dst, (u8 *)off + 0x428);
                 }
                 gScalarCursor[s2] = 0;
-                func_8007A9D0(RAW + 0x925, D_800A3928 + s2 * 8, 8, D_8009F878, gPlayerNameLength);
+                func_8007A9D0(RAW + 0x925, gNameEntryGlyphBuf + s2 * 8, 8, gNameEntryAlphabet, gPlayerNameLength);
                 if (REC(0x428) != 0) {
                     RAW[0x200] = 5;
                     RAW[0x201] = 0;
@@ -326,7 +336,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 func_80046C84(0x46, 0);
                 arg2 = gScalarCursor[s2];
-                arg3 = (s32)(D_800A3928 + s2 * 8);
+                arg3 = (s32)(gNameEntryGlyphBuf + s2 * 8);
                 p = (u8 *)arg3 + arg2;
                 if (*p != 0) {
                     *p = *p - 1;
@@ -340,7 +350,7 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
                 func_80046C84(0x46, 0);
                 arg2 = gScalarCursor[s2];
-                arg3 = (s32)(D_800A3928 + s2 * 8);
+                arg3 = (s32)(gNameEntryGlyphBuf + s2 * 8);
                 p = (u8 *)arg3 + arg2;
                 *p = *p + 1;
                 if (*p >= gPlayerNameLength) {
@@ -383,14 +393,14 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                 w = w + 1;
                 arg2 = 0;
                 font = func_80048E88();
-                arg3 = (s32)(D_800A3928 + s2 * 8);
+                arg3 = (s32)(gNameEntryGlyphBuf + s2 * 8);
                 s2 = (s32)&gScalarCursor[s2];
                 h = ((s16 *)font)[3];
                 txt[1] = 0;
                 n = arg1 - (w + 1) * 4;
                 render_loop:
                 {
-                    txt[0] = D_8009F878[((u8 *)arg3)[arg2]];
+                    txt[0] = gNameEntryAlphabet[((u8 *)arg3)[arg2]];
                     func_800492A0(txt, &w2, &h2);
                     if (arg2 == *(s32 *)s2) {
                         dst = (u8 *)n;
@@ -404,14 +414,14 @@ void func_8008125C(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
                         step = 10;
                         __asm__("" : "+r"(selected), "+r"(step));
                         selected += 0x80;
-                        func_80082EF0((s32)dst, y + heightTmp + 2, w, one, step,
+                        gEmitFlatQuadRect((s32)dst, y + heightTmp + 2, w, one, step,
                                       selected, selected, selected);
                         col = 8;
                     } else {
                         col = 15;
                     }
                     arg2++;
-                    func_80049100(txt, n + (w - w2) / 2, y, col);
+                    gDrawAlignedString(txt, n + (w - w2) / 2, y, col);
                     lenv = w;
                     __asm__("addiu %0,%1,1" : "=r"(step) : "r"(n), "r"(lenv));
                     n = step + lenv;

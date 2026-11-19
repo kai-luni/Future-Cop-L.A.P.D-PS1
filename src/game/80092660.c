@@ -4,7 +4,9 @@ typedef unsigned short u16;
 typedef signed short s16;
 typedef unsigned char u8;
 struct Rect { s16 x, y, w, h; };
+
 struct Packet { u8 pad[3]; u8 len; u32 cmd, mode, xy, pos, wh; };
+void gSetDrawMovePacket(struct Packet *p, struct Rect *r, int x, int y) __asm__("func_80092660");
 /**
  * @brief Builds a five-word display-list entry describing one rectangle.
  *
@@ -24,8 +26,16 @@ struct Packet { u8 pad[3]; u8 len; u32 cmd, mode, xy, pos, wh; };
  *
  * @par Callers
  * func_800259D8, to draw the screen-filling backdrop quad.
+ *
+ * @par Environment path
+ * Builds a VRAM copy packet: length 5 (0 when the rectangle has no area), GP0
+ * 01 to flush the texture cache, GP0 80 copy command, the rectangle xy as
+ * source, (y shifted left 16) or (x and 0xFFFF) as destination and the
+ * rectangle wh. func_800259D8 uses it with a 320x240 rectangle at y 0x100
+ * minus the screen offset and destination 0, gScreenOffsetValue to copy the
+ * frame between the two buffers.
  */
-void func_80092660(struct Packet *p, struct Rect *r, int x, int y)
+void gSetDrawMovePacket(struct Packet *p, struct Rect *r, int x, int y)
 {
     register struct Packet *out __asm__("$8") = p;
     register int len __asm__("$4");

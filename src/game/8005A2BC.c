@@ -14,8 +14,10 @@ typedef struct {
 } Struct5A2BC;
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern s32 func_800195F0(u32 value);
+extern s32 gCountTrailingZeros(u32 value) __asm__("func_800195F0");
 extern void func_8004979C(void *value);
+s32 gBuildSpriteDescTable(void **array, s32 count) __asm__("func_8005A2BC");
+
 
 /**
  * @brief Builds the active sprite/tile descriptor table and publishes it in D_8009F77C.
@@ -52,8 +54,18 @@ extern void func_8004979C(void *value);
  * pointer), rewrites each 8-byte tile record in place (byte +6 += 0x80,
  * byte +7 = (col << 6) | row across 4 columns), and activates the table via
  * func_8004979C (D_8009F77C).
+ *
+ * @par Environment path
+ * Texture descriptor step of the Cpyr atlas loader, not a primitive emitter:
+ * for each source block it stores byte 2 (tile count), func_800195F0 of byte
+ * 3 (trailing-zero count, i.e. log2 of a power-of-two size) and a pointer to
+ * the 8-byte tile records at +8. Each tile record is patched in place: its
+ * byte 6 gets 0x80 added and byte 7 becomes (col shifted left 6) or row, with
+ * col starting at byte 4 shifted right 4 and row at byte 5, wrapping every
+ * four columns. The table is then handed to func_8004979C; called only by
+ * func_8005A414 after it uploaded the pixels.
  */
-s32 func_8005A2BC(void **array, s32 count)
+s32 gBuildSpriteDescTable(void **array, s32 count)
 {
     Struct5A2BC *header;
     s32 i;
@@ -70,7 +82,7 @@ s32 func_8005A2BC(void **array, s32 count)
 
     for (i = 0; i < count; i++) {
         header->items[i].unk0 = ((u8 *)array[i])[2];
-        header->items[i].unk1 = func_800195F0(((u8 *)array[i])[3]);
+        header->items[i].unk1 = gCountTrailingZeros(((u8 *)array[i])[3]);
         row = ((u8 *)array[i])[5];
         col = ((u8 *)array[i])[4] >> 4;
         header->items[i].unk8 = (u8 *)array[i] + 8;

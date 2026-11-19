@@ -18,7 +18,7 @@ extern u8 gTimeMmSsFormat[] __asm__("D_80010DCC");
 
 extern s32 func_80059E9C(void *player, s32 arg1);
 extern s32 func_80049340(u8 *text);
-extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
+extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void func_8008CD30(u8 *dest, u8 *fmt, ...);
 
 /**
@@ -97,7 +97,7 @@ void func_80027F80(void *player, u8 *text, s32 x, s32 color)
             if (v < 0) {
                 v += 3;
             }
-            func_80049100(str, x - (v >> 2), y, color & 0xFFFF);
+            gDrawAlignedString(str, x - (v >> 2), y, color & 0xFFFF);
         }
         i++;
         c = text[i];

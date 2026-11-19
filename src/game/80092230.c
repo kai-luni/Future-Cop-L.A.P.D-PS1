@@ -1,5 +1,7 @@
 // Categories: Graphics > GPU > Draw Environment | Graphics > Textures
 #include "game/types.h"
+u16 gGetTPage(s32 type, s32 blend, s32 x, s32 y) __asm__("func_80092230");
+
 
 /**
  * @brief Packs the texture-page parameter word from coordinates and mode
@@ -18,8 +20,13 @@
  *
  * @par Callers
  * func_80091F90.
+ *
+ * @par Environment path
+ * Packs texture depth mode (type), semi-transparency blend rate, and VRAM
+ * coordinates (x, y) into a 16-bit PS1 texture-page (tpage) parameter word
+ * (called by func_80091F90).
  */
-u16 func_80092230(s32 type, s32 blend, s32 x, s32 y)
+u16 gGetTPage(s32 type, s32 blend, s32 x, s32 y)
 {
     return ((type & 3) << 7)
         | ((blend & 3) << 5)

@@ -8,12 +8,12 @@ struct FontEntry {
 };
 
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern u8 *D_8009F878;
+extern u8 *gNameEntryAlphabet __asm__("D_8009F878");
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
-extern u8 D_800A3928[];
+extern u8 gNameEntryGlyphBuf[] __asm__("D_800A3928");
 extern s32 gScalarCursor[] __asm__("D_8009F8F8");
 extern u8 gHighlightShadeTable[8] __asm__("D_8009F3F8");
 extern s32 gGameClock[] __asm__("D_8009FA60");
@@ -23,8 +23,8 @@ extern void gEncodeNameToGlyphs(u8 *src, u8 *dst, s32 len, u8 *table, s32 tableL
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern struct FontEntry *func_80048E88(void);
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
-extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b);
-extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
+extern void gEmitFlatQuadRect(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b) __asm__("func_80082EF0");
+extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 
 /**
  * @brief Name-entry widget for one player: handles the action codes of the character
@@ -94,12 +94,12 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
     case 3: {
         s8 *flag = &gPlayerMenuDepth[idx];
         if (*flag != 0) {
-            gDecodeGlyphsToName(gPlayerNameTable + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878);
+            gDecodeGlyphsToName(gPlayerNameTable + idx * 9, gNameEntryGlyphBuf + idx * 8, 8, gNameEntryAlphabet);
             *flag = 0;
         } else {
             *flag = 1;
             gScalarCursor[idx] = 0;
-            gEncodeNameToGlyphs(gPlayerNameTable + idx * 9, D_800A3928 + idx * 8, 8, D_8009F878, gPlayerNameLength);
+            gEncodeNameToGlyphs(gPlayerNameTable + idx * 9, gNameEntryGlyphBuf + idx * 8, 8, gNameEntryAlphabet, gPlayerNameLength);
         }
         break;
     }
@@ -108,7 +108,7 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
             u8 *p;
             func_80046C84(0x46, 0);
             i = gScalarCursor[idx];
-            chars = D_800A3928 + idx * 8;
+            chars = gNameEntryGlyphBuf + idx * 8;
             p = chars + i;
             if (*p != 0) {
                 (*p)--;
@@ -122,7 +122,7 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
             u8 *p;
             func_80046C84(0x46, 0);
             i = gScalarCursor[idx];
-            chars = D_800A3928 + idx * 8;
+            chars = gNameEntryGlyphBuf + idx * 8;
             p = chars + i;
             (*p)++;
             if (*p >= gPlayerNameLength) {
@@ -164,7 +164,7 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
                 step++;
             }
             font = func_80048E88();
-            chars = D_800A3928 + idx * 8;
+            chars = gNameEntryGlyphBuf + idx * 8;
             baseX -= step * 4;
             base = gScalarCursor;
             off = idx << 2;
@@ -174,7 +174,7 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
             text[1] = 0;
             for (i = 0; i < 8; i++) {
                 s32 textColor;
-                text[0] = D_8009F878[chars[i]];
+                text[0] = gNameEntryAlphabet[chars[i]];
                 func_800492A0(text, &width, &height);
                 if (i == *sel_ptr) {
                     register s32 boxX __asm__("$4");
@@ -189,18 +189,18 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
                     c_idx = (gGameClock[0] >> 4) & 7;
                     c_idx += (s32)pal;
                     color = *(u8 *)c_idx + 0x80;
-                    func_80082EF0(boxX, y + fontHeight + 2, fontUnk8, boxKind, 10, color, color, color);
+                    gEmitFlatQuadRect(boxX, y + fontHeight + 2, fontUnk8, boxKind, 10, color, color, color);
                     textColor = 8;
                 } else {
                     textColor = 0xF;
                 }
-                func_80049100(text, baseX + (fontUnk8 - width) / 2, y, textColor);
+                gDrawAlignedString(text, baseX + (fontUnk8 - width) / 2, y, textColor);
                 baseX += step;
             }
         } else {
             u8 *str = gPlayerNameTable + idx * 9;
             func_800492A0(str, &fontUnk8, &fontHeight);
-            func_80049100(str, baseX - fontUnk8 / 2, y, 0xF);
+            gDrawAlignedString(str, baseX - fontUnk8 / 2, y, 0xF);
         }
         break;
     }

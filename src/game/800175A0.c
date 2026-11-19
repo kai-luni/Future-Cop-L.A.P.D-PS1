@@ -3,6 +3,8 @@
 
 extern void gProjectBoneParts(s32 arg0, s32 arg1) __asm__("func_8001428C");
 extern void gDrawModelPartsMasked(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80017058");
+s32 gProjectAndRenderMesh(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_800175A0");
+
 
 /**
  * @brief Updates the skinned parts of a model and submits its part
@@ -21,8 +23,13 @@ extern void gDrawModelPartsMasked(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80
  *
  * @par Callers
  * func_8003B2D0.
+ *
+ * @par Environment path
+ * Updates skinned model bone parts via gProjectBoneParts and submits the
+ * model's part list for rendering via gDrawModelPartsMasked, func_8001428C,
+ * and func_80017058 (called by func_8003B2D0).
  */
-s32 func_800175A0(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+s32 gProjectAndRenderMesh(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     gProjectBoneParts(arg0, arg2);
     gDrawModelPartsMasked(arg0, arg3, arg1);

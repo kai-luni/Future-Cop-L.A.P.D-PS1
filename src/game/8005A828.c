@@ -12,6 +12,8 @@ extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern s16 gRadiusTable[] __asm__("D_8009AFB4");
 
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
+void gEmitRadarTriangle(s32 origin, u32 angle, s32 code) __asm__("func_8005A828");
+
 
 /**
  * @brief Emits a three-segment line fan around an origin.
@@ -29,8 +31,17 @@ extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
  * @par Likely role
  * The radar sweep or a three-blade marker: the same origin, three directions
  * offset by the table's angles.
+ *
+ * @par Environment path
+ * Takes one 28-byte packet from the gPacketCursor pool (not advancing when
+ * gPacketLimit is reached) with tag word 0x04000000 (length 4, link 0) and
+ * command word code or 0x20000000, i.e. a POLY_F3 with the colour passed by
+ * the caller. The three vertices are the three point pairs of
+ * gRadarTriangleShape rotated by the sine and cosine from func_8001846C, with
+ * x offset by the 16.16 origin and y offset by 0x2C0000 (44 px), then shifted
+ * right 16. Called only by func_8005A9C4 with a gMarkerColorTable colour.
  */
-void func_8005A828(s32 origin, u32 angle, s32 code)
+void gEmitRadarTriangle(s32 origin, u32 angle, s32 code)
 {
     struct LineF3 *line;
     s32 values[2];

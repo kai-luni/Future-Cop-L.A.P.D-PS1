@@ -11,8 +11,10 @@ extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
 extern char D_80012B14[];
 extern  void (*gLogPrintf)(char *, ...) __asm__("D_8009DDEC");
 extern struct Context *gVramWriteCallback __asm__("D_8009DDE8");
-extern void func_80093CE8(u8 *, u8 *);
+extern void gBuildRectDrawList(u8 *, u8 *) __asm__("func_80093CE8");
 extern void func_8008CD10(void *, void *, int);
+void gDrawOTagEnv(u32 arg0, u8 *arg1) __asm__("func_800933B0");
+
 
 /**
  * @brief Builds a DRAWENV GPU packet, links it to an ordering table, and submits it (PsyQ DrawOTagEnv).
@@ -33,8 +35,13 @@ extern void func_8008CD10(void *, void *, int);
  * Mutates packet buffer at arg1+0x1C, submits DMA/GPU command list, and updates cached DRAWENV at D_8009DDF2+0xE.
  * @par Callers
  * Confirmed: none in direct-call list or asm/us/main.s. Unknown: whether invoked indirectly or unreferenced PsyQ library unit.
+ *
+ * @par Environment path
+ * PsyQ DrawOTagEnv implementation: copies a DRAWENV block via func_8008CD10,
+ * builds its GPU primitive packet via func_80093CE8, logs when debug level is
+ * set via gLogPrintf, and links/submits it to the ordering table.
  */
-void func_800933B0(u32 arg0, u8 *arg1)
+void gDrawOTagEnv(u32 arg0, u8 *arg1)
 {
     register u8 *base __asm__("$19") = gGpuDebugLevel;
     register u8 *saved __asm__("$17");
@@ -49,7 +56,7 @@ void func_800933B0(u32 arg0, u8 *arg1)
     if (cond >= 2)
         gLogPrintf(D_80012B14, arg0, saved);
     p = saved + 0x1c;
-    func_80093CE8(p, saved);
+    gBuildRectDrawList(p, saved);
     mask = 0xffffff;
     ctx = gVramWriteCallback;
     *(u32 *)p = (*(u32 *)p & 0xff000000) | (arg0 & mask);

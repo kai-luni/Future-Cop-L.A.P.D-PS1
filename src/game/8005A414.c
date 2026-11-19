@@ -18,15 +18,17 @@ typedef struct {
 } ArgA414;
 
 extern void **gTextureDescriptorTable __asm__("D_8009F7D8");
-extern s32 D_8009F7DC;
+extern s32 gTexDescriptorCount __asm__("D_8009F7DC");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
-extern void func_8005A220(void);
+extern void gFreeTextureDescriptors(void) __asm__("func_8005A220");
 extern void func_8008CD10(void *dest, void *src, s32 size);
-extern void func_80092F38(RectA414 *rect, void *data);
+extern void gLoadImage(RectA414 *rect, void *data) __asm__("func_80092F38");
 extern void func_80092C8C(s32 arg);
-extern s32 func_8005A2BC(void **array, s32 count);
+extern s32 gBuildSpriteDescTable(void **array, s32 count) __asm__("func_8005A2BC");
+void gLoadTextureChunksToVram(ArgA414 *arg0) __asm__("func_8005A414");
+
 
 /**
  * @brief Unpacks a "Cpyr" sprite/tile atlas blob, uploads its pixels to VRAM,
@@ -75,8 +77,15 @@ extern s32 func_8005A2BC(void **array, s32 count);
  * 0x40-wide column and a trailing 0x40 x 0x1E0 region at (0x140, 0) via
  * func_80092F38 / func_80092C8C, then calls func_8005A2BC to stamp tile
  * coordinates and frees `arg0` via func_800181D4 (or rolls back via func_8005A220).
+ *
+ * @par Environment path
+ * Consumes a 'Cpyr' texture/tile atlas blob from func_80024EC8:221, allocates
+ * gTextureDescriptorTable and per-entry blocks via gAllocMemory, uploads 16x1
+ * tiles at VRAM (0x140, 0x1E0) and a 0x40x0x1E0 block at (0x140, 0) via
+ * func_80092F38/func_80092C8C, stamps coordinates via func_8005A2BC, and
+ * frees arg0.
  */
-void func_8005A414(ArgA414 *arg0)
+void gLoadTextureChunksToVram(ArgA414 *arg0)
 {
     register HeaderA414 *header __asm__("$18");
     s32 count;
@@ -95,7 +104,7 @@ void func_8005A414(ArgA414 *arg0)
         goto cleanup;
     }
 
-    D_8009F7DC = count;
+    gTexDescriptorCount = count;
     gTextureDescriptorTable = gAllocMemory(count * 4, 2);
     p = (u8 *)header + 0xC;
     if (gTextureDescriptorTable == 0) {
@@ -121,7 +130,7 @@ void func_8005A414(ArgA414 *arg0)
             rect[0].y = y + 0x1E0;
             rect[0].w = 0x10;
             rect[0].h = 1;
-            func_80092F38(&rect[0], p);
+            gLoadImage(&rect[0], p);
             func_80092C8C(0);
             x += 0x10;
             p += 0x20;
@@ -136,15 +145,15 @@ void func_8005A414(ArgA414 *arg0)
     rect[1].y = 0;
     rect[1].w = 0x40;
     rect[1].h = 0x1E0;
-    func_80092F38(&rect[1], p + 8);
+    gLoadImage(&rect[1], p + 8);
     func_80092C8C(0);
 
-    if ((func_8005A2BC(gTextureDescriptorTable, count) & 0xFF) != 0) {
+    if ((gBuildSpriteDescTable(gTextureDescriptorTable, count) & 0xFF) != 0) {
         goto done;
     }
 
 cleanup:
-    func_8005A220();
+    gFreeTextureDescriptors();
 
 done:
     gFreeBlock(arg0);

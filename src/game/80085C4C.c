@@ -11,9 +11,10 @@ extern int gStripScaleEnable __asm__("D_8009F4C0");
 extern char D_80085074[];
 extern void *func_8001E4C0(void *, int, unsigned int);
 extern void func_80085AC4(int,int);
-extern void func_80092140(void *,int,int,int,int);
-extern void func_800921F4(void *,int,int,int,int);
-extern void func_80091270(int), func_800932F0(void *), func_800934BC(void *), func_80092BF4(int), func_80095E90(int);
+extern void gSetDefDrawEnv(void *,int,int,int,int) __asm__("func_80092140");
+extern void gSetDefDispEnv(void *,int,int,int,int) __asm__("func_800921F4");
+extern void func_80091270(int), func_800932F0(void *), func_80092BF4(int), func_80095E90(int);
+extern void gPutDispEnvCached(void *) __asm__("func_800934BC");
 extern void func_8008C9C0(void), func_8008C9E0(void);
 extern void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
 extern int func_8009612C(void *), func_80092B94(int);
@@ -120,10 +121,10 @@ int gMovieInitContext(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, in
  func_8001E4C0(ctx,0,0x130);
  gMovieSliceContext=ctx;
  func_80085AC4((u8)a5,0);
- func_80092140((u8 *)gMovieSliceContext+0x34,0,0,0x140,0xf0);
- func_800921F4((u8 *)gMovieSliceContext+0xec,0,0,0x140,0xf0);
- func_80092140((u8 *)gMovieSliceContext+0x90,0,0x100,0x140,0xf0);
- func_800921F4((u8 *)gMovieSliceContext+0x100,0,0x100,0x140,0xf0);
+ gSetDefDrawEnv((u8 *)gMovieSliceContext+0x34,0,0,0x140,0xf0);
+ gSetDefDispEnv((u8 *)gMovieSliceContext+0xec,0,0,0x140,0xf0);
+ gSetDefDrawEnv((u8 *)gMovieSliceContext+0x90,0,0x100,0x140,0xf0);
+ gSetDefDispEnv((u8 *)gMovieSliceContext+0x100,0,0x100,0x140,0xf0);
  if (gStripScaleEnable == 1 && gStripDitherEnabled == 0) {
   gMovieSliceContext->fd=1; gMovieSliceContext->f111=1;
  } else { gMovieSliceContext->fd=0; gMovieSliceContext->f111=0; }
@@ -132,7 +133,7 @@ int gMovieInitContext(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, in
  if (a6) {
   func_80091270(0);
   func_800932F0((u8 *)gMovieSliceContext+0x34+(1-gMovieSliceContext->f114)*92);
-  func_800934BC((u8 *)gMovieSliceContext+0xec+(1-gMovieSliceContext->f114)*20);
+  gPutDispEnvCached((u8 *)gMovieSliceContext+0xec+(1-gMovieSliceContext->f114)*20);
   func_80092BF4(1);
  }
  gMovieSliceContext->a28=a1; gMovieSliceContext->a2c=a2; gMovieSliceContext->a24=a3;

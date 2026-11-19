@@ -8,6 +8,8 @@ typedef struct {
 } Object;
 
 extern int func_80091F74(void);
+Object *gSetDefDrawEnv(Object *obj, int x, int y, int z, int size) __asm__("func_80092140");
+
 
 /**
  * @brief Initialises a drawing-area object at a position and size.
@@ -26,8 +28,14 @@ extern int func_80091F74(void);
  *
  * @par Pairs with
  * func_800921F4 (the sibling initialiser) and func_800934BC (the applier).
+ *
+ * @par Environment path
+ * Initializes a DRAWENV structure with its clip rectangle (x, y, z, size),
+ * drawing offset, and default draw-mode/area/offset fields using
+ * func_80091F74 (called by func_8001BE68, func_800773D8, func_8007757C,
+ * func_80085C4C).
  */
-Object *func_80092140(Object *obj, int x, int y, int z, int size)
+Object *gSetDefDrawEnv(Object *obj, int x, int y, int z, int size)
 {
     int mode = func_80091F74();
     obj->x = x;

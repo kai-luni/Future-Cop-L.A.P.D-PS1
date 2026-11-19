@@ -7,6 +7,8 @@ struct Packet {
     u8 length;
     u32 command;
 };
+void gSetDrawModePacket(struct Packet *packet, int dfe, int dtd, u32 tpage) __asm__("func_80092634");
+
 
 /**
  * @brief Builds a draw-mode/texpage primitive (GP0 0xE1).
@@ -23,8 +25,14 @@ struct Packet {
  *
  * @par Callers
  * None in the symbol table; emitted inline by the sprite and model paths.
+ *
+ * @par Environment path
+ * Builds a draw-mode packet: tpage and 0x9FF keeps page X/Y, blend bits 5-6,
+ * colour depth bits 7-8 and texture-disable bit 11; dtd non-zero adds 0x200
+ * (dither) and dfe non-zero adds 0x400 (drawing to the display area allowed).
+ * No caller references it in the sources.
  */
-void func_80092634(struct Packet *packet, int dfe, int dtd, u32 tpage)
+void gSetDrawModePacket(struct Packet *packet, int dfe, int dtd, u32 tpage)
 {
     register u32 command asm("$3");
     register u32 bits asm("$2");

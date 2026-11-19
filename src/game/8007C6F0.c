@@ -4,7 +4,7 @@
 extern volatile s32 gGameClock __asm__("D_8009FA60");
 extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 
-extern void func_80082EF0(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b);
+extern void gEmitFlatQuadRect(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b) __asm__("func_80082EF0");
 extern void gDrawVehicleSchematic(s32 arg0) __asm__("func_8007C0F8");
 extern s32 func_8001EF34(s32 port);
 extern u8 func_8001EAEC(s32 arg0);
@@ -53,7 +53,7 @@ void gDrawProfileSlotScreen(s32 slot)
         return;
     }
 
-    func_80082EF0(0x20, 0x30, 0x100, 0x90, 0xBB8, 0, 0, 0);
+    gEmitFlatQuadRect(0x20, 0x30, 0x100, 0x90, 0xBB8, 0, 0, 0);
     gDrawVehicleSchematic(slot);
 
     a = 0x6AE;

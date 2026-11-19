@@ -32,6 +32,8 @@ extern s32 D_8009AF94[];
 extern void gTransformPartVertex(struct Unk596C4Part *part, s32 arg1, s32 *out) __asm__("func_80017668");
 extern u32 func_80019668(void);
 extern void gDrawBeamQuad(s32 *from, s32 *to, struct Unk596C4Effect *effect) __asm__("func_80014C64");
+void gEmitObjectBeamSegment(struct Unk596C4 *object) __asm__("func_800596C4");
+
 
 /**
  * @brief Emits one short effect segment from the active part of an object.
@@ -56,8 +58,13 @@ extern void gDrawBeamQuad(s32 *from, s32 *to, struct Unk596C4Effect *effect) __a
  *
  * @par Callers
  * func_800597C0.
+ *
+ * @par Environment path
+ * Transforms an active object part position via gTransformPartVertex, picks a
+ * random descriptor using func_80019668, and emits one short effect beam
+ * segment via gDrawBeamQuad (called by func_800597C0:147,307).
  */
-void func_800596C4(struct Unk596C4 *object)
+void gEmitObjectBeamSegment(struct Unk596C4 *object)
 {
     struct Unk596C4Part *part;
     s32 from[3];

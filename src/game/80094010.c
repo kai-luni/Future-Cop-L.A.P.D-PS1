@@ -3,6 +3,8 @@
 
 extern s16 gMaxDrawWidth __asm__("D_8009DDF4");
 extern s16 gMaxDrawHeight __asm__("D_8009DDF6");
+s32 gPackDrawAreaBottomRight(s32 x, s32 y) __asm__("func_80094010");
+
 
 /**
  * @brief Builds the GPU draw-area bottom-right word (opcode 0xE4) with
@@ -23,8 +25,14 @@ extern s16 gMaxDrawHeight __asm__("D_8009DDF6");
  *
  * @par Callers
  * func_8009398C, func_80093AF0, func_80093CE8.
+ *
+ * @par Environment path
+ * Builds the GP0 E4 drawing-area bottom-right word: x and y are clamped to
+ * 0..gMaxDrawWidth - 1 and 0..gMaxDrawHeight - 1 and packed into bits 0-9 and
+ * 10-19. It is used by the draw-environment packet builders func_8009398C,
+ * func_80093AF0 and func_80093CE8 to close the GPU clip rectangle.
  */
-s32 func_80094010(s32 x, s32 y)
+s32 gPackDrawAreaBottomRight(s32 x, s32 y)
 {
     register s32 cx __asm__("$2");
     register s32 py __asm__("$3");

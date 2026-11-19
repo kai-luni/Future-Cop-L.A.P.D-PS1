@@ -2,9 +2,11 @@
 #include "game/types.h"
 
 extern void **gTextureDescriptorTable __asm__("D_8009F7D8");
-extern s32 D_8009F7DC;
+extern s32 gTexDescriptorCount __asm__("D_8009F7DC");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeTextureDescriptors(void) __asm__("func_8005A220");
+
 
 /**
  * @brief Frees all per-entry sprite/tile descriptor blocks in D_8009F7D8 and resets D_8009F7DC.
@@ -27,17 +29,23 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  *
  * @par Callers
  * Confirmed: func_8005A290 (0x8005A298 in asm/us/main.s), func_8005A414 (0x8005A610 in asm/us/main.s, error cleanup) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Frees each per-entry sprite/tile descriptor block in
+ * gTextureDescriptorTable in reverse order via gFreeBlock, frees the table
+ * itself, and resets D_8009F7DC to 0 (called by func_8005A290 and
+ * func_8005A414).
  */
-void func_8005A220(void)
+void gFreeTextureDescriptors(void)
 {
     s32 i;
 
     if (gTextureDescriptorTable != 0) {
-        for (i = D_8009F7DC - 1; i >= 0; i--) {
+        for (i = gTexDescriptorCount - 1; i >= 0; i--) {
             gFreeBlock(gTextureDescriptorTable[i]);
         }
         gFreeBlock(gTextureDescriptorTable);
         gTextureDescriptorTable = 0;
     }
-    D_8009F7DC = 0;
+    gTexDescriptorCount = 0;
 }

@@ -21,7 +21,7 @@ extern s32 gWorldToRadarCell(s32) __asm__("func_80065744");
 extern void gDrawMapSubtilePolys(u8 *, s32, s32, s32) __asm__("func_80065CA8");
 extern void func_8004ED18(s32 *, s32 *, s32);
 extern void gWorldToMinimapCell(s32 *, s32 *, s32, s32) __asm__("func_800694C8");
-extern void func_8001C214(s32, s32, s32, s32, s32, s32);
+extern void gEmitTranslucentTileRect(s32, s32, s32, s32, s32, s32) __asm__("func_8001C214");
 extern void gDrawMinimapMarkers(void *, s32 *, s32, s32) __asm__("func_80066684");
 void gDrawMapView(struct Owner *owner, s32 *pos) __asm__("func_8006680C");
 
@@ -150,6 +150,6 @@ void gDrawMapView(struct Owner *owner, s32 *pos)
     sy = r2 - h;
     shift = owner->actor->flag ? 80 : 0;
     ax = sx + 13;
-    func_8001C214(0x7fff, (shift + ax) * 2, (sy + 17) * 2, w * 2, h * 2, 1);
+    gEmitTranslucentTileRect(0x7fff, (shift + ax) * 2, (sy + 17) * 2, w * 2, h * 2, 1);
     gDrawMinimapMarkers(owner->actor->obj, start, ((size * 5) << 17) / 80, 0x30000);
 }

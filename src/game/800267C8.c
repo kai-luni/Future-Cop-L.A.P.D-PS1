@@ -63,9 +63,9 @@ extern void gDecodeButtonEdge(u32 buttons, struct InputAction267C8 *action) __as
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern void func_80025F58(void);
 extern s32 func_80049340(u8 *text);
-extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
-extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, s32 blend);
-extern void func_800260B8(struct Obj267C8 *obj, s32 slot, s32 arg2, s32 selection, s32 active);
+extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
+extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, s32 blend) __asm__("func_8001C214");
+extern void gDrawOptionsSubPanel(struct Obj267C8 *obj, s32 slot, s32 arg2, s32 selection, s32 active) __asm__("func_800260B8");
 extern void gTranslatePadButtons(u32 *buttons, s32 slot) __asm__("func_800576A8");
 extern void func_8005AB8C(struct Obj267C8 *obj, void *arg1, void *arg2);
 extern void gDrawMapView(struct Obj267C8 *obj, void *arg1) __asm__("func_8006680C");
@@ -242,12 +242,12 @@ void gUpdateMapScreenView(struct Obj267C8 *obj, s32 slot, s32 active, s32 select
             if (slot != 1) {
                 x = ((s32)(off - func_80049340(text))) / 2 - 0x14;
             }
-            func_80049100(text, x, 0x10, 9);
+            gDrawAlignedString(text, x, 0x10, 9);
         }
     }
 
     if (obj->state->selected >= 0) {
-        func_800260B8(obj, slot, selection, off,
+        gDrawOptionsSubPanel(obj, slot, selection, off,
                      gMapDigit3Action[slot].phase == 0);
         text = gMapPanelLabel;
     } else {
@@ -273,7 +273,7 @@ void gUpdateMapScreenView(struct Obj267C8 *obj, s32 slot, s32 active, s32 select
         {
             s32 blend;
             __asm__("addu %0,%1,$zero" : "=r"(blend) : "r"(color));
-            func_8001C214(color, center - 6, 0x1AE, textWidth + 0xC, 0x1A, blend);
+            gEmitTranslucentTileRect(color, center - 6, 0x1AE, textWidth + 0xC, 0x1A, blend);
         }
     }
     {
@@ -283,7 +283,7 @@ void gUpdateMapScreenView(struct Obj267C8 *obj, s32 slot, s32 active, s32 select
     }
     center += off >> 31;
     __asm__ volatile("" : "+r"(center));
-    func_80049100(text, center >> 1, 0xD8, 9);
+    gDrawAlignedString(text, center >> 1, 0xD8, 9);
 
     if (state->buttons & 0x02000000) {
         struct VectorCopy267C8 { s32 x, y, z; };

@@ -5,6 +5,8 @@ typedef signed short s16;
 
 struct Rect { s16 x, y, w, h; };
 struct Packet { u8 pad[3]; u8 len; u32 cmd, xy, wh; };
+void gBuildVramTransferPkt(struct Packet *p, struct Rect *r) __asm__("func_800926C0");
+
 
 /**
  * @brief Builds a CPU-to-VRAM transfer packet (GP0 0xA0) with its terminator.
@@ -25,8 +27,12 @@ struct Packet { u8 pad[3]; u8 len; u32 cmd, xy, wh; };
  *
  * @par Callers
  * None in the symbol table (inlined where a small upload is needed).
+ *
+ * @par Environment path
+ * Builds a CPU-to-VRAM transfer packet (GP0 0xA0) with its rectangle
+ * parameters and terminator word into packet p (not GP0 0x80 MoveImage).
  */
-void func_800926C0(struct Packet *p, struct Rect *r)
+void gBuildVramTransferPkt(struct Packet *p, struct Rect *r)
 {
     int size = (r->w * r->h + 1) / 2;
     int len = size + 4;

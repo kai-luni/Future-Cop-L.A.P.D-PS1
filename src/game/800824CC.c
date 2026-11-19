@@ -20,6 +20,8 @@ typedef struct Unk824CCObject {
 
 extern void func_800953F0(Unk824CCEntry *entry, u8 *ptr);
 extern void gFreeBlock(Unk824CCObject *object) __asm__("func_800181D4");
+void gLoadCtdtImages(Unk824CCObject *object) __asm__("func_800824CC");
+
 
 /**
  * @brief Uploads texture atlas image blocks from a Ctdt resource via func_800953F0 and frees object.
@@ -54,8 +56,15 @@ extern void gFreeBlock(Unk824CCObject *object) __asm__("func_800181D4");
  * followed by pixel data, uploads each `unk04` x `unk06` rectangle via
  * func_800953F0 advancing `ptr` by `unk04 * (unk06 << 1)`, then frees `object`
  * via func_800181D4.
+ *
+ * @par Environment path
+ * Texture load path for a Ctdt resource: checks header type 2 and magic
+ * 0x35BFBC73, then walks count 8-byte entries, calling func_800953F0(entry,
+ * ptr) for each with ptr starting right after the entry table and advancing
+ * by unk04 * unk06 * 2 bytes (16-bit pixels). The resource node is freed with
+ * func_800181D4 whether or not the header was valid. Called by func_80024EC8.
  */
-void func_800824CC(Unk824CCObject *object)
+void gLoadCtdtImages(Unk824CCObject *object)
 {
     register Unk824CCHeader *header __asm__("$19");
     register u8 *ptr __asm__("$20");

@@ -31,14 +31,14 @@ extern void func_80049734(struct Node24EC8 *node);
 extern void func_8004D6D4(struct Node24EC8 *node);
 extern void func_8004D924(struct Node24EC8 *node);
 extern void func_800511E4(struct Node24EC8 *node);
-extern void func_8005A414(struct Node24EC8 *node);
+extern void gLoadTextureChunksToVram(struct Node24EC8 *node) __asm__("func_8005A414");
 extern void func_80060E74(struct Node24EC8 *node);
 extern void func_80063C20(struct Node24EC8 *node);
-extern void func_80063C5C(struct Node24EC8 *node);
+extern void gLoadCbmpTexture(struct Node24EC8 *node) __asm__("func_80063C5C");
 extern void gInitMapFromGrdb(struct Node24EC8 *node) __asm__("func_80063DC8");
-extern void func_80082358(struct Node24EC8 *node);
-extern void func_800824CC(struct Node24EC8 *node);
-extern void func_800825AC(struct Node24EC8 *node);
+extern void gUploadSaveProfileIcon(struct Node24EC8 *node) __asm__("func_80082358");
+extern void gLoadCtdtImages(struct Node24EC8 *node) __asm__("func_800824CC");
+extern void gValidateAtlasSpriteId(struct Node24EC8 *node) __asm__("func_800825AC");
 extern void gRegisterPublishedBlock(struct Node24EC8 *node) __asm__("func_8008263C");
 extern void func_800899A4(struct Node24EC8 *node);
 void gLoadQueuedAssets(void) __asm__("func_80024EC8");
@@ -151,10 +151,10 @@ loop_test:
                 func_800899A4(node);
                 break;
             case 0x4374696E:
-                func_800825AC(node);
+                gValidateAtlasSpriteId(node);
                 break;
             case 0x43746474:
-                func_800824CC(node);
+                gLoadCtdtImages(node);
                 break;
             case 0x436D6463:
                 gRegisterPublishedBlock(node);
@@ -164,7 +164,7 @@ loop_test:
                 func_80063C20(node);
                 break;
             case 0x43626D70:
-                func_80063C5C(node);
+                gLoadCbmpTexture(node);
                 break;
             case 0x43707463:
                 gInitMapFromGrdb(node);
@@ -206,7 +206,7 @@ loop_test:
                 gRegisterCvkChunk(node);
                 break;
             case 0x436D6963:
-                func_80082358(node);
+                gUploadSaveProfileIcon(node);
                 break;
             case 0x43746F73:
                 func_80029E20(node);
@@ -218,7 +218,7 @@ loop_test:
                 func_80049734(node);
                 break;
             case 0x43707972:
-                func_8005A414(node);
+                gLoadTextureChunksToVram(node);
                 break;
             case 0x43736678:
                 func_8003C110(node);

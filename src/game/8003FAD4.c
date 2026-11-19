@@ -21,7 +21,7 @@ extern s32 gGreyTexpageSub __asm__("D_8009FAA0");
 extern void func_8003C590(s32 arg0);
 extern void func_8003BC0C(struct Unk3BObject *object);
 extern void func_80019584(s32 arg0);
-extern void func_80092F38(s16 *rect, u32 *color);
+extern void gLoadImage(s16 *rect, u32 *color) __asm__("func_80092F38");
 extern void func_80092C8C(s32 arg0);
 void gFinishLevelLoad(void) __asm__("func_8003FAD4");
 
@@ -99,6 +99,6 @@ void gFinishLevelLoad(void)
     local.rect[2] = 2;
     local.rect[3] = 2;
 
-    func_80092F38(local.rect, local.color);
+    gLoadImage(local.rect, local.color);
     func_80092C8C(0);
 }

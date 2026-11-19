@@ -53,7 +53,7 @@ extern void gShutdownRuntime(void) __asm__("func_80076FE0");
 extern void func_8007BFCC(s32, s32);
 extern void func_80077050(void);
 extern void func_8001B2C8(s32, s32);
-extern void func_80025370(void);
+extern void gShowLoadingScreen(void) __asm__("func_80025370");
 extern void func_8007F9CC(void);
 extern void gBeginBootProfileTransfer(void) __asm__("func_8007F8BC");
 extern void gArmProfileTransfer(void) __asm__("func_8007FA88");
@@ -218,7 +218,7 @@ s32 gGameMain(void)
         gUploadRequestFlag = 0;
         gModuleLoadState = 0x14;
 
-        func_80025370();
+        gShowLoadingScreen();
         func_8007F9CC();
         gBeginBootProfileTransfer();
         gArmProfileTransfer();

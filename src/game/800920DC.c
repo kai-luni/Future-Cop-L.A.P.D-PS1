@@ -8,8 +8,10 @@ struct S {
     u16 d;
 };
 
-extern void func_80092F38(void *rect, void *data);
+extern void gLoadImage(void *rect, void *data) __asm__("func_80092F38");
 extern u16 func_8009226C(s32 x, s32 y);
+u16 gLoadClut16(s32 x, s32 a, s32 b) __asm__("func_800920DC");
+
 
 /**
  * @brief Uploads a 16-entry (0x10x1) CLUT palette to VRAM and returns its GPU CLUT handle.
@@ -35,8 +37,13 @@ extern u16 func_8009226C(s32 x, s32 y);
  *
  * @par Callers
  * Confirmed: none in edges.json or asm/us/main.s / Likely: unreferenced libgpu LoadClut2 helper / Unknown: indirect or external callers.
+ *
+ * @par Environment path
+ * CLUT upload helper: sends 16 palette entries from main memory to VRAM at
+ * a,b through the LoadImage-tagged transfer func_80092F38 and returns the
+ * CLUT id for primitives. No caller reaches it in the sources.
  */
-u16 func_800920DC(s32 x, s32 a, s32 b)
+u16 gLoadClut16(s32 x, s32 a, s32 b)
 {
     struct S s;
 
@@ -44,6 +51,6 @@ u16 func_800920DC(s32 x, s32 a, s32 b)
     s.b = b;
     s.c = 0x10;
     s.d = 1;
-    func_80092F38(&s, (void *)x);
+    gLoadImage(&s, (void *)x);
     return func_8009226C(a, b);
 }

@@ -1,7 +1,9 @@
 // Categories: Graphics > GPU Command Lists > Draw Mode | Platform > GPU
 #include "game/types.h"
 
-extern u32 func_800940C4(u8 *p);
+extern u32 gBuildTexWindowCommand(u8 *p) __asm__("func_800940C4");
+void gSetTexWindow(u8 *obj, u8 *arg) __asm__("func_80093954");
+
 
 /**
  * @brief Builds a 2-word GP0 texture-window primitive packet (PsyQ SetTexWindow).
@@ -26,10 +28,14 @@ extern u32 func_800940C4(u8 *p);
  *
  * @par Callers
  * Confirmed: none in direct-call list or asm/us/main.s / Likely: sibling of func_8009398C / Unknown: whether invoked indirectly or unreferenced PsyQ libgpu unit.
+ *
+ * @par Environment path
+ * Builds a 2-word GP0 texture-window primitive packet (PsyQ SetTexWindow)
+ * using func_800940C4 to encode the 8-byte window rectangle.
  */
-void func_80093954(u8 *obj, u8 *arg)
+void gSetTexWindow(u8 *obj, u8 *arg)
 {
     obj[3] = 2;
-    *(u32 *)(obj + 4) = func_800940C4(arg);
+    *(u32 *)(obj + 4) = gBuildTexWindowCommand(arg);
     *(u32 *)(obj + 8) = 0;
 }

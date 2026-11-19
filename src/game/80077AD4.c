@@ -88,7 +88,7 @@ extern u8 D_800821EC[];
 
 extern s8 gOverlayDelay __asm__("D_8009F874");
 extern u8 D_8009F875;
-extern u8 D_8009F876;
+extern u8 gScreenUploadFlag __asm__("D_8009F876");
 extern s32 gFontBankTable __asm__("D_8009F468");
 extern s8 gPanelSyncValue __asm__("D_8009F8BC");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
@@ -152,7 +152,7 @@ void gSetupFrontEndMenus(void)
     D_800A38F8.unk10 = func_80077990;
     gOverlayDelay = -1;
     D_8009F875 = 0;
-    D_8009F876 = 1;
+    gScreenUploadFlag = 1;
     gInitMenuDescriptor(&gMenuDescriptor, gMainMenuItems, 7);
     gMenuDescriptor.unk0C = D_8007A2C4;
     gMenuDescriptor.unk06 = 0;

@@ -11,6 +11,8 @@ typedef struct {
 extern u8 gDebugTagRect[] __asm__("D_80012A94");
 extern DispatchDDE8 *gVramWriteCallback __asm__("D_8009DDE8");
 extern void func_80092CF4(void *arg0, void *arg1);
+void gLoadImage(void *rect, void *data) __asm__("func_80092F38");
+
 
 /**
  * @brief VRAM transfer (LoadImage/StoreImage style): copies a rectangle
@@ -39,8 +41,13 @@ extern void func_80092CF4(void *arg0, void *arg1);
  * Primary VRAM rectangle upload primitive called by func_8005A414
  * ("Cpyr") and func_80063C5C ("Cbmp") (each paired with func_80092C8C) to
  * transfer unpacked pixel and CLUT rectangles into VRAM via D_8009DDE8+8.
+ *
+ * @par Environment path
+ * Transfers a rectangular pixel buffer from main RAM to VRAM by checking
+ * clipping bounds and issuing an 8-word GPU DMA transfer command via
+ * func_80092CF4 (called by func_8001B4A8, func_8003FAD4, func_80048BF8).
  */
-void func_80092F38(void *rect, void *data)
+void gLoadImage(void *rect, void *data)
 {
     func_80092CF4(gDebugTagRect, rect);
     gVramWriteCallback->callback(gVramWriteCallback->unk20, rect, 8, data);

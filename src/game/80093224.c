@@ -9,6 +9,8 @@ typedef struct {
 } Unk8009DDE8;
 
 extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
+void gDrawPrimImmediate(u8 *arg0) __asm__("func_80093224");
+
 
 /**
  * @brief Submits a line/rect packet through the active draw callback table.
@@ -27,8 +29,14 @@ extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
  *
  * @par Callers
  * func_800770A8.
+ *
+ * @par Environment path
+ * Immediate primitive submit: waits or selects through gGpuCallbackTable slot
+ * +0x3C(0), then hands the packet body (after the tag word) and its word
+ * count to slot +0x14, bypassing the ordering table. The frame-segment drawer
+ * func_800770A8 uses it for each corner and edge piece.
  */
-void func_80093224(u8 *arg0)
+void gDrawPrimImmediate(u8 *arg0)
 {
     s32 temp = arg0[3];
 

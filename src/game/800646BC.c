@@ -26,8 +26,9 @@
  * groups).
  *
  * @par Environment path
- * Emits the textured triangle strips of one region surface with per-strip
- * clipping; the tile grid calls it once per populated region.
+ * Already renamed to gEmitTexturedSurface in src/game/800646BC.c: builds and
+ * emits triangle strips of a textured surface with per-strip clipping into
+ * the primitive pool (called by func_8006531C:34).
  */
 __asm__(
     ".set noreorder\n"

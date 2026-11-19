@@ -49,15 +49,17 @@ extern u8 gCounterFormatString[] __asm__("D_800117C0");
 extern u8 gStageLineFormat[] __asm__("D_8009F354");
 extern u8 gScoreFormatString[] __asm__("D_8009F34C");
 extern u8 **gPlayerAvatarSprite __asm__("D_8009F348");
-extern void func_80047888(void);
-extern void func_8006C080(Game *);
-extern void func_80047BE8(s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawTargetMarker(void) __asm__("func_80047888");
+extern void gDrawThreeSlotStatusBar(Game *) __asm__("func_8006C080");
+extern void gEmitHudGouraudBar(s32, s32, s32, s32, s32, s32, s32) __asm__("func_80047BE8");
 extern void func_8005AB8C(Game *, void *, void *);
-extern void func_8004EDC8(Game *);
+extern void gDrawTargetMarkers(Game *) __asm__("func_8004EDC8");
 extern s32 func_80049340(u8 *);
-extern void func_80049100(u8 *, s32, s32, s32);
-extern void func_8001C214(u32, s32, s32, s32, s32, s32);
+extern void gDrawAlignedString(u8 *, s32, s32, s32) __asm__("func_80049100");
+extern void gEmitTranslucentTileRect(u32, s32, s32, s32, s32, s32) __asm__("func_8001C214");
 extern void func_8008CD30(void *, void *, ...);
+void gDrawInGameHud(Game *game) __asm__("func_80047F30");
+
 
 /**
  * @brief Draws the in-game HUD: health bars for both players, score, the
@@ -163,8 +165,15 @@ extern void func_8008CD30(void *, void *, ...);
  * @par Callers
  * func_800271A8 and func_80027510 (analysis/edges.json, kind "direct"); the
  * address also has an "address_taken" edge.
+ *
+ * @par Environment path
+ * Draws the in-game 2D HUD when D_8009FA00 == 4. Calls func_80047888 and
+ * func_8006C080, emits health bars via func_80047BE8, target/radar passes via
+ * func_8005AB8C and func_8004EDC8, objective labels via func_80049100, and in
+ * D_8009FA94->mode == 1 draws score boxes and counters via func_8001C214 and
+ * func_80049100.
  */
-void func_80047F30(Game *game)
+void gDrawInGameHud(Game *game)
 {
     u8 text[32];
     register Player *player __asm__("$8");
@@ -177,29 +186,29 @@ void func_80047F30(Game *game)
     Game *other;
 
     if (gScreenState != 4) return;
-    func_80047888();
-    func_8006C080(game);
+    gDrawTargetMarker();
+    gDrawThreeSlotStatusBar(game);
     player = game->player;
     intensity = (s8)((player->value58 * player->value5c + 0x8000) >> 16);
     if (intensity < 0) intensity = 0;
     if (player->value326 > 0 && (gFrameTime & 0x80)) {
-        func_80047BE8(12, 206, intensity, 0, 64, 127, player->value64 < 2);
+        gEmitHudGouraudBar(12, 206, intensity, 0, 64, 127, player->value64 < 2);
     } else {
         ratio = ((game->health - ((game->health >> 31) & game->health)) << 16) / game->maxhealth;
-        func_80047BE8(15, 206, intensity, 127 + ((ratio - (ratio << 6)) >> 16),
+        gEmitHudGouraudBar(15, 206, intensity, 127 + ((ratio - (ratio << 6)) >> 16),
                      31 + ((ratio * 96) >> 16), (ratio * 64) >> 16, player->value64 < 2);
     }
     func_8005AB8C(game, game->position, game->veca0);
-    func_8004EDC8(game);
+    gDrawTargetMarkers(game);
     p2 = game->player;
     if (p2->valueae > 0) {
         label = gPlayerAvatarSprite[p2->valuea4];
         label_x = 12;
         if (p2->valuec1) label_x = 148 - func_80049340(label) / 2;
-        func_80049100(label, label_x, 74, 8);
+        gDrawAlignedString(label, label_x, 74, 8);
     }
     if (gPlayerCount >= 2 && !game->player->valuec1)
-        func_8001C214(1, 318, 0, 2, 480, 0);
+        gEmitTranslucentTileRect(1, 318, 0, 2, 480, 0);
     state = gGameSession;
     if (state->mode != 1) return;
     score = state->score[game->player->valuec1];
@@ -222,7 +231,7 @@ void func_80047F30(Game *game)
             register s32 arg __asm__("$4") = 1;
             register s32 px __asm__("$5") = x + 135;
             __asm__ volatile("" : "+r"(arg), "+r"(px));
-            func_8001C214(arg, (px - width) * 2, 40, (width + 22) * 2, 20, 1);
+            gEmitTranslucentTileRect(arg, (px - width) * 2, 40, (width + 22) * 2, 20, 1);
         }
         {
             register s32 c __asm__("$7") = 1;
@@ -231,12 +240,12 @@ void func_80047F30(Game *game)
             {
                 register s32 arg __asm__("$5") = px - width;
                 if (flash) c = 9;
-                func_80049100(text, arg, 20, c);
+                gDrawAlignedString(text, arg, 20, c);
             }
         }
         func_8008CD30(text, gCounterFormatString, gGameSession->count1, gGameSession->count2);
-        func_8001C214(1, (x + 127) * 2, 64, 60, 20, 1);
-        func_80049100(text, x + 130, 32, 1);
+        gEmitTranslucentTileRect(1, (x + 127) * 2, 64, 60, 20, 1);
+        gDrawAlignedString(text, x + 130, 32, 1);
         if (gPlayerCount != 1) return;
         {
         register s32 one __asm__("$16");
@@ -265,7 +274,7 @@ void func_80047F30(Game *game)
             w = (width + 22) * 2;
             height = 20;
             __asm__ volatile("addu %0,%1,$zero" : "=r"(one) : "r"(arg), "r"(px), "r"(y), "r"(w), "r"(height));
-            func_8001C214(arg, px, y, w, height, one);
+            gEmitTranslucentTileRect(arg, px, y, w, height, one);
         }
         {
             register s32 c __asm__("$7") = 3;
@@ -274,31 +283,31 @@ void func_80047F30(Game *game)
             {
                 register s32 arg __asm__("$5") = px - width;
                 if (flash) c = 9;
-                func_80049100(text, arg, 44, c);
+                gDrawAlignedString(text, arg, 44, c);
             }
         }
         func_8008CD30(text, gCounterFormatString, gGameSession->count3, gGameSession->count4);
-        func_8001C214(1, (x + 127) * 2, 112, 60, height, one);
+        gEmitTranslucentTileRect(1, (x + 127) * 2, 112, 60, height, one);
         }
-        func_80049100(text, x + 130, 56, 3);
+        gDrawAlignedString(text, x + 130, 56, 3);
         if (!gSinglePlayerEntity) return;
         func_8008CD30(text, gStageLineFormat, gGameSession->stage + 1);
-        func_80049100(text, 274, 216, 8);
+        gDrawAlignedString(text, 274, 216, 8);
         other = gSinglePlayerEntity;
         if (other->health > 0) {
             ratio = (other->health << 16) / other->maxhealth;
             intensity = (s8)((other->extra->a4 * other->extra->a8 + 0x8000) >> 16);
-            func_80047BE8(295, 206, intensity, 127 + ((ratio - (ratio << 6)) >> 16),
+            gEmitHudGouraudBar(295, 206, intensity, 127 + ((ratio - (ratio << 6)) >> 16),
                          31 + ((ratio * 96) >> 16), (ratio * 64) >> 16,
                          other->health * 3 < other->maxhealth);
         }
     } else {
-        func_8001C214(1, 6, 40, (width + 22) * 2, 20, 1);
+        gEmitTranslucentTileRect(1, 6, 40, (width + 22) * 2, 20, 1);
         color = 3;
         if (flash) color = 9;
-        func_80049100(text, 6, 20, color);
+        gDrawAlignedString(text, 6, 20, color);
         func_8008CD30(text, gCounterFormatString, gGameSession->count3, gGameSession->count4);
-        func_8001C214(1, 6, 64, 60, 20, 1);
-        func_80049100(text, 6, 32, 3);
+        gEmitTranslucentTileRect(1, 6, 64, 60, 20, 1);
+        gDrawAlignedString(text, 6, 32, 3);
     }
 }

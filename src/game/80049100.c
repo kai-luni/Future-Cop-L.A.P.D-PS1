@@ -13,7 +13,9 @@ extern u16 gTexpageTable[] __asm__("D_800A1940");
 extern u16 gLoadedFont __asm__("D_8009F768");
 extern s32 D_8009F76C;
 
-extern s32 func_80048F98(s32 character, s32 x, s32 y, u16 color);
+extern s32 gEmitFontGlyphSprite(s32 character, s32 x, s32 y, u16 color) __asm__("func_80048F98");
+void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
+
 
 /**
  * @brief Draws a NUL-terminated string with the current font bank.
@@ -32,8 +34,12 @@ extern s32 func_80048F98(s32 character, s32 x, s32 y, u16 color);
  * @par Likely role
  * The debug/HUD text renderer; the pool it draws into is the 2D one
  * (D_8009FA90/D_8009F9C0).
+ *
+ * @par Environment path
+ * Draws a NUL-terminated string at (x, y) in palette color using the current
+ * font bank by emitting per-character glyph sprites via func_80048F98.
  */
-void func_80049100(u8 *text, s32 x, s32 y, s32 color)
+void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color)
 {
     struct DrawTPage *packet;
     u32 character;
@@ -53,7 +59,7 @@ void func_80049100(u8 *text, s32 x, s32 y, s32 color)
         if (character - 10 < 0x16) {
             color = character - 10;
         } else {
-            x += func_80048F98(character, x, y, color);
+            x += gEmitFontGlyphSprite(character, x, y, color);
         }
     }
 }

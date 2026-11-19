@@ -25,11 +25,13 @@ extern void gPopMenuPanel(void) __asm__("func_80078740");
 extern void func_800493C0(u32 index, u8 blue, u8 green, u8 red);
 extern void func_800788F0(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
 extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
-extern void func_80082EF0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
+extern void gEmitFlatQuadRect(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) __asm__("func_80082EF0");
 extern void func_8007F128(s32 input0, s32 input1, s32 input2, s32 input3, s32 arg5, s32 arg6);
-extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
+extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
 extern struct FontEntry *func_80048E88(void);
+void gUpdatePasswordScreen(s32 state, s32 input_baseX) __asm__("func_8007F1F8");
+
 
 /**
  * @brief State machine and renderer of the ten-character entry screen: commit,
@@ -80,8 +82,15 @@ extern struct FontEntry *func_80048E88(void);
  * @par Callers
  * None in analysis/edges.json, not even an address-taken edge, so the caller lies
  * outside the analysed set; func_8007F1F8 is reached indirectly.
+ *
+ * @par Environment path
+ * Jump-table state machine (states 0..5 via jtbl_800121A4) for the
+ * 10-character A..Z password entry panel. State 0 validates gPasswordBuffer
+ * via func_8007EA78, states 1..4 edit letters and gScalarCursor, and state 5
+ * draws the panel, prompts via func_80078B34, and the highlighted 10-letter
+ * row via func_80082EF0 and func_80049100.
  */
-void func_8007F1F8(s32 state, s32 input_baseX)
+void gUpdatePasswordScreen(s32 state, s32 input_baseX)
 {
     u8 text[8];
     s32 width;
@@ -206,12 +215,12 @@ state_5:
                     boxKind = 2;
                     __asm__ volatile("" : "+r"(boxKind) : "r"(boxX), "r"(boxY), "r"(boxW));
                     color = gHighlightShadeTable[(gGameClock[0] >> 4) & 7] + 0x80;
-                    func_80082EF0(boxX, boxY, boxW, boxKind, 10, color, color, color);
+                    gEmitFlatQuadRect(boxX, boxY, boxW, boxKind, 10, color, color, color);
                     y = 8;
                 } else {
                     y = 0xF;
                 }
-                func_80049100(text, x + (fontUnk8 - width) / 2, hundred, y);
+                gDrawAlignedString(text, x + (fontUnk8 - width) / 2, hundred, y);
                 { s32 t = x + 1; x = t + fontUnk8; }
             }
         }

@@ -25,11 +25,13 @@ typedef struct {
 } Arg63C5C;
 
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
-extern Res63C5C *func_8001996C(void *arg0, s32 arg1);
-extern void func_80092F38(Rect63C5C *rect, void *data);
+extern Res63C5C *gParseTextureContainer(void *arg0, s32 arg1) __asm__("func_8001996C");
+extern void gLoadImage(Rect63C5C *rect, void *data) __asm__("func_80092F38");
 extern void func_80092C8C(s32 arg0);
 extern void func_80048DEC(void);
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gLoadCbmpTexture(Arg63C5C *arg0) __asm__("func_80063C5C");
+
 
 /**
  * @brief Blits a decoded image resource into the frame buffer and releases it.
@@ -63,8 +65,21 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * refreshes the font via func_80048DEC when `s0 == 9`, stores the packed
  * tpage/CLUT entry in D_800A8E80[s0] (read by func_800131A0), and frees `arg0`
  * via func_800181D4.
+ *
+ * @par Environment path
+ * Texture load path for one Cbmp slot (index s0 = unk1C - 1): func_8001996C
+ * unpacks the resource, the 0x80 x 0xFC pixel block goes to VRAM x = 0x180 +
+ * 128 * (s0 shifted right 1), y = 256 * (s0 and 1), and a 0x100 x 1 CLUT goes
+ * to x 0x180 or 0x280 (bit 2 of s0) in row 0xFC + (s0 and 3) or 0x1FC + (s0
+ * and 3), each upload followed by func_80092C8C(0). The stored low half is
+ * the texpage (page X = x shifted right 6, Y bit 0x10 when y = 256, 0x80 =
+ * 8-bit CLUT mode in bits 7-8, blend bits 5-6 zero) and the high half the
+ * CLUT id (row shifted left 6 or column shifted right 4), written to
+ * gTexpageClutTable[s0], which func_800131A0 reads for 3D rendering. Slot 9
+ * additionally refreshes the font through func_80048DEC, then the request
+ * node is freed with func_800181D4.
  */
-void func_80063C5C(Arg63C5C *arg0)
+void gLoadCbmpTexture(Arg63C5C *arg0)
 {
     Rect63C5C rect[2];
     Res63C5C *res;
@@ -80,7 +95,7 @@ void func_80063C5C(Arg63C5C *arg0)
     s32 t1;
 
     s3 = arg0->unk1C;
-    res = func_8001996C(arg0->unk00, arg0->unk20);
+    res = gParseTextureContainer(arg0->unk00, arg0->unk20);
     s0 = s3 - 1;
 
     s1 = (s0 & 1) << 8;
@@ -91,7 +106,7 @@ void func_80063C5C(Arg63C5C *arg0)
     rect[0].w = 0x80;
     rect[0].h = 0xFC;
 
-    func_80092F38(rect, res->unk28);
+    gLoadImage(rect, res->unk28);
     func_80092C8C(0);
 
     t0 = s0;
@@ -116,7 +131,7 @@ void func_80063C5C(Arg63C5C *arg0)
     rect[1].w = 0x100;
     rect[1].h = 1;
 
-    func_80092F38(&rect[1], res->unk2C + 8);
+    gLoadImage(&rect[1], res->unk2C + 8);
     func_80092C8C(0);
 
     if (s0 == 9) {

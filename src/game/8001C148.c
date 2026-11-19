@@ -11,6 +11,8 @@ struct Packet {
 };
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
+void gEmitSolidTileRect(u8 red, u8 green, u8 blue, struct HalfRect *rect, u8 blend) __asm__("func_8001C148");
+
 
 /**
  * @brief Emits a filled rectangle: a texpage word plus a 24-bit colour rectangle.
@@ -29,8 +31,13 @@ extern u8 *gPacketLimit __asm__("D_8009F9C0");
  *
  * @par Callers
  * func_8001C214 (the blended overlay rectangle) and the 2D screens.
+ *
+ * @par Environment path
+ * Emits a 2D filled rectangle (GP0 0x60/0x62 TILE) paired with a texpage word
+ * for the given RGB color, HalfRect bounds, and blend mode into the ordering
+ * table (called by func_8001C214:26,45).
  */
-void func_8001C148(u8 red, u8 green, u8 blue, struct HalfRect *rect, u8 blend)
+void gEmitSolidTileRect(u8 red, u8 green, u8 blue, struct HalfRect *rect, u8 blend)
 {
     u8 *packet;
     if (gPacketCursor < gPacketLimit) {

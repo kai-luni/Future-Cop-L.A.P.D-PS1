@@ -4,6 +4,8 @@
 struct Entry78B98 { u16 text; u16 x; };
 extern struct Entry78B98 gSlotRecordTable[2][2] __asm__("D_800A3578");
 extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
+void gDrawSlotStatusLine(void) __asm__("func_80078B98");
+
 
 /**
  * @brief Draws the two queued display text slots as the bottom status lines.
@@ -26,8 +28,13 @@ extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
  * @par Callers
  * func_80078DD0 (two call sites, verified in the retail listing; the
  * call-graph edges are missing).
+ *
+ * @par Environment path
+ * Walks the two queued display text slots in D_800A3578 and draws each active
+ * slot's status string at the bottom of the screen via func_800788F0 (called
+ * by func_80078DD0:347,353).
  */
-void func_80078B98(void)
+void gDrawSlotStatusLine(void)
 {
     unsigned int i, j;
     register int font asm("$21") = 2;

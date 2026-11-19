@@ -64,6 +64,8 @@ extern struct Prim72F7C *gPrimPoolEnd __asm__("D_8009FA28");
 extern s32 gVectorLength3D(V3_72F7C *vector) __asm__("func_8001A100");
 extern void gGteLoadRotation(u8 *matrix) __asm__("func_80010820");
 extern void gProjectVertexBatch(S3X_72F7C *in, S3X_72F7C *out, u8 *flags, s32 count) __asm__("func_8001047C");
+void gDrawFlatModelNode(struct Node72F7C *node, V3_72F7C *arg) __asm__("func_80072F7C");
+
 
 /**
  * @brief Draws a model node as flat-shaded polygons (the cheap renderer path).
@@ -86,8 +88,15 @@ extern void gProjectVertexBatch(S3X_72F7C *in, S3X_72F7C *out, u8 *flags, s32 co
  *
  * @par Callers
  * func_80073700.
+ *
+ * @par Environment path
+ * Draws a model node on the cheap flat/line renderer path when node->flags &
+ * 0x4000 is clear. After range culling via func_8001A100, loads
+ * gCamera->matrix via func_80010820, projects vertices with func_8001047C,
+ * and emits a 0xE10006A0 draw-mode packet and a 0x42 primitive per segment
+ * into D_8009F9F0/D_8009FA28.
  */
-void func_80072F7C(struct Node72F7C *node, V3_72F7C *arg)
+void gDrawFlatModelNode(struct Node72F7C *node, V3_72F7C *arg)
 {
     S3X_72F7C shorts[100];
     u8 buf[0x68];

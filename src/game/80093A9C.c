@@ -10,8 +10,10 @@ typedef struct {
     u32 data;
 } Packet;
 
-extern u32 func_80093F58(int, int, u32);
-extern u32 func_800940C4(int);
+extern u32 gBuildDrawModeCommand(int, int, u32) __asm__("func_80093F58");
+extern u32 gBuildTexWindowCommand(int) __asm__("func_800940C4");
+void gSetDrawTPage(Packet *packet, int arg1, int arg2, u16 arg3, int arg4) __asm__("func_80093A9C");
+
 
 /**
  * @brief Builds a two-word draw-mode packet: GP0 0xE1 (texpage/dither) plus the
@@ -27,10 +29,14 @@ extern u32 func_800940C4(int);
  *
  * @par Callers
  * None in the symbol table; the sprite and model paths emit it inline.
+ *
+ * @par Environment path
+ * Builds a two-word GPU draw-mode packet containing a GP0 0xE1 command from
+ * func_80093F58 and a GP0 0xE2 texture-window command from func_800940C4.
  */
-void func_80093A9C(Packet *packet, int arg1, int arg2, u16 arg3, int arg4)
+void gSetDrawTPage(Packet *packet, int arg1, int arg2, u16 arg3, int arg4)
 {
     packet->length = 2;
-    packet->command = func_80093F58(arg1, arg2, arg3);
-    packet->data = func_800940C4(arg4);
+    packet->command = gBuildDrawModeCommand(arg1, arg2, arg3);
+    packet->data = gBuildTexWindowCommand(arg4);
 }

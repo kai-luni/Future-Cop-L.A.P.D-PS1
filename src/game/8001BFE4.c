@@ -9,7 +9,7 @@ extern s8 gSelectedLayer __asm__("D_8009F224");
 extern u8 D_8009F226;
 extern struct Unk1BFE4 gDrawBlocks[] __asm__("D_800A06B0");
 
-extern void func_800934BC(struct Unk1BFE4 *entry);
+extern void gPutDispEnvCached(struct Unk1BFE4 *entry) __asm__("func_800934BC");
 
 /**
  * @brief Applies the currently selected layer/tile entry.
@@ -35,7 +35,7 @@ s32 func_8001BFE4(void)
 {
     if (gSelectedLayer >= 0) {
         D_8009F226 = gSelectedLayer;
-        func_800934BC(&gDrawBlocks[gSelectedLayer]);
+        gPutDispEnvCached(&gDrawBlocks[gSelectedLayer]);
         return 0;
     }
     return 0xF;

@@ -3,6 +3,8 @@
 
 extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 extern s32 gScreenModeHook __asm__("D_8009F99C");
+s32 gSetScreenModeHook(s32 callback) __asm__("func_8001F0FC");
+
 
 /**
  * @brief Registers the subsystem callback, once only.
@@ -17,8 +19,13 @@ extern s32 gScreenModeHook __asm__("D_8009F99C");
  *
  * @par Callers
  * func_8002333C (sprite/asset subsystem).
+ *
+ * @par Environment path
+ * Registers the screen-mode/subsystem frame callback pointer once if not
+ * already set and returns registration status (called by
+ * func_8002333C:48,74).
  */
-s32 func_8001F0FC(s32 callback)
+s32 gSetScreenModeHook(s32 callback)
 {
     if (gFrameCallbackEnabled == 0) {
         return 3;

@@ -1,7 +1,7 @@
 // Categories: Resources > Memory Management | Game Engine > Game State > Reset
 #include "game/types.h"
 
-extern void func_8005A220(void);
+extern void gFreeTextureDescriptors(void) __asm__("func_8005A220");
 
 /**
  * @brief Clears the loaded texture/effect descriptor table during subsystem reset.
@@ -27,5 +27,5 @@ extern void func_8005A220(void);
  */
 void func_8005A290(void)
 {
-    func_8005A220();
+    gFreeTextureDescriptors();
 }

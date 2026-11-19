@@ -45,11 +45,13 @@ extern void func_8008C9E0(void);
 extern void *func_80092B94(void *);
 extern void func_80095E90(s32);
 extern void gMdecStartDecode(void *, s32) __asm__("func_80095FF4");
-extern void func_80096070(void *, s32);
-extern void *func_80096090(void *);
-extern void *func_800960CC(void *);
+extern void gStartMdecOutDma(void *, s32) __asm__("func_80096070");
+extern void *gMdecInSync(void *) __asm__("func_80096090");
+extern void *gMdecOutSync(void *) __asm__("func_800960CC");
 extern void *gMdecSetInCallback(void *) __asm__("func_80096108");
 extern void *func_8009612C(void *);
+s32 gDecodeMdecFrameToVram(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3) __asm__("func_800861E4");
+
 
 /**
  * @brief Decodes one image/frame with the hardware decoder and transfers it to
@@ -110,8 +112,15 @@ extern void *func_8009612C(void *);
  * @par Matching note
  * Nearly every argument is pinned to a retail register ($16-$23, $2-$8). The
  * pins are part of the byte match - "simplifying" them changes the code.
+ *
+ * @par Environment path
+ * Decodes a compressed frame with the hardware MDEC pipeline and transfers it
+ * to VRAM using a 0x130-byte gMovieSliceContext job block and completion
+ * callback D_80085074. Copies decode tables gScratchTable and
+ * gSecondScratchTable into scratchpad (0x1F800000/0x1F800100), invokes
+ * gMovieDecodeVlcStream and gMdecStartDecode, and polls state->done.
  */
-s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
+s32 gDecodeMdecFrameToVram(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
 {
     register Input861E4 *input __asm__("$20") = arg0;
     register u32 x __asm__("$23") = arg2;
@@ -123,8 +132,8 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
     u32 count;
     register void *zero __asm__("$4") = buf2;
     __asm__("" : "+r"(input), "+r"(zero));
-    func_80096090(zero);
-    func_800960CC(0);
+    gMdecInSync(zero);
+    gMdecOutSync(0);
     func_80095E90(0);
     __asm__("" : "+r"(buf2), "+r"(result));
     {
@@ -201,9 +210,9 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         u32 width = gMovieSliceContext->w2;
         u32 height = gMovieSliceContext->h2;
         __asm__("" : "+r"(width), "+r"(height));
-        func_80096070(gMovieSliceContext->buffer24, ((s32)(width << 16) >> 16) * ((s32)(height << 16) >> 16) / 2);
+        gStartMdecOutDma(gMovieSliceContext->buffer24, ((s32)(width << 16) >> 16) * ((s32)(height << 16) >> 16) / 2);
     }
-    func_800960CC(0);
+    gMdecOutSync(0);
     {
         register State861E4 *state __asm__("$5") = gMovieSliceContext;
         __asm__ volatile("" : "+r"(state));
@@ -215,8 +224,8 @@ s32 func_800861E4(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         if (count != 200000) result = 1;
     }
 cleanup:
-    func_80096090(0);
-    func_800960CC(0);
+    gMdecInSync(0);
+    gMdecOutSync(0);
     func_8008C9C0();
     if (gStripScaleEnable == 1) gTransferPending = 0;
     if (gMovieSliceContext) {

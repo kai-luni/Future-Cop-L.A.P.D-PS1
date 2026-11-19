@@ -12,6 +12,8 @@ extern u8 gDebugTagArg[] __asm__("D_80012AA0");
 extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
 
 extern void func_80092CF4(u8 *arg0, s32 arg1);
+void gStoreImage(s32 arg0, s32 arg1) __asm__("func_80092F98");
+
 
 /**
  * @brief Sends an 8-word command block to the GPU library with a debug
@@ -30,8 +32,13 @@ extern void func_80092CF4(u8 *arg0, s32 arg1);
  * @par Callers
  * No direct callers in the call graph; referenced through a pointer
  * table.
+ *
+ * @par Environment path
+ * Transfers a rectangular pixel region from VRAM to main RAM by validating
+ * bounds and issuing an 8-word GPU command block via func_80092CF4 (called by
+ * func_80088120:183,271).
  */
-void func_80092F98(s32 arg0, s32 arg1)
+void gStoreImage(s32 arg0, s32 arg1)
 {
     func_80092CF4(gDebugTagArg, arg0);
     gVramWriteCallback->unk08(gVramWriteCallback->unk1C, arg0, 8, arg1);

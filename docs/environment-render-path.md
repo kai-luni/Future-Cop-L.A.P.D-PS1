@@ -152,7 +152,7 @@ clip byte of `gte_ref.c` compares `(s16)sx < width`, while the retail unit
 zero-extends before comparing, so a negative SX never sets bit 0x40; the PROJ
 vector records the retail result (0x81) and does not rely on the model there.
 
-Totals: 18 vector, 227 contract, 2 skip (247 units).
+Totals: 18 vector, 326 contract, 2 skip (346 units).
 
 | address | readable name | test | role (from `@par Environment path`) | proved by / reason |
 |---|---|---|---|---|
@@ -189,7 +189,9 @@ Totals: 18 vector, 227 contract, 2 skip (247 units).
 | `0x80016C88` | `gComputeEnvMapUV` | contract | Computes one environment-map texture coordinate pair for a polygon corner: the vector from the vertex to the referenc... | structure only |
 | `0x80016E6C` | `gEmitEnvMapPolygon` | contract | Emits one environment-mapped textured polygon for a model part: it takes a 0x34-byte packet from gPrimPoolNext (bound... | structure only |
 | `0x80017058` | `gDrawModelPartsMasked` | contract | Part-submission stage of the jointed-model path: func_800175A0 calls it right after func_8001428C has projected the p... | structure only |
+| `0x800172A8` | `gEmitFlatShadedPoly` | contract | Allocates one 0x34-byte packet from gPrimPoolNext/gPrimPoolEnd and emits a flat-shaded triangle or quad (codes 0x20, ... | structure only |
 | `0x80017508` | `gSubmitModelInstance` | contract | Visibility gate and submission for one model instance | structure only |
+| `0x800175A0` | `gProjectAndRenderMesh` | contract | Updates skinned model bone parts via gProjectBoneParts and submits the model's part list for rendering via gDrawModel... | structure only |
 | `0x800175F8` | `gSetModelFrame` | contract | Commits a new animation frame on a model instance: it returns when the frame index is unchanged, otherwise it stores ... | structure only |
 | `0x80017668` | `gTransformPartVertex` | contract | Fetches one vertex of a model part for the instance's current animation frame and transforms it: gGteLoadMatrix (func... | structure only |
 | `0x80017764` | `gFreeCameraList` | contract | Walks the camera record list D_8009F588 (0x94-byte records, next pointer at +0x8C) and frees each record with gFreeBl... | structure only |
@@ -211,6 +213,8 @@ Totals: 18 vector, 227 contract, 2 skip (247 units).
 | `0x8001937C` | `gBuildBasisFromAxisYZ` | contract | Builds a 3x3 basis whose third row is the axis, with the first row (0, -axis.z, axis.x) normalised by func_8001A180 a... | structure only |
 | `0x800193F8` | `gBuildBasisFromAxis` | contract | Builds a 3x3 basis whose third row is the given axis: the first row is the horizontal perpendicular (axis.z, 0, -axis... | structure only |
 | `0x80019470` | `gTransposeMatrix3x3` | vector | Transposes a 3x3 s32 matrix into the destination with nine element assignments and no loop, branch or call | `tests/host/env_test.sh` (env.vectors, TRANSPOSE 2 cases) |
+| `0x800195F0` | `gCountTrailingZeros` | contract | Pure bit utility that feeds the texture descriptor path, not a draw routine: returns 0..31 as the lowest set bit posi... | structure only |
+| `0x8001996C` | `gParseTextureContainer` | contract | Parses a chunked texture container in memory and wires up the pixel and CLUT pointers for each texture entry, returni... | structure only |
 | `0x80019BA4` | `gReleaseAllResources` | contract | Releases every node of the resource registry D_8009F5B8 through func_80019AF8, which runs the node's release callback... | structure only |
 | `0x80019D88` | - | contract | Empty function (jr $ra | structure only |
 | `0x80019D90` | `gTestFrustumFixedNear` | contract | Frustum visibility test for one point plus a safety margin, with a fixed near threshold: depth = z << 4 returns 1 as ... | structure only |
@@ -224,11 +228,23 @@ Totals: 18 vector, 227 contract, 2 skip (247 units).
 | `0x8001AB00` | `gVectorDot` | contract | Returns the 16.16 fixed-point dot product of two three-component vectors (middle 32 bits of each 64-bit product, summ... | structure only |
 | `0x8001AB78` | `gVectorScaleInPlace` (asm) | contract | Hand-written in-place scale of a three-component vector by a 16.16 factor (argument order: scale, vector) | structure only |
 | `0x8001AC28` | `gVectorMulAdd` | contract | Computes out = a + b * scale per component with the middle 32 bits of the 64-bit product (16.16 fixed point) | structure only |
+| `0x8001C148` | `gEmitSolidTileRect` | contract | Emits a 2D filled rectangle (GP0 0x60/0x62 TILE) paired with a texpage word for the given RGB color, HalfRect bounds,... | structure only |
+| `0x8001C214` | `gEmitTranslucentTileRect` | contract | Converts 15-bit color and screen coordinates (x, y, w, h) and delegates to func_8001C148 to emit a solid or semi-tran... | structure only |
+| `0x8001F0FC` | `gSetScreenModeHook` | contract | Registers the screen-mode/subsystem frame callback pointer once if not already set and returns registration status (c... | structure only |
+| `0x800211FC` | `gInitSpuTransferHook` | contract | Not on the draw path: it hooks the transfer callback of the sound side | structure only |
+| `0x80021B50` | `gResetCvkSubsystem` | contract | Clears the 8-entry sprite/asset subsystem table and invokes SPU and subsystem initialization/reset helpers func_80021... | structure only |
+| `0x8002333C` | `gInitCvkStreamSubsystem` | contract | Brings up the CVK sprite/asset subsystem by resetting tables via func_80021B50, registering the frame callback via fu... | structure only |
+| `0x80023478` | `gShutdownCvkSystem` | contract | Not on the draw path: it is subsystem teardown | structure only |
 | `0x80023930` | `gRegisterCvkChunk` | contract | Registers asset chunks routed here by gLoadQueuedAssets (func_80024EC8, 80024EC8.c:185-188): a 'Cvkh' (0x43766B68) no... | structure only |
 | `0x80024EC8` | `gLoadQueuedAssets` | contract | Drains finished asset requests and dispatches them by four-character tag: every node returned by func_800295E8 is app... | structure only |
+| `0x80025370` | `gShowLoadingScreen` | contract | Loading-screen draw step: only when gLoadScreenRequest is 0 and gLoadScreenIndex is below 23, it formats the file nam... | structure only |
+| `0x8002549C` | `gEmitSplitScreenBlit` | contract | Allocates four 28-byte packets from the gPacketCursor pool (bounded by gPacketLimit, reusing the last slot when full)... | structure only |
+| `0x80025690` | `gDrawScreenFadeQuad` | contract | Draws the front-end transition progress/fade bar driven by func_80028FD4() | structure only |
+| `0x800260B8` | `gDrawOptionsSubPanel` | contract | Draws two blended backdrop rectangles via func_8001C214 and prints the six-row options list via func_80049100 using g... | structure only |
 | `0x800267C8` | `gUpdateMapScreenView` | contract | Per-player, per-frame update of the in-game map screen, run on the scratchpad stack by gRunMapScreenOnScratch (func_8... | structure only |
 | `0x80026DDC` | `gRunMapScreenOnScratch` | contract | Inline-assembly trampoline: it pushes $ra, saves $sp in D_8009FAD8, moves the stack to 0x1F8003F0 at the top of the s... | structure only |
 | `0x80026E1C` | `gRunRegionPass` | contract | Runs the environment pass func_80066E98 on the scratchpad stack | structure only |
+| `0x80026E9C` | `gEmitScreenFadeBar` | contract | Allocates two 28-byte packets from the gPacketCursor pool, both with link field 0: texpage E10006A0 (page 0,0, blend ... | structure only |
 | `0x800271A4` | `gRunSoloSessionFrame` | contract | One-player frame driver, called from func_80028618 after func_8002703C when gPlayerCount == 1 (gRunSessionFrame, func... | structure only |
 | `0x80027510` | `gRunSessionFrame` | contract | The frame driver: runs the environment pass through func_80026E1C and the light direction update once per frame, arou... | structure only |
 | `0x80028618` | `gRunGameFrameLoop` | contract | The in-game frame loop: it clears the game clock, sets the frame delta to 8, resets gSceneFrameCounter and seeds the ... | structure only |
@@ -293,6 +309,7 @@ Totals: 18 vector, 227 contract, 2 skip (247 units).
 | `0x80041728` | `gRunEntityCommands` | contract | Processes the four-slot command queue at +0x0C of a waypoint-following entity | structure only |
 | `0x80041880` | `gStepElevator` | contract | Tick of a vertical lift object (sole caller func_80041B6C): after optional func_80041728 and the hold/delay gates, it... | structure only |
 | `0x80041C6C` | `gHandlePlacedPropMsg` | contract | Message handler of another entity class: message 1 answers 0xA4, message 2 rebuilds the orientation from the descript... | structure only |
+| `0x80042004` | `gEmitTexturedQuadPacket` | contract | Emits a textured, semi-transparent GP0 0x2C (POLY_FT4) quad primitive from the supplied points and flags arrays with ... | structure only |
 | `0x80042128` | `gDrawPortraitScreen` | contract | Draw case (message 3 of the type-34 handler func_80042330) of an in-world screen that shows the animated comm portrai... | structure only |
 | `0x800441DC` | `gTickChainEffectList` | contract | Per-frame update pass over object bucket gListHeads[3], called from gRunSceneListPasses (func_8003F4A0, 8003F4A0.c:46... | structure only |
 | `0x80044260` | `gDrawObjectPointTiles` (asm) | contract | Draws an object's point list as small screen-space rectangles | structure only |
@@ -300,6 +317,14 @@ Totals: 18 vector, 227 contract, 2 skip (247 units).
 | `0x80044770` | `gRegisterActorDef5E` | contract | Registers one 0x60-byte actor definition of type 0x5E: func_8003C2A4 first queues a deferred placement for records wi... | structure only |
 | `0x8004488C` | `gLoadActorDef5E` | contract | Chunk loader for 'Cact' actor type 0x5E: it finds the 'tACT' (0x74414354) record of the request's section id (+0x1C) ... | structure only |
 | `0x80044988` | `gSetAnimClipTable` | contract | Installs an animation clip table on a track: it stores the clip array at data + 4 and the clip count from data[0], se... | structure only |
+| `0x80044F8C` | `gInitSoundState` | contract | Not on the draw path: initializes the sound/audio subsystem state by enabling audio and setting volume/stream paramet... | structure only |
+| `0x80047888` | `gDrawTargetMarker` | contract | Draws an object's target reticle and leader line when state->target is set and flag 0x1000000 is clear | structure only |
+| `0x80047BE8` | `gEmitHudGouraudBar` | contract | Draws a vertical HUD health/energy gauge at (x, y_in) with height (z+1)/2 (called by func_80047F30) | structure only |
+| `0x80047F30` | `gDrawInGameHud` | contract | Draws the in-game 2D HUD when D_8009FA00 == 4 | structure only |
+| `0x800485AC` | `gEmitHudPanelSprite` | contract | Allocates two 28-byte packets from the gPacketCursor pool with link field 0: texpage E100011F (page X 960, Y 256, ble... | structure only |
+| `0x80048BF8` | `gLoadFontAsset` | contract | Uploads a font bank's glyph bitmap to VRAM (0x1E0, 0) and palette to (0, 0x1F0) via func_80092F38/func_80092C8C, comp... | structure only |
+| `0x80048F98` | `gEmitFontGlyphSprite` | contract | Looks up character in the current font glyph table, emits an 8x8 textured sprite (SPRT, code 0x64) at (x, y) with the... | structure only |
+| `0x80049100` | `gDrawAlignedString` | contract | Draws a NUL-terminated string at (x, y) in palette color using the current font bank by emitting per-character glyph ... | structure only |
 | `0x8004963C` | `gReleaseMapLightData` | contract | Frees the map light and sprite-descriptor data: the descriptor table D_8009F77C (if set), the 0x180 x 0x44-byte light... | structure only |
 | `0x800496D0` | `gAllocLightGrid` | contract | Allocates the per-cell bucket array D_8009F780 (width x height list heads, allocation tag 2), stores the dimensions i... | structure only |
 | `0x80049EA8` | `gLoadActorLightNode` | contract | Handles a type-0x61 resource request: func_80019C38 locates the 'tACT' (0x74414354) chunk with section id +0x1C insid... | structure only |
@@ -307,10 +332,12 @@ Totals: 18 vector, 227 contract, 2 skip (247 units).
 | `0x8004A924` | `gDrawCellWindowObjects` | contract | Layer 2 of the environment pass: draws the map-cell objects (walls, props) of the 5x5 cell window, filtered by the pe... | structure only |
 | `0x8004ABE4` | `gLaunchDebrisObject` | contract | Starts the ballistic flight of a debris object when it is destroyed | structure only |
 | `0x8004AFC0` | `gStepDebrisFlight` | contract | Advances a launched debris object by one step | structure only |
+| `0x8004B5F8` | `gSpawnMeshFractureDebris` | contract | Selects up to n faces from an entity's 3D model using scratchpad bitmaps (0x1F800000/0x1F800020) and spawns debris fr... | structure only |
 | `0x8004C228` | `gTickDebrisList` | contract | Per-frame update pass over object bucket gListHeads[4]: every node (next at +0x00) whose flag byte +0x0F lacks bit 3 ... | structure only |
 | `0x8004C5C8` | `gDrawDebrisFragments` | contract | Draws the fragment polygons of the debris objects in one scene list | structure only |
 | `0x8004C884` | `gRegisterActorDef5A` | contract | Registers one 0x4C-byte actor definition of type 0x5A: func_8003C2A4 first queues a deferred placement for records wi... | structure only |
 | `0x8004CA98` | `gLoadActorDef5A` | contract | Chunk loader for 'Cact' actor type 0x5A: it finds the 'tACT' (0x74414354) record of the request's section id (+0x1C) ... | structure only |
+| `0x8004EDC8` | `gDrawTargetMarkers` | contract | Prepares the object via func_8005A9C4, emits a 0xE100069E texpage packet into gPacketCursor/gPacketLimit, and iterate... | structure only |
 | `0x8005027C` | `gStepPathMover` | contract | Advances an object along its path-network route by one step | structure only |
 | `0x80050E0C` | `gInitRailSegment` | contract | Seats a route-following mover on its route: with a route descriptor it marks the render object (+0x24 bit 31), finds ... | structure only |
 | `0x800518A8` | `gUpdateMorphBounds` | contract | Updates the player unit's progress-dependent footprint for the form change: from the model's current frame element it... | structure only |
@@ -337,18 +364,27 @@ Totals: 18 vector, 227 contract, 2 skip (247 units).
 | `0x80058714` | `gRespawnPlayerEntity` | contract | Respawns a player entity when its respawn countdown has run out | structure only |
 | `0x800588D4` | `gUpdatePlayerEntity` | contract | Per-frame tick of the player unit, called from its class handler func_8005908C: it resets state +0x2FC, re-arms the m... | structure only |
 | `0x800592D0` | `gDrawOtherPlayerArrow` | contract | Two-player overlay drawn from the player-unit draw handler func_800597C0: it returns unless gPlayerCount is at least ... | structure only |
+| `0x800596C4` | `gEmitObjectBeamSegment` | contract | Transforms an active object part position via gTransformPartVertex, picks a random descriptor using func_80019668, an... | structure only |
+| `0x800597C0` | `gDrawGlowDiscEffect` | contract | Draw handler for the player/effect object (called from func_80059ABC:87) | structure only |
 | `0x80059ABC` | `gHandleCompanionMessage` | contract | Message handler of the kind-0x12 companion object that func_80057914 queues on a part of the player unit, so it has n... | structure only |
 | `0x80059DB0` | - | contract | Empty function (jr $ra | structure only |
 | `0x8005A068` | - | contract | Empty function (jr $ra | structure only |
+| `0x8005A220` | `gFreeTextureDescriptors` | contract | Frees each per-entry sprite/tile descriptor block in gTextureDescriptorTable in reverse order via gFreeBlock, frees t... | structure only |
+| `0x8005A2BC` | `gBuildSpriteDescTable` | contract | Texture descriptor step of the Cpyr atlas loader, not a primitive emitter: for each source block it stores byte 2 (ti... | structure only |
+| `0x8005A414` | `gLoadTextureChunksToVram` | contract | Consumes a 'Cpyr' texture/tile atlas blob from func_80024EC8:221, allocates gTextureDescriptorTable and per-entry blo... | structure only |
+| `0x8005A740` | `gEmitAngledLine` | contract | Computes a direction vector from angle id using gSinCos and emits a flat GP0 0x40 line primitive from origin into the... | structure only |
+| `0x8005A828` | `gEmitRadarTriangle` | contract | Takes one 28-byte packet from the gPacketCursor pool (not advancing when gPacketLimit is reached) with tag word 0x040... | structure only |
+| `0x8005A9C4` | `gDrawRadarMarkers` | contract | Draws one object's radar overlay into the gPacketCursor pool through its callees: a heading line via func_8005A740 at... | structure only |
 | `0x8005BDE4` | `gAttachNearPlayerEffect` | contract | Attaches a timed effect node to an owner object, but only if the model instance's world position (+0x34/+0x38/+0x3C) ... | structure only |
 | `0x8005CED4` | `gTakeArmedLobePoint` | contract | Helper of the damage-field update func_8005D8F4 (its only caller): it scans the twelve 0x1C-byte lobes from +0x58 for... | structure only |
 | `0x8005D060` | `gSpawnLobeArc` | contract | Steps one of the twelve lobes of the damage field updated by func_8005D8F4 (its only caller): once the frame time D_8... | structure only |
 | `0x800619C0` | `gBoxOverlapBitmask` | contract | Turns one oriented box into a world axis-aligned box and returns a per-entry overlap bitmask: it builds a diagonal sc... | structure only |
 | `0x80061CAC` | `gTestPartPairHit` | contract | Narrow-phase hit test between two coord records: bit 27 of each model flag word gives a two-bit mode, and the functio... | structure only |
 | `0x80062EB8` | `gRunRegionObjectPass` | contract | Update and draw pass over the entity table of one region: message 3 to every object, then the polygons of the visible... | structure only |
+| `0x80063C5C` | `gLoadCbmpTexture` | contract | Texture load path for one Cbmp slot (index s0 = unk1C - 1): func_8001996C unpacks the resource, the 0x80 x 0xFC pixel... | structure only |
 | `0x80063DC8` | `gInitMapFromGrdb` | contract | Handler for the 'Cptc' (0x43707463) chunk in gLoadQueuedAssets (80024EC8.c:151-152): it stores the chunk in D_8009F81... | structure only |
 | `0x80064460` | `gSampleCellWindow` | contract | Fills the 25 window entries (mask, node, world position) that the three region layers then draw. | structure only |
-| `0x800646BC` | `gEmitTexturedSurface` (asm) | contract | Emits the textured triangle strips of one region surface with per-strip clipping | structure only |
+| `0x800646BC` | `gEmitTexturedSurface` (asm) | contract | Already renamed to gEmitTexturedSurface in src/game/800646BC.c: builds and emits triangle strips of a textured surfac... | structure only |
 | `0x800648E8` | `gEmitCellPolygon` | contract | Emits one textured polygon of a map cell into the shared primitive pool: the primitive word's bits 15..21 select four... | structure only |
 | `0x80065134` | `gEmitCellGeometry` | contract | Emits the visible cells of one region as geometry | structure only |
 | `0x8006531C` | `gDrawRegionTiles` | contract | Layer 1 of the environment pass: draws the 5x5 window of map regions (the tiled ground surfaces) around the camera po... | structure only |
@@ -366,13 +402,20 @@ Totals: 18 vector, 227 contract, 2 skip (247 units).
 | `0x800694C8` | `gWorldToMinimapCell` | contract | Converts a world x/z position into cell indices of the 54x54 map grid: origin x/z from D_800A2950 is subtracted, each... | structure only |
 | `0x80069580` | `gGetViewGroundAnchor` | contract | Copies entry 'index' of the pair table D_800A3190 into an (x, 0, z) triple, with the middle component zeroed and no b... | structure only |
 | `0x800695A8` | `gBuildCoarseHeightGrid` | contract | Builds the smoothed signed-byte height grid published in D_800A2940: for every map cell of the GRDB header D_8009F80C... | structure only |
+| `0x8006BF44` | `gEmitStatusSlotIcon` | contract | Allocates a 0x34-byte packet from gPrimPoolNext/gPrimPoolEnd and emits a 16x16 textured SPRT primitive (code 0x64, le... | structure only |
+| `0x8006C080` | `gDrawThreeSlotStatusBar` | contract | Draws a three-slot HUD status bar by looping i = 0..2 and calling func_8006BF44 for each 16x16 icon (highlighted when... | structure only |
+| `0x8006C4C4` | `gGenDomePatchVertices` | contract | Generates a 3D s16 vertex grid (4-s16 stride) for a spherical octant dome-patch mesh into dst (called by func_8006C84... | structure only |
+| `0x8006C768` | `gBuildDomeFaceIndices` | contract | Geometry feeding the effect renderer, not a primitive emitter: writes rows - 1 triangle records (count 3, apex vertex... | structure only |
+| `0x8006C84C` | `gBuildDomePatchMesh` | contract | Allocates and populates a spherical dome-patch mesh for effect objects (called by func_8005D3FC and func_8006E814) | structure only |
 | `0x8006CB58` | `gDrawShadedModel` | contract | Draws one procedural effect shape with a colour gradient: it generates up to sixteen mirrored corner points (+-size o... | structure only |
+| `0x8006D520` | `gDrawGroundMarker` | contract | Draws an entity's ground shadow/target ring for func_8006D770 | structure only |
 | `0x8006D770` | `gTickEffectNodes` | contract | Per-frame update of the effect objects in gListHeads bucket 2 | structure only |
 | `0x8006DC24` | `gDrawFlatRing` | contract | Draws one model-list node as a flat ring (annulus) in its local x/z plane | structure only |
 | `0x8006E988` | `gDrawAttachedModelList` | contract | Walks a linked list of model nodes (next at +0x00) for one view and skips nodes whose flag byte +0x0F has bit 3 | structure only |
 | `0x8006EAF0` | `gRegisterActorDef5C` | contract | Registers one 0x54-byte actor definition of type 0x5C: func_8003C2A4 first queues a deferred placement for records wi... | structure only |
 | `0x8006ED78` | `gLoadActorDef5C` | contract | Chunk loader for 'Cact' actor type 0x5C: it finds the 'tACT' (0x74414354) record of the request's section id (+0x1C) ... | structure only |
 | `0x8006F170` | `gTickTracerPool` | contract | Per-frame update of the beam/tracer node pool D_800A3538 (created by func_8006EDC4 with 10 nodes of 0x48 bytes, fille... | structure only |
+| `0x8006F21C` | `gEmitTracerGouraudQuad` | contract | Takes a 0x34-byte packet from the gPrimPoolNext pool, sets length 8 and the low 24 link bits to the tag argument, the... | structure only |
 | `0x8006F310` | `gDrawTracerBand` | contract | Draws one beam/tracer node (endpoints at +0x10 and +0x1C) as a screen-space band: it returns early when both endpoint... | structure only |
 | `0x8006F844` | `gDrawTracerList` | contract | Draw pass for the beam/tracer pool: walks D_800A353C, which is the active-list field (+4) of the pool header D_800A35... | structure only |
 | `0x8006FF44` | `gHandleActor59Msg` | contract | Message handler of the 0x9C-byte kind-0x59 object built by func_8007043C, which stores this function's address in the... | structure only |
@@ -383,6 +426,7 @@ Totals: 18 vector, 227 contract, 2 skip (247 units).
 | `0x80070730` | `gComputeEffectEndPoint` | contract | Computes one end point of a beam or ribbon strip and returns the index of the player entity it locked onto, or -1 | structure only |
 | `0x80071B40` | `gStepBeamNode` | contract | Per-frame step of one beam node, called by the list pass func_8007364C over gBeamNodeList (D_8009F38C) once the node ... | structure only |
 | `0x80071FA4` | `gDrawBeamNode` | contract | Draws one beam node, a set of point strips stretched between two end objects: per strip it makes the points camera-re... | structure only |
+| `0x80072F7C` | `gDrawFlatModelNode` | contract | Draws a model node on the cheap flat/line renderer path when node->flags & 0x4000 is clear | structure only |
 | `0x800734BC` | `gRetireAllRibbons` | contract | Walks the ribbon/beam node list D_8009F38C (pushed by the constructor func_8007377C, 8007377C.c:185-186), sets retire... | structure only |
 | `0x80073500` | `gAllocPositionNode` | contract | Allocates a 0x20-byte node with gAllocMemory (func_80017EBC, tag 1), returns 0 if that fails, otherwise clears the tw... | structure only |
 | `0x8007364C` | `gTickBeamNodeList` | contract | Per-frame maintenance of the beam/ribbon node list D_8009F38C (nodes built by func_8007377C): walking with a predeces... | structure only |
@@ -394,15 +438,70 @@ Totals: 18 vector, 227 contract, 2 skip (247 units).
 | `0x800754B8` | `gInitEmitterParticle` | contract | Initialises one particle node that an emitter object has just taken from its pool: it writes the world position, the ... | structure only |
 | `0x80075A84` | `gRunPolygonPass` | contract | Polygon pass over one scene pool: walks the active particle list, culls and lights each node and draws it through fun... | structure only |
 | `0x800762B0` | `gCreateEmitterObject` | contract | Constructor for spawn kind 0x57, called only from gSpawnObjectFromTable (func_8003E984): it allocates a 0xA0-byte obj... | structure only |
+| `0x800770A8` | `gDrawSevenSegmentChar` | contract | Maps an ASCII character (0-9, A-Z, a-z) to a 7-bit segment mask in gSegTable and draws each active segment from gSegC... | structure only |
+| `0x80078B98` | `gDrawSlotStatusLine` | contract | Walks the two queued display text slots in D_800A3578 and draws each active slot's status string at the bottom of the... | structure only |
+| `0x8007F1F8` | `gUpdatePasswordScreen` | contract | Jump-table state machine (states 0..5 via jtbl_800121A4) for the 10-character A..Z password entry panel | structure only |
+| `0x8008125C` | `gHandleProfileSlotWidget` | contract | Front-end profile-slot widget handler gated by D_8009F8BD and D_8009F8BE. Action 0 draws the 8-cell glyph editor with... | structure only |
+| `0x80082358` | `gUploadSaveProfileIcon` | contract | Extracts selected image and palette chunks from a tagged resource node via func_8001E318, encodes the profile name gl... | structure only |
+| `0x800824CC` | `gLoadCtdtImages` | contract | Texture load path for a Ctdt resource: checks header type 2 and magic 0x35BFBC73, then walks count 8-byte entries, ca... | structure only |
+| `0x800825AC` | `gValidateAtlasSpriteId` | contract | Registers and validates a loaded 2D texture atlas header resource from object, freeing temporary data via gFreeBlock ... | structure only |
+| `0x800826AC` | `gComposeScreenSlices` | contract | Composes a 320x240 front-end/pause screen from descriptor table D_8009B32C[idx] and caches idx in D_8009F874 | structure only |
+| `0x80082AB0` | `gEmitAtlasSpriteSimple` | contract | Thin wrapper on the 2D sprite path: forwards to func_80082B0C, which emits a sprite from the texture atlas table, rep... | structure only |
+| `0x80082B0C` | `gDrawAtlasSprite` | contract | Looks up entry idx in gAtlasTable, resolves -1 dimensions and alignment flags (flagX/flagY), allocates a 0x34-byte pa... | structure only |
+| `0x80082EF0` | `gEmitFlatQuadRect` | contract | Takes a 0x34-byte packet from the gPrimPoolNext pool (overwriting the last slot when gPrimPoolEnd is reached) and bui... | structure only |
+| `0x80082FA4` | `gEmitFlatQuadRectMode` | contract | Takes a 0x34-byte packet from the gPrimPoolNext pool and writes length 5, code (code or 0x28) with the rgb colour, an... | structure only |
+| `0x80083060` | `gEmitFlatQuad` | contract | Emits an untextured flat-shaded four-corner quad (POLY_F4, code 0x28 or arg code) from eight explicit coordinates (x0... | structure only |
+| `0x80083280` | `gDrawBlinkSelectFrame` | contract | 2D overlay helper: computes a grey level gHighlightShadeTable[(gFrameTickCounter shifted right 4) and 7] + 0x80 and d... | structure only |
 | `0x800834C4` | `gAllocCellBucketGrid` | contract | Allocates and zeroes the per-cell bucket grid D_8009F938 (two words per cell) and records its width and height in D_8... | structure only |
 | `0x80083764` | `gBuildSubcellMask` | contract | Builds a 16-bit coverage mask of the 4x4 subcells (0x8000 units each, cell size 0x20000) that the rectangle left..rig... | structure only |
 | `0x80083A10` | `gSpawnSceneNode` | contract | Creates one map-cell model node and inserts it into the cell bucket grid: it takes a 0x5C-byte node from the 250-entr... | structure only |
 | `0x80084398` | `gDrawCellWindowModels` | contract | Layer 3 of the environment pass: animates and submits the models of the same cell window, i.e | structure only |
+| `0x80085074` | `gUploadMovieStrip` | contract | Video draw path, run once per decoded strip: when gStripScaleMode == 1 and gStripScaleEnable != 0 the strip rectangle... | structure only |
+| `0x800860CC` | `gAllocDecodeBuffers` | contract | Not a draw routine, but it provisions the image decode/upload path: allocates the static working set used by func_800... | structure only |
+| `0x800861E4` | `gDecodeMdecFrameToVram` | contract | Decodes a compressed frame with the hardware MDEC pipeline and transfers it to VRAM using a 0x130-byte gMovieSliceCon... | structure only |
 | `0x80086AC0` | `gServiceMovieAudioIrq` | contract | SPU IRQ service routine of the movie audio stream whose state block is pointed to by D_8009F4D8: it returns at once w... | structure only |
+| `0x80091F90` | `gLoadTexturePage` | contract | VRAM upload helper of the texture path: builds a rectangle at x,y with height h and a width narrowed for the pixel ty... | structure only |
+| `0x80092078` | `gLoadClut256` | contract | CLUT upload helper for 8-bit textures: sends 256 palette entries to VRAM at a,b through func_80092F38 and returns the... | structure only |
+| `0x800920DC` | `gLoadClut16` | contract | CLUT upload helper: sends 16 palette entries from main memory to VRAM at a,b through the LoadImage-tagged transfer fu... | structure only |
+| `0x80092140` | `gSetDefDrawEnv` | contract | Initializes a DRAWENV structure with its clip rectangle (x, y, z, size), drawing offset, and default draw-mode/area/o... | structure only |
+| `0x800921F4` | `gSetDefDispEnv` | contract | Display set-up on the draw path: initialises a 20-byte display environment block with the display rectangle, a zero s... | structure only |
+| `0x80092230` | `gGetTPage` | contract | Packs texture depth mode (type), semi-transparency blend rate, and VRAM coordinates (x, y) into a 16-bit PS1 texture-... | structure only |
+| `0x80092514` | `gInitPolyF3Packet` | contract | Initializes a graphics primitive packet header with length 3 and GP0 command code 0x20 (POLY_F3). | structure only |
+| `0x80092528` | `gSetSpritePacket` | contract | Primitive initialiser for a free-size sprite: sets length 4 (colour/code, xy, uv plus CLUT, wh) and code 0x64, opaque... | structure only |
+| `0x8009253C` | `gInitPolyFT3Packet` | contract | Initializes a graphics primitive packet header with length 4 and GP0 command code 0x24 (POLY_FT3). | structure only |
+| `0x80092550` | `gSetTile8Packet` | contract | Primitive initialiser for an 8x8 tile: sets length 2 (colour/code word plus xy word) and code 0x70, leaving colour an... | structure only |
+| `0x80092564` | `gInitPolyF4Packet` | contract | Initializes a graphics primitive packet header with length 5 and GP0 command code 0x28 (POLY_F4). | structure only |
+| `0x80092634` | `gSetDrawModePacket` | contract | Builds a draw-mode packet: tpage and 0x9FF keeps page X/Y, blend bits 5-6, colour depth bits 7-8 and texture-disable ... | structure only |
+| `0x80092660` | `gSetDrawMovePacket` | contract | Builds a VRAM copy packet: length 5 (0 when the rectangle has no area), GP0 01 to flush the texture cache, GP0 80 cop... | structure only |
+| `0x800926C0` | `gBuildVramTransferPkt` | contract | Builds a CPU-to-VRAM transfer packet (GP0 0xA0) with its rectangle parameters and terminator word into packet p (not ... | structure only |
+| `0x80092E10` | `gClearImage` | contract | VRAM fill request: after the rectangle check (tag string ClearImage) it calls the GPU library table slot at +8 with t... | structure only |
+| `0x80092F38` | `gLoadImage` | contract | Transfers a rectangular pixel buffer from main RAM to VRAM by checking clipping bounds and issuing an 8-word GPU DMA ... | structure only |
+| `0x80092F98` | `gStoreImage` | contract | Transfers a rectangular pixel region from VRAM to main RAM by validating bounds and issuing an 8-word GPU command blo... | structure only |
+| `0x80092FF8` | `gMoveImage` | contract | VRAM-to-VRAM copy request: after func_80092CF4 validates the rectangle (tag string MoveImage), an empty rectangle ret... | structure only |
+| `0x80093224` | `gDrawPrimImmediate` | contract | Immediate primitive submit: waits or selects through gGpuCallbackTable slot +0x3C(0), then hands the packet body (aft... | structure only |
+| `0x800933B0` | `gDrawOTagEnv` | contract | PsyQ DrawOTagEnv implementation: copies a DRAWENV block via func_8008CD10, builds its GPU primitive packet via func_8... | structure only |
+| `0x800934BC` | `gPutDispEnvCached` | contract | Applies a 0x14-byte display/drawing-area state block to the GPU via gVramWriteCallback->fn (GP0/GP1 05h, 06h, 07h, 08... | structure only |
+| `0x80093954` | `gSetTexWindow` | contract | Builds a 2-word GP0 texture-window primitive packet (PsyQ SetTexWindow) using func_800940C4 to encode the 8-byte wind... | structure only |
+| `0x80093A4C` | `gSetDrawMaskPacket` | contract | Builds a 1-word GP0 0xE6 mask-bit setting primitive packet encoding flag1 and flag2 into the packet word. | structure only |
+| `0x80093A74` | `gSetMaskBitPacket` | contract | Builds the GP0 E6 mask setting packet: bit 0 (force the mask bit on drawn pixels) follows the flag, bit 1 (check mask... | structure only |
+| `0x80093A9C` | `gSetDrawTPage` | contract | Builds a two-word GPU draw-mode packet containing a GP0 0xE1 command from func_80093F58 and a GP0 0xE2 texture-window... | structure only |
+| `0x80093AF0` | `gBuildSpritePacket` | contract | Builds a 2D GPU sprite command packet from a rectangle descriptor | structure only |
+| `0x80093CE8` | `gBuildRectDrawList` | contract | Builds a GPU display list from a rectangle descriptor for func_800932F0 and func_800933B0 | structure only |
+| `0x80093F58` | `gBuildDrawModeCommand` | contract | Encodes dfe, dtd, and tpage bits into a 32-bit GP0 0xE1 draw-mode (texture page) command word and returns it (called ... | structure only |
+| `0x80093F78` | `gBuildDrawAreaCommands` | contract | Clamps coordinates (x, y) to valid VRAM draw-area bounds and encodes a GP0 0xE3/0xE4 drawing-area command word (calle... | structure only |
+| `0x80094010` | `gPackDrawAreaBottomRight` | contract | Builds the GP0 E4 drawing-area bottom-right word: x and y are clamped to 0..gMaxDrawWidth - 1 and 0..gMaxDrawHeight -... | structure only |
+| `0x800940A8` | `gPackDrawOffset` | contract | Packs the GP0 E5 drawing-offset command, the x,y added to every vertex of later primitives (not a texture window, whi... | structure only |
+| `0x800940C4` | `gBuildTexWindowCommand` | contract | Encodes an 8-byte texture window rectangle into a GP0 0xE2 texture-window command word and returns it (called by func... | structure only |
+| `0x8009446C` | `gUploadImageToGpu` | contract | Uploads a pixel rectangle to GPU VRAM via GP0 and DMA2 | structure only |
+| `0x80094CEC` | `gWaitImageTransferFrame` | contract | Waits for the image-transfer engine to reach a frame boundary in a hand-written assembly loop | structure only |
 | `0x80095900` | `gSqrt12` | contract | Hand-written 20.12 fixed-point square root (result = 64 * sqrt(v), the libgte SquareRoot12 scheme): the GTE leading-z... | structure only |
 | `0x80095B64` | - (asm) | skip | Cross product through a temporary matrix | no caller in the US binary and no readable binding; only checks (a)/(c) apply |
 | `0x80095C14` | `gGteLeadingZeros` | contract | Returns the GTE leading-zero/one count of its argument (mtc2 to LZCS, mfc2 from LZCR) | structure only |
 | `0x80095C30` | `gAtan2` | contract | Two-argument arctangent returning a 12-bit angle (0x1000 = full turn) measured from the +y argument toward the +x arg... | structure only |
+| `0x80096070` | `gStartMdecOutDma` | contract | Video decode support: starts the next decode-out DMA into the destination buffer with the given size, so a strip can ... | structure only |
+| `0x80096090` | `gMdecInSync` | contract | Video decode support, not a draw routine: blocks until the decode-input side is idle (mode 0, timeout inside func_800... | structure only |
+| `0x800960CC` | `gMdecOutSync` | contract | Video decode support rather than primitive drawing: blocks until the decode-out transfer finishes (mode 0, with timeo... | structure only |
+| `0x80096484` | `gIsMdecBusy` | contract | Reads the MDEC transfer status register via D_8009E9F4 and returns bit 29 indicating whether MDEC DMA output/control ... | structure only |
 
 ## Citation index
 
