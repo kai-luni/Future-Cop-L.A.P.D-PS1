@@ -4,24 +4,31 @@
 extern u32 gSavedStackPointer __asm__("D_8009FAD8");
 extern void func_80062FB4(void);
 
+void gRunHudPassOnScratchpad(void) __asm__("func_80026D5C");
+
 /**
- * @brief Runs the viewport/HUD pass func_80062FB4 on a scratchpad stack.
+ * @brief Runs the viewport and HUD pass using the scratchpad stack.
  *
+ * @param void No parameters.
  * @return Nothing.
  *
- * @par Confirmed
- * Inline-asm trampoline: push $ra, save $sp to D_8009FAD8, set $sp to
- * 0x1F800400 (scratchpad), jal func_80062FB4, restore $sp from D_8009FAD8
- * and $ra. The save slot is shared with func_80026E1C and func_8003F530,
- * so the trampolines must not nest.
+ * @par Confirmed mechanics
+ * Saves ra and the main stack pointer, sets sp to 0x1F800400 and calls func_80062FB4. Loads the
+ * saved sp and restores the return address afterward.
  *
- * @par Likely role
- * The scratchpad's fast 1 KB RAM serves as stack for the hot render path.
+ * @par Globals
+ * Writes and reads gSavedStackPointer.
  *
  * @par Callers
- * func_80027510.
+ * Direct calls from gRunSoloSessionFrame (func_800271A4), gRunSessionFrame (func_80027510).
+ *
+ * @par Role and path
+ * The solo and shared session frames use this trampoline for viewport and HUD work.
+ *
+ * @par Unknown
+ * The shared save word supplies one level of stack switching.
  */
-void func_80026D5C(void)
+void gRunHudPassOnScratchpad(void)
 {
     __asm__ volatile(
         "addiu $sp, $sp, -0x4\n\t"

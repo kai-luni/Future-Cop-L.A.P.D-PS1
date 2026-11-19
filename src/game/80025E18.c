@@ -18,33 +18,34 @@ extern s32 func_80046A58(s32 arg0, s32 arg1, s32 arg2, s32 id);
 extern void func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *object);
 extern void func_80047800(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
 
+void gUpdateOptionsPreviewVoice(s32 track, s32 volume, s32 slot) __asm__("func_80025E18");
+
 /**
- * @brief Starts, stops, or adjusts a per-slot preview sound voice in the options menu.
- *
- * Stops the existing voice handle in D_8009F678[slot] if the requested track differs
- * from D_8009FA78[slot] or volume == 0; when volume > 0, updates the live voice volume
- * via func_80047800 or allocates and starts a new voice for D_8009FA58[slot].
+ * @brief Starts, stops or adjusts a player slot's options-menu sound preview.
  *
  * @param track Sound/track ID to preview.
  * @param volume Target volume (0 stops any active handle; > 0 plays or updates).
  * @param slot Player/panel slot index into D_8009F678, D_8009FA78, and D_8009FA58.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Checks the existing voice and stored track. A changed track or zero volume releases and
+ * clears them. Positive volume either updates the existing voice using its pan byte or
+ * allocates and starts a new voice, recording the track only on success.
  *
  * @par Globals
- * D_8009F678 - per-slot active voice handles; D_8009FA78 - per-slot track IDs; D_8009FA58 - per-slot player objects.
- *
- * @par Control flow
- * Releases stale/muted handle if D_8009F678[slot] != 0; then if volume > 0 either updates existing voice or allocates and starts track.
- *
- * @par Calls
- * func_80046A34 - stops/releases handle; func_80047800 - updates volume; func_80046A58 - allocates voice; func_80046E88 - triggers playback.
- *
- * @par Side effects
- * Updates D_8009F678[slot], D_8009FA78[slot], and audio voice allocations.
+ * Reads and updates gSlotVoiceHandle and gSlotTrackId and reads gPlayerEntities.
  *
  * @par Callers
- * Confirmed: func_800260B8 (0x80026524, options sub-panel volume slider adjustments).
+ * Direct calls from gDrawOptionsSubPanel (func_800260B8).
+ *
+ * @par Role and path
+ * The options submenu previews a sound while the player adjusts a volume setting.
+ *
+ * @par Unknown
+ * A negative volume skips playback and is distinct from an explicit zero-volume stop.
  */
-void func_80025E18(s32 track, s32 volume, s32 slot)
+void gUpdateOptionsPreviewVoice(s32 track, s32 volume, s32 slot)
 {
     struct SoundVoice *voice;
     s32 handle;

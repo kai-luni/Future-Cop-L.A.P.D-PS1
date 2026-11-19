@@ -13,7 +13,7 @@ extern void gUpdateCameraAnchor(void) __asm__("func_80066C9C");
  * @par Confirmed
  * Pushes $ra, saves $sp to D_8009FAD8, sets $sp = 0x1F8003F8 (the fast
  * 1 KB scratchpad), calls func_80066C9C, then restores $sp and $ra. Same
- * pattern as func_80026D5C/func_80026E1C/func_8003F530; the shared save
+ * pattern as gRunHudPassOnScratchpad/func_80026E1C/func_8003F530; the shared save
  * slot means these trampolines cannot nest.
  *
  * @par Likely role

@@ -4,27 +4,33 @@
 extern u32 gSavedStackPointer __asm__("D_8009FAD8");
 extern void func_80049564(s32 elapsed);
 
+void gTickScriptTimersOnScratchpad(s32 elapsed) __asm__("func_80026D9C");
+
 /**
- * @brief Runs the script-timer tick pass on the PS1 scratchpad stack.
- *
- * Confirmed: inline assembly saves $ra, stores $sp in D_8009FAD8, switches $sp to scratchpad 0x1F8003FC, forwards $a0 (elapsed) to func_80049564, and restores $sp and $ra.
- * Category follows the 0x1F8003FC scratchpad stack switch, per-frame invocation when unpaused, and ScriptTimer/bytecode evaluation in func_80049564.
- * Likely: non-nestable frame trampoline optimizing timer-loop stack access; Unknown: why 0x1F8003FC leaves one word below scratchpad top.
+ * @brief Ticks the script timers on the scratchpad stack.
  *
  * @param elapsed Frame elapsed tick delta passed through in $a0 to func_80049564.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Saves ra and sp, switches sp to 0x1F8003FC and calls func_80049564 with the incoming a0
+ * unchanged. Restores the main stack and return address afterward.
  *
  * @par Globals
- * D_8009FAD8 - saved main-RAM stack pointer while scratchpad stack is active; D_8009F770/D_8009F774 - script timer array/count updated by func_80049564.
- * @par Control flow
- * Linear inline-assembly trampoline: preserve $ra and $sp, switch $sp to 0x1F8003FC, call func_80049564, restore $sp and $ra, return.
- * @par Calls
- * func_80049564 - decrements D_8009F770 ScriptTimer countdowns by elapsed and evaluates trigger/action scripts via func_80069D68.
- * @par Side effects
- * Overwrites D_8009FAD8, uses scratchpad stack below 0x1F8003FC, and updates script timer state and VM side effects via func_80049564.
+ * Writes and reads gSavedStackPointer. The callee updates gScriptTimerTicks and reads the timer
+ * count at D_8009F774.
+ *
  * @par Callers
- * Confirmed: func_80027510 (0x80027CA0 in asm/us/main.s, with D_8009F9FC); func_800271A4 (0x80027494 in asm/us/main.s, with 0x7E8($gp)) / Likely: none / Unknown: none.
+ * Direct calls from gRunSoloSessionFrame (func_800271A4), gRunSessionFrame (func_80027510).
+ *
+ * @par Role and path
+ * The solo and shared session frames pass their elapsed frame delta into the script timer
+ * update.
+ *
+ * @par Unknown
+ * The reason for the four-byte offset below the scratchpad end is unresolved.
  */
-void func_80026D9C(s32 elapsed)
+void gTickScriptTimersOnScratchpad(s32 elapsed)
 {
     __asm__ volatile(
         "addiu $sp, $sp, -0x4\n\t"

@@ -7,26 +7,33 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
 
 extern s32 func_8001A4E8(s32 *a, s32 *b);
 
+void gSetPlayerFadeTimersByDistance(s32 *arg0) __asm__("func_80025D6C");
+
 /**
- *  @brief Computes a distance-based value for each registered entry.
+ * @brief Sets each player's fade timer from the distance to a reference position.
  *
- *  Each output starts at 0x168 and decreases beyond distance 0x6000,
- *  with the result clamped to zero before storage in the output table.
- *  @param arg0 Reference passed to the distance calculation.
- *  @par Globals
- *  D_8009FA0C gives the count; D_8009FA58 supplies entry pointers.
- *  D_8009FA44 receives the resulting signed 16-bit values.
- *  @par Control flow
- *  Iterates over the entries only when the count is positive.
- *  Distances below 0x6000 retain the maximum value.
- *  @par Calls
- *  func_8001A4E8 calculates distance from arg0 to each entry at word offset 20.
- *  @par Side effects
- *  Overwrites one output-table element per processed entry.
- *  @par Callers
- *  Confirmed: func_8003E984.
+ * @param arg0 Reference passed to the distance calculation.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Calls func_8001A4E8 with the reference and each entity's +0x50 address. Stores 0x168 below
+ * distance 0x6000, otherwise subtracts the excess shifted right by eight and clamps the result
+ * to zero.
+ *
+ * @par Globals
+ * Reads gPlayerCount and gPlayerEntities, writes gPlayerFadeTimers.
+ *
+ * @par Callers
+ * Direct calls from gSpawnObjectFromTable (func_8003E984).
+ *
+ * @par Role and path
+ * The object spawn path derives a per-player screen fade, which the frame fade routine later
+ * drains.
+ *
+ * @par Unknown
+ * The routine uses the caller's player pointers without null checks.
  */
-void func_80025D6C(s32 *arg0)
+void gSetPlayerFadeTimersByDistance(s32 *arg0)
 {
     s32 i;
     register s16 *out __asm__("$18");
