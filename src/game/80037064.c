@@ -77,8 +77,8 @@ struct Dest37064 {
 
 extern s32 gEntityBaseHandler(s32 message, void *object, void *data, s32 arg4) __asm__("func_8002AD58");
 extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options);
-extern void func_8001A180(struct Vec3s32 *vector);
-extern void func_800193F8(struct Vec3s32 *axis, struct Basis *basis);
+extern void gNormalizeVector(struct Vec3s32 *vector) __asm__("func_8001A180");
+extern void gBuildBasisFromAxis(struct Vec3s32 *axis, struct Basis *basis) __asm__("func_800193F8");
 
 /**
  * @brief Spawn setup of a directed entity: copies the template state, binds
@@ -147,8 +147,8 @@ void func_80037064(struct Dest37064 *dest, struct Holder37064 *holder, s32 arg2)
     if (dest->unk78.x == 0 && dest->unk78.y == 0 && dest->unk78.z == 0) {
         dest->unk78.z = 0x10000;
     } else {
-        func_8001A180(&dest->unk78);
+        gNormalizeVector(&dest->unk78);
     }
 
-    func_800193F8(&dest->unk78, (struct Basis *)&dest->unk28.matrix);
+    gBuildBasisFromAxis(&dest->unk78, (struct Basis *)&dest->unk28.matrix);
 }

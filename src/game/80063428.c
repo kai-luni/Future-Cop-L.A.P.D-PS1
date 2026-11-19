@@ -6,8 +6,8 @@ extern u8 D_800A2730[];
 extern u8 gTileDefTable[] __asm__("D_800A6F38");
 extern s32 gTexpageBaseTable[] __asm__("D_800A8E80");
 
-extern s32 gTileMapTable __asm__("D_8009F80C");
-extern s32 D_8009F810;
+extern s32 gMapGridHeader __asm__("D_8009F80C");
+extern s32 gMapChunkNode __asm__("D_8009F810");
 extern s32 D_8009FA04;
 extern int *gTileBlockTable __asm__("D_8009F808");
 extern int *gTableBuffer __asm__("D_8009FA08");
@@ -57,8 +57,8 @@ int *func_80063428(void)
     }
 
     func_80063134();
-    gTileMapTable = 0;
-    D_8009F810 = 0;
+    gMapGridHeader = 0;
+    gMapChunkNode = 0;
     gTileBlockTable = gAllocMemory(0x1A0, 2);
     func_8008CD20(gTileBlockTable, 0, func_80018460(gTileBlockTable));
     gTableBuffer = gAllocMemory(0x1B18, 2);

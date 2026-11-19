@@ -1,9 +1,9 @@
 // Categories: Platform > Sound | Resources > Sound Banks | Game Engine > Game State > Reset
 #include "game/types.h"
 
-extern u8 gChannelEnableFlag __asm__("D_8009F26C");
+extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern s8 gObjectSlots[] __asm__("D_800A0A00");
-extern void *gStreamStatePair[2] __asm__("D_8009F640");
+extern void *gCshdNodeSlots[2] __asm__("D_8009F640");
 extern volatile s32 D_8009F650;
 
 extern void func_80023AB4(s32 arg0);
@@ -41,7 +41,7 @@ void func_80023BF8(void)
     register void **slot __asm__("$16");
     void *block;
 
-    if (gChannelEnableFlag != 0) {
+    if (gCvkSystemActive != 0) {
         i = 0;
         entry = gObjectSlots;
         do {
@@ -53,7 +53,7 @@ void func_80023BF8(void)
 
         i = 0;
         func_80023A24();
-        slot = gStreamStatePair;
+        slot = gCshdNodeSlots;
         do {
             block = *slot;
             if (block != 0) {

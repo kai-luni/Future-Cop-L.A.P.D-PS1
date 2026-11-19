@@ -1,7 +1,7 @@
 // Categories: Game Engine > Frame | Graphics > Display
 #include "game/types.h"
 
-extern void func_80024EC8(void);
+extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 extern void func_8001B4A8(s32 arg0);
 
 /**
@@ -23,6 +23,6 @@ extern void func_8001B4A8(s32 arg0);
  */
 void func_80027EBC(void)
 {
-    (void)func_80024EC8();
+    (void)gLoadQueuedAssets();
     func_8001B4A8((s32)0x1);
 }

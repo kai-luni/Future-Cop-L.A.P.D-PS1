@@ -36,7 +36,7 @@ struct Unk2A940 {
     void *unk94;
 };
 
-extern void func_8003BA50(struct Unk3BObject *object, s32 value);
+extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
 extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk2A940 *arg3);
 
 /**
@@ -89,7 +89,7 @@ s32 func_8002A940(struct Unk2A940 *object, struct Unk2A940Arg2 *arg)
         }
     } else {
         if (object->unk20 != 0 && (object->unk24 & 0x40000) == 0) {
-            func_8003BA50((struct Unk3BObject *)object, previous);
+            gFlagQuartileChange((struct Unk3BObject *)object, previous);
         }
     }
 

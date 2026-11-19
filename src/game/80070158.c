@@ -54,11 +54,11 @@ extern struct Camera70158 *gCamera __asm__("D_8009F9E4");
 
 extern struct Transform70158 *gResolveNodeTransform(void *model, s32 flags, s32 part,
                                             s32 count, void *sub, void *matrix) __asm__("func_8003D9F8");
-extern s32 func_8001A100(s32 *vector);
+extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 extern void gGteLoadRotation(void *matrix) __asm__("func_80010820");
 extern void gGteTransformVertices(void *src, void *dst, s32 arg2) __asm__("func_8001010C");
 extern s32 gTestFrustumFixedNear(s16 *point, s32 margin) __asm__("func_80019D90");
-extern void func_80010704(u32 *src, u32 *dst);
+extern void gGteProjectPoint(u32 *src, u32 *dst) __asm__("func_80010704");
 extern void gEmitRayBurst(void *dst, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6) __asm__("func_80014490");
 extern void gEmitGouraudDisc(void *dst, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6) __asm__("func_8001484C");
 void gDrawGlowNodeList(struct Node70158 *node, s32 *origin) __asm__("func_80070158");
@@ -126,7 +126,7 @@ void gDrawGlowNodeList(struct Node70158 *node, s32 *origin)
         vec[0] = t->x - org[0];
         vec[1] = t->y - org[1];
         vec[2] = t->z - org[2];
-        if (func_8001A100(vec) - (n->unk12 << 4) > 0x1FFFF) {
+        if (gVectorLength3D(vec) - (n->unk12 << 4) > 0x1FFFF) {
             continue;
         }
 
@@ -143,7 +143,7 @@ void gDrawGlowNodeList(struct Node70158 *node, s32 *origin)
         if ((gTestFrustumFixedNear(dst, n->unk12 << 4) & 0xFF) != 2) {
             continue;
         }
-        func_80010704(src, dst);
+        gGteProjectPoint(src, dst);
 
         if (n->unk8C & 2) {
             gEmitGouraudDisc(dst, n->unk78, n->unk7C, n->unk8E, n->unk12, 0x200,

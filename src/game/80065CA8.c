@@ -1,13 +1,13 @@
 // Categories: Graphics > Renderer > Map Tile Icons | Graphics > GPU Primitives | Graphics > 2D Drawing
 #include "game/types.h"
 
-extern u8 gVertexIndexTable[][4] __asm__("D_8009AFE8");
+extern u8 gTileCornerIndices[][4] __asm__("D_8009AFE8");
 extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
-extern u8 gRampVariantTable[] __asm__("D_800A2630");
-extern u16 gTileColourWord __asm__("D_8009F83C");
+extern u8 gTilePatternBuf[] __asm__("D_800A2630");
+extern u16 gTileUvOffset __asm__("D_8009F83C");
 
 #define PK ((u8 *)t0)
 #define SRC ((u16 *)a0)
@@ -25,6 +25,8 @@ extern u16 gTileColourWord __asm__("D_8009F83C");
     PK[(off)] = gr;                                    \
     PK[(off) + 1] = gr;                                \
     PK[(off) + 2] = gr;
+void gDrawMapSubtilePolys(u8 *ctx, s32 arg1, s32 x, s32 y) __asm__("func_80065CA8");
+
 
 /**
  * @brief Emits the 10x10 pixel icon quads of one map cell: walks the cell's
@@ -125,8 +127,27 @@ extern u16 gTileColourWord __asm__("D_8009F83C");
  * - Whether the header's low 24 bits are later replaced by an ordering-table
  *   link (the same word is the addr:24 field of the packet header used by
  *   func_8001C148).
+ *
+ * @par Environment path
+ * Emits the top-down map polygons of one of the 16x16 sub-tiles of a map tile
+ * record: the sub-tile's u16 descriptor at +0x3CC (index arg1) gives the
+ * count (low nibble) and the offset of its primitive words in the +0x5D0
+ * stream, and each word becomes one 10x10-pixel triangle or quad (corner
+ * layout from D_8009B1A4) written as a 0x34-byte packet into the D_8009F9F0
+ * pool, stopping early at a primitive index >= 0x47. The packet header's low
+ * 24 bits get 0x400 minus the sum of the four corner bytes picked through
+ * D_8009AFE8 from the vertex triples at +0xC (the same bytes func_80066F78
+ * treats as vertex heights), and the packet gets UV/CLUT, the texpage word
+ * D_800A8E80[(desc >> 8) & 7] and a flat, gouraud, CLUT-palette or
+ * D_800A2630-pattern colour depending on desc >> 13; descriptors with bit
+ * 0x800 have their four UV half-words shifted by D_8009F83C via scratchpad
+ * 0x1F800070. Its only caller is gDrawMapView (func_8006680C,
+ * 8006680C.c:131), which sets D_8009F83C per tile (8006680C.c:122) and calls
+ * it for every visible sub-tile with a 10-pixel pitch each time the map view
+ * is drawn; this function does not link the packets into an ordering table
+ * itself.
  */
-void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
+void gDrawMapSubtilePolys(u8 *ctx, s32 arg1, s32 x, s32 y)
 {
     s32 idx;
     u32 *wp;
@@ -160,7 +181,7 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
         if (t0 >= 0x47) {
             return;
         }
-        { u8 *e = gVertexIndexTable[t0];
+        { u8 *e = gTileCornerIndices[t0];
         a1 = base[e[0]] + base[e[1]] + base[e[2]] + base[e[3]]; }
         switch (gTileShapeTable[t0] >> 3) {
         case 0:
@@ -195,7 +216,7 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
         a0 = *(s32 *)(ctx + 8) + (wd & 0x7FE);
         t2 = *TEX;
         if (t2 & 0x800) {
-            u16 g = gTileColourWord;
+            u16 g = gTileUvOffset;
             u16 *d = (u16 *)0x1F800070;
             d[0] = *(u16 *)(a0 + 0) + g;
             d[1] = *(u16 *)(a0 + 2) + g;
@@ -264,7 +285,7 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
                 t2 = idx & 0xF0;
                 a0 = (t3 + 1) & 0xF;
                 t1 = (t2 + 0x10) & 0xF0;
-                t4 = (s32)gRampVariantTable;
+                t4 = (s32)gTilePatternBuf;
                 GRAY(4, *(a1 != 1 ? (u8 *)t4 + idx : (u8 *)t4 + (t2 | a0)));
                 GRAY(0x1C, ((u8 *)t4)[a1 != 3 ? (t1 | t3) : (t1 | a0)]);
                 GRAY(0x10, ((u8 *)t4)[(a1 == 3 || a1 == 0) ? (t2 | a0) : (t1 | a0)]);
@@ -302,10 +323,10 @@ void func_80065CA8(u8 *ctx, s32 arg1, s32 x, s32 y)
                 hi = idx & 0xF0;
                 lo1 = (lo + 1) & 0xF;
                 hi1 = (hi + 0x10) & 0xF0;
-                GRAY(4, gRampVariantTable[idx]);
-                GRAY(0x10, gRampVariantTable[hi | lo1]);
-                GRAY(0x28, gRampVariantTable[hi1 | lo1]);
-                GRAY(0x1C, gRampVariantTable[hi1 | lo]);
+                GRAY(4, gTilePatternBuf[idx]);
+                GRAY(0x10, gTilePatternBuf[hi | lo1]);
+                GRAY(0x28, gTilePatternBuf[hi1 | lo1]);
+                GRAY(0x1C, gTilePatternBuf[hi1 | lo]);
             }
             break;
         }

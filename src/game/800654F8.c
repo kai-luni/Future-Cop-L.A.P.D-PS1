@@ -1,7 +1,7 @@
 // Categories: Graphics > HUD > Minimap | Graphics > Textures
 #include "game/types.h"
 
-extern u8 gRampVariantTable[] __asm__("D_800A2630");
+extern u8 gTilePatternBuf[] __asm__("D_800A2630");
 extern u8 D_800A2730[];
 extern s32 gFrameTime __asm__("D_8009FAA4");
 
@@ -63,7 +63,7 @@ void gBuildTilePattern(u32 input)
 
         tmp = arg >> 16;
         n = tmp & 15;
-        out = gRampVariantTable;
+        out = gTilePatternBuf;
         step = 0x100 << n;
         y = step * 15;
         mode = (arg >> 24) & 15;
@@ -104,7 +104,7 @@ void gBuildTilePattern(u32 input)
         s32 cnt;
 
         base <<= sh;
-        dst = gRampVariantTable;
+        dst = gTilePatternBuf;
         src = D_800A2730;
         q = src + 0x100;
         cnt = 0x40;

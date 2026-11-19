@@ -6,7 +6,7 @@ extern s32 *gCamera __asm__("D_8009F9E4");
 struct Table { s8 pad[4]; s32 entries[100]; };
 extern struct Table gTileDefTable __asm__("D_800A6F38");
 extern s32 gTableBuffer __asm__("D_8009FA08");
-extern s16 gTileColourWord __asm__("D_8009F83C");
+extern s16 gTileUvOffset __asm__("D_8009F83C");
 extern void gBuildTilePattern(s32) __asm__("func_800654F8");
 extern s32 gWorldToRadarCell(s32) __asm__("func_80065744");
 extern void gEmitTexturedSurface(void *, s32, void *, s32) __asm__("func_800646BC");
@@ -72,7 +72,7 @@ void gDrawRegionTiles(s32 x, s32 y, s32 *region)
                     gBuildTilePattern(gTileDefTable.entries[id]);
                 }
                 hi = gWorldToRadarCell(obj[0x3C9]);
-                gTileColourWord = (hi << 8) | gWorldToRadarCell(obj[0x3C8]);
+                gTileUvOffset = (hi << 8) | gWorldToRadarCell(obj[0x3C8]);
                 gEmitTexturedSurface(obj, base, region + 2, mask << 16);
                 for (a = 0xC0; a >= 0; a -= 0x40) {
                     for (b = 0xC; b >= 0; b -= 4) {

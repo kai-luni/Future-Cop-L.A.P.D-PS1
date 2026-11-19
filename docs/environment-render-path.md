@@ -152,15 +152,17 @@ clip byte of `gte_ref.c` compares `(s16)sx < width`, while the retail unit
 zero-extends before comparing, so a negative SX never sets bit 0x40; the PROJ
 vector records the retail result (0x81) and does not rely on the model there.
 
-Totals: 18 vector, 127 contract, 2 skip (147 units).
+Totals: 18 vector, 227 contract, 2 skip (247 units).
 
 | address | readable name | test | role (from `@par Environment path`) | proved by / reason |
 |---|---|---|---|---|
+| `0x80010030` | `gSetGeomOffsetAndH` (asm) | contract | Sets the GTE projection centre and distance: it forwards (x, y) to func_800959F0, which writes x << 16 and y << 16 to... | structure only |
 | `0x8001006C` | `gGteTransformWords` (asm) | vector | Batch vertex transform with 12-byte 32-bit vertices | `tests/host/env_test.sh` (env.vectors, XF6C 3 cases): retail asm words, cop2 model |
 | `0x8001010C` | `gGteTransformVertices` (asm) | vector | Batch vertex transform of 8-byte vertices | `tests/host/env_test.sh` (env.vectors, XF10C 2 cases): retail asm words, cop2 model |
 | `0x800101D4` | `gGteTransformVerticesV0` (asm) | vector | Same contract as the 8-byte batch transform, but it multiplies the GTE V0 vector instead of IR. Called by the light s... | `tests/host/env_test.sh` (env.vectors, XF1D4 2 cases): retail asm words, cop2 model |
 | `0x80010234` | `gGteTransformVerticesWide` (asm) | vector | Batch vertex transform with 32-bit output and stride 0xC. Its 39 callers are the map-cell drawers (func_8002B588, fun... | `tests/host/env_test.sh` (env.vectors, XF234 2 cases): retail asm words, cop2 model |
 | `0x8001047C` | `gProjectVertexBatch` (asm) | vector | The batched RTPS projection step: it loads each 8-byte source vertex into VXY0/VZ0, runs rtps, stores SXY2 and SZ3 in... | `tests/host/env_test.sh` (env.vectors, PROJ 5 cases): retail asm words, cop2 model, screen-width read handled per case |
+| `0x80010704` | `gGteProjectPoint` | contract | Perspective-transforms one vertex with GTE RTPS using the currently loaded rotation/translation and stores the screen... | structure only |
 | `0x80010750` | `gGteLoadMatrix` (asm) | vector | The per-model matrix upload: moves a finished model matrix into the GTE (rows 1..3 as F*M^T with F = diag(1,-1,1), y ... | `tests/host/env_test.sh` (env.vectors, LOADMAT 2 cases): retail asm words run, cop2 trap feeds a gte_ref model |
 | `0x80010820` | `gGteLoadRotation` (asm) | vector | Same upload without translation, i.e | `tests/host/env_test.sh` (env.vectors, LOADROT 2 cases): retail asm words, cop2 model |
 | `0x800108D8` | - (asm) | skip | Cross product variant that restores the caller's GTE matrix afterwards | no caller in the US binary and no readable binding; only checks (a)/(c) apply |
@@ -170,6 +172,7 @@ Totals: 18 vector, 127 contract, 2 skip (147 units).
 | `0x80013AF0` | `gInitModelInstance` | contract | Binds a model to a model instance: it stores the model pointer, copies the frame-0 radius shifted left by four togeth... | structure only |
 | `0x80013C80` | `gUpdateLightDirection` | contract | Derives the frame's light direction from the camera matrix | structure only |
 | `0x80013CB8` | `gComposeBoneMatrix` | vector | Builds the local transform of one hierarchy level and composes it into the bone matrix array D_800A0300: each of the ... | `tests/host/env_test.sh` (env.vectors, COMPOSE 3 cases) and `compose_test.sh`; GTE callees are software stand-ins |
+| `0x80013ECC` | `gGteSetLightVector` | contract | Loads one light direction into the GTE light matrix: control register 8 gets (x >> 4) / (y >> 4) << 16 (L11, L12), re... | structure only |
 | `0x80013F08` | `gProjectModelInstance` | contract | Computes one model instance's camera-relative matrix, tests the frame's reference vertex against the view volume and ... | structure only |
 | `0x80014164` | `gComposeTransform` | contract | Composes a part transform with its owner's matrix | structure only |
 | `0x8001428C` | `gProjectBoneParts` | contract | Transforms and projects a jointed model part by part without emitting any primitive | structure only |
@@ -179,6 +182,7 @@ Totals: 18 vector, 127 contract, 2 skip (147 units).
 | `0x80015830` | `gBuildLineQuad` | contract | Builds the screen-space quad of a type-7 model part from two transformed vertices: it rejects the part when either en... | structure only |
 | `0x80015AF4` | `gEmitFrontFacingTriangle` | vector | Backface/winding test for a triangle in packed 16.16 coordinates | `tests/host/build.sh` (harness.c vs render.vectors): `w_keep`, `w_cull`, `w_flat` |
 | `0x80015B68` | `gPrepareModelPart` | vector | Prepares one model part: backface and on-screen rejection, then the screen-space corners and the depth into the work ... | `tests/host/build.sh` (harness.c vs render.vectors): `p_tri`, `p_tri_bias`, `p_tri_clip1..3`, `p_quad`, `p_bill` |
+| `0x80015F14` | `gGteShadeNccs` | contract | Shades one vertex normal with the GTE NCCS command (light matrix, background colour, then multiplied by the input col... | structure only |
 | `0x80015F38` | `gEmitShadedPart` | contract | Turns one prepared model part into a single GPU packet from the gPrimPoolNext pool: the part flags select flat/gourau... | structure only |
 | `0x800164F4` | `gDrawModelFrame` | contract | Draws one animated model frame as textured, depth-cued triangles | structure only |
 | `0x80016A64` | `gDrawModelInstanceParts` | vector | Draws the masked parts of one model instance, with a billboard path for flag-0x40 models | `tests/host/build.sh` (harness.c vs render.vectors): `k_mask8`, `k_maskf7` |
@@ -188,6 +192,7 @@ Totals: 18 vector, 127 contract, 2 skip (147 units).
 | `0x80017508` | `gSubmitModelInstance` | contract | Visibility gate and submission for one model instance | structure only |
 | `0x800175F8` | `gSetModelFrame` | contract | Commits a new animation frame on a model instance: it returns when the frame index is unchanged, otherwise it stores ... | structure only |
 | `0x80017668` | `gTransformPartVertex` | contract | Fetches one vertex of a model part for the instance's current animation frame and transforms it: gGteLoadMatrix (func... | structure only |
+| `0x80017764` | `gFreeCameraList` | contract | Walks the camera record list D_8009F588 (0x94-byte records, next pointer at +0x8C) and frees each record with gFreeBl... | structure only |
 | `0x800177AC` | `gSetCameraPosition` | contract | Minimal-environment step 1: writes the eye position of a view record and its inverse | structure only |
 | `0x80017860` | `gSetCameraRotation` | contract | Minimal-environment step 2: turns yaw/pitch/roll of a view record into its 3x3 matrix and the uploadable view matrix ... | structure only |
 | `0x800178DC` | `gTransformToViewSpace` | contract | Transforms four vertices into view space relative to the eye | structure only |
@@ -201,13 +206,34 @@ Totals: 18 vector, 127 contract, 2 skip (147 units).
 | `0x80018860` | `gBuildViewMatrix` | vector | Builds the view matrix from a pose record | `tests/host/env_test.sh` (env.vectors, VIEW 2 cases) |
 | `0x800188D0` | `gBuildRotationMatrix` | vector | Rotation factory behind the camera setter: three angles in 4096 units per turn produce the 16.16 matrix the view path... | `tests/host/env_test.sh` (env.vectors, ROT 9 cases) |
 | `0x80018DC0` | `gBuildRotationMatrixVariant` | vector | Rotation factory with the same contract as func_800188D0 but a shifted multiply sequence | `tests/host/env_test.sh` (env.vectors, ROTV 9 cases) and `rotation_test.sh` |
+| `0x800192AC` | `gBuildBasisFromPair` | contract | Builds a 3x3 basis from two vectors: rows[0] is first x second normalised by func_8001A180, rows[2] is rows[0] x firs... | structure only |
+| `0x80019310` | `gBuildBasisZFromPair` | contract | Builds a 3x3 basis whose third row is the first vector: rows[0] = second x first normalised by func_8001A180, rows[1]... | structure only |
+| `0x8001937C` | `gBuildBasisFromAxisYZ` | contract | Builds a 3x3 basis whose third row is the axis, with the first row (0, -axis.z, axis.x) normalised by func_8001A180 a... | structure only |
+| `0x800193F8` | `gBuildBasisFromAxis` | contract | Builds a 3x3 basis whose third row is the given axis: the first row is the horizontal perpendicular (axis.z, 0, -axis... | structure only |
 | `0x80019470` | `gTransposeMatrix3x3` | vector | Transposes a 3x3 s32 matrix into the destination with nine element assignments and no loop, branch or call | `tests/host/env_test.sh` (env.vectors, TRANSPOSE 2 cases) |
+| `0x80019BA4` | `gReleaseAllResources` | contract | Releases every node of the resource registry D_8009F5B8 through func_80019AF8, which runs the node's release callback... | structure only |
+| `0x80019D88` | - | contract | Empty function (jr $ra | structure only |
 | `0x80019D90` | `gTestFrustumFixedNear` | contract | Frustum visibility test for one point plus a safety margin, with a fixed near threshold: depth = z << 4 returns 1 as ... | structure only |
+| `0x80019E70` | `gTestFrustumMargin` | contract | View-frustum test for a view-space s16 point (x, y, z) with an extent margin: it returns 1 when z*16 + margin < 0x406... | structure only |
+| `0x80019F54` | `gApproxVectorLength` | contract | Cheap 3D length estimate: the absolute components are sorted and the result is max + (mid + min) / 4, with no multipl... | structure only |
+| `0x8001A100` | `gVectorLength3D` | contract | Returns an integer approximation of the 3D length of a vector by applying the 2D length helper func_8001A074 to (x, y... | structure only |
+| `0x8001A180` | `gNormalizeVector` | contract | Normalises a three-component s32 vector in place: it finds the largest absolute component, uses the GTE leading-zero ... | structure only |
+| `0x8001A314` | `gNormalizeGetLength` | contract | Normalises a three-component vector in place to 16.16 unit length and returns its original length: it pre-scales smal... | structure only |
+| `0x8001A6F8` | `gEaseVectorQuarter` | contract | Moves a three-component s32 vector a quarter of the way toward a target in place: for each axis dst = (3*dst + src) >... | structure only |
 | `0x8001A81C` | `gMulMatrixVector` | vector | Software matrix-times-vector in 16.16 used whenever the GTE must not be disturbed, e.g | `tests/host/env_test.sh` (env.vectors, MULMV 3 cases) |
+| `0x8001AB00` | `gVectorDot` | contract | Returns the 16.16 fixed-point dot product of two three-component vectors (middle 32 bits of each 64-bit product, summ... | structure only |
+| `0x8001AB78` | `gVectorScaleInPlace` (asm) | contract | Hand-written in-place scale of a three-component vector by a 16.16 factor (argument order: scale, vector) | structure only |
+| `0x8001AC28` | `gVectorMulAdd` | contract | Computes out = a + b * scale per component with the middle 32 bits of the 64-bit product (16.16 fixed point) | structure only |
+| `0x80023930` | `gRegisterCvkChunk` | contract | Registers asset chunks routed here by gLoadQueuedAssets (func_80024EC8, 80024EC8.c:185-188): a 'Cvkh' (0x43766B68) no... | structure only |
+| `0x80024EC8` | `gLoadQueuedAssets` | contract | Drains finished asset requests and dispatches them by four-character tag: every node returned by func_800295E8 is app... | structure only |
+| `0x800267C8` | `gUpdateMapScreenView` | contract | Per-player, per-frame update of the in-game map screen, run on the scratchpad stack by gRunMapScreenOnScratch (func_8... | structure only |
+| `0x80026DDC` | `gRunMapScreenOnScratch` | contract | Inline-assembly trampoline: it pushes $ra, saves $sp in D_8009FAD8, moves the stack to 0x1F8003F0 at the top of the s... | structure only |
 | `0x80026E1C` | `gRunRegionPass` | contract | Runs the environment pass func_80066E98 on the scratchpad stack | structure only |
 | `0x800271A4` | `gRunSoloSessionFrame` | contract | One-player frame driver, called from func_80028618 after func_8002703C when gPlayerCount == 1 (gRunSessionFrame, func... | structure only |
 | `0x80027510` | `gRunSessionFrame` | contract | The frame driver: runs the environment pass through func_80026E1C and the light direction update once per frame, arou... | structure only |
 | `0x80028618` | `gRunGameFrameLoop` | contract | The in-game frame loop: it clears the game clock, sets the frame delta to 8, resets gSceneFrameCounter and seeds the ... | structure only |
+| `0x8002A5AC` | - | contract | Empty function (jr $ra | structure only |
+| `0x8002A810` | `gRetireEntityBase` | contract | Shared retire step of an entity: it returns 0 if flag 0x01000000 of +0x24 is already set, otherwise sets 0x01000010, ... | structure only |
 | `0x8002AD58` | `gEntityBaseHandler` | contract | The shared base entity message handler: message 1 returns the 0xA0 base block size, message 2 runs the base spawn fun... | structure only |
 | `0x8002B588` | `gTurnEntityToAngle` | contract | Turns an entity towards a target yaw at a limited speed: when the wrapped difference is no larger than 0x40 it does n... | structure only |
 | `0x8002C584` | `gInitObjectFromDef` | contract | Message-2 (init) handler for the object classes dispatched through func_8002D664 (class ids 6, 8, 30, 33 and 36 in th... | structure only |
@@ -219,9 +245,14 @@ Totals: 18 vector, 127 contract, 2 skip (147 units).
 | `0x8002F30C` | `gStepMoverObject` | contract | Message-6 tick of a one-degree-of-freedom mover that func_8002F7C8 dispatches at message 6: depending on the mode byt... | structure only |
 | `0x8003015C` | `gHandleRotatingPropMsg` | contract | Message handler of one entity class: message 1 answers 0xD8, message 2 runs the placement half func_8002FA20, message... | structure only |
 | `0x800302E8` | `gInitTerrainEntity` | contract | Spawn initializer of the type-32 entity, called only from its handler func_80030960 | structure only |
+| `0x80030AD4` | `gInitEntityGroundPair` | contract | Spawn step (message 2) of the entity class handled by func_80030D3C (message 1 there reports size 0xB0), which calls ... | structure only |
 | `0x80030C60` | `gWarpEntityToSelf` | contract | Message-11 body of the type-29 handler func_80030D3C: it moves the entity that sent the message (or that entity's chi... | structure only |
 | `0x80031238` | `gTestEntityOverlap` | contract | Overlap test between two entities: three branch-free absolute differences against the summed half extents scaled by 1... | structure only |
+| `0x800313F0` | `gFollowAttachTarget` | contract | Keeps an attached entity on its target: when the re-resolve byte +0xB1 is set it is cleared, the target is looked up ... | structure only |
 | `0x800317BC` | `gInitFromSourceModel` | contract | Spawn helper of the entity class handled by func_8003190C (message 2): it forwards message 2 to func_8002AD58, rebind... | structure only |
+| `0x80031990` | `gFreeMapZoneList` | contract | Frees every zone node of gMapZoneList (D_8009F6F8) with gFreeBlock (func_800181D4), reading next at +0x24 before each... | structure only |
+| `0x800319D4` | `gLoadMapZone` | contract | Load-time handler for actor resources of type 0x5F: it locates the 'tACT' (0x74414354) record with func_80019C38 (hea... | structure only |
+| `0x80031B40` | `gTestCameraZoneOverlap` | contract | Returns 1 when a position widened by a radius overlaps any zone in gMapZoneList (D_8009F6F8) whose flag byte (+0x14) ... | structure only |
 | `0x800324E0` | `gUpdateHoverEnemy` | contract | Shared flyer motion tick, called from the message handlers func_80032F3C and func_8003532C: it advances the animation... | structure only |
 | `0x80036E6C` | `gHandleProjectileMsg` | contract | Message handler of a projectile entity class (size 0xD4), reached only through its handler table via the jump table j... | structure only |
 | `0x80037708` | `gHandleProjectileMessage` | contract | Message handler of the kind-0xF projectile class | structure only |
@@ -232,28 +263,56 @@ Totals: 18 vector, 127 contract, 2 skip (147 units).
 | `0x80038A00` | `gUpdateMountedTurret` | contract | Per-tick update of a child entity mounted on a parent (the +0x158 child of func_800395A8 and child[0] of func_800398E... | structure only |
 | `0x80039C58` | `gHandleCameraOverrideMsg` | contract | Message handler of the camera-override object class (size 0x120 on message 1) | structure only |
 | `0x8003A160` | `gUpdateForceField` | contract | Per-frame tick of a force-field object, called from message 6 of its own handler func_8003A844 | structure only |
+| `0x8003A90C` | `gFindVertexRangeEntry` | contract | Walks an array of 0x14-byte entries and returns the first whose byte range [start (+0x03), start + count (+0x04)) con... | structure only |
 | `0x8003AA94` | `gSpawnModelDebris` | contract | Message-2 (spawn) case of the object class handled by func_8003B2D0: it allocates a 0xF0-byte piece array with func_8... | structure only |
+| `0x8003B898` | `gSpawnEntitySlotTypes` | contract | Spawns the definition types configured for an entity through gSpawnTypeAtOwner (func_800402DC), always with bank func... | structure only |
+| `0x8003BA50` | `gFlagQuartileChange` | contract | Sets flag 0x4000 in an entity's +0x24 word when the counter at +0x1C, measured against the maximum at +0x1E, lies in ... | structure only |
+| `0x8003BEF0` | `gTakePoolNode` | contract | Allocates one node from a fixed pool laid out as {storage, active, free}: it pops the head of the free list at +0x08,... | structure only |
+| `0x8003BF1C` | `gReleasePoolNode` | contract | Returns a node to a fixed pool laid out as {storage, active, free}: it unlinks the node from the active list at +0x04... | structure only |
+| `0x8003C404` | `gInstallSpawnRecord` | contract | Installs one copied actor record into the spawn table D_800A7040[D_8009F310][record +0x14]: it first clears the low b... | structure only |
 | `0x8003CF6C` | `gDrawNodeListModels` | contract | One of the scene passes of func_8003F6E4: it walks the node list D_8009F320, skips nodes without an object or without... | structure only |
+| `0x8003D240` | `gSyncAttachedNodes` | contract | Per-frame walk of the 0x4C-byte anchor-node list D_8009F320 that func_8003D680 builds for spawned objects: a node who... | structure only |
+| `0x8003D680` | `gCreateModelNode` | contract | Allocates a 0x4C-byte node (tag 1) and links it at the head of D_8009F320: with a source object it stores the source ... | structure only |
+| `0x8003D9C4` | `gGetObjectTransform` | contract | Returns the transform block (3x3 rotation followed by an s32 position at words 9..11) an object should be drawn with:... | structure only |
 | `0x8003D9F8` | `gResolveNodeTransform` | contract | Resolves an object's world transform from a parent, but only when flag 0x100 is set | structure only |
 | `0x8003DB70` | `gBuildNodePlacement` | contract | Resolves the placement of a spawned node into a 12-word block: a nine-word basis in out[0..8] and a world position in... | structure only |
+| `0x8003E984` | `gSpawnObjectFromTable` | contract | Instantiates one object from definition gSpawnRecordMap[bank][type] (D_800A7040, line 263): it builds the placement m... | structure only |
 | `0x8003F4A0` | `gRunSceneListPasses` | contract | Runs the six per-layer render passes over the global scene lists in a fixed order | structure only |
 | `0x8003F530` | `gRunSceneListPassesOnScratch` | contract | Runs gRunSceneListPasses on the scratchpad stack, so the passes get their own stack for the frame. | structure only |
 | `0x8003F570` | `gRunEntityWorldTick` | contract | The per-frame tick of the entity world, called with the frame delta by both session updates, func_800271A4 (one playe... | structure only |
 | `0x8003F6E4` | `gRunViewScenePasses` | contract | Resolves the view position (from gFocusPositions, otherwise func_80069580) and then runs nine list passes in a fixed ... | structure only |
+| `0x8003F854` | `gTeardownWorldObjects` | contract | World teardown called once by gResetMissionSubsystems (func_80024D14): every object in the seven bucket lists gListHe... | structure only |
+| `0x8003FAD4` | `gFinishLevelLoad` | contract | Post-load finalisation run once per module start by gRunScreenModule (func_800287F4, 800287F4.c:82), after the module... | structure only |
+| `0x8003FF7C` | `gStreamDeferredSpawns` | contract | Per-tick proximity streaming of the deferred spawn requests in D_8009F30C (queued by func_8003FD74 from gSpawnTypeAtO... | structure only |
+| `0x800402DC` | `gSpawnTypeAtOwner` | contract | Common entry for spawning an object of definition type 'column' from bank 'row' next to an owner: it returns 0 unless... | structure only |
+| `0x80040874` | `gHandleLightObjectMsg` | contract | Message handler of spawn kind 0x5D objects, stored at +0x24 by their constructor func_80040E60 | structure only |
 | `0x80040A00` | `gUpdateObjectLights` | contract | Walks a linked object list and integrates one time step per node: with bit 3 of the flags byte clear and an inner rec... | structure only |
+| `0x80040DCC` | `gRegisterActorDef5D` | contract | Registers one 0x58-byte actor definition of type 0x5D: func_8003C2A4 first queues a deferred placement for records wi... | structure only |
+| `0x80041070` | `gLoadActorDef5D` | contract | Chunk loader for 'Cact' actor type 0x5D: it finds the 'tACT' (0x74414354) record of the request's section id (+0x1C) ... | structure only |
 | `0x80041488` | `gInitElevator` | contract | Message-2 (init) handler of the lift object stepped by func_80041880 (gStepElevator) | structure only |
 | `0x80041728` | `gRunEntityCommands` | contract | Processes the four-slot command queue at +0x0C of a waypoint-following entity | structure only |
 | `0x80041880` | `gStepElevator` | contract | Tick of a vertical lift object (sole caller func_80041B6C): after optional func_80041728 and the hold/delay gates, it... | structure only |
 | `0x80041C6C` | `gHandlePlacedPropMsg` | contract | Message handler of another entity class: message 1 answers 0xA4, message 2 rebuilds the orientation from the descript... | structure only |
 | `0x80042128` | `gDrawPortraitScreen` | contract | Draw case (message 3 of the type-34 handler func_80042330) of an in-world screen that shows the animated comm portrai... | structure only |
+| `0x800441DC` | `gTickChainEffectList` | contract | Per-frame update pass over object bucket gListHeads[3], called from gRunSceneListPasses (func_8003F4A0, 8003F4A0.c:46... | structure only |
 | `0x80044260` | `gDrawObjectPointTiles` (asm) | contract | Draws an object's point list as small screen-space rectangles | structure only |
+| `0x800445B0` | `gDrawPointTileList` | contract | Draw pass over one object bucket: for every node (next at +0x00) whose flag byte +0x0F lacks bit 3 it calls gDrawObje... | structure only |
+| `0x80044770` | `gRegisterActorDef5E` | contract | Registers one 0x60-byte actor definition of type 0x5E: func_8003C2A4 first queues a deferred placement for records wi... | structure only |
+| `0x8004488C` | `gLoadActorDef5E` | contract | Chunk loader for 'Cact' actor type 0x5E: it finds the 'tACT' (0x74414354) record of the request's section id (+0x1C) ... | structure only |
 | `0x80044988` | `gSetAnimClipTable` | contract | Installs an animation clip table on a track: it stores the clip array at data + 4 and the clip count from data[0], se... | structure only |
+| `0x8004963C` | `gReleaseMapLightData` | contract | Frees the map light and sprite-descriptor data: the descriptor table D_8009F77C (if set), the 0x180 x 0x44-byte light... | structure only |
+| `0x800496D0` | `gAllocLightGrid` | contract | Allocates the per-cell bucket array D_8009F780 (width x height list heads, allocation tag 2), stores the dimensions i... | structure only |
+| `0x80049EA8` | `gLoadActorLightNode` | contract | Handles a type-0x61 resource request: func_80019C38 locates the 'tACT' (0x74414354) chunk with section id +0x1C insid... | structure only |
 | `0x8004A048` | `gDrawMapCellNode` | contract | Draws one map-cell object as a camera-facing billboard or a four-corner quad, after a perspective cull, a clip-flag t... | structure only |
 | `0x8004A924` | `gDrawCellWindowObjects` | contract | Layer 2 of the environment pass: draws the map-cell objects (walls, props) of the 5x5 cell window, filtered by the pe... | structure only |
 | `0x8004ABE4` | `gLaunchDebrisObject` | contract | Starts the ballistic flight of a debris object when it is destroyed | structure only |
 | `0x8004AFC0` | `gStepDebrisFlight` | contract | Advances a launched debris object by one step | structure only |
+| `0x8004C228` | `gTickDebrisList` | contract | Per-frame update pass over object bucket gListHeads[4]: every node (next at +0x00) whose flag byte +0x0F lacks bit 3 ... | structure only |
 | `0x8004C5C8` | `gDrawDebrisFragments` | contract | Draws the fragment polygons of the debris objects in one scene list | structure only |
+| `0x8004C884` | `gRegisterActorDef5A` | contract | Registers one 0x4C-byte actor definition of type 0x5A: func_8003C2A4 first queues a deferred placement for records wi... | structure only |
+| `0x8004CA98` | `gLoadActorDef5A` | contract | Chunk loader for 'Cact' actor type 0x5A: it finds the 'tACT' (0x74414354) record of the request's section id (+0x1C) ... | structure only |
 | `0x8005027C` | `gStepPathMover` | contract | Advances an object along its path-network route by one step | structure only |
+| `0x80050E0C` | `gInitRailSegment` | contract | Seats a route-following mover on its route: with a route descriptor it marks the render object (+0x24 bit 31), finds ... | structure only |
 | `0x800518A8` | `gUpdateMorphBounds` | contract | Updates the player unit's progress-dependent footprint for the form change: from the model's current frame element it... | structure only |
 | `0x80051C50` | `gBuildObjectBasis` | contract | Builds an object's orientation matrix into the 3x3 block passed as the last argument (the caller passes the object's ... | structure only |
 | `0x80051CC4` | `gPushFromPartBox` | contract | Collision push against one box-shaped model part, called from the masked part loop of func_80051EB8 for every part bi... | structure only |
@@ -261,48 +320,89 @@ Totals: 18 vector, 127 contract, 2 skip (147 units).
 | `0x80052960` | `gComposeJointChain` | vector | Composes a joint chain into a local matrix stack seeded with the object's coordinate matrix: for each record the thre... | `tests/host/joints_test.sh` (joints.vectors, 7 cases); GTE software model |
 | `0x80052D7C` | `gUpdateTwoPartRig` | contract | Refreshes the two auxiliary model instances held in an entity's state block (object->+0xB4->+0xAC, instances at +0x17... | structure only |
 | `0x80053A74` | `gTickHoverPhysics` | contract | Drive integrator of the player unit in form 1 (state + 0xAD == 1, the hover form in the caller's documentation) | structure only |
+| `0x80055EE8` | `gTestCameraSightLine` | contract | Line-of-sight test between the view target (from) and a candidate camera eye (to) on top of the map raycast func_8006... | structure only |
+| `0x8005605C` | `gEaseAngleShortest` | contract | Eases a 12-bit angle toward a target along the shorter way round the circle: both are folded to -0x800..0x7FF, curren... | structure only |
 | `0x8005612C` | `gComputeCameraEye` | contract | Computes a camera eye position around a base point: the per-view offset block is scaled by (0x100 - arg7/2)/256, lowe... | structure only |
 | `0x800564A8` | `gComputeBoomDistance` | contract | Maps a pitch angle to a camera distance: value = 0x10000 - ((pitch - 0x14A) << 16) / 600, then 0x20000 * (0x10000 - v... | structure only |
+| `0x80056530` | `gSpringFollowHeight` | contract | Spring-eases the follow height kept at +0xD4 of the camera info block (the pointer at object+0xAC) toward the followe... | structure only |
 | `0x80056634` | `gPlacePlayerViews` | contract | Places both players' view objects before the frame is drawn | structure only |
 | `0x8005678C` | `gPlaceCameraFromPreset` | contract | Computes a camera position from a preset offset around a follow target and, when asked, applies it through gSetCamera... | structure only |
 | `0x80056870` | `gFindClearCameraPreset` | contract | Searches the alternate camera presets 9..16 for a view of the followed object that is not blocked: it starts at a ran... | structure only |
+| `0x80056994` | `gStepDemoCameraTable` | contract | Counts the s16 timer at +0x2FE of the camera info block down by the frame delta | structure only |
 | `0x800569EC` | `gUpdateChaseCamera` | contract | Chase-camera step: selects the preset, probes it against the map and smooths yaw, pitch, boom and eye offset into the... | structure only |
 | `0x800573A4` | `gResetActorAndPlaceView` | contract | Start-position step: resets an actor from its spawn record and places the third-person view that belongs to it, which... | structure only |
+| `0x800576A8` | `gTranslatePadButtons` | contract | Converts the raw pad word D_8009F7C0[index] into the game's button mask written to *out: the bits 0x80000, 0x40000, 0... | structure only |
 | `0x8005780C` | `gDecodeButtonEdge` | contract | Four-phase button decoder: a set bit in the current mask moves the action record to the press edge (phase 0) or to he... | structure only |
 | `0x80057E40` | `gSlewEntityAim` | contract | Aims the player unit's two-part gun assembly (the +0xDC companion passed by func_800588D4, its only caller): it place... | structure only |
 | `0x80058714` | `gRespawnPlayerEntity` | contract | Respawns a player entity when its respawn countdown has run out | structure only |
 | `0x800588D4` | `gUpdatePlayerEntity` | contract | Per-frame tick of the player unit, called from its class handler func_8005908C: it resets state +0x2FC, re-arms the m... | structure only |
 | `0x800592D0` | `gDrawOtherPlayerArrow` | contract | Two-player overlay drawn from the player-unit draw handler func_800597C0: it returns unless gPlayerCount is at least ... | structure only |
 | `0x80059ABC` | `gHandleCompanionMessage` | contract | Message handler of the kind-0x12 companion object that func_80057914 queues on a part of the player unit, so it has n... | structure only |
+| `0x80059DB0` | - | contract | Empty function (jr $ra | structure only |
+| `0x8005A068` | - | contract | Empty function (jr $ra | structure only |
+| `0x8005BDE4` | `gAttachNearPlayerEffect` | contract | Attaches a timed effect node to an owner object, but only if the model instance's world position (+0x34/+0x38/+0x3C) ... | structure only |
 | `0x8005CED4` | `gTakeArmedLobePoint` | contract | Helper of the damage-field update func_8005D8F4 (its only caller): it scans the twelve 0x1C-byte lobes from +0x58 for... | structure only |
 | `0x8005D060` | `gSpawnLobeArc` | contract | Steps one of the twelve lobes of the damage field updated by func_8005D8F4 (its only caller): once the frame time D_8... | structure only |
 | `0x800619C0` | `gBoxOverlapBitmask` | contract | Turns one oriented box into a world axis-aligned box and returns a per-entry overlap bitmask: it builds a diagonal sc... | structure only |
 | `0x80061CAC` | `gTestPartPairHit` | contract | Narrow-phase hit test between two coord records: bit 27 of each model flag word gives a two-bit mode, and the functio... | structure only |
 | `0x80062EB8` | `gRunRegionObjectPass` | contract | Update and draw pass over the entity table of one region: message 3 to every object, then the polygons of the visible... | structure only |
+| `0x80063DC8` | `gInitMapFromGrdb` | contract | Handler for the 'Cptc' (0x43707463) chunk in gLoadQueuedAssets (80024EC8.c:151-152): it stores the chunk in D_8009F81... | structure only |
 | `0x80064460` | `gSampleCellWindow` | contract | Fills the 25 window entries (mask, node, world position) that the three region layers then draw. | structure only |
 | `0x800646BC` | `gEmitTexturedSurface` (asm) | contract | Emits the textured triangle strips of one region surface with per-strip clipping | structure only |
+| `0x800648E8` | `gEmitCellPolygon` | contract | Emits one textured polygon of a map cell into the shared primitive pool: the primitive word's bits 15..21 select four... | structure only |
 | `0x80065134` | `gEmitCellGeometry` | contract | Emits the visible cells of one region as geometry | structure only |
 | `0x8006531C` | `gDrawRegionTiles` | contract | Layer 1 of the environment pass: draws the 5x5 window of map regions (the tiled ground surfaces) around the camera po... | structure only |
 | `0x800654F8` | `gBuildTilePattern` | contract | Builds the 256-byte pattern uploaded for a tileset | structure only |
 | `0x80065744` | `gWorldToRadarCell` | contract | Maps a world coordinate onto the tile/radar grid coordinate | structure only |
 | `0x80065834` | `gDrawRadarBlip` | contract | Draws one entity onto the radar/minimap | structure only |
+| `0x80065CA8` | `gDrawMapSubtilePolys` | contract | Emits the top-down map polygons of one of the 16x16 sub-tiles of a map tile record: the sub-tile's u16 descriptor at ... | structure only |
+| `0x800665E8` | `gClampMapViewToBounds` | contract | Clamps the map-view centre in place to the world bounds D_800A2950 built by func_80063DC8: z (arg0[2]) into [bounds[0... | structure only |
+| `0x80066684` | `gDrawMinimapMarkers` | contract | Draws up to eight point markers of one map object as gouraud discs: it returns at once for a null object or when no s... | structure only |
 | `0x8006680C` | `gDrawMapView` | contract | Draws the map view around a position for the map screen | structure only |
 | `0x80066C9C` | `gUpdateCameraAnchor` | contract | Per-view look-at update: it selects the player's view record with gSelectViewRecord, loads the camera rotation, and i... | structure only |
 | `0x80066E98` | `gDrawViewLayers` | contract | The environment pass of one view: selects the view record, loads the camera rotation, then draws the same region in t... | structure only |
-| `0x80066F78` | `gGetGroundHeight` | contract | Returns the ground height under a world position by walking one map cell: gTileMapTable (D_8009F80C) gives the grid s... | structure only |
+| `0x80066F78` | `gGetGroundHeight` | contract | Returns the ground height under a world position by walking one map cell: gMapGridHeader (D_8009F80C) gives the grid ... | structure only |
+| `0x8006943C` | `gClampToWorldBounds` | contract | Clamps a moving entity's position in place to the world bounds D_800A2950 shrunk by 0x800 on every side: z (arg0[2]) ... | structure only |
+| `0x800694C8` | `gWorldToMinimapCell` | contract | Converts a world x/z position into cell indices of the 54x54 map grid: origin x/z from D_800A2950 is subtracted, each... | structure only |
+| `0x80069580` | `gGetViewGroundAnchor` | contract | Copies entry 'index' of the pair table D_800A3190 into an (x, 0, z) triple, with the middle component zeroed and no b... | structure only |
+| `0x800695A8` | `gBuildCoarseHeightGrid` | contract | Builds the smoothed signed-byte height grid published in D_800A2940: for every map cell of the GRDB header D_8009F80C... | structure only |
 | `0x8006CB58` | `gDrawShadedModel` | contract | Draws one procedural effect shape with a colour gradient: it generates up to sixteen mirrored corner points (+-size o... | structure only |
 | `0x8006D770` | `gTickEffectNodes` | contract | Per-frame update of the effect objects in gListHeads bucket 2 | structure only |
 | `0x8006DC24` | `gDrawFlatRing` | contract | Draws one model-list node as a flat ring (annulus) in its local x/z plane | structure only |
+| `0x8006E988` | `gDrawAttachedModelList` | contract | Walks a linked list of model nodes (next at +0x00) for one view and skips nodes whose flag byte +0x0F has bit 3 | structure only |
+| `0x8006EAF0` | `gRegisterActorDef5C` | contract | Registers one 0x54-byte actor definition of type 0x5C: func_8003C2A4 first queues a deferred placement for records wi... | structure only |
+| `0x8006ED78` | `gLoadActorDef5C` | contract | Chunk loader for 'Cact' actor type 0x5C: it finds the 'tACT' (0x74414354) record of the request's section id (+0x1C) ... | structure only |
+| `0x8006F170` | `gTickTracerPool` | contract | Per-frame update of the beam/tracer node pool D_800A3538 (created by func_8006EDC4 with 10 nodes of 0x48 bytes, fille... | structure only |
+| `0x8006F310` | `gDrawTracerBand` | contract | Draws one beam/tracer node (endpoints at +0x10 and +0x1C) as a screen-space band: it returns early when both endpoint... | structure only |
+| `0x8006F844` | `gDrawTracerList` | contract | Draw pass for the beam/tracer pool: walks D_800A353C, which is the active-list field (+4) of the pool header D_800A35... | structure only |
+| `0x8006FF44` | `gHandleActor59Msg` | contract | Message handler of the 0x9C-byte kind-0x59 object built by func_8007043C, which stores this function's address in the... | structure only |
+| `0x80070048` | `gIntegrateActor59List` | contract | Advances every node of the scene list gListHeads[1] (D_800A1070[1], passed by gRunSceneListPasses, 8003F4A0.c:48) by ... | structure only |
 | `0x80070158` | `gDrawGlowNodeList` | contract | Walks the node list from the argument, resolves each node's transform with func_8003D9F8, culls it by radius against ... | structure only |
+| `0x800703A8` | `gRegisterActorDef59` | contract | Registers one 0x58-byte actor definition of type 0x59: func_8003C2A4 first queues a deferred placement for records wi... | structure only |
+| `0x800706C4` | `gLoadActorDef59` | contract | Chunk loader for 'Cact' actor type 0x59: it finds the 'tACT' (0x74414354) record of the request's section id (+0x1C) ... | structure only |
 | `0x80070730` | `gComputeEffectEndPoint` | contract | Computes one end point of a beam or ribbon strip and returns the index of the player entity it locked onto, or -1 | structure only |
-| `0x80071B40` | `gStepBeamNode` | contract | Per-frame step of one beam node, called by the list pass func_8007364C over gModelNodeList (D_8009F38C) once the node... | structure only |
+| `0x80071B40` | `gStepBeamNode` | contract | Per-frame step of one beam node, called by the list pass func_8007364C over gBeamNodeList (D_8009F38C) once the node ... | structure only |
 | `0x80071FA4` | `gDrawBeamNode` | contract | Draws one beam node, a set of point strips stretched between two end objects: per strip it makes the points camera-re... | structure only |
+| `0x800734BC` | `gRetireAllRibbons` | contract | Walks the ribbon/beam node list D_8009F38C (pushed by the constructor func_8007377C, 8007377C.c:185-186), sets retire... | structure only |
+| `0x80073500` | `gAllocPositionNode` | contract | Allocates a 0x20-byte node with gAllocMemory (func_80017EBC, tag 1), returns 0 if that fails, otherwise clears the tw... | structure only |
+| `0x8007364C` | `gTickBeamNodeList` | contract | Per-frame maintenance of the beam/ribbon node list D_8009F38C (nodes built by func_8007377C): walking with a predeces... | structure only |
+| `0x80073700` | `gDrawBeamNodeList` | contract | Per-view draw pass over the beam/ribbon node list D_8009F38C: a node with either of its two record pointers at +0x04/... | structure only |
+| `0x80073BBC` | `gHandleBeamObjectMsg` | contract | Message handler of a two-point beam object (no direct caller | structure only |
 | `0x80074104` | `gDrawRibbonList` | contract | Renders every entry of a linked object list as camera-facing ribbons: per entry it builds the strip transform with fu... | structure only |
+| `0x800753D0` | `gUpdateParticleLight` | contract | Keeps the light node at +0x24 of a particle in sync: with a node, the particle's colour bytes +0x15..+0x17 are copied... | structure only |
+| `0x80075478` | `gReleaseParticleLight` | contract | If the light-node pointer at +0x24 of a particle is non-null, releases it through func_800498F0 (which unlinks the no... | structure only |
 | `0x800754B8` | `gInitEmitterParticle` | contract | Initialises one particle node that an emitter object has just taken from its pool: it writes the world position, the ... | structure only |
 | `0x80075A84` | `gRunPolygonPass` | contract | Polygon pass over one scene pool: walks the active particle list, culls and lights each node and draws it through fun... | structure only |
+| `0x800762B0` | `gCreateEmitterObject` | contract | Constructor for spawn kind 0x57, called only from gSpawnObjectFromTable (func_8003E984): it allocates a 0xA0-byte obj... | structure only |
+| `0x800834C4` | `gAllocCellBucketGrid` | contract | Allocates and zeroes the per-cell bucket grid D_8009F938 (two words per cell) and records its width and height in D_8... | structure only |
+| `0x80083764` | `gBuildSubcellMask` | contract | Builds a 16-bit coverage mask of the 4x4 subcells (0x8000 units each, cell size 0x20000) that the rectangle left..rig... | structure only |
 | `0x80083A10` | `gSpawnSceneNode` | contract | Creates one map-cell model node and inserts it into the cell bucket grid: it takes a 0x5C-byte node from the 250-entr... | structure only |
 | `0x80084398` | `gDrawCellWindowModels` | contract | Layer 3 of the environment pass: animates and submits the models of the same cell window, i.e | structure only |
+| `0x80086AC0` | `gServiceMovieAudioIrq` | contract | SPU IRQ service routine of the movie audio stream whose state block is pointed to by D_8009F4D8: it returns at once w... | structure only |
+| `0x80095900` | `gSqrt12` | contract | Hand-written 20.12 fixed-point square root (result = 64 * sqrt(v), the libgte SquareRoot12 scheme): the GTE leading-z... | structure only |
 | `0x80095B64` | - (asm) | skip | Cross product through a temporary matrix | no caller in the US binary and no readable binding; only checks (a)/(c) apply |
+| `0x80095C14` | `gGteLeadingZeros` | contract | Returns the GTE leading-zero/one count of its argument (mtc2 to LZCS, mfc2 from LZCR) | structure only |
+| `0x80095C30` | `gAtan2` | contract | Two-argument arctangent returning a 12-bit angle (0x1000 = full turn) measured from the +y argument toward the +x arg... | structure only |
 
 ## Citation index
 

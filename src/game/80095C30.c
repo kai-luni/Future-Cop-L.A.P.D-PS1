@@ -3,7 +3,9 @@
 
 extern int gSolveLobVector();
 
-extern s16 gRatioTable[] __asm__("D_8009E0A0");
+extern s16 gAtanTable[] __asm__("D_8009E0A0");
+s32 gAtan2(s32 x, s32 y) __asm__("func_80095C30");
+
 
 /**
  * @brief Two-argument arctangent over a 1024-entry table, 12-bit angle result.
@@ -29,8 +31,19 @@ extern s16 gRatioTable[] __asm__("D_8009E0A0");
  * func_8002AD58, func_8002B6C8, func_8002CC30, func_8002E630, func_80038A00,
  * func_8004F764, func_8005027C, func_80050E0C, func_80057E40, func_800592D0,
  * func_8005A934, gSolveLobVector.
+ *
+ * @par Environment path
+ * Two-argument arctangent returning a 12-bit angle (0x1000 = full turn)
+ * measured from the +y argument toward the +x argument: it folds out the
+ * signs, indexes the 1025-entry half-word table D_8009E0A0 with min * 1024 /
+ * max (dividing max >> 10 instead when the numerator would overflow), uses t
+ * when |x| < |y| and 0x400 - t otherwise, then applies 0x800 - r for negative
+ * y and -r for negative x; (0, 0) returns 0. Callers are gEntityBaseHandler,
+ * gTickActor, gSlewEntityAim, gDrawOtherPlayerArrow, gSolveLobVector and
+ * seven unnamed units (12 in the call graph), which use it to turn direction
+ * vectors into headings.
  */
-s32 func_80095C30(s32 x, s32 y)
+s32 gAtan2(s32 x, s32 y)
 {
     s32 result;
     s32 negateY;
@@ -56,14 +69,14 @@ s32 func_80095C30(s32 x, s32 y)
         } else {
             index = (x << 10) / y;
         }
-        result = gRatioTable[index];
+        result = gAtanTable[index];
     } else {
         if (y & 0x7FE00000) {
             index = y / (x >> 10);
         } else {
             index = (y << 10) / x;
         }
-        result = 0x400 - gRatioTable[index];
+        result = 0x400 - gAtanTable[index];
     }
     if (negateY) {
         result = 0x800 - result;

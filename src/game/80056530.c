@@ -2,6 +2,8 @@
 typedef int s32;
 typedef unsigned int u32;
 #define FMUL(d,a,b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
+s32 gSpringFollowHeight(s32 *obj, s32 scale, s32 count) __asm__("func_80056530");
+
 
 /**
  * @brief Spring-eases a camera offset word toward the object's value with a
@@ -26,8 +28,20 @@ typedef unsigned int u32;
  *
  * @par Callers
  * func_800569EC.
+ *
+ * @par Environment path
+ * Spring-eases the follow height kept at +0xD4 of the camera info block (the
+ * pointer at object+0xAC) toward the followed object's y at +0x54: the error
+ * is scaled by 8 and cubed in 16.16 fixed point, the accumulator at +0xD8 is
+ * reset on a sign change and gains the impulse 'count' times, the step is
+ * (accumulator >> 14) * scale, zeroed below magnitude 256 and clamped to the
+ * error, and the new value is stored at +0xD4 and returned.
+ * gUpdateChaseCamera (func_800569EC) calls it once per frame with (object,
+ * elapsed, speed) and stores the result as the y of its local follow position
+ * (800569EC.c:261). A zero error only clears the accumulator, so the port
+ * must keep +0xD4/+0xD8 per camera info block.
  */
-s32 func_80056530(s32 *obj, s32 scale, s32 count)
+s32 gSpringFollowHeight(s32 *obj, s32 scale, s32 count)
 {
     register s32 *state __asm__("$10");
     register s32 delta __asm__("$11");

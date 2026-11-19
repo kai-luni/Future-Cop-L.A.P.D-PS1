@@ -42,12 +42,12 @@ typedef struct Obj {
 extern s32 *gCamera __asm__("D_8009F9E4");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 gTexturePageWord __asm__("D_8009F9B8");
+extern u32 gGreyTexpageAdd __asm__("D_8009F9B8");
 extern u32 gMeshMirrorTable[] __asm__("D_8009B214");
 extern s32 gTexpageBaseTable[] __asm__("D_800A8E80");
 
 extern s32 *gResolveNodeTransform() __asm__("func_8003D9F8");
-extern s32 func_8001A100();
+extern s32 gVectorLength3D() __asm__("func_8001A100");
 extern void gGteLoadRotation() __asm__("func_80010820");
 extern void gGteTransformWords() __asm__("func_8001006C");
 extern void gGteLoadMatrix() __asm__("func_80010750");
@@ -134,7 +134,7 @@ void gDrawFlatRing(Obj *o, s32 *pos)
     vec[1] = s0[10] - pos[1];
     vec[2] = s0[11] - pos[2];
     s2 = vec;
-    if (func_8001A100(s2) - (o->f12 << 4) > 0x1FFFF)
+    if (gVectorLength3D(s2) - (o->f12 << 4) > 0x1FFFF)
         return;
     vec[0] = s0[9] - gCamera[0x1F];
     vec[1] = s0[10] - gCamera[0x20];
@@ -335,7 +335,7 @@ void gDrawFlatRing(Obj *o, s32 *pos)
 }
                 p->h[18] = 0x101;
                 p->h[24] = 0x100;
-                p->w[6] = ((u32)gTexturePageWord << 16) | 1;
+                p->w[6] = ((u32)gGreyTexpageAdd << 16) | 1;
                 if (o->f98 & 0x10) {
                     if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc4;
                     __asm__("");
@@ -362,7 +362,7 @@ void gDrawFlatRing(Obj *o, s32 *pos)
     }
                     p->h[18] = 0x101;
                     p->h[24] = 0x100;
-                    p->w[6] = ((u32)gTexturePageWord << 16) | 1;
+                    p->w[6] = ((u32)gGreyTexpageAdd << 16) | 1;
                 }
             }
         }

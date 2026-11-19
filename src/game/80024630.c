@@ -1,7 +1,7 @@
 // Categories: Platform > Audio
 #include "game/types.h"
 
-extern u8 gChannelEnableFlag __asm__("D_8009F26C");
+extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern s32 gActiveStreamId __asm__("D_8009F280");
 extern s32 gStreamCommandState __asm__("D_8009F648");
 
@@ -40,7 +40,7 @@ extern void func_8002A544(void);
  */
 void func_80024630(s32 arg0)
 {
-    if (gChannelEnableFlag != 0) {
+    if (gCvkSystemActive != 0) {
         if (gStreamCommandState == 1) {
             if (arg0 != 0) {
                 func_80022700();

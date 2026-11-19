@@ -26,7 +26,7 @@ struct OutC2A4 {
     u8 unk49;
 };
 
-extern s32 gSavedChunkBase __asm__("D_8009F310");
+extern s32 gSpawnTableRow __asm__("D_8009F310");
 extern struct UnkC2A4 *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
@@ -74,8 +74,8 @@ u8 func_8003C2A4(struct UnkC2A4 *data)
     out->position.y = gGetGroundHeight(&data->position, 0, 0, 0) +
                       (((matrix[7] >> 4) * data->unk1C) >> 8);
     out->position.z += ((matrix[8] >> 4) * data->unk1C) >> 8;
-    func_8003FD74(data->unk14, gSavedChunkBase, 0, (s32)out);
-    object = gSpawnRecordMap[gSavedChunkBase][data->unk14];
+    func_8003FD74(data->unk14, gSpawnTableRow, 0, (s32)out);
+    object = gSpawnRecordMap[gSpawnTableRow][data->unk14];
     if (object != 0 && (object->flags & 1) != 0) {
         return 1;
     }

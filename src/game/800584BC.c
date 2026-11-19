@@ -33,7 +33,7 @@ struct Unk584BC {
     struct Unk584BCInfo *info;
 };
 
-extern s32 func_800402DC(struct Unk584BC *owner, u8 column, s32 arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(struct Unk584BC *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern void func_80058378(struct Unk584BC *object, s32 amount, s32 source);
 
 /**
@@ -75,7 +75,7 @@ s32 func_800584BC(s32 message, struct Unk584BC *object, struct Unk584BCHit *hit)
         amount = hit->damage;
         if (hit->kind == 0x10) {
             object->info->unk31A = 600;
-            func_800402DC(object, 0xCD, 0, 1, 0);
+            gSpawnTypeAtOwner(object, 0xCD, 0, 1, 0);
         }
     } else {
         if (hit->flags & 0x40) {

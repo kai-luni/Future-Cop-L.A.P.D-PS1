@@ -59,8 +59,8 @@ extern void gBuildRotationMatrix(s32 a0, s32 a1, s32 a2, s32 *a3) __asm__("func_
 extern s32 gGetGroundHeight(struct Vec371 *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80066F78");
 extern s32 func_800684AC(struct Vec371 *a, struct Vec371 *b, struct Vec371 *out, s32 d, s32 e);
 extern void gVectorAddScaled(struct Vec371 *a, struct Vec371 *b, s32 scale, struct Vec371 *out) __asm__("func_8001ACA4");
-extern s32 func_8001A100(struct Vec371 *vector);
-extern void func_8001A180(struct Vec371 *vector);
+extern s32 gVectorLength3D(struct Vec371 *vector) __asm__("func_8001A100");
+extern void gNormalizeVector(struct Vec371 *vector) __asm__("func_8001A180");
 
 /**
  * @brief Per-frame mover tick of a propelled entity: proximity blast test
@@ -259,8 +259,8 @@ void func_800371FC(struct Unk371FC *arg0, s32 arg1)
         }
 UPDATE_SPEED:
         self->direction = self->velocity;
-        self->unk84 = func_8001A100(&self->direction) / 300;
-        func_8001A180(&self->direction);
+        self->unk84 = gVectorLength3D(&self->direction) / 300;
+        gNormalizeVector(&self->direction);
     }
     self->unkC4 -= step;
     if (self->unkC4 <= 0) self->unk1C = -1;

@@ -63,7 +63,7 @@ typedef struct { u8 pad[8]; Config *config; } Arg;
 extern Matrix gIdentityMatrix __asm__("D_8009AA38");
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern s32 func_80019668(void);
-extern Entry *func_8003A90C(Entry *, s32);
+extern Entry *gFindVertexRangeEntry(Entry *, s32) __asm__("func_8003A90C");
 extern s32 func_8004B244(void *, void *, Vec *);
 extern void func_8004B310(void *, Vec *, Vec *, s32, s16 *, s16 *, s32 *, Vec *);
 extern void gBuildRotationMatrixVariant(s32, s32, s32, Matrix *) __asm__("func_80018DC0");
@@ -275,7 +275,7 @@ s32 gSpawnModelDebris(s32 unused, Object *out, Arg *arg)
     i = model->polygons->count;
     poly = model->polygons->poly;
     while (i > 0) {
-        entry = func_8003A90C(model->entries, poly->a);
+        entry = gFindVertexRangeEntry(model->entries, poly->a);
         lower = entry->start;
         upper = lower + entry->count - 1;
         d = poly->a;

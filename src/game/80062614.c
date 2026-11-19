@@ -2,7 +2,7 @@
 typedef unsigned char u8;
 typedef struct Node { void *object; struct Node *next; } Node;
 typedef struct { int x, y, width, height; } Grid;
-extern Grid gClipRect __asm__("D_800A2970");
+extern Grid gCellClipRect __asm__("D_800A2970");
 extern Node gCellNodeArray[] __asm__("D_800A2990");
 extern u8 *gCellMap __asm__("D_8009F820");
 extern void func_800623FC(Node *);
@@ -54,9 +54,9 @@ void func_80062614(void)
     register int value __asm__("$5");
     register int index __asm__("$2");
     register int height __asm__("$3");
-    height = gClipRect.height;
+    height = gCellClipRect.height;
     cur = gCellMap;
-    width = gClipRect.width;
+    width = gCellClipRect.width;
     __asm__("" : "=r"(height) : "0"(height), "r"(cur), "r"(width));
     rows = height - 1;
     __asm__ volatile ("" : : : "memory");

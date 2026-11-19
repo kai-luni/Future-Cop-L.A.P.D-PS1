@@ -13,7 +13,7 @@ typedef struct {
     Unk23528Entry entries[1];
 } Unk23528Header;
 
-extern Unk23528Header **gStreamStatePair[2] __asm__("D_8009F640");
+extern Unk23528Header **gCshdNodeSlots[2] __asm__("D_8009F640");
 
 /**
  *  @brief Finds the first header containing an entry with the requested ID.
@@ -42,7 +42,7 @@ Unk23528Header *func_80023528(s32 id, s32 *outIndex)
     register Unk23528Header ***pp __asm__("$10");
     Unk23528Header **container;
 
-    pp = gStreamStatePair;
+    pp = gCshdNodeSlots;
     for (; i < 2; i++, pp++) {
         container = *pp;
         if (container != 0) {

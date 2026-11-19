@@ -16,7 +16,7 @@ extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gMarkerColorTable[] __asm__("D_800A6F60");
 extern u8 gMarkerLabelText[] __asm__("D_8009F37C");
-extern void func_800694C8(s32 *, s32 *, s32, s32);
+extern void gWorldToMinimapCell(s32 *, s32 *, s32, s32) __asm__("func_800694C8");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(struct SVec *, struct Vec *, s32) __asm__("func_80010234");
 extern void func_80049100(u8 *, s32, s32, s32);
@@ -95,7 +95,7 @@ void gDrawRadarBlip(u8 *entity, struct Vec *min, struct Vec *max, s32 arg3)
     if ((flags >> 5) == 2 && entity[0x16] == 0x1c && gGameSession->mode == 1) {
         offset = 0;
         if (arg3) offset = 0x50;
-        func_800694C8(&sx, &sy, *(s32 *)(entity + 0x58), *(s32 *)(entity + 0x50));
+        gWorldToMinimapCell(&sx, &sy, *(s32 *)(entity + 0x58), *(s32 *)(entity + 0x50));
         index = flags & 31;
         __asm__ volatile ("" : : "r"(index) : "$3");
         colors = gMarkerColorTable;

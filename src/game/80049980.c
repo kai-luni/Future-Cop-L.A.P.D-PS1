@@ -30,7 +30,7 @@ extern s32 gLightGridWidth __asm__("D_8009F78C");
 extern void gBuildRotationMatrix(s32 angle, s32 arg7, s32 arg8, struct TransformMatrix *matrix) __asm__("func_800188D0");
 extern void func_8001AF84(struct TransformMatrix *matrix, struct TransformPoint *source,
                           struct TransformPoint *destination, s32 count);
-extern u16 func_80083764(s32 x, s32 y, s32 left, s32 right, s32 top, s32 bottom);
+extern u16 gBuildSubcellMask(s32 x, s32 y, s32 left, s32 right, s32 top, s32 bottom) __asm__("func_80083764");
 
 /**
  * @brief Places and re-buckets a light node in the map cell grid: relinks it into
@@ -169,5 +169,5 @@ void func_80049980(Node *node, s32 x, s32 z, s32 y, s32 width, s32 depth,
         func_8001AF84(&matrix, points, &node->points[0], 5);
     }
 
-    node->unk12 = func_80083764(z, x, z - width / 2, z + width / 2, x - depth / 2, x + depth / 2);
+    node->unk12 = gBuildSubcellMask(z, x, z - width / 2, z + width / 2, x - depth / 2, x + depth / 2);
 }

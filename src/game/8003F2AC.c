@@ -21,8 +21,8 @@ struct Unk3F2AC {
 };
 
 extern s32 func_8003CAE4(struct Unk3F2AC *object, s32 arg, u8 *flag);
-extern struct Unk3F2AC *func_8003E984(void *handle, struct Unk3F2AC *object,
-                                      s32 flag, s32 arg3, s32 arg4);
+extern struct Unk3F2AC *gSpawnObjectFromTable(void *handle, struct Unk3F2AC *object,
+                                      s32 flag, s32 arg3, s32 arg4) __asm__("func_8003E984");
 extern void func_800498F0(void *object);
 
 /**
@@ -60,7 +60,7 @@ s32 func_8003F2AC(struct Unk3F2AC *object, s32 arg1)
         }
         result = func_8003CAE4(object, arg1, &flag);
         if (flag != 0) {
-            child = func_8003E984(object->unk1C, object, flag, 0,
+            child = gSpawnObjectFromTable(object->unk1C, object, flag, 0,
                                   (object->unk10 >> 1) & 1);
             if (child != 0) {
                 child->unk18 = object->unk18;

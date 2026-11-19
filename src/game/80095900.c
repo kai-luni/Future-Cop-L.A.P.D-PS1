@@ -24,6 +24,17 @@
  *
  * @par Unknown
  * The exact table content at 0x8009DF20 (not decoded here).
+ *
+ * @par Environment path
+ * Hand-written 20.12 fixed-point square root (result = 64 * sqrt(v), the
+ * libgte SquareRoot12 scheme): the GTE leading-zero counter normalises the
+ * input, the even part of the count gives the exponent (0x13 - LZC) / 2, the
+ * mantissa shifted to 0x40..0xFF indexes the half-word table at 0x8009DF20,
+ * and the entry is shifted back by the exponent; 0 returns 0. func_8001A314
+ * feeds it the 16.16 sum of squares and multiplies the result by 4 to get the
+ * vector length (8001A314.c), which fixes the 64 * sqrt scale. It has 13
+ * callers, including gUpdateMorphBounds and gSolveLobVector; the file's
+ * 'Reciprocal' category and @brief are wrong.
  */
 __asm__(
     ".text\n\t"

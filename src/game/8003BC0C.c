@@ -12,8 +12,8 @@ struct Unk3BObject {
 
 extern u8 func_8003B838(struct Unk3BObject *object);
 extern s32 func_8003BF50(struct Unk3BObject *object);
-extern void func_800402DC(struct Unk3BObject *object, u8 kind, s32 arg2,
-                          s32 arg3, s32 arg4);
+extern void gSpawnTypeAtOwner(struct Unk3BObject *object, u8 kind, s32 arg2,
+                          s32 arg3, s32 arg4) __asm__("func_800402DC");
 
 /**
  * @brief Refreshes an entity's map occupancy through its resolved column
@@ -42,7 +42,7 @@ void func_8003BC0C(struct Unk3BObject *object)
     if (object->tableIndex != 0) {
         kind = func_8003B838(object);
         if (kind != 0) {
-            func_800402DC(object, kind, 0, func_8003BF50(object), 0);
+            gSpawnTypeAtOwner(object, kind, 0, func_8003BF50(object), 0);
         }
     }
 }

@@ -42,7 +42,7 @@ struct EntityDef {
 
 extern u8 gMessageDoneFlag __asm__("D_8009F7AC");
 
-extern void func_800695A8(void);
+extern void gBuildCoarseHeightGrid(void) __asm__("func_800695A8");
 extern u8 *func_80019C38(s32 arg0, s32 arg1, u32 tag, s32 arg3);
 extern void *func_80019CA0(s32 arg0, s32 arg1, u32 tag, s32 arg3);
 extern struct Resource *func_80019BF0(s32 group, s32 name);
@@ -50,17 +50,17 @@ extern s32 func_8002AE54(u8 type);
 extern s32 func_8004D4D4(struct EntityDef *def);
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
-extern void func_800319D4(struct Unk4D6D4 *arg0);
+extern void gLoadMapZone(struct Unk4D6D4 *arg0) __asm__("func_800319D4");
 extern void func_80084110(struct Unk4D6D4 *arg0);
-extern void func_80049EA8(struct Unk4D6D4 *arg0);
+extern void gLoadActorLightNode(struct Unk4D6D4 *arg0) __asm__("func_80049EA8");
 extern void func_80060838(struct Unk4D6D4 *arg0);
 extern void gRegistryLoad(struct Unk4D6D4 *arg0) __asm__("func_8006A918");
-extern void func_8004488C(struct Unk4D6D4 *arg0);
-extern void func_80041070(struct Unk4D6D4 *arg0);
-extern void func_8006ED78(struct Unk4D6D4 *arg0);
-extern void func_8004CA98(struct Unk4D6D4 *arg0);
+extern void gLoadActorDef5E(struct Unk4D6D4 *arg0) __asm__("func_8004488C");
+extern void gLoadActorDef5D(struct Unk4D6D4 *arg0) __asm__("func_80041070");
+extern void gLoadActorDef5C(struct Unk4D6D4 *arg0) __asm__("func_8006ED78");
+extern void gLoadActorDef5A(struct Unk4D6D4 *arg0) __asm__("func_8004CA98");
 extern void func_8003BDA0(struct Unk4D6D4 *arg0);
-extern void func_800706C4(struct Unk4D6D4 *arg0);
+extern void gLoadActorDef59(struct Unk4D6D4 *arg0) __asm__("func_800706C4");
 extern void func_800740B8(struct Unk4D6D4 *arg0);
 extern void func_80076878(struct Unk4D6D4 *arg0);
 
@@ -94,7 +94,7 @@ void func_8004D6D4(struct Unk4D6D4 *arg0)
 
     if (gMessageDoneFlag != 0) {
         gMessageDoneFlag = 0;
-        func_800695A8();
+        gBuildCoarseHeightGrid();
     }
 
     defp = &def;
@@ -102,13 +102,13 @@ void func_8004D6D4(struct Unk4D6D4 *arg0)
 
     switch (((struct Unk4D6D4Data *)defp->unk08)->type) {
     case 0x5F:
-        func_800319D4(arg0);
+        gLoadMapZone(arg0);
         break;
     case 0x60:
         func_80084110(arg0);
         break;
     case 0x61:
-        func_80049EA8(arg0);
+        gLoadActorLightNode(arg0);
         break;
     case 0x62:
         func_80060838(arg0);
@@ -117,22 +117,22 @@ void func_8004D6D4(struct Unk4D6D4 *arg0)
         gRegistryLoad(arg0);
         break;
     case 0x5E:
-        func_8004488C(arg0);
+        gLoadActorDef5E(arg0);
         break;
     case 0x5D:
-        func_80041070(arg0);
+        gLoadActorDef5D(arg0);
         break;
     case 0x5C:
-        func_8006ED78(arg0);
+        gLoadActorDef5C(arg0);
         break;
     case 0x5A:
-        func_8004CA98(arg0);
+        gLoadActorDef5A(arg0);
         break;
     case 0x5B:
         func_8003BDA0(arg0);
         break;
     case 0x59:
-        func_800706C4(arg0);
+        gLoadActorDef59(arg0);
         break;
     case 0x58:
         func_800740B8(arg0);

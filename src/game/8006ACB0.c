@@ -42,11 +42,11 @@ struct Locals6ACB0 {
 extern s32 gCommandListHead[2] __asm__("D_800A8F90");
 
 extern void gTransformPartVertex(void *instance, s32 part, void *out) __asm__("func_80017668");
-extern void func_8001A180(void *arg0);
+extern void gNormalizeVector(void *arg0) __asm__("func_8001A180");
 extern void gWriteCellEventValue(void *object, void *event) __asm__("func_8005C048");
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern void *gRegistryFind(u8 id) __asm__("func_8006AAEC");
-extern s32 func_800402DC(void *owner, u8 column, void *arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(void *owner, u8 column, void *arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
 extern void gSolveLeadDirection(void *a0, void *a1, s32 a2, s32 a3, void *a4, void *a5, s32 a6) __asm__("func_8005E2A0");
 extern s32 gSpawnDirectShot(void *a0, s32 a1, void *a2, void *a3, void *a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11) __asm__("func_8005E47C");
@@ -172,7 +172,7 @@ s32 gWeaponFireDispatch(struct Owner6ACB0 *owner, s32 index)
         locals.vec.x = locals.posB.x - locals.posA.x;
         locals.vec.y = locals.posB.y - locals.posA.y;
         locals.vec.z = locals.posB.z - locals.posA.z;
-        func_8001A180(&locals.vec);
+        gNormalizeVector(&locals.vec);
     }
 
     s4 = (*(u8 *)(def + 1) & 1) << 19;
@@ -286,13 +286,13 @@ s32 gWeaponFireDispatch(struct Owner6ACB0 *owner, s32 index)
 
     if (*(u8 *)(def + 0x1B) != 0) {
         if (result != 0) {
-            func_800402DC(result, *(u8 *)(def + 0x1B), 0, 1, 0);
+            gSpawnTypeAtOwner(result, *(u8 *)(def + 0x1B), 0, 1, 0);
         } else {
             locals.t60.pos = locals.posA;
             locals.t60.ptr = (void *)(state + 0x178 + offset * 76);
             locals.t60.a = 0;
             locals.t60.b = 0x64;
-            func_800402DC(0, *(u8 *)(def + 0x1B), &locals.t60, 1, 0);
+            gSpawnTypeAtOwner(0, *(u8 *)(def + 0x1B), &locals.t60, 1, 0);
         }
     }
 

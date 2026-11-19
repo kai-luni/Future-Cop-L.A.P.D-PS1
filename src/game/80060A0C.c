@@ -61,7 +61,7 @@ extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
 extern u32 func_80060DD8(u32 state);
 extern void func_8005A0C4(struct Unk5A190Gauge *gauge, s32 value, s32 divisor);
-extern void func_8003BA50(struct Unk3BObject *object, s32 value);
+extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
 extern void func_8006BDFC(struct Actor *actor, s32 mode);
 extern void func_8006BE90(struct Actor *actor, s32 mode, s32 arg2, s32 arg3);
 
@@ -104,7 +104,7 @@ s32 func_80060A0C(u32 state, s32 index)
                       gPlayerEntities[index]->unk1E);
         if (gPlayerEntities[index]->tableIndex != 0 &&
             (gPlayerEntities[index]->flags & 0x40000) == 0) {
-            func_8003BA50((struct Unk3BObject *)gPlayerEntities[index], old);
+            gFlagQuartileChange((struct Unk3BObject *)gPlayerEntities[index], old);
         }
         break;
 

@@ -10,7 +10,7 @@ extern s32 func_80067684(struct Vec *, s32);
 extern void gBuildRotationMatrix(s32,s32,s32,void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *,void *,s32) __asm__("func_80010234");
-extern void func_8001AC28(void *,void *,s32,void *);
+extern void gVectorMulAdd(void *,void *,s32,void *) __asm__("func_8001AC28");
 s32 gInitMoverObject(struct Obj *obj, struct Arg *arg, s32 extra) __asm__("func_8002EED8");
 
 extern void func_8006314C(void *,s32);
@@ -181,8 +181,8 @@ s32 gInitMoverObject(struct Obj *obj, struct Arg *arg, s32 extra)
         offset += 8;
         gGteTransformVerticesWide(pointer + offset,obj->out,1);
         switch(obj->type) {
-        case 2: func_8001AC28(&obj->pos,obj->matrix2,st->u.distance,&obj->end); break;
-        case 1: func_8001AC28(&obj->pos,obj->matrix,st->u.distance,&obj->end); break;
+        case 2: gVectorMulAdd(&obj->pos,obj->matrix2,st->u.distance,&obj->end); break;
+        case 1: gVectorMulAdd(&obj->pos,obj->matrix,st->u.distance,&obj->end); break;
         case 3:
             obj->end.x=obj->start.x;
             obj->end.z=obj->start.z;

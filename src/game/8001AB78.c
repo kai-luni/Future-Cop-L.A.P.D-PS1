@@ -22,6 +22,15 @@
  * @par Callers
  * func_800324E0, func_80032F3C, func_8003A160, func_8004F764, func_80050E0C,
  * func_800513D0, func_80051580, func_800569EC, func_8005EE04.
+ *
+ * @par Environment path
+ * Hand-written in-place scale of a three-component vector by a 16.16 factor
+ * (argument order: scale, vector). gUpdateChaseCamera (func_800569EC,
+ * 800569EC.c:505) uses it to shorten the eye-offset delta to the per-frame
+ * step elapsed*5<<4 when the remaining distance is longer, which is the
+ * camera's offset smoothing. Other callers are gUpdateHoverEnemy,
+ * gUpdateForceField, func_80032F3C, func_8004F764, func_80050E0C,
+ * func_800513D0, func_80051580 and func_8005EE04.
  */
 __asm__(
     ".text\n\t"

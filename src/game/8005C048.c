@@ -22,8 +22,8 @@ struct Unk5C048Event {
 };
 
 extern s32 func_8003BF50(void *object);
-extern struct Unk5C048Result *func_800402DC(void *owner, u8 column, s32 arg2, s32 row,
-                                            s32 arg4);
+extern struct Unk5C048Result *gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row,
+                                            s32 arg4) __asm__("func_800402DC");
 
 /**
  * @brief Queries the map cell under an event and, when it holds a kind-0x5C
@@ -55,7 +55,7 @@ void gWriteCellEventValue(void *object, struct Unk5C048Event *event)
 {
     struct Unk5C048Result *result;
 
-    result = func_800402DC(object, event->column, 0, func_8003BF50(object), 0);
+    result = gSpawnTypeAtOwner(object, event->column, 0, func_8003BF50(object), 0);
     if (result != 0 && result->def->kind == 0x5C) {
         result->def->value = event->value;
     }

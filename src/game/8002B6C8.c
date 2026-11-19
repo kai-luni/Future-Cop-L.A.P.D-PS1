@@ -19,7 +19,7 @@ struct Unk8002B6C8 {
     u8 unk164;
 };
 
-extern s32 func_80095C30(s32 x, s32 z);
+extern s32 gAtan2(s32 x, s32 z) __asm__("func_80095C30");
 extern void gTurnEntityToAngle(struct Unk8002B6C8 *object, s32 angle, s32 arg2) __asm__("func_8002B588");
 extern void func_8002B0EC(struct Unk8002B6C8 *object, s32 arg1);
 
@@ -56,7 +56,7 @@ void func_8002B6C8(struct Unk8002B6C8 *object, struct Unk8002B6C8 *other, s32 ar
     delta.x = other->x - object->x;
     delta.y = other->y - object->y;
     delta.z = other->z - object->z;
-    angle = func_80095C30(delta.x, delta.z) & 0xFFF;
+    angle = gAtan2(delta.x, delta.z) & 0xFFF;
     diff = angle - object->unk15C;
     if ((((diff >> 31) + diff) ^ (diff >> 31)) > 0x40) {
         gTurnEntityToAngle(object, angle, arg2);

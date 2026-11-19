@@ -89,7 +89,7 @@ extern void *jtbl_800111DC[];
 
 extern void func_8002FC90(void *, u32, s16, s32, s32);
 extern void func_80069D68(void *, s32, u32, void *);
-extern s32 func_800402DC(void *, u8, s32, s32, s32);
+extern s32 gSpawnTypeAtOwner(void *, u8, s32, s32, s32) __asm__("func_800402DC");
 extern void *func_800448D8(struct AnimTrack *, s32, s32, u8);
 extern void gSetModelFrame(struct ModelInstance *, s32) __asm__("func_800175F8");
 extern void gBuildRotationMatrix(s16, s32, s32, void *) __asm__("func_800188D0");
@@ -173,7 +173,7 @@ s32 func_800306A0(struct Actor306A0 *actor, s32 delta)
                 if (obj->unkDC != 0) {
                     local[0x49] = 0x40;
                     *(u32 *)(local + 0x44) = obj->unkDC + 0x28;
-                    func_800402DC(obj, 0xC8, (s32)local, 1, 0);
+                    gSpawnTypeAtOwner(obj, 0xC8, (s32)local, 1, 0);
                 }
             }
         }

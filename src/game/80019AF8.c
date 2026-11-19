@@ -8,8 +8,8 @@ struct Resource {
     struct Resource *prev;
 };
 
-extern struct Resource *gResourceList __asm__("D_8009F5B8");
-extern struct Resource *gListTailFlag __asm__("D_8009F5BC");
+extern struct Resource *gResourceListHead __asm__("D_8009F5B8");
+extern struct Resource *gResourceListTail __asm__("D_8009F5BC");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
@@ -44,17 +44,17 @@ void func_80019AF8(struct Resource *resource)
     if (resource->prev != 0) {
         resource->prev->next = resource->next;
     } else {
-        gResourceList = resource->next;
-        if (gResourceList != 0) {
-            gResourceList->prev = 0;
+        gResourceListHead = resource->next;
+        if (gResourceListHead != 0) {
+            gResourceListHead->prev = 0;
         }
     }
     if (resource->next != 0) {
         resource->next->prev = resource->prev;
     } else {
-        gListTailFlag = resource->prev;
-        if (gListTailFlag != 0) {
-            gListTailFlag->next = 0;
+        gResourceListTail = resource->prev;
+        if (gResourceListTail != 0) {
+            gResourceListTail->next = 0;
         }
     }
     gFreeBlock(resource);

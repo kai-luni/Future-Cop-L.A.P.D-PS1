@@ -12,7 +12,7 @@ extern s32 func_80019668(void);
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(struct Vec *, struct Vec *, s32) __asm__("func_8001006C");
 extern void gBuildRotationMatrix(s32, s32, s32, struct Mat *) __asm__("func_800188D0");
-extern void *func_80073500(struct Vec *, s32, s32, s32);
+extern void *gAllocPositionNode(struct Vec *, s32, s32, s32) __asm__("func_80073500");
 extern void func_8007377C(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
 void gSpawnLobeArc(struct Object *obj, struct State *st) __asm__("func_8005D060");
 
@@ -76,7 +76,7 @@ void gSpawnLobeArc(struct Object *obj, struct State *st)
         v.x += obj->pos.x;
         v.y += obj->pos.y;
         v.z += obj->pos.z;
-        node = func_80073500(&v, 0, 16, 0);
+        node = gAllocPositionNode(&v, 0, 16, 0);
         st->a[st->index] = st->a[other] + (func_80019668() >> 22);
         st->b[st->index] = st->b[other] + (func_80019668() >> 22);
         if (obj->flags->flags & 4) {
@@ -105,7 +105,7 @@ void gSpawnLobeArc(struct Object *obj, struct State *st)
         v.x += obj->pos.x;
         v.y += obj->pos.y;
         v.z += obj->pos.z;
-        func_8007377C(node, func_80073500(&v, 0, 16, 0), 8, 1, 0x30, 0x30, 0x40, 0x200, 0x3000, 0, 0, 0, 0, 1);
+        func_8007377C(node, gAllocPositionNode(&v, 0, 16, 0), 8, 1, 0x30, 0x30, 0x40, 0x200, 0x3000, 0, 0, 0, 0, 1);
         st->index = other;
         if ((func_80019668() & 7) == 7) st->flags |= 1;
     }

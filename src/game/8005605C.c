@@ -1,5 +1,7 @@
 // Categories: Graphics > Camera > Smoothing | Utilities > Mathematics
 #include "game/types.h"
+s32 gEaseAngleShortest(s32 current, s32 target, s32 steps) __asm__("func_8005605C");
+
 
 /**
  * @brief Smooths a 12-bit angle toward a target over a number of steps,
@@ -24,8 +26,20 @@
  *
  * @par Callers
  * func_800569EC.
+ *
+ * @par Environment path
+ * Eases a 12-bit angle toward a target along the shorter way round the
+ * circle: both are folded to -0x800..0x7FF, current is shifted by +/-0x1000
+ * when the gap is at least 0x800, then current = (31*current + target)/32 is
+ * applied 'steps' times, with a linear step of at most 'steps' when integer
+ * rounding stalls the ease. Its only caller gUpdateChaseCamera
+ * (func_800569EC) feeds it the camera yaw against heading plus preset yaw
+ * (800569EC.c:438) and the camera pitch against the preset pitch
+ * (800569EC.c:444), using the frame speed as step count. It is the per-frame
+ * rotation smoothing of the chase camera; the result is not re-masked to 12
+ * bits.
  */
-s32 func_8005605C(s32 current, s32 target, s32 steps)
+s32 gEaseAngleShortest(s32 current, s32 target, s32 steps)
 {
     s32 difference;
     s32 sign;

@@ -30,12 +30,14 @@ struct Camera {
 extern struct Camera *gCamera __asm__("D_8009F9E4");
 extern u8 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u8 *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 gColourWord __asm__("D_8009F388");
+extern u32 gTracerEdgeColour __asm__("D_8009F388");
 
-extern s32 func_8001A100(s32 *vector);
+extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 extern void gGteLoadRotation(u8 *matrix) __asm__("func_80010820");
-extern void func_80010704(s16 *src, s16 *dst);
+extern void gGteProjectPoint(s16 *src, s16 *dst) __asm__("func_80010704");
 extern void func_8006F21C(DVECTOR a0, DVECTOR a1, DVECTOR a2, DVECTOR a3, s32 s3, s32 s4, u32 s5, u32 s6, s32 depth);
+void gDrawTracerBand(struct Node *node, Vec3 *pos) __asm__("func_8006F310");
+
 
 /**
  * @brief Draws one world-space quad band between two points as four textured
@@ -142,8 +144,23 @@ extern void func_8006F21C(DVECTOR a0, DVECTOR a1, DVECTOR a2, DVECTOR a3, s32 s3
  *
  * @par Callers
  * func_8006F844, which walks D_800A353C (analysis/edges.json, kind "direct").
+ *
+ * @par Environment path
+ * Draws one beam/tracer node (endpoints at +0x10 and +0x1C) as a screen-space
+ * band: it returns early when both endpoints are farther than 0x1FFFF
+ * (func_8001A100) from the passed view position, then for each endpoint loads
+ * the camera rotation gCamera +0x28 with gGteLoadRotation, projects (point -
+ * gCamera +0x7C) >> 4 with func_80010704 and returns when the depth is below
+ * 0x40 or the screen point lies outside 0..320 x 0..240. It takes the half
+ * width from +0x44 scaled by 512/depth (at least 3), builds a perpendicular
+ * offset in screen space, writes one 0x34-byte draw-mode packet (0xE10006A0,
+ * header key = mean depth - 200) into the D_8009F9F0 pool and emits four
+ * gouraud quads through func_8006F21C (both halves, both sides) with code
+ * 0x3A, edge colour from D_8009F388 and centre colour from node +0x40. Its
+ * only caller is gDrawTracerList (func_8006F844), once per active tracer node
+ * in each view pass.
  */
-void func_8006F310(struct Node *node, Vec3 *pos)
+void gDrawTracerBand(struct Node *node, Vec3 *pos)
 {
     s32 diff[3];
     DVECTOR proj[2][4];
@@ -169,11 +186,11 @@ void func_8006F310(struct Node *node, Vec3 *pos)
     diff[0] = node->v[0].x - pos->x;
     diff[1] = node->v[0].y - pos->y;
     diff[2] = node->v[0].z - pos->z;
-    if (func_8001A100(diff) > 0x1FFFF) {
+    if (gVectorLength3D(diff) > 0x1FFFF) {
         diff[0] = node->v[1].x - pos->x;
         diff[1] = node->v[1].y - pos->y;
         diff[2] = node->v[1].z - pos->z;
-        if (func_8001A100(diff) > 0x1FFFF) {
+        if (gVectorLength3D(diff) > 0x1FFFF) {
             return;
         }
     }
@@ -190,7 +207,7 @@ void func_8006F310(struct Node *node, Vec3 *pos)
         proj[1][2].vx = diff[0] >> 4;
         proj[1][2].vy = diff[1] >> 4;
         proj[1][3].vx = diff[2] >> 4;
-        func_80010704((s16 *)&proj[1][2], (s16 *)&proj[i][0]);
+        gGteProjectPoint((s16 *)&proj[1][2], (s16 *)&proj[i][0]);
         if (proj[i][1].vx < 0x40) {
             return;
         }
@@ -253,7 +270,7 @@ void func_8006F310(struct Node *node, Vec3 *pos)
     }
 
     s6 = node->field40;
-    w = gColourWord;
+    w = gTracerEdgeColour;
     if (gPrimPoolNext < gPrimPoolEnd) goto L_alloc;
     __asm__("");
     prim = gPrimPoolNext;

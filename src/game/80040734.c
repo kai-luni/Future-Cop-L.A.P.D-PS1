@@ -86,7 +86,7 @@ struct Unk40734 {
     u8 unk89;
 };
 
-extern s32 gMessage10Counter __asm__("D_8009F318");
+extern s32 gLightObjectCount __asm__("D_8009F318");
 
 extern s32 func_8005A6A4(s32 id, struct Unk40734Request *request,
                          struct Unk40734Light **result);

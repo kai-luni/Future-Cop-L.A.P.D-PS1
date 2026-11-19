@@ -76,7 +76,7 @@ typedef struct Prim {
     s16 t30;
 } Prim;
 
-extern s32 func_8001A100(s32 *v);
+extern s32 gVectorLength3D(s32 *v) __asm__("func_8001A100");
 extern void gGteLoadRotation(void *m) __asm__("func_80010820");
 extern void gGteLoadMatrix(void *m) __asm__("func_80010750");
 extern void gGteTransformWords(void *a, void *b, s32 c) __asm__("func_8001006C");
@@ -90,7 +90,7 @@ extern s16 gRibbonSegmentDy[] __asm__("D_800A7898");
 extern Cam *gCamera __asm__("D_8009F9E4");
 extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
-extern s32 gTexturePageWord __asm__("D_8009F9B8");
+extern s32 gGreyTexpageAdd __asm__("D_8009F9B8");
 
 #define ALLOC(p) \
     p = gPrimPoolNext; \
@@ -145,7 +145,7 @@ void gDrawBeamNode(Node *node, s32 *org) __asm__("func_80071FA4");
  * perpendicular screen offset whose width is interpolated from the first to
  * the second end object's +0x1C value and divided by depth, and emits a
  * Gouraud quad, or a two-point line when the offset is zero, from
- * gPrimPoolNext with optional textured variants using gTexturePageWord. It is
+ * gPrimPoolNext with optional textured variants using gGreyTexpageAdd. It is
  * called only by func_80073700 for nodes that have end objects; nodes without
  * them go to func_80072F7C.
  */
@@ -166,7 +166,7 @@ void gDrawBeamNode(Node *node, s32 *org)
             v[1] += node->a->sub->f38;
             v[2] += node->a->sub->f3C;
         }
-        if (func_8001A100(v) > 0x1FFFF) {
+        if (gVectorLength3D(v) > 0x1FFFF) {
             v[0] = node->ents[i].verts[node->ents[i].cnt * 3 + 0] - org[0];
             v[1] = node->ents[i].verts[node->ents[i].cnt * 3 + 1] - org[1];
             v[2] = node->ents[i].verts[node->ents[i].cnt * 3 + 2] - org[2];
@@ -175,7 +175,7 @@ void gDrawBeamNode(Node *node, s32 *org)
                 v[1] += node->a->sub->f38;
                 v[2] += node->a->sub->f3C;
             }
-            if (func_8001A100(v) > 0x1FFFF) goto next_node;
+            if (gVectorLength3D(v) > 0x1FFFF) goto next_node;
         }
 
         {
@@ -328,7 +328,7 @@ void gDrawBeamNode(Node *node, s32 *org)
                     p->w3 = 0;
                     p->t24 = 0x101;
                     p->t30 = 0x100;
-                    p->w6 = (gTexturePageWord << 16) | 1;
+                    p->w6 = (gGreyTexpageAdd << 16) | 1;
                     SETW0(p, z);
                 } else {
                     goto reject_segment;
@@ -361,7 +361,7 @@ reject_segment:
                     p->w3 = 0;
                     p->t24 = 0x101;
                     p->t30 = 0x100;
-                    p->w6 = (gTexturePageWord << 16) | 1;
+                    p->w6 = (gGreyTexpageAdd << 16) | 1;
                     SETW0(p, z);
                 }
 

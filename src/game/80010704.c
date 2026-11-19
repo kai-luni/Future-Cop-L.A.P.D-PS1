@@ -1,5 +1,7 @@
 // Categories: Graphics > GTE > Transform | Platform > GTE
 #include "game/types.h"
+void gGteProjectPoint(u32 *src, u32 *dst) __asm__("func_80010704");
+
 
 /**
  * @brief RTPS: perspective-transforms one vertex and returns the projected
@@ -21,8 +23,16 @@
  *
  * @par Callers
  * func_8006F310 and func_80070158.
+ *
+ * @par Environment path
+ * Perspective-transforms one vertex with GTE RTPS using the currently loaded
+ * rotation/translation and stores the screen XY (SXY2) and depth (SZ3) to the
+ * output, returning the GTE FLAG register. Callers are gDrawTracerBand
+ * (func_8006F310), which loads the camera matrix first, and gDrawGlowNodeList
+ * (func_80070158). It is the projection primitive that turns camera-space
+ * points into screen coordinates.
  */
-void func_80010704(u32 *src, u32 *dst)
+void gGteProjectPoint(u32 *src, u32 *dst)
 {
     __asm__ volatile(
         "lwc2 $0, 0($4)\n\t"

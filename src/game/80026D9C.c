@@ -1,7 +1,7 @@
 // Categories: Game Engine > Frame | Platform > Scratchpad | Gameplay > Entity Script
 #include "game/types.h"
 
-extern u32 gHookInstallFlag __asm__("D_8009FAD8");
+extern u32 gSavedStackPointer __asm__("D_8009FAD8");
 extern void func_80049564(s32 elapsed);
 
 /**

@@ -9,6 +9,8 @@ struct Unk3A90CEntry {
     u8 flags;
     u8 unk08[0x0C];
 };
+struct Unk3A90CEntry *gFindVertexRangeEntry(struct Unk3A90CEntry *entry, s32 key) __asm__("func_8003A90C");
+
 
 /**
  * @brief Looks up the range entry that contains a key in a start/count table.
@@ -33,8 +35,18 @@ struct Unk3A90CEntry {
  *
  * @par Callers
  * func_8003AA94.
+ *
+ * @par Environment path
+ * Walks an array of 0x14-byte entries and returns the first whose byte range
+ * [start (+0x03), start + count (+0x04)) contains the key, or null when the
+ * entry with bit 0x80 in its +0x07 byte is reached without a match. Its only
+ * caller gSpawnModelDebris (func_8003AA94) calls it once per model polygon
+ * with the polygon's first vertex index (8003AA94.c:278) and then marks the
+ * polygon in a bitmask only if all its vertices fall inside the returned
+ * range, so the entries are vertex-index ranges of a model. It uses no
+ * globals and runs whenever a model is broken into debris.
  */
-struct Unk3A90CEntry *func_8003A90C(struct Unk3A90CEntry *entry, s32 key)
+struct Unk3A90CEntry *gFindVertexRangeEntry(struct Unk3A90CEntry *entry, s32 key)
 {
     struct Unk3A90CEntry *result;
     s32 delta;

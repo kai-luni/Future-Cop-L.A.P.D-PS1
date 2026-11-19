@@ -92,7 +92,7 @@ extern u8 D_8009AC54[];
 extern s32 func_80019668(void);
 extern void func_80033608(struct Unit *self, void *anim);
 extern void func_800336A8(struct Unit *self, void *anim);
-extern s32 func_80095900(s32 v);
+extern s32 gSqrt12(s32 v) __asm__("func_80095900");
 extern void func_800330E8(struct Unit *self);
 
 #define G gGameSession
@@ -181,7 +181,7 @@ extern void func_800330E8(struct Unit *self);
             ez_ -= self->pos.z;                                                                        \
             FMUL(m1_, ex_, ex_);                                           \
             FMUL(m2_, ez_, ez_);                                           \
-            lt_ = (func_80095900(m1_ + m2_) << 2) < (self->aa << 4); if (lt_) {       \
+            lt_ = (gSqrt12(m1_ + m2_) << 2) < (self->aa << 4); if (lt_) {       \
                 func_80033608(self, (q_));                                  \
             }                                                              \
         }                                                                  \
@@ -605,7 +605,7 @@ L4170:
                     ez_ -= self->pos.z;
                     FMUL(m1_, ex_, ex_);
                     FMUL(m2_, ez_, ez_);
-                    lt_ = (func_80095900(m1_ + m2_) << 2) < (self->aa << 4); if (lt_) {
+                    lt_ = (gSqrt12(m1_ + m2_) << 2) < (self->aa << 4); if (lt_) {
                         func_80033608(self, c1);
                     }
                 }
@@ -640,7 +640,7 @@ L4170:
                     ez_ -= self->pos.z;
                     FMUL(m1_, ex_, ex_);
                     FMUL(m2_, ez_, ez_);
-                    func_80095900(m1_ + m2_);
+                    gSqrt12(m1_ + m2_);
                     if (d38 < (self->aa << 4)) {
                         func_80033608(self, c9bB);
                     }
@@ -671,7 +671,7 @@ L4170:
             ez_ -= self->pos.z;
             FMUL(m1_, ex_, ex_);
             FMUL(m2_, ez_, ez_);
-            lt_ = (func_80095900(m1_ + m2_) << 2) < (self->aa << 4); if (lt_) {
+            lt_ = (gSqrt12(m1_ + m2_) << 2) < (self->aa << 4); if (lt_) {
                 func_80033608(self, c1);
                 G->fE0 = 2;
             }

@@ -14,11 +14,11 @@ struct Unk2AD58 {
 
 extern void func_8002A5F4(struct Unk2AD58 *object, void *data);
 extern s32 func_8002ACB4(struct Unk2AD58 *object, s32 value);
-extern s32 func_8002A810(struct Unk2AD58 *object, s32 arg1, s32 arg2);
+extern s32 gRetireEntityBase(struct Unk2AD58 *object, s32 arg1, s32 arg2) __asm__("func_8002A810");
 extern s32 func_8002A940(struct Unk2AD58 *object, void *data);
 extern s32 func_8002AA1C(s32 message, struct Unk2AD58 *object, void *hit);
 extern s32 func_8002AB8C(struct Unk2AD58 *object, void *data);
-extern s32 func_80095C30(s32 x, s32 y);
+extern s32 gAtan2(s32 x, s32 y) __asm__("func_80095C30");
 s32 gEntityBaseHandler(s32 message, struct Unk2AD58 *object, void *data) __asm__("func_8002AD58");
 
 
@@ -86,7 +86,7 @@ s32 gEntityBaseHandler(s32 message, struct Unk2AD58 *object, void *data)
         }
         return func_8002ACB4(object, 1);
     case 4:
-        return func_8002A810(object, 1, 1);
+        return gRetireEntityBase(object, 1, 1);
     case 5:
     case 6:
     case 7:
@@ -104,7 +104,7 @@ s32 gEntityBaseHandler(s32 message, struct Unk2AD58 *object, void *data)
     case 16:
         return 1;
     case 15:
-        return func_80095C30(object->unk78, object->unk80) & 0xFFF;
+        return gAtan2(object->unk78, object->unk80) & 0xFFF;
     default:
         return -1;
     }

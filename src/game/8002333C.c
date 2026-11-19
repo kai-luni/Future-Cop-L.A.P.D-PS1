@@ -12,12 +12,12 @@ typedef struct {
 } Unk800A0A00;
 
 extern Unk800A0A00 gObjectSlots[8] __asm__("D_800A0A00");
-extern s32 gStreamStatePair[2] __asm__("D_8009F640");
+extern s32 gCshdNodeSlots[2] __asm__("D_8009F640");
 extern s32 gAssetHandle[3] __asm__("D_800A0A80");
 extern s32 gStreamCommandState __asm__("D_8009F648");
 extern s32 gSpuBufferPtr __asm__("D_8009F278");
 extern s32 gVolatileBase __asm__("D_8009F27C");
-extern u8 gChannelEnableFlag __asm__("D_8009F26C");
+extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern u8 D_800A8E48[];
 extern u8 D_800AB0E8[];
 extern u8 D_80023314[];
@@ -82,7 +82,7 @@ u8 func_8002333C(void)
     i = 0;
     {
         register s32 *p __asm__("$3");
-        p = gStreamStatePair;
+        p = gCshdNodeSlots;
         do {
             *p = 0;
             p++;
@@ -92,12 +92,12 @@ u8 func_8002333C(void)
     if (result == 0) {
         gVolatileBase = func_80098458(0x1010, 0x11E80);
         gSpuBufferPtr = func_80097B28(0xC000);
-        gChannelEnableFlag = 1;
+        gCvkSystemActive = 1;
     }
     gAssetHandle[2] = 0;
     gAssetHandle[0] = 0;
     gAssetHandle[1] = 0;
     gStreamCommandState = 0;
     func_80044F8C();
-    return gChannelEnableFlag;
+    return gCvkSystemActive;
 }

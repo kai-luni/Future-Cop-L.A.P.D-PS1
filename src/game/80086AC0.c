@@ -28,7 +28,9 @@ extern void *func_80086A4C(u32);
 extern void func_8008684C(void *, s32, s32);
 extern s32 func_800867B0(s32);
 extern void func_80098BB8(u32);
-void func_80086AC0(void);
+void gServiceMovieAudioIrq(void) __asm__("func_80086AC0");
+void gServiceMovieAudioIrq(void) __asm__("func_80086AC0");
+
 
 /**
  *  @brief Services an active buffered stream and schedules its next callback.
@@ -47,8 +49,23 @@ void func_80086AC0(void);
  *  Updates stream state, submits data, changes callback configuration and registers func_80086AC0 for the next callback.
  *  @par Callers
  *  Unknown: no direct callers are listed; the function registers itself as a callback.
+ *
+ * @par Environment path
+ * SPU IRQ service routine of the movie audio stream whose state block is
+ * pointed to by D_8009F4D8: it returns at once when the stream is inactive
+ * (+0x08 == 0), otherwise disables the SPU IRQ and callback, and when no
+ * buffer is pending (+0x7B48) and fewer than 6 half-steps are queued
+ * ((+0x7B44 * 2 - +0x7B40) < 6) it submits the next 0x300-byte buffer to SPU
+ * address +0x7B3C via func_8008684C (advancing it by 0x300), or the embedded
+ * fallback buffer at +0x7810 when func_800869D8 has none. On even counter
+ * values it hands the non-zero entry (+0x7B2C)[(count >> 1) & 3] to
+ * func_800867B0, then increments the counter +0x7B40, moves the SPU IRQ
+ * address to +0x7B5C + (count & 7) * 0x180 with func_80098BB8 and re-installs
+ * itself with gSpuInstallIrqCallback before re-enabling the IRQ.
+ * gMovieAudioStart (func_80086DB4, 80086DB4.c:78) calls it once to prime the
+ * stream; every later run is the SPU interrupt.
  */
-void func_80086AC0(void)
+void gServiceMovieAudioIrq(void)
 {
     void *buf;
 
@@ -91,6 +108,6 @@ void func_80086AC0(void)
 
     gMovieAudioState->unk7B40++;
     func_80098BB8(gMovieAudioState->unk7B5C + (gMovieAudioState->unk7B40 & 7) * 0x180);
-    gSpuInstallIrqCallback(func_80086AC0);
+    gSpuInstallIrqCallback(gServiceMovieAudioIrq);
     gSpuSetIrqEnable(1);
 }

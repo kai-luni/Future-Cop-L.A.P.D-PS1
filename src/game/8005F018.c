@@ -122,10 +122,10 @@ extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
 extern s32 func_80019904(s32 arg0);
 extern s32 func_80019FCC(struct Vec3s32 *v);
-extern s32 func_8001AB00(struct Vec3s32 *a, struct Vec3s32 *b);
-extern struct Unk73500 *func_80073500(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3);
+extern s32 gVectorDot(struct Vec3s32 *a, struct Vec3s32 *b) __asm__("func_8001AB00");
+extern struct Unk73500 *gAllocPositionNode(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80073500");
 extern void func_8007377C(void *a0, void *a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13);
-extern s32 func_800402DC(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern s32 func_800684AC(struct Vec3s32 *pos, struct Vec3s32 *in, struct Vec3s32 *out, s32 arg3, s32 arg4);
 
 /**
@@ -329,7 +329,7 @@ void func_8005F018(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec3
                 MUL16(result, result, factor);
                 locals.vec38.z = origin - result;
             }
-        } else if (func_8001AB00(&locals.vec58, &locals.vec38) < 0) {
+        } else if (gVectorDot(&locals.vec58, &locals.vec38) < 0) {
             locals.vec38.x = arg3->unk5C - locals.vec38.x;
             locals.vec38.y = arg3->unk60 - locals.vec38.y;
             locals.vec38.z = arg3->unk64 - locals.vec38.z;
@@ -411,17 +411,17 @@ common:
         s32 a2;
 
         if (obj != 0) {
-            node1 = func_80073500(pos, 0, obj->unk48, 0);
+            node1 = gAllocPositionNode(pos, 0, obj->unk48, 0);
             if (obj->unk4A & 8) {
                 a2 = 0;
             } else {
                 a2 = obj->unk48;
             }
-            node2 = func_80073500(&locals.vec38, 0, a2, 0);
+            node2 = gAllocPositionNode(&locals.vec38, 0, a2, 0);
             func_8007377C(node1, node2, obj->unk36, obj->unk38, obj->unk3B, obj->unk3C, obj->unk3D, obj->unk3E, obj->unk40, obj->unk42, obj->unk44, 0, 0, 1);
         } else {
-            node1 = func_80073500(pos, 0, 0x18, 0);
-            node2 = func_80073500(&locals.vec38, 0, 0x10, 0);
+            node1 = gAllocPositionNode(pos, 0, 0x18, 0);
+            node2 = gAllocPositionNode(&locals.vec38, 0, 0x10, 0);
             func_8007377C(node1, node2, 0x20, 1, 0x7F, 0x7F, 0xFF, 0x2AA, 0x4000, -0x3000, 0, 0, 0, 1);
         }
     }
@@ -441,7 +441,7 @@ common:
         locals.effect.unk49 = 4;
         locals.effect.unk00 = 0x300;
         if (arg0->data->unk1A != 0) {
-            func_800402DC(0, arg0->data->unk1A, (s32)&locals.effect, 0, 0);
+            gSpawnTypeAtOwner(0, arg0->data->unk1A, (s32)&locals.effect, 0, 0);
         }
     }
 
@@ -455,6 +455,6 @@ common:
         locals.effect.unk44 = instance;
         locals.effect.unk48 = 0;
         locals.effect.unk49 = 0x65;
-        func_800402DC(0, (u32)obj, (s32)&locals.effect, 0, 0);
+        gSpawnTypeAtOwner(0, (u32)obj, (s32)&locals.effect, 0, 0);
     }
 }

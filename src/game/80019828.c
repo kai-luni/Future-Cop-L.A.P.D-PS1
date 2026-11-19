@@ -6,7 +6,7 @@ extern u16 *gReciprocalTablePtr __asm__("D_8009F5B0");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern u32 func_80018818(u32 divisor);
 extern u32 func_800187C8(u32 value);
-extern s32 func_80095C14(u32 value);
+extern s32 gGteLeadingZeros(u32 value) __asm__("func_80095C14");
 extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
 
 /**
@@ -48,7 +48,7 @@ void gInitReciprocalTable(void)
         value = func_800187C8(func_80018818(input));
         shift = 0x15;
         if (value != 0) {
-            shift -= func_80095C14(value);
+            shift -= gGteLeadingZeros(value);
         }
         if (shift > 0) {
             value >>= shift;

@@ -40,6 +40,8 @@ extern u8 func_8003BE2C(void *, s32, s32);
 extern void func_8003C14C(void *, void *);
 extern u32 func_80019668(void);
 extern void gBuildRotationMatrix(s32, s32, s32, Work *) __asm__("func_800188D0");
+void *gCreateEmitterObject(Src *arg) __asm__("func_800762B0");
+
 
 /**
  * @brief Constructor of spawn kind 0x57: allocates the 0xA0 object and its
@@ -94,8 +96,23 @@ extern void gBuildRotationMatrix(s32, s32, s32, Work *) __asm__("func_800188D0")
  *
  * @par Callers
  * func_8003E984, kind 0x57 of its per-kind constructor switch.
+ *
+ * @par Environment path
+ * Constructor for spawn kind 0x57, called only from gSpawnObjectFromTable
+ * (func_8003E984): it allocates a 0xA0-byte object with gAllocMemory (tag 1),
+ * builds a pool of 0x28 particle nodes of 0x30 bytes at +0x64 with
+ * func_8003BE2C (freeing the object and returning 0 on failure), copies the
+ * common spawn header with func_8003C14C and stores the handler address
+ * 0x80075698 at +0x24. From the record it derives a three-step RGB colour
+ * ramp with 4.12 fixed-point slopes per step (+0x73/+0x7C), the emission rate
+ * at +0x70, flags at +0x8E (0x8000 when a spread radius or flag input is set,
+ * 0x4000 when the limit +0x48 is below radius * total time) and an offset
+ * vector at +0x9A rotated by a yaw/pitch that is randomised when negative
+ * (gBuildRotationMatrix, func_800188D0). The particles are later created by
+ * gInitEmitterParticle (func_800754B8) and stepped by gRunPolygonPass
+ * (func_80075A84), which reads the same +0x8E flags.
  */
-void *func_800762B0(Src *arg)
+void *gCreateEmitterObject(Src *arg)
 {
     register Src *src __asm__("$17");
     Dest *dest;

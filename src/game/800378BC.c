@@ -50,7 +50,7 @@ struct Unk378BC {
 
 extern s32 gEntityBaseHandler(s32 message, void *object, void *data) __asm__("func_8002AD58");
 extern void func_80060668(void *in, void *out);
-extern void func_80050E0C(void *a, void *b, s32 c, void *d, void *e);
+extern void gInitRailSegment(void *a, void *b, s32 c, void *d, void *e) __asm__("func_80050E0C");
 extern void gOrientEntityBasis(void *self) __asm__("func_80037EB4");
 extern void gSetAnimClipTable(void *data, void *track, u8 forward, s32 index) __asm__("func_80044988");
 extern void gGteLoadMatrix(void *matrix) __asm__("func_80010750");
@@ -101,7 +101,7 @@ void gInitRailMoverEntity(s32 message, struct Unk378BC *self, struct Unk378BCOth
     gEntityBaseHandler(message, self, other);
     part = other->part;
     func_80060668(part->animIn, self->unkA0);
-    func_80050E0C(part->output, self->unkDC, other->info->value, self, self->unk50);
+    gInitRailSegment(part->output, self->unkDC, other->info->value, self, self->unk50);
     gOrientEntityBasis(self);
     self->unk15A = 0;
     if (self->state->animData != 0) {

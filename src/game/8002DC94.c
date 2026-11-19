@@ -69,7 +69,7 @@ extern s32 gEntityBaseHandler(s32 message, struct Self *self, struct Arg1 *arg1,
 extern s32 func_80067684(struct Vec3s32 *pos, s32 sel);
 extern s32 gGetGroundHeight(struct Vec3s32 *pos, struct Vec3s32 *out, s32 a2, s32 a3) __asm__("func_80066F78");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
-extern void func_800192AC(struct Vec3s32 *first, struct Vec3s32 *second, struct Basis *basis);
+extern void gBuildBasisFromPair(struct Vec3s32 *first, struct Vec3s32 *second, struct Basis *basis) __asm__("func_800192AC");
 extern void gSetAnimClipTable(u8 *data, u8 *track, u8 forward, s32 index) __asm__("func_80044988");
 extern void gGteLoadMatrix(struct Basis *basis) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(u8 *ptr, u8 *unk5C, s32 a2) __asm__("func_80010234");
@@ -166,7 +166,7 @@ s32 gInitType11Entity(struct Self *self, struct Arg1 *arg1, s32 arg2)
         vec.x = cosine;
         vec.y = 0;
         vec.z = sine;
-        func_800192AC(&out, &vec, &self->inst.basis);
+        gBuildBasisFromPair(&out, &vec, &self->inst.basis);
     } else {
         gSinCos(angle, &sine2, &cosine2);
         self->inst.basis.rows[2].y = 0;

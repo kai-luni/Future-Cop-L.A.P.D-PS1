@@ -19,9 +19,9 @@ struct Cell841C4 {
 
 struct LinkState;
 extern struct LinkState *gMissionState __asm__("D_8009F934");
-extern struct Cell841C4 *gBucketArray __asm__("D_8009F938");
-extern s32 gMissionGridWidth __asm__("D_8009F93C");
-extern s32 gMissionGridHeight __asm__("D_8009F940");
+extern struct Cell841C4 *gCellBucketGrid __asm__("D_8009F938");
+extern s32 gCellGridWidth __asm__("D_8009F93C");
+extern s32 gCellGridHeight __asm__("D_8009F940");
 extern s32 gFrameTime[] __asm__("D_8009FAA4");
 extern void func_800195D0(struct LinkState *state, int *link);
 
@@ -53,8 +53,8 @@ void func_800841C4(s32 id, s32 mode, s32 index)
     struct Node841C4 *node;
     struct Node841C4 *prev;
 
-    for (i = gMissionGridWidth * gMissionGridHeight - 1; (u32)i < 0x80000000U; i--) {
-        node = gBucketArray[i].head;
+    for (i = gCellGridWidth * gCellGridHeight - 1; (u32)i < 0x80000000U; i--) {
+        node = gCellBucketGrid[i].head;
         prev = 0;
         if (node == 0) {
             continue;
@@ -66,7 +66,7 @@ void func_800841C4(s32 id, s32 mode, s32 index)
                 case 0x19:
                     if (index == 0) {
                         if (prev == 0) {
-                            gBucketArray[i].head = node->next;
+                            gCellBucketGrid[i].head = node->next;
                         } else {
                             prev->next = node->next;
                         }

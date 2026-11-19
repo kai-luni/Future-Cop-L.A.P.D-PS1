@@ -3,7 +3,7 @@
 
 extern s32 gFrameSwitch __asm__("D_8009FAC8");
 extern void gTransformToViewSpace(void *, void *) __asm__("func_800178DC");
-extern s32 func_80019E70(s16 *, s32);
+extern s32 gTestFrustumMargin(s16 *, s32) __asm__("func_80019E70");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gProjectVertexBatch(void *, void *, void *, s32) __asm__("func_8001047C");
 extern void func_80042004(s32, u8 *, u8 *);
@@ -59,7 +59,7 @@ void gDrawPortraitScreen(u8 *object)
     point[0] = matrix[9] >> 4;
     point[1] = matrix[10] >> 4;
     point[2] = matrix[11] >> 4;
-    if ((u8)func_80019E70(point, *(s16 *)(object + 0xa2) << 4) != 2) return;
+    if ((u8)gTestFrustumMargin(point, *(s16 *)(object + 0xa2) << 4) != 2) return;
     if (!(object[0xa1] & 1)) {
         if (point[0] * matrix[6] + point[1] * matrix[7] + point[2] * matrix[8] > 0) return;
     }

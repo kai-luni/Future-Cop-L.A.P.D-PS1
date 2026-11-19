@@ -108,7 +108,7 @@ extern s32 gEntityBaseHandler(s32 message, struct Self35904 *object, struct Arg3
 extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options);
 extern void gSetAnimClipTable(u8 *data, struct AnimTrack *track, u8 forward, s32 index) __asm__("func_80044988");
 extern s32 func_80019668(void);
-extern void func_800193F8(struct Vec3 *axis, void *basis);
+extern void gBuildBasisFromAxis(struct Vec3 *axis, void *basis) __asm__("func_800193F8");
 
 /**
  * @brief Message 2 (initialise) of the model-backed entity handled by func_80036624:
@@ -238,5 +238,5 @@ void gProjectileInit(struct Self35904 *self, struct Arg35904 *arg1, s32 arg2)
 
     self->unk24 = (self->unk24 | 0x800002) & ~0x2000;
 
-    func_800193F8(&self->unk78, &self->unk28.matrix);
+    gBuildBasisFromAxis(&self->unk78, &self->unk28.matrix);
 }

@@ -13,11 +13,11 @@ extern s32 func_80044B34(u8 *, void *, s32, s32);
 extern u8 func_80060238(void *, s32, u8 *, s32, s32);
 extern void func_800448D8(void *, s32, s32, u8);
 extern void func_8005F6E8(void *, u8 *, u8 *, s32);
-extern void func_8002A810(u8 *, s32, s32);
+extern void gRetireEntityBase(u8 *, s32, s32) __asm__("func_8002A810");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern void gUpdateFallMotion(s32, u8 *, s32) __asm__("func_8003802C");
 extern u8 func_8002B1DC(u8 *, s32, u8 *);
-extern s32 func_8001A100(s32 *);
+extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
 extern void func_8002B0EC(u8 *, s32);
 extern void gTurnEntityToAngle(u8 *, s32, s32) __asm__("func_8002B588");
 extern void gOrientEntityBasis(u8 *) __asm__("func_80037EB4");
@@ -146,7 +146,7 @@ void func_8002B784(u8 *obj, s32 step)
             func_8005F6E8(obj + 0xA0, obj, obj, 1);
             break;
         case 3:
-            func_8002A810(obj, 1, 1);
+            gRetireEntityBase(obj, 1, 1);
             return;
         }
         event >>= 6;
@@ -173,7 +173,7 @@ void func_8002B784(u8 *obj, s32 step)
         vector[0] = W(target,0x5C) - W(obj,0x5C);
         vector[1] = W(target,0x60) - W(obj,0x60);
         vector[2] = W(target,0x64) - W(obj,0x64);
-        distance = func_8001A100(vector) - (W(target,0x68) + W(obj,0x68));
+        distance = gVectorLength3D(vector) - (W(target,0x68) + W(obj,0x68));
     }
     if (F(obj,0x118) & 0x40) {
         if (H(obj,0x122) < -1) {

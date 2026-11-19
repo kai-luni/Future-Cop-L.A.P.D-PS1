@@ -23,8 +23,8 @@ struct Unk5C0C0Pool {
     struct Unk5C0C0Node *free;
 };
 
-extern void func_8003BF1C(struct Unk5C0C0Pool *pool, struct Unk5C0C0Node *previous,
-                          struct Unk5C0C0Node *node);
+extern void gReleasePoolNode(struct Unk5C0C0Pool *pool, struct Unk5C0C0Node *previous,
+                          struct Unk5C0C0Node *node) __asm__("func_8003BF1C");
 
 /**
  * @brief Garbage-collects the sprite pool (twin of func_8005BD20 with
@@ -56,7 +56,7 @@ void func_8005C0C0(struct Unk5C0C0Pool *pool, void *owner)
     for (node = pool->active; node != 0; node = next) {
         next = node->next;
         if (node->flags & 1) {
-            func_8003BF1C(pool, previous, node);
+            gReleasePoolNode(pool, previous, node);
             continue;
         }
         if (node->first != 0 && node->firstId != node->first->id) {

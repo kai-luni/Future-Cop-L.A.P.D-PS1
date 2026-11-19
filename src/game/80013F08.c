@@ -64,8 +64,8 @@ extern void *gClipFlagBuffer __asm__("D_8009F57C");
 extern void gTransformToViewSpace(void *coord, struct Matrix *matrix) __asm__("func_800178DC");
 extern void gGteLoadMatrix(struct Matrix *matrix) __asm__("func_80010750");
 extern void gGteTransformVerticesV0(void *src, s16 *dst, s32 count) __asm__("func_800101D4");
-extern u8 func_80019E70(s16 *point, s32 margin);
-extern void func_80013ECC(struct Vec3s32 *vec);
+extern u8 gTestFrustumMargin(s16 *point, s32 margin) __asm__("func_80019E70");
+extern void gGteSetLightVector(struct Vec3s32 *vec) __asm__("func_80013ECC");
 extern void gComposeBoneMatrix(s32 idx, struct Input *input, s16 *table, s32 frame) __asm__("func_80013CB8");
 extern void gGteTransformVertices(void *src, void *dst, s32 count) __asm__("func_8001010C");
 extern void gProjectVertexBatch(void *src, void *dst_points, void *dst_flags, s32 count) __asm__("func_8001047C");
@@ -189,7 +189,7 @@ s32 gProjectModelInstance(struct Instance *instance)
     gGteLoadMatrix(gBoneMatrices);
     gGteTransformVerticesV0((char *)instance->model->unk34 + (index * 16 + 8), point, 1);
 
-    if (func_80019E70(point, instance->unk40) != 2) {
+    if (gTestFrustumMargin(point, instance->unk40) != 2) {
         return 0;
     }
 
@@ -218,7 +218,7 @@ s32 gProjectModelInstance(struct Instance *instance)
         p1data = p1 + 4;
         __asm__ volatile("" : "+r"(p1data));
         gVertexSourceAltPtr = p1data;
-        func_80013ECC(f0);
+        gGteSetLightVector(f0);
 
         while (1) {
             u8 matrixIndex = input->matrixIndex;
@@ -255,7 +255,7 @@ s32 gProjectModelInstance(struct Instance *instance)
         register s32 idx __asm__("$3");
 
         func_8001AE14(gBoneMatrices, &gLightVectorOut, f0);
-        func_80013ECC(f0);
+        gGteSetLightVector(f0);
 
         a1_pts = pts;
         __asm__ volatile("" : "+r"(a1_pts));

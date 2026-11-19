@@ -125,7 +125,7 @@ extern void func_800320E4(struct Unk320E4 *);
 extern s32 gGetGroundHeight(s32 *, s32, s32, s32) __asm__("func_80066F78");
 extern s32 func_80019668(void);
 extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
-extern void func_800193F8(s32 *, void *);
+extern void gBuildBasisFromAxis(s32 *, void *) __asm__("func_800193F8");
 extern void gSetAnimClipTable(u8 *, struct AnimTrack *, u8, s32) __asm__("func_80044988");
 
 /**
@@ -262,7 +262,7 @@ s32 func_80032180(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg)
     obj->unk78 = sc[0];
     obj->unk80 = sc[1];
     obj->unk7C = 0;
-    func_800193F8(&obj->unk78, obj->unk2C);
+    gBuildBasisFromAxis(&obj->unk78, obj->unk2C);
     func_800320E4((struct Unk320E4 *)obj);
 
     obj->unk118 = (u32)0x80000000 / (u32)((obj->unk112 - obj->unk114) << 3);

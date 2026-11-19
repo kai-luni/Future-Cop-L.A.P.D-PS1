@@ -14,7 +14,7 @@ extern void gBuildRotationMatrix(s32, s32, s32, u8 *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(u8 *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(u8 *, u8 *, s32) __asm__("func_80010234");
 extern void gOrientEntityBasis(u8 *) __asm__("func_80037EB4");
-extern s32 func_80095C30(s32, s32);
+extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
 extern void func_8004FFD0(u8 *, s32, u8 *);
 
 typedef struct { s32 x, y, z; } V3;
@@ -255,7 +255,7 @@ loop:
             gGteTransformVerticesWide((u8 *)W((u8 *)W(o, 0x28), 0x34) + ((H(o, 0x70) << 4) + 8), o + 0x5C, 1);
             gOrientEntityBasis(o);
             if (!(F(s, 0x3C) & 0x1000)) {
-                v = func_80095C30(W(o, 0x78), W(o, 0x80));
+                v = gAtan2(W(o, 0x78), W(o, 0x80));
                 U(s, 0x50) = v & 0xFFF;
                 U(s, 0x4C) = v & 0xFFF;
                 U(s, 0x4E) = v & 0xFFF;

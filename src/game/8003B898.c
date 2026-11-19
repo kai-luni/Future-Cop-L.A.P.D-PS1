@@ -15,10 +15,12 @@ struct Entry {
     u8 column;
 };
 
-extern struct Entry *gOccupancyColumns[] __asm__("D_800A0C70");
+extern struct Entry *gSlotSpawnDescs[] __asm__("D_800A0C70");
 extern u8 func_8003B4E0(u8 index, u8 slot, u8 mode);
 extern s32 func_8003BF50(struct Entity *entity);
-extern s32 func_800402DC(struct Entity *entity, u8 column, s32 arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(struct Entity *entity, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
+void gSpawnEntitySlotTypes(u8 index, struct Entity *entity, s32 arg2, u16 flags, s32 mode) __asm__("func_8003B898");
+
 
 /**
  * @brief Registers an entity's map occupancy in one or more grid columns.
@@ -48,8 +50,24 @@ extern s32 func_800402DC(struct Entity *entity, u8 column, s32 arg2, s32 row, s3
  * @par Callers
  * func_8002A810, func_8002B1DC, func_8002ED7C, func_800324E0, gGuidedProjectileUpdate,
  * func_800382B4.
+ *
+ * @par Environment path
+ * Spawns the definition types configured for an entity through
+ * gSpawnTypeAtOwner (func_800402DC), always with bank func_8003BF50(entity):
+ * with entity flag 0x40000 (+0x24) it spawns the single type in the entity's
+ * byte +0x20; otherwise it requires the slot descriptor D_800A0C70[index] and
+ * spawns its type byte +0x1A (mode 0) or, for every set bit of the 5-bit
+ * mask, the type returned by func_8003B4E0(index, bit, mode == 2), falling
+ * back to entry 0 when none was found. All six callers pass the entity's own
+ * +0x20 slot and the mask (+0x19 >> 3) & 0x1E: gRetireEntityBase
+ * (func_8002A810, 8002A810.c:117, mode 2), gGuidedProjectileUpdate
+ * (80035B7C.c:298, when state +0xE0 is 4), gUpdateHoverEnemy
+ * (800324E0.c:261), func_800382B4, func_8002B1DC and func_8002ED7C. It is the
+ * same pattern as func_8003BAE4 and runs at runtime when such an entity is
+ * destroyed or changes state; what the spawned types depict is not visible
+ * here.
  */
-void func_8003B898(u8 index, struct Entity *entity, s32 arg2, u16 flags, s32 mode)
+void gSpawnEntitySlotTypes(u8 index, struct Entity *entity, s32 arg2, u16 flags, s32 mode)
 {
     u8 i;
     u8 found;
@@ -59,11 +77,11 @@ void func_8003B898(u8 index, struct Entity *entity, s32 arg2, u16 flags, s32 mod
     found = 0;
     special = mode == 2;
     if (entity->flags & 0x40000) {
-        func_800402DC(entity, entity->column, arg2, func_8003BF50(entity), 0);
-    } else if (gOccupancyColumns[index] != 0) {
+        gSpawnTypeAtOwner(entity, entity->column, arg2, func_8003BF50(entity), 0);
+    } else if (gSlotSpawnDescs[index] != 0) {
         if (mode == 0) {
-            if (gOccupancyColumns[index]->column != 0) {
-                func_800402DC(entity, gOccupancyColumns[index]->column, arg2,
+            if (gSlotSpawnDescs[index]->column != 0) {
+                gSpawnTypeAtOwner(entity, gSlotSpawnDescs[index]->column, arg2,
                              func_8003BF50(entity), 0);
             }
         } else {
@@ -71,7 +89,7 @@ void func_8003B898(u8 index, struct Entity *entity, s32 arg2, u16 flags, s32 mod
                 if (flags & 1) {
                     column = func_8003B4E0(index, i, special);
                     if (column != 0) {
-                        func_800402DC(entity, column, arg2, func_8003BF50(entity), 0);
+                        gSpawnTypeAtOwner(entity, column, arg2, func_8003BF50(entity), 0);
                         found = 1;
                     }
                 }
@@ -80,7 +98,7 @@ void func_8003B898(u8 index, struct Entity *entity, s32 arg2, u16 flags, s32 mod
             if (!found) {
                 column = func_8003B4E0(index, 0, special);
                 if (column != 0) {
-                    func_800402DC(entity, column, arg2, func_8003BF50(entity), 0);
+                    gSpawnTypeAtOwner(entity, column, arg2, func_8003BF50(entity), 0);
                 }
             }
         }

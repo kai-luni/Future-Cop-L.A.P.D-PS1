@@ -55,7 +55,7 @@ struct Entity {
 };
 
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, struct Arg *arg, s32 arg3) __asm__("func_8002AD58");
-extern s32 func_80095900(s32 arg0);
+extern s32 gSqrt12(s32 arg0) __asm__("func_80095900");
 extern s32 func_80067684(struct Vec3 *pos, s32 mode);
 
 /**
@@ -123,8 +123,8 @@ s32 func_80030DE0(struct Entity *self, struct Arg *arg, s32 arg2)
         self->unkB6 = (s16)def->unk30 / 2;
         s1 = (self->unkB2 * self->unkB2 + self->unkB6 * self->unkB6) >> 8;
         s0 = s1 + ((self->unkB4 * self->unkB4) >> 8);
-        s1 = func_80095900(s1) << 2;
-        s0 = func_80095900(s0) << 2;
+        s1 = gSqrt12(s1) << 2;
+        s0 = gSqrt12(s0) << 2;
         self->unk68 = s0;
         self->unk6E = s1 >> 4;
         self->unk6C = (s16)def->unk34 / 2;

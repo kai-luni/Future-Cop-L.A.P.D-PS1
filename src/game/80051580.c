@@ -26,7 +26,7 @@ struct Unk51580Out {
 };
 
 extern struct Unk51580Header *func_80019A20(s32 magic, s32 arg1, s32 arg2);
-extern void func_8001AB78(s32 arg0, struct Unk51580Out *out);
+extern void gVectorScaleInPlace(s32 arg0, struct Unk51580Out *out) __asm__("func_8001AB78");
 
 /**
  *  @brief Looks up a one-based resource entry and populates an output record.
@@ -63,7 +63,7 @@ s32 func_80051580(struct Unk51580 *arg0, s32 arg1, struct Unk51580Out *arg2)
                 out->unk00 = entry->unk04;
                 out->unk04 = 0;
                 out->unk08 = entry->unk00;
-                func_8001AB78(entry->unk08, out);
+                gVectorScaleInPlace(entry->unk08, out);
                 return 1;
             }
         }

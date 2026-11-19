@@ -1,15 +1,15 @@
 // Categories: Resources > Asset Loader | Resources > Spawn Tables | Gameplay > Object Spawning
 #include "game/types.h"
 
-extern s32 gSavedChunkBase __asm__("D_8009F310");
+extern s32 gSpawnTableRow __asm__("D_8009F310");
 extern void *jtbl_800115B8[];
 
 extern void func_8003BC7C(void *data);
-extern void func_80040DCC(void *data);
-extern void func_80044770(void *data);
-extern void func_8004C884(void *data);
-extern void func_8006EAF0(void *data);
-extern void func_800703A8(void *data);
+extern void gRegisterActorDef5D(void *data) __asm__("func_80040DCC");
+extern void gRegisterActorDef5E(void *data) __asm__("func_80044770");
+extern void gRegisterActorDef5A(void *data) __asm__("func_8004C884");
+extern void gRegisterActorDef5C(void *data) __asm__("func_8006EAF0");
+extern void gRegisterActorDef59(void *data) __asm__("func_800703A8");
 extern void func_80073F88(void *data);
 extern void func_800767E4(void *data);
 
@@ -55,9 +55,9 @@ s32 func_8003BFD0(s32 arg0, s32 arg1)
 
     ptr = (s32 *)arg0;
     remaining = arg1;
-    old = gSavedChunkBase;
+    old = gSpawnTableRow;
     table = (void **)jtbl_800115B8;
-    gSavedChunkBase = 0;
+    gSpawnTableRow = 0;
 
 loop:
     ptr++;
@@ -74,25 +74,25 @@ loop:
     goto default_case;
 
 case_56:
-    gSavedChunkBase = ptr[5];
+    gSpawnTableRow = ptr[5];
     goto done;
 case_57:
-    func_80044770(ptr);
+    gRegisterActorDef5E(ptr);
     goto done;
 case_58:
-    func_80040DCC(ptr);
+    gRegisterActorDef5D(ptr);
     goto done;
 case_59:
-    func_8006EAF0(ptr);
+    gRegisterActorDef5C(ptr);
     goto done;
 case_5A:
-    func_8004C884(ptr);
+    gRegisterActorDef5A(ptr);
     goto done;
 case_5B:
     func_8003BC7C(ptr);
     goto done;
 case_5C:
-    func_800703A8(ptr);
+    gRegisterActorDef59(ptr);
     goto done;
 case_5D:
     func_80073F88(ptr);
@@ -110,6 +110,6 @@ done:
     if (remaining > 0) {
         goto loop;
     }
-    gSavedChunkBase = old;
+    gSpawnTableRow = old;
     return 1;
 }

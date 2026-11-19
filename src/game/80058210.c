@@ -39,7 +39,7 @@ extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 extern struct Unk58210Global *gGameSession __asm__("D_8009FA94");
 
 extern void func_80057358(void *object, s32 amount);
-extern void func_8003BA50(void *object, s32 value);
+extern void gFlagQuartileChange(void *object, s32 value) __asm__("func_8003BA50");
 
 /**
  * @brief Deducts player health, charges gauge unkA2/charge, and flags quartile drops.
@@ -128,6 +128,6 @@ void func_80058210(struct Unk58210 *object, s32 amount)
     func_80057358(object, max);
 
     if (object->unk20 != 0 && (object->unk24 & 0x40000) == 0) {
-        func_8003BA50(object, oldHealth);
+        gFlagQuartileChange(object, oldHealth);
     }
 }

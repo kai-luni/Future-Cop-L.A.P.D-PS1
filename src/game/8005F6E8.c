@@ -92,11 +92,11 @@ extern u8 D_8009F378[];
 
 extern void gTransformPartVertex(void *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_80019668(void);
-extern void func_8001A180(s32 *vec);
-extern s32 func_8001AB00(s32 *coord, s32 *vec);
-extern s32 func_800402DC(void *owner, u8 column, s32 arg2, s32 row, s32 arg4);
+extern void gNormalizeVector(s32 *vec) __asm__("func_8001A180");
+extern s32 gVectorDot(s32 *coord, s32 *vec) __asm__("func_8001AB00");
+extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern void func_80047284(s32 id, s32 arg1, s32 arg2, s32 arg3);
-extern void func_8005BDE4(void *a0, s32 a1, struct S1_5F6E8 *a2, void *a3, s32 a4, void *a5);
+extern void gAttachNearPlayerEffect(void *a0, s32 a1, struct S1_5F6E8 *a2, void *a3, s32 a4, void *a5) __asm__("func_8005BDE4");
 extern void gAttachPartEffect(void *a0, s32 a1, struct S1_5F6E8 *a2, void *a3, s32 a4, void *a5) __asm__("func_8005CBCC");
 extern s32 gWeaponEffectUpdate(void *a0, void *a1, s32 a2) __asm__("func_8005D690");
 extern s32 gSolveLeadDirection(s32 a0, void *a1, s32 a2, s32 a3, void *a4, void *a5, u32 a6) __asm__("func_8005E2A0");
@@ -229,7 +229,7 @@ s32 func_8005F6E8(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3)
         vec[0] = s1->unk5C - pos[0];
         vec[1] = s1->unk60 - pos[1];
         vec[2] = s1->unk64 - pos[2];
-        func_8001A180((s32 *)vec);
+        gNormalizeVector((s32 *)vec);
         goto L9B4;
     case 7:
     L85C:
@@ -298,7 +298,7 @@ L9B4:
     }
 
     if ((a0->unk4 & 0x807) != 0) {
-        dist = func_8001AB00(&a1->unk44, (s32 *)vec);
+        dist = gVectorDot(&a1->unk44, (s32 *)vec);
         if (a0->unk4 & 0x800) {
             if (dist <= 0xF22F) {
                 goto fail;
@@ -345,7 +345,7 @@ L9B4:
         if ((a3 & 0xFF) == 0) {
             goto FEEC;
         }
-        func_8005BDE4(a1, a2, s1, (u8 *)a1 + 0x28, a0->unk23, (u8 *)a0->unk0 + 0x0C);
+        gAttachNearPlayerEffect(a1, a2, s1, (u8 *)a1 + 0x28, a0->unk23, (u8 *)a0->unk0 + 0x0C);
         s7 = 0;
         goto FE2C;
 
@@ -436,14 +436,14 @@ FE2C:
             arg2ptr = objBuf + 0x10;
             objBuf[0x59] = 4;
         }
-        func_800402DC(owner, s2->unk1B, (s32)arg2ptr, 0, 0);
+        gSpawnTypeAtOwner(owner, s2->unk1B, (s32)arg2ptr, 0, 0);
     }
 
     if (flagC8 != 0) {
         *(struct V3_5F6E8 *)(objBuf + 0x10) = *(struct V3_5F6E8 *)vec2;
         objBuf[0x49] = 5;
         *(u32 *)objBuf = 0x800;
-        func_800402DC(0, s2->unk1A, (s32)objBuf, 0, 0);
+        gSpawnTypeAtOwner(0, s2->unk1A, (s32)objBuf, 0, 0);
     }
 
 FEEC:

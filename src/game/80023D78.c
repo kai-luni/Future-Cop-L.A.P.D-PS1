@@ -28,7 +28,7 @@ struct SoundVoice {
 
 extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern u8 gChannelEnableFlag __asm__("D_8009F26C");
+extern u8 gCvkSystemActive __asm__("D_8009F26C");
 
 extern void func_80023E84(void);
 extern s32 func_800450A4(s32 id, s8 *mix);
@@ -69,7 +69,7 @@ void func_80023D78(void)
         func_80023E84();
     }
 
-    if (gChannelEnableFlag != 0 &&
+    if (gCvkSystemActive != 0 &&
         gAssetHandle.state != 0 &&
         gAssetHandle.flag18 != 0) {
         if ((u8)func_800450A4(gAssetHandle.unk0C, mix) != 0 &&

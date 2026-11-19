@@ -5,6 +5,8 @@ typedef struct { s16 x, y, z; } Vec;
 extern u8 gFrameTime __asm__("D_8009FAA4");
 extern s32 gMarkerColorTable[] __asm__("D_800A6F60");
 extern void gEmitGouraudDisc(Vec *, s32, s32, s32, s32, s32, s32) __asm__("func_8001484C");
+void gDrawMinimapMarkers(u8 *obj, s32 *pos, s32 width, s32 height) __asm__("func_80066684");
+
 
 /**
  * @brief Draws the point markers of one minimap object: up to eight
@@ -31,8 +33,20 @@ extern void gEmitGouraudDisc(Vec *, s32, s32, s32, s32, s32, s32) __asm__("func_
  *
  * @par Callers
  * func_8006680C (minimap tile renderer).
+ *
+ * @par Environment path
+ * Draws up to eight point markers of one map object as gouraud discs: it
+ * returns at once for a null object or when no slot of the flag word +0xA4 is
+ * active (mask 0x492492); for every 3-bit slot group with bit 1 set the s16
+ * pair at +0xB0/+0xB2 (stride 4) is shifted << 9, offset by the map origin
+ * pos[0]/pos[1], clipped against the window widened by 103 * scale, mapped to
+ * screen with *5 >> 12 and drawn by gEmitGouraudDisc (func_8001484C) in
+ * colour gMarkerColorTable[+0xA8[i] & 31]. The disc size scale is twice the
+ * low byte of gFrameTime, so the markers pulse with the clock. Its only
+ * caller is gDrawMapView (func_8006680C), the map-screen/radar renderer that
+ * runs each frame the map is shown.
  */
-void func_80066684(u8 *obj, s32 *pos, s32 width, s32 height)
+void gDrawMinimapMarkers(u8 *obj, s32 *pos, s32 width, s32 height)
 {
     u32 flags;
     s32 i, x, y, scale, offset;

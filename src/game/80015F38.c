@@ -10,7 +10,7 @@ typedef struct { u32 xy[4]; u32 link; u8 mode, pad; u16 value; } Work17;
 
 extern Prim17 *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim17 *gPrimPoolEnd __asm__("D_8009FA28");
-extern void func_80015F14(void *a0, void *a1, void *a2);
+extern void gGteShadeNccs(void *a0, void *a1, void *a2) __asm__("func_80015F14");
 void gEmitShadedPart(Part17 *part, Work17 *work, u8 *texture, u8 *light) __asm__("func_80015F38");
 
 
@@ -94,7 +94,7 @@ L_done:
             tmp |= 0x20000000;
         }
         if (fl & 1)
-            func_80015F14(light + part->index[0] * 8, &tmp, &prim->w[1]);
+            gGteShadeNccs(light + part->index[0] * 8, &tmp, &prim->w[1]);
         else
             prim->w[1] = tmp;
         break;
@@ -114,11 +114,11 @@ L_done:
             tmp |= 0x30000000;
         }
         if (fl & 1) {
-            func_80015F14(light + part->index[0] * 8, &tmp, &prim->w[1]);
-            func_80015F14(light + part->index[1] * 8, &tmp, &prim->w[3]);
-            func_80015F14(light + part->index[n] * 8, &tmp, &prim->w[5]);
+            gGteShadeNccs(light + part->index[0] * 8, &tmp, &prim->w[1]);
+            gGteShadeNccs(light + part->index[1] * 8, &tmp, &prim->w[3]);
+            gGteShadeNccs(light + part->index[n] * 8, &tmp, &prim->w[5]);
             if (n == 3)
-                func_80015F14(light + part->index[2] * 8, &tmp, &prim->w[7]);
+                gGteShadeNccs(light + part->index[2] * 8, &tmp, &prim->w[7]);
         } else {
             prim->w[7] = tmp;
             prim->w[5] = tmp;
@@ -133,7 +133,7 @@ L_done:
         ((u8 *)prim)[3] = 7;
         tmp |= 0x24000000;
         if (fl & 1)
-            func_80015F14(light + part->index[0] * 8, &tmp, &prim->w[1]);
+            gGteShadeNccs(light + part->index[0] * 8, &tmp, &prim->w[1]);
         else
             prim->w[1] = tmp;
         c2 = texw[3];
@@ -151,7 +151,7 @@ L_done:
         ((u8 *)prim)[3] = 9;
         tmp |= 0x2C000000;
         if (fl & 1)
-            func_80015F14(light + part->index[0] * 8, &tmp, &prim->w[1]);
+            gGteShadeNccs(light + part->index[0] * 8, &tmp, &prim->w[1]);
         else
             prim->w[1] = tmp;
         c2 = texw[3];
@@ -170,9 +170,9 @@ L_done:
         ((u8 *)prim)[3] = 9;
         tmp |= 0x34000000;
         if (fl & 1) {
-            func_80015F14(light + part->index[0] * 8, &tmp, &prim->w[1]);
-            func_80015F14(light + part->index[1] * 8, &tmp, &prim->w[4]);
-            func_80015F14(light + part->index[2] * 8, &tmp, &prim->w[7]);
+            gGteShadeNccs(light + part->index[0] * 8, &tmp, &prim->w[1]);
+            gGteShadeNccs(light + part->index[1] * 8, &tmp, &prim->w[4]);
+            gGteShadeNccs(light + part->index[2] * 8, &tmp, &prim->w[7]);
         } else {
             prim->w[7] = tmp;
             prim->w[4] = tmp;
@@ -193,10 +193,10 @@ L_done:
         ((u8 *)prim)[3] = 12;
         tmp |= 0x3C000000;
         if (fl & 1) {
-            func_80015F14(light + part->index[0] * 8, &tmp, &prim->w[1]);
-            func_80015F14(light + part->index[1] * 8, &tmp, &prim->w[4]);
-            func_80015F14(light + part->index[3] * 8, &tmp, &prim->w[7]);
-            func_80015F14(light + part->index[2] * 8, &tmp, &prim->w[10]);
+            gGteShadeNccs(light + part->index[0] * 8, &tmp, &prim->w[1]);
+            gGteShadeNccs(light + part->index[1] * 8, &tmp, &prim->w[4]);
+            gGteShadeNccs(light + part->index[3] * 8, &tmp, &prim->w[7]);
+            gGteShadeNccs(light + part->index[2] * 8, &tmp, &prim->w[10]);
         } else {
             prim->w[10] = tmp;
             prim->w[7] = tmp;

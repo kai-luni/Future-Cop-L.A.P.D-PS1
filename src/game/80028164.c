@@ -40,7 +40,7 @@ extern s32 *gScratchBlockPtr __asm__("D_8009F68C");
 extern struct MenuInfo28164 *gGameSession __asm__("D_8009FA94");
 extern struct MenuData28164 *D_8009F2C0;
 extern struct Game28164 *gPlayerEntities __asm__("D_8009FA58");
-extern struct Game28164 *D_8009FA5C[4];
+extern struct Game28164 *gPlayerEntity2[4] __asm__("D_8009FA5C");
 extern s32 gSinglePlayerEntity __asm__("D_8009F9EC");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern s32 gScreenState __asm__("D_8009FA00");
@@ -55,7 +55,7 @@ extern u8 D_8009AC44[];
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void func_8008CD30(u8 *dest, u8 *src, s32 count);
-extern void func_800576A8(void *arg0, s32 arg1);
+extern void gTranslatePadButtons(void *arg0, s32 arg1) __asm__("func_800576A8");
 extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
 extern s32 func_80049340(u8 *text);
 extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
@@ -115,14 +115,14 @@ void func_80028164(void)
     game = gPlayerEntities;
     p1 = game->unkAC;
     if (gSinglePlayerEntity == 0) {
-        p2 = D_8009FA5C[0]->unkAC;
+        p2 = gPlayerEntity2[0]->unkAC;
     } else {
         p2 = 0;
     }
 
-    func_800576A8((u8 *)p1 + 0x30, 0);
+    gTranslatePadButtons((u8 *)p1 + 0x30, 0);
     if (p2 != 0) {
-        func_800576A8((u8 *)p2 + 0x30, 1);
+        gTranslatePadButtons((u8 *)p2 + 0x30, 1);
     }
 
     blend = 1;

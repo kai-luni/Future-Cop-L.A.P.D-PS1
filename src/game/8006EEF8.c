@@ -21,7 +21,7 @@ typedef struct {
 } Unk6EEF8;
 typedef struct { s32 x, y, z; } V3;
 
-extern s32 func_8001A314(s32 *vec);
+extern s32 gNormalizeGetLength(s32 *vec) __asm__("func_8001A314");
 
 /**
  * @brief Initialises a path segment: direction, speed-scaled velocity and
@@ -63,7 +63,7 @@ void func_8006EEF8(Unk6EEF8 *node, s32 scale, s16 arg2, s32 arg3, s32 arg4, s32 
     vec[0] = p2[0] - p1[0];
     vec[1] = p2[1] - p1[1];
     vec[2] = p2[2] - p1[2];
-    t = func_8001A314(vec);
+    t = gNormalizeGetLength(vec);
     sv[0] = vec[0] >> 4;
     sv[1] = vec[1] >> 4;
     sv[2] = vec[2] >> 4;

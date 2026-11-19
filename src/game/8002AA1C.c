@@ -36,7 +36,7 @@ struct Unk3BObject {
     void *unk94;
 };
 
-extern void func_8003BA50(struct Unk3BObject *object, s32 value);
+extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
 extern void func_80069D68(void *arg0, s32 arg1, u32 arg2,
                           struct Unk3BObject *arg3);
 
@@ -118,7 +118,7 @@ s32 func_8002AA1C(s32 message, struct Unk3BObject *object,
             }
         } else {
             if (object->tableIndex != 0 && (object->flags & 0x40000) == 0) {
-                func_8003BA50(object, oldHealth);
+                gFlagQuartileChange(object, oldHealth);
             }
         }
 

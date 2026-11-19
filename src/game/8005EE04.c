@@ -74,7 +74,7 @@ struct Unk5EE04Request {
 
 extern void D_80037708();
 extern s32 func_80019668(void);
-extern void func_8001AB78(s32 value, void *data);
+extern void gVectorScaleInPlace(s32 value, void *data) __asm__("func_8001AB78");
 extern void gSpawnQueuedEntity(struct Unk5EE04Request *request) __asm__("func_8004D444");
 
 /**
@@ -175,11 +175,11 @@ void func_8005EE04(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
 
     if (!fl && e->unk84 != 0) {
         args.unk28 = e->unk78;
-        func_8001AB78(e->unk84 << 8, &args.unk28);
+        gVectorScaleInPlace(e->unk84 << 8, &args.unk28);
     } else {
         args.unk28 = *arg4;
         if (!fl) {
-            func_8001AB78(o->unk06, &args.unk28);
+            gVectorScaleInPlace(o->unk06, &args.unk28);
         }
     }
 

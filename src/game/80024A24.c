@@ -20,7 +20,7 @@ extern s32 gMissionId __asm__("D_8009F684");
 extern s32 gMissionParam __asm__("D_8009F688");
 extern s32 gScratchBlockPtr __asm__("D_8009F68C");
 extern s32 gGameSuspended __asm__("D_8009FA24");
-extern s32 gPanelSelection __asm__("D_8009FA6C");
+extern s32 gOpenPanelCount __asm__("D_8009FA6C");
 extern s32 gScreenResetFlag __asm__("D_8009FA70");
 extern s32 gDemoPlayback __asm__("D_8009FA84");
 extern struct Obj *gGameSession __asm__("D_8009FA94");
@@ -32,7 +32,7 @@ extern struct Name D_80010DC0;
 extern void *gFocusPositions __asm__("D_8009F9A0");
 extern u8 gModuleNameBuffer[] __asm__("D_800A0B30");
 extern u8 gRandomTable[] __asm__("D_800A8540");
-extern s32 D_8009FA5C[];
+extern s32 gPlayerEntity2[] __asm__("D_8009FA5C");
 
 extern void func_80017C68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 extern void func_800860CC(void);
@@ -149,7 +149,7 @@ call_init:
     gMissionId = arg0;
     func_80017C68(0x168, 0x82, 0x118, 0x64, 0xFC, 0x145);
     gGameSuspended = 0;
-    gPanelSelection = 0;
+    gOpenPanelCount = 0;
     func_800860CC();
     func_8008CCB0(gModuleNameBuffer, arg0);
 
@@ -172,7 +172,7 @@ call_init:
 
     {
         s32 n = 1;
-        s32 *bp = D_8009FA5C;
+        s32 *bp = gPlayerEntity2;
 
         do {
             *bp = 0;

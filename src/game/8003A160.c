@@ -13,9 +13,9 @@ typedef struct Model { u8 pad[0x34]; void *parts; } Model;
 extern int gPlayerCount __asm__("D_8009FA0C");
 extern Obj *gPlayerEntities[] __asm__("D_8009FA58");
 extern void func_8003A09C(Obj *);
-extern s32 func_8001A100(Vec *);
-extern void func_8001A6F8(Vec *, Vec *);
-extern void func_8001AB78(s32, Vec *);
+extern s32 gVectorLength3D(Vec *) __asm__("func_8001A100");
+extern void gEaseVectorQuarter(Vec *, Vec *) __asm__("func_8001A6F8");
+extern void gVectorScaleInPlace(s32, Vec *) __asm__("func_8001AB78");
 extern void func_800457B8(s32, s32);
 extern int func_80050D14(void *, s32, Obj *);
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
@@ -175,7 +175,7 @@ valid_target:
                 delta.y = (obj->effectFlags & 2) ? obj->position.y - target->position.y : 0;
                 switch (obj->mode) {
                 case 1:
-                    distance = func_8001A100(&delta);
+                    distance = gVectorLength3D(&delta);
                     if (distance >= 4) {
                         recip = 0x80000000U / (distance >> 1);
                         {
@@ -249,11 +249,11 @@ square_factor:
                     {
                         register Vec *fptr __asm__("$5");
                         __asm__ volatile("mult %0,%2\n\taddiu %1,$sp,0x10\n\tmflo %0\n\tsra %0,%0,4" : "+r"(factor), "=r"(fptr) : "r"(dt));
-                        func_8001AB78(factor, fptr);
+                        gVectorScaleInPlace(factor, fptr);
                     }
                 }
 smooth_force:
-            func_8001A6F8(&force, &obj->forces[i]);
+            gEaseVectorQuarter(&force, &obj->forces[i]);
             if (obj->strength > 0) {
 #define CLAMP(f,d) do { \
     register s32 value __asm__("$16") = (f); \

@@ -42,10 +42,12 @@ struct Unk8002A810 {
 };
 
 extern Unk8002A810Sub *func_8004D664(s32 id);
-extern void func_8003B898(s32 arg0, Unk8002A810 *arg1,
-                         Unk8002A810Local *arg2, s32 arg3, s32 arg4);
+extern void gSpawnEntitySlotTypes(s32 arg0, Unk8002A810 *arg1,
+                         Unk8002A810Local *arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
 extern void func_80031690(Unk8002A810 *arg0);
 extern void func_8004D958(Unk8002A810 *arg0);
+s32 gRetireEntityBase(Unk8002A810 *s0, s32 arg1, s32 arg2) __asm__("func_8002A810");
+
 
 /**
  * @brief The base retire implementation (message 4): marks the entity
@@ -73,8 +75,20 @@ extern void func_8004D958(Unk8002A810 *arg0);
  *
  * @par Callers
  * func_8002AD58, func_8002B784, func_8002C174, func_80058D78.
+ *
+ * @par Environment path
+ * Shared retire step of an entity: it returns 0 if flag 0x01000000 of +0x24
+ * is already set, otherwise sets 0x01000010, resolves the owner from the id
+ * at +0x8C with func_8004D664, and, when the entity's slot byte +0x20 is
+ * non-zero and arg2 is set, calls gSpawnEntitySlotTypes (func_8003B898) in
+ * mode 2 with mask (+0x19 >> 3) & 0x1E, passing a local record copied from a
+ * type-2 owner (+0x78..+0x80, +0x1A). It then calls func_80031690 when +0x74
+ * is non-null and func_8004D958 when arg1 is set, and returns 1.
+ * gEntityBaseHandler (func_8002AD58) calls it for message 4 with (1, 1)
+ * (8002AD58.c:88), and func_8002B784, func_8002C174 and func_80058D78 use it
+ * from their own retire paths.
  */
-s32 func_8002A810(Unk8002A810 *s0, s32 arg1, s32 arg2)
+s32 gRetireEntityBase(Unk8002A810 *s0, s32 arg1, s32 arg2)
 {
     register Unk8002A810Sub *a0 __asm__("$4");
     Unk8002A810Local local;
@@ -114,7 +128,7 @@ s32 func_8002A810(Unk8002A810 *s0, s32 arg1, s32 arg2)
         if (arg2 & 0xFF) {
             register s32 two __asm__("$2");
             two = 2;
-            func_8003B898(s0->unk20, s0, a2,
+            gSpawnEntitySlotTypes(s0->unk20, s0, a2,
                           (s0->unk19 >> 3) & 0x1E, two);
         }
     }

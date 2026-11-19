@@ -38,17 +38,17 @@ extern struct Res *func_8004E80C(void *, s32, s32, s32, s32, s32, s32);
 extern void func_800320E4(struct Obj *);
 extern s32 func_80069A38(V3 *);
 extern s32 gGetGroundHeight(V3 *, s32, s32, s32) __asm__("func_80066F78");
-extern void func_8003BA50(struct Obj *, s32);
-extern void func_8003B898(s32, struct Obj *, s32, s32, s32);
+extern void gFlagQuartileChange(struct Obj *, s32) __asm__("func_8003BA50");
+extern void gSpawnEntitySlotTypes(s32, struct Obj *, s32, s32, s32) __asm__("func_8003B898");
 extern struct Hit *func_8004D664(s32);
 extern void func_80069D68(s32, s32, s32, struct Obj *);
 extern void gVectorAddScaled(V3 *, V3 *, s32, V3 *) __asm__("func_8001ACA4");
-extern void func_8001A180(V3 *);
+extern void gNormalizeVector(V3 *) __asm__("func_8001A180");
 extern s32 func_8001A750(V3 *, V3 *);
 extern void func_8001A644(V3 *);
-extern void func_8001AB78(s32, V3 *);
-extern void func_8001A6F8(V3 *, V3 *);
-extern void func_80019310(V3 *, V3 *, V3 *);
+extern void gVectorScaleInPlace(s32, V3 *) __asm__("func_8001AB78");
+extern void gEaseVectorQuarter(V3 *, V3 *) __asm__("func_8001A6F8");
+extern void gBuildBasisZFromPair(V3 *, V3 *, V3 *) __asm__("func_80019310");
 extern void gGteLoadMatrix(V3 *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(s32, void *, s32) __asm__("func_80010234");
 #define FMUL(d, x, y) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(x), "r"(y) : "$8", "$9")
@@ -255,10 +255,10 @@ L5E4:
                 o->f100 = (10 - k) * 150 + 600;
                 if (o->f20 != 0) {
                     if (!(o->f24 & 0x40000))
-                        func_8003BA50(o, 0);
+                        gFlagQuartileChange(o, 0);
                 }
                 o->f1C = -1;
-                func_8003B898(o->f20, o, 0, (o->f19 >> 3) & 0x1E, 2);
+                gSpawnEntitySlotTypes(o->f20, o, 0, (o->f19 >> 3) & 0x1E, 2);
                 if (o->f134->f48 == 0)
                     o->f134->f48 = gFrameTime;
                 o->f134->f3E++;
@@ -286,7 +286,7 @@ L5E4:
         f78p = &o->f78;
         q = &o->f78;
         o->f78 = o->fDC;
-        func_8001A180(q);
+        gNormalizeVector(q);
         goto L_ED8;
     }
     case 5:
@@ -323,7 +323,7 @@ L_AD4: {
 
     dL = (dt * o->fF8) >> 3;
     gL = func_80069A38(&o->pos) + (o->f6C << 4);
-    func_8001AB78(dL, &a);
+    gVectorScaleInPlace(dL, &a);
     cmp = gL + (o->f114 << 4);
     if (o->pos.y < cmp) {
         if (gL + (o->f110 << 4) >= o->pos.y) {
@@ -341,7 +341,7 @@ L_AD4: {
         }
     }
     a.y = (((dL >> 31) + dL) ^ (dL >> 31)) < 0x201 ? 0 : dL;
-    func_8001A6F8(&a, &o->fE8);
+    gEaseVectorQuarter(&a, &o->fE8);
     o->fE8.y = o->fE8.y - o->fE8.y / 4;
     o->f78.x += a.x;
     o->f78.y += a.y;
@@ -353,7 +353,7 @@ L_AD4: {
         o->f78.y = -0x8000;
     else if (dL > 0x8000)
         o->f78.y = 0x8000;
-    func_8001A180(&o->f78);
+    gNormalizeVector(&o->f78);
 
     dL = (dt * o->fF4) >> 8;
     cmp = (0x10000 - (((o->f38.y >> 31) + o->f38.y) ^ (o->f38.y >> 31))) * 2;
@@ -379,7 +379,7 @@ L_AD4: {
 L_ED0:
     a.y = ay;
 L_ED8:
-    func_80019310(q, &a, &o->f2C);
+    gBuildBasisZFromPair(q, &a, &o->f2C);
     gGteLoadMatrix(&o->f2C);
     gGteTransformVerticesWide((o->f70 << 4) + 8 + o->f28->f34, (u8 *)o + 0x5C, 1);
     return 0;

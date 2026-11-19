@@ -48,7 +48,7 @@ extern void gGteTransformWords(Vec70730 *dst, Vec70730 *src, s32 count) __asm__(
 extern void gGteLoadRotation(void *arg) __asm__("func_80010820");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
-extern s32 func_80019F54(s32 *vector);
+extern s32 gApproxVectorLength(s32 *vector) __asm__("func_80019F54");
 extern void func_8003D0F0(Base70730 *base, s32 type, s32 flags, Vec70730 *out);
 extern s32 func_80067684(Vec70730 *vec, s32 adjust);
 s16 gComputeEffectEndPoint(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg) __asm__("func_80070730");
@@ -235,7 +235,7 @@ s16 gComputeEffectEndPoint(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec7
             vec.x = target->x - gPlayerEntities[r]->pos.x;
             vec.y = target->y - gPlayerEntities[r]->pos.y;
             vec.z = target->z - gPlayerEntities[r]->pos.z;
-            dist = func_80019F54((s32 *)&vec);
+            dist = gApproxVectorLength((s32 *)&vec);
 
             if ((dist >> shift) < ((s16)speed + gPlayerEntities[r]->unk6E)) {
                 target = &gPlayerEntities[r]->pos;

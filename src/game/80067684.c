@@ -20,7 +20,7 @@ typedef struct {
     s32 arr[16];
 } Res67684;
 
-extern Res67684 *gTileMapTable __asm__("D_8009F80C");
+extern Res67684 *gMapGridHeader __asm__("D_8009F80C");
 extern u8 **gTileBlockTable __asm__("D_8009F808");
 
 extern s32 func_80067480(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 *arg4);
@@ -124,7 +124,7 @@ s32 func_80067684(Vec67684 *pos, s32 mode)
         goto fail;
     }
 
-    res = gTileMapTable;
+    res = gMapGridHeader;
     unk04 = res->unk04;
     z17 = z >> 17;
 

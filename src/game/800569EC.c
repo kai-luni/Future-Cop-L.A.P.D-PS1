@@ -82,21 +82,21 @@ extern struct State569EC gPresetEntryTable[] __asm__("D_8009AEC4");
 extern struct Offset569EC gViewPresetTable[] __asm__("D_8009AD08");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern void gDecodeButtonEdge(void *, struct Vec569EC *) __asm__("func_8005780C");
-extern s32 func_80031B40(struct Vec569EC *, void *);
-extern s32 func_80056530(struct Obj569EC *, s32, s32);
+extern s32 gTestCameraZoneOverlap(struct Vec569EC *, void *) __asm__("func_80031B40");
+extern s32 gSpringFollowHeight(struct Obj569EC *, s32, s32) __asm__("func_80056530");
 extern s32 gFindClearCameraPreset(struct Obj569EC *) __asm__("func_80056870");
-extern u8 func_80056994(struct Info569EC *, s32);
+extern u8 gStepDemoCameraTable(struct Info569EC *, s32) __asm__("func_80056994");
 extern void gSelectViewRecord(s32) __asm__("func_80017B60");
 extern void gPlaceCameraFromPreset(struct Obj569EC *, s32, struct Vec569EC *, s32) __asm__("func_8005678C");
 extern void gComputeCameraEye(struct Vec569EC *, s32, s32, s32, s32, struct Vec569EC *, struct Vec569EC *, s32, s32) __asm__("func_8005612C");
-extern s32 func_80055EE8(struct Vec569EC *, struct Vec569EC *);
-extern s32 func_8005605C(s32, s32, s32);
+extern s32 gTestCameraSightLine(struct Vec569EC *, struct Vec569EC *) __asm__("func_80055EE8");
+extern s32 gEaseAngleShortest(s32, s32, s32) __asm__("func_8005605C");
 extern s32 gComputeBoomDistance(s32) __asm__("func_800564A8");
-extern s32 func_8001A314(struct Vec569EC *);
-extern void func_8001AB78(s32, struct Vec569EC *);
+extern s32 gNormalizeGetLength(struct Vec569EC *) __asm__("func_8001A314");
+extern void gVectorScaleInPlace(s32, struct Vec569EC *) __asm__("func_8001AB78");
 extern void gSetCameraRotation(s32, s32, s32) __asm__("func_80017860");
-extern void func_8001AC28(struct Vec569EC *, struct Vec569EC *, s32, struct Vec569EC *);
-extern s32 func_80095C14(s32);
+extern void gVectorMulAdd(struct Vec569EC *, struct Vec569EC *, s32, struct Vec569EC *) __asm__("func_8001AC28");
+extern s32 gGteLeadingZeros(s32) __asm__("func_80095C14");
 extern s32 func_80019668(void);
 extern void func_8001EA20(struct Obj569EC *, s32);
 extern void gSetCameraPosition(struct Vec569EC *) __asm__("func_800177AC");
@@ -240,7 +240,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
     if ((u32)(info->state - 5) < 2) {
         obj = RELOAD_OBJECT();
     __asm__("" : "+r"(obj));
-        if (func_80031B40(&obj->position, obj->collision) == 0) {
+        if (gTestCameraZoneOverlap(&obj->position, obj->collision) == 0) {
             info->state = 0;
         }
     }
@@ -258,7 +258,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
         callObject = RELOAD_OBJECT();
         callElapsed = elapsed;
         callSpeed = speed;
-        local.position.y = func_80056530(callObject, callElapsed, callSpeed);
+        local.position.y = gSpringFollowHeight(callObject, callElapsed, callSpeed);
     }
     if (info->lock != 0) {
         info->selected = 17;
@@ -284,7 +284,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
             selected = info->selected;
         }
     }
-    if (gDemoPlayback > 0) state = func_80056994(info, elapsed);
+    if (gDemoPlayback > 0) state = gStepDemoCameraTable(info, elapsed);
     {
         register struct Camera569EC *saved __asm__("$8");
         register s32 id __asm__("$4");
@@ -370,7 +370,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
         gComputeCameraEye(argPosition, heading, heading + offset->yaw, offset->pitch,
                      offset->distance, &offset->offset, testOut, info->zoom, info->distance);
         prevPtr = &local.previous;
-        blocked = func_80055EE8(prevPtr, testOut);
+        blocked = gTestCameraSightLine(prevPtr, testOut);
         if (blocked != 0 || info->current != 1) {
             value = (u16)info->timer;
             __asm__("" : : "r"(value) : "memory");
@@ -397,7 +397,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
                     }
                     gComputeCameraEye(argPosition, heading, heading + offset->yaw, offset->pitch,
                                  offset->distance, &offset->offset, testOut, info->zoom, info->distance);
-                    if (func_80055EE8(prevPtr, testOut) == 0) {
+                    if (gTestCameraSightLine(prevPtr, testOut) == 0) {
                         blocked = 0;
                         info->current = 1;
                         info->next = 1;
@@ -416,7 +416,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
                     }
                     gComputeCameraEye(&local.position, heading, heading + offset->yaw, offset->pitch,
                                  offset->distance, &offset->offset, &local.out, info->zoom, info->distance);
-                    if (func_80055EE8(&local.previous, &local.out) == 0) {
+                    if (gTestCameraSightLine(&local.previous, &local.out) == 0) {
                         info->current = info->next;
                     } else {
                         info->timer = 120;
@@ -435,13 +435,13 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
         base = (struct Offset569EC *)((s32)base - 0x52F8);
         offset = (struct Offset569EC *)(index * 20 + (s32)base);
     }
-    yaw = func_8005605C(gCamera->yaw, heading + offset->yaw, speed);
+    yaw = gEaseAngleShortest(gCamera->yaw, heading + offset->yaw, speed);
     __asm__ __volatile__("" : "+r"(yaw));
     {
         register struct Camera569EC *camera __asm__("$2");
         camera = gCamera;
         __asm__("" : : "r"(camera) : "$5");
-        pitch = func_8005605C(camera->pitch, offset->pitch, speed);
+        pitch = gEaseAngleShortest(camera->pitch, offset->pitch, speed);
     }
     tick = elapsed;
     __asm__("" : : "r"(tick));
@@ -493,7 +493,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
     local.delta.x = offset->offset.x - info->offset.x;
     local.delta.y = offset->offset.y - info->offset.y;
     local.delta.z = offset->offset.z - info->offset.z;
-    length = func_8001A314(deltaPtr);
+    length = gNormalizeGetLength(deltaPtr);
     tick = elapsed;
     __asm__("" : : "r"(tick));
     scaled = tick * 5 << 8;
@@ -502,7 +502,7 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
     if (length < rate) {
         info->offset = offset->offset;
     } else {
-        func_8001AB78(rate, deltaPtr);
+        gVectorScaleInPlace(rate, deltaPtr);
         info->offset.x += local.delta.x;
         info->offset.y += local.delta.y;
         info->offset.z += local.delta.z;
@@ -510,27 +510,27 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
     gComputeCameraEye(&local.position, heading, yaw, pitch, distance, &info->offset,
                  &local.out, info->zoom, info->distance);
     gSetCameraRotation(yaw, pitch, 0);
-    func_8001AC28(&local.out, &gCamera->axis70, info->zoom << 7, &local.out);
+    gVectorMulAdd(&local.out, &gCamera->axis70, info->zoom << 7, &local.out);
     {
     s32 t;
     t = info->shake;
     if (t != 0) {
         shake = t;
         if (shake >= 256) shake = 255;
-        if (shake != 0) t = 1 << (31 - func_80095C14(shake));
+        if (shake != 0) t = 1 << (31 - gGteLeadingZeros(shake));
         else t = 1;
         shake = t;
         {
             s32 random;
             random = (func_80019668() & (shake - 1)) - shake / 2;
             __asm__("" : : "r"(random) : "$4");
-            func_8001AC28(&local.out, &gCamera->axis64, random << 3, &local.out);
+            gVectorMulAdd(&local.out, &gCamera->axis64, random << 3, &local.out);
         }
         {
             s32 random;
             random = (func_80019668() & (shake - 1)) - shake / 2;
             __asm__("" : : "r"(random) : "$4");
-            func_8001AC28(&local.out, &gCamera->axis58, random << 3, &local.out);
+            gVectorMulAdd(&local.out, &gCamera->axis58, random << 3, &local.out);
         }
         if (info->shake > 0) {
             tick = elapsed;

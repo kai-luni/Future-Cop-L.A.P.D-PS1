@@ -11,6 +11,8 @@ struct Unk4C228 {
 
 extern void gStepDebrisFlight(struct Unk4C228 *node, s32 arg) __asm__("func_8004AFC0");
 extern void func_8004BEE8(struct Unk4C228 *node, s32 arg);
+void gTickDebrisList(struct Unk4C228 *node, s32 arg) __asm__("func_8004C228");
+
 
 /**
  * @brief Walks a scene node list and dispatches each visible node by two
@@ -31,8 +33,18 @@ extern void func_8004BEE8(struct Unk4C228 *node, s32 arg);
  *
  * @par Callers
  * func_8003F4A0.
+ *
+ * @par Environment path
+ * Per-frame update pass over object bucket gListHeads[4]: every node (next at
+ * +0x00) whose flag byte +0x0F lacks bit 3 is stepped by gStepDebrisFlight
+ * (func_8004AFC0) when bit 3 of +0x7B is set, otherwise by func_8004BEE8 (the
+ * shard-list integrator of a fractured object) unless bit 4 of +0x7B is set;
+ * arg is forwarded to both. Its only caller is gRunSceneListPasses
+ * (func_8003F4A0, 8003F4A0.c:49), which gRunEntityWorldTick reaches through
+ * the scratchpad trampoline func_8003F530, so it runs on the tick side, not
+ * the draw side. It uses no globals.
  */
-void func_8004C228(struct Unk4C228 *node, s32 arg)
+void gTickDebrisList(struct Unk4C228 *node, s32 arg)
 {
     while (node != 0) {
         if (!(node->flags0F & 8)) {

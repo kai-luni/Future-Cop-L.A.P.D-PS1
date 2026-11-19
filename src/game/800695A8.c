@@ -11,9 +11,9 @@ struct Map {
     s32 cell[1];
 };
 
-extern struct Map *gTileMapTable __asm__("D_8009F80C");
+extern struct Map *gMapGridHeader __asm__("D_8009F80C");
 extern s8 **gTileBlockTable __asm__("D_8009F808");
-extern s32 gCellDataOutput[] __asm__("D_800A2940");
+extern s32 gHeightGridDesc[] __asm__("D_800A2940");
 extern s8 *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void gFreeBlock(s8 *) __asm__("func_800181D4");
 
@@ -57,6 +57,8 @@ extern void gFreeBlock(s8 *) __asm__("func_800181D4");
     if (sum < (mc)) sum = (mc); \
     *(dst) = sum; \
 } while (0)
+void gBuildCoarseHeightGrid(void) __asm__("func_800695A8");
+
 
 /**
  *  @brief Builds a filtered signed-byte grid from the current map's cell data.
@@ -76,8 +78,23 @@ extern void gFreeBlock(s8 *) __asm__("func_800181D4");
  *  Allocates and publishes an output grid, replacing the stored pointer.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Environment path
+ * Builds the smoothed signed-byte height grid published in D_800A2940: for
+ * every map cell of the GRDB header D_8009F80C inside the border it looks up
+ * the cell's tile block through D_8009F808[(cell >> 2) & 0x3FFF] and writes
+ * an 8x8 block of samples, each the maximum of a 2x2 group of 3-byte vertex
+ * records (12 bytes) starting at block +0xC, into a temporary buffer (tag 1).
+ * It then runs a rounded 1-2-1/2-4-2/1-2-1 filter (>> 4, clamped to s8) whose
+ * result never drops below the centre sample into a tag-2 buffer, frees the
+ * temporary one and stores {origin ((border-1) << 17) + 0x2000, width W, H-2,
+ * buffer} in D_800A2940[0..3]. It runs from the 'Cact' loader func_8004D6D4
+ * (8004D6D4.c:95-97) only while gMessageDoneFlag (D_8009F7AC) is set, which
+ * it clears first, so it is a level-load step; the only reader of the grid is
+ * the bilinear sampler func_80069A38, used for altitude by gUpdateHoverEnemy
+ * (800324E0.c:203,325) and gGuidedProjectileUpdate (80035B7C.c:528).
  */
-void func_800695A8(void)
+void gBuildCoarseHeightGrid(void)
 {
     register struct Map *map __asm__("$3");
     register s32 w __asm__("$16");
@@ -115,7 +132,7 @@ void func_800695A8(void)
     register s8 *mid __asm__("$12");
     register s8 *dp __asm__("$7");
 
-    map = gTileMapTable;
+    map = gMapGridHeader;
     mw = map->w;
     mb = map->border;
     mh = map->h;
@@ -128,7 +145,7 @@ void func_800695A8(void)
     h = h + 2;
     prod = w * h;
     buf = gAllocMemory(prod << 6, 1);
-    bd = gTileMapTable->border;
+    bd = gMapGridHeader->border;
     base = bd - 1;
     for (fb = 0; fb < h; fb++) {
         fy = 0;
@@ -140,12 +157,12 @@ void func_800695A8(void)
             register s32 oj __asm__("$13");
             register s32 x8 __asm__("$24");
             register s32 off __asm__("$8");
-            wt = gTileMapTable->w;
+            wt = gMapGridHeader->w;
             __asm__("mult %1,%2\n\tmove %0,$0" : "=r"(fj) : "r"(wt), "r"(rb));
             __asm__("sll %0,%1,3" : "=r"(x8) : "r"(fy), "r"(fj));
             __asm__("addu %0,%1,%2" : "=r"(wt) : "r"(fy), "r"(base), "r"(x8));
             __asm__("mflo %0" : "=r"(prod) : "r"(wt));
-            v = gTileMapTable->cell[wt + prod];
+            v = gMapGridHeader->cell[wt + prod];
             v = (v >> 2) & 0x3FFF;
             __asm__("" : "+r"(v));
             oj = fj;
@@ -274,8 +291,8 @@ void func_800695A8(void)
         } while (x < H);
     }
     gFreeBlock(buf);
-    gCellDataOutput[3] = (s32)out;
-    gCellDataOutput[0] = ((gTileMapTable->border - 1) << 17) + 0x2000;
-    gCellDataOutput[1] = W;
-    gCellDataOutput[2] = H - 2;
+    gHeightGridDesc[3] = (s32)out;
+    gHeightGridDesc[0] = ((gMapGridHeader->border - 1) << 17) + 0x2000;
+    gHeightGridDesc[1] = W;
+    gHeightGridDesc[2] = H - 2;
 }

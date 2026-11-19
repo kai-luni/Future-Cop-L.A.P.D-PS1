@@ -16,13 +16,13 @@ struct Node24EC8 {
 
 extern struct Node24EC8 *gRequestListHead __asm__("D_8009F668");
 extern struct Node24EC8 *gRequestListTail __asm__("D_8009F66C");
-extern s32 gLastSpawnSlot __asm__("D_8009F9F4");
+extern s32 gRequestOffsetBias __asm__("D_8009F9F4");
 extern s32 gScreenState __asm__("D_8009FA00");
 
 extern struct Node24EC8 *func_800295E8(s32 arg0);
 extern void func_80013550(struct Node24EC8 *node);
 extern void gFreeBlock(struct Node24EC8 *node) __asm__("func_800181D4");
-extern void func_80023930(struct Node24EC8 *node);
+extern void gRegisterCvkChunk(struct Node24EC8 *node) __asm__("func_80023930");
 extern void func_80029E20(struct Node24EC8 *node);
 extern void func_8003C110(struct Node24EC8 *node);
 extern void func_80048E9C(struct Node24EC8 *node);
@@ -35,12 +35,14 @@ extern void func_8005A414(struct Node24EC8 *node);
 extern void func_80060E74(struct Node24EC8 *node);
 extern void func_80063C20(struct Node24EC8 *node);
 extern void func_80063C5C(struct Node24EC8 *node);
-extern void func_80063DC8(struct Node24EC8 *node);
+extern void gInitMapFromGrdb(struct Node24EC8 *node) __asm__("func_80063DC8");
 extern void func_80082358(struct Node24EC8 *node);
 extern void func_800824CC(struct Node24EC8 *node);
 extern void func_800825AC(struct Node24EC8 *node);
 extern void gRegisterPublishedBlock(struct Node24EC8 *node) __asm__("func_8008263C");
 extern void func_800899A4(struct Node24EC8 *node);
+void gLoadQueuedAssets(void) __asm__("func_80024EC8");
+
 
 /**
  * @brief Loads every queued asset of the level and frees the request nodes.
@@ -74,8 +76,24 @@ extern void func_800899A4(struct Node24EC8 *node);
  * `0x43746474` ("Ctdt") -> func_800824CC, `0x4374696E` ("Ctin") -> func_800825AC,
  * `0x43626D70` ("Cbmp") -> func_80063C5C, `0x436D6963` ("Cmic") -> func_80082358,
  * and `0x436F626A` ("Cobj") -> func_80013550 (geometry/animation, no pixel upload).
+ *
+ * @par Environment path
+ * Drains finished asset requests and dispatches them by four-character tag:
+ * every node returned by func_800295E8 is appended to D_8009F668/D_8009F66C,
+ * then each list node is unlinked (skipped and kept while gScreenState
+ * D_8009FA00 == 4), its words +0x24/+0x28/+0x2C are rebased by D_8009F9F4 and
+ * the tag selects the handler, e.g. 'Cptc' func_80063DC8 (GRDB map), 'Cact'
+ * func_8004D6D4 (actor records), 'Csfx' func_8003C110 (spawn-record stream),
+ * 'Ctil'/'Catl' func_80063C20, 'Cbmp' func_80063C5C, 'Cobj' func_80013550,
+ * 'RPNS' func_8004D924 and 'Cvkh'/'Cvkb'/'Cshd' func_80023930; 'Cctr' sets
+ * gScreenState to 2 or 4, 'Cnon' is dropped without a free and unknown tags
+ * are freed. It is polled every frame by the loading and front-end frame
+ * ticks func_80025348, func_80025690, gPrepareAndSubmitFrame (func_800259D8),
+ * func_80027D9C and func_80027EBC. All per-level construction that arrives as
+ * chunks (map grid, spawn tables) is started from this switch, in the order
+ * the stream delivers the chunks.
  */
-void func_80024EC8(void)
+void gLoadQueuedAssets(void)
 {
     struct Node24EC8 *node;
     struct Node24EC8 *next;
@@ -124,9 +142,9 @@ loop_test:
                 }
             }
 
-            node->unk24 += gLastSpawnSlot;
-            node->unk28 += gLastSpawnSlot;
-            node->unk2C += gLastSpawnSlot;
+            node->unk24 += gRequestOffsetBias;
+            node->unk28 += gRequestOffsetBias;
+            node->unk2C += gRequestOffsetBias;
 
             switch (node->tag) {
             case 0x43747273:
@@ -149,7 +167,7 @@ loop_test:
                 func_80063C5C(node);
                 break;
             case 0x43707463:
-                func_80063DC8(node);
+                gInitMapFromGrdb(node);
                 break;
             case 0x43666E74:
                 func_80048E9C(node);
@@ -185,7 +203,7 @@ loop_test:
             case 0x43736864:
             case 0x43766B68:
             case 0x43766B62:
-                func_80023930(node);
+                gRegisterCvkChunk(node);
                 break;
             case 0x436D6963:
                 func_80082358(node);

@@ -99,10 +99,12 @@ struct Unk50E0COut {
 
 extern s32 func_80050DAC(struct Unk50DACMap *map, s32 *position);
 extern s32 func_8004F330(struct Unk50E0COut *out, struct Unk50E0CArg3 *arg3, s32 index);
-extern void func_8001AB78(s32 scale, s32 *vector);
-extern s32 func_8001A100(s32 *vector);
-extern s32 func_80095C30(s32 x, s32 y);
+extern void gVectorScaleInPlace(s32 scale, s32 *vector) __asm__("func_8001AB78");
+extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
+extern s32 gAtan2(s32 x, s32 y) __asm__("func_80095C30");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
+void gInitRailSegment(struct Unk50E0CArg0 *arg0, struct Unk50E0COut *out, struct Unk50E0CArg2 *arg2, struct Unk50E0CArg3 *arg3, s32 *arg4) __asm__("func_80050E0C");
+
 
 /**
  * @brief Initialises a rail/spline mover block for the map cell that contains a
@@ -178,8 +180,22 @@ extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
  * func_800378BC, func_80039C58, func_80039E8C - all three are entity message
  * handlers that call it from their part-update case, passing the render object
  * as arg3 and the object position as arg4.
+ *
+ * @par Environment path
+ * Seats a route-following mover on its route: with a route descriptor it
+ * marks the render object (+0x24 bit 31), finds the route node containing the
+ * position with func_80050DAC in the node list at descriptor+0x0C, stores
+ * that node's coordinates as the segment start and its index at +0x48/+0x4A,
+ * picks the next node with func_8004F330 (flag 0x40 when there is none), and
+ * derives the segment vector, its length (func_8001A100), the normalised
+ * direction written to object+0x78..+0x80, yaw (func_80095C30, with
+ * sine/cosine via gSinCos) and pitch, plus base speed, acceleration and
+ * deceleration scaled by /300 from the tuning record. A null descriptor only
+ * clears out+0x00. Callers are gInitRailMoverEntity (func_800378BC),
+ * gHandleCameraOverrideMsg (func_80039C58) and func_80039E8C, which call it
+ * when such an entity is (re)placed on its route; it uses no globals.
  */
-void func_80050E0C(struct Unk50E0CArg0 *arg0, struct Unk50E0COut *out, struct Unk50E0CArg2 *arg2, struct Unk50E0CArg3 *arg3, s32 *arg4)
+void gInitRailSegment(struct Unk50E0CArg0 *arg0, struct Unk50E0COut *out, struct Unk50E0CArg2 *arg2, struct Unk50E0CArg3 *arg3, s32 *arg4)
 {
     struct Unk50DACMap *map;
     struct Unk50E0CCellAccess *cell;
@@ -237,7 +253,7 @@ void func_80050E0C(struct Unk50E0CArg0 *arg0, struct Unk50E0COut *out, struct Un
     arg3->unk7C = (s16)out->unk0C << 8;
     arg3->unk80 = (s16)out->unk0E << 8;
 
-    length = func_8001A100(&arg3->unk78);
+    length = gVectorLength3D(&arg3->unk78);
     out->unk20 = length >> 8;
 
     if ((((length >> 31) + length) ^ (length >> 31)) >= 2) {
@@ -245,9 +261,9 @@ void func_80050E0C(struct Unk50E0CArg0 *arg0, struct Unk50E0COut *out, struct Un
     } else {
         quotient = 0;
     }
-    func_8001AB78(quotient, &arg3->unk78);
+    gVectorScaleInPlace(quotient, &arg3->unk78);
 
-    angle = func_80095C30(arg3->unk78, arg3->unk80) & 0xFFF;
+    angle = gAtan2(arg3->unk78, arg3->unk80) & 0xFFF;
     out->unk4C = out->unk4E = out->unk50 = angle;
     gSinCos(out->unk50, &out->unk64, &out->unk6C);
 
@@ -278,7 +294,7 @@ void func_80050E0C(struct Unk50E0CArg0 *arg0, struct Unk50E0COut *out, struct Un
         a3 = a0 >> 7;
     }
     a1 = a3 + (a2 >> 2) - (a2 >> 6);
-    angle2 = func_80095C30(arg3->unk7C, a1);
+    angle2 = gAtan2(arg3->unk7C, a1);
     angle2 = (angle2 << 12) >> 12;
     v1 = (0xFFF - angle2) & 0xFFF;
     out->unk52 = out->unk54 = out->unk56 = v1;

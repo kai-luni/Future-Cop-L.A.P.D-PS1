@@ -1,5 +1,7 @@
 // Categories: Utilities > Mathematics > Vector Length | Graphics > Culling
 #include "game/types.h"
+s32 gApproxVectorLength(s32 *vector) __asm__("func_80019F54");
+
 
 /**
  * @brief Cheap 3D distance estimate: max + (sum of the others) / 4.
@@ -18,8 +20,15 @@
  *
  * @par Callers
  * func_8001A644, func_8003E984, func_80070730 and func_80075A84.
+ *
+ * @par Environment path
+ * Cheap 3D length estimate: the absolute components are sorted and the result
+ * is max + (mid + min) / 4, with no multiply or root. Callers are
+ * func_8001A644, func_8003E984, gComputeEffectEndPoint (func_80070730) and
+ * gRunPolygonPass (func_80075A84), which use it for range checks. It is
+ * shared distance math, not specific to the camera or level construction.
  */
-s32 func_80019F54(s32 *vector)
+s32 gApproxVectorLength(s32 *vector)
 {
     s32 a;
     s32 b;

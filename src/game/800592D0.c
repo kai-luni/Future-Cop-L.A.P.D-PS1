@@ -52,12 +52,12 @@ extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
 extern void func_800536B4(s32 *near, s32 *far);
-extern s32 func_80095C30(s32 x, s32 y);
+extern s32 gAtan2(s32 x, s32 y) __asm__("func_80095C30");
 extern void gBuildRotationMatrixVariant() __asm__("func_80018DC0");
 extern void gTransformToViewSpace(struct Unk178DC *object, s32 arg1) __asm__("func_800178DC");
 extern void gGteLoadMatrix(void *arg0) __asm__("func_80010750");
 extern void gGteTransformVerticesV0(void *arg0, void *arg1, s32 arg2) __asm__("func_800101D4");
-extern s32 func_80019E70(s16 *point, s32 margin);
+extern s32 gTestFrustumMargin(s16 *point, s32 margin) __asm__("func_80019E70");
 extern void gProjectVertexBatch(void *arg0, void *arg1, void *arg2, s32 arg3) __asm__("func_8001047C");
 void gDrawOtherPlayerArrow(struct Unk592D0 *arg0) __asm__("func_800592D0");
 
@@ -153,7 +153,7 @@ void gDrawOtherPlayerArrow(struct Unk592D0 *arg0)
     table = gPlayerEntities;
     __asm__("" : "=r"(table) : "0"(table));
     other = table[index];
-    angle = func_80095C30(other->x - height_input, other->z - arg0->z);
+    angle = gAtan2(other->x - height_input, other->z - arg0->z);
     anglearg = (angle << 12) >> 12;
     __asm__("" : "=r"(anglearg) : "0"(anglearg));
     zero = 0;
@@ -166,7 +166,7 @@ void gDrawOtherPlayerArrow(struct Unk592D0 *arg0)
     __asm__("" : "=r"(afbase) : "0"(afbase));
     afptr = (u8 *)(afbase - 0x50C0);
     gGteTransformVerticesV0(afptr, frame.point, 1);
-    if ((func_80019E70((s16 *)frame.point, 0x400) & 0xFF) != 2) {
+    if ((gTestFrustumMargin((s16 *)frame.point, 0x400) & 0xFF) != 2) {
         return;
     }
     gProjectVertexBatch(afptr, frame.point, frame.unkA8, 7);

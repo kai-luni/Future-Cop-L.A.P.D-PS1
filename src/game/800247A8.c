@@ -6,14 +6,14 @@ struct Unk247A8 {
     s32 unk4;
 };
 
-extern struct Unk247A8 gActionRecords[2] __asm__("D_800A0AA0");
+extern struct Unk247A8 gMapOpenPanelAction[2] __asm__("D_800A0AA0");
 extern struct Unk247A8 D_800A0AB0[2];
 extern struct Unk247A8 D_800A0AC0[2];
 extern struct Unk247A8 D_800A0AD0[2];
 extern struct Unk247A8 D_800A0AE0[2];
-extern struct Unk247A8 D_800A0AF0[2];
-extern struct Unk247A8 gPanelPhaseTable[2] __asm__("D_800A0B00");
-extern struct Unk247A8 gPanelChoiceTable[2] __asm__("D_800A0B10");
+extern struct Unk247A8 gMapDigit2Action[2] __asm__("D_800A0AF0");
+extern struct Unk247A8 gMapDigit3Action[2] __asm__("D_800A0B00");
+extern struct Unk247A8 gMapDigit4Action[2] __asm__("D_800A0B10");
 extern struct Unk247A8 gBackActionRecord[2] __asm__("D_800A0B20");
 
 extern u8 gPresetIndexPerPort[] __asm__("D_8009FA98");
@@ -59,8 +59,8 @@ void func_800247A8(void)
     D_8009F664 = 2;
 
     for (i = 0; i < 2; i++) {
-        gActionRecords[i].unk0 = 0x40000;
-        gActionRecords[i].unk4 = 2;
+        gMapOpenPanelAction[i].unk0 = 0x40000;
+        gMapOpenPanelAction[i].unk4 = 2;
         D_800A0AB0[i].unk0 = 0x40000000;
         D_800A0AB0[i].unk4 = 2;
         D_800A0AC0[i].unk0 = 0x80000000;
@@ -70,19 +70,19 @@ void func_800247A8(void)
         D_800A0AE0[i].unk0 = 0x20000000;
         D_800A0AE0[i].unk4 = 2;
         if (gPresetIndexPerPort[i] & 2) {
-            D_800A0AF0[i].unk0 = 0x1000000;
-            gPanelPhaseTable[i].unk0 = 0x8000000;
-            gPanelChoiceTable[i].unk0 = 0x4000000;
+            gMapDigit2Action[i].unk0 = 0x1000000;
+            gMapDigit3Action[i].unk0 = 0x8000000;
+            gMapDigit4Action[i].unk0 = 0x4000000;
             gBackActionRecord[i].unk0 = 0x400000;
         } else {
-            D_800A0AF0[i].unk0 = 0x4000000;
-            gPanelPhaseTable[i].unk0 = 0x400000;
-            gPanelChoiceTable[i].unk0 = 0x1000000;
+            gMapDigit2Action[i].unk0 = 0x4000000;
+            gMapDigit3Action[i].unk0 = 0x400000;
+            gMapDigit4Action[i].unk0 = 0x1000000;
             gBackActionRecord[i].unk0 = 0x8000000;
         }
-        D_800A0AF0[i].unk4 = 2;
-        gPanelPhaseTable[i].unk4 = 2;
-        gPanelChoiceTable[i].unk4 = 2;
+        gMapDigit2Action[i].unk4 = 2;
+        gMapDigit3Action[i].unk4 = 2;
+        gMapDigit4Action[i].unk4 = 2;
         gBackActionRecord[i].unk4 = 2;
     }
 }

@@ -6,10 +6,12 @@ struct Resource {
     struct Resource *next;
 };
 
-extern struct Resource *gResourceList __asm__("D_8009F5B8");
-extern struct Resource *gListTailFlag __asm__("D_8009F5BC");
+extern struct Resource *gResourceListHead __asm__("D_8009F5B8");
+extern struct Resource *gResourceListTail __asm__("D_8009F5BC");
 
 extern void func_80019AF8(struct Resource *resource);
+void gReleaseAllResources(void) __asm__("func_80019BA4");
+
 
 /**
  * @brief Releases every node of the resource registry D_8009F5B8/D_8009F5BC,
@@ -42,18 +44,27 @@ extern void func_80019AF8(struct Resource *resource);
  *
  * @par Callers
  * Confirmed: func_800249BC, func_80024D14 (global subsystem reset, step 24).
+ *
+ * @par Environment path
+ * Releases every node of the resource registry D_8009F5B8 through
+ * func_80019AF8, which runs the node's release callback at +0x8, unlinks it
+ * and frees it, then forces head D_8009F5B8 and tail D_8009F5BC to 0. Callers
+ * are gUnloadFrontEndSubsystems (func_800249BC) and gResetMissionSubsystems
+ * (func_80024D14), so it runs once per front-end unload or mission reset.
+ * Nodes are added to this registry by func_80019A74, e.g. the 'RPNS' handler
+ * func_8004D924.
  */
-void func_80019BA4(void)
+void gReleaseAllResources(void)
 {
     struct Resource *node;
     struct Resource *current;
 
-    node = gResourceList;
+    node = gResourceListHead;
     while (node != 0) {
         current = node;
         node = node->next;
         func_80019AF8(current);
     }
-    gResourceList = 0;
-    gListTailFlag = 0;
+    gResourceListHead = 0;
+    gResourceListTail = 0;
 }

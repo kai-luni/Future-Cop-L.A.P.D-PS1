@@ -33,7 +33,7 @@ extern UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern UnkFC90Obj *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern void func_8005A190(UnkFC90Sub *sub, s32 index, s32 value);
-extern void func_8003BA50(UnkFC90Obj *obj, s32 value);
+extern void gFlagQuartileChange(UnkFC90Obj *obj, s32 value) __asm__("func_8003BA50");
 extern void func_8006BE90(UnkFC90Obj *obj, s32 index, s32 value, s32 flag);
 extern void func_8006BDFC(UnkFC90Obj *obj, s32 index);
 
@@ -164,7 +164,7 @@ void func_8002FC90(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4)
                 temp8 = 0x40000;
                 __asm__("" : "+r"(temp8));
                 if ((obj->unk24 & temp8) == 0) {
-                    func_8003BA50(obj, old);
+                    gFlagQuartileChange(obj, old);
                 }
             }
         }

@@ -11,7 +11,7 @@ typedef struct {
 } Vec3;
 
 extern s32 func_8001A4E8(s32 *a, s32 *b);
-extern void func_8001A180(s32 *v);
+extern void gNormalizeVector(s32 *v) __asm__("func_8001A180");
 
 /**
  * @brief Solves an aim direction by marching a ray toward the target and
@@ -98,7 +98,7 @@ void gSolveLeadDirection(Vec3 *target, Vec3 *out, s32 arg2, s32 arg3,
     p.x -= d.x;
     p.y -= d.y;
     p.z -= d.z;
-    func_8001A180((s32 *)&p);
+    gNormalizeVector((s32 *)&p);
 
     *out = p;
 }

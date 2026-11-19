@@ -31,7 +31,7 @@ struct UnkFB90Global {
 };
 
 extern struct UnkFB90Node *gListHeads[7] __asm__("D_800A1070");
-extern struct UnkFB90Global *gNodeCList __asm__("D_8009F30C");
+extern struct UnkFB90Global *gDeferredSpawnList __asm__("D_8009F30C");
 
 extern void func_8003CA80(void *object);
 extern void gFreeBlock(void *object) __asm__("func_800181D4");
@@ -89,14 +89,14 @@ void func_8003FB90(void *object_, s32 kind_)
         }
     }
 
-    entry = gNodeCList;
+    entry = gDeferredSpawnList;
     while (entry != 0) {
         next = entry->next;
         if (entry->unk10 == object && entry->unk04 == kind) {
             if (previous != 0) {
                 previous->next = next;
             } else {
-                gNodeCList = next;
+                gDeferredSpawnList = next;
             }
             entry->next = 0;
             gFreeBlock(entry);

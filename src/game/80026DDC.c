@@ -1,8 +1,10 @@
 // Categories: Game Engine > Front-End > Map Screen | Platform > Scratchpad
 #include "game/types.h"
 
-extern u32 gHookInstallFlag __asm__("D_8009FAD8");
-extern void func_800267C8(void);
+extern u32 gSavedStackPointer __asm__("D_8009FAD8");
+extern void gUpdateMapScreenView(void) __asm__("func_800267C8");
+void gRunMapScreenOnScratch(void) __asm__("func_80026DDC");
+
 
 /**
  * @brief Runs the map-screen row update on a stack in the scratchpad.
@@ -26,8 +28,20 @@ extern void func_800267C8(void);
  * @par Callers
  * Confirmed: func_80027510 (0x8002790C, 0x80027B1C) with (game, slot, paused, menu mode).
  * Unknown: one call at 0x800273B0 from a routine that is not in the matching set.
+ *
+ * @par Environment path
+ * Inline-assembly trampoline: it pushes $ra, saves $sp in D_8009FAD8, moves
+ * the stack to 0x1F8003F0 at the top of the scratchpad, calls
+ * gUpdateMapScreenView (func_800267C8) with the four argument registers
+ * untouched, then restores the stack and $ra. gRunSessionFrame
+ * (func_80027510) calls it at 80027510.c:247 and :286 for player 0/1 whose
+ * view flag (bit 0/bit 1) is set, in place of the normal 3D gRunRegionPass,
+ * and gRunSoloSessionFrame (func_800271A4) at 800271A4.c:187; so it runs
+ * every frame while a player has the map screen open. The same D_8009FAD8
+ * slot is used by the sibling trampolines func_80026D1C, func_80026D5C and
+ * func_80026E5C, so these must not nest.
  */
-void func_80026DDC(void)
+void gRunMapScreenOnScratch(void)
 {
     __asm__ volatile(
         "addiu $sp, $sp, -0x4\n\t"

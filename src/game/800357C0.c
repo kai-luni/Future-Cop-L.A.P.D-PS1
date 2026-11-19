@@ -81,7 +81,7 @@ extern s32 func_80019668(void);
 extern void func_80033608(struct Self *self, void *anim);
 extern void func_800330E8(struct Self *self);
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
-extern void func_800193F8(struct Vec3 *axis, struct Basis *basis);
+extern void gBuildBasisFromAxis(struct Vec3 *axis, struct Basis *basis) __asm__("func_800193F8");
 extern s32 func_800331CC();
 extern s32 func_8003532C();
 extern s32 func_80032F3C();

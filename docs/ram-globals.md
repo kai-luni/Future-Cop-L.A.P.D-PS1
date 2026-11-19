@@ -100,7 +100,7 @@ sich nicht auf einen Begriff bringen lässt.
 | `D_8009F588` | `gCameraList` | `void *` | Kopf der Liste der Transform-Sätze; wird beim Init auf 0 gesetzt und beim Durchlaufen verkettet. **Bestätigt.** | `func_8001774C`, `func_80017994` |
 | `D_8009F58C` | `gNextCameraId` | `s32` | Fortlaufende ID für Transform-Sätze (`node->id = gNextCameraId++`). **Bestätigt.** | `func_80017994` |
 | `D_8009F214` | `gRandSeed` | `s32` | Zustand des Zufallszahlengenerators (Multiplikation mit 16807, Park-Miller). **Bestätigt.** | `func_80019720` |
-| `D_8009F5B8` | `gResourceList` | `struct Resource *` | Kopf der einfach verketteten Ressourcenliste; wird in mehreren Funktionen durchlaufen und am Ende freigegeben. **Bestätigt.** | `func_80019AA8`, `func_800198DC` |
+| `D_8009F5B8` | `gResourceListHead` | `struct Resource *` | Kopf der einfach verketteten Ressourcenliste; wird in mehreren Funktionen durchlaufen und am Ende freigegeben. **Bestätigt.** | `func_80019AA8`, `func_800198DC` |
 | `D_800A07A8` | `gSoundSystem` | `struct SoundSystem` | Globaler Zustand des Klangsystems mit Bank-Liste und Anzahl. **Bestätigt.** | `func_80021508` |
 | `D_8009F92C` | `gSaveProfileImage` | `u8 *` | 0x948 Byte großer Profilkontext des Speicherkartenpfads: Live-Kopf (0x200 Byte) bei `+0`, Zustandsbytes `+0x200`…`+0x208`, 0x678-Byte-Kartenabbild bei `+0x20C`, Optionsblock `+0x40C`, zehn 0x70-Byte-Sätze `+0x424`, Karten-Treiberzeiger `+0x904`. **Bestätigt.** | `func_8007F9CC`, `func_80081204` |
 
@@ -305,20 +305,20 @@ Die Variablen, die den Weg **Hauptmenü → 1 Player → Precinct Assault → Au
 
 ## Steuerung, Skript-VM, Panels und CD-Treiber: die große Runde
 
-Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-Vergleich (`D_8009BEF4`, `D_8009C810`, `D_8009F614`) und bleiben stehen. Außerdem sind vier Namen aus der vorigen Runde nachgetragen, die in der Doku fehlten: `gDeferredList` (`D_8009F708`), `gDeferredPool` (`D_8009F70C`), `gPendingMessageMask` (`D_8009F7A8`) und `gRegistryTable` (`D_8009F800`).
+Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-Vergleich (`D_8009BEF4`, `D_8009C810`, `D_8009F614`) und bleiben stehen. Außerdem sind vier Namen aus der vorigen Runde nachgetragen, die in der Doku fehlten: `gDeferredRegList` (`D_8009F708`), `gDeferredRegPool` (`D_8009F70C`), `gPendingMessageMask` (`D_8009F7A8`) und `gRegistryTable` (`D_8009F800`).
 
 ### Objekt- und Renderhelfer
 
 | Global (RAM) | C-Name | Datentyp | Bedeutung |
 |---|---|---|---|
 | `D_8009F348` | `gPlayerAvatarSprite` | — | Sprite je Spieler, gezeichnet bei y 74, sobald `player+0xAE` positiv ist. |
-| `D_8009F374` | `gPendingMotion` | — | Startet eine Bewegung, wenn gesetzt; sonst erhält das Objekt einen Callback. |
-| `D_8009F388` | `gColourWord` | — | Farbwort: `(Wert >> 8) \| 0x3A000000`, Farbe ist `field40 >> 8`. |
+| `D_8009F374` | `gSpawnMotionContext` | — | Startet eine Bewegung, wenn gesetzt; sonst erhält das Objekt einen Callback. |
+| `D_8009F388` | `gTracerEdgeColour` | — | Farbwort: `(Wert >> 8) \| 0x3A000000`, Farbe ist `field40 >> 8`. |
 | `D_8009F45C` | `gAtlasTable` | — | Atlas mit `count`; der Index muss darin liegen. |
 | `D_8009F460` | `gSpriteAtlasBlock` | — | Wird vor dem Neuaufbau freigegeben; bei Typ ungleich 2 wird ein Flag gesetzt. |
 | `D_8009F468` | `gFontBankTable` | — | Zeiger auf den **aktiven Front-End-Menüschirm**: `[0]` ist der Cursor der Gruppe 0, `+2` die Eintragszahl, `+0x24` der Elternschirm, `+0x28` die Eintragstabelle. Der C-Name stammt aus einer früheren Runde und ist falsch; die Rolle ist über 37 Units belegt. |
 | `D_8009F508` | `gReleaseDoneFlag` | — | Wird im Completion-Callback gesetzt. |
-| `D_8009F5BC` | `gListTailFlag` | — | Bei ungleich 0 wird hinter dem Ende angehängt, sonst Kopf und Ende gesetzt. |
+| `D_8009F5BC` | `gResourceListTail` | — | Bei ungleich 0 wird hinter dem Ende angehängt, sonst Kopf und Ende gesetzt. |
 | `D_8009FABC` | `gCharTable` | `u8[]` | 0x100-Byte-Zeichentabelle; der Zeiger rückt um 16 weiter. |
 | `D_8009F284` | `gGlobalTick` | — | Globaler Tick, gegen den die Frame-Helfer messen. |
 | `D_8009FA30` | `gFrameTickBase` | — | Wartet mindestens 5 Ticks seit diesem Wert und aktualisiert das Frame-Delta. |
@@ -330,11 +330,11 @@ Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-V
 |---|---|---|---|
 | `D_8009F2CC` | `gLabelRecord` | — | Datensatz mit drei Labelwerten (`unk04/unk08/unk0C`). |
 | `D_8009F2F4` | `gBannerString` | — | Banner-String für `func_80049100(…, 0x41, 0x14, 1)`. |
-| `D_8009F30C` | `gNodeCList` | — | Liste der NodeC-Einträge; passende werden entlinkt und freigegeben. |
-| `D_8009F310` | `gSavedChunkBase` | — | Zwischengespeicherte Basis, wird auf 0 zurückgesetzt und über die Chunks iteriert. |
-| `D_8009F318` | `gMessage10Counter` | — | Zähler der Meldung 10. |
-| `D_8009F31C` | `gCellAbortFlag` | — | Wird gesetzt, solange „keine Zelle" gilt. |
-| `D_8009F320` | `gNodeListHead` | — | Kopf der Knotenliste, Durchlauf mit vorab gesichertem `next`. |
+| `D_8009F30C` | `gDeferredSpawnList` | — | Liste der NodeC-Einträge; passende werden entlinkt und freigegeben. |
+| `D_8009F310` | `gSpawnTableRow` | — | Zwischengespeicherte Basis, wird auf 0 zurückgesetzt und über die Chunks iteriert. |
+| `D_8009F318` | `gLightObjectCount` | — | Zähler der Meldung 10. |
+| `D_8009F31C` | `gBatchSpawnActive` | — | Wird gesetzt, solange „keine Zelle" gilt. |
+| `D_8009F320` | `gAnchorNodeList` | — | Kopf der Knotenliste, Durchlauf mit vorab gesichertem `next`. |
 | `D_8009F328` | `gConeTestFlag` | — | Nur bei ungleich 0 läuft der Kegeltest. |
 | `D_8009F329` | `gBandTestFlag` | — | Bit 0 aktiviert den Bandtest. |
 | `D_8009FA48` | `gChainedNodes` | — | Vier Knoten der Schrittweite 0x6014, angehängt beim Aufbau. |
@@ -346,8 +346,8 @@ Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-V
 | `D_8009FAAC` | `gFixedPool2` | — | Zweiter Pool: Größe `a2`, Anzahl `a3`. |
 | `D_8009FA4C` | `gFixedPool3` | — | Dritter Pool: Größe `a4`, Anzahl `a5`. |
 | `D_8009F800` | `gRegistryTable` | — | 0x80-Slot-Registertabelle (Nachtrag). |
-| `D_8009F708` | `gDeferredList` | — | Einfach verkettete Liste `{next, object}` (Nachtrag). |
-| `D_8009F70C` | `gDeferredPool` | — | Pool aus 256 Acht-Byte-Knoten (Nachtrag). |
+| `D_8009F708` | `gDeferredRegList` | — | Einfach verkettete Liste `{next, object}` (Nachtrag). |
+| `D_8009F70C` | `gDeferredRegPool` | — | Pool aus 256 Acht-Byte-Knoten (Nachtrag). |
 | `D_8009F7A8` | `gPendingMessageMask` | — | Bitmaske ausstehender Meldungen, je erledigtem Eintrag gelöscht (Nachtrag). |
 | `D_8009F7C8` | `gClipLimitOffset` | — | Wird von 200 abgezogen, wenn die Klemmung greift. |
 | `D_8009F7D0` | `gStreamDescriptorPtr` | — | Zeiger auf den Stream-Deskriptor. |
@@ -369,13 +369,13 @@ Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-V
 | `D_8009F680` | `gWasSuspended` | — | Wird auf 1 gesetzt, wenn Menümodus 0 oder `unk312` gesetzt ist. |
 | `D_8009F698` | `gResourceSubChunkPtr` | — | Veröffentlichter `0x74544F53`-Subchunk-Zeiger einer `0x43746F73`-Ressource. |
 | `D_8009F69C` | `gRegisterGuard` | — | Einzige Wächterprüfung auf 0, danach geradliniger Rumpf. |
-| `D_8009FA6C` | `gPanelSelection` | — | Auswahl im Panel; Code 0 verlässt es mit Sound 0x3E und `-1`. |
+| `D_8009FA6C` | `gOpenPanelCount` | — | Auswahl im Panel; Code 0 verlässt es mit Sound 0x3E und `-1`. |
 | `D_8009FA80` | `gSlotIndexLimit` | — | Vergleichswert, bevor der Index weiterläuft. |
 | `D_8009FA88` | `gListTailBranch` | — | Einzelne Verzweigung: Anhängen am Ende oder Kopf-Initialisierung. |
 | `D_8009FAB8` | `gHudMode2` | — | Bei Wert 2 wird das HUD aktiviert. |
 | `D_8009FAC0` | `gPanelSoundIds` | — | Sound-Ids 0x2F/0x30 des Panels, danach mischt `func_80025F58` neu. |
 | `D_8009FAC8` | `gFrameSwitch` | — | Frame-Umschalter; bei 0 kehrt der Aufruf sofort zurück. |
-| `D_8009FAD8` | `gHookInstallFlag` | — | Wird genullt, danach installiert `func_8001E87C` die Geräte-Hooks. |
+| `D_8009FAD8` | `gSavedStackPointer` | — | Wird genullt, danach installiert `func_8001E87C` die Geräte-Hooks. |
 | `D_8009F870` | `gIdleDeadline` | — | Leerlauf-Frist, um 0x2328 Ticks vorgestellt. |
 | `D_8009F874` | `gOverlayDelay` | — | Wird auf `-1` gesetzt, nachdem die Fläche gesetzt wurde. |
 | `D_8009F904` | `gSnapshotResult` | — | Momentaufnahme, danach zwei `func_8001EB2C`-Aufrufe und Vergleich mit 1. |
@@ -388,9 +388,9 @@ Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-V
 | `gFocusPositions` | `gFocusPositions` | — | Wird genullt, bevor `func_80017C68(0x168, …)` die Pools anlegt. |
 | `D_8009F9B0` | `gStreamPreemptFlag` | — | Markiert beim Verdrängen abgebaute Stream-Voices. |
 | `D_8009F9CC` | `gDisplaySetupToggle` | — | Wechselt zwischen 0 und 1 nach dem Display-Aufbau. |
-| `D_800A0AA0` | `gActionRecords` | — | Fünf Acht-Byte-Aktionsdatensätze (Tastenmaske, Phase). |
-| `D_800A0B00` | `gPanelPhaseTable` | — | Phasenfeld je Slot, an `func_800260B8` übergeben. |
-| `D_800A0B10` | `gPanelChoiceTable` | — | Zweite Auswahltabelle, liefert Auswahl 4. |
+| `D_800A0AA0` | `gMapOpenPanelAction` | — | Fünf Acht-Byte-Aktionsdatensätze (Tastenmaske, Phase). |
+| `D_800A0B00` | `gMapDigit3Action` | — | Phasenfeld je Slot, an `func_800260B8` übergeben. |
+| `D_800A0B10` | `gMapDigit4Action` | — | Zweite Auswahltabelle, liefert Auswahl 4. |
 | `D_800A0B20` | `gBackActionRecord` | — | Zurück-Aktion (Phase 0), schließt das Panel. |
 | `D_800A085C` | `gSubsystemTable` | — | Tabelle, die beim Hochfahren des Subsystems einmal gefüllt wird. |
 | `D_800A09D4` | `gMode1IndexBase` | — | Indexbasis für Modus 1. |
@@ -402,10 +402,10 @@ Hundert weitere Globals in **einem** Commit. Drei Kandidaten kippten beim Byte-V
 | `D_800A1160` | `gVoiceTable` | — | 52-Byte-Einträge, nur für nicht-negative Kanalindizes. |
 | `D_800A1920` | `gPositionAngleTable` | — | Zieltabelle für Position und Winkel. |
 | `D_800A19A0` | `gGlyphEntryTable` | — | Einträge, deren `glyphs`-Zeiger `func_800181D4` freigibt. |
-| `D_800A2630` | `gRampVariantTable` | — | Verlaufsvariante des k==6-Zweigs. |
+| `D_800A2630` | `gTilePatternBuf` | — | Verlaufsvariante des k==6-Zweigs. |
 | `D_800A2931` | `gSlfxFlagByte` | `u8` | SLFX-Flag, beim Zerlegen der Karten-Chunks geschrieben. |
-| `D_800A2940` | `gCellDataOutput` | — | Nimmt Ausgabezeiger und Metadaten der Zelldaten auf. |
-| `D_800A3190` | `gScenePositionPairs` | — | Positionspaare, die `func_80066C9C` für die Szene schreibt. |
+| `D_800A2940` | `gHeightGridDesc` | — | Nimmt Ausgabezeiger und Metadaten der Zelldaten auf. |
+| `D_800A3190` | `gViewGroundAnchors` | — | Positionspaare, die `func_80066C9C` für die Szene schreibt. |
 | `D_800A31A0` | `gObjectKeyTable` | — | Schlüsseltabelle, über die `func_80063194` Objekte auflöst. |
 | `D_800A3578` | `gSlotRecordTable` | — | Je Slot drei `{marker, id}`-Paare. |
 
@@ -508,9 +508,9 @@ Fünfzig weitere Globals in **einem** Commit. Vier Kandidaten aus der CD-/Verzei
 |---|---|---|---|
 | `D_8009F930` | `gMissionTable` | `s32 *` | 0x104-Byte-Tabelle, deren erstes Wort eine 32-Bit-Maske ist. |
 | `D_8009F934` | `gMissionState` | `s32` | Nimmt den Zustand der Missions-Boot-Kette `func_80024A24` auf. |
-| `D_8009F938` | `gBucketArray` | `Bucket *` | Eimer-Array-Zeiger, über `func_80083A10` indiziert. |
-| `D_8009F93C` | `gMissionGridWidth` | `int` | Rasterbreite in Zellen. |
-| `D_8009F940` | `gMissionGridHeight` | `int` | Rasterhöhe in Zellen. |
+| `D_8009F938` | `gCellBucketGrid` | `Bucket *` | Eimer-Array-Zeiger, über `func_80083A10` indiziert. |
+| `D_8009F93C` | `gCellGridWidth` | `int` | Rasterbreite in Zellen. |
+| `D_8009F940` | `gCellGridHeight` | `int` | Rasterhöhe in Zellen. |
 | `D_8009F950` | `gWorkAreaBlock` | `void *` | Zielblock samt Arbeitsbereich beim Allokieren. |
 
 ### Datei- und Verzeichnistabellen
@@ -531,7 +531,7 @@ Fünfzig weitere Globals in **einem** Commit. Vier Kandidaten aus der CD-/Verzei
 | `D_8009C8CC` | `gIndexEntryTable` | `int[]` | Einträge für Indizes unter 28. |
 | `D_8009C94C` | `gLowByteEntryTable` | `int[]` | Einträge für Low-Byte-Werte unter sieben. |
 | `D_8009C814` | `gCardRetryCount` | `s32` | Fehlversuchszähler der Karteninitialisierung; nach dem fünften greift der Inline-Fehlerpfad. |
-| `D_800A0C70` | `gOccupancyColumns` | `s32[]` | Belegungs-Spaltenbyte je Region und Slot. |
+| `D_800A0C70` | `gSlotSpawnDescs` | `s32[]` | Belegungs-Spaltenbyte je Region und Slot. |
 
 ## Effekt-Renderer, Lichtraster, Frontend und Pad-Treiber
 
@@ -541,8 +541,8 @@ Fünfzig weitere Globals in **einem** Commit. Zwei Kandidaten fielen beim Byte-V
 
 | Global (RAM) | C-Name | Datentyp | Bedeutung |
 |---|---|---|---|
-| `D_800A2950` | `gWorldClipRect` | `s32[4]` | Welt-Rechteck für x/z mit 0x800 Rand, gegen das Positionen geprüft werden. |
-| `D_800A6578` | `gMapGrid` | `u32[]` | 256-Spalten-Zellenraster, dessen Zellwort per Zeigerrechnung adressiert wird. |
+| `D_800A2950` | `gMapGridBounds` | `s32[4]` | Welt-Rechteck für x/z mit 0x800 Rand, gegen das Positionen geprüft werden. |
+| `D_800A6578` | `gSpawnTypeFlags` | `u32[]` | 256-Spalten-Zellenraster, dessen Zellwort per Zeigerrechnung adressiert wird. |
 | `D_800A7040` | `gSpawnRecordMap` | `s32[2][256]` | Spawn-Datensatz je Karte; beim Eintragen wird das Raster-Byte gelöscht. |
 | `D_800A8DC0` | `gPlayerCollisionCandidates` | `Entry[]` | Kandidatenliste für Spieler-Kollisionen gegen den Gegenspieler. |
 | `D_800A8EA8` | `gPendingEntryList` | `Request[]` | Ausstehende Einträge; beim Verwerfen wird der Completion-Callback (`+0x0C`) genullt. |
@@ -551,8 +551,8 @@ Fünfzig weitere Globals in **einem** Commit. Zwei Kandidaten fielen beim Byte-V
 | `D_800A2290` | `gSideStepTable` | `u8[][8]` | Tabelle `[Seite][Schritt]` für den Verfolger-Kamerapfad. |
 | `D_800A22F0` | `gDomeEffectBlock` | `Block *[4]` | Angehängter Effektblock (0x1B0 Bytes) mit Kuppelnetz und zwölf Bewegungs-Einträgen. |
 | `D_800A2300` | `gEffectKeyTable` | `Entry[]` | Schlüssel-Tabelle; das Feld `unk02` landet in `obj->unk20`. |
-| `D_800A3538` | `gObjectPool` | `Pool` | Objektpool, den `func_8006EDC4` verwaltet. |
-| `D_800A353C` | `gObjectListHead` | `PoolNode *` | Kopf der Objektliste, je Eintrag einmal aufgerufen. |
+| `D_800A3538` | `gTracerPool` | `Pool` | Objektpool, den `func_8006EDC4` verwaltet. |
+| `D_800A353C` | `gTracerActiveList` | `PoolNode *` | Kopf der Objektliste, je Eintrag einmal aufgerufen. |
 | `D_800A3320` | `gOperandStack` | `s32[]` | Globaler Operandenstapel der Skript-VM. |
 | `D_800A3340` | `gVmRecordTable` | `Entry[]` | Datensätze der VM; Rückgabe ist der Zeiger auf den Treffer oder 0. |
 | `D_8009F9A4` | `gVmCountdowns` | `s32[32]` | 32 Countdown-Einträge der Skript-VM, um `amount` dekrementiert und bei 0 geklemmt. |
@@ -569,7 +569,7 @@ Fünfzig weitere Globals in **einem** Commit. Zwei Kandidaten fielen beim Byte-V
 | `D_8009F710` | `gShadowThreshold` | `s16` | Schwelle, unterhalb derer Schattenhalbwörter gesetzt werden. |
 | `D_8009F798` | `gFragmentFreeList` | `Node *` | Freiliste der Fragmentknoten. |
 | `D_8009F7B0` | `gFreedPointer` | `s32` | Zeiger, der beim Aufräumen freigegeben und genullt wird. |
-| `D_8009F7C4` | `gControlMaskWord` | `u32` | Zweites Steuerwort des Layout-Maskenpfads. |
+| `D_8009F7C4` | `gPadWord2` | `u32` | Zweites Steuerwort des Layout-Maskenpfads. |
 
 ### Frontend-Zustände
 
@@ -664,8 +664,8 @@ Fünfzig weitere Globals, wieder in **einem** Commit. Zwei davon mussten in `800
 | Global (RAM) | C-Name | Datentyp | Bedeutung |
 |---|---|---|---|
 | `D_8009F27C` | `gVolatileBase` | `volatile s32` | Flüchtige Basisadresse für die Kanalarbeit. |
-| `D_8009F26C` | `gChannelEnableFlag` | `u8` | Aktivierungs-Byte; nur bei ungleich 0 läuft der Slot-Durchlauf. |
-| `D_8009F640` | `gStreamStatePair` | `s32[2]` | Zwei Zustandswörter, beim Aufsetzen genullt. |
+| `D_8009F26C` | `gCvkSystemActive` | `u8` | Aktivierungs-Byte; nur bei ungleich 0 läuft der Slot-Durchlauf. |
+| `D_8009F640` | `gCshdNodeSlots` | `s32[2]` | Zwei Zustandswörter, beim Aufsetzen genullt. |
 | `D_8009F278` | `gSpuBufferPtr` | `s32` | SPU-Puffer, angefordert mit `func_80097B28(0xC000)`. |
 | `D_8009F648` | `gStreamCommandState` | `s32` | Bei `1` beginnt/stoppt der Aufrufer den Stream, sonst andere Aktion. |
 | `D_8009F280` | `gActiveStreamId` | `s32` | Aktive Stream-Id, an `func_8002A31C` mit Lautstärke 0 übergeben. |
@@ -706,7 +706,7 @@ Fünfundfünfzig weitere Globals, wieder in **einem** Commit umbenannt. Bei alle
 | `D_8009DEFC` | `gTimeoutStamp` | `s32` | Ablaufmarke (aktueller Tick + 0xF0) für ausstehende Aufrufe. | `800951D8.c:11` |
 | `D_8009DF00` | `gPendingDeadline` | `s32` | Gegenstück zur Marke; genullt bedeutet „nichts ausstehend". | `800951D8.c:12` |
 | `D_800A63D0` | `gGpuLibSavedRa` | `s32` | Merker für den Rücksprungadress-Speicher der Bibliotheksroutine. | `80095DB0.c:20` |
-| `D_8009E0A0` | `gRatioTable` | `s16[]` | Verhältnis-Tabelle, in die das Ergebnis einer Divisionsschutz-Prüfung indiziert. | `80095C30.c:57` |
+| `D_8009E0A0` | `gAtanTable` | `s16[]` | Verhältnis-Tabelle, in die das Ergebnis einer Divisionsschutz-Prüfung indiziert. | `80095C30.c:57` |
 | `D_8009F990` | — | — | Merker für die eingehende Rücksprungadresse im MDEC-Pfad. **Nur Inline-Asm, kein C-Name setzbar.** | `80096520.c:11` |
 
 Debug-Texte, die der GPU-Wrapper `func_80092CF4` ausgibt:
@@ -763,7 +763,7 @@ Debug-Texte, die der GPU-Wrapper `func_80092CF4` ausgibt:
 
 | Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
 |---|---|---|---|---|
-| `D_800A2970` | `gClipRect` | `Grid` | Rechteck `(x, y, Breite, Höhe)`, auf dem der Durchlauf arbeitet. | `80062614.c:19` |
+| `D_800A2970` | `gCellClipRect` | `Grid` | Rechteck `(x, y, Breite, Höhe)`, auf dem der Durchlauf arbeitet. | `80062614.c:19` |
 | `D_8009F820` | `gCellMap` | `s32` | Zellenkarte, ein Byte je Zelle, 0 = leer. | `80062614.c:20` |
 | `D_800A2990` | `gCellNodeArray` | `Node[]` | Knoten-Array, indiziert über das Byte der Zellenkarte. | `80062614.c:21` |
 | `D_8009F818` | `gCellEntityList` | `s32[2]` | Liste der Entitäten, die Ansicht 0 bei gesetztem Bit anhängt, Grenze 256. | `80062874.c:46` |
@@ -806,14 +806,14 @@ Fünfunddreißig Globals aus dem Grafikbereich, alle einzeln byte-genau geprüft
 | `D_8009F7D8` | `gTextureDescriptorTable` | `void **` | Zeiger auf das Textur-Deskriptor-Array, beim Missionsstart genullt. |
 | `D_8009F76A` | `gTexBankVramY` | `u16` | VRAM-Y-Basis der Texturbank (Upload bei `y = Wert + 0x100`, `x = 0x380`). |
 | `D_8009F778` | `gSpriteRegionTable` | `void *` | Regions-Tabelle je Sprite: `+ idx*8 + 4` liefert `(u0, v0, Breite, Höhe, Textur-Id)`. |
-| `D_8009FAA0` | `gScreenUvBase` | `u32` | UV-Basiswort für die drei Bildschirm-Vertizes (`<< 16 | 0x101`). |
+| `D_8009FAA0` | `gGreyTexpageSub` | `u32` | UV-Basiswort für die drei Bildschirm-Vertizes (`<< 16 | 0x101`). |
 | `D_800A3548` | `gHeaderPrimitiveRecord` | `u8[]` | Kopf-Primitiv, das aus den Clip-Flag-Bytes des Modells gefüllt wird. |
 | `D_8009B234` | `gModelTextureTable` | `Texture[]` | Textur-Einträge je Modell; das Feld `+0x72` (s8) wählt den Index, `< 0` bedeutet keine Textur. |
 | `D_800A6F38` | `gTileDefTable` | `u8[]` | 100-Einträge-Tabelle der Tile-Definitionen; `func_80065CA8(tile, index, x, y)` zeichnet daraus. |
-| `D_8009F80C` | `gTileMapTable` | `Other *` | Tile-Karte; `->cells` wird auf 0..53 geklemmt und in `gTileDefTable` nachgeschlagen. |
+| `D_8009F80C` | `gMapGridHeader` | `Other *` | Tile-Karte; `->cells` wird auf 0..53 geklemmt und in `gTileDefTable` nachgeschlagen. |
 | `D_8009F808` | `gTileBlockTable` | `int *` | Block-Tabelle: `block = [((slot >> 2) & 0x3FFF)]`. |
 | `D_8009B1A4` | `gTileShapeTable` | `s32[]` | Formcode je Tile: `>> 3` wählt im Switch die Vertex-Menge `v[0..7]` (zwei Varianten). |
-| `D_8009F83C` | `gTileColourWord` | `u16` | Farbwort, das aus den Farb-Bytes des Tile-Records gesetzt wird. |
+| `D_8009F83C` | `gTileUvOffset` | `u16` | Farbwort, das aus den Farb-Bytes des Tile-Records gesetzt wird. |
 | `D_8009F360` | `gRampFillCounter` | `s32` | Füllzähler eines Farbverlaufs; bis `0x14` wird die Farbe durchgeschrieben. |
 | `D_800A1970` | `gPaletteTable` | `u16[]` | Farbpalette; Slot 0 wird mit RGB `(0x1F, 0x1F, 0x1F)` belegt. |
 | `D_8009AAE0` | `gGlyphTable` | `u16[]` | 0x14 Einträge, vom Text-Renderer beim Ausgeben der Glyphen gelesen. |
@@ -896,7 +896,7 @@ Nicht benannt bleiben `D_8009F548` (`3DHS`), `D_8009F54C` (`3DTA`), `D_8009F550`
 |---|---|---|---|---|
 | `D_8009F668` | `gRequestListHead` | `s32` | Kopf der doppelt verketteten Anforderungsliste, an die `func_80024EC8` neue Knoten anhängt. **Bestätigt.** | `func_80024EC8` |
 | `D_8009F66C` | `gRequestListTail` | `s32` | Ende derselben Liste; neue Knoten werden hinten eingefügt. **Bestätigt.** | `func_80024EC8` |
-| `D_8009F9F4` | `gLastSpawnSlot` | `s32` | Slot, den der Spawn-Pfad zuletzt belegt hat und später zurückmeldet. **Wahrscheinlich.** | `func_80024EC8` |
+| `D_8009F9F4` | `gRequestOffsetBias` | `s32` | Slot, den der Spawn-Pfad zuletzt belegt hat und später zurückmeldet. **Wahrscheinlich.** | `func_80024EC8` |
 
 ## 3D-Pipeline und Renderpuffer
 
@@ -940,7 +940,7 @@ Diese Gruppe bildet den Kern der 3D-Ausgabe: Transformationspuffer, Clip-Flags, 
 |---|---|---|---|---|
 | `D_80076A0C` | `gExceptionVectorBackup` | `unsigned int[]` | Acht Wörter Sicherung des ursprünglichen Exception-Vektors `0x80`, die `func_800772E0` zurückschreibt. **Bestätigt.** | `func_80077340` |
 | `D_8009AFB4` | `gRadiusTable` | `s16[]` | Halbwort-Tabelle der Radien für die Ringdarstellung; drei Linien-Primitives werden daraus gebaut. **Bestätigt.** | `func_8005A828` |
-| `D_8009AFE8` | `gVertexIndexTable` | `u32[]` | Vier-Byte-Tabelle der Vertex-Indizes. **Bestätigt.** | `func_800648E8` |
+| `D_8009AFE8` | `gTileCornerIndices` | `u32[]` | Vier-Byte-Tabelle der Vertex-Indizes. **Bestätigt.** | `func_800648E8` |
 | `D_8009B314` | `gSegmentFlagTable` | `u8[]` | Ein Flag-Byte je Segmentindex, adressiert über den Parameter der Segmentabfrage. **Bestätigt.** | `func_800770A8` |
 | `D_8009C8C0` | `gCdTargetLocation` | `unsigned char[]` | Vier-Byte-Puffer für die Zielposition des CD-ROM-Laufwerks. **Bestätigt.** | `func_8008E040` |
 | `D_8009DD64` | `gDmaCallbackTable` | `s32[8]` | Rückruftabelle je DMA-Kanal; wird beim Init über `func_80091F38` genullt. **Bestätigt.** | `func_80091CC0` |
@@ -955,7 +955,7 @@ Diese Gruppe bildet den Kern der 3D-Ausgabe: Transformationspuffer, Clip-Flags, 
 | `D_8009F7A0` | `gEntityIdCounter` | `s32` | Fortlaufende Entity-Id, wird pro Allokation vorab erhöht und beim Init genullt. **Bestätigt.** | `func_8004D3FC` |
 | `D_8009F9DC` | `gLiveNodeCount` | `s32` | Zähler der lebenden Listeneinträge; beim Init genullt und pro Freigabe erniedrigt. **Bestätigt.** | `func_8004AB4C` |
 | `D_8009F7B8` | `gPlacementSlotCount` | `s32` | Anzahl belegter Slots im Platzierungs-Header; beim Missionsstart auf 0 gesetzt. **Bestätigt.** | `func_8005130C` |
-| `D_8009F38C` | `gModelNodeList` | `struct Unk734B0 *` | Kopf der Modell-/Szenengraph-Liste; wird beim Missionsstart geleert. **Bestätigt.** | `func_800734B0` |
+| `D_8009F38C` | `gBeamNodeList` | `struct Unk734B0 *` | Kopf der Modell-/Szenengraph-Liste; wird beim Missionsstart geleert. **Bestätigt.** | `func_800734B0` |
 | `D_8009F6F8` | `gMapZoneList` | `struct Unk31Node *` | Kopf der Liste der Karten-Trigger und Zonen; beim Missionsstart geleert. **Bestätigt.** | `func_80031984` |
 | `D_8009F840` | `gScriptVmDisabled` | `u8` | Sperrflag für die Bytecode-Skriptmaschine; ungleich 0 hält die Ausführung an. **Bestätigt.** | `func_80069D58` |
 | `D_8009FA50` | `gSceneFrameCounter` | `u32` | Frame-Zähler der Szene, inline über `lui`/`lw` geladen. **Wahrscheinlich.** | `func_800437E8` |

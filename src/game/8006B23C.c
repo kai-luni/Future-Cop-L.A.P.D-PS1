@@ -112,15 +112,15 @@ extern void func_80046CF0(struct Unk6B23C *arg0, u8 arg1);
 extern void gTransformPartVertex(void *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_80019668(void);
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
-extern s32 func_8001AB00(s32 *a, s32 *b);
+extern s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
 extern s32 func_800684AC(s32 *a, s32 *b, s32 *c, s32 d, s32 e);
 extern void func_800410BC(void *a, s16 b, s32 c, struct Unk6B23C *d);
-extern void *func_80073500(Vec6B23C *pos, s32 a1, s32 a2, s32 a3);
+extern void *gAllocPositionNode(Vec6B23C *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80073500");
 extern void func_8007377C(void *a0, void *a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13);
 extern void func_8006A524(struct Unk6B23C *a0, void *a1, Vec6B23C *a2, void *a3, void *a4);
-extern void func_8005BDE4(struct Unk6B23C *a0, struct Unk6B23C *a1, struct Unk6B23C_C *a2, void *a3, s32 a4, void *a5);
+extern void gAttachNearPlayerEffect(struct Unk6B23C *a0, struct Unk6B23C *a1, struct Unk6B23C_C *a2, void *a3, s32 a4, void *a5) __asm__("func_8005BDE4");
 extern void func_8006F0E8(s32 a0, s32 a1, s32 a2, s32 a3, Vec6B23C *a4, Vec6B23C *a5);
-extern s32 func_800402DC(void *owner, u8 column, s32 arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
 #define MUL16(out, a, b) \
     __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
@@ -325,7 +325,7 @@ void gBeamPartUpdate(struct Unk6B23C *arg0, s32 index, s32 arg2)
             vb8.y = v58.y - c->vec.y;
             vb8.z = v58.z - c->vec.z;
 
-            if (func_8001AB00((s32 *)&vb8, (s32 *)&v38) < 0) {
+            if (gVectorDot((s32 *)&vb8, (s32 *)&v38) < 0) {
                 __asm__("" : : "r"(d));
                 v38.x = c->vec.x - v38.x;
                 v38.y = c->vec.y - v38.y;
@@ -389,14 +389,14 @@ skip_callback:
     if (s3->type == 0x0B) {
         __asm__("" : "=r"(s5) : "0"(s5));
         if (s1 != 0) {
-            node1 = func_80073500(&v58, 0, s1->unk48, 0);
-            node2 = func_80073500(&v38, 0, (s1->unk4A & 8) ? 0 : s1->unk48, 0);
+            node1 = gAllocPositionNode(&v58, 0, s1->unk48, 0);
+            node2 = gAllocPositionNode(&v38, 0, (s1->unk4A & 8) ? 0 : s1->unk48, 0);
             func_8007377C(node1, node2, s1->unk36, s1->unk38,
                           s1->unk3B, s1->unk3C, s1->unk3D, s1->unk3E,
                           s1->unk40, s1->unk42, s1->unk44, 0, 0, 1);
         } else {
-            node1 = func_80073500(&v58, 0, 0x18, 0);
-            node2 = func_80073500(&v38, 0, 0, 0);
+            node1 = gAllocPositionNode(&v58, 0, 0x18, 0);
+            node2 = gAllocPositionNode(&v38, 0, 0, 0);
             func_8007377C(node1, node2, 0x20, 1,
                           0x7F, 0x7F, 0xFF, 0x2AA, 0x4000, -0x3000, 0, 0, 0, 1);
         }
@@ -415,7 +415,7 @@ skip_callback:
                           D_8009F384, &v58, &v38);
         }
     } else if (s3->type == 0x0E) {
-        func_8005BDE4(self, self, c, (void *)((u8 *)b + 0x178), 0,
+        gAttachNearPlayerEffect(self, self, c, (void *)((u8 *)b + 0x178), 0,
                       (void *)((u8 *)s3 + 0x0C));
         fp = 0;
         id = 0;
@@ -426,7 +426,7 @@ skip_callback:
         local.unk49 = 5;
         local.unk00 = 0x800;
         if (s3->unk1A != 0) {
-            func_800402DC(0, s3->unk1A, (s32)&local, 1, 0);
+            gSpawnTypeAtOwner(0, s3->unk1A, (s32)&local, 1, 0);
         }
     }
 
@@ -434,6 +434,6 @@ skip_callback:
         local.unk48 = 0;
         local.unk49 = 0x60;
         local.unk44 = instance;
-        func_800402DC(0, id, (s32)&local, 1, 0);
+        gSpawnTypeAtOwner(0, id, (s32)&local, 1, 0);
     }
 }

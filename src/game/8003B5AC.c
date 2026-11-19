@@ -13,7 +13,7 @@ struct Entry {
     struct Item items[1];
 };
 
-extern struct Entry *gOccupancyColumns[] __asm__("D_800A0C70");
+extern struct Entry *gSlotSpawnDescs[] __asm__("D_800A0C70");
 
 /**
  *  @brief Reads a mode-selected byte from an indexed entry item.
@@ -38,7 +38,7 @@ extern struct Entry *gOccupancyColumns[] __asm__("D_800A0C70");
  */
 u8 func_8003B5AC(u8 index, u8 slot, s32 mode)
 {
-    struct Entry *entry = gOccupancyColumns[index];
+    struct Entry *entry = gSlotSpawnDescs[index];
 
     if (entry == 0) {
         return 0;
@@ -61,5 +61,5 @@ c0:
 c2:
     return entry->items[slot].unk1;
 tail:
-    return gOccupancyColumns[index]->items[slot].unk2;
+    return gSlotSpawnDescs[index]->items[slot].unk2;
 }

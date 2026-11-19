@@ -45,6 +45,7 @@ extern s32 gTestEntityOverlap(struct Entity *self, void *data) __asm__("func_800
 extern s32 func_80031120(struct Entity *self, void *data, s32 arg);
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, void *data) __asm__("func_8002AD58");
 extern void func_80031004(struct Entity *self);
+extern void gFollowAttachTarget(struct Entity *self) __asm__("func_800313F0");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *jtbl_8001123C[];
 
@@ -122,7 +123,7 @@ m6:
         func_80031004(self);
     }
     if (self->unk16 == 0x26) {
-        func_800313F0(self);
+        gFollowAttachTarget(self);
     }
 mzero:
     return 0;

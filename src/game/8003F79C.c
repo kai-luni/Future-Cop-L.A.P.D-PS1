@@ -3,13 +3,13 @@
 
 struct FixedPool;
 
-extern s32 gOccupancyColumns[] __asm__("D_800A0C70");
+extern s32 gSlotSpawnDescs[] __asm__("D_800A0C70");
 extern s32 gSpawnRecordMap[2][256] __asm__("D_800A7040");
 extern s32 gListHeads[] __asm__("D_800A1070");
 
-extern s32 gSavedChunkBase __asm__("D_8009F310");
+extern s32 gSpawnTableRow __asm__("D_8009F310");
 extern s32 gPendingSpawnList __asm__("D_8009F314");
-extern struct FixedPool *gDeferredPool __asm__("D_8009F70C");
+extern struct FixedPool *gDeferredRegPool __asm__("D_8009F70C");
 
 extern void func_8006EDC4(void);
 extern void func_8005E1BC(void);
@@ -45,7 +45,7 @@ void func_8003F79C(void)
     s32 j;
 
     for (i = 0xFF; i >= 0; i--) {
-        gOccupancyColumns[i] = 0;
+        gSlotSpawnDescs[i] = 0;
     }
 
     for (j = 0; j < 2; j++) {
@@ -55,10 +55,10 @@ void func_8003F79C(void)
         }
     }
 
-    gSavedChunkBase = 0;
+    gSpawnTableRow = 0;
     func_8006EDC4();
     func_8005E1BC();
-    gDeferredPool = func_800194DC(0x100, 8, 1);
+    gDeferredRegPool = func_800194DC(0x100, 8, 1);
     gPendingSpawnList = 0;
 
     for (i = 6; i >= 0; i--) {

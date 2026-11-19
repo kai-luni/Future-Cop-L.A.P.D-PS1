@@ -72,7 +72,7 @@ extern void gUpdateLightDirection(void) __asm__("func_80013C80");
 extern void func_80026D1C(void);
 extern void func_80026D5C(void);
 extern void func_80026D9C(s32 arg0);
-extern void func_80026DDC(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gRunMapScreenOnScratch(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80026DDC");
 extern void gRunRegionPass(s32 arg0, s32 arg1) __asm__("func_80026E1C");
 extern void func_80026E5C(s32 arg0, s32 arg1);
 extern void func_80026F68(s32 arg0, s32 arg1);
@@ -184,7 +184,7 @@ void gRunSoloSessionFrame(void)
     }
 
     if (flags & 1) {
-        func_80026DDC((s32)gPlayerEntities, 0, flags & 0x20, 0);
+        gRunMapScreenOnScratch((s32)gPlayerEntities, 0, flags & 0x20, 0);
     } else {
         gUpdateLightDirection();
         func_80026E5C(0, (s32)gPlayerEntities);

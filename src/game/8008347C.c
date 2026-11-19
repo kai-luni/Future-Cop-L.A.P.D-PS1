@@ -3,7 +3,7 @@
 
 extern s32 *gMissionTable __asm__("D_8009F930");
 extern void *gMissionState __asm__("D_8009F934");
-extern s32 gBucketArray __asm__("D_8009F938");
+extern s32 gCellBucketGrid __asm__("D_8009F938");
 extern s32 gMissionClearFlag __asm__("D_8009F944");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
@@ -50,7 +50,7 @@ void func_8008347C(void)
     s32 *p;
 
     gMissionClearFlag = 0;
-    gBucketArray = 0;
+    gCellBucketGrid = 0;
     gMissionState = func_800194DC(0xFA, 0x5C, 2);
     p = gAllocMemory(0x104, 2);
     gMissionTable = p;

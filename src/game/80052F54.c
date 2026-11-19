@@ -23,7 +23,7 @@ struct Game {
 };
 
 extern struct Game *gGameSession __asm__("D_8009FA94");
-extern s32 func_80095900(s32 value);
+extern s32 gSqrt12(s32 value) __asm__("func_80095900");
 
 /**
  * @brief Landing-impact damage curve scaled by object and difficulty.
@@ -79,7 +79,7 @@ s32 func_80052F54(struct Object *obj, s32 val)
         if (val <= 0x8000) {
             FMUL(val, val, 0x9CC4);
         } else if (val <= 0xC000) {
-            FMUL(temp, val, func_80095900(val) << 2);
+            FMUL(temp, val, gSqrt12(val) << 2);
             FMUL(val, temp, 0xDDB3);
         } else {
             FMUL(val, val, val);

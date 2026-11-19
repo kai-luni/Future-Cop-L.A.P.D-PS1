@@ -7,7 +7,9 @@ extern int gGuidedProjectileUpdate();
 
 #define FMULN(d, a, b) __asm__("nop\n\tnop\n\tmult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 
-extern s32 func_80095900(s32 value);
+extern s32 gSqrt12(s32 value) __asm__("func_80095900");
+s32 gNormalizeGetLength(s32 *vec) __asm__("func_8001A314");
+
 
 /**
  * @brief Vector length with in-place normalisation, range-folded for the
@@ -36,8 +38,19 @@ extern s32 func_80095900(s32 value);
  * @par Callers
  * gGuidedProjectileUpdate, func_8004B180, func_80053A74, func_800549F0, func_800569EC,
  * func_8006EEF8, func_80070E48.
+ *
+ * @par Environment path
+ * Normalises a three-component vector in place to 16.16 unit length and
+ * returns its original length: it pre-scales small (max < 0x200) or large (>
+ * 0x800000) vectors by 2^10, takes gSqrt12 (func_80095900) of the 16.16
+ * square sum, multiplies each component by 0x80000000 / (len * 2) and returns
+ * len * 4 corrected for the pre-scale; a near-zero vector is left unchanged.
+ * gUpdateChaseCamera (func_800569EC, 800569EC.c:496) uses it to measure the
+ * eye-offset delta before stepping it with func_8001AB78; gTickHoverPhysics,
+ * gGuidedProjectileUpdate, func_8004B180, func_800549F0, func_8006EEF8 and
+ * func_80070E48 use it for motion.
  */
-s32 func_8001A314(s32 *vec)
+s32 gNormalizeGetLength(s32 *vec)
 {
     s32 x, y, z, ax, ay, az, d, m, sum, len, t, scale, r;
     s32 p0, p1, p2;
@@ -66,7 +79,7 @@ s32 func_8001A314(s32 *vec)
     FMUL(p0, x, x);
     FMUL(p1, y, y);
     FMUL(p2, z, z);
-    len = func_80095900(p0 + p1 + p2);
+    len = gSqrt12(p0 + p1 + p2);
     t = len << 2;
     if (t >= 2) {
         scale = (s32)(0x80000000U / (u32)(t >> 1));

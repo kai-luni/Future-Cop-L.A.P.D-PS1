@@ -73,11 +73,13 @@ struct Unk3D680 {
 };
 
 extern s32 gIdentityMatrix[9] __asm__("D_8009AA38");
-extern struct Unk3D680 *gNodeListHead __asm__("D_8009F320");
+extern struct Unk3D680 *gAnchorNodeList __asm__("D_8009F320");
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern u32 *func_8003B3D8(u32 column, u32 row);
+struct Unk3D680 *gCreateModelNode(struct Unk3D680Source *source, u8 type, s32 row, struct Unk3D680Parent *parent, s32 arg4, u8 arg5) __asm__("func_8003D680");
+
 
 /**
  * @brief Allocates and initialises one 0x4C-byte map-cell object: transform,
@@ -133,8 +135,22 @@ extern u32 *func_8003B3D8(u32 column, u32 row);
  *
  * @par Callers
  * func_8003FE0C, func_800402DC, func_8004B5F8.
+ *
+ * @par Environment path
+ * Allocates a 0x4C-byte node (tag 1) and links it at the head of D_8009F320:
+ * with a source object it stores the source at +0x04, points the transform
+ * +0x34 at source +0x28, copies source +0x92/+0x93 and asks the source
+ * handler (message 0x10) for +0x42; without one it copies a 3x3 basis from
+ * the parent (+0x49 bit 8) or the identity D_8009AA38 into +0x04..+0x24 and
+ * the parent position (bit 4) into +0x28..+0x30. It sets the scale +0x3C from
+ * the transform block (+0x40 >> 4), the parent's +0x00 or 0x100, and sets
+ * +0x39 = 4 when the spawn record D_800A7040[row][type] and its status word
+ * (func_8003B3D8) exist and arg5, record flag 0x40 or status bit 4 is set.
+ * Callers are func_800402DC, func_8003FE0C and func_8004B5F8; the list
+ * D_8009F320 is walked by gDrawNodeListModels (func_8003CF6C), func_8003D0AC
+ * and func_8003D240.
  */
-struct Unk3D680 *func_8003D680(struct Unk3D680Source *source, u8 type, s32 row,
+struct Unk3D680 *gCreateModelNode(struct Unk3D680Source *source, u8 type, s32 row,
                                struct Unk3D680Parent *parent, s32 arg4, u8 arg5)
 {
     struct Unk3D680 *object;
@@ -233,7 +249,7 @@ struct Unk3D680 *func_8003D680(struct Unk3D680Source *source, u8 type, s32 row,
 
     object->unk3A = 0;
     object->unk3E = 0;
-    object->next = gNodeListHead;
-    gNodeListHead = object;
+    object->next = gAnchorNodeList;
+    gAnchorNodeList = object;
     return object;
 }

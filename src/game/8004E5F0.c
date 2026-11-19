@@ -23,7 +23,7 @@ typedef struct Entity {
 #define FMUL(a, b) ({ s32 r_; __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 #define FMULU(a, b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 
-extern s32 func_80095900(s32 value);
+extern s32 gSqrt12(s32 value) __asm__("func_80095900");
 
 /**
  * @brief Range-and-facing score used by the AI target acquisition.
@@ -86,7 +86,7 @@ s32 func_8004E5F0(Entity *src, Entity *tgt, s32 maxDist, s32 threshold)
         return -1;
     }
 
-    len = func_80095900(FMUL(dx, dx) + FMUL(dz, dz));
+    len = gSqrt12(FMUL(dx, dx) + FMUL(dz, dz));
     dist = len << 2;
     if (maxDist <= dist) {
         return -1;

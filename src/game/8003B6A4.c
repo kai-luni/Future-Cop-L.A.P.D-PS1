@@ -36,7 +36,7 @@ struct NodeC {
 };
 
 extern struct NodeA *gListHeads[7] __asm__("D_800A1070");
-extern struct NodeC *gNodeCList __asm__("D_8009F30C");
+extern struct NodeC *gDeferredSpawnList __asm__("D_8009F30C");
 extern void gFreeBlock(void *arg) __asm__("func_800181D4");
 extern void func_8003CA80(struct Unk3CA80 *object);
 
@@ -94,14 +94,14 @@ void func_8003B6A4(s32 arg_)
         }
     }
 
-    cur = gNodeCList;
+    cur = gDeferredSpawnList;
     while (cur != 0) {
         next = cur->next;
         if (cur->unk10 == arg) {
             if (prev != 0) {
                 prev->next = next;
             } else {
-                gNodeCList = next;
+                gDeferredSpawnList = next;
             }
             cur->next = 0;
             gFreeBlock(cur);

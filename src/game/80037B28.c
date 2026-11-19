@@ -1,8 +1,8 @@
 // Categories: Physics > Motion | Gameplay > AI > Target Selection | Gameplay > Entity Update
 #include "game/types.h"
 
-extern s32 func_8001AB00(s32 *a, s32 *b);
-extern s32 func_8001A100(s32 *vector);
+extern s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
+extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 
 #define MULU16(out, a, b) \
     __asm__ volatile("multu\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
@@ -142,8 +142,8 @@ void func_80037B28(s32 a0, Object *self, s32 unused_arg2) {
         return;
     }
 
-    s0 = func_8001AB00(self->unk78, diff);
-    a2 = func_8001A100(diff);
+    s0 = gVectorDot(self->unk78, diff);
+    a2 = gVectorLength3D(diff);
 
     if (a2 >= 16) {
         if (s0 > 0) {

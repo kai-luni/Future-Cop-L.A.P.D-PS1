@@ -39,12 +39,12 @@ struct Menu {
 /* Union alias: renaming the declarator changes the codegen, so the retail name stays. */
 extern union { struct Game *ptr; u32 raw; } D_8009FA58;
 extern struct Game *gPlayerEntities_arr[] __asm__("D_8009FA58_arr");
-extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C;
+extern struct { struct Game *ptr; u32 pad[2]; } gPlayerEntity2 __asm__("D_8009FA5C");
 extern s32 gSlotVoiceHandle[] __asm__("D_8009F678");
 extern struct { struct Game *ptr; u32 pad[2]; } D_8009FA5C_b, D_8009FA5C_c, D_8009FA5C_d, D_8009FA5C_e;
 extern s32 gScreenState __asm__("D_8009FA00");
 extern struct Menu *gGameSession __asm__("D_8009FA94");
-extern s32 gPanelSelection __asm__("D_8009FA6C");
+extern s32 gOpenPanelCount __asm__("D_8009FA6C");
 extern u32 gSceneFrameCounter __asm__("D_8009FA50");
 extern s32 gDemoPlayback __asm__("D_8009FA84");
 extern u8 gWasSuspended __asm__("D_8009F680");
@@ -74,7 +74,7 @@ extern void func_80026E5C(s32, struct Game *);
 extern void func_80026D5C(void);
 extern void gSelectViewRecord(s32) __asm__("func_80017B60");
 extern void gUpdateLightDirection(void) __asm__("func_80013C80");
-extern void func_80026DDC(struct Game *, s32, s32, s32);
+extern void gRunMapScreenOnScratch(struct Game *, s32, s32, s32) __asm__("func_80026DDC");
 extern void func_8001C214(u32, s32, s32, s32, s32, u8);
 extern void gRunRegionPass(s32, struct Game *) __asm__("func_80026E1C");
 extern void func_80047F30(struct Game *);
@@ -204,11 +204,11 @@ void gRunSessionFrame(void)
     }
     if (!(D_8009FA58.ptr->unk24 & 0x1000000) && D_8009FA58.ptr->unkAC->unk310 != 0) {
         flags |= 1;
-        if (gGameSession->unk5C == 0 || gPanelSelection != 0) flags |= 0x20;
+        if (gGameSession->unk5C == 0 || gOpenPanelCount != 0) flags |= 0x20;
     }
-    if (!(D_8009FA5C.ptr->unk24 & 0x1000000) && D_8009FA5C.ptr->unkAC->unk310 != 0) {
+    if (!(gPlayerEntity2.ptr->unk24 & 0x1000000) && gPlayerEntity2.ptr->unkAC->unk310 != 0) {
         flags |= 2;
-        if (gGameSession->unk5C == 0 || gPanelSelection != 0) flags |= 0x20;
+        if (gGameSession->unk5C == 0 || gOpenPanelCount != 0) flags |= 0x20;
     }
     if (gSceneFrameCounter >= 2 && (func_8001EF34(0) == 0 || func_8001EF34(1) == 0) && gDemoPlayback == 0) {
         flags |= 0x20;
@@ -231,20 +231,20 @@ void gRunSessionFrame(void)
         gRunEntityWorldTick(gFrameDelta);
     }
     if (D_8009FA58.ptr != 0 && !(flags & 1)) func_80026E5C(0, D_8009FA58.ptr);
-    if (D_8009FA5C.ptr != 0 && !(flags & 2)) func_80026E5C(1, D_8009FA5C.ptr);
+    if (gPlayerEntity2.ptr != 0 && !(flags & 2)) func_80026E5C(1, gPlayerEntity2.ptr);
     if (!(flags & 0x20)) func_80026D5C();
     if (D_8009FA58.ptr != 0) {
         old_flags = 1;
-        game2 = D_8009FA5C.ptr;
+        game2 = gPlayerEntity2.ptr;
         if (game2 != 0 && game2->unkAC->unk324 > 0) {
             old_flags = game2->unk24 & 0x20;
             game2->unk24 |= 0x20;
-            D_8009FA5C.ptr->unkDC->unk24 |= 0x20;
+            gPlayerEntity2.ptr->unkDC->unk24 |= 0x20;
         }
         gSelectViewRecord(D_8009FA58.ptr->unkAC->unkAC);
         gUpdateLightDirection();
         if (flags & 1) {
-            func_80026DDC(D_8009FA58.ptr, 0, flags & 0x20, gGameSession->unk5C == 1);
+            gRunMapScreenOnScratch(D_8009FA58.ptr, 0, flags & 0x20, gGameSession->unk5C == 1);
             func_8001C214(1, 0x13E, 0, 2, 0x1E0, 0);
         } else {
             gRunRegionPass(0, D_8009FA58.ptr);
@@ -259,8 +259,8 @@ void gRunSessionFrame(void)
             func_80049100(banner - 0xD0C, 0x41, 0x14, 1);
         }
         if (!old_flags) {
-            D_8009FA5C.ptr->unk24 &= ~0x20;
-            D_8009FA5C.ptr->unkDC->unk24 &= ~0x20;
+            gPlayerEntity2.ptr->unk24 &= ~0x20;
+            gPlayerEntity2.ptr->unkDC->unk24 &= ~0x20;
         }
         if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && gDemoPlayback == 0) {
             text = gLoadingTextPtr;
@@ -274,7 +274,7 @@ void gRunSessionFrame(void)
         func_800485AC(0);
         func_8001BBAC();
         old_flags2 = 1;
-        if (D_8009FA5C.ptr != 0) {
+        if (gPlayerEntity2.ptr != 0) {
             if (D_8009FA58.ptr->unkAC->unk324 > 0) {
                 old_flags2 = D_8009FA58.ptr->unk24 & 0x20;
                 D_8009FA58.ptr->unk24 |= 0x20;
@@ -283,7 +283,7 @@ void gRunSessionFrame(void)
             gSelectViewRecord(D_8009FA5C_b.ptr->unkAC->unkAC);
             gUpdateLightDirection();
             if (flags & 2) {
-                func_80026DDC(D_8009FA5C_c.ptr, 1, flags & 0x20, gGameSession->unk5C == 1);
+                gRunMapScreenOnScratch(D_8009FA5C_c.ptr, 1, flags & 0x20, gGameSession->unk5C == 1);
             } else {
                 gRunRegionPass(1, D_8009FA5C_d.ptr);
                 func_80047F30(D_8009FA5C_e.ptr);

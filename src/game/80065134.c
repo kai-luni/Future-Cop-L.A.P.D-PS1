@@ -5,7 +5,7 @@ typedef unsigned char u8;
 typedef struct { int x, y, z; } Vec;
 void gEmitCellGeometry(void *obj, void *list, int a, int b, unsigned int index) __asm__("func_80065134");
 
-extern void func_800648E8(void *, u32, Vec *);
+extern void gEmitCellPolygon(void *, u32, Vec *) __asm__("func_800648E8");
 /**
  * @brief Walks a packed minimap cell list and emits the visible cells as
  *        geometry, clipping against two bounds.
@@ -112,6 +112,6 @@ call:
         __asm__("" : "+r"(t));
         arg = arg + t;
         __asm__("" : "+r"(arg));
-        func_800648E8((u8 *)list + arg * 8, word, obj);
+        gEmitCellPolygon((u8 *)list + arg * 8, word, obj);
     } while (count < 16);
 }

@@ -20,6 +20,8 @@ struct Unk31Node {
 
 extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeMapZoneList(void) __asm__("func_80031990");
+
 
 /**
  * @brief Frees all nodes in the map trigger/zone linked list D_8009F6F8 and clears its head.
@@ -43,8 +45,17 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  *
  * @par Callers
  * Confirmed: func_80024D14 (0x80024D90, during between-mission global subsystem reset) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Frees every zone node of gMapZoneList (D_8009F6F8) with gFreeBlock
+ * (func_800181D4), reading next at +0x24 before each free, then clears the
+ * head. Its only caller is gResetMissionSubsystems (func_80024D14), which
+ * also runs gFreeCameraList, so it is the teardown counterpart of the zone
+ * builder func_800319D4; func_80031984 only zeroes the head at mission boot
+ * without freeing. The port can treat the zone list as owned by the mission
+ * and dropped as a whole.
  */
-void func_80031990(void)
+void gFreeMapZoneList(void)
 {
     struct Unk31Node *node;
     struct Unk31Node *next;

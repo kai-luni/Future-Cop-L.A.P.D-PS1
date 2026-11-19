@@ -28,7 +28,7 @@ extern s32 gEntityBaseHandler(s32, void *, void *, s32) __asm__("func_8002AD58")
 extern s32 func_800382B4(s32, struct Self *, void *, s32);
 extern void gUpdateMountedTurret(struct Child *, void *) __asm__("func_80038A00");
 extern void func_8004D958(struct Child *);
-extern void func_8003BA50(struct Child *, s32);
+extern void gFlagQuartileChange(struct Child *, s32) __asm__("func_8003BA50");
 
 /**
  * @brief Message dispatcher for entity class 28, managing a container object and up to 4 child entities.
@@ -126,7 +126,7 @@ s32 func_800398EC(s32 message, struct Self *object, void *data, s32 extra)
                     if (p->child[0]->kind && !(p->child[0]->flags & 0x40000)) {
                         previous = p->child[0]->value;
                         p->child[0]->value = self->value;
-                        func_8003BA50(p->child[0], previous);
+                        gFlagQuartileChange(p->child[0], previous);
                     } else {
                         p->child[0]->value = self->value;
                     }

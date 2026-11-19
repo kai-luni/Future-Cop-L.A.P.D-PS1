@@ -64,7 +64,7 @@ extern u16 gEffectUvV[] __asm__("D_800A8EA6");
 
 extern s32 func_80018580(s32 arg0, s32 arg1);
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
-extern void func_800694C8(s32 *outX, s32 *outY, s32 arg2, s32 arg3);
+extern void gWorldToMinimapCell(s32 *outX, s32 *outY, s32 arg2, s32 arg3) __asm__("func_800694C8");
 extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend);
 
 /**
@@ -261,7 +261,7 @@ ready3:
                 break;
             }
             if ((d->unk24 & 0x20) == 0) {
-                func_800694C8(&x, &y, d->unk58, d->unk50);
+                gWorldToMinimapCell(&x, &y, d->unk58, d->unk50);
                 callColor = 0xFFFF;
                 width = 4;
                 sum = x;
@@ -279,7 +279,7 @@ ready3:
         drawObj = gSinglePlayerEntity;
         if (drawObj != 0) {
             if (gGameSession->unk5C == 1) {
-                func_800694C8(&x, &y, drawObj->unk58, drawObj->unk50);
+                gWorldToMinimapCell(&x, &y, drawObj->unk58, drawObj->unk50);
                 callColor = 0xFFFF;
                 width = 4;
                 sum = x;
@@ -316,7 +316,7 @@ ready3:
                 pos = sub;
                 for (; i < 8; i++, pos = (struct Unk5AB8CSub *)((u8 *)pos + 4)) {
                     if ((bits & 2) != 0) {
-                        func_800694C8(&x, &y, pos->pos[0].x << 9, pos->pos[0].y << 9);
+                        gWorldToMinimapCell(&x, &y, pos->pos[0].x << 9, pos->pos[0].y << 9);
                         palIndex = sub->colors[i];
                         __asm__("" : : "r"(palIndex) : "memory");
                         tileCursor = gPacketCursor;

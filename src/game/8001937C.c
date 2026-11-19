@@ -12,7 +12,9 @@ struct Basis {
 };
 
 extern void gGteCrossProduct(struct Vec3s32 *a, struct Vec3s32 *b, struct Vec3s32 *out) __asm__("func_80010974");
-extern void func_8001A180(struct Vec3s32 *vector);
+extern void gNormalizeVector(struct Vec3s32 *vector) __asm__("func_8001A180");
+void gBuildBasisFromAxisYZ(struct Vec3s32 *axis, struct Basis *basis) __asm__("func_8001937C");
+
 
 /**
  * @brief Builds an orthonormal basis whose third row is the given axis,
@@ -33,13 +35,23 @@ extern void func_8001A180(struct Vec3s32 *vector);
  *
  * @par Callers
  * func_80036E6C.
+ *
+ * @par Environment path
+ * Builds a 3x3 basis whose third row is the axis, with the first row (0,
+ * -axis.z, axis.x) normalised by func_8001A180 and the second row the GTE
+ * cross product axis x row0. Its only caller is gHandleProjectileMsg
+ * (func_80036E6C, 80036E6C.c:152), which uses it instead of func_800193F8
+ * when |axis.x| + |axis.y| < 0x10, i.e. for a direction close to the z axis.
+ * Row 0 is perpendicular to the axis only in that case (their dot product is
+ * axis.z * (axis.x - axis.y)), so the result is orthonormal only for near-z
+ * directions.
  */
-void func_8001937C(struct Vec3s32 *axis, struct Basis *basis)
+void gBuildBasisFromAxisYZ(struct Vec3s32 *axis, struct Basis *basis)
 {
     basis->rows[0].x = 0;
     basis->rows[0].y = -axis->z;
     basis->rows[0].z = axis->x;
-    func_8001A180(&basis->rows[0]);
+    gNormalizeVector(&basis->rows[0]);
     gGteCrossProduct(axis, &basis->rows[0], &basis->rows[1]);
     basis->rows[2] = *axis;
 }

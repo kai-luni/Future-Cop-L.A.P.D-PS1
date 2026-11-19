@@ -9,10 +9,12 @@ struct Unk3C404 {
     s16 unk2A;
 };
 
-extern u32 gSavedChunkBase __asm__("D_8009F310");
+extern u32 gSpawnTableRow __asm__("D_8009F310");
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern u32 *func_8003B3D8(u32 column, u32 row);
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gInstallSpawnRecord(struct Unk3C404 *arg0) __asm__("func_8003C404");
+
 
 /**
  * @brief Installs a spawn record into D_800A7040 and clears its map grid byte.
@@ -36,12 +38,25 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  *
  * @par Callers
  * Confirmed: func_80040DCC (0x80040E44), func_80044770 (0x800447D4), func_8004C884 (0x8004C904), func_8006EAF0 (0x8006EB64), func_800703A8 (0x80070420), func_80073F88 (0x80074008), func_800767E4 (0x8007685C).
+ *
+ * @par Environment path
+ * Installs one copied actor record into the spawn table
+ * D_800A7040[D_8009F310][record +0x14]: it first clears the low byte of the
+ * parallel status word D_800A6578[row][id] returned by func_8003B3D8, frees
+ * any record already in that slot, normalises the state half-words (+0x28 ==
+ * 1 forces +0x2A to 0; +0x2A <= 0 sets +0x2A = 0 and +0x28 = -1) and stores
+ * the pointer. Callers are the seven type registrars func_80040DCC,
+ * func_80044770, func_8004C884, func_8006EAF0, func_800703A8, func_80073F88
+ * and func_800767E4, reached from the 'Cact' loader func_8004D6D4 and the
+ * 'Csfx' stream walker func_8003BFD0 during level loading. The table is read
+ * later by the spawn code (func_8003C2A4, func_8003E984, func_800402DC,
+ * gCreateModelNode func_8003D680 and others) to build live objects.
  */
-void func_8003C404(struct Unk3C404 *arg0)
+void gInstallSpawnRecord(struct Unk3C404 *arg0)
 {
-    *(u8 *)func_8003B3D8(arg0->unk14, gSavedChunkBase) = 0;
-    if (gSpawnRecordMap[gSavedChunkBase][arg0->unk14] != 0) {
-        gFreeBlock(gSpawnRecordMap[gSavedChunkBase][arg0->unk14]);
+    *(u8 *)func_8003B3D8(arg0->unk14, gSpawnTableRow) = 0;
+    if (gSpawnRecordMap[gSpawnTableRow][arg0->unk14] != 0) {
+        gFreeBlock(gSpawnRecordMap[gSpawnTableRow][arg0->unk14]);
     }
     if (arg0->unk28 == 1) {
         arg0->unk2A = 0;
@@ -50,5 +65,5 @@ void func_8003C404(struct Unk3C404 *arg0)
         arg0->unk2A = 0;
         arg0->unk28 = -1;
     }
-    gSpawnRecordMap[gSavedChunkBase][arg0->unk14] = arg0;
+    gSpawnRecordMap[gSpawnTableRow][arg0->unk14] = arg0;
 }

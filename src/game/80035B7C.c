@@ -107,28 +107,28 @@ struct SpawnInfo35B7C {
 extern void gSetModelFrame(struct ModelInstance *instance, s32 frame) __asm__("func_800175F8");
 extern s32 func_8001A13C(s32 *a, s32 *b);
 extern s32 func_8001A4E8(s32 *a, s32 *b);
-extern void func_8001A180(s32 *vector);
-extern s32 func_8001A314(s32 *vector);
-extern s32 func_8001A6F8(s32 *a, s32 *b);
-extern s32 func_8001AB00(s32 *a, s32 *b);
+extern void gNormalizeVector(s32 *vector) __asm__("func_8001A180");
+extern s32 gNormalizeGetLength(s32 *vector) __asm__("func_8001A314");
+extern s32 gEaseVectorQuarter(s32 *a, s32 *b) __asm__("func_8001A6F8");
+extern s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
 extern void gVectorAddScaled(s32 *a, s32 *b, s32 delta, s32 *out) __asm__("func_8001ACA4");
 extern s32 func_800684AC(s32 *a, s32 *b, s32 *out, s32 arg3, s32 arg4);
 extern s32 gGetGroundHeight(s32 *a, s32 b, s32 c, s32 d) __asm__("func_80066F78");
 extern s32 func_80069A38(s32 *a);
 extern void gBuildRotationMatrix(s32 a, s32 b, s32 angle, s32 *out) __asm__("func_800188D0");
-extern void func_80019310(s32 *first, s32 *second, s32 *basis);
+extern void gBuildBasisZFromPair(s32 *first, s32 *second, s32 *basis) __asm__("func_80019310");
 extern void gGteLoadRotation(s32 *basis) __asm__("func_80010820");
 extern void gGteTransformWords(s32 *a, s32 *b, s32 c) __asm__("func_8001006C");
 extern void gGteLoadMatrix(s32 *a) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(s32 *a, s32 *b, s32 c) __asm__("func_80010234");
 extern void gGteCrossProduct(s32 *a, s32 *b, s32 *out) __asm__("func_80010974");
 extern s32 func_80019FCC(s32 *vector);
-extern s32 func_80095900(s32 angle);
+extern s32 gSqrt12(s32 angle) __asm__("func_80095900");
 extern void func_800410BC(s32 *pos, s32 speed, s32 angle, struct Obj35B7C *target);
 extern s32 gEntityBaseHandler(s32 state, struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3) __asm__("func_8002AD58");
 extern void gProjectileInit(struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3) __asm__("func_80035904");
-extern s32 func_800402DC(void *owner, u8 column, s32 arg2, s32 row, s32 arg4);
-extern void func_8003B898(u8 arg0, struct Obj35B7C *self, s32 arg2, s32 arg3, s32 arg4);
+extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
+extern void gSpawnEntitySlotTypes(u8 arg0, struct Obj35B7C *self, s32 arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
 extern void *func_8004E80C(struct Obj35B7C *target, u8 arg1, s16 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
 extern void *gSpawnDirectShot(struct SpawnInfo35B7C *info, struct Model *model, s32 *vec80, s32 *vec70, struct Obj35B7C *unkC8, struct Obj35B7C *s1p, s32 unk24, s32 arg7, s32 arg8, s32 arg9, s32 arg10, u32 unkE4) __asm__("func_8005E47C");
 extern void *func_8006C224(struct Obj35B7C *target, struct Obj35B7C *arg1, s32 arg2, s32 arg3);
@@ -295,7 +295,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
     s32 spE0[3];
 
     if (self->unkE0 == 4) {
-        func_8003B898(self->unk20, self, 0, (self->unk19 >> 3) & 0x1E, 2);
+        gSpawnEntitySlotTypes(self->unk20, self, 0, (self->unk19 >> 3) & 0x1E, 2);
         if (self->unkDD != 0xFF) {
             target = self->unkC8;
             if (target == 0) {
@@ -412,8 +412,8 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
                 vec70[1] += 0x2000;
                 break;
             }
-            func_8001A180(vec70);
-            temp = func_8001AB00((s32 *)((u8 *)self + 0x44), vec70);
+            gNormalizeVector(vec70);
+            temp = gVectorDot((s32 *)((u8 *)self + 0x44), vec70);
             if (temp > -0xEC83) {
                 void *created = gSpawnDirectShot(&info, self->mi.model, vec80, vec70,
                                               self->unkC8, p2, self->unk24, 3, 0, 0, 0,
@@ -421,7 +421,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
                 vecA8[i] = (s32)created;
                 if (created != 0) {
                     if (self->mi.unk4B != 0) {
-                        func_800402DC((void *)vecA8[i], (u8)self->mi.unk4B, 0, 1, 0);
+                        gSpawnTypeAtOwner((void *)vecA8[i], (u8)self->mi.unk4B, 0, 1, 0);
                     }
                 }
             } else {
@@ -453,7 +453,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
         case 2:
             if (*(s32 *)((u8 *)self + 0x54) - (self->unkA2 << 8) >= 0x4001) self->unkE0 = 1;
             { register s32 y __asm__("$3"); s32 c; c = 0x18000; y = self->unk7C; y *= 3; self->unk7C = (y + c) / 4; }
-            func_8001A180(&self->unk78);
+            gNormalizeVector(&self->unk78);
             gGteCrossProduct(&self->unk78, (s32 *)((u8 *)self + 0x2C), &self->unkB4);
             break;
         case 1:
@@ -477,7 +477,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
                 vec30[0] = sp60[0] - *(s32 *)((u8 *)self + 0x50);
                 vec30[1] = sp60[1] - *(s32 *)((u8 *)self + 0x54);
                 vec30[2] = sp60[2] - *(s32 *)((u8 *)self + 0x58);
-                s4 = func_8001A314(vec30);
+                s4 = gNormalizeGetLength(vec30);
                 if (s4 <= 0x7FFF) {
                     if ((p1->unk16 == 1 &&
                          *(s16 *)(*(u8 **)((u8 *)p1 + 0xAC) + 0x324) > 0) ||
@@ -488,7 +488,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
                 }
                 if (self->unkE0 == 3) {
                     vec30[1] += 0xA000;
-                    s4 = func_8001A314(vec30);
+                    s4 = gNormalizeGetLength(vec30);
                 }
                 if (s3 >= s4) {
                     s3 = s4;
@@ -502,11 +502,11 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
                     vec40[0] = vec30[0] - self->unk78;
                     vec40[1] = vec30[1] - self->unk7C;
                     vec40[2] = vec30[2] - self->unk80;
-                    func_8001A6F8(vec30, &self->unk78);
-                    func_8001A180(&self->unk78);
+                    gEaseVectorQuarter(vec30, &self->unk78);
+                    gNormalizeVector(&self->unk78);
                     vec40[1] += 0x2000;
-                    func_8001A180(vec40);
-                    func_8001A6F8(vec40, &self->unkB4);
+                    gNormalizeVector(vec40);
+                    gEaseVectorQuarter(vec40, &self->unkB4);
                 }
             } else {
                 goto zero;
@@ -563,11 +563,11 @@ skip:
         ang &= 0xFFF;
         self->unkD6 = ang;
         gBuildRotationMatrix(0, 0, ang, (s32 *)((u8 *)self + 0x2C));
-        func_80019310((s32 *)((u8 *)self + 0x78), spE0, spB8);
+        gBuildBasisZFromPair((s32 *)((u8 *)self + 0x78), spE0, spB8);
         gGteLoadRotation(spB8);
         gGteTransformWords((s32 *)((u8 *)self + 0x2C), (s32 *)((u8 *)self + 0x2C), 3);
     } else {
-        func_80019310((s32 *)((u8 *)self + 0x78), spE0, (s32 *)((u8 *)self + 0x2C));
+        gBuildBasisZFromPair((s32 *)((u8 *)self + 0x78), spE0, (s32 *)((u8 *)self + 0x2C));
     }
     gGteLoadMatrix((s32 *)((u8 *)self + 0x2C));
     gGteTransformVerticesWide((s32 *)((u8 *)self->mi.model->frames + ((self->mi.frame << 4) + 8)),

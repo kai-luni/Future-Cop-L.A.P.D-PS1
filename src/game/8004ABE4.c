@@ -69,7 +69,7 @@ extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern s32 func_80019668(void);
 extern void gGteLoadRotation(u8 *arg0) __asm__("func_80010820");
 extern void gGteTransformWords(void *arg0, void *arg1, s32 arg2) __asm__("func_8001006C");
-extern void func_8003E984(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+extern void gSpawnObjectFromTable(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) __asm__("func_8003E984");
 s32 gLaunchDebrisObject(struct Unk4ABE4 *object, struct Unk4ABE4Arg1 *arg1) __asm__("func_8004ABE4");
 
 
@@ -225,7 +225,7 @@ s32 gLaunchDebrisObject(struct Unk4ABE4 *object, struct Unk4ABE4Arg1 *arg1)
     object->unk84 = 0;
 
     if (object->unk65 != 0) {
-        func_8003E984(object->unk1C, 0, object->unk65, 0, (object->unk10 >> 1) & 1);
+        gSpawnObjectFromTable(object->unk1C, 0, object->unk65, 0, (object->unk10 >> 1) & 1);
     }
 
     return 1;

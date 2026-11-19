@@ -19,7 +19,7 @@ struct Unk74024 {
     s32 unk64;
 };
 
-extern void func_80073BBC();
+extern void gHandleBeamObjectMsg() __asm__("func_80073BBC");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void func_8003C14C(struct Unk74024 *object, struct Unk74024Def *def);
@@ -58,7 +58,7 @@ struct Unk74024 *func_80074024(struct Unk74024Def *def)
         return 0;
     }
     func_8003C14C(object, def);
-    object->update = func_80073BBC;
+    object->update = gHandleBeamObjectMsg;
     object->unk64 = 0;
     size = def->height * def->width;
     def->flags |= 0x10;

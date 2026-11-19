@@ -6,7 +6,7 @@ typedef struct { char pad[0x18]; int count; } Other;
 typedef struct { u32 x,y,w,h; int width,height; } Rect;
 typedef struct { u8 flag; char pad[0x43]; } Entry;
 extern volatile Context *gGameSession __asm__("D_8009FA94");
-extern Other *gTileMapTable __asm__("D_8009F80C");
+extern Other *gMapGridHeader __asm__("D_8009F80C");
 extern int gPlayerCount __asm__("D_8009FA0C");
 extern volatile int D_8009F82C;
 extern volatile int gCellEntityCount __asm__("D_8009F828");
@@ -14,7 +14,7 @@ extern u8 D_8009F836, D_8009F837;
 extern u8 gGridOriginY __asm__("D_8009F835");
 extern u8 gGridOriginX __asm__("D_8009F834");
 extern u32 *gCellMap __asm__("D_8009F820");
-extern Rect gClipRect __asm__("D_800A2970");
+extern Rect gCellClipRect __asm__("D_800A2970");
 extern Entry gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
 extern void func_80062C3C(void), func_80062874(void), func_80062614(void);
 /**
@@ -51,9 +51,9 @@ void func_80062FB4(void)
     D_8009F82C = 0;
     gCellEntityCount = 0;
     if (gGameSession->mode == 1) {
-        h = gClipRect.height - 16;
-        w = gClipRect.width - gTileMapTable->count * 8 + 8;
-        x = y = (gTileMapTable->count - 1) * 4;
+        h = gCellClipRect.height - 16;
+        w = gCellClipRect.width - gMapGridHeader->count * 8 + 8;
+        x = y = (gMapGridHeader->count - 1) * 4;
     } else if (gPlayerCount == 1) {
         h = w = 20;
         x = gGridOriginX * 4;
@@ -70,10 +70,10 @@ void func_80062FB4(void)
     }
     n = w * h;
     p = gCellMap;
-    gClipRect.x = x;
-    gClipRect.y = y;
-    gClipRect.w = w;
-    gClipRect.h = h;
+    gCellClipRect.x = x;
+    gCellClipRect.y = y;
+    gCellClipRect.w = w;
+    gCellClipRect.h = h;
     { register u32 count __asm__("$3");
     count = n >> 2;
     while (count) { *p++ = 0; count--; } }

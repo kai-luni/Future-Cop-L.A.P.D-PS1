@@ -19,7 +19,7 @@ struct Obj {
 };
 
 extern void gTransformPartVertex(void *, s32, void *) __asm__("func_80017668");
-extern s32 func_80095C30(s32, s32);
+extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
@@ -199,7 +199,7 @@ void gUpdateMountedTurret(struct Obj *obj, s32 dt)
                 d[0] = t->pos[0] - obj->vtx[0];
                 d[1] = t->pos[1] - obj->vtx[1];
                 d[2] = t->pos[2] - obj->vtx[2];
-                s2 = func_80095C30(d[0], d[2]) & 0xFFF;
+                s2 = gAtan2(d[0], d[2]) & 0xFFF;
                 if (!(obj->info->flags & 0x1000))
                     s2 = (s2 - info->yawBias) & 0xFFF;
                 if (obj->flags & 0x10) {
@@ -226,7 +226,7 @@ void gUpdateMountedTurret(struct Obj *obj, s32 dt)
                         q = a3 + q;
                         r = a2 >> 6;
                         q -= r;
-                        s1 = (-(func_80095C30(arg0, q) << 12)) >> 12;
+                        s1 = (-(gAtan2(arg0, q) << 12)) >> 12;
                     }
                     {
                         s32 cl;

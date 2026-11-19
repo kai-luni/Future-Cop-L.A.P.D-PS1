@@ -51,6 +51,8 @@ struct Entity {
 
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, struct Spawn *data, s32 arg3) __asm__("func_8002AD58");
 extern s32 func_80067684(struct Vec3 *pos, s32 mode);
+s32 gInitEntityGroundPair(struct Entity *self, struct Spawn *data, s32 arg2) __asm__("func_80030AD4");
+
 
 /**
  * @brief Positions a freshly spawned entity from its spawn record.
@@ -84,8 +86,22 @@ extern s32 func_80067684(struct Vec3 *pos, s32 mode);
  *
  * @par Callers
  * Likely: func_80030D3C (same block).
+ *
+ * @par Environment path
+ * Spawn step (message 2) of the entity class handled by func_80030D3C
+ * (message 1 there reports size 0xB0), which calls it for message 2;
+ * func_80030D3C itself has no direct caller, so this runs once per spawned
+ * instance. After gEntityBaseHandler(2, ...) it sets the point +0xA0/+0xA8
+ * from the doubled record words +0x28/+0x24 and its y +0xA4 to a surface
+ * height from func_80067684 plus record +0x2C << 4, then sets the entity's
+ * own y (+0x54, copied to +0x60) the same way with record +0x2F/+0x36; the
+ * record mode byte maps 0 to the highest surface (-1), 1 to the lowest (-2)
+ * and n to index n-2. It also copies the size half-word +0x34 to +0x6C/+0x6E
+ * (and << 4 to +0x68), record bytes +0x30/+0x31 and half-word +0x32 to
+ * +0xAC/+0xAD/+0xAE, raises flags 0xA00011, clears bit 0x10 of +0x72 for flag
+ * 0x80000 and forces +0xAD to 8 when the +0xAC word is 0x10100.
  */
-s32 func_80030AD4(struct Entity *self, struct Spawn *data, s32 arg2)
+s32 gInitEntityGroundPair(struct Entity *self, struct Spawn *data, s32 arg2)
 {
     struct Sub *sub;
     s32 type;

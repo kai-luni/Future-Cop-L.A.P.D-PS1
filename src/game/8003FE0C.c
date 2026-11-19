@@ -21,11 +21,11 @@ struct Unk3FE0CObject {
     struct Unk3FD74Node *owner;
 };
 
-extern struct Unk3FE0CObject *func_8003D680(struct Unk3FD74Source *source,
+extern struct Unk3FE0CObject *gCreateModelNode(struct Unk3FD74Source *source,
                                             u8 type, s32 arg08, s32 arg18,
-                                            s32 arg4, s32 arg5);
-extern s32 func_8003E984(struct Unk3FE0CObject *object, s32 arg1, u8 type,
-                         s32 arg18, s32 arg08);
+                                            s32 arg4, s32 arg5) __asm__("func_8003D680");
+extern s32 gSpawnObjectFromTable(struct Unk3FE0CObject *object, s32 arg1, u8 type,
+                         s32 arg18, s32 arg08) __asm__("func_8003E984");
 
 /**
  * @brief Instantiates and registers a deferred map spawn node when it enters player range.
@@ -54,11 +54,11 @@ void func_8003FE0C(struct Unk3FD74Node *node)
 {
     struct Unk3FE0CObject *object;
 
-    object = func_8003D680(node->source, node->type, node->arg08,
+    object = gCreateModelNode(node->source, node->type, node->arg08,
                            node->arg18, 0, 1);
     if (object != 0) {
         object->owner = node;
-        if (func_8003E984(object, 0, node->type, node->arg18,
+        if (gSpawnObjectFromTable(object, 0, node->type, node->arg18,
                           node->arg08) != 0) {
             node->flags |= 1;
         }

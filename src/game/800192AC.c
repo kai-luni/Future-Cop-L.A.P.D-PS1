@@ -12,7 +12,9 @@ struct Basis {
 };
 
 extern void gGteCrossProduct(struct Vec3s32 *a, struct Vec3s32 *b, struct Vec3s32 *out) __asm__("func_80010974");
-extern void func_8001A180(struct Vec3s32 *vector);
+extern void gNormalizeVector(struct Vec3s32 *vector) __asm__("func_8001A180");
+void gBuildBasisFromPair(struct Vec3s32 *first, struct Vec3s32 *second, struct Basis *basis) __asm__("func_800192AC");
+
 
 /**
  * @brief Builds a right-handed 3x3 basis from two vectors.
@@ -34,11 +36,20 @@ extern void func_8001A180(struct Vec3s32 *vector);
  *
  * @par Callers
  * The camera and object-transform code (func_80051C50, func_80053A74).
+ *
+ * @par Environment path
+ * Builds a 3x3 basis from two vectors: rows[0] is first x second normalised
+ * by func_8001A180, rows[2] is rows[0] x first (not normalised again) and
+ * rows[1] is first. The call graph lists gInitType11Entity (func_8002DC94)
+ * and gOrientEntityBasis (func_80037EB4) as callers, not the
+ * func_80051C50/func_80053A74 named in the file comment, and the comment's
+ * 'rows[2] normalised' is not what the code does. It is entity orientation
+ * math, adjacent to but not part of the camera path.
  */
-void func_800192AC(struct Vec3s32 *first, struct Vec3s32 *second, struct Basis *basis)
+void gBuildBasisFromPair(struct Vec3s32 *first, struct Vec3s32 *second, struct Basis *basis)
 {
     gGteCrossProduct(first, second, &basis->rows[0]);
-    func_8001A180(&basis->rows[0]);
+    gNormalizeVector(&basis->rows[0]);
     gGteCrossProduct(&basis->rows[0], first, &basis->rows[2]);
     basis->rows[1] = *first;
 }

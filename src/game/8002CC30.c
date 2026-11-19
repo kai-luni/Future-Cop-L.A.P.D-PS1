@@ -28,8 +28,8 @@ extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0")
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern struct Obj *func_8004E80C(struct Obj *, s32, s32, s32, s32, s32, s32);
-extern s32 func_8001A100(s32 *);
-extern s32 func_80095C30(s32, s32);
+extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
+extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
 extern void func_80044B34(struct Obj *, void *, s32, s32);
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 s32 gUpdatePropTick(struct Obj *self, s32 dt) __asm__("func_8002CC30");
@@ -203,11 +203,11 @@ s32 gUpdatePropTick(struct Obj *self, s32 dt)
         delta[2] = target->pos.z - self->pos.z;
         {
             register s32 comparison __asm__("$3");
-            comparison = func_8001A100(delta) - (target->radius + self->radius) < (self->range << 4);
+            comparison = gVectorLength3D(delta) - (target->radius + self->radius) < (self->range << 4);
             if (!comparison) goto fallback;
         }
     }
-    yaw = func_80095C30(delta[0], delta[2]) & 0xfff;
+    yaw = gAtan2(delta[0], delta[2]) & 0xfff;
     if (!(self->flags & 8)) {
         pitch = 0;
         goto rotate;
@@ -243,7 +243,7 @@ s32 gUpdatePropTick(struct Obj *self, s32 dt)
         lo = b >> 2;
         lo = a + lo;
         hi = b >> 6;
-        pitch = -((func_80095C30(first, lo - hi) << 12)) >> 12;
+        pitch = -((gAtan2(first, lo - hi) << 12)) >> 12;
     }
     }
     pitch = pitch < -512 ? -512 : pitch > 512 ? 512 : pitch;

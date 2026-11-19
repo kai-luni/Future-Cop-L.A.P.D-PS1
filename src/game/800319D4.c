@@ -53,6 +53,8 @@ extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern s32 func_80019668(void);
 extern void gFreeBlock(void *obj) __asm__("func_800181D4");
 extern s32 func_80067684(struct Vec3s32 *position, s32 mode);
+void gLoadMapZone(struct Obj *obj) __asm__("func_800319D4");
+
 
 /**
  * @brief Creates a map zone node from an asset record and links it into the
@@ -81,8 +83,22 @@ extern s32 func_80067684(struct Vec3s32 *position, s32 mode);
  * @par Callers
  * func_8004D6D4 (verified in the retail listing; the call-graph edge is
  * missing).
+ *
+ * @par Environment path
+ * Load-time handler for actor resources of type 0x5F: it locates the 'tACT'
+ * (0x74414354) record with func_80019C38 (header 4 bytes before the result),
+ * allocates a 0x28-byte zone node from allocation tag 3 and pushes it onto
+ * gMapZoneList, storing the record id (+0x08), x and z of the record position
+ * >> 8, the height func_80067684(position, mode) >> 8 with the surface mode
+ * derived from the record's type byte (0 -> -1, 1 -> -2, else type - 2), the
+ * three halved extents at +0x0C/+0x0E/+0x10, the flag byte at +0x14, the
+ * request's +0x24 word at +0x18 and a random byte at +0x16, then frees the
+ * request block. It is dispatched by the entity-definition loader
+ * func_8004D6D4 (case 0x5F, 8004D6D4.c:104-105) while a level's actors are
+ * loaded; gTestCameraZoneOverlap (func_80031B40) later reads the zones with
+ * bit 0x40, and gFreeMapZoneList frees them.
  */
-void func_800319D4(struct Obj *obj)
+void gLoadMapZone(struct Obj *obj)
 {
     u8 *r;
     struct Data *d;

@@ -9,6 +9,8 @@ struct Unk17764 {
 extern struct Unk17764 *gCameraList __asm__("D_8009F588");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeCameraList(void) __asm__("func_80017764");
+
 
 /**
  * @brief Releases every record of the transform list D_8009F588 and clears the
@@ -42,8 +44,18 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_80024D14 (the global subsystem reset, which runs it between
  * the scene teardown and the entity teardown).
+ *
+ * @par Environment path
+ * Walks the camera record list D_8009F588 (0x94-byte records, next pointer at
+ * +0x8C) and frees each record with gFreeBlock (func_800181D4), reading the
+ * successor before the free, then sets the list head to 0. The id counter
+ * D_8009F58C and the active camera pointer D_8009F9E4 are not touched here;
+ * func_8001774C is the variant that clears all three. Its only caller is
+ * gResetMissionSubsystems (func_80024D14), so it runs once during mission
+ * teardown/reset, while records are created on demand by gCreateCamera
+ * (func_80017994) from the actor reset func_800573A4.
  */
-void func_80017764(void)
+void gFreeCameraList(void)
 {
     struct Unk17764 *node;
     struct Unk17764 *current;

@@ -7,7 +7,7 @@ struct Unk73F88 {
 
 extern u8 func_8003C2A4(struct Unk73F88 *data);
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void func_8003C404(struct Unk73F88 *data);
+extern void gInstallSpawnRecord(struct Unk73F88 *data) __asm__("func_8003C404");
 
 /**
  * @brief Clones and registers a 0x4C-byte spawn record for chunk type 0x58.
@@ -44,5 +44,5 @@ void func_80073F88(struct Unk73F88 *source)
         return;
     }
     *copy = *source;
-    func_8003C404(copy);
+    gInstallSpawnRecord(copy);
 }

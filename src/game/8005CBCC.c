@@ -101,16 +101,16 @@ struct Unk402DCOwner {
 };
 
 extern struct Unk5CB80Pool gOwnerNodeListB __asm__("D_800A22B0");
-extern u8 gMapGrid[] __asm__("D_800A6578");
+extern u8 gSpawnTypeFlags[] __asm__("D_800A6578");
 
 extern struct Unk5CB80Node *func_8005CB80(struct Unk5CB80Pool *pool, void *target);
-extern struct ListNode *func_8003BEF0(struct ListNode *node);
+extern struct ListNode *gTakePoolNode(struct ListNode *node) __asm__("func_8003BEF0");
 extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern void gSolveLeadDirection(s32 *a, s32 *b, s32 c, s32 d, void *e, void *f, s32 g) __asm__("func_8005E2A0");
-extern void func_8001A180(s32 *vec);
-extern void func_800193F8(s32 *a, s32 *b);
+extern void gNormalizeVector(s32 *vec) __asm__("func_8001A180");
+extern void gBuildBasisFromAxis(s32 *a, s32 *b) __asm__("func_800193F8");
 extern s32 func_8003BF50(struct Unk5CBCCArg0 *arg0);
-extern s32 func_800402DC(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern void D_8005CA04(void);
 
 /**
@@ -198,7 +198,7 @@ void gAttachPartEffect(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 
             return;
         }
 
-        node = (struct Unk5CBCCNode *)func_8003BEF0((struct ListNode *)pool);
+        node = (struct Unk5CBCCNode *)gTakePoolNode((struct ListNode *)pool);
         if (node == 0) {
             return;
         }
@@ -214,9 +214,9 @@ void gAttachPartEffect(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 
                 local.temp.x = arg2->unk5C - local.vec.x;
                 local.temp.y = arg2->unk60 - local.vec.y;
                 local.temp.z = arg2->unk64 - local.vec.z;
-                func_8001A180(&local.temp.x);
+                gNormalizeVector(&local.temp.x);
             }
-            func_800193F8(&local.temp.x, local.out);
+            gBuildBasisFromAxis(&local.temp.x, local.out);
         } else {
             s32 first;
             first = ((s32 *)arg3->coord)[0];
@@ -232,7 +232,7 @@ void gAttachPartEffect(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 
         }
 
         row = func_8003BF50(arg0);
-        base = gMapGrid;
+        base = gSpawnTypeFlags;
         p = &base[(arg5->unk0F << 2) + (row << 10)];
         *p &= 0xFB;
 
@@ -243,7 +243,7 @@ void gAttachPartEffect(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 
         node->self = node;
         node->callback = D_8005CA04;
 
-        if (func_800402DC(0, arg5->unk0F, local.flag ? (s32)&local : 0, row,
+        if (gSpawnTypeAtOwner(0, arg5->unk0F, local.flag ? (s32)&local : 0, row,
                           (s32)&node->self) == 0) {
             node->flags = 1;
             return;

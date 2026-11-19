@@ -27,7 +27,7 @@ extern u8 *gSpriteRegionTable __asm__("D_8009F778");
 
 extern void gGteTransformVertices(V8 *in, V8 *out, s32 n) __asm__("func_8001010C");
 extern s32 gTestFrustumFixedNear(V8 *p, s32 m) __asm__("func_80019D90");
-extern s32 func_80019E70(V8 *p, s32 m);
+extern s32 gTestFrustumMargin(V8 *p, s32 m) __asm__("func_80019E70");
 extern void func_80049F4C(V8 *p);
 extern void gSinCos(s32 angle, s32 *s, s32 *c) __asm__("func_8001846C");
 extern void gProjectVertexBatch(V8 *a, V8 *b, u8 *c, s32 n) __asm__("func_8001047C");
@@ -260,7 +260,7 @@ void gDrawMapCellNode(Node *node, s32 arg1, s32 arg2)
             out[i].z = node->v[i].z + d[2];
         }
         gGteTransformVertices(out, rot, 1);
-        if ((func_80019E70(rot, node->margin) & 0xFF) != 2) {
+        if ((gTestFrustumMargin(rot, node->margin) & 0xFF) != 2) {
             return;
         }
         gProjectVertexBatch(&out[1], &rot[1], chk, 4);

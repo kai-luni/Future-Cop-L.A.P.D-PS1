@@ -92,14 +92,14 @@ struct Emitter {
 extern void gGteTransformWords(void *src, void *dst, s32 count) __asm__("func_8001006C");
 extern void gGteLoadRotation(void *m) __asm__("func_80010820");
 extern void gTransformPartVertex(void *inst, s32 part, s32 *out) __asm__("func_80017668");
-extern s32 func_80019F54(s32 *v);
+extern s32 gApproxVectorLength(s32 *v) __asm__("func_80019F54");
 extern void gMulMatrixVector(void *m, void *in, void *out) __asm__("func_8001A81C");
-extern void *func_8003BEF0(void *node);
-extern void func_8003BF1C(void *pool, void *prev, void *node);
-extern struct Xform *func_8003D9C4(struct Emitter *e);
+extern void *gTakePoolNode(void *node) __asm__("func_8003BEF0");
+extern void gReleasePoolNode(void *pool, void *prev, void *node) __asm__("func_8003BF1C");
+extern struct Xform *gGetObjectTransform(struct Emitter *e) __asm__("func_8003D9C4");
 extern void gResolveNodeTransform(void *a, s32 b, s32 c, s32 d, void *e, void *f) __asm__("func_8003D9F8");
-extern void func_800753D0(struct Particle *p);
-extern void func_80075478(void *p);
+extern void gUpdateParticleLight(struct Particle *p) __asm__("func_800753D0");
+extern void gReleaseParticleLight(void *p) __asm__("func_80075478");
 extern void gInitEmitterParticle(struct Emitter *e, void *node, void *vec, struct Xform *x) __asm__("func_800754B8");
 extern s32 gGetGroundHeight(void *a, s32 b, s32 c, s32 d) __asm__("func_80066F78");
 extern u8 func_800751A4(struct Particle *p, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -173,7 +173,7 @@ void gRunPolygonPass(struct Emitter *e, s32 step)
                 }
                 goto nextE;
             }
-            xf = func_8003D9C4(e);
+            xf = gGetObjectTransform(e);
             if (e->flags8E & 0x10) {
                 { s32 t0 = e->mat.m[0]; local.m.m[1] = e->mat.m[1]; local.m.m[2] = e->mat.m[2]; local.m.m[3] = e->mat.m[3]; local.m.m[4] = e->mat.m[4]; local.m.m[5] = e->mat.m[5]; local.m.m[6] = e->mat.m[6]; local.m.m[7] = e->mat.m[7]; local.m.m[8] = e->mat.m[8]; local.m.m[0] = t0; }
                 local.pos = e->pos;
@@ -210,12 +210,12 @@ void gRunPolygonPass(struct Emitter *e, s32 step)
             tmp[1] = vec[1] - ((s32 *)self->pool.active)[2];
             tmp[2] = vec[2] - ((s32 *)self->pool.active)[3];
             {
-                s16 cnt = func_80019F54(tmp) >> 4;
+                s16 cnt = gApproxVectorLength(tmp) >> 4;
                 if (!(self->flags8E & 0x2000)) {
                     while (cnt >= self->limit) {
                         struct Particle *np;
                         cnt -= self->limit;
-                        np = func_8003BEF0(&self->pool);
+                        np = gTakePoolNode(&self->pool);
                         if (np != 0) {
                             gInitEmitterParticle(self, np, vec, xf);
                         }
@@ -280,13 +280,13 @@ void gRunPolygonPass(struct Emitter *e, s32 step)
                     p->pos.z += (p->vz * shift) >> 8;
                 }
                 if (self->flags8E & 2) {
-                    func_800753D0(p);
+                    gUpdateParticleLight(p);
                 }
                 if ((u8)hit || prevType + p->idx == 6) {
                     if (self->flags8E & 2) {
-                        func_80075478(p);
+                        gReleaseParticleLight(p);
                     }
-                    func_8003BF1C(&self->pool, prev, p);
+                    gReleasePoolNode(&self->pool, prev, p);
                     if (self->pool.active == 0 && (self->flags8E & 1)) {
                         self->flagsF |= 1;
                         goto nextE;

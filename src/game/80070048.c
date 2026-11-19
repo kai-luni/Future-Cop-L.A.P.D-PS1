@@ -16,6 +16,8 @@ struct Entity {
 };
 
 extern void func_8006FB7C(struct Entity *, s32);
+void gIntegrateActor59List(struct Entity *entity, s32 dt) __asm__("func_80070048");
+
 
 /**
  * @brief Integrates one entity list: gravity, velocity, spin, then the
@@ -40,8 +42,20 @@ extern void func_8006FB7C(struct Entity *, s32);
  *
  * @par Callers
  * func_8003F4A0.
+ *
+ * @par Environment path
+ * Advances every node of the scene list gListHeads[1] (D_800A1070[1], passed
+ * by gRunSceneListPasses, 8003F4A0.c:48) by dt << 4: nodes with bit 3 of the
+ * +0x0F flag byte are skipped, otherwise vy += accel(+0x9A) * scale >> 12,
+ * x/y/z (+0x58..) += v(+0x94..) * scale >> 8, the angle +0x12 += spin(+0x66)
+ * * scale >> 12, and func_8006FB7C(node, dt) then steps the six bounded byte
+ * values at +0x79..+0x7F. The offsets +0x12, +0x66, +0x94 and +0x9A are
+ * exactly the fields func_8007043C fills for kind-0x59 objects, and the same
+ * list is drawn by gDrawGlowNodeList (func_80070158, 8003F6E4.c:93). It runs
+ * once per gRunSceneListPasses call (the scene update pass) and never unlinks
+ * or frees nodes.
  */
-void func_80070048(struct Entity *entity, s32 dt)
+void gIntegrateActor59List(struct Entity *entity, s32 dt)
 {
     s32 scale = dt << 4;
     while (entity != 0) {

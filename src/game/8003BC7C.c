@@ -1,7 +1,7 @@
 // Categories: Resources > Object Copy | Game Engine > Object Pool
 #include "game/types.h"
 
-extern u8 *gOccupancyColumns[] __asm__("D_800A0C70");
+extern u8 *gSlotSpawnDescs[] __asm__("D_800A0C70");
 extern u8 *gAllocMemory(s32 size, s32 type) __asm__("func_80017EBC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void *memcpy(void *dst, const void *src, u32 n);
@@ -36,12 +36,12 @@ void func_8003BC7C(u8 *arg0)
 {
     u8 *block;
 
-    if (gOccupancyColumns[arg0[0x14]] != 0) {
-        gFreeBlock(gOccupancyColumns[arg0[0x14]]);
+    if (gSlotSpawnDescs[arg0[0x14]] != 0) {
+        gFreeBlock(gSlotSpawnDescs[arg0[0x14]]);
     }
 
     block = gAllocMemory(0x1C, 2);
-    gOccupancyColumns[arg0[0x14]] = block;
+    gSlotSpawnDescs[arg0[0x14]] = block;
 
     block[0] = arg0[0x18];
     block[1] = arg0[0x19];

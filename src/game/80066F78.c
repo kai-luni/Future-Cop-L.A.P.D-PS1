@@ -13,14 +13,14 @@ struct Map {
     s32 tab[1];
 };
 
-extern struct Map *gTileMapTable __asm__("D_8009F80C");
+extern struct Map *gMapGridHeader __asm__("D_8009F80C");
 extern u8 **gTileBlockTable __asm__("D_8009F808");
-extern u8 gVertexIndexTable[][4] __asm__("D_8009AFE8");
+extern u8 gTileCornerIndices[][4] __asm__("D_8009AFE8");
 extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
 
 extern s32 func_80067480(s8 *data, u32 index, s32 x, s32 y, s32 *out);
 extern s32 *func_8006320C(s32 *pos, s32 *out, s32 *a, u8 *b);
-extern void func_8001A180(s32 *v);
+extern void gNormalizeVector(s32 *v) __asm__("func_8001A180");
 s32 gGetGroundHeight(s32 *position, s32 *output, s32 *a2, s32 *a3) __asm__("func_80066F78");
 
 
@@ -88,7 +88,7 @@ s32 gGetGroundHeight(s32 *position, s32 *output, s32 *a2, s32 *a3) __asm__("func
  *
  * @par Environment path
  * Returns the ground height under a world position by walking one map cell:
- * gTileMapTable (D_8009F80C) gives the grid size and per-cell index, the cell
+ * gMapGridHeader (D_8009F80C) gives the grid size and per-cell index, the cell
  * is (z >> 17) + w * (x >> 17), gTileBlockTable (D_8009F808) yields the cell
  * block, and the half-word at block + 0x3CC for the 8192-unit sub-tile
  * selects the surface count and descriptor list. Each surface is sampled with
@@ -97,7 +97,7 @@ s32 gGetGroundHeight(s32 *position, s32 *output, s32 *a2, s32 *a3) __asm__("func
  * (falling back to the extreme one), optionally lets a dynamic object from
  * func_8006320C win, reports the surface attribute byte when within 0x2000,
  * and, when an output vector is requested, builds the surface normal from
- * gVertexIndexTable (D_8009AFE8) and gTileShapeTable (D_8009B1A4) and
+ * gTileCornerIndices (D_8009AFE8) and gTileShapeTable (D_8009B1A4) and
  * normalises it with func_8001A180. It has 22 direct callers for placement
  * and collision (among them func_80041C6C, func_80041488, func_800164F4 and
  * func_8003802C) and produces no geometry.
@@ -136,7 +136,7 @@ s32 gGetGroundHeight(s32 *position, s32 *output, s32 *a2, s32 *a3)
     x = pos[0];
     if (z < 0) return 0;
     cz = z >> 17;
-    map = gTileMapTable;
+    map = gMapGridHeader;
     if (cz >= map->w - 1) return 0;
     if (x < 0) return 0;
     cx = x >> 17;
@@ -254,7 +254,7 @@ s32 gGetGroundHeight(s32 *position, s32 *output, s32 *a2, s32 *a3)
             register u32 vv __asm__("$2") = t5v >> 15;
             type = vv & 0x7F;
         }
-        p = gVertexIndexTable[type];
+        p = gTileCornerIndices[type];
         {
             u32 i0 = p[0], i1 = p[1], i2 = p[2];
             s8 *q0 = s6 + i0, *q1 = s6 + i1, *q2 = s6 + i2;
@@ -330,7 +330,7 @@ s32 gGetGroundHeight(s32 *position, s32 *output, s32 *a2, s32 *a3)
             register s32 t5v __asm__("$13") = frame.l38;
             out[0] = (a3v << fp) - (t0 << t5v);
         }
-        func_8001A180(out);
+        gNormalizeVector(out);
         __asm__ volatile("" :: "r"(fp), "r"(s0), "r"(cnt), "r"(s2), "r"(s3), "r"(s5), "r"(s6), "r"(s7));
     }
     return s4;

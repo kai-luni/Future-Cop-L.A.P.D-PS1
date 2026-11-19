@@ -18,7 +18,7 @@ extern void gGteCrossProduct(s32 *a, s32 *b, s32 *c) __asm__("func_80010974");
 extern s32 func_8001A7AC(s32 *v);
 extern void func_8001ABE0(s32 scale, s32 *v);
 extern s32 func_80052550(u8 *o, s32 *v);
-extern void func_8006943C(s32 *p);
+extern void gClampToWorldBounds(s32 *p) __asm__("func_8006943C");
 extern s32 gGetGroundHeight(s32 *a, s32 *b, s32 *c, s32 *d) __asm__("func_80066F78");
 extern void func_80053514(u8 *o, s32 a);
 extern void func_80053188(u8 *o, s32 a);
@@ -26,7 +26,7 @@ extern s32 func_80052F54(u8 *o);
 extern void func_8001AD20(s32 *a, s32 *b, s32 *c);
 extern s32 func_8005220C(u8 *o);
 extern void func_80052708(u8 *o, s32 a);
-extern s32 func_8001A314(s32 *v);
+extern s32 gNormalizeGetLength(s32 *v) __asm__("func_8001A314");
 s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags) __asm__("func_80053A74");
 
 
@@ -434,7 +434,7 @@ s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags)
             *(s32 *)(o + 0x50) += *(s32 *)(s + 0x15C) >> 8;
             *(s32 *)(o + 0x54) += *(s32 *)(s + 0x160) >> 8;
             *(s32 *)(o + 0x58) += *(s32 *)(s + 0x164) >> 8;
-            func_8006943C((s32 *)(o + 0x50));
+            gClampToWorldBounds((s32 *)(o + 0x50));
             v28.x = *(s32 *)(o + 0x50);
             v28.y = *(s32 *)(o + 0x54) + 0xCCC;
             v28.z = *(s32 *)(o + 0x58);
@@ -494,7 +494,7 @@ s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags)
         }
     }
     *(Vec3 *)(o + 0x78) = *(Vec3 *)(s + 0x15C);
-    vv = func_8001A314((s32 *)(o + 0x78)) >> 11;
+    vv = gNormalizeGetLength((s32 *)(o + 0x78)) >> 11;
     *(s32 *)(o + 0x84) = vv;
     if (vv == 0) {
         *(Vec3 *)(o + 0x78) = *(Vec3 *)(o + 0xA0);

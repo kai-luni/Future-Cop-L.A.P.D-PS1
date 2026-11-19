@@ -12,7 +12,7 @@ extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 extern s32 D_8009F7A4;
 extern s32 gPendingMessageMask __asm__("D_8009F7A8");
 extern u8 gMessageDoneFlag __asm__("D_8009F7AC");
-extern s32 gLastSpawnSlot[] __asm__("D_8009F9F4");
+extern s32 gRequestOffsetBias[] __asm__("D_8009F9F4");
 extern s32 gUnitListHead __asm__("D_8009FA40");
 extern s32 gListTailBranch __asm__("D_8009FA88");
 extern struct Unk4CAE4State *gGameSession[] __asm__("D_8009FA94");
@@ -101,7 +101,7 @@ void func_8004CAE4(void)
     gMarkerColorTable[29] = colorF8F8F8;
     gMarkerColorTable[30] = 0x78F8;
     gMarkerColorTable[31] = color787878;
-    gLastSpawnSlot[0] = 0;
+    gRequestOffsetBias[0] = 0;
 
     gMessageDoneFlag = 1;
     gPendingMessageMask = 0;

@@ -18,7 +18,7 @@ extern u8 *gPlayerEntities[] __asm__("D_8009FA58");
 
 extern void func_80029C34(void);
 extern void func_80047088(s32 arg0, void *object);
-extern void func_80024EC8(void);
+extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 
 /**
  *  @brief Update a gated countdown and transition the current state on expiry.
@@ -84,5 +84,5 @@ void func_80027D9C(void)
     }
 
 tail:
-    func_80024EC8();
+    gLoadQueuedAssets();
 }

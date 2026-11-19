@@ -1,8 +1,8 @@
 // Categories: Utilities > Mathematics > Vector
 #include "game/types.h"
 
-extern s32 func_80019F54(s32 *vector);
-extern s32 func_80095C14(u32 value);
+extern s32 gApproxVectorLength(s32 *vector) __asm__("func_80019F54");
+extern s32 gGteLeadingZeros(u32 value) __asm__("func_80095C14");
 
 /**
  * @brief Rescales a vector so its largest component fits the 16-bit range,
@@ -32,8 +32,8 @@ s32 func_8001A644(s32 *vector)
     s32 result;
     s32 shift;
 
-    result = func_80019F54(vector);
-    shift = result ? 0x1F - func_80095C14(result) : 0;
+    result = gApproxVectorLength(vector);
+    shift = result ? 0x1F - gGteLeadingZeros(result) : 0;
     if (shift >= 0x10) {
         s32 s, x, y, z;
         s = shift - 0xF;

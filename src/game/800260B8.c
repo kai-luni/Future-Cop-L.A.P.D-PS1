@@ -29,14 +29,14 @@ extern struct MenuText260B8 *gLabelRecord __asm__("D_8009F2CC");
 extern s8 D_8009F2D4;
 extern s8 D_8009F2D5;
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern s32 gPanelSelection __asm__("D_8009FA6C");
+extern s32 gOpenPanelCount __asm__("D_8009FA6C");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gPanelSoundIds __asm__("D_8009FAC0");
 extern s8 gItemCodeTable[] __asm__("D_8009ABE8");
 extern s8 D_8009ABEC[];
 extern s8 gItemLabelByte[] __asm__("D_8009ABED");
 extern s32 gPlayerEntities[] __asm__("D_8009FA58");
-extern s32 D_8009F670[];
+extern s32 gCheatCodeInput[] __asm__("D_8009F670");
 extern s32 gSlotVoiceHandle[2] __asm__("D_8009F678");
 extern s32 gSlotTrackId[2] __asm__("D_8009FA78");
 extern struct InputAction260B8 D_800A0AD0[];
@@ -206,7 +206,7 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
             func_80046C84(0x3E, gPlayerEntities[slotArg]);
             selection = -1;
             state->selected = selection;
-            gPanelSelection--;
+            gOpenPanelCount--;
             state->selected = selection;
             goto display;
         case 7:
@@ -216,13 +216,13 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
         case 8:
             saveOffset = (u32)slotArg * 4;
             func_80046C84(0x3E, *(s32 *)(saveOffset + (u32)gPlayerEntities));
-            if ((func_80060A0C(*(s32 *)(saveOffset + (u32)D_8009F670), slotArg) & 0xFF) != 0) {
+            if ((func_80060A0C(*(s32 *)(saveOffset + (u32)gCheatCodeInput), slotArg) & 0xFF) != 0) {
                 gScreenState = 5;
             } else {
                 flag = 1;
             }
             gItemLabelByte[0] = 6;
-            D_8009F670[slotArg] = 0;
+            gCheatCodeInput[slotArg] = 0;
             goto store_selected;
         case 6:
             func_80046C84(0x3E, gPlayerEntities[slotArg]);
@@ -239,7 +239,7 @@ void func_800260B8(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selectionArg
             selection = -1;
             items[5] = 6;
             state->selected = selection;
-            gPanelSelection--;
+            gOpenPanelCount--;
             if (gSlotVoiceHandle[slotArg] != 0) {
                 func_80046A34(gSlotVoiceHandle[slotArg]);
                 gSlotVoiceHandle[slotArg] = 0;

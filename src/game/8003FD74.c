@@ -19,7 +19,7 @@ struct Unk3FD74Node {
     u8 unk1D[3];
 };
 
-extern struct Unk3FD74Node *gNodeCList __asm__("D_8009F30C");
+extern struct Unk3FD74Node *gDeferredSpawnList __asm__("D_8009F30C");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 /**
@@ -62,7 +62,7 @@ struct Unk3FD74Node *func_8003FD74(s32 type, s32 arg08,
         node->sourceValue = source->value08;
     }
     node->arg18 = arg18;
-    node->next = gNodeCList;
-    gNodeCList = node;
+    node->next = gDeferredSpawnList;
+    gDeferredSpawnList = node;
     return node;
 }

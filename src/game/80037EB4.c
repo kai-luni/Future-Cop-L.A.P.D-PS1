@@ -12,7 +12,7 @@ struct Self {
  struct Vec unk140;
 };
 extern s32 gGetGroundHeight(struct Vec *, struct Vec *, s32, s32) __asm__("func_80066F78");
-extern void func_800192AC(struct Vec *, struct Vec *, struct Vec *);
+extern void gBuildBasisFromPair(struct Vec *, struct Vec *, struct Vec *) __asm__("func_800192AC");
 extern void gBuildRotationMatrix(s32,s32,s32,struct Vec *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(struct Vec *) __asm__("func_80010750");
 void gOrientEntityBasis(struct Self *arg) __asm__("func_80037EB4");
@@ -71,7 +71,7 @@ void gOrientEntityBasis(struct Self *arg)
   tmp.x = (tmp.x + self->basis[1].x * 3) >> 2;
   tmp.y = (tmp.y + self->basis[1].y * 3) >> 2;
   tmp.z = (tmp.z + self->basis[1].z * 3) >> 2;
-  func_800192AC(&tmp, &self->unk140, self->basis);
+  gBuildBasisFromPair(&tmp, &self->unk140, self->basis);
  } else if (self->flags & 0x100) {
   a = self->unk140.z; b = self->unk140.x;
  fixed:

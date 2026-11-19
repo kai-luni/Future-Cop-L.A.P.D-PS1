@@ -1,5 +1,7 @@
 // Categories: Graphics > GTE > Lighting | Platform > GTE
 #include "game/types.h"
+void gGteSetLightVector(u32 *arg0) __asm__("func_80013ECC");
+
 
 /**
  * @brief Loads a light direction into the GTE light matrix and clears the rest.
@@ -16,8 +18,18 @@
  * @par Callers
  * func_80013F08 and func_8001428C - the lighting set-up before a shaded object
  * is drawn.
+ *
+ * @par Environment path
+ * Loads one light direction into the GTE light matrix: control register 8
+ * gets (x >> 4) | (y >> 4) << 16 (L11, L12), register 9 gets z >> 4 (L13 in
+ * the low half; the shift is logical, so L21 receives the upper bits of z >>
+ * 4, 0 for small positive z), and registers 10-12 (L22..L33) are zeroed.
+ * Callers are gProjectModelInstance (func_80013F08) and gProjectBoneParts
+ * (func_8001428C), which set it before shading model parts. A port must note
+ * that only the first light row is meaningful and that negative components
+ * are shifted logically.
  */
-void func_80013ECC(u32 *arg0) {
+void gGteSetLightVector(u32 *arg0) {
     (void)arg0;
     __asm__ __volatile__(
         "lw $t0, 0($4)\n\t"

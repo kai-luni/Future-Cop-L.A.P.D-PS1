@@ -38,7 +38,7 @@ struct Node {
     u8 pad2A[2];
 };
 
-extern Node *gModelNodeList __asm__("D_8009F38C");
+extern Node *gBeamNodeList __asm__("D_8009F38C");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_80070710(void *block);
@@ -182,8 +182,8 @@ void *func_8007377C(void *a0, void *a1, s32 a2, s32 count,
         func_80070E48(node, &node->entries[i], 1);
     }
 
-    node->next = gModelNodeList;
-    gModelNodeList = node;
+    node->next = gBeamNodeList;
+    gBeamNodeList = node;
     return node;
 
 fail_entries:

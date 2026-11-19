@@ -21,16 +21,16 @@ typedef struct {
     u32 unk20;
 } Unk63DC8;
 
-extern Res63DC8 * volatile gTileMapTable __asm__("D_8009F80C");
-extern Unk63DC8 *D_8009F810;
+extern Res63DC8 * volatile gMapGridHeader __asm__("D_8009F80C");
+extern Unk63DC8 *gMapChunkNode __asm__("D_8009F810");
 extern void *gCellMap __asm__("D_8009F820");
 
-extern s32 gWorldClipRect[] __asm__("D_800A2950");
-extern s32 gClipRect[] __asm__("D_800A2970");
+extern s32 gMapGridBounds[] __asm__("D_800A2950");
+extern s32 gCellClipRect[] __asm__("D_800A2970");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void func_800496D0(s32 width, s32 height);
-extern void func_800834C4(s32 width, s32 height);
+extern void gAllocLightGrid(s32 width, s32 height) __asm__("func_800496D0");
+extern void gAllocCellBucketGrid(s32 width, s32 height) __asm__("func_800834C4");
 
 #define FIXMUL(dst, x)                                   \
     dst = 0x360000;                                      \
@@ -43,6 +43,8 @@ extern void func_800834C4(s32 width, s32 height);
                      : "=r"(dst)                           \
                      : "r"(x), "0"(dst)                    \
                      : "$2", "$3", "$4", "$8", "$9")
+void gInitMapFromGrdb(Unk63DC8 *arg0) __asm__("func_80063DC8");
+
 
 /**
  * @brief Parses the map header chunk ("GRDB") and initializes world bounds and cell grids.
@@ -65,8 +67,24 @@ extern void func_800834C4(s32 width, s32 height);
  *
  * @par Callers
  * Confirmed: func_80024EC8 (0x80025210, level asset loader) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Handler for the 'Cptc' (0x43707463) chunk in gLoadQueuedAssets
+ * (80024EC8.c:151-152): it stores the chunk in D_8009F810, scans its records
+ * for the last 'GRDB' one and publishes that header (+0xC) in D_8009F80C,
+ * replaces the origin vector (x, y, z) at +0xC by -(y, 0, x), then writes the
+ * world bounds D_800A2950[0..3] (origin plus border << 17 and the far edges,
+ * 0x20000 units per cell) and two scale factors [4],[5] (0x360000 times the
+ * inverse half-spans) and the cell limits D_800A2970[4] = (w-1)*4, [5] =
+ * (h-1)*4. It allocates the 16-byte-per-cell grid D_8009F820 for (w-1) x
+ * (h-1) cells and sizes the light bucket grid (func_800496D0, D_8009F780) and
+ * the scene-node bucket grid (func_800834C4, D_8009F938) to the same cell
+ * counts. Everything later that clamps to the level (func_800665E8,
+ * func_8006943C), samples its height (func_800695A8) or buckets scene nodes
+ * (gSpawnSceneNode func_80083A10) depends on what this sets up once per level
+ * load.
  */
-void func_80063DC8(Unk63DC8 *arg0)
+void gInitMapFromGrdb(Unk63DC8 *arg0)
 {
     u32 magic;
     u8 *ptr;
@@ -88,19 +106,19 @@ void func_80063DC8(Unk63DC8 *arg0)
 
     magic = 0x47524442;
     ptr = arg0->unk00;
-    D_8009F810 = arg0;
-    gTileMapTable = 0;
+    gMapChunkNode = arg0;
+    gMapGridHeader = 0;
 
     do {
         if (*(u32 *)ptr == magic) {
             found = (Res63DC8 *)(ptr + 0xC);
-            gTileMapTable = found;
+            gMapGridHeader = found;
         }
         ptr += *(u32 *)(ptr + 4);
     } while ((u32)(ptr - arg0->unk00) < arg0->unk20);
 
-    transform = gTileMapTable;
-    resource = gTileMapTable;
+    transform = gMapGridHeader;
+    resource = gMapGridHeader;
 
     old_x = transform->unk0C.x;
     old_y = transform->unk0C.y;
@@ -117,17 +135,17 @@ void func_80063DC8(Unk63DC8 *arg0)
 
     z_bottom = local.z;
     work_x = (u32)(z_bottom + (resource->unk18 << 17));
-    gWorldClipRect[0] = (s32)work_x;
+    gMapGridBounds[0] = (s32)work_x;
 
     right = z_bottom + (resource->unk04 << 17)
         - ((resource->unk18 + 1) << 17);
     work_x = (u32)((right - (s32)work_x) >> 1);
     work_x = numerator_q2 / work_x;
-    gWorldClipRect[1] = right;
+    gMapGridBounds[1] = right;
 
     work_y = local.x;
     work_y += resource->unk18 << 17;
-    gWorldClipRect[2] = work_y;
+    gMapGridBounds[2] = work_y;
 
     z_bottom = z_bottom + (resource->unk08 << 17)
         - ((resource->unk18 + 1) << 17);
@@ -135,23 +153,23 @@ void func_80063DC8(Unk63DC8 *arg0)
     numerator_q2 = numerator_q2 / (u32)work_y;
 
     FIXMUL(product, work_x);
-    gWorldClipRect[4] = product;
+    gMapGridBounds[4] = product;
     FIXMUL(product, numerator_q2);
-    gWorldClipRect[5] = product;
-    gWorldClipRect[3] = z_bottom;
+    gMapGridBounds[5] = product;
+    gMapGridBounds[3] = z_bottom;
 
-    gClipRect[4] = (resource->unk04 - 1) << 2;
-    gClipRect[5] = (resource->unk08 - 1) << 2;
+    gCellClipRect[4] = (resource->unk04 - 1) << 2;
+    gCellClipRect[5] = (resource->unk08 - 1) << 2;
 
     product = (resource->unk04 - 1) * (resource->unk08 - 1);
     result = gAllocMemory(product << 4, 2);
-    call_resource = gTileMapTable;
+    call_resource = gMapGridHeader;
     gCellMap = result;
 
-    func_800496D0(call_resource->unk04 - 1,
+    gAllocLightGrid(call_resource->unk04 - 1,
                   call_resource->unk08 - 1);
 
-    last_resource = gTileMapTable;
-    func_800834C4(last_resource->unk04 - 1,
+    last_resource = gMapGridHeader;
+    gAllocCellBucketGrid(last_resource->unk04 - 1,
                   last_resource->unk08 - 1);
 }

@@ -35,10 +35,10 @@ struct Unk2C174 {
 
 extern struct Unk2C174 *func_8004D664(u32 id);
 extern s32 func_80019668(void);
-extern void func_8001A180(void *vec);
+extern void gNormalizeVector(void *vec) __asm__("func_8001A180");
 extern u8 func_8003B7D8(struct Unk2C174 *obj);
-extern void func_800402DC(struct Unk2C174 *obj, u8 column, s32 arg2, s32 row, s32 arg4);
-extern void func_8002A810(struct Unk2C174 *obj, s32 a, s32 b);
+extern void gSpawnTypeAtOwner(struct Unk2C174 *obj, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
+extern void gRetireEntityBase(struct Unk2C174 *obj, s32 a, s32 b) __asm__("func_8002A810");
 extern void func_8002B0EC(struct Unk2C174 *obj, s32 a);
 extern void func_8002B1DC(struct Unk2C174 *obj, s32 a, s32 b);
 
@@ -95,15 +95,15 @@ void func_8002C174(struct Unk2C174 *obj)
         local.y = obj->y - target->y;
         local.z = obj->z - target->z;
         local.x = dx;
-        func_8001A180(&local.x);
+        gNormalizeVector(&local.x);
         local.unk40 = 0x32;
         sound = func_8003B7D8(obj);
         if (sound == 0) {
             sound = 0x5B;
         }
-        func_800402DC(obj, sound, (s32)&local, 0, 0);
+        gSpawnTypeAtOwner(obj, sound, (s32)&local, 0, 0);
         obj->unk20 = 0;
-        func_8002A810(obj, 1, 1);
+        gRetireEntityBase(obj, 1, 1);
     } else {
         type = (obj->unk19 >> 3) & 0x1E;
         if (type >= 2 || -(obj->unk1E << 2) < obj->unk1C) {
@@ -125,7 +125,7 @@ void func_8002C174(struct Unk2C174 *obj)
                 obj->unk15F = 7;
                 obj->unk24 |= 1;
                 func_8002B0EC(obj, 0x2A);
-                func_800402DC(obj, 0xD2, 0, 0, 0);
+                gSpawnTypeAtOwner(obj, 0xD2, 0, 0, 0);
                 break;
             default:
                 func_8002B1DC(obj, 7, 0);
@@ -137,8 +137,8 @@ void func_8002C174(struct Unk2C174 *obj)
                 sound = 0x5B;
             }
             obj->unk20 = 0;
-            func_800402DC(obj, sound, 0, 0, 0);
-            func_8002A810(obj, 1, 1);
+            gSpawnTypeAtOwner(obj, sound, 0, 0, 0);
+            gRetireEntityBase(obj, 1, 1);
         }
     }
 }

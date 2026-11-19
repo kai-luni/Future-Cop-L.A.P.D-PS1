@@ -120,15 +120,15 @@ extern void func_8001B148(struct RotationMatrix *matrix,
                          struct RotationPoint *source,
                          struct RotationPoint *destination, s32 count);
 extern void func_8003BDEC(struct Pool *pool);
-extern struct ListNode *func_8003BEF0(struct ListNode *node);
+extern struct ListNode *gTakePoolNode(struct ListNode *node) __asm__("func_8003BEF0");
 extern s32 func_8003C7B8(s32 message, void *object, void *arg2, void *arg3);
 extern s32 func_8003C980(s32 message, void *object, void *arg2, void *arg3);
-extern struct Unk754B8Transform *func_8003D9C4(void *object);
+extern struct Unk754B8Transform *gGetObjectTransform(void *object) __asm__("func_8003D9C4");
 extern void gResolveNodeTransform(void *model, s32 flags, s32 part, s32 count,
                          void *sub, void *matrix) __asm__("func_8003D9F8");
 extern void *jtbl_80011E10[];
 extern void func_800752E0(void *object);
-extern void func_80075478(struct Unk75478 *object);
+extern void gReleaseParticleLight(struct Unk75478 *object) __asm__("func_80075478");
 void gInitEmitterParticle(struct Unk754B8 *object, struct RenderState *render, struct Vec3s32 *position, struct RotationMatrix *matrix) __asm__("func_800754B8");
 
 
@@ -299,7 +299,7 @@ s32 gAttachMessageName(s32 message, struct Unk754B8 *object, void *arg2, void *a
     goto *jtbl_80011E10[message];
 
 case0:
-        transform = func_8003D9C4(object);
+        transform = gGetObjectTransform(object);
 
         if ((object->flags1A & 0x100) == 0) {
             sub = object->sub;
@@ -345,7 +345,7 @@ case0:
             object->sub->callback->callback(3, object, 0, 0);
         }
 
-        node = (struct RenderState *)func_8003BEF0(
+        node = (struct RenderState *)gTakePoolNode(
             (struct ListNode *)&object->pool);
         if (node != 0) {
             if (object->flags1A & 0x100) {
@@ -372,7 +372,7 @@ case10:
         if (object->flags8E & 2) {
             for (poolNode = object->pool.active; poolNode != 0;
                  poolNode = poolNode->next) {
-                func_80075478((struct Unk75478 *)poolNode);
+                gReleaseParticleLight((struct Unk75478 *)poolNode);
             }
         }
 

@@ -58,8 +58,8 @@ struct Vec3I { s32 x; s32 y; s32 z; };
 struct Bucket3A { struct Node3A10 *head; s32 arena; };
 
 extern void *gMissionState __asm__("D_8009F934");
-extern struct Bucket3A *gBucketArray __asm__("D_8009F938");
-extern s32 gMissionGridWidth __asm__("D_8009F93C");
+extern struct Bucket3A *gCellBucketGrid __asm__("D_8009F938");
+extern s32 gCellGridWidth __asm__("D_8009F93C");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *func_800195A4(void *state);
 extern void func_80083834(s32 arg0, s32 arg1);
@@ -69,7 +69,7 @@ extern s32 func_80067684(void *vec, s32 adjust);
 extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, void *arg3) __asm__("func_800188D0");
 extern void gGteLoadRotation(void *matrix) __asm__("func_80010820");
 extern void gGteTransformWords(void *src, void *dst, s32 count) __asm__("func_8001006C");
-extern s32 func_80083764(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+extern s32 gBuildSubcellMask(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) __asm__("func_80083764");
 extern void gGteLoadMatrix(void *a) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 u8 gSpawnSceneNode(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *arg3) __asm__("func_80083A10");
@@ -201,7 +201,7 @@ u8 gSpawnSceneNode(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *ar
  * matrix from the caller's matrix or from the request angles with
  * func_800188D0 plus optional scaling and upright correction, transforms the
  * model's bound half-words (func_80010820, func_8001006C) and passes the
- * result to func_80083764. Finally it links the node into gBucketArray[(z >>
+ * result to func_80083764. Finally it links the node into gCellBucketGrid[(z >>
  * 17) + width * (x >> 17)] (at the head when z2 >= 0 or the bucket is empty,
  * otherwise behind the head) and stamps the bucket's last-use time with
  * D_8009FAA4; gDrawCellWindowModels (func_80084398) walks the same buckets.
@@ -423,22 +423,22 @@ u8 gSpawnSceneNode(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *ar
         lo2 += term;
         hi2 -= term;
     }
-    node->unk4E = func_80083764(dst[3].z, dst[3].x,
+    node->unk4E = gBuildSubcellMask(dst[3].z, dst[3].x,
                                dst[3].z + lo2, dst[3].z + hi2,
                                dst[3].x + lo, dst[3].x + hi);
-    idx = (dst[3].z >> 17) + gMissionGridWidth * (dst[3].x >> 17);
-    if (z2 >= 0 || gBucketArray[idx].head == 0) {
-        node->next = gBucketArray[idx].head;
-        gBucketArray[idx].head = node;
+    idx = (dst[3].z >> 17) + gCellGridWidth * (dst[3].x >> 17);
+    if (z2 >= 0 || gCellBucketGrid[idx].head == 0) {
+        node->next = gCellBucketGrid[idx].head;
+        gCellBucketGrid[idx].head = node;
     } else {
-        head = gBucketArray[idx].head;
+        head = gCellBucketGrid[idx].head;
         while (head->next != 0) {
             head = head->next;
         }
         head->next = node;
         node->next = 0;
     }
-    gBucketArray[idx].arena = gFrameTime;
+    gCellBucketGrid[idx].arena = gFrameTime;
     if (node->unk57 != 0) {
         register s32 frame __asm__("$4");
         gGteLoadMatrix(&node->mat[0][0]);

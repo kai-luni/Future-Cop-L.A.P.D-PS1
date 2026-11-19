@@ -12,6 +12,8 @@ struct ParentNode {
     u8 pad_20[0x14];
     void *fallback;
 };
+void **gGetObjectTransform(struct ParentNode *parent) __asm__("func_8003D9C4");
+
 
 /**
  * @brief Returns the address of the "next mesh" slot belonging to a scene node.
@@ -31,8 +33,20 @@ struct ParentNode {
  * @par Callers
  * func_80044260, func_8004C5C8, func_80074104, func_80075A84 and the unit at
  * 0x80075698 - all scene/polygon walkers.
+ *
+ * @par Environment path
+ * Returns the transform block (3x3 rotation followed by an s32 position at
+ * words 9..11) an object should be drawn with: if the object's owner pointer
+ * at +0x1C is null its own block at +0x34, otherwise the owner's block at
+ * +0x04, or the block at +0x04 of the owner's child (owner+0x34) when that
+ * child exists. It is a pure accessor with no globals. gDrawDebrisFragments
+ * (func_8004C5C8, 8004C5C8.c:205) reads the position from base[9..11] for a
+ * distance cull, gInitEmitterParticle (800754B8.c:302) and gRunPolygonPass
+ * (80075A84.c:176) use the result as their transform, and
+ * gDrawObjectPointTiles and gDrawRibbonList call it the same way each draw
+ * pass.
  */
-void **func_8003D9C4(struct ParentNode *parent)
+void **gGetObjectTransform(struct ParentNode *parent)
 {
     struct ChildNode *node;
     void **result;

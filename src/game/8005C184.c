@@ -46,10 +46,10 @@ struct Unk5C184Res {
     u8 flags;
 };
 
-extern struct Unk5C184Kind *gPendingMotion __asm__("D_8009F374");
+extern struct Unk5C184Kind *gSpawnMotionContext __asm__("D_8009F374");
 extern s32 func_8003BF50(struct Unk5C184Kind *object);
-extern s32 func_800402DC(void *owner, u8 column, struct Unk5C184Msg *msg, s32 row,
-                         s32 arg4);
+extern s32 gSpawnTypeAtOwner(void *owner, u8 column, struct Unk5C184Msg *msg, s32 row,
+                         s32 arg4) __asm__("func_800402DC");
 
 /**
  * @brief Rate-limits and spawns a contact impact object via func_800402DC, tagging the result by owner kind and team byte.
@@ -94,9 +94,9 @@ void func_8005C184(struct Unk5C184Vec *arg0, void *arg1, struct Unk5C184Node *no
     msg.unk00 = arg1;
     msg.vec = *arg0;
 
-    gPendingMotion = node->unk08;
+    gSpawnMotionContext = node->unk08;
     flag = func_8003BF50(node->unk08);
-    res = func_800402DC(0, node->unk1E, &msg, flag, 0);
+    res = gSpawnTypeAtOwner(0, node->unk1E, &msg, flag, 0);
     if (res != 0) {
         kind = node->unk08;
         if (kind != 0) {
@@ -121,6 +121,6 @@ void func_8005C184(struct Unk5C184Vec *arg0, void *arg1, struct Unk5C184Node *no
             }
         }
     }
-    gPendingMotion = 0;
+    gSpawnMotionContext = 0;
     node->unk29 = 5;
 }

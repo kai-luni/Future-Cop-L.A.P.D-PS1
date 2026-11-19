@@ -61,15 +61,17 @@ struct TableEntry {
     s32 z;
 };
 
-extern struct Node *gNodeCList __asm__("D_8009F30C");
+extern struct Node *gDeferredSpawnList __asm__("D_8009F30C");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct TableEntry *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void gFreeBlock(struct Node *node) __asm__("func_800181D4");
-extern s32 func_8001A100(s32 *vector);
+extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 extern void func_8003FE0C(struct Node *node);
 extern void func_8003FE90(struct Node *node);
-extern void func_80069580(u32 index, struct DestinationTriple *destination);
+extern void gGetViewGroundAnchor(u32 index, struct DestinationTriple *destination) __asm__("func_80069580");
+void gStreamDeferredSpawns(void) __asm__("func_8003FF7C");
+
 
 /**
  * @brief Proximity gate of the map's spawn nodes: instantiates the objects whose
@@ -111,8 +113,23 @@ extern void func_80069580(u32 index, struct DestinationTriple *destination);
  *
  * @par Callers
  * func_8003F570, and only when D_8009F30C is non-empty.
+ *
+ * @par Environment path
+ * Per-tick proximity streaming of the deferred spawn requests in D_8009F30C
+ * (queued by func_8003FD74 from gSpawnTypeAtOwner's deferred path): it
+ * fetches the ground anchor of view 0, and of view 1 when gPlayerCount >= 2,
+ * with gGetViewGroundAnchor (func_80069580), then for each request with a
+ * definition in gSpawnRecordMap[bank +0x08][type +0x04] it frees requests
+ * whose owner (+0x10) no longer carries the id copied at +0x14, and otherwise
+ * measures the owner's position (+0x50), else the +0x18 record's position
+ * when its byte +0x3D has bit 2, else the definition's position at +0x08
+ * against the anchors with a 0x1FFFF limit. Live requests (flag bit 0 at
+ * +0x1C) that left range are despawned with func_8003FE90, dormant ones that
+ * came into range are instantiated with func_8003FE0C (func_8003D680 +
+ * gSpawnObjectFromTable). Its caller gRunEntityWorldTick (func_8003F570) runs
+ * it each tick only while the list is non-empty.
  */
-void func_8003FF7C(void)
+void gStreamDeferredSpawns(void)
 {
     struct Work work;
     struct Node *node;
@@ -121,14 +138,14 @@ void func_8003FF7C(void)
     struct TableEntry *entry;
     u8 in_range;
 
-    func_80069580(0, (struct DestinationTriple *)&work.base1);
+    gGetViewGroundAnchor(0, (struct DestinationTriple *)&work.base1);
     prev = 0;
 
     if (gPlayerCount >= 2) {
-        func_80069580(1, (struct DestinationTriple *)&work.base2);
+        gGetViewGroundAnchor(1, (struct DestinationTriple *)&work.base2);
     }
 
-    node = gNodeCList;
+    node = gDeferredSpawnList;
     while (node != 0) {
         entry = gSpawnRecordMap[node->arg08][node->type];
         next = node->next;
@@ -139,7 +156,7 @@ void func_8003FF7C(void)
                     if (prev != 0) {
                         prev->next = next;
                     } else {
-                        gNodeCList = next;
+                        gDeferredSpawnList = next;
                     }
                     node->next = 0;
                     gFreeBlock(node);
@@ -159,7 +176,7 @@ void func_8003FF7C(void)
                 work.delta.z = entry->z - work.base1.z;
             }
 
-            in_range = func_8001A100(&work.delta.x) <= 0x1FFFF;
+            in_range = gVectorLength3D(&work.delta.x) <= 0x1FFFF;
 
             if (gPlayerCount >= 2) {
                 if (node->active != 0) {
@@ -176,7 +193,7 @@ void func_8003FF7C(void)
                     work.delta.z = entry->z - work.base2.z;
                 }
 
-                if (func_8001A100(&work.delta.x) <= 0x1FFFF) {
+                if (gVectorLength3D(&work.delta.x) <= 0x1FFFF) {
                     in_range = 1;
                 }
             }

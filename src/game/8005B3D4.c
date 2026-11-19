@@ -37,7 +37,7 @@ struct Unk73500;
 
 extern struct Unk22C0 gLockEndpoints __asm__("D_800A22C0");
 
-extern struct Unk73500 *func_80073500(struct Vec3s32 *position, s16 arg1, s16 arg2, s16 arg3);
+extern struct Unk73500 *gAllocPositionNode(struct Vec3s32 *position, s16 arg1, s16 arg2, s16 arg3) __asm__("func_80073500");
 extern void func_8007377C(void *arg0, void *arg1, s32 arg2, s32 arg3,
                           s32 arg4, s32 arg5, s32 arg6, s32 arg7,
                           s32 arg8, s32 arg9, s32 arg10, s32 arg11,
@@ -107,8 +107,8 @@ void func_8005B3D4(void *arg0)
     }
 
     func_8007377C(
-        func_80073500(&gLockEndpoints.unk1C, 0, 0x100, 0),
-        func_80073500(&gLockEndpoints.unk10, 0, 0x100, 0),
+        gAllocPositionNode(&gLockEndpoints.unk1C, 0, 0x100, 0),
+        gAllocPositionNode(&gLockEndpoints.unk10, 0, 0x100, 0),
         4, 1, 0xFF, 0x60, 0, 0x800, 0, 0, 0, 0, 0, 1);
 
     if (func_8001A4E8((s32 *)&gLockEndpoints.unk10,

@@ -7,6 +7,8 @@ extern s32 gLightNodePool __asm__("D_8009F784");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_80019584(s32 pool);
+void gReleaseMapLightData(void) __asm__("func_8004963C");
+
 
 /**
  * @brief Frees and resets the map-light and effect descriptor globals D_8009F77C, D_8009F784, and D_8009F780.
@@ -29,8 +31,18 @@ extern void func_80019584(s32 pool);
  *
  * @par Callers
  * Confirmed: func_80024D14 (0x80024D80 in asm/us/main.s, global subsystem reset) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Frees the map light and sprite-descriptor data: the descriptor table
+ * D_8009F77C (if set), the 0x180 x 0x44-byte light-node pool D_8009F784
+ * (through func_80019584) and the per-cell light grid D_8009F780 (if set),
+ * zeroing all three pointers. Its only caller is gResetMissionSubsystems
+ * (func_80024D14), the between-mission reset; the pool and table pointers are
+ * set up by func_80049690 and the grid is allocated per map cell by
+ * func_800496D0 from gInitMapFromGrdb. It is the teardown counterpart of
+ * level construction and touches neither D_8009F778 nor the grid size words.
  */
-void func_8004963C(void)
+void gReleaseMapLightData(void)
 {
     if (gSpriteDescriptorTable != 0) {
         gFreeBlock(gSpriteDescriptorTable);

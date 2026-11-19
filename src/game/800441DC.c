@@ -11,6 +11,8 @@ struct Unk441DC {
 
 extern void func_80043CA8(struct Unk441DC *node, s32 arg);
 extern void func_800437E8(struct Unk441DC *node, s32 arg);
+void gTickChainEffectList(struct Unk441DC *node, s32 arg) __asm__("func_800441DC");
+
 
 /**
  * @brief Walks a scene node list and dispatches each visible node to one of
@@ -34,8 +36,18 @@ extern void func_800437E8(struct Unk441DC *node, s32 arg);
  *
  * @par Callers
  * func_8003F4A0.
+ *
+ * @par Environment path
+ * Per-frame update pass over object bucket gListHeads[3], called from
+ * gRunSceneListPasses (func_8003F4A0, 8003F4A0.c:46) on the tick side: every
+ * node (next at +0x00) whose flag byte +0x0F lacks bit 3 is updated by
+ * func_80043CA8 when bit 0 of +0x8D is set, otherwise by func_800437E8, with
+ * arg forwarded. Both callees update a segment chain of an effect node
+ * (spring or drift toward the node anchor, colour ramp, retire on terrain hit
+ * or expiry). The same bucket is drawn per view by gDrawPointTileList
+ * (func_800445B0, 8003F6E4.c:92); this function uses no globals.
  */
-void func_800441DC(struct Unk441DC *node, s32 arg)
+void gTickChainEffectList(struct Unk441DC *node, s32 arg)
 {
     while (node != 0) {
         if (!(node->flags0F & 8)) {

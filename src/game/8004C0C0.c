@@ -50,7 +50,7 @@ extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 extern struct Unk4C0C0Node *func_8004AAD4(struct Unk4C0C0Owner *owner,
                                            struct Unk4C0C0Node *previous,
                                            struct Unk4C0C0Node *node);
-extern s32 func_800402DC(void *owner, u8 column, void *arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(void *owner, u8 column, void *arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
 /**
  * @brief Ages the attached effect/smoke nodes of an owner and spawns their puffs.
@@ -114,7 +114,7 @@ void func_8004C0C0(struct Unk4C0C0Owner *owner)
                         loc.unk00 = node->unk46 << 4;
                     }
                     loc.unk49 = 5;
-                    func_800402DC(0, owner->unk64, &loc, (owner->unk10 >> 1) & 1, 0);
+                    gSpawnTypeAtOwner(0, owner->unk64, &loc, (owner->unk10 >> 1) & 1, 0);
                 }
             }
         } else {

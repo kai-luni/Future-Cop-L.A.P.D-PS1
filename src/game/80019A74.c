@@ -7,8 +7,8 @@ struct Resource {
     struct Resource *prev;
 };
 
-extern struct Resource *gResourceList __asm__("D_8009F5B8");
-extern struct Resource *gListTailFlag __asm__("D_8009F5BC");
+extern struct Resource *gResourceListHead __asm__("D_8009F5B8");
+extern struct Resource *gResourceListTail __asm__("D_8009F5BC");
 
 /* Appends a resource to the global doubly linked list.
  * D_8009F5B8 is the first node and D_8009F5BC the last; a new entry is linked
@@ -42,12 +42,12 @@ void func_80019A74(struct Resource *resource)
 {
     resource->next = 0;
     resource->prev = 0;
-    if (gListTailFlag != 0) {
-        resource->prev = gListTailFlag;
-        gListTailFlag->next = resource;
-        gListTailFlag = resource;
+    if (gResourceListTail != 0) {
+        resource->prev = gResourceListTail;
+        gResourceListTail->next = resource;
+        gResourceListTail = resource;
     } else {
-        gListTailFlag = resource;
-        gResourceList = resource;
+        gResourceListTail = resource;
+        gResourceListHead = resource;
     }
 }

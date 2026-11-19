@@ -1,7 +1,7 @@
 // Categories: Gameplay > Camera > Preset Sequence | Utilities > Random Numbers
 #include "game/types.h"
 
-extern u8 gSideStepTable[][8] __asm__("D_800A2290");
+extern u8 gDemoCameraStates[][8] __asm__("D_800A2290");
 
 extern u32 func_80019668(void);
 
@@ -45,7 +45,7 @@ void func_80056924(void)
     s32 i;
 
     for (i = 0; i < 8; i++) {
-        gSideStepTable[0][i] = (func_80019668() & 7) + 7;
-        gSideStepTable[1][i] = (func_80019668() & 7) + 7;
+        gDemoCameraStates[0][i] = (func_80019668() & 7) + 7;
+        gDemoCameraStates[1][i] = (func_80019668() & 7) + 7;
     }
 }

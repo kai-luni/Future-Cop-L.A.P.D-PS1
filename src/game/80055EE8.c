@@ -9,6 +9,8 @@ struct Vec3s32 {
 
 extern s32 func_800684AC(struct Vec3s32 *arg0, struct Vec3s32 *arg1,
                          struct Vec3s32 *arg2, s32 arg3, s32 arg4);
+s32 gTestCameraSightLine(struct Vec3s32 *from, struct Vec3s32 *to) __asm__("func_80055EE8");
+
 
 /**
  * @brief Camera line-of-sight test with a ceiling clamp, built on the map
@@ -36,8 +38,22 @@ extern s32 func_800684AC(struct Vec3s32 *arg0, struct Vec3s32 *arg1,
  *
  * @par Callers
  * func_80056870, func_800569EC.
+ *
+ * @par Environment path
+ * Line-of-sight test between the view target (from) and a candidate camera
+ * eye (to) on top of the map raycast func_800684AC: when from.y <= 0x7FFF the
+ * end point is bisected toward the start until the midpoint y is at most
+ * 0x8000 (lines 58-66), then the segment end->start is cast and, if the
+ * result has bit 0x8000, a second cast start->hit is made; 0 is returned only
+ * when that second cast also has bit 0x8000, otherwise the raw raycast
+ * result. Both callers treat 0 as an unobstructed view: gUpdateChaseCamera
+ * (func_800569EC) uses it at 800569EC.c:373/400/419 to decide whether to keep
+ * the current preset or step to the next one, and gFindClearCameraPreset
+ * (func_80056870) at 80056870.c:66 to pick the first clear preset slot. It
+ * runs inside the per-frame chase-camera update after the candidate eye has
+ * been computed by gComputeCameraEye.
  */
-s32 func_80055EE8(struct Vec3s32 *from, struct Vec3s32 *to)
+s32 gTestCameraSightLine(struct Vec3s32 *from, struct Vec3s32 *to)
 {
     struct Vec3s32 start;
     struct Vec3s32 end;

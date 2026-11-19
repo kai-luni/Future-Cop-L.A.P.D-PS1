@@ -87,19 +87,19 @@ extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 extern s32 gGetGroundHeight(void *, void *, void *, void *) __asm__("func_80066F78");
 extern void func_80054590(struct Obj549F0 *, s32, s32, void *, s32);
 extern s32 func_80052550(struct Obj549F0 *, void *);
-extern void func_8006943C(s32 *);
+extern void gClampToWorldBounds(s32 *) __asm__("func_8006943C");
 extern s32 func_800684AC(void *, void *, s32, s32, s32);
 extern void func_80053514(struct Obj549F0 *, s32);
 extern void func_80053188(struct Obj549F0 *, s32);
 extern struct AnimClip549F0 *func_800448D8(struct AnimTrack549F0 *, s32, s32, u8);
-extern void func_8001A6F8(void *, void *);
-extern void func_8001A180(void *);
+extern void gEaseVectorQuarter(void *, void *) __asm__("func_8001A6F8");
+extern void gNormalizeVector(void *) __asm__("func_8001A180");
 extern s32 func_80019FCC(s32 *);
-extern s32 func_80095900(s32);
+extern s32 gSqrt12(s32) __asm__("func_80095900");
 extern s32 func_8001A7AC(s32);
 extern s32 func_80044B34(struct Obj549F0 *, struct AnimTrack549F0 *, s32, s32);
 extern void func_80047088(s32, struct Obj549F0 *);
-extern s32 func_8001A314(s32 *);
+extern s32 gNormalizeGetLength(s32 *) __asm__("func_8001A314");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_8005220C(struct Obj549F0 *);
 extern void func_80052708(struct Obj549F0 *, s32);
@@ -676,7 +676,7 @@ dispatch_done:
     self->position.x += sub->velocity.x >> 8;
     self->position.y += sub->velocity.y >> 8;
     self->position.z += sub->velocity.z >> 8;
-    func_8006943C(&self->position.x);
+    gClampToWorldBounds(&self->position.x);
 
     if (sub->velocity.y >= 0x11) {
         w.from.x = w.previous.x;
@@ -715,8 +715,8 @@ dispatch_done:
     }
 
     speed = (s32)((u8 *)sub + 0x168);
-    func_8001A6F8(normalPtr, (void *)speed);
-    func_8001A180((void *)speed);
+    gEaseVectorQuarter(normalPtr, (void *)speed);
+    gNormalizeVector((void *)speed);
 
     if (self->position.y < lane) {
         if (self->unkB9 & 1) {
@@ -820,7 +820,7 @@ fixed_speed:
     goto speed_done;
 
 measured_speed:
-    speed = func_80095900(func_80019FCC(&sub->velocity.x)) << 2;
+    speed = gSqrt12(func_80019FCC(&sub->velocity.x)) << 2;
     speed >>= 8;
     if (self->sub->unk147 != 0) {
         speed *= 4 - self->sub->unk147;
@@ -907,7 +907,7 @@ speed_done:
 
 end:
     self->velocity = sub->velocity;
-    self->unk84 = func_8001A314(&self->velocity.x) >> 11;
+    self->unk84 = gNormalizeGetLength(&self->velocity.x) >> 11;
     if (self->unk84 == 0) {
         self->velocity = self->axis;
     }

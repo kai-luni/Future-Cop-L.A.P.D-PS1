@@ -25,6 +25,8 @@ struct Vec3s32 {
 };
 
 extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
+s32 gTestCameraZoneOverlap(struct Vec3s32 *position, s32 radius) __asm__("func_80031B40");
+
 
 /**
  * @brief Tests whether a position plus radius overlaps any active map zone
@@ -49,8 +51,20 @@ extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
  *
  * @par Callers
  * func_800569EC.
+ *
+ * @par Environment path
+ * Returns 1 when a position widened by a radius overlaps any zone in
+ * gMapZoneList (D_8009F6F8) whose flag byte (+0x14) has bit 0x40, testing
+ * |pos - (zone coord << 8)| - radius <= extent << 4 on x and then z;
+ * otherwise 0. The 0x28-byte zones are pushed by func_800319D4 and the list
+ * is cleared by func_80031984 at mission boot and freed by gFreeMapZoneList
+ * (func_80031990). Its only caller gUpdateChaseCamera (func_800569EC) uses it
+ * at 800569EC.c:243, only while the camera state is 5 or 6, with the object
+ * position and its collision radius, and falls back to state 0 when no zone
+ * overlaps, so bit 0x40 marks zones that hold the camera in those special
+ * states.
  */
-s32 func_80031B40(struct Vec3s32 *position, s32 radius)
+s32 gTestCameraZoneOverlap(struct Vec3s32 *position, s32 radius)
 {
     struct Unk31Node *node;
     s32 found;

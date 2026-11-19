@@ -18,11 +18,11 @@ extern void func_8002E2BC(u8 *, s32);
 extern u8 func_80060238(void *, s32, u8 *, s32, s32);
 extern void func_800448D8(void *, s32, s32, u8);
 extern void func_8005F6E8(void *, u8 *, u8 *, s32);
-extern s32 func_80095C30(s32, s32);
+extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
-extern void func_8001AC28(void *, void *, s32, void *);
+extern void gVectorMulAdd(void *, void *, s32, void *) __asm__("func_8001AC28");
 extern void func_800457B8(s32, s32);
 
 #define FMULU(a,b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
@@ -289,7 +289,7 @@ case_2:
             vec[0] = W(P(obj,0xB8),0x5C) - W(obj,0x5C);
             vec[1] = W(P(obj,0xB8),0x60) - W(obj,0x60);
             vec[2] = W(P(obj,0xB8),0x64) - W(obj,0x64);
-            ang = func_80095C30(vec[0], vec[2]);
+            ang = gAtan2(vec[0], vec[2]);
         }
     {
         s32 cur;
@@ -358,7 +358,7 @@ case_13:
         } else {
             a2 = 0x10000;
         }
-        func_8001AC28(obj + 0xF4, obj + 0x100, a2, obj + 0x50);
+        gVectorMulAdd(obj + 0xF4, obj + 0x100, a2, obj + 0x50);
         if (W(P(obj,0x28),0x10)) {
             func_80044B34(obj, obj + 0xC8, ABS(s0), 0);
         }

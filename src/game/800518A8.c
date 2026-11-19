@@ -44,7 +44,7 @@ typedef struct {
 
 extern void gGteLoadMatrix(void *a0) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a0, void *a1, s32 a2) __asm__("func_80010234");
-extern s32 func_80095900(s32 a0);
+extern s32 gSqrt12(s32 a0) __asm__("func_80095900");
 void gUpdateMorphBounds(Model518A8 *model, s16 *buf, s32 t, Obj518A8 *obj) __asm__("func_800518A8");
 
 
@@ -150,10 +150,10 @@ void gUpdateMorphBounds(Model518A8 *model, s16 *buf, s32 t, Obj518A8 *obj)
     e->unk04 = f04;
     e->unk08 = mn;
 
-    sub->unk40 = func_80095900(((f06 + cenx) + p2) >> 8) << 2;
+    sub->unk40 = gSqrt12(((f06 + cenx) + p2) >> 8) << 2;
     f06 += p2;
     e->unk0C = (s32)sub->unk40 >> 4;
-    v = func_80095900((f06) >> 8) << 2;
+    v = gSqrt12((f06) >> 8) << 2;
     sub->unk46 = v >> 4;
     e->unk0E = v >> 4;
 }

@@ -1,15 +1,17 @@
 // Categories: Graphics > Renderer > Map Cell Geometry | Graphics > GPU Primitives | Graphics > Clipping
 #include "game/types.h"
 
-extern u32 gVertexIndexTable[] __asm__("D_8009AFE8");
+extern u32 gTileCornerIndices[] __asm__("D_8009AFE8");
 extern u32 *gPrimPoolNext __asm__("D_8009F9F0");
 extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
-extern u8 gRampVariantTable[] __asm__("D_800A2630");
-extern u16 gTileColourWord __asm__("D_8009F83C");
+extern u8 gTilePatternBuf[] __asm__("D_800A2630");
+extern u16 gTileUvOffset __asm__("D_8009F83C");
 extern s32 func_800648BC(s32 a, s32 b, s32 c);
 
 typedef struct { s32 w0; s16 h4; u8 b6; u8 b7; } V;
+void gEmitCellPolygon(u8 *base, u32 arg1, u32 *tbl, u32 arg3) __asm__("func_800648E8");
+
 
 /**
  * @brief Emits one precomputed map-cell polygon: decodes the cell's 16-bit
@@ -116,8 +118,26 @@ typedef struct { s32 w0; s16 h4; u8 b6; u8 b7; } V;
  *   declares four: on the k == 6 path a value left in the fourth argument
  *   register is used as the cell sub-index, so that path depends on the
  *   caller's scratch state.
+ *
+ * @par Environment path
+ * Emits one textured polygon of a map cell into the shared primitive pool:
+ * the primitive word's bits 15..21 select four byte vertex indices from
+ * gTileCornerIndices (D_8009AFE8), the polygon is dropped when any vertex has
+ * hidden bit 0 set, when all four are degenerate (bit 2) without bit 1, or
+ * when bit 0 of the word requests a facing test and the GTE NCLIP wrapper
+ * func_800648BC reports back-facing. A 0x34-byte packet is taken at
+ * gPrimPoolNext (the last slot is reused at gPrimPoolEnd), its header gets
+ * the mean of the vertices' +0x04 sort half-words, and the descriptor's kind
+ * (bits 13..15) selects a flat (0x24/0x2C), gouraud (0x34) or four-corner
+ * gouraud (0x3C) textured packet with colours from the descriptor, the CLUT
+ * table tbl[0] or the D_800A2630 shading ramp; texture page and CLUT come
+ * from D_800A8E80 and descriptors with bit 0x800 get their four UVs shifted
+ * by D_8009F83C through scratchpad 0x1F800070. Its only caller is
+ * gEmitCellGeometry (func_80065134), reached from gDrawRegionTiles
+ * (func_8006531C) each frame, so it is the innermost step of drawing the
+ * level ground.
  */
-void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
+void gEmitCellPolygon(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
 {
     u32 w, x0, x1, x2, x3;
     register u32 b0 __asm__("$6");
@@ -142,7 +162,7 @@ void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
     u16 *cl;
     u32 e;
 
-    w = gVertexIndexTable[(arg1 >> 15) & 0x7F];
+    w = gTileCornerIndices[(arg1 >> 15) & 0x7F];
     b0 = w & 0xFF;
     w >>= 8;
     b1 = w & 0xFF;
@@ -197,7 +217,7 @@ void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
     t3 = *p5;
     if (t3 & 0x800) {
         volatile u16 *d = (volatile u16 *)0x1F800070;
-        u16 off = gTileColourWord;
+        u16 off = gTileUvOffset;
         d[0] = ((volatile u16 *)a1)[0] + off;
         d[1] = ((volatile u16 *)a1)[1] + off;
         d[2] = ((volatile u16 *)a1)[2] + off;
@@ -273,7 +293,7 @@ void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
             o[0x1E] = (e << (sh + 2)) & m;
             break;
         } else {
-            u8 *tab = gRampVariantTable;
+            u8 *tab = gTilePatternBuf;
             u32 ty = t3 & 7, lo = arg3 & 0xF, hi = arg3 & 0xF0, lo1 = (lo + 1) & 0xF, hi1 = (hi + 0x10) & 0xF0;
             u8 *p;
             if (ty != 1) p = tab + arg3;
@@ -342,13 +362,13 @@ void func_800648E8(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
             break;
         } else {
             u32 lo = arg3 & 0xF, hi = arg3 & 0xF0, lo1 = (lo + 1) & 0xF, hi1 = (hi + 0x10) & 0xF0;
-            c = gRampVariantTable[arg3];
+            c = gTilePatternBuf[arg3];
             o[4] = c; o[5] = c; o[6] = c;
-            c = gRampVariantTable[hi | lo1];
+            c = gTilePatternBuf[hi | lo1];
             o[0x10] = c; o[0x11] = c; o[0x12] = c;
-            c = gRampVariantTable[hi1 | lo1];
+            c = gTilePatternBuf[hi1 | lo1];
             o[0x28] = c; o[0x29] = c; o[0x2A] = c;
-            c = gRampVariantTable[hi1 | lo];
+            c = gTilePatternBuf[hi1 | lo];
             o[0x1C] = c; o[0x1D] = c; o[0x1E] = c;
             break;
         }

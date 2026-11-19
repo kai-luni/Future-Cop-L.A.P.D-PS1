@@ -74,8 +74,8 @@ struct Frame {
 
 extern struct Unk8009F9E4 *gCamera __asm__("D_8009F9E4");
 
-extern s32 *func_8003D9C4(struct Node4C5C8 *node);
-extern s32 func_8001A100(s32 *vec);
+extern s32 *gGetObjectTransform(struct Node4C5C8 *node) __asm__("func_8003D9C4");
+extern s32 gVectorLength3D(s32 *vec) __asm__("func_8001A100");
 extern void gSetModelUvOffset(s32 low, s32 high) __asm__("func_80013AA0");
 extern void gBuildRotationMatrix(s16 a, s16 b, s32 c, s32 *out) __asm__("func_800188D0");
 extern void gGteLoadRotation(s32 *p) __asm__("func_80010820");
@@ -202,11 +202,11 @@ void gDrawDebrisFragments(struct Node4C5C8 *arg0, s32 *arg1)
             continue;
         }
         sub = node->unk84;
-        base = func_8003D9C4(node);
+        base = gGetObjectTransform(node);
         f.vec[0] = base[9] - pos[0];
         f.vec[1] = base[10] - pos[1];
         f.vec[2] = base[11] - pos[2];
-        if (func_8001A100(f.vec) > 0x1FFFF) {
+        if (gVectorLength3D(f.vec) > 0x1FFFF) {
             continue;
         }
         obj = node->obj;

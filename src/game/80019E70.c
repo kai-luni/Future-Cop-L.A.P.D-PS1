@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gPlayerCount __asm__("D_8009FA0C");
+s32 gTestFrustumMargin(s16 *point, s32 margin) __asm__("func_80019E70");
+
 
 /**
  * @brief Frustum visibility test for a point plus a safety margin.
@@ -27,8 +29,21 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
  *
  * @par Callers
  * func_80013F08, func_80042128, func_8004A048, func_800592D0.
+ *
+ * @par Environment path
+ * View-frustum test for a view-space s16 point (x, y, z) with an extent
+ * margin: it returns 1 when z*16 + margin < 0x406 (too near), 0 when |x| or
+ * |y| exceeds the depth-scaled bound plus margin, and 2 when the point passes
+ * both tests. With D_8009FA0C == 1 x is scaled by 1 << 8 and the margin by <<
+ * 4; otherwise x is scaled by 1 << 9 and the margin by << 5, i.e. the
+ * horizontal half-angle is halved, matching the half-width view that
+ * gRunScreenModule sets up for gPlayerCount != 1 (projection centre 0x50
+ * instead of 0xA0, 800287F4.c:80). Callers are gProjectModelInstance
+ * (func_80013F08), gDrawPortraitScreen (func_80042128), gDrawMapCellNode
+ * (func_8004A048) and gDrawOtherPlayerArrow (func_800592D0); func_80019D90 is
+ * the fixed-near twin.
  */
-s32 func_80019E70(s16 *point, s32 margin)
+s32 gTestFrustumMargin(s16 *point, s32 margin)
 {
     s32 depth;
     s32 limit;

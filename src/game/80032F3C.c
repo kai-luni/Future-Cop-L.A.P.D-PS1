@@ -23,7 +23,7 @@ struct Unk32F3C {
 };
 
 extern u32 func_80019668(void);
-extern void func_8001AB78(s32 arg0, void *arg1);
+extern void gVectorScaleInPlace(s32 arg0, void *arg1) __asm__("func_8001AB78");
 extern s32 func_80032180(u32 arg0, void *arg1, s32 arg2, s32 arg3);
 extern s32 gUpdateHoverEnemy(s32 arg0, void *arg1, s32 arg2) __asm__("func_800324E0");
 extern s32 gEntityBaseHandler(u32 message, void *object, s32 arg2, s32 arg3) __asm__("func_8002AD58");
@@ -82,7 +82,7 @@ s32 func_80032F3C(u32 arg0, struct Unk32F3C *obj, s32 arg2, s32 arg3)
         if (obj->unk16 == c25 || (func_80019668() & 0xF) < 0xA) {
             obj->unkFA = c3;
             obj->unkDC = obj->unk78;
-            func_8001AB78(obj->unkF4, &obj->unkDC);
+            gVectorScaleInPlace(obj->unkF4, &obj->unkDC);
             obj->unkE8 = (func_80019668() & 0xFFF) - 0x800;
             obj->unkEC = (func_80019668() & 0xFFF) - 0x800;
             obj->unkF0 = (func_80019668() & 0xFFF) - 0x800;

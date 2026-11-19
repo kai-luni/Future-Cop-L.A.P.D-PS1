@@ -20,7 +20,7 @@ typedef struct {
     Vec513D0 unk2C;
 } Unk513D0;
 
-extern void func_8001AB78(s32 length, s32 *vector);
+extern void gVectorScaleInPlace(s32 length, s32 *vector) __asm__("func_8001AB78");
 extern s32 func_8001A13C(s32 *a, s32 *b);
 
 /**
@@ -73,7 +73,7 @@ s32 func_800513D0(Unk513D0 *arg0, Vec513D0 *arg1, s32 arg2, s32 *arg3)
         arg0->unk0C += amount;
 
         local = arg0->unk10;
-        func_8001AB78(amount, (s32 *)&local);
+        gVectorScaleInPlace(amount, (s32 *)&local);
 
         arg1->x += local.x;
         arg1->y += local.y;

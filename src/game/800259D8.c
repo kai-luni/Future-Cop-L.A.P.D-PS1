@@ -28,7 +28,7 @@ extern void func_80092660(u32 *arg0, s16 *arg1, s32 arg2, s32 arg3);
 extern void func_8001B4A8(s32 arg0);
 extern u8 func_8002385C(void);
 extern void func_80025690(void);
-extern void func_80024EC8(void);
+extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 extern void func_80047690(u8 enable);
 extern void func_8006AB38(void *arg0);
 extern void gPlacePlayerViews(void) __asm__("func_80056634");
@@ -137,7 +137,7 @@ s32 gPrepareAndSubmitFrame(void)
             break;
         }
         func_80025690();
-        func_80024EC8();
+        gLoadQueuedAssets();
     }
 
     func_8001BFD8(1);

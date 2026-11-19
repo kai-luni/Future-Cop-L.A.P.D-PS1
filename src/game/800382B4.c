@@ -58,7 +58,7 @@ extern void gInitRailMoverEntity(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) _
 extern void func_800379D4(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3);
 extern void func_800381D4(Unk382B4 *arg1);
 extern void func_800448D8(void *arg0, u8 arg1, s32 arg2, s32 arg3);
-extern void func_8003B898(u8 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3, s32 arg4);
+extern void gSpawnEntitySlotTypes(u8 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
 extern void func_80037B28(s32 arg0, Unk382B4 *arg1, s32 arg2);
 extern void func_8002A5B4(Unk382B4 *arg0, s32 arg1);
 extern s32 func_80044B34(Unk382B4 *arg0, void *arg1, s32 arg2, s32 arg3);
@@ -235,7 +235,7 @@ L800383E0: {
         arg1->unk118 |= 0x40;
         arg1->unk24 |= 1;
         func_800448D8((void *)a0, five, six, seven);
-        func_8003B898(arg1->unk20, arg1, 0, (arg1->unk19 >> 3) & 0x1E, 0);
+        gSpawnEntitySlotTypes(arg1->unk20, arg1, 0, (arg1->unk19 >> 3) & 0x1E, 0);
         return 0;
     }
     if (state != one) {

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern void func_8001B4A8(s32 arg0);
-extern void func_80024EC8(void);
+extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 
 /**
  * @brief Loading-screen frame tick: ends the frame in mode 1 and runs the
@@ -20,5 +20,5 @@ extern void func_80024EC8(void);
 void func_80025348(void)
 {
     func_8001B4A8(0x1);
-    func_80024EC8();
+    gLoadQueuedAssets();
 }

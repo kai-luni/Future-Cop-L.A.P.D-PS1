@@ -31,12 +31,14 @@ struct Unk3D240Transform {
     s32 pos[3];
 };
 
-extern struct Unk3D240 *gNodeListHead __asm__("D_8009F320");
+extern struct Unk3D240 *gAnchorNodeList __asm__("D_8009F320");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_8003CF20(struct Unk3D240 *object);
 extern void func_8003D0F0(void *source, s32 a1, s32 a2, void *destination);
+void gSyncAttachedNodes(void) __asm__("func_8003D240");
+
 
 /**
  * @brief Per-frame transform sync of the depth-cued map-object list: objects that
@@ -86,8 +88,22 @@ extern void func_8003D0F0(void *source, s32 a1, s32 a2, void *destination);
  * @par Callers
  * func_8003F570, the per-frame dispatcher, before the seven entity buckets are
  * pumped.
+ *
+ * @par Environment path
+ * Per-frame walk of the 0x4C-byte anchor-node list D_8009F320 that
+ * func_8003D680 builds for spawned objects: a node whose byte +0x38 is 0 and
+ * whose source (+0x04) reports a different word at +0x08 either gets a
+ * 0x4C-byte shadow copy of the source transform from gAllocMemory at +0x34
+ * (when flag bit 2 of +0x39 is clear) or copies the source's matrix and
+ * translation (+0x2C..+0x58) and adds the point from func_8003D0F0; pending
+ * shadows are committed and freed once flag bits 1 and 3 are both set. Nodes
+ * whose child counter +0x3A (incremented per child by gSpawnObjectFromTable)
+ * is zero are unlinked and destroyed with func_8003CF20. Its only caller is
+ * gRunEntityWorldTick (func_8003F570), so this keeps anchors on their
+ * animated parents and frees unused anchors every tick; gDrawNodeListModels
+ * (func_8003CF6C) walks the same list for drawing.
  */
-void func_8003D240(void)
+void gSyncAttachedNodes(void)
 {
     struct Unk3D240 *object;
     struct Unk3D240 *prev;
@@ -96,7 +112,7 @@ void func_8003D240(void)
     s32 first;
 
     prev = 0;
-    object = gNodeListHead;
+    object = gAnchorNodeList;
     while (object != 0) {
         next = object->next;
         if (object->unk38 == 0 && object->unk04 != 0 &&
@@ -184,7 +200,7 @@ void func_8003D240(void)
             if (prev != 0) {
                 prev->next = object->next;
             } else {
-                gNodeListHead = object->next;
+                gAnchorNodeList = object->next;
             }
             object->next = 0;
             func_8003CF20(object);

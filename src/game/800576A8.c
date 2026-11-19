@@ -1,9 +1,11 @@
 // Categories: Platform > Controller Input | Input > Remapping
 #include "game/types.h"
 
-extern s32 D_8009F7C0[];
-extern u32 gControlMaskWord __asm__("D_8009F7C4");
+extern s32 gPadWords[] __asm__("D_8009F7C0");
+extern u32 gPadWord2 __asm__("D_8009F7C4");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
+void gTranslatePadButtons(u32 *out, s32 index) __asm__("func_800576A8");
+
 
 /**
  * @brief Translates a raw pad word into the game's own button mask.
@@ -34,13 +36,26 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
  *
  * @par Callers
  * Confirmed: func_800267C8, func_800588D4.
+ *
+ * @par Environment path
+ * Converts the raw pad word D_8009F7C0[index] into the game's button mask
+ * written to *out: the bits 0x80000, 0x40000, 0x10000000-0x80000000 and
+ * 0x00100000-0x00800000 are copied, while 0x08000000 -> 0x04000000,
+ * 0x04000000 -> 0x00400000, 0x02000000 -> 0x01000000, 0x01000000 ->
+ * 0x08000000 and 0x00400000 -> 0x02000000 are permuted. When gPlayerCount is
+ * 1 the first three of those permuted bits are also taken from the second pad
+ * word D_8009F7C4, so pad 2 can trigger them for the single player. The pad
+ * words are filled each frame by func_80057864 (func_8001E620 per pad) or by
+ * the demo reader func_80059DB8; callers are gUpdatePlayerEntity
+ * (func_800588D4), gUpdateMapScreenView (func_800267C8, 800267C8.c:276) and
+ * func_80028164.
  */
-void func_800576A8(u32 *out, s32 index)
+void gTranslatePadButtons(u32 *out, s32 index)
 {
     s32 in;
     u32 res;
 
-    in = D_8009F7C0[index];
+    in = gPadWords[index];
 
     res = -(u32)((in & 0x80000) != 0) & 0x80000;
     if (in & 0x40000) {
@@ -84,7 +99,7 @@ void func_800576A8(u32 *out, s32 index)
     }
 
     if (gPlayerCount == 1) {
-        in = gControlMaskWord;
+        in = gPadWord2;
         if (in & 0x08000000) {
             res |= 0x04000000;
         }

@@ -10,7 +10,7 @@ struct Resource {
     s32 name;
 };
 
-extern struct Resource *gResourceList __asm__("D_8009F5B8");
+extern struct Resource *gResourceListHead __asm__("D_8009F5B8");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
@@ -40,7 +40,7 @@ void func_80019D00(struct Resource *resource)
 {
     struct Resource *node;
 
-    for (node = gResourceList; node != 0; node = node->next) {
+    for (node = gResourceListHead; node != 0; node = node->next) {
         if (node->group == resource->group && node->name == resource->name) {
             break;
         }

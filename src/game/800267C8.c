@@ -42,22 +42,22 @@ union SpeedValue267C8 {
     s32 word;
 };
 
-extern struct InputAction267C8 D_800A0AF0[];
-extern struct InputAction267C8 gPanelPhaseTable[] __asm__("D_800A0B00");
-extern struct InputAction267C8 gPanelChoiceTable[] __asm__("D_800A0B10");
+extern struct InputAction267C8 gMapDigit2Action[] __asm__("D_800A0AF0");
+extern struct InputAction267C8 gMapDigit3Action[] __asm__("D_800A0B00");
+extern struct InputAction267C8 gMapDigit4Action[] __asm__("D_800A0B10");
 extern struct InputAction267C8 gBackActionRecord[] __asm__("D_800A0B20");
-extern struct InputAction267C8 gActionRecords[] __asm__("D_800A0AA0");
+extern struct InputAction267C8 gMapOpenPanelAction[] __asm__("D_800A0AA0");
 
-extern s32 D_8009F670[];
+extern s32 gCheatCodeInput[] __asm__("D_8009F670");
 extern s32 gPlayerEntities[] __asm__("D_8009FA58");
-extern s32 gPanelSelection __asm__("D_8009FA6C");
+extern s32 gOpenPanelCount __asm__("D_8009FA6C");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern union SpeedValue267C8 gFrameDelta __asm__("D_8009F9FC");
 extern struct SoundState267C8 *gGameSession __asm__("D_8009FA94");
-extern u8 *D_8009F2D8;
-extern u8 *D_8009F2DC;
-extern u8 *D_8009F2E0;
+extern u8 *gMapHeaderText __asm__("D_8009F2D8");
+extern u8 *gMapPanelLabel __asm__("D_8009F2DC");
+extern u8 *gMapPanText __asm__("D_8009F2E0");
 
 extern void gDecodeButtonEdge(u32 buttons, struct InputAction267C8 *action) __asm__("func_8005780C");
 extern s32 func_80046C84(s32 id, s32 arg1);
@@ -66,9 +66,11 @@ extern s32 func_80049340(u8 *text);
 extern void func_80049100(u8 *text, s32 x, s32 y, s32 color);
 extern void func_8001C214(u32 color, s32 x, s32 y, s32 w, s32 h, s32 blend);
 extern void func_800260B8(struct Obj267C8 *obj, s32 slot, s32 arg2, s32 selection, s32 active);
-extern void func_800576A8(u32 *buttons, s32 slot);
+extern void gTranslatePadButtons(u32 *buttons, s32 slot) __asm__("func_800576A8");
 extern void func_8005AB8C(struct Obj267C8 *obj, void *arg1, void *arg2);
 extern void gDrawMapView(struct Obj267C8 *obj, void *arg1) __asm__("func_8006680C");
+void gUpdateMapScreenView(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection) __asm__("func_800267C8");
+
 
 /**
  * @brief Per-slot update of one row of the front-end map screen: evaluates five
@@ -131,8 +133,23 @@ extern void gDrawMapView(struct Obj267C8 *obj, void *arg1) __asm__("func_8006680
  * @par Callers
  * func_80026DDC, a hand-written wrapper that moves the stack pointer to
  * 0x1F8003F0 for the call and restores it afterwards.
+ *
+ * @par Environment path
+ * Per-player, per-frame update of the in-game map screen, run on the
+ * scratchpad stack by gRunMapScreenOnScratch (func_80026DDC): it decodes five
+ * button action records for the slot with gDecodeButtonEdge, appends a base-4
+ * digit (choice - 1) to the cheat-code accumulator D_8009F670[slot] while the
+ * selection byte +0x312 of the state block (player+0xAC) is 1, and on the
+ * D_800A0AA0 action while the selection is -1 opens the options panel (sound
+ * 0x3E, D_8009FA6C++, selection 0, code cleared). It blinks the header text,
+ * draws the options panel via func_800260B8 when the selection is
+ * non-negative, draws a label box, and while the selection is negative
+ * integrates D-pad pan rates (clamped to +-0x200, scaled by gFrameDelta) into
+ * the map cursor at state+0x304/+0x30C. Finally it draws the markers with
+ * func_8005AB8C and the map with gDrawMapView (func_8006680C) centred on the
+ * cursor.
  */
-void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
+void gUpdateMapScreenView(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
 {
     register struct State267C8 *state __asm__("$19");
     register u32 off __asm__("$16");
@@ -150,25 +167,25 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
     state = obj->state;
     {
         register u32 base __asm__("$2");
-        base = (u32)D_800A0AF0;
+        base = (u32)gMapDigit2Action;
         first = (struct InputAction267C8 *)(off + base);
     }
     gDecodeButtonEdge(state->buttons, first);
     {
         register u32 base __asm__("$2");
-        base = (u32)gPanelPhaseTable;
+        base = (u32)gMapDigit3Action;
         second = (struct InputAction267C8 *)(off + base);
     }
     gDecodeButtonEdge(state->buttons, second);
     {
         register u32 base __asm__("$2");
-        base = (u32)gPanelChoiceTable;
+        base = (u32)gMapDigit4Action;
         third = (struct InputAction267C8 *)(off + base);
     }
     gDecodeButtonEdge(state->buttons, third);
     gDecodeButtonEdge(state->buttons,
                   (struct InputAction267C8 *)(off + (u32)gBackActionRecord));
-    off += (u32)gActionRecords;
+    off += (u32)gMapOpenPanelAction;
     gDecodeButtonEdge(state->buttons, (struct InputAction267C8 *)off);
 
     action = 0;
@@ -193,9 +210,9 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
             register s32 offset __asm__("$3");
             offset = slot << 2;
             __asm__ volatile("" : : "r"(offset));
-            v = *(s32 *)((u32)D_8009F670 + offset) * 4;
+            v = *(s32 *)((u32)gCheatCodeInput + offset) * 4;
             v = v - 1;
-            *(s32 *)((u32)D_8009F670 + offset) = v + choice;
+            *(s32 *)((u32)gCheatCodeInput + offset) = v + choice;
         }
     }
 
@@ -203,13 +220,13 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
         if (gGameSession->unk5C == 0 ||
             (gGameSession->unk5C == 1 &&
              (gGameSession->unk0C == 1 ||
-              (gGameSession->unk0C == 2 && gPanelSelection == 1)))) {
+              (gGameSession->unk0C == 2 && gOpenPanelCount == 1)))) {
             func_80046C84(0x3E, gPlayerEntities[slot]);
         }
-        gPanelSelection++;
+        gOpenPanelCount++;
         obj->state->selected = 0;
         func_80025F58();
-        D_8009F670[slot] = 0;
+        gCheatCodeInput[slot] = 0;
     }
 
     off = 0x280;
@@ -218,7 +235,7 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
     }
 
     if (active != 0 && (gFrameTickCounter & 0x100) != 0) {
-        text = D_8009F2D8;
+        text = gMapHeaderText;
         {
             s32 x;
             x = 0x14;
@@ -231,10 +248,10 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
 
     if (obj->state->selected >= 0) {
         func_800260B8(obj, slot, selection, off,
-                     gPanelPhaseTable[slot].phase == 0);
-        text = D_8009F2DC;
+                     gMapDigit3Action[slot].phase == 0);
+        text = gMapPanelLabel;
     } else {
-        text = D_8009F2E0;
+        text = gMapPanText;
     }
 
     {
@@ -273,7 +290,7 @@ void func_800267C8(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection)
         *(struct VectorCopy267C8 *)&state->unk304 = *(struct VectorCopy267C8 *)&obj->unk50;
     }
 
-    func_800576A8(&state->buttons, slot);
+    gTranslatePadButtons(&state->buttons, slot);
 
     if (obj->state->selected < 0) {
         u32 buttons;

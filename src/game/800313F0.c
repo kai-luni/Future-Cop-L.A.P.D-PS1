@@ -47,6 +47,8 @@ extern s32 gEntityBaseHandler(s32 message, struct Entity *self, void *data) __as
 extern void func_80031004(struct Entity *self);
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *jtbl_8001123C[];
+void gFollowAttachTarget(struct Entity *self) __asm__("func_800313F0");
+
 
 /**
  * @brief Syncs an attached entity to its target's transform and position.
@@ -70,8 +72,20 @@ extern void *jtbl_8001123C[];
  *
  * @par Callers
  * func_8003151C.
+ *
+ * @par Environment path
+ * Keeps an attached entity on its target: when the re-resolve byte +0xB1 is
+ * set it is cleared, the target is looked up with gFindEntityByTag
+ * (func_8004D69C) using the id at +0xAC, and pointer (+0xA8) and id are
+ * refreshed. While the target exists and its id at +0x08 still equals +0xAC,
+ * the nine rotation words +0x2C..+0x4C are copied and the position +0x50 is
+ * taken from the target's +0x50 (part index +0xB0 negative) or from
+ * gTransformPartVertex (func_80017668) on the target's model at +0x28, then
+ * mirrored to +0x5C. Its only caller is the entity message handler
+ * func_8003151C, so it runs whenever that handler updates the attached
+ * entity; a recycled target (id mismatch) simply stops the follow.
  */
-void func_800313F0(struct Entity *self)
+void gFollowAttachTarget(struct Entity *self)
 {
     struct Entity *other;
     s32 id;

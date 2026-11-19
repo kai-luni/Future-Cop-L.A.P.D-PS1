@@ -11,7 +11,7 @@ typedef struct {
     s32 time;
 } Slot;
 
-extern u8 gChannelEnableFlag __asm__("D_8009F26C");
+extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern Slot gObjectSlots[] __asm__("D_800A0A00");
 
@@ -42,7 +42,7 @@ s32 func_8002385C(void)
     Slot *slot;
 
     ret = 1;
-    if (gChannelEnableFlag != 0) {
+    if (gCvkSystemActive != 0) {
         i = 0;
         do {
             slot = &gObjectSlots[i];

@@ -13,13 +13,15 @@ struct Unk402DCOwner {
 };
 
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
-extern u8 gCellAbortFlag __asm__("D_8009F31C");
+extern u8 gBatchSpawnActive __asm__("D_8009F31C");
 
 extern u32 *func_8003B3D8(u32 column, u32 row);
-extern void *func_8003D680(struct Unk402DCOwner *owner, u8 column, s32 row, s32 arg3,
-                           s32 arg4, u8 arg5);
-extern s32 func_8003E984(void *object, s32 arg1, u8 column, s32 arg3, s32 row);
+extern void *gCreateModelNode(struct Unk402DCOwner *owner, u8 column, s32 row, s32 arg3,
+                           s32 arg4, u8 arg5) __asm__("func_8003D680");
+extern s32 gSpawnObjectFromTable(void *object, s32 arg1, u8 column, s32 arg3, s32 row) __asm__("func_8003E984");
 extern void *func_8003FD74(s32 column, s32 row, struct Unk402DCOwner *owner, s32 arg3);
+s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
+
 
 /**
  * @brief Map-cell spawn gate: spawns an object into a cell unless the cell's
@@ -58,8 +60,23 @@ extern void *func_8003FD74(s32 column, s32 row, struct Unk402DCOwner *owner, s32
  * func_800588D4, func_80058D78, func_8005B6A8, func_8005BDE4, gWriteCellEventValue,
  * func_8005C184, func_8005C344, gAttachPartEffect, func_8005F018, func_8005F6E8,
  * gWeaponFireDispatch, gBeamPartUpdate.
+ *
+ * @par Environment path
+ * Common entry for spawning an object of definition type 'column' from bank
+ * 'row' next to an owner: it returns 0 unless gSpawnRecordMap[row][column]
+ * (D_800A7040) holds a definition; when the type's flag word from
+ * func_8003B3D8 has (word & 5) == 4 it only parks a request via func_8003FD74
+ * (if owner and owner+0x08 are set) and returns 0; otherwise it creates a
+ * 0x4C-byte anchor node with func_8003D680, passing gBatchSpawnActive
+ * (D_8009F31C) as its override flag, and hands it to func_8003E984, which
+ * builds and registers the object. The 'column/row' parameter names in the
+ * source are really type index and bank, as 8003C404.c and 8003E984.c index
+ * the same table. It is called from 22 runtime paths
+ * (gGuidedProjectileUpdate, gAttachPartEffect, gWeaponFireDispatch,
+ * gBeamPartUpdate, func_8003BAE4 and others) to spawn effects and attached
+ * objects during play.
  */
-s32 func_800402DC(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4)
+s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4)
 {
     if (gSpawnRecordMap[row][column] == 0) {
         return 0;
@@ -73,6 +90,6 @@ s32 func_800402DC(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32
         }
         return 0;
     }
-    return func_8003E984(func_8003D680(owner, column, row, arg2, arg4, gCellAbortFlag), 0,
+    return gSpawnObjectFromTable(gCreateModelNode(owner, column, row, arg2, arg4, gBatchSpawnActive), 0,
                          column, arg2, row);
 }

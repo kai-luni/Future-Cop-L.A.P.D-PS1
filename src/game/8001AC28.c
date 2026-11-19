@@ -4,6 +4,8 @@
 extern int gVectorAddScaled();
 
 union Product1AC28 { long long value; u32 word[2]; };
+void gVectorMulAdd(s32 *a, s32 *b, s32 scale, s32 *out) __asm__("func_8001AC28");
+
 
 /**
  * @brief Scaled vector addition: out = a + b * scale, three components in
@@ -26,8 +28,17 @@ union Product1AC28 { long long value; u32 word[2]; };
  *
  * @par Callers
  * func_8002E630, func_8002EED8, func_80052550, func_800569EC, func_80057E40.
+ *
+ * @par Environment path
+ * Computes out = a + b * scale per component with the middle 32 bits of the
+ * 64-bit product (16.16 fixed point). gUpdateChaseCamera (func_800569EC) uses
+ * it to move the eye along the camera axis +0x70 by zoom << 7
+ * (800569EC.c:513) and to jitter the eye along the +0x64 and +0x58 axes for
+ * camera shake; gTickActor, gInitMoverObject, func_80052550 and
+ * gSlewEntityAim use it for movement. It is directly on the camera motion
+ * path.
  */
-void func_8001AC28(s32 *a, s32 *b, s32 scale, s32 *out)
+void gVectorMulAdd(s32 *a, s32 *b, s32 scale, s32 *out)
 {
     register union Product1AC28 wide __asm__("$8");
     register u32 sum __asm__("$2");

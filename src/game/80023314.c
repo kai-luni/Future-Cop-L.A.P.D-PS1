@@ -1,7 +1,7 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern u8 gChannelEnableFlag __asm__("D_8009F26C");
+extern u8 gCvkSystemActive __asm__("D_8009F26C");
 
 extern void func_80021E1C(void);
 
@@ -23,7 +23,7 @@ extern void func_80021E1C(void);
  */
 void func_80023314(void)
 {
-    if (gChannelEnableFlag != 0) {
+    if (gCvkSystemActive != 0) {
         func_80021E1C();
     }
 }

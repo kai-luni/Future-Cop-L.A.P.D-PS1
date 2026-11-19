@@ -4,6 +4,8 @@ struct ListNode {
     struct ListNode *next;
     struct ListNode *tail;
 };
+struct ListNode *gTakePoolNode(struct ListNode *node) __asm__("func_8003BEF0");
+
 
 /**
  * @brief Pops the last child of a node's child list (LIFO, doubly linked).
@@ -25,8 +27,19 @@ struct ListNode {
  * @par Unknown
  * Whether the re-linking into node->next is a deliberate ordering or an
  * artefact of a doubly linked list with an implicit sentinel.
+ *
+ * @par Environment path
+ * Allocates one node from a fixed pool laid out as {storage, active, free}:
+ * it pops the head of the free list at +0x08, sets the free head to that
+ * node's first word (the next link), pushes the node in front of the active
+ * list at +0x04 and returns it, or returns null when the free list is empty.
+ * gReleasePoolNode (func_8003BF1C) is the inverse. Callers are the runtime
+ * effect and particle spawners func_8005BDE4, gAttachPartEffect
+ * (func_8005CBCC), func_8006F0E8, gInitEmitterParticle (func_800754B8) and
+ * gRunPolygonPass (func_80075A84), so it runs whenever an effect node or
+ * particle is created during play.
  */
-struct ListNode *func_8003BEF0(struct ListNode *node)
+struct ListNode *gTakePoolNode(struct ListNode *node)
 {
     struct ListNode *tail = node->tail;
 

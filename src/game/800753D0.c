@@ -27,6 +27,8 @@ struct Unk753D0 {
 extern void func_80049980(struct Unk752E0Light *light, s32 x, s32 z, s32 y, s32 width,
                           s32 depth, s32 angle, s32 arg7, s32 arg8);
 extern void func_800752E0(struct Unk753D0 *object);
+void gUpdateParticleLight(struct Unk753D0 *object) __asm__("func_800753D0");
+
 
 /**
  * @brief Updates (or creates) the light source of a scene object.
@@ -49,8 +51,20 @@ extern void func_800752E0(struct Unk753D0 *object);
  *
  * @par Callers
  * func_80075A84 (the polygon renderer).
+ *
+ * @par Environment path
+ * Keeps the light node at +0x24 of a particle in sync: with a node, the
+ * particle's colour bytes +0x15..+0x17 are copied into it and func_80049980
+ * re-places it in the D_8009F780 map-cell bucket grid at the particle
+ * position (passed as x, z, y) with width and depth size << 5 (size from
+ * +0x10) and the angle at +0x1A; without a node, func_800752E0 creates one
+ * when size << 5 exceeds 0x500. Its only caller gRunPolygonPass
+ * (func_80075A84) runs it for every live particle of an emitter whose flag
+ * word +0x8E has bit 2 (80075A84.c:282-283), after the particle has been
+ * moved, so it runs every frame. gReleaseParticleLight (func_80075478) frees
+ * the node when the particle dies.
  */
-void func_800753D0(struct Unk753D0 *object)
+void gUpdateParticleLight(struct Unk753D0 *object)
 {
     s32 size;
 

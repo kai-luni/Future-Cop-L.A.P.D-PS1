@@ -25,7 +25,7 @@ extern s32 func_8002DFC4(struct Object *, void *);
 extern s32 gTickActor(struct Object *, void *) __asm__("func_8002E630");
 extern s32 func_8002ACB4(struct Object *, s32);
 extern void *func_800448D8(void *, s32, s32, u8);
-extern void func_8003B898(u8, struct Object *, s32, u16, s32);
+extern void gSpawnEntitySlotTypes(u8, struct Object *, s32, u16, s32) __asm__("func_8003B898");
 
 /**
  * @brief Message handler of object type 27: spawn, attack tick, frame draw
@@ -84,7 +84,7 @@ s32 func_8002ED7C(s32 message, struct Object *object, void *data)
             object->state1C = 1;
             object->state = 4;
             object->flags |= 1;
-            func_8003B898(object->column, object, 0, (object->flags19 >> 3) & 0x1e, 0);
+            gSpawnEntitySlotTypes(object->column, object, 0, (object->flags19 >> 3) & 0x1e, 0);
         }
         return 0;
     default:

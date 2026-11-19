@@ -25,7 +25,7 @@ typedef struct {
 } Obj4B310;
 
 extern s32 func_80019668(void);
-extern void func_8001A180(Vec4B310 *arg);
+extern void gNormalizeVector(Vec4B310 *arg) __asm__("func_8001A180");
 
 /**
  * @brief Samples the launch parameters of one debris particle: two
@@ -99,7 +99,7 @@ void func_8004B310(Obj4B310 *arg0, Vec4B310 *arg1, Vec4B310 *arg2, s32 arg3,
     *arg6 = ((func_80019668() & 0x1F) + 0xA0) << 3;
     *arg6 = -((*arg6 * arg0->unk7C) / 100) * 16;
 
-    func_8001A180(arg1);
+    gNormalizeVector(arg1);
 
     s0 = arg0->unk68 - arg0->unk66;
     if (s0 > 0) {

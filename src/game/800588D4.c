@@ -104,9 +104,9 @@ extern void func_800585B8(struct Unk588D4 *object);
 extern s32 gGetGroundHeight(void *object, s32 arg1, s32 arg2, s32 *arg3) __asm__("func_80066F78");
 extern void func_80058378(struct Unk584BC *object, s32 amount, s32 source);
 extern void gRespawnPlayerEntity(struct Unk588D4 *object) __asm__("func_80058714");
-extern void func_800576A8(void *object);
+extern void gTranslatePadButtons(void *object) __asm__("func_800576A8");
 extern s32 func_800586D4(void *object, s32 arg1, s32 arg2, s32 *arg3);
-extern s32 func_800402DC(void *owner, u8 column, void *arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(void *owner, u8 column, void *arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern s32 func_80046C84(s32 id, s32 arg1);
 extern s32 func_800584BC(s32 message, struct Unk584BC *object,
                          struct Unk584BCHitLocal *hit, s32 arg3, s32 arg4);
@@ -255,12 +255,12 @@ s32 gUpdatePlayerEntity(struct Unk588D4 *object, s32 arg1)
 
     if (c1 < 2) {
         if (gScreenState == 4) {
-            func_800576A8((u8 *)data + 0x30);
+            gTranslatePadButtons((u8 *)data + 0x30);
             s2 = func_800586D4(object, arg1, s2, &locals.out1C);
             if (locals.out1C & 1) {
                 locals.msg.unk49 = 0x40;
                 locals.msg.unk44 = (u8 *)object->unkDC + 0x28;
-                func_800402DC(object, 4, &locals.msg, 1, 0);
+                gSpawnTypeAtOwner(object, 4, &locals.msg, 1, 0);
                 func_80046C84(0x15, object);
             }
             if (s2 != 0) {

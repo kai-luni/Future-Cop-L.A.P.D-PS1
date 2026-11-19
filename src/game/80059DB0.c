@@ -20,6 +20,12 @@
  *
  * @par Callers
  * Confirmed: func_80024D14 (0x80024D58, mission reset sequence) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Empty function (jr $ra; nop); the value gResetMissionSubsystems
+ * (func_80024D14) leaves in $a0 is ignored. It is called once per mission
+ * reset at the start of that sequence, so a port can omit it. No name is
+ * given because an empty body proves no role.
  */
 void func_80059DB0(void)
 {

@@ -19,9 +19,11 @@ extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void func_80070710(void *);
 extern void func_80073BA8(void *);
-extern void *func_80073500(void *, s32, s32, s32);
+extern void *gAllocPositionNode(void *, s32, s32, s32) __asm__("func_80073500");
 extern void *func_80073590(void *, void *, s32, s32, s32, s32);
 extern void *func_8007377C(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3) __asm__("func_80073BBC");
+
 
 /**
  * @brief Message handler of a beam effect object: creates the ribbon between two
@@ -72,8 +74,22 @@ extern void *func_8007377C(void *, void *, s32, s32, s32, s32, s32, s32, s32, s3
  * @par Callers
  * None in analysis/edges.json: no direct call exists, so the handler is reached
  * through an indirect call from an object table.
+ *
+ * @par Environment path
+ * Message handler of a two-point beam object (no direct caller; reached
+ * through an object handler table): after the pre-handler func_8003C7B8,
+ * message 0 builds two endpoint nodes from the object's link coordinate
+ * (func_80073590) or its position +0x58 (func_80073500), retires any previous
+ * effect via func_80073BA8 and builds the ribbon between them with
+ * func_8007377C from definition fields +0x36..+0x44, storing it at +0x64.
+ * Message 2 clones the 0x68-byte object, 7 sets bit 0 of +0x0F when
+ * definition flag 0x10 is set, 6 returns that flag, 10 retires the ribbon and
+ * frees the object, 1/3/4/9 return 0 and the rest go to func_8003C980. The
+ * ribbon is pushed onto D_8009F38C, which func_8007364C updates and
+ * func_80073700 draws (8003F6E4.c:86); func_80074104 (gDrawRibbonList) is a
+ * different list.
  */
-s32 func_80073BBC(s32 message, struct Obj *obj, void *arg2, s32 arg3)
+s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3)
 {
     struct Def *def;
     register struct Link *link __asm__("$5");
@@ -128,8 +144,8 @@ s32 func_80073BBC(s32 message, struct Obj *obj, void *arg2, s32 arg3)
                                (def->flags4a & 8) ? 0 : def->p48, (u16)a);
             b = (u32)func_80073590(owner, coord, obj->kind, 0, def->p48, (u16)b);
         } else {
-            b = (u32)func_80073500(&obj->pos, 0, def->p48, (u16)b);
-            a = (u32)func_80073500(&obj->pos, angle,
+            b = (u32)gAllocPositionNode(&obj->pos, 0, def->p48, (u16)b);
+            a = (u32)gAllocPositionNode(&obj->pos, angle,
                                (def->flags4a & 8) ? 0 : def->p48, (u16)a);
         }
         if (!b) {

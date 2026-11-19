@@ -104,18 +104,18 @@ struct CandList {
 };
 
 extern struct CandList gCommandListHead __asm__("D_800A8F90");
-extern struct Tgt *gPendingMotion __asm__("D_8009F374");
+extern struct Tgt *gSpawnMotionContext __asm__("D_8009F374");
 
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 extern s32 func_800684AC(struct Vec3 *a, struct Vec3 *b, struct Vec3 *out, s32 c, s32 d);
 extern s32 func_80019FCC(struct Vec3 *v);
-extern s32 func_80095900(s32 v);
+extern s32 gSqrt12(s32 v) __asm__("func_80095900");
 extern void func_8005C184(struct Vec3 *v, s32 a, struct Target *t);
-extern void func_8001A180(struct Vec3 *v);
-extern s32 func_8001AB00(struct Vec3 *a, struct Vec3 *b);
+extern void gNormalizeVector(struct Vec3 *v) __asm__("func_8001A180");
+extern s32 gVectorDot(struct Vec3 *a, struct Vec3 *b) __asm__("func_8001AB00");
 extern u8 func_8005C2C8(struct Target *t, struct Cand *c);
 extern s32 func_8003BF50(struct Tgt *t);
-extern struct Res *func_800402DC(void *owner, u8 column, struct Msg *msg, s32 row, s32 arg4);
+extern struct Res *gSpawnTypeAtOwner(void *owner, u8 column, struct Msg *msg, s32 row, s32 arg4) __asm__("func_800402DC");
 
 #define FMUL(d, a, b) do { d = (a); __asm__("mult %0,%1\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "+r"(d) : "r"(b) : "$8", "$9"); } while (0)
 
@@ -235,12 +235,12 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
             az = t.v.z;
             msg.vec.z = az - tgt->pos.z;
             msg.vec.x = ax - bx;
-            s1 = (func_80095900(func_80019FCC(&msg.vec)) << 2) >> 4;
+            s1 = (gSqrt12(func_80019FCC(&msg.vec)) << 2) >> 4;
             dx = head->pos.x - tgt->pos.x;
             msg.vec.y = head->pos.y - tgt->pos.y;
             msg.vec.z = head->pos.z - tgt->pos.z;
             msg.vec.x = dx;
-            s1 -= (func_80095900(func_80019FCC(&msg.vec)) << 2) >> 4;
+            s1 -= (gSqrt12(func_80019FCC(&msg.vec)) << 2) >> 4;
             if (s1 < 0) {
                 if (tgt->flags & 2) {
                     head->flags |= 1;
@@ -299,11 +299,11 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
         s4 = (s4 * s4) >> 8;
         lim = 0x14000;
         if (ABS(dir.x) < lim && ABS(dir.y) < lim && ABS(dir.z) < lim) {
-        func_8001A180(&dir);
+        gNormalizeVector(&dir);
         diff.x = cand->pos.x - tail->pos.x;
         diff.y = cand->pos.y - tail->pos.y;
         diff.z = cand->pos.z - tail->pos.z;
-        s1 = func_8001AB00(&diff, &dir);
+        s1 = gVectorDot(&diff, &dir);
         if (s1 < 0) {
             goto neg;
         }
@@ -318,9 +318,9 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
                 cand->handler(0xE, cand, &t.m, 0);
                 msg.unk49 = 5;
                 msg.unk00 = (void *)(tail->radius << 4);
-                gPendingMotion = tgt->unk08;
+                gSpawnMotionContext = tgt->unk08;
                 f = func_8003BF50(tgt->unk08);
-                res = func_800402DC(0, tgt->unk1E, &msg, f, 0);
+                res = gSpawnTypeAtOwner(0, tgt->unk1E, &msg, f, 0);
                 if (res != 0) {
                     kind = tgt->unk08;
                     if (kind != 0) {
@@ -345,7 +345,7 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
                         }
                     }
                 }
-                gPendingMotion = 0;
+                gSpawnMotionContext = 0;
             }
         }
         goto cont;
@@ -353,7 +353,7 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
             t.v.x = cand->pos.x - head->pos.x;
             t.v.y = cand->pos.y - head->pos.y;
             t.v.z = cand->pos.z - head->pos.z;
-            if (func_8001AB00(&t.v, &dir) <= 0) {
+            if (gVectorDot(&t.v, &dir) <= 0) {
                 goto cont;
             }
             {

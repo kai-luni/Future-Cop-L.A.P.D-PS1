@@ -57,7 +57,7 @@ void gStepBeamNode(Node *node, s32 dt) __asm__("func_80071B40");
  *
  * @par Environment path
  * Per-frame step of one beam node, called by the list pass func_8007364C over
- * gModelNodeList (D_8009F38C) once the node carries flag 0x800. For the two
+ * gBeamNodeList (D_8009F38C) once the node carries flag 0x800. For the two
  * anchors obj2 and obj1 it re-fetches the anchor point from its model with
  * func_8003D0F0 whenever the anchor id changed, optionally rotates it into
  * obj1's base frame (func_80010820, func_8001006C) and adds that base's

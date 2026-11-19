@@ -39,7 +39,7 @@ extern u8 *gPartVertexBuffer __asm__("D_8009F578");
 extern u8 *gClipFlagBuffer __asm__("D_8009F57C");
 
 extern void gTransformToViewSpace(void *object, s32 arg1) __asm__("func_800178DC");
-extern void func_80013ECC(u32 *arg0);
+extern void gGteSetLightVector(u32 *arg0) __asm__("func_80013ECC");
 extern void gComposeBoneMatrix(s32 a0, u8 *a1, s32 a2, s32 a3) __asm__("func_80013CB8");
 extern void gComposeTransform(u8 *a0, u8 *a1, void *a2, void *a3) __asm__("func_80014164");
 extern void gGteLoadMatrix(void *a0) __asm__("func_80010750");
@@ -167,7 +167,7 @@ void gProjectBoneParts(struct Arg0 *arg0, u8 *arg1)
         : "$2", "$3", "$5", "$6", "$7", "$8", "$9", "$10", "$11",
           "$12", "$13", "$14", "$15", "$16", "$17", "memory"
     );
-    func_80013ECC(callarg);
+    gGteSetLightVector(callarg);
 
     for (;;) {
         idx = p[0];

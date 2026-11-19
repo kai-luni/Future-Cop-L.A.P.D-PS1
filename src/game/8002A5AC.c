@@ -20,6 +20,12 @@
  *
  * @par Callers
  * Confirmed: func_80024D14 (0x80024D70, mission reset sequence) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Empty function (jr $ra; nop) with no parameters, globals or calls. Its only
+ * caller is gResetMissionSubsystems (func_80024D14), which calls it once per
+ * mission reset, so a port can omit it. No name is given because an empty
+ * body proves no role.
  */
 void func_8002A5AC(void)
 {

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gMissionState __asm__("D_8009F934");
-extern void *gBucketArray __asm__("D_8009F938");
+extern void *gCellBucketGrid __asm__("D_8009F938");
 extern void *gMissionTable __asm__("D_8009F930");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
@@ -34,10 +34,10 @@ void func_80083428(void)
 {
     func_80019584(gMissionState);
     gMissionState = 0;
-    if (gBucketArray != 0) {
-        gFreeBlock(gBucketArray);
+    if (gCellBucketGrid != 0) {
+        gFreeBlock(gCellBucketGrid);
     }
-    gBucketArray = 0;
+    gCellBucketGrid = 0;
     if (gMissionTable != 0) {
         gFreeBlock(gMissionTable);
     }

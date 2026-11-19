@@ -13,8 +13,10 @@ struct Vec3s32 {
 
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 
-extern s32 func_80095C14(u32 value);
+extern s32 gGteLeadingZeros(u32 value) __asm__("func_80095C14");
 extern s32 func_80019904(s32 value);
+void gNormalizeVector(struct Vec3s32 *vector) __asm__("func_8001A180");
+
 
 /**
  * @brief Normalizes a three-component vector in 16.16 fixed point,
@@ -40,8 +42,18 @@ extern s32 func_80019904(s32 value);
  * @par Callers
  * Twenty direct callers, among them func_800192AC, func_80019310,
  * gGuidedProjectileUpdate, func_80066F78 and gAttachPartEffect.
+ *
+ * @par Environment path
+ * Normalises a three-component s32 vector in place: it finds the largest
+ * absolute component, uses the GTE leading-zero count (func_80095C14) to
+ * shift the vector to about bit 20, sums the 16.16 squares and multiplies
+ * every component by func_80019904(sum); a zero vector is left unchanged.
+ * Callers include gGetGroundHeight (func_80066F78), the basis builders
+ * func_800192AC/func_80019310/func_800193F8/func_8001937C,
+ * gGuidedProjectileUpdate and gWeaponFireDispatch. It is core vector math for
+ * ground normals and orientation frames.
  */
-void func_8001A180(struct Vec3s32 *vector)
+void gNormalizeVector(struct Vec3s32 *vector)
 {
     s32 x;
     s32 y;
@@ -82,7 +94,7 @@ void func_8001A180(struct Vec3s32 *vector)
     ay = az - ((diff >> 31) & diff);
 
     if (ay != 0) {
-        shift = func_80095C14((u32)ay);
+        shift = gGteLeadingZeros((u32)ay);
         p1 = 0x1F;
         shift = p1 - shift;
     } else {

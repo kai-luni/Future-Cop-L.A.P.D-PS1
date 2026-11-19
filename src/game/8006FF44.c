@@ -10,6 +10,8 @@ extern s32 func_8003C980(s32, struct Obj *, s32, s32);
 extern void *gResolveNodeTransform(void *, u16, s8, s32, struct Parent *, void *) __asm__("func_8003D9F8");
 extern void func_8001B148(void *, void *, void *, s32);
 extern void func_8006F898(struct Obj *);
+s32 gHandleActor59Msg(s32 message, struct Obj *obj, s32 arg2, s32 arg3) __asm__("func_8006FF44");
+
 extern void gFreeBlock(struct Obj *) __asm__("func_800181D4");
 /**
  * @brief Entity message handler: per-frame transform refresh, a status
@@ -34,8 +36,22 @@ extern void gFreeBlock(struct Obj *) __asm__("func_800181D4");
  * @par Callers
  * No direct callers in the call graph; dispatched indirectly through a
  * handler table.
+ *
+ * @par Environment path
+ * Message handler of the 0x9C-byte kind-0x59 object built by func_8007043C,
+ * which stores this function's address in the object's +0x24 word
+ * (8007043C.c:151); there is no direct caller. After the shared pre-handler
+ * func_8003C7B8 (non-zero result returns 0), message 0 rotates the s16 triple
+ * at +0x94 in place by the parent node transform (gResolveNodeTransform
+ * func_8003D9F8 + func_8001B148, only when the +0x1A flags have bit 4) and
+ * calls func_8006F898 to turn the byte ranges at +0x6C..+0x77 and durations
+ * +0x68/+0x6A into per-tick slopes, returning 1; message 6 returns 1, message
+ * 1 returns 0, message 10 frees the object and anything else goes to
+ * func_8003C980. The +0x94 triple is the velocity that func_8007043C seeds
+ * from a scaled matrix row and that func_80070048 integrates, so message 0
+ * turns a local launch direction into world space.
  */
-s32 func_8006FF44(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
+s32 gHandleActor59Msg(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
 {
     struct Parent *parent;
     void *child;

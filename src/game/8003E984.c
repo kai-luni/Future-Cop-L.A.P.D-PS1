@@ -97,8 +97,8 @@ struct SpawnWork {
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Player *gPlayerEntities __asm__("D_8009FA58");
-extern struct Player *D_8009FA5C;
-extern void *gPendingMotion __asm__("D_8009F374");
+extern struct Player *gPlayerEntity2 __asm__("D_8009FA5C");
+extern void *gSpawnMotionContext __asm__("D_8009F374");
 extern struct Object *gPendingSpawnList __asm__("D_8009F314");
 
 extern void gBuildNodePlacement(struct Source *, struct Object *, struct Parent *, void *, struct Matrix *, u16 *, s8 *) __asm__("func_8003DB70");
@@ -106,9 +106,9 @@ extern struct Data *gResolveNodeTransform(struct Holder *, u16, s8, s32, struct 
 extern u32 *func_8003B3D8(u32, u32);
 extern void func_8003B3F8(struct Object *, u32, s32);
 extern s32 func_8003CDAC(struct Holder *, s8);
-extern void func_80069580(u32, struct DestinationTriple *);
-extern s32 func_8001A100(s32 *);
-extern s32 func_80019F54(s32 *);
+extern void gGetViewGroundAnchor(u32, struct DestinationTriple *) __asm__("func_80069580");
+extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
+extern s32 gApproxVectorLength(s32 *) __asm__("func_80019F54");
 extern void func_80057358(void *, s32);
 extern void func_80025D6C(s32 *);
 extern void func_800410BC(s32 *, u16, s16, void *);
@@ -117,10 +117,12 @@ extern struct Object *func_8007043C(struct Source *);
 extern struct Object *func_8006EB80(struct Source *);
 extern struct Object *func_800447F0(struct Source *);
 extern struct Object *func_8004C920(struct Source *);
-extern struct Object *func_800762B0(struct Source *);
+extern struct Object *gCreateEmitterObject(struct Source *) __asm__("func_800762B0");
 extern struct Object *func_80074024(struct Source *);
 extern s32 func_80046C84(s32, s32);
 extern void func_80047284(s32, s32, s32, s32);
+s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, void *arg3, s32 arg4) __asm__("func_8003E984");
+
 
 /**
  * @brief Spawns one game object from the static spawn tables: resolves the
@@ -242,8 +244,29 @@ extern void func_80047284(s32, s32, s32, s32);
  * - The meaning of source->unk24, which suppresses the child chain.
  * - Whether D_8009F314 is a plain list head or a per-frame render list; only
  *   head insertion is visible here.
+ *
+ * @par Environment path
+ * Instantiates one object from definition gSpawnRecordMap[bank][type]
+ * (D_800A7040, line 263): it builds the placement matrix with
+ * gBuildNodePlacement (func_8003DB70) and resolves the world position with
+ * gResolveNodeTransform (func_8003D9F8); unless the type's flag byte from
+ * func_8003B3D8 has bit 0 or 2, the spawn is rejected when no
+ * gGetViewGroundAnchor point of the gPlayerCount views lies within 0x1FFFF
+ * (lines 276-290). It then calls the constructor for source->kind (0x57
+ * func_800762B0, 0x58 func_80074024, 0x59 func_8007043C, 0x5A func_8004C920,
+ * 0x5C func_8006EB80, 0x5D func_80040E60, 0x5E func_800447F0), registers the
+ * object with func_8003B3F8, bumps the parent anchor's counters +0x3A/+0x3E,
+ * copies the matrix, runs the init callback func24(0, ...), calls
+ * func_80057358 with 0x3E8 or 0x12C for each player within range when flags1A
+ * & 0x2010, may start a motion with func_800410BC and D_8009F374, pushes the
+ * object onto gPendingSpawnList (D_8009F314), plays its creation sound and
+ * recursively spawns the definition's child type. Callers are
+ * gSpawnTypeAtOwner (func_800402DC), gLaunchDebrisObject (func_8004ABE4),
+ * func_8003F2AC, func_8003FE0C, func_8004B180, func_8004B5F8 and itself;
+ * gRunEntityWorldTick (func_8003F570) drains the pending list at
+ * 8003F570.c:109-112.
  */
-s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg3, s32 arg4)
+s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, void *arg3, s32 arg4)
 {
     struct SpawnWork work;
     register struct Source *source __asm__("$21");
@@ -276,11 +299,11 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
     if ((*(u8 *)func_8003B3D8(type, arg4) & 5) == 0) {
         found = 0;
         for (i = 0; i < gPlayerCount; i++) {
-            func_80069580(i, &work.point);
+            gGetViewGroundAnchor(i, &work.point);
             work.diff[0] = data->x - work.point.second;
             work.diff[1] = data->y - work.point.zero;
             work.diff[2] = data->z - work.point.first;
-            if (func_8001A100(work.diff) <= 0x1FFFF) {
+            if (gVectorLength3D(work.diff) <= 0x1FFFF) {
                 found = 1;
             }
         }
@@ -306,7 +329,7 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
         tmp = func_8004C920(source);
         break;
     case 0x57:
-        tmp = func_800762B0(source);
+        tmp = gCreateEmitterObject(source);
         break;
     case 0x58:
         tmp = func_80074024(source);
@@ -368,16 +391,16 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
         work.distVec[0] = gPlayerEntities->x - data->x;
         work.distVec[1] = gPlayerEntities->y - data->y;
         work.distVec[2] = gPlayerEntities->z - data->z;
-        if (ABS(func_80019F54(work.distVec)) <= 0x1FFFF) {
+        if (ABS(gApproxVectorLength(work.distVec)) <= 0x1FFFF) {
             func_80057358(gPlayerEntities, amount);
         }
 
         if (gPlayerCount >= 2) {
-            work.distVec[0] = D_8009FA5C->x - data->x;
-            work.distVec[1] = D_8009FA5C->y - data->y;
-            work.distVec[2] = D_8009FA5C->z - data->z;
-            if (ABS(func_80019F54(work.distVec)) <= 0x1FFFF) {
-                func_80057358(D_8009FA5C, amount);
+            work.distVec[0] = gPlayerEntity2->x - data->x;
+            work.distVec[1] = gPlayerEntity2->y - data->y;
+            work.distVec[2] = gPlayerEntity2->z - data->z;
+            if (ABS(gApproxVectorLength(work.distVec)) <= 0x1FFFF) {
+                func_80057358(gPlayerEntity2, amount);
             }
         }
     }
@@ -388,7 +411,7 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
 
     if (object->source20->unk2E != 0) {
         if (object->source20->unk30 > 0) {
-            func_800410BC(&data->x, object->source20->unk2E, object->source20->unk30, gPendingMotion);
+            func_800410BC(&data->x, object->source20->unk2E, object->source20->unk30, gSpawnMotionContext);
         } else {
             object->func24(9, object, 0, 0);
         }
@@ -410,24 +433,24 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
                     work.vec1[0] = target->x - gPlayerEntities->x;
                     work.vec1[1] = target->y - gPlayerEntities->y;
                     work.vec1[2] = target->z - gPlayerEntities->z;
-                    work.vec2[0] = target->x - D_8009FA5C->x;
-                    work.vec2[1] = target->y - D_8009FA5C->y;
-                    work.vec2[2] = target->z - D_8009FA5C->z;
+                    work.vec2[0] = target->x - gPlayerEntity2->x;
+                    work.vec2[1] = target->y - gPlayerEntity2->y;
+                    work.vec2[2] = target->z - gPlayerEntity2->z;
                 } else {
                     work.vec1[0] = object->matrix.m[9] - gPlayerEntities->x;
                     work.vec1[1] = object->matrix.m[10] - gPlayerEntities->y;
                     work.vec1[2] = object->matrix.m[11] - gPlayerEntities->z;
-                    work.vec2[0] = object->matrix.m[9] - D_8009FA5C->x;
-                    work.vec2[1] = object->matrix.m[10] - D_8009FA5C->y;
-                    work.vec2[2] = object->matrix.m[11] - D_8009FA5C->z;
+                    work.vec2[0] = object->matrix.m[9] - gPlayerEntity2->x;
+                    work.vec2[1] = object->matrix.m[10] - gPlayerEntity2->y;
+                    work.vec2[2] = object->matrix.m[11] - gPlayerEntity2->z;
                 }
-                dist = func_80019F54(work.vec1);
-                dist2 = func_80019F54(work.vec2);
+                dist = gApproxVectorLength(work.vec1);
+                dist2 = gApproxVectorLength(work.vec2);
                 if (dist < dist2) {
                     if (dist <= 0x1FFFF) {
                         func_80046C84(object->soundId11, (s32)gPlayerEntities);
                     } else if (dist2 <= 0x1FFFF) {
-                        func_80046C84(object->soundId11, (s32)D_8009FA5C);
+                        func_80046C84(object->soundId11, (s32)gPlayerEntity2);
                     }
                 }
             } else {
@@ -440,7 +463,7 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
                     work.vec1[1] = object->matrix.m[10] - gPlayerEntities->y;
                     work.vec1[2] = object->matrix.m[11] - gPlayerEntities->z;
                 }
-                dist = func_80019F54(work.vec1);
+                dist = gApproxVectorLength(work.vec1);
                 if (dist <= 0x1FFFF) {
                     func_80046C84(object->soundId11, (s32)gPlayerEntities);
                 }
@@ -474,7 +497,7 @@ s32 func_8003E984(struct Parent *parent, struct Object *link, u8 type, void *arg
         goto success;
     }
 
-    func_8003E984(parent, object, source->childType, 0, arg4);
+    gSpawnObjectFromTable(parent, object, source->childType, 0, arg4);
     object->unk06 = 0;
     object->flags0F |= 2;
 success:

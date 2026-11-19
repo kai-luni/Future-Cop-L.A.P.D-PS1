@@ -10,7 +10,7 @@ struct Unk5A934 {
     s16 heading;
 };
 
-extern s32 func_80095C30(s32 x, s32 z);
+extern s32 gAtan2(s32 x, s32 z) __asm__("func_80095C30");
 
 /**
  * @brief Computes the relative bearing from an object to a far target for
@@ -46,7 +46,7 @@ s32 func_8005A934(struct Unk5A934 *object, s32 z, s32 x, s32 *angle)
     dx = x - object->x;
     if ((((dz >> 31) + dz) ^ (dz >> 31)) > 0x2000 ||
         (((dx >> 31) + dx) ^ (dx >> 31)) > 0x2000) {
-        direction = func_80095C30(dx, dz);
+        direction = gAtan2(dx, dz);
         direction = (direction << 12) >> 12;
         direction -= object->heading;
         direction -= 0x400;

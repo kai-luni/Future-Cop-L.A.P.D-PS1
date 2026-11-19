@@ -11,7 +11,7 @@ struct Pool {
     struct PoolNode *free;
 };
 
-extern struct Pool gObjectPool __asm__("D_800A3538");
+extern struct Pool gTracerPool __asm__("D_800A3538");
 extern void func_8003BE2C(struct Pool *pool, s32 size, s32 count);
 
 /**
@@ -33,5 +33,5 @@ extern void func_8003BE2C(struct Pool *pool, s32 size, s32 count);
  */
 void func_8006EDC4(void)
 {
-    func_8003BE2C(&gObjectPool, 0x48, 0xA);
+    func_8003BE2C(&gTracerPool, 0x48, 0xA);
 }

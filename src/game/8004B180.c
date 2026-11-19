@@ -35,8 +35,8 @@ struct Unk4B180 {
     struct Unk4B180Shape *shape;
 };
 
-extern s32 func_8001A314(s32 *vector);
-extern s32 func_8003E984(void *owner, s32 arg1, u8 kind, struct Unk4B180Hit *hit, s32 arg4);
+extern s32 gNormalizeGetLength(s32 *vector) __asm__("func_8001A314");
+extern s32 gSpawnObjectFromTable(void *owner, s32 arg1, u8 kind, struct Unk4B180Hit *hit, s32 arg4) __asm__("func_8003E984");
 
 /**
  * @brief Marks a triggered node and spawns an object from its shape's position vector.
@@ -72,11 +72,11 @@ void func_8004B180(struct Unk4B180 *object)
     }
     shape = object->shape;
     hit.position = shape->position;
-    length = func_8001A314(&hit.position.x);
+    length = gNormalizeGetLength(&hit.position.x);
     if (hit.position.y < 0) {
         hit.position.y = -hit.position.y;
     }
     hit.strength = length >> 12;
     hit.mode = 2;
-    func_8003E984(object->owner, 0, object->kind, &hit, (object->flags10 >> 1) & 1);
+    gSpawnObjectFromTable(object->owner, 0, object->kind, &hit, (object->flags10 >> 1) & 1);
 }

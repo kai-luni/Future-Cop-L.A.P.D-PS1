@@ -44,15 +44,15 @@ struct Entity {
 
 extern void gVectorAddScaled(void *a, void *b, s32 c, s32 *d) __asm__("func_8001ACA4");
 extern s32 func_800684AC(void *a, s32 *b, s32 c, s32 d, s32 e);
-extern s32 func_8001A100(s32 *vector);
-extern void func_8001A180(struct Vec3s32 *vector);
+extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
+extern void gNormalizeVector(struct Vec3s32 *vector) __asm__("func_8001A180");
 extern struct Entity *func_8004D3FC(s32 size);
 extern s32 func_80019668(void);
-extern s32 func_800402DC(void *owner, u8 column, s32 arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
 extern void func_80036940(struct Entity *self, s32 arg2, s32 arg3);
-extern void func_8001937C(struct Vec3s32 *axis, void *basis);
-extern void func_800193F8(struct Vec3s32 *axis, void *basis);
+extern void gBuildBasisFromAxisYZ(struct Vec3s32 *axis, void *basis) __asm__("func_8001937C");
+extern void gBuildBasisFromAxis(struct Vec3s32 *axis, void *basis) __asm__("func_800193F8");
 extern s32 func_8001A750(struct Vec3s32 *a, void *b);
 extern void func_8004D958(struct Entity *entity);
 extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
@@ -149,9 +149,9 @@ message_3:
         sign = dy >> 31;
         dy = (sign + dy) ^ sign;
         if (dx + dy < 0x10) {
-            func_8001937C(&self->unk78, self->unk2C);
+            gBuildBasisFromAxisYZ(&self->unk78, self->unk2C);
         } else {
-            func_800193F8(&self->unk78, self->unk2C);
+            gBuildBasisFromAxis(&self->unk78, self->unk2C);
         }
         if (func_8001A750(&self->unk50, &self->unkC8) > 0x58000) {
             func_8004D958(self);

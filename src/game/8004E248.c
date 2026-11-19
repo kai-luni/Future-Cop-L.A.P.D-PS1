@@ -19,7 +19,7 @@ struct Entity {
 };
 
 extern struct Entity *gPlayerEntities __asm__("D_8009FA58");
-extern struct Entity *D_8009FA5C;
+extern struct Entity *gPlayerEntity2 __asm__("D_8009FA5C");
 extern struct Entity *gFocusPositions __asm__("D_8009F9A0");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern s32 D_8009F7A4;
@@ -78,8 +78,8 @@ void func_8004E248(void)
     x = gPlayerEntities->x;
     bestEnt = 0;
     z = gPlayerEntities->z;
-    bx = D_8009FA5C->x;
-    bz = D_8009FA5C->z;
+    bx = gPlayerEntity2->x;
+    bz = gPlayerEntity2->z;
     best = 0x40000000;
     if (gFocusPositions != 0) {
         bx = gFocusPositions->x;

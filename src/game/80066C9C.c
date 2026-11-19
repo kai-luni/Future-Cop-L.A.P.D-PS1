@@ -34,7 +34,7 @@ struct Block {
 };
 
 extern struct Camera *gCamera __asm__("D_8009F9E4");
-extern struct Pair gScenePositionPairs[] __asm__("D_800A3190");
+extern struct Pair gViewGroundAnchors[] __asm__("D_800A3190");
 extern struct Block gCoverageGrid[] __asm__("D_800AB3B8");
 extern u8 gGridOriginX[] __asm__("D_8009F834");
 
@@ -84,7 +84,7 @@ void gUpdateCameraAnchor(s32 index, struct Entity *obj) __asm__("func_80066C9C")
  * gSelectViewRecord, loads the camera rotation, and intersects the camera's
  * view direction (gCamera + 0x70/+0x74/+0x78) from the eye (+0x7C/+0x84) with
  * the entity's height, writing the resulting ground point to
- * gScenePositionPairs[index]. From that point it derives the coarse grid
+ * gViewGroundAnchors[index]. From that point it derives the coarse grid
  * origin ((coordinate >> 17) - 2) for both axes, stores the two bytes at
  * D_8009F834[index * 2], and fills the view's 400-byte block of gCoverageGrid
  * through gSampleCellWindow (func_80064460). It runs once per player and

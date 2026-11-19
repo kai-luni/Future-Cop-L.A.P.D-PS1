@@ -23,7 +23,7 @@ extern volatile Unk80086DB4 *gMovieAudioState __asm__("D_8009F4D8");
 extern void *func_800869D8(u32 index);
 extern void *func_80086A4C(u32 arg);
 extern void func_8008684C(u8 *arg0, u32 arg1, u32 arg2);
-extern void func_80086AC0(void);
+extern void gServiceMovieAudioIrq(void) __asm__("func_80086AC0");
 extern u32 func_80098788(s32 on_off, u32 voice_bits);
 extern void func_80098C68(s32 a, u32 b);
 
@@ -75,7 +75,7 @@ void gMovieAudioStart(void)
         }
         gMovieAudioState->unk7B48 = 3;
         gMovieAudioState->unk08 = 1;
-        func_80086AC0();
+        gServiceMovieAudioIrq();
         gMovieAudioState->unk7B48 = 0;
     }
     gMovieAudioState->unk7B6C = func_80098788(0, gMovieAudioState->unk7B64);

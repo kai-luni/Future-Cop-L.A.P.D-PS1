@@ -10,14 +10,14 @@ struct Unk3F570Node {
 };
 
 extern struct Unk3F570Node *gListHeads[7] __asm__("D_800A1070");
-extern struct Unk3F570Node *gNodeCList __asm__("D_8009F30C");
+extern struct Unk3F570Node *gDeferredSpawnList __asm__("D_8009F30C");
 extern struct Unk3F570Node *gPendingSpawnList __asm__("D_8009F314");
 
 extern s32 func_8003F2AC(struct Unk3F570Node *object, s32 arg1);
 extern void func_8003B44C(struct Unk3F570Node *object);
-extern void func_8003D240(void);
+extern void gSyncAttachedNodes(void) __asm__("func_8003D240");
 extern void gRunSceneListPassesOnScratch(s32 arg) __asm__("func_8003F530");
-extern void func_8003FF7C(void);
+extern void gStreamDeferredSpawns(void) __asm__("func_8003FF7C");
 extern void func_8004C2B8(struct Unk3F570Node *object);
 extern void func_8003F428(struct Unk3F570Node *node, s32 arg);
 extern void func_8005E0AC(s32 object);
@@ -59,7 +59,7 @@ void gRunEntityWorldTick(s32 arg0) __asm__("func_8003F570");
  * and retires every node whose func_8003F2AC result has the low byte set,
  * unlinking it and sending message 10 to its handler. Afterwards it runs the
  * list update passes through func_8003F530, func_8004C2B8 on bucket 4,
- * func_8003F428 on bucket 5, the proximity gate func_8003FF7C when gNodeCList
+ * func_8003F428 on bucket 5, the proximity gate func_8003FF7C when gDeferredSpawnList
  * is non-empty, and finally moves each object queued in gPendingSpawnList
  * into its bucket with func_8003B44C.
  */
@@ -73,7 +73,7 @@ void gRunEntityWorldTick(s32 arg0)
     s32 zero;
 
     func_8005E0AC(arg0);
-    func_8003D240();
+    gSyncAttachedNodes();
 
     i = 0;
     do {
@@ -103,8 +103,8 @@ void gRunEntityWorldTick(s32 arg0)
     gRunSceneListPassesOnScratch(arg0);
     func_8004C2B8(gListHeads[4]);
     func_8003F428(gListHeads[5], arg0);
-    if (gNodeCList != 0) {
-        func_8003FF7C();
+    if (gDeferredSpawnList != 0) {
+        gStreamDeferredSpawns();
     }
     while (gPendingSpawnList != 0) {
         tail = gPendingSpawnList->next;

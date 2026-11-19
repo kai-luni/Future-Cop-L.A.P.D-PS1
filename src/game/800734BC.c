@@ -5,9 +5,11 @@ struct Unk734B0 {
     struct Unk734B0 *next;
 };
 
-extern struct Unk734B0 *gModelNodeList __asm__("D_8009F38C");
+extern struct Unk734B0 *gBeamNodeList __asm__("D_8009F38C");
 
 extern void func_80073BA8(struct Unk734B0 *node);
+void gRetireAllRibbons(void) __asm__("func_800734BC");
+
 
 /**
  * @brief Marks every node on the D_8009F38C list with retire flag 0x1000 and clears the list head.
@@ -31,17 +33,26 @@ extern void func_80073BA8(struct Unk734B0 *node);
  *
  * @par Callers
  * Confirmed: func_80024D14 (0x80024D38, first reset call in between-mission global reset) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Walks the ribbon/beam node list D_8009F38C (pushed by the constructor
+ * func_8007377C, 8007377C.c:185-186), sets retire flag 0x1000 on each node
+ * through func_80073BA8 and then clears the list head. Its only caller is
+ * gResetMissionSubsystems (func_80024D14), the between-mission reset. Because
+ * the head is cleared immediately, the per-frame list pass func_8007364C that
+ * normally retires flagged nodes never sees them again, so this only detaches
+ * the nodes; it frees nothing itself.
  */
-void func_800734BC(void)
+void gRetireAllRibbons(void)
 {
     struct Unk734B0 *node;
     struct Unk734B0 *next;
 
-    node = gModelNodeList;
+    node = gBeamNodeList;
     while (node != 0) {
         next = node->next;
         func_80073BA8(node);
         node = next;
     }
-    gModelNodeList = 0;
+    gBeamNodeList = 0;
 }

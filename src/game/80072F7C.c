@@ -61,7 +61,7 @@ extern struct Camera72F7C *const gCamera __asm__("D_8009F9E4");
 extern struct Prim72F7C *gPrimPoolNext __asm__("D_8009F9F0");
 extern struct Prim72F7C *gPrimPoolEnd __asm__("D_8009FA28");
 
-extern s32 func_8001A100(V3_72F7C *vector);
+extern s32 gVectorLength3D(V3_72F7C *vector) __asm__("func_8001A100");
 extern void gGteLoadRotation(u8 *matrix) __asm__("func_80010820");
 extern void gProjectVertexBatch(S3X_72F7C *in, S3X_72F7C *out, u8 *flags, s32 count) __asm__("func_8001047C");
 
@@ -113,11 +113,11 @@ void func_80072F7C(struct Node72F7C *node, V3_72F7C *arg)
         vec.x = node->entries[i].verts[0].x - arg->x;
         vec.y = node->entries[i].verts[0].y - arg->y;
         vec.z = node->entries[i].verts[0].z - arg->z;
-        if (0x1FFFF < func_8001A100(&vec)) {
+        if (0x1FFFF < gVectorLength3D(&vec)) {
             vec.x = node->entries[i].verts[node->entries[i].count].x - arg->x;
             vec.y = node->entries[i].verts[node->entries[i].count].y - arg->y;
             vec.z = node->entries[i].verts[node->entries[i].count].z - arg->z;
-            if (0x1FFFF < func_8001A100(&vec)) {
+            if (0x1FFFF < gVectorLength3D(&vec)) {
                 continue;
             }
         }

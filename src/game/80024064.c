@@ -18,7 +18,7 @@ struct Unk4749CHandle {
     u8 flag18;
 };
 
-extern u8 gChannelEnableFlag __asm__("D_8009F26C");
+extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 
 extern int func_80024170(void);
@@ -52,7 +52,7 @@ s32 func_80024064(s32 arg0, s32 arg1)
     struct Unk4749CResource *handle;
 
     handle = 0;
-    if (gChannelEnableFlag != 0) {
+    if (gCvkSystemActive != 0) {
         if ((u8)func_80024170()) {
             func_80023E84();
         }

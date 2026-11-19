@@ -33,7 +33,7 @@ struct GlobalFA94 {
 
 extern struct GlobalFA94 *gGameSession __asm__("D_8009FA94");
 
-extern void func_8003BA50(struct Entity *self, s32 old1C);
+extern void gFlagQuartileChange(struct Entity *self, s32 old1C) __asm__("func_8003BA50");
 extern s32 func_80019668(void);
 extern void func_800330E8(struct Entity *self);
 
@@ -62,7 +62,7 @@ void func_8003526C(struct Entity *self)
     s32 old1C = self->unk1C;
     self->unk1C = self->unk1E;
     if (self->unk20 != 0 && !(self->unk24 & 0x40000)) {
-        func_8003BA50(self, old1C);
+        gFlagQuartileChange(self, old1C);
     }
     self->unk134->unk1E = ((s16)self->unk1E >> 1) - (func_80019668() & 0x3F);
     self->unkFA = 0;

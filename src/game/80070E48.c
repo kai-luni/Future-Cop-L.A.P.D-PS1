@@ -76,7 +76,7 @@ extern Dev *gPlayerEntities[] __asm__("D_8009FA58");
 
 extern s16 gComputeEffectEndPoint(Node *node, Obj *obj, V3 *out, void *arg) __asm__("func_80070730");
 extern s32 func_80019668(void);
-extern s32 func_8001A314(V3 *v);
+extern s32 gNormalizeGetLength(V3 *v) __asm__("func_8001A314");
 
 /**
  * @brief Rebuilds one strip of a ribbon/beam node: resolves both end points,
@@ -245,7 +245,7 @@ void func_80070E48(Node *node, Entry *e, s32 mode)
     L.v.x = e->verts[e->count].x - e->verts[0].x;
     L.v.y = e->verts[e->count].y - e->verts[0].y;
     L.v.z = e->verts[e->count].z - e->verts[0].z;
-    len = func_8001A314(&L.v);
+    len = gNormalizeGetLength(&L.v);
     scale = (len >> 4) / e->count;
     __asm__ ("" : : "r"(len >> 4));
     j = 1;

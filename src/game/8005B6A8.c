@@ -30,10 +30,10 @@ extern s16 D_8009F7F2, D_8009F7F4;
 extern void func_8005B5A0(struct Source *, struct Target *, struct Sphere *);
 extern s32 func_800684AC(struct Vec *, struct Vec *, struct Vec *, s32, s32);
 extern s32 func_8003BF50(struct Target *);
-extern s32 func_800402DC(void *, u8, struct Message *, s32, s32);
-extern void func_8001A180(struct Vec *);
-extern s32 func_8001AB00(struct Vec *, struct Vec *);
-extern u32 func_80095900(s32);
+extern s32 gSpawnTypeAtOwner(void *, u8, struct Message *, s32, s32) __asm__("func_800402DC");
+extern void gNormalizeVector(struct Vec *) __asm__("func_8001A180");
+extern s32 gVectorDot(struct Vec *, struct Vec *) __asm__("func_8001AB00");
+extern u32 gSqrt12(s32) __asm__("func_80095900");
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 
 /**
@@ -116,7 +116,7 @@ void func_8005B6A8(struct Owner *owner, struct Source *source)
         sphere->flags |= 1;
         message.type = 5;
         message.value = sphere->radius << 4;
-        func_800402DC(0, source->column, &message, func_8003BF50(source->detail), 0);
+        gSpawnTypeAtOwner(0, source->column, &message, func_8003BF50(source->detail), 0);
         return;
     first_sphere:
         if (func_800684AC(&source->pos, &sphere->pos, &message.vec, 0, 1)) goto hit;

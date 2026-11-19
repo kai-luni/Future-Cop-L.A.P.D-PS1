@@ -1,7 +1,7 @@
 // Categories: Game Engine > Frame | Platform > Scratchpad
 #include "game/types.h"
 
-extern u32 gHookInstallFlag __asm__("D_8009FAD8");
+extern u32 gSavedStackPointer __asm__("D_8009FAD8");
 extern void gDrawViewLayers(void) __asm__("func_80066E98");
 void gRunRegionPass(void) __asm__("func_80026E1C");
 

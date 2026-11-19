@@ -1,5 +1,7 @@
 // Categories: Utilities > Mathematics | Platform > GTE
 #include "game/types.h"
+void gGteLeadingZeros(u32 value) __asm__("func_80095C14");
+
 
 /**
  * @brief Leading-zero count via the GTE (log2 helper).
@@ -17,8 +19,16 @@
  *
  * @par Callers
  * func_8001B4A8 only, for the ordering-table depth bucketing.
+ *
+ * @par Environment path
+ * Returns the GTE leading-zero/one count of its argument (mtc2 to LZCS, mfc2
+ * from LZCR). gUpdateChaseCamera (func_800569EC) turns 1 << (31 - result)
+ * into the power-of-two mask of the camera shake jitter, and
+ * gNormalizeVector, gInitReciprocalTable, func_8001A644, func_8001B4A8 and
+ * func_8004F330 use it for range normalisation. It is a GTE primitive on the
+ * camera motion path.
  */
-void func_80095C14(u32 value) {
+void gGteLeadingZeros(u32 value) {
     (void)value;
     __asm__ volatile(
         "mtc2 $4,$30\n\t"

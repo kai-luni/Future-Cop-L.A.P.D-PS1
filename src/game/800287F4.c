@@ -10,10 +10,10 @@ extern u8 D_8009FAA8;
 extern u8 gStartModuleByName(s32 arg0) __asm__("func_80024E3C");
 extern void gPrepareAndSubmitFrame(void) __asm__("func_800259D8");
 extern void func_80029E64(void);
-extern void func_80010030(s32 arg0, s32 arg1, s32 arg2);
+extern void gSetGeomOffsetAndH(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80010030");
 extern s32 func_80048E94(void);
 extern s32 func_80048E28(s32 arg0);
-extern void func_8003FAD4(void);
+extern void gFinishLevelLoad(void) __asm__("func_8003FAD4");
 extern void func_80027EE4(void);
 extern void gRunGameFrameLoop(s32 arg0) __asm__("func_80028618");
 extern void gFinishScreenModule(s32 arg0) __asm__("func_80025B7C");
@@ -77,9 +77,9 @@ s32 gRunScreenModule(s32 arg0, u8 arg1)
     gPrepareAndSubmitFrame();
     func_80029E64();
 
-    func_80010030((gPlayerCount == 1) ? 0xA0 : 0x50, 0x78, 0x200);
+    gSetGeomOffsetAndH((gPlayerCount == 1) ? 0xA0 : 0x50, 0x78, 0x200);
     func_80048E28(func_80048E94());
-    func_8003FAD4();
+    gFinishLevelLoad();
 
     if (gUploadInProgress != 0) {
         func_80027EE4();

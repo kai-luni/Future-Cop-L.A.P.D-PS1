@@ -37,8 +37,8 @@ struct Slot {
     s32 unk04;
 };
 
-extern struct Slot *gBucketArray __asm__("D_8009F938");
-extern s32 gMissionGridWidth __asm__("D_8009F93C");
+extern struct Slot *gCellBucketGrid __asm__("D_8009F938");
+extern s32 gCellGridWidth __asm__("D_8009F93C");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern s32 func_800196C4(void);
@@ -129,7 +129,7 @@ void gDrawCellWindowModels(s32 x, s32 y, u32 *p)
     s32 k;
     s32 t2;
 
-    if (gBucketArray == 0) {
+    if (gCellBucketGrid == 0) {
         return;
     }
     q = p;
@@ -141,15 +141,15 @@ void gDrawCellWindowModels(s32 x, s32 y, u32 *p)
             if (mask == 0) {
                 continue;
             }
-            idx = x + a + gMissionGridWidth * (y + b);
-            o = gBucketArray[idx].head;
+            idx = x + a + gCellGridWidth * (y + b);
+            o = gCellBucketGrid[idx].head;
             if (o == 0) {
                 continue;
             }
             do {
                 if (!(o->flags & 0x10)) {
                     t = gFrameTime;
-                    gBucketArray[idx].unk04 = t;
+                    gCellBucketGrid[idx].unk04 = t;
                     if (mask & o->unk4E) {
                         if (!(o->flags & 8) && o->unk4D != 0) {
                             if (o->flags & 0x20) {

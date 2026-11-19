@@ -88,16 +88,16 @@ struct ListNode {
 
 extern s32 gPlayerCount[] __asm__("D_8009FA0C");
 extern struct Unk5BCD4Pool gOwnerNodeListA __asm__("D_800A22A0");
-extern u8 gMapGrid[] __asm__("D_800A6578");
+extern u8 gSpawnTypeFlags[] __asm__("D_800A6578");
 extern u8 D_8005B934[];
 
-extern void func_80069580(u32 index, struct DestinationTriple *destination);
-extern s32 func_8001A100(s32 *vector);
+extern void gGetViewGroundAnchor(u32 index, struct DestinationTriple *destination) __asm__("func_80069580");
+extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 extern struct Unk5BCD4Node *func_8005BCD4(struct Unk5BCD4Pool *pool, void *target);
-extern struct ListNode *func_8003BEF0(struct ListNode *node);
+extern struct ListNode *gTakePoolNode(struct ListNode *node) __asm__("func_8003BEF0");
 extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_8003BF50(struct Unk402DCOwner *owner);
-extern s32 func_800402DC(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
 struct Locals5BDE4 {
     struct DestinationTriple local;
@@ -106,6 +106,8 @@ struct Locals5BDE4 {
     u8 pad34[4];
     struct Unk5BDE4Param param;
 };
+void gAttachNearPlayerEffect(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *arg2, struct ModelInstance *instance, u8 part, struct Unk5BDE4Source *in_source) __asm__("func_8005BDE4");
+
 
 /**
  * @brief Attaches a modelled sprite effect to an object part, but only when the
@@ -162,8 +164,23 @@ struct Locals5BDE4 {
  *
  * @par Callers
  * func_8005F6E8 (message 14) and gBeamPartUpdate (definition type 0x0E).
+ *
+ * @par Environment path
+ * Attaches a timed effect node to an owner object, but only if the model
+ * instance's world position (+0x34/+0x38/+0x3C) lies within func_8001A100
+ * distance 0x1FFFF of one of the gPlayerCount per-view ground anchors
+ * returned by gGetViewGroundAnchor (func_80069580); the hit flag 'found' is
+ * never initialised in C and relies on the original register state. A node
+ * keyed by the owner is looked up in gOwnerNodeListA (D_800A22A0) with
+ * func_8005BCD4 and, if absent, taken from the pool with func_8003BEF0,
+ * filled (owner, arg1, arg2, optional part position via gTransformPartVertex,
+ * callback 0x8005B934 at +0x24, lifetime 0x32 at +0x18), bit 2 of the
+ * D_800A6578 flag word for [row][type] is cleared and the object is spawned
+ * through gSpawnTypeAtOwner (func_800402DC); an existing node only gets its
+ * lifetime and arg2 refreshed. Callers are func_8005F6E8 and gBeamPartUpdate
+ * (func_8006B23C), i.e. runtime effect handling, not level construction.
  */
-void func_8005BDE4(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *arg2,
+void gAttachNearPlayerEffect(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *arg2,
                    struct ModelInstance *instance, u8 part, struct Unk5BDE4Source *in_source)
 {
     register struct Unk5BDE4Source *source __asm__("$21") = in_source;
@@ -176,11 +193,11 @@ void func_8005BDE4(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *a
 
     __asm__("" : : "r"(source) : "$2");
     for (i = 0; i < gPlayerCount[0]; i++) {
-        func_80069580(i, &scratch.local);
+        gGetViewGroundAnchor(i, &scratch.local);
         scratch.diff.x = instance->x - scratch.local.second;
         scratch.diff.y = instance->y - scratch.local.zero;
         scratch.diff.z = instance->z - scratch.local.first;
-        if (func_8001A100((s32 *)&scratch.diff) <= 0x1FFFF) {
+        if (gVectorLength3D((s32 *)&scratch.diff) <= 0x1FFFF) {
             found = 1;
         }
         __asm__ volatile("" ::: "memory");
@@ -190,7 +207,7 @@ void func_8005BDE4(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *a
         pool = &gOwnerNodeListA;
         node = func_8005BCD4(pool, owner);
         if (node == 0) {
-            node = (struct Unk5BCD4Node *)func_8003BEF0((struct ListNode *)pool);
+            node = (struct Unk5BCD4Node *)gTakePoolNode((struct ListNode *)pool);
             if (node == 0) {
                 return;
             }
@@ -219,7 +236,7 @@ void func_8005BDE4(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *a
 
             row = func_8003BF50(owner);
     {
-        u8 *p = gMapGrid;
+        u8 *p = gSpawnTypeFlags;
         p[(source->unk0F << 2) + (row << 10)] &= 0xFB;
     }
 
@@ -227,7 +244,7 @@ void func_8005BDE4(struct Unk402DCOwner *owner, s32 arg1, struct Unk5BDE4Arg2 *a
             node->self = node;
             node->unk18 = 0x32;
 
-            if (func_800402DC(owner, source->unk0F,
+            if (gSpawnTypeAtOwner(owner, source->unk0F,
                               scratch.param.flags ? (s32)&scratch.param : 0, row,
                               (s32)&node->self) == 0) {
                 node->flags = 1;

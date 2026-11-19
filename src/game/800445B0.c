@@ -8,6 +8,8 @@ struct Unk445B0Node {
 };
 
 extern void gDrawObjectPointTiles(struct Unk445B0Node *node, void *arg) __asm__("func_80044260");
+void gDrawPointTileList(struct Unk445B0Node *node, void *arg) __asm__("func_800445B0");
+
 
 /**
  * @brief Walks a node list and places every node whose flag bit 3 is
@@ -23,8 +25,17 @@ extern void gDrawObjectPointTiles(struct Unk445B0Node *node, void *arg) __asm__(
  *
  * @par Callers
  * func_8003F6E4 (scene traversal driver).
+ *
+ * @par Environment path
+ * Draw pass over one object bucket: for every node (next at +0x00) whose flag
+ * byte +0x0F lacks bit 3 it calls gDrawObjectPointTiles (func_80044260) with
+ * the view position. Its only caller gRunViewScenePasses (func_8003F6E4) runs
+ * it once per view per frame on bucket gListHeads[3] (8003F6E4.c:92), with
+ * the position from gFocusPositions or gGetViewGroundAnchor, after
+ * gDrawNodeListModels, gDrawDebrisFragments and gDrawAttachedModelList and
+ * before gDrawGlowNodeList and gDrawRibbonList. It uses no globals.
  */
-void func_800445B0(struct Unk445B0Node *node, void *arg)
+void gDrawPointTileList(struct Unk445B0Node *node, void *arg)
 {
     while (node != 0) {
         if (!(node->flags & 8)) {

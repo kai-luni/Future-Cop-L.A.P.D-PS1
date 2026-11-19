@@ -36,7 +36,7 @@ extern void *jtbl_800119A8[];
 extern s32 func_80019668(void);
 extern void func_8004E5F0(void *, void *, s32, s32);
 extern struct Ref4F330 *func_8004E80C(void *, s32, s32, s32, s32, s32, s32);
-extern s32 func_80095C14(u32);
+extern s32 gGteLeadingZeros(u32) __asm__("func_80095C14");
 
 /**
  * @brief Selects the next connected map node for a path follower using target-directed or random scoring.
@@ -204,11 +204,11 @@ common:
                 value = -value;
             }
             if (value < 0) {
-                value = func_80095C14(-value);
+                value = gGteLeadingZeros(-value);
             } else if (value != 0) {
                 s32 count;
                 register s32 limit __asm__("$3");
-                count = func_80095C14(value);
+                count = gGteLeadingZeros(value);
                 limit = 0x3F;
                 __asm__("" : "+r"(limit));
                 value = limit - count;

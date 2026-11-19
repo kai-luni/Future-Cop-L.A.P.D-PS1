@@ -44,15 +44,15 @@ struct Entity {
 
 extern void gVectorAddScaled(void *a, void *b, s32 c, s32 *d) __asm__("func_8001ACA4");
 extern s32 func_800684AC(void *a, s32 *b, s32 c, s32 d, s32 e);
-extern s32 func_8001A100(s32 *vector);
-extern void func_8001A180(struct Vec3s32 *vector);
+extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
+extern void gNormalizeVector(struct Vec3s32 *vector) __asm__("func_8001A180");
 extern struct Entity *gAllocAndLinkEntity(s32 size) __asm__("func_8004D3FC");
 extern s32 func_80019668(void);
-extern s32 func_800402DC(void *owner, u8 column, s32 arg2, s32 row, s32 arg4);
+extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
 extern void func_80036940(struct Entity *self, s32 arg2, s32 arg3);
-extern void func_8001937C(struct Vec3s32 *axis, void *basis);
-extern void func_800193F8(struct Vec3s32 *axis, void *basis);
+extern void gBuildBasisFromAxisYZ(struct Vec3s32 *axis, void *basis) __asm__("func_8001937C");
+extern void gBuildBasisFromAxis(struct Vec3s32 *axis, void *basis) __asm__("func_800193F8");
 extern s32 func_8001A750(struct Vec3s32 *a, void *b);
 extern void func_8004D958(struct Entity *entity);
 extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
@@ -147,8 +147,8 @@ void func_80036BD4(struct Entity *self, s32 arg1, s32 arg2)
     }
 
     self->unk78 = self->unkA0;
-    self->unk84 = func_8001A100((s32 *)&self->unk78) / 300;
-    func_8001A180(&self->unk78);
+    self->unk84 = gVectorLength3D((s32 *)&self->unk78) / 300;
+    gNormalizeVector(&self->unk78);
 
     if (self->unkB4 == 20 && (i & 0xFF) != 0) {
         for (i = 0; i < 4; i++) {
@@ -169,7 +169,7 @@ void func_80036BD4(struct Entity *self, s32 arg1, s32 arg2)
                                 ((func_80019668() & 0x3FFF) - 0x2000);
 
                 if (self->unkB5 != 0) {
-                    func_800402DC(new, self->unkB5, 0, 1, 0);
+                    gSpawnTypeAtOwner(new, self->unkB5, 0, 1, 0);
                 }
             }
         }

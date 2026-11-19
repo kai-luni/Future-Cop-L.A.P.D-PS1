@@ -34,7 +34,7 @@ extern u32 gPacketLimit __asm__("D_8009F9C0");
 extern u32 gPrimPoolEnd __asm__("D_8009FA28");
 
 extern u8 func_8001C034(void);
-extern s32 func_80095C14(s32 value);
+extern s32 gGteLeadingZeros(s32 value) __asm__("func_80095C14");
 extern void func_80029650(u32 arg0);
 extern void func_80092F38(u32 arg0, u32 arg1);
 extern void func_80092C8C(s32 arg0);
@@ -201,7 +201,7 @@ void func_8001B4A8(s32 arg0)
     quot = (gNodeTableLength + v - min) / gNodeTableLength;
     shift = 1;
     if (quot != 0) {
-        v = func_80095C14(quot);
+        v = gGteLeadingZeros(quot);
         xbase = 0x20;
         shift = xbase - v;
     }

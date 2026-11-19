@@ -9,10 +9,10 @@ struct Target { u8 pad0[4]; struct Aim *aim; struct Moving *moving; u8 padc[0xc]
 struct Transform { u8 pad[4]; struct Vec axis0; struct Vec axis1; struct Vec axis2; };
 struct Mid { u8 pad0[0x34]; struct Transform *transform; u8 pad38[0x10]; struct Target **target; };
 struct Obj { u8 pad0[0xf]; u8 flagsF, flags10; u8 pad11[0xb]; struct Mid *mid; struct Tag *tag; s32 (*handler)(s32, struct Obj *, s32, s32); u8 pad28[0x66]; u16 flags8E; u8 pad90[0xa]; s16 x, y, z; };
-extern void func_8001A180(struct Vec *);
-extern s32 func_8001AB00(struct Vec *, struct Vec *);
+extern void gNormalizeVector(struct Vec *) __asm__("func_8001A180");
+extern s32 gVectorDot(struct Vec *, struct Vec *) __asm__("func_8001AB00");
 extern void func_8005B6A8(struct Obj *);
-extern u32 func_80095900(s32);
+extern u32 gSqrt12(s32) __asm__("func_80095900");
 extern u16 D_8009F7F2, D_8009F7F4;
 extern u16 gMessageReturnData __asm__("D_8009F7F0");
 extern s16 data_return[3];
@@ -73,7 +73,7 @@ void *func_8005B934(u32 msg, struct Obj *obj, s32 arg2, s32 arg3)
         shifted = b >> 8;
         a += shifted;
         shifted = c >> 8;
-        root = func_80095900(a + shifted);
+        root = gSqrt12(a + shifted);
         (*obj->mid->target)->strength = root >> 2;
         break;
     case 1:
@@ -114,22 +114,22 @@ void *func_8005B934(u32 msg, struct Obj *obj, s32 arg2, s32 arg3)
                 v.x = t->aim->pos.x - ((struct Vec *)arg2)->x;
                 v.y = t->aim->pos.y - ((struct Vec *)arg2)->y;
                 v.z = t->aim->pos.z - ((struct Vec *)arg2)->z;
-                func_8001A180(&v);
-                product = (func_8001AB00(&v, &tr->axis2) >> 4) * t->strength;
+                gNormalizeVector(&v);
+                product = (gVectorDot(&v, &tr->axis2) >> 4) * t->strength;
                 shifted = product >> 12;
                 D_8009F7F4 = shifted;
-                product = (func_8001AB00(&v, &tr->axis1) >> 4) * t->strength;
+                product = (gVectorDot(&v, &tr->axis1) >> 4) * t->strength;
                 shifted = product >> 12;
                 D_8009F7F2 = shifted;
-                product = (func_8001AB00(&v, &tr->axis0) >> 4) * t->strength;
+                product = (gVectorDot(&v, &tr->axis0) >> 4) * t->strength;
                 shifted = product >> 12;
                 gMessageReturnData = shifted;
                 __asm__ volatile("" : : "r"(shifted) : "$4", "$5", "memory");
-                product = (func_8001AB00(&t->moving->velocity, &tr->axis2) >> 4) * scale;
+                product = (gVectorDot(&t->moving->velocity, &tr->axis2) >> 4) * scale;
                 shifted3 = product >> 12;
                 out = (u16)D_8009F7F4 + shifted3;
             } else {
-                product = (func_8001AB00(&t->moving->velocity, &tr->axis2) >> 4) * scale;
+                product = (gVectorDot(&t->moving->velocity, &tr->axis2) >> 4) * scale;
                 D_8009F7F2 = 0;
                 gMessageReturnData = 0;
                 shifted = product >> 12;

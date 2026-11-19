@@ -40,7 +40,7 @@ struct Unk8006D520 {
 };
 
 extern s32 gPlayerEntities __asm__("D_8009FA58");
-extern s32 D_8009FA5C;
+extern s32 gPlayerEntity2 __asm__("D_8009FA5C");
 
 extern u8 *gResolveNodeTransform(s32 arg0, s32 arg1, s32 arg2, s32 arg3, void *arg4, void *arg5) __asm__("func_8003D9F8");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
@@ -108,7 +108,7 @@ void func_8006D520(struct Unk8006D520 *arg0)
             color = gPlayerEntities;
         } else if (e->unk10 & 0x10) {
             a0 += 0x24;
-            color = D_8009FA5C;
+            color = gPlayerEntity2;
         } else {
             color = 0;
             if (e->unk1C != 0 && e->unk1C->unk38 == 0) {

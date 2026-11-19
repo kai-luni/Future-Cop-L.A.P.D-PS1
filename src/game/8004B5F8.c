@@ -117,8 +117,8 @@ extern s32 func_80017B88(void);
 extern s32 func_80019668(void);
 extern s32 func_8001AF08(V8 *v);
 extern void func_8001B148(s32 *m, V8 *src, V8 *dst, s32 count);
-extern Sub3D *func_8003D680(s32, s32, s32, s32, s32, s32);
-extern void func_8003E984(Sub3D *, s32, s32, s32, s32);
+extern Sub3D *gCreateModelNode(s32, s32, s32, s32, s32, s32) __asm__("func_8003D680");
+extern void gSpawnObjectFromTable(Sub3D *, s32, s32, s32, s32) __asm__("func_8003E984");
 extern Node *func_8004AA90(void);
 extern void func_8004AAC0(Obj *, Node *);
 extern u8 func_8004B244(Obj *, s32, s32 *);
@@ -383,7 +383,7 @@ scan_test:
                 goto all_done;
             }
             if (obj->unk65 != 0 && i < limit) {
-                ((Sub3D **)&node->x)[0] = func_8003D680(0, 0, 0, 0, 0, 0);
+                ((Sub3D **)&node->x)[0] = gCreateModelNode(0, 0, 0, 0, 0, 0);
                 ((Sub3D **)&node->x)[0]->unk3A++;
                 node->type = ((*(u32 *)e >> 8) & 0xF) | 0x80;
             } else {
@@ -477,7 +477,7 @@ scan_test:
                 func_8004AAC0(call_obj, node);
             }
             if (i < limit && obj->unk65 != 0) {
-                func_8003E984(((Sub3D **)&node->x)[0], 0, obj->unk65, 0, (obj->unk10 >> 1) & 1);
+                gSpawnObjectFromTable(((Sub3D **)&node->x)[0], 0, obj->unk65, 0, (obj->unk10 >> 1) & 1);
             }
         }
     {

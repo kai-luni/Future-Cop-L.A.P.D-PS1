@@ -23,8 +23,8 @@ struct Unk5BD20Pool {
     struct Unk5BD20Node *free;
 };
 
-extern void func_8003BF1C(struct Unk5BD20Pool *pool, struct Unk5BD20Node *previous,
-                          struct Unk5BD20Node *node);
+extern void gReleasePoolNode(struct Unk5BD20Pool *pool, struct Unk5BD20Node *previous,
+                          struct Unk5BD20Node *node) __asm__("func_8003BF1C");
 
 /**
  * @brief Garbage-collects one effect pool: releases flagged nodes and drops
@@ -58,7 +58,7 @@ void func_8005BD20(struct Unk5BD20Pool *pool, void *owner)
     for (node = pool->active; node != 0; node = next) {
         next = node->next;
         if (node->flags & 1) {
-            func_8003BF1C(pool, previous, node);
+            gReleasePoolNode(pool, previous, node);
             continue;
         }
         if (node->first != 0 && node->firstId != node->first->id) {

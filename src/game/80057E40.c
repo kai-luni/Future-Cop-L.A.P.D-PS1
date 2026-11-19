@@ -23,12 +23,12 @@ struct Object {
     u8 pad88[0x2c]; struct Info *info;
 };
 extern void gTransformPartVertex(void *, s32, void *) __asm__("func_80017668");
-extern s32 func_80095C30(s32, s32);
+extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern void gUpdateTwoPartRig(void *, s32) __asm__("func_80052D7C");
-extern void func_8001AC28(void *, void *, s32, void *);
+extern void gVectorMulAdd(void *, void *, s32, void *) __asm__("func_8001AC28");
 void gSlewEntityAim(struct Object *obj, s32 step) __asm__("func_80057E40");
 
 
@@ -160,7 +160,7 @@ void gSlewEntityAim(struct Object *obj, s32 step)
                 a = distSum >> 7;
             }
         }
-        angle = func_80095C30(delta.y, a + (b >> 2) - (b >> 6));
+        angle = gAtan2(delta.y, a + (b >> 2) - (b >> 6));
         pitch = -(angle << 12) >> 12;
         pitch = pitch < -400 ? -400 : pitch > 400 ? 400 : pitch;
     }
@@ -174,7 +174,7 @@ void gSlewEntityAim(struct Object *obj, s32 step)
     }
     yaw = 0;
     if (target != 0) {
-        angle = func_80095C30(delta.x, delta.z);
+        angle = gAtan2(delta.x, delta.z);
         yaw = ((angle << 12) >> 12) - info->yaw;
         yaw &= 0xfff;
         if (yaw > 0x800) yaw -= 0x1000;
@@ -206,7 +206,7 @@ void gSlewEntityAim(struct Object *obj, s32 step)
             if (timer > 0) {
                 if (timer >= 89) sum = (timer - 132) << 4;
                 else sum = -timer << 3;
-                func_8001AC28(state->parts[i].b, state->parts[i].a, sum, state->parts[i].b);
+                gVectorMulAdd(state->parts[i].b, state->parts[i].a, sum, state->parts[i].b);
             } else {
                 timer = 0;
             }

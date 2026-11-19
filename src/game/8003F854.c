@@ -11,14 +11,16 @@ struct Unk8003F854 {
 
 extern struct Unk8003F854 *gListHeads[7] __asm__("D_800A1070");
 extern struct Unk8003F854 *gPendingSpawnList __asm__("D_8009F314");
-extern struct Unk8003F854 *gNodeCList __asm__("D_8009F30C");
+extern struct Unk8003F854 *gDeferredSpawnList __asm__("D_8009F30C");
 extern void *gSpawnRecordMap[0x200] __asm__("D_800A7040");
-extern void *gOccupancyColumns[0x100] __asm__("D_800A0C70");
+extern void *gSlotSpawnDescs[0x100] __asm__("D_800A0C70");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_8003D0AC(void);
 extern void func_8006EDF0(void);
 extern void func_8005E22C(void);
+void gTeardownWorldObjects(s32 arg0) __asm__("func_8003F854");
+
 
 /**
  * @brief Tears the world down: handler lists, object banks and dependent subsystems.
@@ -48,8 +50,21 @@ extern void func_8005E22C(void);
  *
  * @par Callers
  * Confirmed: func_80024D14 (global reset).
+ *
+ * @par Environment path
+ * World teardown called once by gResetMissionSubsystems (func_80024D14):
+ * every object in the seven bucket lists gListHeads (D_800A1070) and in
+ * gPendingSpawnList receives message 10 through its handler at +0x24 and all
+ * heads are cleared; the spawn definitions of gSpawnRecordMap are freed per
+ * bank (bank 0 when mode is 0 or 2, bank 1 when mode is 1 or 2); all 0x100
+ * slot descriptors of D_800A0C70 are freed unconditionally; and every
+ * deferred spawn request of D_8009F30C is freed together with its +0x18
+ * block. It finishes with func_8003D0AC (frees the anchor-node list
+ * D_8009F320), func_8006EDF0 and func_8005E22C. The mode argument therefore
+ * decides which spawn-definition bank survives into the next mission;
+ * everything else is rebuilt.
  */
-void func_8003F854(s32 arg0)
+void gTeardownWorldObjects(s32 arg0)
 {
     register s32 mode __asm__("$20");
 
@@ -132,7 +147,7 @@ void func_8003F854(s32 arg0)
         void **slot;
 
         i = 0;
-        slot = gOccupancyColumns;
+        slot = gSlotSpawnDescs;
         do {
             if (*slot != 0) {
                 gFreeBlock(*slot);
@@ -147,7 +162,7 @@ void func_8003F854(s32 arg0)
         register struct Unk8003F854 *p __asm__("$16");
         register struct Unk8003F854 *next __asm__("$17");
 
-        p = gNodeCList;
+        p = gDeferredSpawnList;
         while (p != 0) {
             next = p->next;
             if (p->unk18 != 0) {
@@ -156,7 +171,7 @@ void func_8003F854(s32 arg0)
             gFreeBlock(p);
             p = next;
         }
-        gNodeCList = 0;
+        gDeferredSpawnList = 0;
     }
 
     func_8003D0AC();

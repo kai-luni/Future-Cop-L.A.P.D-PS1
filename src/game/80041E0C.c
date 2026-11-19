@@ -28,7 +28,7 @@ typedef struct { u8 pad00[8]; Data *data; } DataHolder;
 extern s32 gEntityBaseHandler(s32, Object *, DataHolder *) __asm__("func_8002AD58");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern s32 gGetGroundHeight(void *, s32, s32, s32) __asm__("func_80066F78");
-extern u32 func_80095900(s32);
+extern u32 gSqrt12(s32) __asm__("func_80095900");
 
 /**
  * @brief Spawn initialiser of a 15-vertex grid object: ground snap, flag
@@ -94,6 +94,6 @@ s32 func_80041E0C(s32 arg0, Object *obj, DataHolder *holder)
         obj->vertices[i + 9].y = -height / 2;
         obj->vertices[i + 12].y = -height;
     }
-    obj->unkA2 = func_80095900((width * width + height * height) >> 8) >> 2;
+    obj->unkA2 = gSqrt12((width * width + height * height) >> 8) >> 2;
     return 0;
 }

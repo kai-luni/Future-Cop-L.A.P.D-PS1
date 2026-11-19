@@ -3,6 +3,8 @@
 
 extern int gGuidedProjectileUpdate();
 extern int gBeamPartUpdate();
+s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
+
 
 /**
  * @brief Dot product of two three-component vectors in 16.16 fixed point.
@@ -25,8 +27,16 @@ extern int gBeamPartUpdate();
  * @par Callers
  * gGuidedProjectileUpdate, func_80037B28, func_80052550, func_8005B934, func_8005C344,
  * func_8005CED4, func_8005D8F4, func_8005F018, func_8005F6E8, gBeamPartUpdate.
+ *
+ * @par Environment path
+ * Returns the 16.16 fixed-point dot product of two three-component vectors
+ * (middle 32 bits of each 64-bit product, summed, no rounding). Callers are
+ * gGuidedProjectileUpdate, gTakeArmedLobePoint, gBeamPartUpdate,
+ * func_80037B28, func_80052550, func_8005B934, func_8005C344, func_8005D8F4,
+ * func_8005F018 and func_8005F6E8. No camera unit calls it; it is shared
+ * weapon/geometry math.
  */
-s32 func_8001AB00(s32 *a, s32 *b)
+s32 gVectorDot(s32 *a, s32 *b)
 {
     register u32 lo0 __asm__("$8");
     register u32 hi0 __asm__("$9");

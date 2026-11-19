@@ -11,6 +11,8 @@ struct Unk49EA8 {
 extern u8 *func_80019C38(s32 arg0, s32 arg1, u32 tag, s32 arg3);
 extern s32 func_80049E88(u8 *data, s32 arg1);
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gLoadActorLightNode(struct Unk49EA8 *resource) __asm__("func_80049EA8");
+
 
 /**
  * @brief Extracts a type-0x61 `0x74414354` light descriptor, spawns a persistent map light, and frees the request.
@@ -35,8 +37,19 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  *
  * @par Callers
  * Confirmed: func_8004D6D4 (0x8004D77C in asm/us/main.s, switch case `0x61`) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Handles a type-0x61 resource request: func_80019C38 locates the 'tACT'
+ * (0x74414354) chunk with section id +0x1C inside the blob at +0x00 of length
+ * +0x20, the pointer is moved back 4 bytes to the chunk header and passed to
+ * func_80049E88 with duration -1, which spawns a persistent map light node
+ * through func_80049C38, and the request block is then freed with gFreeBlock.
+ * Its only caller is the entity-definition dispatcher func_8004D6D4 (case
+ * 0x61 at 8004D6D4.c:110-111), so it runs while a level's actor resources are
+ * loaded. It reads no global itself; the node lands in the gLightGrid buckets
+ * allocated by gAllocLightGrid (func_800496D0).
  */
-void func_80049EA8(struct Unk49EA8 *resource)
+void gLoadActorLightNode(struct Unk49EA8 *resource)
 {
     func_80049E88(func_80019C38(resource->unk00, resource->unk20, 0x74414354,
                                 resource->unk1C) - 4, -1);

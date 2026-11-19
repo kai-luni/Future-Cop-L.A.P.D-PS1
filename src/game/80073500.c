@@ -19,6 +19,8 @@ struct Unk73500 {
 };
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+struct Unk73500 *gAllocPositionNode(struct Vec3s32 *position, s16 arg1, s16 arg2, s16 arg3) __asm__("func_80073500");
+
 
 /**
  * @brief Allocates and initialises a scene node for a position.
@@ -39,8 +41,19 @@ extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
  *
  * @par Callers
  * func_800137D4, func_8004C8D4, func_8005D060 and the effect spawners.
+ *
+ * @par Environment path
+ * Allocates a 0x20-byte node with gAllocMemory (func_80017EBC, tag 1),
+ * returns 0 if that fails, otherwise clears the two pointer words at
+ * +0x00/+0x04, copies the 12-byte position vector to +0x0C and stores the
+ * half-word arguments as +0x18 = arg3, +0x1A = arg1, +0x1C = arg2; +0x08 and
+ * +0x1E are left uninitialised. Its callers are effect and weapon code -
+ * gSpawnLobeArc (func_8005D060), gBeamPartUpdate (func_8006B23C),
+ * func_8005B3D4, func_8005D8F4, func_8005F018 and func_80073BBC - which
+ * allocate these nodes at runtime when an effect is created. What the three
+ * half-words mean is decided by the callers and is not visible here.
  */
-struct Unk73500 *func_80073500(struct Vec3s32 *position, s16 arg1, s16 arg2, s16 arg3)
+struct Unk73500 *gAllocPositionNode(struct Vec3s32 *position, s16 arg1, s16 arg2, s16 arg3)
 {
     struct Unk73500 *node;
 

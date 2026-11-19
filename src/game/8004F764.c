@@ -32,9 +32,9 @@ struct ObjectF764 {
     s32 turn;
 };
 extern s32 func_8004F330(struct StateF764 *, struct ObjectF764 *, s32);
-extern s32 func_8001A100(s32 *);
-extern void func_8001AB78(s32, s32 *);
-extern s32 func_80095C30(s32, s32);
+extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
+extern void gVectorScaleInPlace(s32, s32 *) __asm__("func_8001AB78");
+extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
 extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 
 #define MULU16(out, a, b) \
@@ -182,15 +182,15 @@ void func_8004F764(struct StateF764 *state, struct ObjectF764 *obj, u8 update)
     s->vector[0] = (s16)s->tx << 8;
     s->vector[1] = (s16)s->ty << 8;
     s->vector[2] = (s16)s->tz << 8;
-    length = func_8001A100(vec);
+    length = gVectorLength3D(vec);
     s->distance = length >> 8;
-    func_8001AB78(0x80000000U / (u32)(length >> 1), vec);
+    gVectorScaleInPlace(0x80000000U / (u32)(length >> 1), vec);
 
     if (s->nextIndex != s->oldIndex || !(s->flags & 0x400)) {
         if ((s16)s->oldYaw != (s16)s->targetYaw && !(s->flags & 0x1000)) {
             s->oldYaw = s->targetYaw;
         }
-        s->targetYaw = func_80095C30(s->vector[0], s->vector[2]) & 0xFFF;
+        s->targetYaw = gAtan2(s->vector[0], s->vector[2]) & 0xFFF;
     }
     a3 = s->vector[0];
     if (a3 < 0) {
@@ -222,7 +222,7 @@ void func_8004F764(struct StateF764 *state, struct ObjectF764 *obj, u8 update)
     a1 = a3 + a1;
     v0 = a2 >> 6;
     a1 -= v0;
-    v0 = func_80095C30(s->vector[1], a1);
+    v0 = gAtan2(s->vector[1], a1);
     a0 = 0xCFFFFFFF;
     v0 = (v0 << 12) >> 12;
     s->targetPitch = (0x1000 - v0) & 0xFFF;

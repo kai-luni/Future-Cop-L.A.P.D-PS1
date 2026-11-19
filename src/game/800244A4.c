@@ -1,7 +1,7 @@
 // Categories: Game Engine > Subsystem Initialization
 #include "game/types.h"
 
-extern u8 gChannelEnableFlag __asm__("D_8009F26C");
+extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern s32 gActiveStreamId __asm__("D_8009F280");
 extern s32 gStreamCommandState __asm__("D_8009F648");
 extern s32 D_8009F64C;
@@ -47,7 +47,7 @@ s32 func_800244A4(void)
     s32 result;
 
     result = 0;
-    if (gChannelEnableFlag != 0) {
+    if (gCvkSystemActive != 0) {
         if ((func_800226C8() & 0xFF) != 0) {
             func_800226D8();
             if (gActiveStreamId != 0) {

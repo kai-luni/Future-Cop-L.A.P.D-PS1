@@ -7,10 +7,12 @@ struct Unk73700 {
     void *second;
 };
 
-extern struct Unk73700 *gModelNodeList __asm__("D_8009F38C");
+extern struct Unk73700 *gBeamNodeList __asm__("D_8009F38C");
 
 extern void gDrawBeamNode(struct Unk73700 *node, s32 arg) __asm__("func_80071FA4");
 extern void func_80072F7C(struct Unk73700 *node, s32 arg);
+void gDrawBeamNodeList(s32 arg) __asm__("func_80073700");
+
 
 /**
  * @brief Walks the global model list and dispatches each node to one of the two
@@ -32,12 +34,21 @@ extern void func_80072F7C(struct Unk73700 *node, s32 arg);
  *
  * @par Callers
  * func_8003F6E4.
+ *
+ * @par Environment path
+ * Per-view draw pass over the beam/ribbon node list D_8009F38C: a node with
+ * either of its two record pointers at +0x04/+0x08 set is drawn by
+ * gDrawBeamNode (func_80071FA4, the full transform/lighting/projection path),
+ * otherwise by the flat-shaded path func_80072F7C; the argument is forwarded
+ * unchanged. gRunViewScenePasses (func_8003F6E4) calls it first among its
+ * draw passes with the per-view position (8003F6E4.c:86), so beams are queued
+ * before models, debris and ribbons each frame. It reads no other global.
  */
-void func_80073700(s32 arg)
+void gDrawBeamNodeList(s32 arg)
 {
     struct Unk73700 *node;
 
-    for (node = gModelNodeList; node != 0; node = node->next) {
+    for (node = gBeamNodeList; node != 0; node = node->next) {
         if (node->first != 0 || node->second != 0) {
             gDrawBeamNode(node, arg);
         } else {

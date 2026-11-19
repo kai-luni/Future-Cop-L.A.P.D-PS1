@@ -44,6 +44,15 @@ extern void func_80095A10(s32 arg0);
  *
  * @par Callers
  * func_800287F4 (once per frame) and func_80019D60.
+ *
+ * @par Environment path
+ * Sets the GTE projection centre and distance: it forwards (x, y) to
+ * func_800959F0, which writes x << 16 and y << 16 to OFX/OFY (control
+ * registers 24/25), and h to func_80095A10, which writes H (register 26).
+ * gRunScreenModule (func_800287F4, 800287F4.c:80) calls it with (0xA0 when
+ * gPlayerCount == 1, else 0x50; 0x78; 0x200) and func_80019D60 with (0xA0,
+ * 0x78, 0x200). It is the projection half of the view set-up that every later
+ * RTPS (e.g. gGteProjectPoint) depends on.
  */
 __asm__(
     ".text\n\t"

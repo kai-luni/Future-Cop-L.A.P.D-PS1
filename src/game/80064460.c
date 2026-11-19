@@ -6,7 +6,7 @@ typedef struct { s32 mask; void *node; VecW pos; } Entry;
 typedef struct { char pad[0x7c]; s32 x,y,z; } Camera;
 typedef struct { s32 a,width; char pad[0x1c]; u32 offsets[1]; } Map;
 extern Camera *gCamera __asm__("D_8009F9E4");
-extern Map *gTileMapTable __asm__("D_8009F80C");
+extern Map *gMapGridHeader __asm__("D_8009F80C");
 extern char *gTileBlockTable __asm__("D_8009F808");
 void gSampleCellWindow(s32 arg0, s32 arg1, Entry *arg2) __asm__("func_80064460");
 
@@ -89,7 +89,7 @@ void gSampleCellWindow(s32 arg0, s32 arg1, Entry *arg2)
         dst = &out->pos;
         do {
             register u32 off __asm__("$4");
-            off = gTileMapTable->offsets[(y+j)*gTileMapTable->width+x+i];
+            off = gMapGridHeader->offsets[(y+j)*gMapGridHeader->width+x+i];
             off &= 0xfffc;
             off += (u32)gTileBlockTable;
             node = *(void **)off;

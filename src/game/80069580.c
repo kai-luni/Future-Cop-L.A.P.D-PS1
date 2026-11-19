@@ -12,7 +12,9 @@ struct DestinationTriple {
     s32 first;
 };
 
-extern struct SourcePair gScenePositionPairs[] __asm__("D_800A3190");
+extern struct SourcePair gViewGroundAnchors[] __asm__("D_800A3190");
+void gGetViewGroundAnchor(u32 index, struct DestinationTriple *destination) __asm__("func_80069580");
+
 
 /**
  * @brief Copies one stored ground position into a view triple.
@@ -38,13 +40,23 @@ extern struct SourcePair gScenePositionPairs[] __asm__("D_800A3190");
  *
  * @par Callers
  * func_8003E984, func_8003F6E4, func_8003FF7C, func_8005BDE4.
+ *
+ * @par Environment path
+ * Copies entry 'index' of the pair table D_800A3190 into an (x, 0, z) triple,
+ * with the middle component zeroed and no bounds check. The table is written
+ * each frame by gUpdateCameraAnchor (func_80066C9C, inline asm at
+ * 80066C9C.c:152) from the active camera gCamera. gRunViewScenePasses
+ * (func_8003F6E4) uses it as the scene-pass centre when gFocusPositions is
+ * null (8003F6E4.c:84), func_8003FF7C fetches entries 0 and 1
+ * (8003FF7C.c:124,128), and func_8003E984 (8003E984.c:279) and func_8005BDE4
+ * loop over gPlayerCount entries to test spawn proximity to each view.
  */
-void func_80069580(u32 index, struct DestinationTriple *destination)
+void gGetViewGroundAnchor(u32 index, struct DestinationTriple *destination)
 {
     s32 first;
 
-    first = gScenePositionPairs[index].first;
+    first = gViewGroundAnchors[index].first;
     destination->zero = 0;
     destination->first = first;
-    destination->second = gScenePositionPairs[index].second;
+    destination->second = gViewGroundAnchors[index].second;
 }

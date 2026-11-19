@@ -21,7 +21,7 @@ extern Prim17 *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim17 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u16 gModelUvOffset __asm__("D_8009F580");
 
-extern void func_80015F14(void *a0, void *a1, void *a2);
+extern void gGteShadeNccs(void *a0, void *a1, void *a2) __asm__("func_80015F14");
 
 /**
  * @brief Emits one gouraud-shaded, depth-cued textured polygon.
@@ -118,7 +118,7 @@ L_done:
         prim->w[6] = t2;
         ((u8 *)prim)[3] = 7;
         tmp |= 0x24000000;
-        func_80015F14(vp, &tmp, &prim->w[1]);
+        gGteShadeNccs(vp, &tmp, &prim->w[1]);
         c1 = a2[1];
         c2 = a2[3];
         msk = 0xFFFF0000;
@@ -143,7 +143,7 @@ L_done:
         hi = 0x28000000;
     L_call:
         tmp = tv | hi;
-        func_80015F14(r4, (void *)r5, r6);
+        gGteShadeNccs(r4, (void *)r5, r6);
         return 1;
     case 5:
     case 7:
@@ -153,7 +153,7 @@ L_done:
         prim->w[6] = ((s32 *)arg3)[6];
         ((u8 *)prim)[3] = 9;
         tmp |= 0x2C000000;
-        func_80015F14(vp, &tmp, &prim->w[1]);
+        gGteShadeNccs(vp, &tmp, &prim->w[1]);
         c1 = a2[1];
         c2 = a2[3];
         msk = 0xFFFF0000;

@@ -4,13 +4,13 @@ typedef unsigned short u16;
 typedef unsigned char u8;
 typedef signed char s8;
 typedef struct {int x,y,z;} Vec;
-extern int *gTileMapTable __asm__("D_8009F80C");
+extern int *gMapGridHeader __asm__("D_8009F80C");
 extern u8 **gTileBlockTable __asm__("D_8009F808");
 extern Vec D_800A2600,D_800A2610,D_800A2620,D_800A32A0[];
 extern u32 D_800A3260[];
 extern int D_800A3280[],D_800A3300[];
 extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
-extern u8 gVertexIndexTable[][4] __asm__("D_8009AFE8");
+extern u8 gTileCornerIndices[][4] __asm__("D_8009AFE8");
 
 /**
  *  @brief Tests a segment against polygons in its midpoint's world cell.
@@ -57,7 +57,7 @@ int func_80067914(Vec *a, Vec *b, int *outA, int *outB, int flag)
         register int by __asm__("$3");
         x0=a->x; bx=b->x; ay=a->y; by=b->y;
         __asm__ __volatile__("" : "+r"(x0), "+r"(bx), "+r"(ay), "+r"(by) : : "memory");
-        world=gTileMapTable;
+        world=gMapGridHeader;
         __asm__ __volatile__("" : "+r"(world));
         sx=x0+bx; sy=ay+by;
     }
@@ -88,7 +88,7 @@ int func_80067914(Vec *a, Vec *b, int *outA, int *outB, int flag)
         type=(poly>>15)&127;
         if(type<71) {
             if(!flag) goto next;
-            indices=gVertexIndexTable[type];
+            indices=gTileCornerIndices[type];
             h0=verts[indices[0]]; h1=verts[indices[1]]; h2=verts[indices[2]];
             hi=h0; lo=h0;
             if(h0<h1) hi=h1; else if(h1<h0) lo=h1;
@@ -135,7 +135,7 @@ int func_80067914(Vec *a, Vec *b, int *outA, int *outB, int flag)
                 if(bestDist && dist>=0) goto next;
                 break;
         }
-        indices=gVertexIndexTable[type];
+        indices=gTileCornerIndices[type];
         h0=verts[indices[0]];h1=verts[indices[1]];h2=verts[indices[2]];h3=verts[indices[3]];
         switch(kind) {
             case 1:

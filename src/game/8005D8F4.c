@@ -92,11 +92,11 @@ extern struct CandList gCommandListHead __asm__("D_800A8F90");
 
 extern void gTransformPartVertex(u8 *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_80019668(void);
-extern s32 func_8001AB00(s32 *a, s32 *b);
+extern s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
 extern u8 gTakeArmedLobePoint(struct Fx *a, s32 *b, struct Cand *c) __asm__("func_8005CED4");
 extern void gSpawnLobeArc(struct Fx *a, u8 *b) __asm__("func_8005D060");
 extern void func_8006C488(struct Cand *a);
-extern void *func_80073500(s32 *pos, s32 a1, s32 a2, s32 a3);
+extern void *gAllocPositionNode(s32 *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80073500");
 extern void *func_80073590(struct Cand *owner, void *coord, s32 kind, s32 a3, s32 a4, s32 a5);
 extern void func_8007377C(void *a, void *b, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7,
                           s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13);
@@ -323,7 +323,7 @@ u8 func_8005D8F4(struct Fx *self_, s32 a1)
             continue;
         }
         if (self->unk00->unk18 & 4) {
-            if (func_8001AB00(delta, &self->unk30) < 0) {
+            if (gVectorDot(delta, &self->unk30) < 0) {
                 continue;
             }
         }
@@ -367,7 +367,7 @@ u8 func_8005D8F4(struct Fx *self_, s32 a1)
     check:
         if ((self->flags & 4) != 0 && notified != 0 &&
             gTakeArmedLobePoint(self, delta, cand) != 0) {
-            func_8007377C(func_80073500(delta, 0, 0x18, 0),
+            func_8007377C(gAllocPositionNode(delta, 0, 0x18, 0),
                           func_80073590(cand, 0, -1, 0, 0x18, 0), 0x20, 1, 0x7F, 0x7F, 0xFF, 0x2AA,
                           0x4000, -0x3000, 0, 0, 0, 1);
             goto send;

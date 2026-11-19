@@ -39,7 +39,7 @@ extern void gProjectileInit(struct Entity *, struct Entity *, s32) __asm__("func
 extern void gGuidedProjectileUpdate(struct Entity *, struct Entity *) __asm__("func_80035B7C");
 extern s32 gEntityBaseHandler(s32, struct Entity *, struct Entity *, s32) __asm__("func_8002AD58");
 extern s32 func_80019FCC(s32 *);
-extern s32 func_80095900(s32);
+extern s32 gSqrt12(s32) __asm__("func_80095900");
 extern void func_800410BC(void *, s32, s32, struct Entity *);
 
 /**
@@ -164,7 +164,7 @@ s32 func_80036624(s32 msg, struct Entity *self, struct Entity *data, s32 extra)
                 vec[0] = (self->x << 8) - self->pos[0];
                 vec[1] = (self->y << 8) - self->pos[1];
                 vec[2] = (self->z << 8) - self->pos[2];
-                amount = self->val1a - (((func_80095900(func_80019FCC(vec)) << 2) >> 8) * self->val1a / self->radius);
+                amount = self->val1a - (((gSqrt12(func_80019FCC(vec)) << 2) >> 8) * self->val1a / self->radius);
             } else {
                 amount = self->val1a;
             }

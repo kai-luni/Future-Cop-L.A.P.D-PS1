@@ -22,8 +22,8 @@ extern s16 gRibbonSegmentDx[] __asm__("D_800A7840");
 extern s16 gRibbonSegmentDy[] __asm__("D_800A7898");
 extern u8 *gCamera __asm__("D_8009F9E4");
 extern u8 *gResolveNodeTransform() __asm__("func_8003D9F8");
-extern u8 *func_8003D9C4();
-extern s32 func_8001A100();
+extern u8 *gGetObjectTransform() __asm__("func_8003D9C4");
+extern s32 gVectorLength3D() __asm__("func_8001A100");
 extern void gMulMatrixVector() __asm__("func_8001A81C");
 extern void gGteLoadRotation() __asm__("func_80010820");
 extern void gGteTransformWords() __asm__("func_8001006C");
@@ -194,7 +194,7 @@ void gDrawRibbonList(u8 *input, s32 *pos)
         if (!node) goto advance;
         p = PTR(obj, 0x1c);
         base = gResolveNodeTransform(p ? W(p, 0x34) : 0, UH(obj, 0x1a), B(obj, 0xe), 1, p, obj + 0x34);
-        m = func_8003D9C4(obj);
+        m = gGetObjectTransform(obj);
         if (!(UB(obj,0x10) & 1)) {
             if (m) {
                 __asm__("" : "=r"(pp) : "0"(pos));
@@ -208,7 +208,7 @@ void gDrawRibbonList(u8 *input, s32 *pos)
                 z = W(base,0x2c);
             }
             frame.v.z = z - pp[2];
-            if (func_8001A100(&frame.v) > 0x1ffff) goto advance;
+            if (gVectorLength3D(&frame.v) > 0x1ffff) goto advance;
         }
         if (!(UH(owner,0x8e) & 0x2000)) {
             UH(gHeaderPrimitiveRecord,0x10) = UH(owner,0x12);

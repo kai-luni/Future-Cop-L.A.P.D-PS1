@@ -2,7 +2,7 @@
 #include "game/types.h"
 typedef struct Obj { s32 value; u8 pad[24]; s32 id; } Obj;
 typedef struct Slot { s8 id; u8 type; u8 active; u8 pad; Obj *a; Obj *b; s32 time; } Slot;
-extern Obj *D_8009F270, *D_8009F274;
+extern Obj *gPendingCvkhNode __asm__("D_8009F270"), *gPendingCvkbNode __asm__("D_8009F274");
 extern Slot gObjectSlots[] __asm__("D_800A0A00");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 func_80023528(s32, s32 *);
@@ -34,8 +34,8 @@ void func_800236FC(void)
     u8 failed = 0;
     s32 result;
     s32 time;
-    if (D_8009F270 && D_8009F274) {
-        if (D_8009F270->id == D_8009F274->id && func_80023528(D_8009F270->id, 0)) {
+    if (gPendingCvkhNode && gPendingCvkbNode) {
+        if (gPendingCvkhNode->id == gPendingCvkbNode->id && func_80023528(gPendingCvkhNode->id, 0)) {
             while (i < 8) {
                 if (gObjectSlots[i].id == -1) break;
                 i++;
@@ -43,21 +43,21 @@ void func_800236FC(void)
             if (i >= 8) failed = 1;
         } else failed = 1;
         if (failed) {
-            gFreeBlock(D_8009F270);
-            gFreeBlock(D_8009F274);
+            gFreeBlock(gPendingCvkhNode);
+            gFreeBlock(gPendingCvkbNode);
         } else {
-            result = func_80021CB0(D_8009F270->value, D_8009F274->value, -1, func_80023500, i);
+            result = func_80021CB0(gPendingCvkhNode->value, gPendingCvkbNode->value, -1, func_80023500, i);
             if (result >= 0) {
                 gObjectSlots[i].active = 1;
                 time = gFrameTickCounter + 1500;
                 gObjectSlots[i].id = result;
                 gObjectSlots[i].time = time;
-                gObjectSlots[i].type = D_8009F270->id;
-                gObjectSlots[i].a = D_8009F270;
-                gObjectSlots[i].b = D_8009F274;
+                gObjectSlots[i].type = gPendingCvkhNode->id;
+                gObjectSlots[i].a = gPendingCvkhNode;
+                gObjectSlots[i].b = gPendingCvkbNode;
             }
         }
-        D_8009F274 = 0;
-        D_8009F270 = 0;
+        gPendingCvkbNode = 0;
+        gPendingCvkhNode = 0;
     }
 }

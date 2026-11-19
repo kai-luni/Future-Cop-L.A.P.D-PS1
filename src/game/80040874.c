@@ -11,7 +11,7 @@ struct Obj {
     char pad64[8]; void *field6c; char point[8]; char pad78[2];
     s16 field7a; s16 field7c;
 };
-extern s32 gMessage10Counter __asm__("D_8009F318");
+extern s32 gLightObjectCount __asm__("D_8009F318");
 extern s32 func_8003C7B8(s32, struct Obj *, s32, s32);
 extern s32 func_8003C980(s32, struct Obj *, s32, s32);
 extern void *gResolveNodeTransform(void *, u16, s8, s32, struct Parent *, void *) __asm__("func_8003D9F8");
@@ -20,6 +20,8 @@ extern s32 func_800196C4(void);
 extern u8 func_80040734(struct Obj *, void *);
 extern void func_800498F0(void *);
 extern void gFreeBlock(struct Obj *) __asm__("func_800181D4");
+s32 gHandleLightObjectMsg(s32 message, struct Obj *obj, s32 arg2, s32 arg3) __asm__("func_80040874");
+
 
 /**
  * @brief Entity message handler with randomized countdown fields and a
@@ -49,8 +51,22 @@ extern void gFreeBlock(struct Obj *) __asm__("func_800181D4");
  * @par Callers
  * No direct callers in the call graph; dispatched indirectly through a
  * handler table.
+ *
+ * @par Environment path
+ * Message handler of spawn kind 0x5D objects, stored at +0x24 by their
+ * constructor func_80040E60. After the shared pre-handler func_8003C7B8
+ * (non-zero returns 0) and with message 1 ignored, message 0 resolves the
+ * world matrix from the parent with gResolveNodeTransform (func_8003D9F8),
+ * transforms the point at +0x70 with func_8001B148 when flag bit 2 is set,
+ * replaces negative s16 values at +0x7A/+0x7C by a random fraction of their
+ * magnitude, and returns func_80040734, which requests a coloured map light
+ * through func_8005A6A4 and stores it at +0x6C. Message 10 decrements the
+ * live counter D_8009F318, unlinks the light at +0x6C with func_800498F0 and
+ * frees the object; other messages go to func_8003C980. It is invoked
+ * indirectly through the +0x24 handler pointer whenever such a light object
+ * is created or destroyed.
  */
-s32 func_80040874(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
+s32 gHandleLightObjectMsg(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
 {
     struct Parent *parent;
     void *child;
@@ -70,7 +86,7 @@ case0:
     if (obj->field7c < 0) obj->field7c = ((func_800196C4() & 0xfff) * -obj->field7c) >> 12;
     return func_80040734(obj, matrix + 0x24);
 case10:
-    gMessage10Counter--;
+    gLightObjectCount--;
     if (obj->field6c) {
         func_800498F0(obj->field6c);
         obj->field6c = 0;

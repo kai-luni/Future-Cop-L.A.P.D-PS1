@@ -1,5 +1,7 @@
 // Categories: Graphics > GTE > Lighting | Graphics > Shading
 #include "game/types.h"
+void gGteShadeNccs(void *a0, void *a1, void *a2) __asm__("func_80015F14");
+
 
 /**
  * @brief NCCS: shades a vertex normal/colour pair (normal colour, single vector).
@@ -18,8 +20,15 @@
  * @par Callers
  * func_80015F38 and func_800172A8 - the two model-renderer paths that shade a
  * vertex before it is written to a packet.
+ *
+ * @par Environment path
+ * Shades one vertex normal with the GTE NCCS command (light matrix,
+ * background colour, then multiplied by the input colour) and stores the
+ * resulting RGB2 word. Callers are gEmitShadedPart (func_80015F38) and
+ * func_800172A8, the model renderer paths. It is model lighting, not level
+ * construction or camera motion.
  */
-void func_80015F14(void *a0, void *a1, void *a2)
+void gGteShadeNccs(void *a0, void *a1, void *a2)
 {
     __asm__ volatile(
         "lwc2 $0, 0($a0)\n\t"

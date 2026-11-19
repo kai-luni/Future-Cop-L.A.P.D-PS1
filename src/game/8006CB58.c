@@ -61,7 +61,7 @@ typedef struct Obj {
 extern Cam *gCamera __asm__("D_8009F9E4");
 extern Prim *gPrimPoolNext __asm__("D_8009F9F0");
 extern Prim *gPrimPoolEnd __asm__("D_8009FA28");
-extern u32 gTexturePageWord __asm__("D_8009F9B8");
+extern u32 gGreyTexpageAdd __asm__("D_8009F9B8");
 
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
@@ -427,7 +427,7 @@ void gDrawShadedModel(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b
                     p->wC = 0;
                     p->w20 = tmp;
                     __asm__ volatile ("" : : : "memory");
-                    tex = gTexturePageWord;
+                    tex = gGreyTexpageAdd;
                     tmp = 0x101; *(u16 *)&p->w24 = tmp;
                     tmp = 0x100; *(u16 *)&p->w30 = tmp;
                     __asm__ volatile ("" : "+r"(tex) : : "memory");
@@ -473,7 +473,7 @@ void gDrawShadedModel(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b
                     p->wC = 0;
                     p->w20 = tmp;
                     __asm__ volatile ("" : : : "memory");
-                    tmp = gTexturePageWord;
+                    tmp = gGreyTexpageAdd;
                     *(u16 *)&p->w24 = 1;
                     p->w18 = (tmp << 16) | 0x101;
                 }

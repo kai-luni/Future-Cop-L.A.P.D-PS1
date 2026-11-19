@@ -24,7 +24,7 @@ struct Part { u8 pad[0x24]; u8 data[0x14]; u8 bytes[4]; };
 struct Info { u8 pad[0x18]; s32 value; };
 struct Other { u8 pad[4]; struct Info *info; struct Part *part; };
 extern s32 gEntityBaseHandler(s32, struct Object *, struct Other *) __asm__("func_8002AD58");
-extern void func_80050E0C(void *, void *, s32, void *, void *);
+extern void gInitRailSegment(void *, void *, s32, void *, void *) __asm__("func_80050E0C");
 extern s32 func_80050D14(void *, struct Other *, struct Object *);
 extern void func_80039BD0(struct Object *);
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
@@ -86,7 +86,7 @@ s32 gHandleCameraOverrideMsg(s32 message, struct Object *self, struct Other *oth
         self->bytes[1] = part->bytes[1];
         self->bytes[2] = part->bytes[2];
         self->bytes[3] = part->bytes[3];
-        func_80050E0C(part->data, self->anim, other->info->value, self, &self->position);
+        gInitRailSegment(part->data, self->anim, other->info->value, self, &self->position);
         self->flags &= 0x7fffffff;
         if (self->state) {
             gGteLoadMatrix(self->matrix);

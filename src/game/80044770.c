@@ -7,7 +7,9 @@ struct Unk44770 {
 
 extern u8 func_8003C2A4(struct Unk44770 *data);
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void func_8003C404(struct Unk44770 *data);
+extern void gInstallSpawnRecord(struct Unk44770 *data) __asm__("func_8003C404");
+void gRegisterActorDef5E(struct Unk44770 *source) __asm__("func_80044770");
+
 
 /**
  * @brief Clones and registers a 0x60-byte spawn-table descriptor into D_800A7040 unless already active.
@@ -32,8 +34,21 @@ extern void func_8003C404(struct Unk44770 *data);
  *
  * @par Callers
  * Confirmed: func_8003BFD0 (0x8003C050 in asm/us/main.s, case `0x57`) and func_8004488C (0x800448B4 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Environment path
+ * Registers one 0x60-byte actor definition of type 0x5E: func_8003C2A4 first
+ * queues a deferred placement for records with flag bit 0 (+0x32) and returns
+ * 1 only when the slot D_800A7040[D_8009F310][record +0x14] already holds a
+ * bit-0 record, in which case nothing else happens; otherwise the record is
+ * copied into a new tag-2 heap block without checking the allocation result
+ * and installed with gInstallSpawnRecord (func_8003C404). It is called by the
+ * 'Cact' chunk loader func_8004488C (type 0x5E in func_8004D6D4,
+ * 8004D6D4.c:120) and by the 'Csfx' stream walker func_8003BFD0, whose jump
+ * table jtbl_800115B8 maps the same type 0x5E to this function (index 8);
+ * both paths therefore agree on the type number. This is part of level
+ * spawn-table construction.
  */
-void func_80044770(struct Unk44770 *source)
+void gRegisterActorDef5E(struct Unk44770 *source)
 {
     struct Unk44770 *copy;
 
@@ -42,5 +57,5 @@ void func_80044770(struct Unk44770 *source)
     }
     copy = gAllocMemory(0x60, 2);
     *copy = *source;
-    func_8003C404(copy);
+    gInstallSpawnRecord(copy);
 }

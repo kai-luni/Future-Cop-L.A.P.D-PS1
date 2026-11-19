@@ -10,8 +10,10 @@ struct Unk3BObject {
     u32 flags;
 };
 
-extern u8 *gOccupancyColumns[] __asm__("D_800A0C70");
+extern u8 *gSlotSpawnDescs[] __asm__("D_800A0C70");
 extern s32 func_8003B65C(s32 value, s32 range);
+void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
+
 
 /**
  * @brief Flags an entity when its counter crosses a quartile boundary.
@@ -37,8 +39,20 @@ extern s32 func_8003B65C(s32 value, s32 range);
  *
  * @par Callers
  * Confirmed: func_8002A940, func_8002AA1C, func_8002FC90, func_800324E0, func_8003526C, func_800395A8, func_800398EC, func_80058210, func_80058D78, func_80060A0C.
+ *
+ * @par Environment path
+ * Sets flag 0x4000 in an entity's +0x24 word when the counter at +0x1C,
+ * measured against the maximum at +0x1E, lies in a different quarter
+ * (func_8003B65C returns 0..3 for <= 1/4, < 1/2, < 3/4, else) than the
+ * previous value passed in, provided the counter is non-negative and the
+ * entity's slot byte +0x20 has a spawn descriptor in D_800A0C70. The flag is
+ * consumed by func_8004CE04 (8004CE04.c:59-61), which clears it and calls
+ * func_8003BAE4 to spawn the slot's types for the new quarter. Callers are
+ * the entity update and hit paths that change +0x1C (gUpdateHoverEnemy,
+ * func_8002A940, func_8002AA1C, func_8002FC90, func_80058210, func_80060A0C
+ * and others).
  */
-void func_8003BA50(struct Unk3BObject *object, s32 value)
+void gFlagQuartileChange(struct Unk3BObject *object, s32 value)
 {
     s32 previous;
     s32 current;
@@ -46,7 +60,7 @@ void func_8003BA50(struct Unk3BObject *object, s32 value)
     if (object->unk1C >= 0) {
         previous = func_8003B65C(value, object->unk1E);
         current = func_8003B65C(object->unk1C, object->unk1E);
-        if (gOccupancyColumns[object->tableIndex] != 0 && current != previous) {
+        if (gSlotSpawnDescs[object->tableIndex] != 0 && current != previous) {
             object->flags |= 0x4000;
         }
     }

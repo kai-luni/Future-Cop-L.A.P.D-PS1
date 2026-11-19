@@ -23,7 +23,7 @@ extern void func_80039504(s32 arg0, void *arg1, void *arg2, s32 arg3);
 extern s32 gEntityBaseHandler(s32 message, void *object, void *data, s32 arg3) __asm__("func_8002AD58");
 extern void func_800382B4(s32 arg0, void *arg1, void *arg2, s32 arg3);
 extern void gUpdateMountedTurret(void *arg0, void *arg1) __asm__("func_80038A00");
-extern void func_8003BA50(struct Unk395A8Child *object, s32 value);
+extern void gFlagQuartileChange(struct Unk395A8Child *object, s32 value) __asm__("func_8003BA50");
 
 /**
  * @brief Message handler for entity type 20 (0x14), wrapping class-5 behavior and propagating updates/damage to its +0x158 child.
@@ -90,7 +90,7 @@ s32 func_800395A8(s32 message, struct Unk395A8Self *object, void *arg2, s32 arg3
             if (self->unk158->unk20 != 0 && (self->unk158->unk24 & 0x40000) == 0) {
                 previous = self->unk158->unk1C;
                 self->unk158->unk1C = self->unk1C;
-                func_8003BA50(self->unk158, previous);
+                gFlagQuartileChange(self->unk158, previous);
             } else {
                 self->unk158->unk1C = self->unk1C;
             }

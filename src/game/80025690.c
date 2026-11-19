@@ -21,7 +21,7 @@ extern Packet *gPrimPoolNext __asm__("D_8009F9F0");
 extern Packet *gPrimPoolEnd __asm__("D_8009FA28");
 extern int func_80028FD4(void);
 extern void func_8002385C(void);
-extern void func_80024EC8(void);
+extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 extern void func_8001B4A8(int);
 
 /**
@@ -150,6 +150,6 @@ fourth:
     p->x3 = 0x20 + value / 4;
     p->y3 = 0x9e;
     func_8002385C();
-    func_80024EC8();
+    gLoadQueuedAssets();
     func_8001B4A8(1);
 }

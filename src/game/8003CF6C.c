@@ -23,9 +23,9 @@ struct Node8003CF6C {
     u8 unk42;
 };
 
-extern struct Node8003CF6C *gNodeListHead __asm__("D_8009F320");
+extern struct Node8003CF6C *gAnchorNodeList __asm__("D_8009F320");
 
-extern s32 func_8001A100(s32 *vector);
+extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 extern void gSetModelUvOffset(s32 low, s32 high) __asm__("func_80013AA0");
 extern u8 gSubmitModelInstance(struct Obj8003CF6C *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
 extern void gDrawModelFrame(struct Obj8003CF6C *obj) __asm__("func_800164F4");
@@ -69,12 +69,12 @@ void gDrawNodeListModels(s32 arg0)
 
     origin = (s32 *)arg0;
     flags = 0;
-    for (node = gNodeListHead; node != 0; node = node->next) {
+    for (node = gAnchorNodeList; node != 0; node = node->next) {
         if (node->obj != 0 && (node->flags39 & 2)) {
             vec[0] = node->obj->x - origin[0];
             vec[1] = node->obj->y - origin[1];
             vec[2] = node->obj->z - origin[2];
-            if (func_8001A100(vec) - node->obj->unk40 > 0x1FFFF) {
+            if (gVectorLength3D(vec) - node->obj->unk40 > 0x1FFFF) {
                 continue;
             }
             if (node->unk40 != 0) {

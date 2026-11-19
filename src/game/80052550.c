@@ -24,9 +24,9 @@ typedef struct {
     s32 z;
 } Vec_52550;
 
-extern void func_8001A180(s32 *arg0);
-extern s32 func_8001AB00(s32 *arg0, s32 *arg1);
-extern void func_8001AC28(s32 *arg0, s32 *arg1, s32 arg2, s32 *arg3);
+extern void gNormalizeVector(s32 *arg0) __asm__("func_8001A180");
+extern s32 gVectorDot(s32 *arg0, s32 *arg1) __asm__("func_8001AB00");
+extern void gVectorMulAdd(s32 *arg0, s32 *arg1, s32 arg2, s32 *arg3) __asm__("func_8001AC28");
 
 /**
  * @brief Applies a stored impulse to the player position, projects out the
@@ -89,9 +89,9 @@ L_after_s1:
     arg1->x += unk->unk64 >> shift;
     arg1->y += unk->unk68 >> shift;
     arg1->z += unk->unk6C >> shift;
-    func_8001A180(vec);
-    ret = func_8001AB00(vec, &unk->unk70);
-    func_8001AC28(&unk->unk70, vec, -ret, &unk->unk70);
+    gNormalizeVector(vec);
+    ret = gVectorDot(vec, &unk->unk70);
+    gVectorMulAdd(&unk->unk70, vec, -ret, &unk->unk70);
     unk->unk70 -= unk->unk70 / 8;
     unk->unk74 -= unk->unk74 / 8;
     if (unk->unk74 >= 0x101) {

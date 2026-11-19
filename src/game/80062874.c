@@ -9,8 +9,8 @@ typedef struct { s32 x,z,w,h; } Bounds;
 typedef struct { s32 x,z; } Pair;
 typedef struct { u32 bits; s32 pad[3]; } Cell;
 extern List gCommandListHead __asm__("D_800A8F90");
-extern Pair gScenePositionPairs[] __asm__("D_800A3190");
-extern Bounds gClipRect __asm__("D_800A2970");
+extern Pair gViewGroundAnchors[] __asm__("D_800A3190");
+extern Bounds gCellClipRect __asm__("D_800A2970");
 extern Node gCellNodeArray[] __asm__("D_800A2990");
 extern Cell D_800AB548[];
 extern Cell gCoverageGrid[] __asm__("D_800AB3B8");
@@ -81,9 +81,9 @@ extern u8 gGridOriginX __asm__("D_8009F834");
  */
 void func_80062874(void) {
     register Obj **scan __asm__("$24") = gCommandListHead.items;
-    register Pair *pairs __asm__("$3") = gScenePositionPairs;
+    register Pair *pairs __asm__("$3") = gViewGroundAnchors;
     Cell *cells = gCoverageGrid;
-    register Bounds *bounds __asm__("$2") = &gClipRect;
+    register Bounds *bounds __asm__("$2") = &gCellClipRect;
     s32 width = bounds->w;
     register s32 count1 __asm__("$13") = gCellEntityCount;
     register s32 count2 __asm__("$14") = D_8009F82C;

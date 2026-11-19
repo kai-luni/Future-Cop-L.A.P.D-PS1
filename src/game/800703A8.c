@@ -7,7 +7,9 @@ struct Unk703A8 {
 
 extern u8 func_8003C2A4(struct Unk703A8 *data);
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void func_8003C404(struct Unk703A8 *data);
+extern void gInstallSpawnRecord(struct Unk703A8 *data) __asm__("func_8003C404");
+void gRegisterActorDef59(struct Unk703A8 *source) __asm__("func_800703A8");
+
 
 /**
  * @brief Clones and registers a 0x58-byte spawn record if not already deferred.
@@ -31,8 +33,22 @@ extern void func_8003C404(struct Unk703A8 *data);
  *
  * @par Callers
  * Confirmed: func_8003BFD0 (0x8003C0A0 via jtbl_800115B8 index 3, type 0x59), func_800706C4 (0x800706EC on tACT chunk).
+ *
+ * @par Environment path
+ * Registers one 0x58-byte actor definition of type 0x59: func_8003C2A4 first
+ * queues a deferred placement for records with flag bit 0 (+0x32) and returns
+ * 1 only when the slot D_800A7040[D_8009F310][record +0x14] already holds a
+ * bit-0 record, in which case nothing else happens; otherwise the record is
+ * copied into a new tag-2 heap block and installed with gInstallSpawnRecord
+ * (func_8003C404). It is called by the 'Cact' chunk loader func_800706C4
+ * (type 0x59 in func_8004D6D4, 8004D6D4.c:135) and by the 'Csfx' stream
+ * walker func_8003BFD0, whose jump table jtbl_800115B8 maps the same type
+ * 0x59 to this function (index 3); both paths therefore agree on the type
+ * number. Instances of this type are later built from the stored record by
+ * func_8007043C (case 0x59 of func_8003E984), which reads record fields
+ * +0x34..+0x56 and installs the message handler func_8006FF44.
  */
-void func_800703A8(struct Unk703A8 *source)
+void gRegisterActorDef59(struct Unk703A8 *source)
 {
     struct Unk703A8 *copy;
 
@@ -44,5 +60,5 @@ void func_800703A8(struct Unk703A8 *source)
         return;
     }
     *copy = *source;
-    func_8003C404(copy);
+    gInstallSpawnRecord(copy);
 }
