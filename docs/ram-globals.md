@@ -1153,6 +1153,72 @@ Zeiger). `D_8009DD10` (`gIrqCallbackTable`) behielt seinen Namen.
 Registeradressen in `0x1F80xxxx` (nur als Zeigerwörter geführt) sowie die zwölf Units dieser Runde,
 deren Rolle nicht belegbar ist — sie stehen in `docs/FUNCTION_MAP.md` ohne Namen.
 
+## Klangsystem, Bildschirmablauf und Modul-Streaming: Runde B
+
+Diese Runde ergänzt die RAM-Symbole der 100 Units von `80021B90` bis
+`80029748`. Die Belege nennen die C-Funktionen oder, bei Belegen
+außerhalb der Runde, die jeweilige Retail-Funktion.
+
+Bei `D_800A0A88` korrigiert die Retail-Analyse den früheren Namen
+`gPlayerCountRecord`. Das Wort liegt bei `gAssetHandle + 0x08`.
+`gStartTrackedSoundVoice` setzt es auf 1 und `gStopTrackedSoundVoice`
+löscht es. Die Abfrage betrifft die laufende Tonwiedergabe.
+
+### Audiotreiber, CVK und VAGM
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_800A07BC` | `gSoundChannelEnableMask` | `void *` | Kanalmaske bei +0x14 des Klangzustands. Beim Abarbeiten werden gesetzte Kanalbits geprüft, die Maske wird im Modus 1 an die SPU übergeben und anschließend gelöscht. **Bestätigt.** | `gFlushSoundChannelUpdates` |
+| `D_8009F268` | `gStreamRequestSequence` | `u16` | Sequenzwert der Stream-Anforderung. Er wird inkrementiert, beim Überlauf auf 1 gesetzt und in den Mixerzustand kopiert. **Bestätigt.** | `gPrimeAudioStream` |
+| `D_8009F634` | `gStreamEventCallback` | `u32 / volatile u32` | Adresse des optionalen Callbacks aus Option 6. Die Stream-Fortschaltung ruft ihn unter anderem mit den Statuswerten 3, 4 und 6 auf. **Bestätigt.** | `gConfigureAudioStreaming`, `gHandleAudioStreamSpuIrq`, `gCompleteAudioStreamTransfer` |
+| `D_800A0974` | `gStreamStopPending` | `s32` | Markierung bei +0x0C des Mixers. Die Abfrage beendet einen aktiven Stream, wenn das Wort ungleich null ist. **Bestätigt.** | `gMarkAudioStreamStopPending`, `gPollAudioStreamStop` |
+| `D_800A09DC` | `gStreamAvailableBlocks` | `s32` | Blockzähler bei +0x74 des Mixers. Beim Reset wird das Limit aus +0x70 übernommen, der IRQ erhöht den Wert bis zum Limit und die Anforderung verringert ihn. **Bestätigt.** | `gGetAudioStreamBlockCount`, `gResetAudioStreamController`, `gSubmitAudioStreamTransfer`, `gHandleAudioStreamSpuIrq` |
+| `D_800A0988` | `gStreamDmaChannelIndex` | `s32[2]` | Erstes Wort bei Mixer +0x20. Die DMA-Fertigmeldung erhöht den Kanalindex, der IRQ setzt ihn für die nächste Anforderung auf null. **Bestätigt.** | `gHandleAudioStreamSpuIrq`, `gCompleteAudioStreamTransfer`, `gSubmitAudioStreamTransfer` |
+| `D_800A099C` | `gStreamChannelStart` | `s32[2]` | Startwert des ersten Kanals bei Mixer +0x34. Der IRQ prüft ihn vor der Folgeanforderung, der Bereichssetter schreibt ihn. **Bestätigt.** | `gHandleAudioStreamSpuIrq`, `gSetAudioStreamChannelRange` |
+| `D_800A09F8` | `gStreamIrqBusy` | `s32[2]` | Sperrwort bei Mixer +0x90 zum Schutz vor erneutem Eintritt in den SPU-IRQ-Handler. **Bestätigt.** | `gHandleAudioStreamSpuIrq` |
+| `D_8009F650` | `gCvkSpuUploadComplete` | `volatile s32 / volatile int` | Abschlusswort für den CVK-SPU-Transfer. Der Aufrufer löscht und prüft es, der DMA-Callback setzt es auf 1. **Bestätigt.** | `gUploadCvkSpuDataAndWait`, `gMarkCvkSpuUploadComplete` |
+| `D_8009F9BC` | `gCvkSpuUploadCursor` | `int` | Nächste SPU-Zieladresse für CVK-Daten. Modus 1 setzt sie auf die Basis zurück, ein abgeschlossener Transfer erhöht sie um die auf 64 Byte gerundete Länge. **Bestätigt.** | `gUploadCvkSpuDataAndWait` |
+| `D_800A0A88` | `gTrackedSoundState` | `int` | Wiedergabestatus des verfolgten Klangs bei +0x08 in gAssetHandle. Der Start setzt das Wort auf 1, die Freigabe löscht es und die Abfrage prüft auf 1. **Bestätigt.** | `gStartTrackedSoundVoice`, `gStopTrackedSoundVoice`, `gIsTrackedSoundPlaying` |
+| `D_8009F64C` | `gStreamBlockDeficitScale` | `s32` | Multiplikator für die Differenz zwischen drei und dem aktuellen Blockzähler. Die VAGM-Initialisierung setzt ihn auf 0x1C2. **Bestätigt.** | `gInitializeVagmAudioStream`, `gScaleAudioStreamBlockDeficit` |
+| `D_8009F65E` | `gSecondTeamRetireTimer` | `u16` | Zweites Halbwort der Team-Zustände ab gTeamFlag. Beim Modulstart gelöscht, danach im Pfad für Ausscheiden und Überblendung indiziert. **Bestätigt.** | `gInitializePanelInputActions`, `gSignalFirstTeamRetirement`, `gTickPlayerTransitionFade` |
+| `D_800A0AD0` | `gOptDecreaseAction` | `struct Unk247A8[2]` | Tastenmaske und Flankenzustand pro Port zum Verringern eines Optionswerts. **Bestätigt.** | `gInitializePanelInputActions`, `func_800260B8` |
+| `D_800A0AE0` | `gOptIncreaseAction` | `struct Unk247A8[2]` | Tastenmaske und Flankenzustand pro Port zum Erhöhen eines Optionswerts. **Bestätigt.** | `gInitializePanelInputActions`, `func_800260B8` |
+
+### Optionsmenü und Ergebnisbildschirm
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_80010DC0` | `gMissionPanelSoundTable` | `struct Name` | Fünf Bytepaare für die Zuordnung von Sitzung +0x28 zu dem beim Missionsstart nach gPanelSoundIds geschriebenen Wert. **Wahrscheinlich.** | `gInitializeMissionModule` |
+| `D_8009F2EC` | `gOptionsVolumeFormat` | `u8[]` | Formatvorlage %03ld aus der Retail-Datei für die Lautstärke-Prozentfelder im Optionsmenü. **Wahrscheinlich.** | `gRefreshOptionsAudioLabels` |
+| `D_8009F2C0` | `gResultsTextTable` | `struct MenuText27F80 * / struct MenuData28164 *` | Tabelle der Textzeiger, aus der der Ergebnisbildschirm Überschriften, Meldungen und Textcodes liest. **Wahrscheinlich.** | `gDrawResultsTextBlock`, `gDrawPlayerResultsScreen` |
+| `D_8009F2FC` | `gResultsDecimalFormat` | `u8[]` | Retail-Format %ld für Statistik-IDs unter 15. **Wahrscheinlich.** | `gDrawResultsTextBlock` |
+| `D_8009F300` | `gResultsRoundFormat` | `u8[]` | Retail-Format %02d für den Sitzungszähler plus 1 im Solo-Ergebnisbildschirm. **Wahrscheinlich.** | `gDrawPlayerResultsScreen` |
+| `D_8009ABF0` | `gResultsCenterLabelCodes` | `u8[]` | Steuercodes für die mittige Beschriftung bei x = 0xA0 im Ergebnisbildschirm. **Wahrscheinlich.** | `gDrawPlayerResultsScreen`, `gDrawResultsTextBlock` |
+| `D_8009AC08` | `gResultsOuterLabelCodes` | `u8[]` | Steuercodes für die gespiegelte äußere Beschriftung bei x = 0x28 und 0x118. **Wahrscheinlich.** | `gDrawPlayerResultsScreen`, `gDrawResultsTextBlock` |
+| `D_8009AC14` | `gResultsInnerLabelCodes` | `u8[]` | Steuercodes für die gespiegelte innere Beschriftung bei x = 0x64 und 0xDC. **Wahrscheinlich.** | `gDrawPlayerResultsScreen`, `gDrawResultsTextBlock` |
+| `D_8009AC20` | `gResultsOuterStatCodes` | `u8[]` | Steuercodes für die äußere Statistikspalte beider Spieler bei x = 0x28 und 0x118. **Wahrscheinlich.** | `gDrawPlayerResultsScreen`, `gDrawResultsTextBlock` |
+| `D_8009AC2C` | `gResultsMiddleStatCodes` | `u8[]` | Steuercodes für die mittlere Statistikspalte beider Spieler bei x = 0x46 und 0xFA. **Wahrscheinlich.** | `gDrawPlayerResultsScreen`, `gDrawResultsTextBlock` |
+| `D_8009AC44` | `gResultsInnerStatCodes` | `u8[]` | Steuercodes für die innere Statistikspalte beider Spieler bei x = 0x64 und 0xDC. **Wahrscheinlich.** | `gDrawPlayerResultsScreen`, `gDrawResultsTextBlock` |
+
+### Modul-Streaming und Portrait-Wiedergabe
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_8009F6A0` | `gModuleReadCompleteIndex` | `s32` | Leseindex des Vierer-Rings für abgeschlossene Modul-Lesevorgänge. Die Übernahme eines Puffers erhöht ihn mit Umlauf bei vier. **Bestätigt.** | `gServiceModuleReadQueues`, `func_80029F50` |
+| `D_8009F6A4` | `gModuleReadPendingWriteIndex` | `s32` | Schreibindex des Vierer-Rings für ausstehende Modul-Lesevorgänge. Beim Einreihen eines Puffers wird er erhöht. **Bestätigt.** | `gServiceModuleReadQueues`, `func_80029F50` |
+| `D_8009F6A8` | `gModuleReadBusy` | `u8` | Busy-Byte eines Modul-Lesevorgangs. Der Start setzt es und die Fertigmeldung löscht es. **Bestätigt.** | `gStartNextModuleBufferRead`, `gCompleteModuleBufferRead`, `gServiceModuleReadQueues` |
+| `D_8009F6AC` | `gModuleReadActiveBuffer` | `Node * volatile / void *` | Zeiger auf den Puffer des laufenden Modul-Lesevorgangs, vom Start gesetzt und von der Fertigmeldung ausgewertet. **Bestätigt.** | `gStartNextModuleBufferRead`, `gCompleteModuleBufferRead` |
+| `D_8009F6B0` | `gModuleReadCompleteWriteIndex` | `volatile s32 / s32` | Schreibindex des Vierer-Rings für abgeschlossene Modul-Lesevorgänge. **Bestätigt.** | `gCompleteModuleBufferRead`, `func_80029F50` |
+| `D_8009F6B4` | `gModuleReadPendingIndex` | `volatile s32 / s32` | Leseindex des Vierer-Rings für ausstehende Modul-Lesevorgänge. Beim Start einer Anforderung wird er erhöht. **Bestätigt.** | `gStartNextModuleBufferRead`, `gServiceModuleReadQueues` |
+| `D_8009F6E8` | `gModuleReadEndCheck` | `s32` | Aktiviert die zusätzliche Prüfung des Leseendes gegen Zustand +0x4C. Wird beim Erreichen der Endposition gelöscht. **Bestätigt.** | `gCompleteModuleBufferRead`, `func_80029F50` |
+| `D_800A0C10` | `gModuleReadCompletedBuffers` | `Node *[]` | Vier Pufferzeiger nach erfolgreichem Lesen. Die Parser-Warteschlange übernimmt sie in Ringreihenfolge. **Bestätigt.** | `gCompleteModuleBufferRead`, `gServiceModuleReadQueues` |
+| `D_800A0C20` | `gModuleReadPendingBuffers` | `Node *[]` | Vier Pufferzeiger für ausstehende Lesevorgänge. Der Dateileser entnimmt jeweils einen Puffer. **Bestätigt.** | `gServiceModuleReadQueues`, `gStartNextModuleBufferRead` |
+| `D_8009F6C4` | `gPortraitStreamDeadline` | `s32` | Frist des Portrait-Streams. Wird beim Anfordern gesetzt, beim vollständigen VAGB-Upload gelöscht und im Frame-Pfad mit dem Taktzähler verglichen. **Bestätigt.** | `func_80029C34`, `gParseStreamedModuleChunks`, `func_8002A26C` |
+| `D_8009F6C8` | `gPortraitStartTick` | `s32` | Zeitbasis der Portrait-Animation. Beim Start wird der aktuelle Tick minus 30 gespeichert und später für den Bildindex abgezogen. **Bestätigt.** | `gStepSynchronizedPortrait` |
+| `D_8009F6D4` | `gVagmWriteIndex` | `volatile s32` | Schreibindex des VAGM-Rings. Wird beim Einreihen eines Blocks erhöht und bei vier auf null gesetzt. **Bestätigt.** | `gParseStreamedModuleChunks`, `func_80029F50` |
+| `D_8009F6E0` | `gVagmPrimeBlockCount` | `s32` | Zähler der im Anlauf eingereihten VAGM-Blöcke. Ab zwei Blöcken wird die Audio-Initialisierung versucht. **Bestätigt.** | `gParseStreamedModuleChunks`, `func_8002A16C` |
+| `D_800A0C44` | `gPortraitAudioByteCount` | `s32[]` | Akkumulator bei gReleaseQueues +0x14 für die auf 64 Byte gerundete VAGB-Nutzlänge. Der Portrait-Pfad übergibt ihn der Stimmvorbereitung. **Bestätigt.** | `gParseStreamedModuleChunks`, `gStepSynchronizedPortrait` |
+
 ## Wie diese Datei weitergeführt wird
 
 Am besten **eine neue Variable nach der anderen** ergänzen und die bestehende Gliederung beibehalten. Ein neuer Eintrag braucht zunächst nur:
