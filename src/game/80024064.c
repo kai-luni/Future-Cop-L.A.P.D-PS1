@@ -45,7 +45,7 @@ s32 gAcquireTrackedSoundVoice(s32 arg0, s32 arg1) __asm__("func_80024064");
  * Reads gCvkSystemActive and updates gAssetHandle.
  *
  * @par Callers
- * Direct calls from func_80029748.
+ * Direct calls from gStepSynchronizedPortrait (func_80029748).
  *
  * @par Role and path
  * The portrait player acquires this voice before trying to start it.

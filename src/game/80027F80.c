@@ -32,7 +32,7 @@ void gDrawResultsTextBlock(void *player, u8 *text, s32 x, s32 color) __asm__("fu
  * skips a line, bytes >= 0x40 are stat codes (minus 0x40), other bytes index the menu text
  * table.
  * @param x Centre column.
- * @param colour Text colour (low 16 bits).
+ * @param color Text color (low 16 bits).
  * @return Nothing.
  *
  * @par Confirmed mechanics

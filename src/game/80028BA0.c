@@ -19,7 +19,8 @@ void gCopyWholeWords(u32 *destination, const u32 *source, u32 byte_count) __asm_
  * None directly.
  *
  * @par Callers
- * Direct calls from gCreateModuleAssetFromHeader (func_80028BCC), func_8002902C.
+ * Direct calls from gCreateModuleAssetFromHeader (func_80028BCC), gParseStreamedModuleChunks
+ * (func_8002902C).
  *
  * @par Role and path
  * The module parser uses this for aligned copies of asset headers and payload fragments.

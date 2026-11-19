@@ -647,7 +647,7 @@ graph LR
 | `gMarkCvkSlotReady` (`func_80023500`) | 40 | Game Engine > State | - | - |
 | `gTickLoadingScreenAssets` (`func_80025348`) | 40 | Game Engine > Frame · Asset Loading | `func_8001B4A8`, `func_80024EC8` | `func_80025B7C` |
 | `gPresentInteractiveScreenFrame` (`func_80027EBC`) | 40 | Game Engine > Frame · Display | `func_8001B4A8`, `func_80024EC8` | `func_80027EE4` |
-| `func_80029720` | 40 | Game Engine > State | - | `func_80023E84` |
+| `gMarkPortraitVoiceStopped` (`func_80029720`) | 40 | Game Engine > State | - | `func_80023E84` |
 | `func_80045028` | 40 | Game Engine > State | - | `func_80045164` |
 | `func_800477D8` | 40 | Game Engine > Audio | - | `func_8002283C`, `func_800228F4`, `func_8004772C`, `func_80047800` |
 | `func_8004953C` | 40 | Game Engine > Scripting | - | `func_8004DC64` |
@@ -1323,7 +1323,7 @@ graph LR
 | `func_80019D00` | 96 | Resources > Resource Registry · Memory Management | - | `func_80013550`, `func_80049734`, `func_800511E4`, `func_80051650` |
 | `func_8001B448` | 96 | Resources > Memory Management | - | `func_800249BC`, `func_80024D14`, `func_80076A2C` |
 | `func_80019C38` | 104 | Resources > Asset Loader · File Access | - | `func_80029E20`, `func_800319D4`, `func_8003BDA0`, `func_80041070`, `func_8004488C`, `func_80049420`, `func_80049EA8`, `func_8004CA98`, `func_80060838`, `func_80060E74`, `func_8006ED78`, `func_800706C4`, `func_800740B8`, `func_80076878`, `func_80084110` |
-| `func_800295E8` | 104 | Resources > Asset Loader · File Access | `func_800195D0`, `func_8002902C` | `func_80024EC8` |
+| `gPopCompletedModuleAsset` (`func_800295E8`) | 104 | Resources > Asset Loader · File Access | `func_800195D0`, `func_8002902C` | `func_80024EC8` |
 | `func_80049734` | 104 | Resources > Loader Post-Process · Lighting | `func_80019A74`, `func_80019AA8`, `func_80019D00` | `func_80024EC8` |
 | `gStepBootProfileTransfer` (`func_80080B08`) | 104 | Resources > Save Data · State Machine | `func_8007FB04` | `func_80076A2C` |
 | `gAllocDecodeBuffers` (`func_800860CC`) | 104 | Resources > Memory Management · Image Decode & Upload | `func_80017EBC` | `func_80024A24` |
@@ -1362,9 +1362,9 @@ graph LR
 | `gInitMcState` (`func_80020618`) | 184 | Resources > Save Data · Memory Card | - | `func_8007F9CC` |
 | `gResetMcManager` (`func_800206D0`) | 188 | Resources > Save Data · Memory Card | `func_80020120`, `func_80020530`, `func_8008D640` | `func_8007FA88` |
 | `func_8003BE2C` | 196 | Resources > Object Pool · Memory Management | `func_80017EBC` | `func_8005E1BC`, `func_8006EDC4`, `func_800762B0` |
-| `func_80029520` | 200 | Resources > Asset Registry · Reference Counting | `func_80029650` | `func_80029C34`, `func_80029EB8` |
+| `gFlushDeferredAssetReleases` (`func_80029520`) | 200 | Resources > Asset Registry · Reference Counting | `func_80029650` | `func_80029C34`, `func_80029EB8` |
 | `func_8007852C` | 204 | Resources > Cleanup | - | `func_800249BC` |
-| `func_80029650` | 208 | Resources > Asset Registry · Reference Counting | `func_800288BC` | `func_8001B4A8`, `func_80029520`, `func_8002A31C`, `func_8002A408` |
+| `gReleaseStreamAssetReference` (`func_80029650`) | 208 | Resources > Asset Registry · Reference Counting | `func_800288BC` | `func_8001B4A8`, `func_80029520`, `func_8002A31C`, `func_8002A408` |
 | `func_80051580` | 208 | Resources > Lookup | `func_80019A20`, `func_8001AB78` | - |
 | `gPollCvkBankSlots` (`func_8002385C`) | 212 | Resources > Slot Table · Frame | - | `func_80025690`, `func_800259D8` |
 | `func_80071A68` | 216 | Resources > Memory Management · Effects | `func_800181D4`, `func_80070710` | `func_8007364C` |
@@ -1409,7 +1409,7 @@ graph LR
 | `gFormatIso9660Path` (`func_8001DC48`) | 936 | Resources > File Access · String | `func_8008CC90`, `func_8008CCB0`, `func_8008CCC0`, `func_8008CCE0` | `func_8001D424` |
 | `func_800131A0` | 944 | Resources > Data Initialization · Animation | `func_80012E48`, `func_8001306C` | `func_80013550` |
 | `gLoadQueuedAssets` (`func_80024EC8`) | 1152 | Resources > Asset Loader · Asset Dispatch | `func_80013550`, `func_800181D4`, `func_80023930`, `func_800295E8`, `func_80029E20`, `func_8003C110`, `func_80048E9C`, `func_80049420`, `func_80049734`, `func_8004D6D4`, `func_8004D924`, `func_800511E4`, `func_8005A414`, `func_80060E74`, `func_80063C20`, `func_80063C5C`, `func_80063DC8`, `func_80082358`, `func_800824CC`, `func_800825AC`, `func_8008263C`, `func_800899A4` | `func_80025348`, `func_80025690`, `func_800259D8`, `func_80027EBC` |
-| `func_8002902C` | 1268 | Resources > Asset Loader · Streaming Audio | `func_80023CA4`, `func_800244A4`, `func_80028BA0`, `func_80028BCC`, `func_80028D28`, `func_80028DC0`, `func_80028E58`, `func_8002A16C`, `func_8002A544` | `func_800295E8` |
+| `gParseStreamedModuleChunks` (`func_8002902C`) | 1268 | Resources > Asset Loader · Streaming Audio | `func_80023CA4`, `func_800244A4`, `func_80028BA0`, `func_80028BCC`, `func_80028D28`, `func_80028DC0`, `func_80028E58`, `func_8002A16C`, `func_8002A544` | `func_800295E8` |
 | `func_8007FB04` | 1292 | Resources > Save Data · Screen State Machine, Memory Card | `func_8001F37C`, `func_800207B4`, `func_80020C90`, `func_80020E68`, `func_80078650`, `func_80078740`, `func_8007F750`, `func_80080010`, `func_80080AD4`, `func_80080B70`, `func_80081204`, `func_80082020`, `func_8008204C` | `func_80080038`, `func_80080B08` |
 | `func_80080B70` | 1684 | Resources > Save Data · File Transfer, Front End | `func_8001E318`, `func_80020FDC`, `func_8007F6E0`, `func_80080A5C`, `func_800822CC`, `func_80089914`, `func_8008CCB0` | `func_8007FB04`, `func_8008125C` |
 
@@ -2497,7 +2497,7 @@ graph LR
 | `gMovieDecodeVlcStream` (`func_80089BBC`) | 392 | Graphics > Video Decode · Decompression | - | `func_80085228`, `func_80085630`, `func_800861E4` |
 | `func_8003B144` | 396 | Graphics > Particles · Integration | `func_8003A960`, `func_8004D958` | `func_8003B2D0` |
 | `gDrawOptionsGaugeRow` (`func_8007CE04`) | 412 | Graphics > HUD > Gauge · Atlas, Text | `func_800788F0`, `func_80082AB0`, `func_80082FA4` | `func_8007CFA0` |
-| `func_80029748` | 420 | Graphics > HUD · Sound | - | `func_800486FC` |
+| `gStepSynchronizedPortrait` (`func_80029748`) | 420 | Graphics > HUD · Sound | - | `func_800486FC` |
 | `gDrawThreeSlotStatusBar` (`func_8006C080`) | 420 | Graphics > HUD > Status Bar · 2D Drawing | `func_800491F8`, `func_8006AAEC`, `func_8006BF44` | `func_80047F30` |
 | `gMovieBuildDitherTables` (`func_80085F1C`) | 432 | Graphics > Video Decode Tables · Mathematics | - | `func_80085C4C`, `func_80086134`, `func_800861E4` |
 | `gUploadMovieStrip` (`func_80085074`) | 436 | Graphics > Video Decode Output · VRAM Transfer | `func_800847E0`, `func_80092F38`, `func_80096070` | - |

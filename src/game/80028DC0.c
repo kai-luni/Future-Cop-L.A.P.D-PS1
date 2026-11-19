@@ -40,7 +40,7 @@ void gQueueCompletedModuleAsset(s32 arg) __asm__("func_80028DC0");
  * Reads the pool pointer and updates the completed-asset list in gStreamBufferList.
  *
  * @par Callers
- * Direct calls from func_8002902C.
+ * Direct calls from gParseStreamedModuleChunks (func_8002902C).
  *
  * @par Role and path
  * The SHOC parser queues an asset once its accumulated data length reaches the expected size.

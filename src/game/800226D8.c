@@ -7,7 +7,7 @@ extern void gClearAudioStreamSpuBuffers(void) __asm__("func_80022C68");
 void gStopAudioStreamAndClearChannels(void) __asm__("func_800226D8");
 
 /**
- * @brief Stops the audio stream and clears the per-channel start fields.
+ * @brief Stops the audio stream and clears the recorded SPU buffer addresses.
  *
  * @param void No parameters.
  * @return Nothing.

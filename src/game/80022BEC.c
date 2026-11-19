@@ -20,7 +20,7 @@ s32 gAssignAudioStreamSpuBuffers(void) __asm__("func_80022BEC");
  * @return Zero on completion, or the first negative address value encountered.
  *
  * @par Confirmed mechanics
- * Loads the base and count once at entry. Each record receives base plus cumulative block size
+ * Loads the base and initial count at entry. Each record receives base plus cumulative block size
  * times block count at +0x44. The delay-slot store also writes the first negative result before
  * returning it.
  *

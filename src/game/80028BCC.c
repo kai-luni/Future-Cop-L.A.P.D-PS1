@@ -49,7 +49,7 @@ s32 gCreateModuleAssetFromHeader(Unk80028BCCOut *out, Unk80028BCC *arg) __asm__(
  * None directly.
  *
  * @par Callers
- * Direct calls from func_8002902C.
+ * Direct calls from gParseStreamedModuleChunks (func_8002902C).
  *
  * @par Role and path
  * The SHOC parser uses this for SHDR chunks before SDAT copies fill the asset payload.

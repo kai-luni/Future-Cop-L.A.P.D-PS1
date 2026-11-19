@@ -21,7 +21,7 @@ struct Unk4749CHandle {
 extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 
 extern void gReleaseSoundVoicesByOwner(s32 owner) __asm__("func_80022240");
-extern void func_80029720(void);
+extern void gMarkPortraitVoiceStopped(void) __asm__("func_80029720");
 extern void func_80045370(void);
 extern s32 func_800474F0(struct Unk4749CHandle *handle);
 
@@ -36,7 +36,7 @@ void gStopTrackedSoundVoice(void) __asm__("func_80023E84");
  * @par Confirmed mechanics
  * For state 1, releases software voices by signed owner byte +0x0D when the resource is
  * present, clears the state and conditionally calls func_80045370. Always releases the tracked
- * handle, clears +0x10 and calls func_80029720.
+ * handle, clears +0x10 and calls gMarkPortraitVoiceStopped.
  *
  * @par Globals
  * Reads and modifies gAssetHandle, including gTrackedSoundState at +0x08.
@@ -65,5 +65,5 @@ void gStopTrackedSoundVoice(void)
     }
     func_800474F0(&gAssetHandle);
     gAssetHandle.unk10 = 0;
-    func_80029720();
+    gMarkPortraitVoiceStopped();
 }

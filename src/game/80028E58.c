@@ -31,7 +31,7 @@ Node *gServiceModuleReadQueues(u8 arg) __asm__("func_80028E58");
  * gModuleReadBusy.
  *
  * @par Callers
- * Direct calls from func_8002902C.
+ * Direct calls from gParseStreamedModuleChunks (func_8002902C).
  *
  * @par Role and path
  * The module parser services the asynchronous file queues before or between parse passes.

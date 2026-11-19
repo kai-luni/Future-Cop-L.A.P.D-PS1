@@ -15,9 +15,10 @@ extern struct Other gReleaseQueues __asm__("D_800A0C30");
 extern Chunk *gVagmRing[4] __asm__("D_800A0C50");
 extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
-extern s32 D_8009F6C4, D_8009F6E0;
+extern s32 gPortraitStreamDeadline __asm__("D_8009F6C4");
+extern s32 gVagmPrimeBlockCount __asm__("D_8009F6E0");
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
-extern volatile s32 D_8009F6D4;
+extern volatile s32 gVagmWriteIndex __asm__("D_8009F6D4");
 extern s32 gGameSuspended __asm__("D_8009FA24");
 extern s32 gServiceModuleReadQueues(s32) __asm__("func_80028E58");
 extern void gRetireParsedModuleBuffer(void) __asm__("func_80028D28");
@@ -29,24 +30,38 @@ extern void func_8002A544(void);
 extern u8 gUploadCvkSpuDataAndWait(void *, s32, s32) __asm__("func_80023CA4");
 extern void func_8002A16C(s32);
 
+void gParseStreamedModuleChunks(void) __asm__("func_8002902C");
+
 /**
- * @brief Parses streamed module container files from D_800A0B70 and dispatches SHOC/CTRL/CANM/FILL/VAGB/VAGM chunks.
- *
- * Guarded by gServiceModuleReadQueues(1) and D_800A0B70.file. Walks chunks up to state->limit: SHOC (0x53484F43) handles SHDR headers via gCreateModuleAssetFromHeader and SDAT audio payloads via gCopyWholeWords/gQueueCompletedModuleAsset; CTRL initializes playback rate; VAGM queues VAG frames and starts audio via gInitializeVagmAudioStream; VAGB uploads sound bank chunks via gUploadCvkSpuDataAndWait and triggers func_8002A16C(1); CANM queues animation chunks; FILL skips to limit.
+ * @brief Parses completed module buffers and dispatches their asset, control, audio and
+ * animation chunks.
  *
  * @param void No parameters.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Services the file rings, increments the parsed-buffer counter, then reads each tag and size
+ * up to the parse limit. SHOC prepares SHDR and copies SDAT data, CTRL initializes the limit
+ * metadata, VAGM queues retained audio blocks, VAGB uploads SPU data, CANM retains animation
+ * blocks and FILL advances to the limit. Retires each parsed buffer before servicing the ring
+ * again.
+ *
  * @par Globals
- * D_800A0B70 (stream file/loader state), D_800A0C30 (chunk/size accumulator), D_800A0C50 (4-slot VAGM ring), D_8009F6B8/D_8009F6C0/D_8009F6C4/D_8009F6D4/D_8009F6DC/D_8009F6E0/D_8009FA24.
- * @par Control flow
- * Loops while D_800A0B70.file != 0; inner loop dispatches chunk tags until file->pos >= state->limit, then retires the file via gRetireParsedModuleBuffer and drains pending files via gServiceModuleReadQueues(0).
- * @par Calls
- * gServiceModuleReadQueues, gCreateModuleAssetFromHeader, gCopyWholeWords, gQueueCompletedModuleAsset, gInitializeVagmAudioStream, func_8002A544, gUploadCvkSpuDataAndWait, func_8002A16C, gRetireParsedModuleBuffer.
- * @par Side effects
- * Advances file->pos/refs, allocates/fills sound buffers, uploads SPU data, queues CANM/VAGM chunks, and starts/stops audio streaming.
+ * Uses gStreamBufferList, gReleaseQueues, gVagmRing, gVagmWriteIndex, gVagmPrimeBlockCount,
+ * gPortraitAudioByteCount, gPortraitStreamDeadline, gBitFieldState, gLatchFlag, gCallGateFlag
+ * and gGameSuspended.
+ *
  * @par Callers
- * Confirmed: func_800295E8.
+ * Direct calls from gPopCompletedModuleAsset (func_800295E8).
+ *
+ * @par Role and path
+ * Called by the asset pop path to deliver module assets and feed the synchronized audio and
+ * portrait queues.
+ *
+ * @par Unknown
+ * Unrecognized tags are advanced by their size and the full tag vocabulary is unresolved.
  */
-void func_8002902C(void)
+void gParseStreamedModuleChunks(void)
 {
     struct State *state;
     File *file;
@@ -117,19 +132,19 @@ void func_8002902C(void)
                     }
                     goto dispatch_end;
                 vagm:
-                    if (gCallGateFlag != 0 && gCallGateFlag != 2 && queue[D_8009F6D4] == 0) {
+                    if (gCallGateFlag != 0 && gCallGateFlag != 2 && queue[gVagmWriteIndex] == 0) {
                         register Chunk *p __asm__("$16");
                         p = chunk;
                         __asm__("" : "+r"(p));
-                        queue[D_8009F6D4] = chunk;
-                        D_8009F6D4++;
-                        if (D_8009F6D4 >= 4) D_8009F6D4 = 0;
+                        queue[gVagmWriteIndex] = chunk;
+                        gVagmWriteIndex++;
+                        if (gVagmWriteIndex >= 4) gVagmWriteIndex = 0;
                         file->refs++;
                         __asm__("" : "+r"(chunk));
                         chunk->owner = file;
                         if (gCallGateFlag == 3) {
-                            D_8009F6E0++;
-                            if ((u32)D_8009F6E0 >= 2) {
+                            gVagmPrimeBlockCount++;
+                            if ((u32)gVagmPrimeBlockCount >= 2) {
                                 if (!gInitializeVagmAudioStream()) func_8002A544();
                                 else gCallGateFlag = one;
                             }
@@ -146,7 +161,7 @@ void func_8002902C(void)
                         if (chunk->index == one) other->size = 0;
                         other->size += ((size + 0x27) >> 6) << 6;
                         if (chunk->index == chunk->total) {
-                            D_8009F6C4 = 0;
+                            gPortraitStreamDeadline = 0;
                             gBitFieldState = (gBitFieldState | 4) & 0xbf;
                             if (gLatchFlag) {
                                 gBitFieldState |= 8;

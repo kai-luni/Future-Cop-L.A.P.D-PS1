@@ -31,7 +31,7 @@ void gRecycleModuleReadBuffer(Node *node) __asm__("func_800288BC");
  *
  * @par Callers
  * Direct calls from gCompleteModuleBufferRead (D_80028918), gRetireParsedModuleBuffer
- * (func_80028D28), func_80029650.
+ * (func_80028D28), gReleaseStreamAssetReference (func_80029650).
  *
  * @par Role and path
  * The module loader recycles rejected reads and unreferenced parsed buffers here.

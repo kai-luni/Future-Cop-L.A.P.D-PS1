@@ -26,7 +26,7 @@ int gUploadCvkSpuDataAndWait(void *data, unsigned int size, int mode) __asm__("f
  * Reads gSpuBufferPtr and reads or writes gCvkSpuUploadCursor and gCvkSpuUploadComplete.
  *
  * @par Callers
- * Direct calls from func_8002902C.
+ * Direct calls from gParseStreamedModuleChunks (func_8002902C).
  *
  * @par Role and path
  * The module loader uses this synchronous upload for embedded sound data.

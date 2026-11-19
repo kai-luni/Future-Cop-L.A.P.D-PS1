@@ -34,7 +34,7 @@ s32 gStartTrackedSoundVoice(void) __asm__("func_80023F08");
  * gTrackedSoundState aliases gAssetHandle +0x08.
  *
  * @par Callers
- * Direct calls from func_80029748.
+ * Direct calls from gStepSynchronizedPortrait (func_80029748).
  *
  * @par Role and path
  * The synchronized portrait path uses this to launch its companion voice.

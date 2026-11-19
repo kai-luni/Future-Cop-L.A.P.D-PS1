@@ -40,7 +40,7 @@ s32 gInitializeVagmAudioStream(void) __asm__("func_800244A4");
  * gStreamBlockDeficitScale.
  *
  * @par Callers
- * Direct calls from func_8002902C.
+ * Direct calls from gParseStreamedModuleChunks (func_8002902C).
  *
  * @par Role and path
  * The VAGM module-chunk path initializes the software stream and the SPU playback chain here.

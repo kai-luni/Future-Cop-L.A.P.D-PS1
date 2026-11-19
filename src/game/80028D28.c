@@ -34,7 +34,7 @@ void gRetireParsedModuleBuffer(void) __asm__("func_80028D28");
  * Updates the parsed and retained lists in gStreamBufferList.
  *
  * @par Callers
- * Direct calls from func_8002902C.
+ * Direct calls from gParseStreamedModuleChunks (func_8002902C).
  *
  * @par Role and path
  * After finishing a buffer, the chunk parser retains it only while chunk references remain.
