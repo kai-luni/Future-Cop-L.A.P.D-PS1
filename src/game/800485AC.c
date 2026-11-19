@@ -54,7 +54,7 @@ void gEmitHudPanelSprite(s32 value) __asm__("func_800485AC");
  * sampling V 0xCC (204) with height 0x30 (48). In single-player (gPlayerCount
  * == 1) it is 64 wide at x 0xF4 with U 0; otherwise 32 wide at x 128 for
  * value 0 or x 0 for value 1, with U 0x20 for value 1. It does nothing when
- * gHudPanelEnable is 0 or gStreamPreemptCount is non-zero; callers are the
+ * gFrameSwitch is 0 or gStreamPreemptFlag[0] is non-zero; callers are the
  * two-player driver func_80027510 and the frame-close hook func_800486FC.
  */
 void gEmitHudPanelSprite(s32 value)

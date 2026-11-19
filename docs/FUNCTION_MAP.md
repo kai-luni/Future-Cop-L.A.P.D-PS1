@@ -2434,12 +2434,12 @@ graph LR
 | `gResetNameEntryState` (`func_8007AB0C`) | 176 | Graphics > HUD > Name Entry · Front-End Configuration | `func_80046C84`, `func_8007A9D0` | - |
 | `gSetCameraPosition` (`func_800177AC`) | 180 | Graphics > Camera > Position | `func_8001A81C` | `func_80056634`, `func_8005678C`, `func_800569EC`, `func_800573A4` |
 | `gFindClearCameraPreset` (`func_80056870`) | 180 | Graphics > Camera > Placement | `func_80019668`, `func_80055EE8`, `func_8005678C` | `func_800569EC` |
-| `gEmitFlatQuadRect` (`func_80082EF0`) | 180 | Graphics > GPU Primitives > Gouraud Quad · 2D Drawing | - | `func_8007ABBC`, `func_8007C0F8`, `func_8007C6F0`, `func_8007D7CC`, `func_8007F1F8`, `func_80080038`, `func_8008125C`, `func_80083280` |
+| `gEmitFlatQuadRect` (`func_80082EF0`) | 180 | Graphics > GPU Primitives > Flat Quad · 2D Drawing | - | `func_8007ABBC`, `func_8007C0F8`, `func_8007C6F0`, `func_8007D7CC`, `func_8007F1F8`, `func_80080038`, `func_8008125C`, `func_80083280` |
 | `gSetDefDrawEnv` (`func_80092140`) | 180 | Graphics > GPU > Drawing Area · 2D Drawing | `func_80091F74` | `func_8001BE68`, `func_800773D8`, `func_8007757C`, `func_80085C4C` |
 | `gTransformToViewSpace` (`func_800178DC`) | 184 | Graphics > Camera > Relative Transform · GTE | `func_8001006C`, `func_80010820` | `func_80013F08`, `func_8001428C`, `func_80042128`, `func_800592D0` |
 | `gWorldToMinimapCell` (`func_800694C8`) | 184 | Graphics > Camera > Minimap · Map | - | `func_8005AB8C`, `func_80065834`, `func_8006680C` |
 | `gMoveImage` (`func_80092FF8`) | 184 | Graphics > GPU > VRAM Transfer · GPU | `func_80092CF4` | - |
-| `gEmitFlatQuadRectMode` (`func_80082FA4`) | 188 | Graphics > GPU Primitives > Gouraud Quad · 2D Drawing | - | `func_8007CE04` |
+| `gEmitFlatQuadRectMode` (`func_80082FA4`) | 188 | Graphics > GPU Primitives > Flat Quad · 2D Drawing | - | `func_8007CE04` |
 | `func_8001C088` | 192 | Graphics > Fade Layers · Display Setup | `func_800932F0` | `func_8001BFA8`, `func_80076EB0`, `func_80087D48` |
 | `func_800932F0` | 192 | Graphics > GPU > Command Queue · GPU | `func_8008CD10`, `func_80093CE8` | `func_8001C088`, `func_800773D8`, `func_8007757C`, `func_80085C4C` |
 | `gPlayCrimeWarMissionMovies` (`func_80079FE0`) | 196 | Graphics > Text > Debug Numbers | `func_80082DDC` | - |

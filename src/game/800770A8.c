@@ -47,8 +47,8 @@ void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800770A8"
  *
  * @par Environment path
  * Maps an ASCII character (0-9, A-Z, a-z) to a 7-bit segment mask in
- * gSegTable and draws each active segment from gSegCoords via func_80092C8C
- * and func_80093224 (called by func_80077278:13,23).
+ * gSegmentFlagTable and draws each active segment as its own immediate
+ * primitive via func_80092C8C and func_80093224 (called by func_80077278:13,23).
  */
 void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2)
 {

@@ -1,4 +1,4 @@
-// Categories: Graphics > GPU Primitives > Gouraud Quad | Graphics > 2D Drawing
+// Categories: Graphics > GPU Primitives > Flat Quad | Graphics > 2D Drawing
 #include "game/types.h"
 
 struct Poly {
@@ -14,17 +14,20 @@ void gEmitFlatQuadRectMode(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s
 
 
 /**
- * @brief Emits a gouraud quad with a caller-selected primitive code.
+ * @brief Emits a flat-shaded quad (POLY_F4 family) with a caller-selected
+ *        primitive code.
  *
  * @param x, y, w, h Rectangle.
  * @param link Ordering-table link.
- * @param r, g, b Colour.
+ * @param r, g, b Single colour for all four corners.
  * @param code Primitive code; the emitted byte is `code | 0x28`, so the low bits
  *        add the semi-transparency/texture bits of the 0x28 family.
  * @return Nothing; packet from D_8009F9F0.
  *
  * @par Confirmed
- * Same body as func_80082EF0, only the code byte differs.
+ * Same body as func_80082EF0, only the code byte differs: 0x28 alone is
+ * POLY_F4 (opaque), the caller's 2 makes it 0x2A, the semi-transparent polygon
+ * (func_8007CE04 does exactly that). Untextured and unshaded either way.
  *
  * @par Likely role
  * The variant the 3D layer uses for blended quads (0x2C) versus opaque (0x28).

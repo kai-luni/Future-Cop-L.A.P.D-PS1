@@ -38,9 +38,10 @@ void gInitSpuTransferHook(void) __asm__("func_800211FC");
  * @par Environment path
  * Not on the draw path: it hooks the transfer callback of the sound side. It
  * installs the hook at 0x8002139C via func_80098FB8, keeps the previous
- * callback and mode in gSavedSpuCallback and gSavedSpuMode, sets mode 0
- * through func_80098F48, zeroes four state words and sets gSpuHookInstalled
- * to 1. Called by func_8002333C; func_80021250 undoes it.
+ * callback in D_8009F9AC and the previous mode in D_8009FA14, sets mode 0
+ * through func_80098F48, zeroes four state words (gSlotIndexLimit, D_8009F998,
+ * D_8009FA34, D_8009FAD0) and sets gInitDoneFlag to 1. Called by
+ * func_8002333C; func_80021250 undoes it.
  */
 void gInitSpuTransferHook(void)
 {

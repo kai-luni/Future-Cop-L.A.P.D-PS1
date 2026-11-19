@@ -16,28 +16,31 @@ void gEmitRadarTriangle(s32 origin, u32 angle, s32 code) __asm__("func_8005A828"
 
 
 /**
- * @brief Emits a three-segment line fan around an origin.
+ * @brief Emits one flat-shaded triangle (POLY_F3, code 0x20) whose three
+ *        corners come from a shape table rotated around a radar origin.
  *
- * @param origin Packed origin (x/y).
- * @param angle Start angle (4096-step convention).
- * @param code Primitive code for the three segments.
- * @return Nothing; 0x1C bytes per segment from D_8009FA90, guarded by D_8009F9C0.
+ * @param origin X origin of the shape in 16.16 fixed point (0x780000 = 120 px
+ *        for the one radar side, 0x280000 = 40 px for the other).
+ * @param angle Rotation angle in the 4096-step convention.
+ * @param code Colour word for the primitive; the base opcode 0x20 is OR-ed in.
+ * @return Nothing; one 0x1C-byte packet from D_8009FA90, guarded by D_8009F9C0.
  *
  * @par Confirmed
- * func_8001846C supplies sine and cosine; a loop runs ctr = 0..2 and consumes the
- * half-word table D_8009AFB4 for the radii, building three line primitives with
- * tags 0x20000000 / 0x04000000 and the code `code | 0x2C0000`.
+ * func_8001846C supplies sine and cosine; a single loop runs ctr = 0..2 and
+ * consumes three point pairs from the half-word table D_8009AFB4, writing them
+ * as the three vertices of one primitive with tag 0x04000000 and the command
+ * word `code | 0x20000000`, i.e. a POLY_F3, not three separate lines.
  *
  * @par Likely role
- * The radar sweep or a three-blade marker: the same origin, three directions
- * offset by the table's angles.
+ * One radar marker: the node's shape table rotated by its heading, drawn at the
+ * radar origin of the player side.
  *
  * @par Environment path
  * Takes one 28-byte packet from the gPacketCursor pool (not advancing when
  * gPacketLimit is reached) with tag word 0x04000000 (length 4, link 0) and
  * command word code or 0x20000000, i.e. a POLY_F3 with the colour passed by
  * the caller. The three vertices are the three point pairs of
- * gRadarTriangleShape rotated by the sine and cosine from func_8001846C, with
+ * gRadiusTable rotated by the sine and cosine from func_8001846C, with
  * x offset by the 16.16 origin and y offset by 0x2C0000 (44 px), then shifted
  * right 16. Called only by func_8005A9C4 with a gMarkerColorTable colour.
  */

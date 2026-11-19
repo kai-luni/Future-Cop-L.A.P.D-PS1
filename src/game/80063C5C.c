@@ -75,7 +75,7 @@ void gLoadCbmpTexture(Arg63C5C *arg0) __asm__("func_80063C5C");
  * the texpage (page X = x shifted right 6, Y bit 0x10 when y = 256, 0x80 =
  * 8-bit CLUT mode in bits 7-8, blend bits 5-6 zero) and the high half the
  * CLUT id (row shifted left 6 or column shifted right 4), written to
- * gTexpageClutTable[s0], which func_800131A0 reads for 3D rendering. Slot 9
+ * gTexpageBaseTable[s0], which func_800131A0 reads for 3D rendering. Slot 9
  * additionally refreshes the font through func_80048DEC, then the request
  * node is freed with func_800181D4.
  */

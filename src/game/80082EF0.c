@@ -1,4 +1,4 @@
-// Categories: Graphics > GPU Primitives > Gouraud Quad | Graphics > 2D Drawing
+// Categories: Graphics > GPU Primitives > Flat Quad | Graphics > 2D Drawing
 #include "game/types.h"
 struct Poly {
     u32 addr : 24;
@@ -13,17 +13,20 @@ void gEmitFlatQuadRect(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b
 
 
 /**
- * @brief Emits an axis-aligned gouraud quad (code 0x28) from a rectangle.
+ * @brief Emits an axis-aligned flat-shaded quad (POLY_F4, code 0x28) from a
+ *        rectangle.
  *
  * @param x, y Top-left corner.
  * @param w, h Size.
  * @param link Ordering-table link value (stored in the top three bytes).
- * @param r, g, b Colour.
+ * @param r, g, b Single colour for all four corners.
  * @return Nothing; the 0x34-byte packet comes from D_8009F9F0 (the last slot is
  *         reused when the pool is exhausted).
  *
  * @par Confirmed
- * Length 5, code 0x28, the four corners in the order (x, y), (x+w, y), (x, y+h),
+ * Length 5, code 0x28 - the fourth of the seven 0x20-family opcodes, i.e. an
+ * untextured, unshaded quad, not a Gouraud quad (0x38) - with one rgb for the
+ * whole primitive, the four corners in the order (x, y), (x+w, y), (x, y+h),
  * (x+w, y+h), and `addr = link`.
  *
  * @par Compare

@@ -23,11 +23,12 @@ void gEmitTracerGouraudQuad(DVECTOR v0, DVECTOR v1, DVECTOR v2, DVECTOR v3, s32 
 
 
 /**
- * @brief Emits a 52-byte textured quad packet from four screen vertices.
+ * @brief Emits a 52-byte semi-transparent Gouraud quad packet (code 0x3A)
+ *        from four screen vertices.
  *
  * @param v0..v3 The four vertices as 16-bit pairs.
- * @param dx, dy Offset applied to the first two vertices (the texture origin
- *        pair), while v2/v3 are also stored unshifted as the "source" corners.
+ * @param dx, dy Offset applied to the first two vertices (the far edge of the
+ *        band), while v2/v3 are also stored unshifted as the near edge.
  * @param unk04, unk1C Words written into the packet's two spare slots.
  * @param tag_in The 16-bit part of the ordering-table link tag.
  * @return Nothing; the packet is taken from the D_8009F9F0 pool (last slot when
@@ -36,12 +37,15 @@ void gEmitTracerGouraudQuad(DVECTOR v0, DVECTOR v1, DVECTOR v2, DVECTOR v3, s32 
  * @par Confirmed
  * Length byte 8, the four XY pairs written in the order x2/y2 (v0), x0/y0 (v0+dx,
  * v0+dy), x1/y1 (v2+dx, v2+dy) and x3/y3 (v2), unk14/unk0C zeroed, and the tag
- * word rebuilt as (old & 0xFF000000) | (tag & 0xFFFFFF).
+ * word rebuilt as (old & 0xFF000000) | (tag & 0xFFFFFF). There is no texpage or
+ * UV word in the packet: length 8 is one code plus four colour vertices, i.e. a
+ * single-colour-per-vertex Gouraud quad, and the caller supplies 0x3A (semi
+ * transparent, Gouraud, untextured).
  *
  * @par Likely role
  * The quad emitter of the model renderer: the same four vertices are used twice,
- * once offset (the screen position) and once raw (the texture/sprite corner), so
- * one packet carries both the destination and the source rectangle.
+ * once offset and once raw, so one packet carries both the far edge (offset) and
+ * the near edge of the band, fading from a caller colour to black.
  *
  * @par Callers
  * func_8006F310 (the model draw entry).

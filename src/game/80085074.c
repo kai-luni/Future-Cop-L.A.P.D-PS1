@@ -51,8 +51,8 @@ void gUploadMovieStrip(void) __asm__("func_80085074");
  * decoder calls it once per strip.
  *
  * @par Environment path
- * Video draw path, run once per decoded strip: when gStripScaleMode == 1 and
- * gStripScaleEnable != 0 the strip rectangle is narrowed to two thirds in x
+ * Video draw path, run once per decoded strip: when gStripScaleEnable == 1 and
+ * gStripDitherEnabled != 0 the strip rectangle is narrowed to two thirds in x
  * and w, compacted with func_800847E0 and uploaded with func_80092F38,
  * otherwise the context rectangle is uploaded unchanged to VRAM. The strip x
  * then advances by gStripStepWidth * 8; while it stays inside the current

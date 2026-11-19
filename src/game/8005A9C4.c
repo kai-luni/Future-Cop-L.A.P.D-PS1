@@ -43,9 +43,9 @@ extern struct Unk5A9C4Other *gPlayerEntities[] __asm__("D_8009FA58");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern s32 gMarkerColorTable[32] __asm__("D_800A6F60");
 
-extern void gEmitAngledLine(s32 origin, s32 id, s32 colour) __asm__("func_8005A740");
+extern void gEmitAngledLine(s32 origin, s32 id, s32 unused) __asm__("func_8005A740");
 extern u8 func_8005A934(struct Unk5A9C4 *object, s32 z, s32 x, s32 *angle);
-extern void gEmitRadarTriangle(s32 colour, s32 angle, s32 colour2) __asm__("func_8005A828");
+extern void gEmitRadarTriangle(s32 origin, s32 angle, s32 colour) __asm__("func_8005A828");
 void gDrawRadarMarkers(struct Unk5A9C4 *object) __asm__("func_8005A9C4");
 
 
@@ -58,18 +58,20 @@ void gDrawRadarMarkers(struct Unk5A9C4 *object) __asm__("func_8005A9C4");
  * @return Nothing.
  *
  * @par Confirmed
- * colour = 0x780000 when unkC1 == 1, else 0x280000. The heading line is
- * func_8005A740(colour, -unkB0 - 0x800, 0xF8F8F8).
+ * The local that reads 0x780000 (unkC1 == 1) or 0x280000 (otherwise) is the
+ * radar origin X in 16.16, not a colour: both callees add it to a vertex x
+ * before the final shift by 16. The heading line is
+ * func_8005A740(origin, -unkB0 - 0x800).
  * When D_8009FA0C >= 2 and D_8009FA94->unk5C == 0, the other side's record
  * D_8009FA58[1 - unkC1] is tested with func_8005A934(object, unk58, unk50,
- * &angle); on success a second line func_8005A740(colour, angle, 0xF800).
+ * &angle); on success a second line func_8005A740(origin, angle).
  * When D_8009FAA4 & 0x180 and the marker node exists, its mask unkA4 is
  * walked in 3-bit steps (test mask 0x249249): for each active slot i,
  * func_8005A934(object, pos[i].a << 9, pos[i].b << 9, &angle) and, on
- * success, func_8005A828(colour, angle, D_800A6F60[flags[i] & 0x1F]).
+ * success, func_8005A828(origin, angle, D_800A6F60[flags[i] & 0x1F]).
  *
  * @par Likely role
- * The two colours distinguish the two sides; the 3-bit stride packs one
+ * The two origins distinguish the two radar sides; the 3-bit stride packs one
  * active bit plus a 5-bit color index per marker slot.
  *
  * @par Callers
@@ -87,7 +89,8 @@ void gDrawRadarMarkers(struct Unk5A9C4 *object) __asm__("func_8005A9C4");
  * otherwise), because both callees add it to the x coordinate before shifting
  * by 16; the third arguments 0xF8F8F8 and 0xF800 passed to func_8005A740 are
  * ignored, since that function takes two parameters and hard-codes colour
- * 0x808080. Called by func_8004EDC8; func_8005A934 supplies the bearing test.
+ * 0x808080 -- hence the placeholder named unused. Called by func_8004EDC8;
+ * func_8005A934 supplies the bearing test.
  */
 void gDrawRadarMarkers(struct Unk5A9C4 *object)
 {

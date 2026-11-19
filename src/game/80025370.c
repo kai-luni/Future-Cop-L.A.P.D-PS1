@@ -64,14 +64,14 @@ int gShowLoadingScreen(void) __asm__("func_80025370");
  * the upload routine, and of D_8009F238 (zero in the retail image).
  *
  * @par Environment path
- * Loading-screen draw step: only when gLoadScreenRequest is 0 and
- * gLoadScreenIndex is below 23, it formats the file name with func_8008CD30
- * (format gNameFormatPair, prefix gPathPrefixPA for type 1 else
- * gPathPrefixCW), loads the file with func_8001E110 into a fresh block and,
- * with gDecodeAllocMode forced to 1, decodes the two images with
+ * Loading-screen draw step: only when gUploadRequestFlag is 0 and
+ * gModuleLoadState is below 23, it formats the file name with func_8008CD30
+ * (format gFormatNamePair, prefix gModulePrefixPA for type 1 else
+ * gModulePrefixCW), loads the file with func_8001E110 into a fresh block and,
+ * with gUploadInProgress forced to 1, decodes the two images with
  * func_800861E4 to destination arguments 320,0 and 320,256. It then frees the
  * block, emits the two-sprite screen blit via func_8002549C(0) and calls
- * func_8001B4A8(1); gLoadScreenRequest is cleared on every exit. Callers are
+ * func_8001B4A8(1); gUploadRequestFlag is cleared on every exit. Callers are
  * the front-end frame func_800259D8 and the main loop func_80076A2C, which
  * writes the index.
  */

@@ -20,9 +20,10 @@ void gSetDrawMovePacket(struct Packet *p, struct Rect *r, int x, int y) __asm__(
  * the rectangle has no area.
  *
  * @par Likely meaning
- * 0x01000000 is also the value func_800926C0 writes as the terminator behind a
- * VRAM transfer, so this is the engine's own list format rather than a raw GPU
- * command: a rectangle plus a destination offset, closed by a fixed tag.
+ * The five words are the VRAM-to-VRAM copy primitive of libgpu: 0x01000000 is
+ * the GP0 01 texture-cache flush and 0x80xxxxxx the GP0 80 copy command, so the
+ * pair is a raw GPU transfer pair, not an engine-specific list format - the
+ * reason func_800259D8 can hand it straight to the GPU.
  *
  * @par Callers
  * func_800259D8, to draw the screen-filling backdrop quad.

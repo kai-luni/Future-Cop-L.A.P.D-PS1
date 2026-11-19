@@ -40,8 +40,9 @@ void gDrawTracerBand(struct Node *node, Vec3 *pos) __asm__("func_8006F310");
 
 
 /**
- * @brief Draws one world-space quad band between two points as four textured
- *        packets, after a cheap distance reject and per-endpoint screen tests.
+ * @brief Draws one world-space quad band between two points as four
+ *        semi-transparent Gouraud quads, after a cheap distance reject and
+ *        per-endpoint screen tests.
  *
  * Confirmed role
  * --------------

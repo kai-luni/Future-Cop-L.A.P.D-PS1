@@ -48,11 +48,11 @@ void gShutdownCvkSystem(void) __asm__("func_80023478");
  *
  * @par Environment path
  * Not on the draw path: it is subsystem teardown. When gCvkSystemActive is
- * set it frees gCvkBufferA (D_8009F27C) and gCvkBufferB (D_8009F278) with
- * func_80098708 and nulls them, removes the callback at 0x80023314 with
- * func_8001F12C, calls func_80021250, func_80023BF8, func_80021C80 and
- * func_80044FEC, and clears the flag. Called by func_8002333C (before
- * set-up), func_8002385C and func_80076FE0.
+ * set it frees the two buffers gVolatileBase (D_8009F27C) and gSpuBufferPtr
+ * (D_8009F278) with func_80098708 and nulls them, removes the callback at
+ * 0x80023314 with func_8001F12C, calls func_80021250, func_80023BF8,
+ * func_80021C80 and func_80044FEC, and clears the flag. Called by func_8002333C
+ * (before set-up), func_8002385C and func_80076FE0.
  */
 void gShutdownCvkSystem(void)
 {
