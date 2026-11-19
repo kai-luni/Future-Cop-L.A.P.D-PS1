@@ -29,7 +29,9 @@ extern void func_8008D640(s32);
 extern void func_8008D650(s32);
 extern void func_8008D670(s32, s32, volatile u32 *);
 extern void func_8008D680(s32, s32, volatile u32 *);
-extern void *func_8001E318(volatile void *, void *, u32);
+extern void *gCopyMemory(volatile void *, void *, u32) __asm__("func_8001E318");
+s32 gMcDispatchStep(void) __asm__("func_8001FAB8");
+
 
 /**
  *  @brief Advances a global device-transfer state machine.
@@ -49,8 +51,16 @@ extern void *func_8001E318(volatile void *, void *, u32);
  *  Updates state fields and buffer contents and invokes device operations.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Advances the memory-card state machine in gOperationState (D_8009AB08):
+ * clears s1BB0 and sets s9A8 to 1, then handles initial directory probe (s8F4
+ * == 1) via func_8008D680, card probe (s908 != 0 && s904 == 0) via
+ * func_8008D650, or queued commands s8F8 == 2/3/6 via func_8008D680 and
+ * func_8008D670 (computing checksums when s90C is set), otherwise stopping
+ * via func_8008D640.
  */
-s32 func_8001FAB8(void)
+s32 gMcDispatchStep(void)
 {
     register struct S *p asm("$3");
     register s32 a asm("$4");
@@ -114,7 +124,7 @@ s32 func_8001FAB8(void)
         q->s8F4 = q->s8F8;
         q->s8F8 = 0;
         if (q->s90C != 0) {
-            func_8001E318(&q->d[2], (void *)q->s910, 0x78);
+            gCopyMemory(&q->d[2], (void *)q->s910, 0x78);
             q = gOperationState;
             for (i = 2; i < 32; i++) {
                 sum += (q->d[i] ^ q->d[32 - i]) + i;
@@ -122,7 +132,7 @@ s32 func_8001FAB8(void)
             gOperationState->d[0] = gOperationState->s998;
             gOperationState->d[1] = sum;
         } else {
-            func_8001E318(q->d, (void *)q->s910, 0x80);
+            gCopyMemory(q->d, (void *)q->s910, 0x80);
         }
         q = gOperationState;
         q->s900 = -5;

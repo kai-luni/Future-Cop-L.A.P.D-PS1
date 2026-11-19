@@ -14,11 +14,13 @@ extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 extern s32 gGameClock __asm__("D_8009FA60");
 extern UnkA78F0 gPadBuffers[] __asm__("D_800A78F0");
 
-extern s32 func_8001EF34(void);
-extern void func_8001EC94(u32 arg0);
+extern s32 gGetPadType(void) __asm__("func_8001EF34");
+extern void gUpdatePadActuators(u32 arg0) __asm__("func_8001EC94");
 extern s32 func_80092C8C(s32 arg0);
 extern s32 func_8001BFE4(void);
-extern void func_8001BFA8(void);
+extern void gFlipDisplayLayer(void) __asm__("func_8001BFA8");
+u32 gPollPadButtons(u32 arg0) __asm__("func_8001EF8C");
+
 
 /**
  * @brief Refreshes one controller port and returns its status/button word with
@@ -55,11 +57,18 @@ extern void func_8001BFA8(void);
  * @par Callers
  * Confirmed: gMovieStreamDemux (stream demux, both ports every pass). Also listed:
  * func_8001E620.
+ *
+ * @par Role and path
+ * Checks that port arg0 is below 2 and holds a supported controller via
+ * func_8001EF34, runs func_8001EC94(arg0) to update DualShock actuators, and
+ * returns the bitwise complement of gPadBuffers[arg0].unk0 (active-high
+ * button state), or 0 otherwise. Reads D_800A78F0 (gPadBuffers); called by
+ * func_8001E620 and gMovieStreamDemux.
  */
-u32 func_8001EF8C(u32 arg0)
+u32 gPollPadButtons(u32 arg0)
 {
-    if (arg0 < 2 && func_8001EF34() != 0) {
-        func_8001EC94(arg0);
+    if (arg0 < 2 && gGetPadType() != 0) {
+        gUpdatePadActuators(arg0);
         return ~gPadBuffers[arg0].unk0;
     }
     return 0;

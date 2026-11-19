@@ -1,5 +1,7 @@
 // Categories: Resources > Save Data | Platform > Memory Card
 static int *const value = (int *)0x8009AB08;
+void gClearMcStatePtr(void) __asm__("func_80020600");
+
 
 /**
  * @brief Clears the memory-card manager pointer.
@@ -13,8 +15,13 @@ static int *const value = (int *)0x8009AB08;
  *
  * @par Callers
  * func_8007FA48 only.
+ *
+ * @par Role and path
+ * Clears the global memory-card manager pointer at 0x8009AB08 (D_8009AB08) to
+ * 0 without freeing the underlying block. Writes D_8009AB08 and makes no
+ * calls; called by func_8007FA48.
  */
-void func_80020600(void)
+void gClearMcStatePtr(void)
 {
     *value = 0;
 }

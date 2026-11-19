@@ -61,7 +61,7 @@ extern s32 gGameSuspended __asm__("D_8009FA24");
 extern void gDecodeButtonEdge(u32, struct InputAction *) __asm__("func_8005780C");
 extern void func_80046A34(s32);
 extern s32 func_80046C84(s32, struct Game *);
-extern s32 func_8001EF34(s32);
+extern s32 gGetPadType(s32) __asm__("func_8001EF34");
 extern void func_80047690(s32);
 extern void func_80069D0C(s32);
 extern void func_8004E248(void);
@@ -83,12 +83,12 @@ extern s32 func_80049340(u8 *);
 extern void gDrawAlignedString(u8 *, s32, s32, s32) __asm__("func_80049100");
 extern void gEmitHudPanelSprite(s32) __asm__("func_800485AC");
 extern void func_800486FC(s32);
-extern void func_8001BBAC(void);
+extern void gEndSubScreenFrame(void) __asm__("func_8001BBAC");
 extern void func_80026D1C(void);
 extern void func_800616A0(s32);
 extern void func_80026D9C(s32);
 extern void gSweepRetiredEntities(void) __asm__("func_8004D598");
-extern void func_8001EB6C(void);
+extern void gStopAllPadRumble(void) __asm__("func_8001EB6C");
 extern void gSoundPauseVoices(void) __asm__("func_800476D0");
 void gRunSessionFrame(void) __asm__("func_80027510");
 
@@ -210,7 +210,7 @@ void gRunSessionFrame(void)
         flags |= 2;
         if (gGameSession->unk5C == 0 || gOpenPanelCount != 0) flags |= 0x20;
     }
-    if (gSceneFrameCounter >= 2 && (func_8001EF34(0) == 0 || func_8001EF34(1) == 0) && gDemoPlayback == 0) {
+    if (gSceneFrameCounter >= 2 && (gGetPadType(0) == 0 || gGetPadType(1) == 0) && gDemoPlayback == 0) {
         flags |= 0x20;
     }
     if (!(flags & 0x20)) {
@@ -262,7 +262,7 @@ void gRunSessionFrame(void)
             gPlayerEntity2.ptr->unk24 &= ~0x20;
             gPlayerEntity2.ptr->unkDC->unk24 &= ~0x20;
         }
-        if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && gDemoPlayback == 0) {
+        if (gSceneFrameCounter >= 2 && gGetPadType(0) == 0 && gDemoPlayback == 0) {
             text = gLoadingTextPtr;
             x = 0x140 - func_80049340(text);
             color = 1;
@@ -272,7 +272,7 @@ void gRunSessionFrame(void)
             gDrawAlignedString(text, xarg, 0xB4, color);
         }
         gEmitHudPanelSprite(0);
-        func_8001BBAC();
+        gEndSubScreenFrame();
         old_flags2 = 1;
         if (gPlayerEntity2.ptr != 0) {
             if (D_8009FA58.ptr->unkAC->unk324 > 0) {
@@ -295,7 +295,7 @@ void gRunSessionFrame(void)
             __asm__ volatile("" : "=r"(banner) : "0"(banner));
             gDrawAlignedString(banner - 0xD0C, 0x41, 0x14, 1);
         }
-        if (gSceneFrameCounter >= 2 && func_8001EF34(1) == 0 && gDemoPlayback == 0) {
+        if (gSceneFrameCounter >= 2 && gGetPadType(1) == 0 && gDemoPlayback == 0) {
             text = gLoadingTextPtr;
             x = 0x140 - func_80049340(text);
             color = 1;
@@ -310,7 +310,7 @@ void gRunSessionFrame(void)
             D_8009FA58.ptr->unk24 &= ~0x20;
             D_8009FA58.ptr->unkDC->unk24 &= ~0x20;
         }
-        func_8001BBAC();
+        gEndSubScreenFrame();
     }
     gSelectViewRecord(D_8009FA58.ptr->unkAC->unkAC);
     if (!(flags & 0x20)) {
@@ -322,7 +322,7 @@ void gRunSessionFrame(void)
     } else {
         if (gWasSuspended == 0) {
             gSavedTickCounter = gGameClock;
-            func_8001EB6C();
+            gStopAllPadRumble();
             gSoundPauseVoices();
             if (gGameSession->unk5C == 0) {
                 index = flags & 1;

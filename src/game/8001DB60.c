@@ -2,7 +2,9 @@
 #include "game/types.h"
 struct Entry { volatile u32 state; u32 pad[3]; s32 flags; u32 pad14; };
 extern struct Entry gFileSlotTable[] __asm__("D_800A6D78");
-extern s32 func_8001D90C(s32);
+extern s32 gReadFileSlotAsync(s32) __asm__("func_8001D90C");
+s32 gReadFileSlot(s32 index) __asm__("func_8001DB60");
+
 
 /**
  *  @brief Dispatches an indexed entry operation according to its flags.
@@ -22,8 +24,14 @@ extern s32 func_8001D90C(s32);
  *  Temporarily modifies the entry flags on the flag-1 path.
  *  @par Callers
  *  Confirmed: func_80028AB4.
+ *
+ * @par Role and path
+ * Reads gFileSlotTable[index].flags (D_800A6D78) and dispatches directly to
+ * func_8001D90C for flags 2, 3, or 17, or returns -6 for unsupported flags.
+ * For flag 1, spins while low state byte is 2 or 3, sets flag bit 0x10 around
+ * func_8001D90C, and clears it afterward; called by func_80028AB4.
  */
-s32 func_8001DB60(s32 index)
+s32 gReadFileSlot(s32 index)
 {
     s32 result;
     register s32 flags __asm__("$8") = gFileSlotTable[index].flags;
@@ -31,7 +39,7 @@ s32 func_8001DB60(s32 index)
     case 2:
     case 3:
     case 17:
-        return func_8001D90C(index);
+        return gReadFileSlotAsync(index);
     case 1: {
         register s32 two __asm__("$9") = 2;
         register s32 three __asm__("$8") = 3;
@@ -39,7 +47,7 @@ s32 func_8001DB60(s32 index)
         while ((gFileSlotTable[index].state & 0xff) == two ||
                (gFileSlotTable[index].state & 0xff) == three) {}
         gFileSlotTable[index].flags |= 0x10;
-        result = func_8001D90C(index);
+        result = gReadFileSlotAsync(index);
         gFileSlotTable[index].flags &= ~0x10;
         return result;
     }

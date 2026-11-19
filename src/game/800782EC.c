@@ -24,7 +24,8 @@ extern struct Mode *gGameSession[] __asm__("D_8009FA94");
 extern struct Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern char D_800A38F8[];
 extern void gRouteFrontEndModeMenu(void) __asm__("func_80078210");
-extern void func_8001EC04(s32, s32), func_80078650(void *, s32);
+extern void gSetPadRumbleEnabled(s32, s32) __asm__("func_8001EC04");
+extern void func_80078650(void *, s32);
 
 /**
  *  @brief Updates mode-dependent progression state and invokes the next handler.
@@ -98,8 +99,8 @@ void func_800782EC(void)
         gRouteFrontEndModeMenu();
         break;
     case 3:
-        func_8001EC04(0, gRumbleEnabled);
-        func_8001EC04(1, D_8009F8D9);
+        gSetPadRumbleEnabled(0, gRumbleEnabled);
+        gSetPadRumbleEnabled(1, D_8009F8D9);
     default:
         func_80078650(D_800A38F8, 0);
         break;

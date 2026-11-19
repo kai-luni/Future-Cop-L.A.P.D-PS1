@@ -1,3 +1,5 @@
+void gClearWord(int *value) __asm__("func_8001C470");
+
 // Categories: Platform > CD-ROM | Utilities > Memory Management
 /**
  * @brief Zeroes the 32-bit integer word pointed to by value.
@@ -20,8 +22,13 @@
  *
  * @par Callers
  * Confirmed: func_8001C808 (0x8001CC00), func_8001D130 (0x8001D1A8).
+ *
+ * @par Role and path
+ * Writes 0 to the 32-bit integer pointed to by value with no direct global
+ * accesses or outgoing calls. Called by func_8001C808 and func_8001D130 to
+ * clear gCdCurrentLoc before installing the CD-ROM sector callback.
  */
-void func_8001C470(int *value)
+void gClearWord(int *value)
 {
     *value = 0;
 }

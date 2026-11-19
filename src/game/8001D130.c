@@ -14,18 +14,20 @@ typedef struct {
 } GlobalState;
 
 extern GlobalState func_80010000;
-extern s32 D_8009F618;
+extern s32 gCdCallbackActive __asm__("D_8009F618");
 extern u8 gCdCommandParam[8] __asm__("D_8009F610");
 extern u8 D_8009F611;
-extern u8 D_8009F61C[];
+extern u8 gCdCurrentLoc[] __asm__("D_8009F61C");
 extern u8 gEventBuffer[] __asm__("D_800A0798");
 extern void D_8001C808(s32 mode);
 
 extern void func_800914B0(s32 arg0, s32 arg1);
 extern void func_8008DEA0(void);
-extern void func_8001C470(void *ptr);
+extern void gClearWord(void *ptr) __asm__("func_8001C470");
 extern s32 func_8008E1A8(s32 value);
 extern s32 func_8008E1BC(s32 mode, void *src, void *dst);
+s32 gProbeCdDriveMode(s32 arg0) __asm__("func_8001D130");
+
 
 /**
  * @brief Initialises a service context and issues its first command.
@@ -60,8 +62,16 @@ extern s32 func_8008E1BC(s32 mode, void *src, void *dst);
  *
  * @par Callers
  * Confirmed: func_8001D248.
+ *
+ * @par Role and path
+ * Validates mode arg0 (1 or 0x11) and idle 0x80010000.unk00, resets state
+ * fields, calls func_800914B0(2, 0) and func_8008DEA0, clears gCdCurrentLoc
+ * via func_8001C470, and installs D_8001C808 via func_8008E1A8. Polls
+ * func_8008E1BC(1, 0, gEventBuffer) twice and sends command 0xA2/0x82 in
+ * gCdCommandParam (its second byte is D_8009F611) via func_8008E1BC(0xE,
+ * ...); called by func_8001D248.
  */
-s32 func_8001D130(s32 arg0)
+s32 gProbeCdDriveMode(s32 arg0)
 {
     register u8 *s1 __asm__("$17");
     register void *a0 __asm__("$4");
@@ -85,12 +95,12 @@ s32 func_8001D130(s32 arg0)
     func_800914B0(2, 0);
     func_8008DEA0();
 
-    a0 = D_8009F61C;
+    a0 = gCdCurrentLoc;
     __asm__("" : "+r"(a0));
-    func_8001C470(a0);
+    gClearWord(a0);
 
     func_80010000.unk18 = func_8008E1A8((s32)D_8001C808);
-    D_8009F618 = 0;
+    gCdCallbackActive = 0;
 
     func_8008E1BC(1, 0, s1);
     func_8008E1BC(1, 0, s1);

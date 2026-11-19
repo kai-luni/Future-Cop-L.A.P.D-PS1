@@ -4,8 +4,10 @@ typedef unsigned int u32;
 struct Entry { volatile s32 state; s32 start, size, pos, flags, pad; };
 extern struct Entry gFileSlotTable[] __asm__("D_800A6D78");
 extern char func_80010010[];
-extern s32 func_8001D0A0(s32);
-extern s32 func_8001CE54(s32, s32, s32, void (*)(s32,s32));
+extern s32 gSeekCdFileSlot(s32) __asm__("func_8001D0A0");
+extern s32 gStartCdFileRead(s32, s32, s32, void (*)(s32,s32)) __asm__("func_8001CE54");
+s32 gReadFileSlotAsync(s32 index, volatile s32 arg1, s32 arg2, void (*arg3)(s32,s32)) __asm__("func_8001D90C");
+
 
 /**
  * @brief Executes a bounded read/write transfer on an open file slot in D_800A6D78.
@@ -28,8 +30,15 @@ extern s32 func_8001CE54(s32, s32, s32, void (*)(s32,s32));
  * Updates D_800A6D78[index].state and .pos, clears 0x80010024 on flags == 0x11 EOF, and fires arg3.
  * @par Callers
  * Confirmed: func_8001DB60 (0x8001DBBC, 0x8001DC1C), func_8001E004 (0x8001E0B8) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Waits out busy states 2/3 on gFileSlotTable[index] (D_800A6D78), clamps
+ * count to remaining bytes, seeks via func_8001D0A0 when (flags & 15) != 1,
+ * and starts the transfer via func_8001CE54(index, arg1, count, callback).
+ * Updates slot pos/state and invokes the completion callback when synchronous
+ * or on error; called by func_8001DB60 and func_8001E004.
  */
-s32 func_8001D90C(s32 index, volatile s32 arg1, s32 arg2, void (*arg3)(s32,s32))
+s32 gReadFileSlotAsync(s32 index, volatile s32 arg1, s32 arg2, void (*arg3)(s32,s32))
 {
     register s32 count __asm__("$19") = arg2;
     register void (*callback)(s32,s32) __asm__("$23") = arg3;
@@ -70,10 +79,10 @@ s32 func_8001D90C(s32 index, volatile s32 arg1, s32 arg2, void (*arg3)(s32,s32))
     transferred = state;
     if (type != one) {
         gFileSlotTable[index].state = 2;
-        state = func_8001D0A0(index);
+        state = gSeekCdFileSlot(index);
     }
     if (state >= 0) {
-        state = func_8001CE54(index, arg1, count, callback);
+        state = gStartCdFileRead(index, arg1, count, callback);
         if (state >= 0) {
             transferred = state;
             state = 0;

@@ -37,8 +37,8 @@ extern u8 D_8009F8D9;
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 
 extern void func_8008CCB0(u8 *a0, s32 a1);
-extern u8 func_8001EB2C(s32 arg0);
-extern void func_8001EC04(s32 port, s32 enable);
+extern u8 gIsPadRumbleEnabled(s32 arg0) __asm__("func_8001EB2C");
+extern void gSetPadRumbleEnabled(s32 port, s32 enable) __asm__("func_8001EC04");
 
 /**
  *  @brief Advances a pending entry sequence and applies its selected state.
@@ -90,9 +90,9 @@ s32 func_80078C88(void)
     gScreenState = 5;
     gFrontEndReturnMode = 3;
     gModuleLoadState = unk0C;
-    gRumbleEnabled = func_8001EB2C(0);
-    D_8009F8D9 = func_8001EB2C(1);
-    func_8001EC04(0, 0);
-    func_8001EC04(1, 0);
+    gRumbleEnabled = gIsPadRumbleEnabled(0);
+    D_8009F8D9 = gIsPadRumbleEnabled(1);
+    gSetPadRumbleEnabled(0, 0);
+    gSetPadRumbleEnabled(1, 0);
     return 1;
 }

@@ -65,7 +65,7 @@ extern s32 func_80046C84(s32 id, s32 arg1);
 extern void func_800471C4(s32 track, struct Unk471C4Object *object);
 extern void gUpdateMorphBounds(void *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_800518A8");
 extern void func_80044B34(void *arg0, void *arg1, s32 arg2, s32 arg3);
-extern void func_8001E930(void *state, s32 flag);
+extern void gSetEntitySmallRumble(void *state, s32 flag) __asm__("func_8001E930");
 extern void gSetModelFrame(struct ModelInstance *instance, s32 frame) __asm__("func_800175F8");
 extern void func_8004D958(struct Entity *entity);
 extern void gTickHoverPhysics(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80053A74");
@@ -237,9 +237,9 @@ void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
         if (state->unkC0 != 0) {
             func_80044B34(obj, (u8 *)model + 0xA0, state->unkBC, 0);
             func_80044B34(obj, obj->animC8, state->unkBC, 0);
-            func_8001E930(obj, 1);
+            gSetEntitySmallRumble(obj, 1);
         } else {
-            func_8001E930(obj, 0);
+            gSetEntitySmallRumble(obj, 0);
         }
 
         gSetModelFrame((struct ModelInstance *)((u8 *)model + 0x28), model->unkAC);

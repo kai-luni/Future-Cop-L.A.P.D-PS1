@@ -20,6 +20,8 @@ extern State *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(int);
 extern void func_8008D670(int, int, void *);
 extern void func_8008D680(int, int, void *);
+int gMcRetryTimeoutA(void) __asm__("func_8001F818");
+
 
 /**
  *  @brief Advances or terminates an operation according to its mode and timer.
@@ -39,8 +41,15 @@ extern void func_8008D680(int, int, void *);
  *  Updates the timer or completion fields; timed completion also sets code to -3.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Handles retry/timeout for gOperationState (D_8009AB08): clears field1bb0,
+ * then for mode 2 (timer > 0) or modes 3 and 6 (timer != 0) decrements timer
+ * and re-dispatches func_8008D680 or func_8008D670; when the timer expires it
+ * sets done to 1, code to -3, clears active/mode/other, and calls
+ * func_8008D640(handle).
  */
-int func_8001F818(void)
+int gMcRetryTimeoutA(void)
 {
     register State *p asm("$6") = gOperationState;
     p->field1bb0 = 0;

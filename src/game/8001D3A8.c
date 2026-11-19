@@ -7,6 +7,8 @@ typedef struct {
 } Unk800A6D78;
 
 extern Unk800A6D78 gFileSlotTable[] __asm__("D_800A6D78");
+s32 gCloseFileSlot(u32 index) __asm__("func_8001D3A8");
+
 
 /**
  * @brief Closes a file slot in D_800A6D78 unless an asynchronous read (state 2 or 3) is active.
@@ -30,8 +32,14 @@ extern Unk800A6D78 gFileSlotTable[] __asm__("D_800A6D78");
  *
  * @par Callers
  * Confirmed: func_8001E004 (0x8001E0E4), func_80029EB8 (0x80029F2C), and gPlayVideoFile (0x800884A4 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Closes file slot index in gFileSlotTable (D_800A6D78) by clearing field0 to
+ * 0 and returning the previous state byte (or 0xF7 if closed/out-of-range),
+ * unless the slot is busy in state 2 or 3 (returning -0xF). Called by
+ * func_8001E004, func_80029EB8, and func_80088120; makes no outgoing calls.
  */
-s32 func_8001D3A8(u32 index)
+s32 gCloseFileSlot(u32 index)
 {
     s32 value;
 

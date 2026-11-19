@@ -63,11 +63,11 @@ extern void func_80047690(u8 enable);
 extern void func_80069D0C(s32 amount);
 extern void func_8004CD6C(s32 message, s32 arg2, s32 arg3);
 extern void func_8004CE04(void);
-extern void func_8001BBAC(void);
-extern void func_8001EB6C(void);
+extern void gEndSubScreenFrame(void) __asm__("func_8001BBAC");
+extern void gStopAllPadRumble(void) __asm__("func_8001EB6C");
 extern void gSoundPauseVoices(void) __asm__("func_800476D0");
 extern void gSweepRetiredEntities(void) __asm__("func_8004D598");
-extern s32 func_8001EF34(s32 arg0);
+extern s32 gGetPadType(s32 arg0) __asm__("func_8001EF34");
 extern void gUpdateLightDirection(void) __asm__("func_80013C80");
 extern void func_80026D1C(void);
 extern void func_80026D5C(void);
@@ -154,7 +154,7 @@ void gRunSoloSessionFrame(void)
         flags |= 0x21;
     }
 
-    if (gSceneFrameCounter >= 2 && func_8001EF34(0) == 0 && gDemoPlayback == 0) {
+    if (gSceneFrameCounter >= 2 && gGetPadType(0) == 0 && gDemoPlayback == 0) {
         text = gLoadingTextPtr;
         x = (0x280 - func_80049340(text)) / 4;
         color = 1;
@@ -203,7 +203,7 @@ void gRunSoloSessionFrame(void)
         gDrawAlignedString(gBannerString, 0x91, 0x14, 1);
     }
 
-    func_8001BBAC();
+    gEndSubScreenFrame();
 
     if (!(flags & 0x20)) {
         func_80026D1C();
@@ -214,7 +214,7 @@ void gRunSoloSessionFrame(void)
     } else {
         if (gWasSuspended == 0) {
             gSavedTickCounter = gGameClock;
-            func_8001EB6C();
+            gStopAllPadRumble();
             gSoundPauseVoices();
             func_80046C84(0x3E, (s32)gPlayerEntities);
         }

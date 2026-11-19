@@ -11,7 +11,9 @@ struct OuterState {
     struct InnerState *inner;
 };
 
-extern void func_8001EA5C(int index);
+extern void gSetLargeMotor(int index) __asm__("func_8001EA5C");
+void gSetEntityLargeRumble(struct OuterState *state) __asm__("func_8001EA20");
+
 
 /**
  * @brief Forwards the player index stored in a state block to the input
@@ -34,9 +36,15 @@ extern void func_8001EA5C(int index);
  *
  * @par Callers
  * func_800569EC.
+ *
+ * @par Role and path
+ * Resolves a controller port index from state->inner->index (+0xAC -> +0xC1,
+ * defaulting to 0 when state is null) and forwards to func_8001EA5C to set
+ * the large vibration motor level. Touches no globals directly; called by
+ * func_800569EC.
  */
-void func_8001EA20(struct OuterState *state)
+void gSetEntityLargeRumble(struct OuterState *state)
 {
     int index = state != 0 ? state->inner->index : 0;
-    func_8001EA5C(index);
+    gSetLargeMotor(index);
 }

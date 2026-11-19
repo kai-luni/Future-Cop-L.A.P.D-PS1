@@ -1,5 +1,7 @@
 // Categories: Utilities > Memory
 #include "game/types.h"
+u8 *gMoveMemory(u8 *destination, u8 *source, s32 count) __asm__("func_8001E44C");
+
 
 /**
  * @brief memmove(): copies bytes with overlap handling.
@@ -16,8 +18,14 @@
  * @par Callers
  * func_800181D4, when the free-range table has to be compacted in place - that
  * is the only place where the direction matters.
+ *
+ * @par Role and path
+ * Copies count bytes from source to destination, copying backward from the
+ * end when source < destination < source + count and forward otherwise.
+ * Touches no globals and is called by gFreeBlock when compacting overlapping
+ * free-range table entries in place.
  */
-u8 *func_8001E44C(u8 *destination, u8 *source, s32 count)
+u8 *gMoveMemory(u8 *destination, u8 *source, s32 count)
 {
     u8 *to;
     u8 *from;

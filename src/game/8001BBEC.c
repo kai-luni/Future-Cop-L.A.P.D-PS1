@@ -10,8 +10,10 @@ typedef struct {
     s32 unk10;
 } Unk800A0660;
 
-extern s32 D_8009F5E8;
+extern s32 gUploadRingWriteIdx __asm__("D_8009F5E8");
 extern Unk800A0660 gUploadRing[] __asm__("D_800A0660");
+void gQueueVramUpload(s32 arg0, s32 arg1, s32 arg2, s32 arg3, u8 arg4) __asm__("func_8001BBEC");
+
 
 /**
  *  @brief Writes five values into the next entry of a four-slot ring.
@@ -33,22 +35,29 @@ extern Unk800A0660 gUploadRing[] __asm__("D_800A0660");
  *  Overwrites one table entry and updates the global index.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Queues a five-field upload descriptor into the 4-entry ring buffer
+ * gUploadRing (D_800A0660) at index gUploadRingWriteIdx and wraps
+ * gUploadRingWriteIdx at 4. Called by func_80029748 to schedule VRAM frame
+ * uploads; func_8001B4A8 consumes the ring up to gUploadRingWriteIdx and
+ * func_8001B2C8 resets gUploadRingWriteIdx to 0.
  */
-void func_8001BBEC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, u8 arg4)
+void gQueueVramUpload(s32 arg0, s32 arg1, s32 arg2, s32 arg3, u8 arg4)
 {
     Unk800A0660 *base;
     Unk800A0660 *entry;
 
     base = gUploadRing;
-    entry = base + D_8009F5E8;
+    entry = base + gUploadRingWriteIdx;
     entry->unk8 = arg4;
     entry->unk4 = arg0;
     entry->unk0 = arg1;
     entry->unkC = arg2;
     entry->unk10 = arg3;
 
-    D_8009F5E8++;
-    if (D_8009F5E8 >= 4) {
-        D_8009F5E8 = 0;
+    gUploadRingWriteIdx++;
+    if (gUploadRingWriteIdx >= 4) {
+        gUploadRingWriteIdx = 0;
     }
 }

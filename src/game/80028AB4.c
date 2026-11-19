@@ -20,8 +20,8 @@ extern Node *D_800A0C20[];
 extern volatile s32 D_8009F6B4;
 extern Node * volatile D_8009F6AC;
 extern u8 D_8009F6A8;
-extern void func_8001D6D0(s32, s32, s32);
-extern void func_8001DB60(s32, void *, s32, void (*)());
+extern void gSeekFileSlot(s32, s32, s32) __asm__("func_8001D6D0");
+extern void gReadFileSlot(s32, void *, s32, void (*)()) __asm__("func_8001DB60");
 extern void func_80028918();
 
 /**
@@ -57,7 +57,7 @@ void func_80028AB4(void)
         D_8009F6AC = node;
         D_8009F6AC->unk04 = state->unk08;
         D_8009F6A8 = 1;
-        func_8001D6D0(gStreamBufferList.unk00, state->unk08, 0);
-        func_8001DB60(gStreamBufferList.unk00, node->data, state->unk1c, func_80028918);
+        gSeekFileSlot(gStreamBufferList.unk00, state->unk08, 0);
+        gReadFileSlot(gStreamBufferList.unk00, node->data, state->unk1c, func_80028918);
     }
 }

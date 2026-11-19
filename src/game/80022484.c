@@ -30,7 +30,7 @@ extern u32 D_8009F634;
 extern u32 D_8009F638;
 extern u32 D_8009F63C;
 
-extern void func_8001E4C0(void *dst, s32 value, s32 size);
+extern void gFillMemory(void *dst, s32 value, s32 size) __asm__("func_8001E4C0");
 extern void func_80022B84(s32 *arg0, s32 index, u32 *out, s32 zero);
 extern s32 func_80022BEC(void);
 extern void func_80022CA8(void);
@@ -81,7 +81,7 @@ s32 func_80022484(s32 arg0, ...)
     local10 = 0;
 
     base = gMixerState;
-    func_8001E4C0(base, 0, 0x98);
+    gFillMemory(base, 0, 0x98);
 
     D_8009F630 = 0;
     D_8009F638 = 0;

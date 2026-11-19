@@ -42,7 +42,7 @@ extern s32 D_8009F980;
 extern s32 gMovieRingBytes __asm__("D_8009F984");
 extern s32 gMovieDescriptorCount __asm__("D_8009F988");
 
-extern void *func_8001E4C0(void *dst, s32 val, u32 count);
+extern void *gFillMemory(void *dst, s32 val, u32 count) __asm__("func_8001E4C0");
 extern s32 func_8008E5D8(s32 cb);
 extern s32 func_80091240(s32 v);
 extern void gMovieStreamPrimeEntry(void) __asm__("func_80088F00");
@@ -85,7 +85,7 @@ s32 gMovieStreamReaderInit(Unk89700 *arg0, s32 arg1, Src89700 *arg2, u32 arg3)
     u8 *p;
 
     t = (D_8009F980 << 11) + 0x57C;
-    func_8001E4C0(arg0, 0, gMovieRingBytes + t + gMovieDescriptorCount * 56);
+    gFillMemory(arg0, 0, gMovieRingBytes + t + gMovieDescriptorCount * 56);
     gMovieStreamContext = arg0;
     p = (u8 *)arg0 + 0x57C;
     gMovieStreamDescriptors = p;

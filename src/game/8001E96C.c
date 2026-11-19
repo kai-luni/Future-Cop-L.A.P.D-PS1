@@ -1,7 +1,9 @@
 // Categories: Input > Vibration | Input > Controller
 #include "game/types.h"
 
-extern void func_8001E9AC(s32 port, s32 enable);
+extern void gSetSmallMotor(s32 port, s32 enable) __asm__("func_8001E9AC");
+void gSetPortSmallRumble(s32 port, s32 enable) __asm__("func_8001E96C");
+
 
 /**
  * @brief Clamps a controller port index to [0, 1] and toggles its small actuator.
@@ -26,8 +28,14 @@ extern void func_8001E9AC(s32 port, s32 enable);
  *
  * @par Callers
  * Confirmed: func_8007C940 (0x8007C9FC, triggers a single shake on vibration toggle enable) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Clamps the signed controller port index into [0, 1] and calls
+ * func_8001E9AC(clamped, enable) to activate or stop the small vibration
+ * motor. Touches no globals directly; called by func_8007C940 when toggling
+ * vibration in the options.
  */
-void func_8001E96C(s32 port, s32 enable)
+void gSetPortSmallRumble(s32 port, s32 enable)
 {
     s32 clamped;
 
@@ -40,5 +48,5 @@ void func_8001E96C(s32 port, s32 enable)
     } else {
         clamped = 0;
     }
-    func_8001E9AC(clamped, enable);
+    gSetSmallMotor(clamped, enable);
 }

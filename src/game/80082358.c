@@ -14,7 +14,7 @@ extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 D_800120E0[];
 
 extern void gEncodeProfileNameGlyphs(u8 *arg0) __asm__("func_800822CC");
-extern u8 *func_8001E318(u8 *destination, u8 *source, u32 count);
+extern u8 *gCopyMemory(u8 *destination, u8 *source, u32 count) __asm__("func_8001E318");
 extern void gFreeBlock(struct Node *node) __asm__("func_800181D4");
 void gUploadSaveProfileIcon(struct Node *node) __asm__("func_80082358");
 
@@ -87,14 +87,14 @@ void gUploadSaveProfileIcon(struct Node *node)
                 switch (chunk_type) {
                 case 0x50495834:
                     if (pix_count != 3 && chunk_data_size == 0x80) {
-                        func_8001E318(dst + pix_offset, chunk_data, 0x80);
+                        gCopyMemory(dst + pix_offset, chunk_data, 0x80);
                         pix_offset += 0x80;
                         pix_count++;
                     }
                     break;
                 case 0x504C3136:
                     if (has_pl16 == 0 && chunk_data_size == 0x20) {
-                        func_8001E318(dst + 0x60, chunk_data, 0x20);
+                        gCopyMemory(dst + 0x60, chunk_data, 0x20);
                         has_pl16 = 1;
                     }
                     break;

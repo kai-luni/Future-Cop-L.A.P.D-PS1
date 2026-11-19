@@ -19,7 +19,7 @@ extern s32 D_8009F964;
 extern s32 gLayerModeBits __asm__("D_8009F968");
 extern s32 gChainedNodes[] __asm__("D_8009FA48");
 
-extern s32 func_8001EF8C(s32);
+extern s32 gPollPadButtons(s32) __asm__("func_8001EF8C");
 extern void func_800859B0(void);
 extern void gMovieSetScaleMode(s32) __asm__("func_800859D8");
 extern s32 func_80085A1C(void);
@@ -98,10 +98,10 @@ s32 gOpenVideoLayer(s32 arg0)
     }
 
     gMovieAbortFlag = 0;
-    var_a0 = func_8001EF8C(0);
+    var_a0 = gPollPadButtons(0);
     var_s0 = 0x40080000;
     gMoviePadMask0 = var_a0 & var_s0;
-    var_v0 = func_8001EF8C(1) & var_s0;
+    var_v0 = gPollPadButtons(1) & var_s0;
     gMoviePadMask1 = var_v0;
     var_v0 = 0x400;
     D_8009F960 = var_v0;

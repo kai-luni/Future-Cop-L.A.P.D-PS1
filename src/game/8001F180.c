@@ -8,6 +8,8 @@ struct Unk8001F180 {
 };
 
 extern struct Unk8001F180 *gOperationState __asm__("D_8009AB08");
+s32 gIsMcManagerBusy(void) __asm__("func_8001F180");
+
 
 /**
  * @brief Checks whether the memory-card manager is busy with an active state or queued command.
@@ -32,8 +34,14 @@ extern struct Unk8001F180 *gOperationState __asm__("D_8009AB08");
  *
  * @par Callers
  * Confirmed: func_8001F1B8 (0x8001F1DC), func_8001F24C (0x8001F270), func_8001F2E0 (0x8001F304), and func_80020B64 (0x80020C2C) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Checks whether the memory-card manager state at gOperationState
+ * (D_8009AB08) is busy by returning 1 if field_8F4 or field_8F8 is non-zero,
+ * or 0 when both are zero. Reads D_8009AB08 and makes no calls; called by
+ * func_8001F1B8, func_8001F24C, func_8001F2E0, and func_80020B64.
  */
-s32 func_8001F180(void)
+s32 gIsMcManagerBusy(void)
 {
     struct Unk8001F180 *state = gOperationState;
 

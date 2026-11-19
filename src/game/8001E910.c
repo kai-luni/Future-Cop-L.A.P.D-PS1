@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void func_80089E20(void);
+void gShutdownPadDriver(void) __asm__("func_8001E910");
+
 
 /**
  * @brief Releases the device/controller BIOS interrupt hook during shutdown.
@@ -24,8 +26,13 @@ extern void func_80089E20(void);
  *
  * @par Callers
  * Confirmed: func_8001E540 (0x8001E550, controller/device layer shutdown) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Releases the controller driver interrupt hook by calling func_80089E20.
+ * Touches no globals directly and is called by func_8001E540 during
+ * device-layer shutdown.
  */
-void func_8001E910(void)
+void gShutdownPadDriver(void)
 {
     func_80089E20();
 }

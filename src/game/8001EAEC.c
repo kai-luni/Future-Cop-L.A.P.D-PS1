@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u8 gPadActuators[] __asm__("D_800A6FF8");
+u8 gIsPadRumbleReady(s32 arg0) __asm__("func_8001EAEC");
+
 
 /**
  * @brief Returns the DualShock actuator/rumble-ready flag byte (+0x16) for a clamped controller slot.
@@ -23,8 +25,14 @@ extern u8 gPadActuators[] __asm__("D_800A6FF8");
  * None observed (read-only query).
  * @par Callers
  * Confirmed: func_8007C6F0 (0x8007C798, gates vibration prompt icon); func_8007C940 (0x8007C9AC, gates rumble toggle test) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Clamps the controller port index to [0, 1] and returns the byte at offset
+ * +0x16 of that slot in gPadActuators (D_800A6FF8), indicating whether
+ * DualShock actuator capability is active. Read-only query with no calls;
+ * called by func_8007C6F0 and func_8007C940.
  */
-u8 func_8001EAEC(s32 arg0)
+u8 gIsPadRumbleReady(s32 arg0)
 {
     u8 *base = gPadActuators;
     s32 offset;

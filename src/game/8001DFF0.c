@@ -3,6 +3,8 @@
 
 extern u8 gCompletionFlag __asm__("D_8009FA68");
 extern s32 gFileSlotState __asm__("D_8009F620");
+void gFileReadDoneCallback(s32 arg0) __asm__("func_8001DFF0");
+
 
 /**
  *  @brief Sets a global flag and stores a signed value.
@@ -20,8 +22,13 @@ extern s32 gFileSlotState __asm__("D_8009F620");
  *  Updates the two globals.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Sets gCompletionFlag (D_8009FA68) to 1 and stores arg0 into gFileSlotState
+ * (D_8009F620) with no outgoing calls. Passed as the completion callback to
+ * func_8001D90C by func_8001E004 to unblock synchronous file reads.
  */
-void func_8001DFF0(s32 arg0)
+void gFileReadDoneCallback(s32 arg0)
 {
     gCompletionFlag = 1;
     gFileSlotState = arg0;

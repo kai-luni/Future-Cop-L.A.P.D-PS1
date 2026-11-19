@@ -18,6 +18,8 @@ typedef struct {
 extern State *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(s32);
 extern void func_8008D690(s32);
+s32 gMcCardEventDone(void) __asm__("func_8001FD28");
+
 
 /**
  *  @brief Transitions the shared state and dispatches its handle to a helper.
@@ -38,8 +40,15 @@ extern void func_8008D690(s32);
  *  Modifies shared state fields and invokes one of the handle helpers.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Handles memory-card event transition in gOperationState (D_8009AB08) after
+ * clearing reset and setting enabled to 1: states 2, 3, and 6 set result to
+ * -3 and active to 1 before calling func_8008D640; state 1 sets result to -1,
+ * promotes mode 5 to 6, and falls into state 4 to call func_8008D640; default
+ * sets result to -2 and state to 4 and calls func_8008D690.
  */
-s32 func_8001FD28(void)
+s32 gMcCardEventDone(void)
 {
     register State *p asm("$2");
     State *q;

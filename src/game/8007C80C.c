@@ -8,7 +8,7 @@ extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 extern u8 D_8009F902[];
 
 extern void gApplyControllerPreset(s32 port, s32 value) __asm__("func_8007BFCC");
-extern void func_8001EC04(s32 port, s32 enable);
+extern void gSetPadRumbleEnabled(s32 port, s32 enable) __asm__("func_8001EC04");
 extern s32 func_80046C84(s32 id, s32 arg1);
 
 /**
@@ -52,7 +52,7 @@ void gHandleControllerSetupAction(s32 action)
         switch (action) {
         case 3:
             gApplyControllerPreset(port, D_8009F900[port]);
-            func_8001EC04(port, gRumbleEnabled[port]);
+            gSetPadRumbleEnabled(port, gRumbleEnabled[port]);
             break;
         case 4:
         case 5:

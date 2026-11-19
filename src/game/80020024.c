@@ -20,6 +20,8 @@ struct Ctx {
 extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
 
 extern void func_8008D640(s32 value);
+void gMcWatchdogTick(void) __asm__("func_80020024");
+
 
 /**
  *  @brief Advances a context counter and invokes its callback.
@@ -37,8 +39,14 @@ extern void func_8008D640(s32 value);
  *  The direct and indirect calls may have additional effects.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Per-frame memory-card watchdog callback installed by func_80020530:
+ * increments unk1BB0 in gOperationState (D_8009AB08) and, if it reaches 0x3D,
+ * resets unk8F8/unk8F4/unk904, sets unk900 to -3 and unk9A4 to 1, and calls
+ * func_8008D640(unk8FC), then always invokes the chained callback unk8CC.
  */
-void func_80020024(void)
+void gMcWatchdogTick(void)
 {
     if (gOperationState->unk1BB0++ >= 0x3D) {
         gOperationState->unk1BB0 = 0;

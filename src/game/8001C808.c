@@ -5,27 +5,29 @@ typedef struct { int flags, a, b, c, d, e; } Ent;
 extern St func_80010000;
 extern Ent gFileSlotTable[] __asm__("D_800A6D78");
 extern u8 gLengthTable[] __asm__("D_800A85C0");
-extern u8 D_8009F61C[];
+extern u8 gCdCurrentLoc[] __asm__("D_8009F61C");
 extern volatile unsigned int *gTransferPending __asm__("D_8009F250");
 extern volatile unsigned int *gTransferStatusPtr __asm__("D_8009F254");
 extern int gTransferError __asm__("D_8009F244");
 extern int gTransferRetryCount __asm__("D_8009F24C");
-extern int D_8009F618;
+extern int gCdCallbackActive __asm__("D_8009F618");
 extern int gCdAbortFlag __asm__("D_8009F228");
 extern volatile u8 gEventBuffer[] __asm__("D_800A0798");
 extern int func_8008E0D8(int);
 extern int func_8008E598(void *, int);
-extern int func_8001C588(void *);
-extern void func_8001C288(void *);
-extern void func_8001C718(void);
-extern void func_8001C680(void);
-extern void func_8001C470(void *);
+extern int gCdlLocToByteOffset(void *) __asm__("func_8001C588");
+extern void gIncrementBcdLoc(void *) __asm__("func_8001C288");
+extern void gStartCdDirRead(void) __asm__("func_8001C718");
+extern void gResetCdReadState(void) __asm__("func_8001C680");
+extern void gClearWord(void *) __asm__("func_8001C470");
 extern int func_8008CD10(int, void *, int);
 extern int func_8008E1BC(int, int, void *);
 extern void func_800914B0(int, int);
 extern void func_8008DEA0(void);
 extern int func_8008E1A8(void *);
 extern void D_8001C808(void);
+void gCdSectorCallback(int arg) __asm__("func_8001C808");
+
 
 /**
  * @brief Completion callback of the streaming file reader: verifies the sector
@@ -98,8 +100,17 @@ extern void D_8001C808(void);
  * No direct callers in the call graph. func_8001D130 installs the address with
  * func_8008E1A8 and the abort path reinstalls it, so the driver invokes it through
  * that saved function pointer.
+ *
+ * @par Role and path
+ * CD-ROM driver sector callback bracketed by func_8008E0D8: on mode 1 it
+ * dispatches on 0x80010000.state (0 increments gCdCurrentLoc and counts down
+ * gTransferRetryCount to call func_8001C680; 2 reads 3-unit sector header via
+ * func_8008E598, checks against gFileSlotTable, copies up to 0x800 bytes via
+ * gLengthTable and func_8008CD10, and invokes 0x80010000.cb). Non-1 modes
+ * enter the abort retry loop with gCdAbortFlag, func_800914B0, func_8008DEA0,
+ * and func_8001C718; installed by func_8001D130 via func_8008E1A8.
  */
-void func_8001C808(int arg)
+void gCdSectorCallback(int arg)
 {
     int saved;
     int cur, want, n, len;
@@ -136,7 +147,7 @@ void func_8001C808(int arg)
                 __asm__ volatile ("" : : "r" (i));
             }
             func_8008E598(buf, 3);
-            cur = func_8001C588(buf);
+            cur = gCdlLocToByteOffset(buf);
             entries = gFileSlotTable;
             q = &func_80010000;
             want = entries[q->idx].c & -0x800;
@@ -146,12 +157,12 @@ void func_8001C808(int arg)
                 func_8008E598(buf2, 0x46);
                 if (cur < want && want < cur + 0x10)
                     return;
-                func_8001C718();
+                gStartCdDirRead();
                 return;
             }
-            loc = D_8009F61C;
+            loc = gCdCurrentLoc;
             __asm__ volatile ("" : : "r" (loc));
-            func_8001C288(loc);
+            gIncrementBcdLoc(loc);
             n = gFileSlotTable[q->idx].c & 0x7FF;
             len = q->remain + n;
             if (len > 0x800) len = 0x800;
@@ -186,19 +197,19 @@ void func_8001C808(int arg)
                 gTransferRetryCount = 0x8CA;
                 if (func_80010000.flag == 1)
                     gFileSlotTable[func_80010000.idx].flags |= 0x100;
-                D_8009F618 = 1;
+                gCdCallbackActive = 1;
                 func_80010000.cb(func_80010000.pos, func_80010000.result);
-                D_8009F618 = 0;
+                gCdCallbackActive = 0;
             }
             break;
         case 0:
-            loc = D_8009F61C;
+            loc = gCdCurrentLoc;
             __asm__ volatile ("" : : "r" (loc));
-            func_8001C288(loc);
+            gIncrementBcdLoc(loc);
             if (gTransferRetryCount != 0) {
                 gTransferRetryCount--;
                 if (gTransferRetryCount == 0) {
-                    func_8001C680();
+                    gResetCdReadState();
                     gTransferRetryCount = 0x8CA;
                 }
             }
@@ -215,13 +226,13 @@ void func_8001C808(int arg)
             if (!(gEventBuffer[0] & 0x10)) break;
             func_800914B0(2, 0);
             func_8008DEA0();
-            loc = D_8009F61C;
+            loc = gCdCurrentLoc;
             __asm__ volatile ("" : : "r" (loc));
-            func_8001C470(loc);
+            gClearWord(loc);
             s->unk18 = func_8008E1A8(D_8001C808);
-            D_8009F618 = 0;
+            gCdCallbackActive = 0;
         } while (gEventBuffer[0] & 0x10);
-        func_8001C718();
+        gStartCdDirRead();
         gCdAbortFlag = 0;
     }
     func_8008E0D8(saved);

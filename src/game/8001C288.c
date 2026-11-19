@@ -1,5 +1,7 @@
 // Categories: Utilities > BCD Arithmetic
 typedef unsigned char u8;
+void gIncrementBcdLoc(u8 *p) __asm__("func_8001C288");
+
 
 /**
  *  @brief Increments a three-byte packed-BCD position in place.
@@ -18,8 +20,14 @@ typedef unsigned char u8;
  *  Overwrites all three bytes at p; input digits are not validated.
  *  @par Callers
  *  Confirmed: func_8001C808.
+ *
+ * @par Role and path
+ * Pure BCD arithmetic helper that decodes three packed-BCD bytes (minute,
+ * second, sector), increments the sector byte with carries at 75 and 60, and
+ * re-encodes them in place. Called by func_8001C808 to advance gCdCurrentLoc
+ * by one CD sector; touches no globals directly.
  */
-void func_8001C288(u8 *p)
+void gIncrementBcdLoc(u8 *p)
 {
     volatile u8 a[3];
     u8 x;

@@ -28,6 +28,8 @@ extern StreamEntry gFileSlotTable[] __asm__("D_800A6D78");
 extern u8 gLengthTable[] __asm__("D_800A85C0");
 
 extern void func_8008CD10(void *dest, const void *src, s32 n);
+void gCopyCdSectorChunk(void) __asm__("func_8001CC6C");
+
 
 /**
  * @brief Copies one chunk of a pending stream into the caller's buffer.
@@ -58,8 +60,15 @@ extern void func_8008CD10(void *dest, const void *src, s32 n);
  *
  * @par Callers
  * Confirmed: func_8001CE54.
+ *
+ * @par Role and path
+ * Copies up to one sector boundary (0x800) of buffered CD data from
+ * gLengthTable (D_800A85C0) at offset gFileSlotTable[0x80010000.unk10].unk0C
+ * & 0x7FF into 0x80010000.unk20 via func_8008CD10. Advances pointers and slot
+ * position, and when remaining bytes reach 0 marks the slot done and calls
+ * 0x80010000.unk14; called by func_8001CE54.
  */
-void func_8001CC6C(void)
+void gCopyCdSectorChunk(void)
 {
     s32 chunk;
     s32 offset;

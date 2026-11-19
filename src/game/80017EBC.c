@@ -21,8 +21,8 @@ extern struct LinkState *gFixedPool1 __asm__("D_8009F9D0");
 extern s32 func_80017D5C(s32 size);
 extern s32 func_80017E0C(s32 size);
 extern struct LinkNode *func_800195A4(struct LinkState *state);
-extern void *func_8001E240(s32 size, s32 mode);
-extern u8 *func_8001E318(u8 *destination, u8 *source, s32 count);
+extern void *gHeapAllocRaw(s32 size, s32 mode) __asm__("func_8001E240");
+extern u8 *gCopyMemory(u8 *destination, u8 *source, s32 count) __asm__("func_8001E318");
 void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 
@@ -118,7 +118,7 @@ void *gAllocMemory(s32 size, s32 tag)
 retry:
     switch (tag) {
     case 0:
-        result = func_8001E240(size, 0);
+        result = gHeapAllocRaw(size, 0);
         if (result != 0) {
             break;
         }
@@ -145,7 +145,7 @@ retry:
         result = (u8 *)result + 4;
         gFreeRangeTablePtr[index] += size;
         if (gFreeRangeTablePtr[index] == gFreeRangeTablePtr[index + 1] && gFreeRangeCount >= 4) {
-            func_8001E318((u8 *)&gFreeRangeTablePtr[index], (u8 *)(&gFreeRangeTablePtr[index] + 2),
+            gCopyMemory((u8 *)&gFreeRangeTablePtr[index], (u8 *)(&gFreeRangeTablePtr[index] + 2),
                          (gFreeRangeCount - index - 1) * 4);
             gFreeRangeCount -= 2;
         }
@@ -166,7 +166,7 @@ retry:
         *(s32 *)result = size;
         result = (u8 *)result + 4;
         if (gFreeRangeTablePtr[index] == gFreeRangeTablePtr[index + 1] && gFreeRangeCount >= 4) {
-            func_8001E318((u8 *)&gFreeRangeTablePtr[index], (u8 *)(&gFreeRangeTablePtr[index] + 2),
+            gCopyMemory((u8 *)&gFreeRangeTablePtr[index], (u8 *)(&gFreeRangeTablePtr[index] + 2),
                          (gFreeRangeCount - index - 1) * 4);
             gFreeRangeCount -= 2;
             if (gHeapSearchCursor >= index + 2) {

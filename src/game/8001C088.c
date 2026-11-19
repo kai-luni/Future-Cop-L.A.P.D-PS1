@@ -15,6 +15,8 @@ extern u8 gLayerIndex __asm__("D_8009F225");
 extern struct Unk1C040 gLayerBlocks[] __asm__("D_800A06E0");
 
 extern void func_800932F0(struct Unk1C040 *entry);
+void gSelectFadeLayer(u8 mode, u8 enable) __asm__("func_8001C088");
+
 
 /**
  * @brief Selects a fade layer and enables or disables all of them.
@@ -37,8 +39,14 @@ extern void func_800932F0(struct Unk1C040 *entry);
  * @par Callers
  * func_80076EB0 (boot: select layer 1 and enable, then layer 0 and enable),
  * func_8001BFA8, gCloseVideoLayer, the unit at 0x80088124.
+ *
+ * @par Role and path
+ * Selects fade layer mode in gSelectedLayer (D_8009F224), sets the enabled
+ * byte on all gLayerBlocks (D_800A06E0) entries up to gLayerIndex
+ * (D_8009F225) to 1 or 0, and calls func_800932F0 with the selected entry.
+ * Called by func_80076EB0, func_8001BFA8, and func_80088120.
  */
-void func_8001C088(u8 mode, u8 enable)
+void gSelectFadeLayer(u8 mode, u8 enable)
 {
     s32 i;
 

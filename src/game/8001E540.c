@@ -3,10 +3,12 @@
 
 extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 
-extern void func_800200F0(void);
-extern void func_8001E910(void);
-extern void func_8001F158(void);
+extern void gResetBiosDevices(void) __asm__("func_800200F0");
+extern void gShutdownPadDriver(void) __asm__("func_8001E910");
+extern void gStopFrameCallback(void) __asm__("func_8001F158");
 extern void func_80091574(void);
+s32 gShutdownDeviceLayer(void) __asm__("func_8001E540");
+
 
 /**
  * @brief Shuts the controller/device layer down again.
@@ -24,13 +26,20 @@ extern void func_80091574(void);
  *
  * @par Callers
  * func_80076FE0 - the counterpart of func_8001E4E4.
+ *
+ * @par Role and path
+ * Shuts down the controller and device layer by releasing sub-devices through
+ * func_800200F0 and func_8001E910, stopping the per-frame callback via
+ * func_8001F158 if D_8009FA20 is non-zero, and removing the interrupt hook
+ * via func_80091574. Reads gFrameCallbackEnabled (D_8009FA20) without
+ * clearing it; called by func_80076FE0 as the counterpart to func_8001E4E4.
  */
-s32 func_8001E540(void)
+s32 gShutdownDeviceLayer(void)
 {
-    func_800200F0();
-    func_8001E910();
+    gResetBiosDevices();
+    gShutdownPadDriver();
     if (gFrameCallbackEnabled != 0) {
-        func_8001F158();
+        gStopFrameCallback();
     }
     func_80091574();
     return 0;

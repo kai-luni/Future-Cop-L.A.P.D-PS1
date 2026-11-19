@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 gPadWords[2] __asm__("D_8009F7C0");
-extern u32 func_8001E620(u32 profile);
+extern u32 gMapPadButtons(u32 profile) __asm__("func_8001E620");
 extern s32 func_8005908C(s32 arg0);
 extern s32 gEntityBaseHandler() __asm__("func_8002AD58");
 
@@ -28,7 +28,7 @@ void func_80057864(void)
     s32 i;
 
     for (i = 0, p = gPadWords; i < 2; i++) {
-        *p = func_8001E620(i);
+        *p = gMapPadButtons(i);
         p++;
     }
 }

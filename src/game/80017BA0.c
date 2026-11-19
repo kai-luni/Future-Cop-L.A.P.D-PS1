@@ -4,7 +4,7 @@
 extern s32 gHeapPoolBase __asm__("D_8009FA9C");
 extern s32 gFreeRangeTablePtr __asm__("D_8009F590");
 
-extern void func_8001E2C0(s32 block);
+extern void gHeapFreeRaw(s32 block) __asm__("func_8001E2C0");
 
 /**
  * @brief Frees the two blocks of the heap layer created by func_80017BE8().
@@ -24,10 +24,10 @@ void gShutdownHeap(void) __asm__("func_80017BA0");
 void gShutdownHeap(void)
 {
     if (gHeapPoolBase != 0) {
-        func_8001E2C0(gHeapPoolBase);
+        gHeapFreeRaw(gHeapPoolBase);
     }
     if (gFreeRangeTablePtr != 0) {
-        func_8001E2C0(gFreeRangeTablePtr);
+        gHeapFreeRaw(gFreeRangeTablePtr);
     }
     gHeapPoolBase = 0;
     gFreeRangeTablePtr = 0;

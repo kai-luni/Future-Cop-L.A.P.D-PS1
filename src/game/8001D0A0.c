@@ -11,12 +11,14 @@ struct UnkD0A0 {
 };
 
 extern struct UnkD0A0 gFileSlotTable[] __asm__("D_800A6D78");
-extern u8 D_8009F614[];
+extern u8 gCdTargetLoc[] __asm__("D_8009F614");
 extern u8 D_8009F615[];
 extern u8 gEventBuffer[] __asm__("D_800A0798");
 
-extern void func_8001C494(void *a0, s32 a1);
+extern void gByteOffsetToCdlLoc(void *a0, s32 a1) __asm__("func_8001C494");
 extern s32 func_8008E1BC(s32 a0, void *a1, void *a2);
+s32 gSeekCdFileSlot(s32 index) __asm__("func_8001D0A0");
+
 
 /**
  * @brief Seeks the CD-ROM to the current byte position of file slot `index` in D_800A6D78.
@@ -41,8 +43,14 @@ extern s32 func_8008E1BC(s32 a0, void *a1, void *a2);
  *
  * @par Callers
  * Confirmed: func_8001D6D0 (0x8001D8A0 in asm/us/main.s) and func_8001D90C (0x8001DA4C in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Checks gFileSlotTable[index].flags & 0xF for mode 1, encodes f0C into
+ * gCdTargetLoc via func_8001C494, and issues CD-ROM command 0x15 with
+ * gCdTargetLoc and gEventBuffer (D_800A0798) via func_8008E1BC, returning -4
+ * on failure or 0. Called by func_8001D6D0 and func_8001D90C.
  */
-s32 func_8001D0A0(s32 index)
+s32 gSeekCdFileSlot(s32 index)
 {
     register u8 *a0 __asm__("$4");
     register u8 *a1 __asm__("$5");
@@ -53,9 +61,9 @@ s32 func_8001D0A0(s32 index)
         s32 r;
 
         a1 = (u8 *)gFileSlotTable[index].f0C;
-        a0 = D_8009F614;
+        a0 = gCdTargetLoc;
         __asm__("" : "+r"(a0));
-        func_8001C494(a0, a1);
+        gByteOffsetToCdlLoc(a0, a1);
 
         a0 = (u8 *)0x15;
         a1 = D_8009F615 - 1;

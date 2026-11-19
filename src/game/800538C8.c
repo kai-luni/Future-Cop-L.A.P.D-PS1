@@ -1,7 +1,7 @@
 // Categories: Platform > Controller Input | Input > Analog
 #include "game/types.h"
 
-extern s32 func_8001E7B8(s32 *x, s32 *y, s32 controller, s32 arg3);
+extern s32 gReadAnalogStick(s32 *x, s32 *y, s32 controller, s32 arg3) __asm__("func_8001E7B8");
 
 /**
  * @brief Converts the analog stick of one controller into direction bits and magnitudes.
@@ -50,7 +50,7 @@ s32 func_800538C8(u8 *context, u32 *flags, s32 *verticalMagnitude,
             return 0;
         }
         if (*(s8 *)(context + 0x310) == 0) {
-            status = func_8001E7B8(&x, &y, *(s8 *)(context + 0xC1), 0);
+            status = gReadAnalogStick(&x, &y, *(s8 *)(context + 0xC1), 0);
             if ((u8)status == 0) {
                 return 0;
             }

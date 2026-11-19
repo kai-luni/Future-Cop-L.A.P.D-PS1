@@ -53,7 +53,7 @@ extern u32 D_8009B324[];
 extern struct Menu gMenuDescriptor __asm__("D_800A3808");
 extern s16 gSlotRecordTable[2][4] __asm__("D_800A3578");
 extern struct InputAction D_800A3588[], D_800A3598[], D_800A35A8[], D_800A35B8[], D_800A35C8[], D_800A35D8[], D_800A35E8[];
-extern u32 func_8001EF8C(u32);
+extern u32 gPollPadButtons(u32) __asm__("func_8001EF8C");
 extern void func_80077990(void);
 extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
 extern void gSetupFrontEndMenus(s32) __asm__("func_80077AD4");
@@ -123,9 +123,9 @@ void func_80078DD0(void)
     u8 *rgb;
     if (gStillRunningState == 0) return;
     D_8009F8B0 = D_8009F8D0;
-    buttons[0] = D_8009F8D0 = func_8001EF8C(0);
+    buttons[0] = D_8009F8D0 = gPollPadButtons(0);
     D_8009F8B4 = D_8009F8D4;
-    buttons[1] = D_8009F8D4 = func_8001EF8C(1);
+    buttons[1] = D_8009F8D4 = gPollPadButtons(1);
     for (i = 0; i < 2; i++) {
         if (buttons[i] & 0x100000) { if (!gMenuUpHoldTicks[i]) gMenuUpHoldTicks[i] = gFrameTickCounter; } else gMenuUpHoldTicks[i] = 0;
         if (buttons[i] & 0x400000) { if (!gMenuDownHoldTicks[i]) gMenuDownHoldTicks[i] = gFrameTickCounter; } else gMenuDownHoldTicks[i] = 0;

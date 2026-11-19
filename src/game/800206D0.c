@@ -26,10 +26,12 @@ struct Ctx {
 
 extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
 
-extern void *func_8001E4C0(void *destination, int value, unsigned int count);
-extern void func_80020530(void);
-extern void func_80020120(void);
+extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
+extern void gAcquireMcCallback(void) __asm__("func_80020530");
+extern void gAcquireMcEvents(void) __asm__("func_80020120");
 extern void func_8008D640(s32 value);
+void gResetMcManager(void) __asm__("func_800206D0");
+
 
 /**
  * @brief Resets the memory-card manager to idle.
@@ -46,8 +48,15 @@ extern void func_8008D640(s32 value);
  *
  * @par Callers
  * func_8007FA88 (arming a profile transfer).
+ *
+ * @par Role and path
+ * Resets the memory-card manager in gOperationState (D_8009AB08) to idle,
+ * zeroing command/status fields and clearing the 0x80-byte name buffer and
+ * 0x1200-byte format buffer via func_8001E4C0, then acquires the frame
+ * callback via func_80020530, opens BIOS card events via func_80020120, and
+ * resets the channel via func_8008D640. Called by func_8007FA88.
  */
-void func_800206D0(void)
+void gResetMcManager(void)
 {
     s32 t = gOperationState->unk000;
 
@@ -67,9 +76,9 @@ void func_800206D0(void)
     gOperationState->unk9A4 = 0;
     gOperationState->unk1BB0 = 0;
 
-    func_8001E4C0(gOperationState->unk914, 0, 0x80);
-    func_8001E4C0(gOperationState->unk9B0, 0, 0x1200);
-    func_80020530();
-    func_80020120();
+    gFillMemory(gOperationState->unk914, 0, 0x80);
+    gFillMemory(gOperationState->unk9B0, 0, 0x1200);
+    gAcquireMcCallback();
+    gAcquireMcEvents();
     func_8008D640(gOperationState->unk8FC);
 }

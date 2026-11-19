@@ -4,15 +4,17 @@
 extern u8 gMediaBypassFlag __asm__("D_8009F234");
 extern s32 gFreeCallback __asm__("D_8009F22C");
 extern s32 gAllocCallback __asm__("D_8009F230");
-extern void *D_8009F240;
+extern void *gFileSearchMgr __asm__("D_8009F240");
 
 extern void D_8001CDD0(void);
 extern void D_8001CDF0(void);
-extern u8 D_8009AABC[];
+extern u8 gDefaultSearchMgr[] __asm__("D_8009AABC");
 extern s32 gFileSlotTable[] __asm__("D_800A6D78");
-extern s32 D_800A8E68[];
+extern s32 gCdDriveStateTable[] __asm__("D_800A8E68");
 extern u32 jtbl_80010AA4[];
-extern s32 func_8001D130(s32 arg0);
+extern s32 gProbeCdDriveMode(s32 arg0) __asm__("func_8001D130");
+s32 gInitCdFileSystem(s32 arg0, s32 arg1, u8 *arg2) __asm__("func_8001D248");
+
 
 /**
  * @brief Initialises the file/CD layer: installs the allocator callbacks,
@@ -52,8 +54,16 @@ extern s32 func_8001D130(s32 arg0);
  *
  * @par Callers
  * func_80076EB0 (boot) and func_8001CE10.
+ *
+ * @par Role and path
+ * Installs allocator callbacks into gAllocCallback (D_8009F230) and
+ * gFreeCallback (D_8009F22C), clears all four slots in gFileSlotTable
+ * (D_800A6D78), and probes modes 1..3 via func_8001D130 into
+ * gCdDriveStateTable[1..3]. Sets gMediaBypassFlag (D_8009F234) to 1 and
+ * stores arg2 or gDefaultSearchMgr into gFileSearchMgr; called by
+ * func_80076EB0 and func_8001CE10.
  */
-s32 func_8001D248(s32 arg0, s32 arg1, u8 *arg2)
+s32 gInitCdFileSystem(s32 arg0, s32 arg1, u8 *arg2)
 {
     register s32 count __asm__("$18");
     u8 *arg2_reg;
@@ -98,11 +108,11 @@ cleared:
     v0 = 0x80010000;
     __asm__("" : "+r"(v0));
     table = (void **)(v0 + 0xAA4);
-    v0 = (s32)D_800A8E68;
+    v0 = (s32)gCdDriveStateTable;
     entry = (s32 *)(v0 + 4);
 
 loop:
-    idx = func_8001D130(i) + 0x10;
+    idx = gProbeCdDriveMode(i) + 0x10;
     if ((u32)idx >= 0x11) {
         goto default_case;
     }
@@ -144,9 +154,9 @@ next:
     }
     gMediaBypassFlag = 1;
     if (arg2_reg == 0) {
-        D_8009F240 = D_8009AABC;
+        gFileSearchMgr = gDefaultSearchMgr;
         return 0;
     }
-    D_8009F240 = arg2_reg;
+    gFileSearchMgr = arg2_reg;
     return 0;
 }

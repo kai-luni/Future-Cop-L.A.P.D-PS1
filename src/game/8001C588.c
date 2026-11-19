@@ -3,6 +3,8 @@ typedef unsigned char u8;
 typedef int s32;
 struct CdlLOC { u8 minute, second, sector, track; };
 #define BCD_TO_INT(value) (((value) >> 4) * 10 + ((value) & 0xF))
+s32 gCdlLocToByteOffset(struct CdlLOC *location) __asm__("func_8001C588");
+
 
 /**
  * @brief Converts a CdlLOC position back into a byte offset.
@@ -29,8 +31,13 @@ struct CdlLOC { u8 minute, second, sector, track; };
  *
  * @par Callers
  * Confirmed: func_8001C808, func_8001D424.
+ *
+ * @par Role and path
+ * Decodes the BCD minute, second, and sector fields of location into a linear
+ * sector index and shifts left by 11 to return the byte offset. Called by
+ * func_8001C808 and func_8001D424; touches no globals and makes no calls.
  */
-s32 func_8001C588(struct CdlLOC *location)
+s32 gCdlLocToByteOffset(struct CdlLOC *location)
 {
     register unsigned int m __asm__("$3");
     register s32 first __asm__("$5");

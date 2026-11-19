@@ -21,6 +21,8 @@ extern void func_8008C9C0(void);
 extern void func_8008C990(s32 arg0);
 extern void func_8008C970(s32 arg0);
 extern void func_8008C9E0(void);
+void gReleaseMcEvents(void) __asm__("func_8002036C");
+
 
 /**
  * @brief Counts a shared release down and frees eight handles when it reaches zero.
@@ -45,8 +47,15 @@ extern void func_8008C9E0(void);
  *
  * @par Callers
  * Likely: func_8002078C (same block).
+ *
+ * @par Role and path
+ * Releases the memory-card BIOS event subsystem by decrementing
+ * gOperationState->unk8C8 and, when it reaches 0, disabling and closing all
+ * eight event handles (unk8D4..unk8F0) via func_8008C990 and func_8008C970
+ * inside a critical section. Reads and writes D_8009AB08; counterpart to
+ * func_80020120, likely called by func_8002078C.
  */
-void func_8002036C(void)
+void gReleaseMcEvents(void)
 {
     if (--gOperationState->unk8C8 == 0) {
         func_8008C9C0();

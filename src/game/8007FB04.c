@@ -14,7 +14,7 @@ extern u8 gProfileImageName[] __asm__("D_800120A4");
 
 extern s32 func_800207B4();
 extern void gPopMenuPanel(void) __asm__("func_80078740");
-extern s32 func_8001F37C(void);
+extern s32 gGetMcPendingFlag(void) __asm__("func_8001F37C");
 extern void func_80080B70(void);
 extern void gQueueMemoryCardFormat(void) __asm__("func_8008204C");
 extern void func_80081204(void);
@@ -23,7 +23,7 @@ extern void func_80080010(void);
 extern void func_80080AD4(void);
 extern s32 func_80020C90(u8 *arg0);
 extern s32 func_80020E68(s32 arg0);
-extern void *func_8001E4C0(void *destination, int value, unsigned int count);
+extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
 extern void func_80078650(u8 *arg0, s32 arg1);
 extern void func_80082020(void);
 
@@ -86,7 +86,7 @@ s32 func_8007FB04(void)
             s1 = gSaveProfileImage[0x203];
 
             if (s1 == 2 && (u32)(gSaveProfileImage[0x204] - 1) < 3) {
-                if (func_8001F37C() != 0) {
+                if (gGetMcPendingFlag() != 0) {
                     if (*(s8 *)(gSaveProfileImage + 0x922) != 0) {
                         gSaveProfileImage[0x922] = gSaveProfileImage[0x922] - 1;
                         if (gSaveProfileImage[0x204] == s1) {
@@ -131,7 +131,7 @@ s32 func_8007FB04(void)
                     gUiHoldFlag = 0;
                     gSaveProfileImage[0x206] = 1;
                 } else {
-                    func_8001E4C0(gSaveProfileImage + 0x20C, 0, 0x678);
+                    gFillMemory(gSaveProfileImage + 0x20C, 0, 0x678);
                     func_80080010();
                     if (gSaveProfileImage[0x921] == 0) {
                         gUiHoldFlag = 0;

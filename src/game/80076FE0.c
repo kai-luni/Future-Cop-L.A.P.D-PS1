@@ -7,8 +7,8 @@ extern s32 gVmCountdowns __asm__("D_8009F9A4");
 extern s32 gOpcodeTable __asm__("D_8009F9F8");
 
 extern void gShutdownCvkSystem(void) __asm__("func_80023478");
-extern void func_8001E2C0(s32 block);
-extern void func_8001E540(void);
+extern void gHeapFreeRaw(s32 block) __asm__("func_8001E2C0");
+extern void gShutdownDeviceLayer(void) __asm__("func_8001E540");
 extern void gShutdownHeap(void) __asm__("func_80017BA0");
 
 /**
@@ -36,10 +36,10 @@ void gShutdownRuntime(void) __asm__("func_80076FE0");
 void gShutdownRuntime(void)
 {
     gShutdownCvkSystem();
-    func_8001E2C0(gGameSession);
-    func_8001E2C0(D_8009FAD4);
-    func_8001E2C0(gVmCountdowns);
-    func_8001E2C0(gOpcodeTable);
-    func_8001E540();
+    gHeapFreeRaw(gGameSession);
+    gHeapFreeRaw(D_8009FAD4);
+    gHeapFreeRaw(gVmCountdowns);
+    gHeapFreeRaw(gOpcodeTable);
+    gShutdownDeviceLayer();
     gShutdownHeap();
 }

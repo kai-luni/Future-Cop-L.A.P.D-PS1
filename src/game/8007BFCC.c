@@ -19,7 +19,7 @@ extern D_8009BEF4_Entry D_8009BEF4[];
 extern u8 gPadMappingTable[] __asm__("D_800AAC50");
 extern u8 gPortCheckTable[] __asm__("D_800A374D");
 
-extern u8 func_8001EB2C(s32 arg0);
+extern u8 gIsPadRumbleEnabled(s32 arg0) __asm__("func_8001EB2C");
 
 /**
  * @brief Applies one of four stored presets to a per-port configuration block.

@@ -18,9 +18,9 @@ extern s32 gHeapSearchCursor __asm__("D_8009F598");
 
 extern void func_800195D0(struct LinkState *state, s32 *link);
 extern s32 func_8001814C(void *block);
-extern void func_8001E2C0(void *block);
-extern u8 *func_8001E318(u8 *destination, u8 *source, s32 count);
-extern u8 *func_8001E44C(u8 *destination, u8 *source, s32 count);
+extern void gHeapFreeRaw(void *block) __asm__("func_8001E2C0");
+extern u8 *gCopyMemory(u8 *destination, u8 *source, s32 count) __asm__("func_8001E318");
+extern u8 *gMoveMemory(u8 *destination, u8 *source, s32 count) __asm__("func_8001E44C");
 void gFreeBlock(void *block) __asm__("func_800181D4");
 
 
@@ -105,7 +105,7 @@ void gFreeBlock(void *block)
             if (end == slot[1]) {
                 if (index != 0) {
                     if (index != gFreeRangeCount - 1) {
-                        func_8001E318((u8 *)slot,
+                        gCopyMemory((u8 *)slot,
                                       (u8 *)(slot + 2),
                                       (gFreeRangeCount - index - 1) * 4);
                         gFreeRangeCount -= 2;
@@ -121,7 +121,7 @@ void gFreeBlock(void *block)
             } else if (index > 0) {
                 slot[0] = end;
             } else {
-                func_8001E44C((u8 *)(table + 3),
+                gMoveMemory((u8 *)(table + 3),
                               (u8 *)(table + 1),
                               gFreeRangeCount * 4);
                 gFreeRangeTablePtr[1] = (s32)block;
@@ -145,7 +145,7 @@ void gFreeBlock(void *block)
         } else {
             copy_source = slot + 1;
             slot += 3;
-            func_8001E44C((u8 *)slot,
+            gMoveMemory((u8 *)slot,
                           (u8 *)copy_source,
                           (gFreeRangeCount - index) * 4);
             gFreeRangeCount += 2;
@@ -156,6 +156,6 @@ void gFreeBlock(void *block)
             gFreeRangeTablePtr[index + 2] = (s32)end;
         }
     } else {
-        func_8001E2C0(block);
+        gHeapFreeRaw(block);
     }
 }

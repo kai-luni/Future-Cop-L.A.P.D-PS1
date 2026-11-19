@@ -6,6 +6,8 @@ struct PadMapping {
 };
 
 extern struct PadMapping gPadMappingTable[] __asm__("D_800AAC50");
+void gInitPadMapping(u32 port) __asm__("func_8001E588");
+
 
 /**
  *  @brief Initializes fourteen controller masks for a valid port.
@@ -23,8 +25,14 @@ extern struct PadMapping gPadMappingTable[] __asm__("D_800AAC50");
  *  Replaces the selected mapping's masks when the port is valid.
  *  @par Callers
  *  Confirmed: func_8001E4E4.
+ *
+ * @par Role and path
+ * Initializes the 14 default controller button bitmasks in
+ * gPadMappingTable[port] when port is less than 2. Writes D_800AAC50
+ * (gPadMappingTable) and makes no calls; called by func_8001E4E4 during
+ * device initialization.
  */
-void func_8001E588(u32 port)
+void gInitPadMapping(u32 port)
 {
     struct PadMapping *mapping;
 

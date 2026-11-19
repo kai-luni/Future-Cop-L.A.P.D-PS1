@@ -3,7 +3,7 @@
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
-extern void func_80020600(void);
+extern void gClearMcStatePtr(void) __asm__("func_80020600");
 
 /**
  * @brief Closes the profile save subsystem and releases both blocks allocated by
@@ -23,7 +23,7 @@ void gShutdownProfileSubsystem(void) __asm__("func_8007FA48");
 
 void gShutdownProfileSubsystem(void)
 {
-    func_80020600();
+    gClearMcStatePtr();
     gFreeBlock(*(void **)(gSaveProfileImage + 0x904));
     gFreeBlock(gSaveProfileImage);
 }

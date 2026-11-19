@@ -5,9 +5,9 @@ typedef unsigned int u32;
 typedef int s32;
 
 extern u8 *gOperationState __asm__("D_8009AB08");
-extern void *func_8001E4C0(void *destination, int value, unsigned int count);
+extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
 extern void func_80020B28(void *records);
-extern s32 func_8001F180(void);
+extern s32 gIsMcManagerBusy(void) __asm__("func_8001F180");
 
 /**
  * @brief Formats an empty PS1 memory-card image buffer and queues a card format write.
@@ -55,7 +55,7 @@ int func_80020B64(void)
 
     base = gOperationState;
     records = base + 0x9B0;
-    func_8001E4C0(records, 0, 0x1200);
+    gFillMemory(records, 0, 0x1200);
     h1 = 0x4D;
     h2 = 0x43;
     mk = 0xA0;
@@ -86,7 +86,7 @@ int func_80020B64(void)
         record += 0x80;
     } while (record < end);
     func_80020B28(records);
-    if (func_8001F180() != 0) {
+    if (gIsMcManagerBusy() != 0) {
         return 1;
     }
     g = gOperationState;

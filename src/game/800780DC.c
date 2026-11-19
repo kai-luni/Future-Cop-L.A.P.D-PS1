@@ -24,7 +24,7 @@ extern s32 gDemoPlayback __asm__("D_8009FA84");
 
 extern void gUpdatePrecinctUnlockFlag(void) __asm__("func_80077FFC");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void *func_8001E4C0(void *destination, int value, unsigned int count);
+extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
 extern void func_800898C8(void);
 extern void gOpenProfileSaveSubsystem(void) __asm__("func_8007F9CC");
 extern void gSetupFrontEndMenus(s32 arg) __asm__("func_80077AD4");
@@ -63,7 +63,7 @@ void func_800780DC(void)
     gUpdatePrecinctUnlockFlag();
     p = gAllocMemory(0x78, 2);
     D_8009F3F4 = (s32)p;
-    func_8001E4C0(p, 0, 0x78);
+    gFillMemory(p, 0, 0x78);
     func_800898C8();
     for (i = 0; i < 2; i++) {
         D_800A35D8[i].unk4 = 2;

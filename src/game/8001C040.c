@@ -12,6 +12,8 @@ struct Unk1C040 {
 
 extern u8 gLayerIndex __asm__("D_8009F225");
 extern struct Unk1C040 gLayerBlocks[] __asm__("D_800A06E0");
+void gSetFadeLayerColor(u32 color) __asm__("func_8001C040");
+
 
 /**
  * @brief Sets the colour of all fade layers.
@@ -29,8 +31,14 @@ extern struct Unk1C040 gLayerBlocks[] __asm__("D_800A06E0");
  * @par Callers
  * func_80076EB0 only - twice with 0, after selecting each layer, so that the
  * first visible frame is guaranteed to be black.
+ *
+ * @par Role and path
+ * Extracts the 8-bit red, green, and blue channels from a 24-bit color and
+ * writes them into every entry of gLayerBlocks (D_800A06E0) up to gLayerIndex
+ * (D_8009F225). Called by func_80076EB0 during boot to clear both fade layers
+ * to black; makes no outgoing calls.
  */
-void func_8001C040(u32 color)
+void gSetFadeLayerColor(u32 color)
 {
     s32 i;
 

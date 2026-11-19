@@ -6,11 +6,13 @@ typedef struct { u8 loc[4]; s32 value; } File;
 extern Entry gFileSlotTable[] __asm__("D_800A6D78");
 extern char gFileOpenResult[] __asm__("D_800A6DD8");
 extern File gFileTable[] __asm__("D_800A6E20");
-extern s32 func_8001CE10(void);
-extern s32 func_8001DC48(s32, s32, void *, char *);
-extern s32 func_8001C478(s32);
+extern s32 gCheckMediaReady(void) __asm__("func_8001CE10");
+extern s32 gFormatIso9660Path(s32, s32, void *, char *) __asm__("func_8001DC48");
+extern s32 gWaitCdLoaderIdle(s32) __asm__("func_8001C478");
 extern s32 func_8008FF20(File *, char *);
-extern s32 func_8001C588(File *);
+s32 gOpenCdFileSlot(s32 arg0, s32 arg1, void *arg2) __asm__("func_8001D424");
+
+extern s32 gCdlLocToByteOffset(File *) __asm__("func_8001C588");
 /**
  * @brief Opens a file and reserves one of the four file slots.
  *
@@ -45,8 +47,16 @@ extern s32 func_8001C588(File *);
  *
  * @par Callers
  * func_8001D5E4 (the name-directory search) and func_8001E110.
+ *
+ * @par Role and path
+ * Checks media readiness via func_8001CE10, reserves the first free slot in
+ * gFileSlotTable (D_800A6D78), normalizes the path into gFileOpenResult
+ * (D_800A6DD8) via func_8001DC48, waits via func_8001C478, and retries
+ * func_8008FF20 against gFileTable (D_800A6E20) up to 5 times. On match,
+ * stores byte position via func_8001C588, size, mode, and state 1 into the
+ * slot and returns the slot index; called by func_8001D5E4 and func_8001E110.
  */
-s32 func_8001D424(s32 arg0, s32 arg1, void *arg2)
+s32 gOpenCdFileSlot(s32 arg0, s32 arg1, void *arg2)
 {
     s32 i, j, ret;
     register s32 mode __asm__("$4");
@@ -54,7 +64,7 @@ s32 func_8001D424(s32 arg0, s32 arg1, void *arg2)
     register s32 three __asm__("$2");
     Entry *entry;
     register char *name __asm__("$20");
-    if (func_8001CE10() < 0) return -2;
+    if (gCheckMediaReady() < 0) return -2;
     i = 0;
     entry = gFileSlotTable;
     __asm__ volatile ("" : "+r" (entry));
@@ -76,10 +86,10 @@ s32 func_8001D424(s32 arg0, s32 arg1, void *arg2)
     __asm__ volatile ("" : "+r" (argument));
     name = (char *)0x800a0000;
     __asm__ volatile ("" : "+r" (name));
-    ret = func_8001DC48(mode, argument, arg2, name + 0x6dd8);
+    ret = gFormatIso9660Path(mode, argument, arg2, name + 0x6dd8);
     if (ret < 0) return ret;
     if (arg1 != 1 && arg1 != 17) return -6;
-    ret = func_8001C478(arg1);
+    ret = gWaitCdLoaderIdle(arg1);
     if (ret < 0) return ret;
     j = 0;
     do {
@@ -89,7 +99,7 @@ s32 func_8001D424(s32 arg0, s32 arg1, void *arg2)
     if (j != 5) {
         register s32 value __asm__("$2");
         register s32 copy __asm__("$4");
-        gFileSlotTable[i].pos = func_8001C588(gFileTable);
+        gFileSlotTable[i].pos = gCdlLocToByteOffset(gFileTable);
         value = gFileTable[0].value;
         copy = gFileSlotTable[i].pos;
         gFileSlotTable[i].mode = arg1;

@@ -14,6 +14,8 @@ extern u8 D_80020024[];
 extern void func_8008C9C0(void);
 extern s32 func_80091510(void *argument);
 extern void func_8008C9E0(void);
+void gAcquireMcCallback(void) __asm__("func_80020530");
+
 
 /**
  * @brief Acquires the memory-card callback lock, installing the card
@@ -34,8 +36,15 @@ extern void func_8008C9E0(void);
  *
  * @par Callers
  * func_800206D0.
+ *
+ * @par Role and path
+ * Acquires the recursive memory-card frame-callback lock by installing
+ * D_80020024 (func_80020024) via func_80091510 inside a critical section when
+ * gOperationState->lockCount is 0 and saving the previous callback in
+ * savedCallback, then increments lockCount. Reads and writes D_8009AB08;
+ * called by func_800206D0.
  */
-void func_80020530(void)
+void gAcquireMcCallback(void)
 {
     if (gOperationState->lockCount == 0) {
         func_8008C9C0();

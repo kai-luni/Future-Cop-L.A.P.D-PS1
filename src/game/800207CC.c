@@ -28,7 +28,7 @@ extern const struct Packed9 D_80010AF4;
 extern const struct Packed9 D_80010B00;
 extern const struct Packed6 D_8009F260;
 
-extern void func_8001E318(void *destination, const void *source, s32 length);
+extern void gCopyMemory(void *destination, const void *source, s32 length) __asm__("func_8001E318");
 
 /**
  * @brief Parses the 15 memory-card directory frames in D_8009AB08 into slot state and names.
@@ -92,7 +92,7 @@ void func_800207CC(void)
         }
         case 0x51:
             gOperationState->state[slot] = 1;
-            func_8001E318(gOperationState->primary[slot], &frame->bytes[10], 20);
+            gCopyMemory(gOperationState->primary[slot], &frame->bytes[10], 20);
             __asm__("" ::: "memory");
             *gOperationState->secondary[slot] = D_80010AF4;
             break;

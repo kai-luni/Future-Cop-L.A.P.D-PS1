@@ -12,8 +12,10 @@ struct UnkD6D0 {
 
 extern volatile struct UnkD6D0 gFileSlotTable[] __asm__("D_800A6D78");
 
-extern s32 func_8001C478(void);
-extern s32 func_8001D0A0(s32 index);
+extern s32 gWaitCdLoaderIdle(void) __asm__("func_8001C478");
+extern s32 gSeekCdFileSlot(s32 index) __asm__("func_8001D0A0");
+s32 gSeekFileSlot(s32 arg0, s32 arg1, s32 arg2) __asm__("func_8001D6D0");
+
 
 /**
  * @brief Seeks or queries the byte position of an open file slot in D_800A6D78.
@@ -39,8 +41,15 @@ extern s32 func_8001D0A0(s32 index);
  *
  * @par Callers
  * Confirmed: func_80028AB4 (0x80028B64 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Validates slot arg0 in gFileSlotTable (D_800A6D78), spins while f00 & 0xFF
+ * is 2 or 3, waits for func_8001C478 if (flags & 0xF) == 1, and computes or
+ * returns the seek position from origin arg2 & 7 (SET/CUR/END/tell). Clamps
+ * to [0, f08], calls func_8001D0A0 if arg2 & 8, and updates f00; called by
+ * func_80028AB4.
  */
-s32 func_8001D6D0(s32 arg0, s32 arg1, s32 arg2)
+s32 gSeekFileSlot(s32 arg0, s32 arg1, s32 arg2)
 {
     s32 sel;
     s32 a1;
@@ -70,7 +79,7 @@ s32 func_8001D6D0(s32 arg0, s32 arg1, s32 arg2)
     test = flags & 0xF;
     __asm__("" : "+r"(test) : "r"(flags));
     if (test == 1) {
-        a1 = func_8001C478();
+        a1 = gWaitCdLoaderIdle();
         if (a1 < 0) {
             return a1;
         }
@@ -111,7 +120,7 @@ s32 func_8001D6D0(s32 arg0, s32 arg1, s32 arg2)
     gFileSlotTable[arg0].f0C = a0;
 
     if (arg2 & 8) {
-        s32 ret = func_8001D0A0(arg0);
+        s32 ret = gSeekCdFileSlot(arg0);
         if (ret < 0) {
             return ret;
         }

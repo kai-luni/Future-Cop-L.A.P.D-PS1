@@ -11,7 +11,7 @@ extern s32 gOutStreamId __asm__("D_8009F6BC");
 extern s32 D_8009F6C8;
 extern void func_80024064(s32, s32, s32);
 extern void func_80023F08(void);
-extern void func_8001BBEC(s32, void *, s32, s32, s32);
+extern void gQueueVramUpload(s32, void *, s32, s32, s32) __asm__("func_8001BBEC");
 
 /**
  * @brief Steps synchronized audio-portrait playback in D_800A0C30 and queues VRAM uploads via func_8001BBEC.
@@ -76,7 +76,7 @@ s32 func_80029748(s32 *out)
         } while (index >= length);
     }
     index = (*frame)->stride * index + 0x28;
-    func_8001BBEC(0, (u8 *)*frame + index, 0x3C0, 0x1CC, 0);
+    gQueueVramUpload(0, (u8 *)*frame + index, 0x3C0, 0x1CC, 0);
     return 1;
 return0:
     return 0;

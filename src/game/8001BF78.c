@@ -5,6 +5,8 @@ extern u8 gLayerIndex __asm__("D_8009F225");
 
 extern void func_80091F60(s32 arg0);
 extern void func_8001BE68(void);
+void gInitFadeLayers(void) __asm__("func_8001BF78");
+
 
 /**
  * @brief Initialises the fade/dimmer layer system with exactly two layers.
@@ -27,8 +29,13 @@ extern void func_8001BE68(void);
  * @par Callers
  * func_80076EB0 - its return value is checked there, but this unit returns
  * nothing, so the caller only ever sees the leftover register value 0.
+ *
+ * @par Role and path
+ * Initializes the two-layer fade/display system by calling func_80091F60(0),
+ * setting gLayerIndex (D_8009F225) to 2, and invoking func_8001BE68() to
+ * populate gLayerBlocks. Called by func_80076EB0 during boot initialization.
  */
-void func_8001BF78(void)
+void gInitFadeLayers(void)
 {
     func_80091F60(0);
     gLayerIndex = 2;

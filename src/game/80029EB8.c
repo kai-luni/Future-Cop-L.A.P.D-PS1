@@ -19,7 +19,7 @@ extern volatile u8 D_8009F6A8;
 extern void func_80029DD8(void);
 extern void func_80029520(void);
 extern void func_80019584(void);
-extern void func_8001D3A8(s32 arg0);
+extern void gCloseFileSlot(s32 arg0) __asm__("func_8001D3A8");
 
 /**
  * @brief Resets the asset registry and loader state during subsystem teardown.
@@ -65,6 +65,6 @@ void func_80029EB8(void)
     if (old != -1) {
         while (D_8009F6A8 != 0) {
         }
-        func_8001D3A8(old);
+        gCloseFileSlot(old);
     }
 }

@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u8 gSelectedLayer __asm__("D_8009F224");
+u8 gGetSelectedLayer(void) __asm__("func_8001C034");
+
 
 /**
  * @brief Returns the current screen-offset selector.
@@ -14,8 +16,13 @@ extern u8 gSelectedLayer __asm__("D_8009F224");
  * @par Callers
  * func_8001B2C8 and func_8001B4A8 (frame buffer size/offset), and the unit at
  * 0x80088124 (image drawing).
+ *
+ * @par Role and path
+ * Returns the current gSelectedLayer (D_8009F224) byte written by
+ * func_8001C088. Called by func_8001B2C8, func_8001B4A8, and func_80088120 to
+ * query the active display buffer/layer index.
  */
-u8 func_8001C034(void)
+u8 gGetSelectedLayer(void)
 {
     return gSelectedLayer;
 }

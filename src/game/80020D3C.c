@@ -6,8 +6,8 @@ extern u8 D_80010B0C[];
 
 extern s32 func_80020C90(void *arg0);
 extern void func_8008CD30(void *buf, void *fmt, u32 n, void *arg);
-extern void func_8001F1B8(s32 a, s32 b, s32 c, s32 d);
-extern s32 func_8001F37C(void);
+extern void gQueueMcOpMode2(s32 a, s32 b, s32 c, s32 d) __asm__("func_8001F1B8");
+extern s32 gGetMcPendingFlag(void) __asm__("func_8001F37C");
 
 /**
  * @brief Queues an asynchronous memory-card read for a named save file.
@@ -49,8 +49,8 @@ s32 func_80020D3C(void *arg0, s32 arg1, u32 arg2)
         if (r != 0) {
             func_8008CD30(buf, D_80010B0C, *gOperationState >> 4, arg0);
             n = (arg2 + 0x7F) >> 7;
-            func_8001F1B8(r << 6, n, arg1, ret);
-            if (func_8001F37C() == 0) {
+            gQueueMcOpMode2(r << 6, n, arg1, ret);
+            if (gGetMcPendingFlag() == 0) {
                 ret = n;
             }
         }

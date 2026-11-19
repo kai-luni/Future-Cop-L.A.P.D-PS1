@@ -1,8 +1,8 @@
 // Categories: Platform > Memory Card | BIOS > Events | Platform > Interrupts
 #include "game/types.h"
 
-extern void func_8002036C(void);
-extern void func_8002059C(void);
+extern void gReleaseMcEvents(void) __asm__("func_8002036C");
+extern void gReleaseMcCallback(void) __asm__("func_8002059C");
 
 /**
  * @brief Releases memory-card BIOS event handles and restores the card interrupt callback lock.
@@ -28,6 +28,6 @@ extern void func_8002059C(void);
  */
 void func_8002078C(void)
 {
-    func_8002036C();
-    func_8002059C();
+    gReleaseMcEvents();
+    gReleaseMcCallback();
 }

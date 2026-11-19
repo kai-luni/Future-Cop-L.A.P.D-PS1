@@ -1,3 +1,5 @@
+void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
+
 // Categories: Utilities > Memory
 /**
  * @brief memset(): fills @c count bytes at @c destination with @c value.
@@ -14,8 +16,13 @@
  * @par Callers
  * The whole engine: decoder set-up, movie context, image jobs, the object table
  * and every structure that has to start out zeroed.
+ *
+ * @par Role and path
+ * Fills count bytes starting at destination with the low 8 bits of value
+ * byte-by-byte and returns destination. Touches no globals and makes no
+ * calls; used across the engine to zero or initialize buffers and structures.
  */
-void *func_8001E4C0(void *destination, int value, unsigned int count)
+void *gFillMemory(void *destination, int value, unsigned int count)
 {
     unsigned char *current = destination;
     void *result = destination;

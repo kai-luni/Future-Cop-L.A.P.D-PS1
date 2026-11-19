@@ -13,6 +13,8 @@ extern int func_8008A044(int, int, int);
 extern void func_8008A240(int, u8 *, int);
 extern int func_8008A1C0(int, u8 *);
 extern int func_80089F4C(int, int, int);
+void gUpdatePadActuators(u32 arg) __asm__("func_8001EC94");
+
 
 /**
  * @brief Manages DualShock actuator alignment, rumble motor expiration, and motor commands for a pad port.
@@ -35,8 +37,17 @@ extern int func_80089F4C(int, int, int);
  *
  * @par Callers
  * Confirmed: func_8001EF8C (0x8001EFB4 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Updates DualShock actuator state for controller slot arg (0 or 1), expiring
+ * active motor timers in gPadActuators[arg].times against gFrameTickCounter
+ * and polling pad mode via func_80089E8C. Resets actuator state on mode 1,
+ * probes and aligns actuators via func_8008A044, func_8008A1C0, and
+ * func_8008A240 on mode 6 (or enables on mode 2), and updates motor outputs
+ * when active. Reads D_8009FA2C and updates D_800A6FF8; called by
+ * func_8001EF8C.
  */
-void func_8001EC94(u32 arg)
+void gUpdatePadActuators(u32 arg)
 {
     State *s;
     int i, mode, n, count, kind;

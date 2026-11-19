@@ -6,7 +6,9 @@ struct InputMaskMap {
 };
 
 extern struct InputMaskMap gPadMappingTable[2] __asm__("D_800AAC50");
-extern u32 func_8001EF8C(void);
+extern u32 gPollPadButtons(void) __asm__("func_8001EF8C");
+u32 gMapPadButtons(u32 profile) __asm__("func_8001E620");
+
 
 /**
  *  @brief Maps the current pressed-input mask to a profile-specific result mask.
@@ -25,8 +27,14 @@ extern u32 func_8001EF8C(void);
  *  No direct writes; the input query may have its own effects.
  *  @par Callers
  *  Confirmed: func_80057864.
+ *
+ * @par Role and path
+ * Polls the current pressed-button mask via func_8001EF8C and remaps up to 14
+ * buttons through gPadMappingTable[profile] into upper result bits when
+ * profile is 0 or 1. Reads D_800AAC50 (gPadMappingTable) and returns 0 for
+ * out-of-range profiles; called by func_80057864.
  */
-u32 func_8001E620(u32 profile)
+u32 gMapPadButtons(u32 profile)
 {
     register struct InputMaskMap *map __asm__("$5");
     register u32 pressed __asm__("$6");
@@ -37,7 +45,7 @@ u32 func_8001E620(u32 profile)
     register u32 secondMask __asm__("$3");
     register u32 firstSet __asm__("$2");
 
-    pressed = func_8001EF8C();
+    pressed = gPollPadButtons();
     result = 0;
     if (profile < 2) {
         offset = (profile * 8) - profile;

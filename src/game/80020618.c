@@ -3,8 +3,10 @@
 
 extern u8 *gOperationState __asm__("D_8009AB08");
 
-extern void *func_8001E4C0(void *destination, int value, unsigned int count);
-extern int func_80020610(void);
+extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
+extern int gGetMcStateSize(void) __asm__("func_80020610");
+void *gInitMcState(s32 arg0, void *arg1) __asm__("func_80020618");
+
 
 /**
  * @brief Initialises the memory-card manager inside a caller-supplied block.
@@ -23,8 +25,15 @@ extern int func_80020610(void);
  *
  * @par Callers
  * func_8007F9CC (profile open).
+ *
+ * @par Role and path
+ * Initializes the memory-card manager in a caller-supplied 0x1BB8-byte block
+ * arg1 for channel arg0 (0 or 1) when gOperationState (D_8009AB08) is null,
+ * zeroing it via func_8001E4C0, populating 16 slot and directory frame
+ * pointers at +0x44 and +0x84, and storing arg0 << 4 in the first word.
+ * Writes D_8009AB08; called by func_8007F9CC.
  */
-void *func_80020618(s32 arg0, void *arg1)
+void *gInitMcState(s32 arg0, void *arg1)
 {
     u32 i;
     u8 *result;
@@ -32,7 +41,7 @@ void *func_80020618(s32 arg0, void *arg1)
     if (gOperationState == 0) {
         if ((u32)arg0 < 2) {
             gOperationState = arg1;
-            func_8001E4C0(gOperationState, 0, func_80020610());
+            gFillMemory(gOperationState, 0, gGetMcStateSize());
 
             for (i = 0; i < 0x10; i++) {
                 ((u32 *)(gOperationState + 0x44))[i] =

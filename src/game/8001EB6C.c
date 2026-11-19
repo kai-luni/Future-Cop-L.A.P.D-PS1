@@ -1,5 +1,7 @@
 // Categories: Input > Controller > Rumble | Input > Controller
-extern void func_8001EBA8(int index);
+extern void gStopPadRumble(int index) __asm__("func_8001EBA8");
+void gStopAllPadRumble(void) __asm__("func_8001EB6C");
+
 
 /**
  * @brief Stops the vibration motors on controller ports 0 and 1.
@@ -23,12 +25,17 @@ extern void func_8001EBA8(int index);
  * @par Callers
  * Confirmed: func_80025B7C (0x80025B98) and func_80027510 (0x80027CD8), the pause path of the frame driver.
  * Unknown: one call at 0x800274CC from a routine that is not in the matching set.
+ *
+ * @par Role and path
+ * Stops vibration on both controller ports by looping index from 0 to 1 and
+ * calling func_8001EBA8(index). Touches no globals directly; called by
+ * func_80025B7C and func_80027510 when pausing or closing.
  */
-void func_8001EB6C(void)
+void gStopAllPadRumble(void)
 {
     int index;
 
     for (index = 0; index < 2; index++) {
-        func_8001EBA8(index);
+        gStopPadRumble(index);
     }
 }

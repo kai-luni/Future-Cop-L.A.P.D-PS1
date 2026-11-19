@@ -449,7 +449,7 @@ Diese Adressen tragen alle denselben Charakter: sie werden als `handler`-Feld in
 
 `D_8001C808`, `D_8002DEA8`, `D_8003190C`, `D_80036E6C`, `D_80037708`, `D_8003B2D0`, `D_80044610`, `D_800578B4`, `D_80059ABC`, `D_8005B934`, `D_8005CA04`, `D_8007F618`, `D_80080038`, `D_80086950`, `D_80086D74`, `D_800A36B8`, `D_800A36E8`, `D_800A3778`, `D_800A38F8`.
 
-**Nicht umbenannt:** `D_8009BEF4`, `D_8009C810`, `D_8009F614` — Byte-Vergleich kippt nach dem Rename.
+**Nicht umbenannt:** `D_8009BEF4`, `D_8009C810` — Byte-Vergleich kippt nach dem Rename. `D_8009F614` ist in der vierten Runde doch als `gCdTargetLoc` durchgegangen: der frühere Fehlschlag kam von einer Inline-Asm-Zeichenkette, die der Rename mitzog, nicht vom Symbol selbst.
 
 ## Textformatierung, Audio-Pegel, Missions- und Dateitabellen
 
@@ -688,7 +688,7 @@ Fünfzig weitere Globals, wieder in **einem** Commit. Zwei davon mussten in `800
 | `D_800A0A88` | `gPlayerCountRecord` | `int` | Spielerzahl-Datensatz; nur der Wert 1 zählt als Einzelspieler. |
 | `D_8009F688` | `gMissionParam` | `s32` | Parameter für `func_80059BFC(flag, …)`, Flag 2 bei `unk0C == 2`. |
 
-**Nicht umbenannt:** `D_8009F61C` (Anfangs-Statuswort des CD-Lesers) und `D_8009F618` (Klammer-Flag um den Callback-Aufruf) — bei beiden kippt der Byte-Vergleich nach dem Rename, sie bleiben mit Retail-Namen stehen.
+`D_8009F61C` (Anfangs-Statuswort des CD-Lesers) und `D_8009F618` (Klammer-Flag um den Callback-Aufruf) tragen seit der vierten Runde die Namen `gCdCurrentLoc` und `gCdCallbackActive`; beide Units mit Zugriff sind byte-identisch geblieben.
 
 ## Grafik-, Sound- und Weltbereich: die zweite Runde
 
@@ -984,6 +984,28 @@ Drei Wörter dieses Pfads bleiben ohne C-Namen: `D_8009F378`, `D_8009F380` und `
 | `D_8009DDEC` | `gLogPrintf` | `void (*)(char *, ...)` | Funktionszeiger auf die zentrale Log-Routine; im Retail mit `func_8008E000` vorbelegt und im ganzen Code als Ausgabe verwendet. **Bestätigt.** | `func_80092910`, `func_800930B0` |
 
 Alle hier genannten Variablen behalten ihren ursprünglichen Typ; die betroffenen Units sind nach der Umbenennung weiterhin byte-identisch.
+
+## CD-ROM-, Datei- und Memory-Card-Pfad: die vierte Runde
+
+Zwölf Globals dieses Pfads in **einem** Commit. Die Namen folgen dem, was die Units selbst schon beschreiben: das Verzeichnis-Lesen, das Suchen einer Datei, das Setzen des Zielorts und der Status des eingehängten Callbacks.
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_1F801800` | `gCdStatusReg` | `volatile u8` | Index-/Statusregister des CD-ROM-Controllers; das Schreiben von 0 quittiert den Interrupt. | `8001CE54.c:140` (Schreiben), `8001C680.c:3` (Deklaration) |
+| `D_1F801803` | `gCdInterruptReg` | `volatile u8` | Interrupt-Freigabe und -Flag desselben Controllers, direkt hinter dem Statusregister. | `8001CE54.c:141` |
+| `D_8009AABC` | `gDefaultSearchMgr` | `u8[]` | Voreingestellte Suchverwaltung; wird als Rückfall zugewiesen, wenn der Aufrufer keine eigene mitbringt. | `8001D248.c:149` |
+| `D_8009F240` | `gFileSearchMgr` | `void *` / `struct Manager *` | Aktive Suchverwaltung der Dateiebene; die Units deklarieren sie unterschiedlich typisiert. | `8001D248.c:149` (Schreiben), `8001D5E4.c:13` (Lesen) |
+| `D_8009F248` | `gCdReadCommand` | `u8` | Kommandobyte, das an `func_8008E1BC` geht; steuert, ob gelesen oder gesucht wird. | `8001CE54.c:186` |
+| `D_8009F258` | `gAltFileSearchDir` | `s32[]` | Zweites Suchverzeichnis, an den Dateipfad als alternatives Ziel übergeben. | `8001E110.c:12` |
+| `D_8009F5E8` | `gUploadRingWriteIdx` | `volatile s32` | Schreibzeiger in den Upload-Ring; jedes `gQueueVramUpload` schiebt ihn um eins weiter. | `8001BBEC.c:13` |
+| `D_8009F614` | `gCdTargetLoc` | `u8[4]` (`CdlLOC`) | Zielort auf der Disc in BCD; wird vor jedem Lesen aus dem Dateislot geschrieben. | `8001D0A0.c:58` (Schreiben), `8001CE54.c:154` (Vergleich) |
+| `D_8009F618` | `gCdCallbackActive` | `s32` | Klammer-Flag um den Callback-Aufruf: solange ungleich 0, läuft die Übergabe. | `8001D130.c:95` (Schreiben), `8001CE54.c:150` (Lesen) |
+| `D_8009F61C` | `gCdCurrentLoc` | `u8[4]` (`CdlLOC`) | Zuletzt gelesener Ort; mit `gCdTargetLoc` verglichen, um zu entscheiden, ob neu gesucht werden muss. | `8001CE54.c:153` |
+| `D_800A8E68` | `gCdDriveStateTable` | `s32[]` | Zustandstabelle des Laufwerks, beim Aufsetzen der Dateiebene gesetzt. | `8001D248.c:103` |
+
+`D_8009F610` stand schon vorher als `gCdCommandParam` in der Datei; zwei Units deklarierten ihn noch mit Retail-Namen und sind jetzt angeglichen.
+
+**Nicht umbenannt:** `D_8009F611` und `D_8009F615` sind einzelne Bytes **innerhalb** von `gCdCommandParam` und `gCdTargetLoc` (`D_8009F615 - 1` zeigt auf den Zielort). Ein eigener Name würde ein Byte aus dem Puffer herausreißen, deshalb bleiben sie stehen. `func_80010000`/`D_80010000` (Laderzustand an der Speichergrenze) bleibt ebenfalls: das Symbol wird in zwei Units unterschiedlich benannt und steht zusätzlich in Inline-Asm-Blöcken.
 
 ## Wie diese Datei weitergeführt wird
 

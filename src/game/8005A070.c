@@ -3,7 +3,7 @@
 
 extern u8 gSourceBlock20[] __asm__("D_8009AFA0");
 
-extern void func_8001E318(u8 *destination, u8 *source, s32 size);
+extern void gCopyMemory(u8 *destination, u8 *source, s32 size) __asm__("func_8001E318");
 
 /**
  * @brief Copies the default 20-byte gauge template into object + 0x54.
@@ -30,5 +30,5 @@ extern void func_8001E318(u8 *destination, u8 *source, s32 size);
  */
 void func_8005A070(u8 *object)
 {
-    func_8001E318(object + 0x54, gSourceBlock20, 0x14);
+    gCopyMemory(object + 0x54, gSourceBlock20, 0x14);
 }

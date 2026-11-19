@@ -7,7 +7,7 @@ extern s32 D_8009F5A0;
 extern s32 gHeapMainBlockSize __asm__("D_8009F9E8");
 extern s32 gHeapPoolBase __asm__("D_8009FA9C");
 
-extern s32 func_8001E240(s32, s32);
+extern s32 gHeapAllocRaw(s32, s32) __asm__("func_8001E240");
 
 /**
  * @brief Initialises the heap: the free-range table and the big main block.
@@ -45,12 +45,12 @@ void gInitHeap(void)
     gFreeRangeTablePtr = 0;
     D_8009F5A0 = 0x182;
 
-    gFreeRangeTablePtr = func_8001E240(0x810, 3);
+    gFreeRangeTablePtr = gHeapAllocRaw(0x810, 3);
     gHeapMainBlockSize = 0x15A000;
-    gHeapPoolBase = func_8001E240(0x15A000, 3);
+    gHeapPoolBase = gHeapAllocRaw(0x15A000, 3);
 
     while (gHeapPoolBase == 0) {
         gHeapMainBlockSize -= 0x1000;
-        gHeapPoolBase = func_8001E240(gHeapMainBlockSize, 3);
+        gHeapPoolBase = gHeapAllocRaw(gHeapMainBlockSize, 3);
     }
 }

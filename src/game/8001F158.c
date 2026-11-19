@@ -5,6 +5,8 @@ extern s32 gScreenModeHook __asm__("D_8009F99C");
 extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 
 extern s32 func_80091510(void (*callback)(void));
+void gStopFrameCallback(void) __asm__("func_8001F158");
+
 
 /**
  * @brief Stops the per-frame callback driver started by func_8001F0B8.
@@ -27,8 +29,14 @@ extern s32 func_80091510(void (*callback)(void));
  *
  * @par Callers
  * Confirmed: func_8001E540 (0x8001E568), the controller/device shutdown, and only when D_8009FA20 reports the driver as running.
+ *
+ * @par Role and path
+ * Stops the per-frame callback driver by calling func_80091510(0) to
+ * uninstall the callback and clearing gScreenModeHook (D_8009F99C) and
+ * gFrameCallbackEnabled (D_8009FA20). Called by func_8001E540 when D_8009FA20
+ * is non-zero.
  */
-void func_8001F158(void)
+void gStopFrameCallback(void)
 {
     func_80091510(0);
     gScreenModeHook = 0;

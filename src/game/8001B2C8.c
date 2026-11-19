@@ -10,7 +10,7 @@ extern s32 D_8009F5D8;
 extern s32 D_8009F5DC;
 extern s32 gPacketPoolBase __asm__("D_8009F5E0");
 extern s32 gNodePoolBase __asm__("D_8009F5E4");
-extern volatile s32 D_8009F5E8;
+extern volatile s32 gUploadRingWriteIdx __asm__("D_8009F5E8");
 extern volatile s32 D_8009F5EC;
 extern volatile s32 D_8009F5F0;
 extern s32 gFrameBlockCount __asm__("D_8009F5F4");
@@ -24,7 +24,7 @@ extern s32 gPrimPoolEnd __asm__("D_8009FA28");
 extern s32 gPacketCursor __asm__("D_8009FA90");
 
 extern s32 gAllocMemory(s32, s32) __asm__("func_80017EBC");
-extern u8 func_8001C034(void);
+extern u8 gGetSelectedLayer(void) __asm__("func_8001C034");
 extern void func_80093178(s32, s32);
 
 /**
@@ -126,13 +126,13 @@ void func_8001B2C8(s32 arg0, s32 arg1)
     value += offset;
     gPacketLimit = value;
 
-    value = func_8001C034();
+    value = gGetSelectedLayer();
     if (value != 0) {
         value = 0x100;
     }
     offset = 0x100 - value;
     gScreenOffsetValue = offset;
     D_8009F5EC = 0;
-    D_8009F5E8 = 0;
+    gUploadRingWriteIdx = 0;
     D_8009F5F0 = 0;
 }

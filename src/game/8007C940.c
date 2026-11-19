@@ -4,11 +4,11 @@
 extern s32 D_8009F8B0[];
 extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 extern s32 func_80046C84(s32, s32);
-extern s32 func_8001EF34(s32);
-extern u8 func_8001EAEC(s32);
-extern u8 func_8001EB2C(s32);
-extern void func_8001EC04(s32, s32);
-extern void func_8001E96C(s32, s32);
+extern s32 gGetPadType(s32) __asm__("func_8001EF34");
+extern u8 gIsPadRumbleReady(s32) __asm__("func_8001EAEC");
+extern u8 gIsPadRumbleEnabled(s32) __asm__("func_8001EB2C");
+extern void gSetPadRumbleEnabled(s32, s32) __asm__("func_8001EC04");
+extern void gSetPortSmallRumble(s32, s32) __asm__("func_8001E96C");
 
 /**
  * @brief Filters the pad state for one port and toggles its vibration pair.
@@ -62,9 +62,9 @@ s32 gToggleVibrationPair(s32 arg0, s32 arg1)
         if ((buttons & ~base[player]) < 0) {
             func_80046C84(0x48, 0);
             port = (player == 1);
-            if (func_8001EF34(port)) {
+            if (gGetPadType(port)) {
                 register s32 connected __asm__("$2");
-                connected = func_8001EAEC(port) & 0xff;
+                connected = gIsPadRumbleReady(port) & 0xff;
                 __asm__("" : "=r"(connected) : "0"(connected));
                 if (!connected) return buttons;
                 {
@@ -80,10 +80,10 @@ s32 gToggleVibrationPair(s32 arg0, s32 arg1)
                 __asm__("" : "=r"(toggle) : "0"(toggle));
                 *p = toggle;
                 if (toggle) {
-                    saved = func_8001EB2C(player);
-                    func_8001EC04(player, 1);
-                    func_8001E96C(player, 1);
-                    func_8001EC04(player, saved);
+                    saved = gIsPadRumbleEnabled(player);
+                    gSetPadRumbleEnabled(player, 1);
+                    gSetPortSmallRumble(player, 1);
+                    gSetPadRumbleEnabled(player, saved);
                 }
                 }
             }

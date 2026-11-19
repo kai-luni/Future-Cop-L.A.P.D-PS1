@@ -3,7 +3,7 @@
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 
-extern void *func_8001E4C0(void *destination, int value, unsigned int count);
+extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
 extern s32 func_8008CCC0(u8 *arg0);
 extern s32 func_800210D0(u8 arg0);
 
@@ -36,7 +36,7 @@ void gEncodeProfileNameGlyphs(u8 *arg0)
     s16 *dst;
     u8 *src = arg0;
 
-    func_8001E4C0(gSaveProfileImage + 4, 0, 0x40);
+    gFillMemory(gSaveProfileImage + 4, 0, 0x40);
     count = func_8008CCC0(src);
     dst = (s16 *)(gSaveProfileImage + 4);
     for (i = 0; i < count; i++) {

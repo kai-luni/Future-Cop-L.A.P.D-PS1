@@ -1,8 +1,10 @@
 // Categories: Platform > Controller | Input > DualShock
 #include "game/types.h"
 
-extern void func_8001E9AC(s32 port, s32 enable);
-extern void func_8001EA5C(s32 port, s32 level);
+extern void gSetSmallMotor(s32 port, s32 enable) __asm__("func_8001E9AC");
+extern void gSetLargeMotor(s32 port, s32 level) __asm__("func_8001EA5C");
+void gStopPadRumble(s32 port) __asm__("func_8001EBA8");
+
 
 /**
  * @brief Switches a pad port's motors and mode off.
@@ -21,8 +23,13 @@ extern void func_8001EA5C(s32 port, s32 level);
  * Stops the pad's vibration.
  * @par Callers
  * Unknown: no direct edge; the counterpart of the motor start path.
+ *
+ * @par Role and path
+ * Clamps the controller port index to [0, 1] and stops both vibration
+ * actuators by calling func_8001E9AC(port, 0) and func_8001EA5C(port, 0).
+ * Touches no globals directly; called by func_8001EB6C and func_8001EC04.
  */
-void func_8001EBA8(s32 port)
+void gStopPadRumble(s32 port)
 {
     s32 clamped;
 
@@ -36,6 +43,6 @@ void func_8001EBA8(s32 port)
         clamped = 0;
     }
     port = clamped;
-    func_8001E9AC(port, 0);
-    func_8001EA5C(port, 0);
+    gSetSmallMotor(port, 0);
+    gSetLargeMotor(port, 0);
 }

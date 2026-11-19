@@ -1,5 +1,7 @@
 // Categories: Platform > CD-ROM | Utilities > Comparison
 #include "game/types.h"
+s32 gCompareCdlLoc(u8 *a, u8 *b) __asm__("func_8001C3F8");
+
 
 /**
  * @brief Lexicographically compares two 3-byte CD-ROM CdlLOC position triples (minute, second, sector).
@@ -24,8 +26,14 @@
  *
  * @par Callers
  * Confirmed: func_8001CE54 (0x8001CFBC in asm/us/main.s, comparing D_8009F61C and D_8009F614) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Compares bytes 0..2 of two 3-byte CdlLOC position arrays in order,
+ * returning 1 if b > a, -1 if b < a, or 0 if equal. Called by func_8001CE54
+ * to compare gCdCurrentLoc against gCdTargetLoc; touches no globals and makes
+ * no calls.
  */
-s32 func_8001C3F8(u8 *a, u8 *b)
+s32 gCompareCdlLoc(u8 *a, u8 *b)
 {
     if (b[0] > a[0]) {
         return 1;

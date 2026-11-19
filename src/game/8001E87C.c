@@ -17,6 +17,8 @@ extern u8 gPadBuffers[] __asm__("D_800A78F0");
 
 extern void func_8008BDB0(u8 *start, u8 *end);
 extern void func_80089E00(void);
+void gInitPadActuators(void) __asm__("func_8001E87C");
+
 
 /**
  *  @brief Initializes two controller actuator slots and related state.
@@ -34,8 +36,14 @@ extern void func_80089E00(void);
  *  Writes slot fields and invokes helpers that may modify related state.
  *  @par Callers
  *  Confirmed: func_8001E4E4.
+ *
+ * @par Role and path
+ * Initializes the two controller actuator slots in gPadActuators
+ * (D_800A6FF8), clears the 0x24-byte gPadBuffers (D_800A78F0) range via
+ * func_8008BDB0, and initializes the pad subsystem via func_80089E00. Called
+ * by func_8001E4E4 during device initialization.
  */
-void func_8001E87C(void)
+void gInitPadActuators(void)
 {
     s32 i;
     s32 j;

@@ -17,7 +17,7 @@ typedef struct State {
     int e;
 } State;
 extern volatile State *gMovieAudioState __asm__("D_8009F4D8");
-extern void *func_8001E4C0(void *, int, unsigned int);
+extern void *gFillMemory(void *, int, unsigned int) __asm__("func_8001E4C0");
 extern void gMovieAudioSetVoiceAttrs(void *, int, int) __asm__("func_80086C74");
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
@@ -72,7 +72,7 @@ int gInitMovieAudio(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b
     if (state) {
     if (!a || !b || !c || !d) return 0;
     gMovieAudioState = state;
-    func_8001E4C0(state, 0, 0x7B80);
+    gFillMemory(state, 0, 0x7B80);
     for (i = 0; i < 0x300; i += 0x10)
         *(i + (char *)gMovieAudioState + 0x7811) = 2;
     gMovieAudioState->one = 1;

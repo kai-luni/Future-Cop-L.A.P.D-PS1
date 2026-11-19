@@ -20,7 +20,7 @@ extern void *gCamera __asm__("D_8009F9E4");
 extern u8 *gFocusPositions[] __asm__("D_8009F9A0");
 extern u8 *gPlayerEntities[] __asm__("D_8009FA58");
 
-extern void func_8001BFD8(u8 value);
+extern void gSetDisplayEnabled(u8 value) __asm__("func_8001BFD8");
 extern void func_8002703C(void);
 extern void gRunSoloSessionFrame(void) __asm__("func_800271A4");
 extern void gRunSessionFrame(void) __asm__("func_80027510");
@@ -117,7 +117,7 @@ void gRunGameFrameLoop(void)
     gFrameDeltaPrev1 = b;
     gFrameDeltaPrev2 = b;
 
-    func_8001BFD8(0);
+    gSetDisplayEnabled(0);
 
     if (gScreenState != 4 && gScreenState != 0xD && gScreenState != work) {
         goto finished;
@@ -192,5 +192,5 @@ frame:
         goto frame;
     }
 finished:
-    func_8001BFD8(1);
+    gSetDisplayEnabled(1);
 }

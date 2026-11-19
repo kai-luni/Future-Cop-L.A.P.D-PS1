@@ -24,10 +24,10 @@ extern s32 gLayerModeBits __asm__("D_8009F968");
 extern s32 gFileSearchGroup __asm__("D_8009F238");
 extern Params88120 gFileTable __asm__("D_800A6E20");
 
-extern s32 func_8001D5E4(s32 arg0, s32 arg1);
-extern void func_8001D3A8(s32 handle);
+extern s32 gOpenFileInSearchGroup(s32 arg0, s32 arg1) __asm__("func_8001D5E4");
+extern void gCloseFileSlot(s32 handle) __asm__("func_8001D3A8");
 extern void func_80092BF4(s32 arg0);
-extern u8 func_8001C034(void);
+extern u8 gGetSelectedLayer(void) __asm__("func_8001C034");
 extern void *func_8008799C(s32 size);
 extern void gMovieFreeDecodeBuffer(void *ptr) __asm__("func_800879BC");
 extern void func_80092C8C(s32 arg0);
@@ -48,7 +48,7 @@ extern s32 gMovieAudioBusyCount(void) __asm__("func_80086FA8");
 extern void gShutdownMovieAudio(void) __asm__("func_80087750");
 extern void gMovieStreamReaderClose(void) __asm__("func_80089874");
 extern s32 func_800858E0(void);
-extern void func_8001C088(u8 mode, u8 enable);
+extern void gSelectFadeLayer(u8 mode, u8 enable) __asm__("func_8001C088");
 extern s32 func_8001BFE4(void);
 
 /*
@@ -146,7 +146,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
     if (gLayerOpenResult == 0) {
         return 0;
     }
-    handle = func_8001D5E4(arg0, gFileSearchGroup);
+    handle = gOpenFileInSearchGroup(arg0, gFileSearchGroup);
     if (handle < 0) {
         func_80092BF4(1);
         return 0;
@@ -161,7 +161,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         rectB.w = 0x1E0;
         rectB.h = 1;
         masked = gMovieDisplayMode & 2;
-        page = func_8001C034();
+        page = gGetSelectedLayer();
         if (page == 0) {
             rectA.y = 0x100;
             rectB.y = 0;
@@ -240,7 +240,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         }
         gMovieStreamReaderClose();
     }
-    func_8001D3A8(handle);
+    gCloseFileSlot(handle);
 
     if ((gMovieDisplayMode & 0x24) == 0x24) {
         rectC.x = 0;
@@ -286,7 +286,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         func_80092C8C(0);
         gMovieFreeDecodeBuffer(out16);
         gMovieFreeDecodeBuffer(in8);
-        func_8001C088(mode, 0);
+        gSelectFadeLayer(mode, 0);
         func_80091270(0);
         func_8001BFE4();
         rectC.x = 0;
@@ -303,7 +303,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         gMoveImage(&rectC, 0, rectD.y);
         func_80092C8C(0);
         func_80091270(0);
-        func_8001C088(1 - mode, 0);
+        gSelectFadeLayer(1 - mode, 0);
         func_80091270(0);
         func_8001BFE4();
     }

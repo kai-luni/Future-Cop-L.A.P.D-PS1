@@ -10,16 +10,16 @@ extern u32 *gOpcodeTable __asm__("D_8009F9F8");
 extern u8 D_8009B2DC[];
 
 extern void func_8008CA30(u32 arg0, u32 arg1);
-extern u32 *func_8001E240(s32 arg0, s32 arg1);
+extern u32 *gHeapAllocRaw(s32 arg0, s32 arg1) __asm__("func_8001E240");
 extern void gInitHeap(void) __asm__("func_80017BE8");
 extern void func_8008DEA0(void);
 extern s32 func_8001E4E4(void);
-extern s32 func_8001BF78(void);
-extern void func_8001C088(s32 mode, s32 enable);
-extern void func_8001C040(u32 color);
+extern s32 gInitFadeLayers(void) __asm__("func_8001BF78");
+extern void gSelectFadeLayer(s32 mode, s32 enable) __asm__("func_8001C088");
+extern void gSetFadeLayerColor(u32 color) __asm__("func_8001C040");
 extern s32 func_8001BFE4(void);
-extern void func_8001D248(s32 arg0, s32 arg1, u8 *arg2);
-extern void func_8001F0B8(void);
+extern void gInitCdFileSystem(s32 arg0, s32 arg1, u8 *arg2) __asm__("func_8001D248");
+extern void gStartFrameCallback(void) __asm__("func_8001F0B8");
 extern void gInitCvkStreamSubsystem(void) __asm__("func_8002333C");
 
 /**
@@ -79,14 +79,14 @@ s32 gInitRuntime(void)
     result = 0;
     func_8008CA30(D_8009EA04, (D_8009EA08 >> 3) << 3);
 
-    gGameSession = func_8001E240(0xF4, 3);
+    gGameSession = gHeapAllocRaw(0xF4, 3);
     for (i = 0x38; i >= 0; i--) {
         gGameSession[i] = 0;
     }
 
-    D_8009FAD4 = func_8001E240(0x190, 3);
-    gVmCountdowns = func_8001E240(0x80, 3);
-    gOpcodeTable = func_8001E240(0x80, 3);
+    D_8009FAD4 = gHeapAllocRaw(0x190, 3);
+    gVmCountdowns = gHeapAllocRaw(0x80, 3);
+    gOpcodeTable = gHeapAllocRaw(0x80, 3);
 
     gInitHeap();
     func_8008DEA0();
@@ -94,19 +94,19 @@ s32 gInitRuntime(void)
     if (func_8001E4E4() != 0) {
         goto done;
     }
-    if (func_8001BF78() != 0) {
+    if (gInitFadeLayers() != 0) {
         goto done;
     }
 
-    func_8001C088(1, 1);
-    func_8001C040(0);
-    func_8001C088(0, 1);
-    func_8001C040(0);
+    gSelectFadeLayer(1, 1);
+    gSetFadeLayerColor(0);
+    gSelectFadeLayer(0, 1);
+    gSetFadeLayerColor(0);
 
     result = 1;
     func_8001BFE4();
-    func_8001D248(0, 0, D_8009B2DC);
-    func_8001F0B8();
+    gInitCdFileSystem(0, 0, D_8009B2DC);
+    gStartFrameCallback();
     gInitCvkStreamSubsystem();
 
 done:

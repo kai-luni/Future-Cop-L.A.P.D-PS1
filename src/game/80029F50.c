@@ -85,7 +85,7 @@ extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern struct FixedPool *func_800194DC(s32 count, s32 size, s32 tag);
-extern s32 func_8001D5E4(void *arg0, s32 arg1);
+extern s32 gOpenFileInSearchGroup(void *arg0, s32 arg1) __asm__("func_8001D5E4");
 
 /**
  * @brief Initialises the streaming subsystem: four 0x6014-byte buffer nodes,
@@ -182,7 +182,7 @@ void func_80029F50(void *arg0)
     state->unk0C = -2;
     state->unk2C = func_800194DC(0x280, 8, 1);
 
-    index = func_8001D5E4(arg0, gFileSearchGroup);
+    index = gOpenFileInSearchGroup(arg0, gFileSearchGroup);
     state->unk00 = index;
     value = -9;
     if (index < 4) {

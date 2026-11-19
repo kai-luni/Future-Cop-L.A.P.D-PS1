@@ -11,7 +11,9 @@ struct OuterState {
     struct InnerState *inner;
 };
 
-extern void func_8001E9AC(int index);
+extern void gSetSmallMotor(int index) __asm__("func_8001E9AC");
+void gSetEntitySmallRumble(struct OuterState *state) __asm__("func_8001E930");
+
 
 /**
  * @brief Resolves a player entity's controller port index and toggles its small actuator.
@@ -35,9 +37,15 @@ extern void func_8001E9AC(int index);
  *
  * @par Callers
  * Confirmed: func_80055988 (0x80055CDC, passes (obj, 1) during transformation and (obj, 0) on completion) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Resolves a player entity's controller port index from state->inner->index
+ * (+0xAC -> +0xC1, defaulting to 0 when state is null) and forwards to
+ * func_8001E9AC to toggle the small vibration motor. Touches no globals
+ * directly (updates D_800A6FF8 via func_8001E9AC); called by func_80055988.
  */
-void func_8001E930(struct OuterState *state)
+void gSetEntitySmallRumble(struct OuterState *state)
 {
     int index = state != 0 ? state->inner->index : 0;
-    func_8001E9AC(index);
+    gSetSmallMotor(index);
 }

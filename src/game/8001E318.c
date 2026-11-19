@@ -1,5 +1,7 @@
 // Categories: Utilities > Memory
 #include "game/types.h"
+u8 *gCopyMemory(u8 *destination, u8 *source, u32 count) __asm__("func_8001E318");
+
 
 /**
  * @brief memcpy/memmove: copies @c count bytes with the widest safe access.
@@ -18,8 +20,14 @@
  *
  * @par Callers
  * func_800181D4 and func_80017EBC, for the free-range table maintenance.
+ *
+ * @par Role and path
+ * Copies count bytes from source to destination using an unrolled 8-word loop
+ * for 4-byte aligned buffers, a 16-bit loop for 2-byte aligned buffers, or a
+ * byte loop otherwise, without overlap handling. Touches no globals and is
+ * called by gAllocMemory and gFreeBlock for free-range table maintenance.
  */
-u8 *func_8001E318(u8 *destination, u8 *source, u32 count)
+u8 *gCopyMemory(u8 *destination, u8 *source, u32 count)
 {
     if (((u32)destination & 3) == 0 &&
         ((u32)source & 3) == 0 &&

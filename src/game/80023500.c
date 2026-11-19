@@ -18,7 +18,7 @@ extern u8 D_80023314[];
 extern Unk800A0A00 gObjectSlots[8] __asm__("D_800A0A00");
 
 extern void func_80098708(s32 arg0);
-extern s32 func_8001F12C(s32 callback);
+extern s32 gClearScreenModeHook(s32 callback) __asm__("func_8001F12C");
 extern void func_80021250(void);
 extern void func_80023BF8(void);
 extern void func_80021C80(void);

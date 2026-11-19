@@ -27,27 +27,29 @@ typedef struct {
 extern GlobalState func_80010000;
 extern Entry gFileSlotTable[] __asm__("D_800A6D78");
 extern s32 D_8009F244;
-extern u8 D_8009F248;
-extern s32 D_8009F618;
-extern u8 D_8009F610[];
-extern u8 D_8009F614[];
-extern u8 D_8009F61C[];
+extern u8 gCdReadCommand __asm__("D_8009F248");
+extern s32 gCdCallbackActive __asm__("D_8009F618");
+extern u8 gCdCommandParam[] __asm__("D_8009F610");
+extern u8 gCdTargetLoc[] __asm__("D_8009F614");
+extern u8 gCdCurrentLoc[] __asm__("D_8009F61C");
 extern u8 gEventBuffer[] __asm__("D_800A0798");
 extern u8 D_8001C60C[];
 extern u8 D_8001C614[];
-extern volatile u8 D_1F801800;
-extern volatile u8 D_1F801803;
+extern volatile u8 gCdStatusReg __asm__("D_1F801800");
+extern volatile u8 gCdInterruptReg __asm__("D_1F801803");
 
-extern s32 func_8001C478(s32 mode);
-extern void func_8001CC6C(void);
-extern void func_8001C494(u8 *dst, s32 arg1);
-extern s32 func_8001C3F8(u8 *a, u8 *b);
-extern void func_8001C27C(void *dst, void *src);
+extern s32 gWaitCdLoaderIdle(s32 mode) __asm__("func_8001C478");
+extern void gCopyCdSectorChunk(void) __asm__("func_8001CC6C");
+extern void gByteOffsetToCdlLoc(u8 *dst, s32 arg1) __asm__("func_8001C494");
+extern s32 gCompareCdlLoc(u8 *a, u8 *b) __asm__("func_8001C3F8");
+extern void gCopyWord(void *dst, void *src) __asm__("func_8001C27C");
 extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
 extern s32 func_8008E174(s32 mode, u8 *result);
 extern s32 func_8008E194(s32 ptr);
 extern s32 func_8008E1BC(s32 mode, void *src, void *dst);
+s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8001CE54");
+
 
 /**
  * @brief Performs one memory-card file operation (read, write or delete) for a
@@ -73,8 +75,17 @@ extern s32 func_8008E1BC(s32 mode, void *src, void *dst);
  *
  * @par Unknown
  * The exact kind values (the switch is spread over the body, not a table).
+ *
+ * @par Role and path
+ * Starts an asynchronous read on gFileSlotTable[arg0] after waiting for
+ * func_8001C478(0x11), configuring 0x80010000 and copying cached sector data
+ * via func_8001CC6C if D_8009F244 matches. Otherwise encodes the sector
+ * CdlLOC into gCdTargetLoc via func_8001C494, clears
+ * gCdStatusReg/gCdInterruptReg, issues CD command 0xE and gCdReadCommand via
+ * func_8008E1BC, and installs D_8001C614 via func_8008E194; called by
+ * func_8001D90C.
  */
-s32 func_8001CE54(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     Entry *entry;
     GlobalState *st;
@@ -107,7 +118,7 @@ s32 func_8001CE54(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     if (kind != 1 && kind != 0x11) {
         return -7;
     }
-    result = func_8001C478(0x11);
+    result = gWaitCdLoaderIdle(0x11);
     if (result < 0) {
         return result;
     }
@@ -122,21 +133,21 @@ s32 func_8001CE54(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     st->unk20 = second;
     st->unk08 = 0;
     if ((entry->unk0C & 0xFFFFF800) == D_8009F244) {
-        func_8001CC6C();
+        gCopyCdSectorChunk();
     }
     if (st->unk04 <= 0) {
         goto success;
     }
     fifth = entry->unk0C;
     LOAD_ADDRESS(a, D_8009F614);
-    func_8001C494(a, fifth);
+    gByteOffsetToCdlLoc(a, fifth);
     while (func_8008E174(1, 0) != 0) {
     }
     a = (u8 *)0xE;
-    b = D_8009F610;
+    b = gCdCommandParam;
     __asm__("lui\t$2,%%hi(D_800A0798)\n\taddiu\t%0,$2,%%lo(D_800A0798)" : "=r"(index) : "r"(a), "r"(b) : "$2");
-    D_1F801800 = 0;
-    D_1F801803 = 0;
+    gCdStatusReg = 0;
+    gCdInterruptReg = 0;
     __asm__ volatile("" : "+r"(index) : : "memory");
     result = func_8008E1BC((s32)a, b, (void *)index);
     if (result == 0) {
@@ -145,14 +156,14 @@ s32 func_8001CE54(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         previous = oldState->unk1C;
         goto failure;
     }
-    if (D_8009F618 == 0) {
+    if (gCdCallbackActive == 0) {
         func_8008C9C0();
     }
     LOAD_ADDRESS(a, D_8009F61C);
     LOAD_ADDRESS(b, D_8009F614);
-    if (func_8001C3F8(a, b) == 0) {
+    if (gCompareCdlLoc(a, b) == 0) {
         func_80010000.unk00 = 2;
-        if (D_8009F618 != 0) {
+        if (gCdCallbackActive != 0) {
             goto success;
         }
         func_8008C9E0();
@@ -179,9 +190,9 @@ s32 func_8001CE54(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     liveState->unk1C = func_8008E194((s32)D_8001C614);
     LOAD_ADDRESS(a, D_8009F61C);
     LOAD_ADDRESS(b, D_8009F614);
-    func_8001C27C(a, b);
+    gCopyWord(a, b);
     LOAD_ADDRESS(b, D_8009F614);
-    if (func_8008E1BC(D_8009F248, b, (void *)index) != 0) {
+    if (func_8008E1BC(gCdReadCommand, b, (void *)index) != 0) {
         goto success;
     }
     previous = liveState->unk1C;

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern void gComputeDualChecksum(u8 *data, u32 len, u32 *sum, u32 *other) __asm__("func_8007F688");
-extern void *func_8001E4C0(void *destination, int value, unsigned int count);
+extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
 
 /**
  *  @brief Validates two computed values for a data buffer.
@@ -36,7 +36,7 @@ s32 gVerifyDualChecksum(u8 *data, u32 len, u32 expectedSum, u32 expectedOther, s
     gComputeDualChecksum(data, len, &sum, &other);
     if (expectedSum != sum || expectedOther != other) {
         if (clear != 0) {
-            func_8001E4C0(data, 0, len);
+            gFillMemory(data, 0, len);
         }
         return 0;
     }

@@ -28,7 +28,7 @@ extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 
 extern u8 *func_80089914(u16 id);
 extern void func_800822CC(u8 *arg0);
-extern u8 *func_8001E318(u8 *destination, u8 *source, u32 count);
+extern u8 *gCopyMemory(u8 *destination, u8 *source, u32 count) __asm__("func_8001E318");
 extern void func_80080A5C(u8 *arg0);
 extern void func_8008CCB0(u8 *arg0, u8 *arg1);
 extern void gUpdateProfileChecksums(void) __asm__("func_8007F6E0");
@@ -107,7 +107,7 @@ void func_80080B70(void)
     if (r != 0) {
         func_800822CC(r);
     }
-    func_8001E318(gSaveProfileImage + 0x20C, gSaveProfileImage, 0x200);
+    gCopyMemory(gSaveProfileImage + 0x20C, gSaveProfileImage, 0x200);
     *(s32 *)(gSaveProfileImage + 0x40C) = 1;
     func_80080A5C(gSaveProfileImage + 0x40C);
     func_80080A5C(REC + 0x474);

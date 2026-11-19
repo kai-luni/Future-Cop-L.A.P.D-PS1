@@ -17,6 +17,8 @@ struct PadActuator {
 
 extern struct PadActuator gPadActuators[] __asm__("D_800A6FF8");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
+void gSetLargeMotor(s32 port, s32 level) __asm__("func_8001EA5C");
+
 
 /**
  *  @brief Sets the large motor level for a controller port.
@@ -35,8 +37,15 @@ extern s32 gFrameTickCounter __asm__("D_8009FA2C");
  *  Updates the selected motor byte and large-motor timer.
  *  @par Callers
  *  Confirmed: func_8001EA20, func_8001EBA8.
+ *
+ * @par Role and path
+ * Clamps level to [0, 255] and updates the large vibration motor state on
+ * gPadActuators[port] when enabled and largeIndex is not 0xFF. Non-zero
+ * levels write motor[largeIndex] and set largeTimer to gFrameTickCounter +
+ * 300; zero clears both. Reads D_8009FA2C and updates D_800A6FF8; called by
+ * func_8001EA20 and func_8001EBA8.
  */
-void func_8001EA5C(s32 port, s32 level)
+void gSetLargeMotor(s32 port, s32 level)
 {
     struct PadActuator *actuator;
     s32 clamped;

@@ -12,9 +12,11 @@ extern Unk800A6D78 gFileSlotTable[] __asm__("D_800A6D78");
 extern volatile u8 gCompletionFlag __asm__("D_8009FA68");
 extern s32 gFileSlotState __asm__("D_8009F620");
 
-extern s32 func_8001D90C(s32 index, s32 arg1, s32 value, u32 (*callback)(u32));
-extern s32 func_8001D3A8(u32 index);
-extern u32 func_8001DFF0(u32 arg0);
+extern s32 gReadFileSlotAsync(s32 index, s32 arg1, s32 value, u32 (*callback)(u32)) __asm__("func_8001D90C");
+extern s32 gCloseFileSlot(u32 index) __asm__("func_8001D3A8");
+extern u32 gFileReadDoneCallback(u32 arg0) __asm__("func_8001DFF0");
+s32 gReadFileSlotBlocking(s32 arg0, s32 arg1, s32 *arg2) __asm__("func_8001E004");
+
 
 /**
  * @brief Reads the contents of an open file into a buffer and closes it.
@@ -43,8 +45,15 @@ extern u32 func_8001DFF0(u32 arg0);
  *
  * @par Callers
  * func_8001E110 only.
+ *
+ * @par Role and path
+ * Validates buffer arg1 and gFileSlotTable[arg0] (D_800A6D78), clears
+ * gCompletionFlag (D_8009FA68) and gFileSlotState (D_8009F620), and calls
+ * func_8001D90C with func_8001DFF0. Spins until gCompletionFlag becomes
+ * non-zero, closes the slot via func_8001D3A8, optionally writes *arg2, and
+ * returns stored; called by func_8001E110.
  */
-s32 func_8001E004(s32 arg0, s32 arg1, s32 *arg2)
+s32 gReadFileSlotBlocking(s32 arg0, s32 arg1, s32 *arg2)
 {
     s32 value;
     s32 arg;
@@ -75,7 +84,7 @@ s32 func_8001E004(s32 arg0, s32 arg1, s32 *arg2)
         }
     }
 
-    value = func_8001D90C(arg0, arg1, arg, func_8001DFF0);
+    value = gReadFileSlotAsync(arg0, arg1, arg, gFileReadDoneCallback);
     if (value < 0) {
         return value;
     }
@@ -84,7 +93,7 @@ s32 func_8001E004(s32 arg0, s32 arg1, s32 *arg2)
     }
 
     stored = gFileSlotState;
-    func_8001D3A8(arg0);
+    gCloseFileSlot(arg0);
     if (arg2 != 0) {
         *arg2 = stored;
     }

@@ -35,7 +35,7 @@ extern Block108 gSecondScratchTable __asm__("D_800A3A58");
 extern void D_80085074(void);
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
-extern void *func_8001E4C0(void *, s32, u32);
+extern void *gFillMemory(void *, s32, u32) __asm__("func_8001E4C0");
 extern void gMovieSetScaleMode(s32) __asm__("func_800859D8");
 extern void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
 extern void func_80089A88(void *, void *, s32);
@@ -156,7 +156,7 @@ s32 gDecodeMdecFrameToVram(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
     }
     gMovieSliceContext = gAllocMemory(0x130, gUploadInProgress ? 2 : 3);
     if (!gMovieSliceContext) goto cleanup;
-    func_8001E4C0(gMovieSliceContext, 0, 0x130);
+    gFillMemory(gMovieSliceContext, 0, 0x130);
     func_8008C9C0();
     gMovieSliceContext->field12C = 1;
     gMovieSliceContext->callback120 = func_8009612C(D_80085074);

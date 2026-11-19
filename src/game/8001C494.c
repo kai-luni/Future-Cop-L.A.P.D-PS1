@@ -7,6 +7,8 @@ struct CdlLOC {
     u8 sector;
     u8 track;
 };
+u32 gByteOffsetToCdlLoc(struct CdlLOC *loc, u32 value) __asm__("func_8001C494");
+
 
 /**
  * @brief Converts a byte offset into a CD-ROM CdlLOC position.
@@ -35,8 +37,14 @@ struct CdlLOC {
  *
  * @par Callers
  * Confirmed: func_8001C718, func_8001CE54. Likely: func_8001D0A0.
+ *
+ * @par Role and path
+ * Converts a byte offset into a 2048-byte sector number, decomposes it into
+ * BCD-encoded minute, second (60/min), and sector (75/sec) fields in loc with
+ * track zeroed, and returns value & 0x7FF. Called by func_8001C718,
+ * func_8001CE54, and func_8001D0A0; touches no globals.
  */
-u32 func_8001C494(struct CdlLOC *loc, u32 value)
+u32 gByteOffsetToCdlLoc(struct CdlLOC *loc, u32 value)
 {
     inline u32 encode_bcd(u32 v)
     {

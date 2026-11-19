@@ -13,7 +13,7 @@ typedef struct {
 extern UnkStruct *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 gPendingFlag __asm__("D_8009F496");
 
-extern void func_800206D0(void);
+extern void gResetMcManager(void) __asm__("func_800206D0");
 
 /**
  * @brief Arms a profile transfer.
@@ -37,7 +37,7 @@ void gArmProfileTransfer(void)
 {
     register s32 six __asm__("$5");
 
-    func_800206D0();
+    gResetMcManager();
 
     {
         register UnkStruct *p __asm__("$4") = gSaveProfileImage;

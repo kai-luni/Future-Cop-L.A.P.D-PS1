@@ -11,7 +11,7 @@ extern u8 D_8009F902;
 extern u8 D_8009F903;
 extern s8 gSnapshotResult __asm__("D_8009F904");
 extern u8 gPortCheckTable[] __asm__("D_800A374D");
-extern u8 func_8001EB2C(s32 arg0);
+extern u8 gIsPadRumbleEnabled(s32 arg0) __asm__("func_8001EB2C");
 
 /**
  * @brief Snapshots both ports' controller presets and actuator flags when opening the port setup menu.
@@ -41,8 +41,8 @@ void gSnapshotControllerPresets(void)
 {
     D_8009F900 = gPresetIndexPerPort;
     D_8009F901 = D_8009FA99;
-    gRumbleEnabled = func_8001EB2C(0);
-    D_8009F8D9 = func_8001EB2C(1);
+    gRumbleEnabled = gIsPadRumbleEnabled(0);
+    D_8009F8D9 = gIsPadRumbleEnabled(1);
     D_8009F902 = 0;
     D_8009F903 = 0;
     if (gSnapshotResult == 1) {

@@ -10,9 +10,11 @@ struct Manager {
     struct Item *items[8];
     s32 count;
 };
-extern struct Manager *D_8009F240;
-extern s32 func_8001CE10(void);
-extern s32 func_8001D424(s32 arg0, s32 arg1, s32 arg2);
+extern struct Manager *gFileSearchMgr __asm__("D_8009F240");
+extern s32 gCheckMediaReady(void) __asm__("func_8001CE10");
+extern s32 gOpenCdFileSlot(s32 arg0, s32 arg1, s32 arg2) __asm__("func_8001D424");
+s32 gOpenFileInSearchGroup(s32 arg0, s32 arg1) __asm__("func_8001D5E4");
+
 
 /**
  * @brief Opens a file by trying every directory of one search group.
@@ -37,8 +39,15 @@ extern s32 func_8001D424(s32 arg0, s32 arg1, s32 arg2);
  *
  * @par Callers
  * func_8001E110 (file loading) and gPlayVideoFile (video resources).
+ *
+ * @par Role and path
+ * Checks media readiness via func_8001CE10, validates arg1 against
+ * gFileSearchMgr->count (gFileSearchMgr), and loops over
+ * gFileSearchMgr->items[arg1] calling func_8001D424(arg0, values[i],
+ * other[i]) until a non-negative slot index is returned. Called by
+ * func_8001E110, func_80088120, and func_80029F50.
  */
-s32 func_8001D5E4(s32 arg0, s32 arg1)
+s32 gOpenFileInSearchGroup(s32 arg0, s32 arg1)
 {
     s32 result = -5;
     s32 i;
@@ -46,14 +55,14 @@ s32 func_8001D5E4(s32 arg0, s32 arg1)
     struct Item *item;
     s32 ret;
 
-    if (func_8001CE10() < 0)
+    if (gCheckMediaReady() < 0)
         return -2;
-    if (arg1 >= D_8009F240->count || arg1 < 0)
+    if (arg1 >= gFileSearchMgr->count || arg1 < 0)
         return -8;
-    item = D_8009F240->items[arg1];
+    item = gFileSearchMgr->items[arg1];
     count = item->count;
     for (i = 0; i < count; i++) {
-        ret = func_8001D424(arg0, item->values[i], item->other[i]);
+        ret = gOpenCdFileSlot(arg0, item->values[i], item->other[i]);
         if (ret >= 0)
             return ret;
         if ((u32)(ret + 6) >= 2)

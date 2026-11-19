@@ -5,6 +5,8 @@ struct GlobalState {
 };
 
 extern struct GlobalState *gOperationState __asm__("D_8009AB08");
+int gGetMcPendingFlag(void) __asm__("func_8001F37C");
+
 
 /**
  * @brief Returns the memory-card manager pending/busy status word at D_8009AB08 + 0x9A4.
@@ -28,8 +30,13 @@ extern struct GlobalState *gOperationState __asm__("D_8009AB08");
  *
  * @par Callers
  * Confirmed: func_80020D3C (0x80020DBC), func_80020FDC (0x80021094), func_8007FB04 (0x8007FBEC).
+ *
+ * @par Role and path
+ * Returns the 32-bit pending/status word at offset +0x9A4 of gOperationState
+ * (D_8009AB08). Reads D_8009AB08 and makes no calls; called by func_80020D3C,
+ * func_80020FDC, and func_8007FB04.
  */
-int func_8001F37C(void)
+int gGetMcPendingFlag(void)
 {
     return gOperationState->value;
 }

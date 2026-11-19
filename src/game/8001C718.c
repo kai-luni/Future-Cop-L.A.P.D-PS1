@@ -4,16 +4,21 @@ typedef struct { int a, b, c, pos, e, f; } Entry;
 typedef struct { int state, a, b, c, index, d, callback, saved, buffer; } State;
 extern State func_80010000;
 extern Entry gFileSlotTable[] __asm__("D_800A6D78");
-extern int D_8009F610[], D_8009F614[], D_8009F61C[];
+extern int gCdCommandParam[] __asm__("D_8009F610");
+extern int gCdTargetLoc[] __asm__("D_8009F614");
+extern int gCdCurrentLoc[] __asm__("D_8009F61C");
 extern u8 gEventBuffer[] __asm__("D_800A0798");
-extern volatile u8 D_1F801800, D_1F801803;
-extern void func_8001C494(int *, int);
+extern volatile u8 gCdStatusReg __asm__("D_1F801800");
+extern volatile u8 gCdInterruptReg __asm__("D_1F801803");
+extern void gByteOffsetToCdlLoc(int *, int) __asm__("func_8001C494");
 extern int func_8008E174(int, int);
 extern int func_8008E1BC(int, void *, void *);
 extern void func_8008CC80(int);
 extern int func_8008E194(void *);
-extern void func_8001C614(void);
-extern void func_8001C27C(int *, int *);
+extern void gCdSeekDoneCallback(void) __asm__("func_8001C614");
+extern void gCopyWord(int *, int *) __asm__("func_8001C27C");
+void gStartCdDirRead(void) __asm__("func_8001C718");
+
 extern int func_8008E2F8(int, void *);
 /**
  * @brief Reads the directory block from the memory card into the loader buffer.
@@ -39,8 +44,16 @@ extern int func_8008E2F8(int, void *);
  *
  * @par Callers
  * func_8001C808.
+ *
+ * @par Role and path
+ * Encodes gFileSlotTable[0x80010000.index].pos into gCdTargetLoc via
+ * func_8001C494, polls func_8008E174(1, 0), clears CD-ROM registers
+ * gCdStatusReg and gCdInterruptReg, and issues CD command 0xE via
+ * func_8008E1BC. Sets 0x80010000.state = 1, installs func_8001C614 via
+ * func_8008E194, copies gCdTargetLoc to gCdCurrentLoc via func_8001C27C, and
+ * calls func_8008E2F8(6, ...); called by func_8001C808.
  */
-void func_8001C718(void)
+void gStartCdDirRead(void)
 {
     register State *state __asm__("$16");
     int result;
@@ -51,9 +64,9 @@ void func_8001C718(void)
     register char *a2 __asm__("$6");
     a1 = (char *)gFileSlotTable[func_80010000.index].pos;
     __asm__ volatile("" : "+r"(a1));
-    a0 = (int)D_8009F614;
+    a0 = (int)gCdTargetLoc;
     __asm__ volatile("" : "+r"(a0));
-    func_8001C494((int *)a0, (int)a1);
+    gByteOffsetToCdlLoc((int *)a0, (int)a1);
     while (func_8008E174(1, 0)) {}
     a0 = 14;
     a1 = (char *)0x800a0000;
@@ -61,15 +74,15 @@ void func_8001C718(void)
     a1 -= 0x9f0;
     a2 = (char *)0x800a0000;
     __asm__ volatile("" : "+r"(a0), "+r"(a1), "+r"(a2));
-    D_1F801800 = 0;
-    D_1F801803 = 0;
+    gCdStatusReg = 0;
+    gCdInterruptReg = 0;
     __asm__ volatile("" : "+r"(a2) : : "memory");
     result = func_8008E1BC(a0, a1, a2 + 0x798);
     state = (State *)0x80010000;
     if (!result)
         func_8008CC80(-1);
     __asm__ volatile("" : "+r"(state));
-    a0 = (int)func_8001C614;
+    a0 = (int)gCdSeekDoneCallback;
     __asm__ volatile("" : "+r"(a0));
     state->state = 1;
     __asm__ volatile("" : : : "memory");
@@ -85,7 +98,7 @@ void func_8001C718(void)
     __asm__ volatile("" : "+r"(a1), "+r"(saved));
     __asm__ volatile("addiu %0,%1,0" : "=r"(p) : "r"(state));
     p->saved = saved;
-    func_8001C27C((int *)a0, (int *)a1);
+    gCopyWord((int *)a0, (int *)a1);
     a1 = (char *)0x800a0000;
     __asm__ volatile("" : "+r"(a1));
     a1 -= 0x9ec;

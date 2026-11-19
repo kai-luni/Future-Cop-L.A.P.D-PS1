@@ -11,6 +11,8 @@ struct PadBuffer {
 };
 
 extern struct PadBuffer gPadBuffers[] __asm__("D_800A78F0");
+s32 gGetPadType(s32 port) __asm__("func_8001EF34");
+
 
 /**
  * @brief Queries the controller type of a port, accepting only two pad ids.
@@ -33,8 +35,15 @@ extern struct PadBuffer gPadBuffers[] __asm__("D_800A78F0");
  * @par Callers
  * func_8001E7B8, func_8001EF8C, func_80027510, func_8007C0F8, func_8007C6F0,
  * func_8007C940.
+ *
+ * @par Role and path
+ * Queries the controller type nibble for port in gPadBuffers (D_800A78F0),
+ * returning 4 or 7 when unk00[0] is zero and the upper nibble of unk00[1]
+ * matches, or 0 otherwise. Reads D_800A78F0 and makes no calls; called by
+ * func_8001E7B8, func_8001EF8C, func_80027510, func_8007C0F8, func_8007C6F0,
+ * and func_8007C940.
  */
-s32 func_8001EF34(s32 port)
+s32 gGetPadType(s32 port)
 {
     struct PadBuffer *pad;
     s32 result;

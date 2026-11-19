@@ -24,7 +24,9 @@ extern State *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(int);
 extern void func_8008D670(int, int, void *);
 extern void func_8008D680(int, int, void *);
-extern void func_8001E318(void *, void *, int);
+extern void gCopyMemory(void *, void *, int) __asm__("func_8001E318");
+int gMcTransferCallback(void) __asm__("func_8001F394");
+
 
 /**
  *  @brief Advances a mode-driven block transfer and handles completion or errors.
@@ -44,8 +46,16 @@ extern void func_8001E318(void *, void *, int);
  *  Updates transfer state and buffers, and starts or stops handle operations.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Advances the memory-card block-transfer state machine in gOperationState
+ * (D_8009AB08), dispatching on mode: mode 2 verifies sequence and checksum on
+ * incoming 128-byte blocks, copies via func_8001E318, and requests the next
+ * block via func_8008D680; modes 3 and 6 copy outgoing blocks via
+ * func_8001E318, compute checksums, and submit via func_8008D670; completion
+ * or retry exhaustion stops the handle via func_8008D640.
  */
-int func_8001F394(void)
+int gMcTransferCallback(void)
 {
     State *p;
     State *r;
@@ -79,11 +89,11 @@ int func_8001F394(void)
         } else {
             r = gOperationState;
             if (r->f90C) {
-                func_8001E318((void *)r->ptr, (void *)&r->arr[2], 0x78);
+                gCopyMemory((void *)r->ptr, (void *)&r->arr[2], 0x78);
                 r = gOperationState;
                 r->ptr = r->ptr + 0x78;
             } else {
-                func_8001E318((void *)r->ptr, (void *)&r->arr[0], 0x80);
+                gCopyMemory((void *)r->ptr, (void *)&r->arr[0], 0x80);
                 r = gOperationState;
                 r->ptr = r->ptr + 0x80;
             }
@@ -128,14 +138,14 @@ int func_8001F394(void)
         gOperationState->v998++;
         if (gOperationState->f90C) {
             gOperationState->ptr = gOperationState->ptr + 0x78;
-            func_8001E318((void *)&gOperationState->arr[2], (void *)gOperationState->ptr, 0x78);
+            gCopyMemory((void *)&gOperationState->arr[2], (void *)gOperationState->ptr, 0x78);
             for (i = 2; i < 32; i++)
                 sum2 += (gOperationState->arr[i] ^ gOperationState->arr[32 - i]) + i;
             gOperationState->arr[0] = gOperationState->v998;
             gOperationState->arr[1] = sum2;
         } else {
             gOperationState->ptr = gOperationState->ptr + 0x80;
-            func_8001E318((void *)&gOperationState->arr[0], (void *)gOperationState->ptr, 0x80);
+            gCopyMemory((void *)&gOperationState->arr[0], (void *)gOperationState->ptr, 0x80);
         }
         func_8008D670(gOperationState->h, gOperationState->v998, (void *)&gOperationState->arr[0]);
         return 0;

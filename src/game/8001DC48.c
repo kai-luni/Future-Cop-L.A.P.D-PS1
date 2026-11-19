@@ -6,6 +6,8 @@ extern void func_8008CC90(u8 *, const u8 *);
 extern u8 func_8008CCE0(int);
 extern int gCompletionFlag __asm__("D_8009FA68");
 extern int gFileSlotState __asm__("D_8009F620");
+int gFormatIso9660Path(int mode, const u8 *name, const u8 *dir, u8 *out) __asm__("func_8001DC48");
+
 
 /**
  * @brief Builds the on-disc path of a file request: joins directory and name,
@@ -61,8 +63,15 @@ extern int gFileSlotState __asm__("D_8009F620");
  * @par Callers
  * func_8001D424 (the open-file slot allocator), which passes mode 1 and the
  * 64-byte name buffer at 0x800A6DD8.
+ *
+ * @par Role and path
+ * Joins optional dir and name strings using func_8008CCC0, func_8008CCB0, and
+ * func_8008CC90, upper-cases each byte with func_8008CCE0, drops disallowed
+ * characters, and in mode 1 normalizes slashes, extension dot, and ;1 version
+ * suffix into out. Called by func_8001D424 to format paths into D_800A6DD8;
+ * accesses no globals in its body.
  */
-int func_8001DC48(int mode, const u8 *name, const u8 *dir, u8 *out)
+int gFormatIso9660Path(int mode, const u8 *name, const u8 *dir, u8 *out)
 {
     u8 buf[64];
     int end;

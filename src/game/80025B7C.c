@@ -22,7 +22,7 @@ extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *jtbl_80010DDC[];
 
 extern void func_80092C8C(s32 arg0);
-extern void func_8001EB6C(void);
+extern void gStopAllPadRumble(void) __asm__("func_8001EB6C");
 extern u8 func_80024170(void);
 extern void func_80025348(void);
 extern void func_80047690(u8 enable);
@@ -80,7 +80,7 @@ void gFinishScreenModule(s32 arg0)
 
     saved_arg = arg0;
     func_80092C8C(0);
-    func_8001EB6C();
+    gStopAllPadRumble();
 
     index = (u32)gScreenState - 5;
     if (index >= 10) {

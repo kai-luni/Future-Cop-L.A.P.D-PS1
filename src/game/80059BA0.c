@@ -3,7 +3,7 @@
 
 extern s32 gFileSearchGroup __asm__("D_8009F238");
 
-extern s32 func_8001E110(s32 name, s32 arg1, void **data, s32 *size, s32 arg4);
+extern s32 gLoadFileAlloc(s32 name, s32 arg1, void **data, s32 *size, s32 arg4) __asm__("func_8001E110");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
@@ -43,7 +43,7 @@ void *func_80059BA0(s32 name)
     void *result;
     s32 size;
 
-    if (func_8001E110(name, gFileSearchGroup, &data, &size, 0) > 0) {
+    if (gLoadFileAlloc(name, gFileSearchGroup, &data, &size, 0) > 0) {
         goto success;
     }
     if (data != 0) {

@@ -6,7 +6,7 @@ extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
 extern u32 gMoviePadMask0 __asm__("D_8009F958");
 extern u32 gMoviePadMask1 __asm__("D_8009F95C");
 
-extern u32 func_8001EF8C(s32 arg0);
+extern u32 gPollPadButtons(s32 arg0) __asm__("func_8001EF8C");
 extern u32 *gMovieStreamReserve(u32 *arg0) __asm__("func_80089404");
 extern void gMovieAudioStart(void) __asm__("func_80086DB4");
 extern void gMovieAudioClockEnable(void) __asm__("func_80086F1C");
@@ -99,8 +99,8 @@ s32 gMovieStreamDemux(u8 *arg0, u8 *arg1, s32 arg2)
     index = 0x80000;
 
     for (;;) {
-        state0 = func_8001EF8C(0) & 0x40080000;
-        state1 = func_8001EF8C(1) & 0x40080000;
+        state0 = gPollPadButtons(0) & 0x40080000;
+        state1 = gPollPadButtons(1) & 0x40080000;
 
         if ((state0 & ~gMoviePadMask0) || (state1 & ~gMoviePadMask1)) {
             if (count >= 4) {

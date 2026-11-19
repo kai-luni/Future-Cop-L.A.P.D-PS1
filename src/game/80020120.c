@@ -15,6 +15,8 @@ extern void func_8008C9C0(void);
 extern void func_8008C9E0(void);
 extern s32 func_8008C960(u32, u32, u32, void *);
 extern void func_8008C980(s32);
+void gAcquireMcEvents(void) __asm__("func_80020120");
+
 
 /**
  * @brief Acquires the memory-card event subsystem, registering eight events.
@@ -48,8 +50,15 @@ extern void func_8008C980(s32);
  *
  * @par Callers
  * Confirmed: func_800206D0 (subsystem setup path).
+ *
+ * @par Role and path
+ * Acquires the memory-card BIOS event subsystem by opening and enabling four
+ * 0xF4000001 high-level events and four 0xF0000011 low-level I/O events via
+ * func_8008C960 and func_8008C980 inside a critical section when
+ * gOperationState->count is 0, then increments count. Reads and writes
+ * D_8009AB08; called by func_800206D0.
  */
-void func_80020120(void)
+void gAcquireMcEvents(void)
 {
     if (gOperationState->count == 0) {
         func_8008C9C0();

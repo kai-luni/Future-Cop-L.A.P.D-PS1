@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u8 gPadActuators[] __asm__("D_800A6FF8");
+u8 gIsPadRumbleEnabled(s32 arg0) __asm__("func_8001EB2C");
+
 
 /**
  * @brief Reads the rumble-enable flag (byte +0x17) for a clamped controller port in D_800A6FF8.
@@ -25,8 +27,14 @@ extern u8 gPadActuators[] __asm__("D_800A6FF8");
  *
  * @par Callers
  * Confirmed: func_8007C088 (0x8007C0A4, 0x8007C0B0), func_8007C940 (0x8007C9E0), func_80080A5C (0x80080A8C, 0x80080A98), and func_80078C88 (0x80078D84, 0x80078D90 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Clamps the controller port index to [0, 1] and returns the enabled flag
+ * byte at offset +0x17 of that slot in gPadActuators (D_800A6FF8). Read-only
+ * query with no calls; called by func_8007C088, func_8007C940, func_80080A5C,
+ * and func_80078C88.
  */
-u8 func_8001EB2C(s32 arg0)
+u8 gIsPadRumbleEnabled(s32 arg0)
 {
     u8 *base = gPadActuators;
     s32 offset;

@@ -20,7 +20,7 @@ extern s32 D_8009F220;
 extern s32 gSubScreenActive __asm__("D_8009F5C0");
 extern u32 gPacketPoolBase __asm__("D_8009F5E0");
 extern u32 gNodePoolBase __asm__("D_8009F5E4");
-extern s32 D_8009F5E8;
+extern s32 gUploadRingWriteIdx __asm__("D_8009F5E8");
 extern s32 D_8009F5EC;
 extern s32 D_8009F5F0;
 extern s32 gFrameBlockCount __asm__("D_8009F5F4");
@@ -33,7 +33,7 @@ extern s32 gScreenOffsetValue __asm__("D_8009F9D4");
 extern u32 gPacketLimit __asm__("D_8009F9C0");
 extern u32 gPrimPoolEnd __asm__("D_8009FA28");
 
-extern u8 func_8001C034(void);
+extern u8 gGetSelectedLayer(void) __asm__("func_8001C034");
 extern s32 gGteLeadingZeros(s32 value) __asm__("func_80095C14");
 extern void func_80029650(u32 arg0);
 extern void gLoadImage(u32 arg0, u32 arg1) __asm__("func_80092F38");
@@ -141,7 +141,7 @@ void func_8001B4A8(s32 arg0)
     }
 
     __asm__("" : "+m"(arg0));
-    h = func_8001C034();
+    h = gGetSelectedLayer();
     if (h != 0) {
         h = 0x100;
     }
@@ -362,7 +362,7 @@ void func_8001B4A8(s32 arg0)
             } while (D_8009F5EC != D_8009F5F0);
         }
 
-        if (D_8009F5F0 != D_8009F5E8) {
+        if (D_8009F5F0 != gUploadRingWriteIdx) {
             do {
                 xbase = (u32)gUploadRing + D_8009F5F0 * 20;
                 gDecodeMdecFrameToVram(*(u32 *)xbase, *(u8 *)(xbase + 8),
@@ -372,7 +372,7 @@ void func_8001B4A8(s32 arg0)
                 if (D_8009F5F0 >= 4) {
                     D_8009F5F0 = 0;
                 }
-            } while (D_8009F5F0 != D_8009F5E8);
+            } while (D_8009F5F0 != gUploadRingWriteIdx);
         }
     }
 

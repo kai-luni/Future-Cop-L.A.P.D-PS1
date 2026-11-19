@@ -1,8 +1,8 @@
 // Categories: Platform > Memory Card | Resources > Save Data
 #include "game/types.h"
 extern u8 *gOperationState __asm__("D_8009AB08");
-extern void *func_8001E4C0(void *destination, int value, unsigned int count);
-extern void func_8001E318(void *destination, void *source, int count);
+extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
+extern void gCopyMemory(void *destination, void *source, int count) __asm__("func_8001E318");
 extern s32 func_8008CCC0(char *text);
 /**
  * @brief Builds a 0x80-byte memory-card name packet with header, title and
@@ -36,12 +36,12 @@ void func_80020F34(char *t, s32 index)
     s32 length; register u32 i __asm__("$4"); register u32 checksum __asm__("$5"); register u32 tt __asm__("$3"); register u32 b __asm__("$2");
     __asm__("" : "=r"(text) : "0"(text));
     off = index * 0x80; packet = gOperationState; packet += 0x9B0; packet += off;
-    func_8001E4C0(packet, 0, 0x80);
+    gFillMemory(packet, 0, 0x80);
     packet[0] = 0x51;
     *(s32 *)(packet + 4) = 0x2000;
     *(u16 *)(packet + 8) = 0xFFFF;
     length = func_8008CCC0(text);
-    func_8001E318(packet + 0xA, text, length);
+    gCopyMemory(packet + 0xA, text, length);
     checksum = 0;
     for (i = 0; i < 0x7F; i++) { b = *packet++; tt = checksum ^ b; checksum = tt; }
     *packet = tt;

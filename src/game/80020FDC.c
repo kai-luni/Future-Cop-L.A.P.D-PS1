@@ -23,11 +23,11 @@ extern char D_80010B0C[];
 
 extern s32 func_8008CD30(char *dst, char *fmt, u32 arg2, u32 arg3);
 extern s32 func_80020C90(void *arg0);
-extern void func_8001F24C(void *arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gQueueMcOpMode3(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8001F24C");
 extern s32 func_80020E68(s32 arg0);
 extern void func_80020F34(char *text, s32 index);
-extern void func_8001F2E0(u32 arg0, u32 arg1, u32 arg2, u32 arg3);
-extern u32 func_8001F37C(void);
+extern void gQueueMcOpMode6(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm__("func_8001F2E0");
+extern u32 gGetMcPendingFlag(void) __asm__("func_8001F37C");
 
 /**
  * @brief Queues a memory-card file write (create or overwrite) and returns 0x2000 when the transfer was queued, 0 when refused.
@@ -76,7 +76,7 @@ s32 func_80020FDC(u32 arg0, u32 arg1, u32 arg2)
     idx = tmp >> 7;
     slot = func_80020C90(a0);
     if (slot != 0) {
-        func_8001F24C(slot << 6, idx, p1, result);
+        gQueueMcOpMode3(slot << 6, idx, p1, result);
         goto tail;
     }
     slot = func_80020E68(p2);
@@ -84,9 +84,9 @@ s32 func_80020FDC(u32 arg0, u32 arg1, u32 arg2)
         return result;
     }
     func_80020F34(p0, slot);
-    func_8001F2E0(slot << 6, idx, p1, 0);
+    gQueueMcOpMode6(slot << 6, idx, p1, 0);
 tail:
-    result = (func_8001F37C() < 1) << 13;
+    result = (gGetMcPendingFlag() < 1) << 13;
     __asm__("" : "=r"(result) : "0"(result));
     return result;
 }

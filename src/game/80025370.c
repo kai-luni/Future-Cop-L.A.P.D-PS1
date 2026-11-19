@@ -11,7 +11,7 @@ extern int gModulePrefixPA __asm__("D_8009F3E0");
 extern int gFileSearchGroup __asm__("D_8009F238");
 extern int gUploadInProgress __asm__("D_8009F9C4");
 extern void func_8008CD30(char *, char *, int, char *);
-extern void func_8001E110(char *, int, void **, int *, int);
+extern void gLoadFileAlloc(char *, int, void **, int *, int) __asm__("func_8001E110");
 extern void gDecodeMdecFrameToVram(void *, int, int, int) __asm__("func_800861E4");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void gEmitSplitScreenBlit(int) __asm__("func_8002549C");
@@ -92,7 +92,7 @@ int gShowLoadingScreen(void)
                 arg = gModulePrefixCW;
             func_8008CD30(buffer, gFormatNamePair, arg, entry->name);
         }
-        func_8001E110(buffer, gFileSearchGroup, &data, &size, 0);
+        gLoadFileAlloc(buffer, gFileSearchGroup, &data, &size, 0);
         if (data) {
             saved = gUploadInProgress;
             gUploadInProgress = 1;

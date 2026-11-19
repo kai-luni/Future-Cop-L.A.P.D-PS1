@@ -10,6 +10,8 @@ struct State {
 
 extern struct State D_80010000;
 extern s32 func_8008E194(s32 value);
+void gCdSeekDoneCallback(u8 arg) __asm__("func_8001C614");
+
 
 /**
  * @brief CD-ROM driver completion callback that advances D_80010000.mode and restores the saved handler.
@@ -32,8 +34,14 @@ extern s32 func_8008E194(s32 value);
  *
  * @par Callers
  * Confirmed: address taken by func_8001C718 (0x8001C7A8) and func_8001CE54 (0x8001D01C) for callback dispatch via D_8009C8A8 / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * CD-ROM driver event callback that ignores events 0, 1, 3, 4, and 5 and on
+ * event 2, if D_80010000.mode == 1, sets D_80010000.mode = 2 and calls
+ * func_8008E194(D_80010000.value) to restore the prior callback. Installed
+ * via func_8008E194 by func_8001C718 and func_8001CE54.
  */
-void func_8001C614(u8 arg)
+void gCdSeekDoneCallback(u8 arg)
 {
     switch (arg) {
     case 0:

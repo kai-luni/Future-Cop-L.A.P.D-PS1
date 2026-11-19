@@ -9,6 +9,8 @@ extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 extern u8 D_8001EFF8[];
 
 extern void func_80091510(void *arg0);
+void gStartFrameCallback(void) __asm__("func_8001F0B8");
+
 
 /**
  * @brief Starts the per-frame callback driver.
@@ -31,8 +33,15 @@ extern void func_80091510(void *arg0);
  *
  * @par Callers
  * func_80076EB0, right before func_8002333C().
+ *
+ * @par Role and path
+ * Starts the per-frame callback driver by zeroing gGameClock,
+ * gFrameTickCounter, gDisplaySetupToggle, and gScreenModeHook, registering
+ * D_8001EFF8 (func_8001EFF8) via func_80091510, and setting
+ * gFrameCallbackEnabled (D_8009FA20) to 1. Writes D_8009FA60, D_8009FA2C,
+ * D_8009F9CC, D_8009F99C, and D_8009FA20; called by func_80076EB0.
  */
-void func_8001F0B8(void)
+void gStartFrameCallback(void)
 {
     register u8 *callback_table __asm__("$4");
     callback_table = D_8001EFF8;

@@ -18,7 +18,9 @@ struct Unk8009AB08 {
 };
 
 extern struct Unk8009AB08 *gOperationState __asm__("D_8009AB08");
-extern s32 func_8001F180(u32 arg0, u32 arg1, u32 arg2, u32 arg3);
+extern s32 gIsMcManagerBusy(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm__("func_8001F180");
+void gQueueMcOpMode6(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm__("func_8001F2E0");
+
 
 /**
  *  @brief Initializes a mode-6 operation when its arguments pass a check.
@@ -39,8 +41,14 @@ extern s32 func_8001F180(u32 arg0, u32 arg1, u32 arg2, u32 arg3);
  *  Updates the shared state fields or sets its field at offset 0x9A4 to 1.
  *  @par Callers
  *  Confirmed: func_80020FDC.
+ *
+ * @par Role and path
+ * Queues a mode-6 memory-card operation in gOperationState (D_8009AB08) when
+ * func_8001F180 reports idle, storing arg0..arg3 into unk998, unk99C, unk910,
+ * and unk90C, arg0 >> 6 into unk1BB4, clearing unk994 and unk9A4, and setting
+ * unk8F8 to 6; otherwise sets unk9A4 to 1. Called by func_80020FDC.
  */
-void func_8001F2E0(u32 arg0, u32 arg1, u32 arg2, u32 arg3)
+void gQueueMcOpMode6(u32 arg0, u32 arg1, u32 arg2, u32 arg3)
 {
     register u32 a __asm__("$18") = arg0;
     register u32 b __asm__("$16") = arg1;
@@ -49,7 +57,7 @@ void func_8001F2E0(u32 arg0, u32 arg1, u32 arg2, u32 arg3)
     volatile struct Unk8009AB08 *p;
     register u32 temp __asm__("$3");
 
-    if (func_8001F180(arg0, arg1, arg2, arg3) == 0) {
+    if (gIsMcManagerBusy(arg0, arg1, arg2, arg3) == 0) {
         p = gOperationState;
         temp = a >> 6;
         p->unk998 = a;

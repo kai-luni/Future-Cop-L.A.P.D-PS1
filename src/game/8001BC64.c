@@ -1,5 +1,7 @@
 // Categories: Graphics > Color
 #include "game/types.h"
+void gScaleRgb24(u32 color, s32 scale, s32 *out) __asm__("func_8001BC64");
+
 
 /**
  *  @brief Multiplies packed RGB components by a scale.
@@ -19,8 +21,14 @@
  *  Writes three signed integers to out.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Pure arithmetic helper not on the environment path: extracts the red,
+ * green, and blue bytes from a 24-bit color, multiplies each by signed scale,
+ * and writes the products to out[0..2]. Touches no globals, makes no calls,
+ * and has no direct callers found in src/.
  */
-void func_8001BC64(u32 color, s32 scale, s32 *out)
+void gScaleRgb24(u32 color, s32 scale, s32 *out)
 {
     s32 r, g, b;
     r = (s32)((color >> 16) & 255) * scale;

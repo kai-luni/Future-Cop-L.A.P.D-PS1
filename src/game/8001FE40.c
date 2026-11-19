@@ -18,6 +18,8 @@ struct Ctx {
 
 extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(s32);
+s32 gMcErrorCallbackA(void) __asm__("func_8001FE40");
+
 
 /**
  *  @brief Resets or advances context state and passes its handle to a helper.
@@ -37,8 +39,14 @@ extern void func_8008D640(s32);
  *  Modifies context flags, state fields, and possibly the countdown and result.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Handles error or timeout cleanup in gOperationState (D_8009AB08): clears
+ * unk1BB0, sets unk9A4 to 1, decrements unk9A8 in state 0 when positive or
+ * resets unk8F8/unk8F4/unk904 (setting unk900 to -3 for non-1 states), and
+ * calls func_8008D640(unk8FC).
  */
-s32 func_8001FE40(void)
+s32 gMcErrorCallbackA(void)
 {
     register volatile struct Ctx *ctx __asm__("$2");
     gOperationState->unk1BB0 = 0;

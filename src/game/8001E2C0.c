@@ -3,6 +3,8 @@
 
 extern s32 gHeapHighWater __asm__("D_80010028");
 extern void func_8008CB40(s32 *header);
+void gHeapFreeRaw(s32 block) __asm__("func_8001E2C0");
+
 
 /**
  * @brief General-purpose free: returns a block to the low-level allocator.
@@ -26,8 +28,14 @@ extern void func_8008CB40(s32 *header);
  * @par Note
  * The high-water mark D_8001002C is not rewound, which is consistent with
  * "highest end ever reached" and is what the pair is used for.
+ *
+ * @par Role and path
+ * Memory-layer deallocator not on the render path: ignores NULL, reads size
+ * from ((s32 *)block)[-1], subtracts size + 4 from gHeapHighWater
+ * (D_80010028), and passes block - 1 to func_8008CB40. Called by gFreeBlock
+ * (func_800181D4), func_80076FE0, and func_80017BA0.
  */
-void func_8001E2C0(s32 block)
+void gHeapFreeRaw(s32 block)
 {
     if (block != 0) {
         s32 size = ((s32 *)block)[-1];

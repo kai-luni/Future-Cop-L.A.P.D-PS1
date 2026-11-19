@@ -1,5 +1,7 @@
 // Categories: Utilities > Memory
 #include "game/types.h"
+s32 gGetBlockSize(s32 *ptr) __asm__("func_8001E304");
+
 
 /**
  *  @brief Reads the signed word immediately preceding a pointer.
@@ -18,8 +20,13 @@
  *  None; a non-null ptr must permit reading the preceding word.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Returns the signed 32-bit word immediately preceding a pointer (ptr[-1]) as
+ * a block size, or -1 if ptr is NULL. Touches no globals and makes no calls;
+ * no direct callers are present in the C tree.
  */
-s32 func_8001E304(s32 *ptr)
+s32 gGetBlockSize(s32 *ptr)
 {
     s32 size = -1;
 

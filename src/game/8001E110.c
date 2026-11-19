@@ -9,12 +9,14 @@ typedef struct {
 } Unk800A6D78;
 
 extern Unk800A6D78 gFileSlotTable[] __asm__("D_800A6D78");
-extern s32 D_8009F258[];
+extern s32 gAltFileSearchDir[] __asm__("D_8009F258");
 extern  s32 (*gAllocCallback)(s32, s32) __asm__("D_8009F230");
 
-extern s32 func_8001D424(s32 arg0, s32 arg1, void *arg2);
-extern s32 func_8001D5E4(s32 arg0, s32 arg1);
-extern s32 func_8001E004(s32 arg0, s32 arg1, s32 *arg2);
+extern s32 gOpenCdFileSlot(s32 arg0, s32 arg1, void *arg2) __asm__("func_8001D424");
+extern s32 gOpenFileInSearchGroup(s32 arg0, s32 arg1) __asm__("func_8001D5E4");
+extern s32 gReadFileSlotBlocking(s32 arg0, s32 arg1, s32 *arg2) __asm__("func_8001E004");
+s32 gLoadFileAlloc(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4) __asm__("func_8001E110");
+
 
 /**
  * @brief Loads a whole file into a newly allocated buffer.
@@ -55,8 +57,15 @@ extern s32 func_8001E004(s32 arg0, s32 arg1, s32 *arg2);
  * @par Unknown
  * The exact error-code numbering (-5, -0x16) - it matches neither the Sony
  * library's usual codes nor the BIOS file API one-to-one.
+ *
+ * @par Role and path
+ * Opens a file via func_8001D5E4 (arg1 >= 0) or func_8001D424 against
+ * gAltFileSearchDir (arg1 < 0), checks gFileSlotTable[index] (D_800A6D78) for
+ * empty files, allocates field8 bytes via gAllocCallback (D_8009F230), and
+ * reads the full file via func_8001E004. Called by func_80025370 and
+ * func_80059BA0.
  */
-s32 func_8001E110(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4)
+s32 gLoadFileAlloc(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4)
 {
     s32 index;
     s32 value;
@@ -64,9 +73,9 @@ s32 func_8001E110(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4)
 
     if (arg1 < 0) {
         arg1 = -arg1;
-        index = func_8001D424(arg0, arg1, D_8009F258);
+        index = gOpenCdFileSlot(arg0, arg1, gAltFileSearchDir);
     } else {
-        index = func_8001D5E4(arg0, arg1);
+        index = gOpenFileInSearchGroup(arg0, arg1);
     }
 
     if ((u32)index >= 4) {
@@ -93,5 +102,5 @@ s32 func_8001E110(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4)
     if (ret == 0) {
         return -0x16;
     }
-    return func_8001E004(index, ret, arg3);
+    return gReadFileSlotBlocking(index, ret, arg3);
 }

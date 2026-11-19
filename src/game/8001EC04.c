@@ -17,7 +17,9 @@ struct PadActuator {
 
 extern struct PadActuator gPadActuators[] __asm__("D_800A6FF8");
 
-extern void func_8001EBA8(s32 port);
+extern void gStopPadRumble(s32 port) __asm__("func_8001EBA8");
+void gSetPadRumbleEnabled(s32 port, s32 enable) __asm__("func_8001EC04");
+
 
 /**
  * @brief Enables or disables vibration actuator support for a controller port.
@@ -41,8 +43,14 @@ extern void func_8001EBA8(s32 port);
  *
  * @par Callers
  * Confirmed: func_8007C80C, func_8007C940, func_80080984.
+ *
+ * @par Role and path
+ * Clamps the controller port index to [0, 1] and sets
+ * gPadActuators[port].enabled to 1 when enable is non-zero, or stops both
+ * motors via func_8001EBA8(port) and clears enabled when zero. Updates
+ * D_800A6FF8; called by func_8007C80C, func_8007C940, and func_80080984.
  */
-void func_8001EC04(s32 port, s32 enable)
+void gSetPadRumbleEnabled(s32 port, s32 enable)
 {
     s32 clamped;
 
@@ -59,7 +67,7 @@ void func_8001EC04(s32 port, s32 enable)
     if (enable) {
         gPadActuators[port].enabled = 1;
     } else {
-        func_8001EBA8(port);
+        gStopPadRumble(port);
         gPadActuators[port].enabled = 0;
     }
 }

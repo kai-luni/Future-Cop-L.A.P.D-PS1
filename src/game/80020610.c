@@ -1,3 +1,5 @@
+int gGetMcStateSize(void) __asm__("func_80020610");
+
 // Categories: Platform > Memory Card | Utilities > Constants
 /**
  * @brief Returns the size of the memory-card manager block.
@@ -9,8 +11,13 @@
  *
  * @par Callers
  * func_8007F9CC (allocation size) and func_80020618 (clearing the block).
+ *
+ * @par Role and path
+ * Returns the constant byte size 0x1BB8 of the memory-card manager state
+ * structure. Touches no globals and makes no calls; called by func_8007F9CC
+ * for allocation and func_80020618 for zeroing.
  */
-int func_80020610(void)
+int gGetMcStateSize(void)
 {
     return 0x1BB8;
 }

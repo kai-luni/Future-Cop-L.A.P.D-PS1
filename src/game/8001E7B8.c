@@ -12,7 +12,9 @@ struct PadBuffer {
 
 extern struct PadBuffer gPadBuffers[] __asm__("D_800A78F0");
 
-extern s32 func_8001EF34(s32 port);
+extern s32 gGetPadType(s32 port) __asm__("func_8001EF34");
+s32 gReadAnalogStick(s32 *x, s32 *y, s32 port, s32 stick) __asm__("func_8001E7B8");
+
 
 /**
  * @brief Reads raw left or right analog-stick byte coordinates from a pad buffer.
@@ -41,10 +43,16 @@ extern s32 func_8001EF34(s32 port);
  *
  * @par Callers
  * Confirmed: func_800538C8 (0x8005392C, converts left stick axes into direction flags and magnitudes).
+ *
+ * @par Role and path
+ * Checks that controller port reports type 7 via func_8001EF34 and copies
+ * either rightX/rightY (stick == 1) or leftX/leftY from gPadBuffers[port]
+ * into *x and *y, returning 1 on success or 0 otherwise. Reads D_800A78F0
+ * (gPadBuffers) and is called by func_800538C8.
  */
-s32 func_8001E7B8(s32 *x, s32 *y, s32 port, s32 stick)
+s32 gReadAnalogStick(s32 *x, s32 *y, s32 port, s32 stick)
 {
-    if (func_8001EF34(port) != 7) {
+    if (gGetPadType(port) != 7) {
         return 0;
     }
     if (stick == 1) {

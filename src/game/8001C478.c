@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern volatile s32 D_80010000;
+s32 gWaitCdLoaderIdle(void) __asm__("func_8001C478");
+
 
 /**
  * @brief Spins until the loader busy word at 0x80010000 clears.
@@ -24,8 +26,13 @@ extern volatile s32 D_80010000;
  *
  * @par Callers
  * Confirmed: func_8001CE54 (0x8001CEB4) before a card file operation, func_8001D424 (0x8001D52C) and func_8001D6D0 (0x8001D7B0) in the card loader paths.
+ *
+ * @par Role and path
+ * Polls D_80010000 in a tight loop until it becomes zero and then returns 0,
+ * making no outgoing calls. Called by func_8001CE54, func_8001D424, and
+ * func_8001D6D0 before issuing CD-ROM file operations.
  */
-s32 func_8001C478(void)
+s32 gWaitCdLoaderIdle(void)
 {
     while (D_80010000 != 0) {
     }

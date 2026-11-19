@@ -3,6 +3,8 @@
 
 extern void func_8008C9C0(void);
 extern void func_8008D784(void);
+void gResetBiosDevices(void) __asm__("func_800200F0");
+
 
 /**
  * @brief Re-runs the BIOS-level device teardown around the interface reset.
@@ -25,8 +27,14 @@ extern void func_8008D784(void);
  *
  * @par Callers
  * Confirmed: func_8001E540 (0x8001E548), first step of the controller/device shutdown.
+ *
+ * @par Role and path
+ * Runs the BIOS-level device reset sequence during shutdown by calling
+ * func_8008C9C0 to disable interrupts, func_8008D784 to issue BIOS B0 device
+ * reset calls, and func_8008C9C0 again to keep interrupts disabled. Touches
+ * no globals directly; called by func_8001E540.
  */
-void func_800200F0(void)
+void gResetBiosDevices(void)
 {
     func_8008C9C0();
     func_8008D784();

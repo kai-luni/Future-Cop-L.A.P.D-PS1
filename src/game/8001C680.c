@@ -1,11 +1,15 @@
 // Categories: Platform > Memory Card | Platform > Serial Port
 #include "game/types.h"
-extern volatile unsigned char D_1F801800, D_1F801803;
-extern int D_8009F61C, D_8009F614;
+extern volatile unsigned char gCdStatusReg __asm__("D_1F801800");
+extern volatile unsigned char gCdInterruptReg __asm__("D_1F801803");
+extern int gCdCurrentLoc __asm__("D_8009F61C");
+extern int gCdTargetLoc __asm__("D_8009F614");
 extern int func_8008E174(int, void *);
 extern int func_8008E1BC(int, void *, void *);
 extern void func_8008CC80(int);
-extern void func_8001C27C(int *, int *);
+extern void gCopyWord(int *, int *) __asm__("func_8001C27C");
+void gResetCdReadState(void) __asm__("func_8001C680");
+
 extern int func_8008E2F8(int, void *);
 /**
  * @brief Initialises the memory-card interface on expansion port 1.
@@ -31,8 +35,16 @@ extern int func_8008E2F8(int, void *);
  *
  * @par Callers
  * func_8001C808.
+ *
+ * @par Role and path
+ * Polls func_8008E174(1, 0), clears CD-ROM registers gCdStatusReg and
+ * gCdInterruptReg, issues CD command 0xE via func_8008E1BC (calling
+ * func_8008CC80(-1) on failure), copies gCdTargetLoc to gCdCurrentLoc via
+ * func_8001C27C, and issues func_8008E2F8(6, ...) while clearing 0x80010000
+ * on failure. Called by func_8001C808 when the transfer retry countdown
+ * expires.
  */
-void func_8001C680(void)
+void gResetCdReadState(void)
 {
     register int *p __asm__("$2");
     register int a0 __asm__("$4");
@@ -45,8 +57,8 @@ void func_8001C680(void)
     a1 -= 0x9f0;
     a2 = (char *)0x800a0000;
     __asm__ volatile("" : "+r"(a0), "+r"(a1), "+r"(a2));
-    D_1F801800 = 0;
-    D_1F801803 = 0;
+    gCdStatusReg = 0;
+    gCdInterruptReg = 0;
     __asm__ volatile("" : "+r"(a2) : : "memory");
     if (!func_8008E1BC(a0, a1, a2 + 0x798))
         func_8008CC80(-1);
@@ -58,7 +70,7 @@ void func_8001C680(void)
     __asm__ volatile("" : "+r"(a1));
     a1 -= 0x9ec;
     __asm__ volatile("" : "+r"(a1));
-    func_8001C27C((int *)a0, (int *)a1);
+    gCopyWord((int *)a0, (int *)a1);
     a1 = (char *)0x800a0000;
     __asm__ volatile("" : "+r"(a1));
     a1 -= 0x9ec;

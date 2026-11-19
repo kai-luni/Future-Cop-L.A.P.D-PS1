@@ -13,6 +13,8 @@ extern struct CardContext *gOperationState __asm__("D_8009AB08");
 extern void func_8008C9C0(void);
 extern s32 func_80091510(void (*callback)(void));
 extern void func_8008C9E0(void);
+void gReleaseMcCallback(void) __asm__("func_8002059C");
+
 
 /**
  * @brief Releases the memory-card callback lock, restoring the previous
@@ -32,8 +34,15 @@ extern void func_8008C9E0(void);
  *
  * @par Callers
  * func_8002078C.
+ *
+ * @par Role and path
+ * Releases the recursive memory-card frame-callback lock by decrementing
+ * gOperationState->lockCount and, when it reaches 0, restoring savedCallback
+ * via func_80091510 and clearing savedCallback inside a critical section.
+ * Reads and writes D_8009AB08; called by func_8002078C as the counterpart to
+ * func_80020530.
  */
-void func_8002059C(void)
+void gReleaseMcCallback(void)
 {
     if (--gOperationState->lockCount == 0) {
         func_8008C9C0();

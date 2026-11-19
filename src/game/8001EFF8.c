@@ -10,7 +10,9 @@ extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 
 extern s32 func_80092C8C(s32 arg0);
 extern void func_8001BFE4(void);
-extern void func_8001BFA8(void);
+extern void gFlipDisplayLayer(void) __asm__("func_8001BFA8");
+void gFrameCallback(void) __asm__("func_8001EFF8");
+
 
 /**
  * @brief Per-frame tick installed as a callback: runs the chained hook, advances
@@ -38,8 +40,16 @@ extern void func_8001BFA8(void);
  * No direct callers in the call graph. func_8001F0B8 installs the callback
  * table at D_8001EFF8 through func_80091510, so the interrupt path reaches
  * it indirectly.
+ *
+ * @par Role and path
+ * Per-frame callback installed via func_80091510 by func_8001F0B8: invokes
+ * gScreenModeHook if non-null, increments gGameClock by 5 in screen states 4
+ * and 13, always increments gFrameTickCounter by 5, polls func_80092C8C(1)
+ * when gFrameBarrier is set to clear the barrier and run func_8001BFE4 and
+ * func_8001BFA8, and toggles gDisplaySetupToggle. Touches D_8009F99C,
+ * D_8009F9CC, D_8009FA00, D_8009FA2C, D_8009FA3C, and D_8009FA60.
  */
-void func_8001EFF8(void)
+void gFrameCallback(void)
 {
     if (gScreenModeHook != 0) {
         gScreenModeHook();
@@ -52,7 +62,7 @@ void func_8001EFF8(void)
         if (func_80092C8C(1) == 0) {
             gFrameBarrier = 0;
             func_8001BFE4();
-            func_8001BFA8();
+            gFlipDisplayLayer();
         }
     }
     gDisplaySetupToggle = 1 - gDisplaySetupToggle;

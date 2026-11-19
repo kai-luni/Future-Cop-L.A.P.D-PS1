@@ -16,6 +16,8 @@ struct Context {
 };
 extern struct Context *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(s32);
+s32 gMcAbortCallback(void) __asm__("func_8001F784");
+
 
 /**
  *  @brief Resets context state and passes a context field to a helper.
@@ -35,8 +37,14 @@ extern void func_8008D640(s32);
  *  field904 and field9a4, then invokes the helper.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Aborts or resets the memory-card operation state in gOperationState
+ * (D_8009AB08) by clearing field1bb0, setting field9a8 to 1, clearing state
+ * and field8f8 (plus clearing field904 and setting field9a4 to 1 when state
+ * is 2, 3, or 6), and calling func_8008D640(field8fc).
  */
-s32 func_8001F784(void)
+s32 gMcAbortCallback(void)
 {
     volatile struct Context *p = gOperationState;
     p->field1bb0 = 0;

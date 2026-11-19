@@ -1,5 +1,7 @@
 // Categories: Graphics > Color
 #include "game/types.h"
+void gAccumScaledRgb24(u32 color, s32 scale, s32 *out) __asm__("func_8001BCD0");
+
 
 /**
  *  @brief Accumulates scaled RGB components into three output integers.
@@ -19,8 +21,14 @@
  *  Adds the scaled components to out[0], out[1], and out[2].
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Pure arithmetic helper not on the environment path: extracts the red,
+ * green, and blue bytes from a 24-bit color, multiplies each by signed scale,
+ * and adds them to out[0..2]. Touches no globals, makes no calls, and has no
+ * direct callers found in src/.
  */
-void func_8001BCD0(u32 color, s32 scale, s32 *out)
+void gAccumScaledRgb24(u32 color, s32 scale, s32 *out)
 {
     s32 r, g, b;
 

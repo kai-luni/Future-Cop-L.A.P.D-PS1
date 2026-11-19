@@ -7,8 +7,8 @@ extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 extern void func_80091480(void);
 extern void func_80095878(void);
 extern void gInitMemoryCardBios(void) __asm__("func_800200A8");
-extern void func_8001E87C(void);
-extern void func_8001E588(u32 port);
+extern void gInitPadActuators(void) __asm__("func_8001E87C");
+extern void gInitPadMapping(u32 port) __asm__("func_8001E588");
 
 /**
  * @brief Initialises the controller/device layer for both ports.
@@ -40,10 +40,10 @@ s32 func_8001E4E4(void)
     func_80095878();
     gInitMemoryCardBios();
     gSavedStackPointer = 0;
-    func_8001E87C();
+    gInitPadActuators();
     gFrameCallbackEnabled = 0;
     for (port = 0; port < 2; port++) {
-        func_8001E588(port);
+        gInitPadMapping(port);
     }
     return 0;
 }

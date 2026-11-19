@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gScreenModeHook __asm__("D_8009F99C");
+s32 gClearScreenModeHook(s32 callback) __asm__("func_8001F12C");
+
 
 /**
  *  @brief Clears the registered callback value if it matches the argument.
@@ -20,8 +22,14 @@ extern s32 gScreenModeHook __asm__("D_8009F99C");
  *  May set D_8009F99C to zero.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Clears gScreenModeHook (D_8009F99C) to 0 and returns 0 if it is non-zero
+ * and equals callback, otherwise leaving it unchanged and returning 3. Reads
+ * and writes D_8009F99C and makes no calls; no direct callers are present in
+ * the C tree.
  */
-s32 func_8001F12C(s32 callback)
+s32 gClearScreenModeHook(s32 callback)
 {
     if (gScreenModeHook == 0) {
         return 3;

@@ -98,7 +98,7 @@ extern void gSetCameraRotation(s32, s32, s32) __asm__("func_80017860");
 extern void gVectorMulAdd(struct Vec569EC *, struct Vec569EC *, s32, struct Vec569EC *) __asm__("func_8001AC28");
 extern s32 gGteLeadingZeros(s32) __asm__("func_80095C14");
 extern s32 func_80019668(void);
-extern void func_8001EA20(struct Obj569EC *, s32);
+extern void gSetEntityLargeRumble(struct Obj569EC *, s32) __asm__("func_8001EA20");
 extern void gSetCameraPosition(struct Vec569EC *) __asm__("func_800177AC");
 
 #define ABS569EC(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
@@ -555,9 +555,9 @@ void gUpdateChaseCamera(struct Obj569EC *object, volatile s32 elapsed, volatile 
             lowEffect = lowEffect - twice;
             __asm__("" : "+r"(lowEffect) : "r"(tick) : "memory");
             info->effect = lowEffect;
-            if (gScreenState == 4) func_8001EA20(object, (s16)lowEffect + 90);
+            if (gScreenState == 4) gSetEntityLargeRumble(object, (s16)lowEffect + 90);
         } else {
-            func_8001EA20(object, 0);
+            gSetEntityLargeRumble(object, 0);
         }
     }
     gSetCameraPosition(&local.out);

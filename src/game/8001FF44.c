@@ -17,6 +17,8 @@ struct Ctx {
 
 extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(s32);
+s32 gMcErrorCallbackB(void) __asm__("func_8001FF44");
+
 
 /**
  *  @brief Updates a context state and passes its stored value to a helper.
@@ -36,8 +38,14 @@ extern void func_8008D640(s32);
  *  Writes context markers and, depending on state, the counter and reset fields.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Handles error or timeout cleanup in gOperationState (D_8009AB08) via a jump
+ * table: clears unk1BB0, sets unk9A4 to 1, decrements unk9A8 when unk8F4 is 0
+ * and unk9A8 > 0 or else sets unk900 to -3 and resets unk8F8/unk8F4/unk904,
+ * and calls func_8008D640(unk8FC).
  */
-s32 func_8001FF44(void)
+s32 gMcErrorCallbackB(void)
 {
     static void *const table[] = { &&case0, &&fallback, &&fallback, &&fallback, &&fallback, &&fallback, &&fallback };
     register s32 count __asm__("$2");
