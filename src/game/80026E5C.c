@@ -5,16 +5,13 @@ extern u32 gSavedStackPointer __asm__("D_8009FAD8");
 extern void gUpdateCameraAnchor(void) __asm__("func_80066C9C");
 
 void gUpdateViewAnchorsOnScratchpad(void) __asm__("func_80026E5C");
-
 /**
  * @brief Runs the per-view camera anchor update on the scratchpad stack.
- *
  * @param void No parameters.
  * @return Nothing.
  *
  * @par Confirmed mechanics
- * Pushes ra and saves sp, sets sp to 0x1F8003F8, calls gUpdateCameraAnchor and restores the
- * saved stack pointer and return address.
+ * Saves ra and sp, calls gUpdateCameraAnchor with sp at 0x1F8003F8, then restores sp and ra.
  *
  * @par Globals
  * Writes and reads gSavedStackPointer. The callee updates gViewGroundAnchors.
@@ -24,9 +21,8 @@ void gUpdateViewAnchorsOnScratchpad(void) __asm__("func_80026E5C");
  *
  * @par Role and path
  * Both session frame paths build view positions through this scratchpad trampoline.
- *
  * @par Unknown
- * The save word is shared with the other scratchpad trampolines.
+ * The reason for the eight-byte gap below the scratchpad end is unresolved.
  */
 void gUpdateViewAnchorsOnScratchpad(void)
 {
