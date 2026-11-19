@@ -2,26 +2,34 @@
 typedef unsigned char u8;
 extern int gMode1IndexBase __asm__("D_800A09D4");
 
+void gMarkAudioStreamAdpcmBlock(u8 *data, int mode, int offset) __asm__("func_80022D1C");
+
 /**
- *  @brief Updates a byte in a data buffer according to a mode.
+ * @brief Sets the ADPCM block flag byte selected by the audio stream mode.
  *
- *  Modes zero and one set bits, while mode three writes a whole byte.
- *  The buffer's purpose and the meaning of these flags are not established.
- *  @param data Buffer to modify.
- *  @param mode Selects the update; other values leave the buffer unchanged.
- *  @param offset Offset used by mode three, before subtracting 15.
- *  @par Globals
- *  D_800A09D4 supplies the index basis for mode one.
- *  @par Control flow
- *  Branches on modes 0, 1, and 3; all other modes return without a write.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Modifies one buffer byte for a supported mode, without bounds checks.
- *  @par Callers
- *  Confirmed: func_80022D84.
+ * @param data Buffer to modify.
+ * @param mode Selects the update; other values leave the buffer unchanged.
+ * @param offset Offset used by mode three, before subtracting 15.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Mode 0 ORs 4 at buffer +1. Mode 1 ORs 1 at gMode1IndexBase minus 15. Mode 3 stores 1 at the
+ * supplied offset minus 15. Other modes perform no write.
+ *
+ * @par Globals
+ * Reads gMode1IndexBase in mode 1.
+ *
+ * @par Callers
+ * Direct calls from func_80022D84.
+ *
+ * @par Role and path
+ * The stream request builder prepares the 16-byte ADPCM block flags before submitting the
+ * channel buffer.
+ *
+ * @par Unknown
+ * This function does not validate the caller's buffer extent.
  */
-void func_80022D1C(u8 *data, int mode, int offset)
+void gMarkAudioStreamAdpcmBlock(u8 *data, int mode, int offset)
 {
     register int index __asm__("$2");
     register u8 *ptr __asm__("$3");

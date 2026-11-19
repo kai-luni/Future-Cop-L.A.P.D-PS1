@@ -64,7 +64,7 @@ s32 gAllocateSoundChannelVoice(s32 unused, s32 index, struct VoiceArgs *args, s3
  * Reads the channel table and allocates a voice record in gSoundSystem.
  *
  * @par Callers
- * Direct calls from func_800228F4, func_80023F08.
+ * Direct calls from gStartAudioStreamChannels (func_800228F4), func_80023F08.
  *
  * @par Role and path
  * The stream start paths use these software descriptors to drive channel playback.

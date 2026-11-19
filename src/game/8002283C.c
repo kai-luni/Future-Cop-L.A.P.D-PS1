@@ -34,31 +34,38 @@ struct StreamMix {
 
 extern struct StreamState gMixerState __asm__("D_800A0968");
 
-extern void func_800227BC(s32 channel, s32 left, s32 right);
+extern void gStoreStreamChannelMix(s32 channel, s32 left, s32 right) __asm__("func_800227BC");
 extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
 extern void gSetSoundChannelMix(s32 voice, struct StreamMix *mix) __asm__("func_800222CC");
 
+void gApplyStreamChannelMix(s32 channel, s32 left, s32 right) __asm__("func_8002283C");
+
 /**
- *  @brief Updates a stream channel's settings and applies its active voice mix.
+ * @brief Stores a stream channel mix and applies it to an active voice when present.
  *
- *  Clamps the channel to the three-channel range, records the requested
- *  values, and updates the associated voice when streaming is active.
- *  @param channel Channel index, clamped to 0 through 2.
- *  @param left Requested left channel setting.
- *  @param right Requested right channel setting.
- *  @par Globals
- *  D_800A0968 supplies the active flag and channel voice and settings.
- *  @par Control flow
- *  Returns after recording settings if streaming is inactive or the voice is null.
- *  @par Calls
- *  func_800227BC records settings; func_800477D8 updates the voice.
- *  gSetSoundChannelMix applies the resulting volume and pan to the voice index.
- *  @par Side effects
- *  Updates channel settings and, when applicable, voice and audio mix state.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param channel Channel index, clamped to 0 through 2.
+ * @param left Requested left channel setting.
+ * @param right Requested right channel setting.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Clamps the channel, calls gStoreStreamChannelMix, checks mixer +0x04 and reads the selected
+ * voice pointer. Calls func_800477D8 with the stored pan and level, then uses signed bytes at
+ * voice offsets +4, +6 and +0x0D to submit an SPU mix with pitch argument -1.
+ *
+ * @par Globals
+ * Reads active state, the channel mix and the voice pointer in gMixerState.
+ *
+ * @par Callers
+ * Direct calls from func_80024730.
+ *
+ * @par Role and path
+ * Used when the stream volume or stereo/mono selection changes during playback.
+ *
+ * @par Unknown
+ * The voice descriptor's additional fields are not accessed here.
  */
-void func_8002283C(s32 channel, s32 left, s32 right)
+void gApplyStreamChannelMix(s32 channel, s32 left, s32 right)
 {
     struct SoundVoice *voice;
     struct StreamMix mix;
@@ -74,7 +81,7 @@ void func_8002283C(s32 channel, s32 left, s32 right)
         clamped = 0;
     }
     channel = clamped;
-    func_800227BC(channel, left, right);
+    gStoreStreamChannelMix(channel, left, right);
     if (gMixerState.active == 0) {
         return;
     }

@@ -12,8 +12,8 @@ extern s32 gConfigureAudioStreaming(s32 arg0, ...) __asm__("func_80022484");
 extern u32 gIsAudioStreamConfigured(void) __asm__("func_800226C8");
 extern void gStopAudioStreamAndClearChannels(void) __asm__("func_800226D8");
 extern s32 gPrimeAudioStream(void) __asm__("func_80022710");
-extern void func_800227BC(s32 arg0, s32 arg1, s32 arg2);
-extern void func_800228F4(void);
+extern void gStoreStreamChannelMix(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800227BC");
+extern void gStartAudioStreamChannels(void) __asm__("func_800228F4");
 extern void func_80024630(s32 arg0);
 extern s32 func_800246A8(s32 arg0);
 extern void func_8002A31C(s32 arg0, s32 arg1);
@@ -36,7 +36,7 @@ extern s32 func_80045288(void);
  *  @par Calls
  *  gIsAudioStreamConfigured, gStopAudioStreamAndClearChannels, and func_8002A31C handle an existing operation.
  *  gConfigureAudioStreaming, func_80024630, func_800246A8, and gPrimeAudioStream initialize or clean up.
- *  func_800451E0, func_80045288, func_800227BC, and func_800228F4 configure and finish.
+ *  func_800451E0, func_80045288, gStoreStreamChannelMix, and gStartAudioStreamChannels configure and finish.
  *  @par Side effects
  *  Changes global state and may stop, initialize, or configure the subsystem.
  *  @par Callers
@@ -69,13 +69,13 @@ s32 func_800244A4(void)
                     return 0;
                 }
                 if (func_800451E0() != 0) {
-                    func_800227BC(0, func_80045288(), 0);
-                    func_800227BC(1, func_80045288(), 0x7F);
+                    gStoreStreamChannelMix(0, func_80045288(), 0);
+                    gStoreStreamChannelMix(1, func_80045288(), 0x7F);
                 } else {
-                    func_800227BC(0, func_80045288(), 0x40);
-                    func_800227BC(1, func_80045288(), 0x40);
+                    gStoreStreamChannelMix(0, func_80045288(), 0x40);
+                    gStoreStreamChannelMix(1, func_80045288(), 0x40);
                 }
-                func_800228F4();
+                gStartAudioStreamChannels();
             }
         }
     }

@@ -13,7 +13,7 @@ extern struct StreamState gMixerState __asm__("D_800A0968");
 extern s32 gMixerWord[2] __asm__("D_800A0970");
 extern u16 gStreamRequestSequence __asm__("D_8009F268");
 
-extern void func_80022CA8(void);
+extern void gResetAudioStreamController(void) __asm__("func_80022CA8");
 extern void func_80022D84(void);
 
 s32 gPrimeAudioStream(void) __asm__("func_80022710");
@@ -50,7 +50,7 @@ s32 gPrimeAudioStream(void)
     struct StreamState *q;
 
     i = 0xFFFF;
-    func_80022CA8();
+    gResetAudioStreamController();
     p = &gMixerState;
     p->flag = 1;
     gStreamRequestSequence++;

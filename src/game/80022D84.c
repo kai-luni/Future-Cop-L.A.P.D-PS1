@@ -42,7 +42,7 @@ struct Request {
 
 extern struct StreamState gMixerState __asm__("D_800A0968");
 
-extern void func_80022D1C(void *data, s32 mode, s32 length);
+extern void gMarkAudioStreamAdpcmBlock(void *data, s32 mode, s32 length) __asm__("func_80022D1C");
 extern void func_80023204(void);
 extern void func_800212F8(struct Request *req);
 
@@ -57,7 +57,7 @@ extern void func_800212F8(struct Request *req);
  *  Channel zero can return early; ring bookkeeping precedes mode selection.
  *  Looping selects mode 3; otherwise the offset selects mode 0, 1, or 2.
  *  @par Calls
- *  func_80022D1C prepares the channel buffer for the selected mode.
+ *  gMarkAudioStreamAdpcmBlock prepares the channel buffer for the selected mode.
  *  func_800212F8 submits the request with func_80023204 as its callback.
  *  @par Side effects
  *  Clears ready, adjusts ring bookkeeping, and initiates a transfer.
@@ -104,7 +104,7 @@ void func_80022D84(void)
         mode = 2;
     }
 
-    func_80022D1C((void *)gMixerState.channels[channel].start, mode, gMixerState.channels[channel].length);
+    gMarkAudioStreamAdpcmBlock((void *)gMixerState.channels[channel].start, mode, gMixerState.channels[channel].length);
 
     req.address = gMixerState.channels[channel].unk20 + gMixerState.unk78;
     req.size = gMixerState.channels[channel].length;

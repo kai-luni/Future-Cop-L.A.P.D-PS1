@@ -6,28 +6,34 @@ struct KeyValue {
     s32 value;
 };
 
+s32 gFindStreamOption(struct KeyValue *table, s32 key, s32 *value, s32 *index) __asm__("func_80022B84");
+
 /**
- *  @brief Finds the first matching key in a zero-terminated table.
+ * @brief Finds a matching key in a zero-terminated table of stream options.
  *
- *  Scans key-value records until a match or a record with key zero is reached.
- *  Optional output pointers receive the matched value and zero-based index.
- *  @param table Table to search, or null for an empty search.
- *  @param key Key to find; zero is the terminator and cannot match.
- *  @param value Optional destination for the matched value.
- *  @param index Optional destination for the matched index.
- *  @return One if a match is found, otherwise zero.
- *  @par Globals
- *  None accessed directly.
- *  @par Control flow
- *  Checks for an empty table, then loops until a match or terminator.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Writes non-null output destinations only when a match is found.
- *  @par Callers
- *  Unknown: no direct callers are listed.
+ * @param table Table to search, or null for an empty search.
+ * @param key Key to find; zero is the terminator and cannot match.
+ * @param value Optional destination for the matched value.
+ * @param index Optional destination for the matched index.
+ * @return One if a match is found, otherwise zero.
+ *
+ * @par Confirmed mechanics
+ * Tests for a null table or zero first key, then walks eight-byte records. On a match, writes
+ * the value and zero-based index through whichever output pointers are nonnull.
+ *
+ * @par Globals
+ * None directly.
+ *
+ * @par Callers
+ * Direct calls from gConfigureAudioStreaming (func_80022484).
+ *
+ * @par Role and path
+ * The audio stream configurator uses this to override default option values.
+ *
+ * @par Unknown
+ * The caller supplies a terminated table.
  */
-s32 func_80022B84(struct KeyValue *table, s32 key, s32 *value, s32 *index)
+s32 gFindStreamOption(struct KeyValue *table, s32 key, s32 *value, s32 *index)
 {
     s32 found;
     s32 i;

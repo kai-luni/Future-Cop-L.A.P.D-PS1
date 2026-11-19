@@ -34,7 +34,7 @@ extern void gSpuSetIrqEnable(s32 mode) __asm__("func_80098A78");
  * Programs the SPU IRQ address and sets bit 0x40 in D_8009EEA4->flags via callees.
  *
  * @par Callers
- * Confirmed: func_800228F4 (0x80022948, after installing callback D_80022FA8 during stream start) / Likely: none / Unknown: none.
+ * Confirmed: gStartAudioStreamChannels (0x80022948, after installing callback D_80022FA8 during stream start) / Likely: none / Unknown: none.
  */
 void func_80022F44(void)
 {

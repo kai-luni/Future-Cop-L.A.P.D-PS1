@@ -599,7 +599,7 @@ graph LR
 | `func_80021888` | 16 | Game Engine > State | - | - |
 | `gIsAudioStreamConfigured` (`func_800226C8`) | 16 | Game Engine > State | - | - |
 | `gMarkAudioStreamStopPending` (`func_80022700`) | 16 | Game Engine > State | - | - |
-| `func_80022B74` | 16 | Game Engine > State | - | `func_8002443C` |
+| `gGetAudioStreamBlockCount` (`func_80022B74`) | 16 | Game Engine > State | - | `func_8002443C` |
 | `func_80049400` | 16 | Game Engine > Init · Entity Script | - | `func_80024A24` |
 | `func_80049410` | 16 | Game Engine > Game State > Reset · Entity Script | - | `func_80024D14` |
 | `gSetMenuCursorToItem2` (`func_8007F678`) | 16 | Game Engine > State | - | - |
@@ -695,7 +695,7 @@ graph LR
 | `gEndSubScreenFrame` (`func_8001BBAC`) | 64 | Game Engine > Frame · Display | `func_8001B4A8` | `func_80027510` |
 | `gSetPortSmallRumble` (`func_8001E96C`) | 64 | Input > Vibration · Controller | `func_8001E9AC` | `func_8007C940` |
 | `gIsPadRumbleReady` (`func_8001EAEC`) | 64 | Input > DualShock · Controller | - | `func_8007C6F0`, `func_8007C940` |
-| `func_80022C68` | 64 | Game Engine > State | - | `func_800226D8` |
+| `gClearAudioStreamSpuBuffers` (`func_80022C68`) | 64 | Game Engine > State | - | `func_800226D8` |
 | `func_80026D1C` | 64 | Game Engine > Frame · Scratchpad, Entity Update | `func_8004EC74` | `func_80027510` |
 | `func_80026D5C` | 64 | Game Engine > Frame · Scratchpad | `func_80062FB4` | `func_80027510` |
 | `func_80026D9C` | 64 | Game Engine > Frame · Scratchpad, Entity Script | `func_80049564` | `func_80027510` |
@@ -719,7 +719,7 @@ graph LR
 | `gSetPadActuatorBuf` (`func_8008A240`) | 72 | Input > DualShock · Controller | `func_8008AE70` | `func_8001EC94` |
 | `func_80021250` | 76 | Game Engine > State | - | - |
 | `func_80021508` | 76 | Game Engine > Audio | - | - |
-| `func_80022B28` | 76 | Game Engine > Audio | - | - |
+| `gSetAudioStreamChannelRange` (`func_80022B28`) | 76 | Game Engine > Audio | - | - |
 | `func_8003CF20` | 76 | Game Engine > Entity Lifecycle · Memory Management | `func_800181D4` | `func_8003D240` |
 | `func_80069D0C` | 76 | Game Engine > State Machine · Entity Script | - | `func_80027510` |
 | `gIsPadPortState8` (`func_80089E40`) | 76 | Game Engine > State | - | - |
@@ -751,7 +751,7 @@ graph LR
 | `func_80045884` | 100 | Game Engine > State Tables | - | - |
 | `gRegisterPublishedBlock` (`func_8008263C`) | 100 | Game Engine > Front-End Configuration · Memory Management | `func_800181D4` | `func_80024EC8` |
 | `func_800216D8` | 104 | Game Engine > Audio | `func_800217A8` | `func_80021554`, `func_80021C80` |
-| `func_80022D1C` | 104 | Game Engine > State Flags | - | `func_80022D84` |
+| `gMarkAudioStreamAdpcmBlock` (`func_80022D1C`) | 104 | Game Engine > State Flags | - | `func_80022D84` |
 | `gUnloadFrontEndSubsystems` (`func_800249BC`) | 104 | Game Engine > Game State > Reset | `func_80017D20`, `func_800198DC`, `func_80019BA4`, `func_8001B448`, `func_80023BF8`, `func_80029EB8`, `func_80047868`, `func_80069D04`, `func_80069D58`, `func_8007852C` | `func_80025B7C` |
 | `gPadVsyncDispatchHook` (`func_8008A3D4`) | 104 | Input > State Checks | - | - |
 | `gStartPadActAlign` (`func_8008B484`) | 104 | Input > Controller Protocol | - | `func_8008A1C0` |
@@ -834,7 +834,7 @@ graph LR
 | `gUpdateTitleScreenTimeout` (`func_800778E4`) | 172 | Game Engine > Front End · Menu System | `func_80078650`, `func_800788B4` | - |
 | `func_80082D30` | 172 | Game Engine > Timing | - | - |
 | `func_8003B5AC` | 176 | Game Engine > Data Lookup | - | `func_8003BAE4` |
-| `func_8002283C` | 184 | Game Engine > Audio | `func_800222CC`, `func_800227BC`, `func_800477D8` | - |
+| `gApplyStreamChannelMix` (`func_8002283C`) | 184 | Game Engine > Audio | `func_800222CC`, `func_800227BC`, `func_800477D8` | - |
 | `gLoadFrontEndModule` (`func_80024904`) | 184 | Game Engine > Game State > Init · Mission Setup | `func_80017C68`, `func_800197A8`, `func_80019828`, `func_80019A64`, `func_8001B2C8`, `func_80029F50`, `func_8004783C`, `func_80069B58`, `func_800780DC`, `func_8008CCB0` | `func_80024E3C` |
 | `func_8003F79C` | 184 | Game Engine > Init · Spawn Tables, Memory Pools | `func_800194DC`, `func_8005E1BC`, `func_8006EDC4` | `func_80024A24` |
 | `func_80042504` | 184 | Game Engine > Entity Initialization | `func_8002AD58` | `func_800426A8` |
@@ -904,7 +904,7 @@ graph LR
 | `gInitPadPorts` (`func_8008BDB0`) | 352 | Input > Port Initialization | `func_8008A3A8`, `func_8008C410`, `func_8008CD00` | `func_8001E87C` |
 | `func_8002703C` | 360 | Game Engine > Frame · Controller, Animation | `func_800136C8`, `func_8004CC68`, `func_8004DB74`, `func_80057864`, `func_80059DB8`, `func_80063568` | - |
 | `gPollPadPorts` (`func_8008A43C`) | 364 | Input > Port Processing | `func_8008A6CC`, `func_8008A8E0` | - |
-| `func_800228F4` | 368 | Game Engine > Audio Streaming | `func_800220C4`, `func_800221E4`, `func_80022F44`, `func_80046B04`, `func_800477D8`, `func_80098BF8` | - |
+| `gStartAudioStreamChannels` (`func_800228F4`) | 368 | Game Engine > Audio Streaming | `func_800220C4`, `func_800221E4`, `func_80022F44`, `func_80046B04`, `func_800477D8`, `func_80098BF8` | - |
 | `gRunEntityWorldTick` (`func_8003F570`) | 372 | Game Engine > Frame · Entity Script | `func_8003B44C`, `func_8003D240`, `func_8003F2AC`, `func_8003F428`, `func_8003F530`, `func_8003FF7C`, `func_8004C2B8`, `func_8005E0AC` | `func_80027510` |
 | `gVSyncWait` (`func_80091270`) | 376 | Game Engine > Frame · Interrupts | `func_800913E8` | `func_8008204C`, `func_80085C4C`, `func_800879DC`, `func_80087D48`, `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008FAC8`, `func_800908D4`, `func_80090C18`, `func_80090E00`, `func_80090FA0`, `func_8009113C`, `func_800951D8`, `func_8009520C`, `func_800953F0`, `func_800954DC`, `func_800955C8`, `func_8009570C` |
 | `func_80028E58` | 380 | Game Engine > Node Queues | `func_80028AB4` | `func_8002902C` |
@@ -1331,7 +1331,7 @@ graph LR
 | `gUpdateProfileChecksums` (`func_8007F6E0`) | 112 | Resources > Save Data · Front-End Configuration | `func_8007F688` | `func_80080B70` |
 | `func_80080A5C` | 120 | Resources > Save Data · Volume, Front End | `func_8001EB2C`, `func_800451E0`, `func_8004522C`, `func_80045288`, `func_800452C8` | `func_80080B70` |
 | `gCloseFileSlot` (`func_8001D3A8`) | 124 | Resources > File Access · CD-ROM | - | `func_8001E004`, `func_80029EB8` |
-| `func_80022BEC` | 124 | Resources > Buffer Management | - | - |
+| `gAssignAudioStreamSpuBuffers` (`func_80022BEC`) | 124 | Resources > Buffer Management | - | - |
 | `gOpenProfileSaveSubsystem` (`func_8007F9CC`) | 124 | Resources > Save Data · Memory Card | `func_80017EBC`, `func_80020618` | `func_80076A2C`, `func_800780DC` |
 | `func_80098708` | 124 | Resources > Object Table · Object List | `func_80097DF8` | `func_80021998`, `func_80087D48` |
 | `gInitHeap` (`func_80017BE8`) | 128 | Resources > Memory Management · Memory | `func_8001E240` | `func_80076EB0` |
@@ -4556,7 +4556,7 @@ graph LR
 | `func_80093280` | 112 | Platform > GPU · GPU Command Lists | - | `func_8001B4A8` |
 | `func_800965C8` | 112 | Platform > Runtime Init · Utilities | - | `func_80076A2C` |
 | `gSpuInitDmaEvent` (`func_80096E40`) | 112 | Platform > Sound · DMA, Interrupts | `func_8008C960`, `func_8008C980`, `func_8008C9B0`, `func_800979F8` | `func_80021B50`, `func_80096D58` |
-| `func_80022CA8` | 116 | Platform > Sound · Streaming Audio | - | `func_80022710` |
+| `gResetAudioStreamController` (`func_80022CA8`) | 116 | Platform > Sound · Streaming Audio | - | `func_80022710` |
 | `func_800457B8` | 116 | Platform > Sound > SE | `func_80045548`, `func_80046698` | `func_8002E630`, `func_8002F30C`, `func_8003A160`, `func_80041880`, `func_8004CECC`, `func_8004D958`, `func_8004DF28`, `func_8004E248`, `func_8008352C` |
 | `gSpuShutdownDmaEvent` (`func_80097A48`) | 116 | Platform > Sound > DMA · Interrupts, System Calls | `func_8008C970`, `func_8008C990`, `func_8008C9B0`, `func_800979F8` | `func_80021C80` |
 | `gCompareCdlLoc` (`func_8001C3F8`) | 120 | Platform > CD-ROM · Comparison | - | `func_8001CE54` |
@@ -4567,7 +4567,7 @@ graph LR
 | `gRestartIrqSubsys` (`func_80091AA4`) | 120 | Platform > CD-ROM · Hardware Init | `func_8008C9B0`, `func_80091B80` | - |
 | `func_8009649C` | 124 | Platform > MDEC · DMA | `func_8008E000` | `func_8009635C`, `func_800963F0` |
 | `func_80021AD0` | 128 | Platform > Audio | `func_80099C58` | `func_80021E1C` |
-| `func_800227BC` | 128 | Platform > Audio | - | `func_8002283C` |
+| `gStoreStreamChannelMix` (`func_800227BC`) | 128 | Platform > Audio | - | `func_8002283C` |
 | `func_80046A58` | 128 | Platform > Sound · Object Pool | `func_80045494`, `func_80046B04` | `func_80025E18`, `func_8007CACC` |
 | `gCdPosToInt` (`func_8008E720`) | 128 | Platform > CD-ROM · Time Conversion | - | `func_800889DC`, `func_800908D4`, `func_80090C18` |
 | `func_8009398C` | 128 | Platform > GPU · Display Setup | `func_80093F78`, `func_80094010` | `func_8001B4A8` |
@@ -4613,7 +4613,7 @@ graph LR
 | `gGetPadPortState` (`func_80089E8C`) | 192 | Platform > State Query | - | `func_8001EC94` |
 | `gBeginPadExchange` (`func_8008B8E8`) | 192 | Platform > State Initialization | `func_8008AB80` | - |
 | `gReadAnalogStick` (`func_8001E7B8`) | 196 | Platform > Controller Input · Analog | `func_8001EF34` | `func_800538C8` |
-| `func_80022A64` | 196 | Platform > Streaming Audio · Voices | `func_8002129C`, `func_80022240`, `func_80022F7C`, `func_80046A34`, `func_80098BF8` | `func_800226D8` |
+| `gStopAudioStreamPlayback` (`func_80022A64`) | 196 | Platform > Streaming Audio · Voices | `func_8002129C`, `func_80022240`, `func_80022F7C`, `func_80046A34`, `func_80098BF8` | `func_800226D8` |
 | `gShutdownMovieAudio` (`func_80087750`) | 196 | Platform > Sound > Shutdown · SPU | `func_80087688`, `func_800876EC`, `func_8008C9E0`, `func_80091510`, `func_80098A78`, `func_80098BF8`, `func_80098FB8` | - |
 | `gRunPadPollStep` (`func_8008A8E0`) | 200 | Platform > Callback Dispatch | `func_8008ADB4`, `func_8008C890` | `func_8008A43C` |
 | `func_80020E68` | 204 | Platform > Memory Card · Save Data | `func_800207CC`, `func_80020DF8` | `func_80020FDC`, `func_8007FB04` |
@@ -4860,7 +4860,7 @@ graph LR
 | `func_80019904` | 104 | Utilities > Mathematics > Fixed Point · Geometry | - | `func_80016C88`, `func_8001A180`, `func_8005F018` |
 | `func_8001AB78` | 104 | Utilities > Mathematics > Vector · Handwritten ASM | - | `func_800324E0`, `func_80032F3C`, `func_8003A160`, `func_8004F764`, `func_80050E0C`, `func_800513D0`, `func_80051580`, `func_800569EC`, `func_8005EE04` |
 | `func_80021740` | 104 | Utilities > Table Lookup | - | `func_80021554` |
-| `func_80022B84` | 104 | Utilities > Table Lookup | - | - |
+| `gFindStreamOption` (`func_80022B84`) | 104 | Utilities > Table Lookup | - | - |
 | `gTransposeMatrix3x3` (`func_80019470`) | 108 | Utilities > Mathematics > Matrix · Matrix Build | - | `func_80018860`, `func_80031238`, `func_80051EB8`, `func_80061CAC` |
 | `gFindListEntryByValue` (`func_8007D39C`) | 108 | Utilities > Search | - | `func_8007D408` |
 | `gCopyMemOverlap` (`func_8008D5D0`) | 108 | Utilities > Memory | - | `func_8008CD3C` |

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern void func_80021508(void);
-extern void func_80022CA8(void);
+extern void gResetAudioStreamController(void) __asm__("func_80022CA8");
 extern s32 func_80021554(s32 *arguments);
 extern void gShutdownSoundSystem(void) __asm__("func_80021C80");
 
@@ -16,9 +16,9 @@ s32 gConfigureSoundSystem(s32 first, ...) __asm__("func_80021C20");
  * @return The parser's status word.
  *
  * @par Confirmed mechanics
- * Spills a0 through a3, calls func_80021508 and func_80022CA8, then passes the address of first
- * to func_80021554. It preserves the result across a call to gShutdownSoundSystem on nonzero
- * status.
+ * Spills a0 through a3, calls func_80021508 and gResetAudioStreamController, then passes the
+ * address of first to func_80021554. It preserves the result across a call to
+ * gShutdownSoundSystem on nonzero status.
  *
  * @par Globals
  * None directly. The reset and configuration callees update gSoundSystem and gMixerState.
@@ -39,7 +39,7 @@ s32 gConfigureSoundSystem(s32 first, ...)
     s32 result;
 
     func_80021508();
-    func_80022CA8();
+    gResetAudioStreamController();
     result = func_80021554(&first);
     if (result != 0) {
         gShutdownSoundSystem();

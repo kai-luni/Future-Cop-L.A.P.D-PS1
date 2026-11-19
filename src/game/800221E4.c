@@ -21,7 +21,7 @@ void gQueueSoundChannelStarts(s32 count, s32 *channels) __asm__("func_800221E4")
  * gSoundChannelEnableMask.
  *
  * @par Callers
- * Direct calls from func_800228F4, func_80023F08.
+ * Direct calls from gStartAudioStreamChannels (func_800228F4), func_80023F08.
  *
  * @par Role and path
  * Stream startup batches its assigned channels into a single update.
