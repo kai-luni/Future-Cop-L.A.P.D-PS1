@@ -9,24 +9,33 @@ struct EventFlags {
 
 extern struct EventFlags gSoundSystem __asm__("D_800A07A8");
 
+void gMoveSoundVoiceMaskToOff(u32 flags) __asm__("func_80021A8C");
+
 /**
- *  @brief Acknowledges the specified event flags.
+ * @brief Moves selected voice bits out of the pending key-on mask and into the
+ * key-off mask.
  *
- *  Clears the selected bits from the pending mask and sets them in the
- *  acknowledged mask, preserving all other bits in both fields.
- *  @param flags Bit mask of events to acknowledge.
- *  @par Globals
- *  D_800A07A8 holds the pending and acknowledged event masks.
- *  @par Control flow
- *  Updates both masks directly without branches or loops.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Modifies the pending and acknowledged fields of D_800A07A8.
- *  @par Callers
- *  Confirmed: func_8002238C.
+ * @param flags Mask of voices to move from key-on to key-off.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Inverts the argument with NOR, ANDs that with word +0x14, and ORs the
+ * original argument into word +0x18. Stores both words.
+ *
+ * @par Globals
+ * Reads and updates gSoundSystem at +0x14 and +0x18.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from func_8002238C.
+ *
+ * @par Role and path
+ * The voice stop path cancels pending starts and queues the voices for
+ * key-off.
+ *
+ * @par Unknown
+ * When the manager flushes these masks depends on the audio update path.
  */
-void func_80021A8C(u32 flags)
+void gMoveSoundVoiceMaskToOff(u32 flags)
 {
     gSoundSystem.pending &= ~flags;
     gSoundSystem.acknowledged |= flags;

@@ -8,24 +8,32 @@ struct FlagState {
 
 extern struct FlagState gSoundSystem __asm__("D_800A07A8");
 
+void gQueueSoundVoiceOffMask(u32 flags) __asm__("func_80021AB4");
+
 /**
- *  @brief Adds bits to a shared flag field.
+ * @brief Adds voice bits to the sound system's pending key-off mask.
  *
- *  ORs the supplied mask into the field at offset 0x18 of D_800A07A8.
- *  Existing bits in that field remain set.
- *  @param flags Bit mask to add to the field.
- *  @par Globals
- *  D_800A07A8.flags is read and updated.
- *  @par Control flow
- *  Performs one unconditional read-modify-write operation.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Updates the flags field of D_800A07A8.
- *  @par Callers
- *  Confirmed: func_80021F3C.
+ * @param flags Mask of voices to mark for key-off.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Loads word +0x18, ORs it with $a0, and stores the result in the return delay
+ * slot.
+ *
+ * @par Globals
+ * Reads and updates gSoundSystem at +0x18.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from func_80021F3C.
+ *
+ * @par Role and path
+ * The voice reset path constructs a mask of configured channels and sends it
+ * here before servicing sound state.
+ *
+ * @par Unknown
+ * Voice selection is performed by the caller.
  */
-void func_80021AB4(u32 flags)
+void gQueueSoundVoiceOffMask(u32 flags)
 {
     gSoundSystem.flags |= flags;
 }

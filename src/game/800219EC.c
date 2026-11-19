@@ -2,25 +2,34 @@
 #include "game/types.h"
 typedef struct { u8 unk00[4]; u8 count; u8 unk05[0xB]; s32 offsets[1]; } D;
 
+void gAdjustSoundBankSampleOffsets(u8 *arg0, s32 amount) __asm__("func_800219EC");
+
 /**
- *  @brief Adds an amount to fields in records referenced by an offset table.
+ * @brief Adds an address adjustment to selected sound bank record words.
  *
- *  The input buffer contains a byte count and an array of offsets relative
- *  to its start; each nonzero offset identifies a counted record group.
- *  @param arg0 Base of the writable data buffer and offset table.
- *  @param amount Signed amount added to each selected record field.
- *  @par Globals
- *  None referenced directly.
- *  @par Control flow
- *  Loops over offsets, skips zero offsets, and walks each group in five-word steps.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Adds amount to the word at offset 0x14 from each successive group position.
- *  @par Callers
- *  Confirmed: func_80021CB0.
+ * @param arg0 Writable bank with an offset table at +0x10.
+ * @param amount Signed adjustment added to each selected word.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Reads the group count byte at +4 and the relative offsets from +0x10. Skips
+ * zero offsets. For each group, uses its first byte as the record count,
+ * updates the word at group +0x14, and advances by 0x14 per record.
+ *
+ * @par Globals
+ * No RAM globals accessed directly.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from func_80021CB0.
+ *
+ * @par Role and path
+ * Bank registration applies the SPU allocation address to the bank records
+ * after upload.
+ *
+ * @par Unknown
+ * The precise on-disc field layout of the remaining group data is open.
  */
-void func_800219EC(u8 *arg0, s32 amount)
+void gAdjustSoundBankSampleOffsets(u8 *arg0, s32 amount)
 {
     s32 i; register s32 j __asm__("$6");
     D *data = (D *)arg0;

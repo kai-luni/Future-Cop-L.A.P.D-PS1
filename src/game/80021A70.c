@@ -9,24 +9,32 @@ struct EventFlags {
 
 extern struct EventFlags gSoundSystem __asm__("D_800A07A8");
 
+void gQueueSoundVoiceOnMask(u32 flags) __asm__("func_80021A70");
+
 /**
- *  @brief Adds bits to the pending event flags.
+ * @brief Adds voice bits to the sound system's pending key-on mask.
  *
- *  ORs the supplied mask into the pending field of the shared event state.
- *  Existing pending bits remain set.
- *  @param flags Bit mask to add to the pending flags.
- *  @par Globals
- *  D_800A07A8.pending is read and updated.
- *  @par Control flow
- *  Performs one unconditional read-modify-write operation.
- *  @par Calls
- *  None.
- *  @par Side effects
- *  Updates the pending field of D_800A07A8.
- *  @par Callers
- *  Confirmed: func_80021F98, func_800221E4.
+ * @param flags Mask of voices to mark for key-on.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Loads word +0x14, ORs it with $a0, and stores the result in the return delay
+ * slot.
+ *
+ * @par Globals
+ * Reads and updates gSoundSystem at +0x14.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from func_80021F98, func_800221E4.
+ *
+ * @par Role and path
+ * Voice startup callers accumulate bits for the SPU key-on service at
+ * func_80021E1C.
+ *
+ * @par Unknown
+ * The caller selects the voice bits to set.
  */
-void func_80021A70(u32 flags)
+void gQueueSoundVoiceOnMask(u32 flags)
 {
     gSoundSystem.pending |= flags;
 }

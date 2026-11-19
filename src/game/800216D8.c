@@ -10,7 +10,7 @@ struct SoundSystem {
 
 extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
-extern void func_800217A8(void);
+extern void gUnloadAllSoundBanks(void) __asm__("func_800217A8");
 
 void gClearSoundStorage(void) __asm__("func_800216D8");
 
@@ -20,7 +20,7 @@ void gClearSoundStorage(void) __asm__("func_800216D8");
  * @return Nothing.
  *
  * @par Confirmed mechanics
- * If the bank pointer at +4 is nonzero, calls func_800217A8 and clears pointer
+ * If the bank pointer at +4 is nonzero, calls gUnloadAllSoundBanks and clears pointer
  * and count. If the channel pointer at +0x0C is nonzero, clears it and the
  * count at +8.
  *
@@ -43,7 +43,7 @@ void gClearSoundStorage(void) __asm__("func_800216D8");
 void gClearSoundStorage(void)
 {
     if (gSoundSystem.banks != 0) {
-        func_800217A8();
+        gUnloadAllSoundBanks();
         gSoundSystem.banks = 0;
         gSoundSystem.bankCount = 0;
     }

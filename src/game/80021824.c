@@ -21,28 +21,32 @@ struct Unk21824 {
     u32 f24;
 };
 
+void gInitSpuCommonAttributes(void) __asm__("func_80021824");
+
 /**
- * @brief Initialises the SPU common attributes: master volume to maximum.
- *
+ * @brief Initializes the common SPU attributes with maximum master-volume
+ * values.
  * @return Nothing.
  *
- * @par Confirmed
- * Builds a 0x28-byte SpuCommonAttr on the stack: mask 0x3FC3, the two volume
- * words 0x3FFF/0x3FFF, all remaining fields 0, and passes it to
- * gSpuSetCommonAttributes, which applies the masked fields to the SPU.
+ * @par Confirmed mechanics
+ * Builds a 0x28-byte stack record with mask 0x3FC3, left and right volume
+ * halfwords of 0x3FFF, and zeroes in all remaining fields. Passes the record
+ * to gSpuSetCommonAttributes.
  *
- * @par Likely role
- * The sound init step of the asset driver func_80021B50: 0x3FFF is the
- * maximum master volume, the mask selects which attribute fields are
- * written.
- *
- * @par Unknown
- * The exact field map of mask 0x3FC3 in the SDK attribute layout.
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_80021B50.
+ * Direct calls in the retail listing are from gResetCvkSubsystem.
+ *
+ * @par Role and path
+ * Sound system startup configures the shared SPU volume and mix state through
+ * this call.
+ *
+ * @par Unknown
+ * The callee interprets each mask bit against the common SPU attribute layout.
  */
-void func_80021824(void)
+void gInitSpuCommonAttributes(void)
 {
     struct Unk21824 attr;
 

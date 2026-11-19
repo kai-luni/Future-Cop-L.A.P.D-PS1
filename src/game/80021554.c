@@ -13,7 +13,7 @@ extern s32 gSoundBankSlots __asm__("D_800A07AC");
 extern s32 gSoundChannelCount __asm__("D_800A07B0");
 extern s32 gChannelTable __asm__("D_800A07B4");
 
-extern s32 func_80021740(s32 *table, s32 key, s32 *value, s32 *index);
+extern s32 gFindConfigValue(s32 *table, s32 key, s32 *value, s32 *index) __asm__("func_80021740");
 extern void gClearSoundStorage(void) __asm__("func_800216D8");
 
 s32 gInitSoundStorage(s32 *arguments) __asm__("func_80021554");
@@ -61,21 +61,21 @@ s32 gInitSoundStorage(s32 *arguments)
     bankCount = 1;
 
     valuePtr = &value;
-    if (func_80021740(arguments, 4, valuePtr, 0) != 0) {
+    if (gFindConfigValue(arguments, 4, valuePtr, 0) != 0) {
         bankCount = value;
         gSoundSystem.bankCount = bankCount;
     }
 
     channelCount = 0x18;
     valuePtr = &value;
-    if (func_80021740(arguments, 5, valuePtr, 0) != 0) {
+    if (gFindConfigValue(arguments, 5, valuePtr, 0) != 0) {
         channelCount = value;
         gSoundChannelCount = channelCount;
     }
 
     value = 0;
     valuePtr = &value;
-    if (func_80021740(arguments, 8, valuePtr, 0) != 0) {
+    if (gFindConfigValue(arguments, 8, valuePtr, 0) != 0) {
         gSoundBankSlots = value;
     }
 
@@ -87,7 +87,7 @@ s32 gInitSoundStorage(s32 *arguments)
 
     value = 0;
     valuePtr = &value;
-    if (func_80021740(arguments, 9, valuePtr, 0) != 0) {
+    if (gFindConfigValue(arguments, 9, valuePtr, 0) != 0) {
         gChannelTable = value;
     }
 
