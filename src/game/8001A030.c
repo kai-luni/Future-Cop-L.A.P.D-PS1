@@ -1,31 +1,32 @@
 // Categories: Utilities > Mathematics > Fixed Point
 #include "game/types.h"
 
+s32 gSquaredLength2Q16(s32 *arg0) __asm__("func_8001A030");
+
 /**
- * @brief Computes the 16.16 fixed-point squared length of a 2-element 32-bit vector.
+ * @brief Computes the squared length of a two-component Q16 vector.
  *
- * Loads arg0[0] and arg0[1], squares each via signed 32x32->64 mult, extracts ((hi << 16) |
- * (lo >> 16)) for each term (shifting right by 16), and returns the sum of the two squares.
+ * @param arg0 Two signed 16.16 components.
+ * @return The sum of two individually shifted squares.
  *
- * @param arg0 Pointer to a two-element s32 vector (arg0[0], arg0[1]) in 16.16 fixed point.
- * @return Sum of squares ((arg0[0] * arg0[0]) >> 16) + ((arg0[1] * arg0[1]) >> 16) in $v0.
+ * @par Confirmed mechanics
+ * Squares the words at +0 and +4 with signed MULT, extracts bits 16 through 47
+ * of each product, and sums them using signed ADD.
  *
  * @par Globals
- * None.
- *
- * @par Control flow
- * Straight-line inline MIPS assembly multiplication and shift-combine sequence; no branches.
- *
- * @par Calls
- * None.
- *
- * @par Side effects
- * None observed.
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * Confirmed: func_8001A7AC (0x8001A7BC, passes squared length into func_80095900 for 2D vector normalization) / Likely: none / Unknown: none.
+ * Direct calls in the retail listing are from gNormalizeVector2Q16.
+ *
+ * @par Role and path
+ * The two-component normalization path calls this before the fixed-point
+ * square root.
+ *
+ * @par Unknown
+ * The routine has no overflow handling beyond the signed ADD instruction.
  */
-s32 func_8001A030(s32 *arg0)
+s32 gSquaredLength2Q16(s32 *arg0)
 {
     __asm__ volatile(
         "lw $13, 0x0($4)\n\t"

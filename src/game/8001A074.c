@@ -1,23 +1,36 @@
 // Categories: Utilities > Mathematics > Vector Length | Graphics > Culling
 #include "game/types.h"
 
+s32 gApproximateLength2(s32 *vector) __asm__("func_8001A074");
+
 /**
- * @brief Two-component length estimate with a 1/128 + 1/64 correction.
+ * @brief Approximates the length of a two-component vector using two piecewise
+ * linear formulas.
  *
- * @param vector Pointer to two 32-bit components.
- * @return An approximation of sqrt(x^2 + y^2) in the same scale as the input.
+ * @param vector Two signed component words.
+ * @return Approximate length in the input scale.
  *
- * @par Confirmed
- * Both components are made absolute and sorted (a >= b via XOR swap). The result
- * is `a + (b >> 2) - (b >> 6)`, except when `a / 2 < b`, where the branch builds
- * `(64 + 8 + 2) * sum + a + 32 * b`, shifts right by 7, and returns
- * `a + (b >> 2) - (b >> 6)` with a = that sum and b = a - b swapped first.
+ * @par Confirmed mechanics
+ * Takes the component magnitudes and swaps them so the greater one comes
+ * first. If the smaller exceeds half the larger, replaces the pair by (75
+ * times larger + 106 times smaller) >> 7 and the difference. Returns the first
+ * term plus (second >> 2) minus (second >> 6).
  *
- * @par Likely role
- * The cheap distance used for range and marker tests (func_8003E984,
- * func_8005B088, func_80070730); func_80019F54 is the three-component variant.
+ * @par Globals
+ * No RAM globals accessed directly.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from gVectorLength3D,
+ * gApproximateDistanceXzOctants, func_800458E8, func_80053730.
+ *
+ * @par Role and path
+ * The two-component estimate supports engine distance and direction
+ * calculations.
+ *
+ * @par Unknown
+ * The routine contains no explicit error bound.
  */
-s32 func_8001A074(s32 *vector)
+s32 gApproximateLength2(s32 *vector)
 {
     s32 a;
     s32 b;

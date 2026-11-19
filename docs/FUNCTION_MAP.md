@@ -4839,8 +4839,8 @@ graph LR
 | `gVectorLength3D` (`func_8001A100`) | 60 | Utilities > Mathematics > Vector Length · Culling | `func_8001A074` | `func_8002B784`, `func_8002CC30`, `func_8002DFC4`, `func_80036BD4`, `func_800371FC`, `func_80037B28`, `func_8003A160`, `func_8003CF6C`, `func_8003E984`, `func_8003FF7C`, `func_80044260`, `func_8004C5C8`, `func_8004F764`, `func_80050E0C`, `func_8005BDE4`, `func_8006DC24`, `func_8006E988`, `func_8006F310`, `func_80070158`, `func_80071FA4`, `func_80072F7C`, `func_80074104` |
 | `func_8006062C` | 60 | Utilities > Mathematics · AI | `func_8001846C` | `func_80060668` |
 | `func_800978AC` | 60 | Utilities > Table Access | - | - |
-| `func_8001A030` | 68 | Utilities > Mathematics > Fixed Point | - | `func_8001A7AC` |
-| `func_8001A13C` | 68 | Utilities > Mathematics > Vector · Collision | `func_8001A074` | `func_80035B7C`, `func_800513D0` |
+| `gSquaredLength2Q16` (`func_8001A030`) | 68 | Utilities > Mathematics > Fixed Point | - | `func_8001A7AC` |
+| `gApproximateDistanceXzOctants` (`func_8001A13C`) | 68 | Utilities > Mathematics > Vector · Collision | `func_8001A074` | `func_80035B7C`, `func_800513D0` |
 | `gComputeU32Reciprocal` (`func_80018818`) | 72 | Utilities > Mathematics > Fixed Point | - | `func_80019828` |
 | `func_8001ABE0` | 72 | Utilities > Mathematics > Fixed Point | - | `func_8001A7AC`, `func_80051EB8`, `func_80053A74`, `func_80054590`, `func_8005E624` |
 | `func_8003B65C` | 72 | Utilities > Mathematics · Map Occupancy | - | `func_8003BA50`, `func_8003BAE4` |
@@ -4852,8 +4852,8 @@ graph LR
 | `gComputeDualChecksum` (`func_8007F688`) | 88 | Utilities > Checksums | - | `func_8007F6E0`, `func_8007F824` |
 | `gAdvancePrimaryPrng` (`func_80019668`) | 92 | Utilities > Random Numbers | - | `func_800136C8`, `func_8002AF94`, `func_8002B0EC`, `func_8002C174`, `func_8002E2BC`, `func_800319D4`, `func_80031DE8`, `func_800320E4`, `func_80032180`, `func_800324E0`, `func_80032F3C`, `func_800331CC`, `func_800336DC`, `func_8003526C`, `func_8003532C`, `func_80035698`, `func_80035904`, `func_80036BD4`, `func_800381D4`, `func_8003AA94`, `func_8003B4E0`, `func_8003DB70`, `func_80042AF4`, `func_80044B34`, `func_80049420`, `func_80049C38`, `func_8004ABE4`, `func_8004B310`, `func_8004B5F8`, `func_8004E80C`, `func_8004F330`, `func_80056870`, `func_80056924`, `func_800569EC`, `func_80058C3C`, `func_800596C4`, `func_8005D060`, `func_8005D8F4`, `func_8005EE04`, `func_8005F018`, `func_8005F6E8`, `func_80060238`, `func_80060E74`, `func_80063568`, `func_80069B58`, `func_80069D68`, `func_8006A524`, `func_8006B23C`, `func_8007043C`, `func_80070730`, `func_80070E48`, `func_800718B8`, `func_800752E0`, `func_800754B8`, `func_800762B0`, `func_80083A10` |
 | `gAdvanceSecondaryPrng` (`func_800196C4`) | 92 | Utilities > Random Numbers | - | `func_8003D0F0`, `func_80040874` |
-| `func_8001A750` | 92 | Utilities > Mathematics > Vector | - | `func_800324E0`, `func_80036E6C`, `func_800410BC` |
-| `func_80019FCC` | 100 | Utilities > Mathematics > Vector | - | `func_80036624`, `func_800549F0`, `func_8005B5A0`, `func_8005C344`, `func_8005F018` |
+| `gApproximateDistanceXzHalfMin` (`func_8001A750`) | 92 | Utilities > Mathematics > Vector | - | `func_800324E0`, `func_80036E6C`, `func_800410BC` |
+| `gSquaredLength3Q16` (`func_80019FCC`) | 100 | Utilities > Mathematics > Vector | - | `func_80036624`, `func_800549F0`, `func_8005B5A0`, `func_8005C344`, `func_8005F018` |
 | `func_80019904` | 104 | Utilities > Mathematics > Fixed Point · Geometry | - | `func_80016C88`, `func_8001A180`, `func_8005F018` |
 | `func_8001AB78` | 104 | Utilities > Mathematics > Vector · Handwritten ASM | - | `func_800324E0`, `func_80032F3C`, `func_8003A160`, `func_8004F764`, `func_80050E0C`, `func_800513D0`, `func_80051580`, `func_800569EC`, `func_8005EE04` |
 | `func_80021740` | 104 | Utilities > Table Lookup | - | `func_80021554` |
@@ -4861,7 +4861,7 @@ graph LR
 | `gTransposeMatrix3x3` (`func_80019470`) | 108 | Utilities > Mathematics > Matrix · Matrix Build | - | `func_80018860`, `func_80031238`, `func_80051EB8`, `func_80061CAC` |
 | `gFindListEntryByValue` (`func_8007D39C`) | 108 | Utilities > Search | - | `func_8007D408` |
 | `gCopyMemOverlap` (`func_8008D5D0`) | 108 | Utilities > Memory | - | `func_8008CD3C` |
-| `func_8001A7AC` | 112 | Utilities > Mathematics > Fixed Point | `func_8001A030`, `func_8001ABE0`, `func_80095900` | `func_80051EB8`, `func_80053A74`, `func_80054590`, `func_800549F0`, `func_8005E624` |
+| `gNormalizeVector2Q16` (`func_8001A7AC`) | 112 | Utilities > Mathematics > Fixed Point | `func_8001A030`, `func_8001ABE0`, `func_80095900` | `func_80051EB8`, `func_80053A74`, `func_80054590`, `func_800549F0`, `func_8005E624` |
 | `gMoveMemory` (`func_8001E44C`) | 116 | Utilities > Memory | - | `func_800181D4` |
 | `gCountTrailingZeros` (`func_800195F0`) | 120 | Utilities > Bit Manipulation · Textures | - | `func_8005A2BC` |
 | `gApproxVectorLength` (`func_80019F54`) | 120 | Utilities > Mathematics > Vector Length · Culling | - | `func_8001A644`, `func_8003E984`, `func_80070730`, `func_80075A84` |
@@ -4873,18 +4873,18 @@ graph LR
 | `func_8004F00C` | 128 | Utilities > Numeric Processing | - | - |
 | `func_800607B8` | 128 | Utilities > Numeric Conversion | - | `func_80060838`, `func_8006A898` |
 | `gNextLcgRand` (`func_80019720`) | 136 | Utilities > Random Numbers | - | `func_800197A8` |
-| `func_8001A074` | 140 | Utilities > Mathematics > Vector Length · Culling | - | `func_8001A100`, `func_8001A13C`, `func_800458E8`, `func_80053730` |
+| `gApproximateLength2` (`func_8001A074`) | 140 | Utilities > Mathematics > Vector Length · Culling | - | `func_8001A100`, `func_8001A13C`, `func_800458E8`, `func_80053730` |
 | `func_80099968` | 140 | Utilities > Fixed-point Arithmetic | - | - |
-| `func_8001A4E8` | 144 | Utilities > Mathematics > Vector | - | `func_8002AB8C`, `func_80035B7C`, `func_80036AB4`, `func_8005B3D4`, `func_8005E2A0` |
+| `gApproximateDistance3` (`func_8001A4E8`) | 144 | Utilities > Mathematics > Vector | - | `func_8002AB8C`, `func_80035B7C`, `func_80036AB4`, `func_8005B3D4`, `func_8005E2A0` |
 | `func_80095900` | 148 | Utilities > Mathematics > Reciprocal · Geometry | - | `func_8001A314`, `func_8001A7AC`, `func_80030DE0`, `func_800336DC`, `func_80036624`, `func_80041E0C`, `func_8004E5F0`, `func_800518A8`, `func_80052F54`, `func_800549F0`, `func_8005B934`, `func_8005C344`, `func_8005E624` |
 | `gVerifyDualChecksum` (`func_8007F824`) | 152 | Utilities > Data Validation | `func_8007F688` | `func_8007F750` |
 | `func_800966B0` | 152 | Utilities > Integer Arithmetic | `func_80096748` | - |
 | `func_80092868` | 160 | Utilities > Diagnostics | - | - |
 | `gAllocHeapBlock` (`func_8008CA90`) | 176 | Utilities > Memory Allocation | - | `func_8001E240` |
 | `gInitReciprocalTable` (`func_80019828`) | 180 | Utilities > Mathematics > Tables · Init | `func_80017EBC`, `func_800187C8`, `func_80018818`, `func_800197A8`, `func_80095C14` | `func_80024904`, `func_80024A24` |
-| `func_8001A644` | 180 | Utilities > Mathematics > Vector | `func_80019F54`, `func_80095C14` | `func_800324E0` |
+| `gScaleVector3ToBit15` (`func_8001A644`) | 180 | Utilities > Mathematics > Vector | `func_80019F54`, `func_80095C14` | `func_800324E0` |
 | `gSinCos` (`func_8001846C`) | 200 | Utilities > Mathematics > Trigonometry · Geometry | - | `func_800136C8`, `func_80014490`, `func_8001484C`, `func_800188D0`, `func_80018DC0`, `func_8001A578`, `func_8002DC94`, `func_80032180`, `func_80035698`, `func_80038A00`, `func_8004A048`, `func_8004F764`, `func_8005027C`, `func_80050E0C`, `func_80053514`, `func_80053A74`, `func_800549F0`, `func_8005612C`, `func_8005A740`, `func_8005A828`, `func_8005AB8C`, `func_8005E624`, `func_8005F018`, `func_8006062C`, `func_80063568`, `func_8006B23C`, `func_8006C4C4`, `func_8006D520`, `func_8006DC24`, `func_80070730` |
-| `func_8001A578` | 204 | Utilities > Mathematics > Vector · Trigonometry | `func_8001846C` | `func_800460D4`, `func_80053514` |
+| `gRotateVector2Q16` (`func_8001A578`) | 204 | Utilities > Mathematics > Vector · Trigonometry | `func_8001846C` | `func_800460D4`, `func_80053514` |
 | `func_80069A38` | 228 | Utilities > Fixed Point · Heightfield Sampling | - | `func_800324E0`, `func_80035B7C` |
 | `func_8001AD20` | 244 | Utilities > Fixed-point Math | - | `func_80053A74` |
 | `func_8001AE14` | 244 | Utilities > Mathematics > Geometry · Matrix Math | - | `func_80013F08` |
@@ -4898,7 +4898,7 @@ graph LR
 | `gIncrementBcdLoc` (`func_8001C288`) | 368 | Utilities > BCD Arithmetic | - | `func_8001C808` |
 | `gAtan2` (`func_80095C30`) | 372 | Utilities > Mathematics > Trigonometry | - | `func_8002AD58`, `func_8002B6C8`, `func_8002CC30`, `func_8002E630`, `func_80038A00`, `func_8004F764`, `func_8005027C`, `func_80050E0C`, `func_80057E40`, `func_800592D0`, `func_8005A934`, `func_8005E624` |
 | `func_800403D0` | 384 | Utilities > Fixed-point Math | - | - |
-| `func_8001A970` | 400 | Utilities > Fixed-point Math | - | `func_80061CAC` |
+| `gTransformPointQ16` (`func_8001A970`) | 400 | Utilities > Fixed-point Math | - | `func_80061CAC` |
 | `gNormalizeVector` (`func_8001A180`) | 404 | Utilities > Mathematics · Geometry | `func_80019904`, `func_80095C14` | `func_800192AC`, `func_80019310`, `func_8001937C`, `func_800193F8`, `func_8002C174`, `func_800324E0`, `func_80035B7C`, `func_80036BD4`, `func_80037064`, `func_800371FC`, `func_8004B310`, `func_80052550`, `func_800549F0`, `func_8005B934`, `func_8005C344`, `func_8005CBCC`, `func_8005E2A0`, `func_8005F6E8`, `func_80066F78`, `func_8006ACB0` |
 | `gPackInputRecord` (`func_8007E8D8`) | 416 | Utilities > Data Packing | - | `func_8007F02C` |
 | `gNormalizeGetLength` (`func_8001A314`) | 468 | Utilities > Mathematics > Vector | `func_80095900` | `func_80035B7C`, `func_8004B180`, `func_80053A74`, `func_800549F0`, `func_800569EC`, `func_8006EEF8`, `func_80070E48` |

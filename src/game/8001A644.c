@@ -4,30 +4,34 @@
 extern s32 gApproxVectorLength(s32 *vector) __asm__("func_80019F54");
 extern s32 gGteLeadingZeros(u32 value) __asm__("func_80095C14");
 
+s32 gScaleVector3ToBit15(s32 *vector) __asm__("func_8001A644");
+
 /**
- * @brief Rescales a vector so its largest component fits the 16-bit range,
- *        returning the pre-scale magnitude word.
+ * @brief Rescales a three-component vector relative to the leading bit of its
+ * length estimate.
  *
- * @param vector Three s32 components, rescaled in place.
- * @return The result of func_80019F54 (the magnitude/max word).
+ * @param vector Three signed components updated in place.
+ * @return The length estimate before rescaling.
  *
- * @par Confirmed
- * shift = 0x1F - LZC(result) (0 when result == 0). shift >= 0x10 shifts
- * the components right by shift - 0xF, otherwise left by 0xF - shift —
- * normalising the leading bit to position 15.
+ * @par Confirmed mechanics
+ * Gets a length estimate from gApproxVectorLength. For nonzero input computes
+ * 31 minus its GTE leading-zero count, then shifts the vector left or
+ * arithmetically right so the estimate's leading bit would reach bit 15.
  *
- * @par Likely role
- * The range guard of the flyer tick func_800324E0 before handing vectors
- * to the s16-based transform/angle helpers: keeps large world coordinates
- * inside the fixed-point domain without losing the ratio.
- *
- * @par Unknown
- * Whether func_80019F54 returns the max component or a norm.
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_800324E0.
+ * Direct calls in the retail listing are from gUpdateHoverEnemy.
+ *
+ * @par Role and path
+ * The flyer update uses the rescaled vector in its direction calculations.
+ *
+ * @par Unknown
+ * The input domain determines whether arithmetic overflow or loss of precision
+ * matters.
  */
-s32 func_8001A644(s32 *vector)
+s32 gScaleVector3ToBit15(s32 *vector)
 {
     s32 result;
     s32 shift;

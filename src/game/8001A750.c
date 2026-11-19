@@ -1,27 +1,36 @@
 // Categories: Utilities > Mathematics > Vector
 #include "game/types.h"
 
+s32 gApproximateDistanceXzHalfMin(s32 *a, s32 *b) __asm__("func_8001A750");
+
 /**
- * @brief Ground-plane distance approximation: max(|dx|, |dz|) +
- *        min(|dx|, |dz|) / 2, ignoring y.
+ * @brief Estimates horizontal distance by adding the larger absolute
+ * displacement to half the smaller, rounded up.
  *
- * @param a, b Point triples.
- * @return The octagonal norm in the x/z plane.
+ * @param a First point with X at +0 and Z at +8.
+ * @param b Second point with the same layout.
+ * @return max(abs(dx), abs(dz)) + ceil(min(abs(dx), abs(dz)) / 2).
  *
- * @par Confirmed
- * sum = |dx| + |dz|, min extracted via the sign-mask trick, result =
- * sum - (min >> 1). No y term.
+ * @par Confirmed mechanics
+ * Uses signed negation for negative deltas at +0 and +8. Selects the lesser
+ * magnitude with the sign mask of their difference, shifts it right once, and
+ * subtracts it from the sum.
  *
- * @par Likely role
- * The horizontal range gate of the flyer tick func_800324E0, the spawn
- * setup func_80036E6C and the radial blast func_800410BC: ground distance
- * is what matters for targeting and blast falloff, the approximation
- * avoids a square root.
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_800324E0, func_80036E6C, func_800410BC.
+ * Direct calls in the retail listing are from gUpdateHoverEnemy,
+ * gHandleProjectileMsg, func_800410BC, func_8006320C.
+ *
+ * @par Role and path
+ * Several gameplay callers use this low-cost distance metric for horizontal
+ * comparisons.
+ *
+ * @par Unknown
+ * The routine does not establish the unit scale of X or Z.
  */
-s32 func_8001A750(s32 *a, s32 *b)
+s32 gApproximateDistanceXzHalfMin(s32 *a, s32 *b)
 {
     s32 x;
     s32 z;

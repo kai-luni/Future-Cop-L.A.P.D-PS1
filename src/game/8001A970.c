@@ -2,26 +2,34 @@
 #include "game/types.h"
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 
+void gTransformPointQ16(volatile s32 *m, volatile s32 *v, s32 *out) __asm__("func_8001A970");
+
 /**
- *  @brief Transforms a three-component vector using a fixed-point affine matrix.
+ * @brief Applies a fixed-point affine transform to one three-component point.
  *
- *  Each output component sums three signed products shifted right by 16 bits,
- *  then adds the corresponding translation from the final three matrix entries.
- *  @param m Twelve matrix entries: nine coefficients followed by three translations.
- *  @param v Three input vector components.
- *  @param out Destination for three transformed components.
- *  @par Globals
- *  None.
- *  @par Control flow
- *  Computes the three components in sequence without branches or loops.
- *  @par Calls
- *  None; inline multiplication instructions form the fixed-point products.
- *  @par Side effects
- *  Writes out[0] through out[2] and reads m and v through volatile pointers.
- *  @par Callers
- *  Confirmed: func_80061CAC.
+ * @param m Twelve matrix words, including the three translations.
+ * @param v Three signed input components.
+ * @param out Destination for three transformed components.
+ * @return Nothing.
+ *
+ * @par Confirmed mechanics
+ * Multiplies the point by the matrix columns at word indices (0,3,6), (1,4,7),
+ * and (2,5,8). Shifts each product by 16 before adding. Adds translation words
+ * at +0x24, +0x28, and +0x2C to the three outputs.
+ *
+ * @par Globals
+ * No RAM globals accessed directly.
+ *
+ * @par Callers
+ * Direct calls in the retail listing are from gTestPartPairHit, func_8006320C.
+ *
+ * @par Role and path
+ * World-space callers use this affine point transform in their geometry paths.
+ *
+ * @par Unknown
+ * The routine does not identify the input and output coordinate frames.
  */
-void func_8001A970(volatile s32 *m, volatile s32 *v, s32 *out)
+void gTransformPointQ16(volatile s32 *m, volatile s32 *v, s32 *out)
 {
     register s32 x __asm__("$12");
     register s32 y __asm__("$11");

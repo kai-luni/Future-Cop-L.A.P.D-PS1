@@ -3,39 +3,45 @@
 
 extern int gSolveLobVector();
 
-extern s32 func_8001A030(s32 arg0);
+extern s32 gSquaredLength2Q16(s32 arg0) __asm__("func_8001A030");
 extern s32 gSqrt12(s32 arg0) __asm__("func_80095900");
 extern void func_8001ABE0(u32 arg0, s32 arg1);
 
+s32 gNormalizeVector2Q16(s32 arg0) __asm__("func_8001A7AC");
+
 /**
- * @brief Scalar normalisation helper: computes the reciprocal-root scale of
- *        a squared magnitude and applies it in place.
+ * @brief Returns the length of a two-component fixed-point vector and
+ * normalizes it in place above the minimum length.
  *
- * @param arg0 The value (passed through func_8001A030, likely a square or
- *        magnitude preparation).
- * @return s0 = func_80095900(func_8001A030(arg0)) << 2, the length word.
+ * @param arg0 Address of a two-word fixed-point vector.
+ * @return Pre-normalization length estimate, equal to the square-root result
+ *     shifted left by two.
  *
- * @par Confirmed
- * When s0 >= 2, func_8001ABE0(0x80000000 / (s0 >> 1), arg0) applies the
- * reciprocal scale; smaller values skip the division (guard against a
- * zero/near-zero length).
+ * @par Confirmed mechanics
+ * Calls gSquaredLength2Q16 and gSqrt12 and shifts the latter result left by
+ * two. If it is at least 2, divides unsigned 0x80000000 by half that length
+ * and passes the quotient and input address to func_8001ABE0.
  *
- * @par Likely role
- * The scalar sibling of the vector normaliser func_8001A180, used by the
- * mover physics and the lob solver gSolveLobVector to normalise single
- * components or magnitudes with the same reciprocal table.
- *
- * @par Unknown
- * What func_8001A030 prepares and func_8001ABE0 writes back.
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_80051EB8, func_80053A74, func_80054590, func_800549F0, gSolveLobVector.
+ * Direct calls in the retail listing are from func_80051EB8,
+ * gTickHoverPhysics, func_80054590, func_800549F0, gSolveLobVector.
+ *
+ * @par Role and path
+ * The motion and lead-direction paths use the resulting direction and original
+ * length.
+ *
+ * @par Unknown
+ * The reconstructed parameter is a word that the retail routine uses as an
+ * address.
  */
-s32 func_8001A7AC(s32 arg0)
+s32 gNormalizeVector2Q16(s32 arg0)
 {
     s32 s0;
 
-    s0 = gSqrt12(func_8001A030(arg0)) << 2;
+    s0 = gSqrt12(gSquaredLength2Q16(arg0)) << 2;
     if (s0 >= 2) {
         func_8001ABE0(0x80000000u / (u32)(s0 >> 1), arg0);
     }

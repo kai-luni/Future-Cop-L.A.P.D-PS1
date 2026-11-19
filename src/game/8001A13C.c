@@ -3,41 +3,41 @@
 
 extern int gGuidedProjectileUpdate();
 
-extern s32 func_8001A074(s32 *vector);
+extern s32 gApproximateLength2(s32 *vector) __asm__("func_8001A074");
+
+s32 gApproximateDistanceXzOctants(s32 *a, s32 *b) __asm__("func_8001A13C");
 
 /**
- * @brief Returns the cheap two-component length of the XZ offset between two
- *        three-word vectors.
+ * @brief Estimates the XZ distance between two points with the piecewise
+ * length helper.
  *
- * Builds a two-word difference with the axes swapped - index 2 first, then
- * index 0 - and hands it to the length estimate func_8001A074, so the y
- * component of both inputs is ignored and the result is a ground-plane range.
+ * @param a First point with X at +0 and Z at +8.
+ * @param b Second point with the same layout.
+ * @return Approximate length of the XZ displacement.
  *
- * @param a First vector, three words (x, y, z); only +0x0 and +0x8 are read.
- * @param b Second vector, same layout.
- * @return An approximation of the length of (a.z - b.z, a.x - b.x).
+ * @par Confirmed mechanics
+ * Subtracts the words at +8 and +0 into two adjacent stack slots, forwards
+ * their address to gApproximateLength2, and returns its result.
  *
  * @par Globals
- * None; the function works only on its arguments.
- *
- * @par Control flow
- * Two subtractions into an 8-byte stack local, then one call. No branches.
- *
- * @par Calls
- * func_8001A074 - absolute-value, sort and 1/128 + 1/64 correction length
- * estimate over the two prepared components.
- *
- * @par Side effects
- * None observed: the stack local is the only memory it writes.
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * Confirmed: gGuidedProjectileUpdate (mover update), func_800513D0.
+ * Direct calls in the retail listing are from gGuidedProjectileUpdate,
+ * func_800513D0.
+ *
+ * @par Role and path
+ * Entity and resource paths use this distance estimate in the horizontal
+ * plane.
+ *
+ * @par Unknown
+ * The call sites determine how the estimate is used.
  */
-s32 func_8001A13C(s32 *a, s32 *b)
+s32 gApproximateDistanceXzOctants(s32 *a, s32 *b)
 {
     s32 delta[2];
 
     delta[0] = a[2] - b[2];
     delta[1] = a[0] - b[0];
-    return func_8001A074(delta);
+    return gApproximateLength2(delta);
 }

@@ -1,29 +1,34 @@
 // Categories: Utilities > Mathematics > Vector
 #include "game/types.h"
 
+/* Handwritten retail routine: returns sum(((s64)v[i] * v[i]) >> 16) for i = 0..2. */
+
+s32 gSquaredLength3Q16(s32 *arg0) __asm__("func_80019FCC");
+
 /**
- * @brief Handwritten squared-length helper: sum of the three squared
- *        components, each product's middle 32 bits (>> 16 of the 64-bit
- *        square).
+ * @brief Computes the squared length of a three-component Q16 vector.
  *
- * @param arg0 Vector of three s32 components.
- * @return x*x + y*y + z*z in 16.16-derived scale.
+ * @param arg0 Three signed 16.16 components.
+ * @return The sum of three individually shifted squares.
  *
- * @par Confirmed
- * Per component mult + (mfhi << 16 | mflo >> 16), the three results
- * summed; the existing source comment documents the same formula. No
- * square root.
+ * @par Confirmed mechanics
+ * Performs three signed MULT instructions. Combines HI << 16 with LO >> 16 for
+ * each square, then sums the three terms with signed ADD.
  *
- * @par Likely role
- * The squared-distance primitive of the tail/whip physics (func_8005C344,
- * func_8005B5A0) and the player tick: comparing squared lengths avoids
- * the root, the reciprocal helpers consume the same scale.
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_80036624, func_800549F0, func_8005B5A0, func_8005C344, func_8005F018.
+ * Direct calls in the retail listing are from func_80036624, func_800549F0,
+ * func_8005B5A0, func_8005C344, func_8005F018.
+ *
+ * @par Role and path
+ * Gameplay distance tests use this helper to compare squared magnitudes.
+ *
+ * @par Unknown
+ * The caller supplies inputs whose scaled squares and sum fit the output word.
  */
-/* Handwritten retail routine: returns sum(((s64)v[i] * v[i]) >> 16) for i = 0..2. */
-s32 func_80019FCC(s32 *arg0)
+s32 gSquaredLength3Q16(s32 *arg0)
 {
     __asm__ volatile(
         "lw $13, 0x0($4)\n\t"

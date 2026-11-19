@@ -4,27 +4,34 @@
 extern int gGuidedProjectileUpdate();
 extern int gSolveLeadDirection();
 
+s32 gApproximateDistance3(s32 *a, s32 *b) __asm__("func_8001A4E8");
+
 /**
- * @brief Fast approximate distance between two points: max + (mid+min)/4.
+ * @brief Estimates the distance between two three-component points.
  *
- * @param a, b Point triples (three s32 each).
- * @return The octagonal norm of the difference.
+ * @param a First point with three signed components.
+ * @param b Second point with three signed components.
+ * @return Largest absolute delta plus the other two deltas summed and shifted
+ *     right by two.
  *
- * @par Confirmed
- * Per-axis absolute differences are XOR-swap sorted so x = max; the result
- * is x + ((y + z) >> 2). The s32 sibling of func_8001AF08 (which works on
- * s16 and scales by 16).
+ * @par Confirmed mechanics
+ * Subtracts corresponding words and takes their magnitudes. Finds the largest
+ * with two conditional swaps and adds one quarter of the sum of the other two.
  *
- * @par Likely role
- * The range gate of the combat code: the beam timer func_8005B3D4 and the
- * aim solver gSolveLeadDirection compare against it, the base handler's hit path
- * func_8002AB8C uses it for reach checks — cheap enough for per-frame
- * distance tests without a square root.
+ * @par Globals
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * func_8002AB8C, gGuidedProjectileUpdate, func_80036AB4, func_8005B3D4, gSolveLeadDirection.
+ * Direct calls in the retail listing are from func_80025D6C, func_8002AB8C,
+ * gGuidedProjectileUpdate, func_80036AB4, func_8005B3D4, gSolveLeadDirection.
+ *
+ * @par Role and path
+ * Gameplay callers use this inexpensive distance estimate for spatial tests.
+ *
+ * @par Unknown
+ * The caller determines the world-unit scale and any acceptance threshold.
  */
-s32 func_8001A4E8(s32 *a, s32 *b)
+s32 gApproximateDistance3(s32 *a, s32 *b)
 {
     s32 x;
     s32 y;

@@ -5,31 +5,33 @@
 
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 
+void gRotateVector2Q16(u32 angle, s32 *vec) __asm__("func_8001A578");
+
 /**
- * @brief Rotates a 2D fixed-point vector in place by a 12-bit angle.
+ * @brief Rotates two fixed-point components in place by the specified angle.
  *
- * Obtains Q16 sine and cosine values from func_8001846C and applies a 2D rotation
- * matrix to vec[0] and vec[1] using fixed-point 16.16 FMUL multiplication.
+ * @param angle Angle in the 4096-step turn used by gSinCos.
+ * @param vec Two writable signed 16.16 components.
+ * @return Nothing.
  *
- * @param angle 12-bit rotation angle (0..4095 = full turn, masked by func_8001846C).
- * @param vec Two-element s32 vector [x, y] updated in place to (x*cos - y*sin, x*sin + y*cos).
+ * @par Confirmed mechanics
+ * Calls gSinCos to get sine and cosine words. Uses four signed products
+ * shifted individually by 16 and stores x*cos - y*sin and x*sin + y*cos.
  *
  * @par Globals
- * None directly; callee func_8001846C reads sine table D_8009A234.
- *
- * @par Control flow
- * Straight-line sequence: sin/cos lookup followed by four FMUL operations updating vec[0] and vec[1].
- *
- * @par Calls
- * func_8001846C - resolves Q16 sine and cosine from the 4096-step lookup table D_8009A234.
- *
- * @par Side effects
- * Overwrites vec[0] and vec[1] with rotated coordinates.
+ * No RAM globals accessed directly.
  *
  * @par Callers
- * Confirmed: func_800460D4 (0x80046100, 0x8004611C, stereo pan vector rotation), func_80053514 (0x800535F4, moving-platform offset rotation).
+ * Direct calls in the retail listing are from func_800460D4, func_80053514.
+ *
+ * @par Role and path
+ * The stereo pan and moving-platform paths share the two-component rotation
+ * helper.
+ *
+ * @par Unknown
+ * The coordinates' axes depend on the caller.
  */
-void func_8001A578(u32 angle, s32 *vec)
+void gRotateVector2Q16(u32 angle, s32 *vec)
 {
     s32 sine;
     s32 cosine;
