@@ -251,8 +251,8 @@ Einundsechzig weitere Globals in **einem** Commit. Damit sind alle Symbole abgea
 | `D_8009AF88` | `gDescriptorBlock` | Deskriptor, dessen Zufallswort bei `&Wert - 0x10` landet. |
 | `D_8009C7A8` | `gPadUpdateByte` | Wird im Pad-Pfad fortgeschrieben; aufgerufene Funktionen können weitere Wirkung haben. |
 | `D_8009C800` | `gModeClearFlag` | Löscht das Modusargument, wenn `func_8008D7…` es erlaubt. |
-| `D_8009CC8A` | `gFrameClockValid` | Gültigkeitsbyte der Frame-Uhr, von `func_800915D4` geprüft. |
-| `D_8009DD30` | `gValueMatchTable` | Tabelle, gegen die ein gelieferter Wert verglichen wird. |
+| `D_8009CC8A` | `gIrqDispatchBusy` | Busy-Halbwort im Dispatcher-Block `D_8009CC88`; `gDispatchIrqs` prüft es, `func_80091B60` löscht es, `func_800915D4` gibt es zurück. |
+| `D_8009DD30` | `gVSyncCallbackTable` | Acht Funktionszeiger, die der VSync-Handler `func_80091BF8` je Bild der Reihe nach aufruft; `gInitVSyncHandler` setzt die Tabelle zurück. |
 | `D_8009EA5C` | `gModeEntryWord` | Wird von den unterstützten Modi als flüchtiger Eintrag geschrieben. |
 | `D_8009EED8` | `gSpuClearFlag` | Kann beim Aufräumen gelöscht werden. |
 | `D_8009EEDC` | `gSpuTransferCallback` | Abschluss-Callback des SPU-DMA-Transfers; wird in `func_800972F8` gerufen und sonst durch `func_8008DFF0(0xF0000009, 0x20)` ersetzt. **Bestätigt.** |
@@ -530,7 +530,7 @@ Fünfzig weitere Globals in **einem** Commit. Vier Kandidaten aus der CD-/Verzei
 | `D_8009C7A0` | `gPadMotorValue` | `s32` | Erhält das Doppelte des Ergebnis-Nibbles, oder 0x20 wenn dieses 0 ist. |
 | `D_8009C8CC` | `gIndexEntryTable` | `int[]` | Einträge für Indizes unter 28. |
 | `D_8009C94C` | `gLowByteEntryTable` | `int[]` | Einträge für Low-Byte-Werte unter sieben. |
-| `D_8009C814` | `gCardRetryCount` | `s32` | Fehlversuchszähler der Karteninitialisierung; nach dem fünften greift der Inline-Fehlerpfad. |
+| `D_8009C814` | `gCdUseDmaFlag` | `s32` | Bit 0 schaltet im CD-Lesepfad `func_800908D4` von `gCdRead` auf den DMA-Callback um; `gStartCdInit` löscht das Wort. **Bestätigt.** |
 | `D_800A0C70` | `gSlotSpawnDescs` | `s32[]` | Belegungs-Spaltenbyte je Region und Slot. |
 
 ## Effekt-Renderer, Lichtraster, Frontend und Pad-Treiber
@@ -596,8 +596,8 @@ Fünfzig weitere Globals in **einem** Commit. Zwei Kandidaten fielen beim Byte-V
 | `D_8009C8C4` | `gLastCommandResult` | `u8` | Zuletzt gespeichertes Kommandoergebnis des Treibers. |
 | `D_8009C8C5` | `gLastResultByte` | `u8` | Einzelbyte dazu, vorzeichenlos gelesen und weitergereicht. |
 | `D_8009CAEC` | `gCommandParamMask` | `int[]` | Je Kommando ein Flag: nur dann ist ein Parameterpuffer erforderlich. |
-| `D_8009CBD0` | `gSectorBufferPtr` | `struct State` | Pufferzeiger, der je abgeschlossenem Sektor um `unk8` weiterläuft. |
-| `D_8009CC88` | `gFrameClockAnchor` | `char[]` | Anker der Frame-Uhr; die Initialisierung liefert diese Adresse oder null. |
+| `D_8009CBD0` | `gCdAsyncReadState` | `struct State` | Zustandsblock des asynchronen CD-Lesens: Moduswort (+0x0C), Ziel-LBA, Busy-Flag (+0x24) und die gesicherten Callbacks (+0x28, +0x2C). |
+| `D_8009CC88` | `gIrqDispatchState` | `struct { u16 active, busy; void (*handlers[11])(void); u16 mask; }` | Zustandsblock des Interrupt-Dispatchers; `gDispatchIrqs` arbeitet auf Aktiv-Flag, Handler-Tabelle und Maske. **Bestätigt.** |
 | `D_800A9448` | `gTimeoutThreshold` | `volatile u32` | Zeitüberschreitungsschwelle (60, 0x50, 0x91, 400). |
 | `D_8009EEE0` | `gInstalledHandler` | `s32` | Zwischengespeicherter, aktuell installierter Handler; bei Treffer kehrt der Rumpf sofort zurück. |
 | `D_8009EA2C` | `gSpuDmaCallback` | `void *` | SPU-DMA-Kanal-4-Callback, beim Aufräumen gelöscht. |
@@ -1051,6 +1051,107 @@ Drei Symbole dieses Blocks trugen ihre Namen schon vorher und sind nur mitgewand
 Zeigerliterale (`*(volatile u16 *)0x1F801120`) angesprochen, nicht über ein Symbol — dort gibt es
 nichts umzubenennen. Die BIOS-Sprungstellen `func_8008C950` bis `func_8008D650` bleiben ebenfalls
 Retail-benannt: handgeschriebene Trampoline, kein C-Code.
+
+## CD-ROM-Treiber, Interrupt-Dispatcher und ISO-9660-Cache: die sechste Runde
+
+Der CD-ROM-Block war die letzte große Baustelle mit eigenen Datenstrukturen. Er zerfällt in drei
+Schichten: die Meldungstexte des Treibers (alle `char[]` im Bereich `0x80012498–0x8001284C`), die
+Zustands- und Callback-Wörter des Treibers (`0x8009C8xx`, `0x8009CBxx`) und die Tabellen des
+ISO-9660-Lesers im Datenbereich (`0x800A3Exx`, `0x800A44xx`, `0x800A5A80`). Die MMIO-Zeiger dieser
+Runde (`0x1F801018`, `0x1F801020`, `0x1F8010B0–0x1F8010F0`, `0x1F801070`, `0x1F801074`,
+`0x1F801110`, `0x1F801114`, `0x1F801800–0x1F801803`, `0x1F801C00`, `0x1F801814`) sind sämtlich
+Zeigerwörter, die eine Initialisierungsroutine einmal füllt — das Register dahinter steht im Namen.
+
+### Meldungstexte des CD-Treibers
+
+| Global (RAM) | C-Name | Bedeutung | Beleg |
+|---|---|---|---|
+| `D_80012498` | `gCdTimeoutFmtMsg` | Formattext der Zeitüberschreitung (`CD_sync`/`CD_ready`/`CD_cw`). **Bestätigt.** | `8008ECFC.c:126`, `8008EF7C.c:148` (Lesen) |
+| `D_800124B4` | `gCdDiskErrorMsg` | Meldung „Disk Error" aus dem Interrupt-Handler. **Wahrscheinlich.** | `8008E7A0.c:105` |
+| `D_800124C0` | `gCdErrorFmtMsg` | Formattext der Fehlerdetails des Interrupt-Handlers. **Wahrscheinlich.** | `8008E7A0.c:117` |
+| `D_800124DC` | `gCdUnknownIntrMsg` | Diagnose für einen unbekannten CD-Interrupt. **Wahrscheinlich.** | `8008E7A0.c:234` |
+| `D_80012510` | `gCdSyncNameStr` | Funktionsname „CD_sync" für Zeitüberschreitungs-Logs. **Wahrscheinlich.** | `8008ECFC.c:81` |
+| `D_80012518` | `gCdReadyNameStr` | Funktionsname „CD_ready" für dieselben Logs. **Wahrscheinlich.** | `8008EF7C.c:103` |
+| `D_80012524` | `gCdCmdLogFmtMsg` | Formattext der Kommando-Aufzeichnung. **Wahrscheinlich.** | `8008F244.c:71` |
+| `D_8001252C` | `gCdNoParamMsg` | Meldung bei fehlendem Parameter. **Wahrscheinlich.** | `8008F244.c:84` |
+| `D_8001253C` | `gCdCmdNameStr` | Funktionsname „CD_cw" für Zeitüberschreitungs-Logs. **Wahrscheinlich.** | `8008F244.c:175` |
+| `D_8001257C` | `gCdInitLogMsg` | Bannertext von `CD_init`. **Wahrscheinlich.** | `8008F8E8.c:55` |
+| `D_80012588` | `gCdInitAddrFmt` | Formattext, der die Adresse des Zustandsblocks ausgibt. **Wahrscheinlich.** | `8008F8E8.c:58` |
+| `D_80012594` | `gCdDataSyncLabel` | Bezeichner der Daten-Synchronisation. **Wahrscheinlich.** | `8008FAC8.c:73` |
+| `D_800125AC` | `gCdDepthErrFmt` | Fehlertext bei Verzeichnistiefe ≥ 8. **Wahrscheinlich.** | `8008FF20.c:95` |
+| `D_800125C8` | `gCdBadPathErrFmt` | Fehlertext bei leerem Pfadsegment. **Wahrscheinlich.** | `8008FF20.c:105` |
+| `D_800125FC` | `gCdSearchLogFmt` | Debug-Text der Dateisuche. **Wahrscheinlich.** | `8008FF20.c:120` |
+| `D_8001261C` | `gCdFoundLogFmt` | Debug-Text bei Treffer. **Wahrscheinlich.** | `8008FF20.c:136` |
+| `D_80012628` | `gCdNotFoundErrFmt` | Fehlertext bei Nichttreffer. **Wahrscheinlich.** | `8008FF20.c:147` |
+| `D_80012638` | `gCdPvdReadErrMsg` | Fehlertext, wenn der PVD-Sektor nicht lesbar ist. **Wahrscheinlich.** | `80090218.c:74` |
+| `D_80012664` | `gCdIsoMagicStr` | Signatur `CD001` des ISO-9660-Volume-Descriptors. **Wahrscheinlich.** | `80090218.c:79` |
+| `D_8001266C` | `gCdBadSigErrMsg` | Fehlertext bei falscher `CD001`-Signatur. **Wahrscheinlich.** | `80090218.c:81` |
+| `D_8001269C` | `gCdPathReadErrFmt` | Fehlertext beim Lesen der Pfadtabelle. **Wahrscheinlich.** | `80090218.c:91` |
+| `D_800126C0` | `gCdPathTblLogMsg` | Überschrift des Pfadtabellen-Dumps. **Wahrscheinlich.** | `80090218.c:99` |
+| `D_800126E0` | `gCdPathEntryFmt` | Formattext eines Pfadtabellen-Eintrags. **Wahrscheinlich.** | `80090218.c:131` |
+| `D_800126F4` | `gCdPathCountFmt` | Formattext der gezählten Pfadeinträge. **Wahrscheinlich.** | `80090218.c:145` |
+| `D_80012718` | `gCdDirReadErrMsg` | Fehlertext, wenn der Verzeichnissektor nicht lesbar ist. **Wahrscheinlich.** | `80090580.c:79` |
+| `D_80012738` | `gCdDirCacheLogMsg` | Überschrift des Verzeichnis-Cache-Dumps. **Wahrscheinlich.** | `80090580.c:84` |
+| `D_80012754` | `gCdDotDirName` | Zwei-Byte-Name des `.`-Eintrags. **Wahrscheinlich.** | `80090580.c:99` |
+| `D_80012758` | `gCdDotDotPrefix` | Erste zwei Bytes des `..`-Eintrags. **Wahrscheinlich.** | `80090580.c:103` |
+| `D_8001275A` | `gCdDotDotNul` | Abschließendes Nullbyte desselben Eintrags. **Wahrscheinlich.** | `80090580.c:104` |
+| `D_8001275C` | `gCdDirEntryFmt` | Formattext eines Cache-Eintrags. **Wahrscheinlich.** | `80090580.c:118` |
+| `D_80012778` | `gCdDirCountFmt` | Formattext der Eintragszahl. **Wahrscheinlich.** | `80090580.c:132` |
+| `D_8001279C` | `gCdSectorErrMsg` | Fehlertext bei abweichender Sektoradresse nach dem Lesen. **Wahrscheinlich.** | `800908D4.c:96` |
+| `D_80012830` | `gIrqInactiveErrFmt` | Fehlertext, wenn ein Interrupt im inaktiven Zustand eintrifft. **Wahrscheinlich.** | `800916EC.c:54` |
+| `D_8001284C` | `gIrqStuckErrFmt` | Fehlertext, wenn ein Interrupt über 0x800 Durchläufe hängen bleibt. **Wahrscheinlich.** | `800916EC.c:94` |
+
+### Zustand und Callbacks des CD-Treibers
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_8009C810` | `gCdReadCallback` | `u32` | Callback nach abgeschlossenem CD-Lesen; `gStartCdInit` setzt ihn auf den DMA-Abschluss. **Bestätigt.** | `8008DEA0.c:57` (Schreiben), `80091240.c:36` (Lesen) |
+| `D_8009C8A8` | `gCdSyncCallback` | `u32` | Callback nach abgeschlossenem Kommando. **Bestätigt.** | `8008DEA0.c:55` (Schreiben), `8008EF7C.c:182` (Aufruf) |
+| `D_8009C8AC` | `gCdReadyCallback` | `u32` | Callback, sobald Daten bereitstehen. **Bestätigt.** | `8008DEA0.c:56` (Schreiben), `8008EF7C.c:171` (Aufruf) |
+| `D_8009C8B8` | `gCdIrqExtraByte` | `u8` | Zweites Byte des IRQ-Antwortpakets. **Bestätigt.** | `8008E7A0.c:100,113` (Lesen/Schreiben), `8008F8E8.c:67` |
+| `D_8009CB88` | `gCdStateBlock` | `char[]` | Adresse des Treiber-Zustandsblocks, wie sie `CD_init` protokolliert. **Wahrscheinlich.** | `8008F8E8.c:58` |
+| `D_8009CBC0` | `gCdCachedDirIndex` | `s32` | Index des gerade zwischengespeicherten Verzeichnisses. **Bestätigt.** | `80090218.c:143` (Schreiben), `80090580.c:74` (Lesen) |
+| `D_8009CBD8` | `gCdReadCursorPtr` | — | Zielzeiger des laufenden Sektors innerhalb `D_8009CBD0` (+0x08). **Wahrscheinlich.** | `800908D4.c:105` |
+| `D_8009CBDC` | `gCdReadModeWord` | `s32` | Moduswort des Leselaufs (+0x0C). **Bestätigt.** | `80090C18.c:111` (Lesen), `80090FA0.c:92` (Schreiben) |
+| `D_8009CBF0` | `gCdReadSectorPtr` | — | Zeiger auf die Ziel-LBA des Leselaufs (+0x20). **Wahrscheinlich.** | `800908D4.c:92` |
+| `D_8009CBF4` | `gCdReadBusyPtr` | — | Busy-Flag des Leselaufs (+0x24). **Bestätigt.** | `80090FA0.c:72` (Lesen), `800908A0.c:38` (Schreiben) |
+| `D_8009CBF8` | `gCdSavedCallbackPtr` | — | Gesicherter primärer Callback (+0x28). **Bestätigt.** | `800908A0.c:33` (Lesen), `80090FA0.c:118` (Schreiben) |
+| `D_8009CBFC` | `gCdSavedReadCbsPtr` | — | Gesichertes Paar aus Ready- und DMA3-Callback (+0x2C…+0x30). **Bestätigt.** | `80090E00.c:104` (Lesen), `80090FA0.c:119` (Schreiben) |
+
+### Interrupt-Dispatcher
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_8009CC8C` | `gIrqHandlerSlots` | `void (*[11])(void)` | Elf Handler-Zeiger im Dispatcher-Block `D_8009CC88` (+0x04). **Bestätigt.** | `800918BC.c:35` (Lesen), `:52` (Schreiben) |
+| `D_8009CCB8` | `gIrqRepeatMask` | `u16` | Maske der Interrupts, die nach der Behandlung erneut geprüft werden (+0x30). **Bestätigt.** | `800916EC.c:79` (Lesen), `800918BC.c:54` (Schreiben) |
+| `D_8009CCC4` | `gIrqQueueHeadPtr` | — | Zeigerwort auf den Anfang des Handler-Stapels (+0x3C). **Wahrscheinlich.** | `80091614.c:66` (Schreiben) |
+
+### BIOS-IRQ-Knoten und ISO-9660-Tabellen
+
+| Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
+|---|---|---|---|---|
+| `D_800A3E04` | `gIrqNodeHandler` | `s32[]` | Handler- und Prädikatswörter (+0x04/+0x08) des BIOS-IRQ-Knotens `D_800A3E00`. **Wahrscheinlich.** | `8008D964.c:47` (Schreiben) |
+| `D_800A3E0C` | `gIrqNodeLinkEnd` | `s32` | Abschließendes Verkettungswort (+0x0C) desselben Knotens. **Wahrscheinlich.** | `8008D964.c:53` (Schreiben) |
+| `D_800A3E58` | `gCdReadyBuffer8` | `u8[]` | Acht-Byte-Antwortpuffer des Ready-Interrupts. **Bestätigt.** | `8008E7A0.c:185,209,231` (Schreiben), `8008EF7C.c:228` (Lesen) |
+| `D_800A3E60` | `gCdDataBuffer8` | `u8[]` | Acht-Byte-Antwortpuffer des INT4-Interrupts. **Bestätigt.** | `8008E7A0.c:191` (Schreiben), `8008EF7C.c:202` (Lesen) |
+| `D_800A3E70` | `gCdWaitFuncName` | `char *` | Name der gerade wartenden Funktion für Zeitüberschreitungs-Logs. **Bestätigt.** | `8008ECFC.c:83,103` (Schreiben/Lesen), `8008EF7C.c:105` |
+| `D_800A3E80` | `gCdDirEntryCache` | `DirEntry[64]` | Zwischenspeicher der 64 Verzeichniseinträge eines Sektors. **Bestätigt.** | `8008FF20.c:139` (Lesen), `80090580.c:95` (Schreiben) |
+| `D_800A445C` | `gCdDirSectorTable` | `s32[]` | Sektor je Verzeichnis-ID, Schrittweite 0x2C. **Wahrscheinlich.** | `80090580.c:77` (Lesen) |
+| `D_800A4480` | `gCdPathDirIdTable` | `u8[]` | Verzeichnis-ID der ISO-Pfadtabelle, Schrittweite 0x2C. **Bestätigt.** | `80090218.c:116` (Schreiben), `:129` (Lesen) |
+| `D_800A4484` | `gCdPathParentTable` | `u8[]` | Eltern-ID derselben Tabelle. **Bestätigt.** | `80090218.c:117` (Schreiben), `800904DC.c:17` (Lesen) |
+| `D_800A4488` | `gCdPathExtentTable` | `u32[]` | Startsektor derselben Tabelle. **Bestätigt.** | `80090218.c:113` (Schreiben), `:128` (Lesen) |
+| `D_800A448C` | `gPathTable` | `char[]` | Namensfeld der ISO-Pfadtabelle, Schrittweite 0x2C. **Wahrscheinlich.** | `80090218.c:120` (Schreiben) |
+
+Drei Namen aus früheren Runden waren falsch geraten und sind in dieser Runde berichtigt:
+`D_8009CC88` hieß `gFrameClockAnchor` (jetzt `gIrqDispatchState`), `D_8009CC8A` hieß
+`gFrameClockValid` (jetzt `gIrqDispatchBusy`), `D_8009DD30` hieß `gValueMatchTable` (jetzt
+`gVSyncCallbackTable`); dazu `D_8009C814` von `gCardRetryCount` auf `gCdUseDmaFlag` und
+`D_8009CBD0` von `gSectorBufferPtr` auf `gCdAsyncReadState` (der Block ist eine Struktur, kein
+Zeiger). `D_8009DD10` (`gIrqCallbackTable`) behielt seinen Namen.
+
+**Nicht umbenannt:** `D_800125E0`, `D_800124F0`, `D_800A3E50` (`gStatusBuffer8` blieb), die
+Registeradressen in `0x1F80xxxx` (nur als Zeigerwörter geführt) sowie die zwölf Units dieser Runde,
+deren Rolle nicht belegbar ist — sie stehen in `docs/FUNCTION_MAP.md` ohne Namen.
 
 ## Wie diese Datei weitergeführt wird
 

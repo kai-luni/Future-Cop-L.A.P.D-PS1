@@ -51,11 +51,11 @@ extern u32 gMovieRingSectors __asm__("D_8009F980");
 
 extern s32 func_800886C8(s32, s32);
 extern void func_8008888C(s32, s32, s32);
-extern s32 func_8008E2F8(s32, s32);
-extern s32 func_8008E598(void *, s32);
-extern s32 func_8008E5FC(s32);
-extern struct CdlLOC *func_8008E61C(s32, struct CdlLOC *);
-extern s32 func_8008E720(struct CdlLOC *);
+extern s32 gCdControlF(s32, s32) __asm__("func_8008E2F8");
+extern s32 gCdRead(void *, s32) __asm__("func_8008E598");
+extern s32 gCdDataSync(s32) __asm__("func_8008E5FC");
+extern struct CdlLOC *gCdIntToPos(s32, struct CdlLOC *) __asm__("func_8008E61C");
+extern s32 gCdPosToInt(struct CdlLOC *) __asm__("func_8008E720");
 extern void func_800889A8(s32, s32, s32);
 
 /**
@@ -81,7 +81,7 @@ extern void func_800889A8(s32, s32, s32);
  */
 struct CdlLOC *func_800889DC(struct CdlLOC *loc, struct CdlLOC *out, s32 offset)
 {
-    return func_8008E61C(func_8008E720(loc) + offset, out);
+    return gCdIntToPos(gCdPosToInt(loc) + offset, out);
 }
 
 struct Loc80088A1C {
@@ -134,19 +134,19 @@ done:
     }
 
     if (!(gMovieStreamContext->unk04 & 3)) {
-        func_8008E598(&tmp.loc, 3);
-        func_8008E5FC(0);
-        sector = func_8008E720(&tmp.loc);
+        gCdRead(&tmp.loc, 3);
+        gCdDataSync(0);
+        sector = gCdPosToInt(&tmp.loc);
 
         disc1 = gMovieStreamContext->unk430;
         func_800889DC(&disc1->loc0C, &disc1->loc24, disc1->unk08);
         //(&disc->loc0C, &disc->loc24, disc->unk08);
 
-        if (func_8008E720(&gMovieStreamContext->unk430->loc24) != sector) {
-            func_8008E598((void *)gMovieStreamContext->unk04, 0x200);
-            func_8008E5FC(0);
-            func_8008E598(gMovieStreamContext->unk458, 0x46);
-            func_8008E5FC(0);
+        if (gCdPosToInt(&gMovieStreamContext->unk430->loc24) != sector) {
+            gCdRead((void *)gMovieStreamContext->unk04, 0x200);
+            gCdDataSync(0);
+            gCdRead(gMovieStreamContext->unk458, 0x46);
+            gCdDataSync(0);
             disc2 = gMovieStreamContext->unk430;
             func_800889DC(&disc2->loc0C, &disc2->loc24, disc2->unk08);
             disc4 = gMovieStreamContext->unk430;
@@ -159,10 +159,10 @@ done:
             b4 = gMovieStreamContext->unk00;
             func_800889A8(a4, b4, (s32)&disc5->loc24);
         } else {
-            func_8008E598((void *)gMovieStreamContext->unk04, 0x200);
-            func_8008E5FC(0);
-            func_8008E598(gMovieStreamContext->unk458, 0x46);
-            func_8008E5FC(0);
+            gCdRead((void *)gMovieStreamContext->unk04, 0x200);
+            gCdDataSync(0);
+            gCdRead(gMovieStreamContext->unk458, 0x46);
+            gCdDataSync(0);
 
             p = gMovieStreamContext;
             p->unk04 += 0x800;
@@ -248,7 +248,7 @@ void gCodeDataSource(u8 mode)
         s32 b = gMovieStreamContext->unk08[gMovieStreamContext->unk408 + 1];
         s32 a = t;
         (void)gMovieStreamContext->unk08[gMovieStreamContext->unk408 + 2];
-        while (func_8008E2F8(a & 0xFF, b) == 0) {
+        while (gCdControlF(a & 0xFF, b) == 0) {
             ;
         }
     }

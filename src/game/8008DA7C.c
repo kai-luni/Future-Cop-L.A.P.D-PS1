@@ -7,6 +7,8 @@ typedef struct {
 } InputState;
 
 extern InputState *gInterruptStatusStatePtr __asm__("D_8009C808");
+int gCheckIrqBit0Persistent(void) __asm__("func_8008DA7C");
+
 
 /**
  *  @brief Tests whether input bit zero is set in both sampled states.
@@ -24,8 +26,14 @@ extern InputState *gInterruptStatusStatePtr __asm__("D_8009C808");
  *  None.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Checks whether bit 0 is set in both the current and previous fields of
+ * gInterruptStatusStatePtr (D_8009C808), returning 1 if both are set and 0
+ * otherwise. Installed into IRQ node D_800A3E00 by func_8008D964. Performs no
+ * function calls and modifies no state.
  */
-int func_8008DA7C(void)
+int gCheckIrqBit0Persistent(void)
 {
     if (gInterruptStatusStatePtr->current & 1) {
         register unsigned int previous __asm__("$2") = gInterruptStatusStatePtr->previous & 1;

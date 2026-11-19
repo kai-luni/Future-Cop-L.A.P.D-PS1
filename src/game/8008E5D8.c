@@ -3,7 +3,9 @@
 
 typedef void (*CdDataCallback)(void);
 
-extern CdDataCallback func_800914E0(s32 channel, CdDataCallback callback);
+extern CdDataCallback gSetDmaCallback(s32 channel, CdDataCallback callback) __asm__("func_800914E0");
+CdDataCallback gSetCdDmaCallback(CdDataCallback callback) __asm__("func_8008E5D8");
+
 
 /**
  * @brief Installs a callback on CD-ROM interrupt channel 3.
@@ -29,8 +31,13 @@ extern CdDataCallback func_800914E0(s32 channel, CdDataCallback callback);
  *
  * @par Callers
  * Confirmed: func_80090E00 (read teardown).
+ *
+ * @par Role and path
+ * Registers callback on DMA channel 3 by calling func_800914E0(3, callback)
+ * and returns the previous callback pointer. Driven by func_80090B48 and
+ * func_80090E00.
  */
-CdDataCallback func_8008E5D8(CdDataCallback callback)
+CdDataCallback gSetCdDmaCallback(CdDataCallback callback)
 {
-    return func_800914E0(3, callback);
+    return gSetDmaCallback(3, callback);
 }

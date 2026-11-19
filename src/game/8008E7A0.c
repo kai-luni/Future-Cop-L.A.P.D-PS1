@@ -9,14 +9,18 @@ extern unsigned char gLastResultByte __asm__("D_8009C8C5");
 extern int D_8009CA6C[];
 extern int D_8009C96C[];
 extern int gIndexEntryTable[] __asm__("D_8009C8CC");
-extern int D_8009C8B8;
+extern int gCdIrqExtraByte __asm__("D_8009C8B8");
 extern int gCdResponseCount __asm__("D_8009C8BC");
 extern int gCdLogLevel __asm__("D_8009C8B0");
 extern int gCdStatusByte __asm__("D_8009C8B4");
 extern unsigned char gCdStateBytes[] __asm__("D_8009CB84");
-extern unsigned char D_800A3E58[], D_800A3E60[];
+extern unsigned char gCdReadyBuffer8[] __asm__("D_800A3E58");
+extern unsigned char gCdDataBuffer8[] __asm__("D_800A3E60");
 extern unsigned char gStatusBuffer8[] __asm__("D_800A3E50");
-extern char D_800124B4[], D_800124C0[], D_800124DC[], D_800124F0[];
+extern char gCdDiskErrorMsg[] __asm__("D_800124B4");
+extern char gCdErrorFmtMsg[] __asm__("D_800124C0");
+extern char gCdUnknownIntrMsg[] __asm__("D_800124DC");
+extern char D_800124F0[];
 extern void func_8008E000();
 extern void func_8008FF08();
 
@@ -26,6 +30,8 @@ extern void func_8008FF08();
 #define COPY4(dst) \
     { register unsigned char *d __asm__("$4") = dst; unsigned char *s = buf; int n; \
       if (d) { for (n = 7; n != -1; n--) { *d++ = *s++; } } }
+int gCdDrainIrqEvent(void) __asm__("func_8008E7A0");
+
 
 /**
  * @brief Dequeues and dispatches one pending CD-ROM hardware interrupt event.
@@ -49,8 +55,17 @@ extern void func_8008FF08();
  *
  * @par Callers
  * Confirmed: func_8008ECFC (0x8008EE64), func_8008EF7C (0x8008F0E4), func_8008F244 (0x8008F540), func_8008FE28 (0x8008FE5C) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Reads stable CD-ROM IRQ flags from *gCdromRequestStatusPtr (D_8009CB78),
+ * drains up to 8 response bytes from *gCdromCommandPtr (D_8009CB70),
+ * acknowledges the IRQ, and updates gCdStatusByte (D_8009C8B4), D_8009C8B8,
+ * and gCdResponseCount (D_8009C8BC). Dispatches modes 1..5 to update
+ * gCdStateBytes (D_8009CB84) and copy response packets into gStatusBuffer8
+ * (D_800A3E50), D_800A3E58, and D_800A3E60. Driven by func_8008ECFC,
+ * func_8008EF7C, func_8008F244, and func_8008FE28.
  */
-int func_8008E7A0(void)
+int gCdDrainIrqEvent(void)
 {
     volatile unsigned char mode;
     unsigned char buf[8];
@@ -97,12 +112,12 @@ int func_8008E7A0(void)
             a &= 0xff;
             s1 = a & 0x1D;
             gCdStatusByte = a;
-            D_8009C8B8 = b;
+            gCdIrqExtraByte = b;
         }
     }
 skip_input:
     if (mode == 5 && gCdLogLevel > 0) {
-        func_8008E000(D_800124B4);
+        func_8008E000(gCdDiskErrorMsg);
         if (gCdLogLevel > 0) {
             register int index __asm__("$2");
             register int val __asm__("$5");
@@ -110,11 +125,11 @@ skip_input:
             register int b __asm__("$7");
             index = gLastResultByte;
             a = gCdStatusByte;
-            b = D_8009C8B8;
+            b = gCdIrqExtraByte;
             __asm__("" : "+r"(index), "+r"(a), "+r"(b));
             index <<= 2;
             __asm__("lui %0, %%hi(D_8009C8CC)\n\taddu %0, %0, %1\n\tlw %0, %%lo(D_8009C8CC)(%0)" : "=&r"(val) : "r"(index));
-            func_8008E000(D_800124C0, val, a, b);
+            func_8008E000(gCdErrorFmtMsg, val, a, b);
         }
     }
     {
@@ -182,13 +197,13 @@ skip_input:
             __asm__("" : "+r"(status));
             status[1] = state;
         }
-        COPY(D_800A3E58);
+        COPY(gCdReadyBuffer8);
         *gCdromIndexStatusPtr = 0;
         *(unsigned char *)gCdromRequestStatusPtr = 0;
         return 4;
     case4:
         {
-        register unsigned char *dest __asm__("$4") = D_800A3E60;
+        register unsigned char *dest __asm__("$4") = gCdDataBuffer8;
         register unsigned char *status __asm__("$2") = gCdStateBytes;
         __asm__("" : "+r"(dest), "+r"(status));
         {
@@ -206,7 +221,7 @@ skip_input:
             if (dest) { for (n = 7; n != -1; n--) { *dest++ = *source++; } }
         }
         }
-        COPY(D_800A3E58);
+        COPY(gCdReadyBuffer8);
         return 4;
     case5:
         {
@@ -228,10 +243,10 @@ skip_input:
             if (dest) { for (n = 7; n != -1; n--) { *dest++ = *source++; } }
         }
         }
-        COPY(D_800A3E58);
+        COPY(gCdReadyBuffer8);
         return 6;
     other:
-        func_8008FF08(D_800124DC);
+        func_8008FF08(gCdUnknownIntrMsg);
         {
             register int m __asm__("$5");
             register char *p __asm__("$4");

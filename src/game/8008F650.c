@@ -7,6 +7,8 @@ extern u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u8 *gCdromCommandPtr __asm__("D_8009CB70");
 extern u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
+s32 gWriteCdAudioMixRegs(u8 *arg0) __asm__("func_8008F650");
+
 
 /**
  *  @brief Writes a four-byte command sequence through indexed register pointers.
@@ -26,8 +28,14 @@ extern u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
  *  Writes the bank selector and register locations, ending with 0x20.
  *  @par Callers
  *  Confirmed: func_8008E578.
+ *
+ * @par Role and path
+ * Selects CD-ROM register bank 2 via *gCdromIndexStatusPtr (D_8009CB6C) to
+ * write arg0[0..1] to *gCdromParameterPtr and *gCdromRequestStatusPtr, then
+ * selects bank 3 to write arg0[2..3] and 0x20 to apply the audio mix. Returns
+ * 0 and is driven by func_8008E578.
  */
-s32 func_8008F650(u8 *arg0)
+s32 gWriteCdAudioMixRegs(u8 *arg0)
 {
     *gCdromIndexStatusPtr = 2;
     *gCdromParameterPtr = arg0[0];

@@ -1,5 +1,7 @@
 // Categories: Platform > Memory Card | BIOS > System Calls
 extern int gModeClearFlag __asm__("D_8009C800");
+int gGetModeClearFlag(void) __asm__("func_8008D7CC");
+
 
 /**
  * @brief Returns the BIOS card/pad initialization status word D_8009C800.
@@ -23,8 +25,13 @@ extern int gModeClearFlag __asm__("D_8009C800");
  *
  * @par Callers
  * Confirmed: func_8008D6E0 (0x8008D700 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Reads and returns the integer flag gModeClearFlag (D_8009C800). Called by
+ * func_8008D6E0 to decide whether to force the memory-card initialization
+ * mode to zero. Performs no calls and has no side effects.
  */
-int func_8008D7CC(void)
+int gGetModeClearFlag(void)
 {
     return gModeClearFlag;
 }

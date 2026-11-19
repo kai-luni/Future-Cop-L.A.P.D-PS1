@@ -4,13 +4,15 @@
 typedef unsigned char u8;
 typedef unsigned int u32;
 
-extern char D_8001257C[];
-extern char D_80012588[];
-extern char D_8009CB88[];
+extern char gCdInitLogMsg[] __asm__("D_8001257C");
+extern char gCdInitAddrFmt[] __asm__("D_80012588");
+extern char gCdStateBlock[] __asm__("D_8009CB88");
 extern void D_8008FE28(void);
 extern u8 gLastResultByte __asm__("D_8009C8C5");
 extern u8 gLastCommandResult __asm__("D_8009C8C4");
-extern u32 D_8009C8AC, D_8009C8A8, D_8009C8B8;
+extern u32 gCdReadyCallback __asm__("D_8009C8AC");
+extern u32 gCdSyncCallback __asm__("D_8009C8A8");
+extern u32 gCdIrqExtraByte __asm__("D_8009C8B8");
 extern u32 gCdStatusByte __asm__("D_8009C8B4");
 extern volatile u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern volatile u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
@@ -19,10 +21,12 @@ extern u32 *gComAccessDelayPtr __asm__("D_8009CB7C");
 extern volatile u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern void func_8008FF08(char *);
 extern void func_8008E000(char *, char *);
-extern void func_80091480(void);
-extern void func_800914B0(int, void (*)(void));
-extern int func_8008F244(int, int, int, int);
-extern int func_8008ECFC(int, int);
+extern void gResetIrqDispatch(void) __asm__("func_80091480");
+extern void gSetIrqCallback(int, void (*)(void)) __asm__("func_800914B0");
+extern int gIssueCdCommand(int, int, int, int) __asm__("func_8008F244");
+extern int gCdSyncLoop(int, int) __asm__("func_8008ECFC");
+int gInitCdSubsystem(void) __asm__("func_8008F8E8");
+
 
 /**
  * @brief Initializes the PsyQ CD-ROM subsystem, interrupt callback, and drive state.
@@ -46,36 +50,44 @@ extern int func_8008ECFC(int, int);
  *
  * @par Callers
  * Confirmed: func_8008DF30 (0x8008DF38), func_8008E04C (0x8008E074) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Initializes the PsyQ CD-ROM subsystem by logging the CD_init banner and
+ * state block D_8009CB88, clearing driver callbacks and status globals, and
+ * installing func_8008FE28 on IRQ slot 2 via func_80091480 and func_800914B0.
+ * It then clears pending CD-ROM interrupts, sets D_8009CB7C (0x1F801020) to
+ * 0x1325, and issues CdlNop, CdlReset, CdlDemute via func_8008F244 followed
+ * by func_8008ECFC sync. Driven by func_8008DF30 and func_8008E04C.
  */
-int func_8008F8E8(void)
+int gInitCdSubsystem(void)
 {
     register int z __asm__("$0");
     register volatile u8 *state __asm__("$3");
     register char *first __asm__("$4");
-    first = D_8001257C;
+    first = gCdInitLogMsg;
     __asm__("" : "+r"(first));
     func_8008FF08(first);
-    func_8008E000(D_80012588, D_8009CB88);
+    func_8008E000(gCdInitAddrFmt, gCdStateBlock);
     gLastResultByte = 0;
     __asm__ volatile("" : : : "memory");
     gLastCommandResult = 0;
     __asm__ volatile("" : : : "memory");
-    D_8009C8AC = 0;
+    gCdReadyCallback = 0;
     __asm__ volatile("" : : : "memory");
-    D_8009C8A8 = 0;
+    gCdSyncCallback = 0;
     __asm__ volatile("" : : : "memory");
-    D_8009C8B8 = 0;
+    gCdIrqExtraByte = 0;
     __asm__ volatile("" : : : "memory");
     {
         register u32 *p __asm__("$1") = (u32 *)0x800A0000;
         __asm__("" : "+r"(p));
         *(u32 *)((char *)p - 0x374c) = 0;
-        func_80091480();
+        gResetIrqDispatch();
     }
     {
         register void (*cb)(void) __asm__("$5") = D_8008FE28;
         __asm__("" : "+r"(cb));
-        func_800914B0(2, cb);
+        gSetIrqCallback(2, cb);
     }
     *gCdromIndexStatusPtr = 1;
     while (*gCdromRequestStatusPtr & 7) {
@@ -97,15 +109,15 @@ int func_8008F8E8(void)
         *port = 0;
         *gCdromRequestStatusPtr = 0;
         *gComAccessDelayPtr = 0x1325;
-        func_8008F244(a0, a1, z, z);
+        gIssueCdCommand(a0, a1, z, z);
     }
     if (gCdStatusByte & 0x10)
-        func_8008F244(1, 0, z, z);
-    if (func_8008F244(10, 0, z, z))
+        gIssueCdCommand(1, 0, z, z);
+    if (gIssueCdCommand(10, 0, z, z))
         return -1;
-    if (func_8008F244(12, 0, z, z))
+    if (gIssueCdCommand(12, 0, z, z))
         return -1;
-    if (func_8008ECFC(0, z) != 2)
+    if (gCdSyncLoop(0, z) != 2)
         return -1;
     return 0;
 }

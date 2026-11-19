@@ -19,7 +19,7 @@ extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u8 gGpuLibPair[] __asm__("D_800A62C8");
 extern u8 gGpuDmaQueue[] __asm__("D_800A9450");
 
-extern u32 func_800915FC(u32 a0);
+extern u32 gSwapIrqMask(u32 a0) __asm__("func_800915FC");
 extern u32 func_80095350(u32 a0);
 extern void func_80095830(unsigned char *destination, int value, unsigned int count);
 extern void func_800951D8(void);
@@ -63,7 +63,7 @@ s32 func_80094F4C(s32 a0)
 {
     u32 saved;
 
-    saved = func_800915FC(0);
+    saved = gSwapIrqMask(0);
     gGpuJobTail = 0;
     gGpuJobHead = gGpuJobTail;
     gSavedIrqMask = saved;
@@ -86,7 +86,7 @@ s32 func_80094F4C(s32 a0)
         break;
     }
 
-    func_800915FC(gSavedIrqMask);
+    gSwapIrqMask(gSavedIrqMask);
     if ((a0 & 7) == 0) {
         return func_80095350(a0);
     }

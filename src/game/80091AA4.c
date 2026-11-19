@@ -13,11 +13,13 @@ typedef struct {
     u8 payload[1];
 } Context;
 
-extern Context gFrameClockAnchor __asm__("D_8009CC88");
+extern Context gIrqDispatchState __asm__("D_8009CC88");
 extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern u32 *gDmaControlPtr __asm__("D_8009DD1C");
 extern void func_80091B80(void *);
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
+Context *gRestartIrqSubsys(void) __asm__("func_80091AA4");
+
 
 /**
  * @brief Starts one CD device-transfer context and arms the hardware.
@@ -38,8 +40,15 @@ extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
  * Marks the context busy and writes hardware words.
  * @par Callers
  * Confirmed: the CD/interrupt block around func_80091270.
+ *
+ * @par Role and path
+ * Restarts the interrupt and DMA callback subsystem when D_8009CC88 is
+ * inactive by calling func_80091B80 on ctx->payload, setting active = 1,
+ * restoring *D_8009DD18 (I_MASK) and *D_8009DD1C (DPCR) from saved fields
+ * +0x32 and +0x34, and exiting the critical section via func_8008C9B0.
+ * Returns D_8009CC88 or 0 if already active.
  */
-Context *func_80091AA4(void)
+Context *gRestartIrqSubsys(void)
 {
     Context *ctx;
     Context *result;

@@ -24,6 +24,12 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  * Whatever the callback does.
  * @par Callers
  * Confirmed: the interrupt/timer block (func_80091270 neighbourhood).
+ *
+ * @par Role and path
+ * Performs an indirect call through slot +0x10 of D_8009DD10 with no
+ * arguments in C; called by func_8001E540. Because no assignment to slot
+ * +0x10 of D_8009DD10 is visible in the inspected units, the target routine
+ * cannot be identified.
  */
 void func_80091574(void)
 {

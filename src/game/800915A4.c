@@ -21,6 +21,12 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  *  Any side effects are those of the invoked callback.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Performs an indirect call through slot +0x18 of D_8009DD10 with no
+ * arguments in C. No callers appear in src/ and no assignment to slot +0x18
+ * is visible in the inspected units, so its target and purpose remain
+ * unknown.
  */
 void func_800915A4(void)
 {

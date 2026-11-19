@@ -19,15 +19,26 @@ extern volatile u8 *gCdromCommandPtr __asm__("D_8009CB70");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern int gPassCounter __asm__("D_800A3E6C");
 extern int gPollDeadline __asm__("D_800A3E68");
-extern char *D_800A3E70;
-extern char D_80012524[], D_8001252C[], D_8001253C[], D_80012498[];
+extern char *gCdWaitFuncName __asm__("D_800A3E70");
+extern char gCdCmdLogFmtMsg[] __asm__("D_80012524");
+extern char gCdNoParamMsg[] __asm__("D_8001252C");
+extern char gCdCmdNameStr[] __asm__("D_8001253C");
+extern char gCdTimeoutFmtMsg[] __asm__("D_80012498");
 extern char gCdErrorLogMsg[] __asm__("D_80012488");
-extern u8 D_800A3E58[];
+extern u8 gCdReadyBuffer8[] __asm__("D_800A3E58");
 extern u8 gStatusBuffer8[] __asm__("D_800A3E50");
-extern void (*D_8009C8AC)(int, void *), (*D_8009C8A8)(int, void *);
-extern void func_8008E000(char *, ...), func_8008ECFC(int, int), func_8008FF08(char *), func_8008F6D8(void);
-extern int func_80091270(int), func_800915D4(void), func_8008E7A0(void);
+extern void (*gCdReadyCallback)(int, void *) __asm__("D_8009C8AC");
+extern void (*gCdSyncCallback)(int, void *) __asm__("D_8009C8A8");
+extern void func_8008E000(char *, ...);
+extern void gCdSyncLoop(int, int) __asm__("func_8008ECFC");
+extern void func_8008FF08(char *);
+extern void gResetCdHardware(void) __asm__("func_8008F6D8");
+extern int gVSyncWait(int) __asm__("func_80091270");
+extern int gGetIrqLatchFlag(void) __asm__("func_800915D4");
+extern int gCdDrainIrqEvent(void) __asm__("func_8008E7A0");
 extern void dummy_5args(int, int, int, int, int);
+int gIssueCdCommand(int arg0, u8 *arg1, u8 *arg2, int arg3) __asm__("func_8008F244");
+
 
 /**
  * @brief Issues a PS1 CD-ROM controller command with parameter validation and optional synchronous wait.
@@ -49,8 +60,17 @@ extern void dummy_5args(int, int, int, int, int);
  * Writes CD hardware ports, updates driver state/globals, may reset controller or fire D_8009C8A8/D_8009C8AC callbacks, and fills arg2.
  * @par Callers
  * Confirmed: func_8008E1BC (0x8008E250, 0x8008E278, 0x8008E29C), func_8008E2F8 (0x8008E384, 0x8008E3AC, 0x8008E3D0), func_8008E42C (0x8008E4B8, 0x8008E4E0, 0x8008E504), func_8008F8E8 (0x8008FA2C, 0x8008FA54, 0x8008FA68, 0x8008FA84).
+ *
+ * @par Role and path
+ * Validates required command parameters against D_8009CAEC, waits for prior
+ * command settlement via func_8008ECFC, caches CdlSetloc/CdlSetmode state in
+ * gCdTargetLocation (D_8009C8C0) and gLastCommandResult (D_8009C8C4), pushes
+ * parameter bytes to *gCdromParameterPtr (D_8009CB74), and writes the command
+ * to *gCdromCommandPtr (D_8009CB70). When arg3 == 0, polls func_8008E7A0
+ * until gCdStateBytes[0] != 0 or timeout. Driven by func_8008E1BC,
+ * func_8008E2F8, func_8008E42C, and func_8008F8E8.
  */
-int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
+int gIssueCdCommand(int arg0, u8 *arg1, u8 *arg2, int arg3)
 {
     register u8 *param __asm__("$16") = arg1;
     register u8 *saved_result __asm__("$22") = arg2;
@@ -68,7 +88,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
         register char *entry __asm__("$5");
         __asm__("" : "+r"(saved_result));
         __asm__("lui %0,%%hi(D_8009C8CC)\n\taddu %0,%0,%1\n\tlw %0,%%lo(D_8009C8CC)(%0)" : "=&r"(entry) : "r"(index));
-        func_8008E000(D_80012524, entry);
+        func_8008E000(gCdCmdLogFmtMsg, entry);
     }
     {
         register int value __asm__("$2");
@@ -81,13 +101,13 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
                 if (gCdLogLevel > 0) {
                     register char *entry __asm__("$5");
                     __asm__("lui %0,%%hi(D_8009C8CC)\n\taddu %0,%0,%1\n\tlw %0,%%lo(D_8009C8CC)(%0)" : "=&r"(entry) : "r"(offset));
-                    func_8008E000(D_8001252C, entry);
+                    func_8008E000(gCdNoParamMsg, entry);
                 }
                 return -2;
             }
         }
     }
-    func_8008ECFC(zero, 0);
+    gCdSyncLoop(zero, 0);
     {
         register int cmd_lo __asm__("$3") = s1 & 255;
         register int two __asm__("$2") = 2;
@@ -160,7 +180,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
     }
     if (state != 0) return 0;
     {
-        register int now __asm__("$2") = func_80091270(-1);
+        register int now __asm__("$2") = gVSyncWait(-1);
         register u8 *st __asm__("$4");
         register int st0 __asm__("$3");
         register char *msg __asm__("$2");
@@ -172,9 +192,9 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
         __asm__ volatile(".set noat\n\tlui $1,%%hi(D_800A3E6C)\n\tsw $0,%%lo(D_800A3E6C)($1)\n\t.set at" : : : "memory");
         st0 = st[0];
         __asm__("" : "+r"(st0));
-        msg = D_8001253C;
+        msg = gCdCmdNameStr;
         __asm__("" : "+r"(st0), "+r"(msg));
-        D_800A3E70 = msg;
+        gCdWaitFuncName = msg;
         if (st0 != 0) goto after_loop;
         other = gIndexEntryTable;
         table = gLowByteEntryTable;
@@ -183,7 +203,7 @@ int func_8008F244(int arg0, u8 *arg1, u8 *arg2, int arg3)
         state1 = state + 1;
     }
 loop:
-    if (gPollDeadline < func_80091270(-1)) goto timeout;
+    if (gPollDeadline < gVSyncWait(-1)) goto timeout;
     {
         register int cur __asm__("$2");
         register int next __asm__("$2");
@@ -200,7 +220,7 @@ loop:
             {
                 register int first __asm__("$4") = state[0];
                 register int second __asm__("$2") = state[1];
-                register char *m __asm__("$5") = D_800A3E70;
+                register char *m __asm__("$5") = gCdWaitFuncName;
                 register int fifth __asm__("$3");
                 register int index __asm__("$2");
                 register int fourth __asm__("$7");
@@ -223,9 +243,9 @@ loop:
                 third = *(int *)index;
                 fourth = *(int *)first;
                 __asm__("" : "+r"(third), "+r"(fourth));
-                func_8008E000(D_80012498, m, third, fourth);
+                func_8008E000(gCdTimeoutFmtMsg, m, third, fourth);
             }
-            func_8008F6D8();
+            gResetCdHardware();
             ret = -1;
         } else {
             ret = 0;
@@ -235,29 +255,29 @@ loop:
         return -1;
     }
 
-    if (func_800915D4() != 0) {
+    if (gGetIrqLatchFlag() != 0) {
         {
             register int v __asm__("$2") = *gCdromIndexStatusPtr;
             __asm__("" : "+r"(v));
             s1 = v & 3;
         }
 inner_loop:
-        param = (u8 *)func_8008E7A0();
+        param = (u8 *)gCdDrainIrqEvent();
         if (param != 0) {
             if ((int)param & 4) {
-                if (D_8009C8AC != 0) {
-                    D_8009C8AC(*state1, D_800A3E58);
+                if (gCdReadyCallback != 0) {
+                    gCdReadyCallback(*state1, gCdReadyBuffer8);
                 }
             }
             {
                 register int m2 __asm__("$2");
                 m2 = (int)param & 2;
                 if (m2) {
-                    if (D_8009C8A8 != 0) {
+                    if (gCdSyncCallback != 0) {
                         register int a0 __asm__("$4");
                         a0 = *state;
                         __asm__("" : "+r"(a0));
-                        D_8009C8A8(a0, gStatusBuffer8);
+                        gCdSyncCallback(a0, gStatusBuffer8);
                     }
                 }
             }

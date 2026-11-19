@@ -13,6 +13,8 @@ extern volatile u32 *gDmaControlCdromPtr __asm__("D_8009CBA4");
 extern volatile u32 *gDma3MemAddrPtr __asm__("D_8009CBA8");
 extern volatile u32 *gDma3BlockCtrlPtr __asm__("D_8009CBAC");
 extern volatile u32 *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
+int gStartCdDmaAsync(u32 destination, u32 size) __asm__("func_8008FD30");
+
 
 /**
  *  @brief Configures hardware registers and starts a transfer.
@@ -34,8 +36,16 @@ extern volatile u32 *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
  *  Writes hardware registers and may busy-wait indefinitely.
  *  @par Callers
  *  Confirmed: func_8008E5B8.
+ *
+ * @par Role and path
+ * Programs CD-ROM DMA3 for a non-blocking transfer to destination with block
+ * control size | 0x10000, setting D_8009CBA0 to 0x21020843, D_8009CB7C to
+ * 0x1325, and bit 0x8000 in D_8009CBA4. After polling *D_8009CB6C until bit
+ * 0x40 is set, it writes 0x11400100 to *D_8009CBB0 and reads it back once
+ * without waiting for completion. Driven by func_8008E5B8 and always returns
+ * 0.
  */
-int func_8008FD30(u32 destination, u32 size)
+int gStartCdDmaAsync(u32 destination, u32 size)
 {
     volatile u8 *p;
     volatile u32 status;

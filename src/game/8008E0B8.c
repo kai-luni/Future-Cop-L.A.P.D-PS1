@@ -1,7 +1,9 @@
 // Categories: Platform > CD-ROM | Platform > Interrupts
 #include "game/types.h"
 
-extern void func_8008F6D8(void);
+extern void gResetCdHardware(void) __asm__("func_8008F6D8");
+void gResetCdController(void) __asm__("func_8008E0B8");
+
 
 /**
  * @brief Clears pending CD-ROM interrupts (driver reset).
@@ -18,8 +20,13 @@ extern void func_8008F6D8(void);
  * Clears CD hardware interrupt flags.
  * @par Callers
  * Unknown: no direct edge in edges.json.
+ *
+ * @par Role and path
+ * Calls func_8008F6D8 to acknowledge pending CD-ROM hardware interrupts,
+ * reset D_8009CB84[0..2], and restore COM_DELAY. Accesses no globals directly
+ * and has no direct callers in src/.
  */
-void func_8008E0B8(void)
+void gResetCdController(void)
 {
-    func_8008F6D8();
+    gResetCdHardware();
 }

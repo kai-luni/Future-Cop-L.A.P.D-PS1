@@ -9,6 +9,8 @@ struct CallbackTable {
 };
 
 extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
+void gSetVSyncCallback(void *argument) __asm__("func_80091510");
+
 
 /**
  * @brief Issues callback operation 4 with an argument.
@@ -24,8 +26,14 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  * @par Likely role
  * The "flush/execute queued commands" entry of the display driver; the argument
  * is a command buffer the driver walks.
+ *
+ * @par Role and path
+ * Calls slot +0x14 of D_8009DD10 with operation code 4 and argument,
+ * installing or uninstalling a per-frame VSync callback (passing 0 to
+ * uninstall). Driven by func_8001F0B8, func_8001F158, func_80020530,
+ * func_8002059C, func_80087750, and func_80087824.
  */
-void func_80091510(void *argument)
+void gSetVSyncCallback(void *argument)
 {
     gIrqCallbackTable->callback(4, argument);
 }

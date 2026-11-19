@@ -8,6 +8,8 @@ extern volatile u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u32 *gComAccessDelayPtr __asm__("D_8009CB7C");
 extern volatile u8 gCdStateBytes[] __asm__("D_8009CB84");
+void gResetCdHardware(void) __asm__("func_8008F6D8");
+
 
 /**
  * @brief Clears pending CD-ROM hardware interrupts and resets CD status and bus delay.
@@ -32,8 +34,16 @@ extern volatile u8 gCdStateBytes[] __asm__("D_8009CB84");
  *
  * @par Callers
  * Confirmed: func_8008E0B8 (0x8008E0C0), func_8008ECFC (0x8008EE20), func_8008EF7C (0x8008F0A0), func_8008F244 (0x8008F4FC), func_8008FAC8 (0x8008FBCC).
+ *
+ * @par Role and path
+ * Selects CD-ROM register bank 1 via *gCdromIndexStatusPtr (D_8009CB6C) and
+ * loops acknowledging pending interrupt bits in *gCdromRequestStatusPtr
+ * (D_8009CB78) until clear. Resets gCdStateBytes[0..2] (D_8009CB84) to {2, 0,
+ * 0}, selects bank 0, clears *gCdromRequestStatusPtr, and writes 0x1325 to
+ * *gComAccessDelayPtr (D_8009CB7C). Driven by func_8008E0B8, func_8008ECFC,
+ * func_8008EF7C, func_8008F244, and func_8008FAC8.
  */
-void func_8008F6D8(void)
+void gResetCdHardware(void)
 {
     *gCdromIndexStatusPtr = 1;
     while (*gCdromRequestStatusPtr & 7) {

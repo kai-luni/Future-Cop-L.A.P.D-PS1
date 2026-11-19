@@ -11,7 +11,7 @@ typedef struct {
 extern Queue *gMovieStreamContext __asm__("D_8009F970");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
-extern s32 func_8008E1BC(s32, s32, s32);
+extern s32 gCdControl(s32, s32, s32) __asm__("func_8008E1BC");
 
 /**
  * @brief Appends a three-word command to the 48-word ring buffer.
@@ -57,7 +57,7 @@ s32 func_80088770(s32 arg0, s32 arg1, s32 arg2)
     queue->count++;
     if (queue->count == 1) {
         gEnableCpuInterrupts();
-        while (!func_8008E1BC(a & 0xff, b, c)) {
+        while (!gCdControl(a & 0xff, b, c)) {
         }
     } else {
         gEnableCpuInterrupts();

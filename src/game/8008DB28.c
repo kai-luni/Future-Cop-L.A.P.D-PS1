@@ -9,6 +9,8 @@ extern void func_8008DBA0(void);
 
 asm(".set jtbl_800A3E18_main, 0x800A3E18");
 asm(".set jtbl_800A3E1C_main, 0x800A3E1C");
+void gPatchKernelPadTable(void) __asm__("func_8008DB28");
+
 
 /**
  * @brief Patches the CD driver base block and fills the jump-table pointers.
@@ -36,8 +38,15 @@ asm(".set jtbl_800A3E1C_main, 0x800A3E1C");
  *
  * @par Callers
  * Confirmed: the CD driver init chain (func_8008D784 neighbourhood).
+ *
+ * @par Role and path
+ * Saves $ra in D_800A3E10, calls gEnterCriticalSection and BIOS B0:57 to read
+ * the kernel entry pointer at +0x16C, stores base + 0x884 and base + 0x894
+ * into jtbl_800A3E18_main and jtbl_800A3E1C_main, zeroes 11 words at base +
+ * 0x594, and flushes cache via func_8008DBA0. Called by func_8008D7DC and
+ * func_8008D86C.
  */
-void func_8008DB28(void)
+void gPatchKernelPadTable(void)
 {
     __asm__ volatile(
         ".set noreorder\n\t"

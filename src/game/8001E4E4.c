@@ -4,7 +4,7 @@
 extern s32 gSavedStackPointer __asm__("D_8009FAD8");
 extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 
-extern void func_80091480(void);
+extern void gResetIrqDispatch(void) __asm__("func_80091480");
 extern void func_80095878(void);
 extern void gInitMemoryCardBios(void) __asm__("func_800200A8");
 extern void gInitPadActuators(void) __asm__("func_8001E87C");
@@ -36,7 +36,7 @@ s32 func_8001E4E4(void)
 {
     u32 port;
 
-    func_80091480();
+    gResetIrqDispatch();
     func_80095878();
     gInitMemoryCardBios();
     gSavedStackPointer = 0;

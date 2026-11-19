@@ -18,6 +18,11 @@ extern void *jtbl_800A3E1C_main;
  *  Any further effects depend on the target; the stub does not write memory.
  *  @par Callers
  *  Confirmed: func_8008D92C.
+ *
+ * @par Role and path
+ * Loads the pointer from jtbl_800A3E1C_main (populated by func_8008DB28 as
+ * kernel base + 0x894) into $9 and performs an unconditional computed jump
+ * without a call frame. Driven by func_8008D92C.
  */
 void func_8008DB14(void)
 {

@@ -4,18 +4,21 @@
 typedef unsigned char u8;
 extern int gPassCounter __asm__("D_800A3E6C");
 extern int gPollDeadline __asm__("D_800A3E68");
-extern char *D_800A3E70;
-extern char D_80012594[], D_80012498[];
+extern char *gCdWaitFuncName __asm__("D_800A3E70");
+extern char gCdDataSyncLabel[] __asm__("D_80012594");
+extern char gCdTimeoutFmtMsg[] __asm__("D_80012498");
 extern char gCdErrorLogMsg[] __asm__("D_80012488");
 extern int gLowByteEntryTable[] __asm__("D_8009C94C");
 extern int gIndexEntryTable[] __asm__("D_8009C8CC");
 extern u8 gLastResultByte __asm__("D_8009C8C5");
 extern u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern int *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
-extern int func_80091270(int);
+extern int gVSyncWait(int) __asm__("func_80091270");
 extern void func_8008FF08(char *);
 extern void func_8008E000(char *, char *, int, int);
-extern void func_8008F6D8(void);
+extern void gResetCdHardware(void) __asm__("func_8008F6D8");
+int gWaitCdDmaComplete(int mode) __asm__("func_8008FAC8");
+
 
 /**
  * @brief Waits for a device reply word with a tick timeout and a retry ceiling.
@@ -49,8 +52,18 @@ extern void func_8008F6D8(void);
  *
  * @par Callers
  * Likely: func_8008E5FC (same block).
+ *
+ * @par Role and path
+ * Polls the CD-ROM DMA3 channel control register *D_8009CBB0 for bit
+ * 0x1000000 to clear, using func_80091270(-1) to enforce a 0x3C0-tick
+ * deadline in D_800A3E68 and a 0x3C0000-pass limit in D_800A3E6C. If the
+ * deadline or pass limit expires, it logs D_80012488 and D_80012498 via
+ * func_8008FF08 and func_8008E000 using state tables D_8009C94C and
+ * D_8009C8CC, calls func_8008F6D8, and returns -1. Driven by func_8008E5FC;
+ * mode 0 loops until completion and returns 0, while non-zero mode returns 1
+ * after one busy pass.
  */
-int func_8008FAC8(int mode)
+int gWaitCdDmaComplete(int mode)
 {
     int ret;
     int pad[2];
@@ -62,7 +75,7 @@ int func_8008FAC8(int mode)
     int now;
     register int count __asm__("$3");
     register int next __asm__("$2");
-    now = func_80091270(-1);
+    now = gVSyncWait(-1);
     __asm__("" : "=m"(pad));
     limit = 0x3c0000;
     other = gIndexEntryTable;
@@ -70,9 +83,9 @@ int func_8008FAC8(int mode)
     table = gLowByteEntryTable;
     gPollDeadline = now + 0x3c0;
     gPassCounter = 0;
-    D_800A3E70 = D_80012594;
+    gCdWaitFuncName = gCdDataSyncLabel;
     do {
-        if (gPollDeadline < func_80091270(-1)) goto timeout;
+        if (gPollDeadline < gVSyncWait(-1)) goto timeout;
         next = gPassCounter;
         __asm__("" : "+r"(next));
         count = next;
@@ -91,7 +104,7 @@ int func_8008FAC8(int mode)
             {
                 register int first __asm__("$4") = state[0];
                 register int second __asm__("$2") = state[1];
-                register char *msg __asm__("$5") = D_800A3E70;
+                register char *msg __asm__("$5") = gCdWaitFuncName;
                 __asm__("" : "+r"(first), "+r"(second), "+r"(msg));
                 {
                     register int fifth __asm__("$3");
@@ -115,12 +128,12 @@ int func_8008FAC8(int mode)
                             third = *(int *)index;
                             fourth = *(int *)first;
                             __asm__("" : "+r"(third), "+r"(fourth), "+r"(fifth));
-                            func_8008E000(D_80012498, msg, third, fourth);
+                            func_8008E000(gCdTimeoutFmtMsg, msg, third, fourth);
                         }
                     }
                 }
             }
-            func_8008F6D8();
+            gResetCdHardware();
             ret = -1;
         } else {
             __asm__("addu %0,$0,$0" : "=r"(ret));

@@ -5,6 +5,8 @@ extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void func_8008DC30(void);
 extern void func_8008D7B0(s32 value);
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
+void gStartCardAndClearPad(void) __asm__("func_8008D74C");
+
 
 /**
  * @brief Starts the BIOS card service and clears pad-clear mode inside a critical section.
@@ -27,8 +29,15 @@ extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
  *
  * @par Callers
  * Confirmed: gInitMemoryCardBios (0x800200C8).
+ *
+ * @par Role and path
+ * Starts BIOS memory-card service and clears pad-clear mode inside a critical
+ * section using gEnterCriticalSection and gExitCriticalSection. Calls
+ * func_8008DC30 (BIOS B0:4B) followed by func_8008D7B0(0) (BIOS B0:5B) in a
+ * straight-line sequence with no direct global accesses. Driven by
+ * gInitMemoryCardBios at 0x800200C8.
  */
-void func_8008D74C(void)
+void gStartCardAndClearPad(void)
 {
     gEnterCriticalSection();
     func_8008DC30();

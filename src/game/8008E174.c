@@ -1,7 +1,9 @@
 // Categories: Platform > CD-ROM > Control
 #include "game/types.h"
 
-extern s32 func_8008EF7C(s32 mode, u8 *result);
+extern s32 gCdReadyLoop(s32 mode, u8 *result) __asm__("func_8008EF7C");
+s32 gCdReady(s32 mode, u8 *result) __asm__("func_8008E174");
+
 
 /**
  * @brief Forwards a mode/result query to func_8008EF7C.
@@ -23,8 +25,13 @@ extern s32 func_8008EF7C(s32 mode, u8 *result);
  *
  * @par Callers
  * func_8001C680, func_8001C718, func_8001CE54, func_8009113C.
+ *
+ * @par Role and path
+ * Forwards mode and result directly to func_8008EF7C to poll or block for a
+ * pending CD-ROM command result. Accesses no globals directly and is called
+ * by func_8001C680, func_8001C718, func_8001CE54, and func_8009113C.
  */
-s32 func_8008E174(s32 mode, u8 *result)
+s32 gCdReady(s32 mode, u8 *result)
 {
-    return func_8008EF7C(mode, result);
+    return gCdReadyLoop(mode, result);
 }

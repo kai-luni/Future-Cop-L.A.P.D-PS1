@@ -5,14 +5,21 @@ typedef struct Entry { s32 a, b; char name[16]; } Entry;
 extern s32 gCdSeenResponseCount __asm__("D_8009CBC4");
 extern s32 gCdResponseCount __asm__("D_8009C8BC");
 extern s32 gCdLogLevel __asm__("D_8009C8B0");
-extern Entry D_800A3E80[];
+extern Entry gCdDirEntryCache[] __asm__("D_800A3E80");
 extern char gCachedDirName[] __asm__("D_800A3E88");
-extern char D_800125AC[], D_800125C8[], D_800125E0[], D_800125FC[], D_8001261C[], D_80012628[];
-extern s32 func_80090218(void);
-extern s32 func_800904DC(s32, char *);
-extern s32 func_80090580(s32);
-extern s32 func_800901F8(char *, char *);
+extern char gCdDepthErrFmt[] __asm__("D_800125AC");
+extern char gCdBadPathErrFmt[] __asm__("D_800125C8");
+extern char D_800125E0[];
+extern char gCdSearchLogFmt[] __asm__("D_800125FC");
+extern char gCdFoundLogFmt[] __asm__("D_8001261C");
+extern char gCdNotFoundErrFmt[] __asm__("D_80012628");
+extern s32 gCdReadPathTable(void) __asm__("func_80090218");
+extern s32 gFindCdPathDir(s32, char *) __asm__("func_800904DC");
+extern s32 gCacheCdDirSector(s32) __asm__("func_80090580");
+extern s32 gMatchCdFilename(char *, char *) __asm__("func_800901F8");
 extern void func_8008E000(char *, ...);
+Entry *gCdSearchFile(Entry *out, char *path) __asm__("func_8008FF20");
+
 
 /**
  * @brief Resolves a backslash-delimited ISO-9660 path to a CD directory entry (CdSearchFile).
@@ -37,8 +44,17 @@ extern void func_8008E000(char *, ...);
  *
  * @par Callers
  * Confirmed: func_8001D424 (0x8001D548, file open) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Resolves an ISO-9660 path string starting with a backslash into a 24-byte
+ * directory Entry written to out, refreshing the path table via func_80090218
+ * whenever D_8009CBC4 differs from D_8009C8BC. It walks up to 7 directory
+ * levels with func_800904DC, caches the leaf directory sector with
+ * func_80090580, and scans up to 64 entries in D_800A3E80 using func_800901F8
+ * while logging errors to func_8008E000 according to D_8009C8B0. Driven by
+ * func_8001D424.
  */
-Entry *func_8008FF20(Entry *out, char *path)
+Entry *gCdSearchFile(Entry *out, char *path)
 {
     char buf[32];
     register char *p __asm__("$16");
@@ -55,7 +71,7 @@ Entry *func_8008FF20(Entry *out, char *path)
     register char *name __asm__("$19");
     orig = path;
     if (gCdSeenResponseCount != gCdResponseCount) {
-        if (!func_80090218()) return 0;
+        if (!gCdReadPathTable()) return 0;
         gCdSeenResponseCount = gCdResponseCount;
     }
     dest = out;
@@ -86,13 +102,13 @@ Entry *func_8008FF20(Entry *out, char *path)
         if (!c2) goto end;
         p++;
         *q = 0;
-        dir = func_800904DC(dir, buf);
+        dir = gFindCdPathDir(dir, buf);
         if (dir == neg) { buf[0] = 0; break; }
         count++;
     } while (count < 8);
 end:
     if (count >= 8) {
-        if (gCdLogLevel > 0) func_8008E000(D_800125AC, orig, count);
+        if (gCdLogLevel > 0) func_8008E000(gCdDepthErrFmt, orig, count);
         return 0;
     }
     if (!*(signed char *)buf) {
@@ -109,7 +125,7 @@ end:
         return 0;
     }
     *q = 0;
-    if (!func_80090580(dir)) {
+    if (!gCacheCdDirSector(dir)) {
         if (gCdLogLevel <= 0) return 0;
         __asm__ volatile(".set\tnoreorder\n\tlui $4,%%hi(D_800125E0)\n\tjal func_8008E000\n\taddiu $4,$4,%%lo(D_800125E0)\n\t.set\treorder"
             : : : "$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25", "$31", "memory");
@@ -117,7 +133,7 @@ end:
     }
     count = 0;
     if (gCdLogLevel >= 2) {
-        func_8008E000(D_800125FC, buf);
+        func_8008E000(gCdSearchLogFmt, buf);
         __asm__ volatile("" : "=r"(count));
         count = 0;
     }
@@ -130,10 +146,10 @@ end:
         s32 hi = 0x800A0000;
         __asm__ volatile("" : "=r"(hi) : "0"(hi));
         if (!*(signed char *)(hi + off + 0x3E88)) break;
-        if (func_800901F8(name, buf)) {
+        if (gMatchCdFilename(name, buf)) {
             if (gCdLogLevel >= 2) {
                 __asm__ volatile("");
-                func_8008E000(D_8001261C, buf);
+                func_8008E000(gCdFoundLogFmt, buf);
             }
             *dest = *entry;
             return entry;
@@ -144,7 +160,7 @@ end:
         off += 24;
     } while (count < 64);
     if (gCdLogLevel > 0) {
-        func_8008E000(D_80012628, buf);
+        func_8008E000(gCdNotFoundErrFmt, buf);
         __asm__ volatile(".set reorder");
     }
     return 0;

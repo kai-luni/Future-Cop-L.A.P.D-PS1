@@ -15,7 +15,7 @@ extern void func_80092C8C(s32 arg0);
 extern void gMdecInSync(s32 arg0) __asm__("func_80096090");
 extern void gMdecOutSync(s32 arg0) __asm__("func_800960CC");
 extern void gClearImage(s16 *buf, s32 a1, s32 a2, s32 a3) __asm__("func_80092E10");
-extern void func_80091270(s32 arg0);
+extern void gVSyncWait(s32 arg0) __asm__("func_80091270");
 extern void func_800932F0(void *ptr);
 extern void gPutDispEnvCached(void *ptr) __asm__("func_800934BC");
 extern void func_80092BF4(s32 arg0);
@@ -79,7 +79,7 @@ void func_80085AC4(u32 arg0, u32 arg1)
     }
 
     if ((arg1 & 0xFF) != 0) {
-        func_80091270(0);
+        gVSyncWait(0);
         func_800932F0((u8 *)gMovieSliceContext + 0x34 + (1 - gMovieSliceContext->unk114) * 92);
         gPutDispEnvCached((u8 *)gMovieSliceContext + 0xEC + (1 - gMovieSliceContext->unk114) * 20);
         func_80092BF4(1);

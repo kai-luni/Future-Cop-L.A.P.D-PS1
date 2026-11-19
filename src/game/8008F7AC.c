@@ -20,6 +20,8 @@ extern u8 *gCdromParameterPtr __asm__("D_8009CB74");
 extern u8 *gCdromCommandPtr __asm__("D_8009CB70");
 extern u8 *gCdromRequestStatusPtr __asm__("D_8009CB78");
 extern u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
+s32 gInitCdAudioMix(void) __asm__("func_8008F7AC");
+
 
 /**
  *  @brief Initializes shared state fields and writes a short register sequence.
@@ -39,8 +41,14 @@ extern u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
  *  Updates shared state and writes the register sequence for banks 2 and 3.
  *  @par Callers
  *  Confirmed: func_8008DF30, func_8008E04C.
+ *
+ * @par Role and path
+ * Initializes CD audio volume and control registers through gSpuRegsAltPtr
+ * (D_8009CB80) and writes {0x80, 0, 0x80, 0} into CD-ROM register banks 2 and
+ * 3 followed by 0x20 to enable CD audio mixing. Returns 0 and is driven by
+ * func_8008DF30 and func_8008E04C.
  */
-s32 func_8008F7AC(void)
+s32 gInitCdAudioMix(void)
 {
     volatile u8 data[4];
     if (gSpuRegsAltPtr->f == 0 && gSpuRegsAltPtr->g == 0) {

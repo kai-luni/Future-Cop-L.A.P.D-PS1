@@ -8,7 +8,7 @@ extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern u8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 
 extern s32 func_80020B64(void);
-extern void func_80091270(s32 arg0);
+extern void gVSyncWait(s32 arg0) __asm__("func_80091270");
 extern s32 func_800207B4(s32 arg0);
 extern s32 func_80078740(void);
 
@@ -45,7 +45,7 @@ void gQueueMemoryCardFormat(void)
     if (func_80020B64() != 0) {
         i = 0;
         do {
-            func_80091270(0);
+            gVSyncWait(0);
             if (func_800207B4(0) != -1) {
                 i = 5;
                 break;

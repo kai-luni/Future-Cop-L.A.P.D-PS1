@@ -16,7 +16,7 @@ extern u8 D_8009F615[];
 extern u8 gEventBuffer[] __asm__("D_800A0798");
 
 extern void gByteOffsetToCdlLoc(void *a0, s32 a1) __asm__("func_8001C494");
-extern s32 func_8008E1BC(s32 a0, void *a1, void *a2);
+extern s32 gCdControl(s32 a0, void *a1, void *a2) __asm__("func_8008E1BC");
 s32 gSeekCdFileSlot(s32 index) __asm__("func_8001D0A0");
 
 
@@ -68,7 +68,7 @@ s32 gSeekCdFileSlot(s32 index)
         a0 = (u8 *)0x15;
         a1 = D_8009F615 - 1;
         a2 = gEventBuffer;
-        r = func_8008E1BC((s32)a0, a1, a2);
+        r = gCdControl((s32)a0, a1, a2);
         if (r == 0) {
             return -4;
         }

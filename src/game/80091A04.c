@@ -5,12 +5,14 @@
 
 typedef unsigned short u16;
 typedef unsigned int u32;
-extern char gFrameClockAnchor[] __asm__("D_8009CC88");
+extern char gIrqDispatchState[] __asm__("D_8009CC88");
 extern volatile u16 *gInterruptStatusHalfPtr __asm__("D_8009DD14");
 extern volatile u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern volatile u32 *gDmaControlPtr __asm__("D_8009DD1C");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void func_80091B70(void);
+void *gStopIrqSubsystem(void) __asm__("func_80091A04");
+
 
 /**
  *  @brief Saves and clears hardware state when the global record is active.
@@ -30,10 +32,17 @@ extern void func_80091B70(void);
  *  Writes record offsets 0, 0x32, and 0x34 and modifies hardware locations.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Stops the interrupt and DMA callback subsystem when D_8009CC88 is active by
+ * entering a critical section via func_8008C9A0, saving *D_8009DD18 (I_MASK)
+ * and *D_8009DD1C (DPCR) into D_8009CC88 + 0x32 and +0x34, clearing I_MASK
+ * and I_STAT, and masking DPCR with 0x77777777. It then calls func_80091B70,
+ * clears the active halfword at D_8009CC88, and returns D_8009CC88.
  */
-void *func_80091A04(void)
+void *gStopIrqSubsystem(void)
 {
-    register char *p __asm__("$16") = gFrameClockAnchor;
+    register char *p __asm__("$16") = gIrqDispatchState;
     volatile u16 *a;
     volatile u16 *b;
     volatile u32 *c;

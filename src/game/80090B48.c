@@ -18,15 +18,17 @@ struct State {
     volatile s32 unk34;     /* 0x34 */
 };
 
-extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
-extern s32 gCardRetryCount __asm__("D_8009C814");
-extern u32 D_8009C810;
+extern struct State gCdAsyncReadState __asm__("D_8009CBD0");
+extern s32 gCdUseDmaFlag __asm__("D_8009C814");
+extern u32 gCdReadCallback __asm__("D_8009C810");
 
-extern void func_800908A0(void);
-extern s32 func_8008E194(s32);
-extern s32 func_8008E1A8(s32);
-extern s32 func_8008E5D8(s32);
-extern s32 func_8008E2F8(s32, s32);
+extern void gCdPauseCallback(void) __asm__("func_800908A0");
+extern s32 gSetCdSyncCallback(s32) __asm__("func_8008E194");
+extern s32 gSetCdReadyCallback(s32) __asm__("func_8008E1A8");
+extern s32 gSetCdDmaCallback(s32) __asm__("func_8008E5D8");
+extern s32 gCdControlF(s32, s32) __asm__("func_8008E2F8");
+void gCdDmaCompleteCb(void) __asm__("func_80090B48");
+
 
 /**
  * @brief CD DMA3 sector-transfer completion callback advancing the read state.
@@ -51,26 +53,35 @@ extern s32 func_8008E2F8(s32, s32);
  *
  * @par Callers
  * Confirmed: no direct calls; address taken in func_800908D4 (0x80090960) and func_80090C18 (0x80090DB8) and registered as DMA3 callback via func_8008E5D8.
+ *
+ * @par Role and path
+ * Serves as the CD-ROM DMA3 sector-transfer completion callback registered
+ * via func_8008E5D8 in func_800908D4 and func_80090C18. For each sector it
+ * advances D_8009CBD0.unk8 by command * 4, decrements unk14, and increments
+ * unk20; when unk14 reaches zero, it restores callbacks via
+ * func_8008E1A8/func_8008E5D8/func_8008E194, issues CdlPause via
+ * func_8008E2F8(9, 0), sets busy = 1, and invokes D_8009C810(2,
+ * state->unk34).
  */
-void func_80090B48(void)
+void gCdDmaCompleteCb(void)
 {
     register struct State *state __asm__("$16");
 
-    state = &gSectorBufferPtr;
+    state = &gCdAsyncReadState;
     state->unk8 += state->command * 4;
     state->unk14--;
     state->unk20++;
     if (state->unk14 != 0) {
         return;
     }
-    func_8008E1A8(state->callback2);
-    if (gCardRetryCount & 1) {
-        func_8008E5D8(state->callback3);
+    gSetCdReadyCallback(state->callback2);
+    if (gCdUseDmaFlag & 1) {
+        gSetCdDmaCallback(state->callback3);
     }
-    func_8008E194((s32)func_800908A0);
-    func_8008E2F8(9, 0);
+    gSetCdSyncCallback((s32)gCdPauseCallback);
+    gCdControlF(9, 0);
     state->busy = 1;
-    if (D_8009C810 != 0) {
-        ((void (*)(s32, s32))D_8009C810)(2, state->unk34);
+    if (gCdReadCallback != 0) {
+        ((void (*)(s32, s32))gCdReadCallback)(2, state->unk34);
     }
 }

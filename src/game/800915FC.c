@@ -4,6 +4,8 @@
 #include "game/types.h"
 
 extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
+u16 gSwapIrqMask(u16 a0) __asm__("func_800915FC");
+
 
 /**
  * @brief Atomically swaps the 16-bit PS1 interrupt mask register (I_MASK) via D_8009DD18.
@@ -27,8 +29,14 @@ extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
  *
  * @par Callers
  * Confirmed: func_80094A3C (0x80094AA8, 0x80094B50, 0x80094CA4), func_80094CEC (0x80094D18, 0x80094EA4), func_80094F4C (0x80094F5C, 0x80095070), func_8009520C (0x800952B0, 0x8009532C).
+ *
+ * @par Role and path
+ * Reads the current 16-bit PS1 I_MASK register (0x1F801074) through
+ * D_8009DD18, writes a0 to it, and returns the previous mask. Called by
+ * func_80094A3C, func_80094CEC, func_80094F4C, and func_8009520C to disable
+ * and restore hardware interrupts.
  */
-u16 func_800915FC(u16 a0)
+u16 gSwapIrqMask(u16 a0)
 {
     u16 old = *gInterruptMaskPtr;
     *gInterruptMaskPtr = a0;

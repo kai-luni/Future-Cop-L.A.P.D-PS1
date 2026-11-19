@@ -45,9 +45,9 @@ extern s32 gCompareCdlLoc(u8 *a, u8 *b) __asm__("func_8001C3F8");
 extern void gCopyWord(void *dst, void *src) __asm__("func_8001C27C");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
-extern s32 func_8008E174(s32 mode, u8 *result);
-extern s32 func_8008E194(s32 ptr);
-extern s32 func_8008E1BC(s32 mode, void *src, void *dst);
+extern s32 gCdReady(s32 mode, u8 *result) __asm__("func_8008E174");
+extern s32 gSetCdSyncCallback(s32 ptr) __asm__("func_8008E194");
+extern s32 gCdControl(s32 mode, void *src, void *dst) __asm__("func_8008E1BC");
 s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8001CE54");
 
 
@@ -141,7 +141,7 @@ s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     fifth = entry->unk0C;
     LOAD_ADDRESS(a, D_8009F614);
     gByteOffsetToCdlLoc(a, fifth);
-    while (func_8008E174(1, 0) != 0) {
+    while (gCdReady(1, 0) != 0) {
     }
     a = (u8 *)0xE;
     b = gCdCommandParam;
@@ -149,7 +149,7 @@ s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     gCdStatusReg = 0;
     gCdInterruptReg = 0;
     __asm__ volatile("" : "+r"(index) : : "memory");
-    result = func_8008E1BC((s32)a, b, (void *)index);
+    result = gCdControl((s32)a, b, (void *)index);
     if (result == 0) {
         stateHigh = 0x80010000;
         __asm__("addiu\t%0,%1,0" : "=r"(oldState) : "r"(stateHigh));
@@ -187,17 +187,17 @@ s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         : "r"(stateHigh)
         : "$2"
     );
-    liveState->unk1C = func_8008E194((s32)D_8001C614);
+    liveState->unk1C = gSetCdSyncCallback((s32)D_8001C614);
     LOAD_ADDRESS(a, D_8009F61C);
     LOAD_ADDRESS(b, D_8009F614);
     gCopyWord(a, b);
     LOAD_ADDRESS(b, D_8009F614);
-    if (func_8008E1BC(gCdReadCommand, b, (void *)index) != 0) {
+    if (gCdControl(gCdReadCommand, b, (void *)index) != 0) {
         goto success;
     }
     previous = liveState->unk1C;
 failure:
-    func_8008E194(previous);
+    gSetCdSyncCallback(previous);
     result = -4;
     __asm__ volatile("sw\t$0,0(%0)" : : "r"(stateHigh), "r"(result) : "memory");
     return result;

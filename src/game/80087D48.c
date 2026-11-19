@@ -16,7 +16,7 @@ extern void gMovieStopAndRestoreCallbacks(void) __asm__("func_80085A24");
 extern void func_80085AC4(s32, s32);
 extern s32 func_800858E0(void);
 extern void gSelectFadeLayer(u8, u8) __asm__("func_8001C088");
-extern void func_80091270(s32);
+extern void gVSyncWait(s32) __asm__("func_80091270");
 extern s32 func_8001BFE4(void);
 extern void func_80098708(void *);
 extern void gMovieFreeDecodeBuffer(void *) __asm__("func_800879BC");
@@ -53,7 +53,7 @@ void gCloseVideoLayer(void)
     if (!(gMovieDisplayMode & 0x20)) {
         func_80085AC4(1, 0);
         gSelectFadeLayer((u8)func_800858E0(), 0);
-        func_80091270(0);
+        gVSyncWait(0);
         func_8001BFE4();
     }
 

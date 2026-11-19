@@ -31,7 +31,7 @@ extern struct Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
 extern  void (*gLogPrintf)(u8 *, int) __asm__("D_8009DDEC");
 extern void func_8008E000(void *, void *, void *);
 extern void func_80095830(unsigned char *, int, unsigned int);
-extern void func_80091480(void);
+extern void gResetIrqDispatch(void) __asm__("func_80091480");
 extern void func_80095860(u32);
 extern int func_80094F4C(int);
 
@@ -72,7 +72,7 @@ int func_80092910(int input)
         state = &gDebugTagBytes;
         __asm__("" : "+r"(state));
         func_80095830((u8 *)state, 0, 0x80);
-        func_80091480();
+        gResetIrqDispatch();
         func_80095860((u32)gVramWriteCallback & 0xffffff);
         index = func_80094F4C(arg);
         dst = (u8 *)state + 0x10;

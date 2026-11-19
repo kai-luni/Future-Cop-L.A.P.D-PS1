@@ -8,10 +8,12 @@ struct CdlLOC {
     u8 track;
 };
 
-extern struct CdlLOC *func_8008E61C(s32 sector, struct CdlLOC *location);
-extern s32 func_8008E1BC(u8 com, u8 *param, u8 *result);
-extern void func_80090FA0(s32 sectors, u32 *buf, s32 mode);
-extern s32 func_8009113C(s32 mode, u8 *result);
+extern struct CdlLOC *gCdIntToPos(s32 sector, struct CdlLOC *location) __asm__("func_8008E61C");
+extern s32 gCdControl(u8 com, u8 *param, u8 *result) __asm__("func_8008E1BC");
+extern void gCdReadAsync(s32 sectors, u32 *buf, s32 mode) __asm__("func_80090FA0");
+extern s32 gCdReadSync(s32 mode, u8 *result) __asm__("func_8009113C");
+s32 gReadCdSectorsSync(s32 sectors, s32 sector, u32 *buf) __asm__("func_8009081C");
+
 
 /**
  * @brief Performs a blocking CD-ROM read of `sectors` blocks starting at logical `sector` into `buf`.
@@ -37,13 +39,21 @@ extern s32 func_8009113C(s32 mode, u8 *result);
  *
  * @par Callers
  * Confirmed: func_80090218 (0x8009024C, 0x800902E8 in asm/us/main.s) and func_80090580 (0x800905E0 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Performs a blocking read of sectors starting at logical sector into buf by
+ * converting sector to BCD CdlLOC with func_8008E61C, issuing CdlSetloc
+ * (command 2) via func_8008E1BC, starting the read via func_80090FA0(sectors,
+ * buf, 0x80), and polling func_8009113C(0, 0) until completion. Returns 1
+ * when func_8009113C returns 0, or 0 otherwise. Driven by func_80090218 and
+ * func_80090580.
  */
-s32 func_8009081C(s32 sectors, s32 sector, u32 *buf)
+s32 gReadCdSectorsSync(s32 sectors, s32 sector, u32 *buf)
 {
     struct CdlLOC loc;
 
-    func_8008E61C(sector, &loc);
-    func_8008E1BC(2, (u8 *)&loc, 0);
-    func_80090FA0(sectors, buf, 0x80);
-    return func_8009113C(0, 0) == 0;
+    gCdIntToPos(sector, &loc);
+    gCdControl(2, (u8 *)&loc, 0);
+    gCdReadAsync(sectors, buf, 0x80);
+    return gCdReadSync(0, 0) == 0;
 }

@@ -3,6 +3,8 @@
 
 extern u8 gPathTable[] __asm__("D_800A448C");
 extern s32 func_8008CCA0(s32 arg0, u8 *arg1);
+s32 gFindCdPathDir(s32 arg0, s32 arg1) __asm__("func_800904DC");
+
 
 /**
  * @brief Searches the cached ISO-9660 path table for a directory entry matching parent ID and name.
@@ -27,8 +29,15 @@ extern s32 func_8008CCA0(s32 arg0, u8 *arg1);
  *
  * @par Callers
  * Confirmed: func_8008FF20 (0x80090004 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Walks up to 128 entries in the 44-byte-stride ISO-9660 path table populated
+ * by func_80090218, checking parent IDs at 0x800A4484 until zero and
+ * comparing names at D_800A448C via func_8008CCA0 when the parent ID matches
+ * arg0. Returns the 1-based directory index (i + 1) on match or -1 if not
+ * found. Driven by func_8008FF20.
  */
-s32 func_800904DC(s32 arg0, s32 arg1)
+s32 gFindCdPathDir(s32 arg0, s32 arg1)
 {
     s32 i;
     s32 off;

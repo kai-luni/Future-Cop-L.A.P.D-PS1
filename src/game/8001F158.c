@@ -4,7 +4,7 @@
 extern s32 gScreenModeHook __asm__("D_8009F99C");
 extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 
-extern s32 func_80091510(void (*callback)(void));
+extern s32 gSetVSyncCallback(void (*callback)(void)) __asm__("func_80091510");
 void gStopFrameCallback(void) __asm__("func_8001F158");
 
 
@@ -38,7 +38,7 @@ void gStopFrameCallback(void) __asm__("func_8001F158");
  */
 void gStopFrameCallback(void)
 {
-    func_80091510(0);
+    gSetVSyncCallback(0);
     gScreenModeHook = 0;
     gFrameCallbackEnabled = 0;
 }

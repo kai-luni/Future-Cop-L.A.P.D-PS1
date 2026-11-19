@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern volatile s32 gVSyncTickCounter __asm__("D_8009DD50");
-extern  void (*gValueMatchTable[8])(void) __asm__("D_8009DD30");
+extern  void (*gVSyncCallbackTable[8])(void) __asm__("D_8009DD30");
 
 /**
  *  @brief Increments a counter and invokes registered callbacks.
@@ -26,7 +26,7 @@ void func_80091BF8(void)
     s32 i;
 
     gVSyncTickCounter = gVSyncTickCounter + 1;
-    for (i = 0, p = gValueMatchTable; i < 8; i++) {
+    for (i = 0, p = gVSyncCallbackTable; i < 8; i++) {
         if (*p != 0) {
             (*p)();
         }

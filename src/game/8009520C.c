@@ -14,8 +14,8 @@ extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gDma2MemAddrPtr __asm__("D_8009DECC");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern char D_80012B48[];
-extern int func_80091270(int);
-extern u32 func_800915FC(u32);
+extern int gVSyncWait(int) __asm__("func_80091270");
+extern u32 gSwapIrqMask(u32) __asm__("func_800915FC");
 extern void func_8008E000(char *, u32, u32, u32, u32);
 
 /**
@@ -52,14 +52,14 @@ int func_8009520C(void)
     register int *counter __asm__("$3");
     register volatile u32 *port __asm__("$6");
     register char *message __asm__("$4");
-    if (gTimeoutStamp < func_80091270(-1)) goto fail;
+    if (gTimeoutStamp < gVSyncWait(-1)) goto fail;
     __asm__("lui %0,%%hi(D_8009DF00)\n\taddiu %0,%0,%%lo(D_8009DF00)" : "=r"(counter));
     if ((*counter)++ > 0xF0000) {
 fail:
         __asm__ volatile("lui %0,%%hi(D_8009DEC8)\n\tlw %0,%%lo(D_8009DEC8)(%0)\n\tlui %1,%%hi(D_80012B48)\n\taddiu %1,%1,%%lo(D_80012B48)\n\tlw $2,0(%0)" : "=r"(port), "=r"(message));
         count = gGpuJobHead;
         func_8008E000(message, (count - gGpuJobTail) & 0x3f, *port, *gDma2ChannelCtrlPtr, *gDma2MemAddrPtr);
-        saved = func_800915FC(0);
+        saved = gSwapIrqMask(0);
         gGpuJobTail = 0;
         gSavedIrqMask = saved;
         gGpuJobHead = gGpuJobTail;
@@ -67,7 +67,7 @@ fail:
         *gDmaControlGpuPtr |= 0x800;
         *gGpuGp1PortPtr = 0x2000000;
         *gGpuGp1PortPtr = 0x1000000;
-        func_800915FC(gSavedIrqMask);
+        gSwapIrqMask(gSavedIrqMask);
         return -1;
     }
     return 0;

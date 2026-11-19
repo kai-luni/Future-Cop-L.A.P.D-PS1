@@ -1,7 +1,9 @@
 // Categories: Platform > CD-ROM | Platform > Memory Card
 #include "../../include/game/types.h"
 
-extern s32 D_8009C8A8;
+extern s32 gCdSyncCallback __asm__("D_8009C8A8");
+s32 gSetCdSyncCallback(s32 value) __asm__("func_8008E194");
+
 
 /**
  * @brief Swaps the driver callback held in D_8009C8A8 and returns the old one.
@@ -26,12 +28,18 @@ extern s32 D_8009C8A8;
  * @par Callers
  * Confirmed: func_8001C614, func_8001C718 (0x8001C7B4) and func_8001CE54 (0x8001D018, 0x8001D058) install and restore the card completion handler; gCdStreamService, func_800908A0, func_800908D4, func_80090B48, func_80090C18, func_80090E00 and func_80090FA0 also call it.
  * Unknown: two further calls at 0x80089074 and 0x800890CC from a driver routine that is not in the matching set.
+ *
+ * @par Role and path
+ * Saves the current callback pointer from D_8009C8A8, writes the new callback
+ * value into D_8009C8A8, and returns the previous pointer. Driven by CD/file
+ * loaders including func_8001C614, func_8001C718, func_8001CE54,
+ * gCdStreamService, and func_800908A0..func_80090FA0.
  */
-s32 func_8008E194(s32 value)
+s32 gSetCdSyncCallback(s32 value)
 {
     s32 previous;
 
-    previous = D_8009C8A8;
-    D_8009C8A8 = value;
+    previous = gCdSyncCallback;
+    gCdSyncCallback = value;
     return previous;
 }

@@ -1,8 +1,10 @@
 // Categories: BIOS > System Calls | Platform > Interrupts
 extern void func_8008DB14(void);
 extern void func_8008DAE0(void);
-extern void func_8008D9DC(void);
+extern void gRemovePriority1Irq(void) __asm__("func_8008D9DC");
 extern int gModeClearFlag __asm__("D_8009C800");
+void gStopPadAndRemoveIrq(void) __asm__("func_8008D92C");
+
 
 /**
  * @brief Tears down BIOS pad and interrupt-chain hooks and clears initialization flag D_8009C800.
@@ -26,11 +28,17 @@ extern int gModeClearFlag __asm__("D_8009C800");
  *
  * @par Callers
  * Confirmed: none in direct-call list or asm/us/main.s / Likely: unreferenced BIOS/pad teardown counterpart to func_8008D7DC / Unknown: whether invoked indirectly.
+ *
+ * @par Role and path
+ * Tears down BIOS pad and interrupt hooks by calling func_8008DB14,
+ * func_8008DAE0 (BIOS B0:14), and func_8008D9DC in sequence. Clears
+ * gModeClearFlag (D_8009C800) to 0 before returning. No direct caller is
+ * present in src/.
  */
-void func_8008D92C(void)
+void gStopPadAndRemoveIrq(void)
 {
     func_8008DB14();
     func_8008DAE0();
-    func_8008D9DC();
+    gRemovePriority1Irq();
     gModeClearFlag = 0;
 }

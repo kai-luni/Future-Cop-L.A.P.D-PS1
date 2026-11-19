@@ -1,4 +1,4 @@
-# Function map - documented functions (1756 units)
+# Function map - documented functions (1755 units)
 
 Markdown map of every function whose source carries a `// Categories:` line: the category is the first line of each `src/game/<addr>.c`, sizes come from `config/us/matching_units.json`, edges from `analysis/edges.json`.
 
@@ -20,7 +20,7 @@ graph LR
     g5["GPU, 2D & HUD<br/>238 functions"]
     g6["Gameplay, AI & Physics<br/>295 functions"]
     g7["Platform<br/>362 functions"]
-    g8["Utilities<br/>110 functions"]
+    g8["Utilities<br/>109 functions"]
     g6 -->|180| g8
     g0 -->|123| g7
     g0 -->|101| g5
@@ -36,7 +36,7 @@ graph LR
     g7 -->|50| g0
     g1 -->|44| g7
     g0 -->|43| g8
-    g7 -->|40| g8
+    g7 -->|39| g8
     g5 -->|38| g8
     g4 -->|38| g6
     g6 -->|34| g1
@@ -604,7 +604,7 @@ graph LR
 | `func_80049410` | 16 | Game Engine > Game State > Reset · Entity Script | - | `func_80024D14` |
 | `gSetMenuCursorToItem2` (`func_8007F678`) | 16 | Game Engine > State | - | - |
 | `gConsumePadCmd` (`func_8008C06C`) | 16 | Game Engine > Command State | - | `func_8008BF78` |
-| `func_8008E030` | 16 | Game Engine > State Access | - | - |
+| `gGetLastCdCommand` (`func_8008E030`) | 16 | Game Engine > State Access | - | - |
 | `func_80092B84` | 16 | Game Engine > State Access | - | - |
 | `gFileReadDoneCallback` (`func_8001DFF0`) | 20 | Game Engine > State Access | - | - |
 | `func_8002A598` | 20 | Game Engine > Init | - | `func_80024A24` |
@@ -617,7 +617,7 @@ graph LR
 | `func_8008DB14` | 20 | Game Engine > Dispatch | - | `func_8008D92C` |
 | `func_80091254` | 20 | Game Engine > State Access | - | - |
 | `func_80024170` | 24 | Game Engine > Mode Flag | - | `func_80025B7C`, `func_800476D0` |
-| `func_800915E4` | 24 | Game Engine > State Access | - | - |
+| `gGetIrqMask` (`func_800915E4`) | 24 | Game Engine > State Access | - | - |
 | `func_80094144` | 24 | Game Engine > State Access | - | - |
 | `func_80021A70` | 28 | Game Engine > Event Flags | - | `func_80021F98`, `func_800221E4` |
 | `func_80021AB4` | 28 | Game Engine > Event Flags | - | `func_80021F3C` |
@@ -631,7 +631,7 @@ graph LR
 | `gSetPadActInfoCmd` (`func_8008B770`) | 32 | Input > DualShock · Controller | - | `func_8008B168` |
 | `gSetPadCombInfoCmd` (`func_8008B790`) | 32 | Input > DualShock · Controller | - | `func_8008AE8C`, `func_8008B168` |
 | `gLookupPadPort` (`func_8008C3EC`) | 32 | Game Engine > Data Selection | - | - |
-| `func_8008E578` | 32 | Game Engine > Dispatch | `func_8008F650` | - |
+| `gSetCdVolume` (`func_8008E578`) | 32 | Game Engine > Dispatch | `func_8008F650` | - |
 | `func_800925B4` | 32 | Game Engine > State | - | - |
 | `func_800925D4` | 32 | Game Engine > State | - | - |
 | `func_800925F4` | 32 | Game Engine > State | - | - |
@@ -706,7 +706,7 @@ graph LR
 | `func_80047690` | 64 | Game Engine > Frame · Display | `func_8002A16C`, `func_80047554` | `func_800259D8`, `func_80025B7C`, `func_80027510`, `func_80082DDC` |
 | `func_800586D4` | 64 | Game Engine > Stack Trampoline · Entity Update | `func_80055988` | `func_800588D4` |
 | `func_80086D74` | 64 | Game Engine > State | - | - |
-| `func_8008DA7C` | 64 | Input > State | - | - |
+| `gCheckIrqBit0Persistent` (`func_8008DA7C`) | 64 | Input > State | - | - |
 | `gStartFrameCallback` (`func_8001F0B8`) | 68 | Game Engine > Timing · Interrupts | `func_80091510` | `func_80076EB0` |
 | `gFreeMapZoneList` (`func_80031990`) | 68 | Game Engine > World Reset · Map, Memory Management | - | `func_80024D14` |
 | `func_8003D0AC` | 68 | Game Engine > World Reset · Entity Lifecycle, Memory Management | - | `func_8003F854` |
@@ -756,7 +756,7 @@ graph LR
 | `gPadVsyncDispatchHook` (`func_8008A3D4`) | 104 | Input > State Checks | - | - |
 | `gStartPadActAlign` (`func_8008B484`) | 104 | Input > Controller Protocol | - | `func_8008A1C0` |
 | `gResetPadPortState` (`func_8008BF10`) | 104 | Game Engine > State | - | - |
-| `func_8008DA14` | 104 | Game Engine > State | - | - |
+| `gClearSio0CtrlAndWait` (`func_8008DA14`) | 104 | Game Engine > State | - | - |
 | `func_80096638` | 104 | Game Engine > Dispatch | - | - |
 | `gPollPadButtons` (`func_8001EF8C`) | 108 | Input > Controller > Pad Poll · Controller | `func_8001EC94`, `func_8001EF34` | `func_8001E620`, `func_800879DC` |
 | `func_80024358` | 108 | Game Engine > Audio | `func_80021F98` | `func_8004772C` |
@@ -813,7 +813,7 @@ graph LR
 | `gExitOptionsRestoreSound` (`func_8007CA34`) | 152 | Game Engine > Options Menu · Volume | `func_80024630`, `func_8002A58C`, `func_800451B4`, `func_800451F8`, `func_80045238`, `func_80045288`, `func_80045294`, `func_80046A34` | - |
 | `func_80082154` | 152 | Game Engine > Front End · Memory Card | `func_80078740`, `func_8008204C` | - |
 | `gStartPadModeSelect` (`func_8008B5D0`) | 152 | Input > Controller Protocol | - | `func_8008A1F8` |
-| `func_800913E8` | 152 | Game Engine > Frame · Interrupts, System Calls | `func_8008CA20`, `func_8008D7B0`, `func_8008FF08` | `func_80091270` |
+| `gWaitVSyncTarget` (`func_800913E8`) | 152 | Game Engine > Frame · Interrupts, System Calls | `func_8008CA20`, `func_8008D7B0`, `func_8008FF08` | `func_80091270` |
 | `gQueueMcOpMode6` (`func_8001F2E0`) | 156 | Game Engine > State | `func_8001F180` | `func_80020FDC` |
 | `func_80027EE4` | 156 | Game Engine > Interactive Loop · Frame Timing | `func_80027E68`, `func_80027EBC`, `func_800451EC`, `func_800462D0`, `func_80078DD0` | `func_800287F4` |
 | `func_800455DC` | 156 | Game Engine > Sound Channels | - | `func_80045678` |
@@ -906,7 +906,7 @@ graph LR
 | `gPollPadPorts` (`func_8008A43C`) | 364 | Input > Port Processing | `func_8008A6CC`, `func_8008A8E0` | - |
 | `func_800228F4` | 368 | Game Engine > Audio Streaming | `func_800220C4`, `func_800221E4`, `func_80022F44`, `func_80046B04`, `func_800477D8`, `func_80098BF8` | - |
 | `gRunEntityWorldTick` (`func_8003F570`) | 372 | Game Engine > Frame · Entity Script | `func_8003B44C`, `func_8003D240`, `func_8003F2AC`, `func_8003F428`, `func_8003F530`, `func_8003FF7C`, `func_8004C2B8`, `func_8005E0AC` | `func_80027510` |
-| `func_80091270` | 376 | Game Engine > Frame · Interrupts | `func_800913E8` | `func_8008204C`, `func_80085C4C`, `func_800879DC`, `func_80087D48`, `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008FAC8`, `func_800908D4`, `func_80090C18`, `func_80090E00`, `func_80090FA0`, `func_8009113C`, `func_800951D8`, `func_8009520C`, `func_800953F0`, `func_800954DC`, `func_800955C8`, `func_8009570C` |
+| `gVSyncWait` (`func_80091270`) | 376 | Game Engine > Frame · Interrupts | `func_800913E8` | `func_8008204C`, `func_80085C4C`, `func_800879DC`, `func_80087D48`, `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008FAC8`, `func_800908D4`, `func_80090C18`, `func_80090E00`, `func_80090FA0`, `func_8009113C`, `func_800951D8`, `func_8009520C`, `func_800953F0`, `func_800954DC`, `func_800955C8`, `func_8009570C` |
 | `func_80028E58` | 380 | Game Engine > Node Queues | `func_80028AB4` | `func_8002902C` |
 | `func_8003F2AC` | 380 | Game Engine > Entity Lifecycle · Object Spawning, Entity Update | `func_8003CAE4`, `func_8003E984`, `func_800498F0` | `func_8003F570` |
 | `gSetupPrecinctAssaultMissionList` (`func_80077708`) | 380 | Game Engine > Front End · Level Table | `func_80077FFC` | `func_8007A4CC`, `func_8007A56C`, `func_8007EA78`, `func_8008125C` |
@@ -1284,8 +1284,8 @@ graph LR
 | `func_80019A74` | 52 | Resources > Resource Registry · Asset Loader | - | `func_80013550`, `func_80029E20`, `func_80049420`, `func_80049734`, `func_8004D924`, `func_800511E4`, `func_80051650`, `func_80060E74`, `func_80063C20` |
 | `func_8004D924` | 52 | Resources > Resource State · Entity Update | `func_80019A74` | `func_80024EC8` |
 | `func_80080AD4` | 52 | Resources > Save Data · Sound, Port Presets | - | `func_8007FB04` |
-| `func_8008E0EC` | 52 | Resources > Lookup | - | - |
-| `func_8008E120` | 52 | Resources > Lookup | - | - |
+| `gGetCdCommandName` (`func_8008E0EC`) | 52 | Resources > Lookup | - | - |
+| `gGetCdIntName` (`func_8008E120`) | 52 | Resources > Lookup | - | - |
 | `func_80077050` | 56 | Resources > Memory Pools | `func_80017C68` | `func_80076A2C` |
 | `gReleaseProfileCardOperation` (`func_8007FACC`) | 56 | Resources > Save Data · Display State | - | `func_80076A2C`, `func_8008125C` |
 | `func_80017D20` | 60 | Resources > Memory Pools | - | `func_800249BC`, `func_80024D14`, `func_80077088` |
@@ -4372,7 +4372,7 @@ graph LR
 | `func_8004522C` | 12 | Platform > Sound > Volume | - | `func_80025F58`, `func_800260B8`, `func_8007CACC`, `func_8007CFA0`, `func_80080A5C` |
 | `func_80045288` | 12 | Platform > Sound > Volume | - | `func_80025F58`, `func_800260B8`, `func_8002A16C`, `func_8007CA34`, `func_8007CACC`, `func_8007CFA0`, `func_80080984`, `func_80080A5C` |
 | `func_800452C8` | 12 | Platform > Sound > Volume | - | `func_80025F58`, `func_800260B8`, `func_800298EC`, `func_80029974`, `func_80045050`, `func_8007CACC`, `func_8007CFA0`, `func_80080A5C`, `func_80086C74` |
-| `func_8008E040` | 12 | Platform > CD-ROM · File Access | - | `func_80090C18` |
+| `gGetCdTargetLocation` (`func_8008E040`) | 12 | Platform > CD-ROM · File Access | - | `func_80090C18` |
 | `func_8008C950` | 16 | BIOS > System Calls · Memory Card | - | `func_800200A8` |
 | `func_8008C960` | 16 | BIOS > System Calls · Interrupts | - | `func_80020120`, `func_80096E40` |
 | `func_8008C970` | 16 | BIOS > System Calls | - | `func_8002036C`, `func_80097A48` |
@@ -4394,7 +4394,7 @@ graph LR
 | `func_8008D670` | 16 | BIOS > Vector Dispatch | - | `func_8001F394`, `func_8001F818`, `func_8001F968`, `func_8001FAB8`, `func_8008D690` |
 | `func_8008D680` | 16 | BIOS > Vector Dispatch | - | `func_8001F394`, `func_8001F818`, `func_8001F968`, `func_8001FAB8` |
 | `func_8008D6D0` | 16 | BIOS > Vector Dispatch | - | `func_8008D690` |
-| `func_8008D7CC` | 16 | Platform > Memory Card · System Calls | - | `func_8008D6E0` |
+| `gGetModeClearFlag` (`func_8008D7CC`) | 16 | Platform > Memory Card · System Calls | - | `func_8008D6E0` |
 | `func_8008DAC0` | 16 | BIOS > System Calls | - | `func_8008D86C` |
 | `func_8008DAD0` | 16 | BIOS > Vector Dispatch | - | `func_8008D8FC` |
 | `func_8008DAE0` | 16 | BIOS > Vector Calls | - | `func_8008D92C` |
@@ -4405,24 +4405,24 @@ graph LR
 | `func_8008DC40` | 16 | BIOS > Vector Calls | - | `func_8008D784` |
 | `func_8008DCC0` | 16 | Platform > Fixed-address Dispatch | - | - |
 | `func_8008DFF0` | 16 | BIOS > Vector Dispatch | - | `func_8008DF6C`, `func_8008DF94`, `func_8008DFBC`, `func_800972F8` |
-| `func_8008E010` | 16 | Platform > CD-ROM | - | `func_80090C18`, `func_80090FA0` |
-| `func_8008E020` | 16 | Platform > CD-ROM | - | `func_80090C18` |
+| `gGetCdStatusByte` (`func_8008E010`) | 16 | Platform > CD-ROM | - | `func_80090C18`, `func_80090FA0` |
+| `gGetCdModeByte` (`func_8008E020`) | 16 | Platform > CD-ROM | - | `func_80090C18` |
 | `func_80090890` | 16 | BIOS > System Calls | - | `func_800901F8`, `func_80090218` |
-| `func_800915D4` | 16 | Platform > Interrupts | - | `func_8008ECFC`, `func_8008EF7C`, `func_8008F244` |
+| `gGetIrqLatchFlag` (`func_800915D4`) | 16 | Platform > Interrupts | - | `func_8008ECFC`, `func_8008EF7C`, `func_8008F244` |
 | `func_80091B60` | 16 | BIOS > Vector Dispatch | - | `func_800916EC` |
 | `func_80091B70` | 16 | BIOS > Vector Dispatch | - | `func_80091A04` |
 | `func_80091B80` | 16 | BIOS > Vector Calls | - | `func_80091614`, `func_80091AA4` |
 | `func_80091B90` | 16 | BIOS > Vector Calls | - | `func_80091614` |
 | `func_800966A0` | 16 | BIOS > Vector Calls | - | - |
-| `func_8008E0D8` | 20 | Platform > CD-ROM · Debug | - | `func_8001C808` |
-| `func_8008E194` | 20 | Platform > CD-ROM · Memory Card | - | `func_8001C614`, `func_8001C718`, `func_8001CE54`, `func_800895E4`, `func_800908A0`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00`, `func_80090FA0` |
-| `func_8008E1A8` | 20 | Platform > CD-ROM · Memory Card | - | `func_8001C808`, `func_8001D130`, `func_800895E4`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00`, `func_80090FA0` |
+| `gSetCdLogLevel` (`func_8008E0D8`) | 20 | Platform > CD-ROM · Debug | - | `func_8001C808` |
+| `gSetCdSyncCallback` (`func_8008E194`) | 20 | Platform > CD-ROM · Memory Card | - | `func_8001C614`, `func_8001C718`, `func_8001CE54`, `func_800895E4`, `func_800908A0`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00`, `func_80090FA0` |
+| `gSetCdReadyCallback` (`func_8008E1A8`) | 20 | Platform > CD-ROM · Memory Card | - | `func_8001C808`, `func_8001D130`, `func_800895E4`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00`, `func_80090FA0` |
 | `func_80091240` | 20 | Platform > CD-ROM · Interrupts | - | `func_80089700` |
 | `func_80091F60` | 20 | Platform > GPU · Draw Environment | - | `func_8001BF78` |
 | `gGetMcPendingFlag` (`func_8001F37C`) | 24 | Platform > Memory Card · Save Data | - | `func_80020D3C`, `func_80020FDC`, `func_8007FB04` |
 | `func_800207B4` | 24 | Platform > Memory Card · Save Data | - | `func_80020A9C`, `func_8007FB04`, `func_8008204C` |
 | `func_8008FF08` | 24 | BIOS > System Calls · Output | - | `func_8008E7A0`, `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008F8E8`, `func_8008FAC8`, `func_800908D4`, `func_80090C18`, `func_800913E8` |
-| `func_800915FC` | 24 | Platform > Interrupts | - | `func_80094A3C`, `func_80094CEC`, `func_80094F4C`, `func_8009520C` |
+| `gSwapIrqMask` (`func_800915FC`) | 24 | Platform > Interrupts | - | `func_80094A3C`, `func_80094CEC`, `func_80094F4C`, `func_8009520C` |
 | `func_80091B48` | 24 | BIOS > Vector Calls | - | `func_80091614` |
 | `gIsMdecBusy` (`func_80096484`) | 24 | Platform > DMA · Image Transfer | - | `func_80096090`, `func_800960CC` |
 | `gWaitCdLoaderIdle` (`func_8001C478`) | 28 | Platform > Memory Card · Loading | - | `func_8001CE54`, `func_8001D424`, `func_8001D6D0` |
@@ -4431,19 +4431,19 @@ graph LR
 | `gShutdownPadDriver` (`func_8001E910`) | 32 | Platform > Device Shutdown · Interrupts | `func_80089E20` | `func_8001E540` |
 | `gStopPadDriver` (`func_80089E20`) | 32 | Platform > Device Shutdown · Interrupts | `func_8008A688` | `func_8001E910` |
 | `gStartTimer2Timeout` (`func_8008C890`) | 32 | Platform > Timer · Controller | - | `func_8008A6CC`, `func_8008A8E0`, `func_8008AB80`, `func_8008BA34` |
-| `func_8008E0B8` | 32 | Platform > CD-ROM · Interrupts | `func_8008F6D8` | `func_80090C18` |
-| `func_8008E154` | 32 | Platform > CD-ROM · Device Wait | `func_8008ECFC` | `func_800895E4` |
-| `func_8008E174` | 32 | Platform > CD-ROM > Control | `func_8008EF7C` | `func_8001C680`, `func_8001C718`, `func_8001CE54`, `func_8009113C` |
-| `func_8008E598` | 32 | Platform > CD-ROM | `func_8008FC30` | `func_8001C808`, `func_800908D4` |
-| `func_8008E5B8` | 32 | Platform > CD-ROM · DMA | `func_8008FD30` | `func_800908D4` |
-| `func_8008E5FC` | 32 | Platform > CD-ROM · Device Wait | `func_8008FAC8` | `func_800908D4`, `func_80090E00` |
-| `func_800901F8` | 32 | Platform > CD-ROM · String | `func_80090890` | `func_8008FF20` |
+| `gResetCdController` (`func_8008E0B8`) | 32 | Platform > CD-ROM · Interrupts | `func_8008F6D8` | `func_80090C18` |
+| `gCdSync` (`func_8008E154`) | 32 | Platform > CD-ROM · Device Wait | `func_8008ECFC` | `func_800895E4` |
+| `gCdReady` (`func_8008E174`) | 32 | Platform > CD-ROM > Control | `func_8008EF7C` | `func_8001C680`, `func_8001C718`, `func_8001CE54`, `func_8009113C` |
+| `gCdRead` (`func_8008E598`) | 32 | Platform > CD-ROM | `func_8008FC30` | `func_8001C808`, `func_800908D4` |
+| `gCdGetSector` (`func_8008E5B8`) | 32 | Platform > CD-ROM · DMA | `func_8008FD30` | `func_800908D4` |
+| `gCdDataSync` (`func_8008E5FC`) | 32 | Platform > CD-ROM · Device Wait | `func_8008FAC8` | `func_800908D4`, `func_80090E00` |
+| `gMatchCdFilename` (`func_800901F8`) | 32 | Platform > CD-ROM · String | `func_80090890` | `func_8008FF20` |
 | `func_80097A28` | 32 | Platform > GPU · Display Setup | `func_80096D58` | `func_80021B50` |
 | `func_8002238C` | 36 | Platform > Sound > Voices | `func_80021A8C` | `func_80022240`, `func_800243F8` |
 | `func_800243F8` | 36 | Platform > Sound > Voices | `func_8002238C` | `func_80046698`, `func_80047088`, `func_800471C4` |
 | `func_80029BC0` | 36 | Platform > Streaming Audio · Sound | - | `func_800476D0` |
 | `func_80046A34` | 36 | Platform > Sound > Voices | `func_80046698` | `func_80022A64`, `func_80025E18`, `func_800260B8`, `func_80027510`, `func_800474F0`, `func_8007CA34`, `func_8007CACC`, `func_8007D150` |
-| `func_8008E5D8` | 36 | Platform > CD-ROM · Interrupts | `func_800914E0` | `func_80089700`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00`, `func_80090FA0` |
+| `gSetCdDmaCallback` (`func_8008E5D8`) | 36 | Platform > CD-ROM · Interrupts | `func_800914E0` | `func_80089700`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00`, `func_80090FA0` |
 | `func_80094A18` | 36 | Platform > GPU · Command Queue | `func_80094A3C` | - |
 | `gSpuSetDmaCallback` (`func_800979F8`) | 36 | Platform > Sound > DMA · Interrupts | `func_800914E0` | `func_80096E40`, `func_80097A48` |
 | `func_80098788` | 36 | Platform > Audio | `func_800987B8` | - |
@@ -4452,10 +4452,10 @@ graph LR
 | `func_8002078C` | 40 | Platform > Memory Card · Events, Interrupts | `func_8002036C`, `func_8002059C` | - |
 | `func_800226D8` | 40 | Platform > Streaming Audio · Voices | `func_80022A64`, `func_80022C68` | `func_80022654` |
 | `gWaitSio0TxReady` (`func_8008AE44`) | 40 | Platform > Status Polling | - | `func_8008A6CC`, `func_8008BA34` |
-| `func_8008D784` | 40 | BIOS > System Calls · CD-ROM | `func_8008DC40`, `func_8008DE20` | `func_800200F0` |
-| `func_8008DF6C` | 40 | Platform > Command Dispatch | `func_8008DFF0` | - |
-| `func_8008DF94` | 40 | Platform > Command Dispatch | `func_8008DFF0` | - |
-| `func_8008DFBC` | 40 | Platform > Command Dispatch | `func_8008DFF0` | - |
+| `gInitCdDriverChain` (`func_8008D784`) | 40 | BIOS > System Calls · CD-ROM | `func_8008DC40`, `func_8008DE20` | `func_800200F0` |
+| `gLogCdSyncCallback` (`func_8008DF6C`) | 40 | Platform > Command Dispatch | `func_8008DFF0` | - |
+| `gLogCdReadyCallback` (`func_8008DF94`) | 40 | Platform > Command Dispatch | `func_8008DFF0` | - |
+| `gLogCdReadCallback` (`func_8008DFBC`) | 40 | Platform > Command Dispatch | `func_8008DFF0` | - |
 | `func_80095808` | 40 | Platform > GPU · DMA | `func_800914E0` | - |
 | `func_80097940` | 40 | Platform > Bit Manipulation | - | - |
 | `func_80097968` | 40 | Platform > Bit Manipulation | - | `func_800973B4` |
@@ -4465,29 +4465,29 @@ graph LR
 | `func_8008DC50` | 44 | Platform > Register Operations | - | - |
 | `gResetBiosDevices` (`func_800200F0`) | 48 | Platform > BIOS · Interrupts | `func_8008D784` | `func_8001E540` |
 | `func_80021C80` | 48 | Platform > Sound · Device Shutdown | `func_800216D8`, `func_80021F3C`, `func_80097A48` | - |
-| `func_80091480` | 48 | Platform > Interrupts · Display | - | `func_8001E4E4`, `func_800773D8`, `func_8007757C`, `func_8008F89C`, `func_8008F8E8`, `func_80092910`, `func_80095E90`, `func_80096D58` |
-| `func_800914B0` | 48 | Platform > Interrupts | - | `func_8001C808`, `func_8001D130`, `func_8008F89C`, `func_8008F8E8`, `func_80091BA0`, `func_80091CC0`, `func_80098C38` |
-| `func_800914E0` | 48 | Platform > Interrupts · Display | - | `func_8008E5D8`, `func_80092AE0`, `func_80094A3C`, `func_80094CEC`, `func_800953F0`, `func_800954DC`, `func_800955C8`, `func_8009570C`, `func_80095808`, `func_80096108`, `func_8009612C`, `func_800979F8` |
+| `gResetIrqDispatch` (`func_80091480`) | 48 | Platform > Interrupts · Display | - | `func_8001E4E4`, `func_800773D8`, `func_8007757C`, `func_8008F89C`, `func_8008F8E8`, `func_80092910`, `func_80095E90`, `func_80096D58` |
+| `gSetIrqCallback` (`func_800914B0`) | 48 | Platform > Interrupts | - | `func_8001C808`, `func_8001D130`, `func_8008F89C`, `func_8008F8E8`, `func_80091BA0`, `func_80091CC0`, `func_80098C38` |
+| `gSetDmaCallback` (`func_800914E0`) | 48 | Platform > Interrupts · Display | - | `func_8008E5D8`, `func_80092AE0`, `func_80094A3C`, `func_80094CEC`, `func_800953F0`, `func_800954DC`, `func_800955C8`, `func_8009570C`, `func_80095808`, `func_80096108`, `func_8009612C`, `func_800979F8` |
 | `func_80091574` | 48 | Platform > Interrupts | - | `func_8001E540` |
 | `func_800949E8` | 48 | Platform > Register Access | - | `func_8009423C` |
 | `gSpuSetTransferMode` (`func_80098F48`) | 48 | Platform > Sound · DMA | - | `func_800211FC`, `func_8008684C` |
 | `func_800451F8` | 52 | Platform > Sound > Volume | - | `func_800260B8`, `func_80044F8C`, `func_8007CA34`, `func_8007CACC`, `func_80080984` |
 | `func_80045294` | 52 | Platform > Sound > Volume | - | `func_800260B8`, `func_80044F8C`, `func_8007CA34`, `func_8007CACC`, `func_80080984` |
-| `func_8008DDEC` | 52 | BIOS > Kernel Patch · Memory Card | - | `func_8008D6E0` |
-| `func_800908A0` | 52 | Platform > CD-ROM · File Access | `func_8008E194` | - |
-| `func_80091510` | 52 | Platform > Interrupts · Display | - | `func_8001F0B8`, `func_8001F158`, `func_80020530`, `func_8002059C`, `func_800773D8`, `func_8007757C`, `func_80087750`, `func_80087824` |
+| `gCopyKernelPatch0xDF80` (`func_8008DDEC`) | 52 | BIOS > Kernel Patch · Memory Card | - | `func_8008D6E0` |
+| `gCdPauseCallback` (`func_800908A0`) | 52 | Platform > CD-ROM · File Access | `func_8008E194` | - |
+| `gSetVSyncCallback` (`func_80091510`) | 52 | Platform > Interrupts · Display | - | `func_8001F0B8`, `func_8001F158`, `func_80020530`, `func_8002059C`, `func_800773D8`, `func_8007757C`, `func_80087750`, `func_80087824` |
 | `func_800951D8` | 52 | Platform > Hardware Init | `func_80091270` | `func_8009415C`, `func_8009446C`, `func_800946A8`, `func_80094A3C`, `func_8009509C` |
 | `func_80095E90` | 52 | Platform > Interrupts · Display | `func_80091480`, `func_80096150` | `func_80085228`, `func_80085630`, `func_80085C4C`, `func_800861E4` |
 | `gIsMcManagerBusy` (`func_8001F180`) | 56 | Platform > Memory Card · Save Data | - | `func_8001F1B8`, `func_8001F24C`, `func_8001F2E0`, `func_80020B64` |
 | `func_80022F44` | 56 | Platform > Sound > Streaming · SPU Transfer | `func_80098A78`, `func_80098BB8` | `func_800228F4` |
-| `func_8008D74C` | 56 | Platform > Memory Card · System Calls, Interrupts | `func_8008C9B0`, `func_8008D7B0`, `func_8008DC30` | `func_800200A8` |
-| `func_8008D92C` | 56 | BIOS > System Calls · Interrupts | `func_8008D9DC`, `func_8008DAE0`, `func_8008DB14` | - |
-| `func_8008D9DC` | 56 | BIOS > System Calls · Interrupts | `func_8008C9B0`, `func_8008CA10` | `func_8008D92C` |
+| `gStartCardAndClearPad` (`func_8008D74C`) | 56 | Platform > Memory Card · System Calls, Interrupts | `func_8008C9B0`, `func_8008D7B0`, `func_8008DC30` | `func_800200A8` |
+| `gStopPadAndRemoveIrq` (`func_8008D92C`) | 56 | BIOS > System Calls · Interrupts | `func_8008D9DC`, `func_8008DAE0`, `func_8008DB14` | - |
+| `gRemovePriority1Irq` (`func_8008D9DC`) | 56 | BIOS > System Calls · Interrupts | `func_8008C9B0`, `func_8008CA10` | `func_8008D92C` |
 | `func_80020B28` | 60 | Platform > Memory Card · Save Data | - | `func_80020B64` |
 | `func_8004572C` | 60 | Platform > Sound > Channels · Entity Update | - | `func_8004DF28`, `func_8004E248`, `func_8008363C` |
 | `func_80047800` | 60 | Platform > Audio | `func_800243C4`, `func_800477D8` | `func_80023D78`, `func_80025E18`, `func_8004530C`, `func_8007CACC` |
 | `func_8005A154` | 60 | Platform > Sound > SE · Gauge | `func_80046C84` | `func_8005A190` |
-| `func_8008DF30` | 60 | Platform > CD-ROM · Device Wait | `func_8008F7AC`, `func_8008F8E8` | `func_8008DEA0` |
+| `gInitCdHardware` (`func_8008DF30`) | 60 | Platform > CD-ROM · Device Wait | `func_8008F7AC`, `func_8008F8E8` | `func_8008DEA0` |
 | `gMdecInSync` (`func_80096090`) | 60 | Platform > DMA · Image Transfer | `func_8009635C`, `func_80096484` | `func_800861E4` |
 | `gMdecOutSync` (`func_800960CC`) | 60 | Platform > DMA · Image Transfer | `func_800963F0`, `func_80096484` | `func_80085228`, `func_80085630`, `func_800861E4` |
 | `gSpuInstallIrqCallback` (`func_80098BF8`) | 60 | Platform > Sound > Interrupts · Interrupts | `func_80098C38` | `func_800228F4`, `func_80022A64`, `func_80087750`, `func_80087824` |
@@ -4508,14 +4508,14 @@ graph LR
 | `func_80029DD8` | 72 | Platform > Streaming Audio · Event Queue | - | `func_80025B7C`, `func_80029974`, `func_80029A60`, `func_80029EB8`, `func_8002A26C` |
 | `func_8002A544` | 72 | Platform > Streaming Audio · Asset Loader | - | `func_8002902C` |
 | `func_800949A0` | 72 | Platform > Hardware | - | `func_8009423C` |
-| `func_8008F89C` | 76 | Platform > CD-ROM · Interrupts | `func_80091480`, `func_800914B0` | `func_8008E04C` |
+| `gResetCdCallbacks` (`func_8008F89C`) | 76 | Platform > CD-ROM · Interrupts | `func_80091480`, `func_800914B0` | `func_8008E04C` |
 | `func_80091CC0` | 76 | Platform > DMA · Interrupts | `func_800914B0`, `func_80091F38` | `func_80091614` |
 | `func_80021BD0` | 80 | Platform > SPU · Shutdown | `func_80099368` | `func_80047554` |
 | `func_80045238` | 80 | Platform > Sound > Volume · Front-End Configuration | `func_80024730` | `func_800260B8`, `func_80044F8C`, `func_8007CA34`, `func_8007CACC`, `func_80080984` |
 | `func_80021998` | 84 | Platform > Sound · Sound Banks | `func_80098708` | `func_80021DAC` |
 | `func_80045050` | 84 | Platform > Sound | `func_800452C8`, `func_800452D4` | - |
 | `gSpuInitPool` (`func_80097AC8`) | 84 | Platform > Sound · DMA | - | `func_80021B50` |
-| `func_80091BA0` | 88 | Platform > Interrupts · Frame | `func_800914B0`, `func_80091C90` | `func_80091614` |
+| `gInitVSyncHandler` (`func_80091BA0`) | 88 | Platform > Interrupts · Frame | `func_800914B0`, `func_80091C90` | `func_80091614` |
 | `func_800978E8` | 88 | Platform > Register Configuration | - | - |
 | `gStopPadRumble` (`func_8001EBA8`) | 92 | Platform > Controller · DualShock | `func_8001E9AC`, `func_8001EA5C` | `func_8001EB6C`, `func_8001EC04` |
 | `gSpuCancelDmaRequests` (`func_8002129C`) | 92 | Platform > Sound · DMA | - | `func_80022A64` |
@@ -4538,21 +4538,21 @@ graph LR
 | `gResetMovieAudioState` (`func_80087688`) | 100 | Platform > Sound > Shutdown | `func_8008C9E0` | `func_80087750` |
 | `gHaltMovieAudioStream` (`func_800876EC`) | 100 | Platform > Sound · SPU | - | `func_80087750` |
 | `func_80097760` | 100 | Platform > Command Dispatch | `func_8009745C` | `func_80098E28` |
-| `func_8008DBB0` | 104 | BIOS > System Calls · BIOS | `func_8008C9B0`, `func_8008DBA0` | `func_8008D7DC`, `func_8008D86C` |
-| `func_8009081C` | 104 | Platform > CD-ROM · File Access | `func_8008E1BC`, `func_8008E61C`, `func_80090FA0`, `func_8009113C` | `func_80090218`, `func_80090580` |
+| `gClearKernelPadWords` (`func_8008DBB0`) | 104 | BIOS > System Calls · BIOS | `func_8008C9B0`, `func_8008DBA0` | `func_8008D7DC`, `func_8008D86C` |
+| `gReadCdSectorsSync` (`func_8009081C`) | 104 | Platform > CD-ROM · File Access | `func_8008E1BC`, `func_8008E61C`, `func_80090FA0`, `func_8009113C` | `func_80090218`, `func_80090580` |
 | `func_80092C8C` | 104 | Platform > GPU | - | `func_8001B4A8`, `func_8001EFF8`, `func_80025B7C`, `func_8003FAD4`, `func_80048BF8`, `func_8005A414`, `func_80063C5C`, `func_800770A8` |
 | `gCdSeekDoneCallback` (`func_8001C614`) | 108 | Platform > CD-ROM · File Access | `func_8008E194` | - |
 | `gAcquireMcCallback` (`func_80020530`) | 108 | Platform > Memory Card · Interrupts | `func_8008C9E0`, `func_80091510` | `func_800206D0` |
 | `func_80046804` | 108 | Platform > Sound | - | `func_80046698` |
 | `func_80046C84` | 108 | Platform > Sound | `func_80045494`, `func_80046F9C` | `func_800260B8`, `func_800267C8`, `func_80027510`, `func_8003E984`, `func_80047088`, `func_80049260`, `func_80055988`, `func_800588D4`, `func_80058D78`, `func_8005A154`, `func_8006ACB0`, `func_8006BA50`, `func_8007A3AC`, `func_8007A4CC`, `func_8007A7A0`, `func_8007AB0C`, `func_8007ABBC`, `func_8007B854`, `func_8007C80C`, `func_8007C940`, `func_8007D27C`, `func_8007E1A4`, `func_8007F1F8`, `func_8007F618`, `func_8008125C` |
-| `func_8008D6E0` | 108 | Platform > Memory Card · System Calls, Interrupts | `func_8008C9B0`, `func_8008D7B0`, `func_8008D7CC`, `func_8008DC20`, `func_8008DCE8`, `func_8008DD7C`, `func_8008DDEC` | `func_800200A8` |
-| `func_8008E04C` | 108 | Platform > CD-ROM · Interrupts | `func_8008F7AC`, `func_8008F89C`, `func_8008F8E8` | - |
+| `gInitCardAndPatches` (`func_8008D6E0`) | 108 | Platform > Memory Card · System Calls, Interrupts | `func_8008C9B0`, `func_8008D7B0`, `func_8008D7CC`, `func_8008DC20`, `func_8008DCE8`, `func_8008DD7C`, `func_8008DDEC` | `func_800200A8` |
+| `gInitCdMode` (`func_8008E04C`) | 108 | Platform > CD-ROM · Interrupts | `func_8008F7AC`, `func_8008F89C`, `func_8008F8E8` | - |
 | `func_80020DF8` | 112 | Platform > Memory Card | `func_800207CC` | `func_80020E68` |
 | `func_80045494` | 112 | Platform > Sound > SE | - | `func_80045678`, `func_80046A58`, `func_80046C84`, `func_80046CF0`, `func_80046E88`, `func_80047284` |
 | `gShutdownRuntime` (`func_80076FE0`) | 112 | Platform > System Shutdown · Memory Management | `func_80017BA0`, `func_8001E2C0`, `func_8001E540`, `func_80023478` | `func_80076A2C` |
-| `func_8008DB28` | 112 | Platform > CD-ROM · Hardware Init | `func_8008DBA0` | `func_8008D7DC`, `func_8008D86C` |
-| `func_8008DD7C` | 112 | Platform > CD-ROM · Hardware Init | `func_8008DBA0` | `func_8008D6E0` |
-| `func_8008DE20` | 112 | BIOS > System Calls · BIOS | `func_8008C9B0`, `func_8008DBA0` | `func_8008D784` |
+| `gPatchKernelPadTable` (`func_8008DB28`) | 112 | Platform > CD-ROM · Hardware Init | `func_8008DBA0` | `func_8008D7DC`, `func_8008D86C` |
+| `gInstallCardPatchSlot` (`func_8008DD7C`) | 112 | Platform > CD-ROM · Hardware Init | `func_8008DBA0` | `func_8008D6E0` |
+| `gPatchCdKernelBlock` (`func_8008DE20`) | 112 | BIOS > System Calls · BIOS | `func_8008C9B0`, `func_8008DBA0` | `func_8008D784` |
 | `func_80093280` | 112 | Platform > GPU · GPU Command Lists | - | `func_8001B4A8` |
 | `func_800965C8` | 112 | Platform > Runtime Init · Utilities | - | `func_80076A2C` |
 | `gSpuInitDmaEvent` (`func_80096E40`) | 112 | Platform > Sound · DMA, Interrupts | `func_8008C960`, `func_8008C980`, `func_8008C9B0`, `func_800979F8` | `func_80021B50`, `func_80096D58` |
@@ -4563,40 +4563,40 @@ graph LR
 | `func_80021490` | 120 | Platform > Audio | `func_80098E28`, `func_80098E88`, `func_80098EE8` | `func_800212F8`, `func_8002139C` |
 | `func_80024630` | 120 | Platform > Audio | - | `func_80047554`, `func_8007CA34`, `func_80080984` |
 | `func_80024730` | 120 | Platform > Sound · Streaming Audio | - | `func_80045238` |
-| `func_8008D964` | 120 | BIOS > System Calls · Interrupts | `func_8008C9B0`, `func_8008CA00`, `func_8008CA10` | `func_8008D7DC`, `func_8008D86C` |
-| `func_80091AA4` | 120 | Platform > CD-ROM · Hardware Init | `func_8008C9B0`, `func_80091B80` | - |
+| `gInstallPriority1Irq` (`func_8008D964`) | 120 | BIOS > System Calls · Interrupts | `func_8008C9B0`, `func_8008CA00`, `func_8008CA10` | `func_8008D7DC`, `func_8008D86C` |
+| `gRestartIrqSubsys` (`func_80091AA4`) | 120 | Platform > CD-ROM · Hardware Init | `func_8008C9B0`, `func_80091B80` | - |
 | `func_8009649C` | 124 | Platform > MDEC · DMA | `func_8008E000` | `func_8009635C`, `func_800963F0` |
 | `func_80021AD0` | 128 | Platform > Audio | `func_80099C58` | `func_80021E1C` |
 | `func_800227BC` | 128 | Platform > Audio | - | `func_8002283C` |
 | `func_80046A58` | 128 | Platform > Sound · Object Pool | `func_80045494`, `func_80046B04` | `func_80025E18`, `func_8007CACC` |
-| `func_8008E720` | 128 | Platform > CD-ROM · Time Conversion | - | `func_800889DC`, `func_800908D4`, `func_80090C18` |
+| `gCdPosToInt` (`func_8008E720`) | 128 | Platform > CD-ROM · Time Conversion | - | `func_800889DC`, `func_800908D4`, `func_80090C18` |
 | `func_8009398C` | 128 | Platform > GPU · Display Setup | `func_80093F78`, `func_80094010` | `func_8001B4A8` |
 | `gBuildTexWindowCommand` (`func_800940C4`) | 128 | Platform > GPU · Textures | - | `func_80093954`, `func_80093A9C`, `func_80093AF0`, `func_80093CE8` |
 | `gCdlLocToByteOffset` (`func_8001C588`) | 132 | Platform > CD-ROM | - | `func_8001C808`, `func_8001D424` |
 | `func_80086954` | 132 | Platform > Transfer State | `func_8008684C` | - |
 | `func_800976DC` | 132 | Platform > Dispatch | `func_80097138`, `func_8009745C` | `func_80098E88` |
 | `func_800246A8` | 136 | Platform > Audio · Buffer Management | - | `func_80024470` |
-| `func_8008F650` | 136 | Platform > Hardware Registers | - | `func_8008E578` |
+| `gWriteCdAudioMixRegs` (`func_8008F650`) | 136 | Platform > Hardware Registers | - | `func_8008E578` |
 | `func_80020A9C` | 140 | Platform > Memory Card · File Access | `func_800207B4` | `func_80020C90` |
 | `func_800886E4` | 140 | Platform > CD-ROM | `func_8008E1BC` | - |
 | `gSendPadCmdByte` (`func_8008B9A8`) | 140 | Platform > Dispatch | `func_8008AB80` | - |
 | `func_800962D0` | 140 | Platform > DMA · Video Decode | `func_800963F0` | `func_80096070` |
 | `gSeekCdFileSlot` (`func_8001D0A0`) | 144 | Platform > CD-ROM · File Access | `func_8001C494`, `func_8008E1BC` | `func_8001D6D0`, `func_8001D90C` |
 | `gWaitSio0AckClear` (`func_8008ADB4`) | 144 | Platform > Hardware Synchronization | `func_8008C8B0` | `func_8008A8E0`, `func_8008BA34` |
-| `func_8008D7DC` | 144 | BIOS > System Calls · Interrupts | `func_8008C9B0`, `func_8008D7B0`, `func_8008D964`, `func_8008DAF0`, `func_8008DB28`, `func_8008DBB0` | - |
-| `func_8008D86C` | 144 | BIOS > System Calls · Interrupts | `func_8008C9B0`, `func_8008D7B0`, `func_8008D964`, `func_8008DAC0`, `func_8008DB28`, `func_8008DBB0` | - |
-| `func_8008DEA0` | 144 | Platform > CD-ROM · Device Init | `func_8008DF30`, `func_8008E000` | `func_8001C808`, `func_8001D130`, `func_80076EB0` |
+| `gInitPadB015WithIrq` (`func_8008D7DC`) | 144 | BIOS > System Calls · Interrupts | `func_8008C9B0`, `func_8008D7B0`, `func_8008D964`, `func_8008DAF0`, `func_8008DB28`, `func_8008DBB0` | - |
+| `gInitPadB012WithIrq` (`func_8008D86C`) | 144 | BIOS > System Calls · Interrupts | `func_8008C9B0`, `func_8008D7B0`, `func_8008D964`, `func_8008DAC0`, `func_8008DB28`, `func_8008DBB0` | - |
+| `gStartCdInit` (`func_8008DEA0`) | 144 | Platform > CD-ROM · Device Init | `func_8008DF30`, `func_8008E000` | `func_8001C808`, `func_8001D130`, `func_80076EB0` |
 | `gStartMdecBlockTransfer` (`func_80096240`) | 144 | Platform > MDEC · DMA | `func_8009635C` | `func_80095F50`, `func_80095FF4`, `func_80096150` |
-| `func_8008DCE8` | 148 | Platform > CD-ROM · Hardware Init | `func_8008DBA0` | `func_8008D6E0` |
+| `gCopyCardPatchTable` (`func_8008DCE8`) | 148 | Platform > CD-ROM · Hardware Init | `func_8008DBA0` | `func_8008D6E0` |
 | `gMdecWaitInSync` (`func_8009635C`) | 148 | Platform > MDEC · DMA | `func_8009649C` | `func_80096090`, `func_80096240` |
 | `gMdecWaitOutSync` (`func_800963F0`) | 148 | Platform > MDEC · DMA | `func_8009649C` | `func_800960CC`, `func_800962D0` |
 | `gResetCdReadState` (`func_8001C680`) | 152 | Platform > Memory Card · Serial Port | `func_8008CC80`, `func_8008E174`, `func_8008E1BC`, `func_8008E2F8` | `func_8001C808` |
 | `func_80077340` | 152 | Platform > Interrupts · Exception Vector | `func_8008C9E0` | - |
 | `func_80092EA0` | 152 | Platform > GPU · Debug Validation | `func_80092CF4` | - |
 | `gCheckTimer2Timeout` (`func_8008C8B0`) | 160 | Platform > Timer · Controller | - | `func_8008A9A8`, `func_8008AB80`, `func_8008ADB4` |
-| `func_80091A04` | 160 | Platform > Hardware State | `func_80091B70` | - |
+| `gStopIrqSubsystem` (`func_80091A04`) | 160 | Platform > Hardware State | `func_80091B70` | - |
 | `func_80095350` | 160 | Platform > GPU · Display Setup | - | `func_80094F4C` |
-| `func_800904DC` | 164 | Platform > CD-ROM · File Access | `func_8008CCA0` | `func_8008FF20` |
+| `gFindCdPathDir` (`func_800904DC`) | 164 | Platform > CD-ROM · File Access | `func_8008CCA0` | `func_8008FF20` |
 | `func_80092AE0` | 164 | Platform > State Control | `func_800914E0` | - |
 | `func_80097808` | 164 | Platform > Audio | - | `func_80098BB8`, `func_80098EE8`, `func_80099368`, `func_80099C58` |
 | `func_80020F34` | 168 | Platform > Memory Card · Save Data | `func_8001E318`, `func_8008CCC0` | `func_80020FDC` |
@@ -4619,13 +4619,13 @@ graph LR
 | `func_80020E68` | 204 | Platform > Memory Card · Save Data | `func_800207CC`, `func_80020DF8` | `func_80020FDC`, `func_8007FB04` |
 | `gInitPadDriverIrq` (`func_8008A5BC`) | 204 | Platform > Controller Input · System Calls, Interrupts | `func_8008C9B0`, `func_8008CA00`, `func_8008CA10`, `func_8008CA20` | `func_80089E00` |
 | `func_8002A16C` | 208 | Platform > Sound · Streaming Audio | `func_80045288` | `func_8002902C`, `func_8002A26C`, `func_80047690`, `func_80080984` |
-| `func_80090B48` | 208 | Platform > CD-ROM · Interrupts, DMA | `func_8008E194`, `func_8008E1A8`, `func_8008E2F8`, `func_8008E5D8` | - |
+| `gCdDmaCompleteCb` (`func_80090B48`) | 208 | Platform > CD-ROM · Interrupts, DMA | `func_8008E194`, `func_8008E1A8`, `func_8008E2F8`, `func_8008E5D8` | - |
 | `func_80023CA4` | 212 | Platform > Requests | `func_800212F8` | `func_8002902C` |
 | `func_8007F750` | 212 | Platform > Save Data | `func_8007F824` | `func_8007FB04` |
-| `func_8008F6D8` | 212 | Platform > CD-ROM > Control | - | `func_8008E0B8`, `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008FAC8` |
+| `gResetCdHardware` (`func_8008F6D8`) | 212 | Platform > CD-ROM > Control | - | `func_8008E0B8`, `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008FAC8` |
 | `gSendPadCmdHeader` (`func_8008B810`) | 216 | Platform > Dispatch | `func_8008AB80` | - |
-| `func_8008FE28` | 216 | Platform > Event Dispatch | `func_8008E7A0` | - |
-| `func_80091614` | 216 | Platform > Initialization | `func_8008C9B0`, `func_800916EC`, `func_80091B1C`, `func_80091B48`, `func_80091B80`, `func_80091B90`, `func_80091BA0`, `func_80091CC0` | - |
+| `gCdIrqCallback` (`func_8008FE28`) | 216 | Platform > Event Dispatch | `func_8008E7A0` | - |
+| `gInitIrqSubsystem` (`func_80091614`) | 216 | Platform > Initialization | `func_8008C9B0`, `func_800916EC`, `func_80091B48`, `func_80091B80`, `func_80091B90`, `func_80091BA0`, `func_80091CC0` | - |
 | `gDrawOTagEnv` (`func_800933B0`) | 216 | Platform > GPU · 2D Drawing | `func_8008CD10`, `func_80093CE8` | - |
 | `func_800453B8` | 220 | Platform > Audio | `func_80044EF8`, `func_8004582C`, `func_80046AD8` | `func_80044F8C` |
 | `gMcErrorCallbackB` (`func_8001FF44`) | 224 | Platform > State | `func_8008D640` | - |
@@ -4634,22 +4634,22 @@ graph LR
 | `gSpuInitSubsystem` (`func_80096D58`) | 232 | Platform > Sound > Init · SPU | `func_80091480`, `func_80096E40`, `func_80096EB8`, `func_800977C4` | `func_80097A28` |
 | `gOpenFileInSearchGroup` (`func_8001D5E4`) | 236 | Platform > CD-ROM · File Access | `func_8001CE10`, `func_8001D424` | `func_8001E110`, `func_80029F50` |
 | `func_80046F9C` | 236 | Platform > Sound > SE · Voice Allocation | - | `func_80046C84`, `func_80046CF0`, `func_80047284` |
-| `func_8008FD30` | 236 | Platform > Hardware Transfer | - | `func_8008E5B8` |
+| `gStartCdDmaAsync` (`func_8008FD30`) | 236 | Platform > Hardware Transfer | - | `func_8008E5B8` |
 | `func_800953F0` | 236 | Platform > GPU · Debug Validation | `func_80091270`, `func_800914E0`, `func_80092CF4`, `func_8009520C` | `func_800824CC` |
 | `func_800954DC` | 236 | Platform > GPU · Debug Validation | `func_80091270`, `func_800914E0`, `func_80092CF4`, `func_8009520C` | - |
 | `gStartCdDirRead` (`func_8001C718`) | 240 | Platform > Memory Card · File Access | `func_8001C494`, `func_8008CC80`, `func_8008E174`, `func_8008E194`, `func_8008E1BC`, `func_8008E2F8` | `func_8001C808` |
 | `gToggleVibrationPair` (`func_8007C940`) | 240 | Platform > Controller Input | `func_8001E96C`, `func_8001EAEC`, `func_8001EB2C`, `func_8001EC04`, `func_8001EF34`, `func_80046C84` | - |
 | `gCdStreamService` (`func_800895E4`) | 240 | Platform > Device Service · Audio | `func_8008C9E0`, `func_8008E154`, `func_8008E194`, `func_8008E1A8`, `func_8008E42C` | `func_80089700` |
-| `func_8008F7AC` | 240 | Platform > Hardware Registers | - | `func_8008DF30`, `func_8008E04C` |
+| `gInitCdAudioMix` (`func_8008F7AC`) | 240 | Platform > Hardware Registers | - | `func_8008DF30`, `func_8008E04C` |
 | `func_80096150` | 240 | Platform > MDEC · Video Decode | `func_8008E000`, `func_80096240` | `func_80095E90` |
 | `gByteOffsetToCdlLoc` (`func_8001C494`) | 244 | Platform > CD-ROM | - | `func_8001C718`, `func_8001CE54`, `func_8001D0A0` |
 | `func_80020FDC` | 244 | Platform > Memory Card · Save Data | `func_8001F24C`, `func_8001F2E0`, `func_8001F37C`, `func_80020C90`, `func_80020E68`, `func_80020F34`, `func_8008CD30` | `func_80080B70` |
 | `gMovieAudioSetVoiceAttrs` (`func_80086C74`) | 256 | Platform > Audio | `func_800452C8`, `func_80098FE8`, `func_80099368` | `func_80087824` |
-| `func_8008FC30` | 256 | Platform > Hardware Transfer | - | `func_8008E598` |
+| `gReadCdDmaSync` (`func_8008FC30`) | 256 | Platform > Hardware Transfer | - | `func_8008E598` |
 | `gMcErrorCallbackA` (`func_8001FE40`) | 260 | Platform > State Management | `func_8008D640` | - |
 | `func_8008684C` | 260 | Platform > Audio Transfer | `func_80098E88`, `func_80098EE8`, `func_80098F48` | `func_80086954` |
-| `func_8008E61C` | 260 | Platform > CD-ROM · Time Conversion | - | `func_800889DC`, `func_80090580`, `func_8009081C` |
-| `func_8009113C` | 260 | Platform > Device Polling | `func_8008E174`, `func_80090C18`, `func_80091270` | `func_8009081C` |
+| `gCdIntToPos` (`func_8008E61C`) | 260 | Platform > CD-ROM · Time Conversion | - | `func_800889DC`, `func_80090580`, `func_8009081C` |
+| `gCdReadSync` (`func_8009113C`) | 260 | Platform > Device Polling | `func_8008E174`, `func_80090C18`, `func_80091270` | `func_8009081C` |
 | `gReadFileSlotBlocking` (`func_8001E004`) | 268 | Platform > CD-ROM · File Access | `func_8001D3A8`, `func_8001D90C` | `func_8001E110` |
 | `func_80046E88` | 276 | Platform > Sound > Voices | `func_80045494`, `func_800458E8`, `func_800460D4`, `func_80046698`, `func_80046B04`, `func_8004772C` | `func_80025E18`, `func_80047088`, `func_800471C4`, `func_8007CACC` |
 | `gProbeCdDriveMode` (`func_8001D130`) | 280 | Platform > Device Service | `func_8008DEA0`, `func_8008E1A8`, `func_8008E1BC`, `func_800914B0` | `func_8001D248` |
@@ -4657,42 +4657,42 @@ graph LR
 | `func_80088770` | 284 | Platform > Device Command Queue | `func_8008C9E0`, `func_8008E1BC` | - |
 | `func_80020B64` | 300 | Platform > Memory Card · Save Data | `func_8001F180`, `func_80020B28` | `func_8008204C` |
 | `gInitRuntime` (`func_80076EB0`) | 304 | Platform > System Init · Boot, Resources, Graphics | `func_80017BE8`, `func_8001BF78`, `func_8001BFE4`, `func_8001C040`, `func_8001C088`, `func_8001D248`, `func_8001E240`, `func_8001E4E4`, `func_8001F0B8`, `func_8002333C`, `func_8008CA30`, `func_8008DEA0` | `func_80076A2C` |
-| `func_8008E2F8` | 308 | Platform > File Service | `func_8008F244` | `func_8001C680`, `func_8001C718`, `func_8008888C`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00` |
+| `gCdControlF` (`func_8008E2F8`) | 308 | Platform > File Service | `func_8008F244` | `func_8001C680`, `func_8001C718`, `func_8008888C`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00` |
 | `func_80047088` | 316 | Platform > Audio · Music | `func_800243F8`, `func_80046C84`, `func_80046E88` | `func_80047554`, `func_800549F0` |
 | `gSoundHaltAllVoices` (`func_80047554`) | 316 | Platform > Sound > Shutdown · Voices, SPU | `func_80021B90`, `func_80021BD0`, `func_80023E84`, `func_80024630`, `func_80046698`, `func_80047088`, `func_800474F0` | `func_80047690`, `func_800476D0` |
-| `func_8008E1BC` | 316 | Platform > CD-ROM | `func_8008F244` | `func_8001C680`, `func_8001C718`, `func_8001C808`, `func_8001CE54`, `func_8001D0A0`, `func_8001D130`, `func_800886E4`, `func_80088770`, `func_8009081C`, `func_80090C18` |
+| `gCdControl` (`func_8008E1BC`) | 316 | Platform > CD-ROM | `func_8008F244` | `func_8001C680`, `func_8001C718`, `func_8001C808`, `func_8001CE54`, `func_8001D0A0`, `func_8001D130`, `func_800886E4`, `func_80088770`, `func_8009081C`, `func_80090C18` |
 | `func_8009509C` | 316 | Platform > Hardware Synchronization | `func_80094CEC`, `func_800951D8`, `func_8009520C` | - |
 | `gSpuSetIrqEnable` (`func_80098A78`) | 316 | Platform > SPU Transfer | `func_8008E000` | `func_80022F44`, `func_80022F7C`, `func_80022FA8`, `func_80087750` |
 | `func_80025E18` | 320 | Platform > Sound > Voices · Options Menu | `func_80046A34`, `func_80046A58`, `func_80046E88`, `func_80047800` | `func_800260B8` |
 | `func_8009520C` | 324 | Platform > CD-ROM > Streaming · Error Handling | `func_8008E000`, `func_80091270`, `func_800915FC` | `func_8009415C`, `func_8009446C`, `func_800946A8`, `func_80094A3C`, `func_8009509C`, `func_800953F0`, `func_800954DC`, `func_800955C8`, `func_8009570C` |
 | `func_800955C8` | 324 | Platform > GPU · Debug Validation | `func_80091270`, `func_800914E0`, `func_80092CF4`, `func_8009520C` | - |
-| `func_800918BC` | 328 | Platform > Hardware Control | `func_8008CA20`, `func_8008D7B0` | - |
-| `func_8008E42C` | 332 | Platform > CD-ROM | `func_8008ECFC`, `func_8008F244` | `func_800895E4`, `func_80090FA0` |
+| `gSetIrqSlotEnable` (`func_800918BC`) | 328 | Platform > Hardware Control | `func_8008CA20`, `func_8008D7B0` | - |
+| `gCdControlB` (`func_8008E42C`) | 332 | Platform > CD-ROM | `func_8008ECFC`, `func_8008F244` | `func_800895E4`, `func_80090FA0` |
 | `gMcRetryTimeoutA` (`func_8001F818`) | 336 | Platform > Asynchronous Operations | `func_8008D640`, `func_8008D670`, `func_8008D680` | - |
 | `gMcRetryTimeoutB` (`func_8001F968`) | 336 | Platform > Asynchronous Operations | `func_8008D640`, `func_8008D670`, `func_8008D680` | - |
 | `func_80094F4C` | 336 | Platform > Hardware Init | `func_800915FC`, `func_80095350`, `func_80095830` | `func_80092910` |
 | `gMovieAudioStart` (`func_80086DB4`) | 340 | Platform > Audio | - | `func_800879DC` |
 | `gInitCdFileSystem` (`func_8001D248`) | 352 | Platform > CD-ROM · Device Init | `func_8001D130` | `func_8001CE10`, `func_80076EB0` |
 | `gTranslatePadButtons` (`func_800576A8`) | 356 | Platform > Controller Input · Remapping | - | `func_800267C8`, `func_800588D4` |
-| `func_8008FAC8` | 360 | Platform > Device Wait · Memory Card | `func_8008E000`, `func_8008F6D8`, `func_8008FF08`, `func_80091270` | `func_8008E5FC` |
+| `gWaitCdDmaComplete` (`func_8008FAC8`) | 360 | Platform > Device Wait · Memory Card | `func_8008E000`, `func_8008F6D8`, `func_8008FF08`, `func_80091270` | `func_8008E5FC` |
 | `func_80046698` | 364 | Platform > Sound > Voices · Memory Pools | `func_800243F8`, `func_80046804` | `func_800457B8`, `func_80046A34`, `func_80046B04`, `func_80046E88`, `func_80047554` |
 | `func_80092910` | 372 | Platform > GPU > Library Reset · Display Setup | `func_8008E000`, `func_80091480`, `func_80094F4C`, `func_80095830` | `func_8001BE68`, `func_800773D8`, `func_8007757C` |
 | `gInitMovieAudio` (`func_80087824`) | 376 | Platform > Sound > Init · SPU | `func_80086C74`, `func_8008C9E0`, `func_80091510`, `func_80098BF8`, `func_80098FB8` | - |
 | `func_80046B04` | 384 | Platform > Audio · Resource Pools | `func_8004665C`, `func_80046698`, `func_80046870` | `func_800228F4`, `func_80046A58`, `func_80046AD8`, `func_80046E88` |
 | `func_80091D0C` | 384 | Platform > DMA Interrupts | `func_8008E000` | - |
 | `func_80046CF0` | 408 | Platform > Sound > SE · Weapons | `func_80045494`, `func_80046F9C` | `func_8006B23C`, `func_8006C488` |
-| `func_80090FA0` | 412 | Platform > CD-ROM · File Access | `func_8008E010`, `func_8008E194`, `func_8008E1A8`, `func_8008E42C`, `func_8008E5D8`, `func_80090C18`, `func_80091270` | `func_8009081C` |
-| `func_80090E00` | 416 | Platform > CD-ROM · Interrupts | `func_8008E194`, `func_8008E1A8`, `func_8008E2F8`, `func_8008E5D8`, `func_8008E5FC`, `func_80091270` | - |
+| `gCdReadAsync` (`func_80090FA0`) | 412 | Platform > CD-ROM · File Access | `func_8008E010`, `func_8008E194`, `func_8008E1A8`, `func_8008E42C`, `func_8008E5D8`, `func_80090C18`, `func_80091270` | `func_8009081C` |
+| `gAbortCdRead` (`func_80090E00`) | 416 | Platform > CD-ROM · Interrupts | `func_8008E194`, `func_8008E1A8`, `func_8008E2F8`, `func_8008E5D8`, `func_8008E5FC`, `func_80091270` | - |
 | `func_800538C8` | 428 | Platform > Controller Input · Analog | `func_8001E7B8` | `func_80053A74`, `func_800549F0` |
 | `func_80098C68` | 444 | Platform > Device Control | - | `func_80021E1C` |
 | `gOpenCdFileSlot` (`func_8001D424`) | 448 | Platform > CD-ROM · File Access | `func_8001C478`, `func_8001C588`, `func_8001CE10`, `func_8001DC48`, `func_8008FF20` | `func_8001D5E4`, `func_8001E110` |
 | `gSpuWriteMemBlock` (`func_80097138`) | 448 | Platform > SPU · Sound | `func_8008E000`, `func_80097990` | `func_80096EB8`, `func_800976DC` |
 | `gReleaseMcEvents` (`func_8002036C`) | 452 | Platform > Device Service · Resource Release | `func_8008C970`, `func_8008C990`, `func_8008C9E0` | `func_8002078C` |
-| `func_800916EC` | 464 | Platform > Interrupt Dispatch | `func_8008E000`, `func_80091B60` | `func_80091614` |
+| `gDispatchIrqs` (`func_800916EC`) | 464 | Platform > Interrupt Dispatch | `func_8008E000`, `func_80091B60` | `func_80091614` |
 | `gExchangeSio0Byte` (`func_8008A9A8`) | 472 | Platform > Serial I/O | `func_8008C8B0` | `func_8008B7D0`, `func_8008BA34` |
 | `func_80083834` | 476 | Platform > Sound > Sequencing · Frame | - | `func_80083A10` |
-| `func_8008F8E8` | 480 | Platform > CD-ROM · Interrupts | `func_8008E000`, `func_8008ECFC`, `func_8008F244`, `func_8008FF08`, `func_80091480`, `func_800914B0` | `func_8008DF30`, `func_8008E04C` |
-| `func_80090C18` | 488 | Platform > CD-ROM · File Access | `func_8008E010`, `func_8008E020`, `func_8008E040`, `func_8008E0B8`, `func_8008E194`, `func_8008E1A8`, `func_8008E1BC`, `func_8008E2F8`, `func_8008E5D8`, `func_8008E720`, `func_8008FF08`, `func_80091270` | `func_800908D4`, `func_80090FA0`, `func_8009113C` |
+| `gInitCdSubsystem` (`func_8008F8E8`) | 480 | Platform > CD-ROM · Interrupts | `func_8008E000`, `func_8008ECFC`, `func_8008F244`, `func_8008FF08`, `func_80091480`, `func_800914B0` | `func_8008DF30`, `func_8008E04C` |
+| `gStartCdSectorRead` (`func_80090C18`) | 488 | Platform > CD-ROM · File Access | `func_8008E010`, `func_8008E020`, `func_8008E040`, `func_8008E0B8`, `func_8008E194`, `func_8008E1A8`, `func_8008E1BC`, `func_8008E2F8`, `func_8008E5D8`, `func_8008E720`, `func_8008FF08`, `func_80091270` | `func_800908D4`, `func_80090FA0`, `func_8009113C` |
 | `func_800460D4` | 508 | Platform > Sound · Vector | `func_8001A578` | `func_800450A4`, `func_80046E88` |
 | `gBeginPadSioTransfer` (`func_8008A6CC`) | 532 | Platform > Serial I/O | `func_8008AE44`, `func_8008C890` | `func_8008A43C`, `func_8008BF78` |
 | `func_80029F50` | 540 | Platform > CD-ROM > Streaming · Init | `func_80017EBC`, `func_800194DC`, `func_8001D5E4` | `func_80024904`, `func_80024A24` |
@@ -4704,31 +4704,31 @@ graph LR
 | `func_80094CEC` | 608 | Platform > Hardware Init · Image Transfer | `func_800914E0`, `func_800915FC` | `func_80094A3C`, `func_8009509C` |
 | `gMcDispatchStep` (`func_8001FAB8`) | 624 | Platform > Device I/O | `func_8001E318`, `func_8008D640`, `func_8008D650`, `func_8008D670`, `func_8008D680` | - |
 | `gBuildRectDrawList` (`func_80093CE8`) | 624 | Platform > GPU · GPU Command Lists, 2D Drawing | `func_80093F58`, `func_80093F78`, `func_80094010`, `func_800940C4` | `func_800932F0`, `func_800933B0` |
-| `func_800908D4` | 628 | Platform > CD-ROM · File Access | `func_8008E194`, `func_8008E1A8`, `func_8008E2F8`, `func_8008E598`, `func_8008E5B8`, `func_8008E5D8`, `func_8008E5FC`, `func_8008E720`, `func_8008FF08`, `func_80090C18`, `func_80091270` | - |
-| `func_8008ECFC` | 640 | Platform > CD-ROM · Interrupts | `func_8008E000`, `func_8008E7A0`, `func_8008F6D8`, `func_8008FF08`, `func_80091270`, `func_800915D4` | `func_8008E154`, `func_8008E42C`, `func_8008F244`, `func_8008F8E8` |
+| `gCdDataReadyCallback` (`func_800908D4`) | 628 | Platform > CD-ROM · File Access | `func_8008E194`, `func_8008E1A8`, `func_8008E2F8`, `func_8008E598`, `func_8008E5B8`, `func_8008E5D8`, `func_8008E5FC`, `func_8008E720`, `func_8008FF08`, `func_80090C18`, `func_80091270` | - |
+| `gCdSyncLoop` (`func_8008ECFC`) | 640 | Platform > CD-ROM · Interrupts | `func_8008E000`, `func_8008E7A0`, `func_8008F6D8`, `func_8008FF08`, `func_80091270`, `func_800915D4` | `func_8008E154`, `func_8008E42C`, `func_8008F244`, `func_8008F8E8` |
 | `gSpuResetHardware` (`func_80096EB8`) | 640 | Platform > Sound · SPU | `func_8008E000`, `func_80097138`, `func_80097990` | `func_80096D58` |
 | `gSpuTransfer` (`func_8009745C`) | 640 | Platform > SPU Transfer | - | `func_800976DC`, `func_80097760` |
-| `func_80090580` | 668 | Platform > CD-ROM · File Access | `func_8008CD10`, `func_8008E000`, `func_8008E61C`, `func_8009081C` | `func_8008FF20` |
+| `gCacheCdDirSector` (`func_80090580`) | 668 | Platform > CD-ROM · File Access | `func_8008CD10`, `func_8008E000`, `func_8008E61C`, `func_8009081C` | `func_8008FF20` |
 | `func_80094A3C` | 688 | Platform > GPU · Command Queue | `func_800914E0`, `func_800915FC`, `func_80094CEC`, `func_800951D8`, `func_8009520C` | `func_80094A18` |
 | `func_800987B8` | 700 | Platform > Register State | - | `func_80098788` |
-| `func_80090218` | 708 | Platform > CD-ROM · File Access | `func_8008CD10`, `func_8008E000`, `func_8009081C`, `func_80090890` | `func_8008FF20` |
-| `func_8008EF7C` | 712 | Platform > CD-ROM > Control | `func_8008E000`, `func_8008E7A0`, `func_8008F6D8`, `func_8008FF08`, `func_80091270`, `func_800915D4` | `func_8008E174` |
+| `gCdReadPathTable` (`func_80090218`) | 708 | Platform > CD-ROM · File Access | `func_8008CD10`, `func_8008E000`, `func_8009081C`, `func_80090890` | `func_8008FF20` |
+| `gCdReadyLoop` (`func_8008EF7C`) | 712 | Platform > CD-ROM > Control | `func_8008E000`, `func_8008E7A0`, `func_8008F6D8`, `func_8008FF08`, `func_80091270`, `func_800915D4` | `func_8008E174` |
 | `func_800207CC` | 720 | Platform > Memory Card · Save Data | `func_8001E318` | `func_80020C90`, `func_80020DF8`, `func_80020E68` |
-| `func_8008FF20` | 728 | Platform > CD-ROM · File Access | `func_8008E000`, `func_800901F8`, `func_80090218`, `func_800904DC`, `func_80090580` | `func_8001D424` |
+| `gCdSearchFile` (`func_8008FF20`) | 728 | Platform > CD-ROM · File Access | `func_8008E000`, `func_800901F8`, `func_80090218`, `func_800904DC`, `func_80090580` | `func_8001D424` |
 | `func_80089018` | 748 | Platform > Buffered Transfers | - | `func_80089304` |
 | `gHandleMusicPreviewMenu` (`func_8007CACC`) | 824 | Platform > Sound > Music · Menu Navigation | `func_800451F8`, `func_8004522C`, `func_80045238`, `func_80045288`, `func_80045294`, `func_800452C8`, `func_80046A34`, `func_80046A58`, `func_80046E88`, `func_80047800` | - |
 | `gRunPadTransfer` (`func_8008BA34`) | 892 | Platform > Device I/O | `func_8008A9A8`, `func_8008AB80`, `func_8008ADB4`, `func_8008AE44`, `func_8008C890` | - |
 | `gSpuSetCommonAttributes` (`func_80098FE8`) | 892 | Platform > SPU · Sound | - | `func_80021824`, `func_80086C74` |
 | `gMcTransferCallback` (`func_8001F394`) | 1008 | Platform > Block Transfer | `func_8001E318`, `func_8008D640`, `func_8008D670`, `func_8008D680` | - |
-| `func_8008F244` | 1036 | Platform > CD-ROM | `func_8008E000`, `func_8008E7A0`, `func_8008ECFC`, `func_8008F6D8`, `func_8008FF08`, `func_80091270`, `func_800915D4` | `func_8008E1BC`, `func_8008E2F8`, `func_8008E42C`, `func_8008F8E8` |
+| `gIssueCdCommand` (`func_8008F244`) | 1036 | Platform > CD-ROM | `func_8008E000`, `func_8008E7A0`, `func_8008ECFC`, `func_8008F6D8`, `func_8008FF08`, `func_80091270`, `func_800915D4` | `func_8008E1BC`, `func_8008E2F8`, `func_8008E42C`, `func_8008F8E8` |
 | `gCdSectorCallback` (`func_8001C808`) | 1124 | Platform > CD-ROM · File Access | `func_8001C288`, `func_8001C588`, `func_8001C680`, `func_8001C718`, `func_8008CD10`, `func_8008DEA0`, `func_8008E0D8`, `func_8008E1A8`, `func_8008E1BC`, `func_8008E598`, `func_800914B0` | - |
 | `func_800889DC` | 1316 | Platform > Disc Location | `func_8008E61C`, `func_8008E720` | - |
-| `func_8008E7A0` | 1372 | Platform > CD-ROM · Interrupts | `func_8008E000`, `func_8008FF08` | `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008FE28` |
+| `gCdDrainIrqEvent` (`func_8008E7A0`) | 1372 | Platform > CD-ROM · Interrupts | `func_8008E000`, `func_8008FF08` | `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008FE28` |
 | `gSpuSetVoiceAttributesOne` (`func_80099C58`) | 1488 | Platform > SPU Audio | `func_80097808`, `func_800999F4` | `func_80021AD0`, `func_800222CC` |
 | `gSpuSetVoiceAttributes` (`func_80099368`) | 1528 | Platform > Audio | `func_80097808`, `func_800999F4` | `func_80021B90`, `func_80021BD0`, `func_80086C74` |
 | `func_800458E8` | 2028 | Platform > Sound · Vector Length | `func_8001A074` | `func_800450A4`, `func_80046E88` |
 
-### Utilities - 110 functions, 28 calls inside the area
+### Utilities - 109 functions, 28 calls inside the area
 
 Mathematics (vector length, fixed point, reciprocal tables) and the lagged-Fibonacci RNG over `D_800A0480`, used by the renderer and the effects.
 
@@ -4798,7 +4798,7 @@ graph LR
     f80096748["80096748"]
 ```
 
-78 further functions of this area without a documented connection (see the table below): `func_80018534`, `func_80018580`, `func_80019470`, `func_800195F0`, `func_80019668`, `func_800196C4`, `func_800198DC`, `func_80019FCC`, `func_8001A4E8`, `func_8001A6F8`, `func_8001A750`, `func_8001A81C`, `func_8001A970`, `func_8001AB00`, `func_8001AB78`, `func_8001AC28`, `func_8001ACA4`, `func_8001AD20`, `func_8001AE14`, `func_8001AF08`, `func_8001BE40`, `func_8001BE48`, `func_8001BE50`, `func_8001BE58`, `func_8001C288`, `func_8001E304`, `func_8001E318`, `func_8001E44C`, `func_80021740`, `func_80022B84`, `func_80028BA0`, `func_8003B65C`, `func_800403D0`, `func_80048E94`, `func_80049EF8`, `func_8004AAC0`, `func_8004DA58`, `func_8004F00C`, `func_8004F08C`, `func_8004F09C`, `func_800607B8`, `func_80069A38`, `func_800780C0`, `func_8007D39C`, `func_8007E8D8`, `func_8008731C`, `func_800886C8`, `func_800896D4`, `func_8008CA90`, `func_8008CB40`, `func_8008CC90`, `func_8008CCA0`, `func_8008CCB0`, `func_8008CCD0`, `func_8008CCF0`, `func_8008CD30`, `func_8008E000`, `func_80091B1C`, `func_80091C90`, `func_80091F38`, `func_80092324`, `func_80092340`, `func_800923D4`, `func_800923F8`, `func_80092410`, `func_80092438`, `func_80092578`, `func_8009258C`, `func_800925A0`, `func_8009272C`, `func_80092764`, `func_80092868`, `func_8009494C`, `func_80095830`, `func_800978AC`, `func_80099968`, `func_800999F4`, `func_80099B2C`.
+77 further functions of this area without a documented connection (see the table below): `func_80018534`, `func_80018580`, `func_80019470`, `func_800195F0`, `func_80019668`, `func_800196C4`, `func_800198DC`, `func_80019FCC`, `func_8001A4E8`, `func_8001A6F8`, `func_8001A750`, `func_8001A81C`, `func_8001A970`, `func_8001AB00`, `func_8001AB78`, `func_8001AC28`, `func_8001ACA4`, `func_8001AD20`, `func_8001AE14`, `func_8001AF08`, `func_8001BE40`, `func_8001BE48`, `func_8001BE50`, `func_8001BE58`, `func_8001C288`, `func_8001E304`, `func_8001E318`, `func_8001E44C`, `func_80021740`, `func_80022B84`, `func_80028BA0`, `func_8003B65C`, `func_800403D0`, `func_80048E94`, `func_80049EF8`, `func_8004AAC0`, `func_8004DA58`, `func_8004F00C`, `func_8004F08C`, `func_8004F09C`, `func_800607B8`, `func_80069A38`, `func_800780C0`, `func_8007D39C`, `func_8007E8D8`, `func_8008731C`, `func_800886C8`, `func_800896D4`, `func_8008CA90`, `func_8008CB40`, `func_8008CC90`, `func_8008CCA0`, `func_8008CCB0`, `func_8008CCD0`, `func_8008CCF0`, `func_8008CD30`, `func_8008E000`, `func_80091C90`, `func_80091F38`, `func_80092324`, `func_80092340`, `func_800923D4`, `func_800923F8`, `func_80092410`, `func_80092438`, `func_80092578`, `func_8009258C`, `func_800925A0`, `func_8009272C`, `func_80092764`, `func_80092868`, `func_8009494C`, `func_80095830`, `func_800978AC`, `func_80099968`, `func_800999F4`, `func_80099B2C`.
 
 | Function | Bytes | Categories | calls (documented) | called by (documented) |
 |---|---|---|---|---|
@@ -4828,7 +4828,6 @@ graph LR
 | `func_800886C8` | 28 | Utilities > Math | - | - |
 | `func_80092324` | 28 | Utilities > Bit Manipulation | - | - |
 | `func_80092340` | 28 | Utilities > Bit Manipulation | - | - |
-| `func_80091B1C` | 36 | Utilities > Memory | - | `func_80091614` |
 | `func_80091C90` | 36 | Utilities > Memory | - | `func_80091BA0` |
 | `func_80091F38` | 36 | Utilities > Memory | - | `func_80091CC0` |
 | `func_800923D4` | 36 | Utilities > Bit Manipulation | - | - |
@@ -5011,7 +5010,7 @@ Stage order (measured): matrix load (`func_80010750` / `func_80010820`) - batch 
 ## Limits of the map
 
 - **No documented caller (396):** `func_8001016C`, `func_800102A0`, `func_8001054C`, `func_80010630`, `func_8001072C`, `func_800108D8`, `func_80015B68`, `func_80015F38`, `func_80016E6C`, `func_8001BBEC`, `func_8001BC64`, `func_8001BCD0`, `func_8001BD70`, `func_8001BDE4`, `func_8001BE40`, `func_8001BE48` ... (+380)
-- **No documented call (727):** `func_8001006C`, `func_8001010C`, `func_8001016C`, `func_800101D4`, `func_80010234`, `func_800102A0`, `func_8001047C`, `func_8001054C`, `func_80010630`, `func_80010704`, `func_8001072C`, `func_80010750`, `func_80010820`, `func_800108D8`, `func_80010974`, `func_80012E1C` ... (+711)
+- **No documented call (726):** `func_8001006C`, `func_8001010C`, `func_8001016C`, `func_800101D4`, `func_80010234`, `func_800102A0`, `func_8001047C`, `func_8001054C`, `func_80010630`, `func_80010704`, `func_8001072C`, `func_80010750`, `func_80010820`, `func_800108D8`, `func_80010974`, `func_80012E1C` ... (+710)
 These are entry points and leaves of the documented part; their counterparts lie outside this set or are reached indirectly.
 
 - **Most called (hubs):**

@@ -7,6 +7,8 @@ struct CallbackTable {
 };
 
 extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
+void gResetIrqDispatch(void) __asm__("func_80091480");
+
 
 /**
  * @brief Dispatches the registered display/VBlank callback.
@@ -20,8 +22,13 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  * @par Likely role
  * The hook the library calls from its interrupt handler; the callback slot is
  * what the game's frame code installs.
+ *
+ * @par Role and path
+ * Invokes the fourth function pointer (offset +0x0C) in the interrupt
+ * callback table D_8009DD10 with no arguments. Called by func_8008F89C and
+ * func_8008F8E8 during CD-ROM subsystem initialization and callback reset.
  */
-void func_80091480(void)
+void gResetIrqDispatch(void)
 {
     gIrqCallbackTable->callback();
 }

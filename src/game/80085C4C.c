@@ -13,7 +13,10 @@ extern void *gFillMemory(void *, int, unsigned int) __asm__("func_8001E4C0");
 extern void func_80085AC4(int,int);
 extern void gSetDefDrawEnv(void *,int,int,int,int) __asm__("func_80092140");
 extern void gSetDefDispEnv(void *,int,int,int,int) __asm__("func_800921F4");
-extern void func_80091270(int), func_800932F0(void *), func_80092BF4(int), func_80095E90(int);
+extern void gVSyncWait(int) __asm__("func_80091270");
+extern void func_800932F0(void *);
+extern void func_80092BF4(int);
+extern void func_80095E90(int);
 extern void gPutDispEnvCached(void *) __asm__("func_800934BC");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
@@ -132,7 +135,7 @@ int gMovieInitContext(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, in
  gMovieSliceContext->fc=0; gMovieSliceContext->f110=0;
  gMovieSliceContext->f114=0; *(s16 *)((u8 *)gMovieSliceContext+0xf6)=0; gMovieSliceContext->f10a=0;
  if (a6) {
-  func_80091270(0);
+  gVSyncWait(0);
   func_800932F0((u8 *)gMovieSliceContext+0x34+(1-gMovieSliceContext->f114)*92);
   gPutDispEnvCached((u8 *)gMovieSliceContext+0xec+(1-gMovieSliceContext->f114)*20);
   func_80092BF4(1);

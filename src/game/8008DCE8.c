@@ -6,6 +6,8 @@ extern u32 D_8008DCD4[];
 extern s32 D_800A3E30;
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void func_8008DBA0(void);
+void gCopyCardPatchTable(void) __asm__("func_8008DCE8");
+
 
 /**
  * @brief Writes a prepared CD driver table into the kernel base block.
@@ -31,8 +33,15 @@ extern void func_8008DBA0(void);
  *
  * @par Callers
  * Confirmed: func_8008D784 (driver init pair). Likely: func_8008DD7C (same shape).
+ *
+ * @par Role and path
+ * Calls gEnterCriticalSection and BIOS B0:56 to compute a kernel destination
+ * from +0x70/+0x74 of *($v0 + 0x18) plus 0x28, then copies words from
+ * D_8008DCD4 to D_8008DCC0. Flushes cache via func_8008DBA0, writes the
+ * destination pointer to 0xDFFC, and restores $ra from D_800A3E30. Called by
+ * func_8008D6E0.
  */
-void func_8008DCE8(void)
+void gCopyCardPatchTable(void)
 {
     register u32 *dst __asm__("$2");
     register u32 *src __asm__("$10");

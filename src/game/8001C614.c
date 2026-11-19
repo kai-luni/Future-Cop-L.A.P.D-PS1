@@ -9,7 +9,7 @@ struct State {
 };
 
 extern struct State D_80010000;
-extern s32 func_8008E194(s32 value);
+extern s32 gSetCdSyncCallback(s32 value) __asm__("func_8008E194");
 void gCdSeekDoneCallback(u8 arg) __asm__("func_8001C614");
 
 
@@ -53,7 +53,7 @@ void gCdSeekDoneCallback(u8 arg)
     case 2:
         if (D_80010000.mode == 1) {
             D_80010000.mode = 2;
-            func_8008E194(D_80010000.value);
+            gSetCdSyncCallback(D_80010000.value);
         }
         break;
     }

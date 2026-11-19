@@ -18,8 +18,8 @@ extern struct Text8 gTextBlock __asm__("D_8009F3B8");
 extern u32 D_800A6E58[];
 extern u32 gExceptionFrame[] __asm__("D_800A6E38");
 
-extern void func_80091480(void);
-extern void func_80091510(void *);
+extern void gResetIrqDispatch(void) __asm__("func_80091480");
+extern void gSetVSyncCallback(void *) __asm__("func_80091510");
 extern void func_80092910(void *);
 extern void gClearImage(void *, int, int, int) __asm__("func_80092E10");
 extern void *gSetDefDrawEnv(void *, int, int, int, int) __asm__("func_80092140");
@@ -65,8 +65,8 @@ __attribute__((noreturn)) void func_800773D8(void)
             : : "r"(hi) : "$3", "$4", "$6", "memory");
     }
 
-    func_80091480();
-    func_80091510(0);
+    gResetIrqDispatch();
+    gSetVSyncCallback(0);
     func_80092910(0);
 
     gClearImage(&text, 0, 0, 0);

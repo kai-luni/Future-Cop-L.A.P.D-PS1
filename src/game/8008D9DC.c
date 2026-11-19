@@ -3,6 +3,8 @@ extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void func_8008CA10(int, void *);
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern char gIrqNode[] __asm__("D_800A3E00");
+int gRemovePriority1Irq(void) __asm__("func_8008D9DC");
+
 
 /**
  * @brief Dequeues the BIOS priority-1 interrupt chain node D_800A3E00 inside a critical section.
@@ -28,8 +30,14 @@ extern char gIrqNode[] __asm__("D_800A3E00");
  *
  * @par Callers
  * Confirmed: func_8008D92C (0x8008D944 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Dequeues the 16-byte IRQ node gIrqNode (D_800A3E00) from BIOS priority 1
+ * inside a critical section bracketed by gEnterCriticalSection and
+ * gExitCriticalSection. Calls func_8008CA10(1, gIrqNode) and returns 1.
+ * Called by func_8008D92C.
  */
-int func_8008D9DC(void)
+int gRemovePriority1Irq(void)
 {
     gEnterCriticalSection();
     {

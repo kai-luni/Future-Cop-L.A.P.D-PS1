@@ -20,6 +20,12 @@ extern void func_8008D670(s32, s32, s32);
  *  No direct writes; the helpers' effects are not specified here.
  *  @par Callers
  *  Confirmed: func_8001FD28.
+ *
+ * @par Role and path
+ * Calls func_8008D6D0 with arg0 and then func_8008D670 with arg0, 0x3F, and 0
+ * without branching. Reads no globals directly and is called by func_8001FD28
+ * as a default state transition. Hands off to BIOS vector B0:50 via
+ * func_8008D6D0 and BIOS vector B0:4E via func_8008D670.
  */
 void func_8008D690(s32 arg0) {
     func_8008D6D0(arg0);

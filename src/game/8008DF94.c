@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void func_8008DFF0(u32 arg0, s32 arg1);
+void gLogCdReadyCallback(void) __asm__("func_8008DF94");
+
 
 /**
  *  @brief Dispatches a fixed command with argument 0x40.
@@ -18,8 +20,13 @@ extern void func_8008DFF0(u32 arg0, s32 arg1);
  *  Any effects are those of the called function.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Calls func_8008DFF0 with constant arguments 0xF0000003 and 0x40 and
+ * returns. Accesses no globals directly; its address is installed as the
+ * default D_8009C8AC callback by func_8008DEA0.
  */
-void func_8008DF94(void)
+void gLogCdReadyCallback(void)
 {
     func_8008DFF0(0xF0000003, 0x40);
 }

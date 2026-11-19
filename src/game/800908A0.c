@@ -1,8 +1,10 @@
 // Categories: Platform > CD-ROM | Resources > File Access
 #include "game/types.h"
 
-extern s32 D_8009CBF8[];
-extern s32 func_8008E194(s32);
+extern s32 gCdSavedCallbackPtr[] __asm__("D_8009CBF8");
+extern s32 gSetCdSyncCallback(s32) __asm__("func_8008E194");
+void gCdPauseCallback(void) __asm__("func_800908A0");
+
 
 /**
  * @brief CD-ROM pause completion callback that restores the prior driver handler and clears busy.
@@ -26,13 +28,19 @@ extern s32 func_8008E194(s32);
  *
  * @par Callers
  * Confirmed: none direct; address taken as D_800908A0 via func_8008E194 in func_800908D4 (0x80090AF4), func_80090B48 (0x80090BD8), and func_80090E00 (0x80090F1C) / Likely: invoked by CD driver callback dispatch on CdlPause completion / Unknown: none.
+ *
+ * @par Role and path
+ * Acts as the CD-ROM pause completion callback installed via func_8008E194
+ * before issuing CdlPause in func_800908D4, func_80090B48, and func_80090E00.
+ * It restores the saved callback *D_8009CBF8 into D_8009C8A8 via
+ * func_8008E194 and clears the busy flag at D_8009CBD0 + 0x24.
  */
-void func_800908A0(void)
+void gCdPauseCallback(void)
 {
     register s32 *p __asm__("$16");
-    p = D_8009CBF8;
+    p = gCdSavedCallbackPtr;
     __asm__ volatile("" : "+r"(p));
-    func_8008E194(*p);
+    gSetCdSyncCallback(*p);
     p -= 10;
     __asm__("" : "+r"(p));
     p[9] = 0;

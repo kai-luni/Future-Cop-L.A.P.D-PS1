@@ -1,5 +1,7 @@
 // Categories: Resources > Lookup
 extern void *gIndexEntryTable[] __asm__("D_8009C8CC");
+void *gGetCdCommandName(unsigned char index) __asm__("func_8008E0EC");
+
 
 /**
  *  @brief Looks up a pointer by byte index with a fallback.
@@ -18,8 +20,15 @@ extern void *gIndexEntryTable[] __asm__("D_8009C8CC");
  *  None.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Returns gIndexEntryTable[index] (D_8009C8CC) when index is less than 28, or
+ * the fallback string pointer at 0x8001233C otherwise. D_8009C8CC holds CD
+ * command name strings logged by func_8008E7A0, func_8008ECFC, func_8008EF7C,
+ * and func_8008F244. Performs no function calls and has no direct callers in
+ * src/.
  */
-void *func_8008E0EC(unsigned char index)
+void *gGetCdCommandName(unsigned char index)
 {
     if (index >= 28) {
         char *base = (char *)0x80010000;

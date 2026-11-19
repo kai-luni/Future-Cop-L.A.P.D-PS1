@@ -43,8 +43,8 @@ extern s32 gMovieRingBytes __asm__("D_8009F984");
 extern s32 gMovieDescriptorCount __asm__("D_8009F988");
 
 extern void *gFillMemory(void *dst, s32 val, u32 count) __asm__("func_8001E4C0");
-extern s32 func_8008E5D8(s32 cb);
-extern s32 func_80091240(s32 v);
+extern s32 gSetCdDmaCallback(s32 cb) __asm__("func_8008E5D8");
+extern s32 gSetCdReadCallback(s32 v) __asm__("func_80091240");
 extern void gMovieStreamPrimeEntry(void) __asm__("func_80088F00");
 extern void gCdStreamService(s32 arg) __asm__("func_800895E4");
 
@@ -108,8 +108,8 @@ s32 gMovieStreamReaderInit(Unk89700 *arg0, s32 arg1, Src89700 *arg2, u32 arg3)
     gMovieStreamContext->unk438 = arg3;
     gMovieStreamContext->unk424 = 0;
     gMovieStreamContext->unk428 = 0;
-    gMovieStreamContext->unk574 = func_8008E5D8(0);
-    gMovieStreamContext->unk578 = func_80091240(0);
+    gMovieStreamContext->unk574 = gSetCdDmaCallback(0);
+    gMovieStreamContext->unk578 = gSetCdReadCallback(0);
     gMovieStreamPrimeEntry();
     gCdStreamService(1);
     return 1;

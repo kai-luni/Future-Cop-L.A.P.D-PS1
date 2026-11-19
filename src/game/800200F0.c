@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
-extern void func_8008D784(void);
+extern void gInitCdDriverChain(void) __asm__("func_8008D784");
 void gResetBiosDevices(void) __asm__("func_800200F0");
 
 
@@ -37,6 +37,6 @@ void gResetBiosDevices(void) __asm__("func_800200F0");
 void gResetBiosDevices(void)
 {
     gDisableCpuInterrupts();
-    func_8008D784();
+    gInitCdDriverChain();
     gDisableCpuInterrupts();
 }

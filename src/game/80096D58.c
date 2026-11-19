@@ -25,7 +25,7 @@ extern s32 gSpuEntryTable __asm__("D_8009EF0C");
 extern u32 D_8009EF14;
 extern u16 gSpuInitWords[] __asm__("D_8009EA8E");
 
-extern void func_80091480(void);
+extern void gResetIrqDispatch(void) __asm__("func_80091480");
 extern void gSpuResetHardware(s32 arg) __asm__("func_80096EB8");
 extern void gSpuInitDmaEvent(void) __asm__("func_80096E40");
 extern void gSpuWriteRegister(s32 index, u32 value, s32 flag) __asm__("func_800977C4");
@@ -64,7 +64,7 @@ void gSpuInitSubsystem(s32 cold_start)
     s32 idx;
     struct Unk96D58 *q;
 
-    func_80091480();
+    gResetIrqDispatch();
     gSpuResetHardware(cold_start);
 
     fill = 0xC000;

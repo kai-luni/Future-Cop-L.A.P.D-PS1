@@ -1,9 +1,11 @@
 // Categories: Platform > CD-ROM | Platform > Interrupts
 #include "game/types.h"
 
-extern void func_8008F89C(void);
-extern s32 func_8008F8E8(void);
-extern s32 func_8008F7AC(void);
+extern void gResetCdCallbacks(void) __asm__("func_8008F89C");
+extern s32 gInitCdSubsystem(void) __asm__("func_8008F8E8");
+extern s32 gInitCdAudioMix(void) __asm__("func_8008F7AC");
+s32 gInitCdMode(s32 mode) __asm__("func_8008E04C");
+
 
 /**
  * @brief Initializes the CD-ROM subsystem and optionally configures CD/SPU audio mixing.
@@ -27,18 +29,25 @@ extern s32 func_8008F7AC(void);
  *
  * @par Callers
  * Confirmed: none in edges.json or asm/us/main.s / Likely: unreferenced PsyQ CdInit helper / Unknown: indirect or external callers.
+ *
+ * @par Role and path
+ * Initializes the CD-ROM subsystem according to mode: mode 2 calls
+ * func_8008F89C to reset callbacks and IRQ 2, while other modes call
+ * func_8008F8E8 and, when mode == 1, func_8008F7AC. Returns 1 on success or 0
+ * if either hardware helper returns non-zero. Accesses no globals directly
+ * and has no direct callers in src/.
  */
-s32 func_8008E04C(s32 mode)
+s32 gInitCdMode(s32 mode)
 {
     if (mode == 2) {
-        func_8008F89C();
+        gResetCdCallbacks();
         return 1;
     }
-    if (func_8008F8E8() != 0) {
+    if (gInitCdSubsystem() != 0) {
         return 0;
     }
     if (mode == 1) {
-        if (func_8008F7AC() != 0) {
+        if (gInitCdAudioMix() != 0) {
             return 0;
         }
     }

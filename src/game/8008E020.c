@@ -1,5 +1,7 @@
 // Categories: Platform > CD-ROM
 extern unsigned char gLastCommandResult __asm__("D_8009C8C4");
+int gGetCdModeByte(void) __asm__("func_8008E020");
+
 
 /**
  * @brief Returns the CD driver result byte.
@@ -17,8 +19,13 @@ extern unsigned char gLastCommandResult __asm__("D_8009C8C4");
  * None observed.
  * @par Callers
  * Unknown: no direct edge in edges.json.
+ *
+ * @par Role and path
+ * Reads and returns gLastCommandResult (D_8009C8C4), which caches the
+ * parameter byte of CD command 14 (CdlSetmode) in func_8008F244. Performs no
+ * function calls and has no direct callers in src/.
  */
-int func_8008E020(void)
+int gGetCdModeByte(void)
 {
     return gLastCommandResult;
 }

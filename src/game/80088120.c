@@ -36,7 +36,7 @@ extern void gLoadImage(Rect88120 *rect, void *buf) __asm__("func_80092F38");
 extern void gMoveImage(Rect88120 *rect, s32 x, s32 y) __asm__("func_80092FF8");
 extern void func_800858F4(s32 value);
 extern void func_80085900(s32 value);
-extern void func_80091270(s32 arg0);
+extern void gVSyncWait(s32 arg0) __asm__("func_80091270");
 extern void gMoviePresentFrame(void) __asm__("func_80085914");
 extern void func_80085AC4(u32 arg0, u32 arg1);
 extern void gMovieAudioClockDisable(void) __asm__("func_80086F30");
@@ -209,7 +209,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         gMovieFreeDecodeBuffer(buf16);
         func_800858F4(page);
         func_80085900(1);
-        func_80091270(0);
+        gVSyncWait(0);
         gMoviePresentFrame();
         rectA.x = 0;
         rectA.w = 0x1E0;
@@ -233,7 +233,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             result = gMovieStreamDemux(arg1, arg2, gLayerModeBits * D_8009F960);
             count = 3;
             while (gMovieAudioBusyCount() != 0 && count > 0) {
-                func_80091270(0);
+                gVSyncWait(0);
                 count--;
             }
             gShutdownMovieAudio();
@@ -287,7 +287,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         gMovieFreeDecodeBuffer(out16);
         gMovieFreeDecodeBuffer(in8);
         gSelectFadeLayer(mode, 0);
-        func_80091270(0);
+        gVSyncWait(0);
         func_8001BFE4();
         rectC.x = 0;
         rectC.w = 0x140;
@@ -302,9 +302,9 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         func_80092C8C(0);
         gMoveImage(&rectC, 0, rectD.y);
         func_80092C8C(0);
-        func_80091270(0);
+        gVSyncWait(0);
         gSelectFadeLayer(1 - mode, 0);
-        func_80091270(0);
+        gVSyncWait(0);
         func_8001BFE4();
     }
     return result;

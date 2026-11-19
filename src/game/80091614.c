@@ -11,20 +11,22 @@ typedef struct Other {
     char pad2[12];
     void *field14;
 } Other;
-extern char gFrameClockAnchor[] __asm__("D_8009CC88");
-extern char D_8009CCC4[];
+extern char gIrqDispatchState[] __asm__("D_8009CC88");
+extern char gIrqQueueHeadPtr[] __asm__("D_8009CCC4");
 extern volatile u16 *gInterruptStatusHalfPtr __asm__("D_8009DD14");
 extern volatile u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern volatile u32 *gDmaControlPtr __asm__("D_8009DD1C");
 extern Other *gIrqCallbackTable __asm__("D_8009DD10");
-extern void func_80091B1C(void *, unsigned int);
+extern void gZeroWords(void *, unsigned int) __asm__("func_80091B1C");
 extern int func_80091B90(void *);
-extern void func_800916EC(void);
+extern void gDispatchIrqs(void) __asm__("func_800916EC");
 extern void func_80091B80(void *);
-extern void *func_80091BA0(void);
+extern void *gInitVSyncHandler(void) __asm__("func_80091BA0");
 extern void *func_80091CC0(void);
 extern void func_80091B48(void *);
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
+void *gInitIrqSubsystem(void) __asm__("func_80091614");
+
 
 /**
  *  @brief Initializes a global subsystem and returns its state address.
@@ -46,10 +48,19 @@ extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
  *  Writes registers and global state and invokes initialization helpers.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Initializes the interrupt and DMA callback subsystem if D_8009CC88 is zero,
+ * clearing *D_8009DD18 (I_MASK) and *D_8009DD14 (I_STAT), setting *D_8009DD1C
+ * (DPCR) to 0x33333333, and zeroing 0x41A ints at D_8009CC88 via
+ * func_80091B1C. It conditionally runs func_800916EC via func_80091B90, sets
+ * up D_8009CCC4 and func_80091B80, populates D_8009DD10 slots +0x14
+ * (func_80091BA0) and +0x04 (func_80091CC0), calls func_80091B48 and
+ * func_8008C9B0, and returns D_8009CC88.
  */
-void *func_80091614(void)
+void *gInitIrqSubsystem(void)
 {
-    register char *p __asm__("$16") = gFrameClockAnchor;
+    register char *p __asm__("$16") = gIrqDispatchState;
     volatile u16 *a;
     volatile u16 *b;
     __asm__("" : "+r"(p));
@@ -59,14 +70,14 @@ void *func_80091614(void)
     *b = 0;
     *a = *b;
     *gDmaControlPtr = 0x33333333;
-    func_80091B1C(p, 0x41a);
-    if (func_80091B90(p + 0x38)) func_800916EC();
-    p = D_8009CCC4;
+    gZeroWords(p, 0x41a);
+    if (func_80091B90(p + 0x38)) gDispatchIrqs();
+    p = gIrqQueueHeadPtr;
     __asm__("" : "+r"(p));
     *(void **)p = p + 0xfdc;
     func_80091B80(p - 4);
     *(u16 *)(p - 0x3c) = 1;
-    gIrqCallbackTable->field14 = func_80091BA0();
+    gIrqCallbackTable->field14 = gInitVSyncHandler();
     gIrqCallbackTable->field4 = func_80091CC0();
     func_80091B48(gIrqCallbackTable);
     p -= 0x3c;

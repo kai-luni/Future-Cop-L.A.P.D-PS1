@@ -4,6 +4,8 @@
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void func_8008DBA0(void);
+void gClearKernelPadWords(void) __asm__("func_8008DBB0");
+
 
 /**
  * @brief Zeroes 9 kernel words at offset +0x62C of the B0(0x57)+0x16C table and flushes instruction cache.
@@ -28,8 +30,14 @@ extern void func_8008DBA0(void);
  *
  * @par Callers
  * Confirmed: func_8008D7DC (0x8008D800 in asm/us/main.s) and func_8008D86C (0x8008D890 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Enters a critical section via gEnterCriticalSection, queries BIOS B0:57 and
+ * dereferences +0x16C, zeroes 9 consecutive 32-bit words starting at base +
+ * 0x62C, flushes cache via func_8008DBA0, and exits via gExitCriticalSection.
+ * Called by func_8008D7DC and func_8008D86C.
  */
-void func_8008DBB0(void)
+void gClearKernelPadWords(void)
 {
     __asm__ volatile(
         ".set noreorder\n\t"

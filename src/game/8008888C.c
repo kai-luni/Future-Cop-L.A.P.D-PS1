@@ -8,7 +8,7 @@ typedef struct {
     volatile s32 count;
 } Queue;
 extern Queue *gMovieStreamContext __asm__("D_8009F970");
-extern s32 func_8008E2F8(s32, s32);
+extern s32 gCdControlF(s32, s32) __asm__("func_8008E2F8");
 
 /**
  *  @brief Enqueues a three-value command and starts it if the queue was empty.
@@ -46,7 +46,7 @@ s32 func_8008888C(s32 arg0, s32 arg1, s32 arg2)
     queue->index %= 48;
     queue->count++;
     if (queue->count == 1) {
-        while (!func_8008E2F8(a & 0xff, b)) {
+        while (!gCdControlF(a & 0xff, b)) {
         }
     }
     return 1;

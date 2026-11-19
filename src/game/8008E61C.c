@@ -7,6 +7,8 @@ struct CdlLOC {
     u8 sector;
     u8 track;
 };
+struct CdlLOC *gCdIntToPos(s32 sector, struct CdlLOC *location) __asm__("func_8008E61C");
+
 
 /**
  * @brief Converts a zero-based logical CD sector number into a BCD-encoded MSF struct CdlLOC.
@@ -29,8 +31,14 @@ struct CdlLOC {
  * Writes minute, second, and sector bytes of *location.
  * @par Callers
  * Confirmed: func_800889DC (0x800889FC), func_80090580 (0x8009068C), func_8009081C (0x80090838) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Adds the 150-sector pre-gap to sector and encodes minute, second (75
+ * sectors/sec), and sector as packed BCD bytes into location, leaving
+ * location->track untouched and returning location. Accesses no globals and
+ * is called by func_800889DC, func_80090580, and func_8009081C.
  */
-struct CdlLOC *func_8008E61C(s32 sector, struct CdlLOC *location)
+struct CdlLOC *gCdIntToPos(s32 sector, struct CdlLOC *location)
 {
     inline s32 encode_bcd(s32 value)
     {

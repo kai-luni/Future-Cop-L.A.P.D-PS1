@@ -16,6 +16,12 @@
  *  Writes a halfword at the address derived from p and executes a delay loop.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Reads a halfword at register $3 + 0xA, ORs in register $2 and 0x12, writes
+ * the result back, and spins for 0x28 iterations. Copied into kernel RAM at
+ * 0xDF80 alongside func_8008DC7C by func_8008DDEC; not called directly from
+ * C.
  */
 void func_8008DC50(void)
 {

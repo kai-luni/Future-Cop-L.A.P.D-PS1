@@ -1,7 +1,9 @@
 // Categories: Platform > CD-ROM | Platform > Device Wait
 #include "game/types.h"
 
-extern s32 func_8008FAC8(s32 mode);
+extern s32 gWaitCdDmaComplete(s32 mode) __asm__("func_8008FAC8");
+s32 gCdDataSync(s32 mode) __asm__("func_8008E5FC");
+
 
 /**
  * @brief Polls the CD-ROM reply state through the mode wrapper.
@@ -27,8 +29,13 @@ extern s32 func_8008FAC8(s32 mode);
  *
  * @par Callers
  * Confirmed: func_80090E00 (read abort path).
+ *
+ * @par Role and path
+ * Forwards mode to func_8008FAC8 to poll once (mode != 0) or block (mode ==
+ * 0) on the CD-ROM data-ready state. Accesses no globals directly and is
+ * called by func_80090E00.
  */
-s32 func_8008E5FC(s32 mode)
+s32 gCdDataSync(s32 mode)
 {
-    return func_8008FAC8(mode);
+    return gWaitCdDmaComplete(mode);
 }

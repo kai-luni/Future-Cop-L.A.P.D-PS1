@@ -23,7 +23,7 @@ extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern int gSpuInstallIrqCallback(void *) __asm__("func_80098BF8");
 extern int gSpuSetTransferCallback(void *) __asm__("func_80098FB8");
-extern int func_80091510(void *);
+extern int gSetVSyncCallback(void *) __asm__("func_80091510");
 extern char D_80086950[];
 extern char D_80086D74[];
 /**
@@ -88,7 +88,7 @@ int gInitMovieAudio(State *state, void *arg_c, int arg_a, void *arg_d, int arg_b
     gMovieAudioState->irq = gSpuInstallIrqCallback(0);
     gMovieAudioState->other = gSpuSetTransferCallback(D_80086950);
     gMovieAudioState->enabled = enabled;
-    if (enabled) gMovieAudioState->callback = func_80091510(D_80086D74);
+    if (enabled) gMovieAudioState->callback = gSetVSyncCallback(D_80086D74);
     else { __asm__ volatile ("" : "=r"(zero)); gMovieAudioState->callback = zero; }
     gEnableCpuInterrupts();
     return 1;

@@ -2,21 +2,21 @@
 #include "game/types.h"
 
 extern u8 gDirRecordBuffer[] __asm__("D_800A5A80");
-extern u8 D_800A4480[];
-extern u8 D_800A4484[];
-extern u8 D_800A4488[];
+extern u8 gCdPathDirIdTable[] __asm__("D_800A4480");
+extern u8 gCdPathParentTable[] __asm__("D_800A4484");
+extern u8 gCdPathExtentTable[] __asm__("D_800A4488");
 extern s32 gCdLogLevel __asm__("D_8009C8B0");
-extern s32 D_8009CBC0;
+extern s32 gCdCachedDirIndex __asm__("D_8009CBC0");
 
-extern u8 D_80012638[];
-extern u8 D_80012664[];
-extern u8 D_8001266C[];
-extern u8 D_8001269C[];
-extern u8 D_800126C0[];
-extern u8 D_800126E0[];
-extern u8 D_800126F4[];
+extern u8 gCdPvdReadErrMsg[] __asm__("D_80012638");
+extern u8 gCdIsoMagicStr[] __asm__("D_80012664");
+extern u8 gCdBadSigErrMsg[] __asm__("D_8001266C");
+extern u8 gCdPathReadErrFmt[] __asm__("D_8001269C");
+extern u8 gCdPathTblLogMsg[] __asm__("D_800126C0");
+extern u8 gCdPathEntryFmt[] __asm__("D_800126E0");
+extern u8 gCdPathCountFmt[] __asm__("D_800126F4");
 
-extern s32 func_8009081C(s32, s32, u8 *);
+extern s32 gReadCdSectorsSync(s32, s32, u8 *) __asm__("func_8009081C");
 extern void func_8008E000();
 extern s32 func_80090890(u8 *, u8 *, s32);
 extern void func_8008CD10(u8 *, u8 *, s32);
@@ -26,6 +26,8 @@ extern void *memcpy(void *, const void *, u32);
 
 #define PRINT_STR(S) __asm__ volatile(".set\tnoreorder\n\tlui $4,%%hi(" #S ")\n\tjal func_8008E000\n\taddiu $4,$4,%%lo(" #S ")\n\t.set\treorder" \
     : : : "$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25", "$31", "memory")
+s32 gCdReadPathTable(void) __asm__("func_80090218");
+
 
 /**
  * @brief Reads the ISO-9660 PVD and path table into D_800A4480..D_800A4488 (CD_newmedia).
@@ -49,8 +51,17 @@ extern void *memcpy(void *, const void *, u32);
  *
  * @par Callers
  * Confirmed: func_8008FF20 (0x8008FF60, CD path lookup) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Reads ISO-9660 primary volume descriptor sector 0x10 into D_800A5A80 via
+ * func_8009081C, verifies the CD001 signature in D_80012664 using
+ * func_80090890, and reads the path-table sector referenced at offset 0x8C.
+ * It then parses up to 128 path-table records into 44-byte-stride tables
+ * D_800A4480, D_800A4484, and D_800A4488 using func_8008CD10, resets cached
+ * directory index D_8009CBC0 to 0, and returns 1 on success. Driven by
+ * func_8008FF20.
  */
-s32 func_80090218(void)
+s32 gCdReadPathTable(void)
 {
     register u8 *buf __asm__("$16");
     register u8 *ptr __asm__("$17");
@@ -68,7 +79,7 @@ s32 func_80090218(void)
     u8 sector[4];
 
     __asm__("lui %0,%%hi(D_800A5A80)\n\taddiu %0,%0,%%lo(D_800A5A80)" : "=r"(buf));
-    res = func_8009081C(1, 0x10, buf);
+    res = gReadCdSectorsSync(1, 0x10, buf);
     if (res != 1) {
         if (gCdLogLevel > 0) {
             PRINT_STR(D_80012638);
@@ -76,7 +87,7 @@ s32 func_80090218(void)
         return 0;
     }
 
-    if (func_80090890(buf + 1, D_80012664, 5) != 0) {
+    if (func_80090890(buf + 1, gCdIsoMagicStr, 5) != 0) {
         if (gCdLogLevel > 0) {
             PRINT_STR(D_8001266C);
         }
@@ -85,7 +96,7 @@ s32 func_80090218(void)
 
     memcpy(sector, buf + 0x8C, 4);
 
-    if (func_8009081C(1, *(s32 *)sector, buf) != res) {
+    if (gReadCdSectorsSync(1, *(s32 *)sector, buf) != res) {
         if (gCdLogLevel > 0) {
             register s32 a1 __asm__("$5") = *(s32 *)sector;
             __asm__ volatile(".set\tnoreorder\n\tlui $4,%%hi(D_8001269C)\n\tjal func_8008E000\n\taddiu $4,$4,%%lo(D_8001269C)\n\t.set\treorder"
@@ -103,7 +114,7 @@ s32 func_80090218(void)
     i = 0;
 
     if (ptr >= end) goto finish_loop;
-    extent_base = D_800A4488;
+    extent_base = gCdPathExtentTable;
     name_base = extent_base + 4;
     end2 = end;
 loop:
@@ -113,8 +124,8 @@ loop:
             memcpy((u8 *)(off + (s32)extent_base), ptr + 2, 4);
             name = (u8 *)(off + (s32)name_base);
             kind = ptr[6];
-            *(s32 *)(D_800A4480 + off) = i + 1;
-            *(s32 *)(D_800A4484 + off) = kind;
+            *(s32 *)(gCdPathDirIdTable + off) = i + 1;
+            *(s32 *)(gCdPathParentTable + off) = kind;
 
             func_8008CD10(name, ptr + 8, ptr[0]);
             name[ptr[0]] = 0;
@@ -128,7 +139,7 @@ loop:
                 a_ = LOADX(D_800A4488, off, 0x4488);
                 b_ = LOADX(D_800A4480, off, 0x4480);
                 c_ = LOADX(D_800A4484, off, 0x4484);
-                func_8008E000(D_800126E0, a_, b_, c_, name);
+                func_8008E000(gCdPathEntryFmt, a_, b_, c_, name);
             }
 
             i++;
@@ -136,13 +147,13 @@ loop:
     if (ptr < end2) goto loop;
 finish_loop:
     if (i < 0x80) {
-        *(s32 *)(D_800A4484 + i * 44) = 0;
+        *(s32 *)(gCdPathParentTable + i * 44) = 0;
     }
 
 after_loop:
-    D_8009CBC0 = 0;
+    gCdCachedDirIndex = 0;
     if (gCdLogLevel >= 2) {
-        func_8008E000(D_800126F4, i);
+        func_8008E000(gCdPathCountFmt, i);
         __asm__ volatile(".set\tnoreorder\n\t.set reorder");
     }
 

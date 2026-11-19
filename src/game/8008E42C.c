@@ -2,10 +2,12 @@
 #include "game/types.h"
 
 extern s32 gCommandParamTable[] __asm__("D_8009C820");
-extern s32 D_8009C8A8;
+extern s32 gCdSyncCallback __asm__("D_8009C8A8");
 extern u8 gCdStatusByte __asm__("D_8009C8B4");
-extern s32 func_8008F244(s32, void *, void *, s32);
-extern s32 func_8008ECFC(s32, void *);
+extern s32 gIssueCdCommand(s32, void *, void *, s32) __asm__("func_8008F244");
+extern s32 gCdSyncLoop(s32, void *) __asm__("func_8008ECFC");
+s32 gCdControlB(s32 command, void *param, void *result) __asm__("func_8008E42C");
+
 
 /**
  * @brief Issues a CD command with a parameter block and an optional retry loop.
@@ -33,8 +35,14 @@ extern s32 func_8008ECFC(s32, void *);
  * Transfers command parameters and may advance the driver state machine.
  * @par Callers
  * Confirmed: gCdStreamService (device start/stop).
+ *
+ * @par Role and path
+ * Dispatches a CD-ROM command via func_8008F244 with up to four attempts
+ * (including optional CdlNop and CdlSetloc) and then blocks in
+ * func_8008ECFC(0, result). Returns 1 when func_8008ECFC reports status 2, or
+ * 0 on failure. Driven by gCdStreamService.
  */
-s32 func_8008E42C(s32 command, void *param, void *result)
+s32 gCdControlB(s32 command, void *param, void *result)
 {
     register s32 i __asm__("$16");
     register void *p __asm__("$17") = param;
@@ -60,7 +68,7 @@ s32 func_8008E42C(s32 command, void *param, void *result)
     __asm__("" : "+r"(index));
     base = gCommandParamTable;
     __asm__("" : "+r"(base));
-    saved = D_8009C8A8;
+    saved = gCdSyncCallback;
     __asm__("" : "+r"(saved));
     off = index << 2;
     __asm__("" : "+r"(off));
@@ -92,20 +100,20 @@ s32 func_8008E42C(s32 command, void *param, void *result)
             : "$1", "$2", "$4", "$5", "$6", "$7", "$31", "memory"
         );
         if (p == 0 || *entry == 0 ||
-            func_8008F244(2, p, r, 0) == 0) {
-            D_8009C8A8 = saved;
-            if (func_8008F244(cmd & 0xff, p, r, 0) == 0) {
+            gIssueCdCommand(2, p, r, 0) == 0) {
+            gCdSyncCallback = saved;
+            if (gIssueCdCommand(cmd & 0xff, p, r, 0) == 0) {
                 ret = 0;
                 goto out;
             }
         }
         i--;
     } while (i != end);
-    D_8009C8A8 = saved;
+    gCdSyncCallback = saved;
     ret = -1;
 out:
     if (ret != 0) {
         return 0;
     }
-    return func_8008ECFC(0, r) == 2;
+    return gCdSyncLoop(0, r) == 2;
 }

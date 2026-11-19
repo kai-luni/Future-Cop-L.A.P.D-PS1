@@ -1,7 +1,7 @@
 // Categories: Platform > CD-ROM | Platform > Interrupts
 #include "game/types.h"
 
-extern s32 D_8009C810;
+extern s32 gCdReadCallback __asm__("D_8009C810");
 
 /**
  * @brief Installs a CD-ROM read completion callback in D_8009C810 and returns the previous one.
@@ -25,6 +25,14 @@ extern s32 D_8009C810;
  *
  * @par Callers
  * Confirmed: gMovieStreamReaderInit (0x80089834, saves and clears callback on stream start), gMovieStreamReaderClose (0x800898A8 in asm/us/main.s, restores saved callback on stream stop) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Hand-written assembly stub matching Sony libcd CdReadCallback that loads
+ * the current callback pointer from D_8009C810 into $v0, returns to $ra, and
+ * stores the new callback pointer from $a0 into D_8009C810 in the branch
+ * delay slot. D_8009C810 is invoked on CD sector/DMA3 completion by
+ * func_800908D4 and func_80090B48; called by gMovieStreamReaderInit and
+ * gMovieStreamReaderClose.
  */
 __asm__(
     ".text\n\t"

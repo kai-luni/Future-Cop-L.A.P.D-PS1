@@ -7,6 +7,8 @@ extern s32 gRaParkPatch __asm__("D_800A3E40");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void func_8008DBA0(void);
+void gPatchCdKernelBlock(void) __asm__("func_8008DE20");
+
 
 /**
  * @brief Copies 3 words from D_8008DE90..D_8008DE9C into offset +0x70 of B0(0x56)+0x18 and flushes cache.
@@ -31,8 +33,15 @@ extern void func_8008DBA0(void);
  *
  * @par Callers
  * Confirmed: func_8008D784 (0x8008D794 in asm/us/main.s, reached from func_800200F0) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Saves $ra in gRaParkPatch (D_800A3E40), enters a critical section via
+ * gEnterCriticalSection, queries BIOS B0:56 +0x18, and copies 3 words from
+ * D_8008DE90..D_8008DE9C into base + 0x70. Flushes cache via func_8008DBA0
+ * and exits the critical section via gExitCriticalSection. Called by
+ * func_8008D784.
  */
-void func_8008DE20(void)
+void gPatchCdKernelBlock(void)
 {
     register u32 value __asm__("$3");
     register u32 *src __asm__("$10");

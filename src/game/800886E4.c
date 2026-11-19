@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
-extern s32 func_8008E1BC(s32 code, void *arg1, void *arg2);
+extern s32 gCdControl(s32 code, void *arg1, void *arg2) __asm__("func_8008E1BC");
 
 /**
  * @brief Polls CD-ROM command 1 status and issues command 0xA on command failure.
@@ -36,7 +36,7 @@ s32 func_800886E4(void)
     gFillMemory(buffer1, 0, 0x20);
     gFillMemory(buffer2, 0, 0x20);
 
-    if (func_8008E1BC(1, buffer1, buffer2) != 0) {
+    if (gCdControl(1, buffer1, buffer2) != 0) {
         switch (buffer2[0]) {
         case 0:
         case 2:
@@ -46,6 +46,6 @@ s32 func_800886E4(void)
         }
     }
 
-    func_8008E1BC(0xA, 0, 0);
+    gCdControl(0xA, 0, 0);
     return 1;
 }

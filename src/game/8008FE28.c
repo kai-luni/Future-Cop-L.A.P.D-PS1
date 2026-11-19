@@ -24,10 +24,13 @@ typedef signed int s32;
 
 extern u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
 extern u8 gCdStateBytes[] __asm__("D_8009CB84");
-extern u32 D_8009C8AC, D_8009C8A8;
-extern char D_800A3E58[];
+extern u32 gCdReadyCallback __asm__("D_8009C8AC");
+extern u32 gCdSyncCallback __asm__("D_8009C8A8");
+extern char gCdReadyBuffer8[] __asm__("D_800A3E58");
 extern char gStatusBuffer8[] __asm__("D_800A3E50");
-extern s32 func_8008E7A0(void);
+extern s32 gCdDrainIrqEvent(void) __asm__("func_8008E7A0");
+void gCdIrqCallback(void) __asm__("func_8008FE28");
+
 
 /**
  *  @brief Drains event results and invokes callbacks for selected result bits.
@@ -48,8 +51,16 @@ extern s32 func_8008E7A0(void);
  *  Invokes callbacks and replaces the mode byte with its saved low two bits.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Serves as the CD-ROM IRQ slot 2 handler registered by func_8008F89C and
+ * func_8008F8E8. It saves the low two bits of *D_8009CB6C, polls
+ * func_8008E7A0 until it returns zero, dispatches D_8009C8AC(D_8009CB84[1],
+ * D_800A3E58) when bit 2 (mask 4) is set and D_8009C8A8(D_8009CB84[0],
+ * D_800A3E50) when bit 1 (mask 2) is set, and finally restores the saved bank
+ * bits to *D_8009CB6C.
  */
-void func_8008FE28(void)
+void gCdIrqCallback(void)
 {
     u8 mode = *gCdromIndexStatusPtr & 3;
     u8 *p = gCdStateBytes + 1;
@@ -57,14 +68,14 @@ void func_8008FE28(void)
     s32 r;
 
     for (;;) {
-        func_8008E7A0();
+        gCdDrainIrqEvent();
         __asm__ volatile("addu %0,$2,$0" : "=r"(r));
         if (r == 0)
             break;
-        if ((r & 4) && D_8009C8AC != 0)
-            ((void (*)(u8, char *))D_8009C8AC)(p[0], D_800A3E58);
-        if ((r & 2) && D_8009C8A8 != 0)
-            ((void (*)(u8, char *))D_8009C8A8)(q[0], gStatusBuffer8);
+        if ((r & 4) && gCdReadyCallback != 0)
+            ((void (*)(u8, char *))gCdReadyCallback)(p[0], gCdReadyBuffer8);
+        if ((r & 2) && gCdSyncCallback != 0)
+            ((void (*)(u8, char *))gCdSyncCallback)(q[0], gStatusBuffer8);
     }
     *gCdromIndexStatusPtr = mode;
 }

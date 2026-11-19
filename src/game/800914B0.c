@@ -6,6 +6,8 @@ struct CallbackTable {
 };
 
 extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
+void gSetIrqCallback(void) __asm__("func_800914B0");
+
 
 /**
  * @brief Dispatches the interrupt-registration callback at offset +0x08 of D_8009DD10.
@@ -28,8 +30,14 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  *
  * @par Callers
  * Confirmed: func_8001C808 (0x8001CBE8), func_8001D130 (0x8001D190), func_8008F89C (0x8008F8D0), func_8008F8E8 (0x8008F950), func_80091BA0 (0x80091BD8), func_80091CC0 (0x80091CEC), gSpuSetIrqCallback (0x80098C44).
+ *
+ * @par Role and path
+ * Dispatches through slot +0x08 of D_8009DD10, passing $a0 (IRQ slot index)
+ * and $a1 (handler pointer) unchanged in registers to register an interrupt
+ * callback. Called by func_8001C808, func_8001D130, func_8008F89C,
+ * func_8008F8E8, func_80091BA0, func_80091CC0, and gSpuSetIrqCallback.
  */
-void func_800914B0(void)
+void gSetIrqCallback(void)
 {
     gIrqCallbackTable->callback();
 }

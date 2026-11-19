@@ -14,25 +14,27 @@ struct State {
     s32 busy;
 };
 
-extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
-extern s32 D_8009CBDC;
-extern s32 gCardRetryCount __asm__("D_8009C814");
+extern struct State gCdAsyncReadState __asm__("D_8009CBD0");
+extern s32 gCdReadModeWord __asm__("D_8009CBDC");
+extern s32 gCdUseDmaFlag __asm__("D_8009C814");
 
-extern s32 func_8008E194(s32);
-extern s32 func_8008E1A8(void *);
-extern void func_8008E5D8(void *);
-extern s32 func_8008E010(void);
-extern s32 func_80091270(s32);
+extern s32 gSetCdSyncCallback(s32) __asm__("func_8008E194");
+extern s32 gSetCdReadyCallback(void *) __asm__("func_8008E1A8");
+extern void gSetCdDmaCallback(void *) __asm__("func_8008E5D8");
+extern s32 gGetCdStatusByte(void) __asm__("func_8008E010");
+extern s32 gVSyncWait(s32) __asm__("func_80091270");
 extern void func_8008FF08(char *);
-extern s32 func_8008E2F8(s32, s32);
-extern s32 func_8008E1BC(s32, void *, s32);
-extern void *func_8008E040(void);
-extern void func_8008E0B8(void);
-extern s32 func_8008E020(void);
-extern s32 func_8008E720(void *);
+extern s32 gCdControlF(s32, s32) __asm__("func_8008E2F8");
+extern s32 gCdControl(s32, void *, s32) __asm__("func_8008E1BC");
+extern void *gGetCdTargetLocation(void) __asm__("func_8008E040");
+extern void gResetCdController(void) __asm__("func_8008E0B8");
+extern s32 gGetCdModeByte(void) __asm__("func_8008E020");
+extern s32 gCdPosToInt(void *) __asm__("func_8008E720");
 
-extern void func_800908D4(void);
-extern void func_80090B48(void);
+extern void gCdDataReadyCallback(void) __asm__("func_800908D4");
+extern void gCdDmaCompleteCb(void) __asm__("func_80090B48");
+s32 gStartCdSectorRead(s32 arg0) __asm__("func_80090C18");
+
 
 /**
  * @brief Configures and starts (or retries) an asynchronous CD-ROM sector read via D_8009CBD0.
@@ -56,8 +58,17 @@ extern void func_80090B48(void);
  *
  * @par Callers
  * Confirmed: func_800908D4 (0x80090A60), func_80090FA0 (0x80091110), func_8009113C (0x800911BC).
+ *
+ * @par Role and path
+ * Starts or retries an asynchronous CD-ROM sector read using D_8009CBD0,
+ * clearing active callbacks and returning -1 if shell-open status bit 0x10 is
+ * set in func_8008E010. On retry (arg0 != 0) it logs, pauses, and re-seeks
+ * via func_8008E1BC; it updates the CD mode to D_8009CBDC if needed, installs
+ * func_800908D4 via func_8008E1A8 and func_80090B48 via func_8008E5D8 when
+ * D_8009C814 & 1, and starts CdlReadN (6) via func_8008E2F8. Driven by
+ * func_80090FA0, func_8009113C, and func_800908D4.
  */
-s32 func_80090C18(s32 arg0)
+s32 gStartCdSectorRead(s32 arg0)
 {
     register struct State *state __asm__("$16");
     register s32 *mode_ptr __asm__("$17");
@@ -66,21 +77,21 @@ s32 func_80090C18(s32 arg0)
     volatile u8 mode_val;
     s32 pos;
 
-    func_8008E194(0);
-    func_8008E1A8(0);
-    if (gCardRetryCount & 1) {
-        func_8008E5D8(0);
+    gSetCdSyncCallback(0);
+    gSetCdReadyCallback(0);
+    if (gCdUseDmaFlag & 1) {
+        gSetCdDmaCallback(0);
     }
-    if (func_8008E010() & 0x10) {
+    if (gGetCdStatusByte() & 0x10) {
         u32 t;
         register struct State *s __asm__("$3");
-        if ((func_80091270(-1) & 0x3F) == 0) {
+        if ((gVSyncWait(-1) & 0x3F) == 0) {
             register char *base __asm__("$4") = (char *)0x80010000;
             __asm__("" : "=r"(base) : "0"(base));
             func_8008FF08(base + 0x27B4);
         }
-        func_8008E2F8(1, 0);
-        t = func_80091270(-1);
+        gCdControlF(1, 0);
+        t = gVSyncWait(-1);
         s = (struct State *)0x800A0000;
         __asm__("" : "=r"(s) : "0"(s));
         s = (struct State *)((char *)s - 0x3430);
@@ -95,14 +106,14 @@ s32 func_80090C18(s32 arg0)
             register char *base __asm__("$4") = (char *)0x80010000;
             __asm__("" : "=r"(base) : "0"(base));
             func_8008FF08(base + 0x27CC);
-            func_8008E1BC(9, 0, 0);
-            if (func_8008E1BC(2, func_8008E040(), 0) == 0) {
+            gCdControl(9, 0, 0);
+            if (gCdControl(2, gGetCdTargetLocation(), 0) == 0) {
                 goto fail;
             }
         }
     }
 
-    func_8008E0B8();
+    gResetCdController();
     __asm__ volatile("");
     mode_ptr = (s32 *)0x800A0000;
     __asm__("" : "=r"(mode_ptr) : "0"(mode_ptr));
@@ -111,8 +122,8 @@ s32 func_80090C18(s32 arg0)
     mode = *mode_ptr;
     mode_val = mode;
     mode &= 0xFF;
-    if (mode != func_8008E020() || arg != 0) {
-        if (func_8008E1BC(0xE, (void *)&mode_val, 0) == 0) {
+    if (mode != gGetCdModeByte() || arg != 0) {
+        if (gCdControl(0xE, (void *)&mode_val, 0) == 0) {
 fail:
             __asm__ volatile("");
             {
@@ -125,7 +136,7 @@ fail:
         }
     }
 
-    pos = func_8008E720(func_8008E040());
+    pos = gCdPosToInt(gGetCdTargetLocation());
     __asm__ volatile("" : : "r"(mode));
     __asm__ volatile("");
     {
@@ -137,21 +148,21 @@ fail:
         state = (struct State *)((char *)state - 0x3430);
         __asm__("" : "=r"(state) : "0"(state));
         state->unk20 = pos;
-        func_8008E1A8(base);
+        gSetCdReadyCallback(base);
     }
     {
         register s32 six __asm__("$4") = 6;
-        if (gCardRetryCount & 1) {
+        if (gCdUseDmaFlag & 1) {
             register char *base __asm__("$4") = (char *)0x80090000;
             __asm__("" : "=r"(base) : "0"(base));
-            func_8008E5D8(base + 0x0B48);
+            gSetCdDmaCallback(base + 0x0B48);
             six = 6;
         }
         state->unk8 = (s32)state->buffer;
-        func_8008E2F8(six, 0);
+        gCdControlF(six, 0);
     }
     state->unk14 = state->count;
-    state->unk18 = func_80091270(-1);
+    state->unk18 = gVSyncWait(-1);
     __asm__ volatile(".set reorder");
     return *(volatile s32 *)&state->unk14;
 }

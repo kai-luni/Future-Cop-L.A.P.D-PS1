@@ -3,7 +3,7 @@
 
 typedef void (*DecDctCallback)(void);
 
-extern DecDctCallback func_800914E0(s32 channel, DecDctCallback callback);
+extern DecDctCallback gSetDmaCallback(s32 channel, DecDctCallback callback) __asm__("func_800914E0");
 
 /**
  * @brief Registers a callback for MDEC channel 1.
@@ -16,5 +16,5 @@ extern DecDctCallback func_800914E0(s32 channel, DecDctCallback callback);
  */
 DecDctCallback func_8009612C(DecDctCallback callback)
 {
-    return func_800914E0(1, callback);
+    return gSetDmaCallback(1, callback);
 }

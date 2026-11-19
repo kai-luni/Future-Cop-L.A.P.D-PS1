@@ -10,7 +10,9 @@ extern volatile u32 *gTimer1CounterPtr __asm__("D_8009CC1C");
 extern volatile u32 gTimerBaselineTick __asm__("D_8009CC20");
 extern s32 gFrameTargetBase __asm__("D_8009CC24");
 extern volatile s32 gVSyncTickCounter __asm__("D_8009DD50");
-extern void func_800913E8(s32, s32);
+extern void gWaitVSyncTarget(s32, s32) __asm__("func_800913E8");
+s32 gVSyncWait(s32 input) __asm__("func_80091270");
+
 
 /**
  * @brief Waits for the frame counter to advance and returns the elapsed
@@ -40,8 +42,16 @@ extern void func_800913E8(s32, s32);
  * func_800908D4, func_80090C18, func_80090E00, func_80090FA0,
  * func_8009113C, func_800951D8, func_8009520C, func_800953F0,
  * func_800954DC, func_800955C8, func_8009570C.
+ *
+ * @par Role and path
+ * Samples Timer 1 counter *D_8009CC1C until stable, computes elapsed 16-bit
+ * ticks against D_8009CC20, and returns D_8009DD50 immediately if input < 0.
+ * For input != 1 it waits via func_800913E8 against D_8009CC24 and
+ * D_8009DD50, polls bit 31 toggle on *D_8009CC18 when bit 0x400000 is set,
+ * and updates D_8009CC24 and D_8009CC20. Called by CD, MDEC, and movie-layer
+ * callers including gMovieStreamDemux and gCloseVideoLayer.
  */
-s32 func_80091270(s32 input)
+s32 gVSyncWait(s32 input)
 {
     register s32 arg0 __asm__("$4") = input;
     u32 saved = *gGpuGp1StatusPtr;
@@ -63,7 +73,7 @@ s32 func_80091270(s32 input)
         else target = gFrameTargetBase;
         count = 0;
         if (arg0 > 0) count = arg0 - 1;
-        func_800913E8(target, count);
+        gWaitVSyncTarget(target, count);
         saved = *gGpuGp1StatusPtr;
         {
             register s32 value __asm__("$4") = gVSyncTickCounter;
@@ -71,7 +81,7 @@ s32 func_80091270(s32 input)
             __asm__("" : "=r"(value) : "0"(value));
             one = 1;
             __asm__("" : "=r"(one) : "0"(one));
-            func_800913E8(value + 1, one);
+            gWaitVSyncTarget(value + 1, one);
         }
         if (saved & 0x400000) {
             while (!((saved ^ *gGpuGp1StatusPtr) & 0x80000000)) {}

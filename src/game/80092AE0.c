@@ -10,7 +10,7 @@ extern u8 D_8009DDF1[];
 extern char D_80012A00[];
 extern  void (*gLogPrintf)(char *, s32) __asm__("D_8009DDEC");
 extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
-extern void func_800914E0(s32, s32);
+extern void gSetDmaCallback(s32, s32) __asm__("func_800914E0");
 
 /**
  *  @brief Updates a global byte state and returns its previous value.
@@ -45,7 +45,7 @@ s32 func_80092AE0(s32 arg0)
     if (arg0 != p[0]) {
         gVramWriteCallback->fn34(1);
         p[0] = arg0;
-        func_800914E0(2, 0);
+        gSetDmaCallback(2, 0);
     }
     return old;
 }

@@ -17,12 +17,12 @@ extern s32 D_8009F514;
 extern u8 gCodeDataSource[] __asm__("D_80088D74");
 extern u8 func_800889DC[];
 
-extern s32 func_8008E154(s32 mode, u8 *result);
-extern void func_8008E42C(s32 mode, u8 *buf, s32 arg2);
+extern s32 gCdSync(s32 mode, u8 *result) __asm__("func_8008E154");
+extern void gCdControlB(s32 mode, u8 *buf, s32 arg2) __asm__("func_8008E42C");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
-extern s32 func_8008E194(s32 value);
-extern s32 func_8008E1A8(s32 value);
+extern s32 gSetCdSyncCallback(s32 value) __asm__("func_8008E194");
+extern s32 gSetCdReadyCallback(s32 value) __asm__("func_8008E1A8");
 
 /**
  * @brief Starts or stops a device service together with its two handles.
@@ -62,15 +62,15 @@ void gCdStreamService(s32 arg0)
     u8 buf[8];
 
     if (arg0 != 0) {
-        func_8008E154(0, 0);
+        gCdSync(0, 0);
         buf[0] = 0xA0;
-        func_8008E42C(0xE, buf, 0);
+        gCdControlB(0xE, buf, 0);
         gDisableCpuInterrupts();
         gMovieStreamContext->unk410 = 0;
         gMovieStreamContext->unk408 = 0;
         gMovieStreamContext->unk40C = 0;
-        D_8009F510 = func_8008E194((s32)gCodeDataSource);
-        D_8009F514 = func_8008E1A8((s32)(func_800889DC + 0x40));
+        D_8009F510 = gSetCdSyncCallback((s32)gCodeDataSource);
+        D_8009F514 = gSetCdReadyCallback((s32)(func_800889DC + 0x40));
         gMovieStreamContext->unk420 = 1;
         gMovieStreamContext->unk41C = 1;
     } else {
@@ -83,8 +83,8 @@ void gCdStreamService(s32 arg0)
         gMovieStreamContext->unk408 = 0;
         gMovieStreamContext->unk40C = 0;
         if (active != 0) {
-            func_8008E194(D_8009F510);
-            func_8008E1A8(D_8009F514);
+            gSetCdSyncCallback(D_8009F510);
+            gSetCdReadyCallback(D_8009F514);
             D_8009F510 = 0;
             D_8009F514 = 0;
             gMovieStreamContext->unk420 = 0;

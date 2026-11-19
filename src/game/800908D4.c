@@ -28,26 +28,28 @@ struct Local {
     u8 pad[0xC];
 };
 
-extern struct State gSectorBufferPtr __asm__("D_8009CBD0");
-extern s32 D_8009CBD8[];
-extern s32 D_8009CBF0[];
-extern s32 gCardRetryCount __asm__("D_8009C814");
-extern void (*D_8009C810)(s32, s32);
+extern struct State gCdAsyncReadState __asm__("D_8009CBD0");
+extern s32 gCdReadCursorPtr[] __asm__("D_8009CBD8");
+extern s32 gCdReadSectorPtr[] __asm__("D_8009CBF0");
+extern s32 gCdUseDmaFlag __asm__("D_8009C814");
+extern void (*gCdReadCallback)(s32, s32) __asm__("D_8009C810");
 extern s32 D_800908A0[];
-extern char D_8001279C[];
-extern void func_80090B48(void);
+extern char gCdSectorErrMsg[] __asm__("D_8001279C");
+extern void gCdDmaCompleteCb(void) __asm__("func_80090B48");
 
-extern s32 func_8008E5D8(s32);
-extern s32 func_8008E5B8(void *, s32);
-extern s32 func_8008E598(void *, s32);
-extern s32 func_8008E5FC(s32);
-extern s32 func_8008E720(struct CdlLOC *);
+extern s32 gSetCdDmaCallback(s32) __asm__("func_8008E5D8");
+extern s32 gCdGetSector(void *, s32) __asm__("func_8008E5B8");
+extern s32 gCdRead(void *, s32) __asm__("func_8008E598");
+extern s32 gCdDataSync(s32) __asm__("func_8008E5FC");
+extern s32 gCdPosToInt(struct CdlLOC *) __asm__("func_8008E720");
 extern void func_8008FF08(char *);
-extern s32 func_80091270(s32);
-extern s32 func_80090C18(s32);
-extern s32 func_8008E1A8(s32);
-extern s32 func_8008E194(s32);
-extern void func_8008E2F8(s32, s32);
+extern s32 gVSyncWait(s32) __asm__("func_80091270");
+extern s32 gStartCdSectorRead(s32) __asm__("func_80090C18");
+extern s32 gSetCdReadyCallback(s32) __asm__("func_8008E1A8");
+extern s32 gSetCdSyncCallback(s32) __asm__("func_8008E194");
+extern void gCdControlF(s32, s32) __asm__("func_8008E2F8");
+void gCdDataReadyCallback(u8 mode, s32 arg1) __asm__("func_800908D4");
+
 
 /**
  * @brief CD-ROM data-ready callback that reads sectors, checks LBA alignment, and completes or retries transfers.
@@ -66,8 +68,17 @@ extern void func_8008E2F8(s32, s32);
  * Writes sector data to D_8009CBD0.unk8, updates D_8009CBD0, prints errors, restores CD callbacks, pauses CD, and invokes D_8009C810.
  * @par Callers
  * Confirmed: none direct; func_80090C18 passes address D_800908D4 to func_8008E1A8 at 0x80090D80.
+ *
+ * @par Role and path
+ * Serves as the CD-ROM data-ready callback installed into D_8009C8AC by
+ * func_80090C18. On mode 1 with remaining count unk14 > 0, it validates the
+ * 3-byte sector header via func_8008E720 for command 0x200, reads the sector
+ * using DMA (func_8008E5B8 with func_80090B48) or PIO (func_8008E598),
+ * retries via func_80090C18(1) if unk14 < 0, and on completion or 0x4B0-tick
+ * timeout restores callbacks, issues CdlPause via func_8008E2F8, and invokes
+ * D_8009C810.
  */
-void func_800908D4(u8 mode, s32 arg1)
+void gCdDataReadyCallback(u8 mode, s32 arg1)
 {
     struct Local tmp;
     register s32 saved __asm__("$17") = arg1;
@@ -75,42 +86,42 @@ void func_800908D4(u8 mode, s32 arg1)
     struct State *st;
     s32 ret;
 
-    gSectorBufferPtr.unk34 = saved;
+    gCdAsyncReadState.unk34 = saved;
     if (mode == 1) {
-        if (gSectorBufferPtr.unk14 > 0) {
+        if (gCdAsyncReadState.unk14 > 0) {
             __asm__ volatile("");
-            if (gSectorBufferPtr.command == 0x200) {
-                if (gCardRetryCount & 1) {
-                    func_8008E5D8(0);
-                    func_8008E5B8(&tmp.loc, 3);
-                    func_8008E5FC(0);
-                    func_8008E5D8((s32)func_80090B48);
+            if (gCdAsyncReadState.command == 0x200) {
+                if (gCdUseDmaFlag & 1) {
+                    gSetCdDmaCallback(0);
+                    gCdGetSector(&tmp.loc, 3);
+                    gCdDataSync(0);
+                    gSetCdDmaCallback((s32)gCdDmaCompleteCb);
                 } else {
-                    func_8008E598(&tmp.loc, 3);
+                    gCdRead(&tmp.loc, 3);
                 }
-                ret = func_8008E720(&tmp.loc);
-                p = D_8009CBF0;
+                ret = gCdPosToInt(&tmp.loc);
+                p = gCdReadSectorPtr;
                 __asm__ volatile("" : "+r"(p));
                 if (ret != *p) {
                     register struct State *s __asm__("$3");
-                    func_8008FF08(D_8001279C);
+                    func_8008FF08(gCdSectorErrMsg);
                     s = (struct State *)(p - 8);
                     __asm__("" : "+r"(s));
                     s->unk14 = -1;
                 }
             }
-            if (gCardRetryCount & 1) {
+            if (gCdUseDmaFlag & 1) {
                 s32 *q;
                 __asm__ volatile("" : : : "memory");
-                q = D_8009CBD8;
+                q = gCdReadCursorPtr;
                 __asm__("" : "+r"(q));
-                func_8008E5B8((void *)q[0], q[2]);
+                gCdGetSector((void *)q[0], q[2]);
             } else {
                 register struct State *s __asm__("$4");
                 __asm__ volatile("" : : : "memory");
-                p = D_8009CBD8;
+                p = gCdReadCursorPtr;
                 __asm__ volatile("" : "+r"(p));
-                func_8008E598((void *)p[0], p[2]);
+                gCdRead((void *)p[0], p[2]);
                 s = (struct State *)(p - 2);
                 __asm__("" : "+r"(s));
                 s->unk8 = p[0] + p[2] * 4;
@@ -120,31 +131,31 @@ void func_800908D4(u8 mode, s32 arg1)
             }
         }
     } else {
-        gSectorBufferPtr.unk14 = -1;
+        gCdAsyncReadState.unk14 = -1;
     }
 
     {
-        s32 t = func_80091270(-1);
-        st = &gSectorBufferPtr;
+        s32 t = gVSyncWait(-1);
+        st = &gCdAsyncReadState;
         __asm__("" : "+r"(st));
         st->unk18 = t;
     }
     if (st->unk14 < 0) {
-        func_80090C18(1);
+        gStartCdSectorRead(1);
     }
-    if (func_80091270(-1) > st->time + 0x4B0) {
+    if (gVSyncWait(-1) > st->time + 0x4B0) {
         st->unk14 = -1;
     }
-    if (st->unk14 == 0 || func_80091270(-1) > st->time + 0x4B0) {
-        func_8008E1A8(st->callback2);
-        if (gCardRetryCount & 1) {
-            func_8008E5D8(st->callback3);
+    if (st->unk14 == 0 || gVSyncWait(-1) > st->time + 0x4B0) {
+        gSetCdReadyCallback(st->callback2);
+        if (gCdUseDmaFlag & 1) {
+            gSetCdDmaCallback(st->callback3);
         }
-        func_8008E194((s32)D_800908A0);
-        func_8008E2F8(9, 0);
+        gSetCdSyncCallback((s32)D_800908A0);
+        gCdControlF(9, 0);
         st->busy = 1;
-        if (D_8009C810) {
-            D_8009C810(st->unk14 == 0 ? 2 : 5, saved);
+        if (gCdReadCallback) {
+            gCdReadCallback(st->unk14 == 0 ? 2 : 5, saved);
         }
     }
 }

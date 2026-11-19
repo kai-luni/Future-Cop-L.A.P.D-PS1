@@ -1,3 +1,5 @@
+void gZeroWords(int *destination, unsigned int count) __asm__("func_80091B1C");
+
 // Categories: Utilities > Memory
 /**
  *  @brief Clears a sequence of integer elements.
@@ -16,8 +18,13 @@
  *  Overwrites the specified destination elements with zero.
  *  @par Callers
  *  Confirmed: func_80091614.
+ *
+ * @par Role and path
+ * Zeroes count consecutive 32-bit integers starting at destination in a
+ * simple while loop. Called by func_80091614 to clear the 0x41A-word
+ * interrupt subsystem state block D_8009CC88.
  */
-void func_80091B1C(int *destination, unsigned int count)
+void gZeroWords(int *destination, unsigned int count)
 {
     while (count-- != 0) {
         *destination++ = 0;

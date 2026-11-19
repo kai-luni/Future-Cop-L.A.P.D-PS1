@@ -9,7 +9,7 @@ extern File gFileTable[] __asm__("D_800A6E20");
 extern s32 gCheckMediaReady(void) __asm__("func_8001CE10");
 extern s32 gFormatIso9660Path(s32, s32, void *, char *) __asm__("func_8001DC48");
 extern s32 gWaitCdLoaderIdle(s32) __asm__("func_8001C478");
-extern s32 func_8008FF20(File *, char *);
+extern s32 gCdSearchFile(File *, char *) __asm__("func_8008FF20");
 s32 gOpenCdFileSlot(s32 arg0, s32 arg1, void *arg2) __asm__("func_8001D424");
 
 extern s32 gCdlLocToByteOffset(File *) __asm__("func_8001C588");
@@ -93,7 +93,7 @@ s32 gOpenCdFileSlot(s32 arg0, s32 arg1, void *arg2)
     if (ret < 0) return ret;
     j = 0;
     do {
-        if (func_8008FF20(gFileTable, name + 0x6dd8)) break;
+        if (gCdSearchFile(gFileTable, name + 0x6dd8)) break;
         j++;
     } while (j < 5);
     if (j != 5) {

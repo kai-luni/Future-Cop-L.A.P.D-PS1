@@ -23,10 +23,10 @@ extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 gPendingDeadline __asm__("D_8009DF00");
 extern u32 gTimeoutStamp __asm__("D_8009DEFC");
 extern Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
-extern int func_80091270(int);
+extern int gVSyncWait(int) __asm__("func_80091270");
 extern void func_80092CF4(char *, void *);
 extern int func_8009520C(void);
-extern void func_800914E0(int, void (*)(void));
+extern void gSetDmaCallback(int, void (*)(void)) __asm__("func_800914E0");
 extern void gAbortCallbackId(void) __asm__("D_80095808");
 
 /**
@@ -68,7 +68,7 @@ int func_800953F0(Entry *entry, void *data)
     register char *first __asm__("$4");
     __asm__("lui %0,%%hi(D_80012B7C)\n\taddiu %0,%0,%%lo(D_80012B7C)" : "=r"(first));
     func_80092CF4(first, entry);
-    gTimeoutStamp = func_80091270(-1) + 0xF0;
+    gTimeoutStamp = gVSyncWait(-1) + 0xF0;
     gPendingDeadline = 0;
     if (!((*gDma2ChannelCtrlPtr & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000))) goto success;
 loop:
@@ -80,7 +80,7 @@ success:
     {
         register void (*callback)(void) __asm__("$5");
         __asm__("lui %0,%%hi(D_80095808)\n\taddiu %0,%0,%%lo(D_80095808)" : "=r"(callback));
-        func_800914E0(2, callback);
+        gSetDmaCallback(2, callback);
     }
     gVramWriteCallback->write(entry, data);
     result = 0;

@@ -5,10 +5,12 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef int s32;
 
-extern s32 D_8009CC8C[];
+extern s32 gIrqHandlerSlots[] __asm__("D_8009CC8C");
 extern volatile short *gInterruptMaskPtr __asm__("D_8009DD18");
 extern void func_8008D7B0(s32);
 extern void func_8008CA20(s32, s32);
+s32 gSetIrqSlotEnable(s32 index, s32 value) __asm__("func_800918BC");
+
 
 /**
  *  @brief Updates an indexed control value and its hardware mask when enabled.
@@ -28,10 +30,17 @@ extern void func_8008CA20(s32, s32);
  *  May update the table, shadow mask, hardware register, and callee-managed state.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Updates the interrupt handler slot D_8009CC8C[index] to value when active,
+ * atomically masking *D_8009DD18 (I_MASK) while updating the shadow repeat
+ * mask at +0x30 and hardware I_MASK bit (1 << index). For indices 0 and 4
+ * through 6 it also notifies BIOS stubs func_8008D7B0 and func_8008CA20,
+ * returning the previous slot value.
  */
-s32 func_800918BC(s32 index, s32 value)
+s32 gSetIrqSlotEnable(s32 index, s32 value)
 {
-    register s32 *base __asm__("$5") = D_8009CC8C;
+    register s32 *base __asm__("$5") = gIrqHandlerSlots;
     s32 old = base[index];
     register u32 bits __asm__("$19");
     register u32 sample __asm__("$3");

@@ -3,7 +3,7 @@
 
 extern s32 gTimeoutStamp __asm__("D_8009DEFC");
 extern s32 gPendingDeadline __asm__("D_8009DF00");
-extern s32 func_80091270(s32 arg0);
+extern s32 gVSyncWait(s32 arg0) __asm__("func_80091270");
 
 /**
  * @brief Arms a 0xF0-tick deadline for the transfer engine.
@@ -26,7 +26,7 @@ void func_800951D8(void)
 {
     s32 value;
 
-    value = func_80091270(-1) + 0xF0;
+    value = gVSyncWait(-1) + 0xF0;
     gTimeoutStamp = value;
     gPendingDeadline = 0;
 }

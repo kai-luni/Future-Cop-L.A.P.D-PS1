@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 func_80090890(u8 *arg0, u8 *arg1, s32 arg2);
+s32 gMatchCdFilename(u8 *arg0, u8 *arg1) __asm__("func_800901F8");
+
 
 /**
  * @brief Compares two 12-byte filenames for equality during CD directory lookup.
@@ -26,8 +28,14 @@ extern s32 func_80090890(u8 *arg0, u8 *arg1, s32 arg2);
  *
  * @par Callers
  * Confirmed: func_8008FF20 (0x80090120, scans the 64-entry cached CD directory table) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Compares two 12-byte filename strings by calling the BIOS strncmp stub
+ * func_80090890(arg0, arg1, 0xC) and returning 1 when the result is zero.
+ * Called exclusively by func_8008FF20 while scanning the 64-entry cached
+ * directory table D_800A3E80.
  */
-s32 func_800901F8(u8 *arg0, u8 *arg1)
+s32 gMatchCdFilename(u8 *arg0, u8 *arg1)
 {
     return func_80090890(arg0, arg1, 0xC) == 0;
 }

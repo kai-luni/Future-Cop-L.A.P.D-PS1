@@ -3,7 +3,7 @@
 
 typedef void (*SpuIrqCallback)(void);
 
-extern void func_800914B0(s32 interrupt, SpuIrqCallback callback);
+extern void gSetIrqCallback(s32 interrupt, SpuIrqCallback callback) __asm__("func_800914B0");
 
 /**
  * @brief Installs an SPU interrupt callback.
@@ -28,5 +28,5 @@ void gSpuSetIrqCallback(SpuIrqCallback callback) __asm__("func_80098C38");
 
 void gSpuSetIrqCallback(SpuIrqCallback callback)
 {
-    func_800914B0(9, callback);
+    gSetIrqCallback(9, callback);
 }

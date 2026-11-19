@@ -1,7 +1,7 @@
 // Categories: Game Engine > State Tables
 #include "../../include/game/types.h"
 
-extern s32 gValueMatchTable[] __asm__("D_8009DD30");
+extern s32 gVSyncCallbackTable[] __asm__("D_8009DD30");
 
 /**
  *  @brief Updates an indexed state value when it differs from the current value.
@@ -23,7 +23,7 @@ extern s32 gValueMatchTable[] __asm__("D_8009DD30");
  */
 void func_80091C64(u32 index, s32 value)
 {
-    if (value != gValueMatchTable[index]) {
-        gValueMatchTable[index] = value;
+    if (value != gVSyncCallbackTable[index]) {
+        gVSyncCallbackTable[index] = value;
     }
 }

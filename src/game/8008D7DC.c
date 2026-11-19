@@ -1,14 +1,16 @@
 // Categories: BIOS > System Calls | Platform > Interrupts
 #include "game/types.h"
 
-extern void func_8008DBB0(void);
+extern void gClearKernelPadWords(void) __asm__("func_8008DBB0");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
-extern void func_8008DB28(void);
+extern void gPatchKernelPadTable(void) __asm__("func_8008DB28");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void func_8008D7B0(s32);
-extern void func_8008D964(void);
+extern void gInstallPriority1Irq(void) __asm__("func_8008D964");
 extern void func_8008DAF0(s32, s32, s32, s32);
 extern s32 gModeClearFlag __asm__("D_8009C800");
+void gInitPadB015WithIrq(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8008D7DC");
+
 
 /**
  * @brief Initializes BIOS/kernel device tables, installs IRQ node D_800A3E00, and invokes BIOS B0:0x15.
@@ -33,15 +35,22 @@ extern s32 gModeClearFlag __asm__("D_8009C800");
  *
  * @par Callers
  * Confirmed: none / Likely: unreferenced BIOS/device init variant (sibling of func_8008D86C) / Unknown: any runtime caller.
+ *
+ * @par Role and path
+ * Initializes BIOS device tables via func_8008DBB0 and func_8008DB28 inside a
+ * critical section, calls func_8008D7B0(0), and installs priority-1 IRQ node
+ * D_800A3E00 via func_8008D964. Forwards its four arguments to func_8008DAF0
+ * (BIOS B0:15) and sets gModeClearFlag (D_8009C800) to 1. No direct caller is
+ * present in src/.
  */
-void func_8008D7DC(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void gInitPadB015WithIrq(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    func_8008DBB0();
+    gClearKernelPadWords();
     gEnterCriticalSection();
-    func_8008DB28();
+    gPatchKernelPadTable();
     gExitCriticalSection();
     func_8008D7B0(0);
-    func_8008D964();
+    gInstallPriority1Irq();
     func_8008DAF0(arg0, arg1, arg2, arg3);
     gModeClearFlag = 1;
     __asm__ volatile("" : : : "memory");

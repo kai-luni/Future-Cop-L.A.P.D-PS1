@@ -2,9 +2,11 @@
 #include "game/types.h"
 
 extern s32 gCommandParamTable[] __asm__("D_8009C820");
-extern s32 D_8009C8A8;
+extern s32 gCdSyncCallback __asm__("D_8009C8A8");
 extern u8 gCdStatusByte __asm__("D_8009C8B4");
-extern s32 func_8008F244(s32, void *, void *, s32);
+extern s32 gIssueCdCommand(s32, void *, void *, s32) __asm__("func_8008F244");
+s32 gCdControl(s32 command, void *param, void *result) __asm__("func_8008E1BC");
+
 
 /**
  * @brief Dispatches a synchronous CD-ROM command with up to four attempts and automatic Nop/Setloc handling.
@@ -30,8 +32,16 @@ extern s32 func_8008F244(s32, void *, void *, s32);
  *
  * @par Callers
  * Confirmed: func_8001C680 (0x8001C6BC), func_8001C718 (0x8001C78C), func_8001C808 (0x8001CBCC), func_8001CE54 (0x8001CF74, 0x8001D044), func_8001D0A0 (0x8001D108), func_8001D130 (0x8001D1CC, 0x8001D1DC, 0x8001D218), func_800886E4 (0x8008871C, 0x80088750), func_80088770 (0x8008884C), func_80089018 (0x80089094), func_8009081C (0x80090848), and func_80090C18 (0x80090CE4, 0x80090CFC, 0x80090D44).
+ *
+ * @par Role and path
+ * Dispatches a synchronous CD-ROM command via func_8008F244 with up to four
+ * attempts, temporarily clearing D_8009C8A8 during optional CdlNop (cmd 1
+ * when D_8009C8B4 & 0x10) and CdlSetloc (cmd 2 when param != 0 and
+ * D_8009C820[index] != 0). Returns 1 on success or 0 after four failures.
+ * Driven by func_8001C680, func_8001C718, func_8001C808, func_8009081C, and
+ * func_80090C18.
  */
-s32 func_8008E1BC(s32 command, void *param, void *result)
+s32 gCdControl(s32 command, void *param, void *result)
 {
     register s32 i __asm__("$16");
     register void *p __asm__("$17") = param;
@@ -56,7 +66,7 @@ s32 func_8008E1BC(s32 command, void *param, void *result)
     __asm__("" : "+r"(index));
     base = gCommandParamTable;
     __asm__("" : "+r"(base));
-    saved = D_8009C8A8;
+    saved = gCdSyncCallback;
     __asm__("" : "+r"(saved));
     off = index << 2;
     __asm__("" : "+r"(off));
@@ -65,7 +75,7 @@ s32 func_8008E1BC(s32 command, void *param, void *result)
     end = -1;
     __asm__("" : "+r"(ret), "+r"(end));
     do {
-        D_8009C8A8 = 0;
+        gCdSyncCallback = 0;
         one = 1;
         __asm__("" : "+r"(one));
         if (index != one && (gCdStatusByte & 0x10)) {
@@ -75,18 +85,18 @@ s32 func_8008E1BC(s32 command, void *param, void *result)
             __asm__("" : "+r"(zero_a1));
             zero_a2 = 0;
             __asm__("" : "+r"(zero_a2));
-            func_8008F244(call_a0, zero_a1, zero_a2, 0);
+            gIssueCdCommand(call_a0, zero_a1, zero_a2, 0);
         }
         if (p == 0 || *entry == 0 ||
-            func_8008F244(2, p, r, 0) == 0) {
-            D_8009C8A8 = saved;
-            if (func_8008F244(cmd & 0xff, p, r, 0) == 0) {
+            gIssueCdCommand(2, p, r, 0) == 0) {
+            gCdSyncCallback = saved;
+            if (gIssueCdCommand(cmd & 0xff, p, r, 0) == 0) {
                 return ret + 1;
             }
         }
         i--;
     } while (i != end);
-    D_8009C8A8 = saved;
+    gCdSyncCallback = saved;
     ret = -1;
     __asm__("" : "+r"(ret));
     __asm__ volatile(".set reorder");

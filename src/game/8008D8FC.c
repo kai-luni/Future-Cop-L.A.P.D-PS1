@@ -22,6 +22,11 @@ extern void func_8008DB00(void);
  *  Any effects are those of the called routines.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Executes func_8008DAD0 (BIOS B0:13), func_8008D7B0(0) (BIOS B0:5B), and
+ * func_8008DB00 (computed jump to jtbl_800A3E18_main) in sequence and always
+ * returns 1. Accesses no globals directly and has no direct callers in src/.
  */
 s32 func_8008D8FC(void)
 {

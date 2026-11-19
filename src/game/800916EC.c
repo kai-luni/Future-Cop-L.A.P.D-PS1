@@ -5,15 +5,18 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef void (*Callback)(void);
 struct State { u16 active, busy; Callback handlers[11]; u16 mask; };
-extern struct State gFrameClockAnchor __asm__("D_8009CC88");
-extern u16 D_8009CCB8;
-extern u16 gFrameClockValid __asm__("D_8009CC8A");
+extern struct State gIrqDispatchState __asm__("D_8009CC88");
+extern u16 gIrqRepeatMask __asm__("D_8009CCB8");
+extern u16 gIrqDispatchBusy __asm__("D_8009CC8A");
 extern u16 *gInterruptStatusHalfPtr __asm__("D_8009DD14");
 extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern int gIrqStuckCounter __asm__("D_8009DD20");
-extern char D_80012830[], D_8001284C[];
+extern char gIrqInactiveErrFmt[] __asm__("D_80012830");
+extern char gIrqStuckErrFmt[] __asm__("D_8001284C");
 extern void func_8008E000(char *, ...);
 extern void func_80091B60(void);
+void gDispatchIrqs(void) __asm__("func_800916EC");
+
 
 /**
  *  @brief Dispatches enabled pending interrupt handlers and checks for persistent status.
@@ -34,10 +37,18 @@ extern void func_80091B60(void);
  *  Writes interrupt status, busy state, and the persistence counter; may invoke handlers.
  *  @par Callers
  *  Confirmed: func_80091614.
+ *
+ * @par Role and path
+ * Dispatches enabled pending PS1 hardware interrupts by scanning bits 0..10
+ * of D_8009CC88.mask & *D_8009DD14 & *D_8009DD18, acknowledging each bit in
+ * *D_8009DD14 and calling its registered handler while repeating on
+ * D_8009CCB8. If an interrupt stays pending for more than 0x800 passes in
+ * D_8009DD20, it logs via func_8008E000 and clears *D_8009DD14, then clears
+ * D_8009CC8A and calls func_80091B60. Driven by func_80091614.
  */
-void func_800916EC(void)
+void gDispatchIrqs(void)
 {
-    register struct State *state __asm__("$17") = &gFrameClockAnchor;
+    register struct State *state __asm__("$17") = &gIrqDispatchState;
     u16 pending;
     register u16 mask __asm__("$3");
     register u16 *pa1 __asm__("$4");
@@ -51,7 +62,7 @@ void func_800916EC(void)
         u16 v;
         v = *gInterruptStatusHalfPtr;
         __asm__ volatile ("" : : "r"(v));
-        func_8008E000(D_80012830, v);
+        func_8008E000(gIrqInactiveErrFmt, v);
         func_80091B60();
     }
     pa1 = gInterruptStatusHalfPtr;
@@ -76,7 +87,7 @@ void func_800916EC(void)
             pending >>= 1;
             i++;
         }
-    } while ((pending = D_8009CCB8 & *gInterruptStatusHalfPtr & *gInterruptMaskPtr));
+    } while ((pending = gIrqRepeatMask & *gInterruptStatusHalfPtr & *gInterruptMaskPtr));
     }
     {
     register u16 *pa __asm__("$5");

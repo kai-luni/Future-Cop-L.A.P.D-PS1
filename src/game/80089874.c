@@ -10,8 +10,8 @@ typedef struct {
 } Unk8009F970;
 
 extern Unk8009F970 *gMovieStreamContext __asm__("D_8009F970");
-extern void func_8008E5D8(void *);
-extern void func_80091240(void *);
+extern void gSetCdDmaCallback(void *) __asm__("func_8008E5D8");
+extern void gSetCdReadCallback(void *) __asm__("func_80091240");
 extern void gCdStreamService(s32) __asm__("func_800895E4");
 
 /**
@@ -37,8 +37,8 @@ void gMovieStreamReaderClose(void) __asm__("func_80089874");
 void gMovieStreamReaderClose(void)
 {
     if (gMovieStreamContext->unk420 != 0) {
-        func_8008E5D8(gMovieStreamContext->unk574);
-        func_80091240(gMovieStreamContext->unk578);
+        gSetCdDmaCallback(gMovieStreamContext->unk574);
+        gSetCdReadCallback(gMovieStreamContext->unk578);
         gCdStreamService(0);
     }
 }

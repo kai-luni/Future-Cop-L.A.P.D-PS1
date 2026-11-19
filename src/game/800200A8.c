@@ -2,9 +2,9 @@
 #include "game/types.h"
 
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
-extern void func_8008D6E0(s32 mode);
+extern void gInitCardAndPatches(s32 mode) __asm__("func_8008D6E0");
 extern void func_8008D660(s32 channel);
-extern void func_8008D74C(void);
+extern void gStartCardAndClearPad(void) __asm__("func_8008D74C");
 extern void func_8008C950(void);
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 
@@ -38,9 +38,9 @@ void gInitMemoryCardBios(void) __asm__("func_800200A8");
 void gInitMemoryCardBios(void)
 {
     gDisableCpuInterrupts();
-    func_8008D6E0(0);
+    gInitCardAndPatches(0);
     func_8008D660(0);
-    func_8008D74C();
+    gStartCardAndClearPad();
     func_8008C950();
     gEnableCpuInterrupts();
 }

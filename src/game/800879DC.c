@@ -13,7 +13,7 @@ extern void gMovieAudioClockEnable(void) __asm__("func_80086F1C");
 extern u32 gMovieAudioClockRead(void) __asm__("func_80086F44");
 extern u32 gMovieFrameDeadline(u32 arg0) __asm__("func_80086F58");
 extern void gMovieDecodeSlice(u8 *arg0, u8 *arg1, u8 *arg2) __asm__("func_8008589C");
-extern void func_80091270(s32 arg0);
+extern void gVSyncWait(s32 arg0) __asm__("func_80091270");
 extern void gMoviePresentFrame(void) __asm__("func_80085914");
 extern void gMovieAudioChunkPush(u8 *arg0) __asm__("func_80086FE4");
 extern void gMovieAudioChunkPushSplit(u8 *arg0) __asm__("func_80087430");
@@ -183,7 +183,7 @@ s32 gMovieStreamDemux(u8 *arg0, u8 *arg1, s32 arg2)
             limit = gMovieFrameDeadline(idx);
             gMovieDecodeSlice(data, arg0, arg1);
             while (gMovieAudioClockRead() < limit) {
-                func_80091270(0);
+                gVSyncWait(0);
             }
             gMoviePresentFrame();
         }

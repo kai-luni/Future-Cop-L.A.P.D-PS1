@@ -3,14 +3,16 @@
 
 #include "game/types.h"
 
-extern s32 gValueMatchTable[] __asm__("D_8009DD30");
+extern s32 gVSyncCallbackTable[] __asm__("D_8009DD30");
 extern volatile s32 gVSyncTickCounter __asm__("D_8009DD50");
 extern s32 *gTimer1ModePtr __asm__("D_8009DD54");
 
 extern void func_80091C90(s32 *dest, u32 count);
-extern void func_800914B0(s32 a0, void *a1);
+extern void gSetIrqCallback(s32 a0, void *a1) __asm__("func_800914B0");
 extern void func_80091BF8(void);
 extern void func_80091C64(u32 index, s32 value);
+void *gInitVSyncHandler(void) __asm__("func_80091BA0");
+
 
 /**
  * @brief Initializes the VSync root-counter hardware, callback table, and IRQ 0 handler.
@@ -34,12 +36,19 @@ extern void func_80091C64(u32 index, s32 value);
  *
  * @par Callers
  * Confirmed: func_80091614 (0x800916A8 in asm/us/main.s, stores returned pointer into D_8009DD10 +0x14) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Initializes the VSync root-counter hardware and callback table by writing
+ * 0x107 to *D_8009DD54 (T1_MODE at 0x1F801114), clearing D_8009DD50, zeroing
+ * the 8-word table D_8009DD30 via func_80091C90, and installing func_80091BF8
+ * on IRQ 0 via func_800914B0. Returns func_80091C64; called by func_80091614
+ * to populate D_8009DD10 slot +0x14.
  */
-void *func_80091BA0(void)
+void *gInitVSyncHandler(void)
 {
     *gTimer1ModePtr = 0x107;
     gVSyncTickCounter = 0;
-    func_80091C90(gValueMatchTable, 8);
-    func_800914B0(0, func_80091BF8);
+    func_80091C90(gVSyncCallbackTable, 8);
+    gSetIrqCallback(0, func_80091BF8);
     return func_80091C64;
 }

@@ -13,6 +13,8 @@ extern volatile u32 *gDmaControlCdromPtr __asm__("D_8009CBA4");
 extern volatile u32 *gDma3MemAddrPtr __asm__("D_8009CBA8");
 extern volatile u32 *gDma3BlockCtrlPtr __asm__("D_8009CBAC");
 extern volatile u32 *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
+int gReadCdDmaSync(u32 destination, u32 size) __asm__("func_8008FC30");
+
 
 /**
  *  @brief Configures and waits for a hardware transfer to a destination.
@@ -33,8 +35,16 @@ extern volatile u32 *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
  *  Writes hardware registers and initiates a transfer; polling can block indefinitely.
  *  @par Callers
  *  Confirmed: func_8008E598.
+ *
+ * @par Role and path
+ * Configures CD-ROM DMA3 for a synchronous transfer of size words (with bit
+ * 0x10000 set) to destination, setting D_8009CBA0 to 0x20943, D_8009CB7C to
+ * 0x1323, and enabling bit 0x8000 in D_8009CBA4. It waits for bit 0x40 in
+ * *D_8009CB6C, triggers DMA3 via *D_8009CBB0 = 0x11000000, polls until bit
+ * 0x1000000 clears, and restores *D_8009CB7C to 0x1325. Driven by
+ * func_8008E598 and always returns 0.
  */
-int func_8008FC30(u32 destination, u32 size)
+int gReadCdDmaSync(u32 destination, u32 size)
 {
     volatile u8 *p;
     *gCdromIndexStatusPtr = 0;

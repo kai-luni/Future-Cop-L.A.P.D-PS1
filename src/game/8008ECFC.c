@@ -7,26 +7,29 @@ typedef int s32;
 
 extern int gPassCounter __asm__("D_800A3E6C");
 extern int gPollDeadline __asm__("D_800A3E68");
-extern char *D_800A3E70;
-extern char D_80012510[], D_80012498[];
+extern char *gCdWaitFuncName __asm__("D_800A3E70");
+extern char gCdSyncNameStr[] __asm__("D_80012510");
+extern char gCdTimeoutFmtMsg[] __asm__("D_80012498");
 extern char gCdErrorLogMsg[] __asm__("D_80012488");
 extern int gLowByteEntryTable[] __asm__("D_8009C94C");
 extern int gIndexEntryTable[] __asm__("D_8009C8CC");
 extern u8 gLastResultByte __asm__("D_8009C8C5");
 extern u8 gCdStateBytes[] __asm__("D_8009CB84");
-extern void (*D_8009C8AC)(int, void *);
-extern void (*D_8009C8A8)(int, void *);
+extern void (*gCdReadyCallback)(int, void *) __asm__("D_8009C8AC");
+extern void (*gCdSyncCallback)(int, void *) __asm__("D_8009C8A8");
 extern volatile u8 *gCdromIndexStatusPtr __asm__("D_8009CB6C");
-extern u8 D_800A3E58[];
+extern u8 gCdReadyBuffer8[] __asm__("D_800A3E58");
 extern u8 gStatusBuffer8[] __asm__("D_800A3E50");
 
-extern int func_80091270(int);
+extern int gVSyncWait(int) __asm__("func_80091270");
 extern void func_8008FF08(char *);
 extern void func_8008E000(char *, char *, int, int);
-extern void func_8008F6D8(void);
-extern int func_800915D4(void);
-extern int func_8008E7A0(void);
+extern void gResetCdHardware(void) __asm__("func_8008F6D8");
+extern int gGetIrqLatchFlag(void) __asm__("func_800915D4");
+extern int gCdDrainIrqEvent(void) __asm__("func_8008E7A0");
 extern void dummy_5args(int, int, int, int, int);
+s32 gCdSyncLoop(s32 mode, u8 *result) __asm__("func_8008ECFC");
+
 
 /**
  * @brief Polls or blocks for completion of the active CD-ROM command (CD_sync).
@@ -51,8 +54,17 @@ extern void dummy_5args(int, int, int, int, int);
  *
  * @par Callers
  * Confirmed: func_8008E154 (0x8008E15C), func_8008E42C (0x8008E530), func_8008F244 (0x8008F304), func_8008F8E8 (0x8008FA94) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Polls or blocks for completion of the active CD-ROM command with a
+ * 0x3C0-tick deadline in gPollDeadline (D_800A3E68) and 0x3C0000-iteration
+ * cap in gPassCounter (D_800A3E6C). Drains events via func_8008E7A0 when
+ * func_800915D4 is non-zero, fires D_8009C8AC/D_8009C8A8 callbacks, copies
+ * gStatusBuffer8 (D_800A3E50) on status 2 or 5, and calls func_8008F6D8 on
+ * timeout. Driven by func_8008E154, func_8008E42C, func_8008F244, and
+ * func_8008F8E8.
  */
-s32 func_8008ECFC(s32 mode, u8 *result)
+s32 gCdSyncLoop(s32 mode, u8 *result)
 {
     register int s0 __asm__("$16");
     register int s1 __asm__("$17");
@@ -71,19 +83,19 @@ s32 func_8008ECFC(s32 mode, u8 *result)
     __asm__("" : "+r"(saved_mode));
     __asm__("" : "+r"(saved_result));
 
-    now = func_80091270(-1);
+    now = gVSyncWait(-1);
     __asm__("lui $30, %%hi(D_8009C8CC)\n\taddiu $30, $30, %%lo(D_8009C8CC)" : "=r"(other));
     table = gLowByteEntryTable;
     state = gCdStateBytes;
     state1 = state + 1;
     two = 2;
     gPollDeadline = now + 0x3c0;
-    msg = D_80012510;
+    msg = gCdSyncNameStr;
     gPassCounter = 0;
-    D_800A3E70 = msg;
+    gCdWaitFuncName = msg;
 
 loop:
-    if (gPollDeadline < func_80091270(-1)) goto timeout;
+    if (gPollDeadline < gVSyncWait(-1)) goto timeout;
     {
         register int cur __asm__("$2");
         register int next __asm__("$2");
@@ -100,7 +112,7 @@ loop:
             {
                 register int first __asm__("$4") = state[0];
                 register int second __asm__("$2") = state[1];
-                register char *m __asm__("$5") = D_800A3E70;
+                register char *m __asm__("$5") = gCdWaitFuncName;
                 register int fifth __asm__("$3");
                 register int index __asm__("$2");
                 register int fourth __asm__("$7");
@@ -123,9 +135,9 @@ loop:
                 third = *(int *)index;
                 fourth = *(int *)first;
                 __asm__("" : "+r"(third), "+r"(fourth));
-                func_8008E000(D_80012498, m, third, fourth);
+                func_8008E000(gCdTimeoutFmtMsg, m, third, fourth);
             }
-            func_8008F6D8();
+            gResetCdHardware();
             ret = -1;
         } else {
             ret = 0;
@@ -135,29 +147,29 @@ loop:
         return -1;
     }
 
-    if (func_800915D4() != 0) {
+    if (gGetIrqLatchFlag() != 0) {
         {
             register int v __asm__("$2") = *gCdromIndexStatusPtr;
             __asm__("" : "+r"(v));
             s1 = v & 3;
         }
 inner_loop:
-        s0 = func_8008E7A0();
+        s0 = gCdDrainIrqEvent();
         if (s0 != 0) {
             if (s0 & 4) {
-                if (D_8009C8AC != 0) {
-                    D_8009C8AC(*state1, D_800A3E58);
+                if (gCdReadyCallback != 0) {
+                    gCdReadyCallback(*state1, gCdReadyBuffer8);
                 }
             }
             {
                 register int m2 __asm__("$2");
                 m2 = s0 & 2;
                 if (m2) {
-                    if (D_8009C8A8 != 0) {
+                    if (gCdSyncCallback != 0) {
                         register int a0 __asm__("$4");
                         a0 = *state;
                         __asm__("" : "+r"(a0));
-                        D_8009C8A8(a0, gStatusBuffer8);
+                        gCdSyncCallback(a0, gStatusBuffer8);
                     }
                 }
             }

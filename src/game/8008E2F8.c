@@ -2,9 +2,11 @@
 #include "game/types.h"
 
 extern s32 gCommandParamTable[] __asm__("D_8009C820");
-extern s32 D_8009C8A8;
+extern s32 gCdSyncCallback __asm__("D_8009C8A8");
 extern u8 gCdStatusByte __asm__("D_8009C8B4");
-extern s32 func_8008F244(s32, void *, void *, s32);
+extern s32 gIssueCdCommand(s32, void *, void *, s32) __asm__("func_8008F244");
+s32 gCdControlF(s32 arg0, void *arg1) __asm__("func_8008E2F8");
+
 
 /**
  * @brief Retries a service request up to four times around a recovery step.
@@ -38,8 +40,15 @@ extern s32 func_8008F244(s32, void *, void *, s32);
  * @par Callers
  * Confirmed: func_8001C680, func_8001C718. Likely: func_8008888C, func_800908D4,
  * func_80090B48, func_80090C18, func_80090E00.
+ *
+ * @par Role and path
+ * Issues an asynchronous CD-ROM command via func_8008F244(cmd, arg1, 0, 1)
+ * with up to four attempts, running CdlNop (cmd 1) when D_8009C8B4 & 0x10 and
+ * CdlSetloc (cmd 2) when arg1 != 0 and D_8009C820[index] != 0. Saves and
+ * restores D_8009C8A8 around setup and returns 1 on success or 0 on failure.
+ * Driven by func_8001C680, func_8001C718, and func_800908D4..func_80090E00.
  */
-s32 func_8008E2F8(s32 arg0, void *arg1)
+s32 gCdControlF(s32 arg0, void *arg1)
 {
     register s32 i __asm__("$16");
     register void *a1 __asm__("$17") = arg1;
@@ -64,7 +73,7 @@ s32 func_8008E2F8(s32 arg0, void *arg1)
     __asm__("" : "+r"(index));
     base = gCommandParamTable;
     __asm__("" : "+r"(base));
-    saved = D_8009C8A8;
+    saved = gCdSyncCallback;
     __asm__("" : "+r"(saved));
     off = index << 2;
     __asm__("" : "+r"(off));
@@ -103,18 +112,18 @@ s32 func_8008E2F8(s32 arg0, void *arg1)
             __asm__("" : "+r"(call_a1));
             zero_a2 = 0;
             __asm__("" : "+r"(zero_a2));
-            if (func_8008F244(call_a0, call_a1, zero_a2, 0) != 0) {
+            if (gIssueCdCommand(call_a0, call_a1, zero_a2, 0) != 0) {
                 goto next;
             }
         }
-        D_8009C8A8 = saved;
-        if (func_8008F244(a0 & 0xff, a1, 0, 1) == 0) {
+        gCdSyncCallback = saved;
+        if (gIssueCdCommand(a0 & 0xff, a1, 0, 1) == 0) {
             return result + 1;
         }
 next:
         i--;
     } while (i != end);
-    D_8009C8A8 = saved;
+    gCdSyncCallback = saved;
     result = -1;
     __asm__("" : "+r"(result));
     __asm__ volatile(".set reorder");

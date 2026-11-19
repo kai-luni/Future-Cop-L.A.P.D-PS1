@@ -5,6 +5,8 @@ struct CallbackTable {
 };
 
 extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
+void gSetDmaCallback(void) __asm__("func_800914E0");
+
 
 /**
  * @brief Dispatches the registered callback in slot +4 of the display
@@ -25,8 +27,13 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  * func_8008E5D8, func_80092AE0, func_80094A3C, func_80094CEC,
  * func_800953F0, func_800954DC, func_800955C8, func_8009570C,
  * func_80095808, func_80096108, func_8009612C, gSpuSetDmaCallback.
+ *
+ * @par Role and path
+ * Dispatches through slot +0x04 of D_8009DD10, passing register arguments
+ * through to install or restore a DMA completion callback. Called by
+ * func_8008E5D8, gSpuSetDmaCallback, and graphics/display callers.
  */
-void func_800914E0(void)
+void gSetDmaCallback(void)
 {
     gIrqCallbackTable->callback();
 }

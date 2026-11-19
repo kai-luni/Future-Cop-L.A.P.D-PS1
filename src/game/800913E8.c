@@ -6,6 +6,8 @@ extern volatile s32 gVSyncTickCounter __asm__("D_8009DD50");
 extern void func_8008CA20(s32, s32);
 extern void func_8008D7B0(s32);
 extern void func_8008FF08(void *);
+void gWaitVSyncTarget(s32 arg0, s32 arg1) __asm__("func_800913E8");
+
 
 /**
  * @brief Spin-waits for the VSync frame counter to reach a target tick, timing out into BIOS error recovery.
@@ -29,8 +31,15 @@ extern void func_8008FF08(void *);
  *
  * @par Callers
  * Confirmed: func_80091270 (0x80091320, 0x80091344 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Spin-waits until the interrupt-driven VSync counter D_8009DD50 reaches arg0
+ * while decrementing a timeout counter initialized to arg1 << 15. If the
+ * timeout reaches -1, it prints the VSync timeout message via func_8008FF08
+ * and invokes BIOS stubs func_8008D7B0(0) (B0:5B) and func_8008CA20(3, 0)
+ * (C0:0A) before breaking. Driven by func_80091270.
  */
-void func_800913E8(s32 arg0, s32 arg1)
+void gWaitVSyncTarget(s32 arg0, s32 arg1)
 {
     volatile s32 temp = arg1 << 15;
 

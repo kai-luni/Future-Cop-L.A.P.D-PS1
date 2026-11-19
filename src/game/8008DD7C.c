@@ -5,7 +5,9 @@ extern u32 D_8008DCD4[];
 extern s32 D_800A3E30;
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void func_8008DBA0(void);
-extern void func_8008DCE8(void);
+extern void gCopyCardPatchTable(void) __asm__("func_8008DCE8");
+void gInstallCardPatchSlot(void) __asm__("func_8008DD7C");
+
 
 /**
  * @brief Installs the completion handler into the kernel block at offset 0x9C8.
@@ -29,8 +31,14 @@ extern void func_8008DCE8(void);
  *
  * @par Callers
  * Confirmed: func_8008D784 (driver init pair).
+ *
+ * @par Role and path
+ * Calls gEnterCriticalSection and BIOS B0:57 to read the kernel pointer at
+ * +0x16C, then copies words from D_8008DCD4 up to func_8008DCE8 into base +
+ * 0x9C8. Flushes cache via func_8008DBA0 and restores $ra from D_800A3E30.
+ * Called by func_8008D6E0.
  */
-void func_8008DD7C(void)
+void gInstallCardPatchSlot(void)
 {
     register u32 value __asm__("$8");
     register u32 *src __asm__("$10");

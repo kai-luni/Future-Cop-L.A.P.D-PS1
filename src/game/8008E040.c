@@ -1,5 +1,7 @@
 // Categories: Platform > CD-ROM | Resources > File Access
 extern unsigned char gCdTargetLocation[] __asm__("D_8009C8C0");
+unsigned char *gGetCdTargetLocation(void) __asm__("func_8008E040");
+
 
 /**
  * @brief Returns a pointer to the 4-byte CD-ROM target location buffer D_8009C8C0.
@@ -23,8 +25,13 @@ extern unsigned char gCdTargetLocation[] __asm__("D_8009C8C0");
  *
  * @par Callers
  * Confirmed: func_80090C18 (0x80090CEC and 0x80090D70 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Returns the address of gCdTargetLocation (D_8009C8C0), the 4-byte CdlLOC
+ * buffer updated during CdlSetloc in func_8008F244. Driven by func_80090C18
+ * and performs no function calls.
  */
-unsigned char *func_8008E040(void)
+unsigned char *gGetCdTargetLocation(void)
 {
     return gCdTargetLocation;
 }

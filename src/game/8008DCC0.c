@@ -20,6 +20,11 @@ extern char D_A000DFAC[];
  *  Effects after the transfer depend on the target code.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Transfers control unconditionally via a computed goto to the fixed address
+ * D_A000DFAC (0xA000DFAC) without creating a call frame. No globals in
+ * D_800xxxxx are accessed and no direct callers exist in src/.
  */
 void func_8008DCC0(void)
 {

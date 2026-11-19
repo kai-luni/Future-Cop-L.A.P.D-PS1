@@ -4,6 +4,8 @@ typedef unsigned int u32;
 
 extern u8 *gLowByteEntryTable[] __asm__("D_8009C94C");
 extern u8 gCdFallbackMsg[] __asm__("D_8001233C");
+u8 *gGetCdIntName(u32 index) __asm__("func_8008E120");
+
 
 /**
  *  @brief Looks up a pointer using the low byte of an index.
@@ -22,8 +24,15 @@ extern u8 gCdFallbackMsg[] __asm__("D_8001233C");
  *  None.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Masks index with 0xFF and returns gLowByteEntryTable[i] (D_8009C94C) when i
+ * < 7, or gCdFallbackMsg (D_8001233C) otherwise. D_8009C94C holds CD
+ * interrupt/status name strings logged on timeout in func_8008ECFC and
+ * func_8008EF7C. Performs no function calls and has no direct callers in
+ * src/.
  */
-u8 *func_8008E120(u32 index)
+u8 *gGetCdIntName(u32 index)
 {
     u32 i = index & 0xFF;
 

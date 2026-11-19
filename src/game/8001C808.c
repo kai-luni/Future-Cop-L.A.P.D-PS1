@@ -13,18 +13,18 @@ extern int gTransferRetryCount __asm__("D_8009F24C");
 extern int gCdCallbackActive __asm__("D_8009F618");
 extern int gCdAbortFlag __asm__("D_8009F228");
 extern volatile u8 gEventBuffer[] __asm__("D_800A0798");
-extern int func_8008E0D8(int);
-extern int func_8008E598(void *, int);
+extern int gSetCdLogLevel(int) __asm__("func_8008E0D8");
+extern int gCdRead(void *, int) __asm__("func_8008E598");
 extern int gCdlLocToByteOffset(void *) __asm__("func_8001C588");
 extern void gIncrementBcdLoc(void *) __asm__("func_8001C288");
 extern void gStartCdDirRead(void) __asm__("func_8001C718");
 extern void gResetCdReadState(void) __asm__("func_8001C680");
 extern void gClearWord(void *) __asm__("func_8001C470");
 extern int func_8008CD10(int, void *, int);
-extern int func_8008E1BC(int, int, void *);
-extern void func_800914B0(int, int);
-extern void func_8008DEA0(void);
-extern int func_8008E1A8(void *);
+extern int gCdControl(int, int, void *) __asm__("func_8008E1BC");
+extern void gSetIrqCallback(int, int) __asm__("func_800914B0");
+extern void gStartCdInit(void) __asm__("func_8008DEA0");
+extern int gSetCdReadyCallback(void *) __asm__("func_8008E1A8");
 extern void D_8001C808(void);
 void gCdSectorCallback(int arg) __asm__("func_8001C808");
 
@@ -125,7 +125,7 @@ void gCdSectorCallback(int arg)
     Ent *entries;
     register u8 *loc __asm__("$4");
 
-    saved = func_8008E0D8(0);
+    saved = gSetCdLogLevel(0);
     head = &func_80010000;
     __asm__ volatile ("" : : "r" (saved), "r" (head));
     arg &= 0xFF;
@@ -146,15 +146,15 @@ void gCdSectorCallback(int arg)
                 while ((*port & 0x1000000) && i++ != 0x10000) { }
                 __asm__ volatile ("" : : "r" (i));
             }
-            func_8008E598(buf, 3);
+            gCdRead(buf, 3);
             cur = gCdlLocToByteOffset(buf);
             entries = gFileSlotTable;
             q = &func_80010000;
             want = entries[q->idx].c & -0x800;
             if (cur != want) {
                 gTransferError = -1;
-                func_8008E598(gLengthTable, 0x200);
-                func_8008E598(buf2, 0x46);
+                gCdRead(gLengthTable, 0x200);
+                gCdRead(buf2, 0x46);
                 if (cur < want && want < cur + 0x10)
                     return;
                 gStartCdDirRead();
@@ -168,7 +168,7 @@ void gCdSectorCallback(int arg)
             if (len > 0x800) len = 0x800;
             len -= n;
             if (len < 0x800) {
-                if (func_8008E598(gLengthTable, 0x200) == 1) {
+                if (gCdRead(gLengthTable, 0x200) == 1) {
                     int idx;
                     register int cnt __asm__("$6");
                     idx = q->idx;
@@ -181,10 +181,10 @@ void gCdSectorCallback(int arg)
                     q->result = -0xC;
                 }
             } else {
-                if (!func_8008E598((void *)q->buf, 0x200))
+                if (!gCdRead((void *)q->buf, 0x200))
                     q->result = -0xC;
             }
-            func_8008E598(buf2, 0x46);
+            gCdRead(buf2, 0x46);
             if (func_80010000.result >= 0) {
                 func_80010000.buf += len;
                 func_80010000.pos += len;
@@ -222,18 +222,18 @@ void gCdSectorCallback(int arg)
         s->result = -0x1D;
         gCdAbortFlag = one;
         do {
-            func_8008E1BC(1, 0, (void *)gEventBuffer);
+            gCdControl(1, 0, (void *)gEventBuffer);
             if (!(gEventBuffer[0] & 0x10)) break;
-            func_800914B0(2, 0);
-            func_8008DEA0();
+            gSetIrqCallback(2, 0);
+            gStartCdInit();
             loc = gCdCurrentLoc;
             __asm__ volatile ("" : : "r" (loc));
             gClearWord(loc);
-            s->unk18 = func_8008E1A8(D_8001C808);
+            s->unk18 = gSetCdReadyCallback(D_8001C808);
             gCdCallbackActive = 0;
         } while (gEventBuffer[0] & 0x10);
         gStartCdDirRead();
         gCdAbortFlag = 0;
     }
-    func_8008E0D8(saved);
+    gSetCdLogLevel(saved);
 }

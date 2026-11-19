@@ -14,21 +14,21 @@ typedef struct {
     u8 name[16];
 } DirEntry;
 
-extern s32 D_8009CBC0;
+extern s32 gCdCachedDirIndex __asm__("D_8009CBC0");
 extern s32 gCdLogLevel __asm__("D_8009C8B0");
-extern u8 D_800A445C[];
+extern u8 gCdDirSectorTable[] __asm__("D_800A445C");
 extern u8 D_800A5A80[];
-extern DirEntry D_800A3E80[];
-extern u16 D_80012754;
-extern s16 D_80012758;
-extern s8 D_8001275A;
-extern u8 D_80012718[];
-extern u8 D_80012738[];
-extern u8 D_8001275C[];
-extern u8 D_80012778[];
+extern DirEntry gCdDirEntryCache[] __asm__("D_800A3E80");
+extern u16 gCdDotDirName __asm__("D_80012754");
+extern s16 gCdDotDotPrefix __asm__("D_80012758");
+extern s8 gCdDotDotNul __asm__("D_8001275A");
+extern u8 gCdDirReadErrMsg[] __asm__("D_80012718");
+extern u8 gCdDirCacheLogMsg[] __asm__("D_80012738");
+extern u8 gCdDirEntryFmt[] __asm__("D_8001275C");
+extern u8 gCdDirCountFmt[] __asm__("D_80012778");
 
-extern struct CdlLOC *func_8008E61C(s32 sector, struct CdlLOC *location);
-extern s32 func_8009081C(s32 sectors, s32 sector, u8 *buf);
+extern struct CdlLOC *gCdIntToPos(s32 sector, struct CdlLOC *location) __asm__("func_8008E61C");
+extern s32 gReadCdSectorsSync(s32 sectors, s32 sector, u8 *buf) __asm__("func_8009081C");
 extern void func_8008E000();
 extern void func_8008CD10(u8 *dst, u8 *src, u32 n);
 extern void *memcpy(void *, const void *, u32);
@@ -39,6 +39,8 @@ extern void *memcpy(void *, const void *, u32);
 #define LOADV(op, S, o) ({ s32 v_; __asm__ volatile("lui %0,%%hi(" #S ")\n\taddu %0,%0,%1\n\t" op " %0,%%lo(" #S ")(%0)" : "=&r"(v_) : "r"(o)); v_; })
 #define HIADDR(o) ({ u8 *a_; __asm__ volatile("lui %0,0x800a\n\taddu %0,%0,%1" : "=&r"(a_) : "r"(o)); a_; })
 #define LOADX(op, S, o) ({ s32 v_; __asm__("lui %0,%%hi(" #S ")\n\taddu %0,%0,%1\n\t" op " %0,%%lo(" #S ")(%0)" : "=&r"(v_) : "r"(o)); v_; })
+s32 gCacheCdDirSector(s32 arg0) __asm__("func_80090580");
+
 
 /**
  * @brief Reads and caches an ISO-9660 directory sector into D_800A3E80 (CD_cachefile).
@@ -62,8 +64,16 @@ extern void *memcpy(void *, const void *, u32);
  *
  * @par Callers
  * Confirmed: func_8008FF20 (0x80090090, CD file search) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Returns 1 immediately if arg0 matches the cached directory index
+ * D_8009CBC0; otherwise reads one sector from D_800A445C[arg0 * 0x2C] into
+ * D_800A5A80 via func_8009081C. It parses up to 64 ISO-9660 directory records
+ * into D_800A3E80[] using func_8008E61C and func_8008CD10, updates D_8009CBC0
+ * = arg0, and logs progress via func_8008E000 when D_8009C8B0 is enabled.
+ * Driven by func_8008FF20.
  */
-s32 func_80090580(s32 arg0)
+s32 gCacheCdDirSector(s32 arg0)
 {
     u8 *p;
     u8 *end;
@@ -71,10 +81,10 @@ s32 func_80090580(s32 arg0)
     s32 sector;
     u8 *h;
 
-    if (arg0 == D_8009CBC0) {
+    if (arg0 == gCdCachedDirIndex) {
         return 1;
     }
-    if (func_8009081C(1, LOADX("lw", D_800A445C, arg0 * 0x2C), D_800A5A80) != 1) {
+    if (gReadCdSectorsSync(1, LOADX("lw", D_800A445C, arg0 * 0x2C), D_800A5A80) != 1) {
         if (gCdLogLevel > 0) {
             PRINT_STR(D_80012718);
         }
@@ -90,33 +100,33 @@ s32 func_80090580(s32 arg0)
         if (*p == 0) {
             break;
         }
-        __asm__("" : : "r"(&D_800A3E80[i]));
+        __asm__("" : : "r"(&gCdDirEntryCache[i]));
         memcpy(&sector, p + 2, 4);
-        func_8008E61C(sector, &D_800A3E80[i].loc);
-        memcpy(&D_800A3E80[i].size, p + 10, 4);
+        gCdIntToPos(sector, &gCdDirEntryCache[i].loc);
+        memcpy(&gCdDirEntryCache[i].size, p + 10, 4);
         switch (i) {
         case 0:
-            *(u16 *)D_800A3E80[0].name = D_80012754;
+            *(u16 *)gCdDirEntryCache[0].name = gCdDotDirName;
             break;
         case 1:
             {
-                s32 a = D_80012758;
-                s32 b = D_8001275A;
+                s32 a = gCdDotDotPrefix;
+                s32 b = gCdDotDotNul;
                 __asm__("" : "=r"(a), "=r"(b) : "0"(a), "1"(b));
-                *(s16 *)D_800A3E80[1].name = a;
-                D_800A3E80[1].name[2] = b;
+                *(s16 *)gCdDirEntryCache[1].name = a;
+                gCdDirEntryCache[1].name[2] = b;
             }
             break;
         default:
-            func_8008CD10(D_800A3E80[i].name, p + 0x21, p[0x20]);
-            D_800A3E80[i].name[p[0x20]] = 0;
+            func_8008CD10(gCdDirEntryCache[i].name, p + 0x21, p[0x20]);
+            gCdDirEntryCache[i].name[p[0x20]] = 0;
             break;
         }
         if (gCdLogLevel >= 2) {
             s32 off = i * sizeof(DirEntry);
             __asm__("" : : "r"(i), "r"(off));
-            func_8008E000(D_8001275C, LOADV("lbu", D_800A3E80, off), LOADV("lbu", D_800A3E81, off),
-                          LOADV("lbu", D_800A3E82, off), *(u32 *)(HIADDR(off) + 0x3E84), D_800A3E80[i].name);
+            func_8008E000(gCdDirEntryFmt, LOADV("lbu", D_800A3E80, off), LOADV("lbu", D_800A3E81, off),
+                          LOADV("lbu", D_800A3E82, off), *(u32 *)(HIADDR(off) + 0x3E84), gCdDirEntryCache[i].name);
         }
         p += *p;
         i++;
@@ -124,12 +134,12 @@ s32 func_80090580(s32 arg0)
             break;
         }
     }
-    D_8009CBC0 = arg0;
+    gCdCachedDirIndex = arg0;
     if (i < 0x40) {
-        D_800A3E80[i].name[0] = 0;
+        gCdDirEntryCache[i].name[0] = 0;
     }
     if (gCdLogLevel >= 2) {
-        func_8008E000(D_80012778, i);
+        func_8008E000(gCdDirCountFmt, i);
         __asm__ volatile(".set\tnoreorder\n\t.set reorder");
     }
     return 1;

@@ -1,7 +1,9 @@
 // Categories: Game Engine > Dispatch
 #include "game/types.h"
 
-extern s32 func_8008F650(u8 *arg0);
+extern s32 gWriteCdAudioMixRegs(u8 *arg0) __asm__("func_8008F650");
+s32 gSetCdVolume(u8 *arg0) __asm__("func_8008E578");
+
 
 /**
  *  @brief Passes a byte pointer to func_8008F650 and returns 1.
@@ -20,9 +22,14 @@ extern s32 func_8008F650(u8 *arg0);
  *  Any effects of func_8008F650 are not specified by this source.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Passes arg0 to func_8008F650 to program the four CD-ROM audio attenuation
+ * registers in banks 2 and 3 and always returns 1. Accesses no globals
+ * directly and has no direct callers in src/.
  */
-s32 func_8008E578(u8 *arg0)
+s32 gSetCdVolume(u8 *arg0)
 {
-    func_8008F650(arg0);
+    gWriteCdAudioMixRegs(arg0);
     return 1;
 }

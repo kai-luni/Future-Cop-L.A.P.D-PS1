@@ -11,15 +11,15 @@ extern u8 gEventBuffer[] __asm__("D_800A0798");
 extern volatile u8 gCdStatusReg __asm__("D_1F801800");
 extern volatile u8 gCdInterruptReg __asm__("D_1F801803");
 extern void gByteOffsetToCdlLoc(int *, int) __asm__("func_8001C494");
-extern int func_8008E174(int, int);
-extern int func_8008E1BC(int, void *, void *);
+extern int gCdReady(int, int) __asm__("func_8008E174");
+extern int gCdControl(int, void *, void *) __asm__("func_8008E1BC");
 extern void func_8008CC80(int);
-extern int func_8008E194(void *);
+extern int gSetCdSyncCallback(void *) __asm__("func_8008E194");
 extern void gCdSeekDoneCallback(void) __asm__("func_8001C614");
 extern void gCopyWord(int *, int *) __asm__("func_8001C27C");
 void gStartCdDirRead(void) __asm__("func_8001C718");
 
-extern int func_8008E2F8(int, void *);
+extern int gCdControlF(int, void *) __asm__("func_8008E2F8");
 /**
  * @brief Reads the directory block from the memory card into the loader buffer.
  *
@@ -67,7 +67,7 @@ void gStartCdDirRead(void)
     a0 = (int)gCdTargetLoc;
     __asm__ volatile("" : "+r"(a0));
     gByteOffsetToCdlLoc((int *)a0, (int)a1);
-    while (func_8008E174(1, 0)) {}
+    while (gCdReady(1, 0)) {}
     a0 = 14;
     a1 = (char *)0x800a0000;
     __asm__ volatile("" : "+r"(a1));
@@ -77,7 +77,7 @@ void gStartCdDirRead(void)
     gCdStatusReg = 0;
     gCdInterruptReg = 0;
     __asm__ volatile("" : "+r"(a2) : : "memory");
-    result = func_8008E1BC(a0, a1, a2 + 0x798);
+    result = gCdControl(a0, a1, a2 + 0x798);
     state = (State *)0x80010000;
     if (!result)
         func_8008CC80(-1);
@@ -86,7 +86,7 @@ void gStartCdDirRead(void)
     __asm__ volatile("" : "+r"(a0));
     state->state = 1;
     __asm__ volatile("" : : : "memory");
-    saved = func_8008E194((void *)a0);
+    saved = gSetCdSyncCallback((void *)a0);
     __asm__ volatile("" : "+r"(saved));
     a0 = 0x800a0000;
     __asm__ volatile("" : "+r"(a0));
@@ -103,6 +103,6 @@ void gStartCdDirRead(void)
     __asm__ volatile("" : "+r"(a1));
     a1 -= 0x9ec;
     __asm__ volatile("" : "+r"(a1));
-    if (!func_8008E2F8(6, a1))
+    if (!gCdControlF(6, a1))
         state->state = 0;
 }

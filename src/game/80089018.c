@@ -41,11 +41,11 @@ extern u8 gCodeDataSource[8] __asm__("D_80088D74");
 
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
-extern s32 func_8008E194(s32 value);
-extern s32 func_8008E1A8(s32 value);
-extern void func_8008E1BC(s32 arg0, s32 arg1, s32 arg2);
+extern s32 gSetCdSyncCallback(s32 value) __asm__("func_8008E194");
+extern s32 gSetCdReadyCallback(s32 value) __asm__("func_8008E1A8");
+extern void gCdControl(s32 arg0, s32 arg1, s32 arg2) __asm__("func_8008E1BC");
 extern s32 func_800886E4(void);
-extern void func_8008E42C(s32 arg0, void *arg1, s32 arg2);
+extern void gCdControlB(s32 arg0, void *arg1, s32 arg2) __asm__("func_8008E42C");
 extern void func_800889DC(s32 arg0, s32 arg1, s32 arg2);
 extern s32 func_80088770(s32 arg0, s32 arg1, s32 arg2);
 extern void func_80088974(s32 arg0, s32 arg1, s32 arg2);
@@ -89,18 +89,18 @@ void func_80089018(void)
         gMovieStreamContext->unk408 = 0;
         gMovieStreamContext->unk40C = 0;
         gMovieStreamContext->unk41C = 0;
-        func_8008E194(0);
-        func_8008E1A8(0);
+        gSetCdSyncCallback(0);
+        gSetCdReadyCallback(0);
         gEnableCpuInterrupts();
-        func_8008E1BC(8, 0, 0);
+        gCdControl(8, 0, 0);
         while (func_800886E4() != 0) {
         }
         local = 0xA0;
-        func_8008E42C(0xE, &local, 0);
+        gCdControlB(0xE, &local, 0);
         work = 1;
         gDisableCpuInterrupts();
-        func_8008E194((s32)gCodeDataSource);
-        func_8008E1A8((s32)func_800889DC + 0x40);
+        gSetCdSyncCallback((s32)gCodeDataSource);
+        gSetCdReadyCallback((s32)func_800889DC + 0x40);
         gMovieStreamContext->unk41C = work;
         gMovieStreamContext->unk414 = work;
         gMovieStreamContext->unk424 = 0;

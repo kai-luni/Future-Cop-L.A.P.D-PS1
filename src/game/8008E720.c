@@ -9,6 +9,8 @@ struct CdlLOC {
 };
 
 #define BCD_TO_INT(value) (((value) >> 4) * 10 + ((value) & 0xF))
+s32 gCdPosToInt(struct CdlLOC *location) __asm__("func_8008E720");
+
 
 /**
  * @brief Converts a CdlLOC position back into a logical sector number.
@@ -29,8 +31,13 @@ struct CdlLOC {
  * None observed.
  * @par Callers
  * Confirmed: the CD file service (func_8008FC30 neighbourhood).
+ *
+ * @par Role and path
+ * Decodes BCD minute, second, and sector bytes from location into a linear
+ * sector count and subtracts 150 pre-gap sectors. Performs no function calls,
+ * accesses no globals, and has no direct callers in src/.
  */
-s32 func_8008E720(struct CdlLOC *location)
+s32 gCdPosToInt(struct CdlLOC *location)
 {
     return (BCD_TO_INT(location->minute) * 60
             + BCD_TO_INT(location->second)) * 75

@@ -18,6 +18,11 @@ extern void *jtbl_800A3E18_main;
  *  Depend on the target; the target must be valid.
  *  @par Callers
  *  Confirmed: func_8008D8FC.
+ *
+ * @par Role and path
+ * Loads the pointer from jtbl_800A3E18_main (populated by func_8008DB28 as
+ * kernel base + 0x884) into $9 and performs an unconditional computed jump
+ * without a call frame. Driven by func_8008D8FC.
  */
 void func_8008DB00(void)
 {

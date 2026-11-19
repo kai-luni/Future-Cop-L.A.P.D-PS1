@@ -2,9 +2,11 @@
 #include "game/types.h"
 
 extern s32 gReadWindowTable[] __asm__("D_8009CBEC");
-extern s32 func_80091270(s32 arg0);
-extern void func_80090C18(s32 arg0);
-extern s32 func_8008E174(s32 mode, u8 *result);
+extern s32 gVSyncWait(s32 arg0) __asm__("func_80091270");
+extern void gStartCdSectorRead(s32 arg0) __asm__("func_80090C18");
+extern s32 gCdReady(s32 mode, u8 *result) __asm__("func_8008E174");
+s32 gCdReadSync(s32 mode, u8 *result) __asm__("func_8009113C");
+
 
 /**
  * @brief Polls a service result word with two timeout limits.
@@ -37,8 +39,16 @@ extern s32 func_8008E174(s32 mode, u8 *result);
  *
  * @par Callers
  * Likely: func_8009081C (same address family).
+ *
+ * @par Role and path
+ * Polls the CD-ROM read window table D_8009CBEC using func_80091270(-1),
+ * returning -1 if the 0x4B0-tick total window expires or calling
+ * func_80090C18(1) if status is negative or the 0x3C-tick stall window
+ * expires. In mode 0 it loops until settled, then converts the status via
+ * func_8008E174(1, result) and normalizes an empty-but-pending state to 1.
+ * Driven by func_8009081C.
  */
-s32 func_8009113C(s32 mode, u8 *result)
+s32 gCdReadSync(s32 mode, u8 *result)
 {
     register s32 ret __asm__("$16");
     register s32 *ptr __asm__("$17");
@@ -52,22 +62,22 @@ s32 func_8009113C(s32 mode, u8 *result)
     ptr = gReadWindowTable;
     flag = ptr + 2;
     do {
-        now = func_80091270(-1);
+        now = gVSyncWait(-1);
         if (ptr[0] + 0x4b0 < now) {
             ret = -1;
         } else {
             if (ptr[-2] < 0) goto timeout;
-            now = func_80091270(-1);
+            now = gVSyncWait(-1);
             if (ptr[-1] + 0x3c < now) {
             timeout:
-                func_80090C18(1);
+                gStartCdSectorRead(1);
                 ret = ptr[-7];
             } else {
                 ret = ptr[-2];
             }
         }
     } while (saved_mode == 0 && ((*flag != 0 && ret == 0) || ret > 0));
-    func_8008E174(1, saved_result);
+    gCdReady(1, saved_result);
     if (*flag != 0 && ret == 0) {
         ret = 1;
     }

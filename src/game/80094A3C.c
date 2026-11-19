@@ -31,8 +31,8 @@ extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern void func_800951D8(void);
 extern s32 func_8009520C(void);
 extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
-extern u32 func_800915FC(u32);
-extern void func_800914E0(s32, void (*)(void));
+extern u32 gSwapIrqMask(u32) __asm__("func_800915FC");
+extern void gSetDmaCallback(s32, void (*)(void)) __asm__("func_800914E0");
 
 /**
  * @brief Enqueues or immediately executes a GPU/DMA2 callback job in the 64-entry ring D_800A9450.
@@ -75,7 +75,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
         gWaitImageTransferFrame();
     }
 
-    gDispatchSavedIrqMask = func_800915FC(0);
+    gDispatchSavedIrqMask = gSwapIrqMask(0);
     ddf0 = &gDebugTagBytes;
     __asm__("" : "=r"(ddf0) : "0"(ddf0));
     ddf0->unk8 = 1;
@@ -84,11 +84,11 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
         while ((*gGpuGp1PortPtr & 0x04000000) == 0) {
         }
         func(arg1, arg3);
-        func_800915FC(gDispatchSavedIrqMask);
+        gSwapIrqMask(gDispatchSavedIrqMask);
         return 0;
     }
 
-    func_800914E0(2, gWaitImageTransferFrame);
+    gSetDmaCallback(2, gWaitImageTransferFrame);
 
     i = 0;
     if (arg2 != 0) {
@@ -110,7 +110,7 @@ s32 func_80094A3C(void (*func)(), void *arg1, s32 arg2, s32 arg3)
     __asm__ volatile("" ::: "memory");
 
     gGpuJobHead = (gGpuJobHead + 1) & 0x3F;
-    func_800915FC(gDispatchSavedIrqMask);
+    gSwapIrqMask(gDispatchSavedIrqMask);
     gWaitImageTransferFrame();
 
     i = (gGpuJobHead - gGpuJobTail) & 0x3F;

@@ -3,7 +3,7 @@
 
 typedef void (*SpuDmaCallback)(void);
 
-extern void func_800914E0(s32 channel, SpuDmaCallback callback);
+extern void gSetDmaCallback(s32 channel, SpuDmaCallback callback) __asm__("func_800914E0");
 
 /**
  * @brief Arms the SPU transfer-complete event with a handler (channel 4).
@@ -32,5 +32,5 @@ void gSpuSetDmaCallback(SpuDmaCallback callback) __asm__("func_800979F8");
 
 void gSpuSetDmaCallback(SpuDmaCallback callback)
 {
-    func_800914E0(4, callback);
+    gSetDmaCallback(4, callback);
 }

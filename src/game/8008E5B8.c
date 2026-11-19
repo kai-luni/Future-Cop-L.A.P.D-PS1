@@ -1,7 +1,9 @@
 // Categories: Platform > CD-ROM | Platform > DMA
 #include "game/types.h"
 
-extern s32 func_8008FD30(void *destination, s32 size);
+extern s32 gStartCdDmaAsync(void *destination, s32 size) __asm__("func_8008FD30");
+s32 gCdGetSector(void *destination, s32 size) __asm__("func_8008E5B8");
+
 
 /**
  * @brief Transfers a CD-ROM sector block via DMA3 and returns success.
@@ -26,8 +28,13 @@ extern s32 func_8008FD30(void *destination, s32 size);
  *
  * @par Callers
  * Confirmed: func_800908D4 (0x80090948 for 3-word sector header, 0x800909D4 for sector payload) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Forwards destination and word count size to func_8008FD30 to perform a
+ * CD-ROM to RAM DMA3 sector transfer, returning 1 when func_8008FD30 returns
+ * 0. Driven by func_800908D4.
  */
-s32 func_8008E5B8(void *destination, s32 size)
+s32 gCdGetSector(void *destination, s32 size)
 {
-    return func_8008FD30(destination, size) == 0;
+    return gStartCdDmaAsync(destination, size) == 0;
 }

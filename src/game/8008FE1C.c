@@ -17,6 +17,12 @@
  *  Overwrites the 32-bit word at 0x8009CB50.
  *  @par Callers
  *  Unknown: no direct callers are listed.
+ *
+ * @par Role and path
+ * Performs a single unconditional 32-bit store of value to the fixed address
+ * 0x8009CB50. No callers or other references to 0x8009CB50 appear in src/, so
+ * the subsystem and purpose of the stored word cannot be established from the
+ * codebase.
  */
 void func_8008FE1C(u32 value)
 {

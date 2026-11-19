@@ -1,6 +1,6 @@
 // Categories: Platform > GPU | Platform > DMA
 extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
-extern void func_800914E0(int, void (*)(void));
+extern void gSetDmaCallback(int, void (*)(void)) __asm__("func_800914E0");
 
 /**
  * @brief Installs func_80094CEC as the channel-2 (GPU) DMA completion callback via func_800914E0.
@@ -28,5 +28,5 @@ void func_80095808(void)
 {
     register void (*callback)(void) asm("$5");
     asm("lui %0, %%hi(func_80094CEC)\n\taddiu %0, %0, %%lo(func_80094CEC)" : "=r"(callback));
-    func_800914E0(2, callback);
+    gSetDmaCallback(2, callback);
 }

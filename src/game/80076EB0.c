@@ -12,7 +12,7 @@ extern u8 D_8009B2DC[];
 extern void gInitHeapBlocks(u32 arg0, u32 arg1) __asm__("func_8008CA30");
 extern u32 *gHeapAllocRaw(s32 arg0, s32 arg1) __asm__("func_8001E240");
 extern void gInitHeap(void) __asm__("func_80017BE8");
-extern void func_8008DEA0(void);
+extern void gStartCdInit(void) __asm__("func_8008DEA0");
 extern s32 func_8001E4E4(void);
 extern s32 gInitFadeLayers(void) __asm__("func_8001BF78");
 extern void gSelectFadeLayer(s32 mode, s32 enable) __asm__("func_8001C088");
@@ -89,7 +89,7 @@ s32 gInitRuntime(void)
     gOpcodeTable = gHeapAllocRaw(0x80, 3);
 
     gInitHeap();
-    func_8008DEA0();
+    gStartCdInit();
 
     if (func_8001E4E4() != 0) {
         goto done;

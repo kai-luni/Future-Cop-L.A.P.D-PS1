@@ -3,6 +3,8 @@
 
 extern u32 func_8008DC40[];
 extern u32 D_8008DCC0[];
+void gCopyKernelPatch0xDF80(void) __asm__("func_8008DDEC");
+
 
 /**
  * @brief Copies the 0x70-byte BIOS memory-card and pad patch block to kernel RAM at 0xDF80.
@@ -26,8 +28,14 @@ extern u32 D_8008DCC0[];
  *
  * @par Callers
  * Confirmed: func_8008D6E0 (0x8008D71C, during BIOS memory-card initialization) / Likely: none / Unknown: none.
+ *
+ * @par Role and path
+ * Copies 32-bit words from func_8008DC40 + 4 (0x8008DC50) up to D_8008DCC0
+ * into fixed kernel RAM address 0x0000DF80. Performs no function calls and
+ * accesses no D_800xxxxx data globals beyond the code-range boundary symbols.
+ * Called by func_8008D6E0.
  */
-void func_8008DDEC(void)
+void gCopyKernelPatch0xDF80(void)
 {
     register u32 *dst __asm__("$2");
     register u32 *src __asm__("$10");
