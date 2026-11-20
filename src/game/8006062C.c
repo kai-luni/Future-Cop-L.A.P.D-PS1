@@ -3,6 +3,8 @@
 
 extern void gSinCos(u32 id, s32 *first, s32 *second) __asm__("func_8001846C");
 
+s32 gCosineClamped(u32 id) __asm__("func_8006062C");
+
 /**
  * @brief Returns the cosine value for a 4096-step angle, clamped to -0x10000 at or above half a turn.
  *
@@ -26,7 +28,7 @@ extern void gSinCos(u32 id, s32 *first, s32 *second) __asm__("func_8001846C");
  * @par Callers
  * Confirmed: func_80060668 (0x80060700 and 0x80060724 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-s32 func_8006062C(u32 id)
+s32 gCosineClamped(u32 id)
 {
     s32 first;
     s32 second;

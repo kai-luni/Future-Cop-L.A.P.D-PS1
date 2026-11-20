@@ -13,6 +13,8 @@ extern u8 gClearOTagFormat[] __asm__("D_80012AD0");
 extern u32 gSeqFirstWord[] __asm__("D_8009DEB0");
 extern u32 gGpuTpageWord[] __asm__("D_8009DE9C");
 
+void gClearOrderingTableReverse(u32 *arg0, s32 arg1) __asm__("func_80093178");
+
 /**
  * @brief Terminates a primitive list: writes the GPU destination/terminator
  *        word into the list head.
@@ -48,7 +50,7 @@ extern u32 gGpuTpageWord[] __asm__("D_8009DE9C");
  * func_8001B2C8 and func_8001B4A8, on the two (arg1 + 2)-word tables, once per
  * frame.
  */
-void func_80093178(u32 *arg0, s32 arg1)
+void gClearOrderingTableReverse(u32 *arg0, s32 arg1)
 {
     register u32 a2 __asm__("$6");
     register u32 a0 __asm__("$4");

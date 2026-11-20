@@ -31,7 +31,7 @@ extern s32 gTestFrustumMargin(V8 *p, s32 m) __asm__("func_80019E70");
 extern void func_80049F4C(V8 *p);
 extern void gSinCos(s32 angle, s32 *s, s32 *c) __asm__("func_8001846C");
 extern void gProjectVertexBatch(V8 *a, V8 *b, u8 *c, s32 n) __asm__("func_8001047C");
-extern s32 func_80049EF8(s32 a, s32 b, s32 c);
+extern s32 gIsTriangleFrontFacing(s32 a, s32 b, s32 c) __asm__("func_80049EF8");
 
 #define getTPage(tp, abr, x, y) \
     ((((tp) & 0x3) << 7) | (((abr) & 0x3) << 5) | (((y) & 0x100) >> 4) | (((x) & 0x3ff) >> 6) | (((y) & 0x200) << 2))
@@ -272,7 +272,7 @@ void gDrawMapCellNode(Node *node, s32 arg1, s32 arg2)
             return;
         }
         if (!(node->flags & 1)) {
-            if (!func_80049EF8(*(s32 *)&rot[1], *(s32 *)&rot[2].x, *(s32 *)&rot[3].x)) {
+            if (!gIsTriangleFrontFacing(*(s32 *)&rot[1], *(s32 *)&rot[2].x, *(s32 *)&rot[3].x)) {
                 return;
             }
         }

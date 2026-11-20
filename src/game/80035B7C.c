@@ -114,7 +114,7 @@ extern s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
 extern void gVectorAddScaled(s32 *a, s32 *b, s32 delta, s32 *out) __asm__("func_8001ACA4");
 extern s32 func_800684AC(s32 *a, s32 *b, s32 *out, s32 arg3, s32 arg4);
 extern s32 gGetGroundHeight(s32 *a, s32 b, s32 c, s32 d) __asm__("func_80066F78");
-extern s32 func_80069A38(s32 *a);
+extern s32 gSampleHeightGridBilinear(s32 *a) __asm__("func_80069A38");
 extern void gBuildRotationMatrix(s32 a, s32 b, s32 angle, s32 *out) __asm__("func_800188D0");
 extern void gBuildBasisZFromPair(s32 *first, s32 *second, s32 *basis) __asm__("func_80019310");
 extern void gGteLoadRotation(s32 *basis) __asm__("func_80010820");
@@ -525,7 +525,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
                 if (self->unkE0 == 3) self->unkE0 = 1;
                 if (p1 != 0) {
                     if (func_8001A13C((s32 *)((u8 *)self + 0x50), sp60) >= 0x301) {
-                        if (*(s32 *)((u8 *)self + 0x54) - func_80069A38((s32 *)((u8 *)self + 0x50)) < 0x800) {
+                        if (*(s32 *)((u8 *)self + 0x54) - gSampleHeightGridBilinear((s32 *)((u8 *)self + 0x50)) < 0x800) {
                             *(s32 *)((u8 *)self + 0x54) += 0x200;
                             self->unkE0 = 3;
                             self->unk84 /= 2;

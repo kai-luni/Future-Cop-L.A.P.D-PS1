@@ -1,4 +1,6 @@
 // Categories: Utilities > Bit Operations
+void gSetPrimListEnd(unsigned int *value) __asm__("func_800923F8");
+
 /**
  *  @brief Sets the low 24 bits of an unsigned integer.
  *
@@ -16,7 +18,7 @@
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-void func_800923F8(unsigned int *value)
+void gSetPrimListEnd(unsigned int *value)
 {
     *value |= 0x00FFFFFFU;
 }

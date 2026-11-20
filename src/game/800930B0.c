@@ -7,6 +7,8 @@ extern u8 D_80012AB8[];
 extern u32 gSeqFirstWord[] __asm__("D_8009DEB0");
 extern u32 gGpuTpageWord[] __asm__("D_8009DE9C");
 
+u32 *gClearOrderingTable(u32 *arg0, s32 arg1) __asm__("func_800930B0");
+
 /**
  *  @brief Link a sequence of words to a global command-list node.
  *
@@ -28,7 +30,7 @@ extern u32 gGpuTpageWord[] __asm__("D_8009DE9C");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-u32 *func_800930B0(u32 *arg0, s32 arg1)
+u32 *gClearOrderingTable(u32 *arg0, s32 arg1)
 {
     register u32 *s0 __asm__("$16");
     register s32 s1 __asm__("$17");

@@ -1,4 +1,6 @@
 // Categories: Graphics > Command Lists
+void gAddPrim(unsigned int *a0, unsigned int *a1) __asm__("func_8009235C");
+
 /**
  *  @brief Inserts a word into a 24-bit linked chain.
  *
@@ -18,7 +20,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8009235C(unsigned int *a0, unsigned int *a1)
+void gAddPrim(unsigned int *a0, unsigned int *a1)
 {
     register unsigned int low asm("$6") = 0x00FFFFFFU;
     register unsigned int high asm("$7") = 0xFF000000U;

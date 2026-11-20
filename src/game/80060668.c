@@ -45,7 +45,7 @@ struct Unk60668Out {
 };
 
 extern s32 func_8005FF70(s32 key);
-extern s32 func_8006062C(u32 id);
+extern s32 gCosineClamped(u32 id) __asm__("func_8006062C");
 extern struct Unk5FF70 gEffectKeyTable[] __asm__("D_800A2300");
 
 /**
@@ -87,8 +87,8 @@ void func_80060668(struct Unk60668In *in, struct Unk60668Out *out)
         out->f06 = in->f05;
         out->f08 = in->f06;
         out->f07 = in->f04;
-        out->f0C = func_8006062C((s16)in->f08 / 2);
-        out->f10 = func_8006062C((s16)in->f0A / 2);
+        out->f0C = gCosineClamped((s16)in->f08 / 2);
+        out->f10 = gCosineClamped((s16)in->f0A / 2);
         out->f0A = in->f0C;
         scale = in->f0E << 12;
         out->f14 = (s16)(scale / 218);

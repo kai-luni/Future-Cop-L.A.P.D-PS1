@@ -1,4 +1,6 @@
 // Categories: Utilities > Bit Manipulation
+int gIsPrimListEnd(unsigned int *value) __asm__("func_80092340");
+
 /**
  *  @brief Tests whether the low 24 bits of a word are all set.
  *
@@ -17,7 +19,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-int func_80092340(unsigned int *value)
+int gIsPrimListEnd(unsigned int *value)
 {
     return (*value & 0x00FFFFFFU) == 0x00FFFFFFU;
 }

@@ -12,8 +12,8 @@ extern void *gPartVertexBuffer __asm__("D_8009F578");
 extern void *gClipFlagBuffer __asm__("D_8009F57C");
 extern s16 gModelUvOffset __asm__("D_8009F580");
 
-extern void func_800959D0(s32 red, s32 green, s32 blue);
-extern void func_800959A0(struct Matrix *matrix);
+extern void gGteSetBackColor(s32 red, s32 green, s32 blue) __asm__("func_800959D0");
+extern void gGteSetColorMatrix(struct Matrix *matrix) __asm__("func_800959A0");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 
 void gInitModelRendererBuffers(void) __asm__("func_80013A14");
@@ -46,11 +46,11 @@ void gInitModelRendererBuffers(void)
 {
     struct Matrix color;
 
-    func_800959D0(0x40, 0x40, 0x40);
+    gGteSetBackColor(0x40, 0x40, 0x40);
     color.m[0][0] = color.m[1][0] = color.m[2][0] = 0x1000;
     color.m[0][1] = color.m[0][2] = color.m[1][1] = color.m[1][2] = color.m[2][1] =
         color.m[2][2] = 0;
-    func_800959A0(&color);
+    gGteSetColorMatrix(&color);
     gLevelVertexBlock = gAllocMemory(0x400, 2);
     gPartVertexBuffer = gAllocMemory(0x800, 2);
     gClipFlagBuffer = gAllocMemory(0x100, 2);

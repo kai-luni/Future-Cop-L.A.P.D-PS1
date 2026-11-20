@@ -4,6 +4,8 @@
 extern u8 gDispEnvCache[] __asm__("D_8009DE5C");
 extern void func_8008CD10(u8 *arg0, u8 *arg1, u32 arg2);
 
+u8 *gCopyDispEnv(u8 *arg0) __asm__("func_800938F0");
+
 /**
  * @brief Copies the cached 0x14-byte DISPENV structure into a caller buffer (PsyQ GetDispEnv).
  *
@@ -28,7 +30,7 @@ extern void func_8008CD10(u8 *arg0, u8 *arg1, u32 arg2);
  * @par Callers
  * Confirmed: none in direct-call list or asm/us/main.s / Likely: none / Unknown: whether unreferenced PsyQ libgpu unit or called indirectly.
  */
-u8 *func_800938F0(u8 *arg0)
+u8 *gCopyDispEnv(u8 *arg0)
 {
     func_8008CD10(arg0, gDispEnvCache, 0x14);
     return arg0;

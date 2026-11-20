@@ -12,6 +12,8 @@ typedef struct {
 
 extern Unk800A2940 gHeightGridDesc __asm__("D_800A2940");
 
+s32 gSampleHeightGridBilinear(s32 *arg0) __asm__("func_80069A38");
+
 /**
  * @brief Bilinear sample of a byte heightfield at a 16.14 fixed-point position.
  *
@@ -40,7 +42,7 @@ extern Unk800A2940 gHeightGridDesc __asm__("D_800A2940");
  * @par Callers
  * Confirmed: func_800324E0, gGuidedProjectileUpdate.
  */
-s32 func_80069A38(s32 *arg0)
+s32 gSampleHeightGridBilinear(s32 *arg0)
 {
     register Unk800A2940 *desc __asm__("$6") = &gHeightGridDesc;
     register s32 origin __asm__("$2");

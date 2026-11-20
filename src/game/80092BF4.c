@@ -10,7 +10,7 @@ extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
 extern u8 D_80012A30[];
 extern  void (*gLogPrintf)(u8 *, s32) __asm__("D_8009DDEC");
 extern Context *gVramWriteCallback __asm__("D_8009DDE8");
-extern void func_80095830(u8 *, int, unsigned int);
+extern void gMemset(u8 *, int, unsigned int) __asm__("func_80095830");
 
 /**
  * @brief Flushes or resets the GPU command queue, depending on the argument.
@@ -35,7 +35,7 @@ void func_80092BF4(s32 arg0)
         gLogPrintf(D_80012A30, arg0);
     }
     if (arg0 == 0) {
-        func_80095830(p + 0x6A, -1, 0x14);
+        gMemset(p + 0x6A, -1, 0x14);
     }
     mode = 0x3000001;
     ctx = gVramWriteCallback;

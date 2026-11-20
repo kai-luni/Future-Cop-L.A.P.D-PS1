@@ -5,6 +5,8 @@ typedef unsigned long long u64;
 typedef union { u64 whole; struct { u32 lo, hi; } words; } Pair;
 extern u64 func_80096748(u32, u32, u32, u32, int);
 
+u64 gDivSigned64(u32 a, u32 b, u32 c, u32 d) __asm__("func_800966B0");
+
 /**
  *  @brief Applies signed operand and result handling around a 64-bit helper.
  *
@@ -26,7 +28,7 @@ extern u64 func_80096748(u32, u32, u32, u32, int);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-u64 func_800966B0(u32 a, u32 b, u32 c, u32 d)
+u64 gDivSigned64(u32 a, u32 b, u32 c, u32 d)
 {
     register int sign __asm__("$18") = 0;
     register u32 xlo __asm__("$8");

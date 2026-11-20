@@ -1,6 +1,8 @@
 // Categories: Utilities > Mathematics | Game Engine > Map Occupancy
 #include "game/types.h"
 
+s32 gQuarterIndex(s32 value, s32 range) __asm__("func_8003B65C");
+
 /**
  * @brief Classifies a signed value into quartile index 0..3 relative to `range`.
  *
@@ -25,7 +27,7 @@
  * @par Callers
  * Confirmed: func_8003BA50 (0x8003BA78, 0x8003BA88 in asm/us/main.s) and func_8003BAE4 (0x8003BB18 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-s32 func_8003B65C(s32 value, s32 range)
+s32 gQuarterIndex(s32 value, s32 range)
 {
     if (value <= range >> 2) {
         return 0;

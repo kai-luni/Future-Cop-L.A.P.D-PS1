@@ -18,7 +18,7 @@ extern char D_80012B30[];
 extern struct Cache gDispEnvCache __asm__("D_8009DE5C");
 extern s16 D_8009DE64[];
 extern s32 D_8009DE6C[];
-extern int func_80091F74(void);
+extern int gGetGpuDrawOffset(void) __asm__("func_80091F74");
 extern void func_8008CD10(void *, void *, int);
 struct Prim *gPutDispEnvCached(struct Prim *p) __asm__("func_800934BC");
 
@@ -98,7 +98,7 @@ struct Prim *gPutDispEnvCached(struct Prim *p)
     t = q[3]; b = p->sE; __asm__("" : "+r"(t), "+r"(b));
     if ((t << 16 >> 16) != b) {
 rect_changed:
-        t = func_80091F74();
+        t = gGetGpuDrawOffset();
         val = p->s8;
         __asm__("" : "+r"(val), "+r"(t));
         p->b12 = t;
@@ -179,7 +179,7 @@ rect_changed:
     t = q[3]; b = p->s6; __asm__("" : "+r"(t), "+r"(b));
     if ((t << 16 >> 16) != b) {
 mode_changed:
-        p->b12 = func_80091F74();
+        p->b12 = gGetGpuDrawOffset();
         if (p->b12 == 1) flags |= 8;
         if (p->b11) flags |= 0x10;
         if (p->b10) flags |= 0x20;

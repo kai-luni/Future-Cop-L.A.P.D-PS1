@@ -1,6 +1,8 @@
 // Categories: Utilities > Math
 #include "game/types.h"
 
+s32 gMinS32(s32 a, s32 b) __asm__("func_800886C8");
+
 /**
  *  @brief Returns the smaller of two signed integers.
  *
@@ -20,7 +22,7 @@
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-s32 func_800886C8(s32 a, s32 b) {
+s32 gMinS32(s32 a, s32 b) {
     if (a < b) {
         return a;
     }

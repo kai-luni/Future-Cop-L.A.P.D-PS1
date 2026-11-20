@@ -35,7 +35,7 @@ struct State80089404 {
 extern struct State80089404 *gMovieStreamContext __asm__("D_8009F970");
 extern u32 gMovieRingSectors __asm__("D_8009F980");
 
-extern s32 func_800886C8(s32 delta, s32 value);
+extern s32 gMinS32(s32 delta, s32 value) __asm__("func_800886C8");
 extern void func_80089018(void);
 extern void func_8008CD10(s32 arg0, s32 arg1);
 
@@ -77,7 +77,7 @@ s32 gMovieStreamReserve(s32 *out)
     register struct Sub80089404 *sub __asm__("$6");
 
     i = 0;
-    *out = func_800886C8(gMovieStreamContext->unk42C->unk10 - gMovieStreamContext->unk42C->unk04, *out);
+    *out = gMinS32(gMovieStreamContext->unk42C->unk10 - gMovieStreamContext->unk42C->unk04, *out);
     retry = i;
 
     available = gMovieStreamContext->unk448;

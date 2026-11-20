@@ -51,7 +51,7 @@ extern u8 gEffectVertexBlock[] __asm__("D_8009AF40");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 
-extern void func_800536B4(s32 *near, s32 *far);
+extern void gComputeDepthCueRange(s32 *near, s32 *far) __asm__("func_800536B4");
 extern s32 gAtan2(s32 x, s32 y) __asm__("func_80095C30");
 extern void gBuildRotationMatrixVariant() __asm__("func_80018DC0");
 extern void gTransformToViewSpace(struct Unk178DC *object, s32 arg1) __asm__("func_800178DC");
@@ -128,7 +128,7 @@ void gDrawOtherPlayerArrow(struct Unk592D0 *arg0)
     if (*(s32 *)(gGameSession + 0x5C) != 0) {
         return;
     }
-    func_800536B4(&frame.near, &frame.far);
+    gComputeDepthCueRange(&frame.near, &frame.far);
     if (frame.far == 0) {
         return;
     }

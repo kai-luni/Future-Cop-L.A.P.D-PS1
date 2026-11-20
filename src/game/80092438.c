@@ -1,4 +1,6 @@
 // Categories: Utilities > Bit Manipulation
+void gSetPrimRawTexture(unsigned char *p, int enabled) __asm__("func_80092438");
+
 /**
  *  @brief Sets or clears bit 0 of a byte at offset 7.
  *
@@ -17,7 +19,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80092438(unsigned char *p, int enabled)
+void gSetPrimRawTexture(unsigned char *p, int enabled)
 {
     unsigned char value;
 

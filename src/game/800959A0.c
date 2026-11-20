@@ -1,6 +1,8 @@
 // Categories: Graphics > GTE > Lighting | Platform > GTE
 #include "game/types.h"
 
+void gGteSetColorMatrix(u32 *arg0) __asm__("func_800959A0");
+
 /**
  * @brief Sets the GTE light colour matrix (registers 16-20).
  *
@@ -17,7 +19,7 @@
  * func_80013A14, together with func_800959D0 (background colour) - one
  * lighting set-up per scene.
  */
-void func_800959A0(u32 *arg0)
+void gGteSetColorMatrix(u32 *arg0)
 {
     __asm__ volatile(
         "lw $t0, 0($4)\n\t"

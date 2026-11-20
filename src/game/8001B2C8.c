@@ -25,7 +25,7 @@ extern s32 gPacketCursor __asm__("D_8009FA90");
 
 extern s32 gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern u8 gGetSelectedLayer(void) __asm__("func_8001C034");
-extern void func_80093178(s32, s32);
+extern void gClearOrderingTableReverse(s32, s32) __asm__("func_80093178");
 
 void gAllocateRenderBuffers(s32 arg0, s32 arg1) __asm__("func_8001B2C8");
 
@@ -95,7 +95,7 @@ void gAllocateRenderBuffers(s32 arg0, s32 arg1)
     gPacketCursor = gRenderNodeTable;
     gNodePoolBase = gRenderNodeTable;
 
-    func_80093178(gOrderingTableBuffers, gNodeTableLength + 2);
+    gClearOrderingTableReverse(gOrderingTableBuffers, gNodeTableLength + 2);
 
     value = gFrameBlockCount;
     count28 = gNodeCapacity;

@@ -1,6 +1,8 @@
 // Categories: Graphics > GPU > Drawing Area | Platform > GPU
 extern int gGpuDrawOffset __asm__("D_8009DD90");
 
+int gGetGpuDrawOffset(void) __asm__("func_80091F74");
+
 /**
  * @brief Returns the GPU library's current drawing origin.
  *
@@ -13,7 +15,7 @@ extern int gGpuDrawOffset __asm__("D_8009DD90");
  * func_80092E68 and func_800934BC (the drawing-area setter compares it before
  * asking for a new area).
  */
-int func_80091F74(void)
+int gGetGpuDrawOffset(void)
 {
     return gGpuDrawOffset;
 }

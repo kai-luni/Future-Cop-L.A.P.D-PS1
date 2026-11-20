@@ -7,7 +7,7 @@ typedef struct {
     unsigned char flag, small, pad, e, f, g;
 } Object;
 
-extern int func_80091F74(void);
+extern int gGetGpuDrawOffset(void) __asm__("func_80091F74");
 Object *gSetDefDrawEnv(Object *obj, int x, int y, int z, int size) __asm__("func_80092140");
 
 
@@ -37,7 +37,7 @@ Object *gSetDefDrawEnv(Object *obj, int x, int y, int z, int size) __asm__("func
  */
 Object *gSetDefDrawEnv(Object *obj, int x, int y, int z, int size)
 {
-    int mode = func_80091F74();
+    int mode = gGetGpuDrawOffset();
     obj->x = x;
     obj->y = y;
     obj->z = z;

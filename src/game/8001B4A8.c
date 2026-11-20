@@ -38,7 +38,7 @@ extern s32 gGteLeadingZeros(s32 value) __asm__("func_80095C14");
 extern void func_80029650(u32 arg0);
 extern void gLoadImage(u32 arg0, u32 arg1) __asm__("func_80092F38");
 extern void func_80092C8C(s32 arg0);
-extern void func_80093178(u32 arg0, s32 arg1);
+extern void gClearOrderingTableReverse(u32 arg0, s32 arg1) __asm__("func_80093178");
 extern void func_80093280(u32 arg0);
 extern void func_8009398C(u32 arg0, void *arg1);
 extern void func_80093A0C(u32 arg0, void *arg1);
@@ -396,7 +396,7 @@ void gSubmitRenderFrame(s32 arg0)
     v -= 0x1C;
     val += v;
     gPacketLimit = val;
-    func_80093178(bv, av + 2);
+    gClearOrderingTableReverse(bv, av + 2);
 done:
     return;
 }

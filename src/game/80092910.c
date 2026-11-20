@@ -30,7 +30,7 @@ extern struct Entry D_8009DE7C[];
 extern struct Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
 extern  void (*gLogPrintf)(u8 *, int) __asm__("D_8009DDEC");
 extern void func_8008E000(void *, void *, void *);
-extern void func_80095830(unsigned char *, int, unsigned int);
+extern void gMemset(unsigned char *, int, unsigned int) __asm__("func_80095830");
 extern void gResetIrqDispatch(void) __asm__("func_80091480");
 extern void func_80095860(u32);
 extern int func_80094F4C(int);
@@ -71,7 +71,7 @@ int func_80092910(int input)
         __asm__ volatile ("" ::: "memory");
         state = &gDebugTagBytes;
         __asm__("" : "+r"(state));
-        func_80095830((u8 *)state, 0, 0x80);
+        gMemset((u8 *)state, 0, 0x80);
         gResetIrqDispatch();
         func_80095860((u32)gVramWriteCallback & 0xffffff);
         index = func_80094F4C(arg);
@@ -108,8 +108,8 @@ int func_80092910(int input)
             __asm__("" : "+r"(base2));
             state->field6 = *(u16 *)(base2 - 0x2184);
         }
-        func_80095830(dst, fill, 0x5c);
-        func_80095830((u8 *)state + 0x6c, -1, 0x14);
+        gMemset(dst, fill, 0x5c);
+        gMemset((u8 *)state + 0x6c, -1, 0x14);
         return state->mode;
     default:
         __asm__ volatile ("" ::: "memory");

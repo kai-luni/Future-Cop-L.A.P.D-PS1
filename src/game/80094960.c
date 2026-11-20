@@ -4,6 +4,8 @@
 extern unsigned int *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern unsigned int *gGpuGp0PortPtr __asm__("D_8009DEC4");
 
+int gSendGpuWordList(unsigned int *data, unsigned int count) __asm__("func_80094960");
+
 /**
  *  @brief Writes a command followed by a sequence of data words.
  *
@@ -23,7 +25,7 @@ extern unsigned int *gGpuGp0PortPtr __asm__("D_8009DEC4");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-int func_80094960(unsigned int *data, unsigned int count)
+int gSendGpuWordList(unsigned int *data, unsigned int count)
 {
     unsigned int remaining = count - 1;
 

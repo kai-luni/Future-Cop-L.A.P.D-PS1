@@ -14,7 +14,7 @@
  *         func_80095A10(h);
  *     }
  */
-extern void func_800959F0(s32 arg0, s32 arg1);
+extern void gGteSetScreenOffset(s32 arg0, s32 arg1) __asm__("func_800959F0");
 extern void func_80095A10(s32 arg0);
 
 /**

@@ -1,6 +1,8 @@
 // Categories: Utilities > Mathematics | Graphics > Clipping
 #include "game/types.h"
 
+s32 gIsTriangleFrontFacing(s32 origin, s32 first, s32 second) __asm__("func_80049EF8");
+
 /**
  * @brief Side test for three packed 2D points: sign of the cross product
  *        of (first - origin) and (second - origin).
@@ -22,7 +24,7 @@
  * @par Callers
  * func_8004A048.
  */
-s32 func_80049EF8(s32 origin, s32 first, s32 second)
+s32 gIsTriangleFrontFacing(s32 origin, s32 first, s32 second)
 {
     return ((s16)first - (s16)origin) * ((second >> 16) - (origin >> 16)) -
            ((s16)second - (s16)origin) * ((first >> 16) - (origin >> 16)) >= 0;

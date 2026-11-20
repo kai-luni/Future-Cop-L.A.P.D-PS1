@@ -36,7 +36,7 @@ extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_80019668(void);
 extern struct Res *func_8004E80C(void *, s32, s32, s32, s32, s32, s32);
 extern void func_800320E4(struct Obj *);
-extern s32 func_80069A38(V3 *);
+extern s32 gSampleHeightGridBilinear(V3 *) __asm__("func_80069A38");
 extern s32 gGetGroundHeight(V3 *, s32, s32, s32) __asm__("func_80066F78");
 extern void gFlagQuartileChange(struct Obj *, s32) __asm__("func_8003BA50");
 extern void gSpawnEntitySlotTypes(s32, struct Obj *, s32, s32, s32) __asm__("func_8003B898");
@@ -200,7 +200,7 @@ L5E4:
     case 4: {
         s32 gr;
         o->pos.y += (dt * o->fF4) >> 9;
-        gr = func_80069A38(&o->pos) + (o->f6C << 4);
+        gr = gSampleHeightGridBilinear(&o->pos) + (o->f6C << 4);
         if (o->pos.y - gr > (o->f114 << 4))
             o->fFA = 0;
         a.z = 0;
@@ -322,7 +322,7 @@ L_AD4: {
     func_8001A644(&a);
 
     dL = (dt * o->fF8) >> 3;
-    gL = func_80069A38(&o->pos) + (o->f6C << 4);
+    gL = gSampleHeightGridBilinear(&o->pos) + (o->f6C << 4);
     gVectorScaleInPlace(dL, &a);
     cmp = gL + (o->f114 << 4);
     if (o->pos.y < cmp) {

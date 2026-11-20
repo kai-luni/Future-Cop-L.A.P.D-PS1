@@ -9,7 +9,7 @@ typedef struct {
 } Unk8009F4D8;
 
 extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
-extern s32 func_800966B0(unsigned long long p, s32 a, s32 b);
+extern s32 gDivSigned64(unsigned long long p, s32 a, s32 b) __asm__("func_800966B0");
 
 /**
  *  @brief Scales an input according to the current state's mode and value.
@@ -47,7 +47,7 @@ s32 func_800867B0(u32 arg0)
             __asm__ volatile("addiu\t%0,$0,0" : "=r"(a3));
             a2 = 0x3F;
             __asm__ volatile("" : "+r"(a2));
-            ret = func_800966B0((unsigned long long)arg0 * k, a2, a3);
+            ret = gDivSigned64((unsigned long long)arg0 * k, a2, a3);
         }
     } else {
         val = gMovieAudioState->unk7B7C;
@@ -57,13 +57,13 @@ s32 func_800867B0(u32 arg0)
             __asm__ volatile("addiu\t%0,$0,0" : "=r"(a3));
             a2 = 0x1117;
             __asm__ volatile("" : "+r"(a2));
-            ret = func_800966B0((unsigned long long)arg0 * k, a2, a3);
+            ret = gDivSigned64((unsigned long long)arg0 * k, a2, a3);
         } else {
             k = 0x6D440;
             p = (unsigned long long)arg0 * k;
             __asm__ volatile("addiu\t%0,$0,0" : "=r"(a3));
             a2 = 0x82BA3;
-            ret = func_800966B0(p, a2, a3);
+            ret = gDivSigned64(p, a2, a3);
         }
     }
 

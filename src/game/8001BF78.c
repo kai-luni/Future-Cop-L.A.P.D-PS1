@@ -3,7 +3,7 @@
 
 extern u8 gLayerIndex __asm__("D_8009F225");
 
-extern void func_80091F60(s32 arg0);
+extern void gSetGpuDrawOffset(s32 arg0) __asm__("func_80091F60");
 extern void func_8001BE68(void);
 void gInitFadeLayers(void) __asm__("func_8001BF78");
 
@@ -37,7 +37,7 @@ void gInitFadeLayers(void) __asm__("func_8001BF78");
  */
 void gInitFadeLayers(void)
 {
-    func_80091F60(0);
+    gSetGpuDrawOffset(0);
     gLayerIndex = 2;
     func_8001BE68();
 }

@@ -3,6 +3,8 @@
 
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 
+s32 gIsInViewFrustumWithMargin(s16 *point, s32 margin) __asm__("func_80063FF8");
+
 /**
  * @brief Tests whether a projected point still lies inside the visible area.
  *
@@ -32,7 +34,7 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
  * @par Callers
  * Confirmed: func_8006411C, func_8006429C.
  */
-s32 func_80063FF8(s16 *point, s32 margin)
+s32 gIsInViewFrustumWithMargin(s16 *point, s32 margin)
 {
     s32 depth;
     s32 limit;

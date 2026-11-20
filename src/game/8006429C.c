@@ -3,7 +3,7 @@
 
 typedef struct { s16 x, y, z; } Vec;
 extern void func_800640D8(Vec *, Vec *);
-extern s32 func_80063FF8(s16 *, s32);
+extern s32 gIsInViewFrustumWithMargin(s16 *, s32) __asm__("func_80063FF8");
 extern s32 func_8006411C(Vec *, s32, void *);
 
 /**
@@ -47,7 +47,7 @@ s32 func_8006429C(void *object, Vec point)
     temp.y = point.y + data[1];
     temp.z = point.z + 0x1000;
     func_800640D8(&temp, &transformed);
-    result = func_80063FF8((s16 *)&transformed, data[0] << 4);
+    result = gIsInViewFrustumWithMargin((s16 *)&transformed, data[0] << 4);
     if (result) {
         result |= func_8006411C(&point, 0x1000, data);
         if (result & 2) {

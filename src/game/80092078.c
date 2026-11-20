@@ -9,7 +9,7 @@ struct S {
 };
 
 extern void gLoadImage(void *rect, void *data) __asm__("func_80092F38");
-extern u16 func_8009226C(s32 x, s32 y);
+extern u16 gGetClutId(s32 x, s32 y) __asm__("func_8009226C");
 u16 gLoadClut256(s32 x, s32 a, s32 b) __asm__("func_80092078");
 
 
@@ -52,5 +52,5 @@ u16 gLoadClut256(s32 x, s32 a, s32 b)
     s.c = 0x100;
     s.d = 1;
     gLoadImage(&s, (void *)x);
-    return func_8009226C(a, b);
+    return gGetClutId(a, b);
 }

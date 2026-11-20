@@ -50,7 +50,7 @@ extern void func_800889DC(s32 arg0, s32 arg1, s32 arg2);
 extern s32 func_80088770(s32 arg0, s32 arg1, s32 arg2);
 extern void func_80088974(s32 arg0, s32 arg1, s32 arg2);
 extern void gMovieStreamPrimeEntry(void) __asm__("func_80088F00");
-extern s32 func_800886C8(s32 a, s32 b);
+extern s32 gMinS32(s32 a, s32 b) __asm__("func_800886C8");
 
 /**
  *  @brief Resets transfer state when requested and starts a bounded buffered transfer.
@@ -169,7 +169,7 @@ void func_80089018(void)
         read_position += capacity;
         read_position -= write_position;
         capacity -= remainder;
-        work = func_800886C8(func_800886C8((s32)read_position, (s32)capacity), work);
+        work = gMinS32(gMinS32((s32)read_position, (s32)capacity), work);
     }
 
     if (work != 0) {

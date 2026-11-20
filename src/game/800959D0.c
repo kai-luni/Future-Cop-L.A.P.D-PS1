@@ -1,6 +1,8 @@
 // Categories: Graphics > GTE > Depth Cueing | Platform > GTE
 #include "game/types.h"
 
+void gGteSetBackColor(s32 a0, s32 a1, s32 a2) __asm__("func_800959D0");
+
 /**
  * @brief Sets the GTE background colour (registers RBK = 13, GBK = 14,
  *        BBK = 15) used by the depth-cueing commands.
@@ -18,7 +20,7 @@
  * func_80013A14 - the scene/lighting set-up writes the fog colour once per
  * scene.
  */
-void func_800959D0(s32 a0, s32 a1, s32 a2)
+void gGteSetBackColor(s32 a0, s32 a1, s32 a2)
 {
     __asm__ volatile(
         "sll $4, $4, 4\n\t"

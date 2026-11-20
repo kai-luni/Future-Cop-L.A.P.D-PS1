@@ -21,7 +21,7 @@ extern u8 gGpuDmaQueue[] __asm__("D_800A9450");
 
 extern u32 gSwapIrqMask(u32 a0) __asm__("func_800915FC");
 extern u32 func_80095350(u32 a0);
-extern void func_80095830(unsigned char *destination, int value, unsigned int count);
+extern void gMemset(unsigned char *destination, int value, unsigned int count) __asm__("func_80095830");
 extern void func_800951D8(void);
 extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
 extern s32 func_8009520C(void);

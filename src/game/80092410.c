@@ -1,4 +1,6 @@
 // Categories: Utilities > Bit Manipulation
+void gSetPrimSemiTrans(unsigned char *obj, int enabled) __asm__("func_80092410");
+
 /**
  *  @brief Sets or clears bit 1 of an object's byte at offset 7.
  *
@@ -17,7 +19,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80092410(unsigned char *obj, int enabled)
+void gSetPrimSemiTrans(unsigned char *obj, int enabled)
 {
     unsigned char value;
 

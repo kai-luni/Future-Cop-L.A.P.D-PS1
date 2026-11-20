@@ -152,6 +152,9 @@ log. [`docs/FUNCTION_MAP.md`](docs/FUNCTION_MAP.md) is the generated architectur
 of the functions whose source carries a category line (`tools/build_function_map.py`).
 [`docs/video-loading-path.md`](docs/video-loading-path.md) traces the movie path from
 the file open through the CD stream, the MDEC slice decode and the audio clock pacing.
+[`docs/performance-notes.md`](docs/performance-notes.md) collects the techniques the
+retail code uses to stay fast on the console (ordering table, packet pools, scratchpad,
+table maths), each finding with status, cited code and proposed readable names.
 
 ## Repository layout
 

@@ -2,7 +2,7 @@
 #include "game/types.h"
 typedef struct { u8 unk00[0x7B74]; s32 unk7B74; } U;
 extern U *gMovieAudioState __asm__("D_8009F4D8");
-extern s32 func_800966B0(u32 lo, u32 hi, s32 a, s32 b);
+extern s32 gDivSigned64(u32 lo, u32 hi, s32 a, s32 b) __asm__("func_800966B0");
 
 /**
  * @brief Converts a movie video chunk index into a playback pacing threshold in stream units.
@@ -46,6 +46,6 @@ s32 gMovieFrameDeadline(u32 arg0)
         a2 = 0xBB5;
         __asm__ volatile("mfhi\t%0" : "=r"(hi) : "r"(a2), "r"(a3));
         __asm__ volatile("mflo\t%0" : "=r"(lo) : "r"(hi));
-        return func_800966B0(lo, hi, a2, a3);
+        return gDivSigned64(lo, hi, a2, a3);
     }
 }

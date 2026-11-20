@@ -3,6 +3,8 @@
 
 extern s32 gCameraNearBase __asm__("D_8009FA64");
 
+void gComputeDepthCueRange(s32 *near, s32 *far) __asm__("func_800536B4");
+
 /**
  * @brief Computes the near and far depth-cue scale factors from the
  *        global view distance.
@@ -23,7 +25,7 @@ extern s32 gCameraNearBase __asm__("D_8009FA64");
  * @par Callers
  * func_800592D0.
  */
-void func_800536B4(s32 *near, s32 *far)
+void gComputeDepthCueRange(s32 *near, s32 *far)
 {
     s32 distance;
 

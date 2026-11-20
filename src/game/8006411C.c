@@ -7,7 +7,7 @@ struct Bound {
 };
 
 extern s32 func_800640D8(u16 *in, s16 *out);
-extern s32 func_80063FF8(s16 *point, s32 margin);
+extern s32 gIsInViewFrustumWithMargin(s16 *point, s32 margin) __asm__("func_80063FF8");
 
 /**
  * @brief Builds a four-direction collision mask around a position.
@@ -43,28 +43,28 @@ s32 func_8006411C(u16 *base, s32 step, struct Bound *bounds)
     in[2] = base[2] + half;
 
     if (func_800640D8(in, out) == 0) {
-        result = func_80063FF8(out, bounds[1].margin << 4) << 1;
+        result = gIsInViewFrustumWithMargin(out, bounds[1].margin << 4) << 1;
     }
 
     in[1] = base[1] + bounds[2].y;
     in[2] += step;
 
     if (func_800640D8(in, out) == 0) {
-        result |= func_80063FF8(out, bounds[2].margin << 4) << 2;
+        result |= gIsInViewFrustumWithMargin(out, bounds[2].margin << 4) << 2;
     }
 
     in[0] += step;
     in[1] = base[1] + bounds[4].y;
 
     if (func_800640D8(in, out) == 0) {
-        result |= func_80063FF8(out, bounds[4].margin << 4) << 4;
+        result |= gIsInViewFrustumWithMargin(out, bounds[4].margin << 4) << 4;
     }
 
     in[1] = base[1] + bounds[3].y;
     in[2] -= step;
 
     if (func_800640D8(in, out) == 0) {
-        result |= func_80063FF8(out, bounds[3].margin << 4) << 3;
+        result |= gIsInViewFrustumWithMargin(out, bounds[3].margin << 4) << 3;
     }
 
     return result;

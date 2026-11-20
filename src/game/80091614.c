@@ -22,7 +22,7 @@ extern int func_80091B90(void *);
 extern void gDispatchIrqs(void) __asm__("func_800916EC");
 extern void func_80091B80(void *);
 extern void *gInitVSyncHandler(void) __asm__("func_80091BA0");
-extern void *func_80091CC0(void);
+extern void *gInitDmaCallbacks(void) __asm__("func_80091CC0");
 extern void func_80091B48(void *);
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 void *gInitIrqSubsystem(void) __asm__("func_80091614");
@@ -78,7 +78,7 @@ void *gInitIrqSubsystem(void)
     func_80091B80(p - 4);
     *(u16 *)(p - 0x3c) = 1;
     gIrqCallbackTable->field14 = gInitVSyncHandler();
-    gIrqCallbackTable->field4 = func_80091CC0();
+    gIrqCallbackTable->field4 = gInitDmaCallbacks();
     func_80091B48(gIrqCallbackTable);
     p -= 0x3c;
     gExitCriticalSection();

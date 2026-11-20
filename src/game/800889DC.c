@@ -49,7 +49,7 @@ extern s32 gReleaseDoneFlag __asm__("D_8009F508");
 extern volatile u32 *D_8009F50C;
 extern u32 gMovieRingSectors __asm__("D_8009F980");
 
-extern s32 func_800886C8(s32, s32);
+extern s32 gMinS32(s32, s32) __asm__("func_800886C8");
 extern void func_8008888C(s32, s32, s32);
 extern s32 gCdControlF(s32, s32) __asm__("func_8008E2F8");
 extern s32 gCdRead(void *, s32) __asm__("func_8008E598");
@@ -186,8 +186,8 @@ done:
                 rem = dividend % gMovieRingSectors;
                 temp = ((volatile struct DiscThing800889DC *)a0v)->unk00 - (u08 + sector);
                 a0v = p->unk440 + gMovieRingSectors - dividend;
-                c = func_800886C8(a0v, gMovieRingSectors - rem);
-                d = func_800886C8(c, temp);
+                c = gMinS32(a0v, gMovieRingSectors - rem);
+                d = gMinS32(c, temp);
                 if (d != 0) {
                     disc7 = (struct DiscThing800889DC *)gMovieStreamContext->unk430;
                     if (gMovieStreamContext->unk04 == disc7->unk30 + (gMovieRingSectors << 11)) {

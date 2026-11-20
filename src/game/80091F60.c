@@ -3,6 +3,8 @@
 
 extern s32 gGpuDrawOffset __asm__("D_8009DD90");
 
+s32 gSetGpuDrawOffset(s32 value) __asm__("func_80091F60");
+
 /**
  * @brief Exchanges the library state's origin/drawing-area word.
  *
@@ -17,7 +19,7 @@ extern s32 gGpuDrawOffset __asm__("D_8009DD90");
  * @par Callers
  * func_8001BF78 (fade layers).
  */
-s32 func_80091F60(s32 value)
+s32 gSetGpuDrawOffset(s32 value)
 {
     s32 previous;
 

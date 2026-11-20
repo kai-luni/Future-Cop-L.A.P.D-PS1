@@ -1,4 +1,6 @@
 // Categories: Utilities > Bit Manipulation
+void gSetPrimNextLink(unsigned int *p, unsigned int value) __asm__("func_800923D4");
+
 /**
  *  @brief Replaces the low 24 bits of a word while preserving its high byte.
  *
@@ -17,7 +19,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800923D4(unsigned int *p, unsigned int value)
+void gSetPrimNextLink(unsigned int *p, unsigned int value)
 {
     *p = (*p & 0xff000000U) | (value & 0x00ffffffU);
 }

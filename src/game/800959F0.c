@@ -1,6 +1,8 @@
 // Categories: Graphics > GTE > Projection | Platform > GTE
 #include "game/types.h"
 
+void gGteSetScreenOffset(u32 arg0, u32 arg1) __asm__("func_800959F0");
+
 /**
  * @brief Sets the GTE screen offset (registers OFX = 24, OFY = 25).
  *
@@ -17,7 +19,7 @@
  * func_80010030 - the front-end passes (0xA0, 0x78) or (0x50, 0x78), i.e. the
  * centre of a 320x240 or 160x240 viewport at y = 120.
  */
-void func_800959F0(u32 arg0, u32 arg1) {
+void gGteSetScreenOffset(u32 arg0, u32 arg1) {
     arg0 <<= 16;
     arg1 <<= 16;
     __asm__ volatile("ctc2 %0, $24" : : "r"(arg0));

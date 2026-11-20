@@ -11,6 +11,8 @@ extern void gSetIrqCallback(s32 a0, void *a1) __asm__("func_800914B0");
 extern void func_80091D0C(void);
 extern void func_80091E8C(s32 a0, s32 a1);
 
+void *gInitDmaCallbacks(void) __asm__("func_80091CC0");
+
 /**
  * @brief Initializes the DMA interrupt handler table, clears DICR, and returns the DMA callback setter.
  *
@@ -35,7 +37,7 @@ extern void func_80091E8C(s32 a0, s32 a1);
  * @par Callers
  * Confirmed: func_80091614 (0x800916B8, during interrupt/callback system initialization) / Likely: none / Unknown: none.
  */
-void *func_80091CC0(void)
+void *gInitDmaCallbacks(void)
 {
     func_80091F38(gDmaCallbackTable, 8);
     *gDmaInterruptCtrlPtr = 0;

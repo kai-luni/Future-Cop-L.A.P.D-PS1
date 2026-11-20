@@ -11,7 +11,7 @@ struct Unk3BObject {
 };
 
 extern u8 *gSlotSpawnDescs[] __asm__("D_800A0C70");
-extern s32 func_8003B65C(s32 value, s32 range);
+extern s32 gQuarterIndex(s32 value, s32 range) __asm__("func_8003B65C");
 void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
 
 
@@ -58,8 +58,8 @@ void gFlagQuartileChange(struct Unk3BObject *object, s32 value)
     s32 current;
 
     if (object->unk1C >= 0) {
-        previous = func_8003B65C(value, object->unk1E);
-        current = func_8003B65C(object->unk1C, object->unk1E);
+        previous = gQuarterIndex(value, object->unk1E);
+        current = gQuarterIndex(object->unk1C, object->unk1E);
         if (gSlotSpawnDescs[object->tableIndex] != 0 && current != previous) {
             object->flags |= 0x4000;
         }
