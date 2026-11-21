@@ -17,6 +17,8 @@
  *  @par Callers
  *  Confirmed: entrypoint.
  */
+void gBiosInitHeap(void) __asm__("func_800966A0");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_800966A0\n"

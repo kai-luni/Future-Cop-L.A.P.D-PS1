@@ -3,9 +3,9 @@
 
 extern volatile s32 gVSyncTickCounter __asm__("D_8009DD50");
 
-extern void func_8008CA20(s32, s32);
-extern void func_8008D7B0(s32);
-extern void func_8008FF08(void *);
+extern void gBiosChangeClearRCnt(s32, s32) __asm__("func_8008CA20");
+extern void gBiosChangeClearPadAndLatch(s32) __asm__("func_8008D7B0");
+extern void gBiosPuts(void *) __asm__("func_8008FF08");
 void gWaitVSyncTarget(s32 arg0, s32 arg1) __asm__("func_800913E8");
 
 
@@ -47,9 +47,9 @@ void gWaitVSyncTarget(s32 arg0, s32 arg1)
         if (--temp == -1) {
             register u8 *base __asm__("$4") = (u8 *)0x80010000;
             __asm__("" : "=r"(base) : "0"(base));
-            func_8008FF08(base + 0x27EC);
-            func_8008D7B0(0);
-            func_8008CA20(3, 0);
+            gBiosPuts(base + 0x27EC);
+            gBiosChangeClearPadAndLatch(0);
+            gBiosChangeClearRCnt(3, 0);
             break;
         }
     }

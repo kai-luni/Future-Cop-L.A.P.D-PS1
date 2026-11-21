@@ -13,8 +13,8 @@ extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern int gIrqStuckCounter __asm__("D_8009DD20");
 extern char gIrqInactiveErrFmt[] __asm__("D_80012830");
 extern char gIrqStuckErrFmt[] __asm__("D_8001284C");
-extern void func_8008E000(char *, ...);
-extern void func_80091B60(void);
+extern void gBiosPrintf(char *, ...) __asm__("func_8008E000");
+extern void gBiosReturnFromException(void) __asm__("func_80091B60");
 void gDispatchIrqs(void) __asm__("func_800916EC");
 
 
@@ -62,8 +62,8 @@ void gDispatchIrqs(void)
         u16 v;
         v = *gInterruptStatusHalfPtr;
         __asm__ volatile ("" : : "r"(v));
-        func_8008E000(gIrqInactiveErrFmt, v);
-        func_80091B60();
+        gBiosPrintf(gIrqInactiveErrFmt, v);
+        gBiosReturnFromException();
     }
     pa1 = gInterruptStatusHalfPtr;
     mask = state->mask;
@@ -105,7 +105,7 @@ void gDispatchIrqs(void)
             __asm__("lui %0,%%hi(D_8001284C)\n\taddiu %0,%0,%%lo(D_8001284C)"
                     : "=r"(msg));
             __asm__ volatile ("" : : "r"(msg));
-            func_8008E000(msg, *pa, *pb);
+            gBiosPrintf(msg, *pa, *pb);
             }
             gIrqStuckCounter = 0;
             *gInterruptStatusHalfPtr = 0;

@@ -23,7 +23,7 @@ struct Port {
     u8 type;
     u8 nentries;
 };
-extern void func_8008CD00(u8 *, int);
+extern void gBiosBzero(u8 *, int) __asm__("func_8008CD00");
 extern int gPadActuatorCostSum __asm__("D_8009C770");
 void gSelectPadActuators(struct Port *p) __asm__("func_8008C138");
 
@@ -62,7 +62,7 @@ void gSelectPadActuators(struct Port *p)
     register u8 *ids __asm__("$5");
     register u8 *flags __asm__("$4");
     register u8 *enabled __asm__("$4");
-    func_8008CD00(p->enabled, 6);
+    gBiosBzero(p->enabled, 6);
     if (p->fieldE6 && p->flags) {
         n = 6;
         if (p->count < 7) {

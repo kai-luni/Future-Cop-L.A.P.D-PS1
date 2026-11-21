@@ -15,7 +15,7 @@ struct Text8 {
 };
 
 extern struct Text8 gTextBlock __asm__("D_8009F3B8");
-extern u32 D_800A6E58[];
+extern u32 gExceptionCpuRegisters[] __asm__("D_800A6E58");
 extern u32 gExceptionFrame[] __asm__("D_800A6E38");
 
 extern void gResetIrqDispatch(void) __asm__("func_80091480");
@@ -80,7 +80,7 @@ __attribute__((noreturn)) void gDrawExceptionScreenAndHalt(void)
 
     for (j = 0; j < 4; j++) {
         for (i = 0; i < 8; i++) {
-            gDrawDebugHexWord(j * 0x40 + 0x10, i * 0x10 + 0x10, D_800A6E58[j * 8 + i]);
+            gDrawDebugHexWord(j * 0x40 + 0x10, i * 0x10 + 0x10, gExceptionCpuRegisters[j * 8 + i]);
         }
     }
 

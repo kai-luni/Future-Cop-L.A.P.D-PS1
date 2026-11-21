@@ -65,8 +65,8 @@ extern void gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) 
 extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void gDrawAtlasSprite(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082B0C");
 extern s32 gSpillVarargsArguments(u8 *, u8 *, s32) __asm__("func_8008CD30");
-extern void func_8008CCB0(u8 *, u8 *);
-extern s32 func_8008CCA0(u8 *, u8 *);
+extern void gBiosStrcpy(u8 *, u8 *) __asm__("func_8008CCB0");
+extern s32 gBiosStrcmp(u8 *, u8 *) __asm__("func_8008CCA0");
 extern void gActivateMenuPanel(s8 *, s32) __asm__("func_80078650");
 extern void gQueueStatusLineText(s32, s32, s32) __asm__("func_80078B34");
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");

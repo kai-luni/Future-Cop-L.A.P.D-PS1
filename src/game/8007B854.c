@@ -43,8 +43,8 @@ extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern u8 *gFontBankTable __asm__("D_8009F468");
 extern void gActivateMenuPanel(void *, s32) __asm__("func_80078650");
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
-extern void func_8008CCB0(void *, s32);
-extern s32 func_8008CCA0(void *, void *);
+extern void gBiosStrcpy(void *, s32) __asm__("func_8008CCB0");
+extern s32 gBiosStrcmp(void *, void *) __asm__("func_8008CCA0");
 extern void gQueueStatusLineText(s32, s32, s32) __asm__("func_80078B34");
 extern void gDrawProfileSlotList(s32) __asm__("func_8007B460");
 #define SELECTED (gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]])
@@ -194,8 +194,8 @@ SELECTION_DONE:;
                 gPendingRowCapture = SELECTED.unk4;
             }
             if (gDeferredTransition != 0) {
-                func_8008CCB0(gFrontEndModuleName, SELECTED.unk0);
-                if (func_8008CCA0(gFrontEndModuleName, gLax1ModuleName) == 0) gPendingModuleNameFlag = gLax2ModuleName;
+                gBiosStrcpy(gFrontEndModuleName, SELECTED.unk0);
+                if (gBiosStrcmp(gFrontEndModuleName, gLax1ModuleName) == 0) gPendingModuleNameFlag = gLax2ModuleName;
                 else gPendingModuleNameFlag = 0;
                 if (special != 0) gModuleLoadState = special;
                 else if (SELECTED.unkC != 0) gModuleLoadState = SELECTED.unkC;

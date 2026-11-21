@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 *gFontBankTable __asm__("D_8009F468");
-extern u8 D_8009F875;
+extern u8 gMenuBackdropIndex __asm__("D_8009F875");
 extern u8 gScreenUploadFlag __asm__("D_8009F876");
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
@@ -51,7 +51,7 @@ s32 gPopMenuPanel(void)
         gMenuSetupCalled = 0;
         gSyncMenuFontBank();
         if ((s8)gFontBankTable[3] != -1) {
-            D_8009F875 = gFontBankTable[3];
+            gMenuBackdropIndex = gFontBankTable[3];
             gScreenUploadFlag = gFontBankTable[4];
         }
         ret = 1;

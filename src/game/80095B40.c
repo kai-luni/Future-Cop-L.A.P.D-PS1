@@ -16,6 +16,8 @@
  * @par Sibling
  * func_80095B20 is the three-vertex form (AVSZ3).
  */
+void gGteAverageZ4ToOtz(void) __asm__("func_80095B40");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80095B40\n"

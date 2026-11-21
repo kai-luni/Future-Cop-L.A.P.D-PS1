@@ -7,7 +7,7 @@ extern u8 *gCdReadCallback __asm__("D_8009C810");
 extern s32 gCdUseDmaFlag __asm__("D_8009C814");
 s32 gStartCdInit(void) __asm__("func_8008DEA0");
 
-extern s32 gInitCdHardware(void) __asm__("func_8008DF30"); extern void func_8008E000(u8 *str);
+extern s32 gInitCdHardware(void) __asm__("func_8008DF30"); extern void gBiosPrintf(u8 *str);
 /**
  * @brief Initialises the CD-ROM driver, retrying five times.
  *

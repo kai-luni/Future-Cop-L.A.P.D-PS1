@@ -26,7 +26,8 @@ struct Message { s32 value; u8 pad04[12]; struct Vec vec; u8 pad1c[0x2d]; u8 typ
 struct Candidates { s32 count; s32 pad; struct Target *items[1]; };
 extern struct Candidates gCommandListHead __asm__("D_800A8F90");
 extern s16 gMessageReturnData[3] __asm__("D_8009F7F0");
-extern s16 D_8009F7F2, D_8009F7F4;
+extern s16 gMessageReturnDataY __asm__("D_8009F7F2");
+extern s16 gMessageReturnDataZ __asm__("D_8009F7F4");
 extern void gApplySphereOverlapHit(struct Source *, struct Target *, struct Sphere *) __asm__("func_8005B5A0");
 extern s32 gTraceMapRay(struct Vec *, struct Vec *, struct Vec *, s32, s32) __asm__("func_800684AC");
 extern s32 gGetEntitySpawnBank(struct Target *) __asm__("func_8003BF50");

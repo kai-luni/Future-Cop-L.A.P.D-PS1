@@ -1,7 +1,7 @@
 // Categories: Game Engine > Queue
 #include "game/types.h"
 
-extern s32 D_8009F6D0;
+extern s32 gStreamAssetReleaseReadIndex __asm__("D_8009F6D0");
 extern s32 gStreamAssetReleaseRing[] __asm__("D_800A0C60");
 
 extern void func_80029650(s32 arg0);
@@ -26,15 +26,15 @@ void gDrainCallbackSlotRing(void) __asm__("func_8002A408");
  */
 void gDrainCallbackSlotRing(void)
 {
-    s32 temp = gStreamAssetReleaseRing[D_8009F6D0];
+    s32 temp = gStreamAssetReleaseRing[gStreamAssetReleaseReadIndex];
 
     while (temp != 0) {
         func_80029650(temp);
-        gStreamAssetReleaseRing[D_8009F6D0] = 0;
-        D_8009F6D0 = D_8009F6D0 + 1;
-        if (D_8009F6D0 >= 4) {
-            D_8009F6D0 = 0;
+        gStreamAssetReleaseRing[gStreamAssetReleaseReadIndex] = 0;
+        gStreamAssetReleaseReadIndex = gStreamAssetReleaseReadIndex + 1;
+        if (gStreamAssetReleaseReadIndex >= 4) {
+            gStreamAssetReleaseReadIndex = 0;
         }
-        temp = gStreamAssetReleaseRing[D_8009F6D0];
+        temp = gStreamAssetReleaseRing[gStreamAssetReleaseReadIndex];
     }
 }

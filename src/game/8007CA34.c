@@ -1,9 +1,9 @@
 // Categories: Game Engine > Options Menu | Platform > Sound > Volume
 #include "game/types.h"
 
-extern s32 D_8009F908;
-extern s32 D_8009F90C;
-extern s32 D_8009F910;
+extern s32 gSavedOptionsSfxVolume __asm__("D_8009F908");
+extern s32 gSavedOptionsVagmVolume __asm__("D_8009F90C");
+extern s32 gSavedOptionsVoiceVolume __asm__("D_8009F910");
 extern s32 gSavedOptionsSoundMode __asm__("D_8009F914");
 extern s32 gSnapshotPointer __asm__("D_8009F91C");
 
@@ -45,9 +45,9 @@ void gExitOptionsRestoreSound(void)
     register s32 flag __asm__("$2");
 
     if (flag == 0) {
-        gSetSfxVolume(D_8009F908);
-        gSetVagmVolumeSetting(D_8009F90C);
-        gSetVoiceVolume(D_8009F910);
+        gSetSfxVolume(gSavedOptionsSfxVolume);
+        gSetVagmVolumeSetting(gSavedOptionsVagmVolume);
+        gSetVoiceVolume(gSavedOptionsVoiceVolume);
         gSetStereoSoundMode(gSavedOptionsSoundMode);
     }
     if (gSnapshotPointer != 0) {

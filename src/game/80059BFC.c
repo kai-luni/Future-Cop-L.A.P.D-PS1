@@ -38,7 +38,7 @@ extern LoadedData *gStreamDescriptorPtr __asm__("D_8009F7D0");
 extern u8 gDemoPlaybackFilenameFormat[] __asm__("D_80011B00");
 
 extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
-extern s32 func_8008CCC0(u8 *str);
+extern s32 gBiosStrlen(u8 *str) __asm__("func_8008CCC0");
 extern void gSpillVarargsArguments(u8 *dst, u8 *fmt, u8 *name, s32 arg3, s32 arg4) __asm__("func_8008CD30");
 extern void *gLoadFileIntoBuffer(s32 name) __asm__("func_80059BA0");
 void gLoadDemoRecording(s32 countArg, s32 seed, u8 *nameArg) __asm__("func_80059BFC");
@@ -81,7 +81,7 @@ void gLoadDemoRecording(s32 countArg, s32 seed, u8 *nameArg)
         return;
     }
 
-    len = func_8008CCC0(name);
+    len = gBiosStrlen(name);
     wasExt = 0;
     if (name[len - 4] == '.' && name[len - 3] == 'm' &&
         name[len - 2] == 'i' && name[len - 1] == 's') {

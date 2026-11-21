@@ -30,7 +30,7 @@ extern u8 *gLookupTextString(u16 id) __asm__("func_80089914");
 extern void func_800822CC(u8 *arg0);
 extern u8 *gCopyMemory(u8 *destination, u8 *source, u32 count) __asm__("func_8001E318");
 extern void gPackAudioAndPadSettings(u8 *arg0) __asm__("func_80080A5C");
-extern void func_8008CCB0(u8 *arg0, u8 *arg1);
+extern void gBiosStrcpy(u8 *arg0, u8 *arg1) __asm__("func_8008CCB0");
 extern void gUpdateProfileChecksums(void) __asm__("func_8007F6E0");
 extern s32 func_80020FDC(u8 *arg0, u8 *arg1, s32 arg2, s32 arg3);
 
@@ -113,8 +113,8 @@ void gSaveSelectedProfileToCard(void)
     *(s32 *)(gSaveProfileImage + 0x40C) = 1;
     gPackAudioAndPadSettings(gSaveProfileImage + 0x40C);
     gPackAudioAndPadSettings(REC + 0x474);
-    func_8008CCB0(REC + 0x440, gPlayerNameTable);
-    func_8008CCB0(REC + 0x44C, gPlayerNameTable + 9);
+    gBiosStrcpy(REC + 0x440, gPlayerNameTable);
+    gBiosStrcpy(REC + 0x44C, gPlayerNameTable + 9);
     S(0x459) = gGameSession[0x8C];
     S(0x45A) = gGameSession[0x90];
     S(0x45B) = gGameSession[0x94];
@@ -140,7 +140,7 @@ void gSaveSelectedProfileToCard(void)
     }
     S(0x458) = gCrimeWarProgress;
     gSavedCrimeWarProgress = gCrimeWarProgress;
-    func_8008CCB0(REC + 0x428, gSaveProfileImage + 0x925);
+    gBiosStrcpy(REC + 0x428, gSaveProfileImage + 0x925);
     gUpdateProfileChecksums();
     gSaveProfileImage[0x922] = 3;
     gSaveProfileImage[0x201] = 2;

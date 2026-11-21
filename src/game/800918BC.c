@@ -7,8 +7,8 @@ typedef int s32;
 
 extern s32 gIrqHandlerSlots[] __asm__("D_8009CC8C");
 extern volatile short *gInterruptMaskPtr __asm__("D_8009DD18");
-extern void func_8008D7B0(s32);
-extern void func_8008CA20(s32, s32);
+extern void gBiosChangeClearPadAndLatch(s32) __asm__("func_8008D7B0");
+extern void gBiosChangeClearRCnt(s32, s32) __asm__("func_8008CA20");
 s32 gSetIrqSlotEnable(s32 index, s32 value) __asm__("func_800918BC");
 
 
@@ -69,12 +69,12 @@ s32 gSetIrqSlotEnable(s32 index, s32 value)
         }
         if (index == 0) {
             s32 disabled = !value;
-            func_8008D7B0(disabled);
-            func_8008CA20(3, disabled);
+            gBiosChangeClearPadAndLatch(disabled);
+            gBiosChangeClearRCnt(3, disabled);
         }
-        if (index == 4) func_8008CA20(0, !value);
-        if (index == 5) func_8008CA20(1, !value);
-        if (index == 6) func_8008CA20(2, !value);
+        if (index == 4) gBiosChangeClearRCnt(0, !value);
+        if (index == 5) gBiosChangeClearRCnt(1, !value);
+        if (index == 6) gBiosChangeClearRCnt(2, !value);
         *gInterruptMaskPtr = bits;
     }
     return old;

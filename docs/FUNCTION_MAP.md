@@ -1449,23 +1449,23 @@ graph LR
 | `gSetGteProjectionDistance` (`func_80095A10`) | 12 | Graphics > GTE > Projection · GTE | - | `func_80010030` |
 | `gGteSetScreenOffset` (`func_800959F0`) | 24 | Graphics > GTE > Projection · GTE | - | `func_80010030` |
 | `gGteSetBackColor` (`func_800959D0`) | 32 | Graphics > GTE > Depth Cueing · GTE | - | `func_80013A14` |
-| `func_80095B20` | 32 | Graphics > GTE > Depth Sort · GTE | - | - |
+| `gGteAverageVertexZ3` (`func_80095B20`) | 32 | Graphics > GTE > Depth Sort · GTE | - | - |
 | `gGteProjectVertex` (`func_8001072C`) | 36 | Graphics > GTE > Transform · GTE | - | - |
 | `gGteShadeNccs` (`func_80015F14`) | 36 | Graphics > GTE > Lighting · Shading | - | `func_80015F38`, `func_800172A8` |
-| `func_80095AAC` | 36 | Graphics > GTE > Interpolation · GTE | - | - |
-| `func_80095B40` | 36 | Graphics > GTE > Depth Sort · GTE | - | - |
+| `gGteInterpolateColorIntpl` (`func_80095AAC`) | 36 | Graphics > GTE > Interpolation · GTE | - | - |
+| `gGteAverageZ4ToOtz` (`func_80095B40`) | 36 | Graphics > GTE > Depth Sort · GTE | - | - |
 | `gGteProjectPoint` (`func_80010704`) | 40 | Graphics > GTE > Transform · GTE | - | `func_8006F310`, `func_80070158` |
 | `gGteApplyColorMatrixWithBackground` (`func_80095A20`) | 40 | Graphics > GTE > Matrix Transform · GTE | - | - |
 | `gGteShadeDcpl` (`func_80095A48`) | 40 | Graphics > GTE > Depth Cueing · Lighting | - | - |
-| `func_80095AD0` | 40 | Graphics > GTE > Mathematics · GTE | - | - |
-| `func_80095AF8` | 40 | Graphics > GTE > Mathematics · GTE | - | - |
+| `gGteSquareVectorShifted` (`func_80095AD0`) | 40 | Graphics > GTE > Mathematics · GTE | - | - |
+| `gGteSquareVectorUnshifted` (`func_80095AF8`) | 40 | Graphics > GTE > Mathematics · GTE | - | - |
 | `func_800648BC` | 44 | Graphics > GTE > Clipping · GTE | - | `func_800648E8` |
 | `gGteSetColorMatrix` (`func_800959A0`) | 48 | Graphics > GTE > Lighting · GTE | - | `func_80013A14` |
 | `gGteSetLightVector` (`func_80013ECC`) | 60 | Graphics > GTE > Lighting · GTE | - | `func_80013F08`, `func_8001428C` |
-| `func_80095A70` | 60 | Graphics > GTE > Depth Cueing · Lighting | - | - |
+| `gGteShadeDpct` (`func_80095A70`) | 60 | Graphics > GTE > Depth Cueing · Lighting | - | - |
 | `func_800640D8` | 68 | Graphics > GTE > Matrix Transform · Geometry | - | `func_8006411C`, `func_8006429C` |
-| `func_80095B64` | 88 | Graphics > GTE > Vector Product · GTE | - | - |
-| `func_80095BBC` | 88 | Graphics > GTE > Vector Product · GTE | - | - |
+| `gGteOuterProductQ12` (`func_80095B64`) | 88 | Graphics > GTE > Vector Product · GTE | - | - |
+| `gGteCrossProductFullPrecisionPreserveRotation` (`func_80095BBC`) | 88 | Graphics > GTE > Vector Product · GTE | - | - |
 | `gGteTransformVertices` (`func_8001010C`) | 96 | Graphics > GTE > Vector Batch Transform · Geometry | - | `func_80013F08`, `func_8001428C`, `func_80016C88`, `func_8004A048`, `func_80051CC4`, `func_800597C0`, `func_80070158` |
 | `gGteTransformVerticesV0` (`func_800101D4`) | 96 | Graphics > GTE > Vector Batch Transform · Geometry | - | `func_80013F08`, `func_800592D0` |
 | `gGteTransformVerticesSquashY` (`func_8001016C`) | 104 | Graphics > GTE > Vector Batch Transform · Geometry | - | - |
@@ -4385,7 +4385,7 @@ graph LR
 | `func_80091B70` | 16 | BIOS > Vector Dispatch | - | `func_80091A04` |
 | `func_80091B80` | 16 | BIOS > Vector Calls | - | `func_80091614`, `func_80091AA4` |
 | `func_80091B90` | 16 | BIOS > Vector Calls | - | `func_80091614` |
-| `func_800966A0` | 16 | BIOS > Vector Calls | - | - |
+| `gBiosInitHeap` (`func_800966A0`) | 16 | BIOS > Vector Calls | - | - |
 | `gSetCdLogLevel` (`func_8008E0D8`) | 20 | Platform > CD-ROM · Debug | - | `func_8001C808` |
 | `gSetCdSyncCallback` (`func_8008E194`) | 20 | Platform > CD-ROM · Memory Card | - | `func_8001C614`, `func_8001C718`, `func_8001CE54`, `func_800895E4`, `func_800908A0`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00`, `func_80090FA0` |
 | `gSetCdReadyCallback` (`func_8008E1A8`) | 20 | Platform > CD-ROM · Memory Card | - | `func_8001C808`, `func_8001D130`, `func_800895E4`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00`, `func_80090FA0` |

@@ -4,7 +4,7 @@
 extern s32 gGpuLibSavedRa __asm__("D_800A63D0");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
-extern void func_8008DBA0(void);
+extern void gBiosFlushCache(void) __asm__("func_8008DBA0");
 
 asm(".set D_80095E5C, 0x80095E5C");
 asm(".set D_80095E74, 0x80095E74");

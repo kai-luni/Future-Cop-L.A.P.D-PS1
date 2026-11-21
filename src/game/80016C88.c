@@ -5,7 +5,7 @@ typedef unsigned char u8;
 extern void gGteTransformVertices(s16 *, s16 *, s32) __asm__("func_8001010C");
 void gComputeEnvMapUV(s16 *p, s16 *n, s32 *q, u8 *out) __asm__("func_80016C88");
 
-extern s32 func_80019904(s32, s32);
+extern s32 gLookupPackedInvSqrt(s32, s32) __asm__("func_80019904");
 /**
  * @brief Computes a per-vertex shade/UV value: normal dot product, transform,
  *        table normalisation and clamping.
@@ -56,7 +56,7 @@ void gComputeEnvMapUV(s16 *p, s16 *n, s32 *q, u8 *out)
     len = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]) >> 12;
     b = a = 0x1000;
     if (len > 0) {
-        len = func_80019904(len << 4, 0x1000) >> 4;
+        len = gLookupPackedInvSqrt(len << 4, 0x1000) >> 4;
         b = ((v[0] * len) >> 12) + 0x1000;
         len = (v[2] * len) >> 12;
         a = len + 0x1000;

@@ -13,7 +13,7 @@ extern volatile u8 gCdInterruptReg __asm__("D_1F801803");
 extern void gByteOffsetToCdlLoc(int *, int) __asm__("func_8001C494");
 extern int gCdReady(int, int) __asm__("func_8008E174");
 extern int gCdControl(int, void *, void *) __asm__("func_8008E1BC");
-extern void func_8008CC80(int);
+extern void gBiosExit(int) __asm__("func_8008CC80");
 extern int gSetCdSyncCallback(void *) __asm__("func_8008E194");
 extern void gCdSeekDoneCallback(void) __asm__("func_8001C614");
 extern void gCopyWord(int *, int *) __asm__("func_8001C27C");
@@ -80,7 +80,7 @@ void gStartCdDirRead(void)
     result = gCdControl(a0, a1, a2 + 0x798);
     state = (State *)0x80010000;
     if (!result)
-        func_8008CC80(-1);
+        gBiosExit(-1);
     __asm__ volatile("" : "+r"(state));
     a0 = (int)gCdSeekDoneCallback;
     __asm__ volatile("" : "+r"(a0));

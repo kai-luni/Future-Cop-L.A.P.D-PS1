@@ -17,9 +17,9 @@ extern u8 gCdPathEntryFmt[] __asm__("D_800126E0");
 extern u8 gCdPathCountFmt[] __asm__("D_800126F4");
 
 extern s32 gReadCdSectorsSync(s32, s32, u8 *) __asm__("func_8009081C");
-extern void func_8008E000();
-extern s32 func_80090890(u8 *, u8 *, s32);
-extern void func_8008CD10(u8 *, u8 *, s32);
+extern void gBiosPrintf() __asm__("func_8008E000");
+extern s32 gBiosStrncmp(u8 *, u8 *, s32) __asm__("func_80090890");
+extern void gBiosMemcpy(u8 *, u8 *, s32) __asm__("func_8008CD10");
 extern void *memcpy(void *, const void *, u32);
 
 #define LOADX(S, o, lo) ({ s32 v_; __asm__ volatile("lui %0,%%hi(" #S ")\n\taddu %0,%0,%1\n\tlw %0,%%lo(" #S ")(%0)" : "=&r"(v_) : "r"(o)); v_; })
@@ -87,7 +87,7 @@ s32 gCdReadPathTable(void)
         return 0;
     }
 
-    if (func_80090890(buf + 1, gCdIsoMagicStr, 5) != 0) {
+    if (gBiosStrncmp(buf + 1, gCdIsoMagicStr, 5) != 0) {
         if (gCdLogLevel > 0) {
             PRINT_STR(D_8001266C);
         }
@@ -127,7 +127,7 @@ loop:
             *(s32 *)(gCdPathDirIdTable + off) = i + 1;
             *(s32 *)(gCdPathParentTable + off) = kind;
 
-            func_8008CD10(name, ptr + 8, ptr[0]);
+            gBiosMemcpy(name, ptr + 8, ptr[0]);
             name[ptr[0]] = 0;
 
             len = ptr[0];
@@ -139,7 +139,7 @@ loop:
                 a_ = LOADX(D_800A4488, off, 0x4488);
                 b_ = LOADX(D_800A4480, off, 0x4480);
                 c_ = LOADX(D_800A4484, off, 0x4484);
-                func_8008E000(gCdPathEntryFmt, a_, b_, c_, name);
+                gBiosPrintf(gCdPathEntryFmt, a_, b_, c_, name);
             }
 
             i++;
@@ -153,7 +153,7 @@ finish_loop:
 after_loop:
     gCdCachedDirIndex = 0;
     if (gCdLogLevel >= 2) {
-        func_8008E000(gCdPathCountFmt, i);
+        gBiosPrintf(gCdPathCountFmt, i);
         __asm__ volatile(".set\tnoreorder\n\t.set reorder");
     }
 

@@ -8,7 +8,7 @@ struct Unk9F4D8 {
 };
 
 extern struct Unk9F4D8 *gMovieAudioState __asm__("D_8009F4D8");
-extern void func_8008CD10(u8 *arg0, u8 *arg1, u32 arg2);
+extern void gBiosMemcpy(u8 *arg0, u8 *arg1, u32 arg2) __asm__("func_8008CD10");
 
 #define BSWAP(p) ((*(u32 *)(p) >> 24) | ((*(u32 *)(p) >> 8) & 0xFF00) | ((*(u32 *)(p) & 0xFF00) << 8) | (*(u32 *)(p) << 24))
 
@@ -80,27 +80,27 @@ void gMovieAudioChunkPush(u8 *arg0)
     s0 = 0x3C00 - (p->unk04 % 0x3C00);
 
     if (s0 >= s1) {
-        func_8008CD10((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x10, s2, s1);
+        gBiosMemcpy((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x10, s2, s1);
         p = gMovieAudioState;
 
         if (flag) {
-            func_8008CD10((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x3C10, s6, s1);
+            gBiosMemcpy((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x3C10, s6, s1);
         } else {
-            func_8008CD10((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x3C10, s2, s1);
+            gBiosMemcpy((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x3C10, s2, s1);
         }
     } else {
-        func_8008CD10((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x10, s2, s0);
+        gBiosMemcpy((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x10, s2, s0);
         s5 = s2 + s0;
         s4 = s1 - s0;
-        func_8008CD10((u8 *)gMovieAudioState + 0x10, s5, s4);
+        gBiosMemcpy((u8 *)gMovieAudioState + 0x10, s5, s4);
         p = gMovieAudioState;
 
         if (flag) {
-            func_8008CD10((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x3C10, s6, s0);
-            func_8008CD10((u8 *)gMovieAudioState + 0x3C10, s6 + s0, s4);
+            gBiosMemcpy((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x3C10, s6, s0);
+            gBiosMemcpy((u8 *)gMovieAudioState + 0x3C10, s6 + s0, s4);
         } else {
-            func_8008CD10((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x3C10, s2, s0);
-            func_8008CD10((u8 *)gMovieAudioState + 0x3C10, s5, s4);
+            gBiosMemcpy((u8 *)((p->unk04 % 0x3C00) + (u32)p) + 0x3C10, s2, s0);
+            gBiosMemcpy((u8 *)gMovieAudioState + 0x3C10, s5, s4);
         }
     }
 

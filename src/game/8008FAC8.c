@@ -14,8 +14,8 @@ extern u8 gLastResultByte __asm__("D_8009C8C5");
 extern u8 gCdStateBytes[] __asm__("D_8009CB84");
 extern int *gDma3ChannelCtrlPtr __asm__("D_8009CBB0");
 extern int gVSyncWait(int) __asm__("func_80091270");
-extern void func_8008FF08(char *);
-extern void func_8008E000(char *, char *, int, int);
+extern void gBiosPuts(char *) __asm__("func_8008FF08");
+extern void gBiosPrintf(char *, char *, int, int) __asm__("func_8008E000");
 extern void gResetCdHardware(void) __asm__("func_8008F6D8");
 int gWaitCdDmaComplete(int mode) __asm__("func_8008FAC8");
 
@@ -100,7 +100,7 @@ int gWaitCdDmaComplete(int mode)
         }
         if (count) {
         timeout:
-            func_8008FF08(gCdErrorLogMsg);
+            gBiosPuts(gCdErrorLogMsg);
             {
                 register int first __asm__("$4") = state[0];
                 register int second __asm__("$2") = state[1];
@@ -128,7 +128,7 @@ int gWaitCdDmaComplete(int mode)
                             third = *(int *)index;
                             fourth = *(int *)first;
                             __asm__("" : "+r"(third), "+r"(fourth), "+r"(fifth));
-                            func_8008E000(gCdTimeoutFmtMsg, msg, third, fourth);
+                            gBiosPrintf(gCdTimeoutFmtMsg, msg, third, fourth);
                         }
                     }
                 }

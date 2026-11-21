@@ -1,7 +1,7 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern volatile s32 D_8009F6D8;
+extern volatile s32 gStreamAssetReleaseWriteIndex __asm__("D_8009F6D8");
 extern s32 gStreamAssetReleaseRing[] __asm__("D_800A0C60");
 
 extern void func_80029650(void);
@@ -28,13 +28,13 @@ void gQueueStreamAssetRelease(s32 arg0, s32 arg1) __asm__("func_8002A31C");
  */
 void gQueueStreamAssetRelease(s32 arg0, s32 arg1)
 {
-    if (gStreamAssetReleaseRing[D_8009F6D8] != 0) {
+    if (gStreamAssetReleaseRing[gStreamAssetReleaseWriteIndex] != 0) {
         func_80029650();
     } else {
-        gStreamAssetReleaseRing[D_8009F6D8] = arg0;
-        D_8009F6D8 = D_8009F6D8 + 1;
-        if (D_8009F6D8 >= 4) {
-            D_8009F6D8 = 0;
+        gStreamAssetReleaseRing[gStreamAssetReleaseWriteIndex] = arg0;
+        gStreamAssetReleaseWriteIndex = gStreamAssetReleaseWriteIndex + 1;
+        if (gStreamAssetReleaseWriteIndex >= 4) {
+            gStreamAssetReleaseWriteIndex = 0;
         }
     }
 }

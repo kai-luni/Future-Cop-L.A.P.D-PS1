@@ -5,8 +5,8 @@ extern u8 gPadIrqNode[] __asm__("D_800A3B60");
 
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
-extern void func_8008CA10(s32 arg0, u8 *arg1);
-extern void func_8008CA20(s32 arg0, s32 arg1);
+extern void gBiosSysDeqIntRp(s32 arg0, u8 *arg1) __asm__("func_8008CA10");
+extern void gBiosChangeClearRCnt(s32 arg0, s32 arg1) __asm__("func_8008CA20");
 void gStopPadDriverIrq(void) __asm__("func_8008A688");
 
 
@@ -43,7 +43,7 @@ void gStopPadDriverIrq(void) __asm__("func_8008A688");
 void gStopPadDriverIrq(void)
 {
     gEnterCriticalSection();
-    func_8008CA20(3, 1);
-    func_8008CA10(2, gPadIrqNode);
+    gBiosChangeClearRCnt(3, 1);
+    gBiosSysDeqIntRp(2, gPadIrqNode);
     gExitCriticalSection();
 }

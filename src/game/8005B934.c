@@ -13,7 +13,8 @@ extern void gNormalizeVector(struct Vec *) __asm__("func_8001A180");
 extern s32 gVectorDot(struct Vec *, struct Vec *) __asm__("func_8001AB00");
 extern void gTraceWeaponSphereRays(struct Obj *) __asm__("func_8005B6A8");
 extern u32 gSqrt12(s32) __asm__("func_80095900");
-extern u16 D_8009F7F2, D_8009F7F4;
+extern u16 gMessageReturnDataY __asm__("D_8009F7F2");
+extern u16 gMessageReturnDataZ __asm__("D_8009F7F4");
 extern u16 gMessageReturnData __asm__("D_8009F7F0");
 extern s16 data_return[3];
 void *gHandleTargetDamageEffect(u32 msg, struct Obj *obj, s32 arg2, s32 arg3) __asm__("func_8005B934");
@@ -119,33 +120,33 @@ void *gHandleTargetDamageEffect(u32 msg, struct Obj *obj, s32 arg2, s32 arg3)
                 gNormalizeVector(&v);
                 product = (gVectorDot(&v, &tr->axis2) >> 4) * t->strength;
                 shifted = product >> 12;
-                D_8009F7F4 = shifted;
+                gMessageReturnDataZ = shifted;
                 product = (gVectorDot(&v, &tr->axis1) >> 4) * t->strength;
                 shifted = product >> 12;
-                D_8009F7F2 = shifted;
+                gMessageReturnDataY = shifted;
                 product = (gVectorDot(&v, &tr->axis0) >> 4) * t->strength;
                 shifted = product >> 12;
                 gMessageReturnData = shifted;
                 __asm__ volatile("" : : "r"(shifted) : "$4", "$5", "memory");
                 product = (gVectorDot(&t->moving->velocity, &tr->axis2) >> 4) * scale;
                 shifted3 = product >> 12;
-                out = (u16)D_8009F7F4 + shifted3;
+                out = (u16)gMessageReturnDataZ + shifted3;
             } else {
                 product = (gVectorDot(&t->moving->velocity, &tr->axis2) >> 4) * scale;
-                D_8009F7F2 = 0;
+                gMessageReturnDataY = 0;
                 gMessageReturnData = 0;
                 shifted = product >> 12;
-                D_8009F7F4 = shifted;
+                gMessageReturnDataZ = shifted;
                 __asm__ volatile("" : : : "memory");
                 out = shifted + (u16)t->strength;
             }
         } else {
             gMessageReturnData = 0;
-            D_8009F7F2 = 0;
+            gMessageReturnDataY = 0;
             __asm__ volatile("" : : : "memory");
             out = (u16)t->strength;
         }
-        D_8009F7F4 = out;
+        gMessageReturnDataZ = out;
         return data_return;
     }
     return 0;

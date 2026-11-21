@@ -19,7 +19,7 @@ extern char gSpuWriteReadyTimeoutText[] __asm__("D_80012CFC");
 extern char gSpuWaitDmafClearStr[] __asm__("D_80012D10");
 
 extern void gSpuBusyWait(void) __asm__("func_80097990");
-extern void func_8008E000(char *arg0, char *arg1);
+extern void gBiosPrintf(char *arg0, char *arg1) __asm__("func_8008E000");
 
 /**
  * @brief Uploads a block of bytes to PlayStation SPU Sound RAM via manual FIFO writes.
@@ -96,7 +96,7 @@ void gSpuWriteMemBlock(u16 *arg0, u32 arg1)
                 __asm__ volatile ("" : "+r" (a));
                 b = (char *)0x80010000;
                 __asm__ volatile ("" : "+r" (b));
-                func_8008E000(a, b + 0x2cfc);
+                gBiosPrintf(a, b + 0x2cfc);
                 break;
             }
         }
@@ -122,7 +122,7 @@ void gSpuWriteMemBlock(u16 *arg0, u32 arg1)
             __asm__ volatile ("" : "+r" (a));
             b = (char *)0x80010000;
             __asm__ volatile ("" : "+r" (b));
-            func_8008E000(a, b + 0x2d10);
+            gBiosPrintf(a, b + 0x2d10);
             break;
         }
     }

@@ -1,7 +1,7 @@
 // Categories: BIOS > System Calls | Platform > CD-ROM
 #include "game/types.h"
 
-extern void func_8008DC40(void);
+extern void gBiosStopCard(void) __asm__("func_8008DC40");
 extern void gPatchCdKernelBlock(void) __asm__("func_8008DE20");
 void gInitCdDriverChain(void) __asm__("func_8008D784");
 
@@ -32,6 +32,6 @@ void gInitCdDriverChain(void) __asm__("func_8008D784");
  */
 void gInitCdDriverChain(void)
 {
-    func_8008DC40();
+    gBiosStopCard();
     gPatchCdKernelBlock();
 }

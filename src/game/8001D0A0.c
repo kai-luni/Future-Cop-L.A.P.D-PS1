@@ -12,7 +12,7 @@ struct UnkD0A0 {
 
 extern struct UnkD0A0 gFileSlotTable[] __asm__("D_800A6D78");
 extern u8 gCdTargetLoc[] __asm__("D_8009F614");
-extern u8 D_8009F615[];
+extern u8 gCdTargetLocSecond[] __asm__("D_8009F615");
 extern u8 gEventBuffer[] __asm__("D_800A0798");
 
 extern void gByteOffsetToCdlLoc(void *a0, s32 a1) __asm__("func_8001C494");
@@ -66,7 +66,7 @@ s32 gSeekCdFileSlot(s32 index)
         gByteOffsetToCdlLoc(a0, a1);
 
         a0 = (u8 *)0x15;
-        a1 = D_8009F615 - 1;
+        a1 = gCdTargetLocSecond - 1;
         a2 = gEventBuffer;
         r = gCdControl((s32)a0, a1, a2);
         if (r == 0) {

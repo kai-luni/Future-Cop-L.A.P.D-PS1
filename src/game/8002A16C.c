@@ -17,7 +17,7 @@ extern Unk800A0B70 gStreamBufferList __asm__("D_800A0B70");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern s32 gVagmPrimeBlockCount __asm__("D_8009F6E0");
-extern s32 D_8009F6E4;
+extern s32 gVagmNextChunkIndex __asm__("D_8009F6E4");
 
 extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
 void gStartVagmAudioStream(s32 arg0) __asm__("func_8002A16C");
@@ -66,6 +66,6 @@ void gStartVagmAudioStream(s32 arg0)
 
         p->unk0C = -1;
         p->unk20 = 0;
-        p->unk08 = p->unk4C + p->unk48 + D_8009F6E4 * 0x6000;
+        p->unk08 = p->unk4C + p->unk48 + gVagmNextChunkIndex * 0x6000;
     }
 }

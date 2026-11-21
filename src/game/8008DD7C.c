@@ -4,7 +4,7 @@
 extern u32 gCardPatchCallStubStart[] __asm__("D_8008DCD4");
 extern s32 gCardPatchSavedReturnAddress __asm__("D_800A3E30");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
-extern void func_8008DBA0(void);
+extern void gBiosFlushCache(void) __asm__("func_8008DBA0");
 extern void gCopyCardPatchTable(void) __asm__("func_8008DCE8");
 void gInstallCardPatchSlot(void) __asm__("func_8008DD7C");
 

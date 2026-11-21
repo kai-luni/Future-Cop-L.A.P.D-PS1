@@ -33,7 +33,7 @@ extern void gGetPadPortCode() __asm__("func_8008C3B4");
 extern void gLookupPadPort() __asm__("func_8008C3EC");
 extern void gConsumePadCmd() __asm__("func_8008C06C");
 extern void gInstallPadProtoHooks() __asm__("func_8008C410");
-extern void func_8008CD00();
+extern void gBiosBzero() __asm__("func_8008CD00");
 extern void gInitPadCallbackTable() __asm__("func_8008A3A8");
 void gInitPadPorts(u8 *a, u8 *b) __asm__("func_8008BDB0");
 
@@ -97,7 +97,7 @@ void gInitPadPorts(u8 *a, u8 *b)
     __asm__("" : "+r"(q) : : "memory");
     gPadBasePort = p;
     gPadCompleteHook = value;
-    func_8008CD00(q, 0x1e0);
+    gBiosBzero(q, 0x1e0);
     i = 0;
     ff = 255;
     q = (u8 *)p + 0x40;

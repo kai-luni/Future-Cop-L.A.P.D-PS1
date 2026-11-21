@@ -9,7 +9,7 @@ extern State *gGameSession __asm__("D_8009FA94");
 extern List gLoadoutTable[3] __asm__("D_8009C0A8");
 extern u8 gAltSpecialLoadoutEntries[] __asm__("D_8009C090");
 extern u8 gDefaultSpecialWeaponRows[] __asm__("D_8009C070");
-extern u8 D_800A362B[];
+extern u8 gOnePlayerLoadoutMenuBackgroundIndex[] __asm__("D_800A362B");
 extern s8 gLoadoutPrimaryWeaponIndices[2] __asm__("D_8009F924");
 extern s8 gLoadoutHeavyWeaponIndices[2] __asm__("D_8009F926");
 extern s8 gLoadoutSpecialWeaponIndices[2] __asm__("D_8009F928");
@@ -53,12 +53,12 @@ void gInitSelectionIndices(void)
     if (gGameSession->mode == 1) {
         gLoadoutTable[2].entries = gAltSpecialLoadoutEntries;
         gLoadoutTable[2].count = 4;
-        D_800A362B[0] = 7;
+        gOnePlayerLoadoutMenuBackgroundIndex[0] = 7;
         gLoadoutTable[1].count = 4;
     } else {
         gLoadoutTable[2].entries = gDefaultSpecialWeaponRows;
         gLoadoutTable[2].count = 5;
-        D_800A362B[0] = 2;
+        gOnePlayerLoadoutMenuBackgroundIndex[0] = 2;
         gLoadoutTable[1].count = 5;
     }
     gLoadoutPrimaryWeaponIndices[0] = gFindListEntryByValue(&gLoadoutTable[0], gGameSession->a);

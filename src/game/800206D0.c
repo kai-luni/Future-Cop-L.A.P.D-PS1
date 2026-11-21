@@ -29,7 +29,7 @@ extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
 extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
 extern void gAcquireMcCallback(void) __asm__("func_80020530");
 extern void gAcquireMcEvents(void) __asm__("func_80020120");
-extern void func_8008D640(s32 value);
+extern void gBiosCardInfo(s32 value) __asm__("func_8008D640");
 void gResetMcManager(void) __asm__("func_800206D0");
 
 
@@ -80,5 +80,5 @@ void gResetMcManager(void)
     gFillMemory(gOperationState->unk9B0, 0, 0x1200);
     gAcquireMcCallback();
     gAcquireMcEvents();
-    func_8008D640(gOperationState->unk8FC);
+    gBiosCardInfo(gOperationState->unk8FC);
 }

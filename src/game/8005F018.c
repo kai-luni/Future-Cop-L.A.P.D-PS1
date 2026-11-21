@@ -120,7 +120,7 @@ extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
-extern s32 func_80019904(s32 arg0);
+extern s32 gLookupPackedInvSqrt(s32 arg0) __asm__("func_80019904");
 extern s32 func_80019FCC(struct Vec3s32 *v);
 extern s32 gVectorDot(struct Vec3s32 *a, struct Vec3s32 *b) __asm__("func_8001AB00");
 extern struct Unk73500 *gAllocPositionNode(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80073500");
@@ -299,7 +299,7 @@ void gFireRayAttack(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec
             {
                 register s32 root __asm__("$2");
                 register s32 shifted __asm__("$3");
-                root = func_80019904(dist);
+                root = gLookupPackedInvSqrt(dist);
                 shifted = s0 << 4;
                 __asm__("" : "=r"(root), "=r"(shifted) : "0"(root), "1"(shifted));
                 MUL16(factor, shifted, root);

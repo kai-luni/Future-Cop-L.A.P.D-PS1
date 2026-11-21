@@ -1,7 +1,7 @@
 // Categories: BIOS > Kernel Patch | Platform > Memory Card
 #include "game/types.h"
 
-extern u32 func_8008DC40[];
+extern u32 gBiosStopCard[] __asm__("func_8008DC40");
 extern u32 gCardPatchJumpStubStart[] __asm__("D_8008DCC0");
 void gCopyKernelPatch0xDF80(void) __asm__("func_8008DDEC");
 
@@ -42,7 +42,7 @@ void gCopyKernelPatch0xDF80(void)
     register u32 *end __asm__("$9");
 
     dst = (u32 *)0xDF80;
-    src = func_8008DC40 + 4;
+    src = gBiosStopCard + 4;
     end = gCardPatchJumpStubStart;
     do {
         *dst++ = *src++;

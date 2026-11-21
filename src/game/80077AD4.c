@@ -87,7 +87,7 @@ extern u8 gGetProfileSlotEditState[] __asm__("D_8008228C");
 extern u8 gResetMemoryCardPromptOnExit[] __asm__("D_800821EC");
 
 extern s8 gOverlayDelay __asm__("D_8009F874");
-extern u8 D_8009F875;
+extern u8 gMenuBackdropIndex __asm__("D_8009F875");
 extern u8 gScreenUploadFlag __asm__("D_8009F876");
 extern s32 gFontBankTable __asm__("D_8009F468");
 extern s8 gPanelSyncValue __asm__("D_8009F8BC");
@@ -102,7 +102,7 @@ extern s32 gFrameTickCounter[] __asm__("D_8009FA2C");
 
 extern void gInitMenuDescriptor(struct State *state, u8 *name, s32 kind) __asm__("func_80077884");
 extern void func_800778E4(void);
-extern void func_80077990(void);
+extern void gSetupTitleScreenPlayerNamesPrologue(void) __asm__("func_80077990");
 extern void gReleaseProfileCardOperation(void) __asm__("func_8007FACC");
 extern void gResumeFrontEndForReturnMode(void) __asm__("func_800782EC");
 
@@ -149,9 +149,9 @@ void gSetupFrontEndMenus(void)
     gTitleScreenMenuDescriptor.unk09 = 1;
     gTitleScreenMenuDescriptor.unk04 = 1;
     gTitleScreenMenuDescriptor.unk18 = func_800778E4;
-    gTitleScreenMenuDescriptor.unk10 = func_80077990;
+    gTitleScreenMenuDescriptor.unk10 = gSetupTitleScreenPlayerNamesPrologue;
     gOverlayDelay = -1;
-    D_8009F875 = 0;
+    gMenuBackdropIndex = 0;
     gScreenUploadFlag = 1;
     gInitMenuDescriptor(&gMenuDescriptor, gMainMenuItems, 7);
     gMenuDescriptor.unk0C = gDrawModeHeadingPageCallback;

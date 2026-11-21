@@ -3,7 +3,7 @@
 
 extern void *gCellMap __asm__("D_8009F820");
 extern void *gCellEntityList[2] __asm__("D_8009F818");
-extern void *D_8009F830;
+extern void *gRenderWorkBufferThird __asm__("D_8009F830");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 void gFreeCellMapAndWorkBuffers(void) __asm__("func_80061860");
 
@@ -40,5 +40,5 @@ void gFreeCellMapAndWorkBuffers(void)
     for (i = 0; i < 2; i++) {
         gFreeBlock(gCellEntityList[i]);
     }
-    gFreeBlock(D_8009F830);
+    gFreeBlock(gRenderWorkBufferThird);
 }

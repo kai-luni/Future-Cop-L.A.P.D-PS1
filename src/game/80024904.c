@@ -17,7 +17,7 @@ extern void gInitModuleStream(void *) __asm__("func_80029F50");
 extern void gResetHudTextState(void) __asm__("func_8004783C");
 extern void gInitScriptVmState(void) __asm__("func_80069B58");
 extern void gInitFrontEndSubsystems(void) __asm__("func_800780DC");
-extern void func_8008CCB0(void *, s32);
+extern void gBiosStrcpy(void *, s32) __asm__("func_8008CCB0");
 
 /**
  * @brief Mission/level initialisation: sets the mission id, resets the
@@ -54,7 +54,7 @@ void gLoadFrontEndModule(s32 arg)
 
     gMissionId = arg;
     func_80017C68(0x168, 0, 0x118, 0, 0xFC, 0);
-    func_8008CCB0(gModuleNameBuffer, arg);
+    gBiosStrcpy(gModuleNameBuffer, arg);
     gRequestListHead = 0;
     gRequestListTail = 0;
     func_80019A64();

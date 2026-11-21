@@ -59,7 +59,7 @@ extern u32 gModuleReadCompletedBuffers[] __asm__("D_800A0C10");
 extern u32 gModuleReadPendingBuffers[] __asm__("D_800A0C20");
 extern u32 gVagmRing[] __asm__("D_800A0C50");
 extern u32 gStreamAssetReleaseRing[] __asm__("D_800A0C60");
-extern s32 D_800A0B9C[2];
+extern s32 gStreamCompletedAssetPool[2] __asm__("D_800A0B9C");
 extern u16 gRingBuffer[] __asm__("D_800A0BC0");
 
 extern s32 gResourceSubChunkPtr __asm__("D_8009F698");
@@ -75,11 +75,11 @@ extern s32 gOutStreamId __asm__("D_8009F6BC");
 extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern s32 gPortraitStreamDeadline __asm__("D_8009F6C4");
 extern s32 gVagmReadIndex __asm__("D_8009F6CC");
-extern s32 D_8009F6D0;
+extern s32 gStreamAssetReleaseReadIndex __asm__("D_8009F6D0");
 extern s32 gVagmWriteIndex __asm__("D_8009F6D4");
-extern s32 D_8009F6D8;
+extern s32 gStreamAssetReleaseWriteIndex __asm__("D_8009F6D8");
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
-extern s32 D_8009F6E4;
+extern s32 gVagmNextChunkIndex __asm__("D_8009F6E4");
 extern s32 gModuleReadEndCheck __asm__("D_8009F6E8");
 extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
 
@@ -152,7 +152,7 @@ void gInitModuleStream(void *arg0)
     }
 
     stride = 0x6014;
-    D_800A0B9C[0] = 0;
+    gStreamCompletedAssetPool[0] = 0;
     node = gAllocMemory(0x18050, 2);
     gChainedNodes = node;
 
@@ -203,10 +203,10 @@ void gInitModuleStream(void *arg0)
     }
 
     gVagmReadIndex = 0;
-    D_8009F6D0 = 0;
+    gStreamAssetReleaseReadIndex = 0;
     gVagmWriteIndex = 0;
-    D_8009F6D8 = 0;
+    gStreamAssetReleaseWriteIndex = 0;
     gCallGateFlag = 0;
-    D_8009F6E4 = 0;
+    gVagmNextChunkIndex = 0;
     gModuleReadEndCheck = 1;
 }

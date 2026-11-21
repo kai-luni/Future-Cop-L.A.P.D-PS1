@@ -12,7 +12,7 @@ extern struct Unk4AADNode *gNodePoolAllocation __asm__("D_8009F79C");
 extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void *func_8008CD20(void *buffer, s32 value, s32 size);
+extern void *gBiosMemset(void *buffer, s32 value, s32 size) __asm__("func_8008CD20");
 void gInitDebrisFragmentPool(void) __asm__("func_8004AB4C");
 
 
@@ -61,7 +61,7 @@ void gInitDebrisFragmentPool(void)
     gFragmentFreeList = pool;
     gNodePoolAllocation = pool;
     if (pool != 0) {
-        func_8008CD20(pool, 0, 0x44C0);
+        gBiosMemset(pool, 0, 0x44C0);
         for (i = 0; i < 0xC7; i++) {
             gFragmentFreeList[i].next = &gFragmentFreeList[i + 1];
         }

@@ -9,8 +9,8 @@ extern u8 gIrqBit0PersistentCheckCallback[] __asm__("D_8008DA7C");
 
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
-extern void func_8008CA00(s32, void *);
-extern void func_8008CA10(s32, void *);
+extern void gBiosEnqueueInterruptHandler(s32, void *) __asm__("func_8008CA00");
+extern void gBiosSysDeqIntRp(s32, void *) __asm__("func_8008CA10");
 s32 gInstallPriority1Irq(void) __asm__("func_8008D964");
 
 
@@ -61,8 +61,8 @@ s32 gInstallPriority1Irq(void)
     gIrqNode = 0;
     gIrqNodeLinkEnd = 0;
 
-    func_8008CA10(one, q);
-    func_8008CA00(1, q);
+    gBiosSysDeqIntRp(one, q);
+    gBiosEnqueueInterruptHandler(1, q);
     gExitCriticalSection();
 
     return 1;

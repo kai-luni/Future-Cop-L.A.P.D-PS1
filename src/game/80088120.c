@@ -19,7 +19,7 @@ extern void *gMovieAudioBlock __asm__("D_8009F4F0");
 extern void *gMovieSpuBufferA __asm__("D_8009F4F4");
 extern void *gMovieSpuBufferB __asm__("D_8009F4F8");
 extern s32 gMovieStreamReserveUnitBytes __asm__("D_8009F960");
-extern s32 D_8009F964;
+extern s32 gMovieDestStrideB __asm__("D_8009F964");
 extern s32 gLayerModeBits __asm__("D_8009F968");
 extern s32 gFileSearchGroup __asm__("D_8009F238");
 extern Params88120 gFileTable __asm__("D_800A6E20");
@@ -228,7 +228,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
 
     gResetMovieFrameBuffers(0, 1);
     if (gMovieStreamReaderInit(gMovieStreamBuffer, gMovieAudioClockDisable, &params, 1, 0x800) != 0) {
-        if (gInitMovieAudio(gMovieAudioBlock, 0x400000, gMovieSpuBufferA, 0x800000, gMovieSpuBufferB, D_8009F964, 1) != 0) {
+        if (gInitMovieAudio(gMovieAudioBlock, 0x400000, gMovieSpuBufferA, 0x800000, gMovieSpuBufferB, gMovieDestStrideB, 1) != 0) {
             gMovieSetAudioMode(0);
             result = gMovieStreamDemux(arg1, arg2, gLayerModeBits * gMovieStreamReserveUnitBytes);
             count = 3;

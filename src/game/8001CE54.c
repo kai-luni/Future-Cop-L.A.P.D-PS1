@@ -33,8 +33,8 @@ extern u8 gCdCommandParam[] __asm__("D_8009F610");
 extern u8 gCdTargetLoc[] __asm__("D_8009F614");
 extern u8 gCdCurrentLoc[] __asm__("D_8009F61C");
 extern u8 gEventBuffer[] __asm__("D_800A0798");
-extern u8 D_8001C60C[];
-extern u8 D_8001C614[];
+extern u8 gNoOpCdReadCompletionStub[] __asm__("D_8001C60C");
+extern u8 gCdSyncCallbackCode[] __asm__("D_8001C614");
 extern volatile u8 gCdStatusReg __asm__("D_1F801800");
 extern volatile u8 gCdInterruptReg __asm__("D_1F801803");
 
@@ -126,7 +126,7 @@ s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     st = &func_80010000;
     st->unk14 = callback;
     if (callback == 0) {
-        st->unk14 = (s32)D_8001C60C;
+        st->unk14 = (s32)gNoOpCdReadCompletionStub;
     }
     st->unk04 = third;
     st->unk10 = index;
@@ -187,7 +187,7 @@ s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         : "r"(stateHigh)
         : "$2"
     );
-    liveState->unk1C = gSetCdSyncCallback((s32)D_8001C614);
+    liveState->unk1C = gSetCdSyncCallback((s32)gCdSyncCallbackCode);
     LOAD_ADDRESS(a, D_8009F61C);
     LOAD_ADDRESS(b, D_8009F614);
     gCopyWord(a, b);

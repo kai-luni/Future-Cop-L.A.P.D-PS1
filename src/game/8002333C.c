@@ -18,8 +18,8 @@ extern s32 gStreamCommandState __asm__("D_8009F648");
 extern s32 gSpuBufferPtr __asm__("D_8009F278");
 extern s32 gVolatileBase __asm__("D_8009F27C");
 extern u8 gCvkSystemActive __asm__("D_8009F26C");
-extern u8 D_800A8E48[];
-extern u8 D_800AB0E8[];
+extern u8 gResourceGroupTableA[] __asm__("D_800A8E48");
+extern u8 gSoundChannelStorage[] __asm__("D_800AB0E8");
 extern u8 gFlushSoundChannelsIfCvkActive[] __asm__("D_80023314");
 
 extern void gShutdownCvkSystem(void) __asm__("func_80023478");
@@ -78,7 +78,7 @@ u8 gInitCvkStreamSubsystem(void)
 
     gShutdownCvkSystem();
     gResetCvkSubsystem();
-    result = func_80021C20(1, 0x1002001, 4, 8, 5, 0x18, 8, D_800A8E48, 9, D_800AB0E8, 0);
+    result = func_80021C20(1, 0x1002001, 4, 8, 5, 0x18, 8, gResourceGroupTableA, 9, gSoundChannelStorage, 0);
     gInitSpuTransferHook();
     gSetScreenModeHook((s32)gFlushSoundChannelsIfCvkActive);
     for (i = 0; i < 8; i++) {

@@ -21,8 +21,8 @@ extern char gCdDiskErrorMsg[] __asm__("D_800124B4");
 extern char gCdErrorFmtMsg[] __asm__("D_800124C0");
 extern char gCdUnknownIntrMsg[] __asm__("D_800124DC");
 extern char gCdUnknownInterruptModeFormat[] __asm__("D_800124F0");
-extern void func_8008E000();
-extern void func_8008FF08();
+extern void gBiosPrintf() __asm__("func_8008E000");
+extern void gBiosPuts() __asm__("func_8008FF08");
 
 #define COPY(dst) \
     { register unsigned char *d __asm__("$3") = dst; unsigned char *s = buf; int n; \
@@ -117,7 +117,7 @@ int gCdDrainIrqEvent(void)
     }
 skip_input:
     if (mode == 5 && gCdLogLevel > 0) {
-        func_8008E000(gCdDiskErrorMsg);
+        gBiosPrintf(gCdDiskErrorMsg);
         if (gCdLogLevel > 0) {
             register int index __asm__("$2");
             register int val __asm__("$5");
@@ -129,7 +129,7 @@ skip_input:
             __asm__("" : "+r"(index), "+r"(a), "+r"(b));
             index <<= 2;
             __asm__("lui %0, %%hi(D_8009C8CC)\n\taddu %0, %0, %1\n\tlw %0, %%lo(D_8009C8CC)(%0)" : "=&r"(val) : "r"(index));
-            func_8008E000(gCdErrorFmtMsg, val, a, b);
+            gBiosPrintf(gCdErrorFmtMsg, val, a, b);
         }
     }
     {
@@ -246,12 +246,12 @@ skip_input:
         COPY(gCdReadyBuffer8);
         return 6;
     other:
-        func_8008FF08(gCdUnknownIntrMsg);
+        gBiosPuts(gCdUnknownIntrMsg);
         {
             register int m __asm__("$5");
             register char *p __asm__("$4");
             __asm__("lbu %0, %2\n\tlui %1, %%hi(D_800124F0)" : "=r"(m), "=r"(p) : "m"(mode));
-            func_8008E000(p + 0x24f0, m);
+            gBiosPrintf(p + 0x24f0, m);
         }
         return 0;
     }

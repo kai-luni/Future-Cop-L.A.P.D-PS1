@@ -1,7 +1,7 @@
 // Categories: Graphics > HUD > Name Entry | Utilities > Character Table
 #include "game/types.h"
 
-extern s32 func_8008CCC0(u8 *str);
+extern s32 gBiosStrlen(u8 *str) __asm__("func_8008CCC0");
 
 /**
  * @brief Encodes a name string into glyph indices (inverse of func_8007AA9C).
@@ -34,7 +34,7 @@ void gEncodeNameToGlyphs(u8 *src, u8 *dst, s32 len, u8 *table, s32 tableLen)
     s32 limit;
     s32 c;
 
-    limit = func_8008CCC0(src);
+    limit = gBiosStrlen(src);
     for (i = 0; i < len; i++) {
         if (i < limit) {
             c = src[i];

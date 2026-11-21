@@ -17,9 +17,9 @@ typedef struct {
 } State;
 
 extern State *volatile gOperationState __asm__("D_8009AB08");
-extern void func_8008D640(int);
-extern void func_8008D670(int, int, void *);
-extern void func_8008D680(int, int, void *);
+extern void gBiosCardInfo(int) __asm__("func_8008D640");
+extern void gBiosWriteCardSector(int, int, void *) __asm__("func_8008D670");
+extern void gBiosCardReadSector(int, int, void *) __asm__("func_8008D680");
 int gMcRetryTimeoutB(void) __asm__("func_8001F968");
 
 
@@ -57,14 +57,14 @@ int gMcRetryTimeoutB(void)
     case 2:
         if (p->counter > 0) {
             p->counter--;
-            func_8008D680(p->field8fc, p->field998, p->field914);
+            gBiosCardReadSector(p->field8fc, p->field998, p->field914);
         } else {
             p->done = 1;
             p->field8f8 = 0;
             p->state = 0;
             p->field904 = 0;
             p->field900 = -3;
-            func_8008D640(p->field8fc);
+            gBiosCardInfo(p->field8fc);
         }
         break;
     case 3:
@@ -72,14 +72,14 @@ int gMcRetryTimeoutB(void)
         p = gOperationState;
         if (p->counter > 0) {
             p->counter--;
-            func_8008D670(p->field8fc, p->field998, p->field914);
+            gBiosWriteCardSector(p->field8fc, p->field998, p->field914);
         } else {
             p->done = 1;
             p->field8f8 = 0;
             p->state = 0;
             p->field904 = 0;
             p->field900 = -3;
-            func_8008D640(p->field8fc);
+            gBiosCardInfo(p->field8fc);
         }
         break;
     default:
@@ -88,7 +88,7 @@ int gMcRetryTimeoutB(void)
             q->done = 1;
             q->field8f8 = 0;
             q->state = 0;
-            func_8008D640(q->field8fc);
+            gBiosCardInfo(q->field8fc);
         }
         break;
     }

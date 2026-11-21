@@ -14,7 +14,7 @@ struct Unk49734Resource {
 };
 
 extern s32 *gSpriteRegionTable __asm__("D_8009F778");
-extern s32 D_8009F788;
+extern s32 gResourceTableSize __asm__("D_8009F788");
 
 extern u8 func_80019AA8(struct Unk49734Resource *resource);
 extern void func_80019A74(struct Unk49734Resource *resource);
@@ -47,7 +47,7 @@ void gLoadCdcsResource(struct Unk49734Resource *resource)
         resource->unk08 = 0;
         func_80019A74(resource);
         gSpriteRegionTable = &resource->data->count;
-        D_8009F788 = resource->data->count;
+        gResourceTableSize = resource->data->count;
     } else {
         func_80019D00(resource);
     }

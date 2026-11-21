@@ -29,9 +29,9 @@ typedef struct {
 
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern u8 gSnapshotResult __asm__("D_8009F904");
-extern s32 D_8009F908;
-extern s32 D_8009F90C;
-extern s32 D_8009F910;
+extern s32 gSavedOptionsSfxVolume __asm__("D_8009F908");
+extern s32 gSavedOptionsVagmVolume __asm__("D_8009F90C");
+extern s32 gSavedOptionsVoiceVolume __asm__("D_8009F910");
 extern volatile s32 gSavedOptionsSoundMode __asm__("D_8009F914");
 extern s32 gTestResultFlag __asm__("D_8009F918");
 extern volatile s32 gSnapshotPointer __asm__("D_8009F91C");
@@ -40,7 +40,7 @@ extern volatile s32 gPreviewTrackId __asm__("D_8009F920");
 extern s32 gGameClock[] __asm__("D_8009FA60");
 extern Unk8009FA94 *gGameSession[2] __asm__("D_8009FA94");
 extern u16 gSoundWidgetLabel[] __asm__("D_8009BABE");
-extern u8 D_800A377B[];
+extern u8 gAudioOptionsMenuBackgroundIndex[] __asm__("D_800A377B");
 
 extern void gEmitFlatQuadRectMode(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082FA4");
 extern Unk8007CE04 *gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");

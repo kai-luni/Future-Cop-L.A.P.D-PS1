@@ -17,7 +17,7 @@ extern s32 gCdReadPathTable(void) __asm__("func_80090218");
 extern s32 gFindCdPathDir(s32, char *) __asm__("func_800904DC");
 extern s32 gCacheCdDirSector(s32) __asm__("func_80090580");
 extern s32 gMatchCdFilename(char *, char *) __asm__("func_800901F8");
-extern void func_8008E000(char *, ...);
+extern void gBiosPrintf(char *, ...) __asm__("func_8008E000");
 Entry *gCdSearchFile(Entry *out, char *path) __asm__("func_8008FF20");
 
 
@@ -108,7 +108,7 @@ Entry *gCdSearchFile(Entry *out, char *path)
     } while (count < 8);
 end:
     if (count >= 8) {
-        if (gCdLogLevel > 0) func_8008E000(gCdDepthErrFmt, orig, count);
+        if (gCdLogLevel > 0) gBiosPrintf(gCdDepthErrFmt, orig, count);
         return 0;
     }
     if (!*(signed char *)buf) {
@@ -118,7 +118,7 @@ end:
             {
                 register char *a0 __asm__("$4") = (char *)0x80010000;
                 __asm__ volatile("" : "=r"(a0) : "0"(a0));
-                func_8008E000(a0 + 0x25C8, a1);
+                gBiosPrintf(a0 + 0x25C8, a1);
             }
             __asm__ volatile(".set reorder");
         }
@@ -133,7 +133,7 @@ end:
     }
     count = 0;
     if (gCdLogLevel >= 2) {
-        func_8008E000(gCdSearchLogFmt, buf);
+        gBiosPrintf(gCdSearchLogFmt, buf);
         __asm__ volatile("" : "=r"(count));
         count = 0;
     }
@@ -149,7 +149,7 @@ end:
         if (gMatchCdFilename(name, buf)) {
             if (gCdLogLevel >= 2) {
                 __asm__ volatile("");
-                func_8008E000(gCdFoundLogFmt, buf);
+                gBiosPrintf(gCdFoundLogFmt, buf);
             }
             *dest = *entry;
             return entry;
@@ -160,7 +160,7 @@ end:
         off += 24;
     } while (count < 64);
     if (gCdLogLevel > 0) {
-        func_8008E000(gCdNotFoundErrFmt, buf);
+        gBiosPrintf(gCdNotFoundErrFmt, buf);
         __asm__ volatile(".set reorder");
     }
     return 0;

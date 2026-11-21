@@ -16,9 +16,9 @@ extern u32 gLax1ModuleName[] __asm__("D_8009F444");
 extern u8 gCreditsMovieFilename[] __asm__("D_80011E60");
 extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 
-extern s32 func_8008CCC0(u8 *);
-extern u8 func_8008CCF0(u8);
-extern s32 func_8008CCA0(void *, void *);
+extern s32 gBiosStrlen(u8 *) __asm__("func_8008CCC0");
+extern u8 gBiosToLower(u8) __asm__("func_8008CCF0");
+extern s32 gBiosStrcmp(void *, void *) __asm__("func_8008CCA0");
 s32 gFindModuleMovie(void **arg0) __asm__("func_80083130");
 
 
@@ -71,12 +71,12 @@ s32 gFindModuleMovie(void **arg0)
     void *s2;
     Entry *entry;
 
-    len = func_8008CCC0(gFrontEndModuleName);
+    len = gBiosStrlen(gFrontEndModuleName);
     i = 0;
     res = 0;
     if (len != 0) {
         do {
-            c = func_8008CCF0(gFrontEndModuleName[i]);
+            c = gBiosToLower(gFrontEndModuleName[i]);
             buffer[i] = c;
             if (c == 0x2E) {
                 break;
@@ -86,7 +86,7 @@ s32 gFindModuleMovie(void **arg0)
     }
     buffer[i] = 0;
 
-    if (func_8008CCA0(buffer, gLax2ModuleName) == 0) {
+    if (gBiosStrcmp(buffer, gLax2ModuleName) == 0) {
         __builtin_memcpy((u32 *)buffer, gLax1ModuleName, 5);
     }
 
@@ -94,7 +94,7 @@ s32 gFindModuleMovie(void **arg0)
     s2 = gCreditsMovieFilename;
     for (; i < 16; i++) {
         entry = &gWideTextTable[i];
-        if (func_8008CCA0(buffer, entry->unk0) == 0) {
+        if (gBiosStrcmp(buffer, entry->unk0) == 0) {
             res = entry->unk8;
             if (arg0_reg == 0) {
                 return res;

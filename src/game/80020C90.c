@@ -11,7 +11,7 @@ extern struct CardManager *gOperationState __asm__("D_8009AB08");
 
 extern s32 gIsCardResultUsable(s32 a0) __asm__("func_80020A9C");
 extern void gParseCardDirectory(void) __asm__("func_800207CC");
-extern s32 func_8008CCA0(void *arg0, void *arg1);
+extern s32 gBiosStrcmp(void *arg0, void *arg1) __asm__("func_8008CCA0");
 
 s32 gFindCardFileSlot(void *arg0) __asm__("func_80020C90");
 
@@ -55,7 +55,7 @@ s32 gFindCardFileSlot(void *arg0)
         one = 1;
         do {
             if (gOperationState->state[i] == one) {
-                if (func_8008CCA0(arg0, gOperationState->primary[i]) == 0) {
+                if (gBiosStrcmp(arg0, gOperationState->primary[i]) == 0) {
                     ret = i;
                     break;
                 }

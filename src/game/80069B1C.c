@@ -11,7 +11,7 @@ struct Unk69B1C {
 
 extern struct Unk69B1C *gGameSession __asm__("D_8009FA94");
 extern u8 gFrameTime[] __asm__("D_8009FAA4");
-extern u8 D_8009FAB4[];
+extern u8 gScriptVmAuxVar[] __asm__("D_8009FAB4");
 extern u8 gScreenResetFlag[] __asm__("D_8009FA70");
 extern u8 gEffectId[] __asm__("D_8009FACC");
 void gBindGameSessionPointers(void) __asm__("func_80069B1C");
@@ -43,7 +43,7 @@ void gBindGameSessionPointers(void)
 
     object = gGameSession;
     object->unkE4 = gFrameTime;
-    object->unkE8 = D_8009FAB4;
+    object->unkE8 = gScriptVmAuxVar;
     object->unkEC = gScreenResetFlag;
     object->unkF0 = gEffectId;
 }

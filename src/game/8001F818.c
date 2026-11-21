@@ -17,9 +17,9 @@ typedef struct State {
 } State;
 
 extern State *gOperationState __asm__("D_8009AB08");
-extern void func_8008D640(int);
-extern void func_8008D670(int, int, void *);
-extern void func_8008D680(int, int, void *);
+extern void gBiosCardInfo(int) __asm__("func_8008D640");
+extern void gBiosWriteCardSector(int, int, void *) __asm__("func_8008D670");
+extern void gBiosCardReadSector(int, int, void *) __asm__("func_8008D680");
 int gMcRetryTimeoutA(void) __asm__("func_8001F818");
 
 
@@ -57,14 +57,14 @@ int gMcRetryTimeoutA(void)
     case 2:
         if (p->timer > 0) {
             p->timer--;
-            func_8008D680(p->handle, p->value, p->data);
+            gBiosCardReadSector(p->handle, p->value, p->data);
         } else {
             p->done = 1;
             p->active = 0;
             p->mode = 0;
             p->other = 0;
             p->code = -3;
-            func_8008D640(p->handle);
+            gBiosCardInfo(p->handle);
         }
         break;
     case 3:
@@ -72,14 +72,14 @@ int gMcRetryTimeoutA(void)
         p = gOperationState;
         if (p->timer != 0) {
             p->timer--;
-            func_8008D670(p->handle, p->value, p->data);
+            gBiosWriteCardSector(p->handle, p->value, p->data);
         } else {
             p->done = 1;
             p->active = 0;
             p->mode = 0;
             p->other = 0;
             p->code = -3;
-            func_8008D640(p->handle);
+            gBiosCardInfo(p->handle);
         }
         break;
     default: {
@@ -87,7 +87,7 @@ int gMcRetryTimeoutA(void)
         q->done = 1;
         q->active = 0;
         q->mode = 0;
-        func_8008D640(q->handle);
+        gBiosCardInfo(q->handle);
         break;
     }
     }

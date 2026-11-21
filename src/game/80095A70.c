@@ -19,6 +19,8 @@
  * None in the symbol table (the callers are inlined in the polygon shading
  * path).
  */
+void gGteShadeDpct(void) __asm__("func_80095A70");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80095A70\n"

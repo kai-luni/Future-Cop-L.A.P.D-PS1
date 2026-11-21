@@ -13,7 +13,7 @@ typedef struct Menu {
 } Menu;
 
 extern Menu *gFontBankTable __asm__("D_8009F468");
-extern u8 D_8009F875;
+extern u8 gMenuBackdropIndex __asm__("D_8009F875");
 extern u8 gScreenUploadFlag __asm__("D_8009F876");
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
 extern u8 D_8009F8C1;
@@ -80,7 +80,7 @@ void gActivateMenuPanel(Menu *arg0, s32 arg1)
     }
     m = gFontBankTable;
     if (m->unk03 != -1) {
-        D_8009F875 = m->unk03;
+        gMenuBackdropIndex = m->unk03;
         gScreenUploadFlag = m->unk04;
     }
 }

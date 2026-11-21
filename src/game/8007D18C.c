@@ -9,16 +9,16 @@ typedef struct {
 } Unk8009FA94;
 
 extern u8 gSnapshotResult __asm__("D_8009F904");
-extern s32 D_8009F908;
-extern s32 D_8009F90C;
-extern s32 D_8009F910;
+extern s32 gSavedOptionsSfxVolume __asm__("D_8009F908");
+extern s32 gSavedOptionsVagmVolume __asm__("D_8009F90C");
+extern s32 gSavedOptionsVoiceVolume __asm__("D_8009F910");
 extern volatile s32 gSavedOptionsSoundMode __asm__("D_8009F914");
 extern s32 gTestResultFlag __asm__("D_8009F918");
 extern volatile s32 gSnapshotPointer __asm__("D_8009F91C");
 extern volatile s32 gPreviewTrackId __asm__("D_8009F920");
 extern Unk8009FA94 *gGameSession[2] __asm__("D_8009FA94");
 extern u16 gSoundWidgetLabel[] __asm__("D_8009BABE");
-extern u8 D_800A377B[];
+extern u8 gAudioOptionsMenuBackgroundIndex[] __asm__("D_800A377B");
 extern void gStartVagmAudioStream(s32) __asm__("func_8002A16C");
 extern s32 gIsVagmAudioStreamActive(void) __asm__("func_8002A58C");
 extern s32 gGetStereoSoundMode(void) __asm__("func_800451E0");
@@ -55,9 +55,9 @@ void gInitOptionsScreen(void)
     s32 tmp;
 
     gTestResultFlag = 0;
-    D_8009F908 = gGetMusicVolume();
-    D_8009F90C = gGetVagmVolumeSetting();
-    D_8009F910 = gGetVoiceVolume();
+    gSavedOptionsSfxVolume = gGetMusicVolume();
+    gSavedOptionsVagmVolume = gGetVagmVolumeSetting();
+    gSavedOptionsVoiceVolume = gGetVoiceVolume();
     tmp = gGetStereoSoundMode();
     gSavedOptionsSoundMode = tmp;
     gSnapshotPointer = 0;
@@ -70,13 +70,13 @@ void gInitOptionsScreen(void)
     __asm__ volatile("lui %0,%%hi(D_8009FA94)\n\tlw %0,%%lo(D_8009FA94)(%0)" : "=r" (p) : : "memory");
     if (p->unk5C == 1) {
         if (p->unk0C == 1) {
-            D_800A377B[0] = 9;
+            gAudioOptionsMenuBackgroundIndex[0] = 9;
         } else {
-            D_800A377B[0] = 3;
+            gAudioOptionsMenuBackgroundIndex[0] = 3;
         }
     } else if (p->unk0C == 1) {
-        D_800A377B[0] = 1;
+        gAudioOptionsMenuBackgroundIndex[0] = 1;
     } else {
-        D_800A377B[0] = 8;
+        gAudioOptionsMenuBackgroundIndex[0] = 8;
     }
 }

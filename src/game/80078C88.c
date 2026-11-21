@@ -36,7 +36,7 @@ extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern u8 gPort2RumbleEnabled __asm__("D_8009F8D9");
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 
-extern void func_8008CCB0(u8 *a0, s32 a1);
+extern void gBiosStrcpy(u8 *a0, s32 a1) __asm__("func_8008CCB0");
 extern u8 gIsPadRumbleEnabled(s32 arg0) __asm__("func_8001EB2C");
 extern void gSetPadRumbleEnabled(s32 port, s32 enable) __asm__("func_8001EC04");
 s32 gStartNextAttractDemo(void) __asm__("func_80078C88");
@@ -86,7 +86,7 @@ s32 gStartNextAttractDemo(void)
     if (e->unk1 != 0) {
         o->unk4C = e->unk3;
     }
-    func_8008CCB0(gFrontEndModuleName, gWideTextTable[e->unk0].unk00);
+    gBiosStrcpy(gFrontEndModuleName, gWideTextTable[e->unk0].unk00);
     unk0C = gWideTextTable[e->unk0].unk0C;
     gDemoPlayback = 1;
     gScreenState = 5;

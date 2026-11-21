@@ -14,9 +14,9 @@ extern s32 gPadPort0IdleCount[] __asm__("D_800A3B70");
 
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
-extern void func_8008CA00(s32 arg0, u8 *arg1);
-extern void func_8008CA10(s32 arg0, u8 *arg1);
-extern void func_8008CA20(s32 arg0, s32 arg1);
+extern void gBiosEnqueueInterruptHandler(s32 arg0, u8 *arg1) __asm__("func_8008CA00");
+extern void gBiosSysDeqIntRp(s32 arg0, u8 *arg1) __asm__("func_8008CA10");
+extern void gBiosChangeClearRCnt(s32 arg0, s32 arg1) __asm__("func_8008CA20");
 void gInitPadDriverIrq(void) __asm__("func_8008A5BC");
 
 
@@ -65,8 +65,8 @@ void gInitPadDriverIrq(void)
     gEnterCriticalSection();
     __asm__ volatile("" ::: "$16");
     buf = gPadIrqNode;
-    func_8008CA10(2, buf);
-    func_8008CA00(2, buf);
+    gBiosSysDeqIntRp(2, buf);
+    gBiosEnqueueInterruptHandler(2, buf);
 
     arg = 3;
     __asm__ volatile("" : "+r"(arg) :: "memory");
@@ -74,7 +74,7 @@ void gInitPadDriverIrq(void)
     state[0] = -2;
     __asm__ volatile("" ::: "memory");
     state[1] |= 1;
-    func_8008CA20(arg, 0);
+    gBiosChangeClearRCnt(arg, 0);
 
     gExitCriticalSection();
 

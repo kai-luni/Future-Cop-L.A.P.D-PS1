@@ -1,7 +1,7 @@
 // Categories: Platform > Command Dispatch
 #include "game/types.h"
 
-extern void func_8008DFF0(u32 arg0, s32 arg1);
+extern void gBiosDeliverEvent(u32 arg0, s32 arg1) __asm__("func_8008DFF0");
 void gLogCdSyncCallback(void) __asm__("func_8008DF6C");
 
 
@@ -28,5 +28,5 @@ void gLogCdSyncCallback(void) __asm__("func_8008DF6C");
  */
 void gLogCdSyncCallback(void)
 {
-    func_8008DFF0(0xF0000003, 0x20);
+    gBiosDeliverEvent(0xF0000003, 0x20);
 }

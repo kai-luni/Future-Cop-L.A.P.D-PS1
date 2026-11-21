@@ -29,9 +29,9 @@ extern u8 gCdReadyBuffer8[] __asm__("D_800A3E58");
 extern u8 gStatusBuffer8[] __asm__("D_800A3E50");
 extern void (*gCdReadyCallback)(int, void *) __asm__("D_8009C8AC");
 extern void (*gCdSyncCallback)(int, void *) __asm__("D_8009C8A8");
-extern void func_8008E000(char *, ...);
+extern void gBiosPrintf(char *, ...) __asm__("func_8008E000");
 extern void gCdSyncLoop(int, int) __asm__("func_8008ECFC");
-extern void func_8008FF08(char *);
+extern void gBiosPuts(char *) __asm__("func_8008FF08");
 extern void gResetCdHardware(void) __asm__("func_8008F6D8");
 extern int gVSyncWait(int) __asm__("func_80091270");
 extern int gGetIrqLatchFlag(void) __asm__("func_800915D4");
@@ -88,7 +88,7 @@ int gIssueCdCommand(int arg0, u8 *arg1, u8 *arg2, int arg3)
         register char *entry __asm__("$5");
         __asm__("" : "+r"(saved_result));
         __asm__("lui %0,%%hi(D_8009C8CC)\n\taddu %0,%0,%1\n\tlw %0,%%lo(D_8009C8CC)(%0)" : "=&r"(entry) : "r"(index));
-        func_8008E000(gCdCmdLogFmtMsg, entry);
+        gBiosPrintf(gCdCmdLogFmtMsg, entry);
     }
     {
         register int value __asm__("$2");
@@ -101,7 +101,7 @@ int gIssueCdCommand(int arg0, u8 *arg1, u8 *arg2, int arg3)
                 if (gCdLogLevel > 0) {
                     register char *entry __asm__("$5");
                     __asm__("lui %0,%%hi(D_8009C8CC)\n\taddu %0,%0,%1\n\tlw %0,%%lo(D_8009C8CC)(%0)" : "=&r"(entry) : "r"(offset));
-                    func_8008E000(gCdNoParamMsg, entry);
+                    gBiosPrintf(gCdNoParamMsg, entry);
                 }
                 return -2;
             }
@@ -216,7 +216,7 @@ loop:
         gPassCounter = next;
         if (0x3c0000 < old) {
         timeout:
-            func_8008FF08(gCdErrorLogMsg);
+            gBiosPuts(gCdErrorLogMsg);
             {
                 register int first __asm__("$4") = state[0];
                 register int second __asm__("$2") = state[1];
@@ -243,7 +243,7 @@ loop:
                 third = *(int *)index;
                 fourth = *(int *)first;
                 __asm__("" : "+r"(third), "+r"(fourth));
-                func_8008E000(gCdTimeoutFmtMsg, m, third, fourth);
+                gBiosPrintf(gCdTimeoutFmtMsg, m, third, fourth);
             }
             gResetCdHardware();
             ret = -1;

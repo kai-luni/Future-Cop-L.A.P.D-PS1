@@ -64,7 +64,7 @@ extern u8 gSpuTimeoutFormat[] __asm__("D_80012CDC");
 extern u8 gSpuResetWaitTimeoutLabel[] __asm__("D_80012CEC");
 
 extern void gSpuBusyWait(void) __asm__("func_80097990");
-extern void func_8008E000(void *fmt, void *msg);
+extern void gBiosPrintf(void *fmt, void *msg) __asm__("func_8008E000");
 extern void gSpuWriteMemBlock(void *attr, s32 size) __asm__("func_80097138");
 
 /**
@@ -130,7 +130,7 @@ again:
     k++;
     if (k >= 0xF01) {
         __asm__ volatile("" ::: "memory");
-        func_8008E000(gSpuTimeoutFormat, gSpuResetWaitTimeoutLabel);
+        gBiosPrintf(gSpuTimeoutFormat, gSpuResetWaitTimeoutLabel);
         goto cont;
     }
     spu = gSpuRegBasePtr;

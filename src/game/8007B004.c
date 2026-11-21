@@ -20,11 +20,11 @@ extern Unk7B004Mode *gGameSession __asm__("D_8009FA94");
 extern volatile s32 gPlayer1MenuReadyFlag __asm__("D_8009F8E0");
 extern volatile s32 gPlayer2MenuReadyFlag __asm__("D_8009F8E4");
 extern volatile s32 gPlayerSelection __asm__("D_8009F8F0");
-extern s32 D_8009F8F4;
+extern s32 gStagedPlayer2Difficulty __asm__("D_8009F8F4");
 extern Unk7B004Node *gFontBankTable __asm__("D_8009F468");
 extern u8 gTwoPlayerMissionSelectMenuItems[] __asm__("D_8009BB34");
 extern Unk7B004Node gFrontEndTransitionMenuDescriptor __asm__("D_800A3688");
-extern u8 D_800A37AB[];
+extern u8 gOnePlayerMissionBackdropIndex[] __asm__("D_800A37AB");
 extern u8 D_800A37DB[];
 
 /**
@@ -67,7 +67,7 @@ void gInitMissionSelectState(void)
     *(s16 *)(base + 0x32) = 0x64;
     __asm__ volatile("" ::: "memory");
     *(s16 *)(base + 0x86) = 0x64;
-    D_8009F8F4 = v98;
+    gStagedPlayer2Difficulty = v98;
     __asm__ volatile("" ::: "memory");
     node = gFontBankTable;
     if (node->unk24 == &gFrontEndTransitionMenuDescriptor) {
@@ -78,13 +78,13 @@ void gInitMissionSelectState(void)
     mode = gGameSession;
     if (mode->unk5C == 1) {
         if (mode->unk0C == 1) {
-            D_800A37AB[0] = 9;
+            gOnePlayerMissionBackdropIndex[0] = 9;
         } else {
             D_800A37DB[0] = 3;
         }
     } else {
         if (mode->unk0C == 1) {
-            D_800A37AB[0] = 1;
+            gOnePlayerMissionBackdropIndex[0] = 1;
         } else {
             D_800A37DB[0] = 8;
         }

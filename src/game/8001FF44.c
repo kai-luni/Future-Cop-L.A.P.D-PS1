@@ -16,7 +16,7 @@ struct Ctx {
 };
 
 extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
-extern void func_8008D640(s32);
+extern void gBiosCardInfo(s32) __asm__("func_8008D640");
 s32 gMcErrorCallbackB(void) __asm__("func_8001FF44");
 
 
@@ -80,6 +80,6 @@ fallback:
     result->unk8F4 = 0;
     result->unk904 = 0;
 done:
-    func_8008D640(result->unk8FC);
+    gBiosCardInfo(result->unk8FC);
     return 0;
 }

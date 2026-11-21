@@ -12,15 +12,16 @@ extern List gCommandListHead __asm__("D_800A8F90");
 extern Pair gViewGroundAnchors[] __asm__("D_800A3190");
 extern Bounds gCellClipRect __asm__("D_800A2970");
 extern Node gCellNodeArray[] __asm__("D_800A2990");
-extern Cell D_800AB548[];
+extern Cell gSecondViewCoverageGrid[] __asm__("D_800AB548");
 extern Cell gCoverageGrid[] __asm__("D_800AB3B8");
-extern s32 D_8009F82C;
+extern s32 gVisibilityRegionCountView2 __asm__("D_8009F82C");
 extern s32 gViewCount __asm__("D_8009F814");
 extern s32 gCellEntityCount __asm__("D_8009F828");
-extern Obj **D_8009F81C;
+extern Obj **gView1CellEntityList __asm__("D_8009F81C");
 extern Obj **gCellEntityList __asm__("D_8009F818");
 extern u8 *gCellMap __asm__("D_8009F820");
-extern u8 D_8009F836, D_8009F837;
+extern u8 gSecondViewGridOriginX __asm__("D_8009F836");
+extern u8 gView1GridOriginY __asm__("D_8009F837");
 extern u8 gGridOriginY __asm__("D_8009F835");
 extern u8 gGridOriginX __asm__("D_8009F834");
 void gBuildDualViewObjectListsAndGrid(void) __asm__("func_80062874");
@@ -88,7 +89,7 @@ void gBuildDualViewObjectListsAndGrid(void) {
     register Bounds *bounds __asm__("$2") = &gCellClipRect;
     s32 width = bounds->w;
     register s32 count1 __asm__("$13") = gCellEntityCount;
-    register s32 count2 __asm__("$14") = D_8009F82C;
+    register s32 count2 __asm__("$14") = gVisibilityRegionCountView2;
     register s32 remaining __asm__("$15") = gCommandListHead.count;
     register s32 cx1 __asm__("$20") = pairs[0].x;
     register s32 cz1 __asm__("$19") = pairs[0].z;
@@ -210,12 +211,12 @@ void gBuildDualViewObjectListsAndGrid(void) {
             {
                 register s32 col __asm__("$4");
                 register s32 s1 __asm__("$3") = pz >> 17;
-                register s32 o1 __asm__("$2") = D_8009F837;
+                register s32 o1 __asm__("$2") = gView1GridOriginY;
                 col = s1 - o1;
                 if ((u32)col < 5) {
                     col += col << 2;
                     {
-                        register s32 o2 __asm__("$3") = D_8009F836;
+                        register s32 o2 __asm__("$3") = gSecondViewGridOriginX;
                         register s32 s2 __asm__("$2") = px >> 17;
                         dz = s2 - o2;
                     }
@@ -223,7 +224,7 @@ void gBuildDualViewObjectListsAndGrid(void) {
                         col += dz;
                         {
                             register s32 off __asm__("$2") = col << 4;
-                            bits = ((Cell *)((s32)off + (s32)D_800AB548))->bits;
+                            bits = ((Cell *)((s32)off + (s32)gSecondViewCoverageGrid))->bits;
                         }
                         if (bits != 0) {
                             register s32 sh1 __asm__("$2") = pz >> 13;
@@ -243,7 +244,7 @@ void gBuildDualViewObjectListsAndGrid(void) {
                             if (count2 >= 256) goto next;
                             {
                                 register s32 off __asm__("$2") = count2 << 2;
-                                register Obj **arr __asm__("$3") = D_8009F81C;
+                                register Obj **arr __asm__("$3") = gView1CellEntityList;
                                 count2++;
                                 arr = (Obj **)((s32)arr + off);
                                 __asm__("" : "+r"(arr));
@@ -297,5 +298,5 @@ void gBuildDualViewObjectListsAndGrid(void) {
     __asm__("" : : "r"(cells));
     gViewCount = n;
     gCellEntityCount = count1;
-    D_8009F82C = count2;
+    gVisibilityRegionCountView2 = count2;
 }

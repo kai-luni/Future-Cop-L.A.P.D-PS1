@@ -19,7 +19,7 @@ struct Ctx {
 
 extern volatile struct Ctx *gOperationState __asm__("D_8009AB08");
 
-extern void func_8008D640(s32 value);
+extern void gBiosCardInfo(s32 value) __asm__("func_8008D640");
 void gMcWatchdogTick(void) __asm__("func_80020024");
 
 
@@ -55,7 +55,7 @@ void gMcWatchdogTick(void)
         gOperationState->unk904 = 0;
         gOperationState->unk900 = -3;
         gOperationState->unk9A4 = 1;
-        func_8008D640(gOperationState->unk8FC);
+        gBiosCardInfo(gOperationState->unk8FC);
     }
     gOperationState->unk8CC();
 }

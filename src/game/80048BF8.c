@@ -37,7 +37,7 @@ struct FontEntry {
 extern struct FontEntry gGlyphEntryTable[] __asm__("D_800A19A0");
 extern u16 gPaletteTable[] __asm__("D_800A1970");
 extern u16 gTexpageTable[] __asm__("D_800A1940");
-extern u16 D_800A1E10[];
+extern u16 gTextColorRampTable[] __asm__("D_800A1E10");
 extern u16 gTexBankVramY __asm__("D_8009F76A");
 extern u16 gLoadedFont __asm__("D_8009F768");
 
@@ -109,7 +109,7 @@ void gLoadFontAsset(s32 arg0)
                 rect[1].y = 0x1FF;
                 rect[1].w = 0x10;
                 rect[1].h = 1;
-                gLoadImage(&rect[1], D_800A1E10);
+                gLoadImage(&rect[1], gTextColorRampTable);
                 gDrawSync(0);
                 gLoadedFont = 0x7FF8;
             }

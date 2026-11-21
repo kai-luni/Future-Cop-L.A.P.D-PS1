@@ -695,14 +695,14 @@ occur on the cited line).
 | `asm/us/main.s:98550` | `/* 54FB8 800647B8 0100184A */  rtps` |
 | `src/game/800648BC.c:33` | `".word 0x4B400006   /* nclip */\n"` |
 | `src/game/800648BC.c:36` | `".word 0x28420000   /* slti       $v0, $v0, 0x0 */\n"` |
-| `src/game/800648E8.c:198` | `if (func_800648BC(pa0, pa1, pa2)) return;` |
+| `src/game/800648E8.c:198` | `if (gGteNclipReturnsNegativeArea(pa0, pa1, pa2)) return;` |
 | `src/game/80015AF4.c:35` | `((s16)second - (s16)origin) * ((first >> 16) - (origin >> 16)) < 0) {` |
 | `src/game/80015B68.c:147` | `if (gEmitFrontFacingTriangle(vtx[i0].u.xy, vtx[i1].u.xy, vtx[i2].u.xy, work)) {` |
 | `asm/us/main.s:98633` | `/* 550D0 800648D0 0600404B */  nclip` |
 | `src/game/80066C9C.c:111` | `gGteLoadRotation(gCamera->matrix);` |
 | `src/game/80064460.c:103` | `flags=gProbeMapCellVisibility(node,v);` |
 | `src/game/80064460.c:113` | `out->mask=a|(((flags&0x8000)>>12)|(((u32)flags>>14)&4)|(((u32)flags>>18)&2)|(((u32)flags>>20)&1));` |
-| `src/game/8006429C.c:51` | `func_800640D8(&temp, &transformed);` |
+| `src/game/8006429C.c:51` | `gGteRotateVertexFlipY(&temp, &transformed);` |
 | `src/game/8006429C.c:52` | `result = gIsInViewFrustumWithMargin((s16 *)&transformed, data[0] << 4);` |
 | `src/game/8006429C.c:66` | `result |= gBuildFourCellVisibilityMask(&point, 0x800, (char *)data + 0x40) << 16;` |
 | `src/game/80063FF8.c:45` | `if (depth + margin < 0x601) {` |
@@ -755,7 +755,7 @@ occur on the cited line).
 | `src/game/8001AB00.c:52` | `__asm__ volatile("mult %2,%3\n\tmflo %0\n\tmfhi %1" : "=r"(lo0), "=r"(hi0) : "r"(x), "r"(y));` |
 | `src/game/8001AC28.c:49` | `__asm__ volatile("mult %2, %3\n\tmflo %0\n\tmfhi %1"` |
 | `src/game/8001A180.c:97` | `shift = gGteLeadingZeros((u32)ay);` |
-| `src/game/8001A180.c:122` | `scale = func_80019904(sum);` |
+| `src/game/8001A180.c:122` | `scale = gLookupPackedInvSqrt(sum);` |
 | `src/game/80019904.c:35` | `".word 0x4884F000   /* mtc2       $a0, $30 */\n"` |
 | `src/game/80019904.c:46` | `".word 0x000A5043   /* sra        $t2, $t2, 1 */\n"` |
 | `src/game/8001A314.c:85` | `scale = (s32)(0x80000000U / (u32)(t >> 1));` |
@@ -779,7 +779,7 @@ occur on the cited line).
 | `src/game/80028618.c:110` | `gFrameDelta = work;` |
 | `src/game/8001D130.c:102` | `func_80010000.unk18 = gSetCdReadyCallback((s32)gCdSectorReadyCallbackAddress);` |
 | `src/game/8001C808.c:170` | `if (len < 0x800) {` |
-| `src/game/8001C808.c:179` | `func_8008CD10(q->buf, gLengthTable + n, cnt);` |
+| `src/game/8001C808.c:179` | `gBiosMemcpy(q->buf, gLengthTable + n, cnt);` |
 | `src/game/8001C808.c:184` | `if (!gCdRead((void *)q->buf, 0x200))` |
 | `src/game/80029748.c:84` | `gQueueVramUpload(0, (u8 *)*frame + index, 0x3C0, 0x1CC, 0);` |
 | `src/game/8001BBEC.c:52` | `entry = base + gUploadRingWriteIdx;` |

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 typedef struct { s16 x, y, z; } Vec;
-extern void func_800640D8(Vec *, Vec *);
+extern void gGteRotateVertexFlipY(Vec *, Vec *) __asm__("func_800640D8");
 extern s32 gIsInViewFrustumWithMargin(s16 *, s32) __asm__("func_80063FF8");
 extern s32 gBuildFourCellVisibilityMask(Vec *, s32, void *) __asm__("func_8006411C");
 s32 gProbeMapCellVisibility(void *object, Vec point) __asm__("func_8006429C");
@@ -48,7 +48,7 @@ s32 gProbeMapCellVisibility(void *object, Vec point)
     temp.x = point.x + 0x1000;
     temp.y = point.y + data[1];
     temp.z = point.z + 0x1000;
-    func_800640D8(&temp, &transformed);
+    gGteRotateVertexFlipY(&temp, &transformed);
     result = gIsInViewFrustumWithMargin((s16 *)&transformed, data[0] << 4);
     if (result) {
         result |= gBuildFourCellVisibilityMask(&point, 0x1000, data);

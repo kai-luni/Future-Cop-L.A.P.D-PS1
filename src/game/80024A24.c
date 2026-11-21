@@ -36,7 +36,7 @@ extern s32 gPlayerEntity2[] __asm__("D_8009FA5C");
 
 extern void func_80017C68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 extern void gAllocDecodeBuffers(void) __asm__("func_800860CC");
-extern void func_8008CCB0(void *a0, s32 a1);
+extern void gBiosStrcpy(void *a0, s32 a1) __asm__("func_8008CCB0");
 extern void func_80019D60(void);
 extern void gClearDescriptorRegistry(void) __asm__("func_8006A880");
 extern void func_80019A64(void);
@@ -143,7 +143,7 @@ call_init:
     gGameSuspended = 0;
     gOpenPanelCount = 0;
     gAllocDecodeBuffers();
-    func_8008CCB0(gModuleNameBuffer, arg0);
+    gBiosStrcpy(gModuleNameBuffer, arg0);
 
     {
         register s32 n __asm__("$3");

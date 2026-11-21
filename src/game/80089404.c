@@ -37,7 +37,7 @@ extern u32 gMovieRingSectors __asm__("D_8009F980");
 
 extern s32 gMinS32(s32 delta, s32 value) __asm__("func_800886C8");
 extern void gPumpMovieStream(void) __asm__("func_80089018");
-extern void func_8008CD10(s32 arg0, s32 arg1);
+extern void gBiosMemcpy(s32 arg0, s32 arg1) __asm__("func_8008CD10");
 
 /**
  *  @brief Waits for available data and computes its position in a circular buffer.
@@ -139,7 +139,7 @@ s32 gMovieStreamReserve(s32 *out)
     rem1 = (u32)offset < rem1;
 
     if (rem1) {
-        func_8008CD10(value - (gMovieRingSectors << 11), value);
+        gBiosMemcpy(value - (gMovieRingSectors << 11), value);
         value -= gMovieRingSectors << 11;
     }
 

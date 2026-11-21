@@ -1,10 +1,10 @@
 // Categories: Platform > Memory Card | BIOS > System Calls | Platform > Interrupts
 #include "game/types.h"
 
-extern void func_8008D7B0(s32 arg0);
+extern void gBiosChangeClearPadAndLatch(s32 arg0) __asm__("func_8008D7B0");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern s32 gGetModeClearFlag(void) __asm__("func_8008D7CC");
-extern void func_8008DC20(s32 arg0);
+extern void gBiosInitCard(s32 arg0) __asm__("func_8008DC20");
 extern void gCopyKernelPatch0xDF80(void) __asm__("func_8008DDEC");
 extern void gCopyCardPatchTable(void) __asm__("func_8008DCE8");
 extern void gInstallCardPatchSlot(void) __asm__("func_8008DD7C");
@@ -47,12 +47,12 @@ void gInitCardAndPatches(s32 mode)
     s32 temp_s0;
 
     temp_s0 = mode;
-    func_8008D7B0(0);
+    gBiosChangeClearPadAndLatch(0);
     gEnterCriticalSection();
     if (gGetModeClearFlag() == 0) {
         temp_s0 = 0;
     }
-    func_8008DC20(temp_s0);
+    gBiosInitCard(temp_s0);
     gCopyKernelPatch0xDF80();
     gCopyCardPatchTable();
     gInstallCardPatchSlot();

@@ -25,10 +25,10 @@ struct S {
 
 extern struct S *gOperationState __asm__("D_8009AB08");
 
-extern void func_8008D640(s32);
-extern void func_8008D650(s32);
-extern void func_8008D670(s32, s32, volatile u32 *);
-extern void func_8008D680(s32, s32, volatile u32 *);
+extern void gBiosCardInfo(s32) __asm__("func_8008D640");
+extern void gBiosCardLoad(s32) __asm__("func_8008D650");
+extern void gBiosWriteCardSector(s32, s32, volatile u32 *) __asm__("func_8008D670");
+extern void gBiosCardReadSector(s32, s32, volatile u32 *) __asm__("func_8008D680");
 extern void *gCopyMemory(volatile void *, void *, u32) __asm__("func_8001E318");
 s32 gMcDispatchStep(void) __asm__("func_8001FAB8");
 
@@ -81,7 +81,7 @@ s32 gMcDispatchStep(void)
             p->s8F8 = 0;
             p->s8F4 = 0;
             p->s904 = 0;
-            func_8008D640(p->s8FC);
+            gBiosCardInfo(p->s8FC);
             return 0;
         }
         e = p->d;
@@ -96,14 +96,14 @@ s32 gMcDispatchStep(void)
         x = p->s8FC;
         y = p->s998;
         p->s910 = (s32)p->s9B0;
-        func_8008D680(x, y, e);
+        gBiosCardReadSector(x, y, e);
         return 0;
     }
     sum = 0;
     if (p->s908 != 0 && p->s904 == 0) {
         p->s908 = 1;
         p->s8F4 = 1;
-        func_8008D650(p->s8FC);
+        gBiosCardLoad(p->s8FC);
         return 0;
     }
     if (gOperationState->s8F8 == 5) {
@@ -116,7 +116,7 @@ s32 gMcDispatchStep(void)
         q->s8F4 = 2;
         q->s8F8 = 0;
         q->s900 = -4;
-        func_8008D680(q->s8FC, q->s998, q->d);
+        gBiosCardReadSector(q->s8FC, q->s998, q->d);
         return 0;
     }
     if (q->s8F8 == 3 || q->s8F8 == 6) {
@@ -136,10 +136,10 @@ s32 gMcDispatchStep(void)
         }
         q = gOperationState;
         q->s900 = -5;
-        func_8008D670(q->s8FC, q->s998, q->d);
+        gBiosWriteCardSector(q->s8FC, q->s998, q->d);
         return 0;
     }
     q->s8F4 = 0;
-    func_8008D640(q->s8FC);
+    gBiosCardInfo(q->s8FC);
     return 0;
 }

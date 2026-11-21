@@ -18,7 +18,7 @@ struct Unk78210Panel {
 
 extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
 extern volatile s32 gPlayerSelection __asm__("D_8009F8F0");
-extern s32 D_8009F8F4;
+extern s32 gStagedPlayer2Difficulty __asm__("D_8009F8F4");
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern volatile s32 gPlayer1MenuReadyFlag __asm__("D_8009F8E0");
@@ -70,7 +70,7 @@ void gHandlePlayerJoinSelection(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
         p = gFontBankTable;
         mode->unk08 = gPlayerSelection;
         __asm__ volatile("" ::: "memory");
-        mode->unk98 = D_8009F8F4;
+        mode->unk98 = gStagedPlayer2Difficulty;
         if (p[5] == 2) {
             register s32 idx __asm__("$2");
             register u8 *base __asm__("$2");

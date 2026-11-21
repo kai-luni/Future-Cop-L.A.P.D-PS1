@@ -29,8 +29,8 @@ extern u8 gCdDirCountFmt[] __asm__("D_80012778");
 
 extern struct CdlLOC *gCdIntToPos(s32 sector, struct CdlLOC *location) __asm__("func_8008E61C");
 extern s32 gReadCdSectorsSync(s32 sectors, s32 sector, u8 *buf) __asm__("func_8009081C");
-extern void func_8008E000();
-extern void func_8008CD10(u8 *dst, u8 *src, u32 n);
+extern void gBiosPrintf() __asm__("func_8008E000");
+extern void gBiosMemcpy(u8 *dst, u8 *src, u32 n) __asm__("func_8008CD10");
 extern void *memcpy(void *, const void *, u32);
 
 #define PRINT_STR(S) __asm__ volatile(".set\tnoreorder\n\tlui $4,%%hi(" #S ")\n\tjal func_8008E000\n\taddiu $4,$4,%%lo(" #S ")\n\t.set\treorder" \
@@ -118,14 +118,14 @@ s32 gCacheCdDirSector(s32 arg0)
             }
             break;
         default:
-            func_8008CD10(gCdDirEntryCache[i].name, p + 0x21, p[0x20]);
+            gBiosMemcpy(gCdDirEntryCache[i].name, p + 0x21, p[0x20]);
             gCdDirEntryCache[i].name[p[0x20]] = 0;
             break;
         }
         if (gCdLogLevel >= 2) {
             s32 off = i * sizeof(DirEntry);
             __asm__("" : : "r"(i), "r"(off));
-            func_8008E000(gCdDirEntryFmt, LOADV("lbu", D_800A3E80, off), LOADV("lbu", D_800A3E81, off),
+            gBiosPrintf(gCdDirEntryFmt, LOADV("lbu", D_800A3E80, off), LOADV("lbu", D_800A3E81, off),
                           LOADV("lbu", D_800A3E82, off), *(u32 *)(HIADDR(off) + 0x3E84), gCdDirEntryCache[i].name);
         }
         p += *p;
@@ -139,7 +139,7 @@ s32 gCacheCdDirSector(s32 arg0)
         gCdDirEntryCache[i].name[0] = 0;
     }
     if (gCdLogLevel >= 2) {
-        func_8008E000(gCdDirCountFmt, i);
+        gBiosPrintf(gCdDirCountFmt, i);
         __asm__ volatile(".set\tnoreorder\n\t.set reorder");
     }
     return 1;

@@ -16,7 +16,7 @@ extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern char gGpuTimeoutDiagnosticFormat[] __asm__("D_80012B48");
 extern int gVSyncWait(int) __asm__("func_80091270");
 extern u32 gSwapIrqMask(u32) __asm__("func_800915FC");
-extern void func_8008E000(char *, u32, u32, u32, u32);
+extern void gBiosPrintf(char *, u32, u32, u32, u32) __asm__("func_8008E000");
 int gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
 
 
@@ -60,7 +60,7 @@ int gCheckGpuDmaTimeout(void)
 fail:
         __asm__ volatile("lui %0,%%hi(D_8009DEC8)\n\tlw %0,%%lo(D_8009DEC8)(%0)\n\tlui %1,%%hi(D_80012B48)\n\taddiu %1,%1,%%lo(D_80012B48)\n\tlw $2,0(%0)" : "=r"(port), "=r"(message));
         count = gGpuJobHead;
-        func_8008E000(message, (count - gGpuJobTail) & 0x3f, *port, *gDma2ChannelCtrlPtr, *gDma2MemAddrPtr);
+        gBiosPrintf(message, (count - gGpuJobTail) & 0x3f, *port, *gDma2ChannelCtrlPtr, *gDma2MemAddrPtr);
         saved = gSwapIrqMask(0);
         gGpuJobTail = 0;
         gSavedIrqMask = saved;

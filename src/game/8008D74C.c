@@ -2,8 +2,8 @@
 #include "game/types.h"
 
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
-extern void func_8008DC30(void);
-extern void func_8008D7B0(s32 value);
+extern void gBiosStartCard(void) __asm__("func_8008DC30");
+extern void gBiosChangeClearPadAndLatch(s32 value) __asm__("func_8008D7B0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 void gStartCardAndClearPad(void) __asm__("func_8008D74C");
 
@@ -40,7 +40,7 @@ void gStartCardAndClearPad(void) __asm__("func_8008D74C");
 void gStartCardAndClearPad(void)
 {
     gEnterCriticalSection();
-    func_8008DC30();
-    func_8008D7B0(0);
+    gBiosStartCard();
+    gBiosChangeClearPadAndLatch(0);
     gExitCriticalSection();
 }

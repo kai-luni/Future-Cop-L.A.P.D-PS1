@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 gDrawEnvCache[] __asm__("D_8009DE00");
-extern void func_8008CD10(u8 *arg0, u8 *arg1, u32 arg2);
+extern void gBiosMemcpy(u8 *arg0, u8 *arg1, u32 arg2) __asm__("func_8008CD10");
 
 u8 *gCopyDrawEnv(u8 *arg0) __asm__("func_80093488");
 
@@ -32,6 +32,6 @@ u8 *gCopyDrawEnv(u8 *arg0) __asm__("func_80093488");
  */
 u8 *gCopyDrawEnv(u8 *arg0)
 {
-    func_8008CD10(arg0, gDrawEnvCache, 0x5C);
+    gBiosMemcpy(arg0, gDrawEnvCache, 0x5C);
     return arg0;
 }

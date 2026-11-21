@@ -26,6 +26,8 @@
  * Cross product through a temporary matrix. It has no caller in the US
  * binary, so only the documented contract matters for the port.
  */
+void gGteOuterProductQ12(void) __asm__("func_80095B64");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80095B64\n"

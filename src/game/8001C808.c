@@ -20,7 +20,7 @@ extern void gIncrementBcdLoc(void *) __asm__("func_8001C288");
 extern void gStartCdDirRead(void) __asm__("func_8001C718");
 extern void gResetCdReadState(void) __asm__("func_8001C680");
 extern void gClearWord(void *) __asm__("func_8001C470");
-extern int func_8008CD10(int, void *, int);
+extern int gBiosMemcpy(int, void *, int) __asm__("func_8008CD10");
 extern int gCdControl(int, int, void *) __asm__("func_8008E1BC");
 extern void gSetIrqCallback(int, int) __asm__("func_800914B0");
 extern void gStartCdInit(void) __asm__("func_8008DEA0");
@@ -176,7 +176,7 @@ void gCdSectorCallback(int arg)
                     cnt = len;
                     __asm__ volatile ("" : : "r" (idx), "r" (cnt) : "$5");
                     gTransferError = gFileSlotTable[idx].c & -0x800;
-                    func_8008CD10(q->buf, gLengthTable + n, cnt);
+                    gBiosMemcpy(q->buf, gLengthTable + n, cnt);
                 } else {
                     q->result = -0xC;
                 }

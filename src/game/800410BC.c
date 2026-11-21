@@ -45,10 +45,10 @@ extern s32 gMessageConeFlag __asm__("D_8009F324");
 extern u8 gConeTestFlag __asm__("D_8009F328");
 extern u8 gBandTestFlag __asm__("D_8009F329");
 extern s32 gLightStrengthScale __asm__("D_8009F700");
-extern s32 D_8009F704;
+extern s32 gFalloffRadius __asm__("D_8009F704");
 extern s16 gShadowThreshold __asm__("D_8009F710");
-extern s16 D_8009F718;
-extern s16 D_8009F71C;
+extern s16 gDamageConeAxisX __asm__("D_8009F718");
+extern s16 gConeTestDirZ __asm__("D_8009F71C");
 
 extern struct Object *gEffectListHead[] __asm__("D_800A8F98");
 
@@ -164,7 +164,7 @@ void gApplyRadialContactDamage(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct A
         gLightStrengthScale = r;
     }
 
-    D_8009F704 = arg2;
+    gFalloffRadius = arg2;
 
     if (gMessageConeFlag > 0) {
         args.unkC = 1;
@@ -198,7 +198,7 @@ void gApplyRadialContactDamage(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct A
         s0 = 0;
         d = func_8001A750((s32 *)pos, &obj->unk50);
 
-        if (d < D_8009F704) {
+        if (d < gFalloffRadius) {
             if (d >= gMessageConeFlag) {
                 if (gBandTestFlag & 1) {
                     s32 yc = obj->unk60;
@@ -218,7 +218,7 @@ void gApplyRadialContactDamage(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct A
                     s32 denom = d >> 8;
                     s32 tx = ((obj->unk50 - pos->x) << 4) / denom;
                     s32 tz = ((obj->unk58 - pos->z) << 4) / denom;
-                    s32 sum = ((D_8009F718 * tx) >> 12) + ((D_8009F71C * tz) >> 12);
+                    s32 sum = ((gDamageConeAxisX * tx) >> 12) + ((gConeTestDirZ * tz) >> 12);
                     if (sum < gShadowThreshold) {
                         continue;
                     }
@@ -226,7 +226,7 @@ void gApplyRadialContactDamage(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct A
 
                 {
                     s32 k;
-                    s0 = D_8009F704 - d;
+                    s0 = gFalloffRadius - d;
                     k = gLightStrengthScale;
                     MUL16(s0, s0, k);
                 }

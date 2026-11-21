@@ -14,6 +14,8 @@
  * @par Callers
  * None in the symbol table (inlined into the surface-normal calculation).
  */
+void gGteCrossProductFullPrecisionPreserveRotation(void) __asm__("func_80095BBC");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80095BBC\n"

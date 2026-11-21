@@ -9,7 +9,7 @@ typedef struct {
 } Unk9EEA4;
 
 extern Unk9EEA4 *gSpuRegBasePtr __asm__("D_8009EEA4");
-extern void func_8008E000(char *a, char *b);
+extern void gBiosPrintf(char *a, char *b) __asm__("func_8008E000");
 
 /**
  * @brief Enables or disables the SPU IRQ and waits until the register reflects it.
@@ -61,7 +61,7 @@ s32 gSpuSetIrqEnable(s32 arg)
                 a1 = (char *)0x80010000;
                 __asm__("" : "=r"(a1) : "0"(a1));
                 a1 += 0x2D3C;
-                func_8008E000(a0, a1);
+                gBiosPrintf(a0, a1);
                 return -1;
             }
         }
@@ -77,7 +77,7 @@ s32 gSpuSetIrqEnable(s32 arg)
                 a1 = (char *)0x80010000;
                 __asm__("" : "=r"(a1) : "0"(a1));
                 a1 += 0x2D4C;
-                func_8008E000(a0, a1);
+                gBiosPrintf(a0, a1);
                 return -1;
             }
         }

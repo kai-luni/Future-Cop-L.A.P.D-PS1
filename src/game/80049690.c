@@ -1,8 +1,8 @@
 // Categories: Graphics > Lighting | Resources > Memory Pools
 #include "game/types.h"
 
-extern s32 D_8009F794;
-extern s32 D_8009F788;
+extern s32 gLightGridLastCleanupTime __asm__("D_8009F794");
+extern s32 gResourceTableSize __asm__("D_8009F788");
 extern void *gSpriteRegionTable __asm__("D_8009F778");
 extern void *gLightGrid __asm__("D_8009F780");
 extern s32 gLightNodePool __asm__("D_8009F784");
@@ -37,8 +37,8 @@ void gInitMapLighting(void) __asm__("func_80049690");
  */
 void gInitMapLighting(void)
 {
-    D_8009F794 = 0;
-    D_8009F788 = 0;
+    gLightGridLastCleanupTime = 0;
+    gResourceTableSize = 0;
     gSpriteRegionTable = 0;
     gLightGrid = 0;
     gLightNodePool = func_800194DC(0x180, 0x44, 2);

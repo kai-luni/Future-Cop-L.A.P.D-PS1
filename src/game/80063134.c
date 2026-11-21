@@ -1,7 +1,7 @@
 // Categories: Graphics > Terrain | Game Engine > Init
 #include "game/types.h"
 
-extern void *D_800A294C[];
+extern void *gTerrainHeightfieldBase[] __asm__("D_800A294C");
 extern u8 gSlfxFlagByte[] __asm__("D_800A2931");
 extern s32 gQueueCount __asm__("D_8009F838");
 void gClearTerrainState(void) __asm__("func_80063134");
@@ -33,7 +33,7 @@ void gClearTerrainState(void) __asm__("func_80063134");
  */
 void gClearTerrainState(void)
 {
-    D_800A294C[0] = 0;
+    gTerrainHeightfieldBase[0] = 0;
     gQueueCount = 0;
     gSlfxFlagByte[0] = 0;
 }

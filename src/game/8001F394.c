@@ -21,9 +21,9 @@ typedef struct State {
 } State;
 
 extern State *gOperationState __asm__("D_8009AB08");
-extern void func_8008D640(int);
-extern void func_8008D670(int, int, void *);
-extern void func_8008D680(int, int, void *);
+extern void gBiosCardInfo(int) __asm__("func_8008D640");
+extern void gBiosWriteCardSector(int, int, void *) __asm__("func_8008D670");
+extern void gBiosCardReadSector(int, int, void *) __asm__("func_8008D680");
 extern void gCopyMemory(void *, void *, int) __asm__("func_8001E318");
 int gMcTransferCallback(void) __asm__("func_8001F394");
 
@@ -83,7 +83,7 @@ int gMcTransferCallback(void)
             } else {
                 p->f9A4 = 1;
                 p->mode = 0;
-                func_8008D640(p->h);
+                gBiosCardInfo(p->h);
                 return 0;
             }
         } else {
@@ -106,11 +106,11 @@ int gMcTransferCallback(void)
                     p->f8F8 = 0;
                 gOperationState->f900 = gOperationState->h;
                 gOperationState->mode = 0;
-                func_8008D640(gOperationState->h);
+                gBiosCardInfo(gOperationState->h);
                 return 0;
             }
         }
-        func_8008D680(p->h, p->v998, (void *)&p->arr[0]);
+        gBiosCardReadSector(p->h, p->v998, (void *)&p->arr[0]);
         return 0;
     case 3:
     case 6:
@@ -147,12 +147,12 @@ int gMcTransferCallback(void)
             gOperationState->ptr = gOperationState->ptr + 0x80;
             gCopyMemory((void *)&gOperationState->arr[0], (void *)gOperationState->ptr, 0x80);
         }
-        func_8008D670(gOperationState->h, gOperationState->v998, (void *)&gOperationState->arr[0]);
+        gBiosWriteCardSector(gOperationState->h, gOperationState->v998, (void *)&gOperationState->arr[0]);
         return 0;
     default:
     reset:
         gOperationState->mode = 0;
-        func_8008D640(gOperationState->h);
+        gBiosCardInfo(gOperationState->h);
         return 0;
     }
 }

@@ -46,7 +46,7 @@ struct State800889DC {
 
 extern volatile struct State800889DC *gMovieStreamContext __asm__("D_8009F970");
 extern s32 gReleaseDoneFlag __asm__("D_8009F508");
-extern volatile u32 *D_8009F50C;
+extern volatile u32 *gMovieDmaControlRegPtr __asm__("D_8009F50C");
 extern u32 gMovieRingSectors __asm__("D_8009F980");
 
 extern s32 gMinS32(s32, s32) __asm__("func_800886C8");
@@ -126,7 +126,7 @@ void func_80088A1C(u8 mode)
 
     if (gReleaseDoneFlag != 0) {
         count = 0;
-        while (*D_8009F50C & 0x1000000) {
+        while (*gMovieDmaControlRegPtr & 0x1000000) {
             count++;
             if (count == 0x10001) goto done;
         }

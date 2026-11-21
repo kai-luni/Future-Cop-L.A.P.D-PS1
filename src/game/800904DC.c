@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 gPathTable[] __asm__("D_800A448C");
-extern s32 func_8008CCA0(s32 arg0, u8 *arg1);
+extern s32 gBiosStrcmp(s32 arg0, u8 *arg1) __asm__("func_8008CCA0");
 s32 gFindCdPathDir(s32 arg0, s32 arg1) __asm__("func_800904DC");
 
 
@@ -59,7 +59,7 @@ s32 gFindCdPathDir(s32 arg0, s32 arg1)
             break;
         }
         if (entry == arg0) {
-            if (func_8008CCA0(arg1, ptr) == 0) {
+            if (gBiosStrcmp(arg1, ptr) == 0) {
                 return i + 1;
             }
         }

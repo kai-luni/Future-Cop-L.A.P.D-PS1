@@ -7,7 +7,7 @@ extern u32 *gPrimPoolEnd __asm__("D_8009FA28");
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
 extern u8 gTilePatternBuf[] __asm__("D_800A2630");
 extern u16 gTileUvOffset __asm__("D_8009F83C");
-extern s32 func_800648BC(s32 a, s32 b, s32 c);
+extern s32 gGteNclipReturnsNegativeArea(s32 a, s32 b, s32 c) __asm__("func_800648BC");
 
 typedef struct { s32 w0; s16 h4; u8 b6; u8 b7; } V;
 void gEmitCellPolygon(u8 *base, u32 arg1, u32 *tbl, u32 arg3) __asm__("func_800648E8");
@@ -195,7 +195,7 @@ void gEmitCellPolygon(u8 *base, u32 arg1, u32 *tbl, u32 arg3)
         pa1 = v1->w0;
         __asm__ __volatile__("");
         pa2 = v2->w0;
-        if (func_800648BC(pa0, pa1, pa2)) return;
+        if (gGteNclipReturnsNegativeArea(pa0, pa1, pa2)) return;
     }
     if (v0 == v3) {
         avg = (v3->h4 + v1->h4 + v2->h4);

@@ -15,7 +15,7 @@ extern int *gTableBuffer __asm__("D_8009FA08");
 extern void gClearTerrainState(void) __asm__("func_80063134");
 extern void *gAllocMemory(s32 size, s32 mode) __asm__("func_80017EBC");
 extern int func_80018460(int *value);
-extern void func_8008CD20(void *ptr, s32 arg1, s32 arg2);
+extern void gBiosMemset(void *ptr, s32 arg1, s32 arg2) __asm__("func_8008CD20");
 int *gInitMapTables(void) __asm__("func_80063428");
 
 
@@ -62,9 +62,9 @@ int *gInitMapTables(void)
     gMapGridHeader = 0;
     gMapChunkNode = 0;
     gTileBlockTable = gAllocMemory(0x1A0, 2);
-    func_8008CD20(gTileBlockTable, 0, func_80018460(gTileBlockTable));
+    gBiosMemset(gTileBlockTable, 0, func_80018460(gTileBlockTable));
     gTableBuffer = gAllocMemory(0x1B18, 2);
-    func_8008CD20(gTableBuffer, 0, func_80018460(gTableBuffer));
+    gBiosMemset(gTableBuffer, 0, func_80018460(gTableBuffer));
 
     for (i = 9; i >= 0; i--) {
         gTexpageBaseTable[i] = 0;

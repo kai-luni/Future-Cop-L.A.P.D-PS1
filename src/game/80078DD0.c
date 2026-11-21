@@ -63,7 +63,7 @@ extern struct InputAction gMenuAcceptActions[] __asm__("D_800A35C8");
 extern struct InputAction gMenuBackActions[] __asm__("D_800A35D8");
 extern struct InputAction gMenuStartActions[] __asm__("D_800A35E8");
 extern u32 gPollPadButtons(u32) __asm__("func_8001EF8C");
-extern void func_80077990(void);
+extern void gSetupTitleScreenPlayerNamesPrologue(void) __asm__("func_80077990");
 extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
 extern void gSetupFrontEndMenus(s32) __asm__("func_80077AD4");
 extern u8 gStartNextAttractDemo(void) __asm__("func_80078C88");
@@ -158,7 +158,7 @@ void gUpdateAndDrawFrontEndMenu(void)
     }
     if (gStillRunningState != 1) {
         changed = count = step = first = 0;
-        if (!gMenuSetupCalled) { func_80077990(); gMenuSetupCalled = 1; }
+        if (!gMenuSetupCalled) { gSetupTitleScreenPlayerNamesPrologue(); gMenuSetupCalled = 1; }
         if (gFontBankTable == &gMenuDescriptor) {
             for (j = 0; j < 2; j++) if (buttons[j] != prev_buttons[j]) goto reset_timer;
         } else {

@@ -16,10 +16,10 @@ extern struct Gfx *gVramWriteCallback __asm__("D_8009DDE8");
 extern  void (*gLogPrintf)(void *, void *) __asm__("D_8009DDEC");
 extern char gPutDispEnvTraceFormat[] __asm__("D_80012B30");
 extern struct Cache gDispEnvCache __asm__("D_8009DE5C");
-extern s16 D_8009DE64[];
+extern s16 gDispEnvCachedScreenRect[] __asm__("D_8009DE64");
 extern s32 gDispEnvCachedModeWord[] __asm__("D_8009DE6C");
 extern int gGetGpuDrawOffset(void) __asm__("func_80091F74");
-extern void func_8008CD10(void *, void *, int);
+extern void gBiosMemcpy(void *, void *, int) __asm__("func_8008CD10");
 struct Prim *gPutDispEnvCached(struct Prim *p) __asm__("func_800934BC");
 
 
@@ -202,7 +202,7 @@ mode_changed:
         gVramWriteCallback->fn(flags);
     }
     __asm__("" ::: "memory");
-    func_8008CD10(&gDispEnvCache, p, 0x14);
+    gBiosMemcpy(&gDispEnvCache, p, 0x14);
     __asm__(".set reorder");
     return p;
 }

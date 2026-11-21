@@ -1,8 +1,8 @@
 // Categories: Game Engine > Initialization
 #include "game/types.h"
 
-extern void func_8008DAD0(void);
-extern void func_8008D7B0(s32 value);
+extern void gBiosStartPad(void) __asm__("func_8008DAD0");
+extern void gBiosChangeClearPadAndLatch(s32 value) __asm__("func_8008D7B0");
 extern void gJumpToKernelPadStartContinuation(void) __asm__("func_8008DB00");
 s32 gStartBiosPadPolling(void) __asm__("func_8008D8FC");
 
@@ -32,8 +32,8 @@ s32 gStartBiosPadPolling(void) __asm__("func_8008D8FC");
  */
 s32 gStartBiosPadPolling(void)
 {
-    func_8008DAD0();
-    func_8008D7B0(0);
+    gBiosStartPad();
+    gBiosChangeClearPadAndLatch(0);
     gJumpToKernelPadStartContinuation();
     return 1;
 }

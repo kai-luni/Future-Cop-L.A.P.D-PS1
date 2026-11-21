@@ -42,7 +42,7 @@ extern s32 gCdGetSector(void *, s32) __asm__("func_8008E5B8");
 extern s32 gCdRead(void *, s32) __asm__("func_8008E598");
 extern s32 gCdDataSync(s32) __asm__("func_8008E5FC");
 extern s32 gCdPosToInt(struct CdlLOC *) __asm__("func_8008E720");
-extern void func_8008FF08(char *);
+extern void gBiosPuts(char *) __asm__("func_8008FF08");
 extern s32 gVSyncWait(s32) __asm__("func_80091270");
 extern s32 gStartCdSectorRead(s32) __asm__("func_80090C18");
 extern s32 gSetCdReadyCallback(s32) __asm__("func_8008E1A8");
@@ -104,7 +104,7 @@ void gCdDataReadyCallback(u8 mode, s32 arg1)
                 __asm__ volatile("" : "+r"(p));
                 if (ret != *p) {
                     register struct State *s __asm__("$3");
-                    func_8008FF08(gCdSectorErrMsg);
+                    gBiosPuts(gCdSectorErrMsg);
                     s = (struct State *)(p - 8);
                     __asm__("" : "+r"(s));
                     s->unk14 = -1;

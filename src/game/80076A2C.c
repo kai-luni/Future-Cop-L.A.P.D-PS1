@@ -68,8 +68,8 @@ extern void func_8001B448(void);
 extern void gFreeBlitPools(void) __asm__("func_80077088");
 extern void gInitNameEntryAlphabet(s32) __asm__("func_800780C0");
 extern void gRunScreenModule(void *, s32) __asm__("func_800287F4");
-extern void func_8008CC90(void *, void *);
-extern void func_8008CCB0(void *, s32);
+extern void gBiosStrcat(void *, void *) __asm__("func_8008CC90");
+extern void gBiosStrcpy(void *, s32) __asm__("func_8008CCB0");
 extern s32 gFindModuleMovie(void *) __asm__("func_80083130");
 
 /**
@@ -246,7 +246,7 @@ s32 gGameMain(void)
         for (;;) {
             if (s2) {
                 gRunScreenModule(gFrontEndBootstrapModule, 1);
-                func_8008CC90(gFrontEndModuleName, gMissionModuleSuffix);
+                gBiosStrcat(gFrontEndModuleName, gMissionModuleSuffix);
                 s2 = 0;
                 continue;
             }
@@ -281,8 +281,8 @@ s32 gGameMain(void)
             switch (gGameSession->unk10) {
             case 0:
                 if (gPendingModuleNameFlag != 0) {
-                    func_8008CCB0(gFrontEndModuleName, gPendingModuleNameFlag);
-                    func_8008CC90(gFrontEndModuleName, gMissionModuleSuffix);
+                    gBiosStrcpy(gFrontEndModuleName, gPendingModuleNameFlag);
+                    gBiosStrcat(gFrontEndModuleName, gMissionModuleSuffix);
                     gPendingScreenState = 3;
                     gPendingModuleNameFlag = 0;
                     gModuleLoadState = 5;

@@ -15,7 +15,7 @@ extern u8 gLayoutPointerFlagB __asm__("D_8009F3E7");
 extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 gAudioOptionsMenuMode[] __asm__("D_800A377D");
-extern u8 D_800A386D[];
+extern u8 gCrimeWarHubMenuInputMode[] __asm__("D_800A386D");
 extern u8 gCwRulesMovieName[] __asm__("D_80012088");
 
 extern void func_800776B8(void);
@@ -53,7 +53,7 @@ void gSelectCrimeWar2P(s32 a0)
     mode->players = 2;
     mode->split = 0;
     gAudioOptionsMenuMode[0] = 0;
-    D_800A386D[0] = 0;
+    gCrimeWarHubMenuInputMode[0] = 0;
     __asm__ volatile("" ::: "memory");
     gCrimeWarProgress = 0;
     func_800776B8();

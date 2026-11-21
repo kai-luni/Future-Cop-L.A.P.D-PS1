@@ -15,7 +15,7 @@ struct Context {
     s32 field1bb0;
 };
 extern struct Context *gOperationState __asm__("D_8009AB08");
-extern void func_8008D640(s32);
+extern void gBiosCardInfo(s32) __asm__("func_8008D640");
 s32 gMcAbortCallback(void) __asm__("func_8001F784");
 
 
@@ -57,12 +57,12 @@ s32 gMcAbortCallback(void)
         p->field8f8 = 0;
         p->field904 = 0;
         p->field9a4 = 1;
-        func_8008D640(p->field8fc);
+        gBiosCardInfo(p->field8fc);
         break;
     default:
         ((volatile struct Context *)gOperationState)->field8f8 = 0;
         ((volatile struct Context *)gOperationState)->state = 0;
-        func_8008D640(((volatile struct Context *)gOperationState)->field8fc);
+        gBiosCardInfo(((volatile struct Context *)gOperationState)->field8fc);
         break;
     }
     return 0;

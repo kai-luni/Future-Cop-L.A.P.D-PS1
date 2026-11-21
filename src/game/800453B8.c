@@ -22,7 +22,7 @@ struct Unk453B8Stream {
     s32 unk08;
 };
 
-extern struct SoundVoice D_800AACC8[];
+extern struct SoundVoice gSoundVoicePool[] __asm__("D_800AACC8");
 extern struct Unk453B8Bank gPlayerSlots[] __asm__("D_800A10E0");
 extern struct Unk453B8Stream gStreamTable[] __asm__("D_800A1810");
 extern struct SoundVoice *gVoiceFreeList __asm__("D_8009F73C");
@@ -69,8 +69,8 @@ void gInitSoundPools(void)
     struct Unk453B8Stream *stream;
     struct SoundVoice *voice;
 
-    gVoiceFreeList = D_800AACC8;
-    voice = D_800AACC8;
+    gVoiceFreeList = gSoundVoicePool;
+    voice = gSoundVoicePool;
     gFreeSoundVoiceCount = 0x18;
     gVoicePriorityList = 0;
     gPrioritySoundVoiceCount = 0;

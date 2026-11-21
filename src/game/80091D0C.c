@@ -17,7 +17,7 @@ extern DmaChannel *gDmaChannelRegBasePtr __asm__("D_8009DD84");
 extern char gDmaBusErrorFormat[] __asm__("D_8001286C");
 extern char gDmaChannelMadrFormat[] __asm__("D_80012888");
 
-extern void func_8008E000(char *, ...);
+extern void gBiosPrintf(char *, ...) __asm__("func_8008E000");
 void gDispatchDmaInterrupts(void) __asm__("func_80091D0C");
 
 
@@ -60,9 +60,9 @@ void gDispatchDmaInterrupts(void)
     }
 
     if ((*gDmaInterruptCtrlPtr & 0xFF000000) == 0x80000000 || (*gDmaInterruptCtrlPtr & 0x8000)) {
-        func_8008E000(gDmaBusErrorFormat, *gDmaInterruptCtrlPtr);
+        gBiosPrintf(gDmaBusErrorFormat, *gDmaInterruptCtrlPtr);
         for (s0 = 0; s0 < 7; s0++) {
-            func_8008E000(gDmaChannelMadrFormat, s0, gDmaChannelRegBasePtr[s0].madr);
+            gBiosPrintf(gDmaChannelMadrFormat, s0, gDmaChannelRegBasePtr[s0].madr);
         }
     }
     __asm__ volatile (".set reorder\n\t.set\tnoreorder");

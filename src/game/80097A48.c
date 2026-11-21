@@ -11,8 +11,8 @@ extern void *gSpuDmaCallback __asm__("D_8009EA2C");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void gSpuSetDmaCallback(SpuDmaCallback callback) __asm__("func_800979F8");
-extern void func_8008C970(void *arg);
-extern void func_8008C990(void *arg);
+extern void gBiosCloseEvent(void *arg) __asm__("func_8008C970");
+extern void gBiosDisableEvent(void *arg) __asm__("func_8008C990");
 
 /**
  * @brief Tears down the SPU DMA completion event and clears its driver callback inside a critical section.
@@ -54,8 +54,8 @@ void gSpuShutdownDmaEvent(void)
             "sw\t$zero,%lo(D_8009EEE0)($at)\n\t"
             ".set\treorder\n\t"
         );
-        func_8008C970(gSpuDmaCallback);
-        func_8008C990(gSpuDmaCallback);
+        gBiosCloseEvent(gSpuDmaCallback);
+        gBiosDisableEvent(gSpuDmaCallback);
         gExitCriticalSection();
     }
 }

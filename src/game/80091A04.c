@@ -10,7 +10,7 @@ extern volatile u16 *gInterruptStatusHalfPtr __asm__("D_8009DD14");
 extern volatile u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern volatile u32 *gDmaControlPtr __asm__("D_8009DD1C");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
-extern void func_80091B70(void);
+extern void gBiosResetEntryInt(void) __asm__("func_80091B70");
 void *gStopIrqSubsystem(void) __asm__("func_80091A04");
 
 
@@ -60,7 +60,7 @@ void *gStopIrqSubsystem(void)
     *b = 0;
     *a = *b;
     *(u32 *)gDmaControlPtr = *gDmaControlPtr & 0x77777777;
-    func_80091B70();
+    gBiosResetEntryInt();
     *(u16 *)p = 0;
     return p;
 }

@@ -13,8 +13,8 @@ extern u32 gTitleScreenDeadline __asm__("D_8009F8E8");
 extern u8 gSetupDoneFlag __asm__("D_8009F3E4");
 
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
-extern s32 func_8008CCC0(u8 *s);
-extern void func_8008CCB0(void *dst, u8 *src);
+extern s32 gBiosStrlen(u8 *s) __asm__("func_8008CCC0");
+extern void gBiosStrcpy(void *dst, u8 *src) __asm__("func_8008CCB0");
 void gSetupTitleScreenPlayerNames(void) __asm__("func_8007799C");
 
 
@@ -51,15 +51,15 @@ void gSetupTitleScreenPlayerNames(void)
     ok = 0;
     if (flag == 0) {
         p = gLookupTextString(0xC8);
-        if (p != 0 && func_8008CCC0(p) < 9) {
-            func_8008CCB0(&gPlayerNameTable, p);
+        if (p != 0 && gBiosStrlen(p) < 9) {
+            gBiosStrcpy(&gPlayerNameTable, p);
         } else {
             gPlayerNameTable = gDefaultPlayer1Name;
             ok = 1;
         }
         p = gLookupTextString(0xD2);
-        if (p != 0 && func_8008CCC0(p) < 9) {
-            func_8008CCB0(&gPlayer2NameBuffer, p);
+        if (p != 0 && gBiosStrlen(p) < 9) {
+            gBiosStrcpy(&gPlayer2NameBuffer, p);
         } else {
             gPlayer2NameBuffer = gDefaultPlayer2Name;
             ok = 1;

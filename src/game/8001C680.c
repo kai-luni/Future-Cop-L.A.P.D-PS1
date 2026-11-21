@@ -6,7 +6,7 @@ extern int gCdCurrentLoc __asm__("D_8009F61C");
 extern int gCdTargetLoc __asm__("D_8009F614");
 extern int gCdReady(int, void *) __asm__("func_8008E174");
 extern int gCdControl(int, void *, void *) __asm__("func_8008E1BC");
-extern void func_8008CC80(int);
+extern void gBiosExit(int) __asm__("func_8008CC80");
 extern void gCopyWord(int *, int *) __asm__("func_8001C27C");
 void gResetCdReadState(void) __asm__("func_8001C680");
 
@@ -61,7 +61,7 @@ void gResetCdReadState(void)
     gCdInterruptReg = 0;
     __asm__ volatile("" : "+r"(a2) : : "memory");
     if (!gCdControl(a0, a1, a2 + 0x798))
-        func_8008CC80(-1);
+        gBiosExit(-1);
     a0 = 0x800a0000;
     __asm__ volatile("" : "+r"(a0));
     a0 -= 0x9e4;

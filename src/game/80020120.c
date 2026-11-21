@@ -19,8 +19,8 @@ extern u8 gMemoryCardIoRetryCallback[] __asm__("D_8001F818");
 extern u8 gMcAbortCallbackAddress[] __asm__("D_8001F784");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
-extern s32 func_8008C960(u32, u32, u32, void *);
-extern void func_8008C980(s32);
+extern s32 gBiosOpenEvent(u32, u32, u32, void *) __asm__("func_8008C960");
+extern void gBiosEnableEvent(s32) __asm__("func_8008C980");
 void gAcquireMcEvents(void) __asm__("func_80020120");
 
 
@@ -68,22 +68,22 @@ void gAcquireMcEvents(void)
 {
     if (gOperationState->count == 0) {
         gDisableCpuInterrupts();
-        gOperationState->h0 = func_8008C960(0xF4000001, 4, 0x1000, gMemoryCardRequestDispatchCallback);
-        gOperationState->h1 = func_8008C960(0xF4000001, 0x8000, 0x1000, gMcErrorCallbackBAddress);
-        gOperationState->h2 = func_8008C960(0xF4000001, 0x100, 0x1000, gMemoryCardServiceErrorCallback);
-        gOperationState->h3 = func_8008C960(0xF4000001, 0x2000, 0x1000, gMcCardEventDoneCallback);
-        gOperationState->h4 = func_8008C960(0xF0000011, 4, 0x1000, D_8001F394);
-        gOperationState->h5 = func_8008C960(0xF0000011, 0x8000, 0x1000, gMcRetryTimeoutBCallback);
-        gOperationState->h6 = func_8008C960(0xF0000011, 0x100, 0x1000, gMemoryCardIoRetryCallback);
-        gOperationState->h7 = func_8008C960(0xF0000011, 0x2000, 0x1000, gMcAbortCallbackAddress);
-        func_8008C980(gOperationState->h0);
-        func_8008C980(gOperationState->h1);
-        func_8008C980(gOperationState->h2);
-        func_8008C980(gOperationState->h3);
-        func_8008C980(gOperationState->h4);
-        func_8008C980(gOperationState->h5);
-        func_8008C980(gOperationState->h6);
-        func_8008C980(gOperationState->h7);
+        gOperationState->h0 = gBiosOpenEvent(0xF4000001, 4, 0x1000, gMemoryCardRequestDispatchCallback);
+        gOperationState->h1 = gBiosOpenEvent(0xF4000001, 0x8000, 0x1000, gMcErrorCallbackBAddress);
+        gOperationState->h2 = gBiosOpenEvent(0xF4000001, 0x100, 0x1000, gMemoryCardServiceErrorCallback);
+        gOperationState->h3 = gBiosOpenEvent(0xF4000001, 0x2000, 0x1000, gMcCardEventDoneCallback);
+        gOperationState->h4 = gBiosOpenEvent(0xF0000011, 4, 0x1000, D_8001F394);
+        gOperationState->h5 = gBiosOpenEvent(0xF0000011, 0x8000, 0x1000, gMcRetryTimeoutBCallback);
+        gOperationState->h6 = gBiosOpenEvent(0xF0000011, 0x100, 0x1000, gMemoryCardIoRetryCallback);
+        gOperationState->h7 = gBiosOpenEvent(0xF0000011, 0x2000, 0x1000, gMcAbortCallbackAddress);
+        gBiosEnableEvent(gOperationState->h0);
+        gBiosEnableEvent(gOperationState->h1);
+        gBiosEnableEvent(gOperationState->h2);
+        gBiosEnableEvent(gOperationState->h3);
+        gBiosEnableEvent(gOperationState->h4);
+        gBiosEnableEvent(gOperationState->h5);
+        gBiosEnableEvent(gOperationState->h6);
+        gBiosEnableEvent(gOperationState->h7);
         gEnableCpuInterrupts();
     }
     gOperationState->count++;

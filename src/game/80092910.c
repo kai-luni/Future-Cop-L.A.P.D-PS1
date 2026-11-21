@@ -29,7 +29,7 @@ extern struct Entry gGpuModeDrawWidthTable[] __asm__("D_8009DE70");
 extern struct Entry gGpuVramHeightByMode[] __asm__("D_8009DE7C");
 extern struct Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
 extern  void (*gLogPrintf)(u8 *, int) __asm__("D_8009DDEC");
-extern void func_8008E000(void *, void *, void *);
+extern void gBiosPrintf(void *, void *, void *) __asm__("func_8008E000");
 extern void gMemset(unsigned char *, int, unsigned int) __asm__("func_80095830");
 extern void gResetIrqDispatch(void) __asm__("func_80091480");
 extern void func_80095860(u32);
@@ -68,7 +68,7 @@ int gResetGraph(int input)
     case 0:
     case 3:
         __asm__ volatile ("" ::: "memory");
-        func_8008E000(gResetGraphTableAddressesFormat, gGpuCallbackTable, &gDebugTagBytes);
+        gBiosPrintf(gResetGraphTableAddressesFormat, gGpuCallbackTable, &gDebugTagBytes);
     case 5:
         __asm__ volatile ("" ::: "memory");
         state = &gDebugTagBytes;

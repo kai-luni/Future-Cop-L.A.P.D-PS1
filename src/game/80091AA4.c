@@ -16,7 +16,7 @@ typedef struct {
 extern Context gIrqDispatchState __asm__("D_8009CC88");
 extern u16 *gInterruptMaskPtr __asm__("D_8009DD18");
 extern u32 *gDmaControlPtr __asm__("D_8009DD1C");
-extern void func_80091B80(void *);
+extern void gBiosSetCustomExitFromException(void *) __asm__("func_80091B80");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 Context *gRestartIrqSubsys(void) __asm__("func_80091AA4");
 
@@ -57,7 +57,7 @@ Context *gRestartIrqSubsys(void)
     __asm__("lui %0,%%hi(D_8009CC88)\n\taddiu %0,%0,%%lo(D_8009CC88)" : "=r"(ctx));
     if (ctx->active != 0)
         goto busy;
-    func_80091B80(ctx->payload);
+    gBiosSetCustomExitFromException(ctx->payload);
     ctx->active = 1;
     *gInterruptMaskPtr = ctx->value;
     dest = gDmaControlPtr;

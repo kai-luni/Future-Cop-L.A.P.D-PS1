@@ -5,9 +5,9 @@ extern void gClearKernelPadWords(void) __asm__("func_8008DBB0");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gPatchKernelPadTable(void) __asm__("func_8008DB28");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
-extern void func_8008D7B0(s32);
+extern void gBiosChangeClearPadAndLatch(s32) __asm__("func_8008D7B0");
 extern void gInstallPriority1Irq(void) __asm__("func_8008D964");
-extern void func_8008DAF0(s32, s32, s32, s32);
+extern void gBiosInitPadDirect(s32, s32, s32, s32) __asm__("func_8008DAF0");
 extern s32 gModeClearFlag __asm__("D_8009C800");
 void gInitPadB015WithIrq(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8008D7DC");
 
@@ -49,9 +49,9 @@ void gInitPadB015WithIrq(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     gEnterCriticalSection();
     gPatchKernelPadTable();
     gExitCriticalSection();
-    func_8008D7B0(0);
+    gBiosChangeClearPadAndLatch(0);
     gInstallPriority1Irq();
-    func_8008DAF0(arg0, arg1, arg2, arg3);
+    gBiosInitPadDirect(arg0, arg1, arg2, arg3);
     gModeClearFlag = 1;
     __asm__ volatile("" : : : "memory");
 }

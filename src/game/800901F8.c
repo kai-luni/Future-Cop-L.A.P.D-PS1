@@ -1,7 +1,7 @@
 // Categories: Platform > CD-ROM | Utilities > String
 #include "game/types.h"
 
-extern s32 func_80090890(u8 *arg0, u8 *arg1, s32 arg2);
+extern s32 gBiosStrncmp(u8 *arg0, u8 *arg1, s32 arg2) __asm__("func_80090890");
 s32 gMatchCdFilename(u8 *arg0, u8 *arg1) __asm__("func_800901F8");
 
 
@@ -37,5 +37,5 @@ s32 gMatchCdFilename(u8 *arg0, u8 *arg1) __asm__("func_800901F8");
  */
 s32 gMatchCdFilename(u8 *arg0, u8 *arg1)
 {
-    return func_80090890(arg0, arg1, 0xC) == 0;
+    return gBiosStrncmp(arg0, arg1, 0xC) == 0;
 }

@@ -57,8 +57,8 @@ extern void func_8007AA9C(u8 *a, u8 *b, s32 c, u8 *d);
 extern void func_8007A9D0(u8 *a, u8 *b, s32 c, u8 *d, s32 e);
 extern void gSaveSelectedProfileToCard(void) __asm__("func_80080B70");
 extern void func_80080984(u8 *a, s32 b);
-extern void func_8008CCB0(u8 *a, u8 *b);
-extern s32 func_8008CCC0(u8 *a);
+extern void gBiosStrcpy(u8 *a, u8 *b) __asm__("func_8008CCB0");
+extern s32 gBiosStrlen(u8 *a) __asm__("func_8008CCC0");
 extern s32 gSpillVarargsArguments(u8 *a, u8 *fmt, ...) __asm__("func_8008CD30");
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern void gActivateMenuPanel(u8 *a, s32 b) __asm__("func_80078650");
@@ -233,14 +233,14 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                         }
                         CNT(gWideTextTable[gFrontEndListTable[4]])
                         arg2 = (s32)gLookupTextString(0x52D0);
-                        if (((u8 *)arg2) != 0 && func_8008CCC0(((u8 *)arg2)) < 5) {
+                        if (((u8 *)arg2) != 0 && gBiosStrlen(((u8 *)arg2)) < 5) {
                             gSpillVarargsArguments(RAW + 0x925, gSkyProfileLabelFormat, ((u8 *)arg2), n, txt);
                         } else {
                             gSpillVarargsArguments(RAW + 0x925, gSkyProfileFallbackLabelFormat, n, txt);
                         }
                     } else {
                         arg2 = (s32)gLookupTextString(0x3868);
-                        if (((u8 *)arg2) != 0 && func_8008CCC0(((u8 *)arg2)) < 7) {
+                        if (((u8 *)arg2) != 0 && gBiosStrlen(((u8 *)arg2)) < 7) {
                             gSpillVarargsArguments(RAW + 0x925, gCrimeWarProfileNameFormat, ((u8 *)arg2), gMissionListMaxIndex + 1, txt);
                         } else {
                             gSpillVarargsArguments(RAW + 0x925, gZoneProfileFallbackLabelFormat, gMissionListMaxIndex + 1, txt);
@@ -249,7 +249,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                 } else {
                     dst = base + 0x925;
                     __asm__("addu %0,%0,%1" : "+r"(off) : "r"(base), "r"(dst));
-                    func_8008CCB0(dst, (u8 *)off + 0x428);
+                    gBiosStrcpy(dst, (u8 *)off + 0x428);
                 }
                 gScalarCursor[s2] = 0;
                 func_8007A9D0(RAW + 0x925, gNameEntryGlyphBuf + s2 * 8, 8, gNameEntryAlphabet, gPlayerNameLength);
@@ -274,13 +274,13 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
             savedIdx = savedBase[0x924];
             off = savedIdx * 0x70;
             __asm__("addu %0,%0,%1" : "+r"(off) : "r"(savedBase), "r"(dst));
-            func_8008CCB0(dst, (u8 *)off + 0x440);
+            gBiosStrcpy(dst, (u8 *)off + 0x440);
             dst = textBase + 9;
             savedBase = RAW;
             savedIdx = savedBase[0x924];
             off = savedIdx * 0x70;
             __asm__("addu %0,%0,%1" : "+r"(off) : "r"(savedBase), "r"(dst));
-            func_8008CCB0(dst, (u8 *)off + 0x44C);
+            gBiosStrcpy(dst, (u8 *)off + 0x44C);
             if (REC(0x459) != 0) *(s32 *)(gGameSession + 0x8C) = REC(0x459);
             if (REC(0x45A) != 0) *(s32 *)(gGameSession + 0x90) = REC(0x45A);
             if (REC(0x45B) != 0) *(s32 *)(gGameSession + 0x94) = REC(0x45B);
@@ -430,7 +430,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
             } else {
                 if (RAW[arg4 * 0x70 + 0x428] == 0) {
                     q = gLookupTextString(0x3714);
-                    if (q == 0 || func_8008CCC0(q) >= 9) {
+                    if (q == 0 || gBiosStrlen(q) >= 9) {
                         q = gDefaultNameString;
                     }
                 } else {

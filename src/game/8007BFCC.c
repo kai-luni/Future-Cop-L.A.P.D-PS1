@@ -10,7 +10,7 @@ extern u8 gPresetIndexPerPort __asm__("D_8009FA98");
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern u8 gPort2RumbleEnabled __asm__("D_8009F8D9");
 extern u8 gStagedControllerPresets __asm__("D_8009F900");
-extern u8 D_8009F901;
+extern u8 gStagedPort2ControllerPreset __asm__("D_8009F901");
 extern u8 gControllerDiagramViews __asm__("D_8009F902");
 extern u8 D_8009F903;
 extern s8 gSnapshotResult __asm__("D_8009F904");

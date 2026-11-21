@@ -6,7 +6,7 @@ extern u32 gCdKernelPatchWordsEnd[] __asm__("D_8008DE9C");
 extern s32 gRaParkPatch __asm__("D_800A3E40");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
-extern void func_8008DBA0(void);
+extern void gBiosFlushCache(void) __asm__("func_8008DBA0");
 void gPatchCdKernelBlock(void) __asm__("func_8008DE20");
 
 

@@ -1,6 +1,6 @@
 // Categories: BIOS > System Calls | Platform > Interrupts
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
-extern void func_8008CA10(int, void *);
+extern void gBiosSysDeqIntRp(int, void *) __asm__("func_8008CA10");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern char gIrqNode[] __asm__("D_800A3E00");
 int gRemovePriority1Irq(void) __asm__("func_8008D9DC");
@@ -43,7 +43,7 @@ int gRemovePriority1Irq(void)
     {
         register void *base __asm__("$5") = gIrqNode;
         __asm__ volatile("" : "+r"(base));
-        func_8008CA10(1, base);
+        gBiosSysDeqIntRp(1, base);
     }
     gExitCriticalSection();
     return 1;

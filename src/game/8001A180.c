@@ -14,7 +14,7 @@ struct Vec3s32 {
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 
 extern s32 gGteLeadingZeros(u32 value) __asm__("func_80095C14");
-extern s32 func_80019904(s32 value);
+extern s32 gLookupPackedInvSqrt(s32 value) __asm__("func_80019904");
 void gNormalizeVector(struct Vec3s32 *vector) __asm__("func_8001A180");
 
 
@@ -119,7 +119,7 @@ void gNormalizeVector(struct Vec3s32 *vector)
     sum = p0 + p1 + shift;
 
     if (sum > 0) {
-        scale = func_80019904(sum);
+        scale = gLookupPackedInvSqrt(sum);
         FMUL(m0, x, scale);
         vector->x = m0;
         FMUL(m0, y, scale);

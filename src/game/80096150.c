@@ -12,7 +12,7 @@ extern u32 gMdecQuantizationUploadCommand[] __asm__("D_8009E8B0");
 extern u32 gMdecDctScaleCommandBlock[] __asm__("D_8009E934");
 extern u8 gExecutableImageBase[] __asm__("D_80010000");
 extern void gStartMdecBlockTransfer(u32 *, u32) __asm__("func_80096240");
-extern void func_8008E000(void *, s32);
+extern void gBiosPrintf(void *, s32) __asm__("func_8008E000");
 void gResetMdecHardware(s32 option) __asm__("func_80096150");
 
 
@@ -62,7 +62,7 @@ void gResetMdecHardware(s32 option)
         break;
     default:
         __asm__ volatile ("" : : : "$4");
-        func_8008E000(gExecutableImageBase + 0x2b8c, option);
+        gBiosPrintf(gExecutableImageBase + 0x2b8c, option);
         break;
     }
 }

@@ -16,7 +16,7 @@ typedef struct {
 } State;
 
 extern State *gOperationState __asm__("D_8009AB08");
-extern void func_8008D640(s32);
+extern void gBiosCardInfo(s32) __asm__("func_8008D640");
 extern void gApplyBiosStateValue(s32) __asm__("func_8008D690");
 s32 gMcCardEventDone(void) __asm__("func_8001FD28");
 
@@ -81,7 +81,7 @@ s32 gMcCardEventDone(void)
         p = gOperationState;
         p->state = 0;
     finish:
-        func_8008D640(p->handle);
+        gBiosCardInfo(p->handle);
         break;
     default:
         p = gOperationState;

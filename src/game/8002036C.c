@@ -18,8 +18,8 @@ typedef struct Unk8009AB08 {
 extern Unk8009AB08 *gOperationState __asm__("D_8009AB08");
 
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
-extern void func_8008C990(s32 arg0);
-extern void func_8008C970(s32 arg0);
+extern void gBiosDisableEvent(s32 arg0) __asm__("func_8008C990");
+extern void gBiosCloseEvent(s32 arg0) __asm__("func_8008C970");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 void gReleaseMcEvents(void) __asm__("func_8002036C");
 
@@ -59,22 +59,22 @@ void gReleaseMcEvents(void)
 {
     if (--gOperationState->unk8C8 == 0) {
         gDisableCpuInterrupts();
-        func_8008C990(gOperationState->unk8D4);
-        func_8008C990(gOperationState->unk8D8);
-        func_8008C990(gOperationState->unk8DC);
-        func_8008C990(gOperationState->unk8E0);
-        func_8008C990(gOperationState->unk8E4);
-        func_8008C990(gOperationState->unk8E8);
-        func_8008C990(gOperationState->unk8EC);
-        func_8008C990(gOperationState->unk8F0);
-        func_8008C970(gOperationState->unk8D4);
-        func_8008C970(gOperationState->unk8D8);
-        func_8008C970(gOperationState->unk8DC);
-        func_8008C970(gOperationState->unk8E0);
-        func_8008C970(gOperationState->unk8E4);
-        func_8008C970(gOperationState->unk8E8);
-        func_8008C970(gOperationState->unk8EC);
-        func_8008C970(gOperationState->unk8F0);
+        gBiosDisableEvent(gOperationState->unk8D4);
+        gBiosDisableEvent(gOperationState->unk8D8);
+        gBiosDisableEvent(gOperationState->unk8DC);
+        gBiosDisableEvent(gOperationState->unk8E0);
+        gBiosDisableEvent(gOperationState->unk8E4);
+        gBiosDisableEvent(gOperationState->unk8E8);
+        gBiosDisableEvent(gOperationState->unk8EC);
+        gBiosDisableEvent(gOperationState->unk8F0);
+        gBiosCloseEvent(gOperationState->unk8D4);
+        gBiosCloseEvent(gOperationState->unk8D8);
+        gBiosCloseEvent(gOperationState->unk8DC);
+        gBiosCloseEvent(gOperationState->unk8E0);
+        gBiosCloseEvent(gOperationState->unk8E4);
+        gBiosCloseEvent(gOperationState->unk8E8);
+        gBiosCloseEvent(gOperationState->unk8EC);
+        gBiosCloseEvent(gOperationState->unk8F0);
         gEnableCpuInterrupts();
     }
 }

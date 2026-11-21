@@ -18,8 +18,8 @@ typedef struct Spec {
 extern Spec gDefaultFormatSpec __asm__("D_8009C7E0");
 extern u8 gHexUpperTable[] __asm__("D_8001223C");
 extern u8 gHexLowerTable[] __asm__("D_80012250");
-extern s32 func_8008CCC0(u8 *s);
-extern u8 *func_8008D5C0(u8 *s, s32 c, s32 n);
+extern s32 gBiosStrlen(u8 *s) __asm__("func_8008CCC0");
+extern u8 *gBiosMemchr(u8 *s, s32 c, s32 n) __asm__("func_8008D5C0");
 extern u8 *gCopyMemOverlap(u8 *dest, u8 *src, s32 count) __asm__("func_8008D5D0");
 
 #define VA(T) ((T)*ap[0]++)
@@ -317,9 +317,9 @@ hexcommon:
                         }
                     }
                 } else if (!spec.hasprec) {
-                    len = func_8008CCC0((u8 *)s);
+                    len = gBiosStrlen((u8 *)s);
                 } else {
-                    u8 *p = func_8008D5C0((u8 *)s, 0, spec.prec);
+                    u8 *p = gBiosMemchr((u8 *)s, 0, spec.prec);
                     if (p != 0) {
                         len = (signed char *)p - s;
                     } else {

@@ -4,7 +4,7 @@
 extern void *gTileBlockTable __asm__("D_8009F808");
 extern void *gMapChunkNode __asm__("D_8009F810");
 extern void *gTableBuffer __asm__("D_8009FA08");
-extern void *D_800A294C[];
+extern void *gTerrainHeightfieldBase[] __asm__("D_800A294C");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 void gFreeTerrainWorkBuffers(void) __asm__("func_800634F4");
 
@@ -42,7 +42,7 @@ void gFreeTerrainWorkBuffers(void)
     if (gTableBuffer != 0) {
         gFreeBlock(gTableBuffer);
     }
-    if (D_800A294C[0] != 0) {
-        gFreeBlock(D_800A294C[0]);
+    if (gTerrainHeightfieldBase[0] != 0) {
+        gFreeBlock(gTerrainHeightfieldBase[0]);
     }
 }

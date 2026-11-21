@@ -27,7 +27,7 @@ extern GlobalState func_80010000;
 extern StreamEntry gFileSlotTable[] __asm__("D_800A6D78");
 extern u8 gLengthTable[] __asm__("D_800A85C0");
 
-extern void func_8008CD10(void *dest, const void *src, s32 n);
+extern void gBiosMemcpy(void *dest, const void *src, s32 n) __asm__("func_8008CD10");
 void gCopyCdSectorChunk(void) __asm__("func_8001CC6C");
 
 
@@ -82,7 +82,7 @@ void gCopyCdSectorChunk(void)
     }
     chunk -= offset;
 
-    func_8008CD10(func_80010000.unk20, &gLengthTable[offset], chunk);
+    gBiosMemcpy(func_80010000.unk20, &gLengthTable[offset], chunk);
 
     func_80010000.unk20 += chunk;
     func_80010000.unk04 -= chunk;

@@ -8,8 +8,8 @@ extern void gFinishSpuTransfer(void) __asm__("func_800972F8");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void gSpuSetDmaCallback(Callback callback) __asm__("func_800979F8");
-extern void *func_8008C960(u32, s32, s32, s32);
-extern void func_8008C980(void *);
+extern void *gBiosOpenEvent(u32, s32, s32, s32) __asm__("func_8008C960");
+extern void gBiosEnableEvent(void *) __asm__("func_8008C980");
 
 /**
  * @brief One-time SPU DMA event init: registers the transfer callback and
@@ -49,7 +49,7 @@ void gSpuInitDmaEvent(void)
                          "sw\t$v0,%%lo(D_8009EE94)($at)\n\t"
                          ".set\treorder" ::: "memory");
         gSpuSetDmaCallback(gFinishSpuTransfer);
-        func_8008C960(0xF0000009, 0x20, 0x2000, 0);
+        gBiosOpenEvent(0xF0000009, 0x20, 0x2000, 0);
         __asm__ volatile(".set\tnoreorder\n\t"
                          "addu\t$a0,$v0,$zero\n\t"
                          "lui\t$at,%%hi(D_8009EA2C)\n\t"

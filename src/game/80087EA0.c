@@ -15,7 +15,7 @@ extern s32 gMovieSecondaryVlcBuffer __asm__("D_8009F500");
 extern s32 gMoviePadMask0 __asm__("D_8009F958");
 extern s32 gMoviePadMask1 __asm__("D_8009F95C");
 extern s32 gMovieStreamReserveUnitBytes __asm__("D_8009F960");
-extern s32 D_8009F964;
+extern s32 gMovieDestStrideB __asm__("D_8009F964");
 extern s32 gLayerModeBits __asm__("D_8009F968");
 extern s32 gChainedNodes[] __asm__("D_8009FA48");
 
@@ -106,7 +106,7 @@ s32 gOpenVideoLayer(s32 arg0)
     var_v0 = 0x400;
     gMovieStreamReserveUnitBytes = var_v0;
     var_v0 = 0x800;
-    D_8009F964 = var_v0;
+    gMovieDestStrideB = var_v0;
     var_v0 = arg0 & 0x20;
     var_s0 = var_v0 < 1;
 

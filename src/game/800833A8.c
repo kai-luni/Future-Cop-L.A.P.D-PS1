@@ -5,7 +5,7 @@ extern s32 gSpecialistModules[5] __asm__("D_8009C1CC");
 extern s32 gModulePrefixCW __asm__("D_8009F3D8");
 extern s32 gModulePrefixPA __asm__("D_8009F3E0");
 
-extern s32 func_8008CCA0(s32 arg0, s32 arg1);
+extern s32 gBiosStrcmp(s32 arg0, s32 arg1) __asm__("func_8008CCA0");
 s32 gResolveModulePrefix(s32 arg0) __asm__("func_800833A8");
 
 
@@ -51,7 +51,7 @@ s32 gResolveModulePrefix(s32 arg0)
     u32 i;
 
     for (i = 0; i < 5; i++) {
-        if (func_8008CCA0(arg0, gSpecialistModules[i]) == 0) {
+        if (gBiosStrcmp(arg0, gSpecialistModules[i]) == 0) {
             break;
         }
     }

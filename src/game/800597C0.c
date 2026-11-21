@@ -69,8 +69,8 @@ struct Global597C0 {
 extern u8 gFrameTime[] __asm__("D_8009FAA4");
 extern u8 gDiscPartIndexTable[] __asm__("D_8009AF3C");
 u8 gCompanionDiscRedIntensity __asm__("D_8009F36D");
-extern u8 D_8009F36E;
-extern u8 D_8009F36F;
+extern u8 gCompanionDiscGreenIntensity __asm__("D_8009F36E");
+extern u8 gCompanionDiscBlueIntensity __asm__("D_8009F36F");
 extern s32 gDiscColourWordSecondary __asm__("D_8009F370");
 extern struct Camera597C0 *gCamera __asm__("D_8009F9E4");
 extern struct Global597C0 *gGameSession[] __asm__("D_8009FA94");
@@ -288,8 +288,8 @@ void gDrawGlowDiscEffect(struct Object597C0 *object)
         s32 rem = temp % count;
         s32 quotient = (rem * 255) / count;
 
-        D_8009F36E = 0;
-        D_8009F36F = 0;
+        gCompanionDiscGreenIntensity = 0;
+        gCompanionDiscBlueIntensity = 0;
         gCompanionDiscRedIntensity = quotient;
 
         gTransformPartVertex(&info->unk210, *(u8 *)(i + (u32)parts), loc.from);

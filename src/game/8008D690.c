@@ -1,8 +1,8 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern void func_8008D6D0(s32);
-extern void func_8008D670(s32, s32, s32);
+extern void gBiosAllowNewCard(s32) __asm__("func_8008D6D0");
+extern void gBiosWriteCardSector(s32, s32, s32) __asm__("func_8008D670");
 void gApplyBiosStateValue(s32 arg0) __asm__("func_8008D690");
 
 
@@ -30,6 +30,6 @@ void gApplyBiosStateValue(s32 arg0) __asm__("func_8008D690");
  * func_8008D6D0 and BIOS vector B0:4E via func_8008D670.
  */
 void gApplyBiosStateValue(s32 arg0) {
-    func_8008D6D0(arg0);
-    func_8008D670(arg0, 0x3F, 0);
+    gBiosAllowNewCard(arg0);
+    gBiosWriteCardSector(arg0, 0x3F, 0);
 }

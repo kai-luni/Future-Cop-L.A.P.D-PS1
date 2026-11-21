@@ -13,6 +13,8 @@
  * @par Callers
  * None in the symbol table (inlined).
  */
+void gGteSquareVectorUnshifted(void) __asm__("func_80095AF8");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80095AF8\n"

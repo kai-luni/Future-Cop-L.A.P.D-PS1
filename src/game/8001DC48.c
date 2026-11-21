@@ -1,9 +1,9 @@
 // Categories: Resources > File Access | Utilities > String
 typedef unsigned char u8;
-extern int func_8008CCC0(const u8 *);
-extern void func_8008CCB0(u8 *, const u8 *);
-extern void func_8008CC90(u8 *, const u8 *);
-extern u8 func_8008CCE0(int);
+extern int gBiosStrlen(const u8 *) __asm__("func_8008CCC0");
+extern void gBiosStrcpy(u8 *, const u8 *) __asm__("func_8008CCB0");
+extern void gBiosStrcat(u8 *, const u8 *) __asm__("func_8008CC90");
+extern u8 gBiosToUpper(int) __asm__("func_8008CCE0");
 extern int gCompletionFlag __asm__("D_8009FA68");
 extern int gFileSlotState __asm__("D_8009F620");
 int gFormatIso9660Path(int mode, const u8 *name, const u8 *dir, u8 *out) __asm__("func_8001DC48");
@@ -84,12 +84,12 @@ int gFormatIso9660Path(int mode, const u8 *name, const u8 *dir, u8 *out)
     u8 c;
     register int marker __asm__("$8");
     mode &= 15;
-    if (name) namelen = func_8008CCC0(name);
-    if (dir) pos = func_8008CCC0(dir);
+    if (name) namelen = gBiosStrlen(name);
+    if (dir) pos = gBiosStrlen(dir);
     if (pos + namelen == 0) { out[0] = 0; return pos; }
     if (pos + namelen + 1 >= 64) return -18;
     if (pos) {
-        func_8008CCB0(buf, dir);
+        gBiosStrcpy(buf, dir);
         if (namelen > 0 && dir[pos-1] != '\\' && dir[pos-1] != ':' && dir[pos-1] != ';' && dir[pos-1] != '.' && dir[pos-1] != '/' && name[0] != '\\' && name[0] != ':' && name[0] != ';' && name[0] != '.' && name[0] != '/') {
             if (namelen == 1 && mode == 2) buf[pos] = ':';
             else buf[pos] = '\\';
@@ -99,13 +99,13 @@ int gFormatIso9660Path(int mode, const u8 *name, const u8 *dir, u8 *out)
     { register u8 *p __asm__("$2") = buf + pos;
       __asm__ volatile("" : "+r" (p));
       *p = 0; }
-    if (namelen) func_8008CC90(buf, name);
-    end = func_8008CCC0(buf) - 1;
+    if (namelen) gBiosStrcat(buf, name);
+    end = gBiosStrlen(buf) - 1;
     i = -1;
     pos = -1;
     while (1) {
         i++;
-        c = func_8008CCE0(buf[i]);
+        c = gBiosToUpper(buf[i]);
         if (((u8)(c - 1) < 44 && c != '!' && c != '*') || ((u8)(c - 61) < 4 && c != '?') || (c >= 91 && c != '\\' && c != '_')) continue;
         if (mode == 1) {
             { int t = '\\' - slash; slash = '\\' - t; }

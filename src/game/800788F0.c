@@ -13,8 +13,8 @@ extern s32 gSelectFontBank(s32 index) __asm__("func_80048E28");
 extern struct FontEntry *gGetActiveFont(void) __asm__("func_80048E88");
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void gMeasureTextExtent(u8 *text, s32 *width, s32 *height) __asm__("func_800492A0");
-extern u8 *func_8008CCD0(u8 *str, s32 c);
-extern s32 func_8008CCC0(u8 *str);
+extern u8 *gBiosStrchr(u8 *str, s32 c) __asm__("func_8008CCD0");
+extern s32 gBiosStrlen(u8 *str) __asm__("func_8008CCC0");
 void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                    s32 alignX, s32 alignY, s32 font) __asm__("func_800788F0");
 
@@ -90,14 +90,14 @@ void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
         p = text;
         lineCount++;
         do {
-            p = func_8008CCD0(p + 1, '\n');
+            p = gBiosStrchr(p + 1, '\n');
             lineCount++;
         } while (p != 0);
         lineCount--;
     }
 
     while (*text != 0) {
-        p = func_8008CCD0(text, '\n');
+        p = gBiosStrchr(text, '\n');
         if (p != 0) {
             *p = 0;
         }
@@ -136,7 +136,7 @@ void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                 y0 += advance;
             }
         } else {
-            text += func_8008CCC0(text);
+            text += gBiosStrlen(text);
         }
     }
 

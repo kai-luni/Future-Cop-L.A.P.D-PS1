@@ -3,7 +3,7 @@
 extern u8 *gOperationState __asm__("D_8009AB08");
 extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
 extern void gCopyMemory(void *destination, void *source, int count) __asm__("func_8001E318");
-extern s32 func_8008CCC0(char *text);
+extern s32 gBiosStrlen(char *text) __asm__("func_8008CCC0");
 
 void gBuildCardFileDirectoryFrame(char *t, s32 index) __asm__("func_80020F34");
 
@@ -42,7 +42,7 @@ void gBuildCardFileDirectoryFrame(char *t, s32 index)
     packet[0] = 0x51;
     *(s32 *)(packet + 4) = 0x2000;
     *(u16 *)(packet + 8) = 0xFFFF;
-    length = func_8008CCC0(text);
+    length = gBiosStrlen(text);
     gCopyMemory(packet + 0xA, text, length);
     checksum = 0;
     for (i = 0; i < 0x7F; i++) { b = *packet++; tt = checksum ^ b; checksum = tt; }

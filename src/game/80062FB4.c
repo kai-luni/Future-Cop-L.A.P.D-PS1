@@ -8,9 +8,10 @@ typedef struct { u8 flag; char pad[0x43]; } Entry;
 extern volatile Context *gGameSession __asm__("D_8009FA94");
 extern Other *gMapGridHeader __asm__("D_8009F80C");
 extern int gPlayerCount __asm__("D_8009FA0C");
-extern volatile int D_8009F82C;
+extern volatile int gVisibilityRegionCountView2 __asm__("D_8009F82C");
 extern volatile int gCellEntityCount __asm__("D_8009F828");
-extern u8 D_8009F836, D_8009F837;
+extern u8 gSecondViewGridOriginX __asm__("D_8009F836");
+extern u8 gView1GridOriginY __asm__("D_8009F837");
 extern u8 gGridOriginY __asm__("D_8009F835");
 extern u8 gGridOriginX __asm__("D_8009F834");
 extern u32 *gCellMap __asm__("D_8009F820");
@@ -52,7 +53,7 @@ void gUpdateViewCollisionGrid(void)
     u32 x, y, x2, y2, w, h, n, i;
     u32 *p;
     Entry *entry;
-    D_8009F82C = 0;
+    gVisibilityRegionCountView2 = 0;
     gCellEntityCount = 0;
     if (gGameSession->mode == 1) {
         h = gCellClipRect.height - 16;
@@ -65,8 +66,8 @@ void gUpdateViewCollisionGrid(void)
     } else {
         x = gGridOriginX * 4;
         y = gGridOriginY * 4;
-        x2 = D_8009F836 * 4;
-        y2 = D_8009F837 * 4;
+        x2 = gSecondViewGridOriginX * 4;
+        y2 = gView1GridOriginY * 4;
         if (x2 < x) { x2 ^= x; x ^= x2; x2 ^= x; }
         if (y2 < y) { y2 ^= y; y ^= y2; y2 ^= y; }
         w = x2 - x + 20;

@@ -12,7 +12,7 @@ extern char gDrawOTagEnvTraceFormat[] __asm__("D_80012B14");
 extern  void (*gLogPrintf)(char *, ...) __asm__("D_8009DDEC");
 extern struct Context *gVramWriteCallback __asm__("D_8009DDE8");
 extern void gBuildRectDrawList(u8 *, u8 *) __asm__("func_80093CE8");
-extern void func_8008CD10(void *, void *, int);
+extern void gBiosMemcpy(void *, void *, int) __asm__("func_8008CD10");
 void gDrawOTagEnv(u32 arg0, u8 *arg1) __asm__("func_800933B0");
 
 
@@ -61,5 +61,5 @@ void gDrawOTagEnv(u32 arg0, u8 *arg1)
     ctx = gVramWriteCallback;
     *(u32 *)p = (*(u32 *)p & 0xff000000) | (arg0 & mask);
     ctx->send(ctx->arg, p, 0x40, 0);
-    func_8008CD10(base + 0xe, saved, 0x5c);
+    gBiosMemcpy(base + 0xe, saved, 0x5c);
 }

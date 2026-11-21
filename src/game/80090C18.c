@@ -23,7 +23,7 @@ extern s32 gSetCdReadyCallback(void *) __asm__("func_8008E1A8");
 extern void gSetCdDmaCallback(void *) __asm__("func_8008E5D8");
 extern s32 gGetCdStatusByte(void) __asm__("func_8008E010");
 extern s32 gVSyncWait(s32) __asm__("func_80091270");
-extern void func_8008FF08(char *);
+extern void gBiosPuts(char *) __asm__("func_8008FF08");
 extern s32 gCdControlF(s32, s32) __asm__("func_8008E2F8");
 extern s32 gCdControl(s32, void *, s32) __asm__("func_8008E1BC");
 extern void *gGetCdTargetLocation(void) __asm__("func_8008E040");
@@ -88,7 +88,7 @@ s32 gStartCdSectorRead(s32 arg0)
         if ((gVSyncWait(-1) & 0x3F) == 0) {
             register char *base __asm__("$4") = (char *)0x80010000;
             __asm__("" : "=r"(base) : "0"(base));
-            func_8008FF08(base + 0x27B4);
+            gBiosPuts(base + 0x27B4);
         }
         gCdControlF(1, 0);
         t = gVSyncWait(-1);
@@ -105,7 +105,7 @@ s32 gStartCdSectorRead(s32 arg0)
         {
             register char *base __asm__("$4") = (char *)0x80010000;
             __asm__("" : "=r"(base) : "0"(base));
-            func_8008FF08(base + 0x27CC);
+            gBiosPuts(base + 0x27CC);
             gCdControl(9, 0, 0);
             if (gCdControl(2, gGetCdTargetLocation(), 0) == 0) {
                 goto fail;

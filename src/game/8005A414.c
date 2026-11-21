@@ -23,7 +23,7 @@ extern s32 gTexDescriptorCount __asm__("D_8009F7DC");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void gFreeTextureDescriptors(void) __asm__("func_8005A220");
-extern void func_8008CD10(void *dest, void *src, s32 size);
+extern void gBiosMemcpy(void *dest, void *src, s32 size) __asm__("func_8008CD10");
 extern void gLoadImage(RectA414 *rect, void *data) __asm__("func_80092F38");
 extern void gDrawSync(s32 arg) __asm__("func_80092C8C");
 extern s32 gBuildSpriteDescTable(void **array, s32 count) __asm__("func_8005A2BC");
@@ -115,7 +115,7 @@ void gLoadTextureChunksToVram(ArgA414 *arg0)
         size = p[2] * 8;
         gTextureDescriptorTable[i] = gAllocMemory(size + 8, 2);
         *(s32 *)gTextureDescriptorTable[i] = *(s32 *)p;
-        func_8008CD10((u8 *)gTextureDescriptorTable[i] + 8, p + 4, size);
+        gBiosMemcpy((u8 *)gTextureDescriptorTable[i] + 8, p + 4, size);
         p += size + 4;
     }
 

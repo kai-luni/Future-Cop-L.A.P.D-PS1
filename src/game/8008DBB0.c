@@ -3,7 +3,7 @@
 
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
-extern void func_8008DBA0(void);
+extern void gBiosFlushCache(void) __asm__("func_8008DBA0");
 void gClearKernelPadWords(void) __asm__("func_8008DBB0");
 
 

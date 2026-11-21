@@ -12,8 +12,8 @@ typedef struct {
 } Unk8009F970;
 
 extern Unk8009F970 *gMovieStreamContext __asm__("D_8009F970");
-extern s32 D_8009F510;
-extern s32 D_8009F514;
+extern s32 gSavedMovieCdSyncCallback __asm__("D_8009F510");
+extern s32 gSavedStreamCdReadyCallback __asm__("D_8009F514");
 extern u8 gCodeDataSource[] __asm__("D_80088D74");
 extern u8 gOffsetCdLocationBySectors[] __asm__("func_800889DC");
 
@@ -69,8 +69,8 @@ void gCdStreamService(s32 arg0)
         gMovieStreamContext->unk410 = 0;
         gMovieStreamContext->unk408 = 0;
         gMovieStreamContext->unk40C = 0;
-        D_8009F510 = gSetCdSyncCallback((s32)gCodeDataSource);
-        D_8009F514 = gSetCdReadyCallback((s32)(gOffsetCdLocationBySectors + 0x40));
+        gSavedMovieCdSyncCallback = gSetCdSyncCallback((s32)gCodeDataSource);
+        gSavedStreamCdReadyCallback = gSetCdReadyCallback((s32)(gOffsetCdLocationBySectors + 0x40));
         gMovieStreamContext->unk420 = 1;
         gMovieStreamContext->unk41C = 1;
     } else {
@@ -83,10 +83,10 @@ void gCdStreamService(s32 arg0)
         gMovieStreamContext->unk408 = 0;
         gMovieStreamContext->unk40C = 0;
         if (active != 0) {
-            gSetCdSyncCallback(D_8009F510);
-            gSetCdReadyCallback(D_8009F514);
-            D_8009F510 = 0;
-            D_8009F514 = 0;
+            gSetCdSyncCallback(gSavedMovieCdSyncCallback);
+            gSetCdReadyCallback(gSavedStreamCdReadyCallback);
+            gSavedMovieCdSyncCallback = 0;
+            gSavedStreamCdReadyCallback = 0;
             gMovieStreamContext->unk420 = 0;
         }
     }

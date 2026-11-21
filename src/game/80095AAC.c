@@ -16,6 +16,8 @@
  * None in the symbol table - like func_80095B20 the caller was inlined into
  * the renderer (GTE helper layer).
  */
+void gGteInterpolateColorIntpl(void) __asm__("func_80095AAC");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80095AAC\n"

@@ -1,7 +1,7 @@
 // Categories: Graphics > Color Tables
 #include "game/types.h"
 
-extern u16 D_800A1E10[][0x10];
+extern u16 gTextColorRampTable[][0x10] __asm__("D_800A1E10");
 extern s32 gRampFillCounter __asm__("D_8009F360");
 void gBuildColorRampRow(s32 index, s32 blue, s32 green, s32 red) __asm__("func_800488A4");
 
@@ -46,7 +46,7 @@ void gBuildColorRampRow(s32 index, s32 blue, s32 green, s32 red)
     }
     blueShift = 10;
     greenShift = 5;
-    table = D_800A1E10;
+    table = gTextColorRampTable;
     __asm__ volatile ("" : "+r" (table));
     row = table[index];
     __asm__ volatile ("" : "+r" (row));
