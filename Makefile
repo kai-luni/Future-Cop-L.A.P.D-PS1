@@ -7,7 +7,7 @@ VENV_PYTHON := $(VENV)/bin/python
 VENV_STAMP := $(VENV)/.installed
 EXE := baseroms/us/SLUS_007.39
 
-.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input function-map
+.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input function-map coverage
 
 all: split
 
@@ -138,6 +138,15 @@ host-weapon-input:
 	  bash tests/host/weapon_input_test.sh; \
 	else \
 	  echo "host-weapon-input: qemu or C toolchain missing, skipped"; \
+	fi
+
+# Line coverage of the host tests. gcov is unavailable (gcc 2.7.2), so this maps
+# executed blocks from qemu -d in_asm onto the .loc line info of a -g compile.
+coverage:
+	@if [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  python3 tools/host_coverage.py $(if $(LCOV),--lcov $(LCOV),); \
+	else \
+	  echo "coverage: C toolchain missing, skipped"; \
 	fi
 
 # Run the environment/matrix render cores under qemu. Skipped (not failed) when

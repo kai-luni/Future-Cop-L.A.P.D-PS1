@@ -440,6 +440,7 @@ static void test_negative_index(void)
           "a negative slot index is rejected like any other out-of-range index");
 }
 
+
 int main(void)
 {
     test_index_gate();

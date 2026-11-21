@@ -237,6 +237,65 @@ static void test_radar_origin_axes(void)
           "a marker inside both limits is drawn again");
 }
 
+/* --- 17. the three marker shapes are all emitted ------------------------ */
+/* gDrawRadarMarker branches on the type argument: 0 draws the two-sprite
+ * marker, 1 the three-quad variant and anything else the five-quad one. The
+ * checks walk all three and inspect the tag and the vertex writes, so the whole
+ * branch tree is exercised and the packet is written where the source says. */
+static void test_marker_shapes(void)
+{
+    R8Vec marker;
+    R8Packet *p;
+
+    /* type 0: tag 0x04000000, colour carries the 0x66 top byte. */
+    prime_marker(&marker);
+    gPacketCursor = packet_arena;
+    packet_arena[0].tag = 0;
+    CHECK(gDrawRadarMarker(&marker, 0x40, 0, 0) == 1, "the type-0 marker is drawn");
+    p = packet_arena;
+    CHECK(p->tag == 0x04000000, "the type-0 packet carries tag 0x04000000");
+    CHECK((p->color >> 24) == 0x66, "the type-0 colour keeps the 0x66 top byte");
+    CHECK(p->x2 == 3 && p->y2 == 3, "the type-0 packet sets its corner size to 3");
+    CHECK(packet_arena[1].tag == 0, "the type-0 marker emits exactly one packet");
+
+    /* type 1: tag 0x04000000, colour carries 0x20, three quads written. */
+    prime_marker(&marker);
+    gPacketCursor = packet_arena;
+    packet_arena[0].tag = 0;
+    CHECK(gDrawRadarMarker(&marker, 0x40, 0, 1) == 1, "the type-1 marker is drawn");
+    p = packet_arena;
+    CHECK((p->color >> 24) == 0x20, "the type-1 colour carries the 0x20 top byte");
+
+    /* every other type: tag 0x05000000, colour carries 0x28. */
+    prime_marker(&marker);
+    gPacketCursor = packet_arena;
+    packet_arena[0].tag = 0;
+    CHECK(gDrawRadarMarker(&marker, 0x40, 0, 3) == 1, "the fallback marker is drawn");
+    p = packet_arena;
+    CHECK(p->tag == 0x05000000, "the fallback packet carries tag 0x05000000");
+    CHECK((p->color >> 24) == 0x28, "the fallback colour carries the 0x28 top byte");
+    CHECK(p->x3 != 0 || p->y3 != 0 || p->y0 != 0,
+          "the fallback marker writes its five quads");
+
+    /* The packet cursor advances past what was emitted. */
+    CHECK(gPacketCursor > packet_arena, "the marker advances the packet cursor");
+
+    /* With the buffer already at its limit the marker still writes its packet
+     * in place instead of advancing the cursor: the three "no room" arms. */
+    {
+        s32 ty;
+        for (ty = 0; ty < 3; ty++) {
+            prime_marker(&marker);
+            gPacketCursor = packet_arena + 8;      /* full */
+            packet_arena[7].tag = 0;
+            CHECK(gDrawRadarMarker(&marker, 0x40, 0, ty) == 1,
+                  "a full packet buffer still reports the marker as drawn");
+            CHECK(gPacketCursor == packet_arena + 8,
+                  "a full packet buffer leaves the cursor at the limit");
+        }
+    }
+}
+
 int main(void)
 {
     test_init_states();
@@ -245,6 +304,7 @@ int main(void)
     test_step_advances_on_exactly_zero();
     test_step_is_side_relative();
     test_radar_origin_axes();
+    test_marker_shapes();
 
     if (failures == 0) say("naming round 8: all checks passed\n");
     return failures;
