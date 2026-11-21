@@ -31,7 +31,7 @@ extern void gWeaponSlotUpdate(struct Unk55E10 *object, s32 arg1) __asm__("func_8
 /**
  * @brief Polls player weapon and target-lock inputs for one frame and dispatches weapon slots.
  *
- * When control->locked (+0x2C8) is clear, updates edge-detection states for special, fire, and weapon actions via func_8005780C, refreshes target lock on a fresh fire press, and triggers weapon slots 0..2 via gWeaponSlotUpdate.
+ * When control->locked (+0x310) is clear, updates edge-detection states for special, fire, and weapon actions via func_8005780C, refreshes target lock on a fresh fire press, and triggers weapon slots 0..2 via gWeaponSlotUpdate.
  *
  * @param object Player entity block whose +0xAC pointer holds the input/weapon control structure.
  *
@@ -39,7 +39,7 @@ extern void gWeaponSlotUpdate(struct Unk55E10 *object, s32 arg1) __asm__("func_8
  * None.
  *
  * @par Control flow
- * Returns early if control->locked != 0. Otherwise updates special, fire, and weapon InputAction states, calls func_8006C34C(object, 0) when fire.phase == 0 (press edge), calls gWeaponSlotUpdate for slot 0 on buttons & 0x04000000, slot 1 on buttons & 0x00400000, and slot 2 when weapon.phase == control->weaponState.
+ * Returns early if control->locked != 0. Otherwise updates special, fire, and weapon InputAction states, calls func_8006C34C(object, 0) when fire.phase == 0 (press edge), calls gWeaponSlotUpdate for slot 0 on buttons & 0x04000000, slot 1 on buttons & 0x00400000, and slot 2 when weapon.phase == control->weaponState (0xA5).
  *
  * @par Calls
  * func_8005780C (4-phase button edge detector), func_8006C34C (target lock acquisition on fire press), gWeaponSlotUpdate (drives weapon slots 0, 1, and 2).

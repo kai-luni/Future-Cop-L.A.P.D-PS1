@@ -80,8 +80,10 @@ extern void gBeamPartUpdate(struct Unk6BA50Obj *obj, s32 idx, s32 arg2) __asm__(
  *
  * @par Confirmed
  * ctl (obj->+0xAC) is read as +0x78 reload timers, +0x84 per-slot counter,
- * +0x8A shared counter, +0x90 per-slot definition id, +0x93 per-slot cycle
- * counter, +0x98 pending node, +0x9C its expected id and +0xC1 owner slot.
+ * the +0x8A halfword array indexed by slot (the same `S16()` macro adds
+ * `idx << 1` to it, so it is the secondary per-slot counter, not one shared
+ * value), +0x90 per-slot definition id, +0x93 per-slot cycle counter, +0x98
+ * pending node, +0x9C its expected id and +0xC1 owner slot.
  * 1. idx >= 3 returns at once. For idx == 2 a pending node is validated against
  *    +0x9C; the list D_8009FA40 is then walked and every node with a non-zero
  *    +0x08 and the same +0x14/+0x16 pair is retired: +0x16 == 0xF clears
@@ -90,8 +92,8 @@ extern void gBeamPartUpdate(struct Unk6BA50Obj *obj, s32 idx, s32 arg2) __asm__(
  *    the function returns, so slot 2 is the "retire the old weapon" pass; when
  *    there is none, or the id no longer matches, the normal path below runs.
  * 2. A positive reload timer at +0x78 idx returns early (still reloading).
- * 3. The counter comes from the shared +0x8A when it is positive (flag set),
- *    otherwise from +0x84 idx. A value <= 0 plays SE 0xD through
+ * 3. The counter comes from the slot-indexed +0x8A halfword when it is positive
+ *    (flag set), otherwise from +0x84 idx. A value <= 0 plays SE 0xD through
  *    func_80046C84 and returns.
  * 4. A value of 5 plays SE 0xE (func_80046C84) and continues.
  * 5. The definition record gRegistryFind(+0x90 idx) is read at +0x24 when the
@@ -103,14 +105,14 @@ extern void gBeamPartUpdate(struct Unk6BA50Obj *obj, s32 idx, s32 arg2) __asm__(
  *    target is +0x8A or +0x84 idx. The cycle counter +0x93 idx is then
  *    decremented and either reloaded from entry +0x06 (adding entry +0x08 to the
  *    reload timer +0x78 idx) or left running (adding entry +0x0A).
- * 7. In the shared-counter case a counter that reached 0 is cleared, the cycle
+ * 7. In the +0x8A case a counter that reached 0 is cleared, the cycle
  *    counter is reloaded from the record's +0x0A and the record's +0x44 and
  *    +0x50 words are swapped - the alternating muzzle halves.
  *
  * @par Likely role
  * The trigger logic of the vehicle weapons: entry +0x06/+0x08 read as a periodic
- * refire and +0x0A as the alternating rate, the shared counter as the linked
- * firing pattern of one slot, and D_8009FA8C[owner slot] as the per-player switch
+ * refire and +0x0A as the alternating rate, the counter set at +0x84/+0x8A as
+ * the per-slot shot budget, and D_8009FA8C[owner slot] as the per-player switch
  * that decides between counting down and toggling (single versus paired fire).
  *
  * @par Unknown
@@ -118,7 +120,9 @@ extern void gBeamPartUpdate(struct Unk6BA50Obj *obj, s32 idx, s32 arg2) __asm__(
  * and why slot 2 consumes the pending node instead of firing.
  *
  * @par Callers
- * gWeaponSlotInput only, which calls it three times per frame (slots 0, 1 and 2).
+ * gWeaponSlotInput calls it once per slot that the pad selects, so zero to three
+ * times per frame - not always three: slots 0 and 1 are independent held-bit
+ * tests and slot 2 fires on a phase match.
  */
 void gWeaponSlotUpdate(struct Unk6BA50Obj *obj, s32 idx) __asm__("func_8006BA50");
 
