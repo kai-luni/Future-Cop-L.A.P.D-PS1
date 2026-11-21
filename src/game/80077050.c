@@ -1,5 +1,7 @@
 // Categories: Resources > Memory Pools
 extern void func_80017C68(int, int, int, int, int, int);
+void gResetFixedPools(void) __asm__("func_80077050");
+
 
 /**
  * @brief (Re)installs the three fixed-size memory pools with an 8-byte stride
@@ -20,7 +22,7 @@ extern void func_80017C68(int, int, int, int, int, int);
  * func_80076A2C, before the render arena is allocated and once per frame
  * before the blits; func_80077088() undoes it.
  */
-void func_80077050(void)
+void gResetFixedPools(void)
 {
     func_80017C68(8, 0, 8, 0, 8, 0);
 }

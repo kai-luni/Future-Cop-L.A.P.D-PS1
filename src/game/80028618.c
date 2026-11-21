@@ -28,7 +28,7 @@ extern void func_80028164(void);
 extern void func_80027D9C(void);
 extern void func_80027D70(void);
 extern void func_8001B4A8(s32 arg);
-extern void func_800451EC(s32 value);
+extern void gSetSoundSpatialMode(s32 value) __asm__("func_800451EC");
 extern void gUpdateSoundVoiceAssignments(void) __asm__("func_800462D0");
 extern void gUpdateSoundSlotTimers(s32 arg) __asm__("func_8008352C");
 extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
@@ -167,7 +167,7 @@ frame:
             cursor++;
         } while (work < 2);
 
-        func_800451EC(work);
+        gSetSoundSpatialMode(work);
         work = 0xD;
         gUpdateSoundVoiceAssignments();
 

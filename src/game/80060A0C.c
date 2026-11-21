@@ -62,7 +62,7 @@ extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 extern u32 gHashCheatCode(u32 state) __asm__("func_80060DD8");
 extern void gInitHudGauge(struct Unk5A190Gauge *gauge, s32 value, s32 divisor) __asm__("func_8005A0C4");
 extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
-extern void func_8006BDFC(struct Actor *actor, s32 mode);
+extern void gRefillWeaponSlotReserve(struct Actor *actor, s32 mode) __asm__("func_8006BDFC");
 extern void gRefillWeaponSlotAmmo(struct Actor *actor, s32 mode, s32 arg2, s32 arg3) __asm__("func_8006BE90");
 s32 gApplyPlayerCheatCode(u32 state, s32 index) __asm__("func_80060A0C");
 
@@ -151,17 +151,17 @@ s32 gApplyPlayerCheatCode(u32 state, s32 index)
         break;
 
     case 0x032D496D:
-        func_8006BDFC(gPlayerEntities[index], 0);
+        gRefillWeaponSlotReserve(gPlayerEntities[index], 0);
         break;
 
     case 0x004F464F:
         offset = index * 4;
-        func_8006BDFC(*(struct Actor **)((u32)gPlayerEntities + offset), 1);
+        gRefillWeaponSlotReserve(*(struct Actor **)((u32)gPlayerEntities + offset), 1);
         break;
 
     case 0x0063A563:
         offset = index * 4;
-        func_8006BDFC(*(struct Actor **)((u32)gPlayerEntities + offset), 2);
+        gRefillWeaponSlotReserve(*(struct Actor **)((u32)gPlayerEntities + offset), 2);
         break;
 
     case 0xFEDAE5DA:

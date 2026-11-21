@@ -38,7 +38,7 @@ struct Msg86 {
 };
 extern struct State86 *gMovieAudioState __asm__("D_8009F4D8");
 extern void gSpuSetCommonAttributes(struct Setup86 *) __asm__("func_80098FE8");
-extern s32 func_800452C8(void);
+extern s32 gGetVoiceVolume(void) __asm__("func_800452C8");
 extern void gSpuSetVoiceAttributes(struct Msg86 *) __asm__("func_80099368");
 
 /**
@@ -83,8 +83,8 @@ void gMovieAudioSetVoiceAttrs(void *object, s32 value, s32 c)
     gSpuSetCommonAttributes(&setup);
     msg.object = object;
     msg.kind = 0xFF93;
-    msg.a = object == gMovieAudioState->first ? func_800452C8() * 127 : 0;
-    msg.b = object == gMovieAudioState->second ? func_800452C8() * 127 : 0;
+    msg.a = object == gMovieAudioState->first ? gGetVoiceVolume() * 127 : 0;
+    msg.b = object == gMovieAudioState->second ? gGetVoiceVolume() * 127 : 0;
     msg.c = c;
     msg.value = value;
     msg.one = 1;

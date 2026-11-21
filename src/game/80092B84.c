@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
+u8 gGetGpuDebugLevel(void) __asm__("func_80092B84");
+
 
 /**
  *  @brief Returns a stored byte of global state.
@@ -19,7 +21,7 @@ extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-u8 func_80092B84(void)
+u8 gGetGpuDebugLevel(void)
 {
     return gGpuDebugLevel;
 }

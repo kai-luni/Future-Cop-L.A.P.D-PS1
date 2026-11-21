@@ -1,3 +1,5 @@
+unsigned int gGetNextPrim(unsigned int *value) __asm__("func_80092324");
+
 // Categories: Utilities > Bit Manipulation
 /**
  *  @brief Returns the low 24 bits of a word with bit 31 set.
@@ -17,7 +19,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-unsigned int func_80092324(unsigned int *value)
+unsigned int gGetNextPrim(unsigned int *value)
 {
     return (*value & 0x00FFFFFFU) | 0x80000000U;
 }

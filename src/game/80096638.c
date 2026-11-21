@@ -1,3 +1,5 @@
+void gResetDispatchLoopGuard(void) __asm__("func_80096638");
+
 // Categories: Game Engine > Dispatch
 /**
  *  @brief Checks a global flag before a disabled indirect-call loop.
@@ -15,7 +17,7 @@
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-void func_80096638(void)
+void gResetDispatchLoopGuard(void)
 {
     __asm__ volatile (
         ".set noat\n"

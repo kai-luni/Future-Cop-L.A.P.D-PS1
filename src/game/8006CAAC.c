@@ -15,6 +15,8 @@ struct Out6CAAC {
     s16 c;
     s16 pad;
 };
+void gScaleVertexStream(struct Out6CAAC *dst, s16 *tbl, s16 count, struct Unk6CAAC *src, s16 scale) __asm__("func_8006CAAC");
+
 
 /**
  * @brief Applies a per-vertex scale table to a vertex stream (skinning/scale
@@ -42,7 +44,7 @@ struct Out6CAAC {
  * @par Callers
  * func_8006CB58 (the model draw entry).
  */
-void func_8006CAAC(struct Out6CAAC *dst, s16 *tbl, s16 count, struct Unk6CAAC *src, s16 scale)
+void gScaleVertexStream(struct Out6CAAC *dst, s16 *tbl, s16 count, struct Unk6CAAC *src, s16 scale)
 {
     s32 n = count;
     register s32 i __asm__("$8") = 0;

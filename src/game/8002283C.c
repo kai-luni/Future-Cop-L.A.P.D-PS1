@@ -35,7 +35,7 @@ struct StreamMix {
 extern struct StreamState gMixerState __asm__("D_800A0968");
 
 extern void gStoreStreamChannelMix(s32 channel, s32 left, s32 right) __asm__("func_800227BC");
-extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
+extern void gSetSoundVoiceMixParameters(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra) __asm__("func_800477D8");
 extern void gSetSoundChannelMix(s32 voice, struct StreamMix *mix) __asm__("func_800222CC");
 
 void gApplyStreamChannelMix(s32 channel, s32 left, s32 right) __asm__("func_8002283C");
@@ -89,7 +89,7 @@ void gApplyStreamChannelMix(s32 channel, s32 left, s32 right)
     if (voice == 0) {
         return;
     }
-    func_800477D8(voice, gMixerState.channels[channel].right, gMixerState.channels[channel].left, -1);
+    gSetSoundVoiceMixParameters(voice, gMixerState.channels[channel].right, gMixerState.channels[channel].left, -1);
     mix.volume = voice->volume;
     mix.pan = voice->pan;
     mix.unk00 = -1;

@@ -35,7 +35,7 @@ extern u32 gStreamEventCallback __asm__("D_8009F634");
 
 extern void gDisarmAudioStreamSpuIrq(void) __asm__("func_80022F7C");
 extern void gSubmitAudioStreamTransfer(void) __asm__("func_80022D84");
-extern void func_80098BB8(s32 address);
+extern void gSetSpuIrqAddress(s32 address) __asm__("func_80098BB8");
 extern void gSpuSetIrqEnable(s32 mode) __asm__("func_80098A78");
 
 void gHandleAudioStreamSpuIrq(void) __asm__("func_80022FA8");
@@ -132,7 +132,7 @@ void gHandleAudioStreamSpuIrq(void)
     if (gMixerState.unk88 < 20) {
         gMixerState.unk88 = 20;
     }
-    func_80098BB8(gMixerState.unk44 + gMixerState.unk7C);
+    gSetSpuIrqAddress(gMixerState.unk44 + gMixerState.unk7C);
     gSpuSetIrqEnable(1);
     gStreamIrqBusy[0] = 0;
 }

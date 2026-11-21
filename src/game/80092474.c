@@ -1,5 +1,7 @@
 // Categories: Graphics > Packet Setup
 #include "game/types.h"
+void gSetPolyFT3Packet(u8 *arg0) __asm__("func_80092474");
+
 
 /**
  *  @brief Sets two bytes in a caller-provided buffer.
@@ -18,7 +20,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80092474(u8 *arg0)
+void gSetPolyFT3Packet(u8 *arg0)
 {
     arg0[3] = 7;
     arg0[7] = 36;

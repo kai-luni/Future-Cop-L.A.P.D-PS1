@@ -25,6 +25,8 @@ struct Unk5C0C0Pool {
 
 extern void gReleasePoolNode(struct Unk5C0C0Pool *pool, struct Unk5C0C0Node *previous,
                           struct Unk5C0C0Node *node) __asm__("func_8003BF1C");
+void gSweepSpritePool(struct Unk5C0C0Pool *pool, void *owner) __asm__("func_8005C0C0");
+
 
 /**
  * @brief Garbage-collects the sprite pool (twin of func_8005BD20 with
@@ -46,7 +48,7 @@ extern void gReleasePoolNode(struct Unk5C0C0Pool *pool, struct Unk5C0C0Node *pre
  * @par Callers
  * func_8005E0AC.
  */
-void func_8005C0C0(struct Unk5C0C0Pool *pool, void *owner)
+void gSweepSpritePool(struct Unk5C0C0Pool *pool, void *owner)
 {
     struct Unk5C0C0Node *node;
     struct Unk5C0C0Node *next;

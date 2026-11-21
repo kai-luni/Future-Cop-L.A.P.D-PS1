@@ -8,7 +8,7 @@ struct Object2F7C8 {
 
 extern s32 gInitMoverObject(struct Object2F7C8 *, s32, s32) __asm__("func_8002EED8");
 extern void gStepMoverObject(struct Object2F7C8 *, s32, s32) __asm__("func_8002F30C");
-extern void func_80063194(struct Object2F7C8 *);
+extern void gRemoveGroundKeyEntry(struct Object2F7C8 *) __asm__("func_80063194");
 extern s32 gEntityBaseHandler(s32, struct Object2F7C8 *, s32, s32) __asm__("func_8002AD58");
 s32 gHandleMoverEntityMsg(s32 msg, struct Object2F7C8 *obj, s32 arg2, s32 arg3) __asm__("func_8002F7C8");
 
@@ -46,7 +46,7 @@ s32 gHandleMoverEntityMsg(s32 msg, struct Object2F7C8 *obj, s32 arg2, s32 arg3)
         return 0;
     case 5:
         if (obj->flags & 4) {
-            func_80063194(obj);
+            gRemoveGroundKeyEntry(obj);
         }
     default:
         return gEntityBaseHandler(msg, obj, arg2, arg3);

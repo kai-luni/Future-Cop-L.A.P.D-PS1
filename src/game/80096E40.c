@@ -4,7 +4,7 @@
 typedef void (*Callback)(void);
 extern s32 gSecondCallGuard __asm__("D_8009EE94");
 extern void *gSpuDmaCallback __asm__("D_8009EA2C");
-extern void func_800972F8(void);
+extern void gFinishSpuTransfer(void) __asm__("func_800972F8");
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
 extern void gSpuSetDmaCallback(Callback callback) __asm__("func_800979F8");
@@ -48,7 +48,7 @@ void gSpuInitDmaEvent(void)
                          "jal\tfunc_8008C9A0\n\t"
                          "sw\t$v0,%%lo(D_8009EE94)($at)\n\t"
                          ".set\treorder" ::: "memory");
-        gSpuSetDmaCallback(func_800972F8);
+        gSpuSetDmaCallback(gFinishSpuTransfer);
         func_8008C960(0xF0000009, 0x20, 0x2000, 0);
         __asm__ volatile(".set\tnoreorder\n\t"
                          "addu\t$a0,$v0,$zero\n\t"

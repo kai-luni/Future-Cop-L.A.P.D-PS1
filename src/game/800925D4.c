@@ -7,6 +7,8 @@ struct State {
     char pad2[20];
     unsigned int c;
 };
+void gSetLineG3Packet(struct State *state) __asm__("func_800925D4");
+
 
 /**
  *  @brief Sets three fields of a state structure to fixed values.
@@ -25,7 +27,7 @@ struct State {
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800925D4(struct State *state)
+void gSetLineG3Packet(struct State *state)
 {
     state->a = 7;
     state->b = 0x58;

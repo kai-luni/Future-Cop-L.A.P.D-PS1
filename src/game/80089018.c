@@ -44,11 +44,11 @@ extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern s32 gSetCdSyncCallback(s32 value) __asm__("func_8008E194");
 extern s32 gSetCdReadyCallback(s32 value) __asm__("func_8008E1A8");
 extern void gCdControl(s32 arg0, s32 arg1, s32 arg2) __asm__("func_8008E1BC");
-extern s32 func_800886E4(void);
+extern s32 gPollCdAfterPause(void) __asm__("func_800886E4");
 extern void gCdControlB(s32 arg0, void *arg1, s32 arg2) __asm__("func_8008E42C");
 extern void gOffsetCdLocationBySectors(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800889DC");
 extern s32 gQueueMovieCdControl(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80088770");
-extern void func_80088974(s32 arg0, s32 arg1, s32 arg2);
+extern void gStartMovieCdSectorRead(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80088974");
 extern void gMovieStreamPrimeEntry(void) __asm__("func_80088F00");
 extern s32 gMinS32(s32 a, s32 b) __asm__("func_800886C8");
 void gPumpMovieStream(void) __asm__("func_80089018");
@@ -95,7 +95,7 @@ void gPumpMovieStream(void)
         gSetCdReadyCallback(0);
         gEnableCpuInterrupts();
         gCdControl(8, 0, 0);
-        while (func_800886E4() != 0) {
+        while (gPollCdAfterPause() != 0) {
         }
         local = 0xA0;
         gCdControlB(0xE, &local, 0);
@@ -133,7 +133,7 @@ void gPumpMovieStream(void)
                 }
             }
             work = (s32)gMovieStreamContext->unk000;
-            func_80088974(gMovieStreamContext->unk004, work,
+            gStartMovieCdSectorRead(gMovieStreamContext->unk004, work,
                           (s32)((u8 *)gMovieStreamContext->unk430 + 0x24));
         } else {
             gMovieStreamContext->unk414 = 0;
@@ -222,7 +222,7 @@ void gPumpMovieStream(void)
             start = sub->unk30;
             state->unk414 = 1;
             address <<= 11;
-            func_80088974((s32)(start + address), work, (s32)parameter);
+            gStartMovieCdSectorRead((s32)(start + address), work, (s32)parameter);
         }
     }
 }

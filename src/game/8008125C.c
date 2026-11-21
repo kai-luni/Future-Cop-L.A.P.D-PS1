@@ -59,7 +59,7 @@ extern void gSaveSelectedProfileToCard(void) __asm__("func_80080B70");
 extern void func_80080984(u8 *a, s32 b);
 extern void func_8008CCB0(u8 *a, u8 *b);
 extern s32 func_8008CCC0(u8 *a);
-extern s32 func_8008CD30(u8 *a, u8 *fmt, ...);
+extern s32 gSpillVarargsArguments(u8 *a, u8 *fmt, ...) __asm__("func_8008CD30");
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern void gActivateMenuPanel(u8 *a, s32 b) __asm__("func_80078650");
 extern void gPlayNonpositionalSoundEffect(s32 id, s32 b) __asm__("func_80046C84");
@@ -222,7 +222,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                     if (fa[0x90 / 4] != 0) count++;
                     if (fa[0x94 / 4] != 0) count++;
                     if (count != 0) {
-                        func_8008CD30(txt, gMenuValueFormat, count);
+                        gSpillVarargsArguments(txt, gMenuValueFormat, count);
                     } else {
                         *(u16 *)txt = gPlaceholderGlyph;
                     }
@@ -234,16 +234,16 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                         CNT(gWideTextTable[gFrontEndListTable[4]])
                         arg2 = (s32)gLookupTextString(0x52D0);
                         if (((u8 *)arg2) != 0 && func_8008CCC0(((u8 *)arg2)) < 5) {
-                            func_8008CD30(RAW + 0x925, gSkyProfileLabelFormat, ((u8 *)arg2), n, txt);
+                            gSpillVarargsArguments(RAW + 0x925, gSkyProfileLabelFormat, ((u8 *)arg2), n, txt);
                         } else {
-                            func_8008CD30(RAW + 0x925, gSkyProfileFallbackLabelFormat, n, txt);
+                            gSpillVarargsArguments(RAW + 0x925, gSkyProfileFallbackLabelFormat, n, txt);
                         }
                     } else {
                         arg2 = (s32)gLookupTextString(0x3868);
                         if (((u8 *)arg2) != 0 && func_8008CCC0(((u8 *)arg2)) < 7) {
-                            func_8008CD30(RAW + 0x925, gCrimeWarProfileNameFormat, ((u8 *)arg2), gMissionListMaxIndex + 1, txt);
+                            gSpillVarargsArguments(RAW + 0x925, gCrimeWarProfileNameFormat, ((u8 *)arg2), gMissionListMaxIndex + 1, txt);
                         } else {
-                            func_8008CD30(RAW + 0x925, gZoneProfileFallbackLabelFormat, gMissionListMaxIndex + 1, txt);
+                            gSpillVarargsArguments(RAW + 0x925, gZoneProfileFallbackLabelFormat, gMissionListMaxIndex + 1, txt);
                         }
                     }
                 } else {

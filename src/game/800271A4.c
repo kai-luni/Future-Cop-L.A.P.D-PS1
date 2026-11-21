@@ -57,10 +57,10 @@ extern u8 gBannerString[] __asm__("D_8009F2F4");
 extern void gDecodeButtonEdge(u32 buttons, struct InputAction *action) __asm__("func_8005780C");
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
-extern s32 func_80049340(u8 *text);
+extern s32 gMeasureTextWidthPx(u8 *text) __asm__("func_80049340");
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void gSetAudioPlaybackEnabled(u8 enable) __asm__("func_80047690");
-extern void func_80069D0C(s32 amount);
+extern void gStepScriptVmCountdowns(s32 amount) __asm__("func_80069D0C");
 extern void gBroadcastEntityMessage(s32 message, s32 arg2, s32 arg3) __asm__("func_8004CD6C");
 extern void gProcessDeferredEntityUpdates(void) __asm__("func_8004CE04");
 extern void gEndSubScreenFrame(void) __asm__("func_8001BBAC");
@@ -156,7 +156,7 @@ void gRunSoloSessionFrame(void)
 
     if (gSceneFrameCounter >= 2 && gGetPadType(0) == 0 && gDemoPlayback == 0) {
         text = gLoadingTextPtr;
-        x = (0x280 - func_80049340(text)) / 4;
+        x = (0x280 - gMeasureTextWidthPx(text)) / 4;
         color = 1;
         if (gFrameTickCounter & 0x80) {
             color = 9;
@@ -174,7 +174,7 @@ void gRunSoloSessionFrame(void)
             gSetAudioPlaybackEnabled(1);
         }
         gWasSuspended = 0;
-        func_80069D0C(gFrameDelta);
+        gStepScriptVmCountdowns(gFrameDelta);
         gCullActiveEntitiesSolo();
         gDispatchQueuedEntityCommands();
         gBroadcastEntityMessage(6, gFrameDelta, 0);

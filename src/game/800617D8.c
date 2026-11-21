@@ -7,6 +7,8 @@ extern s32 D_8009F830;
 extern u8 gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
 
 extern s32 gAllocMemory(s32, s32) __asm__("func_80017EBC");
+void gInitCellEntityWorkBuffers(void) __asm__("func_800617D8");
+
 
 /**
  * @brief Allocates the three 0x400-byte work buffers of a subsystem and clears them.
@@ -32,7 +34,7 @@ extern s32 gAllocMemory(s32, s32) __asm__("func_80017EBC");
  * @par Callers
  * Confirmed: func_80024A24 (mission boot).
  */
-void func_800617D8(void)
+void gInitCellEntityWorkBuffers(void)
 {
     register s32 *p __asm__("$17");
     s32 i;

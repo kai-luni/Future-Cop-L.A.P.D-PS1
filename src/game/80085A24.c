@@ -14,13 +14,13 @@ extern Unk8009F4BC *gMovieSliceContext __asm__("D_8009F4BC");
 
 extern s32 gMdecInSync(s32 mode) __asm__("func_80096090");
 extern s32 gMdecOutSync(s32 mode) __asm__("func_800960CC");
-extern void func_80092C8C(s32 arg);
+extern void gDrawSync(s32 arg) __asm__("func_80092C8C");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
-extern DecDctCallback func_8009612C(DecDctCallback callback);
+extern DecDctCallback gSetDecDctOutCallback(DecDctCallback callback) __asm__("func_8009612C");
 extern DecDctCallback gMdecSetInCallback(DecDctCallback callback) __asm__("func_80096108");
-extern void func_80092B94(DecDctCallback callback);
+extern void gDrawSyncCallback(DecDctCallback callback) __asm__("func_80092B94");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
-extern void func_80095E90(s32 option);
+extern void gDecDctReset(s32 option) __asm__("func_80095E90");
 
 /**
  * @brief Stops the running MDEC movie and restores the saved DMA callbacks,
@@ -52,19 +52,19 @@ void gMovieStopAndRestoreCallbacks(void)
     if (gMovieSliceContext != 0) {
         gMdecInSync(0);
         gMdecOutSync(0);
-        func_80092C8C(0);
+        gDrawSync(0);
         gDisableCpuInterrupts();
 
-        func_8009612C(gMovieSliceContext->unk120);
+        gSetDecDctOutCallback(gMovieSliceContext->unk120);
         gMdecSetInCallback(gMovieSliceContext->unk124);
-        func_80092B94(gMovieSliceContext->unk128);
+        gDrawSyncCallback(gMovieSliceContext->unk128);
 
         gMovieSliceContext->unk120 = 0;
         gMovieSliceContext->unk124 = 0;
         gMovieSliceContext->unk128 = 0;
 
         gEnableCpuInterrupts();
-        func_80095E90(1);
+        gDecDctReset(1);
         gMovieSliceContext = 0;
     }
 }

@@ -22,7 +22,7 @@ extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 
 extern void gReleaseSoundVoicesByOwner(s32 owner) __asm__("func_80022240");
 extern void gMarkPortraitVoiceStopped(void) __asm__("func_80029720");
-extern void func_80045370(void);
+extern void gClearVolumeLimitAndRefreshVoices(void) __asm__("func_80045370");
 extern s32 gReleaseValidatedSoundVoiceHandle(struct Unk4749CHandle *handle) __asm__("func_800474F0");
 
 void gStopTrackedSoundVoice(void) __asm__("func_80023E84");
@@ -60,7 +60,7 @@ void gStopTrackedSoundVoice(void)
         }
         gAssetHandle.state = 0;
         if (gAssetHandle.flag18 == 0) {
-            func_80045370();
+            gClearVolumeLimitAndRefreshVoices();
         }
     }
     gReleaseValidatedSoundVoiceHandle(&gAssetHandle);

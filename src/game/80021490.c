@@ -11,9 +11,9 @@ struct Unk21490 {
 
 extern s32 gSpuTransferActive __asm__("D_8009FA34");
 
-extern void func_80098EE8(s32 channel);
-extern void func_80098E88(s32 arg0, s32 arg1);
-extern void func_80098E28(s32 arg0, s32 arg1);
+extern void gSetSpuTransferStartAddr(s32 channel) __asm__("func_80098EE8");
+extern void gWriteSpuRam(s32 arg0, s32 arg1) __asm__("func_80098E88");
+extern void gWriteSpuData(s32 arg0, s32 arg1) __asm__("func_80098E28");
 
 void gStartSpuTransfer(struct Unk21490 *request) __asm__("func_80021490");
 
@@ -47,10 +47,10 @@ void gStartSpuTransfer(struct Unk21490 *request) __asm__("func_80021490");
 void gStartSpuTransfer(struct Unk21490 *request)
 {
     gSpuTransferActive = 1;
-    func_80098EE8(request->channel);
+    gSetSpuTransferStartAddr(request->channel);
     if (request->mode == 1) {
-        func_80098E88(request->arg0, request->arg1);
+        gWriteSpuRam(request->arg0, request->arg1);
     } else {
-        func_80098E28(request->arg0, request->arg1);
+        gWriteSpuData(request->arg0, request->arg1);
     }
 }

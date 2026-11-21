@@ -7,6 +7,8 @@ struct State {
     unsigned char pad8[16];
     unsigned int value;
 };
+void gSetLineF4(struct State *state) __asm__("func_800925F4");
+
 
 /**
  *  @brief Sets a state to current value 0x4C and active value 6.
@@ -25,7 +27,7 @@ struct State {
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800925F4(struct State *state)
+void gSetLineF4(struct State *state)
 {
     state->active = 6;
     state->current = 0x4C;

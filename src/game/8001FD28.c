@@ -17,7 +17,7 @@ typedef struct {
 
 extern State *gOperationState __asm__("D_8009AB08");
 extern void func_8008D640(s32);
-extern void func_8008D690(s32);
+extern void gApplyBiosStateValue(s32) __asm__("func_8008D690");
 s32 gMcCardEventDone(void) __asm__("func_8001FD28");
 
 
@@ -90,7 +90,7 @@ s32 gMcCardEventDone(void)
         p->state = 4;
         p->flag = 0;
         asm volatile("" : : : "memory");
-        func_8008D690(p->handle);
+        gApplyBiosStateValue(p->handle);
         break;
     }
     return 0;

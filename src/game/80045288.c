@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gMusicVolumeSetting __asm__("D_8009F334");
+s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
+
 
 /**
  * @brief Returns the second volume setting (D_8009F334).
@@ -21,7 +23,7 @@ extern s32 gMusicVolumeSetting __asm__("D_8009F334");
  * func_8007CFA0, func_80080984, func_80080A5C; address referenced by
  * D_8007D18C.
  */
-s32 func_80045288(void)
+s32 gGetVagmVolumeSetting(void)
 {
     return gMusicVolumeSetting;
 }

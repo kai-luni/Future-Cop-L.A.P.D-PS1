@@ -37,11 +37,11 @@ extern u8 gGetSelectedLayer(void) __asm__("func_8001C034");
 extern s32 gGteLeadingZeros(s32 value) __asm__("func_80095C14");
 extern void func_80029650(u32 arg0);
 extern void gLoadImage(u32 arg0, u32 arg1) __asm__("func_80092F38");
-extern void func_80092C8C(s32 arg0);
+extern void gDrawSync(s32 arg0) __asm__("func_80092C8C");
 extern void gClearOrderingTableReverse(u32 arg0, s32 arg1) __asm__("func_80093178");
-extern void func_80093280(u32 arg0);
-extern void func_8009398C(u32 arg0, void *arg1);
-extern void func_80093A0C(u32 arg0, void *arg1);
+extern void gDrawOTag(u32 arg0) __asm__("func_80093280");
+extern void gBuildDrawAreaPacket(u32 arg0, void *arg1) __asm__("func_8009398C");
+extern void gSetDrawOffsetPacket(u32 arg0, void *arg1) __asm__("func_80093A0C");
 extern void gDecodeMdecFrameToVram(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm__("func_800861E4");
 
 void gSubmitRenderFrame(s32 arg0) __asm__("func_8001B4A8");
@@ -261,7 +261,7 @@ void gSubmitRenderFrame(s32 arg0)
         rect[3] = 0xF0;
 
         q = (u32)gDisplayListHead;
-        func_8009398C(q, rect);
+        gBuildDrawAreaPacket(q, rect);
 
         p = 0xFFFFFF;
         mask = q & p;
@@ -280,7 +280,7 @@ void gSubmitRenderFrame(s32 arg0)
 
         rect2[0] = limX;
         rect2[1] = h;
-        func_80093A0C(q, rect2);
+        gSetDrawOffsetPacket(q, rect2);
 
         xbase = *(u32 *)q;
         v = *(u32 *)(max + 4);
@@ -311,7 +311,7 @@ void gSubmitRenderFrame(s32 arg0)
             v = bv + q;
             av = *(u32 *)v;
             gLoadImage(bv + ptr, av);
-            func_80092C8C(0);
+            gDrawSync(0);
             gVramUploadSubmitIndex++;
             if (gVramUploadSubmitIndex >= 0x14) {
                 gVramUploadSubmitIndex = 0;
@@ -321,7 +321,7 @@ void gSubmitRenderFrame(s32 arg0)
 
     if (gSingleShotQueue[0] != 0) {
         gLoadImage((u32)gSingleShotQueue + 8, gSingleShotQueue[0]);
-        func_80092C8C(0);
+        gDrawSync(0);
         if (gSingleShotQueue[1] != 0) {
             func_80029650(gSingleShotQueue[1]);
         }
@@ -348,7 +348,7 @@ void gSubmitRenderFrame(s32 arg0)
                 xbase = (u32)gUploadRing + gMdecUploadSubmitIndex * 20;
                 gDecodeMdecFrameToVram(*(u32 *)xbase, *(u8 *)(xbase + 8),
                               *(u32 *)(xbase + 0xC), *(u32 *)(xbase + 0x10));
-                func_80092C8C(0);
+                gDrawSync(0);
                 gMdecUploadSubmitIndex++;
                 if (gMdecUploadSubmitIndex >= 4) {
                     gMdecUploadSubmitIndex = 0;
@@ -358,8 +358,8 @@ void gSubmitRenderFrame(s32 arg0)
     }
 
     max = count + 1;
-    func_80092C8C(0);
-    func_80093280(table + (max << 2));
+    gDrawSync(0);
+    gDrawOTag(table + (max << 2));
 
     if (({ arg9 = arg0; __asm__ volatile("" : "+r"(arg9)); arg9 != 0; })) {
         gFrameBarrier = 1;

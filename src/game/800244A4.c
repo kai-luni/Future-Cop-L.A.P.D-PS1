@@ -17,8 +17,8 @@ extern void gStartAudioStreamChannels(void) __asm__("func_800228F4");
 extern void gShutdownVagmAudioStream(s32 arg0) __asm__("func_80024630");
 extern s32 gReplaceVagmAudioStreamBuffer(s32 arg0) __asm__("func_800246A8");
 extern void gQueueStreamAssetRelease(s32 arg0, s32 arg1) __asm__("func_8002A31C");
-extern s32 func_800451E0(void);
-extern s32 func_80045288(void);
+extern s32 gGetStereoSoundMode(void) __asm__("func_800451E0");
+extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
 
 s32 gInitializeVagmAudioStream(void) __asm__("func_800244A4");
 
@@ -74,12 +74,12 @@ s32 gInitializeVagmAudioStream(void)
                     gShutdownVagmAudioStream(0);
                     return 0;
                 }
-                if (func_800451E0() != 0) {
-                    gStoreStreamChannelMix(0, func_80045288(), 0);
-                    gStoreStreamChannelMix(1, func_80045288(), 0x7F);
+                if (gGetStereoSoundMode() != 0) {
+                    gStoreStreamChannelMix(0, gGetVagmVolumeSetting(), 0);
+                    gStoreStreamChannelMix(1, gGetVagmVolumeSetting(), 0x7F);
                 } else {
-                    gStoreStreamChannelMix(0, func_80045288(), 0x40);
-                    gStoreStreamChannelMix(1, func_80045288(), 0x40);
+                    gStoreStreamChannelMix(0, gGetVagmVolumeSetting(), 0x40);
+                    gStoreStreamChannelMix(1, gGetVagmVolumeSetting(), 0x40);
                 }
                 gStartAudioStreamChannels();
             }

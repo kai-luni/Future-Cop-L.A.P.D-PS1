@@ -8,8 +8,8 @@ extern u16 gMaxDrawWidth __asm__("D_8009DDF4");
 extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 gGpuPacketArrayAlt[] __asm__("D_800A62A8");
 extern u32 gGpuPacketArray[] __asm__("D_800A6280");
-extern u32 func_800949E8(u32);
-extern void func_800949A0(u32);
+extern u32 gReadGpuInfo(u32) __asm__("func_800949E8");
+extern void gStartGpuLinkedListDma(u32) __asm__("func_800949A0");
 s32 gSubmitGpuRectangleFill(u16 *arg0, u32 arg1) __asm__("func_8009423C");
 
 
@@ -67,9 +67,9 @@ s32 gSubmitGpuRectangleFill(u16 *arg0, u32 arg1)
         xy = *(u32 *)&rect[2];
         q[0] = tag;
         p[8] = xy;
-        q[1] = 0xe3000000 | func_800949E8(3);
-        q[2] = 0xe4000000 | func_800949E8(4);
-        q[3] = 0xe5000000 | func_800949E8(5);
+        q[1] = 0xe3000000 | gReadGpuInfo(3);
+        q[2] = 0xe4000000 | gReadGpuInfo(4);
+        q[3] = 0xe5000000 | gReadGpuInfo(5);
     } else {
         register u32 value __asm__("$2") = 0x05ffffff;
         register u32 mask __asm__("$3") = 0x00ffffff;
@@ -100,7 +100,7 @@ s32 gSubmitGpuRectangleFill(u16 *arg0, u32 arg1)
         p[4] = *(u32 *)&rect[0];
         p[5] = *(u32 *)&rect[2];
     }
-    func_800949A0((u32)gGpuPacketArray);
+    gStartGpuLinkedListDma((u32)gGpuPacketArray);
     result = 0;
     __asm__ volatile ("" : "+r"(result));
     return result;

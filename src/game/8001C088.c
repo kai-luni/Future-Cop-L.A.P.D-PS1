@@ -14,7 +14,7 @@ extern s8 gSelectedLayer __asm__("D_8009F224");
 extern u8 gLayerIndex __asm__("D_8009F225");
 extern struct Unk1C040 gLayerBlocks[] __asm__("D_800A06E0");
 
-extern void func_800932F0(struct Unk1C040 *entry);
+extern void gPutDrawEnv(struct Unk1C040 *entry) __asm__("func_800932F0");
 void gSelectFadeLayer(u8 mode, u8 enable) __asm__("func_8001C088");
 
 
@@ -60,5 +60,5 @@ void gSelectFadeLayer(u8 mode, u8 enable)
             gLayerBlocks[i].enabled = 0;
         }
     }
-    func_800932F0(&gLayerBlocks[gSelectedLayer]);
+    gPutDrawEnv(&gLayerBlocks[gSelectedLayer]);
 }

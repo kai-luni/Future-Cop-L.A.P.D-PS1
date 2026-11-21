@@ -38,7 +38,7 @@ extern void func_80017C68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 extern void gAllocDecodeBuffers(void) __asm__("func_800860CC");
 extern void func_8008CCB0(void *a0, s32 a1);
 extern void func_80019D60(void);
-extern void func_8006A880(void);
+extern void gClearDescriptorRegistry(void) __asm__("func_8006A880");
 extern void func_80019A64(void);
 extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
 extern void gInitDemoCameraStates(void) __asm__("func_80056924");
@@ -54,20 +54,20 @@ extern void gInitScriptTimers(void) __asm__("func_80049400");
 extern void gAllocSpawnRegistry(void) __asm__("func_80060E28");
 extern void gResetPlacementSlotCount(void) __asm__("func_8005130C");
 extern void func_80013A14(void);
-extern s32 func_80063428(void);
+extern s32 gInitMapTables(void) __asm__("func_80063428");
 extern void func_80012E1C(s32 arg0);
-extern void func_800617D8(void);
+extern void gInitCellEntityWorkBuffers(void) __asm__("func_800617D8");
 extern void gResetHudTextState(void) __asm__("func_8004783C");
 extern void gLoadDemoRecording(s32 a0, s32 a1, s32 a2) __asm__("func_80059BFC");
 extern void gInitModuleStream(void *a0) __asm__("func_80029F50");
 extern void gInitMissionBootStub(void) __asm__("func_8005A738");
 extern void gInitMapLighting(void) __asm__("func_80049690");
 extern void gInitTextureDescriptorTable(void) __asm__("func_8005A2B0");
-extern void func_8008347C(void);
+extern void gInitSceneNodeAndVoicePools(void) __asm__("func_8008347C");
 extern void gInitMapZoneList(void) __asm__("func_80031984");
 extern void gInitDebrisFragmentPool(void) __asm__("func_8004AB4C");
 extern void gInitMissionSpawnState(s32 a0) __asm__("func_8003F79C");
-extern void func_800734B0(void);
+extern void gClearBeamNodeList(void) __asm__("func_800734B0");
 
 void gInitializeMissionModule(s32 arg0) __asm__("func_80024A24");
 
@@ -174,7 +174,7 @@ call_init:
     }
 
     func_80019D60();
-    func_8006A880();
+    gClearDescriptorRegistry();
     func_80019A64();
 
     seed = gGlobalTick;
@@ -202,8 +202,8 @@ call_init:
     gAllocSpawnRegistry();
     gResetPlacementSlotCount();
     func_80013A14();
-    func_80012E1C(func_80063428());
-    func_800617D8();
+    func_80012E1C(gInitMapTables());
+    gInitCellEntityWorkBuffers();
     gResetHudTextState();
 
     if (gDemoPlayback != 0) {
@@ -217,9 +217,9 @@ call_init:
     gInitMissionBootStub();
     gInitMapLighting();
     gInitTextureDescriptorTable();
-    func_8008347C();
+    gInitSceneNodeAndVoicePools();
     gInitMapZoneList();
     gInitDebrisFragmentPool();
     gInitMissionSpawnState(arg0);
-    func_800734B0();
+    gClearBeamNodeList();
 }

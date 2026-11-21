@@ -6,7 +6,7 @@ extern u8 gSoundIdTable[] __asm__("D_800A1880");
 extern u8 gSoundBankTableHigh[] __asm__("D_800A18D0");
 extern u8 gRegisteredSoundBankCount __asm__("D_8009F75C");
 
-extern void func_80045504(s32 index);
+extern void gResetSoundEntry(s32 index) __asm__("func_80045504");
 void gResetSoundBankTables(void) __asm__("func_80044EF8");
 
 
@@ -48,6 +48,6 @@ void gResetSoundBankTables(void)
     }
     gRegisteredSoundBankCount = 0;
     for (i = 0; i < 0x6E; i++) {
-        func_80045504(i);
+        gResetSoundEntry(i);
     }
 }

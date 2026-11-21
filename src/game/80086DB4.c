@@ -21,10 +21,10 @@ typedef struct {
 extern volatile Unk80086DB4 *gMovieAudioState __asm__("D_8009F4D8");
 
 extern void *gPeekMovieAudioFirstBuffer(u32 index) __asm__("func_800869D8");
-extern void *func_80086A4C(u32 arg);
+extern void *gPeekMovieAudioSecondBuffer(u32 arg) __asm__("func_80086A4C");
 extern void gUploadMovieAudioBlock(u8 *arg0, u32 arg1, u32 arg2) __asm__("func_8008684C");
 extern void gServiceMovieAudioIrq(void) __asm__("func_80086AC0");
-extern u32 func_80098788(s32 on_off, u32 voice_bits);
+extern u32 gUpdateSpuVoiceNoiseMask(s32 on_off, u32 voice_bits) __asm__("func_80098788");
 extern void gSpuSetVoiceKey(s32 a, u32 b) __asm__("func_80098C68");
 
 /**
@@ -59,7 +59,7 @@ void gMovieAudioStart(void)
         for (i = 0; i < 3; i++) {
             buf = gPeekMovieAudioFirstBuffer(0x300);
             if (buf != 0) {
-                other = func_80086A4C(0x300);
+                other = gPeekMovieAudioSecondBuffer(0x300);
             } else {
                 buf = (u8 *)gMovieAudioState + 0x7810;
                 other = buf;
@@ -78,7 +78,7 @@ void gMovieAudioStart(void)
         gServiceMovieAudioIrq();
         gMovieAudioState->unk7B48 = 0;
     }
-    gMovieAudioState->unk7B6C = func_80098788(0, gMovieAudioState->unk7B64);
-    gMovieAudioState->unk7B70 = func_80098788(0, gMovieAudioState->unk7B68);
+    gMovieAudioState->unk7B6C = gUpdateSpuVoiceNoiseMask(0, gMovieAudioState->unk7B64);
+    gMovieAudioState->unk7B70 = gUpdateSpuVoiceNoiseMask(0, gMovieAudioState->unk7B68);
     gSpuSetVoiceKey(1, gMovieAudioState->unk7B64 | gMovieAudioState->unk7B68);
 }

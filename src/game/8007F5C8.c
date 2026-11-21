@@ -1,3 +1,5 @@
+int gQueryFrontEndVerticalRepeatMask(void) __asm__("func_8007F5C8");
+
 // Categories: Game Engine > Unclassified
 /**
  *  @brief Returns the constant 2.
@@ -16,7 +18,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-int func_8007F5C8(void)
+int gQueryFrontEndVerticalRepeatMask(void)
 {
     return 2;
 }

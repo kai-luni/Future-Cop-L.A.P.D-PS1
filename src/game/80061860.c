@@ -5,6 +5,8 @@ extern void *gCellMap __asm__("D_8009F820");
 extern void *gCellEntityList[2] __asm__("D_8009F818");
 extern void *D_8009F830;
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeCellMapAndWorkBuffers(void) __asm__("func_80061860");
+
 
 /**
  * @brief Frees the spatial visibility grid D_8009F820 and the render work buffers D_8009F818 and D_8009F830.
@@ -28,7 +30,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_80024D14 (0x80024DB0 in asm/us/main.s, global subsystem reset) / Likely: none / Unknown: none.
  */
-void func_80061860(void)
+void gFreeCellMapAndWorkBuffers(void)
 {
     s32 i;
 

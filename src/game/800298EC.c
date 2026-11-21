@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 gScreenState __asm__("D_8009FA00");
-extern s32 func_800452C8(void);
+extern s32 gGetVoiceVolume(void) __asm__("func_800452C8");
 
 typedef struct {
     s16 value;
@@ -50,7 +50,7 @@ void gAppendScriptEvent(s16 arg0) __asm__("func_800298EC");
 void gAppendScriptEvent(s16 arg0)
 {
     if (gScreenState < 5) {
-        if (func_800452C8() != 0) {
+        if (gGetVoiceVolume() != 0) {
             s16 pending = gRingBuffer.length;
             if (pending < 8) {
                 s32 slot = (gRingBuffer.baseIndex + pending) & 7;

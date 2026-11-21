@@ -3,6 +3,8 @@
 
 extern unsigned int gDmaCallbackTable[] __asm__("D_8009DD64");
 extern unsigned int *gDmaInterruptCtrlPtr __asm__("D_8009DD60");
+unsigned int gSetDmaChannelInterruptCallback(int arg0, unsigned int arg1) __asm__("func_80091E8C");
+
 
 /**
  *  @brief Updates an indexed value and its corresponding control bit.
@@ -23,7 +25,7 @@ extern unsigned int *gDmaInterruptCtrlPtr __asm__("D_8009DD60");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-unsigned int func_80091E8C(int arg0, unsigned int arg1)
+unsigned int gSetDmaChannelInterruptCallback(int arg0, unsigned int arg1)
 {
     register int index __asm__("$6") = arg0;
     register unsigned int value __asm__("$4");

@@ -6,10 +6,10 @@ extern u8 gStreamAudioFlag __asm__("D_8009F739");
 extern u8 gSoundProcessingEnabled __asm__("D_8009F340");
 
 extern void gSetStereoSoundMode(s32 value) __asm__("func_800451B4");
-extern void func_800451EC(s32 value);
+extern void gSetSoundSpatialMode(s32 value) __asm__("func_800451EC");
 extern void gSetSfxVolume(s32 value) __asm__("func_800451F8");
 extern void gSetVagmVolumeSetting(s32 value) __asm__("func_80045238");
-extern void func_80045294(s32 value);
+extern void gSetVoiceVolume(s32 value) __asm__("func_80045294");
 extern void gInitSoundPools(void) __asm__("func_800453B8");
 void gInitSoundState(void) __asm__("func_80044F8C");
 
@@ -44,10 +44,10 @@ void gInitSoundState(void) __asm__("func_80044F8C");
 void gInitSoundState(void)
 {
     gSetStereoSoundMode(1);
-    func_800451EC(0);
+    gSetSoundSpatialMode(0);
     gSetSfxVolume(0x40);
     gSetVagmVolumeSetting(0x40);
-    func_80045294(0x40);
+    gSetVoiceVolume(0x40);
     gInitSoundPools();
     gVolumeLevels[0] = -1;
     gStreamAudioFlag = 0;

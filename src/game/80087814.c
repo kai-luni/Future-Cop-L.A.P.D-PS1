@@ -1,3 +1,5 @@
+int gGetMovieSpuBufferSize(void) __asm__("func_80087814");
+
 // Categories: Game Engine > Unclassified
 /**
  *  @brief Returns the constant 0xC00.
@@ -16,7 +18,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-int func_80087814(void)
+int gGetMovieSpuBufferSize(void)
 {
     return 0xC00;
 }

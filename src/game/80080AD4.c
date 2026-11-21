@@ -3,6 +3,8 @@
 
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern void func_80080984(u8 *arg0, s32 arg1);
+void gApplySavedOptionsIfValid(void) __asm__("func_80080AD4");
+
 
 /**
  * @brief Restores audio volumes and controller presets from the movie/menu context when flagged.
@@ -27,7 +29,7 @@ extern void func_80080984(u8 *arg0, s32 arg1);
  * @par Callers
  * Confirmed: func_8007FB04 (0x8007FD0C, when D_8009F464 equals 2 in movie sub-state 1) / Likely: none / Unknown: none.
  */
-void func_80080AD4(void)
+void gApplySavedOptionsIfValid(void)
 {
     u8 *base = gSaveProfileImage;
 

@@ -1,5 +1,7 @@
 // Categories: Platform > Register Operations
 #include "game/types.h"
+void gPatchKernelMaskHalfword(void) __asm__("func_8008DC50");
+
 
 /**
  *  @brief Sets bits in a halfword addressed through a register-bound value.
@@ -23,7 +25,7 @@
  * 0xDF80 alongside func_8008DC7C by func_8008DDEC; not called directly from
  * C.
  */
-void func_8008DC50(void)
+void gPatchKernelMaskHalfword(void)
 {
     register u32 p __asm__("$3");
     register u32 mask __asm__("$2");

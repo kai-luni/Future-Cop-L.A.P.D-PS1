@@ -1,3 +1,5 @@
+int gGetFontBitsPerPixel(unsigned char *value) __asm__("func_800489EC");
+
 // Categories: Graphics > Text > Font Upload
 /**
  * @brief Maps a font format byte to its upload code.
@@ -20,7 +22,7 @@
  * @par Callers
  * func_80048A14.
  */
-int func_800489EC(unsigned char *value)
+int gGetFontBitsPerPixel(unsigned char *value)
 {
     int result = 4;
 

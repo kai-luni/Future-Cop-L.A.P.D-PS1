@@ -9,6 +9,8 @@ typedef struct Unk800899A4 {
 
 extern Unk800899A4 *gTextLookupTable __asm__("D_8009F518");
 extern void gFreeBlock(Unk800899A4 *arg0) __asm__("func_800181D4");
+void gLoadTextLookupTable(Unk800899A4 *arg0) __asm__("func_800899A4");
+
 
 /**
  * @brief Registers and validates the loaded binary-search text table resource.
@@ -34,7 +36,7 @@ extern void gFreeBlock(Unk800899A4 *arg0) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_80024EC8 (asset loader dispatch on tag 0x43747273 / "Ctrs").
  */
-void func_800899A4(Unk800899A4 *arg0)
+void gLoadTextLookupTable(Unk800899A4 *arg0)
 {
     s32 temp = arg0->unk1C;
     s32 flag = 0;

@@ -26,6 +26,8 @@
  * (func_800192AC, func_80019310, func_8001937C, func_800193F8) and the
  * map-cell drawers (func_80035B7C, func_80051C50, func_80053A74).
  */
+void gGteCrossProduct(void) __asm__("func_80010974");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80010974\n"

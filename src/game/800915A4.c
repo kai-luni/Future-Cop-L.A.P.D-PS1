@@ -5,6 +5,8 @@ struct CallbackTable {
 };
 
 extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
+void gResumeIrqSubsystem(void) __asm__("func_800915A4");
+
 
 /**
  *  @brief Invokes the callback at offset 0x18 in the current table.
@@ -28,7 +30,7 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  * is visible in the inspected units, so its target and purpose remain
  * unknown.
  */
-void func_800915A4(void)
+void gResumeIrqSubsystem(void)
 {
     gIrqCallbackTable->callback();
 }

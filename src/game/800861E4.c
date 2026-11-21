@@ -44,14 +44,14 @@ extern void gBuildMovieVlcTables(void *, void *, s32) __asm__("func_80089A88");
 extern void gMovieDecodeVlcStream(void *, void *) __asm__("func_80089BBC");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
-extern void *func_80092B94(void *);
-extern void func_80095E90(s32);
+extern void *gDrawSyncCallback(void *) __asm__("func_80092B94");
+extern void gDecDctReset(s32) __asm__("func_80095E90");
 extern void gMdecStartDecode(void *, s32) __asm__("func_80095FF4");
 extern void gStartMdecOutDma(void *, s32) __asm__("func_80096070");
 extern void *gMdecInSync(void *) __asm__("func_80096090");
 extern void *gMdecOutSync(void *) __asm__("func_800960CC");
 extern void *gMdecSetInCallback(void *) __asm__("func_80096108");
-extern void *func_8009612C(void *);
+extern void *gSetDecDctOutCallback(void *) __asm__("func_8009612C");
 s32 gDecodeMdecFrameToVram(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3) __asm__("func_800861E4");
 
 
@@ -136,7 +136,7 @@ s32 gDecodeMdecFrameToVram(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
     __asm__("" : "+r"(input), "+r"(zero));
     gMdecInSync(zero);
     gMdecOutSync(0);
-    func_80095E90(0);
+    gDecDctReset(0);
     __asm__("" : "+r"(buf2), "+r"(result));
     {
         register s32 flag __asm__("$4") = 0;
@@ -161,9 +161,9 @@ s32 gDecodeMdecFrameToVram(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
     gFillMemory(gMovieSliceContext, 0, 0x130);
     gDisableCpuInterrupts();
     gMovieSliceContext->field12C = 1;
-    gMovieSliceContext->callback120 = func_8009612C(gMovieStripDmaCallback);
+    gMovieSliceContext->callback120 = gSetDecDctOutCallback(gMovieStripDmaCallback);
     gMovieSliceContext->callback124 = gMdecSetInCallback(0);
-    gMovieSliceContext->callback128 = func_80092B94(0);
+    gMovieSliceContext->callback128 = gDrawSyncCallback(0);
     if (gStripScaleEnable == 1) gTransferPending = gStripScaleEnable;
     gEnableCpuInterrupts();
     if (gUploadInProgress) {
@@ -231,12 +231,12 @@ cleanup:
     gDisableCpuInterrupts();
     if (gStripScaleEnable == 1) gTransferPending = 0;
     if (gMovieSliceContext) {
-        func_8009612C(gMovieSliceContext->callback120);
+        gSetDecDctOutCallback(gMovieSliceContext->callback120);
         gMdecSetInCallback(gMovieSliceContext->callback124);
-        func_80092B94(gMovieSliceContext->callback128);
+        gDrawSyncCallback(gMovieSliceContext->callback128);
     }
     gEnableCpuInterrupts();
-    func_80095E90(1);
+    gDecDctReset(1);
     if (gUploadInProgress) {
         if (buf1) gFreeBlock(buf1);
         if (buf2) gFreeBlock(buf2);

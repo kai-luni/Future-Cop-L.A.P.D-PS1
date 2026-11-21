@@ -22,6 +22,8 @@ struct Unk8006C3E0Outer {
 };
 
 extern s32 gCheckTargetRangeAndCone(struct Unk8006C3E0Outer *arg0, struct Unk8006C3E0Other *arg1, s32 arg2, s32 arg3) __asm__("func_8004E5F0");
+void gUpdatePlayerTargetLock(struct Unk8006C3E0Outer *arg0, s32 arg1) __asm__("func_8006C3E0");
+
 
 /**
  * @brief Decrements weapon cooldown timers and validates the player's locked target.
@@ -48,7 +50,7 @@ extern s32 gCheckTargetRangeAndCone(struct Unk8006C3E0Outer *arg0, struct Unk800
  * @par Callers
  * Confirmed: func_800588D4 (0x80058BB8, player entity tick).
  */
-void func_8006C3E0(struct Unk8006C3E0Outer *arg0, s32 arg1)
+void gUpdatePlayerTargetLock(struct Unk8006C3E0Outer *arg0, s32 arg1)
 {
     struct Unk8006C3E0Inner *inner;
     struct Unk8006C3E0Other *other;

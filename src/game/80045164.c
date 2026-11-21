@@ -14,7 +14,7 @@ struct Unk45164Current {
 
 extern struct Unk45164Current gVolumeLevels __asm__("D_800A1800");
 
-extern u8 func_80045028(s32 id);
+extern u8 gIsTrackedSoundId(s32 id) __asm__("func_80045028");
 struct Unk45164Slot *gGetTrackedSoundSource(s32 id) __asm__("func_80045164");
 
 
@@ -43,7 +43,7 @@ struct Unk45164Slot *gGetTrackedSoundSource(s32 id)
     register struct Unk45164Slot *result __asm__("$2");
     struct Unk45164Current *current;
 
-    valid = func_80045028(id);
+    valid = gIsTrackedSoundId(id);
     result = 0;
     if (valid != 0) {
         current = &gVolumeLevels;

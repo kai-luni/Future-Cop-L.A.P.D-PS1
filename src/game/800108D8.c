@@ -25,6 +25,8 @@
  * has no caller in the US binary, so only the documented contract matters for
  * the port.
  */
+void gGteCrossProductPreserveRotation(void) __asm__("func_800108D8");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_800108D8\n"

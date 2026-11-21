@@ -6,7 +6,7 @@ extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
 extern void gResetBiosDevices(void) __asm__("func_800200F0");
 extern void gShutdownPadDriver(void) __asm__("func_8001E910");
 extern void gStopFrameCallback(void) __asm__("func_8001F158");
-extern void func_80091574(void);
+extern void gInvokeIrqCallback(void) __asm__("func_80091574");
 s32 gShutdownDeviceLayer(void) __asm__("func_8001E540");
 
 
@@ -41,6 +41,6 @@ s32 gShutdownDeviceLayer(void)
     if (gFrameCallbackEnabled != 0) {
         gStopFrameCallback();
     }
-    func_80091574();
+    gInvokeIrqCallback();
     return 0;
 }

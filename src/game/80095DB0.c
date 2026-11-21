@@ -9,6 +9,8 @@ extern void func_8008DBA0(void);
 asm(".set D_80095E5C, 0x80095E5C");
 asm(".set D_80095E74, 0x80095E74");
 asm(".set D_80095E8C, 0x80095E8C");
+void gPatchBiosC0Table(void) __asm__("func_80095DB0");
+
 
 /**
  * @brief Patches six words of the BIOS C0 table when they match a known
@@ -38,7 +40,7 @@ asm(".set D_80095E8C, 0x80095E8C");
  * @par Callers
  * func_80095878.
  */
-void func_80095DB0(void)
+void gPatchBiosC0Table(void)
 {
     __asm__ volatile(
         ".set\tnoreorder\n\t"

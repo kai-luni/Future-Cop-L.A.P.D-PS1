@@ -37,7 +37,7 @@ extern s32 gPendingSoundVoiceReleaseCount __asm__("D_8009F32C");
 extern u8 gVolumeLimitSelector __asm__("D_8009F738");
 
 extern void gResetSoundBankTables(void) __asm__("func_80044EF8");
-extern void func_8004582C(void);
+extern void gInitSoundChannelList(void) __asm__("func_8004582C");
 extern s32 gAllocReservedStreamVoice(void) __asm__("func_80046AD8");
 void gInitSoundPools(void) __asm__("func_800453B8");
 
@@ -86,7 +86,7 @@ void gInitSoundPools(void)
     }
     voice[-1].next = 0;
     gResetSoundBankTables();
-    func_8004582C();
+    gInitSoundChannelList();
     bank = gPlayerSlots;
     for (i = 0; i < 6; i++, bank++) {
         bank->unk00 = 0;

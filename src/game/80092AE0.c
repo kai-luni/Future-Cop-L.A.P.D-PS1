@@ -11,6 +11,8 @@ extern char gSetGraphQueueTraceFormat[] __asm__("D_80012A00");
 extern  void (*gLogPrintf)(char *, s32) __asm__("D_8009DDEC");
 extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
 extern void gSetDmaCallback(s32, s32) __asm__("func_800914E0");
+s32 gSetGraphQueue(s32 arg0) __asm__("func_80092AE0");
+
 
 /**
  *  @brief Updates a global byte state and returns its previous value.
@@ -32,7 +34,7 @@ extern void gSetDmaCallback(s32, s32) __asm__("func_800914E0");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-s32 func_80092AE0(s32 arg0)
+s32 gSetGraphQueue(s32 arg0)
 {
     register u8 *p __asm__("$17") = gGpuQueueMode;
     s32 old;

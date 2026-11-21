@@ -4,11 +4,11 @@
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gGameClock __asm__("D_8009FA60");
 extern void gDrawAlignedMultilineText(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
-extern s32 func_8004522C(void);
-extern s32 func_80045288(void);
-extern s32 func_800452C8(void);
+extern s32 gGetMusicVolume(void) __asm__("func_8004522C");
+extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
+extern s32 gGetVoiceVolume(void) __asm__("func_800452C8");
 extern void gDrawOptionsGaugeRow(s32, s32, s32, s32) __asm__("func_8007CE04");
-extern void func_80078B34(s32, s32, s32);
+extern void gQueueStatusLineText(s32, s32, s32) __asm__("func_80078B34");
 
 /**
  * @brief Draws the options screen: three labels, three volume gauges and the
@@ -43,16 +43,16 @@ void gDrawOptionsScreen(s32 arg0)
     gDrawAlignedMultilineText(0, 0xA0, 0x3C, 0x10, 0xFA0, 4, 8, 2);
     gDrawAlignedMultilineText(0, 0xA0, 0x70, 0x10, 0x1004, 4, 8, 2);
     gDrawAlignedMultilineText(0, 0xA0, 0x8D, 0x10, 0x1068, 4, 8, 2);
-    gDrawOptionsGaugeRow(0x14, 0x4B, func_8004522C(), 0x7F);
-    gDrawOptionsGaugeRow(0x14, 0x57, func_80045288(), 0x7F);
-    gDrawOptionsGaugeRow(0x14, 0x62, func_800452C8(), 0x7F);
+    gDrawOptionsGaugeRow(0x14, 0x4B, gGetMusicVolume(), 0x7F);
+    gDrawOptionsGaugeRow(0x14, 0x57, gGetVagmVolumeSetting(), 0x7F);
+    gDrawOptionsGaugeRow(0x14, 0x62, gGetVoiceVolume(), 0x7F);
     switch (*gFontBankTable) {
     case 1:
     case 2:
-    case 3: func_80078B34(0x10F4, 0, 0); break;
-    case 4: func_80078B34(0x10FE, 0, 0); break;
-    case 5: func_80078B34(0x10EA, 0, 0); break;
-    case 0: func_80078B34(0x10D6, 0, 0); break;
+    case 3: gQueueStatusLineText(0x10F4, 0, 0); break;
+    case 4: gQueueStatusLineText(0x10FE, 0, 0); break;
+    case 5: gQueueStatusLineText(0x10EA, 0, 0); break;
+    case 0: gQueueStatusLineText(0x10D6, 0, 0); break;
     }
-    func_80078B34(((gGameClock >> 9) & 1) ? 0x10CC : 0x44C, 1, 0);
+    gQueueStatusLineText(((gGameClock >> 9) & 1) ? 0x10CC : 0x44C, 1, 0);
 }

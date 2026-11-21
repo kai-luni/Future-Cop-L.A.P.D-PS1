@@ -17,12 +17,12 @@ extern s32 gVolatileBase __asm__("D_8009F27C");
 extern u8 gFlushSoundChannelsIfCvkActive[] __asm__("D_80023314");
 extern Unk800A0A00 gObjectSlots[8] __asm__("D_800A0A00");
 
-extern void func_80098708(s32 arg0);
+extern void gClaimSpuEntry(s32 arg0) __asm__("func_80098708");
 extern s32 gClearScreenModeHook(s32 callback) __asm__("func_8001F12C");
 extern void func_80021250(void);
 extern void func_80023BF8(void);
 extern void func_80021C80(void);
-extern void func_80044FEC(void);
+extern void gDisableSoundProcessing(void) __asm__("func_80044FEC");
 void gShutdownCvkSystem(void) __asm__("func_80023478");
 
 
@@ -58,18 +58,18 @@ void gShutdownCvkSystem(void)
 {
     if (gCvkSystemActive != 0) {
         if (gVolatileBase != 0) {
-            func_80098708(gVolatileBase);
+            gClaimSpuEntry(gVolatileBase);
             gVolatileBase = 0;
         }
         if (gSpuBufferPtr != 0) {
-            func_80098708(gSpuBufferPtr);
+            gClaimSpuEntry(gSpuBufferPtr);
             gSpuBufferPtr = 0;
         }
         gClearScreenModeHook((s32)gFlushSoundChannelsIfCvkActive);
         func_80021250();
         func_80023BF8();
         func_80021C80();
-        func_80044FEC();
+        gDisableSoundProcessing();
         gCvkSystemActive = 0;
     }
 }

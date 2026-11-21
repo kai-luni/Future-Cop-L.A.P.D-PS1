@@ -22,7 +22,7 @@ extern volatile s32 gGameClock __asm__("D_8009FA60");
 
 extern void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                           s32 alignX, s32 alignY, s32 font) __asm__("func_800788F0");
-extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
+extern void gQueueStatusLineText(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80078B34");
 
 /**
  * @brief Queues the front-end prompts of one player column: an
@@ -125,24 +125,24 @@ void gDrawMenuCommandsRow(s32 arg0)
             } else {
                 id = 0x6D6;
             }
-            func_80078B34(id, 0, b);
-            func_80078B34(0x6E0, 1, b);
+            gQueueStatusLineText(id, 0, b);
+            gQueueStatusLineText(0x6E0, 1, b);
         } else {
-            func_80078B34(0x6EA, 0, b);
-            func_80078B34(0x44C, 1, b);
+            gQueueStatusLineText(0x6EA, 0, b);
+            gQueueStatusLineText(0x44C, 1, b);
         }
         break;
     case 2:
-        func_80078B34(0x6B8, 0, b);
-        func_80078B34(0x44C, 1, b);
+        gQueueStatusLineText(0x6B8, 0, b);
+        gQueueStatusLineText(0x44C, 1, b);
         break;
     case 3:
-        func_80078B34(0x6AE, 0, b);
-        func_80078B34(0x44C, 1, b);
+        gQueueStatusLineText(0x6AE, 0, b);
+        gQueueStatusLineText(0x44C, 1, b);
         break;
     }
 
     if ((gGameClock >> 9) & 1) {
-        func_80078B34(0x10CC, 1, b);
+        gQueueStatusLineText(0x10CC, 1, b);
     }
 }

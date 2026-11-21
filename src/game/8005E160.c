@@ -17,7 +17,9 @@ extern void gDrawDomeEffectModel(void *effect) __asm__("func_8005DFF0");
  * @par Callers
  * func_8003F6E4 (scene traversal driver).
  */
-void func_8005E160(void)
+void gDrawDomeEffectSlots(void) __asm__("func_8005E160");
+
+void gDrawDomeEffectSlots(void)
 {
     s32 i;
 

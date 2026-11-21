@@ -5,6 +5,8 @@ extern int gRegistryLoad();
 extern int gRegistryFind();
 
 extern s32 gDescriptorRegistryCount __asm__("D_8009F848");
+void gClearDescriptorRegistry(void) __asm__("func_8006A880");
+
 
 /**
  * @brief Clears the 6-entry object/texture descriptor registry count D_8009F848 during mission boot.
@@ -28,7 +30,7 @@ extern s32 gDescriptorRegistryCount __asm__("D_8009F848");
  * @par Callers
  * Confirmed: func_80024A24 (0x80024B98 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-void func_8006A880(void)
+void gClearDescriptorRegistry(void)
 {
     gDescriptorRegistryCount = 0;
 }

@@ -52,11 +52,11 @@ extern u32 gApplyPlayerCheatCode(s32 arg0, s32 arg1) __asm__("func_80060A0C");
 extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
 extern void gSetStereoSoundMode(s32 enable) __asm__("func_800451B4");
 extern void gSetSfxVolume(s32 volume) __asm__("func_800451F8");
-extern s32 func_8004522C(void);
+extern s32 gGetMusicVolume(void) __asm__("func_8004522C");
 extern void gSetVagmVolumeSetting(s32 volume) __asm__("func_80045238");
-extern s32 func_80045288(void);
-extern void func_80045294(s32 volume);
-extern s32 func_800452C8(void);
+extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
+extern void gSetVoiceVolume(s32 volume) __asm__("func_80045294");
+extern s32 gGetVoiceVolume(void) __asm__("func_800452C8");
 extern void func_80025E18(s32 id, s32 value, s32 slot);
 extern void func_80025F58(void);
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
@@ -258,16 +258,16 @@ void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selec
             delta = (p2->phase == 3) ? 1 : -1;
             switch (code = items[selection]) {
             case 1:
-                gSetSfxVolume(func_8004522C() + delta);
-                func_80025E18(gPanelSoundIds, func_8004522C(), slotArg);
+                gSetSfxVolume(gGetMusicVolume() + delta);
+                func_80025E18(gPanelSoundIds, gGetMusicVolume(), slotArg);
                 break;
             case 2:
-                gSetVagmVolumeSetting(func_80045288() + delta);
-                func_80025E18(0x2F, func_80045288(), slotArg);
+                gSetVagmVolumeSetting(gGetVagmVolumeSetting() + delta);
+                func_80025E18(0x2F, gGetVagmVolumeSetting(), slotArg);
                 break;
             case 3:
-                func_80045294(func_800452C8() + delta);
-                func_80025E18(0x30, func_800452C8(), slotArg);
+                gSetVoiceVolume(gGetVoiceVolume() + delta);
+                func_80025E18(0x30, gGetVoiceVolume(), slotArg);
                 break;
             default:
                 break;

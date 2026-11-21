@@ -79,7 +79,7 @@ extern s32 gEntityBaseHandler(s32 message, struct Unk2D664Obj *object, void *dat
 extern void gInitObjectFromDef(struct Unk2D664Obj *obj, void *data, s32 arg2) __asm__("func_8002C584");
 extern s32 gUpdatePropTick(struct Unk2D664Obj *obj, void *data) __asm__("func_8002CC30");
 extern void gTryCaptureObjective(struct Unk2D664Obj *obj, void *data) __asm__("func_8002D1A0");
-extern void func_80063194(s32 key);
+extern void gRemoveGroundKeyEntry(s32 key) __asm__("func_80063194");
 extern struct Unk2D664Entity *gFindUnitById(s32 id) __asm__("func_8004D664");
 s32 gHandleLinkedPropEntity(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3) __asm__("func_8002D664");
 
@@ -168,7 +168,7 @@ s32 gHandleLinkedPropEntity(s32 message, struct Unk2D664Obj *obj, void *arg2, s3
         break;
     case 5:
         if (obj->unkDF & 0x20) {
-            func_80063194(obj);
+            gRemoveGroundKeyEntry(obj);
         }
         if (obj->unk16 == 0x24 && obj->unkFE != 0 && !(obj->flags & 0x4000000)) {
             kind = (obj->unkFE == 1) ? obj->unkF7 : obj->unkF6;

@@ -7,6 +7,8 @@ struct State {
     unsigned char padding8[28];
     unsigned int field24;
 };
+void gInitGouraudFourPointPolylinePacket(struct State *state) __asm__("func_80092614");
+
 
 /**
  *  @brief Initializes three fields of a state structure to fixed values.
@@ -25,7 +27,7 @@ struct State {
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80092614(struct State *state)
+void gInitGouraudFourPointPolylinePacket(struct State *state)
 {
     state->field3 = 9;
     state->field7 = 0x5c;

@@ -3,6 +3,8 @@
 
 extern void func_8008D6D0(s32);
 extern void func_8008D670(s32, s32, s32);
+void gApplyBiosStateValue(s32 arg0) __asm__("func_8008D690");
+
 
 /**
  *  @brief Calls two helpers in sequence for the supplied value.
@@ -27,7 +29,7 @@ extern void func_8008D670(s32, s32, s32);
  * as a default state transition. Hands off to BIOS vector B0:50 via
  * func_8008D6D0 and BIOS vector B0:4E via func_8008D670.
  */
-void func_8008D690(s32 arg0) {
+void gApplyBiosStateValue(s32 arg0) {
     func_8008D6D0(arg0);
     func_8008D670(arg0, 0x3F, 0);
 }

@@ -17,9 +17,9 @@ extern u8 gResultsDecimalFormat[] __asm__("D_8009F2FC");
 extern u8 gTimeMmSsFormat[] __asm__("D_80010DCC");
 
 extern s32 gGetPlayerResultsStat(void *player, s32 arg1) __asm__("func_80059E9C");
-extern s32 func_80049340(u8 *text);
+extern s32 gMeasureTextWidthPx(u8 *text) __asm__("func_80049340");
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
-extern void func_8008CD30(u8 *dest, u8 *fmt, ...);
+extern void gSpillVarargsArguments(u8 *dest, u8 *fmt, ...) __asm__("func_8008CD30");
 
 void gDrawResultsTextBlock(void *player, u8 *text, s32 x, s32 color) __asm__("func_80027F80");
 
@@ -86,15 +86,15 @@ void gDrawResultsTextBlock(void *player, u8 *text, s32 x, s32 color)
                 if (c >= 0xF) {
                     t += 0x96;
                     t /= 300;
-                    func_8008CD30(buf, gTimeMmSsFormat, t / 60, t % 60);
+                    gSpillVarargsArguments(buf, gTimeMmSsFormat, t / 60, t % 60);
                 } else {
-                    func_8008CD30(buf, gResultsDecimalFormat, t);
+                    gSpillVarargsArguments(buf, gResultsDecimalFormat, t);
                 }
                 str = buf;
             } else {
                 str = gResultsTextTable->text[c];
             }
-            v = func_80049340(str);
+            v = gMeasureTextWidthPx(str);
             if (v < 0) {
                 v += 3;
             }

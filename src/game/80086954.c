@@ -11,6 +11,8 @@ typedef struct {
 } State;
 extern State *gMovieAudioState __asm__("D_8009F4D8");
 extern void gUploadMovieAudioBlock(u8 *, u32, u32) __asm__("func_8008684C");
+void gStepMovieAudioSecondChannelTransfer(s32 arg0, State *arg1) __asm__("func_80086954");
+
 
 /**
  *  @brief Advances a two-stage operation in a state structure.
@@ -30,7 +32,7 @@ extern void gUploadMovieAudioBlock(u8 *, u32, u32) __asm__("func_8008684C");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80086954(s32 arg0, State *arg1)
+void gStepMovieAudioSecondChannelTransfer(s32 arg0, State *arg1)
 {
     if (arg1->unk7B48 == 1) {
         gUploadMovieAudioBlock(arg1->unk7B50, arg1->unk7B54, 1);

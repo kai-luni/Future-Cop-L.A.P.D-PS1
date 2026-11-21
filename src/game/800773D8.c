@@ -25,9 +25,9 @@ extern void gClearImage(void *, int, int, int) __asm__("func_80092E10");
 extern void *gSetDefDrawEnv(void *, int, int, int, int) __asm__("func_80092140");
 extern void *gSetDefDispEnv(void *, int, int, int, int) __asm__("func_800921F4");
 extern void gPutDispEnvCached(void *) __asm__("func_800934BC");
-extern void func_800932F0(void *);
-extern void func_80092BF4(int);
-extern void func_80077278(int, int, unsigned int);
+extern void gPutDrawEnv(void *) __asm__("func_800932F0");
+extern void gSetDispMask(int) __asm__("func_80092BF4");
+extern void gDrawDebugHexWord(int, int, unsigned int) __asm__("func_80077278");
 __attribute__((noreturn)) void gDrawExceptionScreenAndHalt(void) __asm__("func_800773D8");
 
 
@@ -75,18 +75,18 @@ __attribute__((noreturn)) void gDrawExceptionScreenAndHalt(void)
     gSetDefDrawEnv(disp, 0, 0, 0x140, 0xF0);
     gSetDefDispEnv(st, 0, 0, 0x140, 0xF0);
     gPutDispEnvCached(st);
-    func_800932F0(disp);
-    func_80092BF4(1);
+    gPutDrawEnv(disp);
+    gSetDispMask(1);
 
     for (j = 0; j < 4; j++) {
         for (i = 0; i < 8; i++) {
-            func_80077278(j * 0x40 + 0x10, i * 0x10 + 0x10, D_800A6E58[j * 8 + i]);
+            gDrawDebugHexWord(j * 0x40 + 0x10, i * 0x10 + 0x10, D_800A6E58[j * 8 + i]);
         }
     }
 
     for (j = 0; j < 2; j++) {
         for (i = 0; i < 4; i++) {
-            func_80077278(i * 0x40 + 0x10, j * 0x10 + 0xA0, gExceptionFrame[j * 4 + i]);
+            gDrawDebugHexWord(i * 0x40 + 0x10, j * 0x10 + 0xA0, gExceptionFrame[j * 4 + i]);
         }
     }
 

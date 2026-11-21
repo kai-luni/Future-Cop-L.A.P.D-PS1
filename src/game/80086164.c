@@ -7,6 +7,8 @@ extern void *gWorkAreaBlock __asm__("D_8009F950");
 extern void *gPreallocatedMovieMdecInputBuffer __asm__("D_8009F954");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeMovieBuffers(void) __asm__("func_80086164");
+
 
 /**
  *  @brief Processes up to four stored block pointers and clears them.
@@ -24,7 +26,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  *  @par Callers
  *  Confirmed: func_80024D14.
  */
-void func_80086164(void)
+void gFreeMovieBuffers(void)
 {
     if (gPreallocatedMovieVlcTableA) {
         gFreeBlock(gPreallocatedMovieVlcTableA);

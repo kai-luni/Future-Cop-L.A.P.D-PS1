@@ -3,7 +3,7 @@
 
 extern u8 gPauseFlag __asm__("D_8009F3E8");
 
-extern void func_8007F5D0(void);
+extern void gOpenPauseOrConfirmMenu(void) __asm__("func_8007F5D0");
 
 /**
  *  @brief Sets a flag and invokes a helper when the input equals 3.
@@ -28,6 +28,6 @@ void gRequestPauseMenu(s32 a0)
 {
     if (a0 == 3) {
         gPauseFlag = 1;
-        func_8007F5D0();
+        gOpenPauseOrConfirmMenu();
     }
 }

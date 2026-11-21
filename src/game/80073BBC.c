@@ -17,8 +17,8 @@ extern s32 gGuardEffectPoolMessage(s32, struct Obj *, void *, s32) __asm__("func
 extern s32 gHandleObjectEventMessages(s32, struct Obj *, void *, s32) __asm__("func_8003C980");
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
-extern void func_80070710(void *);
-extern void func_80073BA8(void *);
+extern void gFreeBeamEndpointBlock(void *) __asm__("func_80070710");
+extern void gSetObjectFlag1000(void *) __asm__("func_80073BA8");
 extern void *gAllocPositionNode(void *, s32, s32, s32) __asm__("func_80073500");
 extern void *gAllocAttachedEffectNode(void *, void *, s32, s32, s32, s32) __asm__("func_80073590");
 extern void *gCreateRibbonBeam(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_8007377C");
@@ -153,7 +153,7 @@ s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3)
             if (a) {
             free_it:
                 __asm__("" : "+r"(free_arg));
-                func_80070710(free_arg);
+                gFreeBeamEndpointBlock(free_arg);
             }
         failed:
             obj->effect = 0;
@@ -161,7 +161,7 @@ s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3)
         }
         free_arg = (void *)b;
         if (!a) goto free_it;
-        if (obj->effect) func_80073BA8(obj->effect);
+        if (obj->effect) gSetObjectFlag1000(obj->effect);
         effect = gCreateRibbonBeam((void *)b, (void *)a, def->p36, def->p38, def->p3b, def->p3c,
                                 def->p3d, def->p3e, def->p40, def->p42,
                                 def->p44, 0, def->event, effectflags);
@@ -173,7 +173,7 @@ s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3)
         *copy = *obj;
         return (s32)copy;
     case 10:
-        if (obj->effect) func_80073BA8(obj->effect);
+        if (obj->effect) gSetObjectFlag1000(obj->effect);
         gFreeBlock(obj);
         return 0;
     case 7:

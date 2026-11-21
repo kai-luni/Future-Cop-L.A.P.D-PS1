@@ -3,6 +3,8 @@
 
 extern s32 gBuildDrawAreaCommands(s16 arg0, s16 arg1) __asm__("func_80093F78");
 extern s32 gPackDrawAreaBottomRight(s16 arg0, s16 arg1) __asm__("func_80094010");
+void gBuildDrawAreaPacket(u8 *obj, u8 *rect) __asm__("func_8009398C");
+
 
 /**
  * @brief Builds a "drawing area" primitive (GP0 0xE4) for a rectangle.
@@ -21,7 +23,7 @@ extern s32 gPackDrawAreaBottomRight(s16 arg0, s16 arg1) __asm__("func_80094010")
  * func_8001B4A8, once per frame when D_8009FA0C >= 2 or a full-screen frame is
  * requested - it sets the clip area before the list is submitted.
  */
-void func_8009398C(u8 *obj, u8 *rect)
+void gBuildDrawAreaPacket(u8 *obj, u8 *rect)
 {
     *(u8 *)(obj + 3) = 2;
     *(s32 *)(obj + 4) = gBuildDrawAreaCommands(*(s16 *)(rect + 0), *(s16 *)(rect + 2));

@@ -3,6 +3,8 @@
 
 extern void gResetIrqDispatch(void) __asm__("func_80091480");
 extern void gResetMdecHardware(s32 option) __asm__("func_80096150");
+void gDecDctReset(s32 option) __asm__("func_80095E90");
+
 
 /**
  * @brief Runs the display option: dispatches the callback only for option 0.
@@ -15,7 +17,7 @@ extern void gResetMdecHardware(s32 option) __asm__("func_80096150");
  * The second call is the option-agnostic handler, the first only the special
  * case 0.
  */
-void func_80095E90(s32 option)
+void gDecDctReset(s32 option)
 {
     if (option == 0) {
         gResetIrqDispatch();

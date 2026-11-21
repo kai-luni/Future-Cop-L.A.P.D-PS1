@@ -18,6 +18,8 @@
  * func_800102A0 is the variant with clip bytes, func_80010630 the one without
  * depths.
  */
+void gGteProjectVertexBatchDepth(void) __asm__("func_8001054C");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_8001054C\n"

@@ -7,6 +7,8 @@ extern s32 gSpuAddrShift __asm__("D_8009EECC");
 
 extern void gSpuWriteMemBlock(s32 arg0, s32 arg1) __asm__("func_80097138");
 extern void gSpuTransfer(s32 arg0, ...) __asm__("func_8009745C");
+s32 gSpuWriteTransferBlock(s32 arg0, s32 arg1) __asm__("func_800976DC");
+
 
 /**
  *  @brief Dispatches two arguments through the selected global path.
@@ -28,7 +30,7 @@ extern void gSpuTransfer(s32 arg0, ...) __asm__("func_8009745C");
  *  @par Callers
  *  Confirmed: func_80098E88.
  */
-s32 func_800976DC(s32 arg0, s32 arg1)
+s32 gSpuWriteTransferBlock(s32 arg0, s32 arg1)
 {
     if (gOpOrderFlag == 0) {
         gSpuTransfer(2, gSpuTransferAddr << gSpuAddrShift);

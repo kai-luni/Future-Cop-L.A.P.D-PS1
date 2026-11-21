@@ -26,15 +26,15 @@ extern Params88120 gFileTable __asm__("D_800A6E20");
 
 extern s32 gOpenFileInSearchGroup(s32 arg0, s32 arg1) __asm__("func_8001D5E4");
 extern void gCloseFileSlot(s32 handle) __asm__("func_8001D3A8");
-extern void func_80092BF4(s32 arg0);
+extern void gSetDispMask(s32 arg0) __asm__("func_80092BF4");
 extern u8 gGetSelectedLayer(void) __asm__("func_8001C034");
-extern void *func_8008799C(s32 size);
+extern void *gAllocMovieBuffer(s32 size) __asm__("func_8008799C");
 extern void gMovieFreeDecodeBuffer(void *ptr) __asm__("func_800879BC");
-extern void func_80092C8C(s32 arg0);
+extern void gDrawSync(s32 arg0) __asm__("func_80092C8C");
 extern void gStoreImage(Rect88120 *rect, void *buf) __asm__("func_80092F98");
 extern void gLoadImage(Rect88120 *rect, void *buf) __asm__("func_80092F38");
 extern void gMoveImage(Rect88120 *rect, s32 x, s32 y) __asm__("func_80092FF8");
-extern void func_800858F4(s32 value);
+extern void gSetMovieSlicePage(s32 value) __asm__("func_800858F4");
 extern void gSetMoviePresentFlag(s32 value) __asm__("func_80085900");
 extern void gVSyncWait(s32 arg0) __asm__("func_80091270");
 extern void gMoviePresentFrame(void) __asm__("func_80085914");
@@ -47,7 +47,7 @@ extern s32 gMovieStreamDemux(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800879D
 extern s32 gMovieAudioBusyCount(void) __asm__("func_80086FA8");
 extern void gShutdownMovieAudio(void) __asm__("func_80087750");
 extern void gMovieStreamReaderClose(void) __asm__("func_80089874");
-extern s32 func_800858E0(void);
+extern s32 gGetMovieActiveBufferIndex(void) __asm__("func_800858E0");
 extern void gSelectFadeLayer(u8 mode, u8 enable) __asm__("func_8001C088");
 extern s32 func_8001BFE4(void);
 
@@ -148,7 +148,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
     }
     handle = gOpenFileInSearchGroup(arg0, gFileSearchGroup);
     if (handle < 0) {
-        func_80092BF4(1);
+        gSetDispMask(1);
         return 0;
     }
     params = gFileTable;
@@ -169,19 +169,19 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             rectA.y = 0;
             rectB.y = 0x100;
         }
-        buf16 = func_8008799C(0x280);
+        buf16 = gAllocMovieBuffer(0x280);
         if (buf16 == 0) {
             return 0;
         }
-        buf8 = func_8008799C(0x3C0);
+        buf8 = gAllocMovieBuffer(0x3C0);
         if (buf8 == 0) {
             gMovieFreeDecodeBuffer(buf16);
             return 0;
         }
         for (row = 0; row < 0x100; row++) {
-            func_80092C8C(0);
+            gDrawSync(0);
             gStoreImage(&rectA, buf16);
-            func_80092C8C(0);
+            gDrawSync(0);
             x = 0;
             above = row < 0x31;
             inside = row < 0xC1;
@@ -204,10 +204,10 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             rectA.y++;
             rectB.y++;
         }
-        func_80092C8C(0);
+        gDrawSync(0);
         gMovieFreeDecodeBuffer(buf8);
         gMovieFreeDecodeBuffer(buf16);
-        func_800858F4(page);
+        gSetMovieSlicePage(page);
         gSetMoviePresentFlag(1);
         gVSyncWait(0);
         gMoviePresentFrame();
@@ -221,9 +221,9 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             rectA.y = 0x100;
             rectB.y = 0;
         }
-        func_80092C8C(0);
+        gDrawSync(0);
         gMoveImage(&rectA, 0, rectB.y);
-        func_80092C8C(0);
+        gDrawSync(0);
     }
 
     gResetMovieFrameBuffers(0, 1);
@@ -249,7 +249,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         rectD.x = 0;
         rectD.w = 0x140;
         rectD.h = 1;
-        mode = func_800858E0();
+        mode = gGetMovieActiveBufferIndex();
         if (mode == 0) {
             rectC.y = 0x100;
             rectD.y = 0;
@@ -257,19 +257,19 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             rectC.y = 0;
             rectD.y = 0x100;
         }
-        in8 = func_8008799C(0x3C0);
+        in8 = gAllocMovieBuffer(0x3C0);
         if (in8 == 0) {
             return 0;
         }
-        out16 = func_8008799C(0x280);
+        out16 = gAllocMovieBuffer(0x280);
         if (out16 == 0) {
             gMovieFreeDecodeBuffer(in8);
             return 0;
         }
         for (line = 0; line < 0x100; line++) {
-            func_80092C8C(0);
+            gDrawSync(0);
             gStoreImage(&rectC, in8);
-            func_80092C8C(0);
+            gDrawSync(0);
             col = 0;
             dst16 = out16;
             src8 = in8;
@@ -283,7 +283,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             rectC.y++;
             rectD.y++;
         }
-        func_80092C8C(0);
+        gDrawSync(0);
         gMovieFreeDecodeBuffer(out16);
         gMovieFreeDecodeBuffer(in8);
         gSelectFadeLayer(mode, 0);
@@ -299,9 +299,9 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
             rectC.y = 0x100;
             rectD.y = 0;
         }
-        func_80092C8C(0);
+        gDrawSync(0);
         gMoveImage(&rectC, 0, rectD.y);
-        func_80092C8C(0);
+        gDrawSync(0);
         gVSyncWait(0);
         gSelectFadeLayer(1 - mode, 0);
         gVSyncWait(0);

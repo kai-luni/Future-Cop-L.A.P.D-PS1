@@ -3,13 +3,13 @@
 
 extern void gReleaseActiveFrontEndResources(void) __asm__("func_8007852C");
 extern void gResetModuleStreamLoader(void) __asm__("func_80029EB8");
-extern void func_80069D58(void);
+extern void gDisableScriptVm(void) __asm__("func_80069D58");
 extern void func_8001B448(void);
 extern void gFreeAllFontGlyphs(void) __asm__("func_80047868");
 extern void gReleaseAllResources(void) __asm__("func_80019BA4");
 extern void func_80023BF8(void);
 extern void gFreeReciprocalTable(void) __asm__("func_800198DC");
-extern void func_80069D04(void);
+extern void gResetEffectPoolsStub(void) __asm__("func_80069D04");
 extern void func_80017D20(void);
 
 /**
@@ -40,12 +40,12 @@ void gUnloadFrontEndSubsystems(void)
 {
     gReleaseActiveFrontEndResources();
     gResetModuleStreamLoader();
-    func_80069D58();
+    gDisableScriptVm();
     func_8001B448();
     gFreeAllFontGlyphs();
     gReleaseAllResources();
     func_80023BF8();
     gFreeReciprocalTable();
-    func_80069D04();
+    gResetEffectPoolsStub();
     func_80017D20();
 }

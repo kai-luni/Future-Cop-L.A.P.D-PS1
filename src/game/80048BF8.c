@@ -42,7 +42,7 @@ extern u16 gTexBankVramY __asm__("D_8009F76A");
 extern u16 gLoadedFont __asm__("D_8009F768");
 
 extern void gLoadImage(Rect *rect, void *data) __asm__("func_80092F38");
-extern void func_80092C8C(s32 arg0);
+extern void gDrawSync(s32 arg0) __asm__("func_80092C8C");
 void gLoadFontAsset(s32 arg0) __asm__("func_80048BF8");
 
 
@@ -100,7 +100,7 @@ void gLoadFontAsset(s32 arg0)
             rect[0].w = info->f04 / 4;
             rect[0].h = info->f06;
             gLoadImage(&rect[0], data);
-            func_80092C8C(0);
+            gDrawSync(0);
 
             gTexpageTable[arg0] = (((gPaletteTable[arg0] + 0x100) & 0x100) >> 4) | 0xE | (((gPaletteTable[arg0] + 0x100) & 0x200) << 2);
 
@@ -110,7 +110,7 @@ void gLoadFontAsset(s32 arg0)
                 rect[1].w = 0x10;
                 rect[1].h = 1;
                 gLoadImage(&rect[1], D_800A1E10);
-                func_80092C8C(0);
+                gDrawSync(0);
                 gLoadedFont = 0x7FF8;
             }
 

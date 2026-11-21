@@ -17,6 +17,8 @@ struct DisplayState {
     u8 pad_00[0xAC];
     struct DisplayOwner *owner;
 };
+void gSetPlayerCrouchBounds(struct DisplayState *state, int compact) __asm__("func_80051AC8");
+
 
 /**
  * @brief Sets the left/right display edges of the player's screen record.
@@ -38,7 +40,7 @@ struct DisplayState {
  * @par Callers
  * Unknown: no direct edge; called from the split-screen/HUD layout path.
  */
-void func_80051AC8(struct DisplayState *state, int compact)
+void gSetPlayerCrouchBounds(struct DisplayState *state, int compact)
 {
     struct DisplayRecord *record = (struct DisplayRecord *)
         ((u8 *)state->owner->record + 8);

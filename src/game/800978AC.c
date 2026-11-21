@@ -3,6 +3,8 @@
 
 extern unsigned short *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern int gSpuAddrShift __asm__("D_8009EECC");
+int gReadSpuRegister(int index, int mode) __asm__("func_800978AC");
+
 
 /**
  *  @brief Reads a table entry with optional left shifting.
@@ -23,7 +25,7 @@ extern int gSpuAddrShift __asm__("D_8009EECC");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-int func_800978AC(int index, int mode)
+int gReadSpuRegister(int index, int mode)
 {
     register unsigned int value __asm__("$4") = gSpuRegBasePtr[index];
     int result;

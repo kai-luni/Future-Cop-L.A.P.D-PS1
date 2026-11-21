@@ -37,6 +37,8 @@
  * rolled back by 0x1C or 0x38 bytes. Its caller is the list pass
  * func_800445B0.
  */
+void gDrawObjectPointTiles(struct Unk445B0Node *node, void *arg) __asm__("func_80044260");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80044260\n"

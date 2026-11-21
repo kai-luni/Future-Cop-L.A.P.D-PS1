@@ -9,7 +9,7 @@ extern u8 gMovieClipPathFormat[] __asm__("D_8009F4AC");
 
 extern void gSetAudioPlaybackEnabled(u8 enable) __asm__("func_80047690");
 extern void gDrawImageResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) __asm__("func_80089D44");
-extern s32 func_8008CD30(u8 *buffer, u8 *format, s32 value, s32 arg3);
+extern s32 gSpillVarargsArguments(u8 *buffer, u8 *format, s32 value, s32 arg3) __asm__("func_8008CD30");
 void gPlayMovieClip(s32 arg0, s32 arg1) __asm__("func_80082DDC");
 
 
@@ -45,12 +45,12 @@ void gPlayMovieClip(s32 arg0, s32 arg1)
     gSetAudioPlaybackEnabled(0);
     switch (arg1) {
     case 1:
-        func_8008CD30(buf, gMovieClipPathFormat, gMoviePathPrefix, arg0);
+        gSpillVarargsArguments(buf, gMovieClipPathFormat, gMoviePathPrefix, arg0);
         gDrawImageResource((s32)buf, 0x26, 0x20, 0x31, 0x100, 0x90);
         break;
     case 0:
     case 2:
-        func_8008CD30(buf, gMovieClipPathFormat, gMoviePathPrefix, arg0);
+        gSpillVarargsArguments(buf, gMovieClipPathFormat, gMoviePathPrefix, arg0);
         gDrawImageResource((s32)buf, 4, 0, 0x18, 0x140, 0xC0);
         break;
     }

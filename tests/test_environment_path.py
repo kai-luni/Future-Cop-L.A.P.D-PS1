@@ -93,7 +93,7 @@ SPINE = (
 
 # Handwritten units that no other unit calls through a readable C name, so no
 # readable binding exists anywhere (their paragraphs say "no caller").
-NO_READABLE_BINDING = {"800108D8", "80095B64"}
+NO_READABLE_BINDING = {"80095B64"}
 
 # Empty reset stubs: the body is a bare `return`, so no role is provable and
 # they are deliberately left unnamed (their paragraph says so).

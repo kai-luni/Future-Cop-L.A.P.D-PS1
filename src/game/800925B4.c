@@ -7,6 +7,8 @@ struct State {
     char pad8[12];
     unsigned int field14;
 };
+void gInitFlatThreePointPolylinePacket(struct State *state) __asm__("func_800925B4");
+
 
 /**
  *  @brief Sets three fields of a state structure to fixed values.
@@ -25,7 +27,7 @@ struct State {
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800925B4(struct State *state)
+void gInitFlatThreePointPolylinePacket(struct State *state)
 {
     state->field3 = 5;
     state->field7 = 0x48;

@@ -50,8 +50,8 @@ struct Unk752E0 {
 };
 
 extern u32 func_80019668(void);
-extern s32 func_8005A6A4(s32 id, struct Unk752E0Request *request,
-                         struct Unk752E0Light **result);
+extern s32 gSpawnDynamicLightEffect(s32 id, struct Unk752E0Request *request,
+                         struct Unk752E0Light **result) __asm__("func_8005A6A4");
 void gSpawnParticleLight(struct Unk752E0 *object) __asm__("func_800752E0");
 
 
@@ -98,7 +98,7 @@ void gSpawnParticleLight(struct Unk752E0 *object)
     request.red = object->red;
     request.green = object->green;
     request.blue = object->blue;
-    func_8005A6A4(0xA, &request, &object->light);
+    gSpawnDynamicLightEffect(0xA, &request, &object->light);
     if (object->light != 0) {
         object->light->red = object->red;
         object->light->green = object->green;

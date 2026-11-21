@@ -11,7 +11,7 @@ extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern void gWaitForInteractiveFrameTicks(void) __asm__("func_80027E68");
 extern void gPresentInteractiveScreenFrame(void) __asm__("func_80027EBC");
-extern void func_800451EC(s32 value);
+extern void gSetSoundSpatialMode(s32 value) __asm__("func_800451EC");
 extern void gUpdateSoundVoiceAssignments(void) __asm__("func_800462D0");
 extern void gUpdateAndDrawFrontEndMenu(void) __asm__("func_80078DD0");
 
@@ -55,7 +55,7 @@ void gRunInteractiveScreenLoop(void)
         gSceneFrameCounter++;
         gGlobalTick++;
         gWaitForInteractiveFrameTicks();
-        func_800451EC(0);
+        gSetSoundSpatialMode(0);
         gUpdateSoundVoiceAssignments();
         gUpdateAndDrawFrontEndMenu();
         gPresentInteractiveScreenFrame();

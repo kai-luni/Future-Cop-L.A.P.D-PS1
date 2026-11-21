@@ -119,7 +119,7 @@ extern s32 func_8001AF08(V8 *v);
 extern void func_8001B148(s32 *m, V8 *src, V8 *dst, s32 count);
 extern Sub3D *gCreateModelNode(s32, s32, s32, s32, s32, s32) __asm__("func_8003D680");
 extern void gSpawnObjectFromTable(Sub3D *, s32, s32, s32, s32) __asm__("func_8003E984");
-extern Node *func_8004AA90(void);
+extern Node *gPopFragmentFreeList(void) __asm__("func_8004AA90");
 extern void gInsertNodeAfter(Obj *, Node *) __asm__("func_8004AAC0");
 extern u8 gComputeForceImpulse(Obj *, s32, s32 *) __asm__("func_8004B244");
 extern void gSampleDebrisLaunchParameters(Obj *, s32 *, s32 *, s32, s16 *, s16 *, s32 *, s32 *) __asm__("func_8004B310");
@@ -387,7 +387,7 @@ scan_test:
     } while (1);
         e = &model->unk24->e[cur];
         if ((u32)(((*(u32 *)e >> 8) & 0xF) - 3) < 2) {
-            node = func_8004AA90();
+            node = gPopFragmentFreeList();
             if (node == 0) {
                 goto all_done;
             }

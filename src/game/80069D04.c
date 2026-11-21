@@ -1,3 +1,5 @@
+void gResetEffectPoolsStub(void) __asm__("func_80069D04");
+
 // Categories: Game Engine > State Machine
 /**
  * @brief Empty 8-byte stub called during mission teardown and global subsystem reset.
@@ -23,6 +25,6 @@
  * @par Callers
  * Confirmed: func_800249BC (0x80024A04, subsystem teardown) and func_80024D14 (0x80024E10, global subsystem reset) / Likely: none / Unknown: none.
  */
-void func_80069D04(void)
+void gResetEffectPoolsStub(void)
 {
 }

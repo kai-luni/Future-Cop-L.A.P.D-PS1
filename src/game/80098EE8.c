@@ -5,6 +5,8 @@ extern volatile u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern u32 gSpuAddrShift __asm__("D_8009EECC");
 
 extern u32 gSpuEncodeOrWriteAddr(s32 register_index, u32 address) __asm__("func_80097808");
+u32 gSetSpuTransferStartAddr(u32 address) __asm__("func_80098EE8");
+
 
 /**
  *  @brief Reads and shifts a value for an address in the accepted range.
@@ -24,7 +26,7 @@ extern u32 gSpuEncodeOrWriteAddr(s32 register_index, u32 address) __asm__("func_
  *  @par Callers
  *  Confirmed: func_80021490, func_8008684C.
  */
-u32 func_80098EE8(u32 address)
+u32 gSetSpuTransferStartAddr(u32 address)
 {
     u32 offset;
 

@@ -18,9 +18,9 @@ extern s32 gGetMcPendingFlag(void) __asm__("func_8001F37C");
 extern void gSaveSelectedProfileToCard(void) __asm__("func_80080B70");
 extern void gQueueMemoryCardFormat(void) __asm__("func_8008204C");
 extern void func_80081204(void);
-extern s32 func_8007F750(void);
+extern s32 gVerifySaveImageChecksums(void) __asm__("func_8007F750");
 extern void func_80080010(void);
-extern void func_80080AD4(void);
+extern void gApplySavedOptionsIfValid(void) __asm__("func_80080AD4");
 extern s32 func_80020C90(u8 *arg0);
 extern s32 func_80020E68(s32 arg0);
 extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
@@ -106,14 +106,14 @@ s32 gStepProfileTransfer(void)
                     gSaveProfileImage[0x205] = s0;
                     s0 = gSaveProfileImage[0x204];
                     if (s0 == 1) {
-                        if (func_8007F750() != 0) {
+                        if (gVerifySaveImageChecksums() != 0) {
                             func_80080010();
                             if (*(s32 *)(gSaveProfileImage + 0x40C) != s0) {
                                 gSaveProfileImage[0x205] = 3;
                                 *(s16 *)(gSaveProfileImage + 0x942) = 0x37D2;
                             }
                             if (gStillRunningState == s1) {
-                                func_80080AD4();
+                                gApplySavedOptionsIfValid();
                                 gStillRunningState = 3;
                             }
                         } else {

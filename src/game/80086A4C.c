@@ -9,6 +9,8 @@ typedef struct {
 } Unk80086A4C;
 
 extern Unk80086A4C *gMovieAudioState __asm__("D_8009F4D8");
+void *gPeekMovieAudioSecondBuffer(u32 arg) __asm__("func_80086A4C");
+
 
 /**
  *  @brief Returns a pointer into the second buffer region when available.
@@ -28,7 +30,7 @@ extern Unk80086A4C *gMovieAudioState __asm__("D_8009F4D8");
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-void *func_80086A4C(u32 arg)
+void *gPeekMovieAudioSecondBuffer(u32 arg)
 {
     Unk80086A4C *p;
 

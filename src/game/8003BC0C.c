@@ -10,7 +10,7 @@ struct Unk3BObject {
     u32 flags;
 };
 
-extern u8 func_8003B838(struct Unk3BObject *object);
+extern u8 gGetSpawnDescColumn(struct Unk3BObject *object) __asm__("func_8003B838");
 extern s32 gGetEntitySpawnBank(struct Unk3BObject *object) __asm__("func_8003BF50");
 extern void gSpawnTypeAtOwner(struct Unk3BObject *object, u8 kind, s32 arg2,
                           s32 arg3, s32 arg4) __asm__("func_800402DC");
@@ -42,7 +42,7 @@ void gSpawnEntityPrimaryType(struct Unk3BObject *object)
     u8 kind;
 
     if (object->tableIndex != 0) {
-        kind = func_8003B838(object);
+        kind = gGetSpawnDescColumn(object);
         if (kind != 0) {
             gSpawnTypeAtOwner(object, kind, 0, gGetEntitySpawnBank(object), 0);
         }

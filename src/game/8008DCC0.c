@@ -3,6 +3,8 @@
  * the address in $v0 and jumps without a call frame; naming the symbol
  * (link path) keeps the %hi/%lo pair as lui+addiu instead of lui+ori. */
 extern char gKernelCardPatchEntryDFAC[] __asm__("D_A000DFAC");
+void gJumpKernelCardPatch(void) __asm__("func_8008DCC0");
+
 
 /**
  *  @brief Transfers control to the fixed address 0xA000DFAC.
@@ -26,7 +28,7 @@ extern char gKernelCardPatchEntryDFAC[] __asm__("D_A000DFAC");
  * D_A000DFAC (0xA000DFAC) without creating a call frame. No globals in
  * D_800xxxxx are accessed and no direct callers exist in src/.
  */
-void func_8008DCC0(void)
+void gJumpKernelCardPatch(void)
 {
     goto *(void *)gKernelCardPatchEntryDFAC;
 }

@@ -117,7 +117,7 @@ extern void gBuildRotationMatrix(s32 a, s32 b, s32 c, void *d) __asm__("func_800
 extern void gInitAttackSchedulerSlot(void *a, void *b) __asm__("func_80060668");
 extern s32 gQuerySurfaceHeight(void *a, s32 b) __asm__("func_80067684");
 extern void gSetAnimClipTable(void *a, void *b, s32 c, s32 d) __asm__("func_80044988");
-extern s32 func_8006314C(void *a, s32 b);
+extern s32 gRegisterGroundObject(void *a, s32 b) __asm__("func_8006314C");
 void gInitObjectFromDef(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2) __asm__("func_8002C584");
 
 
@@ -397,7 +397,7 @@ void gInitObjectFromDef(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 
     gGteLoadMatrix((u8 *)obj + 0x2C);
     gGteTransformVerticesWide((u8 *)obj->unk28->unk34 + ((obj->unk70 << 4) + 8), (u8 *)obj + 0x5C, 1);
     if (st->unk40 & 0x10) {
-        func_8006314C(obj, 0);
+        gRegisterGroundObject(obj, 0);
         obj->unkDF |= 0x20;
     }
     if (st->unk40 & 0x20) {

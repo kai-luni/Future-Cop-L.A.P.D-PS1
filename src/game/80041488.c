@@ -6,7 +6,7 @@ struct Arg { u8 pad[8]; struct Data *data; };
 struct Model { u8 pad[0x34]; u8 *data; };
 struct Self { u8 pad[0x21]; u8 old; u8 pad22[6]; struct Model *model; u8 basis[0x24]; s32 pos[3]; u8 rest[0x14]; s16 index; u8 pad72[0x2e]; s32 values[3]; s32 speeds[3]; s32 other[2]; s32 current; s16 zero; u8 flags; u8 kind; s8 count; s8 last; s8 end; s8 mode; u8 previous; volatile u8 extra; };
 extern void gEntityBaseHandler(s32, struct Self *, struct Arg *, s32) __asm__("func_8002AD58");
-extern void func_8006314C(struct Self *, u8);
+extern void gRegisterGroundObject(struct Self *, u8) __asm__("func_8006314C");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern s32 gGetGroundHeight(void *, s32, s32, s32) __asm__("func_80066F78");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
@@ -111,7 +111,7 @@ void gInitElevator(struct Self *self, struct Arg *arg, s32 a2)
     if (self->flags & 5) self->current = 1;
     else self->current = self->speeds[self->last];
     self->zero = 0;
-    func_8006314C(self, d->kind);
+    gRegisterGroundObject(self, d->kind);
     gBuildRotationMatrix(d->angle, 0, 0, self->basis);
     base = gGetGroundHeight(self->pos, 0, 0, 0);
     for (i = 0; i < self->count; i++) self->values[i] += base;

@@ -4,6 +4,8 @@
 extern void *D_800A294C[];
 extern u8 gSlfxFlagByte[] __asm__("D_800A2931");
 extern s32 gQueueCount __asm__("D_8009F838");
+void gClearTerrainState(void) __asm__("func_80063134");
+
 
 /**
  * @brief Clears terrain heightfield pointer, ground-object table count, and SLFX flag byte.
@@ -29,7 +31,7 @@ extern s32 gQueueCount __asm__("D_8009F838");
  * @par Callers
  * Confirmed: func_80063428 (0x80063450, terrain/map init during func_80024A24 mission boot) / Likely: none / Unknown: none.
  */
-void func_80063134(void)
+void gClearTerrainState(void)
 {
     D_800A294C[0] = 0;
     gQueueCount = 0;

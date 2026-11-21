@@ -13,7 +13,7 @@ struct SoundSystem {
 
 extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 
-extern void func_80098708(s32 handle);
+extern void gClaimSpuEntry(s32 handle) __asm__("func_80098708");
 
 void gReleaseSoundBankSpuHandle(s32 index) __asm__("func_80021998");
 
@@ -47,7 +47,7 @@ void gReleaseSoundBankSpuHandle(s32 index)
 
     bank = gSoundSystem.banks[index];
     if (bank != 0) {
-        func_80098708(bank->handle);
+        gClaimSpuEntry(bank->handle);
         bank->handle = -1;
     }
 }

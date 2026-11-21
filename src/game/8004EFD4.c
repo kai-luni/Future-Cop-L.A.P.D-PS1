@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gFreedPointer __asm__("D_8009F7B0");
+void gClearCoordinatePairStoragePointer(void) __asm__("func_8004EFD4");
+
 
 /**
  *  @brief Clears a global signed integer.
@@ -19,7 +21,7 @@ extern s32 gFreedPointer __asm__("D_8009F7B0");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8004EFD4(void)
+void gClearCoordinatePairStoragePointer(void)
 {
     gFreedPointer = 0;
 }

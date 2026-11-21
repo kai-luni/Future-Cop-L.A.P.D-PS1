@@ -24,10 +24,10 @@ extern volatile Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 extern void gSpuSetIrqEnable(s32) __asm__("func_80098A78");
 extern void gSpuInstallIrqCallback(void *) __asm__("func_80098BF8");
 extern void *gPeekMovieAudioFirstBuffer(u32) __asm__("func_800869D8");
-extern void *func_80086A4C(u32);
+extern void *gPeekMovieAudioSecondBuffer(u32) __asm__("func_80086A4C");
 extern void gUploadMovieAudioBlock(void *, s32, s32) __asm__("func_8008684C");
 extern s32 gScaleMovieAudioClock(s32) __asm__("func_800867B0");
-extern void func_80098BB8(u32);
+extern void gSetSpuIrqAddress(u32) __asm__("func_80098BB8");
 void gServiceMovieAudioIrq(void) __asm__("func_80086AC0");
 void gServiceMovieAudioIrq(void) __asm__("func_80086AC0");
 
@@ -80,7 +80,7 @@ void gServiceMovieAudioIrq(void)
         if ((gMovieAudioState->unk7B44 * 2 - gMovieAudioState->unk7B40) < 6) {
             buf = gPeekMovieAudioFirstBuffer(0x300);
             if (buf != 0) {
-                void *other = func_80086A4C(0x300);
+                void *other = gPeekMovieAudioSecondBuffer(0x300);
                 gMovieAudioState->unk7B58 = 1;
                 gMovieAudioState->unk7B4C = 1;
                 gMovieAudioState->unk7B48 = 1;
@@ -107,7 +107,7 @@ void gServiceMovieAudioIrq(void)
     }
 
     gMovieAudioState->unk7B40++;
-    func_80098BB8(gMovieAudioState->unk7B5C + (gMovieAudioState->unk7B40 & 7) * 0x180);
+    gSetSpuIrqAddress(gMovieAudioState->unk7B5C + (gMovieAudioState->unk7B40 & 7) * 0x180);
     gSpuInstallIrqCallback(gServiceMovieAudioIrq);
     gSpuSetIrqEnable(1);
 }

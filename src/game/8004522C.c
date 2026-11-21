@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gMusicVolume __asm__("D_8009F330");
+s32 gGetMusicVolume(void) __asm__("func_8004522C");
+
 
 /**
  * @brief Returns the first volume setting (D_8009F330).
@@ -20,7 +22,7 @@ extern s32 gMusicVolume __asm__("D_8009F330");
  * func_80025F58, func_800260B8, func_8007CACC, func_8007CFA0, func_80080A5C;
  * address referenced by D_8007D18C.
  */
-s32 func_8004522C(void)
+s32 gGetMusicVolume(void)
 {
     return gMusicVolume;
 }

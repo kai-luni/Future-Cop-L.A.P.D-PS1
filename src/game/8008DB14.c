@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void *jtbl_800A3E1C_main;
+void gCallKernelPadCleanup(void) __asm__("func_8008DB14");
+
 
 /**
  *  @brief Transfers control to the stored dispatch target.
@@ -24,7 +26,7 @@ extern void *jtbl_800A3E1C_main;
  * kernel base + 0x894) into $9 and performs an unconditional computed jump
  * without a call frame. Driven by func_8008D92C.
  */
-void func_8008DB14(void)
+void gCallKernelPadCleanup(void)
 {
     register void *target asm("$9") = jtbl_800A3E1C_main;
 

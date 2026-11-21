@@ -38,7 +38,7 @@ struct FontInfo {
 extern struct FontEntry gGlyphEntryTable[] __asm__("D_800A19A0");
 extern s32 gFontBankCount __asm__("D_8009F364");
 
-extern s32 func_800489EC(unsigned char *value);
+extern s32 gGetFontBitsPerPixel(unsigned char *value) __asm__("func_800489EC");
 extern void gLoadFontAsset(s32 index) __asm__("func_80048BF8");
 extern s32 gSelectFontBank(s32 index) __asm__("func_80048E28");
 void gRegisterFontBank(s32 arg0, s32 *arg1) __asm__("func_80048A14");
@@ -121,8 +121,8 @@ void gRegisterFontBank(s32 arg0, s32 *arg1)
     }
 
     e->f0A.s = (s16)(e->f0A.s / e->f0C);
-    e->f00 = (s16)func_800489EC((u8 *)info);
-    e->f0E = (s16)((((info->f04 * func_800489EC((u8 *)info)) + 0x1F) & ~0x1F) >> 3);
+    e->f00 = (s16)gGetFontBitsPerPixel((u8 *)info);
+    e->f0E = (s16)((((info->f04 * gGetFontBitsPerPixel((u8 *)info)) + 0x1F) & ~0x1F) >> 3);
 
     gLoadFontAsset(gFontBankCount);
     gFontBankCount++;

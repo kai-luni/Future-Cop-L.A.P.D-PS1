@@ -24,6 +24,8 @@
  * map-cell and part drawers (func_80014164, func_80016A64, func_80017058,
  * func_800178DC, func_80031238, func_80035B7C, func_80038A00).
  */
+void gGteTransformWords(void) __asm__("func_8001006C");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_8001006C\n"

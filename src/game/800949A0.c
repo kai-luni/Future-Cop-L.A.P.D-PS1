@@ -9,6 +9,8 @@ extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 *gDma2MemAddrPtr __asm__("D_8009DECC");
 extern u32 *gDma2BlockCtrlPtr __asm__("D_8009DED0");
 extern u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
+void gStartGpuLinkedListDma(u32 value) __asm__("func_800949A0");
+
 
 /**
  *  @brief Writes a value and three constants through four global pointers.
@@ -28,7 +30,7 @@ extern u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
  *  @par Callers
  *  Confirmed: func_8009423C.
  */
-void func_800949A0(u32 value)
+void gStartGpuLinkedListDma(u32 value)
 {
     *gGpuGp1PortPtr = 0x04000002;
     *gDma2MemAddrPtr = value;

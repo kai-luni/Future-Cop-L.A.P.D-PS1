@@ -19,7 +19,7 @@ extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern s32 gVagmPrimeBlockCount __asm__("D_8009F6E0");
 extern s32 D_8009F6E4;
 
-extern s32 func_80045288(void);
+extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
 void gStartVagmAudioStream(s32 arg0) __asm__("func_8002A16C");
 
 
@@ -48,7 +48,7 @@ void gStartVagmAudioStream(s32 arg0)
     s32 value;
 
     if ((arg0 & 0xFF) != 0) {
-        value = func_80045288();
+        value = gGetVagmVolumeSetting();
     } else {
         value = 1;
     }

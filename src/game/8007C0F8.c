@@ -39,7 +39,7 @@ extern s8 gPortCheckTable[] __asm__("D_800A374D");
 extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 
 extern void gDrawAlignedMultilineText(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7) __asm__("func_800788F0");
-extern void func_8008CD30(u8 *dst, u8 *fmt, s32 value);
+extern void gSpillVarargsArguments(u8 *dst, u8 *fmt, s32 value) __asm__("func_8008CD30");
 extern s32 gGetPadType(s32 port) __asm__("func_8001EF34");
 extern void gEmitAtlasSpriteSimple(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8) __asm__("func_80082AB0");
 extern void gEmitFlatQuadRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7) __asm__("func_80082EF0");
@@ -123,7 +123,7 @@ void gDrawVehicleSchematic(s32 slot)
     fmtHi = (u8 *)0x800A0000;
     __asm__("lui\t%0,%%hi(D_8009F900)\n\taddiu\t%0,%0,%%lo(D_8009F900)" : "=r"(selBase), "+r"(fmtHi) : "r"(slot), "r"(bufArg));
     selPtr = (s8 *)(slot + (s32)selBase);
-    func_8008CD30(bufArg, fmtHi - 2940, *selPtr + 1);
+    gSpillVarargsArguments(bufArg, fmtHi - 2940, *selPtr + 1);
     gDrawAlignedMultilineText((s32)text, 0x10E, 0x34, 0xF, 0, 1, 8, c2);
     mode = 0x48;
     port = gGetPadType(gPortCheckTable[0] == 3);

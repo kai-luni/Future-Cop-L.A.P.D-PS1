@@ -18,7 +18,7 @@ extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern struct Unk800A0BC0 gRingBuffer __asm__("D_800A0BC0");
 
-extern s32 func_800452C8(void);
+extern s32 gGetVoiceVolume(void) __asm__("func_800452C8");
 extern void gStopPortraitStreamAndVoice(void) __asm__("func_80029DD8");
 extern void gAppendScriptEvent(s32 arg0) __asm__("func_800298EC");
 void gQueueScriptEvent(s32 arg0) __asm__("func_80029974");
@@ -59,7 +59,7 @@ void gQueueScriptEvent(s32 arg0)
 {
     s32 index;
 
-    if (gScreenState[0] < 5 && func_800452C8() != 0) {
+    if (gScreenState[0] < 5 && gGetVoiceVolume() != 0) {
         if (gRingBuffer.unk00 <= 0 && (gBitFieldState & 0x70) == 0) {
             gAppendScriptEvent(arg0);
         } else {

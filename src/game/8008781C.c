@@ -1,3 +1,5 @@
+int gGetMovieAudioStateSize(void) __asm__("func_8008781C");
+
 // Categories: Game Engine > Unclassified
 /**
  *  @brief Returns the constant 0x7B80.
@@ -16,7 +18,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-int func_8008781C(void)
+int gGetMovieAudioStateSize(void)
 {
     return 0x7B80;
 }

@@ -62,7 +62,7 @@ extern u8 *gMapPanText __asm__("D_8009F2E0");
 extern void gDecodeButtonEdge(u32 buttons, struct InputAction267C8 *action) __asm__("func_8005780C");
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void func_80025F58(void);
-extern s32 func_80049340(u8 *text);
+extern s32 gMeasureTextWidthPx(u8 *text) __asm__("func_80049340");
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, s32 blend) __asm__("func_8001C214");
 extern void gDrawOptionsSubPanel(struct Obj267C8 *obj, s32 slot, s32 arg2, s32 selection, s32 active) __asm__("func_800260B8");
@@ -240,7 +240,7 @@ void gUpdateMapScreenView(struct Obj267C8 *obj, s32 slot, s32 active, s32 select
             s32 x;
             x = 0x14;
             if (slot != 1) {
-                x = ((s32)(off - func_80049340(text))) / 2 - 0x14;
+                x = ((s32)(off - gMeasureTextWidthPx(text))) / 2 - 0x14;
             }
             gDrawAlignedString(text, x, 0x10, 9);
         }
@@ -258,11 +258,11 @@ void gUpdateMapScreenView(struct Obj267C8 *obj, s32 slot, s32 active, s32 select
         register u8 *arg __asm__("$4");
         register s32 color __asm__("$4");
         register s32 result __asm__("$2");
-        result = func_80049340(text);
+        result = gMeasureTextWidthPx(text);
         arg = text;
         __asm__ volatile("" : "+r"(result) : "r"(arg));
         textWidth = result;
-        result = func_80049340(arg);
+        result = gMeasureTextWidthPx(arg);
         color = 1;
         __asm__ volatile("" : "+r"(result), "+r"(color));
         off -= result;

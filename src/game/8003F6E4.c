@@ -27,7 +27,7 @@ extern struct Unk800A1070 gListHeads __asm__("D_800A1070");
 extern void gGetViewGroundAnchor(u32 index, struct DestinationTriple *destination) __asm__("func_80069580");
 extern void gDrawBeamNodeList(s32 arg) __asm__("func_80073700");
 extern void gDrawTracerList(s32 arg) __asm__("func_8006F844");
-extern void func_8005E160(s32 arg);
+extern void gDrawDomeEffectSlots(s32 arg) __asm__("func_8005E160");
 extern void gDrawNodeListModels(s32 arg) __asm__("func_8003CF6C");
 extern void gDrawDebrisFragments(s32 arg0, struct DestinationTriple *arg1) __asm__("func_8004C5C8");
 extern void gDrawAttachedModelList(s32 arg0, struct DestinationTriple *arg1) __asm__("func_8006E988");
@@ -85,7 +85,7 @@ void gRunViewScenePasses(s32 arg0)
     }
     gDrawBeamNodeList((s32)&position);
     gDrawTracerList((s32)&position);
-    func_8005E160((s32)&position);
+    gDrawDomeEffectSlots((s32)&position);
     gDrawNodeListModels((s32)&position);
     gDrawDebrisFragments(gListHeads.unk10, &position);
     gDrawAttachedModelList(gListHeads.unk08, &position);

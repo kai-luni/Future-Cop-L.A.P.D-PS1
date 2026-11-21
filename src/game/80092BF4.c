@@ -11,6 +11,8 @@ extern u8 gSetDisplayMaskTraceFormat[] __asm__("D_80012A30");
 extern  void (*gLogPrintf)(u8 *, s32) __asm__("D_8009DDEC");
 extern Context *gVramWriteCallback __asm__("D_8009DDE8");
 extern void gMemset(u8 *, int, unsigned int) __asm__("func_80095830");
+void gSetDispMask(s32 arg0) __asm__("func_80092BF4");
+
 
 /**
  * @brief Flushes or resets the GPU command queue, depending on the argument.
@@ -25,7 +27,7 @@ extern void gMemset(u8 *, int, unsigned int) __asm__("func_80095830");
  * 3. The command word is 0x3000000 for the flush path and 0x3000001 for the reset
  *    path; it is handed to D_8009DDE8->fn.
  */
-void func_80092BF4(s32 arg0)
+void gSetDispMask(s32 arg0)
 {
     register u8 *p __asm__("$17") = gGpuDebugLevel;
     s32 mode;

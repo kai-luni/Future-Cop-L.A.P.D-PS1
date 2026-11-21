@@ -1,7 +1,7 @@
 // Categories: Graphics > Image Handling | Utilities > Memory
 #include "game/types.h"
 
-extern void func_800962D0(s32 destination, u32 size);
+extern void gProgramMdecOutputDma(s32 destination, u32 size) __asm__("func_800962D0");
 void gStartMdecOutDma(s32 destination, u32 size) __asm__("func_80096070");
 
 
@@ -24,5 +24,5 @@ void gStartMdecOutDma(s32 destination, u32 size) __asm__("func_80096070");
  */
 void gStartMdecOutDma(s32 destination, u32 size)
 {
-    func_800962D0(destination, size);
+    gProgramMdecOutputDma(destination, size);
 }

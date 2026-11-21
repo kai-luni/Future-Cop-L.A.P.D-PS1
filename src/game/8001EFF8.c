@@ -8,7 +8,7 @@ extern s32 gGameClock __asm__("D_8009FA60");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 
-extern s32 func_80092C8C(s32 arg0);
+extern s32 gDrawSync(s32 arg0) __asm__("func_80092C8C");
 extern void func_8001BFE4(void);
 extern void gFlipDisplayLayer(void) __asm__("func_8001BFA8");
 void gFrameCallback(void) __asm__("func_8001EFF8");
@@ -59,7 +59,7 @@ void gFrameCallback(void)
     }
     gFrameTickCounter += 5;
     if (gFrameBarrier != 0) {
-        if (func_80092C8C(1) == 0) {
+        if (gDrawSync(1) == 0) {
             gFrameBarrier = 0;
             func_8001BFE4();
             gFlipDisplayLayer();

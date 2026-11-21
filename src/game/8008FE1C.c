@@ -1,5 +1,7 @@
 // Categories: Game Engine > State
 #include "game/types.h"
+void gStoreGlobalScratchWord(u32 value) __asm__("func_8008FE1C");
+
 
 /**
  *  @brief Stores a 32-bit value at a fixed address.
@@ -24,7 +26,7 @@
  * the subsystem and purpose of the stored word cannot be established from the
  * codebase.
  */
-void func_8008FE1C(u32 value)
+void gStoreGlobalScratchWord(u32 value)
 {
     register u32 *p __asm__("$1");
 

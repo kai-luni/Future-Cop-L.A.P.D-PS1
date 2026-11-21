@@ -24,7 +24,7 @@ extern s32 gGameClock __asm__("D_8009FA60");
 
 extern void gClampLoadoutSelections(s32) __asm__("func_8007D2DC");
 extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
-extern void func_80078B34(s32, s32, s32);
+extern void gQueueStatusLineText(s32, s32, s32) __asm__("func_80078B34");
 extern void gDrawLoadoutListRow(u8 *, s32, s32, s32, s32, s32) __asm__("func_8007D7CC");
 
 /**
@@ -112,14 +112,14 @@ void gDrawLoadoutScreen(s32 arg0)
         i3 = gLoadoutSpecialWeaponIndices[arg0];
         gDrawLoadoutListRow(gLoadoutSpecialWeaponRows + i3 * 6, 0x86, 0x89, s4 == 2, 2, 1);
     }
-    func_80078B34(0x2968, 0, s3);
+    gQueueStatusLineText(0x2968, 0, s3);
     if (s4 >= 0 && gLoadoutTable[s4].values[arg0] > gLoadoutTable[s4].limit)
-        func_80078B34(0x521C, 0, s3);
-    func_80078B34(0x10CC, 1, s3);
+        gQueueStatusLineText(0x521C, 0, s3);
+    gQueueStatusLineText(0x10CC, 1, s3);
     if ((gGameClock >> 9) & 1) {
         switch (s6) {
-        case 1: func_80078B34(0x297C, 1, s3); break;
-        case 2: func_80078B34(0x2972, 1, s3); break;
+        case 1: gQueueStatusLineText(0x297C, 1, s3); break;
+        case 2: gQueueStatusLineText(0x2972, 1, s3); break;
         }
     }
 }

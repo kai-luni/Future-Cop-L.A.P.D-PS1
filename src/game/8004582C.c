@@ -20,6 +20,8 @@ extern s32 gChannelCount __asm__("D_8009F720");
 extern struct SoundChannel *gChannelListHead __asm__("D_8009F724");
 extern struct SoundChannel *gSoundChannelQueueHead __asm__("D_8009F728");
 extern struct SoundChannel *gSoundChannelQueueTail __asm__("D_8009F72C");
+void gInitSoundChannelList(void) __asm__("func_8004582C");
+
 
 /**
  *  @brief Initializes the sound channel array as a singly linked list.
@@ -38,7 +40,7 @@ extern struct SoundChannel *gSoundChannelQueueTail __asm__("D_8009F72C");
  *  @par Callers
  *  Confirmed: func_800453B8 and func_80045548.
  */
-void func_8004582C(void)
+void gInitSoundChannelList(void)
 {
     struct SoundChannel *channel;
     s32 i;

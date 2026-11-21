@@ -3,7 +3,7 @@
 
 extern void func_8008DAD0(void);
 extern void func_8008D7B0(s32 value);
-extern void func_8008DB00(void);
+extern void gJumpToKernelPadStartContinuation(void) __asm__("func_8008DB00");
 s32 gStartBiosPadPolling(void) __asm__("func_8008D8FC");
 
 
@@ -34,6 +34,6 @@ s32 gStartBiosPadPolling(void)
 {
     func_8008DAD0();
     func_8008D7B0(0);
-    func_8008DB00();
+    gJumpToKernelPadStartContinuation();
     return 1;
 }

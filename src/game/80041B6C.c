@@ -9,7 +9,7 @@ struct Obj41B6C {
 extern s32 gEntityBaseHandler(s32 a0, struct Obj41B6C *a1, s32 a2, s32 a3) __asm__("func_8002AD58");
 extern void gInitElevator(struct Obj41B6C *a0, s32 a1, s32 a2) __asm__("func_80041488");
 extern s32 gStepElevator(struct Obj41B6C *a0, s32 a1) __asm__("func_80041880");
-extern void func_80063194(struct Obj41B6C *a0);
+extern void gRemoveGroundKeyEntry(struct Obj41B6C *a0) __asm__("func_80063194");
 s32 gHandleElevatorEntityMessages(s32 msg, struct Obj41B6C *obj, s32 a2, s32 a3) __asm__("func_80041B6C");
 
 
@@ -43,7 +43,7 @@ s32 gHandleElevatorEntityMessages(s32 msg, struct Obj41B6C *obj, s32 a2, s32 a3)
         gInitElevator(obj, a2, a3);
         return 0;
     case 5:
-        func_80063194(obj);
+        gRemoveGroundKeyEntry(obj);
         gEntityBaseHandler(msg, obj, a2, a3);
         return 0;
     case 11:

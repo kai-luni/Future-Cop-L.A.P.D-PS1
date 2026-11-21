@@ -19,6 +19,8 @@ extern void gHandlePeriodicEffectMessage() __asm__("D_80044610");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern u8 gSetupParticleEmitter(struct Unk447F0 *object, s32 def) __asm__("func_80043430");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+struct Unk447F0 *gAllocPeriodicParticleEmitter(s32 def) __asm__("func_800447F0");
+
 
 /**
  * @brief Allocates and initialises a periodic effect object (0xAC bytes,
@@ -40,7 +42,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * func_8003E984.
  */
-struct Unk447F0 *func_800447F0(s32 def)
+struct Unk447F0 *gAllocPeriodicParticleEmitter(s32 def)
 {
     struct Unk447F0 *object;
 

@@ -4,6 +4,8 @@
 #include "../../include/game/types.h"
 
 extern u32 *gSpuAccessDelayPtr __asm__("D_8009EEB8");
+void gSetSpuDmaReadTiming(void) __asm__("func_80097968");
+
 
 /**
  *  @brief Updates the high byte of a pointed-to word.
@@ -21,7 +23,7 @@ extern u32 *gSpuAccessDelayPtr __asm__("D_8009EEB8");
  *  @par Callers
  *  Confirmed: func_800973B4.
  */
-void func_80097968(void)
+void gSetSpuDmaReadTiming(void)
 {
     *gSpuAccessDelayPtr = (*gSpuAccessDelayPtr & 0xF0FFFFFFU) | 0x22000000U;
 }

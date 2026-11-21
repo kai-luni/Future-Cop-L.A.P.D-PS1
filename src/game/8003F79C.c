@@ -11,7 +11,7 @@ extern s32 gSpawnTableRow __asm__("D_8009F310");
 extern s32 gPendingSpawnList __asm__("D_8009F314");
 extern struct FixedPool *gDeferredRegPool __asm__("D_8009F70C");
 
-extern void func_8006EDC4(void);
+extern void gInitTracerPool(void) __asm__("func_8006EDC4");
 extern void gInitEffectPools(void) __asm__("func_8005E1BC");
 extern struct FixedPool *func_800194DC(s32 count, s32 size, s32 tag);
 void gInitMissionSpawnState(void) __asm__("func_8003F79C");
@@ -58,7 +58,7 @@ void gInitMissionSpawnState(void)
     }
 
     gSpawnTableRow = 0;
-    func_8006EDC4();
+    gInitTracerPool();
     gInitEffectPools();
     gDeferredRegPool = func_800194DC(0x100, 8, 1);
     gPendingSpawnList = 0;

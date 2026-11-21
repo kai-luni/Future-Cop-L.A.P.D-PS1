@@ -26,6 +26,8 @@
  * following model pass transforms through it. The view matrix is uploaded
  * elsewhere - gDrawViewLayers calls gGteLoadRotation (80066E98.c:64 and :69).
  */
+void gGteLoadMatrix(void) __asm__("func_80010750");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80010750\n"

@@ -41,7 +41,7 @@ struct Node {
 extern Node *gBeamNodeList __asm__("D_8009F38C");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
-extern void func_80070710(void *block);
+extern void gFreeBeamEndpointBlock(void *block) __asm__("func_80070710");
 extern void gBuildRibbonBeamStrip(Node *node, Entry *entry, s32 mode) __asm__("func_80070E48");
 void *gCreateRibbonBeam(void *a0, void *a1, s32 a2, s32 count,
                     u8 r, u8 g, u8 b, s16 divisor,
@@ -210,10 +210,10 @@ free_node:
 
 cleanup:
     if (a0 != 0) {
-        func_80070710(a0);
+        gFreeBeamEndpointBlock(a0);
     }
     if (a1 != 0) {
-        func_80070710(a1);
+        gFreeBeamEndpointBlock(a1);
     }
     return 0;
 }

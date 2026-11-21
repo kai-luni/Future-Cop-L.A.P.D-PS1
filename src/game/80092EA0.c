@@ -4,6 +4,8 @@ typedef struct { int pad[2]; void (*fn)(void *, void *, int, u32); void *ctx; } 
 extern Device *gVramWriteCallback __asm__("D_8009DDE8");
 extern char gTraceFormatString[] __asm__("D_80012A88");
 extern void gValidateGpuRectDebug(char *, void *) __asm__("func_80092CF4");
+void gClearImage2(void *arg0, int arg1, int arg2, int arg3) __asm__("func_80092EA0");
+
 /**
  * @brief Debug device write: formats a message through the GPU debug path
  *        and sends an 8-byte command to the debug device.
@@ -31,7 +33,7 @@ extern void gValidateGpuRectDebug(char *, void *) __asm__("func_80092CF4");
  * No direct callers in the call graph and no address reference in the
  * sources; likely dead retail code.
  */
-void func_80092EA0(void *arg0, int arg1, int arg2, int arg3)
+void gClearImage2(void *arg0, int arg1, int arg2, int arg3)
 {
     register void *a __asm__("$19") = arg0;
     register int b __asm__("$18");

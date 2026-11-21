@@ -1,5 +1,7 @@
 // Categories: Graphics > Primitive Initialization
 #include "game/types.h"
+void gSetPolyGT4Packet(u8 *arg0) __asm__("func_800924EC");
+
 
 /**
  *  @brief Initializes two bytes of a graphics packet.
@@ -18,7 +20,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800924EC(u8 *arg0)
+void gSetPolyGT4Packet(u8 *arg0)
 {
     arg0[3] = 12;
     arg0[7] = 60;

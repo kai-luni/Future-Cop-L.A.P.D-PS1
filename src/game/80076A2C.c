@@ -47,11 +47,11 @@ extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern u8 gEaLogoName[] __asm__("D_80011E3C");
 extern u8 gIntroMovieFilename[] __asm__("D_80011E48");
 
-extern void func_800965C8(void);
+extern void gRunStaticInitializers(void) __asm__("func_800965C8");
 extern u8 gInitRuntime(void) __asm__("func_80076EB0");
 extern void gShutdownRuntime(void) __asm__("func_80076FE0");
 extern void func_8007BFCC(s32, s32);
-extern void func_80077050(void);
+extern void gResetFixedPools(void) __asm__("func_80077050");
 extern void func_8001B2C8(s32, s32);
 extern void gShowLoadingScreen(void) __asm__("func_80025370");
 extern void func_8007F9CC(void);
@@ -63,10 +63,10 @@ extern s32 gIsBootProfileTransferDone(void) __asm__("func_8007F8CC");
 extern void gReleaseProfileCardOperation(void) __asm__("func_8007FACC");
 extern void gShutdownProfileSubsystem(void) __asm__("func_8007FA48");
 extern void gDrawImageResource(void *, s32, s32, s32, s32, s32) __asm__("func_80089D44");
-extern void func_8008CD30(void *, void *, s32, s32);
+extern void gSpillVarargsArguments(void *, void *, s32, s32) __asm__("func_8008CD30");
 extern void func_8001B448(void);
-extern void func_80077088(void);
-extern void func_800780C0(s32);
+extern void gFreeBlitPools(void) __asm__("func_80077088");
+extern void gInitNameEntryAlphabet(s32) __asm__("func_800780C0");
 extern void gRunScreenModule(void *, s32) __asm__("func_800287F4");
 extern void func_8008CC90(void *, void *);
 extern void func_8008CCB0(void *, s32);
@@ -185,7 +185,7 @@ s32 gGameMain(void)
     s32 s3;
     u8 s2;
 
-    func_800965C8();
+    gRunStaticInitializers();
     s2 = 1;
     if (gInitRuntime() != 0) {
         register s32 z0 __asm__("$4") = 0;
@@ -211,7 +211,7 @@ s32 gGameMain(void)
 
         gPendingScreenState = 3;
         gGameSession->unk10 = 3;
-        func_80077050();
+        gResetFixedPools();
 
         func_8001B2C8(0xC8, 0x200);
 
@@ -236,12 +236,12 @@ s32 gGameMain(void)
 
         gDrawImageResource(gEaLogoName, 4, 0, 0, s0, 0xF0);
 
-        func_8008CD30(local, gConcatStringsFormat, gMoviePathPrefix, (s32)gIntroMovieFilename);
+        gSpillVarargsArguments(local, gConcatStringsFormat, gMoviePathPrefix, (s32)gIntroMovieFilename);
         gDrawImageResource(local, 4, 0, 0x18, s0, 0xC0);
 
         func_8001B448();
-        func_80077088();
-        func_800780C0(0);
+        gFreeBlitPools();
+        gInitNameEntryAlphabet(0);
 
         for (;;) {
             if (s2) {
@@ -302,19 +302,19 @@ s32 gGameMain(void)
                 continue;
             }
 
-            func_80077050();
+            gResetFixedPools();
 
             if (s0 != 0) {
-                func_8008CD30(local + 0x28, gConcatStringsFormat, gMoviePathPrefix, s0);
+                gSpillVarargsArguments(local + 0x28, gConcatStringsFormat, gMoviePathPrefix, s0);
                 gDrawImageResource(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
             }
 
             if (gMovieAbortFlag == 0 && *(s32 *)(local + 0x50) != 0) {
-                func_8008CD30(local + 0x28, gConcatStringsFormat, gMoviePathPrefix, *(s32 *)(local + 0x50));
+                gSpillVarargsArguments(local + 0x28, gConcatStringsFormat, gMoviePathPrefix, *(s32 *)(local + 0x50));
                 gDrawImageResource(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
             }
 
-            func_80077088();
+            gFreeBlitPools();
         }
     }
 

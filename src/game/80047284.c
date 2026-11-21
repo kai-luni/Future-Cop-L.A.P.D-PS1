@@ -3,7 +3,7 @@
 
 extern u8 gSoundIdTable[] __asm__("D_800A1880");
 
-extern s32 func_80045494(s32 id, u8 *table, s32 limit);
+extern s32 gResolveSoundRecordIndex(s32 id, u8 *table, s32 limit) __asm__("func_80045494");
 extern s32 gPlaySpatialSoundBankSlot(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4) __asm__("func_80046F9C");
 void gPlayPositionalSoundEffect(s32 id, s32 arg1, s32 arg2) __asm__("func_80047284");
 
@@ -32,7 +32,7 @@ void gPlayPositionalSoundEffect(s32 id, s32 arg1, s32 arg2)
 {
     s32 slot;
 
-    slot = func_80045494(id, gSoundIdTable, 0x45);
+    slot = gResolveSoundRecordIndex(id, gSoundIdTable, 0x45);
     if (slot != 0xFF) {
         gPlaySpatialSoundBankSlot(arg1, arg2, slot, 0, 1);
     }

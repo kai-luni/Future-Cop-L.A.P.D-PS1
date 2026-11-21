@@ -9,6 +9,8 @@ extern u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
 extern u32 *gDmaControlMdecPtr __asm__("D_8009E9F8");
 
 extern s32 gMdecWaitOutSync(s32 destination, u32 size) __asm__("func_800963F0");
+void gProgramMdecOutputDma(s32 destination, u32 size) __asm__("func_800962D0");
+
 
 /**
  * @brief Starts a block transfer into the decode buffer.
@@ -32,7 +34,7 @@ extern s32 gMdecWaitOutSync(s32 destination, u32 size) __asm__("func_800963F0");
  * @par Callers
  * func_80096070 (the sized image copy).
  */
-void func_800962D0(s32 destination, u32 size)
+void gProgramMdecOutputDma(s32 destination, u32 size)
 {
     gMdecWaitOutSync(destination, size);
     *gDmaControlMdecPtr |= 0x88;

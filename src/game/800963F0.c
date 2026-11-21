@@ -5,7 +5,7 @@
 
 extern u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
 extern u8 gMdecStatusLogMsg[] __asm__("D_80012BB8");
-extern void func_8009649C(void *);
+extern void gResetMdecOnTimeout(void *) __asm__("func_8009649C");
 
 /**
  * @brief Waits for the PS1 MDEC-out DMA1 channel busy bit to clear with timeout recovery.
@@ -43,7 +43,7 @@ s32 gMdecWaitOutSync(void)
             if (count == -1) {
                 register u8 *message __asm__("$4");
                 __asm__ volatile("lui\t%0,%%hi(D_80012BB8)" : "=r"(message));
-                func_8009649C(message + 0x2BB8);
+                gResetMdecOnTimeout(message + 0x2BB8);
                 return -1;
             }
         } while (*gDma1ChannelCtrlPtr & 0x01000000);

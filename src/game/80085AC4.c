@@ -11,15 +11,15 @@ extern Ctx85AC4 *gMovieSliceContext __asm__("D_8009F4BC");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 extern u32 gStripStepWidth __asm__("D_8009F4C8");
 
-extern void func_80092C8C(s32 arg0);
+extern void gDrawSync(s32 arg0) __asm__("func_80092C8C");
 extern void gMdecInSync(s32 arg0) __asm__("func_80096090");
 extern void gMdecOutSync(s32 arg0) __asm__("func_800960CC");
 extern void gClearImage(s16 *buf, s32 a1, s32 a2, s32 a3) __asm__("func_80092E10");
 extern void gVSyncWait(s32 arg0) __asm__("func_80091270");
-extern void func_800932F0(void *ptr);
+extern void gPutDrawEnv(void *ptr) __asm__("func_800932F0");
 extern void gPutDispEnvCached(void *ptr) __asm__("func_800934BC");
-extern void func_80092BF4(s32 arg0);
-extern void func_80095E90(s32 arg0);
+extern void gSetDispMask(s32 arg0) __asm__("func_80092BF4");
+extern void gDecDctReset(s32 arg0) __asm__("func_80095E90");
 void gResetMovieFrameBuffers(u32 arg0, u32 arg1) __asm__("func_80085AC4");
 
 
@@ -60,7 +60,7 @@ void gResetMovieFrameBuffers(u32 arg0, u32 arg1)
     while (gFrameBarrier != 0) {
     }
 
-    func_80092C8C(0);
+    gDrawSync(0);
     gMdecInSync(0);
     gMdecOutSync(0);
 
@@ -70,22 +70,22 @@ void gResetMovieFrameBuffers(u32 arg0, u32 arg1)
         buf[3] = 0xF0;
         buf[2] = ((gStripStepWidth * 5) << 6) >> 1;
         gClearImage(buf, 0, 0, 0);
-        func_80092C8C(0);
+        gDrawSync(0);
 
         buf[0] = 0;
         buf[1] = 0x100;
         buf[3] = 0xF0;
         buf[2] = ((gStripStepWidth * 5) << 6) >> 1;
         gClearImage(buf, 0, 0, 0);
-        func_80092C8C(0);
+        gDrawSync(0);
     }
 
     if ((arg1 & 0xFF) != 0) {
         gVSyncWait(0);
-        func_800932F0((u8 *)gMovieSliceContext + 0x34 + (1 - gMovieSliceContext->unk114) * 92);
+        gPutDrawEnv((u8 *)gMovieSliceContext + 0x34 + (1 - gMovieSliceContext->unk114) * 92);
         gPutDispEnvCached((u8 *)gMovieSliceContext + 0xEC + (1 - gMovieSliceContext->unk114) * 20);
-        func_80092BF4(1);
+        gSetDispMask(1);
     }
 
-    func_80095E90(0);
+    gDecDctReset(0);
 }

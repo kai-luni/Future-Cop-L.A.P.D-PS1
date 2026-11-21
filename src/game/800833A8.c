@@ -6,6 +6,8 @@ extern s32 gModulePrefixCW __asm__("D_8009F3D8");
 extern s32 gModulePrefixPA __asm__("D_8009F3E0");
 
 extern s32 func_8008CCA0(s32 arg0, s32 arg1);
+s32 gResolveModulePrefix(s32 arg0) __asm__("func_800833A8");
+
 
 /**
  * @brief Resolves which of the two loader directory prefixes a module name belongs
@@ -44,7 +46,7 @@ extern s32 func_8008CCA0(s32 arg0, s32 arg1);
  * The mapping is the reverse of what an earlier draft of func_80024E3C assumed: the
  * five listed names take "PA\", all others "CW\".
  */
-s32 func_800833A8(s32 arg0)
+s32 gResolveModulePrefix(s32 arg0)
 {
     u32 i;
 

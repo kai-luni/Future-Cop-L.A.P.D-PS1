@@ -13,7 +13,7 @@ extern s32 gComputeTrackedSoundMix(s32, s8 *) __asm__("func_800450A4");
 extern s8 gComputeTrackedVoiceVolume(void) __asm__("func_80045050");
 extern s32 gAllocateSoundChannelVoice(s32, s32, struct Params *, s32) __asm__("func_800220C4");
 extern s32 gReleaseValidatedSoundVoiceHandle(struct Handle *) __asm__("func_800474F0");
-extern void func_80047800(struct Resource *, s32, s32, s32);
+extern void gUpdateSoundVoiceMix(struct Resource *, s32, s32, s32) __asm__("func_80047800");
 extern void gQueueSoundChannelStarts(s32, s32 *) __asm__("func_800221E4");
 
 s32 gStartTrackedSoundVoice(void) __asm__("func_80023F08");
@@ -68,7 +68,7 @@ s32 gStartTrackedSoundVoice(void)
             if (gAllocateSoundChannelVoice(100, resource->owner, &params, gSpuBufferPtr) == -1) {
                 gReleaseValidatedSoundVoiceHandle(&gAssetHandle);
             } else {
-                if (gAssetHandle.flag) func_80047800(resource, mix[1], mix[0], -1);
+                if (gAssetHandle.flag) gUpdateSoundVoiceMix(resource, mix[1], mix[0], -1);
                 channel = resource->owner;
                 gQueueSoundChannelStarts(1, &channel);
                 gAssetHandle.state = 1;

@@ -16,7 +16,7 @@ extern UnkA78F0 gPadBuffers[] __asm__("D_800A78F0");
 
 extern s32 gGetPadType(void) __asm__("func_8001EF34");
 extern void gUpdatePadActuators(u32 arg0) __asm__("func_8001EC94");
-extern s32 func_80092C8C(s32 arg0);
+extern s32 gDrawSync(s32 arg0) __asm__("func_80092C8C");
 extern s32 func_8001BFE4(void);
 extern void gFlipDisplayLayer(void) __asm__("func_8001BFA8");
 u32 gPollPadButtons(u32 arg0) __asm__("func_8001EF8C");

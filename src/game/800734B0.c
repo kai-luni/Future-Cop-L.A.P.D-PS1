@@ -4,6 +4,8 @@
 struct Unk734B0;
 
 extern struct Unk734B0 *gBeamNodeList __asm__("D_8009F38C");
+void gClearBeamNodeList(void) __asm__("func_800734B0");
+
 
 /**
  * @brief Clears the global model/scene-graph node list head D_8009F38C during mission boot.
@@ -27,7 +29,7 @@ extern struct Unk734B0 *gBeamNodeList __asm__("D_8009F38C");
  * @par Callers
  * Confirmed: func_80024A24 (0x80024CF4 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-void func_800734B0(void)
+void gClearBeamNodeList(void)
 {
     gBeamNodeList = 0;
 }

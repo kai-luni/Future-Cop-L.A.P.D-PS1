@@ -14,7 +14,7 @@ extern volatile u32 *gGpuGp0PortPtr __asm__("D_8009DEC4");
 extern volatile u32 *gDma2MemAddrPtr __asm__("D_8009DECC");
 extern volatile u32 *gDma2BlockCtrlPtr __asm__("D_8009DED0");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
-extern void func_800951D8(void);
+extern void gArmGpuDmaTimeout(void) __asm__("func_800951D8");
 extern int gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
 
 typedef struct {
@@ -55,7 +55,7 @@ int gReadGpuVramRectDma(Hdr *arg0, u32 *out)
     int blocks;
     int t;
 
-    func_800951D8();
+    gArmGpuDmaTimeout();
     p = arg0;
     p->x = (p->x < 0) ? 0 : ((gMaxDrawWidth < p->x) ? (u16)gMaxDrawWidth : (u16)p->x);
     p->y = (p->y < 0) ? 0 : ((gMaxDrawHeight < p->y) ? (u16)gMaxDrawHeight : (u16)p->y);

@@ -64,11 +64,11 @@ extern u8 gMultiBrfMovieName[] __asm__("D_80012094");
 extern void gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
 extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void gDrawAtlasSprite(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082B0C");
-extern s32 func_8008CD30(u8 *, u8 *, s32);
+extern s32 gSpillVarargsArguments(u8 *, u8 *, s32) __asm__("func_8008CD30");
 extern void func_8008CCB0(u8 *, u8 *);
 extern s32 func_8008CCA0(u8 *, u8 *);
 extern void gActivateMenuPanel(s8 *, s32) __asm__("func_80078650");
-extern void func_80078B34(s32, s32, s32);
+extern void gQueueStatusLineText(s32, s32, s32) __asm__("func_80078B34");
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern void gSetTextPaletteEntry(u32, u8, u8, u8) __asm__("func_800493C0");
 
@@ -205,7 +205,7 @@ void gDrawProfileSlotList(s32 arg0)
             } else {
                 m = 1;
             }
-            { register u8 *src __asm__("$5") = gMenuValueFormat; __asm__("" : "+r"(src)); func_8008CD30(text, src, m); }
+            { register u8 *src __asm__("$5") = gMenuValueFormat; __asm__("" : "+r"(src)); gSpillVarargsArguments(text, src, m); }
             gDrawAlignedMultilineText(text, e->unk1C, e->unk1E, 0x10, 0, 4, 0x20, 0);
             if (e->state == 0xA) {
                 len = e->unk12;

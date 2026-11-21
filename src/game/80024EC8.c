@@ -33,14 +33,14 @@ extern void gRegisterResourceWithBias(struct Node24EC8 *node) __asm__("func_8004
 extern void gLoadPathNodePositions(struct Node24EC8 *node) __asm__("func_800511E4");
 extern void gLoadTextureChunksToVram(struct Node24EC8 *node) __asm__("func_8005A414");
 extern void gRegisterUnitSpawner(struct Node24EC8 *node) __asm__("func_80060E74");
-extern void func_80063C20(struct Node24EC8 *node);
+extern void gLoadMapTileCatalog(struct Node24EC8 *node) __asm__("func_80063C20");
 extern void gLoadCbmpTexture(struct Node24EC8 *node) __asm__("func_80063C5C");
 extern void gInitMapFromGrdb(struct Node24EC8 *node) __asm__("func_80063DC8");
 extern void gUploadSaveProfileIcon(struct Node24EC8 *node) __asm__("func_80082358");
 extern void gLoadCtdtImages(struct Node24EC8 *node) __asm__("func_800824CC");
 extern void gValidateAtlasSpriteId(struct Node24EC8 *node) __asm__("func_800825AC");
 extern void gRegisterPublishedBlock(struct Node24EC8 *node) __asm__("func_8008263C");
-extern void func_800899A4(struct Node24EC8 *node);
+extern void gLoadTextLookupTable(struct Node24EC8 *node) __asm__("func_800899A4");
 void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 
 
@@ -148,7 +148,7 @@ loop_test:
 
             switch (node->tag) {
             case 0x43747273:
-                func_800899A4(node);
+                gLoadTextLookupTable(node);
                 break;
             case 0x4374696E:
                 gValidateAtlasSpriteId(node);
@@ -161,7 +161,7 @@ loop_test:
                 break;
             case 0x4361746C:
             case 0x4374696C:
-                func_80063C20(node);
+                gLoadMapTileCatalog(node);
                 break;
             case 0x43626D70:
                 gLoadCbmpTexture(node);

@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void gSubmitGpuDmaJob(s32, s32, s32, s32) __asm__("func_80094A3C");
+void gQueueDirectGpuDmaJob(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80094A18");
+
 
 /**
  * @brief Queues or executes a direct-pointer GPU/DMA2 callback job with zero copy size.
@@ -27,7 +29,7 @@ extern void gSubmitGpuDmaJob(s32, s32, s32, s32) __asm__("func_80094A3C");
  * @par Callers
  * Confirmed: none direct; address taken at 0x8009DDAC inside D_8009DDA8 (passed to func_8008E000/func_80092910) / Likely: indirect dispatch via D_8009DDA8 / Unknown: exact indirect call site.
  */
-void func_80094A18(s32 arg0, s32 arg1, s32 arg2)
+void gQueueDirectGpuDmaJob(s32 arg0, s32 arg1, s32 arg2)
 {
     gSubmitGpuDmaJob(arg0, arg1, 0, arg2);
 }

@@ -17,7 +17,7 @@ struct SoundBank {
 extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
-extern s32 func_80045494(s32 id, u8 *table, s32 limit);
+extern s32 gResolveSoundRecordIndex(s32 id, u8 *table, s32 limit) __asm__("func_80045494");
 extern s32 gComputeSpatialSoundAttenuation(s32 arg0, s32 arg1, s8 *mix, void *arg3) __asm__("func_800458E8");
 extern s32 gAllocPrioritySoundVoice(s32 volume, s32 arg1, s32 arg2, u32 index) __asm__("func_80046B04");
 extern void gComputeSpatialSoundPan(s8 *mix) __asm__("func_800460D4");
@@ -58,7 +58,7 @@ s32 gPlaySoundIdOnVoice(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, voi
 
     result = 0;
     __asm__("" : "=r"(result) : "0"(result));
-    slot = func_80045494(track, gSoundBankTableLow, 0x47);
+    slot = gResolveSoundRecordIndex(track, gSoundBankTableLow, 0x47);
     __asm__("" : "=r"(slot) : "0"(slot));
     if (slot == 0xFF) {
         return result;

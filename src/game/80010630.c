@@ -18,6 +18,8 @@
  * func_8001054C writes SXY and SZ through swc2 as well, func_800102A0 adds the
  * per-vertex clip byte.
  */
+void gGteProjectVerticesRtpt(void) __asm__("func_80010630");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80010630\n"

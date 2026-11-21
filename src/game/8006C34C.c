@@ -20,6 +20,8 @@ struct Unk6C34CControl {
 };
 
 extern Entity *gFindNearestOpposingEntity(Entity *source, Entity *exclude, s32 maxDist, s32 flags) __asm__("func_8006C224");
+void gAcquirePlayerLockOnTarget(Entity *object, s32 arg1) __asm__("func_8006C34C");
+
 
 /**
  * @brief Acquires or cycles a target entity for the player's lock-on state.
@@ -46,7 +48,7 @@ extern Entity *gFindNearestOpposingEntity(Entity *source, Entity *exclude, s32 m
  * @par Callers
  * Confirmed: gWeaponSlotInput (0x80055E78, arg1=0 on fire press), func_800588D4 (0x80058B74, arg1=1 when unk6C==0).
  */
-void func_8006C34C(Entity *object, s32 arg1)
+void gAcquirePlayerLockOnTarget(Entity *object, s32 arg1)
 {
     Unk6C34CControl *control;
     Entity *result;

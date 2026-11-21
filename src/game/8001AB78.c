@@ -32,6 +32,8 @@
  * gUpdateForceField, func_80032F3C, func_8004F764, func_80050E0C,
  * func_800513D0, func_80051580 and func_8005EE04.
  */
+void gVectorScaleInPlace(void) __asm__("func_8001AB78");
+
 __asm__(
     ".text\n\t"
     ".align 2\n\t"

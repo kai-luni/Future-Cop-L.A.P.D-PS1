@@ -3,7 +3,7 @@
 
 extern s32 gStreamCommandState __asm__("D_8009F648");
 
-extern s32 func_800451E0(void);
+extern s32 gGetStereoSoundMode(void) __asm__("func_800451E0");
 extern void gApplyStreamChannelMix(s32 channel, s32 left, s32 right) __asm__("func_8002283C");
 
 void gSetVagmAudioStreamVolume(s32 volume) __asm__("func_80024730");
@@ -33,7 +33,7 @@ void gSetVagmAudioStreamVolume(s32 volume) __asm__("func_80024730");
 void gSetVagmAudioStreamVolume(s32 volume)
 {
     if (gStreamCommandState != 0) {
-        if (func_800451E0() != 0) {
+        if (gGetStereoSoundMode() != 0) {
             gApplyStreamChannelMix(0, volume, 0);
             gApplyStreamChannelMix(1, volume, 0x7F);
         } else {

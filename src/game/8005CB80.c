@@ -16,6 +16,8 @@ struct Unk5CB80Pool {
     struct Unk5CB80Node *active;
     struct Unk5CB80Node *free;
 };
+struct Unk5CB80Node *gFindActivePartEffectByOwner(struct Unk5CB80Pool *pool, void *target) __asm__("func_8005CB80");
+
 
 /**
  * @brief Finds the active sprite node attached to a target object (twin of
@@ -36,7 +38,7 @@ struct Unk5CB80Pool {
  * @par Callers
  * gAttachPartEffect.
  */
-struct Unk5CB80Node *func_8005CB80(struct Unk5CB80Pool *pool, void *target)
+struct Unk5CB80Node *gFindActivePartEffectByOwner(struct Unk5CB80Pool *pool, void *target)
 {
     struct Unk5CB80Node *node;
 

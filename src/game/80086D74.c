@@ -7,6 +7,8 @@ typedef struct State {
 } State;
 
 extern State *gMovieAudioState __asm__("D_8009F4D8");
+void gAdvanceMovieAudioCounters(void) __asm__("func_80086D74");
+
 
 /**
  *  @brief Advances two state counters when the state is active.
@@ -24,7 +26,7 @@ extern State *gMovieAudioState __asm__("D_8009F4D8");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80086D74(void)
+void gAdvanceMovieAudioCounters(void)
 {
     State *state = gMovieAudioState;
     if (state->active != 0) {

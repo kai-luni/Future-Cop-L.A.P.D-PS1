@@ -3,7 +3,7 @@
 
 extern void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                            s32 alignX, s32 alignY, s32 font) __asm__("func_800788F0");
-extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
+extern void gQueueStatusLineText(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80078B34");
 
 /**
  * @brief Draws a three-line menu page and queues two display requests.
@@ -41,8 +41,8 @@ s32 gDrawModeHeadingPage(s32 arg0, s32 arg1)
         gDrawAlignedMultilineText(0, 0xA0, 0x38, 0x10, 0x42E, 4, 8, 1);
         gDrawAlignedMultilineText(0, 0xA0, 0x6C, 0x10, 0x438, 4, 8, 1);
         gDrawAlignedMultilineText(0, 0xA0, 0xA0, 0x10, 0x442, 4, 8, 1);
-        func_80078B34(0x456, 0, 0);
-        func_80078B34(0x44C, 1, 0);
+        gQueueStatusLineText(0x456, 0, 0);
+        gQueueStatusLineText(0x44C, 1, 0);
     }
     return ret;
 }

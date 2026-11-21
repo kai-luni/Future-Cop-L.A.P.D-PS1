@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void gSpuInitSubsystem(s32 cold_start) __asm__("func_80096D58");
+void gWarmStartSpu(void) __asm__("func_80097A28");
+
 
 /**
  * @brief Warm-start display reinitialisation: calls gSpuInitSubsystem(0).
@@ -22,7 +24,7 @@ extern void gSpuInitSubsystem(s32 cold_start) __asm__("func_80096D58");
  * @par Callers
  * func_80021B50.
  */
-void func_80097A28(void)
+void gWarmStartSpu(void)
 {
     gSpuInitSubsystem(0);
 }

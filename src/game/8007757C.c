@@ -23,9 +23,9 @@ extern void gClearImage(void *, int, int, int) __asm__("func_80092E10");
 extern void *gSetDefDrawEnv(void *, int, int, int, int) __asm__("func_80092140");
 extern void *gSetDefDispEnv(void *, int, int, int, int) __asm__("func_800921F4");
 extern void gPutDispEnvCached(void *) __asm__("func_800934BC");
-extern void func_800932F0(void *);
-extern void func_80092BF4(int);
-extern void func_80077278(int, int, unsigned int);
+extern void gPutDrawEnv(void *) __asm__("func_800932F0");
+extern void gSetDispMask(int) __asm__("func_80092BF4");
+extern void gDrawDebugHexWord(int, int, unsigned int) __asm__("func_80077278");
 void gDrawDebugTrapScreen(int a0, int a1, int a2, int a3) __asm__("func_8007757C");
 
 
@@ -65,13 +65,13 @@ void gDrawDebugTrapScreen(int a0, int a1, int a2, int a3)
     gSetDefDrawEnv(disp, 0, 0, 0x140, 0xF0);
     gSetDefDispEnv(st, 0, 0, 0x140, 0xF0);
     gPutDispEnvCached(st);
-    func_800932F0(disp);
-    func_80092BF4(1);
+    gPutDrawEnv(disp);
+    gSetDispMask(1);
 
-    func_80077278(0x20, 0x20, a0);
-    func_80077278(0x20, 0x40, a1);
-    func_80077278(0x20, 0x60, a2);
-    func_80077278(0x20, 0x80, a3);
+    gDrawDebugHexWord(0x20, 0x20, a0);
+    gDrawDebugHexWord(0x20, 0x40, a1);
+    gDrawDebugHexWord(0x20, 0x60, a2);
+    gDrawDebugHexWord(0x20, 0x80, a3);
 
     __asm__ volatile(".word 0x000101CD");
 }

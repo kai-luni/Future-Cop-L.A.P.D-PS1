@@ -24,8 +24,8 @@ extern s8 gScreenDescriptor[] __asm__("D_800A3838");
 extern void gDrawProfileSlotList(s32) __asm__("func_8007B460");
 extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void gSetTextPaletteEntry(u32, u8, u8, u8) __asm__("func_800493C0");
-extern s32 func_8008CD30(u8 *, u8 *, s32);
-extern void func_80078B34(s32, s32, s32);
+extern s32 gSpillVarargsArguments(u8 *, u8 *, s32) __asm__("func_8008CD30");
+extern void gQueueStatusLineText(s32, s32, s32) __asm__("func_80078B34");
 
 /**
  * @brief Draws one front-end list screen: the profile list body, a numbered row
@@ -111,7 +111,7 @@ void gDrawGameHubMenu(s32 arg0)
                 } else {
                     c = 0xF;
                 }
-                { register u8 *t __asm__("$4") = text; register u8 *src __asm__("$5") = gMenuValueFormat; __asm__("" : "+r"(t)); __asm__("" : "+r"(src)); func_8008CD30(t, src, ++i); }
+                { register u8 *t __asm__("$4") = text; register u8 *src __asm__("$5") = gMenuValueFormat; __asm__("" : "+r"(t)); __asm__("" : "+r"(src)); gSpillVarargsArguments(t, src, ++i); }
                 gDrawAlignedMultilineText(text, 0x57, y, c, 0, 4, 8, 2);
                 y += 0xA;
             } while (i < gLineCount + 1);
@@ -169,6 +169,6 @@ common:
     if ((gGameClock >> 9) & 1) {
         s0 = 0x10CC;
     }
-    func_80078B34(a0, 0, 0);
-    func_80078B34(s0, 1, 0);
+    gQueueStatusLineText(a0, 0, 0);
+    gQueueStatusLineText(s0, 1, 0);
 }

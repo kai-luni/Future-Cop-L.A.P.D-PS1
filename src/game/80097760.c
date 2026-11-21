@@ -5,6 +5,8 @@ extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 
 extern void gSpuTransfer(s32 arg0, ...) __asm__("func_8009745C");
+s32 gStartSpuWrite(s32 arg0, s32 arg1) __asm__("func_80097760");
+
 
 /**
  *  @brief Issues a three-command sequence and returns the supplied length.
@@ -25,7 +27,7 @@ extern void gSpuTransfer(s32 arg0, ...) __asm__("func_8009745C");
  *  @par Callers
  *  Confirmed: func_80098E28.
  */
-s32 func_80097760(s32 arg0, s32 arg1)
+s32 gStartSpuWrite(s32 arg0, s32 arg1)
 {
     gSpuTransfer(2, gSpuTransferAddr << gSpuAddrShift);
     gSpuTransfer(0);

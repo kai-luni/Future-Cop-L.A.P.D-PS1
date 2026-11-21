@@ -19,6 +19,8 @@ struct Save {
 
 extern struct Save *gSaveProfileImage __asm__("D_8009F92C");
 extern s32 gVerifyDualChecksum(u8 *data, u32 len, u32 expectedSum, u32 expectedOther, s32 clear) __asm__("func_8007F824");
+s32 gVerifySaveImageChecksums(void) __asm__("func_8007F750");
+
 
 /**
  *  @brief Checks the save header and all ten save entries.
@@ -38,7 +40,7 @@ extern s32 gVerifyDualChecksum(u8 *data, u32 len, u32 expectedSum, u32 expectedO
  *  @par Callers
  *  Confirmed: func_8007FB04.
  */
-s32 func_8007F750(void)
+s32 gVerifySaveImageChecksums(void)
 {
     s32 ok;
     u32 i;

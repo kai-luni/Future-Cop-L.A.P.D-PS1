@@ -3,6 +3,8 @@
 
 extern void *gTextLookupTable __asm__("D_8009F518");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gReleaseActiveTextLookupTable(void) __asm__("func_800898E8");
+
 
 /**
  *  @brief Releases the stored block if one is present.
@@ -20,7 +22,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  *  @par Callers
  *  Confirmed: func_800898C8.
  */
-void func_800898E8(void)
+void gReleaseActiveTextLookupTable(void)
 {
     if (gTextLookupTable != (void *)0) {
         gFreeBlock(gTextLookupTable);

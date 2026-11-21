@@ -27,6 +27,8 @@
  * reset at the start of that sequence, so a port can omit it. No name is
  * given because an empty body proves no role.
  */
-void func_80059DB0(void)
+void gResetEntityWorldStub(void) __asm__("func_80059DB0");
+
+void gResetEntityWorldStub(void)
 {
 }

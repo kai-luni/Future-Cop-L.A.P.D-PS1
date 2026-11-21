@@ -1,3 +1,5 @@
+int gGetMovieSliceContextSize(void) __asm__("func_80085A1C");
+
 // Categories: Game Engine > Unclassified
 /**
  *  @brief Returns the constant 0x130.
@@ -16,7 +18,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-int func_80085A1C(void)
+int gGetMovieSliceContextSize(void)
 {
     return 0x130;
 }

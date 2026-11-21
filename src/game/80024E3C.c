@@ -8,8 +8,8 @@ extern u8 *gGameSession __asm__("D_8009FA94");
 extern u8 gFormatNamePair[] __asm__("D_8009F2E4");
 
 extern void func_800247A8(void);
-extern s32 func_800833A8(s32 arg0);
-extern void func_8008CD30(void *dst, void *src, s32 len, s32 arg3);
+extern s32 gResolveModulePrefix(s32 arg0) __asm__("func_800833A8");
+extern void gSpillVarargsArguments(void *dst, void *src, s32 len, s32 arg3) __asm__("func_8008CD30");
 extern void gLoadFrontEndModule(s32 arg) __asm__("func_80024904");
 extern void func_80024A24(s32 arg);
 
@@ -56,8 +56,8 @@ s32 gStartModuleByName(s32 arg0)
     D_8009F658 = 0;
     *(s32 *)(gGameSession + 0x10) = 4;
 
-    r = func_800833A8(arg0);
-    func_8008CD30(buf, gFormatNamePair, r, arg0);
+    r = gResolveModulePrefix(arg0);
+    gSpillVarargsArguments(buf, gFormatNamePair, r, arg0);
 
     if (gUploadInProgress != 0) {
         gLoadFrontEndModule((s32)buf);

@@ -13,7 +13,7 @@ extern void gGteTransformVerticesWide(void *,void *,s32) __asm__("func_80010234"
 extern void gVectorMulAdd(void *,void *,s32,void *) __asm__("func_8001AC28");
 s32 gInitMoverObject(struct Obj *obj, struct Arg *arg, s32 extra) __asm__("func_8002EED8");
 
-extern void func_8006314C(void *,s32);
+extern void gRegisterGroundObject(void *,s32) __asm__("func_8006314C");
 /**
  * @brief Position, orient and animate one object from its spawn descriptor.
  *
@@ -192,7 +192,7 @@ s32 gInitMoverObject(struct Obj *obj, struct Arg *arg, s32 extra)
         if (st->flags & 1) { obj->pos=obj->end; obj->enabled=1; }
         else obj->enabled=0;
     }
-    if (obj->flags & 4) func_8006314C(obj,0);
+    if (obj->flags & 4) gRegisterGroundObject(obj,0);
     if (obj->flags & 8) obj->enabled=1-obj->enabled;
     else obj->active=0;
     return 0;

@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u8 gSoundProcessingEnabled __asm__("D_8009F340");
+void gDisableSoundProcessing(void) __asm__("func_80044FEC");
+
 
 /**
  *  @brief Clears a global byte.
@@ -19,7 +21,7 @@ extern u8 gSoundProcessingEnabled __asm__("D_8009F340");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80044FEC(void)
+void gDisableSoundProcessing(void)
 {
     gSoundProcessingEnabled = 0;
 }

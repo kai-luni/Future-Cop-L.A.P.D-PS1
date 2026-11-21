@@ -10,6 +10,8 @@ struct SoundVoice {
 };
 
 extern u8 gVolumeLimitSelector __asm__("D_8009F738");
+void gSetSoundVoiceMixParameters(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra) __asm__("func_800477D8");
+
 
 /**
  *  @brief Sets a sound voice's volume, pan, and extra parameter.
@@ -31,7 +33,7 @@ extern u8 gVolumeLimitSelector __asm__("D_8009F738");
  *  @par Callers
  *  Confirmed: func_8002283C, func_800228F4, func_8004772C, and func_80047800.
  */
-void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra)
+void gSetSoundVoiceMixParameters(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra)
 {
     voice->baseVolume = volume;
     if (gVolumeLimitSelector != 0) {

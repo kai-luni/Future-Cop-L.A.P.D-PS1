@@ -30,6 +30,8 @@
  * emits triangle strips of a textured surface with per-strip clipping into
  * the primitive pool (called by func_8006531C:34).
  */
+void gEmitTexturedSurface(void *, int, void *, int) __asm__("func_800646BC");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_800646BC\n"

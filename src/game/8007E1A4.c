@@ -22,7 +22,7 @@ extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C8
 extern s32 gSelectFontBank(s32 index) __asm__("func_80048E28");
 extern void gMeasureTextExtent(u8 *text, s32 *width, s32 *height) __asm__("func_800492A0");
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
-extern void func_8008CD30(u8 *dest, u8 *fmt, ...);
+extern void gSpillVarargsArguments(u8 *dest, u8 *fmt, ...) __asm__("func_8008CD30");
 extern void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                           s32 alignX, s32 alignY, s32 font) __asm__("func_800788F0");
 
@@ -115,7 +115,7 @@ void gStepOptionsSetting(s32 mode, s32 x, s32 y, s32 color, s32 idx)
                     gSelectFontBank(2);
                 }
                 gMeasureTextExtent(s, &w, &h);
-                func_8008CD30(buf, gNumberFormatString, n);
+                gSpillVarargsArguments(buf, gNumberFormatString, n);
                 gDrawAlignedMultilineText(buf, x + w, y, color, 0, 1, 8, 2);
                 if (old != -1) {
                     gSelectFontBank(old);

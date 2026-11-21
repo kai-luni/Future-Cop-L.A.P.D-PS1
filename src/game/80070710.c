@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeBeamEndpointBlock(void *block) __asm__("func_80070710");
+
 
 /**
  * @brief Releases a pool block (thin wrapper around func_800181D4).
@@ -19,7 +21,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * func_80071A68, func_8007377C, func_80073BBC.
  */
-void func_80070710(void *block)
+void gFreeBeamEndpointBlock(void *block)
 {
     gFreeBlock(block);
 }

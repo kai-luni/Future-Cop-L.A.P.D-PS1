@@ -9,6 +9,8 @@ typedef struct {
 } Unk800A3578;
 
 extern Unk800A3578 gSlotRecordTable[] __asm__("D_800A3578");
+void gQueueStatusLineText(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80078B34");
+
 
 /**
  * @brief Queues a display id into one of the two HUD display slots.
@@ -36,7 +38,7 @@ extern Unk800A3578 gSlotRecordTable[] __asm__("D_800A3578");
  * func_8007A2C4, func_8007B17C, func_8007B854, func_8007BCF4, func_8007C6F0,
  * func_8007CFA0, func_8007DD08, func_8007E67C, func_8007F1F8, func_80080038.
  */
-void func_80078B34(s32 arg0, s32 arg1, s32 arg2)
+void gQueueStatusLineText(s32 arg0, s32 arg1, s32 arg2)
 {
     Unk800A3578 *p;
     register s32 temp __asm__("$7");

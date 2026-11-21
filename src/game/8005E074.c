@@ -5,7 +5,7 @@ struct Unk5E074 {
     void *model;
 };
 
-extern void func_8006CA68(void *model);
+extern void gFreeModelPairBlock(void *model) __asm__("func_8006CA68");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 void gFreeAttachedEffect(struct Unk5E074 *effect) __asm__("func_8005E074");
 
@@ -30,6 +30,6 @@ void gFreeAttachedEffect(struct Unk5E074 *effect) __asm__("func_8005E074");
  */
 void gFreeAttachedEffect(struct Unk5E074 *effect)
 {
-    func_8006CA68(effect->model);
+    gFreeModelPairBlock(effect->model);
     gFreeBlock(effect);
 }

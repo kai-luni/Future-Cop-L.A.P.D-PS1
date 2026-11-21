@@ -11,7 +11,7 @@ extern void gRegisterActorDef5A(void *data) __asm__("func_8004C884");
 extern void gRegisterActorDef5C(void *data) __asm__("func_8006EAF0");
 extern void gRegisterActorDef59(void *data) __asm__("func_800703A8");
 extern void gRegisterActorDef58(void *data) __asm__("func_80073F88");
-extern void func_800767E4(void *data);
+extern void gCloneAndInstallSpawnRecord(void *data) __asm__("func_800767E4");
 s32 gParseCsfxChunks(s32 arg0, s32 arg1) __asm__("func_8003BFD0");
 
 
@@ -100,7 +100,7 @@ case_5D:
     gRegisterActorDef58(ptr);
     goto done;
 case_5E:
-    func_800767E4(ptr);
+    gCloneAndInstallSpawnRecord(ptr);
     goto done;
 
 default_case:

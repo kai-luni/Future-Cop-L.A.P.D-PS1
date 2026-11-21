@@ -66,7 +66,7 @@ extern void gSetModelFrame(void *arg0, s32 arg1) __asm__("func_800175F8");
 extern void gStepAttackScheduler(void *arg0, s32 arg1, Unk382B4 *arg2, s32 arg3, s32 arg4) __asm__("func_80060238");
 extern void gUpdateFallMotion(s32 arg0, Unk382B4 *arg1, s32 arg2) __asm__("func_8003802C");
 extern s32 gSubmitModelWithUvOffset(Unk382B4 *arg0, u8 arg1) __asm__("func_8002ACB4");
-extern void func_80063194(s32 key);
+extern void gRemoveGroundKeyEntry(s32 key) __asm__("func_80063194");
 
 register s32 zero __asm__("$0");
 s32 gHandleType5Entity(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) __asm__("func_800382B4");
@@ -335,7 +335,7 @@ L80038650:
         }
     }
     if ((arg1->unk118 & 0x4000) != 0) {
-        func_80063194((s32)arg1);
+        gRemoveGroundKeyEntry((s32)arg1);
     }
     goto L8003871C;
 

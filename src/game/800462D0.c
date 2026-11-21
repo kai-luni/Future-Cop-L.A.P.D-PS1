@@ -96,7 +96,7 @@ extern void func_8002441C(void);
 extern s32 gComputeSpatialSoundAttenuation(s32, s32, s8 *, s32) __asm__("func_800458E8");
 extern void gQueueSoundChannelByPriority(struct SoundChannel *) __asm__("func_800455DC");
 extern void gComputeSpatialSoundPan(s8 *) __asm__("func_800460D4");
-extern void func_80047800(struct SoundVoice *, s32, s32, s32);
+extern void gUpdateSoundVoiceMix(struct SoundVoice *, s32, s32, s32) __asm__("func_80047800");
 extern void gUnlinkSoundBankVoice(struct SoundVoice *) __asm__("func_80046804");
 extern void gInsertSoundBankVoiceByPriority(struct SoundVoice *) __asm__("func_800469A0");
 extern struct SoundVoice *gAllocPrioritySoundVoice(s32, s32, s32, s32) __asm__("func_80046B04");
@@ -298,7 +298,7 @@ delta_ready:
 
             if (channel->voice != 0) {
                 gComputeSpatialSoundPan(&channel->unk14);
-                func_80047800(channel->voice, channel->unk15,
+                gUpdateSoundVoiceMix(channel->voice, channel->unk15,
                               channel->unk14, -1);
                 active++;
                 if (channel->voice->priority != channel->priority) {

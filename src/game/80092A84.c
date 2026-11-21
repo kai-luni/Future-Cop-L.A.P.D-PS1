@@ -3,6 +3,8 @@ typedef unsigned char u8;
 extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
 extern char gSetGraphDebugTraceFormat[] __asm__("D_800129D4");
 extern  void (*gLogPrintf)(char *, int, int, int) __asm__("D_8009DDEC");
+int gSetGraphDebug(int value) __asm__("func_80092A84");
+
 
 /**
  * @brief Exchanges a library flag byte and notifies the debug hook when
@@ -24,7 +26,7 @@ extern  void (*gLogPrintf)(char *, int, int, int) __asm__("D_8009DDEC");
  * @par Callers
  * func_8001BE68.
  */
-int func_80092A84(int value)
+int gSetGraphDebug(int value)
 {
     register u8 *p __asm__("$3") = gGpuDebugLevel;
     int old;

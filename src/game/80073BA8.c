@@ -5,6 +5,8 @@ struct FlagValue {
     unsigned char pad[0xE];
     u16 flags;
 };
+void gSetObjectFlag1000(struct FlagValue *value) __asm__("func_80073BA8");
+
 
 /**
  * @brief Sets flag bit 0x1000 in an object's flag word.
@@ -26,7 +28,7 @@ struct FlagValue {
  * @par Callers
  * func_80073BBC.
  */
-void func_80073BA8(struct FlagValue *value)
+void gSetObjectFlag1000(struct FlagValue *value)
 {
     value->flags |= 0x1000;
 }

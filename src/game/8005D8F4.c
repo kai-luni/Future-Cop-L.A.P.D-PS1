@@ -95,7 +95,7 @@ extern s32 func_80019668(void);
 extern s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
 extern u8 gTakeArmedLobePoint(struct Fx *a, s32 *b, struct Cand *c) __asm__("func_8005CED4");
 extern void gSpawnLobeArc(struct Fx *a, u8 *b) __asm__("func_8005D060");
-extern void func_8006C488(struct Cand *a);
+extern void gRefreshLobeArcWeaponSound(struct Cand *a) __asm__("func_8006C488");
 extern void *gAllocPositionNode(s32 *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80073500");
 extern void *gAllocAttachedEffectNode(struct Cand *owner, void *coord, s32 kind, s32 a3, s32 a4, s32 a5) __asm__("func_80073590");
 extern void gCreateRibbonBeam(void *a, void *b, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7,
@@ -260,7 +260,7 @@ u8 gUpdateDomeFieldEffect(struct Fx *self_, s32 a1)
                     tmp = stat->unk8A[0];
                 }
                 picked = tmp > 0;
-                func_8006C488(cand);
+                gRefreshLobeArcWeaponSound(cand);
                 if (picked == 0) {
                     tmp = cand->stats->unk84[self->unk54];
                 }

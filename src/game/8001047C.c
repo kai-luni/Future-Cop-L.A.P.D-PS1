@@ -33,6 +33,8 @@
  * func_80013F08, func_800164F4, func_8004C5C8, func_80071FA4 and
  * func_80074104.
  */
+void gProjectVertexBatch(void) __asm__("func_8001047C");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_8001047C\n"

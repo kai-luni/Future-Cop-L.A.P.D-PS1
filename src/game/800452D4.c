@@ -8,6 +8,8 @@ extern struct SoundVoice *gVoiceList __asm__("D_8009F74C");
 extern struct SoundVoice *gClass2SoundVoiceList __asm__("D_8009F754");
 
 extern void gUpdateSoundVoiceListMix(struct SoundVoice *voice) __asm__("func_8004530C");
+void gEnableHalfVolumeForSoundVoices(void) __asm__("func_800452D4");
+
 
 /**
  *  @brief Sets a sound flag and processes two voice pointers.
@@ -25,7 +27,7 @@ extern void gUpdateSoundVoiceListMix(struct SoundVoice *voice) __asm__("func_800
  *  @par Callers
  *  Confirmed: func_80045050.
  */
-void func_800452D4(void)
+void gEnableHalfVolumeForSoundVoices(void)
 {
     gVolumeLimitSelector = 1;
     gUpdateSoundVoiceListMix(gVoiceList);

@@ -6,6 +6,8 @@ extern void *gMapChunkNode __asm__("D_8009F810");
 extern void *gTableBuffer __asm__("D_8009FA08");
 extern void *D_800A294C[];
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeTerrainWorkBuffers(void) __asm__("func_800634F4");
+
 
 /**
  * @brief Frees non-null map and mesh buffers D_8009F808, D_8009F810, D_8009FA08, and D_800A294C[0].
@@ -29,7 +31,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_80024D14 (0x80024DA8 in asm/us/main.s, global subsystem reset) / Likely: none / Unknown: none.
  */
-void func_800634F4(void)
+void gFreeTerrainWorkBuffers(void)
 {
     if (gTileBlockTable != 0) {
         gFreeBlock(gTileBlockTable);

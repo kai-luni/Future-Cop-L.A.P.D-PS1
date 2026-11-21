@@ -1,3 +1,5 @@
+void gResetEntityRenderStub(void) __asm__("func_8005A068");
+
 // Categories: Game Engine > World Reset
 /**
  * @brief Empty reset stub invoked during the global subsystem reset sequence.
@@ -27,6 +29,6 @@
  * mission reset, so a port can omit it. No name is given because an empty
  * body proves no role.
  */
-void func_8005A068(void)
+void gResetEntityRenderStub(void)
 {
 }

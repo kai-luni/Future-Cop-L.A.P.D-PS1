@@ -27,7 +27,7 @@ extern u32 gFrameTimeMax __asm__("D_8009F4D0");
 extern s32 gMdecReadHalfword(u16 *value) __asm__("func_80095FE8");
 extern void gStartMdecOutDma(s32 destination, u32 size) __asm__("func_80096070");
 extern s32 gMdecOutSync(s32 mode) __asm__("func_800960CC");
-extern void func_80095E90(s32 option);
+extern void gDecDctReset(s32 option) __asm__("func_80095E90");
 extern void gMdecStartDecode(s32 arg0, s32 arg1) __asm__("func_80095FF4");
 extern void gMovieDecodeVlcStream(u16 *arg0, s32 arg1) __asm__("func_80089BBC");
 extern void gLoadImage(Local *local, s32 arg1) __asm__("func_80092F38");
@@ -176,7 +176,7 @@ void gMovieSliceFeedRows(u8 *data, u32 count, s32 volume)
         gMovieSliceContext->unk11C = 1;
     }
 
-    func_80095E90(1);
+    gDecDctReset(1);
 
     gMovieSliceContext->unk118++;
     gMovieSliceContext->unk30 = 1 - gMovieSliceContext->unk30;

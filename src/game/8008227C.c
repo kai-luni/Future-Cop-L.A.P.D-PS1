@@ -4,6 +4,8 @@
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
+void gSetProfileNameEntryStatusMessage(void) __asm__("func_8008227C");
+
 
 /**
  *  @brief Writes a fixed 16-bit value into a global state buffer.
@@ -21,7 +23,7 @@ extern u8 *gSaveProfileImage __asm__("D_8009F92C");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8008227C(void)
+void gSetProfileNameEntryStatusMessage(void)
 {
     *(u16 *)(gSaveProfileImage + 0x942) = 0x385E;
 }

@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gVoiceVolumeBase __asm__("D_8009F338");
+void gSetVoiceVolume(s32 volume) __asm__("func_80045294");
+
 
 /**
  * @brief Sets the voice/stream volume, clamped to the 0..0x7F range.
@@ -26,7 +28,7 @@ extern s32 gVoiceVolumeBase __asm__("D_8009F338");
  * @par Callers
  * Confirmed: func_80044F8C (0x80044FB4) at sound init with 0x40, func_800260B8 (0x8002650C) and func_80080984 (0x800809BC) from the options screen, func_8007CA34 (0x8007CA5C), func_8007CACC (0x8007CC64).
  */
-void func_80045294(s32 volume)
+void gSetVoiceVolume(s32 volume)
 {
     if (volume >= 0) {
         if (volume < 0x80) {

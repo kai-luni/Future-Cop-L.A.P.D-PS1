@@ -6,7 +6,7 @@ extern void *gSpriteAtlasBlock __asm__("D_8009F460");
 extern s32 gAtlasTable __asm__("D_8009F45C");
 extern void **gPublishedBlockPtr __asm__("D_8009F3F4");
 
-extern void func_800898E8(void);
+extern void gReleaseActiveTextLookupTable(void) __asm__("func_800898E8");
 extern void gReleaseProfileCardOperation(void) __asm__("func_8007FACC");
 extern void gShutdownProfileSubsystem(void) __asm__("func_8007FA48");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
@@ -39,7 +39,7 @@ void gReleaseActiveFrontEndResources(void)
     if (gStillRunningState == 0) {
         return;
     }
-    func_800898E8();
+    gReleaseActiveTextLookupTable();
     gReleaseProfileCardOperation();
     gShutdownProfileSubsystem();
     if (gSpriteAtlasBlock != 0) {

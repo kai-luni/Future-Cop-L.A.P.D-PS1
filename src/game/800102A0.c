@@ -22,6 +22,8 @@
  * positions, depths for ordering and the clip information to reject a polygon
  * without touching the GTE again.
  */
+void gGteProjectVertexTriplesWithClipFlags(void) __asm__("func_800102A0");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_800102A0\n"

@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gSoundSpatialMode __asm__("D_8009F734");
+void gSetSoundSpatialMode(s32 value) __asm__("func_800451EC");
+
 
 /**
  * @brief Sets the global audio listener/spatialization mode D_8009F734.
@@ -27,7 +29,7 @@ extern s32 gSoundSpatialMode __asm__("D_8009F734");
  * @par Callers
  * Confirmed: func_80027EE4 (0x80027F3C, passes 0), func_80044F8C (0x80044F9C, passes 0), and func_80028618 (0x80028748 in asm/us/main.s, passing active D_8009FA58 count; edges.json lists 0x80028620) / Likely: none / Unknown: none.
  */
-void func_800451EC(s32 value)
+void gSetSoundSpatialMode(s32 value)
 {
     gSoundSpatialMode = value;
 }

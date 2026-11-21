@@ -37,7 +37,7 @@ extern u8 gScratchTable[0x100] __asm__("D_800A3958");
 extern u8 gSecondScratchTable[0x108] __asm__("D_800A3A58");
 
 extern void gMovieDecodeVlcStream(u8 *arg0, s32 arg1) __asm__("func_80089BBC");
-extern void func_80095E90(s32 option);
+extern void gDecDctReset(s32 option) __asm__("func_80095E90");
 extern u32 gMdecReadHalfword(u16 *value) __asm__("func_80095FE8");
 extern void gMdecStartDecode(s32 arg0, s32 arg1) __asm__("func_80095FF4");
 extern void gStartMdecOutDma(s32 destination, u32 size) __asm__("func_80096070");
@@ -240,7 +240,7 @@ void gMovieSliceFeedDma(u8 *data, s32 input_arg1, s32 input_arg2)
         }
     }
 
-    func_80095E90(1);
+    gDecDctReset(1);
     {
         register struct State *tp __asm__("$3");
 

@@ -123,12 +123,12 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
 - Status: confirmed
 - Mechanism: All model, effect and cell vertices go through small hand-written COP2 loops: one mvmva per vertex with the rotation/translation loaded once per object. The loads of the next vertex are placed in the GTE latency slots between mvmva and the mfc2 reads, so the R3000 and the GTE overlap; 32-bit world coordinates are pre-shifted by 4 to fit the GTE's 16-bit inputs.
 - Evidence:
-  - `src/game/8001006C.c:46`
-  - `src/game/8001006C.c:58`
-  - `src/game/8001006C.c:38`
-  - `src/game/80010234.c:42`
-  - `src/game/8001016C.c:46`
-  - `src/game/80010750.c:42`
+  - `src/game/8001006C.c:48`
+  - `src/game/8001006C.c:60`
+  - `src/game/8001006C.c:40`
+  - `src/game/80010234.c:44`
+  - `src/game/8001016C.c:48`
+  - `src/game/80010750.c:44`
   - `src/game/80084398.c:226`
   - `src/game/80084398.c:48`
   - `asm/us/main.s:71`
@@ -156,16 +156,16 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
 - Status: confirmed
 - Mechanism: Projection runs one rtps per vertex in a hand-scheduled loop that writes screen XY and Z plus a clip byte per vertex (near, left/right, bottom; FLAG overflow forces reject) and returns the OR of all FLAG words. Polygon emitters AND/OR the clip bytes of their corners to drop whole polygons before any packet is built, and models can reject the whole vertex batch with one test.
 - Evidence:
-  - `src/game/8001047C.c:60`
-  - `src/game/8001047C.c:65`
-  - `src/game/8001047C.c:68`
-  - `src/game/8001047C.c:70`
-  - `src/game/8001047C.c:79`
+  - `src/game/8001047C.c:62`
+  - `src/game/8001047C.c:52`
+  - `src/game/8001047C.c:72`
+  - `src/game/8001047C.c:72`
+  - `src/game/8001047C.c:81`
   - `src/game/800648E8.c:187`
   - `src/game/800648E8.c:188`
   - `src/game/80013F08.c:270`
-  - `src/game/800646BC.c:101`
-  - `src/game/80044260.c:204`
+  - `src/game/800646BC.c:103`
+  - `src/game/80044260.c:206`
   - `asm/us/main.s:388`
   - `asm/us/main.s:98550`
 - Units:
@@ -379,8 +379,8 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
   - `src/game/800188D0.c:47`
   - `src/game/80095C30.c:72`
   - `src/game/80095C30.c:79`
-  - `src/game/80095900.c:46`
-  - `src/game/80095900.c:71`
+  - `src/game/80095900.c:48`
+  - `src/game/80095900.c:73`
 - Units:
   - `src/game/8001846C.c` - manifest 0x8001846C, size 0xC8 (current binding: gSinCos)
   - `src/game/80018534.c` - manifest 0x80018534, size 0x4C (current binding: gSineLookup)
@@ -405,7 +405,7 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
   - `src/game/8001A81C.c:46`
   - `src/game/8001AB00.c:52`
   - `src/game/8001AC28.c:49`
-  - `src/game/8001006C.c:38`
+  - `src/game/8001006C.c:40`
 - Units:
   - `src/game/8001A81C.c` - manifest 0x8001A81C, size 0x154 (current binding: gMulMatrixVector)
   - `src/game/8001AB00.c` - manifest 0x8001AB00, size 0x78 (current binding: gVectorDot)
@@ -592,7 +592,7 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
   - `src/game/8009570C.c:62`
   - `src/game/8009570C.c:72`
   - `src/game/8009570C.c:72`
-  - `src/game/80093280.c:50`
+  - `src/game/80093280.c:52`
   - `src/game/8001B4A8.c:362`
 - Units:
   - `src/game/8009570C.c` - manifest 0x8009570C, size 0xFC (no readable binding)
@@ -648,7 +648,7 @@ occur on the cited line).
 | `src/game/8001B4A8.c:185` | `v = gGteLeadingZeros(quot);` |
 | `src/game/8001B4A8.c:213` | `max = ((max - min) >> shift) + 1;` |
 | `src/game/8001B4A8.c:225` | `*(u32 *)xbase = v;` |
-| `src/game/8001B4A8.c:362` | `func_80093280(table + (max << 2));` |
+| `src/game/8001B4A8.c:362` | `gDrawOTag(table + (max << 2));` |
 | `src/game/800648E8.c:214` | `*(u32 *)o = (*(u32 *)o & 0xFF000000) | (avg & 0xFFFFFF);` |
 | `src/game/800164F4.c:146` | `packet->tag = (packet->tag & 0xff000000) | masked_depth;` |
 | `src/game/800172A8.c:99` | `prim->w[0] = (prim->w[0] & 0xFF000000) | (arg3->s4 & 0xFFFFFF);` |
@@ -671,26 +671,26 @@ occur on the cited line).
 | `src/game/8001B2C8.c:106` | `gPrimPoolEnd = value;` |
 | `src/game/8001B2C8.c:112` | `gPacketLimit = value;` |
 | `src/game/8001B4A8.c:393` | `gPacketCursor = val;` |
-| `src/game/8001006C.c:46` | `".word 0x4A486012   /* mvmva      1, 0, 0, 3, 0 */\n"` |
-| `src/game/8001006C.c:58` | `".word 0x480B4800   /* mfc2       $t3, $9 */\n"` |
-| `src/game/8001006C.c:38` | `".word 0x00094903   /* sra        $t1, $t1, 4 */\n"` |
-| `src/game/80010234.c:42` | `".word 0x4A480012   /* mvmva      1, 0, 0, 0, 0 */\n"` |
-| `src/game/8001016C.c:46` | `".word 0x016A5822   /* sub        $t3, $t3, $t2 */\n"` |
-| `src/game/80010750.c:42` | `".word 0x48CE0000   /* ctc2       $t6, $0 */\n"` |
+| `src/game/8001006C.c:48` | `".word 0x4A486012   /* mvmva      1, 0, 0, 3, 0 */\n"` |
+| `src/game/8001006C.c:60` | `".word 0x480B4800   /* mfc2       $t3, $9 */\n"` |
+| `src/game/8001006C.c:40` | `".word 0x00094903   /* sra        $t1, $t1, 4 */\n"` |
+| `src/game/80010234.c:44` | `".word 0x4A480012   /* mvmva      1, 0, 0, 0, 0 */\n"` |
+| `src/game/8001016C.c:48` | `".word 0x016A5822   /* sub        $t3, $t3, $t2 */\n"` |
+| `src/game/80010750.c:44` | `".word 0x48CE0000   /* ctc2       $t6, $0 */\n"` |
 | `src/game/80084398.c:226` | `gGteLoadMatrix(&o->unk04);` |
 | `src/game/80084398.c:48` | `extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");` |
 | `asm/us/main.s:71` | `/* 8A4 800100A4 1260484A */  mvmva      1, 0, 0, 3, 0` |
 | `asm/us/main.s:210` | `/* A50 80010250 1200484A */  mvmva      1, 0, 0, 0, 0` |
-| `src/game/8001047C.c:60` | `".word 0x4A180001   /* rtps */\n"` |
-| `src/game/8001047C.c:65` | `".word 0x8C880000   /* lw         $t0, 0x0($a0) */\n"` |
-| `src/game/8001047C.c:68` | `".word 0x484FF800   /* cfc2       $t7, $31 */\n"` |
-| `src/game/8001047C.c:70` | `".word 0x004F1025   /* or         $v0, $v0, $t7 */\n"` |
-| `src/game/8001047C.c:79` | `".word 0x29CF0400   /* slti       $t7, $t6, 0x400 */\n"` |
+| `src/game/8001047C.c:62` | `".word 0x4A180001   /* rtps */\n"` |
+| `src/game/8001047C.c:52` | `".word 0x8C880000   /* lw         $t0, 0x0($a0) */\n"` |
+| `src/game/8001047C.c:70` | `".word 0x484FF800   /* cfc2       $t7, $31 */\n"` |
+| `src/game/8001047C.c:72` | `".word 0x004F1025   /* or         $v0, $v0, $t7 */\n"` |
+| `src/game/8001047C.c:81` | `".word 0x29CF0400   /* slti       $t7, $t6, 0x400 */\n"` |
 | `src/game/800648E8.c:187` | `if (f & 1) return;` |
 | `src/game/800648E8.c:188` | `if (!(f & 2) && x2) return;` |
 | `src/game/80013F08.c:270` | `gProjectVertexBatch(t0, a1_pts, flg, count);` |
-| `src/game/800646BC.c:101` | `".word 0x4A180001   /* rtps */\n"` |
-| `src/game/80044260.c:204` | `".word 0x4A180001   /* rtps */\n"` |
+| `src/game/800646BC.c:103` | `".word 0x4A180001   /* rtps */\n"` |
+| `src/game/80044260.c:206` | `".word 0x4A180001   /* rtps */\n"` |
 | `asm/us/main.s:388` | `/* CC8 800104C8 0100184A */  rtps` |
 | `asm/us/main.s:98550` | `/* 54FB8 800647B8 0100184A */  rtps` |
 | `src/game/800648BC.c:33` | `".word 0x4B400006   /* nclip */\n"` |
@@ -748,8 +748,8 @@ occur on the cited line).
 | `src/game/800188D0.c:47` | `gSinCos(x, &sx, &cx);` |
 | `src/game/80095C30.c:72` | `result = gAtanTable[index];` |
 | `src/game/80095C30.c:79` | `result = 0x400 - gAtanTable[index];` |
-| `src/game/80095900.c:46` | `"mtc2\t$4, $30\n\t"` |
-| `src/game/80095900.c:71` | `"lh\t$13, -0x20E0($13)\n\t"` |
+| `src/game/80095900.c:48` | `"mtc2\t$4, $30\n\t"` |
+| `src/game/80095900.c:73` | `"lh\t$13, -0x20E0($13)\n\t"` |
 | `src/game/8001A81C.c:4` | `#define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9` |
 | `src/game/8001A81C.c:46` | `FMUL(p0, x, b);` |
 | `src/game/8001AB00.c:52` | `__asm__ volatile("mult %2,%3\n\tmflo %0\n\tmfhi %1" : "=r"(lo0), "=r"(hi0) : "r"(x), "r"(y));` |
@@ -802,7 +802,7 @@ occur on the cited line).
 | `src/game/8009570C.c:62` | `if (!((*gDma2ChannelCtrlPtr & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000))) goto success;` |
 | `src/game/8009570C.c:72` | `gSetDmaCallback(2, callback);` |
 | `src/game/8009570C.c:74` | `gVramWriteCallback->unk18(arg0);` |
-| `src/game/80093280.c:50` | `dispatch->callback(dispatch->unk18, a1, zero, 0);` |
+| `src/game/80093280.c:52` | `dispatch->callback(dispatch->unk18, a1, zero, 0);` |
 | `asm/us/main.s:267` | `/* B10 80010310 3000284A */  rtpt` |
 | `asm/us/main.s:155607` | `/* 86330 80095B30 2D00584B */  avsz3` |
 | `asm/us/main.s:155549` | `/* 86288 80095A88 2A00F84A */  dpct` |

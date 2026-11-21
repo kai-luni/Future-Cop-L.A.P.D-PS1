@@ -3,6 +3,8 @@
 
 extern u32 gSpuAccessVoiceMaskRegs(s32 on_off, u32 voice_bits, s32 low_register,
                          s32 high_register) __asm__("func_800987B8");
+u32 gUpdateSpuVoiceNoiseMask(s32 on_off, u32 voice_bits) __asm__("func_80098788");
+
 
 /**
  *  @brief Forwards a voice control request with a fixed register pair.
@@ -23,7 +25,7 @@ extern u32 gSpuAccessVoiceMaskRegs(s32 on_off, u32 voice_bits, s32 low_register,
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-u32 func_80098788(s32 on_off, u32 voice_bits)
+u32 gUpdateSpuVoiceNoiseMask(s32 on_off, u32 voice_bits)
 {
     return gSpuAccessVoiceMaskRegs(on_off, voice_bits, 0xCC, 0xCD);
 }

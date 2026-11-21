@@ -3,6 +3,8 @@
 
 extern unsigned int *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern unsigned char gGpuLibPair[] __asm__("D_800A62C8");
+void gWriteGpuControlCommandAndCache(unsigned int value) __asm__("func_80094928");
+
 
 /**
  *  @brief Stores a word and records its low byte in a high-byte-indexed table.
@@ -21,7 +23,7 @@ extern unsigned char gGpuLibPair[] __asm__("D_800A62C8");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80094928(unsigned int value)
+void gWriteGpuControlCommandAndCache(unsigned int value)
 {
     register unsigned char *base asm("$1");
     unsigned int index;

@@ -21,6 +21,8 @@
  * vector instead of IR. Called by the light setup func_80013F08 and the
  * player update func_800592D0.
  */
+void gGteTransformVerticesV0(void) __asm__("func_800101D4");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_800101D4\n"

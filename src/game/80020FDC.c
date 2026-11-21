@@ -21,7 +21,7 @@ struct Unk8009AB08 {
 extern struct Unk8009AB08 *gOperationState __asm__("D_8009AB08");
 extern char gCardDevicePathFormat[] __asm__("D_80010B0C");
 
-extern s32 func_8008CD30(char *dst, char *fmt, u32 arg2, u32 arg3);
+extern s32 gSpillVarargsArguments(char *dst, char *fmt, u32 arg2, u32 arg3) __asm__("func_8008CD30");
 extern s32 gFindCardFileSlot(void *arg0) __asm__("func_80020C90");
 extern void gQueueMcOpMode3(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8001F24C");
 extern s32 gFindFreeCardBlockRun(s32 arg0) __asm__("func_80020E68");
@@ -77,7 +77,7 @@ s32 gQueueCardFileWrite(u32 arg0, u32 arg1, u32 arg2)
     __asm__("" : "=r"(p2) : "0"(p2));
     __asm__("" : "=r"(result) : "0"(result));
 
-    func_8008CD30(buf, gCardDevicePathFormat, gOperationState->unk0000 >> 4, p0);
+    gSpillVarargsArguments(buf, gCardDevicePathFormat, gOperationState->unk0000 >> 4, p0);
     a0 = p0;
     __asm__("" : "=r"(a0) : "0"(a0));
     tmp = p2 + 0x7F;

@@ -1,5 +1,7 @@
 // Categories: Platform > Hardware
 #include "game/types.h"
+void gWaitForSioAckBeforeCardContinuation(void) __asm__("func_8008DC7C");
+
 
 /**
  *  @brief Waits for a hardware status bit to clear and jumps through a fixed address when enabled.
@@ -24,7 +26,7 @@
  * 0xDFFC. Copied into kernel RAM at 0xDF80 by func_8008DDEC; not called
  * directly from C.
  */
-void func_8008DC7C(void)
+void gWaitForSioAckBeforeCardContinuation(void)
 {
     register u32 p __asm__("$3");
 

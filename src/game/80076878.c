@@ -9,8 +9,10 @@ struct Unk76878 {
 };
 
 extern u8 *func_80019C38(s32 arg0, s32 arg1, u32 tag, s32 arg3);
-extern void func_800767E4(u8 *data);
+extern void gCloneAndInstallSpawnRecord(u8 *data) __asm__("func_800767E4");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gLoadKind57SpawnRecord(struct Unk76878 *resource) __asm__("func_80076878");
+
 
 /**
  * @brief Extracts a type-0x57 `0x74414354` spawn record, registers it via func_800767E4, and frees the request block.
@@ -36,9 +38,9 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_8004D6D4 (0x8004D81C in asm/us/main.s, switch case `0x57`) / Likely: none / Unknown: none.
  */
-void func_80076878(struct Unk76878 *resource)
+void gLoadKind57SpawnRecord(struct Unk76878 *resource)
 {
-    func_800767E4(func_80019C38(resource->unk00, resource->unk20,
+    gCloneAndInstallSpawnRecord(func_80019C38(resource->unk00, resource->unk20,
                                 0x74414354, resource->unk1C) - 4);
     gFreeBlock(resource);
 }

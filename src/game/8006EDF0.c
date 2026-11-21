@@ -13,6 +13,8 @@ struct Pool {
 
 extern struct Pool gTracerPool __asm__("D_800A3538");
 extern void gFreeIntrusiveNodePoolStorage(struct Pool *pool) __asm__("func_8003BDEC");
+void gFreeTracerPoolStorage(void) __asm__("func_8006EDF0");
+
 
 /**
  * @brief Releases the backing storage of the beam-effect object pool D_800A3538.
@@ -36,7 +38,7 @@ extern void gFreeIntrusiveNodePoolStorage(struct Pool *pool) __asm__("func_8003B
  * @par Callers
  * Confirmed: func_8003F854 (0x8003F9FC, global world teardown sequence) / Likely: none / Unknown: none.
  */
-void func_8006EDF0(void)
+void gFreeTracerPoolStorage(void)
 {
     gFreeIntrusiveNodePoolStorage(&gTracerPool);
 }

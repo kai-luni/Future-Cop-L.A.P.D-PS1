@@ -94,13 +94,15 @@ extern struct Menu *gFrontEndTransitionNextMenu[] __asm__("D_8009B8B8");
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern s32 gPopMenuPanel(void) __asm__("func_80078740");
 extern void gActivateMenuPanel(struct Menu *, s32) __asm__("func_80078650");
-extern void func_8008227C(void) __asm__("func_8008227C");
+extern void gSetProfileNameEntryStatusMessage(void) __asm__("func_8008227C");
 extern void gSelectEnabledMenuItem(s8, s32, s8) __asm__("func_800787D8");
 extern void gEmitTranslucentTileRect(u32, s32, s32, s32, s32, u8) __asm__("func_8001C214");
 extern void gSetTextPaletteEntry(u32, u8, u8, u8) __asm__("func_800493C0");
 extern void gEmitAtlasSpriteSimple(s32,s32,s32,s32,s32,s32,s32,s32,s32) __asm__("func_80082AB0");
 extern void gDrawAlignedMultilineText(void *,s32,s32,s32,s32,s32,s32,s32) __asm__("func_800788F0");
-extern void func_800826A0(void), func_80078B34(s32,s32,s32), func_8001B4A8(s32);
+extern void func_800826A0(void) __asm__("func_800826A0");
+extern void gQueueStatusLineText(s32,s32,s32) __asm__("func_80078B34");
+extern void func_8001B4A8(s32) __asm__("func_8001B4A8");
 extern void gDrawSlotStatusLine(void) __asm__("func_80078B98");
 void gUpdateAndDrawFrontEndMenu(void) __asm__("func_80078DD0");
 
@@ -259,7 +261,7 @@ reset_timer:
                         else if (*depth == 1) gUiHoldFlag = 1;
                         gPlayNonpositionalSoundEffect(0x49, 0);
                         changed = 1;
-                        if (gFontBankTable == &gProfileNameEntryMenuDescriptor) func_8008227C();
+                        if (gFontBankTable == &gProfileNameEntryMenuDescriptor) gSetProfileNameEntryStatusMessage();
                         continue;
                     }
                     menu = gFontBankTable;
@@ -368,11 +370,11 @@ reset_timer:
         }
         func_800826A0();
         if (gDeferredTransition == -1) gDrawSlotStatusLine();
-        else { func_80078B34(0, 0, 0); func_80078B34(0, 1, 0); }
+        else { gQueueStatusLineText(0, 0, 0); gQueueStatusLineText(0, 1, 0); }
         if (gDeferredTransition != -1) {
             gUiHoldFlag = 1;
             if (gPendingRowCapture) {
-                func_80078B34(500, 0, 0);
+                gQueueStatusLineText(500, 0, 0);
                 gDrawSlotStatusLine();
                 func_8001B4A8(1);
                 while (gFrameBarrier) { }

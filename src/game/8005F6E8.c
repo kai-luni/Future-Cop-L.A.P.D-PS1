@@ -108,7 +108,7 @@ extern s32 gSpawnStaticProjectile(void *a0, void *a1, void *a2, void *a3, u32 a4
 extern s32 gSpawnJitterProjectile(void *a0, void *a1, void *a2, void *a3, void *a4, s32 a5, u32 a6) __asm__("func_8005EE04");
 extern s32 gFireRayAttack(void *a0, void *a1, void *a2, void *a3, s32 a4) __asm__("func_8005F018");
 extern s32 gTraceMapRay(void *a0, void *a1, void *a2, s32 a3, s32 a4) __asm__("func_800684AC");
-extern s32 func_8006F0E8(s32 a0, s32 a1, s32 a2, u32 a3, void *a4, void *a5);
+extern s32 gSpawnTracerBeam(s32 a0, s32 a1, s32 a2, u32 a3, void *a4, void *a5) __asm__("func_8006F0E8");
 s32 gFireEntityWeapon(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3) __asm__("func_8005F6E8");
 
 
@@ -336,7 +336,7 @@ L9B4:
             }
         }
         s7 = 0;
-        temp = func_8006F0E8(0x140, 0x60, 0x30000, *(u32 *)tmp60, pos, vec2);
+        temp = gSpawnTracerBeam(0x140, 0x60, 0x30000, *(u32 *)tmp60, pos, vec2);
         if ((u8)temp) {
             flagC8 = (s2->unk1A != 0);
             goto FE28;

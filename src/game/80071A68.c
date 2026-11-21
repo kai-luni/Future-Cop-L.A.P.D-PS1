@@ -17,7 +17,7 @@ struct Unk71A68 {
     struct Unk71A68Entry *entries;
 };
 
-extern void func_80070710(void *block);
+extern void gFreeBeamEndpointBlock(void *block) __asm__("func_80070710");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 void gFreeBeamNode(struct Unk71A68 *object) __asm__("func_80071A68");
 
@@ -47,10 +47,10 @@ void gFreeBeamNode(struct Unk71A68 *object)
     s32 i;
 
     if (object->first != 0) {
-        func_80070710(object->first);
+        gFreeBeamEndpointBlock(object->first);
     }
     if (object->second != 0) {
-        func_80070710(object->second);
+        gFreeBeamEndpointBlock(object->second);
     }
     for (i = 0; i < object->count; i++) {
         if (object->entries[i].extra != 0) {

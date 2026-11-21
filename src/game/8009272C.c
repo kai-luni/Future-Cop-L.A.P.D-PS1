@@ -1,6 +1,8 @@
 // Categories: Utilities > Record Manipulation
 typedef unsigned char u8;
 typedef unsigned int u32;
+int gCatPrimPackets(u8 *a0, u8 *a1) __asm__("func_8009272C");
+
 
 /**
  *  @brief Combines two record byte values when their sum fits the limit.
@@ -21,7 +23,7 @@ typedef unsigned int u32;
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-int func_8009272C(u8 *a0, u8 *a1)
+int gCatPrimPackets(u8 *a0, u8 *a1)
 {
     int v;
 

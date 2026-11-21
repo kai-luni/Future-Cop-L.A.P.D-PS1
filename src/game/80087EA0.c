@@ -20,19 +20,19 @@ extern s32 gLayerModeBits __asm__("D_8009F968");
 extern s32 gChainedNodes[] __asm__("D_8009FA48");
 
 extern s32 gPollPadButtons(s32) __asm__("func_8001EF8C");
-extern void func_800859B0(void);
+extern void gSetMovieStripDecodeDefaults(void) __asm__("func_800859B0");
 extern void gMovieSetScaleMode(s32) __asm__("func_800859D8");
-extern s32 func_80085A1C(void);
+extern s32 gGetMovieSliceContextSize(void) __asm__("func_80085A1C");
 extern s32 gMovieInitContext(s32, s32, s32, s32, s32, s32, s32) __asm__("func_80085C4C");
-extern s32 func_80087814(void);
-extern s32 func_8008781C(void);
-extern s32 func_8008799C(s32);
+extern s32 gGetMovieSpuBufferSize(void) __asm__("func_80087814");
+extern s32 gGetMovieAudioStateSize(void) __asm__("func_8008781C");
+extern s32 gAllocMovieBuffer(s32) __asm__("func_8008799C");
 extern void gCloseVideoLayer(void) __asm__("func_80087D48");
 extern s32 gCalcMovieBufferSize(s32, s32, s32) __asm__("func_800896D4");
 extern void gBuildMovieVlcTables(s32, s32, s32) __asm__("func_80089A88");
 extern void gInitCdAudioMix(void) __asm__("func_8008F7AC");
 extern s32 gSetGpuDrawOffset(s32) __asm__("func_80091F60");
-extern void func_80092BF4(s32);
+extern void gSetDispMask(s32) __asm__("func_80092BF4");
 extern s32 gAllocSpuRamBlock(s32) __asm__("func_80097B28");
 
 /**
@@ -117,7 +117,7 @@ s32 gOpenVideoLayer(s32 arg0)
     }
 
     if (var_s0 != 0) {
-        func_80092BF4(0);
+        gSetDispMask(0);
         gSetGpuDrawOffset(0);
     }
 
@@ -132,17 +132,17 @@ s32 gOpenVideoLayer(s32 arg0)
     }
 
     gMovieDisplayMode = arg0;
-    gMovieDecodeBufferBlock = func_8008799C(var_a0);
+    gMovieDecodeBufferBlock = gAllocMovieBuffer(var_a0);
     if (gMovieDecodeBufferBlock == 0) {
         goto fail;
     }
 
-    gMoviePrimaryVlcBuffer = func_8008799C(0x6000);
+    gMoviePrimaryVlcBuffer = gAllocMovieBuffer(0x6000);
     if (gMoviePrimaryVlcBuffer == 0) {
         goto fail;
     }
 
-    gMovieSecondaryVlcBuffer = func_8008799C(0x600);
+    gMovieSecondaryVlcBuffer = gAllocMovieBuffer(0x600);
     if (gMovieSecondaryVlcBuffer == 0) {
         goto fail;
     }
@@ -154,10 +154,10 @@ s32 gOpenVideoLayer(s32 arg0)
     } else if (arg0 & 0x10) {
         gMovieSetScaleMode(1);
     } else if (arg0 & 4) {
-        func_800859B0();
+        gSetMovieStripDecodeDefaults();
     }
 
-    var_a0 = func_8008799C(func_80085A1C());
+    var_a0 = gAllocMovieBuffer(gGetMovieSliceContextSize());
     gMovieSliceContextStorage = var_a0;
     if (var_a0 == 0) {
         goto fail;
@@ -175,7 +175,7 @@ s32 gOpenVideoLayer(s32 arg0)
     }
 
     if (!(arg0 & 1)) {
-        gMovieStreamBuffer = func_8008799C(gCalcMovieBufferSize(gLayerModeBits, 0x4400, 1));
+        gMovieStreamBuffer = gAllocMovieBuffer(gCalcMovieBufferSize(gLayerModeBits, 0x4400, 1));
         if (gMovieStreamBuffer == 0) {
             goto fail;
         }
@@ -184,17 +184,17 @@ s32 gOpenVideoLayer(s32 arg0)
         gCalcMovieBufferSize(gLayerModeBits, 0x424C, 1);
     }
 
-    gMovieAudioBlock = func_8008799C(func_8008781C());
+    gMovieAudioBlock = gAllocMovieBuffer(gGetMovieAudioStateSize());
     if (gMovieAudioBlock == 0) {
         goto fail;
     }
 
-    gMovieSpuBufferA = gAllocSpuRamBlock(func_80087814());
+    gMovieSpuBufferA = gAllocSpuRamBlock(gGetMovieSpuBufferSize());
     if (gMovieSpuBufferA == 0) {
         goto fail;
     }
 
-    gMovieSpuBufferB = gAllocSpuRamBlock(func_80087814());
+    gMovieSpuBufferB = gAllocSpuRamBlock(gGetMovieSpuBufferSize());
     if (gMovieSpuBufferB == 0) {
         goto fail;
     }

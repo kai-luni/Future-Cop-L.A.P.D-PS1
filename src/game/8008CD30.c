@@ -39,6 +39,8 @@
  * formatter body at func_8008CD3C. Called by front-end and mission-loading
  * path formatters such as func_80024E3C, func_80025370, and func_80083130.
  */
+void gSpillVarargsArguments(void) __asm__("func_8008CD30");
+
 __asm__(
     ".set noreorder\n"
     " .globl func_8008CD30\n"

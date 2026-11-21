@@ -5,6 +5,8 @@
 
 extern volatile u32 *gGpuGp0PortPtr __asm__("D_8009DEC4");
 extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
+s32 gProbeGpuVersion(u32 flags) __asm__("func_80095350");
+
 
 /**
  * @brief Probes the PS1 GPU version via GP1(0x10) and configures legacy GP0 mode or 2MB VRAM mode.
@@ -27,7 +29,7 @@ extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
  * @par Callers
  * Confirmed: func_80094F4C (0x80095084 in asm/us/main.s, when (a0 & 7) == 0) / Likely: none / Unknown: none.
  */
-s32 func_80095350(u32 flags)
+s32 gProbeGpuVersion(u32 flags)
 {
     *gGpuGp1PortPtr = 0x10000007;
 

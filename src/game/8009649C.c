@@ -10,6 +10,8 @@ extern volatile u32 *gMdecControlStatusPtr __asm__("D_8009E9F4");
 extern volatile u32 *gDma0ChannelCtrlPtr __asm__("D_8009E9C8");
 extern volatile u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
 extern void func_8008E000(void *arg0, s32 arg1);
+s32 gResetMdecOnTimeout(s32 arg0) __asm__("func_8009649C");
+
 
 /**
  * @brief Logs an MDEC/DMA timeout and resets the MDEC unit and DMA channels 0 and 1.
@@ -34,7 +36,7 @@ extern void func_8008E000(void *arg0, s32 arg1);
  * @par Callers
  * Confirmed: func_8009635C, func_800963F0.
  */
-s32 func_8009649C(s32 arg0)
+s32 gResetMdecOnTimeout(s32 arg0)
 {
     register s32 result __asm__("$2");
     func_8008E000(&gMdecTimeoutFormat, arg0);

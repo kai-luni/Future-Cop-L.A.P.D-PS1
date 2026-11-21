@@ -2,6 +2,8 @@
 #include "game/gpu_globals.h"
 
 extern int *gGpuGp1PortPtr __asm__("D_8009DEC8");
+int gReadGpuStatus(void) __asm__("func_80094144");
+
 
 /**
  *  @brief Returns the integer referenced by a global pointer.
@@ -20,7 +22,7 @@ extern int *gGpuGp1PortPtr __asm__("D_8009DEC8");
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-int func_80094144(void)
+int gReadGpuStatus(void)
 {
     return *gGpuGp1PortPtr;
 }

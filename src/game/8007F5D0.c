@@ -6,6 +6,8 @@ extern u8 gRowClearFlag __asm__("D_8009FA10");
 extern u8 gScreenDescriptor[] __asm__("D_800A3838");
 extern u8 gMenuDescriptor[] __asm__("D_800A3808");
 extern void gActivateMenuPanel(u8 *, s32) __asm__("func_80078650");
+void gOpenPauseOrConfirmMenu(void) __asm__("func_8007F5D0");
+
 
 /**
  *  @brief Selects one of two global buffers for a routine call.
@@ -24,7 +26,7 @@ extern void gActivateMenuPanel(u8 *, s32) __asm__("func_80078650");
  *  @par Callers
  *  Confirmed: func_8007F618, func_8007F648.
  */
-void func_8007F5D0(void)
+void gOpenPauseOrConfirmMenu(void)
 {
     if (gArmedFlag == 0 && gRowClearFlag != 0) {
         gActivateMenuPanel(gScreenDescriptor, 1);

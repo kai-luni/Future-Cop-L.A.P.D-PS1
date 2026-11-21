@@ -7,6 +7,8 @@ extern void *gMissionTable __asm__("D_8009F930");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_80019584(s32 pool);
+void gFreeSceneSubsystemBuffers(void) __asm__("func_80083428");
+
 
 /**
  * @brief Frees the scene-node pool D_8009F934, bucket array D_8009F938, and emitter table D_8009F930.
@@ -30,7 +32,7 @@ extern void func_80019584(s32 pool);
  * @par Callers
  * Confirmed: func_80024D14 (0x80024D88 in asm/us/main.s, global subsystem reset) / Likely: none / Unknown: none.
  */
-void func_80083428(void)
+void gFreeSceneSubsystemBuffers(void)
 {
     func_80019584(gMissionState);
     gMissionState = 0;

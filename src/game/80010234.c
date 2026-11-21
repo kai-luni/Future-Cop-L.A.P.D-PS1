@@ -27,6 +27,8 @@
  * are the map-cell drawers (func_8002B588, func_8002C584, func_8002CC30) and
  * the part/instance builders of the scene lists.
  */
+void gGteTransformVerticesWide(void) __asm__("func_80010234");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80010234\n"

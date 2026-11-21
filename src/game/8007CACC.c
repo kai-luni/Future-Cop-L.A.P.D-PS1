@@ -20,16 +20,16 @@ extern struct Sel *gFontBankTable __asm__("D_8009F468");
 extern struct Voice *gSnapshotPointer __asm__("D_8009F91C");
 extern s32 gPreviewTrackId __asm__("D_8009F920");
 
-extern s32 func_8004522C(void);
+extern s32 gGetMusicVolume(void) __asm__("func_8004522C");
 extern void gSetSfxVolume(s32 volume) __asm__("func_800451F8");
-extern s32 func_80045288(void);
+extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
 extern void gSetVagmVolumeSetting(s32 volume) __asm__("func_80045238");
-extern s32 func_800452C8(void);
-extern void func_80045294(s32 volume);
+extern s32 gGetVoiceVolume(void) __asm__("func_800452C8");
+extern void gSetVoiceVolume(s32 volume) __asm__("func_80045294");
 extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
 extern s32 gAllocVoiceForSoundId(s32 arg0, s32 arg1, s32 arg2, s32 id) __asm__("func_80046A58");
 extern s32 gPlaySoundIdOnVoice(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *object) __asm__("func_80046E88");
-extern void func_80047800(struct Voice *voice, s32 pan, s32 volume, s32 extra);
+extern void gUpdateSoundVoiceMix(struct Voice *voice, s32 pan, s32 volume, s32 extra) __asm__("func_80047800");
 
 /**
  * @brief Menu-driven music preview and volume callback.
@@ -92,25 +92,25 @@ s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
         if (flags & 0x800000) {
             switch (gFontBankTable->mode) {
             case 1:
-                gSetSfxVolume(func_8004522C() - 1);
+                gSetSfxVolume(gGetMusicVolume() - 1);
                 break;
             case 2:
-                gSetVagmVolumeSetting(func_80045288() - 1);
+                gSetVagmVolumeSetting(gGetVagmVolumeSetting() - 1);
                 break;
             case 3:
-                func_80045294(func_800452C8() - 1);
+                gSetVoiceVolume(gGetVoiceVolume() - 1);
                 break;
             }
         } else if (flags & 0x200000) {
             switch (gFontBankTable->mode) {
             case 1:
-                gSetSfxVolume(func_8004522C() + 1);
+                gSetSfxVolume(gGetMusicVolume() + 1);
                 break;
             case 2:
-                gSetVagmVolumeSetting(func_80045288() + 1);
+                gSetVagmVolumeSetting(gGetVagmVolumeSetting() + 1);
                 break;
             case 3:
-                func_80045294(func_800452C8() + 1);
+                gSetVoiceVolume(gGetVoiceVolume() + 1);
                 break;
             }
         }
@@ -122,7 +122,7 @@ s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
                 }
             }
             if (gSnapshotPointer == 0) {
-                gSnapshotPointer = (struct Voice *)gAllocVoiceForSoundId(func_8004522C(), 10, 0, 0x4A);
+                gSnapshotPointer = (struct Voice *)gAllocVoiceForSoundId(gGetMusicVolume(), 10, 0, 0x4A);
                 if (gSnapshotPointer == 0) {
                     return flags;
                 }
@@ -131,7 +131,7 @@ s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
                 gPreviewTrackId = k;
                 return flags;
             }
-            func_80047800(gSnapshotPointer, gSnapshotPointer->pan, func_8004522C(), -1);
+            gUpdateSoundVoiceMix(gSnapshotPointer, gSnapshotPointer->pan, gGetMusicVolume(), -1);
         } else if (mode == 2) {
             if (gSnapshotPointer != 0) {
                 if (gPreviewTrackId != 0x4B) {
@@ -140,7 +140,7 @@ s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
                 }
             }
             if (gSnapshotPointer == 0) {
-                gSnapshotPointer = (struct Voice *)gAllocVoiceForSoundId(func_800452C8(), 10, 0, 0x4B);
+                gSnapshotPointer = (struct Voice *)gAllocVoiceForSoundId(gGetVoiceVolume(), 10, 0, 0x4B);
                 if (gSnapshotPointer == 0) {
                     return flags;
                 }
@@ -149,7 +149,7 @@ s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
                 gPreviewTrackId = k;
                 return flags;
             }
-            func_80047800(gSnapshotPointer, gSnapshotPointer->pan, func_800452C8(), -1);
+            gUpdateSoundVoiceMix(gSnapshotPointer, gSnapshotPointer->pan, gGetVoiceVolume(), -1);
         } else {
             if (gSnapshotPointer != 0) {
                 gStopSoundVoiceHandle((s32)gSnapshotPointer);

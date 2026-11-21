@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u32 gSpuEncodeOrWriteAddr(s32 register_index, u32 address) __asm__("func_80097808");
+u32 gSetSpuIrqAddress(u32 address) __asm__("func_80098BB8");
+
 
 /**
  *  @brief Validates an address before passing it to a register routine.
@@ -21,7 +23,7 @@ extern u32 gSpuEncodeOrWriteAddr(s32 register_index, u32 address) __asm__("func_
  *  @par Callers
  *  Confirmed: func_80022F44, func_80022FA8.
  */
-u32 func_80098BB8(u32 address)
+u32 gSetSpuIrqAddress(u32 address)
 {
     if (address > 0x7FFF8) {
         return 0;

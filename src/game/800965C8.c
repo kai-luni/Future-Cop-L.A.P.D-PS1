@@ -1,3 +1,5 @@
+void gRunStaticInitializers(void) __asm__("func_800965C8");
+
 // Categories: Platform > Runtime Init | Utilities
 /**
  * @brief One-shot initialiser: runs the constructor table once per program
@@ -25,7 +27,7 @@
  * @par Callers
  * func_80076A2C, as the very first thing it does.
  */
-void func_800965C8(void)
+void gRunStaticInitializers(void)
 {
     __asm__ volatile (
         ".set noat\n"

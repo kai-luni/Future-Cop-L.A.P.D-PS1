@@ -1,6 +1,8 @@
 // Categories: Platform > GPU | Platform > DMA
 extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
 extern void gSetDmaCallback(int, void (*)(void)) __asm__("func_800914E0");
+void gInstallGpuQueueDmaCallback(void) __asm__("func_80095808");
+
 
 /**
  * @brief Installs func_80094CEC as the channel-2 (GPU) DMA completion callback via func_800914E0.
@@ -24,7 +26,7 @@ extern void gSetDmaCallback(int, void (*)(void)) __asm__("func_800914E0");
  * @par Callers
  * Confirmed: none direct; address passed to func_800914E0 in func_800953F0 (0x8009549C), func_800954DC (0x80095588), func_800955C8 (0x8009567C), and func_8009570C (0x800957CC) / Likely: invoked by DMA2 IRQ via D_8009DD10 / Unknown: none.
  */
-void func_80095808(void)
+void gInstallGpuQueueDmaCallback(void)
 {
     register void (*callback)(void) asm("$5");
     asm("lui %0, %%hi(func_80094CEC)\n\taddiu %0, %0, %%lo(func_80094CEC)" : "=r"(callback));

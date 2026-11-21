@@ -36,6 +36,8 @@
  * callers, including gUpdateMorphBounds and gSolveLobVector; the file's
  * 'Reciprocal' category and @brief are wrong.
  */
+void gSqrt12(void) __asm__("func_80095900");
+
 __asm__(
     ".text\n\t"
     ".set\tnoreorder\n\t"

@@ -1,5 +1,5 @@
 // Categories: BIOS > System Calls | Platform > Interrupts
-extern void func_8008DB14(void);
+extern void gCallKernelPadCleanup(void) __asm__("func_8008DB14");
 extern void func_8008DAE0(void);
 extern void gRemovePriority1Irq(void) __asm__("func_8008D9DC");
 extern int gModeClearFlag __asm__("D_8009C800");
@@ -37,7 +37,7 @@ void gStopPadAndRemoveIrq(void) __asm__("func_8008D92C");
  */
 void gStopPadAndRemoveIrq(void)
 {
-    func_8008DB14();
+    gCallKernelPadCleanup();
     func_8008DAE0();
     gRemovePriority1Irq();
     gModeClearFlag = 0;

@@ -19,6 +19,8 @@
  * None in the symbol table (inlined); the callers of the sibling functions use
  * whichever variant their projection needs.
  */
+void gGteTransformVerticesSquashY(void) __asm__("func_8001016C");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_8001016C\n"

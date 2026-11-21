@@ -24,7 +24,7 @@ extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C8
 extern void gPopMenuPanel(void) __asm__("func_80078740");
 extern void gSetTextPaletteEntry(u32 index, u8 blue, u8 green, u8 red) __asm__("func_800493C0");
 extern void gDrawAlignedMultilineText(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) __asm__("func_800788F0");
-extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
+extern void gQueueStatusLineText(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80078B34");
 extern void gEmitFlatQuadRect(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) __asm__("func_80082EF0");
 extern void func_8007F128(s32 input0, s32 input1, s32 input2, s32 input3, s32 arg5, s32 arg6);
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
@@ -182,11 +182,11 @@ state_5:
             gDrawAlignedMultilineText(0, 0xA0, 0x82, 0x11, gStatusTextId, 4, 8, 1);
         }
         if ((gGameClock[0] >> 9) & 1) {
-            func_80078B34(0x6E5, 0, 0);
-            func_80078B34(0x6E0, 1, 0);
+            gQueueStatusLineText(0x6E5, 0, 0);
+            gQueueStatusLineText(0x6E0, 1, 0);
         } else {
-            func_80078B34(0x3AA2, 0, 0);
-            func_80078B34(0x10CC, 1, 0);
+            gQueueStatusLineText(0x3AA2, 0, 0);
+            gQueueStatusLineText(0x10CC, 1, 0);
         }
         gDrawAlignedMultilineText(0, 0xA0, 0x3C, 0x10, 0x3A98, 4, 8, 1);
         gDrawAlignedMultilineText(0, 0xA0, 0xA2, 0x10, 0x3AB6, 4, 8, 2);

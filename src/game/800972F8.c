@@ -13,6 +13,8 @@ extern volatile u32 gSpuTransferCallback __asm__("D_8009EEDC");
 extern u32 gSetupGuard __asm__("D_8009EEF4");
 extern void gSpuBusyWait(void) __asm__("func_80097990");
 extern void func_8008DFF0(u32 arg0, s32 arg1);
+void gFinishSpuTransfer(void) __asm__("func_800972F8");
+
 
 /**
  *  @brief Clears two shared flag bits and dispatches a completion action.
@@ -33,7 +35,7 @@ extern void func_8008DFF0(u32 arg0, s32 arg1);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800972F8(void)
+void gFinishSpuTransfer(void)
 {
     u32 i;
 

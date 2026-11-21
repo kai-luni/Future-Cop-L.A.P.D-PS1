@@ -1,7 +1,7 @@
 // Categories: Resources > Memory Management | Graphics > Text
 #include "game/types.h"
 
-extern void func_800898E8(void);
+extern void gReleaseActiveTextLookupTable(void) __asm__("func_800898E8");
 void gFreeTextTable(void) __asm__("func_800898C8");
 
 
@@ -34,5 +34,5 @@ void gFreeTextTable(void) __asm__("func_800898C8");
  */
 void gFreeTextTable(void)
 {
-    func_800898E8();
+    gReleaseActiveTextLookupTable();
 }

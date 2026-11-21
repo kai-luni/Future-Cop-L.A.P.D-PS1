@@ -10,7 +10,7 @@ extern u32 *gDma6ChannelCtrlPtr __asm__("D_8009DEE0");
 extern u32 *gDma6MemAddrPtr __asm__("D_8009DED8");
 extern u32 *gDma6BlockCtrlPtr __asm__("D_8009DEDC");
 
-extern void func_800951D8(void);
+extern void gArmGpuDmaTimeout(void) __asm__("func_800951D8");
 extern s32 gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
 s32 gClearOrderingTableReverseDma(u8 *arg0, s32 arg1) __asm__("func_8009415C");
 
@@ -42,7 +42,7 @@ s32 gClearOrderingTableReverseDma(u8 *arg0, s32 arg1)
     *gDma6MemAddrPtr = (u32 *)(arg0 + ((arg1 << 2) - 4));
     *gDma6BlockCtrlPtr = arg1;
     *gDma6ChannelCtrlPtr = 0x11000002;
-    func_800951D8();
+    gArmGpuDmaTimeout();
     if (*gDma6ChannelCtrlPtr & 0x1000000) {
         do {
             if (gCheckGpuDmaTimeout() != 0) {

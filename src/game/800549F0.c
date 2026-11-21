@@ -82,7 +82,7 @@ struct Work549F0 {
 
 extern s32 gReadAnalogMovementDirections(u8 *, u32 *, s32 *, s32 *) __asm__("func_800538C8");
 extern void gSteerHeadingToOctant(struct Obj549F0 *) __asm__("func_80052E28");
-extern void func_80051AC8(struct Obj549F0 *, s32);
+extern void gSetPlayerCrouchBounds(struct Obj549F0 *, s32) __asm__("func_80051AC8");
 extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 extern s32 gGetGroundHeight(void *, void *, void *, void *) __asm__("func_80066F78");
 extern void gComputeOnFootVelocityDelta(struct Obj549F0 *, s32, s32, void *, s32) __asm__("func_80054590");
@@ -471,7 +471,7 @@ after_action:
     lane = speed;
     if (self->unkB9 & 0x80) {
         if (self->state != 9) {
-            func_80051AC8(self, speed);
+            gSetPlayerCrouchBounds(self, speed);
             self->unkB9 &= 0x7F;
         }
     }
@@ -488,7 +488,7 @@ after_action:
             spare = 1;
             anim = 3;
             if ((self->unkB9 & 0x80) == 0) {
-                func_80051AC8(self, spare);
+                gSetPlayerCrouchBounds(self, spare);
             }
             self->unkB9 |= 0x80;
             break;

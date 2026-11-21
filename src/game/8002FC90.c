@@ -35,7 +35,7 @@ extern UnkFC90Obj *gPlayerEntities[2] __asm__("D_8009FA58");
 extern void gSetEntityGaugeValue(UnkFC90Sub *sub, s32 index, s32 value) __asm__("func_8005A190");
 extern void gFlagQuartileChange(UnkFC90Obj *obj, s32 value) __asm__("func_8003BA50");
 extern void gRefillWeaponSlotAmmo(UnkFC90Obj *obj, s32 index, s32 value, s32 flag) __asm__("func_8006BE90");
-extern void func_8006BDFC(UnkFC90Obj *obj, s32 index);
+extern void gRefillWeaponSlotReserve(UnkFC90Obj *obj, s32 index) __asm__("func_8006BDFC");
 void gApplyPlayerResupply(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4) __asm__("func_8002FC90");
 
 
@@ -196,7 +196,7 @@ void gApplyPlayerResupply(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *
         mask = temp >> 4;
         for (j = 0; mask != 0; mask >>= 1, j++) {
             if (mask & 1) {
-                func_8006BDFC(obj, j);
+                gRefillWeaponSlotReserve(obj, j);
             }
         }
     }

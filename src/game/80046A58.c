@@ -3,7 +3,7 @@
 
 extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
 
-extern s32 func_80045494(s32 id, u8 *table, s32 limit);
+extern s32 gResolveSoundRecordIndex(s32 id, u8 *table, s32 limit) __asm__("func_80045494");
 extern s32 gAllocPrioritySoundVoice(s32 arg0, s32 arg1, s32 arg2, s32 slot) __asm__("func_80046B04");
 s32 gAllocVoiceForSoundId(s32 arg0, s32 arg1, s32 arg2, s32 id) __asm__("func_80046A58");
 
@@ -39,7 +39,7 @@ s32 gAllocVoiceForSoundId(s32 arg0, s32 arg1, s32 arg2, s32 id)
     s32 slot;
 
     handle = 0;
-    slot = func_80045494(id, gSoundBankTableLow, 0x47);
+    slot = gResolveSoundRecordIndex(id, gSoundBankTableLow, 0x47);
     if (slot != 0xFF) {
         handle = gAllocPrioritySoundVoice(arg0, arg1, arg2, slot);
     }

@@ -7,6 +7,8 @@ struct Unk4AA90 {
 };
 
 extern struct Unk4AA90 *gFragmentFreeList __asm__("D_8009F798");
+struct Unk4AA90 *gPopFragmentFreeList(void) __asm__("func_8004AA90");
+
 
 /**
  * @brief Pops the head of the fragment free list D_8009F798, keeping the
@@ -27,7 +29,7 @@ extern struct Unk4AA90 *gFragmentFreeList __asm__("D_8009F798");
  * @par Callers
  * func_8004B5F8.
  */
-struct Unk4AA90 *func_8004AA90(void)
+struct Unk4AA90 *gPopFragmentFreeList(void)
 {
     struct Unk4AA90 *current;
 

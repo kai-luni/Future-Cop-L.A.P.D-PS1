@@ -8,6 +8,8 @@ extern s32 gMissionClearFlag __asm__("D_8009F944");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void *func_800194DC(s32 count, s32 size, s32 tag);
+void gInitSceneNodeAndVoicePools(void) __asm__("func_8008347C");
+
 
 /**
  * @brief Resets the scene render pools: the 250-node spawn pool, the 32-slot
@@ -45,7 +47,7 @@ extern void *func_800194DC(s32 count, s32 size, s32 tag);
  * @par Callers
  * Confirmed: func_80024A24 (mission boot).
  */
-void func_8008347C(void)
+void gInitSceneNodeAndVoicePools(void)
 {
     s32 *p;
 

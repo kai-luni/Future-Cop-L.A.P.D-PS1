@@ -7,7 +7,7 @@ struct Unk734B0 {
 
 extern struct Unk734B0 *gBeamNodeList __asm__("D_8009F38C");
 
-extern void func_80073BA8(struct Unk734B0 *node);
+extern void gSetObjectFlag1000(struct Unk734B0 *node) __asm__("func_80073BA8");
 void gRetireAllRibbons(void) __asm__("func_800734BC");
 
 
@@ -51,7 +51,7 @@ void gRetireAllRibbons(void)
     node = gBeamNodeList;
     while (node != 0) {
         next = node->next;
-        func_80073BA8(node);
+        gSetObjectFlag1000(node);
         node = next;
     }
     gBeamNodeList = 0;

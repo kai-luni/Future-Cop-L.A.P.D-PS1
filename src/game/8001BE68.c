@@ -9,8 +9,8 @@ extern struct Draw gDrawBlocks[] __asm__("D_800A06B0");
 extern u8 gLayerIndex __asm__("D_8009F225");
 extern u8 gDisplayEnabled __asm__("D_8009F608");
 extern void gResetGraph(int) __asm__("func_80092910");
-extern void func_80092BF4(int);
-extern void func_80092A84(int);
+extern void gSetDispMask(int) __asm__("func_80092BF4");
+extern void gSetGraphDebug(int) __asm__("func_80092A84");
 extern void gSetDefDrawEnv(struct Display *, int, int, int, int) __asm__("func_80092140");
 extern void gSetDefDispEnv(struct Draw *, int, int, int, int) __asm__("func_800921F4");
 
@@ -48,8 +48,8 @@ int gInitDoubleBufferedGpuEnvs(void)
     register int one __asm__("$3");
     register struct Display *p __asm__("$4");
     gResetGraph(0);
-    func_80092BF4(0);
-    func_80092A84(0);
+    gSetDispMask(0);
+    gSetGraphDebug(0);
     gSetDefDrawEnv(&gLayerBlocks[0], 0, 0, 0x140, 0xF0);
     gSetDefDrawEnv(&gLayerBlocks[1], 0, 0x100, 0x140, 0xF0);
     gSetDefDispEnv(&gDrawBlocks[0], 0, 0, 0x140, 0xF0);
@@ -69,7 +69,7 @@ int gInitDoubleBufferedGpuEnvs(void)
             i++;
         } while (i < gLayerIndex);
     }
-    func_80092BF4(1);
+    gSetDispMask(1);
     gDisplayEnabled = 1;
     return 0;
 }

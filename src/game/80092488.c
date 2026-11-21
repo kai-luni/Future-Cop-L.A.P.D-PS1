@@ -1,5 +1,7 @@
 // Categories: Graphics > Primitive Initialization
 #include "game/types.h"
+void gSetPolyG3(u8 *arg0) __asm__("func_80092488");
+
 
 /**
  *  @brief Initializes two bytes of a graphics packet.
@@ -18,7 +20,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80092488(u8 *arg0)
+void gSetPolyG3(u8 *arg0)
 {
     arg0[3] = 6;
     arg0[7] = 48;

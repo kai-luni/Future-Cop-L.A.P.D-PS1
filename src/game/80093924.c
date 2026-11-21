@@ -5,6 +5,8 @@ struct CallbackTable {
 };
 
 extern struct CallbackTable *gVramWriteCallback __asm__("D_8009DDE8");
+unsigned int gGetOddEvenFlag(void) __asm__("func_80093924");
+
 
 /**
  *  @brief Returns the sign bit of a callback's result.
@@ -23,7 +25,7 @@ extern struct CallbackTable *gVramWriteCallback __asm__("D_8009DDE8");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-unsigned int func_80093924(void)
+unsigned int gGetOddEvenFlag(void)
 {
     return (unsigned int)gVramWriteCallback->callback() >> 31;
 }

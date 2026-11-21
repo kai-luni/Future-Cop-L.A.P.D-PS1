@@ -20,9 +20,9 @@ extern u8 gGpuLibPair[] __asm__("D_800A62C8");
 extern u8 gGpuDmaQueue[] __asm__("D_800A9450");
 
 extern u32 gSwapIrqMask(u32 a0) __asm__("func_800915FC");
-extern u32 func_80095350(u32 a0);
+extern u32 gProbeGpuVersion(u32 a0) __asm__("func_80095350");
 extern void gMemset(unsigned char *destination, int value, unsigned int count) __asm__("func_80095830");
-extern void func_800951D8(void);
+extern void gArmGpuDmaTimeout(void) __asm__("func_800951D8");
 extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
 extern s32 gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
 u32 gSyncGpuDmaQueue(u32 a0) __asm__("func_8009509C");
@@ -54,7 +54,7 @@ u32 gSyncGpuDmaQueue(u32 a0)
     u32 count;
 
     if (a0 == 0) {
-        func_800951D8();
+        gArmGpuDmaTimeout();
         while (gGpuJobHead != gGpuJobTail) {
             gWaitImageTransferFrame();
             if (gCheckGpuDmaTimeout() != 0) {

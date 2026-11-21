@@ -8,6 +8,8 @@ struct Unk631A0 {
 
 extern s32 gQueueCount __asm__("D_8009F838");
 extern struct Unk631A0 gObjectKeyTable[] __asm__("D_800A31A0");
+s32 gRegisterGroundObject(s32 key, u8 value) __asm__("func_8006314C");
+
 
 /**
  * @brief Appends a {key, value} event to the 24-entry frame queue.
@@ -31,7 +33,7 @@ extern struct Unk631A0 gObjectKeyTable[] __asm__("D_800A31A0");
  * @par Callers
  * func_8002C584, func_8002EED8, func_800378BC, func_80041488, func_80041C6C.
  */
-s32 func_8006314C(s32 key, u8 value)
+s32 gRegisterGroundObject(s32 key, u8 value)
 {
     struct Unk631A0 *entry;
 

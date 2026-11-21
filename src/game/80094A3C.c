@@ -28,7 +28,7 @@ extern u32 gDispatchSavedIrqMask __asm__("D_8009DEF0");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 
-extern void func_800951D8(void);
+extern void gArmGpuDmaTimeout(void) __asm__("func_800951D8");
 extern s32 gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
 extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
 extern u32 gSwapIrqMask(u32) __asm__("func_800915FC");
@@ -68,7 +68,7 @@ s32 gSubmitGpuDmaJob(void (*func)(), void *arg1, s32 arg2, s32 arg3)
     register void **dest __asm__("$1");
     register struct StructDDF0 *ddf0 __asm__("$4");
 
-    func_800951D8();
+    gArmGpuDmaTimeout();
 
     while (((gGpuJobHead + 1) & 0x3F) == gGpuJobTail) {
         if (gCheckGpuDmaTimeout() != 0) {

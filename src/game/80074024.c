@@ -23,6 +23,8 @@ extern void gHandleBeamObjectMsg() __asm__("func_80073BBC");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gInitSpawnMotionState(struct Unk74024 *object, struct Unk74024Def *def) __asm__("func_8003C14C");
+struct Unk74024 *gAllocRibbonBeamObject(struct Unk74024Def *def) __asm__("func_80074024");
+
 
 /**
  * @brief Allocates and initializes a kind-0x58 ribbon/beam effect object.
@@ -48,7 +50,7 @@ extern void gInitSpawnMotionState(struct Unk74024 *object, struct Unk74024Def *d
  * @par Callers
  * Confirmed: func_8003E984 (spawn constructor switch case 0x58).
  */
-struct Unk74024 *func_80074024(struct Unk74024Def *def)
+struct Unk74024 *gAllocRibbonBeamObject(struct Unk74024Def *def)
 {
     struct Unk74024 *object;
     s32 size;

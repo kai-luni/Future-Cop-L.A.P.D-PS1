@@ -1,6 +1,8 @@
 // Categories: Platform > Dispatch
 extern unsigned char gExecutableImageBase[] __asm__("D_80010000");
 extern  void (*gLogPrintf)(void *, unsigned int, unsigned int) __asm__("D_8009DDEC");
+void gPrintClutCoordinates(unsigned short value) __asm__("func_800922E4");
+
 
 /**
  *  @brief Dispatches a split 16-bit value to a stored function.
@@ -19,7 +21,7 @@ extern  void (*gLogPrintf)(void *, unsigned int, unsigned int) __asm__("D_8009DD
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800922E4(unsigned short value)
+void gPrintClutCoordinates(unsigned short value)
 {
     unsigned int low = value & 0x3f;
     unsigned int high = value;

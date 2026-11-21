@@ -61,8 +61,8 @@ extern void gLoadActorDef5C(struct Unk4D6D4 *arg0) __asm__("func_8006ED78");
 extern void gLoadActorDef5A(struct Unk4D6D4 *arg0) __asm__("func_8004CA98");
 extern void gLoadActorDef5B(struct Unk4D6D4 *arg0) __asm__("func_8003BDA0");
 extern void gLoadActorDef59(struct Unk4D6D4 *arg0) __asm__("func_800706C4");
-extern void func_800740B8(struct Unk4D6D4 *arg0);
-extern void func_80076878(struct Unk4D6D4 *arg0);
+extern void gLoadActorDef58(struct Unk4D6D4 *arg0) __asm__("func_800740B8");
+extern void gLoadKind57SpawnRecord(struct Unk4D6D4 *arg0) __asm__("func_80076878");
 void gLoadActorChunk(struct Unk4D6D4 *arg0) __asm__("func_8004D6D4");
 
 
@@ -137,10 +137,10 @@ void gLoadActorChunk(struct Unk4D6D4 *arg0)
         gLoadActorDef59(arg0);
         break;
     case 0x58:
-        func_800740B8(arg0);
+        gLoadActorDef58(arg0);
         break;
     case 0x57:
-        func_80076878(arg0);
+        gLoadKind57SpawnRecord(arg0);
         break;
     default:
         lsra = (struct Unk4D6D4LSRa *)func_80019CA0(arg0->unk00, arg0->unk20, 0x6152534C, arg0->unk1C);

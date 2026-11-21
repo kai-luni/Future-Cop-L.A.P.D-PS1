@@ -39,7 +39,7 @@ extern u8 gDemoPlaybackFilenameFormat[] __asm__("D_80011B00");
 
 extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
 extern s32 func_8008CCC0(u8 *str);
-extern void func_8008CD30(u8 *dst, u8 *fmt, u8 *name, s32 arg3, s32 arg4);
+extern void gSpillVarargsArguments(u8 *dst, u8 *fmt, u8 *name, s32 arg3, s32 arg4) __asm__("func_8008CD30");
 extern void *gLoadFileIntoBuffer(s32 name) __asm__("func_80059BA0");
 void gLoadDemoRecording(s32 countArg, s32 seed, u8 *nameArg) __asm__("func_80059BFC");
 
@@ -89,7 +89,7 @@ void gLoadDemoRecording(s32 countArg, s32 seed, u8 *nameArg)
         name[len - 4] = 0;
     }
 
-    func_8008CD30(buffer, gDemoPlaybackFilenameFormat, name, count + 0x40, gDemoPlayback);
+    gSpillVarargsArguments(buffer, gDemoPlaybackFilenameFormat, name, count + 0x40, gDemoPlayback);
     if (wasExt) {
         register u8 *restore __asm__("$3") = (u8 *)(len + (s32)name);
         restore[-4] = '.';

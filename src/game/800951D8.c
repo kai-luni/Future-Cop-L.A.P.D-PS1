@@ -4,6 +4,8 @@
 extern s32 gTimeoutStamp __asm__("D_8009DEFC");
 extern s32 gPendingDeadline __asm__("D_8009DF00");
 extern s32 gVSyncWait(s32 arg0) __asm__("func_80091270");
+void gArmGpuDmaTimeout(void) __asm__("func_800951D8");
+
 
 /**
  * @brief Arms a 0xF0-tick deadline for the transfer engine.
@@ -22,7 +24,7 @@ extern s32 gVSyncWait(s32 arg0) __asm__("func_80091270");
  * @par Callers
  * Confirmed: the hardware init block around func_80094F4C.
  */
-void func_800951D8(void)
+void gArmGpuDmaTimeout(void)
 {
     s32 value;
 

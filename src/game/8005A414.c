@@ -25,7 +25,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void gFreeTextureDescriptors(void) __asm__("func_8005A220");
 extern void func_8008CD10(void *dest, void *src, s32 size);
 extern void gLoadImage(RectA414 *rect, void *data) __asm__("func_80092F38");
-extern void func_80092C8C(s32 arg);
+extern void gDrawSync(s32 arg) __asm__("func_80092C8C");
 extern s32 gBuildSpriteDescTable(void **array, s32 count) __asm__("func_8005A2BC");
 void gLoadTextureChunksToVram(ArgA414 *arg0) __asm__("func_8005A414");
 
@@ -131,7 +131,7 @@ void gLoadTextureChunksToVram(ArgA414 *arg0)
             rect[0].w = 0x10;
             rect[0].h = 1;
             gLoadImage(&rect[0], p);
-            func_80092C8C(0);
+            gDrawSync(0);
             x += 0x10;
             p += 0x20;
             if (x == 0x40) {
@@ -146,7 +146,7 @@ void gLoadTextureChunksToVram(ArgA414 *arg0)
     rect[1].w = 0x40;
     rect[1].h = 0x1E0;
     gLoadImage(&rect[1], p + 8);
-    func_80092C8C(0);
+    gDrawSync(0);
 
     if ((gBuildSpriteDescTable(gTextureDescriptorTable, count) & 0xFF) != 0) {
         goto done;

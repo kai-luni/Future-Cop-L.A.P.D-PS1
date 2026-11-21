@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 *gVmCountdowns __asm__("D_8009F9A4");
+void gStepScriptVmCountdowns(s32 amount) __asm__("func_80069D0C");
+
 
 /**
  * @brief Decrements all positive script-VM countdown entries in D_8009F9A4[0..31] by amount, clamping values below 5 to 0.
@@ -23,7 +25,7 @@ extern s32 *gVmCountdowns __asm__("D_8009F9A4");
  * @par Callers
  * Confirmed: func_80027510 (0x800277B4 in asm/us/main.s, when !(flags & 0x20)); func_800271A4 (0x80027354 in asm/us/main.s, with 0x7E8($gp)) / Likely: none / Unknown: none.
  */
-void func_80069D0C(s32 amount)
+void gStepScriptVmCountdowns(s32 amount)
 {
     s32 i;
     s32 *timer;

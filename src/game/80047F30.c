@@ -54,10 +54,10 @@ extern void gDrawThreeSlotStatusBar(Game *) __asm__("func_8006C080");
 extern void gEmitHudGouraudBar(s32, s32, s32, s32, s32, s32, s32) __asm__("func_80047BE8");
 extern void gDrawRadarBackgroundAndMarkers(Game *, void *, void *) __asm__("func_8005AB8C");
 extern void gDrawTargetMarkers(Game *) __asm__("func_8004EDC8");
-extern s32 func_80049340(u8 *);
+extern s32 gMeasureTextWidthPx(u8 *) __asm__("func_80049340");
 extern void gDrawAlignedString(u8 *, s32, s32, s32) __asm__("func_80049100");
 extern void gEmitTranslucentTileRect(u32, s32, s32, s32, s32, s32) __asm__("func_8001C214");
-extern void func_8008CD30(void *, void *, ...);
+extern void gSpillVarargsArguments(void *, void *, ...) __asm__("func_8008CD30");
 void gDrawInGameHud(Game *game) __asm__("func_80047F30");
 
 
@@ -204,7 +204,7 @@ void gDrawInGameHud(Game *game)
     if (p2->valueae > 0) {
         label = gPlayerAvatarSprite[p2->valuea4];
         label_x = 12;
-        if (p2->valuec1) label_x = 148 - func_80049340(label) / 2;
+        if (p2->valuec1) label_x = 148 - gMeasureTextWidthPx(label) / 2;
         gDrawAlignedString(label, label_x, 74, 8);
     }
     if (gPlayerCount >= 2 && !game->player->valuec1)
@@ -212,7 +212,7 @@ void gDrawInGameHud(Game *game)
     state = gGameSession;
     if (state->mode != 1) return;
     score = state->score[game->player->valuec1];
-    func_8008CD30(text, gScoreFormatString, score);
+    gSpillVarargsArguments(text, gScoreFormatString, score);
     flash = 0;
     if (score >= 30 && (gFrameTime & 0x80)) {
         register s32 a __asm__("$3") = gGameSession->total1;
@@ -243,7 +243,7 @@ void gDrawInGameHud(Game *game)
                 gDrawAlignedString(text, arg, 20, c);
             }
         }
-        func_8008CD30(text, gCounterFormatString, gGameSession->count1, gGameSession->count2);
+        gSpillVarargsArguments(text, gCounterFormatString, gGameSession->count1, gGameSession->count2);
         gEmitTranslucentTileRect(1, (x + 127) * 2, 64, 60, 20, 1);
         gDrawAlignedString(text, x + 130, 32, 1);
         if (gPlayerCount != 1) return;
@@ -251,7 +251,7 @@ void gDrawInGameHud(Game *game)
         register s32 one __asm__("$16");
         register s32 height __asm__("$20");
         score = gGameSession->score[1];
-        func_8008CD30(text, gScoreFormatString, score);
+        gSpillVarargsArguments(text, gScoreFormatString, score);
         flash = 0;
         if (score >= 30 && (gFrameTime & 0x80)) {
             register s32 a __asm__("$3") = gGameSession->total1;
@@ -286,12 +286,12 @@ void gDrawInGameHud(Game *game)
                 gDrawAlignedString(text, arg, 44, c);
             }
         }
-        func_8008CD30(text, gCounterFormatString, gGameSession->count3, gGameSession->count4);
+        gSpillVarargsArguments(text, gCounterFormatString, gGameSession->count3, gGameSession->count4);
         gEmitTranslucentTileRect(1, (x + 127) * 2, 112, 60, height, one);
         }
         gDrawAlignedString(text, x + 130, 56, 3);
         if (!gSinglePlayerEntity) return;
-        func_8008CD30(text, gStageLineFormat, gGameSession->stage + 1);
+        gSpillVarargsArguments(text, gStageLineFormat, gGameSession->stage + 1);
         gDrawAlignedString(text, 274, 216, 8);
         other = gSinglePlayerEntity;
         if (other->health > 0) {
@@ -306,7 +306,7 @@ void gDrawInGameHud(Game *game)
         color = 3;
         if (flash) color = 9;
         gDrawAlignedString(text, 6, 20, color);
-        func_8008CD30(text, gCounterFormatString, gGameSession->count3, gGameSession->count4);
+        gSpillVarargsArguments(text, gCounterFormatString, gGameSession->count3, gGameSession->count4);
         gEmitTranslucentTileRect(1, 6, 64, 60, 20, 1);
         gDrawAlignedString(text, 6, 32, 3);
     }

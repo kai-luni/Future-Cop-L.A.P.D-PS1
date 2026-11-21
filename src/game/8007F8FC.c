@@ -8,6 +8,8 @@ extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern void gArmProfileTransfer(void) __asm__("func_8007FA88");
 extern void gResetProfileTransferFlags(void) __asm__("func_8007F8E0");
 extern void func_800776B8(void);
+void gInitProfileDetailMenuState(void) __asm__("func_8007F8FC");
+
 
 /**
  * @brief Screen-init callback of the profile save/load screen.
@@ -33,7 +35,7 @@ extern void func_800776B8(void);
  * Unknown: no direct call. The address is stored at D_800A36B8+0x10, so it is
  * reached through the front-end screen table.
  */
-void func_8007F8FC(void)
+void gInitProfileDetailMenuState(void)
 {
     u8 *p;
 

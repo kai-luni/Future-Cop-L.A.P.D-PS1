@@ -15,7 +15,7 @@
  *     }
  */
 extern void gGteSetScreenOffset(s32 arg0, s32 arg1) __asm__("func_800959F0");
-extern void func_80095A10(s32 arg0);
+extern void gSetGteProjectionDistance(s32 arg0) __asm__("func_80095A10");
 
 /**
  * @brief Two-stage display set-up: position (x, y) followed by a height value.
@@ -54,6 +54,8 @@ extern void func_80095A10(s32 arg0);
  * 0x78, 0x200). It is the projection half of the view set-up that every later
  * RTPS (e.g. gGteProjectPoint) depends on.
  */
+void gSetGeomOffsetAndH(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80010030");
+
 __asm__(
     ".text\n\t"
     ".align 2\n\t"

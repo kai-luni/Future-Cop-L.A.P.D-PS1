@@ -42,6 +42,8 @@
  * D_8009DEEC while invoking callbacks in D_800A9450, and returns (D_8009DEE8
  * - D_8009DEEC) & 0x3F.
  */
+void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
+
 __asm__(
     ".text\n\t"
     ".set\tnoreorder\n\t"

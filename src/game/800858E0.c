@@ -7,6 +7,8 @@ struct UnkF4BC {
 };
 
 extern struct UnkF4BC *gMovieSliceContext __asm__("D_8009F4BC");
+s32 gGetMovieActiveBufferIndex(void) __asm__("func_800858E0");
+
 
 /**
  * @brief Returns the active buffer index of the playback context.
@@ -20,7 +22,7 @@ extern struct UnkF4BC *gMovieSliceContext __asm__("D_8009F4BC");
  * @par Callers
  * gCloseVideoLayer.
  */
-s32 func_800858E0(void)
+s32 gGetMovieActiveBufferIndex(void)
 {
     return gMovieSliceContext->unk114;
 }

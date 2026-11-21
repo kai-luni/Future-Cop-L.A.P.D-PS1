@@ -13,6 +13,8 @@ struct Pool {
 
 extern struct Pool gTracerPool __asm__("D_800A3538");
 extern void gInitIntrusiveNodePool(struct Pool *pool, s32 size, s32 count) __asm__("func_8003BE2C");
+void gInitTracerPool(void) __asm__("func_8006EDC4");
+
 
 /**
  * @brief Creates the effect pool used by the attached-effect blocks.
@@ -31,7 +33,7 @@ extern void gInitIntrusiveNodePool(struct Pool *pool, s32 size, s32 count) __asm
  * @par Callers
  * Confirmed: the effect/level setup path (world init block).
  */
-void func_8006EDC4(void)
+void gInitTracerPool(void)
 {
     gInitIntrusiveNodePool(&gTracerPool, 0x48, 0xA);
 }

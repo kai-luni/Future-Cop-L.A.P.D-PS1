@@ -35,6 +35,8 @@
  * (func_80013F08, func_8001428C), the map-cell drawers (func_8004A048,
  * func_80051CC4) and the player instance submission (func_800597C0).
  */
+void gGteTransformVertices(void) __asm__("func_8001010C");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_8001010C\n"

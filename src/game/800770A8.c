@@ -16,7 +16,7 @@ typedef struct {
 
 extern u8 gSegmentFlagTable[] __asm__("D_8009B314");
 
-extern void func_80092C8C(s32 arg0);
+extern void gDrawSync(s32 arg0) __asm__("func_80092C8C");
 extern void gDrawPrimImmediate(u8 *arg0) __asm__("func_80093224");
 void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800770A8");
 
@@ -63,7 +63,7 @@ void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2)
     local.unk05 = 0x80;
     local.unk06 = 0x80;
 
-    func_80092C8C(0);
+    gDrawSync(0);
 
     if (flags & 1) {
         local.unk0A = arg1 + 1;
@@ -71,7 +71,7 @@ void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2)
         local.unk0C = arg0;
         local.unk0E = arg1 + 5;
         gDrawPrimImmediate((u8 *)&local);
-        func_80092C8C(0);
+        gDrawSync(0);
     }
 
     if (flags & 2) {
@@ -80,7 +80,7 @@ void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2)
         local.unk0C = arg0;
         local.unk0E = arg1 + 0xC;
         gDrawPrimImmediate((u8 *)&local);
-        func_80092C8C(0);
+        gDrawSync(0);
     }
 
     if (flags & 4) {
@@ -89,7 +89,7 @@ void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2)
         local.unk0C = arg0 + 4;
         local.unk0E = arg1 + 0xD;
         gDrawPrimImmediate((u8 *)&local);
-        func_80092C8C(0);
+        gDrawSync(0);
     }
 
     if (flags & 8) {
@@ -98,7 +98,7 @@ void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2)
         local.unk0C = arg0 + 5;
         local.unk0E = arg1 + 0xC;
         gDrawPrimImmediate((u8 *)&local);
-        func_80092C8C(0);
+        gDrawSync(0);
     }
 
     if (flags & 0x10) {
@@ -107,7 +107,7 @@ void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2)
         local.unk0C = arg0 + 5;
         local.unk0E = arg1 + 5;
         gDrawPrimImmediate((u8 *)&local);
-        func_80092C8C(0);
+        gDrawSync(0);
     }
 
     if (flags & 0x20) {
@@ -116,7 +116,7 @@ void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2)
         local.unk0C = arg0 + 4;
         local.unk0E = arg1;
         gDrawPrimImmediate((u8 *)&local);
-        func_80092C8C(0);
+        gDrawSync(0);
     }
 
     {
@@ -129,7 +129,7 @@ void gDrawSevenSegmentChar(s32 arg0, s32 arg1, s32 arg2)
             local.unk0C = arg0 + 4;
             local.unk0E = arg1 + 6;
             gDrawPrimImmediate(p);
-            func_80092C8C(0);
+            gDrawSync(0);
         }
     }
 }

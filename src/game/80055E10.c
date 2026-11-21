@@ -25,7 +25,7 @@ struct Unk55E10 {
 };
 
 extern void gDecodeButtonEdge(u32 buttons, struct InputAction *action) __asm__("func_8005780C");
-extern void func_8006C34C(struct Unk55E10 *object, s32 arg1);
+extern void gAcquirePlayerLockOnTarget(struct Unk55E10 *object, s32 arg1) __asm__("func_8006C34C");
 extern void gWeaponSlotUpdate(struct Unk55E10 *object, s32 arg1) __asm__("func_8006BA50");
 
 /**
@@ -66,7 +66,7 @@ void gWeaponSlotInput(struct Unk55E10 *object)
     gDecodeButtonEdge(control->buttons, &control->fire);
     gDecodeButtonEdge(control->buttons, &control->weapon);
     if (control->fire.phase == 0) {
-        func_8006C34C(object, 0);
+        gAcquirePlayerLockOnTarget(object, 0);
     }
     if (buttons & 0x4000000) {
         gWeaponSlotUpdate(object, 0);

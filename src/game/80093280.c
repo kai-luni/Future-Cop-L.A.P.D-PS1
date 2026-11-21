@@ -12,6 +12,8 @@ extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(u8 *, s32) __asm__("D_8009DDEC");
 extern Dispatch *gVramWriteCallback __asm__("D_8009DDE8");
 extern u8 gDrawOTagDebugFormat[] __asm__("D_80012AE8");
+void gDrawOTag(s32 arg0) __asm__("func_80093280");
+
 
 /**
  * @brief Hands an ordering table to the GPU (DrawOTag).
@@ -33,7 +35,7 @@ extern u8 gDrawOTagDebugFormat[] __asm__("D_80012AE8");
  * func_8001B4A8 only, once per frame, with the list built from the ordering
  * table buckets.
  */
-void func_80093280(s32 arg0)
+void gDrawOTag(s32 arg0)
 {
     Dispatch *dispatch;
     register s32 a1 __asm__("$5");

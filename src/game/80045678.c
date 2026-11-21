@@ -19,7 +19,7 @@ extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
 extern s32 gChannelCount __asm__("D_8009F720");
 extern struct SoundChannel *gChannelListHead __asm__("D_8009F724");
 
-extern s32 func_80045494(s32 id, u8 *table, s32 limit);
+extern s32 gResolveSoundRecordIndex(s32 id, u8 *table, s32 limit) __asm__("func_80045494");
 extern void gQueueSoundChannelByPriority(struct SoundChannel *channel) __asm__("func_800455DC");
 s32 gAllocPositionalSoundChannel(s32 sound, s32 id, s32 arg2, s32 arg3) __asm__("func_80045678");
 
@@ -53,7 +53,7 @@ s32 gAllocPositionalSoundChannel(s32 sound, s32 id, s32 arg2, s32 arg3)
     s32 slot;
 
     index = -1;
-    slot = func_80045494(sound, gSoundBankTableLow, 0x47);
+    slot = gResolveSoundRecordIndex(sound, gSoundBankTableLow, 0x47);
     if (slot == 0xFF) {
         goto done;
     }

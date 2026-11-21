@@ -20,6 +20,8 @@
  * @par Callers
  * func_8001E4E4, once during boot.
  */
+void gInitGteStandardProjection(void) __asm__("func_80095878");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80095878\n"

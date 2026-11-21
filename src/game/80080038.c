@@ -42,12 +42,12 @@ extern u16 gDifficultyLabelMap[] __asm__("D_8009C1C4");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 
 extern void gDrawAlignedMultilineText(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
-extern void func_80078B34(s32, s32, s32);
+extern void gQueueStatusLineText(s32, s32, s32) __asm__("func_80078B34");
 extern void func_8007F128(s32, s32, s32, s32, s32, s32);
 extern void gStepProfileTransfer(void) __asm__("func_8007FB04");
 extern void gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
 extern void gEmitFlatQuadRect(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082EF0");
-extern s32 func_8008CD30(u8 *, u8 *, s32);
+extern s32 gSpillVarargsArguments(u8 *, u8 *, s32) __asm__("func_8008CD30");
 
 /**
  * @brief Draws the profile detail screen: header, state-dependent message
@@ -117,38 +117,38 @@ void gDrawProfileDetailScreen(s32 arg0)
     gEmitAtlasSpriteSimple(8, 0x93, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
 
     if (gFontBankTable == gMenuActivationBlock) {
-        func_80078B34(0x44C, 0, 0);
-        func_80078B34(0x10CC, 1, 0);
+        gQueueStatusLineText(0x44C, 0, 0);
+        gQueueStatusLineText(0x10CC, 1, 0);
     } else if (gUiHoldFlag != 0 && *gFontBankTable < 10) {
         if (gSaveProfileImage->st921 == 0) {
-            func_80078B34(0x44C, 0, 0);
+            gQueueStatusLineText(0x44C, 0, 0);
             {
                 u8 *p = *gFontBankTable * 0x70 + (u8 *)gSaveProfileImage;
                 s32 on = p[0x428];
                 __asm__("" : : "r"(p), "r"(on));
                 if (on != 0) {
                 if (((gGameClock >> 9) & 1) != 0) {
-                    func_80078B34(0x3912, 0, 0);
+                    gQueueStatusLineText(0x3912, 0, 0);
                 }
             }
             }
-            func_80078B34(0x3908, 1, 0);
+            gQueueStatusLineText(0x3908, 1, 0);
         } else {
             if (gPlayerMenuDepth != 0) {
                 if (((gGameClock >> 9) & 1) != 0) {
                     if (((gGameClock >> 10) & 1) != 0) {
-                        func_80078B34(0x6E5, 0, 0);
+                        gQueueStatusLineText(0x6E5, 0, 0);
                     } else {
-                        func_80078B34(0x6D6, 0, 0);
+                        gQueueStatusLineText(0x6D6, 0, 0);
                     }
-                    func_80078B34(0x6E0, 1, 0);
+                    gQueueStatusLineText(0x6E0, 1, 0);
                 } else {
-                    func_80078B34(0x3926, 0, 0);
-                    func_80078B34(0x10CC, 1, 0);
+                    gQueueStatusLineText(0x3926, 0, 0);
+                    gQueueStatusLineText(0x10CC, 1, 0);
                 }
             } else {
-                func_80078B34(0x391C, 0, 0);
-                func_80078B34(0x3908, 1, 0);
+                gQueueStatusLineText(0x391C, 0, 0);
+                gQueueStatusLineText(0x3908, 1, 0);
             }
         }
     }
@@ -172,7 +172,7 @@ void gDrawProfileDetailScreen(s32 arg0)
                 msg = 0x3750;
             }
         }
-        func_80078B34(0x3908, 1, 0);
+        gQueueStatusLineText(0x3908, 1, 0);
         break;
     case 2:
         if (gSaveProfileImage->st921 == 0) {
@@ -184,14 +184,14 @@ void gDrawProfileDetailScreen(s32 arg0)
                     break;
                 case 2:
                     msg = 0x376E;
-                    func_80078B34(0x3908, 1, 0);
+                    gQueueStatusLineText(0x3908, 1, 0);
                     break;
                 case 3:
                     break;
                 case 0:
                 default:
                     msg = 0x3782;
-                    func_80078B34(0x3908, 1, 0);
+                    gQueueStatusLineText(0x3908, 1, 0);
                     break;
                 }
             }
@@ -203,18 +203,18 @@ void gDrawProfileDetailScreen(s32 arg0)
             } else if (gSaveProfileImage->st204 == 2) {
                 if (gSaveProfileImage->st202 != 2) {
                     msg = 0x373C;
-                    func_80078B34(0x3908, 1, 0);
+                    gQueueStatusLineText(0x3908, 1, 0);
                 }
             } else if (gSaveProfileImage->st206 != 0) {
                 msg = 0x37B4;
-                func_80078B34(0x3908, 1, 0);
+                gQueueStatusLineText(0x3908, 1, 0);
             } else {
                 switch (gSaveProfileImage->st205) {
                 case 1:
                     break;
                 case 2:
                     msg = 0x37C8;
-                    func_80078B34(0x3908, 1, 0);
+                    gQueueStatusLineText(0x3908, 1, 0);
                     break;
                 case 3:
                     break;
@@ -245,7 +245,7 @@ void gDrawProfileDetailScreen(s32 arg0)
     case 4:
         msg = 0x380E;
         gDrawAlignedMultilineText(0, 0x57, 0x6C, 0x10, 0x3818, 4, 8, gSaveProfileImage->st945);
-        func_80078B34(0x3908, 1, 0);
+        gQueueStatusLineText(0x3908, 1, 0);
         break;
     }
 
@@ -342,7 +342,7 @@ void gDrawProfileDetailScreen(s32 arg0)
                             }
                             fmt = gMenuValueFormat;
                             __asm__("" : : "r"(fmt), "r"(m) : "$4");
-                            func_8008CD30(buf, fmt, m);
+                            gSpillVarargsArguments(buf, fmt, m);
                             if (it[0x4A] == 10) {
                                 wd = *(u16 *)(e + 0x12);
                             }
@@ -359,7 +359,7 @@ void gDrawProfileDetailScreen(s32 arg0)
                             }
                             fmt = gMenuValueFormat;
                             __asm__("" : : "r"(fmt), "r"(m) : "$4");
-                            func_8008CD30(buf, fmt, m);
+                            gSpillVarargsArguments(buf, fmt, m);
                             if (it[j + 0x40] == 10) {
                                 wd = *(u16 *)(e + 0x12);
                             }

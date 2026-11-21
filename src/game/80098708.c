@@ -5,6 +5,8 @@ struct Entry { u32 value; u32 other; };
 extern s32 gSpuEntryTableCapacity __asm__("D_8009EF04");
 extern struct Entry *gSpuEntryTable __asm__("D_8009EF0C");
 extern void gSpuCompactPool(void) __asm__("func_80097DF8");
+void gClaimSpuEntry(u32 value) __asm__("func_80098708");
+
 
 /**
  * @brief Marks one entry of a fixed table as "used" by setting its high bit.
@@ -22,7 +24,7 @@ extern void gSpuCompactPool(void) __asm__("func_80097DF8");
  * The reservation of a resource slot: claiming sets bit 31, the barrier bit 30
  * marks the end of the valid range.
  */
-void func_80098708(u32 value)
+void gClaimSpuEntry(u32 value)
 {
     s32 i;
     register s32 count __asm__("$7");

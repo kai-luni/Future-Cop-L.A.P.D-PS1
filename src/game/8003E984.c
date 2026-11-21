@@ -104,7 +104,7 @@ extern struct Object *gPendingSpawnList __asm__("D_8009F314");
 extern void gBuildNodePlacement(struct Source *, struct Object *, struct Parent *, void *, struct Matrix *, u16 *, s8 *) __asm__("func_8003DB70");
 extern struct Data *gResolveNodeTransform(struct Holder *, u16, s8, s32, struct Parent *, struct Matrix *) __asm__("func_8003D9F8");
 extern u32 *gGetSpawnTypeFlagPtr(u32, u32) __asm__("func_8003B3D8");
-extern void func_8003B3F8(struct Object *, u32, s32);
+extern void gApplySpawnTypeFlags(struct Object *, u32, s32) __asm__("func_8003B3F8");
 extern s32 gCheckModelAttachmentSlot(struct Holder *, s8) __asm__("func_8003CDAC");
 extern void gGetViewGroundAnchor(u32, struct DestinationTriple *) __asm__("func_80069580");
 extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
@@ -115,10 +115,10 @@ extern void gApplyRadialContactDamage(s32 *, u16, s16, void *) __asm__("func_800
 extern struct Object *gCreateLightObject(struct Source *) __asm__("func_80040E60");
 extern struct Object *gCreateKind59Actor(struct Source *) __asm__("func_8007043C");
 extern struct Object *gSpawnDomeMeshEffect(struct Source *) __asm__("func_8006EB80");
-extern struct Object *func_800447F0(struct Source *);
+extern struct Object *gAllocPeriodicParticleEmitter(struct Source *) __asm__("func_800447F0");
 extern struct Object *gCreateMeshFractureEntity(struct Source *) __asm__("func_8004C920");
 extern struct Object *gCreateEmitterObject(struct Source *) __asm__("func_800762B0");
-extern struct Object *func_80074024(struct Source *);
+extern struct Object *gAllocRibbonBeamObject(struct Source *) __asm__("func_80074024");
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern void gPlayPositionalSoundEffect(s32, s32, s32, s32) __asm__("func_80047284");
 s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, void *arg3, s32 arg4) __asm__("func_8003E984");
@@ -323,7 +323,7 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
         tmp = gSpawnDomeMeshEffect(source);
         break;
     case 0x5E:
-        tmp = func_800447F0(source);
+        tmp = gAllocPeriodicParticleEmitter(source);
         break;
     case 0x5A:
         tmp = gCreateMeshFractureEntity(source);
@@ -332,7 +332,7 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
         tmp = gCreateEmitterObject(source);
         break;
     case 0x58:
-        tmp = func_80074024(source);
+        tmp = gAllocRibbonBeamObject(source);
         break;
     case 0x5B:
     default:
@@ -345,7 +345,7 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
     }
 
     object->source20 = source;
-    func_8003B3F8(object, type, arg4);
+    gApplySpawnTypeFlags(object, type, arg4);
     if (arg4 == 1) {
         object->flags10 |= 2;
     }

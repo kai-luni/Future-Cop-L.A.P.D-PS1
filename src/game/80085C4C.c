@@ -14,14 +14,15 @@ extern void gResetMovieFrameBuffers(int,int) __asm__("func_80085AC4");
 extern void gSetDefDrawEnv(void *,int,int,int,int) __asm__("func_80092140");
 extern void gSetDefDispEnv(void *,int,int,int,int) __asm__("func_800921F4");
 extern void gVSyncWait(int) __asm__("func_80091270");
-extern void func_800932F0(void *);
-extern void func_80092BF4(int);
-extern void func_80095E90(int);
+extern void gPutDrawEnv(void *) __asm__("func_800932F0");
+extern void gSetDispMask(int) __asm__("func_80092BF4");
+extern void gDecDctReset(int) __asm__("func_80095E90");
 extern void gPutDispEnvCached(void *) __asm__("func_800934BC");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
-extern int func_8009612C(void *), func_80092B94(int);
+extern int gSetDecDctOutCallback(void *) __asm__("func_8009612C");
+extern int gDrawSyncCallback(int) __asm__("func_80092B94");
 extern int gMdecSetInCallback(int) __asm__("func_80096108");
 /**
  * @brief Initialises the video decoder context: clears the 0x130-byte block,
@@ -136,21 +137,21 @@ int gMovieInitContext(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, in
  gMovieSliceContext->f114=0; *(s16 *)((u8 *)gMovieSliceContext+0xf6)=0; gMovieSliceContext->f10a=0;
  if (a6) {
   gVSyncWait(0);
-  func_800932F0((u8 *)gMovieSliceContext+0x34+(1-gMovieSliceContext->f114)*92);
+  gPutDrawEnv((u8 *)gMovieSliceContext+0x34+(1-gMovieSliceContext->f114)*92);
   gPutDispEnvCached((u8 *)gMovieSliceContext+0xec+(1-gMovieSliceContext->f114)*20);
-  func_80092BF4(1);
+  gSetDispMask(1);
  }
  gMovieSliceContext->a28=a1; gMovieSliceContext->a2c=a2; gMovieSliceContext->a24=a3;
- func_80095E90(0); gDisableCpuInterrupts(); gMovieSliceContext->f12c=a4;
+ gDecDctReset(0); gDisableCpuInterrupts(); gMovieSliceContext->f12c=a4;
  if (a4) {
-  gMovieSliceContext->f120=func_8009612C(gMovieStripDmaCallback);
+  gMovieSliceContext->f120=gSetDecDctOutCallback(gMovieStripDmaCallback);
   gMovieSliceContext->f124=gMdecSetInCallback(0);
-  gMovieSliceContext->f128=func_80092B94(0);
+  gMovieSliceContext->f128=gDrawSyncCallback(0);
   if (gStripScaleEnable==1) gReleaseDoneFlag=1;
  } else {
-  gMovieSliceContext->f120=func_8009612C(0);
+  gMovieSliceContext->f120=gSetDecDctOutCallback(0);
   gMovieSliceContext->f124=gMdecSetInCallback(0);
-  gMovieSliceContext->f128=func_80092B94(0);
+  gMovieSliceContext->f128=gDrawSyncCallback(0);
   gReleaseDoneFlag=0;
  }
  gEnableCpuInterrupts(); gMovieBuildDitherTables(); return 1;

@@ -9,11 +9,11 @@ extern s32 gSnapshotPointer __asm__("D_8009F91C");
 
 extern void gSetSfxVolume(s32 volume) __asm__("func_800451F8");
 extern void gSetVagmVolumeSetting(s32 volume) __asm__("func_80045238");
-extern void func_80045294(s32 volume);
+extern void gSetVoiceVolume(s32 volume) __asm__("func_80045294");
 extern void gSetStereoSoundMode(s32 enable) __asm__("func_800451B4");
 extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
-extern s32 func_80045288(void);
-extern s32 func_8002A58C(void);
+extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
+extern s32 gIsVagmAudioStreamActive(void) __asm__("func_8002A58C");
 extern void func_80024630(s32 arg0);
 
 /**
@@ -47,15 +47,15 @@ void gExitOptionsRestoreSound(void)
     if (flag == 0) {
         gSetSfxVolume(D_8009F908);
         gSetVagmVolumeSetting(D_8009F90C);
-        func_80045294(D_8009F910);
+        gSetVoiceVolume(D_8009F910);
         gSetStereoSoundMode(gSavedOptionsSoundMode);
     }
     if (gSnapshotPointer != 0) {
         gStopSoundVoiceHandle(gSnapshotPointer);
         gSnapshotPointer = 0;
     }
-    if (func_80045288() == 0) {
-        if ((func_8002A58C() & 0xFF) == 1) {
+    if (gGetVagmVolumeSetting() == 0) {
+        if ((gIsVagmAudioStreamActive() & 0xFF) == 1) {
             func_80024630(0);
         }
     }

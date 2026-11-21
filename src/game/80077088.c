@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void func_80017D20(void);
+void gFreeBlitPools(void) __asm__("func_80077088");
+
 
 /**
  * @brief Releases the three fixed-size pools installed by func_80077050().
@@ -18,7 +20,7 @@ extern void func_80017D20(void);
  * func_80076A2C only, at the end of the boot sequence and after each frame
  * that drew something.
  */
-void func_80077088(void)
+void gFreeBlitPools(void)
 {
     func_80017D20();
 }

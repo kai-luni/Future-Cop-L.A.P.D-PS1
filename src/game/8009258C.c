@@ -1,5 +1,7 @@
 // Categories: Utilities > Byte Operations
 #include "game/types.h"
+void gSetLineF2Packet(u8 *arg0) __asm__("func_8009258C");
+
 
 /**
  *  @brief Writes two fixed byte values into a buffer.
@@ -18,7 +20,7 @@
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-void func_8009258C(u8 *arg0)
+void gSetLineF2Packet(u8 *arg0)
 {
     arg0[3] = 3;
     arg0[7] = 64;

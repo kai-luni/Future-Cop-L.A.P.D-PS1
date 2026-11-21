@@ -24,6 +24,8 @@
  * calls it once before each of the two region draws, so the camera rotation
  * at gCamera+0x28 is re-established for each layer.
  */
+void gGteLoadRotation(void) __asm__("func_80010820");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80010820\n"

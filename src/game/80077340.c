@@ -2,9 +2,11 @@
 typedef unsigned int u32;
 
 extern u32 gExceptionVectorBackup[] __asm__("D_80076A0C");
-extern void func_80076878(void);
+extern void gLoadKind57SpawnRecord(void) __asm__("func_80076878");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
+void gInstallExceptionVectorHook(void) __asm__("func_80077340");
+
 
 /**
  * @brief Saves the MIPS general exception vector and installs a custom trampoline.
@@ -29,7 +31,7 @@ extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
  * @par Callers
  * Confirmed: none in direct-call list or asm/us/main.s. Unknown: whether invoked dynamically or left unused beside func_800772E0.
  */
-void func_80077340(void)
+void gInstallExceptionVectorHook(void)
 {
     u32 *src = (u32 *)0x80;
     u32 *dst = gExceptionVectorBackup;
@@ -43,7 +45,7 @@ void func_80077340(void)
     for (i = 0; i < 8; i++) {
         *dst++ = *src++;
     }
-    handler = (u32)func_80076878 + 0x4c;
+    handler = (u32)gLoadKind57SpawnRecord + 0x4c;
     __asm__ volatile ("" : "+r" (handler));
     first = handler >> 16;
     __asm__ volatile ("" : "+r" (first));

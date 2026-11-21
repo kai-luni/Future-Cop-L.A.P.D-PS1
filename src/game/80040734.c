@@ -88,8 +88,8 @@ struct Unk40734 {
 
 extern s32 gLightObjectCount __asm__("D_8009F318");
 
-extern s32 func_8005A6A4(s32 id, struct Unk40734Request *request,
-                         struct Unk40734Light **result);
+extern s32 gSpawnDynamicLightEffect(s32 id, struct Unk40734Request *request,
+                         struct Unk40734Light **result) __asm__("func_8005A6A4");
 extern s32 gGuardEffectPoolMessage(s32 message, void *object, void *arg2, void *arg3) __asm__("func_8003C7B8");
 extern struct Unk40734Transform *gResolveNodeTransform(void *model, s32 flags, s32 part,
                                                s32 count, void *sub,
@@ -153,7 +153,7 @@ u8 gSpawnLightForEffect(struct Unk40734 *object, struct Vec3s32 *position)
     request.green = object->unk88;
     request.blue = object->unk89;
 
-    length = func_8005A6A4(object->unk64, &request, &light);
+    length = gSpawnDynamicLightEffect(object->unk64, &request, &light);
     object->light = light;
     if (light == 0) {
         object->unk0F |= 1;

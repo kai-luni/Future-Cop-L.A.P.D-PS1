@@ -3,7 +3,9 @@
 
 extern s32 gSpuClearFlag __asm__("D_8009EED8");
 extern s32 gSpuTransferCallback __asm__("D_8009EEDC");
-extern void func_80097760(s32 arg0, u32 arg1);
+extern void gStartSpuWrite(s32 arg0, u32 arg1) __asm__("func_80097760");
+u32 gWriteSpuData(s32 arg0, u32 arg1) __asm__("func_80098E28");
+
 
 /**
  *  @brief Caps a requested size and passes it to a transfer-related function.
@@ -24,7 +26,7 @@ extern void func_80097760(s32 arg0, u32 arg1);
  *  @par Callers
  *  Confirmed: func_80021490.
  */
-u32 func_80098E28(s32 arg0, u32 arg1)
+u32 gWriteSpuData(s32 arg0, u32 arg1)
 {
     u32 size;
 
@@ -33,7 +35,7 @@ u32 func_80098E28(s32 arg0, u32 arg1)
         size = 0x7EFF0;
     }
 
-    func_80097760(arg0, size);
+    gStartSpuWrite(arg0, size);
 
     if (gSpuTransferCallback != 0) {
         return size;

@@ -54,10 +54,10 @@ extern u8 gResultsMiddleStatCodes[] __asm__("D_8009AC2C");
 extern u8 gResultsInnerStatCodes[] __asm__("D_8009AC44");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void func_8008CD30(u8 *dest, u8 *src, s32 count);
+extern void gSpillVarargsArguments(u8 *dest, u8 *src, s32 count) __asm__("func_8008CD30");
 extern void gTranslatePadButtons(void *arg0, s32 arg1) __asm__("func_800576A8");
 extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend) __asm__("func_8001C214");
-extern s32 func_80049340(u8 *text);
+extern s32 gMeasureTextWidthPx(u8 *text) __asm__("func_80049340");
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void gDrawResultsTextBlock(void *arg0, u8 *text, s32 x, s32 y) __asm__("func_80027F80");
 
@@ -110,7 +110,7 @@ void gDrawPlayerResultsScreen(void)
         gScratchBlockPtr[0] = 0;
         gScratchBlockPtr[2] = gGameSession->unk40 == gGameSession->unk44;
         if (gPlayerCount == 1) {
-            func_8008CD30((u8 *)gResultsTextTable->unk08 + 6, gResultsRoundFormat,
+            gSpillVarargsArguments((u8 *)gResultsTextTable->unk08 + 6, gResultsRoundFormat,
                           gGameSession->unk4C + 1);
             if (gScratchBlockPtr[2] == 0) {
                 gGameSession->unk4C++;
@@ -142,7 +142,7 @@ void gDrawPlayerResultsScreen(void)
     slot = &gResultsTextTable->unk00;
     if (flag) slot++;
     text = *slot;
-    length = func_80049340(text);
+    length = gMeasureTextWidthPx(text);
     limit = 0x12C;
     x = (limit - length) / 4 + 0xA;
     gDrawAlignedString(text, x, 0x14, 8);
@@ -150,13 +150,13 @@ void gDrawPlayerResultsScreen(void)
     slot = &gResultsTextTable->unk00;
     if (!flag) slot++;
     text = *slot;
-    length = func_80049340(text);
+    length = gMeasureTextWidthPx(text);
     x = (limit - length) / 4 + 0xA0;
     gDrawAlignedString(text, x, 0x14, 8);
 
     if (gPlayerCount == blend) {
         text = gResultsTextTable->unk08;
-        length = func_80049340(text);
+        length = gMeasureTextWidthPx(text);
         gDrawAlignedString(text, (0x258 - length) / 4 + 0xA, 0x14,
                        (gFrameTime & 0x20) ? 8 : 2);
     }
@@ -181,7 +181,7 @@ void gDrawPlayerResultsScreen(void)
         tailSlot = &gResultsTextTable->unk5C;
     }
     text = *tailSlot;
-    length = func_80049340(text);
+    length = gMeasureTextWidthPx(text);
     gDrawAlignedString(text, (0x258 - length) / 4 + 0xA, 0xD2, 8);
 
     if (p1->unk48 != 0 && (p2 == 0 || p2->unk48 != 0)) {

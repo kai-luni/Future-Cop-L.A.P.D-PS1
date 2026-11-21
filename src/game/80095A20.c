@@ -19,6 +19,8 @@
  * @par Callers
  * None in the symbol table (inlined into the lighting path).
  */
+void gGteApplyColorMatrixWithBackground(void) __asm__("func_80095A20");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80095A20\n"

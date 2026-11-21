@@ -29,6 +29,8 @@ extern s32 gGetScaledWeaponReserveLimit(struct Unk6BDFCObj *obj, struct Unk6BDFC
 
 #define U8(off)  (*(u8 *)((u32)ctl + idx + (off)))
 #define S16(off) (*(s16 *)((u32)ctl + (idx << 1) + (off)))
+void gRefillWeaponSlotReserve(struct Unk6BDFCObj *obj, s32 idx) __asm__("func_8006BDFC");
+
 
 /**
  * @brief Refreshes one weapon slot's counters and swaps its two range values.
@@ -57,7 +59,7 @@ extern s32 gGetScaledWeaponReserveLimit(struct Unk6BDFCObj *obj, struct Unk6BDFC
  * @par Callers
  * Confirmed: func_8006AB38 (loadout reset) and the weapon update loop.
  */
-void func_8006BDFC(struct Unk6BDFCObj *obj, s32 idx)
+void gRefillWeaponSlotReserve(struct Unk6BDFCObj *obj, s32 idx)
 {
     struct Unk6BDFCCtl *ctl = obj->ctl;
     struct Unk6BDFCTgt *tgt = gRegistryFind(U8(0x90));

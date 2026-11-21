@@ -15,6 +15,8 @@
  * func_80010030, always together with func_800959F0 (which sets the screen
  * offset), i.e. the two calls are the complete projection set-up.
  */
+void gSetGteProjectionDistance(int arg0) __asm__("func_80095A10");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80095A10\n"

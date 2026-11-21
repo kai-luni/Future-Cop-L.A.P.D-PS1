@@ -10,6 +10,8 @@ typedef struct {
 extern s32 gMdecLuminanceQuantizationTable[] __asm__("D_8009E8B4");
 extern s32 gMdecChrominanceQuantizationTable[] __asm__("D_8009E8F4");
 extern s32 gMdecDefaultDctTable[] __asm__("D_8009E938");
+DecDctEnv *gInitDefaultMdecEnvironment(DecDctEnv *environment) __asm__("func_80095EC4");
+
 
 /**
  *  @brief Initializes a decoder environment from three default tables.
@@ -29,7 +31,7 @@ extern s32 gMdecDefaultDctTable[] __asm__("D_8009E938");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-DecDctEnv *func_80095EC4(DecDctEnv *environment)
+DecDctEnv *gInitDefaultMdecEnvironment(DecDctEnv *environment)
 {
     s32 i;
     s32 *source;

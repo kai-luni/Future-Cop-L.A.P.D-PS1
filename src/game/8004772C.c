@@ -18,7 +18,7 @@ struct SoundBank {
     u8 cursor;
 };
 
-extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
+extern void gSetSoundVoiceMixParameters(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra) __asm__("func_800477D8");
 extern u8 func_80024358(struct SoundBank *bank, struct SoundVoice *voice, s32 pan,
                         s32 volume, s32 extra);
 u8 gPlayNextBankSample(struct SoundBank *bank, struct SoundVoice *voice, s32 pan, s32 volume,
@@ -60,7 +60,7 @@ u8 gPlayNextBankSample(struct SoundBank *bank, struct SoundVoice *voice, s32 pan
             bank->cursor = 0;
         }
         voice->sample = &bank->samples[bank->cursor];
-        func_800477D8(voice, pan, volume, extra);
+        gSetSoundVoiceMixParameters(voice, pan, volume, extra);
         result = func_80024358(bank, voice, voice->pan, voice->volume, voice->extra);
     } else {
         result = 0;

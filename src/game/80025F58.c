@@ -12,12 +12,12 @@ extern struct Unk25F58 *gLabelRecord __asm__("D_8009F2CC");
 extern u8 gOptionsVolumeFormat[] __asm__("D_8009F2EC");
 extern u8 gItemCodeTable[] __asm__("D_8009ABE8");
 
-extern s32 func_800451E0(void);
-extern s32 func_8004522C(void);
-extern s32 func_80045288(void);
-extern s32 func_800452C8(void);
+extern s32 gGetStereoSoundMode(void) __asm__("func_800451E0");
+extern s32 gGetMusicVolume(void) __asm__("func_8004522C");
+extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
+extern s32 gGetVoiceVolume(void) __asm__("func_800452C8");
 extern s32 func_8008CCC0(u8 *arg0);
-extern void func_8008CD30(u8 *arg0, u8 *arg1, s32 arg2);
+extern void gSpillVarargsArguments(u8 *arg0, u8 *arg1, s32 arg2) __asm__("func_8008CD30");
 
 void gRefreshOptionsAudioLabels(void) __asm__("func_80025F58");
 
@@ -51,18 +51,18 @@ void gRefreshOptionsAudioLabels(void)
     s32 value;
     u8 *ptr;
 
-    value = (func_8004522C() + 1) * 100 / 128;
+    value = (gGetMusicVolume() + 1) * 100 / 128;
     ptr = gLabelRecord->unk04;
-    func_8008CD30(ptr + func_8008CCC0(ptr) - 3, gOptionsVolumeFormat, value);
+    gSpillVarargsArguments(ptr + func_8008CCC0(ptr) - 3, gOptionsVolumeFormat, value);
 
-    value = (func_80045288() + 1) * 100 / 128;
+    value = (gGetVagmVolumeSetting() + 1) * 100 / 128;
     ptr = gLabelRecord->unk08;
-    func_8008CD30(ptr + func_8008CCC0(ptr) - 3, gOptionsVolumeFormat, value);
+    gSpillVarargsArguments(ptr + func_8008CCC0(ptr) - 3, gOptionsVolumeFormat, value);
 
-    value = (func_800452C8() + 1) * 100 / 128;
+    value = (gGetVoiceVolume() + 1) * 100 / 128;
     ptr = gLabelRecord->unk0C;
-    func_8008CD30(ptr + func_8008CCC0(ptr) - 3, gOptionsVolumeFormat, value);
+    gSpillVarargsArguments(ptr + func_8008CCC0(ptr) - 3, gOptionsVolumeFormat, value);
 
-    value = func_800451E0();
+    value = gGetStereoSoundMode();
     gItemCodeTable[4] = value ? 4 : 5;
 }

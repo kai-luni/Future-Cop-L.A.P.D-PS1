@@ -24,7 +24,7 @@ extern void gSendCommandByTag(s32, s32, s32) __asm__("func_8004DC64");
 extern void gSendCommandByGroup(s32, s32, s32) __asm__("func_8004DD68");
 extern void gSendCommandByTeam(s32, s32, s32) __asm__("func_8004DDF4");
 extern void gSetPathNodeBlocked(s32, s32, s32) __asm__("func_8004F0F0");
-extern void func_8006158C(s32, s32, s32);
+extern void gApplySpawnerCommandById(s32, s32, s32) __asm__("func_8006158C");
 extern void gSendSpawnerCommandByGroup(s32, s32, s32) __asm__("func_80061600");
 extern void gSendSceneNodeCommandById(s32, s32, s32) __asm__("func_800841C4");
 s32 gInterpretEntityScript(u8 *script, s32 arg1, s32 arg2, struct Entity *entity) __asm__("func_80069D68");
@@ -393,7 +393,7 @@ s32 gInterpretEntityScript(u8 *script, s32 arg1, s32 arg2, struct Entity *entity
             gSetPathNodeBlocked(c, b, a);
             break;
         case 60:
-            func_8006158C(c, b, a);
+            gApplySpawnerCommandById(c, b, a);
             break;
         case 61:
             gSendSpawnerCommandByGroup(c, b, a);

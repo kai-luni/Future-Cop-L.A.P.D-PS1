@@ -12,10 +12,12 @@ extern s32 gMapTileAnimList __asm__("D_8009FA04");
 extern int *gTileBlockTable __asm__("D_8009F808");
 extern int *gTableBuffer __asm__("D_8009FA08");
 
-extern void func_80063134(void);
+extern void gClearTerrainState(void) __asm__("func_80063134");
 extern void *gAllocMemory(s32 size, s32 mode) __asm__("func_80017EBC");
 extern int func_80018460(int *value);
 extern void func_8008CD20(void *ptr, s32 arg1, s32 arg2);
+int *gInitMapTables(void) __asm__("func_80063428");
+
 
 /**
  * @brief Clears map/terrain tables and allocates the tile and mesh pointer buffers.
@@ -38,7 +40,7 @@ extern void func_8008CD20(void *ptr, s32 arg1, s32 arg2);
  * @par Callers
  * Confirmed: func_80024A24 (mission boot).
  */
-int *func_80063428(void)
+int *gInitMapTables(void)
 {
     s32 i;
 
@@ -56,7 +58,7 @@ int *func_80063428(void)
         } while (count >= 0);
     }
 
-    func_80063134();
+    gClearTerrainState();
     gMapGridHeader = 0;
     gMapChunkNode = 0;
     gTileBlockTable = gAllocMemory(0x1A0, 2);

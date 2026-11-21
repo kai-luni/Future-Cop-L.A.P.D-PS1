@@ -55,7 +55,7 @@ extern void gOrientEntityBasis(void *self) __asm__("func_80037EB4");
 extern void gSetAnimClipTable(void *data, void *track, u8 forward, s32 index) __asm__("func_80044988");
 extern void gGteLoadMatrix(void *matrix) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *frame, void *output, s32 count) __asm__("func_80010234");
-extern s32 func_8006314C(void *key, u8 value);
+extern s32 gRegisterGroundObject(void *key, u8 value) __asm__("func_8006314C");
 void gInitRailMoverEntity(s32 message, struct Unk378BC *self, struct Unk378BCOther *other) __asm__("func_800378BC");
 
 
@@ -122,6 +122,6 @@ void gInitRailMoverEntity(s32 message, struct Unk378BC *self, struct Unk378BCOth
     offset += 8;
     gGteTransformVerticesWide(pointer + offset, self->unk5C, 1);
     if (self->flags & 0x4000) {
-        func_8006314C(self, 0);
+        gRegisterGroundObject(self, 0);
     }
 }

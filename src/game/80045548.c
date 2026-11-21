@@ -20,7 +20,7 @@ extern struct SoundChannel *gChannelListHead __asm__("D_8009F724");
 extern struct SoundChannel *gSoundChannelQueueHead __asm__("D_8009F728");
 extern struct SoundChannel *gSoundChannelQueueTail __asm__("D_8009F72C");
 
-extern void func_8004582C(void);
+extern void gInitSoundChannelList(void) __asm__("func_8004582C");
 void gReleaseSoundChannel(struct SoundChannel *channel) __asm__("func_80045548");
 
 
@@ -60,6 +60,6 @@ void gReleaseSoundChannel(struct SoundChannel *channel)
     if (gChannelCount != 0) {
         gChannelCount--;
     } else {
-        func_8004582C();
+        gInitSoundChannelList();
     }
 }

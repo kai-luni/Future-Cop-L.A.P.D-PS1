@@ -23,7 +23,7 @@ extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
 
 extern int gIsTrackedSoundPlaying(void) __asm__("func_80024170");
 extern void gStopTrackedSoundVoice(void) __asm__("func_80023E84");
-extern s32 func_80045028(s32 mode);
+extern s32 gIsTrackedSoundId(s32 mode) __asm__("func_80045028");
 extern struct Unk4749CResource *gAllocPrioritySoundVoice(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80046B04");
 extern void gBindSoundVoiceHandle(struct Unk4749CHandle *handle, struct Unk4749CResource *resource) __asm__("func_8004749C");
 
@@ -66,7 +66,7 @@ s32 gAcquireTrackedSoundVoice(s32 arg0, s32 arg1)
         handle = gAllocPrioritySoundVoice(0x7F, 0xA, 0, 0xFF);
         if (handle != 0) {
             gBindSoundVoiceHandle(&gAssetHandle, handle);
-            if ((u8)func_80045028(arg0)) {
+            if ((u8)gIsTrackedSoundId(arg0)) {
                 gAssetHandle.flag18 = 1;
                 gAssetHandle.unk0C = arg0;
             } else {

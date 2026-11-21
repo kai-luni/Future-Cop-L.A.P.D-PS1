@@ -56,7 +56,7 @@ extern s32 gCdRead(void *, s32) __asm__("func_8008E598");
 extern s32 gCdDataSync(s32) __asm__("func_8008E5FC");
 extern struct CdlLOC *gCdIntToPos(s32, struct CdlLOC *) __asm__("func_8008E61C");
 extern s32 gCdPosToInt(struct CdlLOC *) __asm__("func_8008E720");
-extern void func_800889A8(s32, s32, s32);
+extern void gQueueMovieCdRead(s32, s32, s32) __asm__("func_800889A8");
 struct CdlLOC *gOffsetCdLocationBySectors(struct CdlLOC *loc, struct CdlLOC *out, s32 offset) __asm__("func_800889DC");
 
 
@@ -159,7 +159,7 @@ done:
             a4 = gMovieStreamContext->unk04;
             disc5 = gMovieStreamContext->unk430;
             b4 = gMovieStreamContext->unk00;
-            func_800889A8(a4, b4, (s32)&disc5->loc24);
+            gQueueMovieCdRead(a4, b4, (s32)&disc5->loc24);
         } else {
             gCdRead((void *)gMovieStreamContext->unk04, 0x200);
             gCdDataSync(0);

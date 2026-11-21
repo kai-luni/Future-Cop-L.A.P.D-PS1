@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 *gMovieSliceContext __asm__("D_8009F4BC");
+void gSetMovieSlicePage(s32 value) __asm__("func_800858F4");
+
 
 /**
  *  @brief Stores a value in a field of the globally referenced object.
@@ -20,7 +22,7 @@ extern s32 *gMovieSliceContext __asm__("D_8009F4BC");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800858F4(s32 value)
+void gSetMovieSlicePage(s32 value)
 {
     *(s32 *)((u8 *)gMovieSliceContext + 0x114) = value;
 }

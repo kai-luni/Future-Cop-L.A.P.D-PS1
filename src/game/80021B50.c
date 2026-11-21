@@ -3,7 +3,7 @@
 
 extern u8 gSubsystemTable[] __asm__("D_800A085C");
 
-extern void func_80097A28(void);
+extern void gWarmStartSpu(void) __asm__("func_80097A28");
 extern void gSpuInitDmaEvent(void) __asm__("func_80096E40");
 extern void gSpuInitPool(s32 count, u8 *table) __asm__("func_80097AC8");
 extern void func_80021824(void);
@@ -36,7 +36,7 @@ void gResetCvkSubsystem(void) __asm__("func_80021B50");
  */
 void gResetCvkSubsystem(void)
 {
-    func_80097A28();
+    gWarmStartSpu();
     gSpuInitDmaEvent();
     gSpuInitPool(0x20, gSubsystemTable);
     func_80021824();

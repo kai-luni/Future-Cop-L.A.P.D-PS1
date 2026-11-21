@@ -6,6 +6,8 @@
 extern u32 *gGpuGp0PortPtr __asm__("D_8009DEC4");
 extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern void gSubmitGpuDmaJob(s32, s32, s32, s32) __asm__("func_80094A3C");
+u32 gReadGpuInfo(u32 arg0) __asm__("func_800949E8");
+
 
 /**
  *  @brief Writes a tagged value and reads a masked result.
@@ -25,7 +27,7 @@ extern void gSubmitGpuDmaJob(s32, s32, s32, s32) __asm__("func_80094A3C");
  *  @par Callers
  *  Confirmed: func_8009423C.
  */
-u32 func_800949E8(u32 arg0)
+u32 gReadGpuInfo(u32 arg0)
 {
     u32 value = arg0 | 0x10000000;
 

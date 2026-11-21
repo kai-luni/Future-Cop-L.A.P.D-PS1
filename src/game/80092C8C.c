@@ -10,6 +10,8 @@ extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(void *arg0, s32 arg1) __asm__("D_8009DDEC");
 extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
 extern u8 gDrawSyncTraceFormat[] __asm__("D_80012A44");
+void gDrawSync(s32 arg0) __asm__("func_80092C8C");
+
 
 /**
  * @brief GPU synchronisation (DrawSync-style): waits for or flushes the
@@ -30,7 +32,7 @@ extern u8 gDrawSyncTraceFormat[] __asm__("D_80012A44");
  * Every frame: func_8001B4A8, func_800259D8, func_8003FAD4, func_80025B7C and
  * the video layer all bracket their GPU work with it.
  */
-void func_80092C8C(s32 arg0)
+void gDrawSync(s32 arg0)
 {
     if (gGpuDebugLevel >= 2) {
         gLogPrintf(gDrawSyncTraceFormat, arg0);

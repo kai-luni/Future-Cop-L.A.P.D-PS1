@@ -4,10 +4,10 @@
 extern void gSetStereoSoundMode(s32 enable) __asm__("func_800451B4");
 extern void gSetSfxVolume(s32 volume) __asm__("func_800451F8");
 extern void gSetVagmVolumeSetting(s32 volume) __asm__("func_80045238");
-extern void func_80045294(s32 volume);
+extern void gSetVoiceVolume(s32 volume) __asm__("func_80045294");
 extern void gSetPadRumbleEnabled(s32 port, s32 enable) __asm__("func_8001EC04");
-extern s32 func_80045288(void);
-extern s32 func_8002A58C(void);
+extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
+extern s32 gIsVagmAudioStreamActive(void) __asm__("func_8002A58C");
 extern void func_80024630(s32 arg0);
 extern void gStartVagmAudioStream(s32 arg0) __asm__("func_8002A16C");
 extern void gApplyControllerPreset(s32 port, s32 value) __asm__("func_8007BFCC");
@@ -42,18 +42,18 @@ void gApplySavedAudioSettings(u8 *arg0, s32 arg1)
     gSetStereoSoundMode(arg0[7]);
     gSetSfxVolume(arg0[4]);
     gSetVagmVolumeSetting(arg0[5]);
-    func_80045294(arg0[6]);
+    gSetVoiceVolume(arg0[6]);
     gSetPadRumbleEnabled(0, arg0[0xA]);
     gSetPadRumbleEnabled(1, arg0[0xB]);
     gApplyControllerPreset(0, *(s8 *)(arg0 + 8));
     gApplyControllerPreset(1, *(s8 *)(arg0 + 9));
 
-    if (func_80045288() == 0) {
-        if ((func_8002A58C() & 0xFF) == 1) {
+    if (gGetVagmVolumeSetting() == 0) {
+        if ((gIsVagmAudioStreamActive() & 0xFF) == 1) {
             func_80024630(0);
         }
     } else {
-        if ((func_8002A58C() & 0xFF) == 0) {
+        if ((gIsVagmAudioStreamActive() & 0xFF) == 0) {
             gStartVagmAudioStream(1);
         }
     }

@@ -6,6 +6,8 @@ extern s32 gStripDitherEnabled __asm__("D_8009F4C4");
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
 extern s32 gBufferCount __asm__("D_8009F4CC");
 extern s32 gReleaseDoneFlag __asm__("D_8009F508");
+void gSetMovieStripDecodeDefaults(void) __asm__("func_800859B0");
+
 
 /**
  *  @brief Initializes five global state values.
@@ -24,7 +26,7 @@ extern s32 gReleaseDoneFlag __asm__("D_8009F508");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800859B0(void)
+void gSetMovieStripDecodeDefaults(void)
 {
     gStripScaleEnable = 1;
     gStripStepWidth = 3;

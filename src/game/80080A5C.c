@@ -1,14 +1,16 @@
 // Categories: Resources > Save Data | Platform > Sound > Volume | Game Engine > Front End
 #include "game/types.h"
 
-extern s32 func_800451E0(void);
-extern s32 func_8004522C(void);
-extern s32 func_80045288(void);
-extern s32 func_800452C8(void);
+extern s32 gGetStereoSoundMode(void) __asm__("func_800451E0");
+extern s32 gGetMusicVolume(void) __asm__("func_8004522C");
+extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
+extern s32 gGetVoiceVolume(void) __asm__("func_800452C8");
 extern s32 gIsPadRumbleEnabled(s32 arg0) __asm__("func_8001EB2C");
 
 extern u8 gPresetIndexPerPort __asm__("D_8009FA98");
 extern u8 gPort2ControllerPresetIndex[] __asm__("D_8009FA99");
+void gPackAudioAndPadSettings(u8 *arg0) __asm__("func_80080A5C");
+
 
 /**
  * @brief Snapshots current audio volumes, option bytes, and device settings into a save/option sub-block.
@@ -33,12 +35,12 @@ extern u8 gPort2ControllerPresetIndex[] __asm__("D_8009FA99");
  * @par Callers
  * Confirmed: func_80080B70 (0x80080BB4 for header options at +0x40C and 0x80080BDC for profile record audio block at +0x474).
  */
-void func_80080A5C(u8 *arg0)
+void gPackAudioAndPadSettings(u8 *arg0)
 {
-    arg0[4] = func_8004522C();
-    arg0[5] = func_80045288();
-    arg0[6] = func_800452C8();
-    arg0[7] = func_800451E0();
+    arg0[4] = gGetMusicVolume();
+    arg0[5] = gGetVagmVolumeSetting();
+    arg0[6] = gGetVoiceVolume();
+    arg0[7] = gGetStereoSoundMode();
     arg0[0xA] = gIsPadRumbleEnabled(0);
     arg0[0xB] = gIsPadRumbleEnabled(1);
     arg0[8] = gPresetIndexPerPort;

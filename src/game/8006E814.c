@@ -21,7 +21,7 @@ extern s32 gGuardEffectPoolMessage(s32, struct Obj *, s32, s32) __asm__("func_80
 extern s32 gHandleObjectEventMessages(s32, struct Obj *, s32, s32) __asm__("func_8003C980");
 extern void gInitDomeEffectFadeRate(struct Obj *) __asm__("func_8006E720");
 extern void *gBuildDomePatchMesh(s16, s32) __asm__("func_8006C84C");
-extern void func_8006CA68(void *);
+extern void gFreeModelPairBlock(void *) __asm__("func_8006CA68");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
 s32 gHandleDomeMeshEffect(s32 message, struct Obj *obj, s32 arg2, s32 arg3) __asm__("func_8006E814");
 
@@ -80,7 +80,7 @@ s32 gHandleDomeMeshEffect(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
         }
         return 1;
     case 10:
-        if ((obj->flags98 & 0x40) && obj->mesh) func_8006CA68(obj->mesh);
+        if ((obj->flags98 & 0x40) && obj->mesh) gFreeModelPairBlock(obj->mesh);
         gFreeBlock(obj);
         return 0;
     case 6:

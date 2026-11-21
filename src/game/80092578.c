@@ -1,5 +1,7 @@
 // Categories: Utilities > Byte Operations
 #include "game/types.h"
+void gSetFlatRectanglePacketHeader(u8 *arg0) __asm__("func_80092578");
+
 
 /**
  *  @brief Writes two fixed byte values into a buffer.
@@ -18,7 +20,7 @@
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-void func_80092578(u8 *arg0)
+void gSetFlatRectanglePacketHeader(u8 *arg0)
 {
     arg0[3] = 3;
     arg0[7] = 96;

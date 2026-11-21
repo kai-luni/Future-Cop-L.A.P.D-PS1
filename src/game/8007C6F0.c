@@ -8,7 +8,7 @@ extern void gEmitFlatQuadRect(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g
 extern void gDrawVehicleSchematic(s32 arg0) __asm__("func_8007C0F8");
 extern s32 gGetPadType(s32 port) __asm__("func_8001EF34");
 extern u8 gIsPadRumbleReady(s32 arg0) __asm__("func_8001EAEC");
-extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
+extern void gQueueStatusLineText(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80078B34");
 
 /**
  * @brief Profile-slot screen pass: black background, the slot list, and two
@@ -74,6 +74,6 @@ void gDrawProfileSlotScreen(s32 slot)
         }
     }
 
-    func_80078B34(b, 0, 0);
-    func_80078B34(a, 1, 0);
+    gQueueStatusLineText(b, 0, 0);
+    gQueueStatusLineText(a, 1, 0);
 }

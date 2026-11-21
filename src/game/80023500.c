@@ -17,12 +17,12 @@ extern s32 gVolatileBase __asm__("D_8009F27C");
 extern u8 gFlushSoundChannelsIfCvkActive[] __asm__("D_80023314");
 extern Unk800A0A00 gObjectSlots[8] __asm__("D_800A0A00");
 
-extern void func_80098708(s32 arg0);
+extern void gClaimSpuEntry(s32 arg0) __asm__("func_80098708");
 extern s32 gClearScreenModeHook(s32 callback) __asm__("func_8001F12C");
 extern void func_80021250(void);
 extern void gReleaseCvkSoundBanksAndVoices(void) __asm__("func_80023BF8");
 extern void gShutdownSoundSystem(void) __asm__("func_80021C80");
-extern void func_80044FEC(void);
+extern void gDisableSoundProcessing(void) __asm__("func_80044FEC");
 
 void gMarkCvkSlotReady(u32 arg0) __asm__("func_80023500");
 

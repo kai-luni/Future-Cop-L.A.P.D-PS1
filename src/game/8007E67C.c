@@ -12,7 +12,7 @@ extern Entry gMenuEntryTable[] __asm__("D_8009C0E4");
 extern Entry gMenuTailEntryTable[] __asm__("D_8009C18C");
 extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
-extern void func_80078B34(s32, s32, s32);
+extern void gQueueStatusLineText(s32, s32, s32) __asm__("func_80078B34");
 
 /**
  * @brief Draws the static label/sprite layout of one front-end screen and
@@ -64,6 +64,6 @@ void gDrawFrontEndStatics(s32 arg0)
             p++;
         }
     }
-    func_80078B34(0x6AE, 0, 0);
-    func_80078B34(0x10CC, 1, 0);
+    gQueueStatusLineText(0x6AE, 0, 0);
+    gQueueStatusLineText(0x10CC, 1, 0);
 }

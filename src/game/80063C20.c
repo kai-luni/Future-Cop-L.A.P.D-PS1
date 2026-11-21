@@ -10,6 +10,8 @@ struct Unk63C20 {
 
 extern void func_80019A74(struct Unk63C20 *resource);
 extern void gParseMapSectionChunks(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800639D4");
+void gLoadMapTileCatalog(struct Unk63C20 *resource) __asm__("func_80063C20");
+
 
 /**
  * @brief Re-registers a loaded resource with the level setup.
@@ -29,7 +31,7 @@ extern void gParseMapSectionChunks(s32 arg0, s32 arg1, s32 arg2) __asm__("func_8
  * @par Callers
  * Unknown: no direct edge in edges.json.
  */
-void func_80063C20(struct Unk63C20 *resource)
+void gLoadMapTileCatalog(struct Unk63C20 *resource)
 {
     func_80019A74(resource);
     gParseMapSectionChunks(resource->unk00, resource->unk20, resource->unk1C);

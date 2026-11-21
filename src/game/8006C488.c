@@ -12,6 +12,8 @@ struct Unk6C488 {
 };
 
 extern void gRefreshPlayerWeaponSound(struct Unk6C488 *object, s32 state) __asm__("func_80046CF0");
+void gRefreshLobeArcWeaponSound(struct Unk6C488 *object) __asm__("func_8006C488");
+
 
 /**
  * @brief Selects the normal or the alert state of a looping voice.
@@ -36,7 +38,7 @@ extern void gRefreshPlayerWeaponSound(struct Unk6C488 *object, s32 state) __asm_
  * @par Callers
  * Confirmed: func_8005D8F4 (0x8005DB7C), the expanding contact field tick.
  */
-void func_8006C488(struct Unk6C488 *object)
+void gRefreshLobeArcWeaponSound(struct Unk6C488 *object)
 {
     s32 state;
 

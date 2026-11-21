@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u8 gScriptVmDisabled __asm__("D_8009F840");
+void gDisableScriptVm(void) __asm__("func_80069D58");
+
 
 /**
  * @brief Inhibits bytecode script execution by setting the global script-VM disable flag D_8009F840.
@@ -27,7 +29,7 @@ extern u8 gScriptVmDisabled __asm__("D_8009F840");
  * @par Callers
  * Confirmed: func_800249BC (0x800249D4, subsystem teardown) and func_80024D14 (0x80024D60, global subsystem reset) / Likely: none / Unknown: none.
  */
-void func_80069D58(void)
+void gDisableScriptVm(void)
 {
     gScriptVmDisabled = 1;
 }

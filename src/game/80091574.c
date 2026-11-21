@@ -8,6 +8,8 @@ struct CallbackTable {
 };
 
 extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
+void gInvokeIrqCallback(void) __asm__("func_80091574");
+
 
 /**
  * @brief Calls the fifth entry of the interrupt callback table.
@@ -31,7 +33,7 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  * +0x10 of D_8009DD10 is visible in the inspected units, the target routine
  * cannot be identified.
  */
-void func_80091574(void)
+void gInvokeIrqCallback(void)
 {
     gIrqCallbackTable->callback();
 }

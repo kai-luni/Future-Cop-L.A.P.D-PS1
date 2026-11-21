@@ -3,6 +3,8 @@
 
 extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
 extern s32 gCdControl(s32 code, void *arg1, void *arg2) __asm__("func_8008E1BC");
+s32 gPollCdAfterPause(void) __asm__("func_800886E4");
+
 
 /**
  * @brief Polls CD-ROM command 1 status and issues command 0xA on command failure.
@@ -28,7 +30,7 @@ extern s32 gCdControl(s32 code, void *arg1, void *arg2) __asm__("func_8008E1BC")
  * @par Callers
  * Confirmed: func_80089018 (0x8008909C in asm/us/main.s, spin-wait loop after command `8`) / Likely: none / Unknown: none.
  */
-s32 func_800886E4(void)
+s32 gPollCdAfterPause(void)
 {
     u8 buffer1[0x20];
     u8 buffer2[0x20];

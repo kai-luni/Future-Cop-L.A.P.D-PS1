@@ -22,7 +22,7 @@ extern void gMarkSpawnRecordChains(s32 arg0) __asm__("func_8003C590");
 extern void gSpawnEntityPrimaryType(struct Unk3BObject *object) __asm__("func_8003BC0C");
 extern void func_80019584(s32 arg0);
 extern void gLoadImage(s16 *rect, u32 *color) __asm__("func_80092F38");
-extern void func_80092C8C(s32 arg0);
+extern void gDrawSync(s32 arg0) __asm__("func_80092C8C");
 void gFinishLevelLoad(void) __asm__("func_8003FAD4");
 
 
@@ -100,5 +100,5 @@ void gFinishLevelLoad(void)
     local.rect[3] = 2;
 
     gLoadImage(local.rect, local.color);
-    func_80092C8C(0);
+    gDrawSync(0);
 }

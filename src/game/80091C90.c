@@ -1,3 +1,5 @@
+void gClearIntegerRun(int *destination, unsigned int count) __asm__("func_80091C90");
+
 // Categories: Utilities > Memory
 /**
  *  @brief Clears a sequence of integer elements.
@@ -17,7 +19,7 @@
  *  @par Callers
  *  Confirmed: func_80091BA0.
  */
-void func_80091C90(int *destination, unsigned int count)
+void gClearIntegerRun(int *destination, unsigned int count)
 {
     while (count-- != 0) {
         *destination++ = 0;

@@ -3,6 +3,8 @@
 
 extern s32 *gMovieStreamContext __asm__("D_8009F970");
 extern void gQueueMovieCdControlF(s32, s32, s32) __asm__("func_8008888C");
+void gQueueMovieCdRead(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800889A8");
+
 
 /**
  *  @brief Stores two state values and invokes a helper with a third.
@@ -23,7 +25,7 @@ extern void gQueueMovieCdControlF(s32, s32, s32) __asm__("func_8008888C");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800889A8(s32 arg0, s32 arg1, s32 arg2)
+void gQueueMovieCdRead(s32 arg0, s32 arg1, s32 arg2)
 {
     *(s32 *)((u8 *)gMovieStreamContext + 0x450) = arg0;
     *(s32 *)((u8 *)gMovieStreamContext + 0x454) = arg1;

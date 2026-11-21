@@ -3,6 +3,8 @@
 
 extern volatile s32 gVSyncTickCounter __asm__("D_8009DD50");
 extern  void (*gVSyncCallbackTable[8])(void) __asm__("D_8009DD30");
+void gDispatchVSyncCallbacks(void) __asm__("func_80091BF8");
+
 
 /**
  *  @brief Increments a counter and invokes registered callbacks.
@@ -20,7 +22,7 @@ extern  void (*gVSyncCallbackTable[8])(void) __asm__("D_8009DD30");
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-void func_80091BF8(void)
+void gDispatchVSyncCallbacks(void)
 {
     register void (**p)(void) __asm__("$16");
     s32 i;

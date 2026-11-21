@@ -18,7 +18,9 @@ extern u32 *gDma4BlockCtrlPtr __asm__("D_8009EEAC");
 extern u32 *gDma4ChannelCtrlPtr __asm__("D_8009EEB0");
 extern u32 gSetupGuard __asm__("D_8009EEF4");
 extern void gSpuBusyWait(void) __asm__("func_80097990");
-extern void func_80097968(void);
+extern void gSetSpuDmaReadTiming(void) __asm__("func_80097968");
+void gStartSpuReadDma(u32 arg0, u32 arg1, u32 arg2) __asm__("func_800973B4");
+
 
 /**
  *  @brief Configures hardware fields and starts a control operation.
@@ -41,7 +43,7 @@ extern void func_80097968(void);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800973B4(u32 arg0, u32 arg1, u32 arg2)
+void gStartSpuReadDma(u32 arg0, u32 arg1, u32 arg2)
 {
     register u32 control __asm__("$4");
     gSpuRegBasePtr->field1A6 = arg1;
@@ -51,7 +53,7 @@ void func_800973B4(u32 arg0, u32 arg1, u32 arg2)
     arg2 <<= 16;
     gSpuBusyWait();
     __asm__ volatile("" : "+r" (arg2));
-    func_80097968();
+    gSetSpuDmaReadTiming();
     control = 0x01000200;
     __asm__ volatile("" : "+r" (control));
     *gDma4MemAddrPtr = arg0;

@@ -16,6 +16,8 @@ struct SoundChannel {
 };
 
 extern struct SoundChannel gVoiceTable[] __asm__("D_800A1160");
+s32 gIsSoundChannelActive(s32 arg0, s32 index) __asm__("func_80045768");
+
 
 /**
  *  @brief Tests whether a sound channel has a valid ID and nonzero priority.
@@ -37,7 +39,7 @@ extern struct SoundChannel gVoiceTable[] __asm__("D_800A1160");
  *  @par Callers
  *  Confirmed: func_8008352C.
  */
-s32 func_80045768(s32 arg0, s32 index)
+s32 gIsSoundChannelActive(s32 arg0, s32 index)
 {
     register struct SoundChannel *base __asm__("$3");
     struct SoundChannel *channel;

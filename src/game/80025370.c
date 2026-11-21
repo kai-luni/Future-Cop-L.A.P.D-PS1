@@ -10,7 +10,7 @@ extern int gModulePrefixCW __asm__("D_8009F3D8");
 extern int gModulePrefixPA __asm__("D_8009F3E0");
 extern int gFileSearchGroup __asm__("D_8009F238");
 extern int gUploadInProgress __asm__("D_8009F9C4");
-extern void func_8008CD30(char *, char *, int, char *);
+extern void gSpillVarargsArguments(char *, char *, int, char *) __asm__("func_8008CD30");
 extern void gLoadFileAlloc(char *, int, void **, int *, int) __asm__("func_8001E110");
 extern void gDecodeMdecFrameToVram(void *, int, int, int) __asm__("func_800861E4");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
@@ -90,7 +90,7 @@ int gShowLoadingScreen(void)
                 arg = gModulePrefixPA;
             else
                 arg = gModulePrefixCW;
-            func_8008CD30(buffer, gFormatNamePair, arg, entry->name);
+            gSpillVarargsArguments(buffer, gFormatNamePair, arg, entry->name);
         }
         gLoadFileAlloc(buffer, gFileSearchGroup, &data, &size, 0);
         if (data) {

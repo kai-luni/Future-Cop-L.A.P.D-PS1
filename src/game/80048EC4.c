@@ -12,7 +12,7 @@ extern struct FontEntry *gFont __asm__("D_8009F35C");
 extern s32 gRampFillCounter __asm__("D_8009F360");
 extern s32 gFontBankCount __asm__("D_8009F364");
 
-extern void func_80048978(s32 blue, s32 green, s32 red);
+extern void gAddTextPaletteColor(s32 blue, s32 green, s32 red) __asm__("func_80048978");
 void gInitTextRendererState(void) __asm__("func_80048EC4");
 
 
@@ -50,5 +50,5 @@ void gInitTextRendererState(void)
     gRampFillCounter = 0;
     gFontBankCount = 0;
     gEffectId[0] = 0;
-    func_80048978(0x1F, 0x1F, 0x1F);
+    gAddTextPaletteColor(0x1F, 0x1F, 0x1F);
 }

@@ -1,3 +1,5 @@
+void gSetFlatTrianglePacketHeader(unsigned char *p) __asm__("func_80092460");
+
 // Categories: Graphics > Packet Setup
 /**
  *  @brief Sets two bytes in a caller-provided buffer.
@@ -16,7 +18,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80092460(unsigned char *p)
+void gSetFlatTrianglePacketHeader(unsigned char *p)
 {
     p[3] = 4;
     p[7] = 0x20;

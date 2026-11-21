@@ -34,6 +34,8 @@ extern s32 gCdReadCallback __asm__("D_8009C810");
  * func_800908D4 and func_80090B48; called by gMovieStreamReaderInit and
  * gMovieStreamReaderClose.
  */
+void gSetCdReadCallback(void) __asm__("func_80091240");
+
 __asm__(
     ".text\n\t"
     ".set\tnoreorder\n\t"

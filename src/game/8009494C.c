@@ -1,3 +1,5 @@
+int gGetCachedGpuCmdByte(int index) __asm__("func_8009494C");
+
 // Categories: Utilities > Table Access
 /**
  *  @brief Reads an indexed byte from a fixed memory address.
@@ -17,7 +19,7 @@
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-int func_8009494C(int index)
+int gGetCachedGpuCmdByte(int index)
 {
     register unsigned char *ptr asm("$2") = (unsigned char *)0x800A0000U;
     asm("" : "+r"(ptr));

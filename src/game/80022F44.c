@@ -10,7 +10,7 @@ struct StreamState {
 
 extern struct StreamState gMixerState __asm__("D_800A0968");
 
-extern void func_80098BB8(s32 address);
+extern void gSetSpuIrqAddress(s32 address) __asm__("func_80098BB8");
 extern void gSpuSetIrqEnable(s32 mode) __asm__("func_80098A78");
 
 void gArmAudioStreamSpuIrq(void) __asm__("func_80022F44");
@@ -39,6 +39,6 @@ void gArmAudioStreamSpuIrq(void) __asm__("func_80022F44");
  */
 void gArmAudioStreamSpuIrq(void)
 {
-    func_80098BB8(gMixerState.base + gMixerState.offset);
+    gSetSpuIrqAddress(gMixerState.base + gMixerState.offset);
     gSpuSetIrqEnable(1);
 }

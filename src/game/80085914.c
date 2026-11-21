@@ -11,10 +11,10 @@ typedef struct {
 } Unk8009F4BC;
 
 extern Unk8009F4BC *gMovieSliceContext __asm__("D_8009F4BC");
-extern void func_80092C8C(s32);
+extern void gDrawSync(s32) __asm__("func_80092C8C");
 extern void gVSyncWait(s32) __asm__("func_80091270");
 extern void gPutDispEnvCached(void *) __asm__("func_800934BC");
-extern void func_800932F0(void *);
+extern void gPutDrawEnv(void *) __asm__("func_800932F0");
 
 /**
  *  @brief Processes the current buffer and switches to the other buffer.
@@ -41,11 +41,11 @@ void gMoviePresentFrame(void)
     s32 t;
 
     if (gMovieSliceContext->unk11C != 0) {
-        func_80092C8C(0);
+        gDrawSync(0);
         gVSyncWait(0);
         gPutDispEnvCached((void *)&gMovieSliceContext->unkEC[gMovieSliceContext->unk114][0]);
         t = 1 - gMovieSliceContext->unk114;
         gMovieSliceContext->unk114 = t;
-        func_800932F0((void *)&gMovieSliceContext->unk34[t][0]);
+        gPutDrawEnv((void *)&gMovieSliceContext->unk34[t][0]);
     }
 }

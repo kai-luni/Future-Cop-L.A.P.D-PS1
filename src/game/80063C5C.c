@@ -27,7 +27,7 @@ typedef struct {
 extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
 extern Res63C5C *gParseTextureContainer(void *arg0, s32 arg1) __asm__("func_8001996C");
 extern void gLoadImage(Rect63C5C *rect, void *data) __asm__("func_80092F38");
-extern void func_80092C8C(s32 arg0);
+extern void gDrawSync(s32 arg0) __asm__("func_80092C8C");
 extern void gReloadDefaultFontBank(void) __asm__("func_80048DEC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 void gLoadCbmpTexture(Arg63C5C *arg0) __asm__("func_80063C5C");
@@ -107,7 +107,7 @@ void gLoadCbmpTexture(Arg63C5C *arg0)
     rect[0].h = 0xFC;
 
     gLoadImage(rect, res->unk28);
-    func_80092C8C(0);
+    gDrawSync(0);
 
     t0 = s0;
     p1 = s1 >> 4;
@@ -132,7 +132,7 @@ void gLoadCbmpTexture(Arg63C5C *arg0)
     rect[1].h = 1;
 
     gLoadImage(&rect[1], res->unk2C + 8);
-    func_80092C8C(0);
+    gDrawSync(0);
 
     if (s0 == 9) {
         gReloadDefaultFontBank();

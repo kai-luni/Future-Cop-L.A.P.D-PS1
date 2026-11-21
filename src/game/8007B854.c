@@ -45,7 +45,7 @@ extern void gActivateMenuPanel(void *, s32) __asm__("func_80078650");
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern void func_8008CCB0(void *, s32);
 extern s32 func_8008CCA0(void *, void *);
-extern void func_80078B34(s32, s32, s32);
+extern void gQueueStatusLineText(s32, s32, s32) __asm__("func_80078B34");
 extern void gDrawProfileSlotList(s32) __asm__("func_8007B460");
 #define SELECTED (gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]])
 
@@ -238,8 +238,8 @@ SELECTION_DONE:;
         break;
     case 0:
         if (gFontBankTable == gScreenDescriptor) {
-            func_80078B34(0x44C, 0, 0);
-            func_80078B34(0x10CC, 1, 0);
+            gQueueStatusLineText(0x44C, 0, 0);
+            gQueueStatusLineText(0x10CC, 1, 0);
             gDrawProfileSlotList(gActivePlayerIndex);
         }
         break;

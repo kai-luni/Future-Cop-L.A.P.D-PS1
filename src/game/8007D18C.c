@@ -20,11 +20,11 @@ extern Unk8009FA94 *gGameSession[2] __asm__("D_8009FA94");
 extern u16 gSoundWidgetLabel[] __asm__("D_8009BABE");
 extern u8 D_800A377B[];
 extern void gStartVagmAudioStream(s32) __asm__("func_8002A16C");
-extern s32 func_8002A58C(void);
-extern s32 func_800451E0(void);
-extern s32 func_8004522C(void);
-extern s32 func_80045288(void);
-extern s32 func_800452C8(void);
+extern s32 gIsVagmAudioStreamActive(void) __asm__("func_8002A58C");
+extern s32 gGetStereoSoundMode(void) __asm__("func_800451E0");
+extern s32 gGetMusicVolume(void) __asm__("func_8004522C");
+extern s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
+extern s32 gGetVoiceVolume(void) __asm__("func_800452C8");
 
 /**
  * @brief Options-screen init callback: snapshots volumes and the sound-mode flag, primes the preview-sound state and picks the initial menu flag byte.
@@ -55,16 +55,16 @@ void gInitOptionsScreen(void)
     s32 tmp;
 
     gTestResultFlag = 0;
-    D_8009F908 = func_8004522C();
-    D_8009F90C = func_80045288();
-    D_8009F910 = func_800452C8();
-    tmp = func_800451E0();
+    D_8009F908 = gGetMusicVolume();
+    D_8009F90C = gGetVagmVolumeSetting();
+    D_8009F910 = gGetVoiceVolume();
+    tmp = gGetStereoSoundMode();
     gSavedOptionsSoundMode = tmp;
     gSnapshotPointer = 0;
     gPreviewTrackId = 0x47;
     gSoundWidgetLabel[0] = (tmp != 0) ? 0x100E : 0x1018;
     gSnapshotResult = 0;
-    if ((u8)func_8002A58C() == 0) {
+    if ((u8)gIsVagmAudioStreamActive() == 0) {
         gStartVagmAudioStream(0);
     }
     __asm__ volatile("lui %0,%%hi(D_8009FA94)\n\tlw %0,%%lo(D_8009FA94)(%0)" : "=r" (p) : : "memory");

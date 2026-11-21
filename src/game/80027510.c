@@ -63,7 +63,7 @@ extern void gStopSoundVoiceHandle(s32) __asm__("func_80046A34");
 extern s32 gPlayNonpositionalSoundEffect(s32, struct Game *) __asm__("func_80046C84");
 extern s32 gGetPadType(s32) __asm__("func_8001EF34");
 extern void gSetAudioPlaybackEnabled(s32) __asm__("func_80047690");
-extern void func_80069D0C(s32);
+extern void gStepScriptVmCountdowns(s32) __asm__("func_80069D0C");
 extern void gCullActiveEntitiesSplit(void) __asm__("func_8004E248");
 extern void gDispatchQueuedEntityCommands(void) __asm__("func_8004CECC");
 extern void gBroadcastEntityMessage(s32, s32, s32) __asm__("func_8004CD6C");
@@ -79,7 +79,7 @@ extern void gEmitTranslucentTileRect(u32, s32, s32, s32, s32, u8) __asm__("func_
 extern void gRunRegionPass(s32, struct Game *) __asm__("func_80026E1C");
 extern void gDrawInGameHud(struct Game *) __asm__("func_80047F30");
 extern void func_80026F68(s32, s32);
-extern s32 func_80049340(u8 *);
+extern s32 gMeasureTextWidthPx(u8 *) __asm__("func_80049340");
 extern void gDrawAlignedString(u8 *, s32, s32, s32) __asm__("func_80049100");
 extern void gEmitHudPanelSprite(s32) __asm__("func_800485AC");
 extern void gUpdateFrameCloseHud(s32) __asm__("func_800486FC");
@@ -222,7 +222,7 @@ void gRunSessionFrame(void)
             gSetAudioPlaybackEnabled(1);
         }
         gWasSuspended = 0;
-        func_80069D0C(gFrameDelta);
+        gStepScriptVmCountdowns(gFrameDelta);
         gCullActiveEntitiesSplit();
         gDispatchQueuedEntityCommands();
         gBroadcastEntityMessage(6, gFrameDelta, 0);
@@ -264,7 +264,7 @@ void gRunSessionFrame(void)
         }
         if (gSceneFrameCounter >= 2 && gGetPadType(0) == 0 && gDemoPlayback == 0) {
             text = gLoadingTextPtr;
-            x = 0x140 - func_80049340(text);
+            x = 0x140 - gMeasureTextWidthPx(text);
             color = 1;
             if (x < 0) x += 3;
             xarg = x >> 2;
@@ -297,7 +297,7 @@ void gRunSessionFrame(void)
         }
         if (gSceneFrameCounter >= 2 && gGetPadType(1) == 0 && gDemoPlayback == 0) {
             text = gLoadingTextPtr;
-            x = 0x140 - func_80049340(text);
+            x = 0x140 - gMeasureTextWidthPx(text);
             color = 1;
             if (x < 0) x += 3;
             xarg = x >> 2;

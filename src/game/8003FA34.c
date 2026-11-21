@@ -11,7 +11,7 @@ extern struct Unk3FA34Link *gDeferredRegList __asm__("D_8009F708");
 extern s32 gScreenState[] __asm__("D_8009FA00");
 
 extern void gSpawnEntityPrimaryType(void *object) __asm__("func_8003BC0C");
-extern u8 func_8003B838(void *object);
+extern u8 gGetSpawnDescColumn(void *object) __asm__("func_8003B838");
 extern struct Unk3FA34Link *func_800195A4(void *pool);
 void gQueueOrApplyMapOccupancy(void *object) __asm__("func_8003FA34");
 
@@ -47,7 +47,7 @@ void gQueueOrApplyMapOccupancy(void *object)
         gSpawnEntityPrimaryType(object);
         return;
     }
-    if (func_8003B838(object) != 0) {
+    if (gGetSpawnDescColumn(object) != 0) {
         link = func_800195A4(gDeferredRegPool);
         if (link != 0) {
             link->object = object;

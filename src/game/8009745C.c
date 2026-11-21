@@ -22,8 +22,8 @@ extern s32 *gDma4MemAddrPtr __asm__("D_8009EEA8");
 extern s32 *gDma4BlockCtrlPtr __asm__("D_8009EEAC");
 extern s32 *gDma4ChannelCtrlPtr __asm__("D_8009EEB0");
 
-extern void func_80097940(void);
-extern void func_80097968(void);
+extern void gSetSpuAccessDelay(void) __asm__("func_80097940");
+extern void gSetSpuDmaReadTiming(void) __asm__("func_80097968");
 
 /**
  *  @brief Configures or starts an SPU transfer according to an operation code.
@@ -105,9 +105,9 @@ s32 gSpuTransfer(s32 arg0, ...)
             }
         }
         if (gSetupGuard == 1) {
-            func_80097968();
+            gSetSpuDmaReadTiming();
         } else {
-            func_80097940();
+            gSetSpuAccessDelay();
         }
         vl = vl + 1;
         rx = (u32)vl[-1];

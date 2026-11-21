@@ -12,6 +12,8 @@ extern s32 gMdecLuminanceQuantizationTable[] __asm__("D_8009E8B4");
 extern s32 gMdecChrominanceQuantizationTable[] __asm__("D_8009E8F4");
 extern s32 gMdecDctScaleCommandBlock[] __asm__("D_8009E934");
 extern void gStartMdecBlockTransfer(s32 *data, u32 size) __asm__("func_80096240");
+DecDctEnv *gSetMdecDctEnv(DecDctEnv *environment) __asm__("func_80095F50");
+
 
 /**
  *  @brief Copies decoder quantization tables and submits two data blocks.
@@ -32,7 +34,7 @@ extern void gStartMdecBlockTransfer(s32 *data, u32 size) __asm__("func_80096240"
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-DecDctEnv *func_80095F50(DecDctEnv *environment)
+DecDctEnv *gSetMdecDctEnv(DecDctEnv *environment)
 {
     s32 i;
     s32 *source;

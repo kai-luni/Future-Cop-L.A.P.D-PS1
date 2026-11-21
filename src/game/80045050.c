@@ -1,8 +1,8 @@
 // Categories: Platform > Sound
 #include "game/types.h"
 
-extern s32 func_800452C8(void);
-extern void func_800452D4(void);
+extern s32 gGetVoiceVolume(void) __asm__("func_800452C8");
+extern void gEnableHalfVolumeForSoundVoices(void) __asm__("func_800452D4");
 s8 gComputeTrackedVoiceVolume(void) __asm__("func_80045050");
 
 
@@ -33,13 +33,13 @@ s8 gComputeTrackedVoiceVolume(void)
 {
     s32 volume;
 
-    volume = func_800452C8();
+    volume = gGetVoiceVolume();
     if (volume != 0) {
         volume += volume >> 1;
         if (volume >= 0x80) {
             volume = 0x7F;
         }
-        func_800452D4();
+        gEnableHalfVolumeForSoundVoices();
     }
     return volume;
 }

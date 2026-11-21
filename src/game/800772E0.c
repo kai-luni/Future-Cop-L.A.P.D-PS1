@@ -2,6 +2,8 @@
 extern unsigned int gExceptionVectorBackup[] __asm__("D_80076A0C");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
+void gRestoreExceptionVector(void) __asm__("func_800772E0");
+
 
 /**
  * @brief Restores the eight words of the general exception vector from
@@ -36,7 +38,7 @@ extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
  * @par Callers
  * Confirmed: none - no unit in the call graph reaches it.
  */
-void func_800772E0(void)
+void gRestoreExceptionVector(void)
 {
     unsigned int *src = gExceptionVectorBackup;
     unsigned int *dst = (unsigned int *)0x80;

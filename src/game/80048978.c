@@ -4,6 +4,8 @@
 extern s32 gRampFillCounter __asm__("D_8009F360");
 
 extern void gBuildColorRampRow(s32 index, u8 blue, u8 green, u8 red) __asm__("func_800488A4");
+void gAddTextPaletteColor(s32 blue, s32 green, s32 red) __asm__("func_80048978");
+
 
 /**
  * @brief Appends one colour to the text renderer's 20-entry palette.
@@ -32,7 +34,7 @@ extern void gBuildColorRampRow(s32 index, u8 blue, u8 green, u8 red) __asm__("fu
  * @par Callers
  * Unknown: no direct edge; reached from the text/front-end setup paths.
  */
-void func_80048978(s32 blue, s32 green, s32 red)
+void gAddTextPaletteColor(s32 blue, s32 green, s32 red)
 {
     if (gRampFillCounter < 0x14) {
         gBuildColorRampRow(gRampFillCounter, blue, green, red);

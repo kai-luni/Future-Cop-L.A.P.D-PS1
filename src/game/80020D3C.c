@@ -5,7 +5,7 @@ extern u32 *gOperationState __asm__("D_8009AB08");
 extern u8 gCardDevicePathFormat[] __asm__("D_80010B0C");
 
 extern s32 gFindCardFileSlot(void *arg0) __asm__("func_80020C90");
-extern void func_8008CD30(void *buf, void *fmt, u32 n, void *arg);
+extern void gSpillVarargsArguments(void *buf, void *fmt, u32 n, void *arg) __asm__("func_8008CD30");
 extern void gQueueMcOpMode2(s32 a, s32 b, s32 c, s32 d) __asm__("func_8001F1B8");
 extern s32 gGetMcPendingFlag(void) __asm__("func_8001F37C");
 
@@ -49,7 +49,7 @@ s32 gQueueCardFileRead(void *arg0, s32 arg1, u32 arg2)
     if (arg2 != 0) {
         r = gFindCardFileSlot(arg0);
         if (r != 0) {
-            func_8008CD30(buf, gCardDevicePathFormat, *gOperationState >> 4, arg0);
+            gSpillVarargsArguments(buf, gCardDevicePathFormat, *gOperationState >> 4, arg0);
             n = (arg2 + 0x7F) >> 7;
             gQueueMcOpMode2(r << 6, n, arg1, ret);
             if (gGetMcPendingFlag() == 0) {

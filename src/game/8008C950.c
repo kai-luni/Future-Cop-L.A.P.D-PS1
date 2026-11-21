@@ -27,6 +27,8 @@
  * invoke PS1 BIOS A0:70 (_bu_init), initializing the memory card / backup
  * unit subsystem. Called by gInitMemoryCardBios.
  */
+void gInitMemoryCardBiosUnit(void) __asm__("func_8008C950");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_8008C950\n"

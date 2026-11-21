@@ -80,11 +80,11 @@ extern void gPlayPositionalSoundEffect(s32 arg0, s32 arg1, s32 arg2, s32 arg3) _
 extern void gGteLoadMatrix(void *arg0) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__("func_80010234");
 extern void gInitElevator(struct Obj41880 *arg0, s32 arg1, s32 arg2) __asm__("func_80041488");
-extern void func_80063194(s32 arg0);
+extern void gRemoveGroundKeyEntry(s32 arg0) __asm__("func_80063194");
 extern s32 gEntityBaseHandler(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8002AD58");
 extern void gBuildRotationMatrix(s32 arg0, s32 arg1, s32 arg2, void *arg3) __asm__("func_800188D0");
 extern s32 gGetGroundHeight(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
-extern s32 func_8006314C(s32 arg0, u8 arg1);
+extern s32 gRegisterGroundObject(s32 arg0, u8 arg1) __asm__("func_8006314C");
 s32 gStepElevator(struct Obj41880 *arg0, s32 arg1) __asm__("func_80041880");
 
 

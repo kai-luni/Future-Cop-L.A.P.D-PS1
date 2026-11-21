@@ -13,7 +13,7 @@ typedef struct {
 
 extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 extern void gSpuSetVoiceKey(s32, u32) __asm__("func_80098C68");
-extern u32 func_80098788(s32, u32);
+extern u32 gUpdateSpuVoiceNoiseMask(s32, u32) __asm__("func_80098788");
 
 /**
  * @brief Halts stream playback in gMovieAudioState, keys off its voices, and resets SPU registers 0xCC/0xCD.
@@ -43,6 +43,6 @@ void gHaltMovieAudioStream(void)
 {
     gMovieAudioState->unk8 = 0;
     gSpuSetVoiceKey(0, gMovieAudioState->unk7B64 | gMovieAudioState->unk7B68);
-    func_80098788(gMovieAudioState->unk7B6C, gMovieAudioState->unk7B64);
-    func_80098788(gMovieAudioState->unk7B70, gMovieAudioState->unk7B68);
+    gUpdateSpuVoiceNoiseMask(gMovieAudioState->unk7B6C, gMovieAudioState->unk7B64);
+    gUpdateSpuVoiceNoiseMask(gMovieAudioState->unk7B70, gMovieAudioState->unk7B68);
 }

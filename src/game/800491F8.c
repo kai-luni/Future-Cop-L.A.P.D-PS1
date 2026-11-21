@@ -3,7 +3,7 @@
 
 extern char gFormatStringB[] __asm__("D_8009F368");
 
-extern s32 func_8008CD30(char *buffer, char *format, s32 value);
+extern s32 gSpillVarargsArguments(char *buffer, char *format, s32 value) __asm__("func_8008CD30");
 extern void gDrawAlignedString(char *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 void gDrawFormattedHudNumber(s32 value, s32 x, s32 y, s32 color) __asm__("func_800491F8");
 
@@ -30,7 +30,7 @@ void gDrawFormattedHudNumber(s32 value, s32 x, s32 y, s32 color)
 {
     char buffer[0x20];
 
-    func_8008CD30(buffer, gFormatStringB, value);
+    gSpillVarargsArguments(buffer, gFormatStringB, value);
     color &= 0xFFFF;
     gDrawAlignedString(buffer, x, y, color);
 }

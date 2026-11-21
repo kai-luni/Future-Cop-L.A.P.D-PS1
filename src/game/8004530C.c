@@ -11,7 +11,7 @@ struct SoundVoice {
     u8 unk20[0x0C];
 };
 
-extern void func_80047800(struct SoundVoice *voice, s32 program, s32 note, s32 velocity);
+extern void gUpdateSoundVoiceMix(struct SoundVoice *voice, s32 program, s32 note, s32 velocity) __asm__("func_80047800");
 void gUpdateSoundVoiceListMix(struct SoundVoice *voice) __asm__("func_8004530C");
 
 
@@ -36,7 +36,7 @@ void gUpdateSoundVoiceListMix(struct SoundVoice *voice)
 {
     while (voice != 0) {
         if (voice->note != -1) {
-            func_80047800(voice, voice->program, voice->note, voice->velocity);
+            gUpdateSoundVoiceMix(voice, voice->program, voice->note, voice->velocity);
         }
         voice = voice->next;
     }

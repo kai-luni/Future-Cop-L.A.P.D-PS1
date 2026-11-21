@@ -67,7 +67,7 @@ extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gProjectVertexBatch(void *, void *, void *, s32) __asm__("func_8001047C");
-extern void func_8006CAAC(void *, void *, s16, void *, s16);
+extern void gScaleVertexStream(void *, void *, s16, void *, s16) __asm__("func_8006CAAC");
 void gDrawShadedModel(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b, u8 arg_tr, u8 arg_tg, u8 arg_tb) __asm__("func_8006CB58");
 
 
@@ -305,7 +305,7 @@ void gDrawShadedModel(Model *model, Obj *obj, s32 size, u8 r, u8 arg_g, u8 arg_b
         do {
             vp = iter;
             iter++;
-            func_8006CAAC(mp->verts, mp->tbl, mp->stride, vp, i++);
+            gScaleVertexStream(mp->verts, mp->tbl, mp->stride, vp, i++);
         } while (i < n);
     }
     gGteLoadMatrix(&L.mtx);

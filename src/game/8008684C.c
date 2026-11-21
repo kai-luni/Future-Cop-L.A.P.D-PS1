@@ -18,8 +18,8 @@ typedef struct {
 extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 
 extern void gSpuSetTransferMode(s32 mode) __asm__("func_80098F48");
-extern u32 func_80098EE8(u32 address);
-extern void func_80098E88(u8 *data, u32 size);
+extern u32 gSetSpuTransferStartAddr(u32 address) __asm__("func_80098EE8");
+extern void gWriteSpuRam(u8 *data, u32 size) __asm__("func_80098E88");
 void gUploadMovieAudioBlock(u8 *arg0, u32 arg1, u32 arg2) __asm__("func_8008684C");
 
 
@@ -68,6 +68,6 @@ void gUploadMovieAudioBlock(u8 *arg0, u32 arg1, u32 arg2)
     }
 
     gSpuSetTransferMode(0);
-    func_80098EE8(addr);
-    func_80098E88(arg0, 0x300);
+    gSetSpuTransferStartAddr(addr);
+    gWriteSpuRam(arg0, 0x300);
 }

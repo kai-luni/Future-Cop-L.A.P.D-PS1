@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 gOutStreamId __asm__("D_8009F6BC");
-extern u32 func_80045028(u32 arg);
+extern u32 gIsTrackedSoundId(u32 arg) __asm__("func_80045028");
 u8 gCheckOutputStreamVolumeMode(void) __asm__("func_80029BC0");
 
 
@@ -31,5 +31,5 @@ u8 gCheckOutputStreamVolumeMode(void) __asm__("func_80029BC0");
  */
 u8 gCheckOutputStreamVolumeMode(void)
 {
-    return func_80045028(gOutStreamId) & 0xFF;
+    return gIsTrackedSoundId(gOutStreamId) & 0xFF;
 }

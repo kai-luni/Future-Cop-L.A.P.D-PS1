@@ -28,6 +28,8 @@ extern s32 gCdUseDmaFlag __asm__("D_8009C814");
  * gCdUseDmaFlag while being tested for bit 0 DMA mode in func_800908D4
  * through func_80090FA0.
  */
+void gSetCdUseDmaFlag(void) __asm__("func_80091254");
+
 __asm__(
     ".text\n\t"
     ".set\tnoreorder\n\t"

@@ -8,6 +8,8 @@ struct Unk631A0 {
 
 extern s32 gQueueCount __asm__("D_8009F838");
 extern struct Unk631A0 gObjectKeyTable[] __asm__("D_800A31A0");
+void gRemoveGroundKeyEntry(s32 key) __asm__("func_80063194");
+
 
 /**
  * @brief Removes an object from the ground/interaction key table D_800A31A0 by
@@ -42,7 +44,7 @@ extern struct Unk631A0 gObjectKeyTable[] __asm__("D_800A31A0");
  * func_80041C6C; the package also lists func_8002D664, func_8002F7C8 and
  * func_80041B6C.
  */
-void func_80063194(s32 key)
+void gRemoveGroundKeyEntry(s32 key)
 {
     s32 i;
 

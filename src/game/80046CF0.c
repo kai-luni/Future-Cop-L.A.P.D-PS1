@@ -29,7 +29,7 @@ struct UnkA10E0 {
 extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
 extern struct UnkA10E0 gPlayerSlots[] __asm__("D_800A10E0");
 
-extern s32 func_80045494(s32 id, u8 *table, s32 limit);
+extern s32 gResolveSoundRecordIndex(s32 id, u8 *table, s32 limit) __asm__("func_80045494");
 extern s32 gPlaySpatialSoundBankSlot(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4) __asm__("func_80046F9C");
 void gRefreshPlayerWeaponSound(struct Unk6C488 *object, s32 state) __asm__("func_80046CF0");
 
@@ -75,7 +75,7 @@ void gRefreshPlayerWeaponSound(struct Unk6C488 *object, s32 state)
 
     s1 = object->stats->unkC1;
     if (s1 < 2) {
-        s2 = func_80045494(state, gSoundBankTableLow, 0x47);
+        s2 = gResolveSoundRecordIndex(state, gSoundBankTableLow, 0x47);
         firstFree = -1;
         if (s2 != 0xFF) {
             entry = &gPlayerSlots[s1 * 3];

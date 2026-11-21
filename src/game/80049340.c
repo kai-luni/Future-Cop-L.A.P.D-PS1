@@ -11,6 +11,8 @@ struct FontEntry;
 extern struct FontEntry *gFont __asm__("D_8009F35C");
 
 extern struct FontGlyph *gLookupFontGlyph(struct FontEntry *font, u8 character) __asm__("func_800489C8");
+s32 gMeasureTextWidthPx(u8 *text) __asm__("func_80049340");
+
 
 /**
  * @brief Measures a string in the active font and returns twice its advance width.
@@ -33,7 +35,7 @@ extern struct FontGlyph *gLookupFontGlyph(struct FontEntry *font, u8 character) 
  * @par Callers
  * func_800267C8, func_80027510, func_80027F80, func_80047F30.
  */
-s32 func_80049340(u8 *text)
+s32 gMeasureTextWidthPx(u8 *text)
 {
     struct FontEntry *font;
     s32 total;

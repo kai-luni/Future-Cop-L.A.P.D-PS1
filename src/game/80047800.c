@@ -9,8 +9,10 @@ struct SoundVoice {
     s8 extra;
 };
 
-extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
+extern void gSetSoundVoiceMixParameters(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra) __asm__("func_800477D8");
 extern void func_800243C4(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
+void gUpdateSoundVoiceMix(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra) __asm__("func_80047800");
+
 
 /**
  * @brief Applies pan/volume to a voice and forwards the raw values.
@@ -33,8 +35,8 @@ extern void func_800243C4(struct SoundVoice *voice, s32 pan, s32 volume, s32 ext
  * @par Callers
  * Unknown: no direct edge in edges.json.
  */
-void func_80047800(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra)
+void gUpdateSoundVoiceMix(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra)
 {
-    func_800477D8(voice, pan, volume, extra);
+    gSetSoundVoiceMixParameters(voice, pan, volume, extra);
     func_800243C4(voice, voice->pan, voice->volume, voice->extra);
 }

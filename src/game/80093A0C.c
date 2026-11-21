@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u32 gPackDrawOffset(u32 x, u32 y) __asm__("func_800940A8");
+void gSetDrawOffsetPacket(u8 *obj, s16 *rect) __asm__("func_80093A0C");
+
 
 /**
  * @brief Builds the "drawing offset" primitive (GP0 0xE5) for a rectangle
@@ -18,7 +20,7 @@ extern u32 gPackDrawOffset(u32 x, u32 y) __asm__("func_800940A8");
  * @par Callers
  * func_8001B4A8, right after func_8009398C, to place the drawing origin.
  */
-void func_80093A0C(u8 *obj, s16 *rect)
+void gSetDrawOffsetPacket(u8 *obj, s16 *rect)
 {
     obj[3] = 2;
     *(s32 *)(obj + 4) = gPackDrawOffset(*(s16 *)(rect + 0), rect[1]);

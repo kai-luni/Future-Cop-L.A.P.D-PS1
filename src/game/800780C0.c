@@ -27,7 +27,9 @@ extern s16 gPlayerNameLength __asm__("D_8009F87C");
  * @par Callers
  * func_80076A2C, once, right before the front-end loop starts.
  */
-void func_800780C0(void)
+void gInitNameEntryAlphabet(void) __asm__("func_800780C0");
+
+void gInitNameEntryAlphabet(void)
 {
     gNameEntryAlphabet = gNameEntryCharacters;
     gPlayerNameLength = 0x40;

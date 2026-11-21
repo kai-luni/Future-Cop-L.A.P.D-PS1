@@ -15,6 +15,8 @@
  * None in the symbol table; func_80015F14 is the NCCS sibling used by the
  * model renderer.
  */
+void gGteShadeDcpl(void) __asm__("func_80095A48");
+
 __asm__(
     ".set noreorder\n"
     ".globl func_80095A48\n"

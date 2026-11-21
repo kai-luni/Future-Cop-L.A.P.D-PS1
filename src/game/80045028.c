@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gVolumeLevels __asm__("D_800A1800");
+s32 gIsTrackedSoundId(s32 mode) __asm__("func_80045028");
+
 
 /**
  *  @brief Tests whether a mode matches the active global state.
@@ -21,7 +23,7 @@ extern s32 gVolumeLevels __asm__("D_800A1800");
  *  @par Callers
  *  Confirmed: func_80045164.
  */
-s32 func_80045028(s32 mode)
+s32 gIsTrackedSoundId(s32 mode)
 {
     s32 state = gVolumeLevels;
 

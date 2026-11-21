@@ -1,5 +1,7 @@
 // Categories: Graphics > Packed Parameters
 extern  void (*gLogPrintf)(char *, int, int, int, int) __asm__("D_8009DDEC");
+void gDumpTPage(unsigned short value) __asm__("func_80092284");
+
 
 /**
  *  @brief Dispatches fields extracted from a packed 16-bit value.
@@ -18,7 +20,7 @@ extern  void (*gLogPrintf)(char *, int, int, int, int) __asm__("D_8009DDEC");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80092284(unsigned short value)
+void gDumpTPage(unsigned short value)
 {
     unsigned int arg1 = value >> 7;
     unsigned int arg2 = value >> 5;

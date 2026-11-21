@@ -4,7 +4,7 @@
 extern u8 gPauseFlag __asm__("D_8009F3E8");
 
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
-extern void func_8007F5D0(void);
+extern void gOpenPauseOrConfirmMenu(void) __asm__("func_8007F5D0");
 
 /**
  * @brief Leaves the pause menu: plays the cue, clears the flag and restores the screen.
@@ -28,5 +28,5 @@ void gLeavePauseMenu(void)
 {
     gPlayNonpositionalSoundEffect(0x49, 0);
     gPauseFlag = 0;
-    func_8007F5D0();
+    gOpenPauseOrConfirmMenu();
 }

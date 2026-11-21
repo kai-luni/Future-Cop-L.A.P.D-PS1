@@ -7,6 +7,8 @@ struct Unk6CA68 {
 };
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeModelPairBlock(struct Unk6CA68 *object) __asm__("func_8006CA68");
+
 
 /**
  * @brief Frees a two-pointer mesh/effect wrapper and both of its sub-allocations.
@@ -30,7 +32,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_8005E074 (0x8005E088, effect teardown) and func_8006E814 (0x8006E924, message 10 pooled effect mesh release).
  */
-void func_8006CA68(struct Unk6CA68 *object)
+void gFreeModelPairBlock(struct Unk6CA68 *object)
 {
     gFreeBlock(object->first);
     gFreeBlock(object->second);
