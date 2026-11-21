@@ -19,8 +19,7 @@ struct MotionState {
  *
  * The block is put into a usable idle state: enabled flag set, timer, angle,
  * velocity and state byte cleared, both offsets zeroed and the scale set to
- * 1.0 in 16.16 fixed point (0x10000). Pointer fields are untouched, so the
- * caller keeps whatever it set up before.
+ * 1.0 in 16.16 fixed point (0x10000). Padding bytes are untouched.
  *
  * @param state Motion state block (x 0x00, y 0x04, scale 0x08, angle 0x0C,
  *              velocity 0x10, timer 0x14, enabled 0x18, state 0x19).
@@ -35,13 +34,13 @@ struct MotionState {
  * None.
  *
  * @par Side effects
- * Overwrites the whole state block.
+ * Overwrites the named fields; padding bytes are left untouched.
  *
  * @par Callers
- * Unknown: no direct edge; the layout matches the HUD/effect motion records of
- * the same address range.
+ * func_8005D3FC initializes twelve motion blocks.
  */
-void func_8005CEA8(struct MotionState *state)
+void gResetMotionState(struct MotionState *state) __asm__("func_8005CEA8");
+void gResetMotionState(struct MotionState *state)
 {
     state->enabled = 1;
     state->timer = 0;

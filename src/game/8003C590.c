@@ -21,7 +21,7 @@ typedef struct UnkC590Cell {
 
 extern UnkC590Cell *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern u32 *func_8003B3D8(u32 column, u32 row);
-extern void func_8003C4C4(u8 column, s32 row, u8 bits);
+extern void gOrGridCellFlags(u8 column, s32 row, u8 bits) __asm__("func_8003C4C4");
 extern void func_8003C500(s32 column, s32 stop, s32 row);
 
 /**
@@ -131,7 +131,7 @@ chain_loop:
     }
 
 mark:
-    func_8003C4C4((u8)current, row, 4);
+    gOrGridCellFlags((u8)current, row, 4);
 
 after_mark:
     if (cell->next != 0) {

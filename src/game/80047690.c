@@ -7,19 +7,18 @@ extern void func_8002A16C(s32 value);
 extern void gSoundHaltAllVoices(s32 value) __asm__("func_80047554");
 
 /**
- * @brief Enables or disables the text/HUD layer around a draw section.
+ * @brief Selects between starting the stream state and halting sound voices.
  *
- * @param enable Non-zero enables, zero disables.
+ * @param enable Nonzero selects the stream-state call; zero halts voices.
  * @return Nothing.
  *
  * @par Confirmed
  * Enable sets D_8009F739 = 1 and calls func_8002A16C(1); disable calls
- * gSoundHaltAllVoices(0). No other state is touched.
+ * gSoundHaltAllVoices(0). The callees may modify other state.
  *
  * @par Likely role
- * The bracket the frame drivers (func_800259D8, func_80025B7C,
- * func_80027510) and the debug box func_80082DDC use to switch the text
- * layer on for their overlays and back off afterwards.
+ * Frame and debug callers use both branches; the flag and callees belong to
+ * the audio path, not a confirmed text-layer toggle.
  *
  * @par Unknown
  * What func_8002A16C/gSoundHaltAllVoices toggle beyond the layer flag.

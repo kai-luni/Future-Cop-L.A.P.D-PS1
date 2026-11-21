@@ -4,7 +4,7 @@
 struct ScriptTimer;
 
 extern struct ScriptTimer *gScriptTimerTicks __asm__("D_8009F770");
-extern s32 D_8009F774;
+extern s32 gScriptTimerCount __asm__("D_8009F774");
 
 /**
  * @brief Clears the ScriptTimer array pointer D_8009F770 and count D_8009F774 during mission boot.
@@ -31,5 +31,5 @@ extern s32 D_8009F774;
 void func_80049400(void)
 {
     gScriptTimerTicks = 0;
-    D_8009F774 = 0;
+    gScriptTimerCount = 0;
 }

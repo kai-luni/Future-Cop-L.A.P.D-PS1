@@ -24,7 +24,7 @@ struct Obj {
 };
 
 extern u32 *gScriptTimerTicks __asm__("D_8009F770");
-extern s32 D_8009F774;
+extern s32 gScriptTimerCount __asm__("D_8009F774");
 
 struct Resource;
 extern void func_80019A74(struct Resource *resource);
@@ -76,7 +76,7 @@ void func_80049420(struct Obj *obj)
 
     count = (data->f4 - 0xC) / 20;
     gScriptTimerTicks = (u32 *)((u8 *)data + 0xC);
-    D_8009F774 = (s32)count;
+    gScriptTimerCount = (s32)count;
 
     p = (s32 *)((u8 *)data + 0x20);
     for (i = (s32)count; i > 0; i--) {

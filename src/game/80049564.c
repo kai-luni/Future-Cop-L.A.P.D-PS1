@@ -10,7 +10,7 @@ struct ScriptTimer {
 };
 
 extern struct ScriptTimer *gScriptTimerTicks __asm__("D_8009F770");
-extern s32 D_8009F774;
+extern s32 gScriptTimerCount __asm__("D_8009F774");
 
 extern s32 func_80069D68(s32 id, s32 arg1, s32 arg2, s32 arg3);
 
@@ -40,7 +40,7 @@ void func_80049564(s32 elapsed)
     s32 remaining;
 
     timer = gScriptTimerTicks;
-    for (i = 0; i < D_8009F774; timer++, i++) {
+    for (i = 0; i < gScriptTimerCount; timer++, i++) {
         if (timer->count == 0) {
             continue;
         }

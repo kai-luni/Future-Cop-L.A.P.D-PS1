@@ -10,7 +10,7 @@ extern void func_8004ABBC(void);
 extern void func_80029EB8(void);
 extern void func_80059DB0(s32 arg0);
 extern void func_80069D58(void);
-extern void func_80049410(void);
+extern void gResetScriptTimers(void) __asm__("func_80049410");
 extern void func_8002A5AC(void);
 extern void func_8005A290(void);
 extern void gReleaseMapLightData(void) __asm__("func_8004963C");
@@ -77,7 +77,7 @@ void gResetMissionSubsystems(s32 arg0)
     func_80029EB8();
     func_80059DB0(arg0);
     func_80069D58();
-    func_80049410();
+    gResetScriptTimers();
     func_8002A5AC();
     func_8005A290();
     gReleaseMapLightData();

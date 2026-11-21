@@ -32,7 +32,7 @@ extern void func_800451EC(s32 value);
 extern void func_800462D0(void);
 extern void func_8008352C(s32 arg);
 extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
-extern void func_80045884(s32 *position, s32 arg1, s32 angle, s32 index);
+extern void gSetPositionAngleEntry(s32 *position, s32 arg1, s32 angle, s32 index) __asm__("func_80045884");
 void gRunGameFrameLoop(void) __asm__("func_80028618");
 
 
@@ -155,13 +155,13 @@ frame:
                 camera = (u8 *)gCamera;
                 angle = *(s32 *)(camera + 0x20);
                 camera += 0x7C;
-                func_80045884((s32 *)position, (s32)camera, angle, work);
+                gSetPositionAngleEntry((s32 *)position, (s32)camera, angle, work);
             } else {
                 position = *cursor + 0x50;
                 camera = (u8 *)gCamera;
                 angle = *(s32 *)(camera + 0x20);
                 camera += 0x7C;
-                func_80045884((s32 *)position, (s32)camera, angle, work);
+                gSetPositionAngleEntry((s32 *)position, (s32)camera, angle, work);
             }
             work++;
             cursor++;

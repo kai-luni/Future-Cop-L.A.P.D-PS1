@@ -6,7 +6,7 @@ struct Unk3CF20 {
 };
 
 extern struct Unk3CF20 *gAnchorNodeList __asm__("D_8009F320");
-extern void func_8003CF20(struct Unk3CF20 *object);
+extern void gFreeOwnedBufferNode(struct Unk3CF20 *object) __asm__("func_8003CF20");
 
 /**
  * @brief Tears down every node in the D_8009F320 object list and clears the list head.
@@ -39,7 +39,7 @@ void func_8003D0AC(void)
     object = gAnchorNodeList;
     while (object != 0) {
         next = object->next;
-        func_8003CF20(object);
+        gFreeOwnedBufferNode(object);
         object = next;
     }
     gAnchorNodeList = 0;

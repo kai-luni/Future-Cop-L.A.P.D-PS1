@@ -29,7 +29,8 @@ extern u32 *func_8003B3D8(u32 column, u32 row);
  * @par Callers
  * Confirmed: func_8003C500, func_8003C590.
  */
-void func_8003C4C4(u8 column, s32 row, u8 bits)
+void gOrGridCellFlags(u8 column, s32 row, u8 bits) __asm__("func_8003C4C4");
+void gOrGridCellFlags(u8 column, s32 row, u8 bits)
 {
     *(u8 *)func_8003B3D8(column, row) |= bits;
 }

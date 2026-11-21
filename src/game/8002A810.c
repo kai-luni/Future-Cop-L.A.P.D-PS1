@@ -41,7 +41,7 @@ struct Unk8002A810 {
     u32 unk8C;
 };
 
-extern Unk8002A810Sub *func_8004D664(s32 id);
+extern Unk8002A810Sub *gFindUnitById(s32 id) __asm__("func_8004D664");
 extern void gSpawnEntitySlotTypes(s32 arg0, Unk8002A810 *arg1,
                          Unk8002A810Local *arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
 extern void func_80031690(Unk8002A810 *arg0);
@@ -106,7 +106,7 @@ s32 gRetireEntityBase(Unk8002A810 *s0, s32 arg1, s32 arg2)
 
     a0 = 0;
     if (s0->unk8C != 0) {
-        a0 = func_8004D664(s0->unk8C & 0x3FFFFFFF);
+        a0 = gFindUnitById(s0->unk8C & 0x3FFFFFFF);
     }
 
     if (s0->unk20 != 0) {

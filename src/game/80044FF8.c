@@ -32,7 +32,8 @@ extern struct ModeState gVolumeLevels __asm__("D_800A1800");
  *  @par Callers
  *  Confirmed: func_80029C34.
  */
-void func_80044FF8(s32 mode, struct ModeObject *object)
+void gSetVolumeModeState(s32 mode, struct ModeObject *object) __asm__("func_80044FF8");
+void gSetVolumeModeState(s32 mode, struct ModeObject *object)
 {
     gVolumeLevels.mode = mode;
     if (mode != -1) {

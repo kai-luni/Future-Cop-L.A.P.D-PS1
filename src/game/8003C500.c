@@ -8,7 +8,7 @@ struct Unk3C500Cell {
 };
 
 extern struct Unk3C500Cell *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
-extern void func_8003C4C4(u8 column, s32 row, u8 bits);
+extern void gOrGridCellFlags(u8 column, s32 row, u8 bits) __asm__("func_8003C4C4");
 
 /**
  * @brief Marks bit 2 (0x4) along a linked chain of D_800A7040 cell nodes until a stop node id is reached.
@@ -49,6 +49,6 @@ void func_8003C500(s32 column, s32 stop, s32 row)
         cell = line[(u8)columnValue];
         __asm__("" : : "r"(columnValue));
         columnValue = cell->next;
-        func_8003C4C4(columnValue, rowValue, 4);
+        gOrGridCellFlags(columnValue, rowValue, 4);
     } while (cell->id != (u8)stopValue);
 }

@@ -4,7 +4,7 @@
 struct ScriptTimer;
 
 extern struct ScriptTimer *gScriptTimerTicks __asm__("D_8009F770");
-extern s32 D_8009F774;
+extern s32 gScriptTimerCount __asm__("D_8009F774");
 
 /**
  * @brief Clears the ScriptTimer array pointer D_8009F770 and count D_8009F774 during mission reset.
@@ -28,8 +28,9 @@ extern s32 D_8009F774;
  * @par Callers
  * Confirmed: func_80024D14 (0x80024D68 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-void func_80049410(void)
+void gResetScriptTimers(void) __asm__("func_80049410");
+void gResetScriptTimers(void)
 {
     gScriptTimerTicks = 0;
-    D_8009F774 = 0;
+    gScriptTimerCount = 0;
 }

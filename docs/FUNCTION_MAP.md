@@ -599,7 +599,7 @@ graph LR
 | `gMarkAudioStreamStopPending` (`func_80022700`) | 16 | Game Engine > State | - | - |
 | `gGetAudioStreamBlockCount` (`func_80022B74`) | 16 | Game Engine > State | - | `func_8002443C` |
 | `func_80049400` | 16 | Game Engine > Init · Entity Script | - | `func_80024A24` |
-| `func_80049410` | 16 | Game Engine > Game State > Reset · Entity Script | - | `func_80024D14` |
+| `gResetScriptTimers` (`func_80049410`) | 16 | Game Engine > Game State > Reset · Entity Script | - | `func_80024D14` |
 | `gSetMenuCursorToItem2` (`func_8007F678`) | 16 | Game Engine > State | - | - |
 | `gConsumePadCmd` (`func_8008C06C`) | 16 | Game Engine > Command State | - | `func_8008BF78` |
 | `gGetLastCdCommand` (`func_8008E030`) | 16 | Game Engine > State Access | - | - |
@@ -648,7 +648,7 @@ graph LR
 | `gMarkPortraitVoiceStopped` (`func_80029720`) | 40 | Game Engine > State | - | `func_80023E84` |
 | `func_80045028` | 40 | Game Engine > State | - | `func_80045164` |
 | `func_800477D8` | 40 | Game Engine > Audio | - | `func_8002283C`, `func_800228F4`, `func_8004772C`, `func_80047800` |
-| `func_8004953C` | 40 | Game Engine > Scripting | - | `func_8004DC64` |
+| `gSetScriptTimerCount` (`func_8004953C`) | 40 | Game Engine > Scripting | - | `func_8004DC64` |
 | `func_8004ABBC` | 40 | Game Engine > Object Pool · Memory Management | - | `func_80024D14` |
 | `gAppendEntityToList` (`func_8004D3D4`) | 40 | Game Engine > Entity Lifecycle · Object Pool | - | `func_8004D3FC`, `func_8004D444`, `func_8004D4F8` |
 | `func_80060E28` | 40 | Game Engine > Object Registry · Memory Management | `func_80017EBC` | `func_80024A24` |
@@ -661,7 +661,7 @@ graph LR
 | `gInitPadCallbackTable` (`func_8008A3A8`) | 44 | Game Engine > Callback Tables | - | `func_8008BDB0` |
 | `func_80091C64` | 44 | Game Engine > State Tables | - | - |
 | `func_8002A23C` | 48 | Game Engine > State Transitions | - | `func_80022654` |
-| `func_80044FF8` | 48 | Game Engine > Mode State | - | `func_80029C34` |
+| `gSetVolumeModeState` (`func_80044FF8`) | 48 | Game Engine > Mode State | - | `func_80029C34` |
 | `gLeavePauseMenu` (`func_8007F618`) | 48 | Game Engine > Front End · Audio | `func_80046C84`, `func_8007F5D0` | - |
 | `gRequestPauseMenu` (`func_8007F648`) | 48 | Game Engine > State Transitions | `func_8007F5D0` | - |
 | `func_8008D8FC` | 48 | Game Engine > Initialization | `func_8008D7B0`, `func_8008DAD0`, `func_8008DB00` | - |
@@ -676,7 +676,7 @@ graph LR
 | `gInstallPadProtoHooks` (`func_8008C410`) | 52 | Game Engine > Callback Setup | - | `func_8008BDB0` |
 | `func_8008D690` | 52 | Game Engine > State | `func_8008D670`, `func_8008D6D0` | `func_8001FD28` |
 | `func_800452D4` | 56 | Game Engine > Audio | `func_8004530C` | `func_80045050` |
-| `func_8004D664` | 56 | Game Engine > Object Lookup · Entity Lifecycle | - | `func_8002A810`, `func_8002C174`, `func_8002D664`, `func_800324E0`, `func_80058378`, `func_80058D78` |
+| `gFindUnitById` (`func_8004D664`) | 56 | Game Engine > Object Lookup · Entity Lifecycle | - | `func_8002A810`, `func_8002C174`, `func_8002D664`, `func_800324E0`, `func_80058378`, `func_80058D78` |
 | `gFindEntityByTag` (`func_8004D69C`) | 56 | Game Engine > Entity List · Entity Lookup | - | `func_800313F0` |
 | `gSetPadActuatorAlign` (`func_8008A1C0`) | 56 | Input > Controller Ports | `func_8008B484` | `func_8001EC94` |
 | `gCalcPadTableSize` (`func_8008B05C`) | 56 | Input > DualShock · Controller | - | `func_8008AF10` |
@@ -684,7 +684,7 @@ graph LR
 | `gSetEntitySmallRumble` (`func_8001E930`) | 60 | Input > Controller · Vibration | `func_8001E9AC` | `func_80055988` |
 | `gSetEntityLargeRumble` (`func_8001EA20`) | 60 | Game Engine > Input > Player Select | `func_8001EA5C` | `func_800569EC` |
 | `gStopAllPadRumble` (`func_8001EB6C`) | 60 | Input > Controller > Rumble · Controller | `func_8001EBA8` | `func_80025B7C`, `func_80027510` |
-| `func_8003C4C4` | 60 | Game Engine > Collision Grid | `func_8003B3D8` | `func_8003C500`, `func_8003C590` |
+| `gOrGridCellFlags` (`func_8003C4C4`) | 60 | Game Engine > Collision Grid | `func_8003B3D8` | `func_8003C500`, `func_8003C590` |
 | `func_8004665C` | 60 | Game Engine > Audio | - | `func_80046B04` |
 | `func_80069B1C` | 60 | Game Engine > State Machine · Entity Script | - | `func_80069B58` |
 | `gSyncMenuFontBank` (`func_800788B4`) | 60 | Game Engine > Menu System · Text | - | `func_800778E4`, `func_80078650` |
@@ -717,10 +717,10 @@ graph LR
 | `gSetPadActuatorBuf` (`func_8008A240`) | 72 | Input > DualShock · Controller | `func_8008AE70` | `func_8001EC94` |
 | `gResetSoundSystemState` (`func_80021508`) | 76 | Game Engine > Audio | - | - |
 | `gSetAudioStreamChannelRange` (`func_80022B28`) | 76 | Game Engine > Audio | - | - |
-| `func_8003CF20` | 76 | Game Engine > Entity Lifecycle · Memory Management | `func_800181D4` | `func_8003D240` |
+| `gFreeOwnedBufferNode` (`func_8003CF20`) | 76 | Game Engine > Entity Lifecycle · Memory Management | `func_800181D4` | `func_8003D240` |
 | `func_80069D0C` | 76 | Game Engine > State Machine · Entity Script | - | `func_80027510` |
 | `gIsPadPortState8` (`func_80089E40`) | 76 | Game Engine > State | - | - |
-| `func_80029BE4` | 80 | Game Engine > State | - | `func_80029C34` |
+| `gIsAudioStreamReady` (`func_80029BE4`) | 80 | Game Engine > State | - | `func_80029C34` |
 | `func_80045164` | 80 | Game Engine > State | `func_80045028` | `func_800450A4` |
 | `func_80045768` | 80 | Game Engine > Audio | - | `func_8008352C` |
 | `func_80057864` | 80 | Input > Profile State | `func_8001E620` | `func_8002703C`, `func_80027E68` |
@@ -745,7 +745,7 @@ graph LR
 | `gToggleSoundEnable` (`func_8007D27C`) | 96 | Game Engine > Options Menu · Sound | `func_800451B4`, `func_800451E0`, `func_80046C84` | - |
 | `gRespPadModeSelect` (`func_8008B6BC`) | 96 | Input > Controller Protocol | - | - |
 | `func_8004530C` | 100 | Game Engine > Audio | `func_80047800` | `func_800452D4` |
-| `func_80045884` | 100 | Game Engine > State Tables | - | - |
+| `gSetPositionAngleEntry` (`func_80045884`) | 100 | Game Engine > State Tables | - | - |
 | `gRegisterPublishedBlock` (`func_8008263C`) | 100 | Game Engine > Front-End Configuration · Memory Management | `func_800181D4` | `func_80024EC8` |
 | `gClearSoundStorage` (`func_800216D8`) | 104 | Game Engine > Audio | `func_800217A8` | `func_80021554`, `func_80021C80` |
 | `gMarkAudioStreamAdpcmBlock` (`func_80022D1C`) | 104 | Game Engine > State Flags | - | `func_80022D84` |
@@ -3286,7 +3286,7 @@ graph LR
 | `func_8002B1AC` | 36 | Gameplay > Entity Update · Command Processing | - | `func_8002B1DC`, `func_8002B4B4`, `func_8002B784`, `func_8002BFB4` |
 | `func_8005A09C` | 40 | Gameplay > Entity Update · Memory | `func_8001E318` | `func_800331CC` |
 | `func_8005A070` | 44 | Gameplay > Player > Gauge · Gauge | `func_8001E318` | `func_800573A4` |
-| `func_8005CEA8` | 44 | Gameplay > Effect State · Effects | - | `func_8005D3FC` |
+| `gResetMotionState` (`func_8005CEA8`) | 44 | Gameplay > Effect State · Effects | - | `func_8005D3FC` |
 | `func_8006EDC4` | 44 | Gameplay > Effect Pools | `func_8003BE2C` | `func_8003F79C` |
 | `func_800578B4` | 48 | Gameplay > Player · Audio | `func_8005908C` | - |
 | `func_800578E4` | 48 | Gameplay > Player · Message Dispatch | `func_8002AD58` | - |

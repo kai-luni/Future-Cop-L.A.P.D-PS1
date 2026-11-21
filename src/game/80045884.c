@@ -9,7 +9,7 @@ struct Unk45884 {
 extern struct Unk45884 gPositionAngleTable[] __asm__("D_800A1920");
 
 /**
- *  @brief Stores a position and normalized angle in an indexed record.
+ * @brief Stores a position and adjusted signed-remainder angle in an indexed record.
  *
  *  Copies three position components into the global table and stores the
  *  signed remainder of angle plus 0x1000 divided by 0x1000.
@@ -26,9 +26,10 @@ extern struct Unk45884 gPositionAngleTable[] __asm__("D_800A1920");
  *  @par Side effects
  *  Overwrites the selected table record; no index bounds check is performed.
  *  @par Callers
- *  Unknown: no direct callers are listed.
+ *  func_80028618 records camera-related position and angle values.
  */
-void func_80045884(s32 *position, s32 arg1, s32 angle, s32 index)
+void gSetPositionAngleEntry(s32 *position, s32 arg1, s32 angle, s32 index) __asm__("func_80045884");
+void gSetPositionAngleEntry(s32 *position, s32 arg1, s32 angle, s32 index)
 {
     s32 i;
 

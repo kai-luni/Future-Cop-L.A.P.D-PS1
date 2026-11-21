@@ -44,7 +44,7 @@ extern struct Unk8009FA94 *gGameSession __asm__("D_8009FA94");
 extern void *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern void func_80058210(void *object, s32 amount);
-extern struct Entity *func_8004D664(s32 id);
+extern struct Entity *gFindUnitById(s32 id) __asm__("func_8004D664");
 extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, void *arg3);
 
 /**
@@ -89,7 +89,7 @@ void func_80058378(struct Unk80058378 *object, s32 amount, s32 source)
     }
 
     if (object->unk94 != 0) {
-        entity = func_8004D664(source & 0x3FFFFFFF);
+        entity = gFindUnitById(source & 0x3FFFFFFF);
         func_80069D68(object->unk94, (u32)object->unk1C >> 31,
                       entity != 0 ? entity->unk14 & 0x3FFF : -1, object);
     }

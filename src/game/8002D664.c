@@ -80,7 +80,7 @@ extern void gInitObjectFromDef(struct Unk2D664Obj *obj, void *data, s32 arg2) __
 extern s32 gUpdatePropTick(struct Unk2D664Obj *obj, void *data) __asm__("func_8002CC30");
 extern void func_8002D1A0(struct Unk2D664Obj *obj, void *data);
 extern void func_80063194(s32 key);
-extern struct Unk2D664Entity *func_8004D664(s32 id);
+extern struct Unk2D664Entity *gFindUnitById(s32 id) __asm__("func_8004D664");
 
 /**
  * @brief Message dispatcher for multi-part/objective entity classes (6, 8, 30, 33, 36).
@@ -182,7 +182,7 @@ s32 func_8002D664(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
                     __asm__ volatile ("" : : : "memory");
                     gPlayerEntities[0]->unkAC->unk10++;
                     p->unk134->unk18 = 0;
-                    found = func_8004D664(obj->unk8C & 0x3FFFFFFF);
+                    found = gFindUnitById(obj->unk8C & 0x3FFFFFFF);
                     if (found != 0) {
                         if ((found->unk14 & 0x3FFF) == (*(struct Unk2D664State **)0x8009F9EC)->unk14) {
                             register char *base __asm__("$3") = (char *)0x800A0000;

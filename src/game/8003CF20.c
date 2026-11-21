@@ -27,9 +27,10 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * buffer instead of pointing into shared data.
  *
  * @par Callers
- * func_8003D240.
+ * func_8003D0AC and func_8003D240.
  */
-void func_8003CF20(struct Unk3CF20 *object)
+void gFreeOwnedBufferNode(struct Unk3CF20 *object) __asm__("func_8003CF20");
+void gFreeOwnedBufferNode(struct Unk3CF20 *object)
 {
     if (object->flags & 2) {
         gFreeBlock(object->buffer);

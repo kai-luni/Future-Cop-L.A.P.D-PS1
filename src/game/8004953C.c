@@ -30,7 +30,8 @@ extern struct ScriptTimer *gScriptTimerTicks __asm__("D_8009F770");
  *  @par Callers
  *  Confirmed: func_8004DC64.
  */
-void func_8004953C(s32 index, s32 kind, s32 value)
+void gSetScriptTimerCount(s32 index, s32 kind, s32 value) __asm__("func_8004953C");
+void gSetScriptTimerCount(s32 index, s32 kind, s32 value)
 {
     struct ScriptTimer *timers;
 

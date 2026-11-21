@@ -40,7 +40,7 @@ extern s32 gSampleHeightGridBilinear(V3 *) __asm__("func_80069A38");
 extern s32 gGetGroundHeight(V3 *, s32, s32, s32) __asm__("func_80066F78");
 extern void gFlagQuartileChange(struct Obj *, s32) __asm__("func_8003BA50");
 extern void gSpawnEntitySlotTypes(s32, struct Obj *, s32, s32, s32) __asm__("func_8003B898");
-extern struct Hit *func_8004D664(s32);
+extern struct Hit *gFindUnitById(s32) __asm__("func_8004D664");
 extern void func_80069D68(s32, s32, s32, struct Obj *);
 extern void gVectorAddScaled(V3 *, V3 *, s32, V3 *) __asm__("func_8001ACA4");
 extern void gNormalizeVector(V3 *) __asm__("func_8001A180");
@@ -264,7 +264,7 @@ L5E4:
                 o->f134->f3E++;
                 if (o->f8C != 0) {
                     struct Hit *h;
-                    h = func_8004D664(o->f8C & 0x3FFFFFFF);
+                    h = gFindUnitById(o->f8C & 0x3FFFFFFF);
                     if (h != 0 && gPlayerEntities != 0 &&
                         (h->f14 & 0x3FFF) == gPlayerEntities->f14)
                         gPlayerEntities->fAC->f14++;

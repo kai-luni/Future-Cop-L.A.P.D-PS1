@@ -60,7 +60,7 @@ extern struct Block *gDomeEffectBlock[4] __asm__("D_800A22F0");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void *gBuildDomePatchMesh(s32 arg0, s32 arg1) __asm__("func_8006C84C");
-extern void func_8005CEA8(struct Sub *state);
+extern void gResetMotionState(struct Sub *state) __asm__("func_8005CEA8");
 
 /**
  * @brief Allocates a 0x1B0-byte attached-effect block in D_800A22F0 with a dome mesh and 12 motion sub-states.
@@ -149,7 +149,7 @@ struct Block *func_8005D3FC(struct Entity *ent, s32 idx)
             (*p)->unk1AE = 0;
 
             for (; i < 12; i++) {
-                func_8005CEA8((struct Sub *)((u8 *)*q + 0x58 + i * 0x1C));
+                gResetMotionState((struct Sub *)((u8 *)*q + 0x58 + i * 0x1C));
             }
 
             return *p;

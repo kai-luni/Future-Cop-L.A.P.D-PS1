@@ -22,7 +22,8 @@ extern u32 func_8002443C(void);
  *  @par Callers
  *  Confirmed: func_80029C34.
  */
-u32 func_80029BE4(void)
+u32 gIsAudioStreamReady(void) __asm__("func_80029BE4");
+u32 gIsAudioStreamReady(void)
 {
     u32 value = gCallGateFlag;
 

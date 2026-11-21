@@ -39,8 +39,8 @@ extern u8 *gResourceSubChunkPtr __asm__("D_8009F698");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 D_800A0B90[];
 
-extern void func_80044FF8(s32 mode, void *object);
-extern s32 func_80029BE4(void);
+extern void gSetVolumeModeState(s32 mode, void *object) __asm__("func_80044FF8");
+extern s32 gIsAudioStreamReady(void) __asm__("func_80029BE4");
 extern void func_8002A49C(void);
 extern void func_8002A408(void);
 extern void func_80029520(void);
@@ -84,9 +84,9 @@ void func_80029C34(void)
     value = gRingBuffer.entries[index].unk00;
 
     if (gRingBuffer.entries[index].unk02 != 0) {
-        func_80044FF8(value, gRingBuffer.entries[index].unk04);
+        gSetVolumeModeState(value, gRingBuffer.entries[index].unk04);
     } else {
-        func_80044FF8(-1, 0);
+        gSetVolumeModeState(-1, 0);
     }
 
     if (value == gOutStreamId) {
@@ -98,7 +98,7 @@ void func_80029C34(void)
         return;
     }
 
-    if ((func_80029BE4() & 0xFF) != 1) {
+    if ((gIsAudioStreamReady() & 0xFF) != 1) {
         return;
     }
 

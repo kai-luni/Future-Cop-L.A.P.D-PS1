@@ -19,7 +19,7 @@ extern void func_80058C3C(void *, void *, Obj *);
 extern void gSpawnTypeAtOwner(Obj *, int, int, int, int) __asm__("func_800402DC");
 extern void func_80046C84(int, Obj *);
 extern void gFlagQuartileChange(Obj *, int) __asm__("func_8003BA50");
-extern Obj *func_8004D664(int);
+extern Obj *gFindUnitById(int) __asm__("func_8004D664");
 extern void func_80025CFC(Obj *);
 extern void func_8005A190(Data *, int, int);
 
@@ -112,7 +112,7 @@ void func_80058D78(Obj *o)
             if (!o->data->ptr20) o->data->ptr20 = gFrameTime;
             o->data->count16++;
             if (o->id) {
-                found = func_8004D664(o->id & 0x3fffffff);
+                found = gFindUnitById(o->id & 0x3fffffff);
                 if (gPlayerCount == 1) {
                     if (found && gSinglePlayerEntity && gSinglePlayerEntity->tag == (found->tag & 0x3fff)) {
                         ((struct Stats *)gSinglePlayerEntity->stats)->b++;

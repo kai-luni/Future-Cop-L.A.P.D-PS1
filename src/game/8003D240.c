@@ -35,7 +35,7 @@ extern struct Unk3D240 *gAnchorNodeList __asm__("D_8009F320");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
-extern void func_8003CF20(struct Unk3D240 *object);
+extern void gFreeOwnedBufferNode(struct Unk3D240 *object) __asm__("func_8003CF20");
 extern void func_8003D0F0(void *source, s32 a1, s32 a2, void *destination);
 void gSyncAttachedNodes(void) __asm__("func_8003D240");
 
@@ -203,7 +203,7 @@ void gSyncAttachedNodes(void)
                 gAnchorNodeList = object->next;
             }
             object->next = 0;
-            func_8003CF20(object);
+            gFreeOwnedBufferNode(object);
         } else {
             prev = object;
         }

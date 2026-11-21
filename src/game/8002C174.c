@@ -33,7 +33,7 @@ struct Unk2C174 {
     u8 unk15F;
 };
 
-extern struct Unk2C174 *func_8004D664(u32 id);
+extern struct Unk2C174 *gFindUnitById(u32 id) __asm__("func_8004D664");
 extern s32 func_80019668(void);
 extern void gNormalizeVector(void *vec) __asm__("func_8001A180");
 extern u8 func_8003B7D8(struct Unk2C174 *obj);
@@ -83,7 +83,7 @@ void func_8002C174(struct Unk2C174 *obj)
     s32 dx;
 
     if (obj->unk8C != 0) {
-        target = func_8004D664(obj->unk8C & 0x3FFFFFFF);
+        target = gFindUnitById(obj->unk8C & 0x3FFFFFFF);
     } else {
         target = 0;
     }
