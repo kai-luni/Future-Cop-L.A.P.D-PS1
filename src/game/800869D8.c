@@ -9,6 +9,8 @@ typedef struct {
 } Unk800869D8;
 
 extern Unk800869D8 *gMovieAudioState __asm__("D_8009F4D8");
+void *gPeekMovieAudioFirstBuffer(u32 index) __asm__("func_800869D8");
+
 
 /**
  *  @brief Returns a pointer into the first buffer region when available.
@@ -28,7 +30,7 @@ extern Unk800869D8 *gMovieAudioState __asm__("D_8009F4D8");
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-void *func_800869D8(u32 index)
+void *gPeekMovieAudioFirstBuffer(u32 index)
 {
     Unk800869D8 *p = gMovieAudioState;
     return (index < p->end - p->start && p->unk7B78 == 0) ? (u8 *)p + ((p->start % 15360) + 0x10) : 0;

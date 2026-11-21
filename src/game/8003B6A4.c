@@ -39,6 +39,8 @@ extern struct NodeA *gListHeads[7] __asm__("D_800A1070");
 extern struct NodeC *gDeferredSpawnList __asm__("D_8009F30C");
 extern void gFreeBlock(void *arg) __asm__("func_800181D4");
 extern void func_8003CA80(struct Unk3CA80 *object);
+void gRetireOwnedSpawnSlots(s32 arg_) __asm__("func_8003B6A4");
+
 
 /**
  * @brief Tears down active flagged slots and frees deferred nodes owned by a given key.
@@ -64,7 +66,7 @@ extern void func_8003CA80(struct Unk3CA80 *object);
  * @par Callers
  * Confirmed: func_8003BAE4 (0x8003BB08, called before placing entity into map grid columns).
  */
-void func_8003B6A4(s32 arg_)
+void gRetireOwnedSpawnSlots(s32 arg_)
 {
     register s32 arg __asm__("$19");
     register struct NodeC *prev __asm__("$20");

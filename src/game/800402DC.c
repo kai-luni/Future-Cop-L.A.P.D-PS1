@@ -15,7 +15,7 @@ struct Unk402DCOwner {
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern u8 gBatchSpawnActive __asm__("D_8009F31C");
 
-extern u32 *func_8003B3D8(u32 column, u32 row);
+extern u32 *gGetSpawnTypeFlagPtr(u32 column, u32 row) __asm__("func_8003B3D8");
 extern void *gCreateModelNode(struct Unk402DCOwner *owner, u8 column, s32 row, s32 arg3,
                            s32 arg4, u8 arg5) __asm__("func_8003D680");
 extern s32 gSpawnObjectFromTable(void *object, s32 arg1, u8 column, s32 arg3, s32 row) __asm__("func_8003E984");
@@ -81,7 +81,7 @@ s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row,
     if (gSpawnRecordMap[row][column] == 0) {
         return 0;
     }
-    if ((*(u16 *)func_8003B3D8(column, row) & 5) == 4) {
+    if ((*(u16 *)gGetSpawnTypeFlagPtr(column, row) & 5) == 4) {
         if (owner == 0) {
             return 0;
         }

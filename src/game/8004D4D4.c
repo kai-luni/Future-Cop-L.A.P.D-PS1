@@ -10,6 +10,8 @@ struct Entity {
 };
 
 extern struct Entity *gSpawnQueuedEntity(struct EntityDef *def) __asm__("func_8004D444");
+s32 gSpawnQueuedEntityAndGetId(struct EntityDef *def) __asm__("func_8004D4D4");
+
 
 /**
  * @brief Spawns an entity from a request record and returns only its new id.
@@ -35,7 +37,7 @@ extern struct Entity *gSpawnQueuedEntity(struct EntityDef *def) __asm__("func_80
  * Confirmed: func_80031690 (0x800317A0) and func_8003A8C0 (0x8003A8F4) queue their spawn requests through it.
  * Unknown: one call at 0x8004D8F0 from a routine that is not in the matching set.
  */
-s32 func_8004D4D4(struct EntityDef *def)
+s32 gSpawnQueuedEntityAndGetId(struct EntityDef *def)
 {
     return gSpawnQueuedEntity(def)->id;
 }

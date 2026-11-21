@@ -9,7 +9,7 @@ extern volatile s32 gCvkSpuUploadComplete __asm__("D_8009F650");
 extern void gUnloadCvkSoundBank(s32 arg0) __asm__("func_80023AB4");
 extern void gClearSoundProgramSamples(void) __asm__("func_80023A24");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
-extern void func_80044EF8(void);
+extern void gResetSoundBankTables(void) __asm__("func_80044EF8");
 
 void gReleaseCvkSoundBanksAndVoices(void) __asm__("func_80023BF8");
 
@@ -69,7 +69,7 @@ void gReleaseCvkSoundBanksAndVoices(void)
             slot++;
         } while (i < 2);
 
-        func_80044EF8();
+        gResetSoundBankTables();
     }
 }
 

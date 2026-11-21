@@ -45,10 +45,12 @@ struct Target {
 };
 
 extern void func_8002B1AC(Target *s0);
-extern void func_8002B0EC(Target *s0, s32 a1);
+extern void gSetType26AnimationClip(Target *s0, s32 a1) __asm__("func_8002B0EC");
 extern void gSpawnEntitySlotTypes(u8 index, Target *entity, s32 arg2, u16 flags, s32 mode) __asm__("func_8003B898");
 extern void *jtbl_80010FCC[];
 extern void *jtbl_80010FEC[];
+s32 gDispatchType26Command(Target *s0, s32 a1, Target *a2) __asm__("func_8002B1DC");
+
 
 /**
  * @brief Command dispatcher of the class-26 actor state machine at +0x15F.
@@ -90,7 +92,7 @@ extern void *jtbl_80010FEC[];
  * Confirmed: func_8002B4B4, func_8002B784 (class-26 per-frame update),
  * func_8002BFB4 and func_8002C174 (type-26 destruction case).
  */
-s32 func_8002B1DC(Target *s0, s32 a1, Target *a2)
+s32 gDispatchType26Command(Target *s0, s32 a1, Target *a2)
 {
     u8 *base;
     Node *cur;
@@ -213,7 +215,7 @@ L_case6:
 
 L_case7:
     s0->unk15F = 7;
-    func_8002B0EC(s0, 0x3A);
+    gSetType26AnimationClip(s0, 0x3A);
     s0->unk24 |= 1;
     gSpawnEntitySlotTypes(s0->unk20, s0, 0, (s0->unk19 >> 3) & 0x1E, 0);
 

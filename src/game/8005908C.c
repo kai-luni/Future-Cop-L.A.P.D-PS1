@@ -32,6 +32,8 @@ extern s32 gEntityBaseHandler(s32 message, struct Unk5908C *object, struct Unk59
 extern void func_80058378(struct Unk5908C *object, s32 amount, s32 source);
 extern s32 func_800584BC(s32 message, struct Unk5908C *object, struct Unk5908CData *hit,
                          s32 arg3, s32 arg4);
+s32 gHandlePlayerEntityMsg(s32 message, struct Unk5908C *object, struct Unk5908CData *data, s32 arg4) __asm__("func_8005908C");
+
 
 /**
  * @brief Message handler of the player unit (class 1): spawn, form tick,
@@ -65,7 +67,7 @@ extern s32 func_800584BC(s32 message, struct Unk5908C *object, struct Unk5908CDa
  * @par Callers
  * func_80053188, func_800578B4.
  */
-s32 func_8005908C(s32 message, struct Unk5908C *object, struct Unk5908CData *data, s32 arg4)
+s32 gHandlePlayerEntityMsg(s32 message, struct Unk5908C *object, struct Unk5908CData *data, s32 arg4)
 {
     struct Unk5908C *s0;
     struct Unk5908CData *s1;

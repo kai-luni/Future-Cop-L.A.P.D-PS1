@@ -10,7 +10,7 @@ extern s32 *gTimer1ModePtr __asm__("D_8009DD54");
 extern void func_80091C90(s32 *dest, u32 count);
 extern void gSetIrqCallback(s32 a0, void *a1) __asm__("func_800914B0");
 extern void func_80091BF8(void);
-extern void func_80091C64(u32 index, s32 value);
+extern void gSetVSyncCallbackSlot(u32 index, s32 value) __asm__("func_80091C64");
 void *gInitVSyncHandler(void) __asm__("func_80091BA0");
 
 
@@ -50,5 +50,5 @@ void *gInitVSyncHandler(void)
     gVSyncTickCounter = 0;
     func_80091C90(gVSyncCallbackTable, 8);
     gSetIrqCallback(0, func_80091BF8);
-    return func_80091C64;
+    return gSetVSyncCallbackSlot;
 }

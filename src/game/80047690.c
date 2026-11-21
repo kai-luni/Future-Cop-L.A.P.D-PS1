@@ -5,6 +5,8 @@ extern u8 gStreamAudioFlag __asm__("D_8009F739");
 
 extern void func_8002A16C(s32 value);
 extern void gSoundHaltAllVoices(s32 value) __asm__("func_80047554");
+void gSetAudioPlaybackEnabled(u8 enable) __asm__("func_80047690");
+
 
 /**
  * @brief Selects between starting the stream state and halting sound voices.
@@ -26,7 +28,7 @@ extern void gSoundHaltAllVoices(s32 value) __asm__("func_80047554");
  * @par Callers
  * func_800259D8, func_80025B7C, func_80027510, func_80082DDC.
  */
-void func_80047690(u8 enable)
+void gSetAudioPlaybackEnabled(u8 enable)
 {
     if (enable) {
         gStreamAudioFlag = 1;

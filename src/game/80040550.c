@@ -12,6 +12,8 @@ struct Unk40550 {
     u8 unk00[0x6C];
     struct Unk40550Timers *timers;
 };
+void gDrainObjectLightColor(struct Unk40550 *object, s32 amount) __asm__("func_80040550");
+
 
 /**
  *  @brief Applies an amount to three timer fields in priority order.
@@ -32,7 +34,7 @@ struct Unk40550 {
  *  @par Callers
  *  Confirmed: func_80040A00.
  */
-void func_80040550(struct Unk40550 *object, s32 amount)
+void gDrainObjectLightColor(struct Unk40550 *object, s32 amount)
 {
     if (object->timers->total == 0) {
         return;

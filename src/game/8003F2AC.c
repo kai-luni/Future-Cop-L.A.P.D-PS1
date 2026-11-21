@@ -24,6 +24,8 @@ extern s32 func_8003CAE4(struct Unk3F2AC *object, s32 arg, u8 *flag);
 extern struct Unk3F2AC *gSpawnObjectFromTable(void *handle, struct Unk3F2AC *object,
                                       s32 flag, s32 arg3, s32 arg4) __asm__("func_8003E984");
 extern void func_800498F0(void *object);
+s32 gUpdateSpawnNodeLifecycle(struct Unk3F2AC *object, s32 arg1) __asm__("func_8003F2AC");
+
 
 /**
  * @brief Advances one entity node's spawn/retire timers and unlinks any attached grid object on reactivation.
@@ -46,7 +48,7 @@ extern void func_800498F0(void *object);
  * @par Callers
  * Confirmed: func_8003F570 (0x8003F5CC, iterating over D_800A1070[0..6]) / Likely: none / Unknown: none.
  */
-s32 func_8003F2AC(struct Unk3F2AC *object, s32 arg1)
+s32 gUpdateSpawnNodeLifecycle(struct Unk3F2AC *object, s32 arg1)
 {
     u8 flag;
     s32 result;

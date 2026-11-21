@@ -3,6 +3,8 @@
 
 extern void gSpawnTypeAtOwner(void *object, u8 kind, s32 arg2, s32 arg3, s32 arg4) __asm__("func_800402DC");
 extern void func_8003FB90(void *object, u8 kind);
+void gDispatchSpawnCommand(s32 message, void *object, s32 kind) __asm__("func_8003FD10");
+
 
 /**
  * @brief Executes entity queue commands 0x64 (spawn/place) and 0x65 (retire/unlink) for an entity and kind byte.
@@ -29,7 +31,7 @@ extern void func_8003FB90(void *object, u8 kind);
  * @par Callers
  * Confirmed: func_8004CECC (0x8004D220 in asm/us/main.s, command opcodes `0x64` and `0x65`) / Likely: none / Unknown: none.
  */
-void func_8003FD10(s32 message, void *object, s32 kind)
+void gDispatchSpawnCommand(s32 message, void *object, s32 kind)
 {
     switch (message) {
     case 0x64:

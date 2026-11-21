@@ -11,7 +11,7 @@ struct Unk3C404 {
 
 extern u32 gSpawnTableRow __asm__("D_8009F310");
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
-extern u32 *func_8003B3D8(u32 column, u32 row);
+extern u32 *gGetSpawnTypeFlagPtr(u32 column, u32 row) __asm__("func_8003B3D8");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 void gInstallSpawnRecord(struct Unk3C404 *arg0) __asm__("func_8003C404");
 
@@ -54,7 +54,7 @@ void gInstallSpawnRecord(struct Unk3C404 *arg0) __asm__("func_8003C404");
  */
 void gInstallSpawnRecord(struct Unk3C404 *arg0)
 {
-    *(u8 *)func_8003B3D8(arg0->unk14, gSpawnTableRow) = 0;
+    *(u8 *)gGetSpawnTypeFlagPtr(arg0->unk14, gSpawnTableRow) = 0;
     if (gSpawnRecordMap[gSpawnTableRow][arg0->unk14] != 0) {
         gFreeBlock(gSpawnRecordMap[gSpawnTableRow][arg0->unk14]);
     }

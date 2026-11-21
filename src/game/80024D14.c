@@ -23,7 +23,7 @@ extern void func_80061860(void);
 extern void func_80047868(void);
 extern void gFreeCameraList(void) __asm__("func_80017764");
 extern void gRetireAndFreeAllEntities(void) __asm__("func_8004CCDC");
-extern void func_8006A88C(void);
+extern void gResetDescriptorRegistryCount(void) __asm__("func_8006A88C");
 extern void gFreeSpawnRegistry(void) __asm__("func_80060E50");
 extern void gResetDefinitionEntryCount(void) __asm__("func_80060A00");
 extern void func_8005A068(void);
@@ -90,7 +90,7 @@ void gResetMissionSubsystems(s32 arg0)
     func_80047868();
     gFreeCameraList();
     gRetireAndFreeAllEntities();
-    func_8006A88C();
+    gResetDescriptorRegistryCount();
     gFreeSpawnRegistry();
     gResetDefinitionEntryCount();
     func_8005A068();

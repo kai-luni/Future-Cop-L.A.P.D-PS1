@@ -40,8 +40,10 @@ extern u8 *gGameSession __asm__("D_8009FA94");
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 extern s8 gFormCodeTable[][10] __asm__("D_8009ACF4");
 
-extern void func_8005908C(s32 arg0, struct Unk53188 *arg1,
-                           struct Unk53188Arg *arg2, s32 arg3);
+extern void gHandlePlayerEntityMsg(s32 arg0, struct Unk53188 *arg1,
+                           struct Unk53188Arg *arg2, s32 arg3) __asm__("func_8005908C");
+void gApplyPlayerSurfaceEffect(struct Unk53188 *arg0, u32 arg1) __asm__("func_80053188");
+
 
 /**
  * @brief Applies a terrain surface attribute byte to the player unit.
@@ -82,7 +84,7 @@ extern void func_8005908C(s32 arg0, struct Unk53188 *arg1,
  * Confirmed: func_80053A74 and func_800549F0, after ground sampling when the
  * masked attribute byte is non-zero.
  */
-void func_80053188(struct Unk53188 *arg0, u32 arg1)
+void gApplyPlayerSurfaceEffect(struct Unk53188 *arg0, u32 arg1)
 {
     register struct Unk53188Sub *p __asm__("$4");
     struct Unk53188Arg arg;
@@ -247,7 +249,7 @@ void func_80053188(struct Unk53188 *arg0, u32 arg1)
             __asm__("" : "+r"(index) : : "$4");
             arg.unk6 = index;
             arg.unk8 = 0;
-            func_8005908C(0xE, arg0, &arg, 0);
+            gHandlePlayerEntityMsg(0xE, arg0, &arg, 0);
         }
     }
 

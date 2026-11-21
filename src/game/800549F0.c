@@ -89,8 +89,8 @@ extern void gComputeOnFootVelocityDelta(struct Obj549F0 *, s32, s32, void *, s32
 extern s32 func_80052550(struct Obj549F0 *, void *);
 extern void gClampToWorldBounds(s32 *) __asm__("func_8006943C");
 extern s32 gTraceMapRay(void *, void *, s32, s32, s32) __asm__("func_800684AC");
-extern void func_80053514(struct Obj549F0 *, s32);
-extern void func_80053188(struct Obj549F0 *, s32);
+extern void gApplyGroundEntityMotion(struct Obj549F0 *, s32) __asm__("func_80053514");
+extern void gApplyPlayerSurfaceEffect(struct Obj549F0 *, s32) __asm__("func_80053188");
 extern struct AnimClip549F0 *func_800448D8(struct AnimTrack549F0 *, s32, s32, u8);
 extern void gEaseVectorQuarter(void *, void *) __asm__("func_8001A6F8");
 extern void gNormalizeVector(void *) __asm__("func_8001A180");
@@ -103,7 +103,7 @@ extern s32 gNormalizeGetLength(s32 *) __asm__("func_8001A314");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_8005220C(struct Obj549F0 *);
 extern void func_80052708(struct Obj549F0 *, s32);
-extern s32 func_80052F54(struct Obj549F0 *, s32);
+extern s32 gComputeLandingDamage(struct Obj549F0 *, s32) __asm__("func_80052F54");
 s32 gTickOnFootPhysics(struct Obj549F0 *selfArg, s32 unused, s32 speedArg, u32 argFlags) __asm__("func_800549F0");
 
 
@@ -707,13 +707,13 @@ dispatch_done:
         lane = self->position.y - 0xC0;
         self->sub->velocity.y = 0;
     }
-    func_80053514(self, w.surface);
+    gApplyGroundEntityMotion(self, w.surface);
     self->sub->unk147 = 0;
     self->sub->unk146 = 0;
     spare = (s32)0xFFFFFF3F;
     wflags &= spare;
     if (wflags != 0) {
-        func_80053188(self, wflags);
+        gApplyPlayerSurfaceEffect(self, wflags);
     }
 
     speed = (s32)((u8 *)sub + 0x168);
@@ -737,7 +737,7 @@ dispatch_done:
                 s32 damage;
 
                 self->state = 0x12;
-                damage = func_80052F54(self, speed);
+                damage = gComputeLandingDamage(self, speed);
                 impactTotal += damage;
             }
         } else if (self->state == 0x0C && sub->velocity.y < -0x40) {
@@ -772,7 +772,7 @@ above_ground:
                 masked = fb & spare;
                 fallbackFlags = masked;
                 if (masked != 0) {
-                    func_80053188(self, masked);
+                    gApplyPlayerSurfaceEffect(self, masked);
                 }
                 sub->velocity.x = 0;
                 sub->velocity.z = 0;

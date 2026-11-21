@@ -16,7 +16,7 @@ extern void gStoreStreamChannelMix(s32 arg0, s32 arg1, s32 arg2) __asm__("func_8
 extern void gStartAudioStreamChannels(void) __asm__("func_800228F4");
 extern void gShutdownVagmAudioStream(s32 arg0) __asm__("func_80024630");
 extern s32 gReplaceVagmAudioStreamBuffer(s32 arg0) __asm__("func_800246A8");
-extern void func_8002A31C(s32 arg0, s32 arg1);
+extern void gQueueStreamAssetRelease(s32 arg0, s32 arg1) __asm__("func_8002A31C");
 extern s32 func_800451E0(void);
 extern s32 func_80045288(void);
 
@@ -57,7 +57,7 @@ s32 gInitializeVagmAudioStream(void)
         if ((gIsAudioStreamConfigured() & 0xFF) != 0) {
             gStopAudioStreamAndClearChannels();
             if (gActiveStreamId != 0) {
-                func_8002A31C(gActiveStreamId, result);
+                gQueueStreamAssetRelease(gActiveStreamId, result);
                 gActiveStreamId = 0;
             }
         }

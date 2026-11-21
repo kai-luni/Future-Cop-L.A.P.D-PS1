@@ -7,6 +7,8 @@ extern u8 gSoundBankTableHigh[] __asm__("D_800A18D0");
 extern u8 gRegisteredSoundBankCount __asm__("D_8009F75C");
 
 extern void func_80045504(s32 index);
+void gResetSoundBankTables(void) __asm__("func_80044EF8");
+
 
 /**
  *  @brief Resets three byte tables and initializes 110 indexed entries.
@@ -24,7 +26,7 @@ extern void func_80045504(s32 index);
  *  @par Callers
  *  Confirmed: func_800453B8.
  */
-void func_80044EF8(void)
+void gResetSoundBankTables(void)
 {
     s32 i;
     u8 *entry;

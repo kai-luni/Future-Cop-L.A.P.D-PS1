@@ -302,15 +302,15 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
   - `src/game/8003FF7C.c:203`
   - `src/game/8003FF7C.c:207`
   - `src/game/8003FE0C.c:61`
-  - `src/game/8003FE90.c:56`
+  - `src/game/8003FE90.c:58`
 - Units:
   - `src/game/8003FF7C.c` - manifest 0x8003FF7C, size 0x360 (current binding: gStreamDeferredSpawns)
   - `src/game/8003FE0C.c` - manifest 0x8003FE0C, size 0x84 (no readable binding)
-  - `src/game/8003FE90.c` - manifest 0x8003FE90, size 0xEC (no readable binding)
+  - `src/game/8003FE90.c` - manifest 0x8003FE90, size 0xEC (current binding: gRetireDeferredNodes)
 - Naming proposals:
   - `func_8003FF7C` -> `gStreamDeferredSpawns`: keeps current name: walks the deferred list and toggles spawn state by range (8003FF7C.c:179-207).
   - `func_8003FE0C` -> `gActivateDeferredSpawn`: creates the model node and runs gSpawnObjectFromTable, setting flag bit 1 on success (8003FE0C.c:61).
-  - `func_8003FE90` -> `gDespawnDeferredObjects`: unlinks every list node owned by the record from the seven list heads and sends message 10, then clears flag bit 1 (8003FE90.c:56).
+  - `func_8003FE90` -> `gRetireDeferredNodes`: unlinks every list node owned by the record from the seven list heads and sends message 10, then clears flag bit 1 (8003FE90.c:58).
   - global `D_8009F30C` -> `gDeferredSpawnList`: keep: head of the deferred spawn record list walked each tick (8003FF7C.c:64).
 
 ### 11. Per-cell bucket grid for map models (spatial hashing by cell index)
@@ -726,10 +726,10 @@ occur on the cited line).
 | `src/game/80070158.c:129` | `if (gVectorLength3D(vec) - (n->unk12 << 4) > 0x1FFFF) {` |
 | `src/game/8003FF7C.c:179` | `in_range = gVectorLength3D(&work.delta.x) <= 0x1FFFF;` |
 | `src/game/8003FF7C.c:148` | `node = gDeferredSpawnList;` |
-| `src/game/8003FF7C.c:203` | `func_8003FE90(node);` |
+| `src/game/8003FF7C.c:203` | `gRetireDeferredNodes(node);` |
 | `src/game/8003FF7C.c:207` | `func_8003FE0C(node);` |
 | `src/game/8003FE0C.c:61` | `if (gSpawnObjectFromTable(object, 0, node->type, node->arg18,` |
-| `src/game/8003FE90.c:56` | `node->callback(10, node, zero, zero);` |
+| `src/game/8003FE90.c:58` | `node->callback(10, node, zero, zero);` |
 | `src/game/800834C4.c:53` | `cells = gAllocMemory(count * 8, 2);` |
 | `src/game/80084398.c:144` | `idx = x + a + gCellGridWidth * (y + b);` |
 | `src/game/80084398.c:145` | `o = gCellBucketGrid[idx].head;` |

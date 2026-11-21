@@ -73,7 +73,7 @@ extern void gGteTransformVerticesWide(u8 *vertices, s32 *out, s32 count) __asm__
 extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern void func_8005A190(struct Unk5A190 *object, s32 index, s32 value);
 extern void func_80051AF8(struct Unk58714 *arg0);
-extern void func_8006BE90(struct Unk58714 *arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gRefillWeaponSlotAmmo(struct Unk58714 *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8006BE90");
 extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk58714 *arg3);
 void gRespawnPlayerEntity(struct Unk58714 *arg0) __asm__("func_80058714");
 
@@ -166,9 +166,9 @@ void gRespawnPlayerEntity(struct Unk58714 *arg0)
     arg0->unk1C = arg0->unk1E;
     func_8005A190(s1, 0, arg0->unk1C);
 
-    func_8006BE90(arg0, 0, -1, 0);
-    func_8006BE90(arg0, 1, -1, 0);
-    func_8006BE90(arg0, 2, -1, 0);
+    gRefillWeaponSlotAmmo(arg0, 0, -1, 0);
+    gRefillWeaponSlotAmmo(arg0, 1, -1, 0);
+    gRefillWeaponSlotAmmo(arg0, 2, -1, 0);
 
     for (i = 2; i >= 0; i--) {
         s1->unk8A[i] = 0;

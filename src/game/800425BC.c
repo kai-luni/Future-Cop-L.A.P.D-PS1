@@ -10,7 +10,7 @@ struct Unk425BC {
     u8 unkA8[8];
 };
 
-extern void func_8002A5B4(u8 *script, s32 index);
+extern void gRemoveEntityCommand(u8 *script, s32 index) __asm__("func_8002A5B4");
 void gStepType35Commands(struct Unk425BC *script) __asm__("func_800425BC");
 
 
@@ -60,7 +60,7 @@ void gStepType35Commands(struct Unk425BC *script)
                 t = t * 3;
                 self->unkA4 = (self->unkA4 & ~(7u << t)) | ((u32)arg << t);
             }
-            func_8002A5B4((u8 *)self, i);
+            gRemoveEntityCommand((u8 *)self, i);
             continue;
         case 0x4C:
             t = arg >> 5;
@@ -69,7 +69,7 @@ void gStepType35Commands(struct Unk425BC *script)
                 q = (u8 *)self + t;
                 q[0xA8] = (q[0xA8] & 0xE0) | arg;
             }
-            func_8002A5B4((u8 *)self, i);
+            gRemoveEntityCommand((u8 *)self, i);
             continue;
         default:
             p = (struct Unk425BC *)((u8 *)p + 2);

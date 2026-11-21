@@ -44,7 +44,7 @@ extern s32 gPlayerEntity2 __asm__("D_8009FA5C");
 
 extern u8 *gResolveNodeTransform(s32 arg0, s32 arg1, s32 arg2, s32 arg3, void *arg4, void *arg5) __asm__("func_8003D9F8");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
-extern void func_800413EC(s32 arg0, s32 arg1, s32 arg2, s32 context, s32 arg4, s32 mode);
+extern void gApplyBandedRadialDamage(s32 arg0, s32 arg1, s32 arg2, s32 context, s32 arg4, s32 mode) __asm__("func_800413EC");
 extern void func_80041428(s32 arg0, s32 arg1, s32 arg2, s32 context, struct Vec3s32 *position,
                           s32 height, s32 arg6);
 void gDrawGroundMarker(struct Unk8006D520 *arg0) __asm__("func_8006D520");
@@ -128,7 +128,7 @@ void gDrawGroundMarker(struct Unk8006D520 *arg0)
             }
         }
 
-        func_800413EC(a0, e->unk20->unk2E,
+        gApplyBandedRadialDamage(a0, e->unk20->unk2E,
                       (e->unk98 & 0x10 ? e->unk12 + e->unk70 * 2 : e->unk12 + e->unk70) << 4,
                       e->unk9A << 4, color,
                       (e->unk98 & 0x40) ? 2 : 0);

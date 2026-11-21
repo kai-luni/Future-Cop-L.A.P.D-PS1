@@ -13,7 +13,9 @@ extern u8 gProfileMenuControllerMode[] __asm__("D_800A36BD");
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 
 extern void gArmProfileTransfer(void) __asm__("func_8007FA88");
-extern void func_8007F02C(void);
+extern void gPackCurrentProgressPassword(void) __asm__("func_8007F02C");
+void gInitProfileNameEntryMenu(void) __asm__("func_8007F93C");
+
 
 /**
  *  @brief Resets state fields and sets a flag based on the current mode.
@@ -33,7 +35,7 @@ extern void func_8007F02C(void);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8007F93C(void)
+void gInitProfileNameEntryMenu(void)
 {
     u8 *p;
 
@@ -47,7 +49,7 @@ void func_8007F93C(void)
     gUiInteractionEnabled = 0;
     *(u16 *)(p + 0x942) = 0;
     *(u8 *)(p + 0x944) = 0;
-    func_8007F02C();
+    gPackCurrentProgressPassword();
     if (gGameSession->unkC == 2) {
         gProfileMenuControllerMode[0] = 0;
     } else {

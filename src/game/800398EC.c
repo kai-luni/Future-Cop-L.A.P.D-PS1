@@ -23,7 +23,7 @@ struct Self {
     u8 pad74[0xE4];
     struct Child *child[1];
 };
-extern s32 func_800397AC(s32, struct Self *, void *, s32);
+extern s32 gInitType28Entity(s32, struct Self *, void *, s32) __asm__("func_800397AC");
 extern s32 gEntityBaseHandler(s32, void *, void *, s32) __asm__("func_8002AD58");
 extern s32 func_800382B4(s32, struct Self *, void *, s32);
 extern void gUpdateMountedTurret(struct Child *, void *) __asm__("func_80038A00");
@@ -70,7 +70,7 @@ s32 func_800398EC(s32 message, struct Self *object, void *data, s32 extra)
     case 1:
         return 0x168;
     case 2:
-        return func_800397AC(msg, self, arg2, arg3);
+        return gInitType28Entity(msg, self, arg2, arg3);
     case 3:
         if (self->flags & 0x20) return 0;
         gEntityBaseHandler(msg, self, arg2, arg3);

@@ -36,7 +36,7 @@ extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void func_8002FA20(struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3);
 extern void func_80030060(struct Obj3015C *obj, struct Arg3015C *arg);
 extern s32 func_8002F8B8(u8 arg0, s16 arg1, struct Arg3015C *arg2, u8 arg3);
-extern s32 func_8002FF6C(struct Obj3015C *obj, struct Arg3015C *arg);
+extern s32 gApplyRotatingPropProximityEffect(struct Obj3015C *obj, struct Arg3015C *arg) __asm__("func_8002FF6C");
 extern s32 gBuildRotationMatrix(s32 a, s32 b, s32 c, void *d) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *a) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
@@ -96,7 +96,7 @@ s32 gHandleRotatingPropMsg(s32 cmd, struct Obj3015C *obj, struct Arg3015C *arg, 
         if (obj->unk8 == 0) {
             return 0;
         }
-        return func_8002FF6C(obj, arg);
+        return gApplyRotatingPropProximityEffect(obj, arg);
     case 6:
         if (obj->unkD4 != 0) {
             s32 val;

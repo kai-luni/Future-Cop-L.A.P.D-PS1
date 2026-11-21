@@ -10,6 +10,8 @@ typedef struct {
 
 extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 extern s32 gDivSigned64(unsigned long long p, s32 a, s32 b) __asm__("func_800966B0");
+s32 gScaleMovieAudioClock(u32 arg0) __asm__("func_800867B0");
+
 
 /**
  *  @brief Scales an input according to the current state's mode and value.
@@ -29,7 +31,7 @@ extern s32 gDivSigned64(unsigned long long p, s32 a, s32 b) __asm__("func_800966
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-s32 func_800867B0(u32 arg0)
+s32 gScaleMovieAudioClock(u32 arg0)
 {
     register s32 ret __asm__("$3") = 0;
     register s32 mode __asm__("$5");

@@ -59,7 +59,7 @@ extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C8
 extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
 extern s32 func_80049340(u8 *text);
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
-extern void func_80047690(u8 enable);
+extern void gSetAudioPlaybackEnabled(u8 enable) __asm__("func_80047690");
 extern void func_80069D0C(s32 amount);
 extern void func_8004CD6C(s32 message, s32 arg2, s32 arg3);
 extern void func_8004CE04(void);
@@ -171,7 +171,7 @@ void gRunSoloSessionFrame(void)
             clock_value = *(volatile s32 *)&gGameClock;
             gFrameTime = clock_value;
             gFrameTickBase = clock_value;
-            func_80047690(1);
+            gSetAudioPlaybackEnabled(1);
         }
         gWasSuspended = 0;
         func_80069D0C(gFrameDelta);

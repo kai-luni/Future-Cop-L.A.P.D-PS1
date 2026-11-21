@@ -21,7 +21,7 @@ struct Script {
     u8 unk140;
 };
 
-extern void func_8002A5B4(struct Script *script, s32 index);
+extern void gRemoveEntityCommand(struct Script *script, s32 index) __asm__("func_8002A5B4");
 
 /**
  * @brief Executes and consumes opcode 0x6E toggle commands for a force-field entity.
@@ -76,6 +76,6 @@ void func_8003A09C(struct Script *script)
             i++;
             continue;
         }
-        func_8002A5B4(script, i);
+        gRemoveEntityCommand(script, i);
     }
 }

@@ -25,7 +25,7 @@ extern void func_80092C8C(s32 arg0);
 extern void gStopAllPadRumble(void) __asm__("func_8001EB6C");
 extern u8 func_80024170(void);
 extern void func_80025348(void);
-extern void func_80047690(u8 enable);
+extern void gSetAudioPlaybackEnabled(u8 enable) __asm__("func_80047690");
 extern void func_80029DD8(void);
 extern void func_80023BF8(void);
 extern void gUnloadFrontEndSubsystems(s32 arg0) __asm__("func_800249BC");
@@ -123,7 +123,7 @@ state_default:
         gGameSession->unk10 = 4;
 
 state_done:
-    func_80047690(0);
+    gSetAudioPlaybackEnabled(0);
     func_80029DD8();
     func_80023BF8();
 

@@ -22,6 +22,9 @@ struct Unk4AADOwner {
 };
 
 extern struct Unk4AADNode *gFragmentFreeList __asm__("D_8009F798");
+struct Unk4AADNode *gFreeDebrisFragment(struct Unk4AADOwner *owner, struct Unk4AADNode *previous,
+                                  struct Unk4AADNode *node) __asm__("func_8004AAD4");
+
 
 /**
  * @brief Unlinks a debris node from an owner's active list, pushes it onto free list D_8009F798, and updates its parent.
@@ -46,7 +49,7 @@ extern struct Unk4AADNode *gFragmentFreeList __asm__("D_8009F798");
  * @par Callers
  * Confirmed: func_8004C0C0 (expired node pruning), func_8004C324 (message 10 debris teardown).
  */
-struct Unk4AADNode *func_8004AAD4(struct Unk4AADOwner *owner, struct Unk4AADNode *previous,
+struct Unk4AADNode *gFreeDebrisFragment(struct Unk4AADOwner *owner, struct Unk4AADNode *previous,
                                   struct Unk4AADNode *node)
 {
     if (previous != 0) {

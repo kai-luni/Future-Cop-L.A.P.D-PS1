@@ -32,8 +32,8 @@ struct Message { s32 unk0; s16 value; u8 kind; u8 unk7; s32 unk8; };
 extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
 extern void func_800457B8(s32, s32);
 extern void gRetireEntity(struct Entity *) __asm__("func_8004D958");
-extern void func_8003FD10(s32, struct Entity *, s32);
-extern void func_8002A5B4(void *, s32);
+extern void gDispatchSpawnCommand(s32, struct Entity *, s32) __asm__("func_8003FD10");
+extern void gRemoveEntityCommand(void *, s32) __asm__("func_8002A5B4");
 
 /**
  * @brief Walks D_800A8F90 active entities and executes up to four queued 2-byte commands per entity.
@@ -173,7 +173,7 @@ void func_8004CECC(void)
                 break;
             case 0x64:
             case 0x65:
-                func_8003FD10(op, entity, arg);
+                gDispatchSpawnCommand(op, entity, arg);
                 break;
             case 0x3B:
                 if (arg) entity->flags &= ~4;
@@ -207,7 +207,7 @@ void func_8004CECC(void)
                 index++;
                 goto next;
             }
-            func_8002A5B4(entity, index);
+            gRemoveEntityCommand(entity, index);
         next:;
         } while (index < 4 && (op = command->commands[0].op) != 0);
     }

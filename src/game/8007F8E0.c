@@ -9,7 +9,7 @@ extern void *gGameSession __asm__("D_8009FA94");
 
 extern void func_8007FA88(void);
 extern void func_800776B8(void);
-extern void func_8007F02C(void);
+extern void gPackCurrentProgressPassword(void) __asm__("func_8007F02C");
 
 /**
  * @brief Clears the profile page byte and both front-end input flags.

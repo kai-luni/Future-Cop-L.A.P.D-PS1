@@ -21,6 +21,8 @@ struct Unk6BD48State {
 };
 
 extern struct Unk6BD48State *gGameSession __asm__("D_8009FA94");
+s32 gGetScaledWeaponReserveLimit(struct Unk6BD48Obj *obj, struct Unk6BD48Tgt *tgt, s32 flag) __asm__("func_8006BD48");
+
 
 /**
  *  @brief Selects and adjusts a target value according to shared state.
@@ -43,7 +45,7 @@ extern struct Unk6BD48State *gGameSession __asm__("D_8009FA94");
  *  @par Callers
  *  Confirmed: func_8006BDFC, func_8006BE90.
  */
-s32 func_8006BD48(struct Unk6BD48Obj *obj, struct Unk6BD48Tgt *tgt, s32 flag)
+s32 gGetScaledWeaponReserveLimit(struct Unk6BD48Obj *obj, struct Unk6BD48Tgt *tgt, s32 flag)
 {
     s32 val;
     s32 state;

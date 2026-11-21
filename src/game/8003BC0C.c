@@ -11,9 +11,11 @@ struct Unk3BObject {
 };
 
 extern u8 func_8003B838(struct Unk3BObject *object);
-extern s32 func_8003BF50(struct Unk3BObject *object);
+extern s32 gGetEntitySpawnBank(struct Unk3BObject *object) __asm__("func_8003BF50");
 extern void gSpawnTypeAtOwner(struct Unk3BObject *object, u8 kind, s32 arg2,
                           s32 arg3, s32 arg4) __asm__("func_800402DC");
+void gSpawnEntityPrimaryType(struct Unk3BObject *object) __asm__("func_8003BC0C");
+
 
 /**
  * @brief Refreshes an entity's map occupancy through its resolved column
@@ -35,14 +37,14 @@ extern void gSpawnTypeAtOwner(struct Unk3BObject *object, u8 kind, s32 arg2,
  * @par Callers
  * func_800371FC, func_8003FAD4.
  */
-void func_8003BC0C(struct Unk3BObject *object)
+void gSpawnEntityPrimaryType(struct Unk3BObject *object)
 {
     u8 kind;
 
     if (object->tableIndex != 0) {
         kind = func_8003B838(object);
         if (kind != 0) {
-            gSpawnTypeAtOwner(object, kind, 0, func_8003BF50(object), 0);
+            gSpawnTypeAtOwner(object, kind, 0, gGetEntitySpawnBank(object), 0);
         }
     }
 }

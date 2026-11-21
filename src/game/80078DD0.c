@@ -36,7 +36,7 @@ extern s32 gStillRunningState __asm__("D_8009F464");
 extern struct Menu *gFontBankTable __asm__("D_8009F468");
 extern u8 gMenuSetupCalled __asm__("D_8009F8CC");
 extern u8 gAttractDemoSequenceIndex __asm__("D_8009F3F2");
-extern u8 D_8009F3F3 __asm__("D_8009F3F3");
+extern u8 gAttractMovieIndex __asm__("D_8009F3F3");
 extern u8 gFrontEndReturnMode __asm__("D_8009F45A");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern s32 D_8009F8B0, D_8009F8B4;
@@ -58,14 +58,15 @@ extern u32 gPollPadButtons(u32) __asm__("func_8001EF8C");
 extern void func_80077990(void);
 extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
 extern void gSetupFrontEndMenus(s32) __asm__("func_80077AD4");
-extern u8 func_80078C88(void), func_80082D30(s32 *, s32);
+extern u8 func_80078C88(void) __asm__("func_80078C88");
+extern u8 gCheckMenuDirectionRepeat(s32 *, s32) __asm__("func_80082D30");
 extern void func_80082DDC(u32, s32);
 extern void gDecodeButtonEdge(u32, struct InputAction *) __asm__("func_8005780C");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 gTitleScreenConfirmEnabled __asm__("D_8009F46C");
-extern u8 D_8009F3FB __asm__("D_8009F3FB");
+extern u8 gMenuDepthHighlightShade __asm__("D_8009F3FB");
 extern u8 gMenuHighlightColorCycle[] __asm__("D_8009B3D4");
-extern u8 D_8009B3E0[] __asm__("D_8009B3E0");
+extern u8 gMenuDepthHighlightRgb[] __asm__("D_8009B3E0");
 extern u8 gHighlightShadeTable[] __asm__("D_8009F3F8");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern s32 gPendingRowCapture __asm__("D_8009F8C4");
@@ -76,15 +77,16 @@ struct GameContext { u8 pad00[12]; s32 type; u8 pad10[0x4c]; s32 stage; };
 extern struct GameContext *gGameSession __asm__("D_8009FA94");
 extern struct Menu gTitleScreenMenuDescriptor __asm__("D_800A38F8");
 extern struct Menu gProfileNameEntryMenuDescriptor __asm__("D_800A36B8");
-extern struct Menu D_800A3658 __asm__("D_800A3658");
-extern struct Menu D_800A3628 __asm__("D_800A3628");
-extern struct Menu D_800A37D8 __asm__("D_800A37D8");
-extern struct Menu D_800A37A8 __asm__("D_800A37A8");
-extern struct Menu D_800A3688 __asm__("D_800A3688");
+extern struct Menu gTwoPlayerLoadoutMenuDescriptor __asm__("D_800A3658");
+extern struct Menu gOnePlayerLoadoutMenuDescriptor __asm__("D_800A3628");
+extern struct Menu gTwoPlayerMissionSelectMenuDescriptor __asm__("D_800A37D8");
+extern struct Menu gOnePlayerMissionSelectMenuDescriptor __asm__("D_800A37A8");
+extern struct Menu gFrontEndTransitionMenuDescriptor __asm__("D_800A3688");
 extern struct Menu *D_8009B8B8[];
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern s32 gPopMenuPanel(void) __asm__("func_80078740");
-extern void func_80078650(struct Menu *, s32), func_8008227C(void);
+extern void gActivateMenuPanel(struct Menu *, s32) __asm__("func_80078650");
+extern void func_8008227C(void) __asm__("func_8008227C");
 extern void gSelectEnabledMenuItem(s8, s32, s8) __asm__("func_800787D8");
 extern void gEmitTranslucentTileRect(u32, s32, s32, s32, s32, u8) __asm__("func_8001C214");
 extern void func_800493C0(u32, u8, u8, u8);
@@ -92,6 +94,8 @@ extern void gEmitAtlasSpriteSimple(s32,s32,s32,s32,s32,s32,s32,s32,s32) __asm__(
 extern void func_800788F0(void *,s32,s32,s32,s32,s32,s32,s32);
 extern void func_800826A0(void), func_80078B34(s32,s32,s32), func_8001B4A8(s32);
 extern void gDrawSlotStatusLine(void) __asm__("func_80078B98");
+void gUpdateAndDrawFrontEndMenu(void) __asm__("func_80078DD0");
+
 
 /**
  *  @brief Updates controller-driven menu state and renders the active menu.
@@ -122,7 +126,7 @@ extern void gDrawSlotStatusLine(void) __asm__("func_80078B98");
  *  @par Callers
  *  Confirmed: func_80027EE4.
  */
-void func_80078DD0(void)
+void gUpdateAndDrawFrontEndMenu(void)
 {
     u32 buttons[2];
     s8 up[8], down[8], left[8], right[8], accept[8], back[8];
@@ -156,10 +160,10 @@ reset_timer:
             if (gAttractDemoSequenceIndex) active = func_80078C88();
             if (!active) {
                 gFrontEndReturnMode = 5;
-                func_80082DDC(D_8009B324[D_8009F3F3], 0);
+                func_80082DDC(D_8009B324[gAttractMovieIndex], 0);
                 gSetupFrontEndMenus(0);
-                D_8009F3F3++;
-                if (D_8009F3F3 >= 2) { D_8009F3F3 = 0; gAttractDemoSequenceIndex = 1; }
+                gAttractMovieIndex++;
+                if (gAttractMovieIndex >= 2) { gAttractMovieIndex = 0; gAttractDemoSequenceIndex = 1; }
             }
         }
         i = 0;
@@ -208,10 +212,10 @@ reset_timer:
                 if (!D_800A35D8[j].phase) back[idx] = 1;
                 {
                     register u32 arr __asm__("$4");
-                    if (!D_800A3588[j].phase || func_80082D30((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F890)\n\taddiu %0,%0,%%lo(D_8009F890)" : "=r"(arr)); arr; })), 2)) up[idx] = 1;
-                    if (!D_800A3598[j].phase || func_80082D30((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F898)\n\taddiu %0,%0,%%lo(D_8009F898)" : "=r"(arr)); arr; })), 2)) down[idx] = 1;
-                    if (!D_800A35A8[j].phase || func_80082D30((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F8A0)\n\taddiu %0,%0,%%lo(D_8009F8A0)" : "=r"(arr)); arr; })), 1)) left[idx] = 1;
-                    if (!D_800A35B8[j].phase || func_80082D30((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F8A8)\n\taddiu %0,%0,%%lo(D_8009F8A8)" : "=r"(arr)); arr; })), 1)) right[idx] = 1;
+                    if (!D_800A3588[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F890)\n\taddiu %0,%0,%%lo(D_8009F890)" : "=r"(arr)); arr; })), 2)) up[idx] = 1;
+                    if (!D_800A3598[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F898)\n\taddiu %0,%0,%%lo(D_8009F898)" : "=r"(arr)); arr; })), 2)) down[idx] = 1;
+                    if (!D_800A35A8[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F8A0)\n\taddiu %0,%0,%%lo(D_8009F8A0)" : "=r"(arr)); arr; })), 1)) left[idx] = 1;
+                    if (!D_800A35B8[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F8A8)\n\taddiu %0,%0,%%lo(D_8009F8A8)" : "=r"(arr)); arr; })), 1)) right[idx] = 1;
                 }
             }
         }
@@ -231,7 +235,7 @@ reset_timer:
                         if (item->next == (struct Menu *)-1) {
                             if (gPopMenuPanel()) { changed = 1; continue; }
                         } else {
-                            func_80078650(item->next, 1);
+                            gActivateMenuPanel(item->next, 1);
                             changed = 1; continue;
                         }
                     }
@@ -316,7 +320,7 @@ reset_timer:
                     if (item->icon != -1) {
                         color = 0x80;
                         if (j == gFontBankTable->selection[i] && item->enabled) {
-                            if (gPlayerMenuDepth[i]) color = D_8009F3FB + 0x80;
+                            if (gPlayerMenuDepth[i]) color = gMenuDepthHighlightShade + 0x80;
                             else {
                                 s32 frame = gGameClock;
                                 __asm__("lui %0,%%hi(D_8009F3F8)\n\taddiu %0,%0,%%lo(D_8009F3F8)" : "=r"(rgb) : "r"(frame));
@@ -330,7 +334,7 @@ reset_timer:
                         if (j == gFontBankTable->selection[i] && item->enabled) {
                             u8 *rgb2;
                             color = 0x11;
-                            if (gPlayerMenuDepth[i]) rgb2 = D_8009B3E0;
+                            if (gPlayerMenuDepth[i]) rgb2 = gMenuDepthHighlightRgb;
                             else rgb2 = &gMenuHighlightColorCycle[((gGameClock >> 4) & 7) * 3];
                             func_800493C0(color, rgb2[0], rgb2[1], rgb2[2]);
                         } else {
@@ -371,36 +375,36 @@ reset_timer:
                 if (gGameSession->type == 2) {
                     if (gGameSession->stage == 1) {
                         if (gPendingRowCapture) {
-                            D_8009B8B8[0] = &D_800A3658;
-                            func_80078650(&D_800A3688, 1);
-                        } else func_80078650(&D_800A3658, 1);
-                    } else func_80078650(&D_800A3658, 1);
+                            D_8009B8B8[0] = &gTwoPlayerLoadoutMenuDescriptor;
+                            gActivateMenuPanel(&gFrontEndTransitionMenuDescriptor, 1);
+                        } else gActivateMenuPanel(&gTwoPlayerLoadoutMenuDescriptor, 1);
+                    } else gActivateMenuPanel(&gTwoPlayerLoadoutMenuDescriptor, 1);
                 } else {
                     if (gGameSession->stage == 1) {
                         if (gPendingRowCapture) {
-                            D_8009B8B8[0] = &D_800A3628;
-                            func_80078650(&D_800A3688, 1);
-                        } else func_80078650(&D_800A3628, 1);
-                    } else func_80078650(&D_800A3628, 1);
+                            D_8009B8B8[0] = &gOnePlayerLoadoutMenuDescriptor;
+                            gActivateMenuPanel(&gFrontEndTransitionMenuDescriptor, 1);
+                        } else gActivateMenuPanel(&gOnePlayerLoadoutMenuDescriptor, 1);
+                    } else gActivateMenuPanel(&gOnePlayerLoadoutMenuDescriptor, 1);
                 }
                 break;
             case 4:
-                if (gGameSession->type == 2) func_80078650(&D_800A37D8, 1);
-                else func_80078650(&D_800A37A8, 1);
+                if (gGameSession->type == 2) gActivateMenuPanel(&gTwoPlayerMissionSelectMenuDescriptor, 1);
+                else gActivateMenuPanel(&gOnePlayerMissionSelectMenuDescriptor, 1);
                 break;
             case 5:
                 if (gFontBankTable == &gMenuDescriptor) {
                     if (gPendingRowCapture) {
-                        if (gGameSession->type == 2) D_8009B8B8[0] = &D_800A37D8;
-                        else D_8009B8B8[0] = &D_800A37A8;
-                        func_80078650(&D_800A3688, 1);
+                        if (gGameSession->type == 2) D_8009B8B8[0] = &gTwoPlayerMissionSelectMenuDescriptor;
+                        else D_8009B8B8[0] = &gOnePlayerMissionSelectMenuDescriptor;
+                        gActivateMenuPanel(&gFrontEndTransitionMenuDescriptor, 1);
                     } else {
-                        if (gGameSession->type == 2) func_80078650(&D_800A37D8, 1);
-                        else func_80078650(&D_800A37A8, 1);
+                        if (gGameSession->type == 2) gActivateMenuPanel(&gTwoPlayerMissionSelectMenuDescriptor, 1);
+                        else gActivateMenuPanel(&gOnePlayerMissionSelectMenuDescriptor, 1);
                     }
                 } else {
                     D_8009B8B8[0] = (struct Menu *)-1;
-                    func_80078650(&D_800A3688, 1);
+                    gActivateMenuPanel(&gFrontEndTransitionMenuDescriptor, 1);
                 }
                 break;
             }

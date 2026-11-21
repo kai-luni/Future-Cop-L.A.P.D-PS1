@@ -37,6 +37,8 @@ typedef struct {
 
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void func_8001A578(s32 angle, s32 *offset, s32 arg2);
+void gApplyGroundEntityMotion(Unk53514Obj *arg0, Unk53514Arg *arg1) __asm__("func_80053514");
+
 
 /**
  * @brief Carries an actor along with its standing surface entity by applying frame translation and yaw rotation deltas.
@@ -58,7 +60,7 @@ extern void func_8001A578(s32 angle, s32 *offset, s32 arg2);
  * @par Callers
  * Confirmed: func_80053A74 (0x80054344) and func_800549F0 (0x8005540C), passing surface returned by func_80066F78 / Likely: none / Unknown: none.
  */
-void func_80053514(Unk53514Obj *arg0, Unk53514Arg *arg1)
+void gApplyGroundEntityMotion(Unk53514Obj *arg0, Unk53514Arg *arg1)
 {
     register Unk53514Obj *obj __asm__("$18");
     register Unk53514Arg *ent __asm__("$19");

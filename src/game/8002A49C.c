@@ -5,7 +5,7 @@ extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern s32 D_8009F6CC;
 extern u8 gVagmQueueDraining __asm__("D_8009F308");
 extern s32 gVagmRing[] __asm__("D_800A0C50");
-extern void func_8002A31C(s32 arg0, s32 arg1);
+extern void gQueueStreamAssetRelease(s32 arg0, s32 arg1) __asm__("func_8002A31C");
 
 /**
  *  @brief Processes consecutive nonzero entries in a four-slot queue.
@@ -32,7 +32,7 @@ void func_8002A49C(void)
         temp = gVagmRing[D_8009F6CC];
         gVagmQueueDraining = 1;
         while (temp != 0) {
-            func_8002A31C(temp, 0);
+            gQueueStreamAssetRelease(temp, 0);
             gVagmRing[D_8009F6CC] = 0;
             D_8009F6CC = D_8009F6CC + 1;
             if (D_8009F6CC >= 4) {

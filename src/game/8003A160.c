@@ -17,7 +17,7 @@ extern s32 gVectorLength3D(Vec *) __asm__("func_8001A100");
 extern void gEaseVectorQuarter(Vec *, Vec *) __asm__("func_8001A6F8");
 extern void gVectorScaleInPlace(s32, Vec *) __asm__("func_8001AB78");
 extern void func_800457B8(s32, s32);
-extern int func_80050D14(void *, s32, Obj *);
+extern int gUpdatePathMoverMotion(void *, s32, Obj *) __asm__("func_80050D14");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, int) __asm__("func_80010234");
 extern void func_80039E8C(int);
@@ -277,7 +277,7 @@ smooth_force:
         obj->flags &= ~0x400000;
     }
     scale = 0;
-    if (obj->motion[0]) scale = func_80050D14(obj->motion, dt, obj);
+    if (obj->motion[0]) scale = gUpdatePathMoverMotion(obj->motion, dt, obj);
     if (scale) {
         if (obj->model) {
             gGteLoadMatrix(obj->transform);

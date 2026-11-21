@@ -20,6 +20,8 @@ typedef struct EntityList {
 
 extern EntityList gCommandListHead __asm__("D_800A8F90");
 extern s32 gCheckTargetRangeAndCone(Entity *source, Entity *target, s32 maxDist, s32 flags) __asm__("func_8004E5F0");
+Entity *gFindNearestOpposingEntity(Entity *source, Entity *exclude, s32 maxDist, s32 flags) __asm__("func_8006C224");
+
 
 /**
  * @brief Finds the closest eligible opposing entity in D_800A8F90 within range and cone.
@@ -49,7 +51,7 @@ extern s32 gCheckTargetRangeAndCone(Entity *source, Entity *target, s32 maxDist,
  * @par Callers
  * Confirmed: gGuidedProjectileUpdate (0x80035C58, 0x80035E8C, flyer target search), func_8006C34C (0x8006C398, player lock-on acquisition).
  */
-Entity *func_8006C224(Entity *source, Entity *exclude, s32 maxDist, s32 flags)
+Entity *gFindNearestOpposingEntity(Entity *source, Entity *exclude, s32 maxDist, s32 flags)
 {
     Entity *best;
     s32 bestDist;

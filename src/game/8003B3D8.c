@@ -2,6 +2,8 @@
 #include "../../include/game/types.h"
 
 extern u32 gSpawnTypeFlags[] __asm__("D_800A6578");
+u32 *gGetSpawnTypeFlagPtr(u32 column, u32 row) __asm__("func_8003B3D8");
+
 
 /**
  * @brief Computes a pointer to a cell word in the 256-column map grid D_800A6578.
@@ -27,7 +29,7 @@ extern u32 gSpawnTypeFlags[] __asm__("D_800A6578");
  * @par Callers
  * Confirmed: func_8003C404 (0x8003C420), func_8003C4C4 (0x8003C4D4), func_8003C590 (0x8003C620), func_8003D680 (0x8003D914), func_8003E984 (0x8003EA48), and func_800402DC (0x8004032C).
  */
-u32 *func_8003B3D8(u32 column, u32 row)
+u32 *gGetSpawnTypeFlagPtr(u32 column, u32 row)
 {
     u32 rowOffset;
     u32 columnOffset;

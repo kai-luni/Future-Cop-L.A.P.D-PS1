@@ -2,6 +2,8 @@
 #include "../../include/game/types.h"
 
 extern s32 gVSyncCallbackTable[] __asm__("D_8009DD30");
+void gSetVSyncCallbackSlot(u32 index, s32 value) __asm__("func_80091C64");
+
 
 /**
  *  @brief Updates an indexed state value when it differs from the current value.
@@ -21,7 +23,7 @@ extern s32 gVSyncCallbackTable[] __asm__("D_8009DD30");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80091C64(u32 index, s32 value)
+void gSetVSyncCallbackSlot(u32 index, s32 value)
 {
     if (value != gVSyncCallbackTable[index]) {
         gVSyncCallbackTable[index] = value;

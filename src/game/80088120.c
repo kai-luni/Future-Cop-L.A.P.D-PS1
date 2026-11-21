@@ -35,7 +35,7 @@ extern void gStoreImage(Rect88120 *rect, void *buf) __asm__("func_80092F98");
 extern void gLoadImage(Rect88120 *rect, void *buf) __asm__("func_80092F38");
 extern void gMoveImage(Rect88120 *rect, s32 x, s32 y) __asm__("func_80092FF8");
 extern void func_800858F4(s32 value);
-extern void func_80085900(s32 value);
+extern void gSetMoviePresentFlag(s32 value) __asm__("func_80085900");
 extern void gVSyncWait(s32 arg0) __asm__("func_80091270");
 extern void gMoviePresentFrame(void) __asm__("func_80085914");
 extern void func_80085AC4(u32 arg0, u32 arg1);
@@ -208,7 +208,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         gMovieFreeDecodeBuffer(buf8);
         gMovieFreeDecodeBuffer(buf16);
         func_800858F4(page);
-        func_80085900(1);
+        gSetMoviePresentFlag(1);
         gVSyncWait(0);
         gMoviePresentFrame();
         rectA.x = 0;

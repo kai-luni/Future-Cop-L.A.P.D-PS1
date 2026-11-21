@@ -83,6 +83,8 @@ extern void gBuildRotationMatrix(s32 yaw, s32 pitch, s32 roll, void *matrix) __a
 extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 extern void gSetAnimClipTable(u8 *data, void *track, u8 forward, s32 index) __asm__("func_80044988");
 extern void gInitAttackSchedulerSlot(void *in, void *out) __asm__("func_80060668");
+s32 gSetupType27Entity(struct Obj *obj, struct Arg *arg) __asm__("func_8002DFC4");
+
 
 /**
  * @brief Spawn setup shared by the numbered entity handlers: places the object on
@@ -144,7 +146,7 @@ extern void gInitAttackSchedulerSlot(void *in, void *out) __asm__("func_80060668
  * @par Callers
  * func_8002ED7C, case 2 of its switch, after the base spawn hook has run.
  */
-s32 func_8002DFC4(struct Obj *obj, struct Arg *arg)
+s32 gSetupType27Entity(struct Obj *obj, struct Arg *arg)
 {
     struct Source *st;
     s32 sel;

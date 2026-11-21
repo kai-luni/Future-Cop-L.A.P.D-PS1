@@ -14,6 +14,8 @@ extern u8 gFrameTime[] __asm__("D_8009FAA4");
 extern u8 D_8009FAB4[];
 extern u8 gScreenResetFlag[] __asm__("D_8009FA70");
 extern u8 gEffectId[] __asm__("D_8009FACC");
+void gBindGameSessionPointers(void) __asm__("func_80069B1C");
+
 
 /**
  * @brief Binds four global script-VM counter/state buffer addresses onto the mission state structure D_8009FA94.
@@ -35,7 +37,7 @@ extern u8 gEffectId[] __asm__("D_8009FACC");
  * @par Callers
  * Confirmed: func_80069B58 (0x80069CE0 in asm/us/main.s, during script-VM state initialization) / Likely: none / Unknown: none.
  */
-void func_80069B1C(void)
+void gBindGameSessionPointers(void)
 {
     struct Unk69B1C *object;
 

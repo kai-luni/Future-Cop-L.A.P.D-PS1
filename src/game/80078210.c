@@ -23,7 +23,7 @@ extern s32 D_8009F8E0;
 extern s32 D_8009F8E4;
 
 extern void gUpdateMainMenuUnlocks(void) __asm__("func_8007A168");
-extern void func_80078650(struct Unk78210Panel *panel, s32 arg1);
+extern void gActivateMenuPanel(struct Unk78210Panel *panel, s32 arg1) __asm__("func_80078650");
 
 /**
  * @brief Selects and activates the appropriate front-end menu panel for 1-player or 2-player mode and split state.
@@ -52,9 +52,9 @@ void gRouteFrontEndModeMenu(void)
     gUpdateMainMenuUnlocks();
     if (gGameSession[0]->players == 1) {
         if (gGameSession[0]->split == 1) {
-            func_80078650(&D_800A38C8, 0);
+            gActivateMenuPanel(&D_800A38C8, 0);
         } else {
-            func_80078650(&D_800A3868, 0);
+            gActivateMenuPanel(&D_800A3868, 0);
             D_800A3868.visible = 1;
         }
         D_800A377D[0] = 1;
@@ -63,9 +63,9 @@ void gRouteFrontEndModeMenu(void)
         *(volatile s32 *)&D_8009F8E4 = 0;
         *(volatile u8 *)&D_800A377D[0] = 0;
         if (((volatile struct Unk78210Mode *)gGameSession[0])->split == 1) {
-            func_80078650(&D_800A3898, 0);
+            gActivateMenuPanel(&D_800A3898, 0);
         } else {
-            func_80078650(&D_800A3868, 0);
+            gActivateMenuPanel(&D_800A3868, 0);
             D_800A3868.visible = 0;
         }
     }

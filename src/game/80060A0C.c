@@ -63,7 +63,7 @@ extern u32 gHashCheatCode(u32 state) __asm__("func_80060DD8");
 extern void func_8005A0C4(struct Unk5A190Gauge *gauge, s32 value, s32 divisor);
 extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
 extern void func_8006BDFC(struct Actor *actor, s32 mode);
-extern void func_8006BE90(struct Actor *actor, s32 mode, s32 arg2, s32 arg3);
+extern void gRefillWeaponSlotAmmo(struct Actor *actor, s32 mode, s32 arg2, s32 arg3) __asm__("func_8006BE90");
 s32 gApplyPlayerCheatCode(u32 state, s32 index) __asm__("func_80060A0C");
 
 
@@ -138,16 +138,16 @@ s32 gApplyPlayerCheatCode(u32 state, s32 index)
         break;
 
     case 0x01BD6EFD:
-        func_8006BE90(gPlayerEntities[index], 0, -1, 0);
+        gRefillWeaponSlotAmmo(gPlayerEntities[index], 0, -1, 0);
         break;
 
     case 0x03449B84:
         offset = index * 4;
-        func_8006BE90(*(struct Actor **)((u32)gPlayerEntities + offset), 1, -1, 0);
+        gRefillWeaponSlotAmmo(*(struct Actor **)((u32)gPlayerEntities + offset), 1, -1, 0);
         break;
 
     case 0x0058E758:
-        func_8006BE90(gPlayerEntities[index], 2, -1, 0);
+        gRefillWeaponSlotAmmo(gPlayerEntities[index], 2, -1, 0);
         break;
 
     case 0x032D496D:

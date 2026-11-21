@@ -87,7 +87,7 @@ struct Actor306A0 {
 extern u32 gFrameTime __asm__("D_8009FAA4");
 extern void *jtbl_800111DC[];
 
-extern void func_8002FC90(void *, u32, s16, s32, s32);
+extern void gApplyPlayerResupply(void *, u32, s16, s32, s32) __asm__("func_8002FC90");
 extern void func_80069D68(void *, s32, u32, void *);
 extern s32 gSpawnTypeAtOwner(void *, u8, s32, s32, s32) __asm__("func_800402DC");
 extern void *func_800448D8(struct AnimTrack *, s32, s32, u8);
@@ -164,7 +164,7 @@ s32 func_800306A0(struct Actor306A0 *actor, s32 delta)
     if (actor->stateBD == 5) {
         if ((s16)actor->unkCC == 0x190) {
             obj = actor->ptrD0;
-            func_8002FC90(obj, actor->unkB4, actor->unkC4, 0, 0);
+            gApplyPlayerResupply(obj, actor->unkB4, actor->unkC4, 0, 0);
             if (actor->ptr9C != 0 && *(u8 *)actor->ptr9C != 0 && (actor->flags24 & 0x100000) == 0) {
                 func_80069D68(actor->ptr9C, 0, obj->unk14 & 0x7FFF, actor);
             }

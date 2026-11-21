@@ -1,7 +1,7 @@
 // Categories: Gameplay > Entity Update | Game Engine > Command Queue
 #include "game/types.h"
 
-extern void func_8002A5B4(u8 *arg, s32 index);
+extern void gRemoveEntityCommand(u8 *arg, s32 index) __asm__("func_8002A5B4");
 
 /**
  * @brief Drains opcode 0x50 entries from a mover's 4-slot command queue (+0x0C..+0x13) into byte +0xA1.
@@ -40,7 +40,7 @@ void func_8002F280(u8 *arg)
         param = arg[i * 2 + 0xD];
         if (cmd == 0x50) {
             arg[0xA1] = param;
-            func_8002A5B4(arg, i);
+            gRemoveEntityCommand(arg, i);
         } else {
             i++;
         }

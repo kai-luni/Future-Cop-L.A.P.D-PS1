@@ -21,7 +21,7 @@ struct EntityTable {
 
 extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
 
-extern void func_8003BAE4(struct Entity *entity, s32 value);
+extern void gRefreshEntitySlotSpawns(struct Entity *entity, s32 value) __asm__("func_8003BAE4");
 
 /**
  * @brief Runs per-frame deferred updates and grid re-placement across active entities in D_800A8F90.
@@ -58,7 +58,7 @@ void func_8004CE04(void)
             entity->update(4, entity, 0, 0);
         } else if (entity->flags & 0x4000) {
             entity->flags &= ~0x4000;
-            func_8003BAE4(entity, (entity->unk19 >> 3) & 0x1E);
+            gRefreshEntitySlotSpawns(entity, (entity->unk19 >> 3) & 0x1E);
         }
     }
 }

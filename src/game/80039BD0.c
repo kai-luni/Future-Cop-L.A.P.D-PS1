@@ -12,7 +12,7 @@ struct Script {
     u8 unk14[0x10A];
 };
 
-extern void func_8002A5B4(struct Script *script, s32 index);
+extern void gRemoveEntityCommand(struct Script *script, s32 index) __asm__("func_8002A5B4");
 
 /**
  * @brief Drains opcode 0x73 entries from an entity's 4-slot command queue (+0x0C..+0x13) into byte +0x11E.
@@ -53,7 +53,7 @@ void func_80039BD0(struct Script *script)
             i++;
         } else {
             script->unk00[0x11E] = arg;
-            func_8002A5B4(script, i);
+            gRemoveEntityCommand(script, i);
         }
     }
 }

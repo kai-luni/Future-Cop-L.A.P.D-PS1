@@ -5,6 +5,8 @@ extern volatile s32 D_8009F6D8;
 extern s32 D_800A0C60[];
 
 extern void func_80029650(void);
+void gQueueStreamAssetRelease(s32 arg0, s32 arg1) __asm__("func_8002A31C");
+
 
 /**
  *  @brief Inserts a value into a four-entry indexed table when its slot is empty.
@@ -24,7 +26,7 @@ extern void func_80029650(void);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8002A31C(s32 arg0, s32 arg1)
+void gQueueStreamAssetRelease(s32 arg0, s32 arg1)
 {
     if (D_800A0C60[D_8009F6D8] != 0) {
         func_80029650();

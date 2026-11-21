@@ -47,10 +47,12 @@ struct Unk4C0C0Loc {
 
 extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 
-extern struct Unk4C0C0Node *func_8004AAD4(struct Unk4C0C0Owner *owner,
+extern struct Unk4C0C0Node *gFreeDebrisFragment(struct Unk4C0C0Owner *owner,
                                            struct Unk4C0C0Node *previous,
-                                           struct Unk4C0C0Node *node);
+                                           struct Unk4C0C0Node *node) __asm__("func_8004AAD4");
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, void *arg2, s32 row, s32 arg4) __asm__("func_800402DC");
+void gRemoveExpiredDebrisNodes(struct Unk4C0C0Owner *owner) __asm__("func_8004C0C0");
+
 
 /**
  * @brief Ages the attached effect/smoke nodes of an owner and spawns their puffs.
@@ -87,7 +89,7 @@ extern s32 gSpawnTypeAtOwner(void *owner, u8 column, void *arg2, s32 row, s32 ar
  * @par Callers
  * Confirmed: the effect update block (func_8004C324 neighbourhood).
  */
-void func_8004C0C0(struct Unk4C0C0Owner *owner)
+void gRemoveExpiredDebrisNodes(struct Unk4C0C0Owner *owner)
 {
     struct Unk4C0C0Node *previous;
     struct Unk4C0C0Node *next;
@@ -101,7 +103,7 @@ void func_8004C0C0(struct Unk4C0C0Owner *owner)
         next = node->next;
         if (node->unk44 < 0) {
             gLiveNodeCount--;
-            if (func_8004AAD4(owner, previous, node) == 0) {
+            if (gFreeDebrisFragment(owner, previous, node) == 0) {
                 owner->unk0F |= 1;
             }
             if ((gLiveNodeCount & 3) >= 2) {

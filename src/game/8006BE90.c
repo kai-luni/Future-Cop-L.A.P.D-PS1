@@ -15,7 +15,9 @@ struct Object {
 
 struct Target;
 extern struct Target *gRegistryFind(u8 id) __asm__("func_8006AAEC");
-extern s32 func_8006BD48(struct Object *obj, struct Target *tgt, s32 flag);
+extern s32 gGetScaledWeaponReserveLimit(struct Object *obj, struct Target *tgt, s32 flag) __asm__("func_8006BD48");
+s32 gRefillWeaponSlotAmmo(struct Object *obj, s32 idx, s32 step) __asm__("func_8006BE90");
+
 
 /**
  * @brief Refills one controller counter slot toward its scaled registry maximum.
@@ -39,11 +41,11 @@ extern s32 func_8006BD48(struct Object *obj, struct Target *tgt, s32 flag);
  * @par Callers
  * Confirmed: func_8002FC90 (pickup/supply), func_80058714 (compound object reset), func_80060A0C (pickup/cheat dispatch).
  */
-s32 func_8006BE90(struct Object *obj, s32 idx, s32 step)
+s32 gRefillWeaponSlotAmmo(struct Object *obj, s32 idx, s32 step)
 {
     struct Control *ctl = obj->ctl;
     struct Target *tgt = gRegistryFind(ctl->unk90[idx]);
-    s32 max = func_8006BD48(obj, tgt, 0);
+    s32 max = gGetScaledWeaponReserveLimit(obj, tgt, 0);
 
     if (ctl->unk84[idx] < max) {
         if (step >= 0) {

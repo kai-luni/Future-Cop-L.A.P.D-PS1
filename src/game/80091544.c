@@ -9,6 +9,8 @@ struct CallbackTable {
 };
 
 extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
+void gDispatchVSyncCallbackRegistration(void) __asm__("func_80091544");
+
 
 /**
  *  @brief Invokes the callback at offset 0x14 in the current table.
@@ -31,7 +33,7 @@ extern struct CallbackTable *gIrqCallbackTable __asm__("D_8009DD10");
  * without setting arguments in C. No callers appear in src/, so the register
  * arguments passed through and specific operation cannot be proved.
  */
-void func_80091544(void)
+void gDispatchVSyncCallbackRegistration(void)
 {
     gIrqCallbackTable->callback();
 }

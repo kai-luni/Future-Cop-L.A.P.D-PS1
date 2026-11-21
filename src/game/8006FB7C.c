@@ -26,6 +26,8 @@ struct Entity {
             if (e->flags & 1) e->speed[N] = -e->speed[N]; \
         } else { sum = e->V + delta; e->V = sum; } \
     } }
+void gStepBoundedByteChannels(struct Entity *e, int dt) __asm__("func_8006FB7C");
+
 
 /**
  *  @brief Advances six bounded byte values using their signed speeds.
@@ -46,7 +48,7 @@ struct Entity {
  *  @par Callers
  *  Confirmed: func_80070048.
  */
-void func_8006FB7C(struct Entity *e, int dt)
+void gStepBoundedByteChannels(struct Entity *e, int dt)
 {
     register int delta __asm__("$3");
     register int raw __asm__("$2");

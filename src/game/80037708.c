@@ -11,13 +11,13 @@ struct Obj {
     u8 pad2c[0x24]; u8 pos[12]; u8 mat[0x14]; s16 val70;
     u8 pad72[0x4a]; s32 valbc; u8 padc0[8]; struct Data *other;
 };
-extern void func_80037064(struct Obj *, struct Data *, s32);
-extern void func_800371FC(struct Obj *, struct Data *);
+extern void gInitKind15Projectile(struct Obj *, struct Data *, s32) __asm__("func_80037064");
+extern void gStepProjectileMotion(struct Obj *, struct Data *) __asm__("func_800371FC");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern s32 gEntityBaseHandler(s32, struct Obj *, struct Data *, s32) __asm__("func_8002AD58");
 extern s32 func_8002AD58_case9(s32, struct Obj *, struct Data *, s32);
-extern void func_800410BC(void *, s32, s32, struct Data *);
+extern void gApplyRadialContactDamage(void *, s32, s32, struct Data *) __asm__("func_800410BC");
 s32 gHandleProjectileMessage(s32 msg, struct Obj *obj, struct Data *data, s32 arg3) __asm__("func_80037708");
 
 
@@ -65,10 +65,10 @@ s32 gHandleProjectileMessage(s32 msg, struct Obj *obj, struct Data *data, s32 ar
     case 1:
         return 0xD4;
     case 2:
-        func_80037064(obj, data, arg3);
+        gInitKind15Projectile(obj, data, arg3);
         return 0;
     case 6:
-        func_800371FC(obj, data);
+        gStepProjectileMotion(obj, data);
         gGteLoadMatrix((u8 *)obj + 0x2c);
         gGteTransformVerticesWide(obj->sub->data + ((obj->val70 << 4) + 8), obj->mat, 1);
         return 0;
@@ -87,7 +87,7 @@ s32 gHandleProjectileMessage(s32 msg, struct Obj *obj, struct Data *data, s32 ar
         func_8002AD58_case9(msg, obj, data, arg3);
         return 0;
     case 4:
-        func_800410BC(obj->pos, obj->val1a, obj->valbc, obj->other);
+        gApplyRadialContactDamage(obj->pos, obj->val1a, obj->valbc, obj->other);
         *(s32 *)((u8 *)obj + 0x68) = obj->valbc >> 1;
         gEntityBaseHandler(msg, obj, data, arg3);
         return 0;

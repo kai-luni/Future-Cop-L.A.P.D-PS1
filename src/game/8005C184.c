@@ -47,7 +47,7 @@ struct Unk5C184Res {
 };
 
 extern struct Unk5C184Kind *gSpawnMotionContext __asm__("D_8009F374");
-extern s32 func_8003BF50(struct Unk5C184Kind *object);
+extern s32 gGetEntitySpawnBank(struct Unk5C184Kind *object) __asm__("func_8003BF50");
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, struct Unk5C184Msg *msg, s32 row,
                          s32 arg4) __asm__("func_800402DC");
 
@@ -95,7 +95,7 @@ void func_8005C184(struct Unk5C184Vec *arg0, void *arg1, struct Unk5C184Node *no
     msg.vec = *arg0;
 
     gSpawnMotionContext = node->unk08;
-    flag = func_8003BF50(node->unk08);
+    flag = gGetEntitySpawnBank(node->unk08);
     res = gSpawnTypeAtOwner(0, node->unk1E, &msg, flag, 0);
     if (res != 0) {
         kind = node->unk08;

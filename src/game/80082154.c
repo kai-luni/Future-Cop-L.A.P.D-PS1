@@ -7,6 +7,8 @@ extern u8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 
 extern void gQueueMemoryCardFormat(void) __asm__("func_8008204C");
 extern s32 gPopMenuPanel(void) __asm__("func_80078740");
+void gHandleMemoryCardPromptItem(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) __asm__("func_80082154");
+
 
 /**
  * @brief Handles confirmation actions on the memory-card prompt menu panel.
@@ -36,7 +38,7 @@ extern s32 gPopMenuPanel(void) __asm__("func_80078740");
  * @par Callers
  * Confirmed: no direct calls; address placed at 0x8009B9E8 in D_8009B9E4 (bound to D_800A3718 in func_80077AD4 at 0x80077F38) and dispatched via item->handler in func_80078DD0 (0x80079518).
  */
-void func_80082154(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
+void gHandleMemoryCardPromptItem(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     if (arg0 == 3) {
         if (*(u16 *)(gSaveProfileImage + 0x200) == 3) {

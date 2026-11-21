@@ -14,6 +14,8 @@ extern s16 D_800A22E8[];
 extern s32 gSpawnMotionContext __asm__("D_8009F374");
 
 extern void func_8003BE2C(struct Pool *pool, s32 size, s32 count);
+void gInitEffectPools(void) __asm__("func_8005E1BC");
+
 
 /**
  * @brief Creates the two effect pools and clears the attached-effect slots.
@@ -34,7 +36,7 @@ extern void func_8003BE2C(struct Pool *pool, s32 size, s32 count);
  * @par Callers
  * Confirmed: the level/world init path (func_8003F854 neighbourhood).
  */
-void func_8005E1BC(void)
+void gInitEffectPools(void)
 {
     s32 i;
 

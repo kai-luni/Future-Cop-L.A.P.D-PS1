@@ -40,7 +40,7 @@ extern u8 gVmRecordObjects[] __asm__("D_800A3344");
 extern void *func_80019C38(u32 a0, u32 a1, u32 a2, u32 a3);
 extern void *func_80019CA0(u32 a0, u32 a1, u32 a2, u32 a3);
 extern struct Resource *func_80019BF0(s32 group, s32 name);
-extern void func_8006A898(struct Unk6A898 *value);
+extern void gScaleRegistryObjectFields(struct Unk6A898 *value) __asm__("func_8006A898");
 extern void gFreeBlock(struct Unk60838Arg *arg0) __asm__("func_800181D4");
 extern void *memcpy(void *dest, const void *src, u32 count);
 
@@ -82,8 +82,8 @@ void gRegistryLoad(struct Unk60838Arg *arg0)
 
         memcpy(&gVmRecordTable[index], data + 0x10, 0x44);
 
-        func_8006A898((struct Unk6A898 *)(gVmRecordObjects + (u32)(index * 84)));
-        func_8006A898((struct Unk6A898 *)(gVmRecordObjects + (u32)(index * 84) + 0x20));
+        gScaleRegistryObjectFields((struct Unk6A898 *)(gVmRecordObjects + (u32)(index * 84)));
+        gScaleRegistryObjectFields((struct Unk6A898 *)(gVmRecordObjects + (u32)(index * 84) + 0x20));
 
         second = func_80019CA0(arg0->unk00, arg0->unk20, 0x6152534C, arg0->unk1C);
         entry = (struct Unk6AAEC *)(gVmRecordObjects + (u32)(index * 84) - 4);

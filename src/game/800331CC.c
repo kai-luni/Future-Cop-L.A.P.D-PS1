@@ -91,7 +91,7 @@ extern struct Unk331CCGlobal *gGameSession __asm__("D_8009FA94");
 extern struct Unk331CCPlayer *gPlayerEntities __asm__("D_8009FA58");
 extern struct Unk331CCObj *gSinglePlayerEntity __asm__("D_8009F9EC");
 
-extern void func_80032180(s32, struct Unk331CCObj *, struct Unk331CCSrcOuter *, s32);
+extern void gInitHoverEnemy(s32, struct Unk331CCObj *, struct Unk331CCSrcOuter *, s32) __asm__("func_80032180");
 extern struct Unk331CCEntry *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void gInitAttackSchedulerSlot(void *, void *) __asm__("func_80060668");
 extern s32 func_80019668(void);
@@ -145,7 +145,7 @@ s32 gInitStrategicDrone(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOut
     } else {
         src->unk26 = f | 6;
     }
-    func_80032180(arg0, obj, arg2, arg3);
+    gInitHoverEnemy(arg0, obj, arg2, arg3);
     obj->unk134 = gAllocMemory(0xB4, 2);
 
     {

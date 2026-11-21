@@ -74,9 +74,11 @@ struct Unk40E60 {
 extern s32 gLightObjectCount __asm__("D_8009F318");
 extern u8 D_80040874[];
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
-extern void func_8003C14C(struct Unk40E60 *, struct Unk40E60Source *);
+extern void gInitSpawnMotionState(struct Unk40E60 *, struct Unk40E60Source *) __asm__("func_8003C14C");
 extern void gBuildRotationMatrix(s32, s32, s32, struct Unk40E60Work *) __asm__("func_800188D0");
 extern void func_800403D0(void *);
+void *gCreateLightObject(struct Unk40E60Source *src) __asm__("func_80040E60");
+
 
 /**
  *  @brief Allocates and initializes an object from a source record.
@@ -96,7 +98,7 @@ extern void func_800403D0(void *);
  *  @par Callers
  *  Confirmed: func_8003E984.
  */
-void *func_80040E60(struct Unk40E60Source *src)
+void *gCreateLightObject(struct Unk40E60Source *src)
 {
     struct Unk40E60 *dest;
     struct Unk40E60Work work;
@@ -108,7 +110,7 @@ void *func_80040E60(struct Unk40E60Source *src)
     if (dest == 0) {
         return 0;
     }
-    func_8003C14C(dest, src);
+    gInitSpawnMotionState(dest, src);
     dest->unk64 = src->unk34;
     dest->unk12 = src->unk36;
     gBuildRotationMatrix((s32)src->unk38, -(s32)src->unk3A, 0, &work);

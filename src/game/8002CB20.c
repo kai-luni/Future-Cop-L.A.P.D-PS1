@@ -25,7 +25,7 @@ struct Unk2CB20 {
 };
 
 extern void gInitModelInstance(void *instance, struct Model *model, u32 options) __asm__("func_80013AF0");
-extern void func_8002A5B4(struct Unk2CB20 *self, s32 index);
+extern void gRemoveEntityCommand(struct Unk2CB20 *self, s32 index) __asm__("func_8002A5B4");
 
 /**
  * @brief Interprets model-switch script commands: variant select, a flag
@@ -90,6 +90,6 @@ void func_8002CB20(struct Unk2CB20 *self)
             i++;
             continue;
         }
-        func_8002A5B4(self, i);
+        gRemoveEntityCommand(self, i);
     }
 }

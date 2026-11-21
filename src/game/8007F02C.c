@@ -30,6 +30,8 @@ extern void gPackInputRecord(u8 *output, u32 value1, u32 value2, u32 value3,
                           u32 value4, u32 value5, u32 value6, u32 value7,
                           u32 value8, u32 value9, u32 value10, u32 value11,
                           u32 value12, u32 value13) __asm__("func_8007E8D8");
+void gPackCurrentProgressPassword(void) __asm__("func_8007F02C");
+
 
 /**
  *  @brief Pass current mode and selection values to an output builder.
@@ -49,7 +51,7 @@ extern void gPackInputRecord(u8 *output, u32 value1, u32 value2, u32 value3,
  *  @par Callers
  *  Confirmed: func_8007E7A8, func_8007F93C.
  */
-void func_8007F02C(void)
+void gPackCurrentProgressPassword(void)
 {
     gPackInputRecord(gPackedPasswordBytes,
                   gGameSession->unk8C,

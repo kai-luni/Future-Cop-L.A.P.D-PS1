@@ -124,14 +124,14 @@ extern void gGteTransformVerticesWide(s32 *a, s32 *b, s32 c) __asm__("func_80010
 extern void gGteCrossProduct(s32 *a, s32 *b, s32 *out) __asm__("func_80010974");
 extern s32 func_80019FCC(s32 *vector);
 extern s32 gSqrt12(s32 angle) __asm__("func_80095900");
-extern void func_800410BC(s32 *pos, s32 speed, s32 angle, struct Obj35B7C *target);
+extern void gApplyRadialContactDamage(s32 *pos, s32 speed, s32 angle, struct Obj35B7C *target) __asm__("func_800410BC");
 extern s32 gEntityBaseHandler(s32 state, struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3) __asm__("func_8002AD58");
 extern void gProjectileInit(struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3) __asm__("func_80035904");
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern void gSpawnEntitySlotTypes(u8 arg0, struct Obj35B7C *self, s32 arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
 extern void *gFindTargetEntity(struct Obj35B7C *target, u8 arg1, s16 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) __asm__("func_8004E80C");
 extern void *gSpawnDirectShot(struct SpawnInfo35B7C *info, struct Model *model, s32 *vec80, s32 *vec70, struct Obj35B7C *unkC8, struct Obj35B7C *s1p, s32 unk24, s32 arg7, s32 arg8, s32 arg9, s32 arg10, u32 unkE4) __asm__("func_8005E47C");
-extern void *func_8006C224(struct Obj35B7C *target, struct Obj35B7C *arg1, s32 arg2, s32 arg3);
+extern void *gFindNearestOpposingEntity(struct Obj35B7C *target, struct Obj35B7C *arg1, s32 arg2, s32 arg3) __asm__("func_8006C224");
 extern void func_80044B34(struct Obj35B7C *self, void *unkE8, s32 delta, s32 arg3);
 
 /**
@@ -309,7 +309,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
                 if (target->unk16 == 0x12) {
                     target = (struct Obj35B7C *)target->unkB4;
                 }
-                p1 = (struct Obj35B7C *)func_8006C224(target, self->unkC4, self->unkA6 << 8, -1);
+                p1 = (struct Obj35B7C *)gFindNearestOpposingEntity(target, self->unkC4, self->unkA6 << 8, -1);
             } else {
                 p1 = 0;
             }
@@ -380,7 +380,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
                     } else {
                         arg = self->unkC4;
                     }
-                    p2 = (struct Obj35B7C *)func_8006C224(target, arg, self->unkA6 << 8, 0x9C40);
+                    p2 = (struct Obj35B7C *)gFindNearestOpposingEntity(target, arg, self->unkA6 << 8, 0x9C40);
                 } else {
                     p2 = 0;
                 }

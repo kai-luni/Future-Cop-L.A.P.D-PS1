@@ -111,7 +111,7 @@ extern u8 gPresetEntryTable[] __asm__("D_8009AEC4");
 
 extern s32 gComputeBoomDistance(s16 pitch) __asm__("func_800564A8");
 extern s32 gGetGroundHeight(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
-extern void func_8005A070(u8 *object);
+extern void gInitEntityGauge(u8 *object) __asm__("func_8005A070");
 extern s32 gCreateCamera(void) __asm__("func_80017994");
 extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
 extern void gComputeCameraEye(struct Vec3s32 *position, s32 heading, s32 angle, s32 pitch,
@@ -260,7 +260,7 @@ void gResetActorAndPlaceView(struct Arg0 *arg0, struct Arg1 *arg1)
     entity->field310 = 0;
     entity->field3C = 0x2000000;
     entity->field40 = mode;
-    func_8005A070((u8 *)entity);
+    gInitEntityGauge((u8 *)entity);
 
     arg1->fieldBE = 0;
     arg1->fieldC0 = 0;

@@ -16,17 +16,17 @@ extern s8 gRandomTable[] __asm__("D_800A8540");
 
 extern s32 func_80019668(void);
 extern s32 func_80029A60(s32, struct Entity *, s32);
-extern void func_800298EC(s32);
+extern void gAppendScriptEvent(s32) __asm__("func_800298EC");
 extern void func_80029974(s32);
 extern s32 gSendMessageByTag(s32, s32) __asm__("func_8004DE80");
 extern void gSendEntityCommand(struct Entity *, s32, s32, s32) __asm__("func_8004DA84");
 extern void gSendCommandByTag(s32, s32, s32) __asm__("func_8004DC64");
 extern void gSendCommandByGroup(s32, s32, s32) __asm__("func_8004DD68");
 extern void gSendCommandByTeam(s32, s32, s32) __asm__("func_8004DDF4");
-extern void func_8004F0F0(s32, s32, s32);
+extern void gSetPathNodeBlocked(s32, s32, s32) __asm__("func_8004F0F0");
 extern void func_8006158C(s32, s32, s32);
-extern void func_80061600(s32, s32, s32);
-extern void func_800841C4(s32, s32, s32);
+extern void gSendSpawnerCommandByGroup(s32, s32, s32) __asm__("func_80061600");
+extern void gSendSceneNodeCommandById(s32, s32, s32) __asm__("func_800841C4");
 
 
 /**
@@ -313,7 +313,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             func_80029974(a);
             break;
         case 12:
-            func_800298EC(a);
+            gAppendScriptEvent(a);
             break;
         case 20:
             if (a == 0) {
@@ -388,16 +388,16 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             gSendCommandByGroup(c, b, a);
             break;
         case 59:
-            func_8004F0F0(c, b, a);
+            gSetPathNodeBlocked(c, b, a);
             break;
         case 60:
             func_8006158C(c, b, a);
             break;
         case 61:
-            func_80061600(c, b, a);
+            gSendSpawnerCommandByGroup(c, b, a);
             break;
         case 62:
-            func_800841C4(c, b, a);
+            gSendSceneNodeCommandById(c, b, a);
             break;
         default:
             break;

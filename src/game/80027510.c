@@ -62,7 +62,7 @@ extern void gDecodeButtonEdge(u32, struct InputAction *) __asm__("func_8005780C"
 extern void gStopSoundVoiceHandle(s32) __asm__("func_80046A34");
 extern s32 gPlayNonpositionalSoundEffect(s32, struct Game *) __asm__("func_80046C84");
 extern s32 gGetPadType(s32) __asm__("func_8001EF34");
-extern void func_80047690(s32);
+extern void gSetAudioPlaybackEnabled(s32) __asm__("func_80047690");
 extern void func_80069D0C(s32);
 extern void gCullActiveEntitiesSplit(void) __asm__("func_8004E248");
 extern void func_8004CECC(void);
@@ -219,7 +219,7 @@ void gRunSessionFrame(void)
             clock_value = *(volatile s32 *)&gGameClock;
             gFrameTime = clock_value;
             gFrameTickBase = clock_value;
-            func_80047690(1);
+            gSetAudioPlaybackEnabled(1);
         }
         gWasSuspended = 0;
         func_80069D0C(gFrameDelta);

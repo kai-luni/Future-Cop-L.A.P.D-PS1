@@ -9,7 +9,7 @@ extern s32 gSpuBufferPtr __asm__("D_8009F278");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern void gStopTrackedSoundVoice(void) __asm__("func_80023E84");
 extern s32 gValidateSoundVoiceHandle(struct Handle *) __asm__("func_800474C4");
-extern s32 func_800450A4(s32, s8 *);
+extern s32 gComputeTrackedSoundMix(s32, s8 *) __asm__("func_800450A4");
 extern s8 func_80045050(void);
 extern s32 gAllocateSoundChannelVoice(s32, s32, struct Params *, s32) __asm__("func_800220C4");
 extern s32 gReleaseValidatedSoundVoiceHandle(struct Handle *) __asm__("func_800474F0");
@@ -53,7 +53,7 @@ s32 gStartTrackedSoundVoice(void)
     if ((u8)gValidateSoundVoiceHandle(&gAssetHandle) == 1) {
         resource = gAssetHandle.resource;
         if (gAssetHandle.flag) {
-            if (!(u8)func_800450A4(gAssetHandle.id, mix)) {
+            if (!(u8)gComputeTrackedSoundMix(gAssetHandle.id, mix)) {
                 resource = 0;
                 gStopTrackedSoundVoice();
             }

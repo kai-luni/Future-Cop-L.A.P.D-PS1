@@ -13,6 +13,8 @@ struct Unk41DC4 {
 };
 
 extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
+void gSetType34StreamState(struct Unk41DC4 *object, s16 value) __asm__("func_80041DC4");
+
 
 /**
  *  @brief Updates a value and flags on objects of kind 0x22.
@@ -32,7 +34,7 @@ extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
  *  @par Callers
  *  Confirmed: func_80029A60.
  */
-void func_80041DC4(struct Unk41DC4 *object, s16 value)
+void gSetType34StreamState(struct Unk41DC4 *object, s16 value)
 {
     if (object->kind == 0x22) {
         object->valueA4 = value;

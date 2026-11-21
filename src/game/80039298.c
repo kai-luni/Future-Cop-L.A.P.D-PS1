@@ -24,6 +24,8 @@ extern void gInitActorFromSpawn(struct Object *, void *, s32) __asm__("func_8003
 extern s32 gEntityBaseHandler(s32, struct Object *, void *, s32) __asm__("func_8002AD58");
 extern void func_800395A8(s32, struct Child *, void *, s32);
 extern void func_800398EC(s32, struct Child *, void *, s32);
+s32 gHandleMountedPartMsg(s32 message, struct Object *object, void *data, s32 arg3) __asm__("func_80039298");
+
 
 /**
  * @brief Message dispatcher for the container object type.
@@ -59,7 +61,7 @@ extern void func_800398EC(s32, struct Child *, void *, s32);
  * @par Callers
  * Unknown: no direct edge, the object is reached through its handler table.
  */
-s32 func_80039298(s32 message, struct Object *object, void *data, s32 arg3)
+s32 gHandleMountedPartMsg(s32 message, struct Object *object, void *data, s32 arg3)
 {
     register struct Object *obj __asm__("$5") = object;
     register struct Child *child __asm__("$9");

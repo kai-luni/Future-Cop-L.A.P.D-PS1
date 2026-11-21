@@ -55,12 +55,12 @@ extern void *jtbl_800113DC[16];
 
 extern s32 gEntityBaseHandler(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) __asm__("func_8002AD58");
 extern void gInitRailMoverEntity(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) __asm__("func_800378BC");
-extern void func_800379D4(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3);
-extern void func_800381D4(Unk382B4 *arg1);
+extern void gResolveRailMoverContact(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) __asm__("func_800379D4");
+extern void gStepIdleActorTurn(Unk382B4 *arg1) __asm__("func_800381D4");
 extern void func_800448D8(void *arg0, u8 arg1, s32 arg2, s32 arg3);
 extern void gSpawnEntitySlotTypes(u8 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
 extern void func_80037B28(s32 arg0, Unk382B4 *arg1, s32 arg2);
-extern void func_8002A5B4(Unk382B4 *arg0, s32 arg1);
+extern void gRemoveEntityCommand(Unk382B4 *arg0, s32 arg1) __asm__("func_8002A5B4");
 extern s32 func_80044B34(Unk382B4 *arg0, void *arg1, s32 arg2, s32 arg3);
 extern void gSetModelFrame(void *arg0, s32 arg1) __asm__("func_800175F8");
 extern void gStepAttackScheduler(void *arg0, s32 arg1, Unk382B4 *arg2, s32 arg3, s32 arg4) __asm__("func_80060238");
@@ -188,13 +188,13 @@ L8003836C:
     if (arg1->unk16 == 5 && arg1->unk15A == 1) {
         return 0;
     }
-    func_800379D4(arg0, arg1, arg2, arg3);
+    gResolveRailMoverContact(arg0, arg1, arg2, arg3);
 
 L8003839C:
     if ((arg1->unk118 & 0x2000) != 0) {
         if (arg1->unk1C < 0) {
             if (arg1->unk102 > 0) {
-                func_800381D4(arg1);
+                gStepIdleActorTurn(arg1);
             }
         }
     }
@@ -270,7 +270,7 @@ L800384B0:
                     break;
                 }
                 if ((u8)(v - 0x32) < 3) {
-                    func_8002A5B4(arg1, i);
+                    gRemoveEntityCommand(arg1, i);
                 } else {
                     i++;
                 }

@@ -7,7 +7,7 @@ extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s8 gOverlayDelay __asm__("D_8009F874");
 extern u8 D_8009F4AC[];
 
-extern void func_80047690(u8 enable);
+extern void gSetAudioPlaybackEnabled(u8 enable) __asm__("func_80047690");
 extern void gDrawImageResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) __asm__("func_80089D44");
 extern s32 func_8008CD30(u8 *buffer, u8 *format, s32 value, s32 arg3);
 
@@ -40,7 +40,7 @@ void func_80082DDC(s32 arg0, s32 arg1)
     s32 start;
 
     start = gFrameTickCounter;
-    func_80047690(0);
+    gSetAudioPlaybackEnabled(0);
     switch (arg1) {
     case 1:
         func_8008CD30(buf, D_8009F4AC, gMoviePathPrefix, arg0);
@@ -52,7 +52,7 @@ void func_80082DDC(s32 arg0, s32 arg1)
         gDrawImageResource((s32)buf, 4, 0, 0x18, 0x140, 0xC0);
         break;
     }
-    func_80047690(1);
+    gSetAudioPlaybackEnabled(1);
     gOverlayDelay = -1;
     gIdleDeadline += gFrameTickCounter - start;
 }

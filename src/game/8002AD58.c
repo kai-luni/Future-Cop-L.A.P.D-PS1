@@ -12,12 +12,12 @@ struct Unk2AD58 {
     s32 unk80;
 };
 
-extern void func_8002A5F4(struct Unk2AD58 *object, void *data);
+extern void gInitEntityBase(struct Unk2AD58 *object, void *data) __asm__("func_8002A5F4");
 extern s32 func_8002ACB4(struct Unk2AD58 *object, s32 value);
 extern s32 gRetireEntityBase(struct Unk2AD58 *object, s32 arg1, s32 arg2) __asm__("func_8002A810");
-extern s32 func_8002A940(struct Unk2AD58 *object, void *data);
-extern s32 func_8002AA1C(s32 message, struct Unk2AD58 *object, void *hit);
-extern s32 func_8002AB8C(struct Unk2AD58 *object, void *data);
+extern s32 gStepEntityBaseCountdown(struct Unk2AD58 *object, void *data) __asm__("func_8002A940");
+extern s32 gApplyEntityBaseDamage(s32 message, struct Unk2AD58 *object, void *hit) __asm__("func_8002AA1C");
+extern s32 gQueryBaseEntityField(struct Unk2AD58 *object, void *data) __asm__("func_8002AB8C");
 extern s32 gAtan2(s32 x, s32 y) __asm__("func_80095C30");
 s32 gEntityBaseHandler(s32 message, struct Unk2AD58 *object, void *data) __asm__("func_8002AD58");
 
@@ -78,7 +78,7 @@ s32 gEntityBaseHandler(s32 message, struct Unk2AD58 *object, void *data)
     case 1:
         return 0xA0;
     case 2:
-        func_8002A5F4(object, data);
+        gInitEntityBase(object, data);
         return 0;
     case 3:
         if (object->flags & 0x20) {
@@ -94,12 +94,12 @@ s32 gEntityBaseHandler(s32 message, struct Unk2AD58 *object, void *data)
     case 13:
         return 0;
     case 9:
-        return func_8002A940(object, data);
+        return gStepEntityBaseCountdown(object, data);
     case 11:
     case 14:
-        return func_8002AA1C(message, object, data);
+        return gApplyEntityBaseDamage(message, object, data);
     case 12:
-        return func_8002AB8C(object, data);
+        return gQueryBaseEntityField(object, data);
     case 10:
     case 16:
         return 1;

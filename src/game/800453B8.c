@@ -36,7 +36,7 @@ extern struct SoundVoice *gClass2SoundVoiceCount __asm__("D_8009F758");
 extern s32 gPendingSoundVoiceReleaseCount __asm__("D_8009F32C");
 extern u8 gVolumeLimitSelector __asm__("D_8009F738");
 
-extern void func_80044EF8(void);
+extern void gResetSoundBankTables(void) __asm__("func_80044EF8");
 extern void func_8004582C(void);
 extern s32 gAllocReservedStreamVoice(void) __asm__("func_80046AD8");
 
@@ -83,7 +83,7 @@ void func_800453B8(void)
         voice++;
     }
     voice[-1].next = 0;
-    func_80044EF8();
+    gResetSoundBankTables();
     func_8004582C();
     bank = gPlayerSlots;
     for (i = 0; i < 6; i++, bank++) {

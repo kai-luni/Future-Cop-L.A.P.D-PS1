@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gDescriptorRegistryCount __asm__("D_8009F848");
+void gResetDescriptorRegistryCount(void) __asm__("func_8006A88C");
+
 
 /**
  * @brief Clears the 6-entry object/texture descriptor registry count D_8009F848 during mission reset.
@@ -25,7 +27,7 @@ extern s32 gDescriptorRegistryCount __asm__("D_8009F848");
  * @par Callers
  * Confirmed: func_80024D14 (0x80024DD0 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-void func_8006A88C(void)
+void gResetDescriptorRegistryCount(void)
 {
     gDescriptorRegistryCount = 0;
 }

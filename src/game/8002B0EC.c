@@ -3,6 +3,8 @@
 
 extern s32 func_80019668(void);
 extern void func_800448D8(void *track, s32 index, s32 direction, s32 flags);
+void gSetType26AnimationClip(u8 *arg0, u32 arg1) __asm__("func_8002B0EC");
+
 
 /**
  * @brief Switches an actor's animation clip when the requested id differs from +0x15E.
@@ -28,7 +30,7 @@ extern void func_800448D8(void *track, s32 index, s32 direction, s32 flags);
  * @par Callers
  * Confirmed: func_8002B1DC (0x8002B468), func_8002B588 (0x8002B684), func_8002B6C8 (0x8002B764), func_8002B784 (0x8002BA98, 0x8002BB20, 0x8002BF84), func_8002C174 (0x8002C2F0, 0x8002C314).
  */
-void func_8002B0EC(u8 *arg0, u32 arg1)
+void gSetType26AnimationClip(u8 *arg0, u32 arg1)
 {
     u32 v;
 

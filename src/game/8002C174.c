@@ -39,8 +39,10 @@ extern void gNormalizeVector(void *vec) __asm__("func_8001A180");
 extern u8 func_8003B7D8(struct Unk2C174 *obj);
 extern void gSpawnTypeAtOwner(struct Unk2C174 *obj, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern void gRetireEntityBase(struct Unk2C174 *obj, s32 a, s32 b) __asm__("func_8002A810");
-extern void func_8002B0EC(struct Unk2C174 *obj, s32 a);
-extern void func_8002B1DC(struct Unk2C174 *obj, s32 a, s32 b);
+extern void gSetType26AnimationClip(struct Unk2C174 *obj, s32 a) __asm__("func_8002B0EC");
+extern void gDispatchType26Command(struct Unk2C174 *obj, s32 a, s32 b) __asm__("func_8002B1DC");
+void gHandleType26Destruction(struct Unk2C174 *obj) __asm__("func_8002C174");
+
 
 /**
  * @brief Destruction case of the type-26 handler: directed kill against a
@@ -72,7 +74,7 @@ extern void func_8002B1DC(struct Unk2C174 *obj, s32 a, s32 b);
  * @par Callers
  * func_8002C3F0.
  */
-void func_8002C174(struct Unk2C174 *obj)
+void gHandleType26Destruction(struct Unk2C174 *obj)
 {
     register struct Unk2C174 *target __asm__("$7");
     struct Unk2C174Local local;
@@ -118,17 +120,17 @@ void func_8002C174(struct Unk2C174 *obj)
                     sel = 0x44;
                     break;
                 }
-                func_8002B0EC(obj, sel);
-                func_8002B1DC(obj, 7, 0);
+                gSetType26AnimationClip(obj, sel);
+                gDispatchType26Command(obj, 7, 0);
                 break;
             case 8:
                 obj->unk15F = 7;
                 obj->unk24 |= 1;
-                func_8002B0EC(obj, 0x2A);
+                gSetType26AnimationClip(obj, 0x2A);
                 gSpawnTypeAtOwner(obj, 0xD2, 0, 0, 0);
                 break;
             default:
-                func_8002B1DC(obj, 7, 0);
+                gDispatchType26Command(obj, 7, 0);
                 break;
             }
         } else {

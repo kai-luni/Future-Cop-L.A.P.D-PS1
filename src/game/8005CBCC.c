@@ -109,7 +109,7 @@ extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *
 extern void gSolveLeadDirection(s32 *a, s32 *b, s32 c, s32 d, void *e, void *f, s32 g) __asm__("func_8005E2A0");
 extern void gNormalizeVector(s32 *vec) __asm__("func_8001A180");
 extern void gBuildBasisFromAxis(s32 *a, s32 *b) __asm__("func_800193F8");
-extern s32 func_8003BF50(struct Unk5CBCCArg0 *arg0);
+extern s32 gGetEntitySpawnBank(struct Unk5CBCCArg0 *arg0) __asm__("func_8003BF50");
 extern s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern void gAttachedPartEffectHandler(void) __asm__("D_8005CA04");
 
@@ -231,12 +231,12 @@ void gAttachPartEffect(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 
             local.out[0] = first;
         }
 
-        row = func_8003BF50(arg0);
+        row = gGetEntitySpawnBank(arg0);
         base = gSpawnTypeFlags;
         p = &base[(arg5->unk0F << 2) + (row << 10)];
         *p &= 0xFB;
 
-        row = func_8003BF50(arg0);
+        row = gGetEntitySpawnBank(arg0);
         p = &base[(arg5->unk0F << 2) + (row << 10)];
         *p |= 1;
 

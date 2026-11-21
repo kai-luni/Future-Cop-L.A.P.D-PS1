@@ -34,8 +34,10 @@ extern UnkFC90Obj *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern void func_8005A190(UnkFC90Sub *sub, s32 index, s32 value);
 extern void gFlagQuartileChange(UnkFC90Obj *obj, s32 value) __asm__("func_8003BA50");
-extern void func_8006BE90(UnkFC90Obj *obj, s32 index, s32 value, s32 flag);
+extern void gRefillWeaponSlotAmmo(UnkFC90Obj *obj, s32 index, s32 value, s32 flag) __asm__("func_8006BE90");
 extern void func_8006BDFC(UnkFC90Obj *obj, s32 index);
+void gApplyPlayerResupply(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4) __asm__("func_8002FC90");
+
 
 /**
  * @brief Applies a pickup or resupply bitmask payload to a player (and optionally their co-op partner).
@@ -61,7 +63,7 @@ extern void func_8006BDFC(UnkFC90Obj *obj, s32 index);
  * @par Callers
  * Confirmed: func_8002FF6C (proximity pickup trigger), func_800306A0 (resupply actor script).
  */
-void func_8002FC90(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4)
+void gApplyPlayerResupply(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4)
 {
     register UnkFC90Obj *self __asm__("$20");
     register UnkFC90Obj *obj __asm__("$18");
@@ -183,9 +185,9 @@ void func_8002FC90(UnkFC90Obj *arg0, u32 arg1, s32 arg2, s32 *arg3, s32 *arg4)
         for (j = 0; mask != 0; mask >>= 1, j++) {
             if (mask & 1) {
                 if (flag != 0) {
-                    func_8006BE90(obj, j, amount, 1);
+                    gRefillWeaponSlotAmmo(obj, j, amount, 1);
                 } else {
-                    func_8006BE90(obj, j, quotient, 1);
+                    gRefillWeaponSlotAmmo(obj, j, quotient, 1);
                 }
             }
         }

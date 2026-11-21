@@ -15,7 +15,7 @@ struct Entity {
     s16 vx, vy, vz, acceleration;
 };
 
-extern void func_8006FB7C(struct Entity *, s32);
+extern void gStepBoundedByteChannels(struct Entity *, s32) __asm__("func_8006FB7C");
 void gIntegrateActor59List(struct Entity *entity, s32 dt) __asm__("func_80070048");
 
 
@@ -66,7 +66,7 @@ void gIntegrateActor59List(struct Entity *entity, s32 dt)
             entity->y += (entity->vy * scale) >> 8;
             entity->z += (entity->vz * scale) >> 8;
             entity->angle += (entity->rotation * scale) >> 12;
-            func_8006FB7C(entity, dt);
+            gStepBoundedByteChannels(entity, dt);
         }
         entity = entity->next;
     }

@@ -21,7 +21,7 @@ struct Unk60E28Table {
 };
 
 extern struct Unk60E28Table *gRegistryTable __asm__("D_8009F800");
-extern void func_800614BC(struct Unk6158CEntry *entry);
+extern void gApplyRegisteredSpawnerCommand(struct Unk6158CEntry *entry) __asm__("func_800614BC");
 
 /**
  * @brief Looks up a spawner entry by definition id in D_8009F800 and forwards to func_800614BC.
@@ -59,7 +59,7 @@ void func_8006158C(s32 id)
     for (remaining = table->count; remaining > 0; remaining--) {
         entry = *cursor++;
         if (entry->info->def->id == target) {
-            func_800614BC(entry);
+            gApplyRegisteredSpawnerCommand(entry);
             return;
         }
     }

@@ -114,12 +114,14 @@ extern void func_8005C184(struct Vec3 *v, s32 a, struct Target *t);
 extern void gNormalizeVector(struct Vec3 *v) __asm__("func_8001A180");
 extern s32 gVectorDot(struct Vec3 *a, struct Vec3 *b) __asm__("func_8001AB00");
 extern u8 func_8005C2C8(struct Target *t, struct Cand *c);
-extern s32 func_8003BF50(struct Tgt *t);
+extern s32 gGetEntitySpawnBank(struct Tgt *t) __asm__("func_8003BF50");
 extern struct Res *gSpawnTypeAtOwner(void *owner, u8 column, struct Msg *msg, s32 row, s32 arg4) __asm__("func_800402DC");
 
 #define FMUL(d, a, b) do { d = (a); __asm__("mult %0,%1\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "+r"(d) : "r"(b) : "$8", "$9"); } while (0)
 
 #define ASM(d, b) __asm__("mult %0,%1\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "+r"(d) : "r"(b) : "$8", "$9")
+void gSweepBeamSegments(struct Owner *arg0, struct Target *tgt) __asm__("func_8005C344");
+
 
 /**
  * @brief Re-clips a segmented tail to its target: raycasts from the target to
@@ -185,7 +187,7 @@ extern struct Res *gSpawnTypeAtOwner(void *owner, u8 column, struct Msg *msg, s3
  * @par Callers
  * func_8005CA04, message 1, for objects whose tag byte is 0x57.
  */
-void func_8005C344(struct Owner *arg0, struct Target *tgt)
+void gSweepBeamSegments(struct Owner *arg0, struct Target *tgt)
 {
     struct Msg msg;
     struct Vec3 dir;
@@ -319,7 +321,7 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
                 msg.unk49 = 5;
                 msg.unk00 = (void *)(tail->radius << 4);
                 gSpawnMotionContext = tgt->unk08;
-                f = func_8003BF50(tgt->unk08);
+                f = gGetEntitySpawnBank(tgt->unk08);
                 res = gSpawnTypeAtOwner(0, tgt->unk1E, &msg, f, 0);
                 if (res != 0) {
                     kind = tgt->unk08;

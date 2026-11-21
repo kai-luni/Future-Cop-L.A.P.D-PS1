@@ -60,6 +60,8 @@ extern s32 func_8001A750(s32 *a, s32 *b);
 #define MUL16(out, a, b) \
     __asm__ volatile("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
                      : "=r"(out) : "r"(a), "r"(b) : "$8", "$9")
+void gApplyRadialContactDamage(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3) __asm__("func_800410BC");
+
 
 /**
  * @brief Radial blast: walks the global object list, keeps the objects inside a
@@ -124,7 +126,7 @@ extern s32 func_8001A750(s32 *a, s32 *b);
  * func_80036624, func_80036AB4, func_80037708, func_8003E984, func_800413EC,
  * func_80041428, gBeamPartUpdate (two sites).
  */
-void func_800410BC(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3)
+void gApplyRadialContactDamage(struct Vec3s32 *pos, s32 arg1, s32 arg2, struct Arg3 *arg3)
 {
     struct CallArgs args;
     struct Object **list;

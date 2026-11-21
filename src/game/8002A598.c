@@ -3,6 +3,8 @@
 
 extern u32 gInitStateWord __asm__("D_8009FA18");
 extern u32 gGpStateWord __asm__("D_8009F6F0");
+void gClearInitStateWords(void) __asm__("func_8002A598");
+
 
 /**
  * @brief Clears mission-boot state words D_8009FA18 and D_8009F6F0 to zero.
@@ -27,7 +29,7 @@ extern u32 gGpStateWord __asm__("D_8009F6F0");
  * @par Callers
  * Confirmed: func_80024A24 (0x80024C2C, mission boot sequence) / Likely: none / Unknown: none.
  */
-void func_8002A598(void)
+void gClearInitStateWords(void)
 {
     gInitStateWord = 0;
     gGpStateWord = 0;

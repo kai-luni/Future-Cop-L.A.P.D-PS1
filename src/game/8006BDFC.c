@@ -25,7 +25,7 @@ struct Unk6BDFCTgt {
 };
 
 extern struct Unk6BDFCTgt *gRegistryFind(u8 id) __asm__("func_8006AAEC");
-extern s32 func_8006BD48(struct Unk6BDFCObj *obj, struct Unk6BDFCTgt *tgt, s32 flag);
+extern s32 gGetScaledWeaponReserveLimit(struct Unk6BDFCObj *obj, struct Unk6BDFCTgt *tgt, s32 flag) __asm__("func_8006BD48");
 
 #define U8(off)  (*(u8 *)((u32)ctl + idx + (off)))
 #define S16(off) (*(s16 *)((u32)ctl + (idx << 1) + (off)))
@@ -72,5 +72,5 @@ void func_8006BDFC(struct Unk6BDFCObj *obj, s32 idx)
         tgt->unk44 = t;
         tgt->unk50 = t2;
     }
-    S16(0x8A) = func_8006BD48(obj, tgt, 1);
+    S16(0x8A) = gGetScaledWeaponReserveLimit(obj, tgt, 1);
 }

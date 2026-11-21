@@ -20,7 +20,7 @@ extern u8 gFrameDeltaRemainder __asm__("D_8009F693");
 extern u8 *gFocusPositions[] __asm__("D_8009F9A0");
 
 extern void func_80057864(void);
-extern s32 func_80059DB8(void);
+extern s32 gStepDemoInputPlayback(void) __asm__("func_80059DB8");
 extern void gStepPendingMessages(s32 elapsed) __asm__("func_8004DB74");
 extern void func_80063568(s32 arg);
 extern void gStepAnimations(s32 arg) __asm__("func_800136C8");
@@ -96,7 +96,7 @@ void gStepGameplayFrameTime(void)
 
     func_80057864();
     if (gDemoPlayback > 0) {
-        value = func_80059DB8();
+        value = gStepDemoInputPlayback();
         gFrameDelta = value;
         if (value < 0) {
             gScreenState = 5;

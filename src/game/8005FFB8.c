@@ -29,7 +29,7 @@ struct Script5FFB8 {
 
 extern struct Entry5FFB8 gEffectKeyTable[] __asm__("D_800A2300");
 extern s32 gFindEffectKeyIndex(s32 key) __asm__("func_8005FF70");
-extern void func_8002A5B4(struct Script5FFB8 *script, s32 index);
+extern void gRemoveEntityCommand(struct Script5FFB8 *script, s32 index) __asm__("func_8002A5B4");
 void gApplyAttackCommands(struct Obj5FFB8 *obj, struct Script5FFB8 *script) __asm__("func_8005FFB8");
 
 
@@ -104,6 +104,6 @@ void gApplyAttackCommands(struct Obj5FFB8 *obj, struct Script5FFB8 *script)
             i++;
             continue;
         }
-        func_8002A5B4(script, i);
+        gRemoveEntityCommand(script, i);
     }
 }

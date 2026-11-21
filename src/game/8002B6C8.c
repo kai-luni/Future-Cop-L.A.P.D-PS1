@@ -21,7 +21,9 @@ struct Unk8002B6C8 {
 
 extern s32 gAtan2(s32 x, s32 z) __asm__("func_80095C30");
 extern void gTurnEntityToAngle(struct Unk8002B6C8 *object, s32 angle, s32 arg2) __asm__("func_8002B588");
-extern void func_8002B0EC(struct Unk8002B6C8 *object, s32 arg1);
+extern void gSetType26AnimationClip(struct Unk8002B6C8 *object, s32 arg1) __asm__("func_8002B0EC");
+void gFaceType26Target(struct Unk8002B6C8 *object, struct Unk8002B6C8 *other, s32 arg2) __asm__("func_8002B6C8");
+
 
 /**
  * @brief Turns an actor toward another object when the bearing error is
@@ -47,7 +49,7 @@ extern void func_8002B0EC(struct Unk8002B6C8 *object, s32 arg1);
  * @par Callers
  * func_8002B784.
  */
-void func_8002B6C8(struct Unk8002B6C8 *object, struct Unk8002B6C8 *other, s32 arg2)
+void gFaceType26Target(struct Unk8002B6C8 *object, struct Unk8002B6C8 *other, s32 arg2)
 {
     struct Vec3s32 delta;
     s32 angle;
@@ -61,6 +63,6 @@ void func_8002B6C8(struct Unk8002B6C8 *object, struct Unk8002B6C8 *other, s32 ar
     if ((((diff >> 31) + diff) ^ (diff >> 31)) > 0x40) {
         gTurnEntityToAngle(object, angle, arg2);
     } else if (object->unk15E != object->unk164) {
-        func_8002B0EC(object, object->unk164);
+        gSetType26AnimationClip(object, object->unk164);
     }
 }

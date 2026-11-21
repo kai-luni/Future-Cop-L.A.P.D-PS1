@@ -4,6 +4,8 @@
 extern void func_800382B4(s32 arg0);
 extern void gInitAttackSchedulerSlot(u8 *in, u8 *out) __asm__("func_80060668");
 extern u8 *func_80039418(u8 *object, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6);
+s32 gInitType28Entity(s32 arg0, u8 *arg1, u8 *arg2) __asm__("func_800397AC");
+
 
 /**
  * @brief Attaches up to four child objects to a parent from its spawn table.
@@ -38,7 +40,7 @@ extern u8 *func_80039418(u8 *object, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 a
  * @par Callers
  * Likely: func_800398EC (sibling in the same block).
  */
-s32 func_800397AC(s32 arg0, u8 *arg1, u8 *arg2)
+s32 gInitType28Entity(s32 arg0, u8 *arg1, u8 *arg2)
 {
     s32 i;
     register u8 *out __asm__("$19");

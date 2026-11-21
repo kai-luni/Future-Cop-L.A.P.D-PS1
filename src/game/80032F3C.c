@@ -24,7 +24,7 @@ struct Unk32F3C {
 
 extern u32 func_80019668(void);
 extern void gVectorScaleInPlace(s32 arg0, void *arg1) __asm__("func_8001AB78");
-extern s32 func_80032180(u32 arg0, void *arg1, s32 arg2, s32 arg3);
+extern s32 gInitHoverEnemy(u32 arg0, void *arg1, s32 arg2, s32 arg3) __asm__("func_80032180");
 extern s32 gUpdateHoverEnemy(s32 arg0, void *arg1, s32 arg2) __asm__("func_800324E0");
 extern s32 gEntityBaseHandler(u32 message, void *object, s32 arg2, s32 arg3) __asm__("func_8002AD58");
 s32 gHandleTumblingFlyer(u32 arg0, struct Unk32F3C *obj, s32 arg2, s32 arg3) __asm__("func_80032F3C");
@@ -68,7 +68,7 @@ s32 gHandleTumblingFlyer(u32 arg0, struct Unk32F3C *obj, s32 arg2, s32 arg3)
     case 1:
         return 0x134;
     case 2:
-        return func_80032180(2, obj, arg2, arg3);
+        return gInitHoverEnemy(2, obj, arg2, arg3);
     case 6:
         return gUpdateHoverEnemy(6, obj, arg2);
     case 4:

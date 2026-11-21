@@ -1,3 +1,5 @@
+void gIgnoreTagCommand69(void) __asm__("func_8003FD6C");
+
 // Categories: Game Engine > Unclassified
 /**
  *  @brief Performs no operation.
@@ -15,6 +17,6 @@
  *  @par Callers
  *  Confirmed: func_8004DC64.
  */
-void func_8003FD6C(void)
+void gIgnoreTagCommand69(void)
 {
 }

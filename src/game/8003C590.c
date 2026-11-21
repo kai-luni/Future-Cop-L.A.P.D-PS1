@@ -20,9 +20,9 @@ typedef struct UnkC590Cell {
 } UnkC590Cell;
 
 extern UnkC590Cell *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
-extern u32 *func_8003B3D8(u32 column, u32 row);
+extern u32 *gGetSpawnTypeFlagPtr(u32 column, u32 row) __asm__("func_8003B3D8");
 extern void gOrGridCellFlags(u8 column, s32 row, u8 bits) __asm__("func_8003C4C4");
-extern void func_8003C500(s32 column, s32 stop, s32 row);
+extern void gMarkSpawnCycleFlags(s32 column, s32 stop, s32 row) __asm__("func_8003C500");
 
 /**
  * @brief Traverses object-descriptor chains in one row of D_800A7040 and flags active or cyclic nodes in D_800A6578.
@@ -85,7 +85,7 @@ outer_loop:
     current = i;
     __asm__("" : "=r"(current) : "0"(current));
     cell = (UnkC590Cell *)(u32)(u8)current;
-    if ((*(u8 *)func_8003B3D8((u32)cell, row) & 4) != 0) {
+    if ((*(u8 *)gGetSpawnTypeFlagPtr((u32)cell, row) & 4) != 0) {
         goto next_outer;
     }
     if ((u32)cell == 0) {
@@ -140,7 +140,7 @@ after_mark:
         }
         if (tableBase[cell->next] == i) {
             tableBase[(u8)current] = 0;
-            func_8003C500((u8)i, (u8)current, row);
+            gMarkSpawnCycleFlags((u8)i, (u8)current, row);
             goto next_outer;
         }
     }

@@ -96,7 +96,7 @@ extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 extern struct Unk5BCD4Node *func_8005BCD4(struct Unk5BCD4Pool *pool, void *target);
 extern struct ListNode *gTakePoolNode(struct ListNode *node) __asm__("func_8003BEF0");
 extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
-extern s32 func_8003BF50(struct Unk402DCOwner *owner);
+extern s32 gGetEntitySpawnBank(struct Unk402DCOwner *owner) __asm__("func_8003BF50");
 extern s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
 struct Locals5BDE4 {
@@ -234,7 +234,7 @@ void gAttachNearPlayerEffect(struct Unk402DCOwner *owner, s32 arg1, struct Unk5B
                 gTransformPartVertex(instance, (s8)part, &node->unk2C);
             }
 
-            row = func_8003BF50(owner);
+            row = gGetEntitySpawnBank(owner);
     {
         u8 *p = gSpawnTypeFlags;
         p[(source->unk0F << 2) + (row << 10)] &= 0xFB;

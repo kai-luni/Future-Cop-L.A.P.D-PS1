@@ -61,7 +61,7 @@ struct Obj2 {
     u16 unk8E;
 };
 
-extern s32 func_8005C344(struct Owner *owner, struct Target *t);
+extern s32 gSweepBeamSegments(struct Owner *owner, struct Target *t) __asm__("func_8005C344");
 
 /**
  * @brief Message handler for beam/segment-sweep attack instances installed at node +0x24 by gAttachPartEffect.
@@ -116,7 +116,7 @@ s32 func_8005CA04(u32 msg, struct Obj2 *obj, s32 arg2, s32 arg3)
                 t->flags |= 2;
                 obj->unkF |= 1;
             }
-            func_8005C344((struct Owner *)obj, t);
+            gSweepBeamSegments((struct Owner *)obj, t);
         }
         return 0;
     case 2:

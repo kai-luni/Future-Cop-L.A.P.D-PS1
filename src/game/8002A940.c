@@ -38,6 +38,8 @@ struct Unk2A940 {
 
 extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
 extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk2A940 *arg3);
+s32 gStepEntityBaseCountdown(struct Unk2A940 *object, struct Unk2A940Arg2 *arg) __asm__("func_8002A940");
+
 
 /**
  * @brief Decrements an entity countdown and reacts when it expires.
@@ -69,7 +71,7 @@ extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk2A940 *arg3)
  * @par Callers
  * Confirmed: func_8002AD58 (base entity handler, message 0x0E).
  */
-s32 func_8002A940(struct Unk2A940 *object, struct Unk2A940Arg2 *arg)
+s32 gStepEntityBaseCountdown(struct Unk2A940 *object, struct Unk2A940Arg2 *arg)
 {
     s32 delta;
     s32 previous;

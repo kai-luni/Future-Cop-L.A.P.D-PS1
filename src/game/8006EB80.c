@@ -69,7 +69,7 @@ typedef struct {
 
 extern u8 gDomeMeshEffectHandler[] __asm__("D_8006E814");
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
-extern void func_8003C14C(Dest6EB80 *, Source6EB80 *);
+extern void gInitSpawnMotionState(Dest6EB80 *, Source6EB80 *) __asm__("func_8003C14C");
 
 /**
  * @brief Allocates and initializes a 0xA0-byte kind-0x5C effect/mesh object from a source spawn template.
@@ -143,7 +143,7 @@ void *func_8006EB80(Source6EB80 *src)
     dest->unk82 = 0x19;
     dest->unk84 = initialFive;
 
-    func_8003C14C(dest, src);
+    gInitSpawnMotionState(dest, src);
 
     dest->unk24 = gDomeMeshEffectHandler;
     dest->unk90 = src->unk3C;

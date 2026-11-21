@@ -24,6 +24,8 @@ struct Game {
 
 extern struct Game *gGameSession __asm__("D_8009FA94");
 extern s32 gSqrt12(s32 value) __asm__("func_80095900");
+s32 gComputeLandingDamage(struct Object *obj, s32 val) __asm__("func_80052F54");
+
 
 /**
  * @brief Landing-impact damage curve scaled by object and difficulty.
@@ -60,7 +62,7 @@ extern s32 gSqrt12(s32 value) __asm__("func_80095900");
  * (on-foot locomotion tick); both add the result to the impact total and
  * switch the actor to state 0x12 when the landing speed exceeds the limit.
  */
-s32 func_80052F54(struct Object *obj, s32 val)
+s32 gComputeLandingDamage(struct Object *obj, s32 val)
 {
     s32 *modePtr;
     s32 mode;

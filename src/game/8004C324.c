@@ -17,7 +17,7 @@ extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void func_8003A8C0(s32, s32, struct Owner *, s32);
 extern s32 func_8003C7B8(s32, struct Owner *, s32, s32);
 extern s32 func_8003C980(s32, struct Owner *, s32, s32);
-extern struct Node *func_8004AAD4(struct Owner *, struct Node *, struct Node *);
+extern struct Node *gFreeDebrisFragment(struct Owner *, struct Node *, struct Node *) __asm__("func_8004AAD4");
 extern u8 gLaunchDebrisObject(struct Owner *, s32) __asm__("func_8004ABE4");
 extern u8 gSpawnMeshFractureDebris(struct Owner *, s32) __asm__("func_8004B5F8");
 
@@ -130,7 +130,7 @@ case10:
     while (node) {
         gLiveNodeCount--;
         next = node->next;
-        if (!func_8004AAD4(obj, 0, node)) break;
+        if (!gFreeDebrisFragment(obj, 0, node)) break;
         node = next;
     }
     gFreeBlock(obj);

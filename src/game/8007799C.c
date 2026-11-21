@@ -15,6 +15,8 @@ extern u8 gSetupDoneFlag __asm__("D_8009F3E4");
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern s32 func_8008CCC0(u8 *s);
 extern void func_8008CCB0(void *dst, u8 *src);
+void gSetupTitleScreenPlayerNames(void) __asm__("func_8007799C");
+
 
 /**
  * @brief One-time front-end name setup: resolves text ids 0xC8/0xD2 into the two player name buffers with default fallbacks, and arms a deadline word.
@@ -38,7 +40,7 @@ extern void func_8008CCB0(void *dst, u8 *src);
  * @par Callers
  * Confirmed: func_80077AD4 installs func_80077990 as the unk10 init callback of menu state D_800A38F8 (address taken at 0x80077B40); a direct call to the fragment sits at 0x80078F94 in a non-catalog routine. Unknown: the remaining package callers have no call edges.
  */
-void func_8007799C(void)
+void gSetupTitleScreenPlayerNames(void)
 {
     register u32 base __asm__("$2");
     register s32 flag __asm__("$3");

@@ -1,5 +1,5 @@
 // Categories: Gameplay > Player | Platform > Audio
-extern int func_8005908C(int mode);
+extern int gHandlePlayerEntityMsg(int mode) __asm__("func_8005908C");
 
 /**
  * @brief Forwards mode 5 to the sound/volume handler.
@@ -22,7 +22,7 @@ extern int func_8005908C(int mode);
 int func_800578B4(int mode)
 {
     if (mode == 5) {
-        return func_8005908C(5);
+        return gHandlePlayerEntityMsg(5);
     }
     return 0;
 }

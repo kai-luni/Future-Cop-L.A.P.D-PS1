@@ -58,7 +58,7 @@ extern void *func_80019CA0(u32 a0, u32 a1, u32 a2, u32 a3);
 extern s32 func_80019668(void);
 extern void *func_80019C38(u32 a0, u32 a1, u32 a2, u32 a3);
 extern struct Resource *func_80019BF0(s32 group, s32 name);
-extern s32 func_8002AE54(u8 arg0);
+extern s32 gGetEntityHandlerForType(u8 arg0) __asm__("func_8002AE54");
 void gRegisterUnitSpawner(struct Unk60E74Arg *arg0) __asm__("func_80060E74");
 
 
@@ -140,6 +140,6 @@ void gRegisterUnitSpawner(struct Unk60E74Arg *arg0)
         }
     }
 
-    data->unk20 = func_8002AE54(*(u8 *)(data->unk28 + 4));
+    data->unk20 = gGetEntityHandlerForType(*(u8 *)(data->unk28 + 4));
     data->unk2C = arg0;
 }

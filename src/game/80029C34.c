@@ -44,6 +44,8 @@ extern s32 gIsAudioStreamReady(void) __asm__("func_80029BE4");
 extern void func_8002A49C(void);
 extern void func_8002A408(void);
 extern void func_80029520(void);
+void gServiceStreamRequestQueue(void) __asm__("func_80029C34");
+
 
 /**
  *  @brief Processes the current entry of an eight-slot request queue when permitted.
@@ -65,7 +67,7 @@ extern void func_80029520(void);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80029C34(void)
+void gServiceStreamRequestQueue(void)
 {
     State29C34 *state;
     s32 index;

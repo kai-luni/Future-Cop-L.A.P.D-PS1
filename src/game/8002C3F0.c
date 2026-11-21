@@ -17,12 +17,12 @@ typedef struct {
 
 extern void *jtbl_8001104C[];
 
-extern void func_800379D4(s32 message, Object8002C3F0 *object, Data8002C3F0 *data);
-extern void func_8002BFB4(Object8002C3F0 *object, void *data);
-extern void func_8002AF94(s32 message, Object8002C3F0 *object, Data8002C3F0 *data);
+extern void gResolveRailMoverContact(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_800379D4");
+extern void gConsiderType26Target(Object8002C3F0 *object, void *data) __asm__("func_8002BFB4");
+extern void gSetupType26Entity(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_8002AF94");
 extern void func_80037B28(s32 message, Object8002C3F0 *object, Data8002C3F0 *data);
 extern s32 gEntityBaseHandler(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_8002AD58");
-extern void func_8002C174(Object8002C3F0 *object);
+extern void gHandleType26Destruction(Object8002C3F0 *object) __asm__("func_8002C174");
 extern void func_8002B784(Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3);
 extern s32 func_8002ACB4(Object8002C3F0 *object, s32 value);
 s32 gHandleType26Entity(s32 message, Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3) __asm__("func_8002C3F0");
@@ -83,7 +83,7 @@ L_C438:
     return 0x168;
 
 L_C440:
-    func_8002AF94(message, s0, s1);
+    gSetupType26Entity(message, s0, s1);
 L_C44C:
     return 0;
 
@@ -103,14 +103,14 @@ L_C488:
         return 0;
     }
     gEntityBaseHandler(message, s0, s1);
-    func_8002BFB4(s0, s1->unk08);
+    gConsiderType26Target(s0, s1->unk08);
     return 0;
 
 L_C4B4:
     if (s0->unk15F != 7) {
         s2 = gEntityBaseHandler(message, s0, s1);
         if (s2 > 0) {
-            func_8002BFB4(s0, s1->unk08);
+            gConsiderType26Target(s0, s1->unk08);
         }
     }
     return s2;
@@ -119,7 +119,7 @@ L_C4EC:
     if (s0->unk15F == 7) {
         return 0;
     }
-    func_8002C174(s0);
+    gHandleType26Destruction(s0);
     return 0;
 
 L_C50C:

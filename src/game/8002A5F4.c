@@ -53,6 +53,8 @@ struct Object {
 };
 extern void func_80013BD8(void *, void *, s32);
 extern void func_8003FA34(struct Object *);
+void gInitEntityBase(struct Object *self, struct Args *args) __asm__("func_8002A5F4");
+
 
 /**
  * @brief The base spawn implementation (message 2): copies the source
@@ -86,7 +88,7 @@ extern void func_8003FA34(struct Object *);
  * @par Callers
  * func_8002AD58.
  */
-void func_8002A5F4(struct Object *self, struct Args *args)
+void gInitEntityBase(struct Object *self, struct Args *args)
 {
     struct Source *src;
     struct Offset *off;

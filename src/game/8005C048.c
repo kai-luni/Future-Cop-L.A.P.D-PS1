@@ -21,7 +21,7 @@ struct Unk5C048Event {
     u8 column;
 };
 
-extern s32 func_8003BF50(void *object);
+extern s32 gGetEntitySpawnBank(void *object) __asm__("func_8003BF50");
 extern struct Unk5C048Result *gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row,
                                             s32 arg4) __asm__("func_800402DC");
 
@@ -55,7 +55,7 @@ void gWriteCellEventValue(void *object, struct Unk5C048Event *event)
 {
     struct Unk5C048Result *result;
 
-    result = gSpawnTypeAtOwner(object, event->column, 0, func_8003BF50(object), 0);
+    result = gSpawnTypeAtOwner(object, event->column, 0, gGetEntitySpawnBank(object), 0);
     if (result != 0 && result->def->kind == 0x5C) {
         result->def->value = event->value;
     }

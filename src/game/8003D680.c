@@ -77,7 +77,7 @@ extern struct Unk3D680 *gAnchorNodeList __asm__("D_8009F320");
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern u32 *func_8003B3D8(u32 column, u32 row);
+extern u32 *gGetSpawnTypeFlagPtr(u32 column, u32 row) __asm__("func_8003B3D8");
 struct Unk3D680 *gCreateModelNode(struct Unk3D680Source *source, u8 type, s32 row, struct Unk3D680Parent *parent, s32 arg4, u8 arg5) __asm__("func_8003D680");
 
 
@@ -236,7 +236,7 @@ struct Unk3D680 *gCreateModelNode(struct Unk3D680Source *source, u8 type, s32 ro
     }
 
     column = type & 0xFF;
-    result = func_8003B3D8(column, row);
+    result = gGetSpawnTypeFlagPtr(column, row);
     entry = (struct Unk3D680Entry *)gSpawnRecordMap[row][column];
 
     if (entry != 0 && result != 0 &&

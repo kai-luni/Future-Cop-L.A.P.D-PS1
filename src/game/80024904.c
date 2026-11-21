@@ -16,7 +16,7 @@ extern void func_8001B2C8(s32, s32);
 extern void func_80029F50(void *);
 extern void func_8004783C(void);
 extern void func_80069B58(void);
-extern void func_800780DC(void);
+extern void gInitFrontEndSubsystems(void) __asm__("func_800780DC");
 extern void func_8008CCB0(void *, s32);
 
 /**
@@ -66,5 +66,5 @@ void gLoadFrontEndModule(s32 arg)
     func_8004783C();
     func_80029F50(gModuleNameBuffer);
     gScreenResetFlag = 0;
-    func_800780DC();
+    gInitFrontEndSubsystems();
 }

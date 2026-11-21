@@ -8,6 +8,8 @@ typedef struct { char p[0x50]; s32 x,y,z; } Vec;
 #define MUL(o,a,b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(o) : "r"(a),"r"(b) : "$8","$9")
 #define MULN(o,a,b) __asm__("nop\n\tmult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(o) : "r"(a),"r"(b) : "$8","$9")
 #define MULU(o,a,b) __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(o) : "r"(a),"r"(b) : "$8","$9")
+void gApplyPathCurveOffsets(Obj *obj, s32 input, Vec *vec) __asm__("func_8004FFD0");
+
 
 /**
  *  @brief Updates object angles and accumulates a scaled vector contribution.
@@ -29,7 +31,7 @@ typedef struct { char p[0x50]; s32 x,y,z; } Vec;
  *  @par Callers
  *  Confirmed: func_8005027C.
  */
-void func_8004FFD0(Obj *obj, s32 input, Vec *vec) {
+void gApplyPathCurveOffsets(Obj *obj, s32 input, Vec *vec) {
  register Obj *p __asm__("$10") = obj;
  register s32 size __asm__("$7");
  register s32 absin __asm__("$2");

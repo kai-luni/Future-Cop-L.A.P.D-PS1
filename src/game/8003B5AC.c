@@ -14,6 +14,8 @@ struct Entry {
 };
 
 extern struct Entry *gSlotSpawnDescs[] __asm__("D_800A0C70");
+u8 gGetSlotSpawnByte(u8 index, u8 slot, s32 mode) __asm__("func_8003B5AC");
+
 
 /**
  *  @brief Reads a mode-selected byte from an indexed entry item.
@@ -36,7 +38,7 @@ extern struct Entry *gSlotSpawnDescs[] __asm__("D_800A0C70");
  *  @par Callers
  *  Confirmed: func_8003BAE4.
  */
-u8 func_8003B5AC(u8 index, u8 slot, s32 mode)
+u8 gGetSlotSpawnByte(u8 index, u8 slot, s32 mode)
 {
     struct Entry *entry = gSlotSpawnDescs[index];
 

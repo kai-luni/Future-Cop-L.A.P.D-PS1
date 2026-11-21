@@ -29,6 +29,8 @@ extern void func_800382B4(void *arg);
 extern void func_800448D8(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern u32 func_80019668(void);
 extern void *jtbl_80010FAC[8];
+void gSetupType26Entity(void *a0, u8 *s1, S08002AF94 *s0) __asm__("func_8002AF94");
+
 
 /**
  * @brief Handles message-2 spawn setup for entity class 26.
@@ -54,7 +56,7 @@ extern void *jtbl_80010FAC[8];
  * @par Callers
  * Confirmed: func_8002C3F0 (0x8002C444, message 2 of entity class 26).
  */
-void func_8002AF94(void *a0, u8 *s1, S08002AF94 *s0)
+void gSetupType26Entity(void *a0, u8 *s1, S08002AF94 *s0)
 {
     Def8002AF94 *def;
     u32 r;

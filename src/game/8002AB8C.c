@@ -20,6 +20,8 @@ struct Unk2AB8C {
 extern struct Unk2AB8C *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern s32 func_8001A4E8(s32 *a, s32 *b);
+s32 gQueryBaseEntityField(struct Unk2AB8C *object, s32 query) __asm__("func_8002AB8C");
+
 
 /**
  * @brief Returns a requested field or the clear distance to the two player objects.
@@ -49,7 +51,7 @@ extern s32 func_8001A4E8(s32 *a, s32 *b);
  * @par Callers
  * Confirmed: func_8002AD58 (base entity handler).
  */
-s32 func_8002AB8C(struct Unk2AB8C *object, s32 query)
+s32 gQueryBaseEntityField(struct Unk2AB8C *object, s32 query)
 {
     s32 min;
     s32 i;

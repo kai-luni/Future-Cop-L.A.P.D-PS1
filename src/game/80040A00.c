@@ -12,7 +12,7 @@ typedef struct Obj {
     void *inner; s16 vx,vy,vz,rate76; u8 pad78[2]; s16 a7a,a7c,rate7e,rate80,rate82;
     u8 pad84[0xa]; s16 rate8e,rate90,rate92,count94;
 } Obj;
-extern void func_80040550(Obj *, s32);
+extern void gDrainObjectLightColor(Obj *, s32) __asm__("func_80040550");
 extern void func_80040600(Obj *, s32,s32,s32);
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
@@ -83,7 +83,7 @@ void gUpdateObjectLights(Obj *node, s32 dt)
             } else if (node->rate7e) node->a7a += (dt * node->rate7e) >> 8;
             if (o->count94 > 0 && (o->flags66 & 0x30)) {
                 s32 x = (o->rate8e * dt) >> 8;
-                if (o->flags66 & 0x100) func_80040550(o, x);
+                if (o->flags66 & 0x100) gDrainObjectLightColor(o, x);
                 else {
                     s32 y = o->rate90 * dt;
                     register s32 factor __asm__("$2") = o->rate92;

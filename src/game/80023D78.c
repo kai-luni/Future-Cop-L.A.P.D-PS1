@@ -31,7 +31,7 @@ extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 gCvkSystemActive __asm__("D_8009F26C");
 
 extern void gStopTrackedSoundVoice(void) __asm__("func_80023E84");
-extern s32 func_800450A4(s32 id, s8 *mix);
+extern s32 gComputeTrackedSoundMix(s32 id, s8 *mix) __asm__("func_800450A4");
 extern s32 gValidateSoundVoiceHandle(struct Unk4749CHandle *handle) __asm__("func_800474C4");
 extern void func_80047800(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
 
@@ -80,7 +80,7 @@ void gUpdateTrackedSoundVoice(void)
     if (gCvkSystemActive != 0 &&
         gAssetHandle.state != 0 &&
         gAssetHandle.flag18 != 0) {
-        if ((u8)func_800450A4(gAssetHandle.unk0C, mix) != 0 &&
+        if ((u8)gComputeTrackedSoundMix(gAssetHandle.unk0C, mix) != 0 &&
             (u8)gValidateSoundVoiceHandle(&gAssetHandle) == 1) {
             func_80047800((struct SoundVoice *)gAssetHandle.resource,
                           mix[1], mix[0], -1);

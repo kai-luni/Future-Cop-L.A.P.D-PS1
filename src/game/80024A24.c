@@ -41,7 +41,7 @@ extern void func_80019D60(void);
 extern void func_8006A880(void);
 extern void func_80019A64(void);
 extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
-extern void func_80056924(void);
+extern void gInitDemoCameraStates(void) __asm__("func_80056924");
 extern void gInitReciprocalTable(void) __asm__("func_80019828");
 extern void func_8005A044(void);
 extern void gInitDefinitionEntryCount(void) __asm__("func_800609F4");
@@ -49,7 +49,7 @@ extern void func_80069B58(void);
 extern void func_8001774C(void);
 extern void func_8001B2C8(s32 a0, s32 a1);
 extern void func_8004CAE4(void);
-extern void func_8002A598(void);
+extern void gClearInitStateWords(void) __asm__("func_8002A598");
 extern void func_80049400(void);
 extern void gAllocSpawnRegistry(void) __asm__("func_80060E28");
 extern void func_8005130C(void);
@@ -182,7 +182,7 @@ call_init:
     if (v != 0) {
         if (v > 0) {
             gSeedPrng(seed);
-            func_80056924();
+            gInitDemoCameraStates();
             v = gDemoPlayback;
         }
         seed = ((v >> 31) + v) ^ (v >> 31);
@@ -197,7 +197,7 @@ call_init:
     func_8001774C();
     func_8001B2C8(0x898, 0x400);
     func_8004CAE4();
-    func_8002A598();
+    gClearInitStateWords();
     func_80049400();
     gAllocSpawnRegistry();
     func_8005130C();

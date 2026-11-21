@@ -79,6 +79,8 @@ extern s32 gEntityBaseHandler(s32 message, void *object, void *data, s32 arg4) _
 extern void func_80013BD8(struct ModelInstance *instance, struct Model *model, s32 options);
 extern void gNormalizeVector(struct Vec3s32 *vector) __asm__("func_8001A180");
 extern void gBuildBasisFromAxis(struct Vec3s32 *axis, struct Basis *basis) __asm__("func_800193F8");
+void gInitKind15Projectile(struct Dest37064 *dest, struct Holder37064 *holder, s32 arg2) __asm__("func_80037064");
+
 
 /**
  * @brief Spawn setup of a directed entity: copies the template state, binds
@@ -109,7 +111,7 @@ extern void gBuildBasisFromAxis(struct Vec3s32 *axis, struct Basis *basis) __asm
  * @par Callers
  * func_80037708.
  */
-void func_80037064(struct Dest37064 *dest, struct Holder37064 *holder, s32 arg2)
+void gInitKind15Projectile(struct Dest37064 *dest, struct Holder37064 *holder, s32 arg2)
 {
     struct State37064 *p;
     s32 w;

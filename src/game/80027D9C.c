@@ -16,7 +16,7 @@ extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
    materialise the base address with lui/addiu like the retail code does. */
 extern u8 *gPlayerEntities[] __asm__("D_8009FA58");
 
-extern void func_80029C34(void);
+extern void gServiceStreamRequestQueue(void) __asm__("func_80029C34");
 extern void gApplyAnimationSoundEvent(s32 arg0, void *object) __asm__("func_80047088");
 extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 
@@ -61,7 +61,7 @@ void gAdvanceGameplayScreenCountdown(void)
         goto tail;
     }
 
-    func_80029C34();
+    gServiceStreamRequestQueue();
 
     if (gScreenResetFlag <= 0) {
         goto tail;

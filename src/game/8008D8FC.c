@@ -4,6 +4,8 @@
 extern void func_8008DAD0(void);
 extern void func_8008D7B0(s32 value);
 extern void func_8008DB00(void);
+s32 gStartBiosPadPolling(void) __asm__("func_8008D8FC");
+
 
 /**
  *  @brief Runs three routines in sequence and reports success.
@@ -28,7 +30,7 @@ extern void func_8008DB00(void);
  * func_8008DB00 (computed jump to jtbl_800A3E18_main) in sequence and always
  * returns 1. Accesses no globals directly and has no direct callers in src/.
  */
-s32 func_8008D8FC(void)
+s32 gStartBiosPadPolling(void)
 {
     func_8008DAD0();
     func_8008D7B0(0);

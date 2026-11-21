@@ -13,7 +13,7 @@ extern s16 gShadowThreshold __asm__("D_8009F710");
 extern s16 D_8009F718;
 extern s16 D_8009F71C;
 
-extern void func_800410BC(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gApplyRadialContactDamage(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_800410BC");
 
 /**
  * @brief Tilted area-blast wrapper: publishes the cone geometry globals and
@@ -47,7 +47,7 @@ void func_80041428(s32 arg0, s32 arg1, s32 arg2, s32 context, struct Vec3s32 *po
     gConeTestFlag = 1;
     gMessageConeFlag = context;
     D_8009F71C = position->z >> 4;
-    func_800410BC(arg0, arg1, arg2, arg6);
+    gApplyRadialContactDamage(arg0, arg1, arg2, arg6);
     gConeTestFlag = 0;
     gMessageConeFlag = 0;
 }

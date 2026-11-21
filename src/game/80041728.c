@@ -36,7 +36,7 @@ struct Unk41728 {
 
 extern void gGteLoadMatrix(void *matrix) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *frame, void *out, s32 count) __asm__("func_80010234");
-extern void func_8002A5B4(void *script, s32 index);
+extern void gRemoveEntityCommand(void *script, s32 index) __asm__("func_8002A5B4");
 void gRunEntityCommands(struct Unk41728 *self) __asm__("func_80041728");
 
 
@@ -137,7 +137,7 @@ void gRunEntityCommands(struct Unk41728 *self)
         default:
             goto unknown;
         }
-        func_8002A5B4(self, i);
+        gRemoveEntityCommand(self, i);
         continue;
     unknown:
         i++;

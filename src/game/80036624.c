@@ -40,7 +40,7 @@ extern void gGuidedProjectileUpdate(struct Entity *, struct Entity *) __asm__("f
 extern s32 gEntityBaseHandler(s32, struct Entity *, struct Entity *, s32) __asm__("func_8002AD58");
 extern s32 func_80019FCC(s32 *);
 extern s32 gSqrt12(s32) __asm__("func_80095900");
-extern void func_800410BC(void *, s32, s32, struct Entity *);
+extern void gApplyRadialContactDamage(void *, s32, s32, struct Entity *) __asm__("func_800410BC");
 
 /**
  * @brief Message table of the model-backed entity class (block size 0xFC): spawn,
@@ -168,7 +168,7 @@ s32 func_80036624(s32 msg, struct Entity *self, struct Entity *data, s32 extra)
             } else {
                 amount = self->val1a;
             }
-            if (amount > 0) func_800410BC(self->pos, amount, self->strength << 8, self->other);
+            if (amount > 0) gApplyRadialContactDamage(self->pos, amount, self->strength << 8, self->other);
         }
         break;
     case 5:

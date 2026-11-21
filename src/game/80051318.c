@@ -34,6 +34,8 @@ struct Unk51318 {
 };
 
 extern struct Unk80019A20 *func_80019A20(u32 tag, s32 arg1, s32 arg2);
+void gInitLoopingPathState(struct Unk51318 *obj, struct Unk51318Arg1 *arg1, struct Vec3 *arg2) __asm__("func_80051318");
+
 
 /**
  *  @brief Initializes an object with optional resource data and a position.
@@ -54,7 +56,7 @@ extern struct Unk80019A20 *func_80019A20(u32 tag, s32 arg1, s32 arg2);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80051318(struct Unk51318 *obj, struct Unk51318Arg1 *arg1, struct Vec3 *arg2)
+void gInitLoopingPathState(struct Unk51318 *obj, struct Unk51318Arg1 *arg1, struct Vec3 *arg2)
 {
     struct Unk80019A20 *res;
     struct Unk80019A20 *prev;

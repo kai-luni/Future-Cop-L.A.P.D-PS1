@@ -16,7 +16,7 @@ extern struct MenuText27F80 *gResultsTextTable __asm__("D_8009F2C0");
 extern u8 gResultsDecimalFormat[] __asm__("D_8009F2FC");
 extern u8 gTimeMmSsFormat[] __asm__("D_80010DCC");
 
-extern s32 func_80059E9C(void *player, s32 arg1);
+extern s32 gGetPlayerResultsStat(void *player, s32 arg1) __asm__("func_80059E9C");
 extern s32 func_80049340(u8 *text);
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void func_8008CD30(u8 *dest, u8 *fmt, ...);
@@ -77,7 +77,7 @@ void gDrawResultsTextBlock(void *player, u8 *text, s32 x, s32 color)
             if (c >= 0x40) {
                 c -= 0x40;
                 if (gScratchBlockPtr->unk0 == 0) {
-                    t = func_80059E9C(player, c);
+                    t = gGetPlayerResultsStat(player, c);
                     ((s32 *)gScratchBlockPtr)[gScratchBlockPtr->unk4] = t;
                 } else {
                     t = ((s32 *)gScratchBlockPtr)[gScratchBlockPtr->unk4];

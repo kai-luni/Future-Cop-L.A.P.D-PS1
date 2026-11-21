@@ -31,7 +31,7 @@ extern struct Unk78210Panel D_800A3868;
 extern struct Unk78210Panel D_800A3898;
 extern struct Unk78210Panel D_800A38C8;
 
-extern void func_80078650(struct Unk78210Panel *panel, s32 arg1);
+extern void gActivateMenuPanel(struct Unk78210Panel *panel, s32 arg1) __asm__("func_80078650");
 
 /**
  * @brief Menu-item callback handling player/split-screen option hover timing and sub-panel push on confirm.
@@ -88,15 +88,15 @@ void gHandlePlayerJoinSelection(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             *(s16 *)(base + 0x86) = 0x64;
             if (mode->split == 0) {
                 mode->unk98 = gPlayerSelection;
-                func_80078650(&D_800A3868, 1);
+                gActivateMenuPanel(&D_800A3868, 1);
             } else {
-                func_80078650(&D_800A3898, 1);
+                gActivateMenuPanel(&D_800A3898, 1);
             }
         } else {
             if (mode->split == 0) {
-                func_80078650(&D_800A3868, 1);
+                gActivateMenuPanel(&D_800A3868, 1);
             } else {
-                func_80078650(&D_800A38C8, 1);
+                gActivateMenuPanel(&D_800A38C8, 1);
             }
         }
     } else {

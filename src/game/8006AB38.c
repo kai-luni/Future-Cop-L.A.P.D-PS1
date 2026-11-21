@@ -34,6 +34,8 @@ struct Global { u8 pad[8]; s32 field8; u8 padc[0x8c]; s32 field98; };
 extern struct Global *gGameSession __asm__("D_8009FA94");
 extern struct Data *gRegistryFind(u8) __asm__("func_8006AAEC");
 extern void func_8005D3FC(struct Owner *, s32);
+void gResetPlayerWeaponLoadout(struct Owner *owner) __asm__("func_8006AB38");
+
 
 /**
  * @brief (Re)initialises the three weapon slots for a difficulty level.
@@ -64,7 +66,7 @@ extern void func_8005D3FC(struct Owner *, s32);
  * @par Callers
  * Confirmed: func_800259D8.
  */
-void func_8006AB38(struct Owner *owner)
+void gResetPlayerWeaponLoadout(struct Owner *owner)
 {
     struct State *state;
     struct Data *data;

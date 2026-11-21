@@ -61,7 +61,7 @@ extern void func_8008CCB0(u8 *a, u8 *b);
 extern s32 func_8008CCC0(u8 *a);
 extern s32 func_8008CD30(u8 *a, u8 *fmt, ...);
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
-extern void func_80078650(u8 *a, s32 b);
+extern void gActivateMenuPanel(u8 *a, s32 b) __asm__("func_80078650");
 extern void gPlayNonpositionalSoundEffect(s32 id, s32 b) __asm__("func_80046C84");
 extern void func_800492A0(u8 *text, s32 *w, s32 *h);
 extern s32 *func_80048E88(void);
@@ -257,7 +257,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                     RAW[0x200] = 5;
                     RAW[0x201] = 0;
                     RAW[0x204] = 0;
-                    func_80078650(gMenuActivationBlock, 1);
+                    gActivateMenuPanel(gMenuActivationBlock, 1);
                     *gFontBankTable = 1;
                 } else {
                     gPlayerMenuDepth[s2] = 1;

@@ -13,8 +13,8 @@ extern struct Unk3F570Node *gListHeads[7] __asm__("D_800A1070");
 extern struct Unk3F570Node *gDeferredSpawnList __asm__("D_8009F30C");
 extern struct Unk3F570Node *gPendingSpawnList __asm__("D_8009F314");
 
-extern s32 func_8003F2AC(struct Unk3F570Node *object, s32 arg1);
-extern void func_8003B44C(struct Unk3F570Node *object);
+extern s32 gUpdateSpawnNodeLifecycle(struct Unk3F570Node *object, s32 arg1) __asm__("func_8003F2AC");
+extern void gPrependSpawnNodeByKind(struct Unk3F570Node *object) __asm__("func_8003B44C");
 extern void gSyncAttachedNodes(void) __asm__("func_8003D240");
 extern void gRunSceneListPassesOnScratch(s32 arg) __asm__("func_8003F530");
 extern void gStreamDeferredSpawns(void) __asm__("func_8003FF7C");
@@ -82,7 +82,7 @@ void gRunEntityWorldTick(s32 arg0)
         if (node != 0) {
             do {
                 next = node->next;
-                if (func_8003F2AC(node, arg0) & 0xFF) {
+                if (gUpdateSpawnNodeLifecycle(node, arg0) & 0xFF) {
                     if (prev != 0) {
                         prev->next = node->next;
                     } else {
@@ -108,7 +108,7 @@ void gRunEntityWorldTick(s32 arg0)
     }
     while (gPendingSpawnList != 0) {
         tail = gPendingSpawnList->next;
-        func_8003B44C(gPendingSpawnList);
+        gPrependSpawnNodeByKind(gPendingSpawnList);
         gPendingSpawnList = tail;
     }
 }

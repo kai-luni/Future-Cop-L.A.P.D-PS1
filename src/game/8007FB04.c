@@ -24,7 +24,7 @@ extern void func_80080AD4(void);
 extern s32 func_80020C90(u8 *arg0);
 extern s32 func_80020E68(s32 arg0);
 extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
-extern void func_80078650(u8 *arg0, s32 arg1);
+extern void gActivateMenuPanel(u8 *arg0, s32 arg1) __asm__("func_80078650");
 extern void func_80082020(void);
 
 /**
@@ -158,7 +158,7 @@ s32 func_8007FB04(void)
                 gSaveProfileImage[0x202] = 0;
                 gSaveProfileImage[0x201] = 0;
                 gSaveProfileImage[0x207] = 0;
-                func_80078650(gMenuActivationBlock, 1);
+                gActivateMenuPanel(gMenuActivationBlock, 1);
                 gFontBankTable[0] = 1;
                 gUiHoldFlag = 1;
                 gUiInteractionEnabled = 1;

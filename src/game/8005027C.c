@@ -15,7 +15,7 @@ extern void gGteLoadMatrix(u8 *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(u8 *, u8 *, s32) __asm__("func_80010234");
 extern void gOrientEntityBasis(u8 *) __asm__("func_80037EB4");
 extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
-extern void func_8004FFD0(u8 *, s32, u8 *);
+extern void gApplyPathCurveOffsets(u8 *, s32, u8 *) __asm__("func_8004FFD0");
 
 typedef struct { s32 x, y, z; } V3;
 
@@ -346,7 +346,7 @@ loop:
             } else {
                 ret |= 3;
                 if (!(fl & 0x800)) {
-                    func_8004FFD0(s, t, o);
+                    gApplyPathCurveOffsets(s, t, o);
                     goto l900;
                 }
                 goto done;
@@ -370,7 +370,7 @@ l900:
             if (fl & 0x800) {
                 goto done;
             }
-            func_8004FFD0(s, -r1, o);
+            gApplyPathCurveOffsets(s, -r1, o);
             ret |= 3;
             if (F(s, 0x3C) & 0x1000) {
                 goto done;

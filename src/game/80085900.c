@@ -7,6 +7,8 @@ typedef struct {
 } Unk8009F4BC;
 
 extern Unk8009F4BC *gMovieSliceContext __asm__("D_8009F4BC");
+void gSetMoviePresentFlag(s32 arg0) __asm__("func_80085900");
+
 
 /**
  *  @brief Writes a signed value to a global object's field.
@@ -25,7 +27,7 @@ extern Unk8009F4BC *gMovieSliceContext __asm__("D_8009F4BC");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80085900(s32 arg0)
+void gSetMoviePresentFlag(s32 arg0)
 {
     *(volatile s32 *)&gMovieSliceContext->unk11C = arg0;
 }

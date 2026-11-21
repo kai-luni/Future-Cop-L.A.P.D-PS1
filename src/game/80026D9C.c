@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 gSavedStackPointer __asm__("D_8009FAD8");
-extern void func_80049564(s32 elapsed);
+extern void gTickScriptTimers(s32 elapsed) __asm__("func_80049564");
 
 void gTickScriptTimersOnScratchpad(s32 elapsed) __asm__("func_80026D9C");
 

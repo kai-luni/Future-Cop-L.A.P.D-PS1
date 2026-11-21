@@ -11,6 +11,8 @@ struct Blah {
     struct Command cur;
     struct Command next;
 };
+void gRemoveEntityCommand(u8 *script, s32 index) __asm__("func_8002A5B4");
+
 
 /**
  * @brief Removes one entry from a 4-slot command queue at +0x0C by shifting later slots down.
@@ -35,7 +37,7 @@ struct Blah {
  * @par Callers
  * Confirmed: func_8002B4B4 (0x8002B558), func_8002CB20 (0x8002CC00), func_8002E528 (0x8002E600), func_8002F280 (0x8002F2C8), func_80031004 (0x800310F0), func_800382B4 (0x80038534), func_80039BD0 (0x80039C24), func_8003A09C (0x8003A130), func_80041728 (0x8004183C), func_800425BC (0x8004266C), func_800449F8 (0x80044AB4), func_8004CECC (0x8004D368), func_8004F188 (0x8004F2F8), func_800585B8 (0x8005869C), func_8005FFB8 (0x800600B0).
  */
-void func_8002A5B4(u8 *script, s32 index)
+void gRemoveEntityCommand(u8 *script, s32 index)
 {
     register u8 *base __asm__("$8");
     register struct Blah *p __asm__("$6");

@@ -20,6 +20,8 @@ struct Unk381D4 {
 };
 
 extern s32 func_80019668(void);
+void gStepIdleActorTurn(struct Unk381D4 *arg) __asm__("func_800381D4");
+
 
 /**
  * @brief Picks a random turn rate for an entity leaving its idle state.
@@ -51,7 +53,7 @@ extern s32 func_80019668(void);
  * @par Callers
  * Confirmed: func_800382B4.
  */
-void func_800381D4(struct Unk381D4 *arg)
+void gStepIdleActorTurn(struct Unk381D4 *arg)
 {
     s32 v;
 

@@ -21,6 +21,8 @@ extern struct SoundChannel *gSoundChannelQueueHead __asm__("D_8009F728");
 extern struct SoundChannel *gSoundChannelQueueTail __asm__("D_8009F72C");
 
 extern void func_8004582C(void);
+void gReleaseSoundChannel(struct SoundChannel *channel) __asm__("func_80045548");
+
 
 /**
  *  @brief Unlinks a sound channel and pushes it onto another channel list.
@@ -41,7 +43,7 @@ extern void func_8004582C(void);
  *  @par Callers
  *  Confirmed: func_800457B8.
  */
-void func_80045548(struct SoundChannel *channel)
+void gReleaseSoundChannel(struct SoundChannel *channel)
 {
     if (channel->prev != 0) {
         channel->prev->next = channel->next;

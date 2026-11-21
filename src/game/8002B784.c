@@ -16,13 +16,13 @@ extern void gFireEntityWeapon(void *, u8 *, u8 *, s32) __asm__("func_8005F6E8");
 extern void gRetireEntityBase(u8 *, s32, s32) __asm__("func_8002A810");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern void gUpdateFallMotion(s32, u8 *, s32) __asm__("func_8003802C");
-extern u8 func_8002B1DC(u8 *, s32, u8 *);
+extern u8 gDispatchType26Command(u8 *, s32, u8 *) __asm__("func_8002B1DC");
 extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
-extern void func_8002B0EC(u8 *, s32);
+extern void gSetType26AnimationClip(u8 *, s32) __asm__("func_8002B0EC");
 extern void gTurnEntityToAngle(u8 *, s32, s32) __asm__("func_8002B588");
 extern void gOrientEntityBasis(u8 *) __asm__("func_80037EB4");
 extern void func_8002B1D0(u8 *);
-extern void func_8002B6C8(u8 *, u8 *, s32);
+extern void gFaceType26Target(u8 *, u8 *, s32) __asm__("func_8002B6C8");
 extern void func_8002B1AC(u8 *);
 
 /**
@@ -162,7 +162,7 @@ void func_8002B784(u8 *obj, s32 step)
     }
     gUpdateFallMotion(6, obj, step);
     if (B(obj,0x15F) != 6 && H(obj,0xC0) == 0) {
-        func_8002B1DC(obj, 6, 0);
+        gDispatchType26Command(obj, 6, 0);
     }
     target = P(obj,0xB8);
     valid = 0;
@@ -178,12 +178,12 @@ void func_8002B784(u8 *obj, s32 step)
     if (F(obj,0x118) & 0x40) {
         if (H(obj,0x122) < -1) {
             if (B(obj,0x15F) != 5) {
-                func_8002B1DC(obj, 5, target);
+                gDispatchType26Command(obj, 5, target);
             }
             if (!valid) {
-                func_8002B0EC(obj, 0);
+                gSetType26AnimationClip(obj, 0);
             } else {
-                func_8002B6C8(obj, target, step);
+                gFaceType26Target(obj, target, step);
             }
         } else if (H(obj,0x10E) > 0) {
             if (H(obj,0x15C) != H(obj,0x12A)) {
@@ -200,16 +200,16 @@ void func_8002B784(u8 *obj, s32 step)
                 F(obj,0x118) &= ~0x40;
                 W(obj,0x84) = 0;
                 gOrientEntityBasis(obj);
-                func_8002B0EC(obj, B(obj,0x165));
+                gSetType26AnimationClip(obj, B(obj,0x165));
             }
         } else if (B(obj,0x15F) != 5) {
             if (!valid || distance > (H(obj,0xAA) << 4)) {
                 if (B(obj,0x15F) == 1) {
-                    func_8002B1DC(obj, 0, target);
+                    gDispatchType26Command(obj, 0, target);
                 }
                 func_8002B1D0(obj);
             } else if (B(obj,0x162) != 2) {
-                func_8002B6C8(obj, target, step);
+                gFaceType26Target(obj, target, step);
             }
         }
     } else {
@@ -219,13 +219,13 @@ void func_8002B784(u8 *obj, s32 step)
             !(F(obj,0x118) & 0x40) && !(B(obj,0x160) & 0x80)) {
             if (W(obj,0x84) == 0) {
                 if (B(obj,0x15F) == 0) {
-                    func_8002B1DC(obj, 1, target);
+                    gDispatchType26Command(obj, 1, target);
                 }
                 W(obj,0x84) = 0;
                 H(obj,0x10E) = 0;
                 F(obj,0x118) |= 0x40;
                 U(obj,0x15C) = U(obj,0x12A);
-                func_8002B6C8(obj, target, step);
+                gFaceType26Target(obj, target, step);
             } else {
                 H(obj,0x10E) = 0;
             }
@@ -237,7 +237,7 @@ void func_8002B784(u8 *obj, s32 step)
     }
     if (!(B(obj,0x160) & 2) && H(obj,0x1C) < 5 &&
         B(obj,0x15F) != 7 && B(obj,0x15F) != 4 && B(obj,0x15F) != 6) {
-        if (!func_8002B1DC(obj, 6, 0)) {
+        if (!gDispatchType26Command(obj, 6, 0)) {
             mode = (F(obj,0x118) >> 24) & 15;
             if (mode >= 1 && mode <= 6) {
                 F(obj,0x118) = (F(obj,0x118) & 0xF0FFFFFF) | ((mode + 8) << 24);
@@ -249,7 +249,7 @@ void func_8002B784(u8 *obj, s32 step)
     switch (B(obj,0x15F)) {
     case 0:
         if (valid) {
-            func_8002B1DC(obj, 1, target);
+            gDispatchType26Command(obj, 1, target);
         }
         if (H(obj,0x10E) == 0) {
             U(obj,0x10E) = U(obj,0x10C);
@@ -257,12 +257,12 @@ void func_8002B784(u8 *obj, s32 step)
         break;
     case 1:
         if (!valid) {
-            func_8002B1DC(obj, 0, 0);
+            gDispatchType26Command(obj, 0, 0);
         }
         break;
     case 2:
         if (!P(obj,0x138)) {
-            func_8002B1DC(obj, 0, 0);
+            gDispatchType26Command(obj, 0, 0);
         } else if (W(obj,0x84) < H(obj,0x158)) {
             func_8002B1AC(obj);
         }
@@ -276,7 +276,7 @@ void func_8002B784(u8 *obj, s32 step)
         break;
     case 5:
         if (valid) {
-            func_8002B1DC(obj, 1, target);
+            gDispatchType26Command(obj, 1, target);
         } else if (!(F(obj,0x118) & 0x40)) {
             if (W(obj,0x84) == 0) {
                 F(obj,0x118) |= 0x40;
@@ -292,7 +292,7 @@ void func_8002B784(u8 *obj, s32 step)
                 U(obj,0xC0) = U(P(obj,0xA0),4);
             }
             U(obj,0x1C) = U(obj,0x1E);
-            func_8002B1DC(obj, 0, 0);
+            gDispatchType26Command(obj, 0, 0);
         }
         break;
     }
@@ -300,19 +300,19 @@ void func_8002B784(u8 *obj, s32 step)
         if (B(obj,0x15E) != B(obj,0x167)) {
             if (valid) {
                 if (B(obj,0x15E) != B(obj,0x164)) {
-                    func_8002B0EC(obj, B(obj,0x164));
+                    gSetType26AnimationClip(obj, B(obj,0x164));
                 }
             } else if (B(obj,0x15E) != 0) {
-                func_8002B0EC(obj, 0);
+                gSetType26AnimationClip(obj, 0);
             }
         }
     } else {
         if (!(B(obj,0x160) & 1) && W(obj,0x84) <= (H(obj,0x158) >> 2) + 2) {
             if (B(obj,0x15E) != B(obj,0x165)) {
-                func_8002B0EC(obj, B(obj,0x165));
+                gSetType26AnimationClip(obj, B(obj,0x165));
             }
         } else if (B(obj,0x15E) != B(obj,0x166)) {
-            func_8002B0EC(obj, B(obj,0x166));
+            gSetType26AnimationClip(obj, B(obj,0x166));
         }
     }
 }

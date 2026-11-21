@@ -11,6 +11,8 @@ extern u8 gVagmQueueDraining __asm__("D_8009F308");
 extern s32 D_8009F6CC;
 extern u32 D_8009F6E4;
 extern Unk8002A398 *gVagmRing[4] __asm__("D_800A0C50");
+s32 gDequeueVagmChunk(void) __asm__("func_8002A398");
+
 
 /**
  *  @brief Removes the current entry from a four-slot pointer queue.
@@ -30,7 +32,7 @@ extern Unk8002A398 *gVagmRing[4] __asm__("D_800A0C50");
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-s32 func_8002A398(void)
+s32 gDequeueVagmChunk(void)
 {
     Unk8002A398 *ptr;
 

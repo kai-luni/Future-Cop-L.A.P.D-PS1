@@ -19,6 +19,8 @@ struct Unk31Node {
 };
 
 extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
+void gSetMapZoneState(s32 id, s32 kind, s32 mode) __asm__("func_80031BEC");
+
 
 /**
  *  @brief Updates flags on the first list node matching an identifier.
@@ -39,7 +41,7 @@ extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
  *  @par Callers
  *  Confirmed: func_8004DC64.
  */
-void func_80031BEC(s32 id, s32 kind, s32 mode)
+void gSetMapZoneState(s32 id, s32 kind, s32 mode)
 {
     struct Unk31Node *node;
 

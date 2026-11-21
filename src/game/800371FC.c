@@ -54,13 +54,15 @@ struct Unk371FC {
 };
 
 extern struct Unk4E80CList gCommandListHead __asm__("D_800A8F90");
-extern void func_8003BC0C(struct Unk371FC *object);
+extern void gSpawnEntityPrimaryType(struct Unk371FC *object) __asm__("func_8003BC0C");
 extern void gBuildRotationMatrix(s32 a0, s32 a1, s32 a2, s32 *a3) __asm__("func_800188D0");
 extern s32 gGetGroundHeight(struct Vec371 *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80066F78");
 extern s32 gTraceMapRay(struct Vec371 *a, struct Vec371 *b, struct Vec371 *out, s32 d, s32 e) __asm__("func_800684AC");
 extern void gVectorAddScaled(struct Vec371 *a, struct Vec371 *b, s32 scale, struct Vec371 *out) __asm__("func_8001ACA4");
 extern s32 gVectorLength3D(struct Vec371 *vector) __asm__("func_8001A100");
 extern void gNormalizeVector(struct Vec371 *vector) __asm__("func_8001A180");
+void gStepProjectileMotion(struct Unk371FC *arg0, s32 arg1) __asm__("func_800371FC");
+
 
 /**
  * @brief Per-frame mover tick of a propelled entity: proximity blast test
@@ -136,7 +138,7 @@ extern void gNormalizeVector(struct Vec371 *vector) __asm__("func_8001A180");
  * itself has no direct callers; it is dispatched through a message
  * table.
  */
-void func_800371FC(struct Unk371FC *arg0, s32 arg1)
+void gStepProjectileMotion(struct Unk371FC *arg0, s32 arg1)
 {
     register struct Unk371FC *self __asm__("$18");
     register s32 step __asm__("$22");
@@ -199,7 +201,7 @@ void func_800371FC(struct Unk371FC *arg0, s32 arg1)
                 self->unkB8 = 0x8000;
                 self->unkD1 = 0;
                 self->unkD0 = (self->unkD0 & 0xFE) | 2;
-                func_8003BC0C(self);
+                gSpawnEntityPrimaryType(self);
             }
         }
     }

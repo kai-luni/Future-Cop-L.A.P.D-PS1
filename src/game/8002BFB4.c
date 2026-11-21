@@ -27,8 +27,10 @@ typedef struct Target {
     u8 unk160;
 } Target;
 
-extern void func_8002B1DC(Target *arg0, s32 arg1, Target *arg2);
+extern void gDispatchType26Command(Target *arg0, s32 arg1, Target *arg2) __asm__("func_8002B1DC");
 extern void func_8002B1AC(Target *arg0);
+void gConsiderType26Target(Target *s0, Target *s1) __asm__("func_8002BFB4");
+
 
 /**
  * @brief Evaluates and assigns a candidate target for a class-26 actor.
@@ -53,7 +55,7 @@ extern void func_8002B1AC(Target *arg0);
  * @par Callers
  * Confirmed: func_8002C3B0 (0x8002C3D0), func_8002C3F0 (0x8002C4A4, 0x8002C4DC) / Likely: none / Unknown: none.
  */
-void func_8002BFB4(Target *s0, Target *s1)
+void gConsiderType26Target(Target *s0, Target *s1)
 {
     s16 unk1C;
 
@@ -95,7 +97,7 @@ void func_8002BFB4(Target *s0, Target *s1)
             }
         }
 
-        func_8002B1DC(s0, 1, s1);
+        gDispatchType26Command(s0, 1, s1);
         s0->unk118 = (s0->unk118 & 0xF0FFFFFF) | 0x0A000000;
         s0->unk15F = 2;
         s0->unk11E = s1->unk14 & 0x7FFF;
@@ -104,7 +106,7 @@ void func_8002BFB4(Target *s0, Target *s1)
         func_8002B1AC(s0);
     } else {
         if (s0->unk15F == 0) {
-            func_8002B1DC(s0, 1, s1);
+            gDispatchType26Command(s0, 1, s1);
         } else if (s0->unk15F == 1) {
             if (s0->unkB8 != 0 && (s0->unkB8->unk19 & 0xF) < (s1->unk19 & 0xF)) {
                 s0->unkB8 = s1;

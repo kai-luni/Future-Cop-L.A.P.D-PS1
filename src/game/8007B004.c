@@ -23,7 +23,7 @@ extern volatile s32 gPlayerSelection __asm__("D_8009F8F0");
 extern s32 D_8009F8F4;
 extern Unk7B004Node *gFontBankTable __asm__("D_8009F468");
 extern u8 gTwoPlayerMissionSelectMenuItems[] __asm__("D_8009BB34");
-extern Unk7B004Node D_800A3688;
+extern Unk7B004Node gFrontEndTransitionMenuDescriptor __asm__("D_800A3688");
 extern u8 D_800A37AB[];
 extern u8 D_800A37DB[];
 
@@ -70,7 +70,7 @@ void gInitMissionSelectState(void)
     D_8009F8F4 = v98;
     __asm__ volatile("" ::: "memory");
     node = gFontBankTable;
-    if (node->unk24 == &D_800A3688) {
+    if (node->unk24 == &gFrontEndTransitionMenuDescriptor) {
         node->unk24 = node->unk24->unk24;
     }
 

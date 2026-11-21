@@ -11,8 +11,8 @@ struct Entity {
 
 extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 
-extern void func_80031BEC(s32 id, s32 kind, s32 mode);
-extern void func_8003FD6C();
+extern void gSetMapZoneState(s32 id, s32 kind, s32 mode) __asm__("func_80031BEC");
+extern void gIgnoreTagCommand69() __asm__("func_8003FD6C");
 extern void gSetScriptTimerCount(s32 index, s32 kind, s32 value) __asm__("func_8004953C");
 extern u8 gSendEntityCommand(struct Entity *entity, s32 kind, s32 value, s32 retry) __asm__("func_8004DA84");
 void gSendCommandByTag(s32 arg0, s32 kind, s32 value) __asm__("func_8004DC64");
@@ -45,13 +45,13 @@ void gSendCommandByTag(s32 arg0, s32 kind, s32 value)
 
     switch (kind) {
     case 0x7C:
-        func_80031BEC(arg0, 0x7C, value);
+        gSetMapZoneState(arg0, 0x7C, value);
         return;
     case 0x7E:
         gSetScriptTimerCount(arg0, 0x7E, value);
         return;
     case 0x69:
-        func_8003FD6C(arg0, 0x69, value);
+        gIgnoreTagCommand69(arg0, 0x69, value);
         return;
     }
 

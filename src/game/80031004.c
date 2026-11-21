@@ -16,7 +16,7 @@ struct Unk31004 {
     u16 unkA2;
 };
 
-extern void func_8002A5B4(struct Unk31004 *self, s32 index);
+extern void gRemoveEntityCommand(struct Unk31004 *self, s32 index) __asm__("func_8002A5B4");
 extern void func_80069D68(u8 *ptr, s32 arg1, s32 arg2, struct Unk31004 *self);
 
 /**
@@ -78,6 +78,6 @@ void func_80031004(struct Unk31004 *self)
             i++;
             continue;
         }
-        func_8002A5B4(self, i);
+        gRemoveEntityCommand(self, i);
     }
 }

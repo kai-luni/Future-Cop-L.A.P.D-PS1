@@ -31,7 +31,7 @@ struct ObjectF764 {
     u8 pad00[0x84];
     s32 turn;
 };
-extern s32 func_8004F330(struct StateF764 *, struct ObjectF764 *, s32);
+extern s32 gSelectNextPathNode(struct StateF764 *, struct ObjectF764 *, s32) __asm__("func_8004F330");
 extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
 extern void gVectorScaleInPlace(s32, s32 *) __asm__("func_8001AB78");
 extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
@@ -170,7 +170,7 @@ void func_8004F764(struct StateF764 *state, struct ObjectF764 *obj, u8 update)
 
     s = state;
     map = s->map;
-    s->nextIndex = func_8004F330(s, obj, s->index);
+    s->nextIndex = gSelectNextPathNode(s, obj, s->index);
     vec = s->vector;
     if (s->nextIndex < 0) {
         return;

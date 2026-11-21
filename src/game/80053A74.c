@@ -20,9 +20,9 @@ extern void func_8001ABE0(s32 scale, s32 *v);
 extern s32 func_80052550(u8 *o, s32 *v);
 extern void gClampToWorldBounds(s32 *p) __asm__("func_8006943C");
 extern s32 gGetGroundHeight(s32 *a, s32 *b, s32 *c, s32 *d) __asm__("func_80066F78");
-extern void func_80053514(u8 *o, s32 a);
-extern void func_80053188(u8 *o, s32 a);
-extern s32 func_80052F54(u8 *o);
+extern void gApplyGroundEntityMotion(u8 *o, s32 a) __asm__("func_80053514");
+extern void gApplyPlayerSurfaceEffect(u8 *o, s32 a) __asm__("func_80053188");
+extern s32 gComputeLandingDamage(u8 *o) __asm__("func_80052F54");
 extern void func_8001AD20(s32 *a, s32 *b, s32 *c);
 extern s32 func_8005220C(u8 *o);
 extern void func_80052708(u8 *o, s32 a);
@@ -441,12 +441,12 @@ s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags)
             {
                 s32 s0v;
                 s0v = gGetGroundHeight(s5, (s32 *)(s + 0x168), &v60, &v64) + *(s16 *)(o + 0xF2);
-                func_80053514(o, v64);
+                gApplyGroundEntityMotion(o, v64);
                 *(u8 *)(*(u8 **)(o + 0xAC) + 0x147) = 0;
                 *(u8 *)(*(u8 **)(o + 0xAC) + 0x146) = 0;
                 v60 &= ~0xC0;
                 if (v60 != 0) {
-                    func_80053188(o, v60);
+                    gApplyPlayerSurfaceEffect(o, v60);
                 }
                 if (*(s32 *)(o + 0x54) < s0v) {
                     if (*(u8 *)(o + 0xB9) & 1) {
@@ -458,7 +458,7 @@ s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags)
                         }
                         if (a1 > 0x50000) {
                             *(u8 *)(o + 0xBB) = 0x12;
-                            ret += func_80052F54(o);
+                            ret += gComputeLandingDamage(o);
                         }
                     }
                     *(s32 *)(o + 0x54) = s0v;
@@ -474,7 +474,7 @@ s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags)
                         *(Vec3 *)(o + 0x50) = v38;
                         v68 &= ~0xC0;
                         if (v68 != 0) {
-                            func_80053188(o, v68);
+                            gApplyPlayerSurfaceEffect(o, v68);
                         }
                         *(s32 *)(s + 0x15C) = 0;
                         *(s32 *)(s + 0x164) = 0;

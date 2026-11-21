@@ -19,11 +19,13 @@ extern u8 D_800426A8[];
 extern u8 gHandleTriggerAttachmentEntity[] __asm__("D_8003151C");
 
 extern void gHandleTumblingFlyer(void) __asm__("func_80032F3C");
-extern void func_8005908C(void);
+extern void gHandlePlayerEntityMsg(void) __asm__("func_8005908C");
 extern void func_800382B4(void);
 extern void func_8002D664(void);
 extern void func_800395A8(void);
 extern void func_800398EC(void);
+s32 gGetEntityHandlerForType(u32 type) __asm__("func_8002AE54");
+
 
 /**
  *  @brief Maps a type number to a stored address.
@@ -46,7 +48,7 @@ extern void func_800398EC(void);
  *  @par Callers
  *  Confirmed: func_80060E74.
  */
-s32 func_8002AE54(u32 type)
+s32 gGetEntityHandlerForType(u32 type)
 {
     switch (type) {
     case 80:
@@ -56,7 +58,7 @@ s32 func_8002AE54(u32 type)
     case 37:
         return (s32)D_800357C0;
     case 1:
-        return (s32)func_8005908C;
+        return (s32)gHandlePlayerEntityMsg;
     case 5:
         return (s32)func_800382B4;
     case 6:

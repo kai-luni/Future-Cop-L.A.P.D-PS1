@@ -9,6 +9,8 @@ typedef struct Unk8009F468 {
 extern Unk8009F468 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
+s32 gCheckMenuDirectionRepeat(s32 *arg0, s32 arg1) __asm__("func_80082D30");
+
 
 /**
  *  @brief Tests a callback mask and elapsed time to trigger a timed result.
@@ -30,7 +32,7 @@ extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-s32 func_80082D30(s32 *arg0, s32 arg1)
+s32 gCheckMenuDirectionRepeat(s32 *arg0, s32 arg1)
 {
     s32 result = 0;
     s32 (*callback)(s32) = gFontBankTable->unk1C;

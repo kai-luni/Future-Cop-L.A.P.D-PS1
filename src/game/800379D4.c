@@ -23,6 +23,8 @@ typedef struct Obj379D4 {
 } Obj379D4;
 
 extern s32 gEntityBaseHandler(s32 message, Obj379D4 *object, void *data) __asm__("func_8002AD58");
+void gResolveRailMoverContact(s32 message, Obj379D4 *object, Obj379D4 *data) __asm__("func_800379D4");
+
 
 /**
  * @brief Resolves a contact between two objects of the same family.
@@ -58,7 +60,7 @@ extern s32 gEntityBaseHandler(s32 message, Obj379D4 *object, void *data) __asm__
  * @par Callers
  * Confirmed: func_800382B4. Likely: func_8002C3B0 (same block).
  */
-void func_800379D4(s32 message, Obj379D4 *object, Obj379D4 *data)
+void gResolveRailMoverContact(s32 message, Obj379D4 *object, Obj379D4 *data)
 {
     register s32 t2 __asm__("$10");
     register u32 flags __asm__("$9");

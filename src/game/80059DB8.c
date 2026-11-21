@@ -8,6 +8,8 @@ extern s32 gPadWords __asm__("D_8009F7C0");
 extern s32 output[2] __asm__("D_8009F7C0");
 extern s32 gPadWord2 __asm__("D_8009F7C4");
 extern struct Data *gStreamDescriptorPtr __asm__("D_8009F7D0");
+s32 gStepDemoInputPlayback(void) __asm__("func_80059DB8");
+
 
 /**
  *  @brief Consumes counted values from data streams and returns a byte value.
@@ -30,7 +32,7 @@ extern struct Data *gStreamDescriptorPtr __asm__("D_8009F7D0");
  *  @par Callers
  *  Confirmed: func_8002703C.
  */
-s32 func_80059DB8(void)
+s32 gStepDemoInputPlayback(void)
 {
     struct Data *data;
     struct Entry *entry;

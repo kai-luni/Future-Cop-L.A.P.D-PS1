@@ -13,6 +13,8 @@ struct Node {
 };
 
 extern struct Node *gListHeads[7] __asm__("D_800A1070");
+void gPrependSpawnNodeByKind(struct Node *node, s32 index) __asm__("func_8003B44C");
+
 
 /**
  *  @brief Prepends a node to a list selected by its data kind or index.
@@ -33,7 +35,7 @@ extern struct Node *gListHeads[7] __asm__("D_800A1070");
  *  @par Callers
  *  Confirmed: func_8003F570.
  */
-void func_8003B44C(struct Node *node, s32 index)
+void gPrependSpawnNodeByKind(struct Node *node, s32 index)
 {
     node->next = 0;
     switch (node->data->kind) {

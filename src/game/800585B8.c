@@ -37,7 +37,7 @@ struct Obj58 {
     struct Sub58 *unkAC;
 };
 
-extern void func_8002A5B4(struct Obj58 *self, s32 index);
+extern void gRemoveEntityCommand(struct Obj58 *self, s32 index) __asm__("func_8002A5B4");
 
 /**
  * @brief Executes and consumes player command opcodes 0x5F..0x62 from the 4-slot queue.
@@ -100,6 +100,6 @@ void func_800585B8(struct Obj58 *self)
             i++;
             continue;
         }
-        func_8002A5B4(self, i);
+        gRemoveEntityCommand(self, i);
     }
 }

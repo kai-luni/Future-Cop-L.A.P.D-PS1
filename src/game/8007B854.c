@@ -35,12 +35,13 @@ extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern u8 gLax1ModuleName[] __asm__("D_8009F444");
 extern u8 gLax2ModuleName[] __asm__("D_8009F488");
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
-extern u8 D_800A3628[], D_800A3658[];
+extern u8 gOnePlayerLoadoutMenuDescriptor[] __asm__("D_800A3628");
+extern u8 gTwoPlayerLoadoutMenuDescriptor[] __asm__("D_800A3658");
 extern u8 gScreenDescriptor[] __asm__("D_800A3838");
 extern u8 *gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern u8 *gFontBankTable __asm__("D_8009F468");
-extern void func_80078650(void *, s32);
+extern void gActivateMenuPanel(void *, s32) __asm__("func_80078650");
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern void func_8008CCB0(void *, s32);
 extern s32 func_8008CCA0(void *, void *);
@@ -181,9 +182,9 @@ SELECTION_DONE:;
                     ready = 1;
                 }
                 if (ready) {
-                    if (gGameSession->unkC == 1) message = D_800A3628;
-                    else message = D_800A3658;
-                    func_80078650(message, 1);
+                    if (gGameSession->unkC == 1) message = gOnePlayerLoadoutMenuDescriptor;
+                    else message = gTwoPlayerLoadoutMenuDescriptor;
+                    gActivateMenuPanel(message, 1);
                     gDeferredTransition = 2;
                     gPendingRowCapture = 0;
                     if (SELECTED.unk1F == 10) special = SELECTED.unkE;

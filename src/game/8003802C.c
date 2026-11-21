@@ -33,7 +33,7 @@ typedef struct Unk3802C {
     u32 unk118;
 } Unk3802C;
 
-extern s32 func_80050D14(void *arg0, s32 arg1, void *arg2);
+extern s32 gUpdatePathMoverMotion(void *arg0, s32 arg1, void *arg2) __asm__("func_80050D14");
 extern s32 gGetGroundHeight(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
 extern void gOrientEntityBasis(Unk3802C *arg0) __asm__("func_80037EB4");
 extern void gGteLoadMatrix(void *arg0) __asm__("func_80010750");
@@ -89,7 +89,7 @@ void gUpdateFallMotion(s32 arg0, Unk3802C *arg1, s32 arg2)
     s32 delta;
     s32 limit;
 
-    ret = func_80050D14(&arg1->unkDC, arg2, arg1);
+    ret = gUpdatePathMoverMotion(&arg1->unkDC, arg2, arg1);
     unk118 = arg1->unk118;
     if ((unk118 >> 30) == 1) {
         arg1->unkA4 |= 0x100;

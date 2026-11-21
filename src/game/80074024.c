@@ -22,7 +22,7 @@ struct Unk74024 {
 extern void gHandleBeamObjectMsg() __asm__("func_80073BBC");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void func_8003C14C(struct Unk74024 *object, struct Unk74024Def *def);
+extern void gInitSpawnMotionState(struct Unk74024 *object, struct Unk74024Def *def) __asm__("func_8003C14C");
 
 /**
  * @brief Allocates and initializes a kind-0x58 ribbon/beam effect object.
@@ -57,7 +57,7 @@ struct Unk74024 *func_80074024(struct Unk74024Def *def)
     if (object == 0) {
         return 0;
     }
-    func_8003C14C(object, def);
+    gInitSpawnMotionState(object, def);
     object->update = gHandleBeamObjectMsg;
     object->unk64 = 0;
     size = def->height * def->width;

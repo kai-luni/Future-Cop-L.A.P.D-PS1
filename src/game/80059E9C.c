@@ -7,6 +7,8 @@ struct Global { u8 pad[0xAC]; struct Player *player; };
 extern s32 *gGameSession[] __asm__("D_8009FA94");
 extern struct State *gSinglePlayerEntity[] __asm__("D_8009F9EC");
 extern struct Global *gPlayerEntities[] __asm__("D_8009FA58");
+s32 gGetPlayerResultsStat(struct Player *player, s32 id) __asm__("func_80059E9C");
+
 /**
  * @brief Resolves a player stat id to its value, with per-player and
  *        default fallbacks and three special front-end words.
@@ -36,7 +38,7 @@ extern struct Global *gPlayerEntities[] __asm__("D_8009FA58");
  * @par Callers
  * func_80027F80.
  */
-s32 func_80059E9C(struct Player *player, s32 id)
+s32 gGetPlayerResultsStat(struct Player *player, s32 id)
 {
     s32 index;
     s32 *base;

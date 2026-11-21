@@ -13,6 +13,8 @@ extern struct ScriptTimer *gScriptTimerTicks __asm__("D_8009F770");
 extern s32 gScriptTimerCount __asm__("D_8009F774");
 
 extern s32 func_80069D68(s32 id, s32 arg1, s32 arg2, s32 arg3);
+void gTickScriptTimers(s32 elapsed) __asm__("func_80049564");
+
 
 /**
  *  @brief Advances active script timers and dispatches actions when triggered.
@@ -33,7 +35,7 @@ extern s32 func_80069D68(s32 id, s32 arg1, s32 arg2, s32 arg3);
  *  @par Callers
  *  Confirmed: func_80026D9C.
  */
-void func_80049564(s32 elapsed)
+void gTickScriptTimers(s32 elapsed)
 {
     struct ScriptTimer *timer;
     s32 i;

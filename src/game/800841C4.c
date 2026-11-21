@@ -24,6 +24,8 @@ extern s32 gCellGridWidth __asm__("D_8009F93C");
 extern s32 gCellGridHeight __asm__("D_8009F940");
 extern s32 gFrameTime[] __asm__("D_8009FAA4");
 extern void func_800195D0(struct LinkState *state, int *link);
+void gSendSceneNodeCommandById(s32 id, s32 mode, s32 index) __asm__("func_800841C4");
+
 
 /**
  *  @brief Finds the first node with a matching ID and applies a command.
@@ -46,7 +48,7 @@ extern void func_800195D0(struct LinkState *state, int *link);
  *  @par Callers
  *  Confirmed: func_80069D68.
  */
-void func_800841C4(s32 id, s32 mode, s32 index)
+void gSendSceneNodeCommandById(s32 id, s32 mode, s32 index)
 {
     register s32 command __asm__("$11") = mode;
     s32 i;

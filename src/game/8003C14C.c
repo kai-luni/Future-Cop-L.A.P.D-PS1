@@ -54,6 +54,8 @@ struct UnkC14CSrc {
 };
 
 extern s32 gIdentityMatrix[9] __asm__("D_8009AA38");
+void gInitSpawnMotionState(struct UnkC14C *dest, struct UnkC14CSrc *src) __asm__("func_8003C14C");
+
 
 /**
  * @brief Initialises a motion state block from a source record.
@@ -86,7 +88,7 @@ extern s32 gIdentityMatrix[9] __asm__("D_8009AA38");
  * Confirmed: func_8007043C, func_800762B0. Likely: func_80043430,
  * func_8004C920, func_8006EB80, func_80074024.
  */
-void func_8003C14C(struct UnkC14C *dest, struct UnkC14CSrc *src)
+void gInitSpawnMotionState(struct UnkC14C *dest, struct UnkC14CSrc *src)
 {
     dest->unk06 = src->unk15;
     dest->unk11 = src->unk16;

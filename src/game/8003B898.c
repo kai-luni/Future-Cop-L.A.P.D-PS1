@@ -17,7 +17,7 @@ struct Entry {
 
 extern struct Entry *gSlotSpawnDescs[] __asm__("D_800A0C70");
 extern u8 func_8003B4E0(u8 index, u8 slot, u8 mode);
-extern s32 func_8003BF50(struct Entity *entity);
+extern s32 gGetEntitySpawnBank(struct Entity *entity) __asm__("func_8003BF50");
 extern s32 gSpawnTypeAtOwner(struct Entity *entity, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 void gSpawnEntitySlotTypes(u8 index, struct Entity *entity, s32 arg2, u16 flags, s32 mode) __asm__("func_8003B898");
 
@@ -77,19 +77,19 @@ void gSpawnEntitySlotTypes(u8 index, struct Entity *entity, s32 arg2, u16 flags,
     found = 0;
     special = mode == 2;
     if (entity->flags & 0x40000) {
-        gSpawnTypeAtOwner(entity, entity->column, arg2, func_8003BF50(entity), 0);
+        gSpawnTypeAtOwner(entity, entity->column, arg2, gGetEntitySpawnBank(entity), 0);
     } else if (gSlotSpawnDescs[index] != 0) {
         if (mode == 0) {
             if (gSlotSpawnDescs[index]->column != 0) {
                 gSpawnTypeAtOwner(entity, gSlotSpawnDescs[index]->column, arg2,
-                             func_8003BF50(entity), 0);
+                             gGetEntitySpawnBank(entity), 0);
             }
         } else {
             for (i = 0; i < 5; i++) {
                 if (flags & 1) {
                     column = func_8003B4E0(index, i, special);
                     if (column != 0) {
-                        gSpawnTypeAtOwner(entity, column, arg2, func_8003BF50(entity), 0);
+                        gSpawnTypeAtOwner(entity, column, arg2, gGetEntitySpawnBank(entity), 0);
                         found = 1;
                     }
                 }
@@ -98,7 +98,7 @@ void gSpawnEntitySlotTypes(u8 index, struct Entity *entity, s32 arg2, u16 flags,
             if (!found) {
                 column = func_8003B4E0(index, 0, special);
                 if (column != 0) {
-                    gSpawnTypeAtOwner(entity, column, arg2, func_8003BF50(entity), 0);
+                    gSpawnTypeAtOwner(entity, column, arg2, gGetEntitySpawnBank(entity), 0);
                 }
             }
         }

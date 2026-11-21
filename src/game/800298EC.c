@@ -17,6 +17,8 @@ typedef struct {
 } Queue298EC;
 
 extern Queue298EC gRingBuffer __asm__("D_800A0BC0");
+void gAppendScriptEvent(s16 arg0) __asm__("func_800298EC");
+
 
 /**
  * @brief Appends a value to the eight-slot event ring at its next free position.
@@ -45,7 +47,7 @@ extern Queue298EC gRingBuffer __asm__("D_800A0BC0");
  * @par Callers
  * Confirmed: func_80069D68 (script VM). Likely: func_80029974 (immediate path).
  */
-void func_800298EC(s16 arg0)
+void gAppendScriptEvent(s16 arg0)
 {
     if (gScreenState < 5) {
         if (func_800452C8() != 0) {

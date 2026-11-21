@@ -23,7 +23,9 @@ struct EntityTable {
 
 extern struct EntityTable *gRegistryTable __asm__("D_8009F800");
 
-extern void func_800614BC(struct Entity *entity, s32 arg1, s32 arg2);
+extern void gApplyRegisteredSpawnerCommand(struct Entity *entity, s32 arg1, s32 arg2) __asm__("func_800614BC");
+void gSendSpawnerCommandByGroup(s32 message, s32 arg1, s32 arg2) __asm__("func_80061600");
+
 
 /**
  *  @brief Dispatches arguments to entities whose nested byte matches a message.
@@ -44,7 +46,7 @@ extern void func_800614BC(struct Entity *entity, s32 arg1, s32 arg2);
  *  @par Callers
  *  Confirmed: func_80069D68.
  */
-void func_80061600(s32 message, s32 arg1, s32 arg2)
+void gSendSpawnerCommandByGroup(s32 message, s32 arg1, s32 arg2)
 {
     struct Entity **cursor;
     struct Entity *entity;
@@ -54,7 +56,7 @@ void func_80061600(s32 message, s32 arg1, s32 arg2)
     for (remaining = gRegistryTable->count; remaining > 0; remaining--) {
         entity = *cursor++;
         if (entity->unk04->unk28->unk1D == message) {
-            func_800614BC(entity, arg1, arg2);
+            gApplyRegisteredSpawnerCommand(entity, arg1, arg2);
         }
     }
 }

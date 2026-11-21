@@ -10,6 +10,8 @@ struct Node {
     void (*callback)(int, struct Node *, int, int);
 };
 extern struct Node *gListHeads[7] __asm__("D_800A1070");
+void gRetireDeferredNodes(struct Target *arg) __asm__("func_8003FE90");
+
 
 /**
  *  @brief Removes and notifies all list nodes associated with a target.
@@ -30,7 +32,7 @@ extern struct Node *gListHeads[7] __asm__("D_800A1070");
  *  @par Callers
  *  Confirmed: func_8003FF7C.
  */
-void func_8003FE90(struct Target *arg)
+void gRetireDeferredNodes(struct Target *arg)
 {
     register struct Node **cursor __asm__("$18");
     struct Node **base;

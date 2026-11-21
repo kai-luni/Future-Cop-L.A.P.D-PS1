@@ -1,7 +1,7 @@
 // Categories: Game Engine > Collision Grid
 #include "game/types.h"
 
-extern u32 *func_8003B3D8(u32 column, u32 row);
+extern u32 *gGetSpawnTypeFlagPtr(u32 column, u32 row) __asm__("func_8003B3D8");
 
 /**
  * @brief Sets flag bits on one grid cell.
@@ -32,5 +32,5 @@ extern u32 *func_8003B3D8(u32 column, u32 row);
 void gOrGridCellFlags(u8 column, s32 row, u8 bits) __asm__("func_8003C4C4");
 void gOrGridCellFlags(u8 column, s32 row, u8 bits)
 {
-    *(u8 *)func_8003B3D8(column, row) |= bits;
+    *(u8 *)gGetSpawnTypeFlagPtr(column, row) |= bits;
 }

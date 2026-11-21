@@ -13,7 +13,7 @@ typedef struct {
 extern Unk800A0968 gMixerState __asm__("D_800A0968");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern void gStopAudioStreamAndClearChannels(void) __asm__("func_800226D8");
-extern void func_8002A23C(void);
+extern void gRestartVagmStreamOnTimeout(void) __asm__("func_8002A23C");
 
 void gPollAudioStreamStop(void) __asm__("func_80022654");
 
@@ -48,7 +48,7 @@ void gPollAudioStreamStop(void)
             gStopAudioStreamAndClearChannels();
         } else if (gMixerState.unk88 < gFrameTickCounter) {
             gMixerState.unk88 = -1;
-            func_8002A23C();
+            gRestartVagmStreamOnTimeout();
         }
     }
 }

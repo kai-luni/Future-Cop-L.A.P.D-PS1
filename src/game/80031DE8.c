@@ -43,7 +43,7 @@ extern Manager80031DE8 gCommandListHead __asm__("D_800A8F90");
 extern Target80031DE8 *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern s32 func_80019668(void);
-extern s32 func_80031C74(Node80031DE8 *node, Target80031DE8 *target);
+extern s32 gTestMapZoneTrigger(Node80031DE8 *node, Target80031DE8 *target) __asm__("func_80031C74");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
@@ -167,7 +167,7 @@ check:
     if (target == 0) {
         goto after_call;
     }
-    if ((func_80031C74(node, target) & 0xFF) == 0) {
+    if ((gTestMapZoneTrigger(node, target) & 0xFF) == 0) {
         goto after_call;
     }
 

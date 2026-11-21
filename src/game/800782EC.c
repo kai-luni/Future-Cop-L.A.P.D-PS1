@@ -25,7 +25,9 @@ extern struct Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern char gTitleScreenMenuDescriptor[] __asm__("D_800A38F8");
 extern void gRouteFrontEndModeMenu(void) __asm__("func_80078210");
 extern void gSetPadRumbleEnabled(s32, s32) __asm__("func_8001EC04");
-extern void func_80078650(void *, s32);
+extern void gActivateMenuPanel(void *, s32) __asm__("func_80078650");
+void gResumeFrontEndForReturnMode(void) __asm__("func_800782EC");
+
 
 /**
  *  @brief Updates mode-dependent progression state and invokes the next handler.
@@ -50,7 +52,7 @@ extern void func_80078650(void *, s32);
  *  @par Callers
  *  Confirmed: func_80077AD4.
  */
-void func_800782EC(void)
+void gResumeFrontEndForReturnMode(void)
 {
     register s32 v __asm__("$2");
     register s32 raw __asm__("$6");
@@ -102,7 +104,7 @@ void func_800782EC(void)
         gSetPadRumbleEnabled(0, gRumbleEnabled);
         gSetPadRumbleEnabled(1, D_8009F8D9);
     default:
-        func_80078650(gTitleScreenMenuDescriptor, 0);
+        gActivateMenuPanel(gTitleScreenMenuDescriptor, 0);
         break;
     }
 }

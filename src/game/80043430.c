@@ -80,7 +80,7 @@ typedef struct {
     u8 unk5F;
 } Def43430;
 
-extern void func_8003C14C(Obj43430 *p, Def43430 *src);
+extern void gInitSpawnMotionState(Obj43430 *p, Def43430 *src) __asm__("func_8003C14C");
 extern s32 func_80017B88(void);
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, s32 *out) __asm__("func_800188D0");
@@ -119,7 +119,7 @@ u8 gSetupParticleEmitter(Obj43430 *p, Def43430 *src)
     s32 limit;
     u16 value;
 
-    func_8003C14C(p, src);
+    gInitSpawnMotionState(p, src);
     limit = 0x2BC;
 
     if ((s16)src->unk36 == -1) {

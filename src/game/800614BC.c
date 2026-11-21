@@ -14,6 +14,8 @@ struct Unk614BCObj {
     u8 unk00[4];
     struct Unk614BCSub *sub;
 };
+void gApplyRegisteredSpawnerCommand(struct Unk614BCObj *obj, s32 arg1, s32 arg2) __asm__("func_800614BC");
+
 
 /**
  *  @brief Updates flag fields in an object's substructure for two command codes.
@@ -35,7 +37,7 @@ struct Unk614BCObj {
  *  @par Callers
  *  Confirmed: func_8006158C.
  */
-void func_800614BC(struct Unk614BCObj *obj, s32 arg1, s32 arg2)
+void gApplyRegisteredSpawnerCommand(struct Unk614BCObj *obj, s32 arg1, s32 arg2)
 {
     register struct Unk614BCSub *sub __asm__("$4") = obj->sub;
     u16 f;

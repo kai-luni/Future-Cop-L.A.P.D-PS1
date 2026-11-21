@@ -103,7 +103,7 @@ extern struct Object *gPendingSpawnList __asm__("D_8009F314");
 
 extern void gBuildNodePlacement(struct Source *, struct Object *, struct Parent *, void *, struct Matrix *, u16 *, s8 *) __asm__("func_8003DB70");
 extern struct Data *gResolveNodeTransform(struct Holder *, u16, s8, s32, struct Parent *, struct Matrix *) __asm__("func_8003D9F8");
-extern u32 *func_8003B3D8(u32, u32);
+extern u32 *gGetSpawnTypeFlagPtr(u32, u32) __asm__("func_8003B3D8");
 extern void func_8003B3F8(struct Object *, u32, s32);
 extern s32 func_8003CDAC(struct Holder *, s8);
 extern void gGetViewGroundAnchor(u32, struct DestinationTriple *) __asm__("func_80069580");
@@ -111,9 +111,9 @@ extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
 extern s32 gApproxVectorLength(s32 *) __asm__("func_80019F54");
 extern void func_80057358(void *, s32);
 extern void func_80025D6C(s32 *);
-extern void func_800410BC(s32 *, u16, s16, void *);
-extern struct Object *func_80040E60(struct Source *);
-extern struct Object *func_8007043C(struct Source *);
+extern void gApplyRadialContactDamage(s32 *, u16, s16, void *) __asm__("func_800410BC");
+extern struct Object *gCreateLightObject(struct Source *) __asm__("func_80040E60");
+extern struct Object *gCreateKind59Actor(struct Source *) __asm__("func_8007043C");
 extern struct Object *func_8006EB80(struct Source *);
 extern struct Object *func_800447F0(struct Source *);
 extern struct Object *func_8004C920(struct Source *);
@@ -296,7 +296,7 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
     gBuildNodePlacement(source, link, parent, arg3, &work.matrix, &work.half, &work.slot);
     data = gResolveNodeTransform(holder, source->flags32, source->unk1E, 0, parent, &work.matrix);
 
-    if ((*(u8 *)func_8003B3D8(type, arg4) & 5) == 0) {
+    if ((*(u8 *)gGetSpawnTypeFlagPtr(type, arg4) & 5) == 0) {
         found = 0;
         for (i = 0; i < gPlayerCount; i++) {
             gGetViewGroundAnchor(i, &work.point);
@@ -314,10 +314,10 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
 
     switch (source->kind) {
     case 0x5D:
-        tmp = func_80040E60(source);
+        tmp = gCreateLightObject(source);
         break;
     case 0x59:
-        tmp = func_8007043C(source);
+        tmp = gCreateKind59Actor(source);
         break;
     case 0x5C:
         tmp = func_8006EB80(source);
@@ -411,7 +411,7 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
 
     if (object->source20->unk2E != 0) {
         if (object->source20->unk30 > 0) {
-            func_800410BC(&data->x, object->source20->unk2E, object->source20->unk30, gSpawnMotionContext);
+            gApplyRadialContactDamage(&data->x, object->source20->unk2E, object->source20->unk30, gSpawnMotionContext);
         } else {
             object->func24(9, object, 0, 0);
         }

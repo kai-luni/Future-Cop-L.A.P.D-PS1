@@ -116,7 +116,7 @@ extern void func_8008CCB0(void *, void *);
 extern s32 func_8008CCC0(void *);
 extern void func_8008CD30(void *, void *, ...);
 extern u8 *gLookupTextString(s32) __asm__("func_80089914");
-extern void func_80078650(void *, s32);
+extern void gActivateMenuPanel(void *, s32) __asm__("func_80078650");
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern void func_80077FFC(void);
 extern void gSetupPrecinctAssaultMissionList(void) __asm__("func_80077708");

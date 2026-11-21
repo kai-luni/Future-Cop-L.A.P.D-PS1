@@ -37,6 +37,8 @@ extern s32 func_80019668(void);
 extern void gCheckTargetRangeAndCone(void *, void *, s32, s32) __asm__("func_8004E5F0");
 extern struct Ref4F330 *gFindTargetEntity(void *, s32, s32, s32, s32, s32, s32) __asm__("func_8004E80C");
 extern s32 gGteLeadingZeros(u32) __asm__("func_80095C14");
+s32 gSelectNextPathNode(struct Obj4F330 *arg0, struct Node4F330 *arg1, s32 arg2) __asm__("func_8004F330");
+
 
 /**
  * @brief Selects the next connected map node for a path follower using target-directed or random scoring.
@@ -63,7 +65,7 @@ extern s32 gGteLeadingZeros(u32) __asm__("func_80095C14");
  * @par Callers
  * Confirmed: func_8004F764 (0x8004F790, segment hand-off) and func_80050E0C (0x80050EDC, mover setup).
  */
-s32 func_8004F330(struct Obj4F330 *arg0, struct Node4F330 *arg1, s32 arg2)
+s32 gSelectNextPathNode(struct Obj4F330 *arg0, struct Node4F330 *arg1, s32 arg2)
 {
     static void *const label_table[] __attribute__((used)) = {
         &&case_0, &&case_ref, &&case_ref, &&case_ref, &&case_ref, &&case_ref,

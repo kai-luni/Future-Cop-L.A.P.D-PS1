@@ -9,6 +9,8 @@ struct Unk4F0F0Entry {
 
 extern struct Unk4F0F0Entry *gPathNetTables[] __asm__("D_800A2210");
 extern s32 gPlacementSlotCount __asm__("D_8009F7B8");
+void gSetPathNodeBlocked(s32 index, u32 mode, s32 entry) __asm__("func_8004F0F0");
+
 
 /**
  *  @brief Sets or clears bit 1 of a table entry's flags.
@@ -29,7 +31,7 @@ extern s32 gPlacementSlotCount __asm__("D_8009F7B8");
  *  @par Callers
  *  Confirmed: func_80069D68.
  */
-void func_8004F0F0(s32 index, u32 mode, s32 entry)
+void gSetPathNodeBlocked(s32 index, u32 mode, s32 entry)
 {
     u8 *flag;
     u8 value;

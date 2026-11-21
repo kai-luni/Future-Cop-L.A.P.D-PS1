@@ -12,6 +12,8 @@ struct Unk3BF50Object {
     u8 unkC4[4];
     struct Unk3BF50Object *unkC8;
 };
+s32 gGetEntitySpawnBank(struct Unk3BF50Object *object) __asm__("func_8003BF50");
+
 
 /**
  * @brief Tests whether an object is, or is linked to, a kind-0x12 entity.
@@ -37,7 +39,7 @@ struct Unk3BF50Object {
  * func_8003B898, func_8003BAE4, func_8003BC0C, func_8005B6A8, func_8005BDE4,
  * gWriteCellEventValue, func_8005C184, func_8005C344, gAttachPartEffect.
  */
-s32 func_8003BF50(struct Unk3BF50Object *object)
+s32 gGetEntitySpawnBank(struct Unk3BF50Object *object)
 {
     struct Unk3BF50Object *other;
     s32 result;

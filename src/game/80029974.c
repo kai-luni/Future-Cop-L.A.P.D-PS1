@@ -20,7 +20,7 @@ extern struct Unk800A0BC0 gRingBuffer __asm__("D_800A0BC0");
 
 extern s32 func_800452C8(void);
 extern void func_80029DD8(void);
-extern void func_800298EC(s32 arg0);
+extern void gAppendScriptEvent(s32 arg0) __asm__("func_800298EC");
 
 /**
  * @brief Queues an event value into the eight-slot ring buffer.
@@ -59,7 +59,7 @@ void func_80029974(s32 arg0)
 
     if (gScreenState[0] < 5 && func_800452C8() != 0) {
         if (gRingBuffer.unk00 <= 0 && (gBitFieldState & 0x70) == 0) {
-            func_800298EC(arg0);
+            gAppendScriptEvent(arg0);
         } else {
             if (gBitFieldState & 0x40) {
                 gLatchFlag = 1;

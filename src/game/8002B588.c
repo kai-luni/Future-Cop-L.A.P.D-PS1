@@ -6,7 +6,7 @@ struct Obj { u8 pad0[0x28]; struct Model *model; u8 matrix[0x18]; struct Vec pos
 extern void gBuildRotationMatrix(s32,s32,s32,void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *,void *,s32) __asm__("func_80010234");
-extern void func_8002B0EC(void *,s32);
+extern void gSetType26AnimationClip(void *,s32) __asm__("func_8002B0EC");
 extern void func_80044B34(void *,void *,s32,s32);
 void gTurnEntityToAngle(struct Obj *o, s32 angle, s32 speed) __asm__("func_8002B588");
 
@@ -84,7 +84,7 @@ void gTurnEntityToAngle(struct Obj *o, s32 angle, s32 speed)
         gGteTransformVerticesWide(pointer + offset, o->output, 1);
         o->pos2 = o->pos;
         if (o->flag == 0) {
-            func_8002B0EC(o, o->anim);
+            gSetType26AnimationClip(o, o->anim);
             func_80044B34(o, o->track, speed, 0);
             gSetModelFrame(&o->model, o->trackframe);
         }

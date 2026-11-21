@@ -16,7 +16,7 @@ extern s32 *gVmCountdowns __asm__("D_8009F9A4");
 extern u8 gScriptVmDisabled __asm__("D_8009F840");
 
 extern s32 func_80019668(void);
-extern void func_80069B1C(void);
+extern void gBindGameSessionPointers(void) __asm__("func_80069B1C");
 
 /**
  * @brief Initializes script-VM random tables, variable banks, and state pointers, and enables bytecode script execution.
@@ -60,6 +60,6 @@ void func_80069B58(void)
         gVmCountdowns[i] = value;
     }
 
-    func_80069B1C();
+    gBindGameSessionPointers();
     gScriptVmDisabled = 0;
 }

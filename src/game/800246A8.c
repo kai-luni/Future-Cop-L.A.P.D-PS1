@@ -3,8 +3,8 @@
 
 extern s32 gActiveStreamId __asm__("D_8009F280");
 
-extern void func_8002A31C(s32 arg0, s32 arg1);
-extern s32 func_8002A398(void);
+extern void gQueueStreamAssetRelease(s32 arg0, s32 arg1) __asm__("func_8002A31C");
+extern s32 gDequeueVagmChunk(void) __asm__("func_8002A398");
 extern void gSetAudioStreamChannelRange(s32 start, s32 length, s32 channel, u8 looping) __asm__("func_80022B28");
 
 s32 gReplaceVagmAudioStreamBuffer(s32 arg0) __asm__("func_800246A8");
@@ -41,10 +41,10 @@ s32 gReplaceVagmAudioStreamBuffer(s32 arg0)
 
     s0 = 0;
     if (gActiveStreamId != 0) {
-        func_8002A31C(gActiveStreamId, 1);
+        gQueueStreamAssetRelease(gActiveStreamId, 1);
         gActiveStreamId = 0;
     }
-    v1 = (s32 *)func_8002A398();
+    v1 = (s32 *)gDequeueVagmChunk();
     gActiveStreamId = (s32)v1;
     if (v1 != 0) {
         (void)*(volatile s32 *)(v1 + 1);

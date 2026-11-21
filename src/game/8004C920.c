@@ -57,7 +57,7 @@ struct Unk4C920 {
 
 extern u8 gMeshFractureEntityHandler[] __asm__("D_8004C324");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void func_8003C14C(struct Unk4C920 *dest, struct Unk4C920Source *src);
+extern void gInitSpawnMotionState(struct Unk4C920 *dest, struct Unk4C920Source *src) __asm__("func_8003C14C");
 extern void gBuildRotationMatrix(s32, s32, s32, struct Unk4C920Work *) __asm__("func_800188D0");
 
 /**
@@ -92,7 +92,7 @@ void *func_8004C920(struct Unk4C920Source *src)
     if (dest == 0) {
         return 0;
     }
-    func_8003C14C(dest, src);
+    gInitSpawnMotionState(dest, src);
     dest->unk66 = src->unk38;
     dest->unk68 = src->unk3A;
     dest->unk6A = src->unk3C;

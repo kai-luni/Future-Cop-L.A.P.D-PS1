@@ -78,9 +78,11 @@ typedef struct {
 
 extern u8 D_8006FF44[];
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
-extern void func_8003C14C(Dest7043C *dest, Source7043C *src);
+extern void gInitSpawnMotionState(Dest7043C *dest, Source7043C *src) __asm__("func_8003C14C");
 extern s32 func_80019668(void);
 extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, Work7043C *work) __asm__("func_800188D0");
+void *gCreateKind59Actor(Source7043C *src) __asm__("func_8007043C");
+
 
 /**
  * @brief Constructor for spawn kind 0x59: allocates the 0x9C-byte scene object,
@@ -130,7 +132,7 @@ extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, Work7043C *work) __asm__("
  * spawner, which runs the distance gate and the parent bookkeeping before it calls
  * this function).
  */
-void *func_8007043C(Source7043C *src)
+void *gCreateKind59Actor(Source7043C *src)
 {
     Dest7043C *dest;
     Work7043C work;
@@ -146,7 +148,7 @@ void *func_8007043C(Source7043C *src)
         return 0;
     }
 
-    func_8003C14C(dest, src);
+    gInitSpawnMotionState(dest, src);
 
     dest->unk24 = (s32)D_8006FF44;
     dest->unk12 = src->unk34;

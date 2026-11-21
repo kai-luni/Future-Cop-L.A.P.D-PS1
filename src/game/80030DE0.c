@@ -57,6 +57,8 @@ struct Entity {
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, struct Arg *arg, s32 arg3) __asm__("func_8002AD58");
 extern s32 gSqrt12(s32 arg0) __asm__("func_80095900");
 extern s32 gQuerySurfaceHeight(struct Vec3 *pos, s32 mode) __asm__("func_80067684");
+s32 gInitTriggerAttachmentEntity(struct Entity *self, struct Arg *arg, s32 arg2) __asm__("func_80030DE0");
+
 
 /**
  * @brief Spawn initializer of the 0xB8-byte trigger/attachment volume class.
@@ -95,7 +97,7 @@ extern s32 gQuerySurfaceHeight(struct Vec3 *pos, s32 mode) __asm__("func_8006768
  * Confirmed: func_8003151C (message 2 of the class handler whose size query
  * returns 0xB8; call site 0x80031570).
  */
-s32 func_80030DE0(struct Entity *self, struct Arg *arg, s32 arg2)
+s32 gInitTriggerAttachmentEntity(struct Entity *self, struct Arg *arg, s32 arg2)
 {
     struct Def *def;
     s32 s1;

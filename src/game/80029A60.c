@@ -21,7 +21,7 @@ extern u32 gScreenState __asm__("D_8009FA00");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 
 extern void func_80029DD8(void);
-extern void func_80041DC4(struct Unk41DC4 *object, s32 value);
+extern void gSetType34StreamState(struct Unk41DC4 *object, s32 value) __asm__("func_80041DC4");
 
 /**
  * @brief Enqueues or priority-prepends an event/dialogue entry in the 8-slot D_800A0BC0 ring buffer.
@@ -66,7 +66,7 @@ s32 func_80029A60(s32 arg0, struct Unk41DC4 *arg1, u8 arg2)
     }
 
     if (arg2 == 0 || gRingBuffer.unk00 <= 0) {
-        func_80041DC4(arg1, arg0);
+        gSetType34StreamState(arg1, arg0);
 
         index = (gRingBuffer.unk02 + gRingBuffer.unk00) & 7;
         gRingBuffer.entries[index].unk00 = arg0;
@@ -75,7 +75,7 @@ s32 func_80029A60(s32 arg0, struct Unk41DC4 *arg1, u8 arg2)
         gRingBuffer.unk00++;
     } else {
         func_80029DD8();
-        func_80041DC4(arg1, arg0);
+        gSetType34StreamState(arg1, arg0);
 
         index = gRingBuffer.unk02 - 1;
         if (index < 0) {

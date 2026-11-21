@@ -46,8 +46,8 @@ extern void gBuildCoarseHeightGrid(void) __asm__("func_800695A8");
 extern u8 *func_80019C38(s32 arg0, s32 arg1, u32 tag, s32 arg3);
 extern void *func_80019CA0(s32 arg0, s32 arg1, u32 tag, s32 arg3);
 extern struct Resource *func_80019BF0(s32 group, s32 name);
-extern s32 func_8002AE54(u8 type);
-extern s32 func_8004D4D4(struct EntityDef *def);
+extern s32 gGetEntityHandlerForType(u8 type) __asm__("func_8002AE54");
+extern s32 gSpawnQueuedEntityAndGetId(struct EntityDef *def) __asm__("func_8004D4D4");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 extern void gLoadMapZone(struct Unk4D6D4 *arg0) __asm__("func_800319D4");
@@ -154,13 +154,13 @@ void gLoadActorChunk(struct Unk4D6D4 *arg0)
                         ((struct Unk4D6D4List *)defp->unk04)->entries[i].name);
             }
         }
-        type_value = func_8002AE54(((struct Unk4D6D4Data *)defp->unk08)->type);
+        type_value = gGetEntityHandlerForType(((struct Unk4D6D4Data *)defp->unk08)->type);
         list = defp->unk04;
         defp->unk00 = type_value;
         defp->unk0C = arg0;
         arg0->unk08 = 0;
         arg0->unk00 = (s32)list;
-        arg0->unk04 = func_8004D4D4(defp);
+        arg0->unk04 = gSpawnQueuedEntityAndGetId(defp);
         gFreeBlock(arg0);
         break;
     }

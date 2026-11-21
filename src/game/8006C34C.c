@@ -19,7 +19,7 @@ struct Unk6C34CControl {
     Entity *unk70;
 };
 
-extern Entity *func_8006C224(Entity *source, Entity *exclude, s32 maxDist, s32 flags);
+extern Entity *gFindNearestOpposingEntity(Entity *source, Entity *exclude, s32 maxDist, s32 flags) __asm__("func_8006C224");
 
 /**
  * @brief Acquires or cycles a target entity for the player's lock-on state.
@@ -55,7 +55,7 @@ void func_8006C34C(Entity *object, s32 arg1)
     if (((u8)arg1) == 0 || control->unk6C == 0) {
         control->unk70 = control->unk6C;
     }
-    result = func_8006C224(object, control->unk70, 0x18000, 0xF9EE);
+    result = gFindNearestOpposingEntity(object, control->unk70, 0x18000, 0xF9EE);
     if (result != 0) {
         control->unk6C = result;
         control->unk68 = result->unk08;

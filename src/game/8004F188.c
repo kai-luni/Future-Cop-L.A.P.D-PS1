@@ -30,7 +30,7 @@ struct Script {
     s32 unk84;
 };
 
-extern void func_8002A5B4(struct Script *script, s32 index);
+extern void gRemoveEntityCommand(struct Script *script, s32 index) __asm__("func_8002A5B4");
 
 /**
  * @brief Executes and consumes path-mover script opcodes 1..22 from a 4-slot queue.
@@ -120,6 +120,6 @@ void func_8004F188(struct Object *object, struct Script *script)
             continue;
         }
 
-        func_8002A5B4(script, i);
+        gRemoveEntityCommand(script, i);
     }
 }

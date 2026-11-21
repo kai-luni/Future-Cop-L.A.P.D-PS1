@@ -37,7 +37,7 @@ extern u8 gAttachMessageName[] __asm__("D_80075698");
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern u8 func_8003BE2C(void *, s32, s32);
-extern void func_8003C14C(void *, void *);
+extern void gInitSpawnMotionState(void *, void *) __asm__("func_8003C14C");
 extern u32 func_80019668(void);
 extern void gBuildRotationMatrix(s32, s32, s32, Work *) __asm__("func_800188D0");
 void *gCreateEmitterObject(Src *arg) __asm__("func_800762B0");
@@ -135,7 +135,7 @@ void *gCreateEmitterObject(Src *arg)
         gFreeBlock(dest);
         return 0;
     }
-    func_8003C14C(dest, src);
+    gInitSpawnMotionState(dest, src);
     dest->a24 = (s32)gAttachMessageName;
     dest->a72 = src->a41;
     dest->a12 = src->a34;

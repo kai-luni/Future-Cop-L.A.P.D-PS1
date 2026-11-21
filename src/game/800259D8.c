@@ -29,8 +29,8 @@ extern void func_8001B4A8(s32 arg0);
 extern u8 func_8002385C(void);
 extern void gDrawScreenFadeQuad(void) __asm__("func_80025690");
 extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
-extern void func_80047690(u8 enable);
-extern void func_8006AB38(void *arg0);
+extern void gSetAudioPlaybackEnabled(u8 enable) __asm__("func_80047690");
+extern void gResetPlayerWeaponLoadout(void *arg0) __asm__("func_8006AB38");
 extern void gPlacePlayerViews(void) __asm__("func_80056634");
 
 /**
@@ -141,7 +141,7 @@ s32 gPrepareAndSubmitFrame(void)
     }
 
     gSetDisplayEnabled(1);
-    func_80047690(1);
+    gSetAudioPlaybackEnabled(1);
 
     {
         register u8 **cursor __asm__("$16");
@@ -150,7 +150,7 @@ s32 gPrepareAndSubmitFrame(void)
         cursor = gPlayerEntities;
         do {
             if (*cursor != 0) {
-                func_8006AB38(*cursor);
+                gResetPlayerWeaponLoadout(*cursor);
             }
             i++;
             cursor++;

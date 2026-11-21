@@ -20,7 +20,7 @@ typedef struct {
 
 extern volatile Unk80086DB4 *gMovieAudioState __asm__("D_8009F4D8");
 
-extern void *func_800869D8(u32 index);
+extern void *gPeekMovieAudioFirstBuffer(u32 index) __asm__("func_800869D8");
 extern void *func_80086A4C(u32 arg);
 extern void func_8008684C(u8 *arg0, u32 arg1, u32 arg2);
 extern void gServiceMovieAudioIrq(void) __asm__("func_80086AC0");
@@ -57,7 +57,7 @@ void gMovieAudioStart(void)
     if (gMovieAudioState->unk08 == 0) {
         gMovieAudioState->unk7B3C = 0x300;
         for (i = 0; i < 3; i++) {
-            buf = func_800869D8(0x300);
+            buf = gPeekMovieAudioFirstBuffer(0x300);
             if (buf != 0) {
                 other = func_80086A4C(0x300);
             } else {

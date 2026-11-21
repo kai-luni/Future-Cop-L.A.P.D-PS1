@@ -9,6 +9,8 @@ struct Unk3C500Cell {
 
 extern struct Unk3C500Cell *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern void gOrGridCellFlags(u8 column, s32 row, u8 bits) __asm__("func_8003C4C4");
+void gMarkSpawnCycleFlags(s32 column, s32 stop, s32 row) __asm__("func_8003C500");
+
 
 /**
  * @brief Marks bit 2 (0x4) along a linked chain of D_800A7040 cell nodes until a stop node id is reached.
@@ -32,7 +34,7 @@ extern void gOrGridCellFlags(u8 column, s32 row, u8 bits) __asm__("func_8003C4C4
  * @par Callers
  * Confirmed: func_8003C590 (0x8003C754 in asm/us/main.s, when a cycle back-edge table[cell->next] == i is detected) / Likely: none / Unknown: none.
  */
-void func_8003C500(s32 column, s32 stop, s32 row)
+void gMarkSpawnCycleFlags(s32 column, s32 stop, s32 row)
 {
     struct Unk3C500Cell **line;
     struct Unk3C500Cell **base;

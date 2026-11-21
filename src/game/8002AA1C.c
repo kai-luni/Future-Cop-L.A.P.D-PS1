@@ -39,6 +39,9 @@ struct Unk3BObject {
 extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
 extern void func_80069D68(void *arg0, s32 arg1, u32 arg2,
                           struct Unk3BObject *arg3);
+s32 gApplyEntityBaseDamage(s32 message, struct Unk3BObject *object,
+                  struct Unk2AA1CHit *hit) __asm__("func_8002AA1C");
+
 
 /**
  * @brief Applies a hit to an entity and runs its damage script.
@@ -73,7 +76,7 @@ extern void func_80069D68(void *arg0, s32 arg1, u32 arg2,
  * @par Callers
  * Confirmed: func_8002AD58 (base entity handler, message 0xE).
  */
-s32 func_8002AA1C(s32 message, struct Unk3BObject *object,
+s32 gApplyEntityBaseDamage(s32 message, struct Unk3BObject *object,
                   struct Unk2AA1CHit *hit)
 {
     s32 amount;

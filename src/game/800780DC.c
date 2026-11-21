@@ -28,6 +28,8 @@ extern void *gFillMemory(void *destination, int value, unsigned int count) __asm
 extern void gFreeTextTable(void) __asm__("func_800898C8");
 extern void gOpenProfileSaveSubsystem(void) __asm__("func_8007F9CC");
 extern void gSetupFrontEndMenus(s32 arg) __asm__("func_80077AD4");
+void gInitFrontEndSubsystems(void) __asm__("func_800780DC");
+
 
 /**
  * Initialises the object registry and the per-slot flag tables of this subsystem.
@@ -52,7 +54,7 @@ extern void gSetupFrontEndMenus(s32 arg) __asm__("func_80077AD4");
  * The exact role of func_80077FFC, func_800898C8 and func_8007F9CC in this
  * sequence.
  */
-void func_800780DC(void)
+void gInitFrontEndSubsystems(void)
 {
     void *p;
     u32 i;

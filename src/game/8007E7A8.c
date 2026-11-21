@@ -18,7 +18,7 @@ extern u8 gPasswordBuffer[] __asm__("D_800A3948");
 extern u8 gPackedPasswordBytes[] __asm__("D_800A3938");
 extern volatile s32 gScalarCursor __asm__("D_8009F8F8");
 extern u16 gStatusTextId __asm__("D_8009F92A");
-extern void func_8007F02C(void);
+extern void gPackCurrentProgressPassword(void) __asm__("func_8007F02C");
 
 /**
  *  @brief Initializes mode-dependent state and generates ten table-derived values.
@@ -57,7 +57,7 @@ void gInitModeDependentState(void)
     } else {
         D_800A35FD[0] = 1;
     }
-    func_8007F02C();
+    gPackCurrentProgressPassword();
     i = 0;
     odd = gOctalDigitTable;
     even = gHexDigitTable;

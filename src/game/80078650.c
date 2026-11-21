@@ -22,6 +22,8 @@ extern void gResetMenuDirectionHoldTicks(void) __asm__("func_800785F8");
 extern void gSelectEnabledMenuItem(s32 a, s32 b, s32 c) __asm__("func_800787D8");
 extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
 extern void D_8007B3F4(void);
+void gActivateMenuPanel(Menu *arg0, s32 arg1) __asm__("func_80078650");
+
 
 /**
  * @brief Activates a menu, optionally links its parent, resets input, runs the
@@ -51,7 +53,7 @@ extern void D_8007B3F4(void);
  * @par Callers
  * Confirmed: func_800778E4 and func_80078210 (replace, arg1=0), func_8007A5F0 (pushes panels D_800A3868/898/8C8), func_8007B854 (level screen push), func_8007FB04 and func_8008125C (push D_800A3718, arg1=1).
  */
-void func_80078650(Menu *arg0, s32 arg1)
+void gActivateMenuPanel(Menu *arg0, s32 arg1)
 {
     Menu *m;
 

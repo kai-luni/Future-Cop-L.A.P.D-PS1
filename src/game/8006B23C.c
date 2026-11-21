@@ -114,7 +114,7 @@ extern s32 func_80019668(void);
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
 extern s32 gTraceMapRay(s32 *a, s32 *b, s32 *c, s32 d, s32 e) __asm__("func_800684AC");
-extern void func_800410BC(void *a, s16 b, s32 c, struct Unk6B23C *d);
+extern void gApplyRadialContactDamage(void *a, s16 b, s32 c, struct Unk6B23C *d) __asm__("func_800410BC");
 extern void *gAllocPositionNode(Vec6B23C *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80073500");
 extern void func_8007377C(void *a0, void *a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13);
 extern void func_8006A524(struct Unk6B23C *a0, void *a1, Vec6B23C *a2, void *a3, void *a4);
@@ -355,12 +355,12 @@ after_movement:
             if (a2 > 0) {
                 if ((s5 & 0xFF) == 0) {
                     if (c != 0) {
-                        func_800410BC((void *)((u8 *)c + 0x50), s3->unk0C, a2 << 4, self);
+                        gApplyRadialContactDamage((void *)((u8 *)c + 0x50), s3->unk0C, a2 << 4, self);
                         if ((c->unk24 & 0x200080) == 0x200000)
                             goto do_cb;
                         goto skip_callback;
                     } else {
-                        func_800410BC((void *)&v38, s3->unk0C, a2 << 4, self);
+                        gApplyRadialContactDamage((void *)&v38, s3->unk0C, a2 << 4, self);
                         goto skip_callback;
                     }
                 } else {

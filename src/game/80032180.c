@@ -127,6 +127,8 @@ extern s32 func_80019668(void);
 extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 extern void gBuildBasisFromAxis(s32 *, void *) __asm__("func_800193F8");
 extern void gSetAnimClipTable(u8 *, struct AnimTrack *, u8, s32) __asm__("func_80044988");
+s32 gInitHoverEnemy(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg) __asm__("func_80032180");
+
 
 /**
  * @brief Message-2 spawn initialiser of the hovering flyer class: copies the
@@ -190,7 +192,7 @@ extern void gSetAnimClipTable(u8 *, struct AnimTrack *, u8, s32) __asm__("func_8
  * @par Callers
  * func_80032F3C (message 2 of the class message table) and func_800331CC.
  */
-s32 func_80032180(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg)
+s32 gInitHoverEnemy(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg)
 {
     struct Unk32180Source *src;
     s32 *pos;

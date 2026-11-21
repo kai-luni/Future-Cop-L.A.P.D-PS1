@@ -4,6 +4,8 @@
 extern u8 gDemoCameraStates[][8] __asm__("D_800A2290");
 
 extern u32 func_80019668(void);
+void gInitDemoCameraStates(void) __asm__("func_80056924");
+
 
 /**
  * @brief Fills the two per-side camera preset sequences with random entries.
@@ -40,7 +42,7 @@ extern u32 func_80019668(void);
  * over, so either the consumer reinterprets the byte or the table is not a plain
  * preset index; the call sites only show it being read as D_800A2290[side][step].
  */
-void func_80056924(void)
+void gInitDemoCameraStates(void)
 {
     s32 i;
 

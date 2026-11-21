@@ -16,7 +16,7 @@ struct Unk2E528 {
 };
 
 extern void func_8002E2BC(struct Unk2E528 *self, s32 state);
-extern void func_8002A5B4(struct Unk2E528 *self, s32 index);
+extern void gRemoveEntityCommand(struct Unk2E528 *self, s32 index) __asm__("func_8002A5B4");
 
 /**
  * @brief Executes opcodes 0x55 and 0x56 from an animated actor's 4-slot command queue.
@@ -80,6 +80,6 @@ void func_8002E528(struct Unk2E528 *self)
         i++;
         continue;
     consume:
-        func_8002A5B4(self, i);
+        gRemoveEntityCommand(self, i);
     }
 }

@@ -42,6 +42,8 @@ struct Entity {
 
 extern s32 func_80069D68(s32 script, s32 arg1, s32 arg2, struct Entity *entity);
 extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
+s32 gTestMapZoneTrigger(struct Unk31C74Node *node, struct Entity *other) __asm__("func_80031C74");
+
 
 /**
  * @brief Tests an entity against a trigger box and fires the attached script.
@@ -74,7 +76,7 @@ extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
  * @par Callers
  * Likely: func_80031DE8 (same block).
  */
-s32 func_80031C74(struct Unk31C74Node *node, struct Entity *other)
+s32 gTestMapZoneTrigger(struct Unk31C74Node *node, struct Entity *other)
 {
     s32 delta;
     s32 sign;

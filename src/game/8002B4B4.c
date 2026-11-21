@@ -14,9 +14,9 @@ struct Unk2B4B4 {
     u8 unk160;
 };
 
-extern void func_8002B1DC(struct Unk2B4B4 *self, s32 arg, s32 zero);
+extern void gDispatchType26Command(struct Unk2B4B4 *self, s32 arg, s32 zero) __asm__("func_8002B1DC");
 extern void func_8002B1AC(struct Unk2B4B4 *self);
-extern void func_8002A5B4(struct Unk2B4B4 *self, s32 index);
+extern void gRemoveEntityCommand(struct Unk2B4B4 *self, s32 index) __asm__("func_8002A5B4");
 
 /**
  * @brief Executes opcodes 0x5A and 0x5B from a class-26 actor's 4-slot command queue.
@@ -55,7 +55,7 @@ void func_8002B4B4(struct Unk2B4B4 *self)
         switch (op) {
         case 0x5A:
             self->unk15F = arg;
-            func_8002B1DC(self, arg, 0);
+            gDispatchType26Command(self, arg, 0);
             break;
         case 0x5B:
             if (arg != 0) {
@@ -69,6 +69,6 @@ void func_8002B4B4(struct Unk2B4B4 *self)
             i++;
             continue;
         }
-        func_8002A5B4(self, i);
+        gRemoveEntityCommand(self, i);
     }
 }

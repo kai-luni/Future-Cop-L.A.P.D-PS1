@@ -23,7 +23,7 @@ struct Unk36AB4 {
     s32 unkC0;
 };
 
-extern void func_800410BC(void *arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gApplyRadialContactDamage(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_800410BC");
 extern s32 func_8001A4E8(void *arg0, void *arg1);
 
 /**
@@ -58,7 +58,7 @@ void func_80036AB4(struct Unk36AB4 *arg0, s32 arg1)
     register s32 scaled __asm__("$10");
 
     if (self->unkB0 > 0) {
-        func_800410BC(self->unk50, self->unk1A, self->unkB0, self->unkC0);
+        gApplyRadialContactDamage(self->unk50, self->unk1A, self->unkB0, self->unkC0);
         return;
     }
 
