@@ -54,10 +54,12 @@ extern s32 gFrameTime[] __asm__("D_8009FAA4");
 
 extern struct LinkNode *func_800195A4(struct LinkState *state);
 extern s32 func_80019668(void);
-extern void func_800497A8(void);
-extern void func_80049980(struct Unk49C38Node *node, u32 arg1, u32 arg2, s32 arg3,
-                          s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8);
+extern void gReapExpiredLightNodes(void) __asm__("func_800497A8");
+extern void gUpdateDynamicLightNode(struct Unk49C38Node *node, u32 arg1, u32 arg2, s32 arg3,
+                          s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8) __asm__("func_80049980");
 extern s32 gQuerySurfaceHeight(u8 *arg0, s32 arg1) __asm__("func_80067684");
+s32 gSpawnDynamicLightNode(struct Unk49C38 *object, s32 arg1) __asm__("func_80049C38");
+
 
 /**
  * @brief Spawns a map light node: resolves the surface height, allocates
@@ -90,7 +92,7 @@ extern s32 gQuerySurfaceHeight(u8 *arg0, s32 arg1) __asm__("func_80067684");
  * @par Callers
  * func_80049E88, func_8005A6A4.
  */
-s32 func_80049C38(struct Unk49C38 *object, s32 arg1)
+s32 gSpawnDynamicLightNode(struct Unk49C38 *object, s32 arg1)
 {
     struct Unk49C38Node *node;
     register s32 index __asm__("$17");
@@ -131,7 +133,7 @@ s32 func_80049C38(struct Unk49C38 *object, s32 arg1)
     }
     node = (struct Unk49C38Node *)func_800195A4(gLightNodePool);
     if (node == 0) {
-        func_800497A8();
+        gReapExpiredLightNodes();
         node = (struct Unk49C38Node *)func_800195A4(gLightNodePool);
         if (node == 0) {
             return 0;
@@ -177,7 +179,7 @@ s32 func_80049C38(struct Unk49C38 *object, s32 arg1)
     if (var_v1 < 0) {
         var_v1 = func_80019668() & 0xFFF;
     }
-    func_80049980(node, object->unk08, object->unk10,
+    gUpdateDynamicLightNode(node, object->unk08, object->unk10,
                   var_s4 + (object->unk16 << 4),
                   object->unk18 << 4, object->unk1A << 4,
                   var_s2, var_s1, var_v1);

@@ -98,8 +98,10 @@ extern void gSpawnLobeArc(struct Fx *a, u8 *b) __asm__("func_8005D060");
 extern void func_8006C488(struct Cand *a);
 extern void *gAllocPositionNode(s32 *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80073500");
 extern void *func_80073590(struct Cand *owner, void *coord, s32 kind, s32 a3, s32 a4, s32 a5);
-extern void func_8007377C(void *a, void *b, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7,
-                          s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13);
+extern void gCreateRibbonBeam(void *a, void *b, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7,
+                          s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13) __asm__("func_8007377C");
+u8 gUpdateDomeFieldEffect(struct Fx *self_, s32 a1) __asm__("func_8005D8F4");
+
 
 /**
  * @brief Per-frame update of an expanding damage field that rides on an owner's
@@ -164,7 +166,7 @@ extern void func_8007377C(void *a, void *b, s32 a2, s32 a3, s32 a4, s32 a5, s32 
  * func_8005E0AC, which steps the four slots of D_800A22F0 and frees every slot whose
  * update returned something other than 1.
  */
-u8 func_8005D8F4(struct Fx *self_, s32 a1)
+u8 gUpdateDomeFieldEffect(struct Fx *self_, s32 a1)
 {
     register s32 arg1 __asm__("$4");
     register struct Fx *self __asm__("$17");
@@ -367,7 +369,7 @@ u8 func_8005D8F4(struct Fx *self_, s32 a1)
     check:
         if ((self->flags & 4) != 0 && notified != 0 &&
             gTakeArmedLobePoint(self, delta, cand) != 0) {
-            func_8007377C(gAllocPositionNode(delta, 0, 0x18, 0),
+            gCreateRibbonBeam(gAllocPositionNode(delta, 0, 0x18, 0),
                           func_80073590(cand, 0, -1, 0, 0x18, 0), 0x20, 1, 0x7F, 0x7F, 0xFF, 0x2AA,
                           0x4000, -0x3000, 0, 0, 0, 1);
             goto send;

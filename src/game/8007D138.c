@@ -32,7 +32,7 @@ extern u8 gSnapshotResult __asm__("D_8009F904");
 extern s32 D_8009F908;
 extern s32 D_8009F90C;
 extern s32 D_8009F910;
-extern volatile s32 D_8009F914;
+extern volatile s32 gSavedOptionsSoundMode __asm__("D_8009F914");
 extern s32 gTestResultFlag __asm__("D_8009F918");
 extern volatile s32 gSnapshotPointer __asm__("D_8009F91C");
 extern volatile s32 gPreviewTrackId __asm__("D_8009F920");
@@ -44,7 +44,7 @@ extern u8 D_800A377B[];
 
 extern void gEmitFlatQuadRectMode(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082FA4");
 extern Unk8007CE04 *gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
-extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawAlignedMultilineText(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void func_80078B34(s32, s32, s32);
 extern void func_8002A16C(s32);
 extern s32 func_8002A58C(void);
@@ -55,6 +55,8 @@ extern s32 func_80045288(void);
 extern s32 func_800452C8(void);
 extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
+void gConfirmSoundOptionsItem(s32 arg0) __asm__("D_8007D138");
+
 
 /**
  *  @brief Sets a global flag when the argument equals 3.
@@ -73,7 +75,7 @@ extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C8
  *  @par Callers
  *  Unknown: No direct callers are listed.
  */
-void D_8007D138(s32 arg0)
+void gConfirmSoundOptionsItem(s32 arg0)
 {
     if (arg0 == 3) {
         gTestResultFlag = 1;

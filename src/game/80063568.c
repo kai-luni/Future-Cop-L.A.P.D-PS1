@@ -19,11 +19,13 @@ struct AnimNode {
     struct AnimEntry entries[1];
 };
 
-extern struct AnimNode *D_8009FA04;
+extern struct AnimNode *gMapTileAnimList __asm__("D_8009FA04");
 extern u8 gTilePatternCounterState[] __asm__("D_800A2730");
 
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
+void gStepMapTileAnimations(s32 dt) __asm__("func_80063568");
+
 
 /**
  * @brief Advances animated entries in D_8009FA04 and updates the 256-entry table D_800A2730.
@@ -47,7 +49,7 @@ extern s32 func_80019668(void);
  * @par Callers
  * Confirmed: func_8002703C (0x80027178, main frame tick) / Likely: none / Unknown: none.
  */
-void func_80063568(s32 dt)
+void gStepMapTileAnimations(s32 dt)
 {
     struct AnimNode *node;
     s32 i;
@@ -60,7 +62,7 @@ void func_80063568(s32 dt)
     u16 *dst;
     s32 off;
 
-    for (node = D_8009FA04; node != 0; node = node->next) {
+    for (node = gMapTileAnimList; node != 0; node = node->next) {
         e = node->entries;
         for (i = 0; i < node->count; i++, e++) {
             flags = e->flags;

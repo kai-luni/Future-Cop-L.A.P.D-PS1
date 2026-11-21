@@ -21,15 +21,15 @@ extern volatile s32 gPlayerSelection __asm__("D_8009F8F0");
 extern s32 D_8009F8F4;
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern volatile s32 D_8009F8E0;
+extern volatile s32 gPlayer1MenuReadyFlag __asm__("D_8009F8E0");
 extern s32 D_8009F8E0_arr[];
-extern volatile s32 D_8009F8E4;
+extern volatile s32 gPlayer2MenuReadyFlag __asm__("D_8009F8E4");
 extern u8 gTwoPlayerMissionSelectMenuItems[] __asm__("D_8009BB34");
 extern s16 gMenuPreviewScaleP1[] __asm__("D_8009BB66");
 extern s16 gMenuPreviewScaleP2[] __asm__("D_8009BBBA");
-extern struct Unk78210Panel D_800A3868;
-extern struct Unk78210Panel D_800A3898;
-extern struct Unk78210Panel D_800A38C8;
+extern struct Unk78210Panel gCrimeWarHubMenuDescriptor __asm__("D_800A3868");
+extern struct Unk78210Panel gTwoPlayerPrecinctHubMenuDescriptor __asm__("D_800A3898");
+extern struct Unk78210Panel gOnePlayerPrecinctHubMenuDescriptor __asm__("D_800A38C8");
 
 extern void gActivateMenuPanel(struct Unk78210Panel *panel, s32 arg1) __asm__("func_80078650");
 
@@ -78,25 +78,25 @@ void gHandlePlayerJoinSelection(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             __asm__ volatile("" ::: "memory");
             idx[D_8009F8E0_arr] = 1;
             __asm__ volatile("" ::: "memory");
-            if (D_8009F8E0 == 0 || D_8009F8E4 == 0) {
+            if (gPlayer1MenuReadyFlag == 0 || gPlayer2MenuReadyFlag == 0) {
                 return;
             }
             base = gTwoPlayerMissionSelectMenuItems;
-            D_8009F8E0 = 0;
-            D_8009F8E4 = 0;
+            gPlayer1MenuReadyFlag = 0;
+            gPlayer2MenuReadyFlag = 0;
             *(s16 *)(base + 0x32) = 0x64;
             *(s16 *)(base + 0x86) = 0x64;
             if (mode->split == 0) {
                 mode->unk98 = gPlayerSelection;
-                gActivateMenuPanel(&D_800A3868, 1);
+                gActivateMenuPanel(&gCrimeWarHubMenuDescriptor, 1);
             } else {
-                gActivateMenuPanel(&D_800A3898, 1);
+                gActivateMenuPanel(&gTwoPlayerPrecinctHubMenuDescriptor, 1);
             }
         } else {
             if (mode->split == 0) {
-                gActivateMenuPanel(&D_800A3868, 1);
+                gActivateMenuPanel(&gCrimeWarHubMenuDescriptor, 1);
             } else {
-                gActivateMenuPanel(&D_800A38C8, 1);
+                gActivateMenuPanel(&gOnePlayerPrecinctHubMenuDescriptor, 1);
             }
         }
     } else {

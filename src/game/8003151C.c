@@ -40,11 +40,11 @@ struct Entity {
 extern struct Entity *func_8004D69C(s32 tag);
 extern void gTransformPartVertex(void *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 gInitTriggerAttachmentEntity(struct Entity *self, void *data, s32 arg) __asm__("func_80030DE0");
-extern u8 func_8002F8B8(u8 arg0, s16 arg1, void *arg2, s32 arg3);
+extern u8 gTestEntityFieldMatch(u8 arg0, s16 arg1, void *arg2, s32 arg3) __asm__("func_8002F8B8");
 extern s32 gTestEntityOverlap(struct Entity *self, void *data) __asm__("func_80031238");
 extern s32 gApplyTriggerAttachmentContact(struct Entity *self, void *data, s32 arg) __asm__("func_80031120");
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, void *data) __asm__("func_8002AD58");
-extern void func_80031004(struct Entity *self);
+extern void gProcessTriggerEntityCommands(struct Entity *self) __asm__("func_80031004");
 extern void gFollowAttachTarget(struct Entity *self) __asm__("func_800313F0");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *jtbl_8001123C[];
@@ -104,7 +104,7 @@ m10:
     if (a3v & 0x10) {
         return 0;
     }
-    result = func_8002F8B8(self->unkA1, self->unkA2, data, ((u32)a3v >> 2) & 1);
+    result = gTestEntityFieldMatch(self->unkA1, self->unkA2, data, ((u32)a3v >> 2) & 1);
     if (result != 0) {
         if (self->unk16 == 0x26) {
             result = gTestEntityOverlap(self, data);
@@ -120,7 +120,7 @@ m11:
     return gApplyTriggerAttachmentContact(self, data, a3v);
 m6:
     if (self->unk0C != 0) {
-        func_80031004(self);
+        gProcessTriggerEntityCommands(self);
     }
     if (self->unk16 == 0x26) {
         gFollowAttachTarget(self);

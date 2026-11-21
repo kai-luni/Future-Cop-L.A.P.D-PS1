@@ -15,6 +15,9 @@ extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
 extern u8 *func_8008CCD0(u8 *str, s32 c);
 extern s32 func_8008CCC0(u8 *str);
+void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
+                   s32 alignX, s32 alignY, s32 font) __asm__("func_800788F0");
+
 
 /**
  * @brief Draws a (possibly multi-line) text with horizontal and vertical
@@ -46,7 +49,7 @@ extern s32 func_8008CCC0(u8 *str);
  * Seventeen direct callers across the menu/HUD code, among them
  * func_8007D7CC, func_8007F1F8 and func_8008125C.
  */
-void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
+void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
                    s32 alignX, s32 alignY, s32 font)
 {
     register s32 ay __asm__("$21");

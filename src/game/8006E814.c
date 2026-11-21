@@ -17,12 +17,14 @@ struct Obj {
     void *mesh;
 };
 
-extern s32 func_8003C7B8(s32, struct Obj *, s32, s32);
-extern s32 func_8003C980(s32, struct Obj *, s32, s32);
+extern s32 gGuardEffectPoolMessage(s32, struct Obj *, s32, s32) __asm__("func_8003C7B8");
+extern s32 gHandleObjectEventMessages(s32, struct Obj *, s32, s32) __asm__("func_8003C980");
 extern void func_8006E720(struct Obj *);
 extern void *gBuildDomePatchMesh(s16, s32) __asm__("func_8006C84C");
 extern void func_8006CA68(void *);
 extern void gFreeBlock(void *) __asm__("func_800181D4");
+s32 gHandleDomeMeshEffect(s32 message, struct Obj *obj, s32 arg2, s32 arg3) __asm__("func_8006E814");
+
 
 /**
  * @brief Message handler of a mesh-carrying effect object: init with an
@@ -57,10 +59,10 @@ extern void gFreeBlock(void *) __asm__("func_800181D4");
  * No direct callers in the call graph. func_8006EB80 references the address
  * as a class handler, so the dispatcher reaches it indirectly.
  */
-s32 func_8006E814(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
+s32 gHandleDomeMeshEffect(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
 {
     s32 flags;
-    if (func_8003C7B8(message, obj, arg2, arg3)) goto ret0;
+    if (gGuardEffectPoolMessage(message, obj, arg2, arg3)) goto ret0;
     switch (message) {
     case 0:
         func_8006E720(obj);
@@ -87,7 +89,7 @@ s32 func_8006E814(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
     case 9:
         goto ret0;
     default:
-        return func_8003C980(message, obj, arg2, arg3);
+        return gHandleObjectEventMessages(message, obj, arg2, arg3);
     }
 ret0:
     return 0;

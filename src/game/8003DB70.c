@@ -38,7 +38,7 @@ struct Par {
 
 extern s32 gIdentityMatrix[9] __asm__("D_8009AA38");
 extern s32 func_80019668(void);
-extern void func_8003D0F0(s32 *a, s32 b, s32 c, s32 *d);
+extern void gResolveModelEffectPoint(s32 *a, s32 b, s32 c, s32 *d) __asm__("func_8003D0F0");
 extern void gGteLoadRotation(s32 *a) __asm__("func_80010820");
 extern void gGteTransformWords(void *a, void *b, s32 c) __asm__("func_8001006C");
 extern void gBuildRotationMatrix(s32 a, s32 b, s32 c, void *d) __asm__("func_800188D0");
@@ -274,7 +274,7 @@ void gBuildNodePlacement(struct Obj *o, s32 *x, struct Par *p_arg, u8 *y, s32 *o
                 __asm__ ("" : "+r"(bit));
                 a2 = bit < 1;
             }
-            func_8003D0F0(s1, id, a2, out + 9);
+            gResolveModelEffectPoint(s1, id, a2, out + 9);
             if (rot_a(o, v, &m1) & 0xFF) {
                 out[9] += v[0];
                 out[10] += v[1];

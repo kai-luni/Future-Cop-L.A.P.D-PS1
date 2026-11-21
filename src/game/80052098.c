@@ -23,8 +23,10 @@ struct Entity {
 };
 
 extern s32 gTestPartPairHit(struct Coord *coordA, struct Coord *coordB) __asm__("func_80061CAC");
-extern void func_80058378(void *self, s32 amount, s32 source);
-extern void func_80051EB8(void *self, struct Coord *coordB, s32 ret, s32 flags);
+extern void gApplyPlayerHitDamage(void *self, s32 amount, s32 source) __asm__("func_80058378");
+extern void gApplyPlayerModelCollisionPush(void *self, struct Coord *coordB, s32 ret, s32 flags) __asm__("func_80051EB8");
+s32 gResolvePlayerContactHit(void *self, struct Coord *coordA, struct Coord *coordB, struct Entity *other) __asm__("func_80052098");
+
 
 /**
  * @brief Performs cylindrical bounds and narrow-phase part collision, then applies damage and response.
@@ -47,7 +49,7 @@ extern void func_80051EB8(void *self, struct Coord *coordB, s32 ret, s32 flags);
  * @par Callers
  * Confirmed: func_8005220C.
  */
-s32 func_80052098(void *self, struct Coord *coordA, struct Coord *coordB, struct Entity *other)
+s32 gResolvePlayerContactHit(void *self, struct Coord *coordA, struct Coord *coordB, struct Entity *other)
 {
     s32 flags;
     s32 dz;
@@ -93,8 +95,8 @@ s32 func_80052098(void *self, struct Coord *coordA, struct Coord *coordB, struct
         return 0;
     }
 
-    func_80058378(self, other->unk1A, other->id);
-    func_80051EB8(self, coordB, ret, flags);
+    gApplyPlayerHitDamage(self, other->unk1A, other->id);
+    gApplyPlayerModelCollisionPush(self, coordB, ret, flags);
 
     return 1;
 }

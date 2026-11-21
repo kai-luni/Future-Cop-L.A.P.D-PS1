@@ -11,10 +11,10 @@ extern struct Pool gOwnerNodeListA __asm__("D_800A22A0");
 extern struct Pool gOwnerNodeListB __asm__("D_800A22B0");
 extern void *gDomeEffectBlock[] __asm__("D_800A22F0");
 
-extern void func_8005B3D4(void *object);
+extern void gUpdateLockBeamWeapon(void *object) __asm__("func_8005B3D4");
 extern void func_8005BD20(struct Pool *pool, void *object);
 extern void func_8005C0C0(struct Pool *pool, void *object);
-extern u8 func_8005D8F4(void *effect, void *object);
+extern u8 gUpdateDomeFieldEffect(void *effect, void *object) __asm__("func_8005D8F4");
 extern void func_8005E074(void *effect);
 
 /**
@@ -43,11 +43,11 @@ void func_8005E0AC(void *object)
 {
     s32 i;
 
-    func_8005B3D4(object);
+    gUpdateLockBeamWeapon(object);
     func_8005BD20(&gOwnerNodeListA, object);
     func_8005C0C0(&gOwnerNodeListB, object);
     for (i = 0; i < 4; i++) {
-        if (gDomeEffectBlock[i] != 0 && func_8005D8F4(gDomeEffectBlock[i], object) != 1) {
+        if (gDomeEffectBlock[i] != 0 && gUpdateDomeFieldEffect(gDomeEffectBlock[i], object) != 1) {
             func_8005E074(gDomeEffectBlock[i]);
             gDomeEffectBlock[i] = 0;
         }

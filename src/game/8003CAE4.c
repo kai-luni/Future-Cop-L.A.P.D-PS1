@@ -39,6 +39,8 @@ struct Unk3CAE4 {
 };
 
 extern void func_8003CA80(struct Unk3CA80 *object);
+s32 gStepSpawnNodeTimers(struct Unk3CAE4 *object, s32 arg1, u8 *flag) __asm__("func_8003CAE4");
+
 
 /**
  *  @brief Updates an object's timers, flags, and pending event value.
@@ -62,7 +64,7 @@ extern void func_8003CA80(struct Unk3CA80 *object);
  *  @par Callers
  *  Confirmed: func_8003F2AC.
  */
-s32 func_8003CAE4(struct Unk3CAE4 *object, s32 arg1, u8 *flag)
+s32 gStepSpawnNodeTimers(struct Unk3CAE4 *object, s32 arg1, u8 *flag)
 {
     s32 result;
 

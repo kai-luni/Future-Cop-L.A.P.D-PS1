@@ -8,6 +8,8 @@ extern s32 gPacketCursor __asm__("D_8009FA90");
 extern s32 gPacketLimit __asm__("D_8009F9C0");
 extern s32 gPrimPoolNext __asm__("D_8009F9F0");
 extern s32 gPrimPoolEnd __asm__("D_8009FA28");
+s32 gGuardEffectPoolMessage(s32 message, struct Obj *obj) __asm__("func_8003C7B8");
+
 
 /**
  * @brief Checks whether the packet pools still have enough room for a new effect.
@@ -31,7 +33,7 @@ extern s32 gPrimPoolEnd __asm__("D_8009FA28");
  * @par Callers
  * func_80044610 (the effect dispatcher).
  */
-s32 func_8003C7B8(s32 message, struct Obj *obj)
+s32 gGuardEffectPoolMessage(s32 message, struct Obj *obj)
 {
     s32 z;
     if (message == 1) goto case1;

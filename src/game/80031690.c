@@ -60,6 +60,8 @@ struct Unk31690Sub {
 extern void gSourceModelEntityHandler(void) __asm__("D_8003190C");
 extern u8 gSpawnSceneNode(struct Unk31690Sub *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_80083A10");
 extern s32 gSpawnQueuedEntityAndGetId(struct Unk31690Request *request) __asm__("func_8004D4D4");
+s32 gSpawnSourceModelEntity(struct Entity *self) __asm__("func_80031690");
+
 
 /**
  * @brief Spawns a kind-0x17 object through the request queue, optionally
@@ -87,7 +89,7 @@ extern s32 gSpawnQueuedEntityAndGetId(struct Unk31690Request *request) __asm__("
  * @par Callers
  * func_8002A810.
  */
-s32 func_80031690(struct Entity *self)
+s32 gSpawnSourceModelEntity(struct Entity *self)
 {
     struct Unk31690Request request;
     struct Unk31690Args args;

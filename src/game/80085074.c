@@ -17,7 +17,7 @@ extern State *gMovieSliceContext __asm__("D_8009F4BC");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern s32 gStripDitherEnabled __asm__("D_8009F4C4");
 extern s32 gStripStepWidth __asm__("D_8009F4C8");
-extern void func_800847E0(s32, s32, Rect *);
+extern void gConvertMovieStripToRgb555(s32, s32, Rect *) __asm__("func_800847E0");
 extern void gLoadImage(Rect *, s32) __asm__("func_80092F38");
 extern void gStartMdecOutDma(s32, s32) __asm__("func_80096070");
 void gUploadMovieStrip(void) __asm__("func_80085074");
@@ -71,7 +71,7 @@ void gUploadMovieStrip(void)
         rect.y = gMovieSliceContext->rect.y;
         rect.w = ((s16)gMovieSliceContext->rect.w * 2) / 3;
         rect.h = gMovieSliceContext->rect.h;
-        func_800847E0(gMovieSliceContext->dest, gMovieSliceContext->dest, &rect);
+        gConvertMovieStripToRgb555(gMovieSliceContext->dest, gMovieSliceContext->dest, &rect);
         gLoadImage(&rect, gMovieSliceContext->dest);
     } else {
         gLoadImage(&gMovieSliceContext->rect, gMovieSliceContext->dest);

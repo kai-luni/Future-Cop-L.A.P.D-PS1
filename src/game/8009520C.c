@@ -13,7 +13,7 @@ extern volatile u32 *gDmaControlGpuPtr __asm__("D_8009DEE4");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gDma2MemAddrPtr __asm__("D_8009DECC");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
-extern char D_80012B48[];
+extern char gGpuTimeoutDiagnosticFormat[] __asm__("D_80012B48");
 extern int gVSyncWait(int) __asm__("func_80091270");
 extern u32 gSwapIrqMask(u32) __asm__("func_800915FC");
 extern void func_8008E000(char *, u32, u32, u32, u32);

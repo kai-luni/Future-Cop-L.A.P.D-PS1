@@ -44,7 +44,7 @@ struct Target {
     u8 unk160;
 };
 
-extern void func_8002B1AC(Target *s0);
+extern void gSyncCountdownFields(Target *s0) __asm__("func_8002B1AC");
 extern void gSetType26AnimationClip(Target *s0, s32 a1) __asm__("func_8002B0EC");
 extern void gSpawnEntitySlotTypes(u8 index, Target *entity, s32 arg2, u16 flags, s32 mode) __asm__("func_8003B898");
 extern void *jtbl_80010FCC[];
@@ -167,7 +167,7 @@ L_bodyA:
 
 L_bodyB:
     s0->unk15F = 1;
-    func_8002B1AC(s0);
+    gSyncCountdownFields(s0);
     return 1;
 
 L_case5:
@@ -210,7 +210,7 @@ L_case6:
     s0->unk15F = 6;
     *(s16 *)&s0->unk11E = bestIdx;
     s0->unk118 = rv;
-    func_8002B1AC(s0);
+    gSyncCountdownFields(s0);
     return 1;
 
 L_case7:

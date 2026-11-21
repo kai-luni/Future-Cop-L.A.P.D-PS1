@@ -81,7 +81,7 @@ struct Work549F0 {
 };
 
 extern s32 func_800538C8(u8 *, u32 *, s32 *, s32 *);
-extern void func_80052E28(struct Obj549F0 *);
+extern void gSteerHeadingToOctant(struct Obj549F0 *) __asm__("func_80052E28");
 extern void func_80051AC8(struct Obj549F0 *, s32);
 extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 extern s32 gGetGroundHeight(void *, void *, void *, void *) __asm__("func_80066F78");
@@ -97,12 +97,12 @@ extern void gNormalizeVector(void *) __asm__("func_8001A180");
 extern s32 func_80019FCC(s32 *);
 extern s32 gSqrt12(s32) __asm__("func_80095900");
 extern s32 func_8001A7AC(s32);
-extern s32 func_80044B34(struct Obj549F0 *, struct AnimTrack549F0 *, s32, s32);
+extern s32 gAdvanceAnimTrack(struct Obj549F0 *, struct AnimTrack549F0 *, s32, s32) __asm__("func_80044B34");
 extern void gApplyAnimationSoundEvent(s32, struct Obj549F0 *) __asm__("func_80047088");
 extern s32 gNormalizeGetLength(s32 *) __asm__("func_8001A314");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_8005220C(struct Obj549F0 *);
-extern void func_80052708(struct Obj549F0 *, s32);
+extern void gApplyFootprintCollisionImpulse(struct Obj549F0 *, s32) __asm__("func_80052708");
 extern s32 gComputeLandingDamage(struct Obj549F0 *, s32) __asm__("func_80052F54");
 s32 gTickOnFootPhysics(struct Obj549F0 *selfArg, s32 unused, s32 speedArg, u32 argFlags) __asm__("func_800549F0");
 
@@ -451,7 +451,7 @@ after_action:
                 self->state = 0;
             }
         }
-        func_80052E28(self);
+        gSteerHeadingToOctant(self);
         self->unkB8 = 0;
     }
     {
@@ -792,7 +792,7 @@ after_ground:
             self->unkB9 = bits | 1;
         }
     }
-    func_80052708(self, func_8005220C(self));
+    gApplyFootprintCollisionImpulse(self, func_8005220C(self));
 
     if (anim != self->unkBA) {
         goto change_animation;
@@ -875,7 +875,7 @@ speed_done:
         }
     }
 
-    lane = func_80044B34(self, &self->track, speed, action);
+    lane = gAdvanceAnimTrack(self, &self->track, speed, action);
     if (lane & 1) {
         self->unkB9 &= 0xEF;
     } else if (action != 0) {

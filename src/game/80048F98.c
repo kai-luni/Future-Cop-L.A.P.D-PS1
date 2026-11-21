@@ -43,7 +43,7 @@ extern u8 gPaletteTable[] __asm__("D_800A1970");
 
 extern struct LookupState *gFont __asm__("D_8009F35C");
 extern u16 gLoadedFont __asm__("D_8009F768");
-extern s32 D_8009F76C;
+extern s32 gCurrentFontBankIndex __asm__("D_8009F76C");
 
 extern u8 *func_800489C8(struct LookupState *state, unsigned int offset);
 s32 gEmitFontGlyphSprite(u8 character, s32 x, s32 y, u16 color) __asm__("func_80048F98");
@@ -113,7 +113,7 @@ s32 gEmitFontGlyphSprite(u8 character, s32 x, s32 y, u16 color)
     sprite->b0C = u;
     table = (u8 *)((u32)gPaletteTable - 0x1970);
     __asm__ volatile ("" : "=r" (table) : "0" (table));
-    index2 = D_8009F76C;
+    index2 = gCurrentFontBankIndex;
     __asm__ volatile ("" : "=r" (index2) : "0" (index2), "r" (table));
     table += 0x1970;
     __asm__ volatile ("" : "=r" (table) : "0" (table));

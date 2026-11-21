@@ -11,11 +11,13 @@ struct Mid { u8 pad0[0x34]; struct Transform *transform; u8 pad38[0x10]; struct 
 struct Obj { u8 pad0[0xf]; u8 flagsF, flags10; u8 pad11[0xb]; struct Mid *mid; struct Tag *tag; s32 (*handler)(s32, struct Obj *, s32, s32); u8 pad28[0x66]; u16 flags8E; u8 pad90[0xa]; s16 x, y, z; };
 extern void gNormalizeVector(struct Vec *) __asm__("func_8001A180");
 extern s32 gVectorDot(struct Vec *, struct Vec *) __asm__("func_8001AB00");
-extern void func_8005B6A8(struct Obj *);
+extern void gTraceWeaponSphereRays(struct Obj *) __asm__("func_8005B6A8");
 extern u32 gSqrt12(s32) __asm__("func_80095900");
 extern u16 D_8009F7F2, D_8009F7F4;
 extern u16 gMessageReturnData __asm__("D_8009F7F0");
 extern s16 data_return[3];
+void *gHandleTargetDamageEffect(u32 msg, struct Obj *obj, s32 arg2, s32 arg3) __asm__("func_8005B934");
+
 
 /**
  * @brief Four-message callback for kind-0x57 beam/tentacle effect nodes handling radius strength, hit ticks, target marking, and aim offsets.
@@ -39,7 +41,7 @@ extern s16 data_return[3];
  * @par Callers
  * Confirmed: none direct; address taken as D_8005B934 in func_8005BDE4 (0x8005BF98, stored in D_800A22A0 node +0x24) / Likely: indirect callers via node +0x24 / Unknown: specific indirect call sites.
  */
-void *func_8005B934(u32 msg, struct Obj *obj, s32 arg2, s32 arg3)
+void *gHandleTargetDamageEffect(u32 msg, struct Obj *obj, s32 arg2, s32 arg3)
 {
     struct Target *t;
     register struct Target *t1 __asm__("$5");
@@ -95,7 +97,7 @@ void *func_8005B934(u32 msg, struct Obj *obj, s32 arg2, s32 arg3)
             t1->flags |= 2;
             obj->flagsF |= 1;
         } else {
-            func_8005B6A8(obj);
+            gTraceWeaponSphereRays(obj);
         }
         break;
     case 2:

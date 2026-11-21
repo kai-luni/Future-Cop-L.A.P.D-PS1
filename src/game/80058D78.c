@@ -16,13 +16,15 @@ extern Obj *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern void gHandleRetiredPlayer() __asm__("D_800578B4");
 extern void gHandleRetiredPlayerChild() __asm__("D_800578E4");
 extern int gRetireEntityBase(Obj *, int, int) __asm__("func_8002A810");
-extern void func_80058C3C(void *, void *, Obj *);
+extern void gSpawnPlayerRetirementProjectile(void *, void *, Obj *) __asm__("func_80058C3C");
 extern void gSpawnTypeAtOwner(Obj *, int, int, int, int) __asm__("func_800402DC");
 extern void gPlayNonpositionalSoundEffect(int, Obj *) __asm__("func_80046C84");
 extern void gFlagQuartileChange(Obj *, int) __asm__("func_8003BA50");
 extern Obj *gFindUnitById(int) __asm__("func_8004D664");
 extern void func_80025CFC(Obj *);
 extern void func_8005A190(Data *, int, int);
+void gRetirePlayerUnit(Obj *o) __asm__("func_80058D78");
+
 
 /**
  * @brief Retires one unit: on the first pass it spawns the destruction effect and the
@@ -80,7 +82,7 @@ extern void func_8005A190(Data *, int, int);
  * @par Callers
  * func_8005908C, message 4 of the class-1 unit handler.
  */
-void func_80058D78(Obj *o)
+void gRetirePlayerUnit(Obj *o)
 {
     int first;
     register int team __asm__("$2");
@@ -92,7 +94,7 @@ void func_80058D78(Obj *o)
     o->data->flag = 0;
     if (gRetireEntityBase(o, 0, first)) {
         if (first) {
-            func_80058C3C(o->owner, (u8 *)o->child + 0x5c, o);
+            gSpawnPlayerRetirementProjectile(o->owner, (u8 *)o->child + 0x5c, o);
             gSpawnTypeAtOwner(o, 3, 0, 1, 0);
             gSpawnTypeAtOwner(o->child, 9, 0, 1, 0);
             if (gGameSession->active == 1) gPlayNonpositionalSoundEffect(0x41, o);

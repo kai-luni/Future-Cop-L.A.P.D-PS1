@@ -4,7 +4,7 @@
 extern s32 D_8009F908;
 extern s32 D_8009F90C;
 extern s32 D_8009F910;
-extern s32 D_8009F914;
+extern s32 gSavedOptionsSoundMode __asm__("D_8009F914");
 extern s32 gSnapshotPointer __asm__("D_8009F91C");
 
 extern void func_800451F8(s32 volume);
@@ -48,7 +48,7 @@ void gExitOptionsRestoreSound(void)
         func_800451F8(D_8009F908);
         func_80045238(D_8009F90C);
         func_80045294(D_8009F910);
-        func_800451B4(D_8009F914);
+        func_800451B4(gSavedOptionsSoundMode);
     }
     if (gSnapshotPointer != 0) {
         gStopSoundVoiceHandle(gSnapshotPointer);

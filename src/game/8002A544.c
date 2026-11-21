@@ -3,7 +3,7 @@
 
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
-extern u8 D_800A0B90[];
+extern u8 gStreamStartPending[] __asm__("D_800A0B90");
 extern void func_8002A49C(void);
 
 /**
@@ -33,7 +33,7 @@ void func_8002A544(void)
 {
     if (gCallGateFlag != 0) {
         if ((gBitFieldState & 0x40) == 0) {
-            D_800A0B90[0] = 1;
+            gStreamStartPending[0] = 1;
         }
         func_8002A49C();
         gCallGateFlag = 0;

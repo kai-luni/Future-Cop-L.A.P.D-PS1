@@ -11,9 +11,9 @@
 
 typedef struct { s32 x, y, z; } Vec;
 
-extern s32 func_80044B34(u8 *, void *, s32, s32);
+extern s32 gAdvanceAnimTrack(u8 *, void *, s32, s32) __asm__("func_80044B34");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
-extern void func_8002E528(u8 *);
+extern void gProcessActorCommandQueue(u8 *) __asm__("func_8002E528");
 extern void func_8002E2BC(u8 *, s32);
 extern u8 gStepAttackScheduler(void *, s32, u8 *, s32, s32) __asm__("func_80060238");
 extern void func_800448D8(void *, s32, s32, u8);
@@ -184,7 +184,7 @@ s32 gTickActor(u8 *obj, s32 dt)
     register u32 sw __asm__("$3");
 
     if (B(obj,0xDC) == 4) {
-        s0 = func_80044B34(obj, obj + 0xC8, dt, 0);
+        s0 = gAdvanceAnimTrack(obj, obj + 0xC8, dt, 0);
         gSetModelFrame(obj + 0x28, H(obj,0xD4));
         s0 = (u32)s0 >> 1;
         if (s0 != 3) {
@@ -195,7 +195,7 @@ s32 gTickActor(u8 *obj, s32 dt)
         goto done;
     }
     if (B(obj,0xC)) {
-        func_8002E528(obj);
+        gProcessActorCommandQueue(obj);
     }
     if ((B(obj,0xDD) & 1) && H(obj,0xE2) > 0) {
         goto after_timer;
@@ -259,7 +259,7 @@ case_2:
             a2 = (B(obj,0xE6) * dt) / 16;
         }
         s2 = obj + 0xC8;
-        s0 = func_80044B34(obj, s2, a2, 0);
+        s0 = gAdvanceAnimTrack(obj, s2, a2, 0);
         if (W(obj,0xA0)) {
             s0 = (u32)s0 >> 1;
             if (s0) {
@@ -332,7 +332,7 @@ case_0:
         if (B(obj,0xE6)) {
             a2 = (B(obj,0xE6) * dt) / 16;
         }
-        func_80044B34(obj, obj + 0xC8, a2, 0);
+        gAdvanceAnimTrack(obj, obj + 0xC8, a2, 0);
         goto tail;
     }
     goto tail2;
@@ -360,10 +360,10 @@ case_13:
         }
         gVectorMulAdd(obj + 0xF4, obj + 0x100, a2, obj + 0x50);
         if (W(P(obj,0x28),0x10)) {
-            func_80044B34(obj, obj + 0xC8, ABS(s0), 0);
+            gAdvanceAnimTrack(obj, obj + 0xC8, ABS(s0), 0);
         }
     } else {
-        odd = func_80044B34(obj, obj + 0xC8, dt, 0) & 1;
+        odd = gAdvanceAnimTrack(obj, obj + 0xC8, dt, 0) & 1;
         if (B(obj,0xDC) == 1 || B(obj,0xDC) == 3) {
             if (odd) {
                 H(obj,0xE2) = 0;

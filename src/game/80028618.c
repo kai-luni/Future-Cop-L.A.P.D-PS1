@@ -30,7 +30,7 @@ extern void func_80027D70(void);
 extern void func_8001B4A8(s32 arg);
 extern void func_800451EC(s32 value);
 extern void gUpdateSoundVoiceAssignments(void) __asm__("func_800462D0");
-extern void func_8008352C(s32 arg);
+extern void gUpdateSoundSlotTimers(s32 arg) __asm__("func_8008352C");
 extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
 extern void gSetPositionAngleEntry(s32 *position, s32 arg1, s32 angle, s32 index) __asm__("func_80045884");
 void gRunGameFrameLoop(void) __asm__("func_80028618");
@@ -137,7 +137,7 @@ frame:
             frame_id = gFrameDelta;
             cursor = gPlayerEntities;
             work = 0;
-            func_8008352C(frame_id);
+            gUpdateSoundSlotTimers(frame_id);
         }
 
         do {

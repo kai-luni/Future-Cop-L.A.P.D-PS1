@@ -50,7 +50,7 @@ sweep-candidates: verify toolchain
 report:
 	$(PYTHON) tools/generate_decomp_report.py
 
-check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave
+check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3
 	$(PYTHON) -m unittest discover -s tests -t . -v
 
 # Run the naming-round behavioral tests against the original C entry points.
@@ -69,6 +69,15 @@ host-naming-wave:
 	  bash tests/host/naming_wave_test.sh; \
 	else \
 	  echo "host-naming-wave: qemu or C toolchain missing, skipped"; \
+	fi
+
+# Behavioral checks for the units renamed in naming round 3.
+host-naming-round3:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  bash tests/host/naming_round3_test.sh; \
+	else \
+	  echo "host-naming-round3: qemu or C toolchain missing, skipped"; \
 	fi
 
 # Run the environment/matrix render cores under qemu. Skipped (not failed) when

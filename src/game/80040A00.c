@@ -18,7 +18,7 @@ extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
 void gUpdateObjectLights(Obj *node, s32 dt) __asm__("func_80040A00");
 
-extern void func_80049980(void *,s32,s32,s32,s32,s32,s32,s32,s32);
+extern void gUpdateDynamicLightNode(void *,s32,s32,s32,s32,s32,s32,s32,s32) __asm__("func_80049980");
 /**
  * @brief Integrates the motion of an object list and moves its light.
  *
@@ -113,10 +113,10 @@ void gUpdateObjectLights(Obj *node, s32 dt)
                 pos.y = o->pos.y + o->parent->y;
                 pos.z = o->pos.z + o->parent->z;
             }
-            func_80049980(o->inner, pos.x, pos.z, pos.y, scale, scale, o->a7a, o->a7c, 0);
+            gUpdateDynamicLightNode(o->inner, pos.x, pos.z, pos.y, scale, scale, o->a7a, o->a7c, 0);
             goto next;
         direct:
-            func_80049980(o->inner, o->pos.x, o->pos.z, o->pos.y, scale, scale, o->a7a, o->a7c, 0);
+            gUpdateDynamicLightNode(o->inner, o->pos.x, o->pos.z, o->pos.y, scale, scale, o->a7a, o->a7c, 0);
         }
     next:
         node = node->next;

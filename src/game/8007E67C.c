@@ -10,7 +10,7 @@ typedef struct {
 
 extern Entry gMenuEntryTable[] __asm__("D_8009C0E4");
 extern Entry gMenuTailEntryTable[] __asm__("D_8009C18C");
-extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
 extern void func_80078B34(s32, s32, s32);
 
@@ -52,7 +52,7 @@ void gDrawFrontEndStatics(s32 arg0)
         p = gMenuEntryTable;
         i = 0;
         while (i < 28) {
-            func_800788F0(0, p->x, p->y, 16, p->id, p->align, 8, 2);
+            gDrawAlignedMultilineText(0, p->x, p->y, 16, p->id, p->align, 8, 2);
             i++;
             p++;
         }

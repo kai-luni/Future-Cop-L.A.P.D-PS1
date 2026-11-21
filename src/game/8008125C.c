@@ -67,7 +67,7 @@ extern void func_800492A0(u8 *text, s32 *w, s32 *h);
 extern s32 *func_80048E88(void);
 extern void gEmitFlatQuadRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h) __asm__("func_80082EF0");
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
-extern void func_800788F0(u8 *a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h);
+extern void gDrawAlignedMultilineText(u8 *a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h) __asm__("func_800788F0");
 extern void func_80077FFC(void);
 extern void func_80077708(void);
 extern void func_800776B8(void);
@@ -436,7 +436,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                 } else {
                     q = RAW + arg4 * 0x70 + 0x428;
                 }
-                func_800788F0(q, arg1, arg2, arg3, 0, 4, 8, 0);
+                gDrawAlignedMultilineText(q, arg1, arg2, arg3, 0, 4, 8, 0);
             }
             break;
         }

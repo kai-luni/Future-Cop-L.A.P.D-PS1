@@ -11,7 +11,7 @@ struct Entity {
     u8 *script;
 };
 
-extern s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity);
+extern s32 gInterpretEntityScript(u8 *script, s32 arg1, s32 arg2, struct Entity *entity) __asm__("func_80069D68");
 void gRunEntityScript(struct Entity *entity) __asm__("func_8004DEE0");
 
 
@@ -37,6 +37,6 @@ void gRunEntityScript(struct Entity *entity) __asm__("func_8004DEE0");
 void gRunEntityScript(struct Entity *entity)
 {
     if (entity->script != 0 && entity->script[0] != 0) {
-        func_80069D68(entity->script, entity->unk1C < 0, -1, entity);
+        gInterpretEntityScript(entity->script, entity->unk1C < 0, -1, entity);
     }
 }

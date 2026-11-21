@@ -13,6 +13,8 @@ extern int gLightGridWidth __asm__("D_8009F78C");
 extern int gLightGridHeight __asm__("D_8009F790");
 extern int gFrameTime __asm__("D_8009FAA4");
 extern void func_800195D0(void *, Node *);
+void gReapExpiredLightNodes(void) __asm__("func_800497A8");
+
 
 /**
  * @brief Reaps expired dynamic light nodes across the spatial bucket grid D_8009F780.
@@ -35,7 +37,7 @@ extern void func_800195D0(void *, Node *);
  * @par Callers
  * Confirmed: func_80049C38 (light pool exhaustion retry); also direct call at 0x8004A97C in asm/us/main.s (periodic sweep).
  */
-void func_800497A8(void)
+void gReapExpiredLightNodes(void)
 {
     int i;
     register Node *node __asm__("$17");

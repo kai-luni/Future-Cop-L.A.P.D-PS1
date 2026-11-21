@@ -5,8 +5,10 @@ typedef struct { int x, y, width, height; } Grid;
 extern Grid gCellClipRect __asm__("D_800A2970");
 extern Node gCellNodeArray[] __asm__("D_800A2990");
 extern u8 *gCellMap __asm__("D_8009F820");
-extern void func_800623FC(Node *);
+extern void gProcessCellCollisionPairs(Node *) __asm__("func_800623FC");
 extern void func_80062504(Node *, Node *);
+void gSweepCollisionGridPairs(void) __asm__("func_80062614");
+
 /**
  * @brief Broadphase pass over the marked viewport grid: tests the objects inside
  *        every cell and against the objects of the neighbouring cells.
@@ -42,7 +44,7 @@ extern void func_80062504(Node *, Node *);
  * @par Callers
  * func_80062FB4 only.
  */
-void func_80062614(void)
+void gSweepCollisionGridPairs(void)
 {
     register Node *node __asm__("$16");
     register u8 *next __asm__("$17");
@@ -70,7 +72,7 @@ void func_80062614(void)
             __asm__("" : "=r"(index) : "0"(index));
             if (index) {
                 node = &base[index];
-                func_800623FC(node);
+                gProcessCellCollisionPairs(node);
                 if ((value = cur[1])) func_80062504(node, &base[value]);
                 if ((value = next[0])) func_80062504(node, &base[value]);
                 if ((value = next[1])) func_80062504(node, &base[value]);
@@ -83,7 +85,7 @@ void func_80062614(void)
             __asm__("" : "=r"(index) : "0"(index));
             if (index) {
                         node = &base[index];
-                        func_800623FC(node);
+                        gProcessCellCollisionPairs(node);
                         if ((value = cur[1])) func_80062504(node, &base[value]);
                         if ((value = next[0])) func_80062504(node, &base[value]);
                         if ((value = next[1])) func_80062504(node, &base[value]);
@@ -96,7 +98,7 @@ void func_80062614(void)
             __asm__("" : "=r"(index) : "0"(index));
             if (index) {
                 node = &base[index];
-                func_800623FC(node);
+                gProcessCellCollisionPairs(node);
                 if ((value = next[0])) func_80062504(node, &base[value]);
                 if ((value = next[-1])) func_80062504(node, &base[value]);
             }
@@ -110,11 +112,11 @@ void func_80062614(void)
             __asm__("" : "=r"(index) : "0"(index));
             if (index) {
                 node = &base[index];
-                func_800623FC(node);
+                gProcessCellCollisionPairs(node);
                 if ((value = cur[1])) func_80062504(node, &base[value]);
             }
             cur++; cols--;
         } while (cols > 0);
     }
-    if ((index = *cur)) func_800623FC(&base[index]);
+    if ((index = *cur)) gProcessCellCollisionPairs(&base[index]);
 }

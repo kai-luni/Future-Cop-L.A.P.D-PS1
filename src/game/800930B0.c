@@ -3,7 +3,7 @@
 
 extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(u8 *, s32, s32) __asm__("D_8009DDEC");
-extern u8 D_80012AB8[];
+extern u8 gClearOTagTraceFormat[] __asm__("D_80012AB8");
 extern u32 gSeqFirstWord[] __asm__("D_8009DEB0");
 extern u32 gGpuTpageWord[] __asm__("D_8009DE9C");
 
@@ -46,7 +46,7 @@ u32 *gClearOrderingTable(u32 *arg0, s32 arg1)
     s1 = arg1;
 
     if (gGpuDebugLevel >= 2) {
-        u8 *msg = D_80012AB8;
+        u8 *msg = gClearOTagTraceFormat;
         f = gLogPrintf;
         __asm__ volatile("" : "+r"(msg) : : "memory");
         __asm__ volatile("" : "+r"(s0) : : "memory");

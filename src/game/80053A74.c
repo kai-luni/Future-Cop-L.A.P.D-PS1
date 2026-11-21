@@ -11,7 +11,7 @@ typedef struct { s32 x, y, z; } Vec3;
 
 extern u8 func_800538C8(void *context, u32 *flags, s32 *v, s32 *h);
 extern void gSetEntityLoopingSound(s32 anim, u8 *o) __asm__("func_800471C4");
-extern void func_80052E28(u8 *o);
+extern void gSteerHeadingToOctant(u8 *o) __asm__("func_80052E28");
 extern void gSinCos(s32 angle, s32 *sin, s32 *cos) __asm__("func_8001846C");
 extern void func_800537D0(u8 *o, s32 a1, s32 a2, s32 *v, s32 t);
 extern void gGteCrossProduct(s32 *a, s32 *b, s32 *c) __asm__("func_80010974");
@@ -25,7 +25,7 @@ extern void gApplyPlayerSurfaceEffect(u8 *o, s32 a) __asm__("func_80053188");
 extern s32 gComputeLandingDamage(u8 *o) __asm__("func_80052F54");
 extern void func_8001AD20(s32 *a, s32 *b, s32 *c);
 extern s32 func_8005220C(u8 *o);
-extern void func_80052708(u8 *o, s32 a);
+extern void gApplyFootprintCollisionImpulse(u8 *o, s32 a) __asm__("func_80052708");
 extern s32 gNormalizeGetLength(s32 *v) __asm__("func_8001A314");
 s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags) __asm__("func_80053A74");
 
@@ -290,7 +290,7 @@ s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags)
                     (u32)(*(u8 *)(o + 0xBB) - 1) < 8) {
                     *(u8 *)(o + 0xBB) = 0;
                 }
-                func_80052E28(o);
+                gSteerHeadingToOctant(o);
                 *(u8 *)(o + 0xB8) = 0;
             }
             {
@@ -490,7 +490,7 @@ s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags)
                 func_8001AD20(s6, p, s5);
                 func_8001AD20(s5, s6, p);
             }
-            func_80052708(o, func_8005220C(o));
+            gApplyFootprintCollisionImpulse(o, func_8005220C(o));
         }
     }
     *(Vec3 *)(o + 0x78) = *(Vec3 *)(s + 0x15C);

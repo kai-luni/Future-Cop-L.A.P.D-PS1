@@ -15,8 +15,8 @@ extern s32 gIdentityMatrix[9] __asm__("D_8009AA38");
 extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void func_8003A8C0(s32, s32, struct Owner *, s32);
-extern s32 func_8003C7B8(s32, struct Owner *, s32, s32);
-extern s32 func_8003C980(s32, struct Owner *, s32, s32);
+extern s32 gGuardEffectPoolMessage(s32, struct Owner *, s32, s32) __asm__("func_8003C7B8");
+extern s32 gHandleObjectEventMessages(s32, struct Owner *, s32, s32) __asm__("func_8003C980");
 extern struct Node *gFreeDebrisFragment(struct Owner *, struct Node *, struct Node *) __asm__("func_8004AAD4");
 extern u8 gLaunchDebrisObject(struct Owner *, s32) __asm__("func_8004ABE4");
 extern u8 gSpawnMeshFractureDebris(struct Owner *, s32) __asm__("func_8004B5F8");
@@ -89,7 +89,7 @@ s32 func_8004C324(s32 message, struct Owner *obj, s32 arg2, s32 arg3)
     struct Node *node, *next;
     register s32 *hi __asm__("$3");
     s32 first;
-    if (func_8003C7B8(message, obj, arg2, arg3)) return 0;
+    if (gGuardEffectPoolMessage(message, obj, arg2, arg3)) return 0;
     if (message == 1) return 0;
     if (message == 0) goto case0;
     if (message == 10) goto case10;
@@ -136,5 +136,5 @@ case10:
     gFreeBlock(obj);
     return 0;
 default_case:
-    return func_8003C980(message, obj, arg2, arg3);
+    return gHandleObjectEventMessages(message, obj, arg2, arg3);
 }

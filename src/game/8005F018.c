@@ -124,7 +124,7 @@ extern s32 func_80019904(s32 arg0);
 extern s32 func_80019FCC(struct Vec3s32 *v);
 extern s32 gVectorDot(struct Vec3s32 *a, struct Vec3s32 *b) __asm__("func_8001AB00");
 extern struct Unk73500 *gAllocPositionNode(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80073500");
-extern void func_8007377C(void *a0, void *a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13);
+extern void gCreateRibbonBeam(void *a0, void *a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13) __asm__("func_8007377C");
 extern s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern s32 gTraceMapRay(struct Vec3s32 *pos, struct Vec3s32 *in, struct Vec3s32 *out, s32 arg3, s32 arg4) __asm__("func_800684AC");
 void gFireRayAttack(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec3s32 *pos, struct Coll5F018 *arg3, u8 arg4) __asm__("func_8005F018");
@@ -420,11 +420,11 @@ common:
                 a2 = obj->unk48;
             }
             node2 = gAllocPositionNode(&locals.vec38, 0, a2, 0);
-            func_8007377C(node1, node2, obj->unk36, obj->unk38, obj->unk3B, obj->unk3C, obj->unk3D, obj->unk3E, obj->unk40, obj->unk42, obj->unk44, 0, 0, 1);
+            gCreateRibbonBeam(node1, node2, obj->unk36, obj->unk38, obj->unk3B, obj->unk3C, obj->unk3D, obj->unk3E, obj->unk40, obj->unk42, obj->unk44, 0, 0, 1);
         } else {
             node1 = gAllocPositionNode(pos, 0, 0x18, 0);
             node2 = gAllocPositionNode(&locals.vec38, 0, 0x10, 0);
-            func_8007377C(node1, node2, 0x20, 1, 0x7F, 0x7F, 0xFF, 0x2AA, 0x4000, -0x3000, 0, 0, 0, 1);
+            gCreateRibbonBeam(node1, node2, 0x20, 1, 0x7F, 0x7F, 0xFF, 0x2AA, 0x4000, -0x3000, 0, 0, 0, 1);
         }
     }
 

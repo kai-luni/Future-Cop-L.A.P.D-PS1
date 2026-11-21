@@ -26,6 +26,8 @@ extern void gPutDispEnvCached(void *) __asm__("func_800934BC");
 extern void func_800932F0(void *);
 extern void func_80092BF4(int);
 extern void func_80077278(int, int, unsigned int);
+void gDrawDebugTrapScreen(int a0, int a1, int a2, int a3) __asm__("func_8007757C");
+
 
 /**
  * @brief Draws a four-line debug text screen.
@@ -48,7 +50,7 @@ extern void func_80077278(int, int, unsigned int);
  * A diagnostic overlay left in the retail build (func_800773D8 is its looping
  * twin, which ends in an endless redraw).
  */
-void func_8007757C(int a0, int a1, int a2, int a3)
+void gDrawDebugTrapScreen(int a0, int a1, int a2, int a3)
 {
     u8 disp[0xB8];
     struct PacketState st[2];

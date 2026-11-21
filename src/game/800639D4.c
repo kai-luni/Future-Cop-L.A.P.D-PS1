@@ -6,7 +6,7 @@ typedef struct Entry { u8 a; u8 b; u8 kind; u8 c; s16 value; u16 d; u8 *p; u8 *q
 typedef struct Section { u8 *a; u8 *b; u8 *c; u8 pad[0x363]; s8 index; u8 pad2[0x5a]; s16 n; } Section;
 typedef struct List { s8 count; u8 pad[3]; u32 values[1]; } List;
 extern Section **gTileBlockTable __asm__("D_8009F808");
-extern Chunk *D_8009FA04;
+extern Chunk *gMapTileAnimList __asm__("D_8009FA04");
 extern List gTileDefTable __asm__("D_800A6F38");
 extern u8 gSlfxFlagByte[] __asm__("D_800A2931");
 
@@ -83,8 +83,8 @@ void func_800639D4(u8 *data, u32 size, s32 id)
             entry = (Entry *)(chunk + 1);
             base = (u8 *)entry + count * 16;
             {
-                Chunk *previous = D_8009FA04;
-                D_8009FA04 = chunk;
+                Chunk *previous = gMapTileAnimList;
+                gMapTileAnimList = chunk;
                 *(Chunk **)chunk = previous;
             }
             i = 0;

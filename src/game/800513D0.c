@@ -22,6 +22,8 @@ typedef struct {
 
 extern void gVectorScaleInPlace(s32 length, s32 *vector) __asm__("func_8001AB78");
 extern s32 func_8001A13C(s32 *a, s32 *b);
+s32 gAdvanceLoopingPathPosition(Unk513D0 *arg0, Vec513D0 *arg1, s32 arg2, s32 *arg3) __asm__("func_800513D0");
+
 
 /**
  * @brief Integrates a 3D position along a looping table of piecewise-linear segments.
@@ -51,7 +53,7 @@ extern s32 func_8001A13C(s32 *a, s32 *b);
  * @par Callers
  * Confirmed: none (unreferenced in asm/us/main.s and marked orphan/unreachable in analysis/analysis.json).
  */
-s32 func_800513D0(Unk513D0 *arg0, Vec513D0 *arg1, s32 arg2, s32 *arg3)
+s32 gAdvanceLoopingPathPosition(Unk513D0 *arg0, Vec513D0 *arg1, s32 arg2, s32 *arg3)
 {
     s32 done;
     s32 amount;

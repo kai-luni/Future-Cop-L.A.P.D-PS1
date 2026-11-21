@@ -3,27 +3,27 @@
 
 extern u8 D_80039C58[];
 extern u8 D_800357C0[];
-extern u8 D_80041B6C[];
+extern u8 gHandleElevatorEntity[] __asm__("D_80041B6C");
 extern u8 gType11EntityHandler[] __asm__("D_8002DEA8");
 extern u8 D_80041C6C[];
-extern u8 D_8002DB9C[];
+extern u8 gHandleType13Entity[] __asm__("D_8002DB9C");
 extern u8 D_8003015C[];
 extern u8 D_80030960[];
-extern u8 D_8002F7C8[];
-extern u8 D_8002ED7C[];
+extern u8 gHandleMoverEntity[] __asm__("D_8002F7C8");
+extern u8 gHandleType27Entity[] __asm__("D_8002ED7C");
 extern u8 gHandleType26Entity[] __asm__("D_8002C3F0");
 extern u8 gHandleType29Entity[] __asm__("D_80030D3C");
-extern u8 D_8003A844[];
+extern u8 gHandleForceFieldEntity[] __asm__("D_8003A844");
 extern u8 D_80042330[];
 extern u8 D_800426A8[];
 extern u8 gHandleTriggerAttachmentEntity[] __asm__("D_8003151C");
 
 extern void gHandleTumblingFlyer(void) __asm__("func_80032F3C");
 extern void gHandlePlayerEntityMsg(void) __asm__("func_8005908C");
-extern void func_800382B4(void);
-extern void func_8002D664(void);
-extern void func_800395A8(void);
-extern void func_800398EC(void);
+extern void gHandleType5Entity(void) __asm__("func_800382B4");
+extern void gHandleLinkedPropEntity(void) __asm__("func_8002D664");
+extern void gHandleMountedTurretCarrierMessages(void) __asm__("func_800395A8");
+extern void gHandleType28Entity(void) __asm__("func_800398EC");
 s32 gGetEntityHandlerForType(u32 type) __asm__("func_8002AE54");
 
 
@@ -60,39 +60,39 @@ s32 gGetEntityHandlerForType(u32 type)
     case 1:
         return (s32)gHandlePlayerEntityMsg;
     case 5:
-        return (s32)func_800382B4;
+        return (s32)gHandleType5Entity;
     case 6:
     case 8:
     case 30:
     case 33:
     case 36:
-        return (s32)func_8002D664;
+        return (s32)gHandleLinkedPropEntity;
     case 10:
-        return (s32)D_80041B6C;
+        return (s32)gHandleElevatorEntity;
     case 11:
         return (s32)gType11EntityHandler;
     case 12:
         return (s32)D_80041C6C;
     case 13:
-        return (s32)D_8002DB9C;
+        return (s32)gHandleType13Entity;
     case 16:
         return (s32)D_8003015C;
     case 32:
         return (s32)D_80030960;
     case 20:
-        return (s32)func_800395A8;
+        return (s32)gHandleMountedTurretCarrierMessages;
     case 25:
-        return (s32)D_8002F7C8;
+        return (s32)gHandleMoverEntity;
     case 27:
-        return (s32)D_8002ED7C;
+        return (s32)gHandleType27Entity;
     case 26:
         return (s32)gHandleType26Entity;
     case 28:
-        return (s32)func_800398EC;
+        return (s32)gHandleType28Entity;
     case 29:
         return (s32)gHandleType29Entity;
     case 31:
-        return (s32)D_8003A844;
+        return (s32)gHandleForceFieldEntity;
     case 34:
         return (s32)D_80042330;
     case 35:

@@ -22,8 +22,8 @@ struct Object {
 };
 extern void gInitActorFromSpawn(struct Object *, void *, s32) __asm__("func_80038754");
 extern s32 gEntityBaseHandler(s32, struct Object *, void *, s32) __asm__("func_8002AD58");
-extern void func_800395A8(s32, struct Child *, void *, s32);
-extern void func_800398EC(s32, struct Child *, void *, s32);
+extern void gHandleMountedTurretCarrierMessages(s32, struct Child *, void *, s32) __asm__("func_800395A8");
+extern void gHandleType28Entity(s32, struct Child *, void *, s32) __asm__("func_800398EC");
 s32 gHandleMountedPartMsg(s32 message, struct Object *object, void *data, s32 arg3) __asm__("func_80039298");
 
 
@@ -126,10 +126,10 @@ s32 gHandleMountedPartMsg(s32 message, struct Object *object, void *data, s32 ar
                 return result;
             }
         type20:
-            func_800395A8(message, handler, data, arg3);
+            gHandleMountedTurretCarrierMessages(message, handler, data, arg3);
             return 0;
         type28:
-            func_800398EC(message, handler, data, arg3);
+            gHandleType28Entity(message, handler, data, arg3);
             return 0;
         }
     }

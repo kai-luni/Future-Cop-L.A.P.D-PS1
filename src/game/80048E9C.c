@@ -1,7 +1,7 @@
 // Categories: Graphics > Text > Font Upload | Resources > Asset Loading
 #include "game/types.h"
 
-extern void func_80048A14(s32 value, s32 *source);
+extern void gRegisterFontBank(s32 value, s32 *source) __asm__("func_80048A14");
 
 /**
  * @brief Registers a font from an asset table entry: forwards the entry's
@@ -22,5 +22,5 @@ extern void func_80048A14(s32 value, s32 *source);
  */
 void func_80048E9C(s32 *source)
 {
-    func_80048A14(*source, source);
+    gRegisterFontBank(*source, source);
 }

@@ -33,6 +33,8 @@ extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gBuildRotationMatrix(s32 arg0, s32 arg1, s32 arg2, s32 *out) __asm__("func_800188D0");
 extern s32 gGetGroundHeight(struct Vec3C2A4 *position, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
 extern void *func_8003FD74(s32 type, s32 arg08, void *source, s32 arg18);
+u8 gQueueDeferredGroundSpawn(struct UnkC2A4 *data) __asm__("func_8003C2A4");
+
 
 /**
  * @brief Queues a deferred spawn request with rotated ground-offset placement when a spawn record has flag bit 0 set, and checks table occupancy.
@@ -54,7 +56,7 @@ extern void *func_8003FD74(s32 type, s32 arg08, void *source, s32 arg18);
  * @par Callers
  * Confirmed: func_80040DCC (0x80040DD8), func_80044770 (0x8004477C), func_8004C884 (0x8004C890), func_8006EAF0 (0x8006EAFC), func_800703A8 (0x800703B4), func_80073F88 (0x80073F94), func_800767E4 (0x800767F0) / Likely: none / Unknown: none.
  */
-u8 func_8003C2A4(struct UnkC2A4 *data)
+u8 gQueueDeferredGroundSpawn(struct UnkC2A4 *data)
 {
     struct OutC2A4 *out;
     struct UnkC2A4 *object;

@@ -41,6 +41,8 @@ extern s32 gEntityBaseHandler(s32, struct Entity *, struct Entity *, s32) __asm_
 extern s32 func_80019FCC(s32 *);
 extern s32 gSqrt12(s32) __asm__("func_80095900");
 extern void gApplyRadialContactDamage(void *, s32, s32, struct Entity *) __asm__("func_800410BC");
+s32 gHandleDirectShotProjectile(s32 msg, struct Entity *self, struct Entity *data, s32 extra) __asm__("func_80036624");
+
 
 /**
  * @brief Message table of the model-backed entity class (block size 0xFC): spawn,
@@ -105,7 +107,7 @@ extern void gApplyRadialContactDamage(void *, s32, s32, struct Entity *) __asm__
  * from the message-1 size and then drives messages 1 and 2; gSpawnDirectShot itself is
  * called by gGuidedProjectileUpdate (child creation), func_8005F6E8 and gWeaponFireDispatch.
  */
-s32 func_80036624(s32 msg, struct Entity *self, struct Entity *data, s32 extra)
+s32 gHandleDirectShotProjectile(s32 msg, struct Entity *self, struct Entity *data, s32 extra)
 {
     s32 vec[3];
     s32 v, diff;

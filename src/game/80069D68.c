@@ -11,11 +11,11 @@ extern s32 gOperandStack[] __asm__("D_800A3320");
 extern s32 *gVmCountdowns __asm__("D_8009F9A4");
 extern s32 *gOpcodeTable __asm__("D_8009F9F8");
 extern s32 *gGameSession __asm__("D_8009FA94");
-extern s32 *D_8009FAD4;
+extern s32 *gScriptVmVars __asm__("D_8009FAD4");
 extern s8 gRandomTable[] __asm__("D_800A8540");
 
 extern s32 func_80019668(void);
-extern s32 func_80029A60(s32, struct Entity *, s32);
+extern s32 gQueueEntityStreamRequest(s32, struct Entity *, s32) __asm__("func_80029A60");
 extern void gAppendScriptEvent(s32) __asm__("func_800298EC");
 extern void func_80029974(s32);
 extern s32 gSendMessageByTag(s32, s32) __asm__("func_8004DE80");
@@ -27,6 +27,8 @@ extern void gSetPathNodeBlocked(s32, s32, s32) __asm__("func_8004F0F0");
 extern void func_8006158C(s32, s32, s32);
 extern void gSendSpawnerCommandByGroup(s32, s32, s32) __asm__("func_80061600");
 extern void gSendSceneNodeCommandById(s32, s32, s32) __asm__("func_800841C4");
+s32 gInterpretEntityScript(u8 *script, s32 arg1, s32 arg2, struct Entity *entity) __asm__("func_80069D68");
+
 
 
 /**
@@ -141,7 +143,7 @@ extern void gSendSceneNodeCommandById(s32, s32, s32) __asm__("func_800841C4");
  * func_80049564, func_8004D958, func_8004DEE0, func_80058378, func_80058714,
  * func_800600E8, func_80060238, func_8006125C.
  */
-s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
+s32 gInterpretEntityScript(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
 {
     u8 *code;
     s32 *stack;
@@ -224,7 +226,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             a = gVmCountdowns[a] / 5;
             goto push;
         case 19:
-            a = D_8009FAD4[a];
+            a = gScriptVmVars[a];
             goto push;
         case 29:
             gGameSession[a] = b;
@@ -236,7 +238,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             gVmCountdowns[a] = b * 5;
             break;
         case 32:
-            D_8009FAD4[a] = b;
+            gScriptVmVars[a] = b;
             break;
         case 21:
             gGameSession[a]++;
@@ -248,7 +250,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             gVmCountdowns[a] += 5;
             goto push;
         case 24:
-            D_8009FAD4[a]++;
+            gScriptVmVars[a]++;
             goto push;
         case 25:
             gGameSession[a]--;
@@ -260,7 +262,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             gVmCountdowns[a] -= 5;
             goto push;
         case 28:
-            D_8009FAD4[a]--;
+            gScriptVmVars[a]--;
             goto push;
         case 48:
             gGameSession[a] += b;
@@ -272,7 +274,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             gVmCountdowns[a] += b * 5;
             goto push;
         case 51:
-            D_8009FAD4[a] += b;
+            gScriptVmVars[a] += b;
             goto push;
         case 52:
             gGameSession[a] -= b;
@@ -284,7 +286,7 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             gVmCountdowns[a] -= b * 5;
             goto push;
         case 55:
-            D_8009FAD4[a] -= b;
+            gScriptVmVars[a] -= b;
             goto push;
         case 9:
             a = (a == 0);
@@ -304,10 +306,10 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             }
             goto push;
         case 15:
-            a = func_80029A60(a, ent, 1);
+            a = gQueueEntityStreamRequest(a, ent, 1);
             goto push;
         case 14:
-            a = func_80029A60(a, ent, 0);
+            a = gQueueEntityStreamRequest(a, ent, 0);
             goto push;
         case 13:
             func_80029974(a);

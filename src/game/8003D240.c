@@ -36,7 +36,7 @@ extern struct Unk3D240 *gAnchorNodeList __asm__("D_8009F320");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void gFreeOwnedBufferNode(struct Unk3D240 *object) __asm__("func_8003CF20");
-extern void func_8003D0F0(void *source, s32 a1, s32 a2, void *destination);
+extern void gResolveModelEffectPoint(void *source, s32 a1, s32 a2, void *destination) __asm__("func_8003D0F0");
 void gSyncAttachedNodes(void) __asm__("func_8003D240");
 
 
@@ -150,7 +150,7 @@ void gSyncAttachedNodes(void)
             pos2 = *(s32 *)((u8 *)object->unk04 + 0x58);
             local.matrix[0] = first;
             local.pos[2] = pos2;
-            func_8003D0F0((u8 *)object->unk04 + 0x28, -1, 0, (u8 *)object + 0x28);
+            gResolveModelEffectPoint((u8 *)object->unk04 + 0x28, -1, 0, (u8 *)object + 0x28);
             object->unk04 = local.matrix[0];
             object->unk08 = local.matrix[1];
             object->unk0C = local.matrix[2];
@@ -187,7 +187,7 @@ void gSyncAttachedNodes(void)
             object->unk28 = object->unk34->unk28;
             object->unk2C = object->unk34->unk2C;
             object->unk30 = object->unk34->unk30;
-            func_8003D0F0(object->unk34, -1, 0, (u8 *)object + 0x28);
+            gResolveModelEffectPoint(object->unk34, -1, 0, (u8 *)object + 0x28);
             object->unk28 += object->unk34->unk28;
             object->unk2C += object->unk34->unk2C;
             object->unk30 += object->unk34->unk30;

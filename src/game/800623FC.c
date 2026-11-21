@@ -8,7 +8,9 @@ struct Object {
     unsigned int flags;
 };
 struct Node { Object *object; Node *next; };
-extern void func_800620D8(Object *, Object *, unsigned int);
+extern void gTestEntityPairCollision(Object *, Object *, unsigned int) __asm__("func_800620D8");
+void gProcessCellCollisionPairs(Node *list) __asm__("func_800623FC");
+
 
 /**
  *  @brief Processes eligible unordered pairs from a nonempty object list.
@@ -29,7 +31,7 @@ extern void func_800620D8(Object *, Object *, unsigned int);
  *  @par Callers
  *  Confirmed: func_80062614.
  */
-void func_800623FC(Node *list)
+void gProcessCellCollisionPairs(Node *list)
 {
     Object *a, *b;
     Node *other;
@@ -47,7 +49,7 @@ void func_800623FC(Node *list)
                 if (combined & 0x2200) {
                     if (!(flags & 0x800000) || a->callback(10, a, b, 0)) {
                         if (!(b->flags & 0x800000) || b->callback(10, b, a, 0)) {
-                            func_800620D8(a, b, combined);
+                            gTestEntityPairCollision(a, b, combined);
                         }
                     }
                 }

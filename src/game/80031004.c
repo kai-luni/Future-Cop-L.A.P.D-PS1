@@ -17,7 +17,9 @@ struct Unk31004 {
 };
 
 extern void gRemoveEntityCommand(struct Unk31004 *self, s32 index) __asm__("func_8002A5B4");
-extern void func_80069D68(u8 *ptr, s32 arg1, s32 arg2, struct Unk31004 *self);
+extern void gInterpretEntityScript(u8 *ptr, s32 arg1, s32 arg2, struct Unk31004 *self) __asm__("func_80069D68");
+void gProcessTriggerEntityCommands(struct Unk31004 *self) __asm__("func_80031004");
+
 
 /**
  * @brief Executes opcodes 0x78, 0x79, and 0x7A from a trigger/attachment entity's 4-slot command queue.
@@ -41,7 +43,7 @@ extern void func_80069D68(u8 *ptr, s32 arg1, s32 arg2, struct Unk31004 *self);
  * @par Callers
  * Confirmed: func_8003151C.
  */
-void func_80031004(struct Unk31004 *self)
+void gProcessTriggerEntityCommands(struct Unk31004 *self)
 {
     s32 i;
     s32 op;
@@ -67,7 +69,7 @@ void func_80031004(struct Unk31004 *self)
                 if (flags & 0x20) {
                     u8 *ptr = self->unk9C;
                     if (ptr != 0 && ptr[0] != 0) {
-                        func_80069D68(ptr, 0, -1, self);
+                        gInterpretEntityScript(ptr, 0, -1, self);
                     }
                 }
             } else {

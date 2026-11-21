@@ -102,7 +102,7 @@ extern void gUpdateParticleLight(struct Particle *p) __asm__("func_800753D0");
 extern void gReleaseParticleLight(void *p) __asm__("func_80075478");
 extern void gInitEmitterParticle(struct Emitter *e, void *node, void *vec, struct Xform *x) __asm__("func_800754B8");
 extern s32 gGetGroundHeight(void *a, s32 b, s32 c, s32 d) __asm__("func_80066F78");
-extern u8 func_800751A4(struct Particle *p, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+extern u8 gStepParticleColorChannels(struct Particle *p, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) __asm__("func_800751A4");
 void gRunPolygonPass(struct Emitter *e, s32 step) __asm__("func_80075A84");
 
 
@@ -251,9 +251,9 @@ void gRunPolygonPass(struct Emitter *e, s32 step)
                     s32 a3 = (self->c[p->idx] * step) >> 8;
                     s32 r;
                     if (p->idx == 2) {
-                        r = !func_800751A4(p, a1, a2, a3, 0, 0, 0);
+                        r = !gStepParticleColorChannels(p, a1, a2, a3, 0, 0, 0);
                     } else {
-                        r = !func_800751A4(p, a1, a2, a3, self->c0[p->idx + 1],
+                        r = !gStepParticleColorChannels(p, a1, a2, a3, self->c0[p->idx + 1],
                                           self->c1[p->idx + 1], self->c2[p->idx + 1]);
                     }
                     if ((u8)r) {

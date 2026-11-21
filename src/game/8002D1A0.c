@@ -84,7 +84,9 @@ extern struct Ent *gPlayerEntities[2] __asm__("D_8009FA58");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Ent *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct Menu *gGameSession __asm__("D_8009FA94");
-extern void func_80069D68();
+extern void gInterpretEntityScript() __asm__("func_80069D68");
+void gTryCaptureObjective(struct Ent *self, struct Ent *other) __asm__("func_8002D1A0");
+
 
 /**
  * @brief Handles proximity capture and team ownership transfer for an objective entity.
@@ -109,7 +111,7 @@ extern void func_80069D68();
  * @par Callers
  * Confirmed: func_8002D664 (0x8002D6FC, message 10 handler for type 0x24) / Likely: none / Unknown: none.
  */
-void func_8002D1A0(struct Ent *self, struct Ent *other)
+void gTryCaptureObjective(struct Ent *self, struct Ent *other)
 {
     s32 i;
     register struct Ent **pp __asm__("$5");
@@ -222,5 +224,5 @@ check_distance:
         }
     }
     if (self->unk9C != 0 && *self->unk9C != 0 && (self->unk24 & 0x100000))
-        func_80069D68(self->unk9C, 0, other->unk14 & 0x7FFF);
+        gInterpretEntityScript(self->unk9C, 0, other->unk14 & 0x7FFF);
 }

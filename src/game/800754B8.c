@@ -121,8 +121,8 @@ extern void func_8001B148(struct RotationMatrix *matrix,
                          struct RotationPoint *destination, s32 count);
 extern void func_8003BDEC(struct Pool *pool);
 extern struct ListNode *gTakePoolNode(struct ListNode *node) __asm__("func_8003BEF0");
-extern s32 func_8003C7B8(s32 message, void *object, void *arg2, void *arg3);
-extern s32 func_8003C980(s32 message, void *object, void *arg2, void *arg3);
+extern s32 gGuardEffectPoolMessage(s32 message, void *object, void *arg2, void *arg3) __asm__("func_8003C7B8");
+extern s32 gHandleObjectEventMessages(s32 message, void *object, void *arg2, void *arg3) __asm__("func_8003C980");
 extern struct Unk754B8Transform *gGetObjectTransform(void *object) __asm__("func_8003D9C4");
 extern void gResolveNodeTransform(void *model, s32 flags, s32 part, s32 count,
                          void *sub, void *matrix) __asm__("func_8003D9F8");
@@ -289,7 +289,7 @@ s32 gAttachMessageName(s32 message, struct Unk754B8 *object, void *arg2, void *a
         &&case6, &&case7, &&case8, &&zero, &&case10
     };
 
-    if (func_8003C7B8(message, object, arg2, arg3) != 0) {
+    if (gGuardEffectPoolMessage(message, object, arg2, arg3) != 0) {
         return 0;
     }
 
@@ -393,7 +393,7 @@ case8:
         goto zero;
 
 deflt:
-        return func_8003C980(message, object, arg2, arg3);
+        return gHandleObjectEventMessages(message, object, arg2, arg3);
 
 case1:
 zero:

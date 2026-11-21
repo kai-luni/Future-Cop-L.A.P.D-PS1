@@ -19,7 +19,7 @@ extern u8 gRowClearFlag __asm__("D_8009FA10");
 extern u8 gCreditsMovieFilename[] __asm__("D_80011E60");
 extern struct UnkB4E4 gWideTextTable[] __asm__("D_8009B4E4");
 
-extern void func_80082DDC(s32 arg0, s32 arg1);
+extern void gPlayMovieClip(s32 arg0, s32 arg1) __asm__("func_80082DDC");
 extern void gUpdateMainMenuUnlocks(void) __asm__("func_8007A168");
 
 /**
@@ -55,7 +55,7 @@ void gResetProfileListState(void)
 
     if (gMenuDescriptor.unk24 != 0) {
         if (gPauseFlag != 0) {
-            func_80082DDC((s32)gCreditsMovieFilename, 0);
+            gPlayMovieClip((s32)gCreditsMovieFilename, 0);
             gPauseFlag = 0;
         }
         gMenuDescriptor.unk24 = 0;

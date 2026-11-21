@@ -2,9 +2,11 @@
 #include "game/types.h"
 
 extern s32 D_8009F6D0;
-extern s32 D_800A0C60[];
+extern s32 gStreamAssetReleaseRing[] __asm__("D_800A0C60");
 
 extern void func_80029650(s32 arg0);
+void gDrainCallbackSlotRing(void) __asm__("func_8002A408");
+
 
 /**
  *  @brief Processes consecutive nonzero entries in a four-slot circular table.
@@ -22,17 +24,17 @@ extern void func_80029650(s32 arg0);
  *  @par Callers
  *  Confirmed: func_80029C34, func_8002A26C.
  */
-void func_8002A408(void)
+void gDrainCallbackSlotRing(void)
 {
-    s32 temp = D_800A0C60[D_8009F6D0];
+    s32 temp = gStreamAssetReleaseRing[D_8009F6D0];
 
     while (temp != 0) {
         func_80029650(temp);
-        D_800A0C60[D_8009F6D0] = 0;
+        gStreamAssetReleaseRing[D_8009F6D0] = 0;
         D_8009F6D0 = D_8009F6D0 + 1;
         if (D_8009F6D0 >= 4) {
             D_8009F6D0 = 0;
         }
-        temp = D_800A0C60[D_8009F6D0];
+        temp = gStreamAssetReleaseRing[D_8009F6D0];
     }
 }

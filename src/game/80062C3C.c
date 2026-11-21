@@ -19,6 +19,8 @@ extern Obj **gCellEntityList __asm__("D_8009F818");
 extern u8 *gCellMap __asm__("D_8009F820");
 extern u8 gGridOriginY __asm__("D_8009F835");
 extern u8 gGridOriginX __asm__("D_8009F834");
+void gBuildSingleViewObjectGrid(void) __asm__("func_80062C3C");
+
 
 /**
  * @brief Builds the single-view object list and the per-cell object grid of the
@@ -68,7 +70,7 @@ extern u8 gGridOriginX __asm__("D_8009F834");
  * @par Callers
  * func_80062FB4, the region setup, when D_8009FA0C == 1 (the small-view case).
  */
-void func_80062C3C(void) {
+void gBuildSingleViewObjectGrid(void) {
     register s32 count __asm__("$12") = gCellEntityCount;
     Obj **scan = gCommandListHead.items;
     register s32 remaining __asm__("$13");

@@ -22,6 +22,8 @@ extern u8 gBitFieldState __asm__("D_8009F6B8");
 
 extern void func_80029DD8(void);
 extern void gSetType34StreamState(struct Unk41DC4 *object, s32 value) __asm__("func_80041DC4");
+s32 gQueueEntityStreamRequest(s32 arg0, struct Unk41DC4 *arg1, u8 arg2) __asm__("func_80029A60");
+
 
 /**
  * @brief Enqueues or priority-prepends an event/dialogue entry in the 8-slot D_800A0BC0 ring buffer.
@@ -48,7 +50,7 @@ extern void gSetType34StreamState(struct Unk41DC4 *object, s32 value) __asm__("f
  * @par Callers
  * Confirmed: func_80069D68 (0x8006A274 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-s32 func_80029A60(s32 arg0, struct Unk41DC4 *arg1, u8 arg2)
+s32 gQueueEntityStreamRequest(s32 arg0, struct Unk41DC4 *arg1, u8 arg2)
 {
     s32 index;
 

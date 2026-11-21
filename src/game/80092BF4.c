@@ -7,7 +7,7 @@ typedef struct {
 } Context;
 
 extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
-extern u8 D_80012A30[];
+extern u8 gSetDisplayMaskTraceFormat[] __asm__("D_80012A30");
 extern  void (*gLogPrintf)(u8 *, s32) __asm__("D_8009DDEC");
 extern Context *gVramWriteCallback __asm__("D_8009DDE8");
 extern void gMemset(u8 *, int, unsigned int) __asm__("func_80095830");
@@ -32,7 +32,7 @@ void func_80092BF4(s32 arg0)
     Context *ctx;
     __asm__("" : "=r"(p) : "0"(p));
     if (p[0] >= 2) {
-        gLogPrintf(D_80012A30, arg0);
+        gLogPrintf(gSetDisplayMaskTraceFormat, arg0);
     }
     if (arg0 == 0) {
         gMemset(p + 0x6A, -1, 0x14);

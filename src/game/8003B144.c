@@ -5,8 +5,10 @@ typedef short s16;
 typedef int s32;
 struct Part { s16 a,b,c,d,e,f,g,h,i; s8 j,k; };
 struct Entity { u8 pad[0x28]; void *info; u8 pad2[0x75]; s8 count; s8 total; u8 pad3; s16 threshold; u8 pad4[0x22]; struct Part *parts; };
-extern void func_8003A960(struct Entity *, void *, s32);
+extern void gClearDebrisPartBitsOutsideRange(struct Entity *, void *, s32) __asm__("func_8003A960");
 extern void gRetireEntity(struct Entity *) __asm__("func_8004D958");
+void gStepModelDebris(s32 unused, struct Entity *self, s32 delta) __asm__("func_8003B144");
+
 
 /**
  * @brief Animates the parts of a debris/particle object and retires it when empty.
@@ -38,7 +40,7 @@ extern void gRetireEntity(struct Entity *) __asm__("func_8004D958");
  * @par Callers
  * Confirmed: func_8003B2D0.
  */
-void func_8003B144(s32 unused, struct Entity *self, s32 delta)
+void gStepModelDebris(s32 unused, struct Entity *self, s32 delta)
 {
     struct Part *p = self->parts;
     s32 i;
@@ -48,7 +50,7 @@ void func_8003B144(s32 unused, struct Entity *self, s32 delta)
             if (p->b < self->threshold) {
                 p->i = 0;
                 self->count--;
-                func_8003A960(self, self->info, i);
+                gClearDebrisPartBitsOutsideRange(self, self->info, i);
             } else {
                 p->e += (p->i * delta) >> 8;
                 p->a += (p->d * delta) >> 8;

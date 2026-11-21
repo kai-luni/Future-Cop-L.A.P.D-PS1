@@ -23,7 +23,7 @@ extern s32 func_8007EA78(void);
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void gPopMenuPanel(void) __asm__("func_80078740");
 extern void func_800493C0(u32 index, u8 blue, u8 green, u8 red);
-extern void func_800788F0(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
+extern void gDrawAlignedMultilineText(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) __asm__("func_800788F0");
 extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
 extern void gEmitFlatQuadRect(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) __asm__("func_80082EF0");
 extern void func_8007F128(s32 input0, s32 input1, s32 input2, s32 input3, s32 arg5, s32 arg6);
@@ -179,7 +179,7 @@ state_4:
 state_5:
         if (gStatusTextId != 0) {
             func_800493C0(0x11, 0x1F, 0xA, 0xA);
-            func_800788F0(0, 0xA0, 0x82, 0x11, gStatusTextId, 4, 8, 1);
+            gDrawAlignedMultilineText(0, 0xA0, 0x82, 0x11, gStatusTextId, 4, 8, 1);
         }
         if ((gGameClock[0] >> 9) & 1) {
             func_80078B34(0x6E5, 0, 0);
@@ -188,8 +188,8 @@ state_5:
             func_80078B34(0x3AA2, 0, 0);
             func_80078B34(0x10CC, 1, 0);
         }
-        func_800788F0(0, 0xA0, 0x3C, 0x10, 0x3A98, 4, 8, 1);
-        func_800788F0(0, 0xA0, 0xA2, 0x10, 0x3AB6, 4, 8, 2);
+        gDrawAlignedMultilineText(0, 0xA0, 0x3C, 0x10, 0x3A98, 4, 8, 1);
+        gDrawAlignedMultilineText(0, 0xA0, 0xA2, 0x10, 0x3AB6, 4, 8, 2);
         func_8007F128(0xA0, 0xAD, 0xF, 2, 4, 8);
 
         hundred = 100;

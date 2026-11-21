@@ -23,6 +23,8 @@ extern UnkC590Cell *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern u32 *gGetSpawnTypeFlagPtr(u32 column, u32 row) __asm__("func_8003B3D8");
 extern void gOrGridCellFlags(u8 column, s32 row, u8 bits) __asm__("func_8003C4C4");
 extern void gMarkSpawnCycleFlags(s32 column, s32 stop, s32 row) __asm__("func_8003C500");
+void gMarkSpawnRecordChains(s32 arg0) __asm__("func_8003C590");
+
 
 /**
  * @brief Traverses object-descriptor chains in one row of D_800A7040 and flags active or cyclic nodes in D_800A6578.
@@ -44,7 +46,7 @@ extern void gMarkSpawnCycleFlags(s32 column, s32 stop, s32 row) __asm__("func_80
  * @par Callers
  * Confirmed: func_8003FAD4 (0x8003FAE4 with arg0=0, 0x8003FAEC with arg0=1 during screen teardown) / Likely: none / Unknown: none.
  */
-void func_8003C590(s32 arg0)
+void gMarkSpawnRecordChains(s32 arg0)
 {
     s16 table[256];
     register s32 row __asm__("$23");

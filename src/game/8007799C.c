@@ -6,9 +6,9 @@ struct Name7 {
 };
 
 extern struct Name7 gPlayerNameTable __asm__("D_800A6FE0");
-extern struct Name7 D_800A6FE9;
-extern struct Name7 D_8009F474;
-extern struct Name7 D_8009F47C;
+extern struct Name7 gPlayer2NameBuffer __asm__("D_800A6FE9");
+extern struct Name7 gDefaultPlayer1Name __asm__("D_8009F474");
+extern struct Name7 gDefaultPlayer2Name __asm__("D_8009F47C");
 extern u32 gTitleScreenDeadline __asm__("D_8009F8E8");
 extern u8 gSetupDoneFlag __asm__("D_8009F3E4");
 
@@ -54,14 +54,14 @@ void gSetupTitleScreenPlayerNames(void)
         if (p != 0 && func_8008CCC0(p) < 9) {
             func_8008CCB0(&gPlayerNameTable, p);
         } else {
-            gPlayerNameTable = D_8009F474;
+            gPlayerNameTable = gDefaultPlayer1Name;
             ok = 1;
         }
         p = gLookupTextString(0xD2);
         if (p != 0 && func_8008CCC0(p) < 9) {
-            func_8008CCB0(&D_800A6FE9, p);
+            func_8008CCB0(&gPlayer2NameBuffer, p);
         } else {
-            D_800A6FE9 = D_8009F47C;
+            gPlayer2NameBuffer = gDefaultPlayer2Name;
             ok = 1;
         }
         if (ok == 0) {

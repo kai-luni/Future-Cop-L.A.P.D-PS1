@@ -15,7 +15,7 @@ extern s8 gMissionListMaxIndex __asm__("D_8009F882");
 extern s8 gSelectedMissionIndex __asm__("D_8009F880");
 extern s8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
 extern s8 gRowClearFlag __asm__("D_8009FA10");
-extern u8 D_8009F8D9;
+extern u8 gPort2RumbleEnabled __asm__("D_8009F8D9");
 extern u8 gUnlockFlag __asm__("D_8009F3C2");
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern s8 *D_8009F884;
@@ -102,7 +102,7 @@ void gResumeFrontEndForReturnMode(void)
         break;
     case 3:
         gSetPadRumbleEnabled(0, gRumbleEnabled);
-        gSetPadRumbleEnabled(1, D_8009F8D9);
+        gSetPadRumbleEnabled(1, gPort2RumbleEnabled);
     default:
         gActivateMenuPanel(gTitleScreenMenuDescriptor, 0);
         break;

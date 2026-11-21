@@ -17,11 +17,13 @@ typedef struct Object {
 extern void *jtbl_800111DC[];
 extern u32 gFrameTime __asm__("D_8009FAA4");
 extern void gInitTerrainEntity(Object *, void *, s32) __asm__("func_800302E8");
-extern u8 func_8002F8B8(u8, s16, void *, u8);
-extern void func_80030498(Object *, void *);
+extern u8 gTestEntityFieldMatch(u8, s16, void *, u8) __asm__("func_8002F8B8");
+extern void gCheckResupplyPadProximity(Object *, void *) __asm__("func_80030498");
 extern s32 gEntityBaseHandler(s32, Object *, void *) __asm__("func_8002AD58");
 extern u8 gSubmitModelInstance(void *, u32 *, s32) __asm__("func_80017508");
-extern s32 func_800306A0(Object *, void *);
+extern s32 gUpdateResupplyEntity(Object *, void *) __asm__("func_800306A0");
+s32 gHandleResupplyEntity(s32 message, Object *object, void *data, s32 arg3) __asm__("func_80030960");
+
 
 /**
  * @brief Message handler of object type 32: spawn, conditional draw with a
@@ -55,7 +57,7 @@ extern s32 func_800306A0(Object *, void *);
  * No direct callers in the call graph. func_8002AE54 returns the address
  * for object type 32, so the dispatcher reaches it indirectly.
  */
-s32 func_80030960(s32 message, Object *object, void *data, s32 arg3)
+s32 gHandleResupplyEntity(s32 message, Object *object, void *data, s32 arg3)
 {
     register Object *self __asm__("$16");
     register void *other __asm__("$17");
@@ -77,8 +79,8 @@ case2:
     return 0;
 case10:
     if (self->unkBD == 2 || self->unkBD == 0) {
-        if (func_8002F8B8(self->unkBC, self->unkBA, other, self->unkBD == 2)) {
-            func_80030498(self, other);
+        if (gTestEntityFieldMatch(self->unkBC, self->unkBA, other, self->unkBD == 2)) {
+            gCheckResupplyPadProximity(self, other);
         }
     }
     return 1;
@@ -93,7 +95,7 @@ case3:
     }
     return gSubmitModelInstance(self->unkD4, &flags, 1);
 case6:
-    return func_800306A0(self, other);
+    return gUpdateResupplyEntity(self, other);
 fallback:
     return gEntityBaseHandler(message, self, other);
 }

@@ -12,7 +12,7 @@ struct ScriptTimer {
 extern struct ScriptTimer *gScriptTimerTicks __asm__("D_8009F770");
 extern s32 gScriptTimerCount __asm__("D_8009F774");
 
-extern s32 func_80069D68(s32 id, s32 arg1, s32 arg2, s32 arg3);
+extern s32 gInterpretEntityScript(s32 id, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80069D68");
 void gTickScriptTimers(s32 elapsed) __asm__("func_80049564");
 
 
@@ -52,8 +52,8 @@ void gTickScriptTimers(s32 elapsed)
             continue;
         }
         timer->remaining = remaining + timer->period;
-        if (func_80069D68(timer->trigger, 0, -1, 0) != 0) {
-            func_80069D68(timer->action, 0, -1, 0);
+        if (gInterpretEntityScript(timer->trigger, 0, -1, 0) != 0) {
+            gInterpretEntityScript(timer->action, 0, -1, 0);
             if (timer->count > 0) {
                 timer->count--;
             }

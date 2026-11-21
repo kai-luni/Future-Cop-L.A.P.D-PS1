@@ -64,10 +64,12 @@ struct AnimClip;
 struct AnimTrack;
 struct ModelInstance;
 
-extern void func_800516A0(void *owner);
+extern void gResetCompoundVisualSubpart(void *owner) __asm__("func_800516A0");
 extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction, u8 flags);
 extern void gSetModelFrame(struct ModelInstance *instance, s32 frame) __asm__("func_800175F8");
 extern void gUpdateMorphBounds(void *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_800518A8");
+void gResetCompoundEntityAnimation(struct Unk51AF8Arg *arg0) __asm__("func_80051AF8");
+
 
 /**
  * @brief Resets a compound entity's state and restarts its animation tracks.
@@ -97,7 +99,7 @@ extern void gUpdateMorphBounds(void *arg0, void *arg1, s32 arg2, void *arg3) __a
  * @par Callers
  * func_800579D4, func_80058714.
  */
-void func_80051AF8(struct Unk51AF8Arg *arg0)
+void gResetCompoundEntityAnimation(struct Unk51AF8Arg *arg0)
 {
     struct Unk51AF8State *s1;
     struct ModelInstance *model;
@@ -120,7 +122,7 @@ void func_80051AF8(struct Unk51AF8Arg *arg0)
     s1->unkDC = 0;
     s1->unkC2 = 0;
     arg0->unkC3 = 0;
-    func_800516A0(arg0);
+    gResetCompoundVisualSubpart(arg0);
 
     if (s1->unkAD == 1) {
         arg0->unkF2 = 0x1000;

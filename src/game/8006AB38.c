@@ -33,7 +33,7 @@ struct Owner { u8 pad[0xac]; struct State *state; };
 struct Global { u8 pad[8]; s32 field8; u8 padc[0x8c]; s32 field98; };
 extern struct Global *gGameSession __asm__("D_8009FA94");
 extern struct Data *gRegistryFind(u8) __asm__("func_8006AAEC");
-extern void func_8005D3FC(struct Owner *, s32);
+extern void gAllocDomeEffectBlock(struct Owner *, s32) __asm__("func_8005D3FC");
 void gResetPlayerWeaponLoadout(struct Owner *owner) __asm__("func_8006AB38");
 
 
@@ -104,7 +104,7 @@ void gResetPlayerWeaponLoadout(struct Owner *owner)
         if (data->flags & 4)
             state->fielda5 = 0;
         if (data->kind == 13)
-            func_8005D3FC(owner, i);
+            gAllocDomeEffectBlock(owner, i);
     }
     state->field98 = 0;
     state->field6c = 0;

@@ -16,7 +16,11 @@ extern u8 gGridOriginX __asm__("D_8009F834");
 extern u32 *gCellMap __asm__("D_8009F820");
 extern Rect gCellClipRect __asm__("D_800A2970");
 extern Entry gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
-extern void func_80062C3C(void), func_80062874(void), func_80062614(void);
+extern void gBuildSingleViewObjectGrid(void) __asm__("func_80062C3C");
+extern void func_80062874(void) __asm__("func_80062874");
+extern void gSweepCollisionGridPairs(void) __asm__("func_80062614");
+void gUpdateViewCollisionGrid(void) __asm__("func_80062FB4");
+
 /**
  * @brief Computes the active screen region and marks its pixels in the region
  *        table.
@@ -43,7 +47,7 @@ extern void func_80062C3C(void), func_80062874(void), func_80062614(void);
  * func_80062C3C, func_80062874 and func_80062614 (the three mode-specific
  * callers).
  */
-void func_80062FB4(void)
+void gUpdateViewCollisionGrid(void)
 {
     u32 x, y, x2, y2, w, h, n, i;
     u32 *p;
@@ -77,11 +81,11 @@ void func_80062FB4(void)
     { register u32 count __asm__("$3");
     count = n >> 2;
     while (count) { *p++ = 0; count--; } }
-    if (gPlayerCount == 1) func_80062C3C();
+    if (gPlayerCount == 1) gBuildSingleViewObjectGrid();
     else func_80062874();
     i = 0;
     __asm__ volatile ("" : "+r" (i));
     entry = gPlayerCollisionCandidates;
     do { entry->flag = 0; i++; entry++; } while (i < 2);
-    func_80062614();
+    gSweepCollisionGridPairs();
 }

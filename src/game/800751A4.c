@@ -1,6 +1,8 @@
 // Categories: Graphics > Effects > Lights | Game Engine > Front-End Configuration
 typedef unsigned char u8;
 typedef int s32;
+u8 gStepParticleColorChannels(u8 *base, s32 d1, s32 d2, s32 d3, s32 a5, u8 a6, u8 a7) __asm__("func_800751A4");
+
 
 /**
  * @brief Steps three colour channel bytes with per-channel clamping and
@@ -29,7 +31,7 @@ typedef int s32;
  * @par Callers
  * func_80075A84.
  */
-u8 func_800751A4(u8 *base, s32 d1, s32 d2, s32 d3, s32 a5, u8 a6, u8 a7)
+u8 gStepParticleColorChannels(u8 *base, s32 d1, s32 d2, s32 d3, s32 a5, u8 a6, u8 a7)
 {
     register s32 ret __asm__("$8") = 3;
     register s32 old __asm__("$9");

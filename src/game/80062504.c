@@ -11,7 +11,7 @@ struct Node {
     Object *object;
     Node *next;
 };
-extern void func_800620D8(Object *, Object *, int);
+extern void gTestEntityPairCollision(Object *, Object *, int) __asm__("func_800620D8");
 
 /**
  *  @brief Processes eligible object pairs across two nonempty lists.
@@ -52,7 +52,7 @@ void func_80062504(Node *first, Node *second)
             if (flags & 0x2200) {
                 if (!(aflags & mask) || a->callback(10, a, b, 0)) {
                     if (!(b->flags & mask) || b->callback(10, b, a, 0)) {
-                        func_800620D8(a, b, flags);
+                        gTestEntityPairCollision(a, b, flags);
                     }
                 }
             }

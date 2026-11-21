@@ -72,9 +72,9 @@ extern void gGteLoadMatrix(u8 *coord) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(u8 *vertices, s32 *out, s32 count) __asm__("func_80010234");
 extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern void func_8005A190(struct Unk5A190 *object, s32 index, s32 value);
-extern void func_80051AF8(struct Unk58714 *arg0);
+extern void gResetCompoundEntityAnimation(struct Unk58714 *arg0) __asm__("func_80051AF8");
 extern void gRefillWeaponSlotAmmo(struct Unk58714 *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8006BE90");
-extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk58714 *arg3);
+extern void gInterpretEntityScript(void *arg0, s32 arg1, s32 arg2, struct Unk58714 *arg3) __asm__("func_80069D68");
 void gRespawnPlayerEntity(struct Unk58714 *arg0) __asm__("func_80058714");
 
 
@@ -174,9 +174,9 @@ void gRespawnPlayerEntity(struct Unk58714 *arg0)
         s1->unk8A[i] = 0;
     }
 
-    func_80051AF8(arg0);
+    gResetCompoundEntityAnimation(arg0);
 
     if (arg0->unk98 != 0) {
-        func_80069D68(arg0->unk98, 0, -1, arg0);
+        gInterpretEntityScript(arg0->unk98, 0, -1, arg0);
     }
 }

@@ -7,6 +7,8 @@ struct Unk52E28 {
     u8 pad_B2[6];
     u8 unkB8;
 };
+void gSteerHeadingToOctant(struct Unk52E28 *self) __asm__("func_80052E28");
+
 
 /**
  * @brief Steps a 12-bit angle towards a target that depends on the behaviour mode.
@@ -35,7 +37,7 @@ struct Unk52E28 {
  * @par Callers
  * Confirmed: func_80053A74, func_800549F0.
  */
-void func_80052E28(struct Unk52E28 *self)
+void gSteerHeadingToOctant(struct Unk52E28 *self)
 {
     register s32 target __asm__("$5") = 0;
     s32 delta;

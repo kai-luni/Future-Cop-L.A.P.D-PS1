@@ -37,6 +37,9 @@ extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index,
                                       s32 direction, u8 flags);
 extern void func_800449F8(struct AnimScript *script, struct AnimTrack *track);
 extern void func_80044AE8(u32 code, u32 key, s32 *shift, u32 *bits);
+u32 gAdvanceAnimTrack(struct AnimScript *script, struct AnimTrack *track, s32 speed,
+                  s32 direction) __asm__("func_80044B34");
+
 
 /**
  * @brief Advances one animation track by a time step, resolves clip changes and
@@ -96,7 +99,7 @@ extern void func_80044AE8(u32 code, u32 key, s32 *shift, u32 *bits);
  * sites), func_800324E0, gGuidedProjectileUpdate, func_800382B4, func_80038A00,
  * func_800549F0 and func_80055988 (two sites).
  */
-u32 func_80044B34(struct AnimScript *script, struct AnimTrack *track, s32 speed,
+u32 gAdvanceAnimTrack(struct AnimScript *script, struct AnimTrack *track, s32 speed,
                   s32 direction)
 {
     struct AnimClip *clip;

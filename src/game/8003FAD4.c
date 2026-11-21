@@ -18,7 +18,7 @@ extern s32 gDeferredRegPool __asm__("D_8009F70C");
 extern s32 gGreyTexpageAdd __asm__("D_8009F9B8");
 extern s32 gGreyTexpageSub __asm__("D_8009FAA0");
 
-extern void func_8003C590(s32 arg0);
+extern void gMarkSpawnRecordChains(s32 arg0) __asm__("func_8003C590");
 extern void gSpawnEntityPrimaryType(struct Unk3BObject *object) __asm__("func_8003BC0C");
 extern void func_80019584(s32 arg0);
 extern void gLoadImage(s16 *rect, u32 *color) __asm__("func_80092F38");
@@ -78,8 +78,8 @@ void gFinishLevelLoad(void)
     UnkFAD4Node *node = gDeferredRegList;
     UnkFAD4Local local;
 
-    func_8003C590(0);
-    func_8003C590(1);
+    gMarkSpawnRecordChains(0);
+    gMarkSpawnRecordChains(1);
 
     while (node != 0) {
         gSpawnEntityPrimaryType(node->object);

@@ -22,7 +22,7 @@ struct Obj {
     struct Obj *found; s32 foundId;
     s16 speed, range, heading, padEE, timer, yaw, pitch;
 };
-extern void func_8002CB20(struct Obj *);
+extern void gDispatchModelVariantCommands(struct Obj *) __asm__("func_8002CB20");
 extern void gStepAttackScheduler(void *, s32, struct Obj *, s32, s32) __asm__("func_80060238");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
@@ -30,7 +30,7 @@ extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_8001023
 extern struct Obj *gFindTargetEntity(struct Obj *, s32, s32, s32, s32, s32, s32) __asm__("func_8004E80C");
 extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
 extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
-extern void func_80044B34(struct Obj *, void *, s32, s32);
+extern void gAdvanceAnimTrack(struct Obj *, void *, s32, s32) __asm__("func_80044B34");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 s32 gUpdatePropTick(struct Obj *self, s32 dt) __asm__("func_8002CC30");
 
@@ -167,7 +167,7 @@ s32 gUpdatePropTick(struct Obj *self, s32 dt)
     register s32 c __asm__("$4");
     s32 yaw, diff, step, a, b;
 
-    if (self->commands[0]) func_8002CB20(self);
+    if (self->commands[0]) gDispatchModelVariantCommands(self);
     if (!self->model) return 0;
     if (self->script) gStepAttackScheduler(&self->script, dt, self, 0, 1);
     if (self->flags & 4) goto done;
@@ -292,7 +292,7 @@ rotate:
     }
 done:
     if (self->model->anim) {
-        func_80044B34(self, self->anim, dt, 0);
+        gAdvanceAnimTrack(self, self->anim, dt, 0);
         gSetModelFrame(&self->model, self->animFrame);
     }
     return 0;

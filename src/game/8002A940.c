@@ -37,7 +37,7 @@ struct Unk2A940 {
 };
 
 extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
-extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, struct Unk2A940 *arg3);
+extern void gInterpretEntityScript(void *arg0, s32 arg1, s32 arg2, struct Unk2A940 *arg3) __asm__("func_80069D68");
 s32 gStepEntityBaseCountdown(struct Unk2A940 *object, struct Unk2A940Arg2 *arg) __asm__("func_8002A940");
 
 
@@ -97,7 +97,7 @@ s32 gStepEntityBaseCountdown(struct Unk2A940 *object, struct Unk2A940Arg2 *arg)
 
     object->unk24 |= 0x02000000;
     if (object->unk94 != 0) {
-        func_80069D68(object->unk94,
+        gInterpretEntityScript(object->unk94,
                       (u32)object->unk1C >> 31,
                       arg->unk00 & 0x7FFF,
                       object);

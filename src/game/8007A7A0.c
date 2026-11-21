@@ -14,8 +14,8 @@ extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern s32 gPlayerSelection[] __asm__("D_8009F8F0");
 extern u16 gLabelIdTable[] __asm__("D_8009BEEC");
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
-extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
-                         s32 alignX, s32 alignY, s32 font);
+extern void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
+                         s32 alignX, s32 alignY, s32 font) __asm__("func_800788F0");
 
 /**
  * @brief Menu selector widget: steps a per-player option value with
@@ -139,7 +139,7 @@ void gStepPlayersOptionPane(s32 command, s32 x, s32 y)
             __asm__("" : "+r"(text));
             labels = gLabelIdTable;
             __asm__("" : "+r"(labels));
-            func_800788F0(text, x, y + 0xC, 0xF, labels[textId], 4, 8, 1);
+            gDrawAlignedMultilineText(text, x, y + 0xC, 0xF, labels[textId], 4, 8, 1);
         }
         break;
     }

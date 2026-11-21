@@ -40,6 +40,8 @@ extern struct Unk58210Global *gGameSession __asm__("D_8009FA94");
 
 extern void func_80057358(void *object, s32 amount);
 extern void gFlagQuartileChange(void *object, s32 value) __asm__("func_8003BA50");
+void gApplyPlayerHealthDamage(struct Unk58210 *object, s32 amount) __asm__("func_80058210");
+
 
 /**
  * @brief Deducts player health, charges gauge unkA2/charge, and flags quartile drops.
@@ -66,7 +68,7 @@ extern void gFlagQuartileChange(void *object, s32 value) __asm__("func_8003BA50"
  * @par Callers
  * Confirmed: func_80058378 (0x80058398 primary target, 0x80058484 co-op mirror across D_8009FA58).
  */
-void func_80058210(struct Unk58210 *object, s32 amount)
+void gApplyPlayerHealthDamage(struct Unk58210 *object, s32 amount)
 {
     u8 *table;
     u8 *entry;

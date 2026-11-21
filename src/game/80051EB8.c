@@ -68,6 +68,8 @@ extern s32 func_8001A7AC(s32 *arg0);
 extern void func_8001ABE0(s32 scale, s32 *p);
 extern void gPushFromPartBox(struct Arg0 *arg0, void *arg1, s32 arg2, void *arg3,
                           struct Matrix32 *arg4, struct Matrix32 *arg5, s32 arg6) __asm__("func_80051CC4");
+void gApplyPlayerModelCollisionPush(struct Arg0 *arg0, struct Arg1 *arg1, s32 arg2, s32 arg3) __asm__("func_80051EB8");
+
 
 /**
  * @brief Feeds one model instance either a camera push or its transform pass.
@@ -103,7 +105,7 @@ extern void gPushFromPartBox(struct Arg0 *arg0, void *arg1, s32 arg2, void *arg3
  * @par Callers
  * Likely: func_80052098 (same block).
  */
-void func_80051EB8(struct Arg0 *arg0, struct Arg1 *arg1, s32 arg2, s32 arg3)
+void gApplyPlayerModelCollisionPush(struct Arg0 *arg0, struct Arg1 *arg1, s32 arg2, s32 arg3)
 {
     s32 vec[2];
     struct Matrix32 transposed;

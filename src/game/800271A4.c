@@ -76,12 +76,12 @@ extern void gRunMapScreenOnScratch(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm
 extern void gRunRegionPass(s32 arg0, s32 arg1) __asm__("func_80026E1C");
 extern void func_80026E5C(s32 arg0, s32 arg1);
 extern void func_80026F68(s32 arg0, s32 arg1);
-extern void func_80031DE8(s32 arg0);
+extern void gUpdateMapZoneTriggers(s32 arg0) __asm__("func_80031DE8");
 extern void gRunEntityWorldTick(s32 arg0) __asm__("func_8003F570");
 extern void gDrawInGameHud(s32 arg0) __asm__("func_80047F30");
-extern void func_8004CECC(void);
+extern void gDispatchQueuedEntityCommands(void) __asm__("func_8004CECC");
 extern void gCullActiveEntitiesSolo(void) __asm__("func_8004DF28");
-extern void func_800616A0(s32 arg0);
+extern void gUpdateRegisteredSpawners(s32 arg0) __asm__("func_800616A0");
 void gRunSoloSessionFrame(void) __asm__("func_800271A4");
 
 
@@ -176,9 +176,9 @@ void gRunSoloSessionFrame(void)
         gWasSuspended = 0;
         func_80069D0C(gFrameDelta);
         gCullActiveEntitiesSolo();
-        func_8004CECC();
+        gDispatchQueuedEntityCommands();
         func_8004CD6C(6, gFrameDelta, 0);
-        func_80031DE8(gFrameDelta);
+        gUpdateMapZoneTriggers(gFrameDelta);
         func_8004CE04();
         gRunEntityWorldTick(gFrameDelta);
     }
@@ -207,7 +207,7 @@ void gRunSoloSessionFrame(void)
 
     if (!(flags & 0x20)) {
         func_80026D1C();
-        func_800616A0(gFrameDelta);
+        gUpdateRegisteredSpawners(gFrameDelta);
         func_80026D9C(gFrameDelta);
         gSweepRetiredEntities();
         gGameSuspended = 0;

@@ -9,7 +9,7 @@
 #define P(o,n) (*(u8 **)((u8 *)(o) + (n)))
 
 extern void func_8002B4B4(u8 *, s32);
-extern s32 func_80044B34(u8 *, void *, s32, s32);
+extern s32 gAdvanceAnimTrack(u8 *, void *, s32, s32) __asm__("func_80044B34");
 extern u8 gStepAttackScheduler(void *, s32, u8 *, s32, s32) __asm__("func_80060238");
 extern void func_800448D8(void *, s32, s32, u8);
 extern void gFireEntityWeapon(void *, u8 *, u8 *, s32) __asm__("func_8005F6E8");
@@ -21,9 +21,11 @@ extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
 extern void gSetType26AnimationClip(u8 *, s32) __asm__("func_8002B0EC");
 extern void gTurnEntityToAngle(u8 *, s32, s32) __asm__("func_8002B588");
 extern void gOrientEntityBasis(u8 *) __asm__("func_80037EB4");
-extern void func_8002B1D0(u8 *);
+extern void gCopyPairSourceToDestination(u8 *) __asm__("func_8002B1D0");
 extern void gFaceType26Target(u8 *, u8 *, s32) __asm__("func_8002B6C8");
-extern void func_8002B1AC(u8 *);
+extern void gSyncCountdownFields(u8 *) __asm__("func_8002B1AC");
+void gUpdateType26Actor(u8 *obj, s32 step) __asm__("func_8002B784");
+
 
 /**
  * @brief Per-frame update of the class-26 actor: runs its command script,
@@ -105,7 +107,7 @@ extern void func_8002B1AC(u8 *);
  * func_8002C3F0 only, the class-26 handler installed by func_8002AE54, which
  * reaches this body for message 8 - the attack case.
  */
-void func_8002B784(u8 *obj, s32 step)
+void gUpdateType26Actor(u8 *obj, s32 step)
 {
     s32 event;
     u8 *target;
@@ -132,7 +134,7 @@ void func_8002B784(u8 *obj, s32 step)
     } else {
         speed = W(obj,0x84) * step;
     }
-    event = func_80044B34(obj, obj + 0xC8, speed, 0) >> 1;
+    event = gAdvanceAnimTrack(obj, obj + 0xC8, speed, 0) >> 1;
     while (event) {
         switch (event) {
         case 1:
@@ -207,7 +209,7 @@ void func_8002B784(u8 *obj, s32 step)
                 if (B(obj,0x15F) == 1) {
                     gDispatchType26Command(obj, 0, target);
                 }
-                func_8002B1D0(obj);
+                gCopyPairSourceToDestination(obj);
             } else if (B(obj,0x162) != 2) {
                 gFaceType26Target(obj, target, step);
             }
@@ -243,7 +245,7 @@ void func_8002B784(u8 *obj, s32 step)
                 F(obj,0x118) = (F(obj,0x118) & 0xF0FFFFFF) | ((mode + 8) << 24);
             }
             B(obj,0x15F) = 2;
-            func_8002B1AC(obj);
+            gSyncCountdownFields(obj);
         }
     }
     switch (B(obj,0x15F)) {
@@ -264,7 +266,7 @@ void func_8002B784(u8 *obj, s32 step)
         if (!P(obj,0x138)) {
             gDispatchType26Command(obj, 0, 0);
         } else if (W(obj,0x84) < H(obj,0x158)) {
-            func_8002B1AC(obj);
+            gSyncCountdownFields(obj);
         }
         break;
     case 3:

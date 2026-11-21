@@ -67,6 +67,8 @@ extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
 extern s32 func_80019668(void);
 extern void gSolveLobVector(s32, void *, void *, void *, s32) __asm__("func_8005E624");
 extern void gSpawnQueuedEntity(struct Unk58C3CRequest *) __asm__("func_8004D444");
+void gSpawnPlayerRetirementProjectile(void *owner, struct Vec3s32 *position, struct Unk58C3CObject *object) __asm__("func_80058C3C");
+
 
 /**
  * @brief Spawns a kind-7 attached effect with a randomised draw id, saving
@@ -97,7 +99,7 @@ extern void gSpawnQueuedEntity(struct Unk58C3CRequest *) __asm__("func_8004D444"
  * @par Callers
  * func_80058D78.
  */
-void func_80058C3C(void *owner, struct Vec3s32 *position, struct Unk58C3CObject *object)
+void gSpawnPlayerRetirementProjectile(void *owner, struct Vec3s32 *position, struct Unk58C3CObject *object)
 {
     struct Unk58C3CRequest request;
     struct Unk58C3CArgs args;

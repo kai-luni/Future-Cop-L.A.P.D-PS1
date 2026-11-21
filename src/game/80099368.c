@@ -49,7 +49,7 @@ typedef union {
 
 extern SpuRXX *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern u16 gVoiceSampleNote[] __asm__("D_8009EA60");
-extern u16 func_800999F4(s32, s32, s32, s32);
+extern u16 gConvertSpuNoteToPitch(s32, s32, s32, s32) __asm__("func_800999F4");
 extern void func_80097808(s32, u32);
 
 /**
@@ -108,7 +108,7 @@ void gSpuSetVoiceAttributes(SpuVoiceAttr *arg)
             *note = arg->sample_note;
         }
         if (set_all || (mask & 0x20)) {
-            gSpuRegBasePtr->raw[ch8 + 2] = func_800999F4(*note >> 8, *note & 0xFF,
+            gSpuRegBasePtr->raw[ch8 + 2] = gConvertSpuNoteToPitch(*note >> 8, *note & 0xFF,
                                                      arg->note >> 8, arg->note & 0xFF);
         }
         if (set_all || (mask & 0x1)) {

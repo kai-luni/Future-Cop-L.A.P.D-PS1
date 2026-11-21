@@ -22,6 +22,8 @@ typedef struct {
 typedef struct { s32 x, y, z; } V3;
 
 extern s32 gNormalizeGetLength(s32 *vec) __asm__("func_8001A314");
+void gInitFlightSegmentNode(Unk6EEF8 *node, s32 scale, s16 arg2, s32 arg3, s32 arg4, s32 *p1, s32 *p2) __asm__("func_8006EEF8");
+
 
 /**
  * @brief Initialises a path segment: direction, speed-scaled velocity and
@@ -54,7 +56,7 @@ extern s32 gNormalizeGetLength(s32 *vec) __asm__("func_8001A314");
  * @par Callers
  * func_8006F0E8.
  */
-void func_8006EEF8(Unk6EEF8 *node, s32 scale, s16 arg2, s32 arg3, s32 arg4, s32 *p1, s32 *p2)
+void gInitFlightSegmentNode(Unk6EEF8 *node, s32 scale, s16 arg2, s32 arg3, s32 arg4, s32 *p1, s32 *p2)
 {
     s32 vec[3];
     s16 sv[3];

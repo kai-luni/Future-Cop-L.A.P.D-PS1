@@ -8,7 +8,7 @@ extern s32 gTexpageBaseTable[] __asm__("D_800A8E80");
 
 extern s32 gMapGridHeader __asm__("D_8009F80C");
 extern s32 gMapChunkNode __asm__("D_8009F810");
-extern s32 D_8009FA04;
+extern s32 gMapTileAnimList __asm__("D_8009FA04");
 extern int *gTileBlockTable __asm__("D_8009F808");
 extern int *gTableBuffer __asm__("D_8009FA08");
 
@@ -72,7 +72,7 @@ int *func_80063428(void)
         register int *result __asm__("$2");
 
         result = gTableBuffer;
-        D_8009FA04 = 0;
+        gMapTileAnimList = 0;
         gTileDefTable[0] = 0;
         return result;
     }

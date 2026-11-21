@@ -34,6 +34,8 @@ extern void func_800457B8(s32, s32);
 extern void gRetireEntity(struct Entity *) __asm__("func_8004D958");
 extern void gDispatchSpawnCommand(s32, struct Entity *, s32) __asm__("func_8003FD10");
 extern void gRemoveEntityCommand(void *, s32) __asm__("func_8002A5B4");
+void gDispatchQueuedEntityCommands(void) __asm__("func_8004CECC");
+
 
 /**
  * @brief Walks D_800A8F90 active entities and executes up to four queued 2-byte commands per entity.
@@ -53,7 +55,7 @@ extern void gRemoveEntityCommand(void *, s32) __asm__("func_8002A5B4");
  * @par Callers
  * Confirmed: func_80027510 (0x800277C4, 2-player frame) and func_800271A4 (0x80027364 in asm/us/main.s; edges.json lists 0x800271a8) / Likely: none / Unknown: none.
  */
-void func_8004CECC(void)
+void gDispatchQueuedEntityCommands(void)
 {
     s32 i, index, arg;
     register s32 j __asm__("$5");

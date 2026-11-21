@@ -15,12 +15,12 @@ struct Unk78210Panel {
 };
 
 extern struct Unk78210Mode *gGameSession[] __asm__("D_8009FA94");
-extern struct Unk78210Panel D_800A3868;
-extern struct Unk78210Panel D_800A3898;
-extern struct Unk78210Panel D_800A38C8;
-extern u8 D_800A377D[];
-extern s32 D_8009F8E0;
-extern s32 D_8009F8E4;
+extern struct Unk78210Panel gCrimeWarHubMenuDescriptor __asm__("D_800A3868");
+extern struct Unk78210Panel gTwoPlayerPrecinctHubMenuDescriptor __asm__("D_800A3898");
+extern struct Unk78210Panel gOnePlayerPrecinctHubMenuDescriptor __asm__("D_800A38C8");
+extern u8 gAudioOptionsMenuMode[] __asm__("D_800A377D");
+extern s32 gPlayer1MenuReadyFlag __asm__("D_8009F8E0");
+extern s32 gPlayer2MenuReadyFlag __asm__("D_8009F8E4");
 
 extern void gUpdateMainMenuUnlocks(void) __asm__("func_8007A168");
 extern void gActivateMenuPanel(struct Unk78210Panel *panel, s32 arg1) __asm__("func_80078650");
@@ -52,21 +52,21 @@ void gRouteFrontEndModeMenu(void)
     gUpdateMainMenuUnlocks();
     if (gGameSession[0]->players == 1) {
         if (gGameSession[0]->split == 1) {
-            gActivateMenuPanel(&D_800A38C8, 0);
+            gActivateMenuPanel(&gOnePlayerPrecinctHubMenuDescriptor, 0);
         } else {
-            gActivateMenuPanel(&D_800A3868, 0);
-            D_800A3868.visible = 1;
+            gActivateMenuPanel(&gCrimeWarHubMenuDescriptor, 0);
+            gCrimeWarHubMenuDescriptor.visible = 1;
         }
-        D_800A377D[0] = 1;
+        gAudioOptionsMenuMode[0] = 1;
     } else {
-        *(volatile s32 *)&D_8009F8E0 = 0;
-        *(volatile s32 *)&D_8009F8E4 = 0;
-        *(volatile u8 *)&D_800A377D[0] = 0;
+        *(volatile s32 *)&gPlayer1MenuReadyFlag = 0;
+        *(volatile s32 *)&gPlayer2MenuReadyFlag = 0;
+        *(volatile u8 *)&gAudioOptionsMenuMode[0] = 0;
         if (((volatile struct Unk78210Mode *)gGameSession[0])->split == 1) {
-            gActivateMenuPanel(&D_800A3898, 0);
+            gActivateMenuPanel(&gTwoPlayerPrecinctHubMenuDescriptor, 0);
         } else {
-            gActivateMenuPanel(&D_800A3868, 0);
-            D_800A3868.visible = 0;
+            gActivateMenuPanel(&gCrimeWarHubMenuDescriptor, 0);
+            gCrimeWarHubMenuDescriptor.visible = 0;
         }
     }
 }

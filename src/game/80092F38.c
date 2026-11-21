@@ -10,7 +10,7 @@ typedef struct {
 
 extern u8 gDebugTagRect[] __asm__("D_80012A94");
 extern DispatchDDE8 *gVramWriteCallback __asm__("D_8009DDE8");
-extern void func_80092CF4(void *arg0, void *arg1);
+extern void gValidateGpuRectDebug(void *arg0, void *arg1) __asm__("func_80092CF4");
 void gLoadImage(void *rect, void *data) __asm__("func_80092F38");
 
 
@@ -49,6 +49,6 @@ void gLoadImage(void *rect, void *data) __asm__("func_80092F38");
  */
 void gLoadImage(void *rect, void *data)
 {
-    func_80092CF4(gDebugTagRect, rect);
+    gValidateGpuRectDebug(gDebugTagRect, rect);
     gVramWriteCallback->callback(gVramWriteCallback->unk20, rect, 8, data);
 }

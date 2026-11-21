@@ -38,8 +38,8 @@ struct Unk600E8Obj {
 
 extern struct Unk600E8Found *gFindTargetEntity(struct Unk600E8Ctx *ctx,
     u8 arg1, s16 arg2, u8 arg3, s32 arg4, s32 arg5, s32 arg6) __asm__("func_8004E80C");
-extern void func_80069D68(struct Unk600E8Sub *sub, s32 arg1, u32 arg2,
-    struct Unk600E8Ctx *ctx);
+extern void gInterpretEntityScript(struct Unk600E8Sub *sub, s32 arg1, u32 arg2,
+    struct Unk600E8Ctx *ctx) __asm__("func_80069D68");
 s32 gAcquireAttackTarget(struct Unk600E8Obj *obj, s32 amount, struct Unk600E8Ctx *ctx) __asm__("func_800600E8");
 
 
@@ -93,7 +93,7 @@ found_nonnull:
     }
     if (ctx->unk9C != 0 && ctx->unk9C->unk00 != 0 &&
         !(ctx->unk24 & 0x100000)) {
-        func_80069D68(ctx->unk9C, (u32)ctx->unk1C >> 31,
+        gInterpretEntityScript(ctx->unk9C, (u32)ctx->unk1C >> 31,
                       found->unk14 & 0x3FFF, ctx);
     }
     obj->unk18 = found;

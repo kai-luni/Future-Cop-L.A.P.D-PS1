@@ -16,7 +16,7 @@ extern void gSetModelUvOffset(s32 low, s32 high) __asm__("func_80013AA0");
 extern s32 gProjectAndRenderMesh(void *a, s32 b, s32 c, void *d) __asm__("func_800175A0");
 extern void gFreeBlock(s32 block) __asm__("func_800181D4");
 extern s32 gSpawnModelDebris(s32 message, struct Unk3B2D0 *object) __asm__("func_8003AA94");
-extern void func_8003B144(s32 message, struct Unk3B2D0 *object);
+extern void gStepModelDebris(s32 message, struct Unk3B2D0 *object) __asm__("func_8003B144");
 
 /**
  * @brief Message handler of a particle-emitter object: spawn, draw, tick and
@@ -61,7 +61,7 @@ s32 func_8003B2D0(s32 message, struct Unk3B2D0 *object)
     case 2:
         return gSpawnModelDebris(message, object);
     case 6:
-        func_8003B144(message, object);
+        gStepModelDebris(message, object);
         return 0;
     case 3:
         m = 0xFFFF0000;

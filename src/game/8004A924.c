@@ -20,7 +20,7 @@ extern s32 gLightGridWidth __asm__("D_8009F78C");
 extern s32 D_8009F794;
 extern s32 gFrameTime __asm__("D_8009FAA4");
 
-extern void func_800497A8(void);
+extern void gReapExpiredLightNodes(void) __asm__("func_800497A8");
 extern void gDrawMapCellNode(Node *node, s32 arg1, s32 arg2) __asm__("func_8004A048");
 void gDrawCellWindowObjects(s32 arg0, s32 arg1, MaskEntry *arg2) __asm__("func_8004A924");
 
@@ -69,7 +69,7 @@ void gDrawCellWindowObjects(s32 arg0, s32 arg1, MaskEntry *arg2)
     }
 
     if (D_8009F794 + 0x4B0 < gFrameTime) {
-        func_800497A8();
+        gReapExpiredLightNodes();
         D_8009F794 = gFrameTime;
     }
 

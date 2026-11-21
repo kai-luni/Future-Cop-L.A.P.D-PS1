@@ -25,10 +25,12 @@ struct Self {
 };
 extern s32 gInitType28Entity(s32, struct Self *, void *, s32) __asm__("func_800397AC");
 extern s32 gEntityBaseHandler(s32, void *, void *, s32) __asm__("func_8002AD58");
-extern s32 func_800382B4(s32, struct Self *, void *, s32);
+extern s32 gHandleType5Entity(s32, struct Self *, void *, s32) __asm__("func_800382B4");
 extern void gUpdateMountedTurret(struct Child *, void *) __asm__("func_80038A00");
 extern void gRetireEntity(struct Child *) __asm__("func_8004D958");
 extern void gFlagQuartileChange(struct Child *, s32) __asm__("func_8003BA50");
+s32 gHandleType28Entity(s32 message, struct Self *object, void *data, s32 extra) __asm__("func_800398EC");
+
 
 /**
  * @brief Message dispatcher for entity class 28, managing a container object and up to 4 child entities.
@@ -55,7 +57,7 @@ extern void gFlagQuartileChange(struct Child *, s32) __asm__("func_8003BA50");
  * @par Callers
  * Confirmed: func_80039298 (0x800393F0, messages 11/14 for child type 0x1C). Likely: indirect dispatch via handler returned by func_8002AE54 (0x8002AF40) for type 28.
  */
-s32 func_800398EC(s32 message, struct Self *object, void *data, s32 extra)
+s32 gHandleType28Entity(s32 message, struct Self *object, void *data, s32 extra)
 {
     register s32 msg __asm__("$19") = message;
     register struct Self *self __asm__("$18") = object;
@@ -85,7 +87,7 @@ s32 func_800398EC(s32 message, struct Self *object, void *data, s32 extra)
         }
         return 0;
     case 6:
-        func_800382B4(msg, self, arg2, arg3);
+        gHandleType5Entity(msg, self, arg2, arg3);
         i = 0;
         if (i < self->count) {
             p = self;
@@ -109,11 +111,11 @@ s32 func_800398EC(s32 message, struct Self *object, void *data, s32 extra)
                 i++;
             } while (i < self->count);
         }
-        return func_800382B4(msg, self, arg2, arg3);
+        return gHandleType5Entity(msg, self, arg2, arg3);
     case 9:
     case 11:
     case 14:
-        func_800382B4(msg, self, arg2, arg3);
+        gHandleType5Entity(msg, self, arg2, arg3);
     update:
         i = 0;
         if (i < self->count) {
@@ -137,6 +139,6 @@ s32 func_800398EC(s32 message, struct Self *object, void *data, s32 extra)
         }
         return 0;
     default:
-        return func_800382B4(msg, self, arg2, arg3);
+        return gHandleType5Entity(msg, self, arg2, arg3);
     }
 }

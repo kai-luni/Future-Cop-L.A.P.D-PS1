@@ -13,7 +13,7 @@ extern u8 gPrecinctAssaultProgress __asm__("D_8009F459");
 extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
 extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
-extern u8 D_800A377D[];
+extern u8 gAudioOptionsMenuMode[] __asm__("D_800A377D");
 extern u8 D_800A368B[];
 extern u8 gMultiBrfMovieName[] __asm__("D_80012094");
 
@@ -50,7 +50,7 @@ void gSelectPrecinctAssault2P(s32 a0)
     mode = gGameSession;
     mode->players = 2;
     mode->split = 1;
-    D_800A377D[0] = 0;
+    gAudioOptionsMenuMode[0] = 0;
     __asm__ volatile("" ::: "memory");
     gPrecinctAssaultProgress = 0;
     func_80077708();

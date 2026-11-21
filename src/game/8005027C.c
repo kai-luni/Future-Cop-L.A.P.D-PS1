@@ -7,7 +7,7 @@
 #define W(o,n) (*(s32 *)((u8 *)(o) + (n)))
 #define F(o,n) (*(u32 *)((u8 *)(o) + (n)))
 
-extern void func_8004F764(u8 *, u8 *, s32);
+extern void gUpdatePathMoverSegment(u8 *, u8 *, s32) __asm__("func_8004F764");
 extern void gRetireEntity(u8 *) __asm__("func_8004D958");
 extern void gSinCos(s32, s32 *, s32 *) __asm__("func_8001846C");
 extern void gBuildRotationMatrix(s32, s32, s32, u8 *) __asm__("func_800188D0");
@@ -193,7 +193,7 @@ loop:
     k = k < (lv >> 16);
     if (!k) {
         if (H(s, 0x46) < 0) {
-            func_8004F764(s, o, 0);
+            gUpdatePathMoverSegment(s, o, 0);
             {
             s32 h46 = H(s, 0x46);
             if (h46 < 0) {
@@ -380,7 +380,7 @@ l900:
             goto done;
         }
         if (H(s, 0x46) < 0) {
-            func_8004F764(s, o, 1);
+            gUpdatePathMoverSegment(s, o, 1);
         }
         goto done;
     }

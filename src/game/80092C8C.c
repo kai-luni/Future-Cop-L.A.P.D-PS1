@@ -9,7 +9,7 @@ typedef struct {
 extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(void *arg0, s32 arg1) __asm__("D_8009DDEC");
 extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
-extern u8 D_80012A44[];
+extern u8 gDrawSyncTraceFormat[] __asm__("D_80012A44");
 
 /**
  * @brief GPU synchronisation (DrawSync-style): waits for or flushes the
@@ -33,7 +33,7 @@ extern u8 D_80012A44[];
 void func_80092C8C(s32 arg0)
 {
     if (gGpuDebugLevel >= 2) {
-        gLogPrintf(D_80012A44, arg0);
+        gLogPrintf(gDrawSyncTraceFormat, arg0);
     }
 
     gVramWriteCallback->unk3C(arg0);

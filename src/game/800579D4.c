@@ -68,7 +68,9 @@ extern void func_80013BD8(void *, void *, s32);
 extern struct Object *func_80057914(struct Object *);
 extern s32 gQuerySurfaceHeight(void *, s32) __asm__("func_80067684");
 extern void func_8005A0C4(void *, s32, s32);
-extern void func_80051AF8(struct Object *);
+extern void gResetCompoundEntityAnimation(struct Object *) __asm__("func_80051AF8");
+void gInitPlayerUnit(struct Object *arg0, struct Data *arg1, s32 arg2) __asm__("func_800579D4");
+
 
 /**
  * @brief Spawn (message 2) of the class-1 compound object: allocates the state
@@ -143,7 +145,7 @@ extern void func_80051AF8(struct Object *);
  * func_8005908C only, the class-1 handler installed by func_8002AE54, which
  * calls this body for message 2.
  */
-void func_800579D4(struct Object *arg0, struct Data *arg1, s32 arg2)
+void gInitPlayerUnit(struct Object *arg0, struct Data *arg1, s32 arg2)
 {
     register struct Object *obj __asm__("$16");
     struct State *state;
@@ -245,5 +247,5 @@ found:
     obj->health = value;
     obj->maxHealth = value;
     func_8005A0C4(state->gauge, obj->health, obj->maxHealth);
-    func_80051AF8(obj);
+    gResetCompoundEntityAnimation(obj);
 }

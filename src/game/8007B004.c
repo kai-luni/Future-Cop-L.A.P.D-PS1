@@ -17,8 +17,8 @@ typedef struct Unk7B004Node {
 } Unk7B004Node;
 
 extern Unk7B004Mode *gGameSession __asm__("D_8009FA94");
-extern volatile s32 D_8009F8E0;
-extern volatile s32 D_8009F8E4;
+extern volatile s32 gPlayer1MenuReadyFlag __asm__("D_8009F8E0");
+extern volatile s32 gPlayer2MenuReadyFlag __asm__("D_8009F8E4");
 extern volatile s32 gPlayerSelection __asm__("D_8009F8F0");
 extern s32 D_8009F8F4;
 extern Unk7B004Node *gFontBankTable __asm__("D_8009F468");
@@ -62,8 +62,8 @@ void gInitMissionSelectState(void)
     __asm__ volatile("" ::: "memory");
     v98 = mode->unk98;
     __asm__ volatile("" ::: "memory");
-    D_8009F8E0 = 0;
-    D_8009F8E4 = 0;
+    gPlayer1MenuReadyFlag = 0;
+    gPlayer2MenuReadyFlag = 0;
     *(s16 *)(base + 0x32) = 0x64;
     __asm__ volatile("" ::: "memory");
     *(s16 *)(base + 0x86) = 0x64;

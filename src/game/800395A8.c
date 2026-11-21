@@ -21,9 +21,11 @@ struct Unk395A8Self {
 
 extern void func_80039504(s32 arg0, void *arg1, void *arg2, s32 arg3);
 extern s32 gEntityBaseHandler(s32 message, void *object, void *data, s32 arg3) __asm__("func_8002AD58");
-extern void func_800382B4(s32 arg0, void *arg1, void *arg2, s32 arg3);
+extern void gHandleType5Entity(s32 arg0, void *arg1, void *arg2, s32 arg3) __asm__("func_800382B4");
 extern void gUpdateMountedTurret(void *arg0, void *arg1) __asm__("func_80038A00");
 extern void gFlagQuartileChange(struct Unk395A8Child *object, s32 value) __asm__("func_8003BA50");
+s32 gHandleMountedTurretCarrierMessages(s32 message, struct Unk395A8Self *object, void *arg2, s32 arg3) __asm__("func_800395A8");
+
 
 /**
  * @brief Message handler for entity type 20 (0x14), wrapping class-5 behavior and propagating updates/damage to its +0x158 child.
@@ -47,7 +49,7 @@ extern void gFlagQuartileChange(struct Unk395A8Child *object, s32 value) __asm__
  * @par Callers
  * Confirmed: func_80039298 (0x800393E0, msgs 11/14 for child type 0x14); address taken in func_8002AE54 (0x8002AF18, type 20) / Likely: indirect callers via entity->update / Unknown: indirect call sites.
  */
-s32 func_800395A8(s32 message, struct Unk395A8Self *object, void *arg2, s32 arg3)
+s32 gHandleMountedTurretCarrierMessages(s32 message, struct Unk395A8Self *object, void *arg2, s32 arg3)
 {
     register s32 msg __asm__("$17") = message;
     register struct Unk395A8Self *self __asm__("$16") = object;
@@ -71,7 +73,7 @@ s32 func_800395A8(s32 message, struct Unk395A8Self *object, void *arg2, s32 arg3
         }
         return 0;
     case 6:
-        func_800382B4(msg, self, data, extra);
+        gHandleType5Entity(msg, self, data, extra);
         if (self->unk158 != 0) {
             self->unk158->unk1C = self->unk1C;
             gUpdateMountedTurret(self->unk158, data);
@@ -80,7 +82,7 @@ s32 func_800395A8(s32 message, struct Unk395A8Self *object, void *arg2, s32 arg3
     case 9:
     case 11:
     case 14:
-        func_800382B4(msg, self, data, extra);
+        gHandleType5Entity(msg, self, data, extra);
         if (self->unk158 != 0) {
             if (self->unk24 & 0x02000000) {
                 self->unk158->unk24 |= 0x02000000;
@@ -107,7 +109,7 @@ s32 func_800395A8(s32 message, struct Unk395A8Self *object, void *arg2, s32 arg3
     case 12:
     case 13:
     default:
-        func_800382B4(msg, self, data, extra);
+        gHandleType5Entity(msg, self, data, extra);
         break;
     }
 }

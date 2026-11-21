@@ -15,7 +15,7 @@ struct Unk2B4B4 {
 };
 
 extern void gDispatchType26Command(struct Unk2B4B4 *self, s32 arg, s32 zero) __asm__("func_8002B1DC");
-extern void func_8002B1AC(struct Unk2B4B4 *self);
+extern void gSyncCountdownFields(struct Unk2B4B4 *self) __asm__("func_8002B1AC");
 extern void gRemoveEntityCommand(struct Unk2B4B4 *self, s32 index) __asm__("func_8002A5B4");
 
 /**
@@ -62,7 +62,7 @@ void func_8002B4B4(struct Unk2B4B4 *self)
                 self->unk160 &= 0xFE;
             } else {
                 self->unk160 |= 0xFE;
-                func_8002B1AC(self);
+                gSyncCountdownFields(self);
             }
             break;
         default:

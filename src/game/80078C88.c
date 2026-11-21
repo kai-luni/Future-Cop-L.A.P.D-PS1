@@ -33,7 +33,7 @@ extern u8 gAttractDemoSequenceIndex __asm__("D_8009F3F2");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern u8 gFrontEndReturnMode __asm__("D_8009F45A");
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
-extern u8 D_8009F8D9;
+extern u8 gPort2RumbleEnabled __asm__("D_8009F8D9");
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 
 extern void func_8008CCB0(u8 *a0, s32 a1);
@@ -91,7 +91,7 @@ s32 func_80078C88(void)
     gFrontEndReturnMode = 3;
     gModuleLoadState = unk0C;
     gRumbleEnabled = gIsPadRumbleEnabled(0);
-    D_8009F8D9 = gIsPadRumbleEnabled(1);
+    gPort2RumbleEnabled = gIsPadRumbleEnabled(1);
     gSetPadRumbleEnabled(0, 0);
     gSetPadRumbleEnabled(1, 0);
     return 1;

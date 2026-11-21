@@ -64,7 +64,7 @@ extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 di
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void gSetEntityLoopingSound(s32 track, struct Unk471C4Object *object) __asm__("func_800471C4");
 extern void gUpdateMorphBounds(void *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_800518A8");
-extern void func_80044B34(void *arg0, void *arg1, s32 arg2, s32 arg3);
+extern void gAdvanceAnimTrack(void *arg0, void *arg1, s32 arg2, s32 arg3) __asm__("func_80044B34");
 extern void gSetEntitySmallRumble(void *state, s32 flag) __asm__("func_8001E930");
 extern void gSetModelFrame(struct ModelInstance *instance, s32 frame) __asm__("func_800175F8");
 extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
@@ -237,8 +237,8 @@ void gUpdatePlayerFormAndMotion(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s3
         obj->unkF2 = height;
 
         if (state->unkC0 != 0) {
-            func_80044B34(obj, (u8 *)model + 0xA0, state->unkBC, 0);
-            func_80044B34(obj, obj->animC8, state->unkBC, 0);
+            gAdvanceAnimTrack(obj, (u8 *)model + 0xA0, state->unkBC, 0);
+            gAdvanceAnimTrack(obj, obj->animC8, state->unkBC, 0);
             gSetEntitySmallRumble(obj, 1);
         } else {
             gSetEntitySmallRumble(obj, 0);

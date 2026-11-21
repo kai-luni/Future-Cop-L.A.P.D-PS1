@@ -128,7 +128,7 @@ extern void func_800492A0(u8 *, s32 *, s32 *);
 extern FontEntry *func_80048E88(void);
 extern void gEmitFlatQuadRect(s32, s32, s32, s32, u32, s32, s32, s32) __asm__("func_80082EF0");
 extern void gDrawAlignedString(u8 *, s32, s32, s32) __asm__("func_80049100");
-extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 
 #define SLOT(i) (((SaveSlot *)((u8 *)gSaveProfileImage + 0x428))[i])
 #define SELECTED SLOT(gSaveProfileImage->selected)

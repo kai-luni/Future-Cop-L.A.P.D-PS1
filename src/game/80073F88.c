@@ -5,7 +5,7 @@ struct Unk73F88 {
     s32 words[0x13];
 };
 
-extern u8 func_8003C2A4(struct Unk73F88 *data);
+extern u8 gQueueDeferredGroundSpawn(struct Unk73F88 *data) __asm__("func_8003C2A4");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gInstallSpawnRecord(struct Unk73F88 *data) __asm__("func_8003C404");
 
@@ -36,7 +36,7 @@ void func_80073F88(struct Unk73F88 *source)
 {
     struct Unk73F88 *copy;
 
-    if (func_8003C2A4(source) != 0) {
+    if (gQueueDeferredGroundSpawn(source) != 0) {
         return;
     }
     copy = gAllocMemory(0x4C, 2);

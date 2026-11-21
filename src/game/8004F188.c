@@ -31,6 +31,8 @@ struct Script {
 };
 
 extern void gRemoveEntityCommand(struct Script *script, s32 index) __asm__("func_8002A5B4");
+void gProcessPathMoverCommands(struct Object *object, struct Script *script) __asm__("func_8004F188");
+
 
 /**
  * @brief Executes and consumes path-mover script opcodes 1..22 from a 4-slot queue.
@@ -57,7 +59,7 @@ extern void gRemoveEntityCommand(struct Script *script, s32 index) __asm__("func
  * @par Callers
  * Confirmed: func_80050D14 (0x80050D40, movement dispatcher pre-step when arg->unk0C != 0).
  */
-void func_8004F188(struct Object *object, struct Script *script)
+void gProcessPathMoverCommands(struct Object *object, struct Script *script)
 {
     s32 i;
     u32 op;

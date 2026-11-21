@@ -31,6 +31,9 @@ extern void gBuildRotationMatrix(s32 angle, s32 arg7, s32 arg8, struct Transform
 extern void func_8001AF84(struct TransformMatrix *matrix, struct TransformPoint *source,
                           struct TransformPoint *destination, s32 count);
 extern u16 gBuildSubcellMask(s32 x, s32 y, s32 left, s32 right, s32 top, s32 bottom) __asm__("func_80083764");
+void gUpdateDynamicLightNode(Node *node, s32 x, s32 z, s32 y, s32 width, s32 depth,
+                   s32 angle, s32 arg7, s32 arg8) __asm__("func_80049980");
+
 
 /**
  * @brief Places and re-buckets a light node in the map cell grid: relinks it into
@@ -87,7 +90,7 @@ extern u16 gBuildSubcellMask(s32 x, s32 y, s32 left, s32 right, s32 top, s32 bot
  * @par Callers
  * func_80040A00, func_80049C38 and func_800753D0.
  */
-void func_80049980(Node *node, s32 x, s32 z, s32 y, s32 width, s32 depth,
+void gUpdateDynamicLightNode(Node *node, s32 x, s32 z, s32 y, s32 width, s32 depth,
                    s32 angle, s32 arg7, s32 arg8)
 {
     int index;

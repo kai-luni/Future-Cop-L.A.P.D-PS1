@@ -18,6 +18,8 @@ extern s32 gListTailBranch __asm__("D_8009FA88");
 extern struct Unk4CAE4State *gGameSession[] __asm__("D_8009FA94");
 extern s32 gMarkerColorTable[] __asm__("D_800A6F60");
 extern s32 gCommandListHead[] __asm__("D_800A8F90");
+void gInitMarkerColorsAndPools(void) __asm__("func_8004CAE4");
+
 
 /**
  *  @brief Initializes a color table and resets associated state.
@@ -38,7 +40,7 @@ extern s32 gCommandListHead[] __asm__("D_800A8F90");
  *  @par Callers
  *  Confirmed: func_80024A24.
  */
-void func_8004CAE4(void)
+void gInitMarkerColorsAndPools(void)
 {
     register s32 colorF8F800 __asm__("$13");
     register s32 colorF800F8 __asm__("$14");

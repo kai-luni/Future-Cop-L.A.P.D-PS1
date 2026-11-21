@@ -1,5 +1,7 @@
 // Categories: Gameplay > Entity Update | AI > Command Processing
 #include "game/types.h"
+void gSyncCountdownFields(u8 *arg0) __asm__("func_8002B1AC");
+
 
 /**
  * @brief Syncs a class-26 actor's +0x10C field with +0x158 and reloads countdown +0x10E.
@@ -23,7 +25,7 @@
  * @par Callers
  * Confirmed: func_8002B1DC (0x8002B350, 0x8002B44C), func_8002B4B4 (0x8002B540), func_8002B784 (0x8002BD44, 0x8002BDFC), func_8002BFB4 (0x8002C0E0).
  */
-void func_8002B1AC(u8 *arg0)
+void gSyncCountdownFields(u8 *arg0)
 {
     s16 old_value = *(s16 *)(arg0 + 0x10C);
     s16 new_value_signed = *(s16 *)(arg0 + 0x158);

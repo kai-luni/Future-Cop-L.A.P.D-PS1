@@ -3,6 +3,8 @@
 typedef struct {
  u8 pad[0x68]; s16 d0,d1; u8 a,b,c,d,e,f,g,h,i,j,k,l; u8 pad78; u8 m,n,o,pad7c,p,q,r; s16 x,y,z,u,v,w;
 } Obj;
+void gInitGlowColorChannelSlopes(Obj *p) __asm__("func_8006F898");
+
 
 /**
  *  @brief Computes two sets of fixed-point component slopes and orders their endpoints.
@@ -23,7 +25,7 @@ typedef struct {
  *  @par Callers
  *  Confirmed: func_8006FF44.
  */
-void func_8006F898(Obj *p) {
+void gInitGlowColorChannelSlopes(Obj *p) {
  s32 x,y,z; u8 t;
  if (p->d0 < 16) { p->x=0; p->y=0; p->z=0; }
  else {

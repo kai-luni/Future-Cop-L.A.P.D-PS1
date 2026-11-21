@@ -62,6 +62,8 @@ struct Obj2 {
 };
 
 extern s32 gSweepBeamSegments(struct Owner *owner, struct Target *t) __asm__("func_8005C344");
+s32 gHandleBeamSweepEffect(u32 msg, struct Obj2 *obj, s32 arg2, s32 arg3) __asm__("func_8005CA04");
+
 
 /**
  * @brief Message handler for beam/segment-sweep attack instances installed at node +0x24 by gAttachPartEffect.
@@ -87,7 +89,7 @@ extern s32 gSweepBeamSegments(struct Owner *owner, struct Target *t) __asm__("fu
  * @par Callers
  * Confirmed: address taken as D_8005CA04 in gAttachPartEffect (0x8005CDE0, stored at node+0x24). / Likely: entity update loop via node+0x24.
  */
-s32 func_8005CA04(u32 msg, struct Obj2 *obj, s32 arg2, s32 arg3)
+s32 gHandleBeamSweepEffect(u32 msg, struct Obj2 *obj, s32 arg2, s32 arg3)
 {
     struct Target *t;
     s32 v;

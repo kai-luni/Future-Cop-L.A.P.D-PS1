@@ -1,7 +1,7 @@
 // Categories: Platform > GPU | Graphics > Display Setup
 typedef unsigned char u8;
 extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
-extern char D_800129D4[];
+extern char gSetGraphDebugTraceFormat[] __asm__("D_800129D4");
 extern  void (*gLogPrintf)(char *, int, int, int) __asm__("D_8009DDEC");
 
 /**
@@ -37,7 +37,7 @@ int func_80092A84(int value)
         register int a2 __asm__("$6") = p[-2];
         register int a3 __asm__("$7") = p[1];
         __asm__ volatile("" : "+r"(fn), "+r"(a1), "+r"(a2), "+r"(a3));
-        fn(D_800129D4, a1, a2, a3);
+        fn(gSetGraphDebugTraceFormat, a1, a2, a3);
     }
     return old;
 }

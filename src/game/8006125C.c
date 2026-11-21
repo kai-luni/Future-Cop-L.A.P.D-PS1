@@ -13,7 +13,7 @@ extern struct Mode *gGameSession __asm__("D_8009FA94");
 extern struct Player *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct Other *gPlayerEntities __asm__("D_8009FA58");
 extern struct Other *gPlayerEntity2 __asm__("D_8009FA5C");
-extern s32 func_80069D68(s32, s32, s32, s32);
+extern s32 gInterpretEntityScript(s32, s32, s32, s32) __asm__("func_80069D68");
 extern s32 gSpawnTargetableEntityId(void *) __asm__("func_8004D4F8");
 void gTrySpawnRegisteredUnit(struct Entity *entity) __asm__("func_8006125C");
 
@@ -44,7 +44,7 @@ void gTrySpawnRegisteredUnit(struct Entity *entity)
     struct Info *info;
     struct Stats *stats;
     struct Other *other;
-    if (func_80069D68(s->arg1, 0, -1, 0)) {
+    if (gInterpretEntityScript(s->arg1, 0, -1, 0)) {
         if (s->count > 0) s->count--;
         s->total++;
         if (gGameSession->active == 1) {
@@ -73,6 +73,6 @@ void gTrySpawnRegisteredUnit(struct Entity *entity)
         }
     done:
         gSpawnTargetableEntityId(s->def);
-        func_80069D68(s->arg2, 0, -1, 0);
+        gInterpretEntityScript(s->arg2, 0, -1, 0);
     }
 }

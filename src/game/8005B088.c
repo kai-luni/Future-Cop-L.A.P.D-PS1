@@ -11,6 +11,8 @@ extern Packet *gPacketCursor __asm__("D_8009FA90");
 extern Packet *gPacketLimit __asm__("D_8009F9C0");
 extern u16 gEffectUvV __asm__("D_800A8EA6");
 #define MUL(out,a,b) __asm__ volatile("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" : "=r"(out) : "r"(a), "r"(b) : "$8", "$9")
+int gDrawRadarMarker(Vec *p, u32 color, int side, int type) __asm__("func_8005B088");
+
 /**
  * @brief Draws one marker (radar blip or world marker) with distance culling and
  *        camera-relative projection.
@@ -36,7 +38,7 @@ extern u16 gEffectUvV __asm__("D_800A8EA6");
  * The radar/marker overlay: the fixed offsets 53/86/64/92 are the centre of the
  * radar circle in the HUD.
  */
-int func_8005B088(Vec *p, u32 color, int side, int type)
+int gDrawRadarMarker(Vec *p, u32 color, int side, int type)
 {
     register u32 col __asm__("$13") = color;
     register s32 dz __asm__("$12"), dx __asm__("$11"), az __asm__("$5"), ax __asm__("$10");

@@ -43,7 +43,7 @@ extern UnkBox *gDrawAtlasSprite(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32
 extern void gEmitFlatQuadRect(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082EF0");
 extern void gEmitFlatQuad(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80083060");
 extern UnkFont *func_80048E88(void);
-extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawAlignedMultilineText(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 
 /**
  * @brief Draws one row of the loadout/upgrade list: the entry's icon in a framed box,
@@ -209,5 +209,5 @@ void gDrawLoadoutListRow(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
     }
     gEmitAtlasSpriteSimple(gLoadoutTable[idx].unkE, x + 1, y - 2, -1, -1, 0x14, 0x80, 1, 8);
     font = func_80048E88();
-    func_800788F0(0, x, y + font->unk6, 0x10, *(u16 *)(p + 4), 1, 8, 2);
+    gDrawAlignedMultilineText(0, x, y + font->unk6, 0x10, *(u16 *)(p + 4), 1, 8, 2);
 }

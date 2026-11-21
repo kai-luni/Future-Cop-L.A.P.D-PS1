@@ -57,8 +57,8 @@ extern struct Unk5220CList gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
 extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk5220CEntity *gPlayerEntities[] __asm__("D_8009FA58");
 
-extern s32 func_80052098(struct Unk5220CEntity *self, struct Unk5220CCoord *coordA,
-                         struct Unk5220CCoord *coordB, struct Unk5220CEntity *other);
+extern s32 gResolvePlayerContactHit(struct Unk5220CEntity *self, struct Unk5220CCoord *coordA,
+                         struct Unk5220CCoord *coordB, struct Unk5220CEntity *other) __asm__("func_80052098");
 
 /**
  * @brief Checks player entity collisions against D_800A8DC0 candidates and the rival player.
@@ -126,14 +126,14 @@ s32 func_8005220C(struct Unk5220CEntity *self)
     for (; rem > 0; rem--, entry++) {
         other = entry->target;
         if (entry->id == other->id) {
-            result += func_80052098(self, dst, &other->coord, other);
+            result += gResolvePlayerContactHit(self, dst, &other->coord, other);
         }
     }
 
     if (gPlayerCount == 2) {
         other = gPlayerEntities[1 - info->playerIndex];
         if ((other->flags & 4) == 0) {
-            result += func_80052098(self, dst, &other->info->coord, other);
+            result += gResolvePlayerContactHit(self, dst, &other->info->coord, other);
         }
     }
 

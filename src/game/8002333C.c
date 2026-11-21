@@ -20,7 +20,7 @@ extern s32 gVolatileBase __asm__("D_8009F27C");
 extern u8 gCvkSystemActive __asm__("D_8009F26C");
 extern u8 D_800A8E48[];
 extern u8 D_800AB0E8[];
-extern u8 D_80023314[];
+extern u8 gFlushSoundChannelsIfCvkActive[] __asm__("D_80023314");
 
 extern void gShutdownCvkSystem(void) __asm__("func_80023478");
 extern void gResetCvkSubsystem(void) __asm__("func_80021B50");
@@ -80,7 +80,7 @@ u8 gInitCvkStreamSubsystem(void)
     gResetCvkSubsystem();
     result = func_80021C20(1, 0x1002001, 4, 8, 5, 0x18, 8, D_800A8E48, 9, D_800AB0E8, 0);
     gInitSpuTransferHook();
-    gSetScreenModeHook((s32)D_80023314);
+    gSetScreenModeHook((s32)gFlushSoundChannelsIfCvkActive);
     for (i = 0; i < 8; i++) {
         gObjectSlots[i].unk00 = -1;
         gObjectSlots[i].unk01 = -1;

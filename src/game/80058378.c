@@ -43,9 +43,11 @@ extern s32 gPlayerCount __asm__("D_8009FA0C");
 extern struct Unk8009FA94 *gGameSession __asm__("D_8009FA94");
 extern void *gPlayerEntities[2] __asm__("D_8009FA58");
 
-extern void func_80058210(void *object, s32 amount);
+extern void gApplyPlayerHealthDamage(void *object, s32 amount) __asm__("func_80058210");
 extern struct Entity *gFindUnitById(s32 id) __asm__("func_8004D664");
-extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, void *arg3);
+extern void gInterpretEntityScript(void *arg0, s32 arg1, s32 arg2, void *arg3) __asm__("func_80069D68");
+void gApplyPlayerHitDamage(struct Unk80058378 *object, s32 amount, s32 source) __asm__("func_80058378");
+
 
 /**
  * @brief Applies hit damage to an entity, logs attacker source, runs an optional hit script, and mirrors damage to other players when active.
@@ -71,13 +73,13 @@ extern void func_80069D68(void *arg0, s32 arg1, s32 arg2, void *arg3);
  * @par Callers
  * Confirmed: func_80052098 (0x800521C8), func_800584BC (0x8005858C), func_800588D4 (0x80058974), func_8005908C (0x800591C0) / Likely: none / Unknown: none.
  */
-void func_80058378(struct Unk80058378 *object, s32 amount, s32 source)
+void gApplyPlayerHitDamage(struct Unk80058378 *object, s32 amount, s32 source)
 {
     struct Entity *entity;
     s32 i;
     register void **p __asm__("$17");
 
-    func_80058210(object, amount);
+    gApplyPlayerHealthDamage(object, amount);
 
     if (object->unk1C < 0) {
         object->unk8C = source;
@@ -90,7 +92,7 @@ void func_80058378(struct Unk80058378 *object, s32 amount, s32 source)
 
     if (object->unk94 != 0) {
         entity = gFindUnitById(source & 0x3FFFFFFF);
-        func_80069D68(object->unk94, (u32)object->unk1C >> 31,
+        gInterpretEntityScript(object->unk94, (u32)object->unk1C >> 31,
                       entity != 0 ? entity->unk14 & 0x3FFF : -1, object);
     }
 
@@ -99,7 +101,7 @@ void func_80058378(struct Unk80058378 *object, s32 amount, s32 source)
         p = gPlayerEntities;
         do {
             if (object->unkAC->unkC1 != i && *p != 0) {
-                func_80058210(*p, amount);
+                gApplyPlayerHealthDamage(*p, amount);
             }
             i++;
             p++;

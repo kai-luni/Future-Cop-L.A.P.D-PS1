@@ -41,7 +41,7 @@ extern u8 gWideTextTable[] __asm__("D_8009B4E4");
 extern u16 gDifficultyLabelMap[] __asm__("D_8009C1C4");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 
-extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawAlignedMultilineText(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void func_80078B34(s32, s32, s32);
 extern void func_8007F128(s32, s32, s32, s32, s32, s32);
 extern void func_8007FB04(void);
@@ -244,19 +244,19 @@ void gDrawProfileDetailScreen(s32 arg0)
         break;
     case 4:
         msg = 0x380E;
-        func_800788F0(0, 0x57, 0x6C, 0x10, 0x3818, 4, 8, gSaveProfileImage->st945);
+        gDrawAlignedMultilineText(0, 0x57, 0x6C, 0x10, 0x3818, 4, 8, gSaveProfileImage->st945);
         func_80078B34(0x3908, 1, 0);
         break;
     }
 
     if (msg != 0) {
-        func_800788F0(0, 0x57, 0x5A, 0x10, msg, 4, 8, gSaveProfileImage->st945);
+        gDrawAlignedMultilineText(0, 0x57, 0x5A, 0x10, msg, 4, 8, gSaveProfileImage->st945);
     }
     if (gSaveProfileImage->msg != 0) {
         if (gSaveProfileImage->msg == 0x385E) {
             gSaveProfileImage->st944 = 1;
         }
-        func_800788F0(0, 0x57, 0xA3, 0x10, gSaveProfileImage->msg, 4, 8, gSaveProfileImage->st945);
+        gDrawAlignedMultilineText(0, 0x57, 0xA3, 0x10, gSaveProfileImage->msg, 4, 8, gSaveProfileImage->st945);
     }
 
     if (gUiHoldFlag != 0 && gFontBankTable != gMenuActivationBlock && *gFontBankTable < 10) {
@@ -272,10 +272,10 @@ void gDrawProfileDetailScreen(s32 arg0)
                     j = 0;
                     s0 = 0xA1;
                 }
-                func_800788F0((s32)name, 0x57, s0, 0x10, 0, 4, 8, 0);
+                gDrawAlignedMultilineText((s32)name, 0x57, s0, 0x10, 0, 4, 8, 0);
                 s0 += 10;
                 if (j != 0) {
-                    func_800788F0(j, 0x57, s0, 0x10, 0, 4, 8, 0);
+                    gDrawAlignedMultilineText(j, 0x57, s0, 0x10, 0, 4, 8, 0);
                     s0 += 10;
                 }
                 {
@@ -288,7 +288,7 @@ void gDrawProfileDetailScreen(s32 arg0)
                     default: k = -1; break;
                     }
                     if (k != -1) {
-                        func_800788F0(0, 0x57, s0, 0x10, gDifficultyLabelMap[k], 4, 8, 0);
+                        gDrawAlignedMultilineText(0, 0x57, s0, 0x10, gDifficultyLabelMap[k], 4, 8, 0);
                     }
                 }
             }
@@ -319,7 +319,7 @@ void gDrawProfileDetailScreen(s32 arg0)
                 do {
                     e = gWideTextTable + tbl[j] * 0x24;
                     if (j == sel && it[0x44] == 0) {
-                        func_800788F0(0, 0x97, 0xB1, 0x10, *(u16 *)(e + 0x10), 1, 8, 2);
+                        gDrawAlignedMultilineText(0, 0x97, 0xB1, 0x10, *(u16 *)(e + 0x10), 1, 8, 2);
                     }
                     if (j < sel) {
                         wd = *(u16 *)(e + 0x12);
@@ -364,7 +364,7 @@ void gDrawProfileDetailScreen(s32 arg0)
                                 wd = *(u16 *)(e + 0x12);
                             }
                         }
-                        func_800788F0((s32)buf, *(u16 *)(e + 0x1C), e[0x1E], 0x10, 0, 4, 0x20, 0);
+                        gDrawAlignedMultilineText((s32)buf, *(u16 *)(e + 0x1C), e[0x1E], 0x10, 0, 4, 0x20, 0);
                     }
                     gEmitAtlasSpriteSimple(wd, *(u16 *)(e + 0x16), e[0x18], -1, -1, 0xF, 0x80, 1, 8);
                     j++;
@@ -374,7 +374,7 @@ void gDrawProfileDetailScreen(s32 arg0)
     }
 
     if (gSaveProfileImage->st944 != 0) {
-        func_800788F0(0, 0xA0, 0x1B, 0x10, 0x3AB6, 4, 8, 2);
+        gDrawAlignedMultilineText(0, 0xA0, 0x1B, 0x10, 0x3AB6, 4, 8, 2);
         func_8007F128(0xA0, 0x25, 0xF, 2, 4, 8);
     }
 }

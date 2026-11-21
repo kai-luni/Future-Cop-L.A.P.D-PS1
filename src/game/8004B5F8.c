@@ -120,9 +120,9 @@ extern void func_8001B148(s32 *m, V8 *src, V8 *dst, s32 count);
 extern Sub3D *gCreateModelNode(s32, s32, s32, s32, s32, s32) __asm__("func_8003D680");
 extern void gSpawnObjectFromTable(Sub3D *, s32, s32, s32, s32) __asm__("func_8003E984");
 extern Node *func_8004AA90(void);
-extern void func_8004AAC0(Obj *, Node *);
+extern void gInsertNodeAfter(Obj *, Node *) __asm__("func_8004AAC0");
 extern u8 func_8004B244(Obj *, s32, s32 *);
-extern void func_8004B310(Obj *, s32 *, s32 *, s32, s16 *, s16 *, s32 *, s32 *);
+extern void gSampleDebrisLaunchParameters(Obj *, s32 *, s32 *, s32, s16 *, s16 *, s32 *, s32 *) __asm__("func_8004B310");
 s32 gSpawnMeshFractureDebris(Obj *obj, s32 arg1) __asm__("func_8004B5F8");
 
 
@@ -471,7 +471,7 @@ scan_test:
             }
             node->unk2C = 0;
             node->unk2E = 0;
-            func_8004B310(obj, pos, local, r, &node->unk30, &node->unk32, &node->unk40, node->unk34);
+            gSampleDebrisLaunchParameters(obj, pos, local, r, &node->unk30, &node->unk32, &node->unk40, node->unk34);
             if (obj->unk16 != 0) {
                 node->unk44 = obj->unk16 + (func_80019668() & 0xFF);
             } else {
@@ -483,7 +483,7 @@ scan_test:
                 asm("" : : "r"(call_obj));
                 gClipLimitOffset++;
                 asm volatile("" ::: "memory");
-                func_8004AAC0(call_obj, node);
+                gInsertNodeAfter(call_obj, node);
             }
             if (i < limit && obj->unk65 != 0) {
                 gSpawnObjectFromTable(((Sub3D **)&node->x)[0], 0, obj->unk65, 0, (obj->unk10 >> 1) & 1);

@@ -20,7 +20,7 @@ struct Unk3F2AC {
     void *unk6C;
 };
 
-extern s32 func_8003CAE4(struct Unk3F2AC *object, s32 arg, u8 *flag);
+extern s32 gStepSpawnNodeTimers(struct Unk3F2AC *object, s32 arg, u8 *flag) __asm__("func_8003CAE4");
 extern struct Unk3F2AC *gSpawnObjectFromTable(void *handle, struct Unk3F2AC *object,
                                       s32 flag, s32 arg3, s32 arg4) __asm__("func_8003E984");
 extern void func_800498F0(void *object);
@@ -60,7 +60,7 @@ s32 gUpdateSpawnNodeLifecycle(struct Unk3F2AC *object, s32 arg1)
             (object->unk07 == -1 || object->unk04 <= 0)) {
             object->unk0F |= 1;
         }
-        result = func_8003CAE4(object, arg1, &flag);
+        result = gStepSpawnNodeTimers(object, arg1, &flag);
         if (flag != 0) {
             child = gSpawnObjectFromTable(object->unk1C, object, flag, 0,
                                   (object->unk10 >> 1) & 1);

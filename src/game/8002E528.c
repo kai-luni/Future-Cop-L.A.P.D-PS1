@@ -17,6 +17,8 @@ struct Unk2E528 {
 
 extern void func_8002E2BC(struct Unk2E528 *self, s32 state);
 extern void gRemoveEntityCommand(struct Unk2E528 *self, s32 index) __asm__("func_8002A5B4");
+void gProcessActorCommandQueue(struct Unk2E528 *self) __asm__("func_8002E528");
+
 
 /**
  * @brief Executes opcodes 0x55 and 0x56 from an animated actor's 4-slot command queue.
@@ -40,7 +42,7 @@ extern void gRemoveEntityCommand(struct Unk2E528 *self, s32 index) __asm__("func
  * @par Callers
  * Confirmed: func_8002E630.
  */
-void func_8002E528(struct Unk2E528 *self)
+void gProcessActorCommandQueue(struct Unk2E528 *self)
 {
     s32 i;
     s32 op;

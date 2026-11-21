@@ -88,17 +88,19 @@ extern u32 gFrameTime __asm__("D_8009FAA4");
 extern void *jtbl_800111DC[];
 
 extern void gApplyPlayerResupply(void *, u32, s16, s32, s32) __asm__("func_8002FC90");
-extern void func_80069D68(void *, s32, u32, void *);
+extern void gInterpretEntityScript(void *, s32, u32, void *) __asm__("func_80069D68");
 extern s32 gSpawnTypeAtOwner(void *, u8, s32, s32, s32) __asm__("func_800402DC");
 extern void *func_800448D8(struct AnimTrack *, s32, s32, u8);
 extern void gSetModelFrame(struct ModelInstance *, s32) __asm__("func_800175F8");
 extern void gBuildRotationMatrix(s16, s32, s32, void *) __asm__("func_800188D0");
-extern s32 func_80044B34(void *, void *, s32, s32);
+extern s32 gAdvanceAnimTrack(void *, void *, s32, s32) __asm__("func_80044B34");
 extern void gInitTerrainEntity(struct Actor306A0 *, s32, s32) __asm__("func_800302E8");
-extern u8 func_8002F8B8(u8, s16, s32, s32);
-extern void func_80030498(struct Actor306A0 *, s32);
+extern u8 gTestEntityFieldMatch(u8, s16, s32, s32) __asm__("func_8002F8B8");
+extern void gCheckResupplyPadProximity(struct Actor306A0 *, s32) __asm__("func_80030498");
 extern s32 gEntityBaseHandler(s32, struct Actor306A0 *, s32) __asm__("func_8002AD58");
 extern u8 gSubmitModelInstance(struct ModelInstance *, u32 *, s32) __asm__("func_80017508");
+s32 gUpdateResupplyEntity(struct Actor306A0 *actor, s32 delta) __asm__("func_800306A0");
+
 
 /**
  * @brief Per-frame state machine of an animated actor: impact countdown, two
@@ -155,7 +157,7 @@ extern u8 gSubmitModelInstance(struct ModelInstance *, u32 *, s32) __asm__("func
  * @par Callers
  * func_80030960, case 6 of its jump table (the object-type-32 tick message).
  */
-s32 func_800306A0(struct Actor306A0 *actor, s32 delta)
+s32 gUpdateResupplyEntity(struct Actor306A0 *actor, s32 delta)
 {
     struct ObjD0_306A0 *obj;
     u8 local[0x50];
@@ -166,7 +168,7 @@ s32 func_800306A0(struct Actor306A0 *actor, s32 delta)
             obj = actor->ptrD0;
             gApplyPlayerResupply(obj, actor->unkB4, actor->unkC4, 0, 0);
             if (actor->ptr9C != 0 && *(u8 *)actor->ptr9C != 0 && (actor->flags24 & 0x100000) == 0) {
-                func_80069D68(actor->ptr9C, 0, obj->unk14 & 0x7FFF, actor);
+                gInterpretEntityScript(actor->ptr9C, 0, obj->unk14 & 0x7FFF, actor);
             }
             if (obj->unk16 == 1) {
                 *(u16 *)(obj->unkAC + 0xA0) = 1;
@@ -192,7 +194,7 @@ s32 func_800306A0(struct Actor306A0 *actor, s32 delta)
     if (actor->stateBD == 2 || actor->stateBD == 5) {
         if (*(u32 *)((u8 *)actor->instanceD4.model + 0x10) != 0) {
             s32 zero = 0;
-            func_80044B34(zero, (u8 *)actor + 0x120, delta, zero);
+            gAdvanceAnimTrack(zero, (u8 *)actor + 0x120, delta, zero);
             gSetModelFrame(&actor->instanceD4, actor->unk12C);
         }
         if (actor->unkB4 & 0xF0) {
@@ -203,7 +205,7 @@ s32 func_800306A0(struct Actor306A0 *actor, s32 delta)
         gBuildRotationMatrix((s16)actor->unkC8, 0, 0, (u8 *)actor + 0xD8);
     }
 
-    temp = func_80044B34(actor, &actor->animA0, delta, 0);
+    temp = gAdvanceAnimTrack(actor, &actor->animA0, delta, 0);
     {
         register u32 shift __asm__("$16");
         register struct ModelInstance *inst __asm__("$4");

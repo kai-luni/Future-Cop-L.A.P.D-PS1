@@ -20,6 +20,8 @@ extern void func_800932F0(void *ptr);
 extern void gPutDispEnvCached(void *ptr) __asm__("func_800934BC");
 extern void func_80092BF4(s32 arg0);
 extern void func_80095E90(s32 arg0);
+void gResetMovieFrameBuffers(u32 arg0, u32 arg1) __asm__("func_80085AC4");
+
 
 /**
  * @brief Resets the playback context: stops GPU and DMA activity,
@@ -48,7 +50,7 @@ extern void func_80095E90(s32 arg0);
  * @par Callers
  * func_80085C4C, gCloseVideoLayer.
  */
-void func_80085AC4(u32 arg0, u32 arg1)
+void gResetMovieFrameBuffers(u32 arg0, u32 arg1)
 {
     s16 buf[4];
 

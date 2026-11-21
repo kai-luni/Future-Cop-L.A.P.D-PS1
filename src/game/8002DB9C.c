@@ -19,7 +19,7 @@ struct Data {
 
 extern s32 gInitGroundObject(struct Object *, void *, s32) __asm__("func_8002DAA4");
 extern s32 gEntityBaseHandler(s32, struct Object *, struct Data *, s32) __asm__("func_8002AD58");
-extern void func_80044B34(struct Object *, void *, void *, s32);
+extern void gAdvanceAnimTrack(struct Object *, void *, void *, s32) __asm__("func_80044B34");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 
 /**
@@ -66,7 +66,7 @@ s32 func_8002DB9C(s32 message, struct Object *object, struct Data *data, s32 arg
         return data->unk16 == 1;
     case 6:
         if (object->model->unk10 != 0) {
-            func_80044B34(object, object->unkA0, data, 0);
+            gAdvanceAnimTrack(object, object->unkA0, data, 0);
             gSetModelFrame(&object->model, object->unkAC);
         }
     default:

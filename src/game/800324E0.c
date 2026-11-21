@@ -31,7 +31,7 @@ extern s32 *gGameSession __asm__("D_8009FA94");
 extern struct Hit *gPlayerEntities __asm__("D_8009FA58");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 
-extern void func_80044B34(void *, void *, s32, s32);
+extern void gAdvanceAnimTrack(void *, void *, s32, s32) __asm__("func_80044B34");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_80019668(void);
 extern struct Res *gFindTargetEntity(void *, s32, s32, s32, s32, s32, s32) __asm__("func_8004E80C");
@@ -41,7 +41,7 @@ extern s32 gGetGroundHeight(V3 *, s32, s32, s32) __asm__("func_80066F78");
 extern void gFlagQuartileChange(struct Obj *, s32) __asm__("func_8003BA50");
 extern void gSpawnEntitySlotTypes(s32, struct Obj *, s32, s32, s32) __asm__("func_8003B898");
 extern struct Hit *gFindUnitById(s32) __asm__("func_8004D664");
-extern void func_80069D68(s32, s32, s32, struct Obj *);
+extern void gInterpretEntityScript(s32, s32, s32, struct Obj *) __asm__("func_80069D68");
 extern void gVectorAddScaled(V3 *, V3 *, s32, V3 *) __asm__("func_8001ACA4");
 extern void gNormalizeVector(V3 *) __asm__("func_8001A180");
 extern s32 func_8001A750(V3 *, V3 *);
@@ -160,7 +160,7 @@ s32 gUpdateHoverEnemy(s32 unused, struct Obj *o, s32 dt)
     V3 *q;
 
     if (o->f28->f10 != 0) {
-        func_80044B34(o, (u8 *)o + 0x120, dt, 0);
+        gAdvanceAnimTrack(o, (u8 *)o + 0x120, dt, 0);
         gSetModelFrame((u8 *)o + 0x28, o->f12C);
     }
 
@@ -270,7 +270,7 @@ L5E4:
                         gPlayerEntities->fAC->f14++;
                 }
                 if (o->f98 != 0)
-                    func_80069D68(o->f98, 0, -1, o);
+                    gInterpretEntityScript(o->f98, 0, -1, o);
             }
             o->fFA = 5;
             return 0;

@@ -61,7 +61,7 @@ extern void func_800448D8(void *arg0, u8 arg1, s32 arg2, s32 arg3);
 extern void gSpawnEntitySlotTypes(u8 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
 extern void func_80037B28(s32 arg0, Unk382B4 *arg1, s32 arg2);
 extern void gRemoveEntityCommand(Unk382B4 *arg0, s32 arg1) __asm__("func_8002A5B4");
-extern s32 func_80044B34(Unk382B4 *arg0, void *arg1, s32 arg2, s32 arg3);
+extern s32 gAdvanceAnimTrack(Unk382B4 *arg0, void *arg1, s32 arg2, s32 arg3) __asm__("func_80044B34");
 extern void gSetModelFrame(void *arg0, s32 arg1) __asm__("func_800175F8");
 extern void gStepAttackScheduler(void *arg0, s32 arg1, Unk382B4 *arg2, s32 arg3, s32 arg4) __asm__("func_80060238");
 extern void gUpdateFallMotion(s32 arg0, Unk382B4 *arg1, s32 arg2) __asm__("func_8003802C");
@@ -69,6 +69,8 @@ extern s32 func_8002ACB4(Unk382B4 *arg0, u8 arg1);
 extern void func_80063194(s32 key);
 
 register s32 zero __asm__("$0");
+s32 gHandleType5Entity(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) __asm__("func_800382B4");
+
 
 /**
  * @brief Message handler of entity class 5: dispatches messages 1..16 through
@@ -141,7 +143,7 @@ register s32 zero __asm__("$0");
  * direct calls verified in their sources). The entity-type factory func_8002AE54
  * installs it as the class-5 handler.
  */
-s32 func_800382B4(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3)
+s32 gHandleType5Entity(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3)
 {
     register s32 msgidx __asm__("$3");
     s32 scale;
@@ -277,7 +279,7 @@ L800384B0:
             }
         }
     }
-    temp = func_80044B34(arg1, arg1->unkC8, scale, 0);
+    temp = gAdvanceAnimTrack(arg1, arg1->unkC8, scale, 0);
     gSetModelFrame((void *)&arg1->unk28, arg1->unkD4);
     temp >>= 1;
     if (arg1->unk16 == 5 && temp == 3 && arg1->unk15A == 1) {

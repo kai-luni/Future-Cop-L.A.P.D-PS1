@@ -21,9 +21,11 @@ struct Object {
 
 extern s32 gInitType11Entity(struct Object *, void *, s32) __asm__("func_8002DC94");
 extern s32 gEntityBaseHandler(s32, struct Object *, void *) __asm__("func_8002AD58");
-extern void func_8002D664(s32, struct Child *, void *, s32);
-extern void func_80044B34(struct Object *, void *, void *, s32);
+extern void gHandleLinkedPropEntity(s32, struct Child *, void *, s32) __asm__("func_8002D664");
+extern void gAdvanceAnimTrack(struct Object *, void *, void *, s32) __asm__("func_80044B34");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
+s32 gHandleType11EntityMessages(s32 message, struct Object *object, void *data, s32 arg3) __asm__("func_8002DEA8");
+
 
 /**
  * @brief Message handler of object type 11: a parent entity that forwards
@@ -55,7 +57,7 @@ extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
  * No direct callers in the call graph. func_8002AE54 returns the address
  * for object type 11, so the dispatcher reaches it indirectly.
  */
-s32 func_8002DEA8(s32 message, struct Object *object, void *data, s32 arg3)
+s32 gHandleType11EntityMessages(s32 message, struct Object *object, void *data, s32 arg3)
 {
     s32 flag;
     register s32 cmp __asm__("$2");
@@ -82,13 +84,13 @@ s32 func_8002DEA8(s32 message, struct Object *object, void *data, s32 arg3)
     case 11:
     case 14:
         if (object->unkB4 != 0) {
-            func_8002D664(message, object->unkB4, data, arg3);
+            gHandleLinkedPropEntity(message, object->unkB4, data, arg3);
             return 0;
         }
         return gEntityBaseHandler(message, object, data);
     case 6:
         if (object->model->unk10 != 0) {
-            func_80044B34(object, object->unkA0, data, 0);
+            gAdvanceAnimTrack(object, object->unkA0, data, 0);
             gSetModelFrame(&object->model, object->unkAC);
         }
         return 0;

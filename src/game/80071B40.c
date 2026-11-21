@@ -28,10 +28,10 @@ typedef struct Node {
     u8 pad24[4];
     s16 reset;
 } Node;
-extern void func_8003D0F0(Base *, s32, s32, Vec *);
+extern void gResolveModelEffectPoint(Base *, s32, s32, Vec *) __asm__("func_8003D0F0");
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
-extern s32 func_800718B8(Node *, s32, s32, s32, s32);
+extern s32 gStepBeamEntryTimers(Node *, s32, s32, s32, s32) __asm__("func_800718B8");
 void gStepBeamNode(Node *node, s32 dt) __asm__("func_80071B40");
 
 
@@ -83,7 +83,7 @@ void gStepBeamNode(Node *node, s32 dt)
 
     obj = n->obj2;
     if (obj && obj->id && obj->base && obj->id->id != obj->saved) {
-        func_8003D0F0(obj->base, *(s8 *)&obj->pos, obj->flags & 0x10, &obj->pos);
+        gResolveModelEffectPoint(obj->base, *(s8 *)&obj->pos, obj->flags & 0x10, &obj->pos);
         if (n->flags & 8) {
             gGteLoadRotation((u8 *)n->obj1->base + 4);
             {
@@ -99,7 +99,7 @@ void gStepBeamNode(Node *node, s32 dt)
     }
     obj = n->obj1;
     if (obj && obj->id && obj->base && obj->id->id != obj->saved) {
-        func_8003D0F0(obj->base, *(s8 *)&obj->pos, obj->flags & 0x10, &obj->pos);
+        gResolveModelEffectPoint(obj->base, *(s8 *)&obj->pos, obj->flags & 0x10, &obj->pos);
         if (n->flags & 8) {
             gGteLoadRotation((u8 *)n->obj1->base + 4);
             {
@@ -126,7 +126,7 @@ void gStepBeamNode(Node *node, s32 dt)
             }
         }
         for (i = 0; i < n->count; i++) {
-            result |= func_800718B8(n, i, x, y, z);
+            result |= gStepBeamEntryTimers(n, i, x, y, z);
             if (n->active) {
                 part = &n->parts[i];
                 for (j = 1; j < part->count; j++) {

@@ -41,6 +41,8 @@ extern s32 gFontBankCount __asm__("D_8009F364");
 extern s32 func_800489EC(unsigned char *value);
 extern void gLoadFontAsset(s32 index) __asm__("func_80048BF8");
 extern s32 func_80048E28(s32 index);
+void gRegisterFontBank(s32 arg0, s32 *arg1) __asm__("func_80048A14");
+
 
 /**
  * @brief Registers a font in the next free slot (max four): builds the
@@ -64,7 +66,7 @@ extern s32 func_80048E28(s32 index);
  * @par Callers
  * func_80048E9C.
  */
-void func_80048A14(s32 arg0, s32 *arg1)
+void gRegisterFontBank(s32 arg0, s32 *arg1)
 {
     register struct FontSource *src __asm__("$7");
     struct FontEntry *e;

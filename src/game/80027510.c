@@ -65,9 +65,9 @@ extern s32 gGetPadType(s32) __asm__("func_8001EF34");
 extern void gSetAudioPlaybackEnabled(s32) __asm__("func_80047690");
 extern void func_80069D0C(s32);
 extern void gCullActiveEntitiesSplit(void) __asm__("func_8004E248");
-extern void func_8004CECC(void);
+extern void gDispatchQueuedEntityCommands(void) __asm__("func_8004CECC");
 extern void func_8004CD6C(s32, s32, s32);
-extern void func_80031DE8(s32);
+extern void gUpdateMapZoneTriggers(s32) __asm__("func_80031DE8");
 extern void func_8004CE04(void);
 extern void gRunEntityWorldTick(s32) __asm__("func_8003F570");
 extern void func_80026E5C(s32, struct Game *);
@@ -85,7 +85,7 @@ extern void gEmitHudPanelSprite(s32) __asm__("func_800485AC");
 extern void func_800486FC(s32);
 extern void gEndSubScreenFrame(void) __asm__("func_8001BBAC");
 extern void func_80026D1C(void);
-extern void func_800616A0(s32);
+extern void gUpdateRegisteredSpawners(s32) __asm__("func_800616A0");
 extern void func_80026D9C(s32);
 extern void gSweepRetiredEntities(void) __asm__("func_8004D598");
 extern void gStopAllPadRumble(void) __asm__("func_8001EB6C");
@@ -224,9 +224,9 @@ void gRunSessionFrame(void)
         gWasSuspended = 0;
         func_80069D0C(gFrameDelta);
         gCullActiveEntitiesSplit();
-        func_8004CECC();
+        gDispatchQueuedEntityCommands();
         func_8004CD6C(6, gFrameDelta, 0);
-        func_80031DE8(gFrameDelta);
+        gUpdateMapZoneTriggers(gFrameDelta);
         func_8004CE04();
         gRunEntityWorldTick(gFrameDelta);
     }
@@ -315,7 +315,7 @@ void gRunSessionFrame(void)
     gSelectViewRecord(D_8009FA58.ptr->unkAC->unkAC);
     if (!(flags & 0x20)) {
         func_80026D1C();
-        func_800616A0(gFrameDelta);
+        gUpdateRegisteredSpawners(gFrameDelta);
         func_80026D9C(gFrameDelta);
         gSweepRetiredEntities();
         gGameSuspended = 0;

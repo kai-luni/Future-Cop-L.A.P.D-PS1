@@ -24,7 +24,7 @@ extern u32 gPendingDeadline __asm__("D_8009DF00");
 extern u32 gTimeoutStamp __asm__("D_8009DEFC");
 extern Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
 extern int gVSyncWait(int) __asm__("func_80091270");
-extern void func_80092CF4(char *, void *);
+extern void gValidateGpuRectDebug(char *, void *) __asm__("func_80092CF4");
 extern int func_8009520C(void);
 extern void gSetDmaCallback(int, void (*)(void)) __asm__("func_800914E0");
 extern void gAbortCallbackId(void) __asm__("D_80095808");
@@ -67,7 +67,7 @@ int func_800953F0(Entry *entry, void *data)
     int result;
     register char *first __asm__("$4");
     __asm__("lui %0,%%hi(D_80012B7C)\n\taddiu %0,%0,%%lo(D_80012B7C)" : "=r"(first));
-    func_80092CF4(first, entry);
+    gValidateGpuRectDebug(first, entry);
     gTimeoutStamp = gVSyncWait(-1) + 0xF0;
     gPendingDeadline = 0;
     if (!((*gDma2ChannelCtrlPtr & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000))) goto success;

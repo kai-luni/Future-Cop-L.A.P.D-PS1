@@ -6,20 +6,20 @@ struct Unk780DC {
     s32 unk4;
 };
 
-extern struct Unk780DC D_800A3588[2];
-extern struct Unk780DC D_800A3598[2];
-extern struct Unk780DC D_800A35A8[2];
-extern struct Unk780DC D_800A35B8[2];
-extern struct Unk780DC D_800A35C8[2];
-extern struct Unk780DC D_800A35D8[2];
-extern struct Unk780DC D_800A35E8[2];
+extern struct Unk780DC gMenuUpActions[2] __asm__("D_800A3588");
+extern struct Unk780DC gMenuDownActions[2] __asm__("D_800A3598");
+extern struct Unk780DC gMenuLeftActions[2] __asm__("D_800A35A8");
+extern struct Unk780DC gMenuRightActions[2] __asm__("D_800A35B8");
+extern struct Unk780DC gMenuAcceptActions[2] __asm__("D_800A35C8");
+extern struct Unk780DC gMenuBackActions[2] __asm__("D_800A35D8");
+extern struct Unk780DC gMenuStartActions[2] __asm__("D_800A35E8");
 
 extern u8 gArmedFlag __asm__("D_8009FAC4");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern s32 gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern s32 D_8009F3F4;
-extern s32 D_8009F8B0;
-extern s32 D_8009F8B4;
+extern s32 gPlayer1PrevMenuButtons __asm__("D_8009F8B0");
+extern s32 gPlayer2PrevMenuButtons __asm__("D_8009F8B4");
 extern s32 gDemoPlayback __asm__("D_8009FA84");
 
 extern void gUpdatePrecinctUnlockFlag(void) __asm__("func_80077FFC");
@@ -68,24 +68,24 @@ void gInitFrontEndSubsystems(void)
     gFillMemory(p, 0, 0x78);
     gFreeTextTable();
     for (i = 0; i < 2; i++) {
-        D_800A35D8[i].unk4 = 2;
-        D_800A35C8[i].unk4 = 2;
-        D_800A35B8[i].unk4 = 2;
-        D_800A35A8[i].unk4 = 2;
-        D_800A3598[i].unk4 = 2;
-        D_800A3588[i].unk4 = 2;
-        D_800A35E8[i].unk0 = 0x00080000;
-        D_800A35E8[i].unk4 = 2;
-        D_800A3588[i].unk0 = 0x00100000;
-        D_800A3598[i].unk0 = 0x00400000;
-        D_800A35A8[i].unk0 = 0x00800000;
-        D_800A35B8[i].unk0 = 0x00200000;
-        D_800A35C8[i].unk0 = 0x40000000;
-        D_800A35D8[i].unk0 = 0x10000000;
+        gMenuBackActions[i].unk4 = 2;
+        gMenuAcceptActions[i].unk4 = 2;
+        gMenuRightActions[i].unk4 = 2;
+        gMenuLeftActions[i].unk4 = 2;
+        gMenuDownActions[i].unk4 = 2;
+        gMenuUpActions[i].unk4 = 2;
+        gMenuStartActions[i].unk0 = 0x00080000;
+        gMenuStartActions[i].unk4 = 2;
+        gMenuUpActions[i].unk0 = 0x00100000;
+        gMenuDownActions[i].unk0 = 0x00400000;
+        gMenuLeftActions[i].unk0 = 0x00800000;
+        gMenuRightActions[i].unk0 = 0x00200000;
+        gMenuAcceptActions[i].unk0 = 0x40000000;
+        gMenuBackActions[i].unk0 = 0x10000000;
     }
     gOpenProfileSaveSubsystem();
     gSetupFrontEndMenus(1);
-    D_8009F8B0 = 0;
-    D_8009F8B4 = 0;
+    gPlayer1PrevMenuButtons = 0;
+    gPlayer2PrevMenuButtons = 0;
     gDemoPlayback = 0;
 }

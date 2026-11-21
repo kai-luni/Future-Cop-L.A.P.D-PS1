@@ -65,7 +65,7 @@ extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern s32 func_80019668(void);
 extern Entry *gFindVertexRangeEntry(Entry *, s32) __asm__("func_8003A90C");
 extern s32 func_8004B244(void *, void *, Vec *);
-extern void func_8004B310(void *, Vec *, Vec *, s32, s16 *, s16 *, s32 *, Vec *);
+extern void gSampleDebrisLaunchParameters(void *, Vec *, Vec *, s32, s16 *, s16 *, s32 *, Vec *) __asm__("func_8004B310");
 extern void gBuildRotationMatrixVariant(s32, s32, s32, Matrix *) __asm__("func_80018DC0");
 extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
 extern void gGteTransformWords(Matrix *, Matrix *, s32) __asm__("func_8001006C");
@@ -235,7 +235,7 @@ s32 gSpawnModelDebris(s32 unused, Object *out, Arg *arg)
             pos.x = dest->x;
             pos.y = dest->y;
             pos.z = dest->z;
-            func_8004B310(config->force, &pos, &force, forceEnabled, &angle1, &angle2, &extra, &velocity);
+            gSampleDebrisLaunchParameters(config->force, &pos, &force, forceEnabled, &angle1, &angle2, &extra, &velocity);
             particle->vx = velocity.x >> 4;
             particle->vy = velocity.y >> 4;
             particle->vz = velocity.z >> 4;

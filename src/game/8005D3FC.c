@@ -61,6 +61,8 @@ extern struct Block *gDomeEffectBlock[4] __asm__("D_800A22F0");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void *gBuildDomePatchMesh(s32 arg0, s32 arg1) __asm__("func_8006C84C");
 extern void gResetMotionState(struct Sub *state) __asm__("func_8005CEA8");
+struct Block *gAllocDomeEffectBlock(struct Entity *ent, s32 idx) __asm__("func_8005D3FC");
+
 
 /**
  * @brief Allocates a 0x1B0-byte attached-effect block in D_800A22F0 with a dome mesh and 12 motion sub-states.
@@ -85,7 +87,7 @@ extern void gResetMotionState(struct Sub *state) __asm__("func_8005CEA8");
  * @par Callers
  * Confirmed: gWeaponEffectUpdate (lazy slot allocation), func_8006AB38 (kind-13 weapon slot setup).
  */
-struct Block *func_8005D3FC(struct Entity *ent, s32 idx)
+struct Block *gAllocDomeEffectBlock(struct Entity *ent, s32 idx)
 {
     register struct Block **p __asm__("$16");
     struct Block **base;

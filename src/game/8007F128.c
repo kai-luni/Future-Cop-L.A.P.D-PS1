@@ -23,7 +23,7 @@ extern s32 gApplyPasswordUnlocks(void) __asm__("func_8007EA78");
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void func_80078740(void);
 extern void func_800493C0(u32 index, u8 blue, u8 green, u8 red);
-extern void func_800788F0(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
+extern void gDrawAlignedMultilineText(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) __asm__("func_800788F0");
 extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
 extern void gEmitFlatQuadRect(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) __asm__("func_80082EF0");
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
@@ -94,5 +94,5 @@ extern void gDecodeCodeDisplay(s32 input0, s32 input1, s32 input2, s32 input3, s
         src++;
     } while (i < 10);
     buf[i] = 0;
-    func_800788F0(buf, a0, a1, a2, 0, arg5, arg6, a3);
+    gDrawAlignedMultilineText(buf, a0, a1, a2, 0, arg5, arg6, a3);
 }

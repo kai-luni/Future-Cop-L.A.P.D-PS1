@@ -39,28 +39,36 @@ extern u8 gAttractDemoSequenceIndex __asm__("D_8009F3F2");
 extern u8 gAttractMovieIndex __asm__("D_8009F3F3");
 extern u8 gFrontEndReturnMode __asm__("D_8009F45A");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
-extern s32 D_8009F8B0, D_8009F8B4;
+extern s32 gPlayer1PrevMenuButtons __asm__("D_8009F8B0");
+extern s32 gPlayer2PrevMenuButtons __asm__("D_8009F8B4");
 extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s32 prev_buttons[2] __asm__("D_8009F8B0");
-extern u32 D_8009F8D0, D_8009F8D4;
+extern u32 gPlayer1MenuButtons __asm__("D_8009F8D0");
+extern u32 gPlayer2MenuButtons __asm__("D_8009F8D4");
 extern volatile u32 D_8009F8D0_arr[] __asm__("D_8009F8D0");
 extern s32 gMenuUpHoldTicks[] __asm__("D_8009F890");
 extern s32 gMenuDownHoldTicks[] __asm__("D_8009F898");
 extern s32 gMenuLeftHoldTicks[] __asm__("D_8009F8A0");
 extern s32 gMenuRightHoldTicks[] __asm__("D_8009F8A8");
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern u32 D_8009B324[];
+extern u32 gAttractMovieNames[] __asm__("D_8009B324");
 extern struct Menu gMenuDescriptor __asm__("D_800A3808");
 extern s16 gSlotRecordTable[2][4] __asm__("D_800A3578");
-extern struct InputAction D_800A3588[], D_800A3598[], D_800A35A8[], D_800A35B8[], D_800A35C8[], D_800A35D8[], D_800A35E8[];
+extern struct InputAction gMenuUpActions[] __asm__("D_800A3588");
+extern struct InputAction gMenuDownActions[] __asm__("D_800A3598");
+extern struct InputAction gMenuLeftActions[] __asm__("D_800A35A8");
+extern struct InputAction gMenuRightActions[] __asm__("D_800A35B8");
+extern struct InputAction gMenuAcceptActions[] __asm__("D_800A35C8");
+extern struct InputAction gMenuBackActions[] __asm__("D_800A35D8");
+extern struct InputAction gMenuStartActions[] __asm__("D_800A35E8");
 extern u32 gPollPadButtons(u32) __asm__("func_8001EF8C");
 extern void func_80077990(void);
 extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
 extern void gSetupFrontEndMenus(s32) __asm__("func_80077AD4");
 extern u8 func_80078C88(void) __asm__("func_80078C88");
 extern u8 gCheckMenuDirectionRepeat(s32 *, s32) __asm__("func_80082D30");
-extern void func_80082DDC(u32, s32);
+extern void gPlayMovieClip(u32, s32) __asm__("func_80082DDC");
 extern void gDecodeButtonEdge(u32, struct InputAction *) __asm__("func_8005780C");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 gTitleScreenConfirmEnabled __asm__("D_8009F46C");
@@ -82,7 +90,7 @@ extern struct Menu gOnePlayerLoadoutMenuDescriptor __asm__("D_800A3628");
 extern struct Menu gTwoPlayerMissionSelectMenuDescriptor __asm__("D_800A37D8");
 extern struct Menu gOnePlayerMissionSelectMenuDescriptor __asm__("D_800A37A8");
 extern struct Menu gFrontEndTransitionMenuDescriptor __asm__("D_800A3688");
-extern struct Menu *D_8009B8B8[];
+extern struct Menu *gFrontEndTransitionNextMenu[] __asm__("D_8009B8B8");
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern s32 gPopMenuPanel(void) __asm__("func_80078740");
 extern void gActivateMenuPanel(struct Menu *, s32) __asm__("func_80078650");
@@ -91,7 +99,7 @@ extern void gSelectEnabledMenuItem(s8, s32, s8) __asm__("func_800787D8");
 extern void gEmitTranslucentTileRect(u32, s32, s32, s32, s32, u8) __asm__("func_8001C214");
 extern void func_800493C0(u32, u8, u8, u8);
 extern void gEmitAtlasSpriteSimple(s32,s32,s32,s32,s32,s32,s32,s32,s32) __asm__("func_80082AB0");
-extern void func_800788F0(void *,s32,s32,s32,s32,s32,s32,s32);
+extern void gDrawAlignedMultilineText(void *,s32,s32,s32,s32,s32,s32,s32) __asm__("func_800788F0");
 extern void func_800826A0(void), func_80078B34(s32,s32,s32), func_8001B4A8(s32);
 extern void gDrawSlotStatusLine(void) __asm__("func_80078B98");
 void gUpdateAndDrawFrontEndMenu(void) __asm__("func_80078DD0");
@@ -136,10 +144,10 @@ void gUpdateAndDrawFrontEndMenu(void)
     struct Item *item;
     u8 *rgb;
     if (gStillRunningState == 0) return;
-    D_8009F8B0 = D_8009F8D0;
-    buttons[0] = D_8009F8D0 = gPollPadButtons(0);
-    D_8009F8B4 = D_8009F8D4;
-    buttons[1] = D_8009F8D4 = gPollPadButtons(1);
+    gPlayer1PrevMenuButtons = gPlayer1MenuButtons;
+    buttons[0] = gPlayer1MenuButtons = gPollPadButtons(0);
+    gPlayer2PrevMenuButtons = gPlayer2MenuButtons;
+    buttons[1] = gPlayer2MenuButtons = gPollPadButtons(1);
     for (i = 0; i < 2; i++) {
         if (buttons[i] & 0x100000) { if (!gMenuUpHoldTicks[i]) gMenuUpHoldTicks[i] = gFrameTickCounter; } else gMenuUpHoldTicks[i] = 0;
         if (buttons[i] & 0x400000) { if (!gMenuDownHoldTicks[i]) gMenuDownHoldTicks[i] = gFrameTickCounter; } else gMenuDownHoldTicks[i] = 0;
@@ -160,7 +168,7 @@ reset_timer:
             if (gAttractDemoSequenceIndex) active = func_80078C88();
             if (!active) {
                 gFrontEndReturnMode = 5;
-                func_80082DDC(D_8009B324[gAttractMovieIndex], 0);
+                gPlayMovieClip(gAttractMovieNames[gAttractMovieIndex], 0);
                 gSetupFrontEndMenus(0);
                 gAttractMovieIndex++;
                 if (gAttractMovieIndex >= 2) { gAttractMovieIndex = 0; gAttractDemoSequenceIndex = 1; }
@@ -177,19 +185,19 @@ reset_timer:
         } while (i < 2);
         gSyncMenuFontBank();
         if (gFontBankTable->filter) {
-            D_8009F8D0 = gFontBankTable->filter(D_8009F8D0, 0);
-            D_8009F8D4 = (*(u32 (**)(u32, s32))((u8 *)gFontBankTable + 12))(D_8009F8D4, 1);
+            gPlayer1MenuButtons = gFontBankTable->filter(gPlayer1MenuButtons, 0);
+            gPlayer2MenuButtons = (*(u32 (**)(u32, s32))((u8 *)gFontBankTable + 12))(gPlayer2MenuButtons, 1);
         }
         for (j = 0; j < 2; j++) {
             u32 *btns;
             __asm__("lui %0,%%hi(D_8009F8D0)\n\taddiu %0,%0,%%lo(D_8009F8D0)" : "=r"(btns));
-            gDecodeButtonEdge(btns[j], &D_800A3588[j]);
-            gDecodeButtonEdge(btns[j], &D_800A3598[j]);
-            gDecodeButtonEdge(btns[j], &D_800A35A8[j]);
-            gDecodeButtonEdge(btns[j], &D_800A35B8[j]);
-            gDecodeButtonEdge(btns[j], &D_800A35C8[j]);
-            gDecodeButtonEdge(btns[j], &D_800A35D8[j]);
-            gDecodeButtonEdge(btns[j], &D_800A35E8[j]);
+            gDecodeButtonEdge(btns[j], &gMenuUpActions[j]);
+            gDecodeButtonEdge(btns[j], &gMenuDownActions[j]);
+            gDecodeButtonEdge(btns[j], &gMenuLeftActions[j]);
+            gDecodeButtonEdge(btns[j], &gMenuRightActions[j]);
+            gDecodeButtonEdge(btns[j], &gMenuAcceptActions[j]);
+            gDecodeButtonEdge(btns[j], &gMenuBackActions[j]);
+            gDecodeButtonEdge(btns[j], &gMenuStartActions[j]);
             up[j] = 0;
             down[j] = 0;
             left[j] = 0;
@@ -207,15 +215,15 @@ reset_timer:
             s32 idx;
             for (j = first, idx = first; j < count; j++, idx += step) {
                 gActivePlayerIndex = j;
-                if (!D_800A35C8[j].phase) accept[idx] = 1;
-                if (gFontBankTable->extra && !D_800A35E8[j].phase) accept[idx] = 1;
-                if (!D_800A35D8[j].phase) back[idx] = 1;
+                if (!gMenuAcceptActions[j].phase) accept[idx] = 1;
+                if (gFontBankTable->extra && !gMenuStartActions[j].phase) accept[idx] = 1;
+                if (!gMenuBackActions[j].phase) back[idx] = 1;
                 {
                     register u32 arr __asm__("$4");
-                    if (!D_800A3588[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F890)\n\taddiu %0,%0,%%lo(D_8009F890)" : "=r"(arr)); arr; })), 2)) up[idx] = 1;
-                    if (!D_800A3598[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F898)\n\taddiu %0,%0,%%lo(D_8009F898)" : "=r"(arr)); arr; })), 2)) down[idx] = 1;
-                    if (!D_800A35A8[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F8A0)\n\taddiu %0,%0,%%lo(D_8009F8A0)" : "=r"(arr)); arr; })), 1)) left[idx] = 1;
-                    if (!D_800A35B8[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F8A8)\n\taddiu %0,%0,%%lo(D_8009F8A8)" : "=r"(arr)); arr; })), 1)) right[idx] = 1;
+                    if (!gMenuUpActions[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F890)\n\taddiu %0,%0,%%lo(D_8009F890)" : "=r"(arr)); arr; })), 2)) up[idx] = 1;
+                    if (!gMenuDownActions[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F898)\n\taddiu %0,%0,%%lo(D_8009F898)" : "=r"(arr)); arr; })), 2)) down[idx] = 1;
+                    if (!gMenuLeftActions[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F8A0)\n\taddiu %0,%0,%%lo(D_8009F8A0)" : "=r"(arr)); arr; })), 1)) left[idx] = 1;
+                    if (!gMenuRightActions[j].phase || gCheckMenuDirectionRepeat((s32 *)((j << 2) + ({ __asm__("lui %0,%%hi(D_8009F8A8)\n\taddiu %0,%0,%%lo(D_8009F8A8)" : "=r"(arr)); arr; })), 1)) right[idx] = 1;
                 }
             }
         }
@@ -343,7 +351,7 @@ reset_timer:
                         }
                         x = item->x ? item->x : menu_x;
                         y = item->y ? item->y : shown;
-                        func_800788F0(item->text, x, y, color, item->unk16, item->flags & 7, item->flags & 0x38, item->unk15);
+                        gDrawAlignedMultilineText(item->text, x, y, color, item->unk16, item->flags & 7, item->flags & 0x38, item->unk15);
                         shown += 10;
                     } else {
                         color = 2;
@@ -368,21 +376,21 @@ reset_timer:
                 gDrawSlotStatusLine();
                 func_8001B4A8(1);
                 while (gFrameBarrier) { }
-                func_80082DDC(gPendingRowCapture, 1);
+                gPlayMovieClip(gPendingRowCapture, 1);
             }
             switch (gDeferredTransition) {
             case 1:
                 if (gGameSession->type == 2) {
                     if (gGameSession->stage == 1) {
                         if (gPendingRowCapture) {
-                            D_8009B8B8[0] = &gTwoPlayerLoadoutMenuDescriptor;
+                            gFrontEndTransitionNextMenu[0] = &gTwoPlayerLoadoutMenuDescriptor;
                             gActivateMenuPanel(&gFrontEndTransitionMenuDescriptor, 1);
                         } else gActivateMenuPanel(&gTwoPlayerLoadoutMenuDescriptor, 1);
                     } else gActivateMenuPanel(&gTwoPlayerLoadoutMenuDescriptor, 1);
                 } else {
                     if (gGameSession->stage == 1) {
                         if (gPendingRowCapture) {
-                            D_8009B8B8[0] = &gOnePlayerLoadoutMenuDescriptor;
+                            gFrontEndTransitionNextMenu[0] = &gOnePlayerLoadoutMenuDescriptor;
                             gActivateMenuPanel(&gFrontEndTransitionMenuDescriptor, 1);
                         } else gActivateMenuPanel(&gOnePlayerLoadoutMenuDescriptor, 1);
                     } else gActivateMenuPanel(&gOnePlayerLoadoutMenuDescriptor, 1);
@@ -395,15 +403,15 @@ reset_timer:
             case 5:
                 if (gFontBankTable == &gMenuDescriptor) {
                     if (gPendingRowCapture) {
-                        if (gGameSession->type == 2) D_8009B8B8[0] = &gTwoPlayerMissionSelectMenuDescriptor;
-                        else D_8009B8B8[0] = &gOnePlayerMissionSelectMenuDescriptor;
+                        if (gGameSession->type == 2) gFrontEndTransitionNextMenu[0] = &gTwoPlayerMissionSelectMenuDescriptor;
+                        else gFrontEndTransitionNextMenu[0] = &gOnePlayerMissionSelectMenuDescriptor;
                         gActivateMenuPanel(&gFrontEndTransitionMenuDescriptor, 1);
                     } else {
                         if (gGameSession->type == 2) gActivateMenuPanel(&gTwoPlayerMissionSelectMenuDescriptor, 1);
                         else gActivateMenuPanel(&gOnePlayerMissionSelectMenuDescriptor, 1);
                     }
                 } else {
-                    D_8009B8B8[0] = (struct Menu *)-1;
+                    gFrontEndTransitionNextMenu[0] = (struct Menu *)-1;
                     gActivateMenuPanel(&gFrontEndTransitionMenuDescriptor, 1);
                 }
                 break;
@@ -412,6 +420,6 @@ reset_timer:
             gPendingRowCapture = 0;
         }
     }
-    D_8009F8D0 = buttons[0];
-    D_8009F8D4 = buttons[1];
+    gPlayer1MenuButtons = buttons[0];
+    gPlayer2MenuButtons = buttons[1];
 }

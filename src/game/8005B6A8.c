@@ -27,7 +27,7 @@ struct Candidates { s32 count; s32 pad; struct Target *items[1]; };
 extern struct Candidates gCommandListHead __asm__("D_800A8F90");
 extern s16 gMessageReturnData[3] __asm__("D_8009F7F0");
 extern s16 D_8009F7F2, D_8009F7F4;
-extern void func_8005B5A0(struct Source *, struct Target *, struct Sphere *);
+extern void gApplySphereOverlapHit(struct Source *, struct Target *, struct Sphere *) __asm__("func_8005B5A0");
 extern s32 gTraceMapRay(struct Vec *, struct Vec *, struct Vec *, s32, s32) __asm__("func_800684AC");
 extern s32 gGetEntitySpawnBank(struct Target *) __asm__("func_8003BF50");
 extern s32 gSpawnTypeAtOwner(void *, u8, struct Message *, s32, s32) __asm__("func_800402DC");
@@ -35,6 +35,8 @@ extern void gNormalizeVector(struct Vec *) __asm__("func_8001A180");
 extern s32 gVectorDot(struct Vec *, struct Vec *) __asm__("func_8001AB00");
 extern u32 gSqrt12(s32) __asm__("func_80095900");
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
+void gTraceWeaponSphereRays(struct Owner *owner, struct Source *source) __asm__("func_8005B6A8");
+
 
 /**
  * @brief Area-effect pass of a kind-0x57 object: sphere damage plus map trace.
@@ -77,7 +79,7 @@ extern u32 gSqrt12(s32) __asm__("func_80095900");
  * Confirmed: func_8005B934 (message 1 of the kind-0x57 handler, when the
  * linked target has a moving part).
  */
-void func_8005B6A8(struct Owner *owner, struct Source *source)
+void gTraceWeaponSphereRays(struct Owner *owner, struct Source *source)
 {
     struct Vec diff;
     struct Message message;
@@ -91,7 +93,7 @@ void func_8005B6A8(struct Owner *owner, struct Source *source)
     prev = 0;
     while (sphere != 0) {
         if (!(source->flags & 8) && sphere->state <= 0) {
-            func_8005B5A0(source, source->target, sphere);
+            gApplySphereOverlapHit(source, source->target, sphere);
             for (i = 0; i < gCommandListHead.count; i++) {
                 target = gCommandListHead.items[i];
                 if (target->active > 0) {
@@ -103,7 +105,7 @@ void func_8005B6A8(struct Owner *owner, struct Source *source)
                     diff.y = target->pos.y - source->detail->pos.y;
                     diff.z = target->pos.z - source->detail->pos.z;
                     if (ABS(diff.x) <= 65535 && ABS(diff.y) <= 65535 && ABS(diff.z) <= 65535)
-                        func_8005B5A0(source, target, sphere);
+                        gApplySphereOverlapHit(source, target, sphere);
                 }
             }
         }

@@ -26,7 +26,7 @@ extern void gGteTransformWords(void *, void *, s32) __asm__("func_8001006C");
 extern void gSinCos(s32, s32 *, s32 *) __asm__("func_8001846C");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
-extern s32 func_80044B34(void *, void *, s32, s32);
+extern s32 gAdvanceAnimTrack(void *, void *, s32, s32) __asm__("func_80044B34");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 gStepAttackScheduler(void *, s32, void *, void *, s32) __asm__("func_80060238");
 extern void func_800448D8(void *, s32, s32, s32);
@@ -334,7 +334,7 @@ apply:
     obj->old[0] = obj->m[6]; obj->old[1] = obj->m[7]; obj->old[2] = obj->m[8];
     __asm__ volatile ("" : : : "memory");
     if (obj->model->anim) {
-        s32 a = func_80044B34(obj, obj->anim, dt, 0) >> 1;
+        s32 a = gAdvanceAnimTrack(obj, obj->anim, dt, 0) >> 1;
         while (a) {
             switch (a & 0x3F) {
             case 2: obj->flags |= 0x8000;

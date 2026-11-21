@@ -8,9 +8,9 @@ struct Unk78210Mode {
     s32 split;
 };
 
-extern s32 D_800A35CC;
+extern s32 gPlayer1MenuAcceptPhase __asm__("D_800A35CC");
 extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
-extern u8 D_800A377D[];
+extern u8 gAudioOptionsMenuMode[] __asm__("D_800A377D");
 extern u8 gPrecinctAssaultProgress __asm__("D_8009F459");
 extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
 extern void *gPendingRowCapture __asm__("D_8009F8C4");
@@ -52,11 +52,11 @@ void gSelectPrecinctAssault1P(s32 a0)
     if (a0 != 3) {
         return;
     }
-    if (D_800A35CC == 0) {
+    if (gPlayer1MenuAcceptPhase == 0) {
         mode = gGameSession;
         mode->players = 1;
         mode->split = 1;
-        D_800A377D[0] = 1;
+        gAudioOptionsMenuMode[0] = 1;
         __asm__ volatile("" ::: "memory");
         gPrecinctAssaultProgress = 0;
         func_80077708();

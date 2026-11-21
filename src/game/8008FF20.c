@@ -9,7 +9,7 @@ extern Entry gCdDirEntryCache[] __asm__("D_800A3E80");
 extern char gCachedDirName[] __asm__("D_800A3E88");
 extern char gCdDepthErrFmt[] __asm__("D_800125AC");
 extern char gCdBadPathErrFmt[] __asm__("D_800125C8");
-extern char D_800125E0[];
+extern char gCdSearchDiscErrorMessage[] __asm__("D_800125E0");
 extern char gCdSearchLogFmt[] __asm__("D_800125FC");
 extern char gCdFoundLogFmt[] __asm__("D_8001261C");
 extern char gCdNotFoundErrFmt[] __asm__("D_80012628");

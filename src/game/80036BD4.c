@@ -50,16 +50,18 @@ extern struct Entity *gAllocAndLinkEntity(s32 size) __asm__("func_8004D3FC");
 extern s32 func_80019668(void);
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
-extern void func_80036940(struct Entity *self, s32 arg2, s32 arg3);
+extern void gInitLinkedProjectile(struct Entity *self, s32 arg2, s32 arg3) __asm__("func_80036940");
 extern void gBuildBasisFromAxisYZ(struct Vec3s32 *axis, void *basis) __asm__("func_8001937C");
 extern void gBuildBasisFromAxis(struct Vec3s32 *axis, void *basis) __asm__("func_800193F8");
 extern s32 func_8001A750(struct Vec3s32 *a, void *b);
 extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
 extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
-extern void func_80036AB4(struct Entity *self, s32 arg3);
+extern void gUpdateLinkedDamageSource(struct Entity *self, s32 arg3) __asm__("func_80036AB4");
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, s32 arg2, s32 arg3) __asm__("func_8002AD58");
 extern void *jtbl_80011380[];
+void gStepBurstProjectileMotion(struct Entity *self, s32 arg1, s32 arg2) __asm__("func_80036BD4");
+
 
 /**
  * @brief Per-frame motion of a projectile-like entity: advances it along its
@@ -116,7 +118,7 @@ extern void *jtbl_80011380[];
  * func_80036E6C (message 3 of the class message table); func_80036E6C itself has
  * no direct callers because it is reached through a handler table.
  */
-void func_80036BD4(struct Entity *self, s32 arg1, s32 arg2)
+void gStepBurstProjectileMotion(struct Entity *self, s32 arg1, s32 arg2)
 {
     s32 tmp[3];
     struct Entity *new;

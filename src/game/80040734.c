@@ -90,7 +90,7 @@ extern s32 gLightObjectCount __asm__("D_8009F318");
 
 extern s32 func_8005A6A4(s32 id, struct Unk40734Request *request,
                          struct Unk40734Light **result);
-extern s32 func_8003C7B8(s32 message, void *object, void *arg2, void *arg3);
+extern s32 gGuardEffectPoolMessage(s32 message, void *object, void *arg2, void *arg3) __asm__("func_8003C7B8");
 extern struct Unk40734Transform *gResolveNodeTransform(void *model, s32 flags, s32 part,
                                                s32 count, void *sub,
                                                void *matrix) __asm__("func_8003D9F8");
@@ -100,7 +100,9 @@ extern void func_8001B148(struct RotationMatrix *matrix,
 extern s32 func_800196C4(void);
 extern void func_800498F0(void *object);
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
-extern s32 func_8003C980(s32 message, void *object, void *arg2, void *arg3);
+extern s32 gHandleObjectEventMessages(s32 message, void *object, void *arg2, void *arg3) __asm__("func_8003C980");
+u8 gSpawnLightForEffect(struct Unk40734 *object, struct Vec3s32 *position) __asm__("func_80040734");
+
 
 /**
  * @brief Builds a light request from an effect object and allocates the
@@ -127,7 +129,7 @@ extern s32 func_8003C980(s32 message, void *object, void *arg2, void *arg3);
  * @par Callers
  * func_80040874.
  */
-u8 func_80040734(struct Unk40734 *object, struct Vec3s32 *position)
+u8 gSpawnLightForEffect(struct Unk40734 *object, struct Vec3s32 *position)
 {
     struct Unk40734Request request;
     struct Unk40734Light *light;

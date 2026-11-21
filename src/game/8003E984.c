@@ -114,9 +114,9 @@ extern void func_80025D6C(s32 *);
 extern void gApplyRadialContactDamage(s32 *, u16, s16, void *) __asm__("func_800410BC");
 extern struct Object *gCreateLightObject(struct Source *) __asm__("func_80040E60");
 extern struct Object *gCreateKind59Actor(struct Source *) __asm__("func_8007043C");
-extern struct Object *func_8006EB80(struct Source *);
+extern struct Object *gSpawnDomeMeshEffect(struct Source *) __asm__("func_8006EB80");
 extern struct Object *func_800447F0(struct Source *);
-extern struct Object *func_8004C920(struct Source *);
+extern struct Object *gCreateMeshFractureEntity(struct Source *) __asm__("func_8004C920");
 extern struct Object *gCreateEmitterObject(struct Source *) __asm__("func_800762B0");
 extern struct Object *func_80074024(struct Source *);
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
@@ -320,13 +320,13 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
         tmp = gCreateKind59Actor(source);
         break;
     case 0x5C:
-        tmp = func_8006EB80(source);
+        tmp = gSpawnDomeMeshEffect(source);
         break;
     case 0x5E:
         tmp = func_800447F0(source);
         break;
     case 0x5A:
-        tmp = func_8004C920(source);
+        tmp = gCreateMeshFractureEntity(source);
         break;
     case 0x57:
         tmp = gCreateEmitterObject(source);

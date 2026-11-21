@@ -52,7 +52,7 @@ extern u8 **gPlayerAvatarSprite __asm__("D_8009F348");
 extern void gDrawTargetMarker(void) __asm__("func_80047888");
 extern void gDrawThreeSlotStatusBar(Game *) __asm__("func_8006C080");
 extern void gEmitHudGouraudBar(s32, s32, s32, s32, s32, s32, s32) __asm__("func_80047BE8");
-extern void func_8005AB8C(Game *, void *, void *);
+extern void gDrawRadarBackgroundAndMarkers(Game *, void *, void *) __asm__("func_8005AB8C");
 extern void gDrawTargetMarkers(Game *) __asm__("func_8004EDC8");
 extern s32 func_80049340(u8 *);
 extern void gDrawAlignedString(u8 *, s32, s32, s32) __asm__("func_80049100");
@@ -198,7 +198,7 @@ void gDrawInGameHud(Game *game)
         gEmitHudGouraudBar(15, 206, intensity, 127 + ((ratio - (ratio << 6)) >> 16),
                      31 + ((ratio * 96) >> 16), (ratio * 64) >> 16, player->value64 < 2);
     }
-    func_8005AB8C(game, game->position, game->veca0);
+    gDrawRadarBackgroundAndMarkers(game, game->position, game->veca0);
     gDrawTargetMarkers(game);
     p2 = game->player;
     if (p2->valueae > 0) {

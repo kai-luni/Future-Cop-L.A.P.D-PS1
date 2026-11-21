@@ -81,6 +81,8 @@ struct Entity {
 
 extern void gEntityBaseHandler(s32 message, struct Entity *self, struct EntitySpawn *other, s32 arg3) __asm__("func_8002AD58");
 extern void func_80013BD8(struct ModelInstance *instance, void *model, s32 options);
+void gInitLinkedProjectile(struct Entity *self, struct EntitySpawn *other, s32 arg2) __asm__("func_80036940");
+
 
 /**
  * @brief Spawn setup of a linked entity: copies the template state, binds
@@ -109,7 +111,7 @@ extern void func_80013BD8(struct ModelInstance *instance, void *model, s32 optio
  * @par Callers
  * func_80036E6C.
  */
-void func_80036940(struct Entity *self, struct EntitySpawn *other, s32 arg2)
+void gInitLinkedProjectile(struct Entity *self, struct EntitySpawn *other, s32 arg2)
 {
     struct EntityData *data;
 

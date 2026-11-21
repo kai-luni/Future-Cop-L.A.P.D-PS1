@@ -116,8 +116,8 @@ extern s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
 extern s32 gTraceMapRay(s32 *a, s32 *b, s32 *c, s32 d, s32 e) __asm__("func_800684AC");
 extern void gApplyRadialContactDamage(void *a, s16 b, s32 c, struct Unk6B23C *d) __asm__("func_800410BC");
 extern void *gAllocPositionNode(Vec6B23C *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80073500");
-extern void func_8007377C(void *a0, void *a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13);
-extern void func_8006A524(struct Unk6B23C *a0, void *a1, Vec6B23C *a2, void *a3, void *a4);
+extern void gCreateRibbonBeam(void *a0, void *a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13) __asm__("func_8007377C");
+extern void gSpawnChainBeamArcs(struct Unk6B23C *a0, void *a1, Vec6B23C *a2, void *a3, void *a4) __asm__("func_8006A524");
 extern void gAttachNearPlayerEffect(struct Unk6B23C *a0, struct Unk6B23C *a1, struct Unk6B23C_C *a2, void *a3, s32 a4, void *a5) __asm__("func_8005BDE4");
 extern void func_8006F0E8(s32 a0, s32 a1, s32 a2, s32 a3, Vec6B23C *a4, Vec6B23C *a5);
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
@@ -391,17 +391,17 @@ skip_callback:
         if (s1 != 0) {
             node1 = gAllocPositionNode(&v58, 0, s1->unk48, 0);
             node2 = gAllocPositionNode(&v38, 0, (s1->unk4A & 8) ? 0 : s1->unk48, 0);
-            func_8007377C(node1, node2, s1->unk36, s1->unk38,
+            gCreateRibbonBeam(node1, node2, s1->unk36, s1->unk38,
                           s1->unk3B, s1->unk3C, s1->unk3D, s1->unk3E,
                           s1->unk40, s1->unk42, s1->unk44, 0, 0, 1);
         } else {
             node1 = gAllocPositionNode(&v58, 0, 0x18, 0);
             node2 = gAllocPositionNode(&v38, 0, 0, 0);
-            func_8007377C(node1, node2, 0x20, 1,
+            gCreateRibbonBeam(node1, node2, 0x20, 1,
                           0x7F, 0x7F, 0xFF, 0x2AA, 0x4000, -0x3000, 0, 0, 0, 1);
         }
         if (flag) {
-            func_8006A524(self, (s5 & 0xFF) ? 0 : c, &v38,
+            gSpawnChainBeamArcs(self, (s5 & 0xFF) ? 0 : c, &v38,
                           (void *)((u8 *)s3 + 0x0C), s1);
         }
     } else if (s3->type == 0x0A) {

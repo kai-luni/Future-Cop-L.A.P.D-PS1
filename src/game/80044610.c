@@ -29,8 +29,8 @@ struct Obj44610 {
     void *unkA8;
 };
 
-extern s32 func_8003C7B8(s32, struct Obj44610 *, s32, s32);
-extern s32 func_8003C980(s32, struct Obj44610 *, s32, s32);
+extern s32 gGuardEffectPoolMessage(s32, struct Obj44610 *, s32, s32) __asm__("func_8003C7B8");
+extern s32 gHandleObjectEventMessages(s32, struct Obj44610 *, s32, s32) __asm__("func_8003C980");
 extern void gBuildNodePlacement(void *, s32, struct Node44610 *, s32, s32 *, s16 *, s16 *) __asm__("func_8003DB70");
 extern void gSpawnEmitterParticles(struct Obj44610 *, void *, s32) __asm__("func_80042AF4");
 extern void gFreeEmitterObject(struct Obj44610 *) __asm__("func_800427E8");
@@ -59,7 +59,7 @@ s32 func_80044610(s32 message, struct Obj44610 *obj, s32 arg2, s32 arg3)
 {
     register struct Node44610 *parent __asm__("$2");
     register struct Node44610 *child __asm__("$6");
-    if (func_8003C7B8(message, obj, arg2, arg3)) {
+    if (gGuardEffectPoolMessage(message, obj, arg2, arg3)) {
         goto ret0;
     }
     if (message == 1) goto case1;
@@ -86,7 +86,7 @@ case10:
     gFreeEmitterObject(obj);
     return 0;
 dflt:
-    return func_8003C980(message, obj, arg2, arg3);
+    return gHandleObjectEventMessages(message, obj, arg2, arg3);
 ret0:
     return 0;
 }

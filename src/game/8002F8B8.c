@@ -20,6 +20,8 @@ struct Entity {
 
 extern struct Entity *gPlayerEntities[2] __asm__("D_8009FA58");
 extern struct Entity *gGameClock[2] __asm__("D_8009FA60");
+s32 gTestEntityFieldMatch(u8 arg0, s16 arg1, struct Entity *arg2, u8 arg3) __asm__("func_8002F8B8");
+
 
 /**
  * @brief Compares one entity field with a value and optionally checks the pair table.
@@ -53,7 +55,7 @@ extern struct Entity *gGameClock[2] __asm__("D_8009FA60");
  * @par Callers
  * Confirmed: func_8003015C, func_80030960. Likely: func_80030D3C, func_8003151C.
  */
-s32 func_8002F8B8(u8 arg0, s16 arg1, struct Entity *arg2, u8 arg3)
+s32 gTestEntityFieldMatch(u8 arg0, s16 arg1, struct Entity *arg2, u8 arg3)
 {
     s32 val;
     register struct Entity **p __asm__("$3");

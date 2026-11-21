@@ -4,10 +4,10 @@
 extern u8 gPresetIndexPerPort __asm__("D_8009FA98");
 extern u8 gPort2ControllerPresetIndex __asm__("D_8009FA99");
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
-extern u8 D_8009F8D9;
-extern u8 D_8009F900;
+extern u8 gPort2RumbleEnabled __asm__("D_8009F8D9");
+extern u8 gStagedControllerPresets __asm__("D_8009F900");
 extern u8 D_8009F901;
-extern u8 D_8009F902;
+extern u8 gControllerDiagramViews __asm__("D_8009F902");
 extern u8 D_8009F903;
 extern s8 gSnapshotResult __asm__("D_8009F904");
 extern u8 gPortCheckTable[] __asm__("D_800A374D");
@@ -39,11 +39,11 @@ void gSnapshotControllerPresets(void) __asm__("func_8007C088");
 
 void gSnapshotControllerPresets(void)
 {
-    D_8009F900 = gPresetIndexPerPort;
+    gStagedControllerPresets = gPresetIndexPerPort;
     D_8009F901 = gPort2ControllerPresetIndex;
     gRumbleEnabled = gIsPadRumbleEnabled(0);
-    D_8009F8D9 = gIsPadRumbleEnabled(1);
-    D_8009F902 = 0;
+    gPort2RumbleEnabled = gIsPadRumbleEnabled(1);
+    gControllerDiagramViews = 0;
     D_8009F903 = 0;
     if (gSnapshotResult == 1) {
         gPortCheckTable[0] = 3;

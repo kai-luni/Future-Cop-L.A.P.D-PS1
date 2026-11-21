@@ -77,6 +77,8 @@ extern Dev *gPlayerEntities[] __asm__("D_8009FA58");
 extern s16 gComputeEffectEndPoint(Node *node, Obj *obj, V3 *out, void *arg) __asm__("func_80070730");
 extern s32 func_80019668(void);
 extern s32 gNormalizeGetLength(V3 *v) __asm__("func_8001A314");
+void gBuildRibbonBeamStrip(Node *node, Entry *e, s32 mode) __asm__("func_80070E48");
+
 
 /**
  * @brief Rebuilds one strip of a ribbon/beam node: resolves both end points,
@@ -155,7 +157,7 @@ extern s32 gNormalizeGetLength(V3 *v) __asm__("func_8001A314");
  * func_8007377C (constructor, mode 1, once per strip) and func_800718B8
  * (mode 1, when the strip timers expire).
  */
-void func_80070E48(Node *node, Entry *e, s32 mode)
+void gBuildRibbonBeamStrip(Node *node, Entry *e, s32 mode)
 {
     Loc L;
     V3 acc1;

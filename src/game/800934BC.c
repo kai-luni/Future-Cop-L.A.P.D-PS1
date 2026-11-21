@@ -14,7 +14,7 @@ extern u8 gGpuDebugLevel[] __asm__("D_8009DDF2");
 extern u8 gGpuReverseFlag __asm__("D_8009DDF3");
 extern struct Gfx *gVramWriteCallback __asm__("D_8009DDE8");
 extern  void (*gLogPrintf)(void *, void *) __asm__("D_8009DDEC");
-extern char D_80012B30[];
+extern char gPutDispEnvTraceFormat[] __asm__("D_80012B30");
 extern struct Cache gDispEnvCache __asm__("D_8009DE5C");
 extern s16 D_8009DE64[];
 extern s32 gDispEnvCachedModeWord[] __asm__("D_8009DE6C");
@@ -79,7 +79,7 @@ struct Prim *gPutDispEnvCached(struct Prim *p)
     __asm__("" : "+r"(g));
     flags = 0x8000000;
     if (g[0] >= 2) {
-        gLogPrintf(D_80012B30, p);
+        gLogPrintf(gPutDispEnvTraceFormat, p);
     }
     cmd = 0x5000000;
     upper = p->u2;

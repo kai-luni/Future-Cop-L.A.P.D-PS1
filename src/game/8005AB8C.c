@@ -66,6 +66,8 @@ extern s32 func_80018580(s32 arg0, s32 arg1);
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void gWorldToMinimapCell(s32 *outX, s32 *outY, s32 arg2, s32 arg3) __asm__("func_800694C8");
 extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend) __asm__("func_8001C214");
+void gDrawRadarBackgroundAndMarkers(struct Unk5AB8C *input, s32 *arg1, s32 *arg2) __asm__("func_8005AB8C");
+
 
 /**
  * @brief Draws the eight directional markers of one object on the radar.
@@ -88,7 +90,7 @@ extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 b
  * @par Callers
  * The HUD/radar update of the entity renderer.
  */
-void func_8005AB8C(struct Unk5AB8C *input, s32 *arg1, s32 *arg2)
+void gDrawRadarBackgroundAndMarkers(struct Unk5AB8C *input, s32 *arg1, s32 *arg2)
 {
     struct Unk5AB8C *arg0;
     s32 head;

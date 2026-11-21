@@ -27,25 +27,25 @@ typedef struct {
 extern State *gGameSession __asm__("D_8009FA94");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 gPendingScreenState __asm__("D_8009F9A8");
-extern s32 D_8009F850;
-extern s32 D_8009F854;
-extern s32 D_8009F858;
-extern s32 D_8009F85C;
-extern s32 D_8009F860;
-extern s32 D_8009F864;
-extern s8 D_8009F868;
-extern s8 D_8009F869;
+extern s32 gSavedPlayer1PrimaryWeaponId __asm__("D_8009F850");
+extern s32 gSavedPlayer1HeavyWeaponId __asm__("D_8009F854");
+extern s32 gSavedPlayer1SpecialWeaponId __asm__("D_8009F858");
+extern s32 gSavedPlayer2PrimaryWeaponId __asm__("D_8009F85C");
+extern s32 gSavedPlayer2HeavyWeaponId __asm__("D_8009F860");
+extern s32 gSavedPlayer2SpecialWeaponId __asm__("D_8009F864");
+extern s8 gSavedPlayer1DifficultyLevel __asm__("D_8009F868");
+extern s8 gSavedPlayer2DifficultyLevel __asm__("D_8009F869");
 extern u8 gUploadRequestFlag __asm__("D_8009F3E5");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
 extern s32 gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern s32 gMoviePathPrefix __asm__("D_8009F3D0");
-extern u8 D_8009F3A0[];
+extern u8 gConcatStringsFormat[] __asm__("D_8009F3A0");
 extern u8 gFrontEndBootstrapModule[] __asm__("D_8009F3A8");
 extern u8 gMissionModuleSuffix[] __asm__("D_8009F3B0");
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern u8 gEaLogoName[] __asm__("D_80011E3C");
-extern u8 D_80011E48[];
+extern u8 gIntroMovieFilename[] __asm__("D_80011E48");
 
 extern void func_800965C8(void);
 extern u8 gInitRuntime(void) __asm__("func_80076EB0");
@@ -236,7 +236,7 @@ s32 gGameMain(void)
 
         gDrawImageResource(gEaLogoName, 4, 0, 0, s0, 0xF0);
 
-        func_8008CD30(local, D_8009F3A0, gMoviePathPrefix, (s32)D_80011E48);
+        func_8008CD30(local, gConcatStringsFormat, gMoviePathPrefix, (s32)gIntroMovieFilename);
         gDrawImageResource(local, 4, 0, 0x18, s0, 0xC0);
 
         func_8001B448();
@@ -251,25 +251,25 @@ s32 gGameMain(void)
                 continue;
             }
 
-            D_8009F850 = gGameSession->unk28;
-            D_8009F854 = gGameSession->unk2C;
-            D_8009F858 = gGameSession->unk30;
-            D_8009F85C = gGameSession->unk34;
-            D_8009F860 = gGameSession->unk38;
-            D_8009F864 = gGameSession->unk3C;
-            D_8009F868 = ((u8 *)gGameSession)[8];
-            D_8009F869 = ((u8 *)gGameSession)[0x98];
+            gSavedPlayer1PrimaryWeaponId = gGameSession->unk28;
+            gSavedPlayer1HeavyWeaponId = gGameSession->unk2C;
+            gSavedPlayer1SpecialWeaponId = gGameSession->unk30;
+            gSavedPlayer2PrimaryWeaponId = gGameSession->unk34;
+            gSavedPlayer2HeavyWeaponId = gGameSession->unk38;
+            gSavedPlayer2SpecialWeaponId = gGameSession->unk3C;
+            gSavedPlayer1DifficultyLevel = ((u8 *)gGameSession)[8];
+            gSavedPlayer2DifficultyLevel = ((u8 *)gGameSession)[0x98];
 
             gRunScreenModule(gFrontEndModuleName, 0);
 
-            gGameSession->unk28 = D_8009F850;
-            gGameSession->unk2C = D_8009F854;
-            gGameSession->unk30 = D_8009F858;
-            gGameSession->unk34 = D_8009F85C;
-            gGameSession->unk38 = D_8009F860;
-            gGameSession->unk3C = D_8009F864;
-            ((s32 *)gGameSession)[2] = D_8009F868;
-            ((s32 *)gGameSession)[0x26] = D_8009F869;
+            gGameSession->unk28 = gSavedPlayer1PrimaryWeaponId;
+            gGameSession->unk2C = gSavedPlayer1HeavyWeaponId;
+            gGameSession->unk30 = gSavedPlayer1SpecialWeaponId;
+            gGameSession->unk34 = gSavedPlayer2PrimaryWeaponId;
+            gGameSession->unk38 = gSavedPlayer2HeavyWeaponId;
+            gGameSession->unk3C = gSavedPlayer2SpecialWeaponId;
+            ((s32 *)gGameSession)[2] = gSavedPlayer1DifficultyLevel;
+            ((s32 *)gGameSession)[0x26] = gSavedPlayer2DifficultyLevel;
 
             if (gGameSession->unk4C == 10 &&
                 gGameSession->unk5C == s3 &&
@@ -305,12 +305,12 @@ s32 gGameMain(void)
             func_80077050();
 
             if (s0 != 0) {
-                func_8008CD30(local + 0x28, D_8009F3A0, gMoviePathPrefix, s0);
+                func_8008CD30(local + 0x28, gConcatStringsFormat, gMoviePathPrefix, s0);
                 gDrawImageResource(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
             }
 
             if (gMovieAbortFlag == 0 && *(s32 *)(local + 0x50) != 0) {
-                func_8008CD30(local + 0x28, D_8009F3A0, gMoviePathPrefix, *(s32 *)(local + 0x50));
+                func_8008CD30(local + 0x28, gConcatStringsFormat, gMoviePathPrefix, *(s32 *)(local + 0x50));
                 gDrawImageResource(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
             }
 

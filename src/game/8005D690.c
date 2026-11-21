@@ -10,7 +10,7 @@ typedef struct { s16 other, low, high; } Params;
 typedef struct { u8 pad[0xA]; s16 value, other, low, high; } Extra;
 extern Entry *gDomeEffectBlock[4] __asm__("D_800A22F0");
 extern s32 gFrameTime __asm__("D_8009FAA4");
-extern Entry *func_8005D3FC(Obj *, s32);
+extern Entry *gAllocDomeEffectBlock(Obj *, s32) __asm__("func_8005D3FC");
 
 /**
  * @brief Finds or allocates a 4-slot D_800A22F0 weapon-effect block for an owner and updates its active timing and parameters.
@@ -57,7 +57,7 @@ s32 gWeaponEffectUpdate(Obj *arg0, Params *arg1, Extra *arg2)
         }
     }
     if (!e) {
-        e = func_8005D3FC(obj, 0);
+        e = gAllocDomeEffectBlock(obj, 0);
         if (!e) return 0;
         e->low = params->low;
         e->high = params->high;

@@ -11,7 +11,7 @@ extern u8 *gPacketCursor[] __asm__("D_8009FA90");
 extern u8 *gPacketLimit[] __asm__("D_8009F9C0");
 extern u16 gTexpageTable[] __asm__("D_800A1940");
 extern u16 gLoadedFont __asm__("D_8009F768");
-extern s32 D_8009F76C;
+extern s32 gCurrentFontBankIndex __asm__("D_8009F76C");
 
 extern s32 gEmitFontGlyphSprite(s32 character, s32 x, s32 y, u16 color) __asm__("func_80048F98");
 void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
@@ -53,7 +53,7 @@ void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color)
     }
     packet->addr = 0;
     packet->len = 1;
-    packet->code = (gTexpageTable[D_8009F76C] & 0x9FF) | 0xE1000000;
+    packet->code = (gTexpageTable[gCurrentFontBankIndex] & 0x9FF) | 0xE1000000;
     while ((character = *text) != 0) {
         text++;
         if (character - 10 < 0x16) {

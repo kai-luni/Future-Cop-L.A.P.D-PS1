@@ -37,8 +37,8 @@ struct Unk3BObject {
 };
 
 extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
-extern void func_80069D68(void *arg0, s32 arg1, u32 arg2,
-                          struct Unk3BObject *arg3);
+extern void gInterpretEntityScript(void *arg0, s32 arg1, u32 arg2,
+                          struct Unk3BObject *arg3) __asm__("func_80069D68");
 s32 gApplyEntityBaseDamage(s32 message, struct Unk3BObject *object,
                   struct Unk2AA1CHit *hit) __asm__("func_8002AA1C");
 
@@ -126,7 +126,7 @@ s32 gApplyEntityBaseDamage(s32 message, struct Unk3BObject *object,
         }
 
         if (object->unk94 != 0) {
-            func_80069D68(object->unk94, object->unk1C < 0, source, object);
+            gInterpretEntityScript(object->unk94, object->unk1C < 0, source, object);
         }
     }
 

@@ -22,7 +22,7 @@ extern u8 *gFocusPositions[] __asm__("D_8009F9A0");
 extern void func_80057864(void);
 extern s32 gStepDemoInputPlayback(void) __asm__("func_80059DB8");
 extern void gStepPendingMessages(s32 elapsed) __asm__("func_8004DB74");
-extern void func_80063568(s32 arg);
+extern void gStepMapTileAnimations(s32 arg) __asm__("func_80063568");
 extern void gStepAnimations(s32 arg) __asm__("func_800136C8");
 extern void func_8004CC68(void);
 
@@ -109,7 +109,7 @@ void gStepGameplayFrameTime(void)
 
     gFrameTickBase = gFrameTime;
     gStepPendingMessages(gFrameDelta);
-    func_80063568(gFrameDelta);
+    gStepMapTileAnimations(gFrameDelta);
     gStepAnimations(gFrameDelta);
     func_8004CC68();
 }

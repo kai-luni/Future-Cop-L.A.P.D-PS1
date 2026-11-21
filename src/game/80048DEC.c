@@ -1,7 +1,7 @@
 // Categories: Graphics > Text > Font Upload
 #include "game/types.h"
 
-extern s32 D_8009F76C;
+extern s32 gCurrentFontBankIndex __asm__("D_8009F76C");
 extern s32 gFontBankCount __asm__("D_8009F364");
 extern u16 gTexBankVramY __asm__("D_8009F76A");
 
@@ -26,7 +26,7 @@ extern void gLoadFontAsset(s32 value) __asm__("func_80048BF8");
  */
 void func_80048DEC(void)
 {
-    if (D_8009F76C == 0 && gFontBankCount == 1) {
+    if (gCurrentFontBankIndex == 0 && gFontBankCount == 1) {
         gTexBankVramY = gFontBankCount;
         gLoadFontAsset(0);
     }

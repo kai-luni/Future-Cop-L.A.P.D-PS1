@@ -54,7 +54,7 @@ extern s32 gCommandListHead[] __asm__("D_800A8F90");
 extern void gApplyAttackCommands(Func80060238Obj *arg0, Func80060238Arg2 *arg1) __asm__("func_8005FFB8");
 extern s32 func_80019668(void);
 extern s32 gCheckTargetRangeAndCone(Func80060238Arg2 *arg0, Func80060238Obj18 *arg1, s32 arg2, s32 arg3) __asm__("func_8004E5F0");
-extern void func_80069D68(Func80060238Sub9C *arg0, s32 arg1, s32 arg2, Func80060238Arg2 *arg3);
+extern void gInterpretEntityScript(Func80060238Sub9C *arg0, s32 arg1, s32 arg2, Func80060238Arg2 *arg3) __asm__("func_80069D68");
 extern s32 gAcquireAttackTarget(Func80060238Obj *arg0, s32 arg1, Func80060238Arg2 *arg2) __asm__("func_800600E8");
 extern s32 gFireEntityWeapon(Func80060238Obj *arg0, Func80060238Arg2 *arg1, Func80060238Arg2 *arg2, s32 arg3) __asm__("func_8005F6E8");
 s32 gStepAttackScheduler(Func80060238Obj *arg0, s32 arg1, Func80060238Arg2 *arg2, Func80060238Arg2 *arg3, u8 arg4) __asm__("func_80060238");
@@ -259,7 +259,7 @@ L604B0:
     if (arg2->unk24 & 0x100000) {
         goto L60584;
     }
-    func_80069D68(arg2->unk9C, arg2->unk1C < 0, 0, arg2);
+    gInterpretEntityScript(arg2->unk9C, arg2->unk1C < 0, 0, arg2);
 
 L60584:
     if (arg0->unk18 == 0) {

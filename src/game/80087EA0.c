@@ -11,7 +11,7 @@ extern s32 gMovieAudioBlock __asm__("D_8009F4F0");
 extern s32 gMovieSpuBufferA __asm__("D_8009F4F4");
 extern s32 gMovieSpuBufferB __asm__("D_8009F4F8");
 extern s32 gMoviePrimaryVlcBuffer __asm__("D_8009F4FC");
-extern s32 D_8009F500;
+extern s32 gMovieSecondaryVlcBuffer __asm__("D_8009F500");
 extern s32 gMoviePadMask0 __asm__("D_8009F958");
 extern s32 gMoviePadMask1 __asm__("D_8009F95C");
 extern s32 gMovieStreamReserveUnitBytes __asm__("D_8009F960");
@@ -142,12 +142,12 @@ s32 gOpenVideoLayer(s32 arg0)
         goto fail;
     }
 
-    D_8009F500 = func_8008799C(0x600);
-    if (D_8009F500 == 0) {
+    gMovieSecondaryVlcBuffer = func_8008799C(0x600);
+    if (gMovieSecondaryVlcBuffer == 0) {
         goto fail;
     }
 
-    gBuildMovieVlcTables(gMoviePrimaryVlcBuffer, D_8009F500, 0);
+    gBuildMovieVlcTables(gMoviePrimaryVlcBuffer, gMovieSecondaryVlcBuffer, 0);
 
     if (arg0 & 8) {
         gMovieSetScaleMode(0);

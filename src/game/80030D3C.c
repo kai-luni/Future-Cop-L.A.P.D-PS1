@@ -8,7 +8,7 @@ struct Entity {
 };
 
 extern s32 gInitEntityGroundPair(void *, void *, s32) __asm__("func_80030AD4");
-extern u8 func_8002F8B8(u8, s16, void *, u8);
+extern u8 gTestEntityFieldMatch(u8, s16, void *, u8) __asm__("func_8002F8B8");
 extern s32 gWarpEntityToSelf(void *, void *, s32) __asm__("func_80030C60");
 extern s32 gEntityBaseHandler(s32, struct Entity *, void *, s32) __asm__("func_8002AD58");
 
@@ -43,7 +43,7 @@ s32 func_80030D3C(s32 message, struct Entity *self, void *data, s32 arg3)
     case 2:
         return gInitEntityGroundPair(self, data, arg3);
     case 10:
-        return func_8002F8B8(self->unkAD, self->unkAE, data, 0);
+        return gTestEntityFieldMatch(self->unkAD, self->unkAE, data, 0);
     case 11:
         return gWarpEntityToSelf(self, data, arg3);
     case 3:

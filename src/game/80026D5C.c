@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 gSavedStackPointer __asm__("D_8009FAD8");
-extern void func_80062FB4(void);
+extern void gUpdateViewCollisionGrid(void) __asm__("func_80062FB4");
 
 void gRunHudPassOnScratchpad(void) __asm__("func_80026D5C");
 

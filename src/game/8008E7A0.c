@@ -20,7 +20,7 @@ extern unsigned char gStatusBuffer8[] __asm__("D_800A3E50");
 extern char gCdDiskErrorMsg[] __asm__("D_800124B4");
 extern char gCdErrorFmtMsg[] __asm__("D_800124C0");
 extern char gCdUnknownIntrMsg[] __asm__("D_800124DC");
-extern char D_800124F0[];
+extern char gCdUnknownInterruptModeFormat[] __asm__("D_800124F0");
 extern void func_8008E000();
 extern void func_8008FF08();
 

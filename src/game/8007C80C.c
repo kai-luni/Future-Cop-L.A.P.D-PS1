@@ -3,9 +3,9 @@
 
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern s8 gSnapshotResult __asm__("D_8009F904");
-extern s8 D_8009F900[];
+extern s8 gStagedControllerPresets[] __asm__("D_8009F900");
 extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
-extern u8 D_8009F902[];
+extern u8 gControllerDiagramViews[] __asm__("D_8009F902");
 
 extern void gApplyControllerPreset(s32 port, s32 value) __asm__("func_8007BFCC");
 extern void gSetPadRumbleEnabled(s32 port, s32 enable) __asm__("func_8001EC04");
@@ -51,25 +51,25 @@ void gHandleControllerSetupAction(s32 action)
     if (port == gSnapshotResult) {
         switch (action) {
         case 3:
-            gApplyControllerPreset(port, D_8009F900[port]);
+            gApplyControllerPreset(port, gStagedControllerPresets[port]);
             gSetPadRumbleEnabled(port, gRumbleEnabled[port]);
             break;
         case 4:
         case 5:
             gPlayNonpositionalSoundEffect(0x46, 0);
-            D_8009F902[port] ^= 1;
+            gControllerDiagramViews[port] ^= 1;
             break;
         case 1:
-            D_8009F900[port]++;
-            if (D_8009F900[port] >= 4) {
-                D_8009F900[port] = 0;
+            gStagedControllerPresets[port]++;
+            if (gStagedControllerPresets[port] >= 4) {
+                gStagedControllerPresets[port] = 0;
             }
             gPlayNonpositionalSoundEffect(0x47, 0);
             break;
         case 2:
-            D_8009F900[port]--;
-            if (D_8009F900[port] < 0) {
-                D_8009F900[port] = 3;
+            gStagedControllerPresets[port]--;
+            if (gStagedControllerPresets[port] < 0) {
+                gStagedControllerPresets[port] = 3;
             }
             gPlayNonpositionalSoundEffect(0x47, 0);
             break;

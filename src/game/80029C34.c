@@ -37,12 +37,12 @@ extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern u8 gRegisterGuard __asm__("D_8009F69C");
 extern u8 *gResourceSubChunkPtr __asm__("D_8009F698");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern u8 D_800A0B90[];
+extern u8 gStreamStartPending[] __asm__("D_800A0B90");
 
 extern void gSetVolumeModeState(s32 mode, void *object) __asm__("func_80044FF8");
 extern s32 gIsAudioStreamReady(void) __asm__("func_80029BE4");
 extern void func_8002A49C(void);
-extern void func_8002A408(void);
+extern void gDrainCallbackSlotRing(void) __asm__("func_8002A408");
 extern void func_80029520(void);
 void gServiceStreamRequestQueue(void) __asm__("func_80029C34");
 
@@ -105,9 +105,9 @@ void gServiceStreamRequestQueue(void)
     }
 
     if (gCallGateFlag != 2 && gCallGateFlag != 0) {
-        D_800A0B90[0] = 1;
+        gStreamStartPending[0] = 1;
         func_8002A49C();
-        func_8002A408();
+        gDrainCallbackSlotRing();
         gCallGateFlag = 2;
     }
 

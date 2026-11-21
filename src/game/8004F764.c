@@ -73,6 +73,8 @@ extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
         } \
     } \
 } while (0)
+void gUpdatePathMoverSegment(struct StateF764 *state, struct ObjectF764 *obj, u8 update) __asm__("func_8004F764");
+
 
 /**
  * @brief Segment hand-off of the rail mover: selects the next path node, snaps or
@@ -150,7 +152,7 @@ extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
  * func_8005027C, two sites: the segment transition (update 0) and the branch taken
  * while no next node is known (update 1).
  */
-void func_8004F764(struct StateF764 *state, struct ObjectF764 *obj, u8 update)
+void gUpdatePathMoverSegment(struct StateF764 *state, struct ObjectF764 *obj, u8 update)
 {
     register struct StateF764 *s __asm__("$17");
     u8 *map;

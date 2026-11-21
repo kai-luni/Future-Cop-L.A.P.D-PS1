@@ -23,8 +23,8 @@ extern s32 func_80048E28(s32 index);
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern void func_8008CD30(u8 *dest, u8 *fmt, ...);
-extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
-                          s32 alignX, s32 alignY, s32 font);
+extern void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
+                          s32 alignX, s32 alignY, s32 font) __asm__("func_800788F0");
 
 /**
  * @brief Options-row widget: steps a per-player setting byte with wraparound
@@ -116,7 +116,7 @@ void gStepOptionsSetting(s32 mode, s32 x, s32 y, s32 color, s32 idx)
                 }
                 func_800492A0(s, &w, &h);
                 func_8008CD30(buf, gNumberFormatString, n);
-                func_800788F0(buf, x + w, y, color, 0, 1, 8, 2);
+                gDrawAlignedMultilineText(buf, x + w, y, color, 0, 1, 8, 2);
                 if (old != -1) {
                     func_80048E28(old);
                 }

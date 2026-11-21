@@ -8,14 +8,14 @@ struct Unk78210Mode {
     s32 split;
 };
 
-extern s32 D_800A35CC;
+extern s32 gPlayer1MenuAcceptPhase __asm__("D_800A35CC");
 extern struct Unk78210Mode *gGameSession[] __asm__("D_8009FA94");
 extern u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
 extern u8 gCrimeWarProgress __asm__("D_8009F458");
 extern u8 gLayoutPointerFlagB __asm__("D_8009F3E7");
 extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
-extern u8 D_800A377D[];
+extern u8 gAudioOptionsMenuMode[] __asm__("D_800A377D");
 extern u8 D_800A386D[];
 extern u8 gCwRulesMovieName[] __asm__("D_80012088");
 
@@ -53,12 +53,12 @@ void gSelectCrimeWar1P(s32 a0)
     if (a0 != 3) {
         return;
     }
-    if (D_800A35CC == 0) {
+    if (gPlayer1MenuAcceptPhase == 0) {
         mode = gGameSession[0];
         gSavedCrimeWarProgress = 0;
         mode->players = 1;
         mode->split = 0;
-        D_800A377D[0] = 1;
+        gAudioOptionsMenuMode[0] = 1;
         D_800A386D[0] = 1;
         __asm__ volatile("" ::: "memory");
         gCrimeWarProgress = 0;

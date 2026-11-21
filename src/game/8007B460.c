@@ -62,7 +62,7 @@ extern u8 gCwRulesMovieName[] __asm__("D_80012088");
 extern u8 gMultiBrfMovieName[] __asm__("D_80012094");
 
 extern void gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
-extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void gDrawAtlasSprite(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082B0C");
 extern s32 func_8008CD30(u8 *, u8 *, s32);
 extern void func_8008CCB0(u8 *, u8 *);
@@ -151,7 +151,7 @@ void gDrawProfileSlotList(s32 arg0)
         __asm__("" : "+r"(flag));
         c1 = ({ register s32 idx __asm__("$2") = gGameClock; register s32 base; __asm__("lui\t%0,0x800a\n\taddiu\t%0,%0,-3080" : "=r"(base) : "r"(idx)); *(u8 *)(((idx >> 4) & 7) + base); }) + 0x80;
         c2 = c1;
-        func_800788F0(0, 0x97, 0xB1, 0x10, e->unk10, 1, 8, 2);
+        gDrawAlignedMultilineText(0, 0x97, 0xB1, 0x10, e->unk10, 1, 8, 2);
         c3 = c1;
 
         if (i < ({ register s32 idx __asm__("$2") = gMissionListMode; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = gCrimeWarProgress; __asm__("" : "+r"(base)); *(s8 *)(idx + (s32)base); })) {
@@ -162,7 +162,7 @@ void gDrawProfileSlotList(s32 arg0)
             goto common;
         }
         if (gGameSession->unk5C == 1 && e->state != 0xA) {
-            func_800788F0(0, 0x97, 0xA9, 0xC, 0x5226, 1, 8, 2);
+            gDrawAlignedMultilineText(0, 0x97, 0xA9, 0xC, 0x5226, 1, 8, 2);
         }
 
     common:
@@ -177,7 +177,7 @@ void gDrawProfileSlotList(s32 arg0)
             }
         }
         if ((flag & 0xFF) != 0) {
-            func_800788F0(0, 0x97, 0xA9, 0x10, 0xC8A, 1, 8, 2);
+            gDrawAlignedMultilineText(0, 0x97, 0xA9, 0x10, 0xC8A, 1, 8, 2);
         }
         goto cont;
 
@@ -206,7 +206,7 @@ void gDrawProfileSlotList(s32 arg0)
                 m = 1;
             }
             { register u8 *src __asm__("$5") = gMenuValueFormat; __asm__("" : "+r"(src)); func_8008CD30(text, src, m); }
-            func_800788F0(text, e->unk1C, e->unk1E, 0x10, 0, 4, 0x20, 0);
+            gDrawAlignedMultilineText(text, e->unk1C, e->unk1E, 0x10, 0, 4, 0x20, 0);
             if (e->state == 0xA) {
                 len = e->unk12;
             }

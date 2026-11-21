@@ -10,6 +10,8 @@ extern u8 D_8009F4AC[];
 extern void gSetAudioPlaybackEnabled(u8 enable) __asm__("func_80047690");
 extern void gDrawImageResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) __asm__("func_80089D44");
 extern s32 func_8008CD30(u8 *buffer, u8 *format, s32 value, s32 arg3);
+void gPlayMovieClip(s32 arg0, s32 arg1) __asm__("func_80082DDC");
+
 
 /**
  * @brief Plays a named video resource in one of two layouts and accounts the
@@ -34,7 +36,7 @@ extern s32 func_8008CD30(u8 *buffer, u8 *format, s32 value, s32 arg3);
  * @par Callers
  * func_80079F54, func_80079FE0, func_8007A0A4.
  */
-void func_80082DDC(s32 arg0, s32 arg1)
+void gPlayMovieClip(s32 arg0, s32 arg1)
 {
     u8 buf[0x28];
     s32 start;

@@ -67,7 +67,7 @@ extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_
 extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, s32 blend) __asm__("func_8001C214");
 extern void gDrawOptionsSubPanel(struct Obj267C8 *obj, s32 slot, s32 arg2, s32 selection, s32 active) __asm__("func_800260B8");
 extern void gTranslatePadButtons(u32 *buttons, s32 slot) __asm__("func_800576A8");
-extern void func_8005AB8C(struct Obj267C8 *obj, void *arg1, void *arg2);
+extern void gDrawRadarBackgroundAndMarkers(struct Obj267C8 *obj, void *arg1, void *arg2) __asm__("func_8005AB8C");
 extern void gDrawMapView(struct Obj267C8 *obj, void *arg1) __asm__("func_8006680C");
 void gUpdateMapScreenView(struct Obj267C8 *obj, s32 slot, s32 active, s32 selection) __asm__("func_800267C8");
 
@@ -348,6 +348,6 @@ void gUpdateMapScreenView(struct Obj267C8 *obj, s32 slot, s32 active, s32 select
         }
     }
 
-    func_8005AB8C(obj, &obj->unk50, &obj->unkA0);
+    gDrawRadarBackgroundAndMarkers(obj, &obj->unk50, &obj->unkA0);
     gDrawMapView(obj, &state->unk304);
 }

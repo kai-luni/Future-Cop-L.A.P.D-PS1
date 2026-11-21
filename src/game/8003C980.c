@@ -35,6 +35,8 @@ struct Unk3C980Event {
     u8 unk07;
     s32 unk08;
 };
+s32 gHandleObjectEventMessages(s32 message, struct Unk3C980Object *object) __asm__("func_8003C980");
+
 
 /**
  * @brief Event-flag handler: arms a flag on messages 7/8 and fires the linked
@@ -64,7 +66,7 @@ struct Unk3C980Event {
  * func_80040874, func_80044610, func_8004C324, func_8006E814, func_8006FF44,
  * func_80073BBC.
  */
-s32 func_8003C980(s32 message, struct Unk3C980Object *object)
+s32 gHandleObjectEventMessages(s32 message, struct Unk3C980Object *object)
 {
     struct Unk3C980Handler *handler;
     struct Unk3C980Event event;

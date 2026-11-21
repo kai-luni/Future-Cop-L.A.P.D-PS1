@@ -9,11 +9,11 @@ extern void *gMovieAudioBlock __asm__("D_8009F4F0");
 extern void *gMovieSpuBufferA __asm__("D_8009F4F4");
 extern void *gMovieSpuBufferB __asm__("D_8009F4F8");
 extern void *gMoviePrimaryVlcBuffer __asm__("D_8009F4FC");
-extern void *D_8009F500;
+extern void *gMovieSecondaryVlcBuffer __asm__("D_8009F500");
 extern u8 gLayerOpenResult __asm__("D_8009F504");
 
 extern void gMovieStopAndRestoreCallbacks(void) __asm__("func_80085A24");
-extern void func_80085AC4(s32, s32);
+extern void gResetMovieFrameBuffers(s32, s32) __asm__("func_80085AC4");
 extern s32 func_800858E0(void);
 extern void gSelectFadeLayer(u8, u8) __asm__("func_8001C088");
 extern void gVSyncWait(s32) __asm__("func_80091270");
@@ -51,7 +51,7 @@ void gCloseVideoLayer(void)
     gMovieStopAndRestoreCallbacks();
 
     if (!(gMovieDisplayMode & 0x20)) {
-        func_80085AC4(1, 0);
+        gResetMovieFrameBuffers(1, 0);
         gSelectFadeLayer((u8)func_800858E0(), 0);
         gVSyncWait(0);
         func_8001BFE4();
@@ -74,8 +74,8 @@ void gCloseVideoLayer(void)
     if (gMovieSliceContextStorage != 0) {
         gMovieFreeDecodeBuffer(gMovieSliceContextStorage);
     }
-    if (D_8009F500 != 0) {
-        gMovieFreeDecodeBuffer(D_8009F500);
+    if (gMovieSecondaryVlcBuffer != 0) {
+        gMovieFreeDecodeBuffer(gMovieSecondaryVlcBuffer);
     }
     if (gMoviePrimaryVlcBuffer != 0) {
         gMovieFreeDecodeBuffer(gMoviePrimaryVlcBuffer);
@@ -91,6 +91,6 @@ void gCloseVideoLayer(void)
     gMovieSpuBufferA = 0;
     gMovieSpuBufferB = 0;
     gMoviePrimaryVlcBuffer = 0;
-    D_8009F500 = 0;
+    gMovieSecondaryVlcBuffer = 0;
     gLayerOpenResult = 0;
 }

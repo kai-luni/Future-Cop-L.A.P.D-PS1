@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
-extern s32 D_8009F6CC;
+extern s32 gVagmReadIndex __asm__("D_8009F6CC");
 extern u8 gVagmQueueDraining __asm__("D_8009F308");
 extern s32 gVagmRing[] __asm__("D_800A0C50");
 extern void gQueueStreamAssetRelease(s32 arg0, s32 arg1) __asm__("func_8002A31C");
@@ -29,16 +29,16 @@ void func_8002A49C(void)
     s32 temp;
 
     if (gCallGateFlag != 0) {
-        temp = gVagmRing[D_8009F6CC];
+        temp = gVagmRing[gVagmReadIndex];
         gVagmQueueDraining = 1;
         while (temp != 0) {
             gQueueStreamAssetRelease(temp, 0);
-            gVagmRing[D_8009F6CC] = 0;
-            D_8009F6CC = D_8009F6CC + 1;
-            if (D_8009F6CC >= 4) {
-                D_8009F6CC = 0;
+            gVagmRing[gVagmReadIndex] = 0;
+            gVagmReadIndex = gVagmReadIndex + 1;
+            if (gVagmReadIndex >= 4) {
+                gVagmReadIndex = 0;
             }
-            temp = gVagmRing[D_8009F6CC];
+            temp = gVagmRing[gVagmReadIndex];
         }
         gVagmQueueDraining = 0;
     }

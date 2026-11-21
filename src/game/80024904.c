@@ -15,7 +15,7 @@ extern void func_80019A64(void);
 extern void func_8001B2C8(s32, s32);
 extern void func_80029F50(void *);
 extern void func_8004783C(void);
-extern void func_80069B58(void);
+extern void gInitScriptVmState(void) __asm__("func_80069B58");
 extern void gInitFrontEndSubsystems(void) __asm__("func_800780DC");
 extern void func_8008CCB0(void *, s32);
 
@@ -61,7 +61,7 @@ void gLoadFrontEndModule(s32 arg)
     temp = gGlobalTick;
     gInitReciprocalTable();
     gSeedPrng(temp);
-    func_80069B58();
+    gInitScriptVmState();
     func_8001B2C8(0xC8, 0x200);
     func_8004783C();
     func_80029F50(gModuleNameBuffer);

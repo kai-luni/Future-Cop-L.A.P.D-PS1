@@ -110,7 +110,7 @@ extern struct Tgt *gSpawnMotionContext __asm__("D_8009F374");
 extern s32 gTraceMapRay(struct Vec3 *a, struct Vec3 *b, struct Vec3 *out, s32 c, s32 d) __asm__("func_800684AC");
 extern s32 func_80019FCC(struct Vec3 *v);
 extern s32 gSqrt12(s32 v) __asm__("func_80095900");
-extern void func_8005C184(struct Vec3 *v, s32 a, struct Target *t);
+extern void gSpawnBeamContactImpact(struct Vec3 *v, s32 a, struct Target *t) __asm__("func_8005C184");
 extern void gNormalizeVector(struct Vec3 *v) __asm__("func_8001A180");
 extern s32 gVectorDot(struct Vec3 *a, struct Vec3 *b) __asm__("func_8001AB00");
 extern u8 func_8005C2C8(struct Target *t, struct Cand *c);
@@ -250,7 +250,7 @@ void gSweepBeamSegments(struct Owner *arg0, struct Target *tgt)
                 }
                 head->pos = t.v;
                 head->next->flags |= 1;
-                func_8005C184(&t.v, head->radius << 4, tgt);
+                gSpawnBeamContactImpact(&t.v, head->radius << 4, tgt);
                 return;
             }
             p = owner->segs;
@@ -265,7 +265,7 @@ void gSweepBeamSegments(struct Owner *arg0, struct Target *tgt)
                 tail = p;
                 if (tail->next != 0) {
                     tail->next->flags |= 1;
-                    func_8005C184(&t.v, head->radius << 4, tgt);
+                    gSpawnBeamContactImpact(&t.v, head->radius << 4, tgt);
                 }
                 tail->pos = t.v;
             }
@@ -277,7 +277,7 @@ void gSweepBeamSegments(struct Owner *arg0, struct Target *tgt)
             } else {
                 head->pos = t.v;
             }
-            func_8005C184(&t.v, head->radius << 4, tgt);
+            gSpawnBeamContactImpact(&t.v, head->radius << 4, tgt);
         }
     }
     if (tgt->flags & 8) {

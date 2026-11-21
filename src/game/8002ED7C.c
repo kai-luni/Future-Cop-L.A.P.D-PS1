@@ -26,6 +26,8 @@ extern s32 gTickActor(struct Object *, void *) __asm__("func_8002E630");
 extern s32 func_8002ACB4(struct Object *, s32);
 extern void *func_800448D8(void *, s32, s32, u8);
 extern void gSpawnEntitySlotTypes(u8, struct Object *, s32, u16, s32) __asm__("func_8003B898");
+s32 gHandleType27EntityMessages(s32 message, struct Object *object, void *data) __asm__("func_8002ED7C");
+
 
 /**
  * @brief Message handler of object type 27: spawn, attack tick, frame draw
@@ -61,7 +63,7 @@ extern void gSpawnEntitySlotTypes(u8, struct Object *, s32, u16, s32) __asm__("f
  * No direct callers in the call graph. func_8002AE54 returns the address
  * for object type 27, so the dispatcher reaches it indirectly.
  */
-s32 func_8002ED7C(s32 message, struct Object *object, void *data)
+s32 gHandleType27EntityMessages(s32 message, struct Object *object, void *data)
 {
     switch (message) {
     case 1:

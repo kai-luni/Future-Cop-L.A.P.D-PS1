@@ -4,7 +4,7 @@
 extern u32 gStartupHeapBase __asm__("D_8009EA04");
 extern u32 gStartupHeapSizeBytes __asm__("D_8009EA08");
 extern u32 *gGameSession __asm__("D_8009FA94");
-extern u32 *D_8009FAD4;
+extern u32 *gScriptVmVars __asm__("D_8009FAD4");
 extern u32 *gVmCountdowns __asm__("D_8009F9A4");
 extern u32 *gOpcodeTable __asm__("D_8009F9F8");
 extern u8 gRuntimeCdFileSearchManager[] __asm__("D_8009B2DC");
@@ -84,7 +84,7 @@ s32 gInitRuntime(void)
         gGameSession[i] = 0;
     }
 
-    D_8009FAD4 = gHeapAllocRaw(0x190, 3);
+    gScriptVmVars = gHeapAllocRaw(0x190, 3);
     gVmCountdowns = gHeapAllocRaw(0x80, 3);
     gOpcodeTable = gHeapAllocRaw(0x80, 3);
 

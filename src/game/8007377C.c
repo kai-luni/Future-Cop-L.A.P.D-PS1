@@ -42,7 +42,12 @@ extern Node *gBeamNodeList __asm__("D_8009F38C");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void func_80070710(void *block);
-extern void func_80070E48(Node *node, Entry *entry, s32 mode);
+extern void gBuildRibbonBeamStrip(Node *node, Entry *entry, s32 mode) __asm__("func_80070E48");
+void *gCreateRibbonBeam(void *a0, void *a1, s32 a2, s32 count,
+                    u8 r, u8 g, u8 b, s16 divisor,
+                    u16 arg9, s16 arg10, s32 arg11, u8 arg12,
+                    u16 arg13, s32 flagsArg) __asm__("func_8007377C");
+
 
 /**
  * @brief Constructs a ribbon/beam scene node with count strips, a colour
@@ -83,7 +88,7 @@ extern void func_80070E48(Node *node, Entry *entry, s32 mode);
  * func_8005B3D4, func_8005D060, func_8005D8F4, func_8005F018, func_8006A524,
  * gBeamPartUpdate, func_80073BBC.
  */
-void *func_8007377C(void *a0, void *a1, s32 a2, s32 count,
+void *gCreateRibbonBeam(void *a0, void *a1, s32 a2, s32 count,
                     u8 r, u8 g, u8 b, s16 divisor,
                     u16 arg9, s16 arg10, s32 arg11, u8 arg12,
                     u16 arg13, s32 flagsArg)
@@ -179,7 +184,7 @@ void *func_8007377C(void *a0, void *a1, s32 a2, s32 count,
 
     node->field18 = node->field28;
     for (i = 0; i < node->count; i++) {
-        func_80070E48(node, &node->entries[i], 1);
+        gBuildRibbonBeamStrip(node, &node->entries[i], 1);
     }
 
     node->next = gBeamNodeList;

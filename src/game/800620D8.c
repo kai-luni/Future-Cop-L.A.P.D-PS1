@@ -8,6 +8,8 @@ struct Entry { int id; Object *object; };
 struct Bucket { unsigned char count; char pad[3]; struct Entry entries[8]; };
 extern struct Bucket gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
 extern int gTestPartPairHit(Coord *, Coord *) __asm__("func_80061CAC");
+void gTestEntityPairCollision(Object *a, Object *b, unsigned int flags) __asm__("func_800620D8");
+
 
 /**
  *  @brief Tests an object pair for proximity and possible collision.
@@ -30,7 +32,7 @@ extern int gTestPartPairHit(Coord *, Coord *) __asm__("func_80061CAC");
  *  @par Callers
  *  Confirmed: func_800623FC, func_80062504.
  */
-void func_800620D8(Object *a, Object *b, unsigned int flags)
+void gTestEntityPairCollision(Object *a, Object *b, unsigned int flags)
 {
     register Coord *ca __asm__("$9") = &a->coord;
     register Coord *cb __asm__("$10") = &b->coord;

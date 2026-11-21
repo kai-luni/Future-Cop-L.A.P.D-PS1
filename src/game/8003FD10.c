@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern void gSpawnTypeAtOwner(void *object, u8 kind, s32 arg2, s32 arg3, s32 arg4) __asm__("func_800402DC");
-extern void func_8003FB90(void *object, u8 kind);
+extern void gRetireEntitiesByOwnerAndKind(void *object, u8 kind) __asm__("func_8003FB90");
 void gDispatchSpawnCommand(s32 message, void *object, s32 kind) __asm__("func_8003FD10");
 
 
@@ -38,7 +38,7 @@ void gDispatchSpawnCommand(s32 message, void *object, s32 kind)
         gSpawnTypeAtOwner(object, kind, 0, 0, 0);
         break;
     case 0x65:
-        func_8003FB90(object, kind);
+        gRetireEntitiesByOwnerAndKind(object, kind);
         break;
     }
 }

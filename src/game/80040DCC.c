@@ -5,7 +5,7 @@ struct Unk40DCC {
     s32 words[0x16];
 };
 
-extern u8 func_8003C2A4(struct Unk40DCC *data);
+extern u8 gQueueDeferredGroundSpawn(struct Unk40DCC *data) __asm__("func_8003C2A4");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gInstallSpawnRecord(struct Unk40DCC *data) __asm__("func_8003C404");
 void gRegisterActorDef5D(struct Unk40DCC *source) __asm__("func_80040DCC");
@@ -50,7 +50,7 @@ void gRegisterActorDef5D(struct Unk40DCC *source)
 {
     struct Unk40DCC *copy;
 
-    if (func_8003C2A4(source) != 0) {
+    if (gQueueDeferredGroundSpawn(source) != 0) {
         return;
     }
     copy = gAllocMemory(0x58, 2);

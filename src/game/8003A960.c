@@ -8,6 +8,8 @@ struct Data { s32 count; struct Item items[1]; };
 struct Range { u8 pad[3]; u8 start, count; u8 rest[15]; };
 struct Info { u8 pad[0x14]; struct Range *ranges; u8 pad2[12]; struct Data *data; };
 struct State { u8 pad[0xa8]; u32 bits[1]; };
+void gClearDebrisPartBitsOutsideRange(struct State *self, struct Info *info, s32 index) __asm__("func_8003A960");
+
 
 /**
  *  @brief Clears enabled item bits for items outside a selected range.
@@ -29,7 +31,7 @@ struct State { u8 pad[0xa8]; u32 bits[1]; };
  *  @par Callers
  *  Confirmed: func_8003B144.
  */
-void func_8003A960(struct State *self, struct Info *info, s32 index)
+void gClearDebrisPartBitsOutsideRange(struct State *self, struct Info *info, s32 index)
 {
     register s32 offset __asm__("$2") = index * 20;
     register struct Range *range __asm__("$3");

@@ -10,6 +10,8 @@ extern u32 gGpuPacketArrayAlt[] __asm__("D_800A62A8");
 extern u32 gGpuPacketArray[] __asm__("D_800A6280");
 extern u32 func_800949E8(u32);
 extern void func_800949A0(u32);
+s32 gSubmitGpuRectangleFill(u16 *arg0, u32 arg1) __asm__("func_8009423C");
+
 
 /**
  *  @brief Builds and submits a GPU rectangle fill command.
@@ -32,7 +34,7 @@ extern void func_800949A0(u32);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-s32 func_8009423C(u16 *arg0, u32 arg1)
+s32 gSubmitGpuRectangleFill(u16 *arg0, u32 arg1)
 {
     register u16 *rect __asm__("$8") = arg0;
     register u32 color __asm__("$9") = arg1;

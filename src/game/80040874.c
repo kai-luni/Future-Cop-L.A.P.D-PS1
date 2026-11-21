@@ -12,12 +12,12 @@ struct Obj {
     s16 field7a; s16 field7c;
 };
 extern s32 gLightObjectCount __asm__("D_8009F318");
-extern s32 func_8003C7B8(s32, struct Obj *, s32, s32);
-extern s32 func_8003C980(s32, struct Obj *, s32, s32);
+extern s32 gGuardEffectPoolMessage(s32, struct Obj *, s32, s32) __asm__("func_8003C7B8");
+extern s32 gHandleObjectEventMessages(s32, struct Obj *, s32, s32) __asm__("func_8003C980");
 extern void *gResolveNodeTransform(void *, u16, s8, s32, struct Parent *, void *) __asm__("func_8003D9F8");
 extern void func_8001B148(void *, void *, void *, s32);
 extern s32 func_800196C4(void);
-extern u8 func_80040734(struct Obj *, void *);
+extern u8 gSpawnLightForEffect(struct Obj *, void *) __asm__("func_80040734");
 extern void func_800498F0(void *);
 extern void gFreeBlock(struct Obj *) __asm__("func_800181D4");
 s32 gHandleLightObjectMsg(s32 message, struct Obj *obj, s32 arg2, s32 arg3) __asm__("func_80040874");
@@ -71,7 +71,7 @@ s32 gHandleLightObjectMsg(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
     struct Parent *parent;
     void *child;
     char *matrix;
-    if (func_8003C7B8(message, obj, arg2, arg3)) goto ret0;
+    if (gGuardEffectPoolMessage(message, obj, arg2, arg3)) goto ret0;
     if (message == 1) goto ret0;
     if (message == 0) goto case0;
     if (message == 10) goto case10;
@@ -84,7 +84,7 @@ case0:
     if (obj->flags & 4) func_8001B148(matrix, obj->point, obj->point, 1);
     if (obj->field7a < 0) obj->field7a = ((func_800196C4() & 0xfff) * -obj->field7a) >> 12;
     if (obj->field7c < 0) obj->field7c = ((func_800196C4() & 0xfff) * -obj->field7c) >> 12;
-    return func_80040734(obj, matrix + 0x24);
+    return gSpawnLightForEffect(obj, matrix + 0x24);
 case10:
     gLightObjectCount--;
     if (obj->field6c) {
@@ -94,7 +94,7 @@ case10:
     gFreeBlock(obj);
     goto ret0;
 dflt:
-    return func_8003C980(message, obj, arg2, arg3);
+    return gHandleObjectEventMessages(message, obj, arg2, arg3);
 ret0:
     return 0;
 }

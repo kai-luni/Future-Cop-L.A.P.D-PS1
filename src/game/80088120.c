@@ -38,7 +38,7 @@ extern void func_800858F4(s32 value);
 extern void gSetMoviePresentFlag(s32 value) __asm__("func_80085900");
 extern void gVSyncWait(s32 arg0) __asm__("func_80091270");
 extern void gMoviePresentFrame(void) __asm__("func_80085914");
-extern void func_80085AC4(u32 arg0, u32 arg1);
+extern void gResetMovieFrameBuffers(u32 arg0, u32 arg1) __asm__("func_80085AC4");
 extern void gMovieAudioClockDisable(void) __asm__("func_80086F30");
 extern s32 gMovieStreamReaderInit(void *arg0, void (*callback)(void), Params88120 *params, s32 arg3, s32 arg4) __asm__("func_80089700");
 extern s32 gInitMovieAudio(void *arg0, s32 arg1, void *arg2, s32 arg3, void *arg4, s32 arg5, s32 arg6) __asm__("func_80087824");
@@ -226,7 +226,7 @@ u8 gPlayVideoFile(s32 arg0, s32 arg1, s32 arg2)
         func_80092C8C(0);
     }
 
-    func_80085AC4(0, 1);
+    gResetMovieFrameBuffers(0, 1);
     if (gMovieStreamReaderInit(gMovieStreamBuffer, gMovieAudioClockDisable, &params, 1, 0x800) != 0) {
         if (gInitMovieAudio(gMovieAudioBlock, 0x400000, gMovieSpuBufferA, 0x800000, gMovieSpuBufferB, D_8009F964, 1) != 0) {
             gMovieSetAudioMode(0);

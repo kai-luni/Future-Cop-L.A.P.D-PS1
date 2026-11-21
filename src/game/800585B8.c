@@ -38,6 +38,8 @@ struct Obj58 {
 };
 
 extern void gRemoveEntityCommand(struct Obj58 *self, s32 index) __asm__("func_8002A5B4");
+void gDispatchQueuedPlayerCommands(struct Obj58 *self) __asm__("func_800585B8");
+
 
 /**
  * @brief Executes and consumes player command opcodes 0x5F..0x62 from the 4-slot queue.
@@ -63,7 +65,7 @@ extern void gRemoveEntityCommand(struct Obj58 *self, s32 index) __asm__("func_80
  * @par Callers
  * Confirmed: func_800588D4 (0x80058924, player entity tick when self->unk0C != 0).
  */
-void func_800585B8(struct Obj58 *self)
+void gDispatchQueuedPlayerCommands(struct Obj58 *self)
 {
     s32 i;
     s32 op;

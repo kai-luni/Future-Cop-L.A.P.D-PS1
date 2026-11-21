@@ -132,7 +132,7 @@ extern void gSpawnEntitySlotTypes(u8 arg0, struct Obj35B7C *self, s32 arg2, s32 
 extern void *gFindTargetEntity(struct Obj35B7C *target, u8 arg1, s16 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) __asm__("func_8004E80C");
 extern void *gSpawnDirectShot(struct SpawnInfo35B7C *info, struct Model *model, s32 *vec80, s32 *vec70, struct Obj35B7C *unkC8, struct Obj35B7C *s1p, s32 unk24, s32 arg7, s32 arg8, s32 arg9, s32 arg10, u32 unkE4) __asm__("func_8005E47C");
 extern void *gFindNearestOpposingEntity(struct Obj35B7C *target, struct Obj35B7C *arg1, s32 arg2, s32 arg3) __asm__("func_8006C224");
-extern void func_80044B34(struct Obj35B7C *self, void *unkE8, s32 delta, s32 arg3);
+extern void gAdvanceAnimTrack(struct Obj35B7C *self, void *unkE8, s32 delta, s32 arg3) __asm__("func_80044B34");
 
 /**
  * @brief Per-frame update of a mobile entity: advances its animation, acquires
@@ -341,7 +341,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
             temp = 0;
             break;
         }
-        func_80044B34(self, self->unkE8, temp, 0);
+        gAdvanceAnimTrack(self, self->unkE8, temp, 0);
         gSetModelFrame(&self->mi, self->unkF4);
     }
 

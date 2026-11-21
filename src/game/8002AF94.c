@@ -25,7 +25,7 @@ typedef struct {
     Def8002AF94 *def;
 } S08002AF94;
 
-extern void func_800382B4(void *arg);
+extern void gHandleType5Entity(void *arg) __asm__("func_800382B4");
 extern void func_800448D8(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern u32 func_80019668(void);
 extern void *jtbl_80010FAC[8];
@@ -65,7 +65,7 @@ void gSetupType26Entity(void *a0, u8 *s1, S08002AF94 *s0)
     s32 d;
     u8 field4e;
 
-    func_800382B4(a0);
+    gHandleType5Entity(a0);
     *(u8 *)(s1 + 0x15E) = 0;
     func_800448D8(s1 + 0xC8, 0, 1, 0);
 

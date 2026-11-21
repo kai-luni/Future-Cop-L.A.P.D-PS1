@@ -40,7 +40,7 @@ struct Entity {
     struct Unk31C74Ptr *ptrAC;
 };
 
-extern s32 func_80069D68(s32 script, s32 arg1, s32 arg2, struct Entity *entity);
+extern s32 gInterpretEntityScript(s32 script, s32 arg1, s32 arg2, struct Entity *entity) __asm__("func_80069D68");
 extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
 s32 gTestMapZoneTrigger(struct Unk31C74Node *node, struct Entity *other) __asm__("func_80031C74");
 
@@ -104,7 +104,7 @@ s32 gTestMapZoneTrigger(struct Unk31C74Node *node, struct Entity *other)
     }
 
     if (node->script != 0) {
-        func_80069D68(node->script, 0, other->unk14 & 0x7FFF, 0);
+        gInterpretEntityScript(node->script, 0, other->unk14 & 0x7FFF, 0);
     }
 
     if (other->unk16 != 1 && (node->flags & 1)) {

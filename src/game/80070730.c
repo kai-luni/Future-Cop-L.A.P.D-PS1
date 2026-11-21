@@ -49,7 +49,7 @@ extern void gGteLoadRotation(void *arg) __asm__("func_80010820");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
 extern s32 gApproxVectorLength(s32 *vector) __asm__("func_80019F54");
-extern void func_8003D0F0(Base70730 *base, s32 type, s32 flags, Vec70730 *out);
+extern void gResolveModelEffectPoint(Base70730 *base, s32 type, s32 flags, Vec70730 *out) __asm__("func_8003D0F0");
 extern s32 gQuerySurfaceHeight(Vec70730 *vec, s32 adjust) __asm__("func_80067684");
 s16 gComputeEffectEndPoint(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg) __asm__("func_80070730");
 
@@ -202,7 +202,7 @@ s16 gComputeEffectEndPoint(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec7
         m = ((s32)(s16)x) >> 31;
         speed = (x + m) ^ m;
     } else {
-        func_8003D0F0(obj->base, obj->type0C, obj->flags.b & 0x10, out);
+        gResolveModelEffectPoint(obj->base, obj->type0C, obj->flags.b & 0x10, out);
         target = out;
 
         if (mode == 0) {

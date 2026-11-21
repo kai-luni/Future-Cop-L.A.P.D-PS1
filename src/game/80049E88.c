@@ -1,7 +1,7 @@
 // Categories: Graphics > Lighting | Graphics > Effects
 #include "game/types.h"
 
-extern s32 func_80049C38(u8 *data, s32 arg1);
+extern s32 gSpawnDynamicLightNode(u8 *data, s32 arg1) __asm__("func_80049C38");
 
 /**
  * @brief Boolean wrapper around func_80049C38 that spawns a map light node and returns 1 on success or 0 on failure.
@@ -27,5 +27,5 @@ extern s32 func_80049C38(u8 *data, s32 arg1);
  */
 s32 func_80049E88(u8 *data, s32 arg1)
 {
-    return func_80049C38(data, arg1) != 0;
+    return gSpawnDynamicLightNode(data, arg1) != 0;
 }

@@ -35,6 +35,8 @@ extern struct UnkFB90Global *gDeferredSpawnList __asm__("D_8009F30C");
 
 extern void func_8003CA80(void *object);
 extern void gFreeBlock(void *object) __asm__("func_800181D4");
+void gRetireEntitiesByOwnerAndKind(void *object_, s32 kind_) __asm__("func_8003FB90");
+
 
 /**
  * @brief Retires active D_800A1070 nodes and frees deferred D_8009F30C entries matching an owner and kind.
@@ -59,7 +61,7 @@ extern void gFreeBlock(void *object) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_8003FD10 (0x8003FD54 in asm/us/main.s, opcode 0x65) / Likely: none / Unknown: none.
  */
-void func_8003FB90(void *object_, s32 kind_)
+void gRetireEntitiesByOwnerAndKind(void *object_, s32 kind_)
 {
     register void *object __asm__("$19");
     register s32 kind __asm__("$21");

@@ -22,7 +22,7 @@ extern u8 gMenuHighlightColorCycle[] __asm__("D_8009B3D4");
 extern s8 gScreenDescriptor[] __asm__("D_800A3838");
 
 extern void gDrawProfileSlotList(s32) __asm__("func_8007B460");
-extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void func_800493C0(u32, u8, u8, u8);
 extern s32 func_8008CD30(u8 *, u8 *, s32);
 extern void func_80078B34(s32, s32, s32);
@@ -99,7 +99,7 @@ void gDrawGameHubMenu(s32 arg0)
     { register s32 idx __asm__("$2") = gActivePlayerIndex; register s8 *base __asm__("$3"); __asm__("" : "+r"(idx)); base = gPlayerMenuDepth_arr; __asm__("" : "+r"(base)); v = *(s8 *)(idx + (s32)base); }
     if (v == 2) {
         y = 0x52;
-        func_800788F0(0, 0x57, 0x3B, 0x10, 0xC80, 4, 8, v);
+        gDrawAlignedMultilineText(0, 0x57, 0x3B, 0x10, 0xC80, 4, 8, v);
         i = 0;
         if (gLineCount + 1 > 0) {
             do {
@@ -112,7 +112,7 @@ void gDrawGameHubMenu(s32 arg0)
                     c = 0xF;
                 }
                 { register u8 *t __asm__("$4") = text; register u8 *src __asm__("$5") = gMenuValueFormat; __asm__("" : "+r"(t)); __asm__("" : "+r"(src)); func_8008CD30(t, src, ++i); }
-                func_800788F0(text, 0x57, y, c, 0, 4, 8, 2);
+                gDrawAlignedMultilineText(text, 0x57, y, c, 0, 4, 8, 2);
                 y += 0xA;
             } while (i < gLineCount + 1);
         }

@@ -13,6 +13,8 @@ extern s32 gStripStepWidth __asm__("D_8009F4C8");
 
 #define K(o, e, tp, i) o = (e); if ((o & 7) >= (tp)[i]) o += 8; o = gByteTable[o];
 #define PACK (a | ((b << 5) | (c << 10)))
+void gConvertMovieStripToRgb555(u32 *src, u32 *dst, s16 *arg) __asm__("func_800847E0");
+
 
 /**
  * @brief Converts one row of 24-bit RGB pixels into 15-bit RGB555 with a
@@ -66,7 +68,7 @@ extern s32 gStripStepWidth __asm__("D_8009F4C8");
  * @par Callers
  * func_80085074 only, the frame-complete callback of the video decoder.
  */
-void func_800847E0(u32 *src, u32 *dst, s16 *arg)
+void gConvertMovieStripToRgb555(u32 *src, u32 *dst, s16 *arg)
 {
     u8 *th;
     u8 *end;

@@ -1,7 +1,7 @@
 // Categories: Gameplay > Spawning | Game Engine > Object Pool
 #include "game/types.h"
 
-extern void func_800382B4(s32 arg0);
+extern void gHandleType5Entity(s32 arg0) __asm__("func_800382B4");
 extern void gInitAttackSchedulerSlot(u8 *in, u8 *out) __asm__("func_80060668");
 extern u8 *func_80039418(u8 *object, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6);
 s32 gInitType28Entity(s32 arg0, u8 *arg1, u8 *arg2) __asm__("func_800397AC");
@@ -50,7 +50,7 @@ s32 gInitType28Entity(s32 arg0, u8 *arg1, u8 *arg2)
     s32 step;
     u8 *result;
 
-    func_800382B4(2);
+    gHandleType5Entity(2);
     i = 0;
     out = arg1;
     offset = i;

@@ -22,6 +22,8 @@ typedef struct {
     s16 x;
     s16 y;
 } Hdr;
+int gReadGpuVramRectDma(Hdr *arg0, u32 *out) __asm__("func_800946A8");
+
 
 /**
  *  @brief Starts a GPU image readback into an output buffer.
@@ -44,7 +46,7 @@ typedef struct {
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-int func_800946A8(Hdr *arg0, u32 *out)
+int gReadGpuVramRectDma(Hdr *arg0, u32 *out)
 {
     register Hdr *p __asm__("$17");
     register int n __asm__("$3");

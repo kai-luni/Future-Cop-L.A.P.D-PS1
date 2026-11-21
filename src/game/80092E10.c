@@ -2,10 +2,10 @@
 typedef unsigned int u32;
 typedef struct { int pad[2]; void (*fn)(void *, void *, int, u32); void *ctx; } Device;
 extern Device *gVramWriteCallback __asm__("D_8009DDE8");
-extern char D_80012A7C[];
+extern char gClearImageDebugName[] __asm__("D_80012A7C");
 void gClearImage(void *arg0, int arg1, int arg2, int arg3) __asm__("func_80092E10");
 
-extern void func_80092CF4(char *, void *);
+extern void gValidateGpuRectDebug(char *, void *) __asm__("func_80092CF4");
 /**
  * @brief Builds and sends a four-component data block to the GPU library.
  *
@@ -36,7 +36,7 @@ void gClearImage(void *arg0, int arg1, int arg2, int arg3)
     register int c __asm__("$17");
     register int d __asm__("$16");
     register void *a5 __asm__("$5");
-    register char *fmt __asm__("$4") = D_80012A7C;
+    register char *fmt __asm__("$4") = gClearImageDebugName;
     __asm__("" : "+r"(a), "+r"(fmt));
     b = arg1;
     a5 = a;
@@ -44,7 +44,7 @@ void gClearImage(void *arg0, int arg1, int arg2, int arg3)
     c = arg2;
     __asm__("" : "+r"(c));
     d = arg3;
-    func_80092CF4(fmt, a5);
+    gValidateGpuRectDebug(fmt, a5);
     a5 = a;
     __asm__("" : "+r"(a5));
     d = (d & 255) << 16;

@@ -78,9 +78,11 @@ extern s32 gEntityBaseHandler(s32 message, struct Unk2D664Obj *object, void *dat
                          s32 arg3) __asm__("func_8002AD58");
 extern void gInitObjectFromDef(struct Unk2D664Obj *obj, void *data, s32 arg2) __asm__("func_8002C584");
 extern s32 gUpdatePropTick(struct Unk2D664Obj *obj, void *data) __asm__("func_8002CC30");
-extern void func_8002D1A0(struct Unk2D664Obj *obj, void *data);
+extern void gTryCaptureObjective(struct Unk2D664Obj *obj, void *data) __asm__("func_8002D1A0");
 extern void func_80063194(s32 key);
 extern struct Unk2D664Entity *gFindUnitById(s32 id) __asm__("func_8004D664");
+s32 gHandleLinkedPropEntity(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3) __asm__("func_8002D664");
+
 
 /**
  * @brief Message dispatcher for multi-part/objective entity classes (6, 8, 30, 33, 36).
@@ -107,7 +109,7 @@ extern struct Unk2D664Entity *gFindUnitById(s32 id) __asm__("func_8004D664");
  * @par Callers
  * Confirmed: func_8002DEA8 (0x8002DF60, messages 11/14 forwarding to child unkB4). Likely: indirect dispatch via handler returned by func_8002AE54 (0x8002AEBC) for types 6, 8, 30, 33, 36.
  */
-s32 func_8002D664(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
+s32 gHandleLinkedPropEntity(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
 {
     struct Unk2D664State *p;
     struct Unk2D664Entity *found;
@@ -128,7 +130,7 @@ s32 func_8002D664(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
         return gUpdatePropTick(obj, arg2);
     case 10:
         if (obj->unk16 == 0x24) {
-            func_8002D1A0(obj, arg2);
+            gTryCaptureObjective(obj, arg2);
         }
         ret = 0;
         if (obj->unk104 != arg2) {

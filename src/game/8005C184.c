@@ -50,6 +50,8 @@ extern struct Unk5C184Kind *gSpawnMotionContext __asm__("D_8009F374");
 extern s32 gGetEntitySpawnBank(struct Unk5C184Kind *object) __asm__("func_8003BF50");
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, struct Unk5C184Msg *msg, s32 row,
                          s32 arg4) __asm__("func_800402DC");
+void gSpawnBeamContactImpact(struct Unk5C184Vec *arg0, void *arg1, struct Unk5C184Node *node) __asm__("func_8005C184");
+
 
 /**
  * @brief Rate-limits and spawns a contact impact object via func_800402DC, tagging the result by owner kind and team byte.
@@ -75,7 +77,7 @@ extern s32 gSpawnTypeAtOwner(void *owner, u8 column, struct Unk5C184Msg *msg, s3
  * @par Callers
  * Confirmed: func_8005C344 (0x8005C4EC, 0x8005C55C, 0x8005C5F0 on segment raycast hits) / Likely: none / Unknown: none.
  */
-void func_8005C184(struct Unk5C184Vec *arg0, void *arg1, struct Unk5C184Node *node)
+void gSpawnBeamContactImpact(struct Unk5C184Vec *arg0, void *arg1, struct Unk5C184Node *node)
 {
     struct Unk5C184Msg msg;
     struct Unk5C184Res *res;

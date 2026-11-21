@@ -20,8 +20,8 @@ extern struct Unk8009FA94 *gGameSession __asm__("D_8009FA94");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern volatile s32 gGameClock __asm__("D_8009FA60");
 
-extern void func_800788F0(u8 *text, s32 x, s32 y, s32 color, s32 textId,
-                          s32 alignX, s32 alignY, s32 font);
+extern void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
+                          s32 alignX, s32 alignY, s32 font) __asm__("func_800788F0");
 extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
 
 /**
@@ -86,7 +86,7 @@ void gDrawMenuCommandsRow(s32 arg0)
         struct Unk8009FA94 *g = gGameSession;
         s32 y = (g->unk0C == 2) ? 0x37 : 0x41;
         s32 id = (g->unk5C == 1) ? 0x438 : 0x42E;
-        func_800788F0(0, 0xA0, y, 0x10, id, 4, 8, 1);
+        gDrawAlignedMultilineText(0, 0xA0, y, 0x10, id, 4, 8, 1);
     }
 
     if (gFontBankTable->unk5 == 2) {

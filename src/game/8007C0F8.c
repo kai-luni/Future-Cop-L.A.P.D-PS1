@@ -28,8 +28,8 @@ struct Work7C0F8 {
     u8 pad[6];
 };
 
-extern u8 D_8009F902[];
-extern s8 D_8009F900[];
+extern u8 gControllerDiagramViews[] __asm__("D_8009F902");
+extern s8 gStagedControllerPresets[] __asm__("D_8009F900");
 extern u8 D_8009C018[];
 extern u8 gPresetByteTable[] __asm__("D_8009BFD4");
 extern u8 D_8009BEF4[];
@@ -38,7 +38,7 @@ extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern s8 gPortCheckTable[] __asm__("D_800A374D");
 extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 
-extern void func_800788F0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7);
+extern void gDrawAlignedMultilineText(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7) __asm__("func_800788F0");
 extern void func_8008CD30(u8 *dst, u8 *fmt, s32 value);
 extern s32 gGetPadType(s32 port) __asm__("func_8001EF34");
 extern void gEmitAtlasSpriteSimple(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8) __asm__("func_80082AB0");
@@ -114,17 +114,17 @@ void gDrawVehicleSchematic(s32 slot)
     register u8 *bufArg __asm__("$4");
     register u8 *fmtHi __asm__("$5");
 
-    choice = D_8009F902[slot];
+    choice = gControllerDiagramViews[slot];
     table = (struct MenuTable7C0F8 *)(D_8009C018 + choice * 12);
-    func_800788F0((s32)(gPlayerNameTable + slot * 9), 0x28, 0x34, 0xF, 0, 1, 8, c2);
-    func_800788F0(0, 0xA0, 0x34, 0xF, table->sprite, c4, 8, c2);
-    func_800788F0(0, 0x10E, 0x34, 0xF, 0x12F2, 2, 8, c2);
+    gDrawAlignedMultilineText((s32)(gPlayerNameTable + slot * 9), 0x28, 0x34, 0xF, 0, 1, 8, c2);
+    gDrawAlignedMultilineText(0, 0xA0, 0x34, 0xF, table->sprite, c4, 8, c2);
+    gDrawAlignedMultilineText(0, 0x10E, 0x34, 0xF, 0x12F2, 2, 8, c2);
     bufArg = text;
     fmtHi = (u8 *)0x800A0000;
     __asm__("lui\t%0,%%hi(D_8009F900)\n\taddiu\t%0,%0,%%lo(D_8009F900)" : "=r"(selBase), "+r"(fmtHi) : "r"(slot), "r"(bufArg));
     selPtr = (s8 *)(slot + (s32)selBase);
     func_8008CD30(bufArg, fmtHi - 2940, *selPtr + 1);
-    func_800788F0((s32)text, 0x10E, 0x34, 0xF, 0, 1, 8, c2);
+    gDrawAlignedMultilineText((s32)text, 0x10E, 0x34, 0xF, 0, 1, 8, c2);
     mode = 0x48;
     port = gGetPadType(gPortCheckTable[0] == 3);
     center_x = 0xA0;
@@ -155,8 +155,8 @@ void gDrawVehicleSchematic(s32 slot)
             dy = 2;
         }
 
-        sprite = gChoiceSpriteTable[selData[i]][D_8009F902[slot]];
-        func_800788F0(0, center_x + item->x + dy, center_y + item->y, 0x10,
+        sprite = gChoiceSpriteTable[selData[i]][gControllerDiagramViews[slot]];
+        gDrawAlignedMultilineText(0, center_x + item->x + dy, center_y + item->y, 0x10,
                       sprite, flag, 0x20, c2);
 
         if (mode == 0x49 && item->amount != 0) {
@@ -207,7 +207,7 @@ void gDrawVehicleSchematic(s32 slot)
     }
 
     for (i = 0; i < table->count; i++) {
-        func_800788F0(0, center_x, center_y + 0x2A + i * 10, 0xF,
+        gDrawAlignedMultilineText(0, center_x, center_y + 0x2A + i * 10, 0xF,
                       table->items[i], 4, 8, 2);
     }
 }

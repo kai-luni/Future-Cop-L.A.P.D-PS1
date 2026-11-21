@@ -23,7 +23,7 @@ struct Entity {
 struct Owner { u8 pad00[0x94]; void *callback; u8 pad98[8]; struct Vec position; };
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
-extern void func_80069D68(void *, s32, s32, void *);
+extern void gInterpretEntityScript(void *, s32, s32, void *) __asm__("func_80069D68");
 extern s16 gPlayerFadeTimers[] __asm__("D_8009FA44");
 s32 gWarpEntityToSelf(struct Owner *owner, struct Entity *entity) __asm__("func_80030C60");
 
@@ -71,6 +71,6 @@ s32 gWarpEntityToSelf(struct Owner *owner, struct Entity *entity)
         gPlayerFadeTimers[index] = 300;
     }
     if (owner->callback)
-        func_80069D68(owner->callback, 0, entity->flags & 0x7fff, owner);
+        gInterpretEntityScript(owner->callback, 0, entity->flags & 0x7fff, owner);
     return 0;
 }

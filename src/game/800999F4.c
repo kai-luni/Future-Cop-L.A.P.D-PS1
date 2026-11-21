@@ -1,5 +1,7 @@
 // Categories: Utilities > Fixed-point Math
 #include "game/types.h"
+u16 gConvertSpuNoteToPitch(u16 a0, u16 a1, u16 a2, u16 a3) __asm__("func_800999F4");
+
 
 /**
  *  @brief Computes a bounded fixed-point ratio from two paired coordinates.
@@ -22,7 +24,7 @@
  *  @par Callers
  *  Confirmed: gSpuSetVoiceAttributes, gSpuSetVoiceAttributesOne.
  */
-u16 func_800999F4(u16 a0, u16 a1, u16 a2, u16 a3)
+u16 gConvertSpuNoteToPitch(u16 a0, u16 a1, u16 a2, u16 a3)
 {
     s32 start;
     s32 end;

@@ -28,7 +28,7 @@ typedef struct Target {
 } Target;
 
 extern void gDispatchType26Command(Target *arg0, s32 arg1, Target *arg2) __asm__("func_8002B1DC");
-extern void func_8002B1AC(Target *arg0);
+extern void gSyncCountdownFields(Target *arg0) __asm__("func_8002B1AC");
 void gConsiderType26Target(Target *s0, Target *s1) __asm__("func_8002BFB4");
 
 
@@ -103,7 +103,7 @@ void gConsiderType26Target(Target *s0, Target *s1)
         s0->unk11E = s1->unk14 & 0x7FFF;
         s0->unk138 = s1;
         s0->unk13C = s1->unk08;
-        func_8002B1AC(s0);
+        gSyncCountdownFields(s0);
     } else {
         if (s0->unk15F == 0) {
             gDispatchType26Command(s0, 1, s1);

@@ -35,7 +35,7 @@ typedef struct {
 extern s32 gDemoPlayback __asm__("D_8009FA84");
 extern SomeState *gGameSession __asm__("D_8009FA94");
 extern LoadedData *gStreamDescriptorPtr __asm__("D_8009F7D0");
-extern u8 D_80011B00[];
+extern u8 gDemoPlaybackFilenameFormat[] __asm__("D_80011B00");
 
 extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
 extern s32 func_8008CCC0(u8 *str);
@@ -87,7 +87,7 @@ void func_80059BFC(s32 countArg, s32 seed, u8 *nameArg)
         name[len - 4] = 0;
     }
 
-    func_8008CD30(buffer, D_80011B00, name, count + 0x40, gDemoPlayback);
+    func_8008CD30(buffer, gDemoPlaybackFilenameFormat, name, count + 0x40, gDemoPlayback);
     if (wasExt) {
         register u8 *restore __asm__("$3") = (u8 *)(len + (s32)name);
         restore[-4] = '.';

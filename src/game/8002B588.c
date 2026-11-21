@@ -7,7 +7,7 @@ extern void gBuildRotationMatrix(s32,s32,s32,void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *,void *,s32) __asm__("func_80010234");
 extern void gSetType26AnimationClip(void *,s32) __asm__("func_8002B0EC");
-extern void func_80044B34(void *,void *,s32,s32);
+extern void gAdvanceAnimTrack(void *,void *,s32,s32) __asm__("func_80044B34");
 void gTurnEntityToAngle(struct Obj *o, s32 angle, s32 speed) __asm__("func_8002B588");
 
 extern void gSetModelFrame(void *,s32) __asm__("func_800175F8");
@@ -85,7 +85,7 @@ void gTurnEntityToAngle(struct Obj *o, s32 angle, s32 speed)
         o->pos2 = o->pos;
         if (o->flag == 0) {
             gSetType26AnimationClip(o, o->anim);
-            func_80044B34(o, o->track, speed, 0);
+            gAdvanceAnimTrack(o, o->track, speed, 0);
             gSetModelFrame(&o->model, o->trackframe);
         }
     }

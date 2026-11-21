@@ -26,7 +26,7 @@ typedef struct Unk80028BCC {
     u32 unk34;
 } Unk80028BCC;
 
-extern s32 func_80069D68(void *data, s32 arg1, s32 arg2, s32 arg3);
+extern s32 gInterpretEntityScript(void *data, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80069D68");
 extern u8 *gAllocMemory(u8 *data, s32 arg1) __asm__("func_80017EBC");
 extern void gCopyWholeWords(u32 *destination, const u32 *source, u32 byte_count) __asm__("func_80028BA0");
 
@@ -76,11 +76,11 @@ s32 gCreateModuleAssetFromHeader(Unk80028BCCOut *out, Unk80028BCC *arg)
         size = 0;
         data = (u8 *)obj + 0x38;
         next = data + obj->unk30;
-        status = func_80069D68(data, size, -1, size);
+        status = gInterpretEntityScript(data, size, -1, size);
         if ((status & 0xFF) == 0) {
             goto done;
         }
-        func_80069D68(next, size, -1, size);
+        gInterpretEntityScript(next, size, -1, size);
     }
 
     if ((status & 0xFF) != 0) {

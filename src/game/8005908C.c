@@ -24,12 +24,12 @@ struct Unk5908CData {
     struct Unk5908C *unk08;
 };
 
-extern s32 func_800579D4(struct Unk5908C *object, struct Unk5908CData *data, s32 arg3);
+extern s32 gInitPlayerUnit(struct Unk5908C *object, struct Unk5908CData *data, s32 arg3) __asm__("func_800579D4");
 extern s32 gUpdatePlayerEntity(struct Unk5908C *object, struct Unk5908CData *data) __asm__("func_800588D4");
-extern void func_80058D78(struct Unk5908C *object);
+extern void gRetirePlayerUnit(struct Unk5908C *object) __asm__("func_80058D78");
 extern void gFreeBlock(void *arg0) __asm__("func_800181D4");
 extern s32 gEntityBaseHandler(s32 message, struct Unk5908C *object, struct Unk5908CData *data) __asm__("func_8002AD58");
-extern void func_80058378(struct Unk5908C *object, s32 amount, s32 source);
+extern void gApplyPlayerHitDamage(struct Unk5908C *object, s32 amount, s32 source) __asm__("func_80058378");
 extern s32 func_800584BC(s32 message, struct Unk5908C *object, struct Unk5908CData *hit,
                          s32 arg3, s32 arg4);
 s32 gHandlePlayerEntityMsg(s32 message, struct Unk5908C *object, struct Unk5908CData *data, s32 arg4) __asm__("func_8005908C");
@@ -81,7 +81,7 @@ s32 gHandlePlayerEntityMsg(s32 message, struct Unk5908C *object, struct Unk5908C
     case 1:
         return 0xF4;
     case 2:
-        func_800579D4(s0, s1, arg4);
+        gInitPlayerUnit(s0, s1, arg4);
         return 0;
     case 3:
         return 0;
@@ -94,7 +94,7 @@ s32 gHandlePlayerEntityMsg(s32 message, struct Unk5908C *object, struct Unk5908C
     case 6:
         return gUpdatePlayerEntity(s0, s1);
     case 4:
-        func_80058D78(s0);
+        gRetirePlayerUnit(s0);
         return 0;
     case 5:
         if (s0->unkAC != 0) {
@@ -112,7 +112,7 @@ s32 gHandlePlayerEntityMsg(s32 message, struct Unk5908C *object, struct Unk5908C
         }
         s0->unkDC->flags |= 0x02000000;
         s0->unk1C += result;
-        func_80058378(s0, result, s1->unk08 != 0 ? s1->unk08->unk08 : 0);
+        gApplyPlayerHitDamage(s0, result, s1->unk08 != 0 ? s1->unk08->unk08 : 0);
         return 0;
     case 11:
     case 14:

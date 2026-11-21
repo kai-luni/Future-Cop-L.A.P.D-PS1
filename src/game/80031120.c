@@ -34,7 +34,7 @@ struct Entity {
 
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
-extern s32 func_80069D68(s32 script, s32 arg1, s32 arg2, struct Entity *entity);
+extern s32 gInterpretEntityScript(s32 script, s32 arg1, s32 arg2, struct Entity *entity) __asm__("func_80069D68");
 s32 gApplyTriggerAttachmentContact(struct Entity *arg0, struct Entity *arg1) __asm__("func_80031120");
 
 
@@ -99,7 +99,7 @@ s32 gApplyTriggerAttachmentContact(struct Entity *arg0, struct Entity *arg1)
 
     if (arg0->flagsA0 & 2) {
         if (arg0->unk94 != 0) {
-            func_80069D68(arg0->unk94, 0, arg1->unk14 & 0x7FFF, arg0);
+            gInterpretEntityScript(arg0->unk94, 0, arg1->unk14 & 0x7FFF, arg0);
             return 0;
         }
     } else {

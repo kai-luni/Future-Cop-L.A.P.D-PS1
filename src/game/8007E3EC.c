@@ -3,14 +3,14 @@
 
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
-extern volatile s32 D_8009F8E0;
-extern volatile s32 D_8009F8E4;
+extern volatile s32 gPlayer1MenuReadyFlag __asm__("D_8009F8E0");
+extern volatile s32 gPlayer2MenuReadyFlag __asm__("D_8009F8E4");
 extern s32 D_8009F8E0_arr[];
 extern s32 *gGameSession __asm__("D_8009FA94");
 extern u8 gFrontEndReturnMode __asm__("D_8009F45A");
-extern s8 D_8009F924[2];
-extern s8 D_8009F926[2];
-extern s8 D_8009F928[2];
+extern s8 gLoadoutPrimaryWeaponIndices[2] __asm__("D_8009F924");
+extern s8 gLoadoutHeavyWeaponIndices[2] __asm__("D_8009F926");
+extern s8 gLoadoutSpecialWeaponIndices[2] __asm__("D_8009F928");
 extern u8 gRowClearFlag __asm__("D_8009FA10");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern u8 gRowRecordTable[] __asm__("D_8009C030");
@@ -62,7 +62,7 @@ void gFinalizeMissionLoadout(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             __asm__ volatile("" ::: "memory");
             idx[D_8009F8E0_arr] = 1;
             __asm__ volatile("" ::: "memory");
-            if (D_8009F8E0 != 0 && D_8009F8E4 != 0) {
+            if (gPlayer1MenuReadyFlag != 0 && gPlayer2MenuReadyFlag != 0) {
                 flag = 1;
                 if (gGameSession[23] == 1) {
                     gFrontEndReturnMode = 2;
@@ -80,12 +80,12 @@ void gFinalizeMissionLoadout(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
         }
         if (flag != 0) {
             gClampLoadoutSelections(1);
-            gGameSession[10] = gRowRecordTable[D_8009F924[0] * 6];
-            gGameSession[11] = gSecondLoadoutRowRecords[D_8009F926[0] * 6];
-            gGameSession[12] = gLoadoutTable[10][D_8009F928[0] * 6];
-            gGameSession[13] = gRowRecordTable[D_8009F924[1] * 6];
-            gGameSession[14] = gSecondLoadoutRowRecords[D_8009F926[1] * 6];
-            gGameSession[15] = gLoadoutTable[10][D_8009F928[1] * 6];
+            gGameSession[10] = gRowRecordTable[gLoadoutPrimaryWeaponIndices[0] * 6];
+            gGameSession[11] = gSecondLoadoutRowRecords[gLoadoutHeavyWeaponIndices[0] * 6];
+            gGameSession[12] = gLoadoutTable[10][gLoadoutSpecialWeaponIndices[0] * 6];
+            gGameSession[13] = gRowRecordTable[gLoadoutPrimaryWeaponIndices[1] * 6];
+            gGameSession[14] = gSecondLoadoutRowRecords[gLoadoutHeavyWeaponIndices[1] * 6];
+            gGameSession[15] = gLoadoutTable[10][gLoadoutSpecialWeaponIndices[1] * 6];
             gRowClearFlag = 0;
             gScreenState = 5;
         }

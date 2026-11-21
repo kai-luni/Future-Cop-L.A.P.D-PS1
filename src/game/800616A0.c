@@ -23,6 +23,8 @@ struct UnkEntityTable {
 
 extern struct UnkEntityTable *gRegistryTable __asm__("D_8009F800");
 extern void gTrySpawnRegisteredUnit(struct UnkEntity *entity, s32 arg) __asm__("func_8006125C");
+void gUpdateRegisteredSpawners(s32 elapsed) __asm__("func_800616A0");
+
 
 /**
  * @brief Steps all entity spawners in D_8009F800, draining queued spawn counts and advancing interval timers.
@@ -44,7 +46,7 @@ extern void gTrySpawnRegisteredUnit(struct UnkEntity *entity, s32 arg) __asm__("
  * @par Callers
  * Confirmed: func_80027510 (two-player unpaused frame loop); also direct call at 0x80027488 in asm/us/main.s (single-player frame loop).
  */
-void func_800616A0(s32 elapsed)
+void gUpdateRegisteredSpawners(s32 elapsed)
 {
     struct UnkEntity **cursor;
     struct UnkEntity *entity;

@@ -6,6 +6,8 @@ struct ValuePair {
     u16 source;
     u16 destination;
 };
+void gCopyPairSourceToDestination(struct ValuePair *value) __asm__("func_8002B1D0");
+
 
 /**
  * @brief Copies the u16 reload field at +0x10C into the countdown field at +0x10E.
@@ -29,7 +31,7 @@ struct ValuePair {
  * @par Callers
  * Confirmed: func_8002B784 (0x8002BB74, class-26 per-frame update) / Likely: none / Unknown: none.
  */
-void func_8002B1D0(struct ValuePair *value)
+void gCopyPairSourceToDestination(struct ValuePair *value)
 {
     value->destination = value->source;
 }

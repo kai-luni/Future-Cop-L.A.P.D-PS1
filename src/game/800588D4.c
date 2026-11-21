@@ -100,9 +100,9 @@ extern struct Unk588D4Global *gGameSession __asm__("D_8009FA94");
 extern u32 gFrameTime __asm__("D_8009FAA4");
 
 extern void func_8005A190(struct Unk5A190 *object, s32 index, s32 value);
-extern void func_800585B8(struct Unk588D4 *object);
+extern void gDispatchQueuedPlayerCommands(struct Unk588D4 *object) __asm__("func_800585B8");
 extern s32 gGetGroundHeight(void *object, s32 arg1, s32 arg2, s32 *arg3) __asm__("func_80066F78");
-extern void func_80058378(struct Unk584BC *object, s32 amount, s32 source);
+extern void gApplyPlayerHitDamage(struct Unk584BC *object, s32 amount, s32 source) __asm__("func_80058378");
 extern void gRespawnPlayerEntity(struct Unk588D4 *object) __asm__("func_80058714");
 extern void gTranslatePadButtons(void *object) __asm__("func_800576A8");
 extern s32 func_800586D4(void *object, s32 arg1, s32 arg2, s32 *arg3);
@@ -210,13 +210,13 @@ s32 gUpdatePlayerEntity(struct Unk588D4 *object, s32 arg1)
     func_8005A190((struct Unk5A190 *)object->unkAC, 0, object->unk1C);
 
     if (object->unk0C != 0) {
-        func_800585B8(object);
+        gDispatchQueuedPlayerCommands(object);
     }
 
     if (object->unkAC->unkDE != 0) {
         ret = gGetGroundHeight(object->unk50, 0, 0, &locals.out18);
         if (object->unk54 + 0x3800 < ret) {
-            func_80058378((struct Unk584BC *)object, object->unk1C + 1, 0);
+            gApplyPlayerHitDamage((struct Unk584BC *)object, object->unk1C + 1, 0);
         }
     }
 

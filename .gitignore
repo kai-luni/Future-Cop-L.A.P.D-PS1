@@ -14,6 +14,7 @@ __pycache__/
 *.exe
 /tests/host/build/
 /tests/host/build-*/
+/.split-stage-*/
 /gccdump.*
 /test_scale_v5.c.*
 /v3.c.*

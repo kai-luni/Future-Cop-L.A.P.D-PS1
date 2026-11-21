@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gGameSession __asm__("D_8009FA94");
-extern s32 D_8009FAD4;
+extern s32 gScriptVmVars __asm__("D_8009FAD4");
 extern s32 gVmCountdowns __asm__("D_8009F9A4");
 extern s32 gOpcodeTable __asm__("D_8009F9F8");
 
@@ -37,7 +37,7 @@ void gShutdownRuntime(void)
 {
     gShutdownCvkSystem();
     gHeapFreeRaw(gGameSession);
-    gHeapFreeRaw(D_8009FAD4);
+    gHeapFreeRaw(gScriptVmVars);
     gHeapFreeRaw(gVmCountdowns);
     gHeapFreeRaw(gOpcodeTable);
     gShutdownDeviceLayer();

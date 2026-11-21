@@ -12,7 +12,7 @@ struct ListNode {
 extern struct ListNode gTracerPool __asm__("D_800A3538");
 
 extern struct ListNode *gTakePoolNode(struct ListNode *node) __asm__("func_8003BEF0");
-extern void func_8006EEF8(struct ListNode *node, s32 arg0, s16 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+extern void gInitFlightSegmentNode(struct ListNode *node, s32 arg0, s16 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) __asm__("func_8006EEF8");
 
 /**
  * @brief Spawns one beam/tracer node from the effect pool and aims it between
@@ -46,7 +46,7 @@ s32 func_8006F0E8(s32 arg0, s16 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5)
     struct ListNode *node = gTakePoolNode(&gTracerPool);
 
     if (node != 0) {
-        func_8006EEF8(node, arg0, arg1, arg2, arg3, arg4, arg5);
+        gInitFlightSegmentNode(node, arg0, arg1, arg2, arg3, arg4, arg5);
     }
     return 1;
 }

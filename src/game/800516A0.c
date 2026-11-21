@@ -9,6 +9,8 @@ struct Unk516A0Owner {
 };
 
 extern void func_80013BD8(void *list, void *entry, s32 mode);
+void gResetCompoundVisualSubpart(struct Unk516A0Owner *owner) __asm__("func_800516A0");
+
 
 /**
  * @brief Initialises the compound object's visual part: zeroes the entry
@@ -38,7 +40,7 @@ extern void func_80013BD8(void *list, void *entry, s32 mode);
  * @par Callers
  * func_80051AF8.
  */
-void func_800516A0(struct Unk516A0Owner *owner)
+void gResetCompoundVisualSubpart(struct Unk516A0Owner *owner)
 {
     register u8 *state __asm__("$3");
     register u8 *entry __asm__("$13");

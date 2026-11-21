@@ -10,6 +10,8 @@ extern s32 gEntityBaseHandler(s32 a0, struct Obj41B6C *a1, s32 a2, s32 a3) __asm
 extern void gInitElevator(struct Obj41B6C *a0, s32 a1, s32 a2) __asm__("func_80041488");
 extern s32 gStepElevator(struct Obj41B6C *a0, s32 a1) __asm__("func_80041880");
 extern void func_80063194(struct Obj41B6C *a0);
+s32 gHandleElevatorEntityMessages(s32 msg, struct Obj41B6C *obj, s32 a2, s32 a3) __asm__("func_80041B6C");
+
 
 /**
  * @brief Entity-type 10 handler: waypoint-patrol objects with a capped hit counter; spawn, motion and teardown are specialised, everything else goes to the base handler.
@@ -32,7 +34,7 @@ extern void func_80063194(struct Obj41B6C *a0);
  * @par Callers
  * Confirmed: no direct calls; the address is taken at 0x8002AED0 inside func_8002AE54, the entity-type dispatcher (jump-table index 9 = type id 10). The package work list names a sibling handler and a non-existent unit as callers; neither calls this function.
  */
-s32 func_80041B6C(s32 msg, struct Obj41B6C *obj, s32 a2, s32 a3)
+s32 gHandleElevatorEntityMessages(s32 msg, struct Obj41B6C *obj, s32 a2, s32 a3)
 {
     switch (msg) {
     case 1:

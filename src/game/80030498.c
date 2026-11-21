@@ -45,6 +45,8 @@ struct Other {
 };
 
 extern void func_800448D8(void *track, s32 index, s32 direction, s32 flags);
+void gCheckResupplyPadProximity(struct Entity *self, struct Other *other) __asm__("func_80030498");
+
 
 /**
  * @brief Evaluates 3D proximity collision for a type-32 entity in states 0 and 2.
@@ -69,7 +71,7 @@ extern void func_800448D8(void *track, s32 index, s32 direction, s32 flags);
  * @par Callers
  * Confirmed: func_80030960 (0x80030A00, type-32 message 10 handler) / Likely: none / Unknown: none.
  */
-void func_80030498(struct Entity *self, struct Other *other)
+void gCheckResupplyPadProximity(struct Entity *self, struct Other *other)
 {
     struct Coord *a;
     struct OtherCoord *b;

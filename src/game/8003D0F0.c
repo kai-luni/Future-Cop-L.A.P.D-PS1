@@ -26,6 +26,8 @@ struct Unk3D0F0Instance {
 
 extern s32 func_800196C4(void);
 extern void func_8003CE30(struct Unk3D0F0Instance *instance, s8 arg1, struct Vec3 *out);
+void gResolveModelEffectPoint(struct Unk3D0F0Instance *instance, s32 arg1, s32 arg2, struct Vec3 *out) __asm__("func_8003D0F0");
+
 
 /**
  * @brief Fetches a model point for the current animation frame, optionally
@@ -52,7 +54,7 @@ extern void func_8003CE30(struct Unk3D0F0Instance *instance, s8 arg1, struct Vec
  * @par Callers
  * func_8003D240, func_8003DB70, func_80070730, func_80071B40.
  */
-void func_8003D0F0(struct Unk3D0F0Instance *instance, s32 arg1, s32 arg2, struct Vec3 *out)
+void gResolveModelEffectPoint(struct Unk3D0F0Instance *instance, s32 arg1, s32 arg2, struct Vec3 *out)
 {
     struct Unk3D0F0Model *model;
     u8 *base;

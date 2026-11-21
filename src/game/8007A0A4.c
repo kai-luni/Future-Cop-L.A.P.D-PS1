@@ -12,7 +12,7 @@ extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
 extern u8 gCreditsMovieFilename[] __asm__("D_80011E60");
 
-extern void func_80082DDC(s32 arg0, s32 arg1);
+extern void gPlayMovieClip(s32 arg0, s32 arg1) __asm__("func_80082DDC");
 
 /**
  * @brief Plays the videos referenced by the five-entry front-end list.
@@ -41,7 +41,7 @@ void gPlayPrecinctMissionMovies(s32 arg0)
         do {
             val = gWideTextTable[gFrontEndListTable[i]].unk08;
             if (val != 0) {
-                func_80082DDC(val, 2);
+                gPlayMovieClip(val, 2);
                 if (gMovieAbortFlag != 0) {
                     return;
                 }
@@ -49,7 +49,7 @@ void gPlayPrecinctMissionMovies(s32 arg0)
             i++;
         } while (i < 5);
         if (gMovieAbortFlag == 0) {
-            func_80082DDC((s32)gCreditsMovieFilename, 0);
+            gPlayMovieClip((s32)gCreditsMovieFilename, 0);
         }
     }
 }

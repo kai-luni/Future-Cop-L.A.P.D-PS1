@@ -14,8 +14,8 @@ extern volatile u32 *gDmaInterruptCtrlPtr __asm__("D_8009DD60");
 extern  void (*gDmaCallbackTable[])(void) __asm__("D_8009DD64");
 extern DmaChannel *gDmaChannelRegBasePtr __asm__("D_8009DD84");
 
-extern char D_8001286C[];
-extern char D_80012888[];
+extern char gDmaBusErrorFormat[] __asm__("D_8001286C");
+extern char gDmaChannelMadrFormat[] __asm__("D_80012888");
 
 extern void func_8008E000(char *, ...);
 
@@ -58,9 +58,9 @@ void func_80091D0C(void)
     }
 
     if ((*gDmaInterruptCtrlPtr & 0xFF000000) == 0x80000000 || (*gDmaInterruptCtrlPtr & 0x8000)) {
-        func_8008E000(D_8001286C, *gDmaInterruptCtrlPtr);
+        func_8008E000(gDmaBusErrorFormat, *gDmaInterruptCtrlPtr);
         for (s0 = 0; s0 < 7; s0++) {
-            func_8008E000(D_80012888, s0, gDmaChannelRegBasePtr[s0].madr);
+            func_8008E000(gDmaChannelMadrFormat, s0, gDmaChannelRegBasePtr[s0].madr);
         }
     }
     __asm__ volatile (".set reorder\n\t.set\tnoreorder");

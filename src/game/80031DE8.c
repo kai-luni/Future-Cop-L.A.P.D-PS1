@@ -45,6 +45,8 @@ extern Target80031DE8 *gPlayerEntities[2] __asm__("D_8009FA58");
 extern s32 func_80019668(void);
 extern s32 gTestMapZoneTrigger(Node80031DE8 *node, Target80031DE8 *target) __asm__("func_80031C74");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gUpdateMapZoneTriggers(s32 delta) __asm__("func_80031DE8");
+
 
 /**
  * @brief Per-frame tick of the trigger-node list D_8009F6F8.
@@ -82,7 +84,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_800271A4 and func_80027510 (two-player frame driver).
  */
-void func_80031DE8(s32 delta)
+void gUpdateMapZoneTriggers(s32 delta)
 {
     Node80031DE8 *node;
     Node80031DE8 *prev;

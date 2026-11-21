@@ -50,17 +50,19 @@ extern struct Entity *func_8004D3FC(s32 size);
 extern s32 func_80019668(void);
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
-extern void func_80036940(struct Entity *self, s32 arg2, s32 arg3);
+extern void gInitLinkedProjectile(struct Entity *self, s32 arg2, s32 arg3) __asm__("func_80036940");
 extern void gBuildBasisFromAxisYZ(struct Vec3s32 *axis, void *basis) __asm__("func_8001937C");
 extern void gBuildBasisFromAxis(struct Vec3s32 *axis, void *basis) __asm__("func_800193F8");
 extern s32 func_8001A750(struct Vec3s32 *a, void *b);
 extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
 extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
-extern void func_80036AB4(struct Entity *self, s32 arg3);
+extern void gUpdateLinkedDamageSource(struct Entity *self, s32 arg3) __asm__("func_80036AB4");
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, s32 arg2, s32 arg3) __asm__("func_8002AD58");
 extern void *jtbl_80011380[];
 s32 gHandleProjectileMsg(s32 arg0, struct Entity *arg1, s32 arg2, s32 arg3) __asm__("func_80036E6C");
+void gStepBurstProjectileMotion(struct Entity *self, s32 arg1, s32 arg2) __asm__("func_80036BD4");
+
 
 
 /**
@@ -132,7 +134,7 @@ s32 gHandleProjectileMsg(s32 arg0, struct Entity *arg1, s32 arg2, s32 arg3)
 message_1:
     return 0xD4;
 message_2:
-    func_80036940(self, (s32)other, value);
+    gInitLinkedProjectile(self, (s32)other, value);
 zero:
     return 0;
 message_3:
@@ -141,7 +143,7 @@ message_3:
         register s32 dy __asm__("$3");
         register s32 sign __asm__("$4");
 
-        func_80036BD4(self, (s32)other, value);
+        gStepBurstProjectileMotion(self, (s32)other, value);
         dx = self->unk78.x;
         dy = self->unk78.y;
         sign = dx >> 31;
@@ -181,7 +183,7 @@ message_5:
     self->unk1C = -1;
     return 0;
 message_6:
-    func_80036AB4(self, value);
+    gUpdateLinkedDamageSource(self, value);
     goto fallback;
 message_forward:
     if (other->unk08 != 0) {

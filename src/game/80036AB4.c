@@ -25,6 +25,8 @@ struct Unk36AB4 {
 
 extern void gApplyRadialContactDamage(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_800410BC");
 extern s32 func_8001A4E8(void *arg0, void *arg1);
+void gUpdateLinkedDamageSource(struct Unk36AB4 *arg0, s32 arg1) __asm__("func_80036AB4");
+
 
 /**
  * @brief Message-6 tick of a linked blast/attachment entity: applies a radial damage field while the radius word is positive, otherwise attenuates the strength word by distance to its linked child and notifies the child.
@@ -44,7 +46,7 @@ extern s32 func_8001A4E8(void *arg0, void *arg1);
  * @par Callers
  * Confirmed: func_80036E6C message 6 at call site 0x80036FD0 (then the base handler). The other callers named in the package work list do not exist in the unit catalog.
  */
-void func_80036AB4(struct Unk36AB4 *arg0, s32 arg1)
+void gUpdateLinkedDamageSource(struct Unk36AB4 *arg0, s32 arg1)
 {
     register struct Unk36AB4 *self __asm__("$16") = arg0;
     register struct Unk36AB4Child *child __asm__("$17");

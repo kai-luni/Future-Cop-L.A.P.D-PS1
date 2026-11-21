@@ -59,6 +59,8 @@ extern u8 gMeshFractureEntityHandler[] __asm__("D_8004C324");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gInitSpawnMotionState(struct Unk4C920 *dest, struct Unk4C920Source *src) __asm__("func_8003C14C");
 extern void gBuildRotationMatrix(s32, s32, s32, struct Unk4C920Work *) __asm__("func_800188D0");
+void *gCreateMeshFractureEntity(struct Unk4C920Source *src) __asm__("func_8004C920");
+
 
 /**
  * @brief Allocates and initializes a 0x88-byte debris/fracture entity for spawn-source kind 0x5A with handler D_8004C324.
@@ -83,7 +85,7 @@ extern void gBuildRotationMatrix(s32, s32, s32, struct Unk4C920Work *) __asm__("
  * @par Callers
  * Confirmed: func_8003E984 (0x8003EB74, source->kind == 0x5A constructor dispatch) / Likely: none / Unknown: none.
  */
-void *func_8004C920(struct Unk4C920Source *src)
+void *gCreateMeshFractureEntity(struct Unk4C920Source *src)
 {
     struct Unk4C920 *dest;
     struct Unk4C920Work work;

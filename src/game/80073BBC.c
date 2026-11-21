@@ -13,15 +13,15 @@ struct Obj {
     u16 flags1a; struct Link *link; struct Def *def; u8 pad24[0x34];
     struct Vec pos; void *effect;
 };
-extern s32 func_8003C7B8(s32, struct Obj *, void *, s32);
-extern s32 func_8003C980(s32, struct Obj *, void *, s32);
+extern s32 gGuardEffectPoolMessage(s32, struct Obj *, void *, s32) __asm__("func_8003C7B8");
+extern s32 gHandleObjectEventMessages(s32, struct Obj *, void *, s32) __asm__("func_8003C980");
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void func_80070710(void *);
 extern void func_80073BA8(void *);
 extern void *gAllocPositionNode(void *, s32, s32, s32) __asm__("func_80073500");
 extern void *func_80073590(void *, void *, s32, s32, s32, s32);
-extern void *func_8007377C(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+extern void *gCreateRibbonBeam(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_8007377C");
 s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3) __asm__("func_80073BBC");
 
 
@@ -107,7 +107,7 @@ s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3)
     register u32 value __asm__("$2");
     s16 angle;
 
-    if (func_8003C7B8(message, obj, arg2, arg3)) return 0;
+    if (gGuardEffectPoolMessage(message, obj, arg2, arg3)) return 0;
     switch (message) {
     case 0:
         link = obj->link;
@@ -162,7 +162,7 @@ s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3)
         free_arg = (void *)b;
         if (!a) goto free_it;
         if (obj->effect) func_80073BA8(obj->effect);
-        effect = func_8007377C((void *)b, (void *)a, def->p36, def->p38, def->p3b, def->p3c,
+        effect = gCreateRibbonBeam((void *)b, (void *)a, def->p36, def->p38, def->p3b, def->p3c,
                                 def->p3d, def->p3e, def->p40, def->p42,
                                 def->p44, 0, def->event, effectflags);
         obj->effect = effect;
@@ -184,7 +184,7 @@ s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3)
         __asm__("" : "+r"(value));
         return value != 0;
     default:
-        return func_8003C980(message, obj, arg2, arg3);
+        return gHandleObjectEventMessages(message, obj, arg2, arg3);
     case 1: case 3: case 4: case 9:
     return0:
         return 0;

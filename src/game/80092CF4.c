@@ -6,6 +6,8 @@ extern  void (*gLogPrintf)(char *, ...) __asm__("D_8009DDEC");
 extern char gMode2LogTag[] __asm__("D_80012A78");
 extern char gRectFormatString[] __asm__("D_80012A64");
 extern char gOutOfBoundsLogTag[] __asm__("D_80012A58");
+void gValidateGpuRectDebug(char *name, Rect *arg) __asm__("func_80092CF4");
+
 
 /**
  * @brief Validates a rectangle against the GPU library's limits and logs a
@@ -29,7 +31,7 @@ extern char gOutOfBoundsLogTag[] __asm__("D_80012A58");
  * func_80092F38, func_80092F98, func_80092FF8 and func_80093Axx - every transfer
  * wrapper of the GPU layer.
  */
-void func_80092CF4(char *name, Rect *arg)
+void gValidateGpuRectDebug(char *name, Rect *arg)
 {
     register State *state __asm__("$4");
     char *message;

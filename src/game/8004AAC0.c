@@ -5,6 +5,8 @@ struct LinkNode {
     unsigned char pad_4C[0x38];
     struct LinkNode *forward;
 };
+void gInsertNodeAfter(struct LinkNode *left, struct LinkNode *right) __asm__("func_8004AAC0");
+
 
 /**
  * @brief Inserts a node into a doubly linked list after a given node
@@ -25,7 +27,7 @@ struct LinkNode {
  * @par Callers
  * func_8004B5F8.
  */
-void func_8004AAC0(struct LinkNode *left, struct LinkNode *right)
+void gInsertNodeAfter(struct LinkNode *left, struct LinkNode *right)
 {
     right->back = left->forward;
     left->forward = right;

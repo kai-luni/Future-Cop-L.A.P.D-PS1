@@ -14,16 +14,16 @@ struct Entry {
 extern struct Entry gLoadoutTable[] __asm__("D_8009C0A8");
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
-extern s8 D_8009F924[];
-extern s8 D_8009F926[];
-extern s8 D_8009F928[];
+extern s8 gLoadoutPrimaryWeaponIndices[] __asm__("D_8009F924");
+extern s8 gLoadoutHeavyWeaponIndices[] __asm__("D_8009F926");
+extern s8 gLoadoutSpecialWeaponIndices[] __asm__("D_8009F928");
 extern u8 gRowRecordTable[] __asm__("D_8009C030");
 extern u8 gSecondLoadoutRowRecords[] __asm__("D_8009C050");
 extern u8 *D_8009C0D0;
 extern s32 gGameClock __asm__("D_8009FA60");
 
 extern void gClampLoadoutSelections(s32) __asm__("func_8007D2DC");
-extern void func_800788F0(u8 *, s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void func_80078B34(s32, s32, s32);
 extern void gDrawLoadoutListRow(u8 *, s32, s32, s32, s32, s32) __asm__("func_8007D7CC");
 
@@ -76,10 +76,10 @@ void gDrawLoadoutScreen(s32 arg0)
     s5 = gFontBankTable[5];
     s4 = fp - 1;
     if (s5 == 2) {
-        func_800788F0(gPlayerNameTable, 0x23, 0x35, 0x10, 0, 1, 8, s5);
-        func_800788F0((u8 *)s3, 0x23, 0x3F, 0x10, 10000, 1, 8, s5);
-        func_800788F0(gPlayerNameTable + 9, 0xA4, 0x35, 0x10, 0, 1, 8, s5);
-        func_800788F0((u8 *)s6, 0xA4, 0x3F, 0x10, 10000, 1, 8, s5);
+        gDrawAlignedMultilineText(gPlayerNameTable, 0x23, 0x35, 0x10, 0, 1, 8, s5);
+        gDrawAlignedMultilineText((u8 *)s3, 0x23, 0x3F, 0x10, 10000, 1, 8, s5);
+        gDrawAlignedMultilineText(gPlayerNameTable + 9, 0xA4, 0x35, 0x10, 0, 1, 8, s5);
+        gDrawAlignedMultilineText((u8 *)s6, 0xA4, 0x3F, 0x10, 10000, 1, 8, s5);
         s0 = 0xA4;
         if (arg0 != 0) {
             s4 = fp - 5;
@@ -96,20 +96,20 @@ void gDrawLoadoutScreen(s32 arg0)
             else if (gLoadoutTable[s4].replacement != gLoadoutTable[s4].limit)
                 s6 = 2;
         }
-        gDrawLoadoutListRow(gRowRecordTable + D_8009F924[arg0] * 6, s0, 0x4F, s4 == 0, 0, 0);
-        gDrawLoadoutListRow(gSecondLoadoutRowRecords + D_8009F926[arg0] * 6, s0, 0x71, s4 == 1, 1, 0);
-        i3 = D_8009F928[arg0];
+        gDrawLoadoutListRow(gRowRecordTable + gLoadoutPrimaryWeaponIndices[arg0] * 6, s0, 0x4F, s4 == 0, 0, 0);
+        gDrawLoadoutListRow(gSecondLoadoutRowRecords + gLoadoutHeavyWeaponIndices[arg0] * 6, s0, 0x71, s4 == 1, 1, 0);
+        i3 = gLoadoutSpecialWeaponIndices[arg0];
         gDrawLoadoutListRow(D_8009C0D0 + i3 * 6, s0, 0x93, s4 == 2, 2, 0);
     } else {
         if (gFontBankTable[arg0] == 0)
             s6 = 1;
         else if (gLoadoutTable[s4].replacement != gLoadoutTable[s4].limit)
             s6 = 2;
-        func_800788F0(gPlayerNameTable, 0x53, 0x3C, 0x10, 0, 4, 8, 2);
-        func_800788F0(0, 0x53, 0x44, 0x10, 10000, 4, 8, 2);
-        gDrawLoadoutListRow(gRowRecordTable + D_8009F924[arg0] * 6, 0x86, 0x35, s4 == 0, 0, 1);
-        gDrawLoadoutListRow(gSecondLoadoutRowRecords + D_8009F926[arg0] * 6, 0x86, 0x5F, s4 == 1, 1, 1);
-        i3 = D_8009F928[arg0];
+        gDrawAlignedMultilineText(gPlayerNameTable, 0x53, 0x3C, 0x10, 0, 4, 8, 2);
+        gDrawAlignedMultilineText(0, 0x53, 0x44, 0x10, 10000, 4, 8, 2);
+        gDrawLoadoutListRow(gRowRecordTable + gLoadoutPrimaryWeaponIndices[arg0] * 6, 0x86, 0x35, s4 == 0, 0, 1);
+        gDrawLoadoutListRow(gSecondLoadoutRowRecords + gLoadoutHeavyWeaponIndices[arg0] * 6, 0x86, 0x5F, s4 == 1, 1, 1);
+        i3 = gLoadoutSpecialWeaponIndices[arg0];
         gDrawLoadoutListRow(D_8009C0D0 + i3 * 6, 0x86, 0x89, s4 == 2, 2, 1);
     }
     func_80078B34(0x2968, 0, s3);

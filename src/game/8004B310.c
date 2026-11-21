@@ -26,6 +26,9 @@ typedef struct {
 
 extern s32 func_80019668(void);
 extern void gNormalizeVector(Vec4B310 *arg) __asm__("func_8001A180");
+void gSampleDebrisLaunchParameters(Obj4B310 *arg0, Vec4B310 *arg1, Vec4B310 *arg2, s32 arg3,
+                   s16 *arg4, s16 *arg5, s32 *arg6, Vec4B310 *arg7) __asm__("func_8004B310");
+
 
 /**
  * @brief Samples the launch parameters of one debris particle: two
@@ -82,7 +85,7 @@ extern void gNormalizeVector(Vec4B310 *arg) __asm__("func_8001A180");
  * func_8003AA94 (0x8003AEBC) and func_8004B5F8 (0x8004BDE4); both
  * analysis/edges.json kind "direct".
  */
-void func_8004B310(Obj4B310 *arg0, Vec4B310 *arg1, Vec4B310 *arg2, s32 arg3,
+void gSampleDebrisLaunchParameters(Obj4B310 *arg0, Vec4B310 *arg1, Vec4B310 *arg2, s32 arg3,
                    s16 *arg4, s16 *arg5, s32 *arg6, Vec4B310 *arg7)
 {
     s32 s0;

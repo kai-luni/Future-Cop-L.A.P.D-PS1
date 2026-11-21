@@ -7,11 +7,11 @@ extern s32 D_8009F6C4;
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern s32 gGameSuspended __asm__("D_8009FA24");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern u8 D_800A0B90[];
+extern u8 gStreamStartPending[] __asm__("D_800A0B90");
 
 extern void func_80029DD8(void);
 extern void func_8002A16C(s32 arg0);
-extern void func_8002A408(void);
+extern void gDrainCallbackSlotRing(void) __asm__("func_8002A408");
 
 /**
  * @brief Drains deferred asset releases and handles streaming audio timeout teardown and restart.
@@ -37,7 +37,7 @@ extern void func_8002A408(void);
  */
 void func_8002A26C(void)
 {
-    func_8002A408();
+    gDrainCallbackSlotRing();
 
     if (D_8009F6C4 != 0 && D_8009F6C4 < gFrameTickCounter) {
         D_8009F6C4 = 0;
@@ -48,7 +48,7 @@ void func_8002A26C(void)
         }
         if (gGameSuspended == 0) {
             if (gCallGateFlag == 2 || gCallGateFlag == 0) {
-                D_800A0B90[0] = 1;
+                gStreamStartPending[0] = 1;
                 func_8002A16C(1);
             }
         }

@@ -24,6 +24,8 @@ extern struct SoundManager *gMissionTable __asm__("D_8009F930");
 
 extern s32 func_80045768(s32 arg0, s32 index);
 extern void func_800457B8(s32 arg0, s32 index);
+void gUpdateSoundSlotTimers(s32 elapsed) __asm__("func_8008352C");
+
 
 /**
  *  @brief Updates sound-slot timers and releases slots whose sound check fails.
@@ -45,7 +47,7 @@ extern void func_800457B8(s32 arg0, s32 index);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8008352C(s32 elapsed)
+void gUpdateSoundSlotTimers(s32 elapsed)
 {
     u32 bit = 1;
     struct SoundManager *mgr = gMissionTable;

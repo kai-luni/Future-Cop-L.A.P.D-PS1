@@ -3,7 +3,7 @@
 
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern s32 gGameClock __asm__("D_8009FA60");
-extern void func_800788F0(s32, s32, s32, s32, s32, s32, s32, s32);
+extern void gDrawAlignedMultilineText(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern s32 func_8004522C(void);
 extern s32 func_80045288(void);
 extern s32 func_800452C8(void);
@@ -40,9 +40,9 @@ void gDrawOptionsScreen(s32 arg0) __asm__("func_8007CFA0");
 void gDrawOptionsScreen(s32 arg0)
 {
     if (arg0 != 0) return;
-    func_800788F0(0, 0xA0, 0x3C, 0x10, 0xFA0, 4, 8, 2);
-    func_800788F0(0, 0xA0, 0x70, 0x10, 0x1004, 4, 8, 2);
-    func_800788F0(0, 0xA0, 0x8D, 0x10, 0x1068, 4, 8, 2);
+    gDrawAlignedMultilineText(0, 0xA0, 0x3C, 0x10, 0xFA0, 4, 8, 2);
+    gDrawAlignedMultilineText(0, 0xA0, 0x70, 0x10, 0x1004, 4, 8, 2);
+    gDrawAlignedMultilineText(0, 0xA0, 0x8D, 0x10, 0x1068, 4, 8, 2);
     gDrawOptionsGaugeRow(0x14, 0x4B, func_8004522C(), 0x7F);
     gDrawOptionsGaugeRow(0x14, 0x57, func_80045288(), 0x7F);
     gDrawOptionsGaugeRow(0x14, 0x62, func_800452C8(), 0x7F);

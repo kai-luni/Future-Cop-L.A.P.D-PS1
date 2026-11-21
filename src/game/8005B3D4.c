@@ -38,11 +38,13 @@ struct Unk73500;
 extern struct Unk22C0 gLockEndpoints __asm__("D_800A22C0");
 
 extern struct Unk73500 *gAllocPositionNode(struct Vec3s32 *position, s16 arg1, s16 arg2, s16 arg3) __asm__("func_80073500");
-extern void func_8007377C(void *arg0, void *arg1, s32 arg2, s32 arg3,
+extern void gCreateRibbonBeam(void *arg0, void *arg1, s32 arg2, s32 arg3,
                           s32 arg4, s32 arg5, s32 arg6, s32 arg7,
                           s32 arg8, s32 arg9, s32 arg10, s32 arg11,
-                          s32 arg12, s32 arg13);
+                          s32 arg12, s32 arg13) __asm__("func_8007377C");
 extern s32 func_8001A4E8(s32 *a, s32 *b);
+void gUpdateLockBeamWeapon(void *arg0) __asm__("func_8005B3D4");
+
 
 /**
  * @brief Ticks the locked-target beam: validates both endpoints, drains the
@@ -74,7 +76,7 @@ extern s32 func_8001A4E8(s32 *a, s32 *b);
  * @par Callers
  * func_8005E0AC.
  */
-void func_8005B3D4(void *arg0)
+void gUpdateLockBeamWeapon(void *arg0)
 {
     struct Local22C0 local;
 
@@ -106,7 +108,7 @@ void func_8005B3D4(void *arg0)
         return;
     }
 
-    func_8007377C(
+    gCreateRibbonBeam(
         gAllocPositionNode(&gLockEndpoints.unk1C, 0, 0x100, 0),
         gAllocPositionNode(&gLockEndpoints.unk10, 0, 0x100, 0),
         4, 1, 0xFF, 0x60, 0, 0x800, 0, 0, 0, 0, 0, 1);

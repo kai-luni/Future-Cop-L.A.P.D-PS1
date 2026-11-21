@@ -10,7 +10,7 @@ extern int gReleaseDoneFlag __asm__("D_8009F508");
 extern int gStripScaleEnable __asm__("D_8009F4C0");
 extern char gMovieStripDmaCallback[] __asm__("D_80085074");
 extern void *gFillMemory(void *, int, unsigned int) __asm__("func_8001E4C0");
-extern void func_80085AC4(int,int);
+extern void gResetMovieFrameBuffers(int,int) __asm__("func_80085AC4");
 extern void gSetDefDrawEnv(void *,int,int,int,int) __asm__("func_80092140");
 extern void gSetDefDispEnv(void *,int,int,int,int) __asm__("func_800921F4");
 extern void gVSyncWait(int) __asm__("func_80091270");
@@ -124,7 +124,7 @@ int gMovieInitContext(Ctx *ctx, void *a1, void *a2, void *a3, int a4, int a5, in
  if (a1 && a2 && a3) {
  gFillMemory(ctx,0,0x130);
  gMovieSliceContext=ctx;
- func_80085AC4((u8)a5,0);
+ gResetMovieFrameBuffers((u8)a5,0);
  gSetDefDrawEnv((u8 *)gMovieSliceContext+0x34,0,0,0x140,0xf0);
  gSetDefDispEnv((u8 *)gMovieSliceContext+0xec,0,0,0x140,0xf0);
  gSetDefDrawEnv((u8 *)gMovieSliceContext+0x90,0,0x100,0x140,0xf0);

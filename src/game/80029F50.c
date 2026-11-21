@@ -58,7 +58,7 @@ extern u8 gReleaseQueues[0x14] __asm__("D_800A0C30");
 extern u32 D_800A0C10[];
 extern u32 D_800A0C20[];
 extern u32 gVagmRing[] __asm__("D_800A0C50");
-extern u32 D_800A0C60[];
+extern u32 gStreamAssetReleaseRing[] __asm__("D_800A0C60");
 extern s32 D_800A0B9C[2];
 extern u16 gRingBuffer[] __asm__("D_800A0BC0");
 
@@ -74,7 +74,7 @@ extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern s32 gOutStreamId __asm__("D_8009F6BC");
 extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern s32 D_8009F6C4;
-extern s32 D_8009F6CC;
+extern s32 gVagmReadIndex __asm__("D_8009F6CC");
 extern s32 D_8009F6D0;
 extern s32 D_8009F6D4;
 extern s32 D_8009F6D8;
@@ -197,10 +197,10 @@ void func_80029F50(void *arg0)
 
     for (i = 0; i < 4; i++) {
         gVagmRing[i] = 0;
-        D_800A0C60[i] = 0;
+        gStreamAssetReleaseRing[i] = 0;
     }
 
-    D_8009F6CC = 0;
+    gVagmReadIndex = 0;
     D_8009F6D0 = 0;
     D_8009F6D4 = 0;
     D_8009F6D8 = 0;

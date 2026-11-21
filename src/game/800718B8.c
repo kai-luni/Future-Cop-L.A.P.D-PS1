@@ -23,7 +23,9 @@ struct Unk71A68 {
 };
 
 extern s32 func_80019668(void);
-extern void func_80070E48(struct Unk71A68 *object, struct Unk71A68Entry *entry, s32 arg2);
+extern void gBuildRibbonBeamStrip(struct Unk71A68 *object, struct Unk71A68Entry *entry, s32 arg2) __asm__("func_80070E48");
+s32 gStepBeamEntryTimers(struct Unk71A68 *object_, s32 a1, s32 a2, s32 a3, s32 a4) __asm__("func_800718B8");
+
 
 /**
  * @brief Ticks one beam entry: drains its three timers and re-initialises
@@ -54,7 +56,7 @@ extern void func_80070E48(struct Unk71A68 *object, struct Unk71A68Entry *entry, 
  * @par Callers
  * func_80071B40.
  */
-s32 func_800718B8(struct Unk71A68 *object_, s32 a1, s32 a2, s32 a3, s32 a4)
+s32 gStepBeamEntryTimers(struct Unk71A68 *object_, s32 a1, s32 a2, s32 a3, s32 a4)
 {
     register struct Unk71A68 *object __asm__("$17") = object_;
     register s32 a1_reg __asm__("$5");
@@ -124,7 +126,7 @@ s32 func_800718B8(struct Unk71A68 *object_, s32 a1, s32 a2, s32 a3, s32 a4)
             }
             if (cond) {
                 if (object->unk26 <= 0 || --object->unk26 > 0) {
-                    func_80070E48(object, entry, 1);
+                    gBuildRibbonBeamStrip(object, entry, 1);
                 } else {
                     object->unk0E = (object->unk0E & ~2) | 1;
                 }

@@ -1,7 +1,7 @@
 // Categories: Platform > Controller Input
 #include "game/types.h"
 
-extern s32 D_8009F8B0[];
+extern s32 gPlayer1PrevMenuButtons[] __asm__("D_8009F8B0");
 extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern s32 gGetPadType(s32) __asm__("func_8001EF34");
@@ -57,7 +57,7 @@ s32 gToggleVibrationPair(s32 arg0, s32 arg1)
     __asm__("" : "=r"(player) : "0"(player));
     __asm__("" : "=r"(buttons) : "0"(buttons));
     if (player == input) {
-        base = D_8009F8B0;
+        base = gPlayer1PrevMenuButtons;
         __asm__("" : "=r"(base) : "0"(base));
         if ((buttons & ~base[player]) < 0) {
             gPlayNonpositionalSoundEffect(0x48, 0);

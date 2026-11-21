@@ -5,7 +5,7 @@ struct Unk703A8 {
     s32 words[0x16];
 };
 
-extern u8 func_8003C2A4(struct Unk703A8 *data);
+extern u8 gQueueDeferredGroundSpawn(struct Unk703A8 *data) __asm__("func_8003C2A4");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gInstallSpawnRecord(struct Unk703A8 *data) __asm__("func_8003C404");
 void gRegisterActorDef59(struct Unk703A8 *source) __asm__("func_800703A8");
@@ -52,7 +52,7 @@ void gRegisterActorDef59(struct Unk703A8 *source)
 {
     struct Unk703A8 *copy;
 
-    if (func_8003C2A4(source) != 0) {
+    if (gQueueDeferredGroundSpawn(source) != 0) {
         return;
     }
     copy = gAllocMemory(0x58, 2);

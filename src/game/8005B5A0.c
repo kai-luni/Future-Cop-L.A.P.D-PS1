@@ -36,6 +36,8 @@ struct Event {
     struct Detail *detail;
 };
 extern s32 func_80019FCC(s32 *);
+void gApplySphereOverlapHit(struct Source *source, struct Target *target, struct Sphere *sphere) __asm__("func_8005B5A0");
+
 
 /**
  * @brief Tests 3D sphere-vs-target overlap and dispatches a hit event on collision.
@@ -63,7 +65,7 @@ extern s32 func_80019FCC(s32 *);
  * @par Callers
  * Confirmed: func_8005B6A8 (0x8005B718 primary target, 0x8005B858 candidate table D_800A8F90).
  */
-void func_8005B5A0(struct Source *source, struct Target *target, struct Sphere *sphere)
+void gApplySphereOverlapHit(struct Source *source, struct Target *target, struct Sphere *sphere)
 {
     s32 vec[3];
     struct Event event;
