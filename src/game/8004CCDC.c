@@ -13,7 +13,7 @@ extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 extern s32 gEntityIdCounter __asm__("D_8009F7A0");
 extern void *gPlayerEntities[] __asm__("D_8009FA58");
 
-extern void func_8004D958(struct Entity *entity);
+extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
 extern void gSweepRetiredEntities(void) __asm__("func_8004D598");
 
 /**
@@ -51,7 +51,7 @@ void gRetireAndFreeAllEntities(void)
     for (entity = gUnitListHead; entity != 0; entity = entity->next) {
         if (entity->id != 0) {
             entity->flags |= 0x4000000;
-            func_8004D958(entity);
+            gRetireEntity(entity);
         }
     }
     gSweepRetiredEntities();

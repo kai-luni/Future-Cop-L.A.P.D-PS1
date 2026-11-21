@@ -10,7 +10,7 @@ struct Entry {
 extern s32 gArenaOffsetFlag __asm__("D_8009EA3C");
 extern s32 gArenaCursor __asm__("D_8009EA40");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
-extern s32 D_8009EF04;
+extern s32 gSpuEntryTableCapacity __asm__("D_8009EF04");
 extern s32 gTableCursor __asm__("D_8009EF08");
 extern struct Entry *gSpuEntryTable __asm__("D_8009EF0C");
 
@@ -85,7 +85,7 @@ s32 gSpuSplitPoolBlock(s32 a0, u32 a1, s32 a2)
 
     if (entry_addr & 0x40000000) {
         if (t1 > 0) {
-            if (gTableCursor > D_8009EF04 - 2) {
+            if (gTableCursor > gSpuEntryTableCapacity - 2) {
                 return -1;
             }
             gSpuEntryTable[gTableCursor].size = t1;
@@ -94,7 +94,7 @@ s32 gSpuSplitPoolBlock(s32 a0, u32 a1, s32 a2)
             gSpuEntryTable[gTableCursor].addr = s0;
             gSpuEntryTable[gTableCursor].size = a2_reg;
         } else {
-            if (gTableCursor > D_8009EF04 - 1) {
+            if (gTableCursor > gSpuEntryTableCapacity - 1) {
                 return -1;
             }
             gSpuEntryTable[gTableCursor].size = a2_reg;
@@ -121,12 +121,12 @@ s32 gSpuSplitPoolBlock(s32 a0, u32 a1, s32 a2)
             register s32 next_i __asm__("$6");
 
             if (avail == a2_reg) {
-                limit = D_8009EF04;
+                limit = gSpuEntryTableCapacity;
                 count = gTableCursor;
                 __asm__("" : "+r"(limit), "+r"(count));
                 limit -= 2;
             } else {
-                limit = D_8009EF04;
+                limit = gSpuEntryTableCapacity;
                 count = gTableCursor;
                 __asm__("" : "+r"(limit), "+r"(count));
                 limit -= 1;
@@ -194,7 +194,7 @@ s32 gSpuSplitPoolBlock(s32 a0, u32 a1, s32 a2)
 
             if (avail > a2_reg) {
                 __asm__("" : "=r"(m6));
-                if (gTableCursor > D_8009EF04 - 1) {
+                if (gTableCursor > gSpuEntryTableCapacity - 1) {
                     return -1;
                 }
             }

@@ -6,11 +6,17 @@ typedef signed char s8;
 typedef struct {int x,y,z;} Vec;
 extern int *gMapGridHeader __asm__("D_8009F80C");
 extern u8 **gTileBlockTable __asm__("D_8009F808");
-extern Vec D_800A2600,D_800A2610,D_800A2620,D_800A32A0[];
-extern u32 D_800A3260[];
-extern int D_800A3280[],D_800A3300[];
+extern Vec gCellRayStart __asm__("D_800A2600");
+extern Vec gCellRayEnd __asm__("D_800A2610");
+extern Vec gCellRayWallHit __asm__("D_800A2620");
+extern Vec gWallHitPositions[] __asm__("D_800A32A0");
+extern u32 gWallHitPolys[] __asm__("D_800A3260");
+extern int gWallHitKinds[] __asm__("D_800A3280");
+extern int gWallHitTopHeights[] __asm__("D_800A3300");
 extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
 extern u8 gTileCornerIndices[][4] __asm__("D_8009AFE8");
+int gTestMapCellRay(Vec *a, Vec *b, int *outA, int *outB, int flag) __asm__("func_80067914");
+
 
 /**
  *  @brief Tests a segment against polygons in its midpoint's world cell.
@@ -35,7 +41,7 @@ extern u8 gTileCornerIndices[][4] __asm__("D_8009AFE8");
  *  @par Callers
  *  Confirmed: func_800684AC.
  */
-int func_80067914(Vec *a, Vec *b, int *outA, int *outB, int flag)
+int gTestMapCellRay(Vec *a, Vec *b, int *outA, int *outB, int flag)
 {
     int ox,oy;
     const u8 *tile;
@@ -73,12 +79,12 @@ int func_80067914(Vec *a, Vec *b, int *outA, int *outB, int flag)
     __asm__("" : "+r"(v));
     tile=gTileBlockTable[v];
     v=*(u16 *)(tile+0x3cc+cell*2);
-    D_800A2600.x=x0-ox; D_800A2600.y=a->y-oy;
+    gCellRayStart.x=x0-ox; gCellRayStart.y=a->y-oy;
     polys=(const u32 *)(tile+0x5d0+(v>>4));
-    D_800A2600.z=a->z;
-    D_800A2610.x=b->x-ox; D_800A2610.y=b->y-oy;
+    gCellRayStart.z=a->z;
+    gCellRayEnd.x=b->x-ox; gCellRayEnd.y=b->y-oy;
     index=-1;
-    D_800A2610.z=b->z;
+    gCellRayEnd.z=b->z;
     n=v&15;
     verts=(const s8 *)(tile+12+3*lo);
     if(n<=0) goto after_polys;
@@ -107,12 +113,12 @@ int func_80067914(Vec *a, Vec *b, int *outA, int *outB, int flag)
             ny=dy2*h1-h2*dy1;
             nx=h2*dx2-dx1*h1;
             nz=dx1*dy1-dy2*dx2;
-            t0=D_800A2600.y*ny;
-            t0+=(D_800A2600.x-kind)*nx;
-            t0+=(D_800A2600.z-(h3<<8))*nz;
-            p0=D_800A2610.y*ny;
-            p0+=(D_800A2610.x-kind)*nx;
-            p0+=(D_800A2610.z-(h3<<8))*nz;
+            t0=gCellRayStart.y*ny;
+            t0+=(gCellRayStart.x-kind)*nx;
+            t0+=(gCellRayStart.z-(h3<<8))*nz;
+            p0=gCellRayEnd.y*ny;
+            p0+=(gCellRayEnd.x-kind)*nx;
+            p0+=(gCellRayEnd.z-(h3<<8))*nz;
             if((t0^p0)>0) goto next;
             if(outB) *outB=end->z;
             if(outA) {outA[0]=end->y;outA[1]=end->z;outA[2]=end->x;}
@@ -120,17 +126,17 @@ int func_80067914(Vec *a, Vec *b, int *outA, int *outB, int flag)
         }
         shape=gTileShapeTable[type]; kind=shape&7; shape>>=3;
         switch(kind) {
-            case 1: if(D_800A2600.y>0 && D_800A2610.y>0) goto next; break;
-            case 2: if(D_800A2600.x>0 && D_800A2610.x>0) goto next; break;
+            case 1: if(gCellRayStart.y>0 && gCellRayEnd.y>0) goto next; break;
+            case 2: if(gCellRayStart.x>0 && gCellRayEnd.x>0) goto next; break;
             case 3:
-                dist=D_800A2600.x+D_800A2600.y-8192;
-                bestDist=D_800A2610.x+D_800A2610.y-8192;
+                dist=gCellRayStart.x+gCellRayStart.y-8192;
+                bestDist=gCellRayEnd.x+gCellRayEnd.y-8192;
                 dist^=bestDist;
                 if(bestDist && dist>=0) goto next;
                 break;
             case 4:
-                dist=D_800A2600.x-D_800A2600.y;
-                bestDist=D_800A2610.x-D_800A2610.y;
+                dist=gCellRayStart.x-gCellRayStart.y;
+                bestDist=gCellRayEnd.x-gCellRayEnd.y;
                 dist^=bestDist;
                 if(bestDist && dist>=0) goto next;
                 break;
@@ -140,39 +146,39 @@ int func_80067914(Vec *a, Vec *b, int *outA, int *outB, int flag)
         switch(kind) {
             case 1:
                 if(shape==12) {h3=h2;h2=h1;h1=h0;} else if(shape==11) h3=h2;
-                hit=&D_800A2610;
-                if(D_800A2600.y==0) hit=&D_800A2600;
+                hit=&gCellRayEnd;
+                if(gCellRayStart.y==0) hit=&gCellRayStart;
                 goto load_hit_x;
             case 2:
                 if(shape==10) {h3=h2;h2=h1;h1=h0;} else if(shape==9) h3=h2;
-                if(D_800A2600.x==0) hit=&D_800A2600;
-                else hit=&D_800A2610;
+                if(gCellRayStart.x==0) hit=&gCellRayStart;
+                else hit=&gCellRayEnd;
                 dist=hit->y;
                 break;
             case 3:
                 if(shape==6) {h3=h2;h2=h1;h1=h0;} else if(shape==5) {h3=h1;h1=h2;h2=h3;}
-                v=D_800A2600.x; w=D_800A2610.x;
-                if(v==w) {hit=&D_800A2600;dist=v;break;}
-                delta=w-v; q=D_800A2600.y;
-                t0=D_800A2610.y-q; den=t0+delta;
+                v=gCellRayStart.x; w=gCellRayEnd.x;
+                if(v==w) {hit=&gCellRayStart;dist=v;break;}
+                delta=w-v; q=gCellRayStart.y;
+                t0=gCellRayEnd.y-q; den=t0+delta;
                 if(!den) return 0;
                 p0=v*t0; p1=(8192-q)*delta;
                 p0=(p0+p1)/den;
-                q=D_800A2600.z;
-                t0=(D_800A2610.z-q)*(p0-v)/delta;
-                hit=&D_800A2620; hit->y=8192-p0; D_800A2620.x=p0;
+                q=gCellRayStart.z;
+                t0=(gCellRayEnd.z-q)*(p0-v)/delta;
+                hit=&gCellRayWallHit; hit->y=8192-p0; gCellRayWallHit.x=p0;
                 goto store_hit_z;
             case 4:
                 if(shape==8) {h3=h2;h2=h1;h1=h0;} else if(shape==7) h3=h2;
-                v=D_800A2600.x;w=D_800A2610.x;
-                if(v==w) {hit=&D_800A2600;goto load_hit_x;}
-                delta=w-v;q=D_800A2600.y;
-                t0=D_800A2610.y-q;den=t0-delta;
+                v=gCellRayStart.x;w=gCellRayEnd.x;
+                if(v==w) {hit=&gCellRayStart;goto load_hit_x;}
+                delta=w-v;q=gCellRayStart.y;
+                t0=gCellRayEnd.y-q;den=t0-delta;
                 if(!den) return 0;
                 p0=v*t0;p1=q*delta;p0=(p0-p1)/den;
-                q=D_800A2600.z;
-                t0=(D_800A2610.z-q)*(p0-v)/delta;
-                hit=&D_800A2620; hit->y=p0; D_800A2620.x=p0;
+                q=gCellRayStart.z;
+                t0=(gCellRayEnd.z-q)*(p0-v)/delta;
+                hit=&gCellRayWallHit; hit->y=p0; gCellRayWallHit.x=p0;
 store_hit_z:
                 hit->z=q+t0;
 load_hit_x:
@@ -184,8 +190,8 @@ load_hit_x:
         if(high<low) {low^=high;high^=low;low^=high;}
         if(hit->z<high && low<hit->z) {
             index++;off+=12;
-            *(Vec *)((u8 *)D_800A32A0+off)=*hit;
-            D_800A3260[index]=poly;D_800A3280[index]=kind;D_800A3300[index]=high;
+            *(Vec *)((u8 *)gWallHitPositions+off)=*hit;
+            gWallHitPolys[index]=poly;gWallHitKinds[index]=kind;gWallHitTopHeights[index]=high;
         }
 next:
         n--;
@@ -202,9 +208,9 @@ after_polys:
         {
             register Vec *scanbase __asm__("$3");
             register int scanoffset __asm__("$2");
-            n=index; origin=&D_800A2600; originX=origin->x;
+            n=index; origin=&gCellRayStart; originX=origin->x;
             __asm__ __volatile__("" : "+r"(originX));
-            scanbase=D_800A32A0; scanoffset=12*index;
+            scanbase=gWallHitPositions; scanoffset=12*index;
             __asm__ __volatile__("" : "+r"(scanbase), "+r"(scanoffset));
             scan=(Vec *)(scanoffset+(int)scanbase);
         }
@@ -248,14 +254,14 @@ after_polys:
             n--;scan--;
         } while(n>=0);
     }
-    if(outB)*outB=D_800A3300[index];
+    if(outB)*outB=gWallHitTopHeights[index];
     if(outA) {
         register int resultOffset __asm__("$3");
         register Vec *resultBase __asm__("$2");
         register Vec *result __asm__("$3");
         resultOffset=12*index;
         __asm__ __volatile__("" : "+r"(resultOffset));
-        resultBase=D_800A32A0;
+        resultBase=gWallHitPositions;
         result=(Vec *)(resultOffset+(int)resultBase);
         outA[0]=result->y+oy;outA[1]=result->z;outA[2]=result->x+ox;
     }
@@ -264,7 +270,7 @@ after_polys:
         register u32 *polybase __asm__("$2");
         register int offset __asm__("$4");
         register int *kindptr __asm__("$4");
-        kindbase=D_800A3280; offset=index<<2; polybase=D_800A3260;
+        kindbase=gWallHitKinds; offset=index<<2; polybase=gWallHitPolys;
         __asm__ __volatile__("" : "+r"(kindbase), "+r"(offset), "+r"(polybase));
         polybase=(u32 *)(offset+(int)polybase);
         kindptr=(int *)(offset+(int)kindbase);

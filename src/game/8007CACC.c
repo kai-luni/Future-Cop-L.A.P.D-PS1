@@ -26,9 +26,9 @@ extern s32 func_80045288(void);
 extern void func_80045238(s32 volume);
 extern s32 func_800452C8(void);
 extern void func_80045294(s32 volume);
-extern void func_80046A34(s32 handle);
-extern s32 func_80046A58(s32 arg0, s32 arg1, s32 arg2, s32 id);
-extern s32 func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *object);
+extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
+extern s32 gAllocVoiceForSoundId(s32 arg0, s32 arg1, s32 arg2, s32 id) __asm__("func_80046A58");
+extern s32 gPlaySoundIdOnVoice(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *object) __asm__("func_80046E88");
 extern void func_80047800(struct Voice *voice, s32 pan, s32 volume, s32 extra);
 
 /**
@@ -117,16 +117,16 @@ s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
         if (mode == 1) {
             if (gSnapshotPointer != 0) {
                 if (gPreviewTrackId != 0x4A) {
-                    func_80046A34((s32)gSnapshotPointer);
+                    gStopSoundVoiceHandle((s32)gSnapshotPointer);
                     gSnapshotPointer = 0;
                 }
             }
             if (gSnapshotPointer == 0) {
-                gSnapshotPointer = (struct Voice *)func_80046A58(func_8004522C(), 10, 0, 0x4A);
+                gSnapshotPointer = (struct Voice *)gAllocVoiceForSoundId(func_8004522C(), 10, 0, 0x4A);
                 if (gSnapshotPointer == 0) {
                     return flags;
                 }
-                func_80046E88(0x4A, 0, 0, -1, (s32)gSnapshotPointer, 0);
+                gPlaySoundIdOnVoice(0x4A, 0, 0, -1, (s32)gSnapshotPointer, 0);
                 k = 0x4A;
                 gPreviewTrackId = k;
                 return flags;
@@ -135,16 +135,16 @@ s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
         } else if (mode == 2) {
             if (gSnapshotPointer != 0) {
                 if (gPreviewTrackId != 0x4B) {
-                    func_80046A34((s32)gSnapshotPointer);
+                    gStopSoundVoiceHandle((s32)gSnapshotPointer);
                     gSnapshotPointer = 0;
                 }
             }
             if (gSnapshotPointer == 0) {
-                gSnapshotPointer = (struct Voice *)func_80046A58(func_800452C8(), 10, 0, 0x4B);
+                gSnapshotPointer = (struct Voice *)gAllocVoiceForSoundId(func_800452C8(), 10, 0, 0x4B);
                 if (gSnapshotPointer == 0) {
                     return flags;
                 }
-                func_80046E88(0x4B, 0, 0, -1, (s32)gSnapshotPointer, 0);
+                gPlaySoundIdOnVoice(0x4B, 0, 0, -1, (s32)gSnapshotPointer, 0);
                 k = 0x4B;
                 gPreviewTrackId = k;
                 return flags;
@@ -152,7 +152,7 @@ s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
             func_80047800(gSnapshotPointer, gSnapshotPointer->pan, func_800452C8(), -1);
         } else {
             if (gSnapshotPointer != 0) {
-                func_80046A34((s32)gSnapshotPointer);
+                gStopSoundVoiceHandle((s32)gSnapshotPointer);
                 gSnapshotPointer = 0;
             }
         }

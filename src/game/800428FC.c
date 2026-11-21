@@ -1,5 +1,7 @@
 // Categories: Physics > Motion | Graphics > Effects > Particles
 typedef unsigned char u8;
+void gStepParticleColor(u8 *a, u8 *b, int x, int y, int z) __asm__("func_800428FC");
+
 /**
  * @brief Advances a segment position by per-axis deltas with clamping and
  *        boundary-hit flags.
@@ -23,7 +25,7 @@ typedef unsigned char u8;
  * @par Callers
  * func_800437E8, func_80043CA8.
  */
-void func_800428FC(u8 *a, u8 *b, int x, int y, int z)
+void gStepParticleColor(u8 *a, u8 *b, int x, int y, int z)
 {
     if (x > 0) {
         x += b[0x15];

@@ -24,6 +24,8 @@ typedef struct Entity {
 #define FMULU(a, b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 
 extern s32 gSqrt12(s32 value) __asm__("func_80095900");
+s32 gCheckTargetRangeAndCone(Entity *src, Entity *tgt, s32 maxDist, s32 threshold) __asm__("func_8004E5F0");
+
 
 /**
  * @brief Range-and-facing score used by the AI target acquisition.
@@ -59,7 +61,7 @@ extern s32 gSqrt12(s32 value) __asm__("func_80095900");
  * Confirmed: func_8004E80C (nearest and line-of-sight search, modes 1 and 3),
  * func_8004F330, func_80060238, func_8006C224, func_8006C3E0 (direct callers).
  */
-s32 func_8004E5F0(Entity *src, Entity *tgt, s32 maxDist, s32 threshold)
+s32 gCheckTargetRangeAndCone(Entity *src, Entity *tgt, s32 maxDist, s32 threshold)
 {
     s32 dx;
     s32 dz;

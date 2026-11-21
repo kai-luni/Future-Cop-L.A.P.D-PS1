@@ -53,8 +53,8 @@ extern s32 func_800451E0(void);
 extern s32 func_8004522C(void);
 extern s32 func_80045288(void);
 extern s32 func_800452C8(void);
-extern void func_80046A34(s32 handle);
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 /**
  * @brief Draws one framed gauge row: a background quad, an atlas sprite whose
  *        height is scaled to a value/limit ratio, and a zero label.

@@ -22,7 +22,7 @@ extern volatile s32 D_8009F8E4;
 extern volatile s32 gPlayerSelection __asm__("D_8009F8F0");
 extern s32 D_8009F8F4;
 extern Unk7B004Node *gFontBankTable __asm__("D_8009F468");
-extern u8 D_8009BB34[];
+extern u8 gTwoPlayerMissionSelectMenuItems[] __asm__("D_8009BB34");
 extern Unk7B004Node D_800A3688;
 extern u8 D_800A37AB[];
 extern u8 D_800A37DB[];
@@ -58,7 +58,7 @@ void gInitMissionSelectState(void)
     mode = gGameSession;
     gPlayerSelection = mode->unk08;
     __asm__ volatile("" ::: "memory");
-    base = D_8009BB34;
+    base = gTwoPlayerMissionSelectMenuItems;
     __asm__ volatile("" ::: "memory");
     v98 = mode->unk98;
     __asm__ volatile("" ::: "memory");

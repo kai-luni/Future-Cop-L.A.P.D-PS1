@@ -4,21 +4,21 @@
 extern u8 D_80039C58[];
 extern u8 D_800357C0[];
 extern u8 D_80041B6C[];
-extern u8 D_8002DEA8[];
+extern u8 gType11EntityHandler[] __asm__("D_8002DEA8");
 extern u8 D_80041C6C[];
 extern u8 D_8002DB9C[];
 extern u8 D_8003015C[];
 extern u8 D_80030960[];
 extern u8 D_8002F7C8[];
 extern u8 D_8002ED7C[];
-extern u8 D_8002C3F0[];
-extern u8 D_80030D3C[];
+extern u8 gHandleType26Entity[] __asm__("D_8002C3F0");
+extern u8 gHandleType29Entity[] __asm__("D_80030D3C");
 extern u8 D_8003A844[];
 extern u8 D_80042330[];
 extern u8 D_800426A8[];
-extern u8 D_8003151C[];
+extern u8 gHandleTriggerAttachmentEntity[] __asm__("D_8003151C");
 
-extern void func_80032F3C(void);
+extern void gHandleTumblingFlyer(void) __asm__("func_80032F3C");
 extern void func_8005908C(void);
 extern void func_800382B4(void);
 extern void func_8002D664(void);
@@ -52,7 +52,7 @@ s32 func_8002AE54(u32 type)
     case 80:
         return (s32)D_80039C58;
     case 9:
-        return (s32)func_80032F3C;
+        return (s32)gHandleTumblingFlyer;
     case 37:
         return (s32)D_800357C0;
     case 1:
@@ -68,7 +68,7 @@ s32 func_8002AE54(u32 type)
     case 10:
         return (s32)D_80041B6C;
     case 11:
-        return (s32)D_8002DEA8;
+        return (s32)gType11EntityHandler;
     case 12:
         return (s32)D_80041C6C;
     case 13:
@@ -84,11 +84,11 @@ s32 func_8002AE54(u32 type)
     case 27:
         return (s32)D_8002ED7C;
     case 26:
-        return (s32)D_8002C3F0;
+        return (s32)gHandleType26Entity;
     case 28:
         return (s32)func_800398EC;
     case 29:
-        return (s32)D_80030D3C;
+        return (s32)gHandleType29Entity;
     case 31:
         return (s32)D_8003A844;
     case 34:
@@ -97,7 +97,7 @@ s32 func_8002AE54(u32 type)
         return (s32)D_800426A8;
     case 14:
     case 38:
-        return (s32)D_8003151C;
+        return (s32)gHandleTriggerAttachmentEntity;
     default:
         return 0;
     }

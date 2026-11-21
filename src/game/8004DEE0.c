@@ -12,6 +12,8 @@ struct Entity {
 };
 
 extern s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity);
+void gRunEntityScript(struct Entity *entity) __asm__("func_8004DEE0");
+
 
 /**
  * @brief Runs the entity script with the current death state.
@@ -32,7 +34,7 @@ extern s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity);
  * @par Callers
  * Unknown: no direct edge; called from the entity update loop.
  */
-void func_8004DEE0(struct Entity *entity)
+void gRunEntityScript(struct Entity *entity)
 {
     if (entity->script != 0 && entity->script[0] != 0) {
         func_80069D68(entity->script, entity->unk1C < 0, -1, entity);

@@ -34,8 +34,8 @@ struct Obj4F330 {
 };
 extern void *jtbl_800119A8[];
 extern s32 func_80019668(void);
-extern void func_8004E5F0(void *, void *, s32, s32);
-extern struct Ref4F330 *func_8004E80C(void *, s32, s32, s32, s32, s32, s32);
+extern void gCheckTargetRangeAndCone(void *, void *, s32, s32) __asm__("func_8004E5F0");
+extern struct Ref4F330 *gFindTargetEntity(void *, s32, s32, s32, s32, s32, s32) __asm__("func_8004E80C");
 extern s32 gGteLeadingZeros(u32) __asm__("func_80095C14");
 
 /**
@@ -102,14 +102,14 @@ s32 func_8004F330(struct Obj4F330 *arg0, struct Node4F330 *arg1, s32 arg2)
         }
         if (obj->unk5C != 0) {
             if (obj->unk60 == obj->unk5C->unk08) {
-                func_8004E5F0((void *)s1, obj->unk5C, obj->unk2E << 4, 0xFFFF0000);
+                gCheckTargetRangeAndCone((void *)s1, obj->unk5C, obj->unk2E << 4, 0xFFFF0000);
                 obj->unk5C = 0;
             }
             if (obj->unk5C != 0) {
                 goto common;
             }
         }
-        obj->unk5C = func_8004E80C((void *)s1, s0, obj->unk42, 1,
+        obj->unk5C = gFindTargetEntity((void *)s1, s0, obj->unk42, 1,
                                   obj->unk2E << 4, 0xFFFF0000, 0);
         if (obj->unk5C != 0) {
             obj->unk60 = obj->unk5C->unk08;

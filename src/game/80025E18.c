@@ -13,9 +13,9 @@ extern s32 gSlotVoiceHandle[] __asm__("D_8009F678");
 extern s32 gSlotTrackId[] __asm__("D_8009FA78");
 extern void *gPlayerEntities[] __asm__("D_8009FA58");
 
-extern void func_80046A34(s32 handle);
-extern s32 func_80046A58(s32 arg0, s32 arg1, s32 arg2, s32 id);
-extern void func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *object);
+extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
+extern s32 gAllocVoiceForSoundId(s32 arg0, s32 arg1, s32 arg2, s32 id) __asm__("func_80046A58");
+extern void gPlaySoundIdOnVoice(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *object) __asm__("func_80046E88");
 extern void func_80047800(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
 
 void gUpdateOptionsPreviewVoice(s32 track, s32 volume, s32 slot) __asm__("func_80025E18");
@@ -53,7 +53,7 @@ void gUpdateOptionsPreviewVoice(s32 track, s32 volume, s32 slot)
 
     if (gSlotVoiceHandle[slot] != 0) {
         if (track != gSlotTrackId[slot] || volume == 0) {
-            func_80046A34(gSlotVoiceHandle[slot]);
+            gStopSoundVoiceHandle(gSlotVoiceHandle[slot]);
             gSlotVoiceHandle[slot] = 0;
             gSlotTrackId[slot] = 0;
         }
@@ -66,10 +66,10 @@ void gUpdateOptionsPreviewVoice(s32 track, s32 volume, s32 slot)
             voice = (struct SoundVoice *)*handle_slot;
             func_80047800(voice, voice->pan, volume, -1);
         } else {
-            handle = func_80046A58(volume, 0xA, 0, track);
+            handle = gAllocVoiceForSoundId(volume, 0xA, 0, track);
             *handle_slot = handle;
             if (handle != 0) {
-                func_80046E88(track, 0, 0, -1, handle, *(void **)((u8 *)gPlayerEntities + offset));
+                gPlaySoundIdOnVoice(track, 0, 0, -1, handle, *(void **)((u8 *)gPlayerEntities + offset));
                 *(s32 *)((u8 *)gSlotTrackId + offset) = track;
             } else {
                 *(s32 *)((u8 *)gSlotTrackId + offset) = 0;

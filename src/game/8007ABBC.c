@@ -20,7 +20,7 @@ extern s32 gGameClock[] __asm__("D_8009FA60");
 
 extern void gDecodeGlyphsToName(u8 *dst, u8 *src, s32 len, u8 *table) __asm__("func_8007AA9C");
 extern void gEncodeNameToGlyphs(u8 *src, u8 *dst, s32 len, u8 *table, s32 tableLen) __asm__("func_8007A9D0");
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern struct FontEntry *func_80048E88(void);
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
 extern void gEmitFlatQuadRect(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b) __asm__("func_80082EF0");
@@ -106,7 +106,7 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
     case 4:
         if (gPlayerMenuDepth[idx] != 0) {
             u8 *p;
-            func_80046C84(0x46, 0);
+            gPlayNonpositionalSoundEffect(0x46, 0);
             i = gScalarCursor[idx];
             chars = gNameEntryGlyphBuf + idx * 8;
             p = chars + i;
@@ -120,7 +120,7 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
     case 5:
         if (gPlayerMenuDepth[idx] != 0) {
             u8 *p;
-            func_80046C84(0x46, 0);
+            gPlayNonpositionalSoundEffect(0x46, 0);
             i = gScalarCursor[idx];
             chars = gNameEntryGlyphBuf + idx * 8;
             p = chars + i;
@@ -137,7 +137,7 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
             if (*p >= 8) {
                 *p = 0;
             }
-            func_80046C84(0x47, 0);
+            gPlayNonpositionalSoundEffect(0x47, 0);
         }
         break;
     case 2:
@@ -147,7 +147,7 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
             if (*p < 0) {
                 *p = 7;
             }
-            func_80046C84(0x47, 0);
+            gPlayNonpositionalSoundEffect(0x47, 0);
         }
         break;
     case 0: {

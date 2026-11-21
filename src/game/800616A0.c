@@ -22,7 +22,7 @@ struct UnkEntityTable {
 };
 
 extern struct UnkEntityTable *gRegistryTable __asm__("D_8009F800");
-extern void func_8006125C(struct UnkEntity *entity, s32 arg);
+extern void gTrySpawnRegisteredUnit(struct UnkEntity *entity, s32 arg) __asm__("func_8006125C");
 
 /**
  * @brief Steps all entity spawners in D_8009F800, draining queued spawn counts and advancing interval timers.
@@ -58,10 +58,10 @@ void func_800616A0(s32 elapsed)
         entity = *cursor++;
         sub = entity->sub;
         for (i = (sub->unk10 >> 8) & 0xF; i > 0; i--) {
-            func_8006125C(entity, 1);
+            gTrySpawnRegisteredUnit(entity, 1);
         }
         for (i = sub->unk10 >> 12; i > 0; i--) {
-            func_8006125C(entity, 0);
+            gTrySpawnRegisteredUnit(entity, 0);
         }
         flags = sub->unk10;
         sub->unk10 = flags & 0xFF;
@@ -69,7 +69,7 @@ void func_800616A0(s32 elapsed)
             sub->unk14 -= elapsed;
             if ((s16)sub->unk14 < 0) {
                 sub->unk14 += sub->unk0C;
-                func_8006125C(entity, 1);
+                gTrySpawnRegisteredUnit(entity, 1);
             }
         }
     }

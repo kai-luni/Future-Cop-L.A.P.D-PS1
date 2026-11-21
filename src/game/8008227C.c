@@ -25,8 +25,10 @@ void func_8008227C(void)
 {
     *(u16 *)(gSaveProfileImage + 0x942) = 0x385E;
 }
+s32 gGetProfileSlotEditState(s32 arg0) __asm__("D_8008228C");
 
-s32 D_8008228C(s32 arg0)
+
+s32 gGetProfileSlotEditState(s32 arg0)
 {
     s32 result;
 

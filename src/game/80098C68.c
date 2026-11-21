@@ -5,9 +5,10 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef struct { volatile u16 a, b, c, d; } Ports;
 typedef struct { char pad[0x188]; u16 a, b, c, d; } Device;
-extern volatile u32 D_8009EE90, D_8009EA58;
+extern volatile u32 gSpuRegisterShadowMode __asm__("D_8009EE90");
+extern volatile u32 gSpuBufferedKeyOnVoiceMask __asm__("D_8009EA58");
 extern volatile u32 gModeEntryWord __asm__("D_8009EA5C");
-extern u32 D_8009EA30;
+extern u32 gSpuDirectKeyOnVoiceMask __asm__("D_8009EA30");
 extern Ports gSpuInitWord __asm__("D_800A7028");
 extern Device *gSpuRegBasePtr __asm__("D_8009EEA4");
 
@@ -42,18 +43,18 @@ void func_80098C68(int mode, u32 mask)
     high = m >> 16;
     if (mode == 0) goto off;
     if (mode == 1) {
-        if (D_8009EE90 & 1) {
+        if (gSpuRegisterShadowMode & 1) {
             __asm__("lui %0,%%hi(D_800A7028)\n\taddiu %0,%0,%%lo(D_800A7028)" : "=r"(port));
             port->a = m;
             port->b = high;
             gModeEntryWord |= 1;
-            D_8009EA58 |= m;
+            gSpuBufferedKeyOnVoiceMask |= m;
             if (port->c & m) port->c &= ~m;
             if (port->d & high) ((u16 *)port)[3] = port->d & ~high;
         } else {
             gSpuRegBasePtr->a = m;
             gSpuRegBasePtr->b = high;
-            result = D_8009EA30 | m;
+            result = gSpuDirectKeyOnVoiceMask | m;
             goto store;
         }
     } else {
@@ -62,27 +63,27 @@ void func_80098C68(int mode, u32 mask)
     goto done;
 off:
     {
-        if (D_8009EE90 & 1) {
+        if (gSpuRegisterShadowMode & 1) {
             __asm__("lui %0,%%hi(D_800A7028)\n\taddiu %0,%0,%%lo(D_800A7028)" : "=r"(port));
             port->c = m;
             port->d = high;
             gModeEntryWord |= 1;
             __asm__("" : "+r"(m));
             inv = ~m;
-            D_8009EA58 &= inv;
+            gSpuBufferedKeyOnVoiceMask &= inv;
             if (port->a & m) port->a &= inv;
             if (port->b & high) ((u16 *)port)[1] = port->b & ~high;
         } else {
             gSpuRegBasePtr->c = m;
             gSpuRegBasePtr->d = high;
             __asm__("" : "+r"(m) : : "memory");
-            result = D_8009EA30 & ~m;
+            result = gSpuDirectKeyOnVoiceMask & ~m;
             goto store;
         }
     }
     goto done;
 store:
-    D_8009EA30 = result;
+    gSpuDirectKeyOnVoiceMask = result;
 done:
     __asm__("" : : "r"(m), "r"(high));
 }

@@ -45,7 +45,7 @@ extern void gHandleAudioStreamSpuIrq(void) __asm__("D_80022FA8");
 
 extern SpuIrqCallback gSpuInstallIrqCallback(SpuIrqCallback callback) __asm__("func_80098BF8");
 extern void gArmAudioStreamSpuIrq(void) __asm__("func_80022F44");
-extern struct SoundVoice *func_80046B04(s32 sound, s32 arg1, s32 arg2, s32 arg3);
+extern struct SoundVoice *gAllocPrioritySoundVoice(s32 sound, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80046B04");
 extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
 extern s32 gAllocateSoundChannelVoice(s32 arg0, s32 arg1, s32 *arg2, s32 arg3) __asm__("func_800220C4");
 extern void gQueueSoundChannelStarts(s32 count, s32 *channels) __asm__("func_800221E4");
@@ -94,7 +94,7 @@ s32 gStartAudioStreamChannels(void)
         for (i = 0; i < gMixerState.channelCount; i++) {
             params[1] = gMixerState.channels[i].unk08;
             params[2] = gMixerState.channels[i].unk0C;
-            voice = func_80046B04(gMixerState.channels[i].unk08, 0xA, 0, 0xFF);
+            voice = gAllocPrioritySoundVoice(gMixerState.channels[i].unk08, 0xA, 0, 0xFF);
             gMixerState.channels[i].voice = voice;
             if (voice != 0) {
                 func_800477D8(voice, params[2], params[1], -1);

@@ -7,7 +7,7 @@ typedef unsigned int u32;
 extern char gCdInitLogMsg[] __asm__("D_8001257C");
 extern char gCdInitAddrFmt[] __asm__("D_80012588");
 extern char gCdStateBlock[] __asm__("D_8009CB88");
-extern void D_8008FE28(void);
+extern void gCdIrqHandlerAddress(void) __asm__("D_8008FE28");
 extern u8 gLastResultByte __asm__("D_8009C8C5");
 extern u8 gLastCommandResult __asm__("D_8009C8C4");
 extern u32 gCdReadyCallback __asm__("D_8009C8AC");
@@ -85,7 +85,7 @@ int gInitCdSubsystem(void)
         gResetIrqDispatch();
     }
     {
-        register void (*cb)(void) __asm__("$5") = D_8008FE28;
+        register void (*cb)(void) __asm__("$5") = gCdIrqHandlerAddress;
         __asm__("" : "+r"(cb));
         gSetIrqCallback(2, cb);
     }

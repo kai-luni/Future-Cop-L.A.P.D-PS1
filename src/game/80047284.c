@@ -4,7 +4,9 @@
 extern u8 gSoundIdTable[] __asm__("D_800A1880");
 
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
-extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
+extern s32 gPlaySpatialSoundBankSlot(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4) __asm__("func_80046F9C");
+void gPlayPositionalSoundEffect(s32 id, s32 arg1, s32 arg2) __asm__("func_80047284");
+
 
 /**
  * @brief Plays a one-shot sound effect with explicit position/parameter
@@ -26,12 +28,12 @@ extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
  * @par Callers
  * func_80025CFC, func_8002F30C, func_8003E984, func_80041880, func_8005F6E8.
  */
-void func_80047284(s32 id, s32 arg1, s32 arg2)
+void gPlayPositionalSoundEffect(s32 id, s32 arg1, s32 arg2)
 {
     s32 slot;
 
     slot = func_80045494(id, gSoundIdTable, 0x45);
     if (slot != 0xFF) {
-        func_80046F9C(arg1, arg2, slot, 0, 1);
+        gPlaySpatialSoundBankSlot(arg1, arg2, slot, 0, 1);
     }
 }

@@ -1,10 +1,10 @@
 // Categories: Resources > Memory
 #include "game/types.h"
 
-extern void *D_8009F948;
-extern void *D_8009F94C;
+extern void *gPreallocatedMovieVlcTableA __asm__("D_8009F948");
+extern void *gPreallocatedMovieVlcTableB __asm__("D_8009F94C");
 extern void *gWorkAreaBlock __asm__("D_8009F950");
-extern void *D_8009F954;
+extern void *gPreallocatedMovieMdecInputBuffer __asm__("D_8009F954");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
@@ -26,20 +26,20 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  */
 void func_80086164(void)
 {
-    if (D_8009F948) {
-        gFreeBlock(D_8009F948);
+    if (gPreallocatedMovieVlcTableA) {
+        gFreeBlock(gPreallocatedMovieVlcTableA);
     }
-    if (D_8009F94C) {
-        gFreeBlock(D_8009F94C);
+    if (gPreallocatedMovieVlcTableB) {
+        gFreeBlock(gPreallocatedMovieVlcTableB);
     }
     if (gWorkAreaBlock) {
         gFreeBlock(gWorkAreaBlock);
     }
-    if (D_8009F954) {
-        gFreeBlock(D_8009F954);
+    if (gPreallocatedMovieMdecInputBuffer) {
+        gFreeBlock(gPreallocatedMovieMdecInputBuffer);
     }
-    D_8009F948 = (void *)0;
-    D_8009F94C = (void *)0;
+    gPreallocatedMovieVlcTableA = (void *)0;
+    gPreallocatedMovieVlcTableB = (void *)0;
     gWorkAreaBlock = (void *)0;
-    D_8009F954 = (void *)0;
+    gPreallocatedMovieMdecInputBuffer = (void *)0;
 }

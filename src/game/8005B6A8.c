@@ -28,7 +28,7 @@ extern struct Candidates gCommandListHead __asm__("D_800A8F90");
 extern s16 gMessageReturnData[3] __asm__("D_8009F7F0");
 extern s16 D_8009F7F2, D_8009F7F4;
 extern void func_8005B5A0(struct Source *, struct Target *, struct Sphere *);
-extern s32 func_800684AC(struct Vec *, struct Vec *, struct Vec *, s32, s32);
+extern s32 gTraceMapRay(struct Vec *, struct Vec *, struct Vec *, s32, s32) __asm__("func_800684AC");
 extern s32 func_8003BF50(struct Target *);
 extern s32 gSpawnTypeAtOwner(void *, u8, struct Message *, s32, s32) __asm__("func_800402DC");
 extern void gNormalizeVector(struct Vec *) __asm__("func_8001A180");
@@ -108,7 +108,7 @@ void func_8005B6A8(struct Owner *owner, struct Source *source)
             }
         }
         if (prev) {
-            if (func_800684AC(&prev->pos, &sphere->pos, &message.vec, 0, 1)) goto hit;
+            if (gTraceMapRay(&prev->pos, &sphere->pos, &message.vec, 0, 1)) goto hit;
             goto next_sphere;
         }
         goto first_sphere;
@@ -119,7 +119,7 @@ void func_8005B6A8(struct Owner *owner, struct Source *source)
         gSpawnTypeAtOwner(0, source->column, &message, func_8003BF50(source->detail), 0);
         return;
     first_sphere:
-        if (func_800684AC(&source->pos, &sphere->pos, &message.vec, 0, 1)) goto hit;
+        if (gTraceMapRay(&source->pos, &sphere->pos, &message.vec, 0, 1)) goto hit;
     next_sphere:
         prev = sphere;
         sphere = sphere->next;

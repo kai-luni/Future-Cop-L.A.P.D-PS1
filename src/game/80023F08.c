@@ -8,11 +8,11 @@ extern struct Handle gAssetHandle __asm__("D_800A0A80");
 extern s32 gSpuBufferPtr __asm__("D_8009F278");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern void gStopTrackedSoundVoice(void) __asm__("func_80023E84");
-extern s32 func_800474C4(struct Handle *);
+extern s32 gValidateSoundVoiceHandle(struct Handle *) __asm__("func_800474C4");
 extern s32 func_800450A4(s32, s8 *);
 extern s8 func_80045050(void);
 extern s32 gAllocateSoundChannelVoice(s32, s32, struct Params *, s32) __asm__("func_800220C4");
-extern s32 func_800474F0(struct Handle *);
+extern s32 gReleaseValidatedSoundVoiceHandle(struct Handle *) __asm__("func_800474F0");
 extern void func_80047800(struct Resource *, s32, s32, s32);
 extern void gQueueSoundChannelStarts(s32, s32 *) __asm__("func_800221E4");
 
@@ -50,7 +50,7 @@ s32 gStartTrackedSoundVoice(void)
     struct Resource *resource;
 
     if (!gSpuBufferPtr) gStopTrackedSoundVoice();
-    if ((u8)func_800474C4(&gAssetHandle) == 1) {
+    if ((u8)gValidateSoundVoiceHandle(&gAssetHandle) == 1) {
         resource = gAssetHandle.resource;
         if (gAssetHandle.flag) {
             if (!(u8)func_800450A4(gAssetHandle.id, mix)) {
@@ -66,7 +66,7 @@ s32 gStartTrackedSoundVoice(void)
             params.volume = mix[0];
             params.pan = mix[1];
             if (gAllocateSoundChannelVoice(100, resource->owner, &params, gSpuBufferPtr) == -1) {
-                func_800474F0(&gAssetHandle);
+                gReleaseValidatedSoundVoiceHandle(&gAssetHandle);
             } else {
                 if (gAssetHandle.flag) func_80047800(resource, mix[1], mix[0], -1);
                 channel = resource->owner;

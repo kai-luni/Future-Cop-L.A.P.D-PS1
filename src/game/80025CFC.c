@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s16 gTeamFlag[] __asm__("D_8009F65C");
-extern void func_80047284(s32 id, s32 arg1, s32 arg2, s32 arg3);
+extern void gPlayPositionalSoundEffect(s32 id, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80047284");
 
 register s32 zero __asm__("$5");
 
@@ -42,7 +42,7 @@ void gSignalFirstTeamRetirement(u8 *arg0)
         gTeamFlag[index] = 1;
         if (*(u8 *)(*(u8 **)(arg0 + 0xAC) + 0xDE) == 0) {
             zero = 0;
-            func_80047284(0x18, zero, zero, -1);
+            gPlayPositionalSoundEffect(0x18, zero, zero, -1);
         }
     }
 }

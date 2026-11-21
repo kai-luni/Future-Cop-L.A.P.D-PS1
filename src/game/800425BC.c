@@ -11,6 +11,8 @@ struct Unk425BC {
 };
 
 extern void func_8002A5B4(u8 *script, s32 index);
+void gStepType35Commands(struct Unk425BC *script) __asm__("func_800425BC");
+
 
 /**
  *  @brief Processes selected commands in the first four script slots.
@@ -31,7 +33,7 @@ extern void func_8002A5B4(u8 *script, s32 index);
  *  @par Callers
  *  Confirmed: func_800426A8.
  */
-void func_800425BC(struct Unk425BC *script)
+void gStepType35Commands(struct Unk425BC *script)
 {
     register struct Unk425BC *self __asm__("$18");
     register struct Unk425BC *p __asm__("$17");

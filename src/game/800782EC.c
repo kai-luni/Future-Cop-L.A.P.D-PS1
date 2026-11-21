@@ -22,7 +22,7 @@ extern s8 *D_8009F884;
 extern s8 gCrimeWarProgress __asm__("D_8009F458");
 extern struct Mode *gGameSession[] __asm__("D_8009FA94");
 extern struct Entry gWideTextTable[] __asm__("D_8009B4E4");
-extern char D_800A38F8[];
+extern char gTitleScreenMenuDescriptor[] __asm__("D_800A38F8");
 extern void gRouteFrontEndModeMenu(void) __asm__("func_80078210");
 extern void gSetPadRumbleEnabled(s32, s32) __asm__("func_8001EC04");
 extern void func_80078650(void *, s32);
@@ -102,7 +102,7 @@ void func_800782EC(void)
         gSetPadRumbleEnabled(0, gRumbleEnabled);
         gSetPadRumbleEnabled(1, D_8009F8D9);
     default:
-        func_80078650(D_800A38F8, 0);
+        func_80078650(gTitleScreenMenuDescriptor, 0);
         break;
     }
 }

@@ -13,11 +13,12 @@ extern int gScreenState __asm__("D_8009FA00");
 extern int gPlayerCount __asm__("D_8009FA0C");
 extern Obj *gPlayerEntities[] __asm__("D_8009FA58");
 extern Obj *gSinglePlayerEntity __asm__("D_8009F9EC");
-extern void D_800578B4(), D_800578E4();
+extern void gHandleRetiredPlayer() __asm__("D_800578B4");
+extern void gHandleRetiredPlayerChild() __asm__("D_800578E4");
 extern int gRetireEntityBase(Obj *, int, int) __asm__("func_8002A810");
 extern void func_80058C3C(void *, void *, Obj *);
 extern void gSpawnTypeAtOwner(Obj *, int, int, int, int) __asm__("func_800402DC");
-extern void func_80046C84(int, Obj *);
+extern void gPlayNonpositionalSoundEffect(int, Obj *) __asm__("func_80046C84");
 extern void gFlagQuartileChange(Obj *, int) __asm__("func_8003BA50");
 extern Obj *gFindUnitById(int) __asm__("func_8004D664");
 extern void func_80025CFC(Obj *);
@@ -94,7 +95,7 @@ void func_80058D78(Obj *o)
             func_80058C3C(o->owner, (u8 *)o->child + 0x5c, o);
             gSpawnTypeAtOwner(o, 3, 0, 1, 0);
             gSpawnTypeAtOwner(o->child, 9, 0, 1, 0);
-            if (gGameSession->active == 1) func_80046C84(0x41, o);
+            if (gGameSession->active == 1) gPlayNonpositionalSoundEffect(0x41, o);
         }
         o->flags8 |= 0x800000;
         o->child->flags8 |= 0x800000;
@@ -129,8 +130,8 @@ void func_80058D78(Obj *o)
         } else {
             if (gScreenState != 5) func_80025CFC(o);
             func_8005A190(o->data, 0, o->angle);
-            o->update = D_800578B4;
-            o->child->update = D_800578E4;
+            o->update = gHandleRetiredPlayer;
+            o->child->update = gHandleRetiredPlayerChild;
         }
     }
 }

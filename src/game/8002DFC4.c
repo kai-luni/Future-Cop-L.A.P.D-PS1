@@ -78,11 +78,11 @@ struct Arg {
     struct Source *unk8;
 };
 
-extern s32 func_80067684(struct Vec3 *pos, s32 sel);
+extern s32 gQuerySurfaceHeight(struct Vec3 *pos, s32 sel) __asm__("func_80067684");
 extern void gBuildRotationMatrix(s32 yaw, s32 pitch, s32 roll, void *matrix) __asm__("func_800188D0");
 extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 extern void gSetAnimClipTable(u8 *data, void *track, u8 forward, s32 index) __asm__("func_80044988");
-extern void func_80060668(void *in, void *out);
+extern void gInitAttackSchedulerSlot(void *in, void *out) __asm__("func_80060668");
 
 /**
  * @brief Spawn setup shared by the numbered entity handlers: places the object on
@@ -153,7 +153,7 @@ s32 func_8002DFC4(struct Obj *obj, struct Arg *arg)
 
     st = arg->unk8;
     sel = st->unk35 == 0 ? -1 : st->unk35 == 1 ? -2 : st->unk35 - 2;
-    obj->pos.y = func_80067684(&obj->pos, sel) + (st->unk36 << 4);
+    obj->pos.y = gQuerySurfaceHeight(&obj->pos, sel) + (st->unk36 << 4);
     obj->unkE4 = st->unk38.u;
     gBuildRotationMatrix(st->unk38.s, 0, 0, (u8 *)obj + 0x2C);
 
@@ -207,7 +207,7 @@ s32 func_8002DFC4(struct Obj *obj, struct Arg *arg)
     if (obj->unk28->unk10 != 0) {
         gSetAnimClipTable(obj->unk28->unk10, obj->unkC8, 1, 0);
     }
-    func_80060668((u8 *)st + 0x24, (u8 *)obj + 0xA0);
+    gInitAttackSchedulerSlot((u8 *)st + 0x24, (u8 *)obj + 0xA0);
 
     if (obj->unkDD & 0x40) {
         t = obj->unk21;

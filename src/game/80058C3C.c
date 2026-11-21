@@ -60,7 +60,7 @@ struct Unk58C3CRequest {
     s32 unk0C;
 };
 
-extern void D_80036E6C();
+extern void gKind7ProjectileHandler() __asm__("D_80036E6C");
 extern void *gCamera __asm__("D_8009F9E4");
 
 extern void gSelectViewRecord(s32 id) __asm__("func_80017B60");
@@ -104,7 +104,7 @@ void func_80058C3C(void *owner, struct Vec3s32 *position, struct Unk58C3CObject 
     struct Unk58C3CSubArg sub;
     void *old;
 
-    request.handler = D_80036E6C;
+    request.handler = gKind7ProjectileHandler;
     request.unk04 = 0;
     request.args = &args;
     request.unk0C = 0;

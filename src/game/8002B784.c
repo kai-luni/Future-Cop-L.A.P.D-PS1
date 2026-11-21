@@ -10,9 +10,9 @@
 
 extern void func_8002B4B4(u8 *, s32);
 extern s32 func_80044B34(u8 *, void *, s32, s32);
-extern u8 func_80060238(void *, s32, u8 *, s32, s32);
+extern u8 gStepAttackScheduler(void *, s32, u8 *, s32, s32) __asm__("func_80060238");
 extern void func_800448D8(void *, s32, s32, u8);
-extern void func_8005F6E8(void *, u8 *, u8 *, s32);
+extern void gFireEntityWeapon(void *, u8 *, u8 *, s32) __asm__("func_8005F6E8");
 extern void gRetireEntityBase(u8 *, s32, s32) __asm__("func_8002A810");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern void gUpdateFallMotion(s32, u8 *, s32) __asm__("func_8003802C");
@@ -136,14 +136,14 @@ void func_8002B784(u8 *obj, s32 step)
     while (event) {
         switch (event) {
         case 1:
-            if (func_80060238(obj + 0xA0, step, obj, 0, 0)) {
+            if (gStepAttackScheduler(obj + 0xA0, step, obj, 0, 0)) {
                 B(obj,0x162) = 2;
                 func_800448D8(obj + 0xC8, B(obj,0x164) + 1, 1, 1);
             }
             break;
         case 2:
             B(obj,0x162) = 1;
-            func_8005F6E8(obj + 0xA0, obj, obj, 1);
+            gFireEntityWeapon(obj + 0xA0, obj, obj, 1);
             break;
         case 3:
             gRetireEntityBase(obj, 1, 1);
@@ -153,7 +153,7 @@ void func_8002B784(u8 *obj, s32 step)
     }
     gSetModelFrame(obj + 0x28, H(obj,0xD4));
     if (!B(obj,0x162) && (u32)(B(obj,0x15F) - 7) >= 2) {
-        func_80060238(obj + 0xA0, step, obj, 0, 1);
+        gStepAttackScheduler(obj + 0xA0, step, obj, 0, 1);
     }
     if ((u32)(B(obj,0x15F) - 7) < 2) {
         if (B(obj,0x15F) == 7) {

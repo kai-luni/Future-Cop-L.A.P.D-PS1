@@ -29,7 +29,7 @@ extern s32 gScalarCursor[] __asm__("D_8009F8F8");
 extern u8 gPlayerNameTable[] __asm__("D_800A6FE0");
 extern u8 *gGameSession __asm__("D_8009FA94");
 extern u8 gCrimeWarProgress __asm__("D_8009F458");
-extern u8 D_8009F459;
+extern u8 gPrecinctAssaultProgress __asm__("D_8009F459");
 extern u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
 extern u8 gFrontEndListFlag __asm__("D_8009F3C0");
 extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
@@ -41,13 +41,13 @@ extern u8 gRowClearFlag __asm__("D_8009FA10");
 extern u8 *gFontBankTable __asm__("D_8009F468");
 extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
-extern u8 D_800120BC[];
-extern u8 D_800120C8[];
-extern u8 D_800120D4[];
+extern u8 gSkyProfileLabelFormat[] __asm__("D_800120BC");
+extern u8 gSkyProfileFallbackLabelFormat[] __asm__("D_800120C8");
+extern u8 gZoneProfileFallbackLabelFormat[] __asm__("D_800120D4");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern u16 gPlaceholderGlyph __asm__("D_8009F470");
-extern u8 D_8009F498[];
-extern u8 D_8009F4A0[];
+extern u8 gCrimeWarProfileNameFormat[] __asm__("D_8009F498");
+extern u8 gProfileNameCellWidthText[] __asm__("D_8009F4A0");
 extern u8 gDefaultNameString[] __asm__("D_8009F4A4");
 extern u8 gMenuActivationBlock[] __asm__("D_800A3718");
 extern u8 gHighlightShadeTable[] __asm__("D_8009F3F8");
@@ -62,7 +62,7 @@ extern s32 func_8008CCC0(u8 *a);
 extern s32 func_8008CD30(u8 *a, u8 *fmt, ...);
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern void func_80078650(u8 *a, s32 b);
-extern void func_80046C84(s32 id, s32 b);
+extern void gPlayNonpositionalSoundEffect(s32 id, s32 b) __asm__("func_80046C84");
 extern void func_800492A0(u8 *text, s32 *w, s32 *h);
 extern s32 *func_80048E88(void);
 extern void gEmitFlatQuadRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h) __asm__("func_80082EF0");
@@ -234,16 +234,16 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                         CNT(gWideTextTable[gFrontEndListTable[4]])
                         arg2 = (s32)gLookupTextString(0x52D0);
                         if (((u8 *)arg2) != 0 && func_8008CCC0(((u8 *)arg2)) < 5) {
-                            func_8008CD30(RAW + 0x925, D_800120BC, ((u8 *)arg2), n, txt);
+                            func_8008CD30(RAW + 0x925, gSkyProfileLabelFormat, ((u8 *)arg2), n, txt);
                         } else {
-                            func_8008CD30(RAW + 0x925, D_800120C8, n, txt);
+                            func_8008CD30(RAW + 0x925, gSkyProfileFallbackLabelFormat, n, txt);
                         }
                     } else {
                         arg2 = (s32)gLookupTextString(0x3868);
                         if (((u8 *)arg2) != 0 && func_8008CCC0(((u8 *)arg2)) < 7) {
-                            func_8008CD30(RAW + 0x925, D_8009F498, ((u8 *)arg2), gMissionListMaxIndex + 1, txt);
+                            func_8008CD30(RAW + 0x925, gCrimeWarProfileNameFormat, ((u8 *)arg2), gMissionListMaxIndex + 1, txt);
                         } else {
-                            func_8008CD30(RAW + 0x925, D_800120D4, gMissionListMaxIndex + 1, txt);
+                            func_8008CD30(RAW + 0x925, gZoneProfileFallbackLabelFormat, gMissionListMaxIndex + 1, txt);
                         }
                     }
                 } else {
@@ -308,7 +308,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
             gWideTextTable[gFrontEndListTable[4]].unk20 = REC(0x46E);
             func_80077FFC();
             if (*(s32 *)(gGameSession + 0x5C) == 1) {
-                D_8009F459 = 0;
+                gPrecinctAssaultProgress = 0;
                 func_80077708();
             } else {
                 s32 v;
@@ -334,7 +334,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
         case 4:
             *(u16 *)(RAW + 0x942) = 0;
             if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
-                func_80046C84(0x46, 0);
+                gPlayNonpositionalSoundEffect(0x46, 0);
                 arg2 = gScalarCursor[s2];
                 arg3 = (s32)(gNameEntryGlyphBuf + s2 * 8);
                 p = (u8 *)arg3 + arg2;
@@ -348,7 +348,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
         case 5:
             *(u16 *)(RAW + 0x942) = 0;
             if (gPlayerMenuDepth[s2] != 0 && arg4 == RAW[0x924]) {
-                func_80046C84(0x46, 0);
+                gPlayNonpositionalSoundEffect(0x46, 0);
                 arg2 = gScalarCursor[s2];
                 arg3 = (s32)(gNameEntryGlyphBuf + s2 * 8);
                 p = (u8 *)arg3 + arg2;
@@ -367,7 +367,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                 if (*cursor >= 8) {
                     *cursor = 0;
                 }
-                func_80046C84(0x47, 0);
+                gPlayNonpositionalSoundEffect(0x47, 0);
             }
             break;
         case 2:
@@ -379,7 +379,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                 if (*cursor < 0) {
                     *cursor = 7;
                 }
-                func_80046C84(0x47, 0);
+                gPlayNonpositionalSoundEffect(0x47, 0);
             }
             break;
         case 0:
@@ -389,7 +389,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                 s32 *pi;
                 s32 col;
                 s32 rgb;
-                func_800492A0(D_8009F4A0, &w, &h);
+                func_800492A0(gProfileNameCellWidthText, &w, &h);
                 w = w + 1;
                 arg2 = 0;
                 font = func_80048E88();

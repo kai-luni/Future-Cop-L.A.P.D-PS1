@@ -28,11 +28,11 @@ extern void func_8003C110(struct Node24EC8 *node);
 extern void func_80048E9C(struct Node24EC8 *node);
 extern void func_80049420(struct Node24EC8 *node);
 extern void func_80049734(struct Node24EC8 *node);
-extern void func_8004D6D4(struct Node24EC8 *node);
-extern void func_8004D924(struct Node24EC8 *node);
+extern void gLoadActorChunk(struct Node24EC8 *node) __asm__("func_8004D6D4");
+extern void gRegisterResourceWithBias(struct Node24EC8 *node) __asm__("func_8004D924");
 extern void func_800511E4(struct Node24EC8 *node);
 extern void gLoadTextureChunksToVram(struct Node24EC8 *node) __asm__("func_8005A414");
-extern void func_80060E74(struct Node24EC8 *node);
+extern void gRegisterUnitSpawner(struct Node24EC8 *node) __asm__("func_80060E74");
 extern void func_80063C20(struct Node24EC8 *node);
 extern void gLoadCbmpTexture(struct Node24EC8 *node) __asm__("func_80063C5C");
 extern void gInitMapFromGrdb(struct Node24EC8 *node) __asm__("func_80063DC8");
@@ -189,13 +189,13 @@ loop_test:
                 func_80013550(node);
                 break;
             case 0x43616374:
-                func_8004D6D4(node);
+                gLoadActorChunk(node);
                 break;
             case 0x52504E53:
-                func_8004D924(node);
+                gRegisterResourceWithBias(node);
                 break;
             case 0x43736163:
-                func_80060E74(node);
+                gRegisterUnitSpawner(node);
                 break;
             case 0x4366756E:
                 func_80049420(node);

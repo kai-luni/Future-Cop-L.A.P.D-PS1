@@ -8,7 +8,7 @@ extern s32 func_800452C8(void);
 extern s32 gIsPadRumbleEnabled(s32 arg0) __asm__("func_8001EB2C");
 
 extern u8 gPresetIndexPerPort __asm__("D_8009FA98");
-extern u8 D_8009FA99[];
+extern u8 gPort2ControllerPresetIndex[] __asm__("D_8009FA99");
 
 /**
  * @brief Snapshots current audio volumes, option bytes, and device settings into a save/option sub-block.
@@ -42,5 +42,5 @@ void func_80080A5C(u8 *arg0)
     arg0[0xA] = gIsPadRumbleEnabled(0);
     arg0[0xB] = gIsPadRumbleEnabled(1);
     arg0[8] = gPresetIndexPerPort;
-    arg0[9] = D_8009FA99[0];
+    arg0[9] = gPort2ControllerPresetIndex[0];
 }

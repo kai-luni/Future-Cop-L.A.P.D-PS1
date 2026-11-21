@@ -11,7 +11,7 @@ typedef struct {
 extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
 extern  void (*gLogPrintf)(u8 *, s32) __asm__("D_8009DDEC");
 extern Dispatch *gVramWriteCallback __asm__("D_8009DDE8");
-extern u8 D_80012AE8[];
+extern u8 gDrawOTagDebugFormat[] __asm__("D_80012AE8");
 
 /**
  * @brief Hands an ordering table to the GPU (DrawOTag).
@@ -39,7 +39,7 @@ void func_80093280(s32 arg0)
     register s32 a1 __asm__("$5");
     register s32 zero __asm__("$6");
     if (gGpuDebugLevel >= 2) {
-        gLogPrintf(D_80012AE8, arg0);
+        gLogPrintf(gDrawOTagDebugFormat, arg0);
     }
     a1 = arg0;
     __asm__ volatile("" : "+r"(a1));

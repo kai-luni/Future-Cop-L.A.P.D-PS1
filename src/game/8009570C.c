@@ -14,7 +14,7 @@ typedef struct Callbacks {
 } Callbacks;
 
 extern u8 gGpuDebugLevel __asm__("D_8009DDF2");
-extern char D_80012AE8[];
+extern char gDrawOTagDebugFormat[] __asm__("D_80012AE8");
 extern  void (*gLogPrintf)(char *, s32) __asm__("D_8009DDEC");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");

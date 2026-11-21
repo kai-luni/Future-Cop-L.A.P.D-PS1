@@ -11,8 +11,10 @@ typedef struct {
 } Object;
 
 extern s32 gFrameSwitch __asm__("D_8009FAC8");
-extern s32 D_8009F9B4;
+extern s32 gPortraitStreamId __asm__("D_8009F9B4");
 extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
+void gStepPortraitScreen(Object *obj) __asm__("func_8004228C");
+
 
 /**
  *  @brief Updates an object's tracked state against global activity.
@@ -33,12 +35,12 @@ extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
  *  @par Callers
  *  Confirmed: func_80042330.
  */
-void func_8004228C(Object *obj)
+void gStepPortraitScreen(Object *obj)
 {
     s32 active;
     if (obj->unkA0 & 1) {
         active = gFrameSwitch;
-        if ((obj->unkA0 & 2) && (!active || D_8009F9B4 != obj->unkA4)) {
+        if ((obj->unkA0 & 2) && (!active || gPortraitStreamId != obj->unkA4)) {
             obj->unkA4 = -10;
             obj->unkA0 &= ~3;
             obj->flags &= ~8;

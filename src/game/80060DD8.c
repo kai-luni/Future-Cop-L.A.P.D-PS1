@@ -1,5 +1,7 @@
 // Categories: Game Engine > Cheat Codes | Utilities > Hashing
 #include "game/types.h"
+u32 gHashCheatCode(u32 state) __asm__("func_80060DD8");
+
 
 /**
  * @brief Applies a 10-round bit-mixing LFSR/hash transform to a 32-bit input code word.
@@ -25,7 +27,7 @@
  * @par Callers
  * Confirmed: func_80060A0C (0x80060A20, hashes candidate code before matching 13 cheat switch cases) / Likely: none / Unknown: none.
  */
-u32 func_80060DD8(u32 state)
+u32 gHashCheatCode(u32 state)
 {
     u32 mask20000;
     u32 mask10000;

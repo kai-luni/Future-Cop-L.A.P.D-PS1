@@ -24,13 +24,15 @@ struct SoundObj {
     u8 unk08[4];
 };
 
-extern u8 D_8009F75C;
+extern u8 gRegisteredSoundBankCount __asm__("D_8009F75C");
 extern struct Unk7938 gSoundEntryTable[] __asm__("D_800A7938");
 extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
 extern u8 gSoundIdTable[] __asm__("D_800A1880");
-extern u8 D_800A188A[];
+extern u8 gHighSoundIdRegistrationBase[] __asm__("D_800A188A");
 
-extern s32 func_800472E8(s32 key);
+extern s32 gFindSoundBankByKey(s32 key) __asm__("func_800472E8");
+s32 gRegisterSoundBankByKey(struct SoundObj *self, s32 key) __asm__("func_80047344");
+
 
 /**
  *  @brief Finds or registers a sound object under the low byte of a key.
@@ -52,20 +54,20 @@ extern s32 func_800472E8(s32 key);
  *  @par Callers
  *  Confirmed: func_800241D0.
  */
-s32 func_80047344(struct SoundObj *self, s32 key)
+s32 gRegisterSoundBankByKey(struct SoundObj *self, s32 key)
 {
     s32 slot;
     s32 i;
     s32 value;
     struct Unk7938 *entry;
 
-    slot = func_800472E8(key & 0xFF);
-    if (slot != -1 || D_8009F75C >= 0x6E) {
+    slot = gFindSoundBankByKey(key & 0xFF);
+    if (slot != -1 || gRegisteredSoundBankCount >= 0x6E) {
         return slot;
     }
 
-    slot = D_8009F75C;
-    D_8009F75C = slot + 1;
+    slot = gRegisteredSoundBankCount;
+    gRegisteredSoundBankCount = slot + 1;
     entry = &gSoundEntryTable[slot];
 
     self->id = slot;
@@ -88,7 +90,7 @@ s32 func_80047344(struct SoundObj *self, s32 key)
         if (value > 0) {
             if (value >= 0x46) {
                 if (value < 0x82) {
-                    D_800A188A[value] = slot;
+                    gHighSoundIdRegistrationBase[value] = slot;
                 }
             } else {
                 if (self->unk07 == 1) {

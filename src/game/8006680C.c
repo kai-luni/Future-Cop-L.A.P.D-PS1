@@ -19,7 +19,7 @@ extern s32 gClampMapViewToBounds(s32 *, s32) __asm__("func_800665E8");
 extern void gBuildTilePattern(s32) __asm__("func_800654F8");
 extern s32 gWorldToRadarCell(s32) __asm__("func_80065744");
 extern void gDrawMapSubtilePolys(u8 *, s32, s32, s32) __asm__("func_80065CA8");
-extern void func_8004ED18(s32 *, s32 *, s32);
+extern void gDrawMapRadarBlips(s32 *, s32 *, s32) __asm__("func_8004ED18");
 extern void gWorldToMinimapCell(s32 *, s32 *, s32, s32) __asm__("func_800694C8");
 extern void gEmitTranslucentTileRect(s32, s32, s32, s32, s32, s32) __asm__("func_8001C214");
 extern void gDrawMinimapMarkers(void *, s32 *, s32, s32) __asm__("func_80066684");
@@ -136,7 +136,7 @@ void gDrawMapView(struct Owner *owner, s32 *pos)
     sc2 = ((size * 5) << 17) / 80;
     end[0] = start[0] + sc2;
     end[1] = start[1] + 0x30000;
-    func_8004ED18(start, end, owner->actor->flag);
+    gDrawMapRadarBlips(start, end, owner->actor->flag);
     gWorldToMinimapCell(&sx, &sy, start[0], start[1]);
     w = sc2 * (D_800A2960[0] >> 8);
     w >>= 24;

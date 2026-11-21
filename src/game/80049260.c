@@ -3,7 +3,7 @@
 
 extern u32 gEffectId __asm__("D_8009FACC");
 
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 
 /**
  * @brief Consumes the pending text blip request and clears it.
@@ -31,7 +31,7 @@ void func_80049260(void)
 {
     if (gEffectId != 0) {
         if (gEffectId < 0x82) {
-            func_80046C84(gEffectId, 0);
+            gPlayNonpositionalSoundEffect(gEffectId, 0);
         }
         gEffectId = 0;
     }

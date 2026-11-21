@@ -18,11 +18,13 @@ extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
-extern s32 func_800458E8(s32 arg0, s32 arg1, s8 *mix, void *arg3);
-extern s32 func_80046B04(s32 volume, s32 arg1, s32 arg2, u32 index);
-extern void func_800460D4(s8 *mix);
+extern s32 gComputeSpatialSoundAttenuation(s32 arg0, s32 arg1, s8 *mix, void *arg3) __asm__("func_800458E8");
+extern s32 gAllocPrioritySoundVoice(s32 volume, s32 arg1, s32 arg2, u32 index) __asm__("func_80046B04");
+extern void gComputeSpatialSoundPan(s8 *mix) __asm__("func_800460D4");
 extern u8 func_8004772C(struct SoundBank *bank, s32 handle, s32 pan, s32 volume, s32 extra);
-extern void func_80046698(s32 handle);
+extern void gReleaseSoundVoice(s32 handle) __asm__("func_80046698");
+s32 gPlaySoundIdOnVoice(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *object) __asm__("func_80046E88");
+
 
 /**
  * @brief Resolves a sound track ID, computes spatial mix parameters, and starts voice playback.
@@ -47,7 +49,7 @@ extern void func_80046698(s32 handle);
  * @par Callers
  * Confirmed: func_80025E18 (0x80025F08), func_80047088 (0x8004716C), func_800471C4 (0x80047258), func_8007CACC (0x8007CCEC, 0x8007CD90).
  */
-s32 func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *object)
+s32 gPlaySoundIdOnVoice(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *object)
 {
     register s32 result __asm__("$16");
     register s32 slot __asm__("$17");
@@ -62,22 +64,22 @@ s32 func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle, void *obj
         return result;
     }
     bank = &gSoundEntryTable[slot];
-    if (func_800458E8(arg1, arg2, mix, object) == 0) {
+    if (gComputeSpatialSoundAttenuation(arg1, arg2, mix, object) == 0) {
         return result;
     }
     if (handle == 0) {
-        result = func_80046B04(mix[0], bank->unk13, result, slot);
+        result = gAllocPrioritySoundVoice(mix[0], bank->unk13, result, slot);
         if (result == 0) {
             goto done;
         }
         handle = result;
     }
-    func_800460D4(mix);
+    gComputeSpatialSoundPan(mix);
     if (func_8004772C(bank, handle, mix[1], mix[0], arg3) != 0) {
         return result;
     }
     if (result != 0) {
-        func_80046698(result);
+        gReleaseSoundVoice(result);
     }
     result = 0;
     __asm__("" : "=r"(result) : "0"(result));

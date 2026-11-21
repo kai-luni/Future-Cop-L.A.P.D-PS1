@@ -11,7 +11,9 @@ typedef struct {
 extern s32 gEntityBaseHandler(s32 message, Object *object, void *data) __asm__("func_8002AD58");
 extern s32 func_80041E0C(s32 message, Object *object, void *data);
 extern void gDrawPortraitScreen(Object *object) __asm__("func_80042128");
-extern void func_8004228C(Object *object, void *data);
+extern void gStepPortraitScreen(Object *object, void *data) __asm__("func_8004228C");
+s32 gHandlePortraitScreenMsg(s32 message, Object *object, void *data) __asm__("func_80042330");
+
 
 /**
  * @brief Message handler of object type 34: spawn, conditional draw and tick
@@ -41,7 +43,7 @@ extern void func_8004228C(Object *object, void *data);
  * No direct callers in the call graph. func_8002AE54 returns the address
  * for object type 34, so the dispatcher reaches it indirectly.
  */
-s32 func_80042330(s32 message, Object *object, void *data)
+s32 gHandlePortraitScreenMsg(s32 message, Object *object, void *data)
 {
     switch (message) {
     case 1:
@@ -59,7 +61,7 @@ s32 func_80042330(s32 message, Object *object, void *data)
         return 1;
     case 6:
         if (object->unkA0 & 1) {
-            func_8004228C(object, data);
+            gStepPortraitScreen(object, data);
         }
         return 0;
     case 4:

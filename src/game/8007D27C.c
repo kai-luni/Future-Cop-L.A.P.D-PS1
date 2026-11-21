@@ -53,8 +53,8 @@ extern s32 func_800451E0(void);
 extern s32 func_8004522C(void);
 extern s32 func_80045288(void);
 extern s32 func_800452C8(void);
-extern void func_80046A34(s32 handle);
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 
 /**
  * @brief Options-menu callback that toggles global sound enable and updates widget label D_8009BABE[0].
@@ -86,7 +86,7 @@ void gToggleSoundEnable(s32 arg0)
 {
 
     if (arg0 < 3) if (arg0 > 0) {
-        func_80046C84(0x47, 0);
+        gPlayNonpositionalSoundEffect(0x47, 0);
         func_800451B4(func_800451E0() ^ 1);
         if (func_800451E0()) {
             gSoundWidgetLabel[0] = 0x100E;

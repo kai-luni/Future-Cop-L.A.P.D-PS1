@@ -71,12 +71,14 @@ extern s32 gRemainingCounter __asm__("D_8009FAB0");
 
 extern struct Unk437E8Transform *gResolveNodeTransform(void *model, s32 flags, s32 part,
                                                s32 count, void *sub, void *matrix) __asm__("func_8003D9F8");
-extern void func_80042864(struct Unk437E8Part *object, s32 amount);
-extern void func_800428FC(struct Unk437E8 *node, struct Unk437E8Part *cur,
-                          s32 a2, s32 a3, s32 a5);
-extern void func_800427A8(struct Unk437E8 *owner, struct Unk437E8Part *previous,
-                          struct Unk437E8Part *node);
+extern void gDrainParticleColor(struct Unk437E8Part *object, s32 amount) __asm__("func_80042864");
+extern void gStepParticleColor(struct Unk437E8 *node, struct Unk437E8Part *cur,
+                          s32 a2, s32 a3, s32 a5) __asm__("func_800428FC");
+extern void gRecycleEmitterNode(struct Unk437E8 *owner, struct Unk437E8Part *previous,
+                          struct Unk437E8Part *node) __asm__("func_800427A8");
 extern s32 gGetGroundHeight(s32 *pos, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
+s32 gTickGravityParticleChain(struct Unk437E8 *node, s32 arg) __asm__("func_800437E8");
+
 
 /**
  * @brief Per-frame update of the particle/segment chain of a model-bound effect
@@ -133,7 +135,7 @@ extern s32 gGetGroundHeight(s32 *pos, s32 arg1, s32 arg2, s32 arg3) __asm__("fun
  * @par Callers
  * func_800441DC only (its flag-bit-0-clear branch).
  */
-s32 func_800437E8(struct Unk437E8 *node, s32 arg)
+s32 gTickGravityParticleChain(struct Unk437E8 *node, s32 arg)
 {
     register struct Unk437E8 *nd __asm__("$17");
     register struct Unk437E8Part *cur __asm__("$16");
@@ -201,7 +203,7 @@ s32 func_800437E8(struct Unk437E8 *node, s32 arg)
                 amt = 0;
                 if (!(cur->unk14 & 1))
                     amt = v96;
-                func_80042864(cur, amt);
+                gDrainParticleColor(cur, amt);
             } else if (nd->unk8C & 2) {
                 s32 a2;
                 s32 a3;
@@ -211,7 +213,7 @@ s32 func_800437E8(struct Unk437E8 *node, s32 arg)
                 a3 = v98;
                 if (cur->unk14 & 0x10)
                     a3 = -v98;
-                func_800428FC(nd, cur, a2, a3,
+                gStepParticleColor(nd, cur, a2, a3,
                               (cur->unk14 & 0x20) ? -v9A : v9A);
             } else {
                 s32 a2;
@@ -222,7 +224,7 @@ s32 func_800437E8(struct Unk437E8 *node, s32 arg)
                 a3 = 0;
                 if (!(cur->unk14 & 2))
                     a3 = v98;
-                func_800428FC(nd, cur, a2, a3,
+                gStepParticleColor(nd, cur, a2, a3,
                               (cur->unk14 & 4) ? 0 : v9A);
             }
         }
@@ -237,7 +239,7 @@ s32 func_800437E8(struct Unk437E8 *node, s32 arg)
         v = h;
         if (h != 0 && ((h -= arg, v = h, ({ __asm__ volatile("" : "+r"(h)); h << 16; })) <= 0)) {
         remove:
-            func_800427A8(nd, prev, cur);
+            gRecycleEmitterNode(nd, prev, cur);
             gRemainingCounter--;
         } else {
             prev = cur;

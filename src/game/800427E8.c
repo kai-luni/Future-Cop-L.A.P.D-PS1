@@ -12,6 +12,8 @@ struct Unk427E8 {
 
 extern s32 gRemainingCounter __asm__("D_8009FAB0");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeEmitterObject(struct Unk427E8 *object) __asm__("func_800427E8");
+
 
 /**
  * @brief Releases an effect object and its two owned blocks, adjusting
@@ -28,7 +30,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * func_80044610 (effect dispatcher).
  */
-void func_800427E8(struct Unk427E8 *object)
+void gFreeEmitterObject(struct Unk427E8 *object)
 {
     gRemainingCounter -= object->unkA4;
     if (object->unkA8 != 0) {

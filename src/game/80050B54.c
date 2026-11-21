@@ -4,7 +4,7 @@ struct Obj { u8 pad0[6]; s16 y; u8 pad8[4]; s16 scale; u8 pade[14]; u32 value; s
 struct Entry { u8 pad0[2]; s16 a; u8 pad4[4]; s16 b; u8 padA[6]; };
 struct Child { u8 pad0[0x34]; struct Entry *entries; };
 struct State { u8 pad0[0x28]; struct Child *child; u8 pad2c[0x24]; u8 pos[4]; s32 height; u8 pad58[0x18]; s16 index; u8 pad72[0x12]; s32 changed; };
-extern s32 func_80067684(void *, s32);
+extern s32 gQuerySurfaceHeight(void *, s32) __asm__("func_80067684");
 
 /**
  * @brief Moves an object vertically towards a target height.
@@ -87,7 +87,7 @@ s32 func_80050B54(struct Obj *obj, s32 delta, struct State *state)
     }
     if ((flags & 0x50) == 0x40) {
         height = state->height;
-        target = func_80067684(state->pos, -1);
+        target = gQuerySurfaceHeight(state->pos, -1);
         if (state->child != 0) {
             register s32 offset __asm__("$2") = state->index;
             register struct Entry *base __asm__("$3") = state->child->entries;

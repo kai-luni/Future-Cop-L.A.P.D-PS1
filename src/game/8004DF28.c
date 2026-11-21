@@ -28,7 +28,7 @@ struct Entity {
 };
 
 extern struct Entity *gUnitListHead __asm__("D_8009FA40");
-extern s32 D_8009F7A4;
+extern s32 gProximityScriptDeadline __asm__("D_8009F7A4");
 extern s32 gFrameTime[] __asm__("D_8009FAA4");
 extern struct Pos *gPlayerEntities[] __asm__("D_8009FA58");
 extern struct Pos *gFocusPositions[] __asm__("D_8009F9A0");
@@ -39,7 +39,9 @@ extern s32 gEffectPoolCapacity[] __asm__("D_800A8F94");
 extern s32 func_80045678(s32 sound, s32 id, s32 arg2, s32 arg3, s32 arg4);
 extern void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index);
 extern void func_800457B8(s32 arg0, s32 index);
-extern void func_8004DEE0(struct Entity *entity);
+extern void gRunEntityScript(struct Entity *entity) __asm__("func_8004DEE0");
+void gCullActiveEntitiesSolo(void) __asm__("func_8004DF28");
+
 
 /**
  *  @brief Builds a distance-filtered entity list and manages nearby entity sounds.
@@ -61,7 +63,7 @@ extern void func_8004DEE0(struct Entity *entity);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8004DF28(void)
+void gCullActiveEntitiesSolo(void)
 {
     register struct Entity *node __asm__("$16");
     register struct Entity *best __asm__("$22");
@@ -99,11 +101,11 @@ void func_8004DF28(void)
     threshold = 0x38000;
 
     for (;;) {
-        if (D_8009F7A4 > gFrameTime[0]) {
+        if (gProximityScriptDeadline > gFrameTime[0]) {
             goto skip;
         }
         flag = 1;
-        D_8009F7A4 = gFrameTime[0] + 0x12C;
+        gProximityScriptDeadline = gFrameTime[0] + 0x12C;
     skip:
         outHigh = (char *)0x800B0000;
         __asm__("" : "=r"(outHigh) : "0"(outHigh));
@@ -197,6 +199,6 @@ done:
     __asm__("" : "=r"(temp) : "0"(temp));
     *(s32 *)(temp - 0x7070) = count;
     if (best != 0) {
-        func_8004DEE0(best);
+        gRunEntityScript(best);
     }
 }

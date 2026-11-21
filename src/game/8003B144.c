@@ -6,7 +6,7 @@ typedef int s32;
 struct Part { s16 a,b,c,d,e,f,g,h,i; s8 j,k; };
 struct Entity { u8 pad[0x28]; void *info; u8 pad2[0x75]; s8 count; s8 total; u8 pad3; s16 threshold; u8 pad4[0x22]; struct Part *parts; };
 extern void func_8003A960(struct Entity *, void *, s32);
-extern void func_8004D958(struct Entity *);
+extern void gRetireEntity(struct Entity *) __asm__("func_8004D958");
 
 /**
  * @brief Animates the parts of a debris/particle object and retires it when empty.
@@ -61,5 +61,5 @@ void func_8003B144(s32 unused, struct Entity *self, s32 delta)
         p++;
         i++;
     }
-    if (self->count <= 0) func_8004D958(self);
+    if (self->count <= 0) gRetireEntity(self);
 }

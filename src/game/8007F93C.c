@@ -9,7 +9,7 @@ struct UnkFA94 {
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
-extern u8 D_800A36BD[];
+extern u8 gProfileMenuControllerMode[] __asm__("D_800A36BD");
 extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 
 extern void gArmProfileTransfer(void) __asm__("func_8007FA88");
@@ -49,8 +49,8 @@ void func_8007F93C(void)
     *(u8 *)(p + 0x944) = 0;
     func_8007F02C();
     if (gGameSession->unkC == 2) {
-        D_800A36BD[0] = 0;
+        gProfileMenuControllerMode[0] = 0;
     } else {
-        D_800A36BD[0] = 1;
+        gProfileMenuControllerMode[0] = 1;
     }
 }

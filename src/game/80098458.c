@@ -4,7 +4,7 @@ extern s32 gArenaCursor __asm__("D_8009EA40");
 extern s32 gArenaOffsetFlag __asm__("D_8009EA3C");
 extern s32 gSpuAlignMask __asm__("D_8009EED4");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
-extern s32 D_8009EF04;
+extern s32 gSpuEntryTableCapacity __asm__("D_8009EF04");
 extern s32 gTableCursor __asm__("D_8009EF08");
 extern s32 *gSpuEntryTable __asm__("D_8009EF0C");
 extern void gSpuCompactPool(void) __asm__("func_80097DF8");
@@ -95,7 +95,7 @@ s32 func_80098458(s32 arg, s32 size)
           temp -= x;
           remaining = temp - size; }
         if (gap > 0) {
-            if (D_8009EF04 - 2 < gTableCursor) return -1;
+            if (gSpuEntryTableCapacity - 2 < gTableCursor) return -1;
             p[0] = 0x80001010;
             p[4] = sum | 0x40000000;
             __asm__ volatile ("" : : "r" (sum) : "memory");
@@ -106,7 +106,7 @@ s32 func_80098458(s32 arg, s32 size)
             p[3] = size;
             p[5] = remaining;
         } else {
-            if (D_8009EF04 - 1 < gTableCursor) return -1;
+            if (gSpuEntryTableCapacity - 1 < gTableCursor) return -1;
             p[2] = sum | 0x40000000;
             __asm__ volatile ("" : : "r" (sum) : "memory");
             count = 1;

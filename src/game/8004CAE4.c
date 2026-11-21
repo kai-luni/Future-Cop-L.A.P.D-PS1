@@ -9,7 +9,7 @@ struct Unk4CAE4State {
 };
 
 extern s32 gEntityIdCounter __asm__("D_8009F7A0");
-extern s32 D_8009F7A4;
+extern s32 gProximityScriptDeadline __asm__("D_8009F7A4");
 extern s32 gPendingMessageMask __asm__("D_8009F7A8");
 extern u8 gMessageDoneFlag __asm__("D_8009F7AC");
 extern s32 gRequestOffsetBias[] __asm__("D_8009F9F4");
@@ -65,7 +65,7 @@ void func_8004CAE4(void)
 
     entityTable[0] = 0;
     gMarkerColorTable[0] = 0;
-    D_8009F7A4 = 0;
+    gProximityScriptDeadline = 0;
     gUnitListHead = 0;
     gListTailBranch = 0;
     gEntityIdCounter = 0;

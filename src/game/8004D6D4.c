@@ -53,7 +53,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void gLoadMapZone(struct Unk4D6D4 *arg0) __asm__("func_800319D4");
 extern void func_80084110(struct Unk4D6D4 *arg0);
 extern void gLoadActorLightNode(struct Unk4D6D4 *arg0) __asm__("func_80049EA8");
-extern void func_80060838(struct Unk4D6D4 *arg0);
+extern void gLoadAttackDefinition(struct Unk4D6D4 *arg0) __asm__("func_80060838");
 extern void gRegistryLoad(struct Unk4D6D4 *arg0) __asm__("func_8006A918");
 extern void gLoadActorDef5E(struct Unk4D6D4 *arg0) __asm__("func_8004488C");
 extern void gLoadActorDef5D(struct Unk4D6D4 *arg0) __asm__("func_80041070");
@@ -63,6 +63,8 @@ extern void func_8003BDA0(struct Unk4D6D4 *arg0);
 extern void gLoadActorDef59(struct Unk4D6D4 *arg0) __asm__("func_800706C4");
 extern void func_800740B8(struct Unk4D6D4 *arg0);
 extern void func_80076878(struct Unk4D6D4 *arg0);
+void gLoadActorChunk(struct Unk4D6D4 *arg0) __asm__("func_8004D6D4");
+
 
 /**
  *  @brief Loads an entity definition and dispatches initialization by its resource type.
@@ -83,7 +85,7 @@ extern void func_80076878(struct Unk4D6D4 *arg0);
  *  @par Callers
  *  Confirmed: func_80024EC8.
  */
-void func_8004D6D4(struct Unk4D6D4 *arg0)
+void gLoadActorChunk(struct Unk4D6D4 *arg0)
 {
     struct EntityDef def;
     struct EntityDef *defp;
@@ -111,7 +113,7 @@ void func_8004D6D4(struct Unk4D6D4 *arg0)
         gLoadActorLightNode(arg0);
         break;
     case 0x62:
-        func_80060838(arg0);
+        gLoadAttackDefinition(arg0);
         break;
     case 0x63:
         gRegistryLoad(arg0);

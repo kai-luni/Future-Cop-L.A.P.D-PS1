@@ -14,7 +14,7 @@ typedef struct {
 
 extern SpuDebug *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
-extern char D_80012CDC[];
+extern char gSpuTimeoutFormat[] __asm__("D_80012CDC");
 extern char D_80012CFC[];
 extern char D_80012D10[];
 

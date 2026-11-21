@@ -1,7 +1,9 @@
 // Categories: Game Engine > Audio
 #include "game/types.h"
 
-extern s32 func_80046B04(s32 arg0, s32 arg1, s32 arg2, s32 slot);
+extern s32 gAllocPrioritySoundVoice(s32 arg0, s32 arg1, s32 arg2, s32 slot) __asm__("func_80046B04");
+s32 gAllocReservedStreamVoice(void) __asm__("func_80046AD8");
+
 
 /**
  *  @brief Calls the sound routine with a fixed set of arguments.
@@ -20,7 +22,7 @@ extern s32 func_80046B04(s32 arg0, s32 arg1, s32 arg2, s32 slot);
  *  @par Callers
  *  Confirmed: func_800453B8.
  */
-s32 func_80046AD8(void)
+s32 gAllocReservedStreamVoice(void)
 {
-    return func_80046B04(0x7F, 0xA, 2, 0xFF);
+    return gAllocPrioritySoundVoice(0x7F, 0xA, 2, 0xFF);
 }

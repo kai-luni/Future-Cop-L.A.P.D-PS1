@@ -16,7 +16,7 @@ struct Unk6A898 {
     struct Unk607B8 sub;
 };
 
-extern void func_800607B8(struct Unk607B8 *value);
+extern void gScaleDefinitionSubrecordFields(struct Unk607B8 *value) __asm__("func_800607B8");
 
 /**
  *  @brief Processes an embedded structure and rescales two object fields.
@@ -37,7 +37,7 @@ extern void func_800607B8(struct Unk607B8 *value);
  */
 void func_8006A898(struct Unk6A898 *object)
 {
-    func_800607B8(&object->sub);
+    gScaleDefinitionSubrecordFields(&object->sub);
     object->unk0A = (object->unk0A << 12) / 218;
     object->unk08 = (object->unk08 << 12) / 218;
 }

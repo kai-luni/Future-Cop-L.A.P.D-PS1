@@ -11,9 +11,9 @@ typedef struct {
 } Entry;
 
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
-extern u8 D_8009F488[];
-extern u32 D_8009F444[];
-extern u8 D_80011E60[];
+extern u8 gLax2ModuleName[] __asm__("D_8009F488");
+extern u32 gLax1ModuleName[] __asm__("D_8009F444");
+extern u8 gCreditsMovieFilename[] __asm__("D_80011E60");
 extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 
 extern s32 func_8008CCC0(u8 *);
@@ -84,12 +84,12 @@ s32 func_80083130(void **arg0)
     }
     buffer[i] = 0;
 
-    if (func_8008CCA0(buffer, D_8009F488) == 0) {
-        __builtin_memcpy((u32 *)buffer, D_8009F444, 5);
+    if (func_8008CCA0(buffer, gLax2ModuleName) == 0) {
+        __builtin_memcpy((u32 *)buffer, gLax1ModuleName, 5);
     }
 
     i = 0;
-    s2 = D_80011E60;
+    s2 = gCreditsMovieFilename;
     for (; i < 16; i++) {
         entry = &gWideTextTable[i];
         if (func_8008CCA0(buffer, entry->unk0) == 0) {

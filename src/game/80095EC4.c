@@ -7,8 +7,8 @@ typedef struct {
     s16 dct[64];
 } DecDctEnv;
 
-extern s32 D_8009E8B4[];
-extern s32 D_8009E8F4[];
+extern s32 gMdecLuminanceQuantizationTable[] __asm__("D_8009E8B4");
+extern s32 gMdecChrominanceQuantizationTable[] __asm__("D_8009E8F4");
 extern s32 D_8009E938[];
 
 /**
@@ -36,13 +36,13 @@ DecDctEnv *func_80095EC4(DecDctEnv *environment)
     s32 *destination;
 
     destination = (s32 *)environment->iq_y;
-    source = D_8009E8B4;
+    source = gMdecLuminanceQuantizationTable;
     for (i = 15; i != -1; i--) {
         *destination++ = *source++;
     }
 
     destination = (s32 *)environment->iq_c;
-    source = D_8009E8F4;
+    source = gMdecChrominanceQuantizationTable;
     for (i = 15; i != -1; i--) {
         *destination++ = *source++;
     }

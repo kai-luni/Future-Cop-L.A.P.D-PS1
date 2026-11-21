@@ -57,7 +57,7 @@ extern s32 func_80019668(void);
 extern void func_800497A8(void);
 extern void func_80049980(struct Unk49C38Node *node, u32 arg1, u32 arg2, s32 arg3,
                           s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8);
-extern s32 func_80067684(u8 *arg0, s32 arg1);
+extern s32 gQuerySurfaceHeight(u8 *arg0, s32 arg1) __asm__("func_80067684");
 
 /**
  * @brief Spawns a map light node: resolves the surface height, allocates
@@ -162,7 +162,7 @@ s32 func_80049C38(struct Unk49C38 *object, s32 arg1)
         } else {
             callArg = -1;
         }
-        var_s4 = func_80067684((u8 *)&object->unk08, callArg);
+        var_s4 = gQuerySurfaceHeight((u8 *)&object->unk08, callArg);
     }
     node->unk02 = -1;
     var_s2 = object->unk1C;

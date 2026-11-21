@@ -33,11 +33,13 @@ struct SoundBank {
 
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
-extern s32 D_8009F33C;
+extern s32 gNextSoundVoiceGeneration __asm__("D_8009F33C");
 
-extern struct SoundVoice *func_8004665C(void);
-extern void func_80046698(struct SoundVoice *voice);
-extern void func_80046870(struct SoundVoice *voice);
+extern struct SoundVoice *gPopFreeSoundVoice(void) __asm__("func_8004665C");
+extern void gReleaseSoundVoice(struct SoundVoice *voice) __asm__("func_80046698");
+extern void gLinkActiveSoundVoice(struct SoundVoice *voice) __asm__("func_80046870");
+s32 gAllocPrioritySoundVoice(s32 arg0, s32 arg1, s32 arg2, s32 slot) __asm__("func_80046B04");
+
 
 /*
  * Allocate a voice for a sound of bank `slot` (0xFF: any bank) for a request of
@@ -54,7 +56,7 @@ extern void func_80046870(struct SoundVoice *voice);
  * `seq` (wrapping to 1, never 0), and is linked in by func_80046870. Returns 0
  * when no voice could be allocated.
  */
-s32 func_80046B04(s32 arg0, s32 arg1, s32 arg2, s32 slot)
+s32 gAllocPrioritySoundVoice(s32 arg0, s32 arg1, s32 arg2, s32 slot)
 {
     struct SoundBank *bank;
     struct SoundVoice *voice;
@@ -66,20 +68,20 @@ s32 func_80046B04(s32 arg0, s32 arg1, s32 arg2, s32 slot)
     bank = &gSoundEntryTable[slot];
 
     if (slot == 0xFF || bank->voices < bank->unk14) {
-        voice = func_8004665C();
+        voice = gPopFreeSoundVoice();
         if (voice == 0) {
             node = gVoicePriorityList;
             if (node != 0 && node->time < value) {
-                func_80046698(node);
-                voice = func_8004665C();
+                gReleaseSoundVoice(node);
+                voice = gPopFreeSoundVoice();
             }
         }
     } else {
         node = bank->head;
         if (node != 0 && node->time < value &&
             (node->pan == 1 || node->next != 0)) {
-            func_80046698(node);
-            voice = func_8004665C();
+            gReleaseSoundVoice(node);
+            voice = gPopFreeSoundVoice();
         }
     }
 
@@ -92,14 +94,14 @@ s32 func_80046B04(s32 arg0, s32 arg1, s32 arg2, s32 slot)
         if (arg2 == 1) {
             voice->time = value + 0x64;
         }
-        voice->seq = D_8009F33C;
+        voice->seq = gNextSoundVoiceGeneration;
         voice->unk5 = -1;
-        D_8009F33C++;
-        if (D_8009F33C == 0) {
-            D_8009F33C = 1;
+        gNextSoundVoiceGeneration++;
+        if (gNextSoundVoiceGeneration == 0) {
+            gNextSoundVoiceGeneration = 1;
         }
         voice->unk14 = 0;
-        func_80046870(voice);
+        gLinkActiveSoundVoice(voice);
     }
     return voice;
 }

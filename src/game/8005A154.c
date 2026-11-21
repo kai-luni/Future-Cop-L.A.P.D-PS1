@@ -13,7 +13,7 @@ struct Unk5A154Gauge {
 
 extern s32 gPlayerEntities[] __asm__("D_8009FA58");
 
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 
 /**
  * @brief Plays the gauge's edge sound with a per-slot parameter.
@@ -41,5 +41,5 @@ extern s32 func_80046C84(s32 id, s32 arg1);
  */
 void func_8005A154(struct Unk5A154 *object, struct Unk5A154Gauge *gauge)
 {
-    func_80046C84(gauge->sound, gPlayerEntities[object->side]);
+    gPlayNonpositionalSoundEffect(gauge->sound, gPlayerEntities[object->side]);
 }

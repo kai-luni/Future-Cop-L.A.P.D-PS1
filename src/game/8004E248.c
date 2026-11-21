@@ -22,7 +22,7 @@ extern struct Entity *gPlayerEntities __asm__("D_8009FA58");
 extern struct Entity *gPlayerEntity2 __asm__("D_8009FA5C");
 extern struct Entity *gFocusPositions __asm__("D_8009F9A0");
 extern s32 gFrameTime __asm__("D_8009FAA4");
-extern s32 D_8009F7A4;
+extern s32 gProximityScriptDeadline __asm__("D_8009F7A4");
 extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 extern s32 gCommandListHead __asm__("D_800A8F90");
 extern s32 gEffectPoolCapacity __asm__("D_800A8F94");
@@ -30,7 +30,9 @@ extern struct Entity *gEffectListHead[] __asm__("D_800A8F98");
 extern s32 func_80045678(s32, s32, s32, s32, s32);
 extern void func_8004572C(s32, s32, s32, s32, s32);
 extern void func_800457B8(s32, s32);
-extern void func_8004DEE0(struct Entity *);
+extern void gRunEntityScript(struct Entity *) __asm__("func_8004DEE0");
+void gCullActiveEntitiesSplit(void) __asm__("func_8004E248");
+
 
 /**
  * @brief Culls world entities in D_8009FA40 by proximity, builds active list D_800A8F98, updates entity sounds, and triggers one script.
@@ -54,7 +56,7 @@ extern void func_8004DEE0(struct Entity *);
  * @par Callers
  * Confirmed: func_80027510 (two-player unpaused frame loop).
  */
-void func_8004E248(void)
+void gCullActiveEntitiesSplit(void)
 {
     s32 flag;
     s32 x, z;
@@ -90,9 +92,9 @@ void func_8004E248(void)
     flag = 0;
     limit = 0x38000;
 outer_head:
-    if (D_8009F7A4 <= gFrameTime) {
+    if (gProximityScriptDeadline <= gFrameTime) {
         flag = 1;
-        D_8009F7A4 = gFrameTime + 0x12C;
+        gProximityScriptDeadline = gFrameTime + 0x12C;
     }
     out = gEffectListHead;
     count = 0;
@@ -185,5 +187,5 @@ done:
     v0 = 0x800B0000;
     __asm__("" : "+r"(v0));
     *(s32 *)(v0 - 0x7070) = count;
-    if (bestEnt != 0) func_8004DEE0(bestEnt);
+    if (bestEnt != 0) gRunEntityScript(bestEnt);
 }

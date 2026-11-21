@@ -44,17 +44,17 @@ extern s32 gCommandListHead[2] __asm__("D_800A8F90");
 extern void gTransformPartVertex(void *instance, s32 part, void *out) __asm__("func_80017668");
 extern void gNormalizeVector(void *arg0) __asm__("func_8001A180");
 extern void gWriteCellEventValue(void *object, void *event) __asm__("func_8005C048");
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void *gRegistryFind(u8 id) __asm__("func_8006AAEC");
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, void *arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
 extern void gSolveLeadDirection(void *a0, void *a1, s32 a2, s32 a3, void *a4, void *a5, s32 a6) __asm__("func_8005E2A0");
 extern s32 gSpawnDirectShot(void *a0, s32 a1, void *a2, void *a3, void *a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11) __asm__("func_8005E47C");
-extern s32 func_8005EE04(void *a0, void *a1, void *a2, void *a3, void *a4, s32 a5, s32 a6);
+extern s32 gSpawnJitterProjectile(void *a0, void *a1, void *a2, void *a3, void *a4, s32 a5, s32 a6) __asm__("func_8005EE04");
 extern s32 gSolveLobVector(s32 a0, void *a1, void *a2, void *a3, s32 a4) __asm__("func_8005E624");
 extern s32 gSpawnLobShot(s32 a0, void *a1, void *a2, void *a3, void *a4, s32 a5, void *a6, s32 a7, s32 a8) __asm__("func_8005E9E4");
-extern s32 func_8005ECB8(void *a0, void *a1, void *a2, void *a3, s32 a4);
-extern s32 func_8005EB74(void *a0, void *a1, void *a2, void *a3, s32 a4, void *a5, s32 a6);
+extern s32 gSpawnStaticProjectile(void *a0, void *a1, void *a2, void *a3, s32 a4) __asm__("func_8005ECB8");
+extern s32 gSpawnTargetedShot(void *a0, void *a1, void *a2, void *a3, s32 a4, void *a5, s32 a6) __asm__("func_8005EB74");
 extern s32 gAttachPartEffect(void *a0, void *a1, s32 a2, void *a3, s32 a4, void *a5) __asm__("func_8005CBCC");
 extern s32 gWeaponEffectUpdate(void *a0, void *a1, void *a2) __asm__("func_8005D690");
 
@@ -160,7 +160,7 @@ s32 gWeaponFireDispatch(struct Owner6ACB0 *owner, s32 index)
         u8 id2;
         id2 = *(u8 *)(def + 0x1C);
         action = *(u8 *)(def + 0x00);
-        func_80046C84(id2, (s32)owner);
+        gPlayNonpositionalSoundEffect(id2, (s32)owner);
     }
 
     if (action == 2 && *(u8 **)(state + 0x6C) == 0) {
@@ -234,14 +234,14 @@ s32 gWeaponFireDispatch(struct Owner6ACB0 *owner, s32 index)
         break;
 
     case 8:
-        result = (u8 *)func_8005EE04(def + 0x0C, config + 0x44, &locals.posA,
+        result = (u8 *)gSpawnJitterProjectile(def + 0x0C, config + 0x44, &locals.posA,
                                      owner->unkDC, &locals.vec, 0, s4);
         break;
 
     case 9:
         gSolveLobVector((s32)*(s16 *)(def + 0x12) << 4, &locals.vec, &locals.posA,
                       &locals.posB, (s32)*(s16 *)(def + 0x16) << 4);
-        result = (u8 *)func_8005EE04(def + 0x0C, config + 0x44, &locals.posA,
+        result = (u8 *)gSpawnJitterProjectile(def + 0x0C, config + 0x44, &locals.posA,
                                      owner->unkDC, &locals.vec, 1, s4);
         break;
 
@@ -254,12 +254,12 @@ s32 gWeaponFireDispatch(struct Owner6ACB0 *owner, s32 index)
         break;
 
     case 5:
-        result = (u8 *)func_8005ECB8(def + 0x0C, config + 0x44, &locals.posA,
+        result = (u8 *)gSpawnStaticProjectile(def + 0x0C, config + 0x44, &locals.posA,
                                      owner->unkDC, s4);
         break;
 
     case 6:
-        result = (u8 *)func_8005EB74(def + 0x0C, config + 0x44, &locals.posA,
+        result = (u8 *)gSpawnTargetedShot(def + 0x0C, config + 0x44, &locals.posA,
                                      owner->unkDC,
                                      (s32)*(u8 **)(state + 0x6C), &locals.posB, s4);
         break;

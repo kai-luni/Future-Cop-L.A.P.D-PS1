@@ -30,6 +30,8 @@ extern void func_8001ABE0(s32 scale, s32 *vec);
 #define MUL16(out, a, b) \
     __asm__("mult\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
                      : "=r"(out) : "r"(a), "r"(b) : "$8", "$9")
+void gComputeOnFootVelocityDelta(struct Unk54590Obj *obj, s32 a1, s32 a2, s32 *out, s32 f) __asm__("func_80054590");
+
 
 /**
  * @brief Computes a player entity's movement delta vector from facing direction, steering mode, drag, and gravity.
@@ -52,7 +54,7 @@ extern void func_8001ABE0(s32 scale, s32 *vec);
  * @par Callers
  * Confirmed: func_800549F0.
  */
-void func_80054590(struct Unk54590Obj *obj, s32 a1, s32 a2, s32 *out, s32 f)
+void gComputeOnFootVelocityDelta(struct Unk54590Obj *obj, s32 a1, s32 a2, s32 *out, s32 f)
 {
     register struct Unk54590Obj *o __asm__("$19");
     register s32 *v __asm__("$17");

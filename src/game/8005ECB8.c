@@ -71,8 +71,11 @@ struct Unk5EE04Request {
     u32 unk0C;
 };
 
-extern void D_80037708();
+extern void gKind15ProjectileHandler() __asm__("D_80037708");
 extern void *gSpawnQueuedEntity(struct Unk5EE04Request *request) __asm__("func_8004D444");
+void *gSpawnStaticProjectile(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
+                    struct Unk5EE04Ent *ent, u32 flags) __asm__("func_8005ECB8");
+
 
 /**
  * @brief Packs a kind-0xF entity spawn request with handler D_80037708 and queues creation via gSpawnQueuedEntity.
@@ -97,13 +100,13 @@ extern void *gSpawnQueuedEntity(struct Unk5EE04Request *request) __asm__("func_8
  * @par Callers
  * Confirmed: func_8005F6E8 (0x8005F96C, action case 5) and gWeaponFireDispatch (0x8006B09C, action case 5) / Likely: none / Unknown: none.
  */
-void *func_8005ECB8(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
+void *gSpawnStaticProjectile(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
                     struct Unk5EE04Ent *ent, u32 flags)
 {
     struct Unk5EE04Request request;
     struct Unk5EE04Args args;
 
-    request.handler = D_80037708;
+    request.handler = gKind15ProjectileHandler;
     request.unk04 = 0;
     request.args = &args;
     request.unk0C = 0;

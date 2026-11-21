@@ -22,7 +22,7 @@ struct UnkSubArg {
     u8 unk00[0xC]; s32 unk0C; s32 unk10; s32 unk14; s32 unk18; void *unk1C; u8 unk20; u8 unk21[3];
 };
 struct UnkRequest { void (*handler)(); s32 unk04; struct UnkArgs *args; s32 unk0C; };
-extern void D_80036E6C();
+extern void gKind7ProjectileHandler() __asm__("D_80036E6C");
 extern void gSolveLobVector(s32 a0, void *a1, struct Vec3s32 *a2, struct Vec3s32 *a3, s32 a4) __asm__("func_8005E624");
 extern void *gSpawnQueuedEntity(struct UnkRequest *request) __asm__("func_8004D444");
 
@@ -66,7 +66,7 @@ void *gSpawnLobShot(u8 a0, struct Unk5EE04Obj *obj, struct SubChild ***ptr,
     struct UnkSubArg sub;
     struct SubChild **p;
 
-    request.handler = D_80036E6C;
+    request.handler = gKind7ProjectileHandler;
     request.unk04 = 0;
     request.args = &args;
     request.unk0C = 0;

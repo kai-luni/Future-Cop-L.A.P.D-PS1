@@ -67,7 +67,7 @@ typedef struct {
     u16 unk98;
 } Dest6EB80;
 
-extern u8 D_8006E814[];
+extern u8 gDomeMeshEffectHandler[] __asm__("D_8006E814");
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void func_8003C14C(Dest6EB80 *, Source6EB80 *);
 
@@ -145,7 +145,7 @@ void *func_8006EB80(Source6EB80 *src)
 
     func_8003C14C(dest, src);
 
-    dest->unk24 = D_8006E814;
+    dest->unk24 = gDomeMeshEffectHandler;
     dest->unk90 = src->unk3C;
     dest->unk92 = src->unk3E;
     dest->unk94 = src->unk4E;

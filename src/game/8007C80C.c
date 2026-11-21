@@ -9,7 +9,7 @@ extern u8 D_8009F902[];
 
 extern void gApplyControllerPreset(s32 port, s32 value) __asm__("func_8007BFCC");
 extern void gSetPadRumbleEnabled(s32 port, s32 enable) __asm__("func_8001EC04");
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 
 /**
  * @brief Handles one navigation action of the controller configuration screen.
@@ -56,7 +56,7 @@ void gHandleControllerSetupAction(s32 action)
             break;
         case 4:
         case 5:
-            func_80046C84(0x46, 0);
+            gPlayNonpositionalSoundEffect(0x46, 0);
             D_8009F902[port] ^= 1;
             break;
         case 1:
@@ -64,14 +64,14 @@ void gHandleControllerSetupAction(s32 action)
             if (D_8009F900[port] >= 4) {
                 D_8009F900[port] = 0;
             }
-            func_80046C84(0x47, 0);
+            gPlayNonpositionalSoundEffect(0x47, 0);
             break;
         case 2:
             D_8009F900[port]--;
             if (D_8009F900[port] < 0) {
                 D_8009F900[port] = 3;
             }
-            func_80046C84(0x47, 0);
+            gPlayNonpositionalSoundEffect(0x47, 0);
             break;
         }
     }

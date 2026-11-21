@@ -6,7 +6,7 @@ struct SoundVoice;
 extern u8 gVolumeLimitSelector __asm__("D_8009F738");
 extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
 extern struct SoundVoice *gVoiceList __asm__("D_8009F74C");
-extern struct SoundVoice *D_8009F754;
+extern struct SoundVoice *gClass2SoundVoiceList __asm__("D_8009F754");
 
 extern void func_8004530C(struct SoundVoice *voice);
 
@@ -33,6 +33,6 @@ void func_80045370(void)
         gVolumeLimitSelector = 0;
         func_8004530C(gVoicePriorityList);
         func_8004530C(gVoiceList);
-        func_8004530C(D_8009F754);
+        func_8004530C(gClass2SoundVoiceList);
     }
 }

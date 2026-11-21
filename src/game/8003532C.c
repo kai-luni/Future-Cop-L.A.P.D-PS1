@@ -46,13 +46,15 @@ struct Global {
 
 extern struct Global *gGameSession __asm__("D_8009FA94");
 extern s32 func_80019668(void);
-extern void func_80033608(struct Entity *self, void *anim);
-extern void func_8004D958(struct State *state);
-extern struct State *func_80035184(struct Entity *self, s32 *out);
-extern void func_8003526C(struct Entity *self);
-extern void func_800336DC(struct Entity *self);
-extern void func_80060238(void *arg0, s32 arg1, struct Entity *arg2, s32 arg3, s32 arg4);
+extern void gSetDroneAttackTarget(struct Entity *self, void *anim) __asm__("func_80033608");
+extern void gRetireEntity(struct State *state) __asm__("func_8004D958");
+extern struct State *gFindNearestFlaggedType16Unit(struct Entity *self, s32 *out) __asm__("func_80035184");
+extern void gResetDroneApproach(struct Entity *self) __asm__("func_8003526C");
+extern void gUpdateDroneStrategy(struct Entity *self) __asm__("func_800336DC");
+extern void gStepAttackScheduler(void *arg0, s32 arg1, struct Entity *arg2, s32 arg3, s32 arg4) __asm__("func_80060238");
 extern void gUpdateHoverEnemy(void *arg0, struct Entity *self, s32 arg2) __asm__("func_800324E0");
+void gUpdateStrategicDrone(void *arg0, struct Entity *self, s32 arg2) __asm__("func_8003532C");
+
 
 /**
  * @brief Message-6 tick of the drone class: runs the two-stage approach to a
@@ -114,7 +116,7 @@ extern void gUpdateHoverEnemy(void *arg0, struct Entity *self, s32 arg2) __asm__
  * func_800357C0, message 6 of its dispatch table; the same table answers 0x138 for
  * message 1 (the block size) and calls func_80035698 for message 2.
  */
-void func_8003532C(void *arg0, struct Entity *self, s32 arg2) {
+void gUpdateStrategicDrone(void *arg0, struct Entity *self, s32 arg2) {
     struct State *a2;
     struct State *p;
     s32 local18;
@@ -163,7 +165,7 @@ void func_8003532C(void *arg0, struct Entity *self, s32 arg2) {
         dist += other - v0;
 
         if (dist < 0x4000) {
-            func_8003526C(self);
+            gResetDroneApproach(self);
             goto L_timer;
         }
 
@@ -173,10 +175,10 @@ void func_8003532C(void *arg0, struct Entity *self, s32 arg2) {
 
             self->unkF4 += self->unkF4 >> (4 - (gGameSession->unk4C >> 2));
 
-            func_80033608(self, 0);
+            gSetDroneAttackTarget(self, 0);
             goto L_final;
         } else if (self->unkFA == 1) {
-            a2 = func_80035184(self, &local18);
+            a2 = gFindNearestFlaggedType16Unit(self, &local18);
             if (a2 != 0) {
                 if (local18 <= 0x13FFF) {
                     if (self->unkF8 == (s16)self->unk134->unk20) {
@@ -186,9 +188,9 @@ void func_8003532C(void *arg0, struct Entity *self, s32 arg2) {
 
                 if (local18 < 0x1000) {
                     if (a2->unkC8 & 0x02000000) {
-                        func_8004D958(a2);
+                        gRetireEntity(a2);
                     }
-                    func_8003526C(self);
+                    gResetDroneApproach(self);
                     goto L_timer;
                 }
 
@@ -222,11 +224,11 @@ L_timer:
             dist -= func_80019668() & 0x1F;
         }
         self->unk134->unk18 = dist;
-        func_800336DC(self);
+        gUpdateDroneStrategy(self);
     }
 
 L_final:
-    func_80060238((u8 *)self->unk134 + 0x50, arg2, self, 0, 1);
-    func_80060238((u8 *)self->unk134 + 0x78, arg2, self, 0, 1);
+    gStepAttackScheduler((u8 *)self->unk134 + 0x50, arg2, self, 0, 1);
+    gStepAttackScheduler((u8 *)self->unk134 + 0x78, arg2, self, 0, 1);
     gUpdateHoverEnemy(arg0, self, arg2);
 }

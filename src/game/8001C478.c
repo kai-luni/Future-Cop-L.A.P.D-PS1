@@ -1,7 +1,7 @@
 // Categories: Platform > Memory Card | Game Engine > Loading
 #include "game/types.h"
 
-extern volatile s32 D_80010000;
+extern volatile s32 gExecutableImageBase __asm__("D_80010000");
 s32 gWaitCdLoaderIdle(void) __asm__("func_8001C478");
 
 
@@ -34,7 +34,7 @@ s32 gWaitCdLoaderIdle(void) __asm__("func_8001C478");
  */
 s32 gWaitCdLoaderIdle(void)
 {
-    while (D_80010000 != 0) {
+    while (gExecutableImageBase != 0) {
     }
     return 0;
 }

@@ -72,10 +72,13 @@ struct Unk5EE04Request {
     u32 unk0C;
 };
 
-extern void D_80037708();
+extern void gKind15ProjectileHandler() __asm__("D_80037708");
 extern s32 func_80019668(void);
 extern void gVectorScaleInPlace(s32 value, void *data) __asm__("func_8001AB78");
 extern void gSpawnQueuedEntity(struct Unk5EE04Request *request) __asm__("func_8004D444");
+void gSpawnJitterProjectile(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
+                   struct Unk5EE04Ent *ent, struct Unk5EE04Vec *arg4, u8 flag, u32 flags) __asm__("func_8005EE04");
+
 
 /**
  * @brief Spawns a kind-0xF projectile with jittered speed and inherited or
@@ -107,7 +110,7 @@ extern void gSpawnQueuedEntity(struct Unk5EE04Request *request) __asm__("func_80
  * @par Callers
  * func_8005F6E8, gWeaponFireDispatch.
  */
-void func_8005EE04(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
+void gSpawnJitterProjectile(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
                    struct Unk5EE04Ent *ent, struct Unk5EE04Vec *arg4, u8 flag, u32 flags)
 {
     register struct Unk5EE04Vec *po __asm__("$20");
@@ -128,7 +131,7 @@ void func_8005EE04(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
     fs = flags;
     fl = flag;
 
-    request.handler = D_80037708;
+    request.handler = gKind15ProjectileHandler;
     request.unk04 = 0;
     request.args = &args;
     request.unk0C = 0;

@@ -27,6 +27,8 @@ struct SoundBank {
 };
 
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
+void gInsertSoundBankVoiceByPriority(struct SoundVoice *voice) __asm__("func_800469A0");
+
 
 /**
  *  @brief Inserts a sound voice into its bank's priority-ordered list.
@@ -45,7 +47,7 @@ extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
  *  @par Callers
  *  Confirmed: func_80046870.
  */
-void func_800469A0(struct SoundVoice *voice)
+void gInsertSoundBankVoiceByPriority(struct SoundVoice *voice)
 {
     struct SoundBank *bank;
     struct SoundVoice *prev;

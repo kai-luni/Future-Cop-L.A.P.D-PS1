@@ -9,7 +9,7 @@ extern char D_800128DC;
 extern char D_800128EC;
 extern char D_80012904;
 extern char D_80012910;
-extern char D_8001289C;
+extern char gTexturePageDebugFormat __asm__("D_8001289C");
 
 struct S {
     s16 a, b, c, d, e, f, g, h, i, j;

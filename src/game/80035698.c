@@ -78,13 +78,15 @@ extern u16 gFrameDelta __asm__("D_8009F9FC");
 extern void *jtbl_80011318[];
 
 extern s32 func_80019668(void);
-extern void func_80033608(struct Self *self, void *anim);
-extern void func_800330E8(struct Self *self);
+extern void gSetDroneAttackTarget(struct Self *self, void *anim) __asm__("func_80033608");
+extern void gUpdateDroneStrategicPosition(struct Self *self) __asm__("func_800330E8");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void gBuildBasisFromAxis(struct Vec3 *axis, struct Basis *basis) __asm__("func_800193F8");
-extern s32 func_800331CC();
-extern s32 func_8003532C();
-extern s32 func_80032F3C();
+extern s32 gInitStrategicDrone() __asm__("func_800331CC");
+extern s32 gUpdateStrategicDrone() __asm__("func_8003532C");
+extern s32 gHandleTumblingFlyer() __asm__("func_80032F3C");
+void gRearmDroneWander(struct Self *self) __asm__("func_80035698");
+
 
 /**
  * @brief Spawn initialisation of a wandering entity: randomises the target
@@ -115,7 +117,7 @@ extern s32 func_80032F3C();
  * @par Callers
  * func_800357C0.
  */
-void func_80035698(struct Self *self) {
+void gRearmDroneWander(struct Self *self) {
     register u32 mask __asm__("$7");
     register struct Other *other __asm__("$3");
     register u16 val20 __asm__("$6");
@@ -134,11 +136,11 @@ void func_80035698(struct Self *self) {
     self->unkFA = 4;
     self->unkF8 = val20;
     other->unk18 = 0;
-    func_80033608(self, 0);
+    gSetDroneAttackTarget(self, 0);
     {
         register struct Other *other2 __asm__("$2") = self->unk134;
         other2->unk1A = 0;
-        func_800330E8(self);
+        gUpdateDroneStrategicPosition(self);
     }
     gSinCos(func_80019668() & 0xFFF, &sine, &cosine);
     trig = sine;

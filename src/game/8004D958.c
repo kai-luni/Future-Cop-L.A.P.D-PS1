@@ -15,6 +15,8 @@ struct Entity {
 
 extern s32 func_80069D68(s32 script, s32 arg1, s32 arg2, struct Entity *entity);
 extern void func_800457B8(s32 arg0, s32 index);
+void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
+
 
 /**
  * @brief Retires an entity: notifies its script, stops its looping sound
@@ -43,7 +45,7 @@ extern void func_800457B8(s32 arg0, s32 index);
  * func_8003532C, func_80036E6C, func_800398EC, func_8003B144, func_8004CCDC,
  * func_8004CECC, func_8005027C, func_80055988.
  */
-void func_8004D958(struct Entity *entity)
+void gRetireEntity(struct Entity *entity)
 {
     if (entity->id == 0) {
         return;

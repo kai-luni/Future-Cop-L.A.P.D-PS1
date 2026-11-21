@@ -26,19 +26,19 @@ extern struct SoundVoice D_800AACC8[];
 extern struct Unk453B8Bank gPlayerSlots[] __asm__("D_800A10E0");
 extern struct Unk453B8Stream gStreamTable[] __asm__("D_800A1810");
 extern struct SoundVoice *gVoiceFreeList __asm__("D_8009F73C");
-extern s32 D_8009F740;
+extern s32 gFreeSoundVoiceCount __asm__("D_8009F740");
 extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
-extern struct SoundVoice *D_8009F748;
+extern struct SoundVoice *gPrioritySoundVoiceCount __asm__("D_8009F748");
 extern struct SoundVoice *gVoiceList __asm__("D_8009F74C");
-extern struct SoundVoice *D_8009F750;
-extern struct SoundVoice *D_8009F754;
-extern struct SoundVoice *D_8009F758;
-extern s32 D_8009F32C;
+extern struct SoundVoice *gClass0SoundVoiceCount __asm__("D_8009F750");
+extern struct SoundVoice *gClass2SoundVoiceList __asm__("D_8009F754");
+extern struct SoundVoice *gClass2SoundVoiceCount __asm__("D_8009F758");
+extern s32 gPendingSoundVoiceReleaseCount __asm__("D_8009F32C");
 extern u8 gVolumeLimitSelector __asm__("D_8009F738");
 
 extern void func_80044EF8(void);
 extern void func_8004582C(void);
-extern s32 func_80046AD8(void);
+extern s32 gAllocReservedStreamVoice(void) __asm__("func_80046AD8");
 
 /**
  *  @brief Initializes voice, bank and stream state for the audio subsystem.
@@ -69,13 +69,13 @@ void func_800453B8(void)
 
     gVoiceFreeList = D_800AACC8;
     voice = D_800AACC8;
-    D_8009F740 = 0x18;
+    gFreeSoundVoiceCount = 0x18;
     gVoicePriorityList = 0;
-    D_8009F748 = 0;
+    gPrioritySoundVoiceCount = 0;
     gVoiceList = 0;
-    D_8009F750 = 0;
-    D_8009F754 = 0;
-    D_8009F758 = 0;
+    gClass0SoundVoiceCount = 0;
+    gClass2SoundVoiceList = 0;
+    gClass2SoundVoiceCount = 0;
     for (i = 0; i < 0x18; i++) {
         voice->index = i;
         voice->next = voice + 1;
@@ -89,11 +89,11 @@ void func_800453B8(void)
     for (i = 0; i < 6; i++, bank++) {
         bank->unk00 = 0;
     }
-    D_8009F32C = 0;
+    gPendingSoundVoiceReleaseCount = 0;
     i = 0;
     stream = gStreamTable;
     while (i < 2) {
-        stream->unk08 = func_80046AD8();
+        stream->unk08 = gAllocReservedStreamVoice();
         stream->unk00 = 0;
         i++;
         stream++;

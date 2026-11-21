@@ -10,6 +10,8 @@ struct Entity {
 };
 
 extern struct Entity *gUnitListHead __asm__("D_8009FA40");
+s32 gSendMessageByTag(s32 tag, s32 arg) __asm__("func_8004DE80");
+
 
 /**
  * @brief Finds the first entity in D_8009FA40 matching a 16-bit tag and sends it message 0xC.
@@ -35,7 +37,7 @@ extern struct Entity *gUnitListHead __asm__("D_8009FA40");
  * @par Callers
  * Confirmed: func_80069D68 (0x8006A3EC in asm/us/main.s, script VM opcode 47) / Likely: none / Unknown: none.
  */
-s32 func_8004DE80(s32 tag, s32 arg)
+s32 gSendMessageByTag(s32 tag, s32 arg)
 {
     struct Entity *entity;
 

@@ -2,7 +2,7 @@
 typedef unsigned char u8;
 typedef signed int s32;
 
-extern u8 D_800A2730[];
+extern u8 gTilePatternCounterState[] __asm__("D_800A2730");
 extern u8 gTileDefTable[] __asm__("D_800A6F38");
 extern s32 gTexpageBaseTable[] __asm__("D_800A8E80");
 
@@ -47,7 +47,7 @@ int *func_80063428(void)
         register u8 *cursor __asm__("$2");
 
         count = 0x200;
-        cursor = D_800A2730;
+        cursor = gTilePatternCounterState;
         cursor += 0x200;
         do {
             *cursor = 0;

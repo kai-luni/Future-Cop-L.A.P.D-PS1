@@ -8,6 +8,8 @@ struct Unk5FF70 {
 
 extern s32 gDefinitionEntryCount __asm__("D_8009F7F8");
 extern struct Unk5FF70 gEffectKeyTable[] __asm__("D_800A2300");
+s32 gFindEffectKeyIndex(s32 key) __asm__("func_8005FF70");
+
 
 /**
  * @brief Finds the index of a spawn/definition record by its key byte.
@@ -27,7 +29,7 @@ extern struct Unk5FF70 gEffectKeyTable[] __asm__("D_800A2300");
  * @par Callers
  * Unknown: no direct edge in edges.json.
  */
-s32 func_8005FF70(s32 key)
+s32 gFindEffectKeyIndex(s32 key)
 {
     s32 i;
 

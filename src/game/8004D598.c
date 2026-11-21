@@ -12,7 +12,7 @@ struct Entity {
 extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 extern struct Entity *gListTailBranch __asm__("D_8009FA88");
 
-extern void func_80061020(struct Entity *entity);
+extern void gRecordSpawnedUnitRetirement(struct Entity *entity) __asm__("func_80061020");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
@@ -49,7 +49,7 @@ void gSweepRetiredEntities(void)
         next = next->next;
         if (entity->id == 0) {
             if (entity->flags & 0x10000000) {
-                func_80061020(entity);
+                gRecordSpawnedUnitRetirement(entity);
             }
             entity->update(5, entity, 0, 0);
             if (previous != 0) {

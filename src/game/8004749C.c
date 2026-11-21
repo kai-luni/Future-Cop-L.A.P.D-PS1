@@ -10,6 +10,8 @@ struct Unk4749CHandle {
     struct Unk4749CResource *resource;
     s32 serial;
 };
+void gBindSoundVoiceHandle(struct Unk4749CHandle *handle, struct Unk4749CResource *resource) __asm__("func_8004749C");
+
 
 /**
  *  @brief Associates a handle with a resource and copies its serial.
@@ -29,7 +31,7 @@ struct Unk4749CHandle {
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8004749C(struct Unk4749CHandle *handle, struct Unk4749CResource *resource)
+void gBindSoundVoiceHandle(struct Unk4749CHandle *handle, struct Unk4749CResource *resource)
 {
     if (resource != 0 && handle != 0) {
         handle->resource = resource;

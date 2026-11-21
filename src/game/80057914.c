@@ -49,7 +49,7 @@ struct Unk57914 {
     u8 unk93;
 };
 
-extern void D_80059ABC();
+extern void gCompanionSpawnHandler() __asm__("D_80059ABC");
 
 extern void gTransformPartVertex(void *source, s32 arg1, struct Vec3s32 *out) __asm__("func_80017668");
 extern void *gSpawnQueuedEntity(struct Unk57914Request *request) __asm__("func_8004D444");
@@ -85,7 +85,7 @@ void func_80057914(struct Unk57914 *object)
     struct Unk57914Request request;
     struct Unk57914Args args;
 
-    request.handler = D_80059ABC;
+    request.handler = gCompanionSpawnHandler;
     request.args = &args;
     request.unk04 = 0;
     request.unk0C = 0;

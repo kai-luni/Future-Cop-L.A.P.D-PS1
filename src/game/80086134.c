@@ -2,8 +2,8 @@
 #include "game/types.h"
 
 /* gp-relative small data: offsets 0x734 and 0x738 from $gp */
-extern s32 D_8009F948;
-extern s32 D_8009F94C;
+extern s32 gPreallocatedMovieVlcTableA __asm__("D_8009F948");
+extern s32 gPreallocatedMovieVlcTableB __asm__("D_8009F94C");
 
 extern void gBuildMovieVlcTables(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80089A88");
 extern void gMovieBuildDitherTables(void) __asm__("func_80085F1C");
@@ -28,6 +28,6 @@ void gMoviePrepareDecodeTables(void) __asm__("func_80086134");
 
 void gMoviePrepareDecodeTables(void)
 {
-    gBuildMovieVlcTables(D_8009F948, D_8009F94C, 0);
+    gBuildMovieVlcTables(gPreallocatedMovieVlcTableA, gPreallocatedMovieVlcTableB, 0);
     gMovieBuildDitherTables();
 }

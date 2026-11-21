@@ -2,7 +2,7 @@
 #include "game/spu_globals.h"
 
 #include "game/types.h"
-extern volatile u32 D_8009EE90;
+extern volatile u32 gSpuRegisterShadowMode __asm__("D_8009EE90");
 extern volatile u16 D_800A6EA0[];
 extern volatile u16 table[] __asm__("D_800A6EA0");
 extern volatile u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
@@ -42,7 +42,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
     register u32 lower __asm__("$2");
     register u32 masked __asm__("$2");
     __asm__("" : "+r"(command));
-    flag = D_8009EE90;
+    flag = gSpuRegisterShadowMode;
     __asm__("" : "+r"(flag));
     flag &= 1;
     __asm__("" : "+r"(flag));
@@ -62,7 +62,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
     switch (command) {
     case 1: {
         register s32 offset __asm__("$3") = low << 1;
-        if (D_8009EE90 & 1) {
+        if (gSpuRegisterShadowMode & 1) {
             *(volatile u16 *)((char *)table + offset) |= value;
             table[high] |= (value >> 16) & 0xff;
             gModeEntryWord |= 1 << ((low - 0xc6) >> 1);
@@ -78,7 +78,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
     }
     case 0: {
         register s32 offset __asm__("$3") = low << 1;
-        if (D_8009EE90 & 1) {
+        if (gSpuRegisterShadowMode & 1) {
             *(volatile u16 *)(offset + (u32)table) &= ~value;
             table[high] &= ~((value >> 16) & 0xff);
             gModeEntryWord |= 1 << ((low - 0xc6) >> 1);
@@ -94,7 +94,7 @@ u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
     }
     case 8: {
         register s32 offset __asm__("$3") = high << 1;
-        if (D_8009EE90 & 1) {
+        if (gSpuRegisterShadowMode & 1) {
             table[low] = value;
             *(volatile u16 *)(offset + (u32)table) = (value >> 16) & 0xff;
             gModeEntryWord |= 1 << ((low - 0xc6) >> 1);

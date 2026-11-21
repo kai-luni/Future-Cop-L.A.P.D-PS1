@@ -24,7 +24,7 @@ extern s32 gActivePlayerIndex __asm__("D_8009F8B8");
 extern volatile s32 D_8009F8E0;
 extern s32 D_8009F8E0_arr[];
 extern volatile s32 D_8009F8E4;
-extern u8 D_8009BB34[];
+extern u8 gTwoPlayerMissionSelectMenuItems[] __asm__("D_8009BB34");
 extern s16 gMenuPreviewScaleP1[] __asm__("D_8009BB66");
 extern s16 gMenuPreviewScaleP2[] __asm__("D_8009BBBA");
 extern struct Unk78210Panel D_800A3868;
@@ -81,7 +81,7 @@ void gHandlePlayerJoinSelection(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
             if (D_8009F8E0 == 0 || D_8009F8E4 == 0) {
                 return;
             }
-            base = D_8009BB34;
+            base = gTwoPlayerMissionSelectMenuItems;
             D_8009F8E0 = 0;
             D_8009F8E4 = 0;
             *(s16 *)(base + 0x32) = 0x64;

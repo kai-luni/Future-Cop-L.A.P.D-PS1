@@ -89,7 +89,7 @@ struct ListNode {
 extern s32 gPlayerCount[] __asm__("D_8009FA0C");
 extern struct Unk5BCD4Pool gOwnerNodeListA __asm__("D_800A22A0");
 extern u8 gSpawnTypeFlags[] __asm__("D_800A6578");
-extern u8 D_8005B934[];
+extern u8 gTargetDamageEffectHandler[] __asm__("D_8005B934");
 
 extern void gGetViewGroundAnchor(u32 index, struct DestinationTriple *destination) __asm__("func_80069580");
 extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
@@ -240,7 +240,7 @@ void gAttachNearPlayerEffect(struct Unk402DCOwner *owner, s32 arg1, struct Unk5B
         p[(source->unk0F << 2) + (row << 10)] &= 0xFB;
     }
 
-            node->unk24 = (s32)D_8005B934;
+            node->unk24 = (s32)gTargetDamageEffectHandler;
             node->self = node;
             node->unk18 = 0x32;
 

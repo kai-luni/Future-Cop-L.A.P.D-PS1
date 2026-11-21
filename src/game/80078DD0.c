@@ -35,7 +35,8 @@ struct Menu {
 extern s32 gStillRunningState __asm__("D_8009F464");
 extern struct Menu *gFontBankTable __asm__("D_8009F468");
 extern u8 gMenuSetupCalled __asm__("D_8009F8CC");
-extern u8 D_8009F3F2, D_8009F3F3;
+extern u8 gAttractDemoSequenceIndex __asm__("D_8009F3F2");
+extern u8 D_8009F3F3 __asm__("D_8009F3F3");
 extern u8 gFrontEndReturnMode __asm__("D_8009F45A");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern s32 D_8009F8B0, D_8009F8B4;
@@ -61,7 +62,10 @@ extern u8 func_80078C88(void), func_80082D30(s32 *, s32);
 extern void func_80082DDC(u32, s32);
 extern void gDecodeButtonEdge(u32, struct InputAction *) __asm__("func_8005780C");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
-extern u8 D_8009F46C, D_8009F3FB, D_8009B3D4[], D_8009B3E0[];
+extern u8 gTitleScreenConfirmEnabled __asm__("D_8009F46C");
+extern u8 D_8009F3FB __asm__("D_8009F3FB");
+extern u8 gMenuHighlightColorCycle[] __asm__("D_8009B3D4");
+extern u8 D_8009B3E0[] __asm__("D_8009B3E0");
 extern u8 gHighlightShadeTable[] __asm__("D_8009F3F8");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern s32 gPendingRowCapture __asm__("D_8009F8C4");
@@ -70,9 +74,15 @@ extern volatile s32 gGameClock __asm__("D_8009FA60");
 extern volatile u8 gFrameBarrier __asm__("D_8009FA3C");
 struct GameContext { u8 pad00[12]; s32 type; u8 pad10[0x4c]; s32 stage; };
 extern struct GameContext *gGameSession __asm__("D_8009FA94");
-extern struct Menu D_800A38F8, D_800A36B8, D_800A3658, D_800A3628, D_800A37D8, D_800A37A8, D_800A3688;
+extern struct Menu gTitleScreenMenuDescriptor __asm__("D_800A38F8");
+extern struct Menu gProfileNameEntryMenuDescriptor __asm__("D_800A36B8");
+extern struct Menu D_800A3658 __asm__("D_800A3658");
+extern struct Menu D_800A3628 __asm__("D_800A3628");
+extern struct Menu D_800A37D8 __asm__("D_800A37D8");
+extern struct Menu D_800A37A8 __asm__("D_800A37A8");
+extern struct Menu D_800A3688 __asm__("D_800A3688");
 extern struct Menu *D_8009B8B8[];
-extern s32 func_80046C84(s32, s32);
+extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern s32 gPopMenuPanel(void) __asm__("func_80078740");
 extern void func_80078650(struct Menu *, s32), func_8008227C(void);
 extern void gSelectEnabledMenuItem(s8, s32, s8) __asm__("func_800787D8");
@@ -143,13 +153,13 @@ reset_timer:
         }
         if (gFrameTickCounter > gIdleDeadline) {
             u8 active = 0;
-            if (D_8009F3F2) active = func_80078C88();
+            if (gAttractDemoSequenceIndex) active = func_80078C88();
             if (!active) {
                 gFrontEndReturnMode = 5;
                 func_80082DDC(D_8009B324[D_8009F3F3], 0);
                 gSetupFrontEndMenus(0);
                 D_8009F3F3++;
-                if (D_8009F3F3 >= 2) { D_8009F3F3 = 0; D_8009F3F2 = 1; }
+                if (D_8009F3F3 >= 2) { D_8009F3F3 = 0; gAttractDemoSequenceIndex = 1; }
             }
         }
         i = 0;
@@ -211,7 +221,7 @@ reset_timer:
                 gActivePlayerIndex = i;
                 if (accept[i]) {
                     struct Item *item = &gFontBankTable->items[gFontBankTable->selection[i]];
-                    if (gFontBankTable != &D_800A38F8 || D_8009F46C) func_80046C84(0x48, 0);
+                    if (gFontBankTable != &gTitleScreenMenuDescriptor || gTitleScreenConfirmEnabled) gPlayNonpositionalSoundEffect(0x48, 0);
                     if (item->handler) {
                         menu = gFontBankTable;
                         item->handler(3, 0, 0, 0, menu->selection[i]);
@@ -235,9 +245,9 @@ reset_timer:
                         (*depth)--;
                         if (*depth < 0) *depth = 0;
                         else if (*depth == 1) gUiHoldFlag = 1;
-                        func_80046C84(0x49, 0);
+                        gPlayNonpositionalSoundEffect(0x49, 0);
                         changed = 1;
-                        if (gFontBankTable == &D_800A36B8) func_8008227C();
+                        if (gFontBankTable == &gProfileNameEntryMenuDescriptor) func_8008227C();
                         continue;
                     }
                     menu = gFontBankTable;
@@ -245,7 +255,7 @@ reset_timer:
                         menu->cancel();
                         if (gFontBankTable != menu) { changed = 1; continue; }
                     } else if (gPopMenuPanel()) {
-                        func_80046C84(0x49, 0);
+                        gPlayNonpositionalSoundEffect(0x49, 0);
                         changed = 1; continue;
                     }
                 }
@@ -255,7 +265,7 @@ reset_timer:
                     if (!*((s8 *)i + cbase)) {
                         oldsel = gFontBankTable->selection[i];
                         gSelectEnabledMenuItem((s8)(gFontBankTable->selection[i] - 1), -1, (s8)i);
-                        if (oldsel != gFontBankTable->selection[i]) func_80046C84(0x46, 0);
+                        if (oldsel != gFontBankTable->selection[i]) gPlayNonpositionalSoundEffect(0x46, 0);
                     }
                     if (gFontBankTable->items[gFontBankTable->selection[i]].handler)
                         gFontBankTable->items[gFontBankTable->selection[i]].handler(4, 0, 0, 0, gFontBankTable->selection[i]);
@@ -266,7 +276,7 @@ reset_timer:
                     if (!*((s8 *)i + cbase)) {
                         oldsel = gFontBankTable->selection[i];
                         gSelectEnabledMenuItem((s8)(gFontBankTable->selection[i] + 1), 1, (s8)i);
-                        if (oldsel != gFontBankTable->selection[i]) func_80046C84(0x46, 0);
+                        if (oldsel != gFontBankTable->selection[i]) gPlayNonpositionalSoundEffect(0x46, 0);
                     }
                     if (gFontBankTable->items[gFontBankTable->selection[i]].handler)
                         gFontBankTable->items[gFontBankTable->selection[i]].handler(5, 0, 0, 0, gFontBankTable->selection[i]);
@@ -321,7 +331,7 @@ reset_timer:
                             u8 *rgb2;
                             color = 0x11;
                             if (gPlayerMenuDepth[i]) rgb2 = D_8009B3E0;
-                            else rgb2 = &D_8009B3D4[((gGameClock >> 4) & 7) * 3];
+                            else rgb2 = &gMenuHighlightColorCycle[((gGameClock >> 4) & 7) * 3];
                             func_800493C0(color, rgb2[0], rgb2[1], rgb2[2]);
                         } else {
                             color = 15;

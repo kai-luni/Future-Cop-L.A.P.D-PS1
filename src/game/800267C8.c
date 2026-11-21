@@ -60,7 +60,7 @@ extern u8 *gMapPanelLabel __asm__("D_8009F2DC");
 extern u8 *gMapPanText __asm__("D_8009F2E0");
 
 extern void gDecodeButtonEdge(u32 buttons, struct InputAction267C8 *action) __asm__("func_8005780C");
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void func_80025F58(void);
 extern s32 func_80049340(u8 *text);
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
@@ -221,7 +221,7 @@ void gUpdateMapScreenView(struct Obj267C8 *obj, s32 slot, s32 active, s32 select
             (gGameSession->unk5C == 1 &&
              (gGameSession->unk0C == 1 ||
               (gGameSession->unk0C == 2 && gOpenPanelCount == 1)))) {
-            func_80046C84(0x3E, gPlayerEntities[slot]);
+            gPlayNonpositionalSoundEffect(0x3E, gPlayerEntities[slot]);
         }
         gOpenPanelCount++;
         obj->state->selected = 0;

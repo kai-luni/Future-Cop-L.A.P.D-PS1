@@ -61,15 +61,17 @@ struct UnkS2_55988 {
 extern struct Entity *gFocusPositions __asm__("D_8009F9A0");
 
 extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction, u8 flags);
-extern s32 func_80046C84(s32 id, s32 arg1);
-extern void func_800471C4(s32 track, struct Unk471C4Object *object);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
+extern void gSetEntityLoopingSound(s32 track, struct Unk471C4Object *object) __asm__("func_800471C4");
 extern void gUpdateMorphBounds(void *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_800518A8");
 extern void func_80044B34(void *arg0, void *arg1, s32 arg2, s32 arg3);
 extern void gSetEntitySmallRumble(void *state, s32 flag) __asm__("func_8001E930");
 extern void gSetModelFrame(struct ModelInstance *instance, s32 frame) __asm__("func_800175F8");
-extern void func_8004D958(struct Entity *entity);
+extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
 extern void gTickHoverPhysics(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80053A74");
-extern void func_800549F0(void *arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gTickOnFootPhysics(void *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_800549F0");
+void gUpdatePlayerFormAndMotion(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3) __asm__("func_80055988");
+
 
 /**
  * @brief Per-tick update of the transformable player unit: runs the form
@@ -139,7 +141,7 @@ extern void func_800549F0(void *arg0, s32 arg1, s32 arg2, s32 arg3);
  * to the scratchpad at 0x1F8003F4 for the duration of the call and restores it
  * afterwards.
  */
-void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
+void gUpdatePlayerFormAndMotion(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
 {
     register struct UnkS2_55988 *obj __asm__("$18");
     register struct UnkS1_55988 *state __asm__("$17");
@@ -177,7 +179,7 @@ void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
             if (gFocusPositions == 0) {
                 if (obj->state->unkDE == 0) {
                     if (obj->state->unk146 != 0) {
-                        func_80046C84(0x2A, (s32)obj);
+                        gPlayNonpositionalSoundEffect(0x2A, (s32)obj);
                     } else {
                         state->unk2FD = 1 - (u8)state->unkAD;
                     }
@@ -214,7 +216,7 @@ void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
                 func_800448D8((struct AnimTrack *)obj->animC8, 0, 1, 0);
                 state->unkAD = 0;
                 state->unk2FD = 0;
-                func_800471C4(0xFF, (struct Unk471C4Object *)obj);
+                gSetEntityLoopingSound(0xFF, (struct Unk471C4Object *)obj);
             }
         } else if (state->unkC0 > 0) {
             state->unkBC += step * 0xA0;
@@ -254,7 +256,7 @@ void func_80055988(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s32 *arg3)
         }
     } else {
         if (state->flags & 0x80000) {
-            func_8004D958(gFocusPositions);
+            gRetireEntity(gFocusPositions);
             state->unk320 = 3;
         }
     }
@@ -267,7 +269,7 @@ skip_mask:
     }
 
     if (state->unkAD != 1) {
-        func_800549F0(obj, step, parameter, flags);
+        gTickOnFootPhysics(obj, step, parameter, flags);
     } else {
         gTickHoverPhysics(obj, step, parameter, flags);
     }

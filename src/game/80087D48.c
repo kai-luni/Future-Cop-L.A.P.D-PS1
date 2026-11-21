@@ -2,13 +2,13 @@
 #include "game/types.h"
 
 extern u32 gMovieDisplayMode __asm__("D_8009F4DC");
-extern void *D_8009F4E4;
-extern void *D_8009F4E8;
+extern void *gMovieDecodeBufferBlock __asm__("D_8009F4E4");
+extern void *gMovieSliceContextStorage __asm__("D_8009F4E8");
 extern void *gMovieStreamBuffer __asm__("D_8009F4EC");
 extern void *gMovieAudioBlock __asm__("D_8009F4F0");
 extern void *gMovieSpuBufferA __asm__("D_8009F4F4");
 extern void *gMovieSpuBufferB __asm__("D_8009F4F8");
-extern void *D_8009F4FC;
+extern void *gMoviePrimaryVlcBuffer __asm__("D_8009F4FC");
 extern void *D_8009F500;
 extern u8 gLayerOpenResult __asm__("D_8009F504");
 
@@ -71,26 +71,26 @@ void gCloseVideoLayer(void)
             gMovieFreeDecodeBuffer(gMovieStreamBuffer);
         }
     }
-    if (D_8009F4E8 != 0) {
-        gMovieFreeDecodeBuffer(D_8009F4E8);
+    if (gMovieSliceContextStorage != 0) {
+        gMovieFreeDecodeBuffer(gMovieSliceContextStorage);
     }
     if (D_8009F500 != 0) {
         gMovieFreeDecodeBuffer(D_8009F500);
     }
-    if (D_8009F4FC != 0) {
-        gMovieFreeDecodeBuffer(D_8009F4FC);
+    if (gMoviePrimaryVlcBuffer != 0) {
+        gMovieFreeDecodeBuffer(gMoviePrimaryVlcBuffer);
     }
-    if (D_8009F4E4 != 0) {
-        gMovieFreeDecodeBuffer(D_8009F4E4);
+    if (gMovieDecodeBufferBlock != 0) {
+        gMovieFreeDecodeBuffer(gMovieDecodeBufferBlock);
     }
 
-    D_8009F4E4 = 0;
-    D_8009F4E8 = 0;
+    gMovieDecodeBufferBlock = 0;
+    gMovieSliceContextStorage = 0;
     gMovieStreamBuffer = 0;
     gMovieAudioBlock = 0;
     gMovieSpuBufferA = 0;
     gMovieSpuBufferB = 0;
-    D_8009F4FC = 0;
+    gMoviePrimaryVlcBuffer = 0;
     D_8009F500 = 0;
     gLayerOpenResult = 0;
 }

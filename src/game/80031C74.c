@@ -41,7 +41,7 @@ struct Entity {
 };
 
 extern s32 func_80069D68(s32 script, s32 arg1, s32 arg2, struct Entity *entity);
-extern void func_8004D958(struct Entity *entity);
+extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
 
 /**
  * @brief Tests an entity against a trigger box and fires the attached script.
@@ -107,7 +107,7 @@ s32 func_80031C74(struct Unk31C74Node *node, struct Entity *other)
 
     if (other->unk16 != 1 && (node->flags & 1)) {
         other->flags |= 0x4000000;
-        func_8004D958(other);
+        gRetireEntity(other);
     }
 
     { u32 t = node->flags & 2; return t == 0; }

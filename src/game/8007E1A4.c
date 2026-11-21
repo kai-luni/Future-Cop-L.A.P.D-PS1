@@ -18,7 +18,7 @@ extern s8 gPanelSyncValue __asm__("D_8009F8BC");
 extern struct E8007E1A4 gLoadoutTable[] __asm__("D_8009C0A8");
 extern u8 gNumberFormatString[] __asm__("D_8009F490");
 
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern s32 func_80048E28(s32 index);
 extern void func_800492A0(u8 *text, s32 *width, s32 *height);
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
@@ -90,14 +90,14 @@ void gStepOptionsSetting(s32 mode, s32 x, s32 y, s32 color, s32 idx)
     p = (u8 *)e->unk4;
     switch (mode) {
     case 2:
-        func_80046C84(0x46, 0);
+        gPlayNonpositionalSoundEffect(0x46, 0);
         p[gActivePlayerIndex]--;
         if (((s8 *)p)[gActivePlayerIndex] < e->unk9) {
             p[gActivePlayerIndex] = e->unk8 - 1;
         }
         break;
     case 1:
-        func_80046C84(0x46, 0);
+        gPlayNonpositionalSoundEffect(0x46, 0);
         p[gActivePlayerIndex]++;
         if (((s8 *)p)[gActivePlayerIndex] >= e->unk8) {
             p[gActivePlayerIndex] = e->unk9;

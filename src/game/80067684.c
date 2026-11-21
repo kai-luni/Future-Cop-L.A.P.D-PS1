@@ -23,7 +23,9 @@ typedef struct {
 extern Res67684 *gMapGridHeader __asm__("D_8009F80C");
 extern u8 **gTileBlockTable __asm__("D_8009F808");
 
-extern s32 func_80067480(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 *arg4);
+extern s32 gSampleTileHeight(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 *arg4) __asm__("func_80067480");
+s32 gQuerySurfaceHeight(Vec67684 *pos, s32 mode) __asm__("func_80067684");
+
 
 /**
  * @brief Enumerates the surfaces of the map cell under a position and returns one
@@ -79,7 +81,7 @@ extern s32 func_80067480(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 *arg4);
  * func_800319D4, func_80039E8C (two sites), func_80049C38, func_80050B54,
  * func_800511E4, func_800579D4, func_80070730 (three sites), func_80083A10.
  */
-s32 func_80067684(Vec67684 *pos, s32 mode)
+s32 gQuerySurfaceHeight(Vec67684 *pos, s32 mode)
 {
     s32 results[8];
     register s32 count __asm__("$18");
@@ -193,7 +195,7 @@ loop:
             goto after_loop;
         }
 
-        if (func_80067480(arg0, val, arg2, arg3, out) != 0) {
+        if (gSampleTileHeight(arg0, val, arg2, arg3, out) != 0) {
             out++;
             count++;
         }

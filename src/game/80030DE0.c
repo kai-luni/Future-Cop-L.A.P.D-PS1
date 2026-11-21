@@ -56,7 +56,7 @@ struct Entity {
 
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, struct Arg *arg, s32 arg3) __asm__("func_8002AD58");
 extern s32 gSqrt12(s32 arg0) __asm__("func_80095900");
-extern s32 func_80067684(struct Vec3 *pos, s32 mode);
+extern s32 gQuerySurfaceHeight(struct Vec3 *pos, s32 mode) __asm__("func_80067684");
 
 /**
  * @brief Spawn initializer of the 0xB8-byte trigger/attachment volume class.
@@ -145,7 +145,7 @@ s32 func_80030DE0(struct Entity *self, struct Arg *arg, s32 arg2)
         mode = -1;
     }
 
-    self->unk50.y = self->unk5C.y = func_80067684(&self->unk50, mode);
+    self->unk50.y = self->unk5C.y = gQuerySurfaceHeight(&self->unk50, mode);
 
     self->flags |= 0xA00011;
     if (self->unkA0 & 8) {

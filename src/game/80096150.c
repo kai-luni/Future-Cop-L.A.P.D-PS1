@@ -8,9 +8,9 @@
 extern u32 *gMdecControlStatusPtr __asm__("D_8009E9F4");
 extern u32 *gDma0ChannelCtrlPtr __asm__("D_8009E9C8");
 extern volatile u32 *gDma1ChannelCtrlPtr __asm__("D_8009E9D4");
-extern u32 D_8009E8B0[];
-extern u32 D_8009E934[];
-extern u8 D_80010000[];
+extern u32 gMdecQuantizationUploadCommand[] __asm__("D_8009E8B0");
+extern u32 gMdecDctScaleCommandBlock[] __asm__("D_8009E934");
+extern u8 gExecutableImageBase[] __asm__("D_80010000");
 extern void gStartMdecBlockTransfer(u32 *, u32) __asm__("func_80096240");
 extern void func_8008E000(void *, s32);
 
@@ -48,8 +48,8 @@ void func_80096150(s32 option)
         *q = 0;
         *gDma1ChannelCtrlPtr = 0;
         *gMdecControlStatusPtr = 0x60000000;
-        gStartMdecBlockTransfer(D_8009E8B0, 0x20);
-        gStartMdecBlockTransfer(D_8009E934, 0x20);
+        gStartMdecBlockTransfer(gMdecQuantizationUploadCommand, 0x20);
+        gStartMdecBlockTransfer(gMdecDctScaleCommandBlock, 0x20);
         break;
     case 1:
         *gMdecControlStatusPtr = 0x80000000;
@@ -60,7 +60,7 @@ void func_80096150(s32 option)
         break;
     default:
         __asm__ volatile ("" : : : "$4");
-        func_8008E000(D_80010000 + 0x2b8c, option);
+        func_8008E000(gExecutableImageBase + 0x2b8c, option);
         break;
     }
 }

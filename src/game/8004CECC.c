@@ -31,7 +31,7 @@ struct EntityTable { s32 count; s32 unk04; struct Entity *items[1]; };
 struct Message { s32 unk0; s16 value; u8 kind; u8 unk7; s32 unk8; };
 extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
 extern void func_800457B8(s32, s32);
-extern void func_8004D958(struct Entity *);
+extern void gRetireEntity(struct Entity *) __asm__("func_8004D958");
 extern void func_8003FD10(s32, struct Entity *, s32);
 extern void func_8002A5B4(void *, s32);
 
@@ -104,7 +104,7 @@ void func_8004CECC(void)
             case 0x3D:
                 entity->flags |= 0x4000000;
                 if (arg == 1) entity->flags |= 0x8000000;
-                func_8004D958(entity);
+                gRetireEntity(entity);
                 break;
             case 0x3E:
                 entity->unk23 = arg;

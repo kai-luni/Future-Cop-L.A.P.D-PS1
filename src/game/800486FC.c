@@ -3,7 +3,7 @@
 
 extern s32 gScreenState[] __asm__("D_8009FA00");
 extern s32 gPlayerCount[] __asm__("D_8009FA0C");
-extern u8 D_8009F9B4[];
+extern u8 gPortraitStreamId[] __asm__("D_8009F9B4");
 extern s32 gHudMode2 __asm__("D_8009FAB8");
 extern s32 gFrameSwitch __asm__("D_8009FAC8");
 
@@ -42,7 +42,7 @@ void func_800486FC(u8 enable)
     if (gScreenState[0] == 4) {
         func_80049260();
     }
-    gFrameSwitch = func_80029748(D_8009F9B4);
+    gFrameSwitch = func_80029748(gPortraitStreamId);
     func_800487CC(0);
     if (gHudMode2 != 0 && gHudMode2 == 2 && enable && gPlayerCount[0] == 1) {
         gEmitHudPanelSprite(0);

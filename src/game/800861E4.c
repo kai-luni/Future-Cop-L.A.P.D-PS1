@@ -26,13 +26,15 @@ extern s32 gTransferPending __asm__("D_8009F250");
 extern s32 gUploadInProgress __asm__("D_8009F9C4");
 extern s32 gStripScaleEnable __asm__("D_8009F4C0");
 extern State861E4 *gMovieSliceContext __asm__("D_8009F4BC");
-extern void *D_8009F948, *D_8009F94C, *D_8009F954;
+extern void *gPreallocatedMovieVlcTableA __asm__("D_8009F948");
+extern void *gPreallocatedMovieVlcTableB __asm__("D_8009F94C");
+extern void *gPreallocatedMovieMdecInputBuffer __asm__("D_8009F954");
 extern void *gWorkAreaBlock __asm__("D_8009F950");
 extern void *gCharTable __asm__("D_8009FABC");
 extern void *gByteTable __asm__("D_8009F9D8");
 extern Block100 gScratchTable __asm__("D_800A3958");
 extern Block108 gSecondScratchTable __asm__("D_800A3A58");
-extern void D_80085074(void);
+extern void gMovieStripDmaCallback(void) __asm__("D_80085074");
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void *gFillMemory(void *, s32, u32) __asm__("func_8001E4C0");
@@ -151,15 +153,15 @@ s32 gDecodeMdecFrameToVram(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         if (!buf2) goto cleanup;
         gBuildMovieVlcTables(buf1, buf2, 0);
     } else {
-        buf1 = D_8009F948;
-        buf2 = D_8009F94C;
+        buf1 = gPreallocatedMovieVlcTableA;
+        buf2 = gPreallocatedMovieVlcTableB;
     }
     gMovieSliceContext = gAllocMemory(0x130, gUploadInProgress ? 2 : 3);
     if (!gMovieSliceContext) goto cleanup;
     gFillMemory(gMovieSliceContext, 0, 0x130);
     gDisableCpuInterrupts();
     gMovieSliceContext->field12C = 1;
-    gMovieSliceContext->callback120 = func_8009612C(D_80085074);
+    gMovieSliceContext->callback120 = func_8009612C(gMovieStripDmaCallback);
     gMovieSliceContext->callback124 = gMdecSetInCallback(0);
     gMovieSliceContext->callback128 = func_80092B94(0);
     if (gStripScaleEnable == 1) gTransferPending = gStripScaleEnable;
@@ -181,7 +183,7 @@ s32 gDecodeMdecFrameToVram(Input861E4 *arg0, s32 arg1, u32 arg2, s32 arg3)
         }
         }
     } else {
-        gMovieSliceContext->buffer28[0] = D_8009F954;
+        gMovieSliceContext->buffer28[0] = gPreallocatedMovieMdecInputBuffer;
         gMovieSliceContext->buffer24 = gWorkAreaBlock;
     }
     {

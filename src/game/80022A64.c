@@ -26,7 +26,7 @@ extern void gDisarmAudioStreamSpuIrq(void) __asm__("func_80022F7C");
 extern void gSpuInstallIrqCallback(s32 mode) __asm__("func_80098BF8");
 extern void gSpuCancelDmaRequests(void) __asm__("func_8002129C");
 extern void gReleaseSoundVoicesByOwner(s32 owner) __asm__("func_80022240");
-extern void func_80046A34(s32 handle);
+extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
 
 s32 gStopAudioStreamPlayback(void) __asm__("func_80022A64");
 
@@ -71,7 +71,7 @@ s32 gStopAudioStreamPlayback(void)
     for (i = 0; i < gMixerState.channelCount; i++) {
         if (gMixerState.channels[i].id != -1) {
             gReleaseSoundVoicesByOwner(gMixerState.channels[i].id);
-            func_80046A34(gMixerState.channels[i].voice);
+            gStopSoundVoiceHandle(gMixerState.channels[i].voice);
         }
     }
     return 0;

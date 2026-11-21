@@ -11,7 +11,7 @@ struct Unk78210Mode {
 extern s32 D_800A35CC;
 extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
 extern u8 D_800A377D[];
-extern u8 D_8009F459;
+extern u8 gPrecinctAssaultProgress __asm__("D_8009F459");
 extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
 extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
@@ -19,7 +19,7 @@ extern u8 gMultiBrfMovieName[] __asm__("D_80012094");
 extern u8 D_800A368B;
 
 extern void func_80077708(void);
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 
 /**
  * @brief Menu confirm handler for 1-player Precinct Assault, configuring split-mode state and transition targets.
@@ -58,7 +58,7 @@ void gSelectPrecinctAssault1P(s32 a0)
         mode->split = 1;
         D_800A377D[0] = 1;
         __asm__ volatile("" ::: "memory");
-        D_8009F459 = 0;
+        gPrecinctAssaultProgress = 0;
         func_80077708();
         gDeferredTransition = 5;
         gPendingRowCapture = 0;
@@ -72,6 +72,6 @@ void gSelectPrecinctAssault1P(s32 a0)
             *(u8 *)(b3 + 0x368B) = 9;
         }
     } else {
-        func_80046C84(0x4C, 0);
+        gPlayNonpositionalSoundEffect(0x4C, 0);
     }
 }

@@ -76,7 +76,7 @@ extern struct Game41880 *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern void gRunEntityCommands(struct Obj41880 *arg0) __asm__("func_80041728");
 extern void func_800457B8(s32 arg0, s32 arg1);
-extern void func_80047284(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gPlayPositionalSoundEffect(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80047284");
 extern void gGteLoadMatrix(void *arg0) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__("func_80010234");
 extern void gInitElevator(struct Obj41880 *arg0, s32 arg1, s32 arg2) __asm__("func_80041488");
@@ -247,7 +247,7 @@ after_index:
             }
         }
         if (arg0->unkCD != 0) {
-            func_80047284(arg0->unkCD, arg0->unk50, arg0->unk58, -1);
+            gPlayPositionalSoundEffect(arg0->unkCD, arg0->unk50, arg0->unk58, -1);
         }
     }
 

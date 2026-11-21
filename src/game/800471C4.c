@@ -20,8 +20,10 @@ struct Unk471C4Stream {
 extern struct Unk471C4Stream gStreamTable[] __asm__("D_800A1810");
 
 extern void func_800243F8(s32 handle);
-extern void func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle,
-                          struct Unk471C4Object *object);
+extern void gPlaySoundIdOnVoice(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle,
+                          struct Unk471C4Object *object) __asm__("func_80046E88");
+void gSetEntityLoopingSound(s32 track, struct Unk471C4Object *object) __asm__("func_800471C4");
+
 
 /**
  * @brief Switches or stops the looping sound track bound to an entity's stream slot.
@@ -43,7 +45,7 @@ extern void func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle,
  * @par Callers
  * Confirmed: func_80053A74 (starts movement sound), func_80055988 (stops sound with track 0xFF).
  */
-void func_800471C4(s32 track, struct Unk471C4Object *object)
+void gSetEntityLoopingSound(s32 track, struct Unk471C4Object *object)
 {
     struct Unk471C4Stream *stream;
 
@@ -59,6 +61,6 @@ void func_800471C4(s32 track, struct Unk471C4Object *object)
     if (track == 0xFF) {
         return;
     }
-    func_80046E88(track, 0, 0, -1, stream->handle, object);
+    gPlaySoundIdOnVoice(track, 0, 0, -1, stream->handle, object);
     stream->playing = 1;
 }

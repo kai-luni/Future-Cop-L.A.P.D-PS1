@@ -14,7 +14,7 @@ extern s8 D_8009F928[2];
 extern u8 gRowClearFlag __asm__("D_8009FA10");
 extern s32 gScreenState __asm__("D_8009FA00");
 extern u8 gRowRecordTable[] __asm__("D_8009C030");
-extern u8 D_8009C050[];
+extern u8 gSecondLoadoutRowRecords[] __asm__("D_8009C050");
 extern u8 *gLoadoutTable[] __asm__("D_8009C0A8");
 extern s16 D_8009B856[4];
 extern s16 D_8009B7E6[4];
@@ -81,10 +81,10 @@ void gFinalizeMissionLoadout(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
         if (flag != 0) {
             gClampLoadoutSelections(1);
             gGameSession[10] = gRowRecordTable[D_8009F924[0] * 6];
-            gGameSession[11] = D_8009C050[D_8009F926[0] * 6];
+            gGameSession[11] = gSecondLoadoutRowRecords[D_8009F926[0] * 6];
             gGameSession[12] = gLoadoutTable[10][D_8009F928[0] * 6];
             gGameSession[13] = gRowRecordTable[D_8009F924[1] * 6];
-            gGameSession[14] = D_8009C050[D_8009F926[1] * 6];
+            gGameSession[14] = gSecondLoadoutRowRecords[D_8009F926[1] * 6];
             gGameSession[15] = gLoadoutTable[10][D_8009F928[1] * 6];
             gRowClearFlag = 0;
             gScreenState = 5;

@@ -11,7 +11,9 @@ struct Unk4749CHandle {
     s32 serial;
 };
 
-extern void func_80046A34(struct Unk4749CResource *resource);
+extern void gStopSoundVoiceHandle(struct Unk4749CResource *resource) __asm__("func_80046A34");
+s32 gReleaseValidatedSoundVoiceHandle(struct Unk4749CHandle *handle) __asm__("func_800474F0");
+
 
 /**
  * @brief Releases a sound resource handle if it is still valid.
@@ -33,7 +35,7 @@ extern void func_80046A34(struct Unk4749CResource *resource);
  * @par Callers
  * Unknown: no direct edge in edges.json.
  */
-s32 func_800474F0(struct Unk4749CHandle *handle)
+s32 gReleaseValidatedSoundVoiceHandle(struct Unk4749CHandle *handle)
 {
     s32 result;
 
@@ -47,7 +49,7 @@ s32 func_800474F0(struct Unk4749CHandle *handle)
     if (handle->resource->serial != handle->serial) {
         goto done;
     }
-    func_80046A34(handle->resource);
+    gStopSoundVoiceHandle(handle->resource);
     handle->resource = 0;
     result = 1;
 set_result:

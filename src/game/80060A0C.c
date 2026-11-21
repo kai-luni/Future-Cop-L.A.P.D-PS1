@@ -59,11 +59,13 @@ extern s32 gScreenState __asm__("D_8009FA00");
 extern s32 gScreenResetFlag __asm__("D_8009FA70");
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
-extern u32 func_80060DD8(u32 state);
+extern u32 gHashCheatCode(u32 state) __asm__("func_80060DD8");
 extern void func_8005A0C4(struct Unk5A190Gauge *gauge, s32 value, s32 divisor);
 extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
 extern void func_8006BDFC(struct Actor *actor, s32 mode);
 extern void func_8006BE90(struct Actor *actor, s32 mode, s32 arg2, s32 arg3);
+s32 gApplyPlayerCheatCode(u32 state, s32 index) __asm__("func_80060A0C");
+
 
 /**
  * @brief Hashes an input code word via func_80060DD8 and dispatches matching cheat/debug actions for a player.
@@ -84,7 +86,7 @@ extern void func_8006BE90(struct Actor *actor, s32 mode, s32 arg2, s32 arg3);
  * @par Callers
  * Confirmed: func_800260B8.
  */
-s32 func_80060A0C(u32 state, s32 index)
+s32 gApplyPlayerCheatCode(u32 state, s32 index)
 {
     s32 result;
     s32 old;
@@ -92,7 +94,7 @@ s32 func_80060A0C(u32 state, s32 index)
     register s32 delta __asm__("$3");
     register struct Actor *actor __asm__("$4");
 
-    state = func_80060DD8(state);
+    state = gHashCheatCode(state);
     result = 1;
     switch (state) {
     case 0x00011081:

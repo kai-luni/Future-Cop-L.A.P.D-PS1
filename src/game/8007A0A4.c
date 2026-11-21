@@ -10,7 +10,7 @@ struct UnkB4E4 {
 extern struct UnkB4E4 gWideTextTable[] __asm__("D_8009B4E4");
 extern s8 gFrontEndListTable[] __asm__("D_8009B72C");
 extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
-extern u8 D_80011E60[];
+extern u8 gCreditsMovieFilename[] __asm__("D_80011E60");
 
 extern void func_80082DDC(s32 arg0, s32 arg1);
 
@@ -49,7 +49,7 @@ void gPlayPrecinctMissionMovies(s32 arg0)
             i++;
         } while (i < 5);
         if (gMovieAbortFlag == 0) {
-            func_80082DDC((s32)D_80011E60, 0);
+            func_80082DDC((s32)gCreditsMovieFilename, 0);
         }
     }
 }

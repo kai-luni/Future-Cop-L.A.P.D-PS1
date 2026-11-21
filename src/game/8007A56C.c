@@ -9,7 +9,7 @@ struct Unk78210Mode {
 };
 
 extern struct Unk78210Mode *gGameSession __asm__("D_8009FA94");
-extern u8 D_8009F459;
+extern u8 gPrecinctAssaultProgress __asm__("D_8009F459");
 extern u8 gLayoutPointerFlagA __asm__("D_8009F3E6");
 extern void *gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
@@ -52,7 +52,7 @@ void gSelectPrecinctAssault2P(s32 a0)
     mode->split = 1;
     D_800A377D[0] = 0;
     __asm__ volatile("" ::: "memory");
-    D_8009F459 = 0;
+    gPrecinctAssaultProgress = 0;
     func_80077708();
     gDeferredTransition = 5;
     gPendingRowCapture = 0;

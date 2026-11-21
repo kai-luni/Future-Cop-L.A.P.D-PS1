@@ -126,7 +126,9 @@ extern s32 gVectorDot(struct Vec3s32 *a, struct Vec3s32 *b) __asm__("func_8001AB
 extern struct Unk73500 *gAllocPositionNode(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80073500");
 extern void func_8007377C(void *a0, void *a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13);
 extern s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
-extern s32 func_800684AC(struct Vec3s32 *pos, struct Vec3s32 *in, struct Vec3s32 *out, s32 arg3, s32 arg4);
+extern s32 gTraceMapRay(struct Vec3s32 *pos, struct Vec3s32 *in, struct Vec3s32 *out, s32 arg3, s32 arg4) __asm__("func_800684AC");
+void gFireRayAttack(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec3s32 *pos, struct Coll5F018 *arg3, u8 arg4) __asm__("func_8005F018");
+
 
 /**
  * @brief Computes the aim point of a firing actor - random cone around the target,
@@ -190,7 +192,7 @@ extern s32 func_800684AC(struct Vec3s32 *pos, struct Vec3s32 *in, struct Vec3s32
  * func_8005F6E8, the actor-type dispatcher, which reaches this case for one entry of
  * its switch over the data + 0x01 type byte.
  */
-void func_8005F018(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec3s32 *pos, struct Coll5F018 *arg3, u8 arg4)
+void gFireRayAttack(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec3s32 *pos, struct Coll5F018 *arg3, u8 arg4)
 {
     struct Locals5F018 locals;
     struct Obj5F018 *obj;
@@ -384,7 +386,7 @@ void func_8005F018(struct Actor5F018 *arg0, struct Obj1_5F018 *arg1, struct Vec3
     }
 
 common:
-    if (func_800684AC(pos, &locals.vec38, &locals.vec48, 0, 1) != 0) {
+    if (gTraceMapRay(pos, &locals.vec38, &locals.vec48, 0, 1) != 0) {
         register s32 x __asm__("$2");
         register s32 y __asm__("$3");
         register s32 z __asm__("$4");

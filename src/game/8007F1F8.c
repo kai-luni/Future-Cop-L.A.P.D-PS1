@@ -12,7 +12,7 @@ extern s32 gScalarCursor __asm__("D_8009F8F8");
 extern  s32 gScalarCursor_arr[] __asm__("D_8009F8F8");
 extern u16 gStatusTextId __asm__("D_8009F92A");
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
-extern u8 D_800A3938[];
+extern u8 gPackedPasswordBytes[] __asm__("D_800A3938");
 extern u8 gHexDigitTable[] __asm__("D_8009C1AC");
 extern u8 gOctalDigitTable[] __asm__("D_8009C1BC");
 extern u8 gHighlightShadeTable[8] __asm__("D_8009F3F8");
@@ -20,7 +20,7 @@ extern s32 gGameClock[] __asm__("D_8009FA60");
 extern void *jtbl_800121A4[];
 
 extern s32 func_8007EA78(void);
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void gPopMenuPanel(void) __asm__("func_80078740");
 extern void func_800493C0(u32 index, u8 blue, u8 green, u8 red);
 extern void func_800788F0(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
@@ -127,15 +127,15 @@ void gUpdatePasswordScreen(s32 state, s32 input_baseX)
 state_0:
         if ((func_8007EA78() & 0xFF) == 0) {
             gStatusTextId = 0x3AAC;
-            func_80046C84(0x4C, 0);
+            gPlayNonpositionalSoundEffect(0x4C, 0);
         } else {
-            func_80046C84(0x4D, 0);
+            gPlayNonpositionalSoundEffect(0x4D, 0);
             gPopMenuPanel();
         }
         goto done;
 state_1:
         gStatusTextId = 0;
-        func_80046C84(0x46, 0);
+        gPlayNonpositionalSoundEffect(0x46, 0);
         {
             u8 *p;
             i = gScalarCursor;
@@ -149,7 +149,7 @@ state_1:
         goto done;
 state_2:
         gStatusTextId = 0;
-        func_80046C84(0x46, 0);
+        gPlayNonpositionalSoundEffect(0x46, 0);
         {
             u8 *p;
             i = gScalarCursor;
@@ -166,7 +166,7 @@ state_3:
         if (gScalarCursor >= 0xA) {
             gScalarCursor = 0;
         }
-        func_80046C84(0x47, 0);
+        gPlayNonpositionalSoundEffect(0x47, 0);
         goto done;
 state_4:
         gStatusTextId = 0;
@@ -174,7 +174,7 @@ state_4:
         if (gScalarCursor < 0) {
             gScalarCursor = 9;
         }
-        func_80046C84(0x47, 0);
+        gPlayNonpositionalSoundEffect(0x47, 0);
         goto done;
 state_5:
         if (gStatusTextId != 0) {

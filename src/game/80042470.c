@@ -17,6 +17,8 @@ struct Unk423F0Object {
 };
 
 extern struct Unk423F0Player *gPlayerEntities[] __asm__("D_8009FA58");
+s32 gClearPlayerInfoTarget(s32 message, struct Unk423F0Object *object) __asm__("func_80042470");
+
 
 /**
  *  @brief Clears matching player target references to an object.
@@ -37,7 +39,7 @@ extern struct Unk423F0Player *gPlayerEntities[] __asm__("D_8009FA58");
  *  @par Callers
  *  Confirmed: func_800426A8.
  */
-s32 func_80042470(s32 message, struct Unk423F0Object *object)
+s32 gClearPlayerInfoTarget(s32 message, struct Unk423F0Object *object)
 {
     s32 first;
     s32 last;

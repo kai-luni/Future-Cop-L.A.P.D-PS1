@@ -19,7 +19,7 @@ struct Self {
     s32 fieldc8; volatile s32 speed; s32 fieldd0, fieldd4;
 };
 extern s32 gEntityBaseHandler(s32, struct Self *, struct Arg *, s32) __asm__("func_8002AD58");
-extern s32 func_80067684(s32 *, s32);
+extern s32 gQuerySurfaceHeight(s32 *, s32) __asm__("func_80067684");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 #define FMULU(a,b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 /**
@@ -106,7 +106,7 @@ void func_8002FA20(struct Self *self, struct Arg *arg, s32 arg2)
         if (type == 1) mode = -2;
         else mode = type - 2;
     } else mode = -1;
-    self->pos[1] = func_80067684(self->pos, mode) + (sub->height << 4);
+    self->pos[1] = gQuerySurfaceHeight(self->pos, mode) + (sub->height << 4);
     self->flags |= 0x800001;
     if (sub->angle >= 0) {
         gBuildRotationMatrix(sub->angle, 0, 0, self->matrix);

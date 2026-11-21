@@ -20,7 +20,7 @@ extern u8 D_800A386D[];
 extern u8 gCwRulesMovieName[] __asm__("D_80012088");
 
 extern void func_800776B8(void);
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 
 /**
  * @brief Menu confirm handler for 1-player Crime War, configuring single-screen mode and transition state.
@@ -70,6 +70,6 @@ void gSelectCrimeWar1P(s32 a0)
             gPendingRowCapture = gCwRulesMovieName;
         }
     } else {
-        func_80046C84(0x4C, 0);
+        gPlayNonpositionalSoundEffect(0x4C, 0);
     }
 }

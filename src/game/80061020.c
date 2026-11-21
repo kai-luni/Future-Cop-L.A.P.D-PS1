@@ -73,6 +73,8 @@ extern struct Table *gRegistryTable __asm__("D_8009F800");
 extern struct Unit *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct GlobalFA94 *gGameSession __asm__("D_8009FA94");
 extern struct Actor *gPlayerEntities[] __asm__("D_8009FA58");
+void gRecordSpawnedUnitRetirement(struct Unit *arg0) __asm__("func_80061020");
+
 
 /**
  *  @brief Updates matching definition counts and conditional team statistics for a unit.
@@ -92,7 +94,7 @@ extern struct Actor *gPlayerEntities[] __asm__("D_8009FA58");
  *  @par Callers
  *  Confirmed: func_8004D598.
  */
-void func_80061020(struct Unit *arg0)
+void gRecordSpawnedUnitRetirement(struct Unit *arg0)
 {
     struct Table *table;
     register struct Entry **cursor __asm__("$8");

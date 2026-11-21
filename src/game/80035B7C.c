@@ -112,7 +112,7 @@ extern s32 gNormalizeGetLength(s32 *vector) __asm__("func_8001A314");
 extern s32 gEaseVectorQuarter(s32 *a, s32 *b) __asm__("func_8001A6F8");
 extern s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
 extern void gVectorAddScaled(s32 *a, s32 *b, s32 delta, s32 *out) __asm__("func_8001ACA4");
-extern s32 func_800684AC(s32 *a, s32 *b, s32 *out, s32 arg3, s32 arg4);
+extern s32 gTraceMapRay(s32 *a, s32 *b, s32 *out, s32 arg3, s32 arg4) __asm__("func_800684AC");
 extern s32 gGetGroundHeight(s32 *a, s32 b, s32 c, s32 d) __asm__("func_80066F78");
 extern s32 gSampleHeightGridBilinear(s32 *a) __asm__("func_80069A38");
 extern void gBuildRotationMatrix(s32 a, s32 b, s32 angle, s32 *out) __asm__("func_800188D0");
@@ -129,7 +129,7 @@ extern s32 gEntityBaseHandler(s32 state, struct Obj35B7C *self, struct Obj35B7C 
 extern void gProjectileInit(struct Obj35B7C *self, struct Obj35B7C *other, s32 arg3) __asm__("func_80035904");
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern void gSpawnEntitySlotTypes(u8 arg0, struct Obj35B7C *self, s32 arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
-extern void *func_8004E80C(struct Obj35B7C *target, u8 arg1, s16 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
+extern void *gFindTargetEntity(struct Obj35B7C *target, u8 arg1, s16 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) __asm__("func_8004E80C");
 extern void *gSpawnDirectShot(struct SpawnInfo35B7C *info, struct Model *model, s32 *vec80, s32 *vec70, struct Obj35B7C *unkC8, struct Obj35B7C *s1p, s32 unk24, s32 arg7, s32 arg8, s32 arg9, s32 arg10, u32 unkE4) __asm__("func_8005E47C");
 extern void *func_8006C224(struct Obj35B7C *target, struct Obj35B7C *arg1, s32 arg2, s32 arg3);
 extern void func_80044B34(struct Obj35B7C *self, void *unkE8, s32 delta, s32 arg3);
@@ -301,7 +301,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
             if (target == 0) {
                 target = self;
             }
-            p1 = (struct Obj35B7C *)func_8004E80C(target, self->unkDD, self->unkD8, 1,
+            p1 = (struct Obj35B7C *)gFindTargetEntity(target, self->unkDD, self->unkD8, 1,
                                                    self->unkA6 << 8, 0xFFFF0000, 0);
         } else {
             if (self->unkC8 != 0) {
@@ -368,7 +368,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
             if (self->unkDD != 0xFF) {
                 target = self->unkC8;
                 if (target == 0) target = self;
-                p2 = (struct Obj35B7C *)func_8004E80C(target, self->unkDD, self->unkD8, 1,
+                p2 = (struct Obj35B7C *)gFindTargetEntity(target, self->unkDD, self->unkD8, 1,
                                                        self->unkA6 << 8, 0xFFFF0000, 0);
             } else {
                 target = self->unkC8;
@@ -533,7 +533,7 @@ void gGuidedProjectileUpdate(struct Obj35B7C *self, s32 delta)
                     }
                 }
             }
-            if (func_800684AC((s32 *)((u8 *)self + 0xA8), (s32 *)((u8 *)self + 0x50),
+            if (gTraceMapRay((s32 *)((u8 *)self + 0xA8), (s32 *)((u8 *)self + 0x50),
                               sp50, 0, 0) != 0) {
                 self->unk1C = -1;
                 *(struct Vec3_35B7C *)((u8 *)self + 0x50) = *(struct Vec3_35B7C *)sp50;

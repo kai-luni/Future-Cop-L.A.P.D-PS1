@@ -106,7 +106,7 @@ struct Unk2C584Obj {
     s32 unk108[4];
 };
 
-extern u8 D_8002DEA8[];
+extern u8 gType11EntityHandler[] __asm__("D_8002DEA8");
 
 extern s32 gEntityBaseHandler(s32 message, struct Unk2C584Obj *obj, void *data, s32 arg3) __asm__("func_8002AD58");
 extern struct Unk2C584Obj *gSpawnQueuedEntity(void *def) __asm__("func_8004D444");
@@ -114,8 +114,8 @@ extern void gTransformPartVertex(void *a, s32 b, void *c) __asm__("func_80017668
 extern void gGteLoadMatrix(void *a) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 extern void gBuildRotationMatrix(s32 a, s32 b, s32 c, void *d) __asm__("func_800188D0");
-extern void func_80060668(void *a, void *b);
-extern s32 func_80067684(void *a, s32 b);
+extern void gInitAttackSchedulerSlot(void *a, void *b) __asm__("func_80060668");
+extern s32 gQuerySurfaceHeight(void *a, s32 b) __asm__("func_80067684");
 extern void gSetAnimClipTable(void *a, void *b, s32 c, s32 d) __asm__("func_80044988");
 extern s32 func_8006314C(void *a, s32 b);
 void gInitObjectFromDef(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 arg2) __asm__("func_8002C584");
@@ -279,7 +279,7 @@ void gInitObjectFromDef(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 
     gEntityBaseHandler(2, obj, data, arg2);
     if (st->unk04 == 8 || st->unk04 == 0x21 || st->unk04 == 0x24) {
         p = d->unk04;
-        def.handler = D_8002DEA8;
+        def.handler = gType11EntityHandler;
         def.buf = &buf;
         def.zero = 0;
         def.state = st;
@@ -388,9 +388,9 @@ void gInitObjectFromDef(struct Unk2C584Obj *obj, struct Unk2C584Data *data, s32 
         s32 a;
         s32 v = (s8)st->unk34;
         a = v == 0 ? -1 : v == 1 ? -2 : v - 2;
-        obj->unk54 = func_80067684((u8 *)obj + 0x50, a) + (st->unk3A << 4);
+        obj->unk54 = gQuerySurfaceHeight((u8 *)obj + 0x50, a) + (st->unk3A << 4);
     }
-    func_80060668(st->unk24, (u8 *)obj + 0xA0);
+    gInitAttackSchedulerSlot(st->unk24, (u8 *)obj + 0xA0);
     if (*(s32 *)((u8 *)obj->unk28 + 0x10)) {
         gSetAnimClipTable(*(void **)((u8 *)obj->unk28 + 0x10), (u8 *)obj + 0xC8, 1, 0);
     }

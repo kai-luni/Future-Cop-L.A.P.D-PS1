@@ -12,7 +12,7 @@ extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void gWaitForInteractiveFrameTicks(void) __asm__("func_80027E68");
 extern void gPresentInteractiveScreenFrame(void) __asm__("func_80027EBC");
 extern void func_800451EC(s32 value);
-extern void func_800462D0(void);
+extern void gUpdateSoundVoiceAssignments(void) __asm__("func_800462D0");
 extern void func_80078DD0(void);
 
 void gRunInteractiveScreenLoop(void) __asm__("func_80027EE4");
@@ -56,7 +56,7 @@ void gRunInteractiveScreenLoop(void)
         gGlobalTick++;
         gWaitForInteractiveFrameTicks();
         func_800451EC(0);
-        func_800462D0();
+        gUpdateSoundVoiceAssignments();
         func_80078DD0();
         gPresentInteractiveScreenFrame();
     }

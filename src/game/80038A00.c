@@ -28,9 +28,9 @@ extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern s32 func_80044B34(void *, void *, s32, s32);
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
-extern s32 func_80060238(void *, s32, void *, void *, s32);
+extern s32 gStepAttackScheduler(void *, s32, void *, void *, s32) __asm__("func_80060238");
 extern void func_800448D8(void *, s32, s32, s32);
-extern void func_8005F6E8(void *, void *, void *, s32);
+extern void gFireEntityWeapon(void *, void *, void *, s32) __asm__("func_8005F6E8");
 
 union Prod { long long val; struct { u32 lo, hi; } w; };
 #define FMUL(d,a,b) do { u32 raw; register u32 hi __asm__("$9"); register u32 lo __asm__("$8"); __asm__(".set reorder"); raw = (a) * (b); __asm__("" : "=l"(raw), "=h"(hi) : "0"(raw)); lo = raw; __asm__("" : : "r"(lo)); hi <<= 16; lo >>= 16; (d) = hi | lo; __asm__(".set noreorder"); } while (0)
@@ -348,12 +348,12 @@ apply:
     f = obj->flags;
     if (f & 4) return;
     if (f & 8) {
-        func_80060238(obj->script, dt, info, 0, 1);
+        gStepAttackScheduler(obj->script, dt, info, 0, 1);
         return;
     }
     if (obj->mode == 0) {
         if (f & 0x8000) return;
-        if (func_80060238(obj->script, dt, obj, info, (((u32)f >> 7) ^ 1) & 1) & 0xFF) {
+        if (gStepAttackScheduler(obj->script, dt, obj, info, (((u32)f >> 7) ^ 1) & 1) & 0xFF) {
             if (obj->flags & 0x80) {
                 obj->mode = 1;
                 func_800448D8(obj->anim, 1, 1, 1);
@@ -361,6 +361,6 @@ apply:
         }
     } else if (obj->mode == 2) {
         obj->mode = 0;
-        func_8005F6E8(obj->script, obj, info, 1);
+        gFireEntityWeapon(obj->script, obj, info, 1);
     }
 }

@@ -19,19 +19,19 @@ struct Unk4749CHandle {
 };
 
 extern u8 gStreamAudioFlag __asm__("D_8009F739");
-extern s32 D_8009F32C;
+extern s32 gPendingSoundVoiceReleaseCount __asm__("D_8009F32C");
 extern struct Unk47554Node *gVoicePriorityList __asm__("D_8009F744");
 extern struct Unk47554Node *gVoiceList __asm__("D_8009F74C");
 extern void *gPlayerEntities[2] __asm__("D_8009FA58");
-extern struct Unk4749CHandle D_800A10C0[];
+extern struct Unk4749CHandle gPendingSoundVoiceReleaseHandles[] __asm__("D_800A10C0");
 
 extern void func_80023E84(void);
 extern void func_80024630(s32 arg);
-extern void func_80047088(s32 arg0, void *arg1);
-extern void func_80046698(void *arg);
+extern void gApplyAnimationSoundEvent(s32 arg0, void *arg1) __asm__("func_80047088");
+extern void gReleaseSoundVoice(void *arg) __asm__("func_80046698");
 extern void func_80021B90(void);
 extern void func_80021BD0(s32 voice);
-extern s32 func_800474F0(struct Unk4749CHandle *handle);
+extern s32 gReleaseValidatedSoundVoiceHandle(struct Unk4749CHandle *handle) __asm__("func_800474F0");
 
 /**
  * @brief Halts active sound voices, music streams, and CD audio, optionally sparing one node.
@@ -76,24 +76,24 @@ void gSoundHaltAllVoices(struct Unk47554Node *node)
         p = gPlayerEntities;
         do {
             if (*p != 0) {
-                func_80047088(0x27, *p);
+                gApplyAnimationSoundEvent(0x27, *p);
             }
             p++;
             i++;
         } while (i < 2);
     }
-    while (D_8009F32C != 0) {
-        D_8009F32C--;
-        func_800474F0(&D_800A10C0[D_8009F32C]);
+    while (gPendingSoundVoiceReleaseCount != 0) {
+        gPendingSoundVoiceReleaseCount--;
+        gReleaseValidatedSoundVoiceHandle(&gPendingSoundVoiceReleaseHandles[gPendingSoundVoiceReleaseCount]);
     }
     while (gVoicePriorityList != 0) {
-        func_80046698(gVoicePriorityList);
+        gReleaseSoundVoice(gVoicePriorityList);
     }
     entry = gVoiceList;
     while (entry != 0) {
         next = entry->next;
         if (entry != node) {
-            func_80046698(entry);
+            gReleaseSoundVoice(entry);
         }
         entry = next;
     }

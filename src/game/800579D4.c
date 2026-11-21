@@ -66,7 +66,7 @@ extern void gSetAnimClipTable(void *, void *, s32, s32) __asm__("func_80044988")
 extern void gResetActorAndPlaceView(struct Data8 *, struct Object *) __asm__("func_800573A4");
 extern void func_80013BD8(void *, void *, s32);
 extern struct Object *func_80057914(struct Object *);
-extern s32 func_80067684(void *, s32);
+extern s32 gQuerySurfaceHeight(void *, s32) __asm__("func_80067684");
 extern void func_8005A0C4(void *, s32, s32);
 extern void func_80051AF8(struct Object *);
 
@@ -211,7 +211,7 @@ found:
         if (selector != 1) ground = selector - 2;
         else ground = -2;
     } else ground = -1;
-    obj->pos.y = func_80067684(&obj->pos, ground) + 0x200;
+    obj->pos.y = gQuerySurfaceHeight(&obj->pos, ground) + 0x200;
     state->pos = obj->pos;
     state->unkD2 = data->d8->unk24;
     state->unk313 = 0;

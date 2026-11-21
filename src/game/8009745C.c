@@ -16,7 +16,7 @@ extern SpuDebug *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern s32 gSetupGuard __asm__("D_8009EEF4");
-extern s32 D_8009EEF8;
+extern s32 gSpuDmaMainRamAddress __asm__("D_8009EEF8");
 extern s32 D_8009EEFC;
 extern s32 *gDma4MemAddrPtr __asm__("D_8009EEA8");
 extern s32 *gDma4BlockCtrlPtr __asm__("D_8009EEAC");
@@ -111,13 +111,13 @@ s32 gSpuTransfer(s32 arg0, ...)
         }
         vl = vl + 1;
         rx = (u32)vl[-1];
-        D_8009EEF8 = rx;
+        gSpuDmaMainRamAddress = rx;
         rx = (u32)*vl;
         re = gDma4MemAddrPtr;
         rq = rx >> 6;
         rm = rx & 0x3F;
         D_8009EEFC = rq + (rm != 0);
-        *gDma4MemAddrPtr = D_8009EEF8;
+        *gDma4MemAddrPtr = gSpuDmaMainRamAddress;
         *gDma4BlockCtrlPtr = (D_8009EEFC << 16) | 0x10;
         rf = gSetupGuard;
         val = (rf == 1) ? 0x1000200 : 0x1000201;

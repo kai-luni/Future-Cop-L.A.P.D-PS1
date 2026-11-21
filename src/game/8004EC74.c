@@ -18,6 +18,8 @@ struct EntityTable {
 };
 
 extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
+void gDispatchEntityMsg0D(void) __asm__("func_8004EC74");
+
 
 /**
  *  @brief Resets marked entities after sending them update message 0xD.
@@ -36,7 +38,7 @@ extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
  *  @par Callers
  *  Confirmed: func_80026D1C.
  */
-void func_8004EC74(void)
+void gDispatchEntityMsg0D(void)
 {
     struct Entity **cursor;
     struct Entity *entity;

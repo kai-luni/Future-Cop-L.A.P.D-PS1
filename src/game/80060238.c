@@ -51,12 +51,14 @@ typedef struct Func80060238Obj {
 
 extern s32 gCommandListHead[] __asm__("D_800A8F90");
 
-extern void func_8005FFB8(Func80060238Obj *arg0, Func80060238Arg2 *arg1);
+extern void gApplyAttackCommands(Func80060238Obj *arg0, Func80060238Arg2 *arg1) __asm__("func_8005FFB8");
 extern s32 func_80019668(void);
-extern s32 func_8004E5F0(Func80060238Arg2 *arg0, Func80060238Obj18 *arg1, s32 arg2, s32 arg3);
+extern s32 gCheckTargetRangeAndCone(Func80060238Arg2 *arg0, Func80060238Obj18 *arg1, s32 arg2, s32 arg3) __asm__("func_8004E5F0");
 extern void func_80069D68(Func80060238Sub9C *arg0, s32 arg1, s32 arg2, Func80060238Arg2 *arg3);
-extern s32 func_800600E8(Func80060238Obj *arg0, s32 arg1, Func80060238Arg2 *arg2);
-extern s32 func_8005F6E8(Func80060238Obj *arg0, Func80060238Arg2 *arg1, Func80060238Arg2 *arg2, s32 arg3);
+extern s32 gAcquireAttackTarget(Func80060238Obj *arg0, s32 arg1, Func80060238Arg2 *arg2) __asm__("func_800600E8");
+extern s32 gFireEntityWeapon(Func80060238Obj *arg0, Func80060238Arg2 *arg1, Func80060238Arg2 *arg2, s32 arg3) __asm__("func_8005F6E8");
+s32 gStepAttackScheduler(Func80060238Obj *arg0, s32 arg1, Func80060238Arg2 *arg2, Func80060238Arg2 *arg3, u8 arg4) __asm__("func_80060238");
+
 
 /**
  * @brief Frame tick of an attack descriptor: advances its frame
@@ -141,7 +143,7 @@ extern s32 func_8005F6E8(Func80060238Obj *arg0, Func80060238Arg2 *arg1, Func8006
  * object +0xA0, func_8003532C passes the two blocks at +0x50 and +0x78
  * of its entity.
  */
-s32 func_80060238(Func80060238Obj *arg0, s32 arg1, Func80060238Arg2 *arg2, Func80060238Arg2 *arg3, u8 arg4)
+s32 gStepAttackScheduler(Func80060238Obj *arg0, s32 arg1, Func80060238Arg2 *arg2, Func80060238Arg2 *arg3, u8 arg4)
 {
     Func80060238Inner *inner;
     Func80060238Obj18 *obj18;
@@ -158,10 +160,10 @@ s32 func_80060238(Func80060238Obj *arg0, s32 arg1, Func80060238Arg2 *arg2, Func8
         goto L60600;
     }
     if (arg3 != 0 && arg3->unk0C != 0) {
-        func_8005FFB8(arg0, arg3);
+        gApplyAttackCommands(arg0, arg3);
     }
     if (arg2->unk0C != 0) {
-        func_8005FFB8(arg0, arg2);
+        gApplyAttackCommands(arg0, arg2);
     }
     inner = arg0->unk00;
     if (inner->unk01 == 0) {
@@ -235,7 +237,7 @@ L604B0:
         arg0->unk18 = 0;
     }
     if (arg0->unk18 != 0) {
-        if (func_8004E5F0(arg2, arg0->unk18, arg0->unk0A << 4, arg0->unk10) < 0) {
+        if (gCheckTargetRangeAndCone(arg2, arg0->unk18, arg0->unk0A << 4, arg0->unk10) < 0) {
             arg0->unk18 = 0;
         }
     }
@@ -268,7 +270,7 @@ L60594:
         goto L605EC;
     }
 L605A8:
-    if ((u8)func_800600E8(arg0, arg1, arg2) != 0) {
+    if ((u8)gAcquireAttackTarget(arg0, arg1, arg2) != 0) {
         goto L605EC;
     }
     if (!(arg0->flags04 & 0x4000)) {
@@ -281,5 +283,5 @@ L60600:
     return 0;
 
 L605EC:
-    return (u8)func_8005F6E8(arg0, arg2, arg3, bytearg);
+    return (u8)gFireEntityWeapon(arg0, arg2, arg3, bytearg);
 }

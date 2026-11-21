@@ -20,7 +20,7 @@ struct AnimNode {
 };
 
 extern struct AnimNode *D_8009FA04;
-extern u8 D_800A2730[];
+extern u8 gTilePatternCounterState[] __asm__("D_800A2730");
 
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
@@ -152,15 +152,15 @@ void func_80063568(s32 dt)
         }
     }
 
-    if (D_800A2730[0x201] != 0) {
+    if (gTilePatternCounterState[0x201] != 0) {
         u8 *p;
         u8 *q;
 
-        dt += D_800A2730[0x200];
+        dt += gTilePatternCounterState[0x200];
         dt = dt / 4;
-        D_800A2730[0x200] = dt & 3;
-        p = D_800A2730;
-        q = D_800A2730 + 0x100;
+        gTilePatternCounterState[0x200] = dt & 3;
+        p = gTilePatternCounterState;
+        q = gTilePatternCounterState + 0x100;
         for (i = 0x40; i > 0; i--) {
             s32 b;
             s32 c;

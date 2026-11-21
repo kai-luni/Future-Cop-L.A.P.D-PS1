@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeBlockWrapper(void *block) __asm__("func_80042844");
+
 
 /**
  * @brief Releases a memory block through func_800181D4.
@@ -25,7 +27,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: none in asm/us/main.s or analysis/edges.json / Likely: unused helper or stripped effect-object destructor / Unknown: any runtime indirect caller.
  */
-void func_80042844(void *block)
+void gFreeBlockWrapper(void *block)
 {
     gFreeBlock(block);
 }

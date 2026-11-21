@@ -84,7 +84,9 @@ extern void func_8003C14C(Obj43430 *p, Def43430 *src);
 extern s32 func_80017B88(void);
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, s32 *out) __asm__("func_800188D0");
-extern void func_80043250(Obj43430 *p);
+extern void gComputeEmitterColorRates(Obj43430 *p) __asm__("func_80043250");
+u8 gSetupParticleEmitter(Obj43430 *p, Def43430 *src) __asm__("func_80043430");
+
 
 /**
  * @brief Initializes a particle/effect emitter block and allocates its 0x1C-byte node pools.
@@ -110,7 +112,7 @@ extern void func_80043250(Obj43430 *p);
  * @par Callers
  * Confirmed: func_800447F0 (0x80044824, periodic effect spawner).
  */
-u8 func_80043430(Obj43430 *p, Def43430 *src)
+u8 gSetupParticleEmitter(Obj43430 *p, Def43430 *src)
 {
     s32 matrix[9];
     s32 i;
@@ -201,7 +203,7 @@ u8 func_80043430(Obj43430 *p, Def43430 *src)
     p->unk74 = 0;
     p->unk70 = 0;
     p->unk72 = (-p->unk72 << 12) / 100;
-    func_80043250(p);
+    gComputeEmitterColorRates(p);
 
     if (p->unk88 < p->unk8A) {
         p->unkA8 = gAllocMemory(p->unk88 * 0x1C, 1);

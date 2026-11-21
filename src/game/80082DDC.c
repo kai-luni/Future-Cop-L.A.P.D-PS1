@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern s32 D_8009F3D0;
+extern s32 gMoviePathPrefix __asm__("D_8009F3D0");
 extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s8 gOverlayDelay __asm__("D_8009F874");
 extern u8 D_8009F4AC[];
@@ -43,12 +43,12 @@ void func_80082DDC(s32 arg0, s32 arg1)
     func_80047690(0);
     switch (arg1) {
     case 1:
-        func_8008CD30(buf, D_8009F4AC, D_8009F3D0, arg0);
+        func_8008CD30(buf, D_8009F4AC, gMoviePathPrefix, arg0);
         gDrawImageResource((s32)buf, 0x26, 0x20, 0x31, 0x100, 0x90);
         break;
     case 0:
     case 2:
-        func_8008CD30(buf, D_8009F4AC, D_8009F3D0, arg0);
+        func_8008CD30(buf, D_8009F4AC, gMoviePathPrefix, arg0);
         gDrawImageResource((s32)buf, 4, 0, 0x18, 0x140, 0xC0);
         break;
     }

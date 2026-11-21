@@ -1,13 +1,13 @@
 // Categories: Platform > System Init | Game Engine > Boot | Resources | Graphics
 #include "game/types.h"
 
-extern u32 D_8009EA04;
-extern u32 D_8009EA08;
+extern u32 gStartupHeapBase __asm__("D_8009EA04");
+extern u32 gStartupHeapSizeBytes __asm__("D_8009EA08");
 extern u32 *gGameSession __asm__("D_8009FA94");
 extern u32 *D_8009FAD4;
 extern u32 *gVmCountdowns __asm__("D_8009F9A4");
 extern u32 *gOpcodeTable __asm__("D_8009F9F8");
-extern u8 D_8009B2DC[];
+extern u8 gRuntimeCdFileSearchManager[] __asm__("D_8009B2DC");
 
 extern void gInitHeapBlocks(u32 arg0, u32 arg1) __asm__("func_8008CA30");
 extern u32 *gHeapAllocRaw(s32 arg0, s32 arg1) __asm__("func_8001E240");
@@ -77,7 +77,7 @@ s32 gInitRuntime(void)
     s32 i;
 
     result = 0;
-    gInitHeapBlocks(D_8009EA04, (D_8009EA08 >> 3) << 3);
+    gInitHeapBlocks(gStartupHeapBase, (gStartupHeapSizeBytes >> 3) << 3);
 
     gGameSession = gHeapAllocRaw(0xF4, 3);
     for (i = 0x38; i >= 0; i--) {
@@ -105,7 +105,7 @@ s32 gInitRuntime(void)
 
     result = 1;
     func_8001BFE4();
-    gInitCdFileSystem(0, 0, D_8009B2DC);
+    gInitCdFileSystem(0, 0, gRuntimeCdFileSearchManager);
     gStartFrameCallback();
     gInitCvkStreamSubsystem();
 

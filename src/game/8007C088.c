@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 gPresetIndexPerPort __asm__("D_8009FA98");
-extern u8 D_8009FA99;
+extern u8 gPort2ControllerPresetIndex __asm__("D_8009FA99");
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
 extern u8 D_8009F8D9;
 extern u8 D_8009F900;
@@ -40,7 +40,7 @@ void gSnapshotControllerPresets(void) __asm__("func_8007C088");
 void gSnapshotControllerPresets(void)
 {
     D_8009F900 = gPresetIndexPerPort;
-    D_8009F901 = D_8009FA99;
+    D_8009F901 = gPort2ControllerPresetIndex;
     gRumbleEnabled = gIsPadRumbleEnabled(0);
     D_8009F8D9 = gIsPadRumbleEnabled(1);
     D_8009F902 = 0;

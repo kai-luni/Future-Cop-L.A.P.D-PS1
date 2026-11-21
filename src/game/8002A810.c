@@ -45,7 +45,7 @@ extern Unk8002A810Sub *gFindUnitById(s32 id) __asm__("func_8004D664");
 extern void gSpawnEntitySlotTypes(s32 arg0, Unk8002A810 *arg1,
                          Unk8002A810Local *arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
 extern void func_80031690(Unk8002A810 *arg0);
-extern void func_8004D958(Unk8002A810 *arg0);
+extern void gRetireEntity(Unk8002A810 *arg0) __asm__("func_8004D958");
 s32 gRetireEntityBase(Unk8002A810 *s0, s32 arg1, s32 arg2) __asm__("func_8002A810");
 
 
@@ -138,7 +138,7 @@ s32 gRetireEntityBase(Unk8002A810 *s0, s32 arg1, s32 arg2)
     }
 
     if (arg1 & 0xFF) {
-        func_8004D958(s0);
+        gRetireEntity(s0);
     }
     return 1;
 }

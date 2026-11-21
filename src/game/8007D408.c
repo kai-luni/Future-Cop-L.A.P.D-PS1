@@ -16,7 +16,7 @@ extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern u8 D_8009C0C5[], D_8009C0D9[];
 extern int D_8009F8E0, D_8009F8E4;
 typedef struct { u8 pad[0x16]; u16 a; u8 pad2[0x6E]; u16 b; } Tail;
-extern Tail D_8009B7D0;
+extern Tail gTwoPlayerLoadoutMenuItems __asm__("D_8009B7D0");
 extern u8 gFindListEntryByValue(List *, u8) __asm__("func_8007D39C");
 #define CLAMP(x,lo,hi) ((x)<(lo)?(lo):(u8)((x)>(hi)?(hi):(x)))
 
@@ -79,6 +79,6 @@ void gInitSelectionIndices(void)
     D_8009F928[1] = CLAMP(D_8009F928[1], gLoadoutTable[2].min, gLoadoutTable[2].max);
     D_8009F8E0 = 0;
     D_8009F8E4 = 0;
-    D_8009B7D0.a = 100;
-    D_8009B7D0.b = 100;
+    gTwoPlayerLoadoutMenuItems.a = 100;
+    gTwoPlayerLoadoutMenuItems.b = 100;
 }

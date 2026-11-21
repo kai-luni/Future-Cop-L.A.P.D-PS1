@@ -43,7 +43,7 @@ struct Entity {
 };
 
 extern void gVectorAddScaled(void *a, void *b, s32 c, s32 *d) __asm__("func_8001ACA4");
-extern s32 func_800684AC(void *a, s32 *b, s32 c, s32 d, s32 e);
+extern s32 gTraceMapRay(void *a, s32 *b, s32 c, s32 d, s32 e) __asm__("func_800684AC");
 extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
 extern void gNormalizeVector(struct Vec3s32 *vector) __asm__("func_8001A180");
 extern struct Entity *func_8004D3FC(s32 size);
@@ -54,7 +54,7 @@ extern void func_80036940(struct Entity *self, s32 arg2, s32 arg3);
 extern void gBuildBasisFromAxisYZ(struct Vec3s32 *axis, void *basis) __asm__("func_8001937C");
 extern void gBuildBasisFromAxis(struct Vec3s32 *axis, void *basis) __asm__("func_800193F8");
 extern s32 func_8001A750(struct Vec3s32 *a, void *b);
-extern void func_8004D958(struct Entity *entity);
+extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
 extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 extern void func_80036AB4(struct Entity *self, s32 arg3);
@@ -154,7 +154,7 @@ message_3:
             gBuildBasisFromAxis(&self->unk78, self->unk2C);
         }
         if (func_8001A750(&self->unk50, &self->unkC8) > 0x58000) {
-            func_8004D958(self);
+            gRetireEntity(self);
         }
         gGteLoadMatrix(self->unk2C);
         {

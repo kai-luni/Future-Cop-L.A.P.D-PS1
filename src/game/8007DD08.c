@@ -18,7 +18,7 @@ extern s8 D_8009F924[];
 extern s8 D_8009F926[];
 extern s8 D_8009F928[];
 extern u8 gRowRecordTable[] __asm__("D_8009C030");
-extern u8 D_8009C050[];
+extern u8 gSecondLoadoutRowRecords[] __asm__("D_8009C050");
 extern u8 *D_8009C0D0;
 extern s32 gGameClock __asm__("D_8009FA60");
 
@@ -97,7 +97,7 @@ void gDrawLoadoutScreen(s32 arg0)
                 s6 = 2;
         }
         gDrawLoadoutListRow(gRowRecordTable + D_8009F924[arg0] * 6, s0, 0x4F, s4 == 0, 0, 0);
-        gDrawLoadoutListRow(D_8009C050 + D_8009F926[arg0] * 6, s0, 0x71, s4 == 1, 1, 0);
+        gDrawLoadoutListRow(gSecondLoadoutRowRecords + D_8009F926[arg0] * 6, s0, 0x71, s4 == 1, 1, 0);
         i3 = D_8009F928[arg0];
         gDrawLoadoutListRow(D_8009C0D0 + i3 * 6, s0, 0x93, s4 == 2, 2, 0);
     } else {
@@ -108,7 +108,7 @@ void gDrawLoadoutScreen(s32 arg0)
         func_800788F0(gPlayerNameTable, 0x53, 0x3C, 0x10, 0, 4, 8, 2);
         func_800788F0(0, 0x53, 0x44, 0x10, 10000, 4, 8, 2);
         gDrawLoadoutListRow(gRowRecordTable + D_8009F924[arg0] * 6, 0x86, 0x35, s4 == 0, 0, 1);
-        gDrawLoadoutListRow(D_8009C050 + D_8009F926[arg0] * 6, 0x86, 0x5F, s4 == 1, 1, 1);
+        gDrawLoadoutListRow(gSecondLoadoutRowRecords + D_8009F926[arg0] * 6, 0x86, 0x5F, s4 == 1, 1, 1);
         i3 = D_8009F928[arg0];
         gDrawLoadoutListRow(D_8009C0D0 + i3 * 6, 0x86, 0x89, s4 == 2, 2, 1);
     }

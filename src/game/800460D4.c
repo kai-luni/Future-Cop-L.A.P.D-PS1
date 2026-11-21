@@ -12,6 +12,8 @@ extern struct Unk45884 gPositionAngleTable[] __asm__("D_800A1920");
 extern s32 gSoundSpatialMode __asm__("D_8009F734");
 
 extern void func_8001A578(u32 angle, s32 *vec);
+void gComputeSpatialSoundPan(s8 *mix) __asm__("func_800460D4");
+
 
 /**
  * @brief Computes 0..0x7F stereo pan in mix[1] from listener-relative delta vectors when mix[2] is 0.
@@ -35,7 +37,7 @@ extern void func_8001A578(u32 angle, s32 *vec);
  * @par Callers
  * Confirmed: func_800450A4 (0x800450E0), func_80046E88 (0x80046F30); also func_800462D0 (0x8004654C, 0x800465D8) and func_80046F9C (0x80047028) in asm/us/main.s / Likely: none / Unknown: none.
  */
-void func_800460D4(s8 *mix)
+void gComputeSpatialSoundPan(s8 *mix)
 {
     if (mix[2] == 0) {
         func_8001A578(gPositionAngleTable[0].angle, (s32 *)(mix + 4));

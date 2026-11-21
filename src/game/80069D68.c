@@ -18,11 +18,11 @@ extern s32 func_80019668(void);
 extern s32 func_80029A60(s32, struct Entity *, s32);
 extern void func_800298EC(s32);
 extern void func_80029974(s32);
-extern s32 func_8004DE80(s32, s32);
-extern void func_8004DA84(struct Entity *, s32, s32, s32);
-extern void func_8004DC64(s32, s32, s32);
-extern void func_8004DD68(s32, s32, s32);
-extern void func_8004DDF4(s32, s32, s32);
+extern s32 gSendMessageByTag(s32, s32) __asm__("func_8004DE80");
+extern void gSendEntityCommand(struct Entity *, s32, s32, s32) __asm__("func_8004DA84");
+extern void gSendCommandByTag(s32, s32, s32) __asm__("func_8004DC64");
+extern void gSendCommandByGroup(s32, s32, s32) __asm__("func_8004DD68");
+extern void gSendCommandByTeam(s32, s32, s32) __asm__("func_8004DDF4");
 extern void func_8004F0F0(s32, s32, s32);
 extern void func_8006158C(s32, s32, s32);
 extern void func_80061600(s32, s32, s32);
@@ -371,21 +371,21 @@ s32 func_80069D68(u8 *script, s32 arg1, s32 arg2, struct Entity *entity)
             if (b == 0) {
                 a = ent->update(0xC, ent, a, 0);
             } else {
-                a = func_8004DE80(b, a);
+                a = gSendMessageByTag(b, a);
             }
             goto push;
         case 56:
             if (c == 0) {
-                func_8004DA84(ent, b, a, 1);
+                gSendEntityCommand(ent, b, a, 1);
             } else {
-                func_8004DC64(c, b, a);
+                gSendCommandByTag(c, b, a);
             }
             break;
         case 58:
-            func_8004DDF4(c, b, a);
+            gSendCommandByTeam(c, b, a);
             break;
         case 57:
-            func_8004DD68(c, b, a);
+            gSendCommandByGroup(c, b, a);
             break;
         case 59:
             func_8004F0F0(c, b, a);

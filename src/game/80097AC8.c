@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
-extern s32 D_8009EF04;
+extern s32 gSpuEntryTableCapacity __asm__("D_8009EF04");
 extern s32 gTableCursor __asm__("D_8009EF08");
 extern u8 *gSpuEntryTable __asm__("D_8009EF0C");
 
@@ -42,7 +42,7 @@ s32 gSpuInitPool(s32 count, u8 *table)
         ((u32 *)table)[0] = 0x40001010;
         gSpuEntryTable = table;
         gTableCursor = 0;
-        D_8009EF04 = count;
+        gSpuEntryTableCapacity = count;
         ((u32 *)table)[1] = (0x10000 << shift) - 0x1010;
         return count;
     }

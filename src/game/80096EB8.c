@@ -60,7 +60,7 @@ extern s32 gInstalledHandler __asm__("D_8009EEE0");
 extern u8 gSpuInitData[] __asm__("D_8009EEE4");
 extern u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern u16 gSpuInitWord[] __asm__("D_800A7028");
-extern u8 D_80012CDC[];
+extern u8 gSpuTimeoutFormat[] __asm__("D_80012CDC");
 extern u8 D_80012CEC[];
 
 extern void gSpuBusyWait(void) __asm__("func_80097990");
@@ -130,7 +130,7 @@ again:
     k++;
     if (k >= 0xF01) {
         __asm__ volatile("" ::: "memory");
-        func_8008E000(D_80012CDC, D_80012CEC);
+        func_8008E000(gSpuTimeoutFormat, D_80012CEC);
         goto cont;
     }
     spu = gSpuRegBasePtr;

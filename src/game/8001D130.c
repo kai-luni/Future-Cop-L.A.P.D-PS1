@@ -19,7 +19,7 @@ extern u8 gCdCommandParam[8] __asm__("D_8009F610");
 extern u8 D_8009F611;
 extern u8 gCdCurrentLoc[] __asm__("D_8009F61C");
 extern u8 gEventBuffer[] __asm__("D_800A0798");
-extern void D_8001C808(s32 mode);
+extern void gCdSectorReadyCallbackAddress(s32 mode) __asm__("D_8001C808");
 
 extern void gSetIrqCallback(s32 arg0, s32 arg1) __asm__("func_800914B0");
 extern void gStartCdInit(void) __asm__("func_8008DEA0");
@@ -99,7 +99,7 @@ s32 gProbeCdDriveMode(s32 arg0)
     __asm__("" : "+r"(a0));
     gClearWord(a0);
 
-    func_80010000.unk18 = gSetCdReadyCallback((s32)D_8001C808);
+    func_80010000.unk18 = gSetCdReadyCallback((s32)gCdSectorReadyCallbackAddress);
     gCdCallbackActive = 0;
 
     gCdControl(1, 0, s1);

@@ -3,7 +3,7 @@
 
 extern s32 gVolumeLevels[] __asm__("D_800A1800");
 extern u8 gStreamAudioFlag __asm__("D_8009F739");
-extern u8 D_8009F340;
+extern u8 gSoundProcessingEnabled __asm__("D_8009F340");
 
 extern void func_800451B4(s32 value);
 extern void func_800451EC(s32 value);
@@ -51,5 +51,5 @@ void gInitSoundState(void)
     func_800453B8();
     gVolumeLevels[0] = -1;
     gStreamAudioFlag = 0;
-    D_8009F340 = 1;
+    gSoundProcessingEnabled = 1;
 }

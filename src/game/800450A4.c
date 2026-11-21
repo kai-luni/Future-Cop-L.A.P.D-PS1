@@ -11,8 +11,8 @@ struct Unk450A4Slot {
 extern u8 gVolumeLimitSelector __asm__("D_8009F738");
 
 extern struct Unk450A4Slot *func_80045164(s32 id);
-extern s32 func_800458E8(s32 arg0, s32 arg1, s8 *mix, s32 arg3);
-extern void func_800460D4(s8 *mix);
+extern s32 gComputeSpatialSoundAttenuation(s32 arg0, s32 arg1, s8 *mix, s32 arg3) __asm__("func_800458E8");
+extern void gComputeSpatialSoundPan(s8 *mix) __asm__("func_800460D4");
 
 /**
  *  @brief Computes a mix for a sound slot and boosts its volume.
@@ -41,8 +41,8 @@ s32 func_800450A4(s32 id, s8 *mix)
 
     slot = func_80045164(id);
     if (slot != 0) {
-        if (func_800458E8(slot->unk50, slot->unk58, mix, 0) != 0) {
-            func_800460D4(mix);
+        if (gComputeSpatialSoundAttenuation(slot->unk50, slot->unk58, mix, 0) != 0) {
+            gComputeSpatialSoundPan(mix);
             volume = mix[0];
             volume += (mix[0] >> 1) + (mix[0] >> 2);
             if (gVolumeLimitSelector != 0) {

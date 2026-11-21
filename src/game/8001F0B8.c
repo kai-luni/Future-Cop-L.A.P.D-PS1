@@ -6,7 +6,7 @@ extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 gDisplaySetupToggle __asm__("D_8009F9CC");
 extern s32 gScreenModeHook __asm__("D_8009F99C");
 extern u8 gFrameCallbackEnabled __asm__("D_8009FA20");
-extern u8 D_8001EFF8[];
+extern u8 gFrameVSyncCallbackAddress[] __asm__("D_8001EFF8");
 
 extern void gSetVSyncCallback(void *arg0) __asm__("func_80091510");
 void gStartFrameCallback(void) __asm__("func_8001F0B8");
@@ -44,7 +44,7 @@ void gStartFrameCallback(void) __asm__("func_8001F0B8");
 void gStartFrameCallback(void)
 {
     register u8 *callback_table __asm__("$4");
-    callback_table = D_8001EFF8;
+    callback_table = gFrameVSyncCallbackAddress;
     gGameClock = 0;
     gFrameTickCounter = 0;
     gDisplaySetupToggle = 0;

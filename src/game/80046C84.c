@@ -7,7 +7,9 @@ extern int gWeaponSlotUpdate();
 extern u8 gSoundIdTable[] __asm__("D_800A1880");
 
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
-extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
+extern s32 gPlaySpatialSoundBankSlot(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4) __asm__("func_80046F9C");
+s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
+
 
 /**
  * @brief Plays a sound effect by id: looks the id up in the SE table and
@@ -39,7 +41,7 @@ extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
  * func_8007C80C, func_8007C940, func_8007E1A4, func_8007F1F8, func_8007F618,
  * func_8008125C.
  */
-s32 func_80046C84(s32 id, s32 arg1)
+s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1)
 {
     s32 handle;
     s32 slot;
@@ -47,7 +49,7 @@ s32 func_80046C84(s32 id, s32 arg1)
     handle = 0;
     slot = func_80045494(id, gSoundIdTable, 0x45);
     if (slot != 0xFF) {
-        handle = func_80046F9C(handle, handle, slot, arg1, 1);
+        handle = gPlaySpatialSoundBankSlot(handle, handle, slot, arg1, 1);
     }
     return handle;
 }

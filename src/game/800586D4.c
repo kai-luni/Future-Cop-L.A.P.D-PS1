@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 gSavedStackPointer __asm__("D_8009FAD8");
-extern void func_80055988(void);
+extern void gUpdatePlayerFormAndMotion(void) __asm__("func_80055988");
 
 /**
  * @brief Runs func_80055988 with $sp moved to the top of the scratchpad, then

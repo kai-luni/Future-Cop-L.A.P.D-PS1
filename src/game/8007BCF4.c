@@ -18,7 +18,7 @@ extern s32 gDeferredTransition __asm__("D_8009F8C8");
 extern s32 gGameClock __asm__("D_8009FA60");
 extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
-extern u8 D_8009B3D4[];
+extern u8 gMenuHighlightColorCycle[] __asm__("D_8009B3D4");
 extern s8 gScreenDescriptor[] __asm__("D_800A3838");
 
 extern void gDrawProfileSlotList(s32) __asm__("func_8007B460");
@@ -106,7 +106,7 @@ void gDrawGameHubMenu(s32 arg0)
                 if (i == gSelectedRow) {
                     u8 *p;
                     c = 0x11;
-                    p = D_8009B3D4 + ((gGameClock >> 4) & 7) * 3;
+                    p = gMenuHighlightColorCycle + ((gGameClock >> 4) & 7) * 3;
                     func_800493C0(c, p[0], p[1], p[2]);
                 } else {
                     c = 0xF;

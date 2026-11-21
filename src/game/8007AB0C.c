@@ -10,7 +10,7 @@ extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern u8 *gNameEntryAlphabet __asm__("D_8009F878");
 
 extern void gEncodeNameToGlyphs(u8 *arg0, u8 *arg1, s32 arg2, u8 *arg3, s32 arg4) __asm__("func_8007A9D0");
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 
 /**
  * @brief Name-entry reset hook: on a masked input event, rewinds the cursor
@@ -45,7 +45,7 @@ s32 gResetNameEntryState(s32 arg0, s32 arg1)
         if ((arg0 & ~D_8009F8B0[arg1]) < 0) {
             gScalarCursor[arg1] = 0;
             gEncodeNameToGlyphs(gPlaceholderGlyph, gNameEntryGlyphBuf + arg1 * 8, 8, gNameEntryAlphabet, gPlayerNameLength);
-            func_80046C84(0x48, 0);
+            gPlayNonpositionalSoundEffect(0x48, 0);
         }
     }
     return arg0;

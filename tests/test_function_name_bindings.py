@@ -47,15 +47,20 @@ class FunctionNameBindingTest(unittest.TestCase):
     def test_renamed_definitions_carry_their_retail_label(self):
         failures = []
         for path in sorted(GAME.glob("*.c")):
-            retail = "func_" + path.stem.upper()
             text = path.read_text(errors="ignore")
-            names = {n for n, is_static in definitions(text) if not is_static}
-            if not names or f'__asm__("{retail}")' in text:
-                continue
-            for name in names:
-                if RETAIL_NAME.match(name) or (path.name, name) in KNOWN_UNBOUND:
+            masked = strip_comments(text)
+            for name, is_static in definitions(text):
+                if is_static or RETAIL_NAME.match(name):
                     continue
-                failures.append(f'{path.name}: {name} needs __asm__("{retail}")')
+                if (path.name, name) in KNOWN_UNBOUND:
+                    continue
+                # The label binds to the definition it follows, so check the
+                # definition itself: one unit may hold several entry points.
+                labelled = re.search(
+                    rf'\b{re.escape(name)}\s*\([^;{{}}]*\)\s*__asm__\(', masked)
+                if labelled is None:
+                    failures.append(
+                        f'{path.name}: {name} needs its retail __asm__ label')
         if failures:
             self.fail("definitions without a retail symbol binding:\n" + "\n".join(failures))
 

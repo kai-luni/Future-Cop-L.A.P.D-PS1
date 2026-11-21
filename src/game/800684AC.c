@@ -6,7 +6,7 @@ extern int gBeamPartUpdate();
 
 typedef struct { s32 x, y, z; } Vec3;
 extern s32 *gMapGridHeader __asm__("D_8009F80C");
-extern s32 func_80067914(s32 *, s32 *, s32, s32, s32);
+extern s32 gTestMapCellRay(s32 *, s32 *, s32, s32, s32) __asm__("func_80067914");
 
 #define MULU16(out, a, b) \
     __asm__ volatile("multu\t%1,%2\n\tmflo\t$8\n\tmfhi\t$9\n\tsll\t$9,$9,16\n\tsrl\t$8,$8,16\n\tor\t%0,$9,$8" \
@@ -74,6 +74,8 @@ extern s32 func_80067914(s32 *, s32 *, s32, s32, s32);
     if(mode&2) { (p)[0]=-(p)[0]; (p)[1]=-(p)[1]; } \
     if(mode&1) { SWAP((p)[0],(p)[1]); } \
 }
+s32 gTraceMapRay(s32 *p, s32 *q, s32 arg2, s32 arg3, s32 flag) __asm__("func_800684AC");
+
 
 /**
  * @brief Walks the map grid along the segment p -> q (DDA) and runs a
@@ -117,7 +119,7 @@ extern s32 func_80067914(s32 *, s32 *, s32, s32, s32);
  * func_80052410, func_800549F0, func_80055EE8, func_8005B6A8, func_8005C344,
  * func_8005F018, func_8005F6E8, gBeamPartUpdate.
  */
-s32 func_800684AC(s32 *p, s32 *q, s32 arg2, s32 arg3, s32 flag)
+s32 gTraceMapRay(s32 *p, s32 *q, s32 arg2, s32 arg3, s32 flag)
 {
     s32 prev[4], next[4];
     s32 y1, cellstep;
@@ -257,7 +259,7 @@ s32 func_800684AC(s32 *p, s32 *q, s32 arg2, s32 arg3, s32 flag)
             edgex+=cellstep;
         }
         TRANSFORM(next);
-        result=func_80067914(prev,next,arg2,arg3,flag);
+        result=gTestMapCellRay(prev,next,arg2,arg3,flag);
         if(result) return result;
     }
     *(Vec3 *)prev=*(Vec3 *)next;
@@ -273,5 +275,5 @@ s32 func_800684AC(s32 *p, s32 *q, s32 arg2, s32 arg3, s32 flag)
     }
     next[2]=y1>>5;
     TRANSFORM(next);
-    return func_80067914(prev,next,arg2,arg3,flag);
+    return gTestMapCellRay(prev,next,arg2,arg3,flag);
 }

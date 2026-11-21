@@ -50,7 +50,7 @@ extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 func_80019668(void);
 extern s32 gApproxVectorLength(s32 *vector) __asm__("func_80019F54");
 extern void func_8003D0F0(Base70730 *base, s32 type, s32 flags, Vec70730 *out);
-extern s32 func_80067684(Vec70730 *vec, s32 adjust);
+extern s32 gQuerySurfaceHeight(Vec70730 *vec, s32 adjust) __asm__("func_80067684");
 s16 gComputeEffectEndPoint(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec70730 *arg) __asm__("func_80070730");
 
 
@@ -269,7 +269,7 @@ s16 gComputeEffectEndPoint(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec7
                 adjust = -2;
             }
 
-            out->y = func_80067684(arg, adjust);
+            out->y = gQuerySurfaceHeight(arg, adjust);
 
             if ((obj->base != 0) && ((world->flagsE & 8) != 0)) {
                 out->x -= (*world->unk04)->offX;
@@ -299,7 +299,7 @@ s16 gComputeEffectEndPoint(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec7
                 adjust = -2;
             }
 
-            vec.y = func_80067684(&vec, adjust);
+            vec.y = gQuerySurfaceHeight(&vec, adjust);
 
             out->x = vec.x - (*world->unk04)->offX;
             out->y = vec.y - (*world->unk04)->offY;
@@ -318,7 +318,7 @@ s16 gComputeEffectEndPoint(World70730 *world, Obj70730 *obj, Vec70730 *out, Vec7
             adjust = -2;
         }
 
-        out->y = func_80067684(out, adjust);
+        out->y = gQuerySurfaceHeight(out, adjust);
         goto done;
     }
 

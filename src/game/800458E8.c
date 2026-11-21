@@ -30,6 +30,8 @@ struct ExtraData458 {
     u8 pad[0xC1];
     s8 mode;
 };
+s32 gComputeSpatialSoundAttenuation(s32 xin, s32 zin, struct Mix458 *mixin, struct Extra458 *extra) __asm__("func_800458E8");
+
 
 /**
  * @brief Computes distance-attenuated volume and listener XZ deltas for 1- or 2-listener spatial sound mixing.
@@ -53,7 +55,7 @@ struct ExtraData458 {
  * @par Callers
  * Confirmed: func_800450A4 (0x800450D0), func_80046E88 (0x80046EFC); also func_800462D0 (0x80046478) and func_80046F9C (0x80046FF8) in asm/us/main.s / Likely: none / Unknown: none.
  */
-s32 func_800458E8(s32 xin, s32 zin, struct Mix458 *mixin, struct Extra458 *extra)
+s32 gComputeSpatialSoundAttenuation(s32 xin, s32 zin, struct Mix458 *mixin, struct Extra458 *extra)
 {
     register s32 x __asm__("$19") = xin;
     register s32 z __asm__("$20") = zin;

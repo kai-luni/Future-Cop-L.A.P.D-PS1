@@ -39,7 +39,7 @@ extern struct Header511E4 *gPathNetTables[] __asm__("D_800A2210");
 extern s32 func_80019AA8(struct Resource *resource);
 extern void func_80019A74(struct Resource *resource);
 extern void func_80019D00(struct Resource *resource);
-extern s32 func_80067684(struct Vec3s32 *position, s32 mode);
+extern s32 gQuerySurfaceHeight(struct Vec3s32 *position, s32 mode) __asm__("func_80067684");
 
 /**
  * @brief Converts map-relative placement records into world coordinates on load.
@@ -113,7 +113,7 @@ void func_800511E4(struct Resource *resource)
                     } else {
                         mode = type - 2;
                     }
-                    value = func_80067684(&position, mode);
+                    value = gQuerySurfaceHeight(&position, mode);
                 }
 
                 count--;

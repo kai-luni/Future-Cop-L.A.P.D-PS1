@@ -18,8 +18,8 @@ struct SoundChannel {
 extern struct SoundChannel gVoiceTable[] __asm__("D_800A1160");
 extern s32 gChannelCount __asm__("D_8009F720");
 extern struct SoundChannel *gChannelListHead __asm__("D_8009F724");
-extern struct SoundChannel *D_8009F728;
-extern struct SoundChannel *D_8009F72C;
+extern struct SoundChannel *gSoundChannelQueueHead __asm__("D_8009F728");
+extern struct SoundChannel *gSoundChannelQueueTail __asm__("D_8009F72C");
 
 /**
  *  @brief Initializes the sound channel array as a singly linked list.
@@ -53,6 +53,6 @@ void func_8004582C(void)
     channel[-1].next = 0;
     gChannelCount = 0;
     gChannelListHead = gVoiceTable;
-    D_8009F728 = 0;
-    D_8009F72C = 0;
+    gSoundChannelQueueHead = 0;
+    gSoundChannelQueueTail = 0;
 }

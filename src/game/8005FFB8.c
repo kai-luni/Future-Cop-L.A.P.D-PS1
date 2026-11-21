@@ -28,8 +28,10 @@ struct Script5FFB8 {
 };
 
 extern struct Entry5FFB8 gEffectKeyTable[] __asm__("D_800A2300");
-extern s32 func_8005FF70(s32 key);
+extern s32 gFindEffectKeyIndex(s32 key) __asm__("func_8005FF70");
 extern void func_8002A5B4(struct Script5FFB8 *script, s32 index);
+void gApplyAttackCommands(struct Obj5FFB8 *obj, struct Script5FFB8 *script) __asm__("func_8005FFB8");
+
 
 /**
  * @brief Applies scripted attack-descriptor commands from an entity's 4-slot queue.
@@ -56,7 +58,7 @@ extern void func_8002A5B4(struct Script5FFB8 *script, s32 index);
  * @par Callers
  * Confirmed: func_80060238 (0x800602B4, 0x800602CC, merges commands from optional second and primary owner objects).
  */
-void func_8005FFB8(struct Obj5FFB8 *obj, struct Script5FFB8 *script)
+void gApplyAttackCommands(struct Obj5FFB8 *obj, struct Script5FFB8 *script)
 {
     register u8 *p __asm__("$17");
     s32 i;
@@ -91,7 +93,7 @@ void func_8005FFB8(struct Obj5FFB8 *obj, struct Script5FFB8 *script)
             }
             break;
         case 0x26:
-            idx = func_8005FF70(arg);
+            idx = gFindEffectKeyIndex(arg);
             if (idx >= 0) {
                 obj->entry = (struct Entry5FFB8 *)(idx * 0x30 + (s32)tbl);
                 obj->unk20 = obj->entry->unk02;

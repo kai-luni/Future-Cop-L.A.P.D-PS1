@@ -85,10 +85,10 @@ extern void func_80052E28(struct Obj549F0 *);
 extern void func_80051AC8(struct Obj549F0 *, s32);
 extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 extern s32 gGetGroundHeight(void *, void *, void *, void *) __asm__("func_80066F78");
-extern void func_80054590(struct Obj549F0 *, s32, s32, void *, s32);
+extern void gComputeOnFootVelocityDelta(struct Obj549F0 *, s32, s32, void *, s32) __asm__("func_80054590");
 extern s32 func_80052550(struct Obj549F0 *, void *);
 extern void gClampToWorldBounds(s32 *) __asm__("func_8006943C");
-extern s32 func_800684AC(void *, void *, s32, s32, s32);
+extern s32 gTraceMapRay(void *, void *, s32, s32, s32) __asm__("func_800684AC");
 extern void func_80053514(struct Obj549F0 *, s32);
 extern void func_80053188(struct Obj549F0 *, s32);
 extern struct AnimClip549F0 *func_800448D8(struct AnimTrack549F0 *, s32, s32, u8);
@@ -98,12 +98,14 @@ extern s32 func_80019FCC(s32 *);
 extern s32 gSqrt12(s32) __asm__("func_80095900");
 extern s32 func_8001A7AC(s32);
 extern s32 func_80044B34(struct Obj549F0 *, struct AnimTrack549F0 *, s32, s32);
-extern void func_80047088(s32, struct Obj549F0 *);
+extern void gApplyAnimationSoundEvent(s32, struct Obj549F0 *) __asm__("func_80047088");
 extern s32 gNormalizeGetLength(s32 *) __asm__("func_8001A314");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_8005220C(struct Obj549F0 *);
 extern void func_80052708(struct Obj549F0 *, s32);
 extern s32 func_80052F54(struct Obj549F0 *, s32);
+s32 gTickOnFootPhysics(struct Obj549F0 *selfArg, s32 unused, s32 speedArg, u32 argFlags) __asm__("func_800549F0");
+
 
 /**
  * @brief Per-substep locomotion tick of a character on foot: maps the
@@ -275,7 +277,7 @@ extern s32 func_80052F54(struct Obj549F0 *, s32);
  * "direct"); it discards the returned damage and runs this function
  * whenever the mode byte +0xAD is not 1.
  */
-s32 func_800549F0(struct Obj549F0 *selfArg, s32 unused, s32 speedArg, u32 argFlags)
+s32 gTickOnFootPhysics(struct Obj549F0 *selfArg, s32 unused, s32 speedArg, u32 argFlags)
 {
     register struct Obj549F0 *self __asm__("$17") = selfArg;
     s32 speed = speedArg;
@@ -632,7 +634,7 @@ dispatch_done:
                 }
             }
         }
-        func_80054590(self, speed, lane, &w.delta, direction);
+        gComputeOnFootVelocityDelta(self, speed, lane, &w.delta, direction);
     }
 
     {
@@ -685,7 +687,7 @@ dispatch_done:
         w.to.x = self->position.x;
         w.to.y = self->position.y + 0x24C0;
         w.to.z = self->position.z;
-        if (func_800684AC(&w.from, &w.to, 0, 0, 1) & 7) {
+        if (gTraceMapRay(&w.from, &w.to, 0, 0, 1) & 7) {
             s32 vx;
             s32 vz;
 
@@ -886,7 +888,7 @@ speed_done:
 
         event = speed & 0x3F;
         speed >>= 6;
-        func_80047088(event, self);
+        gApplyAnimationSoundEvent(event, self);
     }
 
     if (*(u8 *)((u8 *)self->track.clip + 3) & 4) {
@@ -898,7 +900,7 @@ speed_done:
     }
     if (self->track.index == 0 && (lane & 1)) {
         self->state = 0;
-        func_80047088(0x27, self);
+        gApplyAnimationSoundEvent(0x27, self);
     }
 
     if (--remaining > 0) {

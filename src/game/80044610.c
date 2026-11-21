@@ -32,8 +32,8 @@ struct Obj44610 {
 extern s32 func_8003C7B8(s32, struct Obj44610 *, s32, s32);
 extern s32 func_8003C980(s32, struct Obj44610 *, s32, s32);
 extern void gBuildNodePlacement(void *, s32, struct Node44610 *, s32, s32 *, s16 *, s16 *) __asm__("func_8003DB70");
-extern void func_80042AF4(struct Obj44610 *, void *, s32);
-extern void func_800427E8(struct Obj44610 *);
+extern void gSpawnEmitterParticles(struct Obj44610 *, void *, s32) __asm__("func_80042AF4");
+extern void gFreeEmitterObject(struct Obj44610 *) __asm__("func_800427E8");
 
 /**
  * @brief Effect message handler: behaviour, effect pass and debris burst.
@@ -74,16 +74,16 @@ case0:
         } else {
             obj->pos = parent->pos;
         }
-        func_80042AF4(obj, obj->unkA8, 1);
+        gSpawnEmitterParticles(obj, obj->unkA8, 1);
         obj->unk0c = 0;
         obj->unk16 = 0;
         return 1;
 case1:
     gBuildNodePlacement(obj->unk20, 0, obj->parent, 0, &obj->unk34, &obj->unk12, &obj->unk0e);
-    func_80042AF4(obj, obj->unkA8, 0);
+    gSpawnEmitterParticles(obj, obj->unkA8, 0);
     return 1;
 case10:
-    func_800427E8(obj);
+    gFreeEmitterObject(obj);
     return 0;
 dflt:
     return func_8003C980(message, obj, arg2, arg3);

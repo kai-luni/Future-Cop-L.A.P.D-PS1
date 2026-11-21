@@ -16,8 +16,8 @@ struct SoundChannel {
 };
 
 extern s32 gChannelCount __asm__("D_8009F720");
-extern struct SoundChannel *D_8009F728;
-extern struct SoundChannel *D_8009F72C;
+extern struct SoundChannel *gSoundChannelQueueHead __asm__("D_8009F728");
+extern struct SoundChannel *gSoundChannelQueueTail __asm__("D_8009F72C");
 
 /**
  *  @brief Inserts a sound channel into the global doubly linked list.
@@ -44,11 +44,11 @@ void func_800455DC(struct SoundChannel *channel)
 
     next = 0;
     if (channel->priority == 0) {
-        prev = D_8009F72C;
+        prev = gSoundChannelQueueTail;
         channel->prev = prev;
     } else {
         prev = 0;
-        for (next = D_8009F728; next != 0; next = next->next) {
+        for (next = gSoundChannelQueueHead; next != 0; next = next->next) {
             if (next->priority < channel->priority) {
                 break;
             }
@@ -60,12 +60,12 @@ void func_800455DC(struct SoundChannel *channel)
     if (prev != 0) {
         prev->next = channel;
     } else {
-        D_8009F728 = channel;
+        gSoundChannelQueueHead = channel;
     }
     if (next != 0) {
         next->prev = channel;
     } else {
-        D_8009F72C = channel;
+        gSoundChannelQueueTail = channel;
     }
     gChannelCount++;
 }

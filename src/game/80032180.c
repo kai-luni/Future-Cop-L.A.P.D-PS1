@@ -120,7 +120,7 @@ struct Unk32180 {
 };
 
 extern void gEntityBaseHandler(s32, struct Unk32180 *, struct Unk32180Arg *) __asm__("func_8002AD58");
-extern void func_80060668(void *, void *);
+extern void gInitAttackSchedulerSlot(void *, void *) __asm__("func_80060668");
 extern void func_800320E4(struct Unk320E4 *);
 extern s32 gGetGroundHeight(s32 *, s32, s32, s32) __asm__("func_80066F78");
 extern s32 func_80019668(void);
@@ -200,7 +200,7 @@ s32 func_80032180(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg)
 
     gEntityBaseHandler(arg0, obj, arg);
     src = arg->unk8;
-    func_80060668((u8 *)src + 0x24, (u8 *)obj + 0xA0);
+    gInitAttackSchedulerSlot((u8 *)src + 0x24, (u8 *)obj + 0xA0);
 
     kind = src->unk38;
     obj->unkFA = kind;

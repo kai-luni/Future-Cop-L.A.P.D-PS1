@@ -57,7 +57,7 @@ extern struct Unk4E80CList gCommandListHead __asm__("D_800A8F90");
 extern void func_8003BC0C(struct Unk371FC *object);
 extern void gBuildRotationMatrix(s32 a0, s32 a1, s32 a2, s32 *a3) __asm__("func_800188D0");
 extern s32 gGetGroundHeight(struct Vec371 *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80066F78");
-extern s32 func_800684AC(struct Vec371 *a, struct Vec371 *b, struct Vec371 *out, s32 d, s32 e);
+extern s32 gTraceMapRay(struct Vec371 *a, struct Vec371 *b, struct Vec371 *out, s32 d, s32 e) __asm__("func_800684AC");
 extern void gVectorAddScaled(struct Vec371 *a, struct Vec371 *b, s32 scale, struct Vec371 *out) __asm__("func_8001ACA4");
 extern s32 gVectorLength3D(struct Vec371 *vector) __asm__("func_8001A100");
 extern void gNormalizeVector(struct Vec371 *vector) __asm__("func_8001A180");
@@ -252,7 +252,7 @@ void func_800371FC(struct Unk371FC *arg0, s32 arg1)
         gVectorAddScaled(call0, call1, call2, call3);
         old = &self->old;
         __asm__("" : "+r"(old));
-        if (func_800684AC(old, pos, &out, 0, 0) & 0xFF) {
+        if (gTraceMapRay(old, pos, &out, 0, 0) & 0xFF) {
             self->unk1C = -1;
             self->pos = out;
             return;

@@ -10,6 +10,8 @@ struct Unk4749CHandle {
     struct Unk4749CResource *resource;
     s32 serial;
 };
+s32 gValidateSoundVoiceHandle(struct Unk4749CHandle *handle) __asm__("func_800474C4");
+
 
 /**
  *  @brief Checks whether a resource handle has a matching serial.
@@ -29,7 +31,7 @@ struct Unk4749CHandle {
  *  @par Callers
  *  Confirmed: func_80023D78, func_80024188.
  */
-s32 func_800474C4(struct Unk4749CHandle *handle)
+s32 gValidateSoundVoiceHandle(struct Unk4749CHandle *handle)
 {
     register struct Unk4749CResource *resource __asm__("$3");
     register s32 result __asm__("$2");

@@ -39,7 +39,7 @@ extern u8 gUploadRequestFlag __asm__("D_8009F3E5");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
 extern s32 gPendingModuleNameFlag __asm__("D_8009F3EC");
-extern s32 D_8009F3D0;
+extern s32 gMoviePathPrefix __asm__("D_8009F3D0");
 extern u8 D_8009F3A0[];
 extern u8 gFrontEndBootstrapModule[] __asm__("D_8009F3A8");
 extern u8 gMissionModuleSuffix[] __asm__("D_8009F3B0");
@@ -236,7 +236,7 @@ s32 gGameMain(void)
 
         gDrawImageResource(gEaLogoName, 4, 0, 0, s0, 0xF0);
 
-        func_8008CD30(local, D_8009F3A0, D_8009F3D0, (s32)D_80011E48);
+        func_8008CD30(local, D_8009F3A0, gMoviePathPrefix, (s32)D_80011E48);
         gDrawImageResource(local, 4, 0, 0x18, s0, 0xC0);
 
         func_8001B448();
@@ -305,12 +305,12 @@ s32 gGameMain(void)
             func_80077050();
 
             if (s0 != 0) {
-                func_8008CD30(local + 0x28, D_8009F3A0, D_8009F3D0, s0);
+                func_8008CD30(local + 0x28, D_8009F3A0, gMoviePathPrefix, s0);
                 gDrawImageResource(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
             }
 
             if (gMovieAbortFlag == 0 && *(s32 *)(local + 0x50) != 0) {
-                func_8008CD30(local + 0x28, D_8009F3A0, D_8009F3D0, *(s32 *)(local + 0x50));
+                func_8008CD30(local + 0x28, D_8009F3A0, gMoviePathPrefix, *(s32 *)(local + 0x50));
                 gDrawImageResource(local + 0x28, 4, 0, 0x18, 0x140, 0xC0);
             }
 

@@ -1,10 +1,10 @@
 // Categories: Resources > Memory Management | Graphics > Image Decode & Upload
 #include "game/types.h"
 
-extern void *D_8009F948;
-extern void *D_8009F94C;
+extern void *gPreallocatedMovieVlcTableA __asm__("D_8009F948");
+extern void *gPreallocatedMovieVlcTableB __asm__("D_8009F94C");
 extern void *gWorkAreaBlock __asm__("D_8009F950");
-extern void *D_8009F954;
+extern void *gPreallocatedMovieMdecInputBuffer __asm__("D_8009F954");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 void gAllocDecodeBuffers(void) __asm__("func_800860CC");
@@ -52,13 +52,13 @@ void gAllocDecodeBuffers(void) __asm__("func_800860CC");
  */
 void gAllocDecodeBuffers(void)
 {
-    D_8009F948 = (void *)0;
-    D_8009F94C = (void *)0;
+    gPreallocatedMovieVlcTableA = (void *)0;
+    gPreallocatedMovieVlcTableB = (void *)0;
     gWorkAreaBlock = (void *)0;
-    D_8009F954 = (void *)0;
+    gPreallocatedMovieMdecInputBuffer = (void *)0;
 
-    D_8009F948 = gAllocMemory(0x6000, 2);
-    D_8009F94C = gAllocMemory(0x600, 2);
-    D_8009F954 = gAllocMemory(0x2000, 2);
+    gPreallocatedMovieVlcTableA = gAllocMemory(0x6000, 2);
+    gPreallocatedMovieVlcTableB = gAllocMemory(0x600, 2);
+    gPreallocatedMovieMdecInputBuffer = gAllocMemory(0x2000, 2);
     gWorkAreaBlock = gAllocMemory(0x600, 2);
 }

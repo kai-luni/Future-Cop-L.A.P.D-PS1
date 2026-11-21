@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gDefinitionEntryCount __asm__("D_8009F7F8");
+void gResetDefinitionEntryCount(void) __asm__("func_80060A00");
+
 
 /**
  * @brief Clears the 0x30-byte definition table entry count D_8009F7F8 during mission reset.
@@ -25,7 +27,7 @@ extern s32 gDefinitionEntryCount __asm__("D_8009F7F8");
  * @par Callers
  * Confirmed: func_80024D14 (0x80024DE0 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-void func_80060A00(void)
+void gResetDefinitionEntryCount(void)
 {
     gDefinitionEntryCount = 0;
 }

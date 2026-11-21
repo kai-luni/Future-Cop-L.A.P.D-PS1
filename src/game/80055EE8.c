@@ -7,8 +7,8 @@ struct Vec3s32 {
     s32 z;
 };
 
-extern s32 func_800684AC(struct Vec3s32 *arg0, struct Vec3s32 *arg1,
-                         struct Vec3s32 *arg2, s32 arg3, s32 arg4);
+extern s32 gTraceMapRay(struct Vec3s32 *arg0, struct Vec3s32 *arg1,
+                         struct Vec3s32 *arg2, s32 arg3, s32 arg4) __asm__("func_800684AC");
 s32 gTestCameraSightLine(struct Vec3s32 *from, struct Vec3s32 *to) __asm__("func_80055EE8");
 
 
@@ -81,9 +81,9 @@ s32 gTestCameraSightLine(struct Vec3s32 *from, struct Vec3s32 *to)
         flag = 1;
     }
 
-    result = func_800684AC(&end, &start, &hit, 0, flag);
+    result = gTraceMapRay(&end, &start, &hit, 0, flag);
     if (result & 0x8000) {
-        result = func_800684AC(&start, &hit, 0, 0, flag);
+        result = gTraceMapRay(&start, &hit, 0, 0, flag);
         if (result & 0x8000) {
             return 0;
         }

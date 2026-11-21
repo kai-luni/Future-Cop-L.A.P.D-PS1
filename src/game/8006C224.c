@@ -19,7 +19,7 @@ typedef struct EntityList {
 } EntityList;
 
 extern EntityList gCommandListHead __asm__("D_800A8F90");
-extern s32 func_8004E5F0(Entity *source, Entity *target, s32 maxDist, s32 flags);
+extern s32 gCheckTargetRangeAndCone(Entity *source, Entity *target, s32 maxDist, s32 flags) __asm__("func_8004E5F0");
 
 /**
  * @brief Finds the closest eligible opposing entity in D_800A8F90 within range and cone.
@@ -77,7 +77,7 @@ Entity *func_8006C224(Entity *source, Entity *exclude, s32 maxDist, s32 flags)
         if (entity->unk24 & 0x20005) {
             continue;
         }
-        result = func_8004E5F0(source, entity, maxDist, flags);
+        result = gCheckTargetRangeAndCone(source, entity, maxDist, flags);
         if (result < 0) {
             continue;
         }

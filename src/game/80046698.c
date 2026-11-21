@@ -28,16 +28,18 @@ struct SoundVoice {
 };
 
 extern struct SoundVoice *gVoiceFreeList __asm__("D_8009F73C");
-extern s32 D_8009F740;
+extern s32 gFreeSoundVoiceCount __asm__("D_8009F740");
 extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
-extern s32 D_8009F748;
+extern s32 gPrioritySoundVoiceCount __asm__("D_8009F748");
 extern struct SoundVoice *gVoiceList __asm__("D_8009F74C");
-extern s32 D_8009F750;
-extern struct SoundVoice *D_8009F754;
-extern s32 D_8009F758;
+extern s32 gClass0SoundVoiceCount __asm__("D_8009F750");
+extern struct SoundVoice *gClass2SoundVoiceList __asm__("D_8009F754");
+extern s32 gClass2SoundVoiceCount __asm__("D_8009F758");
 
 extern void func_800243F8(s8 *arg0);
-extern void func_80046804(struct SoundVoice *voice);
+extern void gUnlinkSoundBankVoice(struct SoundVoice *voice) __asm__("func_80046804");
+void gReleaseSoundVoice(struct SoundVoice *voice) __asm__("func_80046698");
+
 
 /**
  * @brief Stops a sound voice and returns its SoundVoice node to the free and bank lists.
@@ -63,7 +65,7 @@ extern void func_80046804(struct SoundVoice *voice);
  * @par Callers
  * Confirmed: func_800457B8 (0x80045808), func_800462D0 (0x800463D8, 0x80046620), func_80046A34 (0x80046A40), func_80046B04 (0x80046BE4), func_80046E88 (0x80046F64), func_80046F9C (0x80047058), gSoundHaltAllVoices (0x80047608, 0x8004763C).
  */
-void func_80046698(struct SoundVoice *voice)
+void gReleaseSoundVoice(struct SoundVoice *voice)
 {
     struct SoundVoice *old;
 
@@ -82,7 +84,7 @@ void func_80046698(struct SoundVoice *voice)
             gVoiceList = voice->next;
             break;
         case 2:
-            D_8009F754 = voice->next;
+            gClass2SoundVoiceList = voice->next;
             break;
         default:
             gVoicePriorityList = voice->next;
@@ -100,20 +102,20 @@ void func_80046698(struct SoundVoice *voice)
 
     switch (voice->priority) {
     case 0:
-        D_8009F750--;
+        gClass0SoundVoiceCount--;
         break;
     case 2:
-        D_8009F758--;
+        gClass2SoundVoiceCount--;
         break;
     default:
-        D_8009F748--;
+        gPrioritySoundVoiceCount--;
         break;
     }
 
-    D_8009F740++;
+    gFreeSoundVoiceCount++;
 
     if (voice->bank != 0xFF) {
-        func_80046804(voice);
+        gUnlinkSoundBankVoice(voice);
     }
 
     if (voice->owner != 0) {

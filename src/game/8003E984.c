@@ -119,8 +119,8 @@ extern struct Object *func_800447F0(struct Source *);
 extern struct Object *func_8004C920(struct Source *);
 extern struct Object *gCreateEmitterObject(struct Source *) __asm__("func_800762B0");
 extern struct Object *func_80074024(struct Source *);
-extern s32 func_80046C84(s32, s32);
-extern void func_80047284(s32, s32, s32, s32);
+extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
+extern void gPlayPositionalSoundEffect(s32, s32, s32, s32) __asm__("func_80047284");
 s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, void *arg3, s32 arg4) __asm__("func_8003E984");
 
 
@@ -448,9 +448,9 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
                 dist2 = gApproxVectorLength(work.vec2);
                 if (dist < dist2) {
                     if (dist <= 0x1FFFF) {
-                        func_80046C84(object->soundId11, (s32)gPlayerEntities);
+                        gPlayNonpositionalSoundEffect(object->soundId11, (s32)gPlayerEntities);
                     } else if (dist2 <= 0x1FFFF) {
-                        func_80046C84(object->soundId11, (s32)gPlayerEntity2);
+                        gPlayNonpositionalSoundEffect(object->soundId11, (s32)gPlayerEntity2);
                     }
                 }
             } else {
@@ -465,14 +465,14 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
                 }
                 dist = gApproxVectorLength(work.vec1);
                 if (dist <= 0x1FFFF) {
-                    func_80046C84(object->soundId11, (s32)gPlayerEntities);
+                    gPlayNonpositionalSoundEffect(object->soundId11, (s32)gPlayerEntities);
                 }
             }
         } else {
             if (target != 0) {
-                func_80047284(object->soundId11, target->x, target->z, -1);
+                gPlayPositionalSoundEffect(object->soundId11, target->x, target->z, -1);
             } else {
-                func_80047284(object->soundId11, object->matrix.m[9], object->matrix.m[11], -1);
+                gPlayPositionalSoundEffect(object->soundId11, object->matrix.m[9], object->matrix.m[11], -1);
             }
         }
     }

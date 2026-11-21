@@ -12,6 +12,9 @@ struct Unk42764Owner {
     u8 unk6C[0x38];
     u16 count;
 };
+void gRecycleEmitterNode(struct Unk42764Owner *owner, struct Unk42764Node *previous,
+                   struct Unk42764Node *node) __asm__("func_800427A8");
+
 
 /**
  * @brief Unlinks a segment node from the active list and returns it to the
@@ -35,7 +38,7 @@ struct Unk42764Owner {
  * @par Callers
  * func_800437E8, func_80043CA8.
  */
-void func_800427A8(struct Unk42764Owner *owner, struct Unk42764Node *previous,
+void gRecycleEmitterNode(struct Unk42764Owner *owner, struct Unk42764Node *previous,
                    struct Unk42764Node *node)
 {
     if (previous != 0) {

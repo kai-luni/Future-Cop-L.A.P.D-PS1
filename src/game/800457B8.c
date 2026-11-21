@@ -17,7 +17,7 @@ struct SoundChannel {
 
 extern struct SoundChannel gVoiceTable[] __asm__("D_800A1160");
 
-extern void func_80046698(s32 handle);
+extern void gReleaseSoundVoice(s32 handle) __asm__("func_80046698");
 extern void func_80045548(struct SoundChannel *channel);
 
 /**
@@ -56,7 +56,7 @@ void func_800457B8(s32 arg0, s32 index)
     }
     channel->id = -1;
     if (channel->unk28 != 0) {
-        func_80046698(channel->unk28);
+        gReleaseSoundVoice(channel->unk28);
     }
     func_80045548(channel);
 }

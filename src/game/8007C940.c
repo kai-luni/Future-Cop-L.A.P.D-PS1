@@ -3,7 +3,7 @@
 
 extern s32 D_8009F8B0[];
 extern u8 gRumbleEnabled[] __asm__("D_8009F8D8");
-extern s32 func_80046C84(s32, s32);
+extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern s32 gGetPadType(s32) __asm__("func_8001EF34");
 extern u8 gIsPadRumbleReady(s32) __asm__("func_8001EAEC");
 extern u8 gIsPadRumbleEnabled(s32) __asm__("func_8001EB2C");
@@ -60,7 +60,7 @@ s32 gToggleVibrationPair(s32 arg0, s32 arg1)
         base = D_8009F8B0;
         __asm__("" : "=r"(base) : "0"(base));
         if ((buttons & ~base[player]) < 0) {
-            func_80046C84(0x48, 0);
+            gPlayNonpositionalSoundEffect(0x48, 0);
             port = (player == 1);
             if (gGetPadType(port)) {
                 register s32 connected __asm__("$2");

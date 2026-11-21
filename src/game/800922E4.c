@@ -1,5 +1,5 @@
 // Categories: Platform > Dispatch
-extern unsigned char D_80010000[];
+extern unsigned char gExecutableImageBase[] __asm__("D_80010000");
 extern  void (*gLogPrintf)(void *, unsigned int, unsigned int) __asm__("D_8009DDEC");
 
 /**
@@ -25,7 +25,7 @@ void func_800922E4(unsigned short value)
     unsigned int high = value;
     unsigned char *address;
     __asm__("" : : "r"(low), "r"(high));
-    address = D_80010000;
+    address = gExecutableImageBase;
     __asm__("" : "=r"(address) : "0"(address));
     gLogPrintf(address + 0x28b4, low << 4, high >> 6);
 }

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 struct Entry { u32 value; u32 other; };
-extern s32 D_8009EF04;
+extern s32 gSpuEntryTableCapacity __asm__("D_8009EF04");
 extern struct Entry *gSpuEntryTable __asm__("D_8009EF0C");
 extern void gSpuCompactPool(void) __asm__("func_80097DF8");
 
@@ -26,7 +26,7 @@ void func_80098708(u32 value)
 {
     s32 i;
     register s32 count __asm__("$7");
-    register s32 initial __asm__("$3") = D_8009EF04;
+    register s32 initial __asm__("$3") = gSpuEntryTableCapacity;
     struct Entry *entry;
     register u32 mask __asm__("$9");
     register u32 high __asm__("$2");

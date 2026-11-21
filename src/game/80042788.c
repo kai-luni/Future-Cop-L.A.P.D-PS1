@@ -12,6 +12,8 @@ struct Unk42764Owner {
     u8 unk6C[0x38];
     u16 count;
 };
+void gPushEmitterActiveNode(struct Unk42764Owner *owner, struct Unk42764Node *node) __asm__("func_80042788");
+
 
 /**
  * @brief Pushes a node onto the active list of an effect owner.
@@ -28,7 +30,7 @@ struct Unk42764Owner {
  * @par Callers
  * func_80042AF4 only.
  */
-void func_80042788(struct Unk42764Owner *owner, struct Unk42764Node *node)
+void gPushEmitterActiveNode(struct Unk42764Owner *owner, struct Unk42764Node *node)
 {
     node->next = owner->active;
     owner->active = node;

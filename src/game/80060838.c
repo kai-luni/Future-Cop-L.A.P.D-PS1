@@ -33,9 +33,11 @@ extern struct Unk60838Entry gEffectKeyTable[] __asm__("D_800A2300");
 extern void *func_80019C38(u32 a0, u32 a1, u32 a2, u32 a3);
 extern void *func_80019CA0(u32 a0, u32 a1, u32 a2, u32 a3);
 extern struct Resource *func_80019BF0(s32 group, s32 name);
-extern void func_800607B8(struct Unk607B8 *value);
+extern void gScaleDefinitionSubrecordFields(struct Unk607B8 *value) __asm__("func_800607B8");
 extern void gFreeBlock(struct Unk60838Arg *arg0) __asm__("func_800181D4");
 extern void *memcpy(void *dest, const void *src, u32 count);
+void gLoadAttackDefinition(struct Unk60838Arg *arg0) __asm__("func_80060838");
+
 
 /**
  * @brief Loads and normalizes a 0x30-byte definition entry into D_800A2300.
@@ -59,7 +61,7 @@ extern void *memcpy(void *dest, const void *src, u32 count);
  * @par Callers
  * Confirmed: func_8004D6D4 (0x8004D78C in asm/us/main.s, type 0x62 case) / Likely: none / Unknown: none.
  */
-void func_80060838(struct Unk60838Arg *arg0)
+void gLoadAttackDefinition(struct Unk60838Arg *arg0)
 {
     struct Unk60838Entry *entry;
     u8 *data;
@@ -76,7 +78,7 @@ void func_80060838(struct Unk60838Arg *arg0)
 
     memcpy(entry, data + 0x10, 0x20);
 
-    func_800607B8(&entry->sub);
+    gScaleDefinitionSubrecordFields(&entry->sub);
 
     entry->unk08 = (entry->unk08 << 12) / 218;
     entry->unk0A = (entry->unk0A << 12) / 218;

@@ -25,6 +25,8 @@ extern s32 gEntityBaseHandler(s32 message, Object8002C3F0 *object, Data8002C3F0 
 extern void func_8002C174(Object8002C3F0 *object);
 extern void func_8002B784(Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3);
 extern s32 func_8002ACB4(Object8002C3F0 *object, s32 value);
+s32 gHandleType26Entity(s32 message, Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3) __asm__("func_8002C3F0");
+
 
 /**
  * @brief Message handler of object type 26: jump-table dispatch with a
@@ -58,7 +60,7 @@ extern s32 func_8002ACB4(Object8002C3F0 *object, s32 value);
  * No direct callers in the call graph. func_8002AE54 returns the address
  * for object type 26, so the dispatcher reaches it indirectly.
  */
-s32 D_8002C3F0(s32 message, Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3)
+s32 gHandleType26Entity(s32 message, Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3)
 {
     Object8002C3F0 *s0;
     Data8002C3F0 *s1;

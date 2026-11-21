@@ -4,7 +4,7 @@
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s32 gTitleScreenDeadline __asm__("D_8009F8E8");
-extern u8 D_8009F46C;
+extern u8 gTitleScreenConfirmEnabled __asm__("D_8009F46C");
 extern u8 gMenuDescriptor[8] __asm__("D_800A3808");
 
 extern void func_80078650(u8 *arg0, s32 arg1);
@@ -43,14 +43,14 @@ void gUpdateTitleScreenTimeout(s32 arg0)
     gIdleDeadline = gFrameTickCounter + 0x2328;
     if (gTitleScreenDeadline < gFrameTickCounter) {
         func_80078650(gMenuDescriptor, 0);
-        D_8009F46C = 1;
+        gTitleScreenConfirmEnabled = 1;
         gSyncMenuFontBank();
     }
 }
 
 void func_80077944(s32 arg0)
 {
-    if (arg0 == 3 && D_8009F46C != 0) {
+    if (arg0 == 3 && gTitleScreenConfirmEnabled != 0) {
         gTitleScreenDeadline = gFrameTickCounter + 1;
         gUpdateTitleScreenTimeout(0);
     }

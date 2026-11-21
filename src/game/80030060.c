@@ -1,8 +1,8 @@
 // Categories: Physics > Distance Approximation | Gameplay > Collision
 #include "game/types.h"
 struct Entity { u8 pad[0x5c]; s32 x; u8 pad60[4]; s32 z; u8 pad68[0x60]; u32 flags; };
-extern void func_8003526C(struct Entity *);
-extern void func_8004D958(struct Entity *);
+extern void gResetDroneApproach(struct Entity *) __asm__("func_8003526C");
+extern void gRetireEntity(struct Entity *) __asm__("func_8004D958");
 
 /**
  * @brief Octagonal distance test in the X/Z plane with a contact reaction.
@@ -49,7 +49,7 @@ void func_80030060(struct Entity *self, struct Entity *other)
         dz = sum >> 7;
     }
     if (dz + (ax >> 2) - (ax >> 6) < 0x3000) {
-        if (self->flags & 0x20000) func_8003526C(other);
-        if (self->flags & 0x2000000) func_8004D958(self);
+        if (self->flags & 0x20000) gResetDroneApproach(other);
+        if (self->flags & 0x2000000) gRetireEntity(self);
     }
 }

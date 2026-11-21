@@ -66,7 +66,7 @@ struct Arg1 {
 };
 
 extern s32 gEntityBaseHandler(s32 message, struct Self *self, struct Arg1 *arg1, s32 arg2) __asm__("func_8002AD58");
-extern s32 func_80067684(struct Vec3s32 *pos, s32 sel);
+extern s32 gQuerySurfaceHeight(struct Vec3s32 *pos, s32 sel) __asm__("func_80067684");
 extern s32 gGetGroundHeight(struct Vec3s32 *pos, struct Vec3s32 *out, s32 a2, s32 a3) __asm__("func_80066F78");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void gBuildBasisFromPair(struct Vec3s32 *first, struct Vec3s32 *second, struct Basis *basis) __asm__("func_800192AC");
@@ -159,7 +159,7 @@ s32 gInitType11Entity(struct Self *self, struct Arg1 *arg1, s32 arg2)
     } else {
         sel = -1;
     }
-    self->pos.y = func_80067684(&self->pos, sel) + base;
+    self->pos.y = gQuerySurfaceHeight(&self->pos, sel) + base;
     if (flag & 1) {
         self->pos.y = gGetGroundHeight(&self->pos, &out, 0, 0) + base;
         gSinCos(angle, &sine, &cosine);

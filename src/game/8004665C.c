@@ -7,7 +7,9 @@ struct SoundVoice {
 };
 
 extern struct SoundVoice *gVoiceFreeList __asm__("D_8009F73C");
-extern s32 D_8009F740;
+extern s32 gFreeSoundVoiceCount __asm__("D_8009F740");
+struct SoundVoice *gPopFreeSoundVoice(void) __asm__("func_8004665C");
+
 
 /**
  *  @brief Removes and returns the head of the available voice list.
@@ -26,12 +28,12 @@ extern s32 D_8009F740;
  *  @par Callers
  *  Confirmed: func_80046B04.
  */
-struct SoundVoice *func_8004665C(void)
+struct SoundVoice *gPopFreeSoundVoice(void)
 {
     struct SoundVoice *voice;
 
-    if (D_8009F740 != 0) {
-        D_8009F740--;
+    if (gFreeSoundVoiceCount != 0) {
+        gFreeSoundVoiceCount--;
         voice = gVoiceFreeList;
         gVoiceFreeList = voice->next;
     } else {

@@ -31,6 +31,8 @@ struct Unk42504Object {
 };
 
 extern void gEntityBaseHandler(s32 kind) __asm__("func_8002AD58");
+s32 gInitType35Entity(s32 message, struct Unk42504Object *object, struct Unk42504Spawn *spawn) __asm__("func_80042504");
+
 
 /**
  *  @brief Initializes an object from its spawn definition.
@@ -52,7 +54,7 @@ extern void gEntityBaseHandler(s32 kind) __asm__("func_8002AD58");
  *  @par Callers
  *  Confirmed: func_800426A8.
  */
-s32 func_80042504(s32 message, struct Unk42504Object *object, struct Unk42504Spawn *spawn)
+s32 gInitType35Entity(s32 message, struct Unk42504Object *object, struct Unk42504Spawn *spawn)
 {
     struct Unk42504Def *def;
     s32 i;

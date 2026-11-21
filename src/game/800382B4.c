@@ -63,7 +63,7 @@ extern void func_80037B28(s32 arg0, Unk382B4 *arg1, s32 arg2);
 extern void func_8002A5B4(Unk382B4 *arg0, s32 arg1);
 extern s32 func_80044B34(Unk382B4 *arg0, void *arg1, s32 arg2, s32 arg3);
 extern void gSetModelFrame(void *arg0, s32 arg1) __asm__("func_800175F8");
-extern void func_80060238(void *arg0, s32 arg1, Unk382B4 *arg2, s32 arg3, s32 arg4);
+extern void gStepAttackScheduler(void *arg0, s32 arg1, Unk382B4 *arg2, s32 arg3, s32 arg4) __asm__("func_80060238");
 extern void gUpdateFallMotion(s32 arg0, Unk382B4 *arg1, s32 arg2) __asm__("func_8003802C");
 extern s32 func_8002ACB4(Unk382B4 *arg0, u8 arg1);
 extern void func_80063194(s32 key);
@@ -288,7 +288,7 @@ L800384B0:
 
 L800385BC:
     if (arg1->unkA0 != 0) {
-        func_80060238(&arg1->unkA0, arg2, arg1, 0, 1);
+        gStepAttackScheduler(&arg1->unkA0, arg2, arg1, 0, 1);
     }
     gUpdateFallMotion(arg0, arg1, arg2);
     return 0;

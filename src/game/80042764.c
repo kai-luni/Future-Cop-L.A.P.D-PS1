@@ -12,6 +12,8 @@ struct Unk42764Owner {
     u8 unk6C[0x38];
     u16 count;
 };
+struct Unk42764Node *gPopEmitterFreeNode(struct Unk42764Owner *owner) __asm__("func_80042764");
+
 
 /**
  * @brief Pops a node from the free list of an effect owner.
@@ -25,7 +27,7 @@ struct Unk42764Owner {
  * @par Callers
  * func_80042AF4 only.
  */
-struct Unk42764Node *func_80042764(struct Unk42764Owner *owner)
+struct Unk42764Node *gPopEmitterFreeNode(struct Unk42764Owner *owner)
 {
     struct Unk42764Node *node;
 

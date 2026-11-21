@@ -55,7 +55,7 @@ struct Unk4C920 {
     u8 unk80[0x88 - 0x80];
 };
 
-extern u8 D_8004C324[];
+extern u8 gMeshFractureEntityHandler[] __asm__("D_8004C324");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void func_8003C14C(struct Unk4C920 *dest, struct Unk4C920Source *src);
 extern void gBuildRotationMatrix(s32, s32, s32, struct Unk4C920Work *) __asm__("func_800188D0");
@@ -104,7 +104,7 @@ void *func_8004C920(struct Unk4C920Source *src)
     dest->unk76 = src->unk44;
     dest->unk78 = src->unk46;
     dest->unk7C = src->unk48;
-    dest->unk24 = (s32)D_8004C324;
+    dest->unk24 = (s32)gMeshFractureEntityHandler;
     dest->unk64 = src->unk34;
     dest->unk65 = src->unk35;
     dest->unk7A = src->unk36;

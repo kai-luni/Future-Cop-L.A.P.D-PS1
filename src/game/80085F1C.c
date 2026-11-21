@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 typedef struct { s32 v[4]; } Matrix;
-extern Matrix D_8001220C;
+extern Matrix gMovieDitherSeedMatrix __asm__("D_8001220C");
 extern u8 gInitGuardFlag __asm__("D_8009F4D4");
 extern u8 gScratchTable[] __asm__("D_800A3958");
 extern u8 gSecondScratchTable[] __asm__("D_800A3A58");
@@ -67,7 +67,7 @@ void gMovieBuildDitherTables(void)
     if (!gInitGuardFlag) {
         size = 1;
         level = 1;
-        matrix = D_8001220C;
+        matrix = gMovieDitherSeedMatrix;
         gScratchTable[0] = 0;
         buffer = gScratchTable;
         base = 8;

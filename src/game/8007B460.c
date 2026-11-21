@@ -47,14 +47,14 @@ extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern s8 *gFontBankTable __asm__("D_8009F468");
 extern u8 gHighlightShadeTable[] __asm__("D_8009F3F8");
 extern s8 gCrimeWarProgress[] __asm__("D_8009F458");
-extern u8 D_8009F444[];
+extern u8 gLax1ModuleName[] __asm__("D_8009F444");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
-extern u8 D_8009F488[];
+extern u8 gLax2ModuleName[] __asm__("D_8009F488");
 extern s32 gGameClock __asm__("D_8009FA60");
 extern struct State8009FA94 *gGameSession __asm__("D_8009FA94");
 extern struct MenuEntry gWideTextTable[] __asm__("D_8009B4E4");
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
-extern u8 D_8009B3D4[];
+extern u8 gMenuHighlightColorCycle[] __asm__("D_8009B3D4");
 extern s8 D_800A3628[];
 extern s8 D_800A3658[];
 extern s8 gScreenDescriptor[] __asm__("D_800A3838");
@@ -69,7 +69,7 @@ extern void func_8008CCB0(u8 *, u8 *);
 extern s32 func_8008CCA0(u8 *, u8 *);
 extern void func_80078650(s8 *, s32);
 extern void func_80078B34(s32, s32, s32);
-extern s32 func_80046C84(s32, s32);
+extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern void func_800493C0(u32, u8, u8, u8);
 
 /**

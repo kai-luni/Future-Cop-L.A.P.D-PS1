@@ -29,7 +29,7 @@ extern struct Sub78C88 gWideTextTable[] __asm__("D_8009B4E4");
 extern struct Obj78C88 *gGameSession __asm__("D_8009FA94");
 extern s32 gDemoPlayback __asm__("D_8009FA84");
 extern s32 gScreenState __asm__("D_8009FA00");
-extern u8 D_8009F3F2;
+extern u8 gAttractDemoSequenceIndex __asm__("D_8009F3F2");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern u8 gFrontEndReturnMode __asm__("D_8009F45A");
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
@@ -66,13 +66,13 @@ s32 func_80078C88(void)
     u8 unk0C;
 
     e = 0;
-    if (D_8009F3F2 != 0) {
-        e = &gFrontEndEntrySequence[D_8009F3F2];
+    if (gAttractDemoSequenceIndex != 0) {
+        e = &gFrontEndEntrySequence[gAttractDemoSequenceIndex];
     }
-    if (D_8009F3F2 != 0) {
-        D_8009F3F2 = D_8009F3F2 + 1;
-        if (D_8009F3F2 >= 5) {
-            D_8009F3F2 = 0;
+    if (gAttractDemoSequenceIndex != 0) {
+        gAttractDemoSequenceIndex = gAttractDemoSequenceIndex + 1;
+        if (gAttractDemoSequenceIndex >= 5) {
+            gAttractDemoSequenceIndex = 0;
         }
     }
     if (e == 0) {

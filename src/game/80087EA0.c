@@ -4,17 +4,17 @@
 extern u8 gMovieAbortFlag __asm__("D_8009F4E0");
 extern u8 gLayerOpenResult __asm__("D_8009F504");
 extern s32 gMovieDisplayMode __asm__("D_8009F4DC");
-extern s32 D_8009F4E4;
-extern s32 D_8009F4E8;
+extern s32 gMovieDecodeBufferBlock __asm__("D_8009F4E4");
+extern s32 gMovieSliceContextStorage __asm__("D_8009F4E8");
 extern s32 gMovieStreamBuffer __asm__("D_8009F4EC");
 extern s32 gMovieAudioBlock __asm__("D_8009F4F0");
 extern s32 gMovieSpuBufferA __asm__("D_8009F4F4");
 extern s32 gMovieSpuBufferB __asm__("D_8009F4F8");
-extern s32 D_8009F4FC;
+extern s32 gMoviePrimaryVlcBuffer __asm__("D_8009F4FC");
 extern s32 D_8009F500;
 extern s32 gMoviePadMask0 __asm__("D_8009F958");
 extern s32 gMoviePadMask1 __asm__("D_8009F95C");
-extern s32 D_8009F960;
+extern s32 gMovieStreamReserveUnitBytes __asm__("D_8009F960");
 extern s32 D_8009F964;
 extern s32 gLayerModeBits __asm__("D_8009F968");
 extern s32 gChainedNodes[] __asm__("D_8009FA48");
@@ -104,7 +104,7 @@ s32 gOpenVideoLayer(s32 arg0)
     var_v0 = gPollPadButtons(1) & var_s0;
     gMoviePadMask1 = var_v0;
     var_v0 = 0x400;
-    D_8009F960 = var_v0;
+    gMovieStreamReserveUnitBytes = var_v0;
     var_v0 = 0x800;
     D_8009F964 = var_v0;
     var_v0 = arg0 & 0x20;
@@ -132,13 +132,13 @@ s32 gOpenVideoLayer(s32 arg0)
     }
 
     gMovieDisplayMode = arg0;
-    D_8009F4E4 = func_8008799C(var_a0);
-    if (D_8009F4E4 == 0) {
+    gMovieDecodeBufferBlock = func_8008799C(var_a0);
+    if (gMovieDecodeBufferBlock == 0) {
         goto fail;
     }
 
-    D_8009F4FC = func_8008799C(0x6000);
-    if (D_8009F4FC == 0) {
+    gMoviePrimaryVlcBuffer = func_8008799C(0x6000);
+    if (gMoviePrimaryVlcBuffer == 0) {
         goto fail;
     }
 
@@ -147,7 +147,7 @@ s32 gOpenVideoLayer(s32 arg0)
         goto fail;
     }
 
-    gBuildMovieVlcTables(D_8009F4FC, D_8009F500, 0);
+    gBuildMovieVlcTables(gMoviePrimaryVlcBuffer, D_8009F500, 0);
 
     if (arg0 & 8) {
         gMovieSetScaleMode(0);
@@ -158,7 +158,7 @@ s32 gOpenVideoLayer(s32 arg0)
     }
 
     var_a0 = func_8008799C(func_80085A1C());
-    D_8009F4E8 = var_a0;
+    gMovieSliceContextStorage = var_a0;
     if (var_a0 == 0) {
         goto fail;
     }
@@ -168,7 +168,7 @@ s32 gOpenVideoLayer(s32 arg0)
         var_a3 = 0x6DE0;
     }
 
-    ptr = D_8009F4E4;
+    ptr = gMovieDecodeBufferBlock;
     if (gMovieInitContext(var_a0, ptr, ptr + var_a3,
                        ptr + var_a3 * 2, 1, var_s0, 0) == 0) {
         goto fail;

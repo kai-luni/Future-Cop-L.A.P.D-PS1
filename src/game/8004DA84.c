@@ -16,8 +16,10 @@ struct Entity {
     u8 type;
 };
 
-extern u8 func_8004DA58(u32 value);
-extern u8 func_8004D9EC(struct Entity *target, s32 kind, s32 value);
+extern u8 gIsQueuedCommandKind(u32 value) __asm__("func_8004DA58");
+extern u8 gEnqueuePendingMessage(struct Entity *target, s32 kind, s32 value) __asm__("func_8004D9EC");
+u8 gSendEntityCommand(struct Entity *entity, s32 kind, s32 value, s32 retry) __asm__("func_8004DA84");
+
 
 /**
  *  @brief Accepts or queues a kind and value for an entity.
@@ -40,14 +42,14 @@ extern u8 func_8004D9EC(struct Entity *target, s32 kind, s32 value);
  *  @par Callers
  *  Confirmed: func_8004DC64, func_8004DD68, func_8004DDF4, func_80069D68.
  */
-u8 func_8004DA84(struct Entity *entity, s32 kind, s32 value, s32 retry)
+u8 gSendEntityCommand(struct Entity *entity, s32 kind, s32 value, s32 retry)
 {
     s32 i;
 
     switch (entity->type) {
     case 18:
     case 21:
-        if (func_8004DA58(kind) != 0) {
+        if (gIsQueuedCommandKind(kind) != 0) {
             break;
         }
         /* Failed filter joins the immediate-success return. */
@@ -85,7 +87,7 @@ u8 func_8004DA84(struct Entity *entity, s32 kind, s32 value, s32 retry)
     }
 
     if (retry != 0) {
-        return func_8004D9EC(entity, kind, value);
+        return gEnqueuePendingMessage(entity, kind, value);
     }
     return 0;
 }

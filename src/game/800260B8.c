@@ -47,9 +47,9 @@ extern struct InputAction260B8 gBackActionRecord[] __asm__("D_800A0B20");
 
 extern void gDecodeButtonEdge(u32 buttons, struct InputAction260B8 *action) __asm__("func_8005780C");
 extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend) __asm__("func_8001C214");
-extern s32 func_80046C84(s32 id, s32 arg1);
-extern u32 func_80060A0C(s32 arg0, s32 arg1);
-extern void func_80046A34(s32 handle);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
+extern u32 gApplyPlayerCheatCode(s32 arg0, s32 arg1) __asm__("func_80060A0C");
+extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
 extern void func_800451B4(s32 enable);
 extern void func_800451F8(s32 volume);
 extern s32 func_8004522C(void);
@@ -198,33 +198,33 @@ void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selec
 
     if (p3->phase == 0) {
         items[5] = 6;
-        func_80046C84(0x3F, gPlayerEntities[slotArg]);
+        gPlayNonpositionalSoundEffect(0x3F, gPlayerEntities[slotArg]);
         if (--selection < 0) {
             selection = 5;
         }
     } else if (p4->phase == 0) {
         items[5] = 6;
-        func_80046C84(0x3F, gPlayerEntities[slotArg]);
+        gPlayNonpositionalSoundEffect(0x3F, gPlayerEntities[slotArg]);
         if (++selection >= 6) {
             selection = 0;
         }
     } else if (active) {
         switch (code = items[selection]) {
         case 0:
-            func_80046C84(0x3E, gPlayerEntities[slotArg]);
+            gPlayNonpositionalSoundEffect(0x3E, gPlayerEntities[slotArg]);
             selection = -1;
             state->selected = selection;
             gOpenPanelCount--;
             state->selected = selection;
             goto display;
         case 7:
-            func_80046C84(0x3E, gPlayerEntities[slotArg]);
+            gPlayNonpositionalSoundEffect(0x3E, gPlayerEntities[slotArg]);
             items[5] = 6;
             goto store_selected;
         case 8:
             saveOffset = (u32)slotArg * 4;
-            func_80046C84(0x3E, *(s32 *)(saveOffset + (u32)gPlayerEntities));
-            if ((func_80060A0C(*(s32 *)(saveOffset + (u32)gCheatCodeInput), slotArg) & 0xFF) != 0) {
+            gPlayNonpositionalSoundEffect(0x3E, *(s32 *)(saveOffset + (u32)gPlayerEntities));
+            if ((gApplyPlayerCheatCode(*(s32 *)(saveOffset + (u32)gCheatCodeInput), slotArg) & 0xFF) != 0) {
                 gScreenState = 5;
             } else {
                 flag = 1;
@@ -233,7 +233,7 @@ void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selec
             gCheatCodeInput[slotArg] = 0;
             goto store_selected;
         case 6:
-            func_80046C84(0x3E, gPlayerEntities[slotArg]);
+            gPlayNonpositionalSoundEffect(0x3E, gPlayerEntities[slotArg]);
             items[5] = 7;
             goto store_selected;
         default:
@@ -243,13 +243,13 @@ void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selec
     } else {
         backAction = (struct InputAction260B8 *)(actionOffset + (u32)gBackActionRecord);
         if (backAction->phase == 0) {
-            func_80046C84(0x3E, gPlayerEntities[slotArg]);
+            gPlayNonpositionalSoundEffect(0x3E, gPlayerEntities[slotArg]);
             selection = -1;
             items[5] = 6;
             state->selected = selection;
             gOpenPanelCount--;
             if (gSlotVoiceHandle[slotArg] != 0) {
-                func_80046A34(gSlotVoiceHandle[slotArg]);
+                gStopSoundVoiceHandle(gSlotVoiceHandle[slotArg]);
                 gSlotVoiceHandle[slotArg] = 0;
             }
             goto store_selected;
@@ -279,21 +279,21 @@ void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selec
             switch (code = items[selection]) {
             case 4:
                 func_800451B4(0);
-                func_80046C84(0x3F, gPlayerEntities[slotArg]);
+                gPlayNonpositionalSoundEffect(0x3F, gPlayerEntities[slotArg]);
                 D_8009ABEC[0] = 5;
                 goto store_selected;
             case 5:
                 func_800451B4(1);
-                func_80046C84(0x3F, gPlayerEntities[slotArg]);
+                gPlayNonpositionalSoundEffect(0x3F, gPlayerEntities[slotArg]);
                 items[4] = 4;
                 goto store_selected;
             case 7:
-                func_80046C84(0x3F, gPlayerEntities[slotArg]);
+                gPlayNonpositionalSoundEffect(0x3F, gPlayerEntities[slotArg]);
                 gItemLabelByte[0] = 8;
                 goto store_selected;
             case 8:
                 toggleOffset = (u32)slotArg * 4;
-                func_80046C84(0x3F, *(s32 *)(toggleOffset + (u32)gPlayerEntities));
+                gPlayNonpositionalSoundEffect(0x3F, *(s32 *)(toggleOffset + (u32)gPlayerEntities));
                 gItemLabelByte[0] = 7;
                 goto store_selected;
             default:
@@ -325,7 +325,7 @@ display:
             break;
         }
         if (gSlotTrackId[slotArg] != id) {
-            func_80046A34(gSlotVoiceHandle[slotArg]);
+            gStopSoundVoiceHandle(gSlotVoiceHandle[slotArg]);
             gSlotVoiceHandle[slotArg] = 0;
         }
     }

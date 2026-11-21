@@ -40,6 +40,8 @@ struct Unk33608Owner {
     u8 unkC0[0x74];
     struct Unk33608Mirror *mirror;
 };
+void gSetDroneAttackTarget(struct Unk33608Owner *owner, struct Unk33608Anim *anim) __asm__("func_80033608");
+
 
 /**
  * @brief Sets an entity's active animation/target block or parks its mode at 4, mirroring to its twin block.
@@ -64,7 +66,7 @@ struct Unk33608Owner {
  * @par Callers
  * Confirmed: func_800336DC (10 sites: 0x80033ED8..0x800347DC), func_8003532C (0x80035478), and func_80035698 (0x80035714).
  */
-void func_80033608(struct Unk33608Owner *owner, struct Unk33608Anim *anim)
+void gSetDroneAttackTarget(struct Unk33608Owner *owner, struct Unk33608Anim *anim)
 {
     register struct Unk33608Mirror *firstMirror __asm__("$2");
     register struct Unk33608Mirror *secondMirror __asm__("$3");

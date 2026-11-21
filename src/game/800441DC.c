@@ -9,8 +9,8 @@ struct Unk441DC {
     u8 flags8D;
 };
 
-extern void func_80043CA8(struct Unk441DC *node, s32 arg);
-extern void func_800437E8(struct Unk441DC *node, s32 arg);
+extern void gTickDampedParticleChain(struct Unk441DC *node, s32 arg) __asm__("func_80043CA8");
+extern void gTickGravityParticleChain(struct Unk441DC *node, s32 arg) __asm__("func_800437E8");
 void gTickChainEffectList(struct Unk441DC *node, s32 arg) __asm__("func_800441DC");
 
 
@@ -52,9 +52,9 @@ void gTickChainEffectList(struct Unk441DC *node, s32 arg)
     while (node != 0) {
         if (!(node->flags0F & 8)) {
             if (node->flags8D & 1) {
-                func_80043CA8(node, arg);
+                gTickDampedParticleChain(node, arg);
             } else {
-                func_800437E8(node, arg);
+                gTickGravityParticleChain(node, arg);
             }
         }
         node = node->next;

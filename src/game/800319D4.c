@@ -52,7 +52,7 @@ extern u8 *func_80019C38(u8 *arg0, u32 arg1, u32 arg2, s32 arg3);
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern s32 func_80019668(void);
 extern void gFreeBlock(void *obj) __asm__("func_800181D4");
-extern s32 func_80067684(struct Vec3s32 *position, s32 mode);
+extern s32 gQuerySurfaceHeight(struct Vec3s32 *position, s32 mode) __asm__("func_80067684");
 void gLoadMapZone(struct Obj *obj) __asm__("func_800319D4");
 
 
@@ -128,7 +128,7 @@ void gLoadMapZone(struct Obj *obj)
     } else {
         mode = -1;
     }
-    value = func_80067684(&d->pos, mode);
+    value = gQuerySurfaceHeight(&d->pos, mode);
     node->f2 = value >> 8;
 
     node->fC = (s16)d->f16 / 2;

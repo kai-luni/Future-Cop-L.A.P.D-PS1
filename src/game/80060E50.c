@@ -5,6 +5,8 @@ struct Unk60E28Table;
 
 extern struct Unk60E28Table *gRegistryTable __asm__("D_8009F800");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeSpawnRegistry(void) __asm__("func_80060E50");
+
 
 /**
  * @brief Frees the 0x80-slot live-object registry table D_8009F800.
@@ -28,7 +30,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_80024D14 (0x80024DD8, between-mission subsystem reset) / Likely: none / Unknown: none.
  */
-void func_80060E50(void)
+void gFreeSpawnRegistry(void)
 {
     gFreeBlock(gRegistryTable);
 }

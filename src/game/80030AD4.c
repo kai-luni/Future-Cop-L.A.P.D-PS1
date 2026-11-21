@@ -50,7 +50,7 @@ struct Entity {
 };
 
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, struct Spawn *data, s32 arg3) __asm__("func_8002AD58");
-extern s32 func_80067684(struct Vec3 *pos, s32 mode);
+extern s32 gQuerySurfaceHeight(struct Vec3 *pos, s32 mode) __asm__("func_80067684");
 s32 gInitEntityGroundPair(struct Entity *self, struct Spawn *data, s32 arg2) __asm__("func_80030AD4");
 
 
@@ -126,7 +126,7 @@ s32 gInitEntityGroundPair(struct Entity *self, struct Spawn *data, s32 arg2)
     } else {
         mode = -1;
     }
-    self->unkA4 = func_80067684((struct Vec3 *)&self->unkA0, mode) + (sub->unk2C << 4);
+    self->unkA4 = gQuerySurfaceHeight((struct Vec3 *)&self->unkA0, mode) + (sub->unk2C << 4);
 
     type = sub->unk2F;
     if (type != 0) {
@@ -138,7 +138,7 @@ s32 gInitEntityGroundPair(struct Entity *self, struct Spawn *data, s32 arg2)
     } else {
         mode = -1;
     }
-    value = func_80067684((struct Vec3 *)&self->unk50, mode) + (sub->unk36 << 4);
+    value = gQuerySurfaceHeight((struct Vec3 *)&self->unk50, mode) + (sub->unk36 << 4);
     self->unk60 = value;
     self->unk54 = value;
 

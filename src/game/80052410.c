@@ -13,7 +13,7 @@ struct Obj52410 {
 extern void gBuildObjectBasis(struct Obj52410 *, s32, struct Vec52410 *, void *) __asm__("func_80051C50");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, struct Vec52410 *, s32) __asm__("func_80010234");
-extern s32 func_800684AC(void *, void *, void *, s32, s32);
+extern s32 gTraceMapRay(void *, void *, void *, s32, s32) __asm__("func_800684AC");
 s32 gTestFootprintEdges(struct Obj52410 *obj, struct Vec52410 *points, struct Vec52410 *out) __asm__("func_80052410");
 
 
@@ -73,14 +73,14 @@ s32 gTestFootprintEdges(struct Obj52410 *obj, struct Vec52410 *points, struct Ve
     p = points;
     for (; i < 4; i++) {
         result <<= 3;
-        result |= func_800684AC(base + offset, p, q, 0, 0) & 7;
+        result |= gTraceMapRay(base + offset, p, q, 0, 0) & 7;
         q++;
         p++;
         offset += 12;
     }
     for (i = 0; i < 4; i++) {
         result <<= 3;
-        result |= func_800684AC(&points[i], &points[(i + 1) & 3], &out[i + 4], 0, 0) & 7;
+        result |= gTraceMapRay(&points[i], &points[(i + 1) & 3], &out[i + 4], 0, 0) & 7;
     }
     return result;
 }

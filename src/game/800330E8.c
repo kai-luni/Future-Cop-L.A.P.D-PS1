@@ -28,6 +28,8 @@ struct Unk330E8Global {
 };
 
 extern struct Unk330E8Global *gGameSession __asm__("D_8009FA94");
+void gUpdateDroneStrategicPosition(struct Unk330E8Obj *obj) __asm__("func_800330E8");
+
 
 /**
  * Updates an object's strategic position according to its AI mode.
@@ -60,7 +62,7 @@ extern struct Unk330E8Global *gGameSession __asm__("D_8009FA94");
  * @par Callers
  * Confirmed: func_800336DC, func_80035698. Likely: func_800331CC, func_8003526C.
  */
-void func_800330E8(struct Unk330E8Obj *obj)
+void gUpdateDroneStrategicPosition(struct Unk330E8Obj *obj)
 {
     u8 type = obj->unk134->unk1A;
     struct Unk330E8Entry *e = obj->unk134;

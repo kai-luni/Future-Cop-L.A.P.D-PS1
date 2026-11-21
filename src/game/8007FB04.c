@@ -7,8 +7,8 @@ extern s32 gStillRunningState __asm__("D_8009F464");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
 extern u8 gPlayerMenuDepth __asm__("D_8009F8C0");
-extern u8 D_800A36E8[];
-extern u8 D_800A36B8[];
+extern u8 gProfileDetailMenuDescriptor[] __asm__("D_800A36E8");
+extern u8 gProfileNameEntryMenuDescriptor[] __asm__("D_800A36B8");
 extern u8 gMenuActivationBlock[] __asm__("D_800A3718");
 extern u8 gProfileImageName[] __asm__("D_800120A4");
 
@@ -68,8 +68,8 @@ s32 func_8007FB04(void)
     state = func_800207B4(0);
     if (state != *(s32 *)(gSaveProfileImage + 0x208)) {
         if (gFontBankTable != 0 &&
-            gFontBankTable != D_800A36E8 &&
-            gFontBankTable != D_800A36B8) {
+            gFontBankTable != gProfileDetailMenuDescriptor &&
+            gFontBankTable != gProfileNameEntryMenuDescriptor) {
             gPopMenuPanel();
         }
 

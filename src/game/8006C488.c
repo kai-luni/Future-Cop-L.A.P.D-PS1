@@ -11,7 +11,7 @@ struct Unk6C488 {
     struct Unk6C488Stats *stats;
 };
 
-extern void func_80046CF0(struct Unk6C488 *object, s32 state);
+extern void gRefreshPlayerWeaponSound(struct Unk6C488 *object, s32 state) __asm__("func_80046CF0");
 
 /**
  * @brief Selects the normal or the alert state of a looping voice.
@@ -44,5 +44,5 @@ void func_8006C488(struct Unk6C488 *object)
     if (object->stats->unk8A > 0) {
         state = 0x33;
     }
-    func_80046CF0(object, state);
+    gRefreshPlayerWeaponSound(object, state);
 }

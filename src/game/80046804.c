@@ -27,6 +27,8 @@ struct SoundBank {
 };
 
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
+void gUnlinkSoundBankVoice(struct SoundVoice *voice) __asm__("func_80046804");
+
 
 /**
  * @brief Unlinks a SoundVoice node from its SoundBank doubly-linked voice list in D_800A7938.
@@ -50,7 +52,7 @@ extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
  * @par Callers
  * Confirmed: func_80046698 (0x800467D4 in asm/us/main.s), func_800462D0 (0x80046588 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-void func_80046804(struct SoundVoice *voice)
+void gUnlinkSoundBankVoice(struct SoundVoice *voice)
 {
     struct SoundBank *bank;
 

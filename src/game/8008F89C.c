@@ -4,7 +4,7 @@
 extern s32 gCdReadyCallback __asm__("D_8009C8AC");
 extern s32 gCdSyncCallback __asm__("D_8009C8A8");
 extern s32 gCdIrqExtraByte __asm__("D_8009C8B8");
-extern u8 D_8008FE28[];
+extern u8 gCdIrqHandlerAddress[] __asm__("D_8008FE28");
 
 extern void gResetIrqDispatch(void) __asm__("func_80091480");
 extern void gSetIrqCallback(s32 arg0, u8 *arg1) __asm__("func_800914B0");
@@ -48,7 +48,7 @@ void gResetCdCallbacks(void)
     __asm__("" : "+r"(base));
     *(s32 *)(base - 0x374C) = 0;
     gResetIrqDispatch();
-    callback = D_8008FE28;
+    callback = gCdIrqHandlerAddress;
     __asm__("" : "+r"(callback));
     gSetIrqCallback(2, callback);
 }

@@ -30,7 +30,9 @@ extern u8 gSoundBankTableLow[] __asm__("D_800A1830");
 extern struct UnkA10E0 gPlayerSlots[] __asm__("D_800A10E0");
 
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
-extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
+extern s32 gPlaySpatialSoundBankSlot(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4) __asm__("func_80046F9C");
+void gRefreshPlayerWeaponSound(struct Unk6C488 *object, s32 state) __asm__("func_80046CF0");
+
 
 /**
  * @brief Starts or refreshes a looping weapon sound in one of the player's
@@ -62,7 +64,7 @@ extern s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4);
  * @par Callers
  * gBeamPartUpdate, func_8006C488.
  */
-void func_80046CF0(struct Unk6C488 *object, s32 state)
+void gRefreshPlayerWeaponSound(struct Unk6C488 *object, s32 state)
 {
     s32 s1;
     s32 s2;
@@ -100,7 +102,7 @@ void func_80046CF0(struct Unk6C488 *object, s32 state)
                 return;
             }
             entry = &gPlayerSlots[s1 * 3] + firstFree;
-            handle = func_80046F9C(0, 0, s2, (s32)object, 0);
+            handle = gPlaySpatialSoundBankSlot(0, 0, s2, (s32)object, 0);
             if (handle != 0) {
                 entry->status = 0x1E;
                 entry->unk4 = 1;

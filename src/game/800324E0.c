@@ -34,7 +34,7 @@ extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void func_80044B34(void *, void *, s32, s32);
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_80019668(void);
-extern struct Res *func_8004E80C(void *, s32, s32, s32, s32, s32, s32);
+extern struct Res *gFindTargetEntity(void *, s32, s32, s32, s32, s32, s32) __asm__("func_8004E80C");
 extern void func_800320E4(struct Obj *);
 extern s32 gSampleHeightGridBilinear(V3 *) __asm__("func_80069A38");
 extern s32 gGetGroundHeight(V3 *, s32, s32, s32) __asm__("func_80066F78");
@@ -53,7 +53,7 @@ extern void gGteLoadMatrix(V3 *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(s32, void *, s32) __asm__("func_80010234");
 #define FMUL(d, x, y) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(x), "r"(y) : "$8", "$9")
 
-extern void func_80060238(u32 *, s32, struct Obj *, s32, s32);
+extern void gStepAttackScheduler(u32 *, s32, struct Obj *, s32, s32) __asm__("func_80060238");
 
 #define AB8(v) ((((v) >> 8) >> 31) + ((v) >> 8) ^ (((v) >> 8) >> 31))
 /**
@@ -168,7 +168,7 @@ s32 gUpdateHoverEnemy(s32 unused, struct Obj *o, s32 dt)
         o->f102 -= dt;
         if ((s16)o->f102 < 0) {
             o->f102 = (func_80019668() & 0x1FF) + 0x384;
-            o->fC8 = func_8004E80C(o, o->f105, o->f106, o->f104,
+            o->fC8 = gFindTargetEntity(o, o->f105, o->f106, o->f104,
                                    o->f108 << 4, 0xFFFF0000, 0);
             if (o->fC8 == 0)
                 goto L5E4;
@@ -370,7 +370,7 @@ L_AD4: {
 
     if (o->type == 0x25 || o->fFA == 0) {
         if (o->fA0 != 0)
-            func_80060238(&o->fA0, dt, o, 0, 1);
+            gStepAttackScheduler(&o->fA0, dt, o, 0, 1);
     }
     a = o->fE8;
     ay = a.y + 0x2000;

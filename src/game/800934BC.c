@@ -17,7 +17,7 @@ extern  void (*gLogPrintf)(void *, void *) __asm__("D_8009DDEC");
 extern char D_80012B30[];
 extern struct Cache gDispEnvCache __asm__("D_8009DE5C");
 extern s16 D_8009DE64[];
-extern s32 D_8009DE6C[];
+extern s32 gDispEnvCachedModeWord[] __asm__("D_8009DE6C");
 extern int gGetGpuDrawOffset(void) __asm__("func_80091F74");
 extern void func_8008CD10(void *, void *, int);
 struct Prim *gPutDispEnvCached(struct Prim *p) __asm__("func_800934BC");
@@ -166,7 +166,7 @@ rect_changed:
         gfx->fn(upper | lower);
     }
     __asm__("" ::: "memory");
-    q = (u16 *)D_8009DE6C;
+    q = (u16 *)gDispEnvCachedModeWord;
     __asm__("" : "+r"(q));
     if (*(s32 *)q != *(s32 *)&p->b10) goto mode_changed;
     t = q[-8]; b = (s16)p->u0; __asm__("" : "+r"(t), "+r"(b));

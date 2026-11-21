@@ -8,7 +8,7 @@ struct State {
     s32 value;
 };
 
-extern struct State D_80010000;
+extern struct State gExecutableImageBase __asm__("D_80010000");
 extern s32 gSetCdSyncCallback(s32 value) __asm__("func_8008E194");
 void gCdSeekDoneCallback(u8 arg) __asm__("func_8001C614");
 
@@ -51,9 +51,9 @@ void gCdSeekDoneCallback(u8 arg)
     case 5:
         break;
     case 2:
-        if (D_80010000.mode == 1) {
-            D_80010000.mode = 2;
-            gSetCdSyncCallback(D_80010000.value);
+        if (gExecutableImageBase.mode == 1) {
+            gExecutableImageBase.mode = 2;
+            gSetCdSyncCallback(gExecutableImageBase.value);
         }
         break;
     }

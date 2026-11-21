@@ -12,7 +12,7 @@ struct State {
 };
 extern struct State gCdAsyncReadState __asm__("D_8009CBD0");
 extern s32 gCdUseDmaFlag __asm__("D_8009C814");
-extern s32 D_800908A0[];
+extern s32 gCdPauseCompletionCallbackAddress[] __asm__("D_800908A0");
 extern s32 gCdSavedCallbackPtr[] __asm__("D_8009CBF8");
 extern s32 gCdSavedReadCbsPtr[] __asm__("D_8009CBFC");
 extern u32 gVSyncWait(s32) __asm__("func_80091270");
@@ -115,7 +115,7 @@ void gAbortCdRead(void)
         __asm__ volatile("" : "+r"(callbacks));
         gSetCdReadyCallback(callbacks[0]);
         if (gCdUseDmaFlag & 1) gSetCdDmaCallback(callbacks[1]);
-        gSetCdSyncCallback((s32)&D_800908A0);
+        gSetCdSyncCallback((s32)&gCdPauseCompletionCallbackAddress);
         gCdControlF(9,0);
         other = (struct State *)(callbacks - 11);
         __asm__("" : "+r"(other));

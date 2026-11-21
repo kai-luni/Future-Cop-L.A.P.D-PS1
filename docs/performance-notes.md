@@ -343,7 +343,7 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
   - `src/game/800648E8.c:219`
   - `src/game/8004B5F8.c:242`
   - `src/game/80085228.c:159`
-  - `src/game/800861E4.c:177`
+  - `src/game/800861E4.c:179`
 - Units:
   - `src/game/8003F530.c` - manifest 0x8003F530, size 0x40 (current binding: gRunSceneListPassesOnScratch)
   - `src/game/80026E1C.c` - manifest 0x80026E1C, size 0x40 (current binding: gRunRegionPass)
@@ -520,9 +520,9 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
   - `src/game/80029748.c:84`
   - `src/game/8001BBEC.c:52`
   - `src/game/8001B4A8.c:349`
-  - `src/game/800861E4.c:208`
-  - `src/game/800861E4.c:213`
-  - `src/game/800861E4.c:177`
+  - `src/game/800861E4.c:210`
+  - `src/game/800861E4.c:215`
+  - `src/game/800861E4.c:179`
   - `src/game/800847E0.c:14`
 - Units:
   - `src/game/800861E4.c` - manifest 0x800861E4, size 0x5CC (current binding: gDecodeMdecFrameToVram)
@@ -740,7 +740,7 @@ occur on the cited line).
 | `src/game/800648E8.c:219` | `volatile u16 *d = (volatile u16 *)0x1F800070;` |
 | `src/game/8004B5F8.c:242` | `bm = (u32 *)0x1F800000;` |
 | `src/game/80085228.c:159` | `memcpy((void *)0x1F800000, gScratchTable, 0x100);` |
-| `src/game/800861E4.c:177` | `*(Block100 *)0x1F800000 = gScratchTable;` |
+| `src/game/800861E4.c:179` | `*(Block100 *)0x1F800000 = gScratchTable;` |
 | `src/game/8001846C.c:36` | `angle &= 0xFFF;` |
 | `src/game/8001846C.c:38` | `s = gSineTable[index] << 1;` |
 | `src/game/8001846C.c:39` | `c = gSineTable[0x400 - index] << 1;` |
@@ -777,15 +777,15 @@ occur on the cited line).
 | `src/game/8002703C.c:93` | `if (gFrameDelta >= 0x3C) {` |
 | `src/game/8002703C.c:113` | `gStepAnimations(gFrameDelta);` |
 | `src/game/80028618.c:110` | `gFrameDelta = work;` |
-| `src/game/8001D130.c:102` | `func_80010000.unk18 = gSetCdReadyCallback((s32)D_8001C808);` |
+| `src/game/8001D130.c:102` | `func_80010000.unk18 = gSetCdReadyCallback((s32)gCdSectorReadyCallbackAddress);` |
 | `src/game/8001C808.c:170` | `if (len < 0x800) {` |
 | `src/game/8001C808.c:179` | `func_8008CD10(q->buf, gLengthTable + n, cnt);` |
 | `src/game/8001C808.c:184` | `if (!gCdRead((void *)q->buf, 0x200))` |
 | `src/game/80029748.c:84` | `gQueueVramUpload(0, (u8 *)*frame + index, 0x3C0, 0x1CC, 0);` |
 | `src/game/8001BBEC.c:52` | `entry = base + gUploadRingWriteIdx;` |
 | `src/game/8001B4A8.c:349` | `gDecodeMdecFrameToVram(*(u32 *)xbase, *(u8 *)(xbase + 8),` |
-| `src/game/800861E4.c:208` | `gMdecStartDecode(gMovieSliceContext->buffer28[gMovieSliceContext->index], gStripScaleEnable);` |
-| `src/game/800861E4.c:213` | `gStartMdecOutDma(gMovieSliceContext->buffer24, ((s32)(width << 16) >> 16) * ((s32)(height << 16) >> 16) / 2);` |
+| `src/game/800861E4.c:210` | `gMdecStartDecode(gMovieSliceContext->buffer28[gMovieSliceContext->index], gStripScaleEnable);` |
+| `src/game/800861E4.c:215` | `gStartMdecOutDma(gMovieSliceContext->buffer24, ((s32)(width << 16) >> 16) * ((s32)(height << 16) >> 16) / 2);` |
 | `src/game/800847E0.c:14` | `#define K(o, e, tp, i) o = (e); if ((o & 7) >= (tp)[i]) o += 8; o = gByteTable[o];` |
 | `src/game/80022F44.c:43` | `gSpuSetIrqEnable(1);` |
 | `src/game/80022FA8.c:71` | `gDisarmAudioStreamSpuIrq();` |

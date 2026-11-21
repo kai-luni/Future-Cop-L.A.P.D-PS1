@@ -73,34 +73,36 @@ struct UnkF744 {
     struct UnkF744 *next;
 };
 
-extern u8 D_8009F340;
-extern s32 D_8009F32C;
-extern s32 D_8009F344;
+extern u8 gSoundProcessingEnabled __asm__("D_8009F340");
+extern s32 gPendingSoundVoiceReleaseCount __asm__("D_8009F32C");
+extern s32 gLastSoundUpdateTick __asm__("D_8009F344");
 extern s32 gChannelCount __asm__("D_8009F720");
-extern struct SoundChannel *D_8009F728;
-extern struct SoundChannel *D_8009F72C;
+extern struct SoundChannel *gSoundChannelQueueHead __asm__("D_8009F728");
+extern struct SoundChannel *gSoundChannelQueueTail __asm__("D_8009F72C");
 extern u8 gStreamAudioFlag __asm__("D_8009F739");
 extern struct UnkF744 *gVoicePriorityList __asm__("D_8009F744");
 
 extern volatile s32 gFrameTickCounter __asm__("D_8009FA2C");
-extern struct Unk4749CHandle D_800A10C0[];
+extern struct Unk4749CHandle gPendingSoundVoiceReleaseHandles[] __asm__("D_800A10C0");
 extern struct Unk10E0 gPlayerSlots[6] __asm__("D_800A10E0");
-extern struct SoundChannel *D_800A1780[];
+extern struct SoundChannel *gSoundChannelReorderBuffer[] __asm__("D_800A1780");
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
-extern s32 func_800474F0(struct Unk4749CHandle *);
+extern s32 gReleaseValidatedSoundVoiceHandle(struct Unk4749CHandle *) __asm__("func_800474F0");
 extern void func_80023D78(void);
 extern void func_8002A26C(void);
-extern void func_80046698(struct SoundVoice *);
+extern void gReleaseSoundVoice(struct SoundVoice *) __asm__("func_80046698");
 extern void func_8002441C(void);
-extern s32 func_800458E8(s32, s32, s8 *, s32);
+extern s32 gComputeSpatialSoundAttenuation(s32, s32, s8 *, s32) __asm__("func_800458E8");
 extern void func_800455DC(struct SoundChannel *);
-extern void func_800460D4(s8 *);
+extern void gComputeSpatialSoundPan(s8 *) __asm__("func_800460D4");
 extern void func_80047800(struct SoundVoice *, s32, s32, s32);
-extern void func_80046804(struct SoundVoice *);
-extern void func_800469A0(struct SoundVoice *);
-extern struct SoundVoice *func_80046B04(s32, s32, s32, s32);
+extern void gUnlinkSoundBankVoice(struct SoundVoice *) __asm__("func_80046804");
+extern void gInsertSoundBankVoiceByPriority(struct SoundVoice *) __asm__("func_800469A0");
+extern struct SoundVoice *gAllocPrioritySoundVoice(s32, s32, s32, s32) __asm__("func_80046B04");
 extern u8 func_8004772C(struct SoundBank *, struct SoundVoice *, s32, s32, s32);
+void gUpdateSoundVoiceAssignments(void) __asm__("func_800462D0");
+
 
 /**
  *  @brief Updates sound timers, channel priorities, and voice assignments.
@@ -125,17 +127,17 @@ extern u8 func_8004772C(struct SoundBank *, struct SoundVoice *, s32, s32, s32);
  *  @par Callers
  *  Confirmed: func_80027EE4.
  */
-void func_800462D0(void)
+void gUpdateSoundVoiceAssignments(void)
 {
     register u32 work __asm__("$2");
 
-    if (D_8009F340 == 0) {
+    if (gSoundProcessingEnabled == 0) {
         return;
     }
 
-    while (D_8009F32C != 0) {
-        D_8009F32C--;
-        func_800474F0(&D_800A10C0[D_8009F32C]);
+    while (gPendingSoundVoiceReleaseCount != 0) {
+        gPendingSoundVoiceReleaseCount--;
+        gReleaseValidatedSoundVoiceHandle(&gPendingSoundVoiceReleaseHandles[gPendingSoundVoiceReleaseCount]);
     }
 
     {
@@ -146,10 +148,10 @@ void func_800462D0(void)
             register s32 stamp __asm__("$4");
 
             work = gFrameTickCounter;
-            previous = D_8009F344;
+            previous = gLastSoundUpdateTick;
             stamp = gFrameTickCounter;
             delta = (s32)work - previous;
-            D_8009F344 = stamp;
+            gLastSoundUpdateTick = stamp;
         }
 
         {
@@ -197,7 +199,7 @@ delta_ready:
                             entry->unk00 = 0;
                             voice = *(struct SoundVoice **)(tag - 1);
                             if (tag[0] == voice->unk10) {
-                                func_80046698(voice);
+                                gReleaseSoundVoice(voice);
                             }
                         }
                     }
@@ -233,17 +235,17 @@ delta_ready:
     {
         struct SoundChannel **table;
 
-        table = D_800A1780;
+        table = gSoundChannelReorderBuffer;
         {
             register struct SoundChannel *channel __asm__("$16");
             struct SoundBank *banks;
 
-            channel = D_8009F72C;
+            channel = gSoundChannelQueueTail;
             if (channel != 0) {
                 banks = gSoundEntryTable;
                 do {
                     *table = channel;
-                    if (func_800458E8(channel->unk0C, channel->unk10,
+                    if (gComputeSpatialSoundAttenuation(channel->unk0C, channel->unk10,
                                       &channel->unk14, 0)) {
                         channel->priority = channel->unk14 +
                             (banks[channel->slot].unk13 << 4);
@@ -260,10 +262,10 @@ delta_ready:
             register s32 count __asm__("$18");
             register s32 index __asm__("$16");
 
-            table = D_800A1780;
+            table = gSoundChannelReorderBuffer;
             count = gChannelCount;
-            D_8009F728 = 0;
-            D_8009F72C = 0;
+            gSoundChannelQueueHead = 0;
+            gSoundChannelQueueTail = 0;
             gChannelCount = 0;
             index = 0;
             while (index < count) {
@@ -282,7 +284,7 @@ delta_ready:
         struct SoundBank *banks;
         register struct SoundVoice *release __asm__("$4");
 
-        channel = D_8009F728;
+        channel = gSoundChannelQueueHead;
         if (channel == 0) {
             return;
         }
@@ -295,14 +297,14 @@ delta_ready:
             }
 
             if (channel->voice != 0) {
-                func_800460D4(&channel->unk14);
+                gComputeSpatialSoundPan(&channel->unk14);
                 func_80047800(channel->voice, channel->unk15,
                               channel->unk14, -1);
                 active++;
                 if (channel->voice->priority != channel->priority) {
                     channel->voice->priority = channel->priority;
-                    func_80046804(channel->voice);
-                    func_800469A0(channel->voice);
+                    gUnlinkSoundBankVoice(channel->voice);
+                    gInsertSoundBankVoiceByPriority(channel->voice);
                 }
                 goto next_channel;
             }
@@ -316,14 +318,14 @@ delta_ready:
                 slot = channel->slot;
                 work = (u32)slot * sizeof(struct SoundBank);
                 bank = (struct SoundBank *)(work + (u32)banks);
-                voice = func_80046B04(channel->unk14, bank->unk13, 0, slot);
+                voice = gAllocPrioritySoundVoice(channel->unk14, bank->unk13, 0, slot);
                 if (voice == 0) {
                     goto next_channel;
                 }
 
                 voice->channel = channel;
                 channel->voice = voice;
-                func_800460D4(&channel->unk14);
+                gComputeSpatialSoundPan(&channel->unk14);
                 started = func_8004772C(bank, voice, channel->unk15,
                                        channel->unk14, -1);
                 release = voice;
@@ -341,7 +343,7 @@ release_current:
             }
 
 release_voice:
-            func_80046698(release);
+            gReleaseSoundVoice(release);
 
 next_channel:
             channel = channel->next;

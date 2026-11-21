@@ -88,14 +88,14 @@ struct Msg_5F6E8 {
     void *unk8;
 };
 
-extern u8 D_8009F378[];
+extern u8 gTracerCoreColour[] __asm__("D_8009F378");
 
 extern void gTransformPartVertex(void *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_80019668(void);
 extern void gNormalizeVector(s32 *vec) __asm__("func_8001A180");
 extern s32 gVectorDot(s32 *coord, s32 *vec) __asm__("func_8001AB00");
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
-extern void func_80047284(s32 id, s32 arg1, s32 arg2, s32 arg3);
+extern void gPlayPositionalSoundEffect(s32 id, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80047284");
 extern void gAttachNearPlayerEffect(void *a0, s32 a1, struct S1_5F6E8 *a2, void *a3, s32 a4, void *a5) __asm__("func_8005BDE4");
 extern void gAttachPartEffect(void *a0, s32 a1, struct S1_5F6E8 *a2, void *a3, s32 a4, void *a5) __asm__("func_8005CBCC");
 extern s32 gWeaponEffectUpdate(void *a0, void *a1, s32 a2) __asm__("func_8005D690");
@@ -103,12 +103,14 @@ extern s32 gSolveLeadDirection(s32 a0, void *a1, s32 a2, s32 a3, void *a4, void 
 extern s32 gSpawnDirectShot(void *a0, s32 a1, void *a2, void *a3, void *a4, void *a5, u32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11) __asm__("func_8005E47C");
 extern s32 gSolveLobVector(s32 a0, void *a1, void *a2, void *a3, s32 a4) __asm__("func_8005E624");
 extern s32 gSpawnLobShot(s32 a0, void *a1, void *a2, void *a3, void *a4, void *a5, void *a6, u32 a7, s32 a8) __asm__("func_8005E9E4");
-extern s32 func_8005EB74(void *a0, void *a1, void *a2, void *a3, void *a4, void *a5, u32 a6);
-extern s32 func_8005ECB8(void *a0, void *a1, void *a2, void *a3, u32 a4);
-extern s32 func_8005EE04(void *a0, void *a1, void *a2, void *a3, void *a4, s32 a5, u32 a6);
-extern s32 func_8005F018(void *a0, void *a1, void *a2, void *a3, s32 a4);
-extern s32 func_800684AC(void *a0, void *a1, void *a2, s32 a3, s32 a4);
+extern s32 gSpawnTargetedShot(void *a0, void *a1, void *a2, void *a3, void *a4, void *a5, u32 a6) __asm__("func_8005EB74");
+extern s32 gSpawnStaticProjectile(void *a0, void *a1, void *a2, void *a3, u32 a4) __asm__("func_8005ECB8");
+extern s32 gSpawnJitterProjectile(void *a0, void *a1, void *a2, void *a3, void *a4, s32 a5, u32 a6) __asm__("func_8005EE04");
+extern s32 gFireRayAttack(void *a0, void *a1, void *a2, void *a3, s32 a4) __asm__("func_8005F018");
+extern s32 gTraceMapRay(void *a0, void *a1, void *a2, s32 a3, s32 a4) __asm__("func_800684AC");
 extern s32 func_8006F0E8(s32 a0, s32 a1, s32 a2, u32 a3, void *a4, void *a5);
+s32 gFireEntityWeapon(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3) __asm__("func_8005F6E8");
+
 
 /**
  * @brief Actor attack dispatcher: resolves the muzzle and aim direction,
@@ -160,7 +162,7 @@ extern s32 func_8006F0E8(s32 a0, s32 a1, s32 a2, u32 a3, void *a4, void *a5);
  * @par Callers
  * func_8002B784, func_8002E630, func_80038A00, func_80060238.
  */
-s32 func_8005F6E8(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3)
+s32 gFireEntityWeapon(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3)
 {
     struct S1_5F6E8 *s1;
     struct S2_5F6E8 *s2;
@@ -206,7 +208,7 @@ s32 func_8005F6E8(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3)
             if ((a3 & 0xFF) == 0) {
                 goto FEEC;
             }
-            ret = func_8005EE04((u8 *)a0->unk0 + 0x0C, (u8 *)a0->unk0 + 0x20,
+            ret = gSpawnJitterProjectile((u8 *)a0->unk0 + 0x0C, (u8 *)a0->unk0 + 0x20,
                                 pos, a1, 0, 0, s4);
             goto FE28;
         }
@@ -268,7 +270,7 @@ s32 func_8005F6E8(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3)
         if ((a3 & 0xFF) == 0) {
             goto FEEC;
         }
-        ret = func_8005ECB8((u8 *)a0->unk0 + 0x0C, (u8 *)a0->unk0 + 0x20,
+        ret = gSpawnStaticProjectile((u8 *)a0->unk0 + 0x0C, (u8 *)a0->unk0 + 0x20,
                             pos, a1, s4);
         goto FE28;
 
@@ -276,7 +278,7 @@ s32 func_8005F6E8(struct S3_5F6E8 *a0, struct S6_5F6E8 *a1, s32 a2, s32 a3)
         if ((a3 & 0xFF) == 0) {
             goto FEEC;
         }
-        ret = func_8005EB74((u8 *)a0->unk0 + 0x0C, (u8 *)a0->unk0 + 0x20,
+        ret = gSpawnTargetedShot((u8 *)a0->unk0 + 0x0C, (u8 *)a0->unk0 + 0x20,
                             pos, a1, s1, (u8 *)s1 + 0x5C, s4);
         goto FE28;
 
@@ -322,8 +324,8 @@ L9B4:
         if ((a3 & 0xFF) == 0) {
             goto FEEC;
         }
-        memcpy(tmp60, D_8009F378, 4);
-        if (func_800684AC(pos, (u8 *)s1 + 0x5C, vec2, 0, 1) == 0) {
+        memcpy(tmp60, gTracerCoreColour, 4);
+        if (gTraceMapRay(pos, (u8 *)s1 + 0x5C, vec2, 0, 1) == 0) {
             *(struct V3_5F6E8 *)vec2 = *(struct V3_5F6E8 *)&s1->unk50;
             if (s1 != 0) {
                 ((struct Msg_5F6E8 *)objBuf)->unk6 = s2->unk1F;
@@ -363,7 +365,7 @@ L9B4:
         if ((a3 & 0xFF) == 0) {
             goto FEEC;
         }
-        func_8005F018(a0, a1, pos, s1, (s2->unk01 == 11) ? 8 : 1);
+        gFireRayAttack(a0, a1, pos, s1, (s2->unk01 == 11) ? 8 : 1);
         ret = 0;
         goto FE28;
 
@@ -371,7 +373,7 @@ L9B4:
         if ((a3 & 0xFF) == 0) {
             goto FEEC;
         }
-        ret = func_8005EE04((u8 *)s2 + 0x0C, (u8 *)s2 + 0x20, pos, a1, vec, 0, s4);
+        ret = gSpawnJitterProjectile((u8 *)s2 + 0x0C, (u8 *)s2 + 0x20, pos, a1, vec, 0, s4);
         goto FE28;
 
     case 9:
@@ -379,7 +381,7 @@ L9B4:
             goto FEEC;
         }
         gSolveLobVector(s2->unk12 << 4, vec, pos, (u8 *)s1 + 0x5C, s2->unk16 << 4);
-        ret = func_8005EE04((u8 *)s2 + 0x0C, (u8 *)s2 + 0x20, pos, a1, vec, 1, s4);
+        ret = gSpawnJitterProjectile((u8 *)s2 + 0x0C, (u8 *)s2 + 0x20, pos, a1, vec, 1, s4);
         goto FE28;
 
     case 13:
@@ -393,7 +395,7 @@ L9B4:
 
     default:
         if (s1 != 0) {
-            if (func_800684AC(pos, (u8 *)s1 + 0x5C, 0, 0, 1) != 0) {
+            if (gTraceMapRay(pos, (u8 *)s1 + 0x5C, 0, 0, 1) != 0) {
                 goto fail;
             }
         }
@@ -447,7 +449,7 @@ FE2C:
     }
 
 FEEC:
-    func_80047284(s2->unk1C, a1->unk50, a1->unk58, -1);
+    gPlayPositionalSoundEffect(s2->unk1C, a1->unk50, a1->unk58, -1);
     return 1;
 
 fail:

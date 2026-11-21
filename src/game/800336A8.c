@@ -13,6 +13,9 @@ struct ObjectReference {
     u8 pad_D0[0x2A];
     u8 dirty;
 };
+void gSetDronePursuitTarget(struct ObjectReference *state,
+                   struct ReferencedObject *object) __asm__("func_800336A8");
+
 
 /**
  * Assigns a non-null target object to an object's reference state.
@@ -34,7 +37,7 @@ struct ObjectReference {
  *   - May update the cached target value at offset 0xCC.
  *   - Clears the flag at offset 0xFA for non-null targets.
  */
-void func_800336A8(struct ObjectReference *state,
+void gSetDronePursuitTarget(struct ObjectReference *state,
                    struct ReferencedObject *object)
 {
     if (object != 0) {

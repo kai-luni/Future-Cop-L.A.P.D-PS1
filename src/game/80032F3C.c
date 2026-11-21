@@ -27,6 +27,8 @@ extern void gVectorScaleInPlace(s32 arg0, void *arg1) __asm__("func_8001AB78");
 extern s32 func_80032180(u32 arg0, void *arg1, s32 arg2, s32 arg3);
 extern s32 gUpdateHoverEnemy(s32 arg0, void *arg1, s32 arg2) __asm__("func_800324E0");
 extern s32 gEntityBaseHandler(u32 message, void *object, s32 arg2, s32 arg3) __asm__("func_8002AD58");
+s32 gHandleTumblingFlyer(u32 arg0, struct Unk32F3C *obj, s32 arg2, s32 arg3) __asm__("func_80032F3C");
+
 
 /**
  * @brief Message handler of a flyer variant: delegates spawn/tick and adds
@@ -56,7 +58,7 @@ extern s32 gEntityBaseHandler(u32 message, void *object, s32 arg2, s32 arg3) __a
  * @par Callers
  * func_800357C0.
  */
-s32 func_80032F3C(u32 arg0, struct Unk32F3C *obj, s32 arg2, s32 arg3)
+s32 gHandleTumblingFlyer(u32 arg0, struct Unk32F3C *obj, s32 arg2, s32 arg3)
 {
     register s32 c25 __asm__("$18");
     register s32 c3 __asm__("$19");

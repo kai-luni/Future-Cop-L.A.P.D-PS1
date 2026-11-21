@@ -71,8 +71,11 @@ struct Unk5EE04Request {
     u32 unk0C;
 };
 
-extern void D_80036E6C();
+extern void gKind7ProjectileHandler() __asm__("D_80036E6C");
 extern void *gSpawnQueuedEntity(struct Unk5EE04Request *request) __asm__("func_8004D444");
+void *gSpawnTargetedShot(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
+                    struct Unk5EE04Ent *ent, u32 arg4, void *arg5, u32 flags) __asm__("func_8005EB74");
+
 
 /**
  * @brief Packs a kind-7 entity spawn request with handler D_80036E6C and queues creation via gSpawnQueuedEntity.
@@ -98,13 +101,13 @@ extern void *gSpawnQueuedEntity(struct Unk5EE04Request *request) __asm__("func_8
  * @par Callers
  * Confirmed: func_8005F6E8 (0x8005F9A4, action case 6) and gWeaponFireDispatch (0x8006B0CC, action case 6) / Likely: none / Unknown: none.
  */
-void *func_8005EB74(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
+void *gSpawnTargetedShot(struct Unk5EE04Obj *obj, s32 **ptr, struct Unk5EE04Vec *pos,
                     struct Unk5EE04Ent *ent, u32 arg4, void *arg5, u32 flags)
 {
     struct Unk5EE04Request request;
     struct Unk5EE04Args args;
 
-    request.handler = D_80036E6C;
+    request.handler = gKind7ProjectileHandler;
     request.unk04 = 0;
     request.args = &args;
     request.unk0C = 0;

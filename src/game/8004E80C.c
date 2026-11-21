@@ -26,9 +26,12 @@ struct Unk4E80CList {
 
 extern struct Unk4E80CList gCommandListHead __asm__("D_800A8F90");
 
-extern s32 func_8004E5F0(struct Unk4E80C *a, struct Unk4E80C *b, s32 c, s32 d);
-extern s32 func_800684AC(void *a, void *b, s32 c, s32 d, s32 e);
+extern s32 gCheckTargetRangeAndCone(struct Unk4E80C *a, struct Unk4E80C *b, s32 c, s32 d) __asm__("func_8004E5F0");
+extern s32 gTraceMapRay(void *a, void *b, s32 c, s32 d, s32 e) __asm__("func_800684AC");
 extern s32 func_80019668(void);
+struct Unk4E80C *gFindTargetEntity(struct Unk4E80C *ctx, s32 type, s32 val, s32 mode,
+                               s32 arg4, s32 arg5, u8 flag) __asm__("func_8004E80C");
+
 
 /**
  * @brief Picks an object out of the global candidate list by class filter,
@@ -85,7 +88,7 @@ extern s32 func_80019668(void);
  * func_8002CC30, func_800324E0, gGuidedProjectileUpdate (two sites), func_8004F330,
  * func_800600E8.
  */
-struct Unk4E80C *func_8004E80C(struct Unk4E80C *ctx, s32 type, s32 val, s32 mode,
+struct Unk4E80C *gFindTargetEntity(struct Unk4E80C *ctx, s32 type, s32 val, s32 mode,
                                s32 arg4, s32 arg5, u8 flag)
 {
     struct Unk4E80C *best;
@@ -144,14 +147,14 @@ struct Unk4E80C *func_8004E80C(struct Unk4E80C *ctx, s32 type, s32 val, s32 mode
             if (flag) {
                 if ((o->unk19 & 0xF) < prio) continue;
             }
-            r = func_8004E5F0(ctx, o, arg4, arg5);
+            r = gCheckTargetRangeAndCone(ctx, o, arg4, arg5);
             if (r < 0) continue;
             if (r >= bestVal) {
                 if (!flag) continue;
                 if (!(prio < (o->unk19 & 0xF))) continue;
             }
             if (mode != 1) {
-                if (func_800684AC(ctx->unk5C, o->unk5C, 0, 0, 0) != 0) continue;
+                if (gTraceMapRay(ctx->unk5C, o->unk5C, 0, 0, 0) != 0) continue;
             }
             bestVal = r;
             best = o;

@@ -19,10 +19,12 @@ struct Unk47088Stream {
 
 extern struct Unk47088Stream gStreamTable[] __asm__("D_800A1810");
 
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void func_800243F8(s8 *arg0);
-extern void func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle,
-                          struct Unk47088Object *object);
+extern void gPlaySoundIdOnVoice(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle,
+                          struct Unk47088Object *object) __asm__("func_80046E88");
+void gApplyAnimationSoundEvent(s32 arg0, struct Unk47088Object *object) __asm__("func_80047088");
+
 
 /**
  * @brief Switches or re-triggers the music track that belongs to an object.
@@ -56,7 +58,7 @@ extern void func_80046E88(s32 track, s32 arg1, s32 arg2, s32 arg3, s32 handle,
  * @par Callers
  * Confirmed: func_800267C8, func_800588D4.
  */
-void func_80047088(s32 arg0, struct Unk47088Object *object)
+void gApplyAnimationSoundEvent(s32 arg0, struct Unk47088Object *object)
 {
     struct Unk47088Stream *stream;
     s32 track;
@@ -68,12 +70,12 @@ void func_80047088(s32 arg0, struct Unk47088Object *object)
 
         if (stream->playing != 0) {
             if (track == stream->track) {
-                voice = (s32 *)func_80046C84(track | 0x38, (s32)object);
+                voice = (s32 *)gPlayNonpositionalSoundEffect(track | 0x38, (s32)object);
                 if (voice != 0) {
                     voice[2] -= 0x64;
                 }
             } else {
-                func_80046C84(stream->track + 0x32, (s32)object);
+                gPlayNonpositionalSoundEffect(stream->track + 0x32, (s32)object);
                 func_800243F8((s8 *)stream->handle);
                 stream->playing = 0;
             }
@@ -82,10 +84,10 @@ void func_80047088(s32 arg0, struct Unk47088Object *object)
         if (track != 7 && stream->playing == 0) {
             stream->track = track;
             if (track != 6) {
-                func_80046E88(track + 0x22, 0, 0, -1, stream->handle, object);
+                gPlaySoundIdOnVoice(track + 0x22, 0, 0, -1, stream->handle, object);
                 stream->playing = 1;
             } else {
-                voice = (s32 *)func_80046C84(0x3D, (s32)object);
+                voice = (s32 *)gPlayNonpositionalSoundEffect(0x3D, (s32)object);
                 if (voice != 0) {
                     voice[2] -= 0x64;
                 }

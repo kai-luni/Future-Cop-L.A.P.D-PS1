@@ -58,7 +58,7 @@ typedef struct {
 } Unk39E8C_I;
 
 extern s32 gEntityBaseHandler(s32, Unk39E8C_O *, Unk39E8C_A *) __asm__("func_8002AD58");
-extern s32 func_80067684(void *, s32);
+extern s32 gQuerySurfaceHeight(void *, s32) __asm__("func_80067684");
 extern void gInitRailSegment(void *, void *, s32, void *, void *) __asm__("func_80050E0C");
 
 /**
@@ -106,11 +106,11 @@ void func_80039E8C(s32 arg0, Unk39E8C_O *obj, Unk39E8C_A *arg2)
 
     gEntityBaseHandler(arg0, obj, arg2);
     in = (Unk39E8C_I *)arg2->unk08;
-    obj->unk54 = obj->unk60 = func_80067684(&obj->unk50, -1);
+    obj->unk54 = obj->unk60 = gQuerySurfaceHeight(&obj->unk50, -1);
     gInitRailSegment(&in->unk24, (u8 *)obj + 0xA0, arg2->unk04->unk18, obj, &obj->unk50);
     obj->unk24 &= 0x7FFFFFFF;
     if (arg2->unk04->unk18 == 0) {
-        obj->unk54 = func_80067684(&obj->unk50, -1) + in->unk28 * 16;
+        obj->unk54 = gQuerySurfaceHeight(&obj->unk50, -1) + in->unk28 * 16;
     }
     obj->unk134 = in->unk38;
     obj->unk136 = (in->unk3A << 8) / 300;

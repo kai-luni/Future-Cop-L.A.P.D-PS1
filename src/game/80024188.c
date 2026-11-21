@@ -12,7 +12,7 @@ struct Unk4749CHandle {
 };
 
 extern struct Unk4749CHandle gAssetHandle __asm__("D_800A0A80");
-extern s32 func_800474C4(struct Unk4749CHandle *handle);
+extern s32 gValidateSoundVoiceHandle(struct Unk4749CHandle *handle) __asm__("func_800474C4");
 
 s32 gGetTrackedSoundVoice(void) __asm__("func_80024188");
 
@@ -42,7 +42,7 @@ s32 gGetTrackedSoundVoice(void)
 {
     register s32 value __asm__("$4");
 
-    if ((u8)func_800474C4(&gAssetHandle) == 1) {
+    if ((u8)gValidateSoundVoiceHandle(&gAssetHandle) == 1) {
         value = (s32)gAssetHandle.resource;
     } else {
         value = 0;

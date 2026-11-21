@@ -12,7 +12,7 @@ extern s32 gScalarCursor __asm__("D_8009F8F8");
 extern  s32 gScalarCursor_arr[] __asm__("D_8009F8F8");
 extern u16 gStatusTextId __asm__("D_8009F92A");
 extern u8 gPasswordBuffer[] __asm__("D_800A3948");
-extern u8 D_800A3938[];
+extern u8 gPackedPasswordBytes[] __asm__("D_800A3938");
 extern u8 gHexDigitTable[] __asm__("D_8009C1AC");
 extern u8 gOctalDigitTable[] __asm__("D_8009C1BC");
 extern u8 gHighlightShadeTable[8] __asm__("D_8009F3F8");
@@ -20,7 +20,7 @@ extern s32 gGameClock[] __asm__("D_8009FA60");
 extern void *jtbl_800121A4[];
 
 extern s32 gApplyPasswordUnlocks(void) __asm__("func_8007EA78");
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void func_80078740(void);
 extern void func_800493C0(u32 index, u8 blue, u8 green, u8 red);
 extern void func_800788F0(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
@@ -54,7 +54,7 @@ extern void gDecodeCodeDisplay(s32 input0, s32 input1, s32 input2, s32 input3, s
     odd = gOctalDigitTable;
     even = gHexDigitTable;
     dst = buf;
-    src = D_800A3938;
+    src = gPackedPasswordBytes;
     do {
         if (i & 1) {
             letter = (u8 *)(((*src + i) & 7) + (u32)odd);

@@ -15,9 +15,9 @@ extern s32 func_80044B34(u8 *, void *, s32, s32);
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern void func_8002E528(u8 *);
 extern void func_8002E2BC(u8 *, s32);
-extern u8 func_80060238(void *, s32, u8 *, s32, s32);
+extern u8 gStepAttackScheduler(void *, s32, u8 *, s32, s32) __asm__("func_80060238");
 extern void func_800448D8(void *, s32, s32, u8);
-extern void func_8005F6E8(void *, u8 *, u8 *, s32);
+extern void gFireEntityWeapon(void *, u8 *, u8 *, s32) __asm__("func_8005F6E8");
 extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
@@ -216,7 +216,7 @@ s32 gTickActor(u8 *obj, s32 dt)
         W(obj,0x54) += W(obj,0x104);
         W(obj,0x58) += W(obj,0x108);
         U(obj,0xA4) = t0 & 0xFFF8;
-        if (func_80060238(obj + 0xA0, dt, obj, 0, 0)) {
+        if (gStepAttackScheduler(obj + 0xA0, dt, obj, 0, 0)) {
             if ((B(obj,0xDD) & 0x80) && H(obj,0xD4) != H(P(obj,0xCC),6)) {
                 goto after_timer;
             }
@@ -266,11 +266,11 @@ case_2:
                 sw = s0 & 0x3F;
                 switch (sw) {
                 case 2:
-                    func_8005F6E8(obj + 0xA0, obj, obj, 1);
+                    gFireEntityWeapon(obj + 0xA0, obj, obj, 1);
                     break;
                 case 1:
                     if (H(obj,0xE2) > 0 && B(obj,0xD9) != B(obj,0x110)) {
-                        if (func_80060238(obj + 0xA0, dt, obj, 0, 0)) {
+                        if (gStepAttackScheduler(obj + 0xA0, dt, obj, 0, 0)) {
                             func_800448D8(s2, B(obj,0x110), 1, 1);
                         }
                     }
@@ -279,7 +279,7 @@ case_2:
             }
         }
     } else {
-        func_80060238(obj + 0xA0, dt, obj, 0, 1);
+        gStepAttackScheduler(obj + 0xA0, dt, obj, 0, 1);
     }
     if ((B(obj,0xDD) & 0x10) || ((B(obj,0xDD) & 4) && P(obj,0xB8))) {
         if (B(obj,0xDD) & 0x10) {

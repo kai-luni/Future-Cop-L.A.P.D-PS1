@@ -107,7 +107,7 @@ extern struct CandList gCommandListHead __asm__("D_800A8F90");
 extern struct Tgt *gSpawnMotionContext __asm__("D_8009F374");
 
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
-extern s32 func_800684AC(struct Vec3 *a, struct Vec3 *b, struct Vec3 *out, s32 c, s32 d);
+extern s32 gTraceMapRay(struct Vec3 *a, struct Vec3 *b, struct Vec3 *out, s32 c, s32 d) __asm__("func_800684AC");
 extern s32 func_80019FCC(struct Vec3 *v);
 extern s32 gSqrt12(s32 v) __asm__("func_80095900");
 extern void func_8005C184(struct Vec3 *v, s32 a, struct Target *t);
@@ -227,7 +227,7 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
         tail = tail->next;
     }
     if (head->next != 0) {
-        if (func_800684AC(&tgt->pos, &tail->pos, &t.v, 0, 1) != 0) {
+        if (gTraceMapRay(&tgt->pos, &tail->pos, &t.v, 0, 1) != 0) {
             bx = tgt->pos.x;
             ay = t.v.y;
             msg.vec.y = ay - tgt->pos.y;
@@ -269,7 +269,7 @@ void func_8005C344(struct Owner *arg0, struct Target *tgt)
             }
         }
     } else {
-        if (func_800684AC(&tgt->pos, &head->pos, &t.v, 0, 1) != 0) {
+        if (gTraceMapRay(&tgt->pos, &head->pos, &t.v, 0, 1) != 0) {
             if (tgt->flags & 2) {
                 head->flags |= 1;
             } else {

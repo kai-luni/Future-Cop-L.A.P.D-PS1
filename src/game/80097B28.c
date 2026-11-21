@@ -10,7 +10,7 @@ extern s32 gArenaOffsetFlag __asm__("D_8009EA3C");
 extern s32 gArenaCursor __asm__("D_8009EA40");
 extern s32 gSpuAddrShift __asm__("D_8009EECC");
 extern s32 gSpuAlignMask __asm__("D_8009EED4");
-extern s32 D_8009EF04;
+extern s32 gSpuEntryTableCapacity __asm__("D_8009EF04");
 extern s32 gTableCursor __asm__("D_8009EF08");
 extern Block *gSpuEntryTable __asm__("D_8009EF0C");
 
@@ -103,7 +103,7 @@ s32 func_80097B28(s32 size)
         goto search_done;
     }
     gSpuCompactPool();
-    count = D_8009EF04;
+    count = gSpuEntryTableCapacity;
     if (i < count) {
         u32 alloc = 0x40000000;
         u32 used = 0x80000000;
@@ -132,7 +132,7 @@ search_done:
     __asm__("" : "=r"(entry) : "0"(entry));
     flags = entry->flags;
     if (flags & special) {
-        if (found < D_8009EF04 &&
+        if (found < gSpuEntryTableCapacity &&
             entry->size - (u32)offset >= (u32)size) {
             register u32 mask __asm__("$5") = 0x0FFFFFFF;
             register s32 next __asm__("$4");
@@ -154,7 +154,7 @@ search_done:
     u32 esize = entry->size;
     if ((u32)size < esize) {
         s32 j = gTableCursor;
-        if (j < D_8009EF04) {
+        if (j < gSpuEntryTableCapacity) {
             u32 nf = flags + (u32)size;
             u32 of = table[j].flags;
             u32 os = table[j].size;

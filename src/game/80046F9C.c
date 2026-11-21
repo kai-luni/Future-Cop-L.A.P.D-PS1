@@ -14,14 +14,16 @@ struct SoundBank {
     s32 head;
 };
 
-extern volatile u8 D_8009F340;
+extern volatile u8 gSoundProcessingEnabled __asm__("D_8009F340");
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
-extern s32 func_800458E8(s32 arg0, s32 arg1, s8 *mix, s32 arg3);
-extern s32 func_80046B04(s32 volume, s32 arg1, s32 arg2, u32 index);
-extern void func_800460D4(s8 *mix);
+extern s32 gComputeSpatialSoundAttenuation(s32 arg0, s32 arg1, s8 *mix, s32 arg3) __asm__("func_800458E8");
+extern s32 gAllocPrioritySoundVoice(s32 volume, s32 arg1, s32 arg2, u32 index) __asm__("func_80046B04");
+extern void gComputeSpatialSoundPan(s8 *mix) __asm__("func_800460D4");
 extern u8 func_8004772C(struct SoundBank *bank, s32 handle, s32 pan, s32 volume, s32 extra);
-extern void func_80046698(s32 handle);
+extern void gReleaseSoundVoice(s32 handle) __asm__("func_80046698");
+s32 gPlaySpatialSoundBankSlot(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4) __asm__("func_80046F9C");
+
 
 /**
  * @brief Starts a sound bank entry as a positional sound effect and returns its voice handle, or 0 when any guard fails.
@@ -48,7 +50,7 @@ extern void func_80046698(s32 handle);
  * @par Callers
  * Confirmed: func_80046C84 (SE by id, position 0,0, class 1), func_80046CF0 (looping weapon sound, class 0), func_80047284 (positional one-shot, class 1).
  */
-s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4)
+s32 gPlaySpatialSoundBankSlot(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4)
 {
     struct SoundBank *bank;
     register s32 handle __asm__("$17");
@@ -57,7 +59,7 @@ s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4)
     register u32 enabled __asm__("$2");
     s8 mix[0x18];
 
-    enabled = D_8009F340;
+    enabled = gSoundProcessingEnabled;
     arg4Value = arg4;
     __asm__("" : "=r"(arg4Value) : "0"(arg4Value));
     indexValue = index;
@@ -74,14 +76,14 @@ s32 func_80046F9C(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4)
     if (bank->count == 0) {
         return handle;
     }
-    if (func_800458E8(arg0, arg1, mix, arg3) == 0) {
+    if (gComputeSpatialSoundAttenuation(arg0, arg1, mix, arg3) == 0) {
         return handle;
     }
-    handle = func_80046B04(mix[0], bank->unk13, (s8)arg4Value, indexValue);
+    handle = gAllocPrioritySoundVoice(mix[0], bank->unk13, (s8)arg4Value, indexValue);
     if (handle != 0) {
-        func_800460D4(mix);
+        gComputeSpatialSoundPan(mix);
         if (func_8004772C(bank, handle, mix[1], mix[0], -1) == 0) {
-            func_80046698(handle);
+            gReleaseSoundVoice(handle);
             handle = 0;
         }
     }

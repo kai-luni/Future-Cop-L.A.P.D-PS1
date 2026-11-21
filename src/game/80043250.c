@@ -19,6 +19,8 @@ typedef struct {
     u8 unk9C[0x0A];
     s16 a6;
 } Unk43250;
+void gComputeEmitterColorRates(Unk43250 *p) __asm__("func_80043250");
+
 
 /**
  * @brief Computes Q12 per-tick colour-channel step deltas (+0x96..+0x9A) for a particle emitter block.
@@ -40,7 +42,7 @@ typedef struct {
  * @par Callers
  * Confirmed: func_80043430 (particle/effect emitter initializer).
  */
-void func_80043250(Unk43250 *p)
+void gComputeEmitterColorRates(Unk43250 *p)
 {
     if (p->flags & 0x01) {
         if (p->a6 < 0x10) {

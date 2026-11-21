@@ -111,7 +111,7 @@ extern void gNormalizeVector(s32 *vec) __asm__("func_8001A180");
 extern void gBuildBasisFromAxis(s32 *a, s32 *b) __asm__("func_800193F8");
 extern s32 func_8003BF50(struct Unk5CBCCArg0 *arg0);
 extern s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
-extern void D_8005CA04(void);
+extern void gAttachedPartEffectHandler(void) __asm__("D_8005CA04");
 
 /**
  * @brief Attaches a modelled sprite effect to one part of an object and submits it
@@ -241,7 +241,7 @@ void gAttachPartEffect(struct Unk5CBCCArg0 *arg0, s32 arg1, struct Unk5CBCCArg2 
         *p |= 1;
 
         node->self = node;
-        node->callback = D_8005CA04;
+        node->callback = gAttachedPartEffectHandler;
 
         if (gSpawnTypeAtOwner(0, arg5->unk0F, local.flag ? (s32)&local : 0, row,
                           (s32)&node->self) == 0) {

@@ -57,7 +57,7 @@ struct Unk31690Sub {
     u8 unk23[5];
 };
 
-extern void D_8003190C(void);
+extern void gSourceModelEntityHandler(void) __asm__("D_8003190C");
 extern u8 gSpawnSceneNode(struct Unk31690Sub *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_80083A10");
 extern s32 func_8004D4D4(struct Unk31690Request *request);
 
@@ -105,7 +105,7 @@ s32 func_80031690(struct Entity *self)
         }
     }
 
-    request.handler = D_8003190C;
+    request.handler = gSourceModelEntityHandler;
     request.unk04 = 0;
     request.args = &args;
     request.unk0C = 0;

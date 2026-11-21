@@ -3,6 +3,8 @@
 
 extern void func_80019A74(s32 *value);
 extern s32 gRequestOffsetBias __asm__("D_8009F9F4");
+void gRegisterResourceWithBias(s32 *value) __asm__("func_8004D924");
+
 
 /**
  * @brief Marks a resource as released and latches its pointer.
@@ -21,7 +23,7 @@ extern s32 gRequestOffsetBias __asm__("D_8009F9F4");
  * @par Callers
  * Unknown: no direct edge in edges.json.
  */
-void func_8004D924(s32 *value)
+void gRegisterResourceWithBias(s32 *value)
 {
     func_80019A74(value);
     gRequestOffsetBias = *value;

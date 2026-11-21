@@ -7,6 +7,8 @@ struct Unk42864 {
     u8 first;
     u8 second;
 };
+void gDrainParticleColor(struct Unk42864 *object, s32 amount) __asm__("func_80042864");
+
 
 /**
  * @brief Drains a three-stage budget (second, first, total) by an amount,
@@ -32,7 +34,7 @@ struct Unk42864 {
  * @par Callers
  * func_800437E8, func_80043CA8.
  */
-void func_80042864(struct Unk42864 *object, s32 amount)
+void gDrainParticleColor(struct Unk42864 *object, s32 amount)
 {
     if (object->total == 0) {
         return;

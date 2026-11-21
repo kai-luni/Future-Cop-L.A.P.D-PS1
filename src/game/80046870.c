@@ -20,13 +20,15 @@ struct SoundVoice {
 };
 
 extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
-extern s32 D_8009F748;
+extern s32 gPrioritySoundVoiceCount __asm__("D_8009F748");
 extern struct SoundVoice *gVoiceList __asm__("D_8009F74C");
-extern s32 D_8009F750;
-extern struct SoundVoice *D_8009F754;
-extern s32 D_8009F758;
+extern s32 gClass0SoundVoiceCount __asm__("D_8009F750");
+extern struct SoundVoice *gClass2SoundVoiceList __asm__("D_8009F754");
+extern s32 gClass2SoundVoiceCount __asm__("D_8009F758");
 
-extern void func_800469A0(struct SoundVoice *voice);
+extern void gInsertSoundBankVoiceByPriority(struct SoundVoice *voice) __asm__("func_800469A0");
+void gLinkActiveSoundVoice(struct SoundVoice *voice) __asm__("func_80046870");
+
 
 /**
  *  @brief Inserts a sound voice into the list selected by its pan field.
@@ -46,7 +48,7 @@ extern void func_800469A0(struct SoundVoice *voice);
  *  @par Callers
  *  Confirmed: func_80046B04.
  */
-void func_80046870(struct SoundVoice *voice)
+void gLinkActiveSoundVoice(struct SoundVoice *voice)
 {
     struct SoundVoice *prev;
     struct SoundVoice *next;
@@ -59,16 +61,16 @@ void func_80046870(struct SoundVoice *voice)
         voice->prev = 0;
         voice->next = gVoiceList;
         gVoiceList = voice;
-        D_8009F750++;
+        gClass0SoundVoiceCount++;
         break;
     case 2:
-        if (D_8009F754 != 0) {
-            D_8009F754->prev = voice;
+        if (gClass2SoundVoiceList != 0) {
+            gClass2SoundVoiceList->prev = voice;
         }
         voice->prev = 0;
-        voice->next = D_8009F754;
-        D_8009F754 = voice;
-        D_8009F758++;
+        voice->next = gClass2SoundVoiceList;
+        gClass2SoundVoiceList = voice;
+        gClass2SoundVoiceCount++;
         break;
     default:
         prev = 0;
@@ -88,11 +90,11 @@ void func_80046870(struct SoundVoice *voice)
         if (next != 0) {
             next->prev = voice;
         }
-        D_8009F748++;
+        gPrioritySoundVoiceCount++;
         break;
     }
 
     if (voice->bank != 0xFF) {
-        func_800469A0(voice);
+        gInsertSoundBankVoiceByPriority(voice);
     }
 }

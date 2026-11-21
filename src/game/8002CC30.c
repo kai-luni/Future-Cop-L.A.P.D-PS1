@@ -23,11 +23,11 @@ struct Obj {
     s16 speed, range, heading, padEE, timer, yaw, pitch;
 };
 extern void func_8002CB20(struct Obj *);
-extern void func_80060238(void *, s32, struct Obj *, s32, s32);
+extern void gStepAttackScheduler(void *, s32, struct Obj *, s32, s32) __asm__("func_80060238");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
-extern struct Obj *func_8004E80C(struct Obj *, s32, s32, s32, s32, s32, s32);
+extern struct Obj *gFindTargetEntity(struct Obj *, s32, s32, s32, s32, s32, s32) __asm__("func_8004E80C");
 extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
 extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
 extern void func_80044B34(struct Obj *, void *, s32, s32);
@@ -169,7 +169,7 @@ s32 gUpdatePropTick(struct Obj *self, s32 dt)
 
     if (self->commands[0]) func_8002CB20(self);
     if (!self->model) return 0;
-    if (self->script) func_80060238(&self->script, dt, self, 0, 1);
+    if (self->script) gStepAttackScheduler(&self->script, dt, self, 0, 1);
     if (self->flags & 4) goto done;
     if (self->flags & 2) {
         self->yaw = (self->yaw + dt * self->speed) & 0xfff;
@@ -192,7 +192,7 @@ s32 gUpdatePropTick(struct Obj *self, s32 dt)
         }
         self->timer -= dt;
         if (self->timer <= 0) {
-            self->found = func_8004E80C(self, self->mode, self->type, 1, self->range << 4, 0xffff0000, 0);
+            self->found = gFindTargetEntity(self, self->mode, self->type, 1, self->range << 4, 0xffff0000, 0);
             self->timer = 1500;
             if (self->found) self->foundId = self->found->id;
         }

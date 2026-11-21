@@ -1,7 +1,7 @@
 // Categories: Game Engine > State
 #include "game/types.h"
 
-extern u8 D_8009F340;
+extern u8 gSoundProcessingEnabled __asm__("D_8009F340");
 
 /**
  *  @brief Clears a global byte.
@@ -21,5 +21,5 @@ extern u8 D_8009F340;
  */
 void func_80044FEC(void)
 {
-    D_8009F340 = 0;
+    gSoundProcessingEnabled = 0;
 }

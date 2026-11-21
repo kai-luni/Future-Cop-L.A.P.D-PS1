@@ -59,7 +59,7 @@ void gApplyControllerPreset(s32 port, s32 value) __asm__("func_8007BFCC");
 
 void gApplyControllerPreset(s32 port, s32 value)
 {
-    extern u8 D_8009FA99[];
+    extern u8 gPort2ControllerPresetIndex[] __asm__("D_8009FA99");
     s32 clampedPort;
     s32 clampedValue;
     u8 *dst;
@@ -89,7 +89,7 @@ void gApplyControllerPreset(s32 port, s32 value)
     }
     value = clampedValue;
 
-    ((u8 *)D_8009FA99 - 1)[port] = value;
+    ((u8 *)gPort2ControllerPresetIndex - 1)[port] = value;
     src = gPresetByteTable + value * 14;
     i = 0;
     base = gPadMappingTable;

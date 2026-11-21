@@ -3,6 +3,8 @@ typedef unsigned char u8;
 typedef signed char s8;
 extern u8 gTileCornerIndices[][4] __asm__("D_8009AFE8");
 extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
+int gSampleTileHeight(s8 *data, unsigned int index, int x, int y, int *out) __asm__("func_80067480");
+
 
 /**
  * @brief Samples and interpolates a terrain surface height within a map sub-cell.
@@ -27,7 +29,7 @@ extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
  * @par Callers
  * Confirmed: func_80066F78 (0x80067120), func_80067684 (0x800677CC) / Likely: none / Unknown: none.
  */
-int func_80067480(s8 *data, unsigned int index, int x, int y, int *out)
+int gSampleTileHeight(s8 *data, unsigned int index, int x, int y, int *out)
 {
     int a, b, c, d;
     int left, right;

@@ -14,7 +14,9 @@ extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 extern void func_80031BEC(s32 id, s32 kind, s32 mode);
 extern void func_8003FD6C();
 extern void gSetScriptTimerCount(s32 index, s32 kind, s32 value) __asm__("func_8004953C");
-extern u8 func_8004DA84(struct Entity *entity, s32 kind, s32 value, s32 retry);
+extern u8 gSendEntityCommand(struct Entity *entity, s32 kind, s32 value, s32 retry) __asm__("func_8004DA84");
+void gSendCommandByTag(s32 arg0, s32 kind, s32 value) __asm__("func_8004DC64");
+
 
 /**
  *  @brief Dispatches a kind and value to a special handler or matching entities.
@@ -37,7 +39,7 @@ extern u8 func_8004DA84(struct Entity *entity, s32 kind, s32 value, s32 retry);
  *  @par Callers
  *  Confirmed: func_80069D68.
  */
-void func_8004DC64(s32 arg0, s32 kind, s32 value)
+void gSendCommandByTag(s32 arg0, s32 kind, s32 value)
 {
     struct Entity *entity;
 
@@ -55,7 +57,7 @@ void func_8004DC64(s32 arg0, s32 kind, s32 value)
 
     for (entity = gUnitListHead; entity != 0; entity = entity->next) {
         if (entity->unk14 == arg0 && entity->id != 0) {
-            func_8004DA84(entity, kind, value, 1);
+            gSendEntityCommand(entity, kind, value, 1);
         }
     }
 }

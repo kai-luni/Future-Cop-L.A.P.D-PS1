@@ -86,14 +86,14 @@ extern struct Glob *gGameSession __asm__("D_8009FA94");
 extern struct Unit *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *gPlayerEntities __asm__("D_8009FA58");
-extern u8 D_8009AC50[];
-extern u8 D_8009AC54[];
+extern u8 gDroneSlotClaimOrder[] __asm__("D_8009AC50");
+extern u8 gDroneAlternateSlotClaimOrder[] __asm__("D_8009AC54");
 
 extern s32 func_80019668(void);
-extern void func_80033608(struct Unit *self, void *anim);
-extern void func_800336A8(struct Unit *self, void *anim);
+extern void gSetDroneAttackTarget(struct Unit *self, void *anim) __asm__("func_80033608");
+extern void gSetDronePursuitTarget(struct Unit *self, void *anim) __asm__("func_800336A8");
 extern s32 gSqrt12(s32 v) __asm__("func_80095900");
-extern void func_800330E8(struct Unit *self);
+extern void gUpdateDroneStrategicPosition(struct Unit *self) __asm__("func_800330E8");
 
 #define G gGameSession
 #define GC(i, k) (((s32 *)((s32)((i) << 3) + (s32)G))[0x30 + (k)])
@@ -182,15 +182,17 @@ extern void func_800330E8(struct Unit *self);
             FMUL(m1_, ex_, ex_);                                           \
             FMUL(m2_, ez_, ez_);                                           \
             lt_ = (gSqrt12(m1_ + m2_) << 2) < (self->aa << 4); if (lt_) {       \
-                func_80033608(self, (q_));                                  \
+                gSetDroneAttackTarget(self, (q_));                                  \
             }                                                              \
         }                                                                  \
         if (self->c8 != (q_)) {                                             \
-            func_800336A8(self, (q_));                                      \
+            gSetDronePursuitTarget(self, (q_));                                      \
         }                                                                  \
     }
 
 extern int abs(int);
+void gUpdateDroneStrategy(struct Unit *self) __asm__("func_800336DC");
+
 
 /**
  * Updates the strategic AI controller for a Precinct Assault unit.
@@ -389,7 +391,7 @@ extern int abs(int);
  *   address 0x8009FA94 as a 0xF4-byte screen state block, so the two views
  *   must be treated as a union that is reused between modes.
  */
-void func_800336DC(struct Unit *self)
+void gUpdateDroneStrategy(struct Unit *self)
 {
     s32 c10;
     s32 d14, d18, d1C, d20, d24, d28, d2C, d30, d34, d38, d3C, d40, d44, d48;
@@ -558,7 +560,7 @@ void func_800336DC(struct Unit *self)
     L_c5:
         APPROACH(c5)
     } else if (cntA < 10) {
-        if (self->c8 != gPlayerEntities) func_800336A8(self, gPlayerEntities);
+        if (self->c8 != gPlayerEntities) gSetDronePursuitTarget(self, gPlayerEntities);
     } else {
         self->ai->mode = 0;
         G->f9C = 0;
@@ -575,15 +577,15 @@ L402C:
     if (n58 != 0 && d28 <= 0x77FFF) {
         if (self->c8 != n58) {
             if (self->b8 == 0 && n64 != 0 && d44 <= 0xFFFF) {
-                if (self->c8 != n64) func_800336A8(self, n64);
+                if (self->c8 != n64) gSetDronePursuitTarget(self, n64);
             } else {
-                func_800336A8(self, n58);
+                gSetDronePursuitTarget(self, n58);
             }
         }
     } else if (n50 != 0 && d24 <= 0x67FFF) {
         if (self->c8 != n50) {
-            func_80033608(self, 0);
-            func_800336A8(self, n50);
+            gSetDroneAttackTarget(self, 0);
+            gSetDronePursuitTarget(self, n50);
         }
     } else {
         self->ai->mode = 0;
@@ -606,11 +608,11 @@ L4170:
                     FMUL(m1_, ex_, ex_);
                     FMUL(m2_, ez_, ez_);
                     lt_ = (gSqrt12(m1_ + m2_) << 2) < (self->aa << 4); if (lt_) {
-                        func_80033608(self, c1);
+                        gSetDroneAttackTarget(self, c1);
                     }
                 }
                 if (self->c8 != c1) {
-                    func_800336A8(self, c1);
+                    gSetDronePursuitTarget(self, c1);
                     G->fE0 = 3;
                 }
             }
@@ -620,12 +622,12 @@ L4170:
             APPROACH(n4C)
         } else if (n64 != 0 && d44 <= 0x5FFFF) {
         L_n64:
-            if (self->c8 != n64) func_800336A8(self, n64);
+            if (self->c8 != n64) gSetDronePursuitTarget(self, n64);
         } else if (c9aB != 0 && d34 <= 0x2FFFF) {
             APPROACH(c9aB)
         } else if (n60 != 0 && d40 <= 0x4FFFF) {
         L_n60:
-            if (self->c8 != n60) func_800336A8(self, n60);
+            if (self->c8 != n60) gSetDronePursuitTarget(self, n60);
         } else if (c9bB != 0 && d38 <= 0x2FFFF) {
             if (self->c8 != c9bB || self->b8 != c9bB) {
                 if (self->b8 != c9bB) {
@@ -642,11 +644,11 @@ L4170:
                     FMUL(m2_, ez_, ez_);
                     gSqrt12(m1_ + m2_);
                     if (d38 < (self->aa << 4)) {
-                        func_80033608(self, c9bB);
+                        gSetDroneAttackTarget(self, c9bB);
                     }
                 }
                 if (self->c8 != c9bB) {
-                    func_800336A8(self, c9bB);
+                    gSetDronePursuitTarget(self, c9bB);
                 }
             }
         } else if (n64 != 0) {
@@ -656,7 +658,7 @@ L4170:
         } else {
             if (self->fa != 1) {
                 self->fa = 1;
-                func_800330E8(self);
+                gUpdateDroneStrategicPosition(self);
             }
         }
         if (c1 != 0 && self->b8 != c1 && (self->b8 == 0 || (self->b8 != n54 && self->b8 != n4C))) {
@@ -672,13 +674,13 @@ L4170:
             FMUL(m1_, ex_, ex_);
             FMUL(m2_, ez_, ez_);
             lt_ = (gSqrt12(m1_ + m2_) << 2) < (self->aa << 4); if (lt_) {
-                func_80033608(self, c1);
+                gSetDroneAttackTarget(self, c1);
                 G->fE0 = 2;
             }
         }
     }
-    if (mode != self->ai->mode) func_800330E8(self);
-    if (self->b8 == 0 && self->aq6 != 4) func_80033608(self, 0);
+    if (mode != self->ai->mode) gUpdateDroneStrategicPosition(self);
+    if (self->b8 == 0 && self->aq6 != 4) gSetDroneAttackTarget(self, 0);
 
     if (self->ai->mode == 2) {
         if (G->s4C >= 9
@@ -742,7 +744,7 @@ L4170:
         i = 0;
         c10 = 0;
         do {
-            s32 idx = (self->ai->c1C == 1 ? D_8009AC54 : D_8009AC50)[i];
+            s32 idx = (self->ai->c1C == 1 ? gDroneAlternateSlotClaimOrder : gDroneSlotClaimOrder)[i];
             if (G->a0[idx] == 0) {
                 if (G->f68 >= 0x1E) {
                     if (G->f88 == 0) gSinglePlayerEntity->ai->s4C = gFrameTime;

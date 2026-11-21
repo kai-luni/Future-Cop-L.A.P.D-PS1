@@ -33,7 +33,7 @@ extern s32 gCdReadCursorPtr[] __asm__("D_8009CBD8");
 extern s32 gCdReadSectorPtr[] __asm__("D_8009CBF0");
 extern s32 gCdUseDmaFlag __asm__("D_8009C814");
 extern void (*gCdReadCallback)(s32, s32) __asm__("D_8009C810");
-extern s32 D_800908A0[];
+extern s32 gCdPauseCompletionCallbackAddress[] __asm__("D_800908A0");
 extern char gCdSectorErrMsg[] __asm__("D_8001279C");
 extern void gCdDmaCompleteCb(void) __asm__("func_80090B48");
 
@@ -151,7 +151,7 @@ void gCdDataReadyCallback(u8 mode, s32 arg1)
         if (gCdUseDmaFlag & 1) {
             gSetCdDmaCallback(st->callback3);
         }
-        gSetCdSyncCallback((s32)D_800908A0);
+        gSetCdSyncCallback((s32)gCdPauseCompletionCallbackAddress);
         gCdControlF(9, 0);
         st->busy = 1;
         if (gCdReadCallback) {

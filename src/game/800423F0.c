@@ -17,6 +17,8 @@ struct Unk423F0Object {
 };
 
 extern struct Unk423F0Player *gPlayerEntities[] __asm__("D_8009FA58");
+void gSetPlayerInfoTarget(struct Unk423F0Object *object) __asm__("func_800423F0");
+
 
 /**
  *  @brief Assigns an object as the target for selected players.
@@ -35,7 +37,7 @@ extern struct Unk423F0Player *gPlayerEntities[] __asm__("D_8009FA58");
  *  @par Callers
  *  Confirmed: func_800426A8.
  */
-void func_800423F0(struct Unk423F0Object *object)
+void gSetPlayerInfoTarget(struct Unk423F0Object *object)
 {
     s32 first;
     s32 last;

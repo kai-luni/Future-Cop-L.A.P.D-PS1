@@ -15,7 +15,7 @@ struct SoundBank {
 };
 
 extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
-extern s32 func_80047344(void *self, s32 key);
+extern s32 gRegisterSoundBankByKey(void *self, s32 key) __asm__("func_80047344");
 
 s32 gAppendSoundProgramSample(s32 key, s32 a, s32 c, s32 b, void *self) __asm__("func_800241D0");
 
@@ -52,7 +52,7 @@ s32 gAppendSoundProgramSample(s32 key, s32 a, s32 c, s32 b, void *self)
     s32 result;
     struct SoundBank *bank;
 
-    slot = func_80047344(self, key & 0xFF);
+    slot = gRegisterSoundBankByKey(self, key & 0xFF);
     result = 0;
     if (slot != -1) {
         bank = &gSoundEntryTable[slot];

@@ -1,7 +1,7 @@
 // Categories: Game Engine > Object Pool | Resources > Memory Management
 #include "game/types.h"
 
-extern void *D_8009F79C;
+extern void *gNodePoolAllocation __asm__("D_8009F79C");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
@@ -29,6 +29,6 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  */
 void func_8004ABBC(void)
 {
-    gFreeBlock(D_8009F79C);
-    D_8009F79C = 0;
+    gFreeBlock(gNodePoolAllocation);
+    gNodePoolAllocation = 0;
 }

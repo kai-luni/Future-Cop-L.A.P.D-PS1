@@ -15,6 +15,8 @@ extern struct Other *gPlayerEntities __asm__("D_8009FA58");
 extern struct Other *gPlayerEntity2 __asm__("D_8009FA5C");
 extern s32 func_80069D68(s32, s32, s32, s32);
 extern s32 gSpawnTargetableEntityId(void *) __asm__("func_8004D4F8");
+void gTrySpawnRegisteredUnit(struct Entity *entity) __asm__("func_8006125C");
+
 
 /**
  *  @brief Updates entity counters and matching participant statistics after a successful check.
@@ -36,7 +38,7 @@ extern s32 gSpawnTargetableEntityId(void *) __asm__("func_8004D4F8");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8006125C(struct Entity *entity)
+void gTrySpawnRegisteredUnit(struct Entity *entity)
 {
     struct Sub *s = entity->sub;
     struct Info *info;

@@ -27,7 +27,7 @@ extern s32 func_800397AC(s32, struct Self *, void *, s32);
 extern s32 gEntityBaseHandler(s32, void *, void *, s32) __asm__("func_8002AD58");
 extern s32 func_800382B4(s32, struct Self *, void *, s32);
 extern void gUpdateMountedTurret(struct Child *, void *) __asm__("func_80038A00");
-extern void func_8004D958(struct Child *);
+extern void gRetireEntity(struct Child *) __asm__("func_8004D958");
 extern void gFlagQuartileChange(struct Child *, s32) __asm__("func_8003BA50");
 
 /**
@@ -102,7 +102,7 @@ s32 func_800398EC(s32 message, struct Self *object, void *data, s32 extra)
             p = self;
             do {
                 if (p->child[0]) {
-                    if (p->child[0]->id) func_8004D958(p->child[0]);
+                    if (p->child[0]->id) gRetireEntity(p->child[0]);
                     p->child[0] = 0;
                 }
                 p = (struct Self *)((u8 *)p + 4);

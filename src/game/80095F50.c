@@ -7,10 +7,10 @@ typedef struct {
     s16 dct[64];
 } DecDctEnv;
 
-extern s32 D_8009E8B0[];
-extern s32 D_8009E8B4[];
-extern s32 D_8009E8F4[];
-extern s32 D_8009E934[];
+extern s32 gMdecQuantizationUploadCommand[] __asm__("D_8009E8B0");
+extern s32 gMdecLuminanceQuantizationTable[] __asm__("D_8009E8B4");
+extern s32 gMdecChrominanceQuantizationTable[] __asm__("D_8009E8F4");
+extern s32 gMdecDctScaleCommandBlock[] __asm__("D_8009E934");
 extern void gStartMdecBlockTransfer(s32 *data, u32 size) __asm__("func_80096240");
 
 /**
@@ -38,20 +38,20 @@ DecDctEnv *func_80095F50(DecDctEnv *environment)
     s32 *source;
     s32 *destination;
 
-    destination = D_8009E8B4;
+    destination = gMdecLuminanceQuantizationTable;
     source = (s32 *)environment->iq_y;
     for (i = 15; i != -1; i--) {
         *destination++ = *source++;
     }
 
-    destination = D_8009E8F4;
+    destination = gMdecChrominanceQuantizationTable;
     source = (s32 *)environment->iq_c;
     for (i = 15; i != -1; i--) {
         *destination++ = *source++;
     }
 
-    gStartMdecBlockTransfer(D_8009E8B0, 0x20);
-    gStartMdecBlockTransfer(D_8009E934, 0x20);
+    gStartMdecBlockTransfer(gMdecQuantizationUploadCommand, 0x20);
+    gStartMdecBlockTransfer(gMdecDctScaleCommandBlock, 0x20);
 
     return environment;
 }

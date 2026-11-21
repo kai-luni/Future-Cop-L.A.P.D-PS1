@@ -14,6 +14,8 @@ struct Entity {
 extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 
 extern void gDrawRadarBlip(struct Entity *entity, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80065834");
+void gDrawMapRadarBlips(s32 arg1, s32 arg2, s32 arg3) __asm__("func_8004ED18");
+
 
 /**
  * @brief Runs one render pass over the entity list, filtered by visibility
@@ -34,7 +36,7 @@ extern void gDrawRadarBlip(struct Entity *entity, s32 arg1, s32 arg2, s32 arg3) 
  * @par Callers
  * The frame driver of the scene renderer.
  */
-void func_8004ED18(s32 arg1, s32 arg2, s32 arg3)
+void gDrawMapRadarBlips(s32 arg1, s32 arg2, s32 arg3)
 {
     struct Entity *entity;
 

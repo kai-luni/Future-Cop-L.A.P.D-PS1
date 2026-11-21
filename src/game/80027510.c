@@ -59,12 +59,12 @@ extern u32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 gGameSuspended __asm__("D_8009FA24");
 
 extern void gDecodeButtonEdge(u32, struct InputAction *) __asm__("func_8005780C");
-extern void func_80046A34(s32);
-extern s32 func_80046C84(s32, struct Game *);
+extern void gStopSoundVoiceHandle(s32) __asm__("func_80046A34");
+extern s32 gPlayNonpositionalSoundEffect(s32, struct Game *) __asm__("func_80046C84");
 extern s32 gGetPadType(s32) __asm__("func_8001EF34");
 extern void func_80047690(s32);
 extern void func_80069D0C(s32);
-extern void func_8004E248(void);
+extern void gCullActiveEntitiesSplit(void) __asm__("func_8004E248");
 extern void func_8004CECC(void);
 extern void func_8004CD6C(s32, s32, s32);
 extern void func_80031DE8(s32);
@@ -191,12 +191,12 @@ void gRunSessionFrame(void)
             game->unkAC->unk310 = !game->unkAC->unk310;
             if (!game->unkAC->unk310) {
                 if (gSlotVoiceHandle[i] != 0) {
-                    func_80046A34(gSlotVoiceHandle[i]);
+                    gStopSoundVoiceHandle(gSlotVoiceHandle[i]);
                     gSlotVoiceHandle[i] = 0;
                 }
-                func_80046C84(0x3E, game);
+                gPlayNonpositionalSoundEffect(0x3E, game);
             } else if (gGameSession->unk5C == 1 && gGameSession->unkC == 2) {
-                func_80046C84(0x3E, game);
+                gPlayNonpositionalSoundEffect(0x3E, game);
             }
         }
         i++;
@@ -223,7 +223,7 @@ void gRunSessionFrame(void)
         }
         gWasSuspended = 0;
         func_80069D0C(gFrameDelta);
-        func_8004E248();
+        gCullActiveEntitiesSplit();
         func_8004CECC();
         func_8004CD6C(6, gFrameDelta, 0);
         func_80031DE8(gFrameDelta);
@@ -331,7 +331,7 @@ void gRunSessionFrame(void)
             } else index = D_8009FA58.ptr->unkAC->unk312 != 0;
             endbase = gPlayerEntities_arr;
             __asm__ volatile("" : "=r"(endbase) : "0"(endbase));
-            func_80046C84(0x3E, endbase[index]);
+            gPlayNonpositionalSoundEffect(0x3E, endbase[index]);
         }
         gWasSuspended = 1;
         gGameSuspended = 1;

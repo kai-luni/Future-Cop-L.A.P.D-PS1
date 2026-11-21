@@ -10,7 +10,7 @@ struct Data { u8 pad[8]; struct DataInner *inner; };
 extern s32 gEntityBaseHandler(s32, struct Object *, struct Data *, s32) __asm__("func_8002AD58");
 extern void gSetAnimClipTable(void *, void *, s32, s32) __asm__("func_80044988");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
-extern s32 func_80067684(void *, s32);
+extern s32 gQuerySurfaceHeight(void *, s32) __asm__("func_80067684");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 s32 gInitGroundObject(struct Object *self, struct Data *data, s32 arg2) __asm__("func_8002DAA4");
 
@@ -64,7 +64,7 @@ s32 gInitGroundObject(struct Object *self, struct Data *data, s32 arg2)
 zero:
     mode = -1;
 done:
-    self->pos[1] = func_80067684(self->pos, mode) + inner->height;
+    self->pos[1] = gQuerySurfaceHeight(self->pos, mode) + inner->height;
     self->flags |= 0xA00000;
     gGteLoadMatrix(self->coord);
     gGteTransformVerticesWide(((self->frame << 4) + 8) + self->model->frames, self->mat, 1);

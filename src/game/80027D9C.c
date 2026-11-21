@@ -17,7 +17,7 @@ extern struct UnkFA94 *gGameSession __asm__("D_8009FA94");
 extern u8 *gPlayerEntities[] __asm__("D_8009FA58");
 
 extern void func_80029C34(void);
-extern void func_80047088(s32 arg0, void *object);
+extern void gApplyAnimationSoundEvent(s32 arg0, void *object) __asm__("func_80047088");
 extern void gLoadQueuedAssets(void) __asm__("func_80024EC8");
 
 void gAdvanceGameplayScreenCountdown(void) __asm__("func_80027D9C");
@@ -80,7 +80,7 @@ void gAdvanceGameplayScreenCountdown(void)
             object = *slot;
 
             if (object != 0) {
-                func_80047088(0x27, object);
+                gApplyAnimationSoundEvent(0x27, object);
             }
             slot++;
         }

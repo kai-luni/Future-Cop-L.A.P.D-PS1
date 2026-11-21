@@ -16,7 +16,7 @@ extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern u32 gHudTpageClutTable[] __asm__("D_800A8EA0");
 extern void gTransformPartVertex(void *, int, Vec *) __asm__("func_80017668");
-extern int func_800684AC(Vec *, Vec *, Vec *, int, int);
+extern int gTraceMapRay(Vec *, Vec *, Vec *, int, int) __asm__("func_800684AC");
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 void gDrawTargetMarker(Object *obj) __asm__("func_80047888");
 
@@ -119,7 +119,7 @@ void gDrawTargetMarker(Object *obj)
     if (!target || (obj->flags & 0x1000000)) return;
     points[2] = target->pos;
     gTransformPartVertex(obj->model + 0x28, 0, &points[0]);
-    if (!func_800684AC(&points[0], &points[2], &points[1], 0, 1)) points[1] = points[2];
+    if (!gTraceMapRay(&points[0], &points[2], &points[1], 0, 1)) points[1] = points[2];
     for (i = 0; i < 3; i++) {
         screen[i].x = (points[i].x - gCamera->pos.x) >> 4;
         screen[i].y = (points[i].y - gCamera->pos.y) >> 4;

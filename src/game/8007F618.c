@@ -3,7 +3,7 @@
 
 extern u8 gPauseFlag __asm__("D_8009F3E8");
 
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void func_8007F5D0(void);
 
 /**
@@ -26,7 +26,7 @@ void gLeavePauseMenu(void) __asm__("func_8007F618");
 
 void gLeavePauseMenu(void)
 {
-    func_80046C84(0x49, 0);
+    gPlayNonpositionalSoundEffect(0x49, 0);
     gPauseFlag = 0;
     func_8007F5D0();
 }

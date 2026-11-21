@@ -32,7 +32,7 @@ extern void gBuildRotationMatrix(s32, s32, s32, s32 *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(s32 *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern void func_800457B8(s32, s32);
-extern void func_80047284(s32, s32, s32, s32);
+extern void gPlayPositionalSoundEffect(s32, s32, s32, s32) __asm__("func_80047284");
 s32 gStepMoverObject(struct Obj *obj, s32 dt) __asm__("func_8002F30C");
 
 
@@ -219,7 +219,7 @@ stopped:
     if (obj->flags & 0x400000) {
         func_800457B8(obj->id, obj->sound);
         obj->flags &= ~0x400000;
-        if (obj->end_sound) func_80047284(obj->end_sound, obj->x, obj->z, -1);
+        if (obj->end_sound) gPlayPositionalSoundEffect(obj->end_sound, obj->x, obj->z, -1);
     }
     return 0;
 }

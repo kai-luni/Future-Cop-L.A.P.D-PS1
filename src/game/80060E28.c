@@ -8,6 +8,8 @@ struct Unk60E28Table {
 
 extern struct Unk60E28Table *gRegistryTable __asm__("D_8009F800");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+void gAllocSpawnRegistry(void) __asm__("func_80060E28");
+
 
 /**
  * @brief Allocates the 0x80-slot registry table behind D_8009F800.
@@ -31,7 +33,7 @@ extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
  * @par Callers
  * Confirmed: func_80024A24 (0x80024C3C), the mission init.
  */
-void func_80060E28(void)
+void gAllocSpawnRegistry(void)
 {
     struct Unk60E28Table *table;
 

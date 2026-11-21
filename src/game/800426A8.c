@@ -9,10 +9,12 @@ struct Entity {
 };
 
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, void *data) __asm__("func_8002AD58");
-extern void func_800423F0(struct Entity *self);
-extern s32 func_80042470(s32 message, struct Entity *self);
-extern s32 func_80042504(s32 message, struct Entity *self, void *data);
-extern void func_800425BC(struct Entity *self);
+extern void gSetPlayerInfoTarget(struct Entity *self) __asm__("func_800423F0");
+extern s32 gClearPlayerInfoTarget(s32 message, struct Entity *self) __asm__("func_80042470");
+extern s32 gInitType35Entity(s32 message, struct Entity *self, void *data) __asm__("func_80042504");
+extern void gStepType35Commands(struct Entity *self) __asm__("func_800425BC");
+s32 gHandleType35Msg(s32 message, struct Entity *self, void *data) __asm__("func_800426A8");
+
 
 /**
  *  @brief Dispatches entity messages to initialization, update, or default handling.
@@ -35,20 +37,20 @@ extern void func_800425BC(struct Entity *self);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-s32 func_800426A8(s32 message, struct Entity *self, void *data)
+s32 gHandleType35Msg(s32 message, struct Entity *self, void *data)
 {
     switch (message) {
     case 1:
         return 0xD0;
     case 2:
-        return func_80042504(message, self, data);
+        return gInitType35Entity(message, self, data);
     case 6:
         if (self->unkA1 != 0) {
-            func_800423F0(self);
+            gSetPlayerInfoTarget(self);
             self->unkA1 = 0;
         }
         if (self->unk0C != 0) {
-            func_800425BC(self);
+            gStepType35Commands(self);
         }
         return 0;
     case 3:
@@ -62,7 +64,7 @@ s32 func_800426A8(s32 message, struct Entity *self, void *data)
     case 14:
         return 0;
     case 5:
-        return func_80042470(message, self);
+        return gClearPlayerInfoTarget(message, self);
     case 12:
     default:
         return gEntityBaseHandler(message, self, data);

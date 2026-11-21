@@ -107,7 +107,7 @@ extern void gRespawnPlayerEntity(struct Unk588D4 *object) __asm__("func_80058714
 extern void gTranslatePadButtons(void *object) __asm__("func_800576A8");
 extern s32 func_800586D4(void *object, s32 arg1, s32 arg2, s32 *arg3);
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, void *arg2, s32 row, s32 arg4) __asm__("func_800402DC");
-extern s32 func_80046C84(s32 id, s32 arg1);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern s32 func_800584BC(s32 message, struct Unk584BC *object,
                          struct Unk584BCHitLocal *hit, s32 arg3, s32 arg4);
 extern void func_8006C34C(struct Unk55E10 *object, s32 arg1);
@@ -261,7 +261,7 @@ s32 gUpdatePlayerEntity(struct Unk588D4 *object, s32 arg1)
                 locals.msg.unk49 = 0x40;
                 locals.msg.unk44 = (u8 *)object->unkDC + 0x28;
                 gSpawnTypeAtOwner(object, 4, &locals.msg, 1, 0);
-                func_80046C84(0x15, object);
+                gPlayNonpositionalSoundEffect(0x15, object);
             }
             if (s2 != 0) {
                 hitarg = 0;

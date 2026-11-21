@@ -25,7 +25,7 @@ extern int gCdControl(int, int, void *) __asm__("func_8008E1BC");
 extern void gSetIrqCallback(int, int) __asm__("func_800914B0");
 extern void gStartCdInit(void) __asm__("func_8008DEA0");
 extern int gSetCdReadyCallback(void *) __asm__("func_8008E1A8");
-extern void D_8001C808(void);
+extern void gCdSectorReadyCallbackAddress(void) __asm__("D_8001C808");
 void gCdSectorCallback(int arg) __asm__("func_8001C808");
 
 
@@ -229,7 +229,7 @@ void gCdSectorCallback(int arg)
             loc = gCdCurrentLoc;
             __asm__ volatile ("" : : "r" (loc));
             gClearWord(loc);
-            s->unk18 = gSetCdReadyCallback(D_8001C808);
+            s->unk18 = gSetCdReadyCallback(gCdSectorReadyCallbackAddress);
             gCdCallbackActive = 0;
         } while (gEventBuffer[0] & 0x10);
         gStartCdDirRead();

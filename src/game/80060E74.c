@@ -59,6 +59,8 @@ extern s32 func_80019668(void);
 extern void *func_80019C38(u32 a0, u32 a1, u32 a2, u32 a3);
 extern struct Resource *func_80019BF0(s32 group, s32 name);
 extern s32 func_8002AE54(u8 arg0);
+void gRegisterUnitSpawner(struct Unk60E74Arg *arg0) __asm__("func_80060E74");
+
 
 /**
  * @brief Registers a spawn object and resolves its three sub-resources.
@@ -93,7 +95,7 @@ extern s32 func_8002AE54(u8 arg0);
  * @par Callers
  * Confirmed: func_80024EC8 (asset loader).
  */
-void func_80060E74(struct Unk60E74Arg *arg0)
+void gRegisterUnitSpawner(struct Unk60E74Arg *arg0)
 {
     struct Unk60E74Data *data;
     struct Unk60E74First *first;

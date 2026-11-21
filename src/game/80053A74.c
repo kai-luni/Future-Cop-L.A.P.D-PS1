@@ -10,7 +10,7 @@ typedef struct { s32 x, y, z; } Vec3;
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 
 extern u8 func_800538C8(void *context, u32 *flags, s32 *v, s32 *h);
-extern void func_800471C4(s32 anim, u8 *o);
+extern void gSetEntityLoopingSound(s32 anim, u8 *o) __asm__("func_800471C4");
 extern void func_80052E28(u8 *o);
 extern void gSinCos(s32 angle, s32 *sin, s32 *cos) __asm__("func_8001846C");
 extern void func_800537D0(u8 *o, s32 a1, s32 a2, s32 *v, s32 t);
@@ -231,7 +231,7 @@ s32 gTickHoverPhysics(u8 *o_, s32 dt, s32 n_, u32 flags)
     } else {
         *(s16 *)(s + 0xDC) = 0;
     }
-    func_800471C4(anim, o);
+    gSetEntityLoopingSound(anim, o);
 
     i = count;
     if (i > 0) {

@@ -60,7 +60,7 @@ struct Unk6BA50Tgt {
 extern struct Unk6BA50Node *gUnitListHead __asm__("D_8009FA40");
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
-extern s32 func_80046C84(s32 id, struct Unk6BA50Obj *obj);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, struct Unk6BA50Obj *obj) __asm__("func_80046C84");
 extern struct Unk6BA50Tgt *gRegistryFind(u8 id) __asm__("func_8006AAEC");
 extern s32 gWeaponFireDispatch(struct Unk6BA50Obj *obj, s32 idx) __asm__("func_8006ACB0");
 extern void gBeamPartUpdate(struct Unk6BA50Obj *obj, s32 idx, s32 arg2) __asm__("func_8006B23C");
@@ -174,12 +174,12 @@ void gWeaponSlotUpdate(struct Unk6BA50Obj *obj, s32 idx)
         if (!flag) {
             val = ctl->unk84[idx];
             if (val <= 0) {
-                func_80046C84(0xD, obj);
+                gPlayNonpositionalSoundEffect(0xD, obj);
                 return;
             }
         }
         if (val == 5) {
-            func_80046C84(0xE, obj);
+            gPlayNonpositionalSoundEffect(0xE, obj);
         }
         tgt = gRegistryFind(ctl->unk90[idx]);
         e = (struct Unk6BA50Entry *)((u8 *)tgt + (flag ? 0x24 : 0x4));

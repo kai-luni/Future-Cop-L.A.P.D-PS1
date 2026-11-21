@@ -78,13 +78,17 @@ extern u16 gFrameDelta __asm__("D_8009F9FC");
 extern void *jtbl_80011318[];
 
 extern s32 func_80019668(void);
-extern void func_80033608(struct Self *self, void *anim);
-extern void func_800330E8(struct Self *self);
+extern void gSetDroneAttackTarget(struct Self *self, void *anim) __asm__("func_80033608");
+extern void gUpdateDroneStrategicPosition(struct Self *self) __asm__("func_800330E8");
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void gBuildBasisFromAxis(struct Vec3 *axis, struct Basis *basis) __asm__("func_800193F8");
-extern s32 func_800331CC();
-extern s32 func_8003532C();
-extern s32 func_80032F3C();
+extern s32 gInitStrategicDrone() __asm__("func_800331CC");
+extern s32 gUpdateStrategicDrone() __asm__("func_8003532C");
+extern s32 gHandleTumblingFlyer() __asm__("func_80032F3C");
+void gRearmDroneWander(struct Self *self) __asm__("func_80035698");
+s32 gHandleStrategicDroneMessage(s32 id, struct Self *a1, struct Other *a2) __asm__("func_800357C0");
+
+
 
 /**
  * @brief Entity-type 37 handler (drone class): size query, spawn and tick forwarding, a wander-rearm timer, and local-player identity checks that raise the global AI event word.
@@ -110,7 +114,7 @@ extern s32 func_80032F3C();
  * @par Callers
  * Confirmed: no direct calls; address taken at 0x8002AEA0 inside func_8002AE54, the entity-type dispatcher (jump-table index 36 = type id 37). The package work list's callers do not exist in the unit catalog.
  */
-s32 func_800357C0(s32 id, struct Self *a1, struct Other *a2) {
+s32 gHandleStrategicDroneMessage(s32 id, struct Self *a1, struct Other *a2) {
     u32 index;
         register struct OtherChild *p __asm__("$3");
     register struct PlayerFA58 *q __asm__("$2");
@@ -132,13 +136,13 @@ case_1:
     return 0x138;
 
 case_2:
-    return func_800331CC();
+    return gInitStrategicDrone();
 
 case_6:
     if (a1->unkFA == 5) {
         return 0;
     }
-    func_8003532C();
+    gUpdateStrategicDrone();
     return 0;
 
 case_4:
@@ -153,7 +157,7 @@ case_4:
             return 0;
         }
     }
-    func_80035698(a1);
+    gRearmDroneWander(a1);
     return 0;
 
 case_9:
@@ -193,5 +197,5 @@ cmp_val:
     goto case_default;
 
 case_default:
-    return func_80032F3C();
+    return gHandleTumblingFlyer();
 }

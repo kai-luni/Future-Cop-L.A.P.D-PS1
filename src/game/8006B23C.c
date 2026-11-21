@@ -108,12 +108,12 @@ extern s32 D_8009F384;
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern struct Unk6B23C_Item *gRegistryFind(u8 id) __asm__("func_8006AAEC");
-extern void func_80046CF0(struct Unk6B23C *arg0, u8 arg1);
+extern void gRefreshPlayerWeaponSound(struct Unk6B23C *arg0, u8 arg1) __asm__("func_80046CF0");
 extern void gTransformPartVertex(void *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 func_80019668(void);
 extern void gSinCos(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern s32 gVectorDot(s32 *a, s32 *b) __asm__("func_8001AB00");
-extern s32 func_800684AC(s32 *a, s32 *b, s32 *c, s32 d, s32 e);
+extern s32 gTraceMapRay(s32 *a, s32 *b, s32 *c, s32 d, s32 e) __asm__("func_800684AC");
 extern void func_800410BC(void *a, s16 b, s32 c, struct Unk6B23C *d);
 extern void *gAllocPositionNode(Vec6B23C *pos, s32 a1, s32 a2, s32 a3) __asm__("func_80073500");
 extern void func_8007377C(void *a0, void *a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10, s32 a11, s32 a12, s32 a13);
@@ -242,7 +242,7 @@ void gBeamPartUpdate(struct Unk6B23C *arg0, s32 index, s32 arg2)
         s3 = (struct Unk6B23C_Sub *)((u8 *)item + 0x24);
     else
         s3 = (struct Unk6B23C_Sub *)((u8 *)item + 0x04);
-    func_80046CF0(self, s3->unk1C);
+    gRefreshPlayerWeaponSound(self, s3->unk1C);
     if (((struct Unk6B23C_B *)((u8 *)b + (index << 1)))->unk8A[0] > 0)
         s7 = (u16)((struct Unk6B23C_B *)((u8 *)b + (index << 1)))->unk8A[0] & 1;
     else
@@ -343,7 +343,7 @@ void gBeamPartUpdate(struct Unk6B23C *arg0, s32 index, s32 arg2)
     }
 
 after_movement:
-    s5 = func_800684AC((s32 *)&v58, (s32 *)&v38, (s32 *)&v48, 0, 1);
+    s5 = gTraceMapRay((s32 *)&v58, (s32 *)&v38, (s32 *)&v48, 0, 1);
     if (s5 & 0xFF) {
         v38 = v48;
         fp = 1;

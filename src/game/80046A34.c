@@ -1,7 +1,9 @@
 // Categories: Platform > Sound > Voices
 #include "game/types.h"
 
-extern void func_80046698(s32 handle);
+extern void gReleaseSoundVoice(s32 handle) __asm__("func_80046698");
+void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
+
 
 /**
  * @brief Stops a sound voice through its handle, ignoring the null handle.
@@ -27,9 +29,9 @@ extern void func_80046698(s32 handle);
  * Confirmed: func_800260B8 (0x80026438, 0x800266F0), func_80027510 (0x8002760C), func_8007CA34 (0x8007CA80), func_8007CACC (0x8007CC98, 0x8007CD3C, 0x8007CDDC), func_80025E18 (0x80025E80), func_80022A64 (0x80022AE8), func_800474F0 (0x8004752C) and the data block D_8007D150 (indirect call at 0x8007D170).
  * Unknown: one call at 0x80027254 from a routine that is not in the matching set.
  */
-void func_80046A34(s32 handle)
+void gStopSoundVoiceHandle(s32 handle)
 {
     if (handle != 0) {
-        func_80046698(handle);
+        gReleaseSoundVoice(handle);
     }
 }

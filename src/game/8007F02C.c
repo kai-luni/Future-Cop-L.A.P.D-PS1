@@ -24,7 +24,7 @@ extern u8 gPlayerWrapLimit __asm__("D_8009F3C1");
 extern u8 gPausedMenuFlag __asm__("D_8009F3C3");
 extern u8 gLockedMenuFlag __asm__("D_8009F3C4");
 extern u8 gCrimeWarProgress __asm__("D_8009F458");
-extern u8 D_800A3938[];
+extern u8 gPackedPasswordBytes[] __asm__("D_800A3938");
 
 extern void gPackInputRecord(u8 *output, u32 value1, u32 value2, u32 value3,
                           u32 value4, u32 value5, u32 value6, u32 value7,
@@ -51,7 +51,7 @@ extern void gPackInputRecord(u8 *output, u32 value1, u32 value2, u32 value3,
  */
 void func_8007F02C(void)
 {
-    gPackInputRecord(D_800A3938,
+    gPackInputRecord(gPackedPasswordBytes,
                   gGameSession->unk8C,
                   gGameSession->unk90,
                   gGameSession->unk94,

@@ -1,3 +1,5 @@
+int gIsQueuedCommandKind(unsigned int value) __asm__("func_8004DA58");
+
 // Categories: Utilities > Range Checks
 /**
  *  @brief Tests whether a value belongs to either of two ranges.
@@ -17,7 +19,7 @@
  *  @par Callers
  *  Confirmed: func_8004DA84.
  */
-int func_8004DA58(unsigned int value)
+int gIsQueuedCommandKind(unsigned int value)
 {
     register unsigned int test __asm__("$2");
 

@@ -33,7 +33,7 @@ struct Entity {
 };
 
 extern s32 gFrameTime __asm__("D_8009FAA4");
-extern void func_8004D958(struct Entity *entity);
+extern void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
 extern s32 func_80069D68(s32 script, s32 arg1, s32 arg2, struct Entity *entity);
 
 /**
@@ -92,7 +92,7 @@ s32 func_80031120(struct Entity *arg0, struct Entity *arg1)
 
     if (arg0->flagsA0 & 1) {
         arg1->flags |= 0x4000000;
-        func_8004D958(arg1);
+        gRetireEntity(arg1);
     }
 
     if (arg0->flagsA0 & 2) {
@@ -101,7 +101,7 @@ s32 func_80031120(struct Entity *arg0, struct Entity *arg1)
             return 0;
         }
     } else {
-        func_8004D958(arg0);
+        gRetireEntity(arg0);
     }
 
     return 0;

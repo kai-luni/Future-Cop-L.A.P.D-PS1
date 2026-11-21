@@ -65,7 +65,7 @@ extern void *func_800195A4(void *state);
 extern void func_80083834(s32 arg0, s32 arg1);
 extern void func_80013BD8(struct Node3A10 *node, struct Model3A10 *model, s32 options);
 extern u32 func_80019668(void);
-extern s32 func_80067684(void *vec, s32 adjust);
+extern s32 gQuerySurfaceHeight(void *vec, s32 adjust) __asm__("func_80067684");
 extern void gBuildRotationMatrix(s32 x, s32 y, s32 z, void *arg3) __asm__("func_800188D0");
 extern void gGteLoadRotation(void *matrix) __asm__("func_80010820");
 extern void gGteTransformWords(void *src, void *dst, s32 count) __asm__("func_8001006C");
@@ -294,7 +294,7 @@ u8 gSpawnSceneNode(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *ar
         v = req->unk1C;
         if (v != -99) {
             adjust = (v == 0) ? -1 : (v == 1) ? -2 : v - 2;
-            v = func_80067684(&node->unk28, adjust);
+            v = gQuerySurfaceHeight(&node->unk28, adjust);
             node->unk2C = v + (req->unk1A << 4);
         }
         {

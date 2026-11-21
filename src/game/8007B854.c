@@ -32,7 +32,8 @@ extern s8 *gMissionListTablePtr __asm__("D_8009F884");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern s32 gPendingRowCapture __asm__("D_8009F8C4");
 extern s32 gDeferredTransition __asm__("D_8009F8C8");
-extern u8 D_8009F444[], D_8009F488[];
+extern u8 gLax1ModuleName[] __asm__("D_8009F444");
+extern u8 gLax2ModuleName[] __asm__("D_8009F488");
 extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern u8 D_800A3628[], D_800A3658[];
 extern u8 gScreenDescriptor[] __asm__("D_800A3838");
@@ -40,7 +41,7 @@ extern u8 *gPendingModuleNameFlag __asm__("D_8009F3EC");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern u8 *gFontBankTable __asm__("D_8009F468");
 extern void func_80078650(void *, s32);
-extern s32 func_80046C84(s32, s32);
+extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
 extern void func_8008CCB0(void *, s32);
 extern s32 func_8008CCA0(void *, void *);
 extern void func_80078B34(s32, s32, s32);
@@ -193,7 +194,7 @@ SELECTION_DONE:;
             }
             if (gDeferredTransition != 0) {
                 func_8008CCB0(gFrontEndModuleName, SELECTED.unk0);
-                if (func_8008CCA0(gFrontEndModuleName, D_8009F444) == 0) gPendingModuleNameFlag = D_8009F488;
+                if (func_8008CCA0(gFrontEndModuleName, gLax1ModuleName) == 0) gPendingModuleNameFlag = gLax2ModuleName;
                 else gPendingModuleNameFlag = 0;
                 if (special != 0) gModuleLoadState = special;
                 else if (SELECTED.unkC != 0) gModuleLoadState = SELECTED.unkC;
@@ -208,7 +209,7 @@ SELECTION_DONE:;
         __asm__("" : "+r"(index));
         base = gPlayerMenuDepth;
         if (base[index] != 0) {
-            func_80046C84(0x46, 0);
+            gPlayNonpositionalSoundEffect(0x46, 0);
             if (base[gActivePlayerIndex] == 2) {
                 gSelectedRow--;
                 if (gSelectedRow < 0) gSelectedRow = gLineCount;
@@ -224,7 +225,7 @@ SELECTION_DONE:;
         __asm__("" : "+r"(index));
         base = gPlayerMenuDepth;
         if (base[index] != 0) {
-            func_80046C84(0x46, 0);
+            gPlayNonpositionalSoundEffect(0x46, 0);
             if (base[gActivePlayerIndex] == 2) {
                 gSelectedRow++;
                 if (gSelectedRow > gLineCount) gSelectedRow = 0;

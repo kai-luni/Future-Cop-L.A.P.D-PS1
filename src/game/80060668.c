@@ -44,9 +44,11 @@ struct Unk60668Out {
     u16 f26;
 };
 
-extern s32 func_8005FF70(s32 key);
+extern s32 gFindEffectKeyIndex(s32 key) __asm__("func_8005FF70");
 extern s32 gCosineClamped(u32 id) __asm__("func_8006062C");
 extern struct Unk5FF70 gEffectKeyTable[] __asm__("D_800A2300");
+void gInitAttackSchedulerSlot(struct Unk60668In *in, struct Unk60668Out *out) __asm__("func_80060668");
+
 
 /**
  * @brief Initializes a 0x28-byte attack/weapon scheduler slot from a 16-byte config descriptor.
@@ -72,7 +74,7 @@ extern struct Unk5FF70 gEffectKeyTable[] __asm__("D_800A2300");
  * @par Callers
  * Confirmed: func_8002C584 (0x8002CA48), func_8002DFC4 (0x8002E278), func_80032180 (0x800321A4), func_800331CC (0x800332B0, 0x800332C0), func_800378BC (0x800378E4), and func_800397AC (0x80039838).
  */
-void func_80060668(struct Unk60668In *in, struct Unk60668Out *out)
+void gInitAttackSchedulerSlot(struct Unk60668In *in, struct Unk60668Out *out)
 {
     s32 index;
     s32 scale;
@@ -81,7 +83,7 @@ void func_80060668(struct Unk60668In *in, struct Unk60668Out *out)
     if (in->f00 < 0) {
         out->f00 = 0;
     } else {
-        index = func_8005FF70(in->f00);
+        index = gFindEffectKeyIndex(in->f00);
         out->f00 = &gEffectKeyTable[index];
         out->f04 = in->f02;
         out->f06 = in->f05;

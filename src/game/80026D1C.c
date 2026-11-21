@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u32 gSavedStackPointer __asm__("D_8009FAD8");
-extern void func_8004EC74(void);
+extern void gDispatchEntityMsg0D(void) __asm__("func_8004EC74");
 
 void gRunEntityUpdatesOnScratchpad(void) __asm__("func_80026D1C");
 

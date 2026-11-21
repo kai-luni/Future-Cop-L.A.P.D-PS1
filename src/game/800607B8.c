@@ -8,6 +8,8 @@ struct Unk607B8 {
     u8 unk0A[2];
     s16 unk0C;
 };
+void gScaleDefinitionSubrecordFields(struct Unk607B8 *value) __asm__("func_800607B8");
+
 
 /**
  *  @brief Rescales three signed fields in place.
@@ -26,7 +28,7 @@ struct Unk607B8 {
  *  @par Callers
  *  Confirmed: func_80060838, func_8006A898.
  */
-void func_800607B8(struct Unk607B8 *value)
+void gScaleDefinitionSubrecordFields(struct Unk607B8 *value)
 {
     value->unk06 = value->unk06 / 300;
     if (value->unk08 != 0) {

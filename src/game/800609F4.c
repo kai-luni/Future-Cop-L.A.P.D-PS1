@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gDefinitionEntryCount __asm__("D_8009F7F8");
+void gInitDefinitionEntryCount(void) __asm__("func_800609F4");
+
 
 /**
  * @brief Resets the 0x30-byte definition table entry count D_8009F7F8 during mission boot.
@@ -25,7 +27,7 @@ extern s32 gDefinitionEntryCount __asm__("D_8009F7F8");
  * @par Callers
  * Confirmed: func_80024A24 (0x80024C00, mission boot sequence) / Likely: none / Unknown: none.
  */
-void func_800609F4(void)
+void gInitDefinitionEntryCount(void)
 {
     gDefinitionEntryCount = 0;
 }

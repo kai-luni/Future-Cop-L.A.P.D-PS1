@@ -55,8 +55,8 @@ extern u8 *gFocusPositions[4] __asm__("D_8009F9A0");
 extern u8 gBannerString[] __asm__("D_8009F2F4");
 
 extern void gDecodeButtonEdge(u32 buttons, struct InputAction *action) __asm__("func_8005780C");
-extern s32 func_80046C84(s32 id, s32 arg1);
-extern void func_80046A34(s32 handle);
+extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
+extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
 extern s32 func_80049340(u8 *text);
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void func_80047690(u8 enable);
@@ -80,7 +80,7 @@ extern void func_80031DE8(s32 arg0);
 extern void gRunEntityWorldTick(s32 arg0) __asm__("func_8003F570");
 extern void gDrawInGameHud(s32 arg0) __asm__("func_80047F30");
 extern void func_8004CECC(void);
-extern void func_8004DF28(void);
+extern void gCullActiveEntitiesSolo(void) __asm__("func_8004DF28");
 extern void func_800616A0(s32 arg0);
 void gRunSoloSessionFrame(void) __asm__("func_800271A4");
 
@@ -137,14 +137,14 @@ void gRunSoloSessionFrame(void)
 
     flags = 0;
     if (player->unk31C.phase == 0 && gScreenState == 4 && player->unk312 == -1) {
-        func_80046C84(0x3E, (s32)gPlayerEntities);
+        gPlayNonpositionalSoundEffect(0x3E, (s32)gPlayerEntities);
         *(volatile s16 *)&player->unk316 = 0;
         *(volatile s16 *)&player->unk314 = 0;
         player->saved_position = gPlayerEntities->position;
         player->unk310 = !player->unk310;
         if (!player->unk310) {
             if (gSlotVoiceHandle != 0) {
-                func_80046A34(gSlotVoiceHandle);
+                gStopSoundVoiceHandle(gSlotVoiceHandle);
                 gSlotVoiceHandle = 0;
             }
         }
@@ -175,7 +175,7 @@ void gRunSoloSessionFrame(void)
         }
         gWasSuspended = 0;
         func_80069D0C(gFrameDelta);
-        func_8004DF28();
+        gCullActiveEntitiesSolo();
         func_8004CECC();
         func_8004CD6C(6, gFrameDelta, 0);
         func_80031DE8(gFrameDelta);
@@ -216,7 +216,7 @@ void gRunSoloSessionFrame(void)
             gSavedTickCounter = gGameClock;
             gStopAllPadRumble();
             gSoundPauseVoices();
-            func_80046C84(0x3E, (s32)gPlayerEntities);
+            gPlayNonpositionalSoundEffect(0x3E, (s32)gPlayerEntities);
         }
         gWasSuspended = 1;
         gGameSuspended = 1;

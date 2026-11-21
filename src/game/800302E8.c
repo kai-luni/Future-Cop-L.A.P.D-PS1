@@ -73,7 +73,7 @@ struct Entity {
 };
 
 extern s32 gEntityBaseHandler(s32 message, struct Entity *self, struct Spawn *data, s32 arg3) __asm__("func_8002AD58");
-extern s32 func_80067684(struct Vec3 *pos, s32 mode);
+extern s32 gQuerySurfaceHeight(struct Vec3 *pos, s32 mode) __asm__("func_80067684");
 extern void gBuildRotationMatrix(s32 yaw, s32 pitch, s32 roll, void *matrix) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *coord) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *vertices, void *out, s32 count) __asm__("func_80010234");
@@ -155,7 +155,7 @@ void gInitTerrainEntity(struct Entity *self, struct Spawn *data, s32 arg2)
         mode = -1;
     }
 
-    value = func_80067684(&self->pos, mode);
+    value = gQuerySurfaceHeight(&self->pos, mode);
     self->pos.y = value + (sub->unk28 << 4);
     self->flags |= 0x800001;
     gBuildRotationMatrix(sub->unk30, 0, 0, self->coord);

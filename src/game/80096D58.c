@@ -14,15 +14,15 @@ extern s32 D_8009EA38;
 extern s32 gArenaOffsetFlag __asm__("D_8009EA3C");
 extern s32 gArenaCursor __asm__("D_8009EA40");
 extern s32 gNormalisedMode __asm__("D_8009EA34");
-extern s32 D_8009EA30;
+extern s32 gSpuDirectKeyOnVoiceMask __asm__("D_8009EA30");
 extern s32 gModeEntryWord __asm__("D_8009EA5C");
-extern s32 D_8009EA58;
+extern s32 gSpuBufferedKeyOnVoiceMask __asm__("D_8009EA58");
 extern s32 gOpOrderFlag __asm__("D_8009EEC0");
-extern s32 D_8009EE90;
-extern s32 D_8009EF04;
+extern s32 gSpuRegisterShadowMode __asm__("D_8009EE90");
+extern s32 gSpuEntryTableCapacity __asm__("D_8009EF04");
 extern s32 gTableCursor __asm__("D_8009EF08");
 extern s32 gSpuEntryTable __asm__("D_8009EF0C");
-extern u32 D_8009EF14;
+extern u32 gSpuInitialArenaTop __asm__("D_8009EF14");
 extern u16 gSpuInitWords[] __asm__("D_8009EA8E");
 
 extern void gResetIrqDispatch(void) __asm__("func_80091480");
@@ -84,7 +84,7 @@ void gSpuInitSubsystem(s32 cold_start)
     __asm__ volatile("" : "=r"(idx) : "0"(idx));
     q = &D_8009EA48;
     __asm__ volatile("" : "=r"(q) : "0"(q));
-    val = D_8009EF14;
+    val = gSpuInitialArenaTop;
     D_8009EA38 = 0;
     gArenaOffsetFlag = 0;
     q->unk0 = 0;
@@ -95,14 +95,14 @@ void gSpuInitSubsystem(s32 cold_start)
     gArenaCursor = val;
     gSpuWriteRegister(idx, val, 0);
 
-    D_8009EF04 = 0;
+    gSpuEntryTableCapacity = 0;
     gTableCursor = 0;
     gSpuEntryTable = 0;
     gNormalisedMode = 0;
     gOpOrderFlag = 0;
-    D_8009EA30 = 0;
+    gSpuDirectKeyOnVoiceMask = 0;
     gModeEntryWord = 0;
-    D_8009EA58 = 0;
-    D_8009EE90 = 0;
+    gSpuBufferedKeyOnVoiceMask = 0;
+    gSpuRegisterShadowMode = 0;
     __asm__ volatile("" ::: "memory");
 }

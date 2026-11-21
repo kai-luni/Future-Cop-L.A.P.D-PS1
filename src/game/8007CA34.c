@@ -11,7 +11,7 @@ extern void func_800451F8(s32 volume);
 extern void func_80045238(s32 volume);
 extern void func_80045294(s32 volume);
 extern void func_800451B4(s32 enable);
-extern void func_80046A34(s32 handle);
+extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
 extern s32 func_80045288(void);
 extern s32 func_8002A58C(void);
 extern void func_80024630(s32 arg0);
@@ -51,7 +51,7 @@ void gExitOptionsRestoreSound(void)
         func_800451B4(D_8009F914);
     }
     if (gSnapshotPointer != 0) {
-        func_80046A34(gSnapshotPointer);
+        gStopSoundVoiceHandle(gSnapshotPointer);
         gSnapshotPointer = 0;
     }
     if (func_80045288() == 0) {

@@ -93,11 +93,13 @@ extern struct Unk331CCObj *gSinglePlayerEntity __asm__("D_8009F9EC");
 
 extern void func_80032180(s32, struct Unk331CCObj *, struct Unk331CCSrcOuter *, s32);
 extern struct Unk331CCEntry *gAllocMemory(s32, s32) __asm__("func_80017EBC");
-extern void func_80060668(void *, void *);
+extern void gInitAttackSchedulerSlot(void *, void *) __asm__("func_80060668");
 extern s32 func_80019668(void);
-extern void func_800330E8(struct Unk331CCObj *);
+extern void gUpdateDroneStrategicPosition(struct Unk331CCObj *) __asm__("func_800330E8");
 extern void func_8005A09C(void *);
 extern void func_8005A0C4(void *, s32, s32);
+s32 gInitStrategicDrone(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *arg2, s32 arg3) __asm__("func_800331CC");
+
 
 /**
  * @brief Message-2 spawn initializer for entity type 37 (drone): allocates its 0xB4-byte AI block, scales stats by difficulty, and initializes gauges/attack slots.
@@ -121,7 +123,7 @@ extern void func_8005A0C4(void *, s32, s32);
  * @par Callers
  * Confirmed: func_800357C0 (0x800357FC, entity type 37 message 2 spawn path) / Likely: none / Unknown: none.
  */
-s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *arg2, s32 arg3)
+s32 gInitStrategicDrone(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *arg2, s32 arg3)
 {
     struct Unk331CCSrc *src;
     s32 i;
@@ -159,8 +161,8 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
             src->unk5A = g | 2;
         }
     }
-    func_80060668((u8 *)src + 0x58, (u8 *)obj->unk134 + 0x50);
-    func_80060668((u8 *)src + 0x68, (u8 *)obj->unk134 + 0x78);
+    gInitAttackSchedulerSlot((u8 *)src + 0x58, (u8 *)obj->unk134 + 0x50);
+    gInitAttackSchedulerSlot((u8 *)src + 0x68, (u8 *)obj->unk134 + 0x78);
 
     {
         s32 w;
@@ -232,7 +234,7 @@ s32 func_800331CC(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *ar
     gGameSession->unk68 = 0;
     obj->unk134->unkC = obj->unk50;
     *(struct Vec3 *)obj->unk134 = gPlayerEntities->unk50;
-    func_800330E8(obj);
+    gUpdateDroneStrategicPosition(obj);
     for (i = 0; i < 16; i++) {
         obj->unk134->unk28[i] = 0;
     }

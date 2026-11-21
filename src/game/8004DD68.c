@@ -11,7 +11,9 @@ struct Entity {
 
 extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 
-extern u8 func_8004DA84(struct Entity *entity, s32 kind, s32 value, s32 retry);
+extern u8 gSendEntityCommand(struct Entity *entity, s32 kind, s32 value, s32 retry) __asm__("func_8004DA84");
+void gSendCommandByGroup(s32 group, s32 kind, s32 value) __asm__("func_8004DD68");
+
 
 /**
  *  @brief Applies an operation to each identified entity in a group.
@@ -33,13 +35,13 @@ extern u8 func_8004DA84(struct Entity *entity, s32 kind, s32 value, s32 retry);
  *  @par Callers
  *  Confirmed: func_80069D68.
  */
-void func_8004DD68(s32 group, s32 kind, s32 value)
+void gSendCommandByGroup(s32 group, s32 kind, s32 value)
 {
     struct Entity *entity;
 
     for (entity = gUnitListHead; entity != 0; entity = entity->next) {
         if (entity->group == group && entity->id != 0) {
-            func_8004DA84(entity, kind, value, 1);
+            gSendEntityCommand(entity, kind, value, 1);
         }
     }
 }

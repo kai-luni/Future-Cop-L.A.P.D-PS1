@@ -3,7 +3,7 @@
 
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern s32 D_8009F6CC;
-extern u8 D_8009F308;
+extern u8 gVagmQueueDraining __asm__("D_8009F308");
 extern s32 gVagmRing[] __asm__("D_800A0C50");
 extern void func_8002A31C(s32 arg0, s32 arg1);
 
@@ -30,7 +30,7 @@ void func_8002A49C(void)
 
     if (gCallGateFlag != 0) {
         temp = gVagmRing[D_8009F6CC];
-        D_8009F308 = 1;
+        gVagmQueueDraining = 1;
         while (temp != 0) {
             func_8002A31C(temp, 0);
             gVagmRing[D_8009F6CC] = 0;
@@ -40,6 +40,6 @@ void func_8002A49C(void)
             }
             temp = gVagmRing[D_8009F6CC];
         }
-        D_8009F308 = 0;
+        gVagmQueueDraining = 0;
     }
 }

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 gTilePatternBuf[] __asm__("D_800A2630");
-extern u8 D_800A2730[];
+extern u8 gTilePatternCounterState[] __asm__("D_800A2730");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern s32 gSineLookup(u32) __asm__("func_80018534");
@@ -105,7 +105,7 @@ void gBuildTilePattern(u32 input)
 
         base <<= sh;
         dst = gTilePatternBuf;
-        src = D_800A2730;
+        src = gTilePatternCounterState;
         q = src + 0x100;
         cnt = 0x40;
 

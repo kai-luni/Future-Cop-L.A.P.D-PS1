@@ -8,7 +8,7 @@
 #define F(o,n) (*(u32 *)((u8 *)(o) + (n)))
 
 extern void func_8004F764(u8 *, u8 *, s32);
-extern void func_8004D958(u8 *);
+extern void gRetireEntity(u8 *) __asm__("func_8004D958");
 extern void gSinCos(s32, s32 *, s32 *) __asm__("func_8001846C");
 extern void gBuildRotationMatrix(s32, s32, s32, u8 *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(u8 *) __asm__("func_80010750");
@@ -198,7 +198,7 @@ loop:
             s32 h46 = H(s, 0x46);
             if (h46 < 0) {
                 if (h46 == -2 && (F(s, 0x3C) & 0x8000)) {
-                    func_8004D958(o);
+                    gRetireEntity(o);
                 } else {
                     F(s, 0x3C) |= 0x40;
                     W(o, 0x84) = 0;

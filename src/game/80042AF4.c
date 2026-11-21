@@ -71,8 +71,10 @@ extern s32 func_80019668(void);
 extern Mat *gResolveNodeTransform(void *a0, u16 a1, s8 a2, s32 a3, void *a4, Mat *a5) __asm__("func_8003D9F8");
 extern void gBuildRotationMatrix(s32 a, s32 b, s32 c, s32 *out) __asm__("func_800188D0");
 extern void func_8001B148(Mat *m, s16 *src, s16 *dst, s32 n);
-extern Node *func_80042764(Ent *e);
-extern void func_80042788(Ent *e, Node *n);
+extern Node *gPopEmitterFreeNode(Ent *e) __asm__("func_80042764");
+extern void gPushEmitterActiveNode(Ent *e, Node *n) __asm__("func_80042788");
+void gSpawnEmitterParticles(Ent *self, Node *src, u8 flag) __asm__("func_80042AF4");
+
 
 /**
  * @brief Steps one particle/effect node: moves it, colours it, spawns children and
@@ -100,7 +102,7 @@ extern void func_80042788(Ent *e, Node *n);
  * @par Callers
  * func_80044610 only.
  */
-void func_80042AF4(Ent *self, Node *src, u8 flag)
+void gSpawnEmitterParticles(Ent *self, Node *src, u8 flag)
 {
     s32 buf[14];
     u8 fl;
@@ -138,7 +140,7 @@ void func_80042AF4(Ent *self, Node *src, u8 flag)
         if (src != 0) {
             n = &src[i];
             if (fl == 0) {
-                n = func_80042764(self);
+                n = gPopEmitterFreeNode(self);
                 if (n == 0) {
                     return;
                 }
@@ -146,7 +148,7 @@ void func_80042AF4(Ent *self, Node *src, u8 flag)
                 goto after;
             }
         } else {
-            n = func_80042764(self);
+            n = gPopEmitterFreeNode(self);
             if (n == 0) {
                 return;
             }
@@ -191,7 +193,7 @@ void func_80042AF4(Ent *self, Node *src, u8 flag)
         n->w12 = ((s16)n->w12 * (s16)self->unk7C) >> 12;
 after:
         if (src != 0 && fl != 0) {
-            n2 = func_80042764(self);
+            n2 = gPopEmitterFreeNode(self);
             if (n2 == 0) {
                 return;
             }
@@ -249,6 +251,6 @@ after:
         } else {
             n->w18 = (base & 0x1FFF) | (self->unk8E << 13);
         }
-        func_80042788(self, n);
+        gPushEmitterActiveNode(self, n);
     }
 }

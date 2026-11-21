@@ -9,7 +9,7 @@ struct CardContext {
 };
 
 extern struct CardContext *gOperationState __asm__("D_8009AB08");
-extern u8 D_80020024[];
+extern u8 gMemoryCardWatchdogVSyncCallback[] __asm__("D_80020024");
 
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern s32 gSetVSyncCallback(void *argument) __asm__("func_80091510");
@@ -48,7 +48,7 @@ void gAcquireMcCallback(void)
 {
     if (gOperationState->lockCount == 0) {
         gDisableCpuInterrupts();
-        gOperationState->savedCallback = gSetVSyncCallback(D_80020024);
+        gOperationState->savedCallback = gSetVSyncCallback(gMemoryCardWatchdogVSyncCallback);
         gEnableCpuInterrupts();
     }
     gOperationState->lockCount++;

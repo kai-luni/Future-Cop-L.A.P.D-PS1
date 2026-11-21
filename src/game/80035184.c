@@ -13,6 +13,8 @@ typedef struct Node {
     int flags;
 } Node;
 extern Node *gUnitListHead __asm__("D_8009FA40");
+Node *gFindNearestFlaggedType16Unit(Node *obj, int *distance) __asm__("func_80035184");
+
 
 /**
  *  @brief Finds the nearest eligible node in the horizontal plane.
@@ -33,7 +35,7 @@ extern Node *gUnitListHead __asm__("D_8009FA40");
  *  @par Callers
  *  Confirmed: func_8003532C.
  */
-Node *func_80035184(Node *obj, int *distance)
+Node *gFindNearestFlaggedType16Unit(Node *obj, int *distance)
 {
     register Node *node __asm__("$9");
     register Node *best __asm__("$10") = 0;

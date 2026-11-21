@@ -36,10 +36,12 @@ struct Unk600E8Obj {
     s32 unk1C;
 };
 
-extern struct Unk600E8Found *func_8004E80C(struct Unk600E8Ctx *ctx,
-    u8 arg1, s16 arg2, u8 arg3, s32 arg4, s32 arg5, s32 arg6);
+extern struct Unk600E8Found *gFindTargetEntity(struct Unk600E8Ctx *ctx,
+    u8 arg1, s16 arg2, u8 arg3, s32 arg4, s32 arg5, s32 arg6) __asm__("func_8004E80C");
 extern void func_80069D68(struct Unk600E8Sub *sub, s32 arg1, u32 arg2,
     struct Unk600E8Ctx *ctx);
+s32 gAcquireAttackTarget(struct Unk600E8Obj *obj, s32 amount, struct Unk600E8Ctx *ctx) __asm__("func_800600E8");
+
 
 /**
  * @brief Decrements a target-search timer, queries func_8004E80C when due, runs an acquisition script, and caches the target pointer and id.
@@ -62,14 +64,14 @@ extern void func_80069D68(struct Unk600E8Sub *sub, s32 arg1, u32 arg2,
  * @par Callers
  * Confirmed: func_80060238 (0x800605AC, weapon/attack tick fire gate) / Likely: none / Unknown: none.
  */
-s32 func_800600E8(struct Unk600E8Obj *obj, s32 amount, struct Unk600E8Ctx *ctx)
+s32 gAcquireAttackTarget(struct Unk600E8Obj *obj, s32 amount, struct Unk600E8Ctx *ctx)
 {
     struct Unk600E8Found *found;
 
     obj->unk16 -= amount;
     if ((s16)obj->unk16 < 0) {
         obj->unk16 = obj->unk14;
-        found = func_8004E80C(ctx, obj->unk06, obj->unk08, obj->unk07,
+        found = gFindTargetEntity(ctx, obj->unk06, obj->unk08, obj->unk07,
                               obj->unk0A << 4, obj->unk0C,
                               (obj->flags >> 6) & 1);
         if (found != 0) {

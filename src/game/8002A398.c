@@ -7,7 +7,7 @@ typedef struct Unk8002A398 {
     u16 unk16;
 } Unk8002A398;
 
-extern u8 D_8009F308;
+extern u8 gVagmQueueDraining __asm__("D_8009F308");
 extern s32 D_8009F6CC;
 extern u32 D_8009F6E4;
 extern Unk8002A398 *gVagmRing[4] __asm__("D_800A0C50");
@@ -35,7 +35,7 @@ s32 func_8002A398(void)
     Unk8002A398 *ptr;
 
     ptr = 0;
-    if (D_8009F308 != 1) {
+    if (gVagmQueueDraining != 1) {
         ptr = gVagmRing[D_8009F6CC];
         if (ptr != 0) {
             D_8009F6E4 = ptr->unk16 + 1;
