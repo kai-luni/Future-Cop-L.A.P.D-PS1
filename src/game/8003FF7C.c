@@ -67,7 +67,7 @@ extern struct TableEntry *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern void gFreeBlock(struct Node *node) __asm__("func_800181D4");
 extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
-extern void func_8003FE0C(struct Node *node);
+extern void gSpawnDeferredNode(struct Node *node) __asm__("func_8003FE0C");
 extern void gRetireDeferredNodes(struct Node *node) __asm__("func_8003FE90");
 extern void gGetViewGroundAnchor(u32 index, struct DestinationTriple *destination) __asm__("func_80069580");
 void gStreamDeferredSpawns(void) __asm__("func_8003FF7C");
@@ -204,7 +204,7 @@ void gStreamDeferredSpawns(void)
                 }
             } else {
                 if (in_range != 0) {
-                    func_8003FE0C(node);
+                    gSpawnDeferredNode(node);
                 }
             }
 

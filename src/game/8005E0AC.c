@@ -12,10 +12,12 @@ extern struct Pool gOwnerNodeListB __asm__("D_800A22B0");
 extern void *gDomeEffectBlock[] __asm__("D_800A22F0");
 
 extern void gUpdateLockBeamWeapon(void *object) __asm__("func_8005B3D4");
-extern void func_8005BD20(struct Pool *pool, void *object);
+extern void gSweepEffectPool(struct Pool *pool, void *object) __asm__("func_8005BD20");
 extern void func_8005C0C0(struct Pool *pool, void *object);
 extern u8 gUpdateDomeFieldEffect(void *effect, void *object) __asm__("func_8005D8F4");
-extern void func_8005E074(void *effect);
+extern void gFreeAttachedEffect(void *effect) __asm__("func_8005E074");
+void gUpdateWorldEffects(void *object) __asm__("func_8005E0AC");
+
 
 /**
  * @brief Per-frame effect driver: beam timer, both pool sweeps and the four
@@ -39,16 +41,16 @@ extern void func_8005E074(void *effect);
  * @par Callers
  * func_8003F570.
  */
-void func_8005E0AC(void *object)
+void gUpdateWorldEffects(void *object)
 {
     s32 i;
 
     gUpdateLockBeamWeapon(object);
-    func_8005BD20(&gOwnerNodeListA, object);
+    gSweepEffectPool(&gOwnerNodeListA, object);
     func_8005C0C0(&gOwnerNodeListB, object);
     for (i = 0; i < 4; i++) {
         if (gDomeEffectBlock[i] != 0 && gUpdateDomeFieldEffect(gDomeEffectBlock[i], object) != 1) {
-            func_8005E074(gDomeEffectBlock[i]);
+            gFreeAttachedEffect(gDomeEffectBlock[i]);
             gDomeEffectBlock[i] = 0;
         }
     }

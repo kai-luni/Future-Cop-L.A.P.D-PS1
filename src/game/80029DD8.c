@@ -7,6 +7,8 @@ extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern s32 gPortraitStreamDeadline __asm__("D_8009F6C4");
 
 extern void func_80023E84(void);
+void gStopPortraitStreamAndVoice(void) __asm__("func_80029DD8");
+
 
 /**
  * @brief Performs guarded stream/voice teardown and resets playback state flags.
@@ -30,7 +32,7 @@ extern void func_80023E84(void);
  * @par Callers
  * Confirmed: func_80025B7C, func_80029974, func_80029A60, func_80029EB8, func_8002A26C.
  */
-void func_80029DD8(void)
+void gStopPortraitStreamAndVoice(void)
 {
     u8 flag;
 

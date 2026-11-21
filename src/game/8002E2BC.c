@@ -32,7 +32,7 @@ struct Unk2E2BC {
 };
 
 extern s32 func_80019668(void);
-extern void func_800448D8(void *track, s32 index, s32 direction, s32 flags);
+extern void gSelectAnimationClip(void *track, s32 index, s32 direction, s32 flags) __asm__("func_800448D8");
 void gSetActorMode(struct Unk2E2BC *objArg, s32 modeArg) __asm__("func_8002E2BC");
 
 
@@ -107,7 +107,7 @@ void gSetActorMode(struct Unk2E2BC *objArg, s32 modeArg)
             goto tail;
         case 2:
             if (obj->unk28->unk10) {
-                func_800448D8(obj->unkC8, ((u8 *)obj)[0x10F], 1, 1);
+                gSelectAnimationClip(obj->unkC8, ((u8 *)obj)[0x10F], 1, 1);
             }
             sh = (u16)obj->unkE0 << 16;
             x = sh >> 16;
@@ -125,7 +125,7 @@ void gSetActorMode(struct Unk2E2BC *objArg, s32 modeArg)
             if (obj->unk28->unk10) {
                 arg = ((u8 *)obj)[0x10E];
             call:
-                func_800448D8(obj->unkC8, arg, 1, 0);
+                gSelectAnimationClip(obj->unkC8, arg, 1, 0);
             }
         tail:
             t = obj->unkE8;
@@ -136,7 +136,7 @@ void gSetActorMode(struct Unk2E2BC *objArg, s32 modeArg)
         case 0:
             __asm__("" : "+r"(mode));
             if (obj->unk28->unk10) {
-                func_800448D8(obj->unkC8, ((u8 *)obj)[0x10C], 1, 0);
+                gSelectAnimationClip(obj->unkC8, ((u8 *)obj)[0x10C], 1, 0);
             }
             sh = (u16)obj->unkDE << 16;
             x = sh >> 16;

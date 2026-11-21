@@ -60,7 +60,7 @@ extern s32 gScreenResetFlag __asm__("D_8009FA70");
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 
 extern u32 gHashCheatCode(u32 state) __asm__("func_80060DD8");
-extern void func_8005A0C4(struct Unk5A190Gauge *gauge, s32 value, s32 divisor);
+extern void gInitHudGauge(struct Unk5A190Gauge *gauge, s32 value, s32 divisor) __asm__("func_8005A0C4");
 extern void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_8003BA50");
 extern void func_8006BDFC(struct Actor *actor, s32 mode);
 extern void gRefillWeaponSlotAmmo(struct Actor *actor, s32 mode, s32 arg2, s32 arg3) __asm__("func_8006BE90");
@@ -101,7 +101,7 @@ s32 gApplyPlayerCheatCode(u32 state, s32 index)
     label_11081:
         old = gPlayerEntities[index]->unk1C;
         gPlayerEntities[index]->unk1C = gPlayerEntities[index]->unk1E;
-        func_8005A0C4(&gPlayerEntities[index]->unkAC->gauge,
+        gInitHudGauge(&gPlayerEntities[index]->unkAC->gauge,
                       gPlayerEntities[index]->unk1C,
                       gPlayerEntities[index]->unk1E);
         if (gPlayerEntities[index]->tableIndex != 0 &&

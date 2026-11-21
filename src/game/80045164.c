@@ -15,6 +15,8 @@ struct Unk45164Current {
 extern struct Unk45164Current gVolumeLevels __asm__("D_800A1800");
 
 extern u8 func_80045028(s32 id);
+struct Unk45164Slot *gGetTrackedSoundSource(s32 id) __asm__("func_80045164");
+
 
 /**
  *  @brief Returns the current slot if an ID check succeeds and its key matches.
@@ -35,7 +37,7 @@ extern u8 func_80045028(s32 id);
  *  @par Callers
  *  Confirmed: func_800450A4.
  */
-struct Unk45164Slot *func_80045164(s32 id)
+struct Unk45164Slot *gGetTrackedSoundSource(s32 id)
 {
     register s32 valid __asm__("$3");
     register struct Unk45164Slot *result __asm__("$2");

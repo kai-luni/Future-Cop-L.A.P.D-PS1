@@ -13,6 +13,8 @@ struct Script {
 };
 
 extern void gRemoveEntityCommand(struct Script *script, s32 index) __asm__("func_8002A5B4");
+void gApplyCameraOverrideOpcode73(struct Script *script) __asm__("func_80039BD0");
+
 
 /**
  * @brief Drains opcode 0x73 entries from an entity's 4-slot command queue (+0x0C..+0x13) into byte +0x11E.
@@ -36,7 +38,7 @@ extern void gRemoveEntityCommand(struct Script *script, s32 index) __asm__("func
  * @par Callers
  * Confirmed: func_80039C58 (0x80039D98 in asm/us/main.s, case 6 when `self->command != 0`) / Likely: none / Unknown: none.
  */
-void func_80039BD0(struct Script *script)
+void gApplyCameraOverrideOpcode73(struct Script *script)
 {
     s32 i;
     s32 op;

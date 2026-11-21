@@ -74,7 +74,7 @@ typedef union {
 extern SpuRXX *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern u16 gVoiceSampleNote[] __asm__("D_8009EA60");
 extern u16 gConvertSpuNoteToPitch(s32, s32, s32, s32) __asm__("func_800999F4");
-extern void func_80097808(s32, u32);
+extern void gSpuEncodeOrWriteAddr(s32, u32) __asm__("func_80097808");
 
 /**
  *  @brief Applies selected attributes to one SPU voice.
@@ -184,10 +184,10 @@ void gSpuSetVoiceAttributesOne(s32 ch, SpuVoiceAttr *arg)
         gSpuRegBasePtr->raw[ch8 + 1] = volume | vol_mode;
     }
     if (set_all || (mask & 0x80)) {
-        func_80097808(ch8 | 3, arg->addr);
+        gSpuEncodeOrWriteAddr(ch8 | 3, arg->addr);
     }
     if (set_all || (mask & 0x10000)) {
-        func_80097808(ch8 | 7, arg->loop_addr);
+        gSpuEncodeOrWriteAddr(ch8 | 7, arg->loop_addr);
     }
     if (set_all || (mask & 0x20000)) {
         gSpuRegBasePtr->raw[ch8 + 4] = arg->adsr1;

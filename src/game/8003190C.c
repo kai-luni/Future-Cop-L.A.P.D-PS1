@@ -3,6 +3,8 @@
 
 extern void gInitFromSourceModel(void *, void *, void *) __asm__("func_800317BC");
 extern s32 gEntityBaseHandler(s32, void *, void *, void *) __asm__("func_8002AD58");
+s32 gHandleSourceModelEntityMsg(u32 message, void *object, void *data, void *arg) __asm__("func_8003190C");
+
 
 /**
  * @brief Message table of the mountable-model entity class: size query, model
@@ -41,7 +43,7 @@ extern s32 gEntityBaseHandler(s32, void *, void *, void *) __asm__("func_8002AD5
  * the handler word of a node request (+0x10 of a stack block) at 0x80031704, so it
  * is reached through that request.
  */
-s32 func_8003190C(u32 message, void *object, void *data, void *arg)
+s32 gHandleSourceModelEntityMsg(u32 message, void *object, void *data, void *arg)
 {
     switch (message) {
     case 1:

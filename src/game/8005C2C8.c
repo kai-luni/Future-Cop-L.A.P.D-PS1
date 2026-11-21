@@ -7,6 +7,8 @@ struct Unk5C2C8 {
     u8 unk2B[0x0D];
     s32 items[10];
 };
+s32 gInsertSweepHitTarget(struct Unk5C2C8 *set, s32 value) __asm__("func_8005C2C8");
+
 
 /**
  * @brief Inserts a value into a 10-element deduplicating set if space remains and it is absent.
@@ -29,7 +31,7 @@ struct Unk5C2C8 {
  * @par Callers
  * Confirmed: func_8005C344 (segment sweep hit deduplication).
  */
-s32 func_8005C2C8(struct Unk5C2C8 *set, s32 value)
+s32 gInsertSweepHitTarget(struct Unk5C2C8 *set, s32 value)
 {
     s32 i;
 

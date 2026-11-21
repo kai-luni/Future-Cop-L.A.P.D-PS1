@@ -65,7 +65,7 @@ struct AnimTrack;
 struct ModelInstance;
 
 extern void gResetCompoundVisualSubpart(void *owner) __asm__("func_800516A0");
-extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction, u8 flags);
+extern struct AnimClip *gSelectAnimationClip(struct AnimTrack *track, s32 index, s32 direction, u8 flags) __asm__("func_800448D8");
 extern void gSetModelFrame(struct ModelInstance *instance, s32 frame) __asm__("func_800175F8");
 extern void gUpdateMorphBounds(void *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_800518A8");
 void gResetCompoundEntityAnimation(struct Unk51AF8Arg *arg0) __asm__("func_80051AF8");
@@ -127,15 +127,15 @@ void gResetCompoundEntityAnimation(struct Unk51AF8Arg *arg0)
     if (s1->unkAD == 1) {
         arg0->unkF2 = 0x1000;
         s1->unkBC = 0x10000;
-        func_800448D8((struct AnimTrack *)((u8 *)arg0 + 0xC8), 0xD, 1, 0);
+        gSelectAnimationClip((struct AnimTrack *)((u8 *)arg0 + 0xC8), 0xD, 1, 0);
     } else {
         arg0->unkF2 = 0;
         s1->unkBC = 0;
-        func_800448D8((struct AnimTrack *)((u8 *)arg0 + 0xC8), 0, 1, 0);
+        gSelectAnimationClip((struct AnimTrack *)((u8 *)arg0 + 0xC8), 0, 1, 0);
     }
 
     model = (struct ModelInstance *)((u8 *)arg0 + 0x28);
-    func_800448D8((struct AnimTrack *)(arg0->unkDC + 0xA0), s1->unkAD == 1, 1, 0);
+    gSelectAnimationClip((struct AnimTrack *)(arg0->unkDC + 0xA0), s1->unkAD == 1, 1, 0);
     gSetModelFrame((struct ModelInstance *)(arg0->unkDC + 0x28),
                   *(s16 *)(arg0->unkDC + 0xAC));
     gSetModelFrame(model, arg0->unkD4);

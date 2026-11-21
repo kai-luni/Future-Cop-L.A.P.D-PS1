@@ -39,7 +39,9 @@ struct Unk39504Self {
 
 extern void gHandleType5Entity(s32 arg0, struct Unk39504Self *self, struct Unk39504Other *other, s32 arg3) __asm__("func_800382B4");
 extern struct Unk39504Child *gSpawnMountedPartChild(struct Unk39504Self *self, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6) __asm__("func_80039418");
-extern void func_8003FA34(struct Unk39504Child *child);
+extern void gQueueOrApplyMapOccupancy(struct Unk39504Child *child) __asm__("func_8003FA34");
+void gSetupMountedTurretCarrier(s32 arg0, struct Unk39504Self *self, struct Unk39504Other *other, s32 arg3) __asm__("func_80039504");
+
 
 /**
  * @brief Initializes a class-5 entity and spawns and registers its kind-0x15 child object.
@@ -63,7 +65,7 @@ extern void func_8003FA34(struct Unk39504Child *child);
  * @par Callers
  * Confirmed: func_800395A8 (message 2 spawn handler).
  */
-void func_80039504(s32 arg0, struct Unk39504Self *self, struct Unk39504Other *other, s32 arg3)
+void gSetupMountedTurretCarrier(s32 arg0, struct Unk39504Self *self, struct Unk39504Other *other, s32 arg3)
 {
     struct Unk39504Sub08 *data;
     s32 flags;
@@ -74,5 +76,5 @@ void func_80039504(s32 arg0, struct Unk39504Self *self, struct Unk39504Other *ot
     self->unk158 = gSpawnMountedPartChild(self, data->unk48 << 8, data->unk4A, flags, data->u.b.unk4C, data->u.b.unk4D, other->unk04->unk20);
     self->unkA0 = 0;
     self->unk158->unk24 |= 0x10;
-    func_8003FA34(self->unk158);
+    gQueueOrApplyMapOccupancy(self->unk158);
 }

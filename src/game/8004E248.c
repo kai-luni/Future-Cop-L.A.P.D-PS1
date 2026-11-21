@@ -27,9 +27,9 @@ extern struct Entity *gUnitListHead __asm__("D_8009FA40");
 extern s32 gCommandListHead __asm__("D_800A8F90");
 extern s32 gEffectPoolCapacity __asm__("D_800A8F94");
 extern struct Entity *gEffectListHead[] __asm__("D_800A8F98");
-extern s32 func_80045678(s32, s32, s32, s32, s32);
-extern void func_8004572C(s32, s32, s32, s32, s32);
-extern void func_800457B8(s32, s32);
+extern s32 gAllocPositionalSoundChannel(s32, s32, s32, s32, s32) __asm__("func_80045678");
+extern void gSetSoundChannelPosition(s32, s32, s32, s32, s32) __asm__("func_8004572C");
+extern void gStopSoundChannelByIndex(s32, s32) __asm__("func_800457B8");
 extern void gRunEntityScript(struct Entity *) __asm__("func_8004DEE0");
 void gCullActiveEntitiesSplit(void) __asm__("func_8004E248");
 
@@ -147,16 +147,16 @@ outer_head:
                         }
                         if (e->unk21 != 0) {
                             if ((e->flags & mask) == 0) {
-                                s8 idx = func_80045678(e->unk21, e->id, e->x, e->z, -1);
+                                s8 idx = gAllocPositionalSoundChannel(e->unk21, e->id, e->x, e->z, -1);
                                 e->unk22 = idx;
                                 if (idx >= 0) e->flags |= mask;
                             } else {
-                                func_8004572C(e->id, e->x, e->z, -1, e->unk22);
+                                gSetSoundChannelPosition(e->id, e->x, e->z, -1, e->unk22);
                             }
                         }
                     } else {
                         if (nf & mask) {
-                            func_800457B8(e->id, e->unk22);
+                            gStopSoundChannelByIndex(e->id, e->unk22);
                             e->flags &= 0xFFBFFFFF;
                         }
                     }
@@ -175,7 +175,7 @@ outer_head:
                     e->flags = v0;
                     __asm__("" : "+r"(v0) : : "memory");
                     if (v0 & mask) {
-                        func_800457B8(e->id, e->unk22);
+                        gStopSoundChannelByIndex(e->id, e->unk22);
                         e->flags &= 0xFFBFFFFF;
                     }
                 }

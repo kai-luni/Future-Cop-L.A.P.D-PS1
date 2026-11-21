@@ -18,7 +18,7 @@ extern void *gResolveNodeTransform(void *, u16, s8, s32, struct Parent *, void *
 extern void func_8001B148(void *, void *, void *, s32);
 extern s32 func_800196C4(void);
 extern u8 gSpawnLightForEffect(struct Obj *, void *) __asm__("func_80040734");
-extern void func_800498F0(void *);
+extern void gFreeLightGridNode(void *) __asm__("func_800498F0");
 extern void gFreeBlock(struct Obj *) __asm__("func_800181D4");
 s32 gHandleLightObjectMsg(s32 message, struct Obj *obj, s32 arg2, s32 arg3) __asm__("func_80040874");
 
@@ -88,7 +88,7 @@ case0:
 case10:
     gLightObjectCount--;
     if (obj->field6c) {
-        func_800498F0(obj->field6c);
+        gFreeLightGridNode(obj->field6c);
         obj->field6c = 0;
     }
     gFreeBlock(obj);

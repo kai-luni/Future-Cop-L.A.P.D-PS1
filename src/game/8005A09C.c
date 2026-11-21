@@ -4,6 +4,8 @@
 extern u8 gSourceBlock20[] __asm__("D_8009AFA0");
 
 extern void gCopyMemory(u8 *destination, u8 *source, s32 size) __asm__("func_8001E318");
+void gCopyDefaultGaugeRecord(u8 *destination) __asm__("func_8005A09C");
+
 
 /**
  * @brief Copies the 20-byte default parameter template D_8009AFA0 into destination.
@@ -27,7 +29,7 @@ extern void gCopyMemory(u8 *destination, u8 *source, s32 size) __asm__("func_800
  * @par Callers
  * Confirmed: func_800331CC (0x800335D0).
  */
-void func_8005A09C(u8 *destination)
+void gCopyDefaultGaugeRecord(u8 *destination)
 {
     gCopyMemory(destination, gSourceBlock20, 0x14);
 }

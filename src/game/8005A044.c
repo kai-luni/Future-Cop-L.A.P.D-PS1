@@ -4,6 +4,8 @@
 extern int gWeaponSlotUpdate();
 
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
+void gResetPlayerInvulnFlags(void) __asm__("func_8005A044");
+
 
 /**
  * @brief Clears the 2-byte per-player gate/status array D_8009FA8C at mission boot.
@@ -27,7 +29,7 @@ extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
  * @par Callers
  * Confirmed: func_80024A24 (0x80024BF8, mission boot sequence) / Likely: none / Unknown: none.
  */
-void func_8005A044(void)
+void gResetPlayerInvulnFlags(void)
 {
     u8 *cursor;
     s32 remaining;

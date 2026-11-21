@@ -42,7 +42,7 @@ extern UnkBox *gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s3
 extern UnkBox *gDrawAtlasSprite(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082B0C");
 extern void gEmitFlatQuadRect(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082EF0");
 extern void gEmitFlatQuad(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80083060");
-extern UnkFont *func_80048E88(void);
+extern UnkFont *gGetActiveFont(void) __asm__("func_80048E88");
 extern void gDrawAlignedMultilineText(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 
 /**
@@ -208,6 +208,6 @@ void gDrawLoadoutListRow(u8 *p, s32 x, s32 arg2, s32 flag, s32 idx, s32 sel)
         y += 2;
     }
     gEmitAtlasSpriteSimple(gLoadoutTable[idx].unkE, x + 1, y - 2, -1, -1, 0x14, 0x80, 1, 8);
-    font = func_80048E88();
+    font = gGetActiveFont();
     gDrawAlignedMultilineText(0, x, y + font->unk6, 0x10, *(u16 *)(p + 4), 1, 8, 2);
 }

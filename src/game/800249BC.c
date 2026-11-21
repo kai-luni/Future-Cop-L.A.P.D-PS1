@@ -2,10 +2,10 @@
 #include "game/types.h"
 
 extern void gReleaseActiveFrontEndResources(void) __asm__("func_8007852C");
-extern void func_80029EB8(void);
+extern void gResetModuleStreamLoader(void) __asm__("func_80029EB8");
 extern void func_80069D58(void);
 extern void func_8001B448(void);
-extern void func_80047868(void);
+extern void gFreeAllFontGlyphs(void) __asm__("func_80047868");
 extern void gReleaseAllResources(void) __asm__("func_80019BA4");
 extern void func_80023BF8(void);
 extern void gFreeReciprocalTable(void) __asm__("func_800198DC");
@@ -39,10 +39,10 @@ void gUnloadFrontEndSubsystems(void) __asm__("func_800249BC");
 void gUnloadFrontEndSubsystems(void)
 {
     gReleaseActiveFrontEndResources();
-    func_80029EB8();
+    gResetModuleStreamLoader();
     func_80069D58();
     func_8001B448();
-    func_80047868();
+    gFreeAllFontGlyphs();
     gReleaseAllResources();
     func_80023BF8();
     gFreeReciprocalTable();

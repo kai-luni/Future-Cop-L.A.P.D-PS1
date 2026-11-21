@@ -75,7 +75,7 @@ struct Arg2_41C6C {
 extern struct Game41880 *gPlayerEntities[2] __asm__("D_8009FA58");
 
 extern void gRunEntityCommands(struct Obj41880 *arg0) __asm__("func_80041728");
-extern void func_800457B8(s32 arg0, s32 arg1);
+extern void gStopSoundChannelByIndex(s32 arg0, s32 arg1) __asm__("func_800457B8");
 extern void gPlayPositionalSoundEffect(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80047284");
 extern void gGteLoadMatrix(void *arg0) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__("func_80010234");
@@ -242,7 +242,7 @@ after_index:
         if (arg0->unk21 != 0) {
             arg0->unk21 = 0;
             if (arg0->unk24 & 0x400000) {
-                func_800457B8(arg0->unk08, arg0->unk22);
+                gStopSoundChannelByIndex(arg0->unk08, arg0->unk22);
                 arg0->unk24 &= ~0x400000;
             }
         }

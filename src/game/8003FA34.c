@@ -13,6 +13,8 @@ extern s32 gScreenState[] __asm__("D_8009FA00");
 extern void gSpawnEntityPrimaryType(void *object) __asm__("func_8003BC0C");
 extern u8 func_8003B838(void *object);
 extern struct Unk3FA34Link *func_800195A4(void *pool);
+void gQueueOrApplyMapOccupancy(void *object) __asm__("func_8003FA34");
+
 
 /**
  * @brief Applies or defers map-occupancy registration for a newly spawned object.
@@ -37,7 +39,7 @@ extern struct Unk3FA34Link *func_800195A4(void *pool);
  * @par Callers
  * Confirmed: func_8002A5F4 (0x8002A7EC, base spawn), func_80039504 (0x80039588, class-5 child registration).
  */
-void func_8003FA34(void *object)
+void gQueueOrApplyMapOccupancy(void *object)
 {
     struct Unk3FA34Link *link;
 

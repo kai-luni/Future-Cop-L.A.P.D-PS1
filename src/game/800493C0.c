@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern u16 gGlyphTable[] __asm__("D_8009AAE0");
+void gSetTextPaletteEntry(u32 index, u8 blue, u8 green, u8 red) __asm__("func_800493C0");
+
 
 /**
  * @brief Writes one entry of the 20-colour text palette in 15-bit BGR form.
@@ -28,7 +30,7 @@ extern u16 gGlyphTable[] __asm__("D_8009AAE0");
  * Confirmed: func_8007BCF4 (0x8007BDD8) and func_8007F1F8 (0x8007F388), the list/profile screens that highlight the selected row.
  * Unknown: one call at 0x80079B64 from a routine that is not in the matching set.
  */
-void func_800493C0(u32 index, u8 blue, u8 green, u8 red)
+void gSetTextPaletteEntry(u32 index, u8 blue, u8 green, u8 red)
 {
     if (index < 0x14) {
         gGlyphTable[index] = (blue << 10) | (green << 5) | red;

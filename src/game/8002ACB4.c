@@ -24,6 +24,8 @@ struct Unk2ACB4 {
 
 extern void gSetModelUvOffset(s32 low, s32 high) __asm__("func_80013AA0");
 extern s32 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
+s32 gSubmitModelWithUvOffset(struct Unk2ACB4 *object, s32 value) __asm__("func_8002ACB4");
+
 
 /**
  * @brief Advances one model instance by a frame value with the depth-cue
@@ -49,7 +51,7 @@ extern s32 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2)
  * @par Callers
  * func_8002AD58, func_8002C3F0, func_8002ED7C, func_800382B4.
  */
-s32 func_8002ACB4(struct Unk2ACB4 *object, s32 value)
+s32 gSubmitModelWithUvOffset(struct Unk2ACB4 *object, s32 value)
 {
     s32 result;
 

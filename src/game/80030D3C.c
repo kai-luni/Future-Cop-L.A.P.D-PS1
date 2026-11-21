@@ -11,6 +11,8 @@ extern s32 gInitEntityGroundPair(void *, void *, s32) __asm__("func_80030AD4");
 extern u8 gTestEntityFieldMatch(u8, s16, void *, u8) __asm__("func_8002F8B8");
 extern s32 gWarpEntityToSelf(void *, void *, s32) __asm__("func_80030C60");
 extern s32 gEntityBaseHandler(s32, struct Entity *, void *, s32) __asm__("func_8002AD58");
+s32 gHandleGroundPairEntity(s32 message, struct Entity *self, void *data, s32 arg3) __asm__("func_80030D3C");
+
 
 /**
  * @brief Entity message handler for object type 29 (size 0xB0).
@@ -35,7 +37,7 @@ extern s32 gEntityBaseHandler(s32, struct Entity *, void *, s32) __asm__("func_8
  * @par Callers
  * Confirmed: none direct; address D_80030D3C returned by func_8002AE54 (0x8002AF4C..0x8002AF54) for type 29. Unknown: indirect callers via entity->update.
  */
-s32 func_80030D3C(s32 message, struct Entity *self, void *data, s32 arg3)
+s32 gHandleGroundPairEntity(s32 message, struct Entity *self, void *data, s32 arg3)
 {
     switch (message) {
     case 1:

@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void gFreeTextureDescriptors(void) __asm__("func_8005A220");
+void gClearTexDescriptorTable(void) __asm__("func_8005A290");
+
 
 /**
  * @brief Clears the loaded texture/effect descriptor table during subsystem reset.
@@ -25,7 +27,7 @@ extern void gFreeTextureDescriptors(void) __asm__("func_8005A220");
  * @par Callers
  * Confirmed: func_80024D14 (0x80024D78, between-mission subsystem reset) / Likely: none / Unknown: none.
  */
-void func_8005A290(void)
+void gClearTexDescriptorTable(void)
 {
     gFreeTextureDescriptors();
 }

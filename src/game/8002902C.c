@@ -26,9 +26,9 @@ extern s32 gCreateModuleAssetFromHeader(void *, void *) __asm__("func_80028BCC")
 extern void gCopyWholeWords(void *, void *, u32) __asm__("func_80028BA0");
 extern void gQueueCompletedModuleAsset(void *) __asm__("func_80028DC0");
 extern s32 gInitializeVagmAudioStream(void) __asm__("func_800244A4");
-extern void func_8002A544(void);
+extern void gResetVagmStreamState(void) __asm__("func_8002A544");
 extern u8 gUploadCvkSpuDataAndWait(void *, s32, s32) __asm__("func_80023CA4");
-extern void func_8002A16C(s32);
+extern void gStartVagmAudioStream(s32) __asm__("func_8002A16C");
 
 void gParseStreamedModuleChunks(void) __asm__("func_8002902C");
 
@@ -145,7 +145,7 @@ void gParseStreamedModuleChunks(void)
                         if (gCallGateFlag == 3) {
                             gVagmPrimeBlockCount++;
                             if ((u32)gVagmPrimeBlockCount >= 2) {
-                                if (!gInitializeVagmAudioStream()) func_8002A544();
+                                if (!gInitializeVagmAudioStream()) gResetVagmStreamState();
                                 else gCallGateFlag = one;
                             }
                         } else gCallGateFlag = one;
@@ -169,7 +169,7 @@ void gParseStreamedModuleChunks(void)
                             }
                             if (!gGameSuspended) {
                                 state->playing = one;
-                                func_8002A16C(1);
+                                gStartVagmAudioStream(1);
                             }
                         }
                     }

@@ -33,7 +33,7 @@ struct UnkFB90Global {
 extern struct UnkFB90Node *gListHeads[7] __asm__("D_800A1070");
 extern struct UnkFB90Global *gDeferredSpawnList __asm__("D_8009F30C");
 
-extern void func_8003CA80(void *object);
+extern void gRetireSpawnSlot(void *object) __asm__("func_8003CA80");
 extern void gFreeBlock(void *object) __asm__("func_800181D4");
 void gRetireEntitiesByOwnerAndKind(void *object_, s32 kind_) __asm__("func_8003FB90");
 
@@ -82,7 +82,7 @@ void gRetireEntitiesByOwnerAndKind(void *object_, s32 kind_)
                     ? node->unk1C->unk04 == object
                     : object == 0)) {
                 if (node->unk10 & 4) {
-                    func_8003CA80(node);
+                    gRetireSpawnSlot(node);
                 } else {
                     node->unk0F |= 1;
                 }

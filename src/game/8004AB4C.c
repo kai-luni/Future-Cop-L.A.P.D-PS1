@@ -13,6 +13,8 @@ extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void *func_8008CD20(void *buffer, s32 value, s32 size);
+void gInitDebrisFragmentPool(void) __asm__("func_8004AB4C");
+
 
 /**
  * @brief Builds the fixed pool of 199 effect/attachment nodes used by the
@@ -49,7 +51,7 @@ extern void *func_8008CD20(void *buffer, s32 value, s32 size);
  * @par Callers
  * Confirmed: func_80024A24 (mission boot).
  */
-void func_8004AB4C(void)
+void gInitDebrisFragmentPool(void)
 {
     struct Unk4AADNode *pool;
     s32 i;

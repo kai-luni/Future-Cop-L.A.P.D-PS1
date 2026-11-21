@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void **gTextureDescriptorTable __asm__("D_8009F7D8");
+void gInitTextureDescriptorTable(void) __asm__("func_8005A2B0");
+
 
 /**
  * @brief Clears the texture descriptor array pointer D_8009F7D8 during mission boot.
@@ -25,7 +27,7 @@ extern void **gTextureDescriptorTable __asm__("D_8009F7D8");
  * @par Callers
  * Confirmed: func_80024A24 (0x80024CCC, mission boot sequence) / Likely: none / Unknown: none.
  */
-void func_8005A2B0(void)
+void gInitTextureDescriptorTable(void)
 {
     gTextureDescriptorTable = 0;
 }

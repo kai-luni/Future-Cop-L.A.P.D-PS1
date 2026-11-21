@@ -20,7 +20,7 @@ struct Arg6C080 {
 };
 
 extern void gRegistryFind(u8 id) __asm__("func_8006AAEC");
-extern void func_800491F8(s32 value, s32 x, s32 y, s32 color);
+extern void gDrawFormattedHudNumber(s32 value, s32 x, s32 y, s32 color) __asm__("func_800491F8");
 extern void gEmitStatusSlotIcon(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8006BF44");
 void gDrawThreeSlotStatusBar(struct Arg6C080 *arg0) __asm__("func_8006C080");
 
@@ -69,10 +69,10 @@ void gDrawThreeSlotStatusBar(struct Arg6C080 *arg0)
         flag = 0;
         if (*(u8 *)((u32)d->fieldC1 + (u32)base) == 0 && d->field8A[i] > 0) {
             flag = 1;
-            func_800491F8(d->field8A[i], x, 0xCE, (gFrameTime & 0x40) ? 0x9 : 0xC);
+            gDrawFormattedHudNumber(d->field8A[i], x, 0xCE, (gFrameTime & 0x40) ? 0x9 : 0xC);
         }
         gEmitStatusSlotIcon(i, (*(u8 *)((u32)d->fieldC1 + (u32)base) != 0 || flag != 0) ? 1 : 0, y, 0xE0);
-        func_800491F8((*(u8 *)((u32)d->fieldC1 + (u32)base) != 0) ? d->field8A[i] : d->field84[i], x, 0xD8, 8);
+        gDrawFormattedHudNumber((*(u8 *)((u32)d->fieldC1 + (u32)base) != 0) ? d->field8A[i] : d->field84[i], x, 0xD8, 8);
     }
     {
         s32 a0 = -1;

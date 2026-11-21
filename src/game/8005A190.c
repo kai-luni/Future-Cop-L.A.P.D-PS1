@@ -15,7 +15,9 @@ struct Unk5A190 {
     struct Unk5A190Gauge gauges[1];
 };
 
-extern void func_8005A154(struct Unk5A190 *object, struct Unk5A190Gauge *gauge, s32 rising);
+extern void gPlayGaugeEdgeSound(struct Unk5A190 *object, struct Unk5A190Gauge *gauge, s32 rising) __asm__("func_8005A154");
+void gSetEntityGaugeValue(struct Unk5A190 *object, s32 index, s32 value) __asm__("func_8005A190");
+
 
 /**
  * @brief Sets a gauge value and drives its three-state fill machine.
@@ -41,7 +43,7 @@ extern void func_8005A154(struct Unk5A190 *object, struct Unk5A190Gauge *gauge, 
  * @par Callers
  * func_8002FC90, func_80058714, func_800588D4, func_80058D78.
  */
-void func_8005A190(struct Unk5A190 *object, s32 index, s32 value)
+void gSetEntityGaugeValue(struct Unk5A190 *object, s32 index, s32 value)
 {
     struct Unk5A190Gauge *gauge;
 
@@ -56,9 +58,9 @@ void func_8005A190(struct Unk5A190 *object, s32 index, s32 value)
     }
     if (gauge->state == 2) {
         gauge->state = 1;
-        func_8005A154(object, gauge, 1);
+        gPlayGaugeEdgeSound(object, gauge, 1);
     } else if (gauge->state == 1 && value <= 0) {
         gauge->state = 0;
-        func_8005A154(object, gauge, 0);
+        gPlayGaugeEdgeSound(object, gauge, 0);
     }
 }

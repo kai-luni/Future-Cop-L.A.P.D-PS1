@@ -11,7 +11,7 @@
 extern void gProcessType26StateCommands(u8 *, s32) __asm__("func_8002B4B4");
 extern s32 gAdvanceAnimTrack(u8 *, void *, s32, s32) __asm__("func_80044B34");
 extern u8 gStepAttackScheduler(void *, s32, u8 *, s32, s32) __asm__("func_80060238");
-extern void func_800448D8(void *, s32, s32, u8);
+extern void gSelectAnimationClip(void *, s32, s32, u8) __asm__("func_800448D8");
 extern void gFireEntityWeapon(void *, u8 *, u8 *, s32) __asm__("func_8005F6E8");
 extern void gRetireEntityBase(u8 *, s32, s32) __asm__("func_8002A810");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
@@ -140,7 +140,7 @@ void gUpdateType26Actor(u8 *obj, s32 step)
         case 1:
             if (gStepAttackScheduler(obj + 0xA0, step, obj, 0, 0)) {
                 B(obj,0x162) = 2;
-                func_800448D8(obj + 0xC8, B(obj,0x164) + 1, 1, 1);
+                gSelectAnimationClip(obj + 0xC8, B(obj,0x164) + 1, 1, 1);
             }
             break;
         case 2:

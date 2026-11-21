@@ -11,8 +11,10 @@ extern struct Pool gOwnerNodeListA __asm__("D_800A22A0");
 extern struct Pool gOwnerNodeListB __asm__("D_800A22B0");
 extern void *gDomeEffectBlock[] __asm__("D_800A22F0");
 
-extern void func_8003BDEC(struct Pool *pool);
-extern void func_8005E074(void *effect);
+extern void gFreeIntrusiveNodePoolStorage(struct Pool *pool) __asm__("func_8003BDEC");
+extern void gFreeAttachedEffect(void *effect) __asm__("func_8005E074");
+void gTeardownEffectsAndPools(void) __asm__("func_8005E22C");
+
 
 /**
  * @brief Tears down the two effect object pools and any active attached model-effect blocks.
@@ -35,15 +37,15 @@ extern void func_8005E074(void *effect);
  * @par Callers
  * Confirmed: func_8003F854 (world teardown).
  */
-void func_8005E22C(void)
+void gTeardownEffectsAndPools(void)
 {
     s32 i;
 
-    func_8003BDEC(&gOwnerNodeListA);
-    func_8003BDEC(&gOwnerNodeListB);
+    gFreeIntrusiveNodePoolStorage(&gOwnerNodeListA);
+    gFreeIntrusiveNodePoolStorage(&gOwnerNodeListB);
     for (i = 0; i < 4; i++) {
         if (gDomeEffectBlock[i] != 0) {
-            func_8005E074(gDomeEffectBlock[i]);
+            gFreeAttachedEffect(gDomeEffectBlock[i]);
         }
     }
 }

@@ -1,3 +1,5 @@
+int gGetDefaultFontBankIndex(void) __asm__("func_80048E94");
+
 // Categories: Utilities > Constants
 /**
  * @brief Returns the default font/character bank index.
@@ -9,7 +11,7 @@
  * @par Callers
  * func_800287F4 passes the result straight into func_80048E28().
  */
-int func_80048E94(void)
+int gGetDefaultFontBankIndex(void)
 {
     return 0;
 }

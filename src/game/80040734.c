@@ -98,7 +98,7 @@ extern void func_8001B148(struct RotationMatrix *matrix,
                           struct RotationPoint *source,
                           struct RotationPoint *destination, s32 count);
 extern s32 func_800196C4(void);
-extern void func_800498F0(void *object);
+extern void gFreeLightGridNode(void *object) __asm__("func_800498F0");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern s32 gHandleObjectEventMessages(s32 message, void *object, void *arg2, void *arg3) __asm__("func_8003C980");
 u8 gSpawnLightForEffect(struct Unk40734 *object, struct Vec3s32 *position) __asm__("func_80040734");

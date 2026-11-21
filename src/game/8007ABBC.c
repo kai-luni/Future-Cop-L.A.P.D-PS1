@@ -21,8 +21,8 @@ extern s32 gGameClock[] __asm__("D_8009FA60");
 extern void gDecodeGlyphsToName(u8 *dst, u8 *src, s32 len, u8 *table) __asm__("func_8007AA9C");
 extern void gEncodeNameToGlyphs(u8 *src, u8 *dst, s32 len, u8 *table, s32 tableLen) __asm__("func_8007A9D0");
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
-extern struct FontEntry *func_80048E88(void);
-extern void func_800492A0(u8 *text, s32 *width, s32 *height);
+extern struct FontEntry *gGetActiveFont(void) __asm__("func_80048E88");
+extern void gMeasureTextExtent(u8 *text, s32 *width, s32 *height) __asm__("func_800492A0");
 extern void gEmitFlatQuadRect(s32 x, s32 y, s32 w, s32 h, u32 link, s32 r, s32 g, s32 b) __asm__("func_80082EF0");
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 
@@ -157,13 +157,13 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
             s32 step;
             s32 *sel_ptr;
 
-            font = func_80048E88();
+            font = gGetActiveFont();
             fontUnk8 = font->unk8;
             step = fontUnk8;
             if (gFontBankTable[5] == 1) {
                 step++;
             }
-            font = func_80048E88();
+            font = gGetActiveFont();
             chars = gNameEntryGlyphBuf + idx * 8;
             baseX -= step * 4;
             base = gScalarCursor;
@@ -175,7 +175,7 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
             for (i = 0; i < 8; i++) {
                 s32 textColor;
                 text[0] = gNameEntryAlphabet[chars[i]];
-                func_800492A0(text, &width, &height);
+                gMeasureTextExtent(text, &width, &height);
                 if (i == *sel_ptr) {
                     register s32 boxX __asm__("$4");
                     register s32 boxKind __asm__("$7");
@@ -199,7 +199,7 @@ void gHandleNameEntryGrid(s32 action, s32 baseX, s32 baseY)
             }
         } else {
             u8 *str = gPlayerNameTable + idx * 9;
-            func_800492A0(str, &fontUnk8, &fontHeight);
+            gMeasureTextExtent(str, &fontUnk8, &fontHeight);
             gDrawAlignedString(str, baseX - fontUnk8 / 2, y, 0xF);
         }
         break;

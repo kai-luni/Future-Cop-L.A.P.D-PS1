@@ -22,8 +22,8 @@ struct AnimTrack {
     u8 flags;
 };
 
-extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction,
-                                      u8 flags);
+extern struct AnimClip *gSelectAnimationClip(struct AnimTrack *track, s32 index, s32 direction,
+                                      u8 flags) __asm__("func_800448D8");
 void gSetAnimClipTable(u8 *data, struct AnimTrack *track, u8 forward, s32 index) __asm__("func_80044988");
 
 
@@ -69,7 +69,7 @@ void gSetAnimClipTable(u8 *data, struct AnimTrack *track, u8 forward, s32 index)
     }
     track->clips = (struct AnimClip *)(data + 4);
     track->count = data[0];
-    func_800448D8(track, index, forward ? 1 : -1, 0);
+    gSelectAnimationClip(track, index, forward ? 1 : -1, 0);
     track->elapsed = 0;
     track->flags = 0;
 }

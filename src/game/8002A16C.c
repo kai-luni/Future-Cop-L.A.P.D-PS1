@@ -20,6 +20,8 @@ extern s32 gVagmPrimeBlockCount __asm__("D_8009F6E0");
 extern s32 D_8009F6E4;
 
 extern s32 func_80045288(void);
+void gStartVagmAudioStream(s32 arg0) __asm__("func_8002A16C");
+
 
 /**
  * @brief Triggers stream playback state transition in D_800A0B70 when audio is active.
@@ -40,7 +42,7 @@ extern s32 func_80045288(void);
  * @par Callers
  * Confirmed: D_8007D18C, func_8002902C, func_8002A26C, func_80047690, func_80080984; func_8002A23C (at 0x8002A254 in asm/us/main.s).
  */
-void func_8002A16C(s32 arg0)
+void gStartVagmAudioStream(s32 arg0)
 {
     Unk800A0B70 *p;
     s32 value;

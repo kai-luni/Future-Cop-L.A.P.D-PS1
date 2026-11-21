@@ -44,7 +44,7 @@ struct Other {
     struct Other *unkB4;
 };
 
-extern void func_800448D8(void *track, s32 index, s32 direction, s32 flags);
+extern void gSelectAnimationClip(void *track, s32 index, s32 direction, s32 flags) __asm__("func_800448D8");
 void gCheckResupplyPadProximity(struct Entity *self, struct Other *other) __asm__("func_80030498");
 
 
@@ -142,7 +142,7 @@ void gCheckResupplyPadProximity(struct Entity *self, struct Other *other)
         if (dz + (ax >> 2) - (ax >> 6) < limit) {
             switch (self->unkBD) {
             case 0:
-                func_800448D8((u8 *)self + 0xA0, 1, 1, 1);
+                gSelectAnimationClip((u8 *)self + 0xA0, 1, 1, 1);
                 self->unkBD = 1;
                 break;
             case 2:

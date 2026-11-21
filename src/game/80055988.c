@@ -60,7 +60,7 @@ struct UnkS2_55988 {
 
 extern struct Entity *gFocusPositions __asm__("D_8009F9A0");
 
-extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction, u8 flags);
+extern struct AnimClip *gSelectAnimationClip(struct AnimTrack *track, s32 index, s32 direction, u8 flags) __asm__("func_800448D8");
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void gSetEntityLoopingSound(s32 track, struct Unk471C4Object *object) __asm__("func_800471C4");
 extern void gUpdateMorphBounds(void *arg0, void *arg1, s32 arg2, void *arg3) __asm__("func_800518A8");
@@ -191,14 +191,14 @@ void gUpdatePlayerFormAndMotion(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s3
     if (state->unkAD != state->unk2FD) {
         if (state->unkBC == 0) {
             state->unkC0 = 1;
-            func_800448D8((struct AnimTrack *)((u8 *)model + 0xA0), 2, 1, 0);
-            func_800448D8((struct AnimTrack *)obj->animC8, 0xC, 1, 0);
+            gSelectAnimationClip((struct AnimTrack *)((u8 *)model + 0xA0), 2, 1, 0);
+            gSelectAnimationClip((struct AnimTrack *)obj->animC8, 0xC, 1, 0);
             state->unkAD = 1;
             state->unkC2 = 0;
         } else {
             state->unkC0 = -1;
-            func_800448D8((struct AnimTrack *)((u8 *)model + 0xA0), 2, -1, 0);
-            func_800448D8((struct AnimTrack *)obj->animC8, 0xC, -1, 0);
+            gSelectAnimationClip((struct AnimTrack *)((u8 *)model + 0xA0), 2, -1, 0);
+            gSelectAnimationClip((struct AnimTrack *)obj->animC8, 0xC, -1, 0);
         }
         state->unk2FD = (u8)state->unkAD;
         *out |= 1;
@@ -210,10 +210,10 @@ void gUpdatePlayerFormAndMotion(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s3
             if (state->unkBC < 0) {
                 state->unkBC = 0;
                 state->unkC0 = 0;
-                func_800448D8((struct AnimTrack *)((u8 *)model + 0xA0), 0, 1, 0);
+                gSelectAnimationClip((struct AnimTrack *)((u8 *)model + 0xA0), 0, 1, 0);
                 obj->unkF0 = 0;
                 state->unkDC = 0;
-                func_800448D8((struct AnimTrack *)obj->animC8, 0, 1, 0);
+                gSelectAnimationClip((struct AnimTrack *)obj->animC8, 0, 1, 0);
                 state->unkAD = 0;
                 state->unk2FD = 0;
                 gSetEntityLoopingSound(0xFF, (struct Unk471C4Object *)obj);
@@ -223,8 +223,8 @@ void gUpdatePlayerFormAndMotion(struct UnkS2_55988 *arg0, s32 arg1, s32 arg2, s3
             if (state->unkBC > 0x10000) {
                 state->unkBC = 0x10000;
                 state->unkC0 = 0;
-                func_800448D8((struct AnimTrack *)((u8 *)model + 0xA0), 1, 1, 0);
-                func_800448D8((struct AnimTrack *)obj->animC8, 0xD, 1, 0);
+                gSelectAnimationClip((struct AnimTrack *)((u8 *)model + 0xA0), 1, 1, 0);
+                gSelectAnimationClip((struct AnimTrack *)obj->animC8, 0xD, 1, 0);
                 obj->unkF0 = 0;
                 state->unkDC = 0;
             }

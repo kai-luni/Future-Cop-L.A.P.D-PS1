@@ -21,6 +21,9 @@ struct Unk3FD74Node {
 
 extern struct Unk3FD74Node *gDeferredSpawnList __asm__("D_8009F30C");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+struct Unk3FD74Node *gQueueDeferredSpawnRequest(s32 type, s32 arg08,
+                                   struct Unk3FD74Source *source, s32 arg18) __asm__("func_8003FD74");
+
 
 /**
  * @brief Allocates and prepends a deferred spawn request node to the pending spawn list.
@@ -44,7 +47,7 @@ extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
  * @par Callers
  * Confirmed: func_8003C2A4 (spawn with generated placement), func_800402DC (cell flags & 5 == 4 deferred path).
  */
-struct Unk3FD74Node *func_8003FD74(s32 type, s32 arg08,
+struct Unk3FD74Node *gQueueDeferredSpawnRequest(s32 type, s32 arg08,
                                    struct Unk3FD74Source *source, s32 arg18)
 {
     struct Unk3FD74Node *node;

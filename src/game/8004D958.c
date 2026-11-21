@@ -14,7 +14,7 @@ struct Entity {
 };
 
 extern s32 gInterpretEntityScript(s32 script, s32 arg1, s32 arg2, struct Entity *entity) __asm__("func_80069D68");
-extern void func_800457B8(s32 arg0, s32 index);
+extern void gStopSoundChannelByIndex(s32 arg0, s32 index) __asm__("func_800457B8");
 void gRetireEntity(struct Entity *entity) __asm__("func_8004D958");
 
 
@@ -54,7 +54,7 @@ void gRetireEntity(struct Entity *entity)
         gInterpretEntityScript(entity->script, ((entity->flags >> 26) ^ 1) & 1, -1, entity);
     }
     if (entity->flags & 0x400000) {
-        func_800457B8(entity->id, entity->sound);
+        gStopSoundChannelByIndex(entity->id, entity->sound);
     }
     entity->id = 0;
 }

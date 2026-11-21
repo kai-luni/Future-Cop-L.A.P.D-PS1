@@ -44,7 +44,7 @@ extern s32 gFrameTime __asm__("D_8009FAA4");
 extern s32 gMarkerColorTable[32] __asm__("D_800A6F60");
 
 extern void gEmitAngledLine(s32 origin, s32 id, s32 unused) __asm__("func_8005A740");
-extern u8 func_8005A934(struct Unk5A9C4 *object, s32 z, s32 x, s32 *angle);
+extern u8 gCheckRadarTargetBearing(struct Unk5A9C4 *object, s32 z, s32 x, s32 *angle) __asm__("func_8005A934");
 extern void gEmitRadarTriangle(s32 origin, s32 angle, s32 colour) __asm__("func_8005A828");
 void gDrawRadarMarkers(struct Unk5A9C4 *object) __asm__("func_8005A9C4");
 
@@ -117,7 +117,7 @@ void gDrawRadarMarkers(struct Unk5A9C4 *object)
         idx = object->unkAC->unkC1;
         __asm__("lui %0,%%hi(D_8009FA58)\n\taddiu %0,%0,%%lo(D_8009FA58)" : "=r" (base));
         other = base[1 - idx];
-        if (func_8005A934(arg, other->unk58, other->unk50, &angle)) {
+        if (gCheckRadarTargetBearing(arg, other->unk58, other->unk50, &angle)) {
             gEmitAngledLine(colour, angle, 0xF800);
         }
     }
@@ -131,7 +131,7 @@ void gDrawRadarMarkers(struct Unk5A9C4 *object)
                 __asm__("lui %1,%%hi(D_800A6F60)\n\taddiu %0,%1,%%lo(D_800A6F60)" : "=r" (colours), "=r" (high));
                 for (; i < 8; i++) {
                     if (mask & 1) {
-                        if (func_8005A934(object, node->pos[i].a << 9,
+                        if (gCheckRadarTargetBearing(object, node->pos[i].a << 9,
                                           node->pos[i].b << 9, &angle)) {
                             gEmitRadarTriangle(colour, angle,
                                           colours[node->flags[i] & 0x1F]);

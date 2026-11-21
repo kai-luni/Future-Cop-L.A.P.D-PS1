@@ -9,7 +9,7 @@ struct Unk740B8 {
 };
 
 extern u8 *func_80019C38(s32 arg0, s32 arg1, u32 tag, s32 arg3);
-extern void func_80073F88(u8 *data);
+extern void gRegisterActorDef58(u8 *data) __asm__("func_80073F88");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
@@ -38,7 +38,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  */
 void func_800740B8(struct Unk740B8 *resource)
 {
-    func_80073F88(func_80019C38(resource->unk00, resource->unk20, 0x74414354,
+    gRegisterActorDef58(func_80019C38(resource->unk00, resource->unk20, 0x74414354,
                                 resource->unk1C) - 4);
     gFreeBlock(resource);
 }

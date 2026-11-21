@@ -119,7 +119,7 @@ extern void gMulMatrixVector(void *matrix, void *source, void *destination) __as
 extern void func_8001B148(struct RotationMatrix *matrix,
                          struct RotationPoint *source,
                          struct RotationPoint *destination, s32 count);
-extern void func_8003BDEC(struct Pool *pool);
+extern void gFreeIntrusiveNodePoolStorage(struct Pool *pool) __asm__("func_8003BDEC");
 extern struct ListNode *gTakePoolNode(struct ListNode *node) __asm__("func_8003BEF0");
 extern s32 gGuardEffectPoolMessage(s32 message, void *object, void *arg2, void *arg3) __asm__("func_8003C7B8");
 extern s32 gHandleObjectEventMessages(s32 message, void *object, void *arg2, void *arg3) __asm__("func_8003C980");
@@ -376,7 +376,7 @@ case10:
             }
         }
 
-        func_8003BDEC(&object->pool);
+        gFreeIntrusiveNodePoolStorage(&object->pool);
         gFreeBlock(object);
         return 0;
 

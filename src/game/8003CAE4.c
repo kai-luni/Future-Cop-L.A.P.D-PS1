@@ -38,7 +38,7 @@ struct Unk3CAE4 {
     s32 (*callback)(s32 message, struct Unk3CAE4 *object, s32 arg2, s32 arg3);
 };
 
-extern void func_8003CA80(struct Unk3CA80 *object);
+extern void gRetireSpawnSlot(struct Unk3CA80 *object) __asm__("func_8003CA80");
 s32 gStepSpawnNodeTimers(struct Unk3CAE4 *object, s32 arg1, u8 *flag) __asm__("func_8003CAE4");
 
 
@@ -132,11 +132,11 @@ unk06_done:
         (object->unk1C->unk39 & 1)) {
         if (object->unk1A & 0x1000) {
             *flag = 0;
-            func_8003CA80((struct Unk3CA80 *)object);
+            gRetireSpawnSlot((struct Unk3CA80 *)object);
             object->flags |= 1;
         } else if (object->unk10 & 4) {
             *flag = 0;
-            func_8003CA80((struct Unk3CA80 *)object);
+            gRetireSpawnSlot((struct Unk3CA80 *)object);
         }
     }
 

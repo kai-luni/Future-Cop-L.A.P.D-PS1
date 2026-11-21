@@ -10,7 +10,7 @@ struct FontEntry;
 
 extern struct FontEntry *gFont __asm__("D_8009F35C");
 
-extern struct FontGlyph *func_800489C8(struct FontEntry *font, u8 character);
+extern struct FontGlyph *gLookupFontGlyph(struct FontEntry *font, u8 character) __asm__("func_800489C8");
 
 /**
  * @brief Measures a string in the active font and returns twice its advance width.
@@ -44,7 +44,7 @@ s32 func_80049340(u8 *text)
     if (font != 0) {
         while ((character = *text++) != 0) {
             if (character >= 0x20) {
-                total += func_800489C8(font, character)->advance;
+                total += gLookupFontGlyph(font, character)->advance;
             }
         }
     }

@@ -12,6 +12,8 @@ extern struct GridObject **gLightGrid __asm__("D_8009F780");
 extern s32 gLightNodePool __asm__("D_8009F784");
 
 extern void func_800195D0(s32 pool, struct GridObject *object);
+void gFreeLightGridNode(struct GridObject *object) __asm__("func_800498F0");
+
 
 /**
  * @brief Unlinks a grid object from its map cell list and returns it to the
@@ -33,7 +35,7 @@ extern void func_800195D0(s32 pool, struct GridObject *object);
  * @par Callers
  * func_8003F2AC, func_80040874, func_80075478.
  */
-void func_800498F0(struct GridObject *object)
+void gFreeLightGridNode(struct GridObject *object)
 {
     struct GridObject **cell;
     struct GridObject *node;

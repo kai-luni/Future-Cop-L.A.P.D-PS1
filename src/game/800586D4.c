@@ -3,6 +3,8 @@
 
 extern u32 gSavedStackPointer __asm__("D_8009FAD8");
 extern void gUpdatePlayerFormAndMotion(void) __asm__("func_80055988");
+void gStepPlayerFormOnScratchpad(void) __asm__("func_800586D4");
+
 
 /**
  * @brief Runs func_80055988 with $sp moved to the top of the scratchpad, then
@@ -39,7 +41,7 @@ extern void gUpdatePlayerFormAndMotion(void) __asm__("func_80055988");
  * Confirmed: func_800588D4 (jal at 0x80058AD8, damage branch of the unit's
  * message 6). Unknown: no other site in the call graph.
  */
-void func_800586D4(void)
+void gStepPlayerFormOnScratchpad(void)
 {
     __asm__ volatile(
         "addiu $sp, $sp, -0x4\n\t"

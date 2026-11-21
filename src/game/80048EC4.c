@@ -13,6 +13,8 @@ extern s32 gRampFillCounter __asm__("D_8009F360");
 extern s32 gFontBankCount __asm__("D_8009F364");
 
 extern void func_80048978(s32 blue, s32 green, s32 red);
+void gInitTextRendererState(void) __asm__("func_80048EC4");
+
 
 /**
  * @brief Reinitialises the text renderer state, clears both 20-entry colour tables, and adds white as entry 0.
@@ -34,7 +36,7 @@ extern void func_80048978(s32 blue, s32 green, s32 red);
  * @par Callers
  * Confirmed: func_8004783C (HUD/text layer reset).
  */
-void func_80048EC4(void)
+void gInitTextRendererState(void)
 {
     s32 i;
 

@@ -97,7 +97,7 @@ struct Unk50E0COut {
     s32 unk6C;
 };
 
-extern s32 func_80050DAC(struct Unk50DACMap *map, s32 *position);
+extern s32 gFindRailPathCell(struct Unk50DACMap *map, s32 *position) __asm__("func_80050DAC");
 extern s32 gSelectNextPathNode(struct Unk50E0COut *out, struct Unk50E0CArg3 *arg3, s32 index) __asm__("func_8004F330");
 extern void gVectorScaleInPlace(s32 scale, s32 *vector) __asm__("func_8001AB78");
 extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
@@ -220,7 +220,7 @@ void gInitRailSegment(struct Unk50E0CArg0 *arg0, struct Unk50E0COut *out, struct
     arg3->unk24 |= 0x80000000U;
     map = (struct Unk50DACMap *)(arg2->unk00 + 0xC);
     out->unk00 = (u8 *)map;
-    index = func_80050DAC(map, arg4);
+    index = gFindRailPathCell(map, arg4);
 
     cell = (struct Unk50E0CCellAccess *)((u8 *)map + 4) + index;
     out->unk48 = out->unk4A = index;

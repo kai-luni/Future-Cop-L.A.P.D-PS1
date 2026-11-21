@@ -11,6 +11,8 @@ struct Unk5A934 {
 };
 
 extern s32 gAtan2(s32 x, s32 z) __asm__("func_80095C30");
+s32 gCheckRadarTargetBearing(struct Unk5A934 *object, s32 z, s32 x, s32 *angle) __asm__("func_8005A934");
+
 
 /**
  * @brief Computes the relative bearing from an object to a far target for
@@ -36,7 +38,7 @@ extern s32 gAtan2(s32 x, s32 z) __asm__("func_80095C30");
  * @par Callers
  * func_8005A9C4.
  */
-s32 func_8005A934(struct Unk5A934 *object, s32 z, s32 x, s32 *angle)
+s32 gCheckRadarTargetBearing(struct Unk5A934 *object, s32 z, s32 x, s32 *angle)
 {
     s32 dz;
     s32 dx;

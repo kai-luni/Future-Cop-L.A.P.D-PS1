@@ -96,8 +96,8 @@ extern struct Unk331CCEntry *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void gInitAttackSchedulerSlot(void *, void *) __asm__("func_80060668");
 extern s32 func_80019668(void);
 extern void gUpdateDroneStrategicPosition(struct Unk331CCObj *) __asm__("func_800330E8");
-extern void func_8005A09C(void *);
-extern void func_8005A0C4(void *, s32, s32);
+extern void gCopyDefaultGaugeRecord(void *) __asm__("func_8005A09C");
+extern void gInitHudGauge(void *, s32, s32) __asm__("func_8005A0C4");
 s32 gInitStrategicDrone(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOuter *arg2, s32 arg3) __asm__("func_800331CC");
 
 
@@ -241,7 +241,7 @@ s32 gInitStrategicDrone(s32 arg0, struct Unk331CCObj *obj, struct Unk331CCSrcOut
     obj->unk134->unk48 = 0;
     obj->unk134->unk4C = 0;
     gSinglePlayerEntity = obj;
-    func_8005A09C(obj->unk134->unkA0);
-    func_8005A0C4(obj->unk134->unkA0, obj->unk1C, obj->unk1E);
+    gCopyDefaultGaugeRecord(obj->unk134->unkA0);
+    gInitHudGauge(obj->unk134->unkA0, obj->unk1C, obj->unk1E);
     return 0;
 }

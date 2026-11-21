@@ -40,7 +40,7 @@ extern s32 gFontBankCount __asm__("D_8009F364");
 
 extern s32 func_800489EC(unsigned char *value);
 extern void gLoadFontAsset(s32 index) __asm__("func_80048BF8");
-extern s32 func_80048E28(s32 index);
+extern s32 gSelectFontBank(s32 index) __asm__("func_80048E28");
 void gRegisterFontBank(s32 arg0, s32 *arg1) __asm__("func_80048A14");
 
 
@@ -127,6 +127,6 @@ void gRegisterFontBank(s32 arg0, s32 *arg1)
     gLoadFontAsset(gFontBankCount);
     gFontBankCount++;
     if (gFontBankCount == 1) {
-        func_80048E28(0);
+        gSelectFontBank(0);
     }
 }

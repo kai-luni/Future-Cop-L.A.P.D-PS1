@@ -73,8 +73,8 @@ struct Unk73590Owner;
 extern struct List gCommandListHead __asm__("D_800A8F90");
 
 extern s32 func_80019668(void);
-extern struct Unk73590 *func_80073590(struct Unk73590Owner *owner, void *coord, s32 kind,
-                                      s32 arg3, s32 arg4, s32 arg5);
+extern struct Unk73590 *gAllocAttachedEffectNode(struct Unk73590Owner *owner, void *coord, s32 kind,
+                                      s32 arg3, s32 arg4, s32 arg5) __asm__("func_80073590");
 extern void gCreateRibbonBeam(struct Unk73590 *a, struct Unk73590 *b, s32 arg2, s32 arg3,
                           s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, s32 arg9,
                           s32 arg10, s32 arg11, s32 arg12, s32 arg13) __asm__("func_8007377C");
@@ -185,9 +185,9 @@ void gSpawnChainBeamArcs(struct Ctx *ctx, struct Object *current, s32 arg2, u16 
         }
 
         if (params != 0) {
-            nodeA = func_80073590((struct Unk73590Owner *)current, 0, -1, 0,
+            nodeA = gAllocAttachedEffectNode((struct Unk73590Owner *)current, 0, -1, 0,
                                   params->unk48, 0);
-            nodeB = func_80073590((struct Unk73590Owner *)item, 0, -1, 0,
+            nodeB = gAllocAttachedEffectNode((struct Unk73590Owner *)item, 0, -1, 0,
                                   (params->unk4A & 8) ? 0 : params->unk48, 0);
             gCreateRibbonBeam(nodeA, nodeB, (s16)params->unk36 >> 1, params->unk38,
                           params->unk3B, params->unk3C, params->unk3D, params->unk3E,
@@ -206,8 +206,8 @@ void gSpawnChainBeamArcs(struct Ctx *ctx, struct Object *current, s32 arg2, u16 
         goto L_cont;
 
     L_else:
-        nodeA = func_80073590((struct Unk73590Owner *)current, 0, -1, 0, 0x30, 0);
-        nodeB = func_80073590((struct Unk73590Owner *)item, 0, -1, 0, 0x30, 0);
+        nodeA = gAllocAttachedEffectNode((struct Unk73590Owner *)current, 0, -1, 0, 0x30, 0);
+        nodeB = gAllocAttachedEffectNode((struct Unk73590Owner *)item, 0, -1, 0, 0x30, 0);
         gCreateRibbonBeam(nodeA, nodeB, 6, 1, 0x7F, 0x7F, 0xFF, 0x4B0, 0x7FFF,
                       -0x1800, 0, 0, 0, 1);
         goto L_join;

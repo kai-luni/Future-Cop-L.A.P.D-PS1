@@ -4,6 +4,8 @@
 extern void gInitForceFieldEntity(s32 message, void *object, void *data) __asm__("func_80039E8C");
 extern void gUpdateForceField(void *object, void *data) __asm__("func_8003A160");
 extern s32 gEntityBaseHandler(s32 message, void *object, void *data) __asm__("func_8002AD58");
+s32 gHandleForceFieldEntityMsg(u32 message, void *object, void *data) __asm__("func_8003A844");
+
 
 /**
  * @brief Message table of the force-field entity class: block size, spawn,
@@ -40,7 +42,7 @@ extern s32 gEntityBaseHandler(s32 message, void *object, void *data) __asm__("fu
  * returns this address (lui/addiu at 0x8002AF58) in its handler-selection case,
  * which is how the class is chained.
  */
-s32 func_8003A844(u32 message, void *object, void *data)
+s32 gHandleForceFieldEntityMsg(u32 message, void *object, void *data)
 {
     switch (message) {
     case 1:

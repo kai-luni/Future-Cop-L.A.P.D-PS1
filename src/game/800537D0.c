@@ -10,7 +10,7 @@ struct Unk537D0 {
 
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 
-extern void func_80053730(struct Unk537D0 *a0, s32 *out);
+extern void gUpdateTwoPlayerSeparation(struct Unk537D0 *a0, s32 *out) __asm__("func_80053730");
 void gBuildHoverMovementVector(struct Unk537D0 *a0, s32 a1, s32 a2, s32 *a3, s32 a4) __asm__("func_800537D0");
 
 
@@ -94,5 +94,5 @@ void gBuildHoverMovementVector(struct Unk537D0 *a0, s32 a1, s32 a2, s32 *a3, s32
         a3[0] = 0;
         a3[2] = 0;
     }
-    func_80053730(a0, a3);
+    gUpdateTwoPlayerSeparation(a0, a3);
 }

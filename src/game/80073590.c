@@ -21,6 +21,9 @@ struct Unk73590 {
 };
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+struct Unk73590 *gAllocAttachedEffectNode(struct Unk73590Owner *owner, void *coord, u8 kind, s16 arg3,
+                               s16 arg4, s16 arg5) __asm__("func_80073590");
+
 
 /**
  * @brief Allocates a 0x20-byte effect node bound to an owner and a coordinate
@@ -46,7 +49,7 @@ extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
  * @par Callers
  * func_8005D8F4, func_8006A524, func_80073BBC.
  */
-struct Unk73590 *func_80073590(struct Unk73590Owner *owner, void *coord, u8 kind, s16 arg3,
+struct Unk73590 *gAllocAttachedEffectNode(struct Unk73590Owner *owner, void *coord, u8 kind, s16 arg3,
                                s16 arg4, s16 arg5)
 {
     struct Unk73590 *node;

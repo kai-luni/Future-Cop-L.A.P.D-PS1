@@ -16,7 +16,7 @@ extern void gProcessForceFieldCommands(Obj *) __asm__("func_8003A09C");
 extern s32 gVectorLength3D(Vec *) __asm__("func_8001A100");
 extern void gEaseVectorQuarter(Vec *, Vec *) __asm__("func_8001A6F8");
 extern void gVectorScaleInPlace(s32, Vec *) __asm__("func_8001AB78");
-extern void func_800457B8(s32, s32);
+extern void gStopSoundChannelByIndex(s32, s32) __asm__("func_800457B8");
 extern int gUpdatePathMoverMotion(void *, s32, Obj *) __asm__("func_80050D14");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, int) __asm__("func_80010234");
@@ -272,7 +272,7 @@ smooth_force:
             if (obj->effectFlags & 2) target->sub->velocity.y += obj->forces[i].y;
         }
     } else if (obj->soundType && (obj->flags & 0x400000)) {
-        func_800457B8(obj->sound, obj->soundIndex);
+        gStopSoundChannelByIndex(obj->sound, obj->soundIndex);
         obj->soundPlaying = 0;
         obj->flags &= ~0x400000;
     }

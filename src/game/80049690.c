@@ -9,6 +9,8 @@ extern s32 gLightNodePool __asm__("D_8009F784");
 extern void *gSpriteDescriptorTable __asm__("D_8009F77C");
 
 extern s32 func_800194DC(s32 count, s32 size, s32 tag);
+void gInitMapLighting(void) __asm__("func_80049690");
+
 
 /**
  * @brief Initializes the dynamic map-light subsystem globals and allocates its 0x180-slot FixedPool.
@@ -33,7 +35,7 @@ extern s32 func_800194DC(s32 count, s32 size, s32 tag);
  * @par Callers
  * Confirmed: func_80024A24 (0x80024CC4 in asm/us/main.s, mission boot init) / Likely: none / Unknown: none.
  */
-void func_80049690(void)
+void gInitMapLighting(void)
 {
     D_8009F794 = 0;
     D_8009F788 = 0;

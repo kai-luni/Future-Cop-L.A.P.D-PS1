@@ -36,7 +36,7 @@ struct Unk2C174 {
 extern struct Unk2C174 *gFindUnitById(u32 id) __asm__("func_8004D664");
 extern s32 func_80019668(void);
 extern void gNormalizeVector(void *vec) __asm__("func_8001A180");
-extern u8 func_8003B7D8(struct Unk2C174 *obj);
+extern u8 gGetDestructionSpawnColumn(struct Unk2C174 *obj) __asm__("func_8003B7D8");
 extern void gSpawnTypeAtOwner(struct Unk2C174 *obj, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern void gRetireEntityBase(struct Unk2C174 *obj, s32 a, s32 b) __asm__("func_8002A810");
 extern void gSetType26AnimationClip(struct Unk2C174 *obj, s32 a) __asm__("func_8002B0EC");
@@ -99,7 +99,7 @@ void gHandleType26Destruction(struct Unk2C174 *obj)
         local.x = dx;
         gNormalizeVector(&local.x);
         local.unk40 = 0x32;
-        sound = func_8003B7D8(obj);
+        sound = gGetDestructionSpawnColumn(obj);
         if (sound == 0) {
             sound = 0x5B;
         }
@@ -134,7 +134,7 @@ void gHandleType26Destruction(struct Unk2C174 *obj)
                 break;
             }
         } else {
-            sound = func_8003B7D8(obj);
+            sound = gGetDestructionSpawnColumn(obj);
             if (sound == 0) {
                 sound = 0x5B;
             }

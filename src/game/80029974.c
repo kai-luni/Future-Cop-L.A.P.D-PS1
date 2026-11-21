@@ -19,7 +19,7 @@ extern u8 gLatchFlag __asm__("D_8009F6C0");
 extern struct Unk800A0BC0 gRingBuffer __asm__("D_800A0BC0");
 
 extern s32 func_800452C8(void);
-extern void func_80029DD8(void);
+extern void gStopPortraitStreamAndVoice(void) __asm__("func_80029DD8");
 extern void gAppendScriptEvent(s32 arg0) __asm__("func_800298EC");
 void gQueueScriptEvent(s32 arg0) __asm__("func_80029974");
 
@@ -66,7 +66,7 @@ void gQueueScriptEvent(s32 arg0)
             if (gBitFieldState & 0x40) {
                 gLatchFlag = 1;
             } else {
-                func_80029DD8();
+                gStopPortraitStreamAndVoice();
             }
 
             index = gRingBuffer.unk02 - 1;

@@ -16,9 +16,9 @@ extern void *gSpawnRecordMap[0x200] __asm__("D_800A7040");
 extern void *gSlotSpawnDescs[0x100] __asm__("D_800A0C70");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
-extern void func_8003D0AC(void);
+extern void gFreeAnchorNodeList(void) __asm__("func_8003D0AC");
 extern void func_8006EDF0(void);
-extern void func_8005E22C(void);
+extern void gTeardownEffectsAndPools(void) __asm__("func_8005E22C");
 void gTeardownWorldObjects(s32 arg0) __asm__("func_8003F854");
 
 
@@ -174,7 +174,7 @@ void gTeardownWorldObjects(s32 arg0)
         gDeferredSpawnList = 0;
     }
 
-    func_8003D0AC();
+    gFreeAnchorNodeList();
     func_8006EDF0();
-    func_8005E22C();
+    gTeardownEffectsAndPools();
 }

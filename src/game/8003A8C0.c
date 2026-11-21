@@ -19,6 +19,8 @@ struct Unk3A8C0Request {
 
 extern void gModelDebrisEntityHandler(void) __asm__("D_8003B2D0");
 extern void gSpawnQueuedEntityAndGetId(struct Unk3A8C0Request *request) __asm__("func_8004D4D4");
+void gCreateModelDebrisEntity(s32 arg0, u8 arg1, s32 arg2, s32 arg3) __asm__("func_8003A8C0");
+
 
 /**
  * @brief Queues a spawn request for a particle-emitter entity handled by func_8003B2D0.
@@ -43,7 +45,7 @@ extern void gSpawnQueuedEntityAndGetId(struct Unk3A8C0Request *request) __asm__(
  * @par Callers
  * Confirmed: func_8004C324 (0x8004C4E0 in asm/us/main.s, message 0 when (obj->flags & 0x10), sub->flag is set, and !link->flag38) / Likely: none / Unknown: none.
  */
-void func_8003A8C0(s32 arg0, u8 arg1, s32 arg2, s32 arg3)
+void gCreateModelDebrisEntity(s32 arg0, u8 arg1, s32 arg2, s32 arg3)
 {
     struct Unk3A8C0Request request;
     struct Unk3A8C0Args args;

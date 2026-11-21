@@ -5,6 +5,8 @@ extern s32 gFileSearchGroup __asm__("D_8009F238");
 
 extern s32 gLoadFileAlloc(s32 name, s32 arg1, void **data, s32 *size, s32 arg4) __asm__("func_8001E110");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void *gLoadFileIntoBuffer(s32 name) __asm__("func_80059BA0");
+
 
 /**
  * @brief Loads a whole file and returns its buffer, releasing the partial buffer
@@ -37,7 +39,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_80059BFC.
  */
-void *func_80059BA0(s32 name)
+void *gLoadFileIntoBuffer(s32 name)
 {
     void *data;
     void *result;

@@ -301,7 +301,7 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
   - `src/game/8003FF7C.c:179`
   - `src/game/8003FF7C.c:203`
   - `src/game/8003FF7C.c:207`
-  - `src/game/8003FE0C.c:61`
+  - `src/game/8003FE0C.c:63`
   - `src/game/8003FE90.c:58`
 - Units:
   - `src/game/8003FF7C.c` - manifest 0x8003FF7C, size 0x360 (current binding: gStreamDeferredSpawns)
@@ -727,8 +727,8 @@ occur on the cited line).
 | `src/game/8003FF7C.c:179` | `in_range = gVectorLength3D(&work.delta.x) <= 0x1FFFF;` |
 | `src/game/8003FF7C.c:148` | `node = gDeferredSpawnList;` |
 | `src/game/8003FF7C.c:203` | `gRetireDeferredNodes(node);` |
-| `src/game/8003FF7C.c:207` | `func_8003FE0C(node);` |
-| `src/game/8003FE0C.c:61` | `if (gSpawnObjectFromTable(object, 0, node->type, node->arg18,` |
+| `src/game/8003FF7C.c:207` | `gSpawnDeferredNode(node);` |
+| `src/game/8003FE0C.c:63` | `if (gSpawnObjectFromTable(object, 0, node->type, node->arg18,` |
 | `src/game/8003FE90.c:58` | `node->callback(10, node, zero, zero);` |
 | `src/game/800834C4.c:53` | `cells = gAllocMemory(count * 8, 2);` |
 | `src/game/80084398.c:144` | `idx = x + a + gCellGridWidth * (y + b);` |

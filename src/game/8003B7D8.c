@@ -11,6 +11,8 @@ struct Unk3BObject {
 };
 
 extern u8 *gSlotSpawnDescs[] __asm__("D_800A0C70");
+u8 gGetDestructionSpawnColumn(struct Unk3BObject *object) __asm__("func_8003B7D8");
+
 
 /**
  * @brief Reads byte [1] from the entity's D_800A0C70 spawn-region table entry.
@@ -35,7 +37,7 @@ extern u8 *gSlotSpawnDescs[] __asm__("D_800A0C70");
  * @par Callers
  * Confirmed: func_8002C174 (0x8002C228, 0x8002C350 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-u8 func_8003B7D8(struct Unk3BObject *object)
+u8 gGetDestructionSpawnColumn(struct Unk3BObject *object)
 {
     u8 *entry;
 

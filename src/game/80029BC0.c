@@ -3,6 +3,8 @@
 
 extern u32 gOutStreamId __asm__("D_8009F6BC");
 extern u32 func_80045028(u32 arg);
+u8 gCheckOutputStreamVolumeMode(void) __asm__("func_80029BC0");
+
 
 /**
  * @brief Checks whether the active stream track D_8009F6BC matches D_800A1800.
@@ -27,7 +29,7 @@ extern u32 func_80045028(u32 arg);
  * @par Callers
  * Confirmed: gSoundPauseVoices (0x800476F0, decides whether to preserve the background stream voice on pause) / Likely: none / Unknown: none.
  */
-u8 func_80029BC0(void)
+u8 gCheckOutputStreamVolumeMode(void)
 {
     return func_80045028(gOutStreamId) & 0xFF;
 }

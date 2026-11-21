@@ -14,6 +14,8 @@ struct Unk5BCD4Pool {
     struct Unk5BCD4Node *active;
     struct Unk5BCD4Node *free;
 };
+struct Unk5BCD4Node *gFindActiveEffectByOwner(struct Unk5BCD4Pool *pool, void *target) __asm__("func_8005BCD4");
+
 
 /**
  * @brief Finds the active effect node attached to a target object.
@@ -34,7 +36,7 @@ struct Unk5BCD4Pool {
  * @par Callers
  * func_8005BDE4.
  */
-struct Unk5BCD4Node *func_8005BCD4(struct Unk5BCD4Pool *pool, void *target)
+struct Unk5BCD4Node *gFindActiveEffectByOwner(struct Unk5BCD4Pool *pool, void *target)
 {
     struct Unk5BCD4Node *node;
 

@@ -9,9 +9,11 @@ extern s32 gGameSuspended __asm__("D_8009FA24");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern u8 gStreamStartPending[] __asm__("D_800A0B90");
 
-extern void func_80029DD8(void);
-extern void func_8002A16C(s32 arg0);
+extern void gStopPortraitStreamAndVoice(void) __asm__("func_80029DD8");
+extern void gStartVagmAudioStream(s32 arg0) __asm__("func_8002A16C");
 extern void gDrainCallbackSlotRing(void) __asm__("func_8002A408");
+void gUpdatePortraitStream(void) __asm__("func_8002A26C");
+
 
 /**
  * @brief Drains deferred asset releases and handles streaming audio timeout teardown and restart.
@@ -35,13 +37,13 @@ extern void gDrainCallbackSlotRing(void) __asm__("func_8002A408");
  * @par Callers
  * Confirmed: func_800462D0 (0x80046374 in asm/us/main.s; omitted from work list due to prologue offset) / Likely: none / Unknown: none.
  */
-void func_8002A26C(void)
+void gUpdatePortraitStream(void)
 {
     gDrainCallbackSlotRing();
 
     if (gPortraitStreamDeadline != 0 && gPortraitStreamDeadline < gFrameTickCounter) {
         gPortraitStreamDeadline = 0;
-        func_80029DD8();
+        gStopPortraitStreamAndVoice();
         if (gBitFieldState & 0x40) {
             gBitFieldState = 0;
             gOutStreamId = -1;
@@ -49,7 +51,7 @@ void func_8002A26C(void)
         if (gGameSuspended == 0) {
             if (gCallGateFlag == 2 || gCallGateFlag == 0) {
                 gStreamStartPending[0] = 1;
-                func_8002A16C(1);
+                gStartVagmAudioStream(1);
             }
         }
     }

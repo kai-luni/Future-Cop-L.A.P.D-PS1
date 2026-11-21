@@ -6,7 +6,7 @@ extern s32 gFrameTickBase __asm__("D_8009FA30");
 extern s32 gGameClock __asm__("D_8009FA60");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 
-extern void func_80057864(void);
+extern void gUpdateMappedPadWords(void) __asm__("func_80057864");
 
 void gWaitForInteractiveFrameTicks(void) __asm__("func_80027E68");
 
@@ -40,7 +40,7 @@ void gWaitForInteractiveFrameTicks(void)
     s32 current;
 
     do {
-        func_80057864();
+        gUpdateMappedPadWords();
         current = gGameClock;
         diff = current - gFrameTickBase;
         gFrameTime = current;

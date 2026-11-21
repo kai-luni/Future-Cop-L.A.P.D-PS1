@@ -7,6 +7,8 @@ struct Unk5E074 {
 
 extern void func_8006CA68(void *model);
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeAttachedEffect(struct Unk5E074 *effect) __asm__("func_8005E074");
+
 
 /**
  * @brief Releases an attached effect: unbinds its model and frees the
@@ -26,7 +28,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * func_8005E0AC, func_8005E22C.
  */
-void func_8005E074(struct Unk5E074 *effect)
+void gFreeAttachedEffect(struct Unk5E074 *effect)
 {
     func_8006CA68(effect->model);
     gFreeBlock(effect);

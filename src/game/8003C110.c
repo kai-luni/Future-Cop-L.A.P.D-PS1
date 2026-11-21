@@ -9,6 +9,8 @@ struct Unk3C110 {
 
 extern void gParseCsfxChunks(s32 arg0, s32 arg1) __asm__("func_8003BFD0");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gLoadCsfxResource(struct Unk3C110 *resource) __asm__("func_8003C110");
+
 
 /**
  * @brief Feeds a resource's chunk stream to the dispatcher and frees the node.
@@ -33,7 +35,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_80024EC8 (0x80025310), the tag switch of the asset loader.
  */
-void func_8003C110(struct Unk3C110 *resource)
+void gLoadCsfxResource(struct Unk3C110 *resource)
 {
     gParseCsfxChunks(resource->unk00, resource->unk20);
     gFreeBlock(resource);

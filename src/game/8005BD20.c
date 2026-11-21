@@ -25,6 +25,8 @@ struct Unk5BD20Pool {
 
 extern void gReleasePoolNode(struct Unk5BD20Pool *pool, struct Unk5BD20Node *previous,
                           struct Unk5BD20Node *node) __asm__("func_8003BF1C");
+void gSweepEffectPool(struct Unk5BD20Pool *pool, void *owner) __asm__("func_8005BD20");
+
 
 /**
  * @brief Garbage-collects one effect pool: releases flagged nodes and drops
@@ -48,7 +50,7 @@ extern void gReleasePoolNode(struct Unk5BD20Pool *pool, struct Unk5BD20Node *pre
  * @par Callers
  * func_8005E0AC.
  */
-void func_8005BD20(struct Unk5BD20Pool *pool, void *owner)
+void gSweepEffectPool(struct Unk5BD20Pool *pool, void *owner)
 {
     struct Unk5BD20Node *node;
     struct Unk5BD20Node *next;

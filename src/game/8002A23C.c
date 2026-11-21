@@ -3,7 +3,7 @@
 
 extern u32 gCallGateFlag __asm__("D_8009F6DC");
 extern void func_80024630(s32 arg0);
-extern void func_8002A16C(s32 arg0);
+extern void gStartVagmAudioStream(s32 arg0) __asm__("func_8002A16C");
 void gRestartVagmStreamOnTimeout(void) __asm__("func_8002A23C");
 
 
@@ -27,6 +27,6 @@ void gRestartVagmStreamOnTimeout(void)
 {
     if (gCallGateFlag != 0) {
         func_80024630(0);
-        func_8002A16C(1);
+        gStartVagmAudioStream(1);
     }
 }

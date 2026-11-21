@@ -15,7 +15,7 @@ typedef struct {
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern s32 gCountTrailingZeros(u32 value) __asm__("func_800195F0");
-extern void func_8004979C(void *value);
+extern void gSetSpriteDescriptorTable(void *value) __asm__("func_8004979C");
 s32 gBuildSpriteDescTable(void **array, s32 count) __asm__("func_8005A2BC");
 
 
@@ -109,6 +109,6 @@ s32 gBuildSpriteDescTable(void **array, s32 count)
         }
     }
 
-    func_8004979C(header);
+    gSetSpriteDescriptorTable(header);
     return 1;
 }

@@ -28,7 +28,7 @@ extern u32 gTexpageBaseTable[] __asm__("D_800A8E80");
 extern Res63C5C *gParseTextureContainer(void *arg0, s32 arg1) __asm__("func_8001996C");
 extern void gLoadImage(Rect63C5C *rect, void *data) __asm__("func_80092F38");
 extern void func_80092C8C(s32 arg0);
-extern void func_80048DEC(void);
+extern void gReloadDefaultFontBank(void) __asm__("func_80048DEC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 void gLoadCbmpTexture(Arg63C5C *arg0) __asm__("func_80063C5C");
 
@@ -135,7 +135,7 @@ void gLoadCbmpTexture(Arg63C5C *arg0)
     func_80092C8C(0);
 
     if (s0 == 9) {
-        func_80048DEC();
+        gReloadDefaultFontBank();
     }
 
     attr = s1 << 6;

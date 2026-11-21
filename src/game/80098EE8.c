@@ -4,7 +4,7 @@
 extern volatile u16 gSpuTransferAddr __asm__("D_8009EEBC");
 extern u32 gSpuAddrShift __asm__("D_8009EECC");
 
-extern u32 func_80097808(s32 register_index, u32 address);
+extern u32 gSpuEncodeOrWriteAddr(s32 register_index, u32 address) __asm__("func_80097808");
 
 /**
  *  @brief Reads and shifts a value for an address in the accepted range.
@@ -33,6 +33,6 @@ u32 func_80098EE8(u32 address)
         return 0;
     }
 
-    gSpuTransferAddr = func_80097808(-1, address);
+    gSpuTransferAddr = gSpuEncodeOrWriteAddr(-1, address);
     return (u32)gSpuTransferAddr << gSpuAddrShift;
 }

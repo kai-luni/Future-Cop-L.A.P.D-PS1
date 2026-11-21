@@ -10,6 +10,8 @@ struct Unk57358 {
     u8 unk00[0xAC];
     struct Unk57358Info *info;
 };
+void gAddCameraShake(struct Unk57358 *object, s32 amount) __asm__("func_80057358");
+
 
 /**
  * @brief Raises the charge value of an object by a fraction of the amount.
@@ -30,7 +32,7 @@ struct Unk57358 {
  * @par Callers
  * Confirmed: func_800578B4/func_800578E4 family (weapon pickup paths).
  */
-void func_80057358(struct Unk57358 *object, s32 amount)
+void gAddCameraShake(struct Unk57358 *object, s32 amount)
 {
     struct Unk57358Info *info;
     s32 charge;

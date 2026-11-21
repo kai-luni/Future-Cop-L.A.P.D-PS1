@@ -10,7 +10,7 @@ extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern void gStopTrackedSoundVoice(void) __asm__("func_80023E84");
 extern s32 gValidateSoundVoiceHandle(struct Handle *) __asm__("func_800474C4");
 extern s32 gComputeTrackedSoundMix(s32, s8 *) __asm__("func_800450A4");
-extern s8 func_80045050(void);
+extern s8 gComputeTrackedVoiceVolume(void) __asm__("func_80045050");
 extern s32 gAllocateSoundChannelVoice(s32, s32, struct Params *, s32) __asm__("func_800220C4");
 extern s32 gReleaseValidatedSoundVoiceHandle(struct Handle *) __asm__("func_800474F0");
 extern void func_80047800(struct Resource *, s32, s32, s32);
@@ -58,7 +58,7 @@ s32 gStartTrackedSoundVoice(void)
                 gStopTrackedSoundVoice();
             }
         } else {
-            mix[0] = func_80045050();
+            mix[0] = gComputeTrackedVoiceVolume();
             mix[1] = 0x40;
         }
         if (resource) {

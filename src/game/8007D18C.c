@@ -19,7 +19,7 @@ extern volatile s32 gPreviewTrackId __asm__("D_8009F920");
 extern Unk8009FA94 *gGameSession[2] __asm__("D_8009FA94");
 extern u16 gSoundWidgetLabel[] __asm__("D_8009BABE");
 extern u8 D_800A377B[];
-extern void func_8002A16C(s32);
+extern void gStartVagmAudioStream(s32) __asm__("func_8002A16C");
 extern s32 func_8002A58C(void);
 extern s32 func_800451E0(void);
 extern s32 func_8004522C(void);
@@ -65,7 +65,7 @@ void gInitOptionsScreen(void)
     gSoundWidgetLabel[0] = (tmp != 0) ? 0x100E : 0x1018;
     gSnapshotResult = 0;
     if ((u8)func_8002A58C() == 0) {
-        func_8002A16C(0);
+        gStartVagmAudioStream(0);
     }
     __asm__ volatile("lui %0,%%hi(D_8009FA94)\n\tlw %0,%%lo(D_8009FA94)(%0)" : "=r" (p) : : "memory");
     if (p->unk5C == 1) {

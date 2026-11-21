@@ -18,6 +18,8 @@ struct Unk3F428Node {
     u8 unk04[0x18];
     struct Unk3F428Def *def;
 };
+void gDispatchSpawnSlotTicks(struct Unk3F428Node *node, s32 arg) __asm__("func_8003F428");
+
 
 /**
  * @brief Dispatches message 1 (frame tick) to every node with non-null def->ops along a linked list.
@@ -42,7 +44,7 @@ struct Unk3F428Node {
  * @par Callers
  * Confirmed: func_8003F570 (0x8003F668 in asm/us/main.s, per-frame entity world tick) / Likely: none / Unknown: none.
  */
-void func_8003F428(struct Unk3F428Node *node, s32 arg)
+void gDispatchSpawnSlotTicks(struct Unk3F428Node *node, s32 arg)
 {
     while (node != 0) {
         if (node->def != 0 && node->def->ops != 0) {

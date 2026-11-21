@@ -13,6 +13,8 @@ struct Unk3CA80 {
     u8 unk16[0x0E];
     void (*callback)(s32 message, struct Unk3CA80 *object, s32 arg2, s32 arg3);
 };
+void gRetireSpawnSlot(struct Unk3CA80 *object) __asm__("func_8003CA80");
+
 
 /**
  * @brief Sends teardown message 7 to an object's callback and marks its slot retired.
@@ -36,7 +38,7 @@ struct Unk3CA80 {
  * @par Callers
  * Confirmed: func_8003B6A4 (0x8003B738), func_8003CAE4 (0x8003CD4C, 0x8003CD80), func_8003FB90 (0x8003FC44) / Likely: none / Unknown: none.
  */
-void func_8003CA80(struct Unk3CA80 *object)
+void gRetireSpawnSlot(struct Unk3CA80 *object)
 {
     s32 zero;
 

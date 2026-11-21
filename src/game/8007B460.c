@@ -70,7 +70,7 @@ extern s32 func_8008CCA0(u8 *, u8 *);
 extern void gActivateMenuPanel(s8 *, s32) __asm__("func_80078650");
 extern void func_80078B34(s32, s32, s32);
 extern s32 gPlayNonpositionalSoundEffect(s32, s32) __asm__("func_80046C84");
-extern void func_800493C0(u32, u8, u8, u8);
+extern void gSetTextPaletteEntry(u32, u8, u8, u8) __asm__("func_800493C0");
 
 /**
  * @brief Draws the profile slot list: two header sprites and one row per

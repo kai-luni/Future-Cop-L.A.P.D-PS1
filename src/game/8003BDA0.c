@@ -11,6 +11,8 @@ struct Unk3BDA0 {
 extern u8 *func_80019C38(s32 arg0, s32 arg1, u32 tag, s32 arg3);
 extern void gSetSlotSpawnDescriptor(u8 *data) __asm__("func_8003BC7C");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gLoadActorDef5B(struct Unk3BDA0 *resource) __asm__("func_8003BDA0");
+
 
 /**
  * @brief Extracts a 'tACT' section from a resource descriptor, copies its slot record, and frees the descriptor.
@@ -34,7 +36,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_8004D6D4 (0x8004D7EC, case 0x5B, omitted from work list).
  */
-void func_8003BDA0(struct Unk3BDA0 *resource)
+void gLoadActorDef5B(struct Unk3BDA0 *resource)
 {
     gSetSlotSpawnDescriptor(func_80019C38(resource->unk00, resource->unk20,
                                 0x74414354, resource->unk1C) - 4);

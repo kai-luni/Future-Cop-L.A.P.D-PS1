@@ -52,7 +52,7 @@ struct Object {
     s32 unk94, unk98, unk9C;
 };
 extern void func_80013BD8(void *, void *, s32);
-extern void func_8003FA34(struct Object *);
+extern void gQueueOrApplyMapOccupancy(struct Object *) __asm__("func_8003FA34");
 void gInitEntityBase(struct Object *self, struct Args *args) __asm__("func_8002A5F4");
 
 
@@ -164,5 +164,5 @@ void gInitEntityBase(struct Object *self, struct Args *args)
     self->unk84 = 0;
     self->unk88 = 0;
     self->unk90 = 0x7F00;
-    func_8003FA34(self);
+    gQueueOrApplyMapOccupancy(self);
 }

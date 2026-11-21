@@ -5,6 +5,8 @@ extern char gFormatStringB[] __asm__("D_8009F368");
 
 extern s32 func_8008CD30(char *buffer, char *format, s32 value);
 extern void gDrawAlignedString(char *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
+void gDrawFormattedHudNumber(s32 value, s32 x, s32 y, s32 color) __asm__("func_800491F8");
+
 
 /**
  * @brief Formats a number with the shared format string and draws it as
@@ -24,7 +26,7 @@ extern void gDrawAlignedString(char *text, s32 x, s32 y, s32 color) __asm__("fun
  * @par Callers
  * func_8006C080 (status bar).
  */
-void func_800491F8(s32 value, s32 x, s32 y, s32 color)
+void gDrawFormattedHudNumber(s32 value, s32 x, s32 y, s32 color)
 {
     char buffer[0x20];
 

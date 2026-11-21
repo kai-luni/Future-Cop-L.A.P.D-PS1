@@ -24,8 +24,10 @@ extern void gUpdateChaseApproachSpeed(s32 message, Object8002C3F0 *object, Data8
 extern s32 gEntityBaseHandler(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_8002AD58");
 extern void gHandleType26Destruction(Object8002C3F0 *object) __asm__("func_8002C174");
 extern void gUpdateType26Actor(Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3) __asm__("func_8002B784");
-extern s32 func_8002ACB4(Object8002C3F0 *object, s32 value);
+extern s32 gSubmitModelWithUvOffset(Object8002C3F0 *object, s32 value) __asm__("func_8002ACB4");
 s32 gHandleType26Entity(s32 message, Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3) __asm__("func_8002C3F0");
+void gHandleType26Contact(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_8002C3B0");
+
 
 
 /**
@@ -95,7 +97,7 @@ L_C468:
     if (s0->unk15F == 7) {
         return 0;
     }
-    func_8002C3B0(message, s0, s1);
+    gHandleType26Contact(message, s0, s1);
     return 0;
 
 L_C488:
@@ -127,7 +129,7 @@ L_C50C:
     return 0;
 
 L_C524:
-    return func_8002ACB4(s0, s0->unk163);
+    return gSubmitModelWithUvOffset(s0, s0->unk163);
 
 L_C538:
     if ((s32)s1 == 6) {

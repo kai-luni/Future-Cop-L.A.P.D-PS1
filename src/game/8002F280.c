@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void gRemoveEntityCommand(u8 *arg, s32 index) __asm__("func_8002A5B4");
+void gProcessMoverCommands(u8 *arg) __asm__("func_8002F280");
+
 
 /**
  * @brief Drains opcode 0x50 entries from a mover's 4-slot command queue (+0x0C..+0x13) into byte +0xA1.
@@ -25,7 +27,7 @@ extern void gRemoveEntityCommand(u8 *arg, s32 index) __asm__("func_8002A5B4");
  * @par Callers
  * Confirmed: func_8002F30C (0x8002F334 in asm/us/main.s, when `obj->command != 0`) / Likely: none / Unknown: none.
  */
-void func_8002F280(u8 *arg)
+void gProcessMoverCommands(u8 *arg)
 {
     s32 i;
     u8 cmd;

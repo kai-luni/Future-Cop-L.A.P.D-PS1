@@ -6,7 +6,7 @@ extern s32 gHudMode2 __asm__("D_8009FAB8");
 extern s32 gOverlayTimer __asm__("D_8009F760");
 extern s32 gFrameSwitch __asm__("D_8009FAC8");
 
-extern u8 func_80048790(void);
+extern u8 gCheckHudLayoutNeedsAdvance(void) __asm__("func_80048790");
 void gUpdateHudLayoutMode(s32 input) __asm__("func_800487CC");
 
 
@@ -48,7 +48,7 @@ void gUpdateHudLayoutMode(s32 input)
     }
     gOverlayTimer = current;
     cycle = 0;
-    if (func_80048790() || (u8)force) {
+    if (gCheckHudLayoutNeedsAdvance() || (u8)force) {
         cycle = 1;
     }
     if ((u8)cycle) {
@@ -57,6 +57,6 @@ void gUpdateHudLayoutMode(s32 input)
             if (gHudMode2 >= 3) {
                 gHudMode2 = 0;
             }
-        } while (func_80048790());
+        } while (gCheckHudLayoutNeedsAdvance());
     }
 }

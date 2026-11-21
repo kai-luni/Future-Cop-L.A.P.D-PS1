@@ -28,8 +28,8 @@ typedef struct {
 
 extern VoiceTable *gMissionTable __asm__("D_8009F930");
 
-extern s32 func_80045678(s32 sound, s32 id, s32 arg2, s32 arg3, s32 arg4);
-extern void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index);
+extern s32 gAllocPositionalSoundChannel(s32 sound, s32 id, s32 arg2, s32 arg3, s32 arg4) __asm__("func_80045678");
+extern void gSetSoundChannelPosition(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index) __asm__("func_8004572C");
 void gAssignSceneSoundVoice(SoundObj *obj) __asm__("func_8008363C");
 
 
@@ -69,7 +69,7 @@ void gAssignSceneSoundVoice(SoundObj *obj)
         if (free == 0) {
             return;
         }
-        voice = func_80045678(obj->unk57, obj->unk54 | 0x40000000, obj->unk34, obj->unk3C, -1);
+        voice = gAllocPositionalSoundChannel(obj->unk57, obj->unk54 | 0x40000000, obj->unk34, obj->unk3C, -1);
         if (voice < 0) {
             return;
         }
@@ -95,7 +95,7 @@ void gAssignSceneSoundVoice(SoundObj *obj)
         slot = &table->slots[obj->slot];
         slot->timer = 900;
         if (obj->unk56 != 0) {
-            func_8004572C(obj->unk54 | 0x40000000, obj->unk34, obj->unk3C, -1, slot->voice);
+            gSetSoundChannelPosition(obj->unk54 | 0x40000000, obj->unk34, obj->unk3C, -1, slot->voice);
         }
     }
 }

@@ -3,6 +3,8 @@
 
 extern s32 func_800452C8(void);
 extern void func_800452D4(void);
+s8 gComputeTrackedVoiceVolume(void) __asm__("func_80045050");
+
 
 /**
  * @brief Computes the scaled voice volume from D_8009F338 and refreshes active voice parameters.
@@ -27,7 +29,7 @@ extern void func_800452D4(void);
  * @par Callers
  * Confirmed: func_80023F08 (0x80023F80 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-s8 func_80045050(void)
+s8 gComputeTrackedVoiceVolume(void)
 {
     s32 volume;
 

@@ -11,6 +11,8 @@ extern struct FontEntry gGlyphEntryTable[] __asm__("D_800A19A0");
 extern s32 gFontBankCount __asm__("D_8009F364");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeFontGlyphBuffers(void) __asm__("func_80048F3C");
+
 
 /**
  * @brief Frees the glyph buffers for all loaded fonts in the font table.
@@ -31,7 +33,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_80047868 (font glyph teardown wrapper).
  */
-void func_80048F3C(void)
+void gFreeFontGlyphBuffers(void)
 {
     s32 i;
 

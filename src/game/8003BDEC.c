@@ -12,6 +12,8 @@ struct Pool {
 };
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeIntrusiveNodePoolStorage(struct Pool *pool) __asm__("func_8003BDEC");
+
 
 /**
  * @brief Releases the backing storage of a fixed pool.
@@ -38,7 +40,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_8003BE2C (pool setup) and the pool users of the 3Bxxx block.
  */
-void func_8003BDEC(struct Pool *pool)
+void gFreeIntrusiveNodePoolStorage(struct Pool *pool)
 {
     if (pool->storage != 0) {
         gFreeBlock(pool->storage);

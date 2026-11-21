@@ -67,7 +67,7 @@ extern void gResetActorAndPlaceView(struct Data8 *, struct Object *) __asm__("fu
 extern void func_80013BD8(void *, void *, s32);
 extern struct Object *gSpawnCompanionEntity(struct Object *) __asm__("func_80057914");
 extern s32 gQuerySurfaceHeight(void *, s32) __asm__("func_80067684");
-extern void func_8005A0C4(void *, s32, s32);
+extern void gInitHudGauge(void *, s32, s32) __asm__("func_8005A0C4");
 extern void gResetCompoundEntityAnimation(struct Object *) __asm__("func_80051AF8");
 void gInitPlayerUnit(struct Object *arg0, struct Data *arg1, s32 arg2) __asm__("func_800579D4");
 
@@ -246,6 +246,6 @@ found:
     if (value > 0x7FFF) value = 0x7FFF;
     obj->health = value;
     obj->maxHealth = value;
-    func_8005A0C4(state->gauge, obj->health, obj->maxHealth);
+    gInitHudGauge(state->gauge, obj->health, obj->maxHealth);
     gResetCompoundEntityAnimation(obj);
 }

@@ -57,7 +57,7 @@ extern s32 gEntityBaseHandler(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) __as
 extern void gInitRailMoverEntity(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) __asm__("func_800378BC");
 extern void gResolveRailMoverContact(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3) __asm__("func_800379D4");
 extern void gStepIdleActorTurn(Unk382B4 *arg1) __asm__("func_800381D4");
-extern void func_800448D8(void *arg0, u8 arg1, s32 arg2, s32 arg3);
+extern void gSelectAnimationClip(void *arg0, u8 arg1, s32 arg2, s32 arg3) __asm__("func_800448D8");
 extern void gSpawnEntitySlotTypes(u8 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
 extern void gUpdateChaseApproachSpeed(s32 arg0, Unk382B4 *arg1, s32 arg2) __asm__("func_80037B28");
 extern void gRemoveEntityCommand(Unk382B4 *arg0, s32 arg1) __asm__("func_8002A5B4");
@@ -65,7 +65,7 @@ extern s32 gAdvanceAnimTrack(Unk382B4 *arg0, void *arg1, s32 arg2, s32 arg3) __a
 extern void gSetModelFrame(void *arg0, s32 arg1) __asm__("func_800175F8");
 extern void gStepAttackScheduler(void *arg0, s32 arg1, Unk382B4 *arg2, s32 arg3, s32 arg4) __asm__("func_80060238");
 extern void gUpdateFallMotion(s32 arg0, Unk382B4 *arg1, s32 arg2) __asm__("func_8003802C");
-extern s32 func_8002ACB4(Unk382B4 *arg0, u8 arg1);
+extern s32 gSubmitModelWithUvOffset(Unk382B4 *arg0, u8 arg1) __asm__("func_8002ACB4");
 extern void func_80063194(s32 key);
 
 register s32 zero __asm__("$0");
@@ -236,7 +236,7 @@ L800383E0: {
         arg1->unk15A = two;
         arg1->unk118 |= 0x40;
         arg1->unk24 |= 1;
-        func_800448D8((void *)a0, five, six, seven);
+        gSelectAnimationClip((void *)a0, five, six, seven);
         gSpawnEntitySlotTypes(arg1->unk20, arg1, 0, (arg1->unk19 >> 3) & 0x1E, 0);
         return 0;
     }
@@ -308,7 +308,7 @@ L80038614:
     if (arg1->unk28->unk10 == 0) {
         goto L80038720;
     }
-    return func_8002ACB4(arg1, arg1->unk159);
+    return gSubmitModelWithUvOffset(arg1, arg1->unk159);
 
 L80038650:
     {

@@ -19,12 +19,12 @@ extern u8 gFrameDeltaPrev2 __asm__("D_8009F692");
 extern u8 gFrameDeltaRemainder __asm__("D_8009F693");
 extern u8 *gFocusPositions[] __asm__("D_8009F9A0");
 
-extern void func_80057864(void);
+extern void gUpdateMappedPadWords(void) __asm__("func_80057864");
 extern s32 gStepDemoInputPlayback(void) __asm__("func_80059DB8");
 extern void gStepPendingMessages(s32 elapsed) __asm__("func_8004DB74");
 extern void gStepMapTileAnimations(s32 arg) __asm__("func_80063568");
 extern void gStepAnimations(s32 arg) __asm__("func_800136C8");
-extern void func_8004CC68(void);
+extern void gUpdateMarkerPulseColors(void) __asm__("func_8004CC68");
 
 void gStepGameplayFrameTime(void) __asm__("func_8002703C");
 
@@ -94,7 +94,7 @@ void gStepGameplayFrameTime(void)
         gFrameDelta = 0x3C;
     }
 
-    func_80057864();
+    gUpdateMappedPadWords();
     if (gDemoPlayback > 0) {
         value = gStepDemoInputPlayback();
         gFrameDelta = value;
@@ -111,5 +111,5 @@ void gStepGameplayFrameTime(void)
     gStepPendingMessages(gFrameDelta);
     gStepMapTileAnimations(gFrameDelta);
     gStepAnimations(gFrameDelta);
-    func_8004CC68();
+    gUpdateMarkerPulseColors();
 }

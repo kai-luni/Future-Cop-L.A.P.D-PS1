@@ -19,6 +19,8 @@ extern struct SoundChannel gVoiceTable[] __asm__("D_800A1160");
 
 extern void gReleaseSoundVoice(s32 handle) __asm__("func_80046698");
 extern void gReleaseSoundChannel(struct SoundChannel *channel) __asm__("func_80045548");
+void gStopSoundChannelByIndex(s32 arg0, s32 index) __asm__("func_800457B8");
+
 
 /**
  * @brief Stops a sound channel by index: clears its id, releases the
@@ -43,7 +45,7 @@ extern void gReleaseSoundChannel(struct SoundChannel *channel) __asm__("func_800
  * func_8002E630, func_8002F30C, func_8003A160, func_80041880, func_8004CECC,
  * func_8004D958, func_8004DF28, func_8004E248, func_8008352C.
  */
-void func_800457B8(s32 arg0, s32 index)
+void gStopSoundChannelByIndex(s32 arg0, s32 index)
 {
     struct SoundChannel *channel;
 

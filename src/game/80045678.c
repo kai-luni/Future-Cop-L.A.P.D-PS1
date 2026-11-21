@@ -21,6 +21,8 @@ extern struct SoundChannel *gChannelListHead __asm__("D_8009F724");
 
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
 extern void gQueueSoundChannelByPriority(struct SoundChannel *channel) __asm__("func_800455DC");
+s32 gAllocPositionalSoundChannel(s32 sound, s32 id, s32 arg2, s32 arg3) __asm__("func_80045678");
+
 
 /**
  * @brief Allocates and activates a SoundChannel entry for a resolved sound effect ID.
@@ -44,7 +46,7 @@ extern void gQueueSoundChannelByPriority(struct SoundChannel *channel) __asm__("
  * @par Callers
  * Confirmed: func_8004DF28 (0x8004E0F4), func_8004E248 (0x8004E49C), func_8008363C (0x8008368C) / Likely: none / Unknown: none.
  */
-s32 func_80045678(s32 sound, s32 id, s32 arg2, s32 arg3)
+s32 gAllocPositionalSoundChannel(s32 sound, s32 id, s32 arg2, s32 arg3)
 {
     struct SoundChannel *channel;
     s32 index;

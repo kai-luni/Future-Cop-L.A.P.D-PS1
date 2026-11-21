@@ -38,7 +38,7 @@ struct Unk58210Global {
 extern u8 gPlayerInvulnerable[] __asm__("D_8009FA8C");
 extern struct Unk58210Global *gGameSession __asm__("D_8009FA94");
 
-extern void func_80057358(void *object, s32 amount);
+extern void gAddCameraShake(void *object, s32 amount) __asm__("func_80057358");
 extern void gFlagQuartileChange(void *object, s32 value) __asm__("func_8003BA50");
 void gApplyPlayerHealthDamage(struct Unk58210 *object, s32 amount) __asm__("func_80058210");
 
@@ -127,7 +127,7 @@ void gApplyPlayerHealthDamage(struct Unk58210 *object, s32 amount)
         max /= 2;
     }
 
-    func_80057358(object, max);
+    gAddCameraShake(object, max);
 
     if (object->unk20 != 0 && (object->unk24 & 0x40000) == 0) {
         gFlagQuartileChange(object, oldHealth);

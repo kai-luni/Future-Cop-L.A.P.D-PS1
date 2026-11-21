@@ -1,3 +1,5 @@
+void gReserveScratchBuffer(void) __asm__("func_8004F08C");
+
 // Categories: Utilities > Stub
 /**
  *  @brief Creates a local buffer referenced by an empty assembly statement.
@@ -15,7 +17,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8004F08C(void)
+void gReserveScratchBuffer(void)
 {
     char b[16];
     __asm__ __volatile__("" : : "r"(b));

@@ -90,7 +90,7 @@ extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 
 extern s32 gReleaseValidatedSoundVoiceHandle(struct Unk4749CHandle *) __asm__("func_800474F0");
 extern void func_80023D78(void);
-extern void func_8002A26C(void);
+extern void gUpdatePortraitStream(void) __asm__("func_8002A26C");
 extern void gReleaseSoundVoice(struct SoundVoice *) __asm__("func_80046698");
 extern void func_8002441C(void);
 extern s32 gComputeSpatialSoundAttenuation(s32, s32, s8 *, s32) __asm__("func_800458E8");
@@ -174,7 +174,7 @@ delta_ready:
         }
 
         func_80023D78();
-        func_8002A26C();
+        gUpdatePortraitStream();
 
         {
             register u32 index __asm__("$19");

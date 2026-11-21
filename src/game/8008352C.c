@@ -23,7 +23,7 @@ struct SoundManager {
 extern struct SoundManager *gMissionTable __asm__("D_8009F930");
 
 extern s32 func_80045768(s32 arg0, s32 index);
-extern void func_800457B8(s32 arg0, s32 index);
+extern void gStopSoundChannelByIndex(s32 arg0, s32 index) __asm__("func_800457B8");
 void gUpdateSoundSlotTimers(s32 elapsed) __asm__("func_8008352C");
 
 
@@ -66,7 +66,7 @@ void gUpdateSoundSlotTimers(s32 elapsed)
                     } else {
                         mask |= bit;
                         actor->unk4B = -1;
-                        func_800457B8(actor->unk54 | 0x40000000, slot->sound_index);
+                        gStopSoundChannelByIndex(actor->unk54 | 0x40000000, slot->sound_index);
                     }
                 }
             }

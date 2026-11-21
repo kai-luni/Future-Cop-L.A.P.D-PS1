@@ -113,7 +113,7 @@ extern s32 gSqrt12(s32 v) __asm__("func_80095900");
 extern void gSpawnBeamContactImpact(struct Vec3 *v, s32 a, struct Target *t) __asm__("func_8005C184");
 extern void gNormalizeVector(struct Vec3 *v) __asm__("func_8001A180");
 extern s32 gVectorDot(struct Vec3 *a, struct Vec3 *b) __asm__("func_8001AB00");
-extern u8 func_8005C2C8(struct Target *t, struct Cand *c);
+extern u8 gInsertSweepHitTarget(struct Target *t, struct Cand *c) __asm__("func_8005C2C8");
 extern s32 gGetEntitySpawnBank(struct Tgt *t) __asm__("func_8003BF50");
 extern struct Res *gSpawnTypeAtOwner(void *owner, u8 column, struct Msg *msg, s32 row, s32 arg4) __asm__("func_800402DC");
 
@@ -312,7 +312,7 @@ void gSweepBeamSegments(struct Owner *arg0, struct Target *tgt)
         msg.vec = tail->pos;
     again:
         if (func_80019FCC(&diff) < s4) {
-            if (func_8005C2C8(tgt, cand) == 0) {
+            if (gInsertSweepHitTarget(tgt, cand) == 0) {
                 t.m.c = tgt->unk2B;
                 t.m.b = tgt->unk1C;
                 t.m.a = tgt->unk08->unk14;

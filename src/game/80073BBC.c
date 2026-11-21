@@ -20,7 +20,7 @@ extern void gFreeBlock(void *) __asm__("func_800181D4");
 extern void func_80070710(void *);
 extern void func_80073BA8(void *);
 extern void *gAllocPositionNode(void *, s32, s32, s32) __asm__("func_80073500");
-extern void *func_80073590(void *, void *, s32, s32, s32, s32);
+extern void *gAllocAttachedEffectNode(void *, void *, s32, s32, s32, s32) __asm__("func_80073590");
 extern void *gCreateRibbonBeam(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_8007377C");
 s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3) __asm__("func_80073BBC");
 
@@ -140,9 +140,9 @@ s32 gHandleBeamObjectMsg(s32 message, struct Obj *obj, void *arg2, s32 arg3)
             owner = 0;
             if (link && !link->disabled) owner = link->owner;
             if (obj->flags1a & 0x100) effectflags |= 8;
-            a = (u32)func_80073590(owner, coord, obj->kind, angle,
+            a = (u32)gAllocAttachedEffectNode(owner, coord, obj->kind, angle,
                                (def->flags4a & 8) ? 0 : def->p48, (u16)a);
-            b = (u32)func_80073590(owner, coord, obj->kind, 0, def->p48, (u16)b);
+            b = (u32)gAllocAttachedEffectNode(owner, coord, obj->kind, 0, def->p48, (u16)b);
         } else {
             b = (u32)gAllocPositionNode(&obj->pos, 0, def->p48, (u16)b);
             a = (u32)gAllocPositionNode(&obj->pos, angle,

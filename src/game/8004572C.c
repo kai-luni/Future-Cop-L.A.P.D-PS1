@@ -16,6 +16,8 @@ struct SoundChannel {
 };
 
 extern struct SoundChannel gVoiceTable[] __asm__("D_800A1160");
+void gSetSoundChannelPosition(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index) __asm__("func_8004572C");
+
 
 /**
  * @brief Updates the 2D world coordinates (X, Z) of an active looping sound channel.
@@ -40,7 +42,7 @@ extern struct SoundChannel gVoiceTable[] __asm__("D_800A1160");
  * @par Callers
  * Confirmed: func_8004DF28 (0x8004E130), func_8004E248 (0x8004E4D8), and func_8008363C (0x80083740) / Likely: none / Unknown: none.
  */
-void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index)
+void gSetSoundChannelPosition(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index)
 {
     struct SoundChannel *channel;
 

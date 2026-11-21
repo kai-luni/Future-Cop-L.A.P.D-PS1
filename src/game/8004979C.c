@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void *gSpriteDescriptorTable __asm__("D_8009F77C");
+void gSetSpriteDescriptorTable(void *value) __asm__("func_8004979C");
+
 
 /**
  * @brief Publishes the active sprite/tile descriptor table pointer into D_8009F77C.
@@ -25,7 +27,7 @@ extern void *gSpriteDescriptorTable __asm__("D_8009F77C");
  * @par Callers
  * Confirmed: func_8005A2BC (0x8005A3E0, sprite/tile descriptor builder) / Likely: none / Unknown: none.
  */
-void func_8004979C(void *value)
+void gSetSpriteDescriptorTable(void *value)
 {
     gSpriteDescriptorTable = value;
 }

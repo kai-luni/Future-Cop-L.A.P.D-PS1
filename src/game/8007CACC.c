@@ -21,9 +21,9 @@ extern struct Voice *gSnapshotPointer __asm__("D_8009F91C");
 extern s32 gPreviewTrackId __asm__("D_8009F920");
 
 extern s32 func_8004522C(void);
-extern void func_800451F8(s32 volume);
+extern void gSetSfxVolume(s32 volume) __asm__("func_800451F8");
 extern s32 func_80045288(void);
-extern void func_80045238(s32 volume);
+extern void gSetVagmVolumeSetting(s32 volume) __asm__("func_80045238");
 extern s32 func_800452C8(void);
 extern void func_80045294(s32 volume);
 extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
@@ -92,10 +92,10 @@ s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
         if (flags & 0x800000) {
             switch (gFontBankTable->mode) {
             case 1:
-                func_800451F8(func_8004522C() - 1);
+                gSetSfxVolume(func_8004522C() - 1);
                 break;
             case 2:
-                func_80045238(func_80045288() - 1);
+                gSetVagmVolumeSetting(func_80045288() - 1);
                 break;
             case 3:
                 func_80045294(func_800452C8() - 1);
@@ -104,10 +104,10 @@ s32 gHandleMusicPreviewMenu(s32 flags, s32 arg1)
         } else if (flags & 0x200000) {
             switch (gFontBankTable->mode) {
             case 1:
-                func_800451F8(func_8004522C() + 1);
+                gSetSfxVolume(func_8004522C() + 1);
                 break;
             case 2:
-                func_80045238(func_80045288() + 1);
+                gSetVagmVolumeSetting(func_80045288() + 1);
                 break;
             case 3:
                 func_80045294(func_800452C8() + 1);

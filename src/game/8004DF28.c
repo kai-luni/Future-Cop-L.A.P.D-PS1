@@ -36,9 +36,9 @@ extern struct Entity *gEffectListHead[] __asm__("D_800A8F98");
 extern s32 gCommandListHead[] __asm__("D_800A8F90");
 extern s32 gEffectPoolCapacity[] __asm__("D_800A8F94");
 
-extern s32 func_80045678(s32 sound, s32 id, s32 arg2, s32 arg3, s32 arg4);
-extern void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index);
-extern void func_800457B8(s32 arg0, s32 index);
+extern s32 gAllocPositionalSoundChannel(s32 sound, s32 id, s32 arg2, s32 arg3, s32 arg4) __asm__("func_80045678");
+extern void gSetSoundChannelPosition(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index) __asm__("func_8004572C");
+extern void gStopSoundChannelByIndex(s32 arg0, s32 index) __asm__("func_800457B8");
 extern void gRunEntityScript(struct Entity *entity) __asm__("func_8004DEE0");
 void gCullActiveEntitiesSolo(void) __asm__("func_8004DF28");
 
@@ -149,20 +149,20 @@ void gCullActiveEntitiesSolo(void)
                         }
                         if (*(volatile u8 *)&node->unk21 != 0) {
                             if (!(node->flags & mask)) {
-                                res = func_80045678(node->unk21, node->id, node->unk50,
+                                res = gAllocPositionalSoundChannel(node->unk21, node->id, node->unk50,
                                                     node->unk58, -1);
                                 node->unk22 = res;
                                 if ((s8)res >= 0) {
                                     node->flags |= mask;
                                 }
                             } else {
-                                func_8004572C(node->id, node->unk50, node->unk58, -1,
+                                gSetSoundChannelPosition(node->id, node->unk50, node->unk58, -1,
                                               node->unk22);
                             }
                         }
                     } else {
                         if (node->flags & mask) {
-                            func_800457B8(node->id, node->unk22);
+                            gStopSoundChannelByIndex(node->id, node->unk22);
                             node->flags &= 0xFFBFFFFF;
                         }
                     }
@@ -182,7 +182,7 @@ void gCullActiveEntitiesSolo(void)
                 } else {
                     node->flags &= 0xDFFFFFFF;
                     if (node->flags & mask) {
-                        func_800457B8(node->id, node->unk22);
+                        gStopSoundChannelByIndex(node->id, node->unk22);
                         node->flags &= 0xFFBFFFFF;
                     }
                 }

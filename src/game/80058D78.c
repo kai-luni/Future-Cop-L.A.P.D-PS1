@@ -22,7 +22,7 @@ extern void gPlayNonpositionalSoundEffect(int, Obj *) __asm__("func_80046C84");
 extern void gFlagQuartileChange(Obj *, int) __asm__("func_8003BA50");
 extern Obj *gFindUnitById(int) __asm__("func_8004D664");
 extern void func_80025CFC(Obj *);
-extern void func_8005A190(Data *, int, int);
+extern void gSetEntityGaugeValue(Data *, int, int) __asm__("func_8005A190");
 void gRetirePlayerUnit(Obj *o) __asm__("func_80058D78");
 
 
@@ -131,7 +131,7 @@ void gRetirePlayerUnit(Obj *o)
             }
         } else {
             if (gScreenState != 5) func_80025CFC(o);
-            func_8005A190(o->data, 0, o->angle);
+            gSetEntityGaugeValue(o->data, 0, o->angle);
             o->update = gHandleRetiredPlayer;
             o->child->update = gHandleRetiredPlayerChild;
         }

@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gSpawnDynamicLightNode(u8 *data, s32 arg1) __asm__("func_80049C38");
+s32 gTrySpawnDynamicLight(u8 *data, s32 arg1) __asm__("func_80049E88");
+
 
 /**
  * @brief Boolean wrapper around func_80049C38 that spawns a map light node and returns 1 on success or 0 on failure.
@@ -25,7 +27,7 @@ extern s32 gSpawnDynamicLightNode(u8 *data, s32 arg1) __asm__("func_80049C38");
  * @par Callers
  * Confirmed: func_80049EA8 (0x80049ED4 in asm/us/main.s, passing func_80019C38(..., 0x74414354, ...) - 4 and -1) / Likely: none / Unknown: none.
  */
-s32 func_80049E88(u8 *data, s32 arg1)
+s32 gTrySpawnDynamicLight(u8 *data, s32 arg1)
 {
     return gSpawnDynamicLightNode(data, arg1) != 0;
 }

@@ -20,6 +20,8 @@ struct Unk5DFF0 {
 
 extern void gDrawShadedModel(s32 model, u8 *coord, s32 size, s32 arg3, s32 arg4, s32 arg5,
                           s32 red, s32 green, s32 blue) __asm__("func_8006CB58");
+void gDrawDomeEffectModel(struct Unk5DFF0 *effect) __asm__("func_8005DFF0");
+
 
 /**
  * @brief Draws one effect model, using the flash colour while the flash counter
@@ -43,7 +45,7 @@ extern void gDrawShadedModel(s32 model, u8 *coord, s32 size, s32 arg3, s32 arg4,
  * @par Callers
  * func_8005E160.
  */
-void func_8005DFF0(struct Unk5DFF0 *effect)
+void gDrawDomeEffectModel(struct Unk5DFF0 *effect)
 {
     u8 red;
     u8 green;

@@ -38,7 +38,7 @@ struct NodeC {
 extern struct NodeA *gListHeads[7] __asm__("D_800A1070");
 extern struct NodeC *gDeferredSpawnList __asm__("D_8009F30C");
 extern void gFreeBlock(void *arg) __asm__("func_800181D4");
-extern void func_8003CA80(struct Unk3CA80 *object);
+extern void gRetireSpawnSlot(struct Unk3CA80 *object) __asm__("func_8003CA80");
 void gRetireOwnedSpawnSlots(s32 arg_) __asm__("func_8003B6A4");
 
 
@@ -89,7 +89,7 @@ void gRetireOwnedSpawnSlots(s32 arg_)
                 goto next;
             }
             if (node->flags & 4) {
-                func_8003CA80((struct Unk3CA80 *)node);
+                gRetireSpawnSlot((struct Unk3CA80 *)node);
             }
         next:
             node = node->next;

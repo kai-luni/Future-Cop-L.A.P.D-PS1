@@ -27,11 +27,11 @@ struct Obj {
 #define FIXMUL(out, a, b) __asm__ volatile("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(out) : "r"(a), "r"(b) : "$8", "$9")
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 
-extern void func_8002F280(struct Obj *);
+extern void gProcessMoverCommands(struct Obj *) __asm__("func_8002F280");
 extern void gBuildRotationMatrix(s32, s32, s32, s32 *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(s32 *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
-extern void func_800457B8(s32, s32);
+extern void gStopSoundChannelByIndex(s32, s32) __asm__("func_800457B8");
 extern void gPlayPositionalSoundEffect(s32, s32, s32, s32) __asm__("func_80047284");
 s32 gStepMoverObject(struct Obj *obj, s32 dt) __asm__("func_8002F30C");
 
@@ -117,7 +117,7 @@ s32 gStepMoverObject(struct Obj *obj, s32 dt)
     s32 rx, ry, rz;
     u8 changed;
 
-    if (obj->command) func_8002F280(obj);
+    if (obj->command) gProcessMoverCommands(obj);
     speed = obj->speed;
     if (!obj->direction) speed = -speed;
     switch (obj->mode) {
@@ -217,7 +217,7 @@ s32 gStepMoverObject(struct Obj *obj, s32 dt)
 stopped:
     if (obj->sound_state) obj->sound_state = 0;
     if (obj->flags & 0x400000) {
-        func_800457B8(obj->id, obj->sound);
+        gStopSoundChannelByIndex(obj->id, obj->sound);
         obj->flags &= ~0x400000;
         if (obj->end_sound) gPlayPositionalSoundEffect(obj->end_sound, obj->x, obj->z, -1);
     }

@@ -19,6 +19,8 @@ extern s32 D_8009F788;
 extern u8 func_80019AA8(struct Unk49734Resource *resource);
 extern void func_80019A74(struct Unk49734Resource *resource);
 extern void func_80019D00(struct Unk49734Resource *resource);
+void gLoadCdcsResource(struct Unk49734Resource *resource) __asm__("func_80049734");
+
 
 /**
  * @brief Publishes the dynamic light table after a resource load.
@@ -39,7 +41,7 @@ extern void func_80019D00(struct Unk49734Resource *resource);
  * @par Callers
  * Confirmed: func_80024EC8 (asset loader).
  */
-void func_80049734(struct Unk49734Resource *resource)
+void gLoadCdcsResource(struct Unk49734Resource *resource)
 {
     if (func_80019AA8(resource) == 0) {
         resource->unk08 = 0;

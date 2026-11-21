@@ -43,29 +43,29 @@ extern void func_80019A64(void);
 extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
 extern void gInitDemoCameraStates(void) __asm__("func_80056924");
 extern void gInitReciprocalTable(void) __asm__("func_80019828");
-extern void func_8005A044(void);
+extern void gResetPlayerInvulnFlags(void) __asm__("func_8005A044");
 extern void gInitDefinitionEntryCount(void) __asm__("func_800609F4");
 extern void gInitScriptVmState(void) __asm__("func_80069B58");
 extern void func_8001774C(void);
 extern void func_8001B2C8(s32 a0, s32 a1);
 extern void gInitMarkerColorsAndPools(void) __asm__("func_8004CAE4");
 extern void gClearInitStateWords(void) __asm__("func_8002A598");
-extern void func_80049400(void);
+extern void gInitScriptTimers(void) __asm__("func_80049400");
 extern void gAllocSpawnRegistry(void) __asm__("func_80060E28");
-extern void func_8005130C(void);
+extern void gResetPlacementSlotCount(void) __asm__("func_8005130C");
 extern void func_80013A14(void);
 extern s32 func_80063428(void);
 extern void func_80012E1C(s32 arg0);
 extern void func_800617D8(void);
-extern void func_8004783C(void);
+extern void gResetHudTextState(void) __asm__("func_8004783C");
 extern void gLoadDemoRecording(s32 a0, s32 a1, s32 a2) __asm__("func_80059BFC");
 extern void gInitModuleStream(void *a0) __asm__("func_80029F50");
-extern void func_8005A738(void);
-extern void func_80049690(void);
-extern void func_8005A2B0(void);
+extern void gInitMissionBootStub(void) __asm__("func_8005A738");
+extern void gInitMapLighting(void) __asm__("func_80049690");
+extern void gInitTextureDescriptorTable(void) __asm__("func_8005A2B0");
 extern void func_8008347C(void);
-extern void func_80031984(void);
-extern void func_8004AB4C(void);
+extern void gInitMapZoneList(void) __asm__("func_80031984");
+extern void gInitDebrisFragmentPool(void) __asm__("func_8004AB4C");
 extern void gInitMissionSpawnState(s32 a0) __asm__("func_8003F79C");
 extern void func_800734B0(void);
 
@@ -191,20 +191,20 @@ call_init:
 
     gInitReciprocalTable();
     gSeedPrng(seed);
-    func_8005A044();
+    gResetPlayerInvulnFlags();
     gInitDefinitionEntryCount();
     gInitScriptVmState();
     func_8001774C();
     func_8001B2C8(0x898, 0x400);
     gInitMarkerColorsAndPools();
     gClearInitStateWords();
-    func_80049400();
+    gInitScriptTimers();
     gAllocSpawnRegistry();
-    func_8005130C();
+    gResetPlacementSlotCount();
     func_80013A14();
     func_80012E1C(func_80063428());
     func_800617D8();
-    func_8004783C();
+    gResetHudTextState();
 
     if (gDemoPlayback != 0) {
         s32 flag = (gGameSession->unk0C == 2) ? 2 : 1;
@@ -214,12 +214,12 @@ call_init:
 
     gInitModuleStream(gModuleNameBuffer);
     gScreenResetFlag = 0;
-    func_8005A738();
-    func_80049690();
-    func_8005A2B0();
+    gInitMissionBootStub();
+    gInitMapLighting();
+    gInitTextureDescriptorTable();
     func_8008347C();
-    func_80031984();
-    func_8004AB4C();
+    gInitMapZoneList();
+    gInitDebrisFragmentPool();
     gInitMissionSpawnState(arg0);
     func_800734B0();
 }

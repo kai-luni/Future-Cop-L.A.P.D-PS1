@@ -26,7 +26,7 @@ struct Other { u8 pad[4]; struct Info *info; struct Part *part; };
 extern s32 gEntityBaseHandler(s32, struct Object *, struct Other *) __asm__("func_8002AD58");
 extern void gInitRailSegment(void *, void *, s32, void *, void *) __asm__("func_80050E0C");
 extern s32 gUpdatePathMoverMotion(void *, struct Other *, struct Object *) __asm__("func_80050D14");
-extern void func_80039BD0(struct Object *);
+extern void gApplyCameraOverrideOpcode73(struct Object *) __asm__("func_80039BD0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern struct Object *gFocusPositions __asm__("D_8009F9A0");
@@ -104,7 +104,7 @@ s32 gHandleCameraOverrideMsg(s32 message, struct Object *self, struct Other *oth
         if (!(self->animflags & 0x40)) { current = self; barrier(); }
         return 0;
     case 6:
-        if (self->command) func_80039BD0(self);
+        if (self->command) gApplyCameraOverrideOpcode73(self);
         if (gUpdatePathMoverMotion(self->anim, other, self)) {
             if (self->state) {
                 gGteLoadMatrix(self->matrix);

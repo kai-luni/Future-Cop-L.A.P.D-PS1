@@ -7,7 +7,7 @@ extern u8 gPortraitStreamId[] __asm__("D_8009F9B4");
 extern s32 gHudMode2 __asm__("D_8009FAB8");
 extern s32 gFrameSwitch __asm__("D_8009FAC8");
 
-extern void func_80049260(void);
+extern void gPlayPendingSessionSoundEffect(void) __asm__("func_80049260");
 extern s32 func_80029748(u8 *name);
 extern void gUpdateHudLayoutMode(u8 force) __asm__("func_800487CC");
 extern void gEmitHudPanelSprite(s32 value) __asm__("func_800485AC");
@@ -42,7 +42,7 @@ void gUpdateFrameCloseHud(u8 enable) __asm__("func_800486FC");
 void gUpdateFrameCloseHud(u8 enable)
 {
     if (gScreenState[0] == 4) {
-        func_80049260();
+        gPlayPendingSessionSoundEffect();
     }
     gFrameSwitch = func_80029748(gPortraitStreamId);
     gUpdateHudLayoutMode(0);

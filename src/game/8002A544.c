@@ -5,6 +5,8 @@ extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern u8 gStreamStartPending[] __asm__("D_800A0B90");
 extern void gDrainVagmRing(void) __asm__("func_8002A49C");
+void gResetVagmStreamState(void) __asm__("func_8002A544");
+
 
 /**
  * @brief Flushes queued VAGM audio chunks and clears the active stream flag D_8009F6DC.
@@ -29,7 +31,7 @@ extern void gDrainVagmRing(void) __asm__("func_8002A49C");
  * @par Callers
  * Confirmed: func_8002902C (0x80029310, on VAGM stream start failure) and func_80024630 (0x80024690, stream stop) / Likely: none / Unknown: none.
  */
-void func_8002A544(void)
+void gResetVagmStreamState(void)
 {
     if (gCallGateFlag != 0) {
         if ((gBitFieldState & 0x40) == 0) {

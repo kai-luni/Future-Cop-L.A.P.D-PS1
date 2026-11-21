@@ -91,7 +91,7 @@ extern void gClampToWorldBounds(s32 *) __asm__("func_8006943C");
 extern s32 gTraceMapRay(void *, void *, s32, s32, s32) __asm__("func_800684AC");
 extern void gApplyGroundEntityMotion(struct Obj549F0 *, s32) __asm__("func_80053514");
 extern void gApplyPlayerSurfaceEffect(struct Obj549F0 *, s32) __asm__("func_80053188");
-extern struct AnimClip549F0 *func_800448D8(struct AnimTrack549F0 *, s32, s32, u8);
+extern struct AnimClip549F0 *gSelectAnimationClip(struct AnimTrack549F0 *, s32, s32, u8) __asm__("func_800448D8");
 extern void gEaseVectorQuarter(void *, void *) __asm__("func_8001A6F8");
 extern void gNormalizeVector(void *) __asm__("func_8001A180");
 extern s32 func_80019FCC(s32 *);
@@ -804,7 +804,7 @@ after_ground:
         goto animation_done;
     }
 change_animation:
-    func_800448D8(&self->track, anim, 1, 1);
+    gSelectAnimationClip(&self->track, anim, 1, 1);
     self->unkBA = anim;
 
 animation_done:
@@ -865,7 +865,7 @@ speed_done:
                     (u32)(frame - 0x12) >= 0x0E) {
                     index = 0x36;
                 }
-                func_800448D8(&self->track, index, 1, 1);
+                gSelectAnimationClip(&self->track, index, 1, 1);
                 frame = self->unkB9;
                 self->state = 0x0D;
                 frame &= 0xCF;

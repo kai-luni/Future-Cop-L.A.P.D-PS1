@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern void gRegisterFontBank(s32 value, s32 *source) __asm__("func_80048A14");
+void gLoadCfntResource(s32 *source) __asm__("func_80048E9C");
+
 
 /**
  * @brief Registers a font from an asset table entry: forwards the entry's
@@ -20,7 +22,7 @@ extern void gRegisterFontBank(s32 value, s32 *source) __asm__("func_80048A14");
  * @par Callers
  * func_80024EC8.
  */
-void func_80048E9C(s32 *source)
+void gLoadCfntResource(s32 *source)
 {
     gRegisterFontBank(*source, source);
 }

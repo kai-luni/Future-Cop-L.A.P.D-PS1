@@ -4,6 +4,8 @@
 struct FontEntry;
 
 extern struct FontEntry *gFont __asm__("D_8009F35C");
+struct FontEntry *gGetActiveFont(void) __asm__("func_80048E88");
+
 
 /**
  * @brief Returns the currently active font entry.
@@ -21,7 +23,7 @@ extern struct FontEntry *gFont __asm__("D_8009F35C");
  * @par Callers
  * func_800788F0, func_8007ABBC, func_8007D7CC, func_8007F1F8, func_8008125C.
  */
-struct FontEntry *func_80048E88(void)
+struct FontEntry *gGetActiveFont(void)
 {
     return gFont;
 }

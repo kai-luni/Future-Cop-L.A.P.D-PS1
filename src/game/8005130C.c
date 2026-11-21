@@ -2,6 +2,8 @@
 #include "game/types.h"
 
 extern s32 gPlacementSlotCount __asm__("D_8009F7B8");
+void gResetPlacementSlotCount(void) __asm__("func_8005130C");
+
 
 /**
  * @brief Resets the placement-header slot count D_8009F7B8 to zero during mission boot.
@@ -25,7 +27,7 @@ extern s32 gPlacementSlotCount __asm__("D_8009F7B8");
  * @par Callers
  * Confirmed: func_80024A24 (0x80024C44, mission boot sequence) / Likely: none / Unknown: none.
  */
-void func_8005130C(void)
+void gResetPlacementSlotCount(void)
 {
     gPlacementSlotCount = 0;
 }

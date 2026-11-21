@@ -19,6 +19,8 @@ struct AnimTrack {
     u8 count;
     u8 flags;
 };
+struct AnimClip *gSelectAnimationClip(struct AnimTrack *track, s32 index, s32 direction, u8 flags) __asm__("func_800448D8");
+
 
 /**
  * @brief Selects an animation clip on a track and sets direction, target
@@ -47,7 +49,7 @@ struct AnimTrack {
  * func_80044988, func_800449F8, func_80044B34, func_80051AF8, func_800549F0,
  * func_80055988.
  */
-struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction, u8 flags)
+struct AnimClip *gSelectAnimationClip(struct AnimTrack *track, s32 index, s32 direction, u8 flags)
 {
     register struct AnimTrack *state __asm__("$8");
     struct AnimClip *clip;

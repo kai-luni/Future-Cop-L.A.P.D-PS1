@@ -7,6 +7,8 @@ extern u32 gSpuAlignBase __asm__("D_8009EED0");
 extern u32 gSpuAlignEnable __asm__("D_8009EEC8");
 extern u32 gSpuAddrShift __asm__("D_8009EECC");
 extern u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
+u32 gSpuEncodeOrWriteAddr(s32 reg, u32 addr) __asm__("func_80097808");
+
 
 /**
  *  @brief Aligns and encodes an address, optionally writing it to a register.
@@ -28,7 +30,7 @@ extern u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
  *  @par Callers
  *  Confirmed: func_80098BB8, func_80098EE8, gSpuSetVoiceAttributes, gSpuSetVoiceAttributesOne.
  */
-u32 func_80097808(s32 reg, u32 addr)
+u32 gSpuEncodeOrWriteAddr(s32 reg, u32 addr)
 {
     register s32 saved_reg __asm__("$6") = reg;
     register u32 align __asm__("$4");

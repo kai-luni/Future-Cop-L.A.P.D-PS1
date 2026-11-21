@@ -29,7 +29,7 @@ extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_8001023
 extern s32 gAdvanceAnimTrack(void *, void *, s32, s32) __asm__("func_80044B34");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 gStepAttackScheduler(void *, s32, void *, void *, s32) __asm__("func_80060238");
-extern void func_800448D8(void *, s32, s32, s32);
+extern void gSelectAnimationClip(void *, s32, s32, s32) __asm__("func_800448D8");
 extern void gFireEntityWeapon(void *, void *, void *, s32) __asm__("func_8005F6E8");
 
 union Prod { long long val; struct { u32 lo, hi; } w; };
@@ -356,7 +356,7 @@ apply:
         if (gStepAttackScheduler(obj->script, dt, obj, info, (((u32)f >> 7) ^ 1) & 1) & 0xFF) {
             if (obj->flags & 0x80) {
                 obj->mode = 1;
-                func_800448D8(obj->anim, 1, 1, 1);
+                gSelectAnimationClip(obj->anim, 1, 1, 1);
             }
         }
     } else if (obj->mode == 2) {

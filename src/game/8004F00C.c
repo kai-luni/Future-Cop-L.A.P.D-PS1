@@ -1,5 +1,7 @@
 // Categories: Utilities > Numeric Processing
 #include "game/types.h"
+void gComputeQuadAverages(u32 a0, u32 a1, u32 a2, u32 a3, u32 *arg) __asm__("func_8004F00C");
+
 
 /**
  *  @brief Computes and transforms four unsigned values into an output array.
@@ -22,7 +24,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8004F00C(u32 a0, u32 a1, u32 a2, u32 a3, u32 *arg)
+void gComputeQuadAverages(u32 a0, u32 a1, u32 a2, u32 a3, u32 *arg)
 {
     register u32 *start __asm__("$2") = arg;
     register u32 *p __asm__("$8");

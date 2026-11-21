@@ -10,7 +10,9 @@ extern s32 gFontBankCount __asm__("D_8009F364");
 extern s32 gCurrentFontBankIndex __asm__("D_8009F76C");
 extern struct FontEntry *gFont __asm__("D_8009F35C");
 
-extern void func_80048DEC(void);
+extern void gReloadDefaultFontBank(void) __asm__("func_80048DEC");
+s32 gSelectFontBank(s32 index) __asm__("func_80048E28");
+
 
 /**
  * @brief Selects one of the loaded font/character banks.
@@ -33,7 +35,7 @@ extern void func_80048DEC(void);
  * front-end always selects bank 0. Other callers: func_80048A14,
  * func_800788F0, func_8007E1A4 and the unit at 0x800788BC.
  */
-s32 func_80048E28(s32 index)
+s32 gSelectFontBank(s32 index)
 {
     s32 result;
 
@@ -45,7 +47,7 @@ s32 func_80048E28(s32 index)
 valid:
     gCurrentFontBankIndex = index;
     gFont = &gGlyphEntryTable[index];
-    func_80048DEC();
+    gReloadDefaultFontBank();
     result = 1;
 done:
     return result;

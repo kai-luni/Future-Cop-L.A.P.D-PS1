@@ -16,10 +16,12 @@ struct Unk800A0B70 {
 extern struct Unk800A0B70 gStreamBufferList __asm__("D_800A0B70");
 extern volatile u8 gModuleReadBusy __asm__("D_8009F6A8");
 
-extern void func_80029DD8(void);
+extern void gStopPortraitStreamAndVoice(void) __asm__("func_80029DD8");
 extern void func_80029520(void);
 extern void func_80019584(void);
 extern void gCloseFileSlot(s32 arg0) __asm__("func_8001D3A8");
+void gResetModuleStreamLoader(void) __asm__("func_80029EB8");
+
 
 /**
  * @brief Resets the asset registry and loader state during subsystem teardown.
@@ -43,14 +45,14 @@ extern void gCloseFileSlot(s32 arg0) __asm__("func_8001D3A8");
  * @par Callers
  * Confirmed: func_800249BC (0x800249CC, subsystem teardown) and func_80024D14 (0x80024D50, global reset).
  */
-void func_80029EB8(void)
+void gResetModuleStreamLoader(void)
 {
     s32 old;
     register s32 pending __asm__("$4");
 
     old = gStreamBufferList.unk00;
     gStreamBufferList.unk00 = -1;
-    func_80029DD8();
+    gStopPortraitStreamAndVoice();
     func_80029520();
     gStreamBufferList.unk04 = 0;
     gStreamBufferList.unk08 = 0;

@@ -3,6 +3,8 @@
 
 extern void gFreeBlock(s32 value) __asm__("func_800181D4");
 extern u32 gFreedPointer __asm__("D_8009F7B0");
+void gReleaseCoordinatePairStorage(s32 arg) __asm__("func_8004EFE4");
+
 
 /**
  * @brief Frees arg if non-zero and clears the global pointer D_8009F7B0.
@@ -26,7 +28,7 @@ extern u32 gFreedPointer __asm__("D_8009F7B0");
  * @par Callers
  * Confirmed: none in asm/us/main.s or analysis/edges.json / Likely: unused teardown counterpart to func_8004EFD4 / Unknown: any indirect caller.
  */
-void func_8004EFE4(s32 arg)
+void gReleaseCoordinatePairStorage(s32 arg)
 {
     if (arg != 0) {
         gFreeBlock(arg);

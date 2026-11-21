@@ -5,7 +5,9 @@ extern s32 gHudMode2 __asm__("D_8009FAB8");
 extern s32 gOverlayTimer __asm__("D_8009F760");
 extern s32 gFrameSwitch __asm__("D_8009FAC8");
 
-extern void func_80048EC4(void);
+extern void gInitTextRendererState(void) __asm__("func_80048EC4");
+void gResetHudTextState(void) __asm__("func_8004783C");
+
 
 /**
  * @brief Resets the HUD/text layer state and reinitialises the text renderer.
@@ -29,10 +31,10 @@ extern void func_80048EC4(void);
  * @par Callers
  * Confirmed: func_80024904 (0x80024988) and func_80024A24 (0x80024C6C), the game-state reset and the mission init.
  */
-void func_8004783C(void)
+void gResetHudTextState(void)
 {
     gHudMode2 = 0;
     gOverlayTimer = 0;
     gFrameSwitch = 0;
-    func_80048EC4();
+    gInitTextRendererState();
 }

@@ -13,7 +13,7 @@ struct Unk2AD58 {
 };
 
 extern void gInitEntityBase(struct Unk2AD58 *object, void *data) __asm__("func_8002A5F4");
-extern s32 func_8002ACB4(struct Unk2AD58 *object, s32 value);
+extern s32 gSubmitModelWithUvOffset(struct Unk2AD58 *object, s32 value) __asm__("func_8002ACB4");
 extern s32 gRetireEntityBase(struct Unk2AD58 *object, s32 arg1, s32 arg2) __asm__("func_8002A810");
 extern s32 gStepEntityBaseCountdown(struct Unk2AD58 *object, void *data) __asm__("func_8002A940");
 extern s32 gApplyEntityBaseDamage(s32 message, struct Unk2AD58 *object, void *hit) __asm__("func_8002AA1C");
@@ -84,7 +84,7 @@ s32 gEntityBaseHandler(s32 message, struct Unk2AD58 *object, void *data)
         if (object->flags & 0x20) {
             return 0;
         }
-        return func_8002ACB4(object, 1);
+        return gSubmitModelWithUvOffset(object, 1);
     case 4:
         return gRetireEntityBase(object, 1, 1);
     case 5:

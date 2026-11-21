@@ -6,7 +6,7 @@ struct Unk75478 {
     void *light;
 };
 
-extern void func_800498F0(void *object);
+extern void gFreeLightGridNode(void *object) __asm__("func_800498F0");
 void gReleaseParticleLight(struct Unk75478 *object) __asm__("func_80075478");
 
 
@@ -38,7 +38,7 @@ void gReleaseParticleLight(struct Unk75478 *object) __asm__("func_80075478");
 void gReleaseParticleLight(struct Unk75478 *object)
 {
     if (object->light != 0) {
-        func_800498F0(object->light);
+        gFreeLightGridNode(object->light);
         object->light = 0;
     }
 }

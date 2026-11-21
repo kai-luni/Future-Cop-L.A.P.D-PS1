@@ -8,7 +8,7 @@ extern s32 gStreamCommandState __asm__("D_8009F648");
 extern void gStopAudioStreamAndClearChannels(void) __asm__("func_800226D8");
 extern void gMarkAudioStreamStopPending(void) __asm__("func_80022700");
 extern void gQueueStreamAssetRelease(s32 arg0, s32 arg1) __asm__("func_8002A31C");
-extern void func_8002A544(void);
+extern void gResetVagmStreamState(void) __asm__("func_8002A544");
 
 void gShutdownVagmAudioStream(s32 arg0) __asm__("func_80024630");
 
@@ -53,6 +53,6 @@ void gShutdownVagmAudioStream(s32 arg0)
             gQueueStreamAssetRelease(gActiveStreamId, 0);
             gActiveStreamId = 0;
         }
-        func_8002A544();
+        gResetVagmStreamState();
     }
 }

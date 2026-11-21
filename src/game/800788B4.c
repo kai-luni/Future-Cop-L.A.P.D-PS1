@@ -3,7 +3,7 @@
 
 extern u8 *gFontBankTable __asm__("D_8009F468");
 extern s8 gPanelSyncValue __asm__("D_8009F8BC");
-extern s32 func_80048E28(s32 index);
+extern s32 gSelectFontBank(s32 index) __asm__("func_80048E28");
 
 /**
  * @brief Synchronizes the active font bank to the current menu panel byte at offset +8.
@@ -40,7 +40,7 @@ void gSyncMenuFontBank(void)
         goto done;
     }
     gPanelSyncValue = state[8];
-    func_80048E28(index);
+    gSelectFontBank(index);
 done:
     ;
 }

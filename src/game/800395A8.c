@@ -19,7 +19,7 @@ struct Unk395A8Self {
     struct Unk395A8Child *unk158;
 };
 
-extern void func_80039504(s32 arg0, void *arg1, void *arg2, s32 arg3);
+extern void gSetupMountedTurretCarrier(s32 arg0, void *arg1, void *arg2, s32 arg3) __asm__("func_80039504");
 extern s32 gEntityBaseHandler(s32 message, void *object, void *data, s32 arg3) __asm__("func_8002AD58");
 extern void gHandleType5Entity(s32 arg0, void *arg1, void *arg2, s32 arg3) __asm__("func_800382B4");
 extern void gUpdateMountedTurret(void *arg0, void *arg1) __asm__("func_80038A00");
@@ -61,7 +61,7 @@ s32 gHandleMountedTurretCarrierMessages(s32 message, struct Unk395A8Self *object
     case 1:
         return 0x15C;
     case 2:
-        func_80039504(msg, self, data, extra);
+        gSetupMountedTurretCarrier(msg, self, data, extra);
         return 0;
     case 3:
         if (self->unk24 & 0x20) {

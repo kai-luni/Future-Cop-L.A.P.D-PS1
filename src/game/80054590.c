@@ -23,7 +23,7 @@ struct Unk54590Sub {
     s32 unk84;
 };
 
-extern void func_80053730(void *obj, s32 *out);
+extern void gUpdateTwoPlayerSeparation(void *obj, s32 *out) __asm__("func_80053730");
 extern s32 func_8001A7AC(s32 *vec);
 extern void func_8001ABE0(s32 scale, s32 *vec);
 
@@ -131,7 +131,7 @@ void gComputeOnFootVelocityDelta(struct Unk54590Obj *obj, s32 a1, s32 a2, s32 *o
         a1 = v[2];
         v[2] = a1 * a2 / 128;
     }
-    func_80053730(o, v);
+    gUpdateTwoPlayerSeparation(o, v);
 
     sub = (struct Unk54590Sub *)(o->unkAC + 0xEC);
     if ((o->unkB9 & 1) != 0 || o->unkBB == 0xB || o->unkBB == 0xC ||

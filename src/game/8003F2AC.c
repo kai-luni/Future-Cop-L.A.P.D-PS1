@@ -23,7 +23,7 @@ struct Unk3F2AC {
 extern s32 gStepSpawnNodeTimers(struct Unk3F2AC *object, s32 arg, u8 *flag) __asm__("func_8003CAE4");
 extern struct Unk3F2AC *gSpawnObjectFromTable(void *handle, struct Unk3F2AC *object,
                                       s32 flag, s32 arg3, s32 arg4) __asm__("func_8003E984");
-extern void func_800498F0(void *object);
+extern void gFreeLightGridNode(void *object) __asm__("func_800498F0");
 s32 gUpdateSpawnNodeLifecycle(struct Unk3F2AC *object, s32 arg1) __asm__("func_8003F2AC");
 
 
@@ -81,7 +81,7 @@ s32 gUpdateSpawnNodeLifecycle(struct Unk3F2AC *object, s32 arg1)
             object->unk0F = (object->unk0F & ~1) | 8;
             if (object->unk20[4] == 0x5D) {
                 if (object->unk6C != 0) {
-                    func_800498F0(object->unk6C);
+                    gFreeLightGridNode(object->unk6C);
                     object->unk6C = 0;
                 }
             }

@@ -18,9 +18,9 @@ extern void gPrependSpawnNodeByKind(struct Unk3F570Node *object) __asm__("func_8
 extern void gSyncAttachedNodes(void) __asm__("func_8003D240");
 extern void gRunSceneListPassesOnScratch(s32 arg) __asm__("func_8003F530");
 extern void gStreamDeferredSpawns(void) __asm__("func_8003FF7C");
-extern void func_8004C2B8(struct Unk3F570Node *object);
-extern void func_8003F428(struct Unk3F570Node *node, s32 arg);
-extern void func_8005E0AC(s32 object);
+extern void gUpdateDebrisOwners(struct Unk3F570Node *object) __asm__("func_8004C2B8");
+extern void gDispatchSpawnSlotTicks(struct Unk3F570Node *node, s32 arg) __asm__("func_8003F428");
+extern void gUpdateWorldEffects(s32 object) __asm__("func_8005E0AC");
 void gRunEntityWorldTick(s32 arg0) __asm__("func_8003F570");
 
 
@@ -72,7 +72,7 @@ void gRunEntityWorldTick(s32 arg0)
     s32 i;
     s32 zero;
 
-    func_8005E0AC(arg0);
+    gUpdateWorldEffects(arg0);
     gSyncAttachedNodes();
 
     i = 0;
@@ -101,8 +101,8 @@ void gRunEntityWorldTick(s32 arg0)
     } while (i < 7);
 
     gRunSceneListPassesOnScratch(arg0);
-    func_8004C2B8(gListHeads[4]);
-    func_8003F428(gListHeads[5], arg0);
+    gUpdateDebrisOwners(gListHeads[4]);
+    gDispatchSpawnSlotTicks(gListHeads[5], arg0);
     if (gDeferredSpawnList != 0) {
         gStreamDeferredSpawns();
     }

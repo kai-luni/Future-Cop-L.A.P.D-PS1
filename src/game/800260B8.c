@@ -50,10 +50,10 @@ extern void gEmitTranslucentTileRect(u32 color, s32 x, s32 y, s32 w, s32 h, u8 b
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern u32 gApplyPlayerCheatCode(s32 arg0, s32 arg1) __asm__("func_80060A0C");
 extern void gStopSoundVoiceHandle(s32 handle) __asm__("func_80046A34");
-extern void func_800451B4(s32 enable);
-extern void func_800451F8(s32 volume);
+extern void gSetStereoSoundMode(s32 enable) __asm__("func_800451B4");
+extern void gSetSfxVolume(s32 volume) __asm__("func_800451F8");
 extern s32 func_8004522C(void);
-extern void func_80045238(s32 volume);
+extern void gSetVagmVolumeSetting(s32 volume) __asm__("func_80045238");
 extern s32 func_80045288(void);
 extern void func_80045294(s32 volume);
 extern s32 func_800452C8(void);
@@ -258,11 +258,11 @@ void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selec
             delta = (p2->phase == 3) ? 1 : -1;
             switch (code = items[selection]) {
             case 1:
-                func_800451F8(func_8004522C() + delta);
+                gSetSfxVolume(func_8004522C() + delta);
                 func_80025E18(gPanelSoundIds, func_8004522C(), slotArg);
                 break;
             case 2:
-                func_80045238(func_80045288() + delta);
+                gSetVagmVolumeSetting(func_80045288() + delta);
                 func_80025E18(0x2F, func_80045288(), slotArg);
                 break;
             case 3:
@@ -278,12 +278,12 @@ void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selec
         } else if (p2->phase == 0 || leftPhase == 0) {
             switch (code = items[selection]) {
             case 4:
-                func_800451B4(0);
+                gSetStereoSoundMode(0);
                 gPlayNonpositionalSoundEffect(0x3F, gPlayerEntities[slotArg]);
                 D_8009ABEC[0] = 5;
                 goto store_selected;
             case 5:
-                func_800451B4(1);
+                gSetStereoSoundMode(1);
                 gPlayNonpositionalSoundEffect(0x3F, gPlayerEntities[slotArg]);
                 items[4] = 4;
                 goto store_selected;

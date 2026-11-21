@@ -14,7 +14,7 @@ extern void gInitReciprocalTable(void) __asm__("func_80019828");
 extern void func_80019A64(void);
 extern void func_8001B2C8(s32, s32);
 extern void gInitModuleStream(void *) __asm__("func_80029F50");
-extern void func_8004783C(void);
+extern void gResetHudTextState(void) __asm__("func_8004783C");
 extern void gInitScriptVmState(void) __asm__("func_80069B58");
 extern void gInitFrontEndSubsystems(void) __asm__("func_800780DC");
 extern void func_8008CCB0(void *, s32);
@@ -63,7 +63,7 @@ void gLoadFrontEndModule(s32 arg)
     gSeedPrng(temp);
     gInitScriptVmState();
     func_8001B2C8(0xC8, 0x200);
-    func_8004783C();
+    gResetHudTextState();
     gInitModuleStream(gModuleNameBuffer);
     gScreenResetFlag = 0;
     gInitFrontEndSubsystems();

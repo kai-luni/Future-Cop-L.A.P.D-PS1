@@ -4,6 +4,8 @@
 struct Unk31Node;
 
 extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
+void gInitMapZoneList(void) __asm__("func_80031984");
+
 
 /**
  * @brief Clears the map trigger/zone linked-list head D_8009F6F8 during mission boot.
@@ -27,7 +29,7 @@ extern struct Unk31Node *gMapZoneList __asm__("D_8009F6F8");
  * @par Callers
  * Confirmed: func_80024A24 (0x80024CDC, mission boot sequence) / Likely: none / Unknown: none.
  */
-void func_80031984(void)
+void gInitMapZoneList(void)
 {
     gMapZoneList = 0;
 }

@@ -14,7 +14,7 @@ struct Owner {
 extern s32 gIdentityMatrix[9] __asm__("D_8009AA38");
 extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 extern void gFreeBlock(void *) __asm__("func_800181D4");
-extern void func_8003A8C0(s32, s32, struct Owner *, s32);
+extern void gCreateModelDebrisEntity(s32, s32, struct Owner *, s32) __asm__("func_8003A8C0");
 extern s32 gGuardEffectPoolMessage(s32, struct Owner *, s32, s32) __asm__("func_8003C7B8");
 extern s32 gHandleObjectEventMessages(s32, struct Owner *, s32, s32) __asm__("func_8003C980");
 extern struct Node *gFreeDebrisFragment(struct Owner *, struct Node *, struct Node *) __asm__("func_8004AAD4");
@@ -117,7 +117,7 @@ case0:
             obj->link->data->data[6] = hi[6];
             obj->link->data->data[7] = hi[7];
             obj->link->data->data[8] = hi[8];
-            func_8003A8C0((s32)obj->link->data, -1, obj, arg2);
+            gCreateModelDebrisEntity((s32)obj->link->data, -1, obj, arg2);
             if (!obj->unk16) { obj->unk0c = 300; obj->unk16 = 300; }
             return 1;
         }

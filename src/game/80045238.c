@@ -4,6 +4,8 @@
 extern s32 gMusicVolumeSetting __asm__("D_8009F334");
 
 extern void func_80024730(s32 volume);
+void gSetVagmVolumeSetting(s32 volume) __asm__("func_80045238");
+
 
 /**
  * @brief Clamps a volume request to 0..0x7F, stores it and applies it to both
@@ -37,7 +39,7 @@ extern void func_80024730(s32 volume);
  * Confirmed: func_800260B8, func_80044F8C, func_8007CA34, func_8007CACC,
  * func_80080984.
  */
-void func_80045238(s32 volume)
+void gSetVagmVolumeSetting(s32 volume)
 {
     if (volume >= 0) {
         if (volume < 0x80) {

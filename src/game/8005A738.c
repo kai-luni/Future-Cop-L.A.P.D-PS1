@@ -1,3 +1,5 @@
+void gInitMissionBootStub(void) __asm__("func_8005A738");
+
 // Categories: Game Engine > Init
 /**
  * @brief Empty initialization stub invoked during mission boot.
@@ -21,6 +23,6 @@
  * @par Callers
  * Confirmed: func_80024A24 (0x80024CBC, mission boot sequence) / Likely: none / Unknown: none.
  */
-void func_8005A738(void)
+void gInitMissionBootStub(void)
 {
 }

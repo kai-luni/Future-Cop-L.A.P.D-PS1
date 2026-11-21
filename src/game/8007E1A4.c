@@ -19,8 +19,8 @@ extern struct E8007E1A4 gLoadoutTable[] __asm__("D_8009C0A8");
 extern u8 gNumberFormatString[] __asm__("D_8009F490");
 
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
-extern s32 func_80048E28(s32 index);
-extern void func_800492A0(u8 *text, s32 *width, s32 *height);
+extern s32 gSelectFontBank(s32 index) __asm__("func_80048E28");
+extern void gMeasureTextExtent(u8 *text, s32 *width, s32 *height) __asm__("func_800492A0");
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern void func_8008CD30(u8 *dest, u8 *fmt, ...);
 extern void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
@@ -112,13 +112,13 @@ void gStepOptionsSetting(s32 mode, s32 x, s32 y, s32 color, s32 idx)
                 old = -1;
                 if (gPanelSyncValue != 2) {
                     old = gPanelSyncValue;
-                    func_80048E28(2);
+                    gSelectFontBank(2);
                 }
-                func_800492A0(s, &w, &h);
+                gMeasureTextExtent(s, &w, &h);
                 func_8008CD30(buf, gNumberFormatString, n);
                 gDrawAlignedMultilineText(buf, x + w, y, color, 0, 1, 8, 2);
                 if (old != -1) {
-                    func_80048E28(old);
+                    gSelectFontBank(old);
                 }
             }
         }

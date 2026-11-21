@@ -10,6 +10,8 @@ struct Unk4CC68 {
 
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern struct Unk4CC68 gMarkerColorTable __asm__("D_800A6F60");
+void gUpdateMarkerPulseColors(void) __asm__("func_8004CC68");
+
 
 /**
  *  @brief Computes three packed values from a global phase-like counter.
@@ -27,7 +29,7 @@ extern struct Unk4CC68 gMarkerColorTable __asm__("D_800A6F60");
  *  @par Callers
  *  Confirmed: func_8002703C.
  */
-void func_8004CC68(void)
+void gUpdateMarkerPulseColors(void)
 {
     s32 level;
 

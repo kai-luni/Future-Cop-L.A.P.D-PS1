@@ -1,5 +1,7 @@
 // Categories: Gameplay > Player | Game Engine > Message Dispatch
 extern int gEntityBaseHandler(int mode) __asm__("func_8002AD58");
+int gDispatchRetiredPlayerChildMessage(int mode) __asm__("func_800578E4");
+
 
 /**
  * @brief Forwards entity message 5 to the base entity handler.
@@ -19,7 +21,7 @@ extern int gEntityBaseHandler(int mode) __asm__("func_8002AD58");
  * @par Callers
  * Unknown: no direct edge in edges.json.
  */
-int func_800578E4(int mode)
+int gDispatchRetiredPlayerChildMessage(int mode)
 {
     if (mode == 5) {
         return gEntityBaseHandler(5);

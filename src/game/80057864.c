@@ -5,6 +5,8 @@ extern u32 gPadWords[2] __asm__("D_8009F7C0");
 extern u32 gMapPadButtons(u32 profile) __asm__("func_8001E620");
 extern s32 gHandlePlayerEntityMsg(s32 arg0) __asm__("func_8005908C");
 extern s32 gEntityBaseHandler() __asm__("func_8002AD58");
+void gUpdateMappedPadWords(void) __asm__("func_80057864");
+
 
 /**
  *  @brief Refreshes two stored profile values.
@@ -22,7 +24,7 @@ extern s32 gEntityBaseHandler() __asm__("func_8002AD58");
  *  @par Callers
  *  Confirmed: func_8002703C, func_80027E68.
  */
-void func_80057864(void)
+void gUpdateMappedPadWords(void)
 {
     register u32 *p __asm__("$17");
     s32 i;

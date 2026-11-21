@@ -99,13 +99,13 @@ extern s32 gScreenState __asm__("D_8009FA00");
 extern struct Unk588D4Global *gGameSession __asm__("D_8009FA94");
 extern u32 gFrameTime __asm__("D_8009FAA4");
 
-extern void func_8005A190(struct Unk5A190 *object, s32 index, s32 value);
+extern void gSetEntityGaugeValue(struct Unk5A190 *object, s32 index, s32 value) __asm__("func_8005A190");
 extern void gDispatchQueuedPlayerCommands(struct Unk588D4 *object) __asm__("func_800585B8");
 extern s32 gGetGroundHeight(void *object, s32 arg1, s32 arg2, s32 *arg3) __asm__("func_80066F78");
 extern void gApplyPlayerHitDamage(struct Unk584BC *object, s32 amount, s32 source) __asm__("func_80058378");
 extern void gRespawnPlayerEntity(struct Unk588D4 *object) __asm__("func_80058714");
 extern void gTranslatePadButtons(void *object) __asm__("func_800576A8");
-extern s32 func_800586D4(void *object, s32 arg1, s32 arg2, s32 *arg3);
+extern s32 gStepPlayerFormOnScratchpad(void *object, s32 arg1, s32 arg2, s32 *arg3) __asm__("func_800586D4");
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, void *arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern s32 gHandlePlayerHitMessage(s32 message, struct Unk584BC *object,
@@ -207,7 +207,7 @@ s32 gUpdatePlayerEntity(struct Unk588D4 *object, s32 arg1)
     s32 c1;
 
     object->unkAC->unk2FC = -1;
-    func_8005A190((struct Unk5A190 *)object->unkAC, 0, object->unk1C);
+    gSetEntityGaugeValue((struct Unk5A190 *)object->unkAC, 0, object->unk1C);
 
     if (object->unk0C != 0) {
         gDispatchQueuedPlayerCommands(object);
@@ -256,7 +256,7 @@ s32 gUpdatePlayerEntity(struct Unk588D4 *object, s32 arg1)
     if (c1 < 2) {
         if (gScreenState == 4) {
             gTranslatePadButtons((u8 *)data + 0x30);
-            s2 = func_800586D4(object, arg1, s2, &locals.out1C);
+            s2 = gStepPlayerFormOnScratchpad(object, arg1, s2, &locals.out1C);
             if (locals.out1C & 1) {
                 locals.msg.unk49 = 0x40;
                 locals.msg.unk44 = (u8 *)object->unkDC + 0x28;

@@ -8,6 +8,8 @@ struct Unk73F88 {
 extern u8 gQueueDeferredGroundSpawn(struct Unk73F88 *data) __asm__("func_8003C2A4");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gInstallSpawnRecord(struct Unk73F88 *data) __asm__("func_8003C404");
+void gRegisterActorDef58(struct Unk73F88 *source) __asm__("func_80073F88");
+
 
 /**
  * @brief Clones and registers a 0x4C-byte spawn record for chunk type 0x58.
@@ -32,7 +34,7 @@ extern void gInstallSpawnRecord(struct Unk73F88 *data) __asm__("func_8003C404");
  * @par Callers
  * Confirmed: func_8003BFD0 (0x8003C0B0 via jtbl_800115B8 index 2, type 0x58), func_800740B8 (0x800740E0 on tACT chunk).
  */
-void func_80073F88(struct Unk73F88 *source)
+void gRegisterActorDef58(struct Unk73F88 *source)
 {
     struct Unk73F88 *copy;
 

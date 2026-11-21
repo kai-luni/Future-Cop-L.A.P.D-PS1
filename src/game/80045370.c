@@ -8,7 +8,7 @@ extern struct SoundVoice *gVoicePriorityList __asm__("D_8009F744");
 extern struct SoundVoice *gVoiceList __asm__("D_8009F74C");
 extern struct SoundVoice *gClass2SoundVoiceList __asm__("D_8009F754");
 
-extern void func_8004530C(struct SoundVoice *voice);
+extern void gUpdateSoundVoiceListMix(struct SoundVoice *voice) __asm__("func_8004530C");
 
 /**
  *  @brief Clears a sound flag and processes three stored voices when the flag is set.
@@ -31,8 +31,8 @@ void func_80045370(void)
 {
     if (gVolumeLimitSelector != 0) {
         gVolumeLimitSelector = 0;
-        func_8004530C(gVoicePriorityList);
-        func_8004530C(gVoiceList);
-        func_8004530C(gClass2SoundVoiceList);
+        gUpdateSoundVoiceListMix(gVoicePriorityList);
+        gUpdateSoundVoiceListMix(gVoiceList);
+        gUpdateSoundVoiceListMix(gClass2SoundVoiceList);
     }
 }

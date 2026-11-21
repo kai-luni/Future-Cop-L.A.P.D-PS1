@@ -24,7 +24,9 @@ extern void gUpdateChaseApproachSpeed(s32 message, Object8002C3F0 *object, Data8
 extern s32 gEntityBaseHandler(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_8002AD58");
 extern void gHandleType26Destruction(Object8002C3F0 *object) __asm__("func_8002C174");
 extern void gUpdateType26Actor(Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3) __asm__("func_8002B784");
-extern s32 func_8002ACB4(Object8002C3F0 *object, s32 value);
+extern s32 gSubmitModelWithUvOffset(Object8002C3F0 *object, s32 value) __asm__("func_8002ACB4");
+void gHandleType26Contact(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_8002C3B0");
+
 
 /**
  * @brief Handles contact/target update for type-26 entities by combining family collision response and target acquisition.
@@ -51,7 +53,7 @@ extern s32 func_8002ACB4(Object8002C3F0 *object, s32 value);
  * @par Callers
  * Confirmed: func_8002C3F0 (0x8002C478 in asm/us/main.s, case 4 when unk15F != 7) / Likely: none / Unknown: none.
  */
-void func_8002C3B0(s32 message, Object8002C3F0 *object, Data8002C3F0 *data)
+void gHandleType26Contact(s32 message, Object8002C3F0 *object, Data8002C3F0 *data)
 {
     gResolveRailMoverContact(message, object, data);
     gConsiderType26Target(object, data);

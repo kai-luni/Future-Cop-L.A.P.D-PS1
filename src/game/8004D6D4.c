@@ -59,7 +59,7 @@ extern void gLoadActorDef5E(struct Unk4D6D4 *arg0) __asm__("func_8004488C");
 extern void gLoadActorDef5D(struct Unk4D6D4 *arg0) __asm__("func_80041070");
 extern void gLoadActorDef5C(struct Unk4D6D4 *arg0) __asm__("func_8006ED78");
 extern void gLoadActorDef5A(struct Unk4D6D4 *arg0) __asm__("func_8004CA98");
-extern void func_8003BDA0(struct Unk4D6D4 *arg0);
+extern void gLoadActorDef5B(struct Unk4D6D4 *arg0) __asm__("func_8003BDA0");
 extern void gLoadActorDef59(struct Unk4D6D4 *arg0) __asm__("func_800706C4");
 extern void func_800740B8(struct Unk4D6D4 *arg0);
 extern void func_80076878(struct Unk4D6D4 *arg0);
@@ -131,7 +131,7 @@ void gLoadActorChunk(struct Unk4D6D4 *arg0)
         gLoadActorDef5A(arg0);
         break;
     case 0x5B:
-        func_8003BDA0(arg0);
+        gLoadActorDef5B(arg0);
         break;
     case 0x59:
         gLoadActorDef59(arg0);

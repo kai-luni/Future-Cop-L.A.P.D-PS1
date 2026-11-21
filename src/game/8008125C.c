@@ -63,8 +63,8 @@ extern s32 func_8008CD30(u8 *a, u8 *fmt, ...);
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
 extern void gActivateMenuPanel(u8 *a, s32 b) __asm__("func_80078650");
 extern void gPlayNonpositionalSoundEffect(s32 id, s32 b) __asm__("func_80046C84");
-extern void func_800492A0(u8 *text, s32 *w, s32 *h);
-extern s32 *func_80048E88(void);
+extern void gMeasureTextExtent(u8 *text, s32 *w, s32 *h) __asm__("func_800492A0");
+extern s32 *gGetActiveFont(void) __asm__("func_80048E88");
 extern void gEmitFlatQuadRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h) __asm__("func_80082EF0");
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void gDrawAlignedMultilineText(u8 *a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h) __asm__("func_800788F0");
@@ -389,10 +389,10 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                 s32 *pi;
                 s32 col;
                 s32 rgb;
-                func_800492A0(gProfileNameCellWidthText, &w, &h);
+                gMeasureTextExtent(gProfileNameCellWidthText, &w, &h);
                 w = w + 1;
                 arg2 = 0;
-                font = func_80048E88();
+                font = gGetActiveFont();
                 arg3 = (s32)(gNameEntryGlyphBuf + s2 * 8);
                 s2 = (s32)&gScalarCursor[s2];
                 h = ((s16 *)font)[3];
@@ -401,7 +401,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                 render_loop:
                 {
                     txt[0] = gNameEntryAlphabet[((u8 *)arg3)[arg2]];
-                    func_800492A0(txt, &w2, &h2);
+                    gMeasureTextExtent(txt, &w2, &h2);
                     if (arg2 == *(s32 *)s2) {
                         dst = (u8 *)n;
                         one = 1;

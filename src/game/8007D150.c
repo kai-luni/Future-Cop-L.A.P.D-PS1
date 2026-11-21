@@ -46,9 +46,9 @@ extern void gEmitFlatQuadRectMode(s32, s32, s32, s32, s32, s32, s32, s32, s32) _
 extern Unk8007CE04 *gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
 extern void gDrawAlignedMultilineText(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void func_80078B34(s32, s32, s32);
-extern void func_8002A16C(s32);
+extern void gStartVagmAudioStream(s32) __asm__("func_8002A16C");
 extern s32 func_8002A58C(void);
-extern void func_800451B4(s32 enable);
+extern void gSetStereoSoundMode(s32 enable) __asm__("func_800451B4");
 extern s32 func_800451E0(void);
 extern s32 func_8004522C(void);
 extern s32 func_80045288(void);

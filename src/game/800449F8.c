@@ -25,8 +25,8 @@ struct AnimScript {
     struct AnimCommand commands[4];
 };
 
-extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction,
-                                      u8 flags);
+extern struct AnimClip *gSelectAnimationClip(struct AnimTrack *track, s32 index, s32 direction,
+                                      u8 flags) __asm__("func_800448D8");
 extern void gRemoveEntityCommand(struct AnimScript *script, s32 index) __asm__("func_8002A5B4");
 void gProcessAnimScriptCommands(struct AnimScript *script, struct AnimTrack *track) __asm__("func_800449F8");
 
@@ -69,7 +69,7 @@ void gProcessAnimScriptCommands(struct AnimScript *script, struct AnimTrack *tra
         arg = script->commands[i].arg;
         switch (op) {
         case 0x32:
-            func_800448D8(track, arg, 1, 0);
+            gSelectAnimationClip(track, arg, 1, 0);
             break;
         case 0x33:
             track->flags &= ~2;

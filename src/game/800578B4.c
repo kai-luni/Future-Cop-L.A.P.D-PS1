@@ -1,5 +1,7 @@
 // Categories: Gameplay > Player | Platform > Audio
 extern int gHandlePlayerEntityMsg(int mode) __asm__("func_8005908C");
+int gHandleRetiredPlayerMsg(int mode) __asm__("func_800578B4");
+
 
 /**
  * @brief Forwards mode 5 to the sound/volume handler.
@@ -19,7 +21,7 @@ extern int gHandlePlayerEntityMsg(int mode) __asm__("func_8005908C");
  * @par Callers
  * Unknown: no direct edge in edges.json.
  */
-int func_800578B4(int mode)
+int gHandleRetiredPlayerMsg(int mode)
 {
     if (mode == 5) {
         return gHandlePlayerEntityMsg(5);

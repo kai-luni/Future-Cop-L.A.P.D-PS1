@@ -31,6 +31,8 @@ extern struct Unk53730 *gPlayerEntities[] __asm__("D_8009FA58");
 extern s32 gCameraNearBase __asm__("D_8009FA64");
 
 extern s32 func_8001A074(struct Unk53730Delta *delta);
+void gUpdateTwoPlayerSeparation(struct Unk53730 *object) __asm__("func_80053730");
+
 
 /**
  * @brief Computes and stores the 2D XZ separation distance between the two players in non-split 2P mode.
@@ -54,7 +56,7 @@ extern s32 func_8001A074(struct Unk53730Delta *delta);
  * @par Callers
  * Confirmed: func_800537D0 (0x800538B0), func_80054590 (0x800546E8) / Likely: none / Unknown: none.
  */
-void func_80053730(struct Unk53730 *object)
+void gUpdateTwoPlayerSeparation(struct Unk53730 *object)
 {
     struct Unk53730 *other;
     struct Unk53730Delta delta;

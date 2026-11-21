@@ -30,7 +30,7 @@ struct Entity {
 struct EntityTable { s32 count; s32 unk04; struct Entity *items[1]; };
 struct Message { s32 unk0; s16 value; u8 kind; u8 unk7; s32 unk8; };
 extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
-extern void func_800457B8(s32, s32);
+extern void gStopSoundChannelByIndex(s32, s32) __asm__("func_800457B8");
 extern void gRetireEntity(struct Entity *) __asm__("func_8004D958");
 extern void gDispatchSpawnCommand(s32, struct Entity *, s32) __asm__("func_8003FD10");
 extern void gRemoveEntityCommand(void *, s32) __asm__("func_8002A5B4");
@@ -82,7 +82,7 @@ void gDispatchQueuedEntityCommands(void)
             switch (op) {
             case 0x39:
                 if (entity->flags & 0x400000) {
-                    func_800457B8(entity->id, entity->sound);
+                    gStopSoundChannelByIndex(entity->id, entity->sound);
                     entity->flags &= ~0x400000;
                 }
                 entity->unk21 = arg;

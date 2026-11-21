@@ -1,7 +1,9 @@
 // Categories: Graphics > Text > Font | Utilities > Memory Management
 #include "game/types.h"
 
-extern void func_80048F3C(void);
+extern void gFreeFontGlyphBuffers(void) __asm__("func_80048F3C");
+void gFreeAllFontGlyphs(void) __asm__("func_80047868");
+
 
 /**
  * @brief Releases the glyph data of every loaded font and nothing else.
@@ -25,7 +27,7 @@ extern void func_80048F3C(void);
  * @par Callers
  * Confirmed: func_800249BC (0x800249E4) and func_80024D14 (0x80024DB8), the two subsystem teardown sequences.
  */
-void func_80047868(void)
+void gFreeAllFontGlyphs(void)
 {
-    func_80048F3C();
+    gFreeFontGlyphBuffers();
 }

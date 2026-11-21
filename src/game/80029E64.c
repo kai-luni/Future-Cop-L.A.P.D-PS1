@@ -9,6 +9,8 @@ struct Unk800A0B70 {
 extern struct Unk800A0B70 gStreamBufferList __asm__("D_800A0B70");
 extern s32 gModuleReadEndCheck __asm__("D_8009F6E8");
 extern void func_80019584();
+void gReleaseModuleAssetPool(void) __asm__("func_80029E64");
+
 
 /**
  * @brief Releases the asset registered in D_800A0B70 if nothing else is using
@@ -27,7 +29,7 @@ extern void func_80019584();
  * @par Callers
  * func_800287F4, right after the module load and before the frame work.
  */
-void func_80029E64(void)
+void gReleaseModuleAssetPool(void)
 {
     if (gStreamBufferList.unk2C != 0 && gModuleReadEndCheck == 0) {
         func_80019584(gStreamBufferList.unk2C);

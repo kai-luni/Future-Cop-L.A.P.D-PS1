@@ -23,11 +23,11 @@ extern struct Node24EC8 *func_800295E8(s32 arg0);
 extern void func_80013550(struct Node24EC8 *node);
 extern void gFreeBlock(struct Node24EC8 *node) __asm__("func_800181D4");
 extern void gRegisterCvkChunk(struct Node24EC8 *node) __asm__("func_80023930");
-extern void func_80029E20(struct Node24EC8 *node);
-extern void func_8003C110(struct Node24EC8 *node);
-extern void func_80048E9C(struct Node24EC8 *node);
+extern void gRegisterPortraitStreamTable(struct Node24EC8 *node) __asm__("func_80029E20");
+extern void gLoadCsfxResource(struct Node24EC8 *node) __asm__("func_8003C110");
+extern void gLoadCfntResource(struct Node24EC8 *node) __asm__("func_80048E9C");
 extern void gLoadScriptTimers(struct Node24EC8 *node) __asm__("func_80049420");
-extern void func_80049734(struct Node24EC8 *node);
+extern void gLoadCdcsResource(struct Node24EC8 *node) __asm__("func_80049734");
 extern void gLoadActorChunk(struct Node24EC8 *node) __asm__("func_8004D6D4");
 extern void gRegisterResourceWithBias(struct Node24EC8 *node) __asm__("func_8004D924");
 extern void gLoadPathNodePositions(struct Node24EC8 *node) __asm__("func_800511E4");
@@ -170,7 +170,7 @@ loop_test:
                 gInitMapFromGrdb(node);
                 break;
             case 0x43666E74:
-                func_80048E9C(node);
+                gLoadCfntResource(node);
                 break;
             case 0x43637472:
                 switch (node->unk1C) {
@@ -209,19 +209,19 @@ loop_test:
                 gUploadSaveProfileIcon(node);
                 break;
             case 0x43746F73:
-                func_80029E20(node);
+                gRegisterPortraitStreamTable(node);
                 break;
             case 0x436E6574:
                 gLoadPathNodePositions(node);
                 break;
             case 0x43646373:
-                func_80049734(node);
+                gLoadCdcsResource(node);
                 break;
             case 0x43707972:
                 gLoadTextureChunksToVram(node);
                 break;
             case 0x43736678:
-                func_8003C110(node);
+                gLoadCsfxResource(node);
                 break;
             case 0x436E6F6E:
                 break;

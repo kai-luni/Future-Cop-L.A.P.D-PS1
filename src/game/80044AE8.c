@@ -1,5 +1,7 @@
 // Categories: Graphics > Animation > Events
 #include "game/types.h"
+void gPackAnimEventBits(u32 code, u32 key, s32 *shift, u32 *bits) __asm__("func_80044AE8");
+
 
 /**
  * @brief Packs a matching animation event code into a 6-bit-per-event
@@ -24,7 +26,7 @@
  * @par Callers
  * func_80044B34.
  */
-void func_80044AE8(u32 code, u32 key, s32 *shift, u32 *bits)
+void gPackAnimEventBits(u32 code, u32 key, s32 *shift, u32 *bits)
 {
     if (key == (code & 0x3FF) && *shift < 0x1A) {
         code &= 0xFC00;

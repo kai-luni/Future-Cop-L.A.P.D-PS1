@@ -9,6 +9,8 @@ struct Unk51650 {
 extern u8 func_80019AA8(struct Unk51650 *resource);
 extern void func_80019A74(struct Unk51650 *resource);
 extern void func_80019D00(struct Unk51650 *resource);
+void gRegisterUniqueResource(struct Unk51650 *resource) __asm__("func_80051650");
+
 
 /**
  * @brief Registers a fresh resource descriptor in D_8009F5B8 or frees it if already loaded.
@@ -33,7 +35,7 @@ extern void func_80019D00(struct Unk51650 *resource);
  * @par Callers
  * Confirmed: none in direct-call list or asm/us/main.s / Likely: unreferenced minimal resource post-load handler / Unknown: whether invoked indirectly.
  */
-void func_80051650(struct Unk51650 *resource)
+void gRegisterUniqueResource(struct Unk51650 *resource)
 {
     if (func_80019AA8(resource) == 0) {
         resource->unk08 = 0;

@@ -22,14 +22,14 @@ extern void *jtbl_800121A4[];
 extern s32 func_8007EA78(void);
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
 extern void gPopMenuPanel(void) __asm__("func_80078740");
-extern void func_800493C0(u32 index, u8 blue, u8 green, u8 red);
+extern void gSetTextPaletteEntry(u32 index, u8 blue, u8 green, u8 red) __asm__("func_800493C0");
 extern void gDrawAlignedMultilineText(u8 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) __asm__("func_800788F0");
 extern void func_80078B34(s32 arg0, s32 arg1, s32 arg2);
 extern void gEmitFlatQuadRect(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) __asm__("func_80082EF0");
 extern void func_8007F128(s32 input0, s32 input1, s32 input2, s32 input3, s32 arg5, s32 arg6);
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
-extern void func_800492A0(u8 *text, s32 *width, s32 *height);
-extern struct FontEntry *func_80048E88(void);
+extern void gMeasureTextExtent(u8 *text, s32 *width, s32 *height) __asm__("func_800492A0");
+extern struct FontEntry *gGetActiveFont(void) __asm__("func_80048E88");
 void gUpdatePasswordScreen(s32 state, s32 input_baseX) __asm__("func_8007F1F8");
 
 
@@ -178,7 +178,7 @@ state_4:
         goto done;
 state_5:
         if (gStatusTextId != 0) {
-            func_800493C0(0x11, 0x1F, 0xA, 0xA);
+            gSetTextPaletteEntry(0x11, 0x1F, 0xA, 0xA);
             gDrawAlignedMultilineText(0, 0xA0, 0x82, 0x11, gStatusTextId, 4, 8, 1);
         }
         if ((gGameClock[0] >> 9) & 1) {
@@ -193,9 +193,9 @@ state_5:
         func_8007F128(0xA0, 0xAD, 0xF, 2, 4, 8);
 
         hundred = 100;
-        font = func_80048E88();
+        font = gGetActiveFont();
         fontUnk8 = font->unk8;
-        font = func_80048E88();
+        font = gGetActiveFont();
         fontHeight = font->height;
         chars = gPasswordBuffer;
         x = baseX - 5 * (fontUnk8 + 1);
@@ -207,7 +207,7 @@ state_5:
             sel = (s32 *)((u8 *)base + off);
             for (i = 0; i < 0xA; i++) {
                 text[0] = *(u8 *)((u32)i + (u32)chars) + 0x41;
-                func_800492A0(text, &width, &height);
+                gMeasureTextExtent(text, &width, &height);
                 if (i == *sel) {
                     boxX = x;
                     boxY = hundred + fontHeight + 2;

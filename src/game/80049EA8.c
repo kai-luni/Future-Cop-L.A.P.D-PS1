@@ -9,7 +9,7 @@ struct Unk49EA8 {
 };
 
 extern u8 *func_80019C38(s32 arg0, s32 arg1, u32 tag, s32 arg3);
-extern s32 func_80049E88(u8 *data, s32 arg1);
+extern s32 gTrySpawnDynamicLight(u8 *data, s32 arg1) __asm__("func_80049E88");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 void gLoadActorLightNode(struct Unk49EA8 *resource) __asm__("func_80049EA8");
 
@@ -51,7 +51,7 @@ void gLoadActorLightNode(struct Unk49EA8 *resource) __asm__("func_80049EA8");
  */
 void gLoadActorLightNode(struct Unk49EA8 *resource)
 {
-    func_80049E88(func_80019C38(resource->unk00, resource->unk20, 0x74414354,
+    gTrySpawnDynamicLight(func_80019C38(resource->unk00, resource->unk20, 0x74414354,
                                 resource->unk1C) - 4, -1);
     gFreeBlock(resource);
 }

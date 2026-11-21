@@ -19,7 +19,7 @@ extern u32 *gGetSpawnTypeFlagPtr(u32 column, u32 row) __asm__("func_8003B3D8");
 extern void *gCreateModelNode(struct Unk402DCOwner *owner, u8 column, s32 row, s32 arg3,
                            s32 arg4, u8 arg5) __asm__("func_8003D680");
 extern s32 gSpawnObjectFromTable(void *object, s32 arg1, u8 column, s32 arg3, s32 row) __asm__("func_8003E984");
-extern void *func_8003FD74(s32 column, s32 row, struct Unk402DCOwner *owner, s32 arg3);
+extern void *gQueueDeferredSpawnRequest(s32 column, s32 row, struct Unk402DCOwner *owner, s32 arg3) __asm__("func_8003FD74");
 s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 
 
@@ -86,7 +86,7 @@ s32 gSpawnTypeAtOwner(struct Unk402DCOwner *owner, u8 column, s32 arg2, s32 row,
             return 0;
         }
         if (owner->unk08 != 0) {
-            func_8003FD74(column, row, owner, 0);
+            gQueueDeferredSpawnRequest(column, row, owner, 0);
         }
         return 0;
     }

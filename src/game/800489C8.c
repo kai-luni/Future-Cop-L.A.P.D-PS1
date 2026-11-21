@@ -3,6 +3,8 @@ struct LookupState {
     unsigned char pad_00[0x10];
     unsigned char *values;
 };
+unsigned char *gLookupFontGlyph(struct LookupState *state, unsigned int offset) __asm__("func_800489C8");
+
 
 /**
  * @brief Looks up the glyph record of a character in a font.
@@ -19,7 +21,7 @@ struct LookupState {
  * @par Callers
  * func_80048F98, func_800492A0, func_80049340.
  */
-unsigned char *func_800489C8(struct LookupState *state, unsigned int offset)
+unsigned char *gLookupFontGlyph(struct LookupState *state, unsigned int offset)
 {
     unsigned char index = *((unsigned char *)state + offset + 0x1C);
     return state->values + index * 11;

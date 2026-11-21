@@ -97,7 +97,7 @@ extern void gActivateMenuPanel(struct Menu *, s32) __asm__("func_80078650");
 extern void func_8008227C(void) __asm__("func_8008227C");
 extern void gSelectEnabledMenuItem(s8, s32, s8) __asm__("func_800787D8");
 extern void gEmitTranslucentTileRect(u32, s32, s32, s32, s32, u8) __asm__("func_8001C214");
-extern void func_800493C0(u32, u8, u8, u8);
+extern void gSetTextPaletteEntry(u32, u8, u8, u8) __asm__("func_800493C0");
 extern void gEmitAtlasSpriteSimple(s32,s32,s32,s32,s32,s32,s32,s32,s32) __asm__("func_80082AB0");
 extern void gDrawAlignedMultilineText(void *,s32,s32,s32,s32,s32,s32,s32) __asm__("func_800788F0");
 extern void func_800826A0(void), func_80078B34(s32,s32,s32), func_8001B4A8(s32);
@@ -344,7 +344,7 @@ reset_timer:
                             color = 0x11;
                             if (gPlayerMenuDepth[i]) rgb2 = gMenuDepthHighlightRgb;
                             else rgb2 = &gMenuHighlightColorCycle[((gGameClock >> 4) & 7) * 3];
-                            func_800493C0(color, rgb2[0], rgb2[1], rgb2[2]);
+                            gSetTextPaletteEntry(color, rgb2[0], rgb2[1], rgb2[2]);
                         } else {
                             color = 15;
                             if (item->color != -1) color = item->color;

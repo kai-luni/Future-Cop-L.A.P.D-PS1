@@ -5,6 +5,8 @@ extern s32 gSoundModeFlag __asm__("D_8009F730");
 extern s32 gMusicVolumeSetting __asm__("D_8009F334");
 
 extern void func_80024730(s32 volume);
+void gSetStereoSoundMode(s32 enable) __asm__("func_800451B4");
+
 
 /**
  * @brief Sets the sound enable flag and re-applies the effect volume.
@@ -29,7 +31,7 @@ extern void func_80024730(s32 volume);
  * @par Callers
  * Confirmed: func_80044F8C (0x80044F94) at sound init, func_800260B8 (0x80026594, 0x800265C4) and func_80080984 (0x80080998) from the options screen, func_8007CA34 (0x8007CA68) and the data block D_8007D27C (0x8007D2A4).
  */
-void func_800451B4(s32 enable)
+void gSetStereoSoundMode(s32 enable)
 {
     gSoundModeFlag = enable != 0;
     func_80024730(gMusicVolumeSetting);

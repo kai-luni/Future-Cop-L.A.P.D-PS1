@@ -15,6 +15,8 @@ struct Unk50DACMap {
     s32 unk04;
     struct Unk50DACCell cells[1];
 };
+s32 gFindRailPathCell(struct Unk50DACMap *map, s32 *position) __asm__("func_80050DAC");
+
 
 /**
  * @brief Finds the index of the map path cell containing the given fixed-point X/Z world coordinates.
@@ -40,7 +42,7 @@ struct Unk50DACMap {
  * @par Callers
  * Confirmed: func_80050E0C (0x80050E60 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-s32 func_80050DAC(struct Unk50DACMap *map, s32 *position)
+s32 gFindRailPathCell(struct Unk50DACMap *map, s32 *position)
 {
     struct Unk50DACCell *cell;
     s32 x;

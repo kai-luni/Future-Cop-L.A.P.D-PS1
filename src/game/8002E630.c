@@ -16,14 +16,14 @@ extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern void gProcessActorCommandQueue(u8 *) __asm__("func_8002E528");
 extern void gSetActorMode(u8 *, s32) __asm__("func_8002E2BC");
 extern u8 gStepAttackScheduler(void *, s32, u8 *, s32, s32) __asm__("func_80060238");
-extern void func_800448D8(void *, s32, s32, u8);
+extern void gSelectAnimationClip(void *, s32, s32, u8) __asm__("func_800448D8");
 extern void gFireEntityWeapon(void *, u8 *, u8 *, s32) __asm__("func_8005F6E8");
 extern s32 gAtan2(s32, s32) __asm__("func_80095C30");
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_80010234");
 extern void gVectorMulAdd(void *, void *, s32, void *) __asm__("func_8001AC28");
-extern void func_800457B8(s32, s32);
+extern void gStopSoundChannelByIndex(s32, s32) __asm__("func_800457B8");
 
 #define FMULU(a,b) ({ s32 r_; __asm__("nop\n\tnop\n\tmultu %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(r_) : "r"(a), "r"(b) : "$8", "$9"); r_; })
 s32 gTickActor(u8 *obj, s32 dt) __asm__("func_8002E630");
@@ -271,7 +271,7 @@ case_2:
                 case 1:
                     if (H(obj,0xE2) > 0 && B(obj,0xD9) != B(obj,0x110)) {
                         if (gStepAttackScheduler(obj + 0xA0, dt, obj, 0, 0)) {
-                            func_800448D8(s2, B(obj,0x110), 1, 1);
+                            gSelectAnimationClip(s2, B(obj,0x110), 1, 1);
                         }
                     }
                     break;
@@ -384,7 +384,7 @@ tail2:
             if (!(F(obj,0x24) & 0x400000)) {
                 goto done;
             }
-            func_800457B8(W(obj,8), (s8)B(obj,0x22));
+            gStopSoundChannelByIndex(W(obj,8), (s8)B(obj,0x22));
             B(obj,0x21) = 0;
             F(obj,0x24) &= ~0x400000;
         }

@@ -6,6 +6,8 @@ extern s32 gFontBankCount __asm__("D_8009F364");
 extern u16 gTexBankVramY __asm__("D_8009F76A");
 
 extern void gLoadFontAsset(s32 value) __asm__("func_80048BF8");
+void gReloadDefaultFontBank(void) __asm__("func_80048DEC");
+
 
 /**
  * @brief Re-uploads font 0 when exactly one font is registered and the
@@ -24,7 +26,7 @@ extern void gLoadFontAsset(s32 value) __asm__("func_80048BF8");
  * @par Callers
  * func_80063C5C.
  */
-void func_80048DEC(void)
+void gReloadDefaultFontBank(void)
 {
     if (gCurrentFontBankIndex == 0 && gFontBankCount == 1) {
         gTexBankVramY = gFontBankCount;

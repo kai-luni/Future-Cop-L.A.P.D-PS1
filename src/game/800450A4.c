@@ -10,7 +10,7 @@ struct Unk450A4Slot {
 
 extern u8 gVolumeLimitSelector __asm__("D_8009F738");
 
-extern struct Unk450A4Slot *func_80045164(s32 id);
+extern struct Unk450A4Slot *gGetTrackedSoundSource(s32 id) __asm__("func_80045164");
 extern s32 gComputeSpatialSoundAttenuation(s32 arg0, s32 arg1, s8 *mix, s32 arg3) __asm__("func_800458E8");
 extern void gComputeSpatialSoundPan(s8 *mix) __asm__("func_800460D4");
 s32 gComputeTrackedSoundMix(s32 id, s8 *mix) __asm__("func_800450A4");
@@ -41,7 +41,7 @@ s32 gComputeTrackedSoundMix(s32 id, s8 *mix)
     struct Unk450A4Slot *slot;
     s32 volume;
 
-    slot = func_80045164(id);
+    slot = gGetTrackedSoundSource(id);
     if (slot != 0) {
         if (gComputeSpatialSoundAttenuation(slot->unk50, slot->unk58, mix, 0) != 0) {
             gComputeSpatialSoundPan(mix);

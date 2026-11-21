@@ -32,7 +32,7 @@ extern struct UnkC2A4 *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gBuildRotationMatrix(s32 arg0, s32 arg1, s32 arg2, s32 *out) __asm__("func_800188D0");
 extern s32 gGetGroundHeight(struct Vec3C2A4 *position, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
-extern void *func_8003FD74(s32 type, s32 arg08, void *source, s32 arg18);
+extern void *gQueueDeferredSpawnRequest(s32 type, s32 arg08, void *source, s32 arg18) __asm__("func_8003FD74");
 u8 gQueueDeferredGroundSpawn(struct UnkC2A4 *data) __asm__("func_8003C2A4");
 
 
@@ -76,7 +76,7 @@ u8 gQueueDeferredGroundSpawn(struct UnkC2A4 *data)
     out->position.y = gGetGroundHeight(&data->position, 0, 0, 0) +
                       (((matrix[7] >> 4) * data->unk1C) >> 8);
     out->position.z += ((matrix[8] >> 4) * data->unk1C) >> 8;
-    func_8003FD74(data->unk14, gSpawnTableRow, 0, (s32)out);
+    gQueueDeferredSpawnRequest(data->unk14, gSpawnTableRow, 0, (s32)out);
     object = gSpawnRecordMap[gSpawnTableRow][data->unk14];
     if (object != 0 && (object->flags & 1) != 0) {
         return 1;

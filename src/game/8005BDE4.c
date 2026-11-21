@@ -93,7 +93,7 @@ extern u8 gTargetDamageEffectHandler[] __asm__("D_8005B934");
 
 extern void gGetViewGroundAnchor(u32 index, struct DestinationTriple *destination) __asm__("func_80069580");
 extern s32 gVectorLength3D(s32 *vector) __asm__("func_8001A100");
-extern struct Unk5BCD4Node *func_8005BCD4(struct Unk5BCD4Pool *pool, void *target);
+extern struct Unk5BCD4Node *gFindActiveEffectByOwner(struct Unk5BCD4Pool *pool, void *target) __asm__("func_8005BCD4");
 extern struct ListNode *gTakePoolNode(struct ListNode *node) __asm__("func_8003BEF0");
 extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 gGetEntitySpawnBank(struct Unk402DCOwner *owner) __asm__("func_8003BF50");
@@ -205,7 +205,7 @@ void gAttachNearPlayerEffect(struct Unk402DCOwner *owner, s32 arg1, struct Unk5B
 
     if (found & 0xFF) {
         pool = &gOwnerNodeListA;
-        node = func_8005BCD4(pool, owner);
+        node = gFindActiveEffectByOwner(pool, owner);
         if (node == 0) {
             node = (struct Unk5BCD4Node *)gTakePoolNode((struct ListNode *)pool);
             if (node == 0) {

@@ -71,7 +71,7 @@ struct Unk58714 {
 extern void gGteLoadMatrix(u8 *coord) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(u8 *vertices, s32 *out, s32 count) __asm__("func_80010234");
 extern void gTransformPartVertex(struct ModelInstance *instance, s32 part, s32 *out) __asm__("func_80017668");
-extern void func_8005A190(struct Unk5A190 *object, s32 index, s32 value);
+extern void gSetEntityGaugeValue(struct Unk5A190 *object, s32 index, s32 value) __asm__("func_8005A190");
 extern void gResetCompoundEntityAnimation(struct Unk58714 *arg0) __asm__("func_80051AF8");
 extern void gRefillWeaponSlotAmmo(struct Unk58714 *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8006BE90");
 extern void gInterpretEntityScript(void *arg0, s32 arg1, s32 arg2, struct Unk58714 *arg3) __asm__("func_80069D68");
@@ -164,7 +164,7 @@ void gRespawnPlayerEntity(struct Unk58714 *arg0)
     s1->unkC0 = 0;
 
     arg0->unk1C = arg0->unk1E;
-    func_8005A190(s1, 0, arg0->unk1C);
+    gSetEntityGaugeValue(s1, 0, arg0->unk1C);
 
     gRefillWeaponSlotAmmo(arg0, 0, -1, 0);
     gRefillWeaponSlotAmmo(arg0, 1, -1, 0);

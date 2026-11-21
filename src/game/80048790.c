@@ -3,6 +3,8 @@
 
 extern s32 gHudMode2 __asm__("D_8009FAB8");
 extern s32 gOverlayTimer __asm__("D_8009F760");
+u8 gCheckHudLayoutNeedsAdvance(void) __asm__("func_80048790");
+
 
 /**
  * @brief Reports whether the HUD overlay may be drawn right now.
@@ -28,7 +30,7 @@ extern s32 gOverlayTimer __asm__("D_8009F760");
  * @par Callers
  * Unknown: no direct edge; companion of the layout update func_800487CC.
  */
-u8 func_80048790(void)
+u8 gCheckHudLayoutNeedsAdvance(void)
 {
     switch (gHudMode2) {
     case 0:

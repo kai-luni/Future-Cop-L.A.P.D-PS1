@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 func_80024170(void);
-extern u8 func_80029BC0(void);
+extern u8 gCheckOutputStreamVolumeMode(void) __asm__("func_80029BC0");
 extern s32 func_80024188(void);
 extern void gSoundHaltAllVoices(s32 value) __asm__("func_80047554");
 
@@ -35,7 +35,7 @@ void gSoundPauseVoices(void)
     s32 value;
 
     value = 0;
-    if (func_80024170() != 0 && func_80029BC0() == 0) {
+    if (func_80024170() != 0 && gCheckOutputStreamVolumeMode() == 0) {
         value = func_80024188();
     }
     gSoundHaltAllVoices(value);

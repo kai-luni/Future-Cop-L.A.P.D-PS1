@@ -20,7 +20,7 @@ extern Bucket *gCellBucketGrid __asm__("D_8009F938");
 extern int gCellGridHeight __asm__("D_8009F940");
 extern int gCellGridWidth __asm__("D_8009F93C");
 extern int gFrameTime __asm__("D_8009FAA4");
-extern void func_800457B8(int, int);
+extern void gStopSoundChannelByIndex(int, int) __asm__("func_800457B8");
 extern void func_800195D0(void *, Node *);
 void gReclaimStaleSceneNodes(int arg0, unsigned char arg1) __asm__("func_80083834");
 
@@ -71,7 +71,7 @@ void gReclaimStaleSceneNodes(int arg0, unsigned char arg1)
                     state->mask = mask;
                     offset = index * 8 + 4;
                     __asm__("" : "+r"(offset));
-                    func_800457B8(node->sound | 0x40000000, *(signed char *)((char *)state + offset + 6));
+                    gStopSoundChannelByIndex(node->sound | 0x40000000, *(signed char *)((char *)state + offset + 6));
                 }
                 head = gCellBucketGrid[i].head;
                 if (node == head) {

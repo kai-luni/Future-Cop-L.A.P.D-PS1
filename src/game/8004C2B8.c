@@ -62,7 +62,7 @@ extern s32 gIdentityMatrix[9] __asm__("D_8009AA38");
 extern s32 gLiveNodeCount __asm__("D_8009F9DC");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
-extern void func_8003A8C0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void gCreateModelDebrisEntity(s32 arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_8003A8C0");
 extern s32 gGuardEffectPoolMessage(s32 arg0, struct Unk4C2B8Owner *arg1, s32 arg2, s32 arg3) __asm__("func_8003C7B8");
 extern s32 gHandleObjectEventMessages(s32 message, void *object, s32 arg2, s32 arg3) __asm__("func_8003C980");
 extern struct Unk4AADNode *gFreeDebrisFragment(struct Unk4AADOwner *owner, struct Unk4AADNode *previous, struct Unk4AADNode *node) __asm__("func_8004AAD4");
@@ -70,6 +70,8 @@ extern s32 gLaunchDebrisObject(struct Unk4C2B8Owner *object, s32 arg1) __asm__("
 extern void gSpawnDebrisExpiryEffect(void *object) __asm__("func_8004B180");
 extern s32 gSpawnMeshFractureDebris(struct Unk4C2B8Owner *object, s32 arg1) __asm__("func_8004B5F8");
 extern void gRemoveExpiredDebrisNodes(struct Unk4C2B8Owner *object) __asm__("func_8004C0C0");
+void gUpdateDebrisOwners(struct Unk4C2B8Owner *input) __asm__("func_8004C2B8");
+
 
 /**
  * @brief Walks a D_800A1070[4] node list and dispatches triggered spawns or child-list sweeps by node->flags.
@@ -94,7 +96,7 @@ extern void gRemoveExpiredDebrisNodes(struct Unk4C2B8Owner *object) __asm__("fun
  * @par Callers
  * Confirmed: func_8003F570 (0x8003F65C in asm/us/main.s, passing D_800A1070[4]) / Likely: none / Unknown: none.
  */
-void func_8004C2B8(struct Unk4C2B8Owner *input)
+void gUpdateDebrisOwners(struct Unk4C2B8Owner *input)
 {
     register struct Unk4C2B8Owner *node __asm__("$16");
     node = input;

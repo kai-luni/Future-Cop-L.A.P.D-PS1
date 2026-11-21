@@ -12,6 +12,8 @@ struct SoundVoice {
 };
 
 extern void func_80047800(struct SoundVoice *voice, s32 program, s32 note, s32 velocity);
+void gUpdateSoundVoiceListMix(struct SoundVoice *voice) __asm__("func_8004530C");
+
 
 /**
  *  @brief Dispatches each linked sound voice with a valid note.
@@ -30,7 +32,7 @@ extern void func_80047800(struct SoundVoice *voice, s32 program, s32 note, s32 v
  *  @par Callers
  *  Confirmed: func_800452D4.
  */
-void func_8004530C(struct SoundVoice *voice)
+void gUpdateSoundVoiceListMix(struct SoundVoice *voice)
 {
     while (voice != 0) {
         if (voice->note != -1) {

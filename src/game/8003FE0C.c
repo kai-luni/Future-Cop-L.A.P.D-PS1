@@ -26,6 +26,8 @@ extern struct Unk3FE0CObject *gCreateModelNode(struct Unk3FD74Source *source,
                                             s32 arg4, s32 arg5) __asm__("func_8003D680");
 extern s32 gSpawnObjectFromTable(struct Unk3FE0CObject *object, s32 arg1, u8 type,
                          s32 arg18, s32 arg08) __asm__("func_8003E984");
+void gSpawnDeferredNode(struct Unk3FD74Node *node) __asm__("func_8003FE0C");
+
 
 /**
  * @brief Instantiates and registers a deferred map spawn node when it enters player range.
@@ -50,7 +52,7 @@ extern s32 gSpawnObjectFromTable(struct Unk3FE0CObject *object, s32 arg1, u8 typ
  * @par Callers
  * Confirmed: func_8003FF7C (0x800402A0, when an inactive spawn node enters player range).
  */
-void func_8003FE0C(struct Unk3FD74Node *node)
+void gSpawnDeferredNode(struct Unk3FD74Node *node)
 {
     struct Unk3FE0CObject *object;
 

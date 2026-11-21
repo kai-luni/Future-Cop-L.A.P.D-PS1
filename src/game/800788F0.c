@@ -9,10 +9,10 @@ struct FontEntry {
 extern s8 gPanelSyncValue __asm__("D_8009F8BC");
 
 extern u8 *gLookupTextString(s32 id) __asm__("func_80089914");
-extern s32 func_80048E28(s32 index);
-extern struct FontEntry *func_80048E88(void);
+extern s32 gSelectFontBank(s32 index) __asm__("func_80048E28");
+extern struct FontEntry *gGetActiveFont(void) __asm__("func_80048E88");
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
-extern void func_800492A0(u8 *text, s32 *width, s32 *height);
+extern void gMeasureTextExtent(u8 *text, s32 *width, s32 *height) __asm__("func_800492A0");
 extern u8 *func_8008CCD0(u8 *str, s32 c);
 extern s32 func_8008CCC0(u8 *str);
 void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
@@ -83,7 +83,7 @@ void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
 
     if (gPanelSyncValue != font0) {
         oldFont = gPanelSyncValue;
-        func_80048E28(font0);
+        gSelectFontBank(font0);
     }
 
     if (ay == 0x10 && text != 0) {
@@ -105,12 +105,12 @@ void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
         drawX = x;
         drawY = y0;
         if (ay == 0x10) {
-            lineHeight = func_80048E88()->height;
+            lineHeight = gGetActiveFont()->height;
             drawY = y0 - (lineCount - line) * lineHeight;
         }
 
         if (alignX != 1 || ay != 8) {
-            func_800492A0(text, &width, &height);
+            gMeasureTextExtent(text, &width, &height);
             if (alignX == 2) {
                 drawX -= width;
             } else if (alignX == 4) {
@@ -131,7 +131,7 @@ void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
             {
                 register s32 advance __asm__("$2");
 
-                advance = func_80048E88()->height;
+                advance = gGetActiveFont()->height;
                 line++;
                 y0 += advance;
             }
@@ -141,6 +141,6 @@ void gDrawAlignedMultilineText(u8 *text, s32 x, s32 y, s32 color, s32 textId,
     }
 
     if (oldFont != -1) {
-        func_80048E28(oldFont);
+        gSelectFontBank(oldFont);
     }
 }

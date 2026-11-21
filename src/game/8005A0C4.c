@@ -9,6 +9,8 @@ struct Unk5A190Gauge {
     u8 state;
     u8 unk11[3];
 };
+void gInitHudGauge(struct Unk5A190Gauge *gauge, s32 value, s32 divisor) __asm__("func_8005A0C4");
+
 
 /**
  * @brief Initializes a 0x14-byte HUD/entity gauge block with range, scale factor, 1/3 threshold, and state.
@@ -34,7 +36,7 @@ struct Unk5A190Gauge {
  * @par Callers
  * Confirmed: func_800331CC (0x800335E4), func_800579D4 (0x80057E10), and func_80060A0C (0x80060B78 in asm/us/main.s) / Likely: none / Unknown: none.
  */
-void func_8005A0C4(struct Unk5A190Gauge *gauge, s32 value, s32 divisor)
+void gInitHudGauge(struct Unk5A190Gauge *gauge, s32 value, s32 divisor)
 {
     s32 limit;
 

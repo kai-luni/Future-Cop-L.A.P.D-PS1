@@ -2,6 +2,8 @@
 #include "game/types.h"
 struct Pair { s32 x; s32 y; };
 extern struct Pair *gFreedPointer __asm__("D_8009F7B0");
+struct Pair *gOffsetClampedCellCoords(s32 *arg) __asm__("func_8004F09C");
+
 
 /**
  *  @brief Computes clamped coordinate intermediates and returns the next pair.
@@ -22,7 +24,7 @@ extern struct Pair *gFreedPointer __asm__("D_8009F7B0");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-struct Pair *func_8004F09C(s32 *arg)
+struct Pair *gOffsetClampedCellCoords(s32 *arg)
 {
     register struct Pair *p __asm__("$5") = gFreedPointer;
     register struct Pair *next __asm__("$7") = p + 1;

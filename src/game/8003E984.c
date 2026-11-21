@@ -109,7 +109,7 @@ extern s32 gCheckModelAttachmentSlot(struct Holder *, s8) __asm__("func_8003CDAC
 extern void gGetViewGroundAnchor(u32, struct DestinationTriple *) __asm__("func_80069580");
 extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
 extern s32 gApproxVectorLength(s32 *) __asm__("func_80019F54");
-extern void func_80057358(void *, s32);
+extern void gAddCameraShake(void *, s32) __asm__("func_80057358");
 extern void func_80025D6C(s32 *);
 extern void gApplyRadialContactDamage(s32 *, u16, s16, void *) __asm__("func_800410BC");
 extern struct Object *gCreateLightObject(struct Source *) __asm__("func_80040E60");
@@ -392,7 +392,7 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
         work.distVec[1] = gPlayerEntities->y - data->y;
         work.distVec[2] = gPlayerEntities->z - data->z;
         if (ABS(gApproxVectorLength(work.distVec)) <= 0x1FFFF) {
-            func_80057358(gPlayerEntities, amount);
+            gAddCameraShake(gPlayerEntities, amount);
         }
 
         if (gPlayerCount >= 2) {
@@ -400,7 +400,7 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
             work.distVec[1] = gPlayerEntity2->y - data->y;
             work.distVec[2] = gPlayerEntity2->z - data->z;
             if (ABS(gApproxVectorLength(work.distVec)) <= 0x1FFFF) {
-                func_80057358(gPlayerEntity2, amount);
+                gAddCameraShake(gPlayerEntity2, amount);
             }
         }
     }

@@ -4,6 +4,8 @@
 extern u32 gEffectId __asm__("D_8009FACC");
 
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
+void gPlayPendingSessionSoundEffect(void) __asm__("func_80049260");
+
 
 /**
  * @brief Consumes the pending text blip request and clears it.
@@ -27,7 +29,7 @@ extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C8
  * @par Callers
  * Confirmed: func_800486FC (0x8004871C), the frame-close HUD hook of screen mode 4.
  */
-void func_80049260(void)
+void gPlayPendingSessionSoundEffect(void)
 {
     if (gEffectId != 0) {
         if (gEffectId < 0x82) {

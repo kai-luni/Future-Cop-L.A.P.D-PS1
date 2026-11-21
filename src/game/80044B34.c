@@ -33,10 +33,10 @@ struct AnimClip {
 struct AnimScript;
 
 extern s32 func_80019668(void);
-extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index,
-                                      s32 direction, u8 flags);
+extern struct AnimClip *gSelectAnimationClip(struct AnimTrack *track, s32 index,
+                                      s32 direction, u8 flags) __asm__("func_800448D8");
 extern void gProcessAnimScriptCommands(struct AnimScript *script, struct AnimTrack *track) __asm__("func_800449F8");
-extern void func_80044AE8(u32 code, u32 key, s32 *shift, u32 *bits);
+extern void gPackAnimEventBits(u32 code, u32 key, s32 *shift, u32 *bits) __asm__("func_80044AE8");
 u32 gAdvanceAnimTrack(struct AnimScript *script, struct AnimTrack *track, s32 speed,
                   s32 direction) __asm__("func_80044B34");
 
@@ -127,13 +127,13 @@ update_clip:
     if (track->flags & 1) {
         track->flags &= ~1;
         if (clip->code != 0) {
-            func_80044AE8(clip->code, track->frame, &shift, &bits);
+            gPackAnimEventBits(clip->code, track->frame, &shift, &bits);
         }
     }
 
     if (clip->type == 0) {
         if (clip->code != 0) {
-            func_80044AE8(clip->code, track->frame, &shift, &bits);
+            gPackAnimEventBits(clip->code, track->frame, &shift, &bits);
         }
         return bits;
     }
@@ -188,7 +188,7 @@ update_clip:
             track->frame += track->step;
 
             if (clip->code != 0) {
-                func_80044AE8(clip->code, track->frame, &shift, &bits);
+                gPackAnimEventBits(clip->code, track->frame, &shift, &bits);
             }
 
             switch (clip->mode) {
@@ -207,14 +207,14 @@ update_clip:
                     }
 
                     if (track->index != next) {
-                        clip = func_800448D8(track, next, 2, 1);
+                        clip = gSelectAnimationClip(track, next, 2, 1);
                         goto update_clip;
                     }
 
                     track->frame = clip->start + clip->end - track->target;
 
                     if (clip->code != 0) {
-                        func_80044AE8(clip->code, track->frame, &shift, &bits);
+                        gPackAnimEventBits(clip->code, track->frame, &shift, &bits);
                     }
                 }
                 break;
@@ -235,7 +235,7 @@ update_clip:
                     track->frame = track->target;
 
                     if (clip->code != 0) {
-                        func_80044AE8(clip->code, target, &shift, &bits);
+                        gPackAnimEventBits(clip->code, target, &shift, &bits);
                     }
 
                     bits |= 1;

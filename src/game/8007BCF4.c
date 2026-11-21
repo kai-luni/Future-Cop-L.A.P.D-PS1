@@ -23,7 +23,7 @@ extern s8 gScreenDescriptor[] __asm__("D_800A3838");
 
 extern void gDrawProfileSlotList(s32) __asm__("func_8007B460");
 extern void gDrawAlignedMultilineText(u8 *, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
-extern void func_800493C0(u32, u8, u8, u8);
+extern void gSetTextPaletteEntry(u32, u8, u8, u8) __asm__("func_800493C0");
 extern s32 func_8008CD30(u8 *, u8 *, s32);
 extern void func_80078B34(s32, s32, s32);
 
@@ -107,7 +107,7 @@ void gDrawGameHubMenu(s32 arg0)
                     u8 *p;
                     c = 0x11;
                     p = gMenuHighlightColorCycle + ((gGameClock >> 4) & 7) * 3;
-                    func_800493C0(c, p[0], p[1], p[2]);
+                    gSetTextPaletteEntry(c, p[0], p[1], p[2]);
                 } else {
                     c = 0xF;
                 }

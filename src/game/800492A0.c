@@ -13,7 +13,9 @@ struct FontEntry {
 
 extern struct FontEntry *gFont __asm__("D_8009F35C");
 
-extern struct FontGlyph *func_800489C8(struct FontEntry *font, u8 character);
+extern struct FontGlyph *gLookupFontGlyph(struct FontEntry *font, u8 character) __asm__("func_800489C8");
+void gMeasureTextExtent(u8 *text, s32 *width, s32 *height) __asm__("func_800492A0");
+
 
 /**
  * @brief Measures a string in the active font: total advance width and line height.
@@ -36,7 +38,7 @@ extern struct FontGlyph *func_800489C8(struct FontEntry *font, u8 character);
  * @par Callers
  * func_800788F0, func_8007ABBC, func_8007E1A4, func_8007F1F8, func_8008125C.
  */
-void func_800492A0(u8 *text, s32 *width, s32 *height)
+void gMeasureTextExtent(u8 *text, s32 *width, s32 *height)
 {
     s32 total;
     s32 lineHeight;
@@ -53,7 +55,7 @@ void func_800492A0(u8 *text, s32 *width, s32 *height)
             if (character < 0x20) {
                 continue;
             }
-            total += func_800489C8(gFont, character)->advance;
+            total += gLookupFontGlyph(gFont, character)->advance;
         }
         lineHeight = gFont->height;
     }

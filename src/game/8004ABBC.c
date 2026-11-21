@@ -4,6 +4,8 @@
 extern void *gNodePoolAllocation __asm__("D_8009F79C");
 
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeFragmentNodePool(void) __asm__("func_8004ABBC");
+
 
 /**
  * @brief Frees the 199-node effect/attachment pool buffer D_8009F79C and clears the pointer.
@@ -27,7 +29,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * Confirmed: func_80024D14 (0x80024D48, between-mission subsystem reset) / Likely: none / Unknown: none.
  */
-void func_8004ABBC(void)
+void gFreeFragmentNodePool(void)
 {
     gFreeBlock(gNodePoolAllocation);
     gNodePoolAllocation = 0;

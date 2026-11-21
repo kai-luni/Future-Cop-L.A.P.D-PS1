@@ -90,7 +90,7 @@ extern void *jtbl_800111DC[];
 extern void gApplyPlayerResupply(void *, u32, s16, s32, s32) __asm__("func_8002FC90");
 extern void gInterpretEntityScript(void *, s32, u32, void *) __asm__("func_80069D68");
 extern s32 gSpawnTypeAtOwner(void *, u8, s32, s32, s32) __asm__("func_800402DC");
-extern void *func_800448D8(struct AnimTrack *, s32, s32, u8);
+extern void *gSelectAnimationClip(struct AnimTrack *, s32, s32, u8) __asm__("func_800448D8");
 extern void gSetModelFrame(struct ModelInstance *, s32) __asm__("func_800175F8");
 extern void gBuildRotationMatrix(s16, s32, s32, void *) __asm__("func_800188D0");
 extern s32 gAdvanceAnimTrack(void *, void *, s32, s32) __asm__("func_80044B34");
@@ -185,7 +185,7 @@ s32 gUpdateResupplyEntity(struct Actor306A0 *actor, s32 delta)
             obj2 = actor->ptrD0;
             if (obj2 != 0 && obj2->unk16 == 1) {
                 *(u16 *)(obj2->unkAC + 0xA0) = 0;
-                func_800448D8(&actor->animA0, 3, 1, 1);
+                gSelectAnimationClip(&actor->animA0, 3, 1, 1);
                 actor->stateBD = 3;
             }
         }
@@ -235,7 +235,7 @@ s32 gUpdateResupplyEntity(struct Actor306A0 *actor, s32 delta)
     if (actor->stateBD == 4 && actor->unkBE >= 0) {
         actor->unkC0 -= delta;
         if (actor->unkC0 <= 0) {
-            func_800448D8(&actor->animA0, 0, 1, 0);
+            gSelectAnimationClip(&actor->animA0, 0, 1, 0);
             actor->stateBD = 0;
         }
     }
