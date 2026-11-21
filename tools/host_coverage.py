@@ -212,8 +212,21 @@ def main():
         build = tests_dir / f"build-{script.stem.replace('_test', '').replace('_', '-')}"
         binary = None
         if build.is_dir():
-            for cand in build.iterdir():
-                if cand.is_file() and os.access(cand, os.X_OK) and not cand.suffix:
+            # The build dir holds objects too; the linked test executable is the
+            # only ELF of type EXEC in it.
+            for cand in sorted(build.iterdir()):
+                if not cand.is_file() or not os.access(cand, os.X_OK):
+                    continue
+                try:
+                    with open(cand, "rb") as fh:
+                        if fh.read(4) != b"\x7fELF":
+                            continue
+                except OSError:
+                    continue
+                rel = subprocess.run(
+                    ["mipsel-linux-gnu-readelf", "-h", str(cand)],
+                    capture_output=True, text=True, env=env)
+                if "EXEC" in rel.stdout:
                     binary = cand
         if binary is None:
             print(f"skip {script.name}: no built binary (run the test first)",

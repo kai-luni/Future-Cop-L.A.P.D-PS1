@@ -7,7 +7,7 @@ VENV_PYTHON := $(VENV)/bin/python
 VENV_STAMP := $(VENV)/.installed
 EXE := baseroms/us/SLUS_007.39
 
-.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input function-map coverage
+.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input function-map coverage reach
 
 all: split
 
@@ -147,6 +147,16 @@ coverage:
 	  python3 tools/host_coverage.py $(if $(LCOV),--lcov $(LCOV),); \
 	else \
 	  echo "coverage: C toolchain missing, skipped"; \
+	fi
+
+# How many decompiled functions the host tests reach at all - including the units
+# they link indirectly, which the coverage target above does not know about.
+reach:
+	@if [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  python3 tools/host_test_reach.py $(if $(LIST),--list,) \
+	    $(if $(JSON),--json $(JSON),); \
+	else \
+	  echo "reach: C toolchain missing, skipped"; \
 	fi
 
 # Run the environment/matrix render cores under qemu. Skipped (not failed) when
