@@ -103,8 +103,8 @@ struct Unk6B23C_Callback {
     struct Unk6B23C *unk08;
 };
 
-extern s32 D_8009F380;
-extern s32 D_8009F384;
+extern s32 gTracerRedCoreColour __asm__("D_8009F380");
+extern s32 gTracerGreenCoreColour __asm__("D_8009F384");
 extern void *gSpawnRecordMap[][0x100] __asm__("D_800A7040");
 
 extern struct Unk6B23C_Item *gRegistryFind(u8 id) __asm__("func_8006AAEC");
@@ -409,10 +409,10 @@ skip_callback:
     } else if (s3->type == 0x0C) {
         if (flag) {
             gSpawnTracerBeam(0x300, 0x30, 0x60000 | (func_80019668() & 0x1F000),
-                          D_8009F380, &v58, &v38);
+                          gTracerRedCoreColour, &v58, &v38);
         } else {
             gSpawnTracerBeam(0x200, 0x30, 0x30000 + (func_80019668() & 0x1F000),
-                          D_8009F384, &v58, &v38);
+                          gTracerGreenCoreColour, &v58, &v38);
         }
     } else if (s3->type == 0x0E) {
         gAttachNearPlayerEffect(self, self, c, (void *)((u8 *)b + 0x178), 0,

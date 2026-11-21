@@ -27,7 +27,7 @@ struct Obj260B8 {
 
 extern struct MenuText260B8 *gLabelRecord __asm__("D_8009F2CC");
 extern s8 gQuitNoColorCodeOffset __asm__("D_8009F2D4");
-extern s8 D_8009F2D5;
+extern s8 gQuitYesColorCodeOffset __asm__("D_8009F2D5");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
 extern s32 gOpenPanelCount __asm__("D_8009FA6C");
 extern s32 gScreenState __asm__("D_8009FA00");
@@ -170,7 +170,7 @@ void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selec
 
     menu = gLabelRecord;
     base1 = menu->unk1C + gQuitNoColorCodeOffset;
-    base2 = menu->unk20 + D_8009F2D5;
+    base2 = menu->unk20 + gQuitYesColorCodeOffset;
     if (gFrameTickCounter & 0x40) {
         initialColor = 0x13;
     }

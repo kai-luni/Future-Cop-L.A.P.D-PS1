@@ -49,8 +49,8 @@ struct PacketWord5 {
     u32 word[5];
 };
 
-extern s32 D_8009F7E8;
-extern s32 D_8009F7EC;
+extern s32 gRadarOriginZ __asm__("D_8009F7E8");
+extern s32 gRadarOriginX __asm__("D_8009F7EC");
 extern s32 gRadarYawSin[] __asm__("D_8009F7E0");
 extern s32 gRadarHeadingCosine[] __asm__("D_8009F7E4");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
@@ -113,11 +113,11 @@ void gDrawRadarBackgroundAndMarkers(struct Unk5AB8C *input, s32 *arg1, s32 *arg2
     register struct DrawObj **drawList __asm__("$17");
     register struct Unk5AB8CSub *pos __asm__("$17");
 
-    D_8009F7EC = arg1[0];
+    gRadarOriginX = arg1[0];
     __asm__ volatile ("" : : : "memory");
     head = arg1[2];
     __asm__("addu %0,%1,$zero" : "=r"(arg0) : "r"(input), "r"(head));
-    D_8009F7E8 = head;
+    gRadarOriginZ = head;
     __asm__ volatile ("" : : : "memory");
     offset = 0;
     gSinCos(-0x400 - (func_80018580(arg2[2], arg2[0]) << 4),

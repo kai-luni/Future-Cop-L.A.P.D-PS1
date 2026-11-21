@@ -8,8 +8,8 @@ typedef struct { s32 x,y,z; } Vec;
 typedef struct { u32 tag, color; s16 x0,y0,x1,y1,x2,y2,x3,y3; } Packet;
 extern s32 gRadarYawSin __asm__("D_8009F7E0");
 extern s32 gRadarHeadingCosine __asm__("D_8009F7E4");
-extern s32 D_8009F7E8 __asm__("D_8009F7E8");
-extern s32 D_8009F7EC __asm__("D_8009F7EC");
+extern s32 gRadarOriginZ __asm__("D_8009F7E8");
+extern s32 gRadarOriginX __asm__("D_8009F7EC");
 extern Packet *gPacketCursor __asm__("D_8009FA90");
 extern Packet *gPacketLimit __asm__("D_8009F9C0");
 extern u16 gEffectUvV __asm__("D_800A8EA6");
@@ -52,10 +52,10 @@ int gDrawRadarMarker(Vec *p, u32 color, int side, int type)
     s32 t;
     register s32 xx __asm__("$8");
     __asm__ volatile("" : "+r"(col));
-    v1 = p->z; v0 = D_8009F7E8; dz = v1 - v0;
+    v1 = p->z; v0 = gRadarOriginZ; dz = v1 - v0;
     v1 = dz >> 31; v0 = v1 + dz; az = v0 ^ v1;
     if (az > 0x25555) return 0;
-    v1 = p->x; v0 = D_8009F7EC; dx = v1 - v0;
+    v1 = p->x; v0 = gRadarOriginX; dx = v1 - v0;
     v1 = dx >> 31; v0 = v1 + dx; ax = v0 ^ v1;
     if (ax > 0x25555) return 0;
     if (az < ax) { az ^= ax; ax ^= az; az ^= ax; }

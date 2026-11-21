@@ -13,7 +13,7 @@ extern u8 gMemoryCardRequestDispatchCallback[] __asm__("D_8001FAB8");
 extern u8 gMcErrorCallbackBAddress[] __asm__("D_8001FF44");
 extern u8 gMemoryCardServiceErrorCallback[] __asm__("D_8001FE40");
 extern u8 gMcCardEventDoneCallback[] __asm__("D_8001FD28");
-extern u8 D_8001F394[] __asm__("D_8001F394");
+extern u8 gMcTransferCompletionCallbackAddress[] __asm__("D_8001F394");
 extern u8 gMcRetryTimeoutBCallback[] __asm__("D_8001F968");
 extern u8 gMemoryCardIoRetryCallback[] __asm__("D_8001F818");
 extern u8 gMcAbortCallbackAddress[] __asm__("D_8001F784");
@@ -72,7 +72,7 @@ void gAcquireMcEvents(void)
         gOperationState->h1 = gBiosOpenEvent(0xF4000001, 0x8000, 0x1000, gMcErrorCallbackBAddress);
         gOperationState->h2 = gBiosOpenEvent(0xF4000001, 0x100, 0x1000, gMemoryCardServiceErrorCallback);
         gOperationState->h3 = gBiosOpenEvent(0xF4000001, 0x2000, 0x1000, gMcCardEventDoneCallback);
-        gOperationState->h4 = gBiosOpenEvent(0xF0000011, 4, 0x1000, D_8001F394);
+        gOperationState->h4 = gBiosOpenEvent(0xF0000011, 4, 0x1000, gMcTransferCompletionCallbackAddress);
         gOperationState->h5 = gBiosOpenEvent(0xF0000011, 0x8000, 0x1000, gMcRetryTimeoutBCallback);
         gOperationState->h6 = gBiosOpenEvent(0xF0000011, 0x100, 0x1000, gMemoryCardIoRetryCallback);
         gOperationState->h7 = gBiosOpenEvent(0xF0000011, 0x2000, 0x1000, gMcAbortCallbackAddress);

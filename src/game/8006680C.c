@@ -14,7 +14,7 @@ extern struct Table gTileDefTable __asm__("D_800A6F38");
 extern struct Grid *gMapGridHeader __asm__("D_8009F80C");
 extern u8 *gTileBlockTable __asm__("D_8009F808");
 extern s16 gTileUvOffset __asm__("D_8009F83C");
-extern s32 D_800A2960[] __asm__("D_800A2960");
+extern s32 gMinimapHorizontalScale[] __asm__("D_800A2960");
 extern s32 gMinimapVerticalScale[] __asm__("D_800A2964");
 extern s32 gClampMapViewToBounds(s32 *, s32) __asm__("func_800665E8");
 extern void gBuildTilePattern(s32) __asm__("func_800654F8");
@@ -139,7 +139,7 @@ void gDrawMapView(struct Owner *owner, s32 *pos)
     end[1] = start[1] + 0x30000;
     gDrawMapRadarBlips(start, end, owner->actor->flag);
     gWorldToMinimapCell(&sx, &sy, start[0], start[1]);
-    w = sc2 * (D_800A2960[0] >> 8);
+    w = sc2 * (gMinimapHorizontalScale[0] >> 8);
     w >>= 24;
     val = sx + w;
     if (val >= 0) { if (val < 54) r = val; else r = 53; } else r = 0;
