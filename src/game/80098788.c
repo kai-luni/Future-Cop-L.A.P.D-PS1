@@ -1,8 +1,8 @@
 // Categories: Platform > Audio
 #include "game/types.h"
 
-extern u32 func_800987B8(s32 on_off, u32 voice_bits, s32 low_register,
-                         s32 high_register);
+extern u32 gSpuAccessVoiceMaskRegs(s32 on_off, u32 voice_bits, s32 low_register,
+                         s32 high_register) __asm__("func_800987B8");
 
 /**
  *  @brief Forwards a voice control request with a fixed register pair.
@@ -25,5 +25,5 @@ extern u32 func_800987B8(s32 on_off, u32 voice_bits, s32 low_register,
  */
 u32 func_80098788(s32 on_off, u32 voice_bits)
 {
-    return func_800987B8(on_off, voice_bits, 0xCC, 0xCD);
+    return gSpuAccessVoiceMaskRegs(on_off, voice_bits, 0xCC, 0xCD);
 }

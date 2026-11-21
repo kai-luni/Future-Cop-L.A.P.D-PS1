@@ -20,7 +20,7 @@ extern s32 gChannelCount __asm__("D_8009F720");
 extern struct SoundChannel *gChannelListHead __asm__("D_8009F724");
 
 extern s32 func_80045494(s32 id, u8 *table, s32 limit);
-extern void func_800455DC(struct SoundChannel *channel);
+extern void gQueueSoundChannelByPriority(struct SoundChannel *channel) __asm__("func_800455DC");
 
 /**
  * @brief Allocates and activates a SoundChannel entry for a resolved sound effect ID.
@@ -67,7 +67,7 @@ s32 func_80045678(s32 sound, s32 id, s32 arg2, s32 arg3)
     channel->priority = 0;
     gChannelListHead = channel->next;
     index = channel->index;
-    func_800455DC(channel);
+    gQueueSoundChannelByPriority(channel);
 done:
     return index;
 }

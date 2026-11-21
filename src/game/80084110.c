@@ -15,6 +15,8 @@ extern struct Resource *func_80019BF0(s32 group, s32 name);
 extern u8 *func_80019C38(u8 *arg0, u32 arg1, u32 arg2, s32 arg3);
 extern void gSpawnSceneNode(u8 *arg0, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80083A10");
 extern void gFreeBlock(struct Unk84110 *arg0) __asm__("func_800181D4");
+void gLoadDeferredSceneAsset(struct Unk84110 *arg0) __asm__("func_80084110");
+
 
 /**
  * @brief Loads a spawn-resource bundle: resolves its entry count, fetches the
@@ -43,7 +45,7 @@ extern void gFreeBlock(struct Unk84110 *arg0) __asm__("func_800181D4");
  * @par Callers
  * func_8004D6D4 (verified in source; the call-graph edge is missing).
  */
-void func_80084110(struct Unk84110 *arg0)
+void gLoadDeferredSceneAsset(struct Unk84110 *arg0)
 {
     u32 *data;
     s32 *node;

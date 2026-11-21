@@ -3,7 +3,7 @@
 
 extern s32 gFreeRangeTablePtr __asm__("D_8009F590");
 extern s32 D_8009F59C;
-extern s32 D_8009F5A0;
+extern s32 gHeapRangeCountThreshold __asm__("D_8009F5A0");
 extern s32 gHeapMainBlockSize __asm__("D_8009F9E8");
 extern s32 gHeapPoolBase __asm__("D_8009FA9C");
 
@@ -43,7 +43,7 @@ void gInitHeap(void)
     D_8009F59C = 0x203;
     gHeapPoolBase = 0;
     gFreeRangeTablePtr = 0;
-    D_8009F5A0 = 0x182;
+    gHeapRangeCountThreshold = 0x182;
 
     gFreeRangeTablePtr = gHeapAllocRaw(0x810, 3);
     gHeapMainBlockSize = 0x15A000;

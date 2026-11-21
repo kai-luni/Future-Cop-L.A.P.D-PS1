@@ -11,7 +11,9 @@ extern u32 *gDma6MemAddrPtr __asm__("D_8009DED8");
 extern u32 *gDma6BlockCtrlPtr __asm__("D_8009DEDC");
 
 extern void func_800951D8(void);
-extern s32 func_8009520C(void);
+extern s32 gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
+s32 gClearOrderingTableReverseDma(u8 *arg0, s32 arg1) __asm__("func_8009415C");
+
 
 /**
  *  @brief Starts a register-controlled transfer and waits for completion.
@@ -33,7 +35,7 @@ extern s32 func_8009520C(void);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-s32 func_8009415C(u8 *arg0, s32 arg1)
+s32 gClearOrderingTableReverseDma(u8 *arg0, s32 arg1)
 {
     *gDmaControlGpuPtr |= 0x8000000;
     *gDma6ChannelCtrlPtr = 0;
@@ -43,7 +45,7 @@ s32 func_8009415C(u8 *arg0, s32 arg1)
     func_800951D8();
     if (*gDma6ChannelCtrlPtr & 0x1000000) {
         do {
-            if (func_8009520C() != 0) {
+            if (gCheckGpuDmaTimeout() != 0) {
                 return -1;
             }
         } while (*gDma6ChannelCtrlPtr & 0x1000000);

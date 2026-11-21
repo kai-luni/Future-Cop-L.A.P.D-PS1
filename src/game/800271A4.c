@@ -61,8 +61,8 @@ extern s32 func_80049340(u8 *text);
 extern void gDrawAlignedString(u8 *text, s32 x, s32 y, s32 color) __asm__("func_80049100");
 extern void gSetAudioPlaybackEnabled(u8 enable) __asm__("func_80047690");
 extern void func_80069D0C(s32 amount);
-extern void func_8004CD6C(s32 message, s32 arg2, s32 arg3);
-extern void func_8004CE04(void);
+extern void gBroadcastEntityMessage(s32 message, s32 arg2, s32 arg3) __asm__("func_8004CD6C");
+extern void gProcessDeferredEntityUpdates(void) __asm__("func_8004CE04");
 extern void gEndSubScreenFrame(void) __asm__("func_8001BBAC");
 extern void gStopAllPadRumble(void) __asm__("func_8001EB6C");
 extern void gSoundPauseVoices(void) __asm__("func_800476D0");
@@ -177,9 +177,9 @@ void gRunSoloSessionFrame(void)
         func_80069D0C(gFrameDelta);
         gCullActiveEntitiesSolo();
         gDispatchQueuedEntityCommands();
-        func_8004CD6C(6, gFrameDelta, 0);
+        gBroadcastEntityMessage(6, gFrameDelta, 0);
         gUpdateMapZoneTriggers(gFrameDelta);
-        func_8004CE04();
+        gProcessDeferredEntityUpdates();
         gRunEntityWorldTick(gFrameDelta);
     }
 

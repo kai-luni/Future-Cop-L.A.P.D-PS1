@@ -16,6 +16,8 @@ struct Unk4B244Force {
     u8 unk42[7];
     u8 flags;
 };
+s32 gComputeForceImpulse(struct Unk4B244Source *source, struct Unk4B244Force *force, s32 *out) __asm__("func_8004B244");
+
 
 /**
  * @brief Computes a signed impulse vector from a force record, gated by the
@@ -44,7 +46,7 @@ struct Unk4B244Force {
  * @par Callers
  * func_8003AA94, func_8004B5F8.
  */
-s32 func_8004B244(struct Unk4B244Source *source, struct Unk4B244Force *force, s32 *out)
+s32 gComputeForceImpulse(struct Unk4B244Source *source, struct Unk4B244Force *force, s32 *out)
 {
     s16 scale;
     u16 flags;

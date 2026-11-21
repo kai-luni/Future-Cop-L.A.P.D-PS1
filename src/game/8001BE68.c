@@ -8,7 +8,7 @@ extern struct Display gLayerBlocks[] __asm__("D_800A06E0");
 extern struct Draw gDrawBlocks[] __asm__("D_800A06B0");
 extern u8 gLayerIndex __asm__("D_8009F225");
 extern u8 gDisplayEnabled __asm__("D_8009F608");
-extern void func_80092910(int);
+extern void gResetGraph(int) __asm__("func_80092910");
 extern void func_80092BF4(int);
 extern void func_80092A84(int);
 extern void gSetDefDrawEnv(struct Display *, int, int, int, int) __asm__("func_80092140");
@@ -47,7 +47,7 @@ int gInitDoubleBufferedGpuEnvs(void)
     int i;
     register int one __asm__("$3");
     register struct Display *p __asm__("$4");
-    func_80092910(0);
+    gResetGraph(0);
     func_80092BF4(0);
     func_80092A84(0);
     gSetDefDrawEnv(&gLayerBlocks[0], 0, 0, 0x140, 0xF0);

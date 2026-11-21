@@ -36,7 +36,7 @@ extern struct State80089404 *gMovieStreamContext __asm__("D_8009F970");
 extern u32 gMovieRingSectors __asm__("D_8009F980");
 
 extern s32 gMinS32(s32 delta, s32 value) __asm__("func_800886C8");
-extern void func_80089018(void);
+extern void gPumpMovieStream(void) __asm__("func_80089018");
 extern void func_8008CD10(s32 arg0, s32 arg1);
 
 /**
@@ -111,7 +111,7 @@ s32 gMovieStreamReserve(s32 *out)
             return 0;
         }
 
-        func_80089018();
+        gPumpMovieStream();
         i = 0;
     }
 

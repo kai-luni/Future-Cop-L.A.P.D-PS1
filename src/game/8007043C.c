@@ -76,7 +76,7 @@ typedef struct {
     s32 z;
 } Work7043C;
 
-extern u8 D_8006FF44[];
+extern u8 gKind59GlowActorHandler[] __asm__("D_8006FF44");
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern void gInitSpawnMotionState(Dest7043C *dest, Source7043C *src) __asm__("func_8003C14C");
 extern s32 func_80019668(void);
@@ -150,7 +150,7 @@ void *gCreateKind59Actor(Source7043C *src)
 
     gInitSpawnMotionState(dest, src);
 
-    dest->unk24 = (s32)D_8006FF44;
+    dest->unk24 = (s32)gKind59GlowActorHandler;
     dest->unk12 = src->unk34;
     dest->unk66 = src->unk38;
     dest->unk68 = src->unk3A;

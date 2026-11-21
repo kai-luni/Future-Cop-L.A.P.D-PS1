@@ -22,6 +22,8 @@ extern int gCellGridWidth __asm__("D_8009F93C");
 extern int gFrameTime __asm__("D_8009FAA4");
 extern void func_800457B8(int, int);
 extern void func_800195D0(void *, Node *);
+void gReclaimStaleSceneNodes(int arg0, unsigned char arg1) __asm__("func_80083834");
+
 /**
  * @brief Drains the scheduled sound-event buckets whose time has come,
  *        firing due events and freeing their nodes.
@@ -50,7 +52,7 @@ extern void func_800195D0(void *, Node *);
  * @par Callers
  * func_80083A10.
  */
-void func_80083834(int arg0, unsigned char arg1)
+void gReclaimStaleSceneNodes(int arg0, unsigned char arg1)
 {
     int i, index, offset, mask;
     Node *node, *prev, *head, *next;

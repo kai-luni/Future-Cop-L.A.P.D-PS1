@@ -26,11 +26,11 @@ extern void gRegisterCvkChunk(struct Node24EC8 *node) __asm__("func_80023930");
 extern void func_80029E20(struct Node24EC8 *node);
 extern void func_8003C110(struct Node24EC8 *node);
 extern void func_80048E9C(struct Node24EC8 *node);
-extern void func_80049420(struct Node24EC8 *node);
+extern void gLoadScriptTimers(struct Node24EC8 *node) __asm__("func_80049420");
 extern void func_80049734(struct Node24EC8 *node);
 extern void gLoadActorChunk(struct Node24EC8 *node) __asm__("func_8004D6D4");
 extern void gRegisterResourceWithBias(struct Node24EC8 *node) __asm__("func_8004D924");
-extern void func_800511E4(struct Node24EC8 *node);
+extern void gLoadPathNodePositions(struct Node24EC8 *node) __asm__("func_800511E4");
 extern void gLoadTextureChunksToVram(struct Node24EC8 *node) __asm__("func_8005A414");
 extern void gRegisterUnitSpawner(struct Node24EC8 *node) __asm__("func_80060E74");
 extern void func_80063C20(struct Node24EC8 *node);
@@ -198,7 +198,7 @@ loop_test:
                 gRegisterUnitSpawner(node);
                 break;
             case 0x4366756E:
-                func_80049420(node);
+                gLoadScriptTimers(node);
                 break;
             case 0x43736864:
             case 0x43766B68:
@@ -212,7 +212,7 @@ loop_test:
                 func_80029E20(node);
                 break;
             case 0x436E6574:
-                func_800511E4(node);
+                gLoadPathNodePositions(node);
                 break;
             case 0x43646373:
                 func_80049734(node);

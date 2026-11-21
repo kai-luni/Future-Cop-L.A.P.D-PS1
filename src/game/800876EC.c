@@ -12,7 +12,7 @@ typedef struct {
 } Unk8009F4D8;
 
 extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
-extern void func_80098C68(s32, u32);
+extern void gSpuSetVoiceKey(s32, u32) __asm__("func_80098C68");
 extern u32 func_80098788(s32, u32);
 
 /**
@@ -42,7 +42,7 @@ void gHaltMovieAudioStream(void) __asm__("func_800876EC");
 void gHaltMovieAudioStream(void)
 {
     gMovieAudioState->unk8 = 0;
-    func_80098C68(0, gMovieAudioState->unk7B64 | gMovieAudioState->unk7B68);
+    gSpuSetVoiceKey(0, gMovieAudioState->unk7B64 | gMovieAudioState->unk7B68);
     func_80098788(gMovieAudioState->unk7B6C, gMovieAudioState->unk7B64);
     func_80098788(gMovieAudioState->unk7B70, gMovieAudioState->unk7B68);
 }

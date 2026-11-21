@@ -1,7 +1,7 @@
 // Categories: Platform > GPU | Game Engine > Command Queue
 #include "game/types.h"
 
-extern void func_80094A3C(s32, s32, s32, s32);
+extern void gSubmitGpuDmaJob(s32, s32, s32, s32) __asm__("func_80094A3C");
 
 /**
  * @brief Queues or executes a direct-pointer GPU/DMA2 callback job with zero copy size.
@@ -29,5 +29,5 @@ extern void func_80094A3C(s32, s32, s32, s32);
  */
 void func_80094A18(s32 arg0, s32 arg1, s32 arg2)
 {
-    func_80094A3C(arg0, arg1, 0, arg2);
+    gSubmitGpuDmaJob(arg0, arg1, 0, arg2);
 }

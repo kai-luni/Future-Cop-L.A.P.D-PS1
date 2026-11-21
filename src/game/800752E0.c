@@ -52,6 +52,8 @@ struct Unk752E0 {
 extern u32 func_80019668(void);
 extern s32 func_8005A6A4(s32 id, struct Unk752E0Request *request,
                          struct Unk752E0Light **result);
+void gSpawnParticleLight(struct Unk752E0 *object) __asm__("func_800752E0");
+
 
 /**
  * @brief Spawns a coloured light effect at an object's position with a random
@@ -80,7 +82,7 @@ extern s32 func_8005A6A4(s32 id, struct Unk752E0Request *request,
  * @par Callers
  * func_800753D0, func_800754B8.
  */
-void func_800752E0(struct Unk752E0 *object)
+void gSpawnParticleLight(struct Unk752E0 *object)
 {
     struct Unk752E0Request request;
 

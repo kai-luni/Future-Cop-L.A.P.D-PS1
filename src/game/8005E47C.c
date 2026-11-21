@@ -22,7 +22,7 @@ struct Args {
     u8 unk4C, unk4D; u16 unk4E; u8 unk50, unk51; u8 pad52[2]; s32 unk54; u8 pad58[8];
 };
 struct Request { void (*handler)(); s32 unk04; struct Args *args; s32 unk0C; };
-extern void D_80036624();
+extern void gDirectShotHandlerAddress() __asm__("D_80036624");
 extern void *gSpawnQueuedEntity(struct Request *) __asm__("func_8004D444");
 
 /**
@@ -64,7 +64,7 @@ void *gSpawnDirectShot(struct Obj *obj, void *a1, struct Vec *pos, void *a3,
     struct Args args;
     s16 value;
 
-    request.handler = D_80036624;
+    request.handler = gDirectShotHandlerAddress;
     request.unk04 = 0;
     request.args = &args;
     request.unk0C = 0;

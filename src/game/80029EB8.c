@@ -14,7 +14,7 @@ struct Unk800A0B70 {
 };
 
 extern struct Unk800A0B70 gStreamBufferList __asm__("D_800A0B70");
-extern volatile u8 D_8009F6A8;
+extern volatile u8 gModuleReadBusy __asm__("D_8009F6A8");
 
 extern void func_80029DD8(void);
 extern void func_80029520(void);
@@ -63,7 +63,7 @@ void func_80029EB8(void)
         gStreamBufferList.unk2C = 0;
     }
     if (old != -1) {
-        while (D_8009F6A8 != 0) {
+        while (gModuleReadBusy != 0) {
         }
         gCloseFileSlot(old);
     }

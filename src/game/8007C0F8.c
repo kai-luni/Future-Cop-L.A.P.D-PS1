@@ -30,9 +30,9 @@ struct Work7C0F8 {
 
 extern u8 gControllerDiagramViews[] __asm__("D_8009F902");
 extern s8 gStagedControllerPresets[] __asm__("D_8009F900");
-extern u8 D_8009C018[];
+extern u8 gControllerDiagramViewTable[] __asm__("D_8009C018");
 extern u8 gPresetByteTable[] __asm__("D_8009BFD4");
-extern u8 D_8009BEF4[];
+extern u8 gControllerPresetSlotTable[] __asm__("D_8009BEF4");
 extern u16 gChoiceSpriteTable[][2] __asm__("D_8009BF9C");
 extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern s8 gPortCheckTable[] __asm__("D_800A374D");
@@ -115,7 +115,7 @@ void gDrawVehicleSchematic(s32 slot)
     register u8 *fmtHi __asm__("$5");
 
     choice = gControllerDiagramViews[slot];
-    table = (struct MenuTable7C0F8 *)(D_8009C018 + choice * 12);
+    table = (struct MenuTable7C0F8 *)(gControllerDiagramViewTable + choice * 12);
     gDrawAlignedMultilineText((s32)(gPlayerNameTable + slot * 9), 0x28, 0x34, 0xF, 0, 1, 8, c2);
     gDrawAlignedMultilineText(0, 0xA0, 0x34, 0xF, table->sprite, c4, 8, c2);
     gDrawAlignedMultilineText(0, 0x10E, 0x34, 0xF, 0x12F2, 2, 8, c2);
@@ -146,7 +146,7 @@ void gDrawVehicleSchematic(s32 slot)
     selData = gPresetByteTable + sel * 14;
 
     for (; i < 14; i++) {
-        item = (struct MenuItem7C0F8 *)(D_8009BEF4 + off);
+        item = (struct MenuItem7C0F8 *)(gControllerPresetSlotTable + off);
         if (i < 7) {
             flag = 2;
             dy = -2;

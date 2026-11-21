@@ -31,6 +31,8 @@ extern void func_80019A74(struct Resource *resource);
 extern u32 func_80019CA0(u32 a, u32 b, u32 c, u32 d);
 extern u32 func_80019C38(u32 a, u32 b, u32 c, u32 d);
 extern s32 func_80019668(void);
+void gLoadScriptTimers(struct Obj *obj) __asm__("func_80049420");
+
 
 /**
  * @brief Post-processes a 20-byte entry table after a resource load.
@@ -61,7 +63,7 @@ extern s32 func_80019668(void);
  * @par Callers
  * Confirmed: func_80024EC8 (asset loader).
  */
-void func_80049420(struct Obj *obj)
+void gLoadScriptTimers(struct Obj *obj)
 {
     struct Data *data;
     s32 *p;

@@ -22,9 +22,11 @@ extern u32 gPendingDeadline __asm__("D_8009DF00");
 extern u32 gTimeoutStamp __asm__("D_8009DEFC");
 extern Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
 extern int gVSyncWait(int) __asm__("func_80091270");
-extern int func_8009520C(void);
+extern int gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
 extern void gSetDmaCallback(int, void (*)(void)) __asm__("func_800914E0");
 extern void gAbortCallbackId(void) __asm__("D_80095808");
+int gDrawOrderingTableWhenGpuReady(s32 arg0) __asm__("func_8009570C");
+
 
 /**
  * @brief Waits for the GPU DMA path to go idle, then issues DrawOTag through the library callback block; returns 0 on success, -1 when the streaming watchdog trips.
@@ -47,7 +49,7 @@ extern void gAbortCallbackId(void) __asm__("D_80095808");
  * @par Callers
  * Confirmed: none - no call edge or address-taken reference in the listing; analysis marks the unit unreachable from entry. Unknown: likely unused library code; the caller named in the package work list does not exist in the unit catalog.
  */
-int func_8009570C(s32 arg0)
+int gDrawOrderingTableWhenGpuReady(s32 arg0)
 {
     int result;
     if (gGpuDebugLevel >= 2) {
@@ -59,7 +61,7 @@ int func_8009570C(s32 arg0)
     gPendingDeadline = 0;
     if (!((*gDma2ChannelCtrlPtr & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000))) goto success;
 loop:
-    if (func_8009520C()) { result = -1; goto done; }
+    if (gCheckGpuDmaTimeout()) { result = -1; goto done; }
 check:
     if (*gDma2ChannelCtrlPtr & 0x01000000) goto loop;
     if (!(*gGpuGp1PortPtr & 0x04000000)) goto loop;

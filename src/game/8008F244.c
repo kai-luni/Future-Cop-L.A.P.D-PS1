@@ -5,7 +5,7 @@ typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
 
-extern int D_8009C9EC[];
+extern int gCdCmdClearsReadyFlagTable[] __asm__("D_8009C9EC");
 extern int gCommandParamMask[] __asm__("D_8009CAEC");
 extern int gCdLogLevel __asm__("D_8009C8B0");
 extern int gLowByteEntryTable[] __asm__("D_8009C94C");
@@ -139,7 +139,7 @@ int gIssueCdCommand(int arg0, u8 *arg1, u8 *arg2, int arg3)
             __asm__("" : "+r"(st), "+r"(off));
             st[0] = 0;
             __asm__("lui %0,%%hi(D_8009C9EC)\n\taddu %0,%0,%1\n\tlw %0,%%lo(D_8009C9EC)(%0)" : "=&r"(v) : "r"(off));
-            c9ec = D_8009C9EC;
+            c9ec = gCdCmdClearsReadyFlagTable;
             if (v != 0) {
                 __asm__("" : "+r"(c9ec));
                 st[1] = 0;

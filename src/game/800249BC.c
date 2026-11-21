@@ -1,7 +1,7 @@
 // Categories: Game Engine > Game State > Reset
 #include "game/types.h"
 
-extern void func_8007852C(void);
+extern void gReleaseActiveFrontEndResources(void) __asm__("func_8007852C");
 extern void func_80029EB8(void);
 extern void func_80069D58(void);
 extern void func_8001B448(void);
@@ -38,7 +38,7 @@ void gUnloadFrontEndSubsystems(void) __asm__("func_800249BC");
 
 void gUnloadFrontEndSubsystems(void)
 {
-    func_8007852C();
+    gReleaseActiveFrontEndResources();
     func_80029EB8();
     func_80069D58();
     func_8001B448();

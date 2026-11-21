@@ -11,6 +11,8 @@ struct Unk537D0 {
 #define FMUL(d, a, b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
 
 extern void func_80053730(struct Unk537D0 *a0, s32 *out);
+void gBuildHoverMovementVector(struct Unk537D0 *a0, s32 a1, s32 a2, s32 *a3, s32 a4) __asm__("func_800537D0");
+
 
 /**
  *  @brief Computes two fixed-point output components from object fields and inputs.
@@ -33,7 +35,7 @@ extern void func_80053730(struct Unk537D0 *a0, s32 *out);
  *  @par Callers
  *  Confirmed: func_80053A74.
  */
-void func_800537D0(struct Unk537D0 *a0, s32 a1, s32 a2, s32 *a3, s32 a4)
+void gBuildHoverMovementVector(struct Unk537D0 *a0, s32 a1, s32 a2, s32 *a3, s32 a4)
 {
     register s32 t2 __asm__("$10");
     register s32 t3 __asm__("$11");

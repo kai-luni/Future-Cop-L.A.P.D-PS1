@@ -14,7 +14,7 @@ typedef struct { s32 x, y, z; } Vec;
 extern s32 gAdvanceAnimTrack(u8 *, void *, s32, s32) __asm__("func_80044B34");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern void gProcessActorCommandQueue(u8 *) __asm__("func_8002E528");
-extern void func_8002E2BC(u8 *, s32);
+extern void gSetActorMode(u8 *, s32) __asm__("func_8002E2BC");
 extern u8 gStepAttackScheduler(void *, s32, u8 *, s32, s32) __asm__("func_80060238");
 extern void func_800448D8(void *, s32, s32, u8);
 extern void gFireEntityWeapon(void *, u8 *, u8 *, s32) __asm__("func_8005F6E8");
@@ -220,7 +220,7 @@ s32 gTickActor(u8 *obj, s32 dt)
             if ((B(obj,0xDD) & 0x80) && H(obj,0xD4) != H(P(obj,0xCC),6)) {
                 goto after_timer;
             }
-            func_8002E2BC(obj, 1);
+            gSetActorMode(obj, 1);
         } else {
             H(obj,0xE2) = 0;
         }
@@ -229,15 +229,15 @@ s32 gTickActor(u8 *obj, s32 dt)
         break;
     }
     case 1:
-        func_8002E2BC(obj, 2);
+        gSetActorMode(obj, 2);
         break;
     case 2:
         if (B(obj,0xD9) != B(obj,0x110)) {
-            func_8002E2BC(obj, 3);
+            gSetActorMode(obj, 3);
         }
         break;
     case 3:
-        func_8002E2BC(obj, 0);
+        gSetActorMode(obj, 0);
         break;
     }
 after_timer:

@@ -19,6 +19,8 @@ struct Unk320E4 {
 };
 
 extern s32 func_80019668(void);
+void gPickHoverWanderTarget(struct Unk320E4 *object) __asm__("func_800320E4");
+
 
 /**
  * @brief Draws a randomised aim point around the flyer's base position.
@@ -40,7 +42,7 @@ extern s32 func_80019668(void);
  * @par Callers
  * func_80032180, func_800324E0.
  */
-void func_800320E4(struct Unk320E4 *object)
+void gPickHoverWanderTarget(struct Unk320E4 *object)
 {
     if (object->state != 3 && object->kind != 0x25) {
         object->targetY = object->baseY;

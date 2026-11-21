@@ -15,6 +15,8 @@ struct Obj {
     u16 limit;
     u16 flags;
 };
+s32 gStepTracerNode(struct Obj *obj, s32 delta) __asm__("func_8006EE14");
+
 
 /**
  * @brief Per-frame tick of a beam/tracer node: integrates its velocity and
@@ -41,7 +43,7 @@ struct Obj {
  * @par Callers
  * func_8006F170.
  */
-s32 func_8006EE14(struct Obj *obj, s32 delta)
+s32 gStepTracerNode(struct Obj *obj, s32 delta)
 {
     if (!(obj->flags & 0x8000)) {
         obj->time += delta;

@@ -47,7 +47,7 @@ extern void gSinCos(s32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
 extern void gGteLoadMatrix(void *p) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *a, void *b, s32 c) __asm__("func_80010234");
 extern void gSubmitModelInstance(struct Obj *o, u32 *flags, s32 arg) __asm__("func_80017508");
-extern void func_8008363C(struct Obj *o);
+extern void gAssignSceneSoundVoice(struct Obj *o) __asm__("func_8008363C");
 void gDrawCellWindowModels(s32 x, s32 y, u32 *p) __asm__("func_80084398");
 
 
@@ -234,7 +234,7 @@ void gDrawCellWindowModels(s32 x, s32 y, u32 *p)
                         }
                         gSubmitModelInstance(o, &local, 1);
                         if (o->unk57) {
-                            func_8008363C(o);
+                            gAssignSceneSoundVoice(o);
                         }
                     }
                 }

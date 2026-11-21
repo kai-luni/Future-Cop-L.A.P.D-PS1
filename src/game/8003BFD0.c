@@ -4,7 +4,7 @@
 extern s32 gSpawnTableRow __asm__("D_8009F310");
 extern void *jtbl_800115B8[];
 
-extern void func_8003BC7C(void *data);
+extern void gSetSlotSpawnDescriptor(void *data) __asm__("func_8003BC7C");
 extern void gRegisterActorDef5D(void *data) __asm__("func_80040DCC");
 extern void gRegisterActorDef5E(void *data) __asm__("func_80044770");
 extern void gRegisterActorDef5A(void *data) __asm__("func_8004C884");
@@ -12,6 +12,8 @@ extern void gRegisterActorDef5C(void *data) __asm__("func_8006EAF0");
 extern void gRegisterActorDef59(void *data) __asm__("func_800703A8");
 extern void func_80073F88(void *data);
 extern void func_800767E4(void *data);
+s32 gParseCsfxChunks(s32 arg0, s32 arg1) __asm__("func_8003BFD0");
+
 
 /**
  * @brief Walks a Csfx chunk stream and dispatches type 0x56..0x5E spawn/snapshot records.
@@ -39,7 +41,7 @@ extern void func_800767E4(void *data);
  * @par Callers
  * Confirmed: func_8003C110 (0x8003C128, processes 0x43736678 Csfx resource node).
  */
-s32 func_8003BFD0(s32 arg0, s32 arg1)
+s32 gParseCsfxChunks(s32 arg0, s32 arg1)
 {
     register s32 *ptr __asm__("$16");
     register s32 remaining __asm__("$17");
@@ -89,7 +91,7 @@ case_5A:
     gRegisterActorDef5A(ptr);
     goto done;
 case_5B:
-    func_8003BC7C(ptr);
+    gSetSlotSpawnDescriptor(ptr);
     goto done;
 case_5C:
     gRegisterActorDef59(ptr);

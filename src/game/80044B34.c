@@ -35,7 +35,7 @@ struct AnimScript;
 extern s32 func_80019668(void);
 extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index,
                                       s32 direction, u8 flags);
-extern void func_800449F8(struct AnimScript *script, struct AnimTrack *track);
+extern void gProcessAnimScriptCommands(struct AnimScript *script, struct AnimTrack *track) __asm__("func_800449F8");
 extern void func_80044AE8(u32 code, u32 key, s32 *shift, u32 *bits);
 u32 gAdvanceAnimTrack(struct AnimScript *script, struct AnimTrack *track, s32 speed,
                   s32 direction) __asm__("func_80044B34");
@@ -112,7 +112,7 @@ u32 gAdvanceAnimTrack(struct AnimScript *script, struct AnimTrack *track, s32 sp
     }
 
     if (script != 0) {
-        func_800449F8(script, track);
+        gProcessAnimScriptCommands(script, track);
     }
 
     if (track->flags & 2) {

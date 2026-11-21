@@ -32,7 +32,7 @@ extern State29C34 gStreamBufferList __asm__("D_800A0B70");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern s32 gOutStreamId __asm__("D_8009F6BC");
 extern u8 gLatchFlag __asm__("D_8009F6C0");
-extern s32 D_8009F6C4;
+extern s32 gPortraitStreamDeadline __asm__("D_8009F6C4");
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern u8 gRegisterGuard __asm__("D_8009F69C");
 extern u8 *gResourceSubChunkPtr __asm__("D_8009F698");
@@ -41,7 +41,7 @@ extern u8 gStreamStartPending[] __asm__("D_800A0B90");
 
 extern void gSetVolumeModeState(s32 mode, void *object) __asm__("func_80044FF8");
 extern s32 gIsAudioStreamReady(void) __asm__("func_80029BE4");
-extern void func_8002A49C(void);
+extern void gDrainVagmRing(void) __asm__("func_8002A49C");
 extern void gDrainCallbackSlotRing(void) __asm__("func_8002A408");
 extern void func_80029520(void);
 void gServiceStreamRequestQueue(void) __asm__("func_80029C34");
@@ -106,7 +106,7 @@ void gServiceStreamRequestQueue(void)
 
     if (gCallGateFlag != 2 && gCallGateFlag != 0) {
         gStreamStartPending[0] = 1;
-        func_8002A49C();
+        gDrainVagmRing();
         gDrainCallbackSlotRing();
         gCallGateFlag = 2;
     }
@@ -114,7 +114,7 @@ void gServiceStreamRequestQueue(void)
     gOutStreamId = value;
     gBitFieldState = 0x40;
     gLatchFlag = 0;
-    D_8009F6C4 = gFrameTickCounter + 0xBB8;
+    gPortraitStreamDeadline = gFrameTickCounter + 0xBB8;
     func_80029520();
 
 tail:

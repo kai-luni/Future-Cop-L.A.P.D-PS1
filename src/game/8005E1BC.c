@@ -13,7 +13,7 @@ extern void *gDomeEffectBlock[] __asm__("D_800A22F0");
 extern s16 D_800A22E8[];
 extern s32 gSpawnMotionContext __asm__("D_8009F374");
 
-extern void func_8003BE2C(struct Pool *pool, s32 size, s32 count);
+extern void gInitIntrusiveNodePool(struct Pool *pool, s32 size, s32 count) __asm__("func_8003BE2C");
 void gInitEffectPools(void) __asm__("func_8005E1BC");
 
 
@@ -41,8 +41,8 @@ void gInitEffectPools(void)
     s32 i;
 
     D_800A22E8[0] = -1;
-    func_8003BE2C(&gOwnerNodeListA, 0x38, 0xA);
-    func_8003BE2C(&gOwnerNodeListB, 0x60, 0xA);
+    gInitIntrusiveNodePool(&gOwnerNodeListA, 0x38, 0xA);
+    gInitIntrusiveNodePool(&gOwnerNodeListB, 0x60, 0xA);
     for (i = 3; i >= 0; i--) {
         gDomeEffectBlock[i] = 0;
     }

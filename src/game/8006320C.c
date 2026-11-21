@@ -12,6 +12,8 @@ extern Entry gObjectKeyTable[] __asm__("D_800A31A0");
 extern s32 func_8001A750(s32 *, s32 *);
 extern void gBuildViewMatrix(void *, void *) __asm__("func_80018860");
 extern void func_8001A970(void *, void *, void *);
+Object *gFindGroundObjectAtPosition(Vec *pos, Vec *out, s32 *height, u8 *id) __asm__("func_8006320C");
+
 
 /**
  *  @brief Finds the first eligible object whose local box matches a position.
@@ -34,7 +36,7 @@ extern void func_8001A970(void *, void *, void *);
  *  @par Callers
  *  Confirmed: func_80066F78.
  */
-Object *func_8006320C(Vec *pos, Vec *out, s32 *height, u8 *id)
+Object *gFindGroundObjectAtPosition(Vec *pos, Vec *out, s32 *height, u8 *id)
 {
     register Entry *current __asm__("$20");
     s32 matrix[12];

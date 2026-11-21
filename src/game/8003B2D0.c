@@ -17,6 +17,8 @@ extern s32 gProjectAndRenderMesh(void *a, s32 b, s32 c, void *d) __asm__("func_8
 extern void gFreeBlock(s32 block) __asm__("func_800181D4");
 extern s32 gSpawnModelDebris(s32 message, struct Unk3B2D0 *object) __asm__("func_8003AA94");
 extern void gStepModelDebris(s32 message, struct Unk3B2D0 *object) __asm__("func_8003B144");
+s32 gHandleParticleEmitterMsg(s32 message, struct Unk3B2D0 *object) __asm__("func_8003B2D0");
+
 
 /**
  * @brief Message handler of a particle-emitter object: spawn, draw, tick and
@@ -51,7 +53,7 @@ extern void gStepModelDebris(s32 message, struct Unk3B2D0 *object) __asm__("func
  * as request.handler of a spawn request, so the dispatcher reaches it
  * indirectly; func_8003AA94 documents message 2 as its spawn case.
  */
-s32 func_8003B2D0(s32 message, struct Unk3B2D0 *object)
+s32 gHandleParticleEmitterMsg(s32 message, struct Unk3B2D0 *object)
 {
     register u32 m __asm__("$17");
 

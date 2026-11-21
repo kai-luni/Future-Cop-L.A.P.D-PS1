@@ -94,13 +94,13 @@ extern void func_8002A26C(void);
 extern void gReleaseSoundVoice(struct SoundVoice *) __asm__("func_80046698");
 extern void func_8002441C(void);
 extern s32 gComputeSpatialSoundAttenuation(s32, s32, s8 *, s32) __asm__("func_800458E8");
-extern void func_800455DC(struct SoundChannel *);
+extern void gQueueSoundChannelByPriority(struct SoundChannel *) __asm__("func_800455DC");
 extern void gComputeSpatialSoundPan(s8 *) __asm__("func_800460D4");
 extern void func_80047800(struct SoundVoice *, s32, s32, s32);
 extern void gUnlinkSoundBankVoice(struct SoundVoice *) __asm__("func_80046804");
 extern void gInsertSoundBankVoiceByPriority(struct SoundVoice *) __asm__("func_800469A0");
 extern struct SoundVoice *gAllocPrioritySoundVoice(s32, s32, s32, s32) __asm__("func_80046B04");
-extern u8 func_8004772C(struct SoundBank *, struct SoundVoice *, s32, s32, s32);
+extern u8 gPlayNextBankSample(struct SoundBank *, struct SoundVoice *, s32, s32, s32) __asm__("func_8004772C");
 void gUpdateSoundVoiceAssignments(void) __asm__("func_800462D0");
 
 
@@ -273,7 +273,7 @@ delta_ready:
 
                 queued = *table++;
                 index++;
-                func_800455DC(queued);
+                gQueueSoundChannelByPriority(queued);
             }
         }
     }
@@ -326,7 +326,7 @@ delta_ready:
                 voice->channel = channel;
                 channel->voice = voice;
                 gComputeSpatialSoundPan(&channel->unk14);
-                started = func_8004772C(bank, voice, channel->unk15,
+                started = gPlayNextBankSample(bank, voice, channel->unk15,
                                        channel->unk14, -1);
                 release = voice;
                 if (started == 0) {

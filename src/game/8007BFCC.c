@@ -15,7 +15,7 @@ extern u8 gControllerDiagramViews __asm__("D_8009F902");
 extern u8 D_8009F903;
 extern s8 gSnapshotResult __asm__("D_8009F904");
 extern u8 gPresetByteTable[] __asm__("D_8009BFD4");
-extern D_8009BEF4_Entry D_8009BEF4[];
+extern D_8009BEF4_Entry gControllerPresetSlotTable[] __asm__("D_8009BEF4");
 extern u8 gPadMappingTable[] __asm__("D_800AAC50");
 extern u8 gPortCheckTable[] __asm__("D_800A374D");
 
@@ -95,7 +95,7 @@ void gApplyControllerPreset(s32 port, s32 value)
     base = gPadMappingTable;
     dst = base + port * 56;
     while (i < 14) {
-        *(s32 *)(dst + src[i] * 4) = D_8009BEF4[i].value;
+        *(s32 *)(dst + src[i] * 4) = gControllerPresetSlotTable[i].value;
         i++;
     }
 }

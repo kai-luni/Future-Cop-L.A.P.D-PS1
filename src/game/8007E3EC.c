@@ -16,8 +16,8 @@ extern s32 gScreenState __asm__("D_8009FA00");
 extern u8 gRowRecordTable[] __asm__("D_8009C030");
 extern u8 gSecondLoadoutRowRecords[] __asm__("D_8009C050");
 extern u8 *gLoadoutTable[] __asm__("D_8009C0A8");
-extern s16 D_8009B856[4];
-extern s16 D_8009B7E6[4];
+extern s16 gPlayer2LoadoutReadyTextId[4] __asm__("D_8009B856");
+extern s16 gTwoPlayerP1LoadoutReadyLabel[4] __asm__("D_8009B7E6");
 
 extern void gClampLoadoutSelections(s32 mode) __asm__("func_8007D2DC");
 
@@ -96,17 +96,17 @@ void gFinalizeMissionLoadout(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
                 off = i << 2;
                 *(s32 *)((u8 *)D_8009F8E0_arr + off) = 0;
                 if (i == 1) {
-                    D_8009B856[0] = 100;
+                    gPlayer2LoadoutReadyTextId[0] = 100;
                 } else {
-                    D_8009B7E6[0] = 100;
+                    gTwoPlayerP1LoadoutReadyLabel[0] = 100;
                 }
                 i = gActivePlayerIndex;
             }
             if (D_8009F8E0_arr[i] != 0) {
                 if (i == 1) {
-                    D_8009B856[0] = 110;
+                    gPlayer2LoadoutReadyTextId[0] = 110;
                 } else {
-                    D_8009B7E6[0] = 110;
+                    gTwoPlayerP1LoadoutReadyLabel[0] = 110;
                 }
             }
         }

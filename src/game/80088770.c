@@ -12,6 +12,8 @@ extern Queue *gMovieStreamContext __asm__("D_8009F970");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern s32 gCdControl(s32, s32, s32) __asm__("func_8008E1BC");
+s32 gQueueMovieCdControl(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80088770");
+
 
 /**
  * @brief Appends a three-word command to the 48-word ring buffer.
@@ -42,7 +44,7 @@ extern s32 gCdControl(s32, s32, s32) __asm__("func_8008E1BC");
  * @par Callers
  * Unknown: no direct edge; the caller is probably a table-driven dispatcher.
  */
-s32 func_80088770(s32 arg0, s32 arg1, s32 arg2)
+s32 gQueueMovieCdControl(s32 arg0, s32 arg1, s32 arg2)
 {
     register s32 b __asm__("$17") = arg1;
     register s32 c __asm__("$18") = arg2;

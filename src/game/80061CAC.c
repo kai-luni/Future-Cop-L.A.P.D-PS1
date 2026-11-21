@@ -12,7 +12,7 @@ extern void gTransposeMatrix3x3(void *, void *) __asm__("func_80019470");
 extern void func_8001A970(void *, void *, void *);
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(void *, void *, int) __asm__("func_8001006C");
-extern int func_800618CC(void *, void *, int, int, int);
+extern int gFindFirstOverlappingModelBox(void *, void *, int, int, int) __asm__("func_800618CC");
 extern u32 gBoxOverlapBitmask(void *, void *, void *, int, int) __asm__("func_800619C0");
 u32 gTestPartPairHit(Coord *arg0, Coord *arg1) __asm__("func_80061CAC");
 
@@ -113,14 +113,14 @@ case1:
         pa = (char *)sa + ((a->frame << 4) + 8);
         gBuildViewMatrix(&a->mat, &m1);
         func_8001A970(&m1, &b->pos, &v);
-        n = func_800618CC(pa, &v, b->radius, sa->count, sa->stride);
+        n = gFindFirstOverlappingModelBox(pa, &v, b->radius, sa->count, sa->stride);
         if (n < 0) goto ret0;
         return (1 << (31-n)) | 1;
 case2:
         pb = (char *)sb + ((b->frame << 4) + 8);
         gBuildViewMatrix(&b->mat, &m1);
         func_8001A970(&m1, &a->pos, &v);
-        n = func_800618CC(pb, &v, a->radius, sb->count, sb->stride);
+        n = gFindFirstOverlappingModelBox(pb, &v, a->radius, sb->count, sb->stride);
         if (n < 0) goto ret0;
         return (1 << (15-n)) | 0x10000;
 case3:

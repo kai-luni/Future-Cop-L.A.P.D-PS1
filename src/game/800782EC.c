@@ -10,7 +10,8 @@ extern s32 gFrameTickCounter[] __asm__("D_8009FA2C");
 extern s32 gIdleDeadline __asm__("D_8009F870");
 extern s32 gStillRunningState __asm__("D_8009F464");
 extern s8 gFrontEndReturnMode __asm__("D_8009F45A");
-extern s8 D_8009F889, D_8009F888;
+extern s8 gMissionListMode __asm__("D_8009F889");
+extern s8 gMissionListEntryCount __asm__("D_8009F888");
 extern s8 gMissionListMaxIndex __asm__("D_8009F882");
 extern s8 gSelectedMissionIndex __asm__("D_8009F880");
 extern s8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
@@ -18,7 +19,7 @@ extern s8 gRowClearFlag __asm__("D_8009FA10");
 extern u8 gPort2RumbleEnabled __asm__("D_8009F8D9");
 extern u8 gUnlockFlag __asm__("D_8009F3C2");
 extern u8 gRumbleEnabled __asm__("D_8009F8D8");
-extern s8 *D_8009F884;
+extern s8 *gMissionListTablePtr __asm__("D_8009F884");
 extern s8 gCrimeWarProgress __asm__("D_8009F458");
 extern struct Mode *gGameSession[] __asm__("D_8009FA94");
 extern struct Entry gWideTextTable[] __asm__("D_8009B4E4");
@@ -66,9 +67,9 @@ void gResumeFrontEndForReturnMode(void)
         if (gPendingScreenState[0] == 0) {
             s8 *p;
             __asm__("lui %0,%%hi(D_8009F458)\n\taddiu %0,%0,%%lo(D_8009F458)" : "=r"(p));
-            if (gSelectedMissionIndex == *(s8 *)(D_8009F889 + (s32)p) && gSelectedMissionIndex < D_8009F888) {
-                (*(s8 *)(D_8009F889 + (s32)p))++;
-                if (*(s8 *)(D_8009F889 + (s32)p) < D_8009F888) {
+            if (gSelectedMissionIndex == *(s8 *)(gMissionListMode + (s32)p) && gSelectedMissionIndex < gMissionListEntryCount) {
+                (*(s8 *)(gMissionListMode + (s32)p))++;
+                if (*(s8 *)(gMissionListMode + (s32)p) < gMissionListEntryCount) {
                     gSelectedMissionIndex++;
                     gMissionListMaxIndex++;
                 }
@@ -90,12 +91,12 @@ void gResumeFrontEndForReturnMode(void)
                 tmp = (v < 0) ? 0 : (((__extension__({ __asm__("" : "+r"(raw)); v; })) < 11) ? raw : (__extension__({ __asm__("" : : "r"(raw)); 10; })));
                 __asm__("" : "+r"(tmp));
                 value = tmp;
-                if (value > gWideTextTable[D_8009F884[gSelectedMissionIndex]].current)
-                    gWideTextTable[D_8009F884[gSelectedMissionIndex]].current = value;
+                if (value > gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]].current)
+                    gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]].current = value;
             }
         }
         for (i = 0; i < gUnlockFlag + 4; i++) {
-            if (gWideTextTable[D_8009F884[i]].current > gWideTextTable[D_8009F884[i]].maximum)
+            if (gWideTextTable[gMissionListTablePtr[i]].current > gWideTextTable[gMissionListTablePtr[i]].maximum)
                 goto set_flag;
         }
         gRouteFrontEndModeMenu();

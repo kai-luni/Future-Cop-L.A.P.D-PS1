@@ -64,7 +64,7 @@ extern Matrix gIdentityMatrix __asm__("D_8009AA38");
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern s32 func_80019668(void);
 extern Entry *gFindVertexRangeEntry(Entry *, s32) __asm__("func_8003A90C");
-extern s32 func_8004B244(void *, void *, Vec *);
+extern s32 gComputeForceImpulse(void *, void *, Vec *) __asm__("func_8004B244");
 extern void gSampleDebrisLaunchParameters(void *, Vec *, Vec *, s32, s16 *, s16 *, s32 *, Vec *) __asm__("func_8004B310");
 extern void gBuildRotationMatrixVariant(s32, s32, s32, Matrix *) __asm__("func_80018DC0");
 extern void gGteLoadRotation(Matrix *) __asm__("func_80010820");
@@ -208,7 +208,7 @@ s32 gSpawnModelDebris(s32 unused, Object *out, Arg *arg)
         matrices[0].m[0] = gIdentityMatrix.m[0];
         table = model->table;
         offset = out->tableOffset;
-        forceEnabled = func_8004B244(config->force, config->force2, &force);
+        forceEnabled = gComputeForceImpulse(config->force, config->force2, &force);
         do {
             particle->zero0 = 0;
             particle->zero2 = 0;

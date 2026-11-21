@@ -5,7 +5,7 @@
 
 extern u32 *gGpuGp0PortPtr __asm__("D_8009DEC4");
 extern u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
-extern void func_80094A3C(s32, s32, s32, s32);
+extern void gSubmitGpuDmaJob(s32, s32, s32, s32) __asm__("func_80094A3C");
 
 /**
  *  @brief Writes a tagged value and reads a masked result.

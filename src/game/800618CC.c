@@ -1,6 +1,8 @@
 // Categories: Physics > Spatial Queries
 typedef struct { short x, y, z, sx, sy, sz; } Box;
 typedef struct { int x, y, z; } Vec;
+int gFindFirstOverlappingModelBox(Box *input, Vec *pos, int radius, int count, int input_stride) __asm__("func_800618CC");
+
 
 /**
  *  @brief Finds the first box containing a position within expanded bounds.
@@ -24,7 +26,7 @@ typedef struct { int x, y, z; } Vec;
  *  @par Callers
  *  Confirmed: func_80061CAC.
  */
-int func_800618CC(Box *input, Vec *pos, int radius, int count, int input_stride)
+int gFindFirstOverlappingModelBox(Box *input, Vec *pos, int radius, int count, int input_stride)
 {
     register Box *box __asm__("$10") = input;
     register int i __asm__("$9");

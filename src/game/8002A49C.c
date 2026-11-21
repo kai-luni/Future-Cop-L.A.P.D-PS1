@@ -6,6 +6,8 @@ extern s32 gVagmReadIndex __asm__("D_8009F6CC");
 extern u8 gVagmQueueDraining __asm__("D_8009F308");
 extern s32 gVagmRing[] __asm__("D_800A0C50");
 extern void gQueueStreamAssetRelease(s32 arg0, s32 arg1) __asm__("func_8002A31C");
+void gDrainVagmRing(void) __asm__("func_8002A49C");
+
 
 /**
  *  @brief Processes consecutive nonzero entries in a four-slot queue.
@@ -24,7 +26,7 @@ extern void gQueueStreamAssetRelease(s32 arg0, s32 arg1) __asm__("func_8002A31C"
  *  @par Callers
  *  Confirmed: func_80029C34.
  */
-void func_8002A49C(void)
+void gDrainVagmRing(void)
 {
     s32 temp;
 

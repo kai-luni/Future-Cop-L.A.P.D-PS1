@@ -38,7 +38,7 @@ struct Unk39504Self {
 };
 
 extern void gHandleType5Entity(s32 arg0, struct Unk39504Self *self, struct Unk39504Other *other, s32 arg3) __asm__("func_800382B4");
-extern struct Unk39504Child *func_80039418(struct Unk39504Self *self, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6);
+extern struct Unk39504Child *gSpawnMountedPartChild(struct Unk39504Self *self, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6) __asm__("func_80039418");
 extern void func_8003FA34(struct Unk39504Child *child);
 
 /**
@@ -71,7 +71,7 @@ void func_80039504(s32 arg0, struct Unk39504Self *self, struct Unk39504Other *ot
     gHandleType5Entity(arg0, self, other, arg3);
     data = other->unk08;
     flags = ((data->u.unk4C_word & 6) == 2) << 1;
-    self->unk158 = func_80039418(self, data->unk48 << 8, data->unk4A, flags, data->u.b.unk4C, data->u.b.unk4D, other->unk04->unk20);
+    self->unk158 = gSpawnMountedPartChild(self, data->unk48 << 8, data->unk4A, flags, data->u.b.unk4C, data->u.b.unk4D, other->unk04->unk20);
     self->unkA0 = 0;
     self->unk158->unk24 |= 0x10;
     func_8003FA34(self->unk158);

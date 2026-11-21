@@ -1,5 +1,7 @@
 // Categories: Utilities > Numeric Conversion
 #include "game/types.h"
+u32 gConvertSpuPitchToNote(u16 arg0, u16 arg1, u16 arg2) __asm__("func_80099B2C");
+
 
 /**
  *  @brief Converts a 16-bit value into a packed coarse and fractional result.
@@ -21,7 +23,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-u32 func_80099B2C(u16 arg0, u16 arg1, u16 arg2)
+u32 gConvertSpuPitchToNote(u16 arg0, u16 arg1, u16 arg2)
 {
     register s32 bit __asm__("$10");
     register s32 i __asm__("$10");

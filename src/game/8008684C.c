@@ -20,6 +20,8 @@ extern Unk8009F4D8 *gMovieAudioState __asm__("D_8009F4D8");
 extern void gSpuSetTransferMode(s32 mode) __asm__("func_80098F48");
 extern u32 func_80098EE8(u32 address);
 extern void func_80098E88(u8 *data, u32 size);
+void gUploadMovieAudioBlock(u8 *arg0, u32 arg1, u32 arg2) __asm__("func_8008684C");
+
 
 /**
  *  @brief Marks a 0x300-byte buffer and transfers it to a selected ring slot.
@@ -42,7 +44,7 @@ extern void func_80098E88(u8 *data, u32 size);
  *  @par Callers
  *  Confirmed: func_80086954.
  */
-void func_8008684C(u8 *arg0, u32 arg1, u32 arg2)
+void gUploadMovieAudioBlock(u8 *arg0, u32 arg1, u32 arg2)
 {
     u32 i;
     u32 addr;

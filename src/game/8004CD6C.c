@@ -14,6 +14,8 @@ struct EntityTable {
 };
 
 extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
+void gBroadcastEntityMessage(s32 message, s32 arg2, s32 arg3) __asm__("func_8004CD6C");
+
 
 /**
  * @brief Broadcasts a message to every active entity in the global entity table D_800A8F90.
@@ -36,7 +38,7 @@ extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
  * @par Callers
  * Confirmed: func_80027510 (two-player frame tick); also direct call at 0x80027374 in asm/us/main.s (single-player frame tick).
  */
-void func_8004CD6C(s32 message, s32 arg2, s32 arg3)
+void gBroadcastEntityMessage(s32 message, s32 arg2, s32 arg3)
 {
     struct Entity **cursor;
     struct Entity *entity;

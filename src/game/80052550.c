@@ -27,6 +27,8 @@ typedef struct {
 extern void gNormalizeVector(s32 *arg0) __asm__("func_8001A180");
 extern s32 gVectorDot(s32 *arg0, s32 *arg1) __asm__("func_8001AB00");
 extern void gVectorMulAdd(s32 *arg0, s32 *arg1, s32 arg2, s32 *arg3) __asm__("func_8001AC28");
+s32 gApplyPlayerCollisionImpulse(Arg0_52550 *arg0, Vec_52550 *arg1) __asm__("func_80052550");
+
 
 /**
  * @brief Applies a stored impulse to the player position, projects out the
@@ -57,7 +59,7 @@ extern void gVectorMulAdd(s32 *arg0, s32 *arg1, s32 arg2, s32 *arg3) __asm__("fu
  * @par Callers
  * func_80053A74, func_800549F0.
  */
-s32 func_80052550(Arg0_52550 *arg0, Vec_52550 *arg1)
+s32 gApplyPlayerCollisionImpulse(Arg0_52550 *arg0, Vec_52550 *arg1)
 {
     Unk_52550 *unk;
     register s32 *vec __asm__("$17");

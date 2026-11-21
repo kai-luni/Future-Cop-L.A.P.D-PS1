@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gRandSeed __asm__("D_8009F214");
-extern s32 D_8009F5A8;
+extern s32 gPrimaryPrngCursor __asm__("D_8009F5A8");
 extern s32 gFreeRangeCursor __asm__("D_8009F5AC");
 extern s32 gStateTable[] __asm__("D_800A0480");
 extern s32 gStateEntryTable[] __asm__("D_800A04D0");
@@ -38,7 +38,7 @@ void gSeedPrng(s32 seed)
     s32 i;
 
     gRandSeed = seed;
-    D_8009F5A8 = 0x14;
+    gPrimaryPrngCursor = 0x14;
     gFreeRangeCursor = 0x14;
     for (i = 0; i < 0x14; i++) {
         gStateTable[i] = gNextLcgRand();

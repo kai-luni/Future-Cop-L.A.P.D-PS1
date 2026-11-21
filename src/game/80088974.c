@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern u8 *gMovieStreamContext __asm__("D_8009F970");
-extern void func_80088770(s32, s32, s32);
+extern void gQueueMovieCdControl(s32, s32, s32) __asm__("func_80088770");
 
 /**
  *  @brief Stores two state values and invokes a helper with a third.
@@ -29,5 +29,5 @@ void func_80088974(s32 arg0, s32 arg1, s32 arg2)
 
     base[0x114] = arg0;
     base[0x115] = arg1;
-    func_80088770(6, arg2, 0);
+    gQueueMovieCdControl(6, arg2, 0);
 }

@@ -2,6 +2,9 @@
 #include "game/types.h"
 
 extern s32 gReadAnalogStick(s32 *x, s32 *y, s32 controller, s32 arg3) __asm__("func_8001E7B8");
+s32 gReadAnalogMovementDirections(u8 *context, u32 *flags, s32 *verticalMagnitude,
+                  s32 *horizontalMagnitude) __asm__("func_800538C8");
+
 
 /**
  * @brief Converts the analog stick of one controller into direction bits and magnitudes.
@@ -36,7 +39,7 @@ extern s32 gReadAnalogStick(s32 *x, s32 *y, s32 controller, s32 arg3) __asm__("f
  * @par Callers
  * Confirmed: func_80053A74, func_800549F0.
  */
-s32 func_800538C8(u8 *context, u32 *flags, s32 *verticalMagnitude,
+s32 gReadAnalogMovementDirections(u8 *context, u32 *flags, s32 *verticalMagnitude,
                   s32 *horizontalMagnitude)
 {
     s32 x;

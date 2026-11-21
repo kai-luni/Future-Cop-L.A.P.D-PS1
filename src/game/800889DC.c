@@ -50,13 +50,15 @@ extern volatile u32 *D_8009F50C;
 extern u32 gMovieRingSectors __asm__("D_8009F980");
 
 extern s32 gMinS32(s32, s32) __asm__("func_800886C8");
-extern void func_8008888C(s32, s32, s32);
+extern void gQueueMovieCdControlF(s32, s32, s32) __asm__("func_8008888C");
 extern s32 gCdControlF(s32, s32) __asm__("func_8008E2F8");
 extern s32 gCdRead(void *, s32) __asm__("func_8008E598");
 extern s32 gCdDataSync(s32) __asm__("func_8008E5FC");
 extern struct CdlLOC *gCdIntToPos(s32, struct CdlLOC *) __asm__("func_8008E61C");
 extern s32 gCdPosToInt(struct CdlLOC *) __asm__("func_8008E720");
 extern void func_800889A8(s32, s32, s32);
+struct CdlLOC *gOffsetCdLocationBySectors(struct CdlLOC *loc, struct CdlLOC *out, s32 offset) __asm__("func_800889DC");
+
 
 /**
  *  @brief Adds a sector offset to a disc location.
@@ -79,7 +81,7 @@ extern void func_800889A8(s32, s32, s32);
  *  Confirmed: func_800889DC calls itself recursively (0x80088B3C, 0x80088BAC) and
  * func_80089018 calls it (0x80089134, 0x80089250); both call sites verified in asm/us/main.s.
  */
-struct CdlLOC *func_800889DC(struct CdlLOC *loc, struct CdlLOC *out, s32 offset)
+struct CdlLOC *gOffsetCdLocationBySectors(struct CdlLOC *loc, struct CdlLOC *out, s32 offset)
 {
     return gCdIntToPos(gCdPosToInt(loc) + offset, out);
 }
@@ -139,7 +141,7 @@ done:
         sector = gCdPosToInt(&tmp.loc);
 
         disc1 = gMovieStreamContext->unk430;
-        func_800889DC(&disc1->loc0C, &disc1->loc24, disc1->unk08);
+        gOffsetCdLocationBySectors(&disc1->loc0C, &disc1->loc24, disc1->unk08);
         //(&disc->loc0C, &disc->loc24, disc->unk08);
 
         if (gCdPosToInt(&gMovieStreamContext->unk430->loc24) != sector) {
@@ -148,12 +150,12 @@ done:
             gCdRead(gMovieStreamContext->unk458, 0x46);
             gCdDataSync(0);
             disc2 = gMovieStreamContext->unk430;
-            func_800889DC(&disc2->loc0C, &disc2->loc24, disc2->unk08);
+            gOffsetCdLocationBySectors(&disc2->loc0C, &disc2->loc24, disc2->unk08);
             disc4 = gMovieStreamContext->unk430;
             gMovieStreamContext->unk428++;
             gMovieStreamContext->unk418 = 2;
             gMovieStreamContext->unk414 = 1;
-            func_8008888C(0x15, (s32)&disc4->loc24, 0);
+            gQueueMovieCdControlF(0x15, (s32)&disc4->loc24, 0);
             a4 = gMovieStreamContext->unk04;
             disc5 = gMovieStreamContext->unk430;
             b4 = gMovieStreamContext->unk00;

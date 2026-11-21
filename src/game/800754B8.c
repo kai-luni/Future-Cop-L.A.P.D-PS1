@@ -127,7 +127,7 @@ extern struct Unk754B8Transform *gGetObjectTransform(void *object) __asm__("func
 extern void gResolveNodeTransform(void *model, s32 flags, s32 part, s32 count,
                          void *sub, void *matrix) __asm__("func_8003D9F8");
 extern void *jtbl_80011E10[];
-extern void func_800752E0(void *object);
+extern void gSpawnParticleLight(void *object) __asm__("func_800752E0");
 extern void gReleaseParticleLight(struct Unk75478 *object) __asm__("func_80075478");
 void gInitEmitterParticle(struct Unk754B8 *object, struct RenderState *render, struct Vec3s32 *position, struct RotationMatrix *matrix) __asm__("func_800754B8");
 
@@ -268,7 +268,7 @@ void gInitEmitterParticle(struct Unk754B8 *object, struct RenderState *render,
     }
 
     if (object->flags8E & 2) {
-        func_800752E0(render);
+        gSpawnParticleLight(render);
     }
 }
 

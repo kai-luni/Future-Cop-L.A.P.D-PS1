@@ -3,7 +3,7 @@ typedef unsigned int u32;
 typedef signed int s32;
 typedef unsigned long long u64;
 typedef union { u64 whole; struct { u32 lo, hi; } words; } Pair;
-extern u64 func_80096748(u32, u32, u32, u32, int);
+extern u64 gDivModUnsigned64(u32, u32, u32, u32, int) __asm__("func_80096748");
 
 u64 gDivSigned64(u32 a, u32 b, u32 c, u32 d) __asm__("func_800966B0");
 
@@ -64,7 +64,7 @@ u64 gDivSigned64(u32 a, u32 b, u32 c, u32 d)
         c = ylo;
         d = yhi;
     }
-    result.whole = func_80096748(a, b, c, d, 0);
+    result.whole = gDivModUnsigned64(a, b, c, d, 0);
     __asm__ volatile("" : "+r"(result));
     rlo = -result.words.lo;
     if (sign) {

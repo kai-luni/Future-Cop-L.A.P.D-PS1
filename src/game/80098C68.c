@@ -11,6 +11,8 @@ extern volatile u32 gModeEntryWord __asm__("D_8009EA5C");
 extern u32 gSpuDirectKeyOnVoiceMask __asm__("D_8009EA30");
 extern Ports gSpuInitWord __asm__("D_800A7028");
 extern Device *gSpuRegBasePtr __asm__("D_8009EEA4");
+void gSpuSetVoiceKey(int mode, u32 mask) __asm__("func_80098C68");
+
 
 /**
  *  @brief Enables or disables selected device bits using one of two register paths.
@@ -32,7 +34,7 @@ extern Device *gSpuRegBasePtr __asm__("D_8009EEA4");
  *  @par Callers
  *  Confirmed: func_80021E1C.
  */
-void func_80098C68(int mode, u32 mask)
+void gSpuSetVoiceKey(int mode, u32 mask)
 {
     register u32 result __asm__("$2");
     register u32 inv __asm__("$3");

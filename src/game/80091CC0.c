@@ -8,7 +8,7 @@ extern s32 gDmaCallbackTable[8] __asm__("D_8009DD64");
 
 extern void func_80091F38(s32 *destination, u32 count);
 extern void gSetIrqCallback(s32 a0, void *a1) __asm__("func_800914B0");
-extern void func_80091D0C(void);
+extern void gDispatchDmaInterrupts(void) __asm__("func_80091D0C");
 extern void func_80091E8C(s32 a0, s32 a1);
 
 void *gInitDmaCallbacks(void) __asm__("func_80091CC0");
@@ -41,6 +41,6 @@ void *gInitDmaCallbacks(void)
 {
     func_80091F38(gDmaCallbackTable, 8);
     *gDmaInterruptCtrlPtr = 0;
-    gSetIrqCallback(3, func_80091D0C);
+    gSetIrqCallback(3, gDispatchDmaInterrupts);
     return func_80091E8C;
 }

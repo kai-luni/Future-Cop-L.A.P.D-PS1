@@ -35,7 +35,7 @@ extern void gAdvanceAnimTrack(void *, void *, s32, s32) __asm__("func_80044B34")
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
 extern s32 func_80019668(void);
 extern struct Res *gFindTargetEntity(void *, s32, s32, s32, s32, s32, s32) __asm__("func_8004E80C");
-extern void func_800320E4(struct Obj *);
+extern void gPickHoverWanderTarget(struct Obj *) __asm__("func_800320E4");
 extern s32 gSampleHeightGridBilinear(V3 *) __asm__("func_80069A38");
 extern s32 gGetGroundHeight(V3 *, s32, s32, s32) __asm__("func_80066F78");
 extern void gFlagQuartileChange(struct Obj *, s32) __asm__("func_8003BA50");
@@ -175,7 +175,7 @@ s32 gUpdateHoverEnemy(s32 unused, struct Obj *o, s32 dt)
             o->fCC = o->fC8->f08;
         }
         if (o->fC8 != 0 && o->fCC != o->fC8->f08) {
-            func_800320E4(o);
+            gPickHoverWanderTarget(o);
             o->fC8 = 0;
         }
 L5E4:
@@ -183,7 +183,7 @@ L5E4:
             o->f100 -= dt;
             if ((s16)o->f100 < 0) {
                 if (o->fFA == 0) {
-                    func_800320E4(o);
+                    gPickHoverWanderTarget(o);
                     o->fFA = 1;
                     o->f100 = o->fFE +
                         (u32)((s16)o->fFE * (func_80019668() & 0xFF)) / 1024;
@@ -216,7 +216,7 @@ L5E4:
             cA = AB8(cA);
             dA = o->pos.z - o->fD8;
             if (o->f10E < cA || o->f10C < AB8(dA)) {
-                func_800320E4(o);
+                gPickHoverWanderTarget(o);
                 b = o->fDC;
                 if (o->type == 0x25)
                     goto L_AD4;

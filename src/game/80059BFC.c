@@ -41,6 +41,8 @@ extern void gSeedPrng(s32 seed) __asm__("func_800197A8");
 extern s32 func_8008CCC0(u8 *str);
 extern void func_8008CD30(u8 *dst, u8 *fmt, u8 *name, s32 arg3, s32 arg4);
 extern void *func_80059BA0(s32 name);
+void gLoadDemoRecording(s32 countArg, s32 seed, u8 *nameArg) __asm__("func_80059BFC");
+
 
 /**
  * @brief Seeds the RNG, formats a mission demo filename, loads the file, and partitions its stream buffer.
@@ -62,7 +64,7 @@ extern void *func_80059BA0(s32 name);
  * @par Callers
  * Confirmed: func_80024A24 (0x80024CA4, during mission boot when D_8009FA84 != 0) / Likely: none / Unknown: none.
  */
-void func_80059BFC(s32 countArg, s32 seed, u8 *nameArg)
+void gLoadDemoRecording(s32 countArg, s32 seed, u8 *nameArg)
 {
     u8 buffer[0x100];
     register s32 count __asm__("$19") = countArg;

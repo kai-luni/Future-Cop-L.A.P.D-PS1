@@ -15,6 +15,8 @@ extern s32 gTableCursor __asm__("D_8009EF08");
 extern Block *gSpuEntryTable __asm__("D_8009EF0C");
 
 extern void gSpuCompactPool(void) __asm__("func_80097DF8");
+s32 gAllocSpuRamBlock(s32 size) __asm__("func_80097B28");
+
 
 /**
  * @brief Allocates a block from the 8-byte-unit pool: rounds the
@@ -79,7 +81,7 @@ extern void gSpuCompactPool(void) __asm__("func_80097DF8");
  * func_80021898 (0x800218E0), func_8002333C (0x8002342C) and gOpenVideoLayer
  * (0x800880C0, 0x800880DC); all analysis/edges.json kind "direct".
  */
-s32 func_80097B28(s32 size)
+s32 gAllocSpuRamBlock(s32 size)
 {
     s32 i = 0;
     s32 found = -1;

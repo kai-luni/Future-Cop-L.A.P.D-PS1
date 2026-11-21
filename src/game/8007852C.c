@@ -10,6 +10,8 @@ extern void func_800898E8(void);
 extern void gReleaseProfileCardOperation(void) __asm__("func_8007FACC");
 extern void gShutdownProfileSubsystem(void) __asm__("func_8007FA48");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gReleaseActiveFrontEndResources(void) __asm__("func_8007852C");
+
 
 /**
  *  @brief Releases the active resource state and its allocated blocks.
@@ -30,7 +32,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  *  @par Callers
  *  Confirmed: func_800249BC.
  */
-void func_8007852C(void)
+void gReleaseActiveFrontEndResources(void)
 {
     u32 i;
 

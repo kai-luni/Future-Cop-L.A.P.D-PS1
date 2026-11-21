@@ -9,8 +9,10 @@ extern s32 gFrameSwitch __asm__("D_8009FAC8");
 
 extern void func_80049260(void);
 extern s32 func_80029748(u8 *name);
-extern void func_800487CC(u8 force);
+extern void gUpdateHudLayoutMode(u8 force) __asm__("func_800487CC");
 extern void gEmitHudPanelSprite(s32 value) __asm__("func_800485AC");
+void gUpdateFrameCloseHud(u8 enable) __asm__("func_800486FC");
+
 
 /**
  * @brief Frame-close hook: refreshes the pause overlay, resolves the player
@@ -37,13 +39,13 @@ extern void gEmitHudPanelSprite(s32 value) __asm__("func_800485AC");
  * @par Callers
  * func_80027510, func_80027D70.
  */
-void func_800486FC(u8 enable)
+void gUpdateFrameCloseHud(u8 enable)
 {
     if (gScreenState[0] == 4) {
         func_80049260();
     }
     gFrameSwitch = func_80029748(gPortraitStreamId);
-    func_800487CC(0);
+    gUpdateHudLayoutMode(0);
     if (gHudMode2 != 0 && gHudMode2 == 2 && enable && gPlayerCount[0] == 1) {
         gEmitHudPanelSprite(0);
     }

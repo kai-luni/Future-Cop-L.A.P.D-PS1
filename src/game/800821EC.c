@@ -14,6 +14,8 @@ struct State821EC {
 extern struct State821EC *gSaveProfileImage __asm__("D_8009F92C");
 extern u8 gUiHoldFlag __asm__("D_8009F8BD");
 extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
+void gUpdateMemoryCardPromptOnExit(void) __asm__("func_800821EC");
+
 
 /**
  *  @brief Advances selected modes in the current state object.
@@ -32,7 +34,7 @@ extern u8 gUiInteractionEnabled __asm__("D_8009F8BE");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800821EC(void)
+void gUpdateMemoryCardPromptOnExit(void)
 {
     if (gSaveProfileImage->mode == 3) {
         gSaveProfileImage->mode = 4;

@@ -4,6 +4,8 @@ typedef int s32;
 typedef unsigned int u32;
 extern int gPlayerCount __asm__("D_8009FA0C");
 #define FMUL(d,a,b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
+int gProjectWorldPointAndExtent(s16 *p) __asm__("func_80049F4C");
+
 /**
  * @brief Projects a world point (and its extent) to screen coordinates with
  *        the software perspective divide.
@@ -27,7 +29,7 @@ extern int gPlayerCount __asm__("D_8009FA0C");
  * @par Callers
  * func_8004A048.
  */
-int func_80049F4C(s16 *p)
+int gProjectWorldPointAndExtent(s16 *p)
 {
     register int retval __asm__("$2");
     register u32 numerator __asm__("$2");

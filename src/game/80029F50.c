@@ -55,8 +55,8 @@ extern Node *gChainedNodes __asm__("D_8009FA48");
 extern s32 gFileSearchGroup __asm__("D_8009F238");
 extern Unk800A6D78 gFileSlotTable[] __asm__("D_800A6D78");
 extern u8 gReleaseQueues[0x14] __asm__("D_800A0C30");
-extern u32 D_800A0C10[];
-extern u32 D_800A0C20[];
+extern u32 gModuleReadCompletedBuffers[] __asm__("D_800A0C10");
+extern u32 gModuleReadPendingBuffers[] __asm__("D_800A0C20");
 extern u32 gVagmRing[] __asm__("D_800A0C50");
 extern u32 gStreamAssetReleaseRing[] __asm__("D_800A0C60");
 extern s32 D_800A0B9C[2];
@@ -64,28 +64,30 @@ extern u16 gRingBuffer[] __asm__("D_800A0BC0");
 
 extern s32 gResourceSubChunkPtr __asm__("D_8009F698");
 extern u8 gRegisterGuard __asm__("D_8009F69C");
-extern s32 D_8009F6A0;
-extern s32 D_8009F6A4;
-extern volatile u8 D_8009F6A8;
-extern volatile s32 D_8009F6AC;
-extern volatile s32 D_8009F6B0;
-extern volatile s32 D_8009F6B4;
+extern s32 gModuleReadCompleteIndex __asm__("D_8009F6A0");
+extern s32 gModuleReadPendingWriteIndex __asm__("D_8009F6A4");
+extern volatile u8 gModuleReadBusy __asm__("D_8009F6A8");
+extern volatile s32 gModuleReadActiveBuffer __asm__("D_8009F6AC");
+extern volatile s32 gModuleReadCompleteWriteIndex __asm__("D_8009F6B0");
+extern volatile s32 gModuleReadPendingIndex __asm__("D_8009F6B4");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern s32 gOutStreamId __asm__("D_8009F6BC");
 extern u8 gLatchFlag __asm__("D_8009F6C0");
-extern s32 D_8009F6C4;
+extern s32 gPortraitStreamDeadline __asm__("D_8009F6C4");
 extern s32 gVagmReadIndex __asm__("D_8009F6CC");
 extern s32 D_8009F6D0;
-extern s32 D_8009F6D4;
+extern s32 gVagmWriteIndex __asm__("D_8009F6D4");
 extern s32 D_8009F6D8;
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern s32 D_8009F6E4;
-extern s32 D_8009F6E8;
+extern s32 gModuleReadEndCheck __asm__("D_8009F6E8");
 extern s32 gStreamPreemptFlag __asm__("D_8009F9B0");
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
 extern struct FixedPool *func_800194DC(s32 count, s32 size, s32 tag);
 extern s32 gOpenFileInSearchGroup(void *arg0, s32 arg1) __asm__("func_8001D5E4");
+void gInitModuleStream(void *arg0) __asm__("func_80029F50");
+
 
 /**
  * @brief Initialises the streaming subsystem: four 0x6014-byte buffer nodes,
@@ -114,7 +116,7 @@ extern s32 gOpenFileInSearchGroup(void *arg0, s32 arg1) __asm__("func_8001D5E4")
  * @par Callers
  * func_80024904, func_80024A24.
  */
-void func_80029F50(void *arg0)
+void gInitModuleStream(void *arg0)
 {
     State800A0B70 *state;
     Node *node;
@@ -130,23 +132,23 @@ void func_80029F50(void *arg0)
     gReleaseQueues[0x12] = 0;
     gReleaseQueues[0x13] = 0xFF;
 
-    D_8009F6A8 = 0;
-    D_8009F6AC = 0;
-    D_8009F6B0 = 0;
-    D_8009F6B4 = 0;
+    gModuleReadBusy = 0;
+    gModuleReadActiveBuffer = 0;
+    gModuleReadCompleteWriteIndex = 0;
+    gModuleReadPendingIndex = 0;
     gStreamPreemptFlag = 0;
     gBitFieldState = 0;
     gOutStreamId = -1;
     gLatchFlag = 0;
-    D_8009F6C4 = 0;
+    gPortraitStreamDeadline = 0;
     gRegisterGuard = 0;
     gResourceSubChunkPtr = 0;
-    D_8009F6A0 = 0;
-    D_8009F6A4 = D_8009F6B4;
+    gModuleReadCompleteIndex = 0;
+    gModuleReadPendingWriteIndex = gModuleReadPendingIndex;
 
     for (i = 0; i < 4; i++) {
-        D_800A0C10[i] = 0;
-        D_800A0C20[i] = 0;
+        gModuleReadCompletedBuffers[i] = 0;
+        gModuleReadPendingBuffers[i] = 0;
     }
 
     stride = 0x6014;
@@ -202,9 +204,9 @@ void func_80029F50(void *arg0)
 
     gVagmReadIndex = 0;
     D_8009F6D0 = 0;
-    D_8009F6D4 = 0;
+    gVagmWriteIndex = 0;
     D_8009F6D8 = 0;
     gCallGateFlag = 0;
     D_8009F6E4 = 0;
-    D_8009F6E8 = 1;
+    gModuleReadEndCheck = 1;
 }

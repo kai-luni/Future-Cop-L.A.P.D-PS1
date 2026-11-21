@@ -10,6 +10,8 @@ extern s32 gInitMoverObject(struct Object2F7C8 *, s32, s32) __asm__("func_8002EE
 extern void gStepMoverObject(struct Object2F7C8 *, s32, s32) __asm__("func_8002F30C");
 extern void func_80063194(struct Object2F7C8 *);
 extern s32 gEntityBaseHandler(s32, struct Object2F7C8 *, s32, s32) __asm__("func_8002AD58");
+s32 gHandleMoverEntityMsg(s32 msg, struct Object2F7C8 *obj, s32 arg2, s32 arg3) __asm__("func_8002F7C8");
+
 
 /**
  * @brief Entity-type handler for script-driven moving props: size query, spawn, per-frame motion and ground-table unregister, with all other messages delegated to the base handler.
@@ -32,7 +34,7 @@ extern s32 gEntityBaseHandler(s32, struct Object2F7C8 *, s32, s32) __asm__("func
  * @par Callers
  * Confirmed: no direct callers in edges or listing. Likely: reached indirectly as an object-type func24 callback (msg 1 is the spawn queue's block-size query). Unknown: which type table installs it.
  */
-s32 func_8002F7C8(s32 msg, struct Object2F7C8 *obj, s32 arg2, s32 arg3)
+s32 gHandleMoverEntityMsg(s32 msg, struct Object2F7C8 *obj, s32 arg2, s32 arg3)
 {
     switch ((u32)msg) {
     case 1:

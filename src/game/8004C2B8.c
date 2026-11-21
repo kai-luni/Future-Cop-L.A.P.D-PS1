@@ -67,7 +67,7 @@ extern s32 gGuardEffectPoolMessage(s32 arg0, struct Unk4C2B8Owner *arg1, s32 arg
 extern s32 gHandleObjectEventMessages(s32 message, void *object, s32 arg2, s32 arg3) __asm__("func_8003C980");
 extern struct Unk4AADNode *gFreeDebrisFragment(struct Unk4AADOwner *owner, struct Unk4AADNode *previous, struct Unk4AADNode *node) __asm__("func_8004AAD4");
 extern s32 gLaunchDebrisObject(struct Unk4C2B8Owner *object, s32 arg1) __asm__("func_8004ABE4");
-extern void func_8004B180(void *object);
+extern void gSpawnDebrisExpiryEffect(void *object) __asm__("func_8004B180");
 extern s32 gSpawnMeshFractureDebris(struct Unk4C2B8Owner *object, s32 arg1) __asm__("func_8004B5F8");
 extern void gRemoveExpiredDebrisNodes(struct Unk4C2B8Owner *object) __asm__("func_8004C0C0");
 
@@ -101,7 +101,7 @@ void func_8004C2B8(struct Unk4C2B8Owner *input)
     while (node != 0) {
         u8 flags = node->flags;
         if (flags & 0x08) {
-            func_8004B180(node);
+            gSpawnDebrisExpiryEffect(node);
         } else if (!(flags & 0x10)) {
             gRemoveExpiredDebrisNodes(node);
         }

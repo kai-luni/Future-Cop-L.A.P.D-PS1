@@ -6,8 +6,8 @@ extern s32 gFreeCallback __asm__("D_8009F22C");
 extern s32 gAllocCallback __asm__("D_8009F230");
 extern void *gFileSearchMgr __asm__("D_8009F240");
 
-extern void D_8001CDD0(void);
-extern void D_8001CDF0(void);
+extern void gDefaultCdAllocCallback(void) __asm__("D_8001CDD0");
+extern void gDefaultCdBufferFreeCallback(void) __asm__("D_8001CDF0");
 extern u8 gDefaultSearchMgr[] __asm__("D_8009AABC");
 extern s32 gFileSlotTable[] __asm__("D_800A6D78");
 extern s32 gCdDriveStateTable[] __asm__("D_800A8E68");
@@ -89,8 +89,8 @@ s32 gInitCdFileSystem(s32 arg0, s32 arg1, u8 *arg2)
     if (arg1 != 0) {
         return -0x11;
     }
-    gAllocCallback = (s32)&D_8001CDD0;
-    gFreeCallback = (s32)&D_8001CDF0;
+    gAllocCallback = (s32)&gDefaultCdAllocCallback;
+    gFreeCallback = (s32)&gDefaultCdBufferFreeCallback;
     goto cleared;
 have_args:
     gAllocCallback = arg0;

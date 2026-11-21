@@ -68,7 +68,7 @@ struct Global597C0 {
 
 extern u8 gFrameTime[] __asm__("D_8009FAA4");
 extern u8 gDiscPartIndexTable[] __asm__("D_8009AF3C");
-u8 D_8009F36D;
+u8 gCompanionDiscRedIntensity __asm__("D_8009F36D");
 extern u8 D_8009F36E;
 extern u8 D_8009F36F;
 extern s32 gDiscColourWordSecondary __asm__("D_8009F370");
@@ -79,8 +79,8 @@ extern void gSetModelUvOffset(s32 low, s32 high) __asm__("func_80013AA0");
 extern u8 gSubmitModelInstance(struct Unk17508 *instance, u32 *flags, s32 arg2) __asm__("func_80017508");
 extern void gTransformPartVertex(struct Unk17508 *instance, s32 part, s32 *out) __asm__("func_80017668");
 extern s32 gTestFrustumFixedNear(s16 *point, s32 margin) __asm__("func_80019D90");
-extern s32 func_800584BC(s32 message, struct State597C0 *object, void *hit, s32 arg3, s32 arg4);
-extern void func_8005920C(struct Object597C0 *object, void *spawn, s32 arg2);
+extern s32 gHandlePlayerHitMessage(s32 message, struct State597C0 *object, void *hit, s32 arg3, s32 arg4) __asm__("func_800584BC");
+extern void gInitCompanionEntity(struct Object597C0 *object, void *spawn, s32 arg2) __asm__("func_8005920C");
 extern void gDrawOtherPlayerArrow(struct State597C0 *state) __asm__("func_800592D0");
 extern void gEmitObjectBeamSegment(struct State597C0 *state) __asm__("func_800596C4");
 extern void gGteTransformVertices(s16 *a, s16 *b, s32 c) __asm__("func_8001010C");
@@ -278,7 +278,7 @@ void gDrawGlowDiscEffect(struct Object597C0 *object)
     offset = 0;
     i = offset;
     __asm__ volatile("" : "+r"(i));
-    color = &D_8009F36D;
+    color = &gCompanionDiscRedIntensity;
     parts = gDiscPartIndexTable;
     count = ((struct Model597C0 *)info->unk210.model)->unk08->unk0C;
 
@@ -290,7 +290,7 @@ void gDrawGlowDiscEffect(struct Object597C0 *object)
 
         D_8009F36E = 0;
         D_8009F36F = 0;
-        D_8009F36D = quotient;
+        gCompanionDiscRedIntensity = quotient;
 
         gTransformPartVertex(&info->unk210, *(u8 *)(i + (u32)parts), loc.from);
 

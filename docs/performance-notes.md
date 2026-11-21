@@ -211,9 +211,9 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
   - `src/game/80066C9C.c:111`
   - `src/game/80064460.c:103`
   - `src/game/80064460.c:113`
-  - `src/game/8006429C.c:49`
-  - `src/game/8006429C.c:50`
-  - `src/game/8006429C.c:64`
+  - `src/game/8006429C.c:51`
+  - `src/game/8006429C.c:52`
+  - `src/game/8006429C.c:66`
   - `src/game/80063FF8.c:45`
   - `src/game/80063FF8.c:58`
   - `src/game/8006531C.c:79`
@@ -589,8 +589,8 @@ Every `src/game/<unit>.c:<line>` citation is listed with its exact code fragment
 - Status: likely
 - Mechanism: The finished OT is not walked by the CPU: the submit path waits until DMA channel 2 is idle and GPUSTAT reports ready for DMA, installs the DMA-complete callback and issues DrawOTag through the library callback block, after which the GPU fetches the primitive chain itself while the CPU starts the next frame. The linked-list DMA mode is inside the library callback and is not visible in this unit, hence likely.
 - Evidence:
-  - `src/game/8009570C.c:60`
-  - `src/game/8009570C.c:70`
+  - `src/game/8009570C.c:62`
+  - `src/game/8009570C.c:72`
   - `src/game/8009570C.c:72`
   - `src/game/80093280.c:50`
   - `src/game/8001B4A8.c:362`
@@ -700,11 +700,11 @@ occur on the cited line).
 | `src/game/80015B68.c:147` | `if (gEmitFrontFacingTriangle(vtx[i0].u.xy, vtx[i1].u.xy, vtx[i2].u.xy, work)) {` |
 | `asm/us/main.s:98633` | `/* 550D0 800648D0 0600404B */  nclip` |
 | `src/game/80066C9C.c:111` | `gGteLoadRotation(gCamera->matrix);` |
-| `src/game/80064460.c:103` | `flags=func_8006429C(node,v);` |
+| `src/game/80064460.c:103` | `flags=gProbeMapCellVisibility(node,v);` |
 | `src/game/80064460.c:113` | `out->mask=a|(((flags&0x8000)>>12)|(((u32)flags>>14)&4)|(((u32)flags>>18)&2)|(((u32)flags>>20)&1));` |
-| `src/game/8006429C.c:49` | `func_800640D8(&temp, &transformed);` |
-| `src/game/8006429C.c:50` | `result = gIsInViewFrustumWithMargin((s16 *)&transformed, data[0] << 4);` |
-| `src/game/8006429C.c:64` | `result |= func_8006411C(&point, 0x800, (char *)data + 0x40) << 16;` |
+| `src/game/8006429C.c:51` | `func_800640D8(&temp, &transformed);` |
+| `src/game/8006429C.c:52` | `result = gIsInViewFrustumWithMargin((s16 *)&transformed, data[0] << 4);` |
+| `src/game/8006429C.c:66` | `result |= gBuildFourCellVisibilityMask(&point, 0x800, (char *)data + 0x40) << 16;` |
 | `src/game/80063FF8.c:45` | `if (depth + margin < 0x601) {` |
 | `src/game/80063FF8.c:58` | `if (limit < extentX) {` |
 | `src/game/8006531C.c:79` | `if (mask & 1) gEmitCellGeometry(obj, base, dx, dy, a + b);` |
@@ -799,9 +799,9 @@ occur on the cited line).
 | `src/game/80017EBC.c:178` | `case 3:` |
 | `src/game/80017EBC.c:190` | `result = func_800195A4((struct LinkState *)pool);` |
 | `src/game/8003BEF0.c:47` | `node->tail = tail->previous;` |
-| `src/game/8009570C.c:60` | `if (!((*gDma2ChannelCtrlPtr & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000))) goto success;` |
-| `src/game/8009570C.c:70` | `gSetDmaCallback(2, callback);` |
-| `src/game/8009570C.c:72` | `gVramWriteCallback->unk18(arg0);` |
+| `src/game/8009570C.c:62` | `if (!((*gDma2ChannelCtrlPtr & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000))) goto success;` |
+| `src/game/8009570C.c:72` | `gSetDmaCallback(2, callback);` |
+| `src/game/8009570C.c:74` | `gVramWriteCallback->unk18(arg0);` |
 | `src/game/80093280.c:50` | `dispatch->callback(dispatch->unk18, a1, zero, 0);` |
 | `asm/us/main.s:267` | `/* B10 80010310 3000284A */  rtpt` |
 | `asm/us/main.s:155607` | `/* 86330 80095B30 2D00584B */  avsz3` |

@@ -15,7 +15,7 @@ extern u8 gProfileImageName[] __asm__("D_800120A4");
 extern s32 func_800207B4();
 extern void gPopMenuPanel(void) __asm__("func_80078740");
 extern s32 gGetMcPendingFlag(void) __asm__("func_8001F37C");
-extern void func_80080B70(void);
+extern void gSaveSelectedProfileToCard(void) __asm__("func_80080B70");
 extern void gQueueMemoryCardFormat(void) __asm__("func_8008204C");
 extern void func_80081204(void);
 extern s32 func_8007F750(void);
@@ -26,6 +26,8 @@ extern s32 func_80020E68(s32 arg0);
 extern void *gFillMemory(void *destination, int value, unsigned int count) __asm__("func_8001E4C0");
 extern void gActivateMenuPanel(u8 *arg0, s32 arg1) __asm__("func_80078650");
 extern void func_80082020(void);
+s32 gStepProfileTransfer(void) __asm__("func_8007FB04");
+
 
 /**
  * @brief One step of the profile save/load transfer state machine.
@@ -59,7 +61,7 @@ extern void func_80082020(void);
  * D_8009F8BD/D_8009F8BE (UI flags), D_8009F468 (active screen),
  * D_800120A4 (save file name).
  */
-s32 func_8007FB04(void)
+s32 gStepProfileTransfer(void)
 {
     register s32 state __asm__("$18");
     register u32 s0 __asm__("$16");
@@ -90,7 +92,7 @@ s32 func_8007FB04(void)
                     if (*(s8 *)(gSaveProfileImage + 0x922) != 0) {
                         gSaveProfileImage[0x922] = gSaveProfileImage[0x922] - 1;
                         if (gSaveProfileImage[0x204] == s1) {
-                            func_80080B70();
+                            gSaveSelectedProfileToCard();
                         } else if (gSaveProfileImage[0x204] == 3) {
                             gQueueMemoryCardFormat();
                         } else {

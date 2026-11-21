@@ -80,13 +80,13 @@ struct Work549F0 {
     s32 pad6C;
 };
 
-extern s32 func_800538C8(u8 *, u32 *, s32 *, s32 *);
+extern s32 gReadAnalogMovementDirections(u8 *, u32 *, s32 *, s32 *) __asm__("func_800538C8");
 extern void gSteerHeadingToOctant(struct Obj549F0 *) __asm__("func_80052E28");
 extern void func_80051AC8(struct Obj549F0 *, s32);
 extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
 extern s32 gGetGroundHeight(void *, void *, void *, void *) __asm__("func_80066F78");
 extern void gComputeOnFootVelocityDelta(struct Obj549F0 *, s32, s32, void *, s32) __asm__("func_80054590");
-extern s32 func_80052550(struct Obj549F0 *, void *);
+extern s32 gApplyPlayerCollisionImpulse(struct Obj549F0 *, void *) __asm__("func_80052550");
 extern void gClampToWorldBounds(s32 *) __asm__("func_8006943C");
 extern s32 gTraceMapRay(void *, void *, s32, s32, s32) __asm__("func_800684AC");
 extern void gApplyGroundEntityMotion(struct Obj549F0 *, s32) __asm__("func_80053514");
@@ -101,7 +101,7 @@ extern s32 gAdvanceAnimTrack(struct Obj549F0 *, struct AnimTrack549F0 *, s32, s3
 extern void gApplyAnimationSoundEvent(s32, struct Obj549F0 *) __asm__("func_80047088");
 extern s32 gNormalizeGetLength(s32 *) __asm__("func_8001A314");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
-extern s32 func_8005220C(struct Obj549F0 *);
+extern s32 gCheckPlayerContactHits(struct Obj549F0 *) __asm__("func_8005220C");
 extern void gApplyFootprintCollisionImpulse(struct Obj549F0 *, s32) __asm__("func_80052708");
 extern s32 gComputeLandingDamage(struct Obj549F0 *, s32) __asm__("func_80052F54");
 s32 gTickOnFootPhysics(struct Obj549F0 *selfArg, s32 unused, s32 speedArg, u32 argFlags) __asm__("func_800549F0");
@@ -302,7 +302,7 @@ s32 gTickOnFootPhysics(struct Obj549F0 *selfArg, s32 unused, s32 speedArg, u32 a
     impactTotal = 0;
     sub = self->sub;
     move = 0;
-    status = (u8)func_800538C8((u8 *)sub, &argFlags, &w.magV, &w.magH);
+    status = (u8)gReadAnalogMovementDirections((u8 *)sub, &argFlags, &w.magV, &w.magH);
 
     if ((argFlags & 0x0A000000) == 0x08000000 &&
         (st = self->state) != 3 &&
@@ -640,7 +640,7 @@ dispatch_done:
     {
         s32 collision;
 
-        collision = func_80052550(self, &w.delta);
+        collision = gApplyPlayerCollisionImpulse(self, &w.delta);
         sub->velocity.x += w.delta.x;
         sub->velocity.y += w.delta.y;
         sub->velocity.z += w.delta.z;
@@ -792,7 +792,7 @@ after_ground:
             self->unkB9 = bits | 1;
         }
     }
-    gApplyFootprintCollisionImpulse(self, func_8005220C(self));
+    gApplyFootprintCollisionImpulse(self, gCheckPlayerContactHits(self));
 
     if (anim != self->unkBA) {
         goto change_animation;

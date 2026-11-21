@@ -16,7 +16,7 @@ struct Entry {
 };
 
 extern struct Entry *gSlotSpawnDescs[] __asm__("D_800A0C70");
-extern u8 func_8003B4E0(u8 index, u8 slot, u8 mode);
+extern u8 gSelectEntitySlotType(u8 index, u8 slot, u8 mode) __asm__("func_8003B4E0");
 extern s32 gGetEntitySpawnBank(struct Entity *entity) __asm__("func_8003BF50");
 extern s32 gSpawnTypeAtOwner(struct Entity *entity, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 void gSpawnEntitySlotTypes(u8 index, struct Entity *entity, s32 arg2, u16 flags, s32 mode) __asm__("func_8003B898");
@@ -87,7 +87,7 @@ void gSpawnEntitySlotTypes(u8 index, struct Entity *entity, s32 arg2, u16 flags,
         } else {
             for (i = 0; i < 5; i++) {
                 if (flags & 1) {
-                    column = func_8003B4E0(index, i, special);
+                    column = gSelectEntitySlotType(index, i, special);
                     if (column != 0) {
                         gSpawnTypeAtOwner(entity, column, arg2, gGetEntitySpawnBank(entity), 0);
                         found = 1;
@@ -96,7 +96,7 @@ void gSpawnEntitySlotTypes(u8 index, struct Entity *entity, s32 arg2, u16 flags,
                 flags >>= 1;
             }
             if (!found) {
-                column = func_8003B4E0(index, 0, special);
+                column = gSelectEntitySlotType(index, 0, special);
                 if (column != 0) {
                     gSpawnTypeAtOwner(entity, column, arg2, gGetEntitySpawnBank(entity), 0);
                 }

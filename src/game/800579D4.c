@@ -65,7 +65,7 @@ extern void gEntityBaseHandler(s32, struct Object *, struct Data *, s32) __asm__
 extern void gSetAnimClipTable(void *, void *, s32, s32) __asm__("func_80044988");
 extern void gResetActorAndPlaceView(struct Data8 *, struct Object *) __asm__("func_800573A4");
 extern void func_80013BD8(void *, void *, s32);
-extern struct Object *func_80057914(struct Object *);
+extern struct Object *gSpawnCompanionEntity(struct Object *) __asm__("func_80057914");
 extern s32 gQuerySurfaceHeight(void *, s32) __asm__("func_80067684");
 extern void func_8005A0C4(void *, s32, s32);
 extern void gResetCompoundEntityAnimation(struct Object *) __asm__("func_80051AF8");
@@ -202,7 +202,7 @@ found:
     func_80013BD8(state->model1C4, obj->modelE4, 0);
     func_80013BD8(state->model210, obj->modelE8, 0);
     obj->flags = (obj->flags & 0xFEFFFFAE) | 0x40800300;
-    obj->child = func_80057914(obj);
+    obj->child = gSpawnCompanionEntity(obj);
     obj->child->flags |= 0x10;
     obj->flags |= 8;
     obj->child->flags |= 8;

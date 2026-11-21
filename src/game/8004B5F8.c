@@ -121,7 +121,7 @@ extern Sub3D *gCreateModelNode(s32, s32, s32, s32, s32, s32) __asm__("func_8003D
 extern void gSpawnObjectFromTable(Sub3D *, s32, s32, s32, s32) __asm__("func_8003E984");
 extern Node *func_8004AA90(void);
 extern void gInsertNodeAfter(Obj *, Node *) __asm__("func_8004AAC0");
-extern u8 func_8004B244(Obj *, s32, s32 *);
+extern u8 gComputeForceImpulse(Obj *, s32, s32 *) __asm__("func_8004B244");
 extern void gSampleDebrisLaunchParameters(Obj *, s32 *, s32 *, s32, s16 *, s16 *, s32 *, s32 *) __asm__("func_8004B310");
 s32 gSpawnMeshFractureDebris(Obj *obj, s32 arg1) __asm__("func_8004B5F8");
 
@@ -342,7 +342,7 @@ s32 gSpawnMeshFractureDebris(Obj *obj, s32 arg1)
         }
         sel = bm;
     }
-    r = func_8004B244(obj, arg1, local);
+    r = gComputeForceImpulse(obj, arg1, local);
     if (src != 0) {
         obj->m[0] = src->v[0];
         obj->m[1] = src->v[1];

@@ -25,15 +25,17 @@ extern u8 gResetGraphTableAddressesFormat[] __asm__("D_800129A0");
 extern u8 gResetGraphModeTraceFormat[] __asm__("D_800129C0");
 extern u8 gGpuCallbackTable[] __asm__("D_8009DDA8");
 extern struct State gDebugTagBytes __asm__("D_8009DDF0");
-extern struct Entry D_8009DE70[];
-extern struct Entry D_8009DE7C[];
+extern struct Entry gGpuModeDrawWidthTable[] __asm__("D_8009DE70");
+extern struct Entry gGpuVramHeightByMode[] __asm__("D_8009DE7C");
 extern struct Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
 extern  void (*gLogPrintf)(u8 *, int) __asm__("D_8009DDEC");
 extern void func_8008E000(void *, void *, void *);
 extern void gMemset(unsigned char *, int, unsigned int) __asm__("func_80095830");
 extern void gResetIrqDispatch(void) __asm__("func_80091480");
 extern void func_80095860(u32);
-extern int func_80094F4C(int);
+extern int gResetGpuHardware(int) __asm__("func_80094F4C");
+int gResetGraph(int input) __asm__("func_80092910");
+
 
 /**
  * @brief Initialises or resets the GPU library state for the given mode.
@@ -55,7 +57,7 @@ extern int func_80094F4C(int);
  * func_80092BF4 (queue reset) and func_80092A84 are its companions in
  * func_8001BE68.
  */
-int func_80092910(int input)
+int gResetGraph(int input)
 {
     register int arg __asm__("$17") = input;
     register struct State *state __asm__("$16");
@@ -74,7 +76,7 @@ int func_80092910(int input)
         gMemset((u8 *)state, 0, 0x80);
         gResetIrqDispatch();
         func_80095860((u32)gVramWriteCallback & 0xffffff);
-        index = func_80094F4C(arg);
+        index = gResetGpuHardware(arg);
         dst = (u8 *)state + 0x10;
         __asm__("" : "+r"(dst));
         state->mode = index;

@@ -30,8 +30,8 @@ extern void gRetirePlayerUnit(struct Unk5908C *object) __asm__("func_80058D78");
 extern void gFreeBlock(void *arg0) __asm__("func_800181D4");
 extern s32 gEntityBaseHandler(s32 message, struct Unk5908C *object, struct Unk5908CData *data) __asm__("func_8002AD58");
 extern void gApplyPlayerHitDamage(struct Unk5908C *object, s32 amount, s32 source) __asm__("func_80058378");
-extern s32 func_800584BC(s32 message, struct Unk5908C *object, struct Unk5908CData *hit,
-                         s32 arg3, s32 arg4);
+extern s32 gHandlePlayerHitMessage(s32 message, struct Unk5908C *object, struct Unk5908CData *hit,
+                         s32 arg3, s32 arg4) __asm__("func_800584BC");
 s32 gHandlePlayerEntityMsg(s32 message, struct Unk5908C *object, struct Unk5908CData *data, s32 arg4) __asm__("func_8005908C");
 
 
@@ -116,7 +116,7 @@ s32 gHandlePlayerEntityMsg(s32 message, struct Unk5908C *object, struct Unk5908C
         return 0;
     case 11:
     case 14:
-        return func_800584BC(message, s0, s1, arg4, 0);
+        return gHandlePlayerHitMessage(message, s0, s1, arg4, 0);
     case 7:
     case 8:
     case 12:

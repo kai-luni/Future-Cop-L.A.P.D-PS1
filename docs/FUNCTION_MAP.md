@@ -772,7 +772,7 @@ graph LR
 | `gScaleRegistryObjectFields` (`func_8006A898`) | 128 | Game Engine > Object Processing | `func_800607B8` | - |
 | `gMcWatchdogTick` (`func_80020024`) | 132 | Game Engine > State | `func_8008D640` | - |
 | `gStopTrackedSoundVoice` (`func_80023E84`) | 132 | Game Engine > Resource Cleanup | `func_80022240`, `func_80029720`, `func_80045370`, `func_800474F0` | `func_80023D78`, `func_80047554` |
-| `func_8003CDAC` | 132 | Game Engine > Object State | - | `func_8003E984` |
+| `gCheckModelAttachmentSlot` (`func_8003CDAC`) | 132 | Game Engine > Object State | - | `func_8003E984` |
 | `gCmdPadInfoModeFirst` (`func_8008AE8C`) | 132 | Input > DualShock · Controller | `func_8008B73C`, `func_8008B750`, `func_8008B790` | `func_8008C444` |
 | `gAppendScriptEvent` (`func_800298EC`) | 136 | Game Engine > Event Queue | `func_800452C8` | `func_80029974`, `func_80069D68` |
 | `gSetMapZoneState` (`func_80031BEC`) | 136 | Game Engine > Object State | - | `func_8004DC64` |
@@ -788,7 +788,7 @@ graph LR
 | `gMarkSpawnCycleFlags` (`func_8003C500`) | 144 | Game Engine > Object Setup · Map, Scene List | `func_8003C4C4` | `func_8003C590` |
 | `gRetireAndFreeAllEntities` (`func_8004CCDC`) | 144 | Game Engine > Entity Lifecycle · World Reset | `func_8004D598`, `func_8004D958` | `func_80024D14` |
 | `gSpawnQueuedEntity` (`func_8004D444`) | 144 | Game Engine > Object Setup > Spawn Queue · Object Spawning | `func_80017EBC`, `func_8004D3D4` | `func_8002C584`, `func_80039418`, `func_8004D4D4`, `func_80057914`, `func_80058C3C`, `func_8005E47C`, `func_8005E9E4`, `func_8005EB74`, `func_8005ECB8`, `func_8005EE04` |
-| `func_800821EC` | 144 | Game Engine > State Transitions | - | - |
+| `gUpdateMemoryCardPromptOnExit` (`func_800821EC`) | 144 | Game Engine > State Transitions | - | - |
 | `gInitPadActuators` (`func_8001E87C`) | 148 | Input > Controller Initialization | `func_80089E00`, `func_8008BDB0` | `func_8001E4E4` |
 | `gQueueMcOpMode2` (`func_8001F1B8`) | 148 | Game Engine > State | `func_8001F180` | `func_80020D3C` |
 | `gQueueMcOpMode3` (`func_8001F24C`) | 148 | Game Engine > State | `func_8001F180` | `func_80020FDC` |
@@ -798,12 +798,12 @@ graph LR
 | `gResetSoundBankTables` (`func_80044EF8`) | 148 | Game Engine > Table Initialization | `func_80045504` | `func_800453B8` |
 | `gReleaseSoundChannel` (`func_80045548`) | 148 | Game Engine > Sound Channels | `func_8004582C` | `func_800457B8` |
 | `gInsertSoundBankVoiceByPriority` (`func_800469A0`) | 148 | Game Engine > Audio | - | `func_80046870` |
-| `func_800486FC` | 148 | Game Engine > Frame · HUD | `func_80029748`, `func_800485AC`, `func_800487CC`, `func_80049260` | `func_80027510`, `func_80027D70` |
+| `gUpdateFrameCloseHud` (`func_800486FC`) | 148 | Game Engine > Frame · HUD | `func_80029748`, `func_800485AC`, `func_800487CC`, `func_80049260` | `func_80027510`, `func_80027D70` |
 | `gRetireEntity` (`func_8004D958`) | 148 | Game Engine > Entity Lifecycle · Sound | `func_800457B8`, `func_80069D68` | `func_8002A810`, `func_8002FF6C`, `func_80030060`, `func_80031120`, `func_80031C74`, `func_8003532C`, `func_80036E6C`, `func_800398EC`, `func_8003B144`, `func_8004CCDC`, `func_8004CECC`, `func_8005027C`, `func_80055988` |
 | `gInitPadMapping` (`func_8001E588`) | 152 | Input > Controller Mapping | - | `func_8001E4E4` |
 | `gRetireParsedModuleBuffer` (`func_80028D28`) | 152 | Game Engine > Lists | `func_800288BC` | `func_8002902C` |
 | `gQueueCompletedModuleAsset` (`func_80028DC0`) | 152 | Game Engine > Object Pool · Memory Pools | `func_800195A4` | `func_8002902C` |
-| `func_8004CD6C` | 152 | Game Engine > Message Dispatch · Entity Update | - | `func_80027510` |
+| `gBroadcastEntityMessage` (`func_8004CD6C`) | 152 | Game Engine > Message Dispatch · Entity Update | - | `func_80027510` |
 | `gSetPathNodeBlocked` (`func_8004F0F0`) | 152 | Game Engine > Entity Tables | - | `func_80069D68` |
 | `gPopMenuPanel` (`func_80078740`) | 152 | Game Engine > Front End · Menu Navigation | - | `func_8007F1F8`, `func_8007FB04`, `func_80082154` |
 | `gExitOptionsRestoreSound` (`func_8007CA34`) | 152 | Game Engine > Options Menu · Volume | `func_80024630`, `func_8002A58C`, `func_800451B4`, `func_800451F8`, `func_80045238`, `func_80045288`, `func_80045294`, `func_80046A34` | - |
@@ -812,7 +812,7 @@ graph LR
 | `gWaitVSyncTarget` (`func_800913E8`) | 152 | Game Engine > Frame · Interrupts, System Calls | `func_8008CA20`, `func_8008D7B0`, `func_8008FF08` | `func_80091270` |
 | `gQueueMcOpMode6` (`func_8001F2E0`) | 156 | Game Engine > State | `func_8001F180` | `func_80020FDC` |
 | `gRunInteractiveScreenLoop` (`func_80027EE4`) | 156 | Game Engine > Interactive Loop · Frame Timing | `func_80027E68`, `func_80027EBC`, `func_800451EC`, `func_800462D0`, `func_80078DD0` | `func_800287F4` |
-| `func_800455DC` | 156 | Game Engine > Sound Channels | - | `func_80045678` |
+| `gQueueSoundChannelByPriority` (`func_800455DC`) | 156 | Game Engine > Sound Channels | - | `func_80045678` |
 | `gScaleMovieAudioClock` (`func_800867B0`) | 156 | Game Engine > Value Scaling | - | - |
 | `gSpawnTargetableEntityId` (`func_8004D4F8`) | 160 | Game Engine > Object Setup > Spawn Queue · Object Spawning | `func_80017EBC`, `func_8004D3D4` | `func_8006125C` |
 | `gSendSpawnerCommandByGroup` (`func_80061600`) | 160 | Game Engine > Entity Dispatch | - | `func_80069D68` |
@@ -822,17 +822,17 @@ graph LR
 | `gStepPortraitScreen` (`func_8004228C`) | 164 | Game Engine > Object State | - | `func_80042330` |
 | `gDispatchEntityMsg0D` (`func_8004EC74`) | 164 | Game Engine > Entity Dispatch | - | `func_80026D1C` |
 | `gSelectCrimeWar1P` (`func_8007A3AC`) | 164 | Game Engine > Front End · Level Table, Sound | `func_80046C84`, `func_800776B8` | - |
-| `func_8002A49C` | 168 | Game Engine > Queue | - | `func_80029C34` |
+| `gDrainVagmRing` (`func_8002A49C`) | 168 | Game Engine > Queue | - | `func_80029C34` |
 | `gMenuReadyToAdvancePredicate` (`func_8007B0D4`) | 168 | Game Engine > State | - | - |
 | `gCmdPadTableHandshake` (`func_8008B168`) | 168 | Input > DualShock · Controller | `func_8008B750`, `func_8008B770`, `func_8008B790`, `func_8008B7B0` | - |
 | `gSetPlayerFadeTimersByDistance` (`func_80025D6C`) | 172 | Game Engine > Spatial Calculations | - | `func_8003E984` |
-| `func_8004772C` | 172 | Game Engine > Audio | `func_80024358`, `func_800477D8` | `func_80046E88` |
+| `gPlayNextBankSample` (`func_8004772C`) | 172 | Game Engine > Audio | `func_80024358`, `func_800477D8` | `func_80046E88` |
 | `gUpdateTitleScreenTimeout` (`func_800778E4`) | 172 | Game Engine > Front End · Menu System | `func_80078650`, `func_800788B4` | - |
 | `gCheckMenuDirectionRepeat` (`func_80082D30`) | 172 | Game Engine > Timing | - | - |
 | `gGetSlotSpawnByte` (`func_8003B5AC`) | 176 | Game Engine > Data Lookup | - | `func_8003BAE4` |
 | `gApplyStreamChannelMix` (`func_8002283C`) | 184 | Game Engine > Audio | `func_800222CC`, `func_800227BC`, `func_800477D8` | - |
 | `gLoadFrontEndModule` (`func_80024904`) | 184 | Game Engine > Game State > Init · Mission Setup | `func_80017C68`, `func_800197A8`, `func_80019828`, `func_80019A64`, `func_8001B2C8`, `func_80029F50`, `func_8004783C`, `func_80069B58`, `func_800780DC`, `func_8008CCB0` | `func_80024E3C` |
-| `func_8003F79C` | 184 | Game Engine > Init · Spawn Tables, Memory Pools | `func_800194DC`, `func_8005E1BC`, `func_8006EDC4` | `func_80024A24` |
+| `gInitMissionSpawnState` (`func_8003F79C`) | 184 | Game Engine > Init · Spawn Tables, Memory Pools | `func_800194DC`, `func_8005E1BC`, `func_8006EDC4` | `func_80024A24` |
 | `gInitType35Entity` (`func_80042504`) | 184 | Game Engine > Entity Initialization | `func_8002AD58` | `func_800426A8` |
 | `gInitLoopingPathState` (`func_80051318`) | 184 | Game Engine > Object Initialization · Lookup | `func_80019A20` | - |
 | `gFinishLevelLoad` (`func_8003FAD4`) | 188 | Game Engine > Screen Teardown · Scene List, Display Setup | `func_80019584`, `func_8003BC0C`, `func_8003C590`, `func_80092C8C`, `func_80092F38` | `func_800287F4` |
@@ -859,9 +859,9 @@ graph LR
 | `gUpdatePadTimer` (`func_8008C77C`) | 220 | Input > Controller Communication | - | `func_8008BF78` |
 | `gAppendSoundProgramSample` (`func_800241D0`) | 228 | Game Engine > Audio | `func_80047344` | `func_800235D4` |
 | `gStepDemoInputPlayback` (`func_80059DB8`) | 228 | Game Engine > Data Decoding | - | `func_8002703C` |
-| `func_8008888C` | 232 | Game Engine > Command Queue | `func_8008E2F8` | - |
+| `gQueueMovieCdControlF` (`func_8008888C`) | 232 | Game Engine > Command Queue | `func_8008E2F8` | - |
 | `gStartNextModuleBufferRead` (`func_80028AB4`) | 236 | Game Engine > Queued Operations | `func_8001D6D0`, `func_8001DB60` | `func_80028918`, `func_80028E58` |
-| `func_80029974` | 236 | Game Engine > Event Queue · Controller Input | `func_800298EC`, `func_80029DD8`, `func_800452C8` | `func_80069D68` |
+| `gQueueScriptEvent` (`func_80029974`) | 236 | Game Engine > Event Queue · Controller Input | `func_800298EC`, `func_80029DD8`, `func_800452C8` | `func_80069D68` |
 | `gRetireDeferredNodes` (`func_8003FE90`) | 236 | Game Engine > Callback Lists | - | `func_8003FF7C` |
 | `gStepType35Commands` (`func_800425BC`) | 236 | Game Engine > Script Processing | `func_8002A5B4` | `func_800426A8` |
 | `gActivateMenuPanel` (`func_80078650`) | 240 | Game Engine > Menu System · Text | `func_800785F8`, `func_800787D8`, `func_800788B4` | `func_800778E4`, `func_80078210`, `func_8007A5F0`, `func_8007B854`, `func_8007FB04`, `func_8008125C` |
@@ -879,18 +879,18 @@ graph LR
 | `gFlushSoundChannelUpdates` (`func_80021E1C`) | 288 | Game Engine > Audio | `func_80021AD0`, `func_80098C68` | `func_80021F3C`, `func_80023314` |
 | `gAllocateSoundChannelVoice` (`func_800220C4`) | 288 | Game Engine > Audio | `func_800223B0` | `func_800228F4` |
 | `gResetMissionSubsystems` (`func_80024D14`) | 296 | Game Engine > Game State > Reset | `func_80013AB4`, `func_80017764`, `func_80017D20`, `func_800181D4`, `func_800198DC`, `func_80019BA4`, `func_80019D88`, `func_8001B448`, `func_80023BF8`, `func_80029EB8`, `func_8002A5AC`, `func_80031990`, `func_8003F854`, `func_80047868`, `func_80049410`, `func_8004963C`, `func_8004ABBC`, `func_8004CCDC`, `func_80059DB0`, `func_8005A068`, `func_8005A290`, `func_80060A00`, `func_80060E50`, `func_80061860`, `func_800634F4`, `func_80069D04`, `func_80069D58`, `func_8006A88C`, `func_800734BC`, `func_80083428`, `func_80086164` | `func_80025B7C` |
-| `func_8008363C` | 296 | Game Engine > Audio | `func_80045678`, `func_8004572C` | - |
+| `gAssignSceneSoundVoice` (`func_8008363C`) | 296 | Game Engine > Audio | `func_80045678`, `func_8004572C` | - |
 | `gQueueBankSampleOnChannel` (`func_80021F98`) | 300 | Game Engine > Audio | `func_80021800`, `func_80021A70`, `func_800223B0` | `func_80024358` |
 | `gRetireEntityBase` (`func_8002A810`) | 304 | Game Engine > Entity Lifecycle · Occupancy | `func_80031690`, `func_8003B898`, `func_8004D664`, `func_8004D958` | `func_8002AD58`, `func_8002B784`, `func_8002C174`, `func_80058D78` |
 | `gLinkActiveSoundVoice` (`func_80046870`) | 304 | Game Engine > Audio | `func_800469A0` | `func_80046B04` |
 | `gHandleControllerSetupAction` (`func_8007C80C`) | 304 | Game Engine > Controller Setup · Controller Input | `func_8001EC04`, `func_80046C84`, `func_8007BFCC` | - |
 | `gClearDebrisPartBitsOutsideRange` (`func_8003A960`) | 308 | Game Engine > State | - | `func_8003B144` |
-| `func_80040600` | 308 | Game Engine > State | - | `func_80040A00` |
+| `gStepObjectLightColor` (`func_80040600`) | 308 | Game Engine > State | - | `func_80040A00` |
 | `gInitFrontEndSubsystems` (`func_800780DC`) | 308 | Game Engine > Object Setup > Registry · Init | `func_80017EBC`, `func_80077AD4`, `func_80077FFC`, `func_8007F9CC`, `func_800898C8` | `func_80024904` |
 | `gSetupTitleScreenPlayerNames` (`func_8007799C`) | 312 | Game Engine > Front-End Configuration · Text Tables | `func_80089914`, `func_8008CCB0`, `func_8008CCC0` | - |
 | `gGetEntityHandlerForType` (`func_8002AE54`) | 320 | Game Engine > Dispatch | - | `func_80060E74` |
 | `gUnloadCvkSoundBank` (`func_80023AB4`) | 324 | Game Engine > Audio · Sound Banks | `func_800181D4`, `func_80021DAC`, `func_800242B4` | - |
-| `func_80078C88` | 328 | Game Engine > State Transitions · Port Control | - | - |
+| `gStartNextAttractDemo` (`func_80078C88`) | 328 | Game Engine > State Transitions · Port Control | - | - |
 | `gRespPadInfoProbe` (`func_8008AF10`) | 332 | Input > Controller Protocol | `func_8008B05C`, `func_8008B094` | `func_8008C518` |
 | `gStartTrackedSoundVoice` (`func_80023F08`) | 348 | Game Engine > Sound Playback | - | - |
 | `gInitializePanelInputActions` (`func_800247A8`) | 348 | Input > Configuration | - | `func_80024E3C` |
@@ -934,7 +934,7 @@ graph LR
 | `gSelectPadActuators` (`func_8008C138`) | 636 | Input > Controller Configuration | `func_8008CD00` | - |
 | `gDrawGameHubMenu` (`func_8007BCF4`) | 660 | Game Engine > Front-End > List Screen · Menu Text, Rendering | `func_800493C0`, `func_800788F0`, `func_80078B34`, `func_8007B460`, `func_8008CD30` | - |
 | `gUpdatePadActuators` (`func_8001EC94`) | 672 | Input > DualShock · Controller | `func_80089E8C`, `func_80089F4C`, `func_8008A044`, `func_8008A1C0`, `func_8008A240` | `func_8001EF8C` |
-| `func_8004C324` | 676 | Game Engine > Entity Lifecycle · Object Pool, Object Dynamics | `func_800181D4`, `func_8003A8C0`, `func_8003C7B8`, `func_8003C980`, `func_8004AAD4`, `func_8004ABE4`, `func_8004B5F8` | - |
+| `gHandleDebrisObjectMessage` (`func_8004C324`) | 676 | Game Engine > Entity Lifecycle · Object Pool, Object Dynamics | `func_800181D4`, `func_8003A8C0`, `func_8003C7B8`, `func_8003C980`, `func_8004AAD4`, `func_8004ABE4`, `func_8004B5F8` | - |
 | `gApplyPathCurveOffsets` (`func_8004FFD0`) | 684 | Game Engine > Object Updates | - | `func_8005027C` |
 | `gStepSpawnNodeTimers` (`func_8003CAE4`) | 712 | Game Engine > Object State | `func_8003CA80` | `func_8003F2AC` |
 | `gHandleType28Entity` (`func_800398EC`) | 740 | Game Engine > Message Dispatch · Entity Script, Entity Update | `func_8002AD58`, `func_800382B4`, `func_80038A00`, `func_800397AC`, `func_8003BA50`, `func_8004D958` | `func_80039298` |
@@ -1354,17 +1354,17 @@ graph LR
 | `gFindHeapRangeForward` (`func_80017D5C`) | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
 | `gFindHeapRangeBackward` (`func_80017E0C`) | 176 | Resources > Memory Management · Memory | - | `func_80017EBC` |
 | `gParseTextureContainer` (`func_8001996C`) | 180 | Resources > Asset Loading · Textures | - | `func_80063C5C` |
-| `func_80084110` | 180 | Resources > Asset Loading · Object Spawning | `func_800181D4`, `func_80019BF0`, `func_80019C38`, `func_80019CA0`, `func_80083A10` | - |
+| `gLoadDeferredSceneAsset` (`func_80084110`) | 180 | Resources > Asset Loading · Object Spawning | `func_800181D4`, `func_80019BF0`, `func_80019C38`, `func_80019CA0`, `func_80083A10` | - |
 | `gInitHeapAndFixedPools` (`func_80017C68`) | 184 | Resources > Memory Pools · Memory | `func_800194DC` | `func_80024904`, `func_80024A24`, `func_80077050` |
 | `gInitMcState` (`func_80020618`) | 184 | Resources > Save Data · Memory Card | - | `func_8007F9CC` |
 | `gResetMcManager` (`func_800206D0`) | 188 | Resources > Save Data · Memory Card | `func_80020120`, `func_80020530`, `func_8008D640` | `func_8007FA88` |
-| `func_8003BE2C` | 196 | Resources > Object Pool · Memory Management | `func_80017EBC` | `func_8005E1BC`, `func_8006EDC4`, `func_800762B0` |
+| `gInitIntrusiveNodePool` (`func_8003BE2C`) | 196 | Resources > Object Pool · Memory Management | `func_80017EBC` | `func_8005E1BC`, `func_8006EDC4`, `func_800762B0` |
 | `gFlushDeferredAssetReleases` (`func_80029520`) | 200 | Resources > Asset Registry · Reference Counting | `func_80029650` | `func_80029C34`, `func_80029EB8` |
-| `func_8007852C` | 204 | Resources > Cleanup | - | `func_800249BC` |
+| `gReleaseActiveFrontEndResources` (`func_8007852C`) | 204 | Resources > Cleanup | - | `func_800249BC` |
 | `gReleaseStreamAssetReference` (`func_80029650`) | 208 | Resources > Asset Registry · Reference Counting | `func_800288BC` | `func_8001B4A8`, `func_80029520`, `func_8002A31C`, `func_8002A408` |
-| `func_80051580` | 208 | Resources > Lookup | `func_80019A20`, `func_8001AB78` | - |
+| `gGetLoopingPathSegmentDelta` (`func_80051580`) | 208 | Resources > Lookup | `func_80019A20`, `func_8001AB78` | - |
 | `gPollCvkBankSlots` (`func_8002385C`) | 212 | Resources > Slot Table · Frame | - | `func_80025690`, `func_800259D8` |
-| `func_80071A68` | 216 | Resources > Memory Management · Effects | `func_800181D4`, `func_80070710` | `func_8007364C` |
+| `gFreeBeamNode` (`func_80071A68`) | 216 | Resources > Memory Management · Effects | `func_800181D4`, `func_80070710` | `func_8007364C` |
 | `gApplySavedAudioSettings` (`func_80080984`) | 216 | Resources > Save Data · Volume, Port Presets | `func_8001EC04`, `func_80024630`, `func_8002A16C`, `func_8002A58C`, `func_800451B4`, `func_800451F8`, `func_80045238`, `func_80045288`, `func_80045294`, `func_8007BFCC` | `func_8008125C` |
 | `gLoadCtdtImages` (`func_800824CC`) | 224 | Resources > Texture Atlas · Image Transfer, GPU | `func_800181D4`, `func_800953F0` | `func_80024EC8` |
 | `gRegisterCvkChunk` (`func_80023930`) | 244 | Resources > Node Registration | - | `func_80024EC8` |
@@ -1372,21 +1372,21 @@ graph LR
 | `gMovieStreamAdvance` (`func_80089304`) | 256 | Resources > Transfer State | `func_80089018` | `func_800879DC` |
 | `gQueueMemoryCardFormat` (`func_8008204C`) | 264 | Resources > Save Data · Memory Card | `func_800207B4`, `func_80020B64`, `func_80091270` | `func_8007FB04`, `func_80082154` |
 | `gAcquireTrackedSoundVoice` (`func_80024064`) | 268 | Resources > Handles | - | - |
-| `func_80049420` | 284 | Resources > Loader Post-Process · Random | `func_80019668`, `func_80019A74`, `func_80019C38`, `func_80019CA0` | `func_80024EC8` |
-| `func_8003BC7C` | 292 | Resources > Object Copy · Object Pool | `func_80017EBC`, `func_800181D4` | `func_8003BDA0`, `func_8003BFD0` |
+| `gLoadScriptTimers` (`func_80049420`) | 284 | Resources > Loader Post-Process · Random | `func_80019668`, `func_80019A74`, `func_80019C38`, `func_80019CA0` | `func_80024EC8` |
+| `gSetSlotSpawnDescriptor` (`func_8003BC7C`) | 292 | Resources > Object Copy · Object Pool | `func_80017EBC`, `func_800181D4` | `func_8003BDA0`, `func_8003BFD0` |
 | `gInstallCvkGroupSamples` (`func_800235D4`) | 296 | Resources > Table Processing | `func_80023528`, `func_800241D0` | - |
-| `func_800511E4` | 296 | Resources > Loader Post-Process · Placement | `func_80019A74`, `func_80019AA8`, `func_80019D00`, `func_80067684` | `func_80024EC8` |
+| `gLoadPathNodePositions` (`func_800511E4`) | 296 | Resources > Loader Post-Process · Placement | `func_80019A74`, `func_80019AA8`, `func_80019D00`, `func_80067684` | `func_80024EC8` |
 | `gLoadFileAlloc` (`func_8001E110`) | 304 | Resources > File Access · CD-ROM | `func_8001D424`, `func_8001D5E4`, `func_8001E004` | `func_80025370`, `func_80059BA0` |
 | `gResolveModelBlockIndices` (`func_8001306C`) | 308 | Resources > Table Remapping | - | `func_800131A0` |
-| `func_8003BFD0` | 320 | Resources > Asset Loader · Spawn Tables, Object Spawning | `func_8003BC7C`, `func_80040DCC`, `func_80044770`, `func_8004C884`, `func_8006EAF0`, `func_800703A8`, `func_80073F88`, `func_800767E4` | `func_8003C110` |
-| `func_80083130` | 336 | Resources > Mission Table · Front-End Module Lookup | `func_8008CCA0`, `func_8008CCC0`, `func_8008CCF0` | `func_80076A2C` |
+| `gParseCsfxChunks` (`func_8003BFD0`) | 320 | Resources > Asset Loader · Spawn Tables, Object Spawning | `func_8003BC7C`, `func_80040DCC`, `func_80044770`, `func_8004C884`, `func_8006EAF0`, `func_800703A8`, `func_80073F88`, `func_800767E4` | `func_8003C110` |
+| `gFindModuleMovie` (`func_80083130`) | 336 | Resources > Mission Table · Front-End Module Lookup | `func_8008CCA0`, `func_8008CCC0`, `func_8008CCF0` | `func_80076A2C` |
 | `gRegisterSoundBankByKey` (`func_80047344`) | 344 | Resources > Sound Registration | `func_800472E8` | `func_800241D0` |
 | `gCreateModuleAssetFromHeader` (`func_80028BCC`) | 348 | Resources > Loader · Script | `func_80017EBC`, `func_80028BA0`, `func_80069D68` | `func_8002902C` |
 | `gCopyCdSectorChunk` (`func_8001CC6C`) | 356 | Resources > Streaming · CD-ROM | `func_8008CD10` | `func_8001CE54` |
 | `gUploadSaveProfileIcon` (`func_80082358`) | 372 | Resources > Chunk Processing · Image Data | - | `func_80024EC8` |
 | `gAllocateRenderBuffers` (`func_8001B2C8`) | 384 | Resources > Memory Allocation · Render Buffers | `func_80017EBC`, `func_8001C034`, `func_80093178` | `func_80024904`, `func_80024A24`, `func_80076A2C` |
 | `gRegisterUnitSpawner` (`func_80060E74`) | 428 | Resources > Loader Post-Process · Spawn Registration | `func_80019668`, `func_80019A74`, `func_80019BF0`, `func_80019C38`, `func_80019CA0`, `func_8002AE54` | `func_80024EC8` |
-| `func_80059BFC` | 436 | Resources > File Access · Init, Demo Playback | `func_800197A8`, `func_80059BA0`, `func_8008CCC0`, `func_8008CD30` | `func_80024A24` |
+| `gLoadDemoRecording` (`func_80059BFC`) | 436 | Resources > File Access · Init, Demo Playback | `func_800197A8`, `func_80059BA0`, `func_8008CCC0`, `func_8008CD30` | `func_80024A24` |
 | `gLoadAttackDefinition` (`func_80060838`) | 444 | Resources > Asset Loader · Object Setup | `func_800181D4`, `func_80019BF0`, `func_80019C38`, `func_80019CA0`, `func_800607B8` | - |
 | `gRegistryLoad` (`func_8006A918`) | 468 | Resources > Loading | - | - |
 | `gMovieStreamReserve` (`func_80089404`) | 480 | Resources > Streaming | - | `func_800879DC` |
@@ -1394,21 +1394,21 @@ graph LR
 | `gInitMapFromGrdb` (`func_80063DC8`) | 560 | Resources > Asset Loader · Map | `func_80017EBC`, `func_800496D0`, `func_800834C4` | `func_80024EC8` |
 | `gSeekFileSlot` (`func_8001D6D0`) | 572 | Resources > File Access · CD-ROM | `func_8001C478`, `func_8001D0A0` | `func_80028AB4` |
 | `gLoadTextureChunksToVram` (`func_8005A414`) | 576 | Resources > Graphics Assets > Texture Upload · VRAM Transfer | `func_80017EBC`, `func_800181D4`, `func_8005A220`, `func_8005A2BC`, `func_8008CD10`, `func_80092C8C`, `func_80092F38` | `func_80024EC8` |
-| `func_800639D4` | 588 | Resources > Chunk Loading | - | `func_80063C20` |
+| `gParseMapSectionChunks` (`func_800639D4`) | 588 | Resources > Chunk Loading | - | `func_80063C20` |
 | `gLoadActorChunk` (`func_8004D6D4`) | 592 | Resources > Entity Loading · Object Creation | - | `func_80024EC8` |
 | `gReadFileSlotAsync` (`func_8001D90C`) | 596 | Resources > File Access · Memory Card | `func_8001CE54`, `func_8001D0A0` | `func_8001DB60`, `func_8001E004` |
 | `gFreeBlock` (`func_800181D4`) | 652 | Resources > Memory Management | `func_8001814C`, `func_800195D0`, `func_8001E2C0`, `func_8001E318`, `func_8001E44C` | `func_80017764`, `func_80019584`, `func_80019AF8`, `func_8001CDF0`, `func_80023AB4`, `func_80024D14`, `func_80024EC8`, `func_80025370`, `func_800319D4`, `func_80031DE8`, `func_8003B2D0`, `func_8003B6A4`, `func_8003BC7C`, `func_8003BDA0`, `func_8003BDEC`, `func_8003C110`, `func_8003C404`, `func_8003CF20`, `func_8003D240`, `func_8003F854`, `func_8003FB90`, `func_8003FF7C`, `func_80040874`, `func_80041070`, `func_800427E8`, `func_80042844`, `func_800447F0`, `func_8004488C`, `func_80049EA8`, `func_8004C324`, `func_8004CA98`, `func_8004D598`, `func_8004EFE4`, `func_8005908C`, `func_80059BA0`, `func_8005A414`, `func_8005E074`, `func_80060838`, `func_80063C5C`, `func_8006C84C`, `func_8006CA68`, `func_8006E814`, `func_8006ED78`, `func_8006FF44`, `func_800706C4`, `func_80070710`, `func_80071A68`, `func_8007377C`, `func_80073BBC`, `func_800740B8`, `func_800762B0`, `func_80076878`, `func_8007FA48`, `func_800824CC`, `func_800825AC`, `func_8008263C`, `func_80084110`, `func_800861E4`, `func_800879BC`, `func_800899A4` |
 | `gAllocMemory` (`func_80017EBC`) | 656 | Resources > Memory Management · Memory | `func_80017D5C`, `func_80017E0C`, `func_800195A4`, `func_8001E240`, `func_8001E318` | `func_80013A14`, `func_80017994`, `func_800194DC`, `func_80019828`, `func_8001B2C8`, `func_8001CDD0`, `func_80028BCC`, `func_80029F50`, `func_800319D4`, `func_800331CC`, `func_8003AA94`, `func_8003BC7C`, `func_8003BE2C`, `func_8003C2A4`, `func_8003D240`, `func_8003D680`, `func_8003FD74`, `func_80040DCC`, `func_80043430`, `func_80044770`, `func_800447F0`, `func_8004AB4C`, `func_8004ABE4`, `func_8004C884`, `func_8004C920`, `func_8004D3FC`, `func_8004D444`, `func_8004D4F8`, `func_800579D4`, `func_8005A2BC`, `func_8005A414`, `func_8005D3FC`, `func_80060E28`, `func_800617D8`, `func_80063428`, `func_80063DC8`, `func_8006C84C`, `func_8006EAF0`, `func_8006EB80`, `func_800703A8`, `func_8007043C`, `func_80073500`, `func_80073590`, `func_8007377C`, `func_80073BBC`, `func_80073F88`, `func_80074024`, `func_800762B0`, `func_800767E4`, `func_800780DC`, `func_8007F9CC`, `func_8008347C`, `func_800860CC`, `func_800861E4`, `func_8008799C` |
-| `func_80098458` | 680 | Resources > Memory Management · Memory | `func_80097DF8`, `func_800980F8` | `func_8002333C` |
-| `func_80097B28` | 708 | Resources > Memory Pools · Sound | `func_80097DF8` | `func_80021898`, `func_8002333C` |
+| `gSpuAllocAt` (`func_80098458`) | 680 | Resources > Memory Management · Memory | `func_80097DF8`, `func_800980F8` | `func_8002333C` |
+| `gAllocSpuRamBlock` (`func_80097B28`) | 708 | Resources > Memory Pools · Sound | `func_80097DF8` | `func_80021898`, `func_8002333C` |
 | `gSpuCompactPool` (`func_80097DF8`) | 768 | Resources > Memory Pools · Sound | - | `func_80097B28`, `func_800980F8`, `func_80098458`, `func_80098708` |
 | `gSpuSplitPoolBlock` (`func_800980F8`) | 864 | Resources > Memory Pools · Sound | `func_80097DF8` | `func_80098458` |
 | `gFormatIso9660Path` (`func_8001DC48`) | 936 | Resources > File Access · String | `func_8008CC90`, `func_8008CCB0`, `func_8008CCC0`, `func_8008CCE0` | `func_8001D424` |
 | `gRelocateModelResource` (`func_800131A0`) | 944 | Resources > Data Initialization · Animation | `func_80012E48`, `func_8001306C` | `func_80013550` |
 | `gLoadQueuedAssets` (`func_80024EC8`) | 1152 | Resources > Asset Loader · Asset Dispatch | `func_80013550`, `func_800181D4`, `func_80023930`, `func_800295E8`, `func_80029E20`, `func_8003C110`, `func_80048E9C`, `func_80049420`, `func_80049734`, `func_8004D6D4`, `func_8004D924`, `func_800511E4`, `func_8005A414`, `func_80060E74`, `func_80063C20`, `func_80063C5C`, `func_80063DC8`, `func_80082358`, `func_800824CC`, `func_800825AC`, `func_8008263C`, `func_800899A4` | `func_80025348`, `func_80025690`, `func_800259D8`, `func_80027EBC` |
 | `gParseStreamedModuleChunks` (`func_8002902C`) | 1268 | Resources > Asset Loader · Streaming Audio | `func_80023CA4`, `func_800244A4`, `func_80028BA0`, `func_80028BCC`, `func_80028D28`, `func_80028DC0`, `func_80028E58`, `func_8002A16C`, `func_8002A544` | `func_800295E8` |
-| `func_8007FB04` | 1292 | Resources > Save Data · Screen State Machine, Memory Card | `func_8001F37C`, `func_800207B4`, `func_80020C90`, `func_80020E68`, `func_80078650`, `func_80078740`, `func_8007F750`, `func_80080010`, `func_80080AD4`, `func_80080B70`, `func_80081204`, `func_80082020`, `func_8008204C` | `func_80080038`, `func_80080B08` |
-| `func_80080B70` | 1684 | Resources > Save Data · File Transfer, Front End | `func_8001E318`, `func_80020FDC`, `func_8007F6E0`, `func_80080A5C`, `func_800822CC`, `func_80089914`, `func_8008CCB0` | `func_8007FB04`, `func_8008125C` |
+| `gStepProfileTransfer` (`func_8007FB04`) | 1292 | Resources > Save Data · Screen State Machine, Memory Card | `func_8001F37C`, `func_800207B4`, `func_80020C90`, `func_80020E68`, `func_80078650`, `func_80078740`, `func_8007F750`, `func_80080010`, `func_80080AD4`, `func_80080B70`, `func_80081204`, `func_80082020`, `func_8008204C` | `func_80080038`, `func_80080B08` |
+| `gSaveSelectedProfileToCard` (`func_80080B70`) | 1684 | Resources > Save Data · File Transfer, Front End | `func_8001E318`, `func_80020FDC`, `func_8007F6E0`, `func_80080A5C`, `func_800822CC`, `func_80089914`, `func_8008CCB0` | `func_8007FB04`, `func_8008125C` |
 
 ### Video, MDEC & Movies - 7 functions, 4 calls inside the area
 
@@ -1833,13 +1833,13 @@ graph LR
 | `func_8005BD20` | 196 | Graphics > Effects > Object Pool · Memory Management | `func_8003BF1C` | `func_8005E0AC` |
 | `func_8005C0C0` | 196 | Graphics > Effects > Object Pool · Memory Management | `func_8003BF1C` | `func_8005E0AC` |
 | `gTransformPartVertex` (`func_80017668`) | 228 | Graphics > Model Renderer > Vertex Fetch · Animation | `func_80010234`, `func_80010750` | `func_8002C584`, `func_800302E8`, `func_800313F0`, `func_80038A00`, `func_80039418`, `func_80047888`, `func_80057914`, `func_80057E40`, `func_80058714`, `func_800596C4`, `func_800597C0`, `func_8005BDE4`, `func_8005CBCC`, `func_8005D8F4`, `func_8005F018`, `func_8005F6E8`, `func_8006ACB0`, `func_8006B23C`, `func_80075A84` |
-| `func_8006EE14` | 228 | Graphics > Effects > Beams · Motion | - | `func_8006F170` |
+| `gStepTracerNode` (`func_8006EE14`) | 228 | Graphics > Effects > Beams · Motion | - | `func_8006F170` |
 | `gInitModelInstance` (`func_80013AF0`) | 232 | Graphics > Model Renderer > Instance Setup | - | `func_80013BD8`, `func_8002CB20` |
-| `func_8003CE30` | 240 | Graphics > Model Renderer > Attachment Points · Animation | - | `func_8003D0F0` |
-| `func_800752E0` | 240 | Graphics > Effects > Lights · Object Spawning | `func_80019668`, `func_8005A6A4` | `func_800753D0`, `func_800754B8` |
-| `func_8006E720` | 244 | Graphics > Effects · Entity Script | - | `func_8006E814` |
+| `gGetAnimatedModelAttachmentPoint` (`func_8003CE30`) | 240 | Graphics > Model Renderer > Attachment Points · Animation | - | `func_8003D0F0` |
+| `gSpawnParticleLight` (`func_800752E0`) | 240 | Graphics > Effects > Lights · Object Spawning | `func_80019668`, `func_8005A6A4` | `func_800753D0`, `func_800754B8` |
+| `gInitDomeEffectFadeRate` (`func_8006E720`) | 244 | Graphics > Effects · Entity Script | - | `func_8006E814` |
 | `gEmitTracerGouraudQuad` (`func_8006F21C`) | 244 | Graphics > Model Renderer > Primitives · GPU Primitives | - | `func_8006F310` |
-| `func_80049F4C` | 252 | Graphics > Renderer > Projection · Mathematics | - | `func_8004A048` |
+| `gProjectWorldPointAndExtent` (`func_80049F4C`) | 252 | Graphics > Renderer > Projection · Mathematics | - | `func_8004A048` |
 | `gEmitObjectBeamSegment` (`func_800596C4`) | 252 | Graphics > Effects · Object Draw Handlers | `func_80014C64`, `func_80017668`, `func_80019668` | `func_800597C0` |
 | `gDispatchModelVariantCommands` (`func_8002CB20`) | 272 | Graphics > Model Renderer > Script · Animation | `func_80013AF0`, `func_8002A5B4` | `func_8002CC30` |
 | `gSpawnPlayerRetirementProjectile` (`func_80058C3C`) | 316 | Graphics > Effects > Object-Attached Effect · Object Spawning | `func_80017B60`, `func_80019668`, `func_8004D444`, `func_8005E624` | `func_80058D78` |
@@ -1849,7 +1849,7 @@ graph LR
 | `gSpawnLightForEffect` (`func_80040734`) | 320 | Graphics > Lighting > Spawn | `func_8005A6A4` | `func_80040874` |
 | `gReapExpiredLightNodes` (`func_800497A8`) | 328 | Graphics > Lighting · Object Pool | - | `func_80049C38` |
 | `gResolveModelEffectPoint` (`func_8003D0F0`) | 336 | Graphics > Model Renderer > Vertex Fetch · Animation | `func_800196C4`, `func_8003CE30` | `func_8003D240`, `func_8003DB70`, `func_80070730`, `func_80071B40` |
-| `func_80044610` | 352 | Graphics > Effects > Dispatcher · Effects | `func_8003C7B8`, `func_8003C980`, `func_8003DB70`, `func_800427E8`, `func_80042AF4` | - |
+| `gHandlePeriodicEffect` (`func_80044610`) | 352 | Graphics > Effects > Dispatcher · Effects | `func_8003C7B8`, `func_8003C980`, `func_8003DB70`, `func_800427E8`, `func_80042AF4` | - |
 | `gDrawPortraitScreen` (`func_80042128`) | 356 | Graphics > Effects > Quad Batch · GTE | `func_8001047C`, `func_80010750`, `func_800178DC`, `func_80019E70`, `func_80042004` | `func_80042330` |
 | `gDrawAttachedModelList` (`func_8006E988`) | 360 | Graphics > Scene Graph > Object List Walk · Renderer | `func_8001A100`, `func_8003D9F8`, `func_8006CB58`, `func_8006DC24` | `func_8003F6E4` |
 | `gDrawCellWindowObjects` (`func_8004A924`) | 364 | Graphics > Renderer > Map Cell Geometry · Minimap | - | `func_80066E98` |
@@ -2442,8 +2442,8 @@ graph LR
 | `gDecodeCodeDisplay` (`func_8007F128`) | 208 | Graphics > HUD > Code Entry · Character Table | `func_800788F0` | `func_8007F1F8`, `func_80080038` |
 | `gEmitFlatQuad` (`func_80083060`) | 208 | Graphics > GPU Primitives > Textured Quad · 2D Drawing | - | `func_8007D7CC` |
 | `gTickPlayerTransitionFade` (`func_80026F68`) | 212 | Graphics > Fade Layers · Frame | `func_80026E9C` | `func_80027510` |
-| `func_800488A4` | 212 | Graphics > Color Tables | - | `func_80048978` |
-| `func_800487CC` | 216 | Graphics > HUD · State Machine | `func_80048790` | `func_800486FC` |
+| `gBuildColorRampRow` (`func_800488A4`) | 212 | Graphics > Color Tables | - | `func_80048978` |
+| `gUpdateHudLayoutMode` (`func_800487CC`) | 216 | Graphics > HUD · State Machine | `func_80048790` | `func_800486FC` |
 | `gTestFrustumFixedNear` (`func_80019D90`) | 224 | Graphics > Culling · Renderer | - | `func_8004A048`, `func_800597C0`, `func_80070158` |
 | `gIsInViewFrustumWithMargin` (`func_80063FF8`) | 224 | Graphics > Clipping · 2D | - | `func_8006411C`, `func_8006429C` |
 | `gDrawViewLayers` (`func_80066E98`) | 224 | Graphics > Region Drawing · Scene Graph | `func_80010820`, `func_80017B60`, `func_8003F6E4`, `func_8004A924`, `func_80062EB8`, `func_8006531C`, `func_80084398` | `func_80026E1C` |
@@ -2453,12 +2453,12 @@ graph LR
 | `gEmitAngledLine` (`func_8005A740`) | 232 | Graphics > 2D Drawing > Lines · Trigonometry | `func_8001846C` | `func_8005A9C4` |
 | `gDrawModeHeadingPage` (`func_8007A2C4`) | 232 | Graphics > HUD > Layout · Front-End Configuration | `func_800788F0`, `func_80078B34` | - |
 | `gLoadTexturePage` (`func_80091F90`) | 232 | Graphics > GPU > VRAM Transfer · Textures | `func_80092230`, `func_80092F38` | - |
-| `func_800449F8` | 240 | Graphics > Animation > Script | `func_8002A5B4`, `func_800448D8` | `func_80044B34` |
+| `gProcessAnimScriptCommands` (`func_800449F8`) | 240 | Graphics > Animation > Script | `func_8002A5B4`, `func_800448D8` | `func_80044B34` |
 | `gWorldToRadarCell` (`func_80065744`) | 240 | Graphics > HUD > Minimap · Mathematics | - | `func_8006531C`, `func_8006680C` |
 | `gDrawSlotStatusLine` (`func_80078B98`) | 240 | Graphics > HUD > Status Line · Text | `func_800788F0` | - |
 | `gDrawAlignedString` (`func_80049100`) | 248 | Graphics > Text > Rendering · GPU Primitives | - | `func_800260B8`, `func_800267C8`, `func_80027510`, `func_80027F80`, `func_80047F30`, `func_800491F8`, `func_80065834`, `func_800788F0`, `func_8007ABBC`, `func_8007F1F8`, `func_8008125C` |
 | `gRunRegionObjectPass` (`func_80062EB8`) | 252 | Graphics > Region Drawing · Object Update, Model Renderer | `func_800164F4` | `func_80066E98` |
-| `func_8009570C` | 252 | Graphics > Ordering Table · GPU | `func_80091270`, `func_800914E0`, `func_8009520C` | - |
+| `gDrawOrderingTableWhenGpuReady` (`func_8009570C`) | 252 | Graphics > Ordering Table · GPU | `func_80091270`, `func_800914E0`, `func_8009520C` | - |
 | `gSpringFollowHeight` (`func_80056530`) | 260 | Graphics > Camera > Smoothing | - | `func_800569EC` |
 | `gUpdateModelWaveBytes` (`func_800135C0`) | 264 | Graphics > Data Animation | - | `func_800136C8` |
 | `gEmitRadarTriangle` (`func_8005A828`) | 268 | Graphics > 2D Drawing > Lines · HUD | `func_8001846C` | `func_8005A9C4` |
@@ -2481,7 +2481,7 @@ graph LR
 | `gEmitFontGlyphSprite` (`func_80048F98`) | 360 | Graphics > Text > Glyph Rendering · GPU Primitives | `func_800489C8` | - |
 | `gLoadCbmpTexture` (`func_80063C5C`) | 364 | Graphics > 2D Drawing > Images · Memory Management | `func_800181D4`, `func_8001996C`, `func_80048DEC`, `func_80092C8C`, `func_80092F38` | `func_80024EC8` |
 | `gTestCameraSightLine` (`func_80055EE8`) | 372 | Graphics > Camera > Visibility · Grid Raycast | `func_800684AC` | `func_80056870`, `func_800569EC` |
-| `func_800773D8` | 380 | Graphics > Debug Display · Debug | `func_80077278`, `func_80091480`, `func_80091510`, `func_80092140`, `func_800921F4`, `func_80092910`, `func_80092BF4`, `func_80092E10`, `func_800932F0`, `func_800934BC` | - |
+| `gDrawExceptionScreenAndHalt` (`func_800773D8`) | 380 | Graphics > Debug Display · Debug | `func_80077278`, `func_80091480`, `func_80091510`, `func_80092140`, `func_800921F4`, `func_80092910`, `func_80092BF4`, `func_80092E10`, `func_800932F0`, `func_800934BC` | - |
 | `gRotateS16PointArray` (`func_8001B148`) | 384 | Graphics > Geometry > Matrix Transform · Mathematics | - | `func_80040874`, `func_80042AF4`, `func_8004B5F8`, `func_8006FF44`, `func_800754B8` |
 | `gUpdateViewCollisionGrid` (`func_80062FB4`) | 384 | Graphics > Screen Regions > Viewports · HUD | `func_80062614`, `func_80062874`, `func_80062C3C` | `func_80026D5C` |
 | `gInitMarkerColorsAndPools` (`func_8004CAE4`) | 388 | Graphics > Color Tables · State Initialization | - | `func_80024A24` |
@@ -2520,7 +2520,7 @@ graph LR
 | `gDrawTargetMarker` (`func_80047888`) | 864 | Graphics > Sprites > Target Markers · Targeting, 2D Drawing, Clipping | `func_8001047C`, `func_80010820`, `func_80017668`, `func_800684AC` | `func_80047F30` |
 | `gComputeCameraEye` (`func_8005612C`) | 892 | Graphics > Camera > Offset Placement · Trigonometry | `func_8001846C` | `func_80056634`, `func_8005678C`, `func_800569EC`, `func_800573A4` |
 | `gAdvanceAnimTrack` (`func_80044B34`) | 964 | Graphics > Animation > Track Advance · Frame | `func_80019668`, `func_800448D8`, `func_800449F8`, `func_80044AE8` | `func_8002B588`, `func_8002B784`, `func_8002CC30`, `func_8002DB9C`, `func_8002DEA8`, `func_8002E630`, `func_800306A0`, `func_800324E0`, `func_80035B7C`, `func_800382B4`, `func_80038A00`, `func_800549F0`, `func_80055988` |
-| `func_80062874` | 968 | Graphics > Culling > Object Grid · Minimap | - | `func_80062FB4` |
+| `gBuildDualViewObjectListsAndGrid` (`func_80062874`) | 968 | Graphics > Culling > Object Grid · Minimap | - | `func_80062FB4` |
 | `gComposeScreenSlices` (`func_800826AC`) | 1028 | Graphics > Image Compositor · Asset Tables | `func_800861E4` | - |
 | `gPutDispEnvCached` (`func_800934BC`) | 1076 | Graphics > GPU > Drawing Area · GPU | `func_8008CD10`, `func_80091F74` | `func_800773D8`, `func_8007757C`, `func_80085C4C` |
 | `gHandleNameEntryGrid` (`func_8007ABBC`) | 1096 | Graphics > HUD > Name Entry · Text, Character Table, Front-End Configuration | `func_80046C84`, `func_80048E88`, `func_80049100`, `func_800492A0`, `func_8007A9D0`, `func_8007AA9C`, `func_80082EF0` | - |
@@ -3339,7 +3339,7 @@ graph LR
 | `func_800767E4` | 148 | Gameplay > Object Spawning · Spawn Tables | `func_80017EBC`, `func_8003C2A4`, `func_8003C404` | `func_8003BFD0`, `func_80076878` |
 | `func_8003FD74` | 152 | Gameplay > Object Spawning · Deferred Queue | `func_80017EBC` | `func_8003C2A4`, `func_800402DC` |
 | `gUpdatePathMoverMotion` (`func_80050D14`) | 152 | Gameplay > Path Following · Motion | `func_8004F188`, `func_8005027C`, `func_80050B54` | `func_8003802C`, `func_80039C58`, `func_8003A160` |
-| `func_800320E4` | 156 | AI > Targeting · Entity Script | `func_80019668` | `func_80032180`, `func_800324E0` |
+| `gPickHoverWanderTarget` (`func_800320E4`) | 156 | AI > Targeting · Entity Script | `func_80019668` | `func_80032180`, `func_800324E0` |
 | `gRegisterActorDef5A` (`func_8004C884`) | 156 | Gameplay > Object Spawning · Spawn Tables | `func_80017EBC`, `func_8003C2A4`, `func_8003C404` | `func_8003BFD0`, `func_8004CA98` |
 | `gClampMapViewToBounds` (`func_800665E8`) | 156 | Gameplay > Map · Minimap | - | `func_8006680C` |
 | `func_80073F88` | 156 | Gameplay > Object Spawning · Spawn Tables | `func_80017EBC`, `func_8003C2A4`, `func_8003C404` | `func_8003BFD0`, `func_800740B8` |
@@ -3358,44 +3358,44 @@ graph LR
 | `gResetDroneApproach` (`func_8003526C`) | 192 | Gameplay > Entity Update · Behaviour | `func_80019668`, `func_800330E8`, `func_8003BA50` | `func_80030060`, `func_8003532C` |
 | `gInstallSpawnRecord` (`func_8003C404`) | 192 | Gameplay > Object Spawning · Spawn Tables | `func_800181D4`, `func_8003B3D8` | `func_80040DCC`, `func_80044770`, `func_8004C884`, `func_8006EAF0`, `func_800703A8`, `func_80073F88`, `func_800767E4` |
 | `gHandlePortraitScreenMsg` (`func_80042330`) | 192 | Gameplay > Entity Script · Model Renderer | `func_8002AD58`, `func_80041E0C`, `func_80042128`, `func_8004228C` | - |
-| `func_80057914` | 192 | Gameplay > Object Spawning · Object Setup | `func_80017668`, `func_8004D444` | `func_800579D4` |
-| `func_8003A09C` | 196 | Gameplay > Entity Script · Command Queue, Force Fields | `func_8002A5B4` | `func_8003A160` |
-| `func_8004B180` | 196 | Gameplay > Object Spawning · Entity Update | `func_8001A314`, `func_8003E984` | `func_8004C2B8` |
-| `func_8005920C` | 196 | Gameplay > Object Spawning · Animation | `func_80013BD8`, `func_8002AD58`, `func_80044988` | `func_80059ABC` |
-| `func_8004CE04` | 200 | Gameplay > Entity Update · Grid | `func_8003BAE4` | `func_80027510` |
+| `gSpawnCompanionEntity` (`func_80057914`) | 192 | Gameplay > Object Spawning · Object Setup | `func_80017668`, `func_8004D444` | `func_800579D4` |
+| `gProcessForceFieldCommands` (`func_8003A09C`) | 196 | Gameplay > Entity Script · Command Queue, Force Fields | `func_8002A5B4` | `func_8003A160` |
+| `gSpawnDebrisExpiryEffect` (`func_8004B180`) | 196 | Gameplay > Object Spawning · Entity Update | `func_8001A314`, `func_8003E984` | `func_8004C2B8` |
+| `gInitCompanionEntity` (`func_8005920C`) | 196 | Gameplay > Object Spawning · Animation | `func_80013BD8`, `func_8002AD58`, `func_80044988` | `func_80059ABC` |
+| `gProcessDeferredEntityUpdates` (`func_8004CE04`) | 200 | Gameplay > Entity Update · Grid | `func_8003BAE4` | `func_80027510` |
 | `gAdvanceGameplayScreenCountdown` (`func_80027D9C`) | 204 | Gameplay > State Transitions | - | - |
-| `func_8003B4E0` | 204 | Gameplay > Map · Object Setup | `func_80019668` | `func_8003B898` |
-| `func_8004B244` | 204 | Physics > Motion · Damage | - | `func_8003AA94`, `func_8004B5F8` |
+| `gSelectEntitySlotType` (`func_8003B4E0`) | 204 | Gameplay > Map · Object Setup | `func_80019668` | `func_8003B898` |
+| `gComputeForceImpulse` (`func_8004B244`) | 204 | Physics > Motion · Damage | - | `func_8003AA94`, `func_8004B5F8` |
 | `gApplyRegisteredSpawnerCommand` (`func_800614BC`) | 208 | Gameplay > State | - | `func_8006158C` |
-| `func_8002B4B4` | 212 | Gameplay > Entity Script · Command Queue, Command Processing | `func_8002A5B4`, `func_8002B1AC`, `func_8002B1DC` | `func_8002B784` |
+| `gProcessType26StateCommands` (`func_8002B4B4`) | 212 | Gameplay > Entity Script · Command Queue, Command Processing | `func_8002A5B4`, `func_8002B1AC`, `func_8002B1DC` | `func_8002B784` |
 | `gStepEntityBaseCountdown` (`func_8002A940`) | 220 | Gameplay > Entity Timer · Script Hook | `func_8003BA50`, `func_80069D68` | `func_8002AD58` |
 | `gWarpEntityToSelf` (`func_80030C60`) | 220 | Gameplay > Entity Draw · Model Renderer | `func_80010234`, `func_80010750`, `func_80069D68` | `func_80030D3C` |
 | `gStepIdleActorTurn` (`func_800381D4`) | 224 | Gameplay > Movement · Random | `func_80019668` | `func_800382B4` |
 | `gUpdateDroneStrategicPosition` (`func_800330E8`) | 228 | AI > Behaviour · Movement | - | `func_800331CC`, `func_800336DC`, `func_8003526C`, `func_80035698` |
 | `gHandleCompanionMessage` (`func_80059ABC`) | 228 | Gameplay > Entity Script · Model Renderer | `func_8002AD58`, `func_800584BC`, `func_8005920C`, `func_800597C0` | - |
 | `gFindNearestFlaggedType16Unit` (`func_80035184`) | 232 | Gameplay > Object Search | - | `func_8003532C` |
-| `func_80039418` | 236 | Gameplay > Object Spawning · Object Setup | `func_80017668`, `func_8004D444` | `func_80039504`, `func_800397AC` |
-| `func_8002F7C8` | 240 | Gameplay > Entity Script · Object Setup | `func_8002AD58`, `func_8002EED8`, `func_8002F30C`, `func_80063194` | - |
+| `gSpawnMountedPartChild` (`func_80039418`) | 236 | Gameplay > Object Spawning · Object Setup | `func_80017668`, `func_8004D444` | `func_80039504`, `func_800397AC` |
+| `gHandleMoverEntityMsg` (`func_8002F7C8`) | 240 | Gameplay > Entity Script · Object Setup | `func_8002AD58`, `func_8002EED8`, `func_8002F30C`, `func_80063194` | - |
 | `gSendEntityCommand` (`func_8004DA84`) | 240 | Gameplay > Entity Messages | `func_8004D9EC` | `func_8004DC64`, `func_8004DD68`, `func_8004DDF4`, `func_80069D68` |
 | `gStepPendingMessages` (`func_8004DB74`) | 240 | Gameplay > Entity Messages | - | `func_8002703C` |
 | `gApplyRotatingPropProximityEffect` (`func_8002FF6C`) | 244 | Gameplay > Collision · Proximity Test | `func_8002FC90`, `func_8004D958` | `func_8003015C` |
 | `gSpawnTypeAtOwner` (`func_800402DC`) | 244 | Gameplay > Object Spawning · Map, Object Setup | `func_8003B3D8`, `func_8003D680`, `func_8003E984`, `func_8003FD74` | `func_8002C174`, `func_800306A0`, `func_80035B7C`, `func_80036BD4`, `func_8003B898`, `func_8003BAE4`, `func_8003BC0C`, `func_8003FD10`, `func_8004C0C0`, `func_800584BC`, `func_800588D4`, `func_80058D78`, `func_8005B6A8`, `func_8005BDE4`, `func_8005C048`, `func_8005C184`, `func_8005C344`, `func_8005CBCC`, `func_8005F018`, `func_8005F6E8`, `func_8006ACB0`, `func_8006B23C` |
-| `func_800618CC` | 244 | Physics > Spatial Queries | - | `func_80061CAC` |
+| `gFindFirstOverlappingModelBox` (`func_800618CC`) | 244 | Physics > Spatial Queries | - | `func_80061CAC` |
 | `gInitGroundObject` (`func_8002DAA4`) | 248 | Gameplay > Entity Animation · Model Renderer | `func_80010234`, `func_80010750`, `func_800188D0`, `func_8002AD58`, `func_80044988`, `func_80067684` | `func_8002DB9C` |
-| `func_8002DB9C` | 248 | Gameplay > Entity Script · Animation | `func_800175F8`, `func_8002AD58`, `func_8002DAA4`, `func_80044B34` | - |
-| `func_800537D0` | 248 | Physics > Movement | `func_80053730` | `func_80053A74` |
+| `gHandleType13EntityMsg` (`func_8002DB9C`) | 248 | Gameplay > Entity Script · Animation | `func_800175F8`, `func_8002AD58`, `func_8002DAA4`, `func_80044B34` | - |
+| `gBuildHoverMovementVector` (`func_800537D0`) | 248 | Physics > Movement | `func_80053730` | `func_80053A74` |
 | `gEntityBaseHandler` (`func_8002AD58`) | 252 | Gameplay > Entity Script · Object Setup | `func_8002A5F4`, `func_8002A810`, `func_8002A940`, `func_8002AA1C`, `func_8002AB8C`, `func_8002ACB4`, `func_80095C30` | `func_8002C3F0`, `func_8002C584`, `func_8002D664`, `func_8002DAA4`, `func_8002DB9C`, `func_8002DC94`, `func_8002DEA8`, `func_8002ED7C`, `func_8002EED8`, `func_8002F7C8`, `func_8002FA20`, `func_8003015C`, `func_800302E8`, `func_80030960`, `func_80030AD4`, `func_80030D3C`, `func_80030DE0`, `func_8003151C`, `func_800317BC`, `func_8003190C`, `func_80032180`, `func_80032F3C`, `func_80035904`, `func_80036624`, `func_80036940`, `func_80036E6C`, `func_80037064`, `func_80037708`, `func_800378BC`, `func_800379D4`, `func_800382B4`, `func_80038754`, `func_80039298`, `func_800395A8`, `func_800398EC`, `func_80039C58`, `func_80039E8C`, `func_8003A844`, `func_80041488`, `func_80041B6C`, `func_80041C6C`, `func_80041E0C`, `func_80042330`, `func_80042504`, `func_800426A8`, `func_800578E4`, `func_800579D4`, `func_8005908C`, `func_8005920C`, `func_80059ABC` |
-| `func_80030060` | 252 | Physics > Distance Approximation · Collision | `func_8003526C`, `func_8004D958` | `func_8003015C` |
-| `func_800584BC` | 252 | Gameplay > Damage · Entity Script | `func_800402DC`, `func_80058378` | `func_800588D4`, `func_8005908C`, `func_80059ABC` |
+| `gHandleRotatingPropProximityContact` (`func_80030060`) | 252 | Physics > Distance Approximation · Collision | `func_8003526C`, `func_8004D958` | `func_8003015C` |
+| `gHandlePlayerHitMessage` (`func_800584BC`) | 252 | Gameplay > Damage · Entity Script | `func_800402DC`, `func_80058378` | `func_800588D4`, `func_8005908C`, `func_80059ABC` |
 | `gHandleObjectEventMessages` (`func_8003C980`) | 256 | Gameplay > Entity Script · Events | - | `func_80040874`, `func_80044610`, `func_8004C324`, `func_8006E814`, `func_8006FF44`, `func_80073BBC` |
 | `gHandleElevatorEntityMessages` (`func_80041B6C`) | 256 | Gameplay > Entity Script · Model Renderer | `func_8002AD58`, `func_80041488`, `func_80041880`, `func_80063194` | - |
 | `gSendCommandByTag` (`func_8004DC64`) | 260 | Gameplay > Entity Dispatch | `func_80031BEC`, `func_8004953C`, `func_8004DA84` | `func_80069D68` |
 | `gHandleActor59Msg` (`func_8006FF44`) | 260 | Gameplay > Entity Update · Entity Lifecycle, Scene Graph | `func_800181D4`, `func_8001B148`, `func_8003C7B8`, `func_8003C980`, `func_8003D9F8`, `func_8006F898` | - |
 | `gProcessActorCommandQueue` (`func_8002E528`) | 264 | Gameplay > Entity Script · Command Queue, Animation | `func_8002A5B4`, `func_8002E2BC` | `func_8002E630` |
-| `func_8003B2D0` | 264 | Gameplay > Entity Script · Particles, Model Renderer | `func_80013AA0`, `func_800175A0`, `func_800181D4`, `func_8003AA94`, `func_8003B144` | - |
+| `gHandleParticleEmitterMsg` (`func_8003B2D0`) | 264 | Gameplay > Entity Script · Particles, Model Renderer | `func_80013AA0`, `func_800175A0`, `func_800181D4`, `func_8003AA94`, `func_8003B144` | - |
 | `gApplySphereOverlapHit` (`func_8005B5A0`) | 264 | Physics > Collision > Radius Tests · Combat | `func_80019FCC` | `func_8005B6A8` |
 | `gProcessCellCollisionPairs` (`func_800623FC`) | 264 | Physics > Pair Processing | `func_800620D8` | `func_80062614` |
-| `func_80062504` | 272 | Physics > Pair Processing | `func_800620D8` | `func_80062614` |
+| `gProcessAdjacentCellCollisionPairs` (`func_80062504`) | 272 | Physics > Pair Processing | `func_800620D8` | `func_80062614` |
 | `gIntegrateActor59List` (`func_80070048`) | 272 | Physics > Motion · Scene Graph | `func_8006FB7C` | `func_8003F4A0` |
 | `gApplyTriggerAttachmentContact` (`func_80031120`) | 280 | Gameplay > Entity Attach · Entity Update | `func_8004D958`, `func_80069D68` | `func_8003151C` |
 | `gInitRailMoverEntity` (`func_800378BC`) | 280 | Gameplay > Entity Update · Model Renderer | `func_80010234`, `func_80010750`, `func_8002AD58`, `func_80037EB4`, `func_80044988`, `func_80050E0C`, `func_80060668`, `func_8006314C` | `func_800382B4` |
@@ -3439,7 +3439,7 @@ graph LR
 | `gLoadMapZone` (`func_800319D4`) | 364 | Gameplay > Map > Zones · Asset Loader | `func_80017EBC`, `func_800181D4`, `func_80019668`, `func_80019C38`, `func_80067684` | - |
 | `gApplyEntityBaseDamage` (`func_8002AA1C`) | 368 | Gameplay > Damage · Health | `func_8003BA50`, `func_80069D68` | `func_8002AD58` |
 | `gHandleResupplyEntity` (`func_80030960`) | 372 | Gameplay > Entity Script · Model Renderer, Collision | `func_80017508`, `func_8002AD58`, `func_8002F8B8`, `func_800302E8`, `func_80030498`, `func_800306A0` | - |
-| `func_8003151C` | 372 | Gameplay > Entity Update · Entity Lifecycle, Collision | `func_8002AD58`, `func_8002F8B8`, `func_80030DE0`, `func_80031004`, `func_80031120`, `func_80031238`, `func_800313F0` | - |
+| `gDispatchTriggerAttachmentEntity` (`func_8003151C`) | 372 | Gameplay > Entity Update · Entity Lifecycle, Collision | `func_8002AD58`, `func_8002F8B8`, `func_80030DE0`, `func_80031004`, `func_80031120`, `func_80031238`, `func_800313F0` | - |
 | `gTestMapZoneTrigger` (`func_80031C74`) | 372 | Gameplay > Trigger Volume · Entity Update | `func_8004D958`, `func_80069D68` | `func_80031DE8` |
 | `gInitLinkedProjectile` (`func_80036940`) | 372 | Gameplay > Object Spawning · Model Renderer | `func_80013BD8`, `func_8002AD58` | `func_80036E6C` |
 | `gResolvePlayerContactHit` (`func_80052098`) | 372 | Physics > Collision · Damage, Entity Update | `func_80051EB8`, `func_80058378`, `func_80061CAC` | `func_8005220C` |
@@ -3449,7 +3449,7 @@ graph LR
 | `gHandleBeamSweepEffect` (`func_8005CA04`) | 380 | Gameplay > Entity Script · Damage, Collision | `func_8005C344` | - |
 | `gRetireEntitiesByOwnerAndKind` (`func_8003FB90`) | 384 | Gameplay > Object Spawning · Object Pool, Memory Management | `func_800181D4`, `func_8003CA80` | `func_8003FD10` |
 | `gHandlePlayerEntityMsg` (`func_8005908C`) | 384 | Gameplay > Player > Handler · Entity Script | `func_800181D4`, `func_8002AD58`, `func_800579D4`, `func_80058378`, `func_800584BC`, `func_800588D4`, `func_80058D78` | `func_80053188`, `func_800578B4` |
-| `func_8006411C` | 384 | Physics > Collision · Movement | `func_80063FF8`, `func_800640D8` | `func_8006429C` |
+| `gBuildFourCellVisibilityMask` (`func_8006411C`) | 384 | Physics > Collision · Movement | `func_80063FF8`, `func_800640D8` | `func_8006429C` |
 | `gHandleRotatingPropMsg` (`func_8003015C`) | 396 | Gameplay > Entity Script · Model Renderer | `func_80010234`, `func_80010750`, `func_800188D0`, `func_8002AD58`, `func_8002F8B8`, `func_8002FA20`, `func_8002FF6C`, `func_80030060` | - |
 | `gInitEntityGroundPair` (`func_80030AD4`) | 396 | Gameplay > Spawn Placement | `func_8002AD58`, `func_80067684` | `func_80030D3C` |
 | `gHandleLightObjectMsg` (`func_80040874`) | 396 | Gameplay > Entity Update · Entity Lifecycle, Scene Graph | `func_800181D4`, `func_800196C4`, `func_8001B148`, `func_8003C7B8`, `func_8003C980`, `func_8003D9F8`, `func_80040734`, `func_800498F0` | - |
@@ -3467,29 +3467,29 @@ graph LR
 | `gHandleProjectileMessage` (`func_80037708`) | 436 | Gameplay > Entity Update · Entity Lifecycle, Scene Graph | `func_80010234`, `func_80010750`, `func_8002AD58`, `func_80037064`, `func_800371FC`, `func_800410BC` | - |
 | `gTestEntityOverlap` (`func_80031238`) | 440 | Physics > Collision | `func_8001006C`, `func_80010820`, `func_80019470` | `func_8003151C` |
 | `gSpawnEntitySlotTypes` (`func_8003B898`) | 440 | Gameplay > Map > Occupancy · Object Setup | `func_8003B4E0`, `func_8003BF50`, `func_800402DC` | `func_8002A810`, `func_8002B1DC`, `func_8002ED7C`, `func_800324E0`, `func_80035B7C`, `func_800382B4` |
-| `func_80052550` | 440 | Physics > Motion · Player | `func_8001A180`, `func_8001AB00`, `func_8001AC28` | `func_80053A74`, `func_800549F0` |
+| `gApplyPlayerCollisionImpulse` (`func_80052550`) | 440 | Physics > Motion · Player | `func_8001A180`, `func_8001AB00`, `func_8001AC28` | `func_80053A74`, `func_800549F0` |
 | `gConsiderType26Target` (`func_8002BFB4`) | 448 | AI > Target Selection · Entity Update | `func_8002B1AC`, `func_8002B1DC` | `func_8002C3B0`, `func_8002C3F0` |
 | `gStepDebrisFlight` (`func_8004AFC0`) | 448 | Physics > Motion · Object Dynamics, Scene Graph | `func_8001006C`, `func_80010820`, `func_800188D0`, `func_8001ACA4`, `func_80066F78` | `func_8004C228` |
-| `func_80050B54` | 448 | Physics > Vertical Movement · Movement | `func_80067684` | `func_80050D14` |
+| `gStepPathMoverVerticalMotion` (`func_80050B54`) | 448 | Physics > Vertical Movement · Movement | `func_80067684` | `func_80050D14` |
 | `gRespawnPlayerEntity` (`func_80058714`) | 448 | Gameplay > Entity Update · Scene Graph, Animation | `func_80010234`, `func_80010750`, `func_80017668`, `func_80051AF8`, `func_8005A190`, `func_80069D68`, `func_8006BE90` | `func_800588D4` |
-| `func_8006429C` | 452 | Physics > Collision · Map | `func_80063FF8`, `func_800640D8`, `func_8006411C` | `func_80064460` |
-| `func_8004BEE8` | 472 | Physics > Motion · Object Dynamics | `func_8001ACA4`, `func_80066F78` | `func_8004C228` |
+| `gProbeMapCellVisibility` (`func_8006429C`) | 452 | Physics > Collision · Map | `func_80063FF8`, `func_800640D8`, `func_8006411C` | `func_80064460` |
+| `gStepFracturedMeshDebris` (`func_8004BEE8`) | 472 | Physics > Motion · Object Dynamics | `func_8001ACA4`, `func_80066F78` | `func_8004C228` |
 | `gSolveLeadDirection` (`func_8005E2A0`) | 476 | Gameplay > Combat > Targeting · Mathematics | `func_8001A180`, `func_8001A4E8` | `func_8005CBCC`, `func_8005F6E8`, `func_8006ACB0` |
 | `gInitFlightSegmentNode` (`func_8006EEF8`) | 496 | Gameplay > Path Following · Fixed Point | `func_8001A314` | `func_8006F0E8` |
 | `gPushFromPartBox` (`func_80051CC4`) | 500 | Physics > Movement · Navigation | `func_8001010C`, `func_80010820` | `func_80051EB8` |
 | `gHandleProjectileMsg` (`func_80036E6C`) | 504 | Gameplay > Entity Update · Entity Lifecycle, Scene Graph | `func_80010234`, `func_80010750`, `func_8001937C`, `func_800193F8`, `func_8001A750`, `func_8002AD58`, `func_80036940`, `func_80036AB4`, `func_80036BD4`, `func_8004D958` | - |
-| `func_80041E0C` | 504 | Gameplay > Object Spawning · Model Renderer | `func_800188D0`, `func_8002AD58`, `func_80066F78`, `func_80095900` | `func_80042330` |
+| `gInitPortraitScreenEntity` (`func_80041E0C`) | 504 | Gameplay > Object Spawning · Model Renderer | `func_800188D0`, `func_8002AD58`, `func_80066F78`, `func_80095900` | `func_80042330` |
 | `gStepParticleColor` (`func_800428FC`) | 504 | Physics > Motion · Particles | - | `func_800437E8`, `func_80043CA8` |
 | `gSpawnDomeMeshEffect` (`func_8006EB80`) | 504 | Gameplay > Object Spawning · Effects, Motion | `func_80017EBC`, `func_8003C14C` | `func_8003E984` |
 | `gHandleMountedTurretCarrierMessages` (`func_800395A8`) | 516 | Gameplay > Entity Update · Message Dispatch, Damage | `func_8002AD58`, `func_800382B4`, `func_80038A00`, `func_80039504`, `func_8003BA50` | `func_80039298` |
-| `func_8005220C` | 516 | Physics > Collision · Player | `func_80052098` | `func_80053A74`, `func_800549F0` |
+| `gCheckPlayerContactHits` (`func_8005220C`) | 516 | Physics > Collision · Player | `func_80052098` | `func_80053A74`, `func_800549F0` |
 | `gSampleTileHeight` (`func_80067480`) | 516 | Physics > Collision · Map | - | `func_80066F78`, `func_80067684` |
 | `gCheckResupplyPadProximity` (`func_80030498`) | 520 | Physics > Collision · Entity Script | `func_800448D8` | `func_80030960` |
-| `func_80039E8C` | 528 | Physics > Force Fields · Object Setup | `func_8002AD58`, `func_80050E0C`, `func_80067684` | `func_8003A844` |
+| `gInitForceFieldEntity` (`func_80039E8C`) | 528 | Physics > Force Fields · Object Setup | `func_8002AD58`, `func_80050E0C`, `func_80067684` | `func_8003A844` |
 | `gInitType11Entity` (`func_8002DC94`) | 532 | Gameplay > Object Spawning · Scene Graph, Animation | `func_80010234`, `func_80010750`, `func_8001846C`, `func_800192AC`, `func_8002AD58`, `func_80044988`, `func_80066F78`, `func_80067684` | `func_8002DEA8` |
 | `gSpawnJitterProjectile` (`func_8005EE04`) | 532 | Gameplay > Weapons > Spawning · Combat | `func_80019668`, `func_8001AB78`, `func_8004D444` | `func_8005F6E8`, `func_8006ACB0` |
 | `gCheckTargetRangeAndCone` (`func_8004E5F0`) | 540 | AI > Target Selection · Collision | `func_80095900` | `func_8004E80C`, `func_8004F330`, `func_80060238`, `func_8006C224`, `func_8006C3E0` |
-| `func_8006320C` | 540 | Physics > Spatial Queries | - | `func_80066F78` |
+| `gFindGroundObjectAtPosition` (`func_8006320C`) | 540 | Physics > Spatial Queries | - | `func_80066F78` |
 | `gInitTriggerAttachmentEntity` (`func_80030DE0`) | 548 | Gameplay > Entity Initialization · Object Setup | `func_8002AD58`, `func_80067684`, `func_80095900` | `func_8003151C` |
 | `gHandleCameraOverrideMsg` (`func_80039C58`) | 564 | Gameplay > Entity Script · Model Renderer | `func_80010234`, `func_80010750`, `func_8002AD58`, `func_80039BD0`, `func_80050D14`, `func_80050E0C` | - |
 | `gComputeLandingDamage` (`func_80052F54`) | 564 | Gameplay > Combat · Difficulty | `func_80095900` | `func_80053A74`, `func_800549F0` |
@@ -3501,7 +3501,7 @@ graph LR
 | `gTrySpawnRegisteredUnit` (`func_8006125C`) | 608 | Gameplay > Statistics | `func_8004D4F8`, `func_80069D68` | - |
 | `gSweepCollisionGridPairs` (`func_80062614`) | 608 | Physics > Collision > Broadphase Grid Pairs · Frame | `func_800623FC`, `func_80062504` | `func_80062FB4` |
 | `gWeaponEffectUpdate` (`func_8005D690`) | 612 | Gameplay > Weapons · Effects, Object Pool | `func_8005D3FC` | `func_8005F6E8`, `func_8006ACB0` |
-| `func_8002E2BC` | 620 | Gameplay > Entity Update · Animation | `func_80019668`, `func_800448D8` | `func_8002E528`, `func_8002E630` |
+| `gSetActorMode` (`func_8002E2BC`) | 620 | Gameplay > Entity Update · Animation | `func_80019668`, `func_800448D8` | `func_8002E528`, `func_8002E630` |
 | `gInitRotatingProp` (`func_8002FA20`) | 624 | Gameplay > Object Spawning · Object Setup, Ground Query | `func_800188D0`, `func_8002AD58`, `func_80067684` | `func_8003015C` |
 | `gProjectileInit` (`func_80035904`) | 632 | Gameplay > Entity Script · Instance Setup, Entity Lifecycle | `func_80013BD8`, `func_800193F8`, `func_80019668`, `func_8002AD58`, `func_80044988` | `func_80036624` |
 | `gCreateKind59Actor` (`func_8007043C`) | 648 | Gameplay > Object Spawning > Constructor · Object Setup | `func_80017EBC`, `func_800188D0`, `func_80019668`, `func_8003C14C` | `func_8003E984` |
@@ -3530,7 +3530,7 @@ graph LR
 | `gUpdatePlayerEntity` (`func_800588D4`) | 872 | Gameplay > Entity Update · Damage, Model Renderer, Entity Script | `func_80010234`, `func_80010750`, `func_800402DC`, `func_80046C84`, `func_80055E10`, `func_800569EC`, `func_800576A8`, `func_80057E40`, `func_80058378`, `func_800584BC`, `func_800585B8`, `func_800586D4`, `func_80058714`, `func_8005A190`, `func_80066F78`, `func_8006C34C`, `func_8006C3E0` | `func_8005908C` |
 | `gRunSoloSessionFrame` (`func_800271A4`) | 876 | Gameplay > Frame Update · Actions, Text | - | - |
 | `gUpdateStrategicDrone` (`func_8003532C`) | 876 | Gameplay > AI > Drone Attachment · Entity Update, Entity Lifecycle | `func_80019668`, `func_800324E0`, `func_80033608`, `func_800336DC`, `func_80035184`, `func_8003526C`, `func_8004D958`, `func_80060238` | `func_800357C0` |
-| `func_80037B28` | 908 | Physics > Motion · Target Selection, Entity Update | `func_8001A100`, `func_8001AB00` | `func_8002C3F0`, `func_800382B4` |
+| `gUpdateChaseApproachSpeed` (`func_80037B28`) | 908 | Physics > Motion · Target Selection, Entity Update | `func_8001A100`, `func_8001AB00` | `func_8002C3F0`, `func_800382B4` |
 | `gApplyPlayerSurfaceEffect` (`func_80053188`) | 908 | Gameplay > Player > Control · Ground Query | `func_8005908C` | `func_80053A74`, `func_800549F0` |
 | `gHandleTargetDamageEffect` (`func_8005B934`) | 928 | Gameplay > Combat · Collision, Effects | `func_8001A180`, `func_8001AB00`, `func_8005B6A8`, `func_80095900` | - |
 | `gCullActiveEntitiesSplit` (`func_8004E248`) | 936 | Gameplay > Entity Update · Sound, Frame | `func_80045678`, `func_8004572C`, `func_800457B8`, `func_8004DEE0` | `func_80027510` |
@@ -4623,75 +4623,75 @@ graph LR
 | `gCdIrqCallback` (`func_8008FE28`) | 216 | Platform > Event Dispatch | `func_8008E7A0` | - |
 | `gInitIrqSubsystem` (`func_80091614`) | 216 | Platform > Initialization | `func_8008C9B0`, `func_800916EC`, `func_80091B48`, `func_80091B80`, `func_80091B90`, `func_80091BA0`, `func_80091CC0` | - |
 | `gDrawOTagEnv` (`func_800933B0`) | 216 | Platform > GPU · 2D Drawing | `func_8008CD10`, `func_80093CE8` | - |
-| `func_800453B8` | 220 | Platform > Audio | `func_80044EF8`, `func_8004582C`, `func_80046AD8` | `func_80044F8C` |
+| `gInitSoundPools` (`func_800453B8`) | 220 | Platform > Audio | `func_80044EF8`, `func_8004582C`, `func_80046AD8` | `func_80044F8C` |
 | `gMcErrorCallbackB` (`func_8001FF44`) | 224 | Platform > State | `func_8008D640` | - |
-| `func_8009415C` | 224 | Platform > DMA | `func_800951D8`, `func_8009520C` | - |
+| `gClearOrderingTableReverseDma` (`func_8009415C`) | 224 | Platform > DMA | `func_800951D8`, `func_8009520C` | - |
 | `gReadFileSlot` (`func_8001DB60`) | 232 | Platform > State | `func_8001D90C` | `func_80028AB4` |
 | `gSpuInitSubsystem` (`func_80096D58`) | 232 | Platform > Sound > Init · SPU | `func_80091480`, `func_80096E40`, `func_80096EB8`, `func_800977C4` | `func_80097A28` |
 | `gOpenFileInSearchGroup` (`func_8001D5E4`) | 236 | Platform > CD-ROM · File Access | `func_8001CE10`, `func_8001D424` | `func_8001E110`, `func_80029F50` |
 | `gPlaySpatialSoundBankSlot` (`func_80046F9C`) | 236 | Platform > Sound > SE · Voice Allocation | - | `func_80046C84`, `func_80046CF0`, `func_80047284` |
 | `gStartCdDmaAsync` (`func_8008FD30`) | 236 | Platform > Hardware Transfer | - | `func_8008E5B8` |
-| `func_800953F0` | 236 | Platform > GPU · Debug Validation | `func_80091270`, `func_800914E0`, `func_80092CF4`, `func_8009520C` | `func_800824CC` |
-| `func_800954DC` | 236 | Platform > GPU · Debug Validation | `func_80091270`, `func_800914E0`, `func_80092CF4`, `func_8009520C` | - |
+| `gLoadImage2` (`func_800953F0`) | 236 | Platform > GPU · Debug Validation | `func_80091270`, `func_800914E0`, `func_80092CF4`, `func_8009520C` | `func_800824CC` |
+| `gStoreImageBlocking` (`func_800954DC`) | 236 | Platform > GPU · Debug Validation | `func_80091270`, `func_800914E0`, `func_80092CF4`, `func_8009520C` | - |
 | `gStartCdDirRead` (`func_8001C718`) | 240 | Platform > Memory Card · File Access | `func_8001C494`, `func_8008CC80`, `func_8008E174`, `func_8008E194`, `func_8008E1BC`, `func_8008E2F8` | `func_8001C808` |
 | `gToggleVibrationPair` (`func_8007C940`) | 240 | Platform > Controller Input | `func_8001E96C`, `func_8001EAEC`, `func_8001EB2C`, `func_8001EC04`, `func_8001EF34`, `func_80046C84` | - |
 | `gCdStreamService` (`func_800895E4`) | 240 | Platform > Device Service · Audio | `func_8008C9E0`, `func_8008E154`, `func_8008E194`, `func_8008E1A8`, `func_8008E42C` | `func_80089700` |
 | `gInitCdAudioMix` (`func_8008F7AC`) | 240 | Platform > Hardware Registers | - | `func_8008DF30`, `func_8008E04C` |
-| `func_80096150` | 240 | Platform > MDEC · Video Decode | `func_8008E000`, `func_80096240` | `func_80095E90` |
+| `gResetMdecHardware` (`func_80096150`) | 240 | Platform > MDEC · Video Decode | `func_8008E000`, `func_80096240` | `func_80095E90` |
 | `gByteOffsetToCdlLoc` (`func_8001C494`) | 244 | Platform > CD-ROM | - | `func_8001C718`, `func_8001CE54`, `func_8001D0A0` |
 | `gQueueCardFileWrite` (`func_80020FDC`) | 244 | Platform > Memory Card · Save Data | `func_8001F24C`, `func_8001F2E0`, `func_8001F37C`, `func_80020C90`, `func_80020E68`, `func_80020F34`, `func_8008CD30` | `func_80080B70` |
 | `gMovieAudioSetVoiceAttrs` (`func_80086C74`) | 256 | Platform > Audio | `func_800452C8`, `func_80098FE8`, `func_80099368` | `func_80087824` |
 | `gReadCdDmaSync` (`func_8008FC30`) | 256 | Platform > Hardware Transfer | - | `func_8008E598` |
 | `gMcErrorCallbackA` (`func_8001FE40`) | 260 | Platform > State Management | `func_8008D640` | - |
-| `func_8008684C` | 260 | Platform > Audio Transfer | `func_80098E88`, `func_80098EE8`, `func_80098F48` | `func_80086954` |
+| `gUploadMovieAudioBlock` (`func_8008684C`) | 260 | Platform > Audio Transfer | `func_80098E88`, `func_80098EE8`, `func_80098F48` | `func_80086954` |
 | `gCdIntToPos` (`func_8008E61C`) | 260 | Platform > CD-ROM · Time Conversion | - | `func_800889DC`, `func_80090580`, `func_8009081C` |
 | `gCdReadSync` (`func_8009113C`) | 260 | Platform > Device Polling | `func_8008E174`, `func_80090C18`, `func_80091270` | `func_8009081C` |
 | `gReadFileSlotBlocking` (`func_8001E004`) | 268 | Platform > CD-ROM · File Access | `func_8001D3A8`, `func_8001D90C` | `func_8001E110` |
 | `gPlaySoundIdOnVoice` (`func_80046E88`) | 276 | Platform > Sound > Voices | `func_80045494`, `func_800458E8`, `func_800460D4`, `func_80046698`, `func_80046B04`, `func_8004772C` | `func_80025E18`, `func_80047088`, `func_800471C4`, `func_8007CACC` |
 | `gProbeCdDriveMode` (`func_8001D130`) | 280 | Platform > Device Service | `func_8008DEA0`, `func_8008E1A8`, `func_8008E1BC`, `func_800914B0` | `func_8001D248` |
 | `gMcCardEventDone` (`func_8001FD28`) | 280 | Platform > State Management | `func_8008D640`, `func_8008D690` | - |
-| `func_80088770` | 284 | Platform > Device Command Queue | `func_8008C9E0`, `func_8008E1BC` | - |
+| `gQueueMovieCdControl` (`func_80088770`) | 284 | Platform > Device Command Queue | `func_8008C9E0`, `func_8008E1BC` | - |
 | `gPrepareCardFormat` (`func_80020B64`) | 300 | Platform > Memory Card · Save Data | `func_8001F180`, `func_80020B28` | `func_8008204C` |
 | `gInitRuntime` (`func_80076EB0`) | 304 | Platform > System Init · Boot, Resources, Graphics | `func_80017BE8`, `func_8001BF78`, `func_8001BFE4`, `func_8001C040`, `func_8001C088`, `func_8001D248`, `func_8001E240`, `func_8001E4E4`, `func_8001F0B8`, `func_8002333C`, `func_8008CA30`, `func_8008DEA0` | `func_80076A2C` |
 | `gCdControlF` (`func_8008E2F8`) | 308 | Platform > File Service | `func_8008F244` | `func_8001C680`, `func_8001C718`, `func_8008888C`, `func_800908D4`, `func_80090B48`, `func_80090C18`, `func_80090E00` |
 | `gApplyAnimationSoundEvent` (`func_80047088`) | 316 | Platform > Audio · Music | `func_800243F8`, `func_80046C84`, `func_80046E88` | `func_80047554`, `func_800549F0` |
 | `gSoundHaltAllVoices` (`func_80047554`) | 316 | Platform > Sound > Shutdown · Voices, SPU | `func_80021B90`, `func_80021BD0`, `func_80023E84`, `func_80024630`, `func_80046698`, `func_80047088`, `func_800474F0` | `func_80047690`, `func_800476D0` |
 | `gCdControl` (`func_8008E1BC`) | 316 | Platform > CD-ROM | `func_8008F244` | `func_8001C680`, `func_8001C718`, `func_8001C808`, `func_8001CE54`, `func_8001D0A0`, `func_8001D130`, `func_800886E4`, `func_80088770`, `func_8009081C`, `func_80090C18` |
-| `func_8009509C` | 316 | Platform > Hardware Synchronization | `func_80094CEC`, `func_800951D8`, `func_8009520C` | - |
+| `gSyncGpuDmaQueue` (`func_8009509C`) | 316 | Platform > Hardware Synchronization | `func_80094CEC`, `func_800951D8`, `func_8009520C` | - |
 | `gSpuSetIrqEnable` (`func_80098A78`) | 316 | Platform > SPU Transfer | `func_8008E000` | `func_80022F44`, `func_80022F7C`, `func_80022FA8`, `func_80087750` |
 | `gUpdateOptionsPreviewVoice` (`func_80025E18`) | 320 | Platform > Sound > Voices · Options Menu | `func_80046A34`, `func_80046A58`, `func_80046E88`, `func_80047800` | `func_800260B8` |
-| `func_8009520C` | 324 | Platform > CD-ROM > Streaming · Error Handling | `func_8008E000`, `func_80091270`, `func_800915FC` | `func_8009415C`, `func_8009446C`, `func_800946A8`, `func_80094A3C`, `func_8009509C`, `func_800953F0`, `func_800954DC`, `func_800955C8`, `func_8009570C` |
-| `func_800955C8` | 324 | Platform > GPU · Debug Validation | `func_80091270`, `func_800914E0`, `func_80092CF4`, `func_8009520C` | - |
+| `gCheckGpuDmaTimeout` (`func_8009520C`) | 324 | Platform > CD-ROM > Streaming · Error Handling | `func_8008E000`, `func_80091270`, `func_800915FC` | `func_8009415C`, `func_8009446C`, `func_800946A8`, `func_80094A3C`, `func_8009509C`, `func_800953F0`, `func_800954DC`, `func_800955C8`, `func_8009570C` |
+| `gMoveImageBlocking` (`func_800955C8`) | 324 | Platform > GPU · Debug Validation | `func_80091270`, `func_800914E0`, `func_80092CF4`, `func_8009520C` | - |
 | `gSetIrqSlotEnable` (`func_800918BC`) | 328 | Platform > Hardware Control | `func_8008CA20`, `func_8008D7B0` | - |
 | `gCdControlB` (`func_8008E42C`) | 332 | Platform > CD-ROM | `func_8008ECFC`, `func_8008F244` | `func_800895E4`, `func_80090FA0` |
 | `gMcRetryTimeoutA` (`func_8001F818`) | 336 | Platform > Asynchronous Operations | `func_8008D640`, `func_8008D670`, `func_8008D680` | - |
 | `gMcRetryTimeoutB` (`func_8001F968`) | 336 | Platform > Asynchronous Operations | `func_8008D640`, `func_8008D670`, `func_8008D680` | - |
-| `func_80094F4C` | 336 | Platform > Hardware Init | `func_800915FC`, `func_80095350`, `func_80095830` | `func_80092910` |
+| `gResetGpuHardware` (`func_80094F4C`) | 336 | Platform > Hardware Init | `func_800915FC`, `func_80095350`, `func_80095830` | `func_80092910` |
 | `gMovieAudioStart` (`func_80086DB4`) | 340 | Platform > Audio | - | `func_800879DC` |
 | `gInitCdFileSystem` (`func_8001D248`) | 352 | Platform > CD-ROM · Device Init | `func_8001D130` | `func_8001CE10`, `func_80076EB0` |
 | `gTranslatePadButtons` (`func_800576A8`) | 356 | Platform > Controller Input · Remapping | - | `func_800267C8`, `func_800588D4` |
 | `gWaitCdDmaComplete` (`func_8008FAC8`) | 360 | Platform > Device Wait · Memory Card | `func_8008E000`, `func_8008F6D8`, `func_8008FF08`, `func_80091270` | `func_8008E5FC` |
 | `gReleaseSoundVoice` (`func_80046698`) | 364 | Platform > Sound > Voices · Memory Pools | `func_800243F8`, `func_80046804` | `func_800457B8`, `func_80046A34`, `func_80046B04`, `func_80046E88`, `func_80047554` |
-| `func_80092910` | 372 | Platform > GPU > Library Reset · Display Setup | `func_8008E000`, `func_80091480`, `func_80094F4C`, `func_80095830` | `func_8001BE68`, `func_800773D8`, `func_8007757C` |
+| `gResetGraph` (`func_80092910`) | 372 | Platform > GPU > Library Reset · Display Setup | `func_8008E000`, `func_80091480`, `func_80094F4C`, `func_80095830` | `func_8001BE68`, `func_800773D8`, `func_8007757C` |
 | `gInitMovieAudio` (`func_80087824`) | 376 | Platform > Sound > Init · SPU | `func_80086C74`, `func_8008C9E0`, `func_80091510`, `func_80098BF8`, `func_80098FB8` | - |
 | `gAllocPrioritySoundVoice` (`func_80046B04`) | 384 | Platform > Audio · Resource Pools | `func_8004665C`, `func_80046698`, `func_80046870` | `func_800228F4`, `func_80046A58`, `func_80046AD8`, `func_80046E88` |
-| `func_80091D0C` | 384 | Platform > DMA Interrupts | `func_8008E000` | - |
+| `gDispatchDmaInterrupts` (`func_80091D0C`) | 384 | Platform > DMA Interrupts | `func_8008E000` | - |
 | `gRefreshPlayerWeaponSound` (`func_80046CF0`) | 408 | Platform > Sound > SE · Weapons | `func_80045494`, `func_80046F9C` | `func_8006B23C`, `func_8006C488` |
 | `gCdReadAsync` (`func_80090FA0`) | 412 | Platform > CD-ROM · File Access | `func_8008E010`, `func_8008E194`, `func_8008E1A8`, `func_8008E42C`, `func_8008E5D8`, `func_80090C18`, `func_80091270` | `func_8009081C` |
 | `gAbortCdRead` (`func_80090E00`) | 416 | Platform > CD-ROM · Interrupts | `func_8008E194`, `func_8008E1A8`, `func_8008E2F8`, `func_8008E5D8`, `func_8008E5FC`, `func_80091270` | - |
-| `func_800538C8` | 428 | Platform > Controller Input · Analog | `func_8001E7B8` | `func_80053A74`, `func_800549F0` |
-| `func_80098C68` | 444 | Platform > Device Control | - | `func_80021E1C` |
+| `gReadAnalogMovementDirections` (`func_800538C8`) | 428 | Platform > Controller Input · Analog | `func_8001E7B8` | `func_80053A74`, `func_800549F0` |
+| `gSpuSetVoiceKey` (`func_80098C68`) | 444 | Platform > Device Control | - | `func_80021E1C` |
 | `gOpenCdFileSlot` (`func_8001D424`) | 448 | Platform > CD-ROM · File Access | `func_8001C478`, `func_8001C588`, `func_8001CE10`, `func_8001DC48`, `func_8008FF20` | `func_8001D5E4`, `func_8001E110` |
 | `gSpuWriteMemBlock` (`func_80097138`) | 448 | Platform > SPU · Sound | `func_8008E000`, `func_80097990` | `func_80096EB8`, `func_800976DC` |
 | `gReleaseMcEvents` (`func_8002036C`) | 452 | Platform > Device Service · Resource Release | `func_8008C970`, `func_8008C990`, `func_8008C9E0` | `func_8002078C` |
 | `gDispatchIrqs` (`func_800916EC`) | 464 | Platform > Interrupt Dispatch | `func_8008E000`, `func_80091B60` | `func_80091614` |
 | `gExchangeSio0Byte` (`func_8008A9A8`) | 472 | Platform > Serial I/O | `func_8008C8B0` | `func_8008B7D0`, `func_8008BA34` |
-| `func_80083834` | 476 | Platform > Sound > Sequencing · Frame | - | `func_80083A10` |
+| `gReclaimStaleSceneNodes` (`func_80083834`) | 476 | Platform > Sound > Sequencing · Frame | - | `func_80083A10` |
 | `gInitCdSubsystem` (`func_8008F8E8`) | 480 | Platform > CD-ROM · Interrupts | `func_8008E000`, `func_8008ECFC`, `func_8008F244`, `func_8008FF08`, `func_80091480`, `func_800914B0` | `func_8008DF30`, `func_8008E04C` |
 | `gStartCdSectorRead` (`func_80090C18`) | 488 | Platform > CD-ROM · File Access | `func_8008E010`, `func_8008E020`, `func_8008E040`, `func_8008E0B8`, `func_8008E194`, `func_8008E1A8`, `func_8008E1BC`, `func_8008E2F8`, `func_8008E5D8`, `func_8008E720`, `func_8008FF08`, `func_80091270` | `func_800908D4`, `func_80090FA0`, `func_8009113C` |
 | `gComputeSpatialSoundPan` (`func_800460D4`) | 508 | Platform > Sound · Vector | `func_8001A578` | `func_800450A4`, `func_80046E88` |
 | `gBeginPadSioTransfer` (`func_8008A6CC`) | 532 | Platform > Serial I/O | `func_8008AE44`, `func_8008C890` | `func_8008A43C`, `func_8008BF78` |
-| `func_80029F50` | 540 | Platform > CD-ROM > Streaming · Init | `func_80017EBC`, `func_800194DC`, `func_8001D5E4` | `func_80024904`, `func_80024A24` |
+| `gInitModuleStream` (`func_80029F50`) | 540 | Platform > CD-ROM > Streaming · Init | `func_80017EBC`, `func_800194DC`, `func_8001D5E4` | `func_80024904`, `func_80024A24` |
 | `gTransferSio0Byte` (`func_8008AB80`) | 564 | Platform > Controller Input · Timer, Controller | `func_8008C890`, `func_8008C8B0` | `func_8008B810`, `func_8008B8E8`, `func_8008B9A8`, `func_8008BA34` |
 | `gStartCdFileRead` (`func_8001CE54`) | 588 | Platform > Memory Card > File Operations · File Access | `func_8001C3F8`, `func_8001C478`, `func_8001C494`, `func_8001CC6C`, `func_8008C9E0`, `func_8008E174`, `func_8008E194`, `func_8008E1BC` | `func_8001D90C` |
 | `gAcquireMcEvents` (`func_80020120`) | 588 | Platform > Memory Card · Events | `func_8008C960`, `func_8008C980`, `func_8008C9E0` | `func_800206D0` |
@@ -4705,20 +4705,20 @@ graph LR
 | `gSpuResetHardware` (`func_80096EB8`) | 640 | Platform > Sound · SPU | `func_8008E000`, `func_80097138`, `func_80097990` | `func_80096D58` |
 | `gSpuTransfer` (`func_8009745C`) | 640 | Platform > SPU Transfer | - | `func_800976DC`, `func_80097760` |
 | `gCacheCdDirSector` (`func_80090580`) | 668 | Platform > CD-ROM · File Access | `func_8008CD10`, `func_8008E000`, `func_8008E61C`, `func_8009081C` | `func_8008FF20` |
-| `func_80094A3C` | 688 | Platform > GPU · Command Queue | `func_800914E0`, `func_800915FC`, `func_80094CEC`, `func_800951D8`, `func_8009520C` | `func_80094A18` |
-| `func_800987B8` | 700 | Platform > Register State | - | `func_80098788` |
+| `gSubmitGpuDmaJob` (`func_80094A3C`) | 688 | Platform > GPU · Command Queue | `func_800914E0`, `func_800915FC`, `func_80094CEC`, `func_800951D8`, `func_8009520C` | `func_80094A18` |
+| `gSpuAccessVoiceMaskRegs` (`func_800987B8`) | 700 | Platform > Register State | - | `func_80098788` |
 | `gCdReadPathTable` (`func_80090218`) | 708 | Platform > CD-ROM · File Access | `func_8008CD10`, `func_8008E000`, `func_8009081C`, `func_80090890` | `func_8008FF20` |
 | `gCdReadyLoop` (`func_8008EF7C`) | 712 | Platform > CD-ROM > Control | `func_8008E000`, `func_8008E7A0`, `func_8008F6D8`, `func_8008FF08`, `func_80091270`, `func_800915D4` | `func_8008E174` |
 | `gParseCardDirectory` (`func_800207CC`) | 720 | Platform > Memory Card · Save Data | `func_8001E318` | `func_80020C90`, `func_80020DF8`, `func_80020E68` |
 | `gCdSearchFile` (`func_8008FF20`) | 728 | Platform > CD-ROM · File Access | `func_8008E000`, `func_800901F8`, `func_80090218`, `func_800904DC`, `func_80090580` | `func_8001D424` |
-| `func_80089018` | 748 | Platform > Buffered Transfers | - | `func_80089304` |
+| `gPumpMovieStream` (`func_80089018`) | 748 | Platform > Buffered Transfers | - | `func_80089304` |
 | `gHandleMusicPreviewMenu` (`func_8007CACC`) | 824 | Platform > Sound > Music · Menu Navigation | `func_800451F8`, `func_8004522C`, `func_80045238`, `func_80045288`, `func_80045294`, `func_800452C8`, `func_80046A34`, `func_80046A58`, `func_80046E88`, `func_80047800` | - |
 | `gRunPadTransfer` (`func_8008BA34`) | 892 | Platform > Device I/O | `func_8008A9A8`, `func_8008AB80`, `func_8008ADB4`, `func_8008AE44`, `func_8008C890` | - |
 | `gSpuSetCommonAttributes` (`func_80098FE8`) | 892 | Platform > SPU · Sound | - | `func_80021824`, `func_80086C74` |
 | `gMcTransferCallback` (`func_8001F394`) | 1008 | Platform > Block Transfer | `func_8001E318`, `func_8008D640`, `func_8008D670`, `func_8008D680` | - |
 | `gIssueCdCommand` (`func_8008F244`) | 1036 | Platform > CD-ROM | `func_8008E000`, `func_8008E7A0`, `func_8008ECFC`, `func_8008F6D8`, `func_8008FF08`, `func_80091270`, `func_800915D4` | `func_8008E1BC`, `func_8008E2F8`, `func_8008E42C`, `func_8008F8E8` |
 | `gCdSectorCallback` (`func_8001C808`) | 1124 | Platform > CD-ROM · File Access | `func_8001C288`, `func_8001C588`, `func_8001C680`, `func_8001C718`, `func_8008CD10`, `func_8008DEA0`, `func_8008E0D8`, `func_8008E1A8`, `func_8008E1BC`, `func_8008E598`, `func_800914B0` | - |
-| `func_800889DC` | 1316 | Platform > Disc Location | `func_8008E61C`, `func_8008E720` | - |
+| `gOffsetCdLocationBySectors` (`func_800889DC`) | 1316 | Platform > Disc Location | `func_8008E61C`, `func_8008E720` | - |
 | `gCdDrainIrqEvent` (`func_8008E7A0`) | 1372 | Platform > CD-ROM · Interrupts | `func_8008E000`, `func_8008FF08` | `func_8008ECFC`, `func_8008EF7C`, `func_8008F244`, `func_8008FE28` |
 | `gSpuSetVoiceAttributesOne` (`func_80099C58`) | 1488 | Platform > SPU Audio | `func_80097808`, `func_800999F4` | `func_80021AD0`, `func_800222CC` |
 | `gSpuSetVoiceAttributes` (`func_80099368`) | 1528 | Platform > Audio | `func_80097808`, `func_800999F4` | `func_80021B90`, `func_80021BD0`, `func_80086C74` |
@@ -4872,12 +4872,12 @@ graph LR
 | `gScaleDefinitionSubrecordFields` (`func_800607B8`) | 128 | Utilities > Numeric Conversion | - | `func_80060838`, `func_8006A898` |
 | `gNextLcgRand` (`func_80019720`) | 136 | Utilities > Random Numbers | - | `func_800197A8` |
 | `gApproximateLength2` (`func_8001A074`) | 140 | Utilities > Mathematics > Vector Length · Culling | - | `func_8001A100`, `func_8001A13C`, `func_800458E8`, `func_80053730` |
-| `func_80099968` | 140 | Utilities > Fixed-point Arithmetic | - | - |
+| `gScaleSpuPitch` (`func_80099968`) | 140 | Utilities > Fixed-point Arithmetic | - | - |
 | `gApproximateDistance3` (`func_8001A4E8`) | 144 | Utilities > Mathematics > Vector | - | `func_8002AB8C`, `func_80035B7C`, `func_80036AB4`, `func_8005B3D4`, `func_8005E2A0` |
 | `func_80095900` | 148 | Utilities > Mathematics > Reciprocal · Geometry | - | `func_8001A314`, `func_8001A7AC`, `func_80030DE0`, `func_800336DC`, `func_80036624`, `func_80041E0C`, `func_8004E5F0`, `func_800518A8`, `func_80052F54`, `func_800549F0`, `func_8005B934`, `func_8005C344`, `func_8005E624` |
 | `gVerifyDualChecksum` (`func_8007F824`) | 152 | Utilities > Data Validation | `func_8007F688` | `func_8007F750` |
 | `gDivSigned64` (`func_800966B0`) | 152 | Utilities > Integer Arithmetic | `func_80096748` | - |
-| `func_80092868` | 160 | Utilities > Diagnostics | - | - |
+| `gPrintDisplayEnvironment` (`func_80092868`) | 160 | Utilities > Diagnostics | - | - |
 | `gAllocHeapBlock` (`func_8008CA90`) | 176 | Utilities > Memory Allocation | - | `func_8001E240` |
 | `gInitReciprocalTable` (`func_80019828`) | 180 | Utilities > Mathematics > Tables · Init | `func_80017EBC`, `func_800187C8`, `func_80018818`, `func_800197A8`, `func_80095C14` | `func_80024904`, `func_80024A24` |
 | `gScaleVector3ToBit15` (`func_8001A644`) | 180 | Utilities > Mathematics > Vector | `func_80019F54`, `func_80095C14` | `func_800324E0` |
@@ -4886,16 +4886,16 @@ graph LR
 | `gSampleHeightGridBilinear` (`func_80069A38`) | 228 | Utilities > Fixed Point · Heightfield Sampling | - | `func_800324E0`, `func_80035B7C` |
 | `gCrossProductQ16` (`func_8001AD20`) | 244 | Utilities > Fixed-point Math | - | `func_80053A74` |
 | `gMultiplyMatrixVectorWithPreshift` (`func_8001AE14`) | 244 | Utilities > Mathematics > Geometry · Matrix Math | - | `func_80013F08` |
-| `func_80092764` | 260 | Utilities > Diagnostics | - | - |
+| `gPrintDrawEnvironment` (`func_80092764`) | 260 | Utilities > Diagnostics | - | - |
 | `gExpand15To16Padded` (`func_8008731C`) | 276 | Utilities > Data Conversion | - | `func_80087430` |
-| `func_80099B2C` | 296 | Utilities > Numeric Conversion | - | - |
+| `gConvertSpuPitchToNote` (`func_80099B2C`) | 296 | Utilities > Numeric Conversion | - | - |
 | `gCopyMemory` (`func_8001E318`) | 308 | Utilities > Memory | - | `func_80017EBC`, `func_800181D4`, `func_8001F394`, `func_8001FAB8`, `func_800207CC`, `func_80020F34`, `func_8005A070`, `func_8005A09C`, `func_80080B70` |
 | `gConvertSpuNoteToPitch` (`func_800999F4`) | 312 | Utilities > Fixed-point Math | - | `func_80099368`, `func_80099C58` |
 | `gFreeHeapBlock` (`func_8008CB40`) | 316 | Utilities > Memory | - | `func_8001E2C0` |
 | `gMulMatrixVector` (`func_8001A81C`) | 340 | Utilities > Mathematics · Geometry | - | `func_80013C80`, `func_800177AC`, `func_80018860`, `func_80074104`, `func_80075A84` |
 | `gIncrementBcdLoc` (`func_8001C288`) | 368 | Utilities > BCD Arithmetic | - | `func_8001C808` |
 | `gAtan2` (`func_80095C30`) | 372 | Utilities > Mathematics > Trigonometry | - | `func_8002AD58`, `func_8002B6C8`, `func_8002CC30`, `func_8002E630`, `func_80038A00`, `func_8004F764`, `func_8005027C`, `func_80050E0C`, `func_80057E40`, `func_800592D0`, `func_8005A934`, `func_8005E624` |
-| `func_800403D0` | 384 | Utilities > Fixed-point Math | - | - |
+| `gInitObjectLightColorSteps` (`func_800403D0`) | 384 | Utilities > Fixed-point Math | - | - |
 | `gTransformPointQ16` (`func_8001A970`) | 400 | Utilities > Fixed-point Math | - | `func_80061CAC` |
 | `gNormalizeVector` (`func_8001A180`) | 404 | Utilities > Mathematics · Geometry | `func_80019904`, `func_80095C14` | `func_800192AC`, `func_80019310`, `func_8001937C`, `func_800193F8`, `func_8002C174`, `func_800324E0`, `func_80035B7C`, `func_80036BD4`, `func_80037064`, `func_800371FC`, `func_8004B310`, `func_80052550`, `func_800549F0`, `func_8005B934`, `func_8005C344`, `func_8005CBCC`, `func_8005E2A0`, `func_8005F6E8`, `func_80066F78`, `func_8006ACB0` |
 | `gPackInputRecord` (`func_8007E8D8`) | 416 | Utilities > Data Packing | - | `func_8007F02C` |

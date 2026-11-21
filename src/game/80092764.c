@@ -19,6 +19,8 @@ struct S {
 
 #define FN() __asm__ volatile("lui %0, %%hi(D_8009DDEC)\n\tlw %0, %%lo(D_8009DDEC)(%0)" : "=r"(f))
 #define HI(name, var) __asm__ volatile("lui %0, %%hi(" #name ")" : "=r"(var))
+void gPrintDrawEnvironment(struct S *p) __asm__("func_80092764");
+
 
 /**
  *  @brief Prints the fields of a structure through a configured callback.
@@ -38,7 +40,7 @@ struct S {
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80092764(struct S *p)
+void gPrintDrawEnvironment(struct S *p)
 {
     register s32 k __asm__("$3");
     s32 a, b, c, d;

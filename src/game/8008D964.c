@@ -4,8 +4,8 @@
 extern s32 gIrqNode __asm__("D_800A3E00");
 extern s32 gIrqNodeHandler[] __asm__("D_800A3E04");
 extern s32 gIrqNodeLinkEnd __asm__("D_800A3E0C");
-extern u8 D_8008DA14[];
-extern u8 D_8008DA7C[];
+extern u8 gSio0IrqChainClearCallback[] __asm__("D_8008DA14");
+extern u8 gIrqBit0PersistentCheckCallback[] __asm__("D_8008DA7C");
 
 extern void gEnterCriticalSection(void) __asm__("func_8008C9A0");
 extern void gExitCriticalSection(void) __asm__("func_8008C9B0");
@@ -56,8 +56,8 @@ s32 gInstallPriority1Irq(void)
     p = gIrqNodeHandler;
     __asm__ volatile("" : "=r"(p) : "0"(p), "r"(one));
     q = p - 1;
-    p[0] = (s32) D_8008DA14;
-    p[1] = (s32) D_8008DA7C;
+    p[0] = (s32) gSio0IrqChainClearCallback;
+    p[1] = (s32) gIrqBit0PersistentCheckCallback;
     gIrqNode = 0;
     gIrqNodeLinkEnd = 0;
 

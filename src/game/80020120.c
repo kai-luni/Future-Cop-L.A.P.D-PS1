@@ -9,8 +9,14 @@ typedef struct {
     s32 h0, h1, h2, h3, h4, h5, h6, h7;
 } State;
 extern State *gOperationState __asm__("D_8009AB08");
-extern u8 D_8001FAB8[], D_8001FF44[], D_8001FE40[], D_8001FD28[];
-extern u8 D_8001F394[], D_8001F968[], D_8001F818[], D_8001F784[];
+extern u8 gMemoryCardRequestDispatchCallback[] __asm__("D_8001FAB8");
+extern u8 gMcErrorCallbackBAddress[] __asm__("D_8001FF44");
+extern u8 gMemoryCardServiceErrorCallback[] __asm__("D_8001FE40");
+extern u8 gMcCardEventDoneCallback[] __asm__("D_8001FD28");
+extern u8 D_8001F394[] __asm__("D_8001F394");
+extern u8 gMcRetryTimeoutBCallback[] __asm__("D_8001F968");
+extern u8 gMemoryCardIoRetryCallback[] __asm__("D_8001F818");
+extern u8 gMcAbortCallbackAddress[] __asm__("D_8001F784");
 extern void gDisableCpuInterrupts(void) __asm__("func_8008C9C0");
 extern void gEnableCpuInterrupts(void) __asm__("func_8008C9E0");
 extern s32 func_8008C960(u32, u32, u32, void *);
@@ -62,14 +68,14 @@ void gAcquireMcEvents(void)
 {
     if (gOperationState->count == 0) {
         gDisableCpuInterrupts();
-        gOperationState->h0 = func_8008C960(0xF4000001, 4, 0x1000, D_8001FAB8);
-        gOperationState->h1 = func_8008C960(0xF4000001, 0x8000, 0x1000, D_8001FF44);
-        gOperationState->h2 = func_8008C960(0xF4000001, 0x100, 0x1000, D_8001FE40);
-        gOperationState->h3 = func_8008C960(0xF4000001, 0x2000, 0x1000, D_8001FD28);
+        gOperationState->h0 = func_8008C960(0xF4000001, 4, 0x1000, gMemoryCardRequestDispatchCallback);
+        gOperationState->h1 = func_8008C960(0xF4000001, 0x8000, 0x1000, gMcErrorCallbackBAddress);
+        gOperationState->h2 = func_8008C960(0xF4000001, 0x100, 0x1000, gMemoryCardServiceErrorCallback);
+        gOperationState->h3 = func_8008C960(0xF4000001, 0x2000, 0x1000, gMcCardEventDoneCallback);
         gOperationState->h4 = func_8008C960(0xF0000011, 4, 0x1000, D_8001F394);
-        gOperationState->h5 = func_8008C960(0xF0000011, 0x8000, 0x1000, D_8001F968);
-        gOperationState->h6 = func_8008C960(0xF0000011, 0x100, 0x1000, D_8001F818);
-        gOperationState->h7 = func_8008C960(0xF0000011, 0x2000, 0x1000, D_8001F784);
+        gOperationState->h5 = func_8008C960(0xF0000011, 0x8000, 0x1000, gMcRetryTimeoutBCallback);
+        gOperationState->h6 = func_8008C960(0xF0000011, 0x100, 0x1000, gMemoryCardIoRetryCallback);
+        gOperationState->h7 = func_8008C960(0xF0000011, 0x2000, 0x1000, gMcAbortCallbackAddress);
         func_8008C980(gOperationState->h0);
         func_8008C980(gOperationState->h1);
         func_8008C980(gOperationState->h2);

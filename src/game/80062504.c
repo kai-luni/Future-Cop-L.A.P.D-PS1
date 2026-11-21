@@ -12,6 +12,8 @@ struct Node {
     Node *next;
 };
 extern void gTestEntityPairCollision(Object *, Object *, int) __asm__("func_800620D8");
+void gProcessAdjacentCellCollisionPairs(Node *first, Node *second) __asm__("func_80062504");
+
 
 /**
  *  @brief Processes eligible object pairs across two nonempty lists.
@@ -33,7 +35,7 @@ extern void gTestEntityPairCollision(Object *, Object *, int) __asm__("func_8006
  *  @par Callers
  *  Confirmed: func_80062614.
  */
-void func_80062504(Node *first, Node *second)
+void gProcessAdjacentCellCollisionPairs(Node *first, Node *second)
 {
     Node *cur;
     Object *a, *b;

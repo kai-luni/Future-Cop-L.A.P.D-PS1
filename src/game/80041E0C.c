@@ -29,6 +29,8 @@ extern s32 gEntityBaseHandler(s32, Object *, DataHolder *) __asm__("func_8002AD5
 extern void gBuildRotationMatrix(s32, s32, s32, void *) __asm__("func_800188D0");
 extern s32 gGetGroundHeight(void *, s32, s32, s32) __asm__("func_80066F78");
 extern u32 gSqrt12(s32) __asm__("func_80095900");
+s32 gInitPortraitScreenEntity(s32 arg0, Object *obj, DataHolder *holder) __asm__("func_80041E0C");
+
 
 /**
  * @brief Spawn initialiser of a 15-vertex grid object: ground snap, flag
@@ -60,7 +62,7 @@ extern u32 gSqrt12(s32) __asm__("func_80095900");
  * @par Callers
  * func_80042330.
  */
-s32 func_80041E0C(s32 arg0, Object *obj, DataHolder *holder)
+s32 gInitPortraitScreenEntity(s32 arg0, Object *obj, DataHolder *holder)
 {
     Data *data;
     s32 width, height;

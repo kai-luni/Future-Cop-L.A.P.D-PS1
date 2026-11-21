@@ -35,6 +35,8 @@ struct Unk584BC {
 
 extern s32 gSpawnTypeAtOwner(struct Unk584BC *owner, u8 column, s32 arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern void gApplyPlayerHitDamage(struct Unk584BC *object, s32 amount, s32 source) __asm__("func_80058378");
+s32 gHandlePlayerHitMessage(s32 message, struct Unk584BC *object, struct Unk584BCHit *hit) __asm__("func_800584BC");
+
 
 /**
  * @brief Processes incoming hit/damage messages (11 and 14) for a unit entity.
@@ -61,7 +63,7 @@ extern void gApplyPlayerHitDamage(struct Unk584BC *object, s32 amount, s32 sourc
  * @par Callers
  * Confirmed: func_800588D4 (0x80058B58, message 0x0E), func_8005908C (0x800591D8, messages 11/14), and func_80059ABC (0x80059B5C, forwarding child messages 11/14).
  */
-s32 func_800584BC(s32 message, struct Unk584BC *object, struct Unk584BCHit *hit)
+s32 gHandlePlayerHitMessage(s32 message, struct Unk584BC *object, struct Unk584BCHit *hit)
 {
     s32 amount;
     s32 source;

@@ -16,7 +16,7 @@ typedef struct {
 extern Unk800A0B70 gStreamBufferList __asm__("D_800A0B70");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
-extern s32 D_8009F6E0;
+extern s32 gVagmPrimeBlockCount __asm__("D_8009F6E0");
 extern s32 D_8009F6E4;
 
 extern s32 func_80045288(void);
@@ -57,7 +57,7 @@ void func_8002A16C(s32 arg0)
         !(gBitFieldState & 0x40)) {
         if (gCallGateFlag == 0) {
             gCallGateFlag = 3;
-            D_8009F6E0 = 0;
+            gVagmPrimeBlockCount = 0;
         } else {
             gCallGateFlag = 4;
         }

@@ -26,7 +26,7 @@ struct Unk753D0 {
 
 extern void gUpdateDynamicLightNode(struct Unk752E0Light *light, s32 x, s32 z, s32 y, s32 width,
                           s32 depth, s32 angle, s32 arg7, s32 arg8) __asm__("func_80049980");
-extern void func_800752E0(struct Unk753D0 *object);
+extern void gSpawnParticleLight(struct Unk753D0 *object) __asm__("func_800752E0");
 void gUpdateParticleLight(struct Unk753D0 *object) __asm__("func_800753D0");
 
 
@@ -76,6 +76,6 @@ void gUpdateParticleLight(struct Unk753D0 *object)
         gUpdateDynamicLightNode(object->light, object->x, object->z, object->y, size, size,
                       object->angle, 0, 0);
     } else if (size > 0x500) {
-        func_800752E0(object);
+        gSpawnParticleLight(object);
     }
 }

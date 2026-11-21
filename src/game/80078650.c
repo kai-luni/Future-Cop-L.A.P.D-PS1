@@ -21,7 +21,7 @@ extern u8 gMenuSetupCalled __asm__("D_8009F8CC");
 extern void gResetMenuDirectionHoldTicks(void) __asm__("func_800785F8");
 extern void gSelectEnabledMenuItem(s32 a, s32 b, s32 c) __asm__("func_800787D8");
 extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
-extern void D_8007B3F4(void);
+extern void gEnterGameHubMenuCallback(void) __asm__("D_8007B3F4");
 void gActivateMenuPanel(Menu *arg0, s32 arg1) __asm__("func_80078650");
 
 
@@ -75,7 +75,7 @@ void gActivateMenuPanel(Menu *arg0, s32 arg1)
     if ((u8)(gFontBankTable->unk05 - 2) < 2) {
         gSelectEnabledMenuItem(0, 1, 1);
     }
-    if ((void *)gFontBankTable->unk10 == (void *)D_8007B3F4) {
+    if ((void *)gFontBankTable->unk10 == (void *)gEnterGameHubMenuCallback) {
         gFontBankTable->unk10();
     }
     m = gFontBankTable;

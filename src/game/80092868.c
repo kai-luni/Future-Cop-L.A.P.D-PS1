@@ -4,6 +4,8 @@
 
 extern  void (*gLogPrintf)(const char *, ...) __asm__("D_8009DDEC");
 struct Values { s16 values[8]; u8 first; u8 second; };
+void gPrintDisplayEnvironment(struct Values *arg0) __asm__("func_80092868");
+
 
 /**
  *  @brief Prints the eight values and two byte fields of a structure.
@@ -22,7 +24,7 @@ struct Values { s16 values[8]; u8 first; u8 second; };
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80092868(struct Values *arg0)
+void gPrintDisplayEnvironment(struct Values *arg0)
 {
     register int a __asm__("$5");
     register int b __asm__("$6");

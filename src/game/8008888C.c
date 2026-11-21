@@ -9,6 +9,8 @@ typedef struct {
 } Queue;
 extern Queue *gMovieStreamContext __asm__("D_8009F970");
 extern s32 gCdControlF(s32, s32) __asm__("func_8008E2F8");
+s32 gQueueMovieCdControlF(s32 arg0, s32 arg1, s32 arg2) __asm__("func_8008888C");
+
 
 /**
  *  @brief Enqueues a three-value command and starts it if the queue was empty.
@@ -30,7 +32,7 @@ extern s32 gCdControlF(s32, s32) __asm__("func_8008E2F8");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-s32 func_8008888C(s32 arg0, s32 arg1, s32 arg2)
+s32 gQueueMovieCdControlF(s32 arg0, s32 arg1, s32 arg2)
 {
     register s32 b __asm__("$17") = arg1;
     register s32 a __asm__("$16") = arg0;

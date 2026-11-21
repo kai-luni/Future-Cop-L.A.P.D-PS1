@@ -15,7 +15,7 @@ struct Unk2E528 {
     u8 unkE6;
 };
 
-extern void func_8002E2BC(struct Unk2E528 *self, s32 state);
+extern void gSetActorMode(struct Unk2E528 *self, s32 state) __asm__("func_8002E2BC");
 extern void gRemoveEntityCommand(struct Unk2E528 *self, s32 index) __asm__("func_8002A5B4");
 void gProcessActorCommandQueue(struct Unk2E528 *self) __asm__("func_8002E528");
 
@@ -63,14 +63,14 @@ void gProcessActorCommandQueue(struct Unk2E528 *self)
                 switch (self->state) {
                 case 1:
                 case 2:
-                    func_8002E2BC(self, 3);
+                    gSetActorMode(self, 3);
                     break;
                 }
             } else {
                 switch (self->state) {
                 case 0:
                 case 3:
-                    func_8002E2BC(self, 1);
+                    gSetActorMode(self, 1);
                     break;
                 case 1:
                 case 2:

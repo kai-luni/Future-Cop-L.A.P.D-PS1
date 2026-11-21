@@ -14,7 +14,7 @@ struct Unk50D14Arg {
 };
 
 extern void gProcessPathMoverCommands(struct Unk50D14 *object, struct Unk50D14Arg *arg) __asm__("func_8004F188");
-extern u8 func_80050B54(struct Unk50D14 *object, s32 arg1, struct Unk50D14Arg *arg);
+extern u8 gStepPathMoverVerticalMotion(struct Unk50D14 *object, s32 arg1, struct Unk50D14Arg *arg) __asm__("func_80050B54");
 extern s32 gStepPathMover(struct Unk50D14 *object, s32 arg1, struct Unk50D14Arg *arg) __asm__("func_8005027C");
 s32 gUpdatePathMoverMotion(struct Unk50D14 *object, s32 arg1, struct Unk50D14Arg *arg) __asm__("func_80050D14");
 
@@ -52,7 +52,7 @@ s32 gUpdatePathMoverMotion(struct Unk50D14 *object, s32 arg1, struct Unk50D14Arg
     }
     if (object->flags & 0x50) {
         if (object->unk26 > 0) {
-            return func_80050B54(object, arg1, arg);
+            return gStepPathMoverVerticalMotion(object, arg1, arg);
         }
         return 0;
     }

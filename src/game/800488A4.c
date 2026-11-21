@@ -3,6 +3,8 @@
 
 extern u16 D_800A1E10[][0x10];
 extern s32 gRampFillCounter __asm__("D_8009F360");
+void gBuildColorRampRow(s32 index, s32 blue, s32 green, s32 red) __asm__("func_800488A4");
+
 
 /**
  *  @brief Builds a 16-entry packed color ramp in a table row.
@@ -25,7 +27,7 @@ extern s32 gRampFillCounter __asm__("D_8009F360");
  *  @par Callers
  *  Confirmed: func_80048978.
  */
-void func_800488A4(s32 index, s32 blue, s32 green, s32 red)
+void gBuildColorRampRow(s32 index, s32 blue, s32 green, s32 red)
 {
     register u16 (*table)[0x10] __asm__("$2");
     register u16 *row __asm__("$3");

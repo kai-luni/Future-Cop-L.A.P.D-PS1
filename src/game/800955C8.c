@@ -26,9 +26,11 @@ extern Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
 extern u32 gGpuCmdBlock[] __asm__("D_8009DE90");
 extern int gVSyncWait(int) __asm__("func_80091270");
 extern void gValidateGpuRectDebug(char *, void *) __asm__("func_80092CF4");
-extern int func_8009520C(void);
+extern int gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
 extern void gSetDmaCallback(int, void (*)(void)) __asm__("func_800914E0");
 extern void gAbortCallbackId(void) __asm__("D_80095808");
+int gMoveImageBlocking(Entry *entry, u32 a, u32 b) __asm__("func_800955C8");
+
 
 /**
  * @brief Debug capture variant C: waits for the GPU, packs a three-word
@@ -56,7 +58,7 @@ extern void gAbortCallbackId(void) __asm__("D_80095808");
  * No direct callers in the call graph and no address reference in the
  * sources; likely an unused retail variant.
  */
-int func_800955C8(Entry *entry, u32 a, u32 b)
+int gMoveImageBlocking(Entry *entry, u32 a, u32 b)
 {
     int result;
     register char *first __asm__("$4");
@@ -65,7 +67,7 @@ int func_800955C8(Entry *entry, u32 a, u32 b)
     gTimeoutStamp = gVSyncWait(-1) + 0xF0;
     gPendingDeadline = 0;
     while ((*gDma2ChannelCtrlPtr & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000)) {
-        if (func_8009520C()) { result = -1; goto done; }
+        if (gCheckGpuDmaTimeout()) { result = -1; goto done; }
     }
     {
         register void (*callback)(void) __asm__("$5");

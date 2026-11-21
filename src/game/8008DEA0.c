@@ -1,6 +1,6 @@
 // Categories: Platform > CD-ROM | Platform > Device Init
 #include "game/types.h"
-extern u8 D_8008DF6C[]; extern u8 D_8008DF94[]; extern u8 D_8008DFBC[]; extern u8 gCdInitFailMsg[] __asm__("D_8001231C");
+extern u8 gLogCdSyncCallbackAddress[] __asm__("D_8008DF6C"); extern u8 gDefaultCdReadyEventCallback[] __asm__("D_8008DF94"); extern u8 gDefaultCdReadCompletionCallback[] __asm__("D_8008DFBC"); extern u8 gCdInitFailMsg[] __asm__("D_8001231C");
 extern u8 *gCdSyncCallback __asm__("D_8009C8A8");
 extern u8 *gCdReadyCallback __asm__("D_8009C8AC");
 extern u8 *gCdReadCallback __asm__("D_8009C810");
@@ -65,9 +65,9 @@ again:
             : : : "$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25", "$31", "memory");
         return 0;
     }
-    gCdSyncCallback = D_8008DF6C;
-    gCdReadyCallback = D_8008DF94;
-    gCdReadCallback = D_8008DFBC;
+    gCdSyncCallback = gLogCdSyncCallbackAddress;
+    gCdReadyCallback = gDefaultCdReadyEventCallback;
+    gCdReadCallback = gDefaultCdReadCompletionCallback;
     gCdUseDmaFlag = 0;
     return 1;
 }

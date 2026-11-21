@@ -17,7 +17,7 @@ extern u32 *gCellMap __asm__("D_8009F820");
 extern Rect gCellClipRect __asm__("D_800A2970");
 extern Entry gPlayerCollisionCandidates[] __asm__("D_800A8DC0");
 extern void gBuildSingleViewObjectGrid(void) __asm__("func_80062C3C");
-extern void func_80062874(void) __asm__("func_80062874");
+extern void gBuildDualViewObjectListsAndGrid(void) __asm__("func_80062874");
 extern void gSweepCollisionGridPairs(void) __asm__("func_80062614");
 void gUpdateViewCollisionGrid(void) __asm__("func_80062FB4");
 
@@ -82,7 +82,7 @@ void gUpdateViewCollisionGrid(void)
     count = n >> 2;
     while (count) { *p++ = 0; count--; } }
     if (gPlayerCount == 1) gBuildSingleViewObjectGrid();
-    else func_80062874();
+    else gBuildDualViewObjectListsAndGrid();
     i = 0;
     __asm__ volatile ("" : "+r" (i));
     entry = gPlayerCollisionCandidates;

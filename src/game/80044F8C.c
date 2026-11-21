@@ -10,7 +10,7 @@ extern void func_800451EC(s32 value);
 extern void func_800451F8(s32 value);
 extern void func_80045238(s32 value);
 extern void func_80045294(s32 value);
-extern void func_800453B8(void);
+extern void gInitSoundPools(void) __asm__("func_800453B8");
 void gInitSoundState(void) __asm__("func_80044F8C");
 
 
@@ -48,7 +48,7 @@ void gInitSoundState(void)
     func_800451F8(0x40);
     func_80045238(0x40);
     func_80045294(0x40);
-    func_800453B8();
+    gInitSoundPools();
     gVolumeLevels[0] = -1;
     gStreamAudioFlag = 0;
     gSoundProcessingEnabled = 1;

@@ -22,7 +22,7 @@ extern u8 *gNameEntryAlphabet __asm__("D_8009F878");
 extern s16 gPlayerNameLength __asm__("D_8009F87C");
 extern s8 gMissionListMaxIndex __asm__("D_8009F882");
 extern s8 gSelectedMissionIndex __asm__("D_8009F880");
-extern s8 D_8009F881;
+extern s8 gMissionListMinIndex __asm__("D_8009F881");
 extern s8 gPlayerMenuDepth[] __asm__("D_8009F8C0");
 extern u8 gNameEntryGlyphBuf[] __asm__("D_800A3928");
 extern s32 gScalarCursor[] __asm__("D_8009F8F8");
@@ -55,7 +55,7 @@ extern s32 gGameClock __asm__("D_8009FA60");
 
 extern void func_8007AA9C(u8 *a, u8 *b, s32 c, u8 *d);
 extern void func_8007A9D0(u8 *a, u8 *b, s32 c, u8 *d, s32 e);
-extern void func_80080B70(void);
+extern void gSaveSelectedProfileToCard(void) __asm__("func_80080B70");
 extern void func_80080984(u8 *a, s32 b);
 extern void func_8008CCB0(u8 *a, u8 *b);
 extern s32 func_8008CCC0(u8 *a);
@@ -207,7 +207,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                 if (gPlayerMenuDepth[s2] != 0) {
                     gPlayerMenuDepth[s2] = 0;
                     func_8007AA9C(RAW + 0x925, gNameEntryGlyphBuf + s2 * 8, 8, gNameEntryAlphabet);
-                    func_80080B70();
+                    gSaveSelectedProfileToCard();
                     break;
                 }
                 selected = base[0x924];
@@ -324,7 +324,7 @@ void gHandleProfileSlotWidget(u32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) 
                     v = 0;
                 }
                 gMissionListMaxIndex = v;
-                D_8009F881 = 0;
+                gMissionListMinIndex = 0;
                 gSelectedMissionIndex = v;
             }
             gRowClearFlag = 0;

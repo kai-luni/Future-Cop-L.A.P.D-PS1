@@ -53,6 +53,8 @@ extern void gCompanionSpawnHandler() __asm__("D_80059ABC");
 
 extern void gTransformPartVertex(void *source, s32 arg1, struct Vec3s32 *out) __asm__("func_80017668");
 extern void *gSpawnQueuedEntity(struct Unk57914Request *request) __asm__("func_8004D444");
+void gSpawnCompanionEntity(struct Unk57914 *object) __asm__("func_80057914");
+
 
 /**
  * @brief Spawns a kind-0x12 object at a model part's position through the
@@ -80,7 +82,7 @@ extern void *gSpawnQueuedEntity(struct Unk57914Request *request) __asm__("func_8
  * @par Callers
  * func_800579D4.
  */
-void func_80057914(struct Unk57914 *object)
+void gSpawnCompanionEntity(struct Unk57914 *object)
 {
     struct Unk57914Request request;
     struct Unk57914Args args;

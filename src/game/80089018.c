@@ -46,11 +46,13 @@ extern s32 gSetCdReadyCallback(s32 value) __asm__("func_8008E1A8");
 extern void gCdControl(s32 arg0, s32 arg1, s32 arg2) __asm__("func_8008E1BC");
 extern s32 func_800886E4(void);
 extern void gCdControlB(s32 arg0, void *arg1, s32 arg2) __asm__("func_8008E42C");
-extern void func_800889DC(s32 arg0, s32 arg1, s32 arg2);
-extern s32 func_80088770(s32 arg0, s32 arg1, s32 arg2);
+extern void gOffsetCdLocationBySectors(s32 arg0, s32 arg1, s32 arg2) __asm__("func_800889DC");
+extern s32 gQueueMovieCdControl(s32 arg0, s32 arg1, s32 arg2) __asm__("func_80088770");
 extern void func_80088974(s32 arg0, s32 arg1, s32 arg2);
 extern void gMovieStreamPrimeEntry(void) __asm__("func_80088F00");
 extern s32 gMinS32(s32 a, s32 b) __asm__("func_800886C8");
+void gPumpMovieStream(void) __asm__("func_80089018");
+
 
 /**
  *  @brief Resets transfer state when requested and starts a bounded buffered transfer.
@@ -75,7 +77,7 @@ extern s32 gMinS32(s32 a, s32 b) __asm__("func_800886C8");
  *  @par Callers
  *  Confirmed: gMovieStreamAdvance.
  */
-void func_80089018(void)
+void gPumpMovieStream(void)
 {
     u8 local;
     s32 work;
@@ -100,7 +102,7 @@ void func_80089018(void)
         work = 1;
         gDisableCpuInterrupts();
         gSetCdSyncCallback((s32)gCodeDataSource);
-        gSetCdReadyCallback((s32)func_800889DC + 0x40);
+        gSetCdReadyCallback((s32)gOffsetCdLocationBySectors + 0x40);
         gMovieStreamContext->unk41C = work;
         gMovieStreamContext->unk414 = work;
         gMovieStreamContext->unk424 = 0;
@@ -115,7 +117,7 @@ void func_80089018(void)
                 address = (s32)((u8 *)parameter + 0xC);
                 sector = parameter->unk08;
                 parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
-                func_800889DC(address, (s32)parameter, sector);
+                gOffsetCdLocationBySectors(address, (s32)parameter, sector);
             }
             {
                 register struct State80089018 *state __asm__("$3");
@@ -125,7 +127,7 @@ void func_80089018(void)
                 parameter = state->unk430;
                 state->unk418 = 2;
                 parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
-                if (func_80088770(0x15, (s32)parameter, 0) == 0) {
+                if (gQueueMovieCdControl(0x15, (s32)parameter, 0) == 0) {
                     gMovieStreamContext->unk43C = work;
                     return;
                 }
@@ -182,7 +184,7 @@ void func_80089018(void)
             address = (s32)((u8 *)parameter + 0xC);
             sector = parameter->unk08;
             parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
-            func_800889DC(address, (s32)parameter, sector);
+            gOffsetCdLocationBySectors(address, (s32)parameter, sector);
         }
         {
             register struct State80089018 *state __asm__("$3");
@@ -193,7 +195,7 @@ void func_80089018(void)
             parameter = (struct Sub80089018 *)((u8 *)parameter + 0x24);
             state->unk44C = state->unk448 + work;
             state->unk418 = 2;
-            if (func_80088770(0x15, (s32)parameter, 0) == 0) {
+            if (gQueueMovieCdControl(0x15, (s32)parameter, 0) == 0) {
                 gMovieStreamContext->unk43C = 1;
                 return;
             }

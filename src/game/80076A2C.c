@@ -70,7 +70,7 @@ extern void func_800780C0(s32);
 extern void gRunScreenModule(void *, s32) __asm__("func_800287F4");
 extern void func_8008CC90(void *, void *);
 extern void func_8008CCB0(void *, s32);
-extern s32 func_80083130(void *);
+extern s32 gFindModuleMovie(void *) __asm__("func_80083130");
 
 /**
  * @brief Front-end main loop of the game: boots the runtime, loads the
@@ -297,7 +297,7 @@ s32 gGameMain(void)
                 continue;
             }
 
-            s0 = func_80083130(local + 0x50);
+            s0 = gFindModuleMovie(local + 0x50);
             if (s0 == 0 && *(s32 *)(local + 0x50) == 0) {
                 continue;
             }

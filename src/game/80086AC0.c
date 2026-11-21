@@ -25,7 +25,7 @@ extern void gSpuSetIrqEnable(s32) __asm__("func_80098A78");
 extern void gSpuInstallIrqCallback(void *) __asm__("func_80098BF8");
 extern void *gPeekMovieAudioFirstBuffer(u32) __asm__("func_800869D8");
 extern void *func_80086A4C(u32);
-extern void func_8008684C(void *, s32, s32);
+extern void gUploadMovieAudioBlock(void *, s32, s32) __asm__("func_8008684C");
 extern s32 gScaleMovieAudioClock(s32) __asm__("func_800867B0");
 extern void func_80098BB8(u32);
 void gServiceMovieAudioIrq(void) __asm__("func_80086AC0");
@@ -86,7 +86,7 @@ void gServiceMovieAudioIrq(void)
                 gMovieAudioState->unk7B48 = 1;
                 gMovieAudioState->unk7B50 = other;
                 gMovieAudioState->unk7B54 = gMovieAudioState->unk7B3C;
-                func_8008684C(buf, gMovieAudioState->unk7B3C, 0);
+                gUploadMovieAudioBlock(buf, gMovieAudioState->unk7B3C, 0);
                 gMovieAudioState->unk7B3C += 0x300;
             } else {
                 gMovieAudioState->unk7B58 = 0;
@@ -94,7 +94,7 @@ void gServiceMovieAudioIrq(void)
                 gMovieAudioState->unk7B48 = 1;
                 gMovieAudioState->unk7B50 = (u8 *)gMovieAudioState + 0x7810;
                 gMovieAudioState->unk7B54 = 0;
-                func_8008684C((u8 *)gMovieAudioState + 0x7810, 0, 0);
+                gUploadMovieAudioBlock((u8 *)gMovieAudioState + 0x7810, 0, 0);
             }
         }
     }

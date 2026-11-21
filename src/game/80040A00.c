@@ -13,7 +13,7 @@ typedef struct Obj {
     u8 pad84[0xa]; s16 rate8e,rate90,rate92,count94;
 } Obj;
 extern void gDrainObjectLightColor(Obj *, s32) __asm__("func_80040550");
-extern void func_80040600(Obj *, s32,s32,s32);
+extern void gStepObjectLightColor(Obj *, s32,s32,s32) __asm__("func_80040600");
 extern void gGteLoadRotation(void *) __asm__("func_80010820");
 extern void gGteTransformWords(Vec *, Vec *, s32) __asm__("func_8001006C");
 void gUpdateObjectLights(Obj *node, s32 dt) __asm__("func_80040A00");
@@ -91,7 +91,7 @@ void gUpdateObjectLights(Obj *node, s32 dt)
                     __asm__("" : "+r"(factor));
                     z = factor * dt;
                     __asm__("" : "+r"(z));
-                    func_80040600(o, x, y >> 8, z >> 8);
+                    gStepObjectLightColor(o, x, y >> 8, z >> 8);
                 }
             }
             scale = 0x500;

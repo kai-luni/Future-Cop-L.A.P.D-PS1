@@ -17,7 +17,7 @@ typedef struct {
 extern s32 gCdCachedDirIndex __asm__("D_8009CBC0");
 extern s32 gCdLogLevel __asm__("D_8009C8B0");
 extern u8 gCdDirSectorTable[] __asm__("D_800A445C");
-extern u8 D_800A5A80[];
+extern u8 gDirRecordBuffer[] __asm__("D_800A5A80");
 extern DirEntry gCdDirEntryCache[] __asm__("D_800A3E80");
 extern u16 gCdDotDirName __asm__("D_80012754");
 extern s16 gCdDotDotPrefix __asm__("D_80012758");
@@ -84,7 +84,7 @@ s32 gCacheCdDirSector(s32 arg0)
     if (arg0 == gCdCachedDirIndex) {
         return 1;
     }
-    if (gReadCdSectorsSync(1, LOADX("lw", D_800A445C, arg0 * 0x2C), D_800A5A80) != 1) {
+    if (gReadCdSectorsSync(1, LOADX("lw", D_800A445C, arg0 * 0x2C), gDirRecordBuffer) != 1) {
         if (gCdLogLevel > 0) {
             PRINT_STR(D_80012718);
         }
@@ -93,10 +93,10 @@ s32 gCacheCdDirSector(s32 arg0)
     if (gCdLogLevel >= 2) {
         PRINT_STR(D_80012738);
     }
-    p = D_800A5A80;
+    p = gDirRecordBuffer;
 
     i = 0;
-    while (p < D_800A5A80 + 0x800) {
+    while (p < gDirRecordBuffer + 0x800) {
         if (*p == 0) {
             break;
         }

@@ -59,7 +59,7 @@ extern void gResolveRailMoverContact(s32 arg0, Unk382B4 *arg1, s32 arg2, s32 arg
 extern void gStepIdleActorTurn(Unk382B4 *arg1) __asm__("func_800381D4");
 extern void func_800448D8(void *arg0, u8 arg1, s32 arg2, s32 arg3);
 extern void gSpawnEntitySlotTypes(u8 arg0, Unk382B4 *arg1, s32 arg2, s32 arg3, s32 arg4) __asm__("func_8003B898");
-extern void func_80037B28(s32 arg0, Unk382B4 *arg1, s32 arg2);
+extern void gUpdateChaseApproachSpeed(s32 arg0, Unk382B4 *arg1, s32 arg2) __asm__("func_80037B28");
 extern void gRemoveEntityCommand(Unk382B4 *arg0, s32 arg1) __asm__("func_8002A5B4");
 extern s32 gAdvanceAnimTrack(Unk382B4 *arg0, void *arg1, s32 arg2, s32 arg3) __asm__("func_80044B34");
 extern void gSetModelFrame(void *arg0, s32 arg1) __asm__("func_800175F8");
@@ -248,7 +248,7 @@ L800383E0: {
 }
 
 L80038498:
-    func_80037B28(arg0, arg1, arg2);
+    gUpdateChaseApproachSpeed(arg0, arg1, arg2);
     return 0;
 
 L800384B0:

@@ -15,6 +15,8 @@ struct Entry {
 
 extern struct Entry *gSlotSpawnDescs[] __asm__("D_800A0C70");
 extern s32 func_80019668(void);
+u8 gSelectEntitySlotType(u8 index, u8 slot, u8 mode) __asm__("func_8003B4E0");
+
 
 /**
  * @brief Resolves a map occupancy column byte from D_800A0C70 for a region and slot.
@@ -38,7 +40,7 @@ extern s32 func_80019668(void);
  * @par Callers
  * Confirmed: func_8003B898 (multi-column map occupancy registration).
  */
-u8 func_8003B4E0(u8 index, u8 slot, u8 mode)
+u8 gSelectEntitySlotType(u8 index, u8 slot, u8 mode)
 {
     if (!(gSlotSpawnDescs[index]->flags & 1)) {
         if (slot == 0 && mode != 0) {

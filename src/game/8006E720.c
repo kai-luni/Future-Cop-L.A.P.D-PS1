@@ -20,6 +20,8 @@ struct UnkE720 {
     u8 unk8E;
     u8 unk8F;
 };
+void gInitDomeEffectFadeRate(struct UnkE720 *self) __asm__("func_8006E720");
+
 
 /**
  * @brief Computes a scaled duration/step value at +0x86 from peak effect colour channels and sub-record rate.
@@ -41,7 +43,7 @@ struct UnkE720 {
  * @par Callers
  * Confirmed: func_8006E814 (message 0 effect init).
  */
-void func_8006E720(struct UnkE720 *self)
+void gInitDomeEffectFadeRate(struct UnkE720 *self)
 {
     s32 a2;
     s32 v1;

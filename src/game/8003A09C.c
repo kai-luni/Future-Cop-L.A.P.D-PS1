@@ -22,6 +22,8 @@ struct Script {
 };
 
 extern void gRemoveEntityCommand(struct Script *script, s32 index) __asm__("func_8002A5B4");
+void gProcessForceFieldCommands(struct Script *script) __asm__("func_8003A09C");
+
 
 /**
  * @brief Executes and consumes opcode 0x6E toggle commands for a force-field entity.
@@ -47,7 +49,7 @@ extern void gRemoveEntityCommand(struct Script *script, s32 index) __asm__("func
  * @par Callers
  * Confirmed: func_8003A160 (0x8003A1A0, force-field per-frame tick when command byte +0x0C is non-zero).
  */
-void func_8003A09C(struct Script *script)
+void gProcessForceFieldCommands(struct Script *script)
 {
     s32 i;
     s32 j;

@@ -27,7 +27,7 @@ struct Unk596C4Effect {
 };
 
 extern s32 gDescriptorBlock __asm__("D_8009AF88");
-extern s32 D_8009AF94[];
+extern s32 gBeamSparkColorTable[] __asm__("D_8009AF94");
 
 extern void gTransformPartVertex(struct Unk596C4Part *part, s32 arg1, s32 *out) __asm__("func_80017668");
 extern u32 func_80019668(void);
@@ -83,7 +83,7 @@ void gEmitObjectBeamSegment(struct Unk596C4 *object)
     z = from[2] + ((part->z << 4) >> 8);
     __asm__("" : : "r"(z));
     to[2] = z;
-    gDescriptorBlock = D_8009AF94[func_80019668() % 3];
+    gDescriptorBlock = gBeamSparkColorTable[func_80019668() % 3];
     gDrawBeamQuad(from, to,
                   (struct Unk596C4Effect *)((u8 *)&gDescriptorBlock - 0x10));
 }

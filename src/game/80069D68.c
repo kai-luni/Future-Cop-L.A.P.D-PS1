@@ -17,7 +17,7 @@ extern s8 gRandomTable[] __asm__("D_800A8540");
 extern s32 func_80019668(void);
 extern s32 gQueueEntityStreamRequest(s32, struct Entity *, s32) __asm__("func_80029A60");
 extern void gAppendScriptEvent(s32) __asm__("func_800298EC");
-extern void func_80029974(s32);
+extern void gQueueScriptEvent(s32) __asm__("func_80029974");
 extern s32 gSendMessageByTag(s32, s32) __asm__("func_8004DE80");
 extern void gSendEntityCommand(struct Entity *, s32, s32, s32) __asm__("func_8004DA84");
 extern void gSendCommandByTag(s32, s32, s32) __asm__("func_8004DC64");
@@ -312,7 +312,7 @@ s32 gInterpretEntityScript(u8 *script, s32 arg1, s32 arg2, struct Entity *entity
             a = gQueueEntityStreamRequest(a, ent, 0);
             goto push;
         case 13:
-            func_80029974(a);
+            gQueueScriptEvent(a);
             break;
         case 12:
             gAppendScriptEvent(a);

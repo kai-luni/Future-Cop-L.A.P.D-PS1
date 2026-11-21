@@ -17,7 +17,7 @@ extern struct Unk780DC gMenuStartActions[2] __asm__("D_800A35E8");
 extern u8 gArmedFlag __asm__("D_8009FAC4");
 extern u8 gModuleLoadState __asm__("D_8009F3F0");
 extern s32 gPendingModuleNameFlag __asm__("D_8009F3EC");
-extern s32 D_8009F3F4;
+extern s32 gPublishedBlockPtr __asm__("D_8009F3F4");
 extern s32 gPlayer1PrevMenuButtons __asm__("D_8009F8B0");
 extern s32 gPlayer2PrevMenuButtons __asm__("D_8009F8B4");
 extern s32 gDemoPlayback __asm__("D_8009FA84");
@@ -64,7 +64,7 @@ void gInitFrontEndSubsystems(void)
     gPendingModuleNameFlag = 0;
     gUpdatePrecinctUnlockFlag();
     p = gAllocMemory(0x78, 2);
-    D_8009F3F4 = (s32)p;
+    gPublishedBlockPtr = (s32)p;
     gFillMemory(p, 0, 0x78);
     gFreeTextTable();
     for (i = 0; i < 2; i++) {

@@ -20,7 +20,7 @@ extern u32 gExceptionFrame[] __asm__("D_800A6E38");
 
 extern void gResetIrqDispatch(void) __asm__("func_80091480");
 extern void gSetVSyncCallback(void *) __asm__("func_80091510");
-extern void func_80092910(void *);
+extern void gResetGraph(void *) __asm__("func_80092910");
 extern void gClearImage(void *, int, int, int) __asm__("func_80092E10");
 extern void *gSetDefDrawEnv(void *, int, int, int, int) __asm__("func_80092140");
 extern void *gSetDefDispEnv(void *, int, int, int, int) __asm__("func_800921F4");
@@ -28,6 +28,8 @@ extern void gPutDispEnvCached(void *) __asm__("func_800934BC");
 extern void func_800932F0(void *);
 extern void func_80092BF4(int);
 extern void func_80077278(int, int, unsigned int);
+__attribute__((noreturn)) void gDrawExceptionScreenAndHalt(void) __asm__("func_800773D8");
+
 
 /**
  * @brief Endless debug screen: same set-up as func_8007757C, but it redraws
@@ -46,7 +48,7 @@ extern void func_80077278(int, int, unsigned int);
  * A development leftover: the "hang forever with diagnostics" screen. It is
  * reachable in the retail binary, so it is part of the shipped behaviour.
  */
-__attribute__((noreturn)) void func_800773D8(void)
+__attribute__((noreturn)) void gDrawExceptionScreenAndHalt(void)
 {
     u8 disp[0xB8];
     struct PacketState st[2];
@@ -67,7 +69,7 @@ __attribute__((noreturn)) void func_800773D8(void)
 
     gResetIrqDispatch();
     gSetVSyncCallback(0);
-    func_80092910(0);
+    gResetGraph(0);
 
     gClearImage(&text, 0, 0, 0);
     gSetDefDrawEnv(disp, 0, 0, 0x140, 0xF0);

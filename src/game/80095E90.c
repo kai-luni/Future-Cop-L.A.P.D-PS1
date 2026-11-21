@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern void gResetIrqDispatch(void) __asm__("func_80091480");
-extern void func_80096150(s32 option);
+extern void gResetMdecHardware(s32 option) __asm__("func_80096150");
 
 /**
  * @brief Runs the display option: dispatches the callback only for option 0.
@@ -21,5 +21,5 @@ void func_80095E90(s32 option)
         gResetIrqDispatch();
     }
 
-    func_80096150(option);
+    gResetMdecHardware(option);
 }

@@ -2,7 +2,7 @@
 #include "game/types.h"
 
 extern s32 gPlayerCount __asm__("D_8009FA0C");
-extern void func_800486FC(s32 arg);
+extern void gUpdateFrameCloseHud(s32 arg) __asm__("func_800486FC");
 
 void gRefreshSoloFrameHud(void) __asm__("func_80027D70");
 
@@ -30,6 +30,6 @@ void gRefreshSoloFrameHud(void) __asm__("func_80027D70");
 void gRefreshSoloFrameHud(void)
 {
     if (gPlayerCount == 1) {
-        func_800486FC(1);
+        gUpdateFrameCloseHud(1);
     }
 }

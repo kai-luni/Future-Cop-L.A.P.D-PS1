@@ -9,6 +9,8 @@ extern s32 gTableCursor __asm__("D_8009EF08");
 extern s32 *gSpuEntryTable __asm__("D_8009EF0C");
 extern void gSpuCompactPool(void) __asm__("func_80097DF8");
 extern s32 gSpuSplitPoolBlock(s32, s32, s32) __asm__("func_800980F8");
+s32 gSpuAllocAt(s32 arg, s32 size) __asm__("func_80098458");
+
 
 /**
  * @brief Allocates an aligned block of the requested size from the block
@@ -61,7 +63,7 @@ extern s32 gSpuSplitPoolBlock(s32, s32, s32) __asm__("func_800980F8");
  * func_8002333C, the sprite/asset bring-up, which stores the result in
  * D_8009F27C from func_80098458(0x1010, 0x11E80).
  */
-s32 func_80098458(s32 arg, s32 size)
+s32 gSpuAllocAt(s32 arg, s32 size)
 {
     s32 reserve, mask, i;
     register s32 address __asm__("$6");

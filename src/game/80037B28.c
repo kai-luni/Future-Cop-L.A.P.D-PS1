@@ -45,6 +45,8 @@ typedef struct Object {
     u8 pad92[0x4A];        // 0x92 to 0xDC
     SubObject subDC;       // 0xDC
 } Object;
+void gUpdateChaseApproachSpeed(s32 a0, Object *self, s32 unused_arg2) __asm__("func_80037B28");
+
 
 /**
  * @brief Approach step of an entity that tracks a target: gates on vertical
@@ -103,7 +105,7 @@ typedef struct Object {
  * func_8002C3F0 (case 3, the type-26 tick/draw case) and func_800382B4 (case 8,
  * the class-5 animated-piece handler); both call sites are direct.
  */
-void func_80037B28(s32 a0, Object *self, s32 unused_arg2) {
+void gUpdateChaseApproachSpeed(s32 a0, Object *self, s32 unused_arg2) {
     s32 diff[3];
     Object *target;
     register SubObject *sub2 __asm__("$5");

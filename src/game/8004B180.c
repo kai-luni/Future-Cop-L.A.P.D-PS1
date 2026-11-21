@@ -37,6 +37,8 @@ struct Unk4B180 {
 
 extern s32 gNormalizeGetLength(s32 *vector) __asm__("func_8001A314");
 extern s32 gSpawnObjectFromTable(void *owner, s32 arg1, u8 kind, struct Unk4B180Hit *hit, s32 arg4) __asm__("func_8003E984");
+void gSpawnDebrisExpiryEffect(struct Unk4B180 *object) __asm__("func_8004B180");
+
 
 /**
  * @brief Marks a triggered node and spawns an object from its shape's position vector.
@@ -57,7 +59,7 @@ extern s32 gSpawnObjectFromTable(void *owner, s32 arg1, u8 kind, struct Unk4B180
  * @par Callers
  * Confirmed: func_8004C2B8 (called on linked list nodes with node->flags & 0x08).
  */
-void func_8004B180(struct Unk4B180 *object)
+void gSpawnDebrisExpiryEffect(struct Unk4B180 *object)
 {
     struct Unk4B180Hit hit;
     struct Unk4B180Shape *shape;

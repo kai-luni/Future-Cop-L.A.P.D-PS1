@@ -48,6 +48,8 @@ extern void gEntityBaseHandler(s32 kind, struct Unk5920C *object, struct Unk5920
                           s32 arg3) __asm__("func_8002AD58");
 extern void func_80013BD8(struct Unk5920CModel **model, s32 arg1, s32 arg2);
 extern void gSetAnimClipTable(u8 *data, u8 *track, u8 forward, s32 index) __asm__("func_80044988");
+void gInitCompanionEntity(struct Unk5920C *object, struct Unk5920CSpawn *spawn, s32 arg2) __asm__("func_8005920C");
+
 
 /**
  * @brief Spawn case of the kind-0x12 companion handler: binds the type's
@@ -82,7 +84,7 @@ extern void gSetAnimClipTable(u8 *data, u8 *track, u8 forward, s32 index) __asm_
  * @par Callers
  * func_80059ABC.
  */
-void func_8005920C(struct Unk5920C *object, struct Unk5920CSpawn *spawn, s32 arg2)
+void gInitCompanionEntity(struct Unk5920C *object, struct Unk5920CSpawn *spawn, s32 arg2)
 {
     struct Unk5920CDef *def;
 

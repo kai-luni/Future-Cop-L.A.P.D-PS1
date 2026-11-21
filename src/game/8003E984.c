@@ -105,7 +105,7 @@ extern void gBuildNodePlacement(struct Source *, struct Object *, struct Parent 
 extern struct Data *gResolveNodeTransform(struct Holder *, u16, s8, s32, struct Parent *, struct Matrix *) __asm__("func_8003D9F8");
 extern u32 *gGetSpawnTypeFlagPtr(u32, u32) __asm__("func_8003B3D8");
 extern void func_8003B3F8(struct Object *, u32, s32);
-extern s32 func_8003CDAC(struct Holder *, s8);
+extern s32 gCheckModelAttachmentSlot(struct Holder *, s8) __asm__("func_8003CDAC");
 extern void gGetViewGroundAnchor(u32, struct DestinationTriple *) __asm__("func_80069580");
 extern s32 gVectorLength3D(s32 *) __asm__("func_8001A100");
 extern s32 gApproxVectorLength(s32 *) __asm__("func_80019F54");
@@ -359,7 +359,7 @@ s32 gSpawnObjectFromTable(struct Parent *parent, struct Object *link, u8 type, v
     }
 
     if (holder != 0) {
-        if ((u8)func_8003CDAC(holder, work.slot) == 0) {
+        if ((u8)gCheckModelAttachmentSlot(holder, work.slot) == 0) {
             work.slot = 0xFF;
         }
     }

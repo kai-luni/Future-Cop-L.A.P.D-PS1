@@ -4,7 +4,7 @@
 extern u8 gRegisterGuard __asm__("D_8009F69C");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern u8 gLatchFlag __asm__("D_8009F6C0");
-extern s32 D_8009F6C4;
+extern s32 gPortraitStreamDeadline __asm__("D_8009F6C4");
 
 extern void func_80023E84(void);
 
@@ -38,7 +38,7 @@ void func_80029DD8(void)
         gRegisterGuard = 1;
         func_80023E84();
         flag = gBitFieldState;
-        D_8009F6C4 = 0;
+        gPortraitStreamDeadline = 0;
         gLatchFlag = 0;
         gBitFieldState = (flag & 0xDF) | 0x8;
     }

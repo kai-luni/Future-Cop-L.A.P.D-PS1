@@ -2,6 +2,8 @@
 typedef unsigned char u8;
 typedef struct { u8 pad[9]; u8 x, y, z; } Inner;
 typedef struct { u8 pad[0x6c]; Inner *inner; u8 pad2[0x1b]; u8 x, y, z; } State;
+void gStepObjectLightColor(State *s, int x, int y, int z) __asm__("func_80040600");
+
 
 /**
  *  @brief Adjusts three inner byte fields toward their corresponding targets.
@@ -23,7 +25,7 @@ typedef struct { u8 pad[0x6c]; Inner *inner; u8 pad2[0x1b]; u8 x, y, z; } State;
  *  @par Callers
  *  Confirmed: func_80040A00.
  */
-void func_80040600(State *s, int x, int y, int z)
+void gStepObjectLightColor(State *s, int x, int y, int z)
 {
     if (x > 0) {
         x += s->inner->x;

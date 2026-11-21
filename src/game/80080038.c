@@ -44,7 +44,7 @@ extern u8 gMenuValueFormat[] __asm__("D_8009F484");
 extern void gDrawAlignedMultilineText(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_800788F0");
 extern void func_80078B34(s32, s32, s32);
 extern void func_8007F128(s32, s32, s32, s32, s32, s32);
-extern void func_8007FB04(void);
+extern void gStepProfileTransfer(void) __asm__("func_8007FB04");
 extern void gEmitAtlasSpriteSimple(s32, s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082AB0");
 extern void gEmitFlatQuadRect(s32, s32, s32, s32, s32, s32, s32, s32) __asm__("func_80082EF0");
 extern s32 func_8008CD30(u8 *, u8 *, s32);
@@ -110,7 +110,7 @@ void gDrawProfileDetailScreen(s32 arg0)
     if (arg0 != 0) {
         return;
     }
-    func_8007FB04();
+    gStepProfileTransfer();
     neg = -1;
     gEmitAtlasSpriteSimple(9, 0x24, 0x34, neg, neg, 0x1F4, 0x80, 1, 8);
     gEmitFlatQuadRect(0x25, 0x9B, 0x67, 2, 0xA, 0x60, 0xC0, 0xFF);

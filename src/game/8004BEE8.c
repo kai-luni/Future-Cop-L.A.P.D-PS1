@@ -41,6 +41,8 @@ struct Node4BEE8 {
 extern s32 gSceneFrameCounter __asm__("D_8009FA50");
 extern void gVectorAddScaled(struct Vec3s32 *a, struct Vec3s32 *b, s32 scale, struct Vec3s32 *out) __asm__("func_8001ACA4");
 extern s32 gGetGroundHeight(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 arg3) __asm__("func_80066F78");
+void gStepFracturedMeshDebris(struct Node4BEE8 *node, s32 arg_) __asm__("func_8004BEE8");
+
 
 /**
  * @brief Integrates the debris/shard list of a fractured object: gravity,
@@ -70,7 +72,7 @@ extern s32 gGetGroundHeight(struct Vec3s32 *position, s32 arg1, s32 arg2, s32 ar
  * @par Callers
  * func_8004C228.
  */
-void func_8004BEE8(struct Node4BEE8 *node, s32 arg_)
+void gStepFracturedMeshDebris(struct Node4BEE8 *node, s32 arg_)
 {
     register s32 arg __asm__("$18") = arg_;
     register s32 neg1 __asm__("$20");

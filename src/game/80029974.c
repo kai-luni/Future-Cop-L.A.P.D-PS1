@@ -21,6 +21,8 @@ extern struct Unk800A0BC0 gRingBuffer __asm__("D_800A0BC0");
 extern s32 func_800452C8(void);
 extern void func_80029DD8(void);
 extern void gAppendScriptEvent(s32 arg0) __asm__("func_800298EC");
+void gQueueScriptEvent(s32 arg0) __asm__("func_80029974");
+
 
 /**
  * @brief Queues an event value into the eight-slot ring buffer.
@@ -53,7 +55,7 @@ extern void gAppendScriptEvent(s32 arg0) __asm__("func_800298EC");
  * @par Callers
  * Confirmed: func_80069D68 (script VM).
  */
-void func_80029974(s32 arg0)
+void gQueueScriptEvent(s32 arg0)
 {
     s32 index;
 

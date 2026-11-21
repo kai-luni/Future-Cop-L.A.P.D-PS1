@@ -121,7 +121,7 @@ struct Unk32180 {
 
 extern void gEntityBaseHandler(s32, struct Unk32180 *, struct Unk32180Arg *) __asm__("func_8002AD58");
 extern void gInitAttackSchedulerSlot(void *, void *) __asm__("func_80060668");
-extern void func_800320E4(struct Unk320E4 *);
+extern void gPickHoverWanderTarget(struct Unk320E4 *) __asm__("func_800320E4");
 extern s32 gGetGroundHeight(s32 *, s32, s32, s32) __asm__("func_80066F78");
 extern s32 func_80019668(void);
 extern void gSinCos(u32, s32 *, s32 *) __asm__("func_8001846C");
@@ -243,7 +243,7 @@ s32 gInitHoverEnemy(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg)
     obj->unkD0 = obj->pos;
 
     if (obj->unkFB & 1) {
-        func_800320E4((struct Unk320E4 *)obj);
+        gPickHoverWanderTarget((struct Unk320E4 *)obj);
         obj->pos = obj->unkDC;
         value = gGetGroundHeight(pos, 0, 0, 0);
         obj->pos.y = value + (obj->unk114 << 4);
@@ -265,7 +265,7 @@ s32 gInitHoverEnemy(s32 arg0, struct Unk32180 *obj, struct Unk32180Arg *arg)
     obj->unk80 = sc[1];
     obj->unk7C = 0;
     gBuildBasisFromAxis(&obj->unk78, obj->unk2C);
-    func_800320E4((struct Unk320E4 *)obj);
+    gPickHoverWanderTarget((struct Unk320E4 *)obj);
 
     obj->unk118 = (u32)0x80000000 / (u32)((obj->unk112 - obj->unk114) << 3);
     obj->unk11C = (u32)0x80000000 / (u32)((obj->unk114 - obj->unk110) << 3);

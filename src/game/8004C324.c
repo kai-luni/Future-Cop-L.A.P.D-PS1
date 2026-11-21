@@ -20,6 +20,8 @@ extern s32 gHandleObjectEventMessages(s32, struct Owner *, s32, s32) __asm__("fu
 extern struct Node *gFreeDebrisFragment(struct Owner *, struct Node *, struct Node *) __asm__("func_8004AAD4");
 extern u8 gLaunchDebrisObject(struct Owner *, s32) __asm__("func_8004ABE4");
 extern u8 gSpawnMeshFractureDebris(struct Owner *, s32) __asm__("func_8004B5F8");
+s32 gHandleDebrisObjectMessage(s32 message, struct Owner *obj, s32 arg2, s32 arg3) __asm__("func_8004C324");
+
 
 /**
  * @brief Message handler of the debris instance built by func_8004C920: message 0
@@ -82,7 +84,7 @@ extern u8 gSpawnMeshFractureDebris(struct Owner *, s32) __asm__("func_8004B5F8")
  * func_8006EB80 and the request tables do not name it, so it is reached only as
  * that instance's message handler.
  */
-s32 func_8004C324(s32 message, struct Owner *obj, s32 arg2, s32 arg3)
+s32 gHandleDebrisObjectMessage(s32 message, struct Owner *obj, s32 arg2, s32 arg3)
 {
     struct Link *link;
     struct Sub2 *sub;

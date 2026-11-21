@@ -57,6 +57,8 @@ struct Request {
 extern void gHandleMountedPartMsg() __asm__("func_80039298");
 extern void gTransformPartVertex(u8 *coord, s32 part, struct Vec3s32 *out) __asm__("func_80017668");
 extern void *gSpawnQueuedEntity(struct Request *request) __asm__("func_8004D444");
+void *gSpawnMountedPartChild(struct Object *object, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6) __asm__("func_80039418");
+
 
 /**
  * @brief Spawns a kind-0x15 object through the request queue with handler
@@ -86,7 +88,7 @@ extern void *gSpawnQueuedEntity(struct Request *request) __asm__("func_8004D444"
  * @par Callers
  * func_80039504, func_800397AC.
  */
-void *func_80039418(struct Object *object, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6)
+void *gSpawnMountedPartChild(struct Object *object, s32 arg1, s16 arg2, s32 arg3, u8 arg4, u8 arg5, s32 arg6)
 {
     struct Request request;
     struct Args args;

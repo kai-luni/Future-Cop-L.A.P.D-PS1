@@ -8,6 +8,8 @@ struct Bound {
 
 extern s32 func_800640D8(u16 *in, s16 *out);
 extern s32 gIsInViewFrustumWithMargin(s16 *point, s32 margin) __asm__("func_80063FF8");
+s32 gBuildFourCellVisibilityMask(u16 *base, s32 step, struct Bound *bounds) __asm__("func_8006411C");
+
 
 /**
  * @brief Builds a four-direction collision mask around a position.
@@ -28,7 +30,7 @@ extern s32 gIsInViewFrustumWithMargin(s16 *point, s32 margin) __asm__("func_8006
  * tested with the object's own margin, and the result tells the mover which sides
  * are free.
  */
-s32 func_8006411C(u16 *base, s32 step, struct Bound *bounds)
+s32 gBuildFourCellVisibilityMask(u16 *base, s32 step, struct Bound *bounds)
 {
     s32 result;
     s32 half;

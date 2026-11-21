@@ -19,7 +19,7 @@ extern u8 gTileCornerIndices[][4] __asm__("D_8009AFE8");
 extern u8 gTileShapeTable[] __asm__("D_8009B1A4");
 
 extern s32 gSampleTileHeight(s8 *data, u32 index, s32 x, s32 y, s32 *out) __asm__("func_80067480");
-extern s32 *func_8006320C(s32 *pos, s32 *out, s32 *a, u8 *b);
+extern s32 *gFindGroundObjectAtPosition(s32 *pos, s32 *out, s32 *a, u8 *b) __asm__("func_8006320C");
 extern void gNormalizeVector(s32 *v) __asm__("func_8001A180");
 s32 gGetGroundHeight(s32 *position, s32 *output, s32 *a2, s32 *a3) __asm__("func_80066F78");
 
@@ -201,7 +201,7 @@ s32 gGetGroundHeight(s32 *position, s32 *output, s32 *a2, s32 *a3)
     if (t5p) {
         register s32 *rr __asm__("$6");
         frame.sv_out = out;
-        rr = func_8006320C(pos, out, &frame.l1C, &frame.l20);
+        rr = gFindGroundObjectAtPosition(pos, out, &frame.l1C, &frame.l20);
         out = frame.sv_out;
         if (rr && frame.l1C >= s4) {
             if (out) {

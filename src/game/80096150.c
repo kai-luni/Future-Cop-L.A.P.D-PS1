@@ -13,6 +13,8 @@ extern u32 gMdecDctScaleCommandBlock[] __asm__("D_8009E934");
 extern u8 gExecutableImageBase[] __asm__("D_80010000");
 extern void gStartMdecBlockTransfer(u32 *, u32) __asm__("func_80096240");
 extern void func_8008E000(void *, s32);
+void gResetMdecHardware(s32 option) __asm__("func_80096150");
+
 
 /**
  * @brief MDEC reset/init for movie playback: option 0 resets and uploads both quant-table command blocks, option 1 resets only, anything else prints "MDEC_rest:bad option(%d)".
@@ -34,7 +36,7 @@ extern void func_8008E000(void *, s32);
  * @par Callers
  * Confirmed: func_80095E90 (forwards the movie option code; the STR path uses 0 at start and 1 after frame decode).
  */
-void func_80096150(s32 option)
+void gResetMdecHardware(s32 option)
 {
     u32 *p;
     register u32 *q __asm__("$2");

@@ -15,7 +15,7 @@ extern volatile u32 *gDma2MemAddrPtr __asm__("D_8009DECC");
 extern volatile u32 *gDma2BlockCtrlPtr __asm__("D_8009DED0");
 extern volatile u32 *gDma2ChannelCtrlPtr __asm__("D_8009DED4");
 extern void func_800951D8(void);
-extern int func_8009520C(void);
+extern int gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
 
 typedef struct {
     u32 w0;
@@ -69,7 +69,7 @@ int gReadGpuVramRectDma(Hdr *arg0, u32 *out)
     if (!(*gGpuGp1PortPtr & 0x4000000)) {
         __asm__ volatile("" ::: "$3");
         do {
-            if (func_8009520C()) return -1;
+            if (gCheckGpuDmaTimeout()) return -1;
         } while (!(*gGpuGp1PortPtr & 0x4000000));
     }
     *gGpuGp1PortPtr = 0x4000000;
@@ -80,7 +80,7 @@ int gReadGpuVramRectDma(Hdr *arg0, u32 *out)
     if (!(*gGpuGp1PortPtr & 0x8000000)) {
         __asm__ volatile("" ::: "$3");
         do {
-            if (func_8009520C()) return -1;
+            if (gCheckGpuDmaTimeout()) return -1;
         } while (!(*gGpuGp1PortPtr & 0x8000000));
     }
     {

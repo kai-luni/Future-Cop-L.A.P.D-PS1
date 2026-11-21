@@ -14,6 +14,8 @@ extern struct FixedPool *gDeferredRegPool __asm__("D_8009F70C");
 extern void func_8006EDC4(void);
 extern void gInitEffectPools(void) __asm__("func_8005E1BC");
 extern struct FixedPool *func_800194DC(s32 count, s32 size, s32 tag);
+void gInitMissionSpawnState(void) __asm__("func_8003F79C");
+
 
 /**
  * @brief Resets spawn and occupancy tables and initializes mission-level object pools.
@@ -39,7 +41,7 @@ extern struct FixedPool *func_800194DC(s32 count, s32 size, s32 tag);
  * @par Callers
  * Confirmed: func_80024A24 (0x80024CEC, mission boot sequence).
  */
-void func_8003F79C(void)
+void gInitMissionSpawnState(void)
 {
     s32 i;
     s32 j;

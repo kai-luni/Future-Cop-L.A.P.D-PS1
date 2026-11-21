@@ -5,6 +5,8 @@ extern u8 *gSlotSpawnDescs[] __asm__("D_800A0C70");
 extern u8 *gAllocMemory(s32 size, s32 type) __asm__("func_80017EBC");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 extern void *memcpy(void *dst, const void *src, u32 n);
+void gSetSlotSpawnDescriptor(u8 *arg0) __asm__("func_8003BC7C");
+
 
 /**
  * @brief Rebuilds the 0x1C snapshot of one slot from the source record.
@@ -32,7 +34,7 @@ extern void *memcpy(void *dst, const void *src, u32 n);
  * @par Callers
  * Likely: func_8003BDA0, func_8003BFD0 (same address block).
  */
-void func_8003BC7C(u8 *arg0)
+void gSetSlotSpawnDescriptor(u8 *arg0)
 {
     u8 *block;
 

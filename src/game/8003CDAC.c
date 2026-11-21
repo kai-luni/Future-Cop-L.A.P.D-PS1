@@ -16,6 +16,8 @@ struct Unk3CDACObject {
 struct Unk3CDACHolder {
     struct Unk3CDACObject *object;
 };
+s32 gCheckModelAttachmentSlot(struct Unk3CDACHolder *holder, s8 index) __asm__("func_8003CDAC");
+
 
 /**
  *  @brief Tests whether an indexed entry is available in a held object.
@@ -37,7 +39,7 @@ struct Unk3CDACHolder {
  *  @par Callers
  *  Confirmed: func_8003E984.
  */
-s32 func_8003CDAC(struct Unk3CDACHolder *holder, s8 index)
+s32 gCheckModelAttachmentSlot(struct Unk3CDACHolder *holder, s8 index)
 {
     struct Unk3CDACObject *object;
     register struct Unk3CDACRange *range __asm__("$3");

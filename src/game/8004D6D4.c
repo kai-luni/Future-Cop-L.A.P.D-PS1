@@ -51,7 +51,7 @@ extern s32 gSpawnQueuedEntityAndGetId(struct EntityDef *def) __asm__("func_8004D
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 extern void gLoadMapZone(struct Unk4D6D4 *arg0) __asm__("func_800319D4");
-extern void func_80084110(struct Unk4D6D4 *arg0);
+extern void gLoadDeferredSceneAsset(struct Unk4D6D4 *arg0) __asm__("func_80084110");
 extern void gLoadActorLightNode(struct Unk4D6D4 *arg0) __asm__("func_80049EA8");
 extern void gLoadAttackDefinition(struct Unk4D6D4 *arg0) __asm__("func_80060838");
 extern void gRegistryLoad(struct Unk4D6D4 *arg0) __asm__("func_8006A918");
@@ -107,7 +107,7 @@ void gLoadActorChunk(struct Unk4D6D4 *arg0)
         gLoadMapZone(arg0);
         break;
     case 0x60:
-        func_80084110(arg0);
+        gLoadDeferredSceneAsset(arg0);
         break;
     case 0x61:
         gLoadActorLightNode(arg0);

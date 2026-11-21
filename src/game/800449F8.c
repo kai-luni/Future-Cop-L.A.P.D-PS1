@@ -28,6 +28,8 @@ struct AnimScript {
 extern struct AnimClip *func_800448D8(struct AnimTrack *track, s32 index, s32 direction,
                                       u8 flags);
 extern void gRemoveEntityCommand(struct AnimScript *script, s32 index) __asm__("func_8002A5B4");
+void gProcessAnimScriptCommands(struct AnimScript *script, struct AnimTrack *track) __asm__("func_800449F8");
+
 
 /**
  * @brief Interprets up to four animation script commands on a track.
@@ -53,7 +55,7 @@ extern void gRemoveEntityCommand(struct AnimScript *script, s32 index) __asm__("
  * @par Callers
  * func_80044B34.
  */
-void func_800449F8(struct AnimScript *script, struct AnimTrack *track)
+void gProcessAnimScriptCommands(struct AnimScript *script, struct AnimTrack *track)
 {
     s32 i;
     s32 op;

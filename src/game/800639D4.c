@@ -9,6 +9,8 @@ extern Section **gTileBlockTable __asm__("D_8009F808");
 extern Chunk *gMapTileAnimList __asm__("D_8009FA04");
 extern List gTileDefTable __asm__("D_800A6F38");
 extern u8 gSlfxFlagByte[] __asm__("D_800A2931");
+void gParseMapSectionChunks(u8 *data, u32 size, s32 id) __asm__("func_800639D4");
+
 
 /**
  *  @brief Processes section, animation, and effects chunks in a data buffer.
@@ -29,7 +31,7 @@ extern u8 gSlfxFlagByte[] __asm__("D_800A2931");
  *  @par Callers
  *  Confirmed: func_80063C20.
  */
-void func_800639D4(u8 *data, u32 size, s32 id)
+void gParseMapSectionChunks(u8 *data, u32 size, s32 id)
 {
     register u8 *end __asm__("$14") = data + size;
     register Section *section __asm__("$9") = 0;

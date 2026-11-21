@@ -66,7 +66,7 @@ extern u32 gPollPadButtons(u32) __asm__("func_8001EF8C");
 extern void func_80077990(void);
 extern void gSyncMenuFontBank(void) __asm__("func_800788B4");
 extern void gSetupFrontEndMenus(s32) __asm__("func_80077AD4");
-extern u8 func_80078C88(void) __asm__("func_80078C88");
+extern u8 gStartNextAttractDemo(void) __asm__("func_80078C88");
 extern u8 gCheckMenuDirectionRepeat(s32 *, s32) __asm__("func_80082D30");
 extern void gPlayMovieClip(u32, s32) __asm__("func_80082DDC");
 extern void gDecodeButtonEdge(u32, struct InputAction *) __asm__("func_8005780C");
@@ -165,7 +165,7 @@ reset_timer:
         }
         if (gFrameTickCounter > gIdleDeadline) {
             u8 active = 0;
-            if (gAttractDemoSequenceIndex) active = func_80078C88();
+            if (gAttractDemoSequenceIndex) active = gStartNextAttractDemo();
             if (!active) {
                 gFrontEndReturnMode = 5;
                 gPlayMovieClip(gAttractMovieNames[gAttractMovieIndex], 0);

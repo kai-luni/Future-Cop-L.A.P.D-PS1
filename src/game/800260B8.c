@@ -39,8 +39,8 @@ extern s32 gPlayerEntities[] __asm__("D_8009FA58");
 extern s32 gCheatCodeInput[] __asm__("D_8009F670");
 extern s32 gSlotVoiceHandle[2] __asm__("D_8009F678");
 extern s32 gSlotTrackId[2] __asm__("D_8009FA78");
-extern struct InputAction260B8 D_800A0AD0[];
-extern struct InputAction260B8 D_800A0AE0[];
+extern struct InputAction260B8 gOptDecreaseAction[] __asm__("D_800A0AD0");
+extern struct InputAction260B8 gOptIncreaseAction[] __asm__("D_800A0AE0");
 extern struct InputAction260B8 gOptUpAction[] __asm__("D_800A0AB0");
 extern struct InputAction260B8 gOptDownAction[] __asm__("D_800A0AC0");
 extern struct InputAction260B8 gBackActionRecord[] __asm__("D_800A0B20");
@@ -180,9 +180,9 @@ void gDrawOptionsSubPanel(struct Obj260B8 *obj, s32 slotArg, s32 arg2, s32 selec
     state = obj->state;
 
     actionOffset = (u32)slotArg * 8;
-    p1 = (struct InputAction260B8 *)(actionOffset + (u32)D_800A0AD0);
+    p1 = (struct InputAction260B8 *)(actionOffset + (u32)gOptDecreaseAction);
     gDecodeButtonEdge(state->buttons, p1);
-    p2 = (struct InputAction260B8 *)(actionOffset + (u32)D_800A0AE0);
+    p2 = (struct InputAction260B8 *)(actionOffset + (u32)gOptIncreaseAction);
     gDecodeButtonEdge(state->buttons, p2);
     p3 = (struct InputAction260B8 *)((u32)gOptUpAction + actionOffset);
     gDecodeButtonEdge(state->buttons, p3);

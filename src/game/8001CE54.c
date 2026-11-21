@@ -26,7 +26,7 @@ typedef struct {
 
 extern GlobalState func_80010000;
 extern Entry gFileSlotTable[] __asm__("D_800A6D78");
-extern s32 D_8009F244;
+extern s32 gTransferError __asm__("D_8009F244");
 extern u8 gCdReadCommand __asm__("D_8009F248");
 extern s32 gCdCallbackActive __asm__("D_8009F618");
 extern u8 gCdCommandParam[] __asm__("D_8009F610");
@@ -132,7 +132,7 @@ s32 gStartCdFileRead(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     st->unk10 = index;
     st->unk20 = second;
     st->unk08 = 0;
-    if ((entry->unk0C & 0xFFFFF800) == D_8009F244) {
+    if ((entry->unk0C & 0xFFFFF800) == gTransferError) {
         gCopyCdSectorChunk();
     }
     if (st->unk04 <= 0) {

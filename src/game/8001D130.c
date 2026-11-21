@@ -16,7 +16,7 @@ typedef struct {
 extern GlobalState func_80010000;
 extern s32 gCdCallbackActive __asm__("D_8009F618");
 extern u8 gCdCommandParam[8] __asm__("D_8009F610");
-extern u8 D_8009F611;
+extern u8 gCdCommandParamByte1 __asm__("D_8009F611");
 extern u8 gCdCurrentLoc[] __asm__("D_8009F61C");
 extern u8 gEventBuffer[] __asm__("D_800A0798");
 extern void gCdSectorReadyCallbackAddress(s32 mode) __asm__("D_8001C808");
@@ -122,7 +122,7 @@ s32 gProbeCdDriveMode(s32 arg0)
         a2 = s1;
         __asm__("" : "+r"(a2));
         v1 = 0x82;
-        D_8009F611 = v1;
+        gCdCommandParamByte1 = v1;
         v1 = 0xA2;
         ((u8 *)v0)[-1] = v1;
 

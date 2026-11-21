@@ -38,6 +38,8 @@ typedef struct { u8 b[0x70]; } Rec;
 typedef struct { u8 pad0[0x424]; Rec recs[10]; u8 pad884[0xA0]; u8 idx; } Big;
 #define S(off) (((Big *)gSaveProfileImage)->recs[((Big *)gSaveProfileImage)->idx].b[(off) - 0x424])
 #define REC (((Rec *)((Big *)gSaveProfileImage)->recs)[((Big *)gSaveProfileImage)->idx].b - 0x424)
+void gSaveSelectedProfileToCard(void) __asm__("func_80080B70");
+
 
 /**
  * @brief Materialises the 0x678-byte front-end profile image in the D_8009F92C block
@@ -98,7 +100,7 @@ typedef struct { u8 pad0[0x424]; Rec recs[10]; u8 pad884[0xA0]; u8 idx; } Big;
  * func_8007FB04, the status-change branch of the movie step, and func_8008125C, the
  * profile list widget, after a name edit is decoded back into the record.
  */
-void func_80080B70(void)
+void gSaveSelectedProfileToCard(void)
 {
     u8 *r;
     u32 i;

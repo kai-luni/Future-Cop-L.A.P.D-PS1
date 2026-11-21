@@ -3,6 +3,8 @@
 struct Entity { u8 pad[0x5c]; s32 x; u8 pad60[4]; s32 z; u8 pad68[0x60]; u32 flags; };
 extern void gResetDroneApproach(struct Entity *) __asm__("func_8003526C");
 extern void gRetireEntity(struct Entity *) __asm__("func_8004D958");
+void gHandleRotatingPropProximityContact(struct Entity *self, struct Entity *other) __asm__("func_80030060");
+
 
 /**
  * @brief Octagonal distance test in the X/Z plane with a contact reaction.
@@ -33,7 +35,7 @@ extern void gRetireEntity(struct Entity *) __asm__("func_8004D958");
  * @par Callers
  * Confirmed: func_8003015C.
  */
-void func_80030060(struct Entity *self, struct Entity *other)
+void gHandleRotatingPropProximityContact(struct Entity *self, struct Entity *other)
 {
     s32 dz, dx, ax, sum;
     dz = self->z - other->z;

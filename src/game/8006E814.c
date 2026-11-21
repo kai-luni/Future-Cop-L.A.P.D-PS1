@@ -19,7 +19,7 @@ struct Obj {
 
 extern s32 gGuardEffectPoolMessage(s32, struct Obj *, s32, s32) __asm__("func_8003C7B8");
 extern s32 gHandleObjectEventMessages(s32, struct Obj *, s32, s32) __asm__("func_8003C980");
-extern void func_8006E720(struct Obj *);
+extern void gInitDomeEffectFadeRate(struct Obj *) __asm__("func_8006E720");
 extern void *gBuildDomePatchMesh(s16, s32) __asm__("func_8006C84C");
 extern void func_8006CA68(void *);
 extern void gFreeBlock(void *) __asm__("func_800181D4");
@@ -65,7 +65,7 @@ s32 gHandleDomeMeshEffect(s32 message, struct Obj *obj, s32 arg2, s32 arg3)
     if (gGuardEffectPoolMessage(message, obj, arg2, arg3)) goto ret0;
     switch (message) {
     case 0:
-        func_8006E720(obj);
+        gInitDomeEffectFadeRate(obj);
         obj->field72 = 0;
         obj->field76 = 20;
         obj->field7c = obj->field78;

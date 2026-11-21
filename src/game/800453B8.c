@@ -39,6 +39,8 @@ extern u8 gVolumeLimitSelector __asm__("D_8009F738");
 extern void gResetSoundBankTables(void) __asm__("func_80044EF8");
 extern void func_8004582C(void);
 extern s32 gAllocReservedStreamVoice(void) __asm__("func_80046AD8");
+void gInitSoundPools(void) __asm__("func_800453B8");
+
 
 /**
  *  @brief Initializes voice, bank and stream state for the audio subsystem.
@@ -60,7 +62,7 @@ extern s32 gAllocReservedStreamVoice(void) __asm__("func_80046AD8");
  *  @par Callers
  *  Confirmed: func_80044F8C.
  */
-void func_800453B8(void)
+void gInitSoundPools(void)
 {
     u32 i;
     struct Unk453B8Bank *bank;

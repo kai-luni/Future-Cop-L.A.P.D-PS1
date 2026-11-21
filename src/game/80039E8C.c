@@ -60,6 +60,8 @@ typedef struct {
 extern s32 gEntityBaseHandler(s32, Unk39E8C_O *, Unk39E8C_A *) __asm__("func_8002AD58");
 extern s32 gQuerySurfaceHeight(void *, s32) __asm__("func_80067684");
 extern void gInitRailSegment(void *, void *, s32, void *, void *) __asm__("func_80050E0C");
+void gInitForceFieldEntity(s32 arg0, Unk39E8C_O *obj, Unk39E8C_A *arg2) __asm__("func_80039E8C");
+
 
 /**
  * @brief Spawn-time initializer of the force-field entity class.
@@ -96,7 +98,7 @@ extern void gInitRailSegment(void *, void *, s32, void *, void *) __asm__("func_
  * @par Callers
  * Confirmed: func_8003A844 (message 2 of the class handler, size query 0x148).
  */
-void func_80039E8C(s32 arg0, Unk39E8C_O *obj, Unk39E8C_A *arg2)
+void gInitForceFieldEntity(s32 arg0, Unk39E8C_O *obj, Unk39E8C_A *arg2)
 {
     Unk39E8C_I *in;
     s32 i;

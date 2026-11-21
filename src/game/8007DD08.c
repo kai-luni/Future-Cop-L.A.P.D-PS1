@@ -19,7 +19,7 @@ extern s8 gLoadoutHeavyWeaponIndices[] __asm__("D_8009F926");
 extern s8 gLoadoutSpecialWeaponIndices[] __asm__("D_8009F928");
 extern u8 gRowRecordTable[] __asm__("D_8009C030");
 extern u8 gSecondLoadoutRowRecords[] __asm__("D_8009C050");
-extern u8 *D_8009C0D0;
+extern u8 *gLoadoutSpecialWeaponRows __asm__("D_8009C0D0");
 extern s32 gGameClock __asm__("D_8009FA60");
 
 extern void gClampLoadoutSelections(s32) __asm__("func_8007D2DC");
@@ -99,7 +99,7 @@ void gDrawLoadoutScreen(s32 arg0)
         gDrawLoadoutListRow(gRowRecordTable + gLoadoutPrimaryWeaponIndices[arg0] * 6, s0, 0x4F, s4 == 0, 0, 0);
         gDrawLoadoutListRow(gSecondLoadoutRowRecords + gLoadoutHeavyWeaponIndices[arg0] * 6, s0, 0x71, s4 == 1, 1, 0);
         i3 = gLoadoutSpecialWeaponIndices[arg0];
-        gDrawLoadoutListRow(D_8009C0D0 + i3 * 6, s0, 0x93, s4 == 2, 2, 0);
+        gDrawLoadoutListRow(gLoadoutSpecialWeaponRows + i3 * 6, s0, 0x93, s4 == 2, 2, 0);
     } else {
         if (gFontBankTable[arg0] == 0)
             s6 = 1;
@@ -110,7 +110,7 @@ void gDrawLoadoutScreen(s32 arg0)
         gDrawLoadoutListRow(gRowRecordTable + gLoadoutPrimaryWeaponIndices[arg0] * 6, 0x86, 0x35, s4 == 0, 0, 1);
         gDrawLoadoutListRow(gSecondLoadoutRowRecords + gLoadoutHeavyWeaponIndices[arg0] * 6, 0x86, 0x5F, s4 == 1, 1, 1);
         i3 = gLoadoutSpecialWeaponIndices[arg0];
-        gDrawLoadoutListRow(D_8009C0D0 + i3 * 6, 0x86, 0x89, s4 == 2, 2, 1);
+        gDrawLoadoutListRow(gLoadoutSpecialWeaponRows + i3 * 6, 0x86, 0x89, s4 == 2, 2, 1);
     }
     func_80078B34(0x2968, 0, s3);
     if (s4 >= 0 && gLoadoutTable[s4].values[arg0] > gLoadoutTable[s4].limit)

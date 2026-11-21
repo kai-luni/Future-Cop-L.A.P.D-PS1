@@ -20,7 +20,7 @@ extern struct SoundBank gSoundEntryTable[] __asm__("D_800A7938");
 extern s32 gComputeSpatialSoundAttenuation(s32 arg0, s32 arg1, s8 *mix, s32 arg3) __asm__("func_800458E8");
 extern s32 gAllocPrioritySoundVoice(s32 volume, s32 arg1, s32 arg2, u32 index) __asm__("func_80046B04");
 extern void gComputeSpatialSoundPan(s8 *mix) __asm__("func_800460D4");
-extern u8 func_8004772C(struct SoundBank *bank, s32 handle, s32 pan, s32 volume, s32 extra);
+extern u8 gPlayNextBankSample(struct SoundBank *bank, s32 handle, s32 pan, s32 volume, s32 extra) __asm__("func_8004772C");
 extern void gReleaseSoundVoice(s32 handle) __asm__("func_80046698");
 s32 gPlaySpatialSoundBankSlot(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4) __asm__("func_80046F9C");
 
@@ -82,7 +82,7 @@ s32 gPlaySpatialSoundBankSlot(s32 arg0, s32 arg1, u32 index, s32 arg3, s32 arg4)
     handle = gAllocPrioritySoundVoice(mix[0], bank->unk13, (s8)arg4Value, indexValue);
     if (handle != 0) {
         gComputeSpatialSoundPan(mix);
-        if (func_8004772C(bank, handle, mix[1], mix[0], -1) == 0) {
+        if (gPlayNextBankSample(bank, handle, mix[1], mix[0], -1) == 0) {
             gReleaseSoundVoice(handle);
             handle = 0;
         }

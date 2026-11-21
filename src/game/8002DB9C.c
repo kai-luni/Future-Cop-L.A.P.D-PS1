@@ -21,6 +21,8 @@ extern s32 gInitGroundObject(struct Object *, void *, s32) __asm__("func_8002DAA
 extern s32 gEntityBaseHandler(s32, struct Object *, struct Data *, s32) __asm__("func_8002AD58");
 extern void gAdvanceAnimTrack(struct Object *, void *, void *, s32) __asm__("func_80044B34");
 extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
+s32 gHandleType13EntityMsg(s32 message, struct Object *object, struct Data *data, s32 arg3) __asm__("func_8002DB9C");
+
 
 /**
  * @brief Message handler of object type 13: spawn, animation tick and a
@@ -52,7 +54,7 @@ extern void gSetModelFrame(void *, s32) __asm__("func_800175F8");
  * No direct callers in the call graph. func_8002AE54 returns the address
  * for object type 13, so the dispatcher reaches it indirectly.
  */
-s32 func_8002DB9C(s32 message, struct Object *object, struct Data *data, s32 arg3)
+s32 gHandleType13EntityMsg(s32 message, struct Object *object, struct Data *data, s32 arg3)
 {
     switch (message) {
     case 1:

@@ -22,6 +22,8 @@ struct EntityTable {
 extern struct EntityTable gCommandListHead __asm__("D_800A8F90");
 
 extern void gRefreshEntitySlotSpawns(struct Entity *entity, s32 value) __asm__("func_8003BAE4");
+void gProcessDeferredEntityUpdates(void) __asm__("func_8004CE04");
+
 
 /**
  * @brief Runs per-frame deferred updates and grid re-placement across active entities in D_800A8F90.
@@ -44,7 +46,7 @@ extern void gRefreshEntitySlotSpawns(struct Entity *entity, s32 value) __asm__("
  * @par Callers
  * Confirmed: func_80027510 (two-player frame tick); also direct call at 0x80027388 in asm/us/main.s (single-player frame tick).
  */
-void func_8004CE04(void)
+void gProcessDeferredEntityUpdates(void)
 {
     struct Entity *entity;
     s32 i;

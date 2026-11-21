@@ -10,7 +10,7 @@ typedef struct {
     u32 unk7B54;
 } State;
 extern State *gMovieAudioState __asm__("D_8009F4D8");
-extern void func_8008684C(u8 *, u32, u32);
+extern void gUploadMovieAudioBlock(u8 *, u32, u32) __asm__("func_8008684C");
 
 /**
  *  @brief Advances a two-stage operation in a state structure.
@@ -33,7 +33,7 @@ extern void func_8008684C(u8 *, u32, u32);
 void func_80086954(s32 arg0, State *arg1)
 {
     if (arg1->unk7B48 == 1) {
-        func_8008684C(arg1->unk7B50, arg1->unk7B54, 1);
+        gUploadMovieAudioBlock(arg1->unk7B50, arg1->unk7B54, 1);
         gMovieAudioState->unk7B48 = 2;
     } else if (arg1->unk7B48 == 2) {
         arg1->unk7B48 = 0;

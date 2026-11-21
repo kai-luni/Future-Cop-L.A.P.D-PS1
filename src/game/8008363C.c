@@ -30,6 +30,8 @@ extern VoiceTable *gMissionTable __asm__("D_8009F930");
 
 extern s32 func_80045678(s32 sound, s32 id, s32 arg2, s32 arg3, s32 arg4);
 extern void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index);
+void gAssignSceneSoundVoice(SoundObj *obj) __asm__("func_8008363C");
+
 
 /**
  *  @brief Allocates or refreshes a sound object's voice slot.
@@ -50,7 +52,7 @@ extern void func_8004572C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 index);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_8008363C(SoundObj *obj)
+void gAssignSceneSoundVoice(SoundObj *obj)
 {
     VoiceTable *table;
     VoiceSlot *slot;

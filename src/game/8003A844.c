@@ -1,7 +1,7 @@
 // Categories: Gameplay > Entity Script | Physics > Force Fields
 #include "game/types.h"
 
-extern void func_80039E8C(s32 message, void *object, void *data);
+extern void gInitForceFieldEntity(s32 message, void *object, void *data) __asm__("func_80039E8C");
 extern void gUpdateForceField(void *object, void *data) __asm__("func_8003A160");
 extern s32 gEntityBaseHandler(s32 message, void *object, void *data) __asm__("func_8002AD58");
 
@@ -46,7 +46,7 @@ s32 func_8003A844(u32 message, void *object, void *data)
     case 1:
         return 0x148;
     case 2:
-        func_80039E8C(2, object, data);
+        gInitForceFieldEntity(2, object, data);
         return 0;
     case 6:
         gUpdateForceField(object, data);

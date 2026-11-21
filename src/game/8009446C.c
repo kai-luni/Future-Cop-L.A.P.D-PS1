@@ -15,7 +15,7 @@ extern volatile u32 *gDma2BlockCtrlPtr __asm__("D_8009DED0");
 extern volatile u32 *gGpuGp1PortPtr __asm__("D_8009DEC8");
 extern u32 *volatile gGpuGp0PortPtr __asm__("D_8009DEC4");
 extern void func_800951D8(void);
-extern int func_8009520C(void);
+extern int gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
 int gUploadImageToGpu(u16 *hdr_, u32 *data_) __asm__("func_8009446C");
 
 
@@ -81,7 +81,7 @@ int gUploadImageToGpu(u16 *hdr_, u32 *data_)
     if ((*gGpuGp1PortPtr & 0x4000000) == 0) {
         __asm__ volatile("" ::: "$3");
         do {
-            if (func_8009520C() != 0) return -1;
+            if (gCheckGpuDmaTimeout() != 0) return -1;
         } while ((*gGpuGp1PortPtr & 0x4000000) == 0);
     }
     *gGpuGp1PortPtr = 0x4000000;

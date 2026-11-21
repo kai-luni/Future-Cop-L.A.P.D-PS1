@@ -24,7 +24,9 @@ extern u32 func_80095350(u32 a0);
 extern void gMemset(unsigned char *destination, int value, unsigned int count) __asm__("func_80095830");
 extern void func_800951D8(void);
 extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
-extern s32 func_8009520C(void);
+extern s32 gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
+s32 gResetGpuHardware(s32 a0) __asm__("func_80094F4C");
+
 
 /**
  * @brief Programs the video/transfer registers and clears the working buffers.
@@ -59,7 +61,7 @@ extern s32 func_8009520C(void);
  * @par Callers
  * Confirmed: func_80092910.
  */
-s32 func_80094F4C(s32 a0)
+s32 gResetGpuHardware(s32 a0)
 {
     u32 saved;
 

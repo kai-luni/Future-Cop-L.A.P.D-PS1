@@ -34,6 +34,8 @@ extern s32 gHandleObjectEventMessages(s32, struct Obj44610 *, s32, s32) __asm__(
 extern void gBuildNodePlacement(void *, s32, struct Node44610 *, s32, s32 *, s16 *, s16 *) __asm__("func_8003DB70");
 extern void gSpawnEmitterParticles(struct Obj44610 *, void *, s32) __asm__("func_80042AF4");
 extern void gFreeEmitterObject(struct Obj44610 *) __asm__("func_800427E8");
+s32 gHandlePeriodicEffect(s32 message, struct Obj44610 *obj, s32 arg2, s32 arg3) __asm__("func_80044610");
+
 
 /**
  * @brief Effect message handler: behaviour, effect pass and debris burst.
@@ -55,7 +57,7 @@ extern void gFreeEmitterObject(struct Obj44610 *) __asm__("func_800427E8");
  * @par Likely role
  * The single entry point of an effect object, called once per tick.
  */
-s32 func_80044610(s32 message, struct Obj44610 *obj, s32 arg2, s32 arg3)
+s32 gHandlePeriodicEffect(s32 message, struct Obj44610 *obj, s32 arg2, s32 arg3)
 {
     register struct Node44610 *parent __asm__("$2");
     register struct Node44610 *child __asm__("$6");

@@ -66,9 +66,9 @@ extern void gSetAudioPlaybackEnabled(s32) __asm__("func_80047690");
 extern void func_80069D0C(s32);
 extern void gCullActiveEntitiesSplit(void) __asm__("func_8004E248");
 extern void gDispatchQueuedEntityCommands(void) __asm__("func_8004CECC");
-extern void func_8004CD6C(s32, s32, s32);
+extern void gBroadcastEntityMessage(s32, s32, s32) __asm__("func_8004CD6C");
 extern void gUpdateMapZoneTriggers(s32) __asm__("func_80031DE8");
-extern void func_8004CE04(void);
+extern void gProcessDeferredEntityUpdates(void) __asm__("func_8004CE04");
 extern void gRunEntityWorldTick(s32) __asm__("func_8003F570");
 extern void func_80026E5C(s32, struct Game *);
 extern void func_80026D5C(void);
@@ -82,7 +82,7 @@ extern void func_80026F68(s32, s32);
 extern s32 func_80049340(u8 *);
 extern void gDrawAlignedString(u8 *, s32, s32, s32) __asm__("func_80049100");
 extern void gEmitHudPanelSprite(s32) __asm__("func_800485AC");
-extern void func_800486FC(s32);
+extern void gUpdateFrameCloseHud(s32) __asm__("func_800486FC");
 extern void gEndSubScreenFrame(void) __asm__("func_8001BBAC");
 extern void func_80026D1C(void);
 extern void gUpdateRegisteredSpawners(s32) __asm__("func_800616A0");
@@ -225,9 +225,9 @@ void gRunSessionFrame(void)
         func_80069D0C(gFrameDelta);
         gCullActiveEntitiesSplit();
         gDispatchQueuedEntityCommands();
-        func_8004CD6C(6, gFrameDelta, 0);
+        gBroadcastEntityMessage(6, gFrameDelta, 0);
         gUpdateMapZoneTriggers(gFrameDelta);
-        func_8004CE04();
+        gProcessDeferredEntityUpdates();
         gRunEntityWorldTick(gFrameDelta);
     }
     if (D_8009FA58.ptr != 0 && !(flags & 1)) func_80026E5C(0, D_8009FA58.ptr);
@@ -305,7 +305,7 @@ void gRunSessionFrame(void)
             gDrawAlignedString(text, xarg, 0xB4, color);
         }
         gEmitHudPanelSprite(1);
-        func_800486FC(1);
+        gUpdateFrameCloseHud(1);
         if (!old_flags2) {
             D_8009FA58.ptr->unk24 &= ~0x20;
             D_8009FA58.ptr->unkDC->unk24 &= ~0x20;

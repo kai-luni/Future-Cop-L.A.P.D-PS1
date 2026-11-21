@@ -58,15 +58,15 @@ extern s32 func_80063428(void);
 extern void func_80012E1C(s32 arg0);
 extern void func_800617D8(void);
 extern void func_8004783C(void);
-extern void func_80059BFC(s32 a0, s32 a1, s32 a2);
-extern void func_80029F50(void *a0);
+extern void gLoadDemoRecording(s32 a0, s32 a1, s32 a2) __asm__("func_80059BFC");
+extern void gInitModuleStream(void *a0) __asm__("func_80029F50");
 extern void func_8005A738(void);
 extern void func_80049690(void);
 extern void func_8005A2B0(void);
 extern void func_8008347C(void);
 extern void func_80031984(void);
 extern void func_8004AB4C(void);
-extern void func_8003F79C(s32 a0);
+extern void gInitMissionSpawnState(s32 a0) __asm__("func_8003F79C");
 extern void func_800734B0(void);
 
 void gInitializeMissionModule(s32 arg0) __asm__("func_80024A24");
@@ -209,10 +209,10 @@ call_init:
     if (gDemoPlayback != 0) {
         s32 flag = (gGameSession->unk0C == 2) ? 2 : 1;
 
-        func_80059BFC(flag, gMissionParam, arg0);
+        gLoadDemoRecording(flag, gMissionParam, arg0);
     }
 
-    func_80029F50(gModuleNameBuffer);
+    gInitModuleStream(gModuleNameBuffer);
     gScreenResetFlag = 0;
     func_8005A738();
     func_80049690();
@@ -220,6 +220,6 @@ call_init:
     func_8008347C();
     func_80031984();
     func_8004AB4C();
-    func_8003F79C(arg0);
+    gInitMissionSpawnState(arg0);
     func_800734B0();
 }

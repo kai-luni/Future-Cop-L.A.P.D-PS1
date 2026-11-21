@@ -33,6 +33,8 @@ struct Unk2E2BC {
 
 extern s32 func_80019668(void);
 extern void func_800448D8(void *track, s32 index, s32 direction, s32 flags);
+void gSetActorMode(struct Unk2E2BC *objArg, s32 modeArg) __asm__("func_8002E2BC");
+
 
 /**
  * @brief Behaviour-mode switch of a scripted animated actor.
@@ -69,7 +71,7 @@ extern void func_800448D8(void *track, s32 index, s32 direction, s32 flags);
  * Confirmed: func_8002E528 (command interpreter opcode) and func_8002E630
  * (per-frame actor tick).
  */
-void func_8002E2BC(struct Unk2E2BC *objArg, s32 modeArg)
+void gSetActorMode(struct Unk2E2BC *objArg, s32 modeArg)
 {
     register struct Unk2E2BC *obj __asm__("$17") = objArg;
     register s32 mode __asm__("$16") = modeArg;

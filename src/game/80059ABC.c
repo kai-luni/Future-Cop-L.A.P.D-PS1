@@ -19,8 +19,8 @@ struct O59ABC {
 extern struct G59ABC *gGameSession __asm__("D_8009FA94");
 
 extern s32 gEntityBaseHandler(s32 message, struct O59ABC *object, s32 data) __asm__("func_8002AD58");
-extern s32 func_800584BC(s32 message, struct C59ABC *child, s32 data, s32 arg3, s32 arg4);
-extern void func_8005920C(struct O59ABC *object, s32 a, s32 b);
+extern s32 gHandlePlayerHitMessage(s32 message, struct C59ABC *child, s32 data, s32 arg3, s32 arg4) __asm__("func_800584BC");
+extern void gInitCompanionEntity(struct O59ABC *object, s32 a, s32 b) __asm__("func_8005920C");
 extern void gDrawGlowDiscEffect(struct O59ABC *object) __asm__("func_800597C0");
 s32 gHandleCompanionMessage(s32 message, struct O59ABC *object, s32 data, s32 arg3) __asm__("func_80059ABC");
 
@@ -73,7 +73,7 @@ s32 gHandleCompanionMessage(s32 message, struct O59ABC *object, s32 data, s32 ar
     case 1:
         return 0xB8;
     case 2:
-        func_8005920C(object, data, arg3);
+        gInitCompanionEntity(object, data, arg3);
     case 6:
     case 9:
 zero:
@@ -88,7 +88,7 @@ zero:
         return 5;
     case 11:
     case 14:
-        return func_800584BC(message, object->unkB4, data, arg3, 1);
+        return gHandlePlayerHitMessage(message, object->unkB4, data, arg3, 1);
     case 4:
         if (gGameSession->unk5C == 1) {
             goto zero;

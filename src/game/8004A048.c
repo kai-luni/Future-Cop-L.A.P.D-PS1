@@ -28,7 +28,7 @@ extern u8 *gSpriteRegionTable __asm__("D_8009F778");
 extern void gGteTransformVertices(V8 *in, V8 *out, s32 n) __asm__("func_8001010C");
 extern s32 gTestFrustumFixedNear(V8 *p, s32 m) __asm__("func_80019D90");
 extern s32 gTestFrustumMargin(V8 *p, s32 m) __asm__("func_80019E70");
-extern void func_80049F4C(V8 *p);
+extern void gProjectWorldPointAndExtent(V8 *p) __asm__("func_80049F4C");
 extern void gSinCos(s32 angle, s32 *s, s32 *c) __asm__("func_8001846C");
 extern void gProjectVertexBatch(V8 *a, V8 *b, u8 *c, s32 n) __asm__("func_8001047C");
 extern s32 gIsTriangleFrontFacing(s32 a, s32 b, s32 c) __asm__("func_80049EF8");
@@ -192,7 +192,7 @@ void gDrawMapCellNode(Node *node, s32 arg1, s32 arg2)
             s4 = *(u8 **)(s3 + 8) + (((gFrameTime - node->c) / node->d) % s3[0]) * 8;
         }
         *(s32 *)&rot[1] = *(s32 *)&node->v[1];
-        func_80049F4C(rot);
+        gProjectWorldPointAndExtent(rot);
         s0 = (u8 *)(gPrimPoolNext >= gPrimPoolEnd ? gPrimPoolNext : gPrimPoolNext++);
         s6 = rot[0].z - 0x100;
         if (node->flags & 8) {

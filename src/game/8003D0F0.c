@@ -25,7 +25,7 @@ struct Unk3D0F0Instance {
 };
 
 extern s32 func_800196C4(void);
-extern void func_8003CE30(struct Unk3D0F0Instance *instance, s8 arg1, struct Vec3 *out);
+extern void gGetAnimatedModelAttachmentPoint(struct Unk3D0F0Instance *instance, s8 arg1, struct Vec3 *out) __asm__("func_8003CE30");
 void gResolveModelEffectPoint(struct Unk3D0F0Instance *instance, s32 arg1, s32 arg2, struct Vec3 *out) __asm__("func_8003D0F0");
 
 
@@ -76,7 +76,7 @@ void gResolveModelEffectPoint(struct Unk3D0F0Instance *instance, s32 arg1, s32 a
         }
 
         if (((u32)arg1 & 0xFF) < 4) {
-            func_8003CE30(instance, (s8)arg1, out);
+            gGetAnimatedModelAttachmentPoint(instance, (s8)arg1, out);
             return;
         }
 

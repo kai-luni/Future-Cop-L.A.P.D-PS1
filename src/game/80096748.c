@@ -120,7 +120,7 @@ static const UQItype __clz_tab[] = {
  *  @par Callers
  *  Confirmed: func_800966B0.
  */
-UDItype func_80096748(n, d, rp)
+UDItype gDivModUnsigned64(n, d, rp)
     UDItype n, d;
     UDItype *rp;
 {

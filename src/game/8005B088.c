@@ -6,7 +6,10 @@ typedef int s32;
 typedef short s16;
 typedef struct { s32 x,y,z; } Vec;
 typedef struct { u32 tag, color; s16 x0,y0,x1,y1,x2,y2,x3,y3; } Packet;
-extern s32 D_8009F7E0, D_8009F7E4, D_8009F7E8, D_8009F7EC;
+extern s32 gRadarYawSin __asm__("D_8009F7E0");
+extern s32 gRadarHeadingCosine __asm__("D_8009F7E4");
+extern s32 D_8009F7E8 __asm__("D_8009F7E8");
+extern s32 D_8009F7EC __asm__("D_8009F7EC");
 extern Packet *gPacketCursor __asm__("D_8009FA90");
 extern Packet *gPacketLimit __asm__("D_8009F9C0");
 extern u16 gEffectUvV __asm__("D_800A8EA6");
@@ -64,8 +67,8 @@ int gDrawRadarMarker(Vec *p, u32 color, int side, int type)
     }
     v0 = ax >> 2; v0 = az + v0; v1 = ax >> 6; dist = v0 - v1;
     v0 = dist > 0x25555; __asm__("" : "=r"(v0) : "0"(v0)); if (v0) return 0;
-    s = D_8009F7E0;
-    MUL(a,s,dz); c = D_8009F7E4; MUL(b,c,dx);
+    s = gRadarYawSin;
+    MUL(a,s,dz); c = gRadarHeadingCosine; MUL(b,c,dx);
     yy = a + b; yy = (yy + (yy >> 1)) >> 12;
     MUL(a,c,dz); MUL(b,s,dx);
     xx = a - b; xx = (xx + (xx >> 1)) >> 12;

@@ -8,6 +8,8 @@ struct Pool {
 };
 
 extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+s32 gInitIntrusiveNodePool(struct Pool *pool, s32 size, s32 count) __asm__("func_8003BE2C");
+
 
 /**
  * @brief Allocates and initializes a fixed-stride intrusive free-list pool.
@@ -31,7 +33,7 @@ extern void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
  * @par Callers
  * Confirmed: func_8005E1BC (allocates two object pools), func_8006EDC4 (D_800A3538 pool), func_800762B0 (kind-0x57 sprite node pool).
  */
-s32 func_8003BE2C(struct Pool *pool, s32 size, s32 count)
+s32 gInitIntrusiveNodePool(struct Pool *pool, s32 size, s32 count)
 {
     s32 i;
 

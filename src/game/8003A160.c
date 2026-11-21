@@ -12,7 +12,7 @@ typedef struct Obj {
 typedef struct Model { u8 pad[0x34]; void *parts; } Model;
 extern int gPlayerCount __asm__("D_8009FA0C");
 extern Obj *gPlayerEntities[] __asm__("D_8009FA58");
-extern void func_8003A09C(Obj *);
+extern void gProcessForceFieldCommands(Obj *) __asm__("func_8003A09C");
 extern s32 gVectorLength3D(Vec *) __asm__("func_8001A100");
 extern void gEaseVectorQuarter(Vec *, Vec *) __asm__("func_8001A6F8");
 extern void gVectorScaleInPlace(s32, Vec *) __asm__("func_8001AB78");
@@ -20,7 +20,7 @@ extern void func_800457B8(s32, s32);
 extern int gUpdatePathMoverMotion(void *, s32, Obj *) __asm__("func_80050D14");
 extern void gGteLoadMatrix(void *) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *, void *, int) __asm__("func_80010234");
-extern void func_80039E8C(int);
+extern void gInitForceFieldEntity(int) __asm__("func_80039E8C");
 extern int gEntityBaseHandler(int, void *, void *) __asm__("func_8002AD58");
 #define ABS(x) ((((x) >> 31) + (x)) ^ ((x) >> 31))
 #define FMUL(d,a,b) __asm__("mult %1,%2\n\tmflo $8\n\tmfhi $9\n\tsll $9,$9,16\n\tsrl $8,$8,16\n\tor %0,$9,$8" : "=r"(d) : "r"(a), "r"(b) : "$8", "$9")
@@ -144,7 +144,7 @@ void gUpdateForceField(Obj *obj, s32 dt)
     register s32 recip __asm__("$3");
     register s32 distance __asm__("$19");
     Obj *target;
-    if (obj->padc) func_8003A09C(obj);
+    if (obj->padc) gProcessForceFieldCommands(obj);
     if (obj->effectFlags & 0x40) {
         obj->timer -= dt;
         if (obj->timer < 0) {

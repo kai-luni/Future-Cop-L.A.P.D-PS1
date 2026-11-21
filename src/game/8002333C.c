@@ -27,8 +27,8 @@ extern void gResetCvkSubsystem(void) __asm__("func_80021B50");
 extern s32 func_80021C20(s32 first, ...);
 extern void gInitSpuTransferHook(void) __asm__("func_800211FC");
 extern s32 gSetScreenModeHook(s32 callback) __asm__("func_8001F0FC");
-extern s32 func_80098458(s32 arg0, s32 arg1);
-extern s32 func_80097B28(s32 arg0);
+extern s32 gSpuAllocAt(s32 arg0, s32 arg1) __asm__("func_80098458");
+extern s32 gAllocSpuRamBlock(s32 arg0) __asm__("func_80097B28");
 extern void gInitSoundState(void) __asm__("func_80044F8C");
 u8 gInitCvkStreamSubsystem(void) __asm__("func_8002333C");
 
@@ -99,8 +99,8 @@ u8 gInitCvkStreamSubsystem(void)
         } while (i < 2);
     }
     if (result == 0) {
-        gVolatileBase = func_80098458(0x1010, 0x11E80);
-        gSpuBufferPtr = func_80097B28(0xC000);
+        gVolatileBase = gSpuAllocAt(0x1010, 0x11E80);
+        gSpuBufferPtr = gAllocSpuRamBlock(0xC000);
         gCvkSystemActive = 1;
     }
     gAssetHandle[2] = 0;

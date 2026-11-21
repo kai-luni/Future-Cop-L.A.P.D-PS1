@@ -48,6 +48,8 @@ extern void gProcessTriggerEntityCommands(struct Entity *self) __asm__("func_800
 extern void gFollowAttachTarget(struct Entity *self) __asm__("func_800313F0");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *jtbl_8001123C[];
+s32 gDispatchTriggerAttachmentEntity(s32 message, struct Entity *arg1, void *arg2, s32 arg3) __asm__("func_8003151C");
+
 
 /**
  * @brief Message handler for trigger/attachment entities (types 14 and 38), dispatching messages 1..13 via jtbl_8001123C.
@@ -70,7 +72,7 @@ extern void *jtbl_8001123C[];
  * @par Callers
  * Confirmed: none direct; func_8002AE54 returns D_8003151C (alias of func_8003151C) at 0x8002AF84 for types 14 and 38 / Likely: entity update callers via function pointer / Unknown: specific indirect call sites.
  */
-s32 func_8003151C(s32 message, struct Entity *arg1, void *arg2, s32 arg3)
+s32 gDispatchTriggerAttachmentEntity(s32 message, struct Entity *arg1, void *arg2, s32 arg3)
 {
     register struct Entity *self __asm__("$16");
     register void *data __asm__("$17");

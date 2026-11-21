@@ -19,6 +19,8 @@ struct Unk71A68 {
 
 extern void func_80070710(void *block);
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
+void gFreeBeamNode(struct Unk71A68 *object) __asm__("func_80071A68");
+
 
 /**
  * @brief Destroys a compound effect object: two pooled blocks, an entry
@@ -40,7 +42,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  * @par Callers
  * func_8007364C.
  */
-void func_80071A68(struct Unk71A68 *object)
+void gFreeBeamNode(struct Unk71A68 *object)
 {
     s32 i;
 

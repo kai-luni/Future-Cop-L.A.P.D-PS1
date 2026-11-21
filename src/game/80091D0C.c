@@ -18,6 +18,8 @@ extern char gDmaBusErrorFormat[] __asm__("D_8001286C");
 extern char gDmaChannelMadrFormat[] __asm__("D_80012888");
 
 extern void func_8008E000(char *, ...);
+void gDispatchDmaInterrupts(void) __asm__("func_80091D0C");
+
 
 /**
  *  @brief Dispatches pending DMA channel callbacks and reports exceptional status.
@@ -39,7 +41,7 @@ extern void func_8008E000(char *, ...);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_80091D0C(void)
+void gDispatchDmaInterrupts(void)
 {
     int s0;
     u32 s1;

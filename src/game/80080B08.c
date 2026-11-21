@@ -4,7 +4,7 @@
 extern u8 *gSaveProfileImage __asm__("D_8009F92C");
 extern s32 gStillRunningState __asm__("D_8009F464");
 
-extern void func_8007FB04(void);
+extern void gStepProfileTransfer(void) __asm__("func_8007FB04");
 
 /**
  * @brief Pumps the boot profile transfer one step and releases the wait.
@@ -26,7 +26,7 @@ void gStepBootProfileTransfer(void)
 {
     u8 s;
 
-    func_8007FB04();
+    gStepProfileTransfer();
     s = gSaveProfileImage[0x200];
     switch (s) {
     case 1:

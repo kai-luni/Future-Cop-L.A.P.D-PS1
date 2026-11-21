@@ -6,7 +6,7 @@ typedef struct {
     void (*fn34)(s32);
 } Unk8009DDE8;
 
-extern u8 D_8009DDF1[];
+extern u8 gGpuQueueMode[] __asm__("D_8009DDF1");
 extern char gSetGraphQueueTraceFormat[] __asm__("D_80012A00");
 extern  void (*gLogPrintf)(char *, s32) __asm__("D_8009DDEC");
 extern Unk8009DDE8 *gVramWriteCallback __asm__("D_8009DDE8");
@@ -34,7 +34,7 @@ extern void gSetDmaCallback(s32, s32) __asm__("func_800914E0");
  */
 s32 func_80092AE0(s32 arg0)
 {
-    register u8 *p __asm__("$17") = D_8009DDF1;
+    register u8 *p __asm__("$17") = gGpuQueueMode;
     s32 old;
     u8 mode = p[1];
 

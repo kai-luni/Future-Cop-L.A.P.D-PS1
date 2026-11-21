@@ -1,7 +1,7 @@
 // Categories: Resources > Requests
 typedef struct { int pad[3]; int size; } Input;
 typedef struct { int handle; int size; int arg; void (*callback)(); int context; int flag; } Request;
-extern int func_80097B28(int);
+extern int gAllocSpuRamBlock(int) __asm__("func_80097B28");
 extern void gEnqueueSpuTransfer(Request *) __asm__("func_800212F8");
 extern void gSignalSpuUploadComplete(void) __asm__("func_80021888");
 extern volatile int gSpuUploadCompleted __asm__("D_8009F628");
@@ -45,7 +45,7 @@ int gUploadSoundBankToSpu(Input *input, int arg, void (*callback)(), int context
     int timeout = 0xFFFFF;
     int handle;
     Request req;
-    handle = func_80097B28(((size + 63) >> 6) << 6);
+    handle = gAllocSpuRamBlock(((size + 63) >> 6) << 6);
     if (handle < 0) {
         result = -1;
     } else {

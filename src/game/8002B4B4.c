@@ -17,6 +17,8 @@ struct Unk2B4B4 {
 extern void gDispatchType26Command(struct Unk2B4B4 *self, s32 arg, s32 zero) __asm__("func_8002B1DC");
 extern void gSyncCountdownFields(struct Unk2B4B4 *self) __asm__("func_8002B1AC");
 extern void gRemoveEntityCommand(struct Unk2B4B4 *self, s32 index) __asm__("func_8002A5B4");
+void gProcessType26StateCommands(struct Unk2B4B4 *self) __asm__("func_8002B4B4");
+
 
 /**
  * @brief Executes opcodes 0x5A and 0x5B from a class-26 actor's 4-slot command queue.
@@ -40,7 +42,7 @@ extern void gRemoveEntityCommand(struct Unk2B4B4 *self, s32 index) __asm__("func
  * @par Callers
  * Confirmed: func_8002B784.
  */
-void func_8002B4B4(struct Unk2B4B4 *self)
+void gProcessType26StateCommands(struct Unk2B4B4 *self)
 {
     s32 i;
     s32 op;

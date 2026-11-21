@@ -10,7 +10,7 @@ struct Unk4C228 {
 };
 
 extern void gStepDebrisFlight(struct Unk4C228 *node, s32 arg) __asm__("func_8004AFC0");
-extern void func_8004BEE8(struct Unk4C228 *node, s32 arg);
+extern void gStepFracturedMeshDebris(struct Unk4C228 *node, s32 arg) __asm__("func_8004BEE8");
 void gTickDebrisList(struct Unk4C228 *node, s32 arg) __asm__("func_8004C228");
 
 
@@ -51,7 +51,7 @@ void gTickDebrisList(struct Unk4C228 *node, s32 arg)
             if (node->flags7B & 8) {
                 gStepDebrisFlight(node, arg);
             } else if (!(node->flags7B & 0x10)) {
-                func_8004BEE8(node, arg);
+                gStepFracturedMeshDebris(node, arg);
             }
         }
         node = node->next;

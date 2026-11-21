@@ -7,6 +7,8 @@ extern s32 gOverlayTimer __asm__("D_8009F760");
 extern s32 gFrameSwitch __asm__("D_8009FAC8");
 
 extern u8 func_80048790(void);
+void gUpdateHudLayoutMode(s32 input) __asm__("func_800487CC");
+
 
 /**
  * @brief Updates the HUD layout mode D_8009FAB8 on overlay transitions and optional manual cycle input.
@@ -29,7 +31,7 @@ extern u8 func_80048790(void);
  * @par Callers
  * Confirmed: func_800486FC (per-frame HUD close hook, passed 0).
  */
-void func_800487CC(s32 input)
+void gUpdateHudLayoutMode(s32 input)
 {
     register s32 cycle __asm__("$16");
     register s32 force __asm__("$17");

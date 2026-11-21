@@ -19,6 +19,8 @@ extern Entry gWideTextTable[] __asm__("D_8009B4E4");
 extern s32 func_8008CCC0(u8 *);
 extern u8 func_8008CCF0(u8);
 extern s32 func_8008CCA0(void *, void *);
+s32 gFindModuleMovie(void **arg0) __asm__("func_80083130");
+
 
 /**
  * @brief Resolves the current front-end module name to its movie file and to
@@ -58,7 +60,7 @@ extern s32 func_8008CCA0(void *, void *);
  * @par Callers
  * func_80076A2C only, once per frame after the screen state has settled.
  */
-s32 func_80083130(void **arg0)
+s32 gFindModuleMovie(void **arg0)
 {
     register void **arg0_reg __asm__("$20") = arg0;
     register s32 res __asm__("$19");

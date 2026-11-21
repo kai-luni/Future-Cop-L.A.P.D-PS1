@@ -22,7 +22,7 @@ struct Unk80089304State {
 };
 
 extern struct Unk80089304State *gMovieStreamContext __asm__("D_8009F970");
-extern void func_80089018(void);
+extern void gPumpMovieStream(void) __asm__("func_80089018");
 
 /**
  *  @brief Advances the current node's byte and 2048-byte page counters.
@@ -73,7 +73,7 @@ void gMovieStreamAdvance(s32 arg0)
             state->unk440 += pages;
         }
     }
-    func_80089018();
+    gPumpMovieStream();
     {
         register struct Unk80089304State *state __asm__("$5");
         register struct Unk80089304Node *node __asm__("$4");

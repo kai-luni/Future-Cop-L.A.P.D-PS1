@@ -3,7 +3,7 @@
 
 extern s32 gRampFillCounter __asm__("D_8009F360");
 
-extern void func_800488A4(s32 index, u8 blue, u8 green, u8 red);
+extern void gBuildColorRampRow(s32 index, u8 blue, u8 green, u8 red) __asm__("func_800488A4");
 
 /**
  * @brief Appends one colour to the text renderer's 20-entry palette.
@@ -35,7 +35,7 @@ extern void func_800488A4(s32 index, u8 blue, u8 green, u8 red);
 void func_80048978(s32 blue, s32 green, s32 red)
 {
     if (gRampFillCounter < 0x14) {
-        func_800488A4(gRampFillCounter, blue, green, red);
+        gBuildColorRampRow(gRampFillCounter, blue, green, red);
         gRampFillCounter++;
     }
 }

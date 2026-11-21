@@ -12,7 +12,7 @@ struct Pool {
 };
 
 extern struct Pool gTracerPool __asm__("D_800A3538");
-extern u8 func_8006EE14(struct PoolNode *node, void *arg);
+extern u8 gStepTracerNode(struct PoolNode *node, void *arg) __asm__("func_8006EE14");
 extern void gReleasePoolNode(struct Pool *pool, struct PoolNode *previous,
                           struct PoolNode *node) __asm__("func_8003BF1C");
 void gTickTracerPool(void *arg) __asm__("func_8006F170");
@@ -55,7 +55,7 @@ void gTickTracerPool(void *arg)
     node = gTracerPool.active;
     while (node != 0) {
         next = node->next;
-        if (func_8006EE14(node, arg) != 1) {
+        if (gStepTracerNode(node, arg) != 1) {
             gReleasePoolNode(&gTracerPool, previous, node);
         } else {
             previous = node;

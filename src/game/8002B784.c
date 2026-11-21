@@ -8,7 +8,7 @@
 #define F(o,n) (*(u32 *)((u8 *)(o) + (n)))
 #define P(o,n) (*(u8 **)((u8 *)(o) + (n)))
 
-extern void func_8002B4B4(u8 *, s32);
+extern void gProcessType26StateCommands(u8 *, s32) __asm__("func_8002B4B4");
 extern s32 gAdvanceAnimTrack(u8 *, void *, s32, s32) __asm__("func_80044B34");
 extern u8 gStepAttackScheduler(void *, s32, u8 *, s32, s32) __asm__("func_80060238");
 extern void func_800448D8(void *, s32, s32, u8);
@@ -120,7 +120,7 @@ void gUpdateType26Actor(u8 *obj, s32 step)
     s32 sign;
     u32 mode;
 
-    func_8002B4B4(obj, step);
+    gProcessType26StateCommands(obj, step);
     if (B(obj,0x162)) {
         if (B(obj,0x15E) != B(obj,0x164) &&
             B(obj,0x15E) != B(obj,0x164) + 1) {

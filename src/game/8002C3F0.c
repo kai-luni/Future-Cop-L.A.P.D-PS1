@@ -20,7 +20,7 @@ extern void *jtbl_8001104C[];
 extern void gResolveRailMoverContact(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_800379D4");
 extern void gConsiderType26Target(Object8002C3F0 *object, void *data) __asm__("func_8002BFB4");
 extern void gSetupType26Entity(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_8002AF94");
-extern void func_80037B28(s32 message, Object8002C3F0 *object, Data8002C3F0 *data);
+extern void gUpdateChaseApproachSpeed(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_80037B28");
 extern s32 gEntityBaseHandler(s32 message, Object8002C3F0 *object, Data8002C3F0 *data) __asm__("func_8002AD58");
 extern void gHandleType26Destruction(Object8002C3F0 *object) __asm__("func_8002C174");
 extern void gUpdateType26Actor(Object8002C3F0 *object, Data8002C3F0 *data, s32 arg3) __asm__("func_8002B784");
@@ -88,7 +88,7 @@ L_C44C:
     return 0;
 
 L_C454:
-    func_80037B28(message, s0, s1);
+    gUpdateChaseApproachSpeed(message, s0, s1);
     return 0;
 
 L_C468:

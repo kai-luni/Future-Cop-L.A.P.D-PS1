@@ -9,7 +9,7 @@ struct Unk3BDA0 {
 };
 
 extern u8 *func_80019C38(s32 arg0, s32 arg1, u32 tag, s32 arg3);
-extern void func_8003BC7C(u8 *data);
+extern void gSetSlotSpawnDescriptor(u8 *data) __asm__("func_8003BC7C");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
@@ -36,7 +36,7 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  */
 void func_8003BDA0(struct Unk3BDA0 *resource)
 {
-    func_8003BC7C(func_80019C38(resource->unk00, resource->unk20,
+    gSetSlotSpawnDescriptor(func_80019C38(resource->unk00, resource->unk20,
                                 0x74414354, resource->unk1C) - 4);
     gFreeBlock(resource);
 }

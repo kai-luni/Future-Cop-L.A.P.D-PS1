@@ -17,6 +17,8 @@ typedef struct {
     s16 out92;
     s16 div94;
 } Unk800403D0;
+void gInitObjectLightColorSteps(Unk800403D0 *p) __asm__("func_800403D0");
+
 
 /**
  *  @brief Computes three fixed-point output values from fields in an object.
@@ -35,7 +37,7 @@ typedef struct {
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-void func_800403D0(Unk800403D0 *p)
+void gInitObjectLightColorSteps(Unk800403D0 *p)
 {
     if (p->flags66 & 0x100) {
         if (p->div94 < 0x10) {

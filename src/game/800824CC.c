@@ -18,7 +18,7 @@ typedef struct Unk824CCObject {
     Unk824CCHeader *header;
 } Unk824CCObject;
 
-extern void func_800953F0(Unk824CCEntry *entry, u8 *ptr);
+extern void gLoadImage2(Unk824CCEntry *entry, u8 *ptr) __asm__("func_800953F0");
 extern void gFreeBlock(Unk824CCObject *object) __asm__("func_800181D4");
 void gLoadCtdtImages(Unk824CCObject *object) __asm__("func_800824CC");
 
@@ -84,7 +84,7 @@ void gLoadCtdtImages(Unk824CCObject *object)
             cursor = (Unk824CCEntry *)header;
             offset = 8;
             do {
-                func_800953F0(
+                gLoadImage2(
                     (Unk824CCEntry *)((u8 *)header + offset), ptr);
                 byte_count = cursor[1].unk04 *
                              (cursor[1].unk06 << 1);

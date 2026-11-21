@@ -108,8 +108,8 @@ extern void gTranslatePadButtons(void *object) __asm__("func_800576A8");
 extern s32 func_800586D4(void *object, s32 arg1, s32 arg2, s32 *arg3);
 extern s32 gSpawnTypeAtOwner(void *owner, u8 column, void *arg2, s32 row, s32 arg4) __asm__("func_800402DC");
 extern s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) __asm__("func_80046C84");
-extern s32 func_800584BC(s32 message, struct Unk584BC *object,
-                         struct Unk584BCHitLocal *hit, s32 arg3, s32 arg4);
+extern s32 gHandlePlayerHitMessage(s32 message, struct Unk584BC *object,
+                         struct Unk584BCHitLocal *hit, s32 arg3, s32 arg4) __asm__("func_800584BC");
 extern void func_8006C34C(struct Unk55E10 *object, s32 arg1);
 extern void gGteLoadMatrix(void *arg) __asm__("func_80010750");
 extern void gGteTransformVerticesWide(void *arg0, void *arg1, s32 arg2) __asm__("func_80010234");
@@ -270,7 +270,7 @@ s32 gUpdatePlayerEntity(struct Unk588D4 *object, s32 arg1)
                 locals.hit.damage = s2;
                 locals.hit.from.attacker = object;
                 locals.hit.unk00 = hitcode;
-                func_800584BC(0xE, (struct Unk584BC *)object, &locals.hit, hitarg, 0);
+                gHandlePlayerHitMessage(0xE, (struct Unk584BC *)object, &locals.hit, hitarg, 0);
             }
         }
         if (data->unk6C == 0) {

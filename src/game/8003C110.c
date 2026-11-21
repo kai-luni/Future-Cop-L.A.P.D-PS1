@@ -7,7 +7,7 @@ struct Unk3C110 {
     s32 unk20;
 };
 
-extern void func_8003BFD0(s32 arg0, s32 arg1);
+extern void gParseCsfxChunks(s32 arg0, s32 arg1) __asm__("func_8003BFD0");
 extern void gFreeBlock(void *block) __asm__("func_800181D4");
 
 /**
@@ -35,6 +35,6 @@ extern void gFreeBlock(void *block) __asm__("func_800181D4");
  */
 void func_8003C110(struct Unk3C110 *resource)
 {
-    func_8003BFD0(resource->unk00, resource->unk20);
+    gParseCsfxChunks(resource->unk00, resource->unk20);
     gFreeBlock(resource);
 }

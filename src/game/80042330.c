@@ -9,7 +9,7 @@ typedef struct {
 } Object;
 
 extern s32 gEntityBaseHandler(s32 message, Object *object, void *data) __asm__("func_8002AD58");
-extern s32 func_80041E0C(s32 message, Object *object, void *data);
+extern s32 gInitPortraitScreenEntity(s32 message, Object *object, void *data) __asm__("func_80041E0C");
 extern void gDrawPortraitScreen(Object *object) __asm__("func_80042128");
 extern void gStepPortraitScreen(Object *object, void *data) __asm__("func_8004228C");
 s32 gHandlePortraitScreenMsg(s32 message, Object *object, void *data) __asm__("func_80042330");
@@ -49,7 +49,7 @@ s32 gHandlePortraitScreenMsg(s32 message, Object *object, void *data)
     case 1:
         return 0x120;
     case 2:
-        return func_80041E0C(message, object, data);
+        return gInitPortraitScreenEntity(message, object, data);
     case 3:
         if (!(object->unkA0 & 1)) {
             return 0;

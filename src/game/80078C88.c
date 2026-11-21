@@ -39,6 +39,8 @@ extern u8 gFrontEndModuleName[] __asm__("D_8009B300");
 extern void func_8008CCB0(u8 *a0, s32 a1);
 extern u8 gIsPadRumbleEnabled(s32 arg0) __asm__("func_8001EB2C");
 extern void gSetPadRumbleEnabled(s32 port, s32 enable) __asm__("func_8001EC04");
+s32 gStartNextAttractDemo(void) __asm__("func_80078C88");
+
 
 /**
  *  @brief Advances a pending entry sequence and applies its selected state.
@@ -59,7 +61,7 @@ extern void gSetPadRumbleEnabled(s32 port, s32 enable) __asm__("func_8001EC04");
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-s32 func_80078C88(void)
+s32 gStartNextAttractDemo(void)
 {
     struct Entry78C88 *e;
     struct Obj78C88 *o;

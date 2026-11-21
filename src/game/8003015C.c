@@ -34,7 +34,7 @@ struct Arg3015C {
 extern s32 gFrameTime __asm__("D_8009FAA4");
 
 extern void gInitRotatingProp(struct Obj3015C *obj, struct Arg3015C *arg, s32 arg3) __asm__("func_8002FA20");
-extern void func_80030060(struct Obj3015C *obj, struct Arg3015C *arg);
+extern void gHandleRotatingPropProximityContact(struct Obj3015C *obj, struct Arg3015C *arg) __asm__("func_80030060");
 extern s32 gTestEntityFieldMatch(u8 arg0, s16 arg1, struct Arg3015C *arg2, u8 arg3) __asm__("func_8002F8B8");
 extern s32 gApplyRotatingPropProximityEffect(struct Obj3015C *obj, struct Arg3015C *arg) __asm__("func_8002FF6C");
 extern s32 gBuildRotationMatrix(s32 a, s32 b, s32 c, void *d) __asm__("func_800188D0");
@@ -88,7 +88,7 @@ s32 gHandleRotatingPropMsg(s32 cmd, struct Obj3015C *obj, struct Arg3015C *arg, 
         return 0;
     case 10:
         if (arg->unk16 == 0x25 && obj->unk1C >= 0) {
-            func_80030060(obj, arg);
+            gHandleRotatingPropProximityContact(obj, arg);
             return 0;
         }
         return gTestEntityFieldMatch(obj->unkC0, obj->unkC4, arg, 0) & 0xFF;

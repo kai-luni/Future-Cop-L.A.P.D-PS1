@@ -33,7 +33,7 @@ extern void gBuildMovieVlcTables(s32, s32, s32) __asm__("func_80089A88");
 extern void gInitCdAudioMix(void) __asm__("func_8008F7AC");
 extern s32 gSetGpuDrawOffset(s32) __asm__("func_80091F60");
 extern void func_80092BF4(s32);
-extern s32 func_80097B28(s32);
+extern s32 gAllocSpuRamBlock(s32) __asm__("func_80097B28");
 
 /**
  * @brief Opens the video/image layer: sets the frame geometry, allocates the
@@ -189,12 +189,12 @@ s32 gOpenVideoLayer(s32 arg0)
         goto fail;
     }
 
-    gMovieSpuBufferA = func_80097B28(func_80087814());
+    gMovieSpuBufferA = gAllocSpuRamBlock(func_80087814());
     if (gMovieSpuBufferA == 0) {
         goto fail;
     }
 
-    gMovieSpuBufferB = func_80097B28(func_80087814());
+    gMovieSpuBufferB = gAllocSpuRamBlock(func_80087814());
     if (gMovieSpuBufferB == 0) {
         goto fail;
     }

@@ -15,7 +15,7 @@ extern Unk8009F970 *gMovieStreamContext __asm__("D_8009F970");
 extern s32 D_8009F510;
 extern s32 D_8009F514;
 extern u8 gCodeDataSource[] __asm__("D_80088D74");
-extern u8 func_800889DC[];
+extern u8 gOffsetCdLocationBySectors[] __asm__("func_800889DC");
 
 extern s32 gCdSync(s32 mode, u8 *result) __asm__("func_8008E154");
 extern void gCdControlB(s32 mode, u8 *buf, s32 arg2) __asm__("func_8008E42C");
@@ -70,7 +70,7 @@ void gCdStreamService(s32 arg0)
         gMovieStreamContext->unk408 = 0;
         gMovieStreamContext->unk40C = 0;
         D_8009F510 = gSetCdSyncCallback((s32)gCodeDataSource);
-        D_8009F514 = gSetCdReadyCallback((s32)(func_800889DC + 0x40));
+        D_8009F514 = gSetCdReadyCallback((s32)(gOffsetCdLocationBySectors + 0x40));
         gMovieStreamContext->unk420 = 1;
         gMovieStreamContext->unk41C = 1;
     } else {

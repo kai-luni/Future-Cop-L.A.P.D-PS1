@@ -9,7 +9,7 @@ struct Unk7364C {
 
 extern struct Unk7364C *gBeamNodeList __asm__("D_8009F38C");
 
-extern void func_80071A68(struct Unk7364C *node);
+extern void gFreeBeamNode(struct Unk7364C *node) __asm__("func_80071A68");
 extern void gStepBeamNode(struct Unk7364C *node, s32 arg) __asm__("func_80071B40");
 void gTickBeamNodeList(s32 arg) __asm__("func_8007364C");
 
@@ -62,7 +62,7 @@ void gTickBeamNodeList(s32 arg)
                 gBeamNodeList = next;
             }
             node->next = 0;
-            func_80071A68(node);
+            gFreeBeamNode(node);
         } else if (flags & 0x800) {
             gStepBeamNode(node, arg);
             previous = node;

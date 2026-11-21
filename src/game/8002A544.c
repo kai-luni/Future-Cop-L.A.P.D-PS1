@@ -4,7 +4,7 @@
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern u8 gStreamStartPending[] __asm__("D_800A0B90");
-extern void func_8002A49C(void);
+extern void gDrainVagmRing(void) __asm__("func_8002A49C");
 
 /**
  * @brief Flushes queued VAGM audio chunks and clears the active stream flag D_8009F6DC.
@@ -35,7 +35,7 @@ void func_8002A544(void)
         if ((gBitFieldState & 0x40) == 0) {
             gStreamStartPending[0] = 1;
         }
-        func_8002A49C();
+        gDrainVagmRing();
         gCallGateFlag = 0;
     }
 }

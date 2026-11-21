@@ -24,7 +24,9 @@ extern u32 func_80095350(u32 a0);
 extern void gMemset(unsigned char *destination, int value, unsigned int count) __asm__("func_80095830");
 extern void func_800951D8(void);
 extern void gWaitImageTransferFrame(void) __asm__("func_80094CEC");
-extern s32 func_8009520C(void);
+extern s32 gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
+u32 gSyncGpuDmaQueue(u32 a0) __asm__("func_8009509C");
+
 
 /**
  *  @brief Waits for or polls queued work and hardware readiness.
@@ -47,7 +49,7 @@ extern s32 func_8009520C(void);
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-u32 func_8009509C(u32 a0)
+u32 gSyncGpuDmaQueue(u32 a0)
 {
     u32 count;
 
@@ -55,12 +57,12 @@ u32 func_8009509C(u32 a0)
         func_800951D8();
         while (gGpuJobHead != gGpuJobTail) {
             gWaitImageTransferFrame();
-            if (func_8009520C() != 0) {
+            if (gCheckGpuDmaTimeout() != 0) {
                 return -1;
             }
         }
         while ((*gDma2ChannelCtrlPtr & 0x1000000) || !(*(volatile u32 *)gGpuGp1PortPtr & 0x4000000)) {
-            if (func_8009520C() != 0) {
+            if (gCheckGpuDmaTimeout() != 0) {
                 return -1;
             }
         }

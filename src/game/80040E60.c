@@ -72,11 +72,11 @@ struct Unk40E60 {
 };
 
 extern s32 gLightObjectCount __asm__("D_8009F318");
-extern u8 D_80040874[];
+extern u8 gLightObjectLifecycleHandler[] __asm__("D_80040874");
 extern void *gAllocMemory(s32, s32) __asm__("func_80017EBC");
 extern void gInitSpawnMotionState(struct Unk40E60 *, struct Unk40E60Source *) __asm__("func_8003C14C");
 extern void gBuildRotationMatrix(s32, s32, s32, struct Unk40E60Work *) __asm__("func_800188D0");
-extern void func_800403D0(void *);
+extern void gInitObjectLightColorSteps(void *) __asm__("func_800403D0");
 void *gCreateLightObject(struct Unk40E60Source *src) __asm__("func_80040E60");
 
 
@@ -120,7 +120,7 @@ void *gCreateLightObject(struct Unk40E60Source *src)
     dest->unk82 = src->unk3E;
     dest->unk76 = src->unk4A;
     dest->unk66 = src->unk56;
-    dest->unk24 = (s32)D_80040874;
+    dest->unk24 = (s32)gLightObjectLifecycleHandler;
     dest->unk7A = src->unk4E;
     dest->unk7C = src->unk50;
     dest->unk7E = src->unk52;
@@ -144,6 +144,6 @@ void *gCreateLightObject(struct Unk40E60Source *src)
     dest->unk08 = 0;
     dest->unk0A = 1;
     gLightObjectCount++;
-    func_800403D0(dest);
+    gInitObjectLightColorSteps(dest);
     return dest;
 }

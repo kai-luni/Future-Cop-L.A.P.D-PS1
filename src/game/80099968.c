@@ -1,5 +1,7 @@
 // Categories: Utilities > Fixed-point Arithmetic
 #include "game/types.h"
+u32 gScaleSpuPitch(s32 a0, u32 a1) __asm__("func_80099968");
+
 
 /**
  *  @brief Computes a fixed-point scaled value using iterative growth and interpolation.
@@ -20,7 +22,7 @@
  *  @par Callers
  *  Unknown: no direct callers are listed.
  */
-u32 func_80099968(s32 a0, u32 a1)
+u32 gScaleSpuPitch(s32 a0, u32 a1)
 {
     s32 prev;
     s32 cur;

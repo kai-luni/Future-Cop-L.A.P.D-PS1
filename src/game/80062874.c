@@ -23,6 +23,8 @@ extern u8 *gCellMap __asm__("D_8009F820");
 extern u8 D_8009F836, D_8009F837;
 extern u8 gGridOriginY __asm__("D_8009F835");
 extern u8 gGridOriginX __asm__("D_8009F834");
+void gBuildDualViewObjectListsAndGrid(void) __asm__("func_80062874");
+
 
 /**
  * @brief Builds the two per-view object lists and the per-cell object grid of
@@ -79,7 +81,7 @@ extern u8 gGridOriginX __asm__("D_8009F834");
  * @par Callers
  * func_80062FB4, the region setup, in its non-small-view branch.
  */
-void func_80062874(void) {
+void gBuildDualViewObjectListsAndGrid(void) {
     register Obj **scan __asm__("$24") = gCommandListHead.items;
     register Pair *pairs __asm__("$3") = gViewGroundAnchors;
     Cell *cells = gCoverageGrid;

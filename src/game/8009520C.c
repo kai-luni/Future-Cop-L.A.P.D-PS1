@@ -17,6 +17,8 @@ extern char gGpuTimeoutDiagnosticFormat[] __asm__("D_80012B48");
 extern int gVSyncWait(int) __asm__("func_80091270");
 extern u32 gSwapIrqMask(u32) __asm__("func_800915FC");
 extern void func_8008E000(char *, u32, u32, u32, u32);
+int gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
+
 
 /**
  * @brief Streaming watchdog: detects a stalled transfer, dumps the ring
@@ -45,7 +47,7 @@ extern void func_8008E000(char *, u32, u32, u32, u32);
  * func_8009415C, func_8009446C, func_800946A8, func_80094A3C, func_8009509C,
  * func_800953F0, func_800954DC, func_800955C8, func_8009570C.
  */
-int func_8009520C(void)
+int gCheckGpuDmaTimeout(void)
 {
     u32 saved;
     register u32 count __asm__("$5");

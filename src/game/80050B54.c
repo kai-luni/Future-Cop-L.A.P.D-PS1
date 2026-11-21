@@ -5,6 +5,8 @@ struct Entry { u8 pad0[2]; s16 a; u8 pad4[4]; s16 b; u8 padA[6]; };
 struct Child { u8 pad0[0x34]; struct Entry *entries; };
 struct State { u8 pad0[0x28]; struct Child *child; u8 pad2c[0x24]; u8 pos[4]; s32 height; u8 pad58[0x18]; s16 index; u8 pad72[0x12]; s32 changed; };
 extern s32 gQuerySurfaceHeight(void *, s32) __asm__("func_80067684");
+s32 gStepPathMoverVerticalMotion(struct Obj *obj, s32 delta, struct State *state) __asm__("func_80050B54");
+
 
 /**
  * @brief Moves an object vertically towards a target height.
@@ -40,7 +42,7 @@ extern s32 gQuerySurfaceHeight(void *, s32) __asm__("func_80067684");
  * @par Callers
  * Confirmed: func_80050D14.
  */
-s32 func_80050B54(struct Obj *obj, s32 delta, struct State *state)
+s32 gStepPathMoverVerticalMotion(struct Obj *obj, s32 delta, struct State *state)
 {
     register u32 lo __asm__("$8");
     register u32 hi __asm__("$9");

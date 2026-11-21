@@ -5,6 +5,8 @@ struct Vec3 { s32 x, y, z; };
 struct Range { s32 count; s16 data[1]; };
 struct Model { u8 pad[12]; u32 flags; u8 pad10[12]; s32 **frames; u8 pad20[16]; u8 slots[8]; struct Range *range; };
 struct Instance { struct Model *model; u8 pad[0x44]; s16 frame; };
+void gGetAnimatedModelAttachmentPoint(struct Instance *input, s32 index, struct Vec3 *out) __asm__("func_8003CE30");
+
 
 /**
  * @brief Reads one of four model attachment points for the current animation
@@ -33,7 +35,7 @@ struct Instance { struct Model *model; u8 pad[0x44]; s16 frame; };
  * @par Callers
  * func_8003D0F0.
  */
-void func_8003CE30(struct Instance *input, s32 index, struct Vec3 *out)
+void gGetAnimatedModelAttachmentPoint(struct Instance *input, s32 index, struct Vec3 *out)
 {
     register struct Instance *instance __asm__("$4") = input;
     register struct Model *model __asm__("$7");

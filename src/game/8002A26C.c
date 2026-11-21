@@ -3,7 +3,7 @@
 
 extern u8 gBitFieldState __asm__("D_8009F6B8");
 extern s32 gOutStreamId __asm__("D_8009F6BC");
-extern s32 D_8009F6C4;
+extern s32 gPortraitStreamDeadline __asm__("D_8009F6C4");
 extern s32 gCallGateFlag __asm__("D_8009F6DC");
 extern s32 gGameSuspended __asm__("D_8009FA24");
 extern s32 gFrameTickCounter __asm__("D_8009FA2C");
@@ -39,8 +39,8 @@ void func_8002A26C(void)
 {
     gDrainCallbackSlotRing();
 
-    if (D_8009F6C4 != 0 && D_8009F6C4 < gFrameTickCounter) {
-        D_8009F6C4 = 0;
+    if (gPortraitStreamDeadline != 0 && gPortraitStreamDeadline < gFrameTickCounter) {
+        gPortraitStreamDeadline = 0;
         func_80029DD8();
         if (gBitFieldState & 0x40) {
             gBitFieldState = 0;

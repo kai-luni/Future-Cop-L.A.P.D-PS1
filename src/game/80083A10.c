@@ -62,7 +62,7 @@ extern struct Bucket3A *gCellBucketGrid __asm__("D_8009F938");
 extern s32 gCellGridWidth __asm__("D_8009F93C");
 extern s32 gFrameTime __asm__("D_8009FAA4");
 extern void *func_800195A4(void *state);
-extern void func_80083834(s32 arg0, s32 arg1);
+extern void gReclaimStaleSceneNodes(s32 arg0, s32 arg1) __asm__("func_80083834");
 extern void func_80013BD8(struct Node3A10 *node, struct Model3A10 *model, s32 options);
 extern u32 func_80019668(void);
 extern s32 gQuerySurfaceHeight(void *vec, s32 adjust) __asm__("func_80067684");
@@ -235,7 +235,7 @@ u8 gSpawnSceneNode(struct Req3A10 *req, struct Model3A10 *model, s32 z2, s32 *ar
 
     node = (struct Node3A10 *)func_800195A4(gMissionState);
     if (node == 0) {
-        func_80083834(gFrameTime - 0x5DC, 1);
+        gReclaimStaleSceneNodes(gFrameTime - 0x5DC, 1);
         node = (struct Node3A10 *)func_800195A4(gMissionState);
         if (node == 0) {
             return 0;

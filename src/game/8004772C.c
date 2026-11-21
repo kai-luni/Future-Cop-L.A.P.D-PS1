@@ -21,6 +21,9 @@ struct SoundBank {
 extern void func_800477D8(struct SoundVoice *voice, s32 pan, s32 volume, s32 extra);
 extern u8 func_80024358(struct SoundBank *bank, struct SoundVoice *voice, s32 pan,
                         s32 volume, s32 extra);
+u8 gPlayNextBankSample(struct SoundBank *bank, struct SoundVoice *voice, s32 pan, s32 volume,
+                 s32 extra) __asm__("func_8004772C");
+
 
 /**
  *  @brief Selects the next bank sample and submits a configured voice.
@@ -44,7 +47,7 @@ extern u8 func_80024358(struct SoundBank *bank, struct SoundVoice *voice, s32 pa
  *  @par Callers
  *  Confirmed: func_80046E88.
  */
-u8 func_8004772C(struct SoundBank *bank, struct SoundVoice *voice, s32 pan, s32 volume,
+u8 gPlayNextBankSample(struct SoundBank *bank, struct SoundVoice *voice, s32 pan, s32 volume,
                  s32 extra)
 {
     u8 cursor;

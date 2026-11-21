@@ -10,7 +10,7 @@ extern Map *gMapGridHeader __asm__("D_8009F80C");
 extern char *gTileBlockTable __asm__("D_8009F808");
 void gSampleCellWindow(s32 arg0, s32 arg1, Entry *arg2) __asm__("func_80064460");
 
-extern s32 func_8006429C(void *, Vec);
+extern s32 gProbeMapCellVisibility(void *, Vec) __asm__("func_8006429C");
 /**
  * @brief Samples the 5x5 cell window of the map attribute grid at a cell
  *        coordinate and fills 25 region entries with the node pointer, the
@@ -100,7 +100,7 @@ void gSampleCellWindow(s32 arg0, s32 arg1, Entry *arg2)
                 *(volatile s16 *)&v.z=(bz+iz)>>4;
             }
             *(volatile s16 *)&v.y=by>>4;
-            flags=func_8006429C(node,v);
+            flags=gProbeMapCellVisibility(node,v);
             out->mask=0;
             if(flags&1) {
                 a=((flags&0x20)>>2)|((flags&0x40)>>4)|((flags&0x200)>>8)|((flags&0x400)>>10);

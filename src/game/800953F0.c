@@ -25,9 +25,11 @@ extern u32 gTimeoutStamp __asm__("D_8009DEFC");
 extern Callbacks *gVramWriteCallback __asm__("D_8009DDE8");
 extern int gVSyncWait(int) __asm__("func_80091270");
 extern void gValidateGpuRectDebug(char *, void *) __asm__("func_80092CF4");
-extern int func_8009520C(void);
+extern int gCheckGpuDmaTimeout(void) __asm__("func_8009520C");
 extern void gSetDmaCallback(int, void (*)(void)) __asm__("func_800914E0");
 extern void gAbortCallbackId(void) __asm__("D_80095808");
+int gLoadImage2(Entry *entry, void *data) __asm__("func_800953F0");
+
 
 /**
  * @brief Debug device write with a GPU-ready timeout (variant A).
@@ -62,7 +64,7 @@ extern void gAbortCallbackId(void) __asm__("D_80095808");
  * func_8009520C, registers D_80095808 via func_800914E0, and transfers one
  * `{data, width, height}` rectangle through D_8009DDE8->write.
  */
-int func_800953F0(Entry *entry, void *data)
+int gLoadImage2(Entry *entry, void *data)
 {
     int result;
     register char *first __asm__("$4");
@@ -72,7 +74,7 @@ int func_800953F0(Entry *entry, void *data)
     gPendingDeadline = 0;
     if (!((*gDma2ChannelCtrlPtr & 0x01000000) || !(*gGpuGp1PortPtr & 0x04000000))) goto success;
 loop:
-    if (func_8009520C()) { result = -1; goto done; }
+    if (gCheckGpuDmaTimeout()) { result = -1; goto done; }
 check:
     if (*gDma2ChannelCtrlPtr & 0x01000000) goto loop;
     if (!(*gGpuGp1PortPtr & 0x04000000)) goto loop;

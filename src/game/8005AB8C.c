@@ -51,14 +51,14 @@ struct PacketWord5 {
 
 extern s32 D_8009F7E8;
 extern s32 D_8009F7EC;
-extern s32 D_8009F7E0[];
-extern s32 D_8009F7E4[];
+extern s32 gRadarYawSin[] __asm__("D_8009F7E0");
+extern s32 gRadarHeadingCosine[] __asm__("D_8009F7E4");
 extern u8 *gPacketCursor __asm__("D_8009FA90");
 extern u8 *gPacketLimit __asm__("D_8009F9C0");
 extern struct DrawObj *gPlayerEntities[] __asm__("D_8009FA58");
 extern struct DrawObj *gSinglePlayerEntity __asm__("D_8009F9EC");
 extern struct DrawObj *gGameSession __asm__("D_8009FA94");
-extern u32 D_8009AFC0[];
+extern u32 gRadarPanelRectTable[] __asm__("D_8009AFC0");
 extern u32 gMarkerColorTable[] __asm__("D_800A6F60");
 extern u16 gEffectUvV[] __asm__("D_800A8EA6");
 
@@ -121,7 +121,7 @@ void gDrawRadarBackgroundAndMarkers(struct Unk5AB8C *input, s32 *arg1, s32 *arg2
     __asm__ volatile ("" : : : "memory");
     offset = 0;
     gSinCos(-0x400 - (func_80018580(arg2[2], arg2[0]) << 4),
-                  D_8009F7E0, D_8009F7E4);
+                  gRadarYawSin, gRadarHeadingCosine);
 
     obj = arg0->unkAC;
     if (obj->unkC1 != 0) {

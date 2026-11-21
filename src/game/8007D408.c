@@ -7,7 +7,8 @@ typedef struct { u8 pad0[0x28]; u8 a; u8 pad29[3]; u8 b; u8 pad2D[3]; u8 c; u8 p
 typedef struct { u8 pad[0x19]; u8 max0,max1,max2; u8 tail[8]; } Entry;
 extern State *gGameSession __asm__("D_8009FA94");
 extern List gLoadoutTable[3] __asm__("D_8009C0A8");
-extern u8 D_8009C090[], D_8009C070[];
+extern u8 gAltSpecialLoadoutEntries[] __asm__("D_8009C090");
+extern u8 gDefaultSpecialWeaponRows[] __asm__("D_8009C070");
 extern u8 D_800A362B[];
 extern s8 gLoadoutPrimaryWeaponIndices[2] __asm__("D_8009F924");
 extern s8 gLoadoutHeavyWeaponIndices[2] __asm__("D_8009F926");
@@ -15,7 +16,8 @@ extern s8 gLoadoutSpecialWeaponIndices[2] __asm__("D_8009F928");
 extern s8 gSelectedMissionIndex __asm__("D_8009F880");
 extern s8 *gMissionListTablePtr __asm__("D_8009F884");
 extern Entry gWideTextTable[] __asm__("D_8009B4E4");
-extern u8 D_8009C0C5[], D_8009C0D9[];
+extern u8 gLoadoutHeavyMinIndex[] __asm__("D_8009C0C5");
+extern u8 gLoadoutSpecialMinIndex[] __asm__("D_8009C0D9");
 extern int gPlayer1MenuReadyFlag __asm__("D_8009F8E0");
 extern int gPlayer2MenuReadyFlag __asm__("D_8009F8E4");
 typedef struct { u8 pad[0x16]; u16 a; u8 pad2[0x6E]; u16 b; } Tail;
@@ -49,12 +51,12 @@ void gInitSelectionIndices(void) __asm__("func_8007D408");
 void gInitSelectionIndices(void)
 {
     if (gGameSession->mode == 1) {
-        gLoadoutTable[2].entries = D_8009C090;
+        gLoadoutTable[2].entries = gAltSpecialLoadoutEntries;
         gLoadoutTable[2].count = 4;
         D_800A362B[0] = 7;
         gLoadoutTable[1].count = 4;
     } else {
-        gLoadoutTable[2].entries = D_8009C070;
+        gLoadoutTable[2].entries = gDefaultSpecialWeaponRows;
         gLoadoutTable[2].count = 5;
         D_800A362B[0] = 2;
         gLoadoutTable[1].count = 5;
@@ -70,13 +72,13 @@ void gInitSelectionIndices(void)
     gLoadoutTable[0].max = gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]].max0;
     gLoadoutPrimaryWeaponIndices[0] = CLAMP(gLoadoutPrimaryWeaponIndices[0], gLoadoutTable[0].min, gLoadoutTable[0].max);
     gLoadoutPrimaryWeaponIndices[1] = CLAMP(gLoadoutPrimaryWeaponIndices[1], gLoadoutTable[0].min, gLoadoutTable[0].max);
-    if (gGameSession->y) D_8009C0C5[0] = 0;
-    else D_8009C0C5[0] = 1;
+    if (gGameSession->y) gLoadoutHeavyMinIndex[0] = 0;
+    else gLoadoutHeavyMinIndex[0] = 1;
     gLoadoutTable[1].max = gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]].max1;
     gLoadoutHeavyWeaponIndices[0] = CLAMP(gLoadoutHeavyWeaponIndices[0], gLoadoutTable[1].min, gLoadoutTable[1].max);
     gLoadoutHeavyWeaponIndices[1] = CLAMP(gLoadoutHeavyWeaponIndices[1], gLoadoutTable[1].min, gLoadoutTable[1].max);
-    if (gGameSession->z) D_8009C0D9[0] = 0;
-    else D_8009C0D9[0] = 1;
+    if (gGameSession->z) gLoadoutSpecialMinIndex[0] = 0;
+    else gLoadoutSpecialMinIndex[0] = 1;
     gLoadoutTable[2].max = gWideTextTable[gMissionListTablePtr[gSelectedMissionIndex]].max2;
     gLoadoutSpecialWeaponIndices[0] = CLAMP(gLoadoutSpecialWeaponIndices[0], gLoadoutTable[2].min, gLoadoutTable[2].max);
     gLoadoutSpecialWeaponIndices[1] = CLAMP(gLoadoutSpecialWeaponIndices[1], gLoadoutTable[2].min, gLoadoutTable[2].max);

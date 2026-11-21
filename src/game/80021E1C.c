@@ -24,7 +24,7 @@ struct SoundSystem {
 extern struct SoundSystem gSoundSystem __asm__("D_800A07A8");
 extern void *gSoundChannelEnableMask __asm__("D_800A07BC");
 
-extern void func_80098C68(s32, void *);
+extern void gSpuSetVoiceKey(s32, void *) __asm__("func_80098C68");
 extern void func_80021AD0(struct SoundChannel *, s32, s32, s32);
 
 void gFlushSoundChannelUpdates(void) __asm__("func_80021E1C");
@@ -66,7 +66,7 @@ void gFlushSoundChannelUpdates(void)
     }
     sys->active = 1;
     if (sys->unk18 != 0) {
-        func_80098C68(0, sys->unk18);
+        gSpuSetVoiceKey(0, sys->unk18);
         sys->unk18 = 0;
     }
     if (gSoundSystem.mask != 0) {
@@ -81,7 +81,7 @@ void gFlushSoundChannelUpdates(void)
             chan++;
         }
         if (gSoundSystem.mask != 0) {
-            func_80098C68(1, (void *)gSoundSystem.mask);
+            gSpuSetVoiceKey(1, (void *)gSoundSystem.mask);
         }
     }
     gSoundSystem.mask = 0;

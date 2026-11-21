@@ -1,21 +1,21 @@
 // Categories: Game Engine > Dispatch
 #include "game/types.h"
 
-extern u8 D_80039C58[];
-extern u8 D_800357C0[];
+extern u8 gCameraOverrideHandlerAddress[] __asm__("D_80039C58");
+extern u8 gStrategicDroneEntityHandler[] __asm__("D_800357C0");
 extern u8 gHandleElevatorEntity[] __asm__("D_80041B6C");
 extern u8 gType11EntityHandler[] __asm__("D_8002DEA8");
-extern u8 D_80041C6C[];
+extern u8 gPlacedPropHandlerAddress[] __asm__("D_80041C6C");
 extern u8 gHandleType13Entity[] __asm__("D_8002DB9C");
-extern u8 D_8003015C[];
-extern u8 D_80030960[];
+extern u8 gRotatingPropEntityHandler[] __asm__("D_8003015C");
+extern u8 gResupplyEntityHandlerAddress[] __asm__("D_80030960");
 extern u8 gHandleMoverEntity[] __asm__("D_8002F7C8");
 extern u8 gHandleType27Entity[] __asm__("D_8002ED7C");
 extern u8 gHandleType26Entity[] __asm__("D_8002C3F0");
 extern u8 gHandleType29Entity[] __asm__("D_80030D3C");
 extern u8 gHandleForceFieldEntity[] __asm__("D_8003A844");
-extern u8 D_80042330[];
-extern u8 D_800426A8[];
+extern u8 gPortraitScreenEntityHandler[] __asm__("D_80042330");
+extern u8 gType35EntityHandlerAddress[] __asm__("D_800426A8");
 extern u8 gHandleTriggerAttachmentEntity[] __asm__("D_8003151C");
 
 extern void gHandleTumblingFlyer(void) __asm__("func_80032F3C");
@@ -52,11 +52,11 @@ s32 gGetEntityHandlerForType(u32 type)
 {
     switch (type) {
     case 80:
-        return (s32)D_80039C58;
+        return (s32)gCameraOverrideHandlerAddress;
     case 9:
         return (s32)gHandleTumblingFlyer;
     case 37:
-        return (s32)D_800357C0;
+        return (s32)gStrategicDroneEntityHandler;
     case 1:
         return (s32)gHandlePlayerEntityMsg;
     case 5:
@@ -72,13 +72,13 @@ s32 gGetEntityHandlerForType(u32 type)
     case 11:
         return (s32)gType11EntityHandler;
     case 12:
-        return (s32)D_80041C6C;
+        return (s32)gPlacedPropHandlerAddress;
     case 13:
         return (s32)gHandleType13Entity;
     case 16:
-        return (s32)D_8003015C;
+        return (s32)gRotatingPropEntityHandler;
     case 32:
-        return (s32)D_80030960;
+        return (s32)gResupplyEntityHandlerAddress;
     case 20:
         return (s32)gHandleMountedTurretCarrierMessages;
     case 25:
@@ -94,9 +94,9 @@ s32 gGetEntityHandlerForType(u32 type)
     case 31:
         return (s32)gHandleForceFieldEntity;
     case 34:
-        return (s32)D_80042330;
+        return (s32)gPortraitScreenEntityHandler;
     case 35:
-        return (s32)D_800426A8;
+        return (s32)gType35EntityHandlerAddress;
     case 14:
     case 38:
         return (s32)gHandleTriggerAttachmentEntity;

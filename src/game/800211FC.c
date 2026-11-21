@@ -1,12 +1,12 @@
 // Categories: Graphics > Sprite/Asset Subsystem | Platform > Interrupts
 #include "game/types.h"
 
-extern s32 D_8009F9AC;
-extern s32 D_8009FA14;
+extern s32 gSavedSpuTransferCallback __asm__("D_8009F9AC");
+extern s32 gSavedSpuTransferMode __asm__("D_8009FA14");
 extern s32 gSlotIndexLimit __asm__("D_8009FA80");
-extern s32 D_8009F998;
-extern s32 D_8009FA34;
-extern s32 D_8009FAD0;
+extern s32 gSpuTransferWriteIndex __asm__("D_8009F998");
+extern s32 gSpuTransferActive __asm__("D_8009FA34");
+extern s32 gSpuTransferDispatching __asm__("D_8009FAD0");
 extern s32 gInitDoneFlag __asm__("D_8009F9C8");
 
 extern void gPerFrameHook(void) __asm__("D_8002139C");
@@ -45,12 +45,12 @@ void gInitSpuTransferHook(void) __asm__("func_800211FC");
  */
 void gInitSpuTransferHook(void)
 {
-    D_8009F9AC = gSpuSetTransferCallback(gPerFrameHook);
-    D_8009FA14 = gSpuGetTransferMode();
+    gSavedSpuTransferCallback = gSpuSetTransferCallback(gPerFrameHook);
+    gSavedSpuTransferMode = gSpuGetTransferMode();
     gSpuSetTransferMode(0);
     gSlotIndexLimit = 0;
-    D_8009F998 = 0;
-    D_8009FA34 = 0;
-    D_8009FAD0 = 0;
+    gSpuTransferWriteIndex = 0;
+    gSpuTransferActive = 0;
+    gSpuTransferDispatching = 0;
     gInitDoneFlag = 1;
 }

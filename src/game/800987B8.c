@@ -7,6 +7,8 @@ extern volatile u16 D_800A6EA0[];
 extern volatile u16 table[] __asm__("D_800A6EA0");
 extern volatile u16 *gSpuRegBasePtr __asm__("D_8009EEA4");
 extern volatile u32 gModeEntryWord __asm__("D_8009EA5C");
+u32 gSpuAccessVoiceMaskRegs(s32 mode, u32 bits, s32 low, s32 high) __asm__("func_800987B8");
+
 
 /**
  *  @brief Reads or modifies a 24-bit value stored across two halfword entries.
@@ -30,7 +32,7 @@ extern volatile u32 gModeEntryWord __asm__("D_8009EA5C");
  *  @par Callers
  *  Confirmed: func_80098788.
  */
-u32 func_800987B8(s32 mode, u32 bits, s32 low, s32 high)
+u32 gSpuAccessVoiceMaskRegs(s32 mode, u32 bits, s32 low, s32 high)
 {
     register s32 command __asm__("$9") = mode;
     register u32 value __asm__("$8") = bits;

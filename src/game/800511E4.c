@@ -40,6 +40,8 @@ extern s32 func_80019AA8(struct Resource *resource);
 extern void func_80019A74(struct Resource *resource);
 extern void func_80019D00(struct Resource *resource);
 extern s32 gQuerySurfaceHeight(struct Vec3s32 *position, s32 mode) __asm__("func_80067684");
+void gLoadPathNodePositions(struct Resource *resource) __asm__("func_800511E4");
+
 
 /**
  * @brief Converts map-relative placement records into world coordinates on load.
@@ -72,7 +74,7 @@ extern s32 gQuerySurfaceHeight(struct Vec3s32 *position, s32 mode) __asm__("func
  * @par Callers
  * Confirmed: func_80024EC8 (asset loader).
  */
-void func_800511E4(struct Resource *resource)
+void gLoadPathNodePositions(struct Resource *resource)
 {
     struct Vec3s32 position;
     struct Header511E4 *header;
