@@ -1,6 +1,6 @@
 # Host-Tests: aktueller Stand und Grenzen
 
-> **Nachtrag 22.11.2026:** Seit diesem Bericht kamen 60 Leaf-Funktionen und portable A1-Vektoren hinzu. Der aktuelle geprüfte Stand und die Grenzen stehen im [Abschlussbericht](portable-characterization-report.md). Die folgenden Messwerte beschreiben den früheren Ausgangsstand.
+> **Nachtrag 22.11.2026:** Der aktuelle geprüfte Stand einschließlich der neuen Leaf-Suite und portablen A2-Vektoren steht in [`host-test-continuation.md`](host-test-continuation.md). Die folgenden Messwerte beschreiben den früheren Ausgangsstand.
 
 ## Ausgeführte Originalfunktionen
 

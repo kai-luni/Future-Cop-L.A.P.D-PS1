@@ -1,5 +1,7 @@
 # Abschlussbericht: Portable Characterization Tests
 
+> **Nachtrag:** Der folgende Bericht dokumentiert den früheren Stand von 185 Funktionen. Der neuere Stand einschließlich `leaf_more` und der A2-Vektoren steht in [`host-test-continuation.md`](host-test-continuation.md).
+
 Stand: 22. November 2026. Ausgangsbasis: 125 A1-/A2-Funktionen mit 690 Assertions (76/423 + 49/267). Die bereits vorhandenen Tests und `source`-basierten Erwartungen wurden erhalten. `src/game` wurde nicht geändert.
 
 ## Ergebnis und Zählweise

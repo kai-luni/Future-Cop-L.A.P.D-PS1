@@ -7,7 +7,7 @@ VENV_PYTHON := $(VENV)/bin/python
 VENV_STAMP := $(VENV)/.installed
 EXE := baseroms/us/SLUS_007.39
 
-.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra portable-check function-map coverage reach
+.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final portable-check function-map coverage reach
 
 all: split
 
@@ -50,7 +50,7 @@ sweep-candidates: verify toolchain
 report:
 	$(PYTHON) tools/generate_decomp_report.py
 
-check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra
+check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final
 	$(PYTHON) -m unittest discover -s tests -t . -v
 
 # Run the naming-round behavioral tests against the original C entry points.
@@ -202,6 +202,24 @@ host-leaf-extra:
 	  $(PYTHON) tools/host_leaf_suite.py report leaf_extra; \
 	else \
 	  echo "host-leaf-extra: qemu or C toolchain missing, skipped"; \
+	fi
+
+# Additional leaf assertions with explicitly initialized synthetic globals.
+host-leaf-more:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report leaf_more; \
+	else \
+	  echo "host-leaf-more: qemu or C toolchain missing, skipped"; \
+	fi
+
+# Additional original leaf functions with synthetic state.
+host-leaf-final:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report leaf_final; \
+	else \
+	  echo "host-leaf-final: qemu or C toolchain missing, skipped"; \
 	fi
 
 # Replay portable vectors independently under QEMU; failure is not a skip.

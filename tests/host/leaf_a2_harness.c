@@ -137,6 +137,9 @@ static void t_random_and_tables(void)
         FCK_EQ(gNextLcgRand(), lv_pm[i][1], "one step from vector seed");
         FCK_EQ(D_8009F214_[0], lv_pm[i][1], "seed updated");
     }
+    D_8009F214_[0] = 0;
+    FCK_EQ(gNextLcgRand(), 0, "zero state remains zero");
+    FCK_EQ(D_8009F214_[0], 0, "zero state is stored");
     D_8009F214_[0] = 1;
     for (i = 0; i < 9999; i++) gNextLcgRand();
     FCK_EQ(gNextLcgRand(), LV_PM_AFTER_10000_FROM_1, "Park-Miller published check value");
@@ -163,6 +166,11 @@ static void t_random_and_tables(void)
         t[0] = 0; t[1] = 10; t[2] = 20; t[3] = 30; t[4] = 40;
         D_8009F590_[0] = (u32)t; D_8009F594_[0] = 5;
         FCK_EQ(gFindHeapBoundaryIndex(25), 2, "inside");
+        FCK_EQ(gFindHeapBoundaryIndex(20), 2, "exact first midpoint");
+        FCK_EQ(gFindHeapBoundaryIndex(30), 3, "exact upper midpoint");
+        t[2] = 10;
+        FCK_EQ(gFindHeapBoundaryIndex(10), 2, "equal midpoint with duplicate boundaries");
+        t[2] = 20;
         FCK_EQ(gFindHeapBoundaryIndex(10), 1, "on boundary");
         FCK_EQ(gFindHeapBoundaryIndex(9), 0, "just below");
         FCK_EQ(gFindHeapBoundaryIndex(40), 4, "last boundary");

@@ -8,6 +8,7 @@ dispatched. Existing suite assertions are attributed by harness markers;
 in_asm supplies only additional translation evidence, not retired instructions.
 """
 import argparse
+from collections import Counter
 import json
 import os
 import re
@@ -167,7 +168,14 @@ def main():
           f'{sum(r["debug_text_and_relocations_equal"] for r in rows)} debug objects match')
     if args.json:
         Path(args.json).write_text(json.dumps(rows, indent=2) + '\n')
-    return 0
+    counts = Counter(row['function'] for row in rows)
+    duplicates = sorted(name for name, count in counts.items() if count > 1)
+    mismatches = [row['function'] for row in rows if not row['debug_text_and_relocations_equal']]
+    if duplicates:
+        print(f'duplicate functions across suites: {", ".join(duplicates)}', file=sys.stderr)
+    if mismatches:
+        print(f'debug objects differ: {", ".join(mismatches)}', file=sys.stderr)
+    return int(bool(duplicates or mismatches))
 
 
 if __name__ == '__main__':

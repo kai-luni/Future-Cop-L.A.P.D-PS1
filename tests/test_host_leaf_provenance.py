@@ -33,6 +33,18 @@ class LeafProvenanceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify_binding([(0x401000, 0x20, target), (0x401000, 0x20, target)], target, 0x401000, 4)
 
+    def test_main_fails_when_debug_object_differs(self):
+        row = {'function': 'func_80010000', 'debug_text_and_relocations_equal': False}
+        with patch.object(provenance, 'verify_suite', return_value=[row]):
+            with patch('sys.argv', ['host_leaf_provenance.py', 'leaf_a1']):
+                self.assertNotEqual(provenance.main(), 0)
+
+    def test_main_rejects_duplicate_functions_across_suites(self):
+        row = {'function': 'func_80010000', 'debug_text_and_relocations_equal': True}
+        with patch.object(provenance, 'verify_suite', return_value=[row]):
+            with patch('sys.argv', ['host_leaf_provenance.py', 'leaf_a1', 'leaf_a2']):
+                self.assertNotEqual(provenance.main(), 0)
+
     def test_only_exec_dispatches_count(self):
         data = ('0x00401000: instruction\n'
                 'Trace 0: 0x7fff [00000000/00402000/00000000/00000000] linked\n')

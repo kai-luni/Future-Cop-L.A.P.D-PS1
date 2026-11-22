@@ -1,6 +1,6 @@
 # Portable Characterization Tests, Version 1
 
-Stand: 22. November 2026. Die JSON-Datei `tests/portable/a1-a2.v1.json` enthält handübertragene A1-Assertions. `tests/portable/export_fixtures.py` erzeugt sie reproduzierbar; die Erwartungswerte werden nicht aus dem QEMU-Ergebnis übernommen. Die bestehenden C-Assertions bleiben bestehen. A2 und die neue Suite sind noch nicht portiert.
+Stand: 22. November 2026. Die JSON-Datei `tests/portable/a1-a2.v1.json` enthält handübertragene Assertions für alle A1- und A2-Funktionen. `tests/portable/export_fixtures.py` erzeugt sie reproduzierbar; die Erwartungswerte werden nicht aus dem QEMU-Ergebnis übernommen. Die bestehenden C-Assertions bleiben bestehen. Extra, More und Final sind noch nicht portiert.
 
 ## Format
 
@@ -12,7 +12,7 @@ Die ausführbare, streng validierende Formatspezifikation ist `tools/portable_te
 - Speicherzellen haben `region`, Byte-`offset` und einen typisierten `value`. `bytes` verwendet eine gerade Anzahl hexadezimaler Kleinbuchstaben. Andere Typen: `s8`, `u8`, `s16`, `u16`, `s32`, `u32`, `ptr`, `void`. Integerwerte sind **kanonische dezimale Zeichenketten** im jeweiligen Wertebereich; ihre Breite und Signedness bestimmen das Bitmuster. C# muss z. B. für bitweise Konversionen `unchecked` und die angegebene Breite verwenden. Die Zellen werden little-endian gespeichert. `void` hat `null` als Wert.
 - `source` ist eine wertvolle, aus Matching-C abgeleitete und hier durch Ausführung bestätigte Verhaltenserwartung; `math`, `spec`, `libc` und `semantic` kennzeichnen andere Herkunft. Keine Kategorie bedeutet automatisch Retail-Messung oder vollständige Spezifikation. Derzeit existiert kein `retail`-Label.
 
-Der Vergleich erfasst nur ausdrücklich angegebene Speicherzellen und Rückgaben, nicht automatisch sämtliche Änderungen. Mockprotokolle und sonstige Seiteneffekte sind in v1 **noch nicht** als eigenes Feld implementiert; sie dürfen daher nicht als geprüft gelten. Globale Bereiche und Pointer sind im Format vorhanden, aber noch nicht mit A2-Vektoren belegt. Alignment der QEMU-Bereiche ist 4 Byte; Pointer-Offsets müssen zur jeweiligen konkreten Funktion passen. Nicht unterstützte Signaturen werden abgewiesen. Struct-Offsets müssen explizit als Zellen modelliert werden. Unbekannte Laufzeitinitialisierung, C-Undefined-Behavior und Hardwareeffekte sind kein verifiziertes Retailverhalten. Für Zufallsgeneratoren nur explizit gesetzte globale Zustände und geeignete Folgen verwenden.
+Der Vergleich erfasst nur ausdrücklich angegebene Speicherzellen und Rückgaben, nicht automatisch sämtliche Änderungen. Mockprotokolle und sonstige Seiteneffekte sind in v1 **noch nicht** als eigenes Feld implementiert; sie dürfen daher nicht als geprüft gelten. A2-Vektoren verwenden synthetische globale Bereiche und Pointer. Alignment der QEMU-Bereiche ist 4 Byte; Pointer-Offsets müssen zur jeweiligen konkreten Funktion passen. Nicht unterstützte Signaturen werden abgewiesen. Struct-Offsets müssen explizit als Zellen modelliert werden. Unbekannte Laufzeitinitialisierung, C-Undefined-Behavior und Hardwareeffekte sind kein verifiziertes Retailverhalten. Für Zufallsgeneratoren nur explizit gesetzte globale Zustände und geeignete Folgen verwenden.
 
 ## Ausführung
 
@@ -20,7 +20,7 @@ Voraussetzung sind die im Projekt vorhandene MIPS-Toolchain und `qemu-mipsel`, k
 
 ```sh
 make portable-check
-python3 tools/host_leaf_provenance.py leaf_a1 leaf_a2 leaf_extra --json build/portable-evidence/provenance.json
+python3 tools/host_leaf_provenance.py leaf_a1 leaf_a2 leaf_extra leaf_more leaf_final --json build/portable-evidence/provenance.json
 ```
 
 `portable-check` validiert Quellen, führt die Format-Tests aus und erstellt für jeden Fall einen separaten MIPS-Treiber. Er kompiliert die konkrete `src/game`-Unit frisch, prüft Quellhash und Signatur, Linker-Map und `func_`-Definition, startet QEMU mit `exec,nochain` und prüft die Eintritts-Dispatches sowie die tatsächlichen Rückgaben und angegebenen Speicherzellen gegen die übernommenen Erwartungen. Fehlende Voraussetzungen oder Abweichungen sind Fehler. Zur dauerhaften Prüfung und zur Ausgabe eines Vergleichsformats:

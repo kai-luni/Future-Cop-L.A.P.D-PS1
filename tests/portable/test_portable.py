@@ -15,6 +15,17 @@ class FormatTests(unittest.TestCase):
     def test_checked_in_suite_validates_against_sources(self):
         portable.validate(example(), check_sources=True)
 
+    def test_checked_in_vectors_match_exporter(self):
+        from unittest.mock import patch
+        from tests.portable import export_fixtures
+
+        with tempfile.TemporaryDirectory() as directory:
+            exported = Path(directory) / 'vectors.json'
+            with patch.object(export_fixtures, 'OUT', exported):
+                export_fixtures.main()
+            self.assertEqual(exported.read_bytes(),
+                             (portable.ROOT / 'tests/portable/a1-a2.v1.json').read_bytes())
+
     def test_invalid_typed_values_are_rejected(self):
         for value in ("4294967296", "01", "-0", "1e1", 1, True):
             with self.subTest(value=value):
