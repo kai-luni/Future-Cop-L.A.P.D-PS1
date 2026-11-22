@@ -18,6 +18,7 @@ Output: a per-function verdict plus the two totals.
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -50,8 +51,26 @@ def _test_binaries(build, env):
     return out
 
 
+def defined_symbols(path, env):
+    result = subprocess.run(["mipsel-linux-gnu-nm", "--defined-only", str(path)],
+                            capture_output=True, text=True, env=env)
+    if result.returncode:
+        return set()
+    return {parts[2] for line in result.stdout.splitlines()
+            if len(parts := line.split()) == 3 and parts[1] in ("T", "t")}
+
+
+def original_definition(binary, symbol, env):
+    """Require the unit's object to export the symbol, not just a mock binary."""
+    obj = Path(binary).parent / (symbol[5:] + ".o")
+    return obj.exists() and symbol in defined_symbols(obj, env)
+
+
 def linked_functions(env):
-    """func_ symbol -> list of test binaries that define it."""
+    """Map original func_ symbols to their test binaries, excluding mocks.
+
+    Units with only descriptive exports are conservatively omitted.
+    """
     found = {}
     for build in sorted((hc.REPO / "tests" / "host").glob("build-*")):
         if not build.is_dir():
@@ -64,7 +83,8 @@ def linked_functions(env):
             for line in r.stdout.splitlines():
                 parts = line.split()
                 if (len(parts) == 3 and parts[1] in ("T", "t")
-                        and parts[2].startswith("func_")):
+                        and parts[2].startswith("func_")
+                        and original_definition(cand, parts[2], env)):
                     found.setdefault(parts[2], []).append(cand)
     return found
 
@@ -73,14 +93,20 @@ TRACE_DIR = Path(os.environ.get("QEMU_TRACE_DIR", "/tmp/qemu-traces"))
 _trace_cache = {}
 
 
+def trace_path(binary, trace_dir):
+    resolved = str(Path(binary).resolve())
+    key = hashlib.sha256(os.fsencode(resolved)).hexdigest()
+    return Path(trace_dir) / f"{Path(binary).name}-{key}.in_asm"
+
+
 def trace_addresses(binary, env):
-    """Executed addresses: from a recorded trace if there is one, else live."""
-    name = Path(binary).name
+    """Use only an explicitly recorded, fresh trace of the actual test run."""
+    name = str(Path(binary).resolve())
     if name in _trace_cache:
         return _trace_cache[name]
-    trace = TRACE_DIR / f"{name}.in_asm"
+    trace = trace_path(binary, TRACE_DIR)
     addrs = set()
-    if trace.exists():
+    if trace.exists() and trace.stat().st_mtime_ns >= Path(binary).stat().st_mtime_ns:
         for line in trace.read_text(errors="ignore").splitlines():
             m = re.match(r"^0x([0-9a-f]+):\s", line)
             if m:
@@ -88,7 +114,7 @@ def trace_addresses(binary, env):
     if addrs:
         _trace_cache[name] = (addrs, None)
         return _trace_cache[name]
-    got = hc.executed_addresses(binary, env)
+    got = (None, f"missing or stale trace: {trace}")
     _trace_cache[name] = got
     return got
 
@@ -107,6 +133,8 @@ def measure_unit(unit, binaries, env, outdir):
     all_lines = set()
     handwritten = not any(per_line for per_line in lines.values())
     covered = set()
+    trace_available = False
+    trace_errors = []
     for per_line in lines.values():
         all_lines.update(per_line)
     for binary in binaries:
@@ -114,30 +142,39 @@ def measure_unit(unit, binaries, env, outdir):
         if base is None:
             continue
         ex, err = trace_addresses(binary, env)
-        if err:
+        if err or ex is None:
+            trace_errors.append(err or f"no trace: {binary}")
             continue
+        trace_available = True
         for per_line in lines.values():
             for lineno, offsets in per_line.items():
                 if any(base + off in ex for off in offsets):
                     covered.add(lineno)
+    if not trace_available:
+        return None, "; ".join(trace_errors) or "no symbol or usable trace"
+    if trace_errors and not covered and not handwritten:
+        return None, "incomplete traces: " + "; ".join(trace_errors)
     if handwritten:
         # A transcription-only unit (inline asm, .word stream) carries no .loc
         # lines, so line coverage cannot speak about it at all. Report whether it
         # executed by looking for any executed address inside its extent.
         for binary in binaries:
-            base = symbol_address(binary, f"func_{unit}", env)
-            if base is None:
+            extent = symbol_extent(binary, f"func_{unit}", env)
+            if extent is None:
                 continue
+            base, size = extent
             ex, err = trace_addresses(binary, env)
-            if err:
+            if err or ex is None:
                 continue
-            if any(base <= a < base + 0x800 for a in ex):
+            if any(base <= a < base + size for a in ex):
                 return (0, 0, True), None
+        if trace_errors:
+            return None, "incomplete traces: " + "; ".join(trace_errors)
         return (0, 0, False), None
     return (len(covered), len(all_lines), None), None
 
 
-def symbol_address(binary, sym, env):
+def symbol_extent(binary, sym, env):
     r = subprocess.run(
         ["mipsel-linux-gnu-nm", "-S", "--defined-only", str(binary)],
         capture_output=True, text=True, env=env,
@@ -145,8 +182,13 @@ def symbol_address(binary, sym, env):
     for line in r.stdout.splitlines():
         parts = line.split()
         if len(parts) == 4 and parts[3] == sym:
-            return int(parts[0], 16)
+            return int(parts[0], 16), int(parts[1], 16)
     return None
+
+
+def symbol_address(binary, sym, env):
+    extent = symbol_extent(binary, sym, env)
+    return extent[0] if extent is not None else None
 
 
 def main():
@@ -196,8 +238,11 @@ def main():
 
     print(f"test binaries:            {len({b for v in results.values() for b in v['binaries']})}")
     print(f"linked func_ symbols:     {len(results)}")
+    not_seen = [s for s, v in results.items() if v["state"] == "linked but not executed"]
+    unknown = [s for s, v in results.items() if not v["state"].startswith("executed") and s not in not_seen]
     print(f"  executed by a test:     {len(ex)}")
-    print(f"  linked but never run:   {len(results) - len(ex)}")
+    print(f"  not seen in traces:     {len(not_seen)}")
+    print(f"  no usable measurement:  {len(unknown)}")
     hand = [s for s, v in results.items() if "handwritten" in v["state"]]
     print(f"  of those handwritten:   {len(hand)}  (asm-only, no line info)")
     print(f"  executed only partly:   {len(partial)}")

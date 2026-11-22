@@ -1,0 +1,603 @@
+{
+  "schema": "fc-portable-tests",
+  "version": 1,
+  "byte_order": "little",
+  "functions": {
+    "func_800886C8": {"source": "src/game/800886C8.c", "sha256": "18e33aaa88cc9f00726383e02cf0ceec4125d0efafddcd54baf9338acad84f4b", "args": ["s32", "s32"], "return": "s32", "origin": {"suite": "a1", "evidence": "libc", "note": "signed min(a,b)"}},
+    "func_800187C8": {"source": "src/game/800187C8.c", "sha256": "d4f5743234140ce9025b8a654bd368eb2f175ac5aac368c5c5a273cb97880514", "args": ["u32"], "return": "u32", "origin": {"suite": "a1", "evidence": "math", "note": "floor(sqrt(v)*256) == isqrt(v<<16), vectors from leaf_vectors.py"}},
+    "func_8003B65C": {"source": "src/game/8003B65C.c", "sha256": "df5370e2ad5a74d1fcc7fcefdffacd2caedd726d5e398796780d0d591dd36719", "args": ["s32", "s32"], "return": "s32", "origin": {"suite": "a1", "evidence": "source", "note": "quarter of range: <=r/4 ->0, <r/2 ->1, <3r/4 ->2, else 3"}},
+    "func_8001BC44": {"source": "src/game/8001BC44.c", "sha256": "9c9ae849949ccf45836d980be6b4055fad3dece175ee5681c00069515a03ac2d", "args": ["u32", "u32", "u32"], "return": "u32", "origin": {"suite": "a1", "evidence": "semantic", "note": "0xRRGGBB packing, each channel masked to 8 bits"}},
+    "func_80049EF8": {"source": "src/game/80049EF8.c", "sha256": "373561f584ebb5135db9bccf74f2f9a6b1a2ddef04ef4ad0b6a8169706f3b06e", "args": ["s32", "s32", "s32"], "return": "s32", "origin": {"suite": "a1", "evidence": "semantic", "note": "same cross product as a predicate: 1 when cross >= 0"}},
+    "func_80015AF4": {"source": "src/game/80015AF4.c", "sha256": "17c98fe6d2f45038d0b9f300282b7e46fb722720de5f7f799f34317e0833b185", "args": ["s32", "s32", "s32", "ptr"], "return": "s32", "origin": {"suite": "a1", "evidence": "semantic", "note": "2D cross product sign of packed (x,y) screen points; <0 culled"}},
+    "func_8001A750": {"source": "src/game/8001A750.c", "sha256": "66937db016697af3f41d60bc71a0b9e978ea09ed0b155fc7465e8ca501751180", "args": ["ptr", "ptr"], "return": "s32", "origin": {"suite": "a1", "evidence": "semantic", "note": "octagonal distance |dx|+|dz|-min(|dx|,|dz|)/2 on x and z only"}},
+    "func_8001A6F8": {"source": "src/game/8001A6F8.c", "sha256": "bfbacd81265ac7d5719574e0fda5d1b8870c67342faefe1721a6034571548bd5", "args": ["ptr", "ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "semantic", "note": "dst += (src-dst)/4 as (3*dst+src)>>2, arithmetic shift floors"}},
+    "func_8001BC64": {"source": "src/game/8001BC64.c", "sha256": "11f1e7f1ecd2acf8141c228bf3c2de988ad8990a449f815bb24cd58d078fb296", "args": ["u32", "s32", "ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "semantic", "note": "split 0xRRGGBB and multiply each channel"}},
+    "func_8001BCD0": {"source": "src/game/8001BCD0.c", "sha256": "da3948568219429342bcde4027888badc67dbadae94a59ca05eef3cd9a959e4d", "args": ["u32", "s32", "ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "semantic", "note": "like 8001BC64 but accumulates into out"}},
+    "func_8001BCA4": {"source": "src/game/8001BCA4.c", "sha256": "e7fd1c38d77332904398463c23e315afb9796652814a5065ede31dc7643ef572", "args": ["u32", "ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "semantic", "note": "channels as 16.16 fixed point (channel << 16)"}},
+    "func_8001BD2C": {"source": "src/game/8001BD2C.c", "sha256": "5f922b842bcf935b829219b6af8f05238fa4f08a88d259877e528e17b4f09bbd", "args": ["u32", "ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "semantic", "note": "accumulate the 16.16 channels, u32 wrap-around"}},
+    "func_8001C27C": {"source": "src/game/8001C27C.c", "sha256": "95f26909b8085013709a5e758ebf0b62f53f88d95f1faab5a17cf7b7e279c39b", "args": ["ptr", "ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "libc", "note": "*dst = *src"}},
+    "func_8001C470": {"source": "src/game/8001C470.c", "sha256": "9d3b4a9a7aea02132b18c8f57939c8281bfd4dd4bdeddb71b8798655e63216ac", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "libc", "note": "*p = 0"}},
+    "func_80018460": {"source": "src/game/80018460.c", "sha256": "96bf964156deb9e4d52bd6c89fc70f6e399e6d636a5eab0e57f01cc6d602f5c4", "args": ["ptr"], "return": "s32", "origin": {"suite": "a1", "evidence": "semantic", "note": "heap block header: size word at payload-4"}},
+    "func_8001E304": {"source": "src/game/8001E304.c", "sha256": "0a518fe76beeeed3827da67952c60d312dbf9766f7b28bef96f8c87d9d536cc5", "args": ["ptr"], "return": "s32", "origin": {"suite": "a1", "evidence": "semantic", "note": "header read with NULL -> -1"}},
+    "func_80091B1C": {"source": "src/game/80091B1C.c", "sha256": "5157d01189c84df0f868978769697a170ed9aba77439f6d20e1fe3aa7ac2f167", "args": ["ptr", "u32"], "return": "void", "origin": {"suite": "a1", "evidence": "libc", "note": "word clear of count words"}},
+    "func_80091C90": {"source": "src/game/80091C90.c", "sha256": "01c0c21be6106a7ccf83d9c80508ef7ac2351be191fe2c700205954e81475b82", "args": ["ptr", "u32"], "return": "void", "origin": {"suite": "a1", "evidence": "libc", "note": "word clear of count words (second copy in the image)"}},
+    "func_80028BA0": {"source": "src/game/80028BA0.c", "sha256": "7538b553876674e79830499147a1d5f44e626df2b246cfc167e31315961ba385", "args": ["ptr", "ptr", "u32"], "return": "void", "origin": {"suite": "a1", "evidence": "libc", "note": "word copy of byte_count/4 words, remainder bytes dropped"}},
+    "func_80095FE8": {"source": "src/game/80095FE8.c", "sha256": "6253dd84f5756cf2ff31293d2f22a46fd644a0bc4546b1ba15609639892c55e3", "args": ["ptr"], "return": "u16", "origin": {"suite": "a1", "evidence": "libc", "note": "u16 load, zero-extended"}},
+    "func_8001E4C0": {"source": "src/game/8001E4C0.c", "sha256": "467686582fc828be4951a6f474175a0474b65c34c38d78fce74cbed02ab36e3e", "args": ["ptr", "s32", "u32"], "return": "ptr", "origin": {"suite": "a1", "evidence": "libc", "note": "memset with return value = dest, low byte of value"}},
+    "func_80095830": {"source": "src/game/80095830.c", "sha256": "ce377cc25f880dc1e07e6c95ec4d05af863ad6fcb6ac305beac2b8d9c4956579", "args": ["ptr", "s32", "u32"], "return": "void", "origin": {"suite": "a1", "evidence": "libc", "note": "memset (void)"}},
+    "func_8008D5D0": {"source": "src/game/8008D5D0.c", "sha256": "97f4b498ac3d8438a502413644dc21321bd6725770217a0f4abb8b33a61860b9", "args": ["ptr", "ptr", "s32"], "return": "ptr", "origin": {"suite": "a1", "evidence": "libc", "note": "overlap-safe copy (memmove); return is dest (backward) or dest+n (forward)"}},
+    "func_800195A4": {"source": "src/game/800195A4.c", "sha256": "ad00775931b58571d782c559b179f151452e48a42b2cfb17df9775e7592a970f", "args": ["ptr"], "return": "ptr", "origin": {"suite": "a1", "evidence": "semantic", "note": "free-list pop: head at +0x10, count at +0x0C"}},
+    "func_800195D0": {"source": "src/game/800195D0.c", "sha256": "9084873e9b8b23eb492c5fcfd88a9d93d794f7f989b34131ec98f5a5840c33ee", "args": ["ptr", "ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "semantic", "note": "free-list push (LIFO pair of 800195A4)"}},
+    "func_8003BEF0": {"source": "src/game/8003BEF0.c", "sha256": "df51ccd438684b6892c96227743eeaa7f7c0aaa5286a158552b91e784d65b5c7", "args": ["ptr"], "return": "ptr", "origin": {"suite": "a1", "evidence": "source", "note": "node{prev,next,tail}: pop tail; tail->prev=node->next; node->next=tail"}},
+    "func_80021800": {"source": "src/game/80021800.c", "sha256": "4d4258ea0bbc78484c17a02087cc0d65050803c9213261b6a89d105dd4f3fdd4", "args": ["ptr", "u32"], "return": "ptr", "origin": {"suite": "a1", "evidence": "source", "note": "offset table at base+0x10; 0 offset -> NULL, else base+offset"}},
+    "func_8002B1AC": {"source": "src/game/8002B1AC.c", "sha256": "66115a6585df1515071e0ef9d0a871db2d9fa7083df7dde9c9d910adbf7ab9b3", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "source", "note": "copy s16 at 0x158 into 0x10C when different, then mirror 0x10C to 0x10E"}},
+    "func_800489C8": {"source": "src/game/800489C8.c", "sha256": "4cc155561637accc2a9e22c7b9ff43333795b414be7b75a386d9e09c2872c038", "args": ["ptr", "u32"], "return": "ptr", "origin": {"suite": "a1", "evidence": "source", "note": "glyph record = values(+0x10) + 11 * byte[0x1C + offset]"}},
+    "func_8007D39C": {"source": "src/game/8007D39C.c", "sha256": "df02661fbfdb2c8e9a57f22bc73c294bf2e216fab23208de6a6c5e6940d065a2", "args": ["ptr", "u8"], "return": "u8", "origin": {"suite": "a1", "evidence": "source", "note": "find first entry (stride 6) with value; not found -> 0"}},
+    "func_8008C858": {"source": "src/game/8008C858.c", "sha256": "a47f408bbe79faeec2f153184e11c91dbcf298008e0aec9b52e2d3e7107fe35e", "args": ["ptr"], "return": "s32", "origin": {"suite": "a1", "evidence": "source", "note": "ready u16 at 0xE6==0 -> 1; device byte 0x46==0xFF -> 0; else 1"}},
+    "func_8007AA9C": {"source": "src/game/8007AA9C.c", "sha256": "8eb4894bd35221fbdeb20bbc85c1219b98eaf8aaba0d36d78fdf0c58e4203ccb", "args": ["ptr", "ptr", "s32", "ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "semantic", "note": "translate via table, trailing spaces -> NUL, empty -> \" \""}},
+    "func_8007F688": {"source": "src/game/8007F688.c", "sha256": "a80a23ec0ca2108b250f821c00b92e695749cb0f40a6778a3b82016f8b5c5f7b", "args": ["ptr", "u32", "ptr", "ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "source", "note": "sum += b[i]+i; other = ((b[i]^other)<<1)+i, hand-computed"}},
+    "func_8008E720": {"source": "src/game/8008E720.c", "sha256": "e6f24c1786c39de9b8590f8a3a04842a291d7fc581b10f2fff136ff10bac2017", "args": ["ptr"], "return": "s32", "origin": {"suite": "a1", "evidence": "spec", "note": "Psy-Q CdPosToInt: BCD MSF -> sector - 150, vectors from leaf_vectors.py"}},
+    "func_8001C3F8": {"source": "src/game/8001C3F8.c", "sha256": "62951af13c99379fe7ea35fef8f0c89b229186f1de418ce1fc03870f4bcccfa0", "args": ["ptr", "ptr"], "return": "s32", "origin": {"suite": "a1", "evidence": "semantic", "note": "lexicographic MSF compare; sign of (b - a); track byte ignored"}},
+    "func_8008AE70": {"source": "src/game/8008AE70.c", "sha256": "612f3754bd0c1881df635923bc5c1550fb77ad935677e5d6b59ed5ffdb739ba0", "args": ["ptr", "s32", "u8"], "return": "void", "origin": {"suite": "a1", "evidence": "source", "note": "store word to inline+4 (0x28), type byte at 0x34"}},
+    "func_8008AE7C": {"source": "src/game/8008AE7C.c", "sha256": "ae71a0d16dce261bd44f535d2a5049a0d4b2084f48bc43dba1c91cb0d004bf5d", "args": ["ptr", "s32", "s32", "s32"], "return": "void", "origin": {"suite": "a1", "evidence": "source", "note": "current(0x36)=a, value(0x2C)=b, active(0x35)=c"}},
+    "func_8008B4EC": {"source": "src/game/8008B4EC.c", "sha256": "99fd3b9451734c2ba05a412daf04b21fa44225e4c22149b8e8ca6fee620a56aa", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "psx-spx 4Dh rumble mapping: current=0x4D, 6 bytes, value=source"}},
+    "func_8008B71C": {"source": "src/game/8008B71C.c", "sha256": "8b067750710c665551ea323f0d698c8af010fa0a9a923ce788dcf3f172fc8202", "args": ["ptr", "u8"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "psx-spx 43h enter/exit config mode, 1 inline byte"}},
+    "func_8008B73C": {"source": "src/game/8008B73C.c", "sha256": "0b772054de9017b965509b27f9bd8170125b2e04b52863b03d1d3a34aed85ee1", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "psx-spx 45h get status/model, no parameters"}},
+    "func_8008B750": {"source": "src/game/8008B750.c", "sha256": "13baa76bef3d533b412d9d08c562e222ff5582b7b3a194a4a2d801cfd058313f", "args": ["ptr", "u8"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "psx-spx 4Ch constant query, 1 inline byte"}},
+    "func_8008B770": {"source": "src/game/8008B770.c", "sha256": "153e50b88a567512ffc30dc127accf62c24cff9bcdc3dc972dbd65aa71c92786", "args": ["ptr", "u8"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "psx-spx 46h actuator info query, 1 inline byte"}},
+    "func_8008B790": {"source": "src/game/8008B790.c", "sha256": "4752987df5cb20b9a1ba56ca67d4ab5e69fc87f1d94af314ca9cd384fca90d8f", "args": ["ptr", "u8"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "psx-spx 47h combination info query, 1 inline byte"}},
+    "func_8008B7B0": {"source": "src/game/8008B7B0.c", "sha256": "8b61d42c0368425996eee969ea0cc22c239aaab5f040a77872b3bd74e21d6b48", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "source", "note": "command 0x4B without parameters (byte not in the psx-spx core table)"}},
+    "func_8008C06C": {"source": "src/game/8008C06C.c", "sha256": "1c9a7ba7c276a24537245be5420ddfea5bfa91365569ffdd810cc7e95a270c48", "args": ["ptr"], "return": "s32", "origin": {"suite": "a1", "evidence": "source", "note": "return current, move it to previous, clear current"}},
+    "func_8004DA58": {"source": "src/game/8004DA58.c", "sha256": "d1cf2f980d4c72dc4ecfd9dfcb7729570b00f11b0aad28342c153aa3bb9e7f42", "args": ["u32"], "return": "s32", "origin": {"suite": "a1", "evidence": "source", "note": "command kinds 0x3C..0x45 and 0x64..0x65 (unsigned range test)"}},
+    "func_80092488": {"source": "src/game/80092488.c", "sha256": "22cc36aab883b4a6fd59fd6bbd3488a785d3a4ab24b64f7914a391a796d1d331", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setPolyG3"}},
+    "func_8009249C": {"source": "src/game/8009249C.c", "sha256": "3c19e6f452c630ec9d3d7ebbaf2b250102222ba9c35f264f4d8c2213c4729c45", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setPolyGT3"}},
+    "func_800924B0": {"source": "src/game/800924B0.c", "sha256": "f934670f38235c18b233474ba42f9e7a2edcebe19edd340d81a8a5faa2d53cf9", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setPolyF4"}},
+    "func_800924C4": {"source": "src/game/800924C4.c", "sha256": "57f7989a40e48297e88c53bb08ce1d47d47fa36f361e5a09617aaff352bc6b5c", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setPolyFT4"}},
+    "func_800924D8": {"source": "src/game/800924D8.c", "sha256": "c6a317739576b97fe9ba367c626aa6c36f84a084462280eddb9a89e823cbde29", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setPolyG4"}},
+    "func_800924EC": {"source": "src/game/800924EC.c", "sha256": "9f9a9fcda5bd786675aa3daec5e8fc996d1f403959cb9bae2bae151f9e5b9681", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setPolyGT4"}},
+    "func_80092514": {"source": "src/game/80092514.c", "sha256": "2fb13496c1f4e23dc7f4f553615b3e8e90ca99968c185058c4ae97d2846e2e90", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setSprt16 (unit doc calls it gInitPolyF3Packet)"}},
+    "func_80092528": {"source": "src/game/80092528.c", "sha256": "23d4fa36d61f7bb3b0043e21debd7f264e9f33c2275910272e0f033069b492df", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setSprt"}},
+    "func_8009253C": {"source": "src/game/8009253C.c", "sha256": "2dc0a5d58f88e378c6ac992fbae9d81c2f0aa5528d338cc7101b468f8dd17121", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setTile1 (unit doc calls it gInitPolyFT3Packet)"}},
+    "func_80092550": {"source": "src/game/80092550.c", "sha256": "0d61dc7bcdbe5b42a850dfd03b1529a4c6502993fafa67fb1960abd2e09007d4", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setTile8"}},
+    "func_80092564": {"source": "src/game/80092564.c", "sha256": "30ecaa3fa488aa623e1d29674f79f1a853bb8945852c81de783fcedb2276b506", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setTile16 (unit doc calls it gInitPolyF4Packet)"}},
+    "func_80092578": {"source": "src/game/80092578.c", "sha256": "726d73be59d7fd8dc558e1f9d4d68482f9ab58e21a325fbb1cf2906242de93c7", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setTile"}},
+    "func_8009258C": {"source": "src/game/8009258C.c", "sha256": "072416d5367d044f9f2406ec8fbe956161e14a141800acca85e0a9e0c61e5679", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setLineF2"}},
+    "func_800925A0": {"source": "src/game/800925A0.c", "sha256": "df910d9ca04f164d44ff5a97017cbf88cda6b44f871e579e56781577ac8f22ca", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setLineG2"}},
+    "func_800925D4": {"source": "src/game/800925D4.c", "sha256": "6d9ab1dfc852a771ca2e950d30427d7a89ef99c1cecc026657ded189d85ef87f", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setLineG3: len 7, code 0x58, terminator at +28"}},
+    "func_800925F4": {"source": "src/game/800925F4.c", "sha256": "e7346cab9d27b0862e733806bffd2bae3af2e43c1a6b495cb0ad1174f3c95931", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setLineF4: len 6, code 0x4c, terminator at +24"}},
+    "func_80092410": {"source": "src/game/80092410.c", "sha256": "adcb5f1e679e5a189251ef5ccf0546189f63045762dbb5713832a51506510bde", "args": ["ptr", "s32"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setSemiTrans: code |= 2 / &= ~2"}},
+    "func_80092438": {"source": "src/game/80092438.c", "sha256": "e9238c4daf1d08c0bc9338a1869fd760c8809c06292aa144694aace403a627e8", "args": ["ptr", "s32"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setShadeTex: code |= 1 / &= ~1"}},
+    "func_80092340": {"source": "src/game/80092340.c", "sha256": "f4a05790064078b6ed5b1dc32ac532820767c0cb9105050285450e5c926fe6f2", "args": ["ptr"], "return": "s32", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK isendprim: addr field == 0xffffff"}},
+    "func_800923D4": {"source": "src/game/800923D4.c", "sha256": "7aca45fee6fb9fa50276382a78621484489e365f719b1aa1984ecbb2c9f51b0d", "args": ["ptr", "u32"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setaddr on a P_TAG: low 24 bits replaced, len kept"}},
+    "func_800923F8": {"source": "src/game/800923F8.c", "sha256": "0006a2ff0677e6ad6d81f0497aaaf553220eed94352e322a6ddbec60b6b9b038", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK termPrim: addr = 0xffffff, len kept"}},
+    "func_80092398": {"source": "src/game/80092398.c", "sha256": "91567214721e09b3c4dcf9e595d7b0c4b1410a44486f4d6bcf75ed566916338f", "args": ["ptr", "u32", "ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK addPrims(ot, p0, p1): p1.addr = ot.addr, ot.addr = p0"}},
+    "func_80092230": {"source": "src/game/80092230.c", "sha256": "2d9f8cd7c96db895077ab86a4c7efa286d30d7e66f484a89364f012d4d7610b0", "args": ["s32", "s32", "s32", "s32"], "return": "u16", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK getTPage, vectors from leaf_vectors.py"}},
+    "func_8009226C": {"source": "src/game/8009226C.c", "sha256": "2c21c72264f6f92e23cc14775ff067566fa858d0e55943333bc4c2aff914bf8e", "args": ["s32", "s32"], "return": "u16", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK getClut, vectors from leaf_vectors.py"}},
+    "func_80093F58": {"source": "src/game/80093F58.c", "sha256": "59c834ae8e8188ab9147e0d1246537edad09238bb79a1cb4b61b9ed8a3b7c7df", "args": ["s32", "s32", "u32"], "return": "u32", "origin": {"suite": "a1", "evidence": "spec", "note": "Psy-Q get_mode / PSn00bSDK setDrawTPage: E1h | dtd<<9 | dfe<<10 | tpage&0x9ff"}},
+    "func_800940A8": {"source": "src/game/800940A8.c", "sha256": "088484043c0cce965d7918c4d13fd7b1c30d600f1cd67c7f1628a6f74dd929c6", "args": ["u32", "u32"], "return": "u32", "origin": {"suite": "a1", "evidence": "spec", "note": "PSn00bSDK setDrawOffset: E5h | (y&0x7ff)<<11 | (x&0x7ff)"}},
+    "func_800940C4": {"source": "src/game/800940C4.c", "sha256": "71a1223d7725ce67002b129c79a8277213607089c3bd90d6442ab8823218bae8", "args": ["ptr"], "return": "s32", "origin": {"suite": "a1", "evidence": "spec", "note": "Psy-Q get_tw / psx-spx GP0(E2h); NULL -> 0"}},
+    "func_80093A4C": {"source": "src/game/80093A4C.c", "sha256": "d6254b718d35729180728be0b4531c74198fd55430d84269df0f918ca981f779", "args": ["ptr", "s32", "s32"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "psx-spx GP0(E6h): bit0 set-mask, bit1 check-mask; len 2, 2nd word 0"}},
+    "func_80093A74": {"source": "src/game/80093A74.c", "sha256": "73828e46e566bfe583a2b39af7b004d5bcb47e947a12385965df5d5094f002ec", "args": ["ptr", "s32"], "return": "void", "origin": {"suite": "a1", "evidence": "spec", "note": "psx-spx GP0(E6h) set-mask bit only; len 2, 2nd word 0"}},
+    "func_800607B8": {"source": "src/game/800607B8.c", "sha256": "d59dbefb954f2fb4ab0f4d5c19569fd5a36ad4210ae2fcbe924c9a3222aeed2c", "args": ["ptr"], "return": "void", "origin": {"suite": "a1", "evidence": "source", "note": "s16 +6 /= 300; +8 = (v<<8)/300 if non-zero; +0xC = (v<<12)/218; C truncation"}}
+  },
+  "cases": [
+    {
+      "id": "signed-min",
+      "regions": [],
+      "steps": [
+        {"label": "1<2", "function": "func_800886C8", "args": [{"type": "s32", "value": "1"}, {"type": "s32", "value": "2"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "2>1", "function": "func_800886C8", "args": [{"type": "s32", "value": "2"}, {"type": "s32", "value": "1"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "signed", "function": "func_800886C8", "args": [{"type": "s32", "value": "-5"}, {"type": "s32", "value": "3"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "-5"}, "memory": []},
+        {"label": "equal", "function": "func_800886C8", "args": [{"type": "s32", "value": "7"}, {"type": "s32", "value": "7"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "7"}, "memory": []},
+        {"label": "INT_MIN", "function": "func_800886C8", "args": [{"type": "s32", "value": "-2147483648"}, {"type": "s32", "value": "2147483647"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "-2147483648"}, "memory": []},
+        {"label": "INT_MAX vs -1", "function": "func_800886C8", "args": [{"type": "s32", "value": "2147483647"}, {"type": "s32", "value": "-1"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "-1"}, "memory": []}
+      ]
+    },
+    {
+      "id": "sqrt-q8",
+      "regions": [],
+      "steps": [
+        {"label": "sqrt 0", "function": "func_800187C8", "args": [{"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "0"}, "memory": []},
+        {"label": "sqrt 1", "function": "func_800187C8", "args": [{"type": "u32", "value": "1"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "256"}, "memory": []},
+        {"label": "sqrt 2", "function": "func_800187C8", "args": [{"type": "u32", "value": "2"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "362"}, "memory": []},
+        {"label": "sqrt 3", "function": "func_800187C8", "args": [{"type": "u32", "value": "3"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "443"}, "memory": []},
+        {"label": "sqrt 4", "function": "func_800187C8", "args": [{"type": "u32", "value": "4"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "512"}, "memory": []},
+        {"label": "sqrt 100", "function": "func_800187C8", "args": [{"type": "u32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "2560"}, "memory": []},
+        {"label": "sqrt 255", "function": "func_800187C8", "args": [{"type": "u32", "value": "255"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "4087"}, "memory": []},
+        {"label": "sqrt 256", "function": "func_800187C8", "args": [{"type": "u32", "value": "256"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "4096"}, "memory": []},
+        {"label": "sqrt 65535", "function": "func_800187C8", "args": [{"type": "u32", "value": "65535"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "65535"}, "memory": []},
+        {"label": "sqrt 65536", "function": "func_800187C8", "args": [{"type": "u32", "value": "65536"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "65536"}, "memory": []},
+        {"label": "sqrt 1000000", "function": "func_800187C8", "args": [{"type": "u32", "value": "1000000"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "256000"}, "memory": []},
+        {"label": "sqrt 2147483647", "function": "func_800187C8", "args": [{"type": "u32", "value": "2147483647"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "11863283"}, "memory": []},
+        {"label": "sqrt 2147483648", "function": "func_800187C8", "args": [{"type": "u32", "value": "2147483648"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "11863283"}, "memory": []},
+        {"label": "sqrt 4294967294", "function": "func_800187C8", "args": [{"type": "u32", "value": "4294967294"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "16777215"}, "memory": []},
+        {"label": "sqrt 4294967295", "function": "func_800187C8", "args": [{"type": "u32", "value": "4294967295"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "16777215"}, "memory": []}
+      ]
+    },
+    {
+      "id": "quarter-boundaries",
+      "regions": [],
+      "steps": [
+        {"label": "0", "function": "func_8003B65C", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "25", "function": "func_8003B65C", "args": [{"type": "s32", "value": "25"}, {"type": "s32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "26", "function": "func_8003B65C", "args": [{"type": "s32", "value": "26"}, {"type": "s32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "49", "function": "func_8003B65C", "args": [{"type": "s32", "value": "49"}, {"type": "s32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "50", "function": "func_8003B65C", "args": [{"type": "s32", "value": "50"}, {"type": "s32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "2"}, "memory": []},
+        {"label": "74", "function": "func_8003B65C", "args": [{"type": "s32", "value": "74"}, {"type": "s32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "2"}, "memory": []},
+        {"label": "75", "function": "func_8003B65C", "args": [{"type": "s32", "value": "75"}, {"type": "s32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "3"}, "memory": []},
+        {"label": "1000", "function": "func_8003B65C", "args": [{"type": "s32", "value": "1000"}, {"type": "s32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "3"}, "memory": []},
+        {"label": "-5", "function": "func_8003B65C", "args": [{"type": "s32", "value": "-5"}, {"type": "s32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "tiny range", "function": "func_8003B65C", "args": [{"type": "s32", "value": "1"}, {"type": "s32", "value": "2"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "3"}, "memory": []}
+      ]
+    },
+    {
+      "id": "rgb-pack",
+      "regions": [],
+      "steps": [
+        {"label": "pack", "function": "func_8001BC44", "args": [{"type": "u32", "value": "18"}, {"type": "u32", "value": "52"}, {"type": "u32", "value": "86"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "1193046"}, "memory": []},
+        {"label": "black", "function": "func_8001BC44", "args": [{"type": "u32", "value": "0"}, {"type": "u32", "value": "0"}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "0"}, "memory": []},
+        {"label": "white", "function": "func_8001BC44", "args": [{"type": "u32", "value": "255"}, {"type": "u32", "value": "255"}, {"type": "u32", "value": "255"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "16777215"}, "memory": []},
+        {"label": "masked", "function": "func_8001BC44", "args": [{"type": "u32", "value": "511"}, {"type": "u32", "value": "256"}, {"type": "u32", "value": "2748"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "16711868"}, "memory": []}
+      ]
+    },
+    {
+      "id": "triangle-facing",
+      "regions": [],
+      "steps": [
+        {"label": "ccw", "function": "func_80049EF8", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "10"}, {"type": "s32", "value": "655360"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "cw", "function": "func_80049EF8", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "655360"}, {"type": "s32", "value": "10"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "collinear", "function": "func_80049EF8", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "327685"}, {"type": "s32", "value": "655370"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "negative ccw", "function": "func_80049EF8", "args": [{"type": "s32", "value": "-262149"}, {"type": "s32", "value": "-327675"}, {"type": "s32", "value": "393211"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "negative cw", "function": "func_80049EF8", "args": [{"type": "s32", "value": "-262149"}, {"type": "s32", "value": "393211"}, {"type": "s32", "value": "-327675"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "tiny cw", "function": "func_80049EF8", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "1"}, {"type": "s32", "value": "-65536"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []}
+      ]
+    },
+    {
+      "id": "triangle-output",
+      "regions": [{"id": "out", "size": 16, "fill": {"type": "u8", "value": "90"}, "symbol": null}],
+      "steps": [
+        {"label": "cw culled", "function": "func_80015AF4", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "655360"}, {"type": "s32", "value": "10"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": [{"region": "out", "offset": 0, "value": {"type": "s32", "value": "1515870810"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "1515870810"}}, {"region": "out", "offset": 8, "value": {"type": "s32", "value": "1515870810"}}, {"region": "out", "offset": 12, "value": {"type": "s32", "value": "1515870810"}}]},
+        {"label": "ccw written", "function": "func_80015AF4", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "10"}, {"type": "s32", "value": "655360"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": [{"region": "out", "offset": 0, "value": {"type": "s32", "value": "0"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "10"}}, {"region": "out", "offset": 8, "value": {"type": "s32", "value": "655360"}}, {"region": "out", "offset": 12, "value": {"type": "s32", "value": "1515870810"}}]},
+        {"label": "collinear kept", "function": "func_80015AF4", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "327685"}, {"type": "s32", "value": "655370"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": [{"region": "out", "offset": 8, "value": {"type": "s32", "value": "655370"}}]},
+        {"label": "negative ccw", "function": "func_80015AF4", "args": [{"type": "s32", "value": "-262149"}, {"type": "s32", "value": "-327675"}, {"type": "s32", "value": "393211"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "negative cw", "function": "func_80015AF4", "args": [{"type": "s32", "value": "-262149"}, {"type": "s32", "value": "393211"}, {"type": "s32", "value": "-327675"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "wide ccw", "function": "func_80015AF4", "args": [{"type": "s32", "value": "-65471464"}, {"type": "s32", "value": "-65535000"}, {"type": "s32", "value": "65600536"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []}
+      ]
+    },
+    {
+      "id": "distance-xz",
+      "regions": [{"id": "a", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "b", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "x=3, z=4", "function": "func_8001A750", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "b", "offset": 0, "value": {"type": "s32", "value": "3"}}, {"region": "b", "offset": 4, "value": {"type": "s32", "value": "1000"}}, {"region": "b", "offset": 8, "value": {"type": "s32", "value": "4"}}], "return": {"type": "s32", "value": "6"}, "memory": []},
+        {"label": "x=10, z=0", "function": "func_8001A750", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "b", "offset": 0, "value": {"type": "s32", "value": "10"}}, {"region": "b", "offset": 4, "value": {"type": "s32", "value": "1000"}}, {"region": "b", "offset": 8, "value": {"type": "s32", "value": "0"}}], "return": {"type": "s32", "value": "10"}, "memory": []},
+        {"label": "x=0, z=-10", "function": "func_8001A750", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "b", "offset": 0, "value": {"type": "s32", "value": "0"}}, {"region": "b", "offset": 4, "value": {"type": "s32", "value": "1000"}}, {"region": "b", "offset": 8, "value": {"type": "s32", "value": "-10"}}], "return": {"type": "s32", "value": "10"}, "memory": []},
+        {"label": "x=-10, z=10", "function": "func_8001A750", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "b", "offset": 0, "value": {"type": "s32", "value": "-10"}}, {"region": "b", "offset": 4, "value": {"type": "s32", "value": "1000"}}, {"region": "b", "offset": 8, "value": {"type": "s32", "value": "10"}}], "return": {"type": "s32", "value": "15"}, "memory": []},
+        {"label": "x=1, z=1", "function": "func_8001A750", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "b", "offset": 0, "value": {"type": "s32", "value": "1"}}, {"region": "b", "offset": 4, "value": {"type": "s32", "value": "1000"}}, {"region": "b", "offset": 8, "value": {"type": "s32", "value": "1"}}], "return": {"type": "s32", "value": "2"}, "memory": []},
+        {"label": "offset", "function": "func_8001A750", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "s32", "value": "100"}}, {"region": "a", "offset": 4, "value": {"type": "s32", "value": "0"}}, {"region": "a", "offset": 8, "value": {"type": "s32", "value": "-50"}}, {"region": "b", "offset": 0, "value": {"type": "s32", "value": "40"}}, {"region": "b", "offset": 4, "value": {"type": "s32", "value": "1000"}}, {"region": "b", "offset": 8, "value": {"type": "s32", "value": "30"}}], "return": {"type": "s32", "value": "110"}, "memory": []},
+        {"label": "symmetric", "function": "func_8001A750", "args": [{"type": "ptr", "value": {"region": "b", "offset": 0}}, {"type": "ptr", "value": {"region": "a", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "110"}, "memory": []},
+        {"label": "same pointer", "function": "func_8001A750", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "a", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []}
+      ]
+    },
+    {
+      "id": "ease-vector",
+      "regions": [{"id": "src", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "dst", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "ease (0, 100, -100)", "function": "func_8001A6F8", "args": [{"type": "ptr", "value": {"region": "src", "offset": 0}}, {"type": "ptr", "value": {"region": "dst", "offset": 0}}], "repeat": 1, "arrange": [{"region": "src", "offset": 0, "value": {"type": "s32", "value": "400"}}, {"region": "src", "offset": 4, "value": {"type": "s32", "value": "0"}}, {"region": "src", "offset": 8, "value": {"type": "s32", "value": "0"}}, {"region": "dst", "offset": 0, "value": {"type": "s32", "value": "0"}}, {"region": "dst", "offset": 4, "value": {"type": "s32", "value": "100"}}, {"region": "dst", "offset": 8, "value": {"type": "s32", "value": "-100"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "dst", "offset": 0, "value": {"type": "s32", "value": "100"}}, {"region": "dst", "offset": 4, "value": {"type": "s32", "value": "75"}}, {"region": "dst", "offset": 8, "value": {"type": "s32", "value": "-75"}}, {"region": "src", "offset": 0, "value": {"type": "s32", "value": "400"}}, {"region": "src", "offset": 4, "value": {"type": "s32", "value": "0"}}, {"region": "src", "offset": 8, "value": {"type": "s32", "value": "0"}}]},
+        {"label": "ease (-1, 1, 7)", "function": "func_8001A6F8", "args": [{"type": "ptr", "value": {"region": "src", "offset": 0}}, {"type": "ptr", "value": {"region": "dst", "offset": 0}}], "repeat": 1, "arrange": [{"region": "src", "offset": 0, "value": {"type": "s32", "value": "0"}}, {"region": "src", "offset": 4, "value": {"type": "s32", "value": "0"}}, {"region": "src", "offset": 8, "value": {"type": "s32", "value": "7"}}, {"region": "dst", "offset": 0, "value": {"type": "s32", "value": "-1"}}, {"region": "dst", "offset": 4, "value": {"type": "s32", "value": "1"}}, {"region": "dst", "offset": 8, "value": {"type": "s32", "value": "7"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "dst", "offset": 0, "value": {"type": "s32", "value": "-1"}}, {"region": "dst", "offset": 4, "value": {"type": "s32", "value": "0"}}, {"region": "dst", "offset": 8, "value": {"type": "s32", "value": "7"}}, {"region": "src", "offset": 0, "value": {"type": "s32", "value": "0"}}, {"region": "src", "offset": 4, "value": {"type": "s32", "value": "0"}}, {"region": "src", "offset": 8, "value": {"type": "s32", "value": "7"}}]}
+      ]
+    },
+    {
+      "id": "rgb-scale",
+      "regions": [{"id": "out", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "scale 0x102030 by 3", "function": "func_8001BC64", "args": [{"type": "u32", "value": "1056816"}, {"type": "s32", "value": "3"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "s32", "value": "48"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "96"}}, {"region": "out", "offset": 8, "value": {"type": "s32", "value": "144"}}]},
+        {"label": "scale 0x102030 by -2", "function": "func_8001BC64", "args": [{"type": "u32", "value": "1056816"}, {"type": "s32", "value": "-2"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "s32", "value": "-32"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "-64"}}, {"region": "out", "offset": 8, "value": {"type": "s32", "value": "-96"}}]},
+        {"label": "scale 0xff000001 by 5", "function": "func_8001BC64", "args": [{"type": "u32", "value": "4278190081"}, {"type": "s32", "value": "5"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "s32", "value": "0"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "0"}}, {"region": "out", "offset": 8, "value": {"type": "s32", "value": "5"}}]},
+        {"label": "accumulate", "function": "func_8001BCD0", "args": [{"type": "u32", "value": "66051"}, {"type": "s32", "value": "10"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [{"region": "out", "offset": 0, "value": {"type": "s32", "value": "1"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "2"}}, {"region": "out", "offset": 8, "value": {"type": "s32", "value": "3"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "s32", "value": "11"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "22"}}, {"region": "out", "offset": 8, "value": {"type": "s32", "value": "33"}}]},
+        {"label": "undo", "function": "func_8001BCD0", "args": [{"type": "u32", "value": "66051"}, {"type": "s32", "value": "-10"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "s32", "value": "1"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "2"}}, {"region": "out", "offset": 8, "value": {"type": "s32", "value": "3"}}]},
+        {"label": "fixed-point", "function": "func_8001BCA4", "args": [{"type": "u32", "value": "11189196"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "u32", "value": "11141120"}}, {"region": "out", "offset": 4, "value": {"type": "u32", "value": "12255232"}}, {"region": "out", "offset": 8, "value": {"type": "u32", "value": "13369344"}}]},
+        {"label": "ignore top byte", "function": "func_8001BCA4", "args": [{"type": "u32", "value": "4279383126"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "u32", "value": "1179648"}}, {"region": "out", "offset": 4, "value": {"type": "u32", "value": "3407872"}}, {"region": "out", "offset": 8, "value": {"type": "u32", "value": "5636096"}}]},
+        {"label": "wrap", "function": "func_8001BD2C", "args": [{"type": "u32", "value": "11188994"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}], "repeat": 1, "arrange": [{"region": "out", "offset": 0, "value": {"type": "u32", "value": "1"}}, {"region": "out", "offset": 4, "value": {"type": "u32", "value": "2"}}, {"region": "out", "offset": 8, "value": {"type": "u32", "value": "4294901760"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "u32", "value": "11141121"}}, {"region": "out", "offset": 4, "value": {"type": "u32", "value": "12255234"}}, {"region": "out", "offset": 8, "value": {"type": "u32", "value": "65536"}}]}
+      ]
+    },
+    {
+      "id": "word-memory",
+      "regions": [{"id": "w", "size": 32, "fill": {"type": "u8", "value": "238"}, "symbol": null}, {"id": "src", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "copy word", "function": "func_8001C27C", "args": [{"type": "ptr", "value": {"region": "w", "offset": 0}}, {"type": "ptr", "value": {"region": "w", "offset": 4}}], "repeat": 1, "arrange": [{"region": "w", "offset": 0, "value": {"type": "s32", "value": "286331153"}}, {"region": "w", "offset": 4, "value": {"type": "s32", "value": "305419896"}}, {"region": "w", "offset": 8, "value": {"type": "s32", "value": "858993459"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "w", "offset": 0, "value": {"type": "s32", "value": "305419896"}}, {"region": "w", "offset": 4, "value": {"type": "s32", "value": "305419896"}}, {"region": "w", "offset": 8, "value": {"type": "s32", "value": "858993459"}}]},
+        {"label": "clear middle word", "function": "func_8001C470", "args": [{"type": "ptr", "value": {"region": "w", "offset": 4}}], "repeat": 1, "arrange": [{"region": "w", "offset": 0, "value": {"type": "s32", "value": "-1"}}, {"region": "w", "offset": 4, "value": {"type": "s32", "value": "-1"}}, {"region": "w", "offset": 8, "value": {"type": "s32", "value": "-1"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "w", "offset": 0, "value": {"type": "s32", "value": "-1"}}, {"region": "w", "offset": 4, "value": {"type": "s32", "value": "0"}}, {"region": "w", "offset": 8, "value": {"type": "s32", "value": "-1"}}]},
+        {"label": "header", "function": "func_80018460", "args": [{"type": "ptr", "value": {"region": "w", "offset": 4}}], "repeat": 1, "arrange": [{"region": "w", "offset": 0, "value": {"type": "s32", "value": "4660"}}, {"region": "w", "offset": 4, "value": {"type": "s32", "value": "77"}}, {"region": "w", "offset": 8, "value": {"type": "s32", "value": "-8"}}], "return": {"type": "s32", "value": "4660"}, "memory": []},
+        {"label": "signed header", "function": "func_80018460", "args": [{"type": "ptr", "value": {"region": "w", "offset": 12}}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "-8"}, "memory": []},
+        {"label": "null", "function": "func_8001E304", "args": [{"type": "ptr", "value": null}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "-1"}, "memory": []},
+        {"label": "header", "function": "func_8001E304", "args": [{"type": "ptr", "value": {"region": "w", "offset": 4}}], "repeat": 1, "arrange": [{"region": "w", "offset": 0, "value": {"type": "s32", "value": "4096"}}], "return": {"type": "s32", "value": "4096"}, "memory": []},
+        {"label": "zero header", "function": "func_8001E304", "args": [{"type": "ptr", "value": {"region": "w", "offset": 4}}], "repeat": 1, "arrange": [{"region": "w", "offset": 0, "value": {"type": "s32", "value": "0"}}], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "clear words and keep guards", "function": "func_80091B1C", "args": [{"type": "ptr", "value": {"region": "w", "offset": 4}}, {"type": "u32", "value": "3"}], "repeat": 1, "arrange": [{"region": "w", "offset": 0, "value": {"type": "bytes", "value": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "w", "offset": 0, "value": {"type": "bytes", "value": "eeeeeeee000000000000000000000000eeeeeeeeeeeeeeee"}}]},
+        {"label": "zero count", "function": "func_80091B1C", "args": [{"type": "ptr", "value": {"region": "w", "offset": 20}}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "w", "offset": 20, "value": {"type": "u32", "value": "4008636142"}}]},
+        {"label": "clear words and keep guards", "function": "func_80091C90", "args": [{"type": "ptr", "value": {"region": "w", "offset": 8}}, {"type": "u32", "value": "2"}], "repeat": 1, "arrange": [{"region": "w", "offset": 0, "value": {"type": "bytes", "value": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "w", "offset": 0, "value": {"type": "bytes", "value": "eeeeeeeeeeeeeeee0000000000000000eeeeeeeeeeeeeeee"}}]},
+        {"label": "zero count", "function": "func_80091C90", "args": [{"type": "ptr", "value": {"region": "w", "offset": 0}}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "w", "offset": 0, "value": {"type": "u32", "value": "4008636142"}}]},
+        {"label": "copy 10 bytes as 2 words", "function": "func_80028BA0", "args": [{"type": "ptr", "value": {"region": "w", "offset": 0}}, {"type": "ptr", "value": {"region": "src", "offset": 0}}, {"type": "u32", "value": "10"}], "repeat": 1, "arrange": [{"region": "src", "offset": 0, "value": {"type": "s32", "value": "16909060"}}, {"region": "src", "offset": 4, "value": {"type": "s32", "value": "84281096"}}, {"region": "src", "offset": 8, "value": {"type": "s32", "value": "151653132"}}, {"region": "w", "offset": 8, "value": {"type": "u32", "value": "4008636142"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "w", "offset": 0, "value": {"type": "u32", "value": "16909060"}}, {"region": "w", "offset": 4, "value": {"type": "u32", "value": "84281096"}}, {"region": "w", "offset": 8, "value": {"type": "u32", "value": "4008636142"}}]},
+        {"label": "drop 3 byte remainder", "function": "func_80028BA0", "args": [{"type": "ptr", "value": {"region": "w", "offset": 16}}, {"type": "ptr", "value": {"region": "src", "offset": 0}}, {"type": "u32", "value": "3"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "w", "offset": 16, "value": {"type": "u32", "value": "4008636142"}}]},
+        {"label": "read unsigned halfword", "function": "func_80095FE8", "args": [{"type": "ptr", "value": {"region": "w", "offset": 0}}], "repeat": 1, "arrange": [{"region": "w", "offset": 0, "value": {"type": "u16", "value": "48879"}}], "return": {"type": "u16", "value": "48879"}, "memory": []},
+        {"label": "read unsigned halfword", "function": "func_80095FE8", "args": [{"type": "ptr", "value": {"region": "w", "offset": 2}}], "repeat": 1, "arrange": [{"region": "w", "offset": 2, "value": {"type": "u16", "value": "65535"}}], "return": {"type": "u16", "value": "65535"}, "memory": []}
+      ]
+    },
+    {
+      "id": "byte-memory",
+      "regions": [{"id": "buf", "size": 32, "fill": {"type": "u8", "value": "238"}, "symbol": null}],
+      "steps": [
+        {"label": "fill and return destination", "function": "func_8001E4C0", "args": [{"type": "ptr", "value": {"region": "buf", "offset": 1}}, {"type": "s32", "value": "421"}, {"type": "u32", "value": "5"}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": {"region": "buf", "offset": 1}}, "memory": [{"region": "buf", "offset": 0, "value": {"type": "bytes", "value": "eea5a5a5a5a5ee"}}]},
+        {"label": "zero count", "function": "func_8001E4C0", "args": [{"type": "ptr", "value": {"region": "buf", "offset": 10}}, {"type": "s32", "value": "0"}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": {"region": "buf", "offset": 10}}, "memory": [{"region": "buf", "offset": 10, "value": {"type": "u8", "value": "238"}}]},
+        {"label": "clear 7 bytes", "function": "func_80095830", "args": [{"type": "ptr", "value": {"region": "buf", "offset": 3}}, {"type": "s32", "value": "0"}, {"type": "u32", "value": "7"}], "repeat": 1, "arrange": [{"region": "buf", "offset": 0, "value": {"type": "bytes", "value": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "buf", "offset": 2, "value": {"type": "bytes", "value": "ee00000000000000ee"}}]},
+        {"label": "zero count", "function": "func_80095830", "args": [{"type": "ptr", "value": {"region": "buf", "offset": 0}}, {"type": "s32", "value": "127"}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "buf", "offset": 0, "value": {"type": "u8", "value": "238"}}]},
+        {"label": "truncate to low byte", "function": "func_80095830", "args": [{"type": "ptr", "value": {"region": "buf", "offset": 0}}, {"type": "s32", "value": "-1"}, {"type": "u32", "value": "1"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "buf", "offset": 0, "value": {"type": "u8", "value": "255"}}]},
+        {"label": "backward", "function": "func_8008D5D0", "args": [{"type": "ptr", "value": {"region": "buf", "offset": 2}}, {"type": "ptr", "value": {"region": "buf", "offset": 0}}, {"type": "s32", "value": "6"}], "repeat": 1, "arrange": [{"region": "buf", "offset": 0, "value": {"type": "bytes", "value": "000102030405060708090a0b0c0d0e0f"}}], "return": {"type": "ptr", "value": {"region": "buf", "offset": 2}}, "memory": [{"region": "buf", "offset": 0, "value": {"type": "bytes", "value": "000100010203040508"}}]},
+        {"label": "forward", "function": "func_8008D5D0", "args": [{"type": "ptr", "value": {"region": "buf", "offset": 0}}, {"type": "ptr", "value": {"region": "buf", "offset": 3}}, {"type": "s32", "value": "5"}], "repeat": 1, "arrange": [{"region": "buf", "offset": 0, "value": {"type": "bytes", "value": "000102030405060708090a0b0c0d0e0f"}}], "return": {"type": "ptr", "value": {"region": "buf", "offset": 5}}, "memory": [{"region": "buf", "offset": 0, "value": {"type": "bytes", "value": "030405060705"}}]},
+        {"label": "zero count", "function": "func_8008D5D0", "args": [{"type": "ptr", "value": {"region": "buf", "offset": 0}}, {"type": "ptr", "value": {"region": "buf", "offset": 3}}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": {"region": "buf", "offset": 0}}, "memory": [{"region": "buf", "offset": 0, "value": {"type": "bytes", "value": "03"}}]},
+        {"label": "equal pointers", "function": "func_8008D5D0", "args": [{"type": "ptr", "value": {"region": "buf", "offset": 4}}, {"type": "ptr", "value": {"region": "buf", "offset": 4}}, {"type": "s32", "value": "3"}], "repeat": 1, "arrange": [{"region": "buf", "offset": 0, "value": {"type": "bytes", "value": "000102030405060708090a0b0c0d0e0f"}}], "return": {"type": "ptr", "value": {"region": "buf", "offset": 4}}, "memory": [{"region": "buf", "offset": 0, "value": {"type": "bytes", "value": "0001020304"}}]},
+        {"label": "exact copy", "function": "func_8008D5D0", "args": [{"type": "ptr", "value": {"region": "buf", "offset": 6}}, {"type": "ptr", "value": {"region": "buf", "offset": 2}}, {"type": "s32", "value": "3"}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": {"region": "buf", "offset": 6}}, "memory": [{"region": "buf", "offset": 0, "value": {"type": "bytes", "value": "00010203040502030409"}}]}
+      ]
+    },
+    {
+      "id": "fixed-pool",
+      "regions": [{"id": "st", "size": 20, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "a", "size": 4, "fill": {"type": "u8", "value": "119"}, "symbol": null}, {"id": "b", "size": 4, "fill": {"type": "u8", "value": "119"}, "symbol": null}],
+      "steps": [
+        {"label": "empty", "function": "func_800195A4", "args": [{"type": "ptr", "value": {"region": "st", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": null}, "memory": [{"region": "st", "offset": 12, "value": {"type": "s32", "value": "0"}}]},
+        {"label": "push a", "function": "func_800195D0", "args": [{"type": "ptr", "value": {"region": "st", "offset": 0}}, {"type": "ptr", "value": {"region": "a", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "a", "offset": 0, "value": {"type": "ptr", "value": null}}, {"region": "st", "offset": 16, "value": {"type": "ptr", "value": {"region": "a", "offset": 0}}}, {"region": "st", "offset": 12, "value": {"type": "s32", "value": "1"}}]},
+        {"label": "push b", "function": "func_800195D0", "args": [{"type": "ptr", "value": {"region": "st", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "b", "offset": 0, "value": {"type": "ptr", "value": {"region": "a", "offset": 0}}}, {"region": "st", "offset": 16, "value": {"type": "ptr", "value": {"region": "b", "offset": 0}}}, {"region": "st", "offset": 12, "value": {"type": "s32", "value": "2"}}]},
+        {"label": "pop b", "function": "func_800195A4", "args": [{"type": "ptr", "value": {"region": "st", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": {"region": "b", "offset": 0}}, "memory": [{"region": "st", "offset": 16, "value": {"type": "ptr", "value": {"region": "a", "offset": 0}}}, {"region": "st", "offset": 12, "value": {"type": "s32", "value": "1"}}]},
+        {"label": "pop a", "function": "func_800195A4", "args": [{"type": "ptr", "value": {"region": "st", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": {"region": "a", "offset": 0}}, "memory": [{"region": "st", "offset": 16, "value": {"type": "ptr", "value": null}}, {"region": "st", "offset": 12, "value": {"type": "s32", "value": "0"}}]},
+        {"label": "pop None", "function": "func_800195A4", "args": [{"type": "ptr", "value": {"region": "st", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": null}, "memory": [{"region": "st", "offset": 16, "value": {"type": "ptr", "value": null}}, {"region": "st", "offset": 12, "value": {"type": "s32", "value": "0"}}]}
+      ]
+    },
+    {
+      "id": "tail-pop",
+      "regions": [{"id": "node", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "t0", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "t1", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "old", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "no tail", "function": "func_8003BEF0", "args": [{"type": "ptr", "value": {"region": "node", "offset": 0}}], "repeat": 1, "arrange": [{"region": "node", "offset": 4, "value": {"type": "ptr", "value": {"region": "old", "offset": 0}}}], "return": {"type": "ptr", "value": null}, "memory": [{"region": "node", "offset": 4, "value": {"type": "ptr", "value": {"region": "old", "offset": 0}}}]},
+        {"label": "detach and insert", "function": "func_8003BEF0", "args": [{"type": "ptr", "value": {"region": "node", "offset": 0}}], "repeat": 1, "arrange": [{"region": "node", "offset": 0, "value": {"type": "u32", "value": "256"}}, {"region": "node", "offset": 8, "value": {"type": "ptr", "value": {"region": "t1", "offset": 0}}}, {"region": "t1", "offset": 0, "value": {"type": "ptr", "value": {"region": "t0", "offset": 0}}}], "return": {"type": "ptr", "value": {"region": "t1", "offset": 0}}, "memory": [{"region": "node", "offset": 0, "value": {"type": "u32", "value": "256"}}, {"region": "node", "offset": 4, "value": {"type": "ptr", "value": {"region": "t1", "offset": 0}}}, {"region": "node", "offset": 8, "value": {"type": "ptr", "value": {"region": "t0", "offset": 0}}}, {"region": "t1", "offset": 0, "value": {"type": "ptr", "value": {"region": "old", "offset": 0}}}]}
+      ]
+    },
+    {
+      "id": "bank-offset-table",
+      "regions": [{"id": "bank", "size": 68, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "entry 0", "function": "func_80021800", "args": [{"type": "ptr", "value": {"region": "bank", "offset": 0}}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [{"region": "bank", "offset": 16, "value": {"type": "u32", "value": "64"}}, {"region": "bank", "offset": 20, "value": {"type": "u32", "value": "0"}}, {"region": "bank", "offset": 24, "value": {"type": "u32", "value": "8"}}], "return": {"type": "ptr", "value": {"region": "bank", "offset": 64}}, "memory": []},
+        {"label": "entry 1", "function": "func_80021800", "args": [{"type": "ptr", "value": {"region": "bank", "offset": 0}}, {"type": "u32", "value": "1"}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": null}, "memory": []},
+        {"label": "entry 2", "function": "func_80021800", "args": [{"type": "ptr", "value": {"region": "bank", "offset": 0}}, {"type": "u32", "value": "2"}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": {"region": "bank", "offset": 8}}, "memory": []}
+      ]
+    },
+    {
+      "id": "countdown-mirror",
+      "regions": [{"id": "record", "size": 384, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "source 9", "function": "func_8002B1AC", "args": [{"type": "ptr", "value": {"region": "record", "offset": 0}}], "repeat": 1, "arrange": [{"region": "record", "offset": 268, "value": {"type": "s16", "value": "5"}}, {"region": "record", "offset": 270, "value": {"type": "s16", "value": "1"}}, {"region": "record", "offset": 344, "value": {"type": "s16", "value": "9"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "record", "offset": 268, "value": {"type": "s16", "value": "9"}}, {"region": "record", "offset": 270, "value": {"type": "s16", "value": "9"}}, {"region": "record", "offset": 344, "value": {"type": "s16", "value": "9"}}]},
+        {"label": "source 7", "function": "func_8002B1AC", "args": [{"type": "ptr", "value": {"region": "record", "offset": 0}}], "repeat": 1, "arrange": [{"region": "record", "offset": 268, "value": {"type": "s16", "value": "7"}}, {"region": "record", "offset": 270, "value": {"type": "s16", "value": "1"}}, {"region": "record", "offset": 344, "value": {"type": "s16", "value": "7"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "record", "offset": 268, "value": {"type": "s16", "value": "7"}}, {"region": "record", "offset": 270, "value": {"type": "s16", "value": "7"}}, {"region": "record", "offset": 344, "value": {"type": "s16", "value": "7"}}]},
+        {"label": "source -1", "function": "func_8002B1AC", "args": [{"type": "ptr", "value": {"region": "record", "offset": 0}}], "repeat": 1, "arrange": [{"region": "record", "offset": 268, "value": {"type": "s16", "value": "0"}}, {"region": "record", "offset": 270, "value": {"type": "s16", "value": "1"}}, {"region": "record", "offset": 344, "value": {"type": "s16", "value": "-1"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "record", "offset": 268, "value": {"type": "s16", "value": "-1"}}, {"region": "record", "offset": 270, "value": {"type": "s16", "value": "-1"}}, {"region": "record", "offset": 344, "value": {"type": "s16", "value": "-1"}}]}
+      ]
+    },
+    {
+      "id": "font-glyph-offset",
+      "regions": [{"id": "state", "size": 64, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "glyphs", "size": 2816, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "index 0", "function": "func_800489C8", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [{"region": "state", "offset": 16, "value": {"type": "ptr", "value": {"region": "glyphs", "offset": 0}}}, {"region": "state", "offset": 28, "value": {"type": "bytes", "value": "000300ff"}}], "return": {"type": "ptr", "value": {"region": "glyphs", "offset": 0}}, "memory": []},
+        {"label": "index 1", "function": "func_800489C8", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}, {"type": "u32", "value": "1"}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": {"region": "glyphs", "offset": 33}}, "memory": []},
+        {"label": "index 3", "function": "func_800489C8", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}, {"type": "u32", "value": "3"}], "repeat": 1, "arrange": [], "return": {"type": "ptr", "value": {"region": "glyphs", "offset": 2805}}, "memory": []}
+      ]
+    },
+    {
+      "id": "first-list-entry",
+      "regions": [{"id": "list", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "entries", "size": 24, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "count 4, key 10", "function": "func_8007D39C", "args": [{"type": "ptr", "value": {"region": "list", "offset": 0}}, {"type": "u8", "value": "10"}], "repeat": 1, "arrange": [{"region": "list", "offset": 8, "value": {"type": "u8", "value": "4"}}, {"region": "list", "offset": 0, "value": {"type": "ptr", "value": {"region": "entries", "offset": 0}}}, {"region": "entries", "offset": 0, "value": {"type": "u8", "value": "10"}}, {"region": "entries", "offset": 6, "value": {"type": "u8", "value": "20"}}, {"region": "entries", "offset": 12, "value": {"type": "u8", "value": "30"}}, {"region": "entries", "offset": 18, "value": {"type": "u8", "value": "20"}}], "return": {"type": "u8", "value": "0"}, "memory": []},
+        {"label": "count 4, key 20", "function": "func_8007D39C", "args": [{"type": "ptr", "value": {"region": "list", "offset": 0}}, {"type": "u8", "value": "20"}], "repeat": 1, "arrange": [{"region": "list", "offset": 8, "value": {"type": "u8", "value": "4"}}], "return": {"type": "u8", "value": "1"}, "memory": []},
+        {"label": "count 4, key 30", "function": "func_8007D39C", "args": [{"type": "ptr", "value": {"region": "list", "offset": 0}}, {"type": "u8", "value": "30"}], "repeat": 1, "arrange": [{"region": "list", "offset": 8, "value": {"type": "u8", "value": "4"}}], "return": {"type": "u8", "value": "2"}, "memory": []},
+        {"label": "count 4, key 99", "function": "func_8007D39C", "args": [{"type": "ptr", "value": {"region": "list", "offset": 0}}, {"type": "u8", "value": "99"}], "repeat": 1, "arrange": [{"region": "list", "offset": 8, "value": {"type": "u8", "value": "4"}}], "return": {"type": "u8", "value": "0"}, "memory": []},
+        {"label": "count 2, key 30", "function": "func_8007D39C", "args": [{"type": "ptr", "value": {"region": "list", "offset": 0}}, {"type": "u8", "value": "30"}], "repeat": 1, "arrange": [{"region": "list", "offset": 8, "value": {"type": "u8", "value": "2"}}], "return": {"type": "u8", "value": "0"}, "memory": []},
+        {"label": "count 0, key 10", "function": "func_8007D39C", "args": [{"type": "ptr", "value": {"region": "list", "offset": 0}}, {"type": "u8", "value": "10"}], "repeat": 1, "arrange": [{"region": "list", "offset": 8, "value": {"type": "u8", "value": "0"}}], "return": {"type": "u8", "value": "0"}, "memory": []}
+      ]
+    },
+    {
+      "id": "pad-ready",
+      "regions": [{"id": "state", "size": 256, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "ready 0, device 255", "function": "func_8008C858", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}], "repeat": 1, "arrange": [{"region": "state", "offset": 230, "value": {"type": "u16", "value": "0"}}, {"region": "state", "offset": 70, "value": {"type": "u8", "value": "255"}}], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "ready 1, device 255", "function": "func_8008C858", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}], "repeat": 1, "arrange": [{"region": "state", "offset": 230, "value": {"type": "u16", "value": "1"}}, {"region": "state", "offset": 70, "value": {"type": "u8", "value": "255"}}], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "ready 1, device 65", "function": "func_8008C858", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}], "repeat": 1, "arrange": [{"region": "state", "offset": 230, "value": {"type": "u16", "value": "1"}}, {"region": "state", "offset": 70, "value": {"type": "u8", "value": "65"}}], "return": {"type": "s32", "value": "1"}, "memory": []}
+      ]
+    },
+    {
+      "id": "glyph-name",
+      "regions": [{"id": "src", "size": 8, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "dst", "size": 8, "fill": {"type": "u8", "value": "238"}, "symbol": null}, {"id": "table", "size": 256, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "glyphs 0", "function": "func_8007AA9C", "args": [{"type": "ptr", "value": {"region": "dst", "offset": 0}}, {"type": "ptr", "value": {"region": "src", "offset": 0}}, {"type": "s32", "value": "4"}, {"type": "ptr", "value": {"region": "table", "offset": 0}}], "repeat": 1, "arrange": [{"region": "src", "offset": 0, "value": {"type": "bytes", "value": "41422020"}}, {"region": "dst", "offset": 0, "value": {"type": "bytes", "value": "eeeeeeeeeeeeeeee"}}, {"region": "table", "offset": 0, "value": {"type": "bytes", "value": "005802030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "dst", "offset": 0, "value": {"type": "bytes", "value": "4142000000ee"}}]},
+        {"label": "glyphs 1", "function": "func_8007AA9C", "args": [{"type": "ptr", "value": {"region": "dst", "offset": 0}}, {"type": "ptr", "value": {"region": "src", "offset": 0}}, {"type": "s32", "value": "4"}, {"type": "ptr", "value": {"region": "table", "offset": 0}}], "repeat": 1, "arrange": [{"region": "src", "offset": 0, "value": {"type": "bytes", "value": "41200120"}}, {"region": "dst", "offset": 0, "value": {"type": "bytes", "value": "eeeeeeeeeeeeeeee"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "dst", "offset": 0, "value": {"type": "bytes", "value": "4120580000ee"}}]},
+        {"label": "glyphs 2", "function": "func_8007AA9C", "args": [{"type": "ptr", "value": {"region": "dst", "offset": 0}}, {"type": "ptr", "value": {"region": "src", "offset": 0}}, {"type": "s32", "value": "3"}, {"type": "ptr", "value": {"region": "table", "offset": 0}}], "repeat": 1, "arrange": [{"region": "src", "offset": 0, "value": {"type": "bytes", "value": "202020"}}, {"region": "dst", "offset": 0, "value": {"type": "bytes", "value": "eeeeeeeeeeeeeeee"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "dst", "offset": 0, "value": {"type": "bytes", "value": "20000000ee"}}]},
+        {"label": "glyphs 3", "function": "func_8007AA9C", "args": [{"type": "ptr", "value": {"region": "dst", "offset": 0}}, {"type": "ptr", "value": {"region": "src", "offset": 0}}, {"type": "s32", "value": "0"}, {"type": "ptr", "value": {"region": "table", "offset": 0}}], "repeat": 1, "arrange": [{"region": "src", "offset": 0, "value": {"type": "bytes", "value": "00"}}, {"region": "dst", "offset": 0, "value": {"type": "bytes", "value": "eeeeeeeeeeeeeeee"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "dst", "offset": 0, "value": {"type": "bytes", "value": "20ee"}}]}
+      ]
+    },
+    {
+      "id": "dual-checksum",
+      "regions": [{"id": "data", "size": 4, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "out", "size": 8, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "checksum 3", "function": "func_8007F688", "args": [{"type": "ptr", "value": {"region": "data", "offset": 0}}, {"type": "u32", "value": "3"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}, {"type": "ptr", "value": {"region": "out", "offset": 4}}], "repeat": 1, "arrange": [{"region": "data", "offset": 0, "value": {"type": "bytes", "value": "010203"}}, {"region": "out", "offset": 0, "value": {"type": "s32", "value": "57005"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "48879"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "u32", "value": "9"}}, {"region": "out", "offset": 4, "value": {"type": "u32", "value": "6"}}]},
+        {"label": "checksum 0", "function": "func_8007F688", "args": [{"type": "ptr", "value": {"region": "data", "offset": 0}}, {"type": "u32", "value": "0"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}, {"type": "ptr", "value": {"region": "out", "offset": 4}}], "repeat": 1, "arrange": [{"region": "data", "offset": 0, "value": {"type": "bytes", "value": "01"}}, {"region": "out", "offset": 0, "value": {"type": "s32", "value": "57005"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "48879"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "u32", "value": "0"}}, {"region": "out", "offset": 4, "value": {"type": "u32", "value": "0"}}]},
+        {"label": "checksum 1", "function": "func_8007F688", "args": [{"type": "ptr", "value": {"region": "data", "offset": 0}}, {"type": "u32", "value": "1"}, {"type": "ptr", "value": {"region": "out", "offset": 0}}, {"type": "ptr", "value": {"region": "out", "offset": 4}}], "repeat": 1, "arrange": [{"region": "data", "offset": 0, "value": {"type": "bytes", "value": "ff"}}, {"region": "out", "offset": 0, "value": {"type": "s32", "value": "57005"}}, {"region": "out", "offset": 4, "value": {"type": "s32", "value": "48879"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "out", "offset": 0, "value": {"type": "u32", "value": "255"}}, {"region": "out", "offset": 4, "value": {"type": "u32", "value": "510"}}]}
+      ]
+    },
+    {
+      "id": "cd-time",
+      "regions": [{"id": "a", "size": 4, "fill": {"type": "u8", "value": "0"}, "symbol": null}, {"id": "b", "size": 4, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "0:2:0", "function": "func_8008E720", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "00020099"}}], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "0:2:1", "function": "func_8008E720", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "00020199"}}], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "1:0:0", "function": "func_8008E720", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "01000099"}}], "return": {"type": "s32", "value": "4350"}, "memory": []},
+        {"label": "74:59:74", "function": "func_8008E720", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "74597499"}}], "return": {"type": "s32", "value": "337349"}, "memory": []},
+        {"label": "0:0:0", "function": "func_8008E720", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "00000099"}}], "return": {"type": "s32", "value": "-150"}, "memory": []},
+        {"label": "12:34:56", "function": "func_8008E720", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "12345699"}}], "return": {"type": "s32", "value": "56456"}, "memory": []},
+        {"label": "MSF [1, 32, 48]", "function": "func_8001C3F8", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "01203000"}}, {"region": "b", "offset": 0, "value": {"type": "bytes", "value": "01203055"}}], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "MSF [1, 32, 49]", "function": "func_8001C3F8", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "01203000"}}, {"region": "b", "offset": 0, "value": {"type": "bytes", "value": "01203155"}}], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "MSF [1, 32, 41]", "function": "func_8001C3F8", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "01203000"}}, {"region": "b", "offset": 0, "value": {"type": "bytes", "value": "01202955"}}], "return": {"type": "s32", "value": "-1"}, "memory": []},
+        {"label": "MSF [1, 33, 41]", "function": "func_8001C3F8", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "01203000"}}, {"region": "b", "offset": 0, "value": {"type": "bytes", "value": "01212955"}}], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "MSF [1, 25, 116]", "function": "func_8001C3F8", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "01203000"}}, {"region": "b", "offset": 0, "value": {"type": "bytes", "value": "01197455"}}], "return": {"type": "s32", "value": "-1"}, "memory": []},
+        {"label": "MSF [2, 0, 116]", "function": "func_8001C3F8", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "01203000"}}, {"region": "b", "offset": 0, "value": {"type": "bytes", "value": "02007455"}}], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "MSF [0, 89, 116]", "function": "func_8001C3F8", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "01203000"}}, {"region": "b", "offset": 0, "value": {"type": "bytes", "value": "00597455"}}], "return": {"type": "s32", "value": "-1"}, "memory": []},
+        {"label": "unsigned bytes", "function": "func_8001C3F8", "args": [{"type": "ptr", "value": {"region": "a", "offset": 0}}, {"type": "ptr", "value": {"region": "b", "offset": 0}}], "repeat": 1, "arrange": [{"region": "a", "offset": 0, "value": {"type": "bytes", "value": "00ff"}}, {"region": "b", "offset": 0, "value": {"type": "bytes", "value": "0000"}}], "return": {"type": "s32", "value": "-1"}, "memory": []}
+      ]
+    },
+    {
+      "id": "pad-command-state",
+      "regions": [{"id": "state", "size": 64, "fill": {"type": "u8", "value": "238"}, "symbol": null}, {"id": "parameters", "size": 8, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "bind actuator buffer", "function": "func_8008AE70", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}, {"type": "s32", "value": "305419896"}, {"type": "u8", "value": "154"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "state", "offset": 40, "value": {"type": "u32", "value": "305419896"}}, {"region": "state", "offset": 52, "value": {"type": "u8", "value": "154"}}, {"region": "state", "offset": 36, "value": {"type": "u32", "value": "4008636142"}}, {"region": "state", "offset": 53, "value": {"type": "u8", "value": "238"}}]},
+        {"label": "set command and active bytes", "function": "func_8008AE7C", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}, {"type": "s32", "value": "322"}, {"type": "s32", "value": "-889275714"}, {"type": "s32", "value": "259"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "66"}}, {"region": "state", "offset": 44, "value": {"type": "u32", "value": "3405691582"}}, {"region": "state", "offset": 53, "value": {"type": "u8", "value": "3"}}, {"region": "state", "offset": 55, "value": {"type": "u8", "value": "238"}}]},
+        {"label": "rumble mapping", "function": "func_8008B4EC", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}], "repeat": 1, "arrange": [{"region": "state", "offset": 32, "value": {"type": "ptr", "value": {"region": "parameters", "offset": 0}}}], "return": {"type": "void", "value": null}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "77"}}, {"region": "state", "offset": 53, "value": {"type": "u8", "value": "6"}}, {"region": "state", "offset": 44, "value": {"type": "ptr", "value": {"region": "parameters", "offset": 0}}}]},
+        {"label": "command 0x43", "function": "func_8008B71C", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}, {"type": "u8", "value": "1"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "67"}}, {"region": "state", "offset": 53, "value": {"type": "u8", "value": "1"}}, {"region": "state", "offset": 44, "value": {"type": "ptr", "value": {"region": "state", "offset": 36}}}, {"region": "state", "offset": 36, "value": {"type": "u8", "value": "1"}}, {"region": "state", "offset": 37, "value": {"type": "u8", "value": "238"}}]},
+        {"label": "command 0x45", "function": "func_8008B73C", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "69"}}, {"region": "state", "offset": 53, "value": {"type": "u8", "value": "0"}}, {"region": "state", "offset": 44, "value": {"type": "ptr", "value": null}}]},
+        {"label": "command 0x4c", "function": "func_8008B750", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}, {"type": "u8", "value": "255"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "76"}}, {"region": "state", "offset": 53, "value": {"type": "u8", "value": "1"}}, {"region": "state", "offset": 44, "value": {"type": "ptr", "value": {"region": "state", "offset": 36}}}, {"region": "state", "offset": 36, "value": {"type": "u8", "value": "255"}}, {"region": "state", "offset": 37, "value": {"type": "u8", "value": "238"}}]},
+        {"label": "command 0x46", "function": "func_8008B770", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}, {"type": "u8", "value": "2"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "70"}}, {"region": "state", "offset": 53, "value": {"type": "u8", "value": "1"}}, {"region": "state", "offset": 44, "value": {"type": "ptr", "value": {"region": "state", "offset": 36}}}, {"region": "state", "offset": 36, "value": {"type": "u8", "value": "2"}}, {"region": "state", "offset": 37, "value": {"type": "u8", "value": "238"}}]},
+        {"label": "command 0x47", "function": "func_8008B790", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}, {"type": "u8", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "71"}}, {"region": "state", "offset": 53, "value": {"type": "u8", "value": "1"}}, {"region": "state", "offset": 44, "value": {"type": "ptr", "value": {"region": "state", "offset": 36}}}, {"region": "state", "offset": 36, "value": {"type": "u8", "value": "0"}}, {"region": "state", "offset": 37, "value": {"type": "u8", "value": "238"}}]},
+        {"label": "command 0x4b", "function": "func_8008B7B0", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "75"}}, {"region": "state", "offset": 53, "value": {"type": "u8", "value": "0"}}, {"region": "state", "offset": 44, "value": {"type": "ptr", "value": null}}]},
+        {"label": "consume 0x45", "function": "func_8008C06C", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}], "repeat": 1, "arrange": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "69"}}], "return": {"type": "s32", "value": "69"}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "0"}}, {"region": "state", "offset": 55, "value": {"type": "u8", "value": "69"}}]},
+        {"label": "consume 0x0", "function": "func_8008C06C", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "0"}}, {"region": "state", "offset": 55, "value": {"type": "u8", "value": "0"}}]},
+        {"label": "consume 0xf0", "function": "func_8008C06C", "args": [{"type": "ptr", "value": {"region": "state", "offset": 0}}], "repeat": 1, "arrange": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "240"}}], "return": {"type": "s32", "value": "240"}, "memory": [{"region": "state", "offset": 54, "value": {"type": "u8", "value": "0"}}, {"region": "state", "offset": 55, "value": {"type": "u8", "value": "240"}}]}
+      ]
+    },
+    {
+      "id": "queued-command-kinds",
+      "regions": [],
+      "steps": [
+        {"label": "0x3b", "function": "func_8004DA58", "args": [{"type": "u32", "value": "59"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "0x3c", "function": "func_8004DA58", "args": [{"type": "u32", "value": "60"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "0x45", "function": "func_8004DA58", "args": [{"type": "u32", "value": "69"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "0x46", "function": "func_8004DA58", "args": [{"type": "u32", "value": "70"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "0x63", "function": "func_8004DA58", "args": [{"type": "u32", "value": "99"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "0x64", "function": "func_8004DA58", "args": [{"type": "u32", "value": "100"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "0x65", "function": "func_8004DA58", "args": [{"type": "u32", "value": "101"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "0x66", "function": "func_8004DA58", "args": [{"type": "u32", "value": "102"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "0x0", "function": "func_8004DA58", "args": [{"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "0xffffffff", "function": "func_8004DA58", "args": [{"type": "u32", "value": "4294967295"}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []}
+      ]
+    },
+    {
+      "id": "packet-80092488",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_80092488", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a506a5a5a530a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-8009249C",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_8009249C", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a509a5a5a534a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-800924B0",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_800924B0", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a505a5a5a528a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-800924C4",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_800924C4", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a509a5a5a52ca5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-800924D8",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_800924D8", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a508a5a5a538a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-800924EC",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_800924EC", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a50ca5a5a53ca5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-80092514",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_80092514", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a503a5a5a57ca5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-80092528",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_80092528", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a504a5a5a564a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-8009253C",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_8009253C", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a502a5a5a568a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-80092550",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_80092550", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a502a5a5a570a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-80092564",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_80092564", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a502a5a5a578a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-80092578",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_80092578", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a503a5a5a560a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-8009258C",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_8009258C", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a503a5a5a540a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-800925A0",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_800925A0", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a504a5a5a550a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-800925D4",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_800925D4", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a507a5a5a558a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a555555555a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "packet-800925F4",
+      "regions": [{"id": "packet", "size": 40, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "packet header and guards", "function": "func_800925F4", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a506a5a5a54ca5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a555555555a5a5a5a5a5a5a5a5a5a5a5a5"}}]}
+      ]
+    },
+    {
+      "id": "primitive-flags",
+      "regions": [{"id": "p", "size": 8, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "flag 1 iteration 0", "function": "func_80092410", "args": [{"type": "ptr", "value": {"region": "p", "offset": 0}}, {"type": "s32", "value": "1"}], "repeat": 1, "arrange": [{"region": "p", "offset": 7, "value": {"type": "u8", "value": "44"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "p", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5a52e"}}]},
+        {"label": "flag -7 iteration 1", "function": "func_80092410", "args": [{"type": "ptr", "value": {"region": "p", "offset": 0}}, {"type": "s32", "value": "-7"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "p", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5a52e"}}]},
+        {"label": "flag 0 iteration 2", "function": "func_80092410", "args": [{"type": "ptr", "value": {"region": "p", "offset": 0}}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "p", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5a52c"}}]},
+        {"label": "flag 0 iteration 3", "function": "func_80092410", "args": [{"type": "ptr", "value": {"region": "p", "offset": 0}}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [{"region": "p", "offset": 7, "value": {"type": "u8", "value": "255"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "p", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5a5fd"}}]},
+        {"label": "flag 1 iteration 0", "function": "func_80092438", "args": [{"type": "ptr", "value": {"region": "p", "offset": 0}}, {"type": "s32", "value": "1"}], "repeat": 1, "arrange": [{"region": "p", "offset": 7, "value": {"type": "u8", "value": "44"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "p", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5a52d"}}]},
+        {"label": "flag -7 iteration 1", "function": "func_80092438", "args": [{"type": "ptr", "value": {"region": "p", "offset": 0}}, {"type": "s32", "value": "-7"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "p", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5a52d"}}]},
+        {"label": "flag 0 iteration 2", "function": "func_80092438", "args": [{"type": "ptr", "value": {"region": "p", "offset": 0}}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "p", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5a52c"}}]},
+        {"label": "flag 0 iteration 3", "function": "func_80092438", "args": [{"type": "ptr", "value": {"region": "p", "offset": 0}}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [{"region": "p", "offset": 7, "value": {"type": "u8", "value": "255"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "p", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5a5fe"}}]}
+      ]
+    },
+    {
+      "id": "primitive-links",
+      "regions": [{"id": "t", "size": 12, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "0x4ffffff", "function": "func_80092340", "args": [{"type": "ptr", "value": {"region": "t", "offset": 0}}], "repeat": 1, "arrange": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "83886079"}}], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "0xfffffe", "function": "func_80092340", "args": [{"type": "ptr", "value": {"region": "t", "offset": 0}}], "repeat": 1, "arrange": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "16777214"}}], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "0xffffffff", "function": "func_80092340", "args": [{"type": "ptr", "value": {"region": "t", "offset": 0}}], "repeat": 1, "arrange": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "4294967295"}}], "return": {"type": "s32", "value": "1"}, "memory": []},
+        {"label": "0xff000000", "function": "func_80092340", "args": [{"type": "ptr", "value": {"region": "t", "offset": 0}}], "repeat": 1, "arrange": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "4278190080"}}], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "set link", "function": "func_800923D4", "args": [{"type": "ptr", "value": {"region": "t", "offset": 0}}, {"type": "u32", "value": "2148676694"}], "repeat": 1, "arrange": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "128699887"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "118633558"}}]},
+        {"label": "set link", "function": "func_800923D4", "args": [{"type": "ptr", "value": {"region": "t", "offset": 0}}, {"type": "u32", "value": "4294967295"}], "repeat": 1, "arrange": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "0"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "16777215"}}]},
+        {"label": "terminate", "function": "func_800923F8", "args": [{"type": "ptr", "value": {"region": "t", "offset": 0}}], "repeat": 1, "arrange": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "83886080"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "100663295"}}]},
+        {"label": "terminate", "function": "func_800923F8", "args": [{"type": "ptr", "value": {"region": "t", "offset": 0}}], "repeat": 1, "arrange": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "152187990"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "167772159"}}]},
+        {"label": "chain two primitives", "function": "func_80092398", "args": [{"type": "ptr", "value": {"region": "t", "offset": 0}}, {"type": "u32", "value": "2158743023"}, {"type": "ptr", "value": {"region": "t", "offset": 4}}], "repeat": 1, "arrange": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "2853319766"}}, {"region": "t", "offset": 4, "value": {"type": "u32", "value": "167772159"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "t", "offset": 0, "value": {"type": "u32", "value": "2863386095"}}, {"region": "t", "offset": 4, "value": {"type": "u32", "value": "152187990"}}]}
+      ]
+    },
+    {
+      "id": "texture-page",
+      "regions": [],
+      "steps": [
+        {"label": "(0, 0, 0, 0)", "function": "func_80092230", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "0"}, {"type": "s32", "value": "0"}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "0"}, "memory": []},
+        {"label": "(2, 1, 640, 256)", "function": "func_80092230", "args": [{"type": "s32", "value": "2"}, {"type": "s32", "value": "1"}, {"type": "s32", "value": "640"}, {"type": "s32", "value": "256"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "314"}, "memory": []},
+        {"label": "(1, 3, 1023, 511)", "function": "func_80092230", "args": [{"type": "s32", "value": "1"}, {"type": "s32", "value": "3"}, {"type": "s32", "value": "1023"}, {"type": "s32", "value": "511"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "255"}, "memory": []},
+        {"label": "(3, 2, 960, 0)", "function": "func_80092230", "args": [{"type": "s32", "value": "3"}, {"type": "s32", "value": "2"}, {"type": "s32", "value": "960"}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "463"}, "memory": []},
+        {"label": "(0, 0, 64, 768)", "function": "func_80092230", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "0"}, {"type": "s32", "value": "64"}, {"type": "s32", "value": "768"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "2065"}, "memory": []},
+        {"label": "(7, 7, 1023, 1023)", "function": "func_80092230", "args": [{"type": "s32", "value": "7"}, {"type": "s32", "value": "7"}, {"type": "s32", "value": "1023"}, {"type": "s32", "value": "1023"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "2559"}, "memory": []}
+      ]
+    },
+    {
+      "id": "clut-index",
+      "regions": [],
+      "steps": [
+        {"label": "(0, 0)", "function": "func_8009226C", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "0"}, "memory": []},
+        {"label": "(256, 480)", "function": "func_8009226C", "args": [{"type": "s32", "value": "256"}, {"type": "s32", "value": "480"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "30736"}, "memory": []},
+        {"label": "(1008, 511)", "function": "func_8009226C", "args": [{"type": "s32", "value": "1008"}, {"type": "s32", "value": "511"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "32767"}, "memory": []},
+        {"label": "(15, 1)", "function": "func_8009226C", "args": [{"type": "s32", "value": "15"}, {"type": "s32", "value": "1"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "64"}, "memory": []},
+        {"label": "(16, 0)", "function": "func_8009226C", "args": [{"type": "s32", "value": "16"}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "1"}, "memory": []},
+        {"label": "(320, 1023)", "function": "func_8009226C", "args": [{"type": "s32", "value": "320"}, {"type": "s32", "value": "1023"}], "repeat": 1, "arrange": [], "return": {"type": "u16", "value": "65492"}, "memory": []}
+      ]
+    },
+    {
+      "id": "draw-mode",
+      "regions": [],
+      "steps": [
+        {"label": "(0, 0, 0)", "function": "func_80093F58", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "0"}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "3774873600"}, "memory": []},
+        {"label": "(1, 0, 0)", "function": "func_80093F58", "args": [{"type": "s32", "value": "1"}, {"type": "s32", "value": "0"}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "3774874624"}, "memory": []},
+        {"label": "(0, 1, 0)", "function": "func_80093F58", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "1"}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "3774874112"}, "memory": []},
+        {"label": "(2, -3, 511)", "function": "func_80093F58", "args": [{"type": "s32", "value": "2"}, {"type": "s32", "value": "-3"}, {"type": "u32", "value": "511"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "3774875647"}, "memory": []},
+        {"label": "(0, 0, 65535)", "function": "func_80093F58", "args": [{"type": "s32", "value": "0"}, {"type": "s32", "value": "0"}, {"type": "u32", "value": "65535"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "3774876159"}, "memory": []}
+      ]
+    },
+    {
+      "id": "draw-offset",
+      "regions": [],
+      "steps": [
+        {"label": "(0, 0)", "function": "func_800940A8", "args": [{"type": "u32", "value": "0"}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "3841982464"}, "memory": []},
+        {"label": "(160, 120)", "function": "func_800940A8", "args": [{"type": "u32", "value": "160"}, {"type": "u32", "value": "120"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "3842228384"}, "memory": []},
+        {"label": "(4294967295, 0)", "function": "func_800940A8", "args": [{"type": "u32", "value": "4294967295"}, {"type": "u32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "3841984511"}, "memory": []},
+        {"label": "(2048, 2048)", "function": "func_800940A8", "args": [{"type": "u32", "value": "2048"}, {"type": "u32", "value": "2048"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "3841982464"}, "memory": []},
+        {"label": "(0, 2047)", "function": "func_800940A8", "args": [{"type": "u32", "value": "0"}, {"type": "u32", "value": "2047"}], "repeat": 1, "arrange": [], "return": {"type": "u32", "value": "3846174720"}, "memory": []}
+      ]
+    },
+    {
+      "id": "texture-window",
+      "regions": [{"id": "rect", "size": 8, "fill": {"type": "u8", "value": "0"}, "symbol": null}],
+      "steps": [
+        {"label": "NULL", "function": "func_800940C4", "args": [{"type": "ptr", "value": null}], "repeat": 1, "arrange": [], "return": {"type": "s32", "value": "0"}, "memory": []},
+        {"label": "(0, 0, 0, 0)", "function": "func_800940C4", "args": [{"type": "ptr", "value": {"region": "rect", "offset": 0}}], "repeat": 1, "arrange": [{"region": "rect", "offset": 0, "value": {"type": "s16", "value": "0"}}, {"region": "rect", "offset": 2, "value": {"type": "s16", "value": "0"}}, {"region": "rect", "offset": 4, "value": {"type": "s16", "value": "0"}}, {"region": "rect", "offset": 6, "value": {"type": "s16", "value": "0"}}], "return": {"type": "s32", "value": "-503316480"}, "memory": []},
+        {"label": "(16, 32, 64, 64)", "function": "func_800940C4", "args": [{"type": "ptr", "value": {"region": "rect", "offset": 0}}], "repeat": 1, "arrange": [{"region": "rect", "offset": 0, "value": {"type": "s16", "value": "16"}}, {"region": "rect", "offset": 2, "value": {"type": "s16", "value": "32"}}, {"region": "rect", "offset": 4, "value": {"type": "s16", "value": "64"}}, {"region": "rect", "offset": 6, "value": {"type": "s16", "value": "64"}}], "return": {"type": "s32", "value": "-503182568"}, "memory": []},
+        {"label": "(0, 0, 256, 256)", "function": "func_800940C4", "args": [{"type": "ptr", "value": {"region": "rect", "offset": 0}}], "repeat": 1, "arrange": [{"region": "rect", "offset": 0, "value": {"type": "s16", "value": "0"}}, {"region": "rect", "offset": 2, "value": {"type": "s16", "value": "0"}}, {"region": "rect", "offset": 4, "value": {"type": "s16", "value": "256"}}, {"region": "rect", "offset": 6, "value": {"type": "s16", "value": "256"}}], "return": {"type": "s32", "value": "-503316480"}, "memory": []},
+        {"label": "(248, 8, 8, 32)", "function": "func_800940C4", "args": [{"type": "ptr", "value": {"region": "rect", "offset": 0}}], "repeat": 1, "arrange": [{"region": "rect", "offset": 0, "value": {"type": "s16", "value": "248"}}, {"region": "rect", "offset": 2, "value": {"type": "s16", "value": "8"}}, {"region": "rect", "offset": 4, "value": {"type": "s16", "value": "8"}}, {"region": "rect", "offset": 6, "value": {"type": "s16", "value": "32"}}], "return": {"type": "s32", "value": "-503251041"}, "memory": []},
+        {"label": "(-8, -16, 128, 16)", "function": "func_800940C4", "args": [{"type": "ptr", "value": {"region": "rect", "offset": 0}}], "repeat": 1, "arrange": [{"region": "rect", "offset": 0, "value": {"type": "s16", "value": "-8"}}, {"region": "rect", "offset": 2, "value": {"type": "s16", "value": "-16"}}, {"region": "rect", "offset": 4, "value": {"type": "s16", "value": "128"}}, {"region": "rect", "offset": 6, "value": {"type": "s16", "value": "16"}}], "return": {"type": "s32", "value": "-502300720"}, "memory": []}
+      ]
+    },
+    {
+      "id": "gpu-draw-mask",
+      "regions": [{"id": "packet", "size": 16, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "(0, 0)", "function": "func_80093A4C", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}, {"type": "s32", "value": "0"}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a502"}}, {"region": "packet", "offset": 4, "value": {"type": "u32", "value": "3858759680"}}, {"region": "packet", "offset": 8, "value": {"type": "u32", "value": "0"}}]},
+        {"label": "(1, 0)", "function": "func_80093A4C", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}, {"type": "s32", "value": "1"}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a502"}}, {"region": "packet", "offset": 4, "value": {"type": "u32", "value": "3858759682"}}, {"region": "packet", "offset": 8, "value": {"type": "u32", "value": "0"}}]},
+        {"label": "(0, 1)", "function": "func_80093A4C", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}, {"type": "s32", "value": "0"}, {"type": "s32", "value": "1"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a502"}}, {"region": "packet", "offset": 4, "value": {"type": "u32", "value": "3858759681"}}, {"region": "packet", "offset": 8, "value": {"type": "u32", "value": "0"}}]},
+        {"label": "(5, -3)", "function": "func_80093A4C", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}, {"type": "s32", "value": "5"}, {"type": "s32", "value": "-3"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a502"}}, {"region": "packet", "offset": 4, "value": {"type": "u32", "value": "3858759683"}}, {"region": "packet", "offset": 8, "value": {"type": "u32", "value": "0"}}]},
+        {"label": "(1,)", "function": "func_80093A74", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}, {"type": "s32", "value": "1"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a502"}}, {"region": "packet", "offset": 4, "value": {"type": "u32", "value": "3858759681"}}, {"region": "packet", "offset": 8, "value": {"type": "u32", "value": "0"}}]},
+        {"label": "(0,)", "function": "func_80093A74", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}, {"type": "s32", "value": "0"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a502"}}, {"region": "packet", "offset": 4, "value": {"type": "u32", "value": "3858759680"}}, {"region": "packet", "offset": 8, "value": {"type": "u32", "value": "0"}}]},
+        {"label": "(256,)", "function": "func_80093A74", "args": [{"type": "ptr", "value": {"region": "packet", "offset": 0}}, {"type": "s32", "value": "256"}], "repeat": 1, "arrange": [], "return": {"type": "void", "value": null}, "memory": [{"region": "packet", "offset": 0, "value": {"type": "bytes", "value": "a5a5a502"}}, {"region": "packet", "offset": 4, "value": {"type": "u32", "value": "3858759681"}}, {"region": "packet", "offset": 8, "value": {"type": "u32", "value": "0"}}]}
+      ]
+    },
+    {
+      "id": "scale-definition",
+      "regions": [{"id": "record", "size": 16, "fill": {"type": "u8", "value": "165"}, "symbol": null}],
+      "steps": [
+        {"label": "(600, 300, 218)", "function": "func_800607B8", "args": [{"type": "ptr", "value": {"region": "record", "offset": 0}}], "repeat": 1, "arrange": [{"region": "record", "offset": 6, "value": {"type": "s16", "value": "600"}}, {"region": "record", "offset": 8, "value": {"type": "s16", "value": "300"}}, {"region": "record", "offset": 12, "value": {"type": "s16", "value": "218"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "record", "offset": 6, "value": {"type": "s16", "value": "2"}}, {"region": "record", "offset": 8, "value": {"type": "s16", "value": "256"}}, {"region": "record", "offset": 12, "value": {"type": "s16", "value": "4096"}}, {"region": "record", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5"}}, {"region": "record", "offset": 10, "value": {"type": "bytes", "value": "a5a5"}}]},
+        {"label": "(-599, 0, -1)", "function": "func_800607B8", "args": [{"type": "ptr", "value": {"region": "record", "offset": 0}}], "repeat": 1, "arrange": [{"region": "record", "offset": 6, "value": {"type": "s16", "value": "-599"}}, {"region": "record", "offset": 8, "value": {"type": "s16", "value": "0"}}, {"region": "record", "offset": 12, "value": {"type": "s16", "value": "-1"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "record", "offset": 6, "value": {"type": "s16", "value": "-1"}}, {"region": "record", "offset": 8, "value": {"type": "s16", "value": "0"}}, {"region": "record", "offset": 12, "value": {"type": "s16", "value": "-18"}}, {"region": "record", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5"}}, {"region": "record", "offset": 10, "value": {"type": "bytes", "value": "a5a5"}}]},
+        {"label": "(299, -1, 1)", "function": "func_800607B8", "args": [{"type": "ptr", "value": {"region": "record", "offset": 0}}], "repeat": 1, "arrange": [{"region": "record", "offset": 6, "value": {"type": "s16", "value": "299"}}, {"region": "record", "offset": 8, "value": {"type": "s16", "value": "-1"}}, {"region": "record", "offset": 12, "value": {"type": "s16", "value": "1"}}], "return": {"type": "void", "value": null}, "memory": [{"region": "record", "offset": 6, "value": {"type": "s16", "value": "0"}}, {"region": "record", "offset": 8, "value": {"type": "s16", "value": "0"}}, {"region": "record", "offset": 12, "value": {"type": "s16", "value": "18"}}, {"region": "record", "offset": 0, "value": {"type": "bytes", "value": "a5a5a5a5a5a5"}}, {"region": "record", "offset": 10, "value": {"type": "bytes", "value": "a5a5"}}]}
+      ]
+    }
+  ]
+}

@@ -149,6 +149,15 @@ static void test_gpu_can_skip_the_rect(void)
     FCK_EQ(fcm_gpu.load[0].rect.w, 0, "the geometry read is suppressed");
 }
 
+static void test_gpu_load_overflow_still_counts_calls(void)
+{
+    s32 i;
+    fcm_gpu_reset();
+    for (i = 0; i < FCM_GPU_LOG_MAX + 3; i++) gLoadImage(0, 0);
+    FCK_EQ(fcm_gpu.loads, FCM_GPU_LOG_MAX + 3, "overflow transfers are counted");
+    FCK_EQ(fcm_gpu.load_overflow, 1, "overflow is visible");
+}
+
 /* The sync mode is the only thing a host test can hold a DrawSync caller to. */
 static void test_gpu_records_sync_modes(void)
 {
@@ -249,6 +258,7 @@ int main(int argc, char **argv)
     test_gpu_records_rect_and_payload();
     test_gpu_tolerates_null_payload();
     test_gpu_can_skip_the_rect();
+    test_gpu_load_overflow_still_counts_calls();
     test_gpu_records_sync_modes();
 
     test_bios_string_services();

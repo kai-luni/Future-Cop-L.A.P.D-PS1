@@ -63,10 +63,11 @@ Rules that keep a mock honest:
   silently — a silent zero turns a missing mock into a wrong answer.
 - **Mocks are included per test**, one at a time. Never a global stub file that
   could replace real logic without anyone noticing.
-- **A data global is a zeroed slot**, because that is what RAM holds before any
-  code writes it. Copying real table bytes out of `baseroms/us/SLUS_007.39` is
-  better still, and the reference script shows how: read at
-  `0x800 + (addr - 0x80010000)` and round-trip the dump before writing it.
+- **Data globals need explicit fixtures.** A `D_` name alone says nothing about
+  initialization, size, pointer targets or runtime state. The zero slots used
+  by the buildability probe are only link placeholders, not execution fixtures.
+  When appropriate, extract known-sized tables from the local retail image at
+  `0x800 + (addr - 0x80010000)`; do not commit generated proprietary bytes.
 
 ## Choosing the next unit
 
@@ -75,17 +76,19 @@ python3 tools/host_test_candidates.py --top 20   # ranked mock frontier
 python3 tools/host_test_candidates.py --list clean
 ```
 
-The tool classifies every unit by the closure of its callees, not by its own
-text (the `// Categories: ...` header names GTE on units that never touch cop2,
-so a text grep over-reports hardware):
+The older `host_test_candidates.py` command remains useful for exploring the
+frontier, but its `clean` label is not proof of hardware freedom: the analysis
+has known missing call edges. For the combined object and graph assessment run:
 
-- `clean` — no hardware anywhere below it. Link the real code, test it.
-- `hw` — some callee touches GTE/MMIO/BIOS. Needs a stand-in at that boundary.
-- `unknown` — an unresolved indirect call, or call sites with no edge. Treated
-  as blocked on purpose: a missing edge must never read as hardware freedom.
+```bash
+python3 tools/host_hw_classification.py --json "$TMPDIR/host-hw.json"
+```
 
-The frontier list ranks a single stand-in by how many non-clean units it
-unblocks. That is where a mock buys the most.
+The combined categories are `candidate` (no known hardware path or recognized
+gap in the model), `hw` (a known hardware path), and `unknown` (insufficient
+evidence). Even `candidate` is not proof that all hardware paths are absent.
+A frontier estimate is a prioritization hint, not proof that a mock unblocks
+all of the listed functions.
 
 To check whether a chain actually builds and links on the host before writing
 assertions:
@@ -120,12 +123,15 @@ of zero.
 
 Two different numbers, and they answer different questions:
 
-- `make reach` — how many `func_` symbols a test binary actually **executed**.
-  This includes units reached through a call chain, which is the number that
-  grows when a test drives a real chain rather than one leaf.
-- `make coverage` — line coverage inside those units, from `qemu -d in_asm`
-  mapped onto `.loc` info. Blocks the translator emitted are close to, but not
-  identical with, instructions actually run, so treat it as an upper bound.
+- `make reach` — estimated execution of `func_` symbols from recorded test
+  traces. A matching unit object is required, but its presence alone does not
+  prove it was linked instead of a mock; see `docs/host-test-current.md` for
+  this and other measurement limits. Call-chain units may also be included.
+- `make coverage` — line coverage for units named in selected test scripts, from
+  `qemu -d in_asm` mapped onto `.loc` info. These scripts may require fixtures;
+  a failed or skipped measurement must not be treated as coverage. Translated
+  blocks are close to, but not identical with, instructions actually run, so
+  treat the measurement as an upper bound.
 
 A unit that is merely *linked* is not covered. A unit that is *executed* but
 never asserted on is worth much less than one with targeted checks — the suite
@@ -135,7 +141,8 @@ tally from `fck_report` is the honest per-test figure.
 
 Do not mock:
 
-- a unit that is `clean` — link the real thing;
+- a unit with no known hardware dependency — investigate and link real code
+  where possible; the old `clean` label alone is not sufficient evidence;
 - a unit whose absence is a call-graph gap — resolve the edge instead;
 - an in-unit hardware access (a `mtc2` in the middle of the function body). A
   linker stub cannot replace that; the unit needs a different approach entirely

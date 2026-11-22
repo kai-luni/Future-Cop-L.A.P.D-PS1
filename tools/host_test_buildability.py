@@ -7,10 +7,11 @@ graph, not about the build: a unit can still fail to compile under the harness
 flags (gcc 2.7.2, -O1 -G0, maspsx), or fail to link because a data global it
 reads is missing.
 
-This tool measures the real ceiling. For every clean unit it compiles the
-unchanged decomp source the way the host harnesses do, links it together with
-every clean unit it actually calls, supplies the remaining data globals as
-zeroed slots, and reports:
+This tool probes linkability for units classified as clean by the existing
+analysis graph. For every such unit it compiles the unchanged decomp source,
+links its discovered clean callees, supplies synthetic zeroed data slots, and
+reports. A successful link does not establish valid data, safe execution, or
+hardware freedom; the graph and hardware detection are incomplete.
 
   ok        compiled and linked with nothing but its D_ data globals bound
   compile   gcc, maspsx, fix_align or as rejected the source
@@ -18,8 +19,7 @@ zeroed slots, and reports:
             not clean C, i.e. the unit needs a mock after all)
   missing   no source file for the unit
 
-Anything reported `ok` can be exercised by a host test today with no hardware
-stand-in at all - that is the honest "no mock needed" number.
+An `ok` result is a link-only result, not a runnable-test guarantee.
 
 Two rules keep the number honest
 --------------------------------
@@ -31,11 +31,9 @@ Two rules keep the number honest
    `80067684: link chain=2 ['func_80067480']`, where func_80067480 is clean and
    compiles fine on its own. Trusting the edge list alone misses 89 units whose
    direct calls the graph never recorded.
-2. Only `D_` symbols (retail data globals - plain RAM that is zero before any
-   code writes it) are satisfied with a zeroed slot, and `make_bindings` raises
-   rather than emit anything else. A `func_` symbol bound as an integer slot
-   links happily and then jumps to address 0 at run time, which is how an
-   earlier version of this tool reported a false 969/969.
+2. Only `D_` symbols are satisfied with a synthetic zeroed slot, and
+   `make_bindings` raises rather than emit anything else. These slots are only
+   for link probing: their values, sizes and pointer targets are not fixtures.
 
 Usage
 -----
@@ -168,10 +166,9 @@ def defined(obj, env):
 def make_bindings(symbols_, path):
     """Emit a C file that defines every symbol as a zeroed 32-bit slot.
 
-    Data globals in the retail image are plain RAM, so a zeroed slot is the
-    honest host stand-in: it is what the original reads before any code has
-    written it. Anything else - above all a `func_` - is refused here, because a
-    function bound as an integer slot links fine and then jumps to address 0.
+    These artificial slots are for linking only. Retail data may be initialized,
+    larger than one word, or a pointer requiring a valid target. Non-D_ symbols
+    are refused because a function bound as data could silently link incorrectly.
     """
     bad = [s for s in symbols_ if not s.startswith(DATA_PREFIX)]
     if bad:

@@ -1,5 +1,12 @@
 # Host-Testabdeckung Future Cop L.A.P.D.: Ausbau, Messung und Befund
 
+> **Historischer Bericht, teilweise widerlegt.** Die Angaben 116 ausgeführte
+> Originalfunktionen und 969 hardwarefreie Units waren überhöht: Die alte
+> Reichweitenmessung zählte auch Mocks; der Aufrufgraph ist unvollständig.
+> 908 erfolgreiche Links mit künstlichen Nullslots beweisen weder korrekte
+> Daten noch Hardwarefreiheit oder Ausführbarkeit. Aktuelle, konservative
+> Messungen und ihre Grenzen stehen in `docs/host-test-current.md`.
+
 Bericht über die Erweiterung der Testinfrastruktur. Alle Zahlen sind gemessen,
 nicht geschätzt; die Befehle zum Nachrechnen stehen in jedem Abschnitt.
 
@@ -123,8 +130,8 @@ Verfahren pro Unit:
 1. Unit kompilieren wie ein Harness (`-O1 -G0`, maspsx, `fix_align.py`, `as`).
 2. Die Closure aus den **undefinierten Symbolen der Objekte** auflösen — nicht
    aus `analysis/edges.json`.
-3. Verbleibende `D_`-Symbole als genullte Slots binden (das ist der RAM-Zustand
-   vor dem ersten Schreibzugriff).
+3. Verbleibende `D_`-Symbole als künstlich genullte Slots für die reine
+   Linkprobe binden. Diese Slots belegen weder Größe noch Initialzustand.
 4. Gegen `tests/host/crt0.s` linken, `-static -e __start`.
 
 ### Ergebnis über alle 969 clean-Units
@@ -156,12 +163,11 @@ einzige Testausführung zieht bis zu 58 echte Funktionen mit.
 
 ### Warum `D_`-Slots zulässig sind und `func_`-Slots nicht
 
-Ein `D_`-Symbol ist eine Datenglobal im Retail-Image. Vor dem ersten
-Schreibzugriff enthält der RAM dort Null; ein genullter Slot modelliert also
-exakt den Ausgangszustand. Eine Funktion dagegen als Integer-Slot zu binden
-linkt anstandslos und springt zur Laufzeit auf Adresse 0 — das war der Fehler,
-der in einem früheren Lauf ein falsches **969/969 ok** erzeugte.
-`make_bindings()` wirft jetzt bei allem, was nicht `D_` ist.
+Ein `D_`-Symbol bezeichnet Daten, aber sein Initialwert und seine Größe folgen
+nicht aus dem Namen. Die künstlichen Null-Slots dienen ausschließlich der
+Linkprobe; für Ausführung brauchen Tests passende Fixtures. Eine Funktion als
+Integer-Slot zu binden kann dagegen irreführend linken; das verursachte zuvor
+die falsche Zahl **969/969 ok**. `make_bindings()` verweigert Nicht-`D_`-Symbole.
 
 ### Die 61 Blocker nach Ursache
 

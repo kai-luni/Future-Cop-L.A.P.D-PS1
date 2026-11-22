@@ -28,7 +28,8 @@ void gLoadImage(void *rect, void *data)
 
     if (fcm_gpu.loads >= FCM_GPU_LOG_MAX) {
         fcm_gpu.load_overflow = 1;
-        return;                       /* still counted below, so the test sees it */
+        fcm_gpu.loads++;
+        return;
     }
     rec = &fcm_gpu.load[fcm_gpu.loads];
     for (i = 0; i < (s32)sizeof(*rec); i++) ((u8 *)rec)[i] = 0;

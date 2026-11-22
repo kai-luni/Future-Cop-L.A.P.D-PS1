@@ -94,5 +94,6 @@ void func_8001484C(void *part, void *work, void *bias, void *tex)
     (void)part; (void)work; (void)bias; (void)tex;
 }
 void func_80019470(void *a) { (void)a; }
-void func_80010820(void *a, void *b) { (void)a; (void)b; }
-void func_8001006C(void *a, void *b, s32 c, s32 d) { (void)a; (void)b; (void)c; (void)d; }
+/* The retail routines consume a0 and a0..a2 respectively; these remain no-ops. */
+void func_80010820(void *a) { (void)a; }
+void func_8001006C(void *a, void *b, s32 c) { (void)a; (void)b; (void)c; }

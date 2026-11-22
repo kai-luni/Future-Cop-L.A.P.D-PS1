@@ -1,5 +1,10 @@
 # Testabdeckung der Decompilation: was messbar ist und wo die Grenze liegt
 
+> **Historisch und teilweise widerlegt:** Die alte Reichweitenmessung zählte
+> Mocks als Originale; die Zahl 969 ist wegen fehlender Graphkanten kein Beweis
+> für Hardwarefreiheit. Linkproben mit Nullslots belegen keine Ausführbarkeit.
+> Der aktuelle Stand und die Messgrenzen stehen in `docs/host-test-current.md`.
+
 Stand: HEAD `986e47a`. Alle Zahlen in diesem Bericht sind gemessen, nicht
 geschätzt — die Befehle zum Nachrechnen stehen in jedem Abschnitt.
 

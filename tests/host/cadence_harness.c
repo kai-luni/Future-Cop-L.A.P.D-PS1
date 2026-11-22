@@ -44,7 +44,7 @@ static s32 fired;
 /* Stubs: the registry always returns the synthetic record, the dispatcher records the shot. */
 struct Tgt *func_8006AAEC(u8 id) { (void)id; return &record; }
 s32 func_8006ACB0(struct Obj *obj, s32 idx) { (void)obj; (void)idx; fired = 1; return 1; }
-s32 func_8006B23C(struct Obj *obj, s32 idx, s32 arg2) { (void)obj; (void)idx; (void)arg2; return 0; }
+void func_8006B23C(struct Obj *obj, s32 idx, s32 arg2) { (void)obj; (void)idx; (void)arg2; }
 s32 func_80046C84(s32 id, struct Obj *obj) { (void)id; (void)obj; return 0; }
 s32 func_8004E5F0(struct Outer *a, void *b, s32 c, s32 d)
 { (void)a; (void)b; (void)c; (void)d; return 0; }
