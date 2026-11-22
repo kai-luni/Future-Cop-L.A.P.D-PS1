@@ -50,7 +50,7 @@ sweep-candidates: verify toolchain
 report:
 	$(PYTHON) tools/generate_decomp_report.py
 
-check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final
+check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b
 	$(PYTHON) -m unittest discover -s tests -t . -v
 
 # Run the naming-round behavioral tests against the original C entry points.
@@ -220,6 +220,42 @@ host-leaf-final:
 	  $(PYTHON) tools/host_leaf_suite.py report leaf_final; \
 	else \
 	  echo "host-leaf-final: qemu or C toolchain missing, skipped"; \
+	fi
+
+.PHONY: host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b
+
+# Follow-up suites use synthetic data and unchanged original functions.
+host-leaf-follow-a host-leaf-follow-b:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report $(subst host-leaf-follow-,leaf_follow_,$@); \
+	else \
+	  echo "$@: qemu or C toolchain missing, skipped"; \
+	fi
+
+host-leaf-hundred-c:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report leaf_hundred_c; \
+	else \
+	  echo "host-leaf-hundred-c: qemu or C toolchain missing, skipped"; \
+	fi
+
+host-leaf-hundred-a:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report leaf_hundred_a; \
+	else \
+	  echo "host-leaf-hundred-a: qemu or C toolchain missing, skipped"; \
+	fi
+
+# Additional original leaf functions with synthetic fixtures.
+host-leaf-hundred-b:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report leaf_hundred_b; \
+	else \
+	  echo "host-leaf-hundred-b: qemu or C toolchain missing, skipped"; \
 	fi
 
 # Replay portable vectors independently under QEMU; failure is not a skip.
