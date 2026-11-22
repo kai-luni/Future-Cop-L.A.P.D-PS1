@@ -7,7 +7,7 @@ VENV_PYTHON := $(VENV)/bin/python
 VENV_STAMP := $(VENV)/.installed
 EXE := baseroms/us/SLUS_007.39
 
-.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface function-map coverage reach
+.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest function-map coverage reach
 
 all: split
 
@@ -50,7 +50,7 @@ sweep-candidates: verify toolchain
 report:
 	$(PYTHON) tools/generate_decomp_report.py
 
-check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface
+check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest
 	$(PYTHON) -m unittest discover -s tests -t . -v
 
 # Run the naming-round behavioral tests against the original C entry points.
@@ -149,6 +149,29 @@ host-terrain-surface:
 	  bash tests/host/terrain_surface_test.sh; \
 	else \
 	  echo "host-terrain-surface: qemu or C toolchain missing, skipped"; \
+	fi
+
+# ISO-9660 path formatting (func_8001DC48) driven through the shared BIOS mock.
+# The unit does all its string work via BIOS vectors, so this is the proof that
+# the mock in tests/host/mocks/ answers with real semantics and that an
+# unimplemented vector aborts instead of returning a plausible 0.
+host-iso9660-path:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  bash tests/host/iso9660_path_test.sh; \
+	else \
+	  echo "host-iso9660-path: qemu or C toolchain missing, skipped"; \
+	fi
+
+# The shared mock library's own contract: unconfigured returns are 0, records are
+# the caller's own data, and an unsupported BIOS call aborts. Links no game unit,
+# so it fails for a mock's reasons only.
+host-mocks-selftest:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  bash tests/host/mocks_selftest_test.sh; \
+	else \
+	  echo "host-mocks-selftest: qemu or C toolchain missing, skipped"; \
 	fi
 
 # Line coverage of the host tests. gcov is unavailable (gcc 2.7.2), so this maps

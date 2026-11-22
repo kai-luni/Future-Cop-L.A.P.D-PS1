@@ -6,16 +6,16 @@
  * observe exactly what those new names say: the volumes are snapshotted, and
  * the background index follows the 2x2 state matrix.
  *
- * The audio getters it calls and the session block it reads through inline asm
- * are provided here. The entry point and the globals are bound to their retail
- * labels, so a broken binding fails at link time instead of silently testing
- * the wrong symbol. */
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef int s32;
-typedef unsigned int u32;
+ * The audio layer it calls (the volume getters, the stereo-mode getter, the
+ * stream-state query and the stream starter) comes from the shared mock at
+ * mocks/sound_mock.c, which defines each of those stand-ins under its retail
+ * label. This harness used to carry its own private copies; the assertions
+ * below are unchanged, they just read the mock's state now. The entry point
+ * and the globals are bound to their retail labels, so a broken binding fails
+ * at link time instead of silently testing the wrong symbol. */
+/* The mock header brings the shared integer typedefs (mocks/fcm_types.h), so
+ * this harness does not repeat them - a second copy would be a redefinition. */
+#include "mocks/sound_mock.h"
 
 void __main(void) {}
 
@@ -73,43 +73,16 @@ s32 gPreviewTrackId __asm__("D_8009F920");
 u8 gSnapshotResult __asm__("D_8009F904");
 u16 gSoundWidgetLabel[4] __asm__("D_8009BABE");
 
-/* Audio layer stand-ins. */
-static s32 music_volume;
-static s32 vagm_volume;
-static s32 voice_volume;
-static s32 sound_mode;
-static s32 stream_active;
-static s32 stream_starts;
-
-s32 gGetMusicVolume(void) __asm__("func_8004522C");
-s32 gGetMusicVolume(void) { return music_volume; }
-
-s32 gGetVagmVolumeSetting(void) __asm__("func_80045288");
-s32 gGetVagmVolumeSetting(void) { return vagm_volume; }
-
-s32 gGetVoiceVolume(void) __asm__("func_800452C8");
-s32 gGetVoiceVolume(void) { return voice_volume; }
-
-s32 gGetStereoSoundMode(void) __asm__("func_800451E0");
-s32 gGetStereoSoundMode(void) { return sound_mode; }
-
-s32 gIsVagmAudioStreamActive(void) __asm__("func_8002A58C");
-s32 gIsVagmAudioStreamActive(void) { return stream_active; }
-
-void gStartVagmAudioStream(s32 id) __asm__("func_8002A16C");
-void gStartVagmAudioStream(s32 id) { (void)id; stream_starts++; }
+/* Audio layer stand-ins live in mocks/sound_mock.c; the harness sets their
+ * values through fcm_sound and reads the call counters back from it. */
 
 /* --- 8007D18C: prime the options screen --------------------------------- */
 void gInitOptionsScreen(void) __asm__("func_8007D18C");
 
 static void prime(void)
 {
-    music_volume = 0;
-    vagm_volume = 0;
-    voice_volume = 0;
-    sound_mode = 0;
-    stream_active = 1;
-    stream_starts = 0;
+    fcm_sound_reset();
+    fcm_sound.stream_active = 1;
     session.selection = 0;
     session.group = 0;
     gGameSession[0] = &session;
@@ -119,9 +92,9 @@ static void prime(void)
 static void test_volume_snapshot(void)
 {
     prime();
-    music_volume = 7;
-    vagm_volume = 5;
-    voice_volume = 3;
+    fcm_sound.music_volume = 7;
+    fcm_sound.vagm_volume = 5;
+    fcm_sound.voice_volume = 3;
 
     gInitOptionsScreen();
     CHECK(gSavedOptionsSfxVolume == 7, "the music volume is snapshotted into the sfx word");
@@ -129,9 +102,9 @@ static void test_volume_snapshot(void)
     CHECK(gSavedOptionsVoiceVolume == 3, "the voice volume is snapshotted");
 
     /* A second run must overwrite, not accumulate. */
-    music_volume = 1;
-    vagm_volume = 2;
-    voice_volume = 4;
+    fcm_sound.music_volume = 1;
+    fcm_sound.vagm_volume = 2;
+    fcm_sound.voice_volume = 4;
     gInitOptionsScreen();
     CHECK(gSavedOptionsSfxVolume == 1, "a second init overwrites the sfx word");
     CHECK(gSavedOptionsVagmVolume == 2, "a second init overwrites the vagm word");
@@ -141,14 +114,14 @@ static void test_volume_snapshot(void)
 static void test_stream_gate(void)
 {
     prime();
-    stream_active = 1;
+    fcm_sound.stream_active = 1;
     gInitOptionsScreen();
-    CHECK(stream_starts == 0, "a busy stream is not restarted");
+    CHECK(fcm_sound.stream_starts == 0, "a busy stream is not restarted");
 
     prime();
-    stream_active = 0;
+    fcm_sound.stream_active = 0;
     gInitOptionsScreen();
-    CHECK(stream_starts == 1, "an idle stream is started once");
+    CHECK(fcm_sound.stream_starts == 1, "an idle stream is started once");
 }
 
 /* The index follows the two state words; only an exact 1 counts as set. */
