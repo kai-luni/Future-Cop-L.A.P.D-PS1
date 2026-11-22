@@ -1,17 +1,18 @@
 # Testabdeckung der Decompilation: was messbar ist und wo die Grenze liegt
 
-Stand: HEAD `71c28e3`. Alle Zahlen in diesem Bericht sind gemessen, nicht
+Stand: HEAD `986e47a`. Alle Zahlen in diesem Bericht sind gemessen, nicht
 geschätzt — die Befehle zum Nachrechnen stehen in jedem Abschnitt.
 
 ## 1. Kurzfassung
 
 | Frage | Antwort |
 |---|---|
-| Kann man die Testabdeckung des C-Codes messen? | Ja — `make coverage`, 469/469 Zeilen in den 53 abgedeckten Units (100 %) |
-| Wieviele Funktionen laufen in Tests? | 100 von ~1763 — alle gelinkten werden auch ausgeführt |
-| Wieviel Prozent der Codebasis ist das? | 5,6 % der 1772 Units |
-| Wieviel ist überhaupt testbar? | realistisch 15–25 %, hart begrenzt bei ~10,8 % ohne tiefe Mocks |
-| Warum nicht mehr? | 91,3 % der Units erreichen transitiv Hardware, die es im Host-Test nicht gibt |
+| Kann man die Testabdeckung des C-Codes messen? | Ja — `make coverage`, 1607/1705 Zeilen in den abgedeckten Units (94,3 %) |
+| Wieviele Funktionen laufen in Tests? | 116 von 1772 — alle gelinkten werden auch ausgeführt |
+| Wieviel Prozent der Codebasis ist das? | 6,5 % der 1772 Units |
+| Wieviel ist überhaupt ohne Mock baubar? | **969 Units (54,7 %) sind hardware-frei, 908 davon (93,7 %) kompilieren und linken ohne jede Attrappe** |
+| Wieviel ist überhaupt testbar? | Die 15–25 %-Schätzung dieses Berichts war zu niedrig — auf Basis der Disassembly-Signatur sind 54,7 % hardware-frei, siehe §5 |
+| Warum nicht mehr? | Nur 90 Units greifen Hardware direkt an — der Rest ist Aufwand, nicht Unmöglichkeit |
 
 ## 2. Das Messverfahren
 
@@ -56,16 +57,16 @@ make reach LIST=1     # pro Funktion
 
 | Kennzahl | Wert |
 |---|---|
-| Testbinaries | 17 |
-| gelinkte `func_`-Symbole | 100 |
-| davon tatsächlich ausgeführt | 100 |
-| davon Handschrift-Asm (keine Zeileninfo) | 7 |
-| Quellzeilen gemessen | 1567 |
-| davon ausgeführt | 1478 (94,3 %) |
+| Testbinaries | 20 |
+| gelinkte `func_`-Symbole | 116 |
+| davon tatsächlich ausgeführt | 116 |
+| davon Handschrift-Asm (keine Zeileninfo) | 18 |
+| Quellzeilen gemessen | 1705 |
+| davon ausgeführt | 1607 (94,3 %) |
 
-Die sieben Handschrift-Units (`8001006C`, `8001010C`, `800101D4`, `80010234`,
-`8001047C`, `80010750`, `80010820`) sind reine `.word`-Ströme ohne `.loc`-Zeilen;
-sie werden über ihren Adressbereich im qemu-Trace als ausgeführt nachgewiesen.
+18 der 116 Units sind Handschrift-Asm ohne `.loc`-Zeilen (die GTE-Ströme sowie
+die Sound-/BIOS-Wrapper); sie werden über ihren Adressbereich im qemu-Trace als
+ausgeführt nachgewiesen.
 
 Acht Units sind nur teilweise durchlaufen, die größte Lücke ist
 `func_80044B34` mit 19/72 Zeilen.
@@ -128,40 +129,55 @@ BIOS-Sprung `0xA0`/`0xB0`/`0xC0`), danach transitive Hülle über den Aufrufgrap
 | Kategorie | Units | Anteil |
 |---|---:|---:|
 | alle C-Units | 1772 | 100,0 % |
-| direkter Hardware-Zugriff | 153 | 8,6 % |
-| — davon cop2/GTE | 38 | 2,1 % |
-| — davon MMIO (SPU/CD/GPU/DMA) | 44 | 2,5 % |
-| — davon BIOS-Aufruf | 76 | 4,3 % |
-| ohne direkten Hardware-Token | 1619 | 91,4 % |
-| transitiv hardware-abhängig | 1617 | 91,3 % |
-| **frei von jeder Hardware-Abhängigkeit** | **155** | **8,7 %** |
-| **Obergrenze mit GTE-Modell** (155 + 36 reine GTE-Units) | **191** | **10,8 %** |
-| aktuell in Tests ausgeführt | 100 | 5,6 % |
+| direkter Hardware-Zugriff | 90 | 5,1 % |
+| — davon cop2/GTE | 39 | 2,2 % |
+| — davon MMIO (SPU/CD/GPU/DMA) | 3 | 0,2 % |
+| — davon BIOS-Aufruf | 46 | 2,6 % |
+| — davon Syscall | 2 | 0,1 % |
+| ohne direkten Hardware-Token | 1682 | 94,9 % |
+| transitiv hardware-abhängig | 803 | 45,3 % |
+| **frei von jeder Hardware-Abhängigkeit** | **969** | **54,7 %** |
+| unbekannt (Callgraph-Lücke) | 162 | 9,1 % |
+| aktuell in Tests ausgeführt | 116 | 6,5 % |
 
 Verteilung der Entfernung zur nächsten Hardware-Unit im Aufrufgraphen:
 
 | Hops | Units | Anteil |
 |---|---:|---:|
-| 0 (greift selbst zu) | 153 | 8,6 % |
-| 1 | 427 | 24,1 % |
-| 2 | 530 | 29,9 % |
-| 3 | 305 | 17,2 % |
-| 4 | 134 | 7,6 % |
-| 5 | 41 | 2,3 % |
-| 6 | 20 | 1,1 % |
-| 7–9 | 7 | 0,5 % |
-| unerreichbar (clean) | 155 | 8,7 % |
+| 0 (greift selbst zu) | 90 | 5,1 % |
+| 1 | 209 | 11,8 % |
+| 2 | 176 | 9,9 % |
+| 3 | 79 | 4,5 % |
+| 4 | 43 | 2,4 % |
+| 5 | 28 | 1,6 % |
+| 6 | 13 | 0,7 % |
+| 7+ | 3 | 0,2 % |
+| kein Pfad zur Hardware (969 clean + 162 unknown) | 1131 | 63,8 % |
 
-Der zentrale Befund: nur 153 Units greifen **direkt** zu, aber 1617 erreichen
-Hardware **transitiv**. Von den 1619 ohne eigenen Hardware-Token rufen nur 427
-direkt eine Hardware-Unit; 1192 haben gar keinen direkten Hardware-Callee.
+Der zentrale Befund: nur 90 Units greifen **direkt** zu, 641 erreichen
+Hardware **transitiv** — und 969 Units erreichen sie **überhaupt nicht**.
+Damit ist die Mehrheit der Codebasis nicht durch Hardware blockiert.
 
-## 6. Kann man die 1619 trotzdem testen — Aufrufe mocken?
+## 6. Kann man die 641 hardware-abhängigen trotzdem testen — Aufrufe mocken?
 
-**Teilweise.** Technisch geht es fast überall, das Muster läuft bereits in 22
-Harnessen für 100 Funktionen. Flächendeckend über alle 1619 ist es aber keine
-tragfähige Strategie, sondern ein Fass ohne Boden mit stark abnehmender
-Aussagekraft.
+**Ja, an wenigen Schnittstellen.** Der Mock-Frontier ist messbar: ein Stand-in
+schaltet nicht eine, sondern bis zu 50 Units frei.
+
+| Stand-in | schaltet frei | Hardware |
+|---|---:|---|
+| `func_8002AD58` | 50 | — |
+| `func_80010750` | 48 | GTE |
+| `func_80010234` | 38 | GTE |
+| `func_80010820` | 37 | GTE |
+| `func_8001006C` | 27 | GTE |
+| `func_80066F78` | 22 | — |
+| `func_800402DC` | 22 | — |
+
+Ein GTE-Modell existiert bereits (`gte_ref.c`); die vier GTE-Einträge oben
+schalten zusammen über 100 weitere Units frei. Das ist der günstigste nächste
+Schritt, nicht der teuerste.
+
+Nachgemessen: `python3 tools/host_test_candidates.py --top 20`.
 
 ### Wo der richtige Mock-Schnitt liegt
 
@@ -182,10 +198,28 @@ Aussagekraft.
 | Technik | Beispiel |
 |---|---|
 | Linker-Stubs unter Retail-Symbolnamen | `s32 gPlayNonpositionalSoundEffect(...) __asm__("func_80046C84")` |
-| Call-Recorder (Sound-IDs, Zähler, steuerbare Rückgabewerte) | `weapon_anim_harness.c` (`sound_log[]`, `fire_calls`, `fire_result`) |
-| GPU-Kommandostrom-Recorder | `naming_round8_harness.c` (`packet_arena[8]`, prüft Tags/Farben/Koordinaten) |
+| **Gemeinsame Mock-Bibliothek** | `tests/host/mocks/{sound,gpu,bios}_mock.c` — 20 Attrappen, per `asm`-Alias gebunden |
+| **Freestanding Test-Kit** | `tests/host/fc_testkit.h` — Assertions mit Wertausgabe, Call-Recorder |
+| Call-Recorder (Sound-IDs, Zähler, steuerbare Rückgabewerte) | `fcm_sound.sfx_ids[]`, `fcm_gpu.draw_sync_modes[]` |
 | cop2-Trap gegen Software-GTE | `env_harness.c` + `gte_ref.c` |
 | Statusbit-Stub, der terminiert | nötig überall dort, wo auf ein Ready-Bit gepollt wird |
+
+Der Bestand an Attrappen ist messbar und wird überwacht:
+
+```
+python3 tests/host/mock_inventory.py
+  stand-in definitions:      65
+    bound with an asm alias: 27
+    bound by C name only:    38
+  distinct retail labels:    50
+  labels defined in >1 file: 12
+```
+
+38 Stand-ins sind noch **nur über den C-Namen** gebunden — dort ist eine falsche
+Bindung ein stiller Fehler statt eines Linkfehlers. Sie stehen in
+`tests/test_shared_mock_library.py` als `KNOWN_LOCAL`-Liste fest, damit die
+Doppelung sichtbar bleibt und der Test anschlägt, sobald ein neues Duplikat
+auftaucht.
 
 ### Die ehrliche Aussagekraft-Grenze
 
@@ -202,36 +236,46 @@ Harness am Ende nur die eigene Erwartung an die Aufrufreihenfolge.
 
 ### Kosten-Realität
 
-22 Skripte decken 100 Funktionen ab, also ~4,5 Units pro Skript. Die großen
+22 Skripte decken 116 Funktionen ab, also ~5,3 Units pro Skript. Die großen
 Harnesse sind umfangreich: `weapon_anim_harness.c` 465 Zeilen für eine Unit,
 `naming_round8_harness.c` 311 Zeilen für drei, `env_harness.c` 466 Zeilen. Auf
-1619 Units hochgerechnet wären das 350–400 Harnesse und zehntausende Zeilen
-handgepflegter Struct-Nachbauten.
+die verbleibenden 853 mock-freien Units hochgerechnet wären das rund 200
+Harnesse. Das ist viel Arbeit, aber keine technische Grenze — und der Anteil an
+Units, die über eine Kette mehrere Funktionen mitziehen, senkt den Aufwand pro
+erreichter Unit deutlich.
 
 ## 7. Empfehlung
 
-1. **Priorität 1 — die 155 komplett freien Units (8,7 %).** Kein Hardware-Mock
-   nötig, minimaler Aufwand, maximale Aussagekraft. Aktuell laufen davon erst 14 von 155; bei den reinen GTE-Units 6 von 36.
-2. **Priorität 2 — gezielt aus dem 1–2-Hop-Bereich (957 Units, 54 %).** Nur
-   Units mit echter Eigenlogik: Zustandsautomaten, Physik/Kollision, Waffen,
-   Menüs, Kamera, GPU-Packet-Emitter. Am billigsten genau dann, wenn eine Unit
-   ohnehin benannt oder dokumentiert wird.
-3. **Nicht mocken — 3–9 Hops (507 Units, 28,6 %) und Hardware-Wrapper.** Der
-   Mock-Aufwand übersteigt den Nutzen. Wer diese Ketten end-to-end prüfen will,
-   fährt mit automatisierten Läufen in einem echten Emulator besser.
+1. **Die Decke ist keine 155, sondern 969.** Gemessen mit
+   `tools/host_test_buildability.py`: 908 der 969 hardware-freien Units
+   kompilieren und linken **ohne jede Attrappe**, nur mit genullten
+   `D_`-Datenslots (93,7 %). Das ist der günstigste Vorrat, weit größer als
+   bisher angenommen. 506 davon sind Blätter, die größte Kette linkt 58 Objekte.
+2. **Priorität 1 — die 908 bauen.** Kein Mock nötig, echter Code, echte
+   Assertions. Der Aufwand pro Unit ist der einzige Knackpunkt, nicht die
+   Technik.
+3. **Priorität 2 — vier GTE-Stand-ins** (`func_80010750`, `func_80010234`,
+   `func_80010820`, `func_8001006C`) schalten über 100 weitere Units frei, und
+   das GTE-Modell existiert schon. Danach `func_8002AD58` (50 Einheiten, keine
+   Hardware).
+4. **Nicht mocken — die 803 transitiv hardware-abhängigen Reste.** Wer diese
+   Ketten end-to-end prüfen will, fährt mit automatisierten Läufen in einem
+   echten Emulator besser.
 
-Realistischer Zielkorridor: **15–25 % der Codebasis**, also ~250–450 Units.
-Darüber hinaus steigen Aufwand und Tautologie-Risiko schneller als der
-Erkenntnisgewinn.
+Die frühere Schätzung von 15–25 % war keine Grenze, sondern eine Folge der
+Fehlklassifizierung über Kommentartext. Auf Basis der Disassembly-Signatur sind
+54,7 % der Units hardware-frei.
 
 ## 8. Reproduktion
 
 ```
-make check                     # 187 Python-Tests + 10 Harnesse
+make check                     # 192 Python-Tests + 12 Harnesse
 make coverage                  # Zeilenabdeckung der Host-Tests
 make coverage LCOV=cov.info    # dasselbe als LCOV-Tracefile
 make reach                     # wieviele Funktionen die Tests erreichen
 make reach LIST=1              # pro Funktion mit Urteil
+python3 tools/host_test_candidates.py --top 20   # was ein Stand-in freischaltet
+python3 tools/host_test_buildability.py          # was ohne Mock baut
 ```
 
 Die Messwerkzeuge sind `tools/host_coverage.py` und `tools/host_test_reach.py`,
