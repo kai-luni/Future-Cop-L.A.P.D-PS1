@@ -1,6 +1,6 @@
 # Portable Characterization Tests, Version 1
 
-Stand: 22. November 2026. Die JSON-Datei `tests/portable/a1-a2.v1.json` enthält handübertragene Assertions für alle A1- und A2-Funktionen. `tests/portable/export_fixtures.py` erzeugt sie reproduzierbar; die Erwartungswerte werden nicht aus dem QEMU-Ergebnis übernommen. Die bestehenden C-Assertions bleiben bestehen. Extra, More, Final, Hundred A/B/C, Follow A/B und Thirty sind noch nicht portiert.
+Stand: 22. November 2026. Die JSON-Datei `tests/portable/a1-a2.v1.json` enthält handübertragene Assertions für alle A1- und A2-Funktionen. `tests/portable/export_fixtures.py` erzeugt sie reproduzierbar; die Erwartungswerte werden nicht aus dem QEMU-Ergebnis übernommen. Die bestehenden C-Assertions bleiben bestehen. Extra, More, Final, Hundred A/B/C, Follow A/B, Thirty und Fifty A/B sind noch nicht portiert.
 
 ## Format
 
