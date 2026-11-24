@@ -70,6 +70,12 @@ extern void gGteTransformVerticesWide(void *, void *, s32) __asm__("func_8001023
  * height from func_80066F78, places the lift at its start stop and transforms
  * the reference vertex (func_80010750, func_80010234); no globals are
  * touched.
+ *
+ * @par Shared field
+ * zero (+0xC4, s16) is the same block field func_80041B6C increments as its
+ * msg-11 hit counter (Obj41B6C.count) and func_80041880 decrements as its
+ * hold countdown (Obj41880.unkC4); init clears it, so a fresh lift is not
+ * held.
  */
 void gInitElevator(struct Self *self, struct Arg *arg, s32 a2)
 {

@@ -47,10 +47,30 @@ verify-noncode: verify extract
 sweep-candidates: verify toolchain
 	$(PYTHON) tools/sweep_candidate_compilers.py
 
+# Precinct Assault map objects: occupancy registration, base capture, unit spawners.
+.PHONY: host-map-objects
+host-map-objects:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  bash tests/host/map_objects_test.sh; \
+	else \
+	  echo "$@: qemu or C toolchain missing, skipped"; \
+	fi
+
+# Precinct Assault moving map elements: lifts (type 10) and mounted turret carriers (type 20).
+.PHONY: host-movers
+host-movers:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  bash tests/host/mover_objects_test.sh; \
+	else \
+	  echo "$@: qemu or C toolchain missing, skipped"; \
+	fi
+
 report:
 	$(PYTHON) tools/generate_decomp_report.py
 
-check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path
+check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path host-map-objects host-movers
 	$(PYTHON) -m unittest discover -s tests -t . -v
 
 # Run the naming-round behavioral tests against the original C entry points.

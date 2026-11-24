@@ -38,6 +38,16 @@ void gQueueOrApplyMapOccupancy(void *object) __asm__("func_8003FA34");
  *
  * @par Callers
  * Confirmed: func_8002A5F4 (0x8002A7EC, base spawn), func_80039504 (0x80039588, class-5 child registration).
+ *
+ * @par Map-object path
+ * This is step 3 of the map-placed object path: a freshly spawned entity (or a
+ * class-5 child) asks to be written into the map occupancy grid. The write
+ * itself happens in func_8003BC0C; this wrapper only decides *when*. While the
+ * level is still loading (screen state other than 4 and 0xD, pool allocated by
+ * func_8003F79C), the request is stacked on D_8009F708 and replayed by
+ * func_8003FAD4 once the scene exists - newest first, because the list is a
+ * stack. See docs/precinct-assault-map-objects.md and
+ * tests/host/map_objects_test.sh (cases 1-13).
  */
 void gQueueOrApplyMapOccupancy(void *object)
 {
