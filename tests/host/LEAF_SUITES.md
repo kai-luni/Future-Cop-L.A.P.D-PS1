@@ -12,6 +12,7 @@ that every possible retail execution path is hardware-free.
 | `leaf_a1_harness.c` | 76 functions without globals |
 | `leaf_a2_harness.c` | 49 functions with a few globals; the harness defines every `D_` label and sets it before each check (no reliance on zero or retail init) |
 | `leaf_math_harness.c` | 16 arithmetic, clamp and limit helpers (heap size accounting, RGB saturation, camera transform setters, teardown wrappers); mocks record their arguments |
+| `leaf_flow_harness.c` | 18 gameplay/flow helpers (audio voice bookkeeping, volume flow, sound-event dispatch, scene-pool lifecycle), hardware-free |
 | `leaf_a*_test.sh` | **generated**; do not edit |
 | `tools/host_leaf_suite.py` | scaffold / gen-script / report / mutate |
 
