@@ -16,12 +16,16 @@
 #include "game/types.h"
 #define FCK_TYPES_H
 #include "leaf_kit.h"
+/* @mock sound_mock */
+/* func_800452C8 (voice-volume getter) and func_80046C84 (SE trigger / voice
+ * lookup) come from the shared mock library: configure fcm_sound.voice_volume
+ * and fcm_sound.sfx_result, read the SE calls back from fcm_sound.sfx_*. */
+#include "sound_mock.h"
 
 /* --------------------------------------------------------------- recorder */
 
 #define LF_CAP_MAX 32
 
-#define LF_VOLDONE    1   /* func_800452C8 get voice volume      */
 #define LF_SLOT       3   /* func_80045164 find tracked slot     */
 #define LF_ATTEN      4   /* func_800458E8 spatial attenuation   */
 #define LF_MIXER      6   /* func_80024730 apply channel volume  */
@@ -32,7 +36,6 @@
 #define LF_RELEASE   14   /* func_80046698 release voice         */
 #define LF_RESOLVE   15   /* func_80045494 resolve sound id      */
 #define LF_ALLOCPRI  16   /* func_80046B04 alloc priority voice  */
-#define LF_LOOKUP    17   /* func_80046C84 voice lookup by id    */
 #define LF_STOPSTREAM 18  /* func_800243F8 stop stream handle    */
 #define LF_PLAYON    19   /* func_80046E88 play id on voice      */
 #define LF_FREE      20   /* func_800181D4 free block            */
@@ -53,6 +56,12 @@ static int lf_calls_n;
 static void lf_reset(void)
 {
     int i;
+    s32 sfx_result = fcm_sound.sfx_result, voice_volume = fcm_sound.voice_volume;
+    /* Clear the shared mock's call log but keep the configured return values,
+     * as the private stand-ins' statics were kept before. */
+    fcm_sound_reset();
+    fcm_sound.sfx_result = sfx_result;
+    fcm_sound.voice_volume = voice_volume;
     lf_calls_n = 0;
     for (i = 0; i < LF_CAP_MAX; i++) {
         lf_calls[i].id = 0;
@@ -135,12 +144,10 @@ struct LfStream lf_streams[2] __asm__("D_800A1810");
 
 /* ------------------------------------------------------------ stand-ins */
 
-static s32 lf_voice_volume;
 static s32 lf_atten_ok, lf_atten_vol;
 static s32 lf_resolve_slot;
 static s32 lf_alloc_base, lf_alloc_seq;
 static s32 lf_pending_at_stream;
-static void *lf_event_voice;
 static void *lf_pool_ret;
 static void *lf_alloc_ptr_ret;
 static s32 lf_table_buffer[0x41];
@@ -153,14 +160,6 @@ struct LfSlot450A4 {
 };
 static struct LfSlot450A4 lf_slot_450A4;
 static struct LfSlot450A4 *lf_slot_ptr;
-
-/* 800452C8 reads D_8009F338 in retail; the value is a fixture here. */
-s32 lf_stub_452C8(void) __asm__("func_800452C8");
-s32 lf_stub_452C8(void)
-{
-    lf_rec(LF_VOLDONE, 0, 0, 0, 0, 0, 0, 0, 0);
-    return lf_voice_volume;
-}
 
 struct LfSlot450A4 *lf_stub_45164(s32 id) __asm__("func_80045164");
 struct LfSlot450A4 *lf_stub_45164(s32 id)
@@ -228,24 +227,17 @@ s32 lf_stub_46B04(s32 a0, s32 a1, s32 a2, s32 slot)
     return lf_alloc_base + lf_alloc_seq++;
 }
 
-s32 lf_stub_46C84(s32 id, s32 arg1) __asm__("func_80046C84");
-s32 lf_stub_46C84(s32 id, s32 arg1)
-{
-    lf_rec(LF_LOOKUP, id, arg1, 0, 0, 0, 0, 0, 0);
-    return (s32)lf_event_voice;
-}
-
 void lf_stub_243F8(s8 *handle) __asm__("func_800243F8");
 void lf_stub_243F8(s8 *handle)
 {
-    lf_rec(LF_STOPSTREAM, (s32)handle, 0, 0, 0, 0, 0, 0, 0);
+    lf_rec(LF_STOPSTREAM, (s32)handle, 0, 0, 0, 0, 0, 0, fcm_sound.sfx_calls);
 }
 
 void lf_stub_46E88(s32 track, s32 a1, s32 a2, s32 a3, s32 handle,
                    void *object) __asm__("func_80046E88");
 void lf_stub_46E88(s32 track, s32 a1, s32 a2, s32 a3, s32 handle, void *object)
 {
-    lf_rec(LF_PLAYON, track, a1, a2, a3, handle, (s32)object, 0, 0);
+    lf_rec(LF_PLAYON, track, a1, a2, a3, handle, (s32)object, 0, fcm_sound.sfx_calls);
 }
 
 void lf_stub_181D4(void *block) __asm__("func_800181D4");
@@ -372,23 +364,22 @@ static void test_voice_volume(void)
     lf_volume_limit = 5;
     lf_voice_list = 0;
     lf_class2_list = 0;
-    lf_voice_volume = 0;
+    fcm_sound.voice_volume = 0;
     FCK_EQ(gComputeTrackedVoiceVolume(), 0, "zero volume returns zero");
     FCK_EQ(lf_volume_limit, 5, "zero volume leaves the limit selector alone");
-    FCK_CHECK(lf_calls_n == 1 && lf_calls[0].id == LF_VOLDONE,
-              "zero volume only queries the volume, no voice refresh");
+    FCK_CHECK(lf_calls_n == 0, "zero volume makes no voice refresh call");
 
-    lf_voice_volume = 84;                 /* 84 + 42 = 126, below the cap */
+    fcm_sound.voice_volume = 84;                 /* 84 + 42 = 126, below the cap */
     FCK_EQ(gComputeTrackedVoiceVolume(), 126, "boost is volume plus half");
     FCK_EQ(lf_volume_limit, 1, "non-zero volume switches the limit selector on");
 
-    lf_voice_volume = 86;                 /* 86 + 43 = 129 saturates */
+    fcm_sound.voice_volume = 86;                 /* 86 + 43 = 129 saturates */
     FCK_EQ(gComputeTrackedVoiceVolume(), 127, "boost saturates at 0x7F");
 
-    lf_voice_volume = -4;                 /* -4 + (-2) = -6 */
+    fcm_sound.voice_volume = -4;                 /* -4 + (-2) = -6 */
     FCK_EQ(gComputeTrackedVoiceVolume(), -6, "negative volume keeps its sign");
 
-    lf_voice_volume = 4096;
+    fcm_sound.voice_volume = 4096;
     FCK_EQ(gComputeTrackedVoiceVolume(), 127, "large volume saturates");
 }
 
@@ -709,7 +700,7 @@ static void test_spatial_pan(void)
 
     lf_reset();
     mix.flag = 0;
-    mix.d0 = -0x10000;                    /* -65536 >> 10 = -64; clamps to 0 */
+    mix.d0 = -0x20000;                    /* -131072 >> 10 = -128; -128 + 64 = -64 clamps to 0 */
     gComputeSpatialSoundPan((s8 *)&mix);
     FCK_EQ(mix.pan, 0, "negative single-listener pan clamps to 0");
 
@@ -816,7 +807,7 @@ static void test_animation_event(void)
     object.info = &info;
     lk_fill(voice, 0x11, sizeof(voice));
     voice[2] = 0x300;
-    lf_event_voice = voice;
+    fcm_sound.sfx_result = (s32)voice;
     lk_fill(lf_streams, 0x66, sizeof(lf_streams));
     lf_streams[1].playing = 1;
     lf_streams[1].track = 2;
@@ -824,14 +815,13 @@ static void test_animation_event(void)
 
     gApplyAnimationSoundEvent(0x10, &object);
     FCK_CHECK(lf_streams[1].playing == 1 && lf_streams[1].track == 2 &&
-              lf_streams[1].handle == 0x555 && lf_calls_n == 0,
+              lf_streams[1].handle == 0x555 && lf_calls_n == 0 && fcm_sound.sfx_calls == 0,
               "request without bit 0x20 does nothing");
 
     lf_reset();
     gApplyAnimationSoundEvent(0x22, &object);       /* same track 2 */
-    FCK_EQ(lf_calls_n, 1, "same track only looks the voice up");
-    FCK_CHECK(lf_calls[0].id == LF_LOOKUP && lf_calls[0].a0 == 0x3A &&
-              lf_calls[0].a1 == (s32)&object,
+    FCK_CHECK(lf_calls_n == 0 && fcm_sound.sfx_calls == 1, "same track only looks the voice up");
+    FCK_CHECK(fcm_sound.sfx_ids[0] == 0x3A && fcm_sound.sfx_last_arg1 == (s32)&object,
               "lookup id is track|0x38 and carries the object");
     FCK_EQ(voice[2], 0x29C, "same track lowers the voice volume by 0x64");
     FCK_CHECK(voice[0] == 0x11111111 && voice[1] == 0x11111111 && voice[3] == 0x11111111,
@@ -841,22 +831,24 @@ static void test_animation_event(void)
 
     lf_reset();
     voice[2] = 0x300;
-    lf_event_voice = 0;
+    fcm_sound.sfx_result = 0;
     gApplyAnimationSoundEvent(0x22, &object);
-    FCK_CHECK(lf_calls_n == 1 && voice[2] == 0x300, "missing voice skips the volume dip");
+    FCK_CHECK(lf_calls_n == 0 && fcm_sound.sfx_calls == 1 && voice[2] == 0x300,
+              "missing voice skips the volume dip");
 
     lf_reset();
     voice[2] = 0x300;
-    lf_event_voice = voice;
+    fcm_sound.sfx_result = (s32)voice;
     gApplyAnimationSoundEvent(0x23, &object);       /* switch to track 3 */
-    FCK_EQ(lf_calls_n, 3, "switch stops, releases and starts");
-    FCK_CHECK(lf_calls[0].id == LF_LOOKUP && lf_calls[0].a0 == 0x34,
+    FCK_CHECK(lf_calls_n == 2 && fcm_sound.sfx_calls == 1, "switch stops, releases and starts");
+    FCK_CHECK(fcm_sound.sfx_ids[0] == 0x34 && fcm_sound.sfx_last_arg1 == (s32)&object,
               "old track is stopped with track+0x32");
-    FCK_CHECK(lf_calls[1].id == LF_STOPSTREAM && lf_calls[1].a0 == 0x555,
-              "stream handle is released");
-    FCK_CHECK(lf_calls[2].id == LF_PLAYON && lf_calls[2].a0 == 0x25 &&
-              lf_calls[2].a1 == 0 && lf_calls[2].a2 == 0 && lf_calls[2].a3 == -1 &&
-              lf_calls[2].a4 == 0x555 && lf_calls[2].a5 == (s32)&object,
+    FCK_CHECK(lf_calls[0].id == LF_STOPSTREAM && lf_calls[0].a0 == 0x555 &&
+              lf_calls[0].a7 == 1,
+              "stream handle is released after the stop sound");
+    FCK_CHECK(lf_calls[1].id == LF_PLAYON && lf_calls[1].a0 == 0x25 &&
+              lf_calls[1].a1 == 0 && lf_calls[1].a2 == 0 && lf_calls[1].a3 == -1 &&
+              lf_calls[1].a4 == 0x555 && lf_calls[1].a5 == (s32)&object,
               "new loop starts with track+0x22 on the retained handle");
     FCK_EQ(lf_streams[1].track, 3, "stream track is updated");
     FCK_EQ(lf_streams[1].playing, 1, "stream is marked playing");
@@ -867,8 +859,8 @@ static void test_animation_event(void)
     lf_streams[1].track = 0x77;
     voice[2] = 0x300;
     gApplyAnimationSoundEvent(0x26, &object);       /* one-shot track 6 */
-    FCK_EQ(lf_calls_n, 1, "track 6 makes a single call");
-    FCK_CHECK(lf_calls[0].id == LF_LOOKUP && lf_calls[0].a0 == 0x3D,
+    FCK_CHECK(lf_calls_n == 0 && fcm_sound.sfx_calls == 1, "track 6 makes a single call");
+    FCK_CHECK(fcm_sound.sfx_ids[0] == 0x3D,
               "one-shot uses the fixed id 0x3D");
     FCK_EQ(voice[2], 0x29C, "one-shot also dips the voice volume");
     FCK_CHECK(lf_streams[1].track == 6 && lf_streams[1].playing == 0,
@@ -878,14 +870,15 @@ static void test_animation_event(void)
     lf_streams[1].playing = 0;
     lf_streams[1].track = 0x77;
     gApplyAnimationSoundEvent(0x27, &object);       /* track 7 */
-    FCK_CHECK(lf_calls_n == 0 && lf_streams[1].track == 0x77,
+    FCK_CHECK(lf_calls_n == 0 && fcm_sound.sfx_calls == 0 && lf_streams[1].track == 0x77,
               "track 7 is a no-op");
 
     lf_reset();
     lf_streams[1].playing = 0;
     lf_streams[1].track = 0x77;
     gApplyAnimationSoundEvent(0x20, &object);       /* track 0 */
-    FCK_CHECK(lf_calls_n == 1 && lf_calls[0].id == LF_PLAYON && lf_calls[0].a0 == 0x22,
+    FCK_CHECK(lf_calls_n == 1 && fcm_sound.sfx_calls == 0 &&
+              lf_calls[0].id == LF_PLAYON && lf_calls[0].a0 == 0x22,
               "track 0 starts the lowest loop id");
     FCK_CHECK(lf_streams[1].track == 0 && lf_streams[1].playing == 1,
               "track 0 is stored and marked playing");

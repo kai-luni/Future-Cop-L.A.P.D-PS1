@@ -5,6 +5,10 @@
 #include "game/types.h"
 #define FCK_TYPES_H
 #include "leaf_kit.h"
+/* @mock sound_mock */
+/* func_8002A16C (VAGM stream starter) comes from the shared mock library;
+ * its calls are read back from fcm_sound.stream_starts/stream_last_arg0. */
+#include "sound_mock.h"
 
 /* =========================================================================
  * Shared globals (defined with retail D_ labels, zero-initialized by default
@@ -112,12 +116,6 @@ void mock_stop_portrait(void) __asm__("func_80029DD8");
 void mock_stop_portrait(void)
 {
     fck_record("stop_portrait", 0, 0, 0);
-}
-
-void mock_start_vagm(s32 arg0) __asm__("func_8002A16C");
-void mock_start_vagm(s32 arg0)
-{
-    fck_record("start_vagm", arg0, 0, 0);
 }
 
 static s32 mock_vagm_chunk_ret;
@@ -446,7 +444,7 @@ static void test_stream_rings(void)
     gGameSuspended = 0;
     gCallGateFlag = 0;
     gStreamStartPending[0] = 0;
-    fck_log_reset();
+    fck_log_reset(); fcm_sound_reset();
     gUpdatePortraitStream();
     FCK_EQ(fck_calls_to("cb_80029650"), 1, "always drains callback ring even with deadline 0");
     FCK_EQ(fck_calls_to("stop_portrait"), 0, "deadline 0 does not stop portrait");
@@ -454,7 +452,7 @@ static void test_stream_rings(void)
     /* Boundary: deadline == frameTickCounter is not yet expired (< required) */
     gPortraitStreamDeadline = 100;
     gFrameTickCounter = 100;
-    fck_log_reset();
+    fck_log_reset(); fcm_sound_reset();
     gUpdatePortraitStream();
     FCK_EQ(gPortraitStreamDeadline, 100, "deadline equal to tick does not expire");
     FCK_EQ(fck_calls_to("stop_portrait"), 0, "equal tick does not stop portrait");
@@ -467,15 +465,15 @@ static void test_stream_rings(void)
     gGameSuspended = 0;
     gCallGateFlag = 2;
     gStreamStartPending[0] = 0;
-    fck_log_reset();
+    fck_log_reset(); fcm_sound_reset();
     gUpdatePortraitStream();
     FCK_EQ(gPortraitStreamDeadline, 0, "expired deadline cleared");
     FCK_EQ(fck_calls_to("stop_portrait"), 1, "expired deadline stops portrait");
     FCK_EQ(gBitFieldState, 0, "bit 0x40 clears bitfield state");
     FCK_EQ(gOutStreamId, -1, "bit 0x40 resets out stream id to -1");
     FCK_EQ(gStreamStartPending[0], 1, "gate 2 sets pending start");
-    FCK_EQ(fck_calls_to("start_vagm"), 1, "gate 2 restarts VAGM stream");
-    c = fck_call_n("start_vagm", 0); FCK_EQ(c.a0, 1, "restart passes arg 1");
+    FCK_EQ(fcm_sound.stream_starts, 1, "gate 2 restarts VAGM stream");
+    FCK_EQ(fcm_sound.stream_last_arg0, 1, "restart passes arg 1");
 
     /* Expired with bit 0x40 clear, unsuspended, gate == 0 -> preserves bitfield/id, still restarts */
     gPortraitStreamDeadline = 50;
@@ -485,11 +483,11 @@ static void test_stream_rings(void)
     gGameSuspended = 0;
     gCallGateFlag = 0;
     gStreamStartPending[0] = 0;
-    fck_log_reset();
+    fck_log_reset(); fcm_sound_reset();
     gUpdatePortraitStream();
     FCK_EQ(gBitFieldState, 0x3F, "bit 0x40 clear preserves bitfield state");
     FCK_EQ(gOutStreamId, 9, "bit 0x40 clear preserves out stream id");
-    FCK_EQ(fck_calls_to("start_vagm"), 1, "gate 0 restarts VAGM stream");
+    FCK_EQ(fcm_sound.stream_starts, 1, "gate 0 restarts VAGM stream");
 
     /* Expired with gate == 1 or suspended -> no restart */
     gPortraitStreamDeadline = 50;
@@ -497,18 +495,18 @@ static void test_stream_rings(void)
     gGameSuspended = 0;
     gCallGateFlag = 1;
     gStreamStartPending[0] = 0;
-    fck_log_reset();
+    fck_log_reset(); fcm_sound_reset();
     gUpdatePortraitStream();
-    FCK_EQ(fck_calls_to("start_vagm"), 0, "gate 1 does not restart stream");
+    FCK_EQ(fcm_sound.stream_starts, 0, "gate 1 does not restart stream");
     FCK_EQ(gStreamStartPending[0], 0, "gate 1 leaves pending flag 0");
 
     gPortraitStreamDeadline = 50;
     gFrameTickCounter = 60;
     gGameSuspended = 1;
     gCallGateFlag = 0;
-    fck_log_reset();
+    fck_log_reset(); fcm_sound_reset();
     gUpdatePortraitStream();
-    FCK_EQ(fck_calls_to("start_vagm"), 0, "suspended game does not restart stream");
+    FCK_EQ(fcm_sound.stream_starts, 0, "suspended game does not restart stream");
 }
 
 static void test_stream_refill(void)

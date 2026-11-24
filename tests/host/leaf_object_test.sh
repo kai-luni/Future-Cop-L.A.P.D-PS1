@@ -28,9 +28,10 @@ for unit in 8002A31C 8002A408 8002A49C 8002A544 8002A26C 800246A8 80024470 8002B
     objects+=("$OUT/$unit.o")
 done
 compile "$HERE/mocks/bios_mock.c" "$OUT/bios_mock.o"
+compile "$HERE/mocks/sound_mock.c" "$OUT/sound_mock.o"
 python3 "$HERE/leaf_vectors.py" > "$OUT/leaf_vectors.h"
 compile "$HERE/leaf_object_harness.c" "$OUT/leaf_object_harness.o" -I"$OUT" -I"$HERE"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s" 2>/dev/null
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/leaf_object" \
-    "$OUT/crt0.o" "$OUT/leaf_object_harness.o" "$OUT/bios_mock.o" "${objects[@]}"
+    "$OUT/crt0.o" "$OUT/leaf_object_harness.o" "$OUT/bios_mock.o" "$OUT/sound_mock.o" "${objects[@]}"
 "$QEMU" "$OUT/leaf_object"
