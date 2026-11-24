@@ -52,6 +52,10 @@ QEMU = os.environ.get(
 MARK_RE = re.compile(r"/\*\s*@leaf\s+([0-9A-Fa-f]{8})\s+(\w+)\s+(.*?)\s*\*/")
 LEAF_RE = re.compile(r"^LEAF (func_[0-9A-F]{8}) checks=(\d+) failures=(\d+)$", re.M)
 EVIDENCE = ("spec", "math", "libc", "semantic", "source")
+# Opt-in shared mocks beyond bios_mock: `/* @mock sound_mock */` in a harness
+# links tests/host/mocks/sound_mock.c instead of the harness carrying a private
+# copy of a stand-in the library already provides.
+MOCK_RE = re.compile(r"/\*\s*@mock\s+(\w+_mock)\s*\*/")
 
 
 def env():
@@ -140,20 +144,36 @@ for unit in {units}; do
     objects+=("$OUT/$unit.o")
 done
 compile "$HERE/mocks/bios_mock.c" "$OUT/bios_mock.o"
-python3 "$HERE/leaf_vectors.py" > "$OUT/leaf_vectors.h"
+{mock_compiles}python3 "$HERE/leaf_vectors.py" > "$OUT/leaf_vectors.h"
 compile "$HERE/{suite}_harness.c" "$OUT/{suite}_harness.o" -I"$OUT" -I"$HERE"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s" 2>/dev/null
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/{suite}" \\
-    "$OUT/crt0.o" "$OUT/{suite}_harness.o" "$OUT/bios_mock.o" "${{objects[@]}}"
+    "$OUT/crt0.o" "$OUT/{suite}_harness.o" "$OUT/bios_mock.o"{mock_objects} "${{objects[@]}}"
 "$QEMU" "$OUT/{suite}"
 """
 
 
+def extra_mocks(suite):
+    """Shared mocks a harness opts into with `/* @mock <name>_mock */`, in order."""
+    text = (HOST / f"{suite}_harness.c").read_text()
+    out = []
+    for name in MOCK_RE.findall(text):
+        if name == "bios_mock" or name in out:
+            continue
+        if not (HOST / "mocks" / f"{name}.c").exists():
+            sys.exit(f"{suite}: @mock {name}: tests/host/mocks/{name}.c does not exist")
+        out.append(name)
+    return out
+
+
 def gen_script(args):
     units = [m["unit"] for m in markers(args.suite)]
+    mocks = extra_mocks(args.suite)
     path = HOST / f"{args.suite}_test.sh"
-    path.write_text(SCRIPT.format(suite=args.suite, dashed=args.suite.replace("_", "-"),
-                                  units=" ".join(units)))
+    path.write_text(SCRIPT.format(
+        suite=args.suite, dashed=args.suite.replace("_", "-"), units=" ".join(units),
+        mock_compiles="".join(f'compile "$HERE/mocks/{m}.c" "$OUT/{m}.o"\n' for m in mocks),
+        mock_objects="".join(f' "$OUT/{m}.o"' for m in mocks)))
     path.chmod(0o755)
     print(f"{path.relative_to(REPO)}: {len(units)} units")
 

@@ -50,7 +50,7 @@ sweep-candidates: verify toolchain
 report:
 	$(PYTHON) tools/generate_decomp_report.py
 
-check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path
+check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path host-leaf-math host-leaf-flow host-leaf-object
 	$(PYTHON) -m unittest discover -s tests -t . -v
 
 # Run the naming-round behavioral tests against the original C entry points.
@@ -222,7 +222,7 @@ host-leaf-final:
 	  echo "host-leaf-final: qemu or C toolchain missing, skipped"; \
 	fi
 
-.PHONY: host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path
+.PHONY: host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-math host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path host-leaf-flow host-leaf-object
 
 # More original leaf functions with synthetic fixtures.
 host-leaf-fifty-a host-leaf-fifty-b:
@@ -257,6 +257,34 @@ host-leaf-thirty:
 	  $(PYTHON) tools/host_leaf_suite.py report leaf_thirty; \
 	else \
 	  echo "host-leaf-thirty: qemu or C toolchain missing, skipped"; \
+	fi
+
+# Arithmetic, clamp and limit helpers with synthetic fixtures.
+host-leaf-math:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report leaf_math; \
+	else \
+	  echo "host-leaf-math: qemu or C toolchain missing, skipped"; \
+	fi
+
+# Gameplay/flow helpers: audio voice bookkeeping, volume flow, sound-event
+# dispatch and scene-pool lifecycle, all hardware-free.
+host-leaf-flow:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report leaf_flow; \
+	else \
+	  echo "host-leaf-flow: qemu or C toolchain missing, skipped"; \
+	fi
+
+# Object state helpers: slot/pool bookkeeping and gated mix updates, hardware-free.
+host-leaf-object:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report leaf_object; \
+	else \
+	  echo "host-leaf-object: qemu or C toolchain missing, skipped"; \
 	fi
 
 # Follow-up suites use synthetic data and unchanged original functions.

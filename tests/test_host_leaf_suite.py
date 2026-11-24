@@ -28,3 +28,24 @@ class LeafSuiteTests(unittest.TestCase):
             finally:
                 other.terminate()
                 other.wait()
+
+    def test_gen_script_links_opt_in_shared_mocks_only(self):
+        """`/* @mock X_mock */` adds mocks/X_mock.o; a harness without it is unchanged."""
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as tmp:
+            host = Path(tmp)
+            (host / 'mocks').mkdir()
+            (host / 'mocks' / 'sound_mock.c').write_text('')
+            (host / 'plain_harness.c').write_text('/* @leaf 80010000 source x */\n')
+            (host / 'opted_harness.c').write_text(
+                '/* @mock sound_mock */\n/* @leaf 80010000 source x */\n')
+            with patch.object(host_leaf_suite, 'HOST', host), \
+                    patch.object(host_leaf_suite, 'REPO', host):
+                host_leaf_suite.gen_script(SimpleNamespace(suite='plain'))
+                host_leaf_suite.gen_script(SimpleNamespace(suite='opted'))
+            plain = (host / 'plain_test.sh').read_text()
+            opted = (host / 'opted_test.sh').read_text()
+        self.assertNotIn('sound_mock', plain)
+        self.assertIn('"$OUT/bios_mock.o" "${objects[@]}"', plain)
+        self.assertIn('compile "$HERE/mocks/sound_mock.c" "$OUT/sound_mock.o"', opted)
+        self.assertIn('"$OUT/bios_mock.o" "$OUT/sound_mock.o" "${objects[@]}"', opted)
