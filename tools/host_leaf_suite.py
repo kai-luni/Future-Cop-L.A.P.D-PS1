@@ -129,7 +129,7 @@ export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${{LD_LI
 
 compile() {{
     local src="$1" obj="$2"; shift 2
-    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" "$@" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
+    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -I"$HERE/mocks" "$@" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }}
@@ -139,11 +139,12 @@ for unit in {units}; do
     compile "$DECOMP/src/game/$unit.c" "$OUT/$unit.o"
     objects+=("$OUT/$unit.o")
 done
+compile "$HERE/mocks/bios_mock.c" "$OUT/bios_mock.o"
 python3 "$HERE/leaf_vectors.py" > "$OUT/leaf_vectors.h"
 compile "$HERE/{suite}_harness.c" "$OUT/{suite}_harness.o" -I"$OUT" -I"$HERE"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s" 2>/dev/null
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/{suite}" \\
-    "$OUT/crt0.o" "$OUT/{suite}_harness.o" "${{objects[@]}}"
+    "$OUT/crt0.o" "$OUT/{suite}_harness.o" "$OUT/bios_mock.o" "${{objects[@]}}"
 "$QEMU" "$OUT/{suite}"
 """
 
@@ -316,6 +317,9 @@ def mutate(args):
         for f in HOST.iterdir():
             if f.is_file() and f.suffix in (".c", ".h", ".py", ".s", ".sh"):
                 shutil.copy2(f, host / f.name)
+        # Generated scripts compile and include the shared mock library.
+        if (HOST / "mocks").is_dir():
+            shutil.copytree(HOST / "mocks", host / "mocks")
         out = tmp / "build"
         rc, stdout, _ = run_suite(args.suite, tmp, out, host)
         if rc != 0:
