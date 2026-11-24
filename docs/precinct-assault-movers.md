@@ -131,6 +131,38 @@ msg-11 hit raises the same counter the tick later uses as a hold gate.
 Verified: the three struct views in
 `src/game/80041B6C.c:4-7`, `src/game/80041488.c:7`, `src/game/80041880.c:28-60`.
 
+**Who sends message 11 (Confirmed, traced):** the sole sender of
+message 11 in the audited sources is the entity-pair collision sweep:
+`gTestEntityPairCollision` (func_800620D8) calls
+`a->callback(11, a, b, hit)` and `b->callback(11, b, a, swapped-hit)` once
+a detailed part test reports a hit
+(`src/game/800620D8.c:91-100`, the `hit` word from `gTestPartPairHit`,
+func_80061CAC; the second object's copy swaps the halves,
+`src/game/800620D8.c:100`). The sweep is fed by the collision grid:
+`gProcessCellCollisionPairs` (func_800623FC) visits each pair of a cell
+once, requires combined flags `0x2200`, asks objects with flag
+`0x800000` for approval via event 10, then pairs that pass go to
+func_800620D8 (`src/game/800623FC.c:20-33,39-55`); its callers are the
+grid sweep func_80062614 (`src/game/800623FC.c:32`), driven by the
+visibility-grid rebuild `gUpdateViewCollisionGrid` family
+(`src/game/80062FB4.c:43-49`). So message 11 is *the* collision-contact
+event — a type-10 lift receives it once per colliding pair per sweep,
+with the raw hit word as payload.
+
+**What +0xC4 counts (Confirmed, mechanism):** the type-10 handler
+ignores the payload entirely: case 11 increments the s16 at `+0xC4`
+only while it is below 20 and then forwards the message to the base
+handler (`if (obj->count < 20) obj->count++; … gEntityBaseHandler(msg, …)`,
+`src/game/80041B6C.c:52-57`), regardless of the `hit` value passed
+in `a3`. The counter therefore counts *collision events since the last
+clear*, capped at 20 — not a floor target, passenger count or
+load. `gStepElevator` consumes it as a hold: while `unkC4 > 0` the whole
+motion body is skipped (`goto end`, `src/game/80041880.c:173-176`), one
+unit per tick — i.e. each recorded collision freezes the lift for that
+many successive ticks (matrix tail still runs). Gameplay cadence
+(how often a lift actually collects contacts) is not observed at
+runtime here; the mechanism is fully code-proven.
+
 ## The mounted-turret carrier chain (entity type 20)
 
 ### Spawn (`gSetupMountedTurretCarrier`, `src/game/80039504.c`)
@@ -202,6 +234,63 @@ Full behaviour is documented in the unit's own header; the host harness
 covers it only through its `gUpdateMountedTurret` stand-in (see Test
 coverage), so its internals stay structure-level here.
 
+**Per-frame shape for a port (Confirmed, from the source body
+`src/game/80038A00.c:174-366`):**
+
+1. *Liveness gate* — returns immediately unless `info->count > 0`
+   (the parent carrier's live count, `:182-183`); then
+   `gTransformPartVertex(info->instance, obj->part, obj->pos)` resolves
+   the mount position on the parent model (`:184`).
+2. *Two orientation paths*, selected by flag bit 1 (`:186`):
+   - *Aim path (bit 1 clear)*: bit 5 forces `yaw = heading` and skips
+     to the matrix build (`:187-189`). Otherwise the target yaw is
+     picked by priority (`:191-242`): no target byte (`+0xA6 == 0`) or
+     negative heading → back-facing `(yaw + 0x800) & 0xFFF`; flag
+     `0x8000` → keep current yaw; a valid target (`t->id == targetId`,
+     `:198`) → `gAtan2` of the target delta minus `info->yawBias`
+     (bias skipped when info flags `0x1000`, `:202-204`); a stale
+     target pointer → fall back to `heading` (`:239-241`). With flag
+     `0x10` the pitch comes from the elevation of the same delta
+     (`gAtan2`, clamped to ±0x200, `:205-237`), else pitch target is 0.
+     Target acquisition itself is external: the unit only *validates*
+     `target`/`targetId`; nothing inside it writes them.
+   - *Ground path (bit 1 set)*: pitch target is 0 while
+     `h = (s16)info->h10C` stays under `info->limit`, and above that a
+     slope ramp `0x400 - ((limit - h/4) << 10)/(h >> 1)` capped at
+     `0x400` (`:265-275`) — a pitch that follows the terrain angle
+     derived from the two info words; the matrix is `info->m` verbatim
+     at pitch 0 or `info->m` pitch-rotated about one axis
+     (`gSinCos` + nine `FMUL`s, rows 2/3 rotated, `:277-311`).
+3. *Rate-limited interpolation* — the `STEP` macro moves yaw and pitch
+   toward their targets by at most `dt * speed` per frame (signed
+   shortest arc in 0x1000 units, `:39-50,243,256`); flag `0x4000`
+   additionally clamps the yaw step to ±0x300 around the heading
+   (`:244-255`).
+4. *Matrix/vertex stage* — aim path: `gBuildRotationMatrix(yaw, pitch, 0,
+   obj->m)`, concatenated with the parent's `info->m` via
+   `gGteLoadRotation`+`gGteTransformWords` unless info flags `0x1000`
+   (`:259-263`); then `gGteLoadMatrix(obj->m)` and the frame vertex
+   `model->frames + (frame << 4) + 8` is transformed into `obj->vtx`
+   with one vertex (`:313-333`); `old[0..2] = m[6..8]` keeps the previous
+   translation (`:334`).
+5. *Animation lump* — if `model->anim` is set, `gAdvanceAnimTrack(obj,
+   anim, dt, 0)` returns a command word consumed six bits at a time
+   (`:336-345`): opcode 2 sets flag `0x8000`, opcode 1 moves mode 1 → 2
+   (forwarded to step 6 on the *next* tick), opcode 3 clears flag
+   `0x8000` (`:339-343`); afterwards `gSetModelFrame(&obj->model,
+   obj->animFrame)` installs the frame (`:346`).
+6. *Firing gate / mode machine* (`:348-365`): flag bit 2 returns
+   (turret disabled); flag bit 8 runs the attack scheduler
+   `gStepAttackScheduler(script, dt, info, 0, 1)` and returns (script-
+   timed fire). Otherwise, mode 0: `gStepAttackScheduler(script, dt,
+   obj, info, ((flags >> 7) ^ 1) & 1)`, and when it reports nonzero
+   while flag `0x80` is set the turret switches to mode 1 and plays the
+   fire clip `gSelectAnimationClip(anim, 1, 1, 1)` (`:354-361`) — i.e.
+   the scheduler decides *when* to fire, the animation clip paces the
+   *shot*. Mode 2 (entered by anim opcode 1 while in mode 1) resets to
+   mode 0 and fires exactly one shot through
+   `gFireEntityWeapon(script, obj, info, 1)` (`:362-365`).
+
 ## Same-idiom neighbours (context, not part of the chains)
 
 `gHandlePlacedPropMsg` (`src/game/80041C6C.c`, type 12, block `0xA4`) and
@@ -265,9 +354,15 @@ harness under qemu-mipsel):
   front-end mission-list binding (`func_800776B8`/`80077708`/`80077FFC`),
   not mission data. Do not infer placement from the function names.
 - whether the msg-11 hit counter (raising the tick's hold counter) pauses
-  the lift in gameplay: the field identity is verified, the gameplay
+  the lift in gameplay: ~~the field identity is verified, the gameplay
   interpretation is not (which caller sends msg 11 with what cadence is
-  unknown).
+  unknown)~~ **resolved as far as code can go**: the sender is the
+  collision sweep (message 11 is the pair-collision event
+  `src/game/800620D8.c:98-100`) and the hold effect is fully driven by
+  the counter (`src/game/80041880.c:173-176`) — see the shared-field
+  section. What stays unproven is only the runtime cadence (how often a
+  lift actually collects contacts in a mission), which no level data in
+  this repository can answer.
 - why `gSpawnMountedPartChild` strips child flag bit `0x2000`.
 - units of `info->h10C`/`info->limit` and the exact steering axes in
   `gUpdateMountedTurret`; the anim-lump opcode semantics beyond 1/2/3.
@@ -340,10 +435,28 @@ level-data-driven behaviour (no placement data exists in the repo).
 1. Does any Precinct Assault mission asset place entity type 10 / the
    carrier types? (Unproven — needs level-data inspection outside this
    repository's current sources.)
-2. Who sends message 11 to a type-10 entity, and does the shared `+0xC4`
-   counter measurably pause the lift in gameplay?
+2. ~~Who sends message 11 to a type-10 entity, and does the shared `+0xC4`
+   counter measurably pause the lift in gameplay?~~ **Answered from
+   code:** the sole sender is the entity-pair collision sweep
+   (`gTestEntityPairCollision`, `src/game/800620D8.c:98-100`, fed by
+   `gProcessCellCollisionPairs`, `src/game/800623FC.c:50-52`); the
+   counter is a capped (20) collision-event tally and every unit of it
+   holds `gStepElevator` for one tick (`src/game/80041B6C.c:52-57`,
+   `src/game/80041880.c:173-176`). Only the in-mission contact cadence
+   remains unobserved (no placement data in this repository — see
+   question 1).
 3. Why is child flag bit `0x2000` stripped in the spawn request?
-4. The exact steering axes/units in `gUpdateMountedTurret` and the full
-   anim-lump opcode set.
+4. ~~The exact steering axes/units in `gUpdateMountedTurret` and the full
+   anim-lump opcode set.~~ **Answered from code** (see the turret-update
+   section): axes are yaw/pitch in 0x1000-unit angles steered by the
+   `STEP` macro at `dt * speed` per frame with a ±0x300 heading clamp
+   (flag 0x4000); pitch on the ground path derives from
+   `info->h10C`/`info->limit`. The anim-lump opcode set is exactly
+   1 (mode 1→2), 2 (set flag 0x8000), 3 (clear flag 0x8000),
+   consumed six bits at a time (`src/game/80038A00.c:337-345`). Still
+   unknown: the unit of `info->h10C`/`info->limit` (raw compare,
+   `<<10`/`>>1` scaling) and which physical axis the ground-path
+   rotation turns about (rows 2/3 of `info->m` — X consistent,
+   unproven).
 5. Should `func_80041C6C`/`func_80041E0C` get their own harness (same
    ground-snap idiom), or stay structure-level here?
