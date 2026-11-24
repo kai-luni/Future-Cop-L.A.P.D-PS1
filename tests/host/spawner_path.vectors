@@ -1,0 +1,54 @@
+# Precinct Assault unit ordering path (spawner chain), retail units only.
+#
+# Line format: name <ops> <inputs> | <observed>
+#   name     one token, no spaces
+#   ops      comma separated, before the inputs:
+#              drain:TOP:BOT:ELAPSED  raise TOP burst orders (bits 8..11) and
+#                                     BOT timed orders (bits 12..15) on record
+#                                     one, then run one frame of
+#                                     gUpdateRegisteredSpawners(ELAPSED)
+#              cmd:ID:CODE:MODE       gApplySpawnerCommandById
+#   inputs   key=value, applied after the per-case reset; the in_* prefix
+#            marks fields that are also observed
+#   observed key=value after the `|`
+#
+# Covered units: func_800616A0 gUpdateRegisteredSpawners, func_8006125C
+# gTrySpawnRegisteredUnit, func_8006158C gApplySpawnerCommandById.
+noop drain:0:0:0 | ops=0 total=0 count=3 spawnCalls=0 scriptCalls=0
+one_order_drains_one_burst_slot drain:1:0:0 | ops=0 total=1 count=2 spawnCalls=1 scriptCalls=2
+two_orders_drain_two_slots drain:2:0:0 | ops=0 total=2 count=1 spawnCalls=2
+fifteen_orders_drain_fifteen_slots drain:15:0:0 | ops=0 total=15 spawnCalls=15
+timed_order_uses_the_timed_slot drain:0:1:0 | ops=0 total=1 spawnCalls=1
+timed_slot_clears_after_frame drain:0:2:0 | ops=0 total=2 spawnCalls=2
+both_nibbles_in_one_frame drain:1:2:0 | ops=0 total=3 spawnCalls=3
+order_count_is_not_clamped_by_cap drain:0:15:0 in_cap=3 | ops=0 total=15 spawnCalls=15
+burst_orders_mix_with_timed drain:3:1:0 | ops=0 total=4 spawnCalls=4
+refused_spawn_keeps_bits_set drain:1:0:0 in_gate=0 | ops=0 total=0 count=3 spawnCalls=0 scriptCalls=1
+refusal_clears_the_bits_anyway drain:1:0:0 in_gate=0 | ops=0
+alpha_timer_underflows_and_respawns drain:0:0:90 in_timer=1 in_cap=3 | total=1 spawnCalls=1 ops=0
+alpha_timer_needs_cap_room drain:0:0:90 in_timer=1 in_cap=0 | total=0 spawnCalls=0
+alpha_timer_needs_count drain:0:0:90 in_timer=1 in_cap=3 in_count=0 | total=0 spawnCalls=0
+alpha_bit_blocks_the_timer drain:0:0:90 in_timer=1 in_cap=3 in_ops=1 | total=0 spawnCalls=0
+timer_above_cap_stops drain:0:0:90 in_timer=9 in_cap=3 in_total=5 | total=5 spawnCalls=0
+timer_stays_positive_above_elapsed drain:0:0:60 in_timer=90 in_cap=3 | total=0 spawnCalls=0 timer=30
+reload_wraps_the_timer drain:0:0:90 in_timer=1 in_cap=3 in_reload=100 | total=1 spawnCalls=1 timer=11
+two_records_tick_together drain:1:0:0 | total=1 total2=0 spawnCalls=1
+second_record_has_own_count drain:0:1:0 | total=1 total2=0 spawnCalls=1
+unknown_spawner_id_ignored cmd:99:0x47:1 | total=0
+unknown_command_ignored cmd:34:0x48:1 | total=0
+stat_counter_type1_burst drain:1:0:0 | st_a=1
+stat_counter_type2_burst drain:1:0:0 in_type=2 | st_b=1
+stat_counter_type3_timed drain:0:1:0 in_type=3 | st_c=1
+stat_counter_type4_burst drain:2:0:0 in_type=4 | st_d=2
+stat_counter_untouched_when_gate_refuses drain:1:0:0 in_gate=0 | st_a=0
+second_record_stat_block drain:0:1:0 | total=1
+# Second participant path: record one keeps the burst order but its id is set
+# to 0x22 so the player comparison at info->1C fails and gPlayerEntities answers
+# instead. The switch then runs with a non-zero stats pointer and writes
+# 0x02/0x06/0x0A/0x0E, while the player-slot counters stay 0.
+other_player_type1 drain:1:0:0 in_other=1 other_id=0x22 in_id=34 | ot_a=1 st_a=0
+other_player_type2 drain:1:0:0 in_other=1 other_id=0x22 in_id=34 in_type=2 | ot_b=1 st_b=0
+other_player_type4 drain:2:0:0 in_other=1 other_id=0x22 in_id=34 in_type=4 | ot_d=2 st_d=0
+other_player_id_mismatch_skips_stats drain:1:0:0 in_other=1 other_id=0x33 in_id=34 | ot_a=0 st_a=0 spawnCalls=1
+other_player_installed_but_player_id_wins drain:1:0:0 in_other=1 | ot_a=0 ot_c=0 st_a=1
+cmd_0x47_both_modes cmd:34:0x47:1,cmd:34:0x47:0 | total=0
