@@ -242,6 +242,14 @@ harness under qemu-mipsel):
   propagation with the quartile-change condition — harness cases D, E, F.
 - the s16 at `+0xC4` is one shared field across all three lift-family
   struct views.
+- **PA-Missionsplatzierung von Typ 10 und Typ 20 (Confirmed, alle 5 PA-`.MIS`-Dateien dekodiert über `Cact` `func_8004D6D4` `src/game/8004D6D4.c:103-165` und `Csac` `func_80060E74` `src/game/80060E74.c:142-157`):**
+  - **Typ 10 (Lift, `gHandleElevatorEntity`):** **8 `Cact`-Instanzen** in 3 von 5 PA-Maps, **0 `Csac`-Spawner**:
+    - `CONFT.MIS`: **4× `Cact`** (`sid=15` `SHDR@0x189068` / `TCAt+0xC@0x1890c4`, `sid=24` `0x189118`/`0x189174`, `sid=37` `0x1891c8`/`0x189224`, `sid=39` `0x189278`/`0x1892d4`), `0× Csac`.
+    - `JOKE.MIS`: **2× `Cact`** (`sid=262` `SHDR@0x1b27a4` / `TCAt+0xC@0x1b2800`, `sid=249` `0x1b6a94`/`0x1b6af0`), `0× Csac`.
+    - `SLIM.MIS`: **2× `Cact`** (`sid=262` `SHDR@0x1a2aa4` / `TCAt+0xC@0x1a2b00`, `sid=249` `0x1a7154`/`0x1a71b0`), `0× Csac`.
+    - `HK.MIS` und `OVMP.MIS`: jeweils **0× `Cact`**, **0× `Csac`**.
+  - **Typ 20 (Mounted-Turret-Carrier, `gHandleMountedTurretCarrierMessages`):** **0 Instanzen** in allen 5 PA-Missionsdateien (`CONFT.MIS`, `HK.MIS`, `JOKE.MIS`, `OVMP.MIS`, `SLIM.MIS`) — weder als `Cact` noch als `Csac`.
+  - **Geschwistertyp 28 (`gHandleType28Entity`, `func_800398EC`):** **2× `Csac` pro PA-Map** (10 gesamt über alle 5 Maps, z. B. `CONFT.MIS` `Csac sid=7` und `sid=57`, ausgelöst durch die 50-Punkte-`RPNS`-Kaufskripte), **0× `Cact`**.
 
 **Likely**:
 
@@ -256,14 +264,6 @@ harness under qemu-mipsel):
 
 **Unproven**:
 
-- **Whether Precinct Assault mission data actually places entity type 10
-  or the carrier types.** The load path is confirmed in code — `"Csac"`
-  records reach `func_80060E74`, whose type byte picks the handler via
-  `func_8002AE54` — but no Precinct Assault level/asset data has been
-  inspected in this repository; this document contains no placement
-  evidence. The existing `precinct_path` host suite covers only the
-  front-end mission-list binding (`func_800776B8`/`80077708`/`80077FFC`),
-  not mission data. Do not infer placement from the function names.
 - whether the msg-11 hit counter (raising the tick's hold counter) pauses
   the lift in gameplay: the field identity is verified, the gameplay
   interpretation is not (which caller sends msg 11 with what cadence is
@@ -337,9 +337,7 @@ level-data-driven behaviour (no placement data exists in the repo).
 
 ## Open questions
 
-1. Does any Precinct Assault mission asset place entity type 10 / the
-   carrier types? (Unproven — needs level-data inspection outside this
-   repository's current sources.)
+1. *(Geklärt — siehe Confirmed oben)* Typ 10 wird 8× als `Cact` in PA platziert (`CONFT.MIS`: 4, `JOKE.MIS`: 2, `SLIM.MIS`: 2; `HK.MIS`/`OVMP.MIS`: 0), Typ 20 kommt in keiner der 5 PA-`.MIS`-Dateien vor (0× `Cact`, 0× `Csac`), während Geschwistertyp 28 in jeder PA-Map 2× als `Csac` vorkommt.
 2. Who sends message 11 to a type-10 entity, and does the shared `+0xC4`
    counter measurably pause the lift in gameplay?
 3. Why is child flag bit `0x2000` stripped in the spawn request?
