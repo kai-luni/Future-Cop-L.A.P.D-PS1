@@ -37,6 +37,7 @@ static void test_sound_defaults_are_zero(void)
     FCK_EQ(gGetVagmVolumeSetting(), 0, "vagm volume defaults to 0");
     FCK_EQ(gGetVoiceVolume(), 0, "voice volume defaults to 0");
     FCK_EQ(gGetStereoSoundMode(), 0, "stereo mode defaults to 0");
+    FCK_EQ(fcm_sound.stereo_mode_reads, 1, "the stereo mode read was counted");
     FCK_EQ(gIsVagmAudioStreamActive(), 0, "stream is not active by default");
     FCK_EQ(gPlayNonpositionalSoundEffect(7, 0), 0, "the SE result defaults to 0");
     FCK_EQ(fcm_sound.sfx_calls, 1, "the SE call was counted");

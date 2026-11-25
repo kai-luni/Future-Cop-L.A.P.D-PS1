@@ -38,6 +38,7 @@ s32 gPlayNonpositionalSoundEffect(s32 id, s32 arg1)
 s32 gGetStereoSoundMode(void) __asm__("func_800451E0");
 s32 gGetStereoSoundMode(void)
 {
+    fcm_sound.stereo_mode_reads++;
     return fcm_sound.stereo_mode;
 }
 
