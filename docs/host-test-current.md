@@ -141,6 +141,54 @@ Matching-Code nicht und beweisen nicht, dass ein Alias für alle Aufrufkontexte
 korrekt wäre. Die Analyse verwendet einen mtime-basierten Objektcache: Nach
 Änderungen an Headern oder Toolchain mit `--force-compile` neu bauen.
 
+## Leaf-Suites: Fixture-Stil und Evidenz (Leitfaden für neue Harnesses)
+
+Werkzeug und Ablauf: `tests/host/LEAF_SUITES.md` und
+`tools/host_leaf_suite.py`. Für jede neue Unit gilt:
+
+**Stil wählen.**
+
+| Unit liest/ruft | Stil | Beispiel |
+|---|---|---|
+| keine globalen Daten, keine Callees | ohne Globals | `leaf_a1` |
+| `D_`-Globals, Tabellen über Zeiger, Callees ohne Shared-Mock | harness-definierte `D_` + private Stand-ins | `leaf_a2`, `leaf_math`, `leaf_core` |
+| Callee, den `tests/host/mocks/*.c` bereits definiert | Shared-Mock per `/* @mock <name>_mock */` | `leaf_object` |
+
+Stile lassen sich kombinieren. Callees, die selbst Unit derselben Suite sind,
+werden echt gelinkt; die Erwartung schließt dann deren Wirkung ein.
+
+**`D_`-Fixture-Regel.** Jedes Label, das die Unit liest, wird im Harness
+definiert und vor *jedem* Aufruf explizit gesetzt. Nie auf Nullinitialisierung,
+BSS oder Retail-Inhalt verlassen; Retail-Tabellen durch synthetische Fixtures
+ersetzen, deren Ergebnis aus dem Fixture folgt. Unberührte Bytes mit Canary
+(`lk_fill`/`lk_all`) prüfen. Units mit absoluten Adressen (`lui 0x800A` +
+Offset) sind unter qemu-user nicht lauffähig (kseg0 nicht mappbar) und werden
+mit Begründung weggelassen; nutzt eine Unit `%hi(label)` mit festem Offset,
+muss das Label im Harness auf dieselben unteren 16 Bit gelegt werden
+(`leaf_core`, `D_8009EF08`).
+
+**Evidenzklassen** (`/* @leaf <addr> <klasse> <begründung> */`):
+
+- `math`: nur, wenn der Erwartungswert in `tests/host/leaf_vectors.py`
+  unabhängig berechnet wird (Formel aus Literatur/Mathematik, nicht aus dem
+  Unit-Quelltext).
+- `spec`: Psy-Q/PSn00bSDK-Dokumentation oder psx-spx; jede Prüfung der Unit
+  muss daraus ableitbar sein, sonst `source`.
+- `libc`: Standardbibliotheksverhalten.
+- `semantic`: von Hand aus einem dokumentierten Zweck abgeleitet; der Zweck
+  steht in der Begründung.
+- `source`: von Hand aus dem dekompilierten Body erarbeitet. Solche Marker
+  **pinnen nur das Ist-Verhalten** (inklusive Eigenheiten), sie belegen keine
+  Absicht und keine Retail-Korrektheit.
+
+Erwartungen nie durch Aufruf einer Re-Implementierung erzeugen.
+
+**Mocks.** Stellt `tests/host/mocks/` einen Stand-in bereits bereit, keine
+private Kopie mit demselben Retail-Label anlegen, sondern
+`/* @mock <name>_mock */` in den Harness-Kopf schreiben;
+`tests/test_shared_mock_library.py` schlägt sonst fehl. Private Stand-ins nur
+für Labels, die die Bibliothek nicht hat; sie zeichnen ihre Argumente auf.
+
 ## Offen
 
 Der historische Aufrufgraph enthält nachweislich Lücken, etwa

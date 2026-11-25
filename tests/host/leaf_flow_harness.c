@@ -1,10 +1,11 @@
 /* Gameplay/flow helpers that touch no hardware: audio voice bookkeeping,
  * front-end volume flow, sound-event dispatch and scene-pool lifecycle.
  *
- * Every fixture is written before the call; nothing relies on retail RAM.
- * Callees are stand-ins bound to their retail label, so a wrong binding is a
- * link error. A stand-in only records its arguments and returns a value the
- * test configured - it never invents behaviour. Two notes on the boundaries:
+ * Every fixture a check depends on is written before the call; nothing relies
+ * on retail RAM or zero-initialised slots. Callees are stand-ins bound to
+ * their retail label, so a wrong binding is a link error. A stand-in only
+ * records its arguments and returns a value the test configured - it never
+ * invents behaviour. Two notes on the boundaries:
  *
  *   - func_8001A578 is an identity rotation: the unit is handed the delta
  *     vector it is about to clamp, and the clamp arithmetic is the property
@@ -390,6 +391,7 @@ static void test_tracked_mix(void)
     /* @leaf 800450A4 source src/game/800450A4.c: 1.25x mix boost, selector picks the 0x3F or 0x7F cap, silent mix on failed attenuation */
     LK_FUNC("func_800450A4");
     lf_reset();
+    lf_spatial_mode = 1;      /* the real pan stage reads D_8009F734 */
     lf_volume_limit = 0;
     lf_slot_450A4.unk50 = 0x1234;
     lf_slot_450A4.unk58 = -0x2345;
@@ -679,7 +681,7 @@ static void test_spatial_pan(void)
 {
     struct LfMix mix;
 
-    /* @leaf 800460D4 math src/game/800460D4.c: single-listener >>10 and dual-listener >>11 halves, both clamped */
+    /* @leaf 800460D4 source src/game/800460D4.c: single-listener >>10 and dual-listener >>11 halves, both clamped */
     LK_FUNC("func_800460D4");
     lf_reset();
     lf_pos_angles[0].angle = 0x111;
@@ -740,7 +742,7 @@ static void test_spatial_pan(void)
 
 static void test_stop_handle(void)
 {
-    /* @leaf 80046A34 semantic src/game/80046A34.c: null handle is a silent no-op, everything else is released */
+    /* @leaf 80046A34 source src/game/80046A34.c: null handle is a silent no-op, everything else is released */
     LK_FUNC("func_80046A34");
     lf_reset();
     gStopSoundVoiceHandle(0);
@@ -891,7 +893,7 @@ static void test_validated_handle(void)
     struct LfHandle4749C handle;
     struct LfResource4749C resource;
 
-    /* @leaf 800474F0 semantic src/game/800474F0.c: release only on serial match, clear the slot, idempotent */
+    /* @leaf 800474F0 source src/game/800474F0.c: release only on serial match, clear the slot, idempotent */
     LK_FUNC("func_800474F0");
     lf_reset();
     FCK_EQ(gReleaseValidatedSoundVoiceHandle(0), 0, "null handle reports nothing released");
@@ -954,7 +956,7 @@ static void test_voice_mix(void)
 
 static void test_blink_frame(void)
 {
-    /* @leaf 80083280 math src/game/80083280.c: palette index (tick>>4)&7, frame origin x-(w+1)/2, y-h/2, four 2px borders */
+    /* @leaf 80083280 source src/game/80083280.c: palette index (tick>>4)&7, frame origin x-(w+1)/2, y-h/2, four 2px borders */
     LK_FUNC("func_80083280");
     lf_reset();
     lf_shade_table[0] = 0x10;
