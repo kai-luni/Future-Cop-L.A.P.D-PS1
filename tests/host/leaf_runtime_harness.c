@@ -909,6 +909,33 @@ s32 lr_stub_67684(void *pos, s32 arg)
 s32 gStepPathMoverVerticalMotion(struct LrObj *obj, s32 delta, struct LrState *state)
     __asm__("func_80050B54");
 
+/* ======================================================================
+ * 80067914 map cell ray test
+ * ====================================================================== */
+
+struct LrCellVec {
+    s32 x, y, z;
+};
+
+static s32 lr_map_header[0x40];
+s32 *gMapGridHeader __asm__("D_8009F80C") = lr_map_header;
+static u8 *lr_tile_table[4];
+u8 **gTileBlockTable __asm__("D_8009F808") = lr_tile_table;
+u8 gTileShapeTable[256] __asm__("D_8009B1A4");
+u8 gTileCornerIndices[128][4] __asm__("D_8009AFE8");
+struct LrCellVec gCellRayStart __asm__("D_800A2600");
+struct LrCellVec gCellRayEnd __asm__("D_800A2610");
+struct LrCellVec gCellRayWallHit __asm__("D_800A2620");
+struct LrCellVec gWallHitPositions[8] __asm__("D_800A32A0");
+u32 gWallHitPolys[8] __asm__("D_800A3260");
+s32 gWallHitKinds[8] __asm__("D_800A3280");
+s32 gWallHitTopHeights[8] __asm__("D_800A3300");
+
+static u8 lr_tile[0x800] __attribute__((aligned(16)));
+
+s32 gTestMapCellRay(struct LrCellVec *a, struct LrCellVec *b, s32 *outA, s32 *outB,
+                    s32 flag) __asm__("func_80067914");
+
 /* ==================================================================== tests */
 
 static u8 lr_state[0x600];
@@ -2574,6 +2601,184 @@ static void test_path_mover_vertical(void)
     FCK_EQ(gStepPathMoverVerticalMotion(&obj, 16, &state), 0, "0x50 matches no mode");
 }
 
+/* ======================================================================
+ * 80067914 map cell ray test
+ * ====================================================================== */
+
+static void cell_reset(void)
+{
+    int i;
+    lk_fill(lr_tile, 0x00, sizeof lr_tile);
+    lk_fill((u8 *)gTileShapeTable, 0x00, sizeof gTileShapeTable);
+    lk_fill((u8 *)gTileCornerIndices, 0x00, sizeof gTileCornerIndices);
+    lk_fill((u8 *)lr_map_header, 0x00, sizeof lr_map_header);
+    lk_fill((u8 *)gWallHitPositions, 0x00, sizeof gWallHitPositions);
+    lk_fill((u8 *)gWallHitPolys, 0x00, sizeof gWallHitPolys);
+    lk_fill((u8 *)gWallHitKinds, 0x00, sizeof gWallHitKinds);
+    lk_fill((u8 *)gWallHitTopHeights, 0x00, sizeof gWallHitTopHeights);
+    lk_fill((u8 *)&gCellRayStart, 0x00, sizeof gCellRayStart);
+    lk_fill((u8 *)&gCellRayEnd, 0x00, sizeof gCellRayEnd);
+    lk_fill((u8 *)&gCellRayWallHit, 0x00, sizeof gCellRayWallHit);
+    for (i = 0; i < 4; i++) lr_tile_table[i] = lr_tile;
+    /* map header: world[1] is the row stride, world[9] the cell descriptor
+     * whose bits 2..15 select the tile block. */
+    lr_map_header[1] = 8;
+    lr_map_header[9] = 0x0004;
+    /* one polygon at the cell's polygon list, 0x10 words in */
+    *(u16 *)(lr_tile + 0x3CC) = (0x10 << 4) | 1;
+    /* the four corner heights of the block */
+    lr_tile[12] = 0x10;
+    lr_tile[13] = 0x20;
+    lr_tile[14] = 0x30;
+    lr_tile[15] = 0x40;
+    /* surface material of material slot 0 */
+    lr_tile[0x370] = 0x2A;
+    lr_reset();
+}
+
+static void test_map_cell_ray(void)
+{
+    static struct LrCellVec a, b;
+    static s32 outA[3];
+    static s32 outB;
+    s32 i;
+    u32 poly;
+
+    /* @leaf 80067914 math the ray's midpoint selects cell (>>13) and the tile block (world[9] bits 2..15); cell-local endpoints drive height interpolation low = (h0<<8) + ((h3-h0)*dist>>5) and high = (h1<<8) + ((h2-h1)*dist>>5); a wall is recorded when its hit z lies between them, a type below 71 is only tested with flag set and then reports a fixed 5 with the surface material, and the diagonal kind solves p0 = (v*t0 + (8192-q)*delta)/den before interpolating */
+    LK_FUNC("func_80067914");
+
+    /* a wall hit: start (1000,-400,8000), end (3000,400,8000); the shape
+     * table entry 11 means "top equals the third corner", the hit x 3000
+     * enters the interpolation. */
+    cell_reset();
+    a.x = 1000; a.y = -400; a.z = 8000;
+    b.x = 3000; b.y = 400; b.z = 8000;
+    poly = 80u << 15;
+    *(u32 *)(lr_tile + 0x5E0) = poly;
+    gTileShapeTable[80] = (11 << 3) | 1;
+    gTileCornerIndices[80][0] = 0;
+    gTileCornerIndices[80][1] = 1;
+    gTileCornerIndices[80][2] = 2;
+    gTileCornerIndices[80][3] = 3;
+    FCK_EQ(gTestMapCellRay(&a, &b, outA, &outB, 0), 0x2A01, "a wall hit returns kind 1 and material 0x2A");
+    FCK_EQ(gCellRayStart.x, 1000, "the start stays in the cell");
+    FCK_EQ(gCellRayStart.y, -400, "the cell offset is zero for this fixture");
+    FCK_EQ(gCellRayEnd.x, 3000, "the end stays in the cell");
+    FCK_EQ(gWallHitPolys[0], poly, "the polygon is recorded");
+    FCK_EQ(gWallHitKinds[0], 1, "the surface kind is recorded");
+    FCK_EQ(gWallHitTopHeights[0], 9692, "high = (0x20 << 8) + (0x10 * 3000 >> 5)");
+    FCK_EQ(gWallHitPositions[0].x, 3000, "the hit x is the segment end");
+    FCK_EQ(gWallHitPositions[0].y, 400, "the hit y is the segment end");
+    FCK_EQ(gWallHitPositions[0].z, 8000, "the hit z is the segment end");
+    FCK_EQ(outB, 9692, "outB carries the top height");
+    FCK_EQ(outA[0], 400, "outA y");
+    FCK_EQ(outA[1], 8000, "outA z");
+    FCK_EQ(outA[2], 3000, "outA x");
+
+    /* the same wall at a height above the interpolated top: low = 7096 */
+    cell_reset();
+    a.x = 1000; a.y = -400; a.z = 12000;
+    b.x = 3000; b.y = 400; b.z = 12000;
+    *(u32 *)(lr_tile + 0x5E0) = poly;
+    gTileShapeTable[80] = (11 << 3) | 1;
+    gTileCornerIndices[80][1] = 1;
+    gTileCornerIndices[80][2] = 2;
+    gTileCornerIndices[80][3] = 3;
+    outA[0] = -1; outA[1] = -1; outA[2] = -1; outB = -1;
+    FCK_EQ(gTestMapCellRay(&a, &b, outA, &outB, 0), 0, "a height above the top is no hit");
+    FCK_EQ(outA[0], -1, "a rejected wall leaves outA alone");
+    FCK_EQ(outB, -1, "a rejected wall leaves outB alone");
+    FCK_EQ(gWallHitPolys[0], 0, "a rejected wall records nothing");
+
+    /* no polygons in the cell */
+    cell_reset();
+    *(u16 *)(lr_tile + 0x3CC) = 0x10 << 4;
+    a.x = 1000; a.y = -400; a.z = 8000;
+    b.x = 3000; b.y = 400; b.z = 8000;
+    FCK_EQ(gTestMapCellRay(&a, &b, outA, &outB, 1), 0, "an empty cell returns zero");
+    FCK_EQ(gWallHitPolys[0], 0, "an empty cell records nothing");
+
+    /* a plane surface is skipped unless the fourth argument allows it */
+    cell_reset();
+    *(u32 *)(lr_tile + 0x5E0) = 40u << 15;
+    gTileShapeTable[40] = 0;
+    gTileCornerIndices[40][1] = 1;
+    gTileCornerIndices[40][2] = 2;
+    a.x = 1000; a.y = -400; a.z = 2000;
+    b.x = 3000; b.y = 400; b.z = 8000;
+    FCK_EQ(gTestMapCellRay(&a, &b, outA, &outB, 0), 0, "a plane below type 71 needs the flag");
+
+    /* the same plane with the flag: the normal (-1024, -512, 1024) makes the
+     * two endpoints straddle the triangle */
+    cell_reset();
+    *(u32 *)(lr_tile + 0x5E0) = 40u << 15;
+    gTileShapeTable[40] = 0;
+    gTileCornerIndices[40][1] = 1;
+    gTileCornerIndices[40][2] = 2;
+    a.x = 1000; a.y = -400; a.z = 2000;
+    b.x = 3000; b.y = 400; b.z = 8000;
+    outA[0] = -1; outA[1] = -1; outA[2] = -1; outB = -1;
+    FCK_EQ(gTestMapCellRay(&a, &b, outA, &outB, 1), 0x2A05, "a plane hit returns kind 5 and material 0x2A");
+    FCK_EQ(outB, 8000, "a plane hit reports the z of the endpoint that was kept");
+    FCK_EQ(outA[0], 400, "the plane hit y");
+    FCK_EQ(outA[1], 8000, "the plane hit z");
+    FCK_EQ(outA[2], 3000, "the plane hit x");
+    FCK_EQ(gWallHitPolys[0], 0, "a plane hit records no wall candidate");
+
+    /* a diagonal wall: p0 = (1000 * 5000 + 10192 * 5000) / 10000 = 5596 */
+    cell_reset();
+    *(u32 *)(lr_tile + 0x5E0) = 81u << 15;
+    gTileShapeTable[81] = (6 << 3) | 3;
+    gTileCornerIndices[81][1] = 1;
+    gTileCornerIndices[81][2] = 2;
+    gTileCornerIndices[81][3] = 3;
+    a.x = 1000; a.y = -2000; a.z = 8000;
+    b.x = 6000; b.y = 3000; b.z = 8000;
+    FCK_EQ(gTestMapCellRay(&a, &b, outA, &outB, 0), 0x2A03, "a diagonal hit returns kind 3 and the material");
+    FCK_EQ(gCellRayWallHit.x, 5596, "the diagonal crossing is p0");
+    FCK_EQ(gCellRayWallHit.y, 2596, "the crossing y is 8192 - p0");
+    FCK_EQ(gCellRayWallHit.z, 8000, "the crossing keeps the segment z");
+    FCK_EQ(gWallHitPositions[0].x, 5596, "the diagonal candidate x");
+    FCK_EQ(gWallHitPositions[0].y, 2596, "the diagonal candidate y");
+    FCK_EQ(gWallHitKinds[0], 3, "the diagonal candidate kind");
+    FCK_EQ(gWallHitTopHeights[0], 9692, "shape 6 shifts the corners: high = (0x10 << 8) + (0x20 * 5596 >> 5)");
+    FCK_EQ(outB, 9692, "the diagonal top feeds outB");
+    FCK_EQ(outA[0], 2596, "the diagonal outA y");
+    FCK_EQ(outA[2], 5596, "the diagonal outA x");
+
+    /* two candidates: both are recorded, neither beats the corner baseline,
+     * so the last one stays selected */
+    cell_reset();
+    *(u16 *)(lr_tile + 0x3CC) = (0x10 << 4) | 2;
+    *(u32 *)(lr_tile + 0x5E0) = 80u << 15;
+    *(u32 *)(lr_tile + 0x5E4) = 80u << 15;
+    gTileShapeTable[80] = (11 << 3) | 1;
+    gTileCornerIndices[80][1] = 1;
+    gTileCornerIndices[80][2] = 2;
+    gTileCornerIndices[80][3] = 3;
+    a.x = 1000; a.y = -400; a.z = 8000;
+    b.x = 3000; b.y = 400; b.z = 8000;
+    FCK_EQ(gTestMapCellRay(&a, &b, outA, &outB, 0), 0x2A01, "two identical walls keep the last");
+    FCK_EQ(gWallHitPolys[0], poly, "the first candidate is recorded");
+    FCK_EQ(gWallHitPolys[1], poly, "the second candidate is recorded");
+    FCK_EQ(gWallHitKinds[1], 1, "the second candidate kind");
+    FCK_EQ(outB, 9692, "outB comes from the selected candidate");
+
+    /* optional outputs may be null */
+    cell_reset();
+    *(u16 *)(lr_tile + 0x3CC) = (0x10 << 4) | 1;
+    *(u32 *)(lr_tile + 0x5E0) = 80u << 15;
+    gTileShapeTable[80] = (11 << 3) | 1;
+    gTileCornerIndices[80][1] = 1;
+    gTileCornerIndices[80][2] = 2;
+    gTileCornerIndices[80][3] = 3;
+    a.x = 1000; a.y = -400; a.z = 8000;
+    b.x = 3000; b.y = 400; b.z = 8000;
+    FCK_EQ(gTestMapCellRay(&a, &b, 0, 0, 0), 0x2A01, "null outputs still return the code");
+    FCK_EQ(gWallHitPolys[0], poly, "null outputs still record the candidate");
+    (void)i;
+}
+
 int main(void)
 {
     test_compound_visual_reset();
@@ -2589,5 +2794,6 @@ int main(void)
     test_registry_load();
     test_heap_allocator();
     test_path_mover_vertical();
+    test_map_cell_ray();
     return lk_done("leaf_runtime");
 }
