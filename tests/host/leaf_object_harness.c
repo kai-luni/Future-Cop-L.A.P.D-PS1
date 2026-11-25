@@ -101,7 +101,10 @@ struct SoundBank gSoundEntryTable[110] __asm__("D_800A7938");
 
 /* =========================================================================
  * External stand-ins (bound by retail func_ label, record calls and return
- * test-configured values).
+ * test-configured values; exception: mock_remove_sample for func_800242B4
+ * shifts samples[] and decrements count when mock_compact_on_remove is set
+ * so gClearSoundProgramSamples's drain loop terminates and observes each
+ * compacted head).
  * ========================================================================= */
 
 static u8 mock_draining_during_cb;
@@ -391,6 +394,11 @@ static void test_stream_rings(void)
     FCK_EQ(gVagmQueueDraining, 0, "draining flag cleared to 0 on exit");
     FCK_EQ(gVagmReadIndex, 1, "VAGM read index wraps from 2 across 3 and 0 to stop at 1");
     FCK_CHECK(gVagmRing[0] == 0 && gVagmRing[2] == 0 && gVagmRing[3] == 0, "drained VAGM slots cleared");
+    FCK_EQ(gStreamAssetReleaseRing[0], 0x777, "full release slot remains occupied");
+    FCK_EQ(gStreamAssetReleaseWriteIndex, 0, "full release ring write index does not advance");
+    FCK_EQ(fck_calls_to("cb_80029650"), 3, "full release ring drops all 3 drained entries to overflow cb");
+    FCK_EQ(fck_call_n("cb_80029650", 0).a0, 0x200, "overflow cb receives dropped 0x200");
+    FCK_EQ(fck_call_n("cb_80029650", 1).a0, 0x300, "overflow cb receives dropped 0x300");
 
     /* Clean transfer into empty release ring */
     lk_fill(gStreamAssetReleaseRing, 0, sizeof(gStreamAssetReleaseRing));
@@ -744,7 +752,9 @@ static void test_actor_and_spawns(void)
     rec_a.unk14 = 14;
     rec_a.unk28 = 4;
     rec_a.unk2A = -3;
+    fck_log_reset();
     gInstallSpawnRecord(&rec_a);
+    FCK_EQ(fck_calls_to("free"), 0, "empty slot 14 skips free");
     FCK_EQ(rec_a.unk2A, 0, "negative unk2A clamped to 0");
     FCK_EQ(rec_a.unk28, -1, "negative unk2A forces unk28 to -1");
 
@@ -752,7 +762,9 @@ static void test_actor_and_spawns(void)
     rec_a.unk14 = 15;
     rec_a.unk28 = 4;
     rec_a.unk2A = 0;
+    fck_log_reset();
     gInstallSpawnRecord(&rec_a);
+    FCK_EQ(fck_calls_to("free"), 0, "empty slot 15 skips free");
     FCK_EQ(rec_a.unk2A, 0, "zero unk2A remains 0");
     FCK_EQ(rec_a.unk28, -1, "zero unk2A forces unk28 to -1");
 }
