@@ -5,6 +5,7 @@
  *
  *   func_8003FA34 gQueueOrApplyMapOccupancy  occupancy registration, immediate
  *                                            vs. deferred onto D_8009F708
+ *   func_8003FAD4 gFinishLevelLoad           replay and deferred-pool release
  *   func_8003BC0C gSpawnEntityPrimaryType    the writer the queue drains into
  *   func_8003B838 gGetSpawnDescColumn        per-object slot column lookup
  *   func_8003BF50 gGetEntitySpawnBank        kind -> bank word forwarded to the
@@ -12,6 +13,7 @@
  *   func_8003B65C gQuarterIndex              counter -> 0..3 bucketing
  *   func_8003BA50 gFlagQuartileChange        quartile crossing flag
  *   func_800195A4 gTakeFixedPoolSlot         the pool the deferral allocates from
+ *   func_8002D664 gHandleLinkedPropEntity    objective message gate and scoring
  *   func_8002D1A0 gTryCaptureObjective       proximity capture + ownership
  *   func_80060E74 gRegisterUnitSpawner       spawner record registration
  *   func_80019CA0/80019C38/80019BF0/80019A74 resource blob walk + registry
@@ -31,9 +33,11 @@
  * arguments, func_80069D68 (script VM) records the script pointer and id it was
  * handed and returns a configured value, func_80019668 (PRNG) returns a
  * configured value and counts calls, func_8002AE54 (entity handler factory)
- * records the type byte it was given.
+ * records the type byte it was given. Replay replaces heap and GPU services;
+ * linked-prop dispatch replaces the base handler and other engine services.
  */
 #include "fc_testkit.h"
+#include "mocks/gpu_mock.h"
 
 #define RETAIL_BASE 0x80010000u
 #define RELOC 0x70000000u
@@ -56,12 +60,14 @@ extern u8 gRetailRam[] __asm__("D_RAM");
 
 /* Units under test. */
 extern void gQueueOrApplyMapOccupancy(void *) __asm__("func_8003FA34");
+extern void gFinishLevelLoad(void) __asm__("func_8003FAD4");
 extern void gSpawnEntityPrimaryType(void *) __asm__("func_8003BC0C");
 extern u8 gGetSpawnDescColumn(void *) __asm__("func_8003B838");
 extern s32 gGetEntitySpawnBank(void *) __asm__("func_8003BF50");
 extern s32 gQuarterIndex(s32, s32) __asm__("func_8003B65C");
 extern void gFlagQuartileChange(void *, s32) __asm__("func_8003BA50");
 extern void *gTakeFixedPoolSlot(void *) __asm__("func_800195A4");
+extern s32 gHandleLinkedPropEntity(s32, void *, void *, s32) __asm__("func_8002D664");
 extern void gTryCaptureObjective(void *, void *) __asm__("func_8002D1A0");
 extern void gRegisterUnitSpawner(void *) __asm__("func_80060E74");
 extern u8 *gFindSectionHeader(u8 *, u32, u32, s32) __asm__("func_80019CA0");
@@ -102,6 +108,40 @@ void gSpawnTypeAtOwner(void *object, s32 column, s32 arg2, s32 bank, s32 arg4)
         g_spawn[g_spawn_calls].arg4 = arg4;
     }
     g_spawn_calls++;
+}
+
+/* Level-load engine services. Observe the release boundary without a heap. */
+static void *g_released_pool;
+static s32 g_release_calls, g_spawn_calls_at_release;
+
+void func_80019584(void *pool)
+{
+    g_release_calls++;
+    g_released_pool = pool;
+    g_spawn_calls_at_release = g_spawn_calls;
+}
+
+void func_8003C590(s32 bank) { (void)bank; }
+
+/* Linked-prop services: only the return and attacker lookup are configured. */
+static s32 g_base_result, g_lookup_id;
+static void *g_lookup_result;
+
+s32 func_8002AD58(s32 msg, void *obj, void *data, s32 extra)
+{
+    (void)msg; (void)obj; (void)data; (void)extra;
+    return g_base_result;
+}
+
+void func_8002C584(void *obj, void *data, s32 extra)
+{ (void)obj; (void)data; (void)extra; }
+s32 func_8002CC30(void *obj, void *data) { (void)obj; (void)data; return 0; }
+void func_80063194(void *key) { (void)key; }
+
+void *func_8004D664(s32 id)
+{
+    g_lookup_id = id;
+    return g_lookup_result;
 }
 
 /* func_80069D68 script VM: records the script pointer and the id it was given,
@@ -175,9 +215,9 @@ struct Pool { u8 pad00[0x0C]; s32 count; void *head; };
 /* Deferred queue node {next, object}. */
 struct QNode { struct QNode *next; void *object; };
 
-/* Entity views used by func_8002D1A0 (offsets are the unit's own). */
+/* Compatible entity views for func_8002D1A0 and func_8002D664. */
 struct Coord { u8 pad00[0x34]; s32 x; s32 y; s32 z; s32 radius; };
-struct SubStats { u8 pad00[0x12]; u16 unk12; u8 pad14[0x2C]; s32 unk40; u8 pad44[0x7D]; s8 unkC1; };
+struct SubStats { u8 pad00[0x10]; u16 unk10; u16 unk12; u8 pad14[0x2C]; s32 unk40; u8 pad44[0x7D]; s8 unkC1; };
 struct Trk { u8 pad00[0x12]; u16 unk12; u8 pad14[4]; u16 unk18; u8 pad1A[0x20]; u16 unk3A; };
 struct Menu {
     u8 pad00[0x64];
@@ -197,7 +237,9 @@ struct Ent {
     u8 unk23;
     u32 unk24;
     struct Coord coord;
-    u8 pad6C[0x26];
+    u8 pad6C[0x20];
+    u32 unk8C;
+    u8 pad90[2];
     u8 unk92;
     u8 unk93;
     u8 pad94[8];
@@ -438,6 +480,43 @@ static void test_occupancy(void)
     g_obj.tableIndex = 0;
     gQueueOrApplyMapOccupancy(&g_obj);
     FCK_EQ(g_spawn_calls, 0, "no pool, index 0: no occupancy write");
+}
+
+static void test_occupancy_replay(void)
+{
+    struct MapObject newest;
+    struct SlotDesc newest_desc;
+
+    CASE("finish load replays newest first, then releases the deferred pool");
+    reset_occupancy();
+    arm_deferral();
+    newest = g_obj;
+    newest_desc = g_desc;
+    newest.tableIndex = 6;
+    newest_desc.column = 0x2B;
+    wr32(A_SLOTDESC + 6 * 4, (u32)&newest_desc);
+    g_release_calls = 0;
+    g_spawn_calls_at_release = -1;
+    g_released_pool = 0;
+    fcm_gpu_reset();
+
+    gQueueOrApplyMapOccupancy(&g_obj);
+    gQueueOrApplyMapOccupancy(&newest);
+    FCK_EQ(g_spawn_calls, 0, "replay: both registrations waited for load finish");
+    gFinishLevelLoad();
+    FCK_EQ(g_spawn_calls, 2, "replay: writes both deferred registrations");
+    FCK_CHECK(g_spawn[0].object == &newest, "replay: newest object written first");
+    FCK_EQ(g_spawn[0].column, 0x2B, "replay: newest object's descriptor used");
+    FCK_CHECK(g_spawn[1].object == &g_obj, "replay: oldest object written second");
+    FCK_EQ(g_spawn[1].column, 0x2A, "replay: oldest object's descriptor used");
+    FCK_EQ(g_release_calls, 1, "replay: one pool release requested");
+    FCK_CHECK(g_released_pool == &g_pool, "replay: releases the original pool");
+    FCK_EQ(g_spawn_calls_at_release, 2, "replay: releases the pool after both writes");
+    FCK_EQ(rd32(A_POOL), 0, "replay: clears the pool pointer");
+    FCK_EQ(rd32(A_QLIST), 0, "replay: clears the list head");
+
+    gQueueOrApplyMapOccupancy(&g_obj);
+    FCK_EQ(g_spawn_calls, 3, "replay: subsequent registration writes immediately");
 }
 
 /* ==================================================================== (c) */
@@ -691,8 +770,8 @@ static void test_capture(void)
     capture_fixture();
     g_other.unk14 = 0x11;
     gTryCaptureObjective(&g_self, &g_other);
-    FCK_EQ(g_menu.unk64[1], 1, "player 1 outpost counter");
-    FCK_EQ(g_menu.unk7C[1], 1, "player 1 total counter");
+    FCK_EQ(g_menu.unk64[1], 1, "1P: enemy drone outpost claims");
+    FCK_EQ(g_menu.unk7C[1], 1, "1P: enemy drone total counter");
     FCK_EQ(g_ptrack.unk3A, 1, "per-player claimed counter");
     FCK_EQ(g_ptrack.unk18, 0, "per-player team cleared");
     FCK_EQ(g_menu.unkE0, 6, "last-capture banner id 6");
@@ -723,6 +802,56 @@ static void test_capture(void)
     g_script_bytes[0] = 0;
     gTryCaptureObjective(&g_self, &g_other);
     FCK_EQ(g_script_calls, 0, "empty first byte: no script");
+}
+
+static void test_linked_prop_messages(void)
+{
+    CASE("linked prop msg 10 gates capture on kind 0x24");
+    capture_fixture();
+    g_self.unk16 = 6;
+    FCK_EQ(gHandleLinkedPropEntity(10, &g_self, &g_other, 0), 1,
+           "msg 10: non-child comparison succeeds even for another kind");
+    FCK_EQ(g_self.unkFE, 0, "msg 10: non-objective does not latch capture");
+    FCK_EQ(g_script_calls, 0, "msg 10: non-objective does not run capture script");
+    FCK_EQ(g_menu.unk64[1], 0, "msg 10: non-objective does not credit a claim");
+
+    /* Same eligible attacker and position: only the kind byte changes. */
+    g_self.unk16 = 0x24;
+    FCK_EQ(gHandleLinkedPropEntity(10, &g_self, &g_other, 0), 1,
+           "msg 10: objective reports the same non-child comparison");
+    FCK_EQ(g_self.unkFE, 1, "msg 10: objective latches capture");
+    FCK_EQ(g_script_calls, 1, "msg 10: objective runs capture script");
+    FCK_EQ(gHandleLinkedPropEntity(10, &g_self, &g_child, 0), 0,
+           "msg 10: matching child returns 0");
+
+    CASE("linked prop msg 5 credits the enemy drone and raises banner 7");
+    capture_fixture();
+    g_self.unk16 = 0x24;
+    g_self.unkFE = 1;     /* Mode 1 scores against +0xF7, not +0xF6. */
+    g_self.unk8C = 0xC0001234;
+    g_player.unk18 = 0x22;
+    g_other.unk14 = 0xC011;  /* Masked attacker owner matches drone id 0x11. */
+    g_ptrack.unk18 = 9;
+    g_lookup_id = -1;
+    g_lookup_result = &g_other;
+    g_base_result = 0x4567;
+
+    FCK_EQ(gHandleLinkedPropEntity(5, &g_self, 0, 0), 0x4567,
+           "msg 5: forwards the base handler result after scoring");
+    FCK_EQ(g_menu.unk64[1], 1, "msg 5: credits the enemy drone outpost claim");
+    FCK_EQ(g_menu.unk7C[1], 1, "msg 5: increments the enemy drone total");
+    FCK_EQ(g_menu.unk64[0], 0, "msg 5: leaves the human outpost score alone");
+    FCK_EQ(g_psub.unk10, 1, "msg 5: increments the slot-0 tracker");
+    FCK_EQ(g_ptrack.unk18, 0, "msg 5: clears the drone tracker team");
+    FCK_EQ(g_lookup_id, 0x1234, "msg 5: masks attacker flags before lookup");
+    FCK_EQ(g_menu.unkE0, 7, "msg 5: matching attacker owner raises banner 7");
+
+    CASE("linked prop msg 5 does not score when the suppression flag is set");
+    g_self.unk24 |= 0x4000000;
+    g_lookup_id = -1;
+    gHandleLinkedPropEntity(5, &g_self, 0, 0);
+    FCK_EQ(g_menu.unk64[1], 1, "msg 5: suppression leaves the score unchanged");
+    FCK_EQ(g_lookup_id, -1, "msg 5: suppression skips attacker lookup");
 }
 
 /* ==================================================================== (d) */
@@ -903,11 +1032,13 @@ int main(void)
     /* The suite never relies on zeroed BSS: every reset repopulates its slots. */
     reset_occupancy();
     test_occupancy();
+    test_occupancy_replay();
 
     test_slot_table();
 
     capture_fixture();
     test_capture();
+    test_linked_prop_messages();
 
     test_spawner_record();
 

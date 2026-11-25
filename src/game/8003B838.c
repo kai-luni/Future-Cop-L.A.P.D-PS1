@@ -38,7 +38,7 @@ u8 gGetSpawnDescColumn(struct Unk3BObject *object) __asm__("func_8003B838");
  * Confirmed: func_8003BC0C (0x8003BC30 in asm/us/main.s), func_8003FA34 (0x8003FA78 in asm/us/main.s) / Likely: none / Unknown: none.
  *
  * @par Map-object path
- * Step 2 of the map-object path (docs/precinct-assault-map-objects.md): the
+ * Step 5 of the map-object path (docs/precinct-assault-map-objects.md): the
  * "does this object want a grid cell, and which one" predicate. The byte it
  * returns is the *primary* column of the object's D_800A0C70 slot descriptor,
  * which func_8003BC0C then passes to func_800402DC together with the bank from

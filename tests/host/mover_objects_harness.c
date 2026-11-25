@@ -479,9 +479,7 @@ static void test_dispatch(void)
     FCK_EQ(rdu8(ADDR_LIFT + S_COUNT), 1, "dispatch: msg 2 ran the real init (count copied)");
     FCK_EQ(rdu8(ADDR_LIFT + S_MODE), 2, "dispatch: msg 2 init derivation ran (mode 2)");
     FCK_EQ(rds32(ADDR_LIFT + S_VALUES + 0), (50 << 4) + 0x100, "dispatch: init stop height copied + ground");
-    /* the return is hardcoded 0 */
-    r = 0;
-    FCK_EQ(r, 0, "dispatch: msg 2 returns 0 (hardcoded)");
+    FCK_EQ(c.a2, 0xABC, "dispatch: msg 2 forwards a3 to init and its base handler");
 
     fck_case("A3 msg 5 removes the ground key first, then the base handler");
     reset_all();
@@ -494,7 +492,7 @@ static void test_dispatch(void)
     c = fck_call_n(N_BASE, 0);
     FCK_EQ(c.a0, 5, "dispatch: msg 5 base call carries message 5");
 
-    fck_case("A4 msg 6 forwards (obj, a2) to the real step and returns its result");
+    fck_case("A4 msg 6 forwards (obj, a2) to the real step");
     reset_all();
     wr8(ADDR_LIFT + O_UNKC6, 0);
     wr32(ADDR_LIFT + O_UNKC0, (u32)-1);   /* armed */
@@ -505,7 +503,8 @@ static void test_dispatch(void)
     wr32(ADDR_LIFT + O_UNKA0 + 0, 5000);  /* thresholds[0] */
     wr16(ADDR_LIFT + O_UNK70, 1);         /* frame index -> GTE input offset */
     r = gHandleElevatorEntityMessages(6, mem(ADDR_LIFT), 2, 0);
-    FCK_EQ(r, 0, "dispatch: msg 6 returns the step result (0)");
+    /* The real step always returns 0; its side effects prove dispatch, not r. */
+    FCK_EQ(r, 0, "dispatch: msg 6 returns 0");
     FCK_EQ(rds32(ADDR_LIFT + O_UNK54), 200, "dispatch: msg 6 ran the real step (height += 2*100)");
     FCK_EQ(fck_calls_to(N_GTELOAD), 1, "dispatch: msg 6 step reached the frame-refresh tail");
 
@@ -631,6 +630,22 @@ static void test_init_elevator(void)
     FCK_EQ(rds32(ADDR_LIFT + S_CURRENT), 512, "init2: current = speeds[last] when (flags & 5) == 0");
     FCK_EQ(rds32(ADDR_LIFT + S_POS + 4), 12 << 4, "init2: entity y placed at values[last] (no ground)");
     FCK_EQ(gCapGteIn, ADDR_FRAMES + 8, "init2: frame vertex uses index 0 (frames + 8)");
+
+    fck_case("B3 signed speed rescaling truncates toward zero");
+    reset_all();
+    {
+        static const s16 fractional[3] = { 217, -217, -219 };
+        build_record(3, 1, pos, fractional, 299, -299, 0, 1, 0, 0);
+    }
+    gInitElevator(mem(ADDR_LIFT), (void *)host_of(ADDR_WRAPPER), 0);
+
+    /* Retail init divides the signed scaled inputs at +0xAC and +0xB8.
+     * The numerators are +/-55552, -56064, and +/-4784 respectively. */
+    FCK_EQ(rds32(ADDR_LIFT + S_SPEEDS + 0), 254, "init3: 55552 / 218 truncates to 254");
+    FCK_EQ(rds32(ADDR_LIFT + S_SPEEDS + 4), -254, "init3: -55552 / 218 truncates to -254");
+    FCK_EQ(rds32(ADDR_LIFT + S_SPEEDS + 8), -257, "init3: -56064 / 218 truncates to -257");
+    FCK_EQ(rds32(ADDR_LIFT + O_UNKB8 + 0), 15, "init3: 4784 / 300 truncates to 15");
+    FCK_EQ(rds32(ADDR_LIFT + O_UNKB8 + 4), -15, "init3: -4784 / 300 truncates to -15");
 }
 
 /* --------------------------------------------- C. func_80041880 step-tick */
@@ -1040,9 +1055,10 @@ static void test_setup_carrier(void)
     FCK_EQ(gCapOwner, ADDR_CARRIER, "setup: request owner is the carrier");
     FCK_EQ(gCapTransCoord, ADDR_CARRIER + 0x28, "setup: part vertex read from coord +0x28");
     FCK_EQ(gCapTransPart, 2, "setup: part vertex index = the computed flags slot");
-    FCK_EQ(gCapSpawnPos0, 0x11110000, "setup: position x from the transform stub");
-    FCK_EQ(gCapSpawnPos1, 0x22220000, "setup: position y from the transform stub");
-    FCK_EQ(gCapSpawnPos2, 0x33330000, "setup: position z from the transform stub");
+    /* Check forwarding into the spawn request, not the transform math. */
+    FCK_EQ(gCapSpawnPos0, 0x11110000, "setup: forwards transform output x to spawn");
+    FCK_EQ(gCapSpawnPos1, 0x22220000, "setup: forwards transform output y to spawn");
+    FCK_EQ(gCapSpawnPos2, 0x33330000, "setup: forwards transform output z to spawn");
 }
 
 /* E. func_800395A8 carrier message dispatch ------------------------------- */

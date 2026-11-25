@@ -2,25 +2,29 @@
 # Run the UNCHANGED retail units behind Precinct Assault's moving map objects
 # (type-10 lift chain and the mounted-turret carrier chain) under qemu-mipsel.
 #
-# Usage: mover_objects_test.sh
+# Usage: [TOOLCHAIN=...] [OUT=...] [STRICT=1] mover_objects_test.sh
 # Builds into tests/host/build-movers (gitignored) and prints a final
 # "movers: ALL PASS (N cases)" line, exiting non-zero on any failure.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="$(cd "$HERE/../.." && pwd)"
-T="$DECOMP/.toolchain"
-OUT="$DECOMP/tests/host/build-movers"
+T="${TOOLCHAIN:-$DECOMP/.toolchain}"
+OUT="${OUT:-$DECOMP/tests/host/build-movers}"
 QEMU="${QEMU:-$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}"
 GCC="$T/gcc-2.7.2-cdk/gcc"
 MASPSX="$(echo "$T"/maspsx-*/maspsx.py)"
-mkdir -p "$OUT"
-export PATH="$T/mipsel-binutils/root/usr/bin:$PATH"
-export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-
 if [ ! -x "$GCC" ] || [ ! -x "$QEMU" ]; then
+    if [ "${STRICT:-0}" = 1 ]; then
+        echo "host-movers: qemu or C toolchain missing" >&2
+        exit 1
+    fi
     echo "host-movers: qemu or C toolchain missing, skipped"
     exit 0
 fi
+
+mkdir -p "$OUT"
+export PATH="$T/mipsel-binutils/root/usr/bin:$PATH"
+export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 compile_s() {
     "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"

@@ -112,13 +112,13 @@ void gTryCaptureObjective(struct Ent *self, struct Ent *other) __asm__("func_800
  * Confirmed: func_8002D664 (0x8002D6FC, message 10 handler for type 0x24) / Likely: none / Unknown: none.
  *
  * @par Map-object path
- * Step 5 of the map-object path: the map-placed base is an objective entity of
+ * Step 8 of the map-object path: the map-placed base is an objective entity of
  * kind 0x24, and this is the whole ownership transfer. Nothing here costs
  * anything or asks the player for input - the capture is proximity plus team
- * and type guards, then the latch +XFE, the team ids, the counters and the
+ * and type guards, then the latch +0xFE, the team ids, the counters and the
  * score are written in one pass. Mode 1 means "claimed for the attacker's own
- * team" (the id matched +XF6), mode 2 "taken from the opposing team" (id
- * matched +XF7); the mode also scales the scored points. The two branches
+ * team" (the id matched +0xF6), mode 2 "taken from the opposing team" (id
+ * matched +0xF7); the mode also scales the scored points. The two branches
  * below (single player and split screen) only differ in *where* the counter
  * lands. See docs/precinct-assault-map-objects.md and
  * tests/host/map_objects_test.sh (cases "capture: ...").

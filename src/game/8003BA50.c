@@ -41,7 +41,7 @@ void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_80
  * Confirmed: func_8002A940, func_8002AA1C, func_8002FC90, func_800324E0, func_8003526C, func_800395A8, func_800398EC, func_80058210, func_80058D78, func_80060A0C.
  *
  * @par Map-object path
- * Step 6 of the map-object path (docs/precinct-assault-map-objects.md): the
+ * In the map-object path (docs/precinct-assault-map-objects.md), the
  * "a quarter of the base's capacity went by" marker. A base counts its own
  * progress in +0x1C against a maximum in +0x1E; every time the counter lands in
  * a different quarter than the previous value, this sets 0x4000 in the flags

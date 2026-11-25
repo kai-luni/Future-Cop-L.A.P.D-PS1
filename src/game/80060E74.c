@@ -96,7 +96,7 @@ void gRegisterUnitSpawner(struct Unk60E74Arg *arg0) __asm__("func_80060E74");
  * Confirmed: func_80024EC8 (asset loader).
  *
  * @par Map-object path
- * Step 1 of the map-object path and the *only* place a unit-producing structure
+ * Step 10 of the map-object path and the *only* place a unit-producing structure
  * is created (docs/precinct-assault-map-objects.md). The argument is an asset
  * descriptor the level loader handed over; the unit appends it to D_8009F800,
  * resolves the three tagged views 'CASt' (the record), 'LSRa' (the ordered

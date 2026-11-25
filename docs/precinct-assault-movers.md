@@ -19,9 +19,8 @@ The map-placed entity source itself is the `"Csac"` asset queue: the asset
 loader `func_80024EC8` (`src/game/80024EC8.c`) hands every `"Csac"`
 (0x43736163) request to `func_80060E74` (`src/game/80060E74.c`), which
 records a spawner whose handler is selected by
-`gGetEntityHandlerForType(*(u8 *)(data->unk28 + 4))` (`src/game/80060E74.c`
-line 143) — i.e. the type byte in the asset record drives the same
-`func_8002AE54` lookup.
+`gGetEntityHandlerForType(*(u8 *)(data->unk28 + 4))` (`src/game/80060E74.c:157`) —
+i.e. the type byte in the asset record drives the same `func_8002AE54` lookup.
 
 ## Function table
 
@@ -142,10 +141,10 @@ func_80061CAC; the second object's copy swaps the halves,
 `gProcessCellCollisionPairs` (func_800623FC) visits each pair of a cell
 once, requires combined flags `0x2200`, asks objects with flag
 `0x800000` for approval via event 10, then pairs that pass go to
-func_800620D8 (`src/game/800623FC.c:20-33,39-55`); its callers are the
-grid sweep func_80062614 (`src/game/800623FC.c:32`), driven by the
-visibility-grid rebuild `gUpdateViewCollisionGrid` family
-(`src/game/80062FB4.c:43-49`). So message 11 is *the* collision-contact
+func_800620D8 (`src/game/800623FC.c:39-55`); it is called by
+`gSweepCollisionGridPairs` (func_80062614 in `src/game/80062614.c`),
+which the visibility-grid rebuild `gUpdateViewCollisionGrid` invokes
+(`src/game/80062FB4.c:91`). So message 11 is *the* collision-contact
 event — a type-10 lift receives it once per colliding pair per sweep,
 with the raw hit word as payload.
 
@@ -373,18 +372,18 @@ harness under qemu-mipsel):
 
 ## Retail data anchors (file:line)
 
-- `src/game/8002AE54.c:70` — `case 10: return (s32)gHandleElevatorEntity;`
-- `src/game/8002AE54.c:82` — `case 20: return (s32)gHandleMountedTurretCarrierMessages;`
-- `src/game/80041B6C.c:37-59` — type-10 message switch with the capped counter at `case 11`
-- `src/game/80041488.c:74-122` — script-record init and rescaling
-- `src/game/80041880.c:155-258` — gate order, motion, stop-change events, matrix tail
+- `src/game/8002AE54.c:70-71` — `case 10: return (s32)gHandleElevatorEntity;`
+- `src/game/8002AE54.c:82-83` — `case 20: return (s32)gHandleMountedTurretCarrierMessages;`
+- `src/game/80041B6C.c:40-59` — type-10 message switch with the capped counter at `case 11`
+- `src/game/80041488.c:80-128` — script-record init and rescaling
+- `src/game/80041880.c:160-263` — gate order, motion, stop-change events, matrix tail
 - `src/game/80041728.c:69-145` — four-slot command interpreter
 - `src/game/80039504.c:68-80` — carrier setup and child spawn
 - `src/game/800395A8.c:52-115` — carrier message dispatch and child sync
-- `src/game/80039298.c:64-137` — container message dispatch
+- `src/game/80039298.c:66-139` — container message dispatch
 - `src/game/80039418.c:91-121` — kind-0x15 spawn request assembly
 - `src/game/80024EC8.c` — `"Csac"` → `func_80060E74` asset dispatch (map-placed entity source)
-- `src/game/80060E74.c:143` — type byte `*(u8 *)(data->unk28 + 4)` → `gGetEntityHandlerForType`
+- `src/game/80060E74.c:157` — type byte `*(u8 *)(data->unk28 + 4)` → `gGetEntityHandlerForType`
 
 ## Test coverage
 
@@ -397,22 +396,23 @@ gcc-2.7.2-cdk + maspsx + fix_align pipeline (identical to
 (`func_80010750`, `func_80010234`, `func_800188D0`) and all other callees
 are recording stand-ins bound by asm alias; no cop2/GTE asm unit is linked.
 
-Executed (62 cases, 252 checks, real output):
+Executed (63 cases, 257 checks):
 
 - `gHandleElevatorEntityMessages`: all arms 1/2/5/11/default/6 via the real
   init and step units — the 20-cap of the hit counter (19→20, 20→20, 5→6,
   −1→0), callee order, and argument forwarding.
 - `gInitElevator`: full record copy/rescale, ground snap, end/last/mode
   derivations (both `end < count` and `end >= count`), current selection,
-  volatile previous/old round-trip, callee order and args, frame refresh.
+  signed division truncating toward zero for both divisors, volatile previous/old
+  round-trip, callee order and args, frame refresh.
 - `gStepElevator` + real `gRunEntityCommands`: frozen bit, hold countdown,
   both directions, both reversals, stop-change snaps, dwell reload
   (per-stop and trigger-mode constant 1), timer-0 player arming, busy
   player, trigger-mode gating, both sound paths, matrix tail, opcodes
   0x52/0x53 in every documented argument range, unknown-opcode persistence.
 - `gSetupMountedTurretCarrier` + real `gSpawnMountedPartChild`: callee
-  order, computed flags, every forwarded spawn-request field, child
-  registration, occupancy queue.
+  order, computed flags, forwarded spawn-request fields (including the transform
+  stub's output, not the transform math), child registration, occupancy queue.
 - `gHandleMountedTurretCarrierMessages`: all arms, child health/flag
   propagation in both directions, quartile-change gating (live/dead child,
   0x40000 bit), null-child handling.

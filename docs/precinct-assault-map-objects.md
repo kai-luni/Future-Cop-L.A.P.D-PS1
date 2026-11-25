@@ -10,7 +10,9 @@ Precinct Assault places a level's structures as *map objects*: entity records th
 
 Everything below was read out of `src/game/*.c`, `config/us/matching_units.json`, and the retail image `baseroms/us/SLUS_007.39`. Where a claim rests on inference rather than on code, it is marked **Likely** or **Unproven**.
 
-### Kauf-Pfad in Precinct Assault: C-Code vs. `RPNS`-Skriptpool (Confirmed)
+### Kauf-Pfad in Precinct Assault: C-Code vs. `RPNS`-Skriptpool
+
+**Datengrundlage: Confirmed (offline decode, tool not in repo).** Das gilt für die `Csac`-Zählungen und die dekodierten `RPNS`-Skripte aus den Retail-`.MIS`-Dateien; die verlinkten C-Stellen belegen das Lade- und VM-Verhalten, nicht den Inhalt der Dateien.
 
 **Befund (Confirmed):** Es gibt im PS-X-EXE-C-Code (`baseroms/us/SLUS_007.39`) zwar kein hartcodiertes Kauf-Menü und keine Preis-Tabelle, und die `Csac`-Spawner-Records selbst enthalten **keine** Preis-Logik — der tatsächliche Precinct-Assault-Einheitenkauf (Preis-Gate + Punkte-Abzug) existiert jedoch **vollständig datengetrieben im `RPNS`-Skriptpool** jeder PA-`.MIS`-Datei:
 
@@ -156,33 +158,35 @@ Sizes are from `config/us/matching_units.json` (`size`), addresses from the same
 
   The pointer cells form one contiguous descriptor `0x8009AB60..0x8009ABB4`, i.e. a stat-screen row table (`Level 10`, `LOSER`, `Total Time`, `First Death`, `Time as Walker`, `Time as Hovercraft` complete the block). The `Outposts Claimed` row is exactly the `unk64`/`unk7C` counter that `func_8002D1A0` increments, which is why the claim really is an "outpost claim" and not a generic capture.
 * **Absent strings** — the same image contains no `buy`/`purchase`/`cost`/`price`/`build` occurrence at all (byte scan over the whole 589 824-byte file). That is the evidence for the "no purchase UI" finding above.
-* **Section tags** — `'CASt'` = `0x74534143`, `'LSRa'` = `0x6152534C`, `'TCAt'` = `0x74414354`, used as the `func_80019CA0`/`func_80019C38` tag argument in `src/game/80060E74.c:124,141,142` and `src/game/8003BDA0.c:47`.
+* **Section tags** — `'CASt'` = `0x74534143`, `'LSRa'` = `0x6152534C`, `'TCAt'` = `0x74414354`, used as the `func_80019CA0`/`func_80019C38` tag argument in `src/game/80060E74.c:124,141,142` and `src/game/8003BDA0.c:42`.
 * **Instruction-order anchors** (read-only parent checkout, `asm/us/main.s`): `glabel func_8003FA34` at line 55 923 (50 lines), `func_8003FAD4` at 55 973, `func_8003F79C` at 55 727, `func_8003BC0C` at 51 473, `func_8003B838` at 51 193, `func_8003BA50` at 51 346, `func_8003B65C` at 51 043, `func_8003BF50` at 51 727, `func_8002D1A0` at 34 832, `func_8002D664` at 35 169, `func_80060E74` at 94 408, `func_800616A0` at 95 013.
 * **Global addresses via `$gp`** — `func_8003FA34` loads `D_8009F70C` from `0x4F8($gp)` and `D_8009F708` from `0x4F4($gp)`; the pool/list pair is adjacent, consistent with the `+0x0C`/`+0x10` field offsets the pool descriptor uses.
 * **`matching_units.json` sizes** — the seven units annotated for this document are `0x4C4` (`8002D1A0`), `0x440` (`8002D664`), `0xA0` (`8003FA34`), `0x70` (`8003BC0C`), `0x60` (`8003B838`), `0x94` (`8003BA50`), `0x1AC` (`80060E74`).
 
 ## Test coverage
 
-`tests/host/map_objects_test.sh` compiles the unchanged retail C of thirteen units with GCC 2.7.2 + maspsx and runs them under `qemu-mipsel`:
+`tests/host/map_objects_test.sh` compiles the unchanged retail C of fifteen units with GCC 2.7.2 + maspsx and runs them under `qemu-mipsel`:
 
 ```
 8003FA34 8003BC0C 8003B838 8003BF50 8003B65C 8003BA50 800195A4
-8002D1A0 80060E74 80019CA0 80019C38 80019BF0 80019A74
+8002D1A0 80060E74 80019CA0 80019C38 80019BF0 80019A74 8003FAD4 8002D664
 ```
 
-`func_800402DC` is *not* linked — it is the boundary: a recording stub keeps its five arguments, so the suite observes what the occupancy chain decided without needing the whole object constructor. `func_80069D68` (script VM), `func_80019668` (PRNG) and `func_8002AE54` (handler factory) are stubs for the same reason.
+`func_800402DC` is *not* linked — it is the boundary: a recording stub keeps its five arguments, so the suite observes what the occupancy chain decided without needing the whole object constructor. `func_80069D68` (script VM), `func_80019668` (PRNG) and `func_8002AE54` (handler factory) are stubs for the same reason. The replay checks the pool release call, not the heap allocator, and stubs the render services. The linked-prop tests stub the base handler and unit lookup; the runner relocates the matching dispatcher's literal RAM operands for QEMU.
 
-Run it from the worktree root (`bash tests/host/map_objects_test.sh`, builds into the gitignored `tests/host/build-map-objects`). It prints `map-objects: ALL PASS (N cases, M checks)` and exits non-zero on the first failing check.
+Run it from the worktree root (`bash tests/host/map_objects_test.sh`, builds into the gitignored `tests/host/build-map-objects`). It prints `map-objects: ALL PASS (N cases, M checks)` and exits non-zero if any check fails.
 
-Result: **36 cases, 165 checks, all pass.**
+Result: **40 cases, 195 checks, all pass.**
 
 | area | what the suite pins |
 |---|---|
 | `func_8003FA34` (cases 1–13) | pool absent → immediate; screen state 4 → immediate; state 0xD → immediate; state 5 → deferred; slot index 0 → dropped *with* the pool untouched; flag `0x40000` → dropped; null descriptor → dropped; descriptor with column 0 → dropped; empty pool → dropped; first deferral onto an empty list; second deferral **prepended** onto a non-empty list; third deferral against an exhausted pool leaves head and links intact; immediate branch still honours the column guard |
+| `func_8003FAD4` | replays two real deferrals newest-first, requests release of the original pool after both writes, clears pool and list pointers, and leaves later registrations on the immediate path |
 | `func_8003B838` | reads `entry[0]`; index 0 / flag `0x40000` / null descriptor / unused index all return 0; other flag bits do not mask |
 | `func_8003B65C` | the exact thresholds (`<= range>>2` → 0, `< range>>1` → 1, `< 3*range>>2` → 2, else 3), including `range == 0` and a negative value |
 | `func_8003BA50` | crossing sets `0x4000`; same quarter does not; the flag is OR-ed onto the existing word; a *downward* crossing flags too; negative counter / null descriptor / zero range / index 0 never flag |
 | `func_8002D1A0` (13 cases: `capture: ...`) | latch one-shot; wrong team; unsupported class; player class with a live slot; inactive player slot; class `0x12` with null carrier and with a live carrier; mode 2 (steal) latches `2` and scores `3×2`/`2×2`; team/child/`unkA8`/`unkDC`/`unk23`/`unkA6`/`unkDE` propagation; flag bit 0 cleared *and* the `0x100000` gate preserved; default radius in/out; radius from `unkFC` and from the attacker's own radius; class `0x25` ignores height while class 5 does not; single-player counters + `unkE0 = 6`; split-screen slot-indexed counters with no banner; script gate (flag clear, null pointer, empty first byte) |
+| `func_8002D664` | msg 10 rejects capture for kinds other than `0x24` and still returns the child comparison; msg 5 credits the 1P enemy drone's counters, updates the tracker and raises banner 7 when the attacker owner matches; the suppression flag blocks scoring |
 | `func_80060E74` (synthetic three-section blob) | registry append at the live count (earlier entries untouched); `'CASt'`/`'LSRa'`/`'TCAt'` walk; delay `×5`; positive delay consumes exactly one PRNG draw and uses `rand % delay`; negative delay mirrored with **no** draw; payload window = descriptor `+0x38`; entry count from the section length; entry pointer resolution and the unresolved-name case; trailing table at `payload - 4`; handler taken from the first `'TCAt'` payload byte; `+0x08` cleared; back-link stored |
 | `func_800195A4`, `func_80019CA0`, `func_80019C38`, `func_80019BF0`, `func_80019A74` | pool pop/head-move/count and the empty-pool case; tag/id section lookup incl. id 0 short-circuit; registry append order, tail linking and key-pair lookup with a miss |
 
@@ -193,9 +197,8 @@ Result: **36 cases, 165 checks, all pass.**
 
 **Branches NOT covered by this suite:**
 
-* `func_8003FAD4` (the replay itself) — the suite drives the deferral path but does not run the replay; the `{next, object}` layout and the prepend order are asserted instead.
 * `func_8003B898` / `func_8003BAE4` — the multi-column footprint writer and the `0x4000` consumer. They call `func_800402DC` and `func_8003B5AC`, i.e. they would need the whole grid, so they are documented but not executed here.
-* `func_8002D664` — the message dispatcher is documented from source; the capture is tested directly at its callee. Message 5's scoring branch (the `unk68`/`unk80`/banner-7 half) is **not** executed.
+* `func_8002D664` — the other dispatch arms and msg 5's per-slot scoring fallback are documented from source, not exercised here.
 * `func_8003BF50`'s carrier branches (`kind 7` via `+0xC0`, `kind 2`/`0xF` via `+0xC8`) — linked but only the `kind 1` path is exercised.
 * `func_800402DC`'s cell-flag and deferred-request paths — stubbed at the boundary by design.
 * `func_80069D68` (script VM) — stubbed; the suite only pins *when* it is called and with which id.
@@ -229,7 +232,7 @@ Result: **36 cases, 165 checks, all pass.**
   - `gScreenResetFlag` (`D_8009FA70`), the countdown that ends a timed match, is armed with `0x78` by the cheat `0x01ADCFED` (`src/game/80060A0C.c:120` context) and decremented by `gFrameDelta` in `gAdvanceGameplayScreenCountdown` (`src/game/80027D9C.c:70`).
 * **The 1P HUD score attribution (`+0x68`/`unk64[1]`) — resolved.** `+0x68` is `score[1]`, the second element of the `s32 score[2]` array at session `+0x64` (`struct State` in `src/game/80047F30.c:38`), and the HUD shows `score[game->player->valuec1]` (`src/game/80047F30.c:214`). `valuec1` (player `+0xC1`, `src/game/80047F30.c:14`) is the *assigned player slot* 0/1: `gInitPlayerUnit` books the chosen slot into `gPlayerEntities[index]` and `state->index` (the `+0xC1` byte) from the spawn record's preferred index, falling back to the first free slot (`src/game/800579D4.c:176-190`). In a 1P Precinct Assault match there is only one player entity, so it books slot 0 and `valuec1 == 0` — the first HUD score box reads `score[0]`, i.e. `+0x64`. **The `unk64[1]`/`unk68` fixed-[1] writes of the 1P capture branches (`src/game/8002D1A0.c:218`, `src/game/8002D664.c:192`) are the opposite side**: they only fire when the capturing unit's team *matches* `gSinglePlayerEntity`'s team (`e->unk18 == id`, `src/game/8002D1A0.c:216`), and `gSinglePlayerEntity` is the type-37 enemy drone publish (`gSinglePlayerEntity = obj`, `src/game/800331CC.c:243`) — so `+0x68` accumulates the *enemy's* outpost claims and the 1P HUD's second score box (`score[1]`, `src/game/80047F30.c:253`) shows it beside the stage line. The two struct views (`unk64[2]` in `src/game/8002D1A0.c:74-78` vs `unk68` in `src/game/8002D664.c:55-59`) are the same array at different offsets. Which team id the *human* player holds (and therefore whether their own claims land in `score[0]` or `score[1]`) is not decided by these units; the 1P branch keys it off the drone's team byte (`unk18`) — see Unproven.
 * The spawner payload is inline at the descriptor's `+0x38`; the trailing table pointer is `payload - 4`. `src/game/80060E74.c:138-144`.
-* Kein hartcodiertes Kauf-Menü oder Preis-Feld im PS-X-EXE-C-Code (`baseroms/us/SLUS_007.39`), und alle 542 `Csac`-Spawner-Records in allen 5 PA-`.MIS`-Dateien (`CONFT.MIS` 111, `HK.MIS` 108, `JOKE.MIS` 102, `OVMP.MIS` 119, `SLIM.MIS` 102) haben leere Inline-Skripte `arg1 = 0x00` / `arg2 = 0x00` (`src/game/80069D68.c:163-165` liefert sofort `1`). Stattdessen liegt der vollständige Precinct-Assault-Kauf-Pfad (Preis-Prüfung, Punkte-Abzug auf `gGameSession[25/26]` via VM-Opcode `25`/`52` und Spawner-Auslösung via VM-Opcode `60` `func_8006158C` → `func_800614BC` `cmd=0x47`) im `RPNS`-Skriptpool jeder PA-`.MIS`-Datei (z. B. `CONFT.MIS+0x68`, `+0x9E`, `+0x191`, `+0x6A7`), referenziert über `SHDR+0x24` (`u24`) von `Cact`-Trigger-Zonen (`TCAt` Typ `95`) und Trigger-Attachments (`TCAt` Typ `14`). Siehe *Kauf-Pfad in Precinct Assault*.
+* **Confirmed (offline decode, tool not in repo):** Kein hartcodiertes Kauf-Menü oder Preis-Feld im PS-X-EXE-C-Code (`baseroms/us/SLUS_007.39`), und alle 542 `Csac`-Spawner-Records in allen 5 PA-`.MIS`-Dateien (`CONFT.MIS` 111, `HK.MIS` 108, `JOKE.MIS` 102, `OVMP.MIS` 119, `SLIM.MIS` 102) haben leere Inline-Skripte `arg1 = 0x00` / `arg2 = 0x00` (`src/game/80069D68.c:163-165` liefert sofort `1`). Stattdessen liegt der vollständige Precinct-Assault-Kauf-Pfad (Preis-Prüfung, Punkte-Abzug auf `gGameSession[25/26]` via VM-Opcode `25`/`52` und Spawner-Auslösung via VM-Opcode `60` `func_8006158C` → `func_800614BC` `cmd=0x47`) im `RPNS`-Skriptpool jeder PA-`.MIS`-Datei (z. B. `CONFT.MIS+0x68`, `+0x9E`, `+0x191`, `+0x6A7`), referenziert über `SHDR+0x24` (`u24`) von `Cact`-Trigger-Zonen (`TCAt` Typ `95`) und Trigger-Attachments (`TCAt` Typ `14`). Siehe *Kauf-Pfad in Precinct Assault*.
 
 ## Likely
 
@@ -243,7 +246,7 @@ Result: **36 cases, 165 checks, all pass.**
 * That the two team ids `unkF6`/`unkF7` are "owner" and "challenger" in a fixed order. The code only ever compares against them; nothing shows which one is the initial owner.
 * The exact meaning of cell flag bits 0 and 2 in `func_800402DC`'s `(word & 5) == 4` test, and what `D_8009F31C` selects in the object constructor.
 * That `func_8003BDA0`'s `'tACT'` record is the *only* writer of `D_800A0C70` entries. `func_8003BC7C` has a second likely caller `func_8003BFD0` this audit did not open.
-* Whether the asset loader may register the same `Csac` record twice (`func_80060E74` appends unconditionally; the per-map `Csac` counts themselves are now Confirmed: `CONFT.MIS` 111, `HK.MIS` 108, `JOKE.MIS` 102, `OVMP.MIS` 119, `SLIM.MIS` 102).
+* Whether the asset loader may register the same `Csac` record twice (`func_80060E74` appends unconditionally; the per-map `Csac` counts are Confirmed (offline decode, tool not in repo): `CONFT.MIS` 111, `HK.MIS` 108, `JOKE.MIS` 102, `OVMP.MIS` 119, `SLIM.MIS` 102).
 * Whether the screen state `9` has a writer inside the audited `src/game` set: `gFinishScreenModule` has an arm for it (`src/game/80025B7C.c:115-121`) but the exhaustive writer search (`gScreenState =`, all sites) found no write of 9 — the state is presumably written by script/mission code outside these sources. What 9 *means* is likewise unlabelled in the audited code; nothing here reads a literal 9.
 
 ## Open questions

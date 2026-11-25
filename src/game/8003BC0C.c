@@ -38,11 +38,11 @@ void gSpawnEntityPrimaryType(struct Unk3BObject *object) __asm__("func_8003BC0C"
  * func_800371FC, func_8003FAD4.
  *
  * @par Map-object path
- * Step 3b of the map-object path (docs/precinct-assault-map-objects.md): this
+ * Step 4 of the map-object path (docs/precinct-assault-map-objects.md): this
  * is the only place a map-occupancy write is actually performed. Both entry
- * points land here - immediately, while the level is still loading or the
- * deferred pool is gone (func_8003FA34), and by replay from func_8003FAD4 once
- * the scene exists. The unit contains no deferral logic itself, which is why
+ * points land here - immediately once the level is built (screen state 4 or
+ * 0xD) or the deferred pool is gone (func_8003FA34), otherwise by replay
+ * from func_8003FAD4. The unit contains no deferral logic itself, which is why
  * tests/host/map_objects_test.sh can observe func_8003FA34 purely through the
  * func_800402DC recorder: every "immediate" case in that suite goes through
  * this unit and its two callees.
