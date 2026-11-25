@@ -15,6 +15,10 @@
 #include "game/types.h"
 #define FCK_TYPES_H
 #include "leaf_kit.h"
+/* @mock sound_mock */
+/* func_80046C84 (SE trigger) comes from the shared mock library: the rumble
+ * checks read fcm_sound.sfx_* back instead of a private stand-in. */
+#include "sound_mock.h"
 
 /* --------------------------------------------------------------- recorder */
 
@@ -27,7 +31,6 @@
 #define LR_POP       5   /* func_8004665C pop free sound voice           */
 #define LR_RELEASE   6   /* func_80046698 release sound voice            */
 #define LR_LINK      7   /* func_80046870 link active sound voice        */
-#define LR_SFX       8   /* func_80046C84 non-positional sound effect    */
 #define LR_PADTYPE   9   /* func_8001EF34 pad type                       */
 #define LR_READY     10  /* func_8001EAEC pad rumble ready               */
 #define LR_ENABLED   11  /* func_8001EB2C pad rumble enabled             */
@@ -279,17 +282,9 @@ s32 lr_prev_buttons[2] __asm__("D_8009F8B0");
  * bound it, so a port of 2 must still land inside the fixture. */
 u8 lr_rumble_toggle[4] __asm__("D_8009F8D8");
 
-static s32 lr_sfx_ret;             /* func_80046C84 */
 static s32 lr_padtype_ret;         /* func_8001EF34 */
 static u8 lr_ready_ret;            /* func_8001EAEC */
 static u8 lr_enabled_ret;          /* func_8001EB2C */
-
-s32 lr_stub_46C84(s32 a, s32 b) __asm__("func_80046C84");
-s32 lr_stub_46C84(s32 a, s32 b)
-{
-    lr_rec(LR_SFX, a, b, 0, 0);
-    return lr_sfx_ret;
-}
 
 s32 lr_stub_1EF34(s32 port) __asm__("func_8001EF34");
 s32 lr_stub_1EF34(s32 port)
@@ -793,7 +788,7 @@ struct LrLinkState *gFixedPool3 __asm__("D_8009FA4C");
 struct LrLinkState *gFixedPool2 __asm__("D_8009FAAC");
 struct LrLinkState *gFixedPool1 __asm__("D_8009F9D0");
 
-static u8 lr_heap[0x2000];
+static u8 lr_heap[0x8000];
 static void *lr_raw_result;
 static s32 lr_fwd_ret;
 static s32 lr_back_ret;
@@ -1440,7 +1435,7 @@ static void vibration_reset(void)
     lr_padtype_ret = 0;
     lr_ready_ret = 0;
     lr_enabled_ret = 0;
-    lr_sfx_ret = 0;
+    fcm_sound_reset();
     lr_reset();
 }
 
@@ -1460,10 +1455,11 @@ static void test_vibration_toggle(void)
     vibration_reset();
     FCK_EQ(lr_call_v0((s32)gToggleVibrationPair, 0x80000000u, 0, 0),
            (s32)0x80000000u, "buttons returned with no pad");
-    FCK_EQ(lr_calls_n, 2, "sound and pad-type query");
-    FCK_CHECK(lr_calls[0].id == LR_SFX && lr_calls[0].a0 == 0x48 &&
-              lr_calls[0].a1 == 0, "the press plays sound 0x48 with argument 0");
-    FCK_CHECK(lr_calls[1].id == LR_PADTYPE && lr_calls[1].a0 == 0,
+    FCK_EQ(lr_calls_n, 1, "only the pad-type query goes through the recorder");
+    FCK_EQ(fcm_sound.sfx_calls, 1, "the press plays one sound effect");
+    FCK_EQ(fcm_sound.sfx_last_id, 0x48, "the press plays sound 0x48");
+    FCK_EQ(fcm_sound.sfx_last_arg1, 0, "the sound effect gets argument 0");
+    FCK_CHECK(lr_calls[0].id == LR_PADTYPE && lr_calls[0].a0 == 0,
               "pad type is queried for port 0");
     FCK_EQ(lr_rumble_toggle[0], 0, "no pad leaves the toggle");
 
@@ -1475,8 +1471,8 @@ static void test_vibration_toggle(void)
     FCK_EQ(lr_call_v0((s32)gToggleVibrationPair, 0x80000000u, 0, 0),
            (s32)0x80000000u, "not-ready pad returns the buttons");
     FCK_EQ(lr_rumble_toggle[0], 0, "not-ready pad does not flip the toggle");
-    FCK_EQ(lr_calls_n, 3, "sound, type, ready - and nothing else");
-    FCK_CHECK(lr_calls[2].id == LR_READY && lr_calls[2].a0 == 0,
+    FCK_EQ(lr_calls_n, 2, "type and ready - and nothing else");
+    FCK_CHECK(lr_calls[1].id == LR_READY && lr_calls[1].a0 == 0,
               "readiness is queried for port 0");
 
     /* ready pad, toggle 0 -> 1: motor 1 is pulsed and the saved mode restored */
@@ -1487,15 +1483,16 @@ static void test_vibration_toggle(void)
     FCK_EQ(lr_call_v0((s32)gToggleVibrationPair, 0x80000000u, 0, 0),
            (s32)0x80000000u, "the buttons come back unchanged");
     FCK_EQ(lr_rumble_toggle[0], 1, "the toggle flips to 1");
-    FCK_EQ(lr_calls_n, 7, "sound, type, ready, read mode, set 1, apply, set saved");
-    FCK_CHECK(lr_calls[3].id == LR_ENABLED && lr_calls[3].a0 == 0,
+    FCK_EQ(lr_calls_n, 6, "type, ready, read mode, set 1, apply, set saved");
+    FCK_CHECK(lr_calls[2].id == LR_ENABLED && lr_calls[2].a0 == 0,
               "the current motor mode is read for port 0");
-    FCK_CHECK(lr_calls[4].id == LR_SETEN && lr_calls[4].a0 == 0 &&
-              lr_calls[4].a1 == 1, "motor mode 1 is enabled");
-    FCK_CHECK(lr_calls[5].id == LR_SMALL && lr_calls[5].a0 == 0 &&
-              lr_calls[5].a1 == 1, "small rumble is applied on port 0");
-    FCK_CHECK(lr_calls[6].id == LR_SETEN && lr_calls[6].a0 == 0 &&
-              lr_calls[6].a1 == 5, "the saved mode 5 is written back");
+    FCK_CHECK(lr_calls[3].id == LR_SETEN && lr_calls[3].a0 == 0 &&
+              lr_calls[3].a1 == 1, "motor mode 1 is enabled");
+    FCK_CHECK(lr_calls[4].id == LR_SMALL && lr_calls[4].a0 == 0 &&
+              lr_calls[4].a1 == 1, "small rumble is applied on port 0");
+    FCK_CHECK(lr_calls[5].id == LR_SETEN && lr_calls[5].a0 == 0 &&
+              lr_calls[5].a1 == 5, "the saved mode 5 is written back");
+    FCK_EQ(fcm_sound.sfx_calls, 1, "the flip plays one sound effect");
 
     /* toggle 1 -> 0: the pulse block is skipped */
     vibration_reset();
@@ -1504,7 +1501,7 @@ static void test_vibration_toggle(void)
     lr_rumble_toggle[0] = 1;
     lr_call_v0((s32)gToggleVibrationPair, 0x80000000u, 0, 0);
     FCK_EQ(lr_rumble_toggle[0], 0, "the toggle flips back to 0");
-    FCK_EQ(lr_calls_n, 3, "no motor access when switching off");
+    FCK_EQ(lr_calls_n, 2, "no motor access when switching off");
 
     /* no new press: bit 31 is already in the previous mask */
     vibration_reset();
@@ -1531,9 +1528,9 @@ static void test_vibration_toggle(void)
     lr_call_v0((s32)gToggleVibrationPair, 0x80000000u, 1, 1);
     FCK_EQ(lr_rumble_toggle[1], 1, "port 1 flips its own toggle");
     FCK_EQ(lr_rumble_toggle[0], 0, "port 0 is untouched");
-    FCK_CHECK(lr_calls[1].id == LR_PADTYPE && lr_calls[1].a0 == 1,
+    FCK_CHECK(lr_calls[0].id == LR_PADTYPE && lr_calls[0].a0 == 1,
               "port 1 maps to pad port 1");
-    FCK_CHECK(lr_calls[3].id == LR_ENABLED && lr_calls[3].a0 == 1,
+    FCK_CHECK(lr_calls[2].id == LR_ENABLED && lr_calls[2].a0 == 1,
               "the motor mode is read for port 1");
 
     /* argument 2 is not a port: port = (player == 1), so player 2 queries
@@ -1542,7 +1539,7 @@ static void test_vibration_toggle(void)
     lr_padtype_ret = 1;
     lr_ready_ret = 1;
     lr_call_v0((s32)gToggleVibrationPair, 0x80000000u, 2, 2);
-    FCK_CHECK(lr_calls[1].id == LR_PADTYPE && lr_calls[1].a0 == 0,
+    FCK_CHECK(lr_calls[0].id == LR_PADTYPE && lr_calls[0].a0 == 0,
               "player 2 maps to pad port 0");
     FCK_EQ(lr_rumble_toggle[2], 1, "the toggle index is the argument itself");
 }
@@ -1802,14 +1799,19 @@ static void test_particle_emitter(void)
     FCK_EQ(p.unk8A, 33, "the pool takes the copied count");
     FCK_EQ(p.unk88, 33, "both counts match, no secondary pool");
 
-    /* the 700 cap pulls unk36 down before unk34 is clamped to it */
+    /* the 700 cap pulls unk36 down before unk34 is clamped to it; 700 nodes
+     * at 0x1C need 0x4C90 bytes, so this case gets a wider free range. */
     emitter_reset(&p, &src);
+    lr_free_ranges[1] = (s32)(lr_heap + 0x8000);
     src.unk36 = 0x1000;
     src.unk34 = 800;
     FCK_EQ(gSetupParticleEmitter(&p, &src), 1, "an oversized count still succeeds");
     FCK_EQ(src.unk36, 700, "unk36 is capped at 0x2BC");
     FCK_EQ(src.unk34, 700, "unk34 is pulled to the cap too");
     FCK_EQ(p.unk8A, 700, "the pool follows the cap");
+    FCK_EQ(*(s32 *)(lr_heap + 0x336C), 0x4C94, "the capped pool header holds (700 * 0x1C + 7) & ~3");
+    FCK_CHECK(p.unk6C == lr_heap + 0x3370, "the capped pool starts at the range end");
+    FCK_CHECK(*(u8 **)((u8 *)p.unk6C + 699 * 0x1C) == 0, "the 700th node ends the list");
 
     /* zero/negative counts fail before any setup beyond motion init */
     emitter_reset(&p, &src);
