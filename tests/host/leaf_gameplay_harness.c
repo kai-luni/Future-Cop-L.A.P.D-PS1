@@ -24,6 +24,15 @@
  *    units rely on to terminate.
  *  - Expectations are literals worked by hand from the cited evidence; no
  *    expectation is computed by a re-implementation of a unit.
+ *
+ * Mutation notes (mutate --per-unit 8): the remaining survivors are
+ * equivalent mutants: 80037B28 `s0 > 0` -> `>= 0` (a zero dot product
+ * scales to 0 on either branch), 800511E4 `count > 0` -> `>= 0` (the loop
+ * condition re-tests count), 8007EA78 `i < 10` -> `<= 10` (an 11th decoded
+ * digit is never read), and `return 0` rewrites of statements that already
+ * return 0 (80040E60, 8005A2BC). Script and grid units are guarded by
+ * fixture bytes/cells past the documented bounds, so an off-by-one read
+ * changes an observable result.
  */
 #include "game/types.h"
 #define FCK_TYPES_H
@@ -103,8 +112,9 @@ u8 gEffectKeyTable[4 * 0x30] __asm__("D_800A2300");
 s32 gViewAnchors[4] __asm__("D_800A3190");          /* {x, z} x 2 */
 s32 gCellClipRect[4] __asm__("D_800A2970");         /* x, z, w, h */
 u32 gCellNodes[2 * 8] __asm__("D_800A2990");        /* {obj, next} */
-u32 gCoverage2[4 * 25] __asm__("D_800AB548");       /* 5x5 cells, bits at +0 */
-u32 gCoverage1[4 * 25] __asm__("D_800AB3B8");
+/* 5x5 cells (bits at +0) plus 11 guard cells the unit must never read */
+u32 gCoverage2[4 * 36] __asm__("D_800AB548");
+u32 gCoverage1[4 * 36] __asm__("D_800AB3B8");
 s32 gCount2 __asm__("D_8009F82C");
 s32 gViewCount __asm__("D_8009F814");
 s32 gCount1 __asm__("D_8009F828");
@@ -305,7 +315,7 @@ s32 st_find_key(s32 key)
 {
     find_calls++;
     find_arg = key;
-    return key == 0x42 ? 2 : -1;
+    return key == 0x42 ? 2 : key == 0x10 ? 0 : -1;
 }
 
 /* 800752E0 callees */
@@ -419,6 +429,15 @@ static void test_resupply(void)
     FCK_EQ(ncalls, 0, "interval: below period, no callee");
     FCK_EQ(rs16(sub0, 0x324), (s16)0xA5A5, "interval: timers untouched");
 
+    /* exactly the period: one tick, remainder 0 */
+    resupply_reset();
+    gPlayerCount = 1;
+    acc = 40; period = 100; gFrameDelta = 60;
+    wr16(pl0, 0x1C, 10); wr16(pl0, 0x1E, 99);
+    gApplyPlayerResupply(pl0, 0x20000, 0, &acc, &period);
+    FCK_EQ(acc, 0, "acc == period: remainder 0");
+    FCK_EQ(rs16(pl0, 0x1C), 12, "acc == period: quotient 1 -> +2");
+
     /* 80 + 250 = 330 over period 100: quotient 3, remainder 30 */
     resupply_reset();
     acc = 80; period = 100; gFrameDelta = 250;
@@ -474,6 +493,8 @@ static void test_resupply(void)
     wr16(pl0, 0x1C, 50); wr16(pl0, 0x1E, 70);
     gApplyPlayerResupply(pl0, 0x1000000 | 0x20000, 5, &acc, &period);
     FCK_EQ(rs16(pl0, 0x1C), 55, "instant: 50 + 5");
+    gApplyPlayerResupply(pl0, 0x1000000 | 0x20000, 0, &acc, &period);
+    FCK_EQ(rs16(pl0, 0x1C), 55, "instant: amount 0 adds nothing (not max)");
     gApplyPlayerResupply(pl0, 0x1000000 | 0x20000, -1, &acc, &period);
     FCK_EQ(rs16(pl0, 0x1C), 70, "instant: negative amount = max");
 
@@ -623,6 +644,15 @@ static void test_chase(void)
     dot_ret = 0xC00; len_ret = 0x1000;
     gUpdateChaseApproachSpeed(0, ch_self, 0);
     FCK_EQ(rs16(ch_self, MB + 0x32), 0x900, "cos 0xC000: approach speed");
+    /* cos exactly 0xF600 is still gated by +0x90 */
+    chase_reset();
+    wr16(ch_self, 0x90, 0x2000);
+    dot_ret = 0xF60; len_ret = 0x1000;
+    gUpdateChaseApproachSpeed(0, ch_self, 0);
+    FCK_EQ(rd16(ch_self, MB + 0x40), 0x5555, "cos 0xF600, gate 0x2000: no change");
+    wr16(ch_self, 0x90, 0x1FFF);
+    gUpdateChaseApproachSpeed(0, ch_self, 0);
+    FCK_EQ(rs16(ch_self, MB + 0x32), 0, "cos 0xF600 > 0xF5FF, close: speed 0");
     /* negative dot: cos -0x10000 returns */
     chase_reset();
     dot_ret = -0x1000; len_ret = 0x1000;
@@ -800,13 +830,15 @@ static void test_light(void)
 
 /* 800449F8: script commands at +0x0C (4 x {op, arg}); track +0x0C frame,
  * +0x13 flags */
-static u8 an_script[0x14], an_track[0x14];
+static u8 an_script[0x16], an_track[0x14];
 
 static void anim_reset(const u8 *cmds)
 {
     s32 i;
     lk_fill(an_script, 0xCC, 0x0C);
     for (i = 0; i < 8; i++) an_script[0xC + i] = cmds[i];
+    an_script[0x14] = 0x34;                /* guard past the 4-entry list */
+    an_script[0x15] = 0x09;
     lk_fill(an_track, 0x11, sizeof an_track);
     sel_calls = 0; rm_calls = 0;
 }
@@ -817,6 +849,8 @@ static void test_anim_script(void)
     static const u8 s2[8] = { 0x33, 0xC8, 0, 0, 0x32, 1, 0, 0 };
     static const u8 s3[8] = { 0x10, 1, 0x20, 2, 0x31, 3, 0x35, 4 };
     static const u8 s4[8] = { 0, 0, 0x32, 1, 0x32, 2, 0x32, 3 };
+    static const u8 s5[8] = { 0x34, 0, 0, 0, 0, 0, 0, 0 };
+    static const u8 s6[8] = { 0x33, 0, 0, 0, 0, 0, 0, 0 };
 
     /* @leaf 800449F8 source src/game/800449F8.c: ops 0x32 select clip (track, arg, 1, 0), 0x33/0x34 clear/set flag bit 1 and set frame = unsigned arg, executed ops removed in place, unknown ops skipped, op 0 stops */
     LK_FUNC("func_800449F8");
@@ -850,11 +884,22 @@ static void test_anim_script(void)
     gProcessAnimScriptCommands(an_script, an_track);
     FCK_EQ(rm_calls, 0, "four unknown ops: nothing removed");
     FCK_EQ(sel_calls, 0, "four unknown ops: nothing selected");
-    FCK_CHECK(lk_all(an_track, 0, sizeof an_track, 0x11), "four unknown ops: track untouched");
+    FCK_CHECK(lk_all(an_track, 0, sizeof an_track, 0x11), "four unknown ops: track untouched (no fifth entry read)");
 
     anim_reset(s4);
     gProcessAnimScriptCommands(an_script, an_track);
     FCK_EQ(sel_calls, 0, "leading op 0: nothing runs");
+
+    anim_reset(s5);
+    gProcessAnimScriptCommands(an_script, an_track);
+    FCK_EQ(rs16(an_track, 0x0C), 0, "0x34 arg 0: frame 0");
+    FCK_EQ(rd8(an_track, 0x13), 0x13, "0x34: flag bit 1 added to 0x11");
+
+    anim_reset(s6);
+    wr8(an_track, 0x13, 0x02);
+    gProcessAnimScriptCommands(an_script, an_track);
+    FCK_EQ(rs16(an_track, 0x0C), 0, "0x33 arg 0: frame 0");
+    FCK_EQ(rd8(an_track, 0x13), 0x00, "0x33: flag bit 1 cleared");
 }
 
 /* 80047BE8: two POLY_G4 at the primitive pool (psx-spx GP0(38h) shaded
@@ -1174,7 +1219,7 @@ static void test_sprite_desc(void)
 
 /* 8005FFB8: object +0x00 entry ptr, +0x04 flags, +0x06 mode, +0x08 arg,
  * +0x20 key word; script commands at +0x0C. */
-static u8 at_obj[0x24], at_script[0x14];
+static u8 at_obj[0x24], at_script[0x16];
 
 static void attack_reset(const u8 *cmds)
 {
@@ -1182,6 +1227,8 @@ static void attack_reset(const u8 *cmds)
     lk_fill(at_obj, 0x5A, sizeof at_obj);
     lk_fill(at_script, 0xCC, 0x0C);
     for (i = 0; i < 8; i++) at_script[0xC + i] = cmds[i];
+    at_script[0x14] = 0x21;                /* guard past the 4-entry list */
+    at_script[0x15] = 0x09;
     rm_calls = 0; find_calls = 0;
 }
 
@@ -1190,6 +1237,8 @@ static void test_attack_cmds(void)
     static const u8 s1[8] = { 0x21, 0x90, 0x1E, 0, 0x26, 0x42, 0x24, 9 };
     static const u8 s2[8] = { 0x1E, 1, 0x26, 0x07, 0x1F, 0, 0x23, 3 };
     static const u8 s3[8] = { 0x25, 1, 0x1D, 2, 0x27, 3, 0x00, 4 };
+    static const u8 s4[8] = { 0x25, 1, 0x1D, 2, 0x27, 3, 0x28, 4 };
+    static const u8 s5[8] = { 0x26, 0x10, 0, 0, 0, 0, 0, 0 };
 
     /* @leaf 8005FFB8 source src/game/8005FFB8.c: ops 0x1F..0x23 set mode op-0x1E and +0x08 = arg, 0x1E arg 0 sets flag 0x100 else clears it, 0x26 binds table entry idx*0x30 and copies its +0x02 when the key is found, executed ops removed, others skipped */
     LK_FUNC("func_8005FFB8");
@@ -1227,6 +1276,17 @@ static void test_attack_cmds(void)
     gApplyAttackCommands(at_obj, at_script);
     FCK_EQ(rm_calls, 0, "0x25/0x1D/0x27: skipped");
     FCK_CHECK(lk_all(at_obj, 0, sizeof at_obj, 0x5A), "skipped ops: object untouched");
+
+    attack_reset(s4);
+    gApplyAttackCommands(at_obj, at_script);
+    FCK_EQ(rm_calls, 0, "four unknown ops: nothing removed");
+    FCK_CHECK(lk_all(at_obj, 0, sizeof at_obj, 0x5A), "four unknown ops: no fifth entry read");
+
+    attack_reset(s5);
+    wr16(gEffectKeyTable, 2, 0x0D0E);
+    gApplyAttackCommands(at_obj, at_script);
+    FCK_EQ(rd32(at_obj, 0), (u32)gEffectKeyTable, "0x26 index 0: entry = table base");
+    FCK_EQ(rd16(at_obj, 0x20), 0x0D0E, "0x26 index 0: +0x20 = entry 0 +0x02");
 }
 
 /* 80062874: objects +0x08 active, +0x24 flags, +0x5C z, +0x60 y, +0x64 x,
@@ -1249,9 +1309,14 @@ static void gv_set(s32 i, s32 active, s32 flags, s32 x, s32 z, s32 r)
 
 static void gv_reset(void)
 {
+    s32 i;
     lk_fill(gCommandList, 0, sizeof gCommandList);
     lk_fill(gCoverage1, 0, sizeof gCoverage1);
     lk_fill(gCoverage2, 0, sizeof gCoverage2);
+    for (i = 25; i < 36; i++) {
+        gCoverage1[4 * i] = 0xFFFF;
+        gCoverage2[4 * i] = 0xFFFF;
+    }
     lk_fill(gCellNodes, 0xA5, sizeof gCellNodes);
     lk_fill(gv_l1, 0xA5, sizeof gv_l1);
     lk_fill(gv_l2, 0xA5, sizeof gv_l2);
@@ -1352,6 +1417,34 @@ static void test_dual_view(void)
     gBuildDualViewObjectListsAndGrid();
     FCK_EQ(gCount2, 1, "below caps: view 2 appended");
     FCK_EQ(gViewCount, 2, "below caps: linked");
+
+    /* window edges: relative row 5 / col 5 are outside (row 5 would read
+     * the guard cells, col 5 would alias cell 5 = row 1 col 0), (4, 4) is
+     * the last cell */
+    gv_reset();
+    gCoverage1[4 * 5] = 0xFFFF;
+    gCoverage2[4 * 5] = 0xFFFF;
+    gCoverage1[4 * 24] = 0x8000;
+    gv_set(0, 1, 0, 0x00000, 0xA0000, 0);           /* row 5, col 0 */
+    gv_set(1, 1, 0, 0xA0000, 0x00000, 0);           /* row 0, col 5 */
+    gv_set(2, 1, 0, 0x80000, 0x80000, 0);           /* row 4, col 4, sub (0,0) */
+    gv_list(3);
+    gBuildDualViewObjectListsAndGrid();
+    FCK_EQ(gCount1, 1, "edges: only (4, 4) hits view 1");
+    FCK_CHECK(gv_l1[0] == gv_obj[2], "edges: view 1 list holds the (4, 4) object");
+    FCK_EQ(gCount2, 0, "edges: view 2 ignores rows/cols 5");
+    gv_reset();
+    gViewAnchors[0] = 0;
+    gViewAnchors[2] = 0;
+    gCoverage2[4 * 5] = 0xFFFF;
+    gOrigin2X = 1; gOrigin2Y = 1;
+    gv_set(0, 1, 0, 0x20000, 0xC0000, 0);           /* view 2 row 5 */
+    gv_set(1, 1, 0, 0xC0000, 0x20000, 0);           /* view 2 col 5 */
+    gv_set(2, 1, 0, 0x00000, 0x20000, 0);           /* view 2 col -1 */
+    gv_list(3);
+    gBuildDualViewObjectListsAndGrid();
+    FCK_EQ(gCount2, 0, "edges with origin 1: rows/cols 5 and -1 ignored");
+    FCK_EQ(gCount1, 0, "edges with origin 1: view 1 grid empty");
 
     /* empty list still publishes the counters */
     gv_reset();
@@ -1560,6 +1653,8 @@ static void test_password(void)
     static const u8 pw1[10] = { 0x07, 0x16, 0x00, 0x10, 0x07, 0x10, 0x07, 0x10, 0x0F, 0x14 };
     /* b = 9,3,5,2,12,4,10,0,7,2: n1 13, n2 12, n3 10, n4 10 -> n5 5, n1 = n2 = 10; n0 11 -> 8; sum 53 */
     static const u8 pw2[10] = { 0x06, 0x14, 0x08, 0x15, 0x0F, 0x11, 0x0F, 0x17, 0x00, 0x13 };
+    /* b = 9,3,9,0,12,4,10,0,14,2: n1 exactly 10, n2 12, n3 10, n4 10 -> n5 2; sum 45 */
+    static const u8 pw8[10] = { 0x06, 0x14, 0x04, 0x13, 0x0F, 0x11, 0x0F, 0x17, 0x09, 0x13 };
     /* pw1 with b9 = 1 (second check 0 != 25&3) */
     static const u8 pw3[10] = { 0x07, 0x16, 0x00, 0x10, 0x07, 0x10, 0x07, 0x10, 0x0F, 0x12 };
     /* pw1 with b8 = 12 (third check 13 != 25&15) */
@@ -1628,6 +1723,13 @@ static void test_password(void)
     FCK_EQ(gMissionListMaxIndex, 7, "CW: progress 8 capped at 7");
     FCK_EQ(gSelectedMissionIndex, 7, "CW: selected 7");
     FCK_EQ(gCrimeWarProgress, 8, "CW: progress itself stays 8");
+
+    pw_reset(pw8);
+    r = gApplyPasswordUnlocks();
+    FCK_EQ(r, 1, "pw8 accepted (promotion at n1 == 10)");
+    FCK_EQ(WT(5, 0x1F), 2, "promotion: n5 = 12 + 10 - 20");
+    FCK_EQ(WT(0, 0x1F), 10, "promotion: n2 = 10");
+    FCK_EQ(gCrimeWarProgress, 3, "pw8 progress 3");
 
     pw_reset(pw3);
     FCK_EQ(gApplyPasswordUnlocks(), 0, "second checksum mismatch: 0");
