@@ -7,7 +7,7 @@ VENV_PYTHON := $(VENV)/bin/python
 VENV_STAMP := $(VENV)/.installed
 EXE := baseroms/us/SLUS_007.39
 
-.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final portable-check function-map coverage reach host-leaf-core
+.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final portable-check function-map coverage reach host-leaf-core host-leaf-runtime
 
 all: split
 
@@ -50,7 +50,7 @@ sweep-candidates: verify toolchain
 report:
 	$(PYTHON) tools/generate_decomp_report.py
 
-check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path host-leaf-math host-leaf-flow host-leaf-object host-leaf-engage host-leaf-scene host-leaf-core
+check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path host-leaf-math host-leaf-flow host-leaf-object host-leaf-engage host-leaf-scene host-leaf-core host-leaf-runtime
 	$(PYTHON) -m unittest discover -s tests -t . -v
 
 # Run the naming-round behavioral tests against the original C entry points.
@@ -222,7 +222,7 @@ host-leaf-final:
 	  echo "host-leaf-final: qemu or C toolchain missing, skipped"; \
 	fi
 
-.PHONY: host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-math host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path host-leaf-flow host-leaf-object host-leaf-engage host-leaf-scene host-leaf-core
+.PHONY: host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-math host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path host-leaf-flow host-leaf-object host-leaf-engage host-leaf-scene host-leaf-core host-leaf-runtime
 
 # More original leaf functions with synthetic fixtures.
 host-leaf-fifty-a host-leaf-fifty-b:
@@ -313,6 +313,16 @@ host-leaf-core:
 	  $(PYTHON) tools/host_leaf_suite.py report leaf_core; \
 	else \
 	  echo "host-leaf-core: qemu or C toolchain missing, skipped"; \
+	fi
+
+# Runtime helpers: visual reset, proximity trigger, voice allocator, status bar
+# and the vibration toggle, hardware-free.
+host-leaf-runtime:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report leaf_runtime; \
+	else \
+	  echo "host-leaf-runtime: qemu or C toolchain missing, skipped"; \
 	fi
 
 # Follow-up suites use synthetic data and unchanged original functions.
