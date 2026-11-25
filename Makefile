@@ -341,6 +341,8 @@ host-leaf-entity:
 	  $(PYTHON) tools/host_leaf_suite.py report leaf_entity; \
 	else \
 	  echo "host-leaf-entity: qemu or C toolchain missing, skipped"; \
+	fi
+
 # Runtime helpers: visual reset, proximity trigger, voice allocator, status bar
 # and the vibration toggle, hardware-free.
 host-leaf-runtime:
@@ -349,6 +351,8 @@ host-leaf-runtime:
 	  $(PYTHON) tools/host_leaf_suite.py report leaf_runtime; \
 	else \
 	  echo "host-leaf-runtime: qemu or C toolchain missing, skipped"; \
+	fi
+
 # Gameplay, HUD and front-end units on harness-defined D_ fixtures, hardware-free.
 host-leaf-gameplay:
 	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
