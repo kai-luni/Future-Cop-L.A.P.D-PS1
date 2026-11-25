@@ -17,6 +17,7 @@ that every possible retail execution path is hardware-free.
 | `leaf_engage_harness.c` | 13 HUD/flow hooks and map-light pool units (panel sprite, frame-close hook, layout mode, text renderer state, glyph/string draw, script timers, light data init/release, CDCS publish, node reaper/grid update/spawner); expectations hand-worked from the decompiled bodies |
 | `leaf_scene_harness.c` | 12 scene/camera/grid/map-chunk/spawn-constructor helpers (camera eye, player damage, radar markers, dome blocks, cheat dispatch, unit retirement, object grid, map chunks, GRDB init, tile pattern, kind 0x59/0x57 constructors), hardware-free |
 | `leaf_core_harness.c` | 11 large SPU/GPU/scene units (voice slots, node commands, Bayer dither tables, GPU fill packets, SPU transfer/key/voice attributes, SPU pool allocator) on harness-defined `D_` fixtures; 80085F1C is `math` via `leaf_vectors.py` `bayer16`; 8008CB40 dropped (absolute kseg0 store) |
+| `leaf_entity_harness.c` | 10 stream, voice, split-screen, results, and entity request units on synthetic fixtures. 80022BEC (read at `0x800A097C`) and 800247A8 (write at `0x8009FA46`) cannot run in QEMU user mode. 80029748 covers inactive and audio-only playback; active animation needs absolute kseg0 RAM at `0x800A0C30`. |
 | `leaf_a*_test.sh` | **generated**; do not edit |
 | `tools/host_leaf_suite.py` | scaffold / gen-script / report / mutate |
 
