@@ -17,6 +17,7 @@ that every possible retail execution path is hardware-free.
 | `leaf_engage_harness.c` | 13 HUD/flow hooks and map-light pool units (panel sprite, frame-close hook, layout mode, text renderer state, glyph/string draw, script timers, light data init/release, CDCS publish, node reaper/grid update/spawner); expectations hand-worked from the decompiled bodies |
 | `leaf_scene_harness.c` | 12 scene/camera/grid/map-chunk/spawn-constructor helpers (camera eye, player damage, radar markers, dome blocks, cheat dispatch, unit retirement, object grid, map chunks, GRDB init, tile pattern, kind 0x59/0x57 constructors), hardware-free |
 | `leaf_core_harness.c` | 11 large SPU/GPU/scene units (voice slots, node commands, Bayer dither tables, GPU fill packets, SPU transfer/key/voice attributes, SPU pool allocator) on harness-defined `D_` fixtures; 80085F1C is `math` via `leaf_vectors.py` `bayer16`; 8008CB40 dropped (absolute kseg0 store) |
+| `leaf_systems_harness.c` | 14 single-object gameplay/SPU units (animation stepping, card format, entity field query, map-zone load, spawn-chain marking, anchor sync, weapon-sound pool, path-curve offsets, looping-path advance, hover vector, sound toggle, rectangle draw list, SPU common/voice attributes) plus the five GPU packet builders they call (E1h/E2h/E3h/E4h/E5h, `spec`), all on synthetic fixtures; 8005AB8C dropped (three retail tables behind hard-coded kseg0 addresses) |
 | `leaf_a*_test.sh` | **generated**; do not edit |
 | `tools/host_leaf_suite.py` | scaffold / gen-script / report / mutate |
 
