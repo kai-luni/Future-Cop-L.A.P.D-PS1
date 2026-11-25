@@ -40,6 +40,18 @@ void gFlagQuartileChange(struct Unk3BObject *object, s32 value) __asm__("func_80
  * @par Callers
  * Confirmed: func_8002A940, func_8002AA1C, func_8002FC90, func_800324E0, func_8003526C, func_800395A8, func_800398EC, func_80058210, func_80058D78, func_80060A0C.
  *
+ * @par Map-object path
+ * Step 6 of the map-object path (docs/precinct-assault-map-objects.md): the
+ * "a quarter of the base's capacity went by" marker. A base counts its own
+ * progress in +0x1C against a maximum in +0x1E; every time the counter lands in
+ * a different quarter than the previous value, this sets 0x4000 in the flags
+ * word and func_8004CE04 later consumes that flag to spawn the slot's types
+ * (func_8003BAE4). The D_800A0C70 guard means only objects that have a slot
+ * descriptor - i.e. map-placed structures, not free-standing props - ever
+ * raise it. See tests/host/map_objects_test.sh (cases "gQuarterIndex
+ * thresholds", "gFlagQuartileChange ..."), which additionally pins the exact
+ * threshold comparison operators.
+ *
  * @par Environment path
  * Sets flag 0x4000 in an entity's +0x24 word when the counter at +0x1C,
  * measured against the maximum at +0x1E, lies in a different quarter

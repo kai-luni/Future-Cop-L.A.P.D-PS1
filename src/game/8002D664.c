@@ -108,6 +108,16 @@ s32 gHandleLinkedPropEntity(s32 message, struct Unk2D664Obj *obj, void *arg2, s3
  *
  * @par Callers
  * Confirmed: func_8002DEA8 (0x8002DF60, messages 11/14 forwarding to child unkB4). Likely: indirect dispatch via handler returned by func_8002AE54 (0x8002AEBC) for types 6, 8, 30, 33, 36.
+ *
+ * @par Map-object path
+ * Step 5a of the map-object path (docs/precinct-assault-map-objects.md): the
+ * message dispatcher that owns the map-placed base. Message 10 forwards to
+ * func_8002D1A0 only for kind 0x24 (the objective class), and message 5 is the
+ * scoring half - it books the capture in the match block, credits the player's
+ * tracker and raises banner 7, all keyed on the latch +XFE that
+ * func_8002D1A0 set. This is the only place where a capture turns into the
+ * "Outposts Claimed"/"Current Points" counters. Messages 9/11/14 keep the child
+ * parts (+0x100/+0x104) in step with the parent's health and team.
  */
 s32 gHandleLinkedPropEntity(s32 message, struct Unk2D664Obj *obj, void *arg2, s32 arg3)
 {
