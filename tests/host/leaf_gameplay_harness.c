@@ -116,6 +116,33 @@ u8 gOrigin2Y __asm__("D_8009F837");
 u8 gOrigin1Y __asm__("D_8009F835");
 u8 gOrigin1X __asm__("D_8009F834");
 
+/* 8006BF44 status icon packets */
+u8 *gPacketCursor __asm__("D_8009FA90");
+u8 *gPacketLimit __asm__("D_8009F9C0");
+u32 gEnvMapTexpageWord[2] __asm__("D_800A8EA4");
+
+/* 8007D150 options preview */
+s32 gSnapshotPointer __asm__("D_8009F91C");
+
+/* 8007EA78 password unlocks (synthetic alphabets and level table) */
+u8 gPasswordBuffer[12] __asm__("D_800A3948");
+u8 gOctalDigitTable[8] __asm__("D_8009C1BC");
+u8 gHexDigitTable[16] __asm__("D_8009C1AC");
+u8 gWideTextTable[16 * 0x24] __asm__("D_8009B4E4");
+s8 gFrontEndListTable[8] __asm__("D_8009B72C");
+u8 gFrontEndListFlag __asm__("D_8009F3C0");
+u8 gPlayerWrapLimit __asm__("D_8009F3C1");
+u8 gPausedMenuFlag __asm__("D_8009F3C3");
+u8 gLockedMenuFlag __asm__("D_8009F3C4");
+u8 gSavedCrimeWarProgress __asm__("D_8009F3F1");
+u8 gCrimeWarProgress __asm__("D_8009F458");
+u8 gSelectedMissionIndex __asm__("D_8009F880");
+u8 gMissionListMinIndex __asm__("D_8009F881");
+u8 gMissionListMaxIndex __asm__("D_8009F882");
+
+/* 80082B0C atlas table */
+void *gAtlasTable __asm__("D_8009F45C");
+
 /* ========================================================================
  * Stand-ins (retail labels, record arguments)
  * ======================================================================== */
@@ -281,6 +308,46 @@ s32 st_find_key(s32 key)
     return key == 0x42 ? 2 : -1;
 }
 
+/* 800752E0 callees */
+static u32 rand_ret;
+u32 st_rand(void) __asm__("func_80019668");
+u32 st_rand(void) { return rand_ret; }
+static s32 light_calls, light_id;
+static u8 light_req[0x30];
+static void *light_result_ptr, *light_ret;
+s32 st_spawn_light(s32 id, u8 *req, void **result) __asm__("func_8005A6A4");
+s32 st_spawn_light(s32 id, u8 *req, void **result)
+{
+    s32 i;
+    light_calls++;
+    light_id = id;
+    for (i = 0; i < 0x30; i++) light_req[i] = req[i];
+    light_result_ptr = result;
+    *result = light_ret;
+    return 0;
+}
+
+/* 8007D150 callee */
+static s32 stop_calls, stop_arg, stop_seen_ptr;
+void st_stop_voice(s32 h) __asm__("func_80046A34");
+void st_stop_voice(s32 h)
+{
+    stop_calls++;
+    stop_arg = h;
+    stop_seen_ptr = gSnapshotPointer;
+}
+
+/* 8007EA78 callees: log order */
+enum { C_PW_REFRESH = 20, C_PW_PA, C_PW_CW, C_PW_UNLOCK };
+static s32 pw_cw_seen;
+void func_80077FFC(void) { log_call(C_PW_REFRESH, 0, 0, 0, 0, 0, 0); }
+void st_pa_list(void) __asm__("func_80077708");
+void st_pa_list(void) { log_call(C_PW_PA, 0, 0, 0, 0, 0, 0); }
+void st_cw_list(void) __asm__("func_800776B8");
+void st_cw_list(void) { pw_cw_seen = gCrimeWarProgress; log_call(C_PW_CW, 0, 0, 0, 0, 0, 0); }
+void st_unlocks(void) __asm__("func_8007A168");
+void st_unlocks(void) { log_call(C_PW_UNLOCK, gMissionListMaxIndex, 0, 0, 0, 0, 0); }
+
 /* 80047BE8 callee */
 enum { C_TILE = 10 };
 void st_tile(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend) __asm__("func_8001C214");
@@ -303,6 +370,11 @@ void gLoadPathNodePositions(u8 *resource) __asm__("func_800511E4");
 s32 gBuildSpriteDescTable(void **array, s32 count) __asm__("func_8005A2BC");
 void gApplyAttackCommands(u8 *obj, u8 *script) __asm__("func_8005FFB8");
 void gBuildDualViewObjectListsAndGrid(void) __asm__("func_80062874");
+void gEmitStatusSlotIcon(s32 a0, s32 a1, s32 a2, s32 a3) __asm__("func_8006BF44");
+void gSpawnParticleLight(u8 *object) __asm__("func_800752E0");
+void gStopOptionsPreview(s32 arg0) __asm__("func_8007D150");
+s32 gApplyPasswordUnlocks(void) __asm__("func_8007EA78");
+void *gDrawAtlasSprite(s32 idx, s32 x, s32 y, s32 w, s32 h, s32 tag, s32 r, s32 g, s32 b, s8 fx, s8 fy) __asm__("func_80082B0C");
 
 /* ======================================================================== */
 
@@ -1291,6 +1363,387 @@ static void test_dual_view(void)
     FCK_EQ(gCount2, 8, "empty list: count 2 kept");
 }
 
+/* 8006BF44: DR_TPAGE (Psy-Q setDrawTPage: tag len 1, GP0(E1h) word
+ * 0xE1000000 | dtd<<9 | dfe<<10 | (tpage & 0x9FF)) followed by a SPRT
+ * (Psy-Q setSprt: tag len 4, code 0x64; setSemiTrans sets bit 1 -> 0x66;
+ * psx-spx GP0(64h..67h): colour+cmd, yx, clut|v|u, h|w). */
+static u8 si_pool[0x1C * 3];
+
+static void test_status_icon(void)
+{
+    u8 *p, *q;
+
+    /* @leaf 8006BF44 spec Psy-Q libgpu setDrawTPage/_get_mode (0xE1000000, dtd bit 9, dfe bit 10, tpage & 0x9FF) and setSprt/setSemiTrans (len 4, code 0x64|2); psx-spx GP0(E1h) and GP0(64h) word layout; icon UV (0xA6, 0x9C+16*slot or 0x96/0xBC), 16x16 at (x, y-16), blink 0xC0/0xA0/0xA0 vs grey 0x60 pinned from src/game/8006BF44.c */
+    LK_FUNC("func_8006BF44");
+
+    lk_fill(si_pool, 0xA5, sizeof si_pool);
+    gPacketCursor = si_pool;
+    gPacketLimit = si_pool + sizeof si_pool;
+    gEnvMapTexpageWord[0] = 0x7FC0FFFFu;    /* clut 0x7FC0, tpage bits all set */
+    gFrameClock = 0;
+    gEmitStatusSlotIcon(2, 1, 40, 100);
+    p = si_pool; q = si_pool + 0x1C;
+    FCK_CHECK(gPacketCursor == si_pool + 0x38, "two packets of 0x1C");
+    FCK_EQ(rd32(p, 0), 0x01000000, "tpage: tag len 1, link 0");
+    FCK_EQ(rd32(p, 4), 0xE1000FFFu, "tpage: 0xE1 | dfe 0x400 | dtd 0x200 | (0xFFFF & 0x9FF)");
+    FCK_EQ(rd32(q, 0), 0x04000000, "sprt: tag len 4, link 0");
+    FCK_EQ(rd8(q, 7), 0x66, "sprt: GP0 0x64 + semi-transparent");
+    FCK_EQ(rd8(q, 4), 0x60, "no blink request: grey R");
+    FCK_EQ(rd8(q, 5), 0x60, "grey G");
+    FCK_EQ(rd8(q, 6), 0x60, "grey B");
+    FCK_EQ(rs16(q, 8), 40, "x");
+    FCK_EQ(rs16(q, 0xA), 84, "y = 100 - 16");
+    FCK_EQ(rd8(q, 0xC), 0xA6, "slot icon u");
+    FCK_EQ(rd8(q, 0xD), 0xBC, "slot 2: v = 0x9C + 32");
+    FCK_EQ(rd16(q, 0xE), 0x7FC0, "clut = texture word >> 16");
+    FCK_EQ(rd16(q, 0x10), 16, "w 16");
+    FCK_EQ(rd16(q, 0x12), 16, "h 16");
+    FCK_CHECK(lk_all(si_pool, 0x38, sizeof si_pool, 0xA5), "third slot untouched");
+
+    /* blink: a1 and frame bit 0x40; slot -1 uses the alternate icon */
+    lk_fill(si_pool, 0xA5, sizeof si_pool);
+    gPacketCursor = si_pool;
+    gEnvMapTexpageWord[0] = 0x12340000u | 0x0160;
+    gFrameClock = 0x40;
+    gEmitStatusSlotIcon(-1, 1, -3, 5);
+    q = si_pool + 0x1C;
+    FCK_EQ(rd32(si_pool, 4), 0xE1000760u, "tpage keeps bits 5-8, forces 9-10");
+    FCK_EQ(rd8(q, 4), 0xC0, "blink R");
+    FCK_EQ(rd8(q, 5), 0xA0, "blink G");
+    FCK_EQ(rd8(q, 6), 0xA0, "blink B");
+    FCK_EQ(rd8(q, 0xC), 0x96, "slot -1: u 0x96");
+    FCK_EQ(rd8(q, 0xD), 0xBC, "slot -1: v 0xBC");
+    FCK_EQ(rs16(q, 8), -3, "negative x");
+    FCK_EQ(rs16(q, 0xA), -11, "y = 5 - 16");
+    FCK_EQ(rd16(q, 0xE), 0x1234, "clut");
+    gPacketCursor = si_pool;
+    gFrameClock = 0xBF;                    /* bit 0x40 clear */
+    gEmitStatusSlotIcon(0, 1, 0, 0);
+    FCK_EQ(rd8(q, 4), 0x60, "frame bit 0x40 clear: grey");
+    FCK_EQ(rd8(q, 0xD), 0x9C, "slot 0: v 0x9C");
+    gPacketCursor = si_pool;
+    gFrameClock = 0x40;
+    gEmitStatusSlotIcon(7, 0, 0, 0);
+    FCK_EQ(rd8(q, 4), 0x60, "a1 0: grey despite frame bit");
+    FCK_EQ(rd8(q, 0xD), 0x0C, "slot 7: 0x9C + 0x70 truncated to a byte");
+
+    /* exhausted pool: both packets at the cursor, cursor kept */
+    lk_fill(si_pool, 0xA5, sizeof si_pool);
+    gPacketCursor = si_pool + 0x1C;
+    gPacketLimit = si_pool + 0x1C;
+    gEmitStatusSlotIcon(1, 0, 9, 9);
+    FCK_CHECK(gPacketCursor == si_pool + 0x1C, "full: cursor unchanged");
+    FCK_EQ(rd32(si_pool + 0x1C, 0), 0x04000000, "full: sprt overwrote the tpage packet");
+    FCK_EQ(rd8(si_pool + 0x1C, 7), 0x66, "full: sprt code at the cursor");
+    FCK_CHECK(lk_all(si_pool, 0, 0x1C, 0xA5), "full: nothing below the cursor");
+}
+
+/* 800752E0: object +0x04 position, +0x10 size, +0x15..+0x17 RGB, +0x1A
+ * angle, +0x24 light; request of 0x30 bytes handed to func_8005A6A4. */
+static u8 pl_obj[0x28], pl_light[0x10];
+
+static void test_particle_light(void)
+{
+    /* @leaf 800752E0 source src/game/800752E0.c: request = position, kind 0x16, height y>>4, width = depth = size<<1, angle rand & 0xFFF (also stored at +0x1A), +0x1E/+0x20 0, +0x22 -1, scale -1, RGB; effect 0xA into +0x24; RGB mirrored into light +9..+11 when non-null */
+    LK_FUNC("func_800752E0");
+
+    lk_fill(pl_obj, 0x5A, sizeof pl_obj);
+    wr32(pl_obj, 4, 0x1000); wr32(pl_obj, 8, -0x100); wr32(pl_obj, 0xC, 0x23456);
+    wr16(pl_obj, 0x10, 0x9000);
+    wr8(pl_obj, 0x15, 0x11); wr8(pl_obj, 0x16, 0x22); wr8(pl_obj, 0x17, 0x33);
+    lk_fill(pl_light, 0xEE, sizeof pl_light);
+    rand_ret = 0x12345; light_ret = pl_light; light_calls = 0;
+    gSpawnParticleLight(pl_obj);
+    FCK_EQ(light_calls, 1, "effect spawned once");
+    FCK_EQ(light_id, 0xA, "effect id 0xA");
+    FCK_CHECK(light_result_ptr == pl_obj + 0x24, "result slot = object +0x24");
+    FCK_EQ(rd32(light_req, 0x08), 0x1000, "request x");
+    FCK_EQ(rd32(light_req, 0x0C), (u32)-0x100, "request y");
+    FCK_EQ(rd32(light_req, 0x10), 0x23456, "request z");
+    FCK_EQ(rd8(light_req, 0x14), 0x16, "kind 0x16");
+    FCK_EQ(rs16(light_req, 0x16), -0x10, "height = y >> 4 (arithmetic)");
+    FCK_EQ(rs16(light_req, 0x18), 0x2000, "width = (0x9000 << 1) as s16");
+    FCK_EQ(rs16(light_req, 0x1A), 0x2000, "depth = width");
+    FCK_EQ(rs16(light_req, 0x1C), 0x345, "angle = rand & 0xFFF");
+    FCK_EQ(rs16(pl_obj, 0x1A), 0x345, "angle stored in the object");
+    FCK_EQ(rs16(light_req, 0x1E), 0, "+0x1E = 0");
+    FCK_EQ(rs16(light_req, 0x20), 0, "+0x20 = 0");
+    FCK_EQ(rd8(light_req, 0x22), 0xFF, "+0x22 = -1");
+    FCK_EQ(rd8(light_req, 0x23), 0x11, "request R");
+    FCK_EQ(rd8(light_req, 0x24), 0x22, "request G");
+    FCK_EQ(rd8(light_req, 0x25), 0x33, "request B");
+    FCK_EQ(rs16(light_req, 0x28), -1, "scale -1");
+    FCK_CHECK(rd32(pl_obj, 0x24) == (u32)pl_light, "light pointer stored");
+    FCK_EQ(rd8(pl_light, 9), 0x11, "light R mirrored");
+    FCK_EQ(rd8(pl_light, 10), 0x22, "light G mirrored");
+    FCK_EQ(rd8(pl_light, 11), 0x33, "light B mirrored");
+    FCK_EQ(rd8(pl_light, 8), 0xEE, "light +8 untouched");
+    FCK_EQ(rd8(pl_light, 12), 0xEE, "light +12 untouched");
+    FCK_EQ(rd8(pl_obj, 0x18), 0x5A, "object +0x18 untouched");
+
+    /* no light returned */
+    lk_fill(pl_light, 0xEE, sizeof pl_light);
+    light_ret = 0; rand_ret = 0xFFFFF000u;
+    wr16(pl_obj, 0x10, 3);
+    gSpawnParticleLight(pl_obj);
+    FCK_EQ(rd32(pl_obj, 0x24), 0, "null light stored");
+    FCK_CHECK(lk_all(pl_light, 0, sizeof pl_light, 0xEE), "null light: nothing mirrored");
+    FCK_EQ(rs16(pl_obj, 0x1A), 0, "rand 0xFFFFF000 & 0xFFF = 0");
+    FCK_EQ(rs16(light_req, 0x18), 6, "width 3 << 1");
+}
+
+static void test_options_preview(void)
+{
+    /* @leaf 8007D150 source src/game/8007D150.c: only message 3 stops the preview voice handle D_8009F91C (when nonzero) and clears it */
+    LK_FUNC("func_8007D150");
+
+    gSnapshotPointer = 0x1234; stop_calls = 0;
+    gStopOptionsPreview(2);
+    FCK_EQ(stop_calls, 0, "message 2: no stop");
+    FCK_EQ(gSnapshotPointer, 0x1234, "message 2: handle kept");
+    gStopOptionsPreview(4);
+    FCK_EQ(stop_calls, 0, "message 4: no stop");
+    gStopOptionsPreview(3);
+    FCK_EQ(stop_calls, 1, "message 3: stop once");
+    FCK_EQ(stop_arg, 0x1234, "message 3: handle passed");
+    FCK_EQ(stop_seen_ptr, 0x1234, "handle cleared after the stop call");
+    FCK_EQ(gSnapshotPointer, 0, "message 3: handle cleared");
+    gStopOptionsPreview(3);
+    FCK_EQ(stop_calls, 1, "message 3, handle 0: no stop");
+    gSnapshotPointer = -1;
+    gStopOptionsPreview(3);
+    FCK_EQ(stop_arg, -1, "negative handle is nonzero");
+    FCK_EQ(gSnapshotPointer, 0, "negative handle cleared");
+}
+
+/* 8007EA78: synthetic alphabets: even positions use hex table
+ * 'P'..'A' (digit j = 'A'+15-j), odd positions octal table 'Q'..'X'; the
+ * buffer holds char - 0x41 and a digit decodes as (j - position) & mask.
+ * The passwords below were encoded by hand from the chosen nibble vectors
+ * b[0..9] (comment), using the field map of the unit's header:
+ * n0 = b1&3 | (b3&3)<<2, n1 = (b2>>2)&3 | (b8&3)<<2, n2 = b4, n3 = b6,
+ * n4 = (b0>>2)&3 | (b5<<1)&0xC; flags f1 b1.2, f2 b5.0, f3 b7.2, f4 b7.0,
+ * f5 b7.1, f6 b9.0, f7 b3.2; checks b0&3, (b9>>1)&3, b2&3|b8&0xC. */
+static void pw_reset(const u8 *pw)
+{
+    s32 i;
+    for (i = 0; i < 16; i++) gHexDigitTable[i] = (u8)(0x41 + 15 - i);
+    for (i = 0; i < 8; i++) gOctalDigitTable[i] = (u8)(0x51 + i);
+    for (i = 0; i < 10; i++) gPasswordBuffer[i] = pw[i];
+    lk_fill(gWideTextTable, 0xA5, sizeof gWideTextTable);
+    gFrontEndListTable[0] = 3; gFrontEndListTable[1] = 0; gFrontEndListTable[2] = 7;
+    gFrontEndListTable[3] = 12; gFrontEndListTable[4] = 5;
+    lk_fill(session, 0x77, sizeof session);
+    gSessionPtr = session;
+    wr32(session, 0x5C, 0);
+    gFrontEndListFlag = 0x77; gPlayerWrapLimit = 0x77; gPausedMenuFlag = 0x77;
+    gLockedMenuFlag = 0x77; gSavedCrimeWarProgress = 0x77; gCrimeWarProgress = 0x77;
+    gSelectedMissionIndex = 0x77; gMissionListMinIndex = 0x77; gMissionListMaxIndex = 0x77;
+    reset_calls();
+}
+
+static s32 pw_untouched(void)
+{
+    return gFrontEndListFlag == 0x77 && gPlayerWrapLimit == 0x77 &&
+           gPausedMenuFlag == 0x77 && gLockedMenuFlag == 0x77 &&
+           gCrimeWarProgress == 0x77 && gSavedCrimeWarProgress == 0x77 &&
+           gMissionListMaxIndex == 0x77 &&
+           lk_all(gWideTextTable, 0, sizeof gWideTextTable, 0xA5) &&
+           lk_all(session, 0x8C, 0x98, 0x77) && ncalls == 0;
+}
+
+#define WT(e, off) rd8(gWideTextTable, (e) * 0x24 + (off))
+
+static void test_password(void)
+{
+    /* b = 8,5,13,5,4,3,2,1,8,3: n = 5,3,4,2,6,0, flags 1101011 (f1..f7), sums 20/25 */
+    static const u8 pw1[10] = { 0x07, 0x16, 0x00, 0x10, 0x07, 0x10, 0x07, 0x10, 0x0F, 0x14 };
+    /* b = 9,3,5,2,12,4,10,0,7,2: n1 13, n2 12, n3 10, n4 10 -> n5 5, n1 = n2 = 10; n0 11 -> 8; sum 53 */
+    static const u8 pw2[10] = { 0x06, 0x14, 0x08, 0x15, 0x0F, 0x11, 0x0F, 0x17, 0x00, 0x13 };
+    /* pw1 with b9 = 1 (second check 0 != 25&3) */
+    static const u8 pw3[10] = { 0x07, 0x16, 0x00, 0x10, 0x07, 0x10, 0x07, 0x10, 0x0F, 0x12 };
+    /* pw1 with b8 = 12 (third check 13 != 25&15) */
+    static const u8 pw4[10] = { 0x07, 0x16, 0x00, 0x10, 0x07, 0x10, 0x07, 0x10, 0x0B, 0x14 };
+    /* pw1 with an 'A' at odd position 3 (not an octal digit) */
+    static const u8 pw5[10] = { 0x07, 0x16, 0x00, 0x00, 0x07, 0x10, 0x07, 0x10, 0x0F, 0x14 };
+    /* pw1 with a 'Q' at even position 0 (not a hex digit) */
+    static const u8 pw6[10] = { 0x10, 0x16, 0x00, 0x10, 0x07, 0x10, 0x07, 0x10, 0x0F, 0x14 };
+    /* pw1 with b0 = 9 (first check 1 != 20&3) */
+    static const u8 pw7[10] = { 0x06, 0x16, 0x00, 0x10, 0x07, 0x10, 0x07, 0x10, 0x0F, 0x14 };
+    s32 r;
+
+    /* @leaf 8007EA78 source src/game/8007EA78.c: 10-digit decode ((j - i) & 7 odd / & 0xF even through the digit tables, stop on a miss), nibble field map, 10/10/10/10 promotion of n2+n1-20 into n5, clamps 8/10, three checksums (sum&3, sum+flags &3, &0xF), flag-gated session/menu writes, level table +0x1F/+0x20, PA vs CW mission list with max index min(progress, 7) */
+    LK_FUNC("func_8007EA78");
+
+    pw_reset(pw1);
+    r = gApplyPasswordUnlocks();
+    FCK_EQ(r, 1, "pw1 accepted");
+    FCK_EQ(rd32(session, 0x8C), 1, "f1: session +0x8C = 1");
+    FCK_EQ(rd32(session, 0x90), 1, "f2: session +0x90 = 1");
+    FCK_EQ(rd32(session, 0x94), 0, "f2: session +0x94 = f3 (0)");
+    FCK_EQ(gFrontEndListFlag, 1, "f7 -> D_8009F3C0");
+    FCK_EQ(gPlayerWrapLimit, 1, "f4 -> D_8009F3C1");
+    FCK_EQ(gPausedMenuFlag, 0x77, "f5 clear: D_8009F3C3 untouched");
+    FCK_EQ(gLockedMenuFlag, 1, "f6 -> D_8009F3C4");
+    FCK_EQ(gCrimeWarProgress, 5, "progress n0 = 5");
+    FCK_EQ(gSavedCrimeWarProgress, 5, "saved progress n0");
+    FCK_EQ(WT(3, 0x1F), 3, "level list[0] (entry 3) = n1");
+    FCK_EQ(WT(0, 0x1F), 4, "level list[1] (entry 0) = n2");
+    FCK_EQ(WT(7, 0x1F), 2, "level list[2] (entry 7) = n3");
+    FCK_EQ(WT(12, 0x1F), 6, "level list[3] (entry 12) = n4");
+    FCK_EQ(WT(5, 0x1F), 0, "level list[4] (entry 5) = n5");
+    FCK_EQ(WT(3, 0x20), 3, "entry 3 +0x20 mirrors +0x1F");
+    FCK_EQ(WT(12, 0x20), 6, "entry 12 +0x20");
+    FCK_EQ(WT(5, 0x20), 0, "entry 5 +0x20");
+    FCK_EQ(WT(1, 0x1F), 0xA5, "entry 1 untouched");
+    FCK_EQ(WT(3, 0x1E), 0xA5, "entry 3 +0x1E untouched");
+    FCK_EQ(WT(3, 0x21), 0xA5, "entry 3 +0x21 untouched");
+    FCK_EQ(ncalls, 3, "refresh, CW list, unlocks");
+    FCK_EQ(calls[0].id, C_PW_REFRESH, "refresh first");
+    FCK_EQ(calls[1].id, C_PW_CW, "CW list (session +0x5C != 1)");
+    FCK_EQ(pw_cw_seen, 5, "progress set before the list setup");
+    FCK_EQ(calls[2].id, C_PW_UNLOCK, "unlocks last");
+    FCK_EQ(calls[2].a[0], 5, "mission bounds set before unlocks");
+    FCK_EQ(gMissionListMaxIndex, 5, "max index = progress 5");
+    FCK_EQ(gMissionListMinIndex, 0, "min index 0");
+    FCK_EQ(gSelectedMissionIndex, 5, "selected = max");
+
+    pw_reset(pw2);
+    wr32(session, 0x5C, 1);
+    r = gApplyPasswordUnlocks();
+    FCK_EQ(r, 1, "pw2 accepted");
+    FCK_EQ(gCrimeWarProgress, 8, "n0 11 clamped to 8");
+    FCK_EQ(WT(3, 0x1F), 10, "promotion: n1 = 10");
+    FCK_EQ(WT(0, 0x1F), 10, "promotion: n2 = 10");
+    FCK_EQ(WT(7, 0x1F), 10, "n3 = 10");
+    FCK_EQ(WT(12, 0x1F), 10, "n4 = 10");
+    FCK_EQ(WT(5, 0x1F), 5, "promotion: n5 = 12 + 13 - 20");
+    FCK_EQ(gFrontEndListFlag, 0x77, "no flags: D_8009F3C0 untouched");
+    FCK_EQ(gLockedMenuFlag, 0x77, "no flags: D_8009F3C4 untouched");
+    FCK_EQ(rd32(session, 0x8C), 0x77777777u, "no flags: session untouched");
+    FCK_EQ(calls[1].id, C_PW_PA, "session +0x5C == 1: PA list");
+    FCK_EQ(gMissionListMaxIndex, 0x77, "PA: mission bounds untouched");
+    pw_reset(pw2);
+    r = gApplyPasswordUnlocks();
+    FCK_EQ(gMissionListMaxIndex, 7, "CW: progress 8 capped at 7");
+    FCK_EQ(gSelectedMissionIndex, 7, "CW: selected 7");
+    FCK_EQ(gCrimeWarProgress, 8, "CW: progress itself stays 8");
+
+    pw_reset(pw3);
+    FCK_EQ(gApplyPasswordUnlocks(), 0, "second checksum mismatch: 0");
+    FCK_CHECK(pw_untouched(), "second checksum mismatch: no side effect");
+    pw_reset(pw4);
+    FCK_EQ(gApplyPasswordUnlocks(), 0, "third checksum mismatch: 0");
+    FCK_CHECK(pw_untouched(), "third checksum mismatch: no side effect");
+    pw_reset(pw7);
+    FCK_EQ(gApplyPasswordUnlocks(), 0, "first checksum mismatch: 0");
+    FCK_CHECK(pw_untouched(), "first checksum mismatch: no side effect");
+    pw_reset(pw5);
+    FCK_EQ(gApplyPasswordUnlocks(), 0, "non-octal digit at odd position: 0");
+    FCK_CHECK(pw_untouched(), "bad digit: no side effect");
+    pw_reset(pw6);
+    FCK_EQ(gApplyPasswordUnlocks(), 0, "non-hex digit at even position: 0");
+    FCK_CHECK(pw_untouched(), "bad hex digit: no side effect");
+}
+
+/* 80082B0C: POLY_FT4 (Psy-Q setPolyFT4: tag len 9, code 0x2C; psx-spx
+ * GP0(2Ch): colour+cmd, xy0, clut|v0|u0, xy1, tpage|v1|u1, xy2, v2|u2, xy3,
+ * v3|u3; vertex order TL, TR, BL, BR). Atlas table: +2 count, entries of
+ * 12 bytes at +8: tpage, u, v, w, h, clut. */
+static u8 at_table[8 + 12 * 3], at_pool[0x34 * 3];
+
+static void test_atlas_sprite(void)
+{
+    u8 *p;
+
+    /* @leaf 80082B0C spec Psy-Q libgpu setPolyFT4 (len 9, code 0x2C) and psx-spx GP0(2Ch) word layout/vertex order; tag low 24 bits from the caller; anchors (flagX 4 centre / 2 right, flagY 0x20 centre / 0x10 bottom), -1 size from the entry and UV extent from the entry's low size bytes pinned from src/game/80082B0C.c */
+    LK_FUNC("func_80082B0C");
+
+    lk_fill(at_table, 0, sizeof at_table);
+    wr16(at_table, 2, 3);
+    p = at_table + 8;                                     /* entry 0 */
+    wr16(p, 0, 0x1234); wr8(p, 2, 0x10); wr8(p, 4, 0x20);
+    wr16(p, 6, 0x18); wr16(p, 8, 0x0C); wr16(p, 0xA, 0x7FC0);
+    p = at_table + 8 + 12 * 2;                            /* entry 2 */
+    wr16(p, 0, 0x0055); wr8(p, 2, 0xF0); wr8(p, 4, 0xF8);
+    wr16(p, 6, 0x118); wr16(p, 8, 0x010); wr16(p, 0xA, 0x4000);
+    gAtlasTable = at_table;
+    lk_fill(at_pool, 0xA5, sizeof at_pool);
+    gPrimNext = at_pool;
+    gPrimEnd = at_pool + sizeof at_pool;
+
+    p = gDrawAtlasSprite(0, 100, 50, -1, -1, 0xFFABCDEF, 0x11, 0x22, 0x33, 0, 0);
+    FCK_CHECK(p == at_pool, "returns the pool primitive");
+    FCK_CHECK(gPrimNext == at_pool + 0x34, "cursor advanced 0x34");
+    FCK_EQ(rd32(p, 0), 0x09ABCDEF, "tag: len 9 | (tag & 0xFFFFFF)");
+    FCK_EQ(rd8(p, 7), 0x2C, "GP0 0x2C");
+    FCK_EQ(rd8(p, 4), 0x11, "R");
+    FCK_EQ(rd8(p, 5), 0x22, "G");
+    FCK_EQ(rd8(p, 6), 0x33, "B");
+    FCK_EQ(rs16(p, 0x08), 100, "v0 x (TL)");
+    FCK_EQ(rs16(p, 0x0A), 50, "v0 y");
+    FCK_EQ(rs16(p, 0x10), 124, "v1 x (TR) = x + entry w 0x18");
+    FCK_EQ(rs16(p, 0x12), 50, "v1 y");
+    FCK_EQ(rs16(p, 0x18), 100, "v2 x (BL)");
+    FCK_EQ(rs16(p, 0x1A), 62, "v2 y = y + entry h 0x0C");
+    FCK_EQ(rs16(p, 0x20), 124, "v3 x (BR)");
+    FCK_EQ(rs16(p, 0x22), 62, "v3 y");
+    FCK_EQ(rd8(p, 0x0C), 0x10, "u0");
+    FCK_EQ(rd8(p, 0x0D), 0x20, "v0");
+    FCK_EQ(rd16(p, 0x0E), 0x7FC0, "clut in word 3");
+    FCK_EQ(rd8(p, 0x14), 0x28, "u1 = u + w");
+    FCK_EQ(rd8(p, 0x15), 0x20, "v1");
+    FCK_EQ(rd16(p, 0x16), 0x1234, "tpage in word 5");
+    FCK_EQ(rd8(p, 0x1C), 0x10, "u2");
+    FCK_EQ(rd8(p, 0x1D), 0x2C, "v2 = v + h");
+    FCK_EQ(rd8(p, 0x24), 0x28, "u3");
+    FCK_EQ(rd8(p, 0x25), 0x2C, "v3");
+
+    /* centre anchors with explicit size; UV extent still from the entry */
+    p = gDrawAtlasSprite(0, 100, 50, 40, 31, 0, 1, 2, 3, 4, 0x20);
+    FCK_CHECK(p == at_pool + 0x34, "second primitive");
+    FCK_EQ(rs16(p, 0x08), 80, "centre x: 100 - 40/2");
+    FCK_EQ(rs16(p, 0x10), 120, "centre x2");
+    FCK_EQ(rs16(p, 0x0A), 35, "centre y: 50 - 31/2");
+    FCK_EQ(rs16(p, 0x1A), 66, "centre y2 = 35 + 31");
+    FCK_EQ(rd8(p, 0x14), 0x28, "explicit size: UV from the entry");
+    FCK_EQ(rd32(p, 0), 0x09000000, "tag 0");
+
+    /* right/bottom anchors; entry 2: u/v wrap, w 0x118 uses low byte for UV */
+    p = gDrawAtlasSprite(2, 300, 200, -1, -1, 0x123, 0, 0, 0, 2, 0x10);
+    FCK_EQ(rs16(p, 0x08), 300 - 0x118, "right anchor: x = x - w (halfword w)");
+    FCK_EQ(rs16(p, 0x10), 300, "right anchor: x2 = x");
+    FCK_EQ(rs16(p, 0x0A), 200 - 0x10, "bottom anchor: y = y - h");
+    FCK_EQ(rs16(p, 0x22), 200, "bottom anchor: y2 = y");
+    FCK_EQ(rd8(p, 0x14), 0x08, "u1 = 0xF0 + 0x18 (low byte of 0x118) wraps");
+    FCK_EQ(rd8(p, 0x1D), 0x08, "v2 = 0xF8 + 0x10 wraps");
+    FCK_EQ(rd16(p, 0x16), 0x0055, "entry 2 tpage");
+    FCK_EQ(rd16(p, 0x0E), 0x4000, "entry 2 clut");
+    /* other anchor codes act as left/top */
+    p = gDrawAtlasSprite(0, 10, 10, -1, -1, 0, 0, 0, 0, 1, 8);
+    FCK_EQ(rs16(p, 0x08), 10, "flagX 1: left");
+    FCK_EQ(rs16(p, 0x1A), 22, "flagY 8: top");
+
+    /* rejects: no table, idx < 0, idx == count */
+    gPrimNext = at_pool;
+    lk_fill(at_pool, 0xA5, sizeof at_pool);
+    gAtlasTable = 0;
+    FCK_CHECK(gDrawAtlasSprite(0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0) == 0, "no table: null");
+    gAtlasTable = at_table;
+    FCK_CHECK(gDrawAtlasSprite(-1, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0) == 0, "idx -1: null");
+    FCK_CHECK(gDrawAtlasSprite(3, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0) == 0, "idx == count: null");
+    FCK_CHECK(gPrimNext == at_pool, "rejects: cursor unchanged");
+    FCK_CHECK(lk_all(at_pool, 0, sizeof at_pool, 0xA5), "rejects: pool untouched");
+    FCK_CHECK(gDrawAtlasSprite(2, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0) == at_pool, "idx count-1 accepted");
+
+    /* exhausted pool */
+    gPrimNext = at_pool + 0x34;
+    gPrimEnd = at_pool + 0x34;
+    p = gDrawAtlasSprite(0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0);
+    FCK_CHECK(p == at_pool + 0x34, "full: primitive at the cursor");
+    FCK_CHECK(gPrimNext == at_pool + 0x34, "full: cursor unchanged");
+}
+
 int main(void)
 {
     test_resupply();
@@ -1303,5 +1756,10 @@ int main(void)
     test_sprite_desc();
     test_attack_cmds();
     test_dual_view();
+    test_status_icon();
+    test_particle_light();
+    test_options_preview();
+    test_password();
+    test_atlas_sprite();
     return lk_done("leaf_gameplay");
 }
