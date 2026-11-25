@@ -79,6 +79,43 @@ void *gPlayerEntities[2] __asm__("D_8009FA58");
 s32 gLightObjectCount __asm__("D_8009F318");
 u8 gLightHandler[4] __asm__("D_80040874");
 
+
+/* 8004CAE4 marker colours and pools; D_800A8F90 is also the 80062874 object
+ * list (count, pad, items[]) */
+s32 gEntityIdCounter __asm__("D_8009F7A0");
+s32 gProximityScriptDeadline __asm__("D_8009F7A4");
+s32 gPendingMessageMask __asm__("D_8009F7A8");
+u8 gMessageDoneFlag __asm__("D_8009F7AC");
+s32 gRequestOffsetBias[2] __asm__("D_8009F9F4");
+s32 gUnitListHead __asm__("D_8009FA40");
+s32 gListTailBranch __asm__("D_8009FA88");
+s32 gMarkerColorTable[34] __asm__("D_800A6F60");
+u32 gCommandList[2 + 16] __asm__("D_800A8F90");
+
+/* 800511E4 path nodes */
+s32 gPlacementSlotCount __asm__("D_8009F7B8");
+void *gPathNetTables[4] __asm__("D_800A2210");
+
+/* 8005FFB8 effect key table (synthetic, 0x30-byte entries) */
+u8 gEffectKeyTable[4 * 0x30] __asm__("D_800A2300");
+
+/* 80062874 dual-view grid */
+s32 gViewAnchors[4] __asm__("D_800A3190");          /* {x, z} x 2 */
+s32 gCellClipRect[4] __asm__("D_800A2970");         /* x, z, w, h */
+u32 gCellNodes[2 * 8] __asm__("D_800A2990");        /* {obj, next} */
+u32 gCoverage2[4 * 25] __asm__("D_800AB548");       /* 5x5 cells, bits at +0 */
+u32 gCoverage1[4 * 25] __asm__("D_800AB3B8");
+s32 gCount2 __asm__("D_8009F82C");
+s32 gViewCount __asm__("D_8009F814");
+s32 gCount1 __asm__("D_8009F828");
+void **gList2 __asm__("D_8009F81C");
+void **gList1 __asm__("D_8009F818");
+u8 *gCellMap __asm__("D_8009F820");
+u8 gOrigin2X __asm__("D_8009F836");
+u8 gOrigin2Y __asm__("D_8009F837");
+u8 gOrigin1Y __asm__("D_8009F835");
+u8 gOrigin1X __asm__("D_8009F834");
+
 /* ========================================================================
  * Stand-ins (retail labels, record arguments)
  * ======================================================================== */
@@ -202,6 +239,48 @@ void st_remove_cmd(u8 *script, s32 i)
     script[0xD + 6] = 0;
 }
 
+/* 800511E4 callees */
+static s32 res_status, res_reuse_calls, res_ack_calls;
+static void *res_reuse_arg, *res_ack_arg;
+s32 st_res_status(void *r) __asm__("func_80019AA8");
+s32 st_res_status(void *r) { (void)r; return res_status; }
+void st_res_ack(void *r) __asm__("func_80019A74");
+void st_res_ack(void *r) { res_ack_calls++; res_ack_arg = r; }
+void st_res_reuse(void *r) __asm__("func_80019D00");
+void st_res_reuse(void *r) { res_reuse_calls++; res_reuse_arg = r; }
+static s32 surf_calls, surf_x[8], surf_z[8], surf_mode[8], surf_ret[8];
+s32 st_surface(s32 *pos, s32 mode) __asm__("func_80067684");
+s32 st_surface(s32 *pos, s32 mode)
+{
+    s32 k = surf_calls++ & 7;
+    surf_x[k] = pos[0]; surf_z[k] = pos[2]; surf_mode[k] = mode;
+    return surf_ret[k];
+}
+
+/* 8005A2BC callees */
+static s32 ctz_calls, ctz_args[4];
+s32 st_ctz(u32 v) __asm__("func_800195F0");
+s32 st_ctz(u32 v)
+{
+    if (ctz_calls < 4) ctz_args[ctz_calls] = v;
+    ctz_calls++;
+    return (s32)(v + 0x10);            /* marker value, not a real ctz */
+}
+static s32 desc_calls;
+static void *desc_arg;
+void st_set_desc(void *t) __asm__("func_8004979C");
+void st_set_desc(void *t) { desc_calls++; desc_arg = t; }
+
+/* 8005FFB8 callee: key lookup scripted per key */
+static s32 find_calls, find_arg;
+s32 st_find_key(s32 key) __asm__("func_8005FF70");
+s32 st_find_key(s32 key)
+{
+    find_calls++;
+    find_arg = key;
+    return key == 0x42 ? 2 : -1;
+}
+
 /* 80047BE8 callee */
 enum { C_TILE = 10 };
 void st_tile(u32 color, s32 x, s32 y, s32 w, s32 h, u8 blend) __asm__("func_8001C214");
@@ -219,6 +298,11 @@ void gUpdateChaseApproachSpeed(s32 msg, u8 *self, s32 unused) __asm__("func_8003
 void *gCreateLightObject(u8 *src) __asm__("func_80040E60");
 void gProcessAnimScriptCommands(u8 *script, u8 *track) __asm__("func_800449F8");
 void gEmitHudGouraudBar(s32 x, s32 y, s32 z, s32 p3, s32 p4, s32 p5, s32 flag) __asm__("func_80047BE8");
+void gInitMarkerColorsAndPools(void) __asm__("func_8004CAE4");
+void gLoadPathNodePositions(u8 *resource) __asm__("func_800511E4");
+s32 gBuildSpriteDescTable(void **array, s32 count) __asm__("func_8005A2BC");
+void gApplyAttackCommands(u8 *obj, u8 *script) __asm__("func_8005FFB8");
+void gBuildDualViewObjectListsAndGrid(void) __asm__("func_80062874");
 
 /* ======================================================================== */
 
@@ -805,6 +889,408 @@ static void test_hud_bar(void)
     FCK_CHECK(lk_all(prim_pool, 0, 0x34, 0xA5), "full pool: nothing written below the cursor");
 }
 
+/* 8004CAE4: 24-bit BGR marker colours (0xF8 bright / 0x78 dim channel). */
+static void test_marker_colors(void)
+{
+    static const u32 expect[32] = {
+        0x000000, 0x0000F8, 0xF80000, 0x00F800, 0xF8F800, 0x00F8F8, 0xF800F8, 0xF8F8F8,
+        0x0078F8, 0x000078, 0x780000, 0x007800, 0x787800, 0x007878, 0x780078, 0x787878,
+        0x003878, 0x0000F8, 0xF80000, 0x00F800, 0x8080F8, 0xF88070, 0x80F880, 0x0000F8,
+        0xF80000, 0x00F800, 0xF8F800, 0x00F8F8, 0xF800F8, 0xF8F8F8, 0x0078F8, 0x787878,
+    };
+    s32 i, ok;
+
+    /* @leaf 8004CAE4 source src/game/8004CAE4.c: 32-entry marker colour table literals, list heads/counters cleared, done flag 1, list capacity 0xFE (session +0x5C == 1), 0x12C (+0x0C == 2) or 0xC8 */
+    LK_FUNC("func_8004CAE4");
+
+    lk_fill(gMarkerColorTable, 0x5A, sizeof gMarkerColorTable);
+    lk_fill(gCommandList, 0x5A, sizeof gCommandList);
+    lk_fill(gRequestOffsetBias, 0x5A, sizeof gRequestOffsetBias);
+    gEntityIdCounter = 11; gProximityScriptDeadline = 12; gPendingMessageMask = 13;
+    gMessageDoneFlag = 0; gUnitListHead = 14; gListTailBranch = 15;
+    lk_fill(session, 0, sizeof session);
+    gSessionPtr = session;
+    wr32(session, 0x5C, 1);
+    wr32(session, 0x0C, 2);
+    gInitMarkerColorsAndPools();
+    ok = 1;
+    for (i = 0; i < 32; i++)
+        if ((u32)gMarkerColorTable[i] != expect[i]) ok = 0;
+    FCK_CHECK(ok, "all 32 marker colours");
+    FCK_EQ(gMarkerColorTable[4], 0xF8F800, "colour 4 cyan-ish 0xF8F800");
+    FCK_EQ(gMarkerColorTable[21], 0xF88070, "colour 21 0xF88070");
+    FCK_EQ(gMarkerColorTable[31], 0x787878, "colour 31 dim white");
+    FCK_EQ((u32)gMarkerColorTable[32], 0x5A5A5A5Au, "entry 32 untouched");
+    FCK_EQ(gCommandList[0], 0, "list head cleared");
+    FCK_EQ(gCommandList[1], 0xFE, "+0x5C == 1 wins: capacity 0xFE");
+    FCK_EQ(gCommandList[2], 0x5A5A5A5Au, "list item 0 untouched");
+    FCK_EQ(gEntityIdCounter, 0, "entity id counter cleared");
+    FCK_EQ(gProximityScriptDeadline, 0, "proximity deadline cleared");
+    FCK_EQ(gPendingMessageMask, 0, "pending mask cleared");
+    FCK_EQ(gMessageDoneFlag, 1, "done flag set");
+    FCK_EQ(gUnitListHead, 0, "unit list cleared");
+    FCK_EQ(gListTailBranch, 0, "tail branch cleared");
+    FCK_EQ(gRequestOffsetBias[0], 0, "request bias [0] cleared");
+    FCK_EQ((u32)gRequestOffsetBias[1], 0x5A5A5A5Au, "request bias [1] untouched");
+
+    wr32(session, 0x5C, 0);
+    wr32(session, 0x0C, 2);
+    gInitMarkerColorsAndPools();
+    FCK_EQ(gCommandList[1], 0x12C, "+0x0C == 2: capacity 0x12C");
+    wr32(session, 0x0C, 1);
+    gInitMarkerColorsAndPools();
+    FCK_EQ(gCommandList[1], 0xC8, "default capacity 0xC8");
+    wr32(session, 0x5C, 2);
+    wr32(session, 0x0C, 2);
+    gInitMarkerColorsAndPools();
+    FCK_EQ(gCommandList[1], 0x12C, "+0x5C == 2 falls through to the +0x0C test");
+}
+
+/* 800511E4: resource +0x00 data, +0x08 state; data +0x0E count, entries of
+ * 12 bytes at +0x14 (+0 flags, +2 z, +4 x, +6 type/height word). */
+static u8 pn_res[0x20], pn_data[0x14 + 12 * 6];
+
+static void pn_entry(s32 i, u32 flags, s32 z, s32 x, u32 w6)
+{
+    u8 *e = pn_data + 0x14 + 12 * i;
+    wr8(e, 0, flags); wr8(e, 1, 0x77);
+    wr16(e, 2, z); wr16(e, 4, x); wr16(e, 6, w6);
+    wr32(e, 8, 0x66666666u);
+}
+
+static void test_path_nodes(void)
+{
+    u8 *e;
+
+    /* @leaf 800511E4 source src/game/800511E4.c: u8 status gate (else func_80019D00), slot table publish/increment, per entry position (x=+4<<8, z=+2<<8), type 5 height (s16 word)*16 else surface query with mode -1/-2/type-2, rewrite +4 = (h+0x7F)>>8, +2 = x>>8, +6 = z>>8, flags low nibble cleared */
+    LK_FUNC("func_800511E4");
+
+    /* status nonzero: reuse path only */
+    lk_fill(pn_res, 0x33, sizeof pn_res);
+    wrp(pn_res, 0, pn_data);
+    lk_fill(pn_data, 0x44, sizeof pn_data);
+    res_status = 1; res_ack_calls = 0; res_reuse_calls = 0; surf_calls = 0;
+    gPlacementSlotCount = 1;
+    lk_fill(gPathNetTables, 0, sizeof gPathNetTables);
+    gLoadPathNodePositions(pn_res);
+    FCK_EQ(res_reuse_calls, 1, "status 1: reuse called");
+    FCK_CHECK(res_reuse_arg == pn_res, "status 1: reuse on the resource");
+    FCK_EQ(res_ack_calls, 0, "status 1: no load");
+    FCK_EQ(gPlacementSlotCount, 1, "status 1: slot count kept");
+    FCK_EQ(rd32(pn_res, 8), 0x33333333u, "status 1: state untouched");
+
+    /* status 0x100 truncates to 0 in u8: load path */
+    lk_fill(pn_data, 0x44, sizeof pn_data);
+    wr16(pn_data, 0x0E, 5);
+    pn_entry(0, 0xAB, 10, 20, 0x0000);          /* type 0 -> mode -1 */
+    pn_entry(1, 0x0F, -3, -4, 0x1231);          /* type 1 -> mode -2 */
+    pn_entry(2, 0xF7, 1, 2, 0x0007);            /* type 7 -> mode 5 */
+    pn_entry(3, 0x50, 6, 7, 0xFFF5);            /* type 5, height -11*16 */
+    pn_entry(4, 0x05, 8, 9, 0x0105);            /* type 5, height 0x105*16 */
+    pn_entry(5, 0x99, 1, 1, 0x0000);            /* beyond count */
+    res_status = 0x100; res_reuse_calls = 0; surf_calls = 0;
+    surf_ret[0] = 0x1234; surf_ret[1] = -0x100; surf_ret[2] = 0x80;
+    gPlacementSlotCount = 1;
+    lk_fill(gPathNetTables, 0, sizeof gPathNetTables);
+    gLoadPathNodePositions(pn_res);
+    FCK_EQ(res_reuse_calls, 0, "status 0x100: low byte 0 loads");
+    FCK_EQ(res_ack_calls, 1, "load: ack once");
+    FCK_EQ(rd32(pn_res, 8), 0, "load: resource +0x08 cleared");
+    FCK_CHECK(gPathNetTables[1] == pn_data + 0x0C, "load: table[slot] = data + 0x0C");
+    FCK_CHECK(gPathNetTables[2] == 0, "load: next slot untouched");
+    FCK_EQ(gPlacementSlotCount, 2, "load: slot count incremented");
+    FCK_EQ(surf_calls, 3, "three surface queries (types 0, 1, 7)");
+    FCK_EQ(surf_x[0], 20 * 256, "query 0 x = +4 << 8");
+    FCK_EQ(surf_z[0], 10 * 256, "query 0 z = +2 << 8");
+    FCK_EQ(surf_mode[0], -1, "type 0 -> mode -1");
+    FCK_EQ(surf_x[1], -4 * 256, "query 1 negative x");
+    FCK_EQ(surf_mode[1], -2, "type 1 -> mode -2");
+    FCK_EQ(surf_mode[2], 5, "type 7 -> mode 5");
+    e = pn_data + 0x14;
+    FCK_EQ(rs16(e, 4), 0x12, "entry 0: height (0x1234+0x7F)>>8");
+    FCK_EQ(rs16(e, 2), 20, "entry 0: +2 = x");
+    FCK_EQ(rs16(e, 6), 10, "entry 0: +6 = z");
+    FCK_EQ(rd8(e, 0), 0xA0, "entry 0: flags low nibble cleared");
+    FCK_EQ(rd8(e, 1), 0x77, "entry 0: +1 untouched");
+    e += 12;
+    FCK_EQ(rs16(e, 4), -1, "entry 1: (-0x100+0x7F)>>8 arithmetic = -1");
+    FCK_EQ(rs16(e, 2), -4, "entry 1: +2 = x");
+    FCK_EQ(rs16(e, 6), -3, "entry 1: +6 = z");
+    FCK_EQ(rd8(e, 0), 0x00, "entry 1: flags 0x0F -> 0");
+    e += 12;
+    FCK_EQ(rs16(e, 4), 0, "entry 2: (0x80+0x7F)>>8 = 0");
+    FCK_EQ(rd8(e, 0), 0xF0, "entry 2: flags 0xF7 -> 0xF0");
+    e += 12;
+    FCK_EQ(rs16(e, 4), -1, "entry 3: (-176+0x7F)>>8 = -1");
+    FCK_EQ(rs16(e, 2), 7, "entry 3: +2 = x");
+    FCK_EQ(rs16(e, 6), 6, "entry 3: +6 = z");
+    e += 12;
+    FCK_EQ(rs16(e, 4), 16, "entry 4: (4176+0x7F)>>8 = 16");
+    e += 12;
+    FCK_EQ(rd8(e, 0), 0x99, "entry 5 beyond count untouched");
+    FCK_EQ(rd16(e, 6), 0, "entry 5 word untouched");
+
+    /* count 0: table published, nothing walked */
+    wr16(pn_data, 0x0E, 0);
+    surf_calls = 0;
+    gLoadPathNodePositions(pn_res);
+    FCK_EQ(gPlacementSlotCount, 3, "count 0: slot still advances");
+    FCK_CHECK(gPathNetTables[2] == pn_data + 0x0C, "count 0: published at slot 2");
+    FCK_EQ(surf_calls, 0, "count 0: no queries");
+}
+
+/* 8005A2BC: sprite headers {?, ?, frames, ctz-src, col<<4, row, ?, ?} then
+ * 8-byte frames; output {count, items[12]: frames, ctz, -, frames ptr}. */
+static u8 sd_a[8 + 8 * 3], sd_b[8 + 8 * 3], sd_hdr[4 + 12 * 3];
+
+static void test_sprite_desc(void)
+{
+    void *arr[2];
+    s32 r;
+
+    /* @leaf 8005A2BC source src/game/8005A2BC.c: alloc(count*12+4, 2) or 0, item = {frames byte 2, ctz(byte 3), ptr+8}, per frame byte +6 += 0x80 and byte +7 = (col<<6)|row with col from byte 4 >> 4 wrapping 4 -> next row, table installed, returns 1 */
+    LK_FUNC("func_8005A2BC");
+
+    lk_fill(sd_a, 0, sizeof sd_a);
+    sd_a[2] = 3; sd_a[3] = 0x08; sd_a[4] = 0x2F; sd_a[5] = 1;
+    sd_a[8 + 6] = 0x10; sd_a[16 + 6] = 0x90; sd_a[24 + 6] = 0xFF;
+    sd_a[8 + 7] = 0xEE; sd_a[16 + 7] = 0xEE; sd_a[24 + 7] = 0xEE;
+    lk_fill(sd_b, 0, sizeof sd_b);
+    sd_b[2] = 2; sd_b[3] = 0x01; sd_b[4] = 0x50; sd_b[5] = 3;
+    arr[0] = sd_a; arr[1] = sd_b;
+    lk_fill(sd_hdr, 0xA5, sizeof sd_hdr);
+    alloc_ret = sd_hdr; alloc_calls = 0; ctz_calls = 0; desc_calls = 0;
+    r = gBuildSpriteDescTable(arr, 2);
+    FCK_EQ(r, 1, "returns 1");
+    FCK_EQ(alloc_args[0], 28, "alloc 2*12+4");
+    FCK_EQ(alloc_args[1], 2, "alloc tag 2");
+    FCK_EQ(rd32(sd_hdr, 0), 2, "header count");
+    FCK_EQ(rd8(sd_hdr, 4), 3, "item 0 frames");
+    FCK_EQ(ctz_args[0], 0x08, "ctz gets header byte 3");
+    FCK_EQ(rd8(sd_hdr, 5), 0x18, "item 0 +1 = ctz result");
+    FCK_EQ(rd32(sd_hdr, 12), (u32)(sd_a + 8), "item 0 frames pointer = header + 8");
+    FCK_EQ(sd_a[8 + 6], 0x90, "frame 0 +6: 0x10 + 0x80");
+    FCK_EQ(sd_a[8 + 7], 0x81, "frame 0 +7: col 2, row 1");
+    FCK_EQ(sd_a[16 + 6], 0x10, "frame 1 +6: 0x90 + 0x80 wraps");
+    FCK_EQ(sd_a[16 + 7], 0xC1, "frame 1 +7: col 3, row 1");
+    FCK_EQ(sd_a[24 + 6], 0x7F, "frame 2 +6: 0xFF + 0x80 wraps");
+    FCK_EQ(sd_a[24 + 7], 0x02, "frame 2 +7: col wrapped to 0, row 2");
+    FCK_EQ(sd_a[4], 0x2F, "header byte 4 untouched");
+    FCK_EQ(rd8(sd_hdr, 16), 2, "item 1 frames");
+    FCK_EQ(rd8(sd_hdr, 17), 0x11, "item 1 ctz result");
+    /* col 5 never equals 4: (5<<6)|3 truncates to 0x43, (6<<6)|3 to 0x83 */
+    FCK_EQ(sd_b[8 + 7], 0x43, "start col 5: 0x143 truncated");
+    FCK_EQ(sd_b[16 + 7], 0x83, "col 6, no row wrap");
+    FCK_EQ(sd_b[8 + 6], 0x80, "item 1 frame 0 +6 += 0x80");
+    FCK_EQ(desc_calls, 1, "table installed");
+    FCK_CHECK(desc_arg == sd_hdr, "installed table is the allocation");
+
+    /* allocation failure */
+    alloc_ret = 0; desc_calls = 0; ctz_calls = 0;
+    r = gBuildSpriteDescTable(arr, 2);
+    FCK_EQ(r, 0, "alloc failure returns 0");
+    FCK_EQ(desc_calls, 0, "alloc failure: nothing installed");
+    FCK_EQ(ctz_calls, 0, "alloc failure: nothing walked");
+
+    /* count 0 */
+    alloc_ret = sd_hdr; desc_calls = 0;
+    r = gBuildSpriteDescTable(arr, 0);
+    FCK_EQ(alloc_args[0], 4, "count 0: alloc 4");
+    FCK_EQ(rd32(sd_hdr, 0), 0, "count 0: header count 0");
+    FCK_EQ(desc_calls, 1, "count 0: still installed");
+}
+
+/* 8005FFB8: object +0x00 entry ptr, +0x04 flags, +0x06 mode, +0x08 arg,
+ * +0x20 key word; script commands at +0x0C. */
+static u8 at_obj[0x24], at_script[0x14];
+
+static void attack_reset(const u8 *cmds)
+{
+    s32 i;
+    lk_fill(at_obj, 0x5A, sizeof at_obj);
+    lk_fill(at_script, 0xCC, 0x0C);
+    for (i = 0; i < 8; i++) at_script[0xC + i] = cmds[i];
+    rm_calls = 0; find_calls = 0;
+}
+
+static void test_attack_cmds(void)
+{
+    static const u8 s1[8] = { 0x21, 0x90, 0x1E, 0, 0x26, 0x42, 0x24, 9 };
+    static const u8 s2[8] = { 0x1E, 1, 0x26, 0x07, 0x1F, 0, 0x23, 3 };
+    static const u8 s3[8] = { 0x25, 1, 0x1D, 2, 0x27, 3, 0x00, 4 };
+
+    /* @leaf 8005FFB8 source src/game/8005FFB8.c: ops 0x1F..0x23 set mode op-0x1E and +0x08 = arg, 0x1E arg 0 sets flag 0x100 else clears it, 0x26 binds table entry idx*0x30 and copies its +0x02 when the key is found, executed ops removed, others skipped */
+    LK_FUNC("func_8005FFB8");
+
+    lk_fill(gEffectKeyTable, 0x11, sizeof gEffectKeyTable);
+    wr16(gEffectKeyTable, 2 * 0x30 + 2, 0xBEEF);
+
+    attack_reset(s1);
+    wr16(at_obj, 4, 0x0001);
+    gApplyAttackCommands(at_obj, at_script);
+    FCK_EQ(rd8(at_obj, 6), 3, "0x21: mode 3");
+    FCK_EQ(rd16(at_obj, 8), 0x90, "0x21: +0x08 = unsigned arg");
+    FCK_EQ(rd16(at_obj, 4), 0x0101, "0x1E arg 0: flag 0x100 set, others kept");
+    FCK_EQ(find_calls, 1, "0x26: key lookup");
+    FCK_EQ(find_arg, 0x42, "0x26: lookup key = arg");
+    FCK_EQ(rd32(at_obj, 0), (u32)(gEffectKeyTable + 2 * 0x30), "0x26: entry = table + 2*0x30");
+    FCK_EQ(rd16(at_obj, 0x20), 0xBEEF, "0x26: +0x20 = entry +0x02");
+    FCK_EQ(rm_calls, 3, "three executed ops removed");
+    FCK_EQ(rm_idx[0], 0, "removed at 0");
+    FCK_EQ(rm_idx[2], 0, "removed at 0 again after the shift");
+    FCK_EQ(at_script[0xC], 0x24, "0x24 skipped and kept");
+    FCK_EQ(at_script[0xD], 9, "0x24 arg kept");
+
+    attack_reset(s2);
+    wr16(at_obj, 4, 0xFFFF);
+    gApplyAttackCommands(at_obj, at_script);
+    FCK_EQ(rd16(at_obj, 4), 0xFEFF, "0x1E arg 1: only flag 0x100 cleared");
+    FCK_EQ(rd32(at_obj, 0), 0x5A5A5A5Au, "0x26 miss: entry untouched");
+    FCK_EQ(rd16(at_obj, 0x20), 0x5A5A, "0x26 miss: +0x20 untouched");
+    FCK_EQ(rm_calls, 4, "miss still removes the command");
+    FCK_EQ(rd8(at_obj, 6), 5, "0x23 last: mode 5");
+    FCK_EQ(rd16(at_obj, 8), 3, "0x23: +0x08 = 3");
+
+    attack_reset(s3);
+    gApplyAttackCommands(at_obj, at_script);
+    FCK_EQ(rm_calls, 0, "0x25/0x1D/0x27: skipped");
+    FCK_CHECK(lk_all(at_obj, 0, sizeof at_obj, 0x5A), "skipped ops: object untouched");
+}
+
+/* 80062874: objects +0x08 active, +0x24 flags, +0x5C z, +0x60 y, +0x64 x,
+ * +0x68 half-size. Coarse cells 1<<17 (5x5 window), 4x4 sub-cells 1<<15
+ * with bit 15 - (4*row + col), cell map in 1<<15 units. */
+static u8 gv_obj[9][0x6C];
+static void *gv_l1[8], *gv_l2[8];
+static u8 gv_map[32 * 32];
+
+static void gv_set(s32 i, s32 active, s32 flags, s32 x, s32 z, s32 r)
+{
+    lk_fill(gv_obj[i], 0, 0x6C);
+    wr32(gv_obj[i], 0x08, active);
+    wr32(gv_obj[i], 0x24, flags);
+    wr32(gv_obj[i], 0x5C, z);
+    wr32(gv_obj[i], 0x60, 0x7777);
+    wr32(gv_obj[i], 0x64, x);
+    wr32(gv_obj[i], 0x68, r);
+}
+
+static void gv_reset(void)
+{
+    lk_fill(gCommandList, 0, sizeof gCommandList);
+    lk_fill(gCoverage1, 0, sizeof gCoverage1);
+    lk_fill(gCoverage2, 0, sizeof gCoverage2);
+    lk_fill(gCellNodes, 0xA5, sizeof gCellNodes);
+    lk_fill(gv_l1, 0xA5, sizeof gv_l1);
+    lk_fill(gv_l2, 0xA5, sizeof gv_l2);
+    lk_fill(gv_map, 0, sizeof gv_map);
+    gList1 = gv_l1; gList2 = gv_l2; gCellMap = gv_map;
+    gOrigin1X = 0; gOrigin1Y = 0; gOrigin2X = 0; gOrigin2Y = 0;
+    gViewAnchors[0] = 0x200000; gViewAnchors[1] = 0x200000;
+    gViewAnchors[2] = 0x200000; gViewAnchors[3] = 0x200000;
+    gCellClipRect[0] = 0; gCellClipRect[1] = 0;
+    gCellClipRect[2] = 32; gCellClipRect[3] = 32;
+    gCount1 = 0; gCount2 = 0; gViewCount = 0x55;
+}
+
+static void gv_list(s32 n)
+{
+    s32 i;
+    gCommandList[0] = n;
+    for (i = 0; i < n; i++) gCommandList[2 + i] = (u32)gv_obj[i];
+}
+
+static void test_dual_view(void)
+{
+    /* @leaf 80062874 source src/game/80062874.c: per active object nearest square point to each view anchor, 5x5 coarse window (1<<17) minus origin, 4x4 sub-cell bit 15-(4r+c); view 1 appends on bit hit, view 2 appends whenever the cell is nonzero, 256 caps skip the object; flags 4 excludes, hit or 0x100 links into the 1<<15 cell map (nodes from 1, next = previous head) */
+    LK_FUNC("func_80062874");
+
+    /* scenario 1: view 1 hits, linking, flags 4 / 0x100 / inactive */
+    gv_reset();
+    gViewAnchors[0] = 0x28000; gViewAnchors[1] = 0x48000;
+    gCoverage1[4 * 11] = 0x0400;            /* cell (row 2, col 1), sub (1,1) */
+    gv_set(0, 1, 0, 0x28000, 0x48000, 0x1000);      /* A hit */
+    gv_set(1, 0, 0x100, 0x28000, 0x48000, 0x1000);  /* B inactive */
+    gv_set(2, 1, 0, 0x28000, 0x48000, 0);           /* C hit, same map cell */
+    gv_set(3, 1, 4, 0x28000, 0x48000, 0);           /* D hit, flags 4 */
+    gv_set(4, 1, 0x100, 0x80000, 0x8000, 0);        /* E no hit, 0x100 */
+    gv_set(5, 1, 0, 0x80000, 0x8000, 0);            /* F no hit */
+    gv_set(6, 1, 0, 0x30000, 0x48000, 0);           /* G cell set, sub bit clear */
+    gv_list(7);
+    gCount1 = 2; gCount2 = 3;
+    gBuildDualViewObjectListsAndGrid();
+    FCK_EQ(gCount1, 5, "view 1: three hits appended after 2");
+    FCK_CHECK(gv_l1[2] == gv_obj[0], "view 1 list: A");
+    FCK_CHECK(gv_l1[3] == gv_obj[2], "view 1 list: C");
+    FCK_CHECK(gv_l1[4] == gv_obj[3], "view 1 list: D (flags 4 still listed)");
+    FCK_EQ((u32)gv_l1[5], 0xA5A5A5A5u, "view 1 list: G not appended");
+    FCK_EQ(gCount2, 3, "view 2: empty grid, count kept");
+    FCK_EQ(gViewCount, 4, "three nodes linked, next index 4");
+    FCK_EQ(gv_map[9 * 32 + 5], 2, "A/C cell (5, 9) head = node 2");
+    FCK_EQ(gCellNodes[2], (u32)gv_obj[0], "node 1 = A");
+    FCK_EQ(gCellNodes[3], 0, "node 1 next = null");
+    FCK_EQ(gCellNodes[4], (u32)gv_obj[2], "node 2 = C");
+    FCK_EQ(gCellNodes[5], (u32)&gCellNodes[2], "node 2 next = node 1");
+    FCK_EQ(gv_map[1 * 32 + 16], 3, "E cell (16, 1) head = node 3");
+    FCK_EQ(gCellNodes[6], (u32)gv_obj[4], "node 3 = E");
+    FCK_EQ(gCellNodes[7], 0, "node 3 next = null");
+    FCK_EQ(gCellNodes[8], 0xA5A5A5A5u, "node 4 unused");
+    FCK_EQ(gv_map[9 * 32 + 6], 0, "G cell (6, 9) not linked");
+
+    /* scenario 2: view 2 with origins, clip rect offset */
+    gv_reset();
+    gOrigin2X = 1; gOrigin2Y = 1;
+    gViewAnchors[2] = 0x48000; gViewAnchors[3] = 0x48000;
+    gCellClipRect[0] = 8; gCellClipRect[1] = 8;
+    gCellClipRect[2] = 4; gCellClipRect[3] = 4;
+    gCoverage2[4 * 6] = 0x8000;             /* cell (row 1, col 1), sub (0,0) */
+    gv_set(0, 1, 0, 0x48000, 0x48000, 0x100);       /* G: cell set, own bit clear */
+    gv_set(1, 1, 0, 0x40000, 0x40000, 0x100);       /* H: clamped +r, sub (0,0) */
+    gv_set(2, 1, 0x100, 0x10000, 0x10000, 0);       /* I: left of both windows */
+    gv_list(3);
+    gBuildDualViewObjectListsAndGrid();
+    FCK_EQ(gCount2, 2, "view 2: G and H appended");
+    FCK_CHECK(gv_l2[0] == gv_obj[0], "view 2 list: G (cell nonzero, no hit)");
+    FCK_CHECK(gv_l2[1] == gv_obj[1], "view 2 list: H");
+    FCK_EQ(gCount1, 0, "view 1 untouched");
+    FCK_EQ(gViewCount, 2, "only H linked");
+    FCK_EQ(gv_map[0], 1, "H at clip-relative (0, 0)");
+    FCK_EQ(gCellNodes[2], (u32)gv_obj[1], "node 1 = H");
+    FCK_CHECK(lk_all(gv_map, 1, sizeof gv_map, 0), "G and I not linked");
+
+    /* scenario 3: caps */
+    gv_reset();
+    gViewAnchors[0] = 0x28000; gViewAnchors[1] = 0x48000;
+    gViewAnchors[2] = 0x28000; gViewAnchors[3] = 0x48000;
+    gCoverage1[4 * 11] = 0x0400;
+    gCoverage2[4 * 11] = 0x0400;
+    gv_set(0, 1, 0x100, 0x28000, 0x48000, 0);
+    gv_list(1);
+    gCount1 = 256; gCount2 = 0;
+    gBuildDualViewObjectListsAndGrid();
+    FCK_EQ(gCount1, 256, "cap 1: count kept");
+    FCK_EQ(gCount2, 0, "cap 1: view 2 skipped as well");
+    FCK_EQ(gViewCount, 1, "cap 1: not linked despite 0x100");
+    gCount1 = 0; gCount2 = 256;
+    gBuildDualViewObjectListsAndGrid();
+    FCK_EQ(gCount1, 1, "cap 2: view 1 still appended");
+    FCK_EQ(gCount2, 256, "cap 2: count kept");
+    FCK_EQ(gViewCount, 1, "cap 2: not linked");
+    gCount1 = 0; gCount2 = 0;
+    gBuildDualViewObjectListsAndGrid();
+    FCK_EQ(gCount2, 1, "below caps: view 2 appended");
+    FCK_EQ(gViewCount, 2, "below caps: linked");
+
+    /* empty list still publishes the counters */
+    gv_reset();
+    gv_list(0);
+    gCount1 = 9; gCount2 = 8;
+    gBuildDualViewObjectListsAndGrid();
+    FCK_EQ(gViewCount, 1, "empty list: view count 1");
+    FCK_EQ(gCount1, 9, "empty list: count 1 kept");
+    FCK_EQ(gCount2, 8, "empty list: count 2 kept");
+}
+
 int main(void)
 {
     test_resupply();
@@ -812,5 +1298,10 @@ int main(void)
     test_light();
     test_anim_script();
     test_hud_bar();
+    test_marker_colors();
+    test_path_nodes();
+    test_sprite_desc();
+    test_attack_cmds();
+    test_dual_view();
     return lk_done("leaf_gameplay");
 }

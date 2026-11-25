@@ -23,7 +23,7 @@ compile() {
 }
 
 objects=()
-for unit in 8002FC90 80037B28 80040E60 800449F8 80047BE8; do
+for unit in 8002FC90 80037B28 80040E60 800449F8 80047BE8 8004CAE4 800511E4 8005A2BC 8005FFB8 80062874; do
     compile "$DECOMP/src/game/$unit.c" "$OUT/$unit.o"
     objects+=("$OUT/$unit.o")
 done
