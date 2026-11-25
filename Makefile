@@ -332,6 +332,8 @@ host-leaf-render:
 	  $(PYTHON) tools/host_leaf_suite.py report leaf_render; \
 	else \
 	  echo "host-leaf-render: qemu or C toolchain missing, skipped"; \
+	fi
+
 # Audio streaming, results rendering, and entity request helpers.
 host-leaf-entity:
 	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
