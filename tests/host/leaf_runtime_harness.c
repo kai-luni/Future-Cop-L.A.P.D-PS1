@@ -1,6 +1,26 @@
-/* leaf_runtime: runtime helpers that other systems call into - a compound
- * visual reset, a proximity (octagonal-distance) trigger, the priority sound
- * voice allocator, the three-slot status bar and the vibration toggle.
+/* leaf_runtime: 14 hardware-free runtime helpers, from packet builders and
+ * geometry queries to the heap allocator and the map loaders:
+ *
+ *   800516A0  compound visual subpart reset
+ *   80030498  octagonal-distance resupply trigger
+ *   8006C080  priority sound voice allocator (two scenarios)
+ *   80046B04  three-slot status bar
+ *   8007C940  vibration toggle (fixed `$2` through a trampoline)
+ *   8001484C  gouraud disc packet build
+ *   80043430  particle emitter setup, 0x1C-stride pool
+ *   800458E8  spatial attenuation curve
+ *   80056634  player view placement from the focus block
+ *   80060838  attack definition / aRSL load
+ *   8006A918  vm record registry load
+ *   80017EBC  heap allocator (linked for real, see below)
+ *   80050B54  path mover vertical motion
+ *   80067914  map cell ray test
+ *
+ * 80017EBC is part of the suite, so gAllocMemory resolves to the real unit and
+ * the other tests that allocate drive it through a synthetic free-range table
+ * (lr_free_ranges) instead of a stand-in: allocations are then observable as
+ * range-end movement plus the four-byte size header, and a failure is staged
+ * with gFreeRangeCount = 0 and a failing search.
  *
  * Fixture style: every D_ label a unit reads is defined here and written by the
  * test before the call; nothing relies on zero-init or on retail memory.
@@ -2691,6 +2711,48 @@ static void test_map_cell_ray(void)
     FCK_EQ(outA[0], -1, "a rejected wall leaves outA alone");
     FCK_EQ(outB, -1, "a rejected wall leaves outB alone");
     FCK_EQ(gWallHitPolys[0], 0, "a rejected wall records nothing");
+
+    /* a polygon word the loop must not reach when the count is zero */
+    cell_reset();
+    *(u16 *)(lr_tile + 0x3CC) = 0x10 << 4;      /* count 0 */
+    *(u32 *)(lr_tile + 0x5E0) = 40u << 15;      /* a hit if it were read */
+    gTileShapeTable[40] = 0;
+    gTileCornerIndices[40][1] = 1;
+    gTileCornerIndices[40][2] = 2;
+    a.x = 1000; a.y = -400; a.z = 2000;
+    b.x = 3000; b.y = 400; b.z = 8000;
+    outA[0] = -1; outB = -1;
+    FCK_EQ(gTestMapCellRay(&a, &b, outA, &outB, 1), 0, "a zero count skips the polygon list");
+    FCK_EQ(outB, -1, "a zero count writes no output");
+    FCK_EQ(gWallHitPolys[0], 0, "a zero count records no candidate");
+
+    /* type 71 is already a wall, not a plane */
+    cell_reset();
+    *(u32 *)(lr_tile + 0x5E0) = 71u << 15;
+    gTileShapeTable[71] = (11 << 3) | 1;
+    gTileCornerIndices[71][0] = 0;
+    gTileCornerIndices[71][1] = 1;
+    gTileCornerIndices[71][2] = 2;
+    gTileCornerIndices[71][3] = 3;
+    a.x = 1000; a.y = -400; a.z = 8000;
+    b.x = 3000; b.y = 400; b.z = 8000;
+    FCK_EQ(gTestMapCellRay(&a, &b, outA, &outB, 1), 0x2A01, "type 71 takes the wall path");
+    FCK_EQ(gWallHitKinds[0], 1, "type 71 is recorded as a wall");
+    FCK_EQ(outB, 9692, "type 71 interpolates like the other walls");
+
+    /* both endpoints exactly on the plane: the product t0^p0 is zero and the
+     * surface still counts as hit */
+    cell_reset();
+    *(u32 *)(lr_tile + 0x5E0) = 40u << 15;
+    gTileShapeTable[40] = 0;
+    gTileCornerIndices[40][1] = 1;
+    gTileCornerIndices[40][2] = 2;
+    a.x = 0; a.y = 0; a.z = 4096;
+    b.x = 0; b.y = 0; b.z = 4096;
+    outA[0] = -1; outA[1] = -1; outA[2] = -1; outB = -1;
+    FCK_EQ(gTestMapCellRay(&a, &b, outA, &outB, 1), 0x2A05,
+           "a segment on the plane is a hit, not a miss");
+    FCK_EQ(outB, 4096, "the on-plane hit reports the endpoint z");
 
     /* no polygons in the cell */
     cell_reset();
