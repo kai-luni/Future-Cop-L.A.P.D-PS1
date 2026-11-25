@@ -34,6 +34,20 @@
 #define LR_SETEN     12  /* func_8001EC04 set pad rumble enabled         */
 #define LR_SMALL     13  /* func_8001E96C set port small rumble          */
 #define LR_VISUAL    14  /* func_80013BD8 bind model slot                */
+#define LR_INITMOTION 15 /* func_8003C14C spawn motion init              */
+#define LR_DETAIL    16  /* func_80017B88 detail gate                    */
+#define LR_ALLOC     17  /* func_80017EBC heap allocation                */
+#define LR_MATRIX    18  /* func_800188D0 rotation matrix                */
+#define LR_COLORRATE 19  /* func_80043250 emitter colour rates           */
+#define LR_EYE       20  /* func_8005612C camera eye                     */
+#define LR_VIEWRECORD 21 /* func_80017B60 view record select             */
+#define LR_CAMPOS    22  /* func_800177AC camera position                */
+#define LR_CAMROT    23  /* func_80017860 camera rotation                */
+#define LR_FETCH     24  /* func_80019C38 tagged payload fetch           */
+#define LR_FETCH2    25  /* func_80019CA0 tagged reference block         */
+#define LR_RESOLVE   26  /* func_80019BF0 resource resolve               */
+#define LR_SUBSCALE  27  /* func_800607B8 sub-record scaler              */
+#define LR_FREE      28  /* func_800181D4 free block                     */
 
 struct LrCall {
     int id;
@@ -75,6 +89,30 @@ static int lr_idx(int id, int nth)
         }
     }
     return -1;
+}
+
+/* Calls that landed on this callee id. */
+static int lr_count(int id)
+{
+    int i, n = 0;
+    for (i = 0; i < lr_calls_n; i++)
+        if (lr_calls[i].id == id) n++;
+    return n;
+}
+
+/* The nth call to this callee id, or a zeroed record. */
+static struct LrCall lr_call(int id, int nth)
+{
+    int i;
+    for (i = 0; i < lr_calls_n; i++) {
+        if (lr_calls[i].id == id && nth-- == 0) return lr_calls[i];
+    }
+    {
+        struct LrCall none;
+        none.id = 0;
+        none.a0 = none.a1 = none.a2 = none.a3 = 0;
+        return none;
+    }
 }
 
 /* ======================================================================
@@ -129,7 +167,7 @@ struct LrOther {
     struct LrCoord coord;
     s32 radius;         /* +0x40 of the coordinate block, i.e. +0x68 here */
     u8 pad6C[0x48];
-    struct LrOther *parent; /* +0xB4 */
+    void *parent;           /* +0xB4, stored into the other entity as-is */
 };
 
 /* ------------------------------------------------------------- 8006C080 */
@@ -318,6 +356,388 @@ void gDrawThreeSlotStatusBar(struct LrStatusArg *arg0) __asm__("func_8006C080");
 s32 gAllocPrioritySoundVoice(s32 arg0, s32 arg1, s32 arg2, s32 slot)
     __asm__("func_80046B04");
 s32 gToggleVibrationPair(s32 arg0, s32 arg1) __asm__("func_8007C940");
+
+/* ======================================================================
+ * 8001484C gouraud disc packet emission
+ * ====================================================================== */
+
+struct LrVec {
+    s16 x, y, z;
+};
+struct LrPolyG3 {
+    u32 color;
+    u32 code;
+    s16 x0, y0;
+    u32 color1;
+    s16 x1, y1;
+    u32 color2;
+    s16 x2, y2;
+};
+
+u8 *gPacketCursor __asm__("D_8009FA90");
+u8 *volatile gPacketLimit __asm__("D_8009F9C0");
+static u8 lr_pkt[0x400];
+
+/* Sine/cosine samples per call; the unit asks for the start angle first and
+ * then once per quarter of the fan. */
+static s32 lr_sin_tab[8];
+static s32 lr_cos_tab[8];
+static u32 lr_trig_angle[8];
+static int lr_trig_n;
+
+void lr_stub_1846C(u32 angle, s32 *sine, s32 *cosine) __asm__("func_8001846C");
+void lr_stub_1846C(u32 angle, s32 *sine, s32 *cosine)
+{
+    int i = lr_trig_n < 8 ? lr_trig_n : 7;
+    if (lr_trig_n < 8) lr_trig_angle[lr_trig_n] = angle;
+    lr_trig_n++;
+    *sine = lr_sin_tab[i];
+    *cosine = lr_cos_tab[i];
+}
+
+void gEmitGouraudDisc(struct LrVec *v, u32 color0, u32 color1, s32 count,
+                      s32 scale, s32 offset_z, s32 angle) __asm__("func_8001484C");
+
+/* ======================================================================
+ * 80043430 particle emitter setup
+ * ====================================================================== */
+
+struct LrEmitter {
+    u8 unk00[0x64];
+    void *unk64;
+    s32 unk68;
+    void *unk6C;
+    s16 unk70;
+    s16 unk72;
+    s16 unk74;
+    s16 unk76;
+    s16 unk78;
+    s16 unk7A;
+    u16 unk7C;
+    u16 unk7E;
+    u16 unk80;
+    u16 unk82;
+    u16 unk84;
+    u16 unk86;
+    s16 unk88;
+    s16 unk8A;
+    u8 unk8C;
+    u8 unk8D;
+    s8 unk8E;
+    u8 unk8F;
+    u8 unk90;
+    u8 unk91;
+    u8 unk92;
+    u8 unk93;
+    u8 unk94;
+    u8 unk95;
+    s16 unk96;
+    s16 unk98;
+    s16 unk9A;
+    u16 unk9C;
+    u16 unk9E;
+    u16 unkA0;
+    u8 unkA2;
+    u8 unkA3;
+    u16 unkA4;
+    s16 unkA6;
+    void *unkA8;
+};
+struct LrEmitterDef {
+    u8 unk00[0x34];
+    u16 unk34;
+    u16 unk36;
+    u16 unk38;
+    u16 unk3A;
+    u16 unk3C;
+    s16 unk3E;
+    s16 unk40;
+    s16 unk42;
+    u16 unk44;
+    u16 unk46;
+    u16 unk48;
+    u16 unk4A;
+    u16 unk4C;
+    u16 unk4E;
+    u8 unk50;
+    u8 unk51;
+    u8 unk52;
+    u8 unk53;
+    u8 unk54;
+    u8 unk55;
+    u8 unk56;
+    u8 unk57;
+    u16 unk58;
+    u8 unk5A;
+    u8 unk5B;
+    u16 unk5C;
+    u8 unk5E;
+    u8 unk5F;
+};
+
+static s32 lr_detail_mode;                 /* func_80017B88 */
+static s32 lr_matrix_out[9];                /* func_800188D0 writes 9 words */
+static s32 lr_alloc_sizes[4];
+static int lr_alloc_n;
+static u8 lr_alloc_buf[0xA000];          /* two 0x5000 blocks */
+static int lr_alloc_fail;                   /* return 0 for the nth request */
+
+void lr_stub_3C14C(struct LrEmitter *p, struct LrEmitterDef *src) __asm__("func_8003C14C");
+void lr_stub_3C14C(struct LrEmitter *p, struct LrEmitterDef *src)
+{
+    lr_rec(LR_INITMOTION, (s32)p, (s32)src, 0, 0);
+}
+
+s32 lr_stub_17B88(void) __asm__("func_80017B88");
+s32 lr_stub_17B88(void)
+{
+    lr_rec(LR_DETAIL, 0, 0, 0, 0);
+    return lr_detail_mode;
+}
+
+void *lr_stub_17EBC(s32 size, s32 tag) __asm__("func_80017EBC");
+void *lr_stub_17EBC(s32 size, s32 tag)
+{
+    lr_rec(LR_ALLOC, size, tag, 0, 0);
+    if (lr_alloc_n < 4) lr_alloc_sizes[lr_alloc_n] = size;
+    lr_alloc_n++;
+    if (lr_alloc_fail && lr_alloc_fail == lr_alloc_n) return 0;
+    return lr_alloc_buf + ((lr_alloc_n - 1) & 1) * 0x5000;
+}
+
+void lr_stub_188D0(s32 x, s32 y, s32 z, s32 *out) __asm__("func_800188D0");
+void lr_stub_188D0(s32 x, s32 y, s32 z, s32 *out)
+{
+    int i;
+    lr_rec(LR_MATRIX, x, y, z, (s32)out);
+    for (i = 0; i < 9; i++) out[i] = lr_matrix_out[i];
+}
+
+void lr_stub_43250(struct LrEmitter *p) __asm__("func_80043250");
+void lr_stub_43250(struct LrEmitter *p)
+{
+    lr_rec(LR_COLORRATE, (s32)p, 0, 0, 0);
+}
+
+u8 gSetupParticleEmitter(struct LrEmitter *p, struct LrEmitterDef *src)
+    __asm__("func_80043430");
+
+/* ======================================================================
+ * 800458E8 spatial sound attenuation
+ * ====================================================================== */
+
+struct LrMix {
+    s8 volume;
+    s8 pan;
+    s8 flag;
+    s8 pad;
+    s32 dx0, dz0, dx1, dz1;
+};
+struct LrExtra {
+    u8 pad[0xAC];
+    u8 *data;
+};
+struct LrExtraData {
+    u8 pad[0xC1];
+    s8 mode;
+};
+
+s32 lr_music_volume __asm__("D_8009F330");
+s32 lr_sound_mode_flag __asm__("D_8009F730");
+s32 lr_sound_spatial_mode __asm__("D_8009F734");
+s32 lr_listener_table[8] __asm__("D_800A1920");
+
+static s32 lr_dist_ret[4];
+static int lr_dist_n;
+static s32 *lr_dist_ptr[4];
+static s32 lr_dist_words[4][2];
+
+s32 lr_stub_1A074(s32 *xz) __asm__("func_8001A074");
+s32 lr_stub_1A074(s32 *xz)
+{
+    int i = lr_dist_n < 4 ? lr_dist_n : 3;
+    lr_dist_ptr[i] = xz;
+    lr_dist_words[i][0] = xz[0];
+    lr_dist_words[i][1] = xz[1];
+    lr_dist_n++;
+    return lr_dist_ret[i];
+}
+
+s32 gComputeSpatialSoundAttenuation(s32 xin, s32 zin, struct LrMix *mix,
+                                    struct LrExtra *extra) __asm__("func_800458E8");
+
+/* ======================================================================
+ * 80056634 player view placement
+ * ====================================================================== */
+
+struct LrVec32 {
+    s32 x, y, z;
+};
+/* 0x14 bytes: f0, f2, f4, then the 12-byte position. */
+struct LrEntry {
+    s16 f0;
+    s16 f2;
+    s32 f4;
+    struct LrVec32 pos;
+};
+struct LrInfo {
+    u8 unk00[0xA6];
+    u8 flagA6;
+    u8 flagA7;
+    s16 valA8;
+    s16 valAA;
+    s8 idAC;
+    u8 unkAD[0x0F];
+    s32 valBC;
+};
+struct LrObject {
+    u8 unk00[0xAC];
+    struct LrInfo *info;
+};
+struct LrPlayer {
+    u8 unk00[0x50];
+    struct LrVec32 pos;
+    u8 unk5C[0x92];
+    s16 angle;
+    u8 unkF0[0x2E];
+    s8 index;
+};
+
+static struct LrPlayer lr_focus_block;
+/* D_8009F9A0 holds a pointer to the focus block, not the block itself: the
+ * unit loads it with lw before reading +0xEE/+0x11E. */
+struct LrPlayer *gFocusPositions __asm__("D_8009F9A0") = &lr_focus_block;
+struct LrEntry gFormCodeTable[8] __asm__("D_8009ACF4");
+struct LrObject *gPlayerEntities[2] __asm__("D_8009FA58");
+
+static struct LrVec32 lr_eye_out;           /* what the eye mock writes */
+static s32 lr_eye_args[9];
+
+void lr_stub_5612C(struct LrVec32 *pos, s32 angle, s32 angle2, s32 pitch, s32 dist,
+                   struct LrVec32 *src, struct LrVec32 *dst, s32 val, s32 val2)
+    __asm__("func_8005612C");
+void lr_stub_5612C(struct LrVec32 *pos, s32 angle, s32 angle2, s32 pitch, s32 dist,
+                   struct LrVec32 *src, struct LrVec32 *dst, s32 val, s32 val2)
+{
+    lr_rec(LR_EYE, (s32)pos, angle, angle2, pitch);
+    lr_eye_args[0] = (s32)pos;
+    lr_eye_args[1] = angle;
+    lr_eye_args[2] = angle2;
+    lr_eye_args[3] = pitch;
+    lr_eye_args[4] = dist;
+    lr_eye_args[5] = (s32)src;
+    lr_eye_args[6] = (s32)dst;
+    lr_eye_args[7] = val;
+    lr_eye_args[8] = val2;
+    *dst = lr_eye_out;
+}
+
+void lr_stub_17B60(s32 id) __asm__("func_80017B60");
+void lr_stub_17B60(s32 id)
+{
+    lr_rec(LR_VIEWRECORD, id, 0, 0, 0);
+}
+
+void lr_stub_177AC(struct LrVec32 *p) __asm__("func_800177AC");
+void lr_stub_177AC(struct LrVec32 *p)
+{
+    lr_rec(LR_CAMPOS, (s32)p, p->x, p->y, p->z);
+}
+
+void lr_stub_17860(s32 yaw, s32 pitch, s32 roll) __asm__("func_80017860");
+void lr_stub_17860(s32 yaw, s32 pitch, s32 roll)
+{
+    lr_rec(LR_CAMROT, yaw, pitch, roll, 0);
+}
+
+void gPlacePlayerViews(void) __asm__("func_80056634");
+
+/* ======================================================================
+ * 80060838 attack definition loader
+ * ====================================================================== */
+
+struct LrSub607B8 {
+    u8 unk00[6];
+    s16 unk06;
+    s16 unk08;
+    u8 unk0A[2];
+    s16 unk0C;
+};
+struct LrDefArg {
+    s32 unk00;
+    u8 unk04[0x18];
+    s32 unk1C;
+    s32 unk20;
+};
+struct LrDefEntry {
+    u8 unk00[8];
+    s16 unk08;
+    s16 unk0A;
+    struct LrSub607B8 sub;
+    u8 unk1A[6];
+    void *unk20[4];
+};
+
+s32 lr_def_count __asm__("D_8009F7F8");
+struct LrDefEntry gEffectKeyTable[8] __asm__("D_800A2300");
+
+static u8 lr_payload[0x80];
+static u8 lr_refblock[0x40];
+static void *lr_ref_returns[4];
+static s32 lr_ref_args[4][2];
+static int lr_ref_n;
+static s32 lr_fetch_args[4][4];
+static int lr_fetch_n;
+
+void *lr_stub_19C38(u32 a0, u32 a1, u32 a2, u32 a3) __asm__("func_80019C38");
+void *lr_stub_19C38(u32 a0, u32 a1, u32 a2, u32 a3)
+{
+    int i = lr_fetch_n < 4 ? lr_fetch_n : 3;
+    if (lr_fetch_n < 4) {
+        lr_fetch_args[i][0] = (s32)a0;
+        lr_fetch_args[i][1] = (s32)a1;
+        lr_fetch_args[i][2] = (s32)a2;
+        lr_fetch_args[i][3] = (s32)a3;
+    }
+    lr_fetch_n++;
+    lr_rec(LR_FETCH, (s32)a0, (s32)a1, (s32)a2, (s32)a3);
+    return lr_payload;
+}
+
+void *lr_stub_19CA0(u32 a0, u32 a1, u32 a2, u32 a3) __asm__("func_80019CA0");
+void *lr_stub_19CA0(u32 a0, u32 a1, u32 a2, u32 a3)
+{
+    lr_rec(LR_FETCH2, (s32)a0, (s32)a1, (s32)a2, (s32)a3);
+    return lr_refblock;
+}
+
+void *lr_stub_19BF0(s32 group, s32 name) __asm__("func_80019BF0");
+void *lr_stub_19BF0(s32 group, s32 name)
+{
+    int i = lr_ref_n < 4 ? lr_ref_n : 3;
+    if (lr_ref_n < 4) {
+        lr_ref_args[i][0] = group;
+        lr_ref_args[i][1] = name;
+    }
+    lr_ref_n++;
+    lr_rec(LR_RESOLVE, group, name, 0, 0);
+    return lr_ref_returns[i];
+}
+
+void lr_stub_607B8(struct LrSub607B8 *sub) __asm__("func_800607B8");
+void lr_stub_607B8(struct LrSub607B8 *sub)
+{
+    lr_rec(LR_SUBSCALE, (s32)sub, sub->unk06, sub->unk08, sub->unk0C);
+    sub->unk06 += 1;                /* visible marker, not a re-implementation */
+}
+
+void lr_stub_181D4(struct LrDefArg *arg0) __asm__("func_800181D4");
+void lr_stub_181D4(struct LrDefArg *arg0)
+{
+    lr_rec(LR_FREE, (s32)arg0, 0, 0, 0);
+}
+
+void gLoadAttackDefinition(struct LrDefArg *arg0) __asm__("func_80060838");
 
 /* ==================================================================== tests */
 
@@ -930,6 +1350,663 @@ static void test_vibration_toggle(void)
     FCK_EQ(lr_rumble_toggle[2], 1, "the toggle index is the argument itself");
 }
 
+/* ======================================================================
+ * 8001484C gouraud disc
+ * ====================================================================== */
+
+static void pkt_reset(void)
+{
+    lk_fill(lr_pkt, 0xEE, sizeof lr_pkt);
+    gPacketCursor = lr_pkt;
+    gPacketLimit = lr_pkt + sizeof lr_pkt;
+    lr_trig_n = 0;
+}
+
+/* Three trig samples make two fan quarters distinguishable: the start pair is
+ * (0, 1.0), then (0.5, 0.75) and (0.25, 0.875) in 16.16. */
+static void trig_plan(void)
+{
+    lr_sin_tab[0] = 0x0000; lr_cos_tab[0] = 0x10000;
+    lr_sin_tab[1] = 0x8000; lr_cos_tab[1] = 0xC000;
+    lr_sin_tab[2] = 0x4000; lr_cos_tab[2] = 0xE000;
+    lr_trig_n = 0;
+}
+
+#define PKT(i, field) (*(s16 *)(lr_pkt + (i) * 0x1C + (field)))
+
+static void test_gouraud_disc(void)
+{
+    static struct LrVec v;
+
+    /* @leaf 8001484C spec psx-spx: the packet is a 0x1C-byte gouraud triangle (colour word, code 0x32xxxxxx, three x/y pairs, two colours), the 0xE10006A0 word is a texpage and 0x06xxxxxx a linked-list terminator; the fan walk and the segment count follow src/game/8001484C.c */
+    LK_FUNC("func_8001484C");
+
+    /* depth 0x100 with offset 0x10 -> 0xF0; scale 4 -> (4 << 9) / 0x100 = 8
+     * segments, count 8 does not clamp, angle 0x1200 -> hi 0x12, step 0x4000 */
+    pkt_reset();
+    trig_plan();
+    v.x = 0x100;
+    v.y = 0x200;
+    v.z = 0x100;
+    gEmitGouraudDisc(&v, 0x00112233, 0x00445566, 8, 4, 0x10, 0x1200);
+
+    FCK_EQ(*(u32 *)(lr_pkt + 0x00), 0x010000F0u, "texpage colour word carries depth-dz");
+    FCK_EQ(*(u32 *)(lr_pkt + 0x04), 0xE10006A0u, "texpage code");
+    FCK_EQ(*(u32 *)(lr_pkt + 0x1C + 0x00), 0x060000F0u, "fan terminator = tag word");
+    FCK_EQ(*(u32 *)(lr_pkt + 0x1C + 0x04), 0x32001122u, "fan code = 0x32000000 | color0 >> 8");
+    FCK_EQ(*(u32 *)(lr_pkt + 0x1C + 0x0C), 0x00445566u >> 8, "first rim colour = color1 >> 8");
+    FCK_EQ(*(u32 *)(lr_pkt + 0x1C + 0x14), 0x00445566u >> 8, "second rim colour = color1 >> 8");
+    FCK_EQ(*(s16 *)(lr_pkt + 2 * 0x1C + 0x08), 0x100, "every fan packet repeats the centre x");
+    FCK_EQ(*(s16 *)(lr_pkt + 8 * 0x1C + 0x0A), 0x200, "every fan packet repeats the centre y");
+    FCK_EQ((s32)(gPacketCursor - lr_pkt), 9 * 0x1C, "nine packets came from the cursor");
+
+    /* Start sample (0, 8 after the >>16 scale) and quarter sample (4, 6):
+     * the four rim points of the first quarter are the four sign combinations
+     * of (cos, sin) around the centre, each on its own packet. */
+    FCK_EQ(*(s16 *)(lr_pkt + 1 * 0x1C + 0x10), 0x108, "pkt1 x1 = +cos");
+    FCK_EQ(*(s16 *)(lr_pkt + 1 * 0x1C + 0x12), 0x200, "pkt1 y1 = +sin");
+    FCK_EQ(*(s16 *)(lr_pkt + 3 * 0x1C + 0x10), 0x100, "pkt3 x1 = -sin");
+    FCK_EQ(*(s16 *)(lr_pkt + 3 * 0x1C + 0x12), 0x208, "pkt3 y1 = +cos");
+    FCK_EQ(*(s16 *)(lr_pkt + 5 * 0x1C + 0x10), 0x0F8, "pkt5 x1 = -cos");
+    FCK_EQ(*(s16 *)(lr_pkt + 5 * 0x1C + 0x12), 0x200, "pkt5 y1 = -sin");
+    FCK_EQ(*(s16 *)(lr_pkt + 7 * 0x1C + 0x10), 0x100, "pkt7 x1 = +sin");
+    FCK_EQ(*(s16 *)(lr_pkt + 7 * 0x1C + 0x12), 0x1F8, "pkt7 y1 = -cos");
+    FCK_EQ(*(s16 *)(lr_pkt + 1 * 0x1C + 0x18), 0x106, "pkt1 x2 uses the quarter sample cos");
+    FCK_EQ(*(s16 *)(lr_pkt + 1 * 0x1C + 0x1A), 0x204, "pkt1 y2 uses the quarter sample sin");
+    FCK_EQ(*(s16 *)(lr_pkt + 3 * 0x1C + 0x18), 0x0FC, "pkt3 x2 = -sin");
+    FCK_EQ(*(s16 *)(lr_pkt + 5 * 0x1C + 0x18), 0x0FA, "pkt5 x2 = -cos");
+    FCK_EQ(*(s16 *)(lr_pkt + 7 * 0x1C + 0x18), 0x104, "pkt7 x2 = +sin");
+
+    /* Second quarter: the previous quarter sample becomes the new start. */
+    FCK_EQ(*(s16 *)(lr_pkt + 2 * 0x1C + 0x10), 0x106, "pkt2 x1 = previous cos");
+    FCK_EQ(*(s16 *)(lr_pkt + 4 * 0x1C + 0x10), 0x0FC, "pkt4 x1 = -previous sin");
+    FCK_EQ(*(s16 *)(lr_pkt + 6 * 0x1C + 0x10), 0x0FA, "pkt6 x1 = -previous cos");
+    FCK_EQ(*(s16 *)(lr_pkt + 8 * 0x1C + 0x10), 0x104, "pkt8 x1 = +previous sin");
+    FCK_EQ(*(s16 *)(lr_pkt + 8 * 0x1C + 0x18), 0x102, "pkt8 x2 from the last sample");
+    FCK_EQ(*(s16 *)(lr_pkt + 8 * 0x1C + 0x1A), 0x1F9, "pkt8 y2 from the last sample");
+
+    FCK_EQ(lr_trig_n, 3, "one start sample and one per quarter");
+    FCK_EQ(lr_trig_angle[0], 0x12, "start sample uses the angle high byte");
+    FCK_EQ(lr_trig_angle[1], 0x12 + 0x200, "quarter 1 angle = hi + step/32");
+    FCK_EQ(lr_trig_angle[2], 0x12 + 0x400, "quarter 2 angle = hi + 2*step/32");
+
+    /* A count above the segment estimate is clamped down to the estimate. */
+    pkt_reset();
+    trig_plan();
+    gEmitGouraudDisc(&v, 0, 0, 100, 4, 0x10, 0x1200);
+    FCK_EQ((s32)(gPacketCursor - lr_pkt), 9 * 0x1C, "100 is clamped to the 8 segments");
+
+    /* A count below the estimate wins: four segments and one quarter. */
+    pkt_reset();
+    trig_plan();
+    gEmitGouraudDisc(&v, 0, 0, 4, 4, 0x10, 0x1200);
+    FCK_EQ((s32)(gPacketCursor - lr_pkt), 5 * 0x1C, "four segments plus the texpage");
+    FCK_EQ(*(s16 *)(lr_pkt + 2 * 0x1C + 0x10), 0x100, "pkt2 x1 = -sin for fp 4");
+    FCK_EQ(*(s16 *)(lr_pkt + 2 * 0x1C + 0x12), 0x208, "pkt2 y1 = +cos for fp 4");
+    FCK_EQ(*(s16 *)(lr_pkt + 4 * 0x1C + 0x10), 0x100, "pkt4 x1 = +sin for fp 4");
+    FCK_EQ(*(s16 *)(lr_pkt + 4 * 0x1C + 0x1A), 0x1FA, "pkt4 y2 from the only quarter");
+    FCK_EQ(lr_trig_n, 2, "fp 4 has a single quarter");
+
+    /* depth - offset <= 0: nothing is emitted, not even the texpage. */
+    pkt_reset();
+    trig_plan();
+    v.z = 0x10;
+    gEmitGouraudDisc(&v, 0, 0, 8, 4, 0x10, 0x1200);
+    FCK_EQ((s32)(gPacketCursor - lr_pkt), 0, "zero depth returns before any packet");
+    FCK_EQ(lr_trig_n, 0, "zero depth samples no angle");
+    FCK_CHECK(*(u32 *)lr_pkt == 0xEEEEEEEEu, "the packet buffer is untouched");
+    v.z = 0x0F;
+    gEmitGouraudDisc(&v, 0, 0, 8, 4, 0x10, 0x1200);
+    FCK_EQ((s32)(gPacketCursor - lr_pkt), 0, "negative depth returns as well");
+
+    /* Cursor at the limit: the packets are written in place and the cursor is
+     * not advanced, so the last corner written is the one that survives. */
+    pkt_reset();
+    trig_plan();
+    v.z = 0x100;
+    gPacketLimit = lr_pkt;
+    gEmitGouraudDisc(&v, 0, 0, 8, 4, 0x10, 0x1200);
+    FCK_EQ((s32)(gPacketCursor - lr_pkt), 0, "a full buffer does not move the cursor");
+    FCK_EQ(*(u32 *)(lr_pkt + 0x04), 0x32000000u, "the last code written wins in place");
+    FCK_EQ(*(s16 *)(lr_pkt + 0x10), 0x104, "the last x1 written wins");
+    FCK_EQ(*(s16 *)(lr_pkt + 0x18), 0x102, "the last x2 written wins");
+}
+
+/* ======================================================================
+ * 80043430 particle emitter setup
+ * ====================================================================== */
+
+static void emitter_reset(struct LrEmitter *p, struct LrEmitterDef *src)
+{
+    int i;
+    lk_fill((u8 *)p, 0xEE, sizeof *p);
+    lk_fill((u8 *)src, 0x00, sizeof *src);
+    lr_reset();
+    lr_alloc_n = 0;
+    lr_alloc_fail = 0;
+    lr_detail_mode = 0;
+    for (i = 0; i < 9; i++) lr_matrix_out[i] = i + 1;
+    lr_matrix_out[6] = 0x1000;
+    lr_matrix_out[7] = 0x2000;
+    lr_matrix_out[8] = -0x1000;
+    src->unk34 = 20;
+    src->unk36 = 10;
+    src->unk38 = 0x1111;
+    src->unk3A = 0x2222;
+    src->unk3C = 50;
+    src->unk3E = 0x40;
+    src->unk40 = 0x10;
+    src->unk42 = 0x100;
+    src->unk44 = 0x3333;
+    src->unk46 = 0x4444;
+    src->unk48 = 0x5555;
+    src->unk4A = 0x6666;
+    src->unk4C = 0x7777;
+    src->unk4E = 0x8888;
+    src->unk50 = 0x08;
+    src->unk51 = 0xA1;
+    src->unk52 = 0xA2;
+    src->unk53 = 0xA3;
+    src->unk54 = 0xA4;
+    src->unk55 = 0xA5;
+    src->unk56 = 0xA6;
+    src->unk58 = 0xFFF6;        /* -10 */
+    src->unk5A = 5;
+    src->unk5B = 6;
+    src->unk5C = 0x9999;
+    src->unk5E = 0x3F;
+    src->unk5F = 0x2C;
+}
+
+static void test_particle_emitter(void)
+{
+    static struct LrEmitter p;
+    static struct LrEmitterDef src;
+    u8 *node;
+    int i;
+
+    /* @leaf 80043430 semantic clamping and pool layout from src/game/80043430.c: unk36 -1 maps to unk34 and caps at 700, unk34 never exceeds unk36, detail mode 1 halves both when unk34 >= 11; +0x8A/+0x88 copies of those counts, 0x1C-stride free list, unk72 = (-unk72 << 12)/100, matrix[6..8] drive +0x76..+0x7A, unk8E = ((s8)unk50) >> 1 limited to [-7,7] with 0 -> 1, unkA6 = |unk58| */
+    LK_FUNC("func_80043430");
+
+    emitter_reset(&p, &src);
+    FCK_EQ(gSetupParticleEmitter(&p, &src), 1, "a valid definition succeeds");
+    FCK_EQ(src.unk34, 10, "unk34 is pulled down to unk36");
+    FCK_EQ(p.unk8A, 10, "+0x8A is the clamped count");
+    FCK_EQ(p.unk88, 10, "+0x88 is the clamped definition count");
+    FCK_EQ(p.unk7C, 0x3333, "+0x7C = src unk44");
+    FCK_EQ(p.unk80, 0x1111, "+0x80 = src unk38");
+    FCK_EQ(p.unk82, 0x2222, "+0x82 = src unk3A");
+    FCK_EQ(p.unk7E, 0x4444, "+0x7E = src unk46");
+    FCK_EQ(p.unk9C, 0x5555, "+0x9C = src unk48");
+    FCK_EQ(p.unk9E, 0x6666, "+0x9E = src unk4A");
+    FCK_EQ(p.unk84, 0x7777, "+0x84 = src unk4C");
+    FCK_EQ(p.unk86, 0x8888, "+0x86 = src unk4E");
+    FCK_EQ(p.unk8C, 5, "+0x8C = src unk5A");
+    FCK_EQ(p.unk8D, 6, "+0x8D = src unk5B");
+    FCK_EQ(p.unk8F, 0xA1, "+0x8F = src unk51");
+    FCK_EQ(p.unk93, 0xA5, "+0x93 = src unk55");
+    FCK_EQ(p.unkA0, 0x9999, "+0xA0 = src unk5C");
+    FCK_EQ(p.unkA2, 0x0F, "+0xA2 = src unk5E & 0xF");
+    FCK_EQ(p.unkA3, 0x0C, "+0xA3 = src unk5F & 0xF");
+    FCK_EQ(p.unkA6, 10, "+0xA6 = |unk58| of -10");
+    FCK_EQ(p.unk8E, 4, "+0x8E = (s8)unk50 >> 1");
+    FCK_EQ(p.unk72, -2048, "+0x72 = (-50 << 12) / 100");
+    FCK_EQ(p.unk76, 16, "+0x76 from matrix[6] >> 4");
+    FCK_EQ(p.unk78, 32, "+0x78 from matrix[7] >> 4");
+    FCK_EQ(p.unk7A, -16, "+0x7A from the sign of matrix[8] >> 4");
+    FCK_EQ(p.unk68, 0, "+0x68 is cleared after the pool link");
+    FCK_EQ(p.unkA4, 0, "+0xA4 is cleared");
+    FCK_EQ(p.unk74, 0, "+0x74 is cleared");
+    FCK_EQ(p.unk70, 0, "+0x70 is cleared");
+    FCK_CHECK(p.unk6C == lr_alloc_buf && p.unk64 == lr_alloc_buf,
+              "the pool pointer and its free-list head are the allocation");
+    FCK_CHECK(p.unkA8 == 0, "equal counts allocate no secondary buffer");
+
+    node = (u8 *)p.unk6C;
+    for (i = 0; i < 9; i++) {
+        if (*(u8 **)(node + i * 0x1C) != node + (i + 1) * 0x1C) break;
+    }
+    FCK_EQ(i, 9, "the first nine nodes link to their successor");
+    FCK_CHECK(*(u8 **)(node + 9 * 0x1C) == 0, "the last node terminates the list");
+
+    FCK_EQ(lr_alloc_n, 1, "one pool allocation");
+    FCK_EQ(lr_alloc_sizes[0], 10 * 0x1C, "the pool is 0x1C bytes per node");
+    /* order: motion init, detail gate, rotation matrix, allocation, colours */
+    FCK_CHECK(lr_calls_n == 5, "five callees");
+    FCK_CHECK(lr_calls[0].id == LR_INITMOTION && lr_calls[0].a0 == (s32)&p &&
+              lr_calls[0].a1 == (s32)&src, "motion init runs first on both blocks");
+    FCK_CHECK(lr_calls[1].id == LR_DETAIL, "the detail gate is asked once");
+    FCK_CHECK(lr_calls[2].id == LR_MATRIX && lr_calls[2].a0 == 0x40 &&
+              lr_calls[2].a1 == -0x10 && lr_calls[2].a2 == 0,
+              "the rotation matrix uses (unk3E, -unk40, 0)");
+    FCK_CHECK(lr_calls[3].id == LR_ALLOC && lr_calls[3].a1 == 1,
+              "the pool is allocated from tag 1");
+    FCK_CHECK(lr_calls[4].id == LR_COLORRATE && lr_calls[4].a0 == (s32)&p,
+              "the colour rates are computed after the link");
+
+    /* -1 means "same as unk34" */
+    emitter_reset(&p, &src);
+    src.unk36 = 0xFFFF;
+    src.unk34 = 33;
+    FCK_EQ(gSetupParticleEmitter(&p, &src), 1, "unk36 -1 succeeds");
+    FCK_EQ(src.unk36, 33, "unk36 takes unk34");
+    FCK_EQ(p.unk8A, 33, "the pool takes the copied count");
+    FCK_EQ(p.unk88, 33, "both counts match, no secondary pool");
+
+    /* the 700 cap pulls unk36 down before unk34 is clamped to it */
+    emitter_reset(&p, &src);
+    src.unk36 = 0x1000;
+    src.unk34 = 800;
+    FCK_EQ(gSetupParticleEmitter(&p, &src), 1, "an oversized count still succeeds");
+    FCK_EQ(src.unk36, 700, "unk36 is capped at 0x2BC");
+    FCK_EQ(src.unk34, 700, "unk34 is pulled to the cap too");
+    FCK_EQ(p.unk8A, 700, "the pool follows the cap");
+
+    /* zero/negative counts fail before any setup beyond motion init */
+    emitter_reset(&p, &src);
+    src.unk36 = 0;
+    FCK_EQ(gSetupParticleEmitter(&p, &src), 0, "a zero count fails");
+    FCK_EQ(lr_calls_n, 1, "only the motion init ran");
+    FCK_CHECK(p.unk6C == (void *)0xEEEEEEEE, "a failure leaves the pool pointer");
+
+    emitter_reset(&p, &src);
+    src.unk36 = 0xFFFE;        /* -2 */
+    FCK_EQ(gSetupParticleEmitter(&p, &src), 0, "a negative count fails");
+    FCK_EQ(lr_alloc_n, 0, "a failure allocates nothing");
+
+    /* detail mode halves both counts once unk34 reaches 11 */
+    emitter_reset(&p, &src);
+    src.unk34 = 20;
+    src.unk36 = 20;
+    lr_detail_mode = 1;
+    FCK_EQ(gSetupParticleEmitter(&p, &src), 1, "detail mode succeeds");
+    FCK_EQ(src.unk34, 10, "unk34 is halved");
+    FCK_EQ(src.unk36, 10, "unk36 is halved");
+    FCK_EQ(p.unk8A, 10, "the pool takes the halved count");
+
+    /* 10 is below the halving threshold */
+    emitter_reset(&p, &src);
+    src.unk34 = 10;
+    src.unk36 = 10;
+    lr_detail_mode = 1;
+    FCK_EQ(gSetupParticleEmitter(&p, &src), 1, "10 is not halved");
+    FCK_EQ(src.unk34, 10, "unk34 stays at 10");
+
+    /* a failed pool allocation aborts before the colour rates */
+    emitter_reset(&p, &src);
+    lr_alloc_fail = 1;
+    FCK_EQ(gSetupParticleEmitter(&p, &src), 0, "a failed allocation fails the setup");
+    FCK_EQ(lr_calls_n, 4, "the colour rates are not reached");
+    FCK_CHECK(p.unk6C == 0, "the failed pool pointer is null");
+
+    /* a smaller unk34 adds the optional secondary pool */
+    emitter_reset(&p, &src);
+    src.unk34 = 5;
+    src.unk36 = 10;
+    FCK_EQ(gSetupParticleEmitter(&p, &src), 1, "a smaller unk34 succeeds");
+    FCK_EQ(lr_alloc_n, 2, "two allocations");
+    FCK_EQ(lr_alloc_sizes[1], 5 * 0x1C, "the secondary pool is unk88 * 0x1C");
+    FCK_CHECK(p.unkA8 == lr_alloc_buf + 0x5000, "the secondary pool pointer is stored");
+}
+
+/* ======================================================================
+ * 800458E8 spatial sound attenuation
+ * ====================================================================== */
+
+static void mix_reset(struct LrMix *mix)
+{
+    lk_fill((u8 *)mix, 0x55, sizeof *mix);
+    lr_dist_n = 0;
+    lr_dist_ret[0] = lr_dist_ret[1] = lr_dist_ret[2] = lr_dist_ret[3] = 0;
+}
+
+static void test_spatial_attenuation(void)
+{
+    static struct LrMix mix;
+    static struct LrExtra extra;
+    static struct LrExtraData data;
+    s32 r;
+
+    /* @leaf 800458E8 math linear attenuation volume - ((distance * volume) >> 17) over 0x20000 with a 0x1FFFF cut-off, the louder of the two listeners in the two-listener mode, centre pan 64 and the flag/pan split from D_8009F730, plus the low-byte volume read that src/game/800458E8.c performs through a u8 pointer */
+    LK_FUNC("func_800458E8");
+
+    lr_listener_table[0] = 0x1000;
+    lr_listener_table[2] = 0x2000;
+    lr_listener_table[4] = 0x3000;
+    lr_listener_table[6] = 0x4000;
+    lr_music_volume = 100;
+    lr_sound_mode_flag = 0;
+    lr_sound_spatial_mode = 1;
+
+    /* one listener, half the range: 128 - (0x10000 * 128 >> 17) = 64 */
+    mix_reset(&mix);
+    lr_dist_ret[0] = 0x10000;
+    r = gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0);
+    FCK_EQ(r, 1, "an in-range sound is audible");
+    FCK_EQ(mix.volume, 50, "volume is linearly attenuated over 0x20000");
+    FCK_EQ(mix.pan, 64, "centre pan with the mode flag clear");
+    FCK_EQ(mix.flag, 1, "amplitude flag set with the mode flag clear");
+    FCK_EQ(mix.dx0, 0x500, "dx0 = x - listener 0 x");
+    FCK_EQ(mix.dz0, 0x800, "dz0 = z - listener 0 z");
+    FCK_EQ(lr_dist_n, 1, "one distance query");
+    FCK_CHECK(lr_dist_ptr[0] == &mix.dx0, "the distance query sees the delta pair");
+    FCK_EQ(lr_dist_words[0][0], 0x500, "the query reads dx0");
+    FCK_EQ(lr_dist_words[0][1], 0x800, "the query reads dz0");
+
+    /* the mode flag moves the result from pan to flag */
+    mix_reset(&mix);
+    lr_dist_ret[0] = 0x10000;
+    lr_sound_mode_flag = 1;
+    gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0);
+    FCK_EQ(mix.flag, 0, "the mode flag clears the amplitude flag");
+    FCK_EQ(mix.pan, 0x55, "the mode flag leaves the pan alone");
+    FCK_EQ(mix.volume, 50, "the volume does not depend on the flag");
+    lr_sound_mode_flag = 0;
+
+    /* full attenuation is still audible; one unit further is not */
+    mix_reset(&mix);
+    lr_dist_ret[0] = 0x1FFFF;
+    FCK_EQ(gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0), 1,
+           "distance 0x1FFFF is the last audible step");
+    FCK_EQ(mix.volume, 1, "the last step leaves one volume unit");
+
+    mix_reset(&mix);
+    lr_dist_ret[0] = 0x20000;
+    lr_sound_mode_flag = 1;
+    FCK_EQ(gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0), 0,
+           "distance 0x20000 is out of range");
+    FCK_EQ(mix.volume, 0, "an out-of-range sound is silent");
+    FCK_EQ(mix.pan, 64, "the out-of-range branch forces centre pan");
+    FCK_EQ(mix.flag, 1, "the out-of-range branch forces the flag");
+    lr_sound_mode_flag = 0;
+
+    /* an unsupported listener count is a full-volume centre mix */
+    mix_reset(&mix);
+    lr_sound_spatial_mode = 0;
+    FCK_EQ(gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0), 1,
+           "mode 0 is always audible");
+    FCK_EQ(mix.volume, 100, "mode 0 keeps the full volume");
+    FCK_EQ(mix.pan, 64, "mode 0 stays centred");
+    FCK_EQ(mix.flag, 1, "mode 0 sets the flag");
+    FCK_EQ(lr_dist_n, 0, "mode 0 measures no distance");
+
+    /* non-positional origin: centre mix, or hard left/right in stereo 2P */
+    mix_reset(&mix);
+    lr_sound_spatial_mode = 1;
+    FCK_EQ(gComputeSpatialSoundAttenuation(0, 0, &mix, 0), 1,
+           "the origin is audible");
+    FCK_EQ(mix.volume, 100, "the origin plays at full volume");
+    FCK_EQ(mix.pan, 64, "the origin is centred");
+    FCK_EQ(mix.flag, 1, "the origin sets the flag");
+    FCK_EQ(lr_dist_n, 0, "the origin measures no distance");
+
+    lk_fill((u8 *)&extra, 0, sizeof extra);
+    extra.data = (u8 *)&data;
+    lk_fill((u8 *)&data, 0, sizeof data);
+    lr_sound_spatial_mode = 2;
+    lr_sound_mode_flag = 1;
+    data.mode = 0;
+    gComputeSpatialSoundAttenuation(0, 0, &mix, &extra);
+    FCK_EQ(mix.pan, 0, "stereo mode 0 pans hard left");
+    data.mode = 1;
+    gComputeSpatialSoundAttenuation(0, 0, &mix, &extra);
+    FCK_EQ(mix.pan, 127, "stereo mode 1 pans hard right");
+    data.mode = 2;
+    gComputeSpatialSoundAttenuation(0, 0, &mix, &extra);
+    FCK_EQ(mix.pan, 64, "any other stereo mode stays centred");
+    gComputeSpatialSoundAttenuation(0, 0, &mix, 0);
+    FCK_EQ(mix.pan, 64, "no entity falls back to centre");
+    lr_sound_mode_flag = 0;
+
+    /* two listeners: the second pair comes from table[4]/table[6] and the
+     * louder listener wins. */
+    mix_reset(&mix);
+    lr_dist_ret[0] = 0x10000;       /* 64 */
+    lr_dist_ret[1] = 0;
+    FCK_EQ(gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0), 1,
+           "the nearer listener keeps the sound audible");
+    FCK_EQ(mix.dx0, 0x500, "listener 0 x delta");
+    FCK_EQ(mix.dz0, 0x800, "listener 0 z delta");
+    FCK_EQ(mix.dx1, 0x1500 - 0x3000, "listener 1 x delta");
+    FCK_EQ(mix.dz1, 0x2800 - 0x4000, "listener 1 z delta");
+    FCK_EQ(mix.volume, 100, "the louder of 50 and 100 wins");
+    FCK_EQ(lr_dist_n, 2, "both listeners are measured");
+    FCK_CHECK(lr_dist_ptr[0] == &mix.dx0 && lr_dist_ptr[1] == &mix.dx1,
+              "each listener measures its own delta pair");
+
+    mix_reset(&mix);
+    lr_dist_ret[0] = 0;
+    lr_dist_ret[1] = 0x10000;
+    gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0);
+    FCK_EQ(mix.volume, 100, "the order of the listeners does not matter");
+
+    mix_reset(&mix);
+    lr_dist_ret[0] = 0x1FFFF;       /* 1 */
+    lr_dist_ret[1] = 0x20000;       /* 0 */
+    gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0);
+    FCK_EQ(mix.volume, 1, "the near listener's residual volume wins");
+
+    mix_reset(&mix);
+    lr_dist_ret[0] = 0x20001;
+    lr_dist_ret[1] = 0x20002;
+    FCK_EQ(gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0), 0,
+           "both listeners out of range is silence");
+    FCK_EQ(mix.volume, 0, "both out of range silences the mix");
+    FCK_EQ(mix.pan, 64, "both out of range forces centre pan");
+
+    mix_reset(&mix);
+    lr_dist_ret[0] = 0x20001;       /* one out of range is enough */
+    lr_dist_ret[1] = 0;
+    FCK_EQ(gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0), 1,
+           "one listener in range is audible");
+    FCK_EQ(mix.volume, 100, "the in-range listener keeps the full volume");
+    lr_sound_spatial_mode = 1;
+
+    /* the volume field is read back as a byte: 0x1234 with distance 0 gives
+     * 0x34, not 0x1234. */
+    mix_reset(&mix);
+    lr_music_volume = 0x1234;
+    lr_dist_ret[0] = 0;
+    gComputeSpatialSoundAttenuation(0x1500, 0x2800, &mix, 0);
+    FCK_EQ(mix.volume, 0x34, "the attenuated volume keeps only the low byte");
+    lr_music_volume = 100;
+}
+
+/* ======================================================================
+ * 80056634 player view placement
+ * ====================================================================== */
+
+static void test_place_player_views(void)
+{
+    static struct LrObject obj0, obj1;
+    static struct LrInfo info0, info1;
+
+    /* @leaf 80056634 source src/game/80056634.c: entry = table[focus->index] with angle = focus->angle; for each live player the eye is placed from the focus position, (angle, angle + f0, f2, f4) and the entry position, the view record is selected by info +0xAC, the eye position/rotation are committed as (angle, f2, 0), and flags +0xA6/+0xA7 become 1 with valAA cleared */
+    LK_FUNC("func_80056634");
+
+    lk_fill((u8 *)&lr_focus_block, 0, sizeof lr_focus_block);
+    lk_fill((u8 *)gFormCodeTable, 0xEE, sizeof gFormCodeTable);
+    gFormCodeTable[3].f0 = 0x20;
+    gFormCodeTable[3].f2 = 0x30;
+    gFormCodeTable[3].f4 = 0x40;
+    gFormCodeTable[3].pos.x = 1;
+    gFormCodeTable[3].pos.y = 2;
+    gFormCodeTable[3].pos.z = 3;
+    lr_focus_block.pos.x = 0x700;
+    lr_focus_block.pos.y = 0x800;
+    lr_focus_block.pos.z = 0x900;
+    lr_focus_block.angle = 0x400;
+    lr_focus_block.index = 3;
+
+    lk_fill((u8 *)&info0, 0, sizeof info0);
+    info0.valA8 = 0x111;
+    info0.valBC = 0x222;
+    info0.idAC = 0x0D;
+    info0.valAA = 7;
+    obj0.info = &info0;
+    lk_fill((u8 *)&info1, 0, sizeof info1);
+    info1.valA8 = 0x333;
+    info1.valBC = 0x444;
+    info1.idAC = 0x0E;
+    info1.valAA = 9;
+    obj1.info = &info1;
+    gPlayerEntities[0] = &obj0;
+    gPlayerEntities[1] = 0;
+
+    lr_eye_out.x = 0x11;
+    lr_eye_out.y = 0x22;
+    lr_eye_out.z = 0x33;
+    lr_reset();
+    gPlacePlayerViews();
+
+    FCK_EQ(lr_eye_args[0], (s32)&lr_focus_block.pos, "the eye is based on the focus position");
+    FCK_EQ(lr_eye_args[1], 0x400, "the eye keeps the focus angle");
+    FCK_EQ(lr_eye_args[2], 0x420, "the second angle adds entry f0");
+    FCK_EQ(lr_eye_args[3], 0x30, "the pitch is entry f2");
+    FCK_EQ(lr_eye_args[4], 0x40, "the distance is entry f4");
+    FCK_EQ(lr_eye_args[5], (s32)&gFormCodeTable[3].pos, "the offset is the entry position");
+    FCK_EQ(lr_eye_args[7], 0x111, "info valA8 is forwarded");
+    FCK_EQ(lr_eye_args[8], 0x222, "info valBC is forwarded");
+    FCK_EQ(lr_count(LR_EYE), 1, "the null player is skipped");
+    FCK_EQ(lr_calls[1].id, LR_VIEWRECORD, "the view record follows the eye");
+    FCK_EQ(lr_calls[1].a0, 0x0D, "the view record id is info +0xAC");
+    FCK_EQ(lr_calls[2].id, LR_CAMPOS, "the eye position is committed");
+    FCK_EQ(lr_calls[2].a1, 0x11, "the committed x is the eye output");
+    FCK_EQ(lr_calls[2].a2, 0x22, "the committed y is the eye output");
+    FCK_EQ(lr_calls[2].a3, 0x33, "the committed z is the eye output");
+    FCK_EQ(lr_calls[3].id, LR_CAMROT, "the rotation is committed last");
+    FCK_EQ(lr_calls[3].a0, 0x400, "the yaw is the focus angle");
+    FCK_EQ(lr_calls[3].a1, 0x30, "the pitch is entry f2");
+    FCK_EQ(lr_calls[3].a2, 0, "the roll is zero");
+    FCK_EQ(lr_calls_n, 4, "four callees for one live player");
+    FCK_EQ(info0.flagA6, 1, "flag +0xA6 is set");
+    FCK_EQ(info0.flagA7, 1, "flag +0xA7 is set");
+    FCK_EQ(info0.valAA, 0, "valAA is cleared");
+    FCK_EQ(info1.flagA6, 0, "the absent player's info is untouched");
+
+    /* both players place their own eye with their own info */
+    gPlayerEntities[1] = &obj1;
+    gFormCodeTable[5].f0 = -0x10;
+    gFormCodeTable[5].f2 = 0x50;
+    gFormCodeTable[5].f4 = 0x60;
+    gFormCodeTable[5].pos.z = 0x77;
+    lr_focus_block.index = 5;
+    lr_reset();
+    gPlacePlayerViews();
+    FCK_EQ(lr_count(LR_EYE), 2, "both players are placed");
+    FCK_EQ(lr_eye_args[2], 0x400 - 0x10, "the second player uses entry 5 f0");
+    FCK_EQ(lr_eye_args[7], 0x333, "the second player forwards its own valA8");
+    FCK_EQ(lr_eye_args[8], 0x444, "the second player forwards its own valBC");
+    FCK_EQ(lr_count(LR_VIEWRECORD), 2, "both view records are selected");
+    FCK_EQ(lr_call(LR_VIEWRECORD, 1).a0, 0x0E, "the second player uses its own id");
+    FCK_EQ(info1.flagA6, 1, "the second player's flag is set");
+    FCK_EQ(info1.valAA, 0, "the second player's valAA is cleared");
+
+    /* no live player: nothing happens, not even a table read side effect */
+    gPlayerEntities[0] = 0;
+    gPlayerEntities[1] = 0;
+    lr_reset();
+    gPlacePlayerViews();
+    FCK_EQ(lr_calls_n, 0, "no live player calls nothing");
+}
+
+/* ======================================================================
+ * 80060838 attack definition loader
+ * ====================================================================== */
+
+static void definition_reset(void)
+{
+    int i;
+    lk_fill((u8 *)gEffectKeyTable, 0xEE, sizeof gEffectKeyTable);
+    lk_fill(lr_payload, 0x5A, sizeof lr_payload);
+    lk_fill(lr_refblock, 0x00, sizeof lr_refblock);
+    lr_def_count = 0;
+    lr_ref_n = 0;
+    lr_fetch_n = 0;
+    lr_reset();
+    for (i = 0; i < 4; i++) lr_ref_returns[i] = (void *)(0x9000 + i);
+    /* the copied 0x20 bytes and the two scaled words */
+    lr_payload[0x18] = 0xDA;        /* unk08 = 218 */
+    lr_payload[0x19] = 0x00;
+    lr_payload[0x1A] = 0x6D;        /* unk0A = 109 */
+    lr_payload[0x1B] = 0x00;
+    lr_payload[0x22] = 0x05;        /* sub.unk06 = 5 */
+    lr_payload[0x23] = 0x00;
+    /* Four 8-byte slots from +8: sp[1] is the group, sp[2] the name. A zero
+     * name means "no resource", so slot 0 and slot 3 stay empty. */
+    ((s32 *)lr_refblock)[4] = 0;        /* slot 0 name */
+    ((s32 *)lr_refblock)[5] = 3;        /* slot 1 group */
+    ((s32 *)lr_refblock)[6] = 7;        /* slot 1 name */
+    ((s32 *)lr_refblock)[7] = 4;        /* slot 2 group */
+    ((s32 *)lr_refblock)[8] = 9;        /* slot 2 name */
+    ((s32 *)lr_refblock)[10] = 0;       /* slot 3 name */
+}
+
+static void test_attack_definition(void)
+{
+    static struct LrDefArg arg;
+    struct LrDefEntry *e;
+    int i;
+
+    /* @leaf 80060838 libc the 0x20-byte copy is the unit's own memcpy of the tACT payload at +0x10 into a 0x30-byte table slot, then src/game/80060838.c: index = count++, unk08/unk0A = (value << 12)/218, the sub-record scaler, four (group, name) pairs from the aRSL block at +8 with a zero name meaning null, and the descriptor is freed */
+    LK_FUNC("func_80060838");
+
+    definition_reset();
+    arg.unk00 = 0x1234;
+    arg.unk1C = 0x56;
+    arg.unk20 = 0x78;
+    gLoadAttackDefinition(&arg);
+
+    e = &gEffectKeyTable[0];
+    FCK_EQ(lr_def_count, 1, "the entry count advances");
+    FCK_EQ(*(u8 *)((u8 *)e + 0x00), 0x5A, "the first copied byte");
+    FCK_EQ(*(u8 *)((u8 *)e + 0x07), 0x5A, "the eighth copied byte");
+    FCK_EQ(e->unk00[0], 0x5A, "the copy starts at the payload +0x10");
+    FCK_EQ(e->unk08, 4096, "unk08 is scaled by 4096/218");
+    FCK_EQ(e->unk0A, 2048, "unk0A is scaled by 4096/218");
+    FCK_EQ(e->unk1A[0], 0x5A, "the tail of the copy is unk1A");
+    FCK_EQ(e->unk20[0], 0, "a zero reference name yields null");
+    FCK_EQ((s32)e->unk20[1], 0x9000, "the first resolved reference");
+    FCK_EQ((s32)e->unk20[2], 0x9001, "the second resolved reference");
+    FCK_EQ(e->unk20[3], 0, "the third zero name yields null");
+    FCK_EQ(lr_ref_n, 2, "only named references are resolved");
+    FCK_EQ(lr_ref_args[0][0], 3, "the first pair group");
+    FCK_EQ(lr_ref_args[0][1], 7, "the first pair name");
+    FCK_EQ(lr_ref_args[1][0], 4, "the second pair group");
+    FCK_EQ(lr_ref_args[1][1], 9, "the second pair name");
+
+    FCK_EQ(lr_fetch_n, 1, "one tagged payload fetch (the reference block is the other call)");
+    FCK_EQ(lr_fetch_args[0][0], 0x1234, "the fetch gets the descriptor blob");
+    FCK_EQ(lr_fetch_args[0][1], 0x78, "the fetch gets the descriptor length");
+    FCK_EQ(lr_fetch_args[0][2], 0x74414354, "the fetch asks for the tACT tag");
+    FCK_EQ(lr_fetch_args[0][3], 0x56, "the fetch gets the section id");
+
+    FCK_EQ(lr_count(LR_FETCH), 1, "one tACT fetch");
+    FCK_EQ(lr_count(LR_FETCH2), 1, "one aRSL fetch");
+    FCK_EQ(lr_call(LR_FETCH2, 0).a2, 0x6152534C, "the aRSL tag");
+    FCK_EQ(lr_count(LR_SUBSCALE), 1, "the sub-record is scaled once");
+    FCK_EQ(lr_call(LR_SUBSCALE, 0).a0, (s32)&e->sub, "the scaler sees the sub-record");
+    FCK_EQ(lr_call(LR_SUBSCALE, 0).a1, 5, "the scaler sees the copied unk06");
+    FCK_EQ(e->sub.unk06, 6, "the scaler's write is visible in the entry");
+    FCK_EQ(lr_count(LR_FREE), 1, "the descriptor is freed once");
+    FCK_EQ(lr_call(LR_FREE, 0).a0, (s32)&arg, "the freed block is the argument");
+    FCK_EQ(lr_calls_n, 6, "fetch, scaler, fetch, two resolves, free");
+
+    /* the next load takes the next slot and leaves the previous one alone */
+    definition_reset();
+    gEffectKeyTable[2].unk08 = 0x1111;
+    lr_def_count = 2;
+    gLoadAttackDefinition(&arg);
+    FCK_EQ(lr_def_count, 3, "the count keeps advancing");
+    FCK_EQ(gEffectKeyTable[2].unk08, 4096, "slot 2 is overwritten");
+    FCK_EQ(gEffectKeyTable[1].unk08, (s16)0xEEEE, "slot 1 is untouched");
+    FCK_EQ(gEffectKeyTable[3].unk08, (s16)0xEEEE, "slot 3 is untouched");
+    for (i = 0; i < 8; i++) {
+        if (gEffectKeyTable[3].unk00[i] != 0xEE) break;
+    }
+    FCK_EQ(i, 8, "the following slot is untouched");
+}
+
 int main(void)
 {
     test_compound_visual_reset();
@@ -937,5 +2014,10 @@ int main(void)
     test_status_bar();
     test_priority_voice();
     test_vibration_toggle();
+    test_gouraud_disc();
+    test_particle_emitter();
+    test_spatial_attenuation();
+    test_place_player_views();
+    test_attack_definition();
     return lk_done("leaf_runtime");
 }
