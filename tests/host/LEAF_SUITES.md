@@ -14,6 +14,7 @@ that every possible retail execution path is hardware-free.
 | `leaf_math_harness.c` | 16 arithmetic, clamp and limit helpers (heap size accounting, RGB saturation, camera transform setters, teardown wrappers); mocks record their arguments |
 | `leaf_flow_harness.c` | 18 gameplay/flow helpers (audio voice bookkeeping, volume flow, sound-event dispatch, scene-pool lifecycle), hardware-free |
 | `leaf_object_harness.c` | 18 object/state helpers (stream rings, spawn descriptors, CVK sound banks, tracked voice); links `mocks/sound_mock.c` via `/* @mock sound_mock */` |
+| `leaf_core_harness.c` | 11 large SPU/GPU/scene units (voice slots, node commands, Bayer dither tables, GPU fill packets, SPU transfer/key/voice attributes, SPU pool allocator) on harness-defined `D_` fixtures; 80085F1C is `math` via `leaf_vectors.py` `bayer16`; 8008CB40 dropped (absolute kseg0 store) |
 | `leaf_a*_test.sh` | **generated**; do not edit |
 | `tools/host_leaf_suite.py` | scaffold / gen-script / report / mutate |
 
