@@ -49,6 +49,12 @@
 #define LR_SUBSCALE  27  /* func_800607B8 sub-record scaler              */
 #define LR_FREE      28  /* func_800181D4 free block                     */
 #define LR_VMSCALE   29  /* func_8006A898 vm record object scaler        */
+#define LR_RAW       30  /* func_8001E240 raw heap allocator             */
+#define LR_RSEARCH_FWD 31 /* func_80017D5C free-range search from front  */
+#define LR_RSEARCH_BACK 32 /* func_80017E0C free-range search from back  */
+#define LR_POOLPOP   33  /* func_800195A4 fixed pool pop                 */
+#define LR_MEMCOPY   34  /* func_8001E318 word move                      */
+#define LR_GROUND    35  /* func_80067684 ground height query            */
 
 struct LrCall {
     int id;
@@ -478,10 +484,6 @@ struct LrEmitterDef {
 
 static s32 lr_detail_mode;                 /* func_80017B88 */
 static s32 lr_matrix_out[9];                /* func_800188D0 writes 9 words */
-static s32 lr_alloc_sizes[4];
-static int lr_alloc_n;
-static u8 lr_alloc_buf[0xA000];          /* two 0x5000 blocks */
-static int lr_alloc_fail;                   /* return 0 for the nth request */
 
 void lr_stub_3C14C(struct LrEmitter *p, struct LrEmitterDef *src) __asm__("func_8003C14C");
 void lr_stub_3C14C(struct LrEmitter *p, struct LrEmitterDef *src)
@@ -494,16 +496,6 @@ s32 lr_stub_17B88(void)
 {
     lr_rec(LR_DETAIL, 0, 0, 0, 0);
     return lr_detail_mode;
-}
-
-void *lr_stub_17EBC(s32 size, s32 tag) __asm__("func_80017EBC");
-void *lr_stub_17EBC(s32 size, s32 tag)
-{
-    lr_rec(LR_ALLOC, size, tag, 0, 0);
-    if (lr_alloc_n < 4) lr_alloc_sizes[lr_alloc_n] = size;
-    lr_alloc_n++;
-    if (lr_alloc_fail && lr_alloc_fail == lr_alloc_n) return 0;
-    return lr_alloc_buf + ((lr_alloc_n - 1) & 1) * 0x5000;
 }
 
 void lr_stub_188D0(s32 x, s32 y, s32 z, s32 *out) __asm__("func_800188D0");
@@ -780,6 +772,142 @@ void lr_stub_6A898(struct LrVmObject *obj)
 
 void gRegistryLoad(struct LrDefArg *arg0) __asm__("func_8006A918");
 
+
+/* ======================================================================
+ * 80017EBC heap allocator
+ * ====================================================================== */
+
+struct LrLinkState {
+    s32 stride;
+    u8 *end;
+    s32 unk08;
+    s32 count;
+    s32 *link;
+};
+
+static s32 lr_free_ranges[8];
+s32 *gFreeRangeTablePtr __asm__("D_8009F590") = lr_free_ranges;
+s32 gFreeRangeCount __asm__("D_8009F594");
+s32 gHeapSearchCursor __asm__("D_8009F598");
+struct LrLinkState *gFixedPool3 __asm__("D_8009FA4C");
+struct LrLinkState *gFixedPool2 __asm__("D_8009FAAC");
+struct LrLinkState *gFixedPool1 __asm__("D_8009F9D0");
+
+static u8 lr_heap[0x2000];
+static void *lr_raw_result;
+static s32 lr_fwd_ret;
+static s32 lr_back_ret;
+static s32 lr_search_size[4];
+static int lr_search_n;
+static void *lr_pop_result;
+static s32 lr_memcopy_args[4];
+
+void *lr_stub_1E240(s32 size, s32 mode) __asm__("func_8001E240");
+void *lr_stub_1E240(s32 size, s32 mode)
+{
+    lr_rec(LR_RAW, size, mode, 0, 0);
+    return lr_raw_result;
+}
+
+s32 lr_stub_17D5C(s32 size) __asm__("func_80017D5C");
+s32 lr_stub_17D5C(s32 size)
+{
+    lr_rec(LR_RSEARCH_FWD, size, 0, 0, 0);
+    if (lr_search_n < 4) lr_search_size[lr_search_n] = size;
+    lr_search_n++;
+    return lr_fwd_ret;
+}
+
+s32 lr_stub_17E0C(s32 size) __asm__("func_80017E0C");
+s32 lr_stub_17E0C(s32 size)
+{
+    lr_rec(LR_RSEARCH_BACK, size, 0, 0, 0);
+    if (lr_search_n < 4) lr_search_size[lr_search_n] = size;
+    lr_search_n++;
+    return lr_back_ret;
+}
+
+struct LinkNode;
+void *lr_stub_195A4(struct LrLinkState *state) __asm__("func_800195A4");
+void *lr_stub_195A4(struct LrLinkState *state)
+{
+    lr_rec(LR_POOLPOP, (s32)state, 0, 0, 0);
+    return lr_pop_result;
+}
+
+u8 *lr_stub_1E318(u8 *dst, u8 *src, s32 count) __asm__("func_8001E318");
+u8 *lr_stub_1E318(u8 *dst, u8 *src, s32 count)
+{
+    s32 i;
+    lr_rec(LR_MEMCOPY, (s32)dst, (s32)src, count, 0);
+    lr_memcopy_args[0] = (s32)dst;
+    lr_memcopy_args[1] = (s32)src;
+    lr_memcopy_args[2] = count;
+    for (i = 0; i < count; i++) dst[i] = src[i];
+    return dst;
+}
+
+void *gAllocMemory(s32 size, s32 tag) __asm__("func_80017EBC");
+
+/* ======================================================================
+ * 80050B54 path mover vertical motion
+ * ====================================================================== */
+
+struct LrObj {
+    u8 pad0[6];
+    s16 y;
+    u8 pad8[4];
+    s16 scale;
+    u8 pade[14];
+    u32 value;
+    s16 divisor;
+    u8 pad22[4];
+    s16 offset;
+    u8 pad28[8];
+    s16 speed;
+    s16 current;
+    u8 pad34[8];
+    u32 flags;
+    s16 timer;
+};
+struct LrStepEntry {
+    u8 pad0[2];
+    s16 a;
+    u8 pad4[4];
+    s16 b;
+    u8 padA[6];
+};
+struct LrChild {
+    u8 pad0[0x34];
+    struct LrStepEntry *entries;
+};
+struct LrState {
+    u8 pad0[0x28];
+    struct LrChild *child;
+    u8 pad2c[0x24];
+    u8 pos[4];
+    s32 height;
+    u8 pad58[0x18];
+    s16 index;
+    u8 pad72[0x12];
+    s32 changed;
+};
+
+static s32 lr_ground_height;
+static s32 lr_ground_pos[1];
+static s32 lr_ground_arg;
+
+s32 lr_stub_67684(void *pos, s32 arg) __asm__("func_80067684");
+s32 lr_stub_67684(void *pos, s32 arg)
+{
+    lr_rec(LR_GROUND, (s32)pos, arg, 0, 0);
+    lr_ground_pos[0] = (s32)pos;
+    lr_ground_arg = arg;
+    return lr_ground_height;
+}
+
+s32 gStepPathMoverVerticalMotion(struct LrObj *obj, s32 delta, struct LrState *state)
+    __asm__("func_80050B54");
 
 /* ==================================================================== tests */
 
@@ -1524,8 +1652,19 @@ static void emitter_reset(struct LrEmitter *p, struct LrEmitterDef *src)
     lk_fill((u8 *)p, 0xEE, sizeof *p);
     lk_fill((u8 *)src, 0x00, sizeof *src);
     lr_reset();
-    lr_alloc_n = 0;
-    lr_alloc_fail = 0;
+    /* one free range for the real allocator: mode 1 carves from its end */
+    lk_fill(lr_heap, 0x00, sizeof lr_heap);
+    lr_free_ranges[0] = (s32)lr_heap;
+    lr_free_ranges[1] = (s32)(lr_heap + 0x1000);
+    lr_free_ranges[2] = 0;
+    lr_free_ranges[3] = 0;
+    gFreeRangeCount = 2;
+    gHeapSearchCursor = -1;
+    lr_back_ret = 0;
+    lr_raw_result = 0;
+    gFixedPool1 = 0;
+    gFixedPool2 = 0;
+    gFixedPool3 = 0;
     lr_detail_mode = 0;
     for (i = 0; i < 9; i++) lr_matrix_out[i] = i + 1;
     lr_matrix_out[6] = 0x1000;
@@ -1600,8 +1739,10 @@ static void test_particle_emitter(void)
     FCK_EQ(p.unkA4, 0, "+0xA4 is cleared");
     FCK_EQ(p.unk74, 0, "+0x74 is cleared");
     FCK_EQ(p.unk70, 0, "+0x70 is cleared");
-    FCK_CHECK(p.unk6C == lr_alloc_buf && p.unk64 == lr_alloc_buf,
+    FCK_CHECK(p.unk6C == lr_heap + 0xEE8 && p.unk64 == lr_heap + 0xEE8,
               "the pool pointer and its free-list head are the allocation");
+    FCK_EQ(*(s32 *)(lr_heap + 0xEE4), 0x11C, "the pool header holds 10 * 0x1C aligned");
+    FCK_EQ(lr_free_ranges[1], (s32)(lr_heap + 0xEE4), "the range end moved down by the pool");
     FCK_CHECK(p.unkA8 == 0, "equal counts allocate no secondary buffer");
 
     node = (u8 *)p.unk6C;
@@ -1611,8 +1752,7 @@ static void test_particle_emitter(void)
     FCK_EQ(i, 9, "the first nine nodes link to their successor");
     FCK_CHECK(*(u8 **)(node + 9 * 0x1C) == 0, "the last node terminates the list");
 
-    FCK_EQ(lr_alloc_n, 1, "one pool allocation");
-    FCK_EQ(lr_alloc_sizes[0], 10 * 0x1C, "the pool is 0x1C bytes per node");
+    FCK_EQ(lr_count(LR_POOLPOP), 0, "no fixed pool is used");
     /* order: motion init, detail gate, rotation matrix, allocation, colours */
     FCK_CHECK(lr_calls_n == 5, "five callees");
     FCK_CHECK(lr_calls[0].id == LR_INITMOTION && lr_calls[0].a0 == (s32)&p &&
@@ -1621,8 +1761,8 @@ static void test_particle_emitter(void)
     FCK_CHECK(lr_calls[2].id == LR_MATRIX && lr_calls[2].a0 == 0x40 &&
               lr_calls[2].a1 == -0x10 && lr_calls[2].a2 == 0,
               "the rotation matrix uses (unk3E, -unk40, 0)");
-    FCK_CHECK(lr_calls[3].id == LR_ALLOC && lr_calls[3].a1 == 1,
-              "the pool is allocated from tag 1");
+    FCK_CHECK(lr_calls[3].id == LR_RSEARCH_BACK && lr_calls[3].a0 == 0x11C,
+              "the pool is allocated from the range end");
     FCK_CHECK(lr_calls[4].id == LR_COLORRATE && lr_calls[4].a0 == (s32)&p,
               "the colour rates are computed after the link");
 
@@ -1654,7 +1794,7 @@ static void test_particle_emitter(void)
     emitter_reset(&p, &src);
     src.unk36 = 0xFFFE;        /* -2 */
     FCK_EQ(gSetupParticleEmitter(&p, &src), 0, "a negative count fails");
-    FCK_EQ(lr_alloc_n, 0, "a failure allocates nothing");
+    FCK_EQ(lr_free_ranges[1], (s32)(lr_heap + 0x1000), "a failure leaves the range alone");
 
     /* detail mode halves both counts once unk34 reaches 11 */
     emitter_reset(&p, &src);
@@ -1676,9 +1816,11 @@ static void test_particle_emitter(void)
 
     /* a failed pool allocation aborts before the colour rates */
     emitter_reset(&p, &src);
-    lr_alloc_fail = 1;
+    gFreeRangeCount = 0;            /* no range and no raw fallback */
+    lr_back_ret = -1;
     FCK_EQ(gSetupParticleEmitter(&p, &src), 0, "a failed allocation fails the setup");
-    FCK_EQ(lr_calls_n, 4, "the colour rates are not reached");
+    FCK_EQ(lr_calls_n, 5, "the colour rates are not reached");
+    FCK_EQ(lr_calls[4].id, LR_RAW, "the failed search falls back to the raw allocator");
     FCK_CHECK(p.unk6C == 0, "the failed pool pointer is null");
 
     /* a smaller unk34 adds the optional secondary pool */
@@ -1686,9 +1828,8 @@ static void test_particle_emitter(void)
     src.unk34 = 5;
     src.unk36 = 10;
     FCK_EQ(gSetupParticleEmitter(&p, &src), 1, "a smaller unk34 succeeds");
-    FCK_EQ(lr_alloc_n, 2, "two allocations");
-    FCK_EQ(lr_alloc_sizes[1], 5 * 0x1C, "the secondary pool is unk88 * 0x1C");
-    FCK_CHECK(p.unkA8 == lr_alloc_buf + 0x5000, "the secondary pool pointer is stored");
+    FCK_EQ(*(s32 *)(lr_heap + 0xE54), 0x90, "the secondary pool header holds (5 * 0x1C + 7) & ~3");
+    FCK_CHECK(p.unkA8 == lr_heap + 0xE58, "the secondary pool pointer is stored");
 }
 
 /* ======================================================================
@@ -2135,6 +2276,304 @@ static void test_registry_load(void)
     FCK_EQ(*(u8 *)(lr_vm_area + 0x00), 0x00, "index 0 is untouched");
 }
 
+/* ======================================================================
+ * 80017EBC heap allocator
+ * ====================================================================== */
+
+static void alloc_reset(void)
+{
+    int i;
+    lk_fill(lr_heap, 0x00, sizeof lr_heap);
+    for (i = 0; i < 8; i++) lr_free_ranges[i] = 0;
+    gFreeRangeCount = 2;
+    gHeapSearchCursor = -1;
+    lr_raw_result = 0;
+    lr_fwd_ret = -1;
+    lr_back_ret = -1;
+    lr_search_n = 0;
+    lr_pop_result = 0;
+    lr_reset();
+}
+
+static void test_heap_allocator(void)
+{
+    u8 *h = lr_heap;
+    static struct LrLinkState pool1, pool2, pool3;
+
+    /* @leaf 80017EBC semantic allocation contract from src/game/80017EBC.c: a zero size returns null; mode 0 goes to the raw allocator and falls back to mode 2; modes 2 and 1 round (size + 7) & ~3, keep a four-byte size header, carve from the front/back of a free range, drop a consumed range and move the mode-2 cursor; a failed range search retries the raw allocator with four bytes less; mode 3 pops from pool 3, then 2, then 1 and otherwise retries as mode 1 */
+    LK_FUNC("func_80017EBC");
+
+    alloc_reset();
+    FCK_EQ((s32)gAllocMemory(0, 2), 0, "a zero size returns null");
+    FCK_EQ(lr_calls_n, 0, "a zero size calls nothing");
+
+    alloc_reset();
+    lr_raw_result = (void *)0xD000;
+    FCK_EQ((s32)gAllocMemory(0x20, 0), 0xD000, "mode 0 returns the raw block");
+    FCK_EQ(lr_call(LR_RAW, 0).a0, 0x20, "mode 0 passes the size");
+    FCK_EQ(lr_call(LR_RAW, 0).a1, 0, "mode 0 passes mode 0");
+    FCK_EQ(lr_calls_n, 1, "mode 0 makes a single call");
+
+    /* a failed raw allocation retries as a front-of-range allocation */
+    alloc_reset();
+    lr_free_ranges[0] = (s32)(h + 0x20);
+    lr_free_ranges[1] = (s32)(h + 0x120);
+    lr_fwd_ret = 0;
+    FCK_EQ((s32)gAllocMemory(5, 0), (s32)(h + 0x24), "the fallback returns the range block");
+    FCK_EQ(lr_call(LR_RSEARCH_FWD, 0).a0, 12, "the fallback searches the aligned size");
+    FCK_EQ(*(s32 *)(h + 0x20), 12, "the fallback writes the size header");
+
+    /* mode 2: (5 + 7) & ~3 = 12 bytes from the front of the range */
+    alloc_reset();
+    lr_free_ranges[0] = (s32)(h + 0x20);
+    lr_free_ranges[1] = (s32)(h + 0x120);
+    lr_fwd_ret = 0;
+    FCK_EQ((s32)gAllocMemory(5, 2), (s32)(h + 0x24), "mode 2 returns past the header");
+    FCK_EQ(*(s32 *)(h + 0x20), 12, "mode 2 stores the aligned size");
+    FCK_EQ(lr_free_ranges[0], (s32)(h + 0x2C), "mode 2 moves the range start");
+    FCK_EQ(gHeapSearchCursor, 0, "mode 2 records the search cursor");
+    FCK_EQ(gFreeRangeCount, 2, "a partly used range stays in the table");
+    FCK_EQ(lr_calls_n, 1, "only the range search runs");
+
+    /* the alignment rounds up, never down */
+    alloc_reset();
+    lr_free_ranges[0] = (s32)(h + 0x20);
+    lr_free_ranges[1] = (s32)(h + 0x320);
+    lr_fwd_ret = 0;
+    gAllocMemory(0x11, 2);
+    FCK_EQ(*(s32 *)(h + 0x20), 0x18, "(0x11 + 7) & ~3 = 0x18");
+
+    /* a consumed range is removed from the table */
+    alloc_reset();
+    lr_free_ranges[0] = (s32)h;
+    lr_free_ranges[1] = (s32)(h + 0x100);
+    lr_free_ranges[2] = (s32)(h + 0x100);
+    lr_free_ranges[3] = (s32)(h + 0x200);
+    gFreeRangeCount = 4;
+    lr_fwd_ret = 0;
+    FCK_EQ((s32)gAllocMemory(0xF9, 2), (s32)(h + 4), "0xF9 rounds to the whole first range");
+    FCK_EQ(*(s32 *)h, 0x100, "the whole 0x100 bytes are taken");
+    FCK_EQ(lr_count(LR_MEMCOPY), 1, "the consumed range is dropped");
+    FCK_EQ(lr_memcopy_args[0], (s32)&lr_free_ranges[0], "the table is compacted in place");
+    FCK_EQ(lr_memcopy_args[1], (s32)&lr_free_ranges[2], "the following pair moves up");
+    FCK_EQ(lr_memcopy_args[2], 12, "(count - index - 1) * 4 bytes move");
+    FCK_EQ(gFreeRangeCount, 2, "one range pair is removed");
+    FCK_EQ(lr_free_ranges[0], (s32)(h + 0x100), "the second pair is now first");
+    FCK_EQ(lr_free_ranges[1], (s32)(h + 0x200), "the second pair's end moved with it");
+
+    /* a failed search retries the raw allocator four bytes smaller */
+    alloc_reset();
+    FCK_EQ((s32)gAllocMemory(5, 2), 0, "a failed search and raw allocation returns null");
+    FCK_EQ(lr_search_size[0], 12, "the search saw the aligned size");
+    FCK_EQ(lr_call(LR_RAW, 0).a0, 8, "the retry is four bytes smaller");
+    FCK_EQ(lr_call(LR_RAW, 0).a1, 0, "the retry uses the raw allocator");
+
+    /* mode 1 carves from the end of the range */
+    alloc_reset();
+    lr_free_ranges[0] = (s32)h;
+    lr_free_ranges[1] = (s32)(h + 0x100);
+    lr_back_ret = 0;
+    FCK_EQ((s32)gAllocMemory(5, 1), (s32)(h + 0xF8), "mode 1 returns from the range end");
+    FCK_EQ(*(s32 *)(h + 0xF4), 12, "mode 1 stores the size header");
+    FCK_EQ(lr_free_ranges[1], (s32)(h + 0xF4), "mode 1 lowers the range end");
+    FCK_EQ(lr_free_ranges[0], (s32)h, "mode 1 leaves the start alone");
+
+    /* a consumed mode-1 range also pulls the cursor back */
+    alloc_reset();
+    lr_free_ranges[0] = (s32)h;
+    lr_free_ranges[1] = (s32)(h + 0x100);
+    lr_free_ranges[2] = (s32)(h + 0x100);
+    lr_free_ranges[3] = (s32)(h + 0x200);
+    gFreeRangeCount = 4;
+    gHeapSearchCursor = 5;
+    lr_back_ret = 0;
+    gAllocMemory(0xF9, 1);
+    FCK_EQ(gFreeRangeCount, 2, "the consumed mode-1 range is dropped");
+    FCK_EQ(gHeapSearchCursor, 3, "a cursor past the removed pair moves back two");
+
+    /* mode 3 pops from the third, then second, then first pool */
+    alloc_reset();
+    pool3.stride = 0x10; pool3.count = 2;
+    pool2.stride = 0x10; pool2.count = 2;
+    pool1.stride = 0x10; pool1.count = 2;
+    gFixedPool3 = &pool3;
+    gFixedPool2 = &pool2;
+    gFixedPool1 = &pool1;
+    lr_pop_result = (void *)0xC000;
+    FCK_EQ((s32)gAllocMemory(8, 3), 0xC000, "mode 3 returns the pool node");
+    FCK_EQ(lr_call(LR_POOLPOP, 0).a0, (s32)&pool3, "the third pool is tried first");
+
+    alloc_reset();
+    pool3.stride = 0x04; pool3.count = 2;
+    pool2.stride = 0x08; pool2.count = 0;
+    pool1.stride = 0x02; pool1.count = 1;
+    gFixedPool3 = &pool3;
+    gFixedPool2 = &pool2;
+    gFixedPool1 = &pool1;
+    lr_pop_result = (void *)0xC100;
+    FCK_EQ((s32)gAllocMemory(8, 3), 0xC100, "a too small pool falls through");
+    FCK_EQ(lr_call(LR_POOLPOP, 0).a0, (s32)&pool1, "the first pool has no size check");
+
+    alloc_reset();
+    pool3.stride = 0x20; pool3.count = 0;
+    pool2.stride = 0x20; pool2.count = 0;
+    pool1.stride = 0x20; pool1.count = 0;
+    gFixedPool3 = &pool3;
+    gFixedPool2 = &pool2;
+    gFixedPool1 = &pool1;
+    lr_free_ranges[0] = (s32)h;
+    lr_free_ranges[1] = (s32)(h + 0x100);
+    lr_back_ret = 0;
+    FCK_EQ((s32)gAllocMemory(8, 3), (s32)(h + 0xF8), "empty pools fall back to a range");
+    FCK_EQ(lr_call(LR_RSEARCH_BACK, 0).a0, 12, "the fallback searches the aligned size");
+    FCK_EQ(lr_count(LR_POOLPOP), 0, "no pool is popped");
+
+    /* an unknown mode is a null return without calls */
+    alloc_reset();
+    FCK_EQ((s32)gAllocMemory(0x10, 4), 0, "an unknown mode returns null");
+    FCK_EQ(lr_calls_n, 0, "an unknown mode calls nothing");
+}
+
+/* ======================================================================
+ * 80050B54 path mover vertical motion
+ * ====================================================================== */
+
+static void mover_reset(struct LrObj *obj, struct LrState *state)
+{
+    lk_fill((u8 *)obj, 0x00, sizeof *obj);
+    lk_fill((u8 *)state, 0x77, sizeof *state);
+    lr_reset();
+    obj->y = 20;
+    obj->scale = 0x100;
+    obj->value = 0x100;
+    obj->divisor = 0x100;
+    obj->offset = 10;
+    obj->speed = 100;
+    obj->current = 0x5555;
+    obj->timer = 0x7777;
+    obj->flags = 0x11;
+    state->height = 1000;
+    state->changed = 0;
+    state->child = 0;
+    state->index = 0;
+    lr_ground_height = 0;
+}
+
+static void test_path_mover_vertical(void)
+{
+    static struct LrObj obj;
+    static struct LrState state;
+    static struct LrChild child;
+    static u8 entries[0x40];
+
+    /* @leaf 80050B54 math the 0x10 mode computes target = (offset << 4) + (y << 8) + ((scale << 8) * ((value * (0x80000000 / (divisor << 7))) >> 16)) >> 16 and climbs (speed * delta) >> 1; the 0x40 mode uses the ground query plus (entry->b - entry->a) << 4 and descends the same step; only the sub-target path writes state->height, and a mode-0x10 arrival clears flag 0x10, the timer and records the speed */
+    LK_FUNC("func_80050B54");
+
+    /* divisor 0x100 -> reciprocal 0x10000; value 0x100 -> 0x100; scale 0x100
+     * -> target 256; plus (10 << 4) and (20 << 8) -> 5536. */
+    mover_reset(&obj, &state);
+    FCK_EQ(gStepPathMoverVerticalMotion(&obj, 16, &state), 1, "a climb reports movement");
+    FCK_EQ(state.height, 1800, "1000 + (100 * 16 >> 1)");
+    FCK_EQ(obj.flags, 0x11, "a climb below the target keeps the flags");
+    FCK_EQ(obj.timer, 0x7777, "a climb below the target keeps the timer");
+    FCK_EQ(obj.current, 0x5555, "a climb below the target keeps the speed record");
+    FCK_EQ(state.changed, 0, "a climb below the target leaves changed alone");
+
+    /* the same step from 5000 arrives: 5800 >= 5536 */
+    mover_reset(&obj, &state);
+    state.height = 5000;
+    FCK_EQ(gStepPathMoverVerticalMotion(&obj, 16, &state), 1, "an arrival reports movement");
+    FCK_EQ(obj.flags, 0x01, "the arrival clears flag 0x10");
+    FCK_EQ(obj.timer, 0, "the arrival clears the timer");
+    FCK_EQ(obj.current, 100, "the arrival records the speed in current");
+    FCK_EQ(state.changed, 1, "the arrival sets state->changed");
+    FCK_EQ(state.height, 5000, "the arrival does not rewrite the state height");
+
+    /* the step scales with the delta */
+    mover_reset(&obj, &state);
+    obj.speed = 200;
+    gStepPathMoverVerticalMotion(&obj, 4, &state);
+    FCK_EQ(state.height, 1400, "1000 + (200 * 4 >> 1)");
+
+    /* a slower object still lands exactly on the target height */
+    mover_reset(&obj, &state);
+    state.height = 5530;
+    gStepPathMoverVerticalMotion(&obj, 16, &state);
+    FCK_EQ(obj.flags, 0x01, "a two unit step also counts as an arrival");
+
+    /* mode 0x40: ground 4000 plus (0x20 - 0x10) << 4 = 4256 */
+    mover_reset(&obj, &state);
+    obj.flags = 0x40;
+    state.height = 5000;
+    child.entries = (struct LrStepEntry *)entries;
+    lk_fill(entries, 0, sizeof entries);
+    /* the unit reads the entry at base + index * 0x10 + 8, so record 0's
+     * heights are the words at +0x0A and +0x10. */
+    *(s16 *)(entries + 0x0A) = 0x10;
+    *(s16 *)(entries + 0x10) = 0x20;
+    state.child = &child;
+    lr_ground_height = 4000;
+    FCK_EQ(gStepPathMoverVerticalMotion(&obj, 16, &state), 1, "a descent reports movement");
+    FCK_EQ(lr_ground_arg, -1, "the ground query asks for height -1");
+    FCK_EQ(lr_ground_pos[0], (s32)state.pos, "the ground query uses the state position");
+    FCK_EQ(state.height, 4256, "the descent lands on the ground target");
+    FCK_EQ(obj.flags, 0x50, "the landing sets flag 0x10 again");
+    FCK_EQ(lr_calls_n, 1, "one ground query");
+
+    /* still above the target after the step: the state follows the step */
+    mover_reset(&obj, &state);
+    obj.flags = 0x40;
+    state.height = 6000;
+    child.entries = (struct LrStepEntry *)entries;
+    state.child = &child;
+    lr_ground_height = 4000;
+    gStepPathMoverVerticalMotion(&obj, 16, &state);
+    FCK_EQ(state.height, 5200, "6000 - (100 * 16 >> 1)");
+    FCK_EQ(obj.flags, 0x40, "an unfinished descent keeps the flags");
+
+    /* no child: the target is the bare ground height */
+    mover_reset(&obj, &state);
+    obj.flags = 0x40;
+    state.height = 5000;
+    state.child = 0;
+    lr_ground_height = 4000;
+    gStepPathMoverVerticalMotion(&obj, 16, &state);
+    FCK_EQ(state.height, 4200, "4000 < 4200 keeps the stepped height");
+
+    /* the entry comes from the state index, 0x10 bytes apart */
+    mover_reset(&obj, &state);
+    obj.flags = 0x40;
+    state.height = 2000;
+    child.entries = (struct LrStepEntry *)entries;
+    lk_fill(entries, 0, sizeof entries);
+    *(s16 *)(entries + 0x2A) = 0x100;
+    *(s16 *)(entries + 0x30) = 0x80;   /* negative contribution: -0x800 */
+    state.child = &child;
+    state.index = 2;
+    lr_ground_height = 4000;
+    gStepPathMoverVerticalMotion(&obj, 16, &state);
+    FCK_EQ(state.height, 1952, "4000 - 0x800 is the descendant target");
+    FCK_EQ(obj.flags, 0x50, "the negative offset still lands on flag 0x10");
+
+    /* a leaf with 0x10 already clear does not climb */
+    mover_reset(&obj, &state);
+    obj.flags = 0x01;
+    state.height = 1000;
+    FCK_EQ(gStepPathMoverVerticalMotion(&obj, 16, &state), 0, "flag 0x10 clear matches no mode");
+    FCK_EQ(state.height, 1000, "an unmatched mode leaves the height alone");
+
+    /* unsupported flag mixes */
+    mover_reset(&obj, &state);
+    obj.flags = 0x20;
+    FCK_EQ(gStepPathMoverVerticalMotion(&obj, 16, &state), 0, "0x20 matches no mode");
+    FCK_EQ(lr_calls_n, 0, "an unmatched mode calls nothing");
+    FCK_EQ(state.height, 1000, "an unmatched mode leaves the height");
+
+    mover_reset(&obj, &state);
+    obj.flags = 0x50;
+    FCK_EQ(gStepPathMoverVerticalMotion(&obj, 16, &state), 0, "0x50 matches no mode");
+}
+
 int main(void)
 {
     test_compound_visual_reset();
@@ -2148,5 +2587,7 @@ int main(void)
     test_place_player_views();
     test_attack_definition();
     test_registry_load();
+    test_heap_allocator();
+    test_path_mover_vertical();
     return lk_done("leaf_runtime");
 }
