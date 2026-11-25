@@ -41,6 +41,8 @@ s32 gHandleMountedPartMsg(s32 message, struct Object *object, void *data, s32 ar
  *
  * @param message Entity message id.
  * @param object Container object; child pointer at 0xEA.
+ *        (Correction: the struct layout below places the child pointer at
+ *        +0xEC - +0xE8 is the u16 flags word, +0xEA..+0xEB are pad.)
  * @param data Message payload.
  * @param arg3 Extra argument forwarded unchanged.
  * @return 0, except for the queries of messages 9 and 10.

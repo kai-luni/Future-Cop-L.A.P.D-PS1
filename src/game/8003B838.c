@@ -36,6 +36,18 @@ u8 gGetSpawnDescColumn(struct Unk3BObject *object) __asm__("func_8003B838");
  *
  * @par Callers
  * Confirmed: func_8003BC0C (0x8003BC30 in asm/us/main.s), func_8003FA34 (0x8003FA78 in asm/us/main.s) / Likely: none / Unknown: none.
+ *
+ * @par Map-object path
+ * Step 5 of the map-object path (docs/precinct-assault-map-objects.md): the
+ * "does this object want a grid cell, and which one" predicate. The byte it
+ * returns is the *primary* column of the object's D_800A0C70 slot descriptor,
+ * which func_8003BC0C then passes to func_800402DC together with the bank from
+ * func_8003BF50. func_8003FA34 uses the same answer purely as a gate: a 0 here
+ * means "nothing to register", so the object is neither written nor queued.
+ * Note the descriptor table is the *map's* table, not the entity's: index 0 is
+ * "unassigned" and the table is rebuilt per level by func_8003F79C /
+ * func_8003BC7C. See tests/host/map_objects_test.sh (case
+ * "gGetSpawnDescColumn guards").
  */
 u8 gGetSpawnDescColumn(struct Unk3BObject *object)
 {

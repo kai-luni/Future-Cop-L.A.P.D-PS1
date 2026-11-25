@@ -30,6 +30,9 @@ s32 gHandleElevatorEntityMessages(s32 msg, struct Obj41B6C *obj, s32 a2, s32 a3)
  *
  * @par Side effects
  * Increments the hit counter up to 20 on msg 11; via callees: entity fields, matrices, sounds and the ground table.
+ * The s16 at +0xC4 is the same field func_80041880 uses as its hold countdown
+ * (Obj41880.unkC4) and func_80041488 clears at init (Self.zero): hits pause
+ * the tick. See docs/precinct-assault-movers.md.
  *
  * @par Callers
  * Confirmed: no direct calls; the address is taken at 0x8002AED0 inside func_8002AE54, the entity-type dispatcher (jump-table index 9 = type id 10). The package work list names a sibling handler and a non-existent unit as callers; neither calls this function.

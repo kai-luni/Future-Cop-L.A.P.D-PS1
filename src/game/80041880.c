@@ -151,6 +151,11 @@ s32 gStepElevator(struct Obj41880 *arg0, s32 arg1) __asm__("func_80041880");
  * player-triggered) and may fire func_800457B8 and func_80047284. It always
  * finishes by reloading the matrix with func_80010750 and transforming one
  * frame vertex with func_80010234.
+ *
+ * @par Shared field
+ * unkC4 (+0xC4, s16) is the same block field func_80041B6C increments as its
+ * msg-11 hit counter (Obj41B6C.count) and func_80041488 clears at init
+ * (Self.zero); a positive value here holds the tick for that many calls.
  */
 s32 gStepElevator(struct Obj41880 *arg0, s32 arg1)
 {
