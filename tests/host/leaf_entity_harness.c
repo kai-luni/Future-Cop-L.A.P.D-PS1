@@ -3,6 +3,17 @@
  * to other units, not another implementation of the function under test.
  * Results drawing and portrait audio call the real decoder and voice
  * acquisition units in this suite, respectively.
+ *
+ * Equivalent-mutant notes (tools/host_leaf_suite.py mutate):
+ *  - 8002283C line 74 `channel >= 0` -> `>` (ge->gt) and `0` -> `1` (int+1):
+ *    when channel == 0, both the true branch (clamped = channel) and the
+ *    else branch (clamped = 0) yield clamped = 0, so both mutants are
+ *    identical for all s32 inputs.
+ *  - 80029A60 line 73 `(unk02 + unk00) & 7` -> `(unk02 - unk00) & 7`:
+ *    guarded by line 58 (normal) and line 70 (priority), this branch only
+ *    runs when count <= 0; for every reachable valid queue state count == 0,
+ *    so +0 and -0 are identical. Line 59 `return 0;` -> `return 0;` is a
+ *    verbatim no-op rewrite.
  */
 #include "game/types.h"
 #define FCK_TYPES_H
@@ -179,7 +190,12 @@ void record_store_mix(s32 channel, s32 level, s32 pan) __asm__("func_800227BC");
 void record_store_mix(s32 channel, s32 level, s32 pan)
 {
     fck_record(store_mix_call, channel, level, pan);
-    /* Channel records are already seeded with distinct effective values. */
+    /* Stateful spy matching the valid-fixture contract of src/game/800227BC.c:
+     * update the selected channel's level/pan before 8002283C reads them back. */
+    if (channel >= 0 && channel < 3) {
+        mixer.channels[channel].level = level;
+        mixer.channels[channel].pan = pan;
+    }
 }
 
 void provide_voice_mix(struct Voice *voice, s32 pan, s32 volume, s32 extra) __asm__("func_800477D8");
@@ -464,6 +480,12 @@ static void test_stream_mix(void)
     expect_call(store_mix_call, 0, 1, 85, 26);
 
     lk_fill(&mixer, 0, sizeof(mixer));
+    fck_log_reset();
+    gApplyStreamChannelMix(3, 77, 15);
+    FCK_EQ(fck_log_count, 1, "upper-bound channel 3 clamps to 2 on inactive stream");
+    expect_call(store_mix_call, 0, 2, 77, 15);
+
+    lk_fill(&mixer, 0, sizeof(mixer));
     lk_fill(&voice, 0, sizeof(voice));
     mixer.active = 1;
     voice.channel = 12;
@@ -477,7 +499,7 @@ static void test_stream_mix(void)
     gApplyStreamChannelMix(19, 90, 21);
     fck_expect_order(live, 3, "store, apply effective voice mix, submit");
     expect_call(store_mix_call, 0, 2, 90, 21);
-    expect_call(voice_parameters_call, 0, (s32)&voice, 31, 53);
+    expect_call(voice_parameters_call, 0, (s32)&voice, 21, 90);
     expect_call(channel_mix_call, 0, 12, -7, -3);
     FCK_EQ(submitted_pitch, -1, "leave existing channel pitch alone");
 }
@@ -885,6 +907,30 @@ static void test_enqueue(void)
     screen_state = 5;
     FCK_EQ(gQueueEntityStreamRequest(66, &entity, 1), 0, "priority cannot bypass screen-state guard");
     FCK_EQ(fck_log_count, 0, "guard does not preempt existing request");
+
+    reset_requests(0, 3, 0x40);
+    FCK_EQ(gQueueEntityStreamRequest(77, &entity, 1), 1, "priority on empty queue accepted without preemption");
+    FCK_EQ(fck_calls_to(preempt_call), 0, "empty queue priority request does not preempt");
+    expect_call(mark_call, 0, (s32)&entity, 77, 0);
+    FCK_EQ(requests.count, 1, "empty priority request increments count to one");
+    FCK_EQ(requests.head, 3, "empty priority request keeps head slot");
+    FCK_EQ(requests.entries[3].id, 77, "empty priority request stored at head slot");
+    FCK_EQ(requests.entries[3].entity, &entity, "empty priority request carries entity");
+    FCK_EQ(requests.entries[3].has_entity, 1, "empty priority request marked as entity request");
+    FCK_CHECK(lk_all(requests.entries, 0, 3 * sizeof(struct Request), 0x5a),
+              "empty priority request leaves earlier slots untouched");
+
+    reset_requests(3, 1, 0x40);
+    FCK_EQ(gQueueEntityStreamRequest(88, &entity, 1), 1, "priority on partially full queue accepted");
+    fck_expect_order(preempt, 2, "partially full priority preempts before marking");
+    expect_call(mark_call, 0, (s32)&entity, 88, 0);
+    FCK_EQ(requests.count, 4, "partially full priority increments count");
+    FCK_EQ(requests.head, 0, "priority from head 1 steps back to slot 0 without wrapping");
+    FCK_EQ(requests.entries[0].id, 88, "slot 0 holds prepended priority request");
+    FCK_EQ(requests.entries[0].entity, &entity, "slot 0 carries requesting entity");
+    FCK_EQ(requests.entries[0].has_entity, 1, "slot 0 marked as entity request");
+    FCK_CHECK(lk_all(requests.entries, sizeof(struct Request), 8 * sizeof(struct Request), 0x5a),
+              "partially full priority leaves slots 1..7 untouched");
 
     reset_requests(8, 0, 0x40);
     FCK_EQ(gQueueEntityStreamRequest(66, &entity, 1), 1, "priority accepted even when full");

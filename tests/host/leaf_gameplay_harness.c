@@ -249,6 +249,7 @@ void st_color_steps(void *obj)
 }
 
 /* 800449F8 / 8005FFB8 callees */
+enum { C_SEL = 30, C_RM, C_FIND };
 static s32 sel_calls, sel_args[4];
 static void *sel_track;
 void *st_select_clip(void *track, s32 index, s32 dir, u8 flags) __asm__("func_800448D8");
@@ -257,23 +258,29 @@ void *st_select_clip(void *track, s32 index, s32 dir, u8 flags)
     sel_calls++;
     sel_track = track;
     sel_args[0] = index; sel_args[1] = dir; sel_args[2] = flags;
+    log_call(C_SEL, (s32)track, index, dir, flags, 0, 0);
     return 0;
 }
 static s32 rm_calls, rm_idx[8];
+static void *rm_script[8];
 /* Removes command i from the 4-entry (op,arg) list at +0x0C by shifting the
- * following entries down and zeroing the last one. */
+ * following entries down and clearing only slot 3's opcode byte at +0x12,
+ * matching src/game/8002A5B4.c:58 (the trailing arg byte at +0x13 stays). */
 void st_remove_cmd(u8 *script, s32 i) __asm__("func_8002A5B4");
 void st_remove_cmd(u8 *script, s32 i)
 {
     s32 k;
-    if (rm_calls < 8) rm_idx[rm_calls] = i;
+    if (rm_calls < 8) {
+        rm_script[rm_calls] = script;
+        rm_idx[rm_calls] = i;
+    }
     rm_calls++;
+    log_call(C_RM, (s32)script, i, 0, 0, 0, 0);
     for (k = i; k < 3; k++) {
         script[0xC + 2 * k] = script[0xC + 2 * k + 2];
         script[0xD + 2 * k] = script[0xD + 2 * k + 2];
     }
     script[0xC + 6] = 0;
-    script[0xD + 6] = 0;
 }
 
 /* 800511E4 callees */
@@ -315,6 +322,7 @@ s32 st_find_key(s32 key)
 {
     find_calls++;
     find_arg = key;
+    log_call(C_FIND, key, 0, 0, 0, 0, 0);
     return key == 0x42 ? 2 : key == 0x10 ? 0 : -1;
 }
 
@@ -841,6 +849,7 @@ static void anim_reset(const u8 *cmds)
     an_script[0x15] = 0x09;
     lk_fill(an_track, 0x11, sizeof an_track);
     sel_calls = 0; rm_calls = 0;
+    reset_calls();
 }
 
 static void test_anim_script(void)
@@ -864,13 +873,14 @@ static void test_anim_script(void)
     FCK_EQ(sel_args[1], 1, "0x32: direction 1");
     FCK_EQ(sel_args[2], 0, "0x32: flags 0");
     FCK_EQ(rm_calls, 2, "two commands executed and removed");
+    FCK_CHECK(rm_script[0] == an_script && rm_script[1] == an_script, "removals target the script");
     FCK_EQ(rm_idx[0], 0, "first removal at 0");
-    FCK_EQ(rm_idx[1], 1, "0x34 removed at 1 after the shift (0x99 kept at 0)");
-    FCK_EQ(rd8(an_track, 0x13), 0x02, "0x34: flag bit 1 set");
-    FCK_EQ(rs16(an_track, 0x0C), 7, "0x34: frame = 7");
-    FCK_EQ(an_script[0xC], 0x99, "unknown op stays in the list");
-    FCK_EQ(an_script[0xD], 1, "unknown op arg kept");
-    FCK_EQ(an_script[0xE], 0, "list terminated after it");
+    FCK_EQ(rm_idx[1], 1, "0x34 removed at 1 after skipping unknown 0x99");
+    FCK_EQ(ncalls, 3, "call sequence: select clip then two removals");
+    FCK_CHECK(calls[0].id == C_SEL && calls[1].id == C_RM && calls[2].id == C_RM,
+              "0x32 selects clip before removing at 0, then removes subsequent 0x34 at 1");
+    FCK_EQ(rd8(an_track, 0x13), 0x02, "subsequent 0x34: flag bit 1 set");
+    FCK_EQ(rs16(an_track, 0x0C), 7, "subsequent 0x34: frame = 7");
 
     anim_reset(s2);
     wr8(an_track, 0x13, 0xFF);
@@ -878,6 +888,7 @@ static void test_anim_script(void)
     FCK_EQ(rd8(an_track, 0x13), 0xFD, "0x33: only flag bit 1 cleared");
     FCK_EQ(rs16(an_track, 0x0C), 200, "0x33: arg 0xC8 is unsigned -> frame 200");
     FCK_EQ(rm_calls, 1, "0x33 removed, then op 0 stops");
+    FCK_EQ(rm_idx[0], 0, "0x33 removed at index 0");
     FCK_EQ(sel_calls, 0, "0x32 behind the terminator not run");
 
     anim_reset(s3);
@@ -1230,11 +1241,12 @@ static void attack_reset(const u8 *cmds)
     at_script[0x14] = 0x21;                /* guard past the 4-entry list */
     at_script[0x15] = 0x09;
     rm_calls = 0; find_calls = 0;
+    reset_calls();
 }
 
 static void test_attack_cmds(void)
 {
-    static const u8 s1[8] = { 0x21, 0x90, 0x1E, 0, 0x26, 0x42, 0x24, 9 };
+    static const u8 s1[8] = { 0x21, 0x90, 0x24, 9, 0x1E, 0, 0x26, 0x42 };
     static const u8 s2[8] = { 0x1E, 1, 0x26, 0x07, 0x1F, 0, 0x23, 3 };
     static const u8 s3[8] = { 0x25, 1, 0x1D, 2, 0x27, 3, 0x00, 4 };
     static const u8 s4[8] = { 0x25, 1, 0x1D, 2, 0x27, 3, 0x28, 4 };
@@ -1251,16 +1263,20 @@ static void test_attack_cmds(void)
     gApplyAttackCommands(at_obj, at_script);
     FCK_EQ(rd8(at_obj, 6), 3, "0x21: mode 3");
     FCK_EQ(rd16(at_obj, 8), 0x90, "0x21: +0x08 = unsigned arg");
-    FCK_EQ(rd16(at_obj, 4), 0x0101, "0x1E arg 0: flag 0x100 set, others kept");
-    FCK_EQ(find_calls, 1, "0x26: key lookup");
-    FCK_EQ(find_arg, 0x42, "0x26: lookup key = arg");
-    FCK_EQ(rd32(at_obj, 0), (u32)(gEffectKeyTable + 2 * 0x30), "0x26: entry = table + 2*0x30");
-    FCK_EQ(rd16(at_obj, 0x20), 0xBEEF, "0x26: +0x20 = entry +0x02");
-    FCK_EQ(rm_calls, 3, "three executed ops removed");
-    FCK_EQ(rm_idx[0], 0, "removed at 0");
-    FCK_EQ(rm_idx[2], 0, "removed at 0 again after the shift");
-    FCK_EQ(at_script[0xC], 0x24, "0x24 skipped and kept");
-    FCK_EQ(at_script[0xD], 9, "0x24 arg kept");
+    FCK_EQ(rd16(at_obj, 4), 0x0101, "subsequent 0x1E arg 0: flag 0x100 set, others kept");
+    FCK_EQ(find_calls, 1, "subsequent 0x26: key lookup");
+    FCK_EQ(find_arg, 0x42, "subsequent 0x26: lookup key = arg");
+    FCK_EQ(rd32(at_obj, 0), (u32)(gEffectKeyTable + 2 * 0x30), "subsequent 0x26: entry = table + 2*0x30");
+    FCK_EQ(rd16(at_obj, 0x20), 0xBEEF, "subsequent 0x26: +0x20 = entry +0x02");
+    FCK_EQ(rm_calls, 3, "three executed ops removed (0x24 skipped)");
+    FCK_CHECK(rm_script[0] == at_script && rm_script[1] == at_script && rm_script[2] == at_script,
+              "removals target the script");
+    FCK_EQ(rm_idx[0], 0, "0x21 removed at 0");
+    FCK_EQ(rm_idx[1], 1, "0x1E removed at 1 after skipping unknown 0x24");
+    FCK_EQ(rm_idx[2], 1, "0x26 removed at 1 after shifting into slot 1");
+    FCK_CHECK(ncalls == 4 && calls[0].id == C_RM && calls[1].id == C_RM &&
+              calls[2].id == C_FIND && calls[3].id == C_RM,
+              "call order: remove 0x21, remove 0x1E, find key 0x42, remove 0x26");
 
     attack_reset(s2);
     wr16(at_obj, 4, 0xFFFF);
@@ -1269,8 +1285,10 @@ static void test_attack_cmds(void)
     FCK_EQ(rd32(at_obj, 0), 0x5A5A5A5Au, "0x26 miss: entry untouched");
     FCK_EQ(rd16(at_obj, 0x20), 0x5A5A, "0x26 miss: +0x20 untouched");
     FCK_EQ(rm_calls, 4, "miss still removes the command");
-    FCK_EQ(rd8(at_obj, 6), 5, "0x23 last: mode 5");
-    FCK_EQ(rd16(at_obj, 8), 3, "0x23: +0x08 = 3");
+    FCK_CHECK(rm_idx[0] == 0 && rm_idx[1] == 0 && rm_idx[2] == 0 && rm_idx[3] == 0,
+              "four consecutive handled ops all remove at index 0");
+    FCK_EQ(rd8(at_obj, 6), 5, "subsequent 0x23 last: mode 5");
+    FCK_EQ(rd16(at_obj, 8), 3, "subsequent 0x23: +0x08 = 3");
 
     attack_reset(s3);
     gApplyAttackCommands(at_obj, at_script);

@@ -1592,7 +1592,7 @@ static void test_gouraud_disc(void)
 {
     static struct LrVec v;
 
-    /* @leaf 8001484C spec psx-spx: the packet is a 0x1C-byte gouraud triangle (colour word, code 0x32xxxxxx, three x/y pairs, two colours), the 0xE10006A0 word is a texpage and 0x06xxxxxx a linked-list terminator; the fan walk and the segment count follow src/game/8001484C.c */
+    /* @leaf 8001484C spec psx-spx GPU/DMA + Psy-Q libgpu POLY_G3 (0x1C bytes): tag high byte = data-word count (0x01 = 1 word for GP0(E1h) draw mode 0xE10006A0, 0x06 = 6 words for GP0(32h) semi-transparent shaded triangle with colour0/xy0/colour1/xy1/colour2/xy2) and low 24 bits = DMA linked-list address field (0xFFFFFF is end-of-list); source (src/game/8001484C.c): stores depth-dz in the low 24-bit tag field, plus the fan walk and segment count */
     LK_FUNC("func_8001484C");
 
     /* depth 0x100 with offset 0x10 -> 0xF0; scale 4 -> (4 << 9) / 0x100 = 8
@@ -1604,9 +1604,9 @@ static void test_gouraud_disc(void)
     v.z = 0x100;
     gEmitGouraudDisc(&v, 0x00112233, 0x00445566, 8, 4, 0x10, 0x1200);
 
-    FCK_EQ(*(u32 *)(lr_pkt + 0x00), 0x010000F0u, "texpage colour word carries depth-dz");
+    FCK_EQ(*(u32 *)(lr_pkt + 0x00), 0x010000F0u, "texpage tag: 1 data word + depth-dz in low 24 bits");
     FCK_EQ(*(u32 *)(lr_pkt + 0x04), 0xE10006A0u, "texpage code");
-    FCK_EQ(*(u32 *)(lr_pkt + 0x1C + 0x00), 0x060000F0u, "fan terminator = tag word");
+    FCK_EQ(*(u32 *)(lr_pkt + 0x1C + 0x00), 0x060000F0u, "fan tag: 6 data words + depth-dz in low 24 bits");
     FCK_EQ(*(u32 *)(lr_pkt + 0x1C + 0x04), 0x32001122u, "fan code = 0x32000000 | color0 >> 8");
     FCK_EQ(*(u32 *)(lr_pkt + 0x1C + 0x0C), 0x00445566u >> 8, "first rim colour = color1 >> 8");
     FCK_EQ(*(u32 *)(lr_pkt + 0x1C + 0x14), 0x00445566u >> 8, "second rim colour = color1 >> 8");

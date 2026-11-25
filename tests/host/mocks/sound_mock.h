@@ -51,6 +51,8 @@ struct FcmSoundMock {
     s32 stream_starts;
     s32 stream_last_arg0;
     s32 stream_target_overflow;       /* starts after the first, ignored */
+
+    s32 stereo_mode_reads;            /* func_800451E0 call count */
 };
 
 /* One global, so the harness reads `fcm_sound.sfx_ids[0]` directly. */

@@ -1625,13 +1625,12 @@ u8 gGpuLibPair[0x100] __asm__("D_800A62C8");
 u8 gGpuDmaQueue[0x1800] __asm__("D_800A9450");
 s32 gResetGpuHardware(s32 a0) __asm__("func_80094F4C");
 
-static u32 gr_chcr, gr_dpcr, gr_gp1[4];
-static s32 gr_gp1_n;
+static u32 gr_chcr, gr_dpcr, gr_gp1;
 static u32 gr_irq_ret, gr_probe_ret;
 u32 mock_swap_irq(u32 m) __asm__("func_800915FC");
 u32 mock_swap_irq(u32 m)
 {
-    fck_record("swap_irq", (s32)m, (s32)gr_gp1[0], (s32)gr_chcr);
+    fck_record("swap_irq", (s32)m, (s32)gr_gp1, (s32)gr_chcr);
     return gr_irq_ret;
 }
 u32 mock_probe(u32 a0) __asm__("func_80095350");
@@ -1641,10 +1640,10 @@ void mock_memset(u8 *d, int v, unsigned n) { fck_record("memset", (s32)d, v, (s3
 
 static void gr_reset(void)
 {
-    gr_chcr = 0x55; gr_dpcr = 0x0001; gr_gp1[0] = 0x77777777;
+    gr_chcr = 0x55; gr_dpcr = 0x0001; gr_gp1 = 0x77777777;
     gDma2ChannelCtrlPtr = &gr_chcr;
     gDmaControlGpuPtr = &gr_dpcr;
-    gGpuGp1PortPtr = &gr_gp1[0];
+    gGpuGp1PortPtr = &gr_gp1;
     gGpuJobTail = 5; gGpuJobHead = 6; gSavedIrqMask = 0;
     gr_irq_ret = 0x0000ABCD; gr_probe_ret = 0x2;
     fck_log_reset();
@@ -1654,7 +1653,7 @@ static void test_80094F4C(void)
 {
     s32 r;
 
-    /* @leaf 80094F4C spec Psy-Q ResetGraph(mode) + psx-spx: mode 0 = full reset (DMA2 CHCR 0x401 = from RAM, linked-list sync mode 2; DPCR bit 11 = DMA2 master enable; GP1(00h) reset GPU; libgpu state cleared; returns the GPU type), modes 1/3 = cancel drawing (GP1(02h) ack IRQ, GP1(01h) reset command buffer), other modes touch no hardware; the IRQ mask is saved around the reset and the GPU job queue emptied */
+    /* @leaf 80094F4C spec psx-spx GPU/DMA + Psy-Q libgpu ResetGraph(mode): DMA2 CHCR 0x401 = from RAM, linked-list sync mode 2; DPCR bit 11 (0x800) = DMA2 master enable; GP1(00h) = reset GPU; GP1(01h) = reset command buffer; source (src/game/80094F4C.c): mode & 7 dispatch (0 and 5 run full GPU reset + DMA2/DPCR setup + 0x100/0x1800 memset, with only (mode & 7) == 0 calling probe and returning its GPU type; 1 and 3 configure DMA2/DPCR and end with GP1(01h) — the RAM-backed port only observes the final GP1(01h) store, not the overwritten GP1(02h) store; modes 2/4/6/7 touch no hardware), IRQ mask save/restore and job queue clear */
     LK_FUNC("func_80094F4C");
 
     gr_reset();
@@ -1662,7 +1661,7 @@ static void test_80094F4C(void)
     FCK_EQ(r, 2, "gr: mode 0 returns the probed GPU type");
     FCK_EQ(gr_chcr, 0x401, "gr: DMA2 CHCR from RAM, linked list");
     FCK_EQ(gr_dpcr, 0x801, "gr: DPCR DMA2 enable bit 11 set, others kept");
-    FCK_EQ(gr_gp1[0], 0, "gr: GP1(00h) reset GPU");
+    FCK_EQ(gr_gp1, 0, "gr: GP1(00h) reset GPU");
     FCK_EQ(gGpuJobTail, 0, "gr: job tail cleared");
     FCK_EQ(gGpuJobHead, 0, "gr: job head cleared");
     FCK_EQ(gSavedIrqMask, 0xABCD, "gr: previous IRQ mask saved");
@@ -1679,38 +1678,46 @@ static void test_80094F4C(void)
     FCK_EQ(fck_call_n("memset", 1).a2, 0x1800, "gr: DMA queue 0x1800 bytes");
     FCK_EQ(fck_call_n("probe", 0).a0, 0, "gr: probe gets the mode");
 
-    /* mode 1: cancel drawing */
+    /* mode 1: cancel drawing (RAM-backed port observes final GP1(01h) store only) */
     gr_reset();
     r = gResetGpuHardware(1);
     FCK_EQ(r, 0, "gr: mode 1 returns 0");
     FCK_EQ(gr_chcr, 0x401, "gr: mode 1 DMA2 CHCR");
     FCK_EQ(gr_dpcr, 0x801, "gr: mode 1 DPCR");
-    FCK_EQ(gr_gp1[0], 0x1000000, "gr: last GP1 write is GP1(01h) reset command buffer");
+    FCK_EQ(gr_gp1, 0x1000000, "gr: last GP1 write is GP1(01h) reset command buffer");
     FCK_EQ(fck_calls_to("memset"), 0, "gr: mode 1 keeps lib state");
     FCK_EQ(fck_calls_to("probe"), 0, "gr: mode 1 no probe");
 
     /* mode 3 behaves like 1; mode 2 touches no hardware */
     gr_reset();
-    gResetGpuHardware(3);
-    FCK_EQ(gr_gp1[0], 0x1000000, "gr: mode 3 resets the command buffer");
+    r = gResetGpuHardware(3);
+    FCK_EQ(r, 0, "gr: mode 3 returns 0");
+    FCK_EQ(gr_chcr, 0x401, "gr: mode 3 DMA2 CHCR");
+    FCK_EQ(gr_dpcr, 0x801, "gr: mode 3 DPCR");
+    FCK_EQ(gr_gp1, 0x1000000, "gr: mode 3 last GP1 write is GP1(01h)");
+    FCK_EQ(fck_calls_to("memset"), 0, "gr: mode 3 keeps lib state");
+    FCK_EQ(fck_calls_to("probe"), 0, "gr: mode 3 no probe");
     gr_reset();
     r = gResetGpuHardware(2);
     FCK_EQ(r, 0, "gr: mode 2 returns 0");
     FCK_EQ(gr_chcr, 0x55, "gr: mode 2 leaves DMA2");
-    FCK_EQ(gr_gp1[0], 0x77777777, "gr: mode 2 leaves GP1");
+    FCK_EQ(gr_gp1, 0x77777777, "gr: mode 2 leaves GP1");
     FCK_EQ(gGpuJobHead, 0, "gr: mode 2 still empties the job queue");
 
-    /* mode 8: low 3 bits 0 -> full reset, probe gets the full word */
+    /* source (mode & 7): mode 8 has low 3 bits 0 -> full reset, probe gets full word */
     gr_reset();
     r = gResetGpuHardware(8);
     FCK_EQ(r, 2, "gr: mode & 7 == 0 -> full reset result");
     FCK_EQ(fck_call_n("probe", 0).a0, 8, "gr: probe gets the unmasked mode");
-    /* mode 5: full hardware reset but returns 0 */
+    /* source (mode & 7): mode 5 runs full hardware reset + memset, skips probe, returns 0 */
     gr_reset();
     r = gResetGpuHardware(5);
     FCK_EQ(r, 0, "gr: mode 5 returns 0");
-    FCK_EQ(gr_gp1[0], 0, "gr: mode 5 resets the GPU");
+    FCK_EQ(gr_chcr, 0x401, "gr: mode 5 DMA2 CHCR");
+    FCK_EQ(gr_dpcr, 0x801, "gr: mode 5 DPCR");
+    FCK_EQ(gr_gp1, 0, "gr: mode 5 resets the GPU with GP1(00h)");
     FCK_EQ(fck_calls_to("memset"), 2, "gr: mode 5 clears lib state");
+    FCK_EQ(fck_calls_to("probe"), 0, "gr: mode 5 skips probe");
 }
 
 int main(void)

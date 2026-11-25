@@ -34,6 +34,10 @@
 #include "game/types.h"
 #define FCK_TYPES_H
 #include "leaf_kit.h"
+/* @mock sound_mock */
+/* func_80046C84 (SE trigger) and func_800451E0 (stereo mode getter) come from
+ * the shared mock library; tests configure and inspect fcm_sound.*. */
+#include "sound_mock.h"
 
 /* Units under test, under their retail labels. */
 void gStepAnimations(s32 dt) __asm__("func_800136C8");
@@ -74,9 +78,7 @@ enum {
     LS_FREEBUF,     /* func_8003CF20 free owned buffer node        */
     LS_RESOLVE,     /* func_80045494 resolve sound id              */
     LS_PLAY,        /* func_80046F9C play standing sound           */
-    LS_CUE,         /* func_80046C84 non-positional cue            */
     LS_SETMODE,     /* func_800451B4 set stereo mode               */
-    LS_GETMODE,     /* func_800451E0 get stereo mode               */
     LS_SCALE,       /* func_8001AB78 scale vector in place         */
     LS_DIST,        /* func_8001A13C distance between points       */
     LS_SEP,         /* func_80053730 two-player separation         */
@@ -1839,31 +1841,16 @@ static void ls_test_hover_vector(void)
 /* ============================================== 8007D27C sound enable toggle */
 
 u16 ls_sound_label[2] __asm__("D_8009BABE");
-static s32 ls_sound_mode;
 
-static s32 ls_cue_calls;
-
-s32 ls_stub_cue(s32 id, s32 arg1) __asm__("func_80046C84");
+/* func_80046C84 and func_800451E0 are linked from mocks/sound_mock.c via
+ * @mock sound_mock; only the local setter func_800451B4 lives here and
+ * updates fcm_sound.stereo_mode while snapshotting prior shared-mock counts. */
 void ls_stub_setmode(s32 enable) __asm__("func_800451B4");
-s32 ls_stub_getmode(void) __asm__("func_800451E0");
-
-s32 ls_stub_cue(s32 id, s32 arg1)
-{
-    ls_rec(LS_CUE, id, arg1, 0, 0, 0, 0);
-    ls_cue_calls++;
-    return 0;
-}
 
 void ls_stub_setmode(s32 enable)
 {
-    ls_rec(LS_SETMODE, enable, 0, 0, 0, 0, 0);
-    ls_sound_mode = enable;
-}
-
-s32 ls_stub_getmode(void)
-{
-    ls_rec(LS_GETMODE, 0, 0, 0, 0, 0, 0);
-    return ls_sound_mode;
+    ls_rec(LS_SETMODE, enable, fcm_sound.sfx_calls, fcm_sound.stereo_mode_reads, 0, 0, 0);
+    fcm_sound.stereo_mode = enable;
 }
 
 /* @leaf 8007D27C source src/game/8007D27C.c: only actions 1 and 2 act; they play cue (0x47, 0), write the inverted stereo enable through 800451B4, then pick the label id from a fresh 800451E0 read: 0x100E when enabled, 0x1018 when muted */
@@ -1872,48 +1859,71 @@ static void ls_test_sound_toggle(void)
     LK_FUNC("func_8007D27C");
 
     /* actions outside {1, 2} do nothing */
-    ls_sound_mode = 0;
+    fcm_sound_reset();
+    fcm_sound.stereo_mode = 0;
     ls_sound_label[0] = 0xAAAA;
-    ls_cue_calls = 0;
+    ls_sound_label[1] = 0x5555;
     ls_reset();
     gToggleSoundEnable(0);
-    FCK_EQ(ls_n, 0, "action 0 calls nothing");
+    FCK_EQ(ls_n, 0, "action 0 does not call setmode");
+    FCK_EQ(fcm_sound.sfx_calls, 0, "action 0 plays no cue");
+    FCK_EQ(fcm_sound.stereo_mode_reads, 0, "action 0 does not read stereo mode");
     FCK_EQ(ls_sound_label[0], 0xAAAA, "label untouched by action 0");
+    FCK_EQ(ls_sound_label[1], 0x5555, "index 1 canary untouched by action 0");
+    fcm_sound_reset();
+    fcm_sound.stereo_mode = 0;
     ls_reset();
     gToggleSoundEnable(3);
-    FCK_EQ(ls_n, 0, "action 3 calls nothing");
-    FCK_EQ(ls_sound_mode, 0, "mode untouched by action 3");
+    FCK_EQ(ls_n, 0, "action 3 does not call setmode");
+    FCK_EQ(fcm_sound.sfx_calls, 0, "action 3 plays no cue");
+    FCK_EQ(fcm_sound.stereo_mode_reads, 0, "action 3 does not read stereo mode");
+    FCK_EQ(fcm_sound.stereo_mode, 0, "mode untouched by action 3");
 
     /* muted -> enabled */
-    ls_sound_mode = 0;
+    fcm_sound_reset();
+    fcm_sound.stereo_mode = 0;
+    ls_sound_label[0] = 0xAAAA;
+    ls_sound_label[1] = 0x5555;
     ls_reset();
     gToggleSoundEnable(1);
-    FCK_EQ(ls_id(0), LS_CUE, "cue first");
-    FCK_EQ(ls_call(LS_CUE, 0)->a0, 0x47, "cue id 0x47");
-    FCK_EQ(ls_call(LS_CUE, 0)->a1, 0, "cue argument 0");
-    FCK_EQ(ls_id(1), LS_GETMODE, "current mode read next");
-    FCK_EQ(ls_id(2), LS_SETMODE, "then the inverted mode written");
+    FCK_EQ(fcm_sound.sfx_calls, 1, "one cue played");
+    FCK_EQ(fcm_sound.sfx_ids[0], 0x47, "cue id 0x47");
+    FCK_EQ(fcm_sound.sfx_last_arg1, 0, "cue argument 0");
+    FCK_EQ(ls_count(LS_SETMODE), 1, "setmode called once");
     FCK_EQ(ls_call(LS_SETMODE, 0)->a0, 1, "0 ^ 1 = 1");
-    FCK_EQ(ls_id(3), LS_GETMODE, "mode read again for the label");
-    FCK_EQ(ls_count(LS_GETMODE), 2, "two reads");
-    FCK_EQ(ls_sound_mode, 1, "mode is now enabled");
+    FCK_EQ(ls_call(LS_SETMODE, 0)->a1, 1, "cue played before setmode");
+    FCK_EQ(ls_call(LS_SETMODE, 0)->a2, 1, "current mode read once before setmode");
+    FCK_EQ(fcm_sound.stereo_mode_reads, 2, "mode read a second time after setmode for label");
+    FCK_EQ(fcm_sound.stereo_mode, 1, "mode is now enabled");
     FCK_EQ(ls_sound_label[0], 0x100E, "enabled label 0x100E");
-    FCK_EQ(ls_sound_label[1], 0, "only index 0 written");
+    FCK_EQ(ls_sound_label[1], 0x5555, "only index 0 written (index 1 canary intact)");
 
     /* enabled -> muted */
+    fcm_sound_reset();
+    fcm_sound.stereo_mode = 1;
+    ls_sound_label[0] = 0xBBBB;
+    ls_sound_label[1] = 0x6666;
     ls_reset();
     gToggleSoundEnable(2);
     FCK_EQ(ls_call(LS_SETMODE, 0)->a0, 0, "1 ^ 1 = 0");
-    FCK_EQ(ls_sound_mode, 0, "mode is now muted");
+    FCK_EQ(ls_call(LS_SETMODE, 0)->a1, 1, "action 2 plays cue before setmode");
+    FCK_EQ(ls_call(LS_SETMODE, 0)->a2, 1, "action 2 reads mode before setmode");
+    FCK_EQ(fcm_sound.stereo_mode_reads, 2, "action 2 reads mode twice");
+    FCK_EQ(fcm_sound.stereo_mode, 0, "mode is now muted");
     FCK_EQ(ls_sound_label[0], 0x1018, "muted label 0x1018");
-    FCK_EQ(ls_count(LS_CUE), 1, "action 2 plays the cue too");
+    FCK_EQ(ls_sound_label[1], 0x6666, "action 2 leaves index 1 canary intact");
+    FCK_EQ(fcm_sound.sfx_calls, 1, "action 2 plays the cue too");
 
     /* a pre-set mode other than 0 or 1 still toggles bit 0 only */
-    ls_sound_mode = 2;
+    fcm_sound_reset();
+    fcm_sound.stereo_mode = 2;
+    ls_sound_label[0] = 0xCCCC;
+    ls_sound_label[1] = 0x7777;
     ls_reset();
     gToggleSoundEnable(1);
     FCK_EQ(ls_call(LS_SETMODE, 0)->a0, 3, "2 ^ 1 = 3");
     FCK_EQ(ls_sound_label[0], 0x100E, "nonzero result takes the enabled label");
+    FCK_EQ(ls_sound_label[1], 0x7777, "bit-0 toggle leaves index 1 canary intact");
 }
 
 /* =========================================== GPU packet builders (helpers) */
@@ -1940,32 +1950,36 @@ extern u16 ls_max_w __asm__("D_8009DDF4");
 extern u16 ls_max_h __asm__("D_8009DDF6");
 
 /* The five packet builders under 0x80093F58..0x800940C4 are separate units in
- * src/game and are linked for real. Their expectations come from the PSX GPU
- * command layout: GP0(0xE1) draw mode, 0xE3/0xE4 draw area with 10-bit x/y,
- * 0xE5 drawing offset with 11-bit x/y and 0xE2 texture window with 5-bit
- * fields. */
+ * src/game and are linked for real. Their GP0 bit layouts follow psx-spx
+ * "GPU Rendering Attributes" and Psy-Q libgpu.h (_get_mode, SetDefDrawEnv /
+ * SetDrawArea, SetDrawOffset, _get_tw / SetTexWindow); C API and clamping /
+ * null-pointer details are separated below as source checks. */
 
-/* @leaf 80093F58 spec GP0(0xE1h) draw mode: bit 9 is the dither flag (dtd) and bit 10 the draw-to-display flag (dfe) on top of the 0xE1000000 opcode, with the texture page in the low 11 bits (0x9FF mask) */
+/* @leaf 80093F58 spec psx-spx GPU Rendering Attributes GP0(E1h) Draw Mode + Psy-Q libgpu.h _get_mode/setDrawTPage: opcode 0xE1, bit 9 = dither (dtd), bit 10 = draw-to-display (dfe), bits 0-8 and 11 = texpage/texture-disable (0x9FF); source (src/game/80093F58.c): non-zero dtd/dfe normalization and tpage & 0x9FF masking */
 static void ls_test_draw_mode(void)
 {
     LK_FUNC("func_80093F58");
+    /* spec: psx-spx GP0(E1h) / Psy-Q _get_mode bit layout */
     FCK_EQ(gBuildDrawModeCommand(0, 0, 0), 0xE1000000, "bare opcode");
     FCK_EQ(gBuildDrawModeCommand(1, 0, 0), 0xE1000400, "dfe sets bit 10");
     FCK_EQ(gBuildDrawModeCommand(0, 1, 0), 0xE1000200, "dtd sets bit 9");
     FCK_EQ(gBuildDrawModeCommand(1, 1, 0x123), 0xE1000723, "both flags plus the tpage");
+    /* source (src/game/80093F58.c): C API boolean normalization and 0x9FF mask */
     FCK_EQ(gBuildDrawModeCommand(5, 5, 0), 0xE1000600, "any non-zero value counts as set");
     FCK_EQ(gBuildDrawModeCommand(0, 0, 0xFFFF), 0xE10009FF, "tpage masked to 0x9FF");
     FCK_EQ(gBuildDrawModeCommand(0, 0, 0x0A00), 0xE1000800, "bit 10 of the tpage is dropped");
 }
 
-/* @leaf 80093F78 spec GP0(0xE3h) draw area top left: x and y are clamped into [0, max-1] against D_8009DDF4/DDF6 and then packed as 10-bit fields with y in bits 10-19 */
+/* @leaf 80093F78 spec psx-spx GPU Rendering Attributes GP0(E3h) Set Drawing Area top left + Psy-Q libgpu.h SetDrawArea/SetDefDrawEnv: opcode 0xE3, X1 in bits 0-9 (10-bit), Y1 in bits 10-19 (10-bit on newer 208-pin GPU; GPU-variant dependent, 9-bit bits 10-18 on older 160-pin GPU); source (src/game/80093F78.c): clamps x/y to [0, D_8009DDF4-1] / [0, D_8009DDF6-1] before 0x3FF masking */
 static void ls_test_draw_area(void)
 {
     LK_FUNC("func_80093F78");
     ls_max_w = 0x140;
     ls_max_h = 0x00F0;
+    /* spec: psx-spx GP0(E3h) X1 bits 0-9, Y1 bits 10-19 (10-bit Y GPU-variant dependent) */
     FCK_EQ(gBuildDrawAreaCommands(0x40, 0x20), 0xE3008040, "x 0x40 y 0x20");
     FCK_EQ(gBuildDrawAreaCommands(0, 0), 0xE3000000, "origin");
+    /* source (src/game/80093F78.c): clamping against D_8009DDF4/D_8009DDF6 and 10-bit mask */
     FCK_EQ(gBuildDrawAreaCommands(-1, -5), 0xE3000000, "negatives clamp to 0");
     FCK_EQ(gBuildDrawAreaCommands(0x200, 0x200), 0xE303BD3F, "oversize clamps to 0x13F/0xEF");
     FCK_EQ(gBuildDrawAreaCommands(0x13F, 0xEF), 0xE303BD3F, "the maximum itself is kept");
@@ -1974,45 +1988,51 @@ static void ls_test_draw_area(void)
     FCK_EQ(gBuildDrawAreaCommands(0x7FF, 0x7FF), 0xE30FFFFF, "10-bit fields mask 0x7FF to 0x3FF");
 }
 
-/* @leaf 80094010 spec GP0(0xE4h) draw area bottom right: x and y are clamped into [0, max-1] against D_8009DDF4/DDF6 and packed as 10-bit fields with y in bits 10-19 */
+/* @leaf 80094010 spec psx-spx GPU Rendering Attributes GP0(E4h) Set Drawing Area bottom right + Psy-Q libgpu.h SetDrawArea/SetDefDrawEnv: opcode 0xE4, X2 in bits 0-9 (10-bit), Y2 in bits 10-19 (10-bit on newer 208-pin GPU; GPU-variant dependent, 9-bit bits 10-18 on older 160-pin GPU); source (src/game/80094010.c): clamps (s16)x/(s16)y to [0, D_8009DDF4-1] / [0, D_8009DDF6-1] before 0x3FF masking */
 static void ls_test_draw_area_bottom_right(void)
 {
     LK_FUNC("func_80094010");
     ls_max_w = 0x140;
     ls_max_h = 0x00F0;
+    /* spec: psx-spx GP0(E4h) X2 bits 0-9, Y2 bits 10-19 (10-bit Y GPU-variant dependent) */
     FCK_EQ(gPackDrawAreaBottomRight(0x7F, 0x4F), 0xE4013C7F, "x 0x7F y 0x4F");
     FCK_EQ(gPackDrawAreaBottomRight(0, 0), 0xE4000000, "origin");
+    /* source (src/game/80094010.c): clamping against D_8009DDF4/D_8009DDF6 */
     FCK_EQ(gPackDrawAreaBottomRight(-1, -1), 0xE4000000, "negatives clamp to 0");
     FCK_EQ(gPackDrawAreaBottomRight(0x400, 0x200), 0xE403BD3F, "oversize clamps to 0x13F/0xEF");
     FCK_EQ(gPackDrawAreaBottomRight(0x10, 0x200), 0xE403BC10, "only the oversize axis clamps");
     FCK_EQ(gPackDrawAreaBottomRight(0x400, 0x10), 0xE400413F, "the other oversize axis clamps");
 }
 
-/* @leaf 800940A8 spec GP0(0xE5h) drawing offset: x and y are 11-bit fields, x in bits 0-10 and y in bits 11-21 */
+/* @leaf 800940A8 spec psx-spx GPU Rendering Attributes GP0(E5h) Set Drawing Offset + Psy-Q libgpu.h SetDrawOffset/SetDefDrawEnv: opcode 0xE5, 11-bit signed X in bits 0-10 and 11-bit signed Y in bits 11-21; source (src/game/800940A8.c): direct 0x7FF bit masking without clamping */
 static void ls_test_draw_offset(void)
 {
     LK_FUNC("func_800940A8");
+    /* spec: psx-spx GP0(E5h) 11-bit X/Y packing */
     FCK_EQ(gPackDrawOffset(0, 0), 0xE5000000, "bare opcode");
     FCK_EQ(gPackDrawOffset(8, 0x10), 0xE5008008, "x 8 y 0x10");
     FCK_EQ(gPackDrawOffset(0x7FF, 0x7FF), 0xE53FFFFF, "both fields at their maximum");
+    /* source (src/game/800940A8.c): upper-bit truncation via & 0x7FF */
     FCK_EQ(gPackDrawOffset(0x800, 0x800), 0xE5000000, "bit 11 is masked away");
     FCK_EQ(gPackDrawOffset(0x1234, 0x5678), 0xE533C234, "0x234 / 0x678 survive the mask");
 }
 
-/* @leaf 800940C4 spec GP0(0xE2h) texture window: u0/v0/u1/v1 are 5-bit fields shifted down by 3 from the byte pairs at +0/+2 and the negated 16-bit words at +4/+6, u1 landing in bits 15-19 and v1 in bits 5-9 */
+/* @leaf 800940C4 spec psx-spx GPU Rendering Attributes GP0(E2h) Texture Window + Psy-Q libgpu.h _get_tw/SetTexWindow: opcode 0xE2, 5-bit fields in 8-pixel steps with Mask X in bits 0-4, Mask Y in bits 5-9, Offset X in bits 10-14, Offset Y in bits 15-19; source (src/game/800940C4.c): NULL returns 0, Offset X/Y come from bytes +0/+2 (>>3) and Mask X/Y from negated s16 at +4/+6 ((-v & 0xFF) >> 3) */
 static void ls_test_tex_window(void)
 {
     u8 p[16];
 
     LK_FUNC("func_800940C4");
+    /* source (src/game/800940C4.c): NULL pointer guard */
     FCK_EQ(gBuildTexWindowCommand(0), 0, "null pointer gives 0");
 
+    /* spec: psx-spx GP0(E2h) Mask X (0-4), Mask Y (5-9), Offset X (10-14), Offset Y (15-19) */
     lk_fill(p, 0, (int)sizeof(p));
-    p[0] = 0x10;              /* -> 2 */
-    p[2] = 0x20;              /* -> 4 */
-    *(s16 *)(p + 4) = -8;     /* -(-8) & 0xFF = 8 -> 1 */
-    *(s16 *)(p + 6) = 0x40;   /* -0x40 & 0xFF = 0xC0 -> 24 */
-    FCK_EQ(gBuildTexWindowCommand(p), 0xE2020B01, "2 / 4 / 1 / 24 in their fields");
+    p[0] = 0x10;              /* Offset X = 2 (bits 10-14) */
+    p[2] = 0x20;              /* Offset Y = 4 (bits 15-19) */
+    *(s16 *)(p + 4) = -8;     /* Mask X = (-(-8) & 0xFF) >> 3 = 1 (bits 0-4) */
+    *(s16 *)(p + 6) = 0x40;   /* Mask Y = (-0x40 & 0xFF) >> 3 = 24 (bits 5-9) */
+    FCK_EQ(gBuildTexWindowCommand(p), 0xE2020B01, "Offset Y=4, Offset X=2, Mask Y=24, Mask X=1");
 
     lk_fill(p, 0xFF, (int)sizeof(p));
     p[0] = 0; p[2] = 0;
@@ -2020,19 +2040,20 @@ static void ls_test_tex_window(void)
     *(s16 *)(p + 6) = 0;
     FCK_EQ(gBuildTexWindowCommand(p), 0xE2000000, "all fields zero");
 
+    /* source (src/game/800940C4.c): byte/s16 truncation and >>3 step quantization */
     lk_fill(p, 0, (int)sizeof(p));
-    p[0] = 0xFF;              /* 0x1F */
-    p[2] = 0xFF;              /* 0x1F */
-    *(s16 *)(p + 4) = 0x100;  /* -0x100 & 0xFF = 0 */
-    *(s16 *)(p + 6) = 8;      /* -8 & 0xFF = 0xF8 -> 0x1F */
-    FCK_EQ(gBuildTexWindowCommand(p), 0xE20FFFE0, "0x1F<<15 | 0x1F<<10 | 0x1F<<5");
+    p[0] = 0xFF;              /* Offset X = 0x1F (bits 10-14) */
+    p[2] = 0xFF;              /* Offset Y = 0x1F (bits 15-19) */
+    *(s16 *)(p + 4) = 0x100;  /* Mask X = (-0x100 & 0xFF) >> 3 = 0 (bits 0-4) */
+    *(s16 *)(p + 6) = 8;      /* Mask Y = (-8 & 0xFF) >> 3 = 0x1F (bits 5-9) */
+    FCK_EQ(gBuildTexWindowCommand(p), 0xE20FFFE0, "Offset Y=0x1F, Offset X=0x1F, Mask Y=0x1F, Mask X=0");
 
     lk_fill(p, 0, (int)sizeof(p));
-    p[0] = 0x07;              /* 0, below one field step */
-    p[2] = 0x08;              /* 1 */
-    *(s16 *)(p + 4) = 0x7F;   /* -0x7F & 0xFF = 0x81 -> 0x10 */
-    *(s16 *)(p + 6) = -0x100; /* 0x100 & 0xFF = 0 */
-    FCK_EQ(gBuildTexWindowCommand(p), 0xE2008010, "u1 = 1, v1 = 0x10");
+    p[0] = 0x07;              /* Offset X = 0, below one 8-px step */
+    p[2] = 0x08;              /* Offset Y = 1 (bits 15-19) */
+    *(s16 *)(p + 4) = 0x7F;   /* Mask X = (-0x7F & 0xFF) >> 3 = 0x10 (bits 0-4) */
+    *(s16 *)(p + 6) = -0x100; /* Mask Y = (0x100 & 0xFF) >> 3 = 0 (bits 5-9) */
+    FCK_EQ(gBuildTexWindowCommand(p), 0xE2008010, "Offset Y = 1 (bits 15-19), Mask X = 0x10 (bits 0-4)");
 }
 
 /* =============================================== 80093CE8 rectangle draw list */
