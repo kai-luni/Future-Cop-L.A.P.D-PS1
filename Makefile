@@ -304,6 +304,7 @@ host-leaf-scene:
 	  $(PYTHON) tools/host_leaf_suite.py report leaf_scene; \
 	else \
 	  echo "host-leaf-scene: qemu or C toolchain missing, skipped"; \
+	fi
 
 # Large SPU/GPU/scene units with harness-defined D_ fixtures, hardware-free.
 host-leaf-core:
