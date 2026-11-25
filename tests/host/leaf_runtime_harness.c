@@ -48,6 +48,7 @@
 #define LR_RESOLVE   26  /* func_80019BF0 resource resolve               */
 #define LR_SUBSCALE  27  /* func_800607B8 sub-record scaler              */
 #define LR_FREE      28  /* func_800181D4 free block                     */
+#define LR_VMSCALE   29  /* func_8006A898 vm record object scaler        */
 
 struct LrCall {
     int id;
@@ -738,6 +739,47 @@ void lr_stub_181D4(struct LrDefArg *arg0)
 }
 
 void gLoadAttackDefinition(struct LrDefArg *arg0) __asm__("func_80060838");
+
+/* ======================================================================
+ * 8006A918 vm record registry loader
+ * ====================================================================== */
+
+struct LrVmObject {
+    u8 unk00[8];
+    s16 unk08;
+    s16 unk0A;
+    struct LrSub607B8 sub;
+    u8 unk1A[6];
+};
+struct LrVmRecord {
+    u32 unk00;
+    struct LrVmObject obj1;
+    struct LrVmObject obj2;
+    void *unk44[4];
+};
+
+/* One object area for all six records; D_800A3344 is the object base, four
+ * bytes into the record table, exactly as the unit computes it. */
+__asm__(".data\n"
+        "\t.globl D_800A3340\n"
+        "D_800A3340:\n"
+        "\t.space 0x400\n"
+        "\t.globl D_800A3344\n"
+        "D_800A3344 = D_800A3340 + 4\n"
+        "\t.text\n");
+
+s32 lr_vm_count __asm__("D_8009F848");
+extern u8 lr_vm_area[] __asm__("D_800A3340");
+
+void lr_stub_6A898(struct LrVmObject *obj) __asm__("func_8006A898");
+void lr_stub_6A898(struct LrVmObject *obj)
+{
+    lr_rec(LR_VMSCALE, (s32)obj, obj->unk08, obj->unk0A, 0);
+    obj->unk08 += 1;
+}
+
+void gRegistryLoad(struct LrDefArg *arg0) __asm__("func_8006A918");
+
 
 /* ==================================================================== tests */
 
@@ -2007,6 +2049,92 @@ static void test_attack_definition(void)
     FCK_EQ(i, 8, "the following slot is untouched");
 }
 
+
+/* ======================================================================
+ * 8006A918 vm record registry loader
+ * ====================================================================== */
+
+static void registry_reset(void)
+{
+    int i;
+    lk_fill(lr_vm_area, 0x00, 0x400);
+    lr_vm_count = 0;
+    lr_ref_n = 0;
+    lr_fetch_n = 0;
+    lr_reset();
+    for (i = 0; i < 0x60; i++) lr_payload[i] = (u8)(0x80 + i);
+    lk_fill(lr_refblock, 0x00, sizeof lr_refblock);
+    lr_ref_returns[0] = (void *)0xA000;
+    lr_ref_returns[1] = (void *)0xA001;
+    /* slot 0 empty, slots 1 and 2 named, slot 3 empty */
+    ((s32 *)lr_refblock)[4] = 0;
+    ((s32 *)lr_refblock)[5] = 3;
+    ((s32 *)lr_refblock)[6] = 7;
+    ((s32 *)lr_refblock)[7] = 4;
+    ((s32 *)lr_refblock)[8] = 9;
+    ((s32 *)lr_refblock)[10] = 0;
+}
+
+static void test_registry_load(void)
+{
+    static struct LrDefArg arg;
+
+    /* @leaf 8006A918 libc the 0x44-byte copy is the unit's own memcpy of the tACT payload at +0x10 into a 0x54-byte record; from src/game/8006A918.c: the load only runs while the count is below six, the count advances, both 0x20-byte objects are scaled, the four aRSL reference pairs fill record +0x44..+0x53 right after the copied 0x44 bytes, and the descriptor is freed even when the gate refuses */
+    LK_FUNC("func_8006A918");
+
+    registry_reset();
+    arg.unk00 = 0x11;
+    arg.unk1C = 0x22;
+    arg.unk20 = 0x33;
+    gRegistryLoad(&arg);
+
+    FCK_EQ(lr_vm_count, 1, "the count advances");
+    FCK_EQ(*(u8 *)(lr_vm_area + 0x00), 0x90, "the copy starts at payload +0x10");
+    FCK_EQ(*(u8 *)(lr_vm_area + 0x43), 0x90 + 0x43, "the copy is 0x44 bytes");
+        FCK_EQ(*(u8 *)(lr_vm_area + 0x0C), 0x90 + 0x0C + 1, "the first object was scaled");
+    FCK_EQ(*(u8 *)(lr_vm_area + 0x2C), 0x90 + 0x2C + 1, "the second object was scaled");
+    FCK_EQ(lr_count(LR_VMSCALE), 2, "two object scalers run");
+    FCK_EQ(lr_call(LR_VMSCALE, 0).a0, (s32)(lr_vm_area + 0x04),
+           "the first object is four bytes into the table");
+    FCK_EQ(lr_call(LR_VMSCALE, 1).a0, (s32)(lr_vm_area + 0x24),
+           "the second object follows 0x20 bytes later");
+    FCK_EQ((s32)*(void **)(lr_vm_area + 0x44), 0, "an empty slot writes null");
+    FCK_EQ((s32)*(void **)(lr_vm_area + 0x48), 0xA000, "the first named reference");
+    FCK_EQ((s32)*(void **)(lr_vm_area + 0x4C), 0xA001, "the second named reference");
+    FCK_EQ((s32)*(void **)(lr_vm_area + 0x50), 0, "the last empty slot writes null");
+    FCK_EQ(lr_ref_n, 2, "two references are resolved");
+    FCK_EQ(lr_ref_args[0][0], 3, "the first pair group");
+    FCK_EQ(lr_ref_args[0][1], 7, "the first pair name");
+    FCK_EQ(lr_ref_args[1][0], 4, "the second pair group");
+    FCK_EQ(lr_ref_args[1][1], 9, "the second pair name");
+    FCK_EQ(lr_call(LR_FETCH, 0).a2, 0x74414354, "the record copy asks for tACT");
+    FCK_EQ(lr_call(LR_FETCH2, 0).a2, 0x6152534C, "the references ask for aRSL");
+    FCK_EQ(lr_count(LR_FREE), 1, "the descriptor is freed");
+    FCK_EQ(lr_call(LR_FREE, 0).a0, (s32)&arg, "the freed block is the argument");
+
+    /* the sixth load is the last one: 6 is refused but the block is freed */
+    registry_reset();
+    lr_vm_count = 6;
+    gRegistryLoad(&arg);
+    FCK_EQ(lr_vm_count, 6, "a full registry does not advance the count");
+    FCK_EQ(lr_count(LR_FETCH), 0, "a full registry fetches nothing");
+    FCK_EQ(lr_count(LR_VMSCALE), 0, "a full registry scales nothing");
+    FCK_EQ(lr_count(LR_FREE), 1, "a full registry still frees the block");
+    FCK_EQ(*(u8 *)lr_vm_area, 0x00, "a full registry writes nothing");
+
+    /* the fifth load lands at index 5, a 0x54-byte stride away */
+    registry_reset();
+    lr_vm_count = 5;
+    gRegistryLoad(&arg);
+    FCK_EQ(lr_vm_count, 6, "the fifth load still runs");
+    FCK_EQ(*(u8 *)(lr_vm_area + 5 * 0x54), 0x90, "index 5 starts at 5 * 0x54");
+    FCK_EQ(lr_call(LR_VMSCALE, 0).a0, (s32)(lr_vm_area + 5 * 0x54 + 0x04),
+           "index 5's first object");
+    FCK_EQ((s32)*(void **)(lr_vm_area + 5 * 0x54 + 0x48), 0xA000,
+           "index 5's second reference");
+    FCK_EQ(*(u8 *)(lr_vm_area + 0x00), 0x00, "index 0 is untouched");
+}
+
 int main(void)
 {
     test_compound_visual_reset();
@@ -2019,5 +2147,6 @@ int main(void)
     test_spatial_attenuation();
     test_place_player_views();
     test_attack_definition();
+    test_registry_load();
     return lk_done("leaf_runtime");
 }
