@@ -467,9 +467,9 @@ function-map:
 
 extract: $(FILES)/.extracted
 
-$(ISO): tools/extract_mode2.py | $(BIN)
+$(ISO): $(BIN) tools/extract_mode2.py
 	@mkdir -p build/disc
-	python3 tools/extract_mode2.py "$(BIN)" "$@"
+	python3 tools/extract_mode2.py "$<" "$@"
 
 $(FILES)/.extracted: $(ISO)
 	@mkdir -p "$(FILES)"
