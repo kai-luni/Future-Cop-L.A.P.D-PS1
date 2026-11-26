@@ -41,3 +41,21 @@ python3 tools/host_leaf_suite.py mutate leaf_final --per-unit 3 --timeout 30 --b
 ```
 
 Letzter Lauf: `make check` erfolgreich, 228 Python-Tests und 1.771/1.771 Matching-Funktionen; alle neunzehn Leaf-Suites liefen tatsächlich. `make portable-check` erfolgreich einschließlich neun Format-Tests und echtem Replay aller 86 Fälle. Der Provenance-Befehl meldete 584/584. Die neuen Suites sind nicht als portable Vektoren übertragen. Alle Build- und Mutationsartefakte sind lokal und nicht Teil des Repositorys.
+
+## Fortsetzung: leaf_plat (26. November 2026)
+
+Stand: 26. November 2026. Ergänzung aus dem Coverage-Worktree (Branch `test/coverage-expansion`), ohne Änderungen an `src/game` oder am Hauptcheckout.
+
+Die Suite `leaf_plat` deckt **30 weitere, bisher ungetestete Originalfunktionen** der Plattform-Client-Schicht (Band 0x8008D..0x8009: CD-ROM-Treiberzugänge, GPU-Status- und Debug-Clients, MDEC-/SPU-Folger) mit **208 zugeordneten Checks** in QEMU ab. Keine der 30 Funktionen war zuvor in irgendeiner Suite mit Markern gelistet (duplikatfrei gegen alle 19 bestehenden Leaf-Suites und alle Nicht-Leaf-Skriptlisten; `8008E194` war doppelt und wurde aus der Suite entfernt, sein Austausch-Vertrag dient nun nur noch als eingebundener Callee-Standin für `800908A0`).
+
+- CD-Clients: `8008E598`, `8008E5B8`, `8008E5FC`, `8008E154`, `8008E174`, `8008E0B8` (Weiterleiter/Wrapper), `8008DF30` (CdInit-Hardwaretest), `8008DEA0` (fünf Versuche, Tabelleninstallation, Fehlerdruck), `8008DF6C`/`8008DF94`/`8008DFBC` (feste Eventwerte 0xF0000003 mit 0x20/0x40/0x40), `8008D690` (BIOS-Statuswert plus Sektor schreiben), `8008E0EC` (Index<28 Tabellenzugriff, sonst Konstante 0x8001233C), `800901F8` (12-Byte-Dateinamenvergleich), `800908A0` (Pause-Callback-Rückstellung).
+- GPU/Interpreter-Clients: `80091BF8` (VSync-Disposition), `80092A84` (Debug-Level-Austausch mit Hook), `80092284` (Tpage-Zerlegung in vier maskierte Felder), `800922E4` (CLUT-Koordinatenzerlegung), `80093488`/`800938F0` (DRAWENV 0x5C-/DISPENV 0x14-Byte-Cacheabrufe).
+- MDEC/SPU-Clients: `80096070` (DMA-Weiterleitung), `80096090`/`800960CC` (Bit-29-/Bit-24-Sync), `80095E90` (Optionsrückstellung), `80097A28` (Warmstart), `80097760` (Transferfolge 2/0/3), `800976DC` (geordnete Folge 2/1/3 oder Blockpfad), `80098E28`/`80098E88` (Größen-Deckelung 0x7EFF0, Clear-Flag-Logik).
+
+Alle Erwartungen sind `source`-Evidenz (quelltextbasierte Charakterisierung der dekompilierten Körper, keine unabhängige Retail-Messung). Alle Callees sind durch Standins ersetzt, die an das Retail-Label gebunden sind; keine Retail-Tabellen, alle `D_`-Slots gehören dem Harness (GPU-Zustandscluster als ein `.data`-Block, `D_8009DDF2` als same-objekt-`.set`-Alias in ein C-Array nach dem `leaf_entity`-Muster).
+
+Volle Mutationsprobe (`host_leaf_suite.py mutate leaf_plat`, temporäre Kopie): **59 von 62 Mutanten erkannt** (57 durch fehlgeschlagene Assertions, 2 durch Abstürze). Die drei übrigen Mutanten sind semantisch äquivalent: `8008DEA0` `return 0` (der Zweig gibt ohnehin 0 zurück) und `80098E28`/`80098E88` `gt->ge` (am Grenzwert 0x7EFF0 ändert sich der geschriebene Wert nicht).
+
+Provenance (`tools/host_leaf_provenance.py leaf_plat`): 30 Funktionen, Karten und Assertionen verifiziert, 30 Debug-Objekte stimmen in `.text` und Relocations überein; QEMU-Eintritts-Dispatch belegt. Suite-Report: 30/30 Funktionen, 208 Checks, Evidenz {source: 30}, Exit 0. `make host-leaf-plat` Teil von `make check` (Skip-Guard wie alle Leaf-Suites).
+
+Neuer Gesamtstand: **31 Leaf-Suiten, 770 unterschiedliche Originalfunktionen, 8.104 zugeordnete Checks**. Die suiteübergreifende Provenienzprüfung bestätigte 775 Funktionszuordnungen und Debug-Objekte; sie meldet die fünf bereits vorhandenen GPU-Paketbauer `80093F58`/`80093F78`/`80094010`/`800940A8`/`800940C4` als Dopplungen in `leaf_systems` und `leaf_fifty_a`. Der Gesamtcheck mit lokalem Retail-Abbild bestand mit 229 Python-Tests, 1.771/1.771 Matching-Funktionen und 31 tatsächlich ausgeführten Leaf-Suiten. `src/game` blieb unverändert.
