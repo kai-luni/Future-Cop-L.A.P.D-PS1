@@ -29,6 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import host_coverage as hc  # noqa: E402
+import unit_paths  # noqa: E402
 
 
 
@@ -207,9 +208,9 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         for sym in sorted(linked):
             unit = sym[5:]
-            src = hc.REPO / "src" / "game" / f"{unit}.c"
+            src = unit_paths.resolve_unit_path(unit, repo=hc.REPO)
             entry = {"unit": unit, "binaries": [b.name for b in linked[sym]]}
-            if not src.exists():
+            if src is None or not src.exists():
                 entry.update(state="no source", covered=0, total=0)
                 results[sym] = entry
                 continue

@@ -19,8 +19,8 @@ GAME = ROOT / "src/game"
 # Pre-existing definitions with a readable C name and no asm label; their
 # retail names are reached through D_ symbols by the callers.
 KNOWN_UNBOUND = {
-    ("800754B8.c", "gAttachMessageName"),
-    ("800889DC.c", "gCodeDataSource"),
+    ("renderer-scene/gInitEmitterParticle.c", "gAttachMessageName"),
+    ("platform/gOffsetCdLocationBySectors.c", "gCodeDataSource"),
 }
 
 DEFINITION = re.compile(
@@ -46,13 +46,14 @@ def definitions(text):
 class FunctionNameBindingTest(unittest.TestCase):
     def test_renamed_definitions_carry_their_retail_label(self):
         failures = []
-        for path in sorted(GAME.glob("*.c")):
+        for path in sorted(GAME.rglob("*.c")):
+            rel = path.relative_to(GAME).as_posix()
             text = path.read_text(errors="ignore")
             masked = strip_comments(text)
             for name, is_static in definitions(text):
                 if is_static or RETAIL_NAME.match(name):
                     continue
-                if (path.name, name) in KNOWN_UNBOUND:
+                if (rel, name) in KNOWN_UNBOUND:
                     continue
                 # The label binds to the definition it follows, so check the
                 # definition itself: one unit may hold several entry points.
@@ -60,7 +61,7 @@ class FunctionNameBindingTest(unittest.TestCase):
                     rf'\b{re.escape(name)}\s*\([^;{{}}]*\)\s*__asm__\(', masked)
                 if labelled is None:
                     failures.append(
-                        f'{path.name}: {name} needs its retail __asm__ label')
+                        f'{rel}: {name} needs its retail __asm__ label')
         if failures:
             self.fail("definitions without a retail symbol binding:\n" + "\n".join(failures))
 

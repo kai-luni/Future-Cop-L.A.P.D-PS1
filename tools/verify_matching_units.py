@@ -8,8 +8,14 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
+
+TOOLS_DIR = Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+import unit_paths  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 LOAD_ADDRESS = 0x80010000
@@ -1706,7 +1712,7 @@ def compile_unit(unit, config, prefix, work, environment=None):
     cpp = ROOT / ".toolchain" / compiler / "cpp"
     if not cpp.is_file():
         raise SystemExit(f"missing {cpp}; run make toolchain")
-    run([cpp, "-lang-c", "-I", ROOT / "include", source, preprocessed], env=environment)
+    run([cpp, "-lang-c", *unit_paths.include_flags(ROOT), source, preprocessed], env=environment)
     run([cc1, *flags, preprocessed, "-o", raw_asm], env=environment)
 
     maspsx = ROOT / ".toolchain" / f"maspsx-{MASPSX_COMMIT}" / "maspsx.py"

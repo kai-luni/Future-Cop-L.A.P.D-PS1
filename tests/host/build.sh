@@ -9,6 +9,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="$(cd "$HERE/../.." && pwd)"
+source "$HERE/unit_path.sh"
 T="$DECOMP/.toolchain"
 GCC="$T/gcc-2.7.2-cdk/gcc"
 AS="$T/mipsel-binutils/root/usr/bin/mipsel-linux-gnu-as"
@@ -23,13 +24,13 @@ export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIB
 
 compile() { # compile <src.c> <obj>
     local src="$1" obj="$2"
-    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
+    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/src/game" -I"$DECOMP/include" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     "$AS" -o "$obj" "$OUT/tmp.mas.s"
 }
 
 for f in 80012E1C 80012E48 8001306C 800131A0 8001996C 80063C5C 80015AF4 80015B68 80016A64; do
-    compile "$DECOMP/src/game/$f.c" "$OUT/$f.o"
+    compile "$(unit_src "$f")" "$OUT/$f.o"
 done
 compile "$HERE/gte_ref.c" "$OUT/gte_ref.o"
 compile "$HERE/stubs.c" "$OUT/stubs.o"

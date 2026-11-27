@@ -65,7 +65,7 @@ class FunctionMapTests(unittest.TestCase):
             )
             seen[cname] = retail
 
-            unit_path = ROOT / "src" / "game" / f"{retail[5:].upper()}.c"
+            unit_path = ROOT / man[retail]["source"]
             text = unit_path.read_text(errors="ignore")
             self.assertIn(f'__asm__("{retail}")', text)
 

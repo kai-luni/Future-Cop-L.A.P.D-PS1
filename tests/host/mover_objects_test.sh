@@ -8,6 +8,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="$(cd "$HERE/../.." && pwd)"
+source "$HERE/unit_path.sh"
 T="${TOOLCHAIN:-$DECOMP/.toolchain}"
 OUT="${OUT:-$DECOMP/tests/host/build-movers}"
 QEMU="${QEMU:-$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}"
@@ -27,7 +28,7 @@ export PATH="$T/mipsel-binutils/root/usr/bin:$PATH"
 export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 compile_s() {
-    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"
+    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/src/game" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$2"
 }
 
@@ -35,12 +36,12 @@ compile_s() {
 UNITS="80041B6C 80041488 80041880 80041728 80039504 800395A8 80039298 80039418"
 OBJS=""
 for unit in $UNITS; do
-    compile_s "$DECOMP/src/game/$unit.c" "$OUT/$unit.mas.s"
+    compile_s "$(unit_src "$unit")" "$OUT/$unit.mas.s"
     mipsel-linux-gnu-as -o "$OUT/$unit.o" "$OUT/$unit.mas.s"
     OBJS="$OBJS $OUT/$unit.o"
 done
 
-"$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -I"$OUT" -O1 -G0 \
+"$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/src/game" -I"$DECOMP/include" -I"$OUT" -O1 -G0 \
     -S "$HERE/mover_objects_harness.c" -o "$OUT/tmp.s"
 python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/harness.mas.s"
 mipsel-linux-gnu-as -o "$OUT/harness.o" "$OUT/harness.mas.s"

@@ -8,42 +8,42 @@
 
 /* Real helpers already covered elsewhere or needed for linking (not counted
  * as @leaf coverage here). Struct tag renames prevent C redefinitions. */
-#include "../../src/game/800914E0.c"
+#include "../../src/game/platform/gSetDmaCallback.c"
 #define CallbackTable CallbackTable_914B0
 #define gIrqCallbackTable gIrqCallbackTable_914B0
-#include "../../src/game/800914B0.c"
+#include "../../src/game/platform/gSetIrqCallback.c"
 #undef CallbackTable
 #undef gIrqCallbackTable
-#include "../../src/game/800195A4.c"
+#include "../../src/game/memory-resources/gTakeFixedPoolSlot.c"
 #define LinkState LinkState_195D0
-#include "../../src/game/800195D0.c"
+#include "../../src/game/memory-resources/gReturnFixedPoolSlot.c"
 #undef LinkState
-#include "../../src/game/80019668.c"
-#include "../../src/game/80019A74.c"
-#include "../../src/game/80019C38.c"
-#include "../../src/game/80045288.c"
-#include "../../src/game/80021A8C.c"
-#include "../../src/game/8002238C.c"
-#include "../../src/game/8001EF34.c"
+#include "../../src/game/utilities/gAdvancePrimaryPrng.c"
+#include "../../src/game/memory-resources/gAppendResourceRegistryEntry.c"
+#include "../../src/game/memory-resources/gFindSectionPayload.c"
+#include "../../src/game/platform/gGetVagmVolumeSetting.c"
+#include "../../src/game/boot-frontend/gMoveSoundVoiceMaskToOff.c"
+#include "../../src/game/platform/gQueueSoundChannelRelease.c"
+#include "../../src/game/boot-frontend/gGetPadType.c"
 #define PadBuffer PadBuffer_1E7B8
 #define gPadBuffers gPadBuffers_1E7B8
-#include "../../src/game/8001E7B8.c"
+#include "../../src/game/platform/gReadAnalogStick.c"
 #undef PadBuffer
 #undef gPadBuffers
-#include "../../src/game/80022B74.c"
-#include "../../src/game/8002443C.c"
-#include "../../src/game/8006AAEC.c"
-#include "../../src/game/8006BD48.c"
-#include "../../src/game/8008B73C.c"
-#include "../../src/game/8008B750.c"
-#include "../../src/game/8008B770.c"
-#include "../../src/game/8008B790.c"
-#include "../../src/game/8008B7B0.c"
-#include "../../src/game/800469A0.c"
+#include "../../src/game/boot-frontend/gGetAudioStreamBlockCount.c"
+#include "../../src/game/boot-frontend/gScaleAudioStreamBlockDeficit.c"
+#include "../../src/game/gameplay-ai/gRegistryFind.c"
+#include "../../src/game/gameplay-ai/gGetScaledWeaponReserveLimit.c"
+#include "../../src/game/boot-frontend/gSetPadModelQueryCmd.c"
+#include "../../src/game/boot-frontend/gSetPadModeConstCmd.c"
+#include "../../src/game/boot-frontend/gSetPadActInfoCmd.c"
+#include "../../src/game/boot-frontend/gSetPadCombInfoCmd.c"
+#include "../../src/game/boot-frontend/gSetPadCombContCmd.c"
+#include "../../src/game/boot-frontend/gInsertSoundBankVoiceByPriority.c"
 #define SoundVoice SoundVoice_46804
 #define SoundBank SoundBank_46804
 #define gSoundEntryTable gSoundEntryTable_46804
-#include "../../src/game/80046804.c"
+#include "../../src/game/platform/gUnlinkSoundBankVoice.c"
 #undef SoundVoice
 #undef SoundBank
 #undef gSoundEntryTable
@@ -151,7 +151,7 @@ static void test_80096108(void)
 {
     int prev = 1;
     void *ret;
-    /* @leaf 80096108 source src/game/80096108.c: registers MDEC input DMA callback on channel 0 */
+    /* @leaf 80096108 source src/game/gpu-2d-hud/gMdecSetInCallback.c: registers MDEC input DMA callback on channel 0 */
     LK_FUNC("func_80096108");
     reset_cb_tbl(); g_cb_ret = &prev;
     ret = func_80096108((void *)dummy_cb_a);
@@ -166,7 +166,7 @@ static void test_8009612C(void)
 {
     int prev = 2;
     void *ret;
-    /* @leaf 8009612C source src/game/8009612C.c: registers MDEC output DMA callback on channel 1 */
+    /* @leaf 8009612C source src/game/gpu-2d-hud/gSetDecDctOutCallback.c: registers MDEC output DMA callback on channel 1 */
     LK_FUNC("func_8009612C");
     reset_cb_tbl(); g_cb_ret = &prev;
     ret = func_8009612C((void *)dummy_cb_b);
@@ -179,7 +179,7 @@ static void test_8009612C(void)
 /* 3. 800979F8: gSpuSetDmaCallback */
 static void test_800979F8(void)
 {
-    /* @leaf 800979F8 source src/game/800979F8.c: registers SPU DMA callback on channel 4 */
+    /* @leaf 800979F8 source src/game/platform/gSpuSetDmaCallback.c: registers SPU DMA callback on channel 4 */
     LK_FUNC("func_800979F8");
     reset_cb_tbl();
     func_800979F8((void *)dummy_cb_a);
@@ -191,7 +191,7 @@ static void test_800979F8(void)
 /* 4. 80098C38: gSpuSetIrqCallback */
 static void test_80098C38(void)
 {
-    /* @leaf 80098C38 source src/game/80098C38.c: registers SPU IRQ callback on interrupt 9 */
+    /* @leaf 80098C38 source src/game/platform/gSpuSetIrqCallback.c: registers SPU IRQ callback on interrupt 9 */
     LK_FUNC("func_80098C38");
     reset_cb_tbl();
     func_80098C38((void *)dummy_cb_a);
@@ -204,7 +204,7 @@ static void test_80098C38(void)
 static void test_80098BF8(void)
 {
     void *prev;
-    /* @leaf 80098BF8 source src/game/80098BF8.c: swaps SPU IRQ handler and registers only on change */
+    /* @leaf 80098BF8 source src/game/platform/gSpuInstallIrqCallback.c: swaps SPU IRQ handler and registers only on change */
     LK_FUNC("func_80098BF8");
     reset_cb_tbl();
     g_spu_irq_hdlr = (void *)dummy_cb_a;
@@ -227,7 +227,7 @@ static void test_80028DC0(void)
 {
     struct QState28DC0 st;
     struct QNode28DC0 n0, n1;
-    /* @leaf 80028DC0 source src/game/80028DC0.c: pops fixed pool slot and appends to asset queue tail */
+    /* @leaf 80028DC0 source src/game/boot-frontend/gQueueCompletedModuleAsset.c: pops fixed pool slot and appends to asset queue tail */
     LK_FUNC("func_80028DC0");
     lk_fill(g_stream_buf, 0, sizeof(g_stream_buf));
     lk_fill(&st, 0, sizeof(st)); lk_fill(&n0, 0, sizeof(n0)); lk_fill(&n1, 0, sizeof(n1));
@@ -269,7 +269,7 @@ struct Hover320E4 {
 static void test_800320E4(void)
 {
     struct Hover320E4 obj;
-    /* @leaf 800320E4 source src/game/800320E4.c: picks randomized hover wander target unless state/kind blocks */
+    /* @leaf 800320E4 source src/game/gameplay-ai/gPickHoverWanderTarget.c: picks randomized hover wander target unless state/kind blocks */
     LK_FUNC("func_800320E4");
     lk_fill(&obj, 0, sizeof(obj));
     obj.baseX = 1000; obj.baseY = 2000; obj.baseZ = 3000;
@@ -302,7 +302,7 @@ static void test_800498F0(void)
     struct LightNode *grid[4];
     struct LightNode a, b, c;
     struct LightPool pool;
-    /* @leaf 800498F0 source src/game/800498F0.c: unlinks light node from grid cell and returns to pool */
+    /* @leaf 800498F0 source src/game/gameplay-ai/gFreeLightGridNode.c: unlinks light node from grid cell and returns to pool */
     LK_FUNC("func_800498F0");
     lk_fill(grid, 0, sizeof(grid));
     lk_fill(&a, 0, sizeof(a)); lk_fill(&b, 0, sizeof(b)); lk_fill(&c, 0, sizeof(c));
@@ -349,7 +349,7 @@ static void test_80075478(void)
     struct LightNode n;
     struct LightPool pool;
     struct Part75478 part;
-    /* @leaf 80075478 source src/game/80075478.c: releases attached particle light and clears pointer */
+    /* @leaf 80075478 source src/game/renderer-scene/gReleaseParticleLight.c: releases attached particle light and clears pointer */
     LK_FUNC("func_80075478");
     lk_fill(grid, 0, sizeof(grid)); lk_fill(&n, 0, sizeof(n));
     lk_fill(&pool, 0, sizeof(pool)); lk_fill(&part, 0, sizeof(part));
@@ -377,7 +377,7 @@ struct Actor381D4 {
 static void test_800381D4(void)
 {
     struct Actor381D4 act;
-    /* @leaf 800381D4 source src/game/800381D4.c: steps idle actor turn state machine with PRNG gate */
+    /* @leaf 800381D4 source src/game/gameplay-ai/gStepIdleActorTurn.c: steps idle actor turn state machine with PRNG gate */
     LK_FUNC("func_800381D4");
     lk_fill(&act, 0, sizeof(act));
     act.unk1C = 55; act.unk118 = 0;
@@ -425,7 +425,7 @@ struct Res4D924 { s32 tag; u8 pad[8]; void *next, *prev; };
 static void test_8004D924(void)
 {
     struct Res4D924 r;
-    /* @leaf 8004D924 source src/game/8004D924.c: appends resource to registry and stores *value bias */
+    /* @leaf 8004D924 source src/game/memory-resources/gRegisterResourceWithBias.c: appends resource to registry and stores *value bias */
     LK_FUNC("func_8004D924");
     lk_fill(&r, 0, sizeof(r));
     r.tag = 0x1234;
@@ -440,7 +440,7 @@ static void test_8004D924(void)
 static void test_80056924(void)
 {
     int i;
-    /* @leaf 80056924 source src/game/80056924.c: fills 2x8 demo camera states in range [7, 14] */
+    /* @leaf 80056924 source src/game/gameplay-ai/gInitDemoCameraStates.c: fills 2x8 demo camera states in range [7, 14] */
     LK_FUNC("func_80056924");
     lk_fill(g_demo_cam, 0, sizeof(g_demo_cam));
     seed_prng(1); /* first few calls yield 2 -> (2&7)+7 = 9 */
@@ -457,7 +457,7 @@ static void test_80056924(void)
 static void test_8003B4E0(void)
 {
     u8 desc[0x20];
-    /* @leaf 8003B4E0 source src/game/8003B4E0.c: selects slot type or column override on PRNG bit 0 */
+    /* @leaf 8003B4E0 source src/game/gameplay-ai/gSelectEntitySlotType.c: selects slot type or column override on PRNG bit 0 */
     LK_FUNC("func_8003B4E0");
     lk_fill(desc, 0, sizeof(desc));
     desc[4] = 0x11;  /* slot 0 */
@@ -486,7 +486,7 @@ static void test_8003B4E0(void)
 static void test_8002A16C(void)
 {
     u8 *p = (u8 *)g_stream_buf;
-    /* @leaf 8002A16C source src/game/8002A16C.c: starts VAGM audio stream and computes chunk address */
+    /* @leaf 8002A16C source src/game/platform/gStartVagmAudioStream.c: starts VAGM audio stream and computes chunk address */
     LK_FUNC("func_8002A16C");
     lk_fill(g_stream_buf, 0, sizeof(g_stream_buf));
     g_stream_buf[0x44 / 4] = 1;
@@ -522,7 +522,7 @@ static void test_8002A16C(void)
 static void test_800243F8(void)
 {
     s8 voice[0x20];
-    /* @leaf 800243F8 source src/game/800243F8.c: moves channel bit from pending to acknowledged */
+    /* @leaf 800243F8 source src/game/platform/gQueueVoiceChannelRelease.c: moves channel bit from pending to acknowledged */
     LK_FUNC("func_800243F8");
     lk_fill(&g_snd_sys, 0, sizeof(g_snd_sys));
     lk_fill(voice, 0, sizeof(voice));
@@ -536,7 +536,7 @@ static void test_800243F8(void)
 
 static void test_80022240(void)
 {
-    /* @leaf 80022240 source src/game/80022240.c: releases active sound voice slots matching owner */
+    /* @leaf 80022240 source src/game/boot-frontend/gReleaseSoundVoicesByOwner.c: releases active sound voice slots matching owner */
     LK_FUNC("func_80022240");
     lk_fill(&g_snd_sys, 0, sizeof(g_snd_sys));
     g_snd_sys.pending = (1u << 3) | (1u << 4);
@@ -562,7 +562,7 @@ static void test_800538C8(void)
     u8 ctx[0x320];
     u32 flags;
     s32 vert, horiz;
-    /* @leaf 800538C8 source src/game/800538C8.c: decodes analog stick deadzone, direction flags, magnitudes */
+    /* @leaf 800538C8 source src/game/platform/gReadAnalogMovementDirections.c: decodes analog stick deadzone, direction flags, magnitudes */
     LK_FUNC("func_800538C8");
     lk_fill(ctx, 0, sizeof(ctx));
     lk_fill(g_pad_bufs, 0, sizeof(g_pad_bufs));
@@ -615,7 +615,7 @@ static void test_80029E20(void)
 {
     struct Res29E20 res;
     s32 blob[6];
-    /* @leaf 80029E20 source src/game/80029E20.c: appends portrait resource and locates 'SOTt' subchunk */
+    /* @leaf 80029E20 source src/game/memory-resources/gRegisterPortraitStreamTable.c: appends portrait resource and locates 'SOTt' subchunk */
     LK_FUNC("func_80029E20");
     lk_fill(&res, 0, sizeof(res));
     lk_fill(blob, 0, sizeof(blob));
@@ -636,7 +636,7 @@ static void test_80029E20(void)
 /* 19. 80029BE4: gIsAudioStreamReady */
 static void test_80029BE4(void)
 {
-    /* @leaf 80029BE4 source src/game/80029BE4.c: checks audio stream readiness from gate & block deficit */
+    /* @leaf 80029BE4 source src/game/boot-frontend/gIsAudioStreamReady.c: checks audio stream readiness from gate & block deficit */
     LK_FUNC("func_80029BE4");
     g_call_gate = 3;
     FCK_EQ(func_80029BE4(), 0, "gate 3 -> not ready");
@@ -668,7 +668,7 @@ static void test_8006BDFC(void)
     struct WepObj obj;
     struct WepSess sess;
     u8 *rec;
-    /* @leaf 8006BDFC source src/game/8006BDFC.c: refills weapon reserve and swaps empty-slot fields */
+    /* @leaf 8006BDFC source src/game/gameplay-ai/gRefillWeaponSlotReserve.c: refills weapon reserve and swaps empty-slot fields */
     LK_FUNC("func_8006BDFC");
     lk_fill(&ctl, 0, sizeof(ctl)); lk_fill(&obj, 0, sizeof(obj));
     lk_fill(&sess, 0, sizeof(sess)); lk_fill(g_vm_recs, 0, sizeof(g_vm_recs));
@@ -703,7 +703,7 @@ static void test_8006BE90(void)
     struct WepObj obj;
     struct WepSess sess;
     u8 *rec;
-    /* @leaf 8006BE90 source src/game/8006BE90.c: refills weapon slot ammo by step or to full max */
+    /* @leaf 8006BE90 source src/game/gameplay-ai/gRefillWeaponSlotAmmo.c: refills weapon slot ammo by step or to full max */
     LK_FUNC("func_8006BE90");
     lk_fill(&ctl, 0, sizeof(ctl)); lk_fill(&obj, 0, sizeof(obj));
     lk_fill(&sess, 0, sizeof(sess)); lk_fill(g_vm_recs, 0, sizeof(g_vm_recs));
@@ -742,7 +742,7 @@ struct PadPortFull {
 static void test_8008AE8C(void)
 {
     struct PadPortFull p;
-    /* @leaf 8008AE8C source src/game/8008AE8C.c: dispatches pad info mode commands for steps 2/3/4 */
+    /* @leaf 8008AE8C source src/game/boot-frontend/gCmdPadInfoModeFirst.c: dispatches pad info mode commands for steps 2/3/4 */
     LK_FUNC("func_8008AE8C");
     lk_fill(&p, 0, sizeof(p));
     p.current_mode_index = 3; p.info_record_index = 5;
@@ -767,7 +767,7 @@ static void test_8008AE8C(void)
 static void test_8008B168(void)
 {
     struct PadPortFull p;
-    /* @leaf 8008B168 source src/game/8008B168.c: dispatches pad table handshake commands for steps 2/3/4 */
+    /* @leaf 8008B168 source src/game/boot-frontend/gCmdPadTableHandshake.c: dispatches pad table handshake commands for steps 2/3/4 */
     LK_FUNC("func_8008B168");
     lk_fill(&p, 0, sizeof(p));
     p.info_record_index = 4;
@@ -820,7 +820,7 @@ static void reset_voices(void)
 static void test_80046870(void)
 {
     struct FullVoice v0, v1, v2, v3;
-    /* @leaf 80046870 source src/game/80046870.c: links sound voice into class/priority & bank lists */
+    /* @leaf 80046870 source src/game/boot-frontend/gLinkActiveSoundVoice.c: links sound voice into class/priority & bank lists */
     LK_FUNC("func_80046870");
     reset_voices();
     lk_fill(&v0, 0, sizeof(v0)); lk_fill(&v1, 0, sizeof(v1));
@@ -868,7 +868,7 @@ static void test_80046698(void)
 {
     struct FullVoice v0, v1;
     struct VoiceOwner own;
-    /* @leaf 80046698 source src/game/80046698.c: releases active voice, unlinks lists/bank, clears owner */
+    /* @leaf 80046698 source src/game/platform/gReleaseSoundVoice.c: releases active voice, unlinks lists/bank, clears owner */
     LK_FUNC("func_80046698");
     reset_voices();
     lk_fill(&v0, 0, sizeof(v0)); lk_fill(&v1, 0, sizeof(v1)); lk_fill(&own, 0, sizeof(own));

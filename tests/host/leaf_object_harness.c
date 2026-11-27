@@ -327,7 +327,7 @@ static void test_stream_rings(void)
 {
     struct FckCall c;
 
-    /* @leaf 8002A31C source src/game/8002A31C.c: 4-slot ring insert with wrap and occupied-slot callback */
+    /* @leaf 8002A31C source src/game/boot-frontend/gQueueStreamAssetRelease.c: 4-slot ring insert with wrap and occupied-slot callback */
     LK_FUNC("func_8002A31C");
     lk_fill(gStreamAssetReleaseRing, 0, sizeof(gStreamAssetReleaseRing));
     gStreamAssetReleaseWriteIndex = 2;
@@ -347,7 +347,7 @@ static void test_stream_rings(void)
     FCK_EQ(gStreamAssetReleaseWriteIndex, 0, "occupied slot leaves write index unchanged");
     FCK_EQ(fck_calls_to("cb_80029650"), 1, "occupied slot invokes callback once");
 
-    /* @leaf 8002A408 source src/game/8002A408.c: drain consecutive nonzero ring slots with wrap and stop at zero */
+    /* @leaf 8002A408 source src/game/boot-frontend/gDrainCallbackSlotRing.c: drain consecutive nonzero ring slots with wrap and stop at zero */
     LK_FUNC("func_8002A408");
     gStreamAssetReleaseRing[0] = 0xAA;
     gStreamAssetReleaseRing[1] = 0;
@@ -369,7 +369,7 @@ static void test_stream_rings(void)
     FCK_EQ(fck_calls_to("cb_80029650"), 0, "already-empty slot is a no-op");
     FCK_EQ(gStreamAssetReleaseReadIndex, 1, "empty drain leaves read index unchanged");
 
-    /* @leaf 8002A49C source src/game/8002A49C.c: gated VAGM ring drain forwards entries, wraps cursor, toggles draining flag */
+    /* @leaf 8002A49C source src/game/boot-frontend/gDrainVagmRing.c: gated VAGM ring drain forwards entries, wraps cursor, toggles draining flag */
     LK_FUNC("func_8002A49C");
     lk_fill(gStreamAssetReleaseRing, 0, sizeof(gStreamAssetReleaseRing));
     gStreamAssetReleaseWriteIndex = 0;
@@ -411,7 +411,7 @@ static void test_stream_rings(void)
     FCK_EQ(gStreamAssetReleaseRing[1], 0x502, "wrapped VAGM entry forwarded to release ring");
     FCK_EQ(gVagmReadIndex, 1, "read index stops after wrapped entry");
 
-    /* @leaf 8002A544 source src/game/8002A544.c: gate check, 0x40 bitmask pending flag, drain, and gate clear */
+    /* @leaf 8002A544 source src/game/platform/gResetVagmStreamState.c: gate check, 0x40 bitmask pending flag, drain, and gate clear */
     LK_FUNC("func_8002A544");
     lk_fill(gStreamAssetReleaseRing, 0, sizeof(gStreamAssetReleaseRing));
     gStreamAssetReleaseWriteIndex = 0;
@@ -440,7 +440,7 @@ static void test_stream_rings(void)
     FCK_EQ(gStreamStartPending[0], 1, "bit 0x40 clear sets pending flag even with other bits set");
     FCK_EQ(gCallGateFlag, 0, "gate cleared to 0 after reset");
 
-    /* @leaf 8002A26C source src/game/8002A26C.c: unconditional ring drain, deadline expiry, 0x40 reset, and conditional restart */
+    /* @leaf 8002A26C source src/game/platform/gUpdatePortraitStream.c: unconditional ring drain, deadline expiry, 0x40 reset, and conditional restart */
     LK_FUNC("func_8002A26C");
     lk_fill(gStreamAssetReleaseRing, 0, sizeof(gStreamAssetReleaseRing));
     gStreamAssetReleaseRing[0] = 0x701;
@@ -523,7 +523,7 @@ static void test_stream_refill(void)
     s32 ret;
     struct FckCall c;
 
-    /* @leaf 800246A8 source src/game/800246A8.c: release prior stream id, dequeue replacement, program channel 1 and 0 ranges */
+    /* @leaf 800246A8 source src/game/platform/gReplaceVagmAudioStreamBuffer.c: release prior stream id, dequeue replacement, program channel 1 and 0 ranges */
     LK_FUNC("func_800246A8");
     lk_fill(gStreamAssetReleaseRing, 0, sizeof(gStreamAssetReleaseRing));
     gStreamAssetReleaseWriteIndex = 0;
@@ -555,7 +555,7 @@ static void test_stream_refill(void)
     FCK_EQ(c.a1, 0x2FC0, "second range length is 0x2FC0");
     FCK_EQ(c.a2, (0 << 8) | 0, "second range targets channel 0 non-looping");
 
-    /* @leaf 80024470 source src/game/80024470.c: admits only event codes 3 and 4 to stream buffer replacement */
+    /* @leaf 80024470 source src/game/boot-frontend/gHandleAudioStreamRefillEvent.c: admits only event codes 3 and 4 to stream buffer replacement */
     LK_FUNC("func_80024470");
     gActiveStreamId = 0;
     mock_vagm_chunk_ret = 0;
@@ -601,7 +601,7 @@ static void test_actor_and_spawns(void)
     struct FckCall c;
     int i;
 
-    /* @leaf 8002B0EC source src/game/8002B0EC.c: clip-change guard, attack match flag, 0x3A randomization/remap and +0x74 zeroing */
+    /* @leaf 8002B0EC source src/game/gameplay-ai/gSetType26AnimationClip.c: clip-change guard, attack match flag, 0x3A randomization/remap and +0x74 zeroing */
     LK_FUNC("func_8002B0EC");
     lk_fill(actor, 0xA5, sizeof(actor));
     actor[0x15E] = 7;
@@ -668,7 +668,7 @@ static void test_actor_and_spawns(void)
     FCK_EQ(c.a1, 0x44, "rng 29 remaps 0x43 -> 0x44");
     FCK_EQ(*(s32 *)(actor + 0x74), 0, "0x44 zeroes +0x74");
 
-    /* @leaf 8003BC7C source src/game/8003BC7C.c: conditional free, 0x1C type-2 alloc, and exact descriptor field copy */
+    /* @leaf 8003BC7C source src/game/memory-resources/gSetSlotSpawnDescriptor.c: conditional free, 0x1C type-2 alloc, and exact descriptor field copy */
     LK_FUNC("func_8003BC7C");
     lk_fill(gSlotSpawnDescs, 0, sizeof(gSlotSpawnDescs));
     lk_fill(src_desc, 0x6D, sizeof(src_desc));
@@ -700,7 +700,7 @@ static void test_actor_and_spawns(void)
     FCK_EQ(fck_calls_to("free"), 0, "empty slot skips free");
     FCK_CHECK(gSlotSpawnDescs[6] == dst_desc, "slot 6 populated");
 
-    /* @leaf 8003BDEC source src/game/8003BDEC.c: null-guarded pool storage free and idempotent second call */
+    /* @leaf 8003BDEC source src/game/memory-resources/gFreeIntrusiveNodePoolStorage.c: null-guarded pool storage free and idempotent second call */
     LK_FUNC("func_8003BDEC");
     pool.storage = backing_mem;
     pool.active = (void *)0x1111;
@@ -715,7 +715,7 @@ static void test_actor_and_spawns(void)
     gFreeIntrusiveNodePoolStorage(&pool);
     FCK_EQ(fck_calls_to("free"), 0, "second call on null storage is a no-op");
 
-    /* @leaf 8003C404 source src/game/8003C404.c: flag byte clear, prior slot free, unk28/unk2A normalization, and 2D table install */
+    /* @leaf 8003C404 source src/game/gameplay-ai/gInstallSpawnRecord.c: flag byte clear, prior slot free, unk28/unk2A normalization, and 2D table install */
     LK_FUNC("func_8003C404");
     lk_fill(gSpawnRecordMap, 0, sizeof(gSpawnRecordMap));
     gSpawnTableRow = 2;
@@ -786,7 +786,7 @@ static void test_cvk_banks(void)
     s32 ret;
     int i;
 
-    /* @leaf 800235D4 source src/game/800235D4.c: CSHD header lookup, 8-slot scan, and 12-byte item install loop */
+    /* @leaf 800235D4 source src/game/memory-resources/gInstallCvkGroupSamples.c: CSHD header lookup, 8-slot scan, and 12-byte item install loop */
     LK_FUNC("func_800235D4");
     lk_fill(gObjectSlots, 0xFF, sizeof(gObjectSlots));
     lk_fill(&fix, 0, sizeof(fix));
@@ -837,7 +837,7 @@ static void test_cvk_banks(void)
     FCK_EQ(ret, 1, "empty matched entry returns 1");
     FCK_EQ(fck_calls_to("append_sample"), 0, "empty entry appends nothing");
 
-    /* @leaf 80023A24 source src/game/80023A24.c: drains all 110 program entries calling remove count times on head byte */
+    /* @leaf 80023A24 source src/game/boot-frontend/gClearSoundProgramSamples.c: drains all 110 program entries calling remove count times on head byte */
     LK_FUNC("func_80023A24");
     lk_fill(gSoundEntryTable, 0, sizeof(gSoundEntryTable));
     gSoundEntryTable[0].count = 2;
@@ -857,7 +857,7 @@ static void test_cvk_banks(void)
     FCK_CHECK(c.a0 == 109 && c.a1 == 99, "last slot 109 drained");
     mock_compact_on_remove = 0;
 
-    /* @leaf 80023AB4 source src/game/80023AB4.c: negative guard, backward sample removal, bank unregister, block frees, first-match break */
+    /* @leaf 80023AB4 source src/game/boot-frontend/gUnloadCvkSoundBank.c: negative guard, backward sample removal, bank unregister, block frees, first-match break */
     LK_FUNC("func_80023AB4");
     lk_fill(gObjectSlots, 0, sizeof(gObjectSlots));
     for (i = 0; i < 8; i++) { gObjectSlots[i].id = -1; gObjectSlots[i].status = -1; }
@@ -915,7 +915,7 @@ static void test_cvk_banks(void)
     FCK_EQ(fck_calls_to("free"), 0, "null blocks skip free");
     FCK_CHECK(gObjectSlots[7].status == -1 && gObjectSlots[7].pad2 == 0, "slot 7 status 0 still retired");
 
-    /* @leaf 80023BF8 source src/game/80023BF8.c: CVK active gate, 8-slot unload, sample drain, CSHD frees, and table reset */
+    /* @leaf 80023BF8 source src/game/platform/gReleaseCvkSoundBanksAndVoices.c: CVK active gate, 8-slot unload, sample drain, CSHD frees, and table reset */
     LK_FUNC("func_80023BF8");
     lk_fill(gObjectSlots, 0, sizeof(gObjectSlots));
     for (i = 0; i < 8; i++) { gObjectSlots[i].id = -1; gObjectSlots[i].status = -1; }
@@ -948,7 +948,7 @@ static void test_tracked_voice(void)
     struct FckCall c;
     s32 ret;
 
-    /* @leaf 80023E84 source src/game/80023E84.c: state==1 owner/volume cleanup plus unconditional handle release and deadline clear */
+    /* @leaf 80023E84 source src/game/boot-frontend/gStopTrackedSoundVoice.c: state==1 owner/volume cleanup plus unconditional handle release and deadline clear */
     LK_FUNC("func_80023E84");
     lk_fill(&res, 0, sizeof(res));
     res.owner = -5;
@@ -988,7 +988,7 @@ static void test_tracked_voice(void)
     FCK_EQ(fck_calls_to("clear_vol_limit"), 0, "flag 1 skips volume limit clear");
     FCK_EQ(gAssetHandle.state, 0, "still clears state to 0");
 
-    /* @leaf 80023D78 source src/game/80023D78.c: deadline window [tick, tick+0xBB8], active-without-deadline stop, and gated mix update */
+    /* @leaf 80023D78 source src/game/boot-frontend/gUpdateTrackedSoundVoice.c: deadline window [tick, tick+0xBB8], active-without-deadline stop, and gated mix update */
     LK_FUNC("func_80023D78");
     lk_fill(&gAssetHandle, 0, sizeof(gAssetHandle));
     gAssetHandle.resource = &res;
@@ -1057,7 +1057,7 @@ static void test_tracked_voice(void)
     gUpdateTrackedSoundVoice();
     FCK_EQ(gAssetHandle.state, 0, "failed handle validation stops voice");
 
-    /* @leaf 80023F08 source src/game/80023F08.c: SPU guard, mix vs default volume/pan, alloc failure vs start and deadline */
+    /* @leaf 80023F08 source src/game/boot-frontend/gStartTrackedSoundVoice.c: SPU guard, mix vs default volume/pan, alloc failure vs start and deadline */
     LK_FUNC("func_80023F08");
     res.owner = 3;
     lk_fill(&gAssetHandle, 0, sizeof(gAssetHandle));

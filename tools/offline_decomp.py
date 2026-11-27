@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import unit_paths
 import verify_matching_units as matching
 
 
@@ -514,7 +515,11 @@ class Runner:
                   symbols: dict[str, str], extras: dict[str, Any] | None = None
                   ) -> dict[str, Any]:
         """Single source of truth for the compiler invocation."""
-        relative = source_path.relative_to(ROOT)
+        try:
+            relative = source_path.relative_to(ROOT)
+        except ValueError:
+            build_root = (ROOT / "build").resolve()
+            relative = Path("build") / source_path.resolve().relative_to(build_root)
         unit = {
             "name": target.name,
             "address": target.address,
@@ -850,7 +855,7 @@ def header_fingerprint(source: Path) -> dict[str, str]:
             return
         for match in re.finditer(r'(?m)^\s*#\s*include\s+"([^"]+)"', text):
             include = match.group(1)
-            for base in (path.parent, ROOT / "include", ROOT):
+            for base in (path.parent, *unit_paths.include_dirs(ROOT), ROOT):
                 candidate = base / include
                 if not candidate.is_file():
                     continue
@@ -1045,7 +1050,7 @@ def promote_command(args: argparse.Namespace) -> int:
     added = []
     for item in sorted(prepared, key=lambda value: value["unit"]["address"]):
         unit = item["unit"]
-        relative = f"src/game/{unit['address']:08X}.c"
+        relative = unit_paths.target_relative_path(unit["address"], item["source_text"])
         target = ROOT / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(item["source_text"])

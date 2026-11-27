@@ -215,7 +215,7 @@ static void test_model_renderer_buffers(void)
 {
     void *level = &arena[0], *part = &arena[8], *clip = &arena[16];
 
-    /* @leaf 80013AB4 source src/game/80013AB4.c: each saved pointer is freed once in source order and the globals stay published */
+    /* @leaf 80013AB4 source src/game/gpu-2d-hud/gFreeModelRendererBuffers.c: each saved pointer is freed once in source order and the globals stay published */
     LK_FUNC("func_80013AB4");
     reset_free();
     gLevelVertexBlock = level;
@@ -236,7 +236,7 @@ static void test_light_direction(void)
     static u8 camera[0x100];
     int i;
 
-    /* @leaf 80013C80 source src/game/80013C80.c: the camera matrix at +0x28, not the camera base, is the first operand */
+    /* @leaf 80013C80 source src/game/renderer-scene/gUpdateLightDirection.c: the camera matrix at +0x28, not the camera base, is the first operand */
     LK_FUNC("func_80013C80");
     lk_fill(camera, 0xA5, sizeof(camera));
     for (i = 0; i < 12; i++) {
@@ -265,7 +265,7 @@ static void test_camera_list_free(void)
 {
     struct CamListRecord nodes[3], snapshot[3];
 
-    /* @leaf 80017764 source src/game/80017764.c: successor read before release, every record freed once, head cleared, id counter left alone */
+    /* @leaf 80017764 source src/game/renderer-scene/gFreeCameraList.c: successor read before release, every record freed once, head cleared, id counter left alone */
     LK_FUNC("func_80017764");
     lk_fill(nodes, 0xA5, sizeof(nodes));
     nodes[0].next = &nodes[1];
@@ -307,7 +307,7 @@ static void test_camera_position(void)
     static struct CameraPosition camera;
     struct Vec3s32 wanted;
 
-    /* @leaf 800177AC math src/game/800177AC.c: position copied to eye, and the matrix product is negated component-wise */
+    /* @leaf 800177AC math src/game/gpu-2d-hud/gSetCameraPosition.c: position copied to eye, and the matrix product is negated component-wise */
     LK_FUNC("func_800177AC");
     lk_fill(&camera, 0xA5, sizeof(camera));
     wanted.x = 7;
@@ -346,7 +346,7 @@ static void test_camera_rotation(void)
 {
     static struct CameraRotation camera;
 
-    /* @leaf 80017860 source src/game/80017860.c: rotation buffer then view matrix, and the three angles stored in pitch/yaw/roll order */
+    /* @leaf 80017860 source src/game/gpu-2d-hud/gSetCameraRotation.c: rotation buffer then view matrix, and the three angles stored in pitch/yaw/roll order */
     LK_FUNC("func_80017860");
     lk_fill(&camera, 0xA5, sizeof(camera));
     gCamera = (u8 *)&camera;
@@ -383,7 +383,7 @@ static void test_camera_create(void)
     static struct CameraRecord nodes[2];
     int i;
 
-    /* @leaf 80017994 source src/game/80017994.c: both matrix copies, id from the counter and an append that sets the previous link */
+    /* @leaf 80017994 source src/game/renderer-scene/gCreateCamera.c: both matrix copies, id from the counter and an append that sets the previous link */
     LK_FUNC("func_80017994");
     lk_fill(nodes, 0xA5, sizeof(nodes));
     for (i = 0; i < 12; i++) gIdentityMatrix[i] = 0x10000 + 0x37 * i;
@@ -416,7 +416,7 @@ static void test_camera_create(void)
 
 static void test_heap_shutdown(void)
 {
-    /* @leaf 80017BA0 source src/game/80017BA0.c: each block freed only when non-zero and both slots cleared afterwards */
+    /* @leaf 80017BA0 source src/game/memory-resources/gShutdownHeap.c: each block freed only when non-zero and both slots cleared afterwards */
     LK_FUNC("func_80017BA0");
     gHeapPoolBase = (s32)&arena[0];
     gFreeRangeTablePtr = (s32)&arena[16];
@@ -448,7 +448,7 @@ static void test_heap_init(void)
      * usable area one word past the size header written at word zero. */
     u32 *range = &arena[0], *main_block = &arena[8];
 
-    /* @leaf 80017BE8 source src/game/80017BE8.c: sentinels, 0x810-byte table and a main block retried in 0x1000 steps until granted */
+    /* @leaf 80017BE8 source src/game/memory-resources/gInitHeap.c: sentinels, 0x810-byte table and a main block retried in 0x1000 steps until granted */
     LK_FUNC("func_80017BE8");
     lk_fill(arena, 0xA5, sizeof(arena));
     gHeapHighWater = 0;
@@ -484,7 +484,7 @@ static void test_heap_and_pools_init(void)
 {
     s32 base = (s32)&arena[0];
 
-    /* @leaf 80017C68 source src/game/80017C68.c: three range pairs, then pools 1, 3, 2 with (count, slot size, tag two) */
+    /* @leaf 80017C68 source src/game/memory-resources/gInitHeapAndFixedPools.c: three range pairs, then pools 1, 3, 2 with (count, slot size, tag two) */
     LK_FUNC("func_80017C68");
     lk_fill(range_table, 0xA5, sizeof(range_table));
     gFreeRangeTablePtr = (s32)range_table;
@@ -520,7 +520,7 @@ static void test_heap_and_pools_init(void)
 
 static void test_fixed_pool_free(void)
 {
-    /* @leaf 80017D20 source src/game/80017D20.c: release order is pool three, two, one and the slots keep their pointers */
+    /* @leaf 80017D20 source src/game/memory-resources/gFreeFixedPools.c: release order is pool three, two, one and the slots keep their pointers */
     LK_FUNC("func_80017D20");
     reset_free();
     gFixedPool1 = (void *)0x1001;
@@ -538,7 +538,7 @@ static void test_fixed_pool_free(void)
 
 static void test_reciprocal_table_free(void)
 {
-    /* @leaf 800198DC source src/game/800198DC.c: null test gates the release and the surviving pointer is left dangling */
+    /* @leaf 800198DC source src/game/utilities/gFreeReciprocalTable.c: null test gates the release and the surviving pointer is left dangling */
     LK_FUNC("func_800198DC");
     reset_free();
     gReciprocalTablePtr = &arena[24];
@@ -559,7 +559,7 @@ static void test_resource_scan(void)
 {
     struct Resource first, second, third, candidate;
 
-    /* @leaf 80019D00 source src/game/80019D00.c: key scan over group/name and the caller's descriptor is always released */
+    /* @leaf 80019D00 source src/game/memory-resources/gScanAndFreeResource.c: key scan over group/name and the caller's descriptor is always released */
     LK_FUNC("func_80019D00");
     lk_fill(&first, 0xA5, sizeof(first));
     lk_fill(&second, 0xA5, sizeof(second));
@@ -598,7 +598,7 @@ static void test_render_buffer_free(void)
     void *packets = &arena[0], *second_packets = &arena[4], *nodes = &arena[8];
     void *nodes_alt = &arena[12], *ordering = &arena[16], *ordering_alt = &arena[20];
 
-    /* @leaf 8001B448 source src/game/8001B448.c: six render arenas released in declaration order with no store back */
+    /* @leaf 8001B448 source src/game/memory-resources/gFreeRenderBuffers.c: six render arenas released in declaration order with no store back */
     LK_FUNC("func_8001B448");
     reset_free();
     gPacketBufferBases = packets;
@@ -623,7 +623,7 @@ static void test_rgb_clamp(void)
     s16 input[6];
     s16 snapshot[6];
 
-    /* @leaf 8001BD70 math src/game/8001BD70.c: odd elements become the byte channels and any bit above 0xFF saturates to 255 */
+    /* @leaf 8001BD70 math src/game/gpu-2d-hud/gPackClampedRgb16Array.c: odd elements become the byte channels and any bit above 0xFF saturates to 255 */
     LK_FUNC("func_8001BD70");
     input[0] = 0x7777; input[1] = 0x12;
     input[2] = 0x7777; input[3] = 0x34;
@@ -662,7 +662,7 @@ static void test_rgb_clamp(void)
 
 static void test_cd_buffer_free(void)
 {
-    /* @leaf 8001CDF0 source src/game/8001CDF0.c: pointer forwarded to the shared free and zero always returned */
+    /* @leaf 8001CDF0 source src/game/memory-resources/gFreeDefaultCdBuffer.c: pointer forwarded to the shared free and zero always returned */
     LK_FUNC("func_8001CDF0");
     reset_free();
     FCK_EQ(gFreeDefaultCdBuffer(&arena[32]), 0, "deallocator callback returns zero");
@@ -682,7 +682,7 @@ static void test_heap_alloc_raw(void)
     u32 *block = &arena[40];
     u32 *second = &arena[48];
 
-    /* @leaf 8001E240 math src/game/8001E240.c: header word, +4 high-water advance and monotonic peak, even when the request fails */
+    /* @leaf 8001E240 math src/game/memory-resources/gHeapAllocRaw.c: header word, +4 high-water advance and monotonic peak, even when the request fails */
     LK_FUNC("func_8001E240");
     lk_fill(arena, 0xA5, sizeof(arena));
     heap_alloc_calls = 0;

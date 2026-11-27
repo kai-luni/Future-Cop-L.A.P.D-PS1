@@ -7,6 +7,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="${DECOMP:-$(cd "$HERE/../.." && pwd)}"
+source "$HERE/unit_path.sh"
 T="$DECOMP/.toolchain"
 OUT="${OUT:-$(mktemp -d "${TMPDIR:-/tmp}/precinct-assault.XXXXXX")}"
 QEMU="${QEMU:-$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}"
@@ -19,14 +20,14 @@ export PATH="$T/mipsel-binutils/root/usr/bin:$PATH"
 export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 compile_s() {
-    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"
+    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/src/game" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$2"
 }
 
 UNITS="800776B8 80077708 80077FFC 8007A4CC 8007A56C 8007A5F0 8007B004 8007B854 8007D39C 8007D408 8007D2DC 8007E3EC"
 OBJS=""
 for u in $UNITS; do
-    compile_s "$DECOMP/src/game/$u.c" "$OUT/$u.mas.s"
+    compile_s "$(unit_src "$u")" "$OUT/$u.mas.s"
     if [ "$u" = 8007A4CC ]; then
         # func_8007A4CC stores D_800A368B through a literal `lui 0x800A`. Guest
         # addresses >= 0x80000000 are unmappable under qemu-mipsel, so relocate

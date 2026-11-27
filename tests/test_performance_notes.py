@@ -74,7 +74,7 @@ def bullet_block(section, name):
 
 
 def unit_addresses(section):
-    return re.findall(r"^  - `src/game/([0-9A-F]{8})\.c` - manifest 0x([0-9A-F]{8}),",
+    return re.findall(r"^  - `(src/game/[a-z0-9-]+/[A-Za-z_]\w*\.c)` - manifest 0x([0-9A-F]{8}),",
                       section, re.M)
 
 
@@ -119,13 +119,15 @@ class PerformanceNotesTest(unittest.TestCase):
             listed = unit_addresses(section)
             if not listed:
                 failures.append(f"finding {number}: no unit entry with address and size")
-            for name, address in listed:
-                if address != name:
-                    failures.append(f"finding {number}: {name}.c claims manifest 0x{address}")
-                if not (GAME / f"{name}.c").is_file():
-                    failures.append(f"finding {number}: {name}.c does not exist")
-                if name not in self.manifest:
-                    failures.append(f"finding {number}: {name} is not in the manifest")
+            for rel_path, address in listed:
+                if not (ROOT / rel_path).is_file():
+                    failures.append(f"finding {number}: {rel_path} does not exist")
+                if address not in self.manifest:
+                    failures.append(f"finding {number}: {address} is not in the manifest")
+                elif self.manifest[address]["source"] != rel_path:
+                    failures.append(
+                        f"finding {number}: {rel_path} disagrees with manifest "
+                        f"{self.manifest[address]['source']} for 0x{address}")
         self.assertEqual(failures, [], "\n".join(failures))
 
     def test_cited_lines_still_hold_that_code(self):
@@ -175,7 +177,7 @@ class PerformanceNotesTest(unittest.TestCase):
         """Every row of the renames table names a symbol its unit really binds."""
         table = self.doc.split("## Renames applied with this document", 1)
         self.assertEqual(len(table), 2, "renames table missing")
-        rows = re.findall(r"^\| `(func_[0-9A-F]{8})` \| `([A-Za-z_]\w*)` \| `(src/game/[0-9A-F]{8}\.c)` \|$",
+        rows = re.findall(r"^\| `(func_[0-9A-F]{8})` \| `([A-Za-z_]\w*)` \| `(src/game/[a-z0-9-]+/[A-Za-z_]\w*\.c)` \|$",
                           table[1], re.M)
         self.assertTrue(rows, "renames table is empty")
         failures = []

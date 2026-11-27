@@ -170,7 +170,7 @@ static void test_iso_path_table(void)
     };
     s32 i;
 
-    /* @leaf 80090218 source src/game/80090218.c: PVD/signature/path read failures, odd/even records, empty table, sector end and 128-row cap on synthetic sectors */
+    /* @leaf 80090218 source src/game/platform/gCdReadPathTable.c: PVD/signature/path read failures, odd/even records, empty table, sector end and 128-row cap on synthetic sectors */
     LK_FUNC("func_80090218");
 
     reset_iso();
@@ -266,7 +266,7 @@ static void test_movie_audio(void)
     static const u8 stereo[] = "ad2X\x00\x00\x00\x18" "xxxxxxxx" "ABCD" "1234";
     static const u8 empty[] = "ad10\x00\x00\x00\x10" "xxxxxxxx";
 
-    /* @leaf 80086FE4 source src/game/80086FE4.c: short/long mono, split stereo, exact ring tail, wrap, zero payload and producer cursor on an already-ready consumer fixture */
+    /* @leaf 80086FE4 source src/game/video-mdec-movies/gMovieAudioChunkPush.c: short/long mono, split stereo, exact ring tail, wrap, zero payload and producer cursor on an already-ready consumer fixture */
     LK_FUNC("func_80086FE4");
 
     run_audio_chunk(short_mono, sizeof(short_mono) - 1, 7, 3);
@@ -343,7 +343,7 @@ static void check_card_frame(char *name, s32 index, s32 name_bytes, u8 checksum)
 
 static void test_card_directory(void)
 {
-    /* @leaf 80020F34 source src/game/80020F34.c: selected 128-byte frame, little-endian fields, empty and 20-byte names, zero fill, exact XOR and neighboring canaries */
+    /* @leaf 80020F34 source src/game/platform/gBuildCardFileDirectoryFrame.c: selected 128-byte frame, little-endian fields, empty and 20-byte names, zero fill, exact XOR and neighboring canaries */
     LK_FUNC("func_80020F34");
 
     check_card_frame("", 1, 0, 0x71);

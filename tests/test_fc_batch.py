@@ -155,9 +155,11 @@ class BatchListTests(unittest.TestCase):
         import json
         manifest = json.loads((ROOT / "config/us/matching_units.json").read_text())
         sources = {unit["source"] for unit in manifest["units"]}
-        for units in self.lists.values():
-            for stem in units:
-                self.assertIn(f"src/game/{stem}.c", sources)
+        for name in self.lists:
+            resolved = fc_batch.load_units(ROOT / "tools" / "batches" / f"{name}.txt")
+            self.assertEqual(len(resolved), len(self.lists[name]))
+            for source in resolved:
+                self.assertIn(source, sources)
 
 
 if __name__ == "__main__":

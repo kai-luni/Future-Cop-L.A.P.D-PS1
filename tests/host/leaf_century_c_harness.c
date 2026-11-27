@@ -17,19 +17,19 @@
 /* Real dependency units compiled into this translation unit without claiming
  * @leaf coverage; they are one-line wrappers with extern-only state, so they
  * cannot collide with other suites' objects (this binary links them once). */
-#include "../../src/game/80022B74.c"
-#include "../../src/game/8003B3D8.c"
-#include "../../src/game/800474C4.c"
-#include "../../src/game/800207B4.c"
-#include "../../src/game/8001E318.c"
-#include "../../src/game/80017B28.c"  /* dep of 80017B60; covered by leaf_a2 */
-#include "../../src/game/800787D8.c"  /* dep of 80080010/80082020; covered by leaf_hundred_a */
+#include "../../src/game/boot-frontend/gGetAudioStreamBlockCount.c"
+#include "../../src/game/gameplay-ai/gGetSpawnTypeFlagPtr.c"
+#include "../../src/game/memory-resources/gValidateSoundVoiceHandle.c"
+#include "../../src/game/platform/gReadCardOperationResult.c"
+#include "../../src/game/utilities/gCopyMemory.c"
+#include "../../src/game/renderer-scene/gFindInstanceById.c"  /* dep of 80017B60; covered by leaf_a2 */
+#include "../../src/game/boot-frontend/gSelectEnabledMenuItem.c"  /* dep of 80080010/80082020; covered by leaf_hundred_a */
 
 /* =================================================================== */
 /* Group 1: SPU/GPU/CD register wrappers and state accessors            */
 /* =================================================================== */
 
-/* Fixed-address word at 0x8009CB50 (src/game/8008FE1C.c) is NOT mapped here;
+/* Fixed-address word at 0x8009CB50 (src/game/boot-frontend/gStoreGlobalScratchWord.c) is NOT mapped here;
  * that unit is excluded from this suite. */
 u32 *gSpuAccessDelayPtr __asm__("D_8009EEB8");
 void gSetSpuDmaReadTiming(void) __asm__("func_80097968");
@@ -67,14 +67,14 @@ static void test_register_state_accessors(void)
     u32 *p1 = (u32 *)&gGpuLibPair; /* scratch target lives in the fixture region */
     u32 gp0_word;
 
-    /* @leaf 80097968 source src/game/80097968.c: RMW (*p & 0xF0FFFFFF) | 0x22000000 through D_8009EEB8 */
+    /* @leaf 80097968 source src/game/platform/gSetSpuDmaReadTiming.c: RMW (*p & 0xF0FFFFFF) | 0x22000000 through D_8009EEB8 */
     LK_FUNC("func_80097968");
     gSpuAccessDelayPtr = p1;
     *p1 = 0x0F123456U;
     gSetSpuDmaReadTiming();
     FCK_EQ(*p1, 0x22123456U, "bits 25 and 29 set, bits 24/26/27 and low bits preserved");
 
-    /* @leaf 80097940 source src/game/80097940.c: RMW (*p & 0xF0FFFFFF) | 0x20000000 through D_8009EEB8 */
+    /* @leaf 80097940 source src/game/platform/gSetSpuAccessDelay.c: RMW (*p & 0xF0FFFFFF) | 0x20000000 through D_8009EEB8 */
     LK_FUNC("func_80097940");
     gSpuAccessDelayPtr = p1;
     *p1 = 0x0F89ABCDU;
@@ -84,7 +84,7 @@ static void test_register_state_accessors(void)
     gSetSpuAccessDelay();
     FCK_EQ(*p1, 0xF0000000U, "top nibble with bit 29 preset stays as masked value");
 
-    /* @leaf 800949E8 source src/game/800949E8.c: writes (arg0 | 0x10000000) to GP1 ptr, returns *GP0 & 0xFFFFFF */
+    /* @leaf 800949E8 source src/game/platform/gReadGpuInfo.c: writes (arg0 | 0x10000000) to GP1 ptr, returns *GP0 & 0xFFFFFF */
     LK_FUNC("func_800949E8");
     gGpuGp1PortPtr = p1;
     gGpuGp0PortPtr = &gp0_word;
@@ -94,7 +94,7 @@ static void test_register_state_accessors(void)
     FCK_EQ(*p1, 0x10000005U, "GP1 write gets bit 28 tag plus argument");
     FCK_CHECK(gReadGpuInfo(0) == 0x00345678U, "arg0 zero still writes tag word");
 
-    /* @leaf 80094144 source src/game/80094144.c: returns *D_8009DEC8 through pointer indirection */
+    /* @leaf 80094144 source src/game/boot-frontend/gReadGpuStatus.c: returns *D_8009DEC8 through pointer indirection */
     LK_FUNC("func_80094144");
     gGpuGp1PortPtr = p1;
     *p1 = (u32)-7;
@@ -102,54 +102,54 @@ static void test_register_state_accessors(void)
     *p1 = 0x7FFFFFFFU;
     FCK_EQ(gReadGpuStatus(), 0x7FFFFFFFU, "large status word returned");
 
-    /* @leaf 8008E010 source src/game/8008E010.c: returns D_8009C8B4 as unsigned byte promoted to int */
+    /* @leaf 8008E010 source src/game/platform/gGetCdStatusByte.c: returns D_8009C8B4 as unsigned byte promoted to int */
     LK_FUNC("func_8008E010");
     gCdStatusByte = 0x80;
     FCK_EQ(gGetCdStatusByte(), 0x80, "high bit byte returned as positive int");
     gCdStatusByte = 3;
     FCK_EQ(gGetCdStatusByte(), 3, "small byte value");
 
-    /* @leaf 8008E020 source src/game/8008E020.c: returns D_8009C8C4 */
+    /* @leaf 8008E020 source src/game/platform/gGetCdModeByte.c: returns D_8009C8C4 */
     LK_FUNC("func_8008E020");
     gLastCommandResult = 200;
     FCK_EQ(gGetCdModeByte(), 200, "mode byte returned");
     gLastCommandResult = 0;
     FCK_EQ(gGetCdModeByte(), 0, "zero returned");
 
-    /* @leaf 8008E030 source src/game/8008E030.c: returns D_8009C8C5 */
+    /* @leaf 8008E030 source src/game/boot-frontend/gGetLastCdCommand.c: returns D_8009C8C5 */
     LK_FUNC("func_8008E030");
     gLastResultByte = 0x1A;
     FCK_EQ(gGetLastCdCommand(), 0x1A, "last command byte returned");
 
-    /* @leaf 8008E040 source src/game/8008E040.c: returns the fixed address of D_8009C8C0 */
+    /* @leaf 8008E040 source src/game/platform/gGetCdTargetLocation.c: returns the fixed address of D_8009C8C0 */
     LK_FUNC("func_8008E040");
     FCK_CHECK(gGetCdTargetLocation() == gCdTargetLocation, "returns base of 4-byte location buffer");
     gCdTargetLocation[0] = 9; gCdTargetLocation[3] = 0x11;
     FCK_CHECK(gGetCdTargetLocation()[0] == 9 && gGetCdTargetLocation()[3] == 0x11,
               "caller-visible buffer content through returned pointer");
 
-    /* @leaf 80045288 source src/game/80045288.c: pure getter of D_8009F334 */
+    /* @leaf 80045288 source src/game/platform/gGetVagmVolumeSetting.c: pure getter of D_8009F334 */
     LK_FUNC("func_80045288");
     gMusicVolumeSetting = 0x7F;
     FCK_EQ(gGetVagmVolumeSetting(), 0x7F, "first read");
     gMusicVolumeSetting = -2;
     FCK_EQ(gGetVagmVolumeSetting(), -2, "negative stored word returned unchanged");
 
-    /* @leaf 800452C8 source src/game/800452C8.c: pure getter of D_8009F338 */
+    /* @leaf 800452C8 source src/game/platform/gGetVoiceVolume.c: pure getter of D_8009F338 */
     LK_FUNC("func_800452C8");
     gVoiceVolumeBase = 0x55;
     FCK_EQ(gGetVoiceVolume(), 0x55, "first read");
     gVoiceVolumeBase = 0;
     FCK_EQ(gGetVoiceVolume(), 0, "zero read");
 
-    /* @leaf 800451E0 source src/game/800451E0.c: pure getter of D_8009F730 */
+    /* @leaf 800451E0 source src/game/platform/gGetStereoSoundMode.c: pure getter of D_8009F730 */
     LK_FUNC("func_800451E0");
     gSoundModeFlag = 1;
     FCK_EQ(gGetStereoSoundMode(), 1, "stereo flag");
     gSoundModeFlag = 0;
     FCK_EQ(gGetStereoSoundMode(), 0, "mono flag");
 
-    /* @leaf 80048E88 source src/game/80048E88.c: returns D_8009F35C or 0 when unset */
+    /* @leaf 80048E88 source src/game/gpu-2d-hud/gGetActiveFont.c: returns D_8009F35C or 0 when unset */
     LK_FUNC("func_80048E88");
     gFont = (struct FontEntry *)0;
     FCK_CHECK(gGetActiveFont() == 0, "null font pointer returned as null");
@@ -181,7 +181,7 @@ static void test_card_and_stream_state(void)
 {
     struct RibbonListHead node;
 
-    /* @leaf 80022700 source src/game/80022700.c: stores 1 to D_800A0974 unconditionally */
+    /* @leaf 80022700 source src/game/boot-frontend/gMarkAudioStreamStopPending.c: stores 1 to D_800A0974 unconditionally */
     LK_FUNC("func_80022700");
     gStreamStopPending = 0;
     gMarkAudioStreamStopPending();
@@ -190,7 +190,7 @@ static void test_card_and_stream_state(void)
     gMarkAudioStreamStopPending();
     FCK_EQ(gStreamStopPending, 1, "stop marker overwrite with 1");
 
-    /* @leaf 8002443C source src/game/8002443C.c: return D_8009F64C * (3 - blocks) via 80022B74 */
+    /* @leaf 8002443C source src/game/boot-frontend/gScaleAudioStreamBlockDeficit.c: return D_8009F64C * (3 - blocks) via 80022B74 */
     LK_FUNC("func_8002443C");
     gStreamAvailableBlocks = 0;
     gStreamBlockDeficitScale = 100;
@@ -205,13 +205,13 @@ static void test_card_and_stream_state(void)
     gStreamAvailableBlocks = 4;
     FCK_EQ(gScaleAudioStreamBlockDeficit(), 3, "negative scale times negative deficit: -3 * (3-4)");
 
-    /* @leaf 800734B0 source src/game/800734B0.c: stores 0 into the list head D_8009F38C */
+    /* @leaf 800734B0 source src/game/boot-frontend/gClearBeamNodeList.c: stores 0 into the list head D_8009F38C */
     LK_FUNC("func_800734B0");
     gBeamNodeListPtr = &node;
     gClearBeamNodeList();
     FCK_CHECK(gBeamNodeListPtr == 0, "head cleared");
 
-    /* @leaf 80060A00 source src/game/80060A00.c: stores 0 into D_8009F7F8 */
+    /* @leaf 80060A00 source src/game/boot-frontend/gResetDefinitionEntryCount.c: stores 0 into D_8009F7F8 */
     LK_FUNC("func_80060A00");
     gDefinitionEntryCount = 47;
     gResetDefinitionEntryCount();
@@ -255,7 +255,7 @@ static void test_grid_tables_and_lookup(void)
     struct Resource20 res;
     struct CardState20600 *saved_mgr = gOperationMgrPtr;
 
-    /* @leaf 8003C4C4 source src/game/8003C4C4.c: ORs bits into cell byte via 8003B3D8 (row<<10 + col<<2) */
+    /* @leaf 8003C4C4 source src/game/boot-frontend/gOrGridCellFlags.c: ORs bits into cell byte via 8003B3D8 (row<<10 + col<<2) */
     LK_FUNC("func_8003C4C4");
     lk_fill(gSpawnTypeFlags, 0, sizeof(gSpawnTypeFlags));
     gOrGridCellFlags(3, 7, 0x10);
@@ -267,7 +267,7 @@ static void test_grid_tables_and_lookup(void)
     gOrGridCellFlags(0, 0, 0x80);
     FCK_EQ(W32(gSpawnTypeFlags, 0) & 0xFF, 0x80, "origin cell addressable");
 
-    /* @leaf 80012E1C source src/game/80012E1C.c: three block tables at +0/+0x400/+0x800/+0xC00, two lists cleared */
+    /* @leaf 80012E1C source src/game/memory-resources/gInitModelBlockTables.c: three block tables at +0/+0x400/+0x800/+0xC00, two lists cleared */
     LK_FUNC("func_80012E1C");
     gAnimNodeList = 1; gAnimWaveList = 2;
     gInitModelBlockTables(0x1000);
@@ -278,7 +278,7 @@ static void test_grid_tables_and_lookup(void)
     gInitModelBlockTables(0);
     FCK_CHECK(gVertexBlockTable == 0 && gRefBlockTable == 0xC00, "zero base still stores offsets");
 
-/* @leaf 80017B60 source src/game/80017B60.c: stores 80017B28(id) result into D_8009F9E4 */
+/* @leaf 80017B60 source src/game/gpu-2d-hud/gSelectViewRecord.c: stores 80017B28(id) result into D_8009F9E4 */
     LK_FUNC("func_80017B60");
     lk_fill(nodes, 0, sizeof(nodes));
     nodes[0].id = 11; nodes[0].next = &nodes[1];
@@ -291,7 +291,7 @@ static void test_grid_tables_and_lookup(void)
     gSelectViewRecord(50);
     FCK_CHECK(gCameraPtr == 0, "miss clears the camera pointer via null lookup");
 
-    /* @leaf 80024188 source src/game/80024188.c: returns handle resource when 800474C4 validates serial */
+    /* @leaf 80024188 source src/game/platform/gGetTrackedSoundVoice.c: returns handle resource when 800474C4 validates serial */
     LK_FUNC("func_80024188");
     lk_fill(&res, 0, sizeof(res));
     res.serial = 42;
@@ -303,7 +303,7 @@ static void test_grid_tables_and_lookup(void)
     gAssetHandle.resource = 0;
     FCK_CHECK(gGetTrackedSoundVoice() == 0, "null resource rejected");
 
-    /* @leaf 80020A9C source src/game/80020A9C.c: result usable for -2, -1 and nonnegative checked values via 800207B4 */
+    /* @leaf 80020A9C source src/game/platform/gIsCardResultUsable.c: result usable for -2, -1 and nonnegative checked values via 800207B4 */
     LK_FUNC("func_80020A9C");
     /* direct status word steering through a real manager object */
     {
@@ -321,7 +321,7 @@ static void test_grid_tables_and_lookup(void)
     }
     gOperationMgrPtr = saved_mgr;
 
-    /* @leaf 8001C478 source src/game/8001C478.c: polls volatile D_80010000 and returns 0 once clear */
+    /* @leaf 8001C478 source src/game/platform/gWaitCdLoaderIdle.c: polls volatile D_80010000 and returns 0 once clear */
     LK_FUNC("func_8001C478");
     gExecutableImageBase = 0;
     FCK_EQ(gWaitCdLoaderIdle(), 0, "idle loader returns 0");
@@ -357,7 +357,7 @@ static void test_menu_gauge_and_noop(void)
     int i;
 
     /* dependency-only use of func_800787D8 (covered by leaf_hundred_a); behavior in this suite exercised via the wrappers below */
-/* @leaf 80080010 source src/game/80080010.c: forwards gSelectEnabledMenuItem(0, 1, 0) */
+/* @leaf 80080010 source src/game/boot-frontend/gSelectFirstEnabledItem.c: forwards gSelectEnabledMenuItem(0, 1, 0) */
     LK_FUNC("func_80080010");
     /* entries[0] and [2] enabled, so the scan must START at index 0 and pick entry 0 */
     lk_fill(entries, 0, sizeof(entries));
@@ -371,7 +371,7 @@ static void test_menu_gauge_and_noop(void)
     gSelectFirstEnabledItem();
     FCK_EQ(menu_desc[0], 0, "scan starts at index 0 and selects the first enabled entry");
 
-    /* @leaf 80082020 source src/game/80082020.c: reselects from saved index gFontBankTable[0] */
+    /* @leaf 80082020 source src/game/boot-frontend/gReselectEnabledItem.c: reselects from saved index gFontBankTable[0] */
     LK_FUNC("func_80082020");
     entries[0].unk0E = 1; entries[0].unk0F = 0;
     entries[2].unk0E = 0;                    /* saved index 2 disabled now */
@@ -381,7 +381,7 @@ static void test_menu_gauge_and_noop(void)
     gReselectEnabledItem();
     FCK_EQ(menu_desc[0], 3, "reselect resumes at saved index 2 and scans forward to 3");
 
-    /* @leaf 8005A09C source src/game/8005A09C.c: copies 0x14 template bytes from D_8009AFA0 via 8001E318 */
+    /* @leaf 8005A09C source src/game/gameplay-ai/gCopyDefaultGaugeRecord.c: copies 0x14 template bytes from D_8009AFA0 via 8001E318 */
     LK_FUNC("func_8005A09C");
     lk_fill(gauge, 0xA5, sizeof(gauge));
     gCopyDefaultGaugeRecord(gauge);
@@ -390,12 +390,12 @@ static void test_menu_gauge_and_noop(void)
               "20-byte template copied to destination");
     FCK_CHECK(gauge[20] == 0xA5, "byte 20 untouched (copy is exactly 0x14)");
 
-    /* @leaf 8003FD6C source src/game/8003FD6C.c: empty body; calling it is the whole contract */
+    /* @leaf 8003FD6C source src/game/other/gIgnoreTagCommand69.c: empty body; calling it is the whole contract */
     LK_FUNC("func_8003FD6C");
     gIgnoreTagCommand69();
     FCK_CHECK(1, "empty entry returns without touching state");
 
-    /* @leaf 8007F5C8 source src/game/8007F5C8.c: body is a constant load of 2 */
+    /* @leaf 8007F5C8 source src/game/other/gQueryFrontEndVerticalRepeatMask.c: body is a constant load of 2 */
     LK_FUNC("func_8007F5C8");
     FCK_EQ(gQueryFrontEndVerticalRepeatMask(), 2, "constant result 2");
     FCK_EQ(gQueryFrontEndVerticalRepeatMask(), 2, "stable across calls");

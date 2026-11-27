@@ -365,7 +365,7 @@ class PromoteTests(unittest.TestCase):
         self.assertEqual(code, 1, output)
         self.assertIn("review still outstanding", output)
         self.assertEqual(self.worker.MATCHING_MANIFEST.read_text(), before)
-        self.assertFalse((self.directory / f"src/game/{UNIT_ADDRESS:08X}.c").is_file())
+        self.assertFalse((self.directory / f"src/game/other/{UNIT}.c").is_file())
 
     def test_promote_records_link_settings(self) -> None:
         config = json.loads(self.worker.MATCHING_MANIFEST.read_text())
@@ -388,7 +388,8 @@ class PromoteTests(unittest.TestCase):
         self.assertTrue(unit["link"])
         self.assertEqual(unit["linker_symbols"]["_gp"], "0x8009F214")
         self.assertEqual(unit["small_data_symbols"], {"D_8009F6DC": 4})
-        self.assertTrue((self.directory / f"src/game/{UNIT_ADDRESS:08X}.c").is_file())
+        self.assertEqual(unit["source"], f"src/game/other/{UNIT}.c")
+        self.assertTrue((self.directory / f"src/game/other/{UNIT}.c").is_file())
         self.assertTrue((self.directory / f"build/us/matching-evidence/{UNIT}.json").is_file())
 
     def test_promote_skips_known_unit(self) -> None:

@@ -40,7 +40,7 @@ static void test_sound_tables(void)
     Unk23528Header *slot_guard = &guard;
     s32 index;
 
-    /* @leaf 80023500 source src/game/80023500.c: unsigned slot bound and byte-only ready update */
+    /* @leaf 80023500 source src/game/boot-frontend/gMarkCvkSlotReady.c: unsigned slot bound and byte-only ready update */
     LK_FUNC("func_80023500");
     lk_fill(&cvk_slot_storage, 0xA5, sizeof(cvk_slot_storage));
     gMarkCvkSlotReady(8);
@@ -53,7 +53,7 @@ static void test_sound_tables(void)
     gMarkCvkSlotReady(0);
     FCK_EQ(cvk_slot_storage.slots[0].ready, 2, "first slot ready");
 
-    /* @leaf 80023528 source src/game/80023528.c: ordered lookup, unsigned IDs and optional output */
+    /* @leaf 80023528 source src/game/memory-resources/gFindCshdSoundGroup.c: ordered lookup, unsigned IDs and optional output */
     LK_FUNC("func_80023528");
     cshd_slot_storage.slots[0] = &slot0;
     cshd_slot_storage.slots[1] = &slot1;
@@ -104,14 +104,14 @@ static void test_state(void)
     u8 profile[0x948];
     u8 cursors[3];
 
-    /* @leaf 8008A5A8 source src/game/8008A5A8.c: signed read-and-clear, then empty */
+    /* @leaf 8008A5A8 source src/game/boot-frontend/gTakePadVblankIrq.c: signed read-and-clear, then empty */
     LK_FUNC("func_8008A5A8");
     gPadVblankIrqFlag = -123;
     FCK_EQ(gTakePadVblankIrq(), -123, "returns prior IRQ state");
     FCK_EQ(gPadVblankIrqFlag, 0, "IRQ state consumed");
     FCK_EQ(gTakePadVblankIrq(), 0, "second poll empty");
 
-    /* @leaf 8007BF88 source src/game/8007BF88.c: only selector 3 replaces state and pointer */
+    /* @leaf 8007BF88 source src/game/boot-frontend/gQueueMultiBrfMovie.c: only selector 3 replaces state and pointer */
     LK_FUNC("func_8007BF88");
     lk_fill(previous, 0x55, sizeof(previous));
     lk_fill(gMultiBrfMovieName, 0x66, sizeof(gMultiBrfMovieName));
@@ -125,7 +125,7 @@ static void test_state(void)
     FCK_EQ(gDeferredTransition, 5, "selector three queues transition");
     FCK_CHECK(gPendingRowCapture == gMultiBrfMovieName, "selector three installs data address");
 
-    /* @leaf 8007F8E0 source src/game/8007F8E0.c: reset only page byte and two input flags */
+    /* @leaf 8007F8E0 source src/game/memory-resources/gResetProfileTransferFlags.c: reset only page byte and two input flags */
     LK_FUNC("func_8007F8E0");
     lk_fill(profile, 0xB7, sizeof(profile));
     gSaveProfileImage = profile;
@@ -138,7 +138,7 @@ static void test_state(void)
     FCK_CHECK(lk_all(profile, 0, 0x921, 0xB7) &&
               lk_all(profile, 0x922, sizeof(profile), 0xB7), "rest of profile left alone");
 
-    /* @leaf 800780C0 source src/game/800780C0.c: install table address and 64-entry length */
+    /* @leaf 800780C0 source src/game/utilities/gInitNameEntryAlphabet.c: install table address and 64-entry length */
     LK_FUNC("func_800780C0");
     lk_fill(gNameEntryCharacters, 0x4D, sizeof(gNameEntryCharacters));
     gNameEntryAlphabet = previous;
@@ -148,7 +148,7 @@ static void test_state(void)
     FCK_EQ(gPlayerNameLength, 64, "alphabet entry count");
     FCK_CHECK(lk_all(gNameEntryCharacters, 0, sizeof(gNameEntryCharacters), 0x4D), "table contents unchanged");
 
-    /* @leaf 80048790 source src/game/80048790.c: advance only in mode two with timer exactly zero */
+    /* @leaf 80048790 source src/game/gpu-2d-hud/gCheckHudLayoutNeedsAdvance.c: advance only in mode two with timer exactly zero */
     LK_FUNC("func_80048790");
     gHudMode2 = 0;
     gOverlayTimer = 0;
@@ -162,7 +162,7 @@ static void test_state(void)
     gOverlayTimer = -1;
     FCK_EQ(gCheckHudLayoutNeedsAdvance(), 0, "negative timer also holds");
 
-    /* @leaf 8007F678 source src/game/8007F678.c: return and store two at selected byte */
+    /* @leaf 8007F678 source src/game/boot-frontend/gSetMenuCursorToItem2.c: return and store two at selected byte */
     LK_FUNC("func_8007F678");
     lk_fill(cursors, 0xA5, sizeof(cursors));
     gFontBankTable = cursors + 1;
@@ -171,7 +171,7 @@ static void test_state(void)
     FCK_EQ(cursors[0], 0xA5, "previous byte unchanged");
     FCK_EQ(cursors[2], 0xA5, "next byte unchanged");
 
-    /* @leaf 80098FB8 source src/game/80098FB8.c: replace, retain, and remove the callback word */
+    /* @leaf 80098FB8 source src/game/platform/gSpuSetTransferCallback.c: replace, retain, and remove the callback word */
     LK_FUNC("func_80098FB8");
     gSpuTransferCallback = 0x1004;
     gSpuSetTransferCallback(0x2008);
@@ -210,7 +210,7 @@ static void test_movie_stream(void)
     Unk88F00 ctx;
     Ent88F00 entries[3];  /* last is backed but outside the logical count */
 
-    /* @leaf 80088F00 source src/game/80088F00.c: descriptor priming, sector rounding and exhaustion */
+    /* @leaf 80088F00 source src/game/boot-frontend/gMovieStreamPrimeEntry.c: descriptor priming, sector rounding and exhaustion */
     LK_FUNC("func_80088F00");
     lk_fill(&ctx, 0xA5, sizeof(ctx));
     lk_fill(entries, 0xA5, sizeof(entries));
@@ -274,7 +274,7 @@ static void test_spring(void)
     SpringObject obj;
     s32 state[0xE0 / 4];
 
-    /* @leaf 80056530 source src/game/80056530.c: fixed-point spring step, snap, dead zone and damping */
+    /* @leaf 80056530 source src/game/gpu-2d-hud/gSpringFollowHeight.c: fixed-point spring step, snap, dead zone and damping */
     LK_FUNC("func_80056530");
     lk_fill(&obj, 0, sizeof(obj));
     lk_fill(state, 0xA5, sizeof(state));
@@ -320,7 +320,7 @@ static void test_debris_mask(void)
     struct Range ranges[2];
     struct { struct Data data; struct Item tail[5]; } parts;
 
-    /* @leaf 8003A960 source src/game/8003A960.c: filter active bits by an inclusive range and optional fourth vertex */
+    /* @leaf 8003A960 source src/game/boot-frontend/gClearDebrisPartBitsOutsideRange.c: filter active bits by an inclusive range and optional fourth vertex */
     LK_FUNC("func_8003A960");
     lk_fill(&state, 0xA5, sizeof(state));
     lk_fill(&info, 0, sizeof(info));
@@ -368,7 +368,7 @@ static void test_model_wave(void)
     Node tail = { 0, second, 1, { 0, 2, 21, 77, 99, 40, 92, 99 } };
     Node head = { &tail, first, 1, { 1, 1, 10, 45, 100, 29, 4, 139 } };
 
-    /* @leaf 800135C0 source src/game/800135C0.c: linked byte animation, phase fold and wrap */
+    /* @leaf 800135C0 source src/game/gpu-2d-hud/gUpdateModelWaveBytes.c: linked byte animation, phase fold and wrap */
     LK_FUNC("func_800135C0");
     lk_fill(first, 0xA5, sizeof(first));
     lk_fill(second, 0xA5, sizeof(second));
@@ -416,7 +416,7 @@ static void test_packets(void)
     struct HalfRect rect = { 0x0007FFFD, 0x000B000D };
     u8 *bytes = (u8 *)packets;
 
-    /* @leaf 80083060 source src/game/80083060.c: quad packing, field widths and pool cursor boundary */
+    /* @leaf 80083060 source src/game/gpu-2d-hud/gEmitFlatQuad.c: quad packing, field widths and pool cursor boundary */
     LK_FUNC("func_80083060");
     lk_fill(polys, 0xA5, sizeof(polys));
     gPrimPoolNext = polys;
@@ -438,7 +438,7 @@ static void test_packets(void)
     FCK_CHECK(gPrimPoolNext == gPrimPoolEnd, "quad at limit does not advance");
     FCK_EQ(polys[1].tag, 0x05000000, "quad at limit still writes the slot");
 
-    /* @leaf 80082EF0 source src/game/80082EF0.c: rectangle corner order and pool cursor boundary */
+    /* @leaf 80082EF0 source src/game/gpu-2d-hud/gEmitFlatQuadRect.c: rectangle corner order and pool cursor boundary */
     LK_FUNC("func_80082EF0");
     lk_fill(polys, 0xA5, sizeof(polys));
     gPrimPoolNext = polys;
@@ -459,7 +459,7 @@ static void test_packets(void)
               polys[1].xy[1] == -8 && polys[1].xy[7] == -8, "zero extent still emits rect at limit");
     FCK_CHECK(lk_all(polys + 2, 0, sizeof(polys[2]), 0xA5), "guard slot untouched");
 
-    /* @leaf 8001C148 source src/game/8001C148.c: draw-page and tile packets, blend and capacity boundary */
+    /* @leaf 8001C148 source src/game/gpu-2d-hud/gEmitSolidTileRect.c: draw-page and tile packets, blend and capacity boundary */
     LK_FUNC("func_8001C148");
     lk_fill(packets, 0xA5, sizeof(packets));
     gPacketCursor = bytes;
@@ -519,7 +519,7 @@ static void test_pad_alignment(void)
     struct PadCapabilityRecord caps[3];
     u8 requests[] = { 0, 1, 0xFF, 1, 0xFF, 2 };
 
-    /* @leaf 8008B508 source src/game/8008B508.c: size-qualified actuator map and completion step */
+    /* @leaf 8008B508 source src/game/boot-frontend/gRespPadActAlign.c: size-qualified actuator map and completion step */
     LK_FUNC("func_8008B508");
     lk_fill(&port, 0, sizeof(port));
     lk_fill(caps, 0, sizeof(caps));
@@ -559,7 +559,7 @@ static void test_pad_handshake(void)
     u16 modes[3];
     u8 response[10];
 
-    /* @leaf 8008B210 source src/game/8008B210.c: multi-response mode, capability and aligned combination tables */
+    /* @leaf 8008B210 source src/game/boot-frontend/gRespPadTableHandshake.c: multi-response mode, capability and aligned combination tables */
     LK_FUNC("func_8008B210");
     lk_fill(&port, 0, sizeof(port));
     lk_fill(caps, 0xA5, sizeof(caps));
@@ -672,7 +672,7 @@ static void test_pad_combination_query(void)
     u8 payload1[] = { 0x8E, 0xFF, 0x6D };
     u8 payload2[] = { 0x79 };
 
-    /* @leaf 8008A118 source src/game/8008A118.c: query count, record length, bytes and bounds */
+    /* @leaf 8008A118 source src/game/memory-resources/gGetPadCombInfo.c: query count, record length, bytes and bounds */
     LK_FUNC("func_8008A118");
     lk_fill(&port, 0, sizeof(port));
     lk_fill(entries, 0, sizeof(entries));
@@ -737,7 +737,7 @@ static void test_retirement(void)
     struct RetiredNode nodes[6];
     int i;
 
-    /* @leaf 8003FE90 source src/game/8003FE90.c: unlink matching nodes across lists before notification */
+    /* @leaf 8003FE90 source src/game/boot-frontend/gRetireDeferredNodes.c: unlink matching nodes across lists before notification */
     LK_FUNC("func_8003FE90");
     lk_fill(&target, 0, sizeof(target));
     lk_fill(&other, 0, sizeof(other));

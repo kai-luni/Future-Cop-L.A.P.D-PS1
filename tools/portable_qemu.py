@@ -10,8 +10,10 @@ import tempfile
 
 if __package__:
     from .portable_tests import DATA, OBSERVATIONS, ROOT, WIDTHS, digest, require, save, signature
+    from . import unit_paths
 else:
     from portable_tests import DATA, OBSERVATIONS, ROOT, WIDTHS, digest, require, save, signature
+    import unit_paths
 
 HOST = ROOT / "tests/host"
 PRELUDE = """#include "fc_testkit.h"
@@ -258,7 +260,7 @@ class Build:
         return self.run([self.binaries / f"mipsel-linux-gnu-{command}", *args], cwd)
 
     def compile(self, source, name, cwd):
-        include = [f"-I{ROOT / 'include'}", f"-I{HOST}"]
+        include = [*unit_paths.include_flags(ROOT), f"-I{HOST}"]
         if self.i386:
             # On hosts without native i386 execution: split the gcc -v -S
             # invocation into its original cpp and cc1 subprocesses.

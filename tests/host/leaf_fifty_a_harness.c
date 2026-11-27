@@ -9,12 +9,12 @@
 /* Real dependencies already covered by other suites. The generated runner
  * links only marked units, so compile these here without claiming coverage.
  */
-#include "../../src/game/8001BC44.c"
-#include "../../src/game/8001C148.c"
-#include "../../src/game/800607B8.c"
-#include "../../src/game/80093F58.c"
-#include "../../src/game/800940A8.c"
-#include "../../src/game/800940C4.c"
+#include "../../src/game/gpu-2d-hud/gPackRgb24.c"
+#include "../../src/game/gpu-2d-hud/gEmitSolidTileRect.c"
+#include "../../src/game/utilities/gScaleDefinitionSubrecordFields.c"
+#include "../../src/game/gpu-2d-hud/gBuildDrawModeCommand.c"
+#include "../../src/game/other/gPackDrawOffset.c"
+#include "../../src/game/platform/gBuildTexWindowCommand.c"
 
 /* ---- 1 & 2: GPU immediate submit & DrawSync (80093224, 80092C8C) ---- */
 struct GpuCbTable {
@@ -64,7 +64,7 @@ static void test_gpu_callbacks(void)
     gVramWriteCallback_s = &tbl;
     gLogPrintf_s = rec_log;
 
-    /* @leaf 80093224 source src/game/80093224.c: flush via unk3C(0) then submit payload+4 with length byte */
+    /* @leaf 80093224 source src/game/gpu-2d-hud/gDrawPrimImmediate.c: flush via unk3C(0) then submit payload+4 with length byte */
     LK_FUNC("func_80093224");
     lk_fill(pkt, 0x5A, sizeof(pkt));
     pkt[3] = 7;
@@ -78,7 +78,7 @@ static void test_gpu_callbacks(void)
     FCK_EQ(cb_14_len, 7, "unk14 receives byte 3 length");
     FCK_CHECK(lk_all(pkt, 0, 3, 0x5A) && pkt[3] == 7 && lk_all(pkt, 4, 16, 0x5A), "packet buffer untouched");
 
-    /* @leaf 80092C8C source src/game/80092C8C.c: conditional trace at debug>=2 then unk3C(arg0) */
+    /* @leaf 80092C8C source src/game/platform/gDrawSync.c: conditional trace at debug>=2 then unk3C(arg0) */
     LK_FUNC("func_80092C8C");
     gGpuDebugLevel_s = 1;
     cb_seq = cb_3c_order = cb_log_order = 0;
@@ -120,7 +120,7 @@ static void test_gpu_ports(void)
     gDma2BlockCtrlPtr_s = &regs[4];
     gDma2ChannelCtrlPtr_s = &regs[5];
 
-    /* @leaf 800949A0 source src/game/800949A0.c: four ordered DMA2/GP1 register writes */
+    /* @leaf 800949A0 source src/game/platform/gStartGpuLinkedListDma.c: four ordered DMA2/GP1 register writes */
     LK_FUNC("func_800949A0");
     regs[0] = 0xDEADBEEFU; regs[1] = 0x11111111U; regs[2] = 0x22222222U;
     regs[3] = 0x33333333U; regs[4] = 0x44444444U; regs[5] = 0x55555555U;
@@ -132,7 +132,7 @@ static void test_gpu_ports(void)
     FCK_EQ(regs[0], 0xDEADBEEFU, "guard word untouched");
     FCK_EQ(regs[1], 0x11111111U, "GP0 word untouched");
 
-    /* @leaf 80094960 source src/game/80094960.c: reset GP1 DMA then stream count words to GP0 */
+    /* @leaf 80094960 source src/game/gpu-2d-hud/gSendGpuWordList.c: reset GP1 DMA then stream count words to GP0 */
     LK_FUNC("func_80094960");
     words[0] = 0x11223344U; words[1] = 0x55667788U; words[2] = 0x99AABBCCU;
     regs[1] = 0xCAFEBABEU; regs[2] = 0xFFFFFFFFU;
@@ -145,7 +145,7 @@ static void test_gpu_ports(void)
     FCK_EQ(regs[1], 0x99AABBCCU, "last streamed word lands in GP0");
     FCK_EQ(regs[2], 0x04000000U, "GP1 written on stream");
 
-    /* @leaf 80095350 source src/game/80095350.c: probe GPU info=7 and select version 0/1/2 */
+    /* @leaf 80095350 source src/game/platform/gProbeGpuVersion.c: probe GPU info=7 and select version 0/1/2 */
     LK_FUNC("func_80095350");
     regs[1] = 0xAA000001U; regs[2] = 0;
     FCK_EQ(gProbeGpuVersion(0xFF), 0, "non-2 GPU info returns 0");
@@ -188,7 +188,7 @@ static void test_platform_hooks(void)
     unsigned int spu_ctrl;
     struct IntcFlags intc;
 
-    /* @leaf 8008DA14 source src/game/8008DA14.c: zero volatile halfword at +0x0A, preserve pad, return 0 */
+    /* @leaf 8008DA14 source src/game/boot-frontend/gClearSio0CtrlAndWait.c: zero volatile halfword at +0x0A, preserve pad, return 0 */
     LK_FUNC("func_8008DA14");
     lk_fill(&sio, 0xA5, sizeof(sio));
     gSio0CtrlClearPtr_s = &sio;
@@ -196,7 +196,7 @@ static void test_platform_hooks(void)
     FCK_EQ(sio.value, 0, "halfword at +0x0A cleared");
     FCK_CHECK(lk_all(&sio, 0, 10, 0xA5), "preceding bytes untouched");
 
-    /* @leaf 800978E8 source src/game/800978E8.c: replace bits 16..18 with 3 (nonzero) or 5 (zero) */
+    /* @leaf 800978E8 source src/game/platform/gSetSpuDelayTimingMode.c: replace bits 16..18 with 3 (nonzero) or 5 (zero) */
     LK_FUNC("func_800978E8");
     gSpuDelayCtrlPtr_s = &spu_ctrl;
     spu_ctrl = 0xA5A75A5AU;
@@ -208,7 +208,7 @@ static void test_platform_hooks(void)
     gSetSpuDelayTimingMode(-3);
     FCK_EQ(spu_ctrl, 0x00030000U, "negative nonzero selects 0x30000");
 
-    /* @leaf 8008A3D4 source src/game/8008A3D4.c: check both INTC bit 0 words before invoking callback */
+    /* @leaf 8008A3D4 source src/game/boot-frontend/gPadVsyncDispatchHook.c: check both INTC bit 0 words before invoking callback */
     LK_FUNC("func_8008A3D4");
     gInterruptStatusPtr_s = &intc;
     gPadIrqCallback_s = rec_pad_irq;
@@ -258,7 +258,7 @@ static void test_cd_audio_mix(void)
     gCdromParameterPtr_s = &cd_regs[3];
     gCdromRequestStatusPtr_s = &cd_regs[4];
 
-    /* @leaf 8008F650 source src/game/8008F650.c: write bank 2/3 CD audio mix registers and apply 0x20 */
+    /* @leaf 8008F650 source src/game/platform/gWriteCdAudioMixRegs.c: write bank 2/3 CD audio mix registers and apply 0x20 */
     LK_FUNC("func_8008F650");
     lk_fill(cd_regs, 0xA5, sizeof(cd_regs));
     mix[0] = 0x11; mix[1] = 0x22; mix[2] = 0x33; mix[3] = 0x44;
@@ -269,7 +269,7 @@ static void test_cd_audio_mix(void)
     FCK_EQ(cd_regs[4], 0x20, "request reg receives apply bit 0x20");
     FCK_CHECK(cd_regs[0] == 0xA5 && lk_all(cd_regs, 5, 8, 0xA5), "adjacent bytes untouched");
 
-    /* @leaf 8008E578 source src/game/8008E578.c: forward to gWriteCdAudioMixRegs and return 1 */
+    /* @leaf 8008E578 source src/game/boot-frontend/gSetCdVolume.c: forward to gWriteCdAudioMixRegs and return 1 */
     LK_FUNC("func_8008E578");
     lk_fill(cd_regs, 0x5A, sizeof(cd_regs));
     mix[0] = 0x70; mix[1] = 0x71; mix[2] = 0x72; mix[3] = 0x73;
@@ -279,7 +279,7 @@ static void test_cd_audio_mix(void)
     FCK_EQ(cd_regs[3], 0x73, "param set to mix[3]");
     FCK_EQ(cd_regs[4], 0x20, "apply written");
 
-    /* @leaf 8008F7AC source src/game/8008F7AC.c: conditional main volume init, CD vol/ctrl + CD mix apply */
+    /* @leaf 8008F7AC source src/game/platform/gInitCdAudioMix.c: conditional main volume init, CD vol/ctrl + CD mix apply */
     LK_FUNC("func_8008F7AC");
     gSpuRegsAltPtr_s = &spu;
     lk_fill(&spu, 0xA5, sizeof(spu));
@@ -363,7 +363,7 @@ static void test_pad_helpers(void)
     struct PadTimerObj obj;
     u8 out_buf[4], cmd_buf[4];
 
-    /* @leaf 80089E8C source src/game/80089E8C.c: remap modes 2/3->1 and 6->4 when busy/flagged/data[0] */
+    /* @leaf 80089E8C source src/game/platform/gGetPadPortState.c: remap modes 2/3->1 and 6->4 when busy/flagged/data[0] */
     LK_FUNC("func_80089E8C");
     gPadLookupPortFn_s = lookup_port_state;
     lk_fill(&pad_st_a, 0, sizeof(pad_st_a));
@@ -389,7 +389,7 @@ static void test_pad_helpers(void)
     data_buf[0] = 1;
     FCK_EQ(gGetPadPortState(), 4, "nonzero data[0] remaps mode 6 to 4");
 
-    /* @leaf 80089F4C source src/game/80089F4C.c: dispatch pad info kinds 1/2/3/4/100 with bounds */
+    /* @leaf 80089F4C source src/game/boot-frontend/gQueryPadInfo.c: dispatch pad info kinds 1/2/3/4/100 with bounds */
     LK_FUNC("func_80089F4C");
     gPadLookupPortFn_s = lookup_pad_info;
     lk_fill(&pad_info_fix, 0, sizeof(pad_info_fix));
@@ -412,7 +412,7 @@ static void test_pad_helpers(void)
     FCK_EQ(gQueryPadInfo(1, 100, 0), 0x12345678, "kind 100 returns field4c");
     FCK_EQ(gQueryPadInfo(1, 99, 0), 0, "unknown kind returns 0");
 
-    /* @leaf 8008C77C source src/game/8008C77C.c: pad state timer, retry thresholds, reset hook and disconnect clear */
+    /* @leaf 8008C77C source src/game/boot-frontend/gUpdatePadTimer.c: pad state timer, retry thresholds, reset hook and disconnect clear */
     LK_FUNC("func_8008C77C");
     gPadResetPortHook_s = rec_pad_reset;
     lk_fill(&obj, 0, sizeof(obj));
@@ -479,7 +479,7 @@ static void test_entity_msg(void)
 {
     struct MsgEntity e[3];
 
-    /* @leaf 8004EC74 source src/game/8004EC74.c: dispatch msg 0xD only for id>0 && unk88!=0 and reset fields */
+    /* @leaf 8004EC74 source src/game/boot-frontend/gDispatchEntityMsg0D.c: dispatch msg 0xD only for id>0 && unk88!=0 and reset fields */
     LK_FUNC("func_8004EC74");
     lk_fill(e, 0, sizeof(e));
     e[0].update = rec_ent_update; e[0].id = 0; e[0].unk88 = 1; e[0].unk90 = 11;
@@ -536,7 +536,7 @@ static void test_prim_emitters(void)
     struct FadePage *pg;
     struct FadeTile *tl;
 
-    /* @leaf 80082FA4 source src/game/80082FA4.c: emit 5-word flat quad and advance pool only below end */
+    /* @leaf 80082FA4 source src/game/gpu-2d-hud/gEmitFlatQuadRectMode.c: emit 5-word flat quad and advance pool only below end */
     LK_FUNC("func_80082FA4");
     lk_fill(quad_buf, 0xA5, sizeof(quad_buf));
     gPrimPoolNext_s = (struct FlatQuadPoly *)quad_buf;
@@ -553,7 +553,7 @@ static void test_prim_emitters(void)
     q = (struct FlatQuadPoly *)(quad_buf + 0x34);
     FCK_CHECK(q->code == 0x28 && q->xy[0] == -5 && q->xy[2] == 3 && q->xy[5] == 12, "second quad at end slot");
 
-    /* @leaf 80026E9C source src/game/80026E9C.c: emit TPage 0xE10006A0 and 0x62 fade tile (h=0xF0) */
+    /* @leaf 80026E9C source src/game/gpu-2d-hud/gEmitScreenFadeBar.c: emit TPage 0xE10006A0 and 0x62 fade tile (h=0xF0) */
     LK_FUNC("func_80026E9C");
     lk_fill(pkt_buf, 0xA5, sizeof(pkt_buf));
     gPacketCursor_s = pkt_buf;
@@ -572,7 +572,7 @@ static void test_prim_emitters(void)
     tl = (struct FadeTile *)pkt_buf;
     FCK_CHECK(tl->len == 3 && tl->w == 0xA0, "tile overwrites slot 0 at limit");
 
-    /* @leaf 80026F68 source src/game/80026F68.c: team retire timer vs fade countdown and clamped fade bar */
+    /* @leaf 80026F68 source src/game/gpu-2d-hud/gTickPlayerTransitionFade.c: team retire timer vs fade countdown and clamped fade bar */
     LK_FUNC("func_80026F68");
     gTeamFlag_s[0] = 0x380; gTeamFlag_s[1] = 0;
     gPlayerFadeTimers_s[0] = 50; gPlayerFadeTimers_s[1] = 0;
@@ -599,7 +599,7 @@ static void test_prim_emitters(void)
     FCK_CHECK(gPlayerFadeTimers_s[1] == 94 && tl->r == 94 && tl->w == 0x140,
               "arg1 low byte nonzero selects width 0x140");
 
-    /* @leaf 8001C214 source src/game/8001C214.c: unpack 15-bit color, halve rect coords, forward to 8001C148 */
+    /* @leaf 8001C214 source src/game/gpu-2d-hud/gEmitTranslucentTileRect.c: unpack 15-bit color, halve rect coords, forward to 8001C148 */
     LK_FUNC("func_8001C214");
     lk_fill(pkt_buf, 0xA5, sizeof(pkt_buf));
     gPacketCursor_s = pkt_buf; gPacketLimit_s = pkt_buf + 0x38;
@@ -625,7 +625,7 @@ static void test_profile_status(void)
 {
     static u8 profile_buf[0x950];
 
-    /* @leaf 8008227C source src/game/8008227C.c: write 0x385E halfword at +0x942 only */
+    /* @leaf 8008227C source src/game/boot-frontend/gSetProfileNameEntryStatusMessage.c: write 0x385E halfword at +0x942 only */
     LK_FUNC("func_8008227C");
     lk_fill(profile_buf, 0xA5, sizeof(profile_buf));
     gSaveProfileImage_s = profile_buf;
@@ -649,7 +649,7 @@ static void test_color_and_scale(void)
 {
     struct ScaleObj obj;
 
-    /* @leaf 8001BDE4 source src/game/8001BDE4.c: 5-to-8 bit replication per channel packed via 8001BC44 */
+    /* @leaf 8001BDE4 source src/game/gpu-2d-hud/gExpandRgb15ToRgb24.c: 5-to-8 bit replication per channel packed via 8001BC44 */
     LK_FUNC("func_8001BDE4");
     FCK_EQ(gExpandRgb15ToRgb24(0x0000U), 0x000000U, "black");
     FCK_EQ(gExpandRgb15ToRgb24(0x7FFFU), 0xFFFFFFU, "white");
@@ -659,7 +659,7 @@ static void test_color_and_scale(void)
     FCK_EQ(gExpandRgb15ToRgb24(0x4210U), 0x848484U, "bit replication on 16/16/16");
     FCK_EQ(gExpandRgb15ToRgb24(0x14A5U), 0x292929U, "bit replication on 5/5/5");
 
-    /* @leaf 8006A898 source src/game/8006A898.c: scale embedded subrecord then (<<12)/218 on unk0A & unk08 */
+    /* @leaf 8006A898 source src/game/boot-frontend/gScaleRegistryObjectFields.c: scale embedded subrecord then (<<12)/218 on unk0A & unk08 */
     LK_FUNC("func_8006A898");
     lk_fill(&obj, 0xA5, sizeof(obj));
     obj.unk08 = 109;
@@ -689,7 +689,7 @@ static void test_gpu_packet_builders(void)
     s16 rect[4];
     struct TPagePkt tp;
 
-    /* @leaf 80093954 source src/game/80093954.c: 2-word GP0 0xE2 texture-window packet */
+    /* @leaf 80093954 source src/game/gpu-2d-hud/gSetTexWindow.c: 2-word GP0 0xE2 texture-window packet */
     LK_FUNC("func_80093954");
     lk_fill(pkt, 0xA5, sizeof(pkt));
     gSetTexWindow(pkt, 0);
@@ -700,7 +700,7 @@ static void test_gpu_packet_builders(void)
     FCK_EQ(*(u32 *)(pkt + 4), 0xE2018B7CU, "packed 0xE2 tex-window word");
     FCK_EQ(*(u32 *)(pkt + 8), 0U, "trailing word cleared");
 
-    /* @leaf 80093A0C source src/game/80093A0C.c: 2-word GP0 0xE5 drawing-offset packet */
+    /* @leaf 80093A0C source src/game/platform/gSetDrawOffsetPacket.c: 2-word GP0 0xE5 drawing-offset packet */
     LK_FUNC("func_80093A0C");
     lk_fill(pkt, 0xA5, sizeof(pkt));
     rect[0] = 320; rect[1] = 240;
@@ -712,7 +712,7 @@ static void test_gpu_packet_builders(void)
     gSetDrawOffsetPacket(pkt, rect);
     FCK_EQ(*(u32 *)(pkt + 4), 0xE53FF7FFU, "negative 11-bit offsets masked");
 
-    /* @leaf 80093A9C source src/game/80093A9C.c: 2-word draw-mode (0xE1) + tex-window (0xE2) packet */
+    /* @leaf 80093A9C source src/game/gpu-2d-hud/gSetDrawTPage.c: 2-word draw-mode (0xE1) + tex-window (0xE2) packet */
     LK_FUNC("func_80093A9C");
     lk_fill(&tp, 0xA5, sizeof(tp));
     gSetDrawTPage(&tp, 1, 1, 0x135, 0);

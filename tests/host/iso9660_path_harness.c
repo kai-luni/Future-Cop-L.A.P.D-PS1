@@ -21,7 +21,7 @@
  *      2 with the vector named. A mock returning 0 there would let a unit carry
  *      on with a value the BIOS never produces.
  *
- * Every expected value below is written out from src/game/8001DC48.c's doc block
+ * Every expected value below is written out from src/game/memory-resources/gFormatIso9660Path.c's doc block
  * (separator rules, character filter, the 64-byte refusal, the empty case, the
  * mode-1 ";1" suffix) and counted by hand. None was recorded from the binary.
  */

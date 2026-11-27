@@ -51,6 +51,10 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
+TOOLS_DIR = pathlib.Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+import unit_paths  # noqa: E402
 SRC = REPO / "src" / "game"
 
 
@@ -145,7 +149,7 @@ def classify(byaddr, callees, hw):
 
 
 def src_units():
-    return {int(p.stem, 16): p for p in SRC.glob("*.c")}
+    return unit_paths.all_unit_paths(REPO)
 
 
 def main():

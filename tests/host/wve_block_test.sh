@@ -15,12 +15,12 @@ mkdir -p "$OUT"
 export PATH="$T/mipsel-binutils/root/usr/bin:$PATH"
 export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 compile() {
-    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"
+    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/src/game" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$2" "$OUT/tmp.mas.s"
 }
-compile "$DECOMP/src/game/80089A88.c" "$OUT/80089A88.o"
-compile "$DECOMP/src/game/80089BBC.c" "$OUT/80089BBC.o"
+compile "$DECOMP/src/game/gpu-2d-hud/gBuildMovieVlcTables.c" "$OUT/80089A88.o"
+compile "$DECOMP/src/game/gpu-2d-hud/gMovieDecodeVlcStream.c" "$OUT/80089BBC.o"
 compile "$HERE/wve_block_harness.c" "$OUT/wve_block_harness.o"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s"
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/wve_block_harness" \

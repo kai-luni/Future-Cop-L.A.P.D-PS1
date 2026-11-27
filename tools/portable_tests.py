@@ -8,6 +8,10 @@ import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+TOOLS_DIR = Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+import unit_paths  # noqa: E402
 SCHEMA = "fc-portable-tests"
 OBSERVATIONS = "fc-portable-observations"
 WIDTHS = {f"{sign}{width}": width // 8 for sign in "su" for width in (8, 16, 32)}
@@ -82,7 +86,8 @@ def digest(path):
 def signature(symbol):
     """Read the unit's own asm alias, not prose or the leaf harness declaration."""
     require(match(symbol, FUNC), f"invalid function: {symbol!r}")
-    path = ROOT / "src/game" / (symbol[5:] + ".c")
+    path = unit_paths.resolve_unit_path(symbol, repo=ROOT)
+    require(path is not None and path.is_file(), f"{symbol}: missing source file")
     source = path.read_text()
     declarations = list(re.finditer(
         rf'^\s*(?:extern\s+)?([\w \t*]+?)[ \t]*\b(\w+)\(([^()]*)\)'
@@ -161,7 +166,8 @@ def validate(suite, check_sources=False):
     for symbol, function in functions.items():
         require(match(symbol, FUNC), f"invalid function symbol: {symbol!r}")
         fields(function, "source sha256 args return origin")
-        require(function["source"] == f"src/game/{symbol[5:]}.c", f"{symbol}: wrong source path")
+        require(match(function["source"], r"src/game/[a-z0-9-]+/[A-Za-z_]\w*\.c"),
+                f"{symbol}: wrong source path")
         require(match(function["sha256"], r"[0-9a-f]{64}"), f"{symbol}: invalid source digest")
         require(all(isinstance(t, str) and t in TYPES - {"void"}
                     for t in array(function["args"], 32)), f"{symbol}: invalid argument type")
@@ -175,6 +181,8 @@ def validate(suite, check_sources=False):
         require(isinstance(origin["note"], str) and origin["note"].strip(), f"{symbol}: empty origin note")
         if check_sources:
             path, _, _, _, args, result = signature(symbol)
+            require(function["source"] == path.relative_to(ROOT).as_posix(),
+                    f"{symbol}: wrong source path {function['source']!r}")
             require(digest(path) == function["sha256"], f"{symbol}: source digest changed")
             require((args, result) == (function["args"], function["return"]),
                     f"{symbol}: fixture ABI differs from the source declaration")

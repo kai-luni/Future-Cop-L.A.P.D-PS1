@@ -126,7 +126,7 @@ static void test_texture_chunks(void)
     u8 *a = (u8 *)tiles_a;
     u8 *b = (u8 *)tiles_b;
 
-    /* @leaf 8005A414 source src/game/8005A414.c: two packed entries, strip row rollover, trailing atlas, low-byte build result and delegated cleanup/ownership */
+    /* @leaf 8005A414 source src/game/memory-resources/gLoadTextureChunksToVram.c: two packed entries, strip row rollover, trailing atlas, low-byte build result and delegated cleanup/ownership */
     LK_FUNC("func_8005A414");
 
     reset_texture(2);
@@ -268,7 +268,7 @@ static void check_dma_launch(u32 *source, u32 blocks)
 
 static void test_gpu_upload(void)
 {
-    /* @leaf 8009446C source src/game/8009446C.c: signed clamps, empty and busy/timeout exits, odd CPU-only words and exact/mixed DMA blocks with RAM-backed registers */
+    /* @leaf 8009446C source src/game/gpu-2d-hud/gUploadImageToGpu.c: signed clamps, empty and busy/timeout exits, odd CPU-only words and exact/mixed DMA blocks with RAM-backed registers */
     LK_FUNC("func_8009446C");
 
     reset_upload(0xFFFE, 7, 0);

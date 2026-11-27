@@ -144,12 +144,12 @@ liest sie als Divisor.
 
 | Global (RAM) | C-Name | Datentyp | Bedeutung | Beispielfunktion |
 |---|---|---|---|---|
-| `D_8009FA0C` | `gPlayerCount` | `s32` / `int` | Anzahl der Spieler im laufenden Match (1 = Einzelspieler, 2 = Zweispieler); viele Pfade verzweigen darauf. **Bestätigt.** Die Funktionsdoku in `src/game/8002D1A0.c` nennt sie „player count". | `func_8002D1A0`, `func_80027510` |
+| `D_8009FA0C` | `gPlayerCount` | `s32` / `int` | Anzahl der Spieler im laufenden Match (1 = Einzelspieler, 2 = Zweispieler); viele Pfade verzweigen darauf. **Bestätigt.** Die Funktionsdoku in `src/game/gameplay-ai/gTryCaptureObjective.c` nennt sie „player count". | `func_8002D1A0`, `func_80027510` |
 | `D_8009F9EC` | `gSinglePlayerEntity` | `struct Ent *` / `Game *` | Zeiger auf die Spielfigur im Einzelspielermodus; wird nur bei `gPlayerCount == 1` ausgewertet und über die Entity-Id verglichen. **Bestätigt.** | `func_8002D1A0`, `func_80027510` |
 | `D_8009F8B8` | `gActivePlayerIndex` | `s32` | Index des Spielers, dessen Menü aktiv ist (1 bei Zweispieler-Menü, sonst 0). **Bestätigt.** | `func_8007A7A0`, `func_8007A5F0` |
 
 <!-- OFFEN: gPlayerEntities (Zwei-Slot-Array der Spieler-Entities) bleibt vorerst
-     unbenannt. In src/game/80027510.c wird dasselbe Symbol doppelt deklariert
+     unbenannt. In src/game/boot-frontend/gRunSessionFrame.c wird dasselbe Symbol doppelt deklariert
      (einmal als Union `gPlayerEntities`, einmal als Array `D_8009FA58_arr`); eine
      Umbenennung verändert dort die erzeugten Bytes. Erst die Doppeldeklaration
      auflösen, dann benennen. -->
@@ -846,12 +846,12 @@ Die folgenden Rollen wurden mit Google Gemini 4 Hydrogen (read-only, Repo-Zugrif
 
 | Global (RAM) | C-Name | Datentyp | Bedeutung | Beleg |
 |---|---|---|---|---|
-| `D_8009C730` | `gPadTxByteHook` | `u32` | Handler, der bei der SIO0-Kommunikation das nächste Sende-Byte liefert; im Init mit `func_8008C07C` belegt. **Bestätigt.** | `src/game/8008BDB0.c:65`, `8008C07C.c:37` |
-| `D_8009C770` | `gPadActuatorCostSum` | `int` | Aufsummierte Aktuator-Kosten eines Polling-Durchlaufs; wird vor der Port-Schleife genullt und nur erhöht, solange die Summe unter 61 bleibt. **Bestätigt.** | `src/game/8008C138.c:78`, `8008A43C.c:62` |
-| `D_8009C790` | `gPadVblankIrqFlag` | `s32` | Verriegeltes Flag eines Pad-VBlank-Durchlaufs: am Beginn von `func_8008A43C` auf 1 gesetzt, von `func_8008A5A8` gelesen und genullt. **Bestätigt.** | `src/game/8008A43C.c:39`, `8008A5A8.c:26` |
-| `D_8009FA8C` | `gPlayerInvulnerable` | `u8[]` | Ein Unverwundbarkeits-Flag je Spieler; verhindert Schadensabzug und Terrain-Schaden, wird im Spawn-Pfad bei `mode0`/`mode1 == 3` gesetzt. **Bestätigt.** | `src/game/800579D4.c:230`, `80058210.c:89`, `80053188.c:171` |
-| `D_800A8EA4` | `gEnvMapTexpageWord` | `s32` | Genau der Eintrag `[9]` von `gTexpageBaseTable` (`0x800A8E80 + 9*4`): gepacktes `(CLUT << 16) \| TPAGE`-Wort für den Env-Map-Texturslot, als `vec.extra` übergeben. **Bestätigt.** | `src/game/80063C5C.c:117`, `80016A64.c:111`, `80016E6C.c:55` |
-| `D_8009FA94` | `gGameSession` | `struct Obj *` (je Unit abweichend) | Persistenter Sitzungs- und Konfigurationsblock (244 Byte, `func_8001E240(0xF4, 3)`): `mode` (1 = 1P, 2 = 2P), `mode0`/`mode1` (Schwierigkeit, God-Mode), Übergangscode bei `+0x10`, Loadout und Match-Zähler. **Bestätigt** in der Rolle, einzelne Felder offen. | `src/game/80076EB0.c:80`, `8008125C.c:283`, `800579D4.c:214` |
+| `D_8009C730` | `gPadTxByteHook` | `u32` | Handler, der bei der SIO0-Kommunikation das nächste Sende-Byte liefert; im Init mit `func_8008C07C` belegt. **Bestätigt.** | `src/game/boot-frontend/gInitPadPorts.c:65`, `8008C07C.c:37` |
+| `D_8009C770` | `gPadActuatorCostSum` | `int` | Aufsummierte Aktuator-Kosten eines Polling-Durchlaufs; wird vor der Port-Schleife genullt und nur erhöht, solange die Summe unter 61 bleibt. **Bestätigt.** | `src/game/boot-frontend/gSelectPadActuators.c:78`, `8008A43C.c:62` |
+| `D_8009C790` | `gPadVblankIrqFlag` | `s32` | Verriegeltes Flag eines Pad-VBlank-Durchlaufs: am Beginn von `func_8008A43C` auf 1 gesetzt, von `func_8008A5A8` gelesen und genullt. **Bestätigt.** | `src/game/boot-frontend/gPollPadPorts.c:39`, `8008A5A8.c:26` |
+| `D_8009FA8C` | `gPlayerInvulnerable` | `u8[]` | Ein Unverwundbarkeits-Flag je Spieler; verhindert Schadensabzug und Terrain-Schaden, wird im Spawn-Pfad bei `mode0`/`mode1 == 3` gesetzt. **Bestätigt.** | `src/game/gameplay-ai/gInitPlayerUnit.c:230`, `80058210.c:89`, `80053188.c:171` |
+| `D_800A8EA4` | `gEnvMapTexpageWord` | `s32` | Genau der Eintrag `[9]` von `gTexpageBaseTable` (`0x800A8E80 + 9*4`): gepacktes `(CLUT << 16) \| TPAGE`-Wort für den Env-Map-Texturslot, als `vec.extra` übergeben. **Bestätigt.** | `src/game/gpu-2d-hud/gLoadCbmpTexture.c:117`, `80016A64.c:111`, `80016E6C.c:55` |
+| `D_8009FA94` | `gGameSession` | `struct Obj *` (je Unit abweichend) | Persistenter Sitzungs- und Konfigurationsblock (244 Byte, `func_8001E240(0xF4, 3)`): `mode` (1 = 1P, 2 = 2P), `mode0`/`mode1` (Schwierigkeit, God-Mode), Übergangscode bei `+0x10`, Loadout und Match-Zähler. **Bestätigt** in der Rolle, einzelne Felder offen. | `src/game/platform/gInitRuntime.c:80`, `8008125C.c:283`, `800579D4.c:214` |
 
 `D_8009C750` bleibt unbenannt und ist in der Doku als **nicht bestimmbar** vermerkt: der Callback wird nur aufgerufen (zweiter Eintrag der IRQ-Chain-2-Tabelle, VBlank-Bit), die schreibende Stelle wurde auch mit Modellhilfe nicht gefunden.
 

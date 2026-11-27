@@ -5,13 +5,13 @@
 #define FCK_TYPES_H
 #include "leaf_kit.h"
 
-#include "../../src/game/8001F180.c"
-#include "../../src/game/80021800.c"
-#include "../../src/game/800223B0.c"
+#include "../../src/game/platform/gIsMcManagerBusy.c"
+#include "../../src/game/memory-resources/gResolveSoundBankEntry.c"
+#include "../../src/game/boot-frontend/gComputeStereoVoiceLevels.c"
 #define gSoundSystem voice_events
-#include "../../src/game/80021A70.c"
+#include "../../src/game/boot-frontend/gQueueSoundVoiceOnMask.c"
 #undef gSoundSystem
-#include "../../src/game/8007E8D8.c"
+#include "../../src/game/utilities/gPackInputRecord.c"
 
 static u32 mc_state[0x1BB8 / 4];
 struct Unk8001F180 *gOperationState = (struct Unk8001F180 *)mc_state;
@@ -19,7 +19,7 @@ void gQueueMcOpMode6(u32 arg0, u32 arg1, u32 arg2, u32 arg3) __asm__("func_8001F
 
 static void test_memory_card_queue(void)
 {
-    /* @leaf 8001F2E0 source src/game/8001F2E0.c: idle manager queues mode 6; busy manager only sets the rejection word */
+    /* @leaf 8001F2E0 source src/game/boot-frontend/gQueueMcOpMode6.c: idle manager queues mode 6; busy manager only sets the rejection word */
     LK_FUNC("func_8001F2E0");
     lk_fill(mc_state, 0xA5, sizeof(mc_state));
     mc_state[0x8F4 / 4] = 0;
@@ -90,7 +90,7 @@ static void test_spu_queue(void)
 {
     Request request = { 17, 29, 43, record_completion, -73, 1 };
 
-    /* @leaf 800212F8 source src/game/800212F8.c: copies the full request, starts when empty, wraps after slot eight */
+    /* @leaf 800212F8 source src/game/boot-frontend/gEnqueueSpuTransfer.c: copies the full request, starts when empty, wraps after slot eight */
     LK_FUNC("func_800212F8");
     lk_fill(gPendingEntryList, 0xA5, sizeof(gPendingEntryList));
     gSpuTransferWriteIndex = gSlotIndexLimit = 8;
@@ -115,7 +115,7 @@ static void test_spu_queue(void)
     FCK_EQ(gPendingEntryList[0].context, 99, "wrapped write uses slot zero");
     FCK_EQ(gPendingEntryList[8].context, -73, "earlier request is not aliased");
 
-    /* @leaf 8002139C source src/game/8002139C.c: dispatch guard, callback, wrapped read and final idle transition */
+    /* @leaf 8002139C source src/game/boot-frontend/gCompleteSpuTransfer.c: dispatch guard, callback, wrapped read and final idle transition */
     LK_FUNC("func_8002139C");
     gPendingEntryList[8] = request;
     gPendingEntryList[8].callback = record_completion;
@@ -194,7 +194,7 @@ static void test_sound_bank(void)
     sound_fixture.scale = 2;
     sound_fixture.pending = 1;
 
-    /* @leaf 80021F98 source src/game/80021F98.c: bank and sample validation, variant offset, channel record and pending key-on */
+    /* @leaf 80021F98 source src/game/boot-frontend/gQueueBankSampleOnChannel.c: bank and sample validation, variant offset, channel record and pending key-on */
     LK_FUNC("func_80021F98");
     FCK_EQ(gQueueBankSampleOnChannel(1, 0, 0, 0, 2, &args), 0, "missing sample rejected");
     FCK_EQ(gQueueBankSampleOnChannel(0, 1, 0, 0, 2, &args), 0, "missing bank rejected");
@@ -213,7 +213,7 @@ static void test_sound_bank(void)
     FCK_EQ(sound_fixture.pending, 5, "key-on flags OR with prior pending voices");
     FCK_CHECK(lk_all(channels[2], 4, 16, 0xA5), "unrelated channel words untouched");
 
-    /* @leaf 80024358 source src/game/80024358.c: unavailable bank and failed lookup return zero; success uses default pitch and supplied mix */
+    /* @leaf 80024358 source src/game/boot-frontend/gQueueVoiceBankSample.c: unavailable bank and failed lookup return zero; success uses default pitch and supplied mix */
     LK_FUNC("func_80024358");
     lk_fill(&voice, 0, sizeof(voice));
     lk_fill(&bank, 0, sizeof(bank));
@@ -254,7 +254,7 @@ static void test_text(void)
     u8 table[] = { '#', 'X', ' ', 'X' };
     u8 glyphs[6];
 
-    /* @leaf 80078B34 source src/game/80078B34.c: status slot gate and three alignment write paths */
+    /* @leaf 80078B34 source src/game/gpu-2d-hud/gQueueStatusLineText.c: status slot gate and three alignment write paths */
     LK_FUNC("func_80078B34");
     lk_fill(gSlotRecordTable, 0xA5, sizeof(gSlotRecordTable));
     gQueueStatusLineText(0x4321, 2, 2);
@@ -271,7 +271,7 @@ static void test_text(void)
     FCK_EQ(gSlotRecordTable[0].unk0, 21, "right update leaves left status intact");
     FCK_CHECK(lk_all(&gSlotRecordTable[1], 4, 8, 0xA5), "default update leaves right pair intact");
 
-    /* @leaf 8007A9D0 source src/game/8007A9D0.c: first matching glyph, unknown fallback, space padding and bounded output */
+    /* @leaf 8007A9D0 source src/game/gpu-2d-hud/gEncodeNameToGlyphs.c: first matching glyph, unknown fallback, space padding and bounded output */
     LK_FUNC("func_8007A9D0");
     lk_fill(glyphs, 0xA5, sizeof(glyphs));
     gEncodeNameToGlyphs(name, glyphs + 1, 4, table, 4);
@@ -308,7 +308,7 @@ static void test_menu_loadout(void)
     u8 values[3][3] = { { 4, 9, 0xA5 }, { 9, 4, 0xA5 }, { 9, 9, 0xA5 } };
     int i;
 
-    /* @leaf 8007B0D4 source src/game/8007B0D4.c: active depth and mode-specific menu code gate return two */
+    /* @leaf 8007B0D4 source src/game/boot-frontend/gMenuReadyToAdvancePredicate.c: active depth and mode-specific menu code gate return two */
     LK_FUNC("func_8007B0D4");
     gFontBankTable = menu;
     gActivePlayerIndex = 0;
@@ -328,7 +328,7 @@ static void test_menu_loadout(void)
     FCK_EQ(menu[1], 1, "query keeps player menu code");
     FCK_EQ(menu[5], 3, "query keeps menu mode");
 
-    /* @leaf 8007D2DC source src/game/8007D2DC.c: per-entry caps and mode-zero exemption for each player's current row */
+    /* @leaf 8007D2DC source src/game/boot-frontend/gClampLoadoutSelections.c: per-entry caps and mode-zero exemption for each player's current row */
     LK_FUNC("func_8007D2DC");
     menu[0] = 2;
     menu[1] = 5;
@@ -368,7 +368,7 @@ static void test_controller_preset(void)
         gPresetByteTable[42 + i] = i;
     }
 
-    /* @leaf 8007BFCC source src/game/8007BFCC.c: clamps both selectors and scatters all 14 mapping words into one port */
+    /* @leaf 8007BFCC source src/game/boot-frontend/gApplyControllerPreset.c: clamps both selectors and scatters all 14 mapping words into one port */
     LK_FUNC("func_8007BFCC");
     lk_fill(pad_mapping, 0xA5, sizeof(pad_mapping));
     lk_fill(preset_indices, 0xA5, sizeof(preset_indices));
@@ -417,7 +417,7 @@ static void test_progress_and_movie(void)
     struct UnkFA94 session;
     int i;
 
-    /* @leaf 8007F02C source src/game/8007F02C.c: routes session flags and indexed progress into the real 8007E8D8 packer */
+    /* @leaf 8007F02C source src/game/boot-frontend/gPackCurrentProgressPassword.c: routes session flags and indexed progress into the real 8007E8D8 packer */
     LK_FUNC("func_8007F02C");
     lk_fill(&session, 0xA5, sizeof(session));
     session.unk8C = 3;
@@ -454,7 +454,7 @@ static void test_progress_and_movie(void)
         FCK_EQ(gPackedPasswordBytes[i], all_ten[i], "all-ten progress folds the fifth value");
     FCK_EQ(progress_entries[2].value, 12, "packer does not change progress table");
 
-    /* @leaf 80086F1C source src/game/80086F1C.c: enable replaces the movie clock word with one and preserves preceding state */
+    /* @leaf 80086F1C source src/game/video-mdec-movies/gMovieAudioClockEnable.c: enable replaces the movie clock word with one and preserves preceding state */
     LK_FUNC("func_80086F1C");
     lk_fill(&movie_clock, 0xA5, sizeof(movie_clock));
     gMovieAudioClockEnable();
@@ -495,7 +495,7 @@ static void test_pool_layouts(void)
     struct Pool pool;
     int i;
 
-    /* @leaf 800194DC source src/game/800194DC.c: rounded stride, backwards free list and null allocation result */
+    /* @leaf 800194DC source src/game/memory-resources/gCreateFixedPool.c: rounded stride, backwards free list and null allocation result */
     LK_FUNC("func_800194DC");
     lk_fill(arena, 0xA5, sizeof(arena));
     arena_capacity = 43;
@@ -520,7 +520,7 @@ static void test_pool_layouts(void)
     FCK_EQ(arena[10], 0xA5A5A5A5, "entry payload untouched");
     FCK_EQ(arena[11], 0xA5A5A5A5, "past-end guard untouched");
 
-    /* @leaf 8003BE2C source src/game/8003BE2C.c: forward links at caller stride, list publication only after allocation */
+    /* @leaf 8003BE2C source src/game/memory-resources/gInitIntrusiveNodePool.c: forward links at caller stride, list publication only after allocation */
     LK_FUNC("func_8003BE2C");
     lk_fill(arena, 0xA5, sizeof(arena));
     pool.active = &arena[1];
@@ -545,7 +545,7 @@ static void test_pool_layouts(void)
     FCK_EQ(arena[7], 0xA5A5A5A5, "node payload untouched");
     FCK_EQ(arena[9], 0xA5A5A5A5, "past-end guard untouched");
 
-    /* @leaf 800496D0 source src/game/800496D0.c: dimensions published and exactly width times height pointers cleared */
+    /* @leaf 800496D0 source src/game/renderer-scene/gAllocLightGrid.c: dimensions published and exactly width times height pointers cleared */
     LK_FUNC("func_800496D0");
     lk_fill(arena, 0xA5, sizeof(arena));
     gAllocLightGrid(3, 2);

@@ -6,6 +6,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="${DECOMP:-$(cd "$HERE/../.." && pwd)}"
+source "$HERE/unit_path.sh"
 T="$DECOMP/.toolchain"
 OUT="${OUT:-$HERE/build-env}"
 QEMU="${QEMU:-$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}"
@@ -26,14 +27,14 @@ GCC="$T/gcc-2.7.2-cdk/gcc"
 MASPSX="$(echo "$T"/maspsx-*/maspsx.py)"
 compile() {
     local src="$1" obj="$2"
-    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
+    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/src/game" -I"$DECOMP/include" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
 UNITS="8001846C 800188D0 80018DC0 80019470 8001A81C 80018860 80013CB8 80010750 80010820 8001006C 8001010C 800101D4 80010234 8001047C"
 OBJS=""
 for f in $UNITS; do
-    compile "$DECOMP/src/game/$f.c" "$OUT/$f.o"
+    compile "$(unit_src "$f")" "$OUT/$f.o"
     OBJS="$OBJS $OUT/$f.o"
 done
 compile "$OUT/sine.c" "$OUT/sine.o"

@@ -5,36 +5,36 @@
 #define FCK_TYPES_H
 #include "leaf_kit.h"
 
-#include "../../src/game/8001A4E8.c"
-#include "../../src/game/8002A5B4.c"
-#include "../../src/game/80013AF0.c"
+#include "../../src/game/utilities/gApproximateDistance3.c"
+#include "../../src/game/gameplay-ai/gRemoveEntityCommand.c"
+#include "../../src/game/renderer-scene/gInitModelInstance.c"
 /* These original translation units use different C declarations for the
  * same linked symbol. Keep their declarations separate within the harness. */
 #define gSelectAnimationClip select_clip_from_actor
-#include "../../src/game/8002E2BC.c"
+#include "../../src/game/gameplay-ai/gSetActorMode.c"
 #undef gSelectAnimationClip
-#include "../../src/game/80019668.c"
-#include "../../src/game/800448D8.c"
-#include "../../src/game/8003C4C4.c"
-#include "../../src/game/8003B3D8.c"
-#include "../../src/game/800196C4.c"
+#include "../../src/game/utilities/gAdvancePrimaryPrng.c"
+#include "../../src/game/gpu-2d-hud/gSelectAnimationClip.c"
+#include "../../src/game/boot-frontend/gOrGridCellFlags.c"
+#include "../../src/game/gameplay-ai/gGetSpawnTypeFlagPtr.c"
+#include "../../src/game/utilities/gAdvanceSecondaryPrng.c"
 #define Model AttachmentModel
-#include "../../src/game/8003CE30.c"
+#include "../../src/game/renderer-scene/gGetAnimatedModelAttachmentPoint.c"
 #undef Model
-#include "../../src/game/8004DA58.c"
+#include "../../src/game/other/gIsQueuedCommandKind.c"
 #define Entity PendingTarget
-#include "../../src/game/8004D9EC.c"
+#include "../../src/game/boot-frontend/gEnqueuePendingMessage.c"
 #undef Entity
 #define Entity CommandTarget
 #define gIsQueuedCommandKind filter_kind_from_command
 #define gEnqueuePendingMessage enqueue_from_command
-#include "../../src/game/8004DA84.c"
+#include "../../src/game/gameplay-ai/gSendEntityCommand.c"
 #undef gEnqueuePendingMessage
 #undef gIsQueuedCommandKind
 #undef Entity
-#include "../../src/game/80019A20.c"
-#include "../../src/game/8001AB78.c"
-#include "../../src/game/8005A154.c"
+#include "../../src/game/memory-resources/gFindRecordPayloadById.c"
+#include "../../src/game/utilities/gVectorScaleInPlace.c"
+#include "../../src/game/platform/gPlayGaugeEdgeSound.c"
 
 #define B8(p, offset) (*(u8 *)((u8 *)(p) + (offset)))
 #define H16(p, offset) (*(u16 *)((u8 *)(p) + (offset)))
@@ -55,7 +55,7 @@ static void test_entity_query(void)
 {
     struct Unk2AB8C object, players[2];
 
-    /* @leaf 8002AB8C source src/game/8002AB8C.c: field dispatch, signed fields and clamped minimum distance net of both radii */
+    /* @leaf 8002AB8C source src/game/gameplay-ai/gQueryBaseEntityField.c: field dispatch, signed fields and clamped minimum distance net of both radii */
     LK_FUNC("func_8002AB8C");
     lk_fill(&object, 0, sizeof(object));
     lk_fill(players, 0, sizeof(players));
@@ -128,7 +128,7 @@ static void test_model_and_actor_queues(void)
     struct Unk2E2BC28 metadata;
     int i;
 
-    /* @leaf 8002CB20 source src/game/8002CB20.c: consumes variant commands, preserves foreign commands and gates instance initialization */
+    /* @leaf 8002CB20 source src/game/renderer-scene/gDispatchModelVariantCommands.c: consumes variant commands, preserves foreign commands and gates instance initialization */
     LK_FUNC("func_8002CB20");
     lk_fill(&variant, 0, sizeof(variant));
     model.flags = 0x40000000;
@@ -181,7 +181,7 @@ static void test_model_and_actor_queues(void)
     FCK_EQ(variant.unk14[0], 0x29, "byte after the fourth slot is not consumed");
     FCK_EQ(variant.commands[3].op, 0x73, "full foreign queue stays intact");
 
-    /* @leaf 8002E528 source src/game/8002E528.c: command 55 selects mode, 56 stores byte, unknown command stays */
+    /* @leaf 8002E528 source src/game/gameplay-ai/gProcessActorCommandQueue.c: command 55 selects mode, 56 stores byte, unknown command stays */
     LK_FUNC("func_8002E528");
     lk_fill(&actor_fixture, 0, sizeof(actor_fixture));
     metadata.unk10 = 0; /* No animation installed; use the real no-clip path. */
@@ -264,7 +264,7 @@ static void test_drone_and_spawn_cycle(void)
     struct Unk33608Anim anim;
     struct Unk3C500Cell cells[3];
 
-    /* @leaf 80033608 source src/game/80033608.c: changed animation mirrored twice and null target applies fallback mode */
+    /* @leaf 80033608 source src/game/gameplay-ai/gSetDroneAttackTarget.c: changed animation mirrored twice and null target applies fallback mode */
     LK_FUNC("func_80033608");
     lk_fill(&owner, 0, sizeof(owner));
     lk_fill(&mirror, 0, sizeof(mirror));
@@ -301,7 +301,7 @@ static void test_drone_and_spawn_cycle(void)
     FCK_EQ(mirror.value8E, 9, "mode four still refreshes fallback halfword");
     FCK_EQ(owner.animB8, &anim, "null branch does not clear animation pointer");
 
-    /* @leaf 8003C500 source src/game/8003C500.c: walk next columns in one row and mark the successor even on the stopping record */
+    /* @leaf 8003C500 source src/game/boot-frontend/gMarkSpawnCycleFlags.c: walk next columns in one row and mark the successor even on the stopping record */
     LK_FUNC("func_8003C500");
     lk_fill(gSpawnTypeFlags, 0xA1, sizeof(gSpawnTypeFlags));
     cells[0].id = 9;
@@ -362,7 +362,7 @@ static void test_points_and_path(void)
     s32 records[] = { 0x74415048, 24, 0, 0, 0, 2,
                       0x61415048, 36, 0, 12, 18, 0x10000, -16, 30, 0x8000 };
 
-    /* @leaf 8003D0F0 source src/game/8003D0F0.c: origin fallback, deterministic random point, attachment slot and direct frame position */
+    /* @leaf 8003D0F0 source src/game/renderer-scene/gResolveModelEffectPoint.c: origin fallback, deterministic random point, attachment slot and direct frame position */
     LK_FUNC("func_8003D0F0");
     lk_fill(&instance, 0, sizeof(instance));
     lk_fill(&model, 0, sizeof(model));
@@ -410,7 +410,7 @@ static void test_points_and_path(void)
     FCK_EQ(out.point.z, 144, "attachment slot zero z via real helper");
     FCK_EQ(out.guard, 0x12345678, "only three destination words written");
 
-    /* @leaf 80051580 source src/game/80051580.c: one-based bounded path index, Q16 scaling and zeroed failure output */
+    /* @leaf 80051580 source src/game/memory-resources/gGetLoopingPathSegmentDelta.c: one-based bounded path index, Q16 scaling and zeroed failure output */
     LK_FUNC("func_80051580");
     path.unk00 = (s32)records;
     path.unk20 = sizeof(records);
@@ -451,7 +451,7 @@ static void test_entity_messages(void)
     struct CommandTarget targets[4];
     int i;
 
-    /* @leaf 8004DD68 source src/game/8004DD68.c: route to live group members, retrying through the real pending queue */
+    /* @leaf 8004DD68 source src/game/boot-frontend/gSendCommandByGroup.c: route to live group members, retrying through the real pending queue */
     LK_FUNC("func_8004DD68");
     lk_fill(targets, 0, sizeof(targets));
     lk_fill(gPendingMessages, 0xA5, sizeof(gPendingMessages));
@@ -479,7 +479,7 @@ static void test_entity_messages(void)
     FCK_EQ(gPendingMessages[0].timer, 600, "retry timer initialized");
     FCK_CHECK(lk_all(&gPendingMessages[1], 0, sizeof(gPendingMessages[1]), 0xA5), "only retry slot zero populated");
 
-    /* @leaf 8004DB74 source src/game/8004DB74.c: sparse mask, exact expiration, retry on full target and stale ID removal */
+    /* @leaf 8004DB74 source src/game/gameplay-ai/gStepPendingMessages.c: sparse mask, exact expiration, retry on full target and stale ID removal */
     LK_FUNC("func_8004DB74");
     lk_fill(gPendingMessages, 0xA5, sizeof(gPendingMessages));
     gPendingMessageMask = 0;
@@ -551,7 +551,7 @@ static void test_player_queue_and_gauge(void)
     } fixture;
     int i;
 
-    /* @leaf 800585B8 source src/game/800585B8.c: four player commands modify different fields and compact the queue */
+    /* @leaf 800585B8 source src/game/gameplay-ai/gDispatchQueuedPlayerCommands.c: four player commands modify different fields and compact the queue */
     LK_FUNC("func_800585B8");
     lk_fill(&player, 0, sizeof(player));
     lk_fill(&sub, 0xA5, sizeof(sub));
@@ -594,7 +594,7 @@ static void test_player_queue_and_gauge(void)
     FCK_EQ(player.unk14[0], 0x5F, "byte after the fourth player slot is not consumed");
     FCK_EQ(player.commands[3].op, 0x73, "full foreign player queue stays intact");
 
-    /* @leaf 8005A190 source src/game/8005A190.c: limit and zero thresholds drive state and real sound helper only on the two falling edges */
+    /* @leaf 8005A190 source src/game/gpu-2d-hud/gSetEntityGaugeValue.c: limit and zero thresholds drive state and real sound helper only on the two falling edges */
     LK_FUNC("func_8005A190");
     lk_fill(&fixture, 0, sizeof(fixture));
     fixture.sound.side = 1;
@@ -646,7 +646,7 @@ static void test_tile_height(void)
             gTileShapeTable[index] = i * 8 + 3;
     }
 
-    /* @leaf 80067480 source src/game/80067480.c: four triangular clipping modes and bilerp at the four-corner threshold */
+    /* @leaf 80067480 source src/game/gameplay-ai/gSampleTileHeight.c: four triangular clipping modes and bilerp at the four-corner threshold */
     LK_FUNC("func_80067480");
     FCK_EQ(gSampleTileHeight(heights, 60, 32768, 32768, &out.height), 1, "index sixty uses four corners");
     FCK_EQ(out.height, 4096, "quad center averages signed corners");
@@ -694,7 +694,7 @@ static void test_tracer_packet(void)
     Prim packets[3];
     DVECTOR v0 = { 100, 25 }, v1 = { 31, 62 }, v2 = { 90, 105 }, v3 = { 19, 38 };
 
-    /* @leaf 8006F21C source src/game/8006F21C.c: packet coordinates, color words, signed tag and non-advancing end cursor */
+    /* @leaf 8006F21C source src/game/renderer-scene/gEmitTracerGouraudQuad.c: packet coordinates, color words, signed tag and non-advancing end cursor */
     LK_FUNC("func_8006F21C");
     lk_fill(packets, 0xA5, sizeof(packets));
     gPrimPoolNext = &packets[0];
@@ -750,7 +750,7 @@ static void test_motion(void)
     struct ByteChannels channels;
     union { struct Actor59 actor; struct ByteChannels channels; } objects[3];
 
-    /* @leaf 8006FB7C source src/game/8006FB7C.c: all six channels advance or clamp with optional speed reversal */
+    /* @leaf 8006FB7C source src/game/boot-frontend/gStepBoundedByteChannels.c: all six channels advance or clamp with optional speed reversal */
     LK_FUNC("func_8006FB7C");
     lk_fill(&channels, 0, sizeof(channels));
     channels.bounds[0] = 5;
@@ -802,7 +802,7 @@ static void test_motion(void)
     gStepBoundedByteChannels(&channels, 1);
     FCK_EQ(channels.value2[0], 32, "fraction below one truncates toward zero");
 
-    /* @leaf 80070048 source src/game/80070048.c: linked integration skips flag eight and steps channels on moving nodes */
+    /* @leaf 80070048 source src/game/gameplay-ai/gIntegrateActor59List.c: linked integration skips flag eight and steps channels on moving nodes */
     LK_FUNC("func_80070048");
     lk_fill(objects, 0, sizeof(objects));
     objects[0].actor.next = &objects[1].actor;

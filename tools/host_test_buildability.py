@@ -67,6 +67,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import host_coverage as hc  # noqa: E402
 import host_test_candidates as cand  # noqa: E402
+import unit_paths  # noqa: E402
 
 REPO = hc.REPO
 GCC = hc.GCC
@@ -110,7 +111,7 @@ def compile_unit_raw(srcpath, outbase, env, label=""):
     mas = Path(str(outbase) + ".mas.s")
     obj = Path(str(outbase) + ".o")
     r = run_retry(
-        [str(GCC), f"-B{TOOLCHAIN / 'gcc-2.7.2-cdk'}/", f"-I{REPO / 'include'}",
+        [str(GCC), f"-B{TOOLCHAIN / 'gcc-2.7.2-cdk'}/", *unit_paths.include_flags(REPO),
          "-O1", "-G0", "-S", str(srcpath), "-o", str(raw)],
         env, capture_output=True, text=True)
     if r.returncode != 0:
@@ -133,9 +134,9 @@ def compile_unit_raw(srcpath, outbase, env, label=""):
 
 def compile_unit(unit, outdir, env):
     """Compile one unit of src/game with the harness flags. (obj, error)."""
-    src = SRC / f"{unit}.c"
-    if not src.exists():
-        return None, f"missing source src/game/{unit}.c"
+    src = unit_paths.resolve_unit_path(unit, repo=REPO)
+    if src is None or not src.exists():
+        return None, f"missing source for {unit}"
     return compile_unit_raw(src, outdir / unit, env)
 
 

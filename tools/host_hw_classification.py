@@ -47,6 +47,7 @@ import host_coverage as hc  # noqa: E402
 import host_test_buildability as htb  # noqa: E402
 import host_test_candidates as cand  # noqa: E402
 from host_test_evidence import classify_graph  # noqa: E402
+import unit_paths  # noqa: E402
 
 SRC = REPO / "src" / "game"
 DEFAULT_OBJ_DIR = REPO / "build" / "host-hw-classification-objs"
@@ -85,7 +86,7 @@ def load_static_inputs(repo=REPO):
         else []
     )
     byaddr = {f["addr"]: f for f in analysis["functions"]}
-    src_units = {int(p.stem, 16): p for p in (repo / "src" / "game").glob("*.c")}
+    src_units = unit_paths.all_unit_paths(repo)
     return analysis, byaddr, edges_raw, indirect_raw, src_units
 
 

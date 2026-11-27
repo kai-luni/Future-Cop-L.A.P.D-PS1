@@ -118,7 +118,7 @@ class VerifierStatusTests(unittest.TestCase):
             "compiler": "gcc-2.7.2-cdk",
             "compiler_flags": [],
             "units": [{"name": "probe", "address": hex(matching.LOAD_ADDRESS),
-                       "size": 8, "source": "src/game/80010704.c", "symbols": {}}],
+                       "size": 8, "source": "src/game/gte/gGteProjectPoint.c", "symbols": {}}],
         }))
         self.report = self.directory / "matching_report.json"
         self.original_compiler = matching.compile_unit
@@ -195,7 +195,7 @@ class HeaderFingerprintTests(unittest.TestCase):
     """Point 2: a changed header has to invalidate an existing acceptance."""
 
     def test_headers_of_an_accepted_source_are_recorded(self) -> None:
-        headers = worker.header_fingerprint(ROOT / "src/game/8002A58C.c")
+        headers = worker.header_fingerprint(ROOT / "src/game/platform/gIsVagmAudioStreamActive.c")
         self.assertIn("include/game/types.h", headers)
         self.assertRegex(headers["include/game/types.h"], r"^[0-9a-f]{64}$")
 
@@ -220,7 +220,7 @@ class PromotionTests(unittest.TestCase):
     def setUp(self) -> None:
         self.directory = Path(tempfile.mkdtemp(prefix="hardening-promote-"))
         self.addCleanup(shutil.rmtree, self.directory, True)
-        self.source_text = (ROOT / "src/game/8002A58C.c").read_text()
+        self.source_text = (ROOT / "src/game/platform/gIsVagmAudioStreamActive.c").read_text()
         (self.directory / "config/us").mkdir(parents=True)
         self.manifest = self.directory / "config/us/matching_units.json"
         config = json.loads(worker.MATCHING_MANIFEST.read_text())
@@ -282,7 +282,7 @@ class PromotionTests(unittest.TestCase):
         self.assertEqual(code, 1, output)
         self.assertIn("not marked matched", output)
         self.assertEqual(self.manifest.read_text(), before)
-        self.assertFalse((self.directory / "src/game/8002A58C.c").is_file())
+        self.assertFalse((self.directory / "src/game/platform/gIsVagmAudioStreamActive.c").is_file())
 
     def test_wrong_source_hash_is_refused(self) -> None:
         self.candidate(source_sha256="deliberately-wrong-hash")
@@ -355,7 +355,8 @@ class PromotionTests(unittest.TestCase):
         self.assertEqual(evidence["fingerprint"]["source_sha256"],
                          json.loads((self.output / "inbox" / UNIT / "unit.json")
                                     .read_text())["source_sha256"])
-        self.assertTrue((self.directory / "src/game/8002A58C.c").is_file())
+        self.assertTrue((self.directory / "src/game/platform/gIsVagmAudioStreamActive.c").is_file())
+        self.assertEqual(units[0]["source"], "src/game/platform/gIsVagmAudioStreamActive.c")
 
     def test_evidence_is_reused_only_for_the_same_fingerprint(self) -> None:
         self.candidate()
@@ -384,7 +385,7 @@ class MatrixIdentityTests(unittest.TestCase):
         self.matrix = matrix
         target = matrix.TARGETS[UNIT]
         self.candidate = {"name": UNIT, "ratio": 1.0, "words": "3/3",
-                          "source": ROOT / "src/game/8002A58C.c",
+                          "source": ROOT / "src/game/platform/gIsVagmAudioStreamActive.c",
                           "symbols": {"D_8009F6DC": "0x8009F6DC"},
                           "extras": {"compiler_flags_extra": ["-O2"],
                                      "maspsx_flags_extra": ["--dont-expand-li"]}}

@@ -357,7 +357,7 @@ static void test_80021554(void)
     s32 args[4] = {0, 0, 0, 0};
     s32 r, i, ok;
 
-    /* @leaf 80021554 source src/game/80021554.c: keys 4/5/8/9 (bank count, channel count, bank slot buffer, channel table) looked up in order; defaults 1 bank / 24 channels; banks*4 and channels*28 bytes cleared; each 28-byte channel record gets its index at +0xC; returns 0 */
+    /* @leaf 80021554 source src/game/boot-frontend/gInitSoundStorage.c: keys 4/5/8/9 (bank count, channel count, bank slot buffer, channel table) looked up in order; defaults 1 bank / 24 channels; banks*4 and channels*28 bytes cleared; each 28-byte channel record gets its index at +0xC; returns 0 */
     LK_FUNC("func_80021554");
 
     /* all keys given */
@@ -464,7 +464,7 @@ static void test_8002DFC4(void)
     s32 r;
     struct FckCall c;
 
-    /* @leaf 8002DFC4 source src/game/8002DFC4.c: surface selector 0->-1, 1->-2, n->n-2; y = surface + (unk36 << 4); speed = (unk40 << 4) / 300 forced >= 1 when positive; rates (v << 12) / 218 + 1; offset (x,y,z) = (3C,3E,3A) << 4; flag 8 starts at the far end with the negated offset; flag 2 -> obj flag 0x80; flag 0x40 moves unk21 to unk113 */
+    /* @leaf 8002DFC4 source src/game/gameplay-ai/gSetupType27Entity.c: surface selector 0->-1, 1->-2, n->n-2; y = surface + (unk36 << 4); speed = (unk40 << 4) / 300 forced >= 1 when positive; rates (v << 12) / 218 + 1; offset (x,y,z) = (3C,3E,3A) << 4; flag 8 starts at the far end with the negated offset; flag 2 -> obj flag 0x80; flag 0x40 moves unk21 to unk113 */
     LK_FUNC("func_8002DFC4");
 
     e27_setup();
@@ -587,7 +587,7 @@ static void test_80040734(void)
     V3 pos;
     u8 r;
 
-    /* @leaf 80040734 source src/game/80040734.c: light request footprint 0x50 below size 0x28 else 2 * size, kind | 0x40, height = y >> 4, angle/scale/colour from the object, slot -1; null light sets bit 0 of +0x0F and returns 0; first spawn records the duration in +0x0C/+0x16; the light gets the object colour */
+    /* @leaf 80040734 source src/game/renderer-scene/gSpawnLightForEffect.c: light request footprint 0x50 below size 0x28 else 2 * size, kind | 0x40, height = y >> 4, angle/scale/colour from the object, slot -1; null light sets bit 0 of +0x0F and returns 0; first spawn records the duration in +0x0C/+0x16; the light gets the object colour */
     LK_FUNC("func_80040734");
 
     lk_fill(&o, 0, sizeof(o));
@@ -670,7 +670,7 @@ static void test_8004F188(void)
     PmScript s;
     u8 entries[12 * 4];
 
-    /* @leaf 8004F188 source src/game/8004F188.c: ops 1-7/10-15 set the motion mode (op - 1) into flag bits 24..27 and the parameter into +0x42; op 19 pauses (arg 0: flag 0x40, script +0x84 = 0) or resumes (copies +0x30 to +0x32); op 21/20 set/clear bit 1 of 12-byte entry arg at +4; op 22 speed = (arg * 41 * 256 / 300) >> 4; handled ops are removed, unknown ops stay; op 0 ends the queue */
+    /* @leaf 8004F188 source src/game/gameplay-ai/gProcessPathMoverCommands.c: ops 1-7/10-15 set the motion mode (op - 1) into flag bits 24..27 and the parameter into +0x42; op 19 pauses (arg 0: flag 0x40, script +0x84 = 0) or resumes (copies +0x30 to +0x32); op 21/20 set/clear bit 1 of 12-byte entry arg at +4; op 22 speed = (arg * 41 * 256 / 300) >> 4; handled ops are removed, unknown ops stay; op 0 ends the queue */
     LK_FUNC("func_8004F188");
 
     lk_fill(&o, 0, sizeof(o));
@@ -748,7 +748,7 @@ static void test_8005D690(void)
     s16 data[0x60];
     s32 r;
 
-    /* @leaf 8005D690 source src/game/8005D690.c: finds the owner's block among the four dome slots or allocates one (alloc failure -> 0); a fresh block takes low/high/other from params with high < low replaced by low * 8 / 5; non-player kinds re-arm for 120 ticks and set bit 0; the player toggles bit 0 when the timer expired, re-arms 60 ticks and, while bit 0 is set, copies value/range from extra and shows/hides the effect object by the ammo word at data + 0x8A + 2 * index (returns 1) */
+    /* @leaf 8005D690 source src/game/gameplay-ai/gWeaponEffectUpdate.c: finds the owner's block among the four dome slots or allocates one (alloc failure -> 0); a fresh block takes low/high/other from params with high < low replaced by low * 8 / 5; non-player kinds re-arm for 120 ticks and set bit 0; the player toggles bit 0 when the timer expired, re-arms 60 ticks and, while bit 0 is set, copies value/range from extra and shows/hides the effect object by the ammo word at data + 0x8A + 2 * index (returns 1) */
     LK_FUNC("func_8005D690");
 
     lk_fill(&owner, 0, sizeof(owner));
@@ -1220,7 +1220,7 @@ static void test_8006C84C(void)
     DmMesh *m;
     struct FckCall c;
 
-    /* @leaf 8006C84C source src/game/8006C84C.c: step = 0x200 / (0x200 / n) for n in 1..0x200 else 0x200; count = 0x200 / step, rows = count + 1, width = 2 * rows - 2, vertices = rows * width + 1 (8 bytes each), faces = count * (2 * rows - 3) + rows - 1 (5 bytes each); flag bit 0 halves the width; any failed allocation frees what was allocated and returns 0 */
+    /* @leaf 8006C84C source src/game/gpu-2d-hud/gBuildDomePatchMesh.c: step = 0x200 / (0x200 / n) for n in 1..0x200 else 0x200; count = 0x200 / step, rows = count + 1, width = 2 * rows - 2, vertices = rows * width + 1 (8 bytes each), faces = count * (2 * rows - 3) + rows - 1 (5 bytes each); flag bit 0 halves the width; any failed allocation frees what was allocated and returns 0 */
     LK_FUNC("func_8006C84C");
 
     dm_reset(-1);
@@ -1454,7 +1454,7 @@ static void test_80083834(void)
     RnState st;
     s32 pool;
 
-    /* @leaf 80083834 source src/game/80083834.c: no grid -> nothing; cells walked from the last to the first, a cell newer than arg0 is skipped; in each cell's list, nodes whose time <= frame time are unlinked and returned to the pool (head or interior), playing nodes with a channel index mark the channel in the mission mask and stop sound | 0x40000000 on entries[index].byte6; a negative time or flag 0x80 ends the cell; arg1 != 0 returns after the first interior removal */
+    /* @leaf 80083834 source src/game/platform/gReclaimStaleSceneNodes.c: no grid -> nothing; cells walked from the last to the first, a cell newer than arg0 is skipped; in each cell's list, nodes whose time <= frame time are unlinked and returned to the pool (head or interior), playing nodes with a channel index mark the channel in the mission mask and stop sound | 0x40000000 on entries[index].byte6; a negative time or flag 0x80 ends the cell; arg1 != 0 returns after the first interior removal */
     LK_FUNC("func_80083834");
 
     lk_fill(&st, 0, sizeof(st));
@@ -1653,7 +1653,7 @@ static void test_80094F4C(void)
 {
     s32 r;
 
-    /* @leaf 80094F4C spec psx-spx GPU/DMA + Psy-Q libgpu ResetGraph(mode): DMA2 CHCR 0x401 = from RAM, linked-list sync mode 2; DPCR bit 11 (0x800) = DMA2 master enable; GP1(00h) = reset GPU; GP1(01h) = reset command buffer; source (src/game/80094F4C.c): mode & 7 dispatch (0 and 5 run full GPU reset + DMA2/DPCR setup + 0x100/0x1800 memset, with only (mode & 7) == 0 calling probe and returning its GPU type; 1 and 3 configure DMA2/DPCR and end with GP1(01h) — the RAM-backed port only observes the final GP1(01h) store, not the overwritten GP1(02h) store; modes 2/4/6/7 touch no hardware), IRQ mask save/restore and job queue clear */
+    /* @leaf 80094F4C spec psx-spx GPU/DMA + Psy-Q libgpu ResetGraph(mode): DMA2 CHCR 0x401 = from RAM, linked-list sync mode 2; DPCR bit 11 (0x800) = DMA2 master enable; GP1(00h) = reset GPU; GP1(01h) = reset command buffer; source (src/game/platform/gResetGpuHardware.c): mode & 7 dispatch (0 and 5 run full GPU reset + DMA2/DPCR setup + 0x100/0x1800 memset, with only (mode & 7) == 0 calling probe and returning its GPU type; 1 and 3 configure DMA2/DPCR and end with GP1(01h) — the RAM-backed port only observes the final GP1(01h) store, not the overwritten GP1(02h) store; modes 2/4/6/7 touch no hardware), IRQ mask save/restore and job queue clear */
     LK_FUNC("func_80094F4C");
 
     gr_reset();
