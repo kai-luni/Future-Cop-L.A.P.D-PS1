@@ -23,7 +23,8 @@ void gDrawMinimapMarkers(u8 *obj, s32 *pos, s32 width, s32 height) __asm__("func
  * Returns when obj is null or !(flags & 0x492492). scale = D_8009FAA4 * 2,
  * offset = scale * 103 added to width and height. Per slot (3-bit stride,
  * active bit 1): x = (coord << 9) - pos[0]; drawn only when
- * x + offset >= 0 && x < width, with v.x = (x * 5) >> 12; y likewise.
+ * x + offset >= 0 && x < width, with v.x = ((u32)(x * 5)) >> 12 (logical
+ * right shift); y likewise.
  * v.z = 0x1000. func_8001484C(&v, D_800A6F60[color & 31] << 8, 0, 32,
  * scale, 0xE00, 0) draws the disc.
  *

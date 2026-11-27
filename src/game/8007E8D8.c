@@ -4,8 +4,11 @@
 /**
  *  @brief Packs thirteen input values into a ten-byte output record.
  *
- *  The record combines input bits with low bits of two accumulated sums.
- *  A special case adjusts f0 and g0 when f0 through i0 have low bytes equal to 10.
+ *  The record combines input bits with low bits of two accumulated sums
+ *  computed from the unadjusted inputs. A special case then adjusts f0 and g0
+ *  when f0 through i0 all have low byte 10: if (l0 & 0xFF) >= 6, f0 gains 5
+ *  and g0 gains (l0 & 0xFF) - 5; otherwise f0 gains (l0 & 0xFF) and g0 is
+ *  unchanged.
  *  @param out0 Destination for ten bytes.
  *  @param a First packed input.
  *  @param b Second packed input.

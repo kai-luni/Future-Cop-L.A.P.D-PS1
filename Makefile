@@ -533,3 +533,10 @@ host-leaf-formats:
 
 host-leaf-formats-graphics:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_formats_graphics
+
+# Hardware-free tranche 1 leaf suite (25 unchanged original functions); missing tools fail.
+.PHONY: host-leaf-hw-free-a
+check: host-leaf-hw-free-a
+
+host-leaf-hw-free-a:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_hw_free_a

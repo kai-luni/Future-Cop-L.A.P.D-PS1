@@ -23,13 +23,16 @@ s32 gScaleMovieAudioClock(u32 arg0) __asm__("func_800867B0");
  *  @par Globals
  *  gMovieAudioState supplies the mode and the value tested against 0x800.
  *  @par Control flow
- *  Mode 1 selects 0x40 and 0x3F; mode 0 selects a pair based on the value.
+ *  Mode 1 selects 0x40 / 0x3F; mode 0 selects 0x14D0 / 0x1117 when unk7B7C ==
+ *  0x800 and 0x6D440 / 0x82BA3 otherwise. Any other mode returns 0 without
+ *  calling the divider.
  *  @par Calls
- *  func_800966B0 receives the 64-bit product and selected divisor words.
+ *  func_800966B0 receives the 64-bit unsigned product and selected divisor words
+ *  (with high divisor word 0).
  *  @par Side effects
  *  No direct state changes; effects of the helper are not shown here.
  *  @par Callers
- *  Unknown: no direct callers are listed.
+ *  Confirmed: func_80086AC0.
  */
 s32 gScaleMovieAudioClock(u32 arg0)
 {

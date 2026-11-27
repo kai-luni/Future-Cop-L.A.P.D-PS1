@@ -16,31 +16,18 @@ void gSetEntityLargeRumble(struct OuterState *state) __asm__("func_8001EA20");
 
 
 /**
- * @brief Forwards the player index stored in a state block to the input
- *        subsystem selector.
+ * @brief Forwards the controller port index stored in an entity state block
+ *        to the large vibration motor handler.
  *
- * @param state Outer state; +0xAC the inner block whose +0xC1 byte is the
- *        player index. Null selects index 0.
+ * @param state Outer state; +0xAC points to the inner block whose signed +0xC1
+ *        byte supplies the port index. Null selects index 0.
  * @return Nothing.
  *
  * @par Confirmed
- * index = state ? state->inner->index : 0; func_8001EA5C(index) runs.
- *
- * @par Likely role
- * The camera rig's player-context switch (func_800569EC): before polling
- * input for the followed unit, the input subsystem is pointed at that
- * unit's player slot.
- *
- * @par Unknown
- * What func_8001EA5C switches beyond the index.
+ * Computes `index = state != 0 ? state->inner->index : 0` and invokes
+ * `gSetLargeMotor(index)` (`func_8001EA5C`). Touches no globals directly.
  *
  * @par Callers
- * func_800569EC.
- *
- * @par Role and path
- * Resolves a controller port index from state->inner->index (+0xAC -> +0xC1,
- * defaulting to 0 when state is null) and forwards to func_8001EA5C to set
- * the large vibration motor level. Touches no globals directly; called by
  * func_800569EC.
  */
 void gSetEntityLargeRumble(struct OuterState *state)

@@ -23,10 +23,10 @@ s32 gTestCameraSightLine(struct Vec3s32 *from, struct Vec3s32 *to) __asm__("func
  * @par Confirmed
  * The midpoint is computed; when from.y <= 0x7FFF the end point is bisected
  * toward the start until mid.y <= 0x8000 (keeps the ray below the ceiling
- * plane). func_800684AC(end, start, &hit, 0, flag) casts; on a hit
- * (result & 0x8000) a second cast start -> hit checks the near segment;
- * only when that also hits is the view reported blocked (0 returned for
- * the clear case of the second cast).
+ * plane). func_800684AC(end, start, &hit, 0, flag) casts; when bit 0x8000 is
+ * set in the result, a second cast start -> hit checks the near segment, and
+ * 0 is returned only when that second cast also has bit 0x8000 set (otherwise
+ * the raw raycast result is returned).
  *
  * @par Likely role
  * The obstruction test of the chase camera (func_80056870's preset search
@@ -43,7 +43,7 @@ s32 gTestCameraSightLine(struct Vec3s32 *from, struct Vec3s32 *to) __asm__("func
  * Line-of-sight test between the view target (from) and a candidate camera
  * eye (to) on top of the map raycast func_800684AC: when from.y <= 0x7FFF the
  * end point is bisected toward the start until the midpoint y is at most
- * 0x8000 (lines 58-66), then the segment end->start is cast and, if the
+ * 0x8000, then the segment end->start is cast and, if the
  * result has bit 0x8000, a second cast start->hit is made; 0 is returned only
  * when that second cast also has bit 0x8000, otherwise the raw raycast
  * result. Both callers treat 0 as an unobstructed view: gUpdateChaseCamera
