@@ -52,6 +52,8 @@ QEMU = os.environ.get(
 MARK_RE = re.compile(r"/\*\s*@leaf\s+([0-9A-Fa-f]{8})\s+(\w+)\s+(.*?)\s*\*/")
 LEAF_RE = re.compile(r"^LEAF (func_[0-9A-F]{8}) checks=(\d+) failures=(\d+)$", re.M)
 EVIDENCE = ("spec", "math", "libc", "semantic", "source")
+# Original dependencies may be linked without claiming new direct coverage.
+LINK_RE = re.compile(r"/\*\s*@link\s+([0-9A-Fa-f]{8})\s*\*/")
 # Opt-in shared mocks beyond bios_mock: `/* @mock sound_mock */` in a harness
 # links tests/host/mocks/sound_mock.c instead of the harness carrying a private
 # copy of a stand-in the library already provides.
@@ -168,6 +170,9 @@ def extra_mocks(suite):
 
 def gen_script(args):
     units = [m["unit"] for m in markers(args.suite)]
+    harness = (HOST / f"{args.suite}_harness.c").read_text()
+    units.extend(unit.upper() for unit in LINK_RE.findall(harness))
+    units = list(dict.fromkeys(units))
     mocks = extra_mocks(args.suite)
     path = HOST / f"{args.suite}_test.sh"
     path.write_text(SCRIPT.format(
