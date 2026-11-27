@@ -51,3 +51,22 @@ that every possible retail execution path is hardware-free.
 Rules: never compute an expectation by calling a re-implementation of the
 unit; never depend on the initial content of a `D_` slot; replace retail
 tables with synthetic fixtures whose expected output follows from the fixture.
+
+## Media and format suites
+
+Both suites use `source` evidence: literal expectations pin the behavior of
+the unchanged decompiled functions on synthetic inputs. The test scripts are
+generated with `tools/host_leaf_suite.py gen-script`. Both Make targets run
+from `make check`; neither silently skips missing tools.
+
+| Make target / harness | Original entry points and tested behavior |
+| --- | --- |
+| `host-leaf-formats` / `leaf_formats_harness.c` | `80090218` reads mock PVD/path sectors: three early failures, odd/even record lengths, name termination, empty table, exact sector end and 128-row cap. `80086FE4` pushes mono/stereo WVE samples into two RAM rings: short/long headers, contiguous and wrapped copies, exact tail and zero payload. `80020F34` builds the selected memory-card directory frame: fixed fields, empty/20-byte names, cleared padding, XOR checksum and neighboring canaries. |
+| `host-leaf-formats-graphics` / `leaf_formats_graphics_harness.c` | `8005A414` unpacks two Cpyr entries, crosses a strip row, sends the trailing atlas and delegates cleanup on an empty list, failed table allocation or descriptor-build failure. `8009446C` clamps signed dimensions, rejects empty/timed-out transfers, and writes the CPU remainder and DMA setup to RAM-backed registers. |
+
+The ISO sector and BIOS substitutes do not model a CD drive; the card test
+does not issue a write. The audio consumer is already at a known cursor (no
+asynchronous playback or busy-wait test). The Cpyr allocator, descriptor
+builder and cleanup are stand-ins, and the shared GPU mock records transfer
+arguments without writing VRAM. The upload test observes only final register
+values, not the GP0 write sequence, bus timing or DMA completion.

@@ -511,3 +511,13 @@ host-spawner-path:
 	else \
 	  echo "$@: qemu or C toolchain missing, skipped"; \
 	fi
+
+# Original media/format clients with synthetic data; missing tools fail.
+.PHONY: host-leaf-formats host-leaf-formats-graphics
+check: host-leaf-formats host-leaf-formats-graphics
+
+host-leaf-formats:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_formats
+
+host-leaf-formats-graphics:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_formats_graphics
