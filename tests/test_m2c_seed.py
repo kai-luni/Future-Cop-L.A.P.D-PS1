@@ -14,6 +14,7 @@ The seed stays an unverified hint: registering it must never touch
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -77,19 +78,27 @@ class SeedGenerationTests(unittest.TestCase):
             self.assertIn(TARGET, completed.stdout)
             self.assertIn("func_80045028", completed.stdout)
 
+            register_seed = ROOT / "build/us/decomp_context_addon/register_seed.py"
+            if not register_seed.exists():
+                self.skipTest("context add-on is not unpacked under build/us")
+
             seeds = work / "seeds"
-            # Seed registration checks containment under the checkout that owns build/.
-            seed_repo = (ROOT / "build").resolve().parent
+            seed_repo = work / "repo"
+            # Resolve build to the seed output tree, but keep the executable inside seed_repo.
+            executable = seed_repo / EXECUTABLE.relative_to(ROOT)
+            executable.parent.mkdir(parents=True)
+            shutil.copyfile(EXECUTABLE.resolve(), executable)
+            (seed_repo / "build").symlink_to(ROOT / "build", target_is_directory=True)
+
             registered = subprocess.run(
-                [sys.executable, str(ROOT / "build/us/decomp_context_addon/register_seed.py"),
+                [sys.executable, str(register_seed),
                  "--repo", str(seed_repo), "--name", TARGET, "--address", "0x80029BC0",
                  "--size", "0x24", "--source", str(seed), "--seed-dir", str(seeds),
                  "--producer", "m2c pinned; mipsel-gcc-c; test context"],
                 cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                 timeout=120,
             )
-            if registered.returncode != 0:
-                self.skipTest("context add-on is not unpacked under build/us")
+            self.assertEqual(registered.returncode, 0, registered.stderr)
             record = json.loads((seeds / f"{TARGET}.json").read_text())
             self.assertEqual(record["name"], TARGET)
             self.assertFalse(record["verified"])
