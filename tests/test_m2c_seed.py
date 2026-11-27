@@ -78,9 +78,8 @@ class SeedGenerationTests(unittest.TestCase):
             self.assertIn("func_80045028", completed.stdout)
 
             seeds = work / "seeds"
-            # When baseroms/ and build/ are worktree symlinks pointing into the main
-            # checkout, register_seed.py's containment check needs the resolved repo root.
-            seed_repo = EXECUTABLE.resolve().parents[2]
+            # Seed registration checks containment under the checkout that owns build/.
+            seed_repo = (ROOT / "build").resolve().parent
             registered = subprocess.run(
                 [sys.executable, str(ROOT / "build/us/decomp_context_addon/register_seed.py"),
                  "--repo", str(seed_repo), "--name", TARGET, "--address", "0x80029BC0",
