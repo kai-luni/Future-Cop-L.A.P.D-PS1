@@ -29,9 +29,9 @@ struct Unk73590 *gAllocAttachedEffectNode(struct Unk73590Owner *owner, void *coo
  * @brief Allocates a 0x20-byte effect node bound to an owner and a coordinate
  *        source.
  *
- * @param owner Optional owner block; +8 its id, +0x28 a coordinate pointer.
- * @param coord Coordinate source; when 0 and an owner exists, the owner's
- *        +0x28 pointer is used.
+ * @param owner Optional owner block; +8 its id, +0x28 an embedded coordinate block.
+ * @param coord Coordinate source; when 0 and an owner exists, the address of
+ *        owner->coord (+0x28) is used.
  * @param kind Effect kind byte.
  * @param arg3, arg4, arg5 Three s16 parameters stored at +0x1A/+0x1C/+0x18.
  * @return The new node, or 0 when the pool is exhausted.

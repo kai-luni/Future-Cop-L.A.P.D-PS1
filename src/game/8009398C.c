@@ -7,7 +7,7 @@ void gBuildDrawAreaPacket(u8 *obj, u8 *rect) __asm__("func_8009398C");
 
 
 /**
- * @brief Builds a "drawing area" primitive (GP0 0xE4) for a rectangle.
+ * @brief Builds a drawing-area packet (GP0 0xE3 and 0xE4) for a rectangle.
  *
  * @param obj Target packet; obj[3] receives the command length 2.
  * @param rect Source rectangle: x, y, w, h as four half-words.
@@ -15,9 +15,9 @@ void gBuildDrawAreaPacket(u8 *obj, u8 *rect) __asm__("func_8009398C");
  * @return Nothing.
  *
  * @par Confirmed mechanics
- * obj[4] = func_80093F78(x, y) (the top-left coordinate word) and
- * obj[8] = func_80094010(x + w - 1, y + h - 1) (the bottom-right one). Both
- * helpers build the packed 16-bit coordinate words.
+ * obj[4] = func_80093F78(x, y) (GP0 0xE3 top-left word) and
+ * obj[8] = func_80094010(x + w - 1, y + h - 1) (GP0 0xE4 bottom-right word).
+ * Both helpers clamp to draw bounds and pack 10-bit X/Y fields.
  *
  * @par Callers
  * func_8001B4A8, once per frame when D_8009FA0C >= 2 or a full-screen frame is

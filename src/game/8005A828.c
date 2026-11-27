@@ -22,8 +22,9 @@ void gEmitRadarTriangle(s32 origin, u32 angle, s32 code) __asm__("func_8005A828"
  * @param origin X origin of the shape in 16.16 fixed point (0x780000 = 120 px
  *        for the one radar side, 0x280000 = 40 px for the other).
  * @param angle Rotation angle in the 4096-step convention.
- * @param code Colour word for the primitive; the base opcode 0x20 is OR-ed in.
- * @return Nothing; one 0x1C-byte packet from D_8009FA90, guarded by D_8009F9C0.
+ * @param code Colour word for the primitive; 0x20000000 (opcode 0x20) is OR-ed in.
+ * @return Nothing; writes one 0x1C-byte packet at D_8009FA90 and advances D_8009FA90
+ *         only while below D_8009F9C0.
  *
  * @par Confirmed
  * func_8001846C supplies sine and cosine; a single loop runs ctr = 0..2 and

@@ -39,7 +39,7 @@ void gAllocDecodeBuffers(void) __asm__("func_800860CC");
  * func_80017EBC - tagged allocation, tag 2, four times.
  *
  * @par Side effects
- * Allocates 0x7400 bytes in total and publishes them through the four globals.
+ * Allocates 0x8C00 bytes in total and publishes them through the four globals.
  *
  * @par Callers
  * Confirmed: func_80024A24 (mission boot).

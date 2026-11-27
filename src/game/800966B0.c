@@ -26,7 +26,7 @@ u64 gDivSigned64(u32 a, u32 b, u32 c, u32 d) __asm__("func_800966B0");
  *  @par Side effects
  *  No direct state changes; effects of the helper are not shown here.
  *  @par Callers
- *  Unknown: no direct callers are listed.
+ *  Confirmed: func_800867B0, func_80086F58.
  */
 u64 gDivSigned64(u32 a, u32 b, u32 c, u32 d)
 {

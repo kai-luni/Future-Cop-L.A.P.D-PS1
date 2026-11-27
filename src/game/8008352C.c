@@ -39,13 +39,13 @@ void gUpdateSoundSlotTimers(s32 elapsed) __asm__("func_8008352C");
  *  If the mask is not full, slots are visited until all remaining mask bits
  *  are accounted for; unmasked slots are checked when their timer is negative.
  *  @par Calls
- *  func_80045768 checks the actor and sound index; func_800457B8 is called
- *  when that check returns zero.
+ *  func_80045768 checks the actor and sound index (its return value is
+ *  truncated to u8); func_800457B8 is called when that check returns zero.
  *  @par Side effects
  *  Updates timers and the mask; a failed check sets the actor's unk4B to -1.
  *  A successful check resets the slot timer to 300.
  *  @par Callers
- *  Unknown: no direct callers are listed.
+ *  Confirmed: func_80028618.
  */
 void gUpdateSoundSlotTimers(s32 elapsed)
 {

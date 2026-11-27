@@ -23,7 +23,8 @@ unsigned int gSetDmaChannelInterruptCallback(int arg0, unsigned int arg1) __asm_
  *  @par Side effects
  *  On change, writes the table entry and control word, discarding the word's top byte.
  *  @par Callers
- *  Unknown: no direct callers are listed.
+ *  Registered by func_80091CC0 and dispatched indirectly via D_8009DD10 (e.g.
+ *  from func_800914E0).
  */
 unsigned int gSetDmaChannelInterruptCallback(int arg0, unsigned int arg1)
 {
