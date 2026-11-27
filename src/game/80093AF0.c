@@ -12,38 +12,38 @@ void gBuildSpritePacket(u8 *arg0, u8 *arg1) __asm__("func_80093AF0");
 
 
 /**
- * @brief Builds a GPU sprite packet from a rectangle descriptor: mode,
- *        corners, UV, tpage/clut words and an optional flat-colour rect.
+ * @brief Builds a GPU drawing-environment packet (DR_ENV) from a descriptor:
+ *        clip area, draw offset, draw mode, tex window, mask, and optional clear.
  *
- * @param obj Output packet buffer; byte 3 receives the word count - 1.
- * @param rect Descriptor: +0/+2 x/y, +4/+6 w/h, +8/+0xA UV, +0xC clut,
- *        +0x14 tpage, +0x16/+0x17 dtd/dfe, +0x18 flat-rect flag,
- *        +0x19..+0x1B RGB.
+ * @param arg0 Output packet buffer; byte 3 receives the command word count (6 or 9).
+ * @param arg1 Descriptor: +0/+2/+4/+6 clip x/y/w/h, +8/+0xA draw offset x/y,
+ *        +0xC..+0x13 texture window Rect, +0x14 tpage, +0x16/+0x17 dtd/dfe,
+ *        +0x18 clear-background flag, +0x19..+0x1B RGB.
  * @return Nothing.
  *
  * @par Confirmed
- * Words: +4 = func_80093F78(x, y), +8 = func_80094010(x+w-1, y+h-1),
- * +0xC = func_800940A8(u, v), +0x10 = func_80093F58(dfe, dtd, tpage),
- * +0x14 = func_800940C4(clut), +0x18 = 0xE6000000 (draw-mode reset).
- * With the flat flag: three more words 0x60000000 | RGB, the position
- * minus UV and the size clamped to D_8009DDF4-1/D_8009DDF6-1 (the screen
- * bounds); the base count is 7.
+ * Words: +4 = func_80093F78(x, y) (GP0 0xE3), +8 = func_80094010(x+w-1, y+h-1)
+ * (GP0 0xE4), +0xC = func_800940A8(ofsX, ofsY) (GP0 0xE5), +0x10 =
+ * func_80093F58(dfe, dtd, tpage) (GP0 0xE1), +0x14 = func_800940C4(rect+0xC)
+ * (GP0 0xE2), +0x18 = 0xE6000000 (GP0 0xE6 mask-bit). When rect[0x18] != 0,
+ * appends three words for a GP0 0x60 flat-colour rect: 0x60000000 | RGB,
+ * (x-ofsX, y-ofsY), and (w, h) clamped to [0, D_8009DDF4-1]/[0, D_8009DDF6-1].
+ * obj[3] = count - 1 (6 without clear rect, 9 with clear rect).
  *
  * @par Likely role
- * One of the packet builders of the 2D layer: the 0xE6 reset word and
- * the 0x60 flat-rect opcode are standard PSX GPU commands, the clamping
- * keeps off-screen sprites inside the draw area.
+ * Psy-Q SetDrawEnv packet builder: emits the standard GP0 E1..E6 state setup
+ * commands and an optional GP0 0x60 background clear rectangle.
  *
  * @par Callers
  * No direct callers in the call graph and no address reference in the
  * sources; dispatch unconfirmed (likely a packet-builder table).
  *
  * @par Environment path
- * Builds a 2D GPU sprite command packet from a rectangle descriptor.
- * Populates draw-area (func_80093F78, func_80094010), texcoord
+ * Builds a GPU drawing-environment (DR_ENV) command packet from a descriptor.
+ * Populates draw-area (func_80093F78, func_80094010), draw-offset
  * (func_800940A8), draw-mode (func_80093F58), texwindow (func_800940C4), and
- * 0xE6000000 commands, and when rect[0x18] is set appends a 0x60 primitive
- * clamped to D_8009DDF4/D_8009DDF6.
+ * 0xE6000000 mask commands, and when rect[0x18] is set appends a 0x60 clear
+ * rectangle clamped to D_8009DDF4/D_8009DDF6.
  */
 void gBuildSpritePacket(u8 *arg0, u8 *arg1)
 {

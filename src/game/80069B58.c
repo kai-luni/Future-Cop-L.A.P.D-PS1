@@ -31,7 +31,7 @@ void gInitScriptVmState(void) __asm__("func_80069B58");
  * @par Globals
  * D_8009FA94 (+0x18..+0x24 written), D_8009F9F8 (32-word table written), D_8009FAD4 (100-word bank zeroed), D_8009F9A4 (32-word bank set to -10), D_8009F840 (cleared to 0).
  * @par Control flow
- * Four unnested counted loops (4 unrolled assignments, 32 forward, 100 downward, 32 downward), then func_80069B1C and byte store.
+ * Four unrolled assignments and three unnested counted loops (32 forward, 100 downward, 32 downward), then func_80069B1C and byte store.
  * @par Calls
  * func_80019668 - supplies random numbers modulo 1000. func_80069B1C - stores D_8009FAA4/FAB4/FA70/FACC addresses into D_8009FA94->unkE4..unkF0.
  * @par Side effects
