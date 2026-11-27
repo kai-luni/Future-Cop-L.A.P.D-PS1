@@ -26,12 +26,18 @@ OUT = ROOT / 'docs' / 'FUNCTION_MAP.md'
 
 
 def load():
-    manifest = json.load(open(ROOT / 'config/us/matching_units.json'))
+    with open(ROOT / 'config/us/matching_units.json') as fh:
+        manifest = json.load(fh)
     man = {u['name']: u for u in manifest['units']}
     cats = {}
     cnames = {}
     for name, unit in sorted(man.items()):
-        path = ROOT / unit['source']
+        if not name.startswith('func_'):
+            continue
+        source = unit.get('source', '')
+        if not source.startswith('src/game/'):
+            continue
+        path = ROOT / source
         if not path.is_file():
             continue
         text = path.read_text(errors='ignore')
@@ -43,8 +49,9 @@ def load():
         alias = readable_name(text, name)
         if alias:
             cnames[name] = alias
-    edges = [e for e in json.load(open(ROOT / 'analysis/edges.json'))['edges']
-             if e.get('kind') == 'direct' and e.get('from') and e.get('to')]
+    with open(ROOT / 'analysis/edges.json') as fh:
+        edges = [e for e in json.load(fh)['edges']
+                 if e.get('kind') == 'direct' and e.get('from') and e.get('to')]
     return man, cats, cnames, edges
 
 
@@ -154,7 +161,7 @@ def render():
     total = len(cats)
     lines = [f'# Function map - documented functions ({total} units)\n',
              'Markdown map of every function whose source carries a `// Categories:` line: the '
-             'category is the first line of each `src/game/<group>/<name>.c`, sizes come from '
+             'category is the first line of each `src/game/<addr>.c`, sizes come from '
              '`config/us/matching_units.json`, edges from `analysis/edges.json`.\n',
              '**Reading the map.** Each node is a documented function; a renamed function shows its '
              'C name first and the retail address in parentheses. Edges are '
