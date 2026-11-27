@@ -74,7 +74,7 @@ def compile_unit(unit, outdir, env):
     obj = outdir / f"{unit}.o"
 
     step = [
-        [str(GCC), f"-B{TOOLCHAIN / 'gcc-2.7.2-cdk'}/", f"-I{REPO / 'include'}",
+        [str(GCC), f"-B{TOOLCHAIN / 'gcc-2.7.2-cdk'}/", *unit_paths.include_flags(REPO),
          "-O1", "-G0", "-g", "-S", str(src), "-o", str(raw)],
     ]
     for cmd in step:

@@ -233,6 +233,22 @@ def source_address(
     return _infer_address_from_file(target) if target.is_file() else None
 
 
+def include_dirs(repo: Path = ROOT) -> tuple[Path, ...]:
+    """Return include search dirs for compiling units at any depth under ``src/game/``.
+
+    ``src/game`` comes first so legacy ``#include "../../include/..."`` directives
+    in moved ``src/game/<group>/<name>.c`` files resolve against this checkout's
+    own ``include/`` directory rather than escaping into a parent directory.
+    """
+    repo = Path(repo)
+    return (repo / "src" / "game", repo / "include")
+
+
+def include_flags(repo: Path = ROOT) -> list[str]:
+    """Return ``-I<dir>`` compiler flags for :func:`include_dirs`."""
+    return [f"-I{path}" for path in include_dirs(repo)]
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)

@@ -13,7 +13,7 @@ export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIB
 
 MASPSX="$(echo "$T"/maspsx-*/maspsx.py)"
 compile() {
-    "$T/gcc-2.7.2-cdk/gcc" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"
+    "$T/gcc-2.7.2-cdk/gcc" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/src/game" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$2" "$OUT/tmp.mas.s"
 }

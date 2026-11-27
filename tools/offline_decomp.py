@@ -855,7 +855,7 @@ def header_fingerprint(source: Path) -> dict[str, str]:
             return
         for match in re.finditer(r'(?m)^\s*#\s*include\s+"([^"]+)"', text):
             include = match.group(1)
-            for base in (path.parent, ROOT / "include", ROOT):
+            for base in (path.parent, *unit_paths.include_dirs(ROOT), ROOT):
                 candidate = base / include
                 if not candidate.is_file():
                     continue

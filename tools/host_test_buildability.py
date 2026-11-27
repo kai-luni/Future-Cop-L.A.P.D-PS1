@@ -111,7 +111,7 @@ def compile_unit_raw(srcpath, outbase, env, label=""):
     mas = Path(str(outbase) + ".mas.s")
     obj = Path(str(outbase) + ".o")
     r = run_retry(
-        [str(GCC), f"-B{TOOLCHAIN / 'gcc-2.7.2-cdk'}/", f"-I{REPO / 'include'}",
+        [str(GCC), f"-B{TOOLCHAIN / 'gcc-2.7.2-cdk'}/", *unit_paths.include_flags(REPO),
          "-O1", "-G0", "-S", str(srcpath), "-o", str(raw)],
         env, capture_output=True, text=True)
     if r.returncode != 0:

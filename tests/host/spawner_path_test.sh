@@ -20,7 +20,7 @@ export PATH="$T/mipsel-binutils/root/usr/bin:$PATH"
 export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 compile_s() {
-    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"
+    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/src/game" -I"$DECOMP/include" -O1 -G0 -S "$1" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$2"
 }
 
@@ -32,7 +32,7 @@ for unit in 800616A0 8006125C 8006158C 800614BC; do
     OBJS="$OBJS $OUT/$unit.o"
 done
 python3 "$HERE/spawner_path_vectors.py" "$VECTORS" > "$OUT/spawner_path_vectors.h"
-"$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -I"$OUT" -O1 -G0 \
+"$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/src/game" -I"$DECOMP/include" -I"$OUT" -O1 -G0 \
     -DSPAWNER_VECTORS='gSpawnerVectors' -S "$HERE/spawner_path_harness.c" -o "$OUT/tmp.s"
 python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/harness.mas.s"
 mipsel-linux-gnu-as -o "$OUT/harness.o" "$OUT/harness.mas.s"
