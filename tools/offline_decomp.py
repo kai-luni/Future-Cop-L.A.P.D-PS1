@@ -515,7 +515,11 @@ class Runner:
                   symbols: dict[str, str], extras: dict[str, Any] | None = None
                   ) -> dict[str, Any]:
         """Single source of truth for the compiler invocation."""
-        relative = source_path.relative_to(ROOT)
+        try:
+            relative = source_path.relative_to(ROOT)
+        except ValueError:
+            build_root = (ROOT / "build").resolve()
+            relative = Path("build") / source_path.resolve().relative_to(build_root)
         unit = {
             "name": target.name,
             "address": target.address,
