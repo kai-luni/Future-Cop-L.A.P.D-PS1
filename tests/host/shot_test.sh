@@ -21,8 +21,8 @@ compile() { # compile <src.c> <obj>
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
-compile "$DECOMP/src/game/8005E47C.c" "$OUT/8005E47C.o"
-compile "$DECOMP/src/game/8001ACA4.c" "$OUT/8001ACA4.o"
+compile "$DECOMP/src/game/gameplay-ai/gSpawnDirectShot.c" "$OUT/8005E47C.o"
+compile "$DECOMP/src/game/utilities/gVectorAddScaled.c" "$OUT/8001ACA4.o"
 compile "$HERE/shot_harness.c" "$OUT/shot_harness.o"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s"
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/shot_harness" \

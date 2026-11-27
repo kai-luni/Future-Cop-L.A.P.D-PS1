@@ -16,10 +16,10 @@ The type-10 handler address is completed at `0x8002AED0` (`lui 0x8004` +
 both verified from the retail bytes of `SLUS_007.39`.
 
 The map-placed entity source itself is the `"Csac"` asset queue: the asset
-loader `func_80024EC8` (`src/game/80024EC8.c`) hands every `"Csac"`
-(0x43736163) request to `func_80060E74` (`src/game/80060E74.c`), which
+loader `func_80024EC8` (`src/game/memory-resources/gLoadQueuedAssets.c`) hands every `"Csac"`
+(0x43736163) request to `func_80060E74` (`src/game/memory-resources/gRegisterUnitSpawner.c`), which
 records a spawner whose handler is selected by
-`gGetEntityHandlerForType(*(u8 *)(data->unk28 + 4))` (`src/game/80060E74.c:157`) —
+`gGetEntityHandlerForType(*(u8 *)(data->unk28 + 4))` (`src/game/memory-resources/gRegisterUnitSpawner.c:157`) —
 i.e. the type byte in the asset record drives the same `func_8002AE54` lookup.
 
 ## Function table
@@ -46,7 +46,7 @@ document and the handler addresses were verified against the retail bytes.
 
 ## The lift chain (entity type 10)
 
-Message protocol of `gHandleElevatorEntityMessages` (`src/game/80041B6C.c`,
+Message protocol of `gHandleElevatorEntityMessages` (`src/game/gameplay-ai/gHandleElevatorEntityMessages.c`,
 sole entry into the family):
 
 | message | behaviour | return |
@@ -58,7 +58,7 @@ sole entry into the family):
 | 6 | `gStepElevator(obj, a2)` — per-tick motion | step result (always 0) |
 | 11 | hit counter: `if (obj->count < 20) obj->count++` on the s16 at `+0xC4`, then base handler | `0` |
 
-### Init from the script record (`gInitElevator`, `src/game/80041488.c`)
+### Init from the script record (`gInitElevator`, `src/game/gameplay-ai/gInitElevator.c`)
 
 `func_8002AD58(2, self, arg, a2)` runs first, then the record
 (`struct Data` in the unit) is copied and rescaled:
@@ -76,7 +76,7 @@ the basis with `gGteLoadMatrix` (func_80010750) and transforms one frame
 vertex with `gGteTransformVerticesWide(model->data + (index << 4) + 8,
 self + 0x5C, 1)` (func_80010234).
 
-### Per-tick stepping (`gStepElevator`, `src/game/80041880.c`)
+### Per-tick stepping (`gStepElevator`, `src/game/gameplay-ai/gStepElevator.c`)
 
 Gate order, exactly as the code runs it:
 
@@ -103,7 +103,7 @@ Gate order, exactly as the code runs it:
 8. The tail always runs (unless gates 2/3 fired): `gGteLoadMatrix(unk2C)`
    and one frame-vertex transform `gGteTransformVerticesWide(..., 1)`.
 
-### Command interpreter (`gRunEntityCommands`, `src/game/80041728.c`)
+### Command interpreter (`gRunEntityCommands`, `src/game/gameplay-ai/gRunEntityCommands.c`)
 
 Four `Command{op u8, arg u8}` slots at `+0x0C`; `op == 0` terminates the
 walk. Opcodes:
@@ -128,23 +128,23 @@ The s16 at `+0xC4` is read/written under three names across the family:
 hold countdown of `gStepElevator`). It is one shared block field, so a
 msg-11 hit raises the same counter the tick later uses as a hold gate.
 Verified: the three struct views in
-`src/game/80041B6C.c:4-7`, `src/game/80041488.c:7`, `src/game/80041880.c:28-60`.
+`src/game/gameplay-ai/gHandleElevatorEntityMessages.c:4-7`, `src/game/gameplay-ai/gInitElevator.c:7`, `src/game/gameplay-ai/gStepElevator.c:28-60`.
 
 **Who sends message 11 (Confirmed, traced):** the sole sender of
 message 11 in the audited sources is the entity-pair collision sweep:
 `gTestEntityPairCollision` (func_800620D8) calls
 `a->callback(11, a, b, hit)` and `b->callback(11, b, a, swapped-hit)` once
 a detailed part test reports a hit
-(`src/game/800620D8.c:91-100`, the `hit` word from `gTestPartPairHit`,
+(`src/game/gameplay-ai/gTestEntityPairCollision.c:91-100`, the `hit` word from `gTestPartPairHit`,
 func_80061CAC; the second object's copy swaps the halves,
-`src/game/800620D8.c:100`). The sweep is fed by the collision grid:
+`src/game/gameplay-ai/gTestEntityPairCollision.c:100`). The sweep is fed by the collision grid:
 `gProcessCellCollisionPairs` (func_800623FC) visits each pair of a cell
 once, requires combined flags `0x2200`, asks objects with flag
 `0x800000` for approval via event 10, then pairs that pass go to
-func_800620D8 (`src/game/800623FC.c:39-55`); it is called by
-`gSweepCollisionGridPairs` (func_80062614 in `src/game/80062614.c`),
+func_800620D8 (`src/game/gameplay-ai/gProcessCellCollisionPairs.c:39-55`); it is called by
+`gSweepCollisionGridPairs` (func_80062614 in `src/game/gameplay-ai/gSweepCollisionGridPairs.c`),
 which the visibility-grid rebuild `gUpdateViewCollisionGrid` invokes
-(`src/game/80062FB4.c:91`). So message 11 is *the* collision-contact
+(`src/game/gpu-2d-hud/gUpdateViewCollisionGrid.c:91`). So message 11 is *the* collision-contact
 event — a type-10 lift receives it once per colliding pair per sweep,
 with the raw hit word as payload.
 
@@ -152,11 +152,11 @@ with the raw hit word as payload.
 ignores the payload entirely: case 11 increments the s16 at `+0xC4`
 only while it is below 20 and then forwards the message to the base
 handler (`if (obj->count < 20) obj->count++; … gEntityBaseHandler(msg, …)`,
-`src/game/80041B6C.c:52-57`), regardless of the `hit` value passed
+`src/game/gameplay-ai/gHandleElevatorEntityMessages.c:52-57`), regardless of the `hit` value passed
 in `a3`. The counter therefore counts *collision events since the last
 clear*, capped at 20 — not a floor target, passenger count or
 load. `gStepElevator` consumes it as a hold: while `unkC4 > 0` the whole
-motion body is skipped (`goto end`, `src/game/80041880.c:173-176`), one
+motion body is skipped (`goto end`, `src/game/gameplay-ai/gStepElevator.c:173-176`), one
 unit per tick — i.e. each recorded collision freezes the lift for that
 many successive ticks (matrix tail still runs). Gameplay cadence
 (how often a lift actually collects contacts) is not observed at
@@ -164,7 +164,7 @@ runtime here; the mechanism is fully code-proven.
 
 ## The mounted-turret carrier chain (entity type 20)
 
-### Spawn (`gSetupMountedTurretCarrier`, `src/game/80039504.c`)
+### Spawn (`gSetupMountedTurretCarrier`, `src/game/gameplay-ai/gSetupMountedTurretCarrier.c`)
 
 Straight-line sequence: `gHandleType5Entity(2, self, other, arg3)` (the
 class-5 init, func_800382B4), then
@@ -175,7 +175,7 @@ data->unk4A, flags, data->unk4C, data->unk4D, other->unk04->unk20)`
 `0x10` ORed in, and `gQueueOrApplyMapOccupancy(self->unk158)`
 (func_8003FA34) registers the child's map occupancy.
 
-### Child spawn request (`gSpawnMountedPartChild`, `src/game/80039418.c`)
+### Child spawn request (`gSpawnMountedPartChild`, `src/game/gameplay-ai/gSpawnMountedPartChild.c`)
 
 Builds a `Request{handler = func_80039298, args}` whose args carry kind
 `0x15`, the parent's tag/parameter bytes, `flags & 0x7FFFDFFF` (bit `0x2000`
@@ -184,7 +184,7 @@ cleared), `unk1F = parent unk19 & 0xF`, and a position produced by
 then queues it with `gSpawnQueuedEntity` (func_8004D444). The child's
 handler is therefore `gHandleMountedPartMsg` itself.
 
-### Carrier dispatch (`gHandleMountedTurretCarrierMessages`, `src/game/800395A8.c`)
+### Carrier dispatch (`gHandleMountedTurretCarrierMessages`, `src/game/gameplay-ai/gHandleMountedTurretCarrierMessages.c`)
 
 | message | behaviour | return |
 |---|---|---|
@@ -200,7 +200,7 @@ The case-5 fall-through tail has no `return` statement in the decompiled
 source; the return value of messages 5/4/7/8/10/12/13 on the shared tail is
 undefined retail behaviour and deliberately unasserted by the tests.
 
-### Child container dispatch (`gHandleMountedPartMsg`, `src/game/80039298.c`)
+### Child container dispatch (`gHandleMountedPartMsg`, `src/game/boot-frontend/gHandleMountedPartMsg.c`)
 
 Container object: `u16 flags` at `+0xE8`, child pointer at `+0xEC`;
 child: `unk08` at `+0x08`, type byte at `+0x16`, countdown `unk1C` s16 at
@@ -217,7 +217,7 @@ child: `unk08` at `+0x08`, type byte at `+0x16`, countdown `unk1C` s16 at
 | 11, 14 | `flags & 1` → base handler; else child type `0x14` → real `gHandleMountedTurretCarrierMessages` (return 0), type `0x1C` → `gHandleType28Entity` (func_800398EC, return 0), other types → `0` | `0` / base result |
 | default | base handler | base result |
 
-### Turret update (`gUpdateMountedTurret`, `src/game/80038A00.c`)
+### Turret update (`gUpdateMountedTurret`, `src/game/gameplay-ai/gUpdateMountedTurret.c`)
 
 Runs on carrier message 6 (and on message-6 of the type-28 sibling
 `func_800398EC`). Object view: model `+0x28` (anim `+0x10`, frame base
@@ -234,7 +234,7 @@ covers it only through its `gUpdateMountedTurret` stand-in (see Test
 coverage), so its internals stay structure-level here.
 
 **Per-frame shape for a port (Confirmed, from the source body
-`src/game/80038A00.c:174-366`):**
+`src/game/gameplay-ai/gUpdateMountedTurret.c:174-366`):**
 
 1. *Liveness gate* — returns immediately unless `info->count > 0`
    (the parent carrier's live count, `:182-183`); then
@@ -292,8 +292,8 @@ coverage), so its internals stay structure-level here.
 
 ## Same-idiom neighbours (context, not part of the chains)
 
-`gHandlePlacedPropMsg` (`src/game/80041C6C.c`, type 12, block `0xA4`) and
-`gInitPortraitScreenEntity` (`src/game/80041E0C.c`, called by the type-34
+`gHandlePlacedPropMsg` (`src/game/gameplay-ai/gHandlePlacedPropMsg.c`, type 12, block `0xA4`) and
+`gInitPortraitScreenEntity` (`src/game/gameplay-ai/gInitPortraitScreenEntity.c`, called by the type-34
 handler `func_80042330`) share the lift chain's ground-snap/basis/frame
 idiom (`gGetGroundHeight`, `gBuildRotationMatrix`, `func_80010750` +
 `func_80010234`) but follow their own message maps; both are documented in
@@ -330,7 +330,7 @@ harness under qemu-mipsel):
   propagation with the quartile-change condition — harness cases D, E, F.
 - the s16 at `+0xC4` is one shared field across all three lift-family
   struct views.
-- **PA-Missionsplatzierung von Typ 10 und Typ 20 (Confirmed, alle 5 PA-`.MIS`-Dateien dekodiert über `Cact` `func_8004D6D4` `src/game/8004D6D4.c:103-165` und `Csac` `func_80060E74` `src/game/80060E74.c:142-157`):**
+- **PA-Missionsplatzierung von Typ 10 und Typ 20 (Confirmed, alle 5 PA-`.MIS`-Dateien dekodiert über `Cact` `func_8004D6D4` `src/game/memory-resources/gLoadActorChunk.c:103-165` und `Csac` `func_80060E74` `src/game/memory-resources/gRegisterUnitSpawner.c:142-157`):**
   - **Typ 10 (Lift, `gHandleElevatorEntity`):** **8 `Cact`-Instanzen** in 3 von 5 PA-Maps, **0 `Csac`-Spawner**:
     - `CONFT.MIS`: **4× `Cact`** (`sid=15` `SHDR@0x189068` / `TCAt+0xC@0x1890c4`, `sid=24` `0x189118`/`0x189174`, `sid=37` `0x1891c8`/`0x189224`, `sid=39` `0x189278`/`0x1892d4`), `0× Csac`.
     - `JOKE.MIS`: **2× `Cact`** (`sid=262` `SHDR@0x1b27a4` / `TCAt+0xC@0x1b2800`, `sid=249` `0x1b6a94`/`0x1b6af0`), `0× Csac`.
@@ -357,8 +357,8 @@ harness under qemu-mipsel):
   interpretation is not (which caller sends msg 11 with what cadence is
   unknown)~~ **resolved as far as code can go**: the sender is the
   collision sweep (message 11 is the pair-collision event
-  `src/game/800620D8.c:98-100`) and the hold effect is fully driven by
-  the counter (`src/game/80041880.c:173-176`) — see the shared-field
+  `src/game/gameplay-ai/gTestEntityPairCollision.c:98-100`) and the hold effect is fully driven by
+  the counter (`src/game/gameplay-ai/gStepElevator.c:173-176`) — see the shared-field
   section. What stays unproven is only the runtime cadence (how often a
   lift actually collects contacts in a mission), which no level data in
   this repository can answer.
@@ -366,24 +366,24 @@ harness under qemu-mipsel):
 - units of `info->h10C`/`info->limit` and the exact steering axes in
   `gUpdateMountedTurret`; the anim-lump opcode semantics beyond 1/2/3.
 - `gHandleMountedPartMsg`'s unit `@param` note says the child pointer lives
-  at `0xEA`; the struct layout of `src/game/80039298.c` places it at
+  at `0xEA`; the struct layout of `src/game/boot-frontend/gHandleMountedPartMsg.c` places it at
   `+0xEC` (after `u16 flags` at `+0xE8` and two pad bytes), and the block
   size answer `0xF0` matches that layout.
 
 ## Retail data anchors (file:line)
 
-- `src/game/8002AE54.c:70-71` — `case 10: return (s32)gHandleElevatorEntity;`
-- `src/game/8002AE54.c:82-83` — `case 20: return (s32)gHandleMountedTurretCarrierMessages;`
-- `src/game/80041B6C.c:40-59` — type-10 message switch with the capped counter at `case 11`
-- `src/game/80041488.c:80-128` — script-record init and rescaling
-- `src/game/80041880.c:160-263` — gate order, motion, stop-change events, matrix tail
-- `src/game/80041728.c:69-145` — four-slot command interpreter
-- `src/game/80039504.c:68-80` — carrier setup and child spawn
-- `src/game/800395A8.c:52-115` — carrier message dispatch and child sync
-- `src/game/80039298.c:66-139` — container message dispatch
-- `src/game/80039418.c:91-121` — kind-0x15 spawn request assembly
-- `src/game/80024EC8.c` — `"Csac"` → `func_80060E74` asset dispatch (map-placed entity source)
-- `src/game/80060E74.c:157` — type byte `*(u8 *)(data->unk28 + 4)` → `gGetEntityHandlerForType`
+- `src/game/boot-frontend/gGetEntityHandlerForType.c:70-71` — `case 10: return (s32)gHandleElevatorEntity;`
+- `src/game/boot-frontend/gGetEntityHandlerForType.c:82-83` — `case 20: return (s32)gHandleMountedTurretCarrierMessages;`
+- `src/game/gameplay-ai/gHandleElevatorEntityMessages.c:40-59` — type-10 message switch with the capped counter at `case 11`
+- `src/game/gameplay-ai/gInitElevator.c:80-128` — script-record init and rescaling
+- `src/game/gameplay-ai/gStepElevator.c:160-263` — gate order, motion, stop-change events, matrix tail
+- `src/game/gameplay-ai/gRunEntityCommands.c:69-145` — four-slot command interpreter
+- `src/game/gameplay-ai/gSetupMountedTurretCarrier.c:68-80` — carrier setup and child spawn
+- `src/game/gameplay-ai/gHandleMountedTurretCarrierMessages.c:52-115` — carrier message dispatch and child sync
+- `src/game/boot-frontend/gHandleMountedPartMsg.c:66-139` — container message dispatch
+- `src/game/gameplay-ai/gSpawnMountedPartChild.c:91-121` — kind-0x15 spawn request assembly
+- `src/game/memory-resources/gLoadQueuedAssets.c` — `"Csac"` → `func_80060E74` asset dispatch (map-placed entity source)
+- `src/game/memory-resources/gRegisterUnitSpawner.c:157` — type byte `*(u8 *)(data->unk28 + 4)` → `gGetEntityHandlerForType`
 
 ## Test coverage
 
@@ -441,11 +441,11 @@ level-data-driven behaviour (no placement data exists in the repo).
 2. ~~Who sends message 11 to a type-10 entity, and does the shared `+0xC4`
    counter measurably pause the lift in gameplay?~~ **Answered from
    code:** the sole sender is the entity-pair collision sweep
-   (`gTestEntityPairCollision`, `src/game/800620D8.c:98-100`, fed by
-   `gProcessCellCollisionPairs`, `src/game/800623FC.c:50-52`); the
+   (`gTestEntityPairCollision`, `src/game/gameplay-ai/gTestEntityPairCollision.c:98-100`, fed by
+   `gProcessCellCollisionPairs`, `src/game/gameplay-ai/gProcessCellCollisionPairs.c:50-52`); the
    counter is a capped (20) collision-event tally and every unit of it
-   holds `gStepElevator` for one tick (`src/game/80041B6C.c:52-57`,
-   `src/game/80041880.c:173-176`). Only the in-mission contact cadence
+   holds `gStepElevator` for one tick (`src/game/gameplay-ai/gHandleElevatorEntityMessages.c:52-57`,
+   `src/game/gameplay-ai/gStepElevator.c:173-176`). Only the in-mission contact cadence
    remains unobserved (no placement data in this repository — see
    question 1).
 3. Why is child flag bit `0x2000` stripped in the spawn request?
@@ -456,7 +456,7 @@ level-data-driven behaviour (no placement data exists in the repo).
    (flag 0x4000); pitch on the ground path derives from
    `info->h10C`/`info->limit`. The anim-lump opcode set is exactly
    1 (mode 1→2), 2 (set flag 0x8000), 3 (clear flag 0x8000),
-   consumed six bits at a time (`src/game/80038A00.c:337-345`). Still
+   consumed six bits at a time (`src/game/gameplay-ai/gUpdateMountedTurret.c:337-345`). Still
    unknown: the unit of `info->h10C`/`info->limit` (raw compare,
    `<<10`/`>>1` scaling) and which physical axis the ground-path
    rotation turns about (rows 2/3 of `info->m` — X consistent,

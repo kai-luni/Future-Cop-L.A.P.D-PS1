@@ -17,19 +17,22 @@ export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIB
 
 compile() {
     local src="$1" obj="$2"; shift 2
-    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" "$@" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
+    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -I"$HERE/mocks" "$@" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
 
+source "$HERE/unit_path.sh"
+
 objects=()
 for unit in 80018818 80018580 800195F0 80019F54 8001A074 8001A4E8 8001AF08 8001AE14 8001B148 8001AF84 8005605C 8001E318 8001E44C 8008731C 80083764 80060DD8 8008E61C 8001C494 8009235C 80092634 800926C0 800921F4 80042764 80042788 800427A8 8003BF1C 8005CB80 8003D9C4 8003F428 8003A90C 80021740 80022B84 80019A20 80019CA0 80019C38 8001996C 8005C2C8 80040550 80042864 80040600 800428FC 800403D0 80043250 8006F898 8006E720 8006C768 80057358 8005A0C4 80051AC8 8004B244 8008B05C 8008B668 8008BF10 8004749C 80077884 80013AF0 800175F8 80020B28 8003BF50 8003C980; do
-    compile "$DECOMP/src/game/$unit.c" "$OUT/$unit.o"
+    compile "$(unit_src "$unit")" "$OUT/$unit.o"
     objects+=("$OUT/$unit.o")
 done
+compile "$HERE/mocks/bios_mock.c" "$OUT/bios_mock.o"
 python3 "$HERE/leaf_vectors.py" > "$OUT/leaf_vectors.h"
 compile "$HERE/leaf_extra_harness.c" "$OUT/leaf_extra_harness.o" -I"$OUT" -I"$HERE"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s" 2>/dev/null
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/leaf_extra" \
-    "$OUT/crt0.o" "$OUT/leaf_extra_harness.o" "${objects[@]}"
+    "$OUT/crt0.o" "$OUT/leaf_extra_harness.o" "$OUT/bios_mock.o" "${objects[@]}"
 "$QEMU" "$OUT/leaf_extra"

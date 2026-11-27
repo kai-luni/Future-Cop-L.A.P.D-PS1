@@ -454,7 +454,7 @@ static void test_hud_panel_sprite(void)
 {
     u8 *cursor;
 
-    /* @leaf 800485AC source src/game/800485AC.c: gates, two 0x1C packets (texpage 0xE100011F + SPRT 0x64 0x808080), x/w/u variants per player count and register arg */
+    /* @leaf 800485AC source src/game/gpu-2d-hud/gEmitHudPanelSprite.c: gates, two 0x1C packets (texpage 0xE100011F + SPRT 0x64 0x808080), x/w/u variants per player count and register arg */
     LK_FUNC("func_800485AC");
     le_reset();
     lk_fill(le_pool, 0x5A, sizeof(le_pool));
@@ -547,7 +547,7 @@ static void test_hud_panel_sprite(void)
 
 static void test_frame_close_hud(void)
 {
-    /* @leaf 800486FC source src/game/800486FC.c: mode-4 session sound first, frame switch from the name resolver, always a layout refresh, status reset only in hud mode 2 with enable and single player */
+    /* @leaf 800486FC source src/game/boot-frontend/gUpdateFrameCloseHud.c: mode-4 session sound first, frame switch from the name resolver, always a layout refresh, status reset only in hud mode 2 with enable and single player */
     LK_FUNC("func_800486FC");
     le_reset();
     lk_fill(le_cf_pool, 0x5A, sizeof(le_cf_pool));
@@ -614,7 +614,7 @@ static void test_frame_close_hud(void)
 
 static void test_hud_layout_mode(void)
 {
-    /* @leaf 800487CC source src/game/800487CC.c: mode-5 guard suppresses the cycle request, a rising overlay edge forces mode 2, otherwise a do-while advances mode 2 mod 3 */
+    /* @leaf 800487CC source src/game/gpu-2d-hud/gUpdateHudLayoutMode.c: mode-5 guard suppresses the cycle request, a rising overlay edge forces mode 2, otherwise a do-while advances mode 2 mod 3 */
     LK_FUNC("func_800487CC");
     le_reset();
     le_screen_state[0] = 5;
@@ -680,7 +680,7 @@ static void test_text_init(void)
     int i;
     int bad;
 
-    /* @leaf 80048EC4 source src/game/80048EC4.c: VRAM Y 1, font/count/effect cleared, twenty texpage/palette words zeroed, white 0x1F1F1F registered; the colour arguments are all equal so the blue/green/red order is not observed here */
+    /* @leaf 80048EC4 source src/game/gpu-2d-hud/gInitTextRendererState.c: VRAM Y 1, font/count/effect cleared, twenty texpage/palette words zeroed, white 0x1F1F1F registered; the colour arguments are all equal so the blue/green/red order is not observed here */
     LK_FUNC("func_80048EC4");
     le_reset();
     lk_fill(le_texpage_table, 0x3C, sizeof(le_texpage_table));
@@ -722,7 +722,7 @@ static void test_glyph_sprite(void)
 {
     struct LeGlyph *g;
 
-    /* @leaf 80048F98 source src/game/80048F98.c: SPRT len 4 / code 100, RGB split (>>8)&0x7C, (>>3)&0x7C, (c&0x1F)<<2 of the palette word, u/v from the glyph, x/y biased by the signed glyph offsets, w0E is the loaded font, returns the advance byte */
+    /* @leaf 80048F98 source src/game/gpu-2d-hud/gEmitFontGlyphSprite.c: SPRT len 4 / code 100, RGB split (>>8)&0x7C, (>>3)&0x7C, (c&0x1F)<<2 of the palette word, u/v from the glyph, x/y biased by the signed glyph offsets, w0E is the loaded font, returns the advance byte */
     LK_FUNC("func_80048F98");
     le_reset();
     lk_fill(le_pool, 0x5A, sizeof(le_pool));
@@ -810,7 +810,7 @@ static void test_draw_string(void)
     struct LeGlyph *ga;
     struct LeGlyph *gb;
 
-    /* @leaf 80049100 source src/game/80049100.c: no loaded font draws nothing, one texpage word table[bank] & 0x9FF | 0xE1000000 first, per-character advances accumulate on x, chars 10..0x25 are control codes that re-colour instead of drawing */
+    /* @leaf 80049100 source src/game/gpu-2d-hud/gDrawAlignedString.c: no loaded font draws nothing, one texpage word table[bank] & 0x9FF | 0xE1000000 first, per-character advances accumulate on x, chars 10..0x25 are control codes that re-colour instead of drawing */
     LK_FUNC("func_80049100");
     le_reset();
     lk_fill(le_pool, 0x5A, sizeof(le_pool));
@@ -906,7 +906,7 @@ static void test_draw_string(void)
 
 static void test_script_timers(void)
 {
-    /* @leaf 80049420 source src/game/80049420.c: header word 1 gives (len-0xC)/20 entries, each entry's word 1 *5 (negative mirrored into word 2), word 2 random % product, words 3 and 4 += base; tagged views 0x7446554E / 0x74455854 */
+    /* @leaf 80049420 source src/game/memory-resources/gLoadScriptTimers.c: header word 1 gives (len-0xC)/20 entries, each entry's word 1 *5 (negative mirrored into word 2), word 2 random % product, words 3 and 4 += base; tagged views 0x7446554E / 0x74455854 */
     LK_FUNC("func_80049420");
     le_reset();
     lk_fill((u8 *)le_timer_words, 0, sizeof(le_timer_words));
@@ -956,7 +956,7 @@ static void test_script_timers(void)
 
 static void test_release_light_data(void)
 {
-    /* @leaf 8004963C source src/game/8004963C.c: guarded frees for table and grid, unconditional pool free, all three pointers cleared */
+    /* @leaf 8004963C source src/game/renderer-scene/gReleaseMapLightData.c: guarded frees for table and grid, unconditional pool free, all three pointers cleared */
     LK_FUNC("func_8004963C");
     le_reset();
     le_sprite_desc_table = (void *)0x6000;
@@ -999,7 +999,7 @@ static void test_release_light_data(void)
 
 static void test_init_lighting(void)
 {
-    /* @leaf 80049690 source src/game/80049690.c: five state words cleared, pool 0x180 x 0x44 tag 2 published, descriptor table cleared */
+    /* @leaf 80049690 source src/game/renderer-scene/gInitMapLighting.c: five state words cleared, pool 0x180 x 0x44 tag 2 published, descriptor table cleared */
     LK_FUNC("func_80049690");
     le_reset();
     le_cleanup_time = 7;
@@ -1026,7 +1026,7 @@ static void test_init_lighting(void)
 
 static void test_load_cdcs(void)
 {
-    /* @leaf 80049734 source src/game/80049734.c: fresh resource clears the status word, prepares and publishes table pointer and count; loaded resource only runs maintenance */
+    /* @leaf 80049734 source src/game/memory-resources/gLoadCdcsResource.c: fresh resource clears the status word, prepares and publishes table pointer and count; loaded resource only runs maintenance */
     LK_FUNC("func_80049734");
     le_reset();
     le_resource_state = 0;
@@ -1066,7 +1066,7 @@ static void test_reap_lights(void)
 {
     struct LeLightNode a, b, c, d;
 
-    /* @leaf 800497A8 source src/game/800497A8.c: bucket sweep from last to first, head/middle unlink, expired only while key >= 0 and flag 0x40 clear, nodes returned to the pool */
+    /* @leaf 800497A8 source src/game/renderer-scene/gReapExpiredLightNodes.c: bucket sweep from last to first, head/middle unlink, expired only while key >= 0 and flag 0x40 clear, nodes returned to the pool */
     LK_FUNC("func_800497A8");
     le_reset();
     lk_fill((u8 *)&a, 0, sizeof(a));
@@ -1178,7 +1178,7 @@ static void test_update_light_node(void)
     struct LeLightNode node, node2, other, n1;
     int m;
 
-    /* @leaf 80049980 source src/game/80049980.c: cell (z>>17) + W*(x>>17), head/tail insert and both unlink paths, depth key keeps the larger extent, flat record points, rotated diamond through the prefilled matrix, coverage mask takes (z, x, z +- w/2, x +- d/2) */
+    /* @leaf 80049980 source src/game/renderer-scene/gUpdateDynamicLightNode.c: cell (z>>17) + W*(x>>17), head/tail insert and both unlink paths, depth key keeps the larger extent, flat record points, rotated diamond through the prefilled matrix, coverage mask takes (z, x, z +- w/2, x +- d/2) */
     LK_FUNC("func_80049980");
     le_reset();
     lk_fill((u8 *)&node, 0xA5, sizeof(node));
@@ -1320,7 +1320,7 @@ static void test_spawn_light(void)
     struct LeLightNode *n;
     s32 ret;
 
-    /* @leaf 80049C38 source src/game/80049C38.c: both size words >= 0x40 and a grid required, id-list dedup keeping the count on a miss, pool exhaustion retries after a real reap, surface modes -3/0/1/other via call args -1/-2/value-2, negative angles randomised through & 0xFFF, life offset by the frame tick, node placed via the real 80049980 */
+    /* @leaf 80049C38 source src/game/renderer-scene/gSpawnDynamicLightNode.c: both size words >= 0x40 and a grid required, id-list dedup keeping the count on a miss, pool exhaustion retries after a real reap, surface modes -3/0/1/other via call args -1/-2/value-2, negative angles randomised through & 0xFFF, life offset by the frame tick, node placed via the real 80049980 */
     LK_FUNC("func_80049C38");
     le_reset();
     lk_fill((u8 *)&le_spawn_obj, 0, sizeof(le_spawn_obj));

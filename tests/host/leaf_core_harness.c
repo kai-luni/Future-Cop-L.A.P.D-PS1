@@ -247,7 +247,7 @@ static void test_scene_voice(void)
     static LcVoiceTable table;
     static LcSoundObj obj;
 
-    /* @leaf 8008363C source src/game/8008363C.c: lowest set bit of the 32-slot free mask (binary search), new slot timer 300, refresh 900, position update only when +0x56 is set */
+    /* @leaf 8008363C source src/game/boot-frontend/gAssignSceneSoundVoice.c: lowest set bit of the 32-slot free mask (binary search), new slot timer 300, refresh 900, position update only when +0x56 is set */
     LK_FUNC("func_8008363C");
 
     /* no free slot: nothing allocated */
@@ -365,7 +365,7 @@ static void node_fixture(void)
 
 static void test_node_command(void)
 {
-    /* @leaf 800841C4 source src/game/800841C4.c: cells scanned high to low, first id match only; 0x19 unlinks or sets deadline, 0x1A/0x1B toggle flag bits */
+    /* @leaf 800841C4 source src/game/boot-frontend/gSendSceneNodeCommandById.c: cells scanned high to low, first id match only; 0x19 unlinks or sets deadline, 0x1A/0x1B toggle flag bits */
     LK_FUNC("func_800841C4");
 
     node_fixture();
@@ -475,7 +475,7 @@ static void test_gpu_fill(void)
     static u32 gpustat;
     s32 r;
 
-    /* @leaf 8009423C source src/game/8009423C.c: w/h clamped to [0, max-1]; 64-aligned x and w use the 5-word GP0(02h) fill packet, otherwise a GP0(60h) rectangle with E3/E4/E5 restored from GPU info 3/4/5 */
+    /* @leaf 8009423C source src/game/gpu-2d-hud/gSubmitGpuRectangleFill.c: w/h clamped to [0, max-1]; 64-aligned x and w use the 5-word GP0(02h) fill packet, otherwise a GP0(60h) rectangle with E3/E4/E5 restored from GPU info 3/4/5 */
     LK_FUNC("func_8009423C");
 
     gMaxDrawWidth = 1024;
@@ -561,7 +561,7 @@ static void test_spu_transfer(void)
 {
     s32 r;
 
-    /* @leaf 8009745C source src/game/8009745C.c: op 2 stores addr>>shift at +0x1A6, op 0/1 poll +0x1A6 then set SPUCNT bits 4-5 to 3/2, op 3 programs DMA4 in 64-byte blocks; 0xF01 polls then -2 */
+    /* @leaf 8009745C source src/game/platform/gSpuTransfer.c: op 2 stores addr>>shift at +0x1A6, op 0/1 poll +0x1A6 then set SPUCNT bits 4-5 to 3/2, op 3 programs DMA4 in 64-byte blocks; 0xF01 polls then -2 */
     LK_FUNC("func_8009745C");
 
     spu_reset();
@@ -673,7 +673,7 @@ static int pool_is(const u32 *rec, int n)
 
 static void test_spu_compact(void)
 {
-    /* @leaf 80097DF8 source src/game/80097DF8.c: merges contiguous free records, tombstones size 0, sorts by address up to the tail, drops the first tombstone, folds trailing free records into the tail */
+    /* @leaf 80097DF8 source src/game/memory-resources/gSpuCompactPool.c: merges contiguous free records, tombstones size 0, sorts by address up to the tail, drops the first tombstone, folds trailing free records into the tail */
     LK_FUNC("func_80097DF8");
     {
         static const u32 in[] = { 0x00000000, 0x100, 0x80000100, 0x80, 0x80000180, 0x40, 0x400001C0, 0x1000 };
@@ -733,7 +733,7 @@ static void test_spu_alloc(void)
 {
     s32 r;
 
-    /* @leaf 80097B28 source src/game/80097B28.c: size rounded up to 8 (below 8 to 0), untouched pool cut from record 0, freed block split with the remainder at the cursor, tail must exceed the reserve; with the real 80097DF8 */
+    /* @leaf 80097B28 source src/game/memory-resources/gAllocSpuRamBlock.c: size rounded up to 8 (below 8 to 0), untouched pool cut from record 0, freed block split with the remainder at the cursor, tail must exceed the reserve; with the real 80097DF8 */
     LK_FUNC("func_80097B28");
     {
         static const u32 in[] = { 0x40001000, 0x10000 };
@@ -805,7 +805,7 @@ static void test_spu_split(void)
 {
     s32 r;
 
-    /* @leaf 800980F8 source src/game/800980F8.c: splits record a0 at a1 into leading free gap, block of a2 and trailing free/tail record; capacity and reserve checks return -1; with the real 80097DF8 */
+    /* @leaf 800980F8 source src/game/memory-resources/gSpuSplitPoolBlock.c: splits record a0 at a1 into leading free gap, block of a2 and trailing free/tail record; capacity and reserve checks return -1; with the real 80097DF8 */
     LK_FUNC("func_800980F8");
     {
         static const u32 in[] = { 0x00001000, 0x100, 0x40001100, 0x1000 };
@@ -891,7 +891,7 @@ static void test_spu_alloc_at(void)
 {
     s32 r;
 
-    /* @leaf 80098458 source src/game/80098458.c: address and size rounded to 8, below 0x1010 or past 0x80000-reserve -1; untouched pool cut directly, otherwise first free record containing or above x, else the tail start, split by the real 800980F8 */
+    /* @leaf 80098458 source src/game/memory-resources/gSpuAllocAt.c: address and size rounded to 8, below 0x1010 or past 0x80000-reserve -1; untouched pool cut directly, otherwise first free record containing or above x, else the tail start, split by the real 800980F8 */
     LK_FUNC("func_80098458");
     {
         static const u32 in[] = { 0x40001010, 0x7EFF0 };
@@ -964,7 +964,7 @@ static void test_spu_alloc_at(void)
 
 static void test_spu_key(void)
 {
-    /* @leaf 80098C68 source src/game/80098C68.c: low 24 voice bits; direct path writes KON/KOFF at +0x188/+0x18C and a soft mask, shadow path (D_8009EE90 bit 0) writes D_800A7028 and clears the opposite field */
+    /* @leaf 80098C68 source src/game/platform/gSpuSetVoiceKey.c: low 24 voice bits; direct path writes KON/KOFF at +0x188/+0x18C and a soft mask, shadow path (D_8009EE90 bit 0) writes D_800A7028 and clears the opposite field */
     LK_FUNC("func_80098C68");
 
     spu_reset();

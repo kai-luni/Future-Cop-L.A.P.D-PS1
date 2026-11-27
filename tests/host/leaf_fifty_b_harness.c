@@ -10,59 +10,59 @@
  * isolate C89 struct/typedef/extern names so unchanged src/game units compile
  * cleanly in one translation unit without claiming coverage for them.
  */
-#include "../../src/game/8001846C.c"
-#include "../../src/game/80019720.c"
-#include "../../src/game/8001E318.c"
-#include "../../src/game/8001E4C0.c"
-#include "../../src/game/8001E9AC.c"
+#include "../../src/game/utilities/gSinCos.c"
+#include "../../src/game/utilities/gNextLcgRand.c"
+#include "../../src/game/utilities/gCopyMemory.c"
+#include "../../src/game/other/gFillMemory.c"
+#include "../../src/game/boot-frontend/gSetSmallMotor.c"
 
 #define PadActuator PadActuator_8001EA5C
 #define gPadActuators gPadActuators_8001EA5C
 #define gFrameTickCounter gFrameTickCounter_8001EA5C
-#include "../../src/game/8001EA5C.c"
+#include "../../src/game/boot-frontend/gSetLargeMotor.c"
 #undef PadActuator
 #undef gPadActuators
 #undef gFrameTickCounter
 
 #define gPadActuators gPadActuators_8001EB2C
-#include "../../src/game/8001EB2C.c"
+#include "../../src/game/platform/gIsPadRumbleEnabled.c"
 #undef gPadActuators
 
-#include "../../src/game/8001F180.c"
-#include "../../src/game/80020610.c"
+#include "../../src/game/platform/gIsMcManagerBusy.c"
+#include "../../src/game/other/gGetMcStateSize.c"
 
 #define State State_800223B0
 #define gSoundSystem gSoundSystem_800223B0
-#include "../../src/game/800223B0.c"
+#include "../../src/game/boot-frontend/gComputeStereoVoiceLevels.c"
 #undef State
 #undef gSoundSystem
 
-#include "../../src/game/8003B65C.c"
-#include "../../src/game/80045504.c"
-#include "../../src/game/8004582C.c"
+#include "../../src/game/utilities/gQuarterIndex.c"
+#include "../../src/game/boot-frontend/gResetSoundEntry.c"
+#include "../../src/game/boot-frontend/gInitSoundChannelList.c"
 
 #define SoundBank SoundBank_800472E8
 #define gSoundEntryTable gSoundEntryTable_800472E8
-#include "../../src/game/800472E8.c"
+#include "../../src/game/boot-frontend/gFindSoundBankByKey.c"
 #undef SoundBank
 #undef gSoundEntryTable
 
-#include "../../src/game/8005FF70.c"
+#include "../../src/game/gameplay-ai/gFindEffectKeyIndex.c"
 
 #define u16 u16_80073BA8
-#include "../../src/game/80073BA8.c"
+#include "../../src/game/gameplay-ai/gSetObjectFlag1000.c"
 #undef u16
 
-#include "../../src/game/800787D8.c"
+#include "../../src/game/boot-frontend/gSelectEnabledMenuItem.c"
 
 #define u8 u8_8008731C
 #define u32 u32_8008731C
-#include "../../src/game/8008731C.c"
+#include "../../src/game/utilities/gExpand15To16Padded.c"
 #undef u8
 #undef u32
 
-#include "../../src/game/8008E194.c"
-#include "../../src/game/80091F74.c"
+#include "../../src/game/platform/gSetCdSyncCallback.c"
+#include "../../src/game/gpu-2d-hud/gGetGpuDrawOffset.c"
 
 /* ---- 1..4: Pad rumble wrappers (8001E96C, 8001EBA8, 8001EB6C, 8001EC04) ---- */
 struct PadActuator gPadActuators_s[3] __asm__("D_800A6FF8");
@@ -86,7 +86,7 @@ static void reset_actuators(void)
 
 static void test_pad_rumble(void)
 {
-    /* @leaf 8001E96C source src/game/8001E96C.c: clamp port to [0,1] and forward to gSetSmallMotor */
+    /* @leaf 8001E96C source src/game/boot-frontend/gSetPortSmallRumble.c: clamp port to [0,1] and forward to gSetSmallMotor */
     LK_FUNC("func_8001E96C");
     reset_actuators();
     gFrameTickCounter_s = 100;
@@ -100,7 +100,7 @@ static void test_pad_rumble(void)
     FCK_CHECK(gPadActuators_s[1].motor[0] == 0 && gPadActuators_s[1].smallTimer == 0 &&
               gPadActuators_s[0].motor[0] == 1, "port 1 cleared without touching port 0");
 
-    /* @leaf 8001EBA8 source src/game/8001EBA8.c: clamp port to [0,1] and zero both small and large motors */
+    /* @leaf 8001EBA8 source src/game/platform/gStopPadRumble.c: clamp port to [0,1] and zero both small and large motors */
     LK_FUNC("func_8001EBA8");
     reset_actuators();
     gPadActuators_s[0].motor[0] = 1; gPadActuators_s[0].motor[1] = 200;
@@ -119,7 +119,7 @@ static void test_pad_rumble(void)
               gPadActuators_s[2].motor[0] == 1,
               "port==2 stops both motors on port 1 without touching guard slot 2");
 
-    /* @leaf 8001EB6C source src/game/8001EB6C.c: stop rumble on both ports 0 and 1 */
+    /* @leaf 8001EB6C source src/game/boot-frontend/gStopAllPadRumble.c: stop rumble on both ports 0 and 1 */
     LK_FUNC("func_8001EB6C");
     reset_actuators();
     gPadActuators_s[0].motor[0] = 1; gPadActuators_s[0].motor[1] = 99; gPadActuators_s[0].smallTimer = 10;
@@ -130,7 +130,7 @@ static void test_pad_rumble(void)
     FCK_CHECK(gPadActuators_s[1].motor[0] == 0 && gPadActuators_s[1].motor[1] == 0 &&
               gPadActuators_s[1].largeTimer == 0, "port 1 stopped");
 
-    /* @leaf 8001EC04 source src/game/8001EC04.c: clamp port and enable or stop-then-disable rumble */
+    /* @leaf 8001EC04 source src/game/boot-frontend/gSetPadRumbleEnabled.c: clamp port and enable or stop-then-disable rumble */
     LK_FUNC("func_8001EC04");
     reset_actuators();
     gPadActuators_s[0].enabled = 0;
@@ -187,7 +187,7 @@ static void test_trig_units(void)
 
     init_synth_sine();
 
-    /* @leaf 8006062C source src/game/8006062C.c: cosine via 8001846C below 0x800, else -0x10000 */
+    /* @leaf 8006062C source src/game/utilities/gCosineClamped.c: cosine via 8001846C below 0x800, else -0x10000 */
     LK_FUNC("func_8006062C");
     FCK_EQ(gCosineClamped(0), 0x10000, "cos(0) = +0x10000");
     FCK_EQ(gCosineClamped(0x200), 0x5A82 << 1, "cos(45 deg) from table");
@@ -199,7 +199,7 @@ static void test_trig_units(void)
     gSineTable_s[0x400] = 0x8000;
     FCK_EQ(gCosineClamped(0xC00), -0x10000, "above 0x800 clamps to -0x10000");
 
-    /* @leaf 8005A740 source src/game/8005A740.c: emit LineF2 at radius 24..30 and advance cursor below limit */
+    /* @leaf 8005A740 source src/game/gpu-2d-hud/gEmitAngledLine.c: emit LineF2 at radius 24..30 and advance cursor below limit */
     LK_FUNC("func_8005A740");
     lk_fill(line_buf, 0xA5, sizeof(line_buf));
     gPacketCursor_s = line_buf; gPacketLimit_s = line_buf + 0x1C;
@@ -213,7 +213,7 @@ static void test_trig_units(void)
     FCK_CHECK(gPacketCursor_s == line_buf + 0x1C, "cursor stops at limit");
     FCK_CHECK(ln->x0 == 100 && ln->y0 == 68 && ln->x1 == 100 && ln->y1 == 74, "angle 90 endpoints");
 
-    /* @leaf 80060668 source src/game/80060668.c: populate attack slot from effect table or null on f00<0 */
+    /* @leaf 80060668 source src/game/gameplay-ai/gInitAttackSchedulerSlot.c: populate attack slot from effect table or null on f00<0 */
     LK_FUNC("func_80060668");
     lk_fill(gEffectKeyTable_s, 0, sizeof(gEffectKeyTable_s));
     gDefinitionEntryCount_s = 3;
@@ -240,7 +240,7 @@ static void test_trig_units(void)
               "runtime fields zeroed");
     FCK_CHECK(aout.f20 == 0x1111 && aout.f24 == 0x3333 && aout.f26 == 0x2222, "effect row fields copied");
 
-    /* @leaf 8006C4C4 source src/game/8006C4C4.c: generate dome patch vertices for count==0 and count!=0 */
+    /* @leaf 8006C4C4 source src/game/gpu-2d-hud/gGenDomePatchVertices.c: generate dome patch vertices for count==0 and count!=0 */
     LK_FUNC("func_8006C4C4");
     lk_fill(verts, 0xA5, sizeof(verts));
     gGenDomePatchVertices(verts, 0x200, 0);
@@ -294,7 +294,7 @@ static void test_misc_game_units(void)
     u8 desc_dummy;
     struct RibbonNode rn[3];
 
-    /* @leaf 8007B3F4 source src/game/8007B3F4.c: install menu descriptor and conditionally select enabled item 3 */
+    /* @leaf 8007B3F4 source src/game/boot-frontend/gEnterGameHubMenu.c: install menu descriptor and conditionally select enabled item 3 */
     LK_FUNC("func_8007B3F4");
     lk_fill(&ft, 0, sizeof(ft));
     lk_fill(&sess, 0, sizeof(sess));
@@ -316,7 +316,7 @@ static void test_misc_game_units(void)
     gEnterGameHubMenu();
     FCK_EQ(ft.selected[0], 4, "unk0C==1 selects next enabled item 4");
 
-    /* @leaf 8003BA50 source src/game/8003BA50.c: set 0x4000 flag on quartile transition with non-null desc */
+    /* @leaf 8003BA50 source src/game/gameplay-ai/gFlagQuartileChange.c: set 0x4000 flag on quartile transition with non-null desc */
     LK_FUNC("func_8003BA50");
     lk_fill(&qobj, 0, sizeof(qobj));
     gSlotSpawnDescs_s[0] = 0; gSlotSpawnDescs_s[1] = &desc_dummy;
@@ -335,7 +335,7 @@ static void test_misc_game_units(void)
     gFlagQuartileChange(&qobj, 60); /* boundary unk1C==0 is non-negative */
     FCK_EQ(qobj.flags, 0x4000U, "unk1C==0 boundary still flags quartile change");
 
-    /* @leaf 800734BC source src/game/800734BC.c: set 0x1000 flag on all linked nodes and clear head */
+    /* @leaf 800734BC source src/game/renderer-scene/gRetireAllRibbons.c: set 0x1000 flag on all linked nodes and clear head */
     LK_FUNC("func_800734BC");
     lk_fill(rn, 0, sizeof(rn));
     rn[0].next = &rn[1]; rn[0].flags = 0x0001;
@@ -371,7 +371,7 @@ void gSnapshotControllerPresets(void) __asm__("func_8007C088");
 
 static void test_prng_and_snapshot(void)
 {
-    /* @leaf 800197A8 source src/game/800197A8.c: seed LCG, set cursors to 20, fill two 20-word tables */
+    /* @leaf 800197A8 source src/game/utilities/gSeedPrng.c: seed LCG, set cursors to 20, fill two 20-word tables */
     LK_FUNC("func_800197A8");
     lk_fill(gStateTable_s, 0xA5, sizeof(gStateTable_s));
     lk_fill(gStateEntryTable_s, 0xA5, sizeof(gStateEntryTable_s));
@@ -384,7 +384,7 @@ static void test_prng_and_snapshot(void)
     FCK_CHECK(gStateTable_s[20] == (s32)0xA5A5A5A5 && gStateEntryTable_s[20] == (s32)0xA5A5A5A5,
               "21st guard words untouched");
 
-    /* @leaf 8007C088 source src/game/8007C088.c: stage presets/rumble, clear diagram views, set port check 1 or 3 */
+    /* @leaf 8007C088 source src/game/boot-frontend/gSnapshotControllerPresets.c: stage presets/rumble, clear diagram views, set port check 1 or 3 */
     LK_FUNC("func_8007C088");
     reset_actuators();
     gPadActuators_s[0].enabled = 1; gPadActuators_s[1].enabled = 0;
@@ -450,7 +450,7 @@ static void test_memory_card(void)
     void *ret;
     int i;
 
-    /* @leaf 80020618 source src/game/80020618.c: validate null global and port<2, zero 0x1BB8, init 16+16 ptrs */
+    /* @leaf 80020618 source src/game/memory-resources/gInitMcState.c: validate null global and port<2, zero 0x1BB8, init 16+16 ptrs */
     LK_FUNC("func_80020618");
     gOperationState_s = 0;
     FCK_CHECK(gInitMcState(2, &mc_storage) == 0 && gOperationState_s == 0, "arg0==2 rejected");
@@ -466,7 +466,7 @@ static void test_memory_card(void)
               "16 primary and secondary pointers initialized");
     FCK_CHECK(gInitMcState(0, &mc_storage) == 0, "already initialized rejects re-init");
 
-    /* @leaf 8001F24C source src/game/8001F24C.c: queue mode-3 op when idle, else set busy flag unk9A4=1 */
+    /* @leaf 8001F24C source src/game/boot-frontend/gQueueMcOpMode3.c: queue mode-3 op when idle, else set busy flag unk9A4=1 */
     LK_FUNC("func_8001F24C");
     mc_storage.field_8F4 = 0; mc_storage.unk8F8 = 0;
     mc_storage.unk994 = 9; mc_storage.unk9A4 = 9;
@@ -478,7 +478,7 @@ static void test_memory_card(void)
     gQueueMcOpMode3(0x55, 0x66, 0x77, 0x88);
     FCK_CHECK(mc_storage.unk9A4 == 1 && mc_storage.unk998 == 0x11, "busy manager sets unk9A4=1 without overwriting");
 
-    /* @leaf 800207CC source src/game/800207CC.c: parse 15 directory frames with XOR checksum and label copy */
+    /* @leaf 800207CC source src/game/platform/gParseCardDirectory.c: parse 15 directory frames with XOR checksum and label copy */
     LK_FUNC("func_800207CC");
     lk_fill(mc_storage.directory, 0, sizeof(mc_storage.directory));
     /* slot 1 (dir[0]): 0xA0 empty with valid checksum */
@@ -508,7 +508,7 @@ static void test_memory_card(void)
               mc_storage.primary[3][0] == 'O', "bad checksum forces 0x53 and other label");
     FCK_EQ(mc_storage.state[15], 2, "last slot 15 parsed");
 
-    /* @leaf 80020DF8 source src/game/80020DF8.c: bounds check slot<16, lazy parse when 0, return state */
+    /* @leaf 80020DF8 source src/game/platform/gReadCardSlotState.c: bounds check slot<16, lazy parse when 0, return state */
     LK_FUNC("func_80020DF8");
     FCK_EQ(gReadCardSlotState(16), -1, "slot 16 out of range returns -1");
     FCK_EQ(gReadCardSlotState(0xFFFFFFFFU), -1, "unsigned -1 out of range returns -1");
@@ -526,7 +526,7 @@ void gCdSeekDoneCallback(u8 arg) __asm__("func_8001C614");
 
 static void test_cd_seek_cb(void)
 {
-    /* @leaf 8001C614 source src/game/8001C614.c: arg==2 && mode==1 advances mode to 2 and installs sync cb */
+    /* @leaf 8001C614 source src/game/platform/gCdSeekDoneCallback.c: arg==2 && mode==1 advances mode to 2 and installs sync cb */
     LK_FUNC("func_8001C614");
     gExecutableImageBase_s.mode = 1; gExecutableImageBase_s.value = 0x12345678;
     gCdSyncCallback_s = 0x55;
@@ -580,7 +580,7 @@ static void test_sound_units(void)
     struct SndChan22 chans[2];
     struct VoiceArgs22 vargs;
 
-    /* @leaf 80045548 source src/game/80045548.c: unlink channel from queue, prepend to free list, dec or reinit */
+    /* @leaf 80045548 source src/game/boot-frontend/gReleaseSoundChannel.c: unlink channel from queue, prepend to free list, dec or reinit */
     LK_FUNC("func_80045548");
     lk_fill(ch, 0, sizeof(ch));
     ch[0].next = &ch[1]; ch[1].prev = &ch[0]; ch[1].next = &ch[2]; ch[2].prev = &ch[1];
@@ -598,7 +598,7 @@ static void test_sound_units(void)
               gChannelListHead_s == gVoiceTable_s && gVoiceTable_s[0].id == -1,
               "count==0 triggers gInitSoundChannelList");
 
-    /* @leaf 80044EF8 source src/game/80044EF8.c: fill low/id(0x46) & high(0x3C) tables with 0xFF and reset 0x6E entries */
+    /* @leaf 80044EF8 source src/game/boot-frontend/gResetSoundBankTables.c: fill low/id(0x46) & high(0x3C) tables with 0xFF and reset 0x6E entries */
     LK_FUNC("func_80044EF8");
     lk_fill(gSoundBankTableLow_s, 0x11, sizeof(gSoundBankTableLow_s));
     lk_fill(gSoundIdTable_s, 0x22, sizeof(gSoundIdTable_s));
@@ -617,7 +617,7 @@ static void test_sound_units(void)
               gSoundEntryTable_s[0x6D].unk13 == 1 && gSoundEntryTable_s[0x6D].unk16 == 0xFF &&
               gSoundEntryTable_s[0x6E].unk13 == 0x44, "entries 0..0x6D reset, 0x6E untouched");
 
-    /* @leaf 80047344 source src/game/80047344.c: register sound bank, clamp fields, route IDs to low/id/high tables */
+    /* @leaf 80047344 source src/game/memory-resources/gRegisterSoundBankByKey.c: register sound bank, clamp fields, route IDs to low/id/high tables */
     LK_FUNC("func_80047344");
     gResetSoundBankTables();
     lk_fill(gHighSoundIdRegistrationBase_s, 0xEE, sizeof(gHighSoundIdRegistrationBase_s));
@@ -641,7 +641,7 @@ static void test_sound_units(void)
     gRegisteredSoundBankCount_s = 0x6E;
     FCK_EQ(gRegisterSoundBankByKey(&sobj, 0x4C), -1, "full table returns -1");
 
-    /* @leaf 800241D0 source src/game/800241D0.c: register bank and append up to 4 samples when enabled */
+    /* @leaf 800241D0 source src/game/boot-frontend/gAppendSoundProgramSample.c: register bank and append up to 4 samples when enabled */
     LK_FUNC("func_800241D0");
     gResetSoundBankTables();
     lk_fill(&sobj, 0, sizeof(sobj));
@@ -655,7 +655,7 @@ static void test_sound_units(void)
     sobj.unk05 = 0;
     FCK_EQ(gAppendSoundProgramSample(0x52, 1, 2, 3, &sobj), 0, "disabled bank returns 0");
 
-    /* @leaf 800220C4 source src/game/800220C4.c: allocate first free voice of 3 and compute stereo levels */
+    /* @leaf 800220C4 source src/game/boot-frontend/gAllocateSoundChannelVoice.c: allocate first free voice of 3 and compute stereo levels */
     LK_FUNC("func_800220C4");
     lk_fill(&gSoundSystem_s, 0, sizeof(gSoundSystem_s));
     lk_fill(chans, 0, sizeof(chans));
@@ -703,7 +703,7 @@ static void test_drawenv_and_movie_ring(void)
     u8 chunk[0x10 + 60]; /* 16-byte header + 30 bytes left + 30 bytes right */
     int i;
 
-    /* @leaf 80092140 source src/game/80092140.c: initialize DRAWENV defaults and mode-dependent small threshold */
+    /* @leaf 80092140 source src/game/gpu-2d-hud/gSetDefDrawEnv.c: initialize DRAWENV defaults and mode-dependent small threshold */
     LK_FUNC("func_80092140");
     lk_fill(&env, 0xA5, sizeof(env));
     gGpuDrawOffset_s = 0;
@@ -720,7 +720,7 @@ static void test_drawenv_and_movie_ring(void)
     gSetDefDrawEnv(&env, 0, 0, 320, 0x121);
     FCK_EQ(env.small, 0, "mode 1 size=0x121 sets small=0");
 
-    /* @leaf 80087430 source src/game/80087430.c: big-endian chunk split into padded 16-byte stereo ring with wrap */
+    /* @leaf 80087430 source src/game/platform/gMovieAudioChunkPushSplit.c: big-endian chunk split into padded 16-byte stereo ring with wrap */
     LK_FUNC("func_80087430");
     gMovieAudioState_s = &movie_ring_storage;
     lk_fill(&movie_ring_storage, 0xAA, sizeof(movie_ring_storage));

@@ -10,12 +10,12 @@
  * links only marked units, so compile these here without claiming coverage.
  * The relative paths also work in the mutation tool's source snapshot.
  */
-#include "../../src/game/8001E4C0.c"
-#include "../../src/game/8001EF34.c"
-#include "../../src/game/800288BC.c"
-#include "../../src/game/8003BF1C.c"
-#include "../../src/game/800489C8.c"
-#include "../../src/game/8007F688.c"
+#include "../../src/game/other/gFillMemory.c"
+#include "../../src/game/boot-frontend/gGetPadType.c"
+#include "../../src/game/memory-resources/gRecycleModuleReadBuffer.c"
+#include "../../src/game/renderer-scene/gReleasePoolNode.c"
+#include "../../src/game/gpu-2d-hud/gLookupFontGlyph.c"
+#include "../../src/game/utilities/gComputeDualChecksum.c"
 
 struct DmaEntry { u8 before[12]; s32 completion; u8 after[8]; };
 struct DmaEntry dma_entries[4] __asm__("D_800A8EA8");
@@ -27,7 +27,7 @@ void gSpuCancelDmaRequests(void) __asm__("func_8002129C");
 
 static void test_dma_queue(void)
 {
-    /* @leaf 8002129C source src/game/8002129C.c: initialized queue cancels only the selected completion */
+    /* @leaf 8002129C source src/game/platform/gSpuCancelDmaRequests.c: initialized queue cancels only the selected completion */
     LK_FUNC("func_8002129C");
     dma_initialized = 0;
     dma_read_index = 2;
@@ -76,7 +76,7 @@ static void test_motion(void)
     struct UnkC14CSrc src;
     int i;
 
-    /* @leaf 8003C14C source src/game/8003C14C.c: tuning conversion and selector-controlled signed limit */
+    /* @leaf 8003C14C source src/game/gameplay-ai/gInitSpawnMotionState.c: tuning conversion and selector-controlled signed limit */
     LK_FUNC("func_8003C14C");
     lk_fill(&src, 0x6D, sizeof(src));
     lk_fill(&dest, 0xA5, sizeof(dest));
@@ -146,7 +146,7 @@ static void test_sound_lists(void)
     struct SoundVoice voice[3];
     int i;
 
-    /* @leaf 8004582C source src/game/8004582C.c: exact channel count and singly linked free list */
+    /* @leaf 8004582C source src/game/boot-frontend/gInitSoundChannelList.c: exact channel count and singly linked free list */
     LK_FUNC("func_8004582C");
     lk_fill(channels, 0xA5, sizeof(channels));
     channel_count = -9;
@@ -166,7 +166,7 @@ static void test_sound_lists(void)
     }
     FCK_CHECK(lk_all(channels + 30, 0, sizeof(channels[0]), 0xA5), "backed slot beyond 30 untouched");
 
-    /* @leaf 80046804 source src/game/80046804.c: remove middle, head and last voice from its bank */
+    /* @leaf 80046804 source src/game/platform/gUnlinkSoundBankVoice.c: remove middle, head and last voice from its bank */
     LK_FUNC("func_80046804");
     lk_fill(banks, 0xA5, sizeof(banks));
     lk_fill(voice, 0x6D, sizeof(voice));
@@ -216,7 +216,7 @@ static void test_script_timers(void)
 {
     struct ScriptTimer timers[6];
 
-    /* @leaf 80049400 source src/game/80049400.c: clear publication, not timer contents */
+    /* @leaf 80049400 source src/game/boot-frontend/gInitScriptTimers.c: clear publication, not timer contents */
     LK_FUNC("func_80049400");
     lk_fill(timers, 0xA5, sizeof(timers));
     script_timers = timers;
@@ -226,7 +226,7 @@ static void test_script_timers(void)
     FCK_EQ(script_timer_count, 0, "timer count reset");
     FCK_CHECK(lk_all(timers, 0, sizeof(timers), 0xA5), "unpublished table not modified");
 
-    /* @leaf 80049564 source src/game/80049564.c: expiry, trigger gating and finite versus infinite repeats */
+    /* @leaf 80049564 source src/game/boot-frontend/gTickScriptTimers.c: expiry, trigger gating and finite versus infinite repeats */
     LK_FUNC("func_80049564");
     timers[0].count = 0;
     timers[0].remaining = -1;
@@ -280,7 +280,7 @@ static void test_fragments(void)
     struct Unk4AADNode nodes[4];
     struct Unk4AADParent parent;
 
-    /* @leaf 8004AAD4 source src/game/8004AAD4.c: unlink active fragments, push free list and notify flagged parent */
+    /* @leaf 8004AAD4 source src/game/boot-frontend/gFreeDebrisFragment.c: unlink active fragments, push free list and notify flagged parent */
     LK_FUNC("func_8004AAD4");
     lk_fill(&owner, 0x6D, sizeof(owner));
     lk_fill(nodes, 0xA5, sizeof(nodes));
@@ -339,7 +339,7 @@ static void test_game_state(void)
     struct Unk77FFC snapshot[6];
     int i;
 
-    /* @leaf 8005A044 source src/game/8005A044.c: reset exactly two player flag bytes */
+    /* @leaf 8005A044 source src/game/boot-frontend/gResetPlayerInvulnFlags.c: reset exactly two player flag bytes */
     LK_FUNC("func_8005A044");
     player_invulnerable[0] = 0x40;
     player_invulnerable[1] = 1;
@@ -348,7 +348,7 @@ static void test_game_state(void)
     FCK_CHECK(player_invulnerable[0] == 0 && player_invulnerable[1] == 0, "both players reset");
     FCK_EQ(player_invulnerable[2], 0xB7, "backed byte outside two players untouched");
 
-    /* @leaf 80063134 source src/game/80063134.c: reset terrain publications, not adjacent slots */
+    /* @leaf 80063134 source src/game/gpu-2d-hud/gClearTerrainState.c: reset terrain publications, not adjacent slots */
     LK_FUNC("func_80063134");
     terrain_heightfield[0] = &session;
     terrain_heightfield[1] = snapshot;
@@ -360,7 +360,7 @@ static void test_game_state(void)
     FCK_CHECK(terrain_effect[0] == 0 && terrain_effect[1] == 0x62, "only first effect byte cleared");
     FCK_EQ(terrain_queue_count, 0, "terrain queue count reset");
 
-    /* @leaf 80069B1C source src/game/80069B1C.c: bind four distinct addresses without writing pointed-to bytes */
+    /* @leaf 80069B1C source src/game/boot-frontend/gBindGameSessionPointers.c: bind four distinct addresses without writing pointed-to bytes */
     LK_FUNC("func_80069B1C");
     lk_fill(&session, 0xA5, sizeof(session));
     lk_fill(frame_time, 0x19, sizeof(frame_time));
@@ -377,7 +377,7 @@ static void test_game_state(void)
     FCK_CHECK(lk_all(frame_time, 0, 4, 0x19) && lk_all(vm_aux, 0, 4, 0x2A) &&
               lk_all(screen_reset, 0, 4, 0x3B) && lk_all(effect_id, 0, 4, 0x4C), "bound values not modified");
 
-    /* @leaf 80077FFC source src/game/80077FFC.c: only the four indexed completion states determine unlock */
+    /* @leaf 80077FFC source src/game/boot-frontend/gUpdatePrecinctUnlockFlag.c: only the four indexed completion states determine unlock */
     LK_FUNC("func_80077FFC");
     lk_fill(precincts, 0xA5, sizeof(precincts));
     precinct_order[0] = 5;
@@ -401,7 +401,7 @@ static void test_game_state(void)
     gUpdatePrecinctUnlockFlag();
     FCK_EQ(precinct_unlocked, 0, "unanimous but wrong state does not unlock");
 
-    /* @leaf 8007BFAC source src/game/8007BFAC.c: selector three publishes transition and filename */
+    /* @leaf 8007BFAC source src/game/boot-frontend/gQueueCwRulesMovie.c: selector three publishes transition and filename */
     LK_FUNC("func_8007BFAC");
     deferred_transition = -5;
     pending_capture = &session;
@@ -433,7 +433,7 @@ static void test_movie_audio(void)
     static struct MovieAudioFixture state;
     static struct MovieAudioFixture snapshot;
 
-    /* @leaf 80086A4C source src/game/80086A4C.c: wrapped second-buffer pointer, exact capacity and busy gate */
+    /* @leaf 80086A4C source src/game/boot-frontend/gPeekMovieAudioSecondBuffer.c: wrapped second-buffer pointer, exact capacity and busy gate */
     LK_FUNC("func_80086A4C");
     lk_fill(&state, 0xA5, sizeof(state));
     movie_audio = &state;
@@ -449,7 +449,7 @@ static void test_movie_audio(void)
     FCK_CHECK(gPeekMovieAudioSecondBuffer(0) == 0, "busy state rejects request even with room");
     FCK_EQ(state.blocked, -1, "peek does not clear busy state");
 
-    /* @leaf 80086D74 source src/game/80086D74.c: active-only increments of bytes and blocks */
+    /* @leaf 80086D74 source src/game/boot-frontend/gAdvanceMovieAudioCounters.c: active-only increments of bytes and blocks */
     LK_FUNC("func_80086D74");
     state.active = 0;
     state.bytes = 0x3BF0;
@@ -486,7 +486,7 @@ static void test_pad_reads(void)
     struct PadBuffer analog_snapshot[2];
     s32 axes[4];
 
-    /* @leaf 8008C07C source src/game/8008C07C.c: mode-specific indexed reads, enables and out-of-range defaults */
+    /* @leaf 8008C07C source src/game/boot-frontend/gReadPadTxByte.c: mode-specific indexed reads, enables and out-of-range defaults */
     LK_FUNC("func_8008C07C");
     lk_fill(&pad, 0, sizeof(pad));
     pad.data0 = primary;
@@ -515,7 +515,7 @@ static void test_pad_reads(void)
     FCK_EQ(memcmp(&pad, &snapshot, sizeof(pad)), 0, "read does not consume index or alter port");
     FCK_CHECK(primary[0] == 0xC3 && secondary[0] == 0x42, "input bytes untouched");
 
-    /* @leaf 8001E7B8 source src/game/8001E7B8.c: pad type gates axis writes; only selector one chooses right stick */
+    /* @leaf 8001E7B8 source src/game/platform/gReadAnalogStick.c: pad type gates axis writes; only selector one chooses right stick */
     LK_FUNC("func_8001E7B8");
     lk_fill(analog_pad_buffers, 0x6D, sizeof(analog_pad_buffers));
     analog_pad_buffers[0].unk00[0] = 0;
@@ -554,7 +554,7 @@ static void test_packet_headers(void)
     u8 sprite[16] = { 0x6D, 0x6D, 0x6D, 0x6D, 0x6D, 3, 0x6D, 0x6D,
                       0x6D, 0x74, 0x6D, 0x6D, 0x6D, 0x6D, 0x6D, 0x6D };
 
-    /* @leaf 80092460 source src/game/80092460.c: flat triangle length and code bytes only */
+    /* @leaf 80092460 source src/game/other/gSetFlatTrianglePacketHeader.c: flat triangle length and code bytes only */
     LK_FUNC("func_80092460");
     lk_fill(packet, 0xA5, sizeof(packet));
     gSetFlatTrianglePacketHeader(packet + 1);
@@ -562,7 +562,7 @@ static void test_packet_headers(void)
     FCK_EQ(packet[8], 0x20, "flat triangle opcode");
     FCK_EQ(memcmp(packet, triangle, sizeof(triangle)), 0, "all other packet and guard bytes remain");
 
-    /* @leaf 80092500 source src/game/80092500.c: 8x8 sprite length and code bytes only */
+    /* @leaf 80092500 source src/game/gpu-2d-hud/gSetSprt8.c: 8x8 sprite length and code bytes only */
     LK_FUNC("func_80092500");
     lk_fill(packet, 0x6D, sizeof(packet));
     gSetSprt8(packet + 2);
@@ -576,7 +576,7 @@ static void test_mdec_defaults(void)
     struct { u32 before; DecDctEnv env; u32 after; } fixture;
     int i;
 
-    /* @leaf 80095EC4 source src/game/80095EC4.c: three full table copies with stable destination identity */
+    /* @leaf 80095EC4 source src/game/gpu-2d-hud/gInitDefaultMdecEnvironment.c: three full table copies with stable destination identity */
     LK_FUNC("func_80095EC4");
     lk_fill(&fixture, 0xA5, sizeof(fixture));
     for (i = 0; i < 16; i++) {
@@ -617,7 +617,7 @@ static void test_spawn_retirement(void)
 {
     struct Unk3CA80 slot, expected;
 
-    /* @leaf 8003CA80 source src/game/8003CA80.c: teardown callback sees live slot before reset */
+    /* @leaf 8003CA80 source src/game/gameplay-ai/gRetireSpawnSlot.c: teardown callback sees live slot before reset */
     LK_FUNC("func_8003CA80");
     lk_fill(&slot, 0xA5, sizeof(slot));
     slot.identifier = 800;
@@ -672,7 +672,7 @@ static void test_text_metrics(void)
     memcpy(&snapshot, &font, sizeof(font));
     memcpy(glyph_snapshot, glyphs, sizeof(glyphs));
 
-    /* @leaf 800492A0 source src/game/800492A0.c: signed advance accumulation and height output */
+    /* @leaf 800492A0 source src/game/gpu-2d-hud/gMeasureTextExtent.c: signed advance accumulation and height output */
     LK_FUNC("func_800492A0");
     active_font = &font;
     out[0] = 123; out[1] = -7; out[2] = -9; out[3] = 456;
@@ -688,7 +688,7 @@ static void test_text_metrics(void)
     FCK_CHECK(memcmp(&font, &snapshot, sizeof(font)) == 0 &&
               memcmp(glyphs, glyph_snapshot, sizeof(glyphs)) == 0, "extent leaves font data untouched");
 
-    /* @leaf 80049340 source src/game/80049340.c: doubled width with no modification of the font or text */
+    /* @leaf 80049340 source src/game/gpu-2d-hud/gMeasureTextWidthPx.c: doubled width with no modification of the font or text */
     LK_FUNC("func_80049340");
     active_font = &font;
     FCK_EQ(gMeasureTextWidthPx(line), 26, "pixel width doubles signed advances");
@@ -742,7 +742,7 @@ static void test_profile_checksums(void)
     u8 original[7];
     int i;
 
-    /* @leaf 8007F6E0 source src/game/8007F6E0.c: update exactly 11 checksum pairs without editing payloads */
+    /* @leaf 8007F6E0 source src/game/memory-resources/gUpdateProfileChecksums.c: update exactly 11 checksum pairs without editing payloads */
     LK_FUNC("func_8007F6E0");
     prepare_save_payloads(&save);
     memcpy(&expected, &save, sizeof(save));
@@ -762,7 +762,7 @@ static void test_profile_checksums(void)
     }
     FCK_EQ(memcmp(&save, &expected, sizeof(save)), 0, "only the checksum words changed");
 
-    /* @leaf 8007F750 source src/game/8007F750.c: header validity distinct from aggregate status and failed-entry clearing */
+    /* @leaf 8007F750 source src/game/platform/gVerifySaveImageChecksums.c: header validity distinct from aggregate status and failed-entry clearing */
     LK_FUNC("func_8007F750");
     memcpy(&save, &expected, sizeof(save)); /* load expected checksum words, not output from updater */
     expected.valid = 1;
@@ -787,7 +787,7 @@ static void test_profile_checksums(void)
     FCK_EQ(save.valid, 0, "bad header clears validity");
     FCK_EQ(memcmp(&save, &expected, sizeof(save)), 0, "bad header retained but entry scanning still continues");
 
-    /* @leaf 8007F824 source src/game/8007F824.c: independent checksum fields and exact optional clear region */
+    /* @leaf 8007F824 source src/game/utilities/gVerifyDualChecksum.c: independent checksum fields and exact optional clear region */
     LK_FUNC("func_8007F824");
     memcpy(original, region, sizeof(region));
     FCK_EQ(gVerifyDualChecksum(region + 1, 5, 443, 0xD54, -1), 1, "matching pair succeeds even with clear enabled");
@@ -816,7 +816,7 @@ static void test_pad_mode(void)
 {
     struct PadPort port;
 
-    /* @leaf 8008B6BC source src/game/8008B6BC.c: step/status select return, rejection write or callback */
+    /* @leaf 8008B6BC source src/game/boot-frontend/gRespPadModeSelect.c: step/status select return, rejection write or callback */
     LK_FUNC("func_8008B6BC");
     lk_fill(&port, 0xA5, sizeof(port));
     port.mode_already_selected = 0x90;
@@ -866,7 +866,7 @@ static void test_resource_publication(void)
     Unk8008263C *slots[31], resource[4];
     Unk8008263C *expected[31];
 
-    /* @leaf 800899A4 source src/game/800899A4.c: validate wrapper and header, freeing in publication order */
+    /* @leaf 800899A4 source src/game/memory-resources/gLoadTextLookupTable.c: validate wrapper and header, freeing in publication order */
     LK_FUNC("func_800899A4");
     lk_fill(&initial, 0xA5, sizeof(initial));
     initial.header = &good_header;
@@ -898,7 +898,7 @@ static void test_resource_publication(void)
     FCK_CHECK(text_table == &accepted && fck_log_count == 4, "valid table on empty slot needs no release");
     FCK_CHECK(good_header == 1 && bad_header == 2, "input headers not edited");
 
-    /* @leaf 8008263C source src/game/8008263C.c: bounded publication and release of collisions or invalid IDs */
+    /* @leaf 8008263C source src/game/boot-frontend/gRegisterPublishedBlock.c: bounded publication and release of collisions or invalid IDs */
     LK_FUNC("func_8008263C");
     lk_fill(slots, 0, sizeof(slots));
     lk_fill(resource, 0xA5, sizeof(resource));
@@ -946,7 +946,7 @@ static void test_queue_retirement(void)
     struct Unk5BD20Target targets[2];
     int i;
 
-    /* @leaf 80028D28 source src/game/80028D28.c: pop parsed head, append retained buffers, recycle unreferenced */
+    /* @leaf 80028D28 source src/game/boot-frontend/gRetireParsedModuleBuffer.c: pop parsed head, append retained buffers, recycle unreferenced */
     LK_FUNC("func_80028D28");
     lk_fill(&module_queues, 0xA5, sizeof(module_queues));
     lk_fill(buffers, 0x6D, sizeof(buffers));
@@ -971,7 +971,7 @@ static void test_queue_retirement(void)
     FCK_CHECK(buffers[1].next == 0 && buffers[3].unk08 == 0x6D6D6D6D, "other retained and parsed records intact");
     FCK_CHECK(lk_all(&module_queues, 0, 0x10, 0xA5), "unrelated queue state left alone");
 
-    /* @leaf 8005BD20 source src/game/8005BD20.c: sweep flagged nodes and invalidate stale references on survivors */
+    /* @leaf 8005BD20 source src/game/renderer-scene/gSweepEffectPool.c: sweep flagged nodes and invalidate stale references on survivors */
     LK_FUNC("func_8005BD20");
     lk_fill(effects, 0, sizeof(effects));
     lk_fill(targets, 0x6D, sizeof(targets));

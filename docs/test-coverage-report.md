@@ -44,7 +44,7 @@ abgedeckt, wenn mindestens eine ihr zugeordnete Instruktion lief; nur Zeilen mit
 Code kommen in den Nenner, also zählen Deklarationen und Kommentare nicht mit.
 
 Nebenwirkung: die Messung hat drei echte Lücken aufgedeckt und geschlossen — die
-Marker-Typen 0/1 und der Pfad „Puffer voll" in `src/game/8005B088.c` waren
+Marker-Typen 0/1 und der Pfad „Puffer voll" in `src/game/renderer-scene/gDrawRadarMarker.c` waren
 ungetestet.
 
 ## 3. Wieviele Funktionen erreichen die Tests wirklich?
@@ -109,7 +109,7 @@ mit der Hardware. Eine bekannte Abweichung ist in
 ### SPU — Sound Processing Unit
 Eigener Audio-DSP mit 512 KB Sample-RAM, 24 ADPCM-Stimmen, Register bei
 `0x1F801C00`. Zwei unabhängige Probleme: der Bereich faultet, und die Semantik
-ist ein Echtzeit-Handshake — `src/game/80097138.c` pollt `SPUSTAT & 0x400`, bis
+ist ein Echtzeit-Handshake — `src/game/platform/gSpuWriteMemBlock.c` pollt `SPUSTAT & 0x400`, bis
 ein Transfer fertig ist; ohne Gerät terminiert das nie. Und das Ergebnis ist
 Schall, es gibt keinen Wert zum Vergleichen.
 
@@ -121,7 +121,7 @@ bewusst nicht im Repo.
 
 ### BIOS
 512-KB-Boot-ROM mit Kernel; Aufruf über Sprung auf `0xA0`/`0xB0`/`0xC0` mit
-Service-Index in `$t1` (siehe `src/game/8008D650.c`: `addiu $t2,$zero,0xA0` /
+Service-Index in `$t1` (siehe `src/game/platform/func_8008D650.c`: `addiu $t2,$zero,0xA0` /
 `jr $t2` / `addiu $t1,$zero,0xAC`). Der Sprung faultet, und der Code liefe im
 Kernel-Modus mit COP0, Exception-Vektoren und `I_STAT`/`I_MASK`. Ein Stub könnte
 nur „Erfolg" zurückgeben — der Test wäre tautologisch.

@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import unit_paths
 import verify_matching_units as matching
 
 
@@ -1045,7 +1046,7 @@ def promote_command(args: argparse.Namespace) -> int:
     added = []
     for item in sorted(prepared, key=lambda value: value["unit"]["address"]):
         unit = item["unit"]
-        relative = f"src/game/{unit['address']:08X}.c"
+        relative = unit_paths.target_relative_path(unit["address"], item["source_text"])
         target = ROOT / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(item["source_text"])

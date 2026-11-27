@@ -56,8 +56,8 @@ compile() {
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
 
-compile "$DECOMP/src/game/80067480.c" "$OUT/80067480.o"
-compile "$DECOMP/src/game/80067684.c" "$OUT/80067684.o"
+compile "$DECOMP/src/game/gameplay-ai/gSampleTileHeight.c" "$OUT/80067480.o"
+compile "$DECOMP/src/game/gameplay-ai/gQuerySurfaceHeight.c" "$OUT/80067684.o"
 compile "$HERE/terrain_surface_harness.c" "$OUT/terrain_surface_harness.o"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s"
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/terrain_surface" \

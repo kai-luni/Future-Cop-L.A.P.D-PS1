@@ -308,7 +308,7 @@ static void test_camera_eye(void)
     s32 out[3];
     struct FckCall c;
 
-    /* @leaf 8005612C source src/game/8005612C.c: offset shrink/bias, focus-zeroing, four-quadrant pitch cotangent, heading rotation, and ray step */
+    /* @leaf 8005612C source src/game/gpu-2d-hud/gComputeCameraEye.c: offset shrink/bias, focus-zeroing, four-quadrant pitch cotangent, heading rotation, and ray step */
     LK_FUNC("func_8005612C");
     gFocusPositions = 0;
     pos.x = 1000; pos.y = 200; pos.z = 3000;
@@ -375,7 +375,7 @@ static void test_player_damage(void)
     struct SceneGameSession sess;
     struct FckCall c;
 
-    /* @leaf 80058210 source src/game/80058210.c: damage guards, health mirror, unkA2/shake clamps, session halving, and quartile callback */
+    /* @leaf 80058210 source src/game/gameplay-ai/gApplyPlayerHealthDamage.c: damage guards, health mirror, unkA2/shake clamps, session halving, and quartile callback */
     LK_FUNC("func_80058210");
     lk_fill(&obj, 0, sizeof(obj));
     lk_fill(&sub_ac, 0, sizeof(sub_ac));
@@ -486,7 +486,7 @@ static void test_radar_markers(void)
     struct FckCall c;
     int i;
 
-    /* @leaf 8005A9C4 source src/game/8005A9C4.c: side origin selection, heading line, 2P bearing line, and 3-bit-stride radar triangles */
+    /* @leaf 8005A9C4 source src/game/gpu-2d-hud/gDrawRadarMarkers.c: side origin selection, heading line, 2P bearing line, and 3-bit-stride radar triangles */
     LK_FUNC("func_8005A9C4");
     lk_fill(&obj, 0, sizeof(obj));
     lk_fill(&ac, 0, sizeof(ac));
@@ -606,7 +606,7 @@ static void test_dome_alloc(void)
     void *ret;
     struct FckCall c;
 
-    /* @leaf 8005D3FC source src/game/8005D3FC.c: 4-slot scan, 0x1B0 alloc, 3-way mesh/colour selection, and 12 motion sub-state resets */
+    /* @leaf 8005D3FC source src/game/renderer-scene/gAllocDomeEffectBlock.c: 4-slot scan, 0x1B0 alloc, 3-way mesh/colour selection, and 12 motion sub-state resets */
     LK_FUNC("func_8005D3FC");
     lk_fill(&ent, 0, sizeof(ent));
     lk_fill(ent_ac, 0, sizeof(ent_ac));
@@ -699,7 +699,7 @@ static void test_cheat_codes(void)
     struct FckCall c;
     s32 ret;
 
-    /* @leaf 80060A0C source src/game/80060A0C.c: 13-case cheat code dispatch, health refill/max fallthrough, mission exit, ammo/reserve, score, and unknown-code return */
+    /* @leaf 80060A0C source src/game/boot-frontend/gApplyPlayerCheatCode.c: 13-case cheat code dispatch, health refill/max fallthrough, mission exit, ammo/reserve, score, and unknown-code return */
     LK_FUNC("func_80060A0C");
     lk_fill(&a0, 0, sizeof(a0)); lk_fill(&a1, 0, sizeof(a1));
     lk_fill(&s0, 0, sizeof(s0)); lk_fill(&s1, 0, sizeof(s1));
@@ -808,7 +808,7 @@ static void test_unit_retirement(void)
     struct SceneGameSession sess;
     int i;
 
-    /* @leaf 80061020 source src/game/80061020.c: registry count decrement and 1P/2P team-routed type 1..4 statistics */
+    /* @leaf 80061020 source src/game/gameplay-ai/gRecordSpawnedUnitRetirement.c: registry count decrement and 1P/2P team-routed type 1..4 statistics */
     LK_FUNC("func_80061020");
     lk_fill(&tbl, 0, sizeof(tbl)); lk_fill(ents, 0, sizeof(ents));
     lk_fill(infos, 0, sizeof(infos)); lk_fill(defs, 0, sizeof(defs));
@@ -891,7 +891,7 @@ static void test_single_view_grid(void)
     u8 cell_map[64];
     int i;
 
-    /* @leaf 80062C3C source src/game/80062C3C.c: radius clamping, 5x5x16 coverage bit test, 256 cap, flags 4/0x100 gating, and cell linked list */
+    /* @leaf 80062C3C source src/game/gpu-2d-hud/gBuildSingleViewObjectGrid.c: radius clamping, 5x5x16 coverage bit test, 256 cap, flags 4/0x100 gating, and cell linked list */
     LK_FUNC("func_80062C3C");
     lk_fill(objs, 0, sizeof(objs));
     lk_fill(out_list, 0, sizeof(out_list));
@@ -990,7 +990,7 @@ static void test_parse_map_chunks(void)
     u8 *p;
     u8 sentinel_anim[12];
 
-    /* @leaf 800639D4 source src/game/800639D4.c: ScLA skip, Sect pointer relocation, ScTA list link & entry relocation/division, SLFX dedup & flag */
+    /* @leaf 800639D4 source src/game/memory-resources/gParseMapSectionChunks.c: ScLA skip, Sect pointer relocation, ScTA list link & entry relocation/division, SLFX dedup & flag */
     LK_FUNC("func_800639D4");
     lk_fill(buf, 0, sizeof(buf));
     lk_fill(tile_blocks, 0, sizeof(tile_blocks));
@@ -1084,7 +1084,7 @@ static void test_init_grdb(void)
     u8 fake_cell_map[16];
     struct FckCall c;
 
-    /* @leaf 80063DC8 source src/game/80063DC8.c: last-GRDB scan, origin rotate/negate, world bounds + 0x360000 inverse spans, and grid allocations */
+    /* @leaf 80063DC8 source src/game/memory-resources/gInitMapFromGrdb.c: last-GRDB scan, origin rotate/negate, world bounds + 0x360000 inverse spans, and grid allocations */
     LK_FUNC("func_80063DC8");
     lk_fill(buf, 0, sizeof(buf));
     lk_fill(&desc, 0, sizeof(desc));
@@ -1136,7 +1136,7 @@ static void test_init_grdb(void)
 
 static void test_tile_pattern(void)
 {
-    /* @leaf 800654F8 source src/game/800654F8.c: mode 0 sine-grid clamp/flatten/mask and mode 1 mirrored 4-byte blend */
+    /* @leaf 800654F8 source src/game/gpu-2d-hud/gBuildTilePattern.c: mode 0 sine-grid clamp/flatten/mask and mode 1 mirrored 4-byte blend */
     LK_FUNC("func_800654F8");
     lk_fill(gTilePatternBuf, 0xAA, sizeof(gTilePatternBuf));
     lk_fill(gTilePatternCounterState, 0, sizeof(gTilePatternCounterState));
@@ -1212,7 +1212,7 @@ static void test_kind59_ctor(void)
     struct FckCall c;
     void *ret;
 
-    /* @leaf 8007043C source src/game/8007043C.c: 0x9C alloc, handler install, field copies, fixed/random angles & unk90, and scaled rotation vector */
+    /* @leaf 8007043C source src/game/gameplay-ai/gCreateKind59Actor.c: 0x9C alloc, handler install, field copies, fixed/random angles & unk90, and scaled rotation vector */
     LK_FUNC("func_8007043C");
     lk_fill(&src, 0, sizeof(src));
     lk_fill(&dst, 0xEE, sizeof(dst));
@@ -1298,7 +1298,7 @@ static void test_emitter_ctor(void)
     struct FckCall c;
     void *ret;
 
-    /* @leaf 800762B0 source src/game/800762B0.c: 0xA0 alloc + pool rollback, colour transpose, 4.12 slopes, rate, and 0x8000/0x4000 flags */
+    /* @leaf 800762B0 source src/game/gameplay-ai/gCreateEmitterObject.c: 0xA0 alloc + pool rollback, colour transpose, 4.12 slopes, rate, and 0x8000/0x4000 flags */
     LK_FUNC("func_800762B0");
     lk_fill(&src, 0, sizeof(src));
     lk_fill(&dst, 0xEE, sizeof(dst));

@@ -962,7 +962,7 @@ static void test_compound_visual_reset(void)
     u8 *entry;
     int i;
 
-    /* @leaf 800516A0 source src/game/800516A0.c: entry at state+0x2A8, +0x0C word keeps the low half 1 and bit 27, every other high bit is masked off; self link at +0x34/+0x3C, +0x40 = 0x10, four bytes at +0x30, the model slot bound, transform[0..14] copied to +0x260 */
+    /* @leaf 800516A0 source src/game/renderer-scene/gResetCompoundVisualSubpart.c: entry at state+0x2A8, +0x0C word keeps the low half 1 and bit 27, every other high bit is masked off; self link at +0x34/+0x3C, +0x40 = 0x10, four bytes at +0x30, the model slot bound, transform[0..14] copied to +0x260 */
     LK_FUNC("func_800516A0");
 
     state = lr_state;
@@ -1183,7 +1183,7 @@ static void test_status_bar(void)
     int i;
     int c;
 
-    /* @leaf 8006C080 source src/game/8006C080.c: three slots at x 0x33/0x5C/0x85 and y 0x22/0x4B/0x74 (step 0x29): registry id, the +0x8A counter at 0xCE in colour 9/0xC from frame bit 0x40 when the invulnerability byte is clear, icon highlight from that byte, and the +0x84 counter at 0xD8 in colour 8; a closing icon (-1, byte, 0xC) and, with a live single-player entity, one more at 0x124 */
+    /* @leaf 8006C080 source src/game/gpu-2d-hud/gDrawThreeSlotStatusBar.c: three slots at x 0x33/0x5C/0x85 and y 0x22/0x4B/0x74 (step 0x29): registry id, the +0x8A counter at 0xCE in colour 9/0xC from frame bit 0x40 when the invulnerability byte is clear, icon highlight from that byte, and the +0x84 counter at 0xD8 in colour 8; a closing icon (-1, byte, 0xC) and, with a live single-player entity, one more at 0x124 */
     LK_FUNC("func_8006C080");
 
     lk_fill((u8 *)&d, 0, sizeof d);
@@ -1318,7 +1318,7 @@ static void test_priority_voice(void)
     static struct LrVoice node;
     s32 r;
 
-    /* @leaf 80046B04 source src/game/80046B04.c: priority is arg0 + (arg1<<4); a free voice is taken when the slot is 0xFF or the bank has room (voices < unk14), otherwise the bank head (or the global list for 0xFF) is stolen when its priority is lower and, for a bank, it is panned hard or has a successor; the voice carries slot/volume/pan(=arg2)/priority and a fresh generation that wraps 1.., linked in by 80046870 */
+    /* @leaf 80046B04 source src/game/platform/gAllocPrioritySoundVoice.c: priority is arg0 + (arg1<<4); a free voice is taken when the slot is 0xFF or the bank has room (voices < unk14), otherwise the bank head (or the global list for 0xFF) is stolen when its priority is lower and, for a bank, it is panned hard or has a successor; the voice carries slot/volume/pan(=arg2)/priority and a fresh generation that wraps 1.., linked in by 80046870 */
     LK_FUNC("func_80046B04");
 
     /* 0xFF with a free voice: bank fields are not consulted */
@@ -1461,7 +1461,7 @@ static void vibration_reset(void)
 
 static void test_vibration_toggle(void)
 {
-    /* @leaf 8007C940 source src/game/8007C940.c: the body runs only when $2 (unset by the decompiler, set here through lr_call_v0) equals the port; a new press is `buttons & ~prev[port] < 0` (sign bit), which plays 0x48 and, with a pad present and ready, flips toggle[port] and pulses motor mode 1 for one frame; the return value is arg0 */
+    /* @leaf 8007C940 source src/game/platform/gToggleVibrationPair.c: the body runs only when $2 (unset by the decompiler, set here through lr_call_v0) equals the port; a new press is `buttons & ~prev[port] < 0` (sign bit), which plays 0x48 and, with a pad present and ready, flips toggle[port] and pulses motor mode 1 for one frame; the return value is arg0 */
     LK_FUNC("func_8007C940");
 
     /* port mismatch: $2 differs from the port argument */
@@ -1592,7 +1592,7 @@ static void test_gouraud_disc(void)
 {
     static struct LrVec v;
 
-    /* @leaf 8001484C spec psx-spx GPU/DMA + Psy-Q libgpu POLY_G3 (0x1C bytes): tag high byte = data-word count (0x01 = 1 word for GP0(E1h) draw mode 0xE10006A0, 0x06 = 6 words for GP0(32h) semi-transparent shaded triangle with colour0/xy0/colour1/xy1/colour2/xy2) and low 24 bits = DMA linked-list address field (0xFFFFFF is end-of-list); source (src/game/8001484C.c): stores depth-dz in the low 24-bit tag field, plus the fan walk and segment count */
+    /* @leaf 8001484C spec psx-spx GPU/DMA + Psy-Q libgpu POLY_G3 (0x1C bytes): tag high byte = data-word count (0x01 = 1 word for GP0(E1h) draw mode 0xE10006A0, 0x06 = 6 words for GP0(32h) semi-transparent shaded triangle with colour0/xy0/colour1/xy1/colour2/xy2) and low 24 bits = DMA linked-list address field (0xFFFFFF is end-of-list); source (src/game/renderer-scene/gEmitGouraudDisc.c): stores depth-dz in the low 24-bit tag field, plus the fan walk and segment count */
     LK_FUNC("func_8001484C");
 
     /* depth 0x100 with offset 0x10 -> 0xF0; scale 4 -> (4 << 9) / 0x100 = 8
@@ -1750,7 +1750,7 @@ static void test_particle_emitter(void)
     u8 *node;
     int i;
 
-    /* @leaf 80043430 semantic clamping and pool layout from src/game/80043430.c: unk36 -1 maps to unk34 and caps at 700, unk34 never exceeds unk36, detail mode 1 halves both when unk34 >= 11; +0x8A/+0x88 copies of those counts, 0x1C-stride free list, unk72 = (-unk72 << 12)/100, matrix[6..8] drive +0x76..+0x7A, unk8E = ((s8)unk50) >> 1 limited to [-7,7] with 0 -> 1, unkA6 = |unk58| */
+    /* @leaf 80043430 semantic clamping and pool layout from src/game/renderer-scene/gSetupParticleEmitter.c: unk36 -1 maps to unk34 and caps at 700, unk34 never exceeds unk36, detail mode 1 halves both when unk34 >= 11; +0x8A/+0x88 copies of those counts, 0x1C-stride free list, unk72 = (-unk72 << 12)/100, matrix[6..8] drive +0x76..+0x7A, unk8E = ((s8)unk50) >> 1 limited to [-7,7] with 0 -> 1, unkA6 = |unk58| */
     LK_FUNC("func_80043430");
 
     emitter_reset(&p, &src);
@@ -1899,7 +1899,7 @@ static void test_spatial_attenuation(void)
     static struct LrExtraData data;
     s32 r;
 
-    /* @leaf 800458E8 math linear attenuation volume - ((distance * volume) >> 17) over 0x20000 with a 0x1FFFF cut-off, the louder of the two listeners in the two-listener mode, centre pan 64 and the flag/pan split from D_8009F730, plus the low-byte volume read that src/game/800458E8.c performs through a u8 pointer */
+    /* @leaf 800458E8 math linear attenuation volume - ((distance * volume) >> 17) over 0x20000 with a 0x1FFFF cut-off, the louder of the two listeners in the two-listener mode, centre pan 64 and the flag/pan split from D_8009F730, plus the low-byte volume read that src/game/platform/gComputeSpatialSoundAttenuation.c performs through a u8 pointer */
     LK_FUNC("func_800458E8");
 
     lr_listener_table[0] = 0x1000;
@@ -2053,7 +2053,7 @@ static void test_place_player_views(void)
     static struct LrObject obj0, obj1;
     static struct LrInfo info0, info1;
 
-    /* @leaf 80056634 source src/game/80056634.c: entry = table[focus->index] with angle = focus->angle; for each live player the eye is placed from the focus position, (angle, angle + f0, f2, f4) and the entry position, the view record is selected by info +0xAC, the eye position/rotation are committed as (angle, f2, 0), and flags +0xA6/+0xA7 become 1 with valAA cleared */
+    /* @leaf 80056634 source src/game/gpu-2d-hud/gPlacePlayerViews.c: entry = table[focus->index] with angle = focus->angle; for each live player the eye is placed from the focus position, (angle, angle + f0, f2, f4) and the entry position, the view record is selected by info +0xAC, the eye position/rotation are committed as (angle, f2, 0), and flags +0xA6/+0xA7 become 1 with valAA cleared */
     LK_FUNC("func_80056634");
 
     lk_fill((u8 *)&lr_focus_block, 0, sizeof lr_focus_block);
@@ -2180,7 +2180,7 @@ static void test_attack_definition(void)
     struct LrDefEntry *e;
     int i;
 
-    /* @leaf 80060838 libc the 0x20-byte copy is the unit's own memcpy of the tACT payload at +0x10 into a 0x30-byte table slot, then src/game/80060838.c: index = count++, unk08/unk0A = (value << 12)/218, the sub-record scaler, four (group, name) pairs from the aRSL block at +8 with a zero name meaning null, and the descriptor is freed */
+    /* @leaf 80060838 libc the 0x20-byte copy is the unit's own memcpy of the tACT payload at +0x10 into a 0x30-byte table slot, then src/game/memory-resources/gLoadAttackDefinition.c: index = count++, unk08/unk0A = (value << 12)/218, the sub-record scaler, four (group, name) pairs from the aRSL block at +8 with a zero name meaning null, and the descriptor is freed */
     LK_FUNC("func_80060838");
 
     definition_reset();
@@ -2269,7 +2269,7 @@ static void test_registry_load(void)
 {
     static struct LrDefArg arg;
 
-    /* @leaf 8006A918 libc the 0x44-byte copy is the unit's own memcpy of the tACT payload at +0x10 into a 0x54-byte record; from src/game/8006A918.c: the load only runs while the count is below six, the count advances, both 0x20-byte objects are scaled, the four aRSL reference pairs fill record +0x44..+0x53 right after the copied 0x44 bytes, and the descriptor is freed even when the gate refuses */
+    /* @leaf 8006A918 libc the 0x44-byte copy is the unit's own memcpy of the tACT payload at +0x10 into a 0x54-byte record; from src/game/memory-resources/gRegistryLoad.c: the load only runs while the count is below six, the count advances, both 0x20-byte objects are scaled, the four aRSL reference pairs fill record +0x44..+0x53 right after the copied 0x44 bytes, and the descriptor is freed even when the gate refuses */
     LK_FUNC("func_8006A918");
 
     registry_reset();
@@ -2349,7 +2349,7 @@ static void test_heap_allocator(void)
     u8 *h = lr_heap;
     static struct LrLinkState pool1, pool2, pool3;
 
-    /* @leaf 80017EBC semantic allocation contract from src/game/80017EBC.c: a zero size returns null; mode 0 goes to the raw allocator and falls back to mode 2; modes 2 and 1 round (size + 7) & ~3, keep a four-byte size header, carve from the front/back of a free range, drop a consumed range and move the mode-2 cursor; a failed range search retries the raw allocator with four bytes less; mode 3 pops from pool 3, then 2, then 1 and otherwise retries as mode 1 */
+    /* @leaf 80017EBC semantic allocation contract from src/game/memory-resources/gAllocMemory.c: a zero size returns null; mode 0 goes to the raw allocator and falls back to mode 2; modes 2 and 1 round (size + 7) & ~3, keep a four-byte size header, carve from the front/back of a free range, drop a consumed range and move the mode-2 cursor; a failed range search retries the raw allocator with four bytes less; mode 3 pops from pool 3, then 2, then 1 and otherwise retries as mode 1 */
     LK_FUNC("func_80017EBC");
 
     alloc_reset();

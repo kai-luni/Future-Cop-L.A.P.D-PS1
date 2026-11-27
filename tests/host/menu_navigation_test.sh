@@ -17,7 +17,7 @@ compile() {
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$2" "$OUT/tmp.mas.s"
 }
-compile "$DECOMP/src/game/800787D8.c" "$OUT/menu.o"
+compile "$DECOMP/src/game/boot-frontend/gSelectEnabledMenuItem.c" "$OUT/menu.o"
 compile "$HERE/menu_navigation_harness.c" "$OUT/harness.o"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s"
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/harness" "$OUT/crt0.o" "$OUT/harness.o" "$OUT/menu.o"

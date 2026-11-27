@@ -15,7 +15,7 @@ void fcm_sound_reset(void)
 
 /* func_80046C84 gPlayNonpositionalSoundEffect(s32 id, s32 arg1) -> s32
  *
- * The retail signature, taken from src/game/80046C84.c: the id and one
+ * The retail signature, taken from src/game/platform/gPlayNonpositionalSoundEffect.c: the id and one
  * forwarded playback parameter, returning the voice handle (0 = not found).
  * Callers differ only in the C type they pass for arg1 - a game object pointer
  * in most units, a plain word in others - which is the same 32-bit register. */

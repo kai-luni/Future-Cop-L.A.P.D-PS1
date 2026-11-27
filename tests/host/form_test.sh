@@ -19,7 +19,7 @@ compile() { # compile <src.c> <obj>
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
-compile "$DECOMP/src/game/80044B34.c" "$OUT/80044B34.o"
+compile "$DECOMP/src/game/gpu-2d-hud/gAdvanceAnimTrack.c" "$OUT/80044B34.o"
 compile "$HERE/form_harness.c" "$OUT/form_harness.o"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s"
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/form_harness" \

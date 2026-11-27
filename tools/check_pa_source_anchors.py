@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check explicit src/game/file.c:line anchors in the Precinct Assault docs."""
+"""Check explicit src/game/<group>/<name>.c:line anchors in the Precinct Assault docs."""
 
 from functools import cache
 from pathlib import Path
@@ -11,7 +11,7 @@ DOCS = (
     "docs/precinct-assault-movers.md",
     "docs/precinct-assault-map-objects.md",
 )
-ANCHOR = re.compile(r"(src/game/\w+\.c):([0-9]+(?:-[0-9]+)?(?:,\s*[0-9]+(?:-[0-9]+)?)*)")
+ANCHOR = re.compile(r"(src/game/[a-z0-9-]+/\w+\.c):([0-9]+(?:-[0-9]+)?(?:,\s*[0-9]+(?:-[0-9]+)?)*)")
 C_TOKEN = re.compile(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'', re.S)
 
 

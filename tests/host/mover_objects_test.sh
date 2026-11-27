@@ -8,6 +8,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="$(cd "$HERE/../.." && pwd)"
+source "$HERE/unit_path.sh"
 T="${TOOLCHAIN:-$DECOMP/.toolchain}"
 OUT="${OUT:-$DECOMP/tests/host/build-movers}"
 QEMU="${QEMU:-$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}"
@@ -35,7 +36,7 @@ compile_s() {
 UNITS="80041B6C 80041488 80041880 80041728 80039504 800395A8 80039298 80039418"
 OBJS=""
 for unit in $UNITS; do
-    compile_s "$DECOMP/src/game/$unit.c" "$OUT/$unit.mas.s"
+    compile_s "$(unit_src "$unit")" "$OUT/$unit.mas.s"
     mipsel-linux-gnu-as -o "$OUT/$unit.o" "$OUT/$unit.mas.s"
     OBJS="$OBJS $OUT/$unit.o"
 done

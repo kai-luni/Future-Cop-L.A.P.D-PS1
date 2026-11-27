@@ -190,7 +190,7 @@ void record_store_mix(s32 channel, s32 level, s32 pan) __asm__("func_800227BC");
 void record_store_mix(s32 channel, s32 level, s32 pan)
 {
     fck_record(store_mix_call, channel, level, pan);
-    /* Stateful spy matching the valid-fixture contract of src/game/800227BC.c:
+    /* Stateful spy matching the valid-fixture contract of src/game/platform/gStoreStreamChannelMix.c:
      * update the selected channel's level/pan before 8002283C reads them back. */
     if (channel >= 0 && channel < 3) {
         mixer.channels[channel].level = level;

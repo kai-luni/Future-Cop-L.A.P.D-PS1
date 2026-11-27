@@ -6,6 +6,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="${DECOMP:-$(cd "$HERE/../.." && pwd)}"
+source "$HERE/unit_path.sh"
 T="$DECOMP/.toolchain"
 OUT="${OUT:-$HERE/build-env}"
 QEMU="${QEMU:-$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}"
@@ -33,7 +34,7 @@ compile() {
 UNITS="8001846C 800188D0 80018DC0 80019470 8001A81C 80018860 80013CB8 80010750 80010820 8001006C 8001010C 800101D4 80010234 8001047C"
 OBJS=""
 for f in $UNITS; do
-    compile "$DECOMP/src/game/$f.c" "$OUT/$f.o"
+    compile "$(unit_src "$f")" "$OUT/$f.o"
     OBJS="$OBJS $OUT/$f.o"
 done
 compile "$OUT/sine.c" "$OUT/sine.o"

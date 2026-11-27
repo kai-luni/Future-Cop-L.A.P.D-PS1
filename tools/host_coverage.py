@@ -36,6 +36,10 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+TOOLS_DIR = Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+import unit_paths  # noqa: E402
 TOOLCHAIN = REPO / ".toolchain"
 GCC = TOOLCHAIN / "gcc-2.7.2-cdk" / "gcc"
 BINUTILS = TOOLCHAIN / "mipsel-binutils" / "root" / "usr" / "bin"
@@ -61,9 +65,9 @@ def toolchain_env():
 
 def compile_unit(unit, outdir, env):
     """Compile one unit the way the harness does and return the object path."""
-    src = REPO / "src" / "game" / f"{unit}.c"
-    if not src.exists():
-        return None, f"missing source {src}"
+    src = unit_paths.resolve_unit_path(unit, repo=REPO)
+    if src is None or not src.exists():
+        return None, f"missing source for {unit}"
 
     raw = outdir / f"{unit}.s"
     mas = outdir / f"{unit}.mas.s"

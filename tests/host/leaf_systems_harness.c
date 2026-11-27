@@ -207,7 +207,7 @@ s32 ls_stub_rand(void)
 static u16 ls_anim_src[512];
 static u16 ls_anim_dst[8];
 
-/* @leaf 800136C8 source src/game/800136C8.c: type<16 entries count down timer by dt, reload rate and advance cur by type (0 forward, 1 backward, 2 ping-pong toggling flag 2, 3 random % max), types >=16 run a 15-bit angle clock scaled by dt*rate>>3 through sincos and quantise to max; a changed entry copies 3 (or 4 with flag 1) u16 from src + cur*6 / cur*8 */
+/* @leaf 800136C8 source src/game/gpu-2d-hud/gStepAnimations.c: type<16 entries count down timer by dt, reload rate and advance cur by type (0 forward, 1 backward, 2 ping-pong toggling flag 2, 3 random % max), types >=16 run a 15-bit angle clock scaled by dt*rate>>3 through sincos and quantise to max; a changed entry copies 3 (or 4 with flag 1) u16 from src + cur*6 / cur*8 */
 static void ls_test_anim(void)
 {
     struct LsAnimNode node;
@@ -423,7 +423,7 @@ s32 ls_stub_busy(void)
     return ls_card_busy;
 }
 
-/* @leaf 80020B64 source src/game/80020B64.c: clears 0x1200 bytes at +0x9B0, stamps sixteen 0x80-byte records (record 0 "MC" head, the rest 0xA0 with an FFFF word at +8) each closed by an XOR of its first 0x7F bytes at +0x7F, hands the table to 80020B28, and only when the manager is idle publishes +0x998 = 1, +0x99C = 0x23, +0x910 = record 1, +0x8F8 = 5 and four zero words */
+/* @leaf 80020B64 source src/game/platform/gPrepareCardFormat.c: clears 0x1200 bytes at +0x9B0, stamps sixteen 0x80-byte records (record 0 "MC" head, the rest 0xA0 with an FFFF word at +8) each closed by an XOR of its first 0x7F bytes at +0x7F, hands the table to 80020B28, and only when the manager is idle publishes +0x998 = 1, +0x99C = 0x23, +0x910 = record 1, +0x8F8 = 5 and four zero words */
 static void ls_test_card_format(void)
 {
     u8 *rec0 = ls_card + 0x9B0;
@@ -536,7 +536,7 @@ static void ls_ec_init(struct LsEcEntity *e, u8 kind, u16 w14, u8 w17, u8 w18)
     e->unkC8 = 0;
 }
 
-/* @leaf 8002F8B8 source src/game/8002F8B8.c: selector 8 maps kind 0x12 to 1 and every other kind to itself, 1/3/4 take +0x14/+0x17/+0x18, 2 aborts on kind 0x15, 5 tests bit (1<<+0x18) of the argument, 7 needs kind 2 and a partner of kind 0x12; on a match the filter either returns 1 or walks both player slots, skipping the caller itself when it is kind 1 and failing on any other slot whose +0xAC->+0x40 is non-zero */
+/* @leaf 8002F8B8 source src/game/gameplay-ai/gTestEntityFieldMatch.c: selector 8 maps kind 0x12 to 1 and every other kind to itself, 1/3/4 take +0x14/+0x17/+0x18, 2 aborts on kind 0x15, 5 tests bit (1<<+0x18) of the argument, 7 needs kind 2 and a partner of kind 0x12; on a match the filter either returns 1 or walks both player slots, skipping the caller itself when it is kind 1 and failing on any other slot whose +0xAC->+0x40 is non-zero */
 static void ls_test_entity_field_match(void)
 {
     LK_FUNC("func_8002F8B8");
@@ -709,7 +709,7 @@ static void ls_zone_record_init(s32 tag, s32 x, s32 y, s32 z, u16 f14, u16 f16,
     *(u16 *)(ls_zone_record + 0x1C) = f1C;
 }
 
-/* @leaf 800319D4 source src/game/800319D4.c: looks the object up by its +0x20/+0x1C keys under tag 0x74414354, allocates a 0x28 node tagged 3 and prepends it to D_8009F6F8, seeding x/z from the object in 8.8, the record tag, a surface height queried in mode -1/-2/type-2 then scaled to 8.8, half the three u16 extents, the +0x1C word, +0x1B, a random byte and the -1/0 sentinels, then frees the object */
+/* @leaf 800319D4 source src/game/gameplay-ai/gLoadMapZone.c: looks the object up by its +0x20/+0x1C keys under tag 0x74414354, allocates a 0x28 node tagged 3 and prepends it to D_8009F6F8, seeding x/z from the object in 8.8, the record tag, a surface height queried in mode -1/-2/type-2 then scaled to 8.8, half the three u16 extents, the +0x1C word, +0x1B, a random byte and the -1/0 sentinels, then frees the object */
 static void ls_test_map_zone(void)
 {
     LK_FUNC("func_800319D4");
@@ -862,7 +862,7 @@ static struct LsSpawnCell *ls_cell(int n, u8 type, u8 next, s32 unk20, s16 unk28
     return c;
 }
 
-/* @leaf 8003C590 source src/game/8003C590.c: clears a 256-word visit table, then for i = 1..255 of one D_800A7040 row (1024-byte stride) skips empty, already-visited and type-flag-bit-4 slots, tags the chain with i while walking cell->next, and sets bit 4 through 8003C4C4 where (+0x28==0 && +0x2A>0) or (+0x20==0 && type 0x57/0x58/0x59, or 0x5C with +0x48==0); a next slot already tagged i closes the cycle: the tag is cleared and 8003C500 is called with (i, current, row) */
+/* @leaf 8003C590 source src/game/boot-frontend/gMarkSpawnRecordChains.c: clears a 256-word visit table, then for i = 1..255 of one D_800A7040 row (1024-byte stride) skips empty, already-visited and type-flag-bit-4 slots, tags the chain with i while walking cell->next, and sets bit 4 through 8003C4C4 where (+0x28==0 && +0x2A>0) or (+0x20==0 && type 0x57/0x58/0x59, or 0x5C with +0x48==0); a next slot already tagged i closes the cycle: the tag is cleared and 8003C500 is called with (i, current, row) */
 static void ls_test_spawn_chains(void)
 {
     LK_FUNC("func_8003C590");
@@ -1039,7 +1039,7 @@ static void ls_anchor_init(struct LsAnchor *o)
     o->unk3E = 1;
 }
 
-/* @leaf 8003D240 source src/game/8003D240.c: walks D_8009F320 and refreshes a node whose +0x38 is 0 and whose source (+0x04) reports a different word at +0x08: either a 0x4C-byte shadow copy of source+0x28 (flag bit 2 clear), or the twelve source words from +0x2C..+0x58 into +0x04..+0x30 with the fetched point added to +0x28..+0x30; the frame word +0x3E == 0 sets flag bit 8, the shadow is committed and freed once bits 1 and 3 are both set, and a zero +0x3A unlinks and destroys the node */
+/* @leaf 8003D240 source src/game/renderer-scene/gSyncAttachedNodes.c: walks D_8009F320 and refreshes a node whose +0x38 is 0 and whose source (+0x04) reports a different word at +0x08: either a 0x4C-byte shadow copy of source+0x28 (flag bit 2 clear), or the twelve source words from +0x2C..+0x58 into +0x04..+0x30 with the fetched point added to +0x28..+0x30; the frame word +0x3E == 0 sets flag bit 8, the shadow is committed and freed once bits 1 and 3 are both set, and a zero +0x3A unlinks and destroys the node */
 static void ls_test_anchor_sync(void)
 {
     struct LsAnchor o1, o2, o3;
@@ -1262,7 +1262,7 @@ static void ls_w_reset(void)
 
 static struct LsWHandle ls_wh_a, ls_wh_b;
 
-/* @leaf 80046CF0 source src/game/80046CF0.c: acts only for player indices below 2, resolves the state against D_800A1830 with limit 0x47 and aborts on 0xFF; in the three slots at D_800A10E0[player*3] it refreshes (status 0x1E, +4 = 1) an occupied slot of the same bank whose +0x10 matches the handle's, frees (status 0) a same-bank slot with a stale handle, remembers the first free slot, and otherwise starts func_80046F9C(0, 0, bank, object, 0), storing status 0x1E, +4 = 1, the bank, the handle word and the handle on success */
+/* @leaf 80046CF0 source src/game/platform/gRefreshPlayerWeaponSound.c: acts only for player indices below 2, resolves the state against D_800A1830 with limit 0x47 and aborts on 0xFF; in the three slots at D_800A10E0[player*3] it refreshes (status 0x1E, +4 = 1) an occupied slot of the same bank whose +0x10 matches the handle's, frees (status 0) a same-bank slot with a stale handle, remembers the first free slot, and otherwise starts func_80046F9C(0, 0, bank, object, 0), storing status 0x1E, +4 = 1, the bank, the handle word and the handle on success */
 static void ls_test_weapon_sound(void)
 {
     struct LsWObj object;
@@ -1442,7 +1442,7 @@ static void ls_curve_reset(LsCurveObj *o)
     o->angle4 = 0x6666;
 }
 
-/* @leaf 8004FFD0 source src/game/8004FFD0.c: with a non-zero turn and bits 28-29 of flags set, the 16.16 size minus |input| is scaled by 0x80000000/(size/2) and multiplied with turn, leaving turnout = ((turn*r)>>16) & 0xFFF; rate drives angle2 = (angle + ((scale*4*rate)>>9)*(size+input)>>16) & 0xFFF unless flag 0x1000, and always adds (x,y,z)<<8 scaled by q = (((scale<<10)*(size-|input|))>>16 >> 2)^2 >> 12 to the vector; rate2 turns angle4 = (angle3 + ((rate2<<16) * (((size+input)>>1 * scale<<10)>>16) >> 16)) & 0xFFF */
+/* @leaf 8004FFD0 source src/game/boot-frontend/gApplyPathCurveOffsets.c: with a non-zero turn and bits 28-29 of flags set, the 16.16 size minus |input| is scaled by 0x80000000/(size/2) and multiplied with turn, leaving turnout = ((turn*r)>>16) & 0xFFF; rate drives angle2 = (angle + ((scale*4*rate)>>9)*(size+input)>>16) & 0xFFF unless flag 0x1000, and always adds (x,y,z)<<8 scaled by q = (((scale<<10)*(size-|input|))>>16 >> 2)^2 >> 12 to the vector; rate2 turns angle4 = (angle3 + ((rate2<<16) * (((size+input)>>1 * scale<<10)>>16) >> 16)) & 0xFFF */
 static void ls_test_path_curve(void)
 {
     LsCurveObj o;
@@ -1583,7 +1583,7 @@ s32 ls_stub_dist(s32 *a, s32 *b)
     return ls_path_dist;
 }
 
-/* @leaf 800513D0 source src/game/800513D0.c: returns 0 unless +0x00 is set, then spends the budget in steps of at most (unk08 - unk0C), scaling the +0x10 vector by the step and adding it to the position; when budget remains it loads (z, x, length) from the 3-word record at +0x20, bumps +0x24 and the optional counter, advances +0x20 by 12, and on +0x24 == +0x28 wraps to +0x1C, reports 1 and snaps the position to +0x2C when the XZ distance is below 0x2000 */
+/* @leaf 800513D0 source src/game/gameplay-ai/gAdvanceLoopingPathPosition.c: returns 0 unless +0x00 is set, then spends the budget in steps of at most (unk08 - unk0C), scaling the +0x10 vector by the step and adding it to the position; when budget remains it loads (z, x, length) from the 3-word record at +0x20, bumps +0x24 and the optional counter, advances +0x20 by 12, and on +0x24 == +0x28 wraps to +0x1C, reports 1 and snaps the position to +0x2C when the XZ distance is below 0x2000 */
 static void ls_test_path_advance(void)
 {
     LsPath p;
@@ -1768,7 +1768,7 @@ void ls_stub_sep(struct LsHover *a0, s32 *out)
 
 /* FMUL in the unit is (a*b)>>16 on the 64-bit product; all fixtures use 16.16
  * values (0x10000 = 1.0) so the expected components are exact products. */
-/* @leaf 800537D0 source src/game/800537D0.c: a zero magnitude clears a3[0] and a3[2]; otherwise the two source fields at +0xA0/+0xA8 are rotated (a2 != 0: (A8, -A0)), left as they are (a2 == 0, a4 == 0), or combined after scaling the magnitude by 181/256 and testing it against 1: a4 == 1 gives (A0+A8, A8-A0) for a positive and (A0-A8, A8+A0) for a negative magnitude, a4 != 1 the exact opposite; the outputs are ((t4*t2)>>16) and ((a1*t3)>>16) and func_80053730 always runs last on the same outputs */
+/* @leaf 800537D0 source src/game/gameplay-ai/gBuildHoverMovementVector.c: a zero magnitude clears a3[0] and a3[2]; otherwise the two source fields at +0xA0/+0xA8 are rotated (a2 != 0: (A8, -A0)), left as they are (a2 == 0, a4 == 0), or combined after scaling the magnitude by 181/256 and testing it against 1: a4 == 1 gives (A0+A8, A8-A0) for a positive and (A0-A8, A8+A0) for a negative magnitude, a4 != 1 the exact opposite; the outputs are ((t4*t2)>>16) and ((a1*t3)>>16) and func_80053730 always runs last on the same outputs */
 static void ls_test_hover_vector(void)
 {
     struct LsHover h;
@@ -1853,7 +1853,7 @@ void ls_stub_setmode(s32 enable)
     fcm_sound.stereo_mode = enable;
 }
 
-/* @leaf 8007D27C source src/game/8007D27C.c: only actions 1 and 2 act; they play cue (0x47, 0), write the inverted stereo enable through 800451B4, then pick the label id from a fresh 800451E0 read: 0x100E when enabled, 0x1018 when muted */
+/* @leaf 8007D27C source src/game/boot-frontend/gToggleSoundEnable.c: only actions 1 and 2 act; they play cue (0x47, 0), write the inverted stereo enable through 800451B4, then pick the label id from a fresh 800451E0 read: 0x100E when enabled, 0x1018 when muted */
 static void ls_test_sound_toggle(void)
 {
     LK_FUNC("func_8007D27C");
@@ -1955,7 +1955,7 @@ extern u16 ls_max_h __asm__("D_8009DDF6");
  * SetDrawArea, SetDrawOffset, _get_tw / SetTexWindow); C API and clamping /
  * null-pointer details are separated below as source checks. */
 
-/* @leaf 80093F58 spec psx-spx GPU Rendering Attributes GP0(E1h) Draw Mode + Psy-Q libgpu.h _get_mode/setDrawTPage: opcode 0xE1, bit 9 = dither (dtd), bit 10 = draw-to-display (dfe), bits 0-8 and 11 = texpage/texture-disable (0x9FF); source (src/game/80093F58.c): non-zero dtd/dfe normalization and tpage & 0x9FF masking */
+/* @leaf 80093F58 spec psx-spx GPU Rendering Attributes GP0(E1h) Draw Mode + Psy-Q libgpu.h _get_mode/setDrawTPage: opcode 0xE1, bit 9 = dither (dtd), bit 10 = draw-to-display (dfe), bits 0-8 and 11 = texpage/texture-disable (0x9FF); source (src/game/gpu-2d-hud/gBuildDrawModeCommand.c): non-zero dtd/dfe normalization and tpage & 0x9FF masking */
 static void ls_test_draw_mode(void)
 {
     LK_FUNC("func_80093F58");
@@ -1964,13 +1964,13 @@ static void ls_test_draw_mode(void)
     FCK_EQ(gBuildDrawModeCommand(1, 0, 0), 0xE1000400, "dfe sets bit 10");
     FCK_EQ(gBuildDrawModeCommand(0, 1, 0), 0xE1000200, "dtd sets bit 9");
     FCK_EQ(gBuildDrawModeCommand(1, 1, 0x123), 0xE1000723, "both flags plus the tpage");
-    /* source (src/game/80093F58.c): C API boolean normalization and 0x9FF mask */
+    /* source (src/game/gpu-2d-hud/gBuildDrawModeCommand.c): C API boolean normalization and 0x9FF mask */
     FCK_EQ(gBuildDrawModeCommand(5, 5, 0), 0xE1000600, "any non-zero value counts as set");
     FCK_EQ(gBuildDrawModeCommand(0, 0, 0xFFFF), 0xE10009FF, "tpage masked to 0x9FF");
     FCK_EQ(gBuildDrawModeCommand(0, 0, 0x0A00), 0xE1000800, "bit 10 of the tpage is dropped");
 }
 
-/* @leaf 80093F78 spec psx-spx GPU Rendering Attributes GP0(E3h) Set Drawing Area top left + Psy-Q libgpu.h SetDrawArea/SetDefDrawEnv: opcode 0xE3, X1 in bits 0-9 (10-bit), Y1 in bits 10-19 (10-bit on newer 208-pin GPU; GPU-variant dependent, 9-bit bits 10-18 on older 160-pin GPU); source (src/game/80093F78.c): clamps x/y to [0, D_8009DDF4-1] / [0, D_8009DDF6-1] before 0x3FF masking */
+/* @leaf 80093F78 spec psx-spx GPU Rendering Attributes GP0(E3h) Set Drawing Area top left + Psy-Q libgpu.h SetDrawArea/SetDefDrawEnv: opcode 0xE3, X1 in bits 0-9 (10-bit), Y1 in bits 10-19 (10-bit on newer 208-pin GPU; GPU-variant dependent, 9-bit bits 10-18 on older 160-pin GPU); source (src/game/gpu-2d-hud/gBuildDrawAreaCommands.c): clamps x/y to [0, D_8009DDF4-1] / [0, D_8009DDF6-1] before 0x3FF masking */
 static void ls_test_draw_area(void)
 {
     LK_FUNC("func_80093F78");
@@ -1979,7 +1979,7 @@ static void ls_test_draw_area(void)
     /* spec: psx-spx GP0(E3h) X1 bits 0-9, Y1 bits 10-19 (10-bit Y GPU-variant dependent) */
     FCK_EQ(gBuildDrawAreaCommands(0x40, 0x20), 0xE3008040, "x 0x40 y 0x20");
     FCK_EQ(gBuildDrawAreaCommands(0, 0), 0xE3000000, "origin");
-    /* source (src/game/80093F78.c): clamping against D_8009DDF4/D_8009DDF6 and 10-bit mask */
+    /* source (src/game/gpu-2d-hud/gBuildDrawAreaCommands.c): clamping against D_8009DDF4/D_8009DDF6 and 10-bit mask */
     FCK_EQ(gBuildDrawAreaCommands(-1, -5), 0xE3000000, "negatives clamp to 0");
     FCK_EQ(gBuildDrawAreaCommands(0x200, 0x200), 0xE303BD3F, "oversize clamps to 0x13F/0xEF");
     FCK_EQ(gBuildDrawAreaCommands(0x13F, 0xEF), 0xE303BD3F, "the maximum itself is kept");
@@ -1988,7 +1988,7 @@ static void ls_test_draw_area(void)
     FCK_EQ(gBuildDrawAreaCommands(0x7FF, 0x7FF), 0xE30FFFFF, "10-bit fields mask 0x7FF to 0x3FF");
 }
 
-/* @leaf 80094010 spec psx-spx GPU Rendering Attributes GP0(E4h) Set Drawing Area bottom right + Psy-Q libgpu.h SetDrawArea/SetDefDrawEnv: opcode 0xE4, X2 in bits 0-9 (10-bit), Y2 in bits 10-19 (10-bit on newer 208-pin GPU; GPU-variant dependent, 9-bit bits 10-18 on older 160-pin GPU); source (src/game/80094010.c): clamps (s16)x/(s16)y to [0, D_8009DDF4-1] / [0, D_8009DDF6-1] before 0x3FF masking */
+/* @leaf 80094010 spec psx-spx GPU Rendering Attributes GP0(E4h) Set Drawing Area bottom right + Psy-Q libgpu.h SetDrawArea/SetDefDrawEnv: opcode 0xE4, X2 in bits 0-9 (10-bit), Y2 in bits 10-19 (10-bit on newer 208-pin GPU; GPU-variant dependent, 9-bit bits 10-18 on older 160-pin GPU); source (src/game/gpu-2d-hud/gPackDrawAreaBottomRight.c): clamps (s16)x/(s16)y to [0, D_8009DDF4-1] / [0, D_8009DDF6-1] before 0x3FF masking */
 static void ls_test_draw_area_bottom_right(void)
 {
     LK_FUNC("func_80094010");
@@ -1997,14 +1997,14 @@ static void ls_test_draw_area_bottom_right(void)
     /* spec: psx-spx GP0(E4h) X2 bits 0-9, Y2 bits 10-19 (10-bit Y GPU-variant dependent) */
     FCK_EQ(gPackDrawAreaBottomRight(0x7F, 0x4F), 0xE4013C7F, "x 0x7F y 0x4F");
     FCK_EQ(gPackDrawAreaBottomRight(0, 0), 0xE4000000, "origin");
-    /* source (src/game/80094010.c): clamping against D_8009DDF4/D_8009DDF6 */
+    /* source (src/game/gpu-2d-hud/gPackDrawAreaBottomRight.c): clamping against D_8009DDF4/D_8009DDF6 */
     FCK_EQ(gPackDrawAreaBottomRight(-1, -1), 0xE4000000, "negatives clamp to 0");
     FCK_EQ(gPackDrawAreaBottomRight(0x400, 0x200), 0xE403BD3F, "oversize clamps to 0x13F/0xEF");
     FCK_EQ(gPackDrawAreaBottomRight(0x10, 0x200), 0xE403BC10, "only the oversize axis clamps");
     FCK_EQ(gPackDrawAreaBottomRight(0x400, 0x10), 0xE400413F, "the other oversize axis clamps");
 }
 
-/* @leaf 800940A8 spec psx-spx GPU Rendering Attributes GP0(E5h) Set Drawing Offset + Psy-Q libgpu.h SetDrawOffset/SetDefDrawEnv: opcode 0xE5, 11-bit signed X in bits 0-10 and 11-bit signed Y in bits 11-21; source (src/game/800940A8.c): direct 0x7FF bit masking without clamping */
+/* @leaf 800940A8 spec psx-spx GPU Rendering Attributes GP0(E5h) Set Drawing Offset + Psy-Q libgpu.h SetDrawOffset/SetDefDrawEnv: opcode 0xE5, 11-bit signed X in bits 0-10 and 11-bit signed Y in bits 11-21; source (src/game/other/gPackDrawOffset.c): direct 0x7FF bit masking without clamping */
 static void ls_test_draw_offset(void)
 {
     LK_FUNC("func_800940A8");
@@ -2012,18 +2012,18 @@ static void ls_test_draw_offset(void)
     FCK_EQ(gPackDrawOffset(0, 0), 0xE5000000, "bare opcode");
     FCK_EQ(gPackDrawOffset(8, 0x10), 0xE5008008, "x 8 y 0x10");
     FCK_EQ(gPackDrawOffset(0x7FF, 0x7FF), 0xE53FFFFF, "both fields at their maximum");
-    /* source (src/game/800940A8.c): upper-bit truncation via & 0x7FF */
+    /* source (src/game/other/gPackDrawOffset.c): upper-bit truncation via & 0x7FF */
     FCK_EQ(gPackDrawOffset(0x800, 0x800), 0xE5000000, "bit 11 is masked away");
     FCK_EQ(gPackDrawOffset(0x1234, 0x5678), 0xE533C234, "0x234 / 0x678 survive the mask");
 }
 
-/* @leaf 800940C4 spec psx-spx GPU Rendering Attributes GP0(E2h) Texture Window + Psy-Q libgpu.h _get_tw/SetTexWindow: opcode 0xE2, 5-bit fields in 8-pixel steps with Mask X in bits 0-4, Mask Y in bits 5-9, Offset X in bits 10-14, Offset Y in bits 15-19; source (src/game/800940C4.c): NULL returns 0, Offset X/Y come from bytes +0/+2 (>>3) and Mask X/Y from negated s16 at +4/+6 ((-v & 0xFF) >> 3) */
+/* @leaf 800940C4 spec psx-spx GPU Rendering Attributes GP0(E2h) Texture Window + Psy-Q libgpu.h _get_tw/SetTexWindow: opcode 0xE2, 5-bit fields in 8-pixel steps with Mask X in bits 0-4, Mask Y in bits 5-9, Offset X in bits 10-14, Offset Y in bits 15-19; source (src/game/platform/gBuildTexWindowCommand.c): NULL returns 0, Offset X/Y come from bytes +0/+2 (>>3) and Mask X/Y from negated s16 at +4/+6 ((-v & 0xFF) >> 3) */
 static void ls_test_tex_window(void)
 {
     u8 p[16];
 
     LK_FUNC("func_800940C4");
-    /* source (src/game/800940C4.c): NULL pointer guard */
+    /* source (src/game/platform/gBuildTexWindowCommand.c): NULL pointer guard */
     FCK_EQ(gBuildTexWindowCommand(0), 0, "null pointer gives 0");
 
     /* spec: psx-spx GP0(E2h) Mask X (0-4), Mask Y (5-9), Offset X (10-14), Offset Y (15-19) */
@@ -2040,7 +2040,7 @@ static void ls_test_tex_window(void)
     *(s16 *)(p + 6) = 0;
     FCK_EQ(gBuildTexWindowCommand(p), 0xE2000000, "all fields zero");
 
-    /* source (src/game/800940C4.c): byte/s16 truncation and >>3 step quantization */
+    /* source (src/game/platform/gBuildTexWindowCommand.c): byte/s16 truncation and >>3 step quantization */
     lk_fill(p, 0, (int)sizeof(p));
     p[0] = 0xFF;              /* Offset X = 0x1F (bits 10-14) */
     p[2] = 0xFF;              /* Offset Y = 0x1F (bits 15-19) */
@@ -2058,7 +2058,7 @@ static void ls_test_tex_window(void)
 
 /* =============================================== 80093CE8 rectangle draw list */
 
-/* The five command builders are linked for real (src/game/80093F58.c and
+/* The five command builders are linked for real (src/game/gpu-2d-hud/gBuildDrawModeCommand.c and
  * friends), so the expected words below are decoded by hand from the PSX GPU
  * packet layout: E1h draw mode, E2h texture window, E3h/E4h draw area, E5h
  * drawing offset, E6h mask reset, and 0x60/0x02 polygons carrying a 24-bit
@@ -2095,7 +2095,7 @@ static u32 ls_word(const u8 *p, int off)
          | ((u32)p[off + 2] << 16) | ((u32)p[off + 3] << 24);
 }
 
-/* @leaf 80093CE8 source src/game/80093CE8.c: writes six GPU packets into obj+4..obj+0x18 (E3h from x/y, E4h from x+w-1/y+h-1, E5h from u/v, E1h from dfe/dtd/tpage, E2h from rect+0xC, E6h constant), sets obj[3] = 6, and with rect[0x18] != 0 clamps w/h to D_8009DDF4/DDF6-1 and appends a 0x60 textured or 0x02 fill packet carrying the RGB bytes plus the size pair, raising the count to 9 */
+/* @leaf 80093CE8 source src/game/platform/gBuildRectDrawList.c: writes six GPU packets into obj+4..obj+0x18 (E3h from x/y, E4h from x+w-1/y+h-1, E5h from u/v, E1h from dfe/dtd/tpage, E2h from rect+0xC, E6h constant), sets obj[3] = 6, and with rect[0x18] != 0 clamps w/h to D_8009DDF4/DDF6-1 and appends a 0x60 textured or 0x02 fill packet carrying the RGB bytes plus the size pair, raising the count to 9 */
 static void ls_test_rect_list(void)
 {
     LK_FUNC("func_80093CE8");
@@ -2230,7 +2230,7 @@ static void ls_spu_reset(void)
     ls_reset();
 }
 
-/* @leaf 80098FE8 source src/game/80098FE8.c: mask 0 means every field; bits 1/2 gate the main volumes with bits 4/8 selecting the 0x8000..0xE000 mode encoding (0..7) and clamping through the signed +0x80 and negative cases, bits 0x40/0x80/0x400/0x800 write the four CD/ext words verbatim, and bits 0x100/0x200/0x1000/0x2000 set or clear control bits 2/0/3/1 from the cd/ext reverb and mix flags */
+/* @leaf 80098FE8 source src/game/platform/gSpuSetCommonAttributes.c: mask 0 means every field; bits 1/2 gate the main volumes with bits 4/8 selecting the 0x8000..0xE000 mode encoding (0..7) and clamping through the signed +0x80 and negative cases, bits 0x40/0x80/0x400/0x800 write the four CD/ext words verbatim, and bits 0x100/0x200/0x1000/0x2000 set or clear control bits 2/0/3/1 from the cd/ext reverb and mix flags */
 static void ls_test_spu_common(void)
 {
     struct LsSpuCommon a;
@@ -2448,7 +2448,7 @@ static void ls_attr_reset(struct LsVoiceAttr *a)
     ls_conv_ret = 0x1234;
 }
 
-/* @leaf 80099C58 source src/game/80099C58.c: mask 0 means every field; bit 0x10 writes the voice pitch word +2, 0x40 the channel's D_8009EA60 sample note, 0x20 recomputes +2 through 800999F4(note>>8, note&0xFF, arg note>>8, arg note&0xFF), 1/2 write the volume words with bits 4/8 selecting the 0x8000..0xE000 mode and clamping at 0x80 and below zero, 0x80/0x10000 call 80097808 with ch*8|3 / ch*8|7, 0x20000/0x40000 write the envelope words +4/+5, and 0x800/0x1000/0x2000/0x4000/0x8000 rebuild +4/+5 from the rate and mode fields with the documented masks (0xFF, 0xFF0F, 0x3F, 0xFFC0, 0xFFF0) and bounds 0x7F, 0xF, 0x7F, 0x1F, 0xF */
+/* @leaf 80099C58 source src/game/platform/gSpuSetVoiceAttributesOne.c: mask 0 means every field; bit 0x10 writes the voice pitch word +2, 0x40 the channel's D_8009EA60 sample note, 0x20 recomputes +2 through 800999F4(note>>8, note&0xFF, arg note>>8, arg note&0xFF), 1/2 write the volume words with bits 4/8 selecting the 0x8000..0xE000 mode and clamping at 0x80 and below zero, 0x80/0x10000 call 80097808 with ch*8|3 / ch*8|7, 0x20000/0x40000 write the envelope words +4/+5, and 0x800/0x1000/0x2000/0x4000/0x8000 rebuild +4/+5 from the rate and mode fields with the documented masks (0xFF, 0xFF0F, 0x3F, 0xFFC0, 0xFFF0) and bounds 0x7F, 0xF, 0x7F, 0x1F, 0xF */
 static void ls_test_spu_voice(void)
 {
     struct LsVoiceAttr a;

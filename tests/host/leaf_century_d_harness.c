@@ -15,12 +15,12 @@
 #define B8(b, o)  (*(u8 *)((u8 *)(b) + (o)))
 
 /* Real dependee units, verbatim, no marker claimed here. */
-#include "../../src/game/8001A074.c"    /* gApproximateLength2, covered by leaf_extra */
-#include "../../src/game/80045028.c"    /* gIsTrackedSoundId, covered by leaf_hundred_a */
-#include "../../src/game/800452C8.c"    /* gGetVoiceVolume, covered by leaf_century_c */
-#include "../../src/game/8001846C.c"    /* gSinCos, covered by leaf_follow_b */
-#include "../../src/game/800987B8.c"    /* gSpuAccessVoiceMaskRegs, unmarked impl unit */
-#include "../../src/game/8002A5B4.c"    /* gRemoveEntityCommand, queue compaction */
+#include "../../src/game/utilities/gApproximateLength2.c"    /* gApproximateLength2, covered by leaf_extra */
+#include "../../src/game/boot-frontend/gIsTrackedSoundId.c"    /* gIsTrackedSoundId, covered by leaf_hundred_a */
+#include "../../src/game/platform/gGetVoiceVolume.c"    /* gGetVoiceVolume, covered by leaf_century_c */
+#include "../../src/game/utilities/gSinCos.c"    /* gSinCos, covered by leaf_follow_b */
+#include "../../src/game/platform/gSpuAccessVoiceMaskRegs.c"    /* gSpuAccessVoiceMaskRegs, unmarked impl unit */
+#include "../../src/game/gameplay-ai/gRemoveEntityCommand.c"    /* gRemoveEntityCommand, queue compaction */
 
 /* Voice-mask dependees (both covered by leaf_a2): a recording stand-in bound
  * to each retail label captures the mask the units under test compute, which
@@ -62,7 +62,7 @@ static void test_vector_math(void)
 {
     s32 p[3], q[3];
 
-    /* @leaf 8001A13C source src/game/8001A13C.c: delta=(a[2]-b[2], a[0]-b[0]) into 8001A074 */
+    /* @leaf 8001A13C source src/game/utilities/gApproximateDistanceXzOctants.c: delta=(a[2]-b[2], a[0]-b[0]) into 8001A074 */
     LK_FUNC("func_8001A13C");
     p[0] = 100; p[2] = 50;
     q[0] = 40;  q[2] = 20;
@@ -86,7 +86,7 @@ static void test_vector_math(void)
     q[0] = 0;  q[2] = 0;
     FCK_EQ(gApproximateDistanceXzOctants(p, q), 25, "x-axis distance is exact");
 
-    /* @leaf 8001A100 source src/game/8001A100.c: planar=(8001A074(vec), vec[2]) then helper again */
+    /* @leaf 8001A100 source src/game/utilities/gVectorLength3D.c: planar=(8001A074(vec), vec[2]) then helper again */
     LK_FUNC("func_8001A100");
     p[0] = 30; p[1] = 40; p[2] = 0;
     FCK_EQ(gVectorLength3D(p), gApproximateLength2Impl(gApproximateLength2Impl(30, 40), 0),
@@ -133,7 +133,7 @@ static void test_pitch_and_rotate(void)
         gSineTable[0x400 - i] = gSineTable[i];
     }
 
-    /* @leaf 80099968 source src/game/80099968.c: prev=a0<<12; steps=a1>>5; frac=a1&0x1F; x=0x103B loop */
+    /* @leaf 80099968 source src/game/utilities/gScaleSpuPitch.c: prev=a0<<12; steps=a1>>5; frac=a1&0x1F; x=0x103B loop */
     LK_FUNC("func_80099968");
         FCK_EQ(gScaleSpuPitch(0x1000, 0), 0x1000, "no steps, frac 0 returns a0 after the >>12");
     /* steps=0, frac=0x1F: cur=a0*0x103B, interpolated then >>12 */
@@ -148,7 +148,7 @@ static void test_pitch_and_rotate(void)
     FCK_EQ(gScaleSpuPitch(-0x1000, 0), 0xFF000, "negative input wraps through the u32 return");
     FCK_EQ(gScaleSpuPitch(-0x1000, 0x40), 0xFEF8A, "negative input with steps wraps the same way");
 
-    /* @leaf 8001A578 source src/game/8001A578.c: x'=x*cos-y*sin, y'=x*sin+y*cos (FMUL = product>>16) */
+    /* @leaf 8001A578 source src/game/utilities/gRotateVector2Q16.c: x'=x*cos-y*sin, y'=x*sin+y*cos (FMUL = product>>16) */
     LK_FUNC("func_8001A578");
     /* angle 0: s=0, c=0x10000 => exact identity */
     vec[0] = 0x10000; vec[1] = 0x08000;
@@ -216,7 +216,7 @@ static void test_spu_command_builders(void)
     gSpuRegBasePtr = reg_file;
     lk_fill(reg_file, 0, sizeof(reg_file));
 
-    /* @leaf 80097808 source src/game/80097808.c: reg -1 returns (addr>>shift)&0xFFFF; reg>=0 writes u16 and returns addr */
+    /* @leaf 80097808 source src/game/platform/gSpuEncodeOrWriteAddr.c: reg -1 returns (addr>>shift)&0xFFFF; reg>=0 writes u16 and returns addr */
     LK_FUNC("func_80097808");
     r = gSpuEncodeOrWriteAddr(-1, 0x1234);
     FCK_EQ(r, 0x1234, "register -1 encodes low halfword with shift 0");
@@ -236,7 +236,7 @@ static void test_spu_command_builders(void)
     FCK_EQ(r, 0x1240 & 0xFFFF, "misaligned address rounded up to 16-byte boundary");
     gSpuAlignEnable = 0;
 
-    /* @leaf 80098BB8 source src/game/80098BB8.c: >0x7FFF8 reject; else 80097808(0xD2, address) */
+    /* @leaf 80098BB8 source src/game/platform/gSetSpuIrqAddress.c: >0x7FFF8 reject; else 80097808(0xD2, address) */
     LK_FUNC("func_80098BB8");
     latched = (u32)gSetSpuIrqAddress(0x7FFF8);
     FCK_CHECK(latched != 0, "top valid address encodes to a nonzero word");
@@ -246,7 +246,7 @@ static void test_spu_command_builders(void)
     FCK_CHECK(reg_file[0xD2 * 2] == (0x1000 & 0xFFFF) || reg_file[0x1A4] == 0,
               "irq address write lands in register file");
 
-    /* @leaf 80098EE8 source src/game/80098EE8.c: offset=addr-0x1010; >0x7EFE8 reject; latch << shift returned */
+    /* @leaf 80098EE8 source src/game/platform/gSetSpuTransferStartAddr.c: offset=addr-0x1010; >0x7EFE8 reject; latch << shift returned */
     LK_FUNC("func_80098EE8");
     gSpuAddrShift = 0;
     FCK_EQ(gSetSpuTransferStartAddr(0x1010), gSpuTransferAddr, "return equals the latched word with shift 0");
@@ -261,7 +261,7 @@ static void test_spu_command_builders(void)
     FCK_EQ(gSetSpuTransferStartAddr(0x7FFF9), 0, "offset one past the boundary rejected");
     FCK_EQ(gSetSpuTransferStartAddr(0x100F), 0, "address below the base rejected by the unsigned wrap");
 
-    /* @leaf 80098788 source src/game/80098788.c: forwards (on_off, voice_bits, 0xCC, 0xCD) to 800987B8 */
+    /* @leaf 80098788 source src/game/platform/gUpdateSpuVoiceNoiseMask.c: forwards (on_off, voice_bits, 0xCC, 0xCD) to 800987B8 */
     LK_FUNC("func_80098788");
     lk_fill(reg_file, 0, sizeof(reg_file));
     gSpuRegisterShadowMode = 1; /* shadow mode: writes hit D_800A6EA0 table */
@@ -317,7 +317,7 @@ static void test_ring_and_lookup(void)
 {
     struct Unk45164Slot slot;
 
-    /* @leaf 800298EC source src/game/800298EC.c: screen<5 and voice!=0 gates: slot=(base+len)&7, len++ */
+    /* @leaf 800298EC source src/game/boot-frontend/gAppendScriptEvent.c: screen<5 and voice!=0 gates: slot=(base+len)&7, len++ */
     LK_FUNC("func_800298EC");
     lk_fill(&gRingBuffer, 0, sizeof(gRingBuffer));
     gScreenState = 0;
@@ -344,7 +344,7 @@ static void test_ring_and_lookup(void)
     gAppendScriptEvent(0x7777);
     FCK_EQ(gRingBuffer.length, 8, "full ring drops the value without overflow");
 
-    /* @leaf 80045164 source src/game/80045164.c: returns slot when 80045028(mode) validates and slot->key == current key */
+    /* @leaf 80045164 source src/game/boot-frontend/gGetTrackedSoundSource.c: returns slot when 80045028(mode) validates and slot->key == current key */
     LK_FUNC("func_80045164");
     lk_fill(&slot, 0, sizeof(slot));
     slot.key = 0x55;
@@ -373,7 +373,7 @@ static void test_voice_masks(void)
 {
     s32 channels[4];
 
-    /* @leaf 800221E4 source src/game/800221E4.c: ORs 1<<ch for ch != -1 into a mask and forwards to 80021A70 */
+    /* @leaf 800221E4 source src/game/boot-frontend/gQueueSoundChannelStarts.c: ORs 1<<ch for ch != -1 into a mask and forwards to 80021A70 */
     LK_FUNC("func_800221E4");
     gVoiceOnMaskCalls = 0;
     channels[0] = 0; channels[1] = 3; channels[2] = -1; channels[3] = 7;
@@ -388,7 +388,7 @@ static void test_voice_masks(void)
     gQueueSoundChannelStarts(2, channels);
     FCK_EQ(gVoiceOnMaskRecorded, 0, "all -1 entries produce an empty mask but still forward");
 
-    /* @leaf 8002238C source src/game/8002238C.c: forwards mask 1<<channel to 80021A8C */
+    /* @leaf 8002238C source src/game/platform/gQueueSoundChannelRelease.c: forwards mask 1<<channel to 80021A8C */
     LK_FUNC("func_8002238C");
     gVoiceOffMaskCalls = 0;
     gQueueSoundChannelRelease(5);
@@ -428,7 +428,7 @@ static void test_entity_command_queues(void)
     struct Script39BD0 cam;
     struct Script3A09C ff;
 
-    /* @leaf 8002F280 source src/game/8002F280.c: consumes 0x50 pairs at +0x0C, writes param to +0xA1 */
+    /* @leaf 8002F280 source src/game/gameplay-ai/gProcessMoverCommands.c: consumes 0x50 pairs at +0x0C, writes param to +0xA1 */
     LK_FUNC("func_8002F280");
     lk_fill(mover, 0, sizeof(mover));
     mover[0xA1] = 0;
@@ -461,7 +461,7 @@ static void test_entity_command_queues(void)
     gProcessMoverCommands(mover);
     FCK_EQ(mover[0xA1], 0, "unknown ops never consume, phantom slot ignored");
 
-    /* @leaf 80039BD0 source src/game/80039BD0.c: cmd 0x73 stores arg at +0x11E and consumes the slot */
+    /* @leaf 80039BD0 source src/game/gameplay-ai/gApplyCameraOverrideOpcode73.c: cmd 0x73 stores arg at +0x11E and consumes the slot */
     LK_FUNC("func_80039BD0");
     lk_fill((u8 *)&cam, 0, sizeof(cam));
     cam.commands[0].op = 0x73; cam.commands[0].arg = 0x42;
@@ -493,7 +493,7 @@ static void test_entity_command_queues(void)
     gApplyCameraOverrideOpcode73(&cam);
     FCK_EQ(cam.unk00[0x11E], 0, "skipped queue leaves the target untouched, phantom ignored");
 
-    /* @leaf 8003A09C source src/game/8003A09C.c: op 0x6E zeroes unk11C[0..1] and sets/clears unk140 bit 0 */
+    /* @leaf 8003A09C source src/game/gameplay-ai/gProcessForceFieldCommands.c: op 0x6E zeroes unk11C[0..1] and sets/clears unk140 bit 0 */
     LK_FUNC("func_8003A09C");
     lk_fill((u8 *)&ff, 0, sizeof(ff));
     ff.unk140 = 0x03;
@@ -588,7 +588,7 @@ static void test_type35_and_spawner(void)
     struct EntityLocal ea, eb;
     struct EntityTableLocal table;
 
-    /* @leaf 800425BC source src/game/800425BC.c: op 0x4B packs (arg&7) at field ((arg>>3)*3) of unkA4; 0x4C packs low 5 bits at +0xA8+arg>>5 */
+    /* @leaf 800425BC source src/game/boot-frontend/gStepType35Commands.c: op 0x4B packs (arg&7) at field ((arg>>3)*3) of unkA4; 0x4C packs low 5 bits at +0xA8+arg>>5 */
     LK_FUNC("func_800425BC");
     lk_fill((u8 *)&t35, 0, sizeof(t35));
     t35.unkA4 = 0xFFFFFFFF;
@@ -625,7 +625,7 @@ static void test_type35_and_spawner(void)
     FCK_EQ(t35.unkA4, 0x71, "skipped queue leaves the packed word alone, phantom ignored");
     FCK_CHECK(t35.unk00[0x0C] == 0x99, "skipped unknown op survives in place");
 
-    /* @leaf 800614BC source src/game/800614BC.c: 0x46: arg2==0 sets flag bit 0, arg2!=0 clears it and unk14 */
+    /* @leaf 800614BC source src/game/gameplay-ai/gApplyRegisteredSpawnerCommand.c: 0x46: arg2==0 sets flag bit 0, arg2!=0 clears it and unk14 */
     LK_FUNC("func_800614BC");
     lk_fill(&sub, 0, sizeof(sub));
     sub.flags = 0;
@@ -666,7 +666,7 @@ static void test_type35_and_spawner(void)
     gApplyRegisteredSpawnerCommand(&obj, 0x99, 1);
     FCK_CHECK(1, "unknown opcode returns without touching state");
 
-    /* @leaf 80061600 source src/game/80061600.c: walks registry, forwards to 800614BC when unk1D matches message */
+    /* @leaf 80061600 source src/game/boot-frontend/gSendSpawnerCommandByGroup.c: walks registry, forwards to 800614BC when unk1D matches message */
     LK_FUNC("func_80061600");
     sub2a.unk1D = 0x22;
     sub2b.unk1D = 0x33;

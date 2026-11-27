@@ -8,13 +8,13 @@
 
 /* Real helpers already covered elsewhere or needed for linking (not counted
  * as @leaf coverage here). Relative paths also work in mutate's snapshot. */
-#include "../../src/game/8003BF1C.c"
-#include "../../src/game/80019A20.c"
-#include "../../src/game/8003CA80.c"
-#include "../../src/game/80013AF0.c"
-#include "../../src/game/80095C30.c"
-#include "../../src/game/8001A074.c"
-#include "../../src/game/8001E318.c"
+#include "../../src/game/renderer-scene/gReleasePoolNode.c"
+#include "../../src/game/memory-resources/gFindRecordPayloadById.c"
+#include "../../src/game/gameplay-ai/gRetireSpawnSlot.c"
+#include "../../src/game/renderer-scene/gInitModelInstance.c"
+#include "../../src/game/utilities/gAtan2.c"
+#include "../../src/game/utilities/gApproximateLength2.c"
+#include "../../src/game/utilities/gCopyMemory.c"
 
 /* Synthetic host-RAM globals referenced by the tested units & helpers. */
 void **g_tex_desc_tbl   __asm__("D_8009F7D8");
@@ -83,7 +83,7 @@ extern void *func_8008E5D8(void *callback);
 static void test_8005A2B0(void)
 {
     void *dummy = (void *)0x12345678;
-    /* @leaf 8005A2B0 source src/game/8005A2B0.c: clears global texture descriptor table pointer */
+    /* @leaf 8005A2B0 source src/game/boot-frontend/gInitTextureDescriptorTable.c: clears global texture descriptor table pointer */
     LK_FUNC("func_8005A2B0");
     g_tex_desc_tbl = &dummy;
     func_8005A2B0();
@@ -95,7 +95,7 @@ static void test_8005A2B0(void)
 /* 2. 8006A880: gClearDescriptorRegistry */
 static void test_8006A880(void)
 {
-    /* @leaf 8006A880 source src/game/8006A880.c: resets descriptor registry count to zero */
+    /* @leaf 8006A880 source src/game/boot-frontend/gClearDescriptorRegistry.c: resets descriptor registry count to zero */
     LK_FUNC("func_8006A880");
     g_desc_reg_cnt = 42;
     func_8006A880();
@@ -113,7 +113,7 @@ static void test_80086F44(void)
     u8 marker_a = 1;
     u8 marker_b = 2;
     u8 **slot = (u8 **)(g_mov_aud_buf + 0x7B24);
-    /* @leaf 80086F44 source src/game/80086F44.c: reads movie audio clock pointer at offset 0x7B24 */
+    /* @leaf 80086F44 source src/game/video-mdec-movies/gMovieAudioClockRead.c: reads movie audio clock pointer at offset 0x7B24 */
     LK_FUNC("func_80086F44");
     g_mov_aud_state = g_mov_aud_buf;
     *slot = &marker_a;
@@ -169,7 +169,7 @@ static void reset_irq_hits(void)
 
 static void test_80091480(void)
 {
-    /* @leaf 80091480 source src/game/80091480.c: dispatches IRQ reset callback via table slot 3 */
+    /* @leaf 80091480 source src/game/platform/gResetIrqDispatch.c: dispatches IRQ reset callback via table slot 3 */
     LK_FUNC("func_80091480");
     reset_irq_hits();
     func_80091480();
@@ -182,7 +182,7 @@ static void test_80091480(void)
 
 static void test_800914B0(void)
 {
-    /* @leaf 800914B0 source src/game/800914B0.c: dispatches IRQ callback via table slot 2 */
+    /* @leaf 800914B0 source src/game/platform/gSetIrqCallback.c: dispatches IRQ callback via table slot 2 */
     LK_FUNC("func_800914B0");
     reset_irq_hits();
     func_800914B0();
@@ -193,7 +193,7 @@ static void test_800914B0(void)
 
 static void test_800914E0(void)
 {
-    /* @leaf 800914E0 source src/game/800914E0.c: dispatches DMA callback via table slot 1 */
+    /* @leaf 800914E0 source src/game/platform/gSetDmaCallback.c: dispatches DMA callback via table slot 1 */
     LK_FUNC("func_800914E0");
     reset_irq_hits();
     func_800914E0();
@@ -205,7 +205,7 @@ static void test_800914E0(void)
 static void test_80091510(void)
 {
     int token = 77;
-    /* @leaf 80091510 source src/game/80091510.c: dispatches VSync callback with op=4 via slot 5 */
+    /* @leaf 80091510 source src/game/platform/gSetVSyncCallback.c: dispatches VSync callback with op=4 via slot 5 */
     LK_FUNC("func_80091510");
     reset_irq_hits();
     func_80091510(&token);
@@ -219,7 +219,7 @@ static void test_80091510(void)
 
 static void test_80091544(void)
 {
-    /* @leaf 80091544 source src/game/80091544.c: dispatches VSync registration thunk via slot 5 */
+    /* @leaf 80091544 source src/game/boot-frontend/gDispatchVSyncCallbackRegistration.c: dispatches VSync registration thunk via slot 5 */
     LK_FUNC("func_80091544");
     reset_irq_hits();
     func_80091544();
@@ -230,7 +230,7 @@ static void test_80091544(void)
 
 static void test_80091574(void)
 {
-    /* @leaf 80091574 source src/game/80091574.c: invokes IRQ callback via table slot 4 */
+    /* @leaf 80091574 source src/game/platform/gInvokeIrqCallback.c: invokes IRQ callback via table slot 4 */
     LK_FUNC("func_80091574");
     reset_irq_hits();
     func_80091574();
@@ -241,7 +241,7 @@ static void test_80091574(void)
 
 static void test_800915A4(void)
 {
-    /* @leaf 800915A4 source src/game/800915A4.c: resumes IRQ subsystem via table slot 6 */
+    /* @leaf 800915A4 source src/game/boot-frontend/gResumeIrqSubsystem.c: resumes IRQ subsystem via table slot 6 */
     LK_FUNC("func_800915A4");
     reset_irq_hits();
     func_800915A4();
@@ -257,7 +257,7 @@ static void *g_vram_table[16];
 
 static void test_80093924(void)
 {
-    /* @leaf 80093924 source src/game/80093924.c: returns bit 31 of VRAM callback slot 14 */
+    /* @leaf 80093924 source src/game/boot-frontend/gGetOddEvenFlag.c: returns bit 31 of VRAM callback slot 14 */
     LK_FUNC("func_80093924");
     lk_fill(g_vram_table, 0, sizeof(g_vram_table));
     g_vram_table[14] = (void *)vram_cb_stub;
@@ -277,7 +277,7 @@ static void test_80093924(void)
 static void test_80096484(void)
 {
     int reg = 0;
-    /* @leaf 80096484 source src/game/80096484.c: dereferences MDEC control status pointer */
+    /* @leaf 80096484 source src/game/platform/gIsMdecBusy.c: dereferences MDEC control status pointer */
     LK_FUNC("func_80096484");
     g_mdec_ctrl_ptr = &reg;
     FCK_EQ(func_80096484(), 0, "reads 0");
@@ -307,7 +307,7 @@ static s32 bc_update(s32 message, struct A8F90_Entity *ent, s32 a2, s32 a3)
 static void test_8004CD6C(void)
 {
     struct A8F90_Entity e[4];
-    /* @leaf 8004CD6C source src/game/8004CD6C.c: broadcasts message only to entities with id > 0 */
+    /* @leaf 8004CD6C source src/game/boot-frontend/gBroadcastEntityMessage.c: broadcasts message only to entities with id > 0 */
     LK_FUNC("func_8004CD6C");
     lk_fill(e, 0, sizeof(e));
     e[0].id = 10; e[0].update = bc_update;
@@ -351,7 +351,7 @@ static struct PadActData *pad_lookup_stub(int arg0)
 static void test_8008A044(void)
 {
     struct PadActEntry ents[2];
-    /* @leaf 8008A044 source src/game/8008A044.c: returns actuator count for index<0 or fields a..e */
+    /* @leaf 8008A044 source src/game/boot-frontend/gGetPadActuatorInfo.c: returns actuator count for index<0 or fields a..e */
     LK_FUNC("func_8008A044");
     lk_fill(&g_pad_act_data, 0, sizeof(g_pad_act_data));
     ents[0].a = 11; ents[0].b = 22; ents[0].c = 33; ents[0].d = 44; ents[0].e = 55;
@@ -377,7 +377,7 @@ static void test_8008A044(void)
 static void test_80049410(void)
 {
     int dummy = 1;
-    /* @leaf 80049410 source src/game/80049410.c: clears script timer head and count */
+    /* @leaf 80049410 source src/game/boot-frontend/gResetScriptTimers.c: clears script timer head and count */
     LK_FUNC("func_80049410");
     g_script_tmr_hd = &dummy;
     g_script_tmr_cnt = 15;
@@ -408,7 +408,7 @@ static void test_8003C7B8(void)
     struct EffParent parent;
     struct EffCounter ctr;
     struct EffObj obj;
-    /* @leaf 8003C7B8 source src/game/8003C7B8.c: effect pool headroom guard and msg 0/1/10 handler */
+    /* @leaf 8003C7B8 source src/game/renderer-scene/gGuardEffectPoolMessage.c: effect pool headroom guard and msg 0/1/10 handler */
     LK_FUNC("func_8003C7B8");
 
     lk_fill(&parent, 0, sizeof(parent));
@@ -491,7 +491,7 @@ static void test_8005C0C0(void)
     struct Tgt5C0C0 t1, t2;
     struct Node5C0C0 n0, n1, n2;
     struct Pool5C0C0 pool;
-    /* @leaf 8005C0C0 source src/game/8005C0C0.c: releases flagged pool nodes and clears stale refs */
+    /* @leaf 8005C0C0 source src/game/renderer-scene/gSweepSpritePool.c: releases flagged pool nodes and clears stale refs */
     LK_FUNC("func_8005C0C0");
     lk_fill(&t1, 0, sizeof(t1)); lk_fill(&t2, 0, sizeof(t2));
     lk_fill(&n0, 0, sizeof(n0)); lk_fill(&n1, 0, sizeof(n1)); lk_fill(&n2, 0, sizeof(n2));
@@ -533,7 +533,7 @@ static void test_80051318(void)
     struct Vec3_51318 pos;
     /* Two records in synthetic blob: 0x61415048 ('HPAa') and 0x74415048 ('HPAt') */
     s32 recs[12];
-    /* @leaf 80051318 source src/game/80051318.c: initializes looping path state from record blob */
+    /* @leaf 80051318 source src/game/boot-frontend/gInitLoopingPathState.c: initializes looping path state from record blob */
     LK_FUNC("func_80051318");
     lk_fill(&st, 0x5A, sizeof(st));
     lk_fill(&a1, 0, sizeof(a1));
@@ -610,7 +610,7 @@ static void test_8003CAE4(void)
     struct Obj_3CAE4 obj;
     u8 flag;
     s32 res;
-    /* @leaf 8003CAE4 source src/game/8003CAE4.c: steps spawn node timers, callbacks, and retire path */
+    /* @leaf 8003CAE4 source src/game/boot-frontend/gStepSpawnNodeTimers.c: steps spawn node timers, callbacks, and retire path */
     LK_FUNC("func_8003CAE4");
     lk_fill(&sub1, 0, sizeof(sub1));
     lk_fill(&sub2, 0, sizeof(sub2));
@@ -675,7 +675,7 @@ static void test_80013BD8(void)
     struct Model13BD8 mdl;
     struct MInst13BD8 inst;
     int i;
-    /* @leaf 80013BD8 source src/game/80013BD8.c: binds model instance and copies identity matrix */
+    /* @leaf 80013BD8 source src/game/renderer-scene/gBindModelInstanceWithMatrix.c: binds model instance and copies identity matrix */
     LK_FUNC("func_80013BD8");
     for (i = 0; i < 9; i++) g_id_mat[i] = (i + 1) * 100;
     lk_fill(&mfs, 0, sizeof(mfs));
@@ -719,7 +719,7 @@ static void test_8005A934(void)
     struct Obj5A934 obj;
     s32 angle = 0x1234;
     int i;
-    /* @leaf 8005A934 source src/game/8005A934.c: computes radar bearing outside 0x2000 deadzone */
+    /* @leaf 8005A934 source src/game/gpu-2d-hud/gCheckRadarTargetBearing.c: computes radar bearing outside 0x2000 deadzone */
     LK_FUNC("func_8005A934");
     for (i = 0; i <= 1024; i++) g_atan_tbl[i] = (s16)(i >> 2); /* 0..256 */
     lk_fill(&obj, 0, sizeof(obj));
@@ -752,7 +752,7 @@ static void test_80053730(void)
     struct Info53730 i0, i1;
     struct Obj53730 p0, p1;
     struct Glob53730 sess;
-    /* @leaf 80053730 source src/game/80053730.c: updates camera near base from 2P XZ separation */
+    /* @leaf 80053730 source src/game/gameplay-ai/gUpdateTwoPlayerSeparation.c: updates camera near base from 2P XZ separation */
     LK_FUNC("func_80053730");
     lk_fill(&i0, 0, sizeof(i0)); lk_fill(&i1, 0, sizeof(i1));
     lk_fill(&p0, 0, sizeof(p0)); lk_fill(&p1, 0, sizeof(p1));
@@ -791,7 +791,7 @@ static void test_8005A070(void)
 {
     u8 obj[0x80];
     int i;
-    /* @leaf 8005A070 source src/game/8005A070.c: copies 0x14 gauge bytes from D_8009AFA0 to +0x54 */
+    /* @leaf 8005A070 source src/game/gameplay-ai/gInitEntityGauge.c: copies 0x14 gauge bytes from D_8009AFA0 to +0x54 */
     LK_FUNC("func_8005A070");
     lk_fill(obj, 0xA5, sizeof(obj));
     for (i = 0; i < 0x14; i++) g_src_blk20[i] = (u8)(0x30 + i);
@@ -805,7 +805,7 @@ static void test_8005A070(void)
 /* 24. 8001F158: gStopFrameCallback */
 static void test_8001F158(void)
 {
-    /* @leaf 8001F158 source src/game/8001F158.c: unregisters VSync callback and clears frame hook/flag */
+    /* @leaf 8001F158 source src/game/boot-frontend/gStopFrameCallback.c: unregisters VSync callback and clears frame hook/flag */
     LK_FUNC("func_8001F158");
     reset_irq_hits();
     g_scr_mode_hook = 0x5555;
@@ -825,7 +825,7 @@ static void test_8008E5D8(void)
 {
     int prev_tok = 9;
     void *ret;
-    /* @leaf 8008E5D8 source src/game/8008E5D8.c: registers CD DMA callback on channel 3 */
+    /* @leaf 8008E5D8 source src/game/platform/gSetCdDmaCallback.c: registers CD DMA callback on channel 3 */
     LK_FUNC("func_8008E5D8");
     reset_irq_hits();
     g_dma_ret_val = &prev_tok;

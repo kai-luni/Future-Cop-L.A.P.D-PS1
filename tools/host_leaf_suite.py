@@ -44,6 +44,10 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+TOOLS_DIR = Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+import unit_paths  # noqa: E402
 HOST = REPO / "tests" / "host"
 T = REPO / ".toolchain"
 GCC = T / "gcc-2.7.2-cdk" / "gcc"
@@ -85,7 +89,10 @@ def markers(suite):
 # ------------------------------------------------------------------ scaffold
 
 def prototype(addr):
-    src = (REPO / "src" / "game" / f"{addr}.c").read_text(errors="ignore")
+    src_path = unit_paths.resolve_unit_path(addr, repo=REPO)
+    if src_path is None:
+        return None, f"missing source for {addr}"
+    src = src_path.read_text(errors="ignore")
     m = re.search(r"^([^\n;]*?\b(\w+)\s*\([^;]*?\))\s*__asm__\(\s*\"func_%s\"\s*\)\s*;" % addr,
                   src, re.M | re.S)
     if m:
@@ -140,9 +147,11 @@ compile() {{
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }}
 
+source "$HERE/unit_path.sh"
+
 objects=()
 for unit in {units}; do
-    compile "$DECOMP/src/game/$unit.c" "$OUT/$unit.o"
+    compile "$(unit_src "$unit")" "$OUT/$unit.o"
     objects+=("$OUT/$unit.o")
 done
 compile "$HERE/mocks/bios_mock.c" "$OUT/bios_mock.o"
@@ -334,6 +343,8 @@ def mutate(args):
         (tmp / "src").mkdir()
         shutil.copytree(REPO / "src" / "game", tmp / "src" / "game")
         os.symlink(REPO / "include", tmp / "include")
+        os.symlink(REPO / "config", tmp / "config")
+        os.symlink(REPO / "tools", tmp / "tools")
         # Snapshot the harness side too, so editing tests/host while a long
         # mutation run is in flight cannot change what the mutants are run
         # against. Build directories are not copied.
@@ -355,7 +366,9 @@ def mutate(args):
             if time.time() - t0 > args.budget:
                 print(f"budget of {args.budget}s reached, stopping before {unit}")
                 break
-            path = tmp / "src" / "game" / f"{unit}.c"
+            path = unit_paths.resolve_unit_path(unit, repo=tmp)
+            if path is None:
+                sys.exit(f"missing source for {unit}")
             original = path.read_text()
             for label, line, text in mutants(original, args.per_unit, unit):
                 path.write_text(text)

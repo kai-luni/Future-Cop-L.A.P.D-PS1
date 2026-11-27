@@ -18,9 +18,9 @@ compile() {
     mipsel-linux-gnu-as -o "$2" "$OUT/tmp.mas.s"
 }
 
-compile "$DECOMP/src/game/800776B8.c" "$OUT/setup_cw.o"
-compile "$DECOMP/src/game/80077708.c" "$OUT/setup_pa.o"
-compile "$DECOMP/src/game/80077FFC.c" "$OUT/unlock.o"
+compile "$DECOMP/src/game/boot-frontend/gSetupCrimeWarMissionList.c" "$OUT/setup_cw.o"
+compile "$DECOMP/src/game/boot-frontend/gSetupPrecinctAssaultMissionList.c" "$OUT/setup_pa.o"
+compile "$DECOMP/src/game/boot-frontend/gUpdatePrecinctUnlockFlag.c" "$OUT/unlock.o"
 compile "$HERE/precinct_path_harness.c" "$OUT/harness.o"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s"
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/harness" "$OUT/crt0.o" "$OUT/harness.o" "$OUT/setup_cw.o" "$OUT/setup_pa.o" "$OUT/unlock.o"

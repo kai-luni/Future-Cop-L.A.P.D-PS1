@@ -17,7 +17,7 @@ compile() {
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$2" "$OUT/tmp.mas.s"
 }
-compile "$DECOMP/src/game/800879DC.c" "$OUT/800879DC.o"
+compile "$DECOMP/src/game/video-mdec-movies/gMovieStreamDemux.c" "$OUT/800879DC.o"
 compile "$HERE/wve_demux_harness.c" "$OUT/wve_demux_harness.o"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s"
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/wve_demux_harness" "$OUT/crt0.o" "$OUT/wve_demux_harness.o" "$OUT/800879DC.o"

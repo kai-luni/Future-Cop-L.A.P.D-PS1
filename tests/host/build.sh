@@ -9,6 +9,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="$(cd "$HERE/../.." && pwd)"
+source "$HERE/unit_path.sh"
 T="$DECOMP/.toolchain"
 GCC="$T/gcc-2.7.2-cdk/gcc"
 AS="$T/mipsel-binutils/root/usr/bin/mipsel-linux-gnu-as"
@@ -29,7 +30,7 @@ compile() { # compile <src.c> <obj>
 }
 
 for f in 80012E1C 80012E48 8001306C 800131A0 8001996C 80063C5C 80015AF4 80015B68 80016A64; do
-    compile "$DECOMP/src/game/$f.c" "$OUT/$f.o"
+    compile "$(unit_src "$f")" "$OUT/$f.o"
 done
 compile "$HERE/gte_ref.c" "$OUT/gte_ref.o"
 compile "$HERE/stubs.c" "$OUT/stubs.o"

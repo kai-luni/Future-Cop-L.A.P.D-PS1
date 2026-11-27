@@ -17,19 +17,22 @@ export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIB
 
 compile() {
     local src="$1" obj="$2"; shift 2
-    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" "$@" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
+    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -I"$HERE/mocks" "$@" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
 
+source "$HERE/unit_path.sh"
+
 objects=()
 for unit in 80092B84 8004522C 8008D7CC 800915D4 8001C034 80087D3C 80022B74 80048E94 80085A1C 80087814 8008781C 80044FEC 80031984 800609F4 8006A88C 8005130C 8004EFD4 8002A58C 8007F8CC 8007F8BC 8001774C 8004979C 800451EC 800858F4 800207B4 8001F37C 800196C4; do
-    compile "$DECOMP/src/game/$unit.c" "$OUT/$unit.o"
+    compile "$(unit_src "$unit")" "$OUT/$unit.o"
     objects+=("$OUT/$unit.o")
 done
+compile "$HERE/mocks/bios_mock.c" "$OUT/bios_mock.o"
 python3 "$HERE/leaf_vectors.py" > "$OUT/leaf_vectors.h"
 compile "$HERE/leaf_hundred_c_harness.c" "$OUT/leaf_hundred_c_harness.o" -I"$OUT" -I"$HERE"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s" 2>/dev/null
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/leaf_hundred_c" \
-    "$OUT/crt0.o" "$OUT/leaf_hundred_c_harness.o" "${objects[@]}"
+    "$OUT/crt0.o" "$OUT/leaf_hundred_c_harness.o" "$OUT/bios_mock.o" "${objects[@]}"
 "$QEMU" "$OUT/leaf_hundred_c"

@@ -265,7 +265,7 @@ static s32 rm_calls, rm_idx[8];
 static void *rm_script[8];
 /* Removes command i from the 4-entry (op,arg) list at +0x0C by shifting the
  * following entries down and clearing only slot 3's opcode byte at +0x12,
- * matching src/game/8002A5B4.c:58 (the trailing arg byte at +0x13 stays). */
+ * matching src/game/gameplay-ai/gRemoveEntityCommand.c:58 (the trailing arg byte at +0x13 stays). */
 void st_remove_cmd(u8 *script, s32 i) __asm__("func_8002A5B4");
 void st_remove_cmd(u8 *script, s32 i)
 {
@@ -426,7 +426,7 @@ static void test_resupply(void)
 {
     s32 acc, period;
 
-    /* @leaf 8002FC90 source src/game/8002FC90.c: interval accumulator (*acc += delta, early out below period, quotient/remainder), 0x12 proxy via +0xB4, co-op 0x20000 health min(cur+2q or cur+amount, max) with negative amount = max, quartile hook gated by +0x20/+0x24 bit 0x40000, self-only timers 0x34BC/0x1770, ammo bits 0-3 and reserve bits 4-7 */
+    /* @leaf 8002FC90 source src/game/gameplay-ai/gApplyPlayerResupply.c: interval accumulator (*acc += delta, early out below period, quotient/remainder), 0x12 proxy via +0xB4, co-op 0x20000 health min(cur+2q or cur+amount, max) with negative amount = max, quartile hook gated by +0x20/+0x24 bit 0x40000, self-only timers 0x34BC/0x1770, ammo bits 0-3 and reserve bits 4-7 */
     LK_FUNC("func_8002FC90");
 
     /* below the period: accumulator grows, nothing else */
@@ -579,7 +579,7 @@ static void chase_reset(void)
 
 static void test_chase(void)
 {
-    /* @leaf 80037B28 source src/game/80037B28.c: +0x90/flags 0x48/flags>>30==1 gates, |dy|-(bias<<4) < 0x1401 band, cosine = dot*(0x80000000/(len>>1))>>16 (len<16 -> 0x10000), 0xF600/0x8000 heading gates, target +0x24<0 link-match branches, otherwise speed (spd>>1)+(base>>2) or close-range base>>2 (type 26) / 0, hold 300 */
+    /* @leaf 80037B28 source src/game/gameplay-ai/gUpdateChaseApproachSpeed.c: +0x90/flags 0x48/flags>>30==1 gates, |dy|-(bias<<4) < 0x1401 band, cosine = dot*(0x80000000/(len>>1))>>16 (len<16 -> 0x10000), 0xF600/0x8000 heading gates, target +0x24<0 link-match branches, otherwise speed (spd>>1)+(base>>2) or close-range base>>2 (type 26) / 0, hold 300 */
     LK_FUNC("func_80037B28");
 
     /* gates before any callee */
@@ -750,7 +750,7 @@ static void test_light(void)
 {
     void *r;
 
-    /* @leaf 80040E60 source src/game/80040E60.c: count cap 0x15F, alloc(0x98,1), field copy map, rotation(+0x38,-+0x3A,0) vector scaled ((v>>4)*s)>>12, 300/period or -1, word flag at src+0x3C, handler D_80040874, count++ before colour steps */
+    /* @leaf 80040E60 source src/game/boot-frontend/gCreateLightObject.c: count cap 0x15F, alloc(0x98,1), field copy map, rotation(+0x38,-+0x3A,0) vector scaled ((v>>4)*s)>>12, 300/period or -1, word flag at src+0x3C, handler D_80040874, count++ before colour steps */
     LK_FUNC("func_80040E60");
 
     /* cap */
@@ -861,7 +861,7 @@ static void test_anim_script(void)
     static const u8 s5[8] = { 0x34, 0, 0, 0, 0, 0, 0, 0 };
     static const u8 s6[8] = { 0x33, 0, 0, 0, 0, 0, 0, 0 };
 
-    /* @leaf 800449F8 source src/game/800449F8.c: ops 0x32 select clip (track, arg, 1, 0), 0x33/0x34 clear/set flag bit 1 and set frame = unsigned arg, executed ops removed in place, unknown ops skipped, op 0 stops */
+    /* @leaf 800449F8 source src/game/gpu-2d-hud/gProcessAnimScriptCommands.c: ops 0x32 select clip (track, arg, 1, 0), 0x33/0x34 clear/set flag bit 1 and set frame = unsigned arg, executed ops removed in place, unknown ops skipped, op 0 stops */
     LK_FUNC("func_800449F8");
 
     anim_reset(s1);
@@ -920,7 +920,7 @@ static void test_hud_bar(void)
 {
     u8 *p, *q;
 
-    /* @leaf 80047BE8 source src/game/80047BE8.c: background tile, two POLY_G4 (GP0 0x38, tag len 8, low 24 tag bits cleared) with dim=p/2 and bright=p channels in opposite horizontal gradients, height (z+1)/2, flag + frame byte >= 0x80 halves, pool cursor +0x34 unless full, five tick tiles */
+    /* @leaf 80047BE8 source src/game/renderer-scene/gEmitHudGouraudBar.c: background tile, two POLY_G4 (GP0 0x38, tag len 8, low 24 tag bits cleared) with dim=p/2 and bright=p channels in opposite horizontal gradients, height (z+1)/2, flag + frame byte >= 0x80 halves, pool cursor +0x34 unless full, five tick tiles */
     LK_FUNC("func_80047BE8");
 
     lk_fill(prim_pool, 0xA5, sizeof prim_pool);
@@ -1028,7 +1028,7 @@ static void test_marker_colors(void)
     };
     s32 i, ok;
 
-    /* @leaf 8004CAE4 source src/game/8004CAE4.c: 32-entry marker colour table literals, list heads/counters cleared, done flag 1, list capacity 0xFE (session +0x5C == 1), 0x12C (+0x0C == 2) or 0xC8 */
+    /* @leaf 8004CAE4 source src/game/gpu-2d-hud/gInitMarkerColorsAndPools.c: 32-entry marker colour table literals, list heads/counters cleared, done flag 1, list capacity 0xFE (session +0x5C == 1), 0x12C (+0x0C == 2) or 0xC8 */
     LK_FUNC("func_8004CAE4");
 
     lk_fill(gMarkerColorTable, 0x5A, sizeof gMarkerColorTable);
@@ -1090,7 +1090,7 @@ static void test_path_nodes(void)
 {
     u8 *e;
 
-    /* @leaf 800511E4 source src/game/800511E4.c: u8 status gate (else func_80019D00), slot table publish/increment, per entry position (x=+4<<8, z=+2<<8), type 5 height (s16 word)*16 else surface query with mode -1/-2/type-2, rewrite +4 = (h+0x7F)>>8, +2 = x>>8, +6 = z>>8, flags low nibble cleared */
+    /* @leaf 800511E4 source src/game/memory-resources/gLoadPathNodePositions.c: u8 status gate (else func_80019D00), slot table publish/increment, per entry position (x=+4<<8, z=+2<<8), type 5 height (s16 word)*16 else surface query with mode -1/-2/type-2, rewrite +4 = (h+0x7F)>>8, +2 = x>>8, +6 = z>>8, flags low nibble cleared */
     LK_FUNC("func_800511E4");
 
     /* status nonzero: reuse path only */
@@ -1176,7 +1176,7 @@ static void test_sprite_desc(void)
     void *arr[2];
     s32 r;
 
-    /* @leaf 8005A2BC source src/game/8005A2BC.c: alloc(count*12+4, 2) or 0, item = {frames byte 2, ctz(byte 3), ptr+8}, per frame byte +6 += 0x80 and byte +7 = (col<<6)|row with col from byte 4 >> 4 wrapping 4 -> next row, table installed, returns 1 */
+    /* @leaf 8005A2BC source src/game/gpu-2d-hud/gBuildSpriteDescTable.c: alloc(count*12+4, 2) or 0, item = {frames byte 2, ctz(byte 3), ptr+8}, per frame byte +6 += 0x80 and byte +7 = (col<<6)|row with col from byte 4 >> 4 wrapping 4 -> next row, table installed, returns 1 */
     LK_FUNC("func_8005A2BC");
 
     lk_fill(sd_a, 0, sizeof sd_a);
@@ -1252,7 +1252,7 @@ static void test_attack_cmds(void)
     static const u8 s4[8] = { 0x25, 1, 0x1D, 2, 0x27, 3, 0x28, 4 };
     static const u8 s5[8] = { 0x26, 0x10, 0, 0, 0, 0, 0, 0 };
 
-    /* @leaf 8005FFB8 source src/game/8005FFB8.c: ops 0x1F..0x23 set mode op-0x1E and +0x08 = arg, 0x1E arg 0 sets flag 0x100 else clears it, 0x26 binds table entry idx*0x30 and copies its +0x02 when the key is found, executed ops removed, others skipped */
+    /* @leaf 8005FFB8 source src/game/gameplay-ai/gApplyAttackCommands.c: ops 0x1F..0x23 set mode op-0x1E and +0x08 = arg, 0x1E arg 0 sets flag 0x100 else clears it, 0x26 binds table entry idx*0x30 and copies its +0x02 when the key is found, executed ops removed, others skipped */
     LK_FUNC("func_8005FFB8");
 
     lk_fill(gEffectKeyTable, 0x11, sizeof gEffectKeyTable);
@@ -1357,7 +1357,7 @@ static void gv_list(s32 n)
 
 static void test_dual_view(void)
 {
-    /* @leaf 80062874 source src/game/80062874.c: per active object nearest square point to each view anchor, 5x5 coarse window (1<<17) minus origin, 4x4 sub-cell bit 15-(4r+c); view 1 appends on bit hit, view 2 appends whenever the cell is nonzero, 256 caps skip the object; flags 4 excludes, hit or 0x100 links into the 1<<15 cell map (nodes from 1, next = previous head) */
+    /* @leaf 80062874 source src/game/gpu-2d-hud/gBuildDualViewObjectListsAndGrid.c: per active object nearest square point to each view anchor, 5x5 coarse window (1<<17) minus origin, 4x4 sub-cell bit 15-(4r+c); view 1 appends on bit hit, view 2 appends whenever the cell is nonzero, 256 caps skip the object; flags 4 excludes, hit or 0x100 links into the 1<<15 cell map (nodes from 1, next = previous head) */
     LK_FUNC("func_80062874");
 
     /* scenario 1: view 1 hits, linking, flags 4 / 0x100 / inactive */
@@ -1484,7 +1484,7 @@ static void test_status_icon(void)
 {
     u8 *p, *q;
 
-    /* @leaf 8006BF44 spec Psy-Q libgpu setDrawTPage/_get_mode (0xE1000000, dtd bit 9, dfe bit 10, tpage & 0x9FF) and setSprt/setSemiTrans (len 4, code 0x64|2); psx-spx GP0(E1h) and GP0(64h) word layout; icon UV (0xA6, 0x9C+16*slot or 0x96/0xBC), 16x16 at (x, y-16), blink 0xC0/0xA0/0xA0 vs grey 0x60 pinned from src/game/8006BF44.c */
+    /* @leaf 8006BF44 spec Psy-Q libgpu setDrawTPage/_get_mode (0xE1000000, dtd bit 9, dfe bit 10, tpage & 0x9FF) and setSprt/setSemiTrans (len 4, code 0x64|2); psx-spx GP0(E1h) and GP0(64h) word layout; icon UV (0xA6, 0x9C+16*slot or 0x96/0xBC), 16x16 at (x, y-16), blink 0xC0/0xA0/0xA0 vs grey 0x60 pinned from src/game/renderer-scene/gEmitStatusSlotIcon.c */
     LK_FUNC("func_8006BF44");
 
     lk_fill(si_pool, 0xA5, sizeof si_pool);
@@ -1555,7 +1555,7 @@ static u8 pl_obj[0x28], pl_light[0x10];
 
 static void test_particle_light(void)
 {
-    /* @leaf 800752E0 source src/game/800752E0.c: request = position, kind 0x16, height y>>4, width = depth = size<<1, angle rand & 0xFFF (also stored at +0x1A), +0x1E/+0x20 0, +0x22 -1, scale -1, RGB; effect 0xA into +0x24; RGB mirrored into light +9..+11 when non-null */
+    /* @leaf 800752E0 source src/game/renderer-scene/gSpawnParticleLight.c: request = position, kind 0x16, height y>>4, width = depth = size<<1, angle rand & 0xFFF (also stored at +0x1A), +0x1E/+0x20 0, +0x22 -1, scale -1, RGB; effect 0xA into +0x24; RGB mirrored into light +9..+11 when non-null */
     LK_FUNC("func_800752E0");
 
     lk_fill(pl_obj, 0x5A, sizeof pl_obj);
@@ -1605,7 +1605,7 @@ static void test_particle_light(void)
 
 static void test_options_preview(void)
 {
-    /* @leaf 8007D150 source src/game/8007D150.c: only message 3 stops the preview voice handle D_8009F91C (when nonzero) and clears it */
+    /* @leaf 8007D150 source src/game/boot-frontend/gStopOptionsPreview.c: only message 3 stops the preview voice handle D_8009F91C (when nonzero) and clears it */
     LK_FUNC("func_8007D150");
 
     gSnapshotPointer = 0x1234; stop_calls = 0;
@@ -1685,7 +1685,7 @@ static void test_password(void)
     static const u8 pw7[10] = { 0x06, 0x16, 0x00, 0x10, 0x07, 0x10, 0x07, 0x10, 0x0F, 0x14 };
     s32 r;
 
-    /* @leaf 8007EA78 source src/game/8007EA78.c: 10-digit decode ((j - i) & 7 odd / & 0xF even through the digit tables, stop on a miss), nibble field map, 10/10/10/10 promotion of n2+n1-20 into n5, clamps 8/10, three checksums (sum&3, sum+flags &3, &0xF), flag-gated session/menu writes, level table +0x1F/+0x20, PA vs CW mission list with max index min(progress, 7) */
+    /* @leaf 8007EA78 source src/game/boot-frontend/gApplyPasswordUnlocks.c: 10-digit decode ((j - i) & 7 odd / & 0xF even through the digit tables, stop on a miss), nibble field map, 10/10/10/10 promotion of n2+n1-20 into n5, clamps 8/10, three checksums (sum&3, sum+flags &3, &0xF), flag-gated session/menu writes, level table +0x1F/+0x20, PA vs CW mission list with max index min(progress, 7) */
     LK_FUNC("func_8007EA78");
 
     pw_reset(pw1);
@@ -1776,7 +1776,7 @@ static void test_atlas_sprite(void)
 {
     u8 *p;
 
-    /* @leaf 80082B0C spec Psy-Q libgpu setPolyFT4 (len 9, code 0x2C) and psx-spx GP0(2Ch) word layout/vertex order; tag low 24 bits from the caller; anchors (flagX 4 centre / 2 right, flagY 0x20 centre / 0x10 bottom), -1 size from the entry and UV extent from the entry's low size bytes pinned from src/game/80082B0C.c */
+    /* @leaf 80082B0C spec Psy-Q libgpu setPolyFT4 (len 9, code 0x2C) and psx-spx GP0(2Ch) word layout/vertex order; tag low 24 bits from the caller; anchors (flagX 4 centre / 2 right, flagY 0x20 centre / 0x10 bottom), -1 size from the entry and UV extent from the entry's low size bytes pinned from src/game/gpu-2d-hud/gDrawAtlasSprite.c */
     LK_FUNC("func_80082B0C");
 
     lk_fill(at_table, 0, sizeof at_table);

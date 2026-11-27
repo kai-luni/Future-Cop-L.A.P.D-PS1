@@ -22,9 +22,11 @@ compile() {
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
 
+source "$HERE/unit_path.sh"
+
 objects=()
 for unit in 8002A31C 8002A408 8002A49C 8002A544 8002A26C 800246A8 80024470 8002B0EC 8003BC7C 8003BDEC 8003C404 800235D4 80023A24 80023AB4 80023BF8 80023E84 80023D78 80023F08; do
-    compile "$DECOMP/src/game/$unit.c" "$OUT/$unit.o"
+    compile "$(unit_src "$unit")" "$OUT/$unit.o"
     objects+=("$OUT/$unit.o")
 done
 compile "$HERE/mocks/bios_mock.c" "$OUT/bios_mock.o"

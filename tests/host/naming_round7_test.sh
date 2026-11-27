@@ -5,6 +5,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="${DECOMP:-$(cd "$HERE/../.." && pwd)}"
+source "$HERE/unit_path.sh"
 T="$DECOMP/.toolchain"
 OUT="${OUT:-$HERE/build-naming-round7}"
 QEMU="${QEMU:-$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}"
@@ -23,7 +24,7 @@ compile() {
 
 objects=()
 for unit in 8007D18C; do
-    compile "$DECOMP/src/game/$unit.c" "$OUT/$unit.o"
+    compile "$(unit_src "$unit")" "$OUT/$unit.o"
     objects+=("$OUT/$unit.o")
 done
 compile "$HERE/mocks/sound_mock.c" "$OUT/sound_mock.o"

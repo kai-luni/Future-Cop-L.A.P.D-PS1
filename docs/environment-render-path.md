@@ -22,61 +22,61 @@ region pass.
 
 1. **Game loop** - `gRunGameFrameLoop` (`0x80028618`) runs one frame driver per
    iteration: `gRunSoloSessionFrame` (`0x800271A4`) or `gRunSessionFrame`
-   (`0x80027510`). Evidence: `src/game/80028618.c:131`, `src/game/80028618.c:133`.
+   (`0x80027510`). Evidence: `src/game/boot-frontend/gRunGameFrameLoop.c:131`, `src/game/boot-frontend/gRunGameFrameLoop.c:133`.
 2. **Entity world tick** - the driver calls `gRunEntityWorldTick`
    (`0x8003F570`), which ends with `gRunSceneListPassesOnScratch`
    (`0x8003F530`); that wrapper switches to the scratchpad stack and calls
-   `gRunSceneListPasses` (`0x8003F4A0`). Evidence: `src/game/80027510.c:231`, `src/game/800271A4.c:183`, `src/game/8003F570.c:103`, `src/game/8003F530.c:36`.
+   `gRunSceneListPasses` (`0x8003F4A0`). Evidence: `src/game/boot-frontend/gRunSessionFrame.c:231`, `src/game/gameplay-ai/gRunSoloSessionFrame.c:183`, `src/game/boot-frontend/gRunEntityWorldTick.c:103`, `src/game/boot-frontend/gRunSceneListPassesOnScratch.c:36`.
 3. **Scene-list passes** - `gRunSceneListPasses` makes eight calls over
    `gListHeads` (`D_800A1070`), e.g. `gTickEffectNodes` on list 2,
    `gUpdateObjectLights` on list 0, and last `gRunPolygonPass` (`0x80075A84`)
    on list 5, which culls/lights each particle node and draws it through
-   `func_800751A4`. Evidence: `src/game/8003F4A0.c:45`, `src/game/8003F4A0.c:47`, `src/game/8003F4A0.c:50`.
+   `func_800751A4`. Evidence: `src/game/renderer-scene/gRunSceneListPasses.c:45`, `src/game/renderer-scene/gRunSceneListPasses.c:47`, `src/game/renderer-scene/gRunSceneListPasses.c:50`.
 4. **Camera anchor + cell window** - per present player, `func_80026E5C`
    runs `gUpdateCameraAnchor` (`0x80066C9C`) on the scratchpad. It selects the
    view record, loads the camera rotation and calls `gSampleCellWindow`
    (`0x80064460`, emitted as the raw word `0x0c019118` = `jal 0x80064460`) to
    fill the 25-entry window block in `D_800AB3B8` that the three layers read.
-   Evidence: `src/game/80027510.c:233`, `src/game/800271A4.c:190`, `src/game/80026E5C.c:37`, `src/game/80066C9C.c:110`, `src/game/80066C9C.c:111`, `src/game/80066C9C.c:194`.
+   Evidence: `src/game/boot-frontend/gRunSessionFrame.c:233`, `src/game/gameplay-ai/gRunSoloSessionFrame.c:190`, `src/game/boot-frontend/gUpdateViewAnchorsOnScratchpad.c:37`, `src/game/gpu-2d-hud/gUpdateCameraAnchor.c:110`, `src/game/gpu-2d-hud/gUpdateCameraAnchor.c:111`, `src/game/gpu-2d-hud/gUpdateCameraAnchor.c:194`.
 5. **View select + light** - before each region pass the driver selects that
    player's view record (`gSelectViewRecord`, `0x80017B60`) and calls
    `gUpdateLightDirection` (`0x80013C80`). In the solo driver the light update
-   comes just before the anchor call (step 4), not after it. Evidence: `src/game/80027510.c:244`, `src/game/80027510.c:245`, `src/game/80027510.c:283`, `src/game/80027510.c:284`, `src/game/800271A4.c:189`.
+   comes just before the anchor call (step 4), not after it. Evidence: `src/game/boot-frontend/gRunSessionFrame.c:244`, `src/game/boot-frontend/gRunSessionFrame.c:245`, `src/game/boot-frontend/gRunSessionFrame.c:283`, `src/game/boot-frontend/gRunSessionFrame.c:284`, `src/game/gameplay-ai/gRunSoloSessionFrame.c:189`.
 6. **Region pass** - `gRunRegionPass` (`0x80026E1C`, player index 0 or 1)
    moves to the scratchpad stack and calls `gDrawViewLayers`. Evidence:
-   `src/game/80027510.c:250`, `src/game/80027510.c:288`, `src/game/800271A4.c:194`, `src/game/80026E1C.c:36`.
+   `src/game/boot-frontend/gRunSessionFrame.c:250`, `src/game/boot-frontend/gRunSessionFrame.c:288`, `src/game/gameplay-ai/gRunSoloSessionFrame.c:194`, `src/game/boot-frontend/gRunRegionPass.c:36`.
 7. **Three layers** - `gDrawViewLayers` (`0x80066E98`) selects the view
    record, uploads the camera rotation (`gGteLoadRotation`, `0x80010820`, on
    `gCamera + 0x28`), draws layer 1 `gDrawRegionTiles` (`0x8006531C`),
    re-uploads the rotation, then layer 2 `gDrawCellWindowObjects`
    (`0x8004A924`) and layer 3 `gDrawCellWindowModels` (`0x80084398`), all on
-   the same `(x, y, region)` triple from `D_800AB3B8`. Evidence: `src/game/80066E98.c:63`, `src/game/80066E98.c:64`, `src/game/80066E98.c:68`, `src/game/80066E98.c:69`, `src/game/80066E98.c:70`, `src/game/80066E98.c:71`.
-   - Layer 1 internals: `src/game/8006531C.c:72`, `src/game/8006531C.c:74`, `src/game/8006531C.c:76`, `src/game/8006531C.c:79` (tileset pattern, colour word,
+   the same `(x, y, region)` triple from `D_800AB3B8`. Evidence: `src/game/gpu-2d-hud/gDrawViewLayers.c:63`, `src/game/gpu-2d-hud/gDrawViewLayers.c:64`, `src/game/gpu-2d-hud/gDrawViewLayers.c:68`, `src/game/gpu-2d-hud/gDrawViewLayers.c:69`, `src/game/gpu-2d-hud/gDrawViewLayers.c:70`, `src/game/gpu-2d-hud/gDrawViewLayers.c:71`.
+   - Layer 1 internals: `src/game/gpu-2d-hud/gDrawRegionTiles.c:72`, `src/game/gpu-2d-hud/gDrawRegionTiles.c:74`, `src/game/gpu-2d-hud/gDrawRegionTiles.c:76`, `src/game/gpu-2d-hud/gDrawRegionTiles.c:79` (tileset pattern, colour word,
      `gEmitTexturedSurface` `0x800646BC`, `gEmitCellGeometry` `0x80065134`).
-   - Layer 2 internals: `src/game/8004A924.c:91` (`gDrawMapCellNode`, `0x8004A048`).
-   - Layer 3 internals: `src/game/80084398.c:181`, `src/game/80084398.c:226`, `src/game/80084398.c:231`, `src/game/80084398.c:235`, `src/game/80017508.c:42`, `src/game/80017508.c:44` (frame, `gGteLoadMatrix` +
+   - Layer 2 internals: `src/game/renderer-scene/gDrawCellWindowObjects.c:91` (`gDrawMapCellNode`, `0x8004A048`).
+   - Layer 3 internals: `src/game/renderer-scene/gDrawCellWindowModels.c:181`, `src/game/renderer-scene/gDrawCellWindowModels.c:226`, `src/game/renderer-scene/gDrawCellWindowModels.c:231`, `src/game/renderer-scene/gDrawCellWindowModels.c:235`, `src/game/renderer-scene/gSubmitModelInstance.c:42`, `src/game/renderer-scene/gSubmitModelInstance.c:44` (frame, `gGteLoadMatrix` +
      `gGteTransformVerticesWide`, then `gSubmitModelInstance` ->
      `gProjectModelInstance` / `gDrawModelInstanceParts`).
 8. **Close of the view** - `gRunRegionObjectPass` (`0x80062EB8`, draws
-   visible entities via `gDrawModelFrame` `src/game/80062EB8.c:72`) and
+   visible entities via `gDrawModelFrame` `src/game/gpu-2d-hud/gRunRegionObjectPass.c:72`) and
    `gRunViewScenePasses` (`0x8003F6E4`), which resolves the view position and
    draws the object lists (`gDrawNodeListModels`, `gDrawDebrisFragments`,
    `gDrawGlowNodeList`, `gDrawRibbonList`, plus five still-unnamed `func_` calls).
-   Evidence: `src/game/80066E98.c:72`, `src/game/80066E98.c:73`, `src/game/8003F6E4.c:89`, `src/game/8003F6E4.c:90`, `src/game/8003F6E4.c:93`, `src/game/8003F6E4.c:94`.
+   Evidence: `src/game/gpu-2d-hud/gDrawViewLayers.c:72`, `src/game/gpu-2d-hud/gDrawViewLayers.c:73`, `src/game/renderer-scene/gRunViewScenePasses.c:89`, `src/game/renderer-scene/gRunViewScenePasses.c:90`, `src/game/renderer-scene/gRunViewScenePasses.c:93`, `src/game/renderer-scene/gRunViewScenePasses.c:94`.
 
 ## 2. Camera / view
 
 | step | function | what it does | evidence |
 |---|---|---|---|
-| placement | `gPlacePlayerViews` `0x80056634`, `gPlaceCameraFromPreset` `0x8005678C`, `gUpdateChaseCamera` `0x800569EC`, `gResetActorAndPlaceView` `0x800573A4` | the four view placements; each calls both setters | `src/game/80056634.c:111`, `src/game/80056634.c:112`, `src/game/8005678C.c:83`, `src/game/8005678C.c:84`, `src/game/800569EC.c:512`, `src/game/800569EC.c:563`, `src/game/800573A4.c:283`, `src/game/800573A4.c:284` |
-| setter 1 | `gSetCameraPosition` `0x800177AC` | writes the eye position of the active view record and its rotated (inverse) form through `gMulMatrixVector` | `src/game/800177AC.c:55` |
-| setter 2 | `gSetCameraRotation` `0x80017860` | yaw/pitch/roll -> 3x3 rotation (`gBuildRotationMatrix` `0x800188D0`), then the view matrix (`gBuildViewMatrix` `0x80018860`) | `src/game/80017860.c:49`, `src/game/80017860.c:50` |
-| matrix build | `gBuildViewMatrix` `0x80018860` | transposes the rotation (`gTransposeMatrix3x3` `0x80019470`) and rotates the translation in software (`gMulMatrixVector` `0x8001A81C`, no GTE) | `src/game/80018860.c:56`, `src/game/80018860.c:58` |
-| angles | `gBuildRotationMatrix` `0x800188D0` | sine/cosine pairs from `gSinCos` `0x8001846C` | `src/game/800188D0.c:47` |
-| GTE upload | `gGteLoadRotation` `0x80010820` (asm) | uploads the camera rotation (no translation); the environment pass calls it before layer 1 and again before layers 2/3 | `src/game/80066E98.c:64`, `src/game/80066E98.c:69` |
-| GTE upload (models) | `gGteLoadMatrix` `0x80010750` (asm) | uploads matrix + translation, rows y/z negated; used per model instance (e.g. layer 3), **not** by `gDrawViewLayers` for the camera | `src/game/80084398.c:226` |
-| view record selection | `gSelectViewRecord` `0x80017B60` | `gCamera = gFindInstanceById(id)` (`0x80017B28`); called by the driver, the camera anchor and `gDrawViewLayers` | `src/game/80017B60.c:31`, `src/game/80027510.c:244`, `src/game/80066E98.c:63` |
-| light | `gUpdateLightDirection` `0x80013C80` | light vector = camera matrix x light input (software); must follow the setters | `src/game/80013C80.c:39` |
+| placement | `gPlacePlayerViews` `0x80056634`, `gPlaceCameraFromPreset` `0x8005678C`, `gUpdateChaseCamera` `0x800569EC`, `gResetActorAndPlaceView` `0x800573A4` | the four view placements; each calls both setters | `src/game/gpu-2d-hud/gPlacePlayerViews.c:111`, `src/game/gpu-2d-hud/gPlacePlayerViews.c:112`, `src/game/gpu-2d-hud/gPlaceCameraFromPreset.c:83`, `src/game/gpu-2d-hud/gPlaceCameraFromPreset.c:84`, `src/game/gpu-2d-hud/gUpdateChaseCamera.c:512`, `src/game/gpu-2d-hud/gUpdateChaseCamera.c:563`, `src/game/gameplay-ai/gResetActorAndPlaceView.c:283`, `src/game/gameplay-ai/gResetActorAndPlaceView.c:284` |
+| setter 1 | `gSetCameraPosition` `0x800177AC` | writes the eye position of the active view record and its rotated (inverse) form through `gMulMatrixVector` | `src/game/gpu-2d-hud/gSetCameraPosition.c:55` |
+| setter 2 | `gSetCameraRotation` `0x80017860` | yaw/pitch/roll -> 3x3 rotation (`gBuildRotationMatrix` `0x800188D0`), then the view matrix (`gBuildViewMatrix` `0x80018860`) | `src/game/gpu-2d-hud/gSetCameraRotation.c:49`, `src/game/gpu-2d-hud/gSetCameraRotation.c:50` |
+| matrix build | `gBuildViewMatrix` `0x80018860` | transposes the rotation (`gTransposeMatrix3x3` `0x80019470`) and rotates the translation in software (`gMulMatrixVector` `0x8001A81C`, no GTE) | `src/game/gte/gBuildViewMatrix.c:56`, `src/game/gte/gBuildViewMatrix.c:58` |
+| angles | `gBuildRotationMatrix` `0x800188D0` | sine/cosine pairs from `gSinCos` `0x8001846C` | `src/game/utilities/gBuildRotationMatrix.c:47` |
+| GTE upload | `gGteLoadRotation` `0x80010820` (asm) | uploads the camera rotation (no translation); the environment pass calls it before layer 1 and again before layers 2/3 | `src/game/gpu-2d-hud/gDrawViewLayers.c:64`, `src/game/gpu-2d-hud/gDrawViewLayers.c:69` |
+| GTE upload (models) | `gGteLoadMatrix` `0x80010750` (asm) | uploads matrix + translation, rows y/z negated; used per model instance (e.g. layer 3), **not** by `gDrawViewLayers` for the camera | `src/game/renderer-scene/gDrawCellWindowModels.c:226` |
+| view record selection | `gSelectViewRecord` `0x80017B60` | `gCamera = gFindInstanceById(id)` (`0x80017B28`); called by the driver, the camera anchor and `gDrawViewLayers` | `src/game/gpu-2d-hud/gSelectViewRecord.c:31`, `src/game/boot-frontend/gRunSessionFrame.c:244`, `src/game/gpu-2d-hud/gDrawViewLayers.c:63` |
+| light | `gUpdateLightDirection` `0x80013C80` | light vector = camera matrix x light input (software); must follow the setters | `src/game/renderer-scene/gUpdateLightDirection.c:39` |
 
 Note: the `@par Environment path` paragraph of `0x80010750` calls it
 "minimal-environment step 4" (view matrix upload). In the code the camera upload
@@ -384,7 +384,7 @@ Totals: 18 vector, 326 contract, 2 skip (346 units).
 | `0x80063C5C` | `gLoadCbmpTexture` | contract | Texture load path for one Cbmp slot (index s0 = unk1C - 1): func_8001996C unpacks the resource, the 0x80 x 0xFC pixel... | structure only |
 | `0x80063DC8` | `gInitMapFromGrdb` | contract | Handler for the 'Cptc' (0x43707463) chunk in gLoadQueuedAssets (80024EC8.c:151-152): it stores the chunk in D_8009F81... | structure only |
 | `0x80064460` | `gSampleCellWindow` | contract | Fills the 25 window entries (mask, node, world position) that the three region layers then draw. | structure only |
-| `0x800646BC` | `gEmitTexturedSurface` (asm) | contract | Already renamed to gEmitTexturedSurface in src/game/800646BC.c: builds and emits triangle strips of a textured surfac... | structure only |
+| `0x800646BC` | `gEmitTexturedSurface` (asm) | contract | Already renamed to gEmitTexturedSurface in src/game/renderer-scene/gEmitTexturedSurface.c: builds and emits triangle strips of a textured surfac... | structure only |
 | `0x800648E8` | `gEmitCellPolygon` | contract | Emits one textured polygon of a map cell into the shared primitive pool: the primitive word's bits 15..21 select four... | structure only |
 | `0x80065134` | `gEmitCellGeometry` | contract | Emits the visible cells of one region as geometry | structure only |
 | `0x8006531C` | `gDrawRegionTiles` | contract | Layer 1 of the environment pass: draws the 5x5 window of map regions (the tiled ground surfaces) around the camera po... | structure only |
@@ -510,67 +510,67 @@ occur on the cited line).
 
 | citation | code fragment |
 |---|---|
-| `src/game/80028618.c:131` | `gRunSoloSessionFrame();` |
-| `src/game/80028618.c:133` | `gRunSessionFrame();` |
-| `src/game/80027510.c:231` | `gRunEntityWorldTick(` |
-| `src/game/800271A4.c:183` | `gRunEntityWorldTick(` |
-| `src/game/8003F570.c:103` | `gRunSceneListPassesOnScratch(arg0);` |
-| `src/game/8003F530.c:36` | `jal func_8003F4A0` |
-| `src/game/8003F4A0.c:45` | `gTickEffectNodes(gListHeads[2], arg);` |
-| `src/game/8003F4A0.c:47` | `gUpdateObjectLights(gListHeads[0], arg);` |
-| `src/game/8003F4A0.c:50` | `gRunPolygonPass(gListHeads[5], arg);` |
-| `src/game/80027510.c:233` | `func_80026E5C(0,` |
-| `src/game/800271A4.c:190` | `func_80026E5C(0,` |
-| `src/game/80026E5C.c:37` | `jal func_80066C9C` |
-| `src/game/80066C9C.c:110` | `gSelectViewRecord(` |
-| `src/game/80066C9C.c:111` | `gGteLoadRotation(gCamera->matrix);` |
-| `src/game/80066C9C.c:194` | `.word 0x0c019118` |
-| `src/game/80027510.c:244` | `gSelectViewRecord(` |
-| `src/game/80027510.c:245` | `gUpdateLightDirection();` |
-| `src/game/80027510.c:283` | `gSelectViewRecord(` |
-| `src/game/80027510.c:284` | `gUpdateLightDirection();` |
-| `src/game/800271A4.c:189` | `gUpdateLightDirection();` |
-| `src/game/80027510.c:250` | `gRunRegionPass(0,` |
-| `src/game/80027510.c:288` | `gRunRegionPass(1,` |
-| `src/game/800271A4.c:194` | `gRunRegionPass(0,` |
-| `src/game/80026E1C.c:36` | `jal func_80066E98` |
-| `src/game/80066E98.c:63` | `gSelectViewRecord(object->info->id);` |
-| `src/game/80066E98.c:64` | `gGteLoadRotation(gCamera + 0x28);` |
-| `src/game/80066E98.c:68` | `gDrawRegionTiles(x, y, region);` |
-| `src/game/80066E98.c:69` | `gGteLoadRotation(gCamera + 0x28);` |
-| `src/game/80066E98.c:70` | `gDrawCellWindowObjects(x, y, region);` |
-| `src/game/80066E98.c:71` | `gDrawCellWindowModels(x, y, region);` |
-| `src/game/80066E98.c:72` | `gRunRegionObjectPass(index);` |
-| `src/game/80066E98.c:73` | `gRunViewScenePasses(index);` |
-| `src/game/8003F6E4.c:89` | `gDrawNodeListModels(` |
-| `src/game/8003F6E4.c:90` | `gDrawDebrisFragments(` |
-| `src/game/8003F6E4.c:93` | `gDrawGlowNodeList(` |
-| `src/game/8003F6E4.c:94` | `gDrawRibbonList(` |
-| `src/game/8006531C.c:72` | `gBuildTilePattern(` |
-| `src/game/8006531C.c:74` | `gWorldToRadarCell(` |
-| `src/game/8006531C.c:76` | `gEmitTexturedSurface(` |
-| `src/game/8006531C.c:79` | `gEmitCellGeometry(` |
-| `src/game/8004A924.c:91` | `gDrawMapCellNode(` |
-| `src/game/80084398.c:181` | `gSetModelFrame(o, s);` |
-| `src/game/80084398.c:226` | `gGteLoadMatrix(&o->unk04);` |
-| `src/game/80084398.c:231` | `gGteTransformVerticesWide(` |
-| `src/game/80084398.c:235` | `gSubmitModelInstance(o, &local, 1);` |
-| `src/game/80017508.c:42` | `gProjectModelInstance(instance);` |
-| `src/game/80017508.c:44` | `gDrawModelInstanceParts(` |
-| `src/game/80062EB8.c:72` | `gDrawModelFrame(object->data);` |
-| `src/game/80056634.c:111` | `gSetCameraPosition(&out);` |
-| `src/game/80056634.c:112` | `gSetCameraRotation(angle, entry->f2, 0);` |
-| `src/game/8005678C.c:83` | `gSetCameraRotation(` |
-| `src/game/8005678C.c:84` | `gSetCameraPosition(out);` |
-| `src/game/800569EC.c:512` | `gSetCameraRotation(yaw, pitch, 0);` |
-| `src/game/800569EC.c:563` | `gSetCameraPosition(&local.out);` |
-| `src/game/800573A4.c:283` | `gSetCameraRotation(` |
-| `src/game/800573A4.c:284` | `gSetCameraPosition(&position);` |
-| `src/game/800177AC.c:55` | `gMulMatrixVector(gCamera->matrix, position, &rotated);` |
-| `src/game/80017860.c:49` | `gBuildRotationMatrix(yaw, pitch, roll, gCamera->rotation);` |
-| `src/game/80017860.c:50` | `gBuildViewMatrix(gCamera->rotation, gCamera->matrix);` |
-| `src/game/80018860.c:56` | `gTransposeMatrix3x3(` |
-| `src/game/80018860.c:58` | `gMulMatrixVector(` |
-| `src/game/800188D0.c:47` | `gSinCos(x, &sx, &cx);` |
-| `src/game/80017B60.c:31` | `gCamera = gFindInstanceById(id);` |
-| `src/game/80013C80.c:39` | `gMulMatrixVector(gCamera + 0x28, gLightVectorIn, gLightVectorOut);` |
+| `src/game/boot-frontend/gRunGameFrameLoop.c:131` | `gRunSoloSessionFrame();` |
+| `src/game/boot-frontend/gRunGameFrameLoop.c:133` | `gRunSessionFrame();` |
+| `src/game/boot-frontend/gRunSessionFrame.c:231` | `gRunEntityWorldTick(` |
+| `src/game/gameplay-ai/gRunSoloSessionFrame.c:183` | `gRunEntityWorldTick(` |
+| `src/game/boot-frontend/gRunEntityWorldTick.c:103` | `gRunSceneListPassesOnScratch(arg0);` |
+| `src/game/boot-frontend/gRunSceneListPassesOnScratch.c:36` | `jal func_8003F4A0` |
+| `src/game/renderer-scene/gRunSceneListPasses.c:45` | `gTickEffectNodes(gListHeads[2], arg);` |
+| `src/game/renderer-scene/gRunSceneListPasses.c:47` | `gUpdateObjectLights(gListHeads[0], arg);` |
+| `src/game/renderer-scene/gRunSceneListPasses.c:50` | `gRunPolygonPass(gListHeads[5], arg);` |
+| `src/game/boot-frontend/gRunSessionFrame.c:233` | `func_80026E5C(0,` |
+| `src/game/gameplay-ai/gRunSoloSessionFrame.c:190` | `func_80026E5C(0,` |
+| `src/game/boot-frontend/gUpdateViewAnchorsOnScratchpad.c:37` | `jal func_80066C9C` |
+| `src/game/gpu-2d-hud/gUpdateCameraAnchor.c:110` | `gSelectViewRecord(` |
+| `src/game/gpu-2d-hud/gUpdateCameraAnchor.c:111` | `gGteLoadRotation(gCamera->matrix);` |
+| `src/game/gpu-2d-hud/gUpdateCameraAnchor.c:194` | `.word 0x0c019118` |
+| `src/game/boot-frontend/gRunSessionFrame.c:244` | `gSelectViewRecord(` |
+| `src/game/boot-frontend/gRunSessionFrame.c:245` | `gUpdateLightDirection();` |
+| `src/game/boot-frontend/gRunSessionFrame.c:283` | `gSelectViewRecord(` |
+| `src/game/boot-frontend/gRunSessionFrame.c:284` | `gUpdateLightDirection();` |
+| `src/game/gameplay-ai/gRunSoloSessionFrame.c:189` | `gUpdateLightDirection();` |
+| `src/game/boot-frontend/gRunSessionFrame.c:250` | `gRunRegionPass(0,` |
+| `src/game/boot-frontend/gRunSessionFrame.c:288` | `gRunRegionPass(1,` |
+| `src/game/gameplay-ai/gRunSoloSessionFrame.c:194` | `gRunRegionPass(0,` |
+| `src/game/boot-frontend/gRunRegionPass.c:36` | `jal func_80066E98` |
+| `src/game/gpu-2d-hud/gDrawViewLayers.c:63` | `gSelectViewRecord(object->info->id);` |
+| `src/game/gpu-2d-hud/gDrawViewLayers.c:64` | `gGteLoadRotation(gCamera + 0x28);` |
+| `src/game/gpu-2d-hud/gDrawViewLayers.c:68` | `gDrawRegionTiles(x, y, region);` |
+| `src/game/gpu-2d-hud/gDrawViewLayers.c:69` | `gGteLoadRotation(gCamera + 0x28);` |
+| `src/game/gpu-2d-hud/gDrawViewLayers.c:70` | `gDrawCellWindowObjects(x, y, region);` |
+| `src/game/gpu-2d-hud/gDrawViewLayers.c:71` | `gDrawCellWindowModels(x, y, region);` |
+| `src/game/gpu-2d-hud/gDrawViewLayers.c:72` | `gRunRegionObjectPass(index);` |
+| `src/game/gpu-2d-hud/gDrawViewLayers.c:73` | `gRunViewScenePasses(index);` |
+| `src/game/renderer-scene/gRunViewScenePasses.c:89` | `gDrawNodeListModels(` |
+| `src/game/renderer-scene/gRunViewScenePasses.c:90` | `gDrawDebrisFragments(` |
+| `src/game/renderer-scene/gRunViewScenePasses.c:93` | `gDrawGlowNodeList(` |
+| `src/game/renderer-scene/gRunViewScenePasses.c:94` | `gDrawRibbonList(` |
+| `src/game/gpu-2d-hud/gDrawRegionTiles.c:72` | `gBuildTilePattern(` |
+| `src/game/gpu-2d-hud/gDrawRegionTiles.c:74` | `gWorldToRadarCell(` |
+| `src/game/gpu-2d-hud/gDrawRegionTiles.c:76` | `gEmitTexturedSurface(` |
+| `src/game/gpu-2d-hud/gDrawRegionTiles.c:79` | `gEmitCellGeometry(` |
+| `src/game/renderer-scene/gDrawCellWindowObjects.c:91` | `gDrawMapCellNode(` |
+| `src/game/renderer-scene/gDrawCellWindowModels.c:181` | `gSetModelFrame(o, s);` |
+| `src/game/renderer-scene/gDrawCellWindowModels.c:226` | `gGteLoadMatrix(&o->unk04);` |
+| `src/game/renderer-scene/gDrawCellWindowModels.c:231` | `gGteTransformVerticesWide(` |
+| `src/game/renderer-scene/gDrawCellWindowModels.c:235` | `gSubmitModelInstance(o, &local, 1);` |
+| `src/game/renderer-scene/gSubmitModelInstance.c:42` | `gProjectModelInstance(instance);` |
+| `src/game/renderer-scene/gSubmitModelInstance.c:44` | `gDrawModelInstanceParts(` |
+| `src/game/gpu-2d-hud/gRunRegionObjectPass.c:72` | `gDrawModelFrame(object->data);` |
+| `src/game/gpu-2d-hud/gPlacePlayerViews.c:111` | `gSetCameraPosition(&out);` |
+| `src/game/gpu-2d-hud/gPlacePlayerViews.c:112` | `gSetCameraRotation(angle, entry->f2, 0);` |
+| `src/game/gpu-2d-hud/gPlaceCameraFromPreset.c:83` | `gSetCameraRotation(` |
+| `src/game/gpu-2d-hud/gPlaceCameraFromPreset.c:84` | `gSetCameraPosition(out);` |
+| `src/game/gpu-2d-hud/gUpdateChaseCamera.c:512` | `gSetCameraRotation(yaw, pitch, 0);` |
+| `src/game/gpu-2d-hud/gUpdateChaseCamera.c:563` | `gSetCameraPosition(&local.out);` |
+| `src/game/gameplay-ai/gResetActorAndPlaceView.c:283` | `gSetCameraRotation(` |
+| `src/game/gameplay-ai/gResetActorAndPlaceView.c:284` | `gSetCameraPosition(&position);` |
+| `src/game/gpu-2d-hud/gSetCameraPosition.c:55` | `gMulMatrixVector(gCamera->matrix, position, &rotated);` |
+| `src/game/gpu-2d-hud/gSetCameraRotation.c:49` | `gBuildRotationMatrix(yaw, pitch, roll, gCamera->rotation);` |
+| `src/game/gpu-2d-hud/gSetCameraRotation.c:50` | `gBuildViewMatrix(gCamera->rotation, gCamera->matrix);` |
+| `src/game/gte/gBuildViewMatrix.c:56` | `gTransposeMatrix3x3(` |
+| `src/game/gte/gBuildViewMatrix.c:58` | `gMulMatrixVector(` |
+| `src/game/utilities/gBuildRotationMatrix.c:47` | `gSinCos(x, &sx, &cx);` |
+| `src/game/gpu-2d-hud/gSelectViewRecord.c:31` | `gCamera = gFindInstanceById(id);` |
+| `src/game/renderer-scene/gUpdateLightDirection.c:39` | `gMulMatrixVector(gCamera + 0x28, gLightVectorIn, gLightVectorOut);` |

@@ -302,7 +302,7 @@ static void pl_log_set(void)
 
 static void test_cd_readwrappers(void)
 {
-    /* @leaf 8008E598 source src/game/8008E598.c: forwards (destination,size) to func_8008FC30 and returns 1 exactly when that call returned 0 */
+    /* @leaf 8008E598 source src/game/platform/gCdRead.c: forwards (destination,size) to func_8008FC30 and returns 1 exactly when that call returned 0 */
     LK_FUNC("func_8008E598");
     rd_calls = 0; ret_8008FC30 = 0; saw_rd_dst = 0; saw_rd_size = 0;
     FCK_EQ(gCdRead((void *)0x1234, 0x100), 1, "loader completed: 1");
@@ -315,7 +315,7 @@ static void test_cd_readwrappers(void)
     FCK_EQ(gCdRead((void *)0x2000, 8), 0, "error read: 0");
     FCK_EQ(rd_calls, 3, "three dispatches total");
 
-    /* @leaf 8008E5B8 source src/game/8008E5B8.c: forwards (destination,size) to func_8008FD30 and returns 1 exactly when that call returned 0 */
+    /* @leaf 8008E5B8 source src/game/platform/gCdGetSector.c: forwards (destination,size) to func_8008FD30 and returns 1 exactly when that call returned 0 */
     LK_FUNC("func_8008E5B8");
     sec_calls = 0; ret_8008FD30 = 0;
     FCK_EQ(gCdGetSector((void *)0x5678, 3), 1, "sector DMA done: 1");
@@ -325,7 +325,7 @@ static void test_cd_readwrappers(void)
     ret_8008FD30 = 5;
     FCK_EQ(gCdGetSector((void *)0x5678, 1), 0, "pending DMA: 0");
 
-    /* @leaf 8008E5FC source src/game/8008E5FC.c: forwards the mode word to func_8008FAC8 and returns that result unchanged */
+    /* @leaf 8008E5FC source src/game/platform/gCdDataSync.c: forwards the mode word to func_8008FAC8 and returns that result unchanged */
     LK_FUNC("func_8008E5FC");
     dsync_calls = 0; ret_8008FAC8 = -1; saw_dsync_mode = 0;
     FCK_EQ(gCdDataSync(0), -1, "timeout value passes through");
@@ -337,7 +337,7 @@ static void test_cd_readwrappers(void)
     FCK_EQ(gCdDataSync(0x33), 0x100, "no truncation of the callee value");
     FCK_EQ(dsync_calls, 3, "three polls dispatched");
 
-    /* @leaf 8008E154 source src/game/8008E154.c: forwards mode and result pointer to func_8008ECFC and returns its result */
+    /* @leaf 8008E154 source src/game/platform/gCdSync.c: forwards mode and result pointer to func_8008ECFC and returns its result */
     LK_FUNC("func_8008E154");
     csync_calls = 0; ret_8008ECFC = -1;
     FCK_EQ(gCdSync(0, (u8 *)0x2468), -1, "sync result forwarded");
@@ -346,7 +346,7 @@ static void test_cd_readwrappers(void)
     ret_8008ECFC = 0x22;
     FCK_EQ(gCdSync(0x11, (u8 *)0x1111), 0x22, "non-zero status forwarded");
 
-    /* @leaf 8008E174 source src/game/8008E174.c: forwards mode and result pointer to func_8008EF7C and returns its result */
+    /* @leaf 8008E174 source src/game/platform/gCdReady.c: forwards mode and result pointer to func_8008EF7C and returns its result */
     LK_FUNC("func_8008E174");
     crdy_calls = 0; ret_8008EF7C = 3;
     FCK_EQ(gCdReady(1, (u8 *)0x1357), 3, "ready result forwarded");
@@ -355,7 +355,7 @@ static void test_cd_readwrappers(void)
     ret_8008EF7C = 0;
     FCK_EQ(gCdReady(0, 0), 0, "zero/NULL pass through");
 
-    /* @leaf 8008E0B8 source src/game/8008E0B8.c: single tail call into func_8008F6D8 with no arguments or state of its own */
+    /* @leaf 8008E0B8 source src/game/platform/gResetCdController.c: single tail call into func_8008F6D8 with no arguments or state of its own */
     LK_FUNC("func_8008E0B8");
     cdreset_calls = 0;
     gResetCdController();
@@ -366,7 +366,7 @@ static void test_cdinit(void)
 {
     s32 r;
 
-    /* @leaf 8008DF30 source src/game/8008DF30.c: returns 0 when func_8008F8E8 reports a live driver (non-zero), otherwise 1 exactly when func_8008F7AC returns 0 */
+    /* @leaf 8008DF30 source src/game/platform/gInitCdHardware.c: returns 0 when func_8008F8E8 reports a live driver (non-zero), otherwise 1 exactly when func_8008F7AC returns 0 */
     LK_FUNC("func_8008DF30");
     sub_calls = mix_calls = 0;
     ret_8008F8E8 = 1;
@@ -381,7 +381,7 @@ static void test_cdinit(void)
     ret_8008F8E8 = 0; ret_8008F7AC = -1;
     FCK_EQ(gInitCdHardware(), 0, "negative mixer status: 0");
 
-    /* @leaf 8008DEA0 source src/game/8008DEA0.c: five attempts; only a gInitCdHardware() result of exactly 1 installs D_8008DF6C/94/BC into the three driver words, clears D_8009C814 and returns 1; after the fifth failure it prints D_8001231C via func_8008E000 and returns 0 */
+    /* @leaf 8008DEA0 source src/game/platform/gStartCdInit.c: five attempts; only a gInitCdHardware() result of exactly 1 installs D_8008DF6C/94/BC into the three driver words, clears D_8009C814 and returns 1; after the fifth failure it prints D_8001231C via func_8008E000 and returns 0 */
     LK_FUNC("func_8008DEA0");
     gCdSyncCallback_g = (u8 *)(unsigned long)0xDEAD0001u;
     gCdReadyCallback_g = (u8 *)(unsigned long)0xDEAD0002u;
@@ -413,7 +413,7 @@ static void test_cdinit(void)
 
 static void test_cd_events(void)
 {
-    /* @leaf 8008DF6C source src/game/8008DF6C.c: dispatches the fixed pair (0xF0000003, 0x20) to func_8008DFF0 */
+    /* @leaf 8008DF6C source src/game/platform/gLogCdSyncCallback.c: dispatches the fixed pair (0xF0000003, 0x20) to func_8008DFF0 */
     LK_FUNC("func_8008DF6C");
     evt_calls = 0; evt_a0[0] = evt_a1[0] = 0;
     gLogCdSyncCallback();
@@ -421,7 +421,7 @@ static void test_cd_events(void)
     FCK_EQ(evt_a0[0], 0xF0000003, "CD event spec word");
     FCK_EQ(evt_a1[0], 0x20, "sync event value 0x20");
 
-    /* @leaf 8008DF94 source src/game/8008DF94.c: dispatches the fixed pair (0xF0000003, 0x40) to func_8008DFF0 */
+    /* @leaf 8008DF94 source src/game/platform/gLogCdReadyCallback.c: dispatches the fixed pair (0xF0000003, 0x40) to func_8008DFF0 */
     LK_FUNC("func_8008DF94");
     evt_calls = 0; evt_a0[0] = evt_a1[0] = 0;
     gLogCdReadyCallback();
@@ -429,7 +429,7 @@ static void test_cd_events(void)
     FCK_EQ(evt_a0[0], 0xF0000003, "CD event spec word");
     FCK_EQ(evt_a1[0], 0x40, "ready event value 0x40");
 
-    /* @leaf 8008DFBC source src/game/8008DFBC.c: dispatches the fixed pair (0xF0000003, 0x40) to func_8008DFF0 */
+    /* @leaf 8008DFBC source src/game/platform/gLogCdReadCallback.c: dispatches the fixed pair (0xF0000003, 0x40) to func_8008DFF0 */
     LK_FUNC("func_8008DFBC");
     evt_calls = 0; evt_a0[0] = evt_a1[0] = 0;
     gLogCdReadCallback();
@@ -437,7 +437,7 @@ static void test_cd_events(void)
     FCK_EQ(evt_a0[0], 0xF0000003, "CD event spec word");
     FCK_EQ(evt_a1[0], 0x40, "read event value 0x40");
 
-    /* @leaf 8008D690 source src/game/8008D690.c: sends the argument to func_8008D6D0 alone, then (argument, 0x3F, 0) to func_8008D670 */
+    /* @leaf 8008D690 source src/game/boot-frontend/gApplyBiosStateValue.c: sends the argument to func_8008D6D0 alone, then (argument, 0x3F, 0) to func_8008D670 */
     LK_FUNC("func_8008D690");
     anc_calls = 0; wcs_calls = 0; anc_arg = 0;
     wcs_a0 = wcs_a1 = wcs_a2 = 0;
@@ -459,7 +459,7 @@ static const s32 cd_cmd_fallback = (s32)0x8001233C;
 
 static void test_cd_clients(void)
 {
-    /* @leaf 8008E0EC source src/game/8008E0EC.c: index < 28 returns D_8009C8CC[index], anything else the constant 0x8001233C */
+    /* @leaf 8008E0EC source src/game/memory-resources/gGetCdCommandName.c: index < 28 returns D_8009C8CC[index], anything else the constant 0x8001233C */
     LK_FUNC("func_8008E0EC");
     {
         s32 i;
@@ -472,7 +472,7 @@ static void test_cd_clients(void)
     FCK_EQ((u32)gGetCdCommandName(0x100), 0x3000, "0x100 truncates to byte 0");
     FCK_EQ((u32)gGetCdCommandName(0x11C), (u32)cd_cmd_fallback, "0x11C truncates to byte 28: fallback");
 
-    /* @leaf 800901F8 source src/game/800901F8.c: 12-byte equality via the BIOS strncmp stand-in func_80090890; returns 1 only for equality */
+    /* @leaf 800901F8 source src/game/platform/gMatchCdFilename.c: 12-byte equality via the BIOS strncmp stand-in func_80090890; returns 1 only for equality */
     LK_FUNC("func_800901F8");
     ret_80090890 = 0;
     FCK_EQ(gMatchCdFilename((u8 *)"AAAABBBBCCC", (u8 *)"AAAABBBBCCC"), 1,
@@ -485,7 +485,7 @@ static void test_cd_clients(void)
     FCK_EQ(gMatchCdFilename((u8 *)"AAAAAAAAAAAA", (u8 *)"BBBBBBBBBBBB"), 0,
            "totally different names: no match");
 
-    /* @leaf 800908A0 source src/game/800908A0.c: restores *D_8009CBF8 into D_8009C8A8 through func_8008E194 and clears the busy word below the saved slot */
+    /* @leaf 800908A0 source src/game/platform/gCdPauseCallback.c: restores *D_8009CBF8 into D_8009C8A8 through func_8008E194 and clears the busy word below the saved slot */
     LK_FUNC("func_800908A0");
     gCdSavedCallbackPtr[0] = 0x7777;
     gCdSavedBusyFlag = 1;
@@ -515,7 +515,7 @@ static void test_gpu_stateclients(void)
 {
     s32 i;
 
-    /* @leaf 80091BF8 source src/game/80091BF8.c: increments the volatile tick counter D_8009DD50 once and calls each of the eight D_8009DD30 slots that is non-NULL, skipping NULL slots */
+    /* @leaf 80091BF8 source src/game/boot-frontend/gDispatchVSyncCallbacks.c: increments the volatile tick counter D_8009DD50 once and calls each of the eight D_8009DD30 slots that is non-NULL, skipping NULL slots */
     LK_FUNC("func_80091BF8");
     for (i = 0; i < 8; i++) fired[i] = 0;
     for (i = 0; i < 8; i++) gVSyncCallbackTable[i] = 0;
@@ -550,7 +550,7 @@ static void test_gpu_stateclients(void)
 
 static void test_gpu_debugclients(void)
 {
-    /* @leaf 80092A84 source src/game/80092A84.c: returns and replaces the flag byte at D_8009DDF2[0]; a nonzero new value also runs the printf hook with the trace tag and the bytes at p[0]/p[-2]/p[1] */
+    /* @leaf 80092A84 source src/game/platform/gSetGraphDebug.c: returns and replaces the flag byte at D_8009DDF2[0]; a nonzero new value also runs the printf hook with the trace tag and the bytes at p[0]/p[-2]/p[1] */
     LK_FUNC("func_80092A84");
     pl_log_set();
     gGpuDebugCluster[0] = 0x40;
@@ -566,7 +566,7 @@ static void test_gpu_debugclients(void)
     FCK_EQ(log_a1, 0x40, "hook arg2 is the byte two below (p[-2])");
     FCK_EQ(log_a2, 0x66, "hook arg3 is the byte above (p[1])");
 
-    /* @leaf 80092284 source src/game/80092284.c: splits the packed tpage into four masked fields ((v>>7)&3, (v>>5)&3, (v<<6)&0x7C0, ((v<<4)&0x100)|((v>>2)&0x200)) and passes them with the tag address to the hook */
+    /* @leaf 80092284 source src/game/gpu-2d-hud/gDumpTPage.c: splits the packed tpage into four masked fields ((v>>7)&3, (v>>5)&3, (v<<6)&0x7C0, ((v<<4)&0x100)|((v>>2)&0x200)) and passes them with the tag address to the hook */
     LK_FUNC("func_80092284");
     pl_log_set();
     gDumpTPage(0x81);
@@ -587,7 +587,7 @@ static void test_gpu_debugclients(void)
     FCK_EQ(log_a2, (0x2FF << 6) & 0x7C0, "field 3 masks to 0x7C0");
     FCK_EQ(log_a3, 0x100, "0x2FF case: bit 8 of value<<4 set, bit 9 of value>>2 clear");
 
-    /* @leaf 800922E4 source src/game/800922E4.c: passes ((v & 0x3F) << 4) and (v >> 6) with the tag address to the hook */
+    /* @leaf 800922E4 source src/game/platform/gPrintClutCoordinates.c: passes ((v & 0x3F) << 4) and (v >> 6) with the tag address to the hook */
     LK_FUNC("func_800922E4");
     pl_log_set();
     gPrintClutCoordinates(0x123);
@@ -610,7 +610,7 @@ static void test_gpu_debugclients(void)
 
 static void test_mdec_spu_clients(void)
 {
-    /* @leaf 80096070 source src/game/80096070.c: forwards (destination,size) to func_800962D0 unchanged */
+    /* @leaf 80096070 source src/game/gpu-2d-hud/gStartMdecOutDma.c: forwards (destination,size) to func_800962D0 unchanged */
     LK_FUNC("func_80096070");
     prog_calls = 0; prog_dst = 0; prog_size = 0;
     gStartMdecOutDma(0x7000, 0x240);
@@ -620,7 +620,7 @@ static void test_mdec_spu_clients(void)
     gStartMdecOutDma(-1, 0);
     FCK_EQ(prog_dst, -1, "negative destination forwarded untouched");
 
-    /* @leaf 80096090 source src/game/80096090.c: mode 0 returns func_8009635C()'s wait result, any other mode returns bit 29 of func_80096484()'s status */
+    /* @leaf 80096090 source src/game/platform/gMdecInSync.c: mode 0 returns func_8009635C()'s wait result, any other mode returns bit 29 of func_80096484()'s status */
     LK_FUNC("func_80096090");
     wait_calls = 0;
     ret_8009635C = -1;
@@ -636,7 +636,7 @@ static void test_mdec_spu_clients(void)
     FCK_EQ(gMdecInSync(1), 0, "bit 29 clear: 0");
     FCK_EQ(wait_calls, 2, "nonzero modes bypass the wait");
 
-    /* @leaf 800960CC source src/game/800960CC.c: mode 0 returns func_800963F0()'s wait result, any other mode returns bit 24 of func_80096484()'s status */
+    /* @leaf 800960CC source src/game/platform/gMdecOutSync.c: mode 0 returns func_800963F0()'s wait result, any other mode returns bit 24 of func_80096484()'s status */
     LK_FUNC("func_800960CC");
     outwait_calls = 0;
     ret_800963F0 = -1;
@@ -652,7 +652,7 @@ static void test_mdec_spu_clients(void)
     FCK_EQ(gMdecOutSync(7), 0, "bit 24 clear: 0");
     FCK_EQ(outwait_calls, 2, "nonzero modes bypass the wait");
 
-    /* @leaf 80095E90 source src/game/80095E90.c: option 0 additionally runs func_80091480 first; func_80096150 receives the option in every case */
+    /* @leaf 80095E90 source src/game/platform/gDecDctReset.c: option 0 additionally runs func_80091480 first; func_80096150 receives the option in every case */
     LK_FUNC("func_80095E90");
     irqreset_calls = 0; mdec_calls = 0; mdec_last_opt = 0;
     gDecDctReset(0);
@@ -667,14 +667,14 @@ static void test_mdec_spu_clients(void)
     FCK_EQ(irqreset_calls, 1, "negative option also skips the IRQ path");
     FCK_EQ(mdec_last_opt, -1, "negative option forwarded");
 
-    /* @leaf 80097A28 source src/game/80097A28.c: calls the init entry with the constant 0 (warm start) */
+    /* @leaf 80097A28 source src/game/platform/gWarmStartSpu.c: calls the init entry with the constant 0 (warm start) */
     LK_FUNC("func_80097A28");
     spuinit_calls = 0; spuinit_arg = 5;
     gWarmStartSpu();
     FCK_EQ(spuinit_calls, 1, "init dispatched once");
     FCK_EQ(spuinit_arg, 0, "warm start passes cold_start = 0");
 
-    /* @leaf 80097760 source src/game/80097760.c: issues gSpuTransfer(2, addr << shift), then gSpuTransfer(0), then gSpuTransfer(3, arg0, arg1) and returns arg1 */
+    /* @leaf 80097760 source src/game/platform/gStartSpuWrite.c: issues gSpuTransfer(2, addr << shift), then gSpuTransfer(0), then gSpuTransfer(3, arg0, arg1) and returns arg1 */
     LK_FUNC("func_80097760");
     tr_calls = 0;
     gSpuTransferAddr = 0x345;
@@ -694,7 +694,7 @@ static void test_mdec_spu_clients(void)
     FCK_EQ(tr_a1[0], 0, "zero address and shift forward zero");
     FCK_EQ(gStartSpuWrite(-1, -5), -5, "negative values pass through");
 
-    /* @leaf 800976DC source src/game/800976DC.c: D_8009EEC0 == 0 issues ops 2/1/3 (with addr << shift), otherwise one func_80097138(arg0,arg1) call; arg1 returned in both paths */
+    /* @leaf 800976DC source src/game/platform/gSpuWriteTransferBlock.c: D_8009EEC0 == 0 issues ops 2/1/3 (with addr << shift), otherwise one func_80097138(arg0,arg1) call; arg1 returned in both paths */
     LK_FUNC("func_800976DC");
     tr_calls = 0; wb_calls = 0;
     gOpOrderFlag = 0;
@@ -721,7 +721,7 @@ static void test_mdec_spu_clients(void)
     gSpuWriteTransferBlock(7, 8);
     FCK_EQ(wb_calls, 1, "any nonzero flag selects the block path");
 
-    /* @leaf 80098E28 source src/game/80098E28.c: caps the size at 0x7EFF0, forwards to func_80097760 and clears D_8009EED8 only when D_8009EEDC is zero; returns the capped size */
+    /* @leaf 80098E28 source src/game/platform/gWriteSpuData.c: caps the size at 0x7EFF0, forwards to func_80097760 and clears D_8009EED8 only when D_8009EEDC is zero; returns the capped size */
     LK_FUNC("func_80098E28");
     tr_calls = 0;
     gSpuClearFlag = 9;
@@ -739,7 +739,7 @@ static void test_mdec_spu_clients(void)
     FCK_EQ(gWriteSpuData(0x100, 0xFFFFFFFF), 0x7EFF0, "u32 wrap caps to 0x7EFF0");
     FCK_EQ(gSpuTransferCallback, 0, "the write path never touches the callback slot");
 
-    /* @leaf 80098E88 source src/game/80098E88.c: same contract as func_80098E28 through func_800976DC */
+    /* @leaf 80098E88 source src/game/platform/gWriteSpuRam.c: same contract as func_80098E28 through func_800976DC */
     LK_FUNC("func_80098E88");
     wb_calls = 0;
     gOpOrderFlag = 1;
@@ -762,7 +762,7 @@ static void test_env_copies(void)
     u8 *r;
     s32 i;
 
-    /* @leaf 80093488 source src/game/80093488.c: copies the 0x5C-byte cached DRAWENV at D_8009DE00 into the caller buffer through func_8008CD10 and returns the buffer */
+    /* @leaf 80093488 source src/game/gpu-2d-hud/gCopyDrawEnv.c: copies the 0x5C-byte cached DRAWENV at D_8009DE00 into the caller buffer through func_8008CD10 and returns the buffer */
     LK_FUNC("func_80093488");
     for (i = 0; i < 0x5C; i++) { gDrawEnvCache[i] = (u8)(0x40 + i); buf[i] = 0; }
     for (i = 0x5C; i < 0x90; i++) buf[i] = 0xC7;   /* sentinel beyond the copy */
@@ -775,7 +775,7 @@ static void test_env_copies(void)
     FCK_EQ(buf[0x5B], 0x40 + 0x5B, "last byte copied");
     FCK_EQ(buf[0x5C], 0xC7, "byte just past the copy stays untouched");
 
-    /* @leaf 800938F0 source src/game/800938F0.c: copies the 0x14-byte cached DISPENV at D_8009DE5C through func_8008CD10 and returns the buffer */
+    /* @leaf 800938F0 source src/game/gpu-2d-hud/gCopyDispEnv.c: copies the 0x14-byte cached DISPENV at D_8009DE5C through func_8008CD10 and returns the buffer */
     LK_FUNC("func_800938F0");
     for (i = 0; i < 0x28; i++) buf[i] = 0;
     for (i = 0; i < 0x14; i++) gDispEnvCache[i] = (u8)(0x80 + i);

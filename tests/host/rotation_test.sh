@@ -26,8 +26,8 @@ compile() {
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$DECOMP/tests/host/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
-compile "$DECOMP/src/game/8001846C.c" "$OUT/8001846C.o"
-compile "$DECOMP/src/game/80018DC0.c" "$OUT/80018DC0.o"
+compile "$DECOMP/src/game/utilities/gSinCos.c" "$OUT/8001846C.o"
+compile "$DECOMP/src/game/utilities/gBuildRotationMatrixVariant.c" "$OUT/80018DC0.o"
 compile "$OUT/sine.c" "$OUT/sine.o"
 compile "$HERE/rotation_harness.c" "$OUT/rotation_harness.o"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$DECOMP/tests/host/crt0.s"

@@ -1,7 +1,7 @@
 #!/bin/bash
 # ISO-9660 path formatting driven through the shared BIOS mock.
 #
-# The unit under test (src/game/8001DC48.c) is the unchanged decomp source. It
+# The unit under test (src/game/memory-resources/gFormatIso9660Path.c) is the unchanged decomp source. It
 # reaches the PS1 BIOS for every string operation it performs, so this test is
 # only meaningful with mocks/bios_mock.c behind those vectors - and it exercises
 # that mock the way a test should: it asserts the real call chain, the resulting
@@ -31,7 +31,7 @@ compile() {
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
 
-compile "$DECOMP/src/game/8001DC48.c" "$OUT/8001DC48.o"
+compile "$DECOMP/src/game/memory-resources/gFormatIso9660Path.c" "$OUT/8001DC48.o"
 compile "$HERE/mocks/bios_mock.c" "$OUT/bios_mock.o"
 compile "$HERE/iso9660_path_harness.c" "$OUT/iso9660_path_harness.o"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s"

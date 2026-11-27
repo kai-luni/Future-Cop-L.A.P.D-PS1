@@ -24,6 +24,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="$(cd "$HERE/../.." && pwd)"
+source "$HERE/unit_path.sh"
 T="${TOOLCHAIN:-$DECOMP/.toolchain}"
 OUT="${OUT:-$HERE/build-map-objects}"
 QEMU="${QEMU:-$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}"
@@ -61,7 +62,7 @@ UNITS="8003FA34 8003BC0C 8003B838 8003BF50 8003B65C 8003BA50 800195A4 8002D1A0
        80060E74 80019CA0 80019C38 80019BF0 80019A74 8003FAD4 8002D664"
 OBJS=""
 for unit in $UNITS; do
-    compile_s "$DECOMP/src/game/$unit.c" "$OUT/$unit.mas.s"
+    compile_s "$(unit_src "$unit")" "$OUT/$unit.mas.s"
     if [ "$unit" = 8002D664 ]; then
         relocate_linked_prop_ram "$OUT/$unit.mas.s"
     fi

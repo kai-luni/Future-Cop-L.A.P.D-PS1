@@ -26,10 +26,10 @@ compile() {
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$DECOMP/tests/host/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
-compile "$DECOMP/src/game/8001846C.c" "$OUT/8001846C.o"
-compile "$DECOMP/src/game/80018DC0.c" "$OUT/80018DC0.o"
+compile "$DECOMP/src/game/utilities/gSinCos.c" "$OUT/8001846C.o"
+compile "$DECOMP/src/game/utilities/gBuildRotationMatrixVariant.c" "$OUT/80018DC0.o"
 compile "$OUT/sine.c" "$OUT/sine.o"
-compile "$DECOMP/src/game/80052960.c" "$OUT/80052960.o"
+compile "$DECOMP/src/game/renderer-scene/gComposeJointChain.c" "$OUT/80052960.o"
 compile "$HERE/joints_probe.c" "$OUT/joints_probe.o"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$DECOMP/tests/host/crt0.s"
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/joints_harness" "$OUT/crt0.o" "$OUT/joints_probe.o" "$OUT/sine.o" "$OUT/8001846C.o" "$OUT/80018DC0.o" "$OUT/80052960.o"

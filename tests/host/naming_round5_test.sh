@@ -5,6 +5,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DECOMP="${DECOMP:-$(cd "$HERE/../.." && pwd)}"
+source "$HERE/unit_path.sh"
 T="$DECOMP/.toolchain"
 OUT="${OUT:-$HERE/build-naming-round5}"
 QEMU="${QEMU:-$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}"
@@ -23,7 +24,7 @@ compile() {
 
 objects=()
 for unit in 8003B7D8 8003CA80 80050DAC 8005BCD4 80044AE8 8004CC68; do
-    compile "$DECOMP/src/game/$unit.c" "$OUT/$unit.o"
+    compile "$(unit_src "$unit")" "$OUT/$unit.o"
     objects+=("$OUT/$unit.o")
 done
 compile "$HERE/naming_round5_harness.c" "$OUT/naming_round5_harness.o"

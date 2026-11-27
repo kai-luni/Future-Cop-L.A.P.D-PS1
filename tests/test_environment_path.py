@@ -17,10 +17,14 @@ symbol bindings are consistent, not that any function behaves correctly.
 Behaviour is covered (for a few units) by the qemu harnesses in tests/host/.
 """
 import re
+import sys
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import unit_paths  # noqa: E402
+
 GAME = ROOT / "src/game"
 DOC = ROOT / "docs/environment-render-path.md"
 
@@ -104,7 +108,7 @@ FUNC_REF = re.compile(r"\bfunc_([0-9A-Fa-f]{8})\b")
 
 
 def unit_path(addr):
-    return GAME / f"{addr.upper()}.c"
+    return unit_paths.resolve_unit_path(addr, repo=ROOT)
 
 
 def strip_comments(text):
@@ -135,7 +139,7 @@ class EnvironmentPathTest(unittest.TestCase):
         cls.texts = {}
         for addr in ENVIRONMENT_UNITS:
             path = unit_path(addr)
-            if path.is_file():
+            if path is not None and path.is_file():
                 cls.texts[addr] = path.read_text(errors="ignore")
 
     def test_curated_list_has_no_duplicates(self):
@@ -147,7 +151,7 @@ class EnvironmentPathTest(unittest.TestCase):
 
     def test_curated_list_matches_annotated_units(self):
         annotated = sorted(
-            p.stem.upper() for p in GAME.glob("*.c")
+            f"{addr:08X}" for addr, p in unit_paths.all_unit_paths(ROOT).items()
             if "@par Environment path" in p.read_text(errors="ignore"))
         self.assertEqual(
             sorted(set(annotated) - set(ENVIRONMENT_UNITS)), [],
@@ -171,7 +175,7 @@ class EnvironmentPathTest(unittest.TestCase):
             if not re.search(r"\.globl(?:\\t|\s)+func_" + addr + r"\b", text):
                 failures.append(f'{addr}.c: no readable name with __asm__("func_{addr}")')
                 continue
-            callers = [p.name for p in GAME.glob("*.c")
+            callers = [p.name for p in GAME.rglob("*.c")
                        if bound_names(p.read_text(errors="ignore"), addr)]
             if not callers:
                 failures.append(f"{addr}.c: handwritten unit without any readable binding")
@@ -180,7 +184,7 @@ class EnvironmentPathTest(unittest.TestCase):
 
     def test_no_readable_binding_entries_are_still_unbound(self):
         for addr in sorted(NO_READABLE_BINDING):
-            bound = [p.name for p in GAME.glob("*.c")
+            bound = [p.name for p in GAME.rglob("*.c")
                      if bound_names(p.read_text(errors="ignore"), addr)]
             self.assertEqual(bound, [], f"{addr} now has a readable binding; "
                              "drop it from NO_READABLE_BINDING")
@@ -189,7 +193,8 @@ class EnvironmentPathTest(unittest.TestCase):
         failures = []
         for addr, text in sorted(self.texts.items()):
             for ref in FUNC_REF.findall(environment_paragraph(text) or ""):
-                if not unit_path(ref).is_file():
+                ref_path = unit_path(ref)
+                if ref_path is None or not ref_path.is_file():
                     failures.append(f"{addr}.c cites func_{ref} (no unit file)")
         if failures:
             self.fail("\n".join(failures))
@@ -210,7 +215,7 @@ class EnvironmentPathTest(unittest.TestCase):
         quoted fragment on line N, and every citation in the doc is indexed."""
         doc = DOC.read_text()
         index = re.findall(
-            r"^\| `src/game/([0-9A-F]{8}\.c):(\d+)` \| `([^`]+)` \|$", doc, re.M)
+            r"^\| `src/game/([a-z0-9-]+/[A-Za-z_]\w*\.c):(\d+)` \| `([^`]+)` \|$", doc, re.M)
         self.assertTrue(index, "citation index is empty")
         failures = []
         for name, line, fragment in index:
@@ -223,7 +228,7 @@ class EnvironmentPathTest(unittest.TestCase):
             if n > len(lines) or fragment not in lines[n - 1]:
                 failures.append(f"{name}:{line} no longer holds `{fragment}`")
         indexed = {(name, line) for name, line, _ in index}
-        for name, line in re.findall(r"src/game/([0-9A-F]{8}\.c):(\d+)", doc):
+        for name, line in re.findall(r"src/game/([a-z0-9-]+/[A-Za-z_]\w*\.c):(\d+)", doc):
             if (name, line) not in indexed:
                 failures.append(f"{name}:{line} cited but not in the index")
         if failures:

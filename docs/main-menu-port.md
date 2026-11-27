@@ -3,11 +3,11 @@
 The initial seven menu records are `gMainMenuItems` (`D_8009BBF8`, 0x1c
 bytes each) in `asm/us/main.s`, installed by `gSetupFrontEndMenus`
 (`func_80077AD4`), called by `func_800780DC`.
-`gUpdateMainMenuUnlocks` (`func_8007A168`, `src/game/8007A168.c`) enables items 2 and 5 only
+`gUpdateMainMenuUnlocks` (`func_8007A168`, `src/game/gpu-2d-hud/gUpdateMainMenuUnlocks.c`) enables items 2 and 5 only
 when the relevant progress or flags are set. They have no text ID before
 unlocking. The initial enabled indices are 0, 1, 3, 4 and 6.
 
-`gSelectEnabledMenuItem` (`func_800787D8`, `src/game/800787D8.c`) scans from a candidate,
+`gSelectEnabledMenuItem` (`func_800787D8`, `src/game/boot-frontend/gSelectEnabledMenuItem.c`) scans from a candidate,
 wraps at either end, and selects the first enabled record in the requested
 player/group. If no matching item is found, it leaves the previous selection
 unchanged; direction zero tests only the initial candidate. `tests/host/menu_navigation_test.sh` compiles this C

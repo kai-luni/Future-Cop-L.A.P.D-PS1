@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generate docs/FUNCTION_MAP.md: a markdown map of the documented functions.
 
-Scope is whatever is documented in the tree itself: every src/game/<addr>.c whose
-first line is a `// Categories: ...` line and whose address is registered in
+Scope is whatever is documented in the tree itself: every src/game/<group>/<name>.c
+whose first line is a `// Categories: ...` line and whose address is registered in
 config/us/matching_units.json. Edges come from analysis/edges.json, direct calls
 only, and solely between two documented functions.
 
@@ -13,44 +13,16 @@ import argparse
 import collections
 import json
 import pathlib
-import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+TOOLS_DIR = pathlib.Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
+from unit_paths import CATEGORY_RE, group_of, readable_name  # noqa: E402
+
 OUT = ROOT / 'docs' / 'FUNCTION_MAP.md'
-CATEGORY_RE = re.compile(r'^// Categories: (.+)$')
-
-
-def readable_name(text, retail):
-    """Return the C name bound to *retail* by an asm-labelled prototype.
-
-    Parameters may contain function pointers, so the argument list is
-    balanced by hand instead of matched with a regular expression.
-    """
-    marker = f'__asm__("{retail}")'
-    index = 0
-    while True:
-        index = text.find(marker, index)
-        if index < 0:
-            return None
-        close = index
-        while close > 0 and text[close - 1] in " \t\n":
-            close -= 1
-        if close > 0 and text[close - 1] == ')':
-            depth = 0
-            open_at = close - 1
-            while open_at >= 0:
-                if text[open_at] == ')':
-                    depth += 1
-                elif text[open_at] == '(':
-                    depth -= 1
-                    if depth == 0:
-                        break
-                open_at -= 1
-            name = re.search(r'([A-Za-z_]\w*)\s*$', text[:open_at])
-            if name:
-                return name.group(1)
-        index += len(marker)
 
 
 def load():
@@ -58,9 +30,9 @@ def load():
     man = {u['name']: u for u in manifest['units']}
     cats = {}
     cnames = {}
-    for path in sorted((ROOT / 'src/game').glob('*.c')):
-        name = 'func_' + path.stem.upper()
-        if name not in man:
+    for name, unit in sorted(man.items()):
+        path = ROOT / unit['source']
+        if not path.is_file():
             continue
         text = path.read_text(errors='ignore')
         first = text.split('\n', 1)[0]
@@ -74,28 +46,6 @@ def load():
     edges = [e for e in json.load(open(ROOT / 'analysis/edges.json'))['edges']
              if e.get('kind') == 'direct' and e.get('from') and e.get('to')]
     return man, cats, cnames, edges
-
-
-def group_of(primary):
-    toks = [t.strip() for t in primary.split('>')]
-    area, subs = toks[0], set(toks[1:])
-    if area in {'Game Engine', 'Input'}:
-        return 'Boot & Front-End'
-    if area == 'Utilities':
-        return 'Utilities'
-    if area in {'Platform', 'BIOS'}:
-        return 'Platform'
-    if area == 'Resources':
-        return 'Video, MDEC & Movies' if 'Movie Playback' in subs else 'Memory & Resources'
-    if area in {'Gameplay', 'AI', 'Physics'}:
-        return 'Gameplay, AI & Physics'
-    if area == 'Graphics':
-        if 'GTE' in subs:
-            return 'GTE Pipeline'
-        if subs & {'Model Renderer', 'Renderer', 'Scene Graph', 'Lighting', 'Effects'}:
-            return 'Renderer & Scene'
-        return 'GPU, 2D & HUD'
-    return 'Other'
 
 
 ORDER = ['Boot & Front-End', 'Memory & Resources', 'Video, MDEC & Movies', 'GTE Pipeline',
@@ -204,7 +154,7 @@ def render():
     total = len(cats)
     lines = [f'# Function map - documented functions ({total} units)\n',
              'Markdown map of every function whose source carries a `// Categories:` line: the '
-             'category is the first line of each `src/game/<addr>.c`, sizes come from '
+             'category is the first line of each `src/game/<group>/<name>.c`, sizes come from '
              '`config/us/matching_units.json`, edges from `analysis/edges.json`.\n',
              '**Reading the map.** Each node is a documented function; a renamed function shows its '
              'C name first and the retail address in parentheses. Edges are '

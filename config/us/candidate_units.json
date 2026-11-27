@@ -19,7 +19,7 @@
       "name": "func_800847E0",
       "address": "0x800847E0",
       "size": "0x894",
-      "source": "src/game/800847E0.c",
+      "source": "src/game/gpu-2d-hud/gConvertMovieStripToRgb555.c",
       "compiler_flags": [
         "-quiet",
         "-msoft-float",
@@ -44,7 +44,7 @@
       "name": "func_80018DC0",
       "address": "0x80018DC0",
       "size": "0x4EC",
-      "source": "src/game/80018DC0.c",
+      "source": "src/game/utilities/gBuildRotationMatrixVariant.c",
       "symbols": {"func_8001846C": "0x8001846C"},
       "link": true,
       "linker_symbols": {"func_8001846C": "0x8001846C"}
@@ -53,7 +53,7 @@
       "name": "func_800188D0",
       "address": "0x800188D0",
       "size": "0x4F0",
-      "source": "src/game/800188D0.c",
+      "source": "src/game/utilities/gBuildRotationMatrix.c",
       "symbols": {"func_8001846C": "0x8001846C"},
       "link": true,
       "linker_symbols": {"func_8001846C": "0x8001846C"}
@@ -62,7 +62,7 @@
       "name": "func_800207CC",
       "address": "0x800207CC",
       "size": "0x2D0",
-      "source": "src/game/800207CC.c",
+      "source": "src/game/platform/gParseCardDirectory.c",
       "symbols": {
         "D_8009AB08": "0x8009AB08",
         "D_80010AE8": "0x80010AE8",
@@ -85,14 +85,14 @@
       "name": "func_8007E8D8",
       "address": "0x8007E8D8",
       "size": "0x1A0",
-      "source": "src/game/8007E8D8.c",
+      "source": "src/game/utilities/gPackInputRecord.c",
       "symbols": {}
     },
     {
       "name": "func_8001F180",
       "address": "0x8001F180",
       "size": "0x38",
-      "source": "src/game/8001F180.c",
+      "source": "src/game/platform/gIsMcManagerBusy.c",
       "symbols": {
         "D_8009AB08": "0x8009AB08"
       }
@@ -101,7 +101,7 @@
       "name": "func_800210D0",
       "address": "0x800210D0",
       "size": "0x12C",
-      "source": "src/game/800210D0.c",
+      "source": "src/game/gpu-2d-hud/gEncodeCardTitleGlyph.c",
       "symbols": {
         "D_8009AB0C": "0x8009AB0C",
         "D_8009AB18": "0x8009AB18"
@@ -116,14 +116,14 @@
       "name": "func_8002A5B4",
       "address": "0x8002A5B4",
       "size": "0x40",
-      "source": "src/game/8002A5B4.c",
+      "source": "src/game/gameplay-ai/gRemoveEntityCommand.c",
       "symbols": {}
     },
     {
       "name": "func_80045028",
       "address": "0x80045028",
       "size": "0x28",
-      "source": "src/game/80045028.c",
+      "source": "src/game/boot-frontend/gIsTrackedSoundId.c",
       "symbols": {
         "D_800A1800": "0x800A1800"
       }
@@ -132,7 +132,7 @@
       "name": "func_8004572C",
       "address": "0x8004572C",
       "size": "0x3C",
-      "source": "src/game/8004572C.c",
+      "source": "src/game/platform/gSetSoundChannelPosition.c",
       "symbols": {
         "D_800A1160": "0x800A1160"
       },
@@ -145,7 +145,7 @@
       "name": "func_80048790",
       "address": "0x80048790",
       "size": "0x3C",
-      "source": "src/game/80048790.c",
+      "source": "src/game/gpu-2d-hud/gCheckHudLayoutNeedsAdvance.c",
       "symbols": {
         "D_8009F760": "0x8009F760",
         "D_8009FAB8": "0x8009FAB8"
@@ -173,7 +173,7 @@
       "name": "func_8008C858",
       "address": "0x8008C858",
       "size": "0x2C",
-      "source": "src/game/8008C858.c",
+      "source": "src/game/platform/gCheckPadReady.c",
       "symbols": {}
     }
   ]

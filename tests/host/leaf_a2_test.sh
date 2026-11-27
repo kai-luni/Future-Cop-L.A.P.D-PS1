@@ -17,19 +17,22 @@ export LD_LIBRARY_PATH="$T/mipsel-binutils/root/usr/lib/x86_64-linux-gnu${LD_LIB
 
 compile() {
     local src="$1" obj="$2"; shift 2
-    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" "$@" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
+    "$GCC" -B"$T/gcc-2.7.2-cdk/" -I"$DECOMP/include" -I"$HERE/mocks" "$@" -O1 -G0 -S "$src" -o "$OUT/tmp.s"
     python3 "$MASPSX" "$OUT/tmp.s" | python3 "$HERE/fix_align.py" > "$OUT/tmp.mas.s"
     mipsel-linux-gnu-as -o "$obj" "$OUT/tmp.mas.s"
 }
 
+source "$HERE/unit_path.sh"
+
 objects=()
 for unit in 80019720 80018534 8001814C 80017B88 80017B28 80019BF0 80019AA8 8004D3D4 8004D69C 8004665C 8004AA90 800451F8 80045294 8001F0FC 8001F12C 8008E194 8008E1A8 80091F60 800915FC 800915E4 80093F78 80098F48 80098F78 80091C64 80021A70 80021A8C 80021AB4 80028FD4 80029720 800472E8 80045504 800477D8 80022C68 800493C0 800536B4 8005FF70 80065744 80069D0C 800896D4 8008CA30 8008C3B4 8008C3EC 8001EAEC 8001EB2C 8001EF34 80089E40 8008E120 8006314C 80063194; do
-    compile "$DECOMP/src/game/$unit.c" "$OUT/$unit.o"
+    compile "$(unit_src "$unit")" "$OUT/$unit.o"
     objects+=("$OUT/$unit.o")
 done
+compile "$HERE/mocks/bios_mock.c" "$OUT/bios_mock.o"
 python3 "$HERE/leaf_vectors.py" > "$OUT/leaf_vectors.h"
 compile "$HERE/leaf_a2_harness.c" "$OUT/leaf_a2_harness.o" -I"$OUT" -I"$HERE"
 mipsel-linux-gnu-as -o "$OUT/crt0.o" "$HERE/crt0.s" 2>/dev/null
 mipsel-linux-gnu-ld -static -e __start -o "$OUT/leaf_a2" \
-    "$OUT/crt0.o" "$OUT/leaf_a2_harness.o" "${objects[@]}"
+    "$OUT/crt0.o" "$OUT/leaf_a2_harness.o" "$OUT/bios_mock.o" "${objects[@]}"
 "$QEMU" "$OUT/leaf_a2"

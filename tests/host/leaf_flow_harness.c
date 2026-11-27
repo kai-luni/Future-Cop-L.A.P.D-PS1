@@ -359,7 +359,7 @@ struct LfVoice47800 {
 
 static void test_voice_volume(void)
 {
-    /* @leaf 80045050 source src/game/80045050.c: 1.5x boost with 0x7F saturation, no work at zero volume */
+    /* @leaf 80045050 source src/game/platform/gComputeTrackedVoiceVolume.c: 1.5x boost with 0x7F saturation, no work at zero volume */
     LK_FUNC("func_80045050");
     lf_reset();
     lf_volume_limit = 5;
@@ -388,7 +388,7 @@ static void test_tracked_mix(void)
 {
     struct LfMix mix;
 
-    /* @leaf 800450A4 source src/game/800450A4.c: 1.25x mix boost, selector picks the 0x3F or 0x7F cap, silent mix on failed attenuation */
+    /* @leaf 800450A4 source src/game/boot-frontend/gComputeTrackedSoundMix.c: 1.25x mix boost, selector picks the 0x3F or 0x7F cap, silent mix on failed attenuation */
     LK_FUNC("func_800450A4");
     lf_reset();
     lf_spatial_mode = 1;      /* the real pan stage reads D_8009F734 */
@@ -459,7 +459,7 @@ static void test_tracked_mix(void)
 
 static void test_stereo_mode(void)
 {
-    /* @leaf 800451B4 source src/game/800451B4.c: enable flag normalised to 0/1, effect volume re-applied */
+    /* @leaf 800451B4 source src/game/platform/gSetStereoSoundMode.c: enable flag normalised to 0/1, effect volume re-applied */
     LK_FUNC("func_800451B4");
     lf_reset();
     lf_sound_mode = 5;
@@ -478,7 +478,7 @@ static void test_stereo_mode(void)
 
 static void test_vagm_volume(void)
 {
-    /* @leaf 80045238 source src/game/80045238.c: clamp to 0..0x7F, store, forward the stored value */
+    /* @leaf 80045238 source src/game/platform/gSetVagmVolumeSetting.c: clamp to 0..0x7F, store, forward the stored value */
     LK_FUNC("func_80045238");
     lf_reset();
     lf_music_volume = 0x55;
@@ -502,7 +502,7 @@ static void test_half_volume(void)
 {
     struct LfVoice4530C a, b;
 
-    /* @leaf 800452D4 source src/game/800452D4.c: raise the selector then walk both stored lists in pointer order */
+    /* @leaf 800452D4 source src/game/boot-frontend/gEnableHalfVolumeForSoundVoices.c: raise the selector then walk both stored lists in pointer order */
     LK_FUNC("func_800452D4");
     lf_reset();
     lk_fill(&a, 0, sizeof(a));
@@ -536,7 +536,7 @@ static void test_list_mix(void)
 {
     struct LfVoice4530C v[3];
 
-    /* @leaf 8004530C source src/game/8004530C.c: follow next, skip note -1, forward program/note/velocity */
+    /* @leaf 8004530C source src/game/boot-frontend/gUpdateSoundVoiceListMix.c: follow next, skip note -1, forward program/note/velocity */
     LK_FUNC("func_8004530C");
     lf_reset();
     lk_fill(v, 0xA5, sizeof(v));
@@ -572,7 +572,7 @@ static void test_clear_limit(void)
 {
     struct LfVoice4530C p, q, r;
 
-    /* @leaf 80045370 source src/game/80045370.c: flag gates clearing and three list walks */
+    /* @leaf 80045370 source src/game/boot-frontend/gClearVolumeLimitAndRefreshVoices.c: flag gates clearing and three list walks */
     LK_FUNC("func_80045370");
     lf_reset();
     lk_fill(&p, 0, sizeof(p));
@@ -615,7 +615,7 @@ static void test_sound_pools(void)
 {
     int i, banks_ok, voices_ok;
 
-    /* @leaf 800453B8 source src/game/800453B8.c: 24-node free list, six cleared bank markers, two stream records */
+    /* @leaf 800453B8 source src/game/platform/gInitSoundPools.c: 24-node free list, six cleared bank markers, two stream records */
     LK_FUNC("func_800453B8");
     lf_reset();
     lk_fill(lf_voice_pool, 0xA5, sizeof(lf_voice_pool));
@@ -681,7 +681,7 @@ static void test_spatial_pan(void)
 {
     struct LfMix mix;
 
-    /* @leaf 800460D4 source src/game/800460D4.c: single-listener >>10 and dual-listener >>11 halves, both clamped */
+    /* @leaf 800460D4 source src/game/platform/gComputeSpatialSoundPan.c: single-listener >>10 and dual-listener >>11 halves, both clamped */
     LK_FUNC("func_800460D4");
     lf_reset();
     lf_pos_angles[0].angle = 0x111;
@@ -742,7 +742,7 @@ static void test_spatial_pan(void)
 
 static void test_stop_handle(void)
 {
-    /* @leaf 80046A34 source src/game/80046A34.c: null handle is a silent no-op, everything else is released */
+    /* @leaf 80046A34 source src/game/platform/gStopSoundVoiceHandle.c: null handle is a silent no-op, everything else is released */
     LK_FUNC("func_80046A34");
     lf_reset();
     gStopSoundVoiceHandle(0);
@@ -756,7 +756,7 @@ static void test_stop_handle(void)
 
 static void test_alloc_for_id(void)
 {
-    /* @leaf 80046A58 source src/game/80046A58.c: bank table with limit 0x47, 0xFF slot suppresses allocation */
+    /* @leaf 80046A58 source src/game/platform/gAllocVoiceForSoundId.c: bank table with limit 0x47, 0xFF slot suppresses allocation */
     LK_FUNC("func_80046A58");
     lf_reset();
     lf_resolve_slot = 0xFF;
@@ -779,7 +779,7 @@ static void test_alloc_for_id(void)
 
 static void test_reserved_voice(void)
 {
-    /* @leaf 80046AD8 source src/game/80046AD8.c: fixed reserved-stream request (0x7F, 0xA, 2, slot 0xFF) */
+    /* @leaf 80046AD8 source src/game/boot-frontend/gAllocReservedStreamVoice.c: fixed reserved-stream request (0x7F, 0xA, 2, slot 0xFF) */
     LK_FUNC("func_80046AD8");
     lf_reset();
     lf_alloc_base = 500;
@@ -800,7 +800,7 @@ static void test_animation_event(void)
     struct LfInfo47088 info;
     s32 voice[4];
 
-    /* @leaf 80047088 source src/game/80047088.c: 0x20 gate, same-track volume dip, restart, one-shot and track 7 no-op */
+    /* @leaf 80047088 source src/game/platform/gApplyAnimationSoundEvent.c: 0x20 gate, same-track volume dip, restart, one-shot and track 7 no-op */
     LK_FUNC("func_80047088");
     lf_reset();
     lk_fill(&info, 0, sizeof(info));
@@ -893,7 +893,7 @@ static void test_validated_handle(void)
     struct LfHandle4749C handle;
     struct LfResource4749C resource;
 
-    /* @leaf 800474F0 source src/game/800474F0.c: release only on serial match, clear the slot, idempotent */
+    /* @leaf 800474F0 source src/game/platform/gReleaseValidatedSoundVoiceHandle.c: release only on serial match, clear the slot, idempotent */
     LK_FUNC("func_800474F0");
     lf_reset();
     FCK_EQ(gReleaseValidatedSoundVoiceHandle(0), 0, "null handle reports nothing released");
@@ -929,7 +929,7 @@ static void test_voice_mix(void)
 {
     struct LfVoice47800 voice;
 
-    /* @leaf 80047800 source src/game/80047800.c: set fields first, then forward the record's adopted values */
+    /* @leaf 80047800 source src/game/platform/gUpdateSoundVoiceMix.c: set fields first, then forward the record's adopted values */
     LK_FUNC("func_80047800");
     lf_reset();
     voice.bank = 0x1234;
@@ -956,7 +956,7 @@ static void test_voice_mix(void)
 
 static void test_blink_frame(void)
 {
-    /* @leaf 80083280 source src/game/80083280.c: palette index (tick>>4)&7, frame origin x-(w+1)/2, y-h/2, four 2px borders */
+    /* @leaf 80083280 source src/game/gpu-2d-hud/gDrawBlinkSelectFrame.c: palette index (tick>>4)&7, frame origin x-(w+1)/2, y-h/2, four 2px borders */
     LK_FUNC("func_80083280");
     lf_reset();
     lf_shade_table[0] = 0x10;
@@ -1004,7 +1004,7 @@ static void test_blink_frame(void)
 
 static void test_scene_free(void)
 {
-    /* @leaf 80083428 source src/game/80083428.c: pool freed unconditionally, grid and table only when non-null, table pointer retained */
+    /* @leaf 80083428 source src/game/renderer-scene/gFreeSceneSubsystemBuffers.c: pool freed unconditionally, grid and table only when non-null, table pointer retained */
     LK_FUNC("func_80083428");
     lf_reset();
     lf_mission_state = (void *)0x1000;
@@ -1044,7 +1044,7 @@ static void test_scene_init(void)
 {
     int i;
 
-    /* @leaf 8008347C source src/game/8008347C.c: 250x0x5C pool, 0x104 emitter table with an all-ones free mask */
+    /* @leaf 8008347C source src/game/renderer-scene/gInitSceneNodeAndVoicePools.c: 250x0x5C pool, 0x104 emitter table with an all-ones free mask */
     LK_FUNC("func_8008347C");
     lf_reset();
     for (i = 0; i < 0x41; i++) lf_table_buffer[i] = (s32)0xCCCCCCCC;

@@ -198,7 +198,7 @@ Von 1772 Units exportieren 1768 korrekt `func_<eigene Adresse>`. Vier nicht:
 | 80095860 | `bios_A0_49_GPU_cw` | hw |
 | 80096520 | `entrypoint` | hw |
 
-`src/game/80096748.c:123` definiert
+`src/game/utilities/func_80096748.c:123` definiert
 
 ```c
 UDItype gDivModUnsigned64(n, d, rp)
@@ -212,7 +212,7 @@ Kosten: 5 clean-Units sind dadurch blockiert, **3 davon ausschließlich**
 (`800867B0`, `80086F58`, `800966B0`). Ein einzeiliger Alias hebt die Zahl von
 908 auf 911.
 
-`src/game/8007D138.c:78` definiert `void gConfirmSoundOptionsItem(s32 arg0)`,
+`src/game/boot-frontend/func_8007D138.c:78` definiert `void gConfirmSoundOptionsItem(s32 arg0)`,
 während Zeile 58 denselben C-Namen auf `D_8007D138` aliasiert. Die Funktion wird
 also unter dem Datenlabel emittiert. Das blockiert derzeit keine Unit, ist aber
 dieselbe Fehlerklasse.
@@ -481,7 +481,7 @@ python3 tools/host_test_buildability.py           # Decke ohne Mock
 
 ## 10. Offene Punkte
 
-1. **`src/game/80096748.c:123`** braucht einen `__asm__`-Alias. Einzeilig,
+1. **`src/game/utilities/func_80096748.c:123`** braucht einen `__asm__`-Alias. Einzeilig,
    hebt die Decke von 908 auf 911. Nicht gemacht — `src/` ist Byte-Matching.
 2. **38 Stand-ins nur per C-Name gebunden.** Stilles Risiko in den alten
    Harnessen; die neue Bibliothek ist sauber.

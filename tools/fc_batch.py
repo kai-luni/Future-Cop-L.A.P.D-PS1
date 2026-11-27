@@ -31,6 +31,10 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+TOOLS_DIR = Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+import unit_paths  # noqa: E402
 MANIFEST = ROOT / "config" / "us" / "matching_units.json"
 
 IDENT = re.compile(r"[A-Za-z_]\w*")
@@ -272,8 +276,19 @@ def load_units(source):
     if path.suffix == ".json":
         return [unit["source"] for unit in json.loads(path.read_text())["units"]
                 if unit["source"].startswith("src/game/")]
-    return [f"src/game/{line.strip()}.c"
-            for line in path.read_text().split() if line.strip()]
+    resolved = []
+    for token in path.read_text().split():
+        token = token.strip()
+        if not token:
+            continue
+        if (ROOT / token).is_file():
+            resolved.append(token)
+            continue
+        found = unit_paths.resolve_unit_path(token, repo=ROOT, manifest_path=MANIFEST)
+        if found is None:
+            raise FileNotFoundError(f"cannot resolve unit {token!r} in {source}")
+        resolved.append(found.relative_to(ROOT).as_posix())
+    return resolved
 
 
 def environment():
