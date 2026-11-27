@@ -49,3 +49,18 @@ class LeafSuiteTests(unittest.TestCase):
         self.assertIn('"$OUT/bios_mock.o" "${objects[@]}"', plain)
         self.assertIn('compile "$HERE/mocks/sound_mock.c" "$OUT/sound_mock.o"', opted)
         self.assertIn('"$OUT/bios_mock.o" "$OUT/sound_mock.o" "${objects[@]}"', opted)
+
+    def test_gen_script_links_unmarked_original_dependencies_once(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as tmp:
+            host = Path(tmp)
+            (host / 'leaf_harness.c').write_text(
+                '/* @link 8001abcd */\n/* @link 8001ABCD */\n'
+                '/* @link 80010000 */\n/* @leaf 80010000 source x */\n')
+            with patch.object(host_leaf_suite, 'HOST', host), \
+                    patch.object(host_leaf_suite, 'REPO', host):
+                host_leaf_suite.gen_script(SimpleNamespace(suite='leaf'))
+                marks = host_leaf_suite.markers('leaf')
+            script = (host / 'leaf_test.sh').read_text()
+        self.assertIn('for unit in 80010000 8001ABCD; do', script)
+        self.assertEqual([mark['unit'] for mark in marks], ['80010000'])

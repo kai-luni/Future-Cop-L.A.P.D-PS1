@@ -373,6 +373,18 @@ host-leaf-runtime:
 	  echo "host-leaf-runtime: qemu or C toolchain missing, skipped"; \
 	fi
 
+# Original heap release and gameplay teardown on synthetic state.
+.PHONY: host-leaf-release
+check: host-leaf-release
+
+host-leaf-release:
+	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
+	if [ -x "$$QEMU" ] && [ -x .toolchain/gcc-2.7.2-cdk/gcc ]; then \
+	  $(PYTHON) tools/host_leaf_suite.py report leaf_release; \
+	else \
+	  echo "$@: qemu or C toolchain missing, skipped"; \
+	fi
+
 # Gameplay, HUD and front-end units on harness-defined D_ fixtures, hardware-free.
 host-leaf-gameplay:
 	@QEMU=$${QEMU:-$$HOME/.local/share/qemu-user/extracted/usr/bin/qemu-mipsel}; \
