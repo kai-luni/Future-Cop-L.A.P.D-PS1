@@ -237,10 +237,211 @@ static void test_80089A88(void)
     }
 }
 
+/* Camera fixtures expose only the fields and offsets used by the leaf units. */
+struct Vec3 {
+    s32 x, y, z;
+};
+
+struct ViewPreset {
+    s16 angle, pitch;
+    s32 distance;
+    u8 data[12];
+};
+
+struct CameraInfo {
+    u8 pad00[0xA8];
+    s16 bias_a8;
+    u8 padAA[0x12];
+    s32 bias_bc;
+};
+
+struct CameraObject {
+    u8 pad00[0x5C];
+    struct Vec3 position;
+    u8 pad68[0x44];
+    struct CameraInfo *info;
+    s16 heading;
+};
+
+struct ViewPreset gViewPresets[17] __asm__("D_8009AD08");
+s32 gPrimaryPrngCursor __asm__("D_8009F5A8");
+
+static struct CameraInfo camera_info;
+static struct CameraObject camera;
+static struct CameraEyeCall {
+    int step;
+    u32 position_address;
+    struct Vec3 position;
+    s32 heading, angle, pitch, distance;
+    const u8 *data;
+    s32 *out;
+    s32 bias_a8, bias_bc;
+    s32 prng_cursor;
+} eye_calls[8];
+
+static int camera_step, eye_count;
+static struct {
+    int count, step;
+    s32 angle, pitch, roll;
+} rotation_call;
+static struct {
+    int count, step;
+    s32 *out;
+    struct Vec3 value;
+} position_call;
+
+/* Observe these boundaries directly: eye calculation is given the exact
+ * preset fields and a copied origin; setters must see the produced eye in
+ * the right order without touching the application's active camera state.
+ */
+void record_eye(struct Vec3 *position, s32 heading, s32 angle, s32 pitch,
+                s32 distance, u8 *data, s32 *out, s32 a8, s32 bc)
+    __asm__("func_8005612C");
+void record_eye(struct Vec3 *position, s32 heading, s32 angle, s32 pitch,
+                s32 distance, u8 *data, s32 *out, s32 a8, s32 bc)
+{
+    struct CameraEyeCall *call;
+
+    camera_step++;
+    if (eye_count < 8) {
+        call = &eye_calls[eye_count];
+        call->step = camera_step;
+        call->position_address = (u32)position;
+        call->position = *position;
+        call->heading = heading;
+        call->angle = angle;
+        call->pitch = pitch;
+        call->distance = distance;
+        call->data = data;
+        call->out = out;
+        call->bias_a8 = a8;
+        call->bias_bc = bc;
+        call->prng_cursor = gPrimaryPrngCursor;
+    }
+    eye_count++;
+    out[0] = distance;
+    out[1] = angle;
+    out[2] = pitch;
+}
+
+void record_rotation(s32 angle, s32 pitch, s32 roll) __asm__("func_80017860");
+void record_rotation(s32 angle, s32 pitch, s32 roll)
+{
+    rotation_call.count++;
+    rotation_call.step = ++camera_step;
+    rotation_call.angle = angle;
+    rotation_call.pitch = pitch;
+    rotation_call.roll = roll;
+}
+
+void record_position(s32 *out) __asm__("func_800177AC");
+void record_position(s32 *out)
+{
+    position_call.count++;
+    position_call.step = ++camera_step;
+    position_call.out = out;
+    position_call.value.x = out[0];
+    position_call.value.y = out[1];
+    position_call.value.z = out[2];
+}
+
+static void reset_camera(void)
+{
+    camera.position.x = 314;
+    camera.position.y = -271;
+    camera.position.z = 159;
+    camera.heading = -600;
+    camera.info = &camera_info;
+    camera_info.bias_a8 = -1234;
+    camera_info.bias_bc = 0x12345678;
+    camera_step = 0;
+    eye_count = 0;
+    memset(eye_calls, 0, sizeof(eye_calls));
+    memset(&rotation_call, 0, sizeof(rotation_call));
+    memset(&position_call, 0, sizeof(position_call));
+}
+
+static void check_eye_call(const struct CameraEyeCall *call, int step,
+                           int slot, s32 angle, s32 pitch, s32 distance)
+{
+    FCK_EQ(call->step, step, "eye calculation order");
+    FCK_CHECK(call->position_address != (u32)&camera.position, "origin copied to a local");
+    FCK_EQ(call->position.x, 314, "origin x forwarded");
+    FCK_EQ(call->position.y, -271, "origin y forwarded");
+    FCK_EQ(call->position.z, 159, "origin z forwarded");
+    FCK_EQ(call->heading, -600, "signed heading forwarded");
+    FCK_EQ(call->angle, angle, "heading plus preset angle");
+    FCK_EQ(call->pitch, pitch, "signed preset pitch forwarded");
+    FCK_EQ(call->distance, distance, "preset distance forwarded");
+    FCK_CHECK(call->data == gViewPresets[slot].data, "exact preset data pointer");
+    FCK_EQ(call->bias_a8, -1234, "signed halfword bias forwarded");
+    FCK_EQ(call->bias_bc, 0x12345678, "word bias forwarded");
+}
+
+extern void gPlaceCameraFromPreset(struct CameraObject *object, s32 index,
+                                   s32 *out, s32 apply)
+    __asm__("func_8005678C");
+
+/* @leaf 8005678C source Preset forwarding and compute/rotate/position order for query and apply. */
+static void test_8005678C(void)
+{
+    static const struct {
+        s32 slot, apply, angle, pitch, distance;
+    } cases[] = {
+        {4, 0, -710, 330, -74565},
+        {6, -7, 250, -451, 0x76543}
+    };
+    s32 guarded[5];
+    unsigned i;
+
+    LK_FUNC("func_8005678C");
+    gViewPresets[4].angle = -110;
+    gViewPresets[4].pitch = 330;
+    gViewPresets[4].distance = -74565;
+    gViewPresets[6].angle = 850;
+    gViewPresets[6].pitch = -451;
+    gViewPresets[6].distance = 0x76543;
+    for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
+        reset_camera();
+        lk_fill(guarded, 0x5A, sizeof(guarded));
+        gPlaceCameraFromPreset(&camera, cases[i].slot, &guarded[1], cases[i].apply);
+        FCK_EQ(eye_count, 1, "exactly one eye calculation");
+        check_eye_call(&eye_calls[0], 1, cases[i].slot, cases[i].angle,
+                       cases[i].pitch, cases[i].distance);
+        FCK_CHECK(eye_calls[0].out == &guarded[1], "caller output pointer forwarded");
+        FCK_EQ(guarded[1], cases[i].distance, "eye x retained");
+        FCK_EQ(guarded[2], cases[i].angle, "eye y retained");
+        FCK_EQ(guarded[3], cases[i].pitch, "eye z retained");
+        FCK_EQ(guarded[0], 0x5A5A5A5A, "leading eye guard");
+        FCK_EQ(guarded[4], 0x5A5A5A5A, "trailing eye guard");
+        FCK_EQ(camera.heading, -600, "object heading unchanged");
+        FCK_EQ(camera.position.x, 314, "object x unchanged");
+        FCK_EQ(camera.position.y, -271, "object y unchanged");
+        FCK_EQ(camera.position.z, 159, "object z unchanged");
+        if (cases[i].apply == 0) {
+            FCK_EQ(rotation_call.count, 0, "query does not rotate");
+            FCK_EQ(position_call.count, 0, "query does not move");
+        } else {
+            FCK_EQ(rotation_call.count, 1, "apply rotates once");
+            FCK_EQ(rotation_call.step, 2, "rotation follows eye calculation");
+            FCK_EQ(rotation_call.angle, cases[i].angle, "rotation receives preset yaw");
+            FCK_EQ(rotation_call.pitch, cases[i].pitch, "rotation receives preset pitch");
+            FCK_EQ(rotation_call.roll, 0, "rotation roll is zero");
+            FCK_EQ(position_call.count, 1, "apply moves once");
+            FCK_EQ(position_call.step, 3, "position follows rotation");
+            FCK_CHECK(position_call.out == &guarded[1], "position receives caller output pointer");
+            FCK_EQ(position_call.value.x, cases[i].distance, "position receives computed x");
+            FCK_EQ(position_call.value.y, cases[i].angle, "position receives computed y");
+            FCK_EQ(position_call.value.z, cases[i].pitch, "position receives computed z");
+        }
+    }
+}
+
 int main(void)
 {
     test_800188D0();
     test_80089BBC();
     test_80089A88();
+    test_8005678C();
     return lk_done("leaf_hud_r4");
 }
