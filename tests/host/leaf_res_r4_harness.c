@@ -261,9 +261,52 @@ static void test_8007F9CC(void)
     FCK_EQ(mc_storage[0x1BB8 / 4], 0x5A5A5A5A, "manager guard untouched");
 }
 
+/* @link 80019470 */
+/* @link 8001A81C */
+
+extern void gBuildViewMatrix(u8 *pose, u8 *view) __asm__("func_80018860");
+
+static void test_80018860(void)
+{
+    static const s32 pose[12] = {
+        0, -65536, 0,
+        32768, 0, 0,
+        -16384, 32768, 65536,
+        101, -103, 107
+    };
+    static const s32 expected[12] = {
+        0, 32768, -16384,
+        -65536, 0, 32768,
+        0, 0, 65536,
+        -103, -50, -29
+    };
+    s32 source[12], guarded[14];
+    int i;
+
+    /* @leaf 80018860 source writes a stored transpose, then negates each component from the original column-strided multiply, which shifts each signed Q16 product before adding */
+    LK_FUNC("func_80018860");
+    for (i = 0; i < 12; i++)
+        source[i] = pose[i];
+    lk_fill(guarded, 0xA5, sizeof(guarded));
+
+    /* The helper reads indices 2, 5, 8 for Z: floor(-101/4) +
+     * floor(-103/2) + 107 = -26 - 52 + 107 before negation. */
+    gBuildViewMatrix((u8 *)source, (u8 *)(guarded + 1));
+    for (i = 0; i < 9; i++)
+        FCK_EQ(guarded[i + 1], expected[i], "transposed rotation word");
+    FCK_EQ(guarded[10], expected[9], "negated rotated X");
+    FCK_EQ(guarded[11], expected[10], "negated rotated Y");
+    FCK_EQ(guarded[12], expected[11], "negated rotated Z with per-product rounding");
+    for (i = 0; i < 12; i++)
+        FCK_EQ(source[i], pose[i], "source pose word untouched");
+    FCK_EQ(guarded[0], 0xA5A5A5A5, "word before output untouched");
+    FCK_EQ(guarded[13], 0xA5A5A5A5, "word after output untouched");
+}
+
 int main(void)
 {
     test_800131A0();
     test_8007F9CC();
+    test_80018860();
     return lk_done("leaf_res_r4");
 }
