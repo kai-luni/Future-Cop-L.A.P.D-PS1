@@ -7,7 +7,7 @@ VENV_PYTHON := $(VENV)/bin/python
 VENV_STAMP := $(VENV)/.installed
 EXE := baseroms/us/SLUS_007.39
 
-.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final portable-check function-map coverage reach host-leaf-core host-leaf-systems host-leaf-render host-leaf-runtime
+.PHONY: all setup toolchain verify split function-inventory verify-matching verify-noncode sweep-candidates report check extract inventory inventory-noncode offline-decomp-status clean host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final portable-check function-map coverage reach host-leaf-core host-leaf-systems host-leaf-render host-leaf-runtime host-leaf-spu-r3
 
 all: split
 
@@ -70,7 +70,7 @@ host-movers:
 report:
 	$(PYTHON) tools/generate_decomp_report.py
 
-check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path host-leaf-math host-leaf-flow host-leaf-object host-leaf-engage host-leaf-scene host-leaf-core host-leaf-systems host-leaf-render host-leaf-entity host-leaf-runtime host-leaf-gameplay host-leaf-lock-on host-leaf-plat host-map-objects host-movers
+check: verify function-inventory verify-matching verify-noncode report function-map host-env host-naming host-naming-wave host-naming-round3 host-naming-round4 host-naming-round5 host-naming-round6 host-naming-round7 host-naming-round8 host-weapon-anim host-weapon-input host-terrain-surface host-iso9660-path host-mocks-selftest host-leaf-a1 host-leaf-a2 host-leaf-extra host-leaf-more host-leaf-final host-leaf-hundred-a host-leaf-hundred-b host-leaf-hundred-c host-leaf-follow-a host-leaf-follow-b host-leaf-thirty host-leaf-fifty-a host-leaf-fifty-b host-leaf-century-a host-leaf-century-b host-leaf-century-c host-leaf-century-d host-leaf-fewmore-a host-leaf-fewmore-b host-spawner-path host-leaf-math host-leaf-flow host-leaf-object host-leaf-engage host-leaf-scene host-leaf-core host-leaf-systems host-leaf-render host-leaf-entity host-leaf-runtime host-leaf-gameplay host-leaf-lock-on host-leaf-plat host-map-objects host-movers host-leaf-spu-r3
 	$(PYTHON) -m unittest discover -s tests -t . -v
 
 # Run the naming-round behavioral tests against the original C entry points.
@@ -535,8 +535,8 @@ host-leaf-formats-graphics:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_formats_graphics
 
 # Hardware-free tranche 1 leaf suite (25 unchanged original functions); missing tools fail.
-.PHONY: host-leaf-hw-free-a host-leaf-hw-free-b
-check: host-leaf-hw-free-a host-leaf-hw-free-b
+.PHONY: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-cd-r3 host-leaf-res-r3 host-leaf-boot-r3 host-leaf-hud-r3
+check: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-cd-r3 host-leaf-res-r3 host-leaf-boot-r3 host-leaf-hud-r3
 
 host-leaf-hw-free-a:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_hw_free_a
@@ -544,3 +544,25 @@ host-leaf-hw-free-a:
 # Hardware-free tranche 2 leaf suite (25 unchanged original functions, no device mocks); missing tools fail.
 host-leaf-hw-free-b:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_hw_free_b
+
+# SPU/sound platform-band leaf suite (5 unchanged original functions, no device mocks); missing tools fail.
+host-leaf-spu-r3:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_spu_r3
+
+# Hardware-free tranche 3: CD-ROM/DMA3/kernel band (5 unchanged platform units; register cells for the CD/DMA3 pointers, SIGSEGV trap for the one literal kseg0 store); missing tools fail.
+host-leaf-cd-r3:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_cd_r3
+
+# Resource/memory-resources band leaf suite (5 unchanged original functions, callees stubbed); missing tools fail.
+host-leaf-res-r3:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_res_r3
+
+# Boot/front-end tranche 3 leaf suite (5 unchanged original functions: channel
+# flush, mission spawn state, bank sample rotation, entity alloc/link, small
+# rumble); missing tools fail.
+host-leaf-boot-r3:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_boot_r3
+
+# HUD text/glyph + render-effect leaf suite (5 unchanged original functions); missing tools fail.
+host-leaf-hud-r3:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_hud_r3
