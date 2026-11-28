@@ -208,9 +208,49 @@ static void test_800491F8(void)
     check_hud_number(0, (s32)0xCAFE0000U, 0, zero_text, 0);
 }
 
+/* @leaf 80027D70 source gRefreshSoloFrameHud.c:4-7,30-35 single-player equality gate and HUD argument */
+s32 gPlayerCount __asm__("D_8009FA0C");
+extern void gRefreshSoloFrameHud(void) __asm__("func_80027D70");
+
+static const char close_hud_call[] = "func_800486FC";
+
+void mock_close_hud(s32 arg) __asm__("func_800486FC");
+void mock_close_hud(s32 arg)
+{
+    fck_record(close_hud_call, arg, 0, 0);
+}
+
+static void test_80027D70(void)
+{
+    static const s32 counts[] = {1, 0, 2, -1, 0x10001};
+    static const char *order[] = {close_hud_call};
+    struct FckCall call;
+    int i;
+
+    LK_FUNC("func_80027D70");
+    /* Lines 32-34: only exact equality of the full player-count word calls
+     * the HUD update, with constant 1. No path writes the count. */
+    for (i = 0; i < (int)(sizeof(counts) / sizeof(counts[0])); i++) {
+        gPlayerCount = counts[i];
+        fck_log_reset();
+
+        gRefreshSoloFrameHud();
+
+        if (i == 0) {
+            fck_expect_order(order, 1, "solo frame calls the HUD once");
+            call = fck_call_n(close_hud_call, 0);
+            FCK_EQ(call.a0, 1, "solo HUD refresh argument");
+        } else {
+            fck_expect_order(0, 0, "non-solo frame does not call the HUD");
+        }
+        FCK_EQ(gPlayerCount, counts[i], "player count untouched");
+    }
+}
+
 int main(void)
 {
     test_8003526C();
     test_800491F8();
+    test_80027D70();
     return lk_done("leaf_ui_r4");
 }
