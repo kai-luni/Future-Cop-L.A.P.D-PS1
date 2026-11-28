@@ -172,8 +172,98 @@ static void test_800131A0(void)
     FCK_EQ(model.geometry.x18, 0x5678, "no bit 25: mesh field preserved");
 }
 
+/* @link 8001E4C0 */
+/* @link 80020610 */
+/* @link 80020618 */
+
+struct Profile {
+    u8 pad0[0x200];
+    u8 active, pad201[7];
+    u32 result;
+    u8 pad20C[0x6F8];
+    void *volatile manager;
+    u8 pad908[0x3D];
+    u8 page, pad946[2];
+};
+
+struct Profile *profile __asm__("D_8009F92C");
+u8 *mc_state __asm__("D_8009AB08");
+
+static struct { struct Profile image; u32 guard; } profile_storage;
+static u32 mc_storage[0x1BB8 / 4 + 1];
+static const char alloc_call[] = "func_80017EBC";
+static int alloc_count;
+
+void *mock_alloc(s32 size, s32 tag) __asm__("func_80017EBC");
+void *mock_alloc(s32 size, s32 tag)
+{
+    fck_record(alloc_call, size, tag, (s32)profile);
+    if (alloc_count++ == 0)
+        return &profile_storage.image;
+
+    /* The defaults must be visible before allocating the second block. */
+    FCK_EQ(profile->result, 3, "result is set before manager allocation");
+    FCK_EQ(profile->page, 2, "page is set before manager allocation");
+    FCK_EQ(profile->active, 0, "active byte still zero at manager allocation");
+    FCK_EQ(profile->manager, 0, "manager slot still zero at allocation");
+    return mc_storage;
+}
+
+extern void gOpenProfileSaveSubsystem(void) __asm__("func_8007F9CC");
+
+static void test_8007F9CC(void)
+{
+    static const char *order[] = {alloc_call, alloc_call};
+    struct FckCall first, second;
+    int i;
+
+    /* @leaf 8007F9CC source allocate and publish 0x948-byte profile, zero and set defaults before manager allocation, then initialize channel zero in the second block */
+    LK_FUNC("func_8007F9CC");
+    profile = 0;
+    mc_state = 0;
+    alloc_count = 0;
+    fck_log_reset();
+    lk_fill(&profile_storage, 0xA5, sizeof(profile_storage));
+    lk_fill(mc_storage, 0x5A, sizeof(mc_storage));
+
+    gOpenProfileSaveSubsystem();
+
+    fck_expect_order(order, 2, "exactly two allocations");
+    first = fck_call_n(alloc_call, 0);
+    second = fck_call_n(alloc_call, 1);
+    FCK_EQ(first.a0, 0x948, "profile allocation size");
+    FCK_EQ(first.a1, 2, "profile allocation tag");
+    FCK_EQ(first.a2, 0, "profile initially unpublished");
+    FCK_EQ(second.a0, 0x1BB8, "manager allocation size from original size helper");
+    FCK_EQ(second.a1, 2, "manager allocation tag");
+    FCK_EQ(second.a2, &profile_storage.image, "profile published before manager allocation");
+    FCK_EQ(profile, &profile_storage.image, "profile global holds first allocation");
+    FCK_EQ(profile->active, 1, "profile active after manager allocation");
+    FCK_EQ(profile->result, 3, "result defaults to three");
+    FCK_EQ(profile->manager, mc_storage, "second allocation saved at +904");
+    FCK_EQ(profile->page, 2, "page defaults to two");
+    FCK_EQ(lk_all(profile, 0, 0x200, 0), 1, "profile zero before +200");
+    FCK_EQ(lk_all(profile, 0x201, 0x208, 0), 1, "profile zero between active and result");
+    FCK_EQ(lk_all(profile, 0x20C, 0x904, 0), 1, "profile image zero");
+    FCK_EQ(lk_all(profile, 0x908, 0x945, 0), 1, "profile zero after manager pointer");
+    FCK_EQ(lk_all(profile, 0x946, 0x948, 0), 1, "last profile bytes zero");
+    FCK_EQ(profile_storage.guard, 0xA5A5A5A5, "profile guard untouched");
+
+    FCK_EQ(mc_state, mc_storage, "original initializer installs second block");
+    FCK_EQ(mc_storage[0], 0, "manager channel is zero");
+    for (i = 0; i < 16; i++) {
+        FCK_EQ(mc_storage[0x44 / 4 + i], mc_state + 0xC4 + i * 0x80,
+               "manager slot frame pointer");
+        FCK_EQ(mc_storage[0x84 / 4 + i], mc_state + 0x104 + i * 0x80,
+               "manager directory frame pointer");
+    }
+    FCK_EQ(mc_storage[0x1BB8 / 4 - 1], 0, "manager last word zeroed");
+    FCK_EQ(mc_storage[0x1BB8 / 4], 0x5A5A5A5A, "manager guard untouched");
+}
+
 int main(void)
 {
     test_800131A0();
+    test_8007F9CC();
     return lk_done("leaf_res_r4");
 }
