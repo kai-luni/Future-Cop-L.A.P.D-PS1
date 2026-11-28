@@ -2,6 +2,7 @@
  * Expectations are derived from the named units' source, not captured output.
  */
 /* @link 8001846C */
+/* @link 80019668 */
 #include "leaf_kit.h"
 
 /* Sparse quarter-wave fixture for the real gSinCos. Deliberately distinct
@@ -437,11 +438,113 @@ static void test_8005678C(void)
     }
 }
 
+s32 gPrimaryPrngState[20] __asm__("D_800A0480");
+
+static int sight_count, clear_on;
+static struct SightCall {
+    int step;
+    u32 from_address;
+    int to_is_eye_output;
+    struct Vec3 from, to;
+} sight_calls[8];
+
+/* The map-dependent sight test is the only additional stand-in for search.
+ * The PRNG and camera preset placement run as real C units.
+ */
+s32 record_sight_line(struct Vec3 *from, struct Vec3 *to) __asm__("func_80055EE8");
+s32 record_sight_line(struct Vec3 *from, struct Vec3 *to)
+{
+    struct SightCall *call;
+
+    camera_step++;
+    if (sight_count < 8) {
+        call = &sight_calls[sight_count];
+        call->step = camera_step;
+        call->from_address = (u32)from;
+        call->to_is_eye_output = (u32)to == (u32)eye_calls[sight_count].out;
+        call->from = *from;
+        call->to = *to;
+    }
+    sight_count++;
+    return sight_count == clear_on ? 0 : -27;
+}
+
+extern s32 gFindClearCameraPreset(struct CameraObject *object) __asm__("func_80056870");
+
+/* @leaf 80056870 source Real PRNG seed selection, ordered placement/raycast, wraparound, last success and exhaustion. */
+static void test_80056870(void)
+{
+    static const struct {
+        s32 seed_word, clear_on, result, tries;
+        s32 slots[8];
+    } cases[] = {
+        {0x208, 1, 9, 1, {9}},
+        {0x206, 8, 14, 8, {15, 16, 9, 10, 11, 12, 13, 14}},
+        {0x207, 0, -1, 8, {16, 9, 10, 11, 12, 13, 14, 15}}
+    };
+    const struct SightCall *sight;
+    const struct CameraEyeCall *eye;
+    s32 j, slot;
+    unsigned i;
+
+    LK_FUNC("func_80056870");
+    for (slot = 9; slot <= 16; slot++) {
+        gViewPresets[slot].angle = 100 + slot;
+        gViewPresets[slot].pitch = -200 - slot;
+        gViewPresets[slot].distance = 30000 + slot;
+    }
+    for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
+        reset_camera();
+        sight_count = 0;
+        clear_on = cases[i].clear_on;
+        memset(sight_calls, 0, sizeof(sight_calls));
+
+        /* At cursor zero the real PRNG wraps to 19 and adds word 2.
+         * The search uses only the low three bits of the returned sum.
+         */
+        memset(gPrimaryPrngState, 0, sizeof(gPrimaryPrngState));
+        gPrimaryPrngCursor = 0;
+        gPrimaryPrngState[19] = 0x100;
+        gPrimaryPrngState[2] = cases[i].seed_word;
+        FCK_EQ(gFindClearCameraPreset(&camera), cases[i].result, "search result");
+        FCK_EQ(gPrimaryPrngCursor, 19, "exactly one PRNG update");
+        FCK_EQ(gPrimaryPrngState[19], 0x100 + cases[i].seed_word, "updated PRNG word");
+        FCK_EQ(gPrimaryPrngState[2], cases[i].seed_word, "lagged PRNG word preserved");
+        FCK_EQ(eye_count, cases[i].tries, "candidate count");
+        FCK_EQ(sight_count, cases[i].tries, "sight test count");
+        FCK_EQ(camera_step, 2 * cases[i].tries, "only eye/sight pairs");
+        FCK_EQ(rotation_call.count, 0, "search does not rotate");
+        FCK_EQ(position_call.count, 0, "search does not move");
+        FCK_EQ(camera.position.x, 314, "object x unchanged");
+        FCK_EQ(camera.position.y, -271, "object y unchanged");
+        FCK_EQ(camera.position.z, 159, "object z unchanged");
+        for (j = 0; j < cases[i].tries; j++) {
+            slot = cases[i].slots[j];
+            eye = &eye_calls[j];
+            sight = &sight_calls[j];
+            check_eye_call(eye, 2 * j + 1, slot, -500 + slot, -200 - slot, 30000 + slot);
+            FCK_EQ(eye->prng_cursor, 19, "PRNG advanced before placement");
+            FCK_EQ(sight->step, 2 * j + 2, "each sight test follows placement");
+            FCK_CHECK(sight->to_is_eye_output, "exact candidate pointer fed to sight test");
+            FCK_CHECK(sight->from_address != (u32)&camera.position &&
+                      sight->from_address != eye->position_address, "sight test uses its own origin copy");
+            FCK_CHECK(sight->from_address == sight_calls[0].from_address, "origin reused across attempts");
+            FCK_EQ(sight->from.x, 314, "sight origin x");
+            FCK_EQ(sight->from.y, -271, "sight origin y");
+            FCK_EQ(sight->from.z, 159, "sight origin z");
+            FCK_EQ(sight->to.x, 30000 + slot, "sight destination x");
+            FCK_EQ(sight->to.y, -500 + slot, "sight destination y");
+            FCK_EQ(sight->to.z, -200 - slot, "sight destination z");
+        }
+    }
+}
+
 int main(void)
 {
     test_800188D0();
     test_80089BBC();
     test_80089A88();
     test_8005678C();
+    test_80056870();
     return lk_done("leaf_hud_r4");
 }
