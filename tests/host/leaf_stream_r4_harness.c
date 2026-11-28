@@ -178,9 +178,49 @@ static void test_release_module_pool(void)
     expect_pool_neighbors(0x100);
 }
 
+void *text_table __asm__("D_8009F518");
+
+static u32 text_payload[2];
+static void *text_at_free;
+static const char block_call[] = "func_800181D4";
+static const char *block_order[] = {block_call};
+
+void free_block(void *block) __asm__("func_800181D4");
+void free_block(void *block)
+{
+    text_at_free = text_table;
+    fck_record(block_call, (s32)block, 0, 0);
+}
+
+extern void free_text_table(void) __asm__("func_800898C8");
+/* @link 800898E8 */
+
+static void test_free_text_table(void)
+{
+    /* @leaf 800898C8 source gFreeTextTable.c:35-38 delegates to the original gReleaseActiveTextLookupTable.c:25-31, reaching one free for a live table and none for an empty table */
+    LK_FUNC("func_800898C8");
+
+    lk_fill(text_payload, 0x3c, sizeof(text_payload));
+    text_table = text_payload;
+    fck_log_reset();
+    free_text_table();
+    /* The unchanged delegate is linked, so observe its downstream call and write. */
+    fck_expect_order(block_order, 1, "text wrapper: reaches exactly one block free");
+    FCK_EQ(fck_call_n(block_call, 0).a0, text_payload, "text wrapper: frees installed table");
+    FCK_EQ(text_table, 0, "text wrapper: delegated release clears table pointer");
+    FCK_CHECK(lk_all(text_payload, 0, sizeof(text_payload), 0x3c),
+              "text wrapper: no direct writes into table storage");
+
+    fck_log_reset();
+    free_text_table();
+    fck_expect_order(0, 0, "text wrapper: empty table has no downstream free");
+    FCK_EQ(text_table, 0, "text wrapper: empty table stays null");
+}
+
 int main(void)
 {
     test_reset_stream();
     test_release_module_pool();
+    test_free_text_table();
     return lk_done("leaf_stream_r4");
 }
