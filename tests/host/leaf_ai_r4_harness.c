@@ -252,9 +252,143 @@ static void test_radar_marker(void)
     FCK_CHECK(packet_cursor == p + 1, "exact distance limit consumes packet");
 }
 
+/* gFinalizeMissionLoadout.c uses a pointer view of D_8009C0A8; the
+ * callee gClampLoadoutSelections.c uses the three 20-byte row records.
+ * Pointer slot 10 aliases the first word of the third row. */
+struct LoadoutRow {
+    u8 *record_ids;
+    u8 *selections;
+    u8 unused, replacement, limit;
+    u8 pad[9];
+};
+
+/* @link 8007D2DC */
+static s8 loadout_menu[6];
+static s32 session[24];
+static u8 special_records[60];
+s8 *loadout_menu_ptr __asm__("D_8009F468") = loadout_menu;
+s32 *session_ptr __asm__("D_8009FA94") = session;
+s32 active_player __asm__("D_8009F8B8");
+s32 D_8009F8E0_arr[2];
+__asm__(".globl D_8009F8E0\nD_8009F8E0 = D_8009F8E0_arr\n"
+        ".globl D_8009F8E4\nD_8009F8E4 = D_8009F8E0_arr + 4");
+s16 p1_ready_label[4] __asm__("D_8009B7E6");
+s16 p2_ready_label[4] __asm__("D_8009B856");
+u8 front_end_mode __asm__("D_8009F45A");
+u8 row_clear __asm__("D_8009FA10");
+s32 screen_state __asm__("D_8009FA00");
+u8 primary_indices[2] __asm__("D_8009F924");
+u8 heavy_indices[2] __asm__("D_8009F926");
+u8 special_indices[2] __asm__("D_8009F928");
+u8 primary_records[60] __asm__("D_8009C030");
+u8 heavy_records[60] __asm__("D_8009C050");
+struct LoadoutRow loadout_rows[3] __asm__("D_8009C0A8") = {
+    { 0, primary_indices, 0, 1, 2, { 0 } },
+    { 0, heavy_indices, 0, 1, 2, { 0 } },
+    { special_records, special_indices, 0, 1, 2, { 0 } }
+};
+
+extern void gFinalizeMissionLoadout(s32, s32, s32, s32, s32)
+    __asm__("func_8007E3EC");
+
+static void test_mission_loadout(void)
+{
+    /* @leaf 8007E3EC source gFinalizeMissionLoadout.c: selection and ready labels, both-player gate, clamp-before-copy and transition globals */
+    LK_FUNC("func_8007E3EC");
+    loadout_menu[5] = 2;
+    loadout_menu[0] = 1;
+    loadout_menu[1] = 6;
+    active_player = 1;
+    D_8009F8E0_arr[0] = 1;
+    D_8009F8E0_arr[1] = 1;
+    p1_ready_label[0] = 77;
+    p2_ready_label[0] = 88;
+    p2_ready_label[1] = 99;
+    session[9] = 19;
+    session[10] = -1;
+    session[16] = 26;
+    session[23] = 1;
+    front_end_mode = 44;
+    row_clear = 9;
+    screen_state = 8;
+
+    gFinalizeMissionLoadout(0, 100, 101, 102, 6);
+    FCK_EQ(D_8009F8E0_arr[1], 1, "matching selection keeps player two ready");
+    FCK_EQ(p2_ready_label[0], 110, "matching ready player gets label 110");
+    gFinalizeMissionLoadout(0, 100, 101, 102, 7);
+    FCK_EQ(D_8009F8E0_arr[1], 0, "changed selection clears player two ready");
+    FCK_EQ(p2_ready_label[0], 100, "changed selection resets label to 100");
+    FCK_EQ(p2_ready_label[1], 99, "only first label word changes");
+    FCK_EQ(D_8009F8E0_arr[0], 1, "player two change leaves player one ready");
+    FCK_EQ(p1_ready_label[0], 77, "player two change leaves player one label");
+
+    active_player = 0;
+    gFinalizeMissionLoadout(0, 100, 101, 102, 2);
+    FCK_EQ(D_8009F8E0_arr[0], 0, "changed selection clears player one ready");
+    FCK_EQ(p1_ready_label[0], 100, "changed player one selection resets label");
+    FCK_EQ(screen_state, 8, "selection update does not transition");
+
+    primary_indices[0] = 9;
+    primary_indices[1] = 2;
+    heavy_indices[0] = 0;
+    heavy_indices[1] = 9;
+    special_indices[0] = 2;
+    special_indices[1] = 1;
+    primary_records[6] = 31;
+    primary_records[12] = 32;
+    heavy_records[0] = 40;
+    heavy_records[6] = 41;
+    special_records[6] = 51;
+    special_records[12] = 52;
+
+    gFinalizeMissionLoadout(2, 100, 101, 102, 0);
+    FCK_EQ(D_8009F8E0_arr[0], 0, "unhandled op does not mark readiness");
+    FCK_EQ(front_end_mode, 44, "unhandled op leaves front-end mode");
+    FCK_EQ(screen_state, 8, "unhandled op leaves screen state");
+
+    gFinalizeMissionLoadout(3, 100, 101, 102, 0);
+    FCK_EQ(D_8009F8E0_arr[0], 1, "first confirmation marks its player ready");
+    FCK_EQ(D_8009F8E0_arr[1], 0, "first confirmation does not mark other player");
+    FCK_EQ(primary_indices[0], 9, "waiting for other player does not clamp");
+    FCK_EQ(session[10], -1, "waiting does not copy to session");
+    FCK_EQ(row_clear, 9, "waiting does not clear row flag");
+    FCK_EQ(front_end_mode, 44, "waiting does not assign front-end mode");
+    FCK_EQ(screen_state, 8, "waiting leaves the screen unchanged");
+
+    /* Both invalid selections are on highlighted rows. They must still
+     * clamp in mode 1, and the copied values must use the new indices. */
+    active_player = 1;
+    gFinalizeMissionLoadout(3, 100, 101, 102, 0);
+    FCK_EQ(D_8009F8E0_arr[1], 1, "second confirmation marks its player ready");
+    FCK_EQ(primary_indices[0], 1, "confirm clamps highlighted primary row");
+    FCK_EQ(heavy_indices[1], 1, "confirm clamps highlighted heavy row");
+    FCK_EQ(session[10], 31, "player one primary copied after clamp");
+    FCK_EQ(session[11], 40, "player one heavy copied");
+    FCK_EQ(session[12], 52, "player one special copied");
+    FCK_EQ(session[13], 32, "player two primary copied");
+    FCK_EQ(session[14], 41, "player two heavy copied after clamp");
+    FCK_EQ(session[15], 51, "player two special copied");
+    FCK_EQ(session[9], 19, "word before session outputs preserved");
+    FCK_EQ(session[16], 26, "word after session outputs preserved");
+    FCK_EQ(front_end_mode, 2, "session word 23 equal to 1 selects mode 2");
+    FCK_EQ(row_clear, 0, "transition clears row flag");
+    FCK_EQ(screen_state, 5, "transition sets screen 5");
+
+    loadout_menu[5] = 1;
+    session[23] = 0;
+    D_8009F8E0_arr[0] = 0;
+    D_8009F8E0_arr[1] = 0;
+    screen_state = 8;
+    gFinalizeMissionLoadout(3, 100, 101, 102, 0);
+    FCK_EQ(front_end_mode, 1, "single-player session chooses mode 1");
+    FCK_EQ(screen_state, 5, "single-player confirmation transitions without ready flags");
+    FCK_EQ(D_8009F8E0_arr[1], 0, "single-player confirmation does not mark readiness");
+}
+
 int main(void)
 {
     test_actor_mode();
     test_radar_marker();
+    test_mission_loadout();
     return lk_done("leaf_ai_r4");
 }
