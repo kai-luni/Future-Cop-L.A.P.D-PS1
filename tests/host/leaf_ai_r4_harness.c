@@ -141,8 +141,120 @@ static void test_actor_mode(void)
     FCK_EQ(prng_cursor, 4, "negative duration does not consume jitter");
 }
 
+/* gDrawRadarMarker.c writes up to 24 bytes but reserves 28 per packet. */
+struct Vec {
+    s32 x, y, z;
+};
+
+struct RadarPacket {
+    u32 tag, color;
+    s16 x0, y0, x1, y1, x2, y2, x3, y3;
+    u32 tail;
+};
+
+static struct RadarPacket radar_packets[8];
+struct RadarPacket *packet_cursor __asm__("D_8009FA90");
+struct RadarPacket *packet_limit __asm__("D_8009F9C0");
+s32 radar_sin __asm__("D_8009F7E0");
+s32 radar_cos __asm__("D_8009F7E4");
+s32 radar_z __asm__("D_8009F7E8");
+s32 radar_x __asm__("D_8009F7EC");
+u16 radar_uv __asm__("D_800A8EA6");
+
+extern s32 gDrawRadarMarker(struct Vec *, u32, s32, s32)
+    __asm__("func_8005B088");
+
+static void reset_radar(void)
+{
+    lk_fill(radar_packets, 0xa5, sizeof(radar_packets));
+    packet_cursor = radar_packets;
+    packet_limit = radar_packets + 8;
+    radar_sin = 0;
+    radar_cos = 0x10000;
+    radar_x = 0;
+    radar_z = 0;
+    radar_uv = 0x1234;
+}
+
+static void test_radar_marker(void)
+{
+    struct Vec marker;
+    struct RadarPacket *p = radar_packets;
+
+    /* @leaf 8005B088 source gDrawRadarMarker.c: projected packets for all shape branches, strict distance culling and cursor limit */
+    LK_FUNC("func_8005B088");
+    reset_radar();
+    radar_sin = 0x10000;
+    radar_cos = 0;
+    radar_x = 300;
+    radar_z = -700;
+    marker.x = radar_x + 8192;
+    marker.y = 919;
+    marker.z = radar_z - 8192;
+
+    /* Quarter-turn: xx = -3, yy = -3 after scaling and signed shifts. */
+    FCK_EQ(gDrawRadarMarker(&marker, 0x112233, 12, 0), 1, "sprite accepted");
+    FCK_CHECK(packet_cursor == p + 1, "sprite reserves 28 bytes");
+    FCK_EQ(p[0].tag, 0x04000000, "sprite tag");
+    FCK_EQ(p[0].color, 0x66112233, "sprite color and opcode");
+    FCK_EQ(p[0].x0, 37, "sprite X includes side offset");
+    FCK_EQ(p[0].y0, 41, "sprite Y from rotated X");
+    FCK_EQ((u16)p[0].x1, 0xc980, "sprite fixed UV bytes");
+    FCK_EQ(p[0].y1, 0x1234, "sprite UV word from global");
+    FCK_EQ(p[0].x2, 3, "sprite width");
+    FCK_EQ(p[0].y2, 3, "sprite height");
+    FCK_CHECK(lk_all(&p[0], 20, 28, 0xa5), "sprite leaves trailing bytes alone");
+
+    FCK_EQ(gDrawRadarMarker(&marker, 0x445566, 92, 1), 1, "triangle accepted");
+    FCK_CHECK(packet_cursor == p + 2, "triangle reserves 28 bytes");
+    FCK_EQ(p[1].tag, 0x04000000, "triangle tag");
+    FCK_EQ(p[1].color, 0x20445566, "triangle color and opcode");
+    FCK_EQ(p[1].x0, 118, "triangle first X");
+    FCK_EQ(p[1].y0, 40, "triangle first Y");
+    FCK_EQ(p[1].x1, 122, "triangle second X");
+    FCK_EQ(p[1].y1, 44, "triangle second Y");
+    FCK_EQ(p[1].x2, 114, "triangle third X");
+    FCK_EQ(p[1].y2, 44, "triangle third Y");
+    FCK_CHECK(lk_all(&p[1], 20, 28, 0xa5), "triangle leaves trailing bytes alone");
+
+    /* Equality disables advance, not the write into the current slot. */
+    packet_limit = packet_cursor;
+    FCK_EQ(gDrawRadarMarker(&marker, 0x778899, 12, 2), 1, "quad accepted at limit");
+    FCK_CHECK(packet_cursor == p + 2, "quad at limit does not advance");
+    FCK_EQ(p[2].tag, 0x05000000, "quad tag");
+    FCK_EQ(p[2].color, 0x28778899, "quad color and opcode");
+    FCK_EQ(p[2].x0, 38, "quad first X");
+    FCK_EQ(p[2].y0, 39, "quad first Y");
+    FCK_EQ(p[2].x1, 41, "quad second X");
+    FCK_EQ(p[2].y1, 42, "quad second Y");
+    FCK_EQ(p[2].x2, 35, "quad third X");
+    FCK_EQ(p[2].y2, 42, "quad third Y");
+    FCK_EQ(p[2].x3, 38, "quad fourth X");
+    FCK_EQ(p[2].y3, 45, "quad fourth Y");
+    FCK_CHECK(lk_all(&p[2], 24, 28, 0xa5), "quad leaves tail alone");
+
+    reset_radar();
+    marker.x = 0;
+    marker.z = -0x25556;
+    FCK_EQ(gDrawRadarMarker(&marker, 0x112233, 12, 0), 0, "negative Z beyond limit");
+    marker.x = 0x25556;
+    marker.z = 0;
+    FCK_EQ(gDrawRadarMarker(&marker, 0x112233, 12, 0), 0, "positive X beyond limit");
+    marker.x = 0x20000;
+    marker.z = 0x20000;
+    FCK_EQ(gDrawRadarMarker(&marker, 0x112233, 12, 0), 0, "diagonal exceeds combined limit");
+    FCK_CHECK(packet_cursor == p, "culling preserves cursor");
+    FCK_CHECK(lk_all(p, 0, sizeof(radar_packets), 0xa5), "culling writes no packets");
+
+    marker.x = -0x25555;
+    marker.z = 0;
+    FCK_EQ(gDrawRadarMarker(&marker, 0x112233, 12, 0), 1, "exact distance limit accepted");
+    FCK_CHECK(packet_cursor == p + 1, "exact distance limit consumes packet");
+}
+
 int main(void)
 {
     test_actor_mode();
+    test_radar_marker();
     return lk_done("leaf_ai_r4");
 }

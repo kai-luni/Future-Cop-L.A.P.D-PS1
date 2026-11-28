@@ -25,7 +25,7 @@ compile() {
 source "$HERE/unit_path.sh"
 
 objects=()
-for unit in 8002E2BC 800448D8 80019668; do
+for unit in 8002E2BC 8005B088 800448D8 80019668; do
     compile "$(unit_src "$unit")" "$OUT/$unit.o"
     objects+=("$OUT/$unit.o")
 done
