@@ -133,8 +133,54 @@ static void test_reset_stream(void)
     expect_stream_reset();
 }
 
+s32 read_end_check __asm__("D_8009F6E8");
+
+extern void release_module_pool(void) __asm__("func_80029E64");
+
+static void expect_pool_neighbors(s32 end_check)
+{
+    /* The only write in gReleaseModuleAssetPool.c:34-37 is at +2c. */
+    FCK_EQ(stream.slot, 11, "pool release: leaves active slot alone");
+    FCK_CHECK(lk_all(&stream, 0x04, 0x2c, 0x5a),
+              "pool release: words before pending untouched");
+    FCK_CHECK(lk_all(&stream, 0x30, 0x50, 0x5a),
+              "pool release: bytes after pending untouched");
+    FCK_EQ(read_end_check, end_check, "pool release: end check is only read");
+}
+
+static void test_release_module_pool(void)
+{
+    /* @leaf 80029E64 source gReleaseModuleAssetPool.c:34-37 releases a nonnull pool only when the end-check word is zero, then clears just +2c */
+    LK_FUNC("func_80029E64");
+
+    seed_stream(11, &pending_pool);
+    read_end_check = 0;
+    release_module_pool();
+    fck_expect_order(&reset_order[2], 1, "pool release: exactly one destructor call");
+    FCK_EQ(fck_call_n(pool_call, 0).a0, &pending_pool, "pool release: destructor argument");
+    FCK_EQ(at_pool.pending, &pending_pool, "pool release: destructor precedes clear");
+    FCK_EQ(stream.pending, 0, "pool release: clears the pending pointer");
+    expect_pool_neighbors(0);
+
+    /* Line 34: null suppresses a second call even though the flag allows release. */
+    fck_log_reset();
+    release_module_pool();
+    fck_expect_order(0, 0, "pool release: empty pointer skips destructor");
+    FCK_EQ(stream.pending, 0, "pool release: empty pointer stays null");
+    expect_pool_neighbors(0);
+
+    /* Line 34: a nonzero end-check word blocks release of a live pool. */
+    seed_stream(11, &pending_pool);
+    read_end_check = 0x100;
+    release_module_pool();
+    fck_expect_order(0, 0, "pool release: nonzero end check skips destructor");
+    FCK_EQ(stream.pending, &pending_pool, "pool release: blocked pointer survives");
+    expect_pool_neighbors(0x100);
+}
+
 int main(void)
 {
     test_reset_stream();
+    test_release_module_pool();
     return lk_done("leaf_stream_r4");
 }
