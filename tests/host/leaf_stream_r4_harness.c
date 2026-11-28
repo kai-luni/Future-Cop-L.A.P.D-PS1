@@ -247,11 +247,44 @@ static void test_release_text_table(void)
     FCK_EQ(text_table, 0, "text release: repeated release leaves slot empty");
 }
 
+/* The matching unit has a void prototype, but the retail caller declares a
+ * pointer argument (gPlayVideoFile.c:32) and passes it in $a0 (178, 208-209).
+ * Use that caller-side ABI: the wrapper leaves $a0 for func_800181D4. */
+extern void free_movie_buffer(void *buffer) __asm__("func_800879BC");
+
+static void test_free_movie_buffer(void)
+{
+    static u32 first_buffer[2], second_buffer[2];
+    const char *order[] = {block_call, block_call};
+
+    /* @leaf 800879BC source gMovieFreeDecodeBuffer.c:21-24 calls only the heap free; gPlayVideoFile.c:32,208-209 supplies distinct decode pointers in $a0 */
+    LK_FUNC("func_800879BC");
+
+    lk_fill(first_buffer, 0x4d, sizeof(first_buffer));
+    lk_fill(second_buffer, 0x83, sizeof(second_buffer));
+    text_table = text_payload;
+    fck_log_reset();
+    free_movie_buffer(first_buffer);
+    fck_expect_order(block_order, 1, "movie free: exactly one free on first invocation");
+    FCK_EQ(fck_call_n(block_call, 0).a0, first_buffer, "movie free: forwards first buffer");
+
+    free_movie_buffer(second_buffer);
+    fck_expect_order(order, 2, "movie free: one free per invocation in caller order");
+    FCK_EQ(fck_call_n(block_call, 1).a0, second_buffer, "movie free: forwards second buffer");
+    /* No direct writes in lines 21-24; allocator side effects are not under test. */
+    FCK_CHECK(lk_all(first_buffer, 0, sizeof(first_buffer), 0x4d),
+              "movie free: first buffer has no wrapper writes");
+    FCK_CHECK(lk_all(second_buffer, 0, sizeof(second_buffer), 0x83),
+              "movie free: second buffer has no wrapper writes");
+    FCK_EQ(text_table, text_payload, "movie free: unrelated text slot untouched");
+}
+
 int main(void)
 {
     test_reset_stream();
     test_release_module_pool();
     test_free_text_table();
     test_release_text_table();
+    test_free_movie_buffer();
     return lk_done("leaf_stream_r4");
 }
