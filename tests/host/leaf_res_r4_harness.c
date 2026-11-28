@@ -303,10 +303,99 @@ static void test_80018860(void)
     FCK_EQ(guarded[13], 0xA5A5A5A5, "word after output untouched");
 }
 
+/* @link 80019AA8 */
+/* @link 80019A74 */
+/* @link 80019D00 */
+
+struct ModelResource {
+    void *data;
+    s32 unk04, unk08;
+    struct ModelResource *next, *prev;
+    s32 unk14, group, name, size;
+};
+
+struct ModelResource *resource_head __asm__("D_8009F5B8");
+struct ModelResource *resource_tail __asm__("D_8009F5BC");
+
+static const char free_call[] = "func_800181D4";
+
+void mock_free(void *resource) __asm__("func_800181D4");
+void mock_free(void *resource)
+{
+    fck_record(free_call, (s32)resource, (s32)resource_head, (s32)resource_tail);
+}
+
+extern void gPrepareModelResource(struct ModelResource *resource) __asm__("func_80013550");
+
+static void test_80013550(void)
+{
+    static const char *duplicate_order[] = {free_call};
+    struct { struct Chunk prefix; struct ModelFixture model; } input;
+    struct ModelFixture *model = &input.model;
+    struct ModelFixture unused;
+    struct ModelResource prior, request, duplicate;
+    struct FckCall released;
+
+    /* @leaf 80013550 source new key relocates +0 using length at +20, installs output and clears +8 before registry append; duplicate key frees only the request */
+    LK_FUNC("func_80013550");
+    chunk(&input.prefix, 0x54455354, sizeof(input.prefix), 0);
+    init_model(model);
+    init_model(&unused);
+    lk_fill(&prior, 0, sizeof(prior));
+    lk_fill(&request, 0, sizeof(request));
+    request.data = &input;
+    request.unk04 = 0x12345678;
+    request.unk08 = 0x76543210;
+    request.group = 7;
+    request.name = -9;
+    request.size = (u8 *)&model->track - (u8 *)&input;
+    prior.group = 7;
+    prior.name = -8;
+    resource_head = resource_tail = &prior;
+    model->track.next = (struct AnimNode *)0x33445441;
+    model->track.pad = sizeof(model->track) + sizeof(model->sprites);
+    fck_log_reset();
+
+    gPrepareModelResource(&request);
+
+    FCK_EQ(fck_log_count, 0, "new resource not freed");
+    FCK_EQ(request.data, &model->geometry, "new resource publishes relocated header");
+    FCK_EQ(request.unk08, 0, "new resource clears descriptor word +8");
+    FCK_EQ(request.unk04, 0x12345678, "new resource preserves word +4");
+    FCK_EQ(request.group, 7, "new resource preserves group");
+    FCK_EQ(request.name, -9, "new resource preserves signed name");
+    FCK_EQ(request.size, (u8 *)&model->track - (u8 *)&input, "new resource preserves byte length");
+    FCK_EQ(model->geometry.p28, model->triangles.records, "length includes final triangle chunk");
+    FCK_EQ(model->geometry.anim, 0, "length excludes trailing track chunk");
+    FCK_EQ(resource_head, &prior, "registry head preserved");
+    FCK_EQ(resource_tail, &request, "new resource becomes registry tail");
+    FCK_EQ(prior.next, &request, "prior tail linked to new resource");
+    FCK_EQ(request.prev, &prior, "new resource links back to prior tail");
+    FCK_EQ(request.next, 0, "new resource terminates registry");
+
+    duplicate = request;
+    duplicate.data = &unused;
+    duplicate.unk08 = 0x24681357;
+    gPrepareModelResource(&duplicate);
+
+    fck_expect_order(duplicate_order, 1, "duplicate goes to heap free once");
+    released = fck_call_n(free_call, 0);
+    FCK_EQ(released.a0, &duplicate, "free receives duplicate descriptor, not payload or prior entry");
+    FCK_EQ(released.a1, &prior, "registry head preserved at release");
+    FCK_EQ(released.a2, &request, "registry tail preserved at release");
+    FCK_EQ(duplicate.data, &unused, "duplicate retains original data pointer");
+    FCK_EQ(duplicate.unk08, 0x24681357, "duplicate does not clear word +8");
+    FCK_EQ(unused.geometry.p28, 0, "duplicate payload not relocated");
+    FCK_EQ(resource_head, &prior, "duplicate does not replace head");
+    FCK_EQ(resource_tail, &request, "duplicate does not become tail");
+    FCK_EQ(request.next, 0, "duplicate not linked");
+}
+
 int main(void)
 {
     test_800131A0();
     test_8007F9CC();
     test_80018860();
+    test_80013550();
     return lk_done("leaf_res_r4");
 }
