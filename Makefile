@@ -534,9 +534,10 @@ host-leaf-formats:
 host-leaf-formats-graphics:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_formats_graphics
 
-# Hardware-free tranche 1 leaf suite (25 unchanged original functions); missing tools fail.
-.PHONY: host-leaf-hw-free-a host-leaf-hw-free-b
-check: host-leaf-hw-free-a host-leaf-hw-free-b
+# Hardware-free tranche 1 and 2 leaf suites and the boot/front-end tranche 3
+# (unchanged original functions); missing tools fail.
+.PHONY: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-boot-r3
+check: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-boot-r3
 
 host-leaf-hw-free-a:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_hw_free_a
@@ -544,3 +545,9 @@ host-leaf-hw-free-a:
 # Hardware-free tranche 2 leaf suite (25 unchanged original functions, no device mocks); missing tools fail.
 host-leaf-hw-free-b:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_hw_free_b
+
+# Boot/front-end tranche 3 leaf suite (5 unchanged original functions: channel
+# flush, mission spawn state, bank sample rotation, entity alloc/link, small
+# rumble); missing tools fail.
+host-leaf-boot-r3:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_boot_r3
