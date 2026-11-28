@@ -247,10 +247,78 @@ static void test_80027D70(void)
     }
 }
 
+/* @leaf 8005A154 source gPlayGaugeEdgeSound.c:4-17,44-47 unsigned effect byte and player-slot word forwarding */
+struct GaugeOwner {
+    u8 pad00[0xC1];
+    s8 side;
+    u8 guard[4];
+};
+
+struct Gauge {
+    u8 pad00[0x13];
+    u8 sound;
+    u8 guard[4];
+};
+
+s32 gPlayerEntities[2] __asm__("D_8009FA58");
+extern void gPlayGaugeEdgeSound(struct GaugeOwner *owner, struct Gauge *gauge)
+    __asm__("func_8005A154");
+
+static const char gauge_sound_call[] = "func_80046C84";
+static s32 gauge_sound_result;
+
+s32 mock_gauge_sound(s32 id, s32 player) __asm__("func_80046C84");
+s32 mock_gauge_sound(s32 id, s32 player)
+{
+    fck_record(gauge_sound_call, id, player, 0);
+    return gauge_sound_result;
+}
+
+static void check_gauge_sound(s8 side, u8 sound, s32 slot_word, s32 result)
+{
+    static const s32 players[] = {(s32)0x8F123456U, 0x23456789};
+    static const char *order[] = {gauge_sound_call};
+    struct GaugeOwner owner, before_owner;
+    struct Gauge gauge, before_gauge;
+    struct FckCall call;
+
+    lk_fill(&owner, 0xA5, sizeof(owner));
+    lk_fill(&gauge, 0x5A, sizeof(gauge));
+    owner.side = side;
+    gauge.sound = sound;
+    memcpy(&before_owner, &owner, sizeof(owner));
+    memcpy(&before_gauge, &gauge, sizeof(gauge));
+    memcpy(gPlayerEntities, players, sizeof(gPlayerEntities));
+    gauge_sound_result = result;
+    fck_log_reset();
+
+    gPlayGaugeEdgeSound(&owner, &gauge);
+
+    /* Line 46: one sound call forwards an unsigned byte at +0x13 and
+     * the whole selected player word. Neither input record nor the slot
+     * table is modified, and the callee result is discarded. */
+    fck_expect_order(order, 1, "gauge calls sound once");
+    call = fck_call_n(gauge_sound_call, 0);
+    FCK_EQ(call.a0, sound, "gauge sound id is unsigned byte");
+    FCK_EQ(call.a1, slot_word, "gauge owner selects the player-table word");
+    FCK_EQ(memcmp(&owner, &before_owner, sizeof(owner)), 0, "gauge owner untouched");
+    FCK_EQ(memcmp(&gauge, &before_gauge, sizeof(gauge)), 0, "gauge record untouched");
+    FCK_EQ(memcmp(gPlayerEntities, players, sizeof(gPlayerEntities)), 0,
+           "gauge player table untouched");
+}
+
+static void test_8005A154(void)
+{
+    LK_FUNC("func_8005A154");
+    check_gauge_sound(0, 0xE3, (s32)0x8F123456U, 0);
+    check_gauge_sound(1, 0x34, 0x23456789, 17);
+}
+
 int main(void)
 {
     test_8003526C();
     test_800491F8();
     test_80027D70();
+    test_8005A154();
     return lk_done("leaf_ui_r4");
 }
