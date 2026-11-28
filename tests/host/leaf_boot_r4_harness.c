@@ -461,11 +461,143 @@ static void test_80046E88(void)
     }
 }
 
+u8 snapshotResult[2] __asm__("D_8009F904");
+s32 savedSfx __asm__("D_8009F908");
+s32 savedVagm __asm__("D_8009F90C");
+s32 savedVoice __asm__("D_8009F910");
+volatile s32 savedMode __asm__("D_8009F914");
+s32 testResult __asm__("D_8009F918");
+volatile s32 snapshotPointer __asm__("D_8009F91C");
+volatile s32 previewTrack __asm__("D_8009F920");
+u16 widgetLabel[2] __asm__("D_8009BABE");
+u8 optionsBackdrop[2] __asm__("D_800A377B");
+
+static const char musicCall[] = "func_8004522C";
+static const char vagmCall[] = "func_80045288";
+static const char voiceCall[] = "func_800452C8";
+static const char stereoCall[] = "func_800451E0";
+static const char activeCall[] = "func_8002A58C";
+static const char streamCall[] = "func_8002A16C";
+static s32 stereoResult, activeResult;
+
+/* The shared sound mock does not record order across these six boundaries.
+ * Record the preceding writes too, so final state cannot mask a late store. */
+s32 mockMusicVolume(void) __asm__("func_8004522C");
+s32 mockMusicVolume(void)
+{
+    fck_record(musicCall, testResult, 0, 0);
+    return 93;
+}
+
+s32 mockVagmVolume(void) __asm__("func_80045288");
+s32 mockVagmVolume(void)
+{
+    fck_record(vagmCall, savedSfx, 0, 0);
+    return 37;
+}
+
+s32 mockVoiceVolume(void) __asm__("func_800452C8");
+s32 mockVoiceVolume(void)
+{
+    fck_record(voiceCall, savedVagm, 0, 0);
+    return 64;
+}
+
+s32 mockStereoMode(void) __asm__("func_800451E0");
+s32 mockStereoMode(void)
+{
+    fck_record(stereoCall, savedVoice, 0, 0);
+    return stereoResult;
+}
+
+s32 mockStreamActive(void) __asm__("func_8002A58C");
+s32 mockStreamActive(void)
+{
+    fck_record(activeCall, snapshotPointer, previewTrack, snapshotResult[0]);
+    return activeResult;
+}
+
+void mockStartStream(s32 track) __asm__("func_8002A16C");
+void mockStartStream(s32 track)
+{
+    fck_record(streamCall, track, optionsBackdrop[0], 0);
+}
+
+extern void initOptions(void) __asm__("func_8007D18C");
+
+static void test_8007D18C(void)
+{
+    static const char *order[] = {
+        musicCall, vagmCall, voiceCall, stereoCall, activeCall, streamCall
+    };
+    static const struct {
+        s32 mode, players, stereo, active;
+        u16 label;
+        u8 backdrop, calls;
+    } cases[] = {
+        {1, 1,  0, 0,     0x1018, 9, 6},
+        {1, 2, -3, 1,     0x100E, 3, 5},
+        {2, 1,  2, 0x100, 0x100E, 1, 6},
+        {0, 0,  0, 0x101, 0x1018, 8, 5}
+    };
+    struct Session before;
+    int i;
+
+    /* @leaf 8007D18C source gInitOptionsScreen.c:57-81 snapshots volume getters then stereo, resets preview state before stream poll, starts track 0 only for a zero low byte, writes label and exact-equality backdrop */
+    LK_FUNC("func_8007D18C");
+    for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
+        lk_fill(&session, 0xA2, sizeof(session));
+        session.mode = cases[i].mode;
+        session.players = cases[i].players;
+        before = session;
+        stereoResult = cases[i].stereo;
+        activeResult = cases[i].active;
+        savedSfx = -1;
+        savedVagm = -2;
+        savedVoice = -3;
+        savedMode = -4;
+        testResult = 17;
+        snapshotPointer = 23;
+        previewTrack = 41;
+        lk_fill(snapshotResult, 0xB3, sizeof(snapshotResult));
+        lk_fill(widgetLabel, 0xC4, sizeof(widgetLabel));
+        lk_fill(optionsBackdrop, 0xD5, sizeof(optionsBackdrop));
+        fck_log_reset();
+
+        initOptions();
+
+        fck_expect_order(order, cases[i].calls, "options getters, poll, then optional start");
+        FCK_EQ(fck_log[0].a0, 0, "clears exit result before first getter");
+        FCK_EQ(fck_log[1].a0, 93, "stores music volume before VAGM getter");
+        FCK_EQ(fck_log[2].a0, 37, "stores VAGM volume before voice getter");
+        FCK_EQ(fck_log[3].a0, 64, "stores voice volume before stereo getter");
+        expectArgs(4, 0, 0x47, 0);
+        if (cases[i].calls == 6)
+            expectArgs(5, 0, 0xD5, 0);
+
+        FCK_EQ(testResult, 0, "exit result stays clear");
+        FCK_EQ(savedSfx, 93, "music result stored in SFX snapshot");
+        FCK_EQ(savedVagm, 37, "VAGM result stored");
+        FCK_EQ(savedVoice, 64, "voice result stored");
+        FCK_EQ(savedMode, cases[i].stereo, "full stereo word stored");
+        FCK_EQ(snapshotPointer, 0, "preview handle cleared");
+        FCK_EQ(previewTrack, 0x47, "preview track reset");
+        FCK_EQ(snapshotResult[0], 0, "result byte cleared");
+        FCK_EQ(snapshotResult[1], 0xB3, "result neighbor untouched");
+        FCK_EQ(widgetLabel[0], cases[i].label, "stereo selects widget label");
+        FCK_EQ(widgetLabel[1], 0xC4C4, "label neighbor untouched");
+        FCK_EQ(optionsBackdrop[0], cases[i].backdrop, "options backdrop truth table");
+        FCK_EQ(optionsBackdrop[1], 0xD5, "backdrop neighbor untouched");
+        FCK_EQ(memcmp(&session, &before, sizeof(session)), 0, "session is read-only");
+    }
+}
+
 int main(void)
 {
     test_8007B004();
     test_80046F9C();
     test_8007D408();
     test_80046E88();
+    test_8007D18C();
     return lk_done("leaf_boot_r4");
 }
