@@ -529,11 +529,141 @@ static void test_target_markers(void)
     FCK_CHECK(lk_all(p + 1, 0, 7 * sizeof(*p), 0xa5), "empty lists leave later packets alone");
 }
 
+/* gFindGroundObjectAtPosition.c: the radius-test center is the triple
+ * immediately after matrix[11]; the remaining six bytes precede the radius.
+ * The table has a 16-byte prefix after its header for transform index 1. */
+struct GroundBox {
+    s16 x, y, z, half_x, half_y, half_z;
+    u8 stride_padding[12];
+};
+
+struct GroundTable {
+    s32 count, stride;
+    u8 index_prefix[16];
+    struct GroundBox boxes[4];
+};
+
+struct GroundModel {
+    u8 pad00[0x34];
+    struct GroundTable *table;
+};
+
+struct GroundTransform {
+    struct GroundModel *model;
+    s32 matrix[12];
+    struct Vec radius_center;
+    u8 pad40[6];
+    s16 radius, index;
+};
+
+struct GroundObject {
+    u8 pad00[0x24];
+    u32 flags;
+    struct GroundTransform transform;
+};
+
+struct GroundEntry {
+    struct GroundObject *object;
+    u8 id;
+    u8 pad05[3];
+};
+
+/* @link 8001A750 */
+/* @link 80018860 */
+/* @link 80019470 */
+/* @link 8001A81C */
+/* @link 8001A970 */
+s32 ground_count __asm__("D_8009F838");
+struct GroundEntry ground_entries[4] __asm__("D_800A31A0");
+
+extern struct GroundObject *gFindGroundObjectAtPosition(struct Vec *, struct Vec *, s32 *, u8 *)
+    __asm__("func_8006320C");
+
+static void test_ground_object(void)
+{
+    static struct GroundTable table = {
+        4, 24, { 0 }, {
+            { 9, 16, 19, 1, 4, 1, { 0 } }, /* would match, but skipped */
+            { 5, 60, 19, 1, 4, 1, { 0 } }, /* X outside */
+            { 9, 61, 19, 1, 4, 1, { 0 } }, /* Y one grid step too high */
+            { 9, 60, 19, 1, 4, 1, { 0 } }  /* X/Z edges and exact Y threshold */
+        }
+    };
+    struct GroundModel model;
+    struct GroundObject objects[4];
+    struct Vec pos = { 1000, 535, -300 };
+    struct Vec out = { -11, -22, -33 };
+    s32 height = 123;
+    u8 id = 0xfe;
+    int i;
+
+    /* @leaf 8006320C source gFindGroundObjectAtPosition.c: flags and strict radius, indexed strided boxes, first hit, affine height rounding and optional output */
+    LK_FUNC("func_8006320C");
+    model.table = &table;
+    lk_fill(objects, 0, sizeof(objects));
+    for (i = 0; i < 4; i++) {
+        struct GroundTransform *t = &objects[i].transform;
+        objects[i].flags = 0x20000000;
+        t->model = &model;
+        t->matrix[0] = t->matrix[4] = t->matrix[8] = 0x10000;
+        t->matrix[9] = 840;
+        t->matrix[10] = 151;
+        t->matrix[11] = -620;
+        t->radius_center = pos;
+        t->radius = 16;
+        t->index = 1;
+        ground_entries[i].object = &objects[i];
+        ground_entries[i].id = 40 + i;
+    }
+    objects[0].flags = 0x10000000;
+    objects[1].transform.radius_center.x += 256;
+
+    ground_count = 0;
+    FCK_CHECK(gFindGroundObjectAtPosition(&pos, &out, &height, &id) == 0,
+              "empty ground queue misses");
+    ground_count = 2;
+    FCK_CHECK(gFindGroundObjectAtPosition(&pos, &out, &height, &id) == 0,
+              "wrong flag and exact-radius candidates rejected");
+    FCK_EQ(height, 123, "miss preserves height");
+    FCK_EQ(id, 0xfe, "miss preserves ID");
+    FCK_EQ(out.x, -11, "miss preserves optional X");
+    FCK_EQ(out.y, -22, "miss preserves optional Y");
+    FCK_EQ(out.z, -33, "miss preserves optional Z");
+
+    /* Inverse translation yields local (160, 384, 320). The fourth
+     * box's top is (60+4)*16, then the forward translation adds 151:
+     * world height 1175 rounds up to 1280. Entry 3 would also match. */
+    ground_count = 4;
+    FCK_CHECK(gFindGroundObjectAtPosition(&pos, &out, &height, &id) == &objects[2],
+              "first eligible matching object returned");
+    FCK_EQ(height, 1280, "hit transforms and rounds strided box top");
+    FCK_EQ(id, 42, "hit returns first matching entry ID");
+    FCK_EQ(out.x, 0, "optional X comes from matrix word 3");
+    FCK_EQ(out.y, 0x10000, "optional Y comes from matrix word 4");
+    FCK_EQ(out.z, 0, "optional Z comes from matrix word 5");
+
+    pos.y--;
+    height = 321;
+    id = 0xfd;
+    FCK_CHECK(gFindGroundObjectAtPosition(&pos, 0, &height, &id) == 0,
+              "one unit below vertical threshold misses all tested boxes");
+    FCK_EQ(height, 321, "box miss preserves height");
+    FCK_EQ(id, 0xfd, "box miss preserves ID");
+
+    pos.y++;
+    table.count = 1;
+    FCK_CHECK(gFindGroundObjectAtPosition(&pos, 0, &height, &id) == &objects[2],
+              "single box is tested and null optional output is accepted");
+    FCK_EQ(height, 512, "single box height includes translation and rounding");
+    FCK_EQ(id, 42, "null optional output still writes matching ID");
+}
+
 int main(void)
 {
     test_actor_mode();
     test_radar_marker();
     test_mission_loadout();
     test_target_markers();
+    test_ground_object();
     return lk_done("leaf_ai_r4");
 }
