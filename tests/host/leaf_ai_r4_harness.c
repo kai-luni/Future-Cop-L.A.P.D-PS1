@@ -385,10 +385,155 @@ static void test_mission_loadout(void)
     FCK_EQ(D_8009F8E0_arr[1], 0, "single-player confirmation does not mark readiness");
 }
 
+/* Layouts shared by gDrawTargetMarkers.c and the real radar pre-pass. */
+struct EffectNode {
+    u8 pad00[8];
+    s32 count;
+    u8 pad0c[0x17];
+    u8 type;
+    u32 flags;
+    u8 pad28[0x28];
+    struct Vec pos;
+};
+
+struct MarkerExtra {
+    u8 pad00[0xa4];
+    u32 flags;
+    u8 types[8];
+    s16 coords[8][2];
+};
+
+struct MarkerControl {
+    u8 pad00[0xc1];
+    s8 mode;
+    u8 padc2[0x23e];
+    struct MarkerExtra *extra;
+};
+
+struct MarkerObject {
+    u8 pad00[0xac];
+    struct MarkerControl *control;
+    s16 heading, padb2;
+};
+
+/* @link 8005A9C4 */
+/* @link 8005A740 */
+/* @link 8005A934 */
+/* @link 8005A828 */
+/* @link 8001846C */
+/* @link 80095C30 */
+s32 effect_count[1] __asm__("D_800A8F90");
+struct EffectNode *effect_nodes[5] __asm__("D_800A8F98");
+u32 frame_time __asm__("D_8009FAA4");
+u32 marker_colors[32] __asm__("D_800A6F60");
+s32 player_count __asm__("D_8009FA0C");
+struct EffectNode *player_entities[2] __asm__("D_8009FA58");
+u16 sine_table[0x401] __asm__("D_8009A234");
+s16 atan_table[0x401] __asm__("D_8009E0A0");
+s16 radius_table[6] __asm__("D_8009AFB4");
+
+extern void gDrawTargetMarkers(struct MarkerObject *) __asm__("func_8004EDC8");
+
+static void test_target_markers(void)
+{
+    struct MarkerObject object;
+    struct MarkerControl control;
+    struct MarkerExtra extra;
+    struct EffectNode nodes[5];
+    struct RadarPacket *p = radar_packets;
+    int i;
+
+    /* @leaf 8004EDC8 source gDrawTargetMarkers.c: ordered radar pre-pass, texpage, filtered effect nodes, packed extra slots and show-all flag */
+    LK_FUNC("func_8004EDC8");
+    lk_fill(&object, 0, sizeof(object));
+    lk_fill(&control, 0, sizeof(control));
+    lk_fill(&extra, 0, sizeof(extra));
+    lk_fill(nodes, 0, sizeof(nodes));
+    object.control = &control;
+    control.extra = &extra;
+    player_count = 1;
+    sine_table[0x400] = 0x8000; /* gSinCos produces -65536 cos at heading 0x800. */
+
+    effect_count[0] = 5;
+    for (i = 0; i < 5; i++) {
+        effect_nodes[i] = &nodes[i];
+        nodes[i].count = 1;
+        nodes[i].type = 1;
+    }
+    nodes[0].count = 0;
+    nodes[1].type = 0;
+    nodes[2].flags = 0x20;
+    nodes[3].flags = 0x40;
+    nodes[3].pos.x = 8192;
+    nodes[3].pos.z = -4096;
+    nodes[4].type = (1 << 5) | 24;
+    nodes[4].pos.z = 4096;
+
+    /* Bit 2 of each three-bit group selects a slot. Bit 0 in slot 0
+     * does not select it here; the pre-pass sees its zero distance. */
+    extra.flags = 1 | (4 << 3) | (4 << 21);
+    extra.types[1] = (2 << 5) | 3;
+    extra.coords[1][0] = 16;
+    extra.coords[1][1] = -16;
+    extra.types[7] = 25;
+    extra.coords[7][0] = -24;
+    extra.coords[7][1] = 24;
+
+    marker_colors[1] = 0x112233;
+    marker_colors[3] = 0x445566;
+    marker_colors[24] = 0x778899;
+    marker_colors[25] = 0x123456;
+
+    reset_radar();
+    frame_time = 0;
+    gDrawTargetMarkers(&object);
+    FCK_CHECK(packet_cursor == p + 4, "disabled high types and invalid entries emit no packets");
+    FCK_EQ(p[0].color, 0x40808080, "heading pre-pass runs before texpage");
+    FCK_EQ(p[0].x0, 16, "heading pre-pass uses side zero origin");
+    FCK_EQ(p[0].y0, 44, "heading pre-pass uses object heading");
+    FCK_EQ(p[1].tag, 0x01000000, "texpage tag clears address and sets word count");
+    FCK_EQ(p[1].color, 0xe100069e, "texpage command precedes markers");
+    FCK_CHECK(lk_all(&p[1], 8, 28, 0xa5), "texpage writes only first two words");
+    FCK_EQ(p[2].color, 0x66112233, "eligible node color and shape");
+    FCK_EQ(p[2].x0, 37, "node X uses small side offset");
+    FCK_EQ(p[2].y0, 44, "node Y uses node position");
+    FCK_EQ(p[3].color, 0x28445566, "slot one appears after effect nodes");
+    FCK_EQ(p[3].x0, 41, "slot one scales and switches stored Z into marker X");
+    FCK_EQ(p[3].y0, 39, "slot one scales and switches stored X into marker Y");
+    FCK_CHECK(lk_all(p + 4, 0, 4 * sizeof(*p), 0xa5), "no other packets touched");
+
+    reset_radar();
+    control.mode = 1;
+    frame_time = 0x80;
+    gDrawTargetMarkers(&object);
+    FCK_CHECK(packet_cursor == p + 6, "show-all adds one node and one extra");
+    FCK_EQ(p[0].x0, 96, "heading pre-pass uses side one origin");
+    FCK_EQ(p[1].color, 0xe100069e, "texpage follows pre-pass on side one");
+    FCK_EQ(p[2].color, 0x66112233, "first effect stays first under show-all");
+    FCK_EQ(p[2].x0, 117, "nonzero control mode uses large side offset");
+    FCK_EQ(p[3].color, 0x20778899, "high node indexes color and selects triangle");
+    FCK_EQ(p[3].x0, 120, "high node passes position and large offset");
+    FCK_EQ(p[4].color, 0x28445566, "low extra follows both nodes");
+    FCK_EQ(p[4].x0, 121, "low extra uses large offset");
+    FCK_EQ(p[5].color, 0x66123456, "slot seven appears last");
+    FCK_EQ(p[5].x0, 116, "slot seven projects signed Z");
+    FCK_EQ(p[5].y0, 45, "slot seven projects signed X");
+
+    reset_radar();
+    packet_limit = p;
+    effect_count[0] = 0;
+    control.extra = 0;
+    gDrawTargetMarkers(&object);
+    FCK_CHECK(packet_cursor == p, "texpage at limit does not advance cursor");
+    FCK_EQ(p[0].color, 0xe100069e, "texpage still writes at limit");
+    FCK_CHECK(lk_all(p + 1, 0, 7 * sizeof(*p), 0xa5), "empty lists leave later packets alone");
+}
+
 int main(void)
 {
     test_actor_mode();
     test_radar_marker();
     test_mission_loadout();
+    test_target_markers();
     return lk_done("leaf_ai_r4");
 }
