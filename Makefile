@@ -535,8 +535,8 @@ host-leaf-formats-graphics:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_formats_graphics
 
 # Hardware-free tranche 1 leaf suite (25 unchanged original functions); missing tools fail.
-.PHONY: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-cd-r3 host-leaf-res-r3 host-leaf-boot-r3
-check: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-cd-r3 host-leaf-res-r3 host-leaf-boot-r3
+.PHONY: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-cd-r3 host-leaf-res-r3 host-leaf-boot-r3 host-leaf-hud-r3
+check: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-cd-r3 host-leaf-res-r3 host-leaf-boot-r3 host-leaf-hud-r3
 
 host-leaf-hw-free-a:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_hw_free_a
@@ -562,3 +562,7 @@ host-leaf-res-r3:
 # rumble); missing tools fail.
 host-leaf-boot-r3:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_boot_r3
+
+# HUD text/glyph + render-effect leaf suite (5 unchanged original functions); missing tools fail.
+host-leaf-hud-r3:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_hud_r3
