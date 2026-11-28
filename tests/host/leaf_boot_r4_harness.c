@@ -250,9 +250,150 @@ static void test_80046F9C(void)
     }
 }
 
+struct LoadoutList {
+    u8 *entries;
+    s32 unused;
+    u8 count, min, max, pad[9];
+};
+
+struct MissionLimits {
+    u8 pad[0x19];
+    u8 primaryMax, heavyMax, specialMax;
+    u8 tail[8];
+};
+
+struct LoadoutList loadout[4] __asm__("D_8009C0A8");
+/* These are interior retail aliases, not independent minima. */
+__asm__(".globl D_8009C0C5\n.set D_8009C0C5,D_8009C0A8+0x1D\n"
+        ".globl D_8009C0D9\n.set D_8009C0D9,D_8009C0A8+0x31");
+u8 alternateWeapons[4] __asm__("D_8009C090");
+u8 defaultWeapons[5] __asm__("D_8009C070");
+u8 loadoutBackdrop[2] __asm__("D_800A362B");
+s8 primaryIndices[3] __asm__("D_8009F924");
+s8 heavyIndices[3] __asm__("D_8009F926");
+s8 specialIndices[3] __asm__("D_8009F928");
+s8 selectedMission __asm__("D_8009F880");
+static s8 missionMap[] = {1, 2, 0};
+s8 *missionRows __asm__("D_8009F884") = missionMap;
+struct MissionLimits missionLimits[3] __asm__("D_8009B4E4");
+u16 loadoutItems[0x45] __asm__("D_8009B7D0");
+
+static const char lookupCall[] = "func_8007D39C";
+static const u8 lookupResults[] = {0xFE, 8, 9, 0, 2, 0xFF};
+
+u8 mockLookup(struct LoadoutList *list, u8 value) __asm__("func_8007D39C");
+u8 mockLookup(struct LoadoutList *list, u8 value)
+{
+    int call = fck_log_count;
+    fck_record(lookupCall, (s32)list, value, list->count);
+    if (call < sizeof(lookupResults) / sizeof(lookupResults[0]))
+        return lookupResults[call];
+    return 0;
+}
+
+extern void initSelectionIndices(void) __asm__("func_8007D408");
+
+static void test_8007D408(void)
+{
+    static const char *order[] = {
+        lookupCall, lookupCall, lookupCall, lookupCall, lookupCall, lookupCall
+    };
+    static const struct {
+        s32 mode, x, y, z;
+        u8 count, backdrop, primaryMin, heavyMin, specialMin;
+    } cases[] = {
+        {1, 0, 2, 0, 4, 7, 1, 0, 1},
+        {2, 1, 0, -1, 5, 2, 0, 1, 0}
+    };
+    struct LoadoutList expected[4];
+    struct Session before;
+    struct MissionLimits limitsBefore[3];
+    int i;
+
+    /* @leaf 8007D408 source gInitSelectionIndices.c:53-88 configures list before six ordered lookups, takes maxima from the mapped mission row, clamps signed indices using three unlock flags, then resets flags and halfwords */
+    LK_FUNC("func_8007D408");
+    for (i = 0; i < 2; i++) {
+        lk_fill(&session, 0x89, sizeof(session));
+        session.mode = cases[i].mode;
+        session.primaryUnlocked = cases[i].x;
+        session.heavyUnlocked = cases[i].y;
+        session.specialUnlocked = cases[i].z;
+        session.primary0 = 0xE1;
+        session.primary1 = 11;
+        session.heavy0 = 22;
+        session.heavy1 = 33;
+        session.special0 = 44;
+        session.special1 = 55;
+        before = session;
+
+        lk_fill(loadout, 0xA5, sizeof(loadout));
+        loadout[0].count = 6;
+        selectedMission = 1;
+        lk_fill(missionLimits, 0xB6, sizeof(missionLimits));
+        missionLimits[2].primaryMax = 3;
+        missionLimits[2].heavyMax = 4;
+        missionLimits[2].specialMax = 1 + i * 2;
+        memcpy(limitsBefore, missionLimits, sizeof(missionLimits));
+        memcpy(expected, loadout, sizeof(loadout));
+        expected[0].min = cases[i].primaryMin;
+        expected[0].max = 3;
+        expected[1].count = cases[i].count;
+        expected[1].min = cases[i].heavyMin;
+        expected[1].max = 4;
+        expected[2].entries = i == 0 ? alternateWeapons : defaultWeapons;
+        expected[2].count = cases[i].count;
+        expected[2].min = cases[i].specialMin;
+        expected[2].max = i == 0 ? 1 : 3;
+        lk_fill(loadoutItems, 0xC7, sizeof(loadoutItems));
+        lk_fill(loadoutBackdrop, 0xD8, sizeof(loadoutBackdrop));
+        lk_fill(primaryIndices, 0xE9, sizeof(primaryIndices));
+        lk_fill(heavyIndices, 0xE9, sizeof(heavyIndices));
+        lk_fill(specialIndices, 0xE9, sizeof(specialIndices));
+        ready1 = 17;
+        ready2 = 19;
+        fck_log_reset();
+
+        initSelectionIndices();
+
+        fck_expect_order(order, 6, "six lookup calls");
+        expectArgs(0, (s32)&loadout[0], 0xE1, 6);
+        expectArgs(1, (s32)&loadout[0], 11, 6);
+        expectArgs(2, (s32)&loadout[1], 22, cases[i].count);
+        expectArgs(3, (s32)&loadout[1], 33, cases[i].count);
+        expectArgs(4, (s32)&loadout[2], 44, cases[i].count);
+        expectArgs(5, (s32)&loadout[2], 55, cases[i].count);
+        FCK_EQ(memcmp(loadout, expected, sizeof(loadout)), 0,
+               "list entries, counts, limits and untouched bytes");
+        FCK_EQ(primaryIndices[0], cases[i].primaryMin, "primary signed index clamps up");
+        FCK_EQ(primaryIndices[1], 3, "primary index clamps down");
+        FCK_EQ(heavyIndices[0], 4, "heavy index clamps down");
+        FCK_EQ(heavyIndices[1], cases[i].heavyMin, "heavy index respects minimum");
+        FCK_EQ(specialIndices[0], i == 0 ? 1 : 2, "special upper clamp or interior value");
+        FCK_EQ(specialIndices[1], cases[i].specialMin, "special signed index clamps up");
+        FCK_CHECK((u8)primaryIndices[2] == 0xE9 && (u8)heavyIndices[2] == 0xE9 &&
+                  (u8)specialIndices[2] == 0xE9, "index array neighbors untouched");
+        FCK_EQ(loadoutBackdrop[0], cases[i].backdrop, "mode selects loadout backdrop");
+        FCK_EQ(loadoutBackdrop[1], 0xD8, "backdrop neighbor untouched");
+        FCK_EQ(ready1, 0, "loadout clears first ready flag");
+        FCK_EQ(ready2, 0, "loadout clears second ready flag");
+        FCK_EQ(loadoutItems[0x16 / 2], 100, "loadout item +0x16 set to 100");
+        FCK_EQ(loadoutItems[0x86 / 2], 100, "loadout item +0x86 set to 100");
+        FCK_CHECK(lk_all(loadoutItems, 0, 0x16, 0xC7) &&
+                  lk_all(loadoutItems, 0x18, 0x86, 0xC7) &&
+                  lk_all(loadoutItems, 0x88, sizeof(loadoutItems), 0xC7),
+                  "other loadout item bytes untouched");
+        FCK_EQ(memcmp(&session, &before, sizeof(session)), 0, "session is read-only");
+        FCK_EQ(memcmp(missionLimits, limitsBefore, sizeof(missionLimits)), 0,
+               "mission limit rows are read-only");
+        FCK_EQ(selectedMission, 1, "selected mission untouched");
+        FCK_EQ(missionRows, missionMap, "mission map binding untouched");
+    }
+}
+
 int main(void)
 {
     test_8007B004();
     test_80046F9C();
+    test_8007D408();
     return lk_done("leaf_boot_r4");
 }
