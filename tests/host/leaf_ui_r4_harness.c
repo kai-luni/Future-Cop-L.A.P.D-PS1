@@ -314,11 +314,168 @@ static void test_8005A154(void)
     check_gauge_sound(1, 0x34, 0x23456789, 17);
 }
 
+/* @leaf 80029974 source gQueueScriptEvent.c:4-24,58-85 short-circuit, immediate dispatch, latch/stop, ring wrap and saturation */
+struct EventSlot {
+    u16 value;
+    u8 used;
+    u8 pad03[5];
+};
+
+struct EventRing {
+    s16 count;
+    s16 head;
+    struct EventSlot slots[8];
+};
+
+u32 gScreenState[2] __asm__("D_8009FA00");
+u8 gBitFieldState __asm__("D_8009F6B8");
+u8 gLatchFlag __asm__("D_8009F6C0");
+struct EventRing gRingBuffer __asm__("D_800A0BC0");
+
+extern void gQueueScriptEvent(s32 value) __asm__("func_80029974");
+
+static const char volume_call[] = "func_800452C8";
+static const char stop_call[] = "func_80029DD8";
+static const char append_call[] = "func_800298EC";
+static s32 voice_volume;
+static struct EventRing ring_at_stop;
+static u8 latch_at_stop;
+
+s32 mock_voice_volume(void) __asm__("func_800452C8");
+s32 mock_voice_volume(void)
+{
+    fck_record(volume_call, 0, 0, 0);
+    return voice_volume;
+}
+
+void mock_stop_portrait(void) __asm__("func_80029DD8");
+void mock_stop_portrait(void)
+{
+    fck_record(stop_call, 0, 0, 0);
+    memcpy(&ring_at_stop, &gRingBuffer, sizeof(gRingBuffer));
+    latch_at_stop = gLatchFlag;
+}
+
+void mock_append_event(s32 value) __asm__("func_800298EC");
+void mock_append_event(s32 value)
+{
+    fck_record(append_call, value, 0, 0);
+}
+
+enum EventPath { SCREEN_GUARD, SILENT_VOICE, DIRECT_EVENT, LATCH_EVENT, STOP_EVENT };
+
+struct EventCase {
+    u32 screen;
+    s32 volume;
+    u8 flags;
+    s16 count;
+    s16 head;
+    enum EventPath path;
+    s16 expected_count;
+    s16 slot;                 /* -1 means no ring write. */
+};
+
+static void check_queue_event(const struct EventCase *test)
+{
+    static const char *voice_only[] = {volume_call};
+    static const char *direct[] = {volume_call, append_call};
+    static const char *stop[] = {volume_call, stop_call};
+    static const s32 event = 0x1234BEEF;
+    struct EventRing before, expected;
+    struct FckCall call;
+    int i;
+
+    gScreenState[0] = test->screen;
+    gScreenState[1] = 0x12345678;
+    gBitFieldState = test->flags;
+    gLatchFlag = 0xA5;
+    voice_volume = test->volume;
+    lk_fill(&gRingBuffer, 0x69, sizeof(gRingBuffer));
+    gRingBuffer.count = test->count;
+    gRingBuffer.head = test->head;
+    for (i = 0; i < 8; i++)
+        gRingBuffer.slots[i].value = 0x1100 + i;
+    memcpy(&before, &gRingBuffer, sizeof(before));
+    memcpy(&expected, &before, sizeof(expected));
+    lk_fill(&ring_at_stop, 0, sizeof(ring_at_stop));
+    latch_at_stop = 0;
+    fck_log_reset();
+
+    gQueueScriptEvent(event);
+
+    /* Lines 62-69: screen guard short-circuits the query; zero volume does
+     * nothing; immediate dispatch gets the full word. Only non-latch
+     * enqueue calls stop, before any writes to the ring. */
+    switch (test->path) {
+    case SCREEN_GUARD:
+        fck_expect_order(0, 0, "event screen guard short-circuits volume");
+        break;
+    case SILENT_VOICE:
+    case LATCH_EVENT:
+        fck_expect_order(voice_only, 1, "silent or latch path only queries volume");
+        break;
+    case DIRECT_EVENT:
+        fck_expect_order(direct, 2, "volume precedes immediate dispatch");
+        call = fck_call_n(append_call, 0);
+        FCK_EQ(call.a0, event, "immediate event preserves full word");
+        break;
+    case STOP_EVENT:
+        fck_expect_order(stop, 2, "volume precedes portrait stop");
+        FCK_EQ(memcmp(&ring_at_stop, &before, sizeof(before)), 0, "stop precedes ring writes");
+        FCK_EQ(latch_at_stop, 0xA5, "stop sees original latch");
+        break;
+    }
+
+    /* Lines 67,72-83: the target slot gets low 16 bits and a clear use
+     * byte. Compare the whole ring to also pin all padding and other slots. */
+    if (test->slot >= 0) {
+        expected.slots[test->slot].value = 0xBEEF;
+        expected.slots[test->slot].used = 0;
+        expected.head = test->slot;
+        expected.count = test->expected_count;
+        FCK_EQ(gRingBuffer.head, test->slot, "event ring head moves back and wraps");
+        FCK_EQ(gRingBuffer.count, test->expected_count, "event ring count saturates at eight");
+        FCK_EQ(gRingBuffer.slots[test->slot].value, 0xBEEF, "queued event keeps low halfword");
+        FCK_EQ(gRingBuffer.slots[test->slot].used, 0, "queued event clears slot use byte");
+    }
+    FCK_EQ(memcmp(&gRingBuffer, &expected, sizeof(expected)), 0, "event ring exact writes");
+    FCK_EQ(gLatchFlag, test->path == LATCH_EVENT ? 1 : 0xA5, "only latch path writes latch");
+    FCK_EQ(gScreenState[0], test->screen, "event screen guard word untouched");
+    FCK_EQ(gScreenState[1], 0x12345678, "adjacent screen word untouched");
+    FCK_EQ(gBitFieldState, test->flags, "event flags untouched");
+}
+
+static void test_80029974(void)
+{
+    static const struct EventCase cases[] = {
+        /* Lines 62-63: unsigned screen boundary, nonzero voice, count <= 0
+         * and only mask bits 0x70 control the immediate path. */
+        {5, 7, 0x40, 1, 0, SCREEN_GUARD, 1, -1},
+        {0xFFFFFFFFU, 7, 0, 0, 2, SCREEN_GUARD, 0, -1},
+        {4, 0, 0x40, 1, 0, SILENT_VOICE, 1, -1},
+        {4, -2, 0x8F, 0, 2, DIRECT_EVENT, 0, -1},
+        {1, 7, 0, -1, 0, DIRECT_EVENT, -1, -1},
+        /* Lines 66-83: latch beats stop; head 0 wraps; 7 grows to 8,
+         * while a full ring still overwrites the target slot. */
+        {4, 7, 0x70, 0, 0, LATCH_EVENT, 1, 7},
+        {1, 7, 0x10, 0, 1, STOP_EVENT, 1, 0},
+        {1, 7, 0x20, 0, 2, STOP_EVENT, 1, 1},
+        {1, 7, 0, 7, 4, STOP_EVENT, 8, 3},
+        {1, 7, 0, 8, 0, STOP_EVENT, 8, 7},
+    };
+    int i;
+
+    LK_FUNC("func_80029974");
+    for (i = 0; i < (int)(sizeof(cases) / sizeof(cases[0])); i++)
+        check_queue_event(&cases[i]);
+}
+
 int main(void)
 {
     test_8003526C();
     test_800491F8();
     test_80027D70();
     test_8005A154();
+    test_80029974();
     return lk_done("leaf_ui_r4");
 }
