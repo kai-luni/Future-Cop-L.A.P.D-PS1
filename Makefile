@@ -535,8 +535,8 @@ host-leaf-formats-graphics:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_formats_graphics
 
 # Hardware-free tranche 1 leaf suite (25 unchanged original functions); missing tools fail.
-.PHONY: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-cd-r3 host-leaf-res-r3 host-leaf-boot-r3 host-leaf-hud-r3
-check: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-cd-r3 host-leaf-res-r3 host-leaf-boot-r3 host-leaf-hud-r3
+.PHONY: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-cd-r3 host-leaf-res-r3 host-leaf-boot-r3 host-leaf-hud-r3 host-leaf-stream-r4 host-leaf-ui-r4 host-leaf-scene-r4 host-leaf-effects-r4 host-leaf-boot-r4 host-leaf-hud-r4 host-leaf-ai-r4 host-leaf-res-r4
+check: host-leaf-hw-free-a host-leaf-hw-free-b host-leaf-cd-r3 host-leaf-res-r3 host-leaf-boot-r3 host-leaf-hud-r3 host-leaf-stream-r4 host-leaf-ui-r4 host-leaf-scene-r4 host-leaf-effects-r4 host-leaf-boot-r4 host-leaf-hud-r4 host-leaf-ai-r4 host-leaf-res-r4
 
 host-leaf-hw-free-a:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_hw_free_a
@@ -566,3 +566,50 @@ host-leaf-boot-r3:
 # HUD text/glyph + render-effect leaf suite (5 unchanged original functions); missing tools fail.
 host-leaf-hud-r3:
 	$(PYTHON) tools/host_leaf_suite.py report leaf_hud_r3
+
+# Round 4, stream/resource band: module stream reset and asset pool release, text
+# table release and its delegate, movie decode buffer free (5 unchanged original
+# functions, callees stubbed); missing tools fail.
+host-leaf-stream-r4:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_stream_r4
+
+# Round 4, gameplay/UI band: drone approach reset, formatted HUD number, solo
+# frame refresh, gauge edge sound, script event queue (5 unchanged original
+# functions); missing tools fail.
+host-leaf-ui-r4:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_ui_r4
+
+# Round 4, scene/terrain band: clamped cell coordinate pair, cell entity work
+# buffer init and frees, coordinate pair storage release (5 unchanged original
+# functions); missing tools fail.
+host-leaf-scene-r4:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_scene_r4
+
+# Round 4, effect pool band: attached effect free, tracer pool storage and init,
+# effect pool init and teardown (5 unchanged original functions); missing tools fail.
+host-leaf-effects-r4:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_effects_r4
+
+# Round 4, boot/front-end band: mission select state, spatial bank playback,
+# selection indices, sound ID on a voice, options screen init (5 unchanged
+# original functions, callees stubbed); missing tools fail.
+host-leaf-boot-r4:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_boot_r4
+
+# Round 4, HUD/geometry band: rotation matrix build, movie VLC tables and
+# stream decode, camera placement from preset and clean-preset search (5
+# unchanged original functions); missing tools fail.
+host-leaf-hud-r4:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_hud_r4
+
+# Round 4, AI/renderer band: actor mode, radar marker, mission loadout
+# finalisation, target markers, ground object search (5 unchanged original
+# functions); missing tools fail.
+host-leaf-ai-r4:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_ai_r4
+
+# Round 4, resource/SPU band: model resource relocation and preparation, profile
+# save subsystem open, view matrix build, SPU entry claim (5 unchanged original
+# functions); missing tools fail.
+host-leaf-res-r4:
+	$(PYTHON) tools/host_leaf_suite.py report leaf_res_r4
