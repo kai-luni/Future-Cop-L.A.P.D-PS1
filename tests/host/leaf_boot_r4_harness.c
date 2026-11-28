@@ -390,10 +390,82 @@ static void test_8007D408(void)
     }
 }
 
+u8 soundIds[0x47] __asm__("D_800A1830");
+static const char resolveCall[] = "func_80045494";
+static s32 resolvedSlot;
+
+s32 mockResolve(s32 id, u8 *table, s32 limit) __asm__("func_80045494");
+s32 mockResolve(s32 id, u8 *table, s32 limit)
+{
+    fck_record(resolveCall, id, (s32)table, limit);
+    return resolvedSlot;
+}
+
+extern s32 playSoundId(s32 track, s32 x, s32 z, s32 extra, s32 handle, void *object)
+    __asm__("func_80046E88");
+
+static void test_80046E88(void)
+{
+    static const char *newOrder[] = {
+        resolveCall, attenuationCall, allocCall, panCall, startCall, releaseCall
+    };
+    static const char *existingOrder[] = {
+        resolveCall, attenuationCall, panCall, startCall
+    };
+    static const struct {
+        s32 slot, supplied, allocation, result;
+        u8 audible, started;
+        int calls;
+    } cases[] = {
+        {0xFF, 0,      0xA321, 0,      1, 1, 1},
+        {12,   0,      0xA321, 0,      0, 1, 2},
+        {12,   0,      0,      0,      1, 1, 3},
+        {12,   0,      0xA321, 0xA321, 1, 1, 5},
+        {12,   0,      0xA321, 0,      1, 0, 6},
+        {12,   0xC123, 0xA321, 0,      1, 1, 4},
+        {12,   0xC123, 0xA321, 0,      1, 0, 4}
+    };
+    int i;
+
+    /* @leaf 80046E88 source gPlaySoundIdOnVoice.c:59-87 resolves ID with limit 0x47, rejects sentinel or inaudible results, allocates only for null supplied handle, passes caller extra to start, releases only a newly allocated failed voice */
+    LK_FUNC("func_80046E88");
+    for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
+        const int calls = cases[i].calls;
+        const int existing = cases[i].supplied != 0;
+        s32 ret;
+
+        /* Unlike 80046F9C, this caller has no enabled/count preflight. */
+        soundEnabled = 0;
+        primeSound(12, 0, cases[i].audible, cases[i].allocation, cases[i].started);
+        lk_fill(soundIds, 0xDA, sizeof(soundIds));
+        resolvedSlot = cases[i].slot;
+        ret = playSoundId(54, -89, 99, -27, cases[i].supplied, &session);
+
+        FCK_EQ(ret, cases[i].result, "only a successful new allocation returns a handle");
+        fck_expect_order(existing ? existingOrder : newOrder, calls, "sound-ID call sequence");
+        expectArgs(0, 54, (s32)soundIds, 0x47);
+        if (calls >= 2)
+            expectArgs(1, -89, 99, (s32)&session);
+        if (!existing && calls >= 3)
+            expectAllocated(2, 0, 12);
+        if (existing)
+            expectStarted(3, 12, 0xC123, -27);
+        if (calls >= 5)
+            expectStarted(4, 12, 0xA321, -27);
+        if (calls == 6)
+            expectArgs(5, 0xA321, 0, 0);
+        FCK_CHECK(lk_all(soundIds, 0, sizeof(soundIds), 0xDA), "ID table untouched");
+        FCK_EQ(soundEnabled, 0, "sound enable byte untouched");
+        FCK_EQ(memcmp(soundBanks, banksBefore, sizeof(soundBanks)), 0,
+               "caller does not write bank records");
+    }
+}
+
 int main(void)
 {
     test_8007B004();
     test_80046F9C();
     test_8007D408();
+    test_80046E88();
     return lk_done("leaf_boot_r4");
 }
