@@ -55,6 +55,19 @@ symbols are declared in `config/us/matching_units.json`. Only units that pass th
 retail-byte verifier count as matched — provisional assembly, static-recompiler
 output and boundary guesses never award progress.
 
+If a Linux sandbox stops the legacy 32-bit compiler with `SIGSYS` (`Bad system
+call`), prepare a separate `.toolchain` in a fresh test worktree using the native
+`.toolchain` from an already bootstrapped checkout:
+
+```sh
+python3 tools/sandbox_toolchain.py /path/to/native-checkout/.toolchain .toolchain
+```
+
+Install `qemu-i386` or pass its path via `--qemu-i386`. The overlay runs the
+original GCC executables under QEMU without changing the sandbox or replacing
+the native toolchain. Run the usual tests from the test worktree. Leave
+`PORTABLE_I386` unset when using the overlay; the launchers already use QEMU.
+
 ## The LLM reconstruction campaign
 
 The 1,249 functions added on top of the upstream base were reconstructed through a

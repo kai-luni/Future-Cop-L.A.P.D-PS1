@@ -259,6 +259,11 @@ class Build:
     def binutils(self, command, cwd, *args):
         return self.run([self.binaries / f"mipsel-linux-gnu-{command}", *args], cwd)
 
+    def compiler_binary(self, name):
+        launcher = self.gcc.with_name(name)
+        guest = launcher.with_name(name + ".i386")
+        return guest if guest.is_symlink() else launcher
+
     def compile(self, source, name, cwd):
         include = [*unit_paths.include_flags(ROOT), f"-I{HOST}"]
         if self.i386:
@@ -268,10 +273,10 @@ class Build:
                        "__MIPSEL__", "__mips", "__MIPSEL", "__CHAR_UNSIGNED__", "__OPTIMIZE__",
                        "__EXTENSIONS__", "_MIPSEL", "_LANGUAGE_C", "LANGUAGE_C",
                        "__SIZE_TYPE__=unsigned int", "__PTRDIFF_TYPE__=int")
-            self.run([self.i386, self.gcc.with_name("cpp"), "-lang-c", *include,
+            self.run([self.i386, self.compiler_binary("cpp"), "-lang-c", *include,
                       "-isystem", self.gcc.parent / "include", "-undef",
                       *(f"-D{define}" for define in defines), source, f"{name}.i"], cwd)
-            self.run([self.i386, self.gcc.with_name("cc1"), f"{name}.i", "-quiet",
+            self.run([self.i386, self.compiler_binary("cc1"), f"{name}.i", "-quiet",
                       "-dumpbase", source.name, "-O1", "-G0", "-o", f"{name}.s"], cwd)
         else:
             self.run([self.gcc, f"-B{self.gcc.parent}/", *include,
@@ -298,8 +303,9 @@ class Build:
 
         observations = {"schema": OBSERVATIONS, "version": 1, "cases": []}
         proof = {"kind": "qemu-unchanged-source", "suite_sha256": suite_digest,
-                 "compiler": str(self.gcc), "compiler_host": "qemu-i386" if self.i386 else "native",
-                 "compiler_sha256": {name: digest(self.gcc.with_name(name)) for name in ("gcc", "cpp", "cc1")},
+                 "compiler": str(self.gcc),
+                 "compiler_host": "qemu-i386" if self.i386 or self.compiler_binary("gcc") != self.gcc else "native",
+                 "compiler_sha256": {name: digest(self.compiler_binary(name)) for name in ("gcc", "cpp", "cc1")},
                  "maspsx_sha256": digest(self.maspsx),
                  "qemu_version": self.run([self.qemu, "--version"], root).splitlines()[0],
                  "cases": []}
