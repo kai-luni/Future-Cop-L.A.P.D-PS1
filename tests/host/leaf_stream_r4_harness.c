@@ -193,7 +193,6 @@ void free_block(void *block)
 }
 
 extern void free_text_table(void) __asm__("func_800898C8");
-/* @link 800898E8 */
 
 static void test_free_text_table(void)
 {
@@ -217,10 +216,42 @@ static void test_free_text_table(void)
     FCK_EQ(text_table, 0, "text wrapper: empty table stays null");
 }
 
+extern void release_text_table(void) __asm__("func_800898E8");
+
+static void test_release_text_table(void)
+{
+    /* @leaf 800898E8 source gReleaseActiveTextLookupTable.c:25-31 skips a null table, otherwise frees the installed pointer before clearing it */
+    LK_FUNC("func_800898E8");
+
+    text_table = 0;
+    fck_log_reset();
+    release_text_table();
+    fck_expect_order(0, 0, "text release: null guard skips block free");
+    FCK_EQ(text_table, 0, "text release: null slot stays null");
+
+    lk_fill(text_payload, 0x67, sizeof(text_payload));
+    text_table = &text_payload[1];
+    text_at_free = 0;
+    fck_log_reset();
+    release_text_table();
+    fck_expect_order(block_order, 1, "text release: one block free");
+    FCK_EQ(fck_call_n(block_call, 0).a0, &text_payload[1], "text release: exact installed pointer");
+    FCK_EQ(text_at_free, &text_payload[1], "text release: slot still live during free");
+    FCK_EQ(text_table, 0, "text release: slot clears after free");
+    FCK_CHECK(lk_all(text_payload, 0, sizeof(text_payload), 0x67),
+              "text release: no direct writes into table storage");
+
+    fck_log_reset();
+    release_text_table();
+    fck_expect_order(0, 0, "text release: cleared table is not freed twice");
+    FCK_EQ(text_table, 0, "text release: repeated release leaves slot empty");
+}
+
 int main(void)
 {
     test_reset_stream();
     test_release_module_pool();
     test_free_text_table();
+    test_release_text_table();
     return lk_done("leaf_stream_r4");
 }
