@@ -127,9 +127,120 @@ static void test_80089BBC(void)
     FCK_CHECK(gMovieVlcTableB == secondary.table.length, "secondary table pointer unchanged");
 }
 
+struct VlcEntry {
+    u8 bits;
+    u8 pad;
+    u16 code;
+};
+
+struct VlcEntry gPrimaryEntries[0x60] __asm__("D_8009C1E0");
+struct VlcEntry gSecondaryEntries[0x80] __asm__("D_8009C360");
+u16 gDefaultSymbols[0xE0] __asm__("D_8009C560");
+
+extern s32 gBuildMovieVlcTables(u8 *table_a, u8 *table_b, u16 *symbols)
+    __asm__("func_80089A88");
+
+static void check_vlc_range(const u8 *length, const u16 *value,
+                            unsigned start, unsigned end, u8 bits, u16 symbol)
+{
+    unsigned i;
+    int matching_lengths = 1;
+    int matching_values = 1;
+
+    for (i = start; i < end; i++) {
+        matching_lengths &= length[i] == bits;
+        matching_values &= value[i] == symbol;
+    }
+    FCK_CHECK(matching_lengths, "VLC length range");
+    FCK_CHECK(matching_values, "VLC value range");
+}
+
+/* @leaf 80089A88 source Pointer publication, null rejection, explicit/default symbols, and both table layouts. */
+static void test_80089A88(void)
+{
+    struct VlcPrimary *a = &primary.table;
+    struct VlcSecondary *b = &secondary.table;
+    u16 custom[0xE0];
+    unsigned i, pass;
+    u16 base;
+
+    LK_FUNC("func_80089A88");
+    lk_fill(&primary, 0x5A, sizeof(primary));
+    lk_fill(&secondary, 0x5A, sizeof(secondary));
+    FCK_EQ(gBuildMovieVlcTables(0, b->length, custom), -1, "null primary rejected");
+    FCK_CHECK(gMovieVlcTableA == 0, "null primary published");
+    FCK_CHECK(gMovieVlcTableB == b->length, "secondary published on failure");
+    FCK_CHECK(lk_all(&secondary, 0, sizeof(secondary), 0x5A), "secondary unchanged on failure");
+    FCK_EQ(gBuildMovieVlcTables(a->length, 0, custom), -1, "null secondary rejected");
+    FCK_CHECK(gMovieVlcTableA == a->length, "primary published on failure");
+    FCK_CHECK(gMovieVlcTableB == 0, "null secondary published");
+    FCK_CHECK(lk_all(&primary, 0, sizeof(primary), 0x5A), "primary unchanged on failure");
+
+    /* In the primary table code >> 3 picks a 13-bit index; in the secondary
+     * table code >> 7 picks a 9-bit index. Shorter codes replicate into
+     * their low don't-care bits. Keep the two symbol sequences distinct.
+     */
+    for (i = 0; i < 0x60; i++) {
+        gPrimaryEntries[i].bits = 13;
+        gPrimaryEntries[i].code = (0x80 + i) << 3;
+    }
+    gPrimaryEntries[0].bits = 11;
+    gPrimaryEntries[0].code = 0x40 << 3;
+    gPrimaryEntries[0x5F].bits = 11;
+    gPrimaryEntries[0x5F].code = 0x1FFC << 3;
+    for (i = 0; i < 0x80; i++) {
+        gSecondaryEntries[i].bits = 9;
+        gSecondaryEntries[i].code = (0x40 + i) << 7;
+    }
+    gSecondaryEntries[0].bits = 8;
+    gSecondaryEntries[0].code = 0x20 << 7;
+    gSecondaryEntries[0x7F].bits = 7;
+    gSecondaryEntries[0x7F].code = 0x1FC << 7;
+    for (i = 0; i < 0xE0; i++) {
+        custom[i] = 0x1200 + i;
+        gDefaultSymbols[i] = 0xAB00 + i;
+    }
+
+    for (pass = 0; pass < 2; pass++) {
+        base = pass == 0 ? 0x1200 : 0xAB00;
+        lk_fill(&primary, 0x5A, sizeof(primary));
+        lk_fill(&secondary, 0x5A, sizeof(secondary));
+        FCK_EQ(gBuildMovieVlcTables(a->length, b->length, pass == 0 ? custom : 0), 0,
+               "successful table build");
+        FCK_CHECK(gMovieVlcTableA == a->length, "primary published");
+        FCK_CHECK(gMovieVlcTableB == b->length, "secondary published");
+
+        check_vlc_range(a->length, a->value, 0, 0x40, 0x5A, 0x5A5A);
+        check_vlc_range(a->length, a->value, 0x40, 0x44, 11, base);
+        check_vlc_range(a->length, a->value, 0x44, 0x81, 0x5A, 0x5A5A);
+        for (i = 1; i < 0x5F; i++) {
+            FCK_EQ(a->length[0x80 + i], 13, "primary full-length code");
+            FCK_EQ(a->value[0x80 + i], base + i, "primary symbol order");
+        }
+        check_vlc_range(a->length, a->value, 0xDF, 0x1FFC, 0x5A, 0x5A5A);
+        check_vlc_range(a->length, a->value, 0x1FFC, 0x2000, 11, base + 0x5F);
+
+        check_vlc_range(b->length, b->value, 0, 0x20, 0x5A, 0x5A5A);
+        check_vlc_range(b->length, b->value, 0x20, 0x22, 8, base + 0x60);
+        check_vlc_range(b->length, b->value, 0x22, 0x41, 0x5A, 0x5A5A);
+        for (i = 1; i < 0x7F; i++) {
+            FCK_EQ(b->length[0x40 + i], 9, "secondary full-length code");
+            FCK_EQ(b->value[0x40 + i], base + 0x60 + i, "secondary symbol order");
+        }
+        check_vlc_range(b->length, b->value, 0xBF, 0x1FC, 0x5A, 0x5A5A);
+        check_vlc_range(b->length, b->value, 0x1FC, 0x200, 7, base + 0xDF);
+
+        FCK_EQ(primary.before, 0x5A5A5A5A, "primary leading guard");
+        FCK_EQ(primary.after, 0x5A5A5A5A, "primary trailing guard");
+        FCK_EQ(secondary.before, 0x5A5A5A5A, "secondary leading guard");
+        FCK_EQ(secondary.after, 0x5A5A5A5A, "secondary trailing guard");
+    }
+}
+
 int main(void)
 {
     test_800188D0();
     test_80089BBC();
+    test_80089A88();
     return lk_done("leaf_hud_r4");
 }
