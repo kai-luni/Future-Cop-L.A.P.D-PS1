@@ -32,6 +32,10 @@
  * test needing more than this would be asserting a log, not behaviour. */
 #define FCM_SOUND_LOG_MAX 64
 
+/* Ordered boundary log: one entry per stand-in entry, so a harness can assert
+ * the relative order of the seven audio boundaries. */
+#define FCM_SOUND_MAX_CALLS 32
+
 struct FcmSoundMock {
     /* --- values the stand-ins return (all default 0) --- */
     s32 sfx_result;      /* func_80046C84: voice handle, 0 = id not found */
@@ -53,7 +57,32 @@ struct FcmSoundMock {
     s32 stream_target_overflow;       /* starts after the first, ignored */
 
     s32 stereo_mode_reads;            /* func_800451E0 call count */
+
+    /* --- ordered boundary log ---
+     * Every stand-in appends its kind here, so a harness can assert the order
+     * of the seven audio boundaries without carrying a private copy of them. */
+    s32 call_count;
+    s32 call_kinds[FCM_SOUND_MAX_CALLS];
+    s32 call_overflow;                /* 1 = more calls than the log holds */
 };
+
+/* Kinds appended to `call_kinds`, one per stand-in. */
+enum {
+    FCM_SOUND_CALL_SFX = 1,
+    FCM_SOUND_CALL_STEREO_MODE,
+    FCM_SOUND_CALL_MUSIC_VOLUME,
+    FCM_SOUND_CALL_VAGM_VOLUME,
+    FCM_SOUND_CALL_VOICE_VOLUME,
+    FCM_SOUND_CALL_STREAM_START,
+    FCM_SOUND_CALL_STREAM_ACTIVE
+};
+
+/* Optional observer, called at the top of every stand-in before the mock
+ * records anything, with the call kind and the two incoming words. A harness
+ * uses it to snapshot its own globals at call time - proving a store already
+ * happened - or to splice the call into its own ordered log. It never lets the
+ * harness redefine a label the library already provides. */
+extern void (*fcm_sound_observer)(s32 kind, s32 arg0, s32 arg1);
 
 /* One global, so the harness reads `fcm_sound.sfx_ids[0]` directly. */
 extern struct FcmSoundMock fcm_sound;

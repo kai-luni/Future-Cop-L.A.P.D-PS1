@@ -1,7 +1,9 @@
 /* Boot/front-end round 4: unchanged original units, linked under their retail
  * labels. The fixture owns the RAM labels; audio dependencies are scripted and
  * recorded to isolate each caller from the audio engine. */
+/* @mock sound_mock */
 #include "leaf_kit.h"
+#include "mocks/sound_mock.h"
 
 struct Session {
     u8 pad00[8];
@@ -478,49 +480,36 @@ static const char voiceCall[] = "func_800452C8";
 static const char stereoCall[] = "func_800451E0";
 static const char activeCall[] = "func_8002A58C";
 static const char streamCall[] = "func_8002A16C";
-static s32 stereoResult, activeResult;
 
-/* The shared sound mock does not record order across these six boundaries.
- * Record the preceding writes too, so final state cannot mask a late store. */
-s32 mockMusicVolume(void) __asm__("func_8004522C");
-s32 mockMusicVolume(void)
+/* The shared sound mock records call counts but not the interleaving with the
+ * writes that precede each getter. Observe its boundaries instead of defining
+ * the labels here: the observer runs at call entry and snapshots the globals,
+ * so a late store still shows up as a wrong slot in `fck_log`. */
+static void bootSoundObserver(s32 kind, s32 arg0, s32 arg1)
 {
-    fck_record(musicCall, testResult, 0, 0);
-    return 93;
-}
-
-s32 mockVagmVolume(void) __asm__("func_80045288");
-s32 mockVagmVolume(void)
-{
-    fck_record(vagmCall, savedSfx, 0, 0);
-    return 37;
-}
-
-s32 mockVoiceVolume(void) __asm__("func_800452C8");
-s32 mockVoiceVolume(void)
-{
-    fck_record(voiceCall, savedVagm, 0, 0);
-    return 64;
-}
-
-s32 mockStereoMode(void) __asm__("func_800451E0");
-s32 mockStereoMode(void)
-{
-    fck_record(stereoCall, savedVoice, 0, 0);
-    return stereoResult;
-}
-
-s32 mockStreamActive(void) __asm__("func_8002A58C");
-s32 mockStreamActive(void)
-{
-    fck_record(activeCall, snapshotPointer, previewTrack, snapshotResult[0]);
-    return activeResult;
-}
-
-void mockStartStream(s32 track) __asm__("func_8002A16C");
-void mockStartStream(s32 track)
-{
-    fck_record(streamCall, track, optionsBackdrop[0], 0);
+    switch (kind) {
+    case FCM_SOUND_CALL_MUSIC_VOLUME:
+        fck_record(musicCall, testResult, 0, 0);
+        break;
+    case FCM_SOUND_CALL_VAGM_VOLUME:
+        fck_record(vagmCall, savedSfx, 0, 0);
+        break;
+    case FCM_SOUND_CALL_VOICE_VOLUME:
+        fck_record(voiceCall, savedVagm, 0, 0);
+        break;
+    case FCM_SOUND_CALL_STEREO_MODE:
+        fck_record(stereoCall, savedVoice, 0, 0);
+        break;
+    case FCM_SOUND_CALL_STREAM_ACTIVE:
+        fck_record(activeCall, snapshotPointer, previewTrack, snapshotResult[0]);
+        break;
+    case FCM_SOUND_CALL_STREAM_START:
+        fck_record(streamCall, arg0, optionsBackdrop[0], 0);
+        break;
+    default:
+        fck_record("unexpected-sound-call", kind, arg0, arg1);
+        break;
+    }
 }
 
 extern void initOptions(void) __asm__("func_8007D18C");
@@ -545,13 +534,18 @@ static void test_8007D18C(void)
 
     /* @leaf 8007D18C source gInitOptionsScreen.c:57-81 snapshots volume getters then stereo, resets preview state before stream poll, starts track 0 only for a zero low byte, writes label and exact-equality backdrop */
     LK_FUNC("func_8007D18C");
+    fcm_sound_observer = bootSoundObserver;
     for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
         lk_fill(&session, 0xA2, sizeof(session));
         session.mode = cases[i].mode;
         session.players = cases[i].players;
         before = session;
-        stereoResult = cases[i].stereo;
-        activeResult = cases[i].active;
+        fcm_sound_reset();
+        fcm_sound.music_volume = 93;
+        fcm_sound.vagm_volume = 37;
+        fcm_sound.voice_volume = 64;
+        fcm_sound.stereo_mode = cases[i].stereo;
+        fcm_sound.stream_active = cases[i].active;
         savedSfx = -1;
         savedVagm = -2;
         savedVoice = -3;
@@ -590,6 +584,7 @@ static void test_8007D18C(void)
         FCK_EQ(optionsBackdrop[1], 0xD5, "backdrop neighbor untouched");
         FCK_EQ(memcmp(&session, &before, sizeof(session)), 0, "session is read-only");
     }
+    fcm_sound_observer = 0;
 }
 
 int main(void)

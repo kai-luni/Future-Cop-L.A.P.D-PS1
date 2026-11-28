@@ -3,7 +3,9 @@
  * from the implementation. All five entry points are void; we check their
  * observable state and their calls to the recording stand-ins.
  */
+/* @mock sound_mock */
 #include "leaf_kit.h"
+#include "mocks/sound_mock.h"
 
 /* @leaf 8003526C source gResetDroneApproach.c:4-39,62-75 counter restore, AI reset and ordered callbacks */
 struct DroneState {
@@ -265,14 +267,12 @@ extern void gPlayGaugeEdgeSound(struct GaugeOwner *owner, struct Gauge *gauge)
     __asm__("func_8005A154");
 
 static const char gauge_sound_call[] = "func_80046C84";
-static s32 gauge_sound_result;
 
-s32 mock_gauge_sound(s32 id, s32 player) __asm__("func_80046C84");
-s32 mock_gauge_sound(s32 id, s32 player)
-{
-    fck_record(gauge_sound_call, id, player, 0);
-    return gauge_sound_result;
-}
+/* Both audio boundaries below come from the shared sound mock; the observer
+ * only splices them into this harness's own ordered log, the way the private
+ * stand-ins used to. Defined after the label constants, because the log
+ * compares label pointers. */
+static void uiSoundObserver(s32 kind, s32 arg0, s32 arg1);
 
 static void check_gauge_sound(s8 side, u8 sound, s32 slot_word, s32 result)
 {
@@ -289,7 +289,7 @@ static void check_gauge_sound(s8 side, u8 sound, s32 slot_word, s32 result)
     memcpy(&before_owner, &owner, sizeof(owner));
     memcpy(&before_gauge, &gauge, sizeof(gauge));
     memcpy(gPlayerEntities, players, sizeof(gPlayerEntities));
-    gauge_sound_result = result;
+    fcm_sound.sfx_result = result;
     fck_log_reset();
 
     gPlayGaugeEdgeSound(&owner, &gauge);
@@ -337,15 +337,15 @@ extern void gQueueScriptEvent(s32 value) __asm__("func_80029974");
 static const char volume_call[] = "func_800452C8";
 static const char stop_call[] = "func_80029DD8";
 static const char append_call[] = "func_800298EC";
-static s32 voice_volume;
 static struct EventRing ring_at_stop;
 static u8 latch_at_stop;
 
-s32 mock_voice_volume(void) __asm__("func_800452C8");
-s32 mock_voice_volume(void)
+static void uiSoundObserver(s32 kind, s32 arg0, s32 arg1)
 {
-    fck_record(volume_call, 0, 0, 0);
-    return voice_volume;
+    if (kind == FCM_SOUND_CALL_SFX)
+        fck_record(gauge_sound_call, arg0, arg1, 0);
+    else if (kind == FCM_SOUND_CALL_VOICE_VOLUME)
+        fck_record(volume_call, 0, 0, 0);
 }
 
 void mock_stop_portrait(void) __asm__("func_80029DD8");
@@ -389,7 +389,7 @@ static void check_queue_event(const struct EventCase *test)
     gScreenState[1] = 0x12345678;
     gBitFieldState = test->flags;
     gLatchFlag = 0xA5;
-    voice_volume = test->volume;
+    fcm_sound.voice_volume = test->volume;
     lk_fill(&gRingBuffer, 0x69, sizeof(gRingBuffer));
     gRingBuffer.count = test->count;
     gRingBuffer.head = test->head;
@@ -472,6 +472,7 @@ static void test_80029974(void)
 
 int main(void)
 {
+    fcm_sound_observer = uiSoundObserver;
     test_8003526C();
     test_800491F8();
     test_80027D70();
