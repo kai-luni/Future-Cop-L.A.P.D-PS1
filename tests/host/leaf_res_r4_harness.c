@@ -391,11 +391,89 @@ static void test_80013550(void)
     FCK_EQ(request.next, 0, "duplicate not linked");
 }
 
+/* @link 80097DF8 */
+
+struct SpuEntry {
+    u32 value, size;
+};
+
+s32 spu_capacity __asm__("D_8009EF04");
+s32 spu_cursor __asm__("D_8009EF08");
+struct SpuEntry *spu_table __asm__("D_8009EF0C");
+
+extern void gClaimSpuEntry(u32 value) __asm__("func_80098708");
+
+static void test_80098708(void)
+{
+    struct SpuEntry table[4] = {
+        {0x10, 2}, {0x40, 3}, {0x40, 4}, {0x40000100, 5}
+    };
+
+    /* @leaf 80098708 source sets bit 31 on first exact match only, stops at bit 30 or capacity, then invokes the real compactor even on a miss */
+    LK_FUNC("func_80098708");
+    spu_table = table;
+    spu_capacity = 4;
+    spu_cursor = 3;
+    gClaimSpuEntry(0x40);
+    FCK_EQ(table[0].value, 0x10, "nonmatching entry unchanged");
+    FCK_EQ(table[1].value, 0x80000040, "first exact match sets bit 31");
+    FCK_EQ(table[1].size, 3, "claim does not alter noncontiguous entry size");
+    FCK_EQ(table[2].value, 0x40, "later duplicate is not tagged");
+    FCK_EQ(table[3].value, 0x40000100, "tail barrier unchanged");
+    FCK_EQ(spu_cursor, 3, "noncontiguous table requires no compaction");
+
+    /* Marking first enables a merge with the following free block, then a
+     * fold into the tail. Compacting before marking cannot yield this state. */
+    table[1].value = 0x20;
+    table[2].value = 0x80000023;
+    table[3].value = 0x40000027;
+    gClaimSpuEntry(0x20);
+    FCK_EQ(table[0].value, 0x10, "live record survives compaction");
+    FCK_EQ(table[1].value, 0x40000020, "claim precedes compaction and tail fold");
+    FCK_EQ(table[1].size, 12, "fold combines claimed, free and tail sizes");
+    FCK_EQ(spu_cursor, 1, "compaction moves tail cursor");
+
+    /* Matching the barrier itself must not set either additional flag. */
+    table[1].value = 0x40000040;
+    table[1].size = 3;
+    spu_cursor = 1;
+    gClaimSpuEntry(0x40000040);
+    FCK_EQ(table[1].value, 0x40000040, "bit 30 checked before equality");
+
+    table[2].value = 0x50;
+    gClaimSpuEntry(0x50);
+    FCK_EQ(table[2].value, 0x50, "match beyond barrier not tagged");
+
+    /* A miss still folds a pre-existing free record into the tail. */
+    table[1].value = 0x20;
+    table[2].value = 0x80000060;
+    table[2].size = 4;
+    table[3].value = 0x40000064;
+    spu_cursor = 3;
+    gClaimSpuEntry(0x70);
+    FCK_EQ(table[2].value, 0x40000060, "pre-existing free entry folds on miss");
+    FCK_EQ(table[2].size, 9, "miss still folds tail size");
+    FCK_EQ(spu_cursor, 2, "miss still lowers compaction cursor");
+
+    spu_cursor = 0;
+    spu_capacity = 1;
+    table[1].value = 0x70;
+    gClaimSpuEntry(0x70);
+    FCK_EQ(table[1].value, 0x70, "capacity excludes following matching entry");
+    spu_capacity = 0;
+    gClaimSpuEntry(0x10);
+    FCK_EQ(table[0].value, 0x10, "zero capacity excludes first entry");
+    spu_capacity = -1;
+    gClaimSpuEntry(0x10);
+    FCK_EQ(table[0].value, 0x10, "negative capacity excludes first entry");
+}
+
 int main(void)
 {
     test_800131A0();
     test_8007F9CC();
     test_80018860();
     test_80013550();
+    test_80098708();
     return lk_done("leaf_res_r4");
 }
